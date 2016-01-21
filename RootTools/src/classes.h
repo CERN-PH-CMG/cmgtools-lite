@@ -2,6 +2,6 @@
 
 namespace {
   namespace {
-    RecoilCorrector recoilCorrector(string nameFileToCorrect, int iSeed);
+    RecoilCorrector recoilCorrector;
   }
 }

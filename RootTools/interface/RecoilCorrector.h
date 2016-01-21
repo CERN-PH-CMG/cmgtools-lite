@@ -35,6 +35,7 @@ class RecoilCorrector
 {
   
 public:
+  RecoilCorrector() { /* empty constructor only for ROOT dictionaries */ }
   RecoilCorrector(string iNameZDat, int iSeed=0xDEADBEEF);
   RecoilCorrector(string iNameZDat1, string iPrefix, int iSeed=0xDEADBEEF);
   ~RecoilCorrector();
