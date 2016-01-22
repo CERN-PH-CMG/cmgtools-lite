@@ -4,8 +4,8 @@ import array
 from ROOT import TMatrixD, std, TFile, TH1
 
 from PhysicsTools.Heppy.analyzers.core.Analyzer import Analyzer
-from TauAnalysis.SVfitStandalone.SVfitStandaloneAlgorithm import SVfitAlgo
-from TauAnalysis.SVfitStandalone.MeasuredTauLepton import measuredTauLepton
+from CMGTools.SVfitStandalone.SVfitStandaloneAlgorithm import SVfitAlgo
+from CMGTools.SVfitStandalone.MeasuredTauLepton import measuredTauLepton
 
 TH1.AddDirectory(False)
 
@@ -20,7 +20,7 @@ class SVfitProducer(Analyzer):
         if hasattr(self.cfg_ana, 'visPtResponseFile'):
             file_name = self.cfg_ana.visPtResponseFile
         else:
-            file_name = '/'.join([os.environ['CMSSW_BASE'], 'src','TauAnalysis', 
+            file_name = '/'.join([os.environ['CMSSW_BASE'], 'src','CMGTools', 
                                   'SVfitStandalone', 'data',
                                   'svFitVisMassAndPtResolutionPDF.root'])
                                   

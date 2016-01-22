@@ -13,7 +13,7 @@
 #include "DataFormats/PatCandidates/interface/Electron.h"
 #include "DataFormats/PatCandidates/interface/Muon.h"
 
-#include "TauAnalysis/SVfitStandalone/interface/SVfitStandaloneAlgorithm.h"
+#include "CMGTools/SVfitStandalone/interface/SVfitStandaloneAlgorithm.h"
 
 #include <sstream>
 
@@ -51,7 +51,7 @@ DiTauWithSVFitProducer<T, U>::DiTauWithSVFitProducer(const edm::ParameterSet& iC
   warningNumbers_(0),
   verbose_(iConfig.getUntrackedParameter<bool>("verbose", false)),
   SVFitVersion_(iConfig.getParameter<int>("SVFitVersion")),
-  p4TransferFunctionFile_(iConfig.getUntrackedParameter<std::string>("p4TransferFunctionFile", "TauAnalysis/SVfitStandalone/data/svFitVisMassAndPtResolutionPDF.root")),
+  p4TransferFunctionFile_(iConfig.getUntrackedParameter<std::string>("p4TransferFunctionFile", "CMGTools/SVfitStandalone/data/svFitVisMassAndPtResolutionPDF.root")),
   integrateOverP4_(iConfig.getUntrackedParameter<bool>("integrateOverP4", false)),
   fitAlgo_(iConfig.getParameter<std::string>("fitAlgo")) {
 

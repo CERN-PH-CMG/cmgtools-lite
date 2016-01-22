@@ -9,7 +9,7 @@ from CMGTools.H2TauTau.tools.setupOutput import addTauMuOutput, addTauEleOutput,
 
 
 def createProcess(runOnMC=True, channel='di-mu', runSVFit=False,
-                  p4TransferFunctionFile='TauAnalysis/SVfitStandalone/data/svFitVisMassAndPtResolutionPDF.root', # Christians's default. If not touched, it would default to this anyways
+                  p4TransferFunctionFile='CMGTools/SVfitStandalone/data/svFitVisMassAndPtResolutionPDF.root', # Christians's default. If not touched, it would default to this anyways
                   integrateOverP4=False):
     '''Set up CMSSW process to run MVA MET and SVFit.
 

@@ -24,7 +24,7 @@ channel = 'di-mu'
 # if false, no mass calculation is carried out
 runSVFit = True
 # decide whether tau energy resolution has to enter SVfit integration
-p4TransferFunctionFile = 'TauAnalysis/SVfitStandalone/data/svFitVisMassAndPtResolutionPDF.root' # Christians's default. If not touched, it would default to this anyways
+p4TransferFunctionFile = 'CMGTools/SVfitStandalone/data/svFitVisMassAndPtResolutionPDF.root' # Christians's default. If not touched, it would default to this anyways
 integrateOverP4 = False # Default False
 
 # increase to 1000 before running on the batch, to reduce size of log files
