@@ -81,7 +81,7 @@ class BaseDumper(Module):
         for i,l in enumerate(allleps):
             if i in ils: 
                 lepsS.append(l)
-            elif l.tightId and l.relIsoAfterFSR < (0.4 if abs(l.pdgId)==13 else 0.5) and l.sip3d < 4:
+            elif l.tightId and l.relIsoAfterFSR < (0.4 if abs(l.pdgId)==13 else 0.4) and l.sip3d < 4:
                 lepsS.append(l)
         ev.nLepSel = len(lepsS)
         ev.mjj = (jets[0].p4()+jets[1].p4()).M() if len(jets) >= 2 else 0
@@ -131,13 +131,14 @@ class BaseDumper(Module):
         for i,l in enumerate(leps):
             print "    lepton %d: id %+2d pt %5.1f eta %+4.2f phi %+4.2f   tightId %d relIso %5.3f sip3d %5.2f dxy %+4.3f dz %+4.3f bdt %+5.3f lostHits %1d fsr %1d/%1d" % (
                     i+1, l.pdgId,l.pt,l.eta,l.phi, l.tightId, l.relIsoAfterFSR, l.sip3d, l.dxy, l.dz, l.mvaIdSpring15, l.lostHits, l.hasFSR, l.hasOwnFSR),
-            if self.options.ismore:
-                print " iso ch %5.2f nh %5.2f ph %5.2f pu %5.2f rho %5.2f ea %4.3f preFSR %5.3f" % ( l.chargedHadIso04, l.neutralHadIso04, l.photonIso04, l.puChargedHadIso04, l.rho, l.EffectiveArea04, l.relIso04 ),
             if self.options.ismc:
                 print "   mcMatch id %+4d, any %+2d" % (l.mcMatchId, l.mcMatchAny),
-                if self.options.ismore:
-                    print " promptLep %d promptTau %d promptPho %d anyPho %d" % (l.mcPrompt, l.mcPromptTau, l.mcPromptGamma, l.mcGamma),
             print ""
+            if self.options.ismore:
+                print "\t\t iso 04 ch %5.2f nh %5.2f ph %5.2f pu %5.2f rho %5.2f ea %4.3f preFSR %5.3f" % ( l.chargedHadIso04, l.neutralHadIso04, l.photonIso04, l.puChargedHadIso04, l.rho, l.EffectiveArea04, l.relIso04 )
+                print "\t\t iso 03 ch %5.2f nh %5.2f ph %5.2f pu %5.2f rho %5.2f ea %4.3f preFSR %5.3f" % ( l.chargedHadIso03, l.neutralHadIso03, l.photonIso03, l.puChargedHadIso03, l.rho, l.EffectiveArea03, l.relIso03 )
+                if self.options.ismc:
+                    print "\t\t promptLep %d promptTau %d promptPho %d anyPho %d" % (l.mcPrompt, l.mcPromptTau, l.mcPromptGamma, l.mcGamma)
         for i,j in enumerate(jets):
             if self.options.ismc:
                 print "    jet %d:  pt %5.1f uncorrected pt %5.1f eta %+4.2f phi %+4.2f  btag %4.3f mcMatch %2d mcFlavour %2d mcPt %5.1f" % (i+1, j.pt, j.rawPt, j.eta, j.phi, min(1.,max(0.,j.btagCSV)), j.mcMatchId, j.mcFlavour, j.mcPt)
@@ -173,7 +174,7 @@ class BaseDumper(Module):
                           zz.pt, ev.mjj, ev.Djet, ev.nLepSel, ev.nJet30ZZ, ev.nB, ev.nJet40c, ev.mjj40c, ev.category)
         print "    met %6.2f (phi %+4.2f)" % (ev.met_pt, ev.met_phi)
         print "    vertices %d" % (ev.nVert)
-        print "    HLT: ", " ".join([t for t in "DoubleMu DoubleEl MuEG TripleEl TripleMu DoubleMuEl DoubleElMu SingleEl SingleMu DoubleMuSync DoubleElSync MuEGSync SingleElSync Signal SignalSync ".split() if getattr(ev,"HLT_"+t)])
+        print "    HLT: ", " ".join([t for t in "DoubleMu DoubleEl MuEG TripleEl TripleMu DoubleMuEl DoubleElMu SingleEl SingleMu Signal".split() if getattr(ev,"HLT_"+t)])
         print ""
 
 cut = None
