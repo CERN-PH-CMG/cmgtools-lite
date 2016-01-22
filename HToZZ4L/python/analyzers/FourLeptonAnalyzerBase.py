@@ -72,7 +72,7 @@ class FourLeptonAnalyzerBase( Analyzer ):
         return lepton.relIsoAfterFSR < 0.4 #absIsoWithFSR(R=0.4,puCorr="deltaBeta")/lepton.pt()<0.4
 
     def electronIsolation(self,lepton):
-        return lepton.relIsoAfterFSR < 0.5 #absIsoWithFSR(R=0.4,puCorr="rhoArea")/lepton.pt()<0.5
+        return lepton.relIsoAfterFSR < 0.4 #absIsoWithFSR(R=0.4,puCorr="rhoArea")/lepton.pt()<0.5
 
     def diLeptonMass(self,dilepton):
         return dilepton.M()>12.0 and dilepton.M()<120.

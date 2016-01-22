@@ -91,12 +91,12 @@ class FSRPhotonMaker( Analyzer ):
         #now attach FSR photons to all leptons (for isolation)
         for l in leptons:
             l.fsrPhotons = inConeCollection(l, event.attachedFsrPhotons, 0.5, -1)
-            l.relIsoAfterFSR = l.absIsoWithFSR()/l.pt()
+            l.relIsoAfterFSR = l.absIsoWithFSR(R=(0.4 if abs(l.pdgId()) == 13 else 0.3))/l.pt()
 
         #define list of FSR photons attached to photons that pass post-FSR iso, for jet cleaning
         event.selectedPhotons = []
         for l in leptons:
-            if l.tightId() and l.relIsoAfterFSR < (0.4 if abs(l.pdgId()) == 13 else 0.5):
+            if l.tightId() and l.relIsoAfterFSR < (0.4 if abs(l.pdgId()) == 13 else 0.4):
                 event.selectedPhotons += l.ownFsrPhotons
 
         return True
