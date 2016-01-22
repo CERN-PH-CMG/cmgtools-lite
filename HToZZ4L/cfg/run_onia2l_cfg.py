@@ -32,7 +32,7 @@ for d in mcSamples:
     d.vetoTriggers = []
     d.splitFactor = len(d.files)/4
 
-selectedComponents = mcSamples
+selectedComponents = dataSamples + mcSamples
 
 if True: autoAAA(selectedComponents)
  
@@ -47,4 +47,4 @@ elif test == "1M":
 elif test in ('2','3','5'):
     doTestN(test,selectedComponents)
 
-from PhysicsTools.HeppyCore.framework.eventsfwlite import Events
+config = autoConfig(selectedComponents, sequence)
