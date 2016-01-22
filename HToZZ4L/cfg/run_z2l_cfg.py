@@ -16,7 +16,7 @@ sequence = cfg.Sequence(hzz4lPreSequence +  [ fastSkim2L ] + hzz4lObjSequence + 
 ])
 
 #-------- SAMPLES AND TRIGGERS -----------
-from CMGTools.HToZZ4L.samples.samples_13TeV_Spring15 import *
+from CMGTools.HToZZ4L.samples.samples_13TeV_Fall15 import *
 dataSamples = [ ] # d for d in dataSamples if "DoubleMu" in d.name ]
 for d in dataSamples:
     d.triggers = triggers_mumu if 'Muon' in d.name else triggers_ee
@@ -35,13 +35,13 @@ printSummary(selectedComponents)
 
 #redefineRunRange(selectedComponents,[258214,258214])
 if True: autoAAA(selectedComponents)
-doECalCorrections(era="50ns")
-doKalmanMuonCorrections()
+#doECalCorrections(era="50ns")
+#doKalmanMuonCorrections()
 
 from PhysicsTools.HeppyCore.framework.heppy_loop import getHeppyOption
 test = getHeppyOption('test')
 if test in ("1","1M","1E"):
-    component = { "1":DYJetsToLL_LO_M50, "1M":DoubleMuon_Run2015D_PromptV4_25ns, "1E":DoubleEG_Run2015D_PromptV4_25ns }[test]
+    component = { "1":DYJetsToLL_LO_M50, "1M":DoubleMuon_Run2015D_16Dec2015_25ns, "1E":DoubleEG_Run2015D_16Dec2015_25ns }[test]
     if not component.isMC: redefineRunRange([component],[258214,258214])
     selectedComponents = doTest1( component, sequence=sequence )
 elif test in ('2','3','5'):
