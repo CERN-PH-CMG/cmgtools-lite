@@ -17,19 +17,19 @@ selectedComponents = [ d for d in data_50ns if "SingleMu" not in d.name ]
 #redefineRunRange(selectedComponents,[258158,258158])
 #selectedComponents = [ DoubleMuon_Run2015D_16Dec2015_25ns, DoubleEG_Run2015D_16Dec2015_25ns, MuonEG_Run2015D_16Dec2015_25ns, SingleMuon_Run2015D_16Dec2015_25ns, SingleElectron_Run2015D_16Dec2015_25ns ]
 #redefineRunRange(selectedComponents,[258214,258214])
-selectedComponents = H4L + [ ZZTo4L, ZZTo4L_aMC ] + GGZZTo4L + [DYJetsToLL_M10to50,DYJetsToLL_M50] + [ WZTo3LNu, TTLep ] + SingleTop
-selectedComponents = H4L + GGZZTo4L + [DYJetsToLL_M10to50,DYJetsToLL_M50] + [ WZTo3LNu, TTLep ] + SingleTop
-cropToLumi( [DYJetsToLL_M10to50,DYJetsToLL_M50,TTLep]+SingleTop, 100.0 )
-cropToLumi( [ZZTo4L, ZZTo4L_aMC]+GGZZTo4L, 500.0 )
-cropToLumi( H4L, 10000.0 )
-configureSplittingFromTime(DYJets+SingleTop+[WZTo3LNu,TTLep,GGZZTo4tau], 10.0, 1)
-configureSplittingFromTime([DYJetsToLL_M10to50], 5.0, 1)
-configureSplittingFromTime([ ZZTo4L, ZZTo4L_aMC, GGZZTo2mu2tau, GGZZTo2e2tau ], 25.0, 1)
-configureSplittingFromTime( H4L + [ GGZZTo4mu, GGZZTo4e, GGZZTo2e2mu], 100.0, 1)
-selectedComponents = [ DYJetsToLL_M50, DYJetsToLL_LO_M50, DYBJetsToLL, DYBBJetsToLL ] + DYJetsM50HT
-configureSplittingFromTime(selectedComponents, 20.0, 1)
-configureSplittingFromTime([DYJetsToLL_M50_HT400to600], 40.0, 1)
-configureSplittingFromTime([DYJetsToLL_M50_HT600toInf], 60.0, 1)
+#selectedComponents = H4L + [ ZZTo4L, ZZTo4L_aMC ] + GGZZTo4L + [DYJetsToLL_M10to50,DYJetsToLL_M50] + [ WZTo3LNu, TTLep ] + SingleTop
+#selectedComponents = H4L + GGZZTo4L + [DYJetsToLL_M10to50,DYJetsToLL_M50] + [ WZTo3LNu, TTLep ] + SingleTop
+#cropToLumi( [DYJetsToLL_M10to50,DYJetsToLL_M50,TTLep]+SingleTop, 100.0 )
+#cropToLumi( [ZZTo4L, ZZTo4L_aMC]+GGZZTo4L, 500.0 )
+#cropToLumi( H4L, 10000.0 )
+#configureSplittingFromTime(DYJets+SingleTop+[WZTo3LNu,TTLep,GGZZTo4tau], 10.0, 1)
+#configureSplittingFromTime([DYJetsToLL_M10to50], 5.0, 1)
+#configureSplittingFromTime([ ZZTo4L, ZZTo4L_aMC, GGZZTo2mu2tau, GGZZTo2e2tau ], 25.0, 1)
+#configureSplittingFromTime( H4L + [ GGZZTo4mu, GGZZTo4e, GGZZTo2e2mu], 100.0, 1)
+#selectedComponents = [ DYJetsToLL_M50, DYJetsToLL_LO_M50, DYBJetsToLL, DYBBJetsToLL ] + DYJetsM50HT
+#configureSplittingFromTime(selectedComponents, 20.0, 1)
+#configureSplittingFromTime([DYJetsToLL_M50_HT400to600], 40.0, 1)
+#configureSplittingFromTime([DYJetsToLL_M50_HT600toInf], 60.0, 1)
 
 sequence = cfg.Sequence(hzz4lCoreSequence)
 

@@ -13,7 +13,7 @@ from CMGTools.HToZZ4L.analyzers.FSRPhotonMaker import *
 from CMGTools.HToZZ4L.analyzers.GenFSRAnalyzer import *
 from CMGTools.HToZZ4L.analyzers.fourLeptonTree import *
 from CMGTools.HToZZ4L.analyzers.GenDPhiZZWeight import GenDPhiZZWeight
-from CMGTools.HToZZ4L.samples.samples_13TeV_Spring15 import *
+from CMGTools.HToZZ4L.samples.samples_13TeV_Fall15 import *
 
 from CMGTools.TTHAnalysis.analyzers.ttHFastLepSkimmer import ttHFastLepSkimmer
 fastSkim2LnoSip = cfg.Analyzer( ttHFastLepSkimmer, name="fastLepSkim2LnoSIP",
@@ -98,14 +98,8 @@ triggerFlagsAna = cfg.Analyzer(
         # Singles
         'SingleEl' : triggers_1e,
         'SingleMu' : triggers_1mu,
-        # Old Sync
-        'DoubleMuSync' : triggers_mumu_sync,
-        'DoubleElSync' : triggers_ee_sync,
-        'MuEGSync'     : triggers_mue_sync,
-        'SingleElSync' : triggers_1e_sync,
         # Summaries 
         'Signal' : triggers_signal_real,
-        'SignalSync' : triggers_signal_sync,
         }
     )
 
@@ -173,7 +167,7 @@ lepAna = cfg.Analyzer(
     mu_tightId = "POG_ID_Loose",
     # electron isolation correction method (can be "rhoArea" or "deltaBeta")
     ele_isoCorr = "rhoArea" ,
-    ele_effectiveAreas = "Phys14_25ns_v1" , #(can be 'Data2012' or 'Phys14_25ns_v1')
+    ele_effectiveAreas = "Spring15_25ns_v1" , #(can be 'Data2012' or 'Phys14_25ns_v1')
     ele_tightId = "MVA_ID_NonTrig_Spring15_HZZ",
     # Mini-isolation, with pT dependent cone: will fill in the miniRelIso, miniRelIsoCharged, miniRelIsoNeutral variables of the leptons (see https://indico.cern.ch/event/368826/ )
     doMiniIsolation = False, # off by default since it requires access to all PFCandidates 
@@ -219,7 +213,7 @@ jetAna = cfg.Analyzer(
     jetLepArbitration = (lambda jet,lepton : lepton), # you can decide which to keep in case of overlaps; e.g. if the jet is b-tagged you might want to keep the jet
     cleanSelectedLeptons = False, #Whether to clean 'selectedLeptons' after disambiguation. Treat with care (= 'False') if running Jetanalyzer more than once
     minLepPt = 0,
-    lepSelCut = lambda lepton : lepton.tightId() and lepton.relIsoAfterFSR < (0.4 if abs(lepton.pdgId())==13 else 0.5),
+    lepSelCut = lambda lepton : lepton.tightId() and lepton.relIsoAfterFSR < (0.4 if abs(lepton.pdgId())==13 else 0.4),
     relaxJetId = False,  
     doPuId = False,
     recalibrateJets = False, # True, False, 'MC', 'Data'
@@ -369,7 +363,7 @@ hzz4lObjSequence = [
     fsrRecovery,
     jetAna,
     metAna,
-    metNoHFAna,
+    #metNoHFAna,
     triggerFlagsAna,
 ]
 hzz4lCoreSequence = hzz4lPreSequence +  [ fastSkim4L ] + hzz4lObjSequence + [
