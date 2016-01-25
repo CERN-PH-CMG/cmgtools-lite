@@ -111,7 +111,7 @@ tauAna.loose_etaMax = 2.3
 #tauAna.loose_vetoLeptonsPOG = True
 #tauAna.loose_tauAntiMuonID = "againstMuonTight"
 #tauAna.loose_tauAntiElectronID = "againstElectronLoose"
-if False: #if cleaning jet-loose tau cleaning
+if True: #if cleaning jet-loose tau cleaning
     jetAna.cleanJetsFromTaus = True
     jetAnaScaleUp.cleanJetsFromTaus = True
     jetAnaScaleDown.cleanJetsFromTaus = True
@@ -342,17 +342,17 @@ if runData and not isTest: # For running on data
     dataChunks = []
 
     # Oct05 rereco of Run2015C
-    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_246908-260627_13TeV_PromptReco_Collisions15_25ns_JSON.txt'
+    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_246908-260627_13TeV_PromptReco_Collisions15_25ns_JSON_v2.txt'
     processing = "Run2015C_25ns-05Oct2015-v1"; short = "Run2015C_Oct05"; run_ranges = [ (254231,254914) ]; useAAA=False;
     dataChunks.append((json,processing,short,run_ranges,useAAA))
 
     # Oct05 rereco of Run2015D-PromptReco-v3 (up to run 258158)
-    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_246908-260627_13TeV_PromptReco_Collisions15_25ns_JSON.txt'
+    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_246908-260627_13TeV_PromptReco_Collisions15_25ns_JSON_v2.txt'
     processing = "Run2015D-05Oct2015-v1"; short = "Run2015D_Oct05"; run_ranges = [ (256630,258158) ]; useAAA=False;
     dataChunks.append((json,processing,short,run_ranges,useAAA))
 
     # Run2015D PromptReco-v4 (258159-260627) - WARNING: beware of CACHING in .cmgdataset
-    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_246908-260627_13TeV_PromptReco_Collisions15_25ns_JSON.txt'
+    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_246908-260627_13TeV_PromptReco_Collisions15_25ns_JSON_v2.txt'
     processing = "Run2015D-PromptReco-v4"; short = "Run2015D_PromptV4"; run_ranges = [ (258159,260627) ]; useAAA=False;
     dataChunks.append((json,processing,short,run_ranges,useAAA))
 
@@ -367,14 +367,14 @@ if runData and not isTest: # For running on data
         DatasetsAndTriggers.append( ("DoubleMuon", triggers_mumu_iso + triggers_mumu_ss + triggers_mumu_ht + triggers_3mu + triggers_3mu_alt) )
         DatasetsAndTriggers.append( ("DoubleEG",   triggers_ee + triggers_ee_ht + triggers_3e) )
         DatasetsAndTriggers.append( ("MuonEG",     triggers_mue + triggers_mue_ht + triggers_2mu1e + triggers_2e1mu) )
-#        DatasetsAndTriggers.append( ("SingleMuon", triggers_1mu_iso + triggers_1mu_iso_50ns + triggers_1mu_noniso) )
-#        DatasetsAndTriggers.append( ("SingleElectron", triggers_1e + triggers_1e_50ns) )
+        DatasetsAndTriggers.append( ("SingleMuon", triggers_1mu_iso + triggers_1mu_iso_50ns + triggers_1mu_noniso) )
+        DatasetsAndTriggers.append( ("SingleElectron", triggers_1e + triggers_1e_50ns) )
 
         if runDataQCD: # for fake rate measurements in data
-            lepAna.loose_muon_dxy = 999
-            lepAna.loose_electron_dxy = 999
+#            lepAna.loose_muon_dxy = 999
+#            lepAna.loose_electron_dxy = 999
             ttHLepSkim.minLeptons = 1
-            FRTrigs = triggers_FR_1mu_iso + triggers_FR_1mu_noiso + triggers_FR_1e_noiso + triggers_FR_1e_iso
+            FRTrigs = triggers_FR_1mu_iso + triggers_FR_1mu_noiso + triggers_FR_1e_noiso + triggers_FR_1e_iso + triggers_FR_1e_b2g
             for t in FRTrigs:
                 tShort = t.replace("HLT_","FR_").replace("_v*","")
                 triggerFlagsAna.triggerBits[tShort] = [ t ]
@@ -419,11 +419,11 @@ if runData and not isTest: # For running on data
         susyCoreSequence.remove(jsonAna)
 
 if runFRMC: 
-    selectedComponents = QCD_MuX_50ns + QCD_ElX + [DYJetsToLL_M50_50ns, WJetsToLNu_50ns, TTJets_50ns]
-    lepAna.loose_muon_dxy = 999
-    lepAna.loose_electron_dxy = 999
+    selectedComponents = QCD_Mu5 + QCDPtEMEnriched + QCDPtbcToE
+#    lepAna.loose_muon_dxy = 999
+#    lepAna.loose_electron_dxy = 999
     ttHLepSkim.minLeptons = 1
-    FRTrigs = triggers_FR_1mu_iso + triggers_FR_1mu_noiso + triggers_FR_1e_noiso + triggers_FR_1e_iso
+    FRTrigs = triggers_FR_1mu_iso + triggers_FR_1mu_noiso + triggers_FR_1e_noiso + triggers_FR_1e_iso + triggers_FR_1e_b2g
     for c in selectedComponents:
         c.triggers = [] # FRTrigs
         c.vetoTriggers = [] 

@@ -1,13 +1,14 @@
 from CMGTools.TTHAnalysis.treeReAnalyzer import *
-from CMGTools.TTHAnalysis.tools.conept import conept
 
 class LeptonFakeRateQCDVars:
-    def __init__(self,leptonSel,jetSel, jetSort = lambda jet:jet.pt, label=None, isMC=True):
+    def __init__(self,leptonSel,jetSel, jetSort = lambda jet:jet.pt, label=None, isMC=True, coneptdef = None):
         self.label = "" if (label in ["",None]) else ("_"+label)
         self.leptonSel = leptonSel
         self.jetSel = jetSel
         self.jetSort = jetSort
         self.jetvars = "pt eta phi btagCSV mcFlavour".split()
+        self.coneptdef = coneptdef
+        if not self.coneptdef: raise RuntimeError, 'Choose the definition to be used for cone pt'        
     def listBranches(self):
         label = self.label
         return [ ("nLepGood","I") ] + [ ("LepGood_awayJet%s_%s"%(self.label,var),"F",8,"nLepGood") for var in self.jetvars ] + [ ("LepGood_CorrConePt","F",8,"nLepGood") ]
@@ -20,7 +21,7 @@ class LeptonFakeRateQCDVars:
             ret["LepGood_CorrConePt"] = [-99.0] * event.nLepGood
         for il,lep in enumerate(leps):
             if not self.leptonSel(lep): continue
-            ret["LepGood_CorrConePt"][il] = conept(lep.pt,lep.miniRelIso,lep.jetPtRatiov2,lep.jetPtRelv2,lep.pdgId,2)
+            ret["LepGood_CorrConePt"][il] = self.coneptdef(lep)
 #            print ret["LepGood_CorrConePt"][il]/lep.pt,lep.miniRelIso,lep.jetPtRatiov2,lep.jetPtRelv2,lep.pdgId
             jets = [ j for j in jetsc if self.jetSel(j,lep,deltaR(j,lep)) ]
             if len(jets) == 0: continue 

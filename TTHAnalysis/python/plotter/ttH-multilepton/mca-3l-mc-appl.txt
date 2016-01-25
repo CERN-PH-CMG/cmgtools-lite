@@ -1,0 +1,17 @@
+ttH+    : TTHnobb : xsec ; FillColor=ROOT.kOrange+10, FakeRate='ttH-multilepton/fakeRate-Mor16-3l-appl.txt'
+
+TTW     : TTWToLNu : xsec ;  FillColor=ROOT.kGreen-5, FakeRate='ttH-multilepton/fakeRate-Mor16-3l-appl.txt'
+TTZ     : TTZToLLNuNu : xsec ;  FillColor=ROOT.kSpring+2, FakeRate='ttH-multilepton/fakeRate-Mor16-3l-appl.txt'
+TTZ     : TTLLJets_m1to10 : xsec ;  FillColor=ROOT.kSpring+2, FakeRate='ttH-multilepton/fakeRate-Mor16-3l-appl.txt'
+
+WZ 	: WZTo3LNu : xsec ;  FillColor=ROOT.kViolet-4, FakeRate='ttH-multilepton/fakeRate-Mor16-3l-appl.txt'
+ZZ      : ZZTo4L : xsec ;  FillColor=ROOT.kAzure-9, FakeRate='ttH-multilepton/fakeRate-Mor16-3l-appl.txt'
+
+TT      : TTJets_DiLepton : xsec ; FillColor=ROOT.kGray, FakeRate='ttH-multilepton/fakeRate-Mor16-3l-appl.txt'
+TT      : TTJets_SingleLeptonFromT : xsec ; FillColor=ROOT.kGray, FakeRate='ttH-multilepton/fakeRate-Mor16-3l-appl.txt'
+TT      : TTJets_SingleLeptonFromTbar : xsec ; FillColor=ROOT.kGray, FakeRate='ttH-multilepton/fakeRate-Mor16-3l-appl.txt'
+
+DY      : DYJetsToLL_M10to50 : xsec ; FillColor=ROOT.kViolet-4, FakeRate='ttH-multilepton/fakeRate-Mor16-3l-appl.txt'
+DY      : DYJetsToLL_M50 : xsec ; FillColor=ROOT.kViolet-4, FakeRate='ttH-multilepton/fakeRate-Mor16-3l-appl.txt'
+WJets   : WJetsToLNu : xsec ; FillColor=ROOT.kCyan+2, FakeRate='ttH-multilepton/fakeRate-Mor16-3l-appl.txt'
+
