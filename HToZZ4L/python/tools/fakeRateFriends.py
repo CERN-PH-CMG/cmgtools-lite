@@ -50,7 +50,7 @@ class FRWeight1_ZSS(FRWeightBase):
         return fr1*fr2
 
 def _zzLepPass(lep):
-       return lep.tightId and lep.relIsoAfterFSR < (0.4 if abs(lep.pdgId)==13 else 0.5)
+       return lep.tightId and lep.relIsoAfterFSR < 0.35 
 
 class FRWeight1_Z2P2F(FRWeightBase):
     def __init__(self,label,histFile,frName,frProcess):      

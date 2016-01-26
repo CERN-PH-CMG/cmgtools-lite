@@ -180,7 +180,7 @@ Charmonium_Run2015C_16Dec2015_25ns = kreator.makeDataComponent("Charmonium_Run20
 MuOnia_Run2015C_16Dec2015_25ns = kreator.makeDataComponent("MuOnia_Run2015C_16Dec2015_25ns", "/MuOnia/Run2015C_25ns-16Dec2015-v1/MINIAOD", "CMS", ".*root", jsonFilter=jsonFilter, json=json_25ns)
 
 DoubleMuon_Run2015D_16Dec2015_25ns = kreator.makeDataComponent("DoubleMuon_Run2015D_16Dec2015_25ns", "/DoubleMuon/Run2015D-16Dec2015-v1/MINIAOD", "CMS", ".*root", jsonFilter=jsonFilter, json=json_25ns)
-DoubleEG_Run2015D_16Dec2015_25ns = kreator.makeDataComponent("DoubleEG_Run2015D_16Dec2015_25ns", "/DoubleEG/Run2015D-16Dec2015-v1/MINIAOD", "CMS", ".*root", jsonFilter=jsonFilter, json=json_25ns)
+DoubleEG_Run2015D_16Dec2015_25ns = kreator.makeDataComponent("DoubleEG_Run2015D_16Dec2015_25ns", "/DoubleEG/Run2015D-16Dec2015-v2/MINIAOD", "CMS", ".*root", jsonFilter=jsonFilter, json=json_25ns)
 MuonEG_Run2015D_16Dec2015_25ns = kreator.makeDataComponent("MuonEG_Run2015D_16Dec2015_25ns", "/MuonEG/Run2015D-16Dec2015-v2/MINIAOD", "CMS", ".*root", jsonFilter=jsonFilter, json=json_25ns)
 SingleMuon_Run2015D_16Dec2015_25ns = kreator.makeDataComponent("SingleMuon_Run2015D_16Dec2015_25ns", "/SingleMuon/Run2015D-16Dec2015-v1/MINIAOD", "CMS", ".*root", jsonFilter=jsonFilter, json=json_25ns)
 SingleElectron_Run2015D_16Dec2015_25ns = kreator.makeDataComponent("SingleElectron_Run2015D_16Dec2015_25ns", "/SingleElectron/Run2015D-16Dec2015-v1/MINIAOD", "CMS", ".*root", jsonFilter=jsonFilter, json=json_25ns)
@@ -191,10 +191,10 @@ MuOnia_Run2015D_16Dec2015_25ns = kreator.makeDataComponent("MuOnia_Run2015D_16De
 data_25ns = [
     DoubleMuon_Run2015C_16Dec2015_25ns, DoubleEG_Run2015C_16Dec2015_25ns, MuonEG_Run2015C_16Dec2015_25ns, SingleMuon_Run2015C_16Dec2015_25ns, SingleElectron_Run2015C_16Dec2015_25ns,
     DoubleMuon_Run2015D_16Dec2015_25ns,
-    #DoubleEG_Run2015D_16Dec2015_25ns,
+    DoubleEG_Run2015D_16Dec2015_25ns,
     MuonEG_Run2015D_16Dec2015_25ns,
-    #SingleMuon_Run2015D_16Dec2015_25ns,
-    #SingleElectron_Run2015D_16Dec2015_25ns,
+    SingleMuon_Run2015D_16Dec2015_25ns,
+    SingleElectron_Run2015D_16Dec2015_25ns,
 ]
 data_25ns_onia = [
     Charmonium_Run2015C_16Dec2015_25ns, MuOnia_Run2015C_16Dec2015_25ns, 

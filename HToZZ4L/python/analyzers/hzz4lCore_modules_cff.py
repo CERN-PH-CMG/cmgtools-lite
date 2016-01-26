@@ -213,7 +213,7 @@ jetAna = cfg.Analyzer(
     jetLepArbitration = (lambda jet,lepton : lepton), # you can decide which to keep in case of overlaps; e.g. if the jet is b-tagged you might want to keep the jet
     cleanSelectedLeptons = False, #Whether to clean 'selectedLeptons' after disambiguation. Treat with care (= 'False') if running Jetanalyzer more than once
     minLepPt = 0,
-    lepSelCut = lambda lepton : lepton.tightId() and lepton.relIsoAfterFSR < (0.4 if abs(lepton.pdgId())==13 else 0.4),
+    lepSelCut = lambda lepton : lepton.tightId() and lepton.relIsoAfterFSR < 0.35,
     relaxJetId = False,  
     doPuId = False,
     recalibrateJets = False, # True, False, 'MC', 'Data'
