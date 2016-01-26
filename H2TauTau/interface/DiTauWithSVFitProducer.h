@@ -58,6 +58,7 @@ DiTauWithSVFitProducer<T, U>::DiTauWithSVFitProducer(const edm::ParameterSet& iC
   // will produce a collection containing a copy of each di-object in input,
   // with the SVFit mass set.
   produces<std::vector<DiTauObject>>();
+  consumes<DiTauCollection>(diTauSrc_);
 }
 
 
