@@ -39,6 +39,42 @@ leptonTypeHZZ = NTupleObjectType("leptonHZZ", baseObjectTypes = [ leptonTypeExtr
     NTupleVariable("hlt1L", lambda x : getattr(x,'matchedTrgObj1El',None) != None or  getattr(x,'matchedTrgObj1Mu',None) != None, int, help="Matched to single lepton trigger"),
 ])
 
+leptonTypeHZZLite = NTupleObjectType("leptonHZZLite", baseObjectTypes = [ particleType ], variables = [
+    NTupleVariable("charge",   lambda x : x.charge(), int),
+    # ----------------------
+    NTupleVariable("tightId",     lambda x : x.tightId(), int, help="POG Tight ID (for electrons it's configured in the analyzer)"),
+    NTupleVariable("looseId",     lambda x : x.looseIdSusy, int, help="Loose HZZ ID"),
+    # ----------------------
+    NTupleVariable("dxy",   lambda x : x.dxy(), help="d_{xy} with respect to PV, in cm (with sign)"),
+    NTupleVariable("dz",    lambda x : x.dz() , help="d_{z} with respect to PV, in cm (with sign)"),
+    NTupleVariable("edxy",  lambda x : x.edB(), help="#sigma(d_{xy}) with respect to PV, in cm"),
+    NTupleVariable("edz",   lambda x : x.edz(), help="#sigma(d_{z}) with respect to PV, in cm"),
+    NTupleVariable("ip3d",  lambda x : x.ip3D() , help="d_{3d} with respect to PV, in cm (absolute value)"),
+    NTupleVariable("sip3d",  lambda x : x.sip3D(), help="S_{ip3d} with respect to PV (significance)"),
+    # ----------------------
+    NTupleVariable("ptErr",   lambda x : x.ptErr(), help="Lepton p_{T} error"),
+    NTupleVariable("lostHits",    lambda x : (x.gsfTrack() if abs(x.pdgId())==11 else x.innerTrack()).hitPattern().numberOfLostHits(ROOT.reco.HitPattern.MISSING_INNER_HITS), int, help="Number of lost hits on inner track"),
+    NTupleVariable("trackerLayers", lambda x : (x.track() if abs(x.pdgId())==13 else x.gsfTrack()).hitPattern().trackerLayersWithMeasurement(), int, help="Tracker Layers"),
+    NTupleVariable("pixelLayers", lambda x : (x.track() if abs(x.pdgId())==13 else x.gsfTrack()).hitPattern().pixelLayersWithMeasurement(), int, help="Pixel Layers"),
+    NTupleVariable("etaSc", lambda x : x.superCluster().eta() if abs(x.pdgId())==11 else -100, help="Electron supercluster pseudorapidity"),
+    NTupleVariable("r9",   lambda x : x.r9() if abs(x.pdgId())==11 else 1.0, help="electron r9"),
+    NTupleVariable("convVeto",    lambda x : x.passConversionVeto() if abs(x.pdgId())==11 else 1, int, help="Conversion veto (always true for muons)"),
+    NTupleVariable("mvaIdSpring15",   lambda lepton : lepton.mvaRun2("NonTrigSpring15MiniAOD") if abs(lepton.pdgId()) == 11 else 1, help="EGamma POG MVA ID for non-triggering electrons, Spring15 re-training; 1 for muons"),
+    # ----------------------
+    NTupleVariable("relIsoAfterFSR",    lambda x : x.relIsoAfterFSR,   help="RelIso after FSR"),
+    NTupleVariable("chargedHadIso03",   lambda x : x.chargedHadronIsoR(0.3),   help="PF Abs Iso, R=0.3, charged hadrons only"),
+    # ----------------------
+    NTupleVariable("hasOwnFSR",  lambda x : len(x.ownFsrPhotons), int),
+    NTupleSubObject("p4WithFSR", lambda x : x.p4WithFSR(), fourVectorType),
+    # ----------------------
+    NTupleVariable("mcMatchId",  lambda x : getattr(x, 'mcMatchId', -99), int, mcOnly=True, help="Match to source from hard scatter (pdgId of heaviest particle in chain, 25 for H, 6 for t, 23/24 for W/Z), zero if non-prompt or fake"),
+    NTupleVariable("mcMatchAny", lambda x : getattr(x, 'mcMatchAny', -99), int, mcOnly=True, help="Match to any final state leptons: 0 if unmatched, 1 if light flavour (including prompt), 4 if charm, 5 if bottom"),
+    NTupleVariable("mcPt",   lambda x : x.mcLep.pt() if getattr(x,"mcLep",None) else 0., mcOnly=True, help="p_{T} of associated gen lepton"),
+    # ----------------------
+    NTupleVariable("hlt1L", lambda x : getattr(x,'matchedTrgObj1El',None) != None or  getattr(x,'matchedTrgObj1Mu',None) != None, int, help="Matched to single lepton trigger"),
+])
+
+
 fsrPhotonTypeHZZ = NTupleObjectType("fsrPhotonHZZ", baseObjectTypes = [ particleType ], variables = [
     NTupleVariable("chargedHadIso",   lambda x : getattr(x,'absIsoCH',-1.0),   help="PF Abs Iso, R=0.3, charged hadrons only"),
     NTupleVariable("photonIso",       lambda x : getattr(x,'absIsoPH',-1.0),   help="PF Abs Iso, R=0.3, photons only"),
@@ -55,6 +91,14 @@ ZType = NTupleObjectType("ZType", baseObjectTypes=[fourVectorType], variables = 
     NTupleSubObject("l2",  lambda x : x.leg2,leptonTypeHZZ),
     NTupleVariable("mll",  lambda x : (x.leg1.p4() + x.leg2.p4()).M(), help="Dilepton mass, without FSR"),
 ])
+ZTypeLite = NTupleObjectType("ZTypeLite", baseObjectTypes=[fourVectorType], variables = [
+    NTupleVariable("hasFSR",   lambda x : x.hasFSR(), int),
+    NTupleSubObject("l1",  lambda x : x.leg1,leptonTypeHZZLite),
+    NTupleSubObject("l2",  lambda x : x.leg2,leptonTypeHZZLite),
+    NTupleVariable("mll",  lambda x : (x.leg1.p4() + x.leg2.p4()).M(), help="Dilepton mass, without FSR"),
+])
+
+
 
 ZZType = NTupleObjectType("ZZType", baseObjectTypes=[fourVectorType], variables = [
     NTupleVariable("hasFSR",   lambda x : x.hasFSR(), int),

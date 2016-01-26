@@ -233,7 +233,7 @@ for pd,triggers in DatasetsAndTriggers:
     vetos += triggers
     
 if __name__ == '__main__':
-    if False:
+    if True:
         from CMGTools.Production.cacheChecker import CacheChecker
         checker = CacheChecker()
         for d in [ DoubleEG_Run2015D_16Dec2015_25ns, SingleMuon_Run2015D_16Dec2015_25ns, SingleElectron_Run2015D_16Dec2015_25ns, ]:
