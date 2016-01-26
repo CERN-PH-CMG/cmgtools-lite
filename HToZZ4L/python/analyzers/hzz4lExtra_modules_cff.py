@@ -25,9 +25,10 @@ twoLeptonTreeProducer = cfg.Analyzer(
      globalVariables = hzz_globalVariables, # rho, nvertices, njets
      globalObjects = hzz_globalObjects, # met
      collections = {
-         "bestIsoZ"        : NTupleCollection("z",   ZType, 1, help="Dilepton Candidates"),    
-         "selectedLeptons" : NTupleCollection("Lep", leptonTypeHZZ, 10, help="Leptons after the preselection"),
-         "cleanJets"       : NTupleCollection("Jet", jetTypeExtra, 10, help="Cental jets after full selection and cleaning, sorted by pt"),
+         #"bestIsoZ"        : NTupleCollection("z",   ZType, 1, help="Dilepton Candidates"),    
+         "bestIsoZ"        : NTupleCollection("z",   ZTypeLite, 1, help="Dilepton Candidates"),    
+         #"selectedLeptons" : NTupleCollection("Lep", leptonTypeHZZ, 10, help="Leptons after the preselection"),
+         #"cleanJets"       : NTupleCollection("Jet", jetTypeExtra, 10, help="Cental jets after full selection and cleaning, sorted by pt"),
      },
      defaultFloatType = 'F',
 )

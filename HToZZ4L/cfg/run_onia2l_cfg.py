@@ -18,7 +18,7 @@ sequence = cfg.Sequence(hzz4lPreSequence +  [ fastSkim2L ] + hzz4lObjSequence + 
 ])
 
 #-------- SAMPLES AND TRIGGERS -----------
-from CMGTools.HToZZ4L.samples.samples_13TeV_Spring15 import *
+from CMGTools.HToZZ4L.samples.samples_13TeV_Fall15 import *
 dataSamples = dataSamples_onia
 for d in dataSamples:
     d.triggers = triggers_jpsi2mu if 'Charmonium' in d.name else triggers_upsilon2mu
@@ -32,7 +32,7 @@ for d in mcSamples:
     d.vetoTriggers = []
     d.splitFactor = len(d.files)/4
 
-selectedComponents = mcSamples
+selectedComponents = dataSamples + mcSamples
 
 if True: autoAAA(selectedComponents)
  
@@ -40,12 +40,11 @@ if True: autoAAA(selectedComponents)
 from PhysicsTools.HeppyCore.framework.heppy_loop import getHeppyOption
 test = getHeppyOption('test')
 if test == "1":
-    selectedComponents = doTest1( Charmonium_Run2015D_PromptV4_25ns,
-                                  "root://eoscms//eos/cms/store/data/Run2015D/Charmonium/MINIAOD/PromptReco-v4/000/258/656/00000/42F839D8-7970-E511-A33C-02163E013678.root",
+    selectedComponents = doTest1( Charmonium_Run2015D_16Dec2015_25ns,
                                   sequence = sequence, cache = True)
 elif test == "1M":
     selectedComponents = doTest1( JpsiToMuMuPt8, sequence=sequence )
 elif test in ('2','3','5'):
     doTestN(test,selectedComponents)
 
-from PhysicsTools.HeppyCore.framework.eventsfwlite import Events
+config = autoConfig(selectedComponents, sequence)

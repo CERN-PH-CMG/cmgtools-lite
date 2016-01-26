@@ -20,7 +20,7 @@ sequence = cfg.Sequence(hzz4lPreSequence +  [ fastSkim3L ] + hzz4lObjSequence + 
 ])
 
 #-------- SAMPLES AND TRIGGERS -----------
-from CMGTools.HToZZ4L.samples.samples_13TeV_Spring15 import *
+from CMGTools.HToZZ4L.samples.samples_13TeV_Fall15 import *
 dataSamples = [ d for d in dataSamples if 'Double' in d.name and not ( "V4" in d.name and "Silver" not in d.name ) ] 
 for d in dataSamples:
     d.triggers = triggers_mumu if 'Muon' in d.name else triggers_ee
