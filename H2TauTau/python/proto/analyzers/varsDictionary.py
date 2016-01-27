@@ -59,6 +59,7 @@ vars['l1_eid_loose'] = {'std': 'l1_eid_loose', 'sync': 'id_e_cut_loose_1'}
 vars['l1_eid_medium'] = {'std': 'l1_eid_medium', 'sync': 'id_e_cut_medium_1'}
 vars['l1_eid_tight'] = {'std': 'l1_eid_tight', 'sync': 'id_e_cut_tight_1'}
 vars['l1_weight_trigger'] = {'std': 'l1_weight_trigger', 'sync': 'trigweight_1'}
+vars['l1_weight_idiso'] = {'std': 'l1_weight_idiso', 'sync': 'idisoweight_1'}
 vars['l1_againstElectronLooseMVA5'] = {'std': 'l1_againstElectronLooseMVA5', 'sync': 'againstElectronLooseMVA5_1'}
 vars['l1_againstElectronMediumMVA5'] = {'std': 'l1_againstElectronMediumMVA5', 'sync': 'againstElectronMediumMVA5_1'}
 vars['l1_againstElectronTightMVA5'] = {'std': 'l1_againstElectronTightMVA5', 'sync': 'againstElectronTightMVA5_1'}
