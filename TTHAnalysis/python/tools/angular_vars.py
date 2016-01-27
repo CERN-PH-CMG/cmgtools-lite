@@ -38,7 +38,8 @@ class angular_vars:
             bloose  = [j for j in jets if j.btagCSV > 0.605]
             bmedium = [j for j in jets if j.btagCSV > 0.890]
             btight = [j for j in jets if j.btagCSV > 0.970]
-            (met, metphi)  = event.met_pt, event.met_phi
+            met = getattr(event,"met"+self.systsJEC[_var]+"_pt")
+            metphi = getattr(event,"met"+self.systsJEC[_var]+"_phi")
             njet = len(jets); nlep = len(leps); nbloose = len(bloose); nbmedium = len(bmedium); nbtight = len(btight);
             ret = dict([(name,0.0) for name in self.namebranches])
 

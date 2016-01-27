@@ -1,31 +1,32 @@
 #!/usr/bin/env python
+import sys
 
-ODIR="test_tthplots_jan26"
+ODIR=sys.argv[1]
 
 lumi = 2.16
 
-def base(selection='2lss'):
+def base(selection):
 
-    T="-P /data/p/peruzzi/TREES_74X_140116_MiniIso_tauClean_Mor16lepMVA"
-    CORE="%s --neg --s2v --tree treeProducerSusyMultilepton --mcc ttH-multilepton/lepchoice-ttH-FO.txt --mcc ttH-multilepton/ttH_2lss3l_triggerdefs.txt -F sf/t {P}/2_recleaner_v3_ttHvariations/evVarFriend_{cname}.root"%T
+    CORE="-P /data1/p/peruzzi/TREES_74X_140116_MiniIso_tauClean_Mor16lepMVA -F sf/t {P}/2_recleaner_v4_vetoCSVM/evVarFriend_{cname}.root -F sf/t {P}/4_kinMVA_trainMarcoJan27_v0/evVarFriend_{cname}.root"
+
+    CORE+=" -l 2.26 --neg --s2v --tree treeProducerSusyMultilepton --mcc ttH-multilepton/lepchoice-ttH-FO.txt --mcc ttH-multilepton/ttH_2lss3l_triggerdefs.txt -F sf/t {P}/2_recleaner_v3/evVarFriend_{cname}.root"
+    CORE+=" -f -j 8 --lspam '#bf{CMS} #it{Preliminary}' --legendWidth 0.20 --legendFontSize 0.035 --showRatio --maxRatioRange 0 3  --showMCError"
 
     if selection=='2lss':
-        GO="python mcPlots.py %s ttH-multilepton/mca-2lss-mc.txt ttH-multilepton/2lss_tight.txt -f -j 8 --lspam '#bf{CMS} #it{Preliminary}' --legendWidth 0.20 --legendFontSize 0.035 --showRatio --maxRatioRange 0 3 ttH-multilepton/check_FO_def_plots.txt --showMCError"%CORE
-#    elif selection=='3l':
-#        GO="python mcPlots.py %s ttH-multilepton/mca-3l-Mor16.txt ttH-multilepton/3l_Mor16.txt -f -j 8 --lspam '#bf{CMS} #it{Preliminary}' --legendWidth 0.20 --legendFontSize 0.035 --showRatio --maxRatioRange 0 3 ttH-multilepton/cr_3l_plots.txt --showMCError"%CORE
+        GO="python mcPlots.py %s ttH-multilepton/mca-2lss-mc.txt ttH-multilepton/2lss_tight.txt ttH-multilepton/2lss_3l_plots.txt --xP 'lep3_.*' --xP '3lep_.* --xP 'kinMVA_3l_.*'' "%CORE
+    elif selection=='3l':
+        GO="python mcPlots.py %s ttH-multilepton/mca-3l-mc.txt ttH-multilepton/3l_tight.txt ttH-multilepton/2lss_3l_plots.txt --xP '2lep_.*' --xP 'kinMVA_2lss_.*' "%CORE
     else:
         raise RuntimeError, 'Unknown selection'
 
-    withpu = "%s -l %f"%(GO,lumi)
-#    PU_ALL = " --FMC sf/t {P}/1_purew_mix_true_nvtx/evVarFriend_{cname}.root -W 'vtxWeight*btagMediumSF_Mini*triggerSF_Loop*leptonSF_Loop' -l %f"%lumi_all
-    return withpu
+    return GO
 
 def procs(GO,mylist):
     return GO+' '+" ".join([ '-p %s'%l for l in mylist ])
 def sigprocs(GO,mylist):
     return procs(GO,mylist)+' --showIndivSigs --noStackSig'
 def runIt(GO,name,plots=[],noplots=[]):
-    print GO,' '.join(['--sP %s'%p for p in plots]),' '.join(['--xP %s'%p for p in noplots]),"--pdir /afs/cern.ch/user/p/peruzzi/www/%s/%s"%(ODIR,name)
+    print GO,' '.join(['--sP %s'%p for p in plots]),' '.join(['--xP %s'%p for p in noplots]),"--pdir %s/%s"%(ODIR,name)
 def add(GO,opt):
     return '%s %s'%(GO,opt)
 def setwide(x):
@@ -35,38 +36,17 @@ def setwide(x):
 
 if __name__ == '__main__':
 
-    x = base('2lss')
-    x = procs(x,['ttH'])
-    runIt(x,'2lss_SR')
+    torun = None
+    if len(sys.argv)>2: torun = sys.argv[2:]
 
-#    x = base('2lss')
-#    x = procs(x,['ttH'])
-#    x = add(x,"-R mt2FO_2Tight mt2FO_mt2Tight 'nLepFO>=2 && nLepTight>=2'")
-#    x = add(x, "-A alwaystrue noHtautau 'GenHiggsDecayMode!=15'")
-#    runIt(x,'2lss_SR')
-#    x2 = add(x,"-X 4j -X 2b1B")
-#    runIt(x2,'2lss_SR_nojetcut')
-#
-#    x3 = add(x2,"-R pt2010 pt2015 'LepGood1_conePt>20 && LepGood2_conePt>15' ")
-#    runIt(x3,'2lss_SR_nojetcut_cut15')
-#
-#    for mod in ["ReclConept15","ReclBtagTightVeto","ReclBtagMediumVeto"]:
-#
-#        x = base('2lss')
-#        x = procs(x,['ttH'])
-#        x = add(x,"-R mt2FO_2Tight mt2FO_mt2Tight 'nLepFO>=2 && nLepTight>=2'")
-#        x = add(x, "-A alwaystrue noHtautau 'GenHiggsDecayMode!=15'")
-#        x = x.replace('lepchoice-ttH-FO.txt','lepchoice-ttH-FO-%s.txt'%mod)
-#        runIt(x,'2lss_SR_%s'%mod)
-#        x2 = add(x,"-X 4j -X 2b1B")
-#        runIt(x2,'2lss_SR_nojetcut_%s'%mod)
+    if not torun or '2lss_SR' in torun:
+        x = base('2lss')
+        runIt(x,'2lss_SR/all')
+        for flav in ['mm','ee','em']: runIt(add(x,'-E %s'%flav),'2lss_SR/%s'%flav)
 
-#    x = base('2lss')
-#    x = x.replace('mca-2lss-mc.txt','mca-2lss-mc-appl.txt')
-#    x = x.replace('2_recleaner_v3_ttHvariations','2_recleaner_v3')
-#    runIt(x,'2lss_SR_appl')
+    if not torun or '3l_SR' in torun:
+        x = base('3l')
+        runIt(x,'3l_SR')
 
-
-#    x = base('3l')
-#    x = procs(x,['ttH'])
-#    runIt(x,'3l_SR')
+# x = procs(x,['ttH'])# to plot only ttH
+# x = add(x,"-E 2B") # b-tight selection

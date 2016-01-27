@@ -17,7 +17,7 @@ muTightCharge: (abs(LepGood1_pdgId)!=13 || LepGood1_tightCharge>=1) && (abs(LepG
 2b1B: nBJetLoose25 >= 2 || nBJetMedium25 >= 1
 
 # some cuts that are off by default but can be turned on with -E
-2B: nBJetMedium25 >= 2 ; Disabled=True
+2B: nBJetMedium25 >= 2 ; Disable=True
 ee: abs(LepGood1_pdgId)==11 && abs(LepGood2_pdgId)==11; Disable=True
 em: abs(LepGood1_pdgId) != abs(LepGood2_pdgId);         Disable=True
 mm: abs(LepGood1_pdgId)==13 && abs(LepGood2_pdgId)==13; Disable=True

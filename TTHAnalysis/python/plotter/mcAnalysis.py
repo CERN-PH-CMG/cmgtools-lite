@@ -371,6 +371,24 @@ class MCAnalysis:
                     if self._options.weight and nev < 1000: print ( nfmtS if nev > 0.2 else nfmtX) % toPrint,
                     else                                  : print nfmtL % toPrint,
                 print ""
+        elif self._options.txtfmt in ("tsv","csv","dsv","ssv"):
+            sep = { 'tsv':"\t", 'csv':",", 'dsv':';', 'ssv':' ' }[self._options.txtfmt]
+            if len(table[0][1]) == 1:
+                for k,r in table:
+                    if sep in k:
+                        if self._options.txtfmt in ("tsv","ssv"):
+                            k = k.replace(sep,"_")
+                        else:
+                            k = '"'+k.replace('"','""')+'"'
+                    (nev,err,fraction) = r[0][1][0], r[0][1][1], 1.0
+                    toPrint = (nev,)
+                    if self._options.errors:    toPrint+=(err,)
+                    if self._options.fractions: toPrint+=(fraction*100,)
+                    if self._options.weight and nev < 1000: ytxt = ( nfmtS if nev > 0.2 else nfmtX) % toPrint
+                    else                                  : ytxt = nfmtL % toPrint
+                    print "%s%s%s" % (k,sep,sep.join(ytxt.split()))
+                print ""
+
     def _getYields(self,ttylist,cuts):
         return mergeReports([tty.getYields(cuts) for tty in ttylist])
     def __str__(self):

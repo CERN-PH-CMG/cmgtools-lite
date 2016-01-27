@@ -31,7 +31,8 @@ class EventVars2LSS:
             _ijets = [ij for ij in _ijets_list]
             jets = [ (jetsc[ij] if ij>=0 else jetsd[-ij-1]) for ij in _ijets]
 
-            (met, metphi)  = event.met_pt, event.met_phi
+            met = getattr(event,"met"+self.systsJEC[_var]+"_pt")
+            metphi = getattr(event,"met"+self.systsJEC[_var]+"_phi")
             njet = len(jets); nlep = len(leps)
             # prepare output
             ret = dict([(name,0.0) for name in self.namebranches])

@@ -30,10 +30,73 @@ def doLegend(rocs,options,textSize=0.035):
         legend_ = leg 
         return leg
 
+def effFromH2D(h2d,options):
+    points = []
+    for xbin in xrange(1,h2d.GetNbinsX()+1):
+        xval = h2d.GetXaxis().GetBinCenter(xbin)
+        if options.xcut and (xval < options.xcut[0] or xval > options.xcut[1]):
+            continue
+        xerrs = h2d.GetXaxis().GetBinLowEdge(xbin)-xval, h2d.GetXaxis().GetBinUpEdge(xbin)-xval 
+        ypass,ypassErr, yfail,yfailErr = h2d.GetBinContent(xbin,2),h2d.GetBinError(xbin,2), h2d.GetBinContent(xbin,1),h2d.GetBinError(xbin,1)
+        yall = ypass+yfail
+        if yall == 0: continue 
+        eff = ypass/yall 
+        neff = (yall**2)/(ypassErr**2 + yfailErr**2)
+        errsCP = [ ROOT.TEfficiency.ClopperPearson(int(neff),int(neff*eff), 0.6827, i)-eff for i in (False,True) ]
+        points.append( (xval, xerrs, eff, errsCP) )
+    if not points: return None
+    ret = ROOT.TGraphAsymmErrors(len(points))
+    for i,(xval, xerrs, yval, yerrs) in enumerate(points):
+        ret.SetPoint(i, xval, yval)
+        ret.SetPointError(i, -xerrs[0], xerrs[1], -yerrs[0], yerrs[1])
+    ret._xrange = h2d.GetXaxis().GetXmin(), h2d.GetXaxis().GetXmax()
+    ret.GetXaxis().SetRangeUser(ret._xrange[0], ret._xrange[1])
+    ret.GetXaxis().SetTitle(h2d.GetXaxis().GetTitle())
+    return ret
+
+def dumpEffFromH2D(h2d,xbin):
+    ret = ""
+    ypass,ypassErr,yfail,yfailErr = h2d.GetBinContent(xbin,2),h2d.GetBinError(xbin,2), h2d.GetBinContent(xbin,1),h2d.GetBinError(xbin,1)
+    yall = ypass+yfail
+    if yall == 0: return " <empty>"
+    eff = ypass/yall 
+    ret +=  "pass %10.1f +- %8.1f, fail %10.1f +- %8.1f, eff = %.4f" % (ypass,ypassErr,yfail,yfailErr,eff)
+    neff = (yall**2)/(ypassErr**2 + yfailErr**2)
+    weff = yall/neff
+    ret += " nEff = %9.2f w = %9.2f pEff = %9.2f" % (neff,weff,neff*eff)
+    errBin0 = hypot(ypass*yfailErr, yfail*ypassErr)/(yall**2)
+    errBin1 = hypot(ypass*hypot(yfailErr,weff), yfail*hypot(ypassErr,weff))/(yall**2)
+    ret += " errBin0 = %.4f " % errBin0
+    ret += " errBin1 = %.4f " % errBin1
+    errsCP = [ ROOT.TEfficiency.ClopperPearson(int(neff),int(neff*eff), 0.6827, i)-eff for i in (False,True) ]
+    ret += " errsCP = % .4f/%.4f " % (errsCP[0], errsCP[1])
+    ret += "\t%s" % getattr(h2d, '_cname', '<nil>')
+    return ret
+
 def stackEffs(outname,x,effs,options):
-    alleffs = ROOT.THStack("all","all")
-    for title,eff in effs:
-        alleffs.Add(eff)
+    if effs[0][1].ClassName() == "TProfile2D": 
+        return stackInXYSlices(outname,x,effs,options)
+    if effs[0][1].ClassName() != "TGraphAsymmErrors": 
+        print "Cannot stack %s: %s" % (effs[0][1].GetName(), effs[0][1].ClassName())
+        return
+    first = effs[0][1]
+    if hasattr(first, '_xrange'): 
+        xmin, xmax = first._xrange
+    else:
+        xmin = first.GetX()[0] - first.GetErrorXlow(0) 
+        xmax = first.GetX()[first.GetN()-1] + first.GetErrorXhigh(first.GetN()-1)
+
+    ymax = 0 
+    for title, eff in effs:
+        ymax = max(ymax, max([ eff.GetY()[i] + eff.GetErrorYhigh(i)*1.3 for i in xrange(eff.GetN()) ]))
+
+    frame = ROOT.TH1D("frame","frame",100,xmin,xmax)
+    frame.GetXaxis().SetTitle(first.GetXaxis().GetTitle())
+    frame.GetYaxis().SetTitle(first.GetYaxis().GetTitle())
+    frame.GetYaxis().SetRangeUser(0,ymax)
+    frame.GetYaxis().SetDecimals()
+    frame.GetYaxis().SetTitle(options.ytitle)
+
     doRatio = options.showRatio and len(effs) > 1
     # define aspect ratio
     if doRatio: ROOT.gStyle.SetPaperSize(20.,25.)
@@ -60,80 +123,124 @@ def stackEffs(outname,x,effs,options):
     p1.SetGridx(options.showGrid)
     p1.SetLogx(x.getOption('Logx',False))
     p1.SetLogy(options.logy)
-    alleffs.Draw("APL");
-    h0 = effs[0][1].Clone("frame"); h0.Reset();
-    h0.GetYaxis().SetDecimals()
-    h0.GetYaxis().SetTitle(options.ytitle)
-    h0.Draw("AXIS");
-    alleffs.Draw("NOSTACK P SAME")
+
+    frame.Draw()
+    for title, eff in effs: eff.Draw("PZ SAME")
+
     if options.xrange:
-        h0.GetXaxis().SetRangeUser(options.xrange[0], options.xrange[1])
+        frame.GetXaxis().SetRangeUser(options.xrange[0], options.xrange[1])
     if options.yrange:
-        h0.GetYaxis().SetRangeUser(options.yrange[0], options.yrange[1])
+        frame.GetYaxis().SetRangeUser(options.yrange[0], options.yrange[1])
+
     leg = doLegend(effs,options)
     if options.fontsize: leg.SetTextSize(options.fontsize)
     if doRatio:
         p2.cd()
-        h0.GetXaxis().SetLabelOffset(999) ## send them away
-        h0.GetXaxis().SetTitleOffset(999) ## in outer space
-        h0.GetYaxis().SetLabelSize(0.05)
-        doEffRatio(x,effs,options)
+        keepme = doEffRatio(x,effs,frame,options)
+        frame.GetXaxis().SetLabelOffset(999) ## send them away
+        frame.GetXaxis().SetTitleOffset(999) ## in outer space
+        frame.GetYaxis().SetLabelSize(0.05)
     c1.Print(outname.replace(".root","")+".png")
     c1.Print(outname.replace(".root","")+".eps")
     c1.Print(outname.replace(".root","")+".pdf")
 
-def doEffRatio(x,effs,options):
-    effrels = [ e.ProjectionX(n+"_rel") for (n,e) in effs ]
-    unity   = effrels[0]
+def stackInXYSlices(outname,x,effs,options):
+    h2d = effs[0][1]
+    names = ("X","Y")
+    axes  = h2d.GetXaxis(), h2d.GetYaxis()
+    nbins = h2d.GetNbinsX(), h2d.GetNbinsY()
+    def slice(h,axis,bins):
+        (aobj,ai) = (h.GetXaxis(),0) if axis == "X" else (h.GetYaxis(),1)
+        ret = ROOT.TGraphAsymmErrors(len(bins))
+        for (i,bin) in enumerate(bins):
+            x = aobj.GetBinCenter(bin[ai])
+            xlo = aobj.GetBinLowEdge(bin[ai])
+            xhi = aobj.GetBinUpEdge(bin[ai])
+            y = h.GetBinContent(bin[0],bin[1])
+            dy = h.GetBinError(bin[0],bin[1])
+            ret.SetPoint(i, x, y)
+            ret.SetPointError(i, x-xlo, xhi-x, min(y,dy), dy)
+        return ret
+    for sliceaxis in 0,1:
+        runaxis = 1-sliceaxis
+        sliceobj = axes[sliceaxis]
+        for islice in xrange(1,nbins[sliceaxis]+1):
+            bins = [ ((i,islice) if runaxis == 0 else (islice,i)) for i in xrange(1,nbins[runaxis]+1) ]
+            slice_effs = [ (n,slice(h,names[runaxis],bins)) for (n,h) in effs ]
+            stackEffs(outname.replace(".root",".slice%s_bin%d.root" % (names[sliceaxis],islice+1)),
+                      slice_effs, bins, options)
+    
+
+def doEffRatio(x,effs,frame,options):
+    cframe = frame.Clone("frame_ratio"); cframe.Reset()
+    cframe.Draw()
+    effrels = [ e.Clone(n+"_rel") for (n,e) in effs ]
+    unity   = effrels[0]; ref = effs[0][1]
     rmin, rmax = 1,1
+    def find(graph, x):
+        for i in xrange(graph.GetN()):
+            if graph.GetX()[i]-graph.GetErrorYlow(i) <= x:
+                if x <= graph.GetX()[i]+graph.GetErrorYhigh(i):
+                    return i
+        return -1
     for ie,eff in enumerate(effrels):
-        for b in xrange(1,eff.GetNbinsX()+1):
-            scale = effs[0][1].GetBinContent(b)
-            if scale == 0:
-                eff.SetBinContent(b,0)
-                eff.SetBinError(b,0)
-                continue
-            eff.SetBinContent(b, eff.GetBinContent(b)/scale)
-            eff.SetBinError(b, eff.GetBinError(b)/scale)
+        points = []
+        for b in xrange(eff.GetN()):
+            xv = eff.GetX()[b]
+            b2 = find(ref, xv)
+            if b2 == -1: continue
+            if ref.GetY()[b2] == 0: continue
+            points.append((b, b2))
+        eff.Set(len(points))
+        for i,(b, b2) in enumerate(points):
+            scale = ref.GetY()[b2]
+            src = effs[ie][1]
+            eff.SetPoint(i, src.GetX()[b], src.GetY()[b]/scale)
+            eff.SetPointError(i, src.GetErrorXlow(b), src.GetErrorXhigh(b), 
+                                 src.GetErrorYlow(b)/scale, src.GetErrorYhigh(b)/scale)
             if ie == 0:
                 eff.SetFillStyle(3013)
-                eff.SetFillColor(effs[ie][1].GetLineColor())
+                eff.SetFillColor(src.GetLineColor())
                 eff.SetMarkerStyle(0)
             else:
-                eff.SetLineColor(effs[ie][1].GetLineColor())
-                eff.SetLineWidth(effs[ie][1].GetLineWidth())
-                eff.SetMarkerColor(effs[ie][1].GetMarkerColor())
-                eff.SetMarkerStyle(effs[ie][1].GetMarkerStyle())
-            rmax = max(rmax, eff.GetBinContent(b)+2*eff.GetBinError(b))
-            rmin = min(rmin, max(0,eff.GetBinContent(b)-2*eff.GetBinError(b)))
+                eff.SetLineColor(src.GetLineColor())
+                eff.SetLineWidth(src.GetLineWidth())
+                eff.SetMarkerColor(src.GetMarkerColor())
+                eff.SetMarkerStyle(src.GetMarkerStyle())
+            rmax = max(rmax, eff.GetY()[i]+2*eff.GetErrorYhigh(i))
+            rmin = min(rmin, max(0,eff.GetY()[i]-2*eff.GetErrorYlow(i)))
     if options.ratioRange != (-1,-1):
         rmin,rmax = options.ratioRange
-    unity.Draw("E2");
-    unity.GetYaxis().SetRangeUser(rmin,rmax);
-    unity.GetXaxis().SetTitleSize(0.14)
-    unity.GetYaxis().SetTitleSize(0.14)
-    unity.GetXaxis().SetLabelSize(0.11)
-    unity.GetYaxis().SetLabelSize(0.11)
-    unity.GetYaxis().SetNdivisions(505)
-    unity.GetYaxis().SetDecimals(True)
-    unity.GetYaxis().SetTitle("X / "+effs[0][0])
-    unity.GetYaxis().SetTitleOffset(0.52);
-    line = ROOT.TLine(unity.GetXaxis().GetXmin(),1,unity.GetXaxis().GetXmax(),1)
+    cframe.Draw()
+    cframe.GetYaxis().SetRangeUser(rmin,rmax);
+    cframe.GetXaxis().SetTitleSize(0.14)
+    cframe.GetYaxis().SetTitleSize(0.14)
+    cframe.GetXaxis().SetLabelSize(0.11)
+    cframe.GetYaxis().SetLabelSize(0.11)
+    cframe.GetYaxis().SetNdivisions(505)
+    cframe.GetYaxis().SetDecimals(True)
+    cframe.GetYaxis().SetTitle("X / "+effs[0][0])
+    cframe.GetYaxis().SetTitleOffset(0.52);
+    line = ROOT.TLine(cframe.GetXaxis().GetXmin(),1,cframe.GetXaxis().GetXmax(),1)
     line.SetLineWidth(3);
     line.SetLineColor(effs[0][1].GetLineColor());
-    line.DrawLine(unity.GetXaxis().GetXmin(),1,unity.GetXaxis().GetXmax(),1)
+    line.DrawLine(cframe.GetXaxis().GetXmin(),1,cframe.GetXaxis().GetXmax(),1)
+    unity.Draw("E2 SAME");
     for ratio in effrels[1:]:
-        ratio.Draw("E SAME");
+        ratio.Draw("PZ SAME");
+    return (cframe,line,effrels)
 
     
 
-def makeEff(mca,cut,idplot,xvarplot,notDoProfile=False):
+def makeEff(mca,cut,idplot,xvarplot,returnSeparatePassFail=False,notDoProfile="auto",mainOptions=None):
     import copy
     is2D = (":" in xvarplot.expr.replace("::","--"))
     options = copy.copy(idplot.opts)
     options.update(xvarplot.opts)
     mybins = copy.copy(xvarplot.bins)
-    if not notDoProfile:
+    if notDoProfile == "auto":
+        notDoProfile = not is2D
+    if notDoProfile == False and returnSeparatePassFail == False:
         if is2D: options['Profile2D']=True
         else:    options['Profile1D']=True
     else:
@@ -145,10 +252,15 @@ def makeEff(mca,cut,idplot,xvarplot,notDoProfile=False):
                      "%s:%s" % (idplot.expr,xvarplot.expr),
                      mybins,
                      options) 
-    #print pspec.name
-    #print mybins
-    #print options
-    return mca.getPlots(pspec,cut,makeSummary=True)
+    report = mca.getPlots(pspec,cut,makeSummary=True)
+    if 'signal' in report and 'background' in report:
+        report['total'] = mergePlots(pspec.name+"_total", [ report[s] for s in ('signal','background') ] )
+    if mainOptions and mainOptions.compare:
+        print report.keys()
+    if notDoProfile and not returnSeparatePassFail:
+        if is2D: report = dict([(title, effFromH3D(hist,mainOptions)) for (title, hist) in report.iteritems()])
+        else:    report = dict([(title, effFromH2D(hist,mainOptions)) for (title, hist) in report.iteritems()])
+    return report
 
 if __name__ == "__main__":
     from optparse import OptionParser
@@ -165,6 +277,7 @@ if __name__ == "__main__":
     parser.add_option("--grid", dest="showGrid", action="store_true", default=False, help="Show grid lines")
     parser.add_option("--groupBy",  dest="groupBy",  default="process",  type="string", help="Group by: cut, process")
     parser.add_option("--legend",  dest="legend",  default="TR",  type="string", help="Legend position (BR, TR)")
+    parser.add_option("--compare", dest="compare", default="", help="Samples to compare (by default, all except the totals)")
     parser.add_option("--showRatio", dest="showRatio", action="store_true", default=False, help="Add a data/sim ratio plot at the bottom")
     parser.add_option("--rr", "--ratioRange", dest="ratioRange", type="float", nargs=2, default=(-1,-1), help="Min and max for the ratio")
     parser.add_option("--normEffUncToLumi", dest="normEffUncToLumi", action="store_true", default=False, help="Normalize the dataset to the given lumi for the uncertainties on the calculated efficiency")
@@ -186,14 +299,14 @@ if __name__ == "__main__":
     ROOT.gROOT.ProcessLine(".x tdrstyle.cc")
     ROOT.gStyle.SetErrorX(0.5)
     ROOT.gStyle.SetOptStat(0)
-    effplots = [ (y,x,makeEff(mca,cut,y,x,options.normEffUncToLumi)) for y in ids for x in xvars ]
+    effplots = [ (y,x,makeEff(mca,cut,y,x,returnSeparatePassFail=options.normEffUncToLumi,mainOptions=options)) for y in ids for x in xvars ]
     for (y,x,pmap) in effplots:
         for proc in procs:
             eff = pmap[proc]
             if not eff: continue
             #eff.Print()
 #            PrintHisto(eff)
-            if options.xcut:
+            if options.xcut and eff.ClassName() != "TGraphAsymmErrors":
                 ax = eff.GetXaxis()
                 for b in xrange(1,eff.GetNbinsX()+1):
                     if ax.GetBinCenter(b) < options.xcut[0] or ax.GetBinCenter(b) > options.xcut[1]:
@@ -259,15 +372,24 @@ if __name__ == "__main__":
                 if ex != x: continue
                 effs = []
                 myname = outname.replace(".root","_%s_%s.root" % (y.name,x.name))
-                for proc in procs:
+                procsToStack = options.compare.split(",") if options.compare else procs
+                for proc in procsToStack:
                     eff = pmap[proc]
                     if not eff: continue
-                    eff.SetLineColor(mca.getProcessOption(proc,"FillColor",SAFE_COLOR_LIST[len(effs)]))
-                    eff.SetMarkerColor(mca.getProcessOption(proc,"FillColor",SAFE_COLOR_LIST[len(effs)]))
-                    eff.SetMarkerStyle(mca.getProcessOption(proc,"MarkerStyle",20))
-                    eff.SetMarkerSize(mca.getProcessOption(proc,"MarkerSize",1.6)*0.8)
-                    eff.SetLineWidth(4)
-                    effs.append((mca.getProcessOption(proc,"Label",proc),eff))
+                    if proc in procs:
+                        eff.SetLineColor(mca.getProcessOption(proc,"FillColor",SAFE_COLOR_LIST[len(effs)]))
+                        eff.SetMarkerColor(mca.getProcessOption(proc,"FillColor",SAFE_COLOR_LIST[len(effs)]))
+                        eff.SetMarkerStyle(mca.getProcessOption(proc,"MarkerStyle",20))
+                        eff.SetMarkerSize(mca.getProcessOption(proc,"MarkerSize",1.6)*0.8)
+                        eff.SetLineWidth(4)
+                        effs.append((mca.getProcessOption(proc,"Label",proc),eff))
+                    else:
+                        eff.SetLineColor(SAFE_COLOR_LIST[len(effs)])
+                        eff.SetMarkerColor(SAFE_COLOR_LIST[len(effs)])
+                        eff.SetMarkerStyle(20)
+                        eff.SetMarkerSize(1.6*0.8)
+                        eff.SetLineWidth(4)
+                        effs.append((proc,eff))
                 if len(effs) == 0: continue
                 stackEffs(myname,x,effs,options)
     if "process" in options.groupBy:
@@ -285,8 +407,8 @@ if __name__ == "__main__":
                     eff.SetMarkerSize(y.getOption("MarkerSize",1.4)*0.8)
                     eff.SetLineWidth(4)
                     effs.append((y.getOption("Title",y.name),eff))
-            if len(effs) == 0: continue
-            stackEffs(myname,x,effs,options)
+                if len(effs) == 0: continue
+                stackEffs(myname,x,effs,options)
     outfile.Close()
 
 

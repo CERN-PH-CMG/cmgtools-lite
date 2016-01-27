@@ -258,6 +258,7 @@ def doScaleSigNormData(pspec,pmap,mca):
     signals = [ "signal" ] + mca.listSignals()
     for p,h in pmap.iteritems():
         if p in signals: h.Scale(sf)
+    pspec.setLog("ScaleSig", [ "Signal processes scaled by %g" % sf ] )
     return sf
 
 def doNormFit(pspec,pmap,mca,saveScales=False):
@@ -369,33 +370,43 @@ def doNormFit(pspec,pmap,mca,saveScales=False):
     pspec.setLog("Fitting", fitlog)
     
 
-def doRatioHists(pspec,pmap,total,totalSyst,maxRange,fitRatio=None,errorsOnRef=True):
-    numkey = "data" 
+def doRatioHists(pspec,pmap,total,totalSyst,maxRange,fitRatio=None,errorsOnRef=True,ratioNums="signal",ratioDen="background"):
+    numkeys = [ "data" ]
     if "data" not in pmap: 
-        if len(pmap) == 4 and 'signal' in pmap and 'background' in pmap:
+        if len(pmap) >= 4 and ratioDen in pmap:
+            numkeys = []
+            for p in pmap.iterkeys():
+                for s in ratioNums.split(","):
+                    if re.match(s,p): 
+                        numkeys.append(p)
+                        break
+            if len(numkeys) == 0:
+                return (None,None,None,None)
             # do this first
             total.GetXaxis().SetLabelOffset(999) ## send them away
             total.GetXaxis().SetTitleOffset(999) ## in outer space
             total.GetYaxis().SetLabelSize(0.05)
             # then we can overwrite total with background
             numkey = 'signal'
-            total     = pmap['background']
-            totalSyst = pmap['background']
+            total     = pmap[ratioDen]
+            totalSyst = pmap[ratioDen]
         else:    
             return (None,None,None,None)
-    ratio = None
-    if hasattr(pmap[numkey], 'poissonGraph'):
-        ratio = pmap[numkey].poissonGraph.Clone("data_div"); 
-        for i in xrange(ratio.GetN()):
-            x    = ratio.GetX()[i]
-            div  = total.GetBinContent(total.GetXaxis().FindBin(x))
-            ratio.SetPoint(i, x, ratio.GetY()[i]/div if div > 0 else 0)
-            ratio.SetPointError(i, ratio.GetErrorXlow(i), ratio.GetErrorXhigh(i), 
-                                   ratio.GetErrorYlow(i)/div  if div > 0 else 0, 
-                                   ratio.GetErrorYhigh(i)/div if div > 0 else 0) 
-    else:
-        ratio = pmap[numkey].Clone("data_div"); 
-        ratio.Divide(total)
+    ratios = [] #None
+    for numkey in numkeys:
+        if hasattr(pmap[numkey], 'poissonGraph'):
+            ratio = pmap[numkey].poissonGraph.Clone("data_div"); 
+            for i in xrange(ratio.GetN()):
+                x    = ratio.GetX()[i]
+                div  = total.GetBinContent(total.GetXaxis().FindBin(x))
+                ratio.SetPoint(i, x, ratio.GetY()[i]/div if div > 0 else 0)
+                ratio.SetPointError(i, ratio.GetErrorXlow(i), ratio.GetErrorXhigh(i), 
+                                       ratio.GetErrorYlow(i)/div  if div > 0 else 0, 
+                                       ratio.GetErrorYhigh(i)/div if div > 0 else 0) 
+        else:
+            ratio = pmap[numkey].Clone("data_div"); 
+            ratio.Divide(total)
+        ratios.append(ratio)
     unity  = totalSyst.Clone("sim_div");
     unity0 = total.Clone("sim_div");
     rmin, rmax =  1,1
@@ -411,15 +422,16 @@ def doRatioHists(pspec,pmap,total,totalSyst,maxRange,fitRatio=None,errorsOnRef=T
             unity0.SetBinError(b, 0)
         rmin = min([ rmin, 1-2*e/n if n > 0 else 1])
         rmax = max([ rmax, 1+2*e/n if n > 0 else 1])
-    if ratio.ClassName() != "TGraphAsymmErrors":
-        for b in xrange(1,unity.GetNbinsX()+1):
-            if ratio.GetBinContent(b) == 0: continue
-            rmin = min([ rmin, ratio.GetBinContent(b) - 2*ratio.GetBinError(b) ]) 
-            rmax = max([ rmax, ratio.GetBinContent(b) + 2*ratio.GetBinError(b) ])  
-    else:
-        for i in xrange(ratio.GetN()):
-            rmin = min([ rmin, ratio.GetY()[i] - 2*ratio.GetErrorYlow(i)  ]) 
-            rmax = max([ rmax, ratio.GetY()[i] + 2*ratio.GetErrorYhigh(i) ])  
+    for ratio in ratios:
+        if ratio.ClassName() != "TGraphAsymmErrors":
+            for b in xrange(1,unity.GetNbinsX()+1):
+                if ratio.GetBinContent(b) == 0: continue
+                rmin = min([ rmin, ratio.GetBinContent(b) - 2*ratio.GetBinError(b) ]) 
+                rmax = max([ rmax, ratio.GetBinContent(b) + 2*ratio.GetBinError(b) ])  
+        else:
+            for i in xrange(ratio.GetN()):
+                rmin = min([ rmin, ratio.GetY()[i] - 2*ratio.GetErrorYlow(i)  ]) 
+                rmax = max([ rmax, ratio.GetY()[i] + 2*ratio.GetErrorYhigh(i) ])  
     if rmin < maxRange[0]: rmin = maxRange[0]; 
     if rmax > maxRange[1]: rmax = maxRange[1];
     if (rmax > 3 and rmax <= 3.4): rmax = 3.4
@@ -437,7 +449,7 @@ def doRatioHists(pspec,pmap,total,totalSyst,maxRange,fitRatio=None,errorsOnRef=T
         unity.Draw("E2");
     else:
         unity.Draw("AXIS");
-    if fitRatio != None:
+    if fitRatio != None and len(ratios) == 1:
         from CMGTools.TTHAnalysis.tools.plotDecorations import fitTGraph
         fitTGraph(ratio,order=fitRatio)
         unity.SetFillStyle(3013);
@@ -466,8 +478,9 @@ def doRatioHists(pspec,pmap,total,totalSyst,maxRange,fitRatio=None,errorsOnRef=T
     line.SetLineWidth(2);
     line.SetLineColor(58);
     line.Draw("L")
-    ratio.Draw("E SAME" if ratio.ClassName() != "TGraphAsymmErrors" else "PZ SAME");
-    return (ratio, unity, unity0, line)
+    for ratio in ratios:
+        ratio.Draw("E SAME" if ratio.ClassName() != "TGraphAsymmErrors" else "PZ SAME");
+    return (ratios, unity, unity0, line)
 
 def doStatTests(total,data,test,legendCorner):
     #print "Stat tests for %s:" % total.GetName()
@@ -711,7 +724,7 @@ class PlotMaker:
                 dir.WriteTObject(stack)
                 # 
                 if not makeCanvas and not self._options.printPlots: continue
-                doRatio = self._options.showRatio and ('data' in pmap or (self._options.plotmode != "stack" and len(pmap) == 4)) and ("TH2" not in total.ClassName())
+                doRatio = self._options.showRatio and ('data' in pmap or (self._options.plotmode != "stack")) and ("TH2" not in total.ClassName())
                 islog = pspec.hasOption('Logy'); 
                 if doRatio: ROOT.gStyle.SetPaperSize(20.,sf*(plotformat[1]+150))
                 else:       ROOT.gStyle.SetPaperSize(20.,sf*plotformat[1])
@@ -814,7 +827,7 @@ class PlotMaker:
                 rdata,rnorm,rnorm2,rline = (None,None,None,None)
                 if doRatio:
                     p2.cd(); 
-                    rdata,rnorm,rnorm2,rline = doRatioHists(pspec,pmap,total,totalSyst, maxRange=options.maxRatioRange, fitRatio=options.fitRatio, errorsOnRef=options.errorBandOnRatio)
+                    rdata,rnorm,rnorm2,rline = doRatioHists(pspec,pmap,total,totalSyst, maxRange=options.maxRatioRange, fitRatio=options.fitRatio, errorsOnRef=options.errorBandOnRatio, ratioNums=options.ratioNums, ratioDen=options.ratioDen)
                 if self._options.printPlots:
                     for ext in self._options.printPlots.split(","):
                         fdir = self._options.printDir;
@@ -855,6 +868,8 @@ class PlotMaker:
                                     if "TGraph" in plot.ClassName(): continue
                                     c1.SetRightMargin(0.20)
                                     plot.SetContour(100)
+                                    ROOT.gStyle.SetPaintTextFormat(pspec.getOption("PaintTextFormat","g"))
+                                    plot.SetMarkerSize(pspec.getOption("MarkerSize",1))
                                     plot.Draw(pspec.getOption("PlotMode","COLZ TEXT45"))
                                     c1.Print("%s/%s_%s.%s" % (fdir, pspec.name, p, ext))
                                 if "data" in pmap and "TGraph" in pmap["data"].ClassName():
@@ -887,6 +902,8 @@ def addPlotMakerOptions(parser):
     parser.add_option("--showSFitShape", dest="showSFitShape", action="store_true", default=False, help="Stack a shape of background + scaled signal normalized to total data")
     parser.add_option("--showMCError", dest="showMCError", action="store_true", default=False, help="Show a shaded area for MC uncertainty")
     parser.add_option("--showRatio", dest="showRatio", action="store_true", default=False, help="Add a data/sim ratio plot at the bottom")
+    parser.add_option("--ratioDen", dest="ratioDen", type="string", default="background", help="Denominator of the ratio, when comparing MCs")
+    parser.add_option("--ratioNums", dest="ratioNums", type="string", default="signal", help="Numerator(s) of the ratio, when comparing MCs (comma separated list of regexps)")
     parser.add_option("--noErrorBandOnRatio", dest="errorBandOnRatio", action="store_false", default=True, help="Do not show the error band on the reference in the ratio plots")
     parser.add_option("--fitRatio", dest="fitRatio", type="int", default=None, help="Fit the ratio with a polynomial of the specified order")
     parser.add_option("--scaleSigToData", dest="scaleSignalToData", action="store_true", default=False, help="Scale all signal processes so that the overall event yield matches the observed one")
