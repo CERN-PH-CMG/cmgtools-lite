@@ -11,9 +11,9 @@ from CMGTools.H2TauTau.proto.analyzers.TauIsolationCalculator import TauIsolatio
 from CMGTools.H2TauTau.proto.analyzers.MuonIsolationCalculator import MuonIsolationCalculator
 
 from CMGTools.RootTools.utils.splitFactor import splitFactor
-from CMGTools.H2TauTau.proto.samples.spring15.htt_common import backgrounds_mu, sm_signals, mssm_signals, data_single_muon, sync_list
-from CMGTools.H2TauTau.proto.samples.spring15.triggers_tauMu import mc_triggers, mc_triggerfilters
-from CMGTools.H2TauTau.proto.samples.spring15.triggers_tauMu import data_triggers, data_triggerfilters
+from CMGTools.H2TauTau.proto.samples.fall15.htt_common import backgrounds_mu, sm_signals, mssm_signals, data_single_muon, sync_list
+from CMGTools.H2TauTau.proto.samples.fall15.triggers_tauMu import mc_triggers, mc_triggerfilters
+from CMGTools.H2TauTau.proto.samples.fall15.triggers_tauMu import data_triggers, data_triggerfilters
 
 from CMGTools.H2TauTau.htt_ntuple_base_cff import puFileData, puFileMC, eventSelector
 
@@ -23,7 +23,7 @@ from CMGTools.H2TauTau.htt_ntuple_base_cff import puFileData, puFileMC, eventSel
 production = getHeppyOption('production')
 production = False
 pick_events = False
-syncntuple = False
+syncntuple = True
 cmssw = False
 
 # Define extra modules
@@ -85,7 +85,7 @@ for mc in samples:
 # selectedComponents = samples + data_list
 # selectedComponents = data_list
 # selectedComponents = samples
-selectedComponents = [s for s in samples if s.name == 'DYJetsToLL_M50_LO']
+selectedComponents = [s for s in samples if s.name == 'HiggsSUSYGG160']
 
 ###################################################
 ###             CHERRY PICK EVENTS              ###

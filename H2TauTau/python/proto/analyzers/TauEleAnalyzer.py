@@ -192,11 +192,11 @@ class TauEleAnalyzer(DiLeptonAnalyzer):
 
     def testTightElectronID(self, electron):
         '''Selection for electron from tau decay'''
-        return electron.mvaIDRun2('NonTrigSpring15', 'POG80')
+        return electron.mvaIDRun2('NonTrigSpring15MiniAOD', 'POG80')
 
     def testElectronID(self, electron):
         '''Loose selection for generic electrons'''
-        return electron.mvaIDRun2('NonTrigSpring15', 'POG90')
+        return electron.mvaIDRun2('NonTrigSpring15MiniAOD', 'POG90')
 
     def testVetoElectronID(self, electron):
         return electron.cutBasedId('POG_SPRING15_25ns_v1_Veto')

@@ -198,6 +198,9 @@ class DirectDiTau(DiTau):
     def svfitMass(self):
         return -999.
 
+    def svfitTransverseMass(self):
+        return -999.
+
     def svfitMassError(self):
         return -999.
 
