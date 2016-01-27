@@ -114,6 +114,7 @@ class SVfitProducer(Analyzer):
         # method override
         event.diLepton.svfitMass = svfit.mass
         event.diLepton.svfitMassError = svfit.massUncert
+        event.diLepton.svfitTransverseMass = svfit.transverseMass
 
         # add also the pt, eta and phi as computed by SVfit
         if self.cfg_ana.integration == 'MarkovChain':

@@ -52,6 +52,9 @@ class DiTau(DiObject):
     def svfitMass(self):
         return self.userFloat('mass')
 
+    def svfitTransverseMass(self):
+        return self.userFloat('transverseMass')
+
     def svfitMassError(self):
         return self.userFloat('massUncert')
 

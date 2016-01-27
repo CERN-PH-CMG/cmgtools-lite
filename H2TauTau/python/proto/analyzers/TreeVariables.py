@@ -44,6 +44,7 @@ event_vars = [
 ditau_vars = [
     Variable('mvis', lambda dil : dil.mass()),
     Variable('svfit_mass', lambda dil : dil.svfitMass()),
+    Variable('svfit_transverse_mass', lambda dil : dil.svfitTransverseMass()),
     Variable('svfit_mass_error', lambda dil : dil.svfitMassError()),
     Variable('svfit_pt', lambda dil : dil.svfitPt()),
     Variable('svfit_pt_error', lambda dil : dil.svfitPtError()),
