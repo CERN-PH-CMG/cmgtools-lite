@@ -43,7 +43,7 @@ print 'runSVFit', runSVFit
 
 local_run = True
 if local_run:
-    from CMGTools.H2TauTau.proto.samples.spring15.higgs_susy import HiggsSUSYGG160 as ggh160
+    from CMGTools.H2TauTau.proto.samples.fall15.higgs_susy import HiggsSUSYGG160 as ggh160
     process.source = cms.Source(
         "PoolSource",
         noEventSort = cms.untracked.bool(True),
