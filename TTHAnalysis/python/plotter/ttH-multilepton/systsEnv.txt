@@ -1,0 +1,2 @@
+dummy_ten_percent : ttH.*|TT[WZ] : .* : 1.10
+

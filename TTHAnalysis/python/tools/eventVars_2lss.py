@@ -48,16 +48,16 @@ class EventVars2LSS:
                         sumdr += deltaR(j,j2)
                 ret["avg_dr_jet"] = sumdr/ndr if ndr else 0;
             if nlep > 0:
-                ret["MT_met_lep1"] = sqrt( 2*leps[0].pt*met*(1-cos(leps[0].phi-metphi)) )
+                ret["MT_met_lep1"] = sqrt( 2*leps[0].conePt*met*(1-cos(leps[0].phi-metphi)) )
             if nlep > 1:
-                px = leps[0].pt*cos(leps[0].phi) + leps[1].pt*cos(leps[1].phi) + met*cos(metphi) 
-                py = leps[0].pt*sin(leps[0].phi) + leps[1].pt*sin(leps[1].phi) + met*sin(metphi) 
-                ht = leps[0].pt + leps[1].pt + met
+                px = leps[0].conePt*cos(leps[0].phi) + leps[1].conePt*cos(leps[1].phi) + met*cos(metphi) 
+                py = leps[0].conePt*sin(leps[0].phi) + leps[1].conePt*sin(leps[1].phi) + met*sin(metphi) 
+                ht = leps[0].conePt + leps[1].conePt + met
                 ret["MT_met_leplep"] = sqrt(max(0,ht**2 - px**2 - py**2))
             if nlep >= 1:
                 sumapz, sumspz = 0,0
                 for o in leps[:2] + jets:
-                    pz = o.pt*sinh(o.eta)
+                    pz = o.conePt*sinh(o.eta) if o in leps else o.pt*sinh(o.eta)
                     sumspz += pz
                     sumapz += abs(pz); 
                 ret["sum_abspz"] = sumapz

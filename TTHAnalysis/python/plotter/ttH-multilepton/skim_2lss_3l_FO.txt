@@ -1,0 +1,4 @@
+alwaystrue: 1
+cleanup: minMllAFAS > 12
+lep: nLepFO>=2
+sign: (nLepFO>=3) || (LepGood1_charge*LepGood2_charge > 0)

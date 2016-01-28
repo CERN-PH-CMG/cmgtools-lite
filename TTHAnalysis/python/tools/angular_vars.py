@@ -14,7 +14,7 @@ class angular_vars:
         self.inputlabel = '_'+recllabel
         self.branches = []
         for var in self.systsJEC: self.branches.extend([br+self.systsJEC[var]+self.label for br in self.namebranches])
-        self.branches.extend(["iF%s_%d"%(self.inputlabel,i)+self.label for i in xrange(8)])
+        self.branches.extend([("iF%s_%d"%(self.inputlabel,i)+self.label,"I") for i in xrange(8)])
     def listBranches(self):
         return self.branches[:]	
     def __call__(self,event):
@@ -47,8 +47,7 @@ class angular_vars:
 
             l_phi = 0
             for i in range(len(leps)):
-                if leps[i].relIso03 < 0.1:
-                   l_phi += leps[i].pt * abs(deltaPhi(metphi,leps[i].phi))
+                l_phi += leps[i].conePt * abs(deltaPhi(metphi,leps[i].phi))
             ret["L_phi"] = l_phi
 
 
@@ -71,60 +70,47 @@ class angular_vars:
 
             if nlep>=1:
                 if nbloose >= 1:
-                   if leps[0].relIso03 < 0.1:
-                      ret["DR_l_b_loose1"] = min([deltaR(m,leps[0]) for m in bloose])
+                    ret["DR_l_b_loose1"] = min([deltaR(m,leps[0]) for m in bloose])
                 if nbmedium >= 1:
-                   if leps[0].relIso03 < 0.1:
-                      ret["DR_l_b_medium1"] = min([deltaR(n,leps[0]) for n in bmedium])
+                    ret["DR_l_b_medium1"] = min([deltaR(n,leps[0]) for n in bmedium])
                 if nbtight >= 1:
-                   if leps[0].relIso03 < 0.1:
-                      ret["DR_l_b_tight1"] = min([deltaR(p,leps[0]) for p in btight])
+                    ret["DR_l_b_tight1"] = min([deltaR(p,leps[0]) for p in btight])
 
             #DR_l_b_2:
 
             if nlep>=2:
                 if nbloose >= 1:
-                   if leps[1].relIso03 < 0.1:
-                      ret["DR_l_b_loose2"] = min([deltaR(q,leps[1]) for q in bloose])
+                    ret["DR_l_b_loose2"] = min([deltaR(q,leps[1]) for q in bloose])
                 if nbmedium >= 1:
-                   if leps[1].relIso03 < 0.1:
-                      ret["DR_l_b_medium2"] = min([deltaR(r,leps[1]) for r in bmedium])
+                    ret["DR_l_b_medium2"] = min([deltaR(r,leps[1]) for r in bmedium])
                 if nbtight >= 1:
-                   if leps[1].relIso03 < 0.1:
-                      ret["DR_l_b_tight2"] = min([deltaR(s,leps[1]) for s in btight])
+                    ret["DR_l_b_tight2"] = min([deltaR(s,leps[1]) for s in btight])
 
             #pTl_DR_l_b_1:
 
             if nlep>=1:
                 if nbloose >= 1:
-                   if leps[0].relIso03 < 0.1:
-                      ret["pTl_DR_l_b_loose1"] = leps[0].pt * min([deltaR(t,leps[0]) for t in bloose])
+                    ret["pTl_DR_l_b_loose1"] = leps[0].conePt * min([deltaR(t,leps[0]) for t in bloose])
                 if nbmedium >= 1:
-                   if leps[0].relIso03 < 0.1:
-                      ret["pTl_DR_l_b_medium1"] = leps[0].pt * min([deltaR(u,leps[0]) for u in bmedium])
+                    ret["pTl_DR_l_b_medium1"] = leps[0].conePt * min([deltaR(u,leps[0]) for u in bmedium])
                 if nbtight >= 1:
-                   if leps[0].relIso03 < 0.1:
-                      ret["pTl_DR_l_b_tight1"] = leps[0].pt * min([deltaR(v,leps[0]) for v in btight])
+                    ret["pTl_DR_l_b_tight1"] = leps[0].conePt * min([deltaR(v,leps[0]) for v in btight])
 
             #pTl_DR_l_b_2:	      
 
             if nlep>=2:
                 if nbloose >= 1:
-                   if leps[1].relIso03 < 0.1:
-                      ret["pTl_DR_l_b_loose2"] = leps[1].pt * min([deltaR(w,leps[1]) for w in bloose])
+                    ret["pTl_DR_l_b_loose2"] = leps[1].conePt * min([deltaR(w,leps[1]) for w in bloose])
                 if nbmedium >= 1:
-                   if leps[1].relIso03 < 0.1:
-                      ret["pTl_DR_l_b_medium2"] = leps[1].pt * min([deltaR(x,leps[1]) for x in bmedium])
+                    ret["pTl_DR_l_b_medium2"] = leps[1].conePt * min([deltaR(x,leps[1]) for x in bmedium])
                 if nbtight >= 1:
-                   if leps[1].relIso03 < 0.1:
-                      ret["pTl_DR_l_b_tight2"] = leps[1].pt * min([deltaR(y,leps[1]) for y in btight])
+                    ret["pTl_DR_l_b_tight2"] = leps[1].conePt * min([deltaR(y,leps[1]) for y in btight])
 
             #L_pt:
 
             l_pt = 0
             for z in range(len(leps)):
-                if leps[z].relIso03 < 0.1:
-                   l_pt += leps[z].pt
+                l_pt += leps[z].conePt
             ret["L_pt"] = l_pt
 
             for br in self.namebranches:

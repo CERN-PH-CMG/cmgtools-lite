@@ -6,7 +6,7 @@
 
 TString Path = "/afs/cern.ch/work/p/peruzzi/tthtrees/TREES_74X_140116_MiniIso_tauClean_Mor16lepMVA/";
 //TString Path = "/data1/p/peruzzi/TREES_74X_140116_MiniIso_tauClean_Mor16lepMVA/";
-TString friends[2] = {TString("2_recleaner_v4_vetoCSVM"), TString("3_kinBDTvars_v4")};
+TString friends[2] = {TString("2_recleaner_v4_vetoCSVM"), TString("3_kinBDTvars_v5_fix_reliso_conept")};
 
 #include "TFile.h"
 #include "TTree.h"
@@ -32,7 +32,7 @@ void addBkgAndVarsToFactory(TString name, TMVA::Factory *factory){
 	  factory->AddVariable("met := min(met_pt, 400)", 'F');
 	}
 	else if (name.Contains("3l")) {
-	  factory->AddVariable("LepGood_pt[iF_Recl_1] := LepGood_pt[iF_Recl_1]", 'F');
+	  factory->AddVariable("LepGood_conePt[iF_Recl_1] := LepGood_conePt[iF_Recl_1]", 'F');
 	  factory->AddVariable("max_Lep_eta := max(abs(LepGood_eta[iF_Recl_0]),abs(LepGood_eta[iF_Recl_1]))", 'F');
 	  factory->AddVariable("L_phi := L_phi", 'F');
 	  factory->AddVariable("minMllAFSS := minMllAFSS_Recl", 'F');
@@ -68,7 +68,7 @@ void addBkgAndVarsToFactory(TString name, TMVA::Factory *factory){
       else if (name.Contains("3l")) {
 	factory->AddVariable("avg_dr_jet : = avg_dr_jet", 'F');
 	factory->AddVariable("numJets_float := nJet25_Recl", 'F');                       
-	factory->AddVariable("LepGood_pt[iF_Recl_1] := LepGood_pt[iF_Recl_1]", 'F');
+	factory->AddVariable("LepGood_conePt[iF_Recl_1] := LepGood_conePt[iF_Recl_1]", 'F');
 	factory->AddVariable("max_Lep_eta := max(abs(LepGood_eta[iF_Recl_0]),abs(LepGood_eta[iF_Recl_1]))", 'F');
 	factory->AddVariable("L_phi := L_phi", 'F');
 	factory->AddVariable("mindr_lep1_jet := mindr_lep1_jet", 'F');
