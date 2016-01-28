@@ -55,6 +55,7 @@ GenEvtWeightCounter::GenEvtWeightCounter(const edm::ParameterSet& iConfig):
    // produces<std::vector<double>, edm::InRun>("genWeight");
     produces<double, edm::InRun>();
     produces<double, edm::InRun>("sumUnityGenWeights");
+    consumes<GenEventInfoProduct>(edm::InputTag("generator"));
 }
 
 
@@ -66,8 +67,7 @@ GenEvtWeightCounter::~GenEvtWeightCounter()
 void
 GenEvtWeightCounter::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
-    using namespace edm;
-    Handle<GenEventInfoProduct> genInfoHandle;
+    edm::Handle<GenEventInfoProduct> genInfoHandle;
     iEvent.getByLabel("generator", genInfoHandle);
 
     const GenEventInfoProduct *genInfo = genInfoHandle.product();

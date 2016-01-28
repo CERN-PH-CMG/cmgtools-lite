@@ -8,11 +8,13 @@
 
 using namespace svFitStandalone;
 
+//#define SVFIT_DEBUG 1
+
 double 
-probMET(double dMETX, double dMETY, double covDet, const TMatrixD& covInv, double power, bool verbose)
+probMET(double dMETX, double dMETY, double covDet, const TMatrixD& covInv, double power, bool verbosity)
 {
 #ifdef SVFIT_DEBUG 
-  if ( verbose ) {
+  if ( verbosity ) {
     std::cout << "<probMET>:" << std::endl;
     std::cout << " dMETX = " << dMETX << std::endl;
     std::cout << " dMETY = " << dMETY << std::endl;
@@ -29,17 +31,19 @@ probMET(double dMETX, double dMETY, double covDet, const TMatrixD& covInv, doubl
     nll = std::numeric_limits<float>::max();
   }
   double prob = TMath::Exp(-power*nll);
-  if ( verbose ) {
+#ifdef SVFIT_DEBUG 
+  if ( verbosity ) {
     std::cout << "--> prob = " << prob << std::endl;
   }
+#endif 
   return prob; 
 }
 
 double 
-probTauToLepMatrixElement(double decayAngle, double nunuMass, double visMass, double x, bool applySinTheta, bool verbose)
+probTauToLepMatrixElement(double decayAngle, double nunuMass, double visMass, double x, bool applySinTheta, bool verbosity)
 {
 #ifdef SVFIT_DEBUG 
-  if ( verbose ) {
+  if ( verbosity ) {
     std::cout << "<probTauToLepMatrixElement>:" << std::endl;
     std::cout << " decayAngle = " << decayAngle << std::endl;
     std::cout << " nunuMass = " << nunuMass << std::endl;
@@ -62,7 +66,7 @@ probTauToLepMatrixElement(double decayAngle, double nunuMass, double visMass, do
   }
   if ( applySinTheta ) prob *= (0.5*TMath::Sin(decayAngle));
 #ifdef SVFIT_DEBUG 
-  if ( verbose ) {
+  if ( verbosity ) {
     std::cout << "--> prob = " << prob << std::endl;
   }
 #endif
@@ -70,10 +74,10 @@ probTauToLepMatrixElement(double decayAngle, double nunuMass, double visMass, do
 }
 
 double 
-probTauToHadPhaseSpace(double decayAngle, double nunuMass, double visMass, double x, bool applySinTheta, bool verbose)
+probTauToHadPhaseSpace(double decayAngle, double nunuMass, double visMass, double x, bool applySinTheta, bool verbosity)
 {
 #ifdef SVFIT_DEBUG 
-  if ( verbose ) {
+  if ( verbosity ) {
     std::cout << "<probTauToHadPhaseSpace>:" << std::endl;
     std::cout << " decayAngle = " << decayAngle << std::endl;
     std::cout << " nunuMass = " << nunuMass << std::endl;
@@ -94,7 +98,7 @@ probTauToHadPhaseSpace(double decayAngle, double nunuMass, double visMass, doubl
   }
   if ( applySinTheta ) prob *= (0.5*TMath::Sin(decayAngle));
 #ifdef SVFIT_DEBUG 
-  if ( verbose ) {
+  if ( verbosity ) {
     std::cout << "--> prob = " << prob << std::endl;
   }
 #endif
@@ -118,17 +122,17 @@ namespace
 }
 
 double 
-probVisMass(double visMass, const TH1* lutVisMass, bool verbose)
+probVisMass(double visMass, const TH1* lutVisMass, bool verbosity)
 {
 #ifdef SVFIT_DEBUG 
-  if ( verbose ) {
+  if ( verbosity ) {
     std::cout << "<probVisMass>:" << std::endl;
-    std::cout << " visMass = " << deltaVisMass << std::endl;
+    std::cout << " visMass = " << visMass << std::endl;
   }
 #endif
   double prob = ( lutVisMass ) ? extractProbFromLUT(visMass, lutVisMass) : 1.0;
 #ifdef SVFIT_DEBUG 
-  if ( verbose ) {
+  if ( verbosity ) {
     std::cout << "--> prob = " << prob << std::endl;
   }
 #endif
@@ -136,17 +140,17 @@ probVisMass(double visMass, const TH1* lutVisMass, bool verbose)
 }
 
 double 
-probVisMassShift(double deltaVisMass, const TH1* lutVisMassRes, bool verbose)
+probVisMassShift(double deltaVisMass, const TH1* lutVisMassRes, bool verbosity)
 {
 #ifdef SVFIT_DEBUG 
-  if ( verbose ) {
+  if ( verbosity ) {
     std::cout << "<probVisMassShift>:" << std::endl;
     std::cout << " deltaVisMass = " << deltaVisMass << std::endl;
   }
 #endif
   double prob = ( lutVisMassRes ) ? extractProbFromLUT(deltaVisMass, lutVisMassRes) : 1.0;
 #ifdef SVFIT_DEBUG 
-  if ( verbose ) {
+  if ( verbosity ) {
     std::cout << "--> prob = " << prob << std::endl;
   }
 #endif
@@ -154,10 +158,10 @@ probVisMassShift(double deltaVisMass, const TH1* lutVisMassRes, bool verbose)
 }
 
 double 
-probVisPtShift(double recTauPtDivGenTauPt, const TH1* lutVisPtRes, bool verbose)
+probVisPtShift(double recTauPtDivGenTauPt, const TH1* lutVisPtRes, bool verbosity)
 {
 #ifdef SVFIT_DEBUG 
-  if ( verbose ) {
+  if ( verbosity ) {
     std::cout << "<probVisPtShift>:" << std::endl;
     std::cout << " recTauPtDivGenTauPt = " << recTauPtDivGenTauPt << std::endl;
   }
@@ -168,7 +172,7 @@ probVisPtShift(double recTauPtDivGenTauPt, const TH1* lutVisPtRes, bool verbose)
     (1./recTauPtDivGenTauPt) : 1.e+1;
   prob *= genTauPtDivRecTauPt;
 #ifdef SVFIT_DEBUG 
-  if ( verbose ) {
+  if ( verbosity ) {
     std::cout << "--> prob = " << prob << std::endl;
   }
 #endif

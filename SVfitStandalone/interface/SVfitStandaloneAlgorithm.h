@@ -78,7 +78,7 @@ namespace svFitStandalone
     double mvis_;  // mass of visible tau decay products
     double mtest_; // current mass hypothesis
   };
-  // for markov chain integration
+  // for Markov Chain integration
   void map_xMarkovChain(const double*, bool, bool, bool, bool, bool, double*);
   class MCObjectiveFunctionAdapter : public ROOT::Math::Functor
   {
@@ -119,6 +119,8 @@ namespace svFitStandalone
       histogramPhi_density_ = (TH1*)histogramPhi_->Clone(Form("%s_density", histogramPhi_->GetName()));
       histogramMass_ = makeHistogram("SVfitStandaloneAlgorithm_histogramMass", 1.e+1, 1.e+4, 1.025);
       histogramMass_density_ = (TH1*)histogramMass_->Clone(Form("%s_density", histogramMass_->GetName()));
+      histogramTransverseMass_ = makeHistogram("SVfitStandaloneAlgorithm_histogramTransverseMass", 1., 1.e+4, 1.025);
+      histogramTransverseMass_density_ = (TH1*)histogramTransverseMass_->Clone(Form("%s_density", histogramTransverseMass_->GetName()));
     }      
     ~MCPtEtaPhiMassAdapter()
     {
@@ -130,6 +132,8 @@ namespace svFitStandalone
       delete histogramPhi_density_;
       delete histogramMass_;
       delete histogramMass_density_;
+      delete histogramTransverseMass_;
+      delete histogramTransverseMass_density_;
     }
     void SetHistogramMass(TH1* histogramMass, TH1* histogramMass_density)
     {
@@ -139,6 +143,12 @@ namespace svFitStandalone
       histogramMass_ = histogramMass;
       if ( histogramMass_density != 0 ) delete histogramMass_density_;
       histogramMass_density_ = histogramMass_density;
+      if ( histogramMass_ && histogramMass_->GetXaxis()->GetXmax() > histogramTransverseMass_->GetXaxis()->GetXmax() ) {
+  if ( histogramTransverseMass_ != 0 ) delete histogramTransverseMass_;
+  histogramTransverseMass_ = makeHistogram("SVfitStandaloneAlgorithm_histogramTransverseMass", 1., histogramMass_->GetXaxis()->GetXmax(), 1.025);
+  if ( histogramTransverseMass_density_ != 0 ) delete histogramTransverseMass_density_;
+  histogramTransverseMass_density_ = (TH1*)histogramTransverseMass_->Clone(Form("%s_density", histogramTransverseMass_->GetName()));  
+      }
     }
     void SetL1isLep(bool l1isLep) { l1isLep_ = l1isLep; }
     void SetL2isLep(bool l2isLep) { l2isLep_ = l2isLep; }
@@ -153,6 +163,7 @@ namespace svFitStandalone
       histogramEta_->Reset();
       histogramPhi_->Reset();
       histogramMass_->Reset();
+      histogramTransverseMass_->Reset();
     }
     double getPt() const { return extractValue(histogramPt_, histogramPt_density_); }
     double getPtUncert() const { return extractUncertainty(histogramPt_, histogramPt_density_); }
@@ -166,6 +177,9 @@ namespace svFitStandalone
     double getMass() const { return extractValue(histogramMass_, histogramMass_density_); }
     double getMassUncert() const { return extractUncertainty(histogramMass_, histogramMass_density_); }
     double getMassLmax() const { return extractLmax(histogramMass_, histogramMass_density_); }
+    double getTransverseMass() const { return extractValue(histogramTransverseMass_, histogramTransverseMass_density_); }
+    double getTransverseMassUncert() const { return extractUncertainty(histogramTransverseMass_, histogramTransverseMass_density_); }
+    double getTransverseMassLmax() const { return extractLmax(histogramTransverseMass_, histogramTransverseMass_density_); }
    private:    
     virtual double DoEval(const double* x) const
     {
@@ -174,16 +188,20 @@ namespace svFitStandalone
       fittedDiTauSystem_ = fittedTauLeptons_[0] + fittedTauLeptons_[1];
       //std::cout << "<MCPtEtaPhiMassAdapter::DoEval>" << std::endl;
       //std::cout << " Pt = " << fittedDiTauSystem_.pt() << "," 
-      //	  << " eta = " << fittedDiTauSystem_.eta() << "," 
-      //	  << " phi = " << fittedDiTauSystem_.phi() << ","
-      //	  << " mass = " << fittedDiTauSystem_.mass() << std::endl;
+      //    << " eta = " << fittedDiTauSystem_.eta() << "," 
+      //    << " phi = " << fittedDiTauSystem_.phi() << ","
+      //    << " mass = " << fittedDiTauSystem_.mass() << std::endl;
       histogramPt_->Fill(fittedDiTauSystem_.pt());
       histogramEta_->Fill(fittedDiTauSystem_.eta());
       histogramPhi_->Fill(fittedDiTauSystem_.phi());
       histogramMass_->Fill(fittedDiTauSystem_.mass());
+      double transverseMass = TMath::Sqrt(2.*fittedTauLeptons_[0].pt()*fittedTauLeptons_[1].pt()*(1. - TMath::Cos(fittedTauLeptons_[0].phi() - fittedTauLeptons_[1].phi())));
+      //std::cout << "transverseMass = " << transverseMass << std::endl;
+      histogramTransverseMass_->Fill(transverseMass);
       return 0.;
     } 
    protected:
+ //public:
     mutable std::vector<svFitStandalone::LorentzVector> fittedTauLeptons_;
     mutable LorentzVector fittedDiTauSystem_;
     mutable TH1* histogramPt_;
@@ -194,6 +212,8 @@ namespace svFitStandalone
     mutable TH1* histogramPhi_density_;
     mutable TH1* histogramMass_;
     mutable TH1* histogramMass_density_;
+    mutable TH1* histogramTransverseMass_;
+    mutable TH1* histogramTransverseMass_density_;
     mutable double x_mapped_[10];
     int nDim_;
     bool l1isLep_;
@@ -269,7 +289,7 @@ class SVfitStandaloneAlgorithm
 {
  public:
   /// constructor from a minimal set of configurables
-  SVfitStandaloneAlgorithm(const std::vector<MeasuredTauLepton>& measuredTauLeptons, double measuredMETx, double measuredMETy, const TMatrixD& covMET, unsigned int verbose = 0);
+  SVfitStandaloneAlgorithm(const std::vector<MeasuredTauLepton>& measuredTauLeptons, double measuredMETx, double measuredMETy, const TMatrixD& covMET, unsigned int verbosity = 0);
   /// destructor
   ~SVfitStandaloneAlgorithm();
 
@@ -293,7 +313,7 @@ class SVfitStandaloneAlgorithm
   /// integration by VEGAS to be called from outside
   void integrateVEGAS(const std::string& likelihoodFileName = "");
   /// integration by Markov Chain MC to be called from outside
-  void integrateMarkovChain();
+  void integrateMarkovChain(const std::string& likelihoodFileName = "");
 
   /// return status of minuit fit
   /*    
@@ -319,11 +339,16 @@ class SVfitStandaloneAlgorithm
   /// return mass of the di-tau system (kept for legacy)
   double getMass() const {return mass(); }
 
+  /// return transverse mass of the di-tau system 
+  double transverseMass() const { return transverseMass_; }
+  /// return uncertainty on the transverse mass of the fitted di-tau system
+  double transverseMassUncert() const { return transverseMassUncert_; }
+
   /// return pt, eta, phi values and their uncertainties
   /*
     NOTE: these values are computed only in case in the
           markov chain integration method. For any other
-	  method 0. will be returned.
+    method 0. will be returned.
   */
   /// return pt of the di-tau system
   double pt() const { return pt_; }
@@ -340,6 +365,7 @@ class SVfitStandaloneAlgorithm
  
   /// return maxima of likelihood scan
   double massLmax() const { return massLmax_; }
+  double transverseMassLmax() const { return transverseMassLmax_; }
   double ptLmax() const { return ptLmax_; }
   double etaLmax() const { return etaLmax_; }
   double phiLmax() const { return phiLmax_; }
@@ -367,7 +393,7 @@ class SVfitStandaloneAlgorithm
   /// return whether this is a valid solution or not
   unsigned int nllStatus_;
   /// verbosity level
-  unsigned int verbose_;
+  unsigned int verbosity_;
   /// stop minimization after a maximal number of function calls
   unsigned int maxObjFunctionCalls_;
 
@@ -383,8 +409,12 @@ class SVfitStandaloneAlgorithm
   
   /// fitted di-tau mass
   double mass_;
-  /// uncertainty of the fitted di-tau mass
+  /// uncertainty on the fitted di-tau mass
   double massUncert_;
+  /// fitted transverse mass of di-tau system
+  double transverseMass_;
+  /// uncertainty on the fitted transverse mass of di-tau system
+  double transverseMassUncert_;
   /// fit result for each of the decay branches 
   std::vector<svFitStandalone::LorentzVector> fittedTauLeptons_;
   /// fitted di-tau system
@@ -412,6 +442,7 @@ class SVfitStandaloneAlgorithm
 
   /// maxima of likelihood scan
   double massLmax_;
+  double transverseMassLmax_;
   double ptLmax_;
   double etaLmax_;
   double phiLmax_;

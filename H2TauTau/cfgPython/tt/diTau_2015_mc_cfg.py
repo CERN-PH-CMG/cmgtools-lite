@@ -86,8 +86,7 @@ tauDecayModeWeighter = cfg.Analyzer(
 tau1Weighter = cfg.Analyzer(
   LeptonWeighter                    ,
   name        ='LeptonWeighter_tau1',
-  effWeight   = None                ,
-  effWeightMC = None                ,
+  scaleFactorFiles = {},
   lepton      = 'leg1'              ,
   verbose     = False               ,
   disable     = True                ,
@@ -96,8 +95,7 @@ tau1Weighter = cfg.Analyzer(
 tau2Weighter = cfg.Analyzer(
   LeptonWeighter                    ,
   name        ='LeptonWeighter_tau2',
-  effWeight   = None                ,
-  effWeightMC = None                ,
+  scaleFactorFiles = {},
   lepton      = 'leg2'              ,
   verbose     = False               ,
   disable     = True                ,

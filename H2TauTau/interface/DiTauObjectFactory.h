@@ -24,12 +24,19 @@ template<typename T, typename U>
 class DiTauObjectFactory : public edm::EDProducer 
 {
     public:
+        typedef edm::View<T> collection1;
+        typedef edm::View<U> collection2;
+        typedef edm::View<reco::MET> met_collection;
+    
         DiTauObjectFactory(const edm::ParameterSet& ps) :             
             leg1Label_(ps.getParameter<edm::InputTag>("leg1Collection")),
             leg2Label_(ps.getParameter<edm::InputTag>("leg2Collection")),
             metLabel_(ps.getParameter<edm::InputTag>("metCollection"))
         {
           produces<std::vector<DiTauObject>>();
+          consumes<collection1>(leg1Label_);
+          consumes<collection2>(leg2Label_);
+          consumes<met_collection>(metLabel_);
         }
 
         void produce(edm::Event&, const edm::EventSetup&);
@@ -95,21 +102,17 @@ void cmg::DiTauObjectFactory<T, U>::set(const reco::MET& met, cmg::DiTauObject& 
 template<typename T, typename U>
 void cmg::DiTauObjectFactory<T, U>::produce(edm::Event& iEvent, const edm::EventSetup&){
   
-  typedef edm::View<T> collection1;
-  typedef edm::View<U> collection2;
-  typedef edm::View<reco::MET> met_collection;
-  
   edm::Handle<collection1> leg1Cands;
-  iEvent.getByLabel(this->leg1Label_, leg1Cands);
+  iEvent.getByLabel(leg1Label_, leg1Cands);
   
   edm::Handle<collection2> leg2Cands;
-  iEvent.getByLabel(this->leg2Label_, leg2Cands);
+  iEvent.getByLabel(leg2Label_, leg2Cands);
   
   edm::Handle<met_collection> metCands;
   bool metAvailable = false;
   if (!(metLabel_ == edm::InputTag())) {
     metAvailable = true; 
-    iEvent.getByLabel(this->metLabel_, metCands);
+    iEvent.getByLabel(metLabel_, metCands);
   }
 
   std::auto_ptr<std::vector<DiTauObject>> result(new std::vector<DiTauObject>);

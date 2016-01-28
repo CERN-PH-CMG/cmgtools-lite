@@ -200,7 +200,7 @@ class TauMuAnalyzer(DiLeptonAnalyzer):
 
 
     def testElectronID(self, electron):
-        return electron.mvaIDRun2('NonTrigSpring15', 'POG90')
+        return electron.mvaIDRun2('NonTrigSpring15MiniAOD', 'POG90')
 
     def otherLeptonVeto(self, leptons, otherLeptons, isoCut=0.3):
         # count electrons

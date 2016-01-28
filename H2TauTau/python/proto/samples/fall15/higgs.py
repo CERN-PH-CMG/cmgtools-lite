@@ -11,102 +11,28 @@ HiggsGGH125 = creator.makeMCComponent('HiggsGGH125', '/GluGluHToTauTau_M125_13Te
 
 HiggsVBF125 = creator.makeMCComponent('HiggsVBF125', '/VBFHToTauTau_M125_13TeV_powheg_pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM', 'CMS', '.*root', 1.0)
 
-# HiggsTTH125 = creator.makeMCComponent('HiggsTTH125', '/ttHJetToTT_M125_13TeV_amcatnloFXFX_madspin_pythia8/RunIISpring15MiniAODv2-74X_mcRun2_asymptotic_v2-v1/MINIAODSIM', 'CMS', '.*root', 1.0)
-
-# HiggsVBF125 = cfg.MCComponent(
-#     name = 'HiggsVBF125',
-#     files = [],
-#     xSection = None, 
-#     nGenEvents = 0,
-#     triggers = [],
-#     effCorrFactor = 1 )
-
-
-
-############# Gluon fusion ###############
-
-
-# HiggsGGH125 = cfg.MCComponent(
-#     name = 'HiggsGGH125',
-#     files = [],
-#     xSection = None, 
-#     nGenEvents = 0,
-#     triggers = [],
-#     effCorrFactor = 1 )
-
-
-
-
-############# VH  ###############
-
-
-
-HiggsVH125 = cfg.MCComponent(
-    name = 'HiggsVH125',
-    files = [],
-    xSection = None, 
-    nGenEvents = 0,
-    triggers = [],
-    effCorrFactor = 1 )
-
-
-############# TTH  ###############
-
-HiggsTTHInclusive125 = cfg.MCComponent(
-    name = 'HiggsTTHInclusive125',
-    files = [],
-    xSection = None, 
-    nGenEvents = 0,
-    triggers = [],
-    effCorrFactor = 1 )
-
-
-
-HiggsVBFtoWW125 = cfg.MCComponent(
-    name = 'HiggsVBFtoWW125',
-    files = [],
-    xSection = None, 
-    nGenEvents = 0,
-    triggers = [],
-    effCorrFactor = 1 )
-
-HiggsGGHtoWW125 = cfg.MCComponent(
-    name = 'HiggsGGHtoWW125',
-    files = [],
-    xSection = None, 
-    nGenEvents = 0,
-    triggers = [],
-    effCorrFactor = 1 )
-
-HiggsVHtoWW125 = cfg.MCComponent(
-    name = 'HiggsVHtoWW125',
-    files = [],
-    xSection = None, 
-    nGenEvents = 0,
-    triggers = [],
-    effCorrFactor = 1 )
-
+HiggsTTH125 = creator.makeMCComponent('HiggsTTH125', '/ttHJetToTT_M125_13TeV_amcatnloFXFX_madspin_pythia8/RunIISpring15MiniAODv2-74X_mcRun2_asymptotic_v2-v1/MINIAODSIM', 'CMS', '.*root', 1.0)
 
 
 #############
 
 mc_higgs_vbf = [
     HiggsVBF125,
-    HiggsVBFtoWW125,
+    # HiggsVBFtoWW125,
 ]
 
 mc_higgs_ggh = [
     HiggsGGH125,
-    HiggsGGHtoWW125,
+    # HiggsGGHtoWW125,
 ]
 
 mc_higgs_vh = [
-    HiggsVH125,
-    HiggsVHtoWW125
+    # HiggsVH125,
+    # HiggsVHtoWW125
 ]
 
 mc_higgs_tth = [
-    HiggsTTHInclusive125
+    HiggsTTH125
 ]
 
 mc_higgs = copy.copy(mc_higgs_vbf)

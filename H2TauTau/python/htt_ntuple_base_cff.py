@@ -19,9 +19,8 @@ from CMGTools.H2TauTau.proto.analyzers.NJetsAnalyzer import NJetsAnalyzer
 from CMGTools.H2TauTau.proto.analyzers.HiggsPtWeighter import HiggsPtWeighter
 from CMGTools.H2TauTau.proto.analyzers.VBFAnalyzer import VBFAnalyzer
 
-puFileMC = '$CMSSW_BASE/src/CMGTools/H2TauTau/data/MC_Spring15_PU25_Startup.root'
-puFileData = '$CMSSW_BASE/src/CMGTools/H2TauTau/data/data_pu_11-19-2015_69mb_600.root'
-puFileData = '$CMSSW_BASE/src/CMGTools/H2TauTau/data/data_pu_11-11-2015_69mb_600_2015D.root'
+puFileMC = '$CMSSW_BASE/src/CMGTools/H2TauTau/data/MC_Fall15_PU25_V1.root'
+puFileData = '$CMSSW_BASE/src/CMGTools/H2TauTau/data/Data_Pileup_2015D_Jan27.root'
 
 eventSelector = cfg.Analyzer(
     EventSelector,
