@@ -83,7 +83,7 @@ class MuMuAnalyzer(DiLeptonAnalyzer):
             muon1 = self.__class__.LeptonClass(pat_muon1)
             for i_2, pat_muon2 in enumerate(leptons):
                 # Keep only pairs with pT(muon1) > pT(muon2)
-                if i_2 > i_1:
+                if i_2 <= i_1:
                     continue
 
                 muon2 = self.__class__.LeptonClass(pat_muon2)
@@ -216,7 +216,7 @@ class MuMuAnalyzer(DiLeptonAnalyzer):
 
     def trigMatched(self, event, diL, requireAllMatched=False):
         
-        matched = super(MuMuAnalyzer, self).trigMatched(event, diL, requireAllMatched=requireAllMatched, ptMin=18., etaMax=2.1)
+        matched = super(MuMuAnalyzer, self).trigMatched(event, diL, requireAllMatched=requireAllMatched, ptMin=18., etaMax=2.1, onlyLeg1=True)
 
         if matched and len(diL.matchedPaths) == 1 and diL.leg1().pt() < 25. and 'IsoMu24' in list(diL.matchedPaths)[0]:
             matched = False
