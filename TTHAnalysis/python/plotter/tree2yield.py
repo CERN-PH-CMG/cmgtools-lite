@@ -90,6 +90,10 @@ class TreeToYield:
             ## modify cuts to get to control region. order is important
             self._mcCorrs = self._mcCorrs + self._FR.cutMods()  + self._FR.mods()
             self._weight = True
+        for macro in self._options.loadMacro:
+            libname = macro.replace(".cc","_cc.so").replace(".cxx","_cxx.so")
+            if libname not in ROOT.gSystem.GetLibraries():
+                ROOT.gROOT.ProcessLine(".L %s+" % macro);
         #print "Done creation  %s for task %s in pid %d " % (self._fname, self._name, os.getpid())
     def setScaleFactor(self,scaleFactor):
         if self._mcCorrs and scaleFactor and scaleFactor != 1.0:
@@ -252,6 +256,7 @@ class TreeToYield:
             plot.GetYaxis().SetTitle(spec.getOption('YTitle',"Events"))
             plot.GetXaxis().SetTitle(spec.getOption('XTitle',spec.name))
             plot.GetXaxis().SetNdivisions(spec.getOption('XNDiv',510))
+            plot.GetXaxis().SetMoreLogLabels(True)
     def getPlot(self,plotspec,cut):
         ret = self.getPlotRaw(plotspec.name, plotspec.expr, plotspec.bins, cut, plotspec)
         # fold overflow
@@ -275,6 +280,7 @@ class TreeToYield:
                     ret.SetBinContent( b, ret.GetBinContent(b) / ret.GetXaxis().GetBinWidth(b) )
                     ret.SetBinError(   b, ret.GetBinError(b) / ret.GetXaxis().GetBinWidth(b) )
         self._stylePlot(ret,plotspec)
+        ret._cname = self._cname
         return ret
     def getPlotRaw(self,name,expr,bins,cut,plotspec):
         unbinnedData2D = plotspec.getOption('UnbinnedData2D',False) if plotspec != None else False
@@ -427,6 +433,7 @@ def addTreeToYieldOptions(parser):
     parser.add_option("--s2v", "--scalar2vector",     dest="doS2V",    action="store_true", default=False, help="Do scalar to vector conversion") 
     parser.add_option("--neg", "--allow-negative-results",     dest="allowNegative",    action="store_true", default=False, help="If the total yield is negative, keep it so rather than truncating it to zero") 
     parser.add_option("--max-entries",     dest="maxEntries", default=1000000000, type="int", help="Max entries to process in each tree") 
+    parser.add_option("-L", "--load-macro",  dest="loadMacro",   type="string", action="append", default=[], help="Load the following macro, with .L <file>+");
 
 def mergeReports(reports):
     import copy

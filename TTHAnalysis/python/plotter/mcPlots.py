@@ -678,7 +678,7 @@ class PlotMaker:
                         elif 'TH2' in plot.ClassName():
                             for b1 in xrange(1,plot.GetNbinsX()+1):
                                 for b2 in xrange(1,plot.GetNbinsY()+1):
-                                    if plot.GetBinContent(b1,b2)<0: print 'Warning: histo %s has bin %d,%d with negative content (%f), the stack plot will probably be incorrect.'%(p,b1,b2,plot.GetBinContent(b))
+                                    if plot.GetBinContent(b1,b2)<0: print 'Warning: histo %s has bin %d,%d with negative content (%f), the stack plot will probably be incorrect.'%(p,b1,b2,plot.GetBinContent(b1,b2))
 #                        if plot.Integral() <= 0: continue
                         if mca.isSignal(p): plot.Scale(options.signalPlotScale)
                         if mca.isSignal(p) and options.noStackSig == True: continue 

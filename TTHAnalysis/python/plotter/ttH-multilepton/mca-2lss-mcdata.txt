@@ -11,9 +11,14 @@ TT      : TTJets_DiLepton : xsec ; FillColor=ROOT.kGray
 TT      : TTJets_SingleLeptonFromT : xsec ; FillColor=ROOT.kGray
 TT      : TTJets_SingleLeptonFromTbar : xsec ; FillColor=ROOT.kGray
 
+TT_2l      : TTJets_DiLepton : xsec ; FillColor=ROOT.kOrange, SkipMe=True
+TT_1l      : TTJets_SingleLeptonFromT : xsec ; FillColor=ROOT.kYellow, SkipMe=True
+TT_1l      : TTJets_SingleLeptonFromTbar : xsec ; FillColor=ROOT.kYellow, SkipMe=True
+
 DY      : DYJetsToLL_M10to50 : xsec ; FillColor=ROOT.kCyan
 DY      : DYJetsToLL_M50 : xsec ; FillColor=ROOT.kCyan
-WJets   : WJetsToLNu : xsec ; FakeRate="ttH-multilepton/fakeRate-2lss-frmc-tt.txt", Label="WJets_{FR}", FillColor=ROOT.kCyan+2
+WJets   : WJetsToLNu : xsec ; FillColor=ROOT.kCyan+2
+#WJetsFR   : WJetsToLNu : xsec ; FakeRate="ttH-multilepton/fakeRate-2lss-frmc-tt.txt", Label="WJets_{FR}", FillColor=ROOT.kCyan+2
 
 data: DoubleEG_Run2015C_Oct05_runs_254231_254914
 data: DoubleEG_Run2015D_Oct05_runs_256630_258158

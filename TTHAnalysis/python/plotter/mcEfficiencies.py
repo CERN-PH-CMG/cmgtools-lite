@@ -5,10 +5,26 @@ from CMGTools.TTHAnalysis.plotter.mcPlots import *
 if "/bin2Dto1Dlib_cc.so" not in ROOT.gSystem.GetLibraries():
     ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/TTHAnalysis/python/plotter/bin2Dto1Dlib.cc+" % os.environ['CMSSW_BASE']);
 
-def addROCMakerOptions(parser):
+def addMCEfficiencyOptions(parser):
     addMCAnalysisOptions(parser)
     parser.add_option("--select-plot", "--sP", dest="plotselect", action="append", default=[], help="Select only these plots out of the full file")
     parser.add_option("--exclude-plot", "--xP", dest="plotexclude", action="append", default=[], help="Exclude these plots from the full file")
+    parser.add_option("-o", "--out", dest="out", default=None, help="Output file name. by default equal to plots -'.txt' +'.root'");
+    parser.add_option("--rebin", dest="globalRebin", type="int", default="0", help="Rebin all plots by this factor")
+    parser.add_option("--xrange", dest="xrange", default=None, nargs=2, type='float', help="X axis range");
+    parser.add_option("--xcut", dest="xcut", default=None, nargs=2, type='float', help="X axis cut");
+    parser.add_option("--yrange", dest="yrange", default=None, nargs=2, type='float', help="Y axis range");
+    parser.add_option("--logy", dest="logy", default=False, action='store_true', help="Do y axis in log scale");
+    parser.add_option("--ytitle", dest="ytitle", default="Efficiency", type='string', help="Y axis title");
+    parser.add_option("--fontsize", dest="fontsize", default=0, type='float', help="Legend font size");
+    parser.add_option("--grid", dest="showGrid", action="store_true", default=False, help="Show grid lines")
+    parser.add_option("--groupBy",  dest="groupBy",  default="process",  type="string", help="Group by: cut, process")
+    parser.add_option("--legend",  dest="legend",  default="TR",  type="string", help="Legend position (BR, TR)")
+    parser.add_option("--compare", dest="compare", default="", help="Samples to compare (by default, all except the totals)")
+    parser.add_option("--showRatio", dest="showRatio", action="store_true", default=False, help="Add a data/sim ratio plot at the bottom")
+    parser.add_option("--rr", "--ratioRange", dest="ratioRange", type="float", nargs=2, default=(-1,-1), help="Min and max for the ratio")
+    parser.add_option("--normEffUncToLumi", dest="normEffUncToLumi", action="store_true", default=False, help="Normalize the dataset to the given lumi for the uncertainties on the calculated efficiency")
+
 
 def doLegend(rocs,options,textSize=0.035):
         if options.legend == "TR":
@@ -39,7 +55,7 @@ def effFromH2D(h2d,options):
         xerrs = h2d.GetXaxis().GetBinLowEdge(xbin)-xval, h2d.GetXaxis().GetBinUpEdge(xbin)-xval 
         ypass,ypassErr, yfail,yfailErr = h2d.GetBinContent(xbin,2),h2d.GetBinError(xbin,2), h2d.GetBinContent(xbin,1),h2d.GetBinError(xbin,1)
         yall = ypass+yfail
-        if yall == 0: continue 
+        if yall <= 0 or ypass < 0: continue 
         eff = ypass/yall 
         neff = (yall**2)/(ypassErr**2 + yfailErr**2)
         errsCP = [ ROOT.TEfficiency.ClopperPearson(int(neff),int(neff*eff), 0.6827, i)-eff for i in (False,True) ]
@@ -121,11 +137,11 @@ def stackEffs(outname,x,effs,options):
         c1.SetWindowSize(600 + (600 - c1.GetWw()), 600 + (600 - c1.GetWh()));
     p1.SetGridy(options.showGrid)
     p1.SetGridx(options.showGrid)
-    p1.SetLogx(x.getOption('Logx',False))
+    p1.SetLogx(x.getOption('Logx',False) if x else False)
     p1.SetLogy(options.logy)
 
     frame.Draw()
-    for title, eff in effs: eff.Draw("PZ SAME")
+    for title, eff in effs: eff.Draw("P SAME")
 
     if options.xrange:
         frame.GetXaxis().SetRangeUser(options.xrange[0], options.xrange[1])
@@ -144,12 +160,7 @@ def stackEffs(outname,x,effs,options):
     c1.Print(outname.replace(".root","")+".eps")
     c1.Print(outname.replace(".root","")+".pdf")
 
-def stackInXYSlices(outname,x,effs,options):
-    h2d = effs[0][1]
-    names = ("X","Y")
-    axes  = h2d.GetXaxis(), h2d.GetYaxis()
-    nbins = h2d.GetNbinsX(), h2d.GetNbinsY()
-    def slice(h,axis,bins):
+def graphFromSlice(h,axis,bins):
         (aobj,ai) = (h.GetXaxis(),0) if axis == "X" else (h.GetYaxis(),1)
         ret = ROOT.TGraphAsymmErrors(len(bins))
         for (i,bin) in enumerate(bins):
@@ -160,13 +171,22 @@ def stackInXYSlices(outname,x,effs,options):
             dy = h.GetBinError(bin[0],bin[1])
             ret.SetPoint(i, x, y)
             ret.SetPointError(i, x-xlo, xhi-x, min(y,dy), dy)
+        ret.SetName(h.GetName()+"_slice"+axis)
         return ret
+def graphFromXSlice(h,ybin):
+    return graphFromSlice(h,"X", [ (i,ybin) for i in xrange(1,h.GetNbinsX()+1)  ])
+
+def stackInXYSlices(outname,x,effs,options):
+    h2d = effs[0][1]
+    names = ("X","Y")
+    axes  = h2d.GetXaxis(), h2d.GetYaxis()
+    nbins = h2d.GetNbinsX(), h2d.GetNbinsY()
     for sliceaxis in 0,1:
         runaxis = 1-sliceaxis
         sliceobj = axes[sliceaxis]
         for islice in xrange(1,nbins[sliceaxis]+1):
             bins = [ ((i,islice) if runaxis == 0 else (islice,i)) for i in xrange(1,nbins[runaxis]+1) ]
-            slice_effs = [ (n,slice(h,names[runaxis],bins)) for (n,h) in effs ]
+            slice_effs = [ (n,graphFromSlice(h,names[runaxis],bins)) for (n,h) in effs ]
             stackEffs(outname.replace(".root",".slice%s_bin%d.root" % (names[sliceaxis],islice+1)),
                       slice_effs, bins, options)
     
@@ -255,6 +275,9 @@ def makeEff(mca,cut,idplot,xvarplot,returnSeparatePassFail=False,notDoProfile="a
     report = mca.getPlots(pspec,cut,makeSummary=True)
     if 'signal' in report and 'background' in report:
         report['total'] = mergePlots(pspec.name+"_total", [ report[s] for s in ('signal','background') ] )
+    if 'data' in report and 'background' in report:
+        report['data_sub'] = report['data'].Clone(pspec.name+'_data_sub')
+        report['data_sub'].Add(report['background'], -1.0)
     if mainOptions and mainOptions.compare:
         print report.keys()
     if notDoProfile and not returnSeparatePassFail:
@@ -265,22 +288,7 @@ def makeEff(mca,cut,idplot,xvarplot,returnSeparatePassFail=False,notDoProfile="a
 if __name__ == "__main__":
     from optparse import OptionParser
     parser = OptionParser(usage="%prog [options] mc.txt cuts.txt plotfile.txt")
-    addROCMakerOptions(parser)
-    parser.add_option("-o", "--out", dest="out", default=None, help="Output file name. by default equal to plots -'.txt' +'.root'");
-    parser.add_option("--rebin", dest="globalRebin", type="int", default="0", help="Rebin all plots by this factor")
-    parser.add_option("--xrange", dest="xrange", default=None, nargs=2, type='float', help="X axis range");
-    parser.add_option("--xcut", dest="xcut", default=None, nargs=2, type='float', help="X axis cut");
-    parser.add_option("--yrange", dest="yrange", default=None, nargs=2, type='float', help="Y axis range");
-    parser.add_option("--logy", dest="logy", default=False, action='store_true', help="Do y axis in log scale");
-    parser.add_option("--ytitle", dest="ytitle", default="Efficiency", type='string', help="Y axis title");
-    parser.add_option("--fontsize", dest="fontsize", default=0, type='float', help="Legend font size");
-    parser.add_option("--grid", dest="showGrid", action="store_true", default=False, help="Show grid lines")
-    parser.add_option("--groupBy",  dest="groupBy",  default="process",  type="string", help="Group by: cut, process")
-    parser.add_option("--legend",  dest="legend",  default="TR",  type="string", help="Legend position (BR, TR)")
-    parser.add_option("--compare", dest="compare", default="", help="Samples to compare (by default, all except the totals)")
-    parser.add_option("--showRatio", dest="showRatio", action="store_true", default=False, help="Add a data/sim ratio plot at the bottom")
-    parser.add_option("--rr", "--ratioRange", dest="ratioRange", type="float", nargs=2, default=(-1,-1), help="Min and max for the ratio")
-    parser.add_option("--normEffUncToLumi", dest="normEffUncToLumi", action="store_true", default=False, help="Normalize the dataset to the given lumi for the uncertainties on the calculated efficiency")
+    addMCEfficiencyOptions(parser)
     (options, args) = parser.parse_args()
     options.globalRebin = 1
     options.allowNegative = True # with the fine bins used in ROCs, one otherwise gets nonsensical results
@@ -301,9 +309,9 @@ if __name__ == "__main__":
     ROOT.gStyle.SetOptStat(0)
     effplots = [ (y,x,makeEff(mca,cut,y,x,returnSeparatePassFail=options.normEffUncToLumi,mainOptions=options)) for y in ids for x in xvars ]
     for (y,x,pmap) in effplots:
-        for proc in procs:
+        for proc in procs + [ "total", "signal", "background", "data_sub" ]:
+            if (proc not in pmap) or not pmap[proc]: continue
             eff = pmap[proc]
-            if not eff: continue
             #eff.Print()
 #            PrintHisto(eff)
             if options.xcut and eff.ClassName() != "TGraphAsymmErrors":
@@ -331,13 +339,8 @@ if __name__ == "__main__":
                     eff.SetBinError(bin,sqrt(eff.GetBinContent(bin)))
 
                 outfile.WriteTObject(eff)
-
                 effratio = eff.ProjectionX("_px") if is1d else eff.Project3D("yx")
                 effratio.Reset()
-
-                #eff.Print()
-                #effratio.Print()
-
                 for b1 in xrange(len(binsfail)):
                     passing = eff.GetBinContent(binspass[b1])
                     failing = eff.GetBinContent(binsfail[b1])
@@ -351,19 +354,7 @@ if __name__ == "__main__":
                         ratiobin = effratio.FindBin(eff.GetXaxis().GetBinCenter(bx),eff.GetYaxis().GetBinCenter(by))
                     effratio.SetBinContent(ratiobin,passing/(passing+failing))
                     effratio.SetBinError(ratiobin,sqrt(passing*failing*((passing+failing)**(-3))))
-#                    print 'bx',ROOT.Long(bx)
-#                    print 'num',passing
-#                    print 'den',passing+failing
-#                    print 'ratio',effratio.GetBinContent(ratiobin)
-#                    print 'err',effratio.GetBinError(ratiobin)
-#                    print 'relerr',effratio.GetBinError(ratiobin)/effratio.GetBinContent(ratiobin)
-                eff = effratio
                 pmap[proc] = effratio
-#            else:
-#                for bx in xrange(eff.GetNbinsX()):
-#                    print bx
-#                    print eff.GetBinContent(bx+1)
-#                    print eff.GetBinError(bx+1)
             eff.SetName("_".join([y.name,x.name,proc]))
             outfile.WriteTObject(eff)
     if len(procs)>=1 and "cut" in options.groupBy:

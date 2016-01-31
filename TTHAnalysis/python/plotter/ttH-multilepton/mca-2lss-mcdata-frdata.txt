@@ -6,6 +6,14 @@ TTZ     : TTLLJets_m1to10 : xsec : LepGood1_mcMatchId != 0 && LepGood2_mcMatchId
 
 WZ 	: WZTo3LNu : xsec : LepGood1_mcMatchId != 0 && LepGood2_mcMatchId != 0 ;  FillColor=ROOT.kViolet-4
 ZZ      : ZZTo4L : xsec : LepGood1_mcMatchId != 0 && LepGood2_mcMatchId != 0 ;  FillColor=ROOT.kAzure-9
+WWss: WpWpJJ : xsec : LepGood1_mcMatchId != 0 && LepGood2_mcMatchId != 0 ; FillColor=ROOT.kOrange-3
+
+Rares: WWDouble : xsec : LepGood1_mcMatchId != 0 && LepGood2_mcMatchId != 0 ; FillColor=ROOT.kMagenta-7
+Rares: WWZ : xsec : LepGood1_mcMatchId != 0 && LepGood2_mcMatchId != 0 ; FillColor=ROOT.kMagenta-7
+Rares: WZZ : xsec : LepGood1_mcMatchId != 0 && LepGood2_mcMatchId != 0 ; FillColor=ROOT.kMagenta-7
+Rares: ZZZ : xsec : LepGood1_mcMatchId != 0 && LepGood2_mcMatchId != 0 ; FillColor=ROOT.kMagenta-7
+Rares: TTTT : xsec : LepGood1_mcMatchId != 0 && LepGood2_mcMatchId != 0 ; FillColor=ROOT.kMagenta-7
+Rares: tZq_ll : xsec : LepGood1_mcMatchId != 0 && LepGood2_mcMatchId != 0 ; FillColor=ROOT.kMagenta-7
 
 data: DoubleEG_Run2015C_Oct05_runs_254231_254914
 data: DoubleEG_Run2015D_Oct05_runs_256630_258158
@@ -23,44 +31,34 @@ data: SingleMuon_Run2015C_Oct05_runs_254231_254914
 data: SingleMuon_Run2015D_Oct05_runs_256630_258158
 data: SingleMuon_Run2015D_PromptV4_runs_258159_260627
 
-fakes_data: DoubleEG_Run2015C_Oct05_runs_254231_254914 ; FakeRate="ttH-multilepton/fakeRate-2lss-frdata.txt", Label="Fakes", FillStyle=3005, NormSystematic=0.3
-fakes_data: DoubleEG_Run2015D_Oct05_runs_256630_258158 ; FakeRate="ttH-multilepton/fakeRate-2lss-frdata.txt", Label="Fakes", FillStyle=3005, NormSystematic=0.3
-fakes_data: DoubleEG_Run2015D_PromptV4_runs_258159_260627 ; FakeRate="ttH-multilepton/fakeRate-2lss-frdata.txt", Label="Fakes", FillStyle=3005, NormSystematic=0.3
-fakes_data: DoubleMuon_Run2015C_Oct05_runs_254231_254914 ; FakeRate="ttH-multilepton/fakeRate-2lss-frdata.txt", Label="Fakes", FillStyle=3005, NormSystematic=0.3
-fakes_data: DoubleMuon_Run2015D_Oct05_runs_256630_258158 ; FakeRate="ttH-multilepton/fakeRate-2lss-frdata.txt", Label="Fakes", FillStyle=3005, NormSystematic=0.3
-fakes_data: DoubleMuon_Run2015D_PromptV4_runs_258159_260627 ; FakeRate="ttH-multilepton/fakeRate-2lss-frdata.txt", Label="Fakes", FillStyle=3005, NormSystematic=0.3
-fakes_data: MuonEG_Run2015C_Oct05_runs_254231_254914 ; FakeRate="ttH-multilepton/fakeRate-2lss-frdata.txt", Label="Fakes", FillStyle=3005, NormSystematic=0.3
-fakes_data: MuonEG_Run2015D_Oct05_runs_256630_258158 ; FakeRate="ttH-multilepton/fakeRate-2lss-frdata.txt", Label="Fakes", FillStyle=3005, NormSystematic=0.3
-fakes_data: MuonEG_Run2015D_PromptV4_runs_258159_260627 ; FakeRate="ttH-multilepton/fakeRate-2lss-frdata.txt", Label="Fakes", FillStyle=3005, NormSystematic=0.3
-fakes_data: SingleElectron_Run2015C_Oct05_runs_254231_254914 ; FakeRate="ttH-multilepton/fakeRate-2lss-frdata.txt", Label="Fakes", FillStyle=3005, NormSystematic=0.3
-fakes_data: SingleElectron_Run2015D_Oct05_runs_256630_258158 ; FakeRate="ttH-multilepton/fakeRate-2lss-frdata.txt", Label="Fakes", FillStyle=3005, NormSystematic=0.3
-fakes_data: SingleElectron_Run2015D_PromptV4_runs_258159_260627 ; FakeRate="ttH-multilepton/fakeRate-2lss-frdata.txt", Label="Fakes", FillStyle=3005, NormSystematic=0.3
-fakes_data: SingleMuon_Run2015C_Oct05_runs_254231_254914 ; FakeRate="ttH-multilepton/fakeRate-2lss-frdata.txt", Label="Fakes", FillStyle=3005, NormSystematic=0.3
-fakes_data: SingleMuon_Run2015D_Oct05_runs_256630_258158 ; FakeRate="ttH-multilepton/fakeRate-2lss-frdata.txt", Label="Fakes", FillStyle=3005, NormSystematic=0.3
-fakes_data: SingleMuon_Run2015D_PromptV4_runs_258159_260627 ; FakeRate="ttH-multilepton/fakeRate-2lss-frdata.txt", Label="Fakes", FillStyle=3005, NormSystematic=0.3
+fakes_data: DoubleEG_Run2015C_Oct05_runs_254231_254914 ; FakeRate="ttH-multilepton/fakeRate-2lss-frdata.txt", Label="Fakes", FillColor=ROOT.kBlack, FillStyle=3005, NormSystematic=0.3
+fakes_data: DoubleEG_Run2015D_Oct05_runs_256630_258158 ; FakeRate="ttH-multilepton/fakeRate-2lss-frdata.txt", Label="Fakes", FillColor=ROOT.kBlack, FillStyle=3005, NormSystematic=0.3
+fakes_data: DoubleEG_Run2015D_PromptV4_runs_258159_260627 ; FakeRate="ttH-multilepton/fakeRate-2lss-frdata.txt", Label="Fakes", FillColor=ROOT.kBlack, FillStyle=3005, NormSystematic=0.3
+fakes_data: DoubleMuon_Run2015C_Oct05_runs_254231_254914 ; FakeRate="ttH-multilepton/fakeRate-2lss-frdata.txt", Label="Fakes", FillColor=ROOT.kBlack, FillStyle=3005, NormSystematic=0.3
+fakes_data: DoubleMuon_Run2015D_Oct05_runs_256630_258158 ; FakeRate="ttH-multilepton/fakeRate-2lss-frdata.txt", Label="Fakes", FillColor=ROOT.kBlack, FillStyle=3005, NormSystematic=0.3
+fakes_data: DoubleMuon_Run2015D_PromptV4_runs_258159_260627 ; FakeRate="ttH-multilepton/fakeRate-2lss-frdata.txt", Label="Fakes", FillColor=ROOT.kBlack, FillStyle=3005, NormSystematic=0.3
+fakes_data: MuonEG_Run2015C_Oct05_runs_254231_254914 ; FakeRate="ttH-multilepton/fakeRate-2lss-frdata.txt", Label="Fakes", FillColor=ROOT.kBlack, FillStyle=3005, NormSystematic=0.3
+fakes_data: MuonEG_Run2015D_Oct05_runs_256630_258158 ; FakeRate="ttH-multilepton/fakeRate-2lss-frdata.txt", Label="Fakes", FillColor=ROOT.kBlack, FillStyle=3005, NormSystematic=0.3
+fakes_data: MuonEG_Run2015D_PromptV4_runs_258159_260627 ; FakeRate="ttH-multilepton/fakeRate-2lss-frdata.txt", Label="Fakes", FillColor=ROOT.kBlack, FillStyle=3005, NormSystematic=0.3
+fakes_data: SingleElectron_Run2015C_Oct05_runs_254231_254914 ; FakeRate="ttH-multilepton/fakeRate-2lss-frdata.txt", Label="Fakes", FillColor=ROOT.kBlack, FillStyle=3005, NormSystematic=0.3
+fakes_data: SingleElectron_Run2015D_Oct05_runs_256630_258158 ; FakeRate="ttH-multilepton/fakeRate-2lss-frdata.txt", Label="Fakes", FillColor=ROOT.kBlack, FillStyle=3005, NormSystematic=0.3
+fakes_data: SingleElectron_Run2015D_PromptV4_runs_258159_260627 ; FakeRate="ttH-multilepton/fakeRate-2lss-frdata.txt", Label="Fakes", FillColor=ROOT.kBlack, FillStyle=3005, NormSystematic=0.3
+fakes_data: SingleMuon_Run2015C_Oct05_runs_254231_254914 ; FakeRate="ttH-multilepton/fakeRate-2lss-frdata.txt", Label="Fakes", FillColor=ROOT.kBlack, FillStyle=3005, NormSystematic=0.3
+fakes_data: SingleMuon_Run2015D_Oct05_runs_256630_258158 ; FakeRate="ttH-multilepton/fakeRate-2lss-frdata.txt", Label="Fakes", FillColor=ROOT.kBlack, FillStyle=3005, NormSystematic=0.3
+fakes_data: SingleMuon_Run2015D_PromptV4_runs_258159_260627 ; FakeRate="ttH-multilepton/fakeRate-2lss-frdata.txt", Label="Fakes", FillColor=ROOT.kBlack, FillStyle=3005, NormSystematic=0.3
 
-flips_data: DoubleEG_Run2015C_Oct05_runs_254231_254914 ; FakeRate="ttH-multilepton/flipRate-2lss-data.txt", Label="Flips", FillStyle=3006, NormSystematic=0.3
-flips_data: DoubleEG_Run2015D_Oct05_runs_256630_258158 ; FakeRate="ttH-multilepton/flipRate-2lss-data.txt", Label="Flips", FillStyle=3006, NormSystematic=0.3
-flips_data: DoubleEG_Run2015D_PromptV4_runs_258159_260627 ; FakeRate="ttH-multilepton/flipRate-2lss-data.txt", Label="Flips", FillStyle=3006, NormSystematic=0.3
-flips_data: DoubleMuon_Run2015C_Oct05_runs_254231_254914 ; FakeRate="ttH-multilepton/flipRate-2lss-data.txt", Label="Flips", FillStyle=3006, NormSystematic=0.3
-flips_data: DoubleMuon_Run2015D_Oct05_runs_256630_258158 ; FakeRate="ttH-multilepton/flipRate-2lss-data.txt", Label="Flips", FillStyle=3006, NormSystematic=0.3
-flips_data: DoubleMuon_Run2015D_PromptV4_runs_258159_260627 ; FakeRate="ttH-multilepton/flipRate-2lss-data.txt", Label="Flips", FillStyle=3006, NormSystematic=0.3
-flips_data: MuonEG_Run2015C_Oct05_runs_254231_254914 ; FakeRate="ttH-multilepton/flipRate-2lss-data.txt", Label="Flips", FillStyle=3006, NormSystematic=0.3
-flips_data: MuonEG_Run2015D_Oct05_runs_256630_258158 ; FakeRate="ttH-multilepton/flipRate-2lss-data.txt", Label="Flips", FillStyle=3006, NormSystematic=0.3
-flips_data: MuonEG_Run2015D_PromptV4_runs_258159_260627 ; FakeRate="ttH-multilepton/flipRate-2lss-data.txt", Label="Flips", FillStyle=3006, NormSystematic=0.3
-flips_data: SingleElectron_Run2015C_Oct05_runs_254231_254914 ; FakeRate="ttH-multilepton/flipRate-2lss-data.txt", Label="Flips", FillStyle=3006, NormSystematic=0.3
-flips_data: SingleElectron_Run2015D_Oct05_runs_256630_258158 ; FakeRate="ttH-multilepton/flipRate-2lss-data.txt", Label="Flips", FillStyle=3006, NormSystematic=0.3
-flips_data: SingleElectron_Run2015D_PromptV4_runs_258159_260627 ; FakeRate="ttH-multilepton/flipRate-2lss-data.txt", Label="Flips", FillStyle=3006, NormSystematic=0.3
-flips_data: SingleMuon_Run2015C_Oct05_runs_254231_254914 ; FakeRate="ttH-multilepton/flipRate-2lss-data.txt", Label="Flips", FillStyle=3006, NormSystematic=0.3
-flips_data: SingleMuon_Run2015D_Oct05_runs_256630_258158 ; FakeRate="ttH-multilepton/flipRate-2lss-data.txt", Label="Flips", FillStyle=3006, NormSystematic=0.3
-flips_data: SingleMuon_Run2015D_PromptV4_runs_258159_260627 ; FakeRate="ttH-multilepton/flipRate-2lss-data.txt", Label="Flips", FillStyle=3006, NormSystematic=0.3
-
-WWss: WpWpJJ : xsec : LepGood1_mcMatchId != 0 && LepGood2_mcMatchId != 0 ; FillColor=ROOT.kOrange-3
-
-Rares: WWDouble : xsec : LepGood1_mcMatchId != 0 && LepGood2_mcMatchId != 0 ; FillColor=ROOT.kMagenta-7
-Rares: WWZ : xsec : LepGood1_mcMatchId != 0 && LepGood2_mcMatchId != 0 ; FillColor=ROOT.kMagenta-7
-Rares: WZZ : xsec : LepGood1_mcMatchId != 0 && LepGood2_mcMatchId != 0 ; FillColor=ROOT.kMagenta-7
-Rares: ZZZ : xsec : LepGood1_mcMatchId != 0 && LepGood2_mcMatchId != 0 ; FillColor=ROOT.kMagenta-7
-Rares: TTTT : xsec : LepGood1_mcMatchId != 0 && LepGood2_mcMatchId != 0 ; FillColor=ROOT.kMagenta-7
-Rares: tZq_ll : xsec : LepGood1_mcMatchId != 0 && LepGood2_mcMatchId != 0 ; FillColor=ROOT.kMagenta-7
-
+flips_data: DoubleEG_Run2015C_Oct05_runs_254231_254914 ; FakeRate="ttH-multilepton/flipRate-2lss-frdata.txt", Label="Flips", FillColor=ROOT.kBlack, FillStyle=3006, NormSystematic=0.3
+flips_data: DoubleEG_Run2015D_Oct05_runs_256630_258158 ; FakeRate="ttH-multilepton/flipRate-2lss-frdata.txt", Label="Flips", FillColor=ROOT.kBlack, FillStyle=3006, NormSystematic=0.3
+flips_data: DoubleEG_Run2015D_PromptV4_runs_258159_260627 ; FakeRate="ttH-multilepton/flipRate-2lss-frdata.txt", Label="Flips", FillColor=ROOT.kBlack, FillStyle=3006, NormSystematic=0.3
+flips_data: DoubleMuon_Run2015C_Oct05_runs_254231_254914 ; FakeRate="ttH-multilepton/flipRate-2lss-frdata.txt", Label="Flips", FillColor=ROOT.kBlack, FillStyle=3006, NormSystematic=0.3
+flips_data: DoubleMuon_Run2015D_Oct05_runs_256630_258158 ; FakeRate="ttH-multilepton/flipRate-2lss-frdata.txt", Label="Flips", FillColor=ROOT.kBlack, FillStyle=3006, NormSystematic=0.3
+flips_data: DoubleMuon_Run2015D_PromptV4_runs_258159_260627 ; FakeRate="ttH-multilepton/flipRate-2lss-frdata.txt", Label="Flips", FillColor=ROOT.kBlack, FillStyle=3006, NormSystematic=0.3
+flips_data: MuonEG_Run2015C_Oct05_runs_254231_254914 ; FakeRate="ttH-multilepton/flipRate-2lss-frdata.txt", Label="Flips", FillColor=ROOT.kBlack, FillStyle=3006, NormSystematic=0.3
+flips_data: MuonEG_Run2015D_Oct05_runs_256630_258158 ; FakeRate="ttH-multilepton/flipRate-2lss-frdata.txt", Label="Flips", FillColor=ROOT.kBlack, FillStyle=3006, NormSystematic=0.3
+flips_data: MuonEG_Run2015D_PromptV4_runs_258159_260627 ; FakeRate="ttH-multilepton/flipRate-2lss-frdata.txt", Label="Flips", FillColor=ROOT.kBlack, FillStyle=3006, NormSystematic=0.3
+flips_data: SingleElectron_Run2015C_Oct05_runs_254231_254914 ; FakeRate="ttH-multilepton/flipRate-2lss-frdata.txt", Label="Flips", FillColor=ROOT.kBlack, FillStyle=3006, NormSystematic=0.3
+flips_data: SingleElectron_Run2015D_Oct05_runs_256630_258158 ; FakeRate="ttH-multilepton/flipRate-2lss-frdata.txt", Label="Flips", FillColor=ROOT.kBlack, FillStyle=3006, NormSystematic=0.3
+flips_data: SingleElectron_Run2015D_PromptV4_runs_258159_260627 ; FakeRate="ttH-multilepton/flipRate-2lss-frdata.txt", Label="Flips", FillColor=ROOT.kBlack, FillStyle=3006, NormSystematic=0.3
+flips_data: SingleMuon_Run2015C_Oct05_runs_254231_254914 ; FakeRate="ttH-multilepton/flipRate-2lss-frdata.txt", Label="Flips", FillColor=ROOT.kBlack, FillStyle=3006, NormSystematic=0.3
+flips_data: SingleMuon_Run2015D_Oct05_runs_256630_258158 ; FakeRate="ttH-multilepton/flipRate-2lss-frdata.txt", Label="Flips", FillColor=ROOT.kBlack, FillStyle=3006, NormSystematic=0.3
+flips_data: SingleMuon_Run2015D_PromptV4_runs_258159_260627 ; FakeRate="ttH-multilepton/flipRate-2lss-frdata.txt", Label="Flips", FillColor=ROOT.kBlack, FillStyle=3006, NormSystematic=0.3

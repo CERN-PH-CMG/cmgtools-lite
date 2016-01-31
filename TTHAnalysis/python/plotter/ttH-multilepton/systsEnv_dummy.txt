@@ -1,0 +1,23 @@
+lumi      : ttH.*|TT[WZ] : .* : 1.046
+
+lepeff	  : ttH.*|TT[WZ] : .* : 1.04
+trigeff	  : ttH.*|TT[WZ] : .* : 1.05
+
+ttWZ_norm : TT[WZ] : .* : 1.20
+
+fakes_norm : TT : .* : 1.20
+fakes_norm : DY : .* : 1.20
+fakes_norm : WJetsFR : .* : 1.20
+fakes_norm : SingleTop : .* : 1.20
+fakes_norm : WW : .* : 1.20
+
+fakes_shape : TT : .* : 1.30 : shapeOnly
+fakes_shape : DY : .* : 1.30 : shapeOnly
+fakes_shape : WJetsFR : .* : 1.30 : shapeOnly
+fakes_shape : SingleTop : .* : 1.30 : shapeOnly
+fakes_shape : WW : .* : 1.30 : shapeOnly
+
+rares_norm : Rares : .* : 1.50
+
+diboson_norm : WZ : .* : 1.20
+diboson_norm : ZZ : .* : 1.20

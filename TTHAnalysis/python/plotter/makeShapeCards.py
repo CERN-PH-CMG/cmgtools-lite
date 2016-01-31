@@ -18,14 +18,18 @@ options.weight = True
 options.final  = True
 options.allProcesses  = True
 
+if "/functions_cc.so" not in ROOT.gSystem.GetLibraries(): 
+    ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/TTHAnalysis/python/plotter/functions.cc+" % os.environ['CMSSW_BASE']);
+
 mca  = MCAnalysis(args[0],options)
 cuts = CutsFile(args[1],options)
 
 truebinname = os.path.basename(args[1]).replace(".txt","") if options.outname == None else options.outname
 binname = truebinname if truebinname[0] not in "234" else "ttH_"+truebinname
+print binname
 outdir  = options.outdir+"/" if options.outdir else ""
 
-masses = [ 125.7 ]
+masses = [ 125.0 ]
 if options.masses:
     masses = [ float(x) for x in open(options.masses) ]
 
@@ -42,8 +46,9 @@ def file2map(x):
             fields = [ float(i) for i in cols ]
             ret[fields[0]] = dict(zip(headers,fields[1:]))
     return ret
-YRpath = os.environ['CMSSW_RELEASE_BASE']+"/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/";
-XStth = file2map(YRpath+"xs/8TeV/8TeV-ttH.txt")
+#YRpath = os.environ['CMSSW_RELEASE_BASE']+"/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/";
+YRpath = '/afs/cern.ch/user/p/peruzzi/work/cmgtools/combine/CMSSW_7_4_14/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/'
+#XStth = file2map(YRpath+"xs/8TeV/8TeV-ttH.txt")
 BRhvv = file2map(YRpath+"br/BR2bosons.txt")
 BRhff = file2map(YRpath+"br/BR2fermions.txt")
 def mkspline(table,column,sf=1.0):
@@ -57,11 +62,23 @@ def mkspline(table,column,sf=1.0):
     spline._x = x
     spline._y = y
     return spline
+def mkOneSpline():
+    pairs = [ (100*x,1) for x in range(10) ]
+    pairs.sort()
+    x,y = ROOT.std.vector('double')(), ROOT.std.vector('double')()
+    for xi,yi in pairs:
+        x.push_back(xi) 
+        y.push_back(yi) 
+    spline = ROOT.ROOT.Math.Interpolator(x,y);
+    spline._x = x
+    spline._y = y
+    return spline
 splines = {
-    'ttH' : mkspline(XStth, "XS_pb",   0.1271 * 1.00757982823 ), ## get 1 at 125.7
-    'hww' : mkspline(BRhvv, "H_WW",    0.2262 ),
-    'hzz' : mkspline(BRhvv, "H_ZZ",    0.0281 ),
-    'htt' : mkspline(BRhff, "H_tautau",0.0620 ),
+    'ttH' : mkOneSpline(),
+#    'ttH' : mkspline(XStth, "XS_pb",   0.1271 * 1.00757982823 ), ## get 1 at 125.7
+    'hww' : mkspline(BRhvv, "H_WW",    2.15e-01 ),
+    'hzz' : mkspline(BRhvv, "H_ZZ",    2.64e-02 ),
+    'htt' : mkspline(BRhff, "H_tautau",6.32e-02 ),
 }
 def getYieldScale(mass,process):
     if "ttH_" not in process: return 1.0
@@ -105,14 +122,14 @@ for sysfile in args[4:]:
             raise RuntimeError, "Malformed line %s in file %s"%(line.strip(),sysfile)
         elif len(field) == 4 or field[4] == "lnN":
             (name, procmap, binmap, amount) = field[:4]
-            if re.match(binmap,truebinname) == None: continue
+            if re.match(binmap+"$",truebinname) == None: continue
             if name not in systs: systs[name] = []
-            systs[name].append((re.compile(procmap),amount))
+            systs[name].append((re.compile(procmap+"$"),amount))
         elif field[4] in ["envelop","shapeOnly","templates","alternateShapeOnly"]:
             (name, procmap, binmap, amount) = field[:4]
-            if re.match(binmap,truebinname) == None: continue
+            if re.match(binmap+"$",truebinname) == None: continue
             if name not in systs: systsEnv[name] = []
-            systsEnv[name].append((re.compile(procmap),amount,field[4]))
+            systsEnv[name].append((re.compile(procmap+"$"),amount,field[4]))
         else:
             raise RuntimeError, "Unknown systematic type %s" % field[4]
     if options.verbose:
@@ -307,6 +324,7 @@ for mass in masses:
         datacard.write("shapes ttH_htt  * ../common/%s.input.root x_$PROCESS$MASS x_$PROCESS$MASS_$SYSTEMATIC\n" % binname)
     else:
         myyields = dict([(k,v) for (k,v) in allyields.iteritems()]) 
+        if not os.path.exists(myout): os.mkdir(myout)
         datacard = open(myout+binname+".card.txt", "w"); 
         datacard.write("## Datacard for cut file %s\n"%args[1])
         datacard.write("shapes *        * %s.input.root x_$PROCESS x_$PROCESS_$SYSTEMATIC\n" % binname)
@@ -336,6 +354,7 @@ for mass in masses:
 if len(masses) > 1:
     myout = outdir
     myyields = dict([(k,-1 if "ttH" in k else v) for (k,v) in allyields.iteritems()]) 
+    if not os.path.exists(myout): os.mkdir(myout)
     datacard = open(myout+binname+".card.txt", "w"); 
     datacard.write("## Datacard for cut file %s (all massess, taking signal normalization from templates)\n")
     datacard.write("shapes *        * common/%s.input.root x_$PROCESS x_$PROCESS_$SYSTEMATIC\n" % binname)

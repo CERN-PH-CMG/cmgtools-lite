@@ -18,6 +18,9 @@ ele conv cuts: (abs(LepGood1_pdgId)!=11 || (LepGood1_convVeto && LepGood1_lostHi
 2b: nBJetLoose25 >= 2 ; Disable=True
 1B: nBJetMedium25 >= 1 ; Disable=True
 2B: nBJetMedium25 >= 2 ; Disable=True
+BLoose: nBJetMedium25 < 2 ; Disable=True
+BTight: nBJetMedium25 >= 2 ; Disable=True
 Bveto: nBJetMedium25 == 0 ; Disable=True
 0tau: nTauGood==0 ; Disable=True
 1tau: nTauGood>=1 ; Disable=True
+tightMVA075: LepGood1_mvaTTH>0.75 && LepGood2_mvaTTH>0.75 && LepGood3_mvaTTH>0.75 ; Disable=True

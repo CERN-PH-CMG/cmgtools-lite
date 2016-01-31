@@ -308,6 +308,19 @@ from CMGTools.RootTools.samples.samples_13TeV_DATA2015 import *
 selectedComponents = [ TTLep_pow ];
 
 
+
+# for tth
+#selectedComponents = [WpWpJJ,TTGJets,TGJets,WGToLNuG,ZGTo2LG]
+#selectedComponentsB = [WWDouble,ZZTo4L,tZq_ll,GGHZZ4L,VHToNonbb,WWZ,ZZZ,WZZ,TTTT]
+# to do: single top, WJets, WWTo2L2Nu
+
+#selectedComponentsA = [TToLeptons_tch_amcatnlo,TToLeptons_sch_amcatnlo,T_tWch,TBar_tWch]
+#selectedComponentsB = [WWTo2L2Nu,WWDouble,WpWpJJ,WWZ,WZZ,ZZZ,TTTT,tZq_ll]
+#for c in selectedComponentsA: c.splitFactor = len(c.files)/2
+#for c in selectedComponentsB: c.splitFactor = len(c.files)
+#
+#selectedComponents = selectedComponentsA + selectedComponentsB
+
 #selectedComponents = SMS_miniAODv2_T1tttt
 #susyCounter.SMS_varying_masses = ['genSusyMGluino','genSusyMNeutralino']
 
