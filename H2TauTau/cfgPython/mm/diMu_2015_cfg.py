@@ -172,10 +172,10 @@ if not cmssw:
 ###################################################
 if not production:
     # comp = DYJetsToLL_M50_LO
-    comp = sync_list[0]
-    # comp = [b for b in backgrounds_mu if b.name == 'DYJetsToLL_M50_LO'][0]
+    # comp = sync_list[0]
+    comp = [b for b in backgrounds_mu if b.name == 'DYJetsToLL_M50_LO'][0]
     selectedComponents = [comp]
-    comp.splitFactor = 5
+    comp.splitFactor = 1
 
 
 preprocessor = None

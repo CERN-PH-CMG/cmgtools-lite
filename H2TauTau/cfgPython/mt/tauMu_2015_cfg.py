@@ -82,10 +82,10 @@ for mc in samples:
 ###################################################
 ###             SET COMPONENTS BY HAND          ###
 ###################################################
-# selectedComponents = samples + data_list
+selectedComponents = samples + data_list
 # selectedComponents = data_list
 # selectedComponents = samples
-selectedComponents = [s for s in samples if s.name == 'HiggsSUSYGG160']
+# selectedComponents = [s for s in samples if s.name == 'HiggsSUSYGG160']
 
 ###################################################
 ###             CHERRY PICK EVENTS              ###
@@ -109,11 +109,11 @@ if not cmssw:
 if not production:
     cache = True
     # comp = samples[0]
-    # comp = sync_list[0]
-    # selectedComponents = [comp]
-    selectedComponents = [selectedComponents[0]]
-    comp = selectedComponents[0]
-    comp.splitFactor = 1
+    comp = sync_list[0]
+    selectedComponents = [comp]
+    # selectedComponents = [selectedComponents[0]]
+    # comp = selectedComponents[0]
+    comp.splitFactor = 5
     comp.fineSplitFactor = 1
     # comp.files = comp.files[]
 

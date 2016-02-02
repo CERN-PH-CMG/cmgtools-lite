@@ -201,7 +201,7 @@ if not production:
     # comp = my_connect.mc_dict['HiggsGGH125']
     comp = sync_list[0]
     selectedComponents = [comp]
-    comp.splitFactor = 1
+    comp.splitFactor = 5
     comp.fineSplitFactor = 1
 #    comp.files = comp.files[:1]
 
