@@ -57,10 +57,10 @@ class TwoLeptonAnalyzer( Analyzer ):
         return lepton.tightId()
 
     def muonIsolation(self,lepton):
-        return lepton.relIsoAfterFSR < 0.4
+        return lepton.relIsoAfterFSR < 0.35
 
     def electronIsolation(self,lepton):
-        return lepton.relIsoAfterFSR < 0.5
+        return lepton.relIsoAfterFSR < 0.35
 
 
     def twoLeptonIsolation(self,twoLepton):

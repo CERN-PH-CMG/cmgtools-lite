@@ -11,7 +11,7 @@ hzz_globalVariables = [
 
 hzz_globalObjects = {
     "met" : NTupleObject("met", metType),
-    "metNoHF" : NTupleObject("metNoHF", metType)
+    #"metNoHF" : NTupleObject("metNoHF", metType)
 }
 
 

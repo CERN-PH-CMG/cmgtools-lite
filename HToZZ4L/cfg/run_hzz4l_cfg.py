@@ -11,25 +11,25 @@ from CMGTools.HToZZ4L.tools.configTools import *
 #-------- SAMPLES AND TRIGGERS -----------
 
 #-------- SEQUENCE
-from CMGTools.HToZZ4L.samples.samples_13TeV_Spring15 import *
+from CMGTools.HToZZ4L.samples.samples_13TeV_Fall15 import *
 
 selectedComponents = [ d for d in data_50ns if "SingleMu" not in d.name ]
 #redefineRunRange(selectedComponents,[258158,258158])
-#selectedComponents = [ DoubleMuon_Run2015D_PromptV4_25ns, DoubleEG_Run2015D_PromptV4_25ns, MuonEG_Run2015D_PromptV4_25ns, SingleMuon_Run2015D_PromptV4_25ns, SingleElectron_Run2015D_PromptV4_25ns ]
+#selectedComponents = [ DoubleMuon_Run2015D_16Dec2015_25ns, DoubleEG_Run2015D_16Dec2015_25ns, MuonEG_Run2015D_16Dec2015_25ns, SingleMuon_Run2015D_16Dec2015_25ns, SingleElectron_Run2015D_16Dec2015_25ns ]
 #redefineRunRange(selectedComponents,[258214,258214])
-selectedComponents = H4L + [ ZZTo4L, ZZTo4L_aMC ] + GGZZTo4L + [DYJetsToLL_M10to50,DYJetsToLL_M50] + [ WZTo3LNu, TTLep ] + SingleTop
-selectedComponents = H4L + GGZZTo4L + [DYJetsToLL_M10to50,DYJetsToLL_M50] + [ WZTo3LNu, TTLep ] + SingleTop
-cropToLumi( [DYJetsToLL_M10to50,DYJetsToLL_M50,TTLep]+SingleTop, 100.0 )
-cropToLumi( [ZZTo4L, ZZTo4L_aMC]+GGZZTo4L, 500.0 )
-cropToLumi( H4L, 10000.0 )
-configureSplittingFromTime(DYJets+SingleTop+[WZTo3LNu,TTLep,GGZZTo4tau], 10.0, 1)
-configureSplittingFromTime([DYJetsToLL_M10to50], 5.0, 1)
-configureSplittingFromTime([ ZZTo4L, ZZTo4L_aMC, GGZZTo2mu2tau, GGZZTo2e2tau ], 25.0, 1)
-configureSplittingFromTime( H4L + [ GGZZTo4mu, GGZZTo4e, GGZZTo2e2mu], 100.0, 1)
-selectedComponents = [ DYJetsToLL_M50, DYJetsToLL_LO_M50, DYBJetsToLL, DYBBJetsToLL ] + DYJetsM50HT
-configureSplittingFromTime(selectedComponents, 20.0, 1)
-configureSplittingFromTime([DYJetsToLL_M50_HT400to600], 40.0, 1)
-configureSplittingFromTime([DYJetsToLL_M50_HT600toInf], 60.0, 1)
+#selectedComponents = H4L + [ ZZTo4L, ZZTo4L_aMC ] + GGZZTo4L + [DYJetsToLL_M10to50,DYJetsToLL_M50] + [ WZTo3LNu, TTLep ] + SingleTop
+#selectedComponents = H4L + GGZZTo4L + [DYJetsToLL_M10to50,DYJetsToLL_M50] + [ WZTo3LNu, TTLep ] + SingleTop
+#cropToLumi( [DYJetsToLL_M10to50,DYJetsToLL_M50,TTLep]+SingleTop, 100.0 )
+#cropToLumi( [ZZTo4L, ZZTo4L_aMC]+GGZZTo4L, 500.0 )
+#cropToLumi( H4L, 10000.0 )
+#configureSplittingFromTime(DYJets+SingleTop+[WZTo3LNu,TTLep,GGZZTo4tau], 10.0, 1)
+#configureSplittingFromTime([DYJetsToLL_M10to50], 5.0, 1)
+#configureSplittingFromTime([ ZZTo4L, ZZTo4L_aMC, GGZZTo2mu2tau, GGZZTo2e2tau ], 25.0, 1)
+#configureSplittingFromTime( H4L + [ GGZZTo4mu, GGZZTo4e, GGZZTo2e2mu], 100.0, 1)
+#selectedComponents = [ DYJetsToLL_M50, DYJetsToLL_LO_M50, DYBJetsToLL, DYBBJetsToLL ] + DYJetsM50HT
+#configureSplittingFromTime(selectedComponents, 20.0, 1)
+#configureSplittingFromTime([DYJetsToLL_M50_HT400to600], 40.0, 1)
+#configureSplittingFromTime([DYJetsToLL_M50_HT600toInf], 60.0, 1)
 
 sequence = cfg.Sequence(hzz4lCoreSequence)
 
@@ -38,7 +38,7 @@ for comp in mcSamples:
     comp.vetoTriggers = []
 
 
-doECalCorrections(era="25ns")
+#doECalCorrections(era="25ns")
 
 if not getHeppyOption("test"):
     printSummary(selectedComponents)
@@ -57,17 +57,14 @@ elif test == "1F":
 elif test in ('2','3','5'):
     doTestN(test,selectedComponents)
 elif test == "data":
-    selectedComponents = doTest1( DoubleMuon_Run2015D_05Oct2015_25ns, 
-                            url = 'root://eoscms//eos/cms/store/data/Run2015D/DoubleMuon/MINIAOD/05Oct2015-v1/40000/006906D0-646F-E511-B01E-0025905A6118.root',
-                            sequence=sequence )
+    selectedComponents = doTest1( DoubleMuon_Run2015D_16Dec2015_25ns, sequence=sequence )
 elif test=="sync":
     comp = GGHZZ4L
     comp.name = 'HZZ4L'
     comp.files = [ 'root://eoscms.cern.ch//eos/cms'+X for X in (
-        '/store/mc/RunIISpring15MiniAODv2/VBF_HToZZTo4L_M125_13TeV_powheg_JHUgen_pythia8/MINIAODSIM/74X_mcRun2_asymptotic_v2-v1/30000/3E964C5D-1D6E-E511-8B9A-0050560207C5.root',
-        '/store/mc/RunIISpring15MiniAODv2/WminusH_HToZZTo4L_M125_13TeV_powheg-minlo-HWJ_JHUgen_pythia8/MINIAODSIM/74X_mcRun2_asymptotic_v2-v1/30000/D8CA6B54-056F-E511-BB1A-02163E014CE3.root',
-        '/store/mc/RunIISpring15MiniAODv2/WplusH_HToZZTo4L_M125_13TeV_powheg-minlo-HWJ_JHUgen_pythia8/MINIAODSIM/74X_mcRun2_asymptotic_v2-v1/40000/D22BEE88-C26D-E511-B330-002590A81EF0.root',
-        '/store/mc/RunIISpring15MiniAODv2/ttH_HToZZ_4LFilter_M125_13TeV_powheg_JHUgen_pythia8/MINIAODSIM/74X_mcRun2_asymptotic_v2-v1/80000/84F62DD7-1475-E511-9F59-009C02AB98A6.root'
+    '/store/mc/RunIIFall15MiniAODv1/VBF_HToZZTo4L_M125_13TeV_powheg2_JHUgenV6_pythia8/MINIAODSIM/PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/00000/E2490ECF-CBA7-E511-9B19-001E67398458.root', 
+    '/store/mc/RunIIFall15MiniAODv1/WminusH_HToZZTo4L_M125_13TeV_powheg2-minlo-HWJ_JHUgenV6_pythia8/MINIAODSIM/PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/50000/282C35FB-68A3-E511-A0C4-0CC47A4C8E5E.root',
+    '/store/mc/RunIIFall15MiniAODv1/WplusH_HToZZTo4L_M125_13TeV_powheg2-minlo-HWJ_JHUgenV6_pythia8/MINIAODSIM/PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/20000/E2DA5AA7-C5AC-E511-97E0-0CC47A4C8E98.root', 
     )]
     if getHeppyOption('turbo'):
         comp.fineSplitFactor = int(getHeppyOption('turbo'))
@@ -77,7 +74,7 @@ elif test=="sync":
         comp.splitFactor = 1 if getHeppyOption('single') else 5
     selectedComponents = [ comp ]
     if getHeppyOption('events'): insertEventSelector(sequence)
-    doECalCorrections(sync=True)
+    #doECalCorrections(sync=True)
     
 
 config = autoConfig(selectedComponents, sequence)
