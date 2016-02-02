@@ -254,38 +254,7 @@ class TauMuAnalyzer(DiLeptonAnalyzer):
         if len(diLeptons) == 1:
             return diLeptons[0]
 
-        least_iso_highest_pt = lambda dl: (dl.leg1().relIsoR(R=0.3, dBetaFactor=0.5, allCharged=0), -dl.leg1().pt(), dl.leg2().tauID("byCombinedIsolationDeltaBetaCorrRaw3Hits"), -dl.leg2().pt())
+        least_iso_highest_pt = lambda dl: (dl.leg1().relIsoR(R=0.3, dBetaFactor=0.5, allCharged=0), -dl.leg1().pt(), -dl.leg2().tauID("byIsolationMVArun2v1DBnewDMwLTraw"), -dl.leg2().pt())
 
         return sorted(diLeptons, key=lambda dil : least_iso_highest_pt(dil))[0]
 
-        # minRelIso = min(d.leg1().relIsoR(R=0.3, dBetaFactor=0.5, allCharged=0) for d in diLeptons)
-
-        # diLeps = [dil for dil in diLeptons if dil.leg1().relIsoR(R=0.3, dBetaFactor=0.5, allCharged=0) == minRelIso]
-
-        # if len(diLeps) == 1:
-        #     return diLeps[0]
-
-        # maxPt = max(d.leg1().pt() for d in diLeps)
-
-        # diLeps = [dil for dil in diLeps if dil.leg1().pt() == maxPt]
-
-        # if len(diLeps) == 1:
-        #     return diLeps[0]
-
-        # minIso = min(d.leg2().tauID("byCombinedIsolationDeltaBetaCorrRaw3Hits") for d in diLeps)
-
-        # diLeps = [dil for dil in diLeps if dil.leg2().tauID("byCombinedIsolationDeltaBetaCorrRaw3Hits") == minIso]
-
-        # if len(diLeps) == 1:
-        #     return diLeps[0]
-
-        # maxPt = max(d.leg2().pt() for d in diLeps)
-
-        # diLeps = [dil for dil in diLeps if dil.leg2().pt() == maxPt]
-
-        # if len(diLeps) != 1:
-        #     print 'ERROR in finding best dilepton', diLeps
-        #     import pdb
-        #     pdb.set_trace()
-
-        # return diLeps[0]

@@ -206,7 +206,7 @@ class TauTauAnalyzer(DiLeptonAnalyzer):
         2nd precedence most isolated).'''
         # osDiLeptons = [dl for dl in diLeptons if dl.leg1().charge() != dl.leg2().charge()]
         # least_iso_highest_pt = lambda dl : min((dl.leg1().tauID(self.cfg_ana.isolation), -dl.leg1().pt()), (dl.leg2().tauID(self.cfg_ana.isolation), -dl.leg2().pt()))
-        least_iso_highest_pt = lambda dl: (dl.leg1().tauID(self.cfg_ana.isolation), -dl.leg1().pt(), dl.leg2().tauID(self.cfg_ana.isolation), -dl.leg2().pt())
+        least_iso_highest_pt = lambda dl: (-dl.leg1().tauID(self.cfg_ana.isolation), -dl.leg1().pt(), -dl.leg2().tauID(self.cfg_ana.isolation), -dl.leg2().pt())
         # set reverse = True in case the isolation changes to MVA
         # in that case the least isolated is the one with the lowest MVAscore
         # if osDiLeptons : return sorted(osDiLeptons, key=lambda dl : least_iso(dl), reverse=False)[0]

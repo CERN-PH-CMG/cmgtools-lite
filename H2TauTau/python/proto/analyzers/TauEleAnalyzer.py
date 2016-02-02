@@ -300,9 +300,9 @@ class TauEleAnalyzer(DiLeptonAnalyzer):
         if len(diLeps) == 1:
             return diLeps[0]
 
-        minIso = min(d.leg2().tauID("byCombinedIsolationDeltaBetaCorrRaw3Hits") for d in diLeps)
+        minIso = min(-d.leg2().tauID("byIsolationMVArun2v1DBnewDMwLTraw") for d in diLeps)
 
-        diLeps = [dil for dil in diLeps if dil.leg2().tauID("byCombinedIsolationDeltaBetaCorrRaw3Hits") == minIso]
+        diLeps = [dil for dil in diLeps if -dil.leg2().tauID("byIsolationMVArun2v1DBnewDMwLTraw") == minIso]
 
         if len(diLeps) == 1:
             return diLeps[0]
