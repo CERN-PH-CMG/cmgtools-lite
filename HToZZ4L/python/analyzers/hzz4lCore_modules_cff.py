@@ -27,6 +27,11 @@ fastSkim2L = fastSkim2LnoSip.clone(name="fastLepSkim2L",
 )
 fastSkim3L = fastSkim2L.clone(name="fastLepSkim3L", minLeptons = 3)
 fastSkim4L = fastSkim2L.clone(name="fastLepSkim3L", minLeptons = 4)
+fastSkim2Mu3 = fastSkim2LnoSip.clone(name="fastLepSkim2Mu3",
+        muCut = lambda mu : mu.pt() > 3 and abs(mu.dB(mu.PV3D) / mu.edB(mu.PV3D)) < 4,
+        eleCut = lambda ele : False,
+)
+
 
 genAna = cfg.Analyzer(
     GeneratorAnalyzer, name="GeneratorAnalyzer",
@@ -339,8 +344,8 @@ def doECalCorrections(sync=False,era="25ns"):
 def doKalmanMuonCorrections(sync=False):
     global lepAna, fastSkim4L, fastSkim2L, fastSkim3L
     lepAna.doMuonScaleCorrections = ( 'Kalman', {
-        'MC': 'MC_74X_13TeV',
-        'Data': 'DATA_Prompt_13TeV',
+        'MC': 'MC_76X_13TeV',
+        'Data': 'DATA_76X_13TeV',
         'isSync': sync
     })
     fastSkim2L.muCut = lambda mu : mu.pt() > 3 and (abs(mu.dB(mu.PV3D)) <= 4*mu.edB(mu.PV3D))
