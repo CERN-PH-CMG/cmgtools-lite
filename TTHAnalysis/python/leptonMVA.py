@@ -48,17 +48,7 @@ class CategorizedMVA:
 _CommonSpect = [ 
 ]
 _CommonVars = {
- 'WithPtV2':[ 
-    MVAVar("LepGood_pt",lambda x: x.pt()),
-    MVAVar("LepGood_miniRelIsoCharged",lambda x: getattr(x,'miniAbsIsoCharged',-99)/x.pt()), 
-    MVAVar("LepGood_miniRelIsoNeutral",lambda x: getattr(x,'miniAbsIsoNeutral',-99)/x.pt()), 
-    MVAVar("LepGood_jetPtRelv2", lambda x : ptRelv2(x) if hasattr(x,'jet') else -1),
-    MVAVar("LepGood_jetPtRatio := min(LepGood_jetPtRatio_LepAwareJECv2,1.5)", lambda x : min((x.pt()/jetLepAwareJEC(x).Pt() if hasattr(x,'jet') else -1), 1.5)),
-    MVAVar("LepGood_jetBTagCSV := max(LepGood_jetBTagCSV,0)", lambda x : max( (x.jet.btag('pfCombinedInclusiveSecondaryVertexV2BJetTags') if hasattr(x.jet, 'btag') else -99) ,0.)),
-    MVAVar("LepGood_sip3d",lambda x: x.sip3D()),
-    MVAVar("LepGood_dxy := log(abs(LepGood_dxy))",lambda x: log(abs(x.dxy()))),
-    MVAVar("LepGood_dz  := log(abs(LepGood_dz))", lambda x: log(abs(x.dz()))),
- ], 'forMoriond16':[ 
+ 'forMoriond16':[ 
     MVAVar("LepGood_pt",lambda x: x.pt()),
     MVAVar("LepGood_eta",lambda x: x.eta()),
     MVAVar("LepGood_jetNDauChargedMVASel",lambda lepton: sum((deltaR(x.eta(),x.phi(),lepton.jet.eta(),lepton.jet.phi())<=0.4 and x.charge()!=0 and x.fromPV()>1 and qualityTrk(x.pseudoTrack(),lepton.associatedVertex)) for x in lepton.jet.daughterPtrVector()) if hasattr(lepton,'jet') and lepton.jet != lepton else 0),
@@ -74,18 +64,14 @@ _CommonVars = {
 }
 
 _MuonVars = {
- 'WithPtV2': [
-    MVAVar("LepGood_segmentCompatibility",lambda x: x.segmentCompatibility()), 
- ], 'forMoriond16': [
+ 'forMoriond16': [
     MVAVar("LepGood_segmentCompatibility",lambda x: x.segmentCompatibility()), 
  ],
 }
 
 _ElectronVars = {
- 'WithPtV2': [
-    MVAVar("LepGood_mvaIdPhys14",lambda x: x.mvaRun2("NonTrigPhys14")),    
- ], 'forMoriond16': [
-    MVAVar("LepGood_mvaIdSpring15",lambda x: x.mvaRun2("NonTrigSpring15")),
+ 'forMoriond16': [
+    MVAVar("LepGood_mvaIdSpring15",lambda x: x.mvaRun2("NonTrigSpring15MiniAOD")),
  ]
 
 }
