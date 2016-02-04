@@ -289,7 +289,7 @@ class DiLeptonAnalyzer(Analyzer):
         '''Returns the best diLepton (the one with highest pt1 + pt2).'''
         return max(diLeptons, key=operator.methodcaller('sumPt'))
 
-    def trigMatched(self, event, diL, requireAllMatched=False, ptMin=None,  etaMax=None, relaxIds=[11, 15], onlyLeg1=False):
+    def trigMatched(self, event, diL, requireAllMatched=False, ptMin=None,  etaMax=None, relaxIds=[11, 15], onlyLeg1=False, checkBothLegs=False):
         '''Check that at least one trigger object per pgdId from a given trigger 
         has a matched leg with the same pdg ID. If requireAllMatched is True, 
         requires that each single trigger object has a match.'''
@@ -325,6 +325,7 @@ class DiLeptonAnalyzer(Analyzer):
                 continue
 
             matchedIds = []
+            matchedLegs = []
             allMatched = True
             
             for to in info.objects:
@@ -332,7 +333,9 @@ class DiLeptonAnalyzer(Analyzer):
                     continue
                 if etaMax and abs(to.eta()) > etaMax:
                     continue
-                if self.trigObjMatched(to, legs, relaxIds=relaxIds):
+                toMatched, objMatchedLegs = self.trigObjMatched(to, legs, relaxIds=relaxIds)
+                matchedLegs += objMatchedLegs
+                if toMatched:
                     matchedIds.append(abs(to.pdgId()))
                 else:
                     allMatched = False
@@ -341,6 +344,12 @@ class DiLeptonAnalyzer(Analyzer):
                len(matchedIds) >= len(legs) * sameFlavour:
                 if requireAllMatched and not allMatched:
                     matched = False
+                elif checkBothLegs:
+                    if all(l in matchedLegs for l in legs):
+                        matched = True
+                        diL.matchedPaths.add(info.name)
+                    else:
+                        matched = False
                 else:
                     matched = True
                     diL.matchedPaths.add(info.name)
@@ -354,6 +363,7 @@ class DiLeptonAnalyzer(Analyzer):
         phi = to.phi()
         pdgId = abs(to.pdgId())
         to.matched = False
+        matchedLegs = []
         for leg in legs:
             # JAN - Single-ele trigger filter has pdg ID 0, to be understood
             # RIC - same seems to happen with di-tau
@@ -364,10 +374,11 @@ class DiLeptonAnalyzer(Analyzer):
                (pdgId == 0 and abs(leg.pdgId()) in relaxIds):
                 if deltaR2(eta, phi, leg.eta(), leg.phi()) < dR2Max:
                     to.matched = True
+                    matchedLegs.append(leg)
                     if hasattr(leg, 'triggerobjects'):
                         if to not in leg.triggerobjects:
                             leg.triggerobjects.append(to)
                     else:
                         leg.triggerobjects = [to]
 
-        return to.matched
+        return to.matched, matchedLegs
