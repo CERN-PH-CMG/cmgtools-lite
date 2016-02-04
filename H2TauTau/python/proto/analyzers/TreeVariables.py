@@ -43,6 +43,7 @@ event_vars = [
 # di-tau object variables
 ditau_vars = [
     Variable('mvis', lambda dil : dil.mass()),
+    Variable('mt_total', lambda dil : dil.mtTotal()),
     Variable('svfit_mass', lambda dil : dil.svfitMass()),
     Variable('svfit_transverse_mass', lambda dil : dil.svfitTransverseMass()),
     Variable('svfit_mass_error', lambda dil : dil.svfitMassError()),
@@ -91,7 +92,7 @@ lepton_vars = [
     Variable('reliso05_04', lambda lep : lep.relIsoR(R=0.4, dBetaFactor=0.5, allCharged=0)),
     Variable('dxy', lambda lep : lep.dxy()),
     Variable('dxy_error', lambda lep : lep.edxy() if hasattr(lep, 'edxy') else lep.dxy_error()),
-    Variable('dz', lambda lep : lep.dz()),
+    Variable('dz', lambda lep : lep.leadChargedHadrCand().dz() if hasattr(lep, 'leadChargedHadrCand') else lep.dz()),
     Variable('dz_error', lambda lep : lep.edz() if hasattr(lep, 'edz') else -1.),
     Variable('weight'),
     Variable('weight_trigger', lambda lep : getattr(lep, 'weight_trigger', -999.)),

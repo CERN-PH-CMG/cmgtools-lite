@@ -87,7 +87,7 @@ class TauTauAnalyzer(DiLeptonAnalyzer):
 
         # RIC: agreed with Adinda to sort taus by isolation
         iso = self.cfg_ana.isolation
-        if event.leg1.tauID(iso) > event.leg2.tauID(iso):
+        if event.leg1.tauID(iso) < event.leg2.tauID(iso):
             event.leg1 = event.diLepton.leg2()
             event.leg2 = event.diLepton.leg1()
             event.selectedLeptons = [event.leg2, event.leg1]

@@ -22,11 +22,11 @@ from CMGTools.H2TauTau.htt_ntuple_base_cff import commonSequence, genAna, dyJets
 
 # mu-mu specific configuration settings
 
-syncntuple = True
+syncntuple = False
 pick_events = False
 computeSVfit = False
-production = False
-cmssw = False
+production = True
+cmssw = True
 
 # When ready, include weights from CMGTools.H2TauTau.proto.weights.weighttable
 mc_tauEffWeight_mc = None
@@ -138,8 +138,8 @@ for mc in samples:
 ###             SET COMPONENTS BY HAND          ###
 ###################################################
 selectedComponents = samples
-selectedComponents = data_list
-selectedComponents = samples + data_list
+# selectedComponents = data_list
+# selectedComponents = samples + data_list
 # selectedComponents = [ggh160]
 # for c in selectedComponents : c.splitFactor *= 5
 
@@ -181,7 +181,8 @@ if not production:
 preprocessor = None
 if cmssw:
     sequence.append(fileCleaner)
-    preprocessor = CmsswPreprocessor("$CMSSW_BASE/src/CMGTools/H2TauTau/prod/h2TauTauMiniAOD_mumu_cfg.py", addOrigAsSecondary=False)
+    preprocessor = CmsswPreprocessor(
+        "$CMSSW_BASE/src/CMGTools/H2TauTau/prod/h2TauTauMiniAOD_mumu_cfg.py", addOrigAsSecondary=False)
 
 # the following is declared in case this cfg is used in input to the
 # heppy.py script
@@ -195,6 +196,3 @@ config = cfg.Config(components=selectedComponents,
 
 printComps(config.components, True)
 
-
-def modCfgForPlot(config):
-    config.components = []
