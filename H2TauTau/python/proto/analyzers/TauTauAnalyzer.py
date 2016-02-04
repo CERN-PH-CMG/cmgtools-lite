@@ -87,7 +87,7 @@ class TauTauAnalyzer(DiLeptonAnalyzer):
 
         # RIC: agreed with Adinda to sort taus by isolation
         iso = self.cfg_ana.isolation
-        if event.leg1.tauID(iso) > event.leg2.tauID(iso):
+        if event.leg1.tauID(iso) < event.leg2.tauID(iso):
             event.leg1 = event.diLepton.leg2()
             event.leg2 = event.diLepton.leg1()
             event.selectedLeptons = [event.leg2, event.leg1]
@@ -149,7 +149,7 @@ class TauTauAnalyzer(DiLeptonAnalyzer):
             pyl.associatedVertex = event.goodVertices[0]
             pyl.rho = event.rho
             pyl.event = event
-            if not pyl.mvaIDRun2('NonTrigSpring15', 'POG90'):
+            if not pyl.mvaIDRun2('NonTrigSpring15MiniAOD', 'POG90'):
                 continue
             if not pyl.relIsoR(R=0.3, dBetaFactor=0.5, allCharged=0) < 0.3:
                 continue
@@ -206,7 +206,7 @@ class TauTauAnalyzer(DiLeptonAnalyzer):
         2nd precedence most isolated).'''
         # osDiLeptons = [dl for dl in diLeptons if dl.leg1().charge() != dl.leg2().charge()]
         # least_iso_highest_pt = lambda dl : min((dl.leg1().tauID(self.cfg_ana.isolation), -dl.leg1().pt()), (dl.leg2().tauID(self.cfg_ana.isolation), -dl.leg2().pt()))
-        least_iso_highest_pt = lambda dl: (dl.leg1().tauID(self.cfg_ana.isolation), -dl.leg1().pt(), dl.leg2().tauID(self.cfg_ana.isolation), -dl.leg2().pt())
+        least_iso_highest_pt = lambda dl: (-dl.leg1().tauID(self.cfg_ana.isolation), -dl.leg1().pt(), -dl.leg2().tauID(self.cfg_ana.isolation), -dl.leg2().pt())
         # set reverse = True in case the isolation changes to MVA
         # in that case the least isolated is the one with the lowest MVAscore
         # if osDiLeptons : return sorted(osDiLeptons, key=lambda dl : least_iso(dl), reverse=False)[0]

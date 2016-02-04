@@ -102,7 +102,7 @@ def createProcess(runOnMC=True, channel='di-mu', runSVFit=False,
     process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
     process.GlobalTag.globaltag = '76X_mcRun2_asymptotic_v12'
     if not runOnMC:
-        process.GlobalTag.globaltag = 'auto:run2'
+        process.GlobalTag.globaltag = '76X_dataRun2_v15'
 
 
     process.load('JetMETCorrections.Configuration.DefaultJEC_cff')

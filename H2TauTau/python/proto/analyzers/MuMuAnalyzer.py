@@ -79,10 +79,11 @@ class MuMuAnalyzer(DiLeptonAnalyzer):
     def buildDiLeptonsSingle(self, leptons, event):
         di_leptons = []
         met = self.handles['met'].product()[0]
-        for pat_muon1 in leptons:
+        for i_1, pat_muon1 in enumerate(leptons):
             muon1 = self.__class__.LeptonClass(pat_muon1)
-            for pat_muon2 in leptons:
-                if pat_muon1 == pat_muon2:
+            for i_2, pat_muon2 in enumerate(leptons):
+                # Keep only pairs with pT(muon1) > pT(muon2)
+                if i_2 <= i_1:
                     continue
 
                 muon2 = self.__class__.LeptonClass(pat_muon2)
@@ -183,7 +184,7 @@ class MuMuAnalyzer(DiLeptonAnalyzer):
         return muon.relIsoR(R=0.3, dBetaFactor=0.5, allCharged=0) < isocut    
 
     def testElectronID(self, electron):
-        return electron.mvaIDRun2('NonTrigSpring15', 'POG90')
+        return electron.mvaIDRun2('NonTrigSpring15MiniAOD', 'POG90')
 
     def thirdLeptonVeto(self, leptons, otherLeptons, ptcut=10, isocut=0.3):
         '''Tri-lepton veto. Returns False if > 2 leptons (e or mu).'''
@@ -215,7 +216,7 @@ class MuMuAnalyzer(DiLeptonAnalyzer):
 
     def trigMatched(self, event, diL, requireAllMatched=False):
         
-        matched = super(MuMuAnalyzer, self).trigMatched(event, diL, requireAllMatched=requireAllMatched, ptMin=18., etaMax=2.1)
+        matched = super(MuMuAnalyzer, self).trigMatched(event, diL, requireAllMatched=requireAllMatched, ptMin=18., etaMax=2.1, onlyLeg1=True)
 
         if matched and len(diL.matchedPaths) == 1 and diL.leg1().pt() < 25. and 'IsoMu24' in list(diL.matchedPaths)[0]:
             matched = False

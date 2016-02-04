@@ -55,7 +55,7 @@ def jsonPick( dataset, jsonMap):
     jsonFile = None
     for key, value in  jsonMap.iteritems():
         pat = re.compile(key)
-        if pat.match(baseDataSet):
+        if pat.match(baseDataSet) or pat.match(dataset):
             jsonFiles.append(value)
     if len(jsonFiles)==0:
         raise ValueError('No json file found for ' + dataset)

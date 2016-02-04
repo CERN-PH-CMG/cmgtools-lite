@@ -289,7 +289,7 @@ class DiLeptonAnalyzer(Analyzer):
         '''Returns the best diLepton (the one with highest pt1 + pt2).'''
         return max(diLeptons, key=operator.methodcaller('sumPt'))
 
-    def trigMatched(self, event, diL, requireAllMatched=False, ptMin=None,  etaMax=None, relaxIds=[11, 15]):
+    def trigMatched(self, event, diL, requireAllMatched=False, ptMin=None,  etaMax=None, relaxIds=[11, 15], onlyLeg1=False):
         '''Check that at least one trigger object per pgdId from a given trigger 
         has a matched leg with the same pdg ID. If requireAllMatched is True, 
         requires that each single trigger object has a match.'''
@@ -298,6 +298,9 @@ class DiLeptonAnalyzer(Analyzer):
         diL.matchedPaths = set()
 
         sameFlavour = (abs(legs[0].pdgId()) == abs(legs[1].pdgId()))
+
+        if onlyLeg1:
+            legs = legs[:1]
 
         if hasattr(self.cfg_ana, 'filtersToMatch'):
             filtersToMatch = self.cfg_ana.filtersToMatch[0]
