@@ -51,4 +51,49 @@ class TauIsolationCalculator(Analyzer):
             tau.puppi_iso03_pt = sum(c_p.pt()*c_p.puppiWeight() for c_p in puppi_iso_cands_03)
             # Add puppi isolation
 
+            self.tauIsoBreakdown(tau)
+            
         return True
+
+
+    def tauIsoBreakdown(self, tau):
+        
+        iso = 0.
+        for i in range(len(tau.isolationCands())):
+            iso += tau.isolationCands()[i].pt()
+        tau.ptSumIso = iso
+
+        iso = 0.
+        for i in range(len(tau.isolationChargedHadrCands())):
+            iso += tau.isolationChargedHadrCands()[i].pt()
+        tau.chargedPtSumIso = iso
+
+        iso = 0.
+        for i in range(len(tau.isolationGammaCands())):
+            iso += tau.isolationGammaCands()[i].pt()
+        tau.gammaPtSumIso = iso
+
+        iso = 0.
+        for i in range(len(tau.isolationNeutrHadrCands())):
+            iso += tau.isolationNeutrHadrCands()[i].pt()
+        tau.neutralPtSumIso = iso
+
+        ptsum = 0.
+        for i in range(len(tau.signalCands())):
+            ptsum += tau.signalCands()[i].pt()
+        tau.signalCandsPtSum = ptsum
+
+        ptsum = 0.
+        for i in range(len(tau.signalChargedHadrCands())):
+            ptsum += tau.signalChargedHadrCands()[i].pt()
+        tau.chargedSignalCandsPtSum = ptsum
+
+        ptsum = 0.
+        for i in range(len(tau.signalGammaCands())):
+            ptsum += tau.signalGammaCands()[i].pt()
+        tau.gammaSignalCandsPtSum = ptsum
+
+        ptsum = 0.
+        for i in range(len(tau.signalNeutrHadrCands())):
+            ptsum += tau.signalNeutrHadrCands()[i].pt()
+        tau.neutralSignalCandsPtSum = ptsum
