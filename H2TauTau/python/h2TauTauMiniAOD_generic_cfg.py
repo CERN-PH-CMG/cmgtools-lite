@@ -115,7 +115,11 @@ def createProcess(runOnMC=True, channel='di-mu', runSVFit=False,
 
     if addAK4:
         addAK4Jets(process)
-        process.mvaMetInputPath.insert(0, process.jetSequenceAK4)
+        process.tauMuSequence.insert(4, process.jetSequenceAK4)
+        process.tauEleSequence.insert(4, process.jetSequenceAK4)
+        process.muEleSequence.insert(4, process.jetSequenceAK4)
+        process.diMuSequence.insert(2, process.jetSequenceAK4)
+        process.diTauSequence.insert(2, process.jetSequenceAK4)
 
     # if '25ns' in process.source.fileNames[0] or 'mcRun2_asymptotic_v2' in process.source.fileNames[0]:
     print 'Using 25 ns MVA MET training'
@@ -141,7 +145,7 @@ def createProcess(runOnMC=True, channel='di-mu', runSVFit=False,
 
     if channel == 'all' or channel == 'all-separate':
         process.schedule = cms.Schedule(
-            process.mvaMetInputPath,
+            # process.mvaMetInputPath,
             process.tauMuPath,
             process.tauElePath,
             process.muElePath,
@@ -150,31 +154,31 @@ def createProcess(runOnMC=True, channel='di-mu', runSVFit=False,
         )
     elif channel == 'tau-mu':
         process.schedule = cms.Schedule(
-            process.mvaMetInputPath,
+            # process.mvaMetInputPath,
             process.tauMuPath,
             process.outpath
         )
     elif channel == 'tau-ele':
         process.schedule = cms.Schedule(
-            process.mvaMetInputPath,
+            # process.mvaMetInputPath,
             process.tauElePath,
             process.outpath
         )
     elif channel == 'di-tau':
         process.schedule = cms.Schedule(
-            process.mvaMetInputPath,
+            # process.mvaMetInputPath,
             process.diTauPath,
             process.outpath
         )
     elif channel == 'mu-ele':
         process.schedule = cms.Schedule(
-            process.mvaMetInputPath,
+            # process.mvaMetInputPath,
             process.muElePath,
             process.outpath
         )
     elif channel == 'di-mu':
         process.schedule = cms.Schedule(
-            process.mvaMetInputPath,
+            # process.mvaMetInputPath,
             process.diMuPath,
             process.outpath
         )

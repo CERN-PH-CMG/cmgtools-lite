@@ -54,8 +54,15 @@ cmgDiTauCorSVFitPreSel = diTauSVFit.clone()
 
 cmgDiTauCorSVFitFullSel = cmgDiTauSel.clone() 
 
+diTauTauCounter = cms.EDFilter(
+    "CandViewCountFilter",
+    src = cms.InputTag("tauPreSelectionDiTau"),
+    minNumber = cms.uint32(2),
+    )
+
 diTauSequence = cms.Sequence(   
   tauPreSelectionDiTau    +   
+  diTauTauCounter +
   diTauMVAMetSequence     +
   cmgDiTau                +
   cmgDiTauCor             +
