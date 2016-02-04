@@ -8,7 +8,9 @@ from CMGTools.H2TauTau.objects.jetreco_cff import addAK4Jets
 from CMGTools.H2TauTau.tools.setupOutput import addTauMuOutput, addTauEleOutput, addDiTauOutput, addMuEleOutput, addDiMuOutput
 
 
-def createProcess(runOnMC=True, channel='di-mu', runSVFit=False):
+def createProcess(runOnMC=True, channel='di-mu', runSVFit=False,
+                  p4TransferFunctionFile='CMGTools/SVfitStandalone/data/svFitVisMassAndPtResolutionPDF.root', # Christians's default. If not touched, it would default to this anyways
+                  integrateOverP4=False):
     '''Set up CMSSW process to run MVA MET and SVFit.
 
     Args:
@@ -43,7 +45,7 @@ def createProcess(runOnMC=True, channel='di-mu', runSVFit=False):
     # dataset_files = 'miniAOD-prod_PAT_.*root'
 
     if runOnMC:
-        from CMGTools.H2TauTau.proto.samples.spring15.higgs_susy import HiggsSUSYGG160 as ggh160
+        from CMGTools.H2TauTau.proto.samples.fall15.higgs_susy import HiggsSUSYGG160 as ggh160
         process.source = cms.Source(
             "PoolSource",
             noEventSort = cms.untracked.bool(True),
@@ -64,9 +66,9 @@ def createProcess(runOnMC=True, channel='di-mu', runSVFit=False):
         'keep *'
     )
 
-    # process.options = cms.untracked.PSet(
-    #     allowUnscheduled=cms.untracked.bool(True)
-    # )
+    process.options = cms.untracked.PSet(
+        allowUnscheduled=cms.untracked.bool(True)
+    )
 
     process.genEvtWeightsCounter = cms.EDProducer(
         'GenEvtWeightCounter',
@@ -98,14 +100,13 @@ def createProcess(runOnMC=True, channel='di-mu', runSVFit=False):
 
     # Adding jet collection
     process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
-    process.GlobalTag.globaltag = '74X_mcRun2_asymptotic_v2'
+    process.GlobalTag.globaltag = '76X_mcRun2_asymptotic_v12'
     if not runOnMC:
-        process.GlobalTag.globaltag = '74X_dataRun2_Prompt_v4'
-
-    # process.GlobalTag.globaltag = 'auto:run2_mc'
+        process.GlobalTag.globaltag = '76X_dataRun2_v15'
 
 
     process.load('JetMETCorrections.Configuration.DefaultJEC_cff')
+    process.load('JetMETCorrections.Configuration.JetCorrectors_cff')
     # process.load('PhysicsTools.PatAlgos.slimming.unpackedTracksAndVertices_cfi')
     # process.load("Configuration.StandardSequences.Geometry_cff")
     # process.load("Configuration.StandardSequences.MagneticField_38T_cff")
@@ -227,6 +228,18 @@ def createProcess(runOnMC=True, channel='di-mu', runSVFit=False):
         process.cmgMuEleCorSVFitPreSel.SVFitVersion = 0
         process.cmgDiMuCorSVFitPreSel.SVFitVersion = 0
 
+    if integrateOverP4:
+        process.cmgTauMuCorSVFitPreSel.integrateOverP4 = integrateOverP4
+        process.cmgTauEleCorSVFitPreSel.integrateOverP4 = integrateOverP4
+        process.cmgDiTauCorSVFitPreSel.integrateOverP4 = integrateOverP4
+        process.cmgMuEleCorSVFitPreSel.integrateOverP4 = integrateOverP4
+    
+    if p4TransferFunctionFile:
+        process.cmgTauMuCorSVFitPreSel.p4TransferFunctionFile = p4TransferFunctionFile
+        process.cmgTauEleCorSVFitPreSel.p4TransferFunctionFile = p4TransferFunctionFile
+        process.cmgDiTauCorSVFitPreSel.p4TransferFunctionFile = p4TransferFunctionFile
+        process.cmgMuEleCorSVFitPreSel.p4TransferFunctionFile = p4TransferFunctionFile
+    
     print sep_line
     print 'INPUT:'
     print sep_line

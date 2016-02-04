@@ -18,7 +18,7 @@
              determined from MET significance algorithm)
     power  : additional power to enhance the nll term
 */
-double probMET(double dMETX, double dMETY, double covDet, const TMatrixD& covInv, double power = 1., bool verbose = false);
+double probMET(double dMETX, double dMETY, double covDet, const TMatrixD& covInv, double power = 1., bool verbosity = false);
 
 /**
    \class   probTauToLepPhaseSpace LikelihoodFunctions.h "CMGTools/SVfitStandalone/interface/LikelihoodFunctions.h"
@@ -37,7 +37,7 @@ double probMET(double dMETX, double dMETY, double covDet, const TMatrixD& covInv
              Nucl. Phys. B395 (1993) 499.
 
 */
-double probTauToLepMatrixElement(double decayAngle, double nunuMass, double visMass, double x, bool applySinTheta, bool verbose = false);
+double probTauToLepMatrixElement(double decayAngle, double nunuMass, double visMass, double x, bool applySinTheta, bool verbosity = false);
 
 /**
    \class   probTauToHadPhaseSpace LikelihoodFunctions.h "CMGTools/SVfitStandalone/interface/LikelihoodFunctions.h"
@@ -48,7 +48,7 @@ double probTauToLepMatrixElement(double decayAngle, double nunuMass, double visM
 
     decayAngle : decay angle in the restframe of the tau lepton decay
 */
-double probTauToHadPhaseSpace(double decayAngle, double nunuMass, double visMass, double x, bool applySinTheta, bool verbose = false);
+double probTauToHadPhaseSpace(double decayAngle, double nunuMass, double visMass, double x, bool applySinTheta, bool verbosity = false);
 
 /**
    \class   probVisMass LikelihoodFunctions.h "CMGTools/SVfitStandalone/interface/LikelihoodFunctions.h"
@@ -59,7 +59,7 @@ double probTauToHadPhaseSpace(double decayAngle, double nunuMass, double visMass
 
     lutVisMass : histograms that parametrize the mass distribution of the visible decay products produced in hadronic tau decays on generator level
 */
-double probVisMass(double visMass, const TH1* lutVisMass, bool verbose = false);
+double probVisMass(double visMass, const TH1* lutVisMass, bool verbosity = false);
 
 /**
    \class   probVisMassShift, probVisPtShift LikelihoodFunctions.h "CMGTools/SVfitStandalone/interface/LikelihoodFunctions.h"
@@ -71,7 +71,7 @@ double probVisMass(double visMass, const TH1* lutVisMass, bool verbose = false);
 
     lutVisMassRes, lutVisPtRes : histograms that parametrize the Pt and mass resolution for hadronic taus
 */
-double probVisMassShift(double deltaVisMass, const TH1* lutVisMassRes, bool verbose = false);
-double probVisPtShift(double recTauPtDivGenTauPt, const TH1* lutVisPtRes, bool verbose = false);
+double probVisMassShift(double deltaVisMass, const TH1* lutVisMassRes, bool verbosity = false);
+double probVisPtShift(double recTauPtDivGenTauPt, const TH1* lutVisPtRes, bool verbosity = false);
 
 #endif

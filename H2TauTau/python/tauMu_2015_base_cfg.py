@@ -17,18 +17,6 @@ from CMGTools.H2TauTau.htt_ntuple_base_cff import commonSequence, genAna, dyJets
 syncntuple = True
 computeSVfit = False
 
-# When ready, include weights from CMGTools.H2TauTau.proto.weights.weighttable
-
-# mc_tauEffWeight_mc = 'effTau_muTau_MC_2012ABCDSummer13'
-# mc_muEffWeight_mc = 'effMu_muTau_MC_2012ABCD'
-# mc_tauEffWeight = 'effTau_muTau_Data_2012ABCDSummer13'
-# mc_muEffWeight = 'effMu_muTau_Data_2012ABCDSummer13'
-
-mc_tauEffWeight_mc = None
-mc_muEffWeight_mc = None
-mc_tauEffWeight = None
-mc_muEffWeight = None
-
 dyJetsFakeAna.channel = 'mt'
 
 # Define mu-tau specific modules
@@ -65,23 +53,20 @@ tauFakeRateWeighter = cfg.Analyzer(
 tauWeighter = cfg.Analyzer(
     LeptonWeighter,
     name='LeptonWeighter_tau',
-    effWeight=None,
-    effWeightMC=None,
+    scaleFactorFiles={},
     lepton='leg2',
-    verbose=False,
     disable=True,
 )
 
 muonWeighter = cfg.Analyzer(
     LeptonWeighter,
     name='LeptonWeighter_mu',
-    effWeight=None,
-    effWeightMC=None,
+    scaleFactorFiles={
+        'trigger':'$CMSSW_BASE/src/CMGTools/H2TauTau/data/Muon_SingleMu_eff.root',
+        'idiso':'$CMSSW_BASE/src/CMGTools/H2TauTau/data/Muon_IdIso0p10_eff.root',
+    },
     lepton='leg1',
-    verbose=False,
-    disable=True,
-    idWeight=None,
-    isoWeight=None
+    disable=False
 )
 
 treeProducer = cfg.Analyzer(

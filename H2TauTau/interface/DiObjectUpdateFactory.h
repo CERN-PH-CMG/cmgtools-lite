@@ -32,6 +32,8 @@ namespace cmg{
       shiftTaus_         (ps.getParameter<bool>("shiftTaus"))
       {
         produces<collection>();
+        consumes<collection>(diObjectLabel_);
+        consumes<std::vector<reco::GenParticle> >(genParticleLabel_);
       }
 
     void produce(edm::Event&, const edm::EventSetup&);

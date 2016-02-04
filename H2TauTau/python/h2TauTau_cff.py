@@ -12,7 +12,7 @@ from CMGTools.H2TauTau.skims.skim_cff import tauMuFullSelSkimSequence, tauEleFul
 # Need to explicitly import all modules in all sequences for cms.load(..)
 # to work properly in the top-level config
 
-from CMGTools.H2TauTau.objects.mvaMetInputs_cff import mvaMetInputSequence, calibratedAK4PFJetsForPFMVAMEt, puJetIdForPFMVAMEt
+from CMGTools.H2TauTau.objects.mvaMetInputs_cff import mvaMetInputSequence, calibratedAK4PFJetsForPFMVAMEt, puJetIdForPFMVAMEt, ak4PFL1FastL2L3Corrector, ak4PFL1FastjetCorrector, ak4PFL2RelativeCorrector, ak4PFL3AbsoluteCorrector
 
 from CMGTools.H2TauTau.objects.tauMuObjectsMVAMET_cff import mvaMETTauMu, cmgTauMu, cmgTauMuCor, cmgTauMuTauPtSel, cmgTauMuCorSVFitPreSel, cmgTauMuCorSVFitFullSel, tauMuMVAMetSequence, tauPreSelectionTauMu, muonPreSelectionTauMu
 
@@ -25,7 +25,6 @@ from CMGTools.H2TauTau.objects.muEleObjectsMVAMET_cff import mvaMETMuEle, cmgMuE
 from CMGTools.H2TauTau.objects.diMuObjectsMVAMET_cff import mvaMETDiMu, cmgDiMu, cmgDiMuCor, cmgDiMuTauPtSel, cmgDiMuCorSVFitPreSel, cmgDiMuCorSVFitFullSel, diMuMVAMetSequence, muonPreSelectionDiMu
 
 from CMGTools.H2TauTau.skims.skim_cff import tauMuFullSelCount, tauEleFullSelCount, diTauFullSelCount, muEleFullSelCount, diMuFullSelCount
-
 
 # MVA MET Inputs
 mvaMetInputPath = cms.Path(

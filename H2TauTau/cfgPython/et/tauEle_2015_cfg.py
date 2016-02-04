@@ -1,5 +1,6 @@
 import PhysicsTools.HeppyCore.framework.config as cfg
 from PhysicsTools.HeppyCore.framework.config import printComps
+from PhysicsTools.Heppy.utils.cmsswPreprocessor import CmsswPreprocessor
 
 # Tau-tau analyzers
 from CMGTools.H2TauTau.proto.analyzers.TauEleAnalyzer import TauEleAnalyzer
@@ -9,6 +10,7 @@ from CMGTools.H2TauTau.proto.analyzers.TauDecayModeWeighter import TauDecayModeW
 from CMGTools.H2TauTau.proto.analyzers.TauFakeRateWeighter import TauFakeRateWeighter
 from CMGTools.H2TauTau.proto.analyzers.LeptonWeighter import LeptonWeighter
 from CMGTools.H2TauTau.proto.analyzers.SVfitProducer import SVfitProducer
+from CMGTools.H2TauTau.proto.analyzers.FileCleaner import FileCleaner
 
 # common configuration and sequence
 from CMGTools.H2TauTau.htt_ntuple_base_cff import commonSequence, genAna, dyJetsFakeAna, puFileData, puFileMC, eventSelector
@@ -17,22 +19,11 @@ from CMGTools.H2TauTau.htt_ntuple_base_cff import commonSequence, genAna, dyJets
 
 # 'Nom', 'Up', 'Down', or None
 shift = None
-syncntuple = False
 computeSVfit = False
-production = True  # production = True run on batch, production = False run locally
-#production = True  # production = True run on batch, production = False run locally
+production = False  # production = True run on batch, production = False run locally
+syncntuple = True
+cmssw = False
 
-# When ready, include weights from CMGTools.H2TauTau.proto.weights.weighttable
-
-# hlt_tauEffWeight_mc = 'effTau_eTau_MC_2012ABCDSummer13'
-# hlt_tauEffWeight = 'effTau_eTau_Data_2012ABCDSummer13'
-# hlt_eleEffWeight_mc = 'effEle_eTau_MC_2012ABCD'
-# hlt_eleEffWeight = 'effEle_eTau_Data_2012ABCDSummer13'
-
-hlt_tauEffWeight_mc = None
-hlt_tauEffWeight = None
-hlt_eleEffWeight_mc = None
-hlt_eleEffWeight = None
 
 dyJetsFakeAna.channel = 'et'
 
@@ -81,23 +72,20 @@ tauFakeRateWeighter = cfg.Analyzer(
 tauWeighter = cfg.Analyzer(
     LeptonWeighter,
     name='LeptonWeighter_tau',
-    effWeight=None,
-    effWeightMC=None,
+    scaleFactorFiles = {},
     lepton='leg2',
-    verbose=False,
     disable=True,
 )
 
 eleWeighter = cfg.Analyzer(
     LeptonWeighter,
     name='LeptonWeighter_ele',
-    effWeight=None,
-    effWeightMC=None,
+    scaleFactorFiles={
+        'trigger':'$CMSSW_BASE/src/CMGTools/H2TauTau/data/Electron_SingleEle_eff.root',
+        'idiso':'$CMSSW_BASE/src/CMGTools/H2TauTau/data/Electron_IdIso0p10_eff.root',
+    },
     lepton='leg1',
-    verbose=False,
-    disable=True,
-    idWeight=None,
-    isoWeight=None
+    disable=False
 )
 
 treeProducer = cfg.Analyzer(
@@ -124,6 +112,11 @@ svfitProducer = cfg.Analyzer(
     l2type='tau'
 )
 
+fileCleaner = cfg.Analyzer(
+    FileCleaner,
+    name='FileCleaner'
+)
+
 ###################################################
 ### CONNECT SAMPLES TO THEIR ALIASES AND FILES  ###
 ###################################################
@@ -133,10 +126,10 @@ svfitProducer = cfg.Analyzer(
 # my_connect.connect()
 # MC_list = my_connect.MC_list
 
-from CMGTools.H2TauTau.proto.samples.spring15.htt_common import backgrounds_ele, sm_signals, mssm_signals, data_single_electron, sync_list
+from CMGTools.H2TauTau.proto.samples.fall15.htt_common import backgrounds_ele, sm_signals, mssm_signals, data_single_electron, sync_list
 
-from CMGTools.H2TauTau.proto.samples.spring15.triggers_tauEle import mc_triggers, mc_triggerfilters
-from CMGTools.H2TauTau.proto.samples.spring15.triggers_tauEle import data_triggers, data_triggerfilters
+from CMGTools.H2TauTau.proto.samples.fall15.triggers_tauEle import mc_triggers, mc_triggerfilters
+from CMGTools.H2TauTau.proto.samples.fall15.triggers_tauEle import data_triggers, data_triggerfilters
 
 from CMGTools.RootTools.utils.splitFactor import splitFactor
 
@@ -186,8 +179,13 @@ sequence.insert(sequence.index(dyJetsFakeAna) + 1, dyLLReweighterTauEle)
 if computeSVfit:
     sequence.append(svfitProducer)
 sequence.append(treeProducer)
+
 if syncntuple:
     sequence.append(syncTreeProducer)
+
+if not cmssw:
+    module = [s for s in sequence if s.name == 'MCWeighter'][0]
+    sequence.remove(module)
 
 ###################################################
 ###             CHERRY PICK EVENTS              ###
@@ -203,10 +201,14 @@ if not production:
     # comp = my_connect.mc_dict['HiggsGGH125']
     comp = sync_list[0]
     selectedComponents = [comp]
-    comp.splitFactor = 1
+    comp.splitFactor = 5
     comp.fineSplitFactor = 1
 #    comp.files = comp.files[:1]
 
+preprocessor = None
+if cmssw:
+    sequence.append(fileCleaner)
+    preprocessor = CmsswPreprocessor("$CMSSW_BASE/src/CMGTools/H2TauTau/prod/h2TauTauMiniAOD_etau_cfg.py", addOrigAsSecondary=False)
 
 # the following is declared in case this cfg is used in input to the
 # heppy.py script
@@ -214,6 +216,7 @@ from PhysicsTools.HeppyCore.framework.eventsfwlite import Events
 config = cfg.Config(components=selectedComponents,
                     sequence=sequence,
                     services=[],
+                    preprocessor=preprocessor,
                     events_class=Events
                     )
 

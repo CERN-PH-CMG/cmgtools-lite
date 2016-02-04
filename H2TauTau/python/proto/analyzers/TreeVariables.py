@@ -32,7 +32,7 @@ event_vars = [
     Variable('n_vertices', lambda ev : len(ev.vertices), type=int),
     Variable('rho', lambda ev : ev.rho),
     Variable('weight', lambda ev : ev.eventWeight),
-    Variable('weight_vertex', lambda ev : ev.vertexWeight),
+    Variable('weight_vertex', lambda ev : ev.puWeight),
     Variable('weight_embed', lambda ev : ev.embedWeight),
     Variable('weight_njet', lambda ev : ev.NJetWeight),
     Variable('weight_hqt', lambda ev : ev.higgsPtWeight),
@@ -43,7 +43,9 @@ event_vars = [
 # di-tau object variables
 ditau_vars = [
     Variable('mvis', lambda dil : dil.mass()),
+    Variable('mt_total', lambda dil : dil.mtTotal()),
     Variable('svfit_mass', lambda dil : dil.svfitMass()),
+    Variable('svfit_transverse_mass', lambda dil : dil.svfitTransverseMass()),
     Variable('svfit_mass_error', lambda dil : dil.svfitMassError()),
     Variable('svfit_pt', lambda dil : dil.svfitPt()),
     Variable('svfit_pt_error', lambda dil : dil.svfitPtError()),
@@ -90,21 +92,23 @@ lepton_vars = [
     Variable('reliso05_04', lambda lep : lep.relIsoR(R=0.4, dBetaFactor=0.5, allCharged=0)),
     Variable('dxy', lambda lep : lep.dxy()),
     Variable('dxy_error', lambda lep : lep.edxy() if hasattr(lep, 'edxy') else lep.dxy_error()),
-    Variable('dz', lambda lep : lep.dz()),
+    Variable('dz', lambda lep : lep.leadChargedHadrCand().dz() if hasattr(lep, 'leadChargedHadrCand') else lep.dz()),
     Variable('dz_error', lambda lep : lep.edz() if hasattr(lep, 'edz') else -1.),
     Variable('weight'),
-    Variable('weight_trigger', lambda lep : getattr(lep, 'triggerWeight', -999.)),
-    Variable('eff_trigger_data', lambda lep : getattr(lep, 'triggerEffData', -999.)),
-    Variable('eff_trigger_mc', lambda lep : getattr(lep, 'triggerEffMC', -999.)),
-    Variable('weight_rec_eff', lambda lep : getattr(lep, 'recEffWeight', -999.)),
+    Variable('weight_trigger', lambda lep : getattr(lep, 'weight_trigger', -999.)),
+    Variable('eff_trigger_data', lambda lep : getattr(lep, 'eff_data_trigger', -999.)),
+    Variable('eff_trigger_mc', lambda lep : getattr(lep, 'eff_mc_trigger', -999.)),
+    Variable('weight_idiso', lambda lep : getattr(lep, 'weight_idiso', -999.)),
+    Variable('eff_idiso_data', lambda lep : getattr(lep, 'eff_data_idiso', -999.)),
+    Variable('eff_idiso_mc', lambda lep : getattr(lep, 'eff_mc_idiso', -999.)),
     Variable('gen_match')
 ]
 
 # electron
 electron_vars = [
     # Variable('eid_nontrigmva_loose', lambda ele : ele.mvaIDRun2("NonTrigPhys14", "Loose")),
-    Variable('eid_nontrigmva_loose', lambda ele : ele.mvaRun2('NonTrigSpring15')),
-    Variable('eid_nontrigmva_tight', lambda ele : ele.mvaIDRun2("NonTrigSpring15", "POG80")),
+    Variable('eid_nontrigmva_loose', lambda ele : ele.mvaRun2('NonTrigSpring15MiniAOD')),
+    Variable('eid_nontrigmva_tight', lambda ele : ele.mvaIDRun2("NonTrigSpring15MiniAOD", "POG80")),
     Variable('eid_veto', lambda ele : ele.cutBasedId('POG_SPRING15_25ns_v1_Veto')),
     Variable('eid_loose', lambda ele : ele.cutBasedId('POG_SPRING15_25ns_v1_Loose')),
     Variable('eid_medium', lambda ele : ele.cutBasedId('POG_SPRING15_25ns_v1_Medium')),

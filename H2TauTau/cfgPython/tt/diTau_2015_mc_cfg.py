@@ -10,7 +10,7 @@ from CMGTools.H2TauTau.proto.analyzers.TauTauAnalyzer             import TauTauA
 from CMGTools.H2TauTau.proto.analyzers.H2TauTauTreeProducerTauTau import H2TauTauTreeProducerTauTau
 from CMGTools.H2TauTau.proto.analyzers.TauDecayModeWeighter       import TauDecayModeWeighter
 from CMGTools.H2TauTau.proto.analyzers.LeptonWeighter             import LeptonWeighter
-from CMGTools.H2TauTau.proto.analyzers.TauP4Scaler                import TauP4Scaler
+# from CMGTools.H2TauTau.proto.analyzers.TauP4Scaler                import TauP4Scaler
 from CMGTools.H2TauTau.proto.analyzers.SVfitProducer              import SVfitProducer
 
 # common configuration and sequence
@@ -24,58 +24,61 @@ production = getHeppyOption('production')
 
 # local switches
 syncntuple   = True
-computeSVfit = True
+computeSVfit = False
 pick_events  = False
-cmssw        = True
+cmssw        = False
 
 dyJetsFakeAna.channel = 'tt'
 
 ### Define tau-tau specific modules
 
 tauTauAna = cfg.Analyzer(
-  class_object        = TauTauAnalyzer                            ,
-  name                = 'TauTauAnalyzer'                          ,
-  pt1                 = 45                                        ,
-  eta1                = 2.1                                       ,
-  iso1                = 1.                                        ,
-  looseiso1           = 999999999.                                ,
-  pt2                 = 45                                        ,
-  eta2                = 2.1                                       ,
-  iso2                = 1.                                        ,
-  looseiso2           = 999999999.                                ,
-  isolation           = 'byCombinedIsolationDeltaBetaCorrRaw3Hits',
-  m_min               = 10                                        ,
-  m_max               = 99999                                     ,
-  dR_min              = 0.5                                       ,
-  jetPt               = 30.                                       ,
-  jetEta              = 4.7                                       ,
-  relaxJetId          = False                                     ,
-  verbose             = False                                     ,
-  from_single_objects = False                                     ,
+  class_object        = TauTauAnalyzer                     ,
+  name                = 'TauTauAnalyzer'                   ,
+  pt1                 = 40.                                ,
+  eta1                = 2.1                                ,
+  iso1                = 1.                                 ,
+  looseiso1           = 999999999.                         ,
+  pt2                 = 40.                                ,
+  eta2                = 2.1                                ,
+  iso2                = 1.                                 ,
+  looseiso2           = 999999999.                         ,
+  isolation           = 'byIsolationMVArun2v1DBnewDMwLTraw',
+  m_min               = 10                                 ,
+  m_max               = 99999                              ,
+  dR_min              = 0.5                                ,
+  jetPt               = 30.                                ,
+  jetEta              = 4.7                                ,
+  relaxJetId          = False                              ,
+  verbose             = False                              ,
+  from_single_objects = False                              ,
   )
+
+if not cmssw:
+  tauTauAna.from_single_objects = True
 
 fileCleaner = cfg.Analyzer(
   FileCleaner         ,
   name = 'FileCleaner'
 )
 
-tau1Calibration = cfg.Analyzer(
-  TauP4Scaler       ,
-  'TauP4Scaler_tau1',
-  leg      = 'leg1' ,
-  method   = 'peak' ,
-  scaleMET = True   ,
-  verbose  = False  ,
-  )
+# tau1Calibration = cfg.Analyzer(
+#   TauP4Scaler       ,
+#   'TauP4Scaler_tau1',
+#   leg      = 'leg1' ,
+#   method   = 'peak' ,
+#   scaleMET = True   ,
+#   verbose  = False  ,
+#   )
 
-tau2Calibration = cfg.Analyzer(
-  TauP4Scaler       ,
-  'TauP4Scaler_tau2',
-  leg      = 'leg2' ,
-  method   = 'peak' ,
-  scaleMET = True   ,
-  verbose  = False  ,
-  )
+# tau2Calibration = cfg.Analyzer(
+#   TauP4Scaler       ,
+#   'TauP4Scaler_tau2',
+#   leg      = 'leg2' ,
+#   method   = 'peak' ,
+#   scaleMET = True   ,
+#   verbose  = False  ,
+#   )
 
 tauDecayModeWeighter = cfg.Analyzer(
   TauDecayModeWeighter   ,
@@ -86,8 +89,7 @@ tauDecayModeWeighter = cfg.Analyzer(
 tau1Weighter = cfg.Analyzer(
   LeptonWeighter                    ,
   name        ='LeptonWeighter_tau1',
-  effWeight   = None                ,
-  effWeightMC = None                ,
+  scaleFactorFiles = {},
   lepton      = 'leg1'              ,
   verbose     = False               ,
   disable     = True                ,
@@ -96,8 +98,7 @@ tau1Weighter = cfg.Analyzer(
 tau2Weighter = cfg.Analyzer(
   LeptonWeighter                    ,
   name        ='LeptonWeighter_tau2',
-  effWeight   = None                ,
-  effWeightMC = None                ,
+  scaleFactorFiles = {},
   lepton      = 'leg2'              ,
   verbose     = False               ,
   disable     = True                ,
@@ -131,9 +132,9 @@ svfitProducer = cfg.Analyzer(
 ###################################################
 from CMGTools.RootTools.utils.splitFactor import splitFactor
 from CMGTools.H2TauTau.proto.samples.data15.data import data_tau
-from CMGTools.H2TauTau.proto.samples.spring15.higgs import HiggsGGH125 as ggh125
-from CMGTools.H2TauTau.proto.samples.spring15.higgs_susy import HiggsSUSYGG160 as ggh160
-from CMGTools.H2TauTau.proto.samples.spring15.triggers_tauTau import mc_triggers, mc_triggerfilters, data_triggers, data_triggerfilters
+from CMGTools.H2TauTau.proto.samples.fall15.higgs import HiggsGGH125 as ggh125
+from CMGTools.H2TauTau.proto.samples.fall15.higgs_susy import HiggsSUSYGG160 as ggh160
+from CMGTools.H2TauTau.proto.samples.fall15.triggers_tauTau import mc_triggers, mc_triggerfilters, data_triggers, data_triggerfilters
 
 data_list = data_tau
 MC_list = [ggh160]
@@ -206,8 +207,8 @@ if not production:
   cache                = True
   comp                 = ggh160
   selectedComponents   = [comp]
-  comp.splitFactor     = 100
-  comp.fineSplitFactor = 4
+  comp.splitFactor     = 5
+  comp.fineSplitFactor = 1
 #   comp.files           = comp.files[:1]
     
 preprocessor = None

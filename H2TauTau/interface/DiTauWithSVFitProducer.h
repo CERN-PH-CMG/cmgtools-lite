@@ -40,8 +40,9 @@ private:
   int SVFitVersion_;
   std::string p4TransferFunctionFile_;
   bool integrateOverP4_;
-
   std::string fitAlgo_;
+
+  std::unique_ptr<TFile> inputFile_visPtResolution_;
 };
 
 
@@ -55,9 +56,14 @@ DiTauWithSVFitProducer<T, U>::DiTauWithSVFitProducer(const edm::ParameterSet& iC
   integrateOverP4_(iConfig.getUntrackedParameter<bool>("integrateOverP4", false)),
   fitAlgo_(iConfig.getParameter<std::string>("fitAlgo")) {
 
+  edm::FileInPath inputFileName_visPtResolution(p4TransferFunctionFile_);
+  //TH1::AddDirectory(false);  
+  inputFile_visPtResolution_ = std::unique_ptr<TFile>(new TFile(inputFileName_visPtResolution.fullPath().data()));
+
   // will produce a collection containing a copy of each di-object in input,
   // with the SVFit mass set.
   produces<std::vector<DiTauObject>>();
+  consumes<DiTauCollection>(diTauSrc_);
 }
 
 
@@ -136,8 +142,8 @@ void DiTauWithSVFitProducer<T, U>::produce(edm::Event& iEvent, const edm::EventS
     }
 
     double massSVFit = 0.;
-    float det=tmsig.Determinant();
-    if(det>1e-8) {
+    float det = tmsig.Determinant();
+    if(det > 1e-8) {
       if (SVFitVersion_ >= 1) {
         //Note that this works only for di-objects where the tau is the leg1 and mu is leg2
         std::vector<svFitStandalone::MeasuredTauLepton> measuredTauLeptons;
@@ -177,11 +183,8 @@ void DiTauWithSVFitProducer<T, U>::produce(edm::Event& iEvent, const edm::EventS
         SVfitStandaloneAlgorithm algo(measuredTauLeptons, met.px(), met.py(), tmsig, 0);
         algo.addLogM(false);
         
-        // RIC
-        edm::FileInPath inputFileName_visPtResolution(p4TransferFunctionFile_);
-        //TH1::AddDirectory(false);  
-        TFile* inputFile_visPtResolution = new TFile(inputFileName_visPtResolution.fullPath().data());
-        algo.shiftVisPt(integrateOverP4_, inputFile_visPtResolution);
+        
+        algo.shiftVisPt(integrateOverP4_, &*inputFile_visPtResolution_);
         
         if (fitAlgo_ == "VEGAS")
           algo.integrateVEGAS();
@@ -191,6 +194,7 @@ void DiTauWithSVFitProducer<T, U>::produce(edm::Event& iEvent, const edm::EventS
           algo.integrate();
 
         massSVFit = algo.mass();
+        diTau.addUserFloat("transverseMass", algo.transverseMass());
 
         // Add more fit results as user floats
         diTau.addUserFloat("massUncert", algo.massUncert());
@@ -212,6 +216,7 @@ void DiTauWithSVFitProducer<T, U>::produce(edm::Event& iEvent, const edm::EventS
     }
     // This is now handled via the user floats so we can keep the visible mass
     diTau.addUserFloat("mass", massSVFit);
+
 
     pOut->push_back(diTau);
 

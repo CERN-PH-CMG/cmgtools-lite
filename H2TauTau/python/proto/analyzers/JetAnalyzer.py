@@ -223,7 +223,7 @@ class JetAnalyzer(Analyzer):
         # medium csv working point
         # https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation74X
         jet.btagMVA = jet.btag('pfCombinedInclusiveSecondaryVertexV2BJetTags')
-        jet.btagFlag = jet.btagMVA > 0.89
+        jet.btagFlag = jet.btagMVA > 0.8
 
         # Use the following once we start applying data-MC scale factors:
         # jet.btagFlag = self.btagSF.isbtagged(

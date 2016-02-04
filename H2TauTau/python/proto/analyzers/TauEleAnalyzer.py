@@ -192,11 +192,11 @@ class TauEleAnalyzer(DiLeptonAnalyzer):
 
     def testTightElectronID(self, electron):
         '''Selection for electron from tau decay'''
-        return electron.mvaIDRun2('NonTrigSpring15', 'POG80')
+        return electron.mvaIDRun2('NonTrigSpring15MiniAOD', 'POG80')
 
     def testElectronID(self, electron):
         '''Loose selection for generic electrons'''
-        return electron.mvaIDRun2('NonTrigSpring15', 'POG90')
+        return electron.mvaIDRun2('NonTrigSpring15MiniAOD', 'POG90')
 
     def testVetoElectronID(self, electron):
         return electron.cutBasedId('POG_SPRING15_25ns_v1_Veto')
@@ -300,9 +300,9 @@ class TauEleAnalyzer(DiLeptonAnalyzer):
         if len(diLeps) == 1:
             return diLeps[0]
 
-        minIso = min(d.leg2().tauID("byCombinedIsolationDeltaBetaCorrRaw3Hits") for d in diLeps)
+        minIso = min(-d.leg2().tauID("byIsolationMVArun2v1DBnewDMwLTraw") for d in diLeps)
 
-        diLeps = [dil for dil in diLeps if dil.leg2().tauID("byCombinedIsolationDeltaBetaCorrRaw3Hits") == minIso]
+        diLeps = [dil for dil in diLeps if -dil.leg2().tauID("byIsolationMVArun2v1DBnewDMwLTraw") == minIso]
 
         if len(diLeps) == 1:
             return diLeps[0]
