@@ -38,7 +38,7 @@ cmgDiTauCor = cmgDiTauCor.clone()
 cmgDiTauTauPtSel = cms.EDFilter(
   "PATCompositeCandidateSelector",
   src = cms.InputTag("cmgDiTauCor"),
-  cut = cms.string("daughter(0).pt()>45. && daughter(1).pt()>45.")
+  cut = cms.string("daughter(0).pt()>40. && daughter(1).pt()>40.")
   )
 
 # recoil correction ----------------------------------------------------
