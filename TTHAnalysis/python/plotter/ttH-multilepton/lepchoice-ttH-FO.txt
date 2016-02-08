@@ -6,6 +6,10 @@ LepGood1_isFO\b : LepGood_isFO_Recl[iF_Recl[0]]; AlsoData
 LepGood2_isFO\b : LepGood_isFO_Recl[iF_Recl[1]]; AlsoData
 LepGood3_isFO\b : LepGood_isFO_Recl[iF_Recl[2]]; AlsoData
 LepGood4_isFO\b : LepGood_isFO_Recl[iF_Recl[3]]; AlsoData
+LepGood1_isMatchRightCharge\b : (LepGood_mcMatchId[iF_Recl[0]]!=0 && LepGood_pdgId[iF_Recl[0]]==LepGood_mcMatchPdgId[iF_Recl[0]]); AlsoData
+LepGood2_isMatchRightCharge\b : (LepGood_mcMatchId[iF_Recl[1]]!=0 && LepGood_pdgId[iF_Recl[1]]==LepGood_mcMatchPdgId[iF_Recl[1]]); AlsoData
+LepGood3_isMatchRightCharge\b : (LepGood_mcMatchId[iF_Recl[2]]!=0 && LepGood_pdgId[iF_Recl[2]]==LepGood_mcMatchPdgId[iF_Recl[2]]); AlsoData
+LepGood4_isMatchRightCharge\b : (LepGood_mcMatchId[iF_Recl[3]]!=0 && LepGood_pdgId[iF_Recl[3]]==LepGood_mcMatchPdgId[iF_Recl[3]]); AlsoData
 LepGood1_(\w+) : LepGood_\1[iF_Recl[0]]; AlsoData
 LepGood2_(\w+) : LepGood_\1[iF_Recl[1]]; AlsoData
 LepGood3_(\w+) : LepGood_\1[iF_Recl[2]]; AlsoData

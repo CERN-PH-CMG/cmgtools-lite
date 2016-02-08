@@ -4,16 +4,13 @@ import re
 
 ODIR=sys.argv[1]
 
-lumi = 2.16
-
 doplots=True
 
 def base(selection):
 
-    CORE="-P /data/p/peruzzi/skim_2lss_3l_TREES_74X_140116_MiniIso_tauClean_Mor16lepMVA -F sf/t {P}/2_recleaner_v6_vetoCSVM_eleIdEmuPt30_PtRatio030orMVA/evVarFriend_{cname}.root -F sf/t {P}/4_kinMVA_trainMilosJan31_v3_reclv6/evVarFriend_{cname}.root"
+    CORE="-P /data1/p/peruzzi/skim_2lss_3l_TREES_74X_140116_MiniIso_tauClean_Mor16lepMVA_v7 -F sf/t {P}/2_recleaner_v7_vetoCSVM_eleIdEmuPt30_PtRatio030orMVA_MVA075/evVarFriend_{cname}.root -F sf/t {P}/4_kinMVA_trainMilosJan31_v3_reclv7/evVarFriend_{cname}.root"
 
     CORE+=" -f -j 8 -l 2.26 --neg --s2v --tree treeProducerSusyMultilepton --mcc ttH-multilepton/lepchoice-ttH-FO.txt --mcc ttH-multilepton/ttH_2lss3l_triggerdefs.txt"
-    CORE+=" -E tightMVA075" # temporary
     if doplots: CORE+=" --lspam '#bf{CMS} #it{Preliminary}' --legendWidth 0.20 --legendFontSize 0.035 --showRatio --maxRatioRange 0 3  --showMCError --rebin 2"
 
     CORE+=" -W 'puw(nTrueInt)' "
@@ -43,13 +40,13 @@ def setwide(x):
     x2 = x2.replace('--legendWidth 0.35','--legendWidth 0.20')
     return x2
 def fulltrees(x):
-    return x.replace('/data/p/peruzzi/skim_2lss_3l_TREES_74X_140116_MiniIso_tauClean_Mor16lepMVA','/data1/p/peruzzi/TREES_74X_140116_MiniIso_tauClean_Mor16lepMVA')
+    return x.replace('/data1/p/peruzzi/skim_2lss_3l_TREES_74X_140116_MiniIso_tauClean_Mor16lepMVA_v7','/data1/p/peruzzi/TREES_74X_140116_MiniIso_tauClean_Mor16lepMVA')
 
 if __name__ == '__main__':
 
     torun = sys.argv[2]
 
-    if 'data' in torun and not any([re.match(x.strip()+'$',torun) for x in ['.*_appl.*','cr_.*']]): raise RuntimeError, 'You are trying to unblind!'
+    if 'data' in torun and not any([re.match(x.strip()+'$',torun) for x in ['.*_appl.*','cr_.*','2lss_SR_.*_data_frdata','3l_SR_.*_data_frdata']]): raise RuntimeError, 'You are trying to unblind!'
 
     if '2lss_' in torun:
         x = base('2lss')
@@ -58,6 +55,11 @@ if __name__ == '__main__':
         if '_2fo' in torun: x = add(x,"-A alwaystrue 2FO 'LepGood1_isTight+LepGood2_isTight==0'")
         if '_relax' in torun: x = add(x,'-X TT')
         if '_data' in torun: x = x.replace('mca-2lss-mc.txt','mca-2lss-mcdata.txt')
+        if '_frdata' in torun:
+            if not '_data' in torun: raise RuntimeError
+            x = fulltrees(x) # for the flips
+            x = add(x,"--xp data")
+            x = x.replace('mca-2lss-mcdata.txt','mca-2lss-mcdata-frdata.txt')
 
         if '_closure' in torun:
             x = x.replace("--xP 'kinMVA_input.*'","--sP 'kinMVA_input.*'")
@@ -78,6 +80,10 @@ if __name__ == '__main__':
         if '_appl' in torun: x = add(x,'-I TTT')
         if '_relax' in torun: x = add(x,'-X TTT')
         if '_data' in torun: x = x.replace('mca-3l-mc.txt','mca-3l-mcdata.txt')
+        if '_frdata' in torun:
+            if not '_data' in torun: raise RuntimeError
+            x = add(x,"--xp data")
+            x = x.replace('mca-3l-mcdata.txt','mca-3l-mcdata-frdata.txt')
         runIt(x,'%s'%torun)
 
     if 'cr_3j' in torun:
@@ -98,7 +104,7 @@ if __name__ == '__main__':
     if 'cr_ttbar' in torun:
         x = base('2lss')
         x = fulltrees(x)
-        if '_data' in torun: x = x.replace('mca-2lss-mc.txt','mca-2lss-mcdata.txt')
+        if '_data' in torun: x = x.replace('mca-2lss-mc.txt','mca-2lss-mcdata-ttbar.txt')
         if '_appl' in torun: x = add(x,'-I TT')
         if '_1fo' in torun: x = add(x,"-A alwaystrue 1FO 'LepGood1_isTight+LepGood2_isTight==1'")
         if '_leadmupt25' in torun: x = add(x,"-A 'entry point' leadmupt25 'abs(LepGood1_pdgId)==13 && LepGood1_pt>25'")
@@ -118,6 +124,10 @@ if __name__ == '__main__':
     if 'cr_ttz' in torun:
         x = base('3l')
         if '_data' in torun: x = x.replace('mca-3l-mc.txt','mca-3l-mcdata.txt')
+        if '_frdata' in torun:
+            if not '_data' in torun: raise RuntimeError
+            x = add(x,"--xp data")
+            x = x.replace('mca-3l-mcdata.txt','mca-3l-mcdata-frdata.txt')
         plots = ['lep2_pt','met','nJet25','mZ1']
         x = add(x,"-I 'Z veto' -X 2b1B -E 2b -E 1B --rebin 4")
         runIt(x,'%s'%torun,plots)

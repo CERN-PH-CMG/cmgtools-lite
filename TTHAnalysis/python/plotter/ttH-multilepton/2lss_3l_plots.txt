@@ -42,14 +42,14 @@ nVert:		nVert													  				  : 50,-0.5,49.5; XTitle="N_{vtx}"
 
 kinMVA_2lss_ttbar: kinMVA_2lss_ttbar : 40,-1,1 ; XTitle="2lss kinMVA vs. ttbar"
 kinMVA_2lss_ttV: kinMVA_2lss_ttV : 40,-1,1 ; XTitle="2lss kinMVA vs. ttV"
-#kinMVA_2lss_2D: kinMVA_2lss_ttV\:kinMVA_2lss_ttbar : 40,-1,1,40,-1,1 ; XTitle="2lss kinMVA vs. ttbar", YTitle="2lss kinMVA vs. ttV", PlotMode="COLZ"
-kinMVA_2lss_bins_Marco: ttH_MVAto1D_6_2lss_Marco(kinMVA_2lss_ttbar,kinMVA_2lss_ttV,LepGood1_pdgId,LepGood2_pdgId) : [0.5,1.5,2.5,3.5,4.5,5.5,6.5]; XTitle="2lss kinMVA vs. ttbar/ttV"
-kinMVA_2lss_bins_Milos: ttH_MVAto1D_6_2lss_Milos(kinMVA_2lss_ttbar,kinMVA_2lss_ttV,LepGood1_pdgId,LepGood2_pdgId) : [0.5,1.5,2.5,3.5,4.5,5.5,6.5]; XTitle="2lss kinMVA vs. ttbar/ttV", Legend='TL'
+#kinMVA_2lss_2D: kinMVA_2lss_ttV\:kinMVA_2lss_ttbar : 20,-1,1,20,-1,1 ; XTitle="2lss kinMVA vs. ttbar", YTitle="2lss kinMVA vs. ttV", PlotMode="COLZ"
+kinMVA_2lss_bins: ttH_MVAto1D_6_2lss_Marco(kinMVA_2lss_ttbar,kinMVA_2lss_ttV,LepGood1_pdgId,LepGood2_pdgId) : [0.5,1.5,2.5,3.5,4.5,5.5,6.5]; XTitle="2lss kinMVA vs. ttbar/ttV"
+#kinMVA_2lss_bins_Milos: ttH_MVAto1D_6_2lss_Milos(kinMVA_2lss_ttbar,kinMVA_2lss_ttV,LepGood1_pdgId,LepGood2_pdgId) : [0.5,1.5,2.5,3.5,4.5,5.5,6.5]; XTitle="2lss kinMVA vs. ttbar/ttV", Legend='TL'
 kinMVA_3l_ttbar: kinMVA_3l_ttbar : 40,-1,1 ; XTitle="3l kinMVA vs. ttbar"
 kinMVA_3l_ttV: kinMVA_3l_ttV : 40,-1,1 ; XTitle="3l kinMVA vs. ttV"
-#kinMVA_3l_2D: kinMVA_3l_ttV\:kinMVA_3l_ttbar : 40,-1,1,40,-1,1 ; XTitle="3l kinMVA vs. ttbar", YTitle="3l kinMVA vs. ttV", PlotMode="COLZ"
-kinMVA_3l_bins_Marco: ttH_MVAto1D_3_3l_Marco(kinMVA_3l_ttbar,kinMVA_3l_ttV) : [0.5,1.5,2.5,3.5]; XTitle="3l kinMVA vs. ttbar/ttV"
-kinMVA_3l_bins_Milos: ttH_MVAto1D_6_3l_Milos(kinMVA_3l_ttbar,kinMVA_3l_ttV) : [0.5,1.5,2.5,3.5,4.5,5.5,6.5]; XTitle="3l kinMVA vs. ttbar/ttV", Legend='TL'
+#kinMVA_3l_2D: kinMVA_3l_ttV\:kinMVA_3l_ttbar : 20,-1,1,20,-1,1 ; XTitle="3l kinMVA vs. ttbar", YTitle="3l kinMVA vs. ttV", PlotMode="COLZ"
+kinMVA_3l_bins: ttH_MVAto1D_3_3l_Marco(kinMVA_3l_ttbar,kinMVA_3l_ttV) : [0.5,1.5,2.5,3.5]; XTitle="3l kinMVA vs. ttbar/ttV"
+#kinMVA_3l_bins_Milos: ttH_MVAto1D_6_3l_Milos(kinMVA_3l_ttbar,kinMVA_3l_ttV) : [0.5,1.5,2.5,3.5,4.5,5.5,6.5]; XTitle="3l kinMVA vs. ttbar/ttV", Legend='TL'
 
 kinMVA_input_max_Lep_eta: max(abs(LepGood1_eta),abs(LepGood2_eta)) : 20,0,2.5 ;
 kinMVA_input_numJets: nJet25_Recl : 10,0,10;

@@ -2,7 +2,7 @@
 
 if [[ "$HOSTNAME" == "cmsphys10" ]]; then
 #    T="/data1/p/peruzzi/TREES_74X_140116_MiniIso_tauClean_Mor16lepMVA";
-    T="/data/p/peruzzi/skim_2lss_3l_TREES_74X_140116_MiniIso_tauClean_Mor16lepMVA";
+    T="/data1/p/peruzzi/skim_2lss_3l_TREES_74X_140116_MiniIso_tauClean_Mor16lepMVA_v7";
     J=8;
 else
     T="/afs/cern.ch/work/p/peruzzi/tthtrees/TREES_74X_140116_MiniIso_tauClean_Mor16lepMVA";
@@ -29,7 +29,7 @@ BTight=" -E BTight "
 ZeroTau=" -E 0tau "
 OneTau=" -E 1tau "
 
-OPTIONS="${OPTIONS} --Fs {P}/2_recleaner_v6_vetoCSVM_eleIdEmuPt30_PtRatio030orMVA --Fs {P}/4_kinMVA_trainMilosJan31_v3_reclv6"
+OPTIONS="${OPTIONS} --Fs {P}/2_recleaner_v7_vetoCSVM_eleIdEmuPt30_PtRatio030orMVA_MVA075 --Fs {P}/4_kinMVA_trainMilosJan31_v3_reclv7"
 OPTIONS="${OPTIONS} --mcc ttH-multilepton/lepchoice-ttH-FO.txt --mcc ttH-multilepton/ttH_2lss3l_triggerdefs.txt -W puw(nTrueInt)"
 OPTIONS="${OPTIONS} --asimov --xp data --xp '.*data.*'" # safety!
 
