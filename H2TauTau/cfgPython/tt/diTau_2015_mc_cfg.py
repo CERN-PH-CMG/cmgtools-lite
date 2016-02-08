@@ -26,7 +26,7 @@ production = getHeppyOption('production')
 syncntuple   = True
 computeSVfit = False
 pick_events  = False
-cmssw        = False
+cmssw        = True
 
 dyJetsFakeAna.channel = 'tt'
 

@@ -38,7 +38,7 @@ cmgDiTauCor = cmgDiTauCor.clone()
 cmgDiTauTauPtSel = cms.EDFilter(
   "PATCompositeCandidateSelector",
   src = cms.InputTag("cmgDiTauCor"),
-  cut = cms.string("daughter(0).pt()>45. && daughter(1).pt()>45.")
+  cut = cms.string("daughter(0).pt()>40. && daughter(1).pt()>40.")
   )
 
 # recoil correction ----------------------------------------------------
@@ -54,8 +54,15 @@ cmgDiTauCorSVFitPreSel = diTauSVFit.clone()
 
 cmgDiTauCorSVFitFullSel = cmgDiTauSel.clone() 
 
+diTauTauCounter = cms.EDFilter(
+    "CandViewCountFilter",
+    src = cms.InputTag("tauPreSelectionDiTau"),
+    minNumber = cms.uint32(2),
+    )
+
 diTauSequence = cms.Sequence(   
   tauPreSelectionDiTau    +   
+  diTauTauCounter +
   diTauMVAMetSequence     +
   cmgDiTau                +
   cmgDiTauCor             +

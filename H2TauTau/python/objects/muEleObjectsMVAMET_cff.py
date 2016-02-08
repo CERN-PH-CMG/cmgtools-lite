@@ -55,9 +55,23 @@ cmgMuEleCorSVFitFullSel = cmgMuEleSel.clone(src = 'cmgMuEleCorSVFitPreSel',
                                               cut = ''
                                               ) 
 
+muEleMuCounter = cms.EDFilter(
+    "CandViewCountFilter",
+    src = cms.InputTag("muonPreSelectionMuEle"),
+    minNumber = cms.uint32(1),
+    )
+
+muEleEleCounter = cms.EDFilter(
+    "CandViewCountFilter",
+    src = cms.InputTag("electronPreSelectionMuEle"),
+    minNumber = cms.uint32(1),
+    )
+
 muEleSequence = cms.Sequence( #
     muonPreSelectionMuEle +   
+    muEleMuCounter + 
     electronPreSelectionMuEle +   
+    muEleEleCounter +
     muEleMVAMetSequence +
     cmgMuEle +
     # cmgMuEleCor+ # Correction only applies to taus, not needed for mu-ele

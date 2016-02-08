@@ -20,7 +20,7 @@ from CMGTools.H2TauTau.proto.analyzers.HiggsPtWeighter import HiggsPtWeighter
 from CMGTools.H2TauTau.proto.analyzers.VBFAnalyzer import VBFAnalyzer
 
 puFileMC = '$CMSSW_BASE/src/CMGTools/H2TauTau/data/MC_Fall15_PU25_V1.root'
-puFileData = '$CMSSW_BASE/src/CMGTools/H2TauTau/data/Data_Pileup_2015D_Jan27.root'
+puFileData = '$CMSSW_BASE/src/CMGTools/H2TauTau/data/Data_Pileup_2015D_Feb02.root'
 
 eventSelector = cfg.Analyzer(
     EventSelector,
