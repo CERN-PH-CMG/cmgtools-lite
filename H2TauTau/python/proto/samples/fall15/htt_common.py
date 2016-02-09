@@ -21,15 +21,22 @@ WZTo1L3Nu.xSection = 3.05
 DYJetsToLL_M50_LO.xSection = 6025.2
 DYJetsToLL_M50.xSection = 6025.2
 
+# Dummy values such that the NJetsAnalyzer fills number of outgoing partons
+DYJetsToLL_M50_LO.fractions = [1., 1., 1., 1., 1.]
+DYJetsToLL_M50_LO.nevents = [1., 1., 1., 1., 1.]
+
+WJetsToLNu.fractions = [1., 1., 1., 1., 1.]
+WJetsToLNu.nevents = [1., 1., 1., 1., 1.]
+
 # Backgrounds
 diboson_lo = [ZZ, WZ]
 diboson_nlo = [ZZTo4L, WZTo1L3Nu, WZTo3L, WWTo1L1Nu2Q] #, VVTo2L2Nu, ZZTo2L2Q,  WZTo2L2Q, WZTo1L1Nu2Q]
 
-essential = [TT_pow_ext, WJetsToLNu, DYJetsToLL_M50_LO, TBar_tWch, T_tWch] #WJetsToLNu_LO
+essential = [TT_pow_ext, WJetsToLNu, DYJetsToLL_M50_LO, TBar_tWch, T_tWch, TBarToLeptons_tch_powheg, TToLeptons_tch_powheg] #WJetsToLNu_LO
 
 # Build default background list
 backgrounds = essential
-backgrounds += DYNJets
+# backgrounds += DYNJets
 backgrounds += diboson_nlo
 backgrounds += []
 
