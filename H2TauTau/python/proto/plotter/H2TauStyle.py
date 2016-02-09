@@ -95,6 +95,7 @@ histPref['WZ*'] = {'style':sHTT_VV, 'layer':0.8, 'legend':'Diboson'}
 histPref['ZZ*'] = {'style':sHTT_VV, 'layer':0.7, 'legend':'Diboson'} 
 histPref['Diboson'] = {'style':sHTT_VV, 'layer':0.7, 'legend':'Diboson'} 
 histPref['VV*'] = {'style':sHTT_VV, 'layer':0.7, 'legend':'Diboson'} 
+histPref['Electroweak'] = {'style':sHTT_VV, 'layer':0.7, 'legend':'Electroweak'} 
 histPref['QCD*'] = {'style':sHTT_QCD, 'layer':2, 'legend':'QCD multijet'}
 histPref['W'] = {'style':sHTT_WJets, 'layer':3, 'legend':'W+jets'}  
 histPref['ZJ'] = {'style':sHTT_DYJets, 'layer':3.1, 'legend':'Z#rightarrow#tau#tau/Z#rightarrow ll, j#rightarrow#tau'}

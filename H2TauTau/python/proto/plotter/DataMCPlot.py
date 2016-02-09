@@ -449,6 +449,9 @@ class DataMCPlot(object):
             filename = self.name+'.root'
 
         outf = TFile(filename, mode)
+        if dir and outf.Get(dir):
+            print 'Directory', dir, 'already present in output file, recreate'
+            outf = TFile(filename, 'RECREATE')
         if dir:
             outf_dir = outf.mkdir(dir)
             outf_dir.cd()

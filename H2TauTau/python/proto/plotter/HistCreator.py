@@ -96,7 +96,7 @@ def setSumWeights(sample):
     if isinstance(sample, HistogramCfg) or sample.is_data:
         return
 
-    pckfile = '/'.join([sample.ana_dir, sample.dir_name, 'SkimAnalyzerCount', 'SkimReport.pck'])
+    pckfile = '/'.join([sample.ana_dir, sample.dir_name, 'MCWeighter', 'SkimReport.pck'])
     try:
         pckobj  = pickle.load(open(pckfile,'r'))
         counters = dict(pckobj)

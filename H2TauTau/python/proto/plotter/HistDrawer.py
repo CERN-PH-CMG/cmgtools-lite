@@ -105,7 +105,7 @@ class HistDrawer:
 
     @staticmethod
     def draw(plot, do_ratio=True, channel='#mu#tau_{h}', plot_dir='plots', 
-             plot_name=None, SetLogy=0, mssm=False,
+             plot_name=None, SetLogy=0, 
              blindxmin=None, blindxmax=None, unit=None):
         print plot
         Stack.STAT_ERRORS = True
@@ -120,7 +120,7 @@ class HistDrawer:
         pad.cd()
         pad.SetLogy(SetLogy)
 
-        plot.DrawStack('HIST', print_norm=plot.name=='_norm_') # magic word to print integrals in legend
+        plot.DrawStack('HIST', print_norm=plot.name=='_norm_', ymin=0.1) # magic word to print integrals in legend
 
         h = plot.supportHist
         h.GetXaxis().SetLabelColor(1)
@@ -190,6 +190,9 @@ class HistDrawer:
         ensureDir(plot_dir)
         plotname += plot_name if plot_name else plot.name
         can.SaveAs(plotname + '.png')
+        h.GetYaxis().SetRangeUser(pad.GetUymax() * 5./10000., pad.GetUymax() * 5.)
+        pad.SetLogy(True)
+        can.SaveAs(plotname + '_log.png')
         pad.SetLogy(0)
         return ratio
 
