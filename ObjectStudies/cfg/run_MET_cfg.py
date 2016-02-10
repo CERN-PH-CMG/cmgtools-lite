@@ -1,11 +1,7 @@
 import PhysicsTools.HeppyCore.framework.config as cfg
 
 #-------- SAMPLES AND TRIGGERS -----------
-from CMGTools.RootTools.samples.samples_8TeVReReco_74X import * # <-- this one for the official sample
-from CMGTools.ObjectStudies.samples.samples_METPOG_private import * #<-- this one for the private re-reco
-###from CMGTools.RootTools.samples.samples_13TeV_74X import * #<--miniAOD v1
-from CMGTools.RootTools.samples.samples_13TeV_RunIISpring15MiniAODv2 import * #<--miniAOD v2
-
+from CMGTools.RootTools.samples.samples_13TeV_RunIIFall15MiniAODv2 import * #<--miniAOD v2 samples_13TeV_RunIIFall15MiniAODv2
 from CMGTools.RootTools.samples.samples_13TeV_DATA2015 import *
 
 from CMGTools.RootTools.samples.triggers_13TeV_Spring15 import triggers_1mu_iso_50ns, triggers_mumu, triggers_ee, triggers_photon30, triggers_photon50, triggers_photon75, triggers_photon90, triggers_photon120
@@ -21,7 +17,7 @@ is25ns = True
 
 #-------- HOW TO RUN
 
-test = 13
+test = 2
 
 if test==0:
     selectedComponents = [DoubleMu_742, DoubleMu_740p9]
@@ -53,7 +49,7 @@ elif test==1:
 
    # ----------------------- Summer15 options -------------------------------------------------------------------- #
 elif test==2:
-    selectedComponents = [ DYJetsToLL_M50_50ns ]
+    selectedComponents = [ DYJetsToLL_M50 ]
     isZSkim=True
     for comp in selectedComponents:
         comp.triggers = triggers_mumu
@@ -347,29 +343,31 @@ else:
         jecDBFile = os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/jec/Summer15_25nsV2_MC.db'
         jecEra    = 'Summer15_25nsV2_MC'
 
-preprocessorFile = "$CMSSW_BASE/tmp/MetType1_jec_%s.py"%(jecEra)
-extraArgs=[]
-if comp.isData:
-    extraArgs.append('--isData')
-    GT= '74X_dataRun2_Prompt_v2'
-else:
-    if not is25ns:
-        GT= 'MCRUN2_74_V9A'
-    else:
-        GT= 'MCRUN2_74_V9'
-if removeResiduals:extraArgs.append('--removeResiduals')
-args = ['python', 
-  os.path.expandvars(os.environ['CMSSW_BASE']+'/python/CMGTools/ObjectStudies/corMETMiniAOD_cfgCreator.py'),\
-  '--GT='+GT, 
-  '--outputFile='+preprocessorFile, 
-  '--jecDBFile='+jecDBFile,
-  '--jecEra='+jecEra
-  ] + extraArgs 
-#print "Making pre-processorfile:"
-#print " ".join(args)
-subprocess.call(args)
-from PhysicsTools.Heppy.utils.cmsswPreprocessor import CmsswPreprocessor
-preprocessor = CmsswPreprocessor(preprocessorFile)
+
+
+#preprocessorFile = "$CMSSW_BASE/tmp/MetType1_jec_%s.py"%(jecEra)
+#extraArgs=[]
+#if comp.isData:
+#    extraArgs.append('--isData')
+#    GT= '74X_dataRun2_Prompt_v2'
+#else:
+#    if not is25ns:
+#        GT= 'MCRUN2_74_V9A'
+#    else:
+#        GT= 'MCRUN2_74_V9'
+#if removeResiduals:extraArgs.append('--removeResiduals')
+#args = ['python',
+#  os.path.expandvars(os.environ['CMSSW_BASE']+'/python/CMGTools/ObjectStudies/corMETMiniAOD_cfgCreator.py'),\
+#  '--GT='+GT,
+#  '--outputFile='+preprocessorFile,
+#  '--jecDBFile='+jecDBFile,
+#  '--jecEra='+jecEra
+#  ] + extraArgs
+##print "Making pre-processorfile:"
+##print " ".join(args)
+#subprocess.call(args)
+#from PhysicsTools.Heppy.utils.cmsswPreprocessor import CmsswPreprocessor
+#preprocessor = CmsswPreprocessor(preprocessorFile)
 
 #printComps(config.components, True)               
 config = cfg.Config( components = selectedComponents,
