@@ -124,6 +124,7 @@ vars['l2_gen_match'] = {'std': 'l2_gen_match', 'sync': 'gen_match_2'}
 # di-tau pair
 vars['pthiggs'] = {'std': 'pthiggs', 'sync': 'pt_tt'}
 vars['visMass'] = {'std': 'visMass', 'sync': 'm_vis'}
+vars['mvis'] = {'std': 'mvis', 'sync': 'm_vis'}
 vars['svfit_mass'] = {'std': 'svfit_mass', 'sync': 'm_sv'}
 vars['svfit_transverse_mass'] = {'std':'svfit_transverse_mass', 'sync':'mt_sv'}
 vars['svfit_pt'] = {'std': 'svfit_pt', 'sync': 'pt_sv'}

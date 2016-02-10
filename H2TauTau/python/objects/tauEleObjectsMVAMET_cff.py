@@ -57,9 +57,24 @@ cmgTauEleCorSVFitFullSel = cmgTauEleSel.clone(src = 'cmgTauEleCorSVFitPreSel',
                                               cut = ''
                                               ) 
 
+
+tauEleTauCounter = cms.EDFilter(
+    "CandViewCountFilter",
+    src = cms.InputTag("tauPreSelectionTauEle"),
+    minNumber = cms.uint32(1),
+    )
+
+tauEleEleCounter = cms.EDFilter(
+    "CandViewCountFilter",
+    src = cms.InputTag("electronPreSelectionTauEle"),
+    minNumber = cms.uint32(1),
+    )
+
 tauEleSequence = cms.Sequence( #
-    tauPreSelectionTauEle +   
+    tauPreSelectionTauEle + 
+    tauEleTauCounter +  
     electronPreSelectionTauEle +   
+    tauEleEleCounter + 
     tauEleMVAMetSequence +
     cmgTauEle +
     cmgTauEleCor+

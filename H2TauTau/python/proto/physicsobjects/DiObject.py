@@ -291,10 +291,15 @@ class MuonElectron(DiTau):
 
 class TauTau(DiTau):
 
-    def __init__(self, diobject):
+    def __init__(self, diobject, iso='byIsolationMVArun2v1DBnewDMwLTraw'):
         super(TauTau, self).__init__(diobject)
-        self.tau = Tau(super(TauTau, self).leg1())
-        self.tau2 = Tau(super(TauTau, self).leg2())
+        if super(TauTau, self).leg1().tauID(iso) > super(TauTau, self).leg2().tauID(iso):
+            self.tau = Tau(super(TauTau, self).leg1())
+            self.tau2 = Tau(super(TauTau, self).leg2())
+        else:
+            self.tau = Tau(super(TauTau, self).leg2())
+            self.tau2 = Tau(super(TauTau, self).leg1())
+        self.iso = iso
 
     def leg1(self):
         return self.tau

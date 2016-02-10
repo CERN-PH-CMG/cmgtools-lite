@@ -201,6 +201,10 @@ class TauTauAnalyzer(DiLeptonAnalyzer):
         '''Second muon veto'''
         return len(muons) == 0
 
+    def trigMatched(self, event, diL, requireAllMatched=False):
+        matched = super(TauTauAnalyzer, self).trigMatched(event, diL, requireAllMatched=requireAllMatched, checkBothLegs=True)
+        return matched
+
     def bestDiLepton(self, diLeptons):
         '''Returns the best diLepton (1st precedence most isolated opposite-sign,
         2nd precedence most isolated).'''

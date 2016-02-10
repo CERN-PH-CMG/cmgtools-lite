@@ -54,8 +54,16 @@ cmgDiMuCorSVFitFullSel = cmgDiMuSel.clone(src='cmgDiMuCorSVFitPreSel',
                                           cut=''
                                           )
 
+
+diMuMuCounter = cms.EDFilter(
+    "CandViewCountFilter",
+    src = cms.InputTag("muonPreSelectionDiMu"),
+    minNumber = cms.uint32(2),
+    )
+
 diMuSequence = cms.Sequence(
     muonPreSelectionDiMu +
+    diMuMuCounter + 
     diMuMVAMetSequence +
     cmgDiMu +
     # cmgDiMuCor + # Correction only applies to taus, not needed for di-mu
