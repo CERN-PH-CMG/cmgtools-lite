@@ -150,15 +150,27 @@ jet_vars = [
     # JAN - only one PU mva working point, but we may want to add more
     # run in our skimming step
     # (for which Jet.py would have to be touched again)
-    Variable('mva_pu', lambda jet : jet.puMva('pileupJetId:fullDiscriminant')),
-    Variable('id_loose', lambda jet : jet.looseJetId()),
-    Variable('id_pu', lambda jet : jet.puJetId()),
-    Variable('mva_btag', lambda jet : jet.btagMVA),
-    Variable('area', lambda jet : jet.jetArea()),
-    Variable('flavour_parton', lambda jet : jet.partonFlavour()),
-    Variable('csv', lambda jet : jet.btagMVA),
-    Variable('rawfactor', lambda jet : jet.rawFactor()),
-    Variable('genjet_pt', lambda jet : jet.matchedGenJet.pt() if hasattr(jet, 'matchedGenJet') and jet.matchedGenJet else -999.),
+    Variable('mva_pu'                   , lambda jet : jet.puMva('pileupJetId:fullDiscriminant') if hasattr(jet, 'puMva'                    ) else -999.                      ),
+    Variable('id_loose'                 , lambda jet : jet.looseJetId()                          if hasattr(jet, 'looseJetId'               ) else -999.                      ),
+    Variable('id_pu'                    , lambda jet : jet.puJetId()                             if hasattr(jet, 'puJetId'                  ) else -999.                      ),
+    Variable('mva_btag'                 , lambda jet : jet.btagMVA                               if hasattr(jet, 'btagMVA'                  ) else -999.                      ),
+    Variable('area'                     , lambda jet : jet.jetArea()                             if hasattr(jet, 'jetArea'                  ) else -999.                      ),
+    Variable('flavour_parton'           , lambda jet : jet.partonFlavour()                       if hasattr(jet, 'partonFlavour'            ) else -999.                      ),
+    Variable('csv'                      , lambda jet : jet.btagMVA                               if hasattr(jet, 'btagMVA'                  ) else -999.                      ),
+    Variable('rawfactor'                , lambda jet : jet.rawFactor()                           if hasattr(jet, 'rawFactor'                ) else -999.                      ),
+    Variable('genjet_pt'                , lambda jet : jet.matchedGenJet.pt()                    if hasattr(jet, 'matchedGenJet'            ) and jet.matchedGenJet else -999.),
+    Variable('nConstituents'            , lambda jet : jet.nConstituents()                       if hasattr(jet, 'nConstituents'            ) else -999.                      ),
+    Variable('rawFactor'                , lambda jet : jet.rawFactor()                           if hasattr(jet, 'rawFactor'                ) else -999.                      ),
+    Variable('chargedHadronEnergy'      , lambda jet : jet.chargedHadronEnergy()                 if hasattr(jet, 'chargedHadronEnergy'      ) else -999.                      ),
+    Variable('neutralHadronEnergy'      , lambda jet : jet.neutralHadronEnergy()                 if hasattr(jet, 'neutralHadronEnergy'      ) else -999.                      ),
+    Variable('neutralEmEnergy'          , lambda jet : jet.neutralEmEnergy()                     if hasattr(jet, 'neutralEmEnergy'          ) else -999.                      ),
+    Variable('muonEnergy'               , lambda jet : jet.muonEnergy()                          if hasattr(jet, 'muonEnergy'               ) else -999.                      ),
+    Variable('chargedEmEnergy'          , lambda jet : jet.chargedEmEnergy()                     if hasattr(jet, 'chargedEmEnergy'          ) else -999.                      ),
+    Variable('chargedHadronMultiplicity', lambda jet : jet.chargedHadronMultiplicity()           if hasattr(jet, 'chargedHadronMultiplicity') else -999.                      ),
+    Variable('chargedMultiplicity'      , lambda jet : jet.chargedMultiplicity()                 if hasattr(jet, 'chargedMultiplicity'      ) else -999.                      ),
+    Variable('neutralMultiplicity'      , lambda jet : jet.neutralMultiplicity()                 if hasattr(jet, 'neutralMultiplicity'      ) else -999.                      ),
+
+
 ]
 
 # gen info
