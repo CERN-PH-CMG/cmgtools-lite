@@ -1,234 +1,77 @@
-import CMGTools.RootTools.fwlite.Config as cfg
+import PhysicsTools.HeppyCore.framework.config as cfg
 
-DYJets = cfg.MCComponent(
-    name = 'DYJets',
-    files = [],
-    xSection = 2008.4*3.,
-    nGenEvents = 1,
-    triggers = [],
-    effCorrFactor = 1 )
+from CMGTools.RootTools.samples.ComponentCreator import ComponentCreator
 
-DY1Jets = cfg.MCComponent(
-    name = 'DY1Jets',
-    files = [],
-    xSection = 561.0,
-    nGenEvents = 1,
-    triggers = [],
-    effCorrFactor = 1 )
+creator = ComponentCreator()
 
-DY2Jets = cfg.MCComponent(
-    name = 'DY2Jets',
-    files = [],
-    xSection = 181.,
-    nGenEvents = 1,
-    triggers = [],
-    effCorrFactor = 1 )
+DYJetsToLL_M50_ext1 = creator.makeMCComponent('DYJetsToLL_M50_ext1', '/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12_ext1-v1/MINIAODSIM', 'CMS', '.*root', 6025.2 )
+DYJetsToLL_M50      = creator.makeMCComponent('DYJetsToLL_M50'     , '/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM'      , 'CMS', '.*root', 6025.2 )
+DY1JetsToLL_M50     = creator.makeMCComponent('DY1JetsToLL_M50'    , '/DY1JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM'     , 'CMS', '.*root', 1016   )
+DY2JetsToLL_M50     = creator.makeMCComponent('DY2JetsToLL_M50'    , '/DY2JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM'     , 'CMS', '.*root',  331.4 )
+DY3JetsToLL_M50     = creator.makeMCComponent('DY3JetsToLL_M50'    , '/DY3JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM'     , 'CMS', '.*root',   96.36)
+DY4JetsToLL_M50     = creator.makeMCComponent('DY4JetsToLL_M50'    , '/DY4JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM'     , 'CMS', '.*root',   51.4 )
 
-DY3Jets = cfg.MCComponent(
-    name = 'DY3Jets',
-    files = [],
-    xSection = 51.1,
-    nGenEvents = 1,
-    triggers = [],
-    effCorrFactor = 1 )
+DYJetsToLL_M50_HT_100to200 = creator.makeMCComponent('DYJetsToLL_M50_HT_100to200', '/DYJetsToLL_M-50_HT-100to200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM', 'CMS', '.*root', 147.4  )
+DYJetsToLL_M50_HT_200to400 = creator.makeMCComponent('DYJetsToLL_M50_HT_200to400', '/DYJetsToLL_M-50_HT-200to400_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM', 'CMS', '.*root',  40.99 )
+DYJetsToLL_M50_HT_400to600 = creator.makeMCComponent('DYJetsToLL_M50_HT_400to600', '/DYJetsToLL_M-50_HT-400to600_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM', 'CMS', '.*root',   5.678)
+DYJetsToLL_M50_HT_600toInf = creator.makeMCComponent('DYJetsToLL_M50_HT_600toInf', '/DYJetsToLL_M-50_HT-600toInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM', 'CMS', '.*root',   2.198)
 
-DY4Jets = cfg.MCComponent(
-    name = 'DY4Jets',
-    files = [],
-    xSection = 23.04,
-    nGenEvents = 1,
-    triggers = [],
-    effCorrFactor = 1 )
+DYJetsToLL_M10to50  = creator.makeMCComponent('DYJetsToLL_M10to50' , '/DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM' , 'CMS', '.*root', 18610  )
+DY1JetsToLL_M10to50 = creator.makeMCComponent('DY1JetsToLL_M10to50', '/DY1JetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM', 'CMS', '.*root',   421.5)
+DY2JetsToLL_M10to50 = creator.makeMCComponent('DY2JetsToLL_M10to50', '/DY2JetsToLL_M-10to50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM', 'CMS', '.*root',   184.3)
 
-WJets = cfg.MCComponent(
-    name = 'WJets',
-    files = [],
-    xSection = 36257.2 ,
-    nGenEvents = 1,
-    triggers = [],
-    effCorrFactor = 1 )
+dy_inclusive = [
+    DYJetsToLL_M50_ext1,
+    DYJetsToLL_M50      
+]
 
-W1234Jets = cfg.MCComponent(
-    name = 'W1234Jets',
-    files = [],
-    xSection = 9401.8,
-    nGenEvents = 1,
-    triggers = [],
-    effCorrFactor = 1 )
+dy_jet_bins = [
+    DY1JetsToLL_M50,    
+    DY2JetsToLL_M50,    
+    DY3JetsToLL_M50,    
+    DY4JetsToLL_M50,    
+]
 
-W1Jets = cfg.MCComponent(
-    name = 'W1Jets',
-    files = [],
-    xSection = 6440.4, #PG inclusive scaled according to LO XS
-    nGenEvents = 1,
-    triggers = [],
-    effCorrFactor = 1 )
+dy_ht_bins = [
+    DYJetsToLL_M50_HT_100to200,
+    DYJetsToLL_M50_HT_200to400,
+    DYJetsToLL_M50_HT_400to600,
+    DYJetsToLL_M50_HT_600toInf,
+]
 
-W2Jets = cfg.MCComponent(
-    name = 'W2Jets',
-    files = [],
-    xSection = 2087.2, #PG inclusive scaled according to LO XS
-    nGenEvents = 1,
-    triggers = [],
-    effCorrFactor = 1 )
+dy_low_mass = [
+    DYJetsToLL_M10to50 ,
+    DY1JetsToLL_M10to50,
+    DY2JetsToLL_M10to50,
+]
 
-W3Jets = cfg.MCComponent(
-    name = 'W3Jets',
-    files = [],
-    xSection = 619.0, #PG inclusive scaled according to LO XS
-    nGenEvents = 1,
-    triggers = [],
-    effCorrFactor = 1 )
+dy_all = dy_inclusive + dy_jet_bins + dy_ht_bins + dy_low_mass
 
-W1Jets_ext = cfg.MCComponent(
-    name = 'W1Jets_ext',
-    files = [],
-    xSection = 6440.4, #PG inclusive scaled according to LO XS
-    nGenEvents = 1,
-    triggers = [],
-    effCorrFactor = 1 )
+WJetsToLNu             = creator.makeMCComponent('WJetsToLNu'            , '/WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM'           , 'CMS', '.*root', 61526.2 )
+WJetsToLNu_HT_100to200 = creator.makeMCComponent('WJetsToLNu_HT_100to200', '/WJetsToLNu_HT-100To200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM', 'CMS', '.*root',  1345   )
+WJetsToLNu_HT_200to400 = creator.makeMCComponent('WJetsToLNu_HT_200to400', '/WJetsToLNu_HT-200To400_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM', 'CMS', '.*root',   359.7 )
+WJetsToLNu_HT_400to600 = creator.makeMCComponent('WJetsToLNu_HT_400to600', '/WJetsToLNu_HT-400To600_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM', 'CMS', '.*root',    48.91)
+WJetsToLNu_HT_600toInf = creator.makeMCComponent('WJetsToLNu_HT_600toInf', '/WJetsToLNu_HT-600ToInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM', 'CMS', '.*root',    18.77)
 
-W2Jets_ext = cfg.MCComponent(
-    name = 'W2Jets_ext',
-    files = [],
-    xSection = 2087.2, #PG inclusive scaled according to LO XS
-    nGenEvents = 1,
-    triggers = [],
-    effCorrFactor = 1 )
+wjets_inclusive = [
+    WJetsToLNu,
+]
 
-W3Jets_ext = cfg.MCComponent(
-    name = 'W3Jets_ext',
-    files = [],
-    xSection = 619.0, #PG inclusive scaled according to LO XS
-    nGenEvents = 1,
-    triggers = [],
-    effCorrFactor = 1 )
-
-W4Jets = cfg.MCComponent(
-    name = 'W4Jets',
-    files = [],
-    xSection = 255.2, #PG inclusive scaled according to LO XS
-    nGenEvents = 1,
-    triggers = [],
-    effCorrFactor = 1 )
-
-TTJets = cfg.MCComponent(
-    name = 'TTJets',
-    files = [],
-    xSection = 228.4, # correction factor from Valentina removed as it depends on the jet binning
-    nGenEvents = 1,
-    triggers = [],
-    effCorrFactor = 1 )
-
-TTJetsFullLept = cfg.MCComponent(
-    name = 'TTJetsFullLept',
-    files = [],
-    xSection = 249.5*0.96*(1-0.676)*(1-0.676), # TOP-12-007 + Valentina's SF
-    nGenEvents = 1,
-    triggers = [],
-    effCorrFactor = 1 )
-
-TTJetsSemiLept = cfg.MCComponent(
-    name = 'TTJetsSemiLept',
-    files = [],
-    xSection = 249.5*0.96*(1-0.676)*0.676*2, # TOP-12-007 + Valentina's SF
-    nGenEvents = 1,
-    triggers = [],
-    effCorrFactor = 1 )
-
-TTJetsHadronic = cfg.MCComponent(
-    name = 'TTJetsHadronic',
-    files = [],
-    xSection = 249.5*0.96*0.676*0.676, # TOP-12-007 + Valentina's SF
-    nGenEvents = 1,
-    triggers = [],
-    effCorrFactor = 1 )
-
-T_tW = cfg.MCComponent(
-    name = 'T_tW',
-    files = [],
-    xSection = 11.1, # from the sync twiki
-    nGenEvents = 1,
-    triggers = [],
-    effCorrFactor = 1 )
-
-Tbar_tW = cfg.MCComponent(
-    name = 'Tbar_tW',
-    files = [],
-    xSection = 11.1, # from the sync twiki
-    nGenEvents = 1,
-    triggers = [],
-    effCorrFactor = 1 )
+wjets_ht_bins = [
+    WJetsToLNu_HT_100to200,
+    WJetsToLNu_HT_200to400,
+    WJetsToLNu_HT_400to600,
+    WJetsToLNu_HT_600toInf,
+]
 
 
 
-mc_dy = [
-    DYJets,
-    DY1Jets,
-    DY2Jets,
-    DY3Jets,
-    DY4Jets,
-    ]
-
-mc_w = [
-    WJets,
-    W1234Jets,
-    W1Jets,
-    W2Jets,
-    W3Jets,
-    W4Jets,
-    ]
-
-mc_w_ext = [
-    W1Jets_ext,
-    W2Jets_ext,
-    W3Jets_ext,
-    ]
-
-t_mc_ewk = [
-    TTJets,
-    T_tW,
-    Tbar_tW,
-    TTJetsFullLept,
-    TTJetsSemiLept,
-    TTJetsHadronic,
-    ]
 
 
-mc_ewk = []
-mc_ewk += mc_dy
-mc_ewk += mc_w
-mc_ewk += t_mc_ewk
 
 
-# for backward compatibility:
-ztt_mc_ewk = mc_dy
-ztt_inc_mc_ewk = [DYJets]
-w_mc_ewk = mc_w
 
 
-#stitching:
-
-# from COLIN, measured on inclusive DYJets sample, before any selection.
-dy_fractions = [ 0.72328,
-                 0.188645,
-                 0.0613196,
-                 0.0188489,
-                 0.00790643
-                 ]
-
-for dy in mc_dy:
-    dy.fractions = dy_fractions
 
 
-# from Jose
-w_fractions = [ 0.74392452,
-                0.175999,
-                0.0562617,
-                0.0168926,
-                0.00692218
-                ]
-
-for w in mc_w + mc_w_ext:
-    w.fractions = w_fractions
 
