@@ -89,6 +89,9 @@ class JetAnalyzer(Analyzer):
         leptons = []
         if hasattr(event, 'selectedLeptons'):
             leptons = event.selectedLeptons
+        if hasattr(self.cfg_ana, 'toClean'):
+            leptons = getattr(event, self.cfg_ana.toClean)
+            
 
         genJets = None
         if self.cfg_comp.isMC:
@@ -131,7 +134,7 @@ class JetAnalyzer(Analyzer):
         # Attach matched jets to selected + other leptons
         if hasattr(event, 'otherLeptons'):
             leptons += event.otherLeptons
-
+            
         pairs = matchObjectCollection(leptons, allJets, 0.5 * 0.5)
         # associating a jet to each lepton
         for lepton in leptons:
