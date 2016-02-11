@@ -10,7 +10,7 @@ class EventVars2LSS:
         self.systsJEC = {0:"", 1:"_jecUp", -1:"_jecDown"}
         self.inputlabel = '_'+recllabel
         self.branches = []
-        for var in self.systsJEC: self.branches.extend([br+self.systsJEC[var]+self.label for br in self.namebranches])
+        for var in self.systsJEC: self.branches.extend([br+self.label+self.systsJEC[var] for br in self.namebranches])
     def listBranches(self):
         return self.branches[:]
     def __call__(self,event):
@@ -27,7 +27,7 @@ class EventVars2LSS:
             if not hasattr(event,"nJet"+self.systsJEC[var]): _var = 0
             jetsc = [j for j in Collection(event,"Jet"+self.systsJEC[_var],"nJet"+self.systsJEC[_var])]
             jetsd = [j for j in Collection(event,"DiscJet"+self.systsJEC[_var],"nDiscJet"+self.systsJEC[_var])]
-            _ijets_list = getattr(event,"iJ"+self.systsJEC[_var]+self.inputlabel)
+            _ijets_list = getattr(event,"iJ"+self.inputlabel+self.systsJEC[_var])
             _ijets = [ij for ij in _ijets_list]
             jets = [ (jetsc[ij] if ij>=0 else jetsd[-ij-1]) for ij in _ijets]
 
@@ -64,7 +64,7 @@ class EventVars2LSS:
                 ret["sum_sgnpz"] = sumspz
 
             for br in self.namebranches:
-                allret[br+self.systsJEC[var]+self.label] = ret[br]
+                allret[br+self.label+self.systsJEC[var]] = ret[br]
 	 	
 	return allret
 

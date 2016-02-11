@@ -12,6 +12,7 @@ parser.add_option("-v", "--verbose",  dest="verbose",  default=0,  type="int",  
 parser.add_option("--masses", dest="masses", default=None, type="string", help="produce results for all these masses")
 parser.add_option("--mass-int-algo", dest="massIntAlgo", type="string", default="sigmaBR", help="Interpolation algorithm for nearby masses") 
 parser.add_option("--asimov", dest="asimov", action="store_true", help="Asimov")
+parser.add_option("--2d-binning-function",dest="binfunction", type="string", default=None, help="Function used to bin the 2D histogram: nbins:func, where func(x,y) = bin in [1,nbins]")
 
 (options, args) = parser.parse_args()
 options.weight = True
@@ -90,6 +91,25 @@ def getYieldScale(mass,process):
                 scale *= splines['efficiency_'+dec].Eval(mass)
             break
     return scale 
+def rebin2Dto1D(h,funcstring):
+    nbins,fname = funcstring.split(':',1)
+    func = getattr(ROOT,fname)
+    nbins = int(nbins)
+    newh = ROOT.TH1D(h.GetName(),h.GetTitle(),nbins,0.5,nbins+0.5)
+    x = h.GetXaxis()
+    y = h.GetYaxis()
+    allowed = [i+1 for i in xrange(nbins)]
+    if 'TH2' not in h.ClassName(): raise RuntimeError, "Calling rebin2Dto1D on something that is not TH2"
+    for i in xrange(x.GetNbins()):
+        for j in xrange(y.GetNbins()):
+            bin = int(func(x.GetBinCenter(i+1),y.GetBinCenter(j+1)))
+            if bin not in allowed: raise RuntimeError, "Binning function gives not admissible result"
+            newh.SetBinContent(bin,newh.GetBinContent(bin)+h.GetBinContent(i+1,j+1))
+    newh.SetLineWidth(h.GetLineWidth())
+    newh.SetLineStyle(h.GetLineStyle())
+    newh.SetLineColor(h.GetLineColor())
+    return newh
+
 
 report = mca.getPlotsRaw("x", args[2], args[3], cuts.allCuts(), nodata=options.asimov)
 
@@ -125,7 +145,7 @@ for sysfile in args[4:]:
             if re.match(binmap+"$",truebinname) == None: continue
             if name not in systs: systs[name] = []
             systs[name].append((re.compile(procmap+"$"),amount))
-        elif field[4] in ["envelop","shapeOnly","templates","alternateShapeOnly"]:
+        elif field[4] in ["envelop","shapeOnly","templates","alternateShapeOnly"] or '2D' in field[4]:
             (name, procmap, binmap, amount) = field[:4]
             if re.match(binmap+"$",truebinname) == None: continue
             if name not in systs: systsEnv[name] = []
@@ -167,7 +187,7 @@ for name in systsEnv.keys():
             effmap0[p]  = "-" 
             effmap12[p] = "-" 
             continue
-        if mode in ["envelop","shapeOnly"]:
+        if any([re.match(x+'.*',mode) for x in ["envelop","shapeOnly"]]):
             nominal = report[p]
             p0up = nominal.Clone(nominal.GetName()+"_"+name+"0Up"  ); p0up.Scale(effect)
             p0dn = nominal.Clone(nominal.GetName()+"_"+name+"0Down"); p0dn.Scale(1.0/effect)
@@ -175,18 +195,46 @@ for name in systsEnv.keys():
             p1dn = nominal.Clone(nominal.GetName()+"_"+name+"1Down");
             p2up = nominal.Clone(nominal.GetName()+"_"+name+"2Up"  );
             p2dn = nominal.Clone(nominal.GetName()+"_"+name+"2Down");
-            nbin = nominal.GetNbinsX()
-            xmin = nominal.GetBinCenter(1)
-            xmax = nominal.GetBinCenter(nbin)
-            for b in xrange(1,nbin+1):
-                x = (nominal.GetBinCenter(b)-xmin)/(xmax-xmin)
-                c1 = 2*(x-0.5)         # straight line from (0,-1) to (1,+1)
-                c2 = 1 - 8*(x-0.5)**2  # parabola through (0,-1), (0.5,~1), (1,-1)
-                p1up.SetBinContent(b, p1up.GetBinContent(b) * pow(effect,+c1))
-                p1dn.SetBinContent(b, p1dn.GetBinContent(b) * pow(effect,-c1))
-                p2up.SetBinContent(b, p2up.GetBinContent(b) * pow(effect,+c2))
-                p2dn.SetBinContent(b, p2dn.GetBinContent(b) * pow(effect,-c2))
-            if mode != "shapeOnly":
+            nbinx = nominal.GetNbinsX()
+            xmin = nominal.GetXaxis().GetBinCenter(1)
+            xmax = nominal.GetXaxis().GetBinCenter(nbinx)
+            if '2D' in mode:
+                if 'TH2' not in nominal.ClassName(): raise RuntimeError, 'Trying to use 2D shape systs on a 1D histogram'
+                nbiny = nominal.GetNbinsY()
+                ymin = nominal.GetYaxis().GetBinCenter(1)
+                ymax = nominal.GetYaxis().GetBinCenter(nbiny)
+            c1def = lambda x: 2*(x-0.5) # straight line from (0,-1) to (1,+1)
+            c2def = lambda x: 1 - 8*(x-0.5)**2 # parabola through (0,-1), (0.5,~1), (1,-1)
+            if '2D' not in mode:
+                if 'TH1' not in nominal.ClassName(): raise RuntimeError, 'Trying to use 1D shape systs on a 2D histogram'
+                for b in xrange(1,nbinx+1):
+                    x = (nominal.GetBinCenter(bx)-xmin)/(xmax-xmin)
+                    c1 = c1def(x)
+                    c2 = c2def(x)
+                    p1up.SetBinContent(b, p1up.GetBinContent(b) * pow(effect,+c1))
+                    p1dn.SetBinContent(b, p1dn.GetBinContent(b) * pow(effect,-c1))
+                    p2up.SetBinContent(b, p2up.GetBinContent(b) * pow(effect,+c2))
+                    p2dn.SetBinContent(b, p2dn.GetBinContent(b) * pow(effect,-c2))
+            else: # e.g. shapeOnly2D_1X_-1Y will do an anti-correlated shape distorsion of the x and y axes
+                if '_0X' in mode: modX = 0
+                elif '_1X' in mode: modX = 1
+                elif '_-1X' in mode: modX = -1
+                else: raise RuntimeError, 'Wrong configuration'
+                if '_0Y' in mode: modY = 0
+                elif '_1Y' in mode: modY = 1
+                elif '_-1Y' in mode: modY = -1
+                else: raise RuntimeError, 'Wrong configuration'
+                for bx in xrange(1,nbinx+1):
+                    for by in xrange(1,nbiny+1):
+                        x = (nominal.GetXaxis().GetBinCenter(bx)-xmin)/(xmax-xmin)
+                        y = (nominal.GetYaxis().GetBinCenter(by)-ymin)/(ymax-ymin)
+                        c1 = c1def(x)*modX + c1def(y)*modY
+                        c2 = c2def(x)*modX + c2def(y)*modY
+                        p1up.SetBinContent(bx,by, p1up.GetBinContent(bx,by) * pow(effect,+c1))
+                        p1dn.SetBinContent(bx,by, p1dn.GetBinContent(bx,by) * pow(effect,-c1))
+                        p2up.SetBinContent(bx,by, p2up.GetBinContent(bx,by) * pow(effect,+c2))
+                        p2dn.SetBinContent(bx,by, p2dn.GetBinContent(bx,by) * pow(effect,-c2))
+            if "shapeOnly" not in mode:
                 report[p+"_"+name+"0Up"]   = p0up
                 report[p+"_"+name+"0Down"] = p0dn
                 effect0 = "1"
@@ -275,7 +323,7 @@ if len(masses) > 1:
             scale = getYieldScale(mass,p)
             posts = ['']
             for name,(effmap0,effmap12,mode) in systsEnv.iteritems():
-                if mode == "envelop" and effmap0[p] != "-": 
+                if re.match('envelop.*',mode) and effmap0[p] != "-": 
                     posts += [ "_%s%d%s" % (name,i,d) for (i,d) in [(0,'Up'),(0,'Down'),(1,'Up'),(1,'Down'),(2,'Up'),(2,'Down')]]
                 elif effmap0[p]  != "-":
                     posts += [ "_%s%s" % (name,d) for d in ['Up','Down']]
@@ -346,9 +394,9 @@ for mass in masses:
     for name,(effmap0,effmap12,mode) in systsEnv.iteritems():
         if mode == "templates":
             datacard.write(('%-10s shape' % name) + " ".join([kpatt % effmap0[p]  for p in procs]) +"\n")
-        if mode == "envelop":
+        if re.match('envelop.*',mode):
             datacard.write(('%-10s shape' % (name+"0")) + " ".join([kpatt % effmap0[p]  for p in procs]) +"\n")
-        if mode in ["envelop", "shapeOnly"]:
+        if any([re.match(x+'.*',mode) for x in ["envelop", "shapeOnly"]]):
             datacard.write(('%-10s shape' % (name+"1")) + " ".join([kpatt % effmap12[p] for p in procs]) +"\n")
             datacard.write(('%-10s shape' % (name+"2")) + " ".join([kpatt % effmap12[p] for p in procs]) +"\n")
 if len(masses) > 1:
@@ -379,9 +427,9 @@ if len(masses) > 1:
     for name,(effmap0,effmap12,mode) in systsEnv.iteritems():
         if mode == "templates":
             datacard.write(('%-10s shape' % name) + " ".join([kpatt % effmap0[p]  for p in procs]) +"\n")
-        if mode == "envelop":
+        if re.match('envelop.*',mode):
             datacard.write(('%-10s shape' % (name+"0")) + " ".join([kpatt % effmap0[p]  for p in procs]) +"\n")
-        if mode in ["envelop", "shapeOnly"]:
+        if any([re.match(x+'.*',mode) for x in ["envelop", "shapeOnly"]]):
             datacard.write(('%-10s shape' % (name+"1")) + " ".join([kpatt % effmap12[p] for p in procs]) +"\n")
             datacard.write(('%-10s shape' % (name+"2")) + " ".join([kpatt % effmap12[p] for p in procs]) +"\n")
     datacard.close()
@@ -394,6 +442,7 @@ if len(masses) > 1:
 myout = outdir+"/common/" if len(masses) > 1 else outdir;
 workspace = ROOT.TFile.Open(myout+binname+".input.root", "RECREATE")
 for n,h in report.iteritems():
+    if options.binfunction: h = rebin2Dto1D(h,options.binfunction)
     if options.verbose: print "\t%s (%8.3f events)" % (h.GetName(),h.Integral())
     workspace.WriteTObject(h,h.GetName())
 workspace.Close()

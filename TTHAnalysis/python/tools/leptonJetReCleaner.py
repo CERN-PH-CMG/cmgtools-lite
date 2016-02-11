@@ -18,7 +18,7 @@ class MyVarProxy:
     def pdgId(self): return self._ob.pdgId
 
 class LeptonJetReCleaner:
-    def __init__(self,label,looseLeptonSel,cleaningLeptonSel,FOLeptonSel,tightLeptonSel,cleanJet,selectJet,CSVbtagFileName=None,EFFbtagFileName=None,CSVbtagFileNameFastSim=None,isFastSim=False,cleanWithTaus=False,coneptdef=None):
+    def __init__(self,label,looseLeptonSel,cleaningLeptonSel,FOLeptonSel,tightLeptonSel,cleanJet,selectJet,doBtagRWT=False,isFastSim=False,cleanWithTaus=False,coneptdef=None):
         self.label = "" if (label in ["",None]) else ("_"+label)
         self.looseLeptonSel = looseLeptonSel
         self.cleaningLeptonSel = cleaningLeptonSel # applied on top of looseLeptonSel
@@ -26,15 +26,17 @@ class LeptonJetReCleaner:
         self.tightLeptonSel = tightLeptonSel # applied on top of looseLeptonSel
         self.cleanJet = cleanJet
         self.selectJet = selectJet
-        self.do_btagSF = False
+        self.doBtagRWT = doBtagRWT
         self.isFastSim = isFastSim
         if self.isFastSim:
             print '-'*15
             print 'WARNING: will apply b-tag scale factors for FastSim'
             print '-'*15
-        if (CSVbtagFileName or EFFbtagFileName or CSVbtagFileNameFastSim): self.init_btagMediumScaleFactor(CSVbtagFileName,EFFbtagFileName,CSVbtagFileNameFastSim)
         self.systsJEC = {0:"", 1:"_jecUp", -1:"_jecDown"}
-        self.systsBTAG = {0:"", 1:"_BCUp", -1:"_BCDown", 2:"_LightUp", -2:"_LightDown", 3:"_FS_BCUp", -3:"_FS_BCDown", 4:"_FS_LightUp", -4:"_FS_LightDown"}
+        self.systsBTAG = dict(enumerate(["", "_JESUp", "_JESDown", "_LFUp", "_LFDown", "_HFUp", "_HFDown", \
+                                             "_HFStats1Up", "_HFStats1Down", "_HFStats2Up", "_HFStats2Down", \
+                                             "_LFStats1Up", "_LFStats1Down", "_LFStats2Up", "_LFStats2Down", \
+                                             "_cErr1Up", "_cErr1Down", "_cErr2Up", "_cErr2Down" ]))
         self.cleanWithTaus = cleanWithTaus
         self.coneptdef = coneptdef
         self.debugprinted = False
@@ -63,16 +65,20 @@ class LeptonJetReCleaner:
                 ])
 
         if self.isFastSim: biglist.append(("pTGluinoPair","F"))
-        for key in self.systsBTAG:
-            biglist.append(("btagMediumSF"+self.systsBTAG[key]+label, "F"))
         for key in self.systsJEC:
             biglist.extend([
-                    ("nJetSel"+self.systsJEC[key]+label, "I"), ("iJ"+self.systsJEC[key]+label,"I",20,"nJetSel"+self.systsJEC[key]+label), # index >= 0 if in Jet; -1-index (<0) if in DiscJet
-                    ("nDiscJetSel"+self.systsJEC[key]+label, "I"), ("iDiscJ"+self.systsJEC[key]+label,"I",20,"nDiscJetSel"+self.systsJEC[key]+label), # index >= 0 if in Jet; -1-index (<0) if in DiscJet
-                    ("nJet40"+self.systsJEC[key]+label, "I"), "htJet40j"+self.systsJEC[key]+label, ("nBJetLoose40"+self.systsJEC[key]+label, "I"), ("nBJetMedium40"+self.systsJEC[key]+label, "I"),
-                    ("nJet25"+self.systsJEC[key]+label, "I"), "htJet25j"+self.systsJEC[key]+label, ("nBJetLoose25"+self.systsJEC[key]+label, "I"), ("nBJetMedium25"+self.systsJEC[key]+label, "I"),
-                    "mhtJet25"+self.systsJEC[key]+label,
+                    ("nJetSel"+label+self.systsJEC[key], "I"), ("iJ"+label+self.systsJEC[key],"I",20,"nJetSel"+label+self.systsJEC[key]), # index >= 0 if in Jet; -1-index (<0) if in DiscJet
+                    ("nDiscJetSel"+label+self.systsJEC[key], "I"), ("iDiscJ"+label+self.systsJEC[key],"I",20,"nDiscJetSel"+label+self.systsJEC[key]), # index >= 0 if in Jet; -1-index (<0) if in DiscJet
+                    ("nJet40"+label+self.systsJEC[key], "I"), "htJet40j"+label+self.systsJEC[key], ("nBJetLoose40"+label+self.systsJEC[key], "I"), ("nBJetMedium40"+label+self.systsJEC[key], "I"),
+                    ("nJet25"+label+self.systsJEC[key], "I"), "htJet25j"+label+self.systsJEC[key], ("nBJetLoose25"+label+self.systsJEC[key], "I"), ("nBJetMedium25"+label+self.systsJEC[key], "I"),
+                    "mhtJet25"+label+self.systsJEC[key],
                     ])
+            for bkey in self.systsBTAG:
+                thisvar = self.select_jec_btag_unc_combinations(key,bkey)
+                if thisvar:
+                    biglist.extend([
+                            ("eventBTagSF"+label+thisvar, "F")
+                            ])
         for jfloat in "pt eta phi mass btagCSV rawPt".split():
             biglist.append( ("JetSel"+label+"_"+jfloat,"F",20,"nJetSel"+label) )
             biglist.append( ("DiscJetSel"+label+"_"+jfloat,"F",20,"nDiscJetSel"+label) )
@@ -165,73 +171,6 @@ class LeptonJetReCleaner:
                         ret["LepGood_mcMatchPdgId"][il] = mylep.pdgId()
                     else: raise RuntimeError, "Error in lepton re-matching: lep.mcMatchId is %d for not matched"%(mylep.mcMatchId)
 
-
-
-    def init_btagMediumScaleFactor(self,CSVbtagFileName,EFFbtagFileName,CSVbtagFileNameFastSim):
-        self.do_btagSF = True
-        self.btagMediumCalib = ROOT.BTagCalibration("CSVv2", CSVbtagFileName)
-        if CSVbtagFileNameFastSim: self.btagMediumCalibFastSim = ROOT.BTagCalibration("CSV_FastSim", CSVbtagFileNameFastSim)
-        self.btagMediumReader=[]
-        self.btagMediumReader.append(ROOT.BTagCalibrationReader(self.btagMediumCalib, 1, "mujets", "down"))
-        self.btagMediumReader.append(ROOT.BTagCalibrationReader(self.btagMediumCalib, 1, "mujets", "central"))
-        self.btagMediumReader.append(ROOT.BTagCalibrationReader(self.btagMediumCalib, 1, "mujets", "up"))
-        if CSVbtagFileNameFastSim:
-            self.btagMediumReaderFastSim=[]
-            self.btagMediumReaderFastSim.append(ROOT.BTagCalibrationReader(self.btagMediumCalibFastSim, 1, "fastsim", "down"))
-            self.btagMediumReaderFastSim.append(ROOT.BTagCalibrationReader(self.btagMediumCalibFastSim, 1, "fastsim", "central"))
-            self.btagMediumReaderFastSim.append(ROOT.BTagCalibrationReader(self.btagMediumCalibFastSim, 1, "fastsim", "up"))
-        self.btagMediumReaderLight=[]
-        self.btagMediumReaderLight.append(ROOT.BTagCalibrationReader(self.btagMediumCalib, 1, "comb", "down"))
-        self.btagMediumReaderLight.append(ROOT.BTagCalibrationReader(self.btagMediumCalib, 1, "comb", "central"))
-        self.btagMediumReaderLight.append(ROOT.BTagCalibrationReader(self.btagMediumCalib, 1, "comb", "up"))
-        if CSVbtagFileNameFastSim:
-            self.btagMediumReaderLightFastSim=[]
-            self.btagMediumReaderLightFastSim.append(ROOT.BTagCalibrationReader(self.btagMediumCalibFastSim, 1, "fastsim", "down"))
-            self.btagMediumReaderLightFastSim.append(ROOT.BTagCalibrationReader(self.btagMediumCalibFastSim, 1, "fastsim", "central"))
-            self.btagMediumReaderLightFastSim.append(ROOT.BTagCalibrationReader(self.btagMediumCalibFastSim, 1, "fastsim", "up"))
-        self.btagEffFile = ROOT.TFile(EFFbtagFileName,"read")
-        self.btagEffHistos = (self.btagEffFile.Get("h2_BTaggingEff_csv_med_Eff_b"),self.btagEffFile.Get("h2_BTaggingEff_csv_med_Eff_c"),self.btagEffFile.Get("h2_BTaggingEff_csv_med_Eff_udsg"))
-    def read_btagMediumScaleFactor(self,readersBC,readersLight,jet,flavor,shift=0,croplowpt=0,crophighpt=1e6):
-        if abs(shift)>2: raise RuntimeError, 'Unsupported b-tag shift value was passed: %d'%shift
-        # agreed upon: include jets in under/overflow in last bins
-        pt = min(max(jet.pt,croplowpt+0.001),crophighpt-0.001)
-        eta = min(max(jet.eta,-2.399),2.399)
-        if abs(flavor)==5: fcode = 0
-        elif abs(flavor)==4: fcode = 1
-        else: fcode = 2
-        res = 0
-        if fcode<2: # correlate systs of B and C
-            _s = shift if abs(shift)<2 else 0
-            res = readersBC[_s+1].eval(fcode,eta,pt)
-        else:
-            _s = shift/2 if abs(shift)!=1 else 0
-            res = readersLight[_s+1].eval(fcode,eta,pt)
-        if res==0: raise RuntimeError,'Btag SF returned zero, something is not correct: flavor=%d, eta=%f, pt=%f'%(flavor,jet.eta,jet.pt)
-        return res
-    def read_btagMediumEfficiency(self,jet,flavor):
-        if abs(flavor)==5: fcode = 0
-        elif abs(flavor)==4: fcode = 1
-        else: fcode = 2
-        h = self.btagEffHistos[fcode]
-        ptbin = max(1,min(h.GetNbinsX(),h.GetXaxis().FindBin(jet.pt)))
-        etabin = max(1,min(h.GetNbinsY(),h.GetYaxis().FindBin(abs(jet.eta))))
-        return h.GetBinContent(ptbin,etabin)
-    def btagMediumScaleFactor(self,event,bjets,alljets,shift=0):
-        if event.isData or (not self.do_btagSF): return 1.0
-        pmc = 1.0; pdata = 1.0
-        for j in alljets:
-            sf = self.read_btagMediumScaleFactor(self.btagMediumReader,self.btagMediumReaderLight,j,j.mcFlavour,shift if abs(shift)<3 else 0,croplowpt=30,crophighpt=670)
-            if self.isFastSim: sf = sf * self.read_btagMediumScaleFactor(self.btagMediumReaderFastSim,self.btagMediumReaderLightFastSim,j,j.mcFlavour,0 if abs(shift)<3 else int(copysign(abs(shift)-2,shift)),croplowpt=20,crophighpt=800)
-            eff = self.read_btagMediumEfficiency(j,j.mcFlavour)
-            if j in bjets:
-                pmc = pmc * eff
-                pdata = pdata * eff * sf
-            else:
-                pmc = pmc * (1-eff)
-                pdata = pdata * (1-eff*sf)
-        res = pdata/pmc if pmc!=0 else 1.
-        return res
-
     def recleanJets(self,jetcollcleaned,jetcolldiscarded,lepcoll,postfix,ret,jetret,discjetret,doMatchQuantities=False):
         ### Define jets
         ret["iJ"+postfix] = []
@@ -263,7 +202,7 @@ class LeptonJetReCleaner:
         ret["nDiscJetSel"+postfix] = len(ret["iDiscJ"+postfix])
         # 4. compute the variables
         if doMatchQuantities:
-            if not postfix=="": raise RuntimeError,'Inconsistent usage of postfix in LeptonJetReCleaner'
+            if not postfix==self.label: raise RuntimeError,'Inconsistent usage of postfix in LeptonJetReCleaner'
             for jfloat in "pt eta phi mass btagCSV rawPt".split():
                 jetret[jfloat] = []
                 discjetret[jfloat] = []
@@ -285,13 +224,12 @@ class LeptonJetReCleaner:
         # 5. compute the sums
         ret["nJet25"+postfix] = 0; ret["htJet25j"+postfix] = 0; ret["nBJetLoose25"+postfix] = 0; ret["nBJetMedium25"+postfix] = 0
         ret["nJet40"+postfix] = 0; ret["htJet40j"+postfix] = 0; ret["nBJetLoose40"+postfix] = 0; ret["nBJetMedium40"+postfix] = 0
-        cleanjets = []; cleanBjets = []
+        cleanjets = [];
         mhtJet25vec = ROOT.TLorentzVector(0,0,0,0)
         for x in lepcoll: mhtJet25vec = mhtJet25vec - x.p4()
         for j in jetcollcleaned+jetcolldiscarded:
             if not (j._clean and self.selectJet(j)): continue
             cleanjets.append(j)
-            if j.btagCSV>0.890: cleanBjets.append(j)
             if j.pt > 25:
                 ret["nJet25"+postfix] += 1; ret["htJet25j"+postfix] += j.pt; 
                 if j.btagCSV>0.605: ret["nBJetLoose25"+postfix] += 1
@@ -302,7 +240,7 @@ class LeptonJetReCleaner:
                 if j.btagCSV>0.605: ret["nBJetLoose40"+postfix] += 1
                 if j.btagCSV>0.890: ret["nBJetMedium40"+postfix] += 1
         ret["mhtJet25"+postfix] = mhtJet25vec.Pt()
-        return (cleanjets,cleanBjets)
+        return cleanjets
 
     def bestZ1TL(self,lepsl,lepst,cut=lambda lep:True):
           pairs = []
@@ -350,7 +288,7 @@ class LeptonJetReCleaner:
             jetsc[var] = [j for j in Collection(event,"Jet"+self.systsJEC[_var],"nJet"+self.systsJEC[_var])]
             jetsd[var] = [j for j in Collection(event,"DiscJet"+self.systsJEC[_var],"nDiscJet"+self.systsJEC[_var])]
         self.debugprinted = True
-        ret = {}; jetret = {}; discjetret = {};
+        ret = {}; retwlabel = {}; jetret = {}; discjetret = {};
 
         lepsl = []; lepslv = [];
         ret, lepsl, lepslv = self.fillCollWithVeto(ret,leps,leps,'L','Loose',self.looseLeptonSel,None)
@@ -364,19 +302,17 @@ class LeptonJetReCleaner:
         ret['minMllSFOS'] = self.minMllTL(lepsl, lepsl, paircut = lambda l1,l2 : l1.pdgId  == -l2.pdgId) 
 
         cleanjets={}
-        cleanBjets={}
         for var in self.systsJEC:
-            cleanjets[var]=[]
-            cleanBjets[var]=[]
-            cleanjets[var],cleanBjets[var] = self.recleanJets(jetsc[var],jetsd[var],lepsc+taus_forclean,self.systsJEC[var],ret,jetret,discjetret,(var==0))
-
-        for var in self.systsBTAG: ret["btagMediumSF"+self.systsBTAG[var]]=self.btagMediumScaleFactor(event,cleanBjets[0],cleanjets[0],var) if self.do_btagSF else 1.0
+            cleanjets[var] = self.recleanJets(jetsc[var],jetsd[var],lepsc+taus_forclean,self.label+self.systsJEC[var],retwlabel,jetret,discjetret,(var==0))
+            for btagsyst in self.systsBTAG:
+                thisvar = self.select_jec_btag_unc_combinations(var,btagsyst)
+                if thisvar: retwlabel["eventBTagSF"+self.label+thisvar] = self.bTag_eventRWT_SF(event,lepsc,cleanjets[var],self.systsBTAG[btagsyst]) if self.doBtagRWT else 1
 
         # calculate FOs and tight leptons using the cleaned HT, sorted by conept
         lepsf = []; lepsfv = [];
-        ret, lepsf, lepsfv = self.fillCollWithVeto(ret,leps,lepsl,'F','FO',self.FOLeptonSel,lepsl,ret["htJet40j"],sortby = lambda x: x.conept)
+        ret, lepsf, lepsfv = self.fillCollWithVeto(ret,leps,lepsl,'F','FO',self.FOLeptonSel,lepsl,retwlabel["htJet40j"+self.label],sortby = lambda x: x.conept)
         lepst = []; lepstv = [];
-        ret, lepst, lepstv = self.fillCollWithVeto(ret,leps,lepsl,'T','Tight',self.tightLeptonSel,lepsl,ret["htJet40j"],sortby = lambda x: x.conept)
+        ret, lepst, lepstv = self.fillCollWithVeto(ret,leps,lepsl,'T','Tight',self.tightLeptonSel,lepsl,retwlabel["htJet40j"+self.label],sortby = lambda x: x.conept)
 
         ### attach labels and return
         fullret = {}
@@ -387,11 +323,23 @@ class LeptonJetReCleaner:
         if self.isFastSim:  fullret["pTGluinoPair"] = self.ptFirstPair(Collection(event,'GenPart','nGenPart'), 1000021, requireOnePair=True)
         for k,v in ret.iteritems(): 
             fullret[k+self.label] = v
+        fullret.update(retwlabel)
         for k,v in jetret.iteritems(): 
             fullret["JetSel%s_%s" % (self.label,k)] = v
         for k,v in discjetret.iteritems(): 
             fullret["DiscJetSel%s_%s" % (self.label,k)] = v
         return fullret
+
+    def bTag_eventRWT_SF(self,ev,leps,jets,systlabel):
+        if ev.isData: return 1
+        sf = 1
+        for l in leps: sf = sf * getattr(l,"jetBTagCSVWeight"+systlabel)
+        for j in jets: sf = sf * getattr(j,"btagCSVWeight"+systlabel)
+        return sf
+    def select_jec_btag_unc_combinations(self,jetunc,btagunc):
+        if "JESUp" in self.systsBTAG[btagunc]: return "_jecUp " if self.systsJEC[jetunc]=="_jecUp" else None
+        if "JESDown" in self.systsBTAG[btagunc]: return "_jecDown" if self.systsJEC[jetunc]=="_jecDown" else None
+        return self.systsBTAG[btagunc]+self.systsJEC[jetunc] if self.systsJEC[jetunc]=="" else None
 
 def passMllVeto(l1, l2, mZmin, mZmax, isOSSF ):
     if  l1.pdgId == -l2.pdgId or not isOSSF:
@@ -418,6 +366,16 @@ def _tthlep_lepId(lep):
                 return False
             return True
         return False
+
+def _ttH_idEmu_cuts_E2(lep):
+    if (abs(lep.pdgId)!=11): return True
+    if (lep.hadronicOverEm>=(0.10-0.03*(abs(lep.etaSc)>1.479))): return False
+    if (abs(lep.dEtaScTrkIn)>=(0.01-0.002*(abs(lep.etaSc)>1.479))): return False
+    if (abs(lep.dPhiScTrkIn)>=(0.04+0.03*(abs(lep.etaSc)>1.479))): return False
+    if (lep.eInvMinusPInv<=-0.05): return False
+    if (lep.eInvMinusPInv>=(0.01-0.005*(abs(lep.etaSc)>1.479))): return False
+    if (lep.sigmaIEtaIEta>=(0.011+0.019*(abs(lep.etaSc)>1.479))): return False
+    return True
 
 def _susy2lss_lepId_CBloose(lep):
         if abs(lep.pdgId) == 13:

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-MYTREEDIR="/data1/p/peruzzi/TREES_74X_140116_MiniIso_tauClean_Mor16lepMVA"
+MYTREEDIR="/data1/peruzzi/TREES_76X_150216_noLHE_jecV1_noJecUnc"
 MYLUMI="2.26"
 
 EXE="python mcPlots.py"

@@ -6,14 +6,17 @@ ODIR=sys.argv[1]
 
 doplots=True
 
+purew = "-W 'puw(nTrueInt)'"
+
 def base(selection):
 
-    CORE="-P /data1/p/peruzzi/skim_2lss_3l_TREES_74X_140116_MiniIso_tauClean_Mor16lepMVA_v7 -F sf/t {P}/2_recleaner_v7_vetoCSVM_eleIdEmuPt30_PtRatio030orMVA_MVA075/evVarFriend_{cname}.root -F sf/t {P}/4_kinMVA_trainMilosJan31_v3_reclv7/evVarFriend_{cname}.root"
+    print 'echo WARNING: remember to add the missing samples!'
+    CORE="-P /data1/peruzzi/TREES_76X_150216_noLHE_jecV1_noJecUnc_skim_reclv8 -F sf/t {P}/2_recleaner_v8_b1E2_approx/evVarFriend_{cname}.root -F sf/t {P}/4_kinMVA_74XtrainingMilosJan31_v3_reclv8/evVarFriend_{cname}.root"
 
     CORE+=" -f -j 8 -l 2.26 --neg --s2v --tree treeProducerSusyMultilepton --mcc ttH-multilepton/lepchoice-ttH-FO.txt --mcc ttH-multilepton/ttH_2lss3l_triggerdefs.txt"
     if doplots: CORE+=" --lspam '#bf{CMS} #it{Preliminary}' --legendWidth 0.20 --legendFontSize 0.035 --showRatio --maxRatioRange 0 3  --showMCError --rebin 2"
 
-    CORE+=" -W 'puw(nTrueInt)' "
+    CORE+=" %s "%purew
 
     if selection=='2lss':
         GO="%s ttH-multilepton/mca-2lss-mc.txt ttH-multilepton/2lss_tight.txt "%CORE
@@ -31,6 +34,7 @@ def procs(GO,mylist):
 def sigprocs(GO,mylist):
     return procs(GO,mylist)+' --showIndivSigs --noStackSig'
 def runIt(GO,name,plots=[],noplots=[]):
+    if '_74vs76' in name: GO = prep74vs76(GO)
     if doplots: print 'python mcPlots.py',"--pdir %s/%s"%(ODIR,name),GO,' '.join(['--sP %s'%p for p in plots]),' '.join(['--xP %s'%p for p in noplots]),' '.join(sys.argv[3:])
     else: print 'echo %s; python mcAnalysis.py'%name,GO,' '.join(sys.argv[3:])
 def add(GO,opt):
@@ -40,7 +44,15 @@ def setwide(x):
     x2 = x2.replace('--legendWidth 0.35','--legendWidth 0.20')
     return x2
 def fulltrees(x):
-    return x.replace('/data1/p/peruzzi/skim_2lss_3l_TREES_74X_140116_MiniIso_tauClean_Mor16lepMVA_v7','/data1/p/peruzzi/TREES_74X_140116_MiniIso_tauClean_Mor16lepMVA')
+    return x.replace('/data1/peruzzi/TREES_76X_150216_noLHE_jecV1_noJecUnc_skim_reclv8','/data1/peruzzi/TREES_76X_150216_noLHE_jecV1_noJecUnc')
+def prep74vs76(x):
+    x = x.replace('ttH-multilepton/mca','ttH-multilepton/test_74vs76/mca')
+    x = x.replace(purew,"")
+    print 'echo NO PU REW'
+    x = add(x,"--plotmode nostack")
+    x = x.replace("-P /data1/peruzzi/TREES_76X_150216_noLHE_jecV1_noJecUnc_skim_reclv8 -F sf/t {P}/2_recleaner_v8_b1E2_approx/evVarFriend_{cname}.root -F sf/t {P}/4_kinMVA_74XtrainingMilosJan31_v3_reclv8/evVarFriend_{cname}.root",\
+                  "-P /data1/peruzzi/test_74vs76 -F sf/t {P}/2_recleaner/evVarFriend_{cname}.root -F sf/t {P}/4_kinMVA/evVarFriend_{cname}.root")
+    return x
 
 if __name__ == '__main__':
 
@@ -104,7 +116,8 @@ if __name__ == '__main__':
     if 'cr_ttbar' in torun:
         x = base('2lss')
         x = fulltrees(x)
-        if '_data' in torun: x = x.replace('mca-2lss-mc.txt','mca-2lss-mcdata-ttbar.txt')
+        x = x.replace('mca-2lss-mc.txt','mca-2lss-mcdata-ttbar.txt')
+        if '_data' not in torun: x = add(x,'--xp data')
         if '_appl' in torun: x = add(x,'-I TT')
         if '_1fo' in torun: x = add(x,"-A alwaystrue 1FO 'LepGood1_isTight+LepGood2_isTight==1'")
         if '_leadmupt25' in torun: x = add(x,"-A 'entry point' leadmupt25 'abs(LepGood1_pdgId)==13 && LepGood1_pt>25'")
@@ -133,20 +146,4 @@ if __name__ == '__main__':
         runIt(x,'%s'%torun,plots)
         x = add(x,"-E 4j")
         runIt(x,'%s_4j'%torun,plots)
-
-    if 'cr_zjets' in torun:
-        x = base('2lss')
-        x = fulltrees(x)
-        if '_data' in torun: x = x.replace('mca-2lss-mc.txt','mca-2lss-mcdata.txt')
-        if '_scaletodata' in torun: x = add(x,"--sp '.*' --scaleSigToData")
-        x = x.replace('ttH-multilepton/2lss_tight.txt','standard-candles/zjets.txt')
-        plots = ['nBJetLoose25','2lep_nTight','2lep_bestMVA','2lep_worseMVA','lep1_pt','lep2_pt','met','nJet25','mZ1']
-        x = add(x,"-X muon isel 'abs(LepGood1_pdgId)==11' -A 'entry point' fo2 'nLepFO>=2' -R lepton1 lepton1pt 'LepGood1_conePt>20' -R lepton2 lepton2pt 'LepGood2_conePt>10 && (abs(LepGood2_pdgId)!=11 || LepGood2_conePt>15)'")
-        x = add(x,"-R trigger mytrigger 'Triggers_ee || Triggers_mm || Triggers_em' -A 'entry point' atleast1FO 'LepGood1_isTight+LepGood2_isTight>=1'")
-        if '_mm' in torun: x = add(x,"-A 'entry point' ismu 'abs(LepGood1_pdgId)==13'") 
-        if '_ee' in torun: x = add(x,"-A 'entry point' ismu 'abs(LepGood1_pdgId)==11'") 
-        runIt(x,'%s'%torun,plots)
-
-
-
 

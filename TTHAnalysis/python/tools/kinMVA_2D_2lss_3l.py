@@ -124,28 +124,22 @@ class KinMVA_2D_2lss_3l:
             MVAVar("LepGood_conePt[iF_Recl_2]:=LepGood_conePt[iF_Recl_2]", func = lambda ev : ev.LepGood_conePt[int(ev.iF_Recl[2])]),
             ]
 
-	self._MVAs["kinMVA_2lss_ttbar"] = MVATool("2lss_ttbar", weights%"2lss_ttbar", self._vars_ttbar_2lss, specs = self._specs)
-	self._MVAs["kinMVA_2lss_ttV"] = MVATool("2lss_ttV", weights%"2lss_ttV", self._vars_ttV_2lss, specs = self._specs)
-	self._MVAs["kinMVA_3l_ttbar"] = MVATool("3l_ttbar", weights%"3l_ttbar", self._vars_ttbar_3l, specs = self._specs)
-	self._MVAs["kinMVA_3l_ttV"] = MVATool("3l_ttV", weights%"3l_ttV", self._vars_ttV_3l, specs = self._specs)
-
-	self._MVAs["kinMVA_2lss_ttbar_jecUp"] = MVATool("2lss_ttbar_jecUp", weights%"2lss_ttbar", self._vars_ttbar_2lss_jecUp, specs = self._specs)
-	self._MVAs["kinMVA_2lss_ttV_jecUp"] = MVATool("2lss_ttV_jecUp", weights%"2lss_ttV", self._vars_ttV_2lss_jecUp, specs = self._specs)
-	self._MVAs["kinMVA_3l_ttbar_jecUp"] = MVATool("3l_ttbar_jecUp", weights%"3l_ttbar", self._vars_ttbar_3l_jecUp, specs = self._specs)
-	self._MVAs["kinMVA_3l_ttV_jecUp"] = MVATool("3l_ttV_jecUp", weights%"3l_ttV", self._vars_ttV_3l_jecUp, specs = self._specs)
-
-	self._MVAs["kinMVA_2lss_ttbar_jecDown"] = MVATool("2lss_ttbar_jecDown", weights%"2lss_ttbar", self._vars_ttbar_2lss_jecDown, specs = self._specs)
-	self._MVAs["kinMVA_2lss_ttV_jecDown"] = MVATool("2lss_ttV_jecDown", weights%"2lss_ttV", self._vars_ttV_2lss_jecDown, specs = self._specs)
-	self._MVAs["kinMVA_3l_ttbar_jecDown"] = MVATool("3l_ttbar_jecDown", weights%"3l_ttbar", self._vars_ttbar_3l_jecDown, specs = self._specs)
-	self._MVAs["kinMVA_3l_ttV_jecDown"] = MVATool("3l_ttV_jecDown", weights%"3l_ttV", self._vars_ttV_3l_jecDown, specs = self._specs)
+        for var in self.systsJEC:
+            self._MVAs["kinMVA_2lss_ttbar"+self.systsJEC[var]] = MVATool("2lss_ttbar"+self.systsJEC[var], weights%"2lss_ttbar", getattr(self,"_vars_ttbar_2lss"+self.systsJEC[var]), specs = self._specs)
+            self._MVAs["kinMVA_2lss_ttV"+self.systsJEC[var]] = MVATool("2lss_ttV"+self.systsJEC[var], weights%"2lss_ttV", getattr(self,"_vars_ttV_2lss"+self.systsJEC[var]), specs = self._specs)
+            self._MVAs["kinMVA_3l_ttbar"+self.systsJEC[var]] = MVATool("3l_ttbar"+self.systsJEC[var], weights%"3l_ttbar", getattr(self,"_vars_ttbar_3l"+self.systsJEC[var]), specs = self._specs)
+            self._MVAs["kinMVA_3l_ttV"+self.systsJEC[var]] = MVATool("3l_ttV"+self.systsJEC[var], weights%"3l_ttV", getattr(self,"_vars_ttV_3l"+self.systsJEC[var]), specs = self._specs)
 
     def listBranches(self):
         return self._MVAs.keys()
     def __call__(self,event):
         out = {}
         for name, mva in self._MVAs.iteritems():
-            if '2lss' in name: out[name] = mva(event) if event.nLepFO_Recl>=2 else -99
-            elif '3l' in name: out[name] = mva(event) if event.nLepFO_Recl>=3 else -99
+            _mva = mva
+            for i,j in self.systsJEC.iteritems():
+                if j in name and not hasattr(event,"nJet"+j): _mva = self._MVAs[name.replace(j,"")]
+            if '2lss' in name: out[name] = _mva(event) if event.nLepFO_Recl>=2 else -99
+            elif '3l' in name: out[name] = _mva(event) if event.nLepFO_Recl>=3 else -99
         return out
 
 if __name__ == '__main__':
@@ -156,7 +150,7 @@ if __name__ == '__main__':
     tree = file.Get("tree")
     tree.vectorTree = True
     tree.AddFriend("sf/t",argv[2]) # recleaner
-    tree.AddFriend("sf/t",argv[3]) # kinvars
+    if len(argv)>3: tree.AddFriend("sf/t",argv[3]) # kinvars if as a separate friend tree
               
     class Tester(Module):
         def __init__(self, name):

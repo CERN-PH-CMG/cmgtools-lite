@@ -5,9 +5,10 @@ import os.path, re, types, itertools
 
 MODULES = []
 
-from CMGTools.TTHAnalysis.tools.leptonJetReCleaner import LeptonJetReCleaner,_susy2lss_lepId_CB,_susy2lss_lepId_CBloose,_susy2lss_multiIso,_tthlep_lepId,_susy2lss_idEmu_cuts,_susy2lss_idIsoEmu_cuts,_susy2lss_lepId_loosestFO,_susy2lss_lepId_tighterFO,_susy2lss_lepId_IPcuts,_susy2lss_lepConePt1015,_susy2lss_lepId_inSituLoosestFO,_susy2lss_lepId_inSituTighterFO,_susy2lss_multiIso_relaxedForInSituApp
+from CMGTools.TTHAnalysis.tools.leptonJetReCleaner import LeptonJetReCleaner,_ttH_idEmu_cuts_E2,_susy2lss_lepId_CB,_susy2lss_lepId_CBloose,_susy2lss_multiIso,_tthlep_lepId,_susy2lss_idEmu_cuts,_susy2lss_idIsoEmu_cuts,_susy2lss_lepId_loosestFO,_susy2lss_lepId_tighterFO,_susy2lss_lepId_IPcuts,_susy2lss_lepConePt1015,_susy2lss_lepId_inSituLoosestFO,_susy2lss_lepId_inSituTighterFO,_susy2lss_multiIso_relaxedForInSituApp
 from CMGTools.TTHAnalysis.tools.leptonChoiceRA5 import LeptonChoiceRA5
 from CMGTools.TTHAnalysis.tools.conept import conept_RA5, conept_TTH
+from CMGTools.TTHAnalysis.tools.btagRWTs_ND import BTagWeightCalculator,BTagReweightFriend,BTagLeptonReweightFriend
 ##--- TTH instances
 #MODULES.append( ('leptonJetReCleanerTTH', lambda : LeptonJetReCleaner("I03Sip8", 
 #                lambda lep : lep.relIso03 < 0.5 and lep.sip3d < 8 and _tthlep_lepId(lep), 
@@ -20,22 +21,37 @@ from CMGTools.TTHAnalysis.tools.conept import conept_RA5, conept_TTH
 
 isFastSim = False
 
+utility_files_dir_tth= "/afs/cern.ch/work/p/peruzzi/tthtrees/cms_utility_files"
 utility_files_dir= "/afs/cern.ch/work/p/peruzzi/ra5trees/cms_utility_files"
 btagSF = utility_files_dir+"/CSVv2_25ns.csv"
 btagEFF = utility_files_dir+"/btageff__ttbar_powheg_pythia8_25ns.root"
 btagSF_FastSim = utility_files_dir+"/CSV_13TEV_Combined_20_11_2015_FullSim_FastSim.csv"
 
+
+# btag reweighting in 76X
+BTagReweight76X = lambda : BTagWeightCalculator(utility_files_dir_tth+"/csv_rwt_fit_hf_76x_2016_02_08.root",
+                                                utility_files_dir_tth+"/csv_rwt_fit_lf_76x_2016_02_08.root")
+systsBTAG = ["nominal", "_JESUp", "_JESDown", "_LFUp", "_LFDown", "_HFUp", "_HFDown", \
+                 "_HFStats1Up", "_HFStats1Down", "_HFStats2Up", "_HFStats2Down", \
+                 "_LFStats1Up", "_LFStats1Down", "_LFStats2Up", "_LFStats2Down", \
+                 "_cErr1Up", "_cErr1Down", "_cErr2Up", "_cErr2Down" ]
+for syst in systsBTAG: # should be converted to lambda functions
+    MODULES.append( ('btagRWJet%s'%syst, BTagReweightFriend(BTagReweight76X, outlabel='btagCSVWeight%s'%syst.replace('nominal',''), rwtSyst=syst.replace('_','')) ))
+    MODULES.append( ('btagRWJetUp%s'%syst, BTagReweightFriend(BTagReweight76X, jets=["Jet_jecUp","DiscJet_jecUp"], outlabel='btagCSVWeight%s'%syst.replace('nominal',''), rwtSyst=syst.replace('_','')) ))
+    MODULES.append( ('btagRWJetDown%s'%syst, BTagReweightFriend(BTagReweight76X, jets=["Jet_jecDown","DiscJet_jecDown"], outlabel='btagCSVWeight%s'%syst.replace('nominal',''), rwtSyst=syst.replace('_','')) ))
+    MODULES.append( ('btagRWLep%s'%syst, BTagLeptonReweightFriend(BTagReweight76X, outlabel='jetBTagCSVWeight%s'%syst.replace('nominal',''), rwtSyst=syst.replace('_','')) ))
+
 #--- Susy multilep instances
-MODULES.append( ('leptonJetReCleanerTTH', lambda : LeptonJetReCleaner("Recl", 
+MODULES.append( ('leptonJetReCleanerTTH', lambda : LeptonJetReCleaner("Recl", # b1E2 definition of FO
                    looseLeptonSel = lambda lep : lep.miniRelIso < 0.4 and lep.sip3d < 8,
-                   cleaningLeptonSel = lambda lep : lep.conept>10 and lep.jetBTagCSV<0.89 and (abs(lep.pdgId)!=11 or lep.conept<30 or lep.idEmu) and (lep.jetPtRatiov2>0.3 or lep.mvaTTH>0.75), # cuts applied on top of loose
-                   FOLeptonSel = lambda lep,ht : lep.conept>10 and lep.jetBTagCSV<0.89 and (abs(lep.pdgId)!=11 or lep.conept<30 or lep.idEmu) and (lep.jetPtRatiov2>0.3 or lep.mvaTTH>0.75), # cuts applied on top of loose
-                   tightLeptonSel = lambda lep,ht : lep.conept>10 and lep.jetBTagCSV<0.89 and (abs(lep.pdgId)!=11 or lep.conept<30 or lep.idEmu) and (lep.jetPtRatiov2>0.3 or lep.mvaTTH>0.75) and (abs(lep.pdgId)!=13 or lep.mediumMuonId>0) and lep.mvaTTH > 0.75, # cuts applied on top of loose
+                   cleaningLeptonSel = lambda lep : lep.conept>10 and lep.jetBTagCSV<0.89 and (abs(lep.pdgId)!=11 or lep.conept<30 or _ttH_idEmu_cuts_E2(lep)) and ((lep.jetPtRatiov2>0.3 and lep.jetBTagCSV<0.605) or lep.mvaTTH>0.75), # cuts applied on top of loose
+                   FOLeptonSel = lambda lep,ht : lep.conept>10 and lep.jetBTagCSV<0.89 and (abs(lep.pdgId)!=11 or lep.conept<30 or _ttH_idEmu_cuts_E2(lep)) and ((lep.jetPtRatiov2>0.3 and lep.jetBTagCSV<0.605) or lep.mvaTTH>0.75), # cuts applied on top of loose
+                   tightLeptonSel = lambda lep,ht : lep.conept>10 and lep.jetBTagCSV<0.89 and (abs(lep.pdgId)!=11 or lep.conept<30 or _ttH_idEmu_cuts_E2(lep)) and ((lep.jetPtRatiov2>0.3 and lep.jetBTagCSV<0.605) or lep.mvaTTH>0.75) and (abs(lep.pdgId)!=13 or lep.mediumMuonId>0) and lep.mvaTTH > 0.75, # cuts applied on top of loose
                    cleanJet = lambda lep,jet,dr : dr<0.4,
                    selectJet = lambda jet: abs(jet.eta)<2.4, # also cuts on the discarded jets as calculated by the recleaner
                    isFastSim = False,
-                   CSVbtagFileName = None, EFFbtagFileName = None, CSVbtagFileNameFastSim = None,
-                   cleanWithTaus = False,
+                   doBtagRWT = True,
+                   cleanWithTaus = True,
                    coneptdef = lambda lep: conept_TTH(lep) ) ))
 
 #MODULES.append( ('leptonJetReCleaner_special_TTHbtagTightVeto', lambda : LeptonJetReCleaner("ReclBtagTightVeto", 
@@ -47,7 +63,7 @@ MODULES.append( ('leptonJetReCleanerTTH', lambda : LeptonJetReCleaner("Recl",
 #                   selectJet = lambda jet: abs(jet.eta)<2.4, # also cuts on the discarded jets as calculated by the recleaner
 #                   isFastSim = False,
 #                   CSVbtagFileName = None, EFFbtagFileName = None, CSVbtagFileNameFastSim = None,
-#                   cleanWithTaus = False,
+#                   cleanWithTaus = True,
 #                   coneptdef = lambda lep: conept_TTH(lep) ) ))
 #MODULES.append( ('leptonJetReCleaner_special_TTHnoBtagMediumVeto', lambda : LeptonJetReCleaner("ReclNoBtagMediumVeto", 
 #                   looseLeptonSel = lambda lep : lep.miniRelIso < 0.4 and lep.sip3d < 8,
@@ -58,7 +74,7 @@ MODULES.append( ('leptonJetReCleanerTTH', lambda : LeptonJetReCleaner("Recl",
 #                   selectJet = lambda jet: abs(jet.eta)<2.4, # also cuts on the discarded jets as calculated by the recleaner
 #                   isFastSim = False,
 #                   CSVbtagFileName = None, EFFbtagFileName = None, CSVbtagFileNameFastSim = None,
-#                   cleanWithTaus = False,
+#                   cleanWithTaus = True,
 #                   coneptdef = lambda lep: conept_TTH(lep) ) ))
 #MODULES.append( ('leptonJetReCleaner_special_TTHconept15', lambda : LeptonJetReCleaner("ReclConept15", 
 #                   looseLeptonSel = lambda lep : lep.miniRelIso < 0.4 and lep.sip3d < 8,
@@ -69,7 +85,7 @@ MODULES.append( ('leptonJetReCleanerTTH', lambda : LeptonJetReCleaner("Recl",
 #                   selectJet = lambda jet: abs(jet.eta)<2.4, # also cuts on the discarded jets as calculated by the recleaner
 #                   isFastSim = False,
 #                   CSVbtagFileName = None, EFFbtagFileName = None, CSVbtagFileNameFastSim = None,
-#                   cleanWithTaus = False,
+#                   cleanWithTaus = True,
 #                   coneptdef = lambda lep: conept_TTH(lep) ) ))
 
 #--- Susy multilep instances
@@ -167,7 +183,7 @@ from CMGTools.TTHAnalysis.tools.vertexWeightFriend import VertexWeightFriend
 #MODULES.append ( ('puWeightsTrue_down', lambda : VertexWeightFriend(putruefilemc,putruefiledata_down,"nTrueInt_signal","pileup",verbose=True,vtx_coll_to_reweight="nTrueInt",postfix="down",name="vtxWeightDown") ) )
 
 putruefiledata_central="/afs/cern.ch/user/p/peruzzi/work/tthtrees/cms_utility_files/Cert_246908-260627_13TeV_PromptReco_Collisions15_25ns_JSON_v2_pileup_69000_50.root"
-putruefilemc = "/afs/cern.ch/user/p/peruzzi/work/cmgtools/CMSSW_7_4_14/src/CMGTools/TTHAnalysis/python/plotter/susy-multilepton/for-pu-rew/pu_plots/zjets-4-nvtx_plots_true.root"
+putruefilemc = "/afs/cern.ch/user/p/peruzzi/work/cmgtools/CMSSW_7_6_3_patch2/src/CMGTools/TTHAnalysis/python/plotter/susy-multilepton/for-pu-rew/pu_plots/zjets-4-nvtx_plots_true.root"
 MODULES.append ( ('puWeightsTrue_central', lambda : VertexWeightFriend(putruefilemc,putruefiledata_central,"nTrueInt_signal","pileup",verbose=True,vtx_coll_to_reweight="nTrueInt",name="vtxWeight") ) )
 
 
