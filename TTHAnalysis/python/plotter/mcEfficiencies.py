@@ -48,7 +48,7 @@ def doLegend(rocs,options,textSize=0.035):
         legend_ = leg 
         return leg
 
-def effFromH2D(h2d,options):
+def effFromH2D(h2d,options,uncertainties="CP"):
     points = []
     for xbin in xrange(1,h2d.GetNbinsX()+1):
         xval = h2d.GetXaxis().GetBinCenter(xbin)
@@ -60,8 +60,13 @@ def effFromH2D(h2d,options):
         if yall <= 0 or ypass < 0: continue 
         eff = ypass/yall 
         neff = (yall**2)/(ypassErr**2 + yfailErr**2)
-        errsCP = [ ROOT.TEfficiency.ClopperPearson(int(neff),int(neff*eff), 0.6827, i)-eff for i in (False,True) ]
-        points.append( (xval, xerrs, eff, errsCP) )
+        if uncertainties == "CP":
+            errs = [ ROOT.TEfficiency.ClopperPearson(int(neff),int(neff*eff), 0.6827, i)-eff for i in (False,True) ]
+        elif uncertainties == "PF":
+            err = hypot(yfail * ypassErr, ypass * yfailErr)/(yall*yall)
+            errs = [ -err, err ]
+        #print h2d.GetName(), xval, ypass, ypassErr, yfail, yfailErr, eff, neff, eff*neff, (1-eff)*neff, errs
+        points.append( (xval, xerrs, eff, errs) )
     if not points: return None
     ret = ROOT.TGraphAsymmErrors(len(points))
     for i,(xval, xerrs, yval, yerrs) in enumerate(points):
@@ -70,6 +75,7 @@ def effFromH2D(h2d,options):
     ret._xrange = h2d.GetXaxis().GetXmin(), h2d.GetXaxis().GetXmax()
     ret.GetXaxis().SetRangeUser(ret._xrange[0], ret._xrange[1])
     ret.GetXaxis().SetTitle(h2d.GetXaxis().GetTitle())
+    ret.SetName(h2d.GetName()+"_graph")
     return ret
 
 def dumpEffFromH2D(h2d,xbin):
