@@ -28,6 +28,7 @@ class MCAnalysis:
         self._rank        = {} ## keep ranks as in the input text file
         self._projection  = Projections(options.project, options) if options.project != None else None
         self._premap = []
+        self._optionsOnlyProcesses = {}
         defaults = {}
         for premap in options.premap:
             to,fro = premap.split("=")
@@ -59,6 +60,9 @@ class MCAnalysis:
                 for k,v in defaults.iteritems():
                     if k not in extra: extra[k] = v
             if len(field) <= 1: continue
+            if field[1] == "-": 
+                self._optionsOnlyProcesses[field[0]] = extra
+                continue
             if "SkipMe" in extra and extra["SkipMe"] == True and not options.allProcesses: continue
             signal = False
             pname = field[0]
@@ -179,6 +183,8 @@ class MCAnalysis:
         ret = self._allData.keys()[:]
         ret.sort(key = lambda n : self._rank[n])
         return ret
+    def listOptionsOnlyProcesses(self):
+        return self._optionsOnlyProcesses.keys()
     def isBackground(self,process):
         return process != 'data' and not self._isSignal[process]
     def isSignal(self,process):
@@ -199,9 +205,18 @@ class MCAnalysis:
         for tty in self._allData[process]: 
             tty.setScaleFactor( "((%s) * (%s))" % (tty.getScaleFactor(),scaleFactor) )
     def getProcessOption(self,process,name,default=None):
-        return self._allData[process][0].getOption(name,default=default)
+        if process in self._allData:
+            return self._allData[process][0].getOption(name,default=default)
+        elif process in self._optionsOnlyProcesses:
+            options = self._optionsOnlyProcesses[process]
+            return options[name] if name in options else default
+        else: raise RuntimeError, "Can't get option %s for undefined process %s" % (name,process)
     def setProcessOption(self,process,name,value):
-        return self._allData[process][0].setOption(name,value)
+        if process in self._allData:
+            return self._allData[process][0].setOption(name,value)
+        elif process in self._optionsOnlyProcesses:
+            self._optionsOnlyProcesses[process][name] = value
+        else: raise RuntimeError, "Can't set option %s for undefined process %s" % (name,process)
     def getScales(self,process):
         return [ tty.getScaleFactor() for tty in self._allData[process] ] 
     def getYields(self,cuts,process=None,nodata=False,makeSummary=False,noEntryLine=False):
