@@ -321,6 +321,32 @@ def makeEff(mca,cut,idplot,xvarplot,returnSeparatePassFail=False,notDoProfile="a
         else:    report = dict([(title, effFromH2D(hist,mainOptions)) for (title, hist) in report.iteritems()])
     return report
 
+def styleEffsByProc(effmap,procs,mca):
+    allprocs = mca.listSignals(True)+mca.listBackgrounds(True)+mca.listOptionsOnlyProcesses()
+    effs = []
+    for proc in procs:
+        if proc not in effmap: continue
+        eff = effmap[proc]
+        if not eff: continue
+        if proc in allprocs:
+            eff.SetLineColor(mca.getProcessOption(proc,"FillColor",SAFE_COLOR_LIST[len(effs)]))
+            eff.SetFillColor(mca.getProcessOption(proc,"FillColor",SAFE_COLOR_LIST[len(effs)]))
+            eff.SetMarkerColor(mca.getProcessOption(proc,"FillColor",SAFE_COLOR_LIST[len(effs)]))
+            eff.SetMarkerStyle(mca.getProcessOption(proc,"MarkerStyle",20))
+            eff.SetMarkerSize(mca.getProcessOption(proc,"MarkerSize",1.6)*0.8)
+            eff.SetLineWidth(4)
+            effs.append((mca.getProcessOption(proc,"Label",proc),eff))
+            if mca.getProcessOption(proc,'DrawOption'):
+                eff.DrawOption = mca.getProcessOption(proc,'DrawOption')
+        else:
+            eff.SetLineColor(SAFE_COLOR_LIST[len(effs)])
+            eff.SetMarkerColor(SAFE_COLOR_LIST[len(effs)])
+            eff.SetMarkerStyle(20)
+            eff.SetMarkerSize(1.6*0.8)
+            eff.SetLineWidth(4)
+            effs.append((proc,eff))
+    return effs
+
 if __name__ == "__main__":
     from optparse import OptionParser
     parser = OptionParser(usage="%prog [options] mc.txt cuts.txt plotfile.txt")
@@ -397,26 +423,9 @@ if __name__ == "__main__":
         for x in xvars:
             for y,ex,pmap in effplots:
                 if ex != x: continue
-                effs = []
                 myname = outname.replace(".root","_%s_%s.root" % (y.name,x.name))
                 procsToStack = options.compare.split(",") if options.compare else procs
-                for proc in procsToStack:
-                    eff = pmap[proc]
-                    if not eff: continue
-                    if proc in procs:
-                        eff.SetLineColor(mca.getProcessOption(proc,"FillColor",SAFE_COLOR_LIST[len(effs)]))
-                        eff.SetMarkerColor(mca.getProcessOption(proc,"FillColor",SAFE_COLOR_LIST[len(effs)]))
-                        eff.SetMarkerStyle(mca.getProcessOption(proc,"MarkerStyle",20))
-                        eff.SetMarkerSize(mca.getProcessOption(proc,"MarkerSize",1.6)*0.8)
-                        eff.SetLineWidth(4)
-                        effs.append((mca.getProcessOption(proc,"Label",proc),eff))
-                    else:
-                        eff.SetLineColor(SAFE_COLOR_LIST[len(effs)])
-                        eff.SetMarkerColor(SAFE_COLOR_LIST[len(effs)])
-                        eff.SetMarkerStyle(20)
-                        eff.SetMarkerSize(1.6*0.8)
-                        eff.SetLineWidth(4)
-                        effs.append((proc,eff))
+                effs = styleEffsByProc(pmap,procsToStack,mca)
                 if len(effs) == 0: continue
                 stackEffs(myname,x,effs,options)
     if "process" in options.groupBy:
