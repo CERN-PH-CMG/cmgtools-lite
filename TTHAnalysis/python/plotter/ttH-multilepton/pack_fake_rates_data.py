@@ -88,25 +88,25 @@ if __name__ == "__main__":
        etaslices_mu = [ (0.4,"00_12"), (1.8,"12_24") ]
        Xs     = ("signal","data","total","data_sub")
        Xnices = ("MC non-pr.", "Data all" ,"MC all", "Data sub.") 
-       h2d_el = [ make2D(outfile,"FR_mva06_el_"+X, ptbins_el, etabins_el) for X in Xs ]
-       h2d_mu = [ make2D(outfile,"FR_mva06_mu_"+X, ptbins_mu, etabins_mu) for X in Xs ]
+       h2d_el = [ make2D(outfile,"FR_mva075_el_"+X, ptbins_el, etabins_el) for X in Xs ]
+       h2d_mu = [ make2D(outfile,"FR_mva075_mu_"+X, ptbins_mu, etabins_mu) for X in Xs ]
 
        Plots="plots/74X/ttH/fr-meas"
-       Z3l="z3l/v1.1"
-       QCD="v1.2"
+       Z3l="z3l/v2.0"
+       QCD="v2.0"
        #### Electrons: 
        # 10-30 from Z+l
-       readMany2D(Xs, h2d_el, "/".join([Plots, Z3l, "el/fakerates/fr_sub_eta_%s.root"]), "mva06_l3CPt_c_%s", etaslices_el, (10,30) )
+       readMany2D(Xs, h2d_el, "/".join([Plots, Z3l, "el/fakerates/fr_sub_eta_%s.root"]), "mva075_l3CPt_c_%s", etaslices_el, (10,30) )
        # 30-inf from Ele12 bMedium
-       readMany2D(Xs, h2d_el, "/".join([Plots, QCD, "el/HLT_Ele12_CaloIdM_TrackIdM_PFJet30/fakerates/bMedium/fr_sub_eta_%s.root"]), "mvaPt_060i_ptJI_mvaPt060_coarse_%s", etaslices_el, (30,999) )
+       readMany2D(Xs, h2d_el, "/".join([Plots, QCD, "el/HLT_Ele12_CaloIdM_TrackIdM_PFJet30/fakerates/bMedium/fr_sub_eta_%s.root"]), "mvaPt_075i_ptJI85_mvaPt075_coarse_%s", etaslices_el, (30,999) )
 
        #### Muons: 
        # 10-20 from Z+l
-       readMany2D(Xs, h2d_mu, "/".join([Plots, Z3l, "mu/fakerates/fr_sub_eta_%s.root"]), "mva06_l3CPt_1_%s", etaslices_mu, (10,20) )
+       readMany2D(Xs, h2d_mu, "/".join([Plots, Z3l, "mu/fakerates/fr_sub_eta_%s.root"]), "mva075_l3CPt_1_%s", etaslices_mu, (10,20) )
        # 20-45 from Mu8
-       readMany2D(Xs, h2d_mu, "/".join([Plots, QCD, "mu/HLT_Mu8/fakerates/fr_sub_eta_%s.root"]), "mvaPt_060i_ptJI_mvaPt060_coarse_%s", etaslices_mu, (20,45) )
+       readMany2D(Xs, h2d_mu, "/".join([Plots, QCD, "mu/HLT_Mu8/fakerates/fr_sub_eta_%s.root"]), "mvaPt_075i_ptJI85_mvaPt075_coarse_%s", etaslices_mu, (20,45) )
        # 45-inf from Mu17
-       readMany2D(Xs, h2d_mu, "/".join([Plots, QCD, "mu/HLT_Mu17/fakerates/fr_sub_eta_%s.root"]), "mvaPt_060i_ptJI_mvaPt060_coarse_%s", etaslices_mu, (45,999) )
+       readMany2D(Xs, h2d_mu, "/".join([Plots, QCD, "mu/HLT_Mu17/fakerates/fr_sub_eta_%s.root"]), "mvaPt_075i_ptJI85_mvaPt075_coarse_%s", etaslices_mu, (45,999) )
 
        # Serialize
        for h in h2d_el + h2d_mu: outfile.WriteTObject(h)

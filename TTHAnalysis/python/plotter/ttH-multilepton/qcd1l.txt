@@ -5,7 +5,7 @@ veto: nLepGood == 1
 presel: LepGood_sip3d < 8 && LepGood_jetBTagCSV < 0.89
 mu : abs(LepGood_pdgId)==13 ; Disable=True
 el : abs(LepGood_pdgId)==11 && LepGood_convVeto && LepGood_lostHits == 0 ; Disable=True
-num : LepGood_mediumMuonId > 0 && LepGood_mvaTTH > 0.6 ; Disable=True
-ptfCut: LepGood_mvaTTH > 0.6 || LepGood_jetPtRatiov2 > 0.3
-idEmuCut: LepGood_idEmu 
-#|| LepGood_pt*if3(LepGood_mvaTTH>0.60&&LepGood_mediumMuonId>0, 1.0, 0.85/LepGood_jetPtRatiov2) < 30
+ptfCut: LepGood_mvaTTH > 0.75 || LepGood_jetPtRatiov2 > 0.3
+idEmuCut: LepGood_idEmu2
+cvslDen:  LepGood_mvaTTH > 0.75 || LepGood_jetBTagCSV < 0.605
+num : LepGood_mediumMuonId > 0 && LepGood_mvaTTH > 0.75 ; Disable=True
