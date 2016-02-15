@@ -45,6 +45,72 @@ class PlotSpec:
     def allLogs(self):
         return self.logs.iteritems()
 
+def makeHistFromBinsAndSpec(name,expr,bins,plotspec):
+        profile1D      = plotspec.getOption('Profile1D',False) if plotspec != None else False
+        profile2D      = plotspec.getOption('Profile2D',False) if plotspec != None else False
+        nvars = expr.replace("::","--").count(":")+1
+        if nvars == 1 or (nvars == 2 and profile1D):
+            if bins[0] == "[":
+                edges = [ float(f) for f in bins[1:-1].split(",") ]
+                if profile1D: 
+                    histo = ROOT.TProfile(name,name,len(edges)-1,array('f',edges))
+                else:
+                    histo = ROOT.TH1D(name,name,len(edges)-1,array('f',edges))
+            else:
+                (nb,xmin,xmax) = bins.split(",")
+                if profile1D:
+                    histo = ROOT.TProfile(name,name,int(nb),float(xmin),float(xmax))
+                else:
+                    histo = ROOT.TH1D(name,name,int(nb),float(xmin),float(xmax))
+        elif nvars == 2 or (nvars == 3 and profile2D):
+            if bins[0] == "[":
+                xbins, ybins = bins.split("*")
+                xedges = [ float(f) for f in xbins[1:-1].split(",") ]
+                yedges = [ float(f) for f in ybins[1:-1].split(",") ]
+                if profile2D:
+                    histo = ROOT.TProfile2D(name,name,len(xedges)-1,array('d',xedges),len(yedges)-1,array('d',yedges))
+                else:
+                    histo = ROOT.TH2D(name,name,len(xedges)-1,array('f',xedges),len(yedges)-1,array('f',yedges))
+            else:
+                (nbx,xmin,xmax,nby,ymin,ymax) = bins.split(",")
+                if profile2D:
+                    histo = ROOT.TProfile2D(name,name,int(nbx),float(xmin),float(xmax),int(nby),float(ymin),float(ymax))
+                else:
+                    histo = ROOT.TH2D(name,name,int(nbx),float(xmin),float(xmax),int(nby),float(ymin),float(ymax))
+        elif nvars == 3:
+            ez,ey,ex = [ e.replace("--","::") for e in expr.replace("::","--").split(":") ]
+            if bins[0] == "[":
+                xbins, ybins, zbins = bins.split("*")
+                xedges = [ float(f) for f in xbins[1:-1].split(",") ]
+                yedges = [ float(f) for f in ybins[1:-1].split(",") ]
+                zedges = [ float(f) for f in zbins[1:-1].split(",") ]
+                histo = ROOT.TH3D(name,name,len(xedges)-1,array('f',xedges),len(yedges)-1,array('f',yedges),len(zedges)-1,array('f',zedges))
+            else:
+                (nbx,xmin,xmax,nby,ymin,ymax,nbz,zmin,zmax) = bins.split(",")
+                histo = ROOT.TH3D(name,name,int(nbx),float(xmin),float(xmax),int(nby),float(ymin),float(ymax),int(nbz),float(zmin),float(zmax))
+            histo.GetXaxis().SetTitle(ex)
+            histo.GetYaxis().SetTitle(ey)
+            histo.GetZaxis().SetTitle(ez)
+        else:
+            raise RuntimeError, "Can't make a plot with %d dimensions" % nvars
+        histo.Sumw2()
+        return histo
+
+def cropNegativeBins(histo):
+            if "TH1" in histo.ClassName():
+                for b in xrange(0,histo.GetNbinsX()+2):
+                    if histo.GetBinContent(b) < 0: histo.SetBinContent(b, 0.0)
+            elif "TH2" in histo.ClassName():
+                for bx in xrange(0,histo.GetNbinsX()+2):
+                    for by in xrange(0,histo.GetNbinsY()+2):
+                        if histo.GetBinContent(bx,by) < 0: histo.SetBinContent(bx,by, 0.0)
+            elif "TH3" in histo.ClassName():
+                for bx in xrange(0,histo.GetNbinsX()+2):
+                    for by in xrange(0,histo.GetNbinsY()+2):
+                        for bz in xrange(0,histo.GetNbinsZ()+2):
+                            if histo.GetBinContent(bx,by,bz) < 0: histo.SetBinContent(bx,by,bz, 0.0)
+
+
 class TreeToYield:
     def __init__(self,root,options,scaleFactor=1.0,name=None,cname=None,settings={},treename=None):
         self._name  = name  if name != None else root
@@ -284,8 +350,6 @@ class TreeToYield:
         return ret
     def getPlotRaw(self,name,expr,bins,cut,plotspec):
         unbinnedData2D = plotspec.getOption('UnbinnedData2D',False) if plotspec != None else False
-        profile1D      = plotspec.getOption('Profile1D',False) if plotspec != None else False
-        profile2D      = plotspec.getOption('Profile2D',False) if plotspec != None else False
         if not self._isInit: self._init()
         if self._weight:
             if self._isdata: cut = "(%s)     *(%s)*(%s)" % (self._weightString,                    self._scaleFactor, self.adaptExpr(cut,cut=True))
@@ -299,65 +363,16 @@ class TreeToYield:
 #        print cut
 #        print expr
         if ROOT.gROOT.FindObject("dummy") != None: ROOT.gROOT.FindObject("dummy").Delete()
-        histo = None
-        canKeys = False
-        nvars = expr.replace("::","--").count(":")+1
-        if nvars == 1 or (nvars == 2 and profile1D):
-            if bins[0] == "[":
-                edges = [ float(f) for f in bins[1:-1].split(",") ]
-                if profile1D: 
-                    histo = ROOT.TProfile("dummy","dummy",len(edges)-1,array('f',edges))
-                else:
-                    histo = ROOT.TH1D("dummy","dummy",len(edges)-1,array('f',edges))
-            else:
-                (nb,xmin,xmax) = bins.split(",")
-                if profile1D:
-                    histo = ROOT.TProfile("dummy","dummy",int(nb),float(xmin),float(xmax))
-                else:
-                    histo = ROOT.TH1D("dummy","dummy",int(nb),float(xmin),float(xmax))
-                    canKeys = True
-            unbinnedData2D = False
-        elif nvars == 2 or (nvars == 3 and profile2D):
-            if bins[0] == "[":
-                xbins, ybins = bins.split("*")
-                xedges = [ float(f) for f in xbins[1:-1].split(",") ]
-                yedges = [ float(f) for f in ybins[1:-1].split(",") ]
-                if profile2D:
-                    histo = ROOT.TProfile2D("dummy","dummy",len(xedges)-1,array('d',xedges),len(yedges)-1,array('d',yedges))
-                else:
-                    histo = ROOT.TH2D("dummy","dummy",len(xedges)-1,array('f',xedges),len(yedges)-1,array('f',yedges))
-            else:
-                (nbx,xmin,xmax,nby,ymin,ymax) = bins.split(",")
-                if profile2D:
-                    histo = ROOT.TProfile2D("dummy","dummy",int(nbx),float(xmin),float(xmax),int(nby),float(ymin),float(ymax))
-                    unbinnedData2D = False 
-                else:
-                    histo = ROOT.TH2D("dummy","dummy",int(nbx),float(xmin),float(xmax),int(nby),float(ymin),float(ymax))
-                    unbinnedData2D = (self._name == "data") and unbinnedData2D
-        elif nvars == 3:
-            ez,ey,ex = [ e.replace("--","::") for e in expr.replace("::","--").split(":") ]
-            if bins[0] == "[":
-                xbins, ybins, zbins = bins.split("*")
-                xedges = [ float(f) for f in xbins[1:-1].split(",") ]
-                yedges = [ float(f) for f in ybins[1:-1].split(",") ]
-                zedges = [ float(f) for f in zbins[1:-1].split(",") ]
-                histo = ROOT.TH3D("dummy","dummy",len(xedges)-1,array('f',xedges),len(yedges)-1,array('f',yedges),len(zedges)-1,array('f',zedges))
-            else:
-                (nbx,xmin,xmax,nby,ymin,ymax,nbz,zmin,zmax) = bins.split(",")
-                histo = ROOT.TH3D("dummy","dummy",int(nbx),float(xmin),float(xmax),int(nby),float(ymin),float(ymax),int(nbz),float(zmin),float(zmax))
-            histo.GetXaxis().SetTitle(ex)
-            histo.GetYaxis().SetTitle(ey)
-            histo.GetZaxis().SetTitle(ez)
-        else:
-            raise RuntimeError, "Can't make a plot with %d dimensions" % nvars
-        histo.Sumw2()
+        histo = makeHistFromBinsAndSpec("dummy",expr,bins,plotspec)
+        canKeys = (histo.ClassName == "TH1D" and bins[0] != "[")
+        if histo.ClassName != "TH2D" or self._name == "data": unbinnedData2D = False
         if unbinnedData2D:
             nent = self._tree.Draw("%s" % expr, cut, "", self._options.maxEntries)
             if nent == 0: return ROOT.TGraph(0)
             graph = ROOT.gROOT.FindObject("Graph").Clone(name) #ROOT.gPad.GetPrimitive("Graph").Clone(name)
             return graph
         drawOpt = "goff"
-        if profile1D or profile2D: drawOpt += " PROF";
+        if "TProfile" in histo.ClassName(): drawOpt += " PROF";
         self._tree.Draw("%s>>%s" % (expr,"dummy"), cut, drawOpt, self._options.maxEntries)
         if canKeys and histo.GetEntries() > 0 and histo.GetEntries() < self.getOption('KeysPdfMinN',100) and not self._isdata and self.getOption("KeysPdf",False):
             #print "Histogram for %s/%s has %d entries, so will use KeysPdf " % (self._cname, self._name, histo.GetEntries())
@@ -375,19 +390,7 @@ class TreeToYield:
         return histo.Clone(name)
     def negativeCheck(self,histo):
         if not self._options.allowNegative: 
-            if "TH1" in histo.ClassName():
-                for b in xrange(0,histo.GetNbinsX()+2):
-                    if histo.GetBinContent(b) < 0: histo.SetBinContent(b, 0.0)
-            elif "TH2" in histo.ClassName():
-                for bx in xrange(0,histo.GetNbinsX()+2):
-                    for by in xrange(0,histo.GetNbinsY()+2):
-                        if histo.GetBinContent(bx,by) < 0: histo.SetBinContent(bx,by, 0.0)
-            elif "TH3" in histo.ClassName():
-                for bx in xrange(0,histo.GetNbinsX()+2):
-                    for by in xrange(0,histo.GetNbinsY()+2):
-                        for bz in xrange(0,histo.GetNbinsZ()+2):
-                            if histo.GetBinContent(bx,by,bz) < 0: histo.SetBinContent(bx,by,bz, 0.0)
-
+            cropNegativeBins(histo)
     def __str__(self):
         mystr = ""
         mystr += str(self._fname) + '\n'
