@@ -405,6 +405,22 @@ class TreeToYield:
         eventLoop.loop(self._tree, getattr(self._options, 'maxEvents', -1), cut=cut)
         eventLoop.endComponent(self)
 
+def _copyPlotStyle(self,plotfrom,plotto):
+        plotto.SetFillStyle(plotfrom.GetFillStyle())
+        plotto.SetFillColor(plotfrom.GetFillColor())
+        plotto.SetMarkerStyle(plotfrom.GetMarkerStyle())
+        plotto.SetMarkerColor(plotfrom.GetMarkerColor())
+        plotto.SetMarkerSize(plotfrom.GetMarkerSize())
+        plotto.SetLineStyle(plotfrom.GetLineStyle())
+        plotto.SetLineColor(plotfrom.GetLineColor())
+        plotto.SetLineWidth(plotfrom.GetLineWidth())
+        plotto.GetXaxis().SetTitle(plotfrom.GetXaxis().GetTitle())
+        plotto.GetYaxis().SetTitle(plotfrom.GetYaxis().GetTitle())
+        plotto.GetZaxis().SetTitle(plotfrom.GetZaxis().GetTitle())
+        plotto.GetXaxis().SetNdivisions(plotfrom.GetXaxis().GetNdivisions())
+        plotto.GetYaxis().SetNdivisions(plotfrom.GetYaxis().GetNdivisions())
+        plotto.GetZaxis().SetNdivisions(plotfrom.GetZaxis().GetNdivisions())
+
 def addTreeToYieldOptions(parser):
     parser.add_option("-l", "--lumi",           dest="lumi",   type="float", default="19.7", help="Luminosity (in 1/fb)");
     parser.add_option("-u", "--unweight",       dest="weight",       action="store_false", default=True, help="Don't use weights (in MC events)");

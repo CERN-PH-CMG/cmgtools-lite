@@ -453,6 +453,12 @@ class MCAnalysis:
             if k2 not in mergemap: mergemap[k2]=[]
             mergemap[k2].append(v)
         return dict([ (k,mergePlots(pspec.name+"_"+k,v)) for k,v in mergemap.iteritems() ])
+    def stylePlot(self,process,plot,pspec,mayBeMissing=False):
+        if mayBeMissing and process not in self._allData: return
+        for tty in self._allData[process]: 
+            tty._stylePlot(plot,pspec)
+            break
+
 
 def addMCAnalysisOptions(parser,addTreeToYieldOnesToo=True):
     if addTreeToYieldOnesToo: addTreeToYieldOptions(parser)
