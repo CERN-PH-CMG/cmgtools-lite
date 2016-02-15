@@ -268,6 +268,28 @@ def doEffRatio(x,effs,frame,options):
     return (cframe,line,effrels)
 
     
+def makeDataSub(report,mca):
+    data_sub      = report['data'].Clone(report['data'].GetName()+'_sub')
+    data_sub_syst = report['data'].Clone(report['data'].GetName()+'_sub_syst')
+    for p in mca.listBackgrounds():
+        if p not in report: continue
+        b = report[p]
+        data_sub.Add(b, -1.0)
+        data_sub_syst.Add(b, -1.0)
+        syst = mca.getProcessOption(p,'NormSystematic',0.) 
+        #print "subtracting background %s from data with systematic %r" % (p,syst)
+        if syst <= 0: continue
+        if "TH1" in b.ClassName():
+            for bx in xrange(1,b.GetNbinsX()+1):
+                data_sub_syst.SetBinError(bx, hypot(data_sub_syst.GetBinError(bx), syst * b.GetBinContent(bx)))
+        elif "TH2" in b.ClassName():
+            for (bx,by) in itertools.product(range(1,b.GetNbinsX()+1), range(1,b.GetNbinsY()+1)):
+                data_sub_syst.SetBinError(bx, by, hypot(data_sub_syst.GetBinError(bx, by), syst * b.GetBinContent(bx, by)))
+        elif "TH3" in b.ClassName():
+            for (bx,by,bz) in itertools.product(range(1,b.GetNbinsX()+1), range(1,b.GetNbinsY()+1), range(1,b.GetNbinsZ()+1)):
+                data_sub_syst.SetBinError(bx, by, bz, hypot(data_sub_syst.GetBinError(bx, by, bz), syst * b.GetBinContent(bx, by, bz)))
+    report['data_sub']      = data_sub
+    report['data_sub_syst'] = data_sub_syst
 
 def makeEff(mca,cut,idplot,xvarplot,returnSeparatePassFail=False,notDoProfile="auto",mainOptions=None):
     import copy
@@ -293,10 +315,7 @@ def makeEff(mca,cut,idplot,xvarplot,returnSeparatePassFail=False,notDoProfile="a
     if 'signal' in report and 'background' in report:
         report['total'] = mergePlots(pspec.name+"_total", [ report[s] for s in ('signal','background') ] )
     if 'data' in report and 'background' in report:
-        report['data_sub'] = report['data'].Clone(pspec.name+'_data_sub')
-        report['data_sub'].Add(report['background'], -1.0)
-    if mainOptions and mainOptions.compare:
-        print report.keys()
+        makeDataSub(report, mca)
     if notDoProfile and not returnSeparatePassFail:
         if is2D: report = dict([(title, effFromH3D(hist,mainOptions)) for (title, hist) in report.iteritems()])
         else:    report = dict([(title, effFromH2D(hist,mainOptions)) for (title, hist) in report.iteritems()])
