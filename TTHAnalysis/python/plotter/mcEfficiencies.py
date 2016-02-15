@@ -16,10 +16,11 @@ def addMCEfficiencyOptions(parser):
     parser.add_option("--yrange", dest="yrange", default=None, nargs=2, type='float', help="Y axis range");
     parser.add_option("--logy", dest="logy", default=False, action='store_true', help="Do y axis in log scale");
     parser.add_option("--ytitle", dest="ytitle", default="Efficiency", type='string', help="Y axis title");
-    parser.add_option("--fontsize", dest="fontsize", default=0, type='float', help="Legend font size");
+    parser.add_option("--fontsize", dest="fontsize", default=0.035, type='float', help="Legend font size");
     parser.add_option("--grid", dest="showGrid", action="store_true", default=False, help="Show grid lines")
     parser.add_option("--groupBy",  dest="groupBy",  default="process",  type="string", help="Group by: cut, process")
     parser.add_option("--legend",  dest="legend",  default="TR",  type="string", help="Legend position (BR, TR)")
+    parser.add_option("--legendWidth", dest="legendWidth", type="float", default=0.35, help="Width of the legend")
     parser.add_option("--compare", dest="compare", default="", help="Samples to compare (by default, all except the totals)")
     parser.add_option("--showRatio", dest="showRatio", action="store_true", default=False, help="Add a data/sim ratio plot at the bottom")
     parser.add_option("--rr", "--ratioRange", dest="ratioRange", type="float", nargs=2, default=(-1,-1), help="Min and max for the ratio")
@@ -27,12 +28,13 @@ def addMCEfficiencyOptions(parser):
 
 
 def doLegend(rocs,options,textSize=0.035):
+        lwidth = options.legendWidth
         if options.legend == "TR":
-            (x1,y1,x2,y2) = (.6, .85 - textSize*max(len(rocs)-3,0), .93, .98)
+            (x1,y1,x2,y2) = (.93-lwidth, .98 - 1.2*textSize*max(len(rocs),3), .93, .98)
         elif options.legend == "TL":
-            (x1,y1,x2,y2) = (.2, .85 - textSize*max(len(rocs)-3,0), .53, .98)
+            (x1,y1,x2,y2) = (.2, .98 - 1.2*textSize*max(len(rocs),3), .2+lwidth, .98)
         else:
-            (x1,y1,x2,y2) = (.6, .30 + textSize*max(len(rocs)-3,0), .93, .18)
+            (x1,y1,x2,y2) = (.93-lwidth, .18 + 1.2*textSize*max(len(rocs),3), .93, .18)
         leg = ROOT.TLegend(x1,y1,x2,y2)
         leg.SetFillColor(0)
         leg.SetShadowColor(0)
@@ -148,8 +150,7 @@ def stackEffs(outname,x,effs,options):
     if options.yrange:
         frame.GetYaxis().SetRangeUser(options.yrange[0], options.yrange[1])
 
-    leg = doLegend(effs,options)
-    if options.fontsize: leg.SetTextSize(options.fontsize)
+    leg = doLegend(effs,options,textSize=options.fontsize)
     if doRatio:
         p2.cd()
         keepme = doEffRatio(x,effs,frame,options)
@@ -159,7 +160,17 @@ def stackEffs(outname,x,effs,options):
     c1.Print(outname.replace(".root","")+".png")
     c1.Print(outname.replace(".root","")+".eps")
     c1.Print(outname.replace(".root","")+".pdf")
-
+    dump = open(outname.replace(".root","")+".txt","w")
+    for n,e in effs:
+        dump.write(" ===  %s === \n" % n)
+        dump.write("  x min    x max      eff   -err   +err  \n")
+        dump.write("-------- --------    ----- ------ ------ \n")
+        for i in xrange(e.GetN()):
+            dump.write("%8.3f %8.3f    %.3f -%.3f +%.3f \n" % (
+                 e.GetX()[i]-e.GetErrorYlow(i),
+                 e.GetX()[i]+e.GetErrorYhigh(i),
+                 e.GetY()[i], e.GetErrorYlow(i), e.GetErrorYhigh(i) ))
+        dump.write("\n\n");
 def graphFromSlice(h,axis,bins):
         (aobj,ai) = (h.GetXaxis(),0) if axis == "X" else (h.GetYaxis(),1)
         ret = ROOT.TGraphAsymmErrors(len(bins))
