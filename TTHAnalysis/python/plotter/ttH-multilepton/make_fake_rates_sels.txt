@@ -1,5 +1,7 @@
 miniRelIso_005: LepGood_miniRelIso<0.05: 2,-0.5,1.5;   Title="MiniIso<0.05", MarkerColor=ROOT.kViolet+10, MarkerStyle=21, MarkerSize=1.3
 mvaPt_060: LepGood_mvaTTH > 0.60:  2,-0.5,1.5;   Title="MVA > 0.60", MarkerColor=4,  MarkerStyle=21, MarkerSize=1.3
 mvaPt_060i: LepGood_mvaTTH > 0.60 && LepGood_mediumMuonId > 0:  2,-0.5,1.5;   Title="MVA > 0.60 + Id", MarkerColor=4,  MarkerStyle=21, MarkerSize=1.3
+mvaPt_075i: LepGood_mvaTTH > 0.75 && LepGood_mediumMuonId > 0:  2,-0.5,1.5;   Title="MVA > 0.75 + Id", MarkerColor=4,  MarkerStyle=21, MarkerSize=1.3
+mvaPt_080i: LepGood_mvaTTH > 0.80 && LepGood_mediumMuonId > 0:  2,-0.5,1.5;   Title="MVA > 0.80 + Id", MarkerColor=4,  MarkerStyle=21, MarkerSize=1.3
 mvaPt_030i: LepGood_mvaTTH > 0.30 && LepGood_mediumMuonId > 0:  2,-0.5,1.5;   Title="MVA > 0.30 + Id", MarkerColor=4,  MarkerStyle=21, MarkerSize=1.3
 mvaPt_000i: LepGood_mvaTTH > 0.00 && LepGood_mediumMuonId > 0:  2,-0.5,1.5;   Title="MVA > 0.00 + Id", MarkerColor=4,  MarkerStyle=21, MarkerSize=1.3
