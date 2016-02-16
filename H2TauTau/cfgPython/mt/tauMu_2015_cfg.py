@@ -21,9 +21,9 @@ from CMGTools.H2TauTau.htt_ntuple_base_cff import puFileData, puFileMC, eventSel
 
 # production = True run on batch, production = False (or unset) run locally
 production = getHeppyOption('production')
-production = True
+production = False
 pick_events = False
-syncntuple = False
+syncntuple = True
 cmssw = True
 data = False
 
@@ -111,11 +111,11 @@ if not production:
     cache = True
     comp = sync_list[0]
     # comp = [s for s in selectedComponents if 'DYJets' in s.name][0]
-    comp = [s for s in selectedComponents if 'HiggsSUSYBB110' in s.name][0]
+    # comp = [s for s in selectedComponents if 'HiggsSUSYBB110' in s.name][0]
     selectedComponents = [comp]
     # selectedComponents = [selectedComponents[0]]
     # comp = selectedComponents[0]
-    comp.splitFactor = 1
+    comp.splitFactor = 5
     comp.fineSplitFactor = 1
     # comp.files = comp.files[]
 

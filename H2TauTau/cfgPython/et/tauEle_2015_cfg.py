@@ -22,7 +22,7 @@ shift = None
 computeSVfit = False
 production = False  # production = True run on batch, production = False run locally
 syncntuple = True
-cmssw = False
+cmssw = True
 
 
 dyJetsFakeAna.channel = 'et'
@@ -46,6 +46,9 @@ tauEleAna = cfg.Analyzer(
     from_single_objects=True,
     verbose=False
 )
+
+if cmssw:
+    tauEleAna.from_single_objects = False
 
 dyLLReweighterTauEle = cfg.Analyzer(
     DYLLReweighterTauEle,

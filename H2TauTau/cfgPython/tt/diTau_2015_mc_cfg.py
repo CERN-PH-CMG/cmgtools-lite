@@ -21,13 +21,14 @@ from CMGTools.H2TauTau.htt_ntuple_base_cff import commonSequence, genAna, dyJets
 
 # production = True run on batch, production = False (or unset) run locally
 production = getHeppyOption('production')
-production = True
+production = False
 
 # local switches
 syncntuple   = True
 computeSVfit = False
 pick_events  = False
 cmssw        = True
+data = False
 
 dyJetsFakeAna.channel = 'tt'
 
@@ -44,7 +45,7 @@ tauTauAna = cfg.Analyzer(
   eta2                = 2.1                                ,
   iso2                = 1.                                 ,
   looseiso2           = 999999999.                         ,
-  isolation           = 'byIsolationMVArun2v1DBnewDMwLTraw',
+  isolation           = 'byIsolationMVArun2v1DBoldDMwLTraw',
   m_min               = 10                                 ,
   m_max               = 99999                              ,
   dR_min              = 0.5                                ,
@@ -173,7 +174,8 @@ for mc in samples:
 ###             SET COMPONENTS BY HAND          ###
 ###################################################
 selectedComponents = samples
-selectedComponents = data_list
+if data:
+  selectedComponents = data_list
 
 ###################################################
 ###                  SEQUENCE                   ###
@@ -220,7 +222,7 @@ if pick_events:
 if not production:
   cache                = True
   comp                 = ggh160
-  comp = data_list[0]
+  # comp = data_list[0]
   selectedComponents   = [comp]
   comp.splitFactor     = 5
   comp.fineSplitFactor = 1
@@ -229,8 +231,8 @@ if not production:
 preprocessor = None
 if cmssw:
     sequence.append(fileCleaner)
-    # preprocessor = CmsswPreprocessor("$CMSSW_BASE/src/CMGTools/H2TauTau/prod/h2TauTauMiniAOD_ditau_cfg.py", addOrigAsSecondary=False)
-    preprocessor = CmsswPreprocessor("$CMSSW_BASE/src/CMGTools/H2TauTau/prod/h2TauTauMiniAOD_ditau_data_cfg.py", addOrigAsSecondary=False)
+    cfg_name = "$CMSSW_BASE/src/CMGTools/H2TauTau/prod/h2TauTauMiniAOD_ditau_data_cfg.py" if data else "$CMSSW_BASE/src/CMGTools/H2TauTau/prod/h2TauTauMiniAOD_ditau_cfg.py"
+    preprocessor = CmsswPreprocessor(cfg_name, addOrigAsSecondary=False)
 
 # the following is declared in case this cfg is used in input to the
 # heppy.py script

@@ -143,8 +143,8 @@ class TauMuAnalyzer(DiLeptonAnalyzer):
         return True
 
     def testLeg2ID(self, tau):
-        return ((tau.tauID('decayModeFinding') > 0.5 or
-                 tau.tauID('decayModeFindingNewDMs') > 0.5) and
+        return (tau.tauID('decayModeFinding') > 0.5 and
+                 # tau.tauID('decayModeFindingNewDMs') > 0.5) and
                 # tau.tauID('againstElectronVLooseMVA5') > 0.5  and
                 # tau.tauID('againstMuonTight3')         > 0.5  and
                 abs(tau.charge()) == 1. and
@@ -254,7 +254,7 @@ class TauMuAnalyzer(DiLeptonAnalyzer):
         if len(diLeptons) == 1:
             return diLeptons[0]
 
-        least_iso_highest_pt = lambda dl: (dl.leg1().relIsoR(R=0.3, dBetaFactor=0.5, allCharged=0), -dl.leg1().pt(), -dl.leg2().tauID("byIsolationMVArun2v1DBnewDMwLTraw"), -dl.leg2().pt())
+        least_iso_highest_pt = lambda dl: (dl.leg1().relIsoR(R=0.3, dBetaFactor=0.5, allCharged=0), -dl.leg1().pt(), -dl.leg2().tauID("byIsolationMVArun2v1DBoldDMwLTraw"), -dl.leg2().pt())
 
         return sorted(diLeptons, key=lambda dil : least_iso_highest_pt(dil))[0]
 
