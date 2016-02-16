@@ -1,6 +1,5 @@
-from PhysicsTools.HeppyCore.statistics.counter import Counters
 from PhysicsTools.Heppy.analyzers.core.AutoHandle import AutoHandle
-from PhysicsTools.Heppy.physicsobjects.PhysicsObjects import Tau, Muon, Jet, GenParticle
+from PhysicsTools.Heppy.physicsobjects.PhysicsObjects import Tau, Muon
 from PhysicsTools.Heppy.physicsobjects.Electron import Electron
 
 from CMGTools.H2TauTau.proto.analyzers.DiLeptonAnalyzer import DiLeptonAnalyzer
@@ -86,6 +85,8 @@ class TauTauAnalyzer(DiLeptonAnalyzer):
 #       event.selectedLeptons = [event.leg2, event.leg1]
 
         # RIC: agreed with Adinda to sort taus by isolation
+        # JAN: This code however doesn't fix the order in the dilepton object -
+        #      added it there
         iso = self.cfg_ana.isolation
         if event.leg1.tauID(iso) < event.leg2.tauID(iso):
             event.leg1 = event.diLepton.leg2()
