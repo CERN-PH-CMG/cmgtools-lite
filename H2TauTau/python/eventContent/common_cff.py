@@ -31,7 +31,8 @@ common = [
     'keep *_genEvtWeightsCounter_*_*',
     'keep *_offlineBeamSpot_*_*',
     'keep *_reducedEgamma_reducedConversions_*',
-    'keep LHEEventProduct_externalLHEProducer_*_*'
+    'keep LHEEventProduct_externalLHEProducer_*_*',
+    'keep *_l1extraParticles_*_*'
     ]
 
 commonDebug = copy.deepcopy(common) 
