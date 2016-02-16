@@ -1,27 +1,34 @@
 import copy
+from collections import namedtuple
 
 from CMGTools.H2TauTau.proto.plotter.PlotConfigs import HistogramCfg, VariableCfg
 from CMGTools.H2TauTau.proto.plotter.categories_TauMu import cat_Inc
 from CMGTools.H2TauTau.proto.plotter.HistCreator import createHistogram
 from CMGTools.H2TauTau.proto.plotter.HistDrawer import HistDrawer
 from CMGTools.H2TauTau.proto.plotter.Variables import all_vars, getVars
-from CMGTools.H2TauTau.proto.plotter.helper_methods import getPUWeight
+# from CMGTools.H2TauTau.proto.plotter.helper_methods import getPUWeight
 
 from CMGTools.H2TauTau.proto.plotter.Samples import createSampleLists
 
-int_lumi = 2094.2 # from Alexei's email
+int_lumi = 2240. # from Alexei's email
 
-total_weight = 'weight * ' + getPUWeight()
-# total_weight = 'weight'
+total_weight = 'weight'
+total_weight = 'geninfo_mcweight'
+total_weight = 'weight/l1_weight/weight_njet'
+# total_weight = 'weight/l1_weight/weight_njet/weight_vertex'
 
 print total_weight
 
-cuts = {}
+Cut = namedtuple('Cut', ['name', 'cut'])
+
+cuts = []
 
 inc_cut = '&&'.join([cat_Inc])
-inc_cut += '&& l2_decayModeFinding'
+# inc_cut += '&& l2_decayModeFinding'
 
-cuts['inclusive'] = inc_cut + '&& l1_charge != l2_charge && !(met_pt < 0.15 && met_phi > 0. && met_phi < 1.8)'
+
+cuts.append(Cut('inclusive', inc_cut + '&& l1_charge != l2_charge'))
+# cuts.append(Cut('inclusivemtnotwoprong', inc_cut + '&& l1_charge != l2_charge && mt<40 && l2_decayModeFinding'))
 
 # cuts['lowMT'] = cuts['inclusive'] + '&& mt < 20'
 # cuts['verylowMT'] = cuts['inclusive'] + '&& mt < 5'
@@ -70,11 +77,11 @@ cuts['inclusive'] = inc_cut + '&& l1_charge != l2_charge && !(met_pt < 0.15 && m
 
 qcd_from_same_sign = True
 
-analysis_dir = '/data/steggema/mt/18112015'
+analysis_dir = '/afs/cern.ch/user/s/steggema/work/public/mt/090216/'
 samples_mc, samples_data, samples, all_samples, sampleDict = createSampleLists(analysis_dir=analysis_dir)
 
 if qcd_from_same_sign:
-    samples_qcdfromss = [s for s in samples if s.name != 'QCD']
+    samples_qcdfromss = [s for s in all_samples if s.name != 'QCD']
     samples_ss = copy.deepcopy(samples_qcdfromss)
 
     scale = 1.06
@@ -98,20 +105,20 @@ variables = getVars(['_norm_', 'mt', 'mvis', 'n_vertices'])
 # variables = getVars(['_norm_', 'met_pt', 'met_phi'])
 
 # variables = getVars(['_norm_'])
-# variables = [
-#     VariableCfg(name='mvis', binning={'nbinsx':35, 'xmin':0, 'xmax':350}, unit='GeV', xtitle='m_{vis}')
-# ]
+variables = [
+    VariableCfg(name='mvis', binning={'nbinsx':35, 'xmin':0, 'xmax':350}, unit='GeV', xtitle='m_{vis}')
+]
 
-for cut_name in cuts:
-    if qcd_from_same_sign and not 'SS' in cut_name :
-        cfg_example = HistogramCfg(name='example', var=None, cfgs=samples_qcdfromss, cut=inc_cut, lumi=int_lumi, weight=total_weight)
+for cut in cuts:
+    if qcd_from_same_sign and not 'SS' in cut.name:
+        cfg_example = HistogramCfg(name=cut.name, var=None, cfgs=samples_qcdfromss, cut=inc_cut, lumi=int_lumi, weight=total_weight)
     else:
-        cfg_example = HistogramCfg(name='example', var=None, cfgs=samples, cut=inc_cut, lumi=int_lumi, weight=total_weight)
+        cfg_example = HistogramCfg(name=cut.name, var=None, cfgs=all_samples, cut=inc_cut, lumi=int_lumi, weight=total_weight)
         
 
-    cfg_example.cut = cuts[cut_name]
-    if qcd_from_same_sign and not 'SS' in cut_name:
-        qcd.cut = cuts[cut_name].replace('l1_charge != l2_charge', 'l1_charge == l2_charge')
+    cfg_example.cut = cut.cut
+    if qcd_from_same_sign and not 'SS' in cut.name:
+        qcd.cut = cut.cut.replace('l1_charge != l2_charge', 'l1_charge == l2_charge')
 
     for variable in variables:
         cfg_example.var = variable
@@ -119,9 +126,9 @@ for cut_name in cuts:
             qcd.var = variable # Can put into function but we will not want it by default if we take normalisations from e.g. high MT
         
         plot = createHistogram(cfg_example, verbose=True)
-        plot.Group('VV', ['ZZ', 'WZ', 'WW', 'T_tWch', 'TBar_tWch'])
+        plot.Group('VV', ['WWTo1L1Nu2Q', 'WZTo1L3Nu', 'ZZTo4L', 'T_tWch', 'TBar_tWch', 'Ztt_ZJ'])
         # plot.Group('Single t', ['T_tWch', 'TBar_tWch', 'TToLeptons_sch', 'TToLeptons_tch'])
         # plot.Group('ZLL', ['Ztt_ZL', 'Ztt_ZJ'], style=plot.Hist('Ztt_ZL').style)
-        HistDrawer.draw(plot, plot_dir='plots/RemoveLowMET_'+cut_name)
-
-        plot.WriteDataCard(filename='datacard_mvis.root', dir='mt_' + cut_name)
+        HistDrawer.draw(plot, plot_dir='plots/'+cut.name)
+        if variable.name == 'mvis':
+            plot.WriteDataCard(filename='datacard_mvis.root', dir='mt_' + cut.name, mode='UPDATE')

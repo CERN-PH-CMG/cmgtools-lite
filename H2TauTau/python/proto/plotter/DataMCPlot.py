@@ -375,7 +375,10 @@ class DataMCPlot(object):
             same = ''
         self.supportHist = None
         for hist in self.nostack:
-            hist.Draw()
+            if hist.style.drawAsData:
+                hist.Draw()
+            else:
+                hist.Draw('HIST')
             if not self.supportHist:
                 self.supportHist = hist
         self.stack.Draw(opt+same,
@@ -398,9 +401,12 @@ class DataMCPlot(object):
             self.supportHist.GetYaxis().SetRangeUser(ymin, ymax)
             self.axisWasSet = True
         for hist in self.nostack:
-            if self.blindminx:
+            if self.blindminx and hist.style.drawAsData:
                 hist.Blind(self.blindminx, self.blindmaxx)
-            hist.Draw('same')
+            if hist.style.drawAsData:
+                hist.Draw('SAME')
+            else:
+                hist.Draw('SAME HIST')
 
         if self.supportHist.weighted.GetMaximumBin() < self.supportHist.weighted.GetNbinsX()/2:
             self.legendBorders = 0.62, 0.46, 0.88, 0.89

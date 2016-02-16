@@ -10,7 +10,8 @@ class Style:
                  lineColor=1,
                  lineWidth=2,
                  fillColor=None,
-                 fillStyle=1001):
+                 fillStyle=1001,
+                 drawAsData=False):
         self.markerStyle = markerStyle
         self.markerColor = markerColor
         self.markerSize = markerSize
@@ -22,6 +23,7 @@ class Style:
         else:
             self.fillColor = fillColor
         self.fillStyle = fillStyle
+        self.drawAsData = drawAsData
 
     def formatHisto(self, hist, title=None):
         hist.SetMarkerStyle(self.markerStyle)
@@ -41,7 +43,7 @@ class Style:
 # user defined styles can be created in the same way in any python module
 
 sBlack = Style()
-sData = Style(fillStyle=0, markerSize=1.3)
+sData = Style(fillStyle=0, markerSize=1.3, drawAsData=True)
 sBlue = Style(markerColor=4, fillColor=4)
 sGreen = Style(markerColor=8, fillColor=8)
 sRed = Style(markerColor=2, fillColor=2)
@@ -56,7 +58,8 @@ wcol = TColor.GetColor(222,90,106)
 sHTT_WJets = Style(lineColor=1, markerColor=wcol, fillColor=wcol)
 ttcol = TColor.GetColor(155,152,204)
 sHTT_TTJets = Style(lineColor=1, markerColor=ttcol, fillColor=ttcol)
-sHTT_Higgs = Style(lineColor=kBlue, markerColor=2, lineStyle=2, fillColor=0)
+# sHTT_Higgs = Style(lineColor=kBlue, markerColor=2, lineStyle=2, fillColor=0)
+sHTT_Higgs = Style(lineColor=kBlue, markerColor=0, lineStyle=2, fillColor=0, lineWidth=3)
 zlcol = TColor.GetColor(100,182,232)
 sHTT_ZL = Style(lineColor=1, markerColor=zlcol, fillColor=zlcol)
 dibosoncol = TColor.GetColor(222,90,106)
