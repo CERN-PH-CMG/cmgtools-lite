@@ -40,6 +40,8 @@ class L1TriggerAnalyzer(Analyzer):
             label = self.cfg_ana.label
         else:
             label = 'l1extraParticles'
+
+        self.l1PtCut = self.cfg_ana.l1PtCut if hasattr(self.cfg_ana, 'l1PtCut') else 0.
             
         self.handles['EmIsolated'   ] = AutoHandle( (label, 'Isolated'   ), 'std::vector<l1extra::L1EmParticle>'    )
         self.handles['EmNonIsolated'] = AutoHandle( (label, 'NonIsolated'), 'std::vector<l1extra::L1EmParticle>'    )
@@ -81,6 +83,8 @@ class L1TriggerAnalyzer(Analyzer):
      
             mycoll = self.handles[coll].product()
             for leg, l1 in product(legs.keys(), mycoll):
+                if l1.pt() < self.l1PtCut:
+                    continue
                 dR = deltaR(l1.eta(), l1.phi(), leg.eta(), leg.phi())
                 if dR < legs[leg]:
                     leg.L1 = l1
@@ -92,11 +96,13 @@ class L1TriggerAnalyzer(Analyzer):
             if 'leg1' in self.cfg_ana.requireMatches:
                 if not hasattr(event.diLepton.leg1(), 'L1'):
                     return False
-            self.counters.counter('L1TriggerAnalyzer').inc('leg 1 match')
+                else:
+                    self.counters.counter('L1TriggerAnalyzer').inc('leg 1 match')
             if 'leg2' in self.cfg_ana.requireMatches:
                 if not hasattr(event.diLepton.leg2(), 'L1'):
                     return False
-            self.counters.counter('L1TriggerAnalyzer').inc('leg 2 match')
+                else:
+                    self.counters.counter('L1TriggerAnalyzer').inc('leg 2 match')
 
         return True
 
@@ -105,6 +111,7 @@ setattr(L1TriggerAnalyzer, 'defaultConfig',
         class_object=L1TriggerAnalyzer,
         collections=['IsoTau', 'Tau', 'Muon'],
         requireMatches=[],
+        l1PtCut=0.,
         dR=0.5
     )
 )
