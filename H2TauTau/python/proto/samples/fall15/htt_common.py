@@ -22,11 +22,11 @@ DYJetsToLL_M50_LO.xSection = 6025.2
 DYJetsToLL_M50.xSection = 6025.2
 
 # Dummy values such that the NJetsAnalyzer fills number of outgoing partons
-DYJetsToLL_M50_LO.fractions = [1., 1., 1., 1., 1.]
-DYJetsToLL_M50_LO.nevents = [1., 1., 1., 1., 1.]
+# DYJetsToLL_M50_LO.fractions = [1., 1., 1., 1., 1.]
+# DYJetsToLL_M50_LO.nevents = [1., 1., 1., 1., 1.]
 
-WJetsToLNu.fractions = [1., 1., 1., 1., 1.]
-WJetsToLNu.nevents = [1., 1., 1., 1., 1.]
+# WJetsToLNu.fractions = [1., 1., 1., 1., 1.]
+# WJetsToLNu.nevents = [1., 1., 1., 1., 1.]
 
 # Backgrounds
 diboson_lo = [ZZ, WZ]
