@@ -78,7 +78,6 @@ class NJetsAnalyzer(Analyzer):
             self.hasMCProduct = False
             print 'WARNING: No LHEEventProduct from externalLHEProducer present in event'
             print '  (fine for sample directly produced in Pythia)'
-            import pdb; pdb.set_trace()
             return True
 
         hep = self.mchandles['source'].product().hepeup()
