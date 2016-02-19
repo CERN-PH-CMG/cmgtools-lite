@@ -5,20 +5,24 @@ import ROOT
 from array import array
 import os.path as osp
 
-PAIRSEL = "((pdgId*tag_pdgId==-11*11||pdgId*tag_pdgId==-13*13)&&abs(mass-91.)<20.)"
+WEIGHT = "puWeight"
+PAIRSEL = ("((pdgId*tag_pdgId==-11*11||pdgId*tag_pdgId==-13*13)"
+           "&&abs(mass-91.)<20.)")
 SELECTIONS = [
     ('inclusive',      PAIRSEL),
     ('singleTriggers', PAIRSEL+"&&passSingle"),
     ('doubleTriggers', PAIRSEL+"&&passDouble"),
-    # ('ttbar', "(pdgId*tag_pdgId==-11*13)||"
-    #           "((pdgId*tag_pdgId==-11*11||pdgId*tag_pdgId==-13*13)"
-    #           "&&abs(mass-91.)>15.)&&met_pt>30.)&&passDouble"),
+    # ('ttbar', "( (pdgId*tag_pdgId==-11*13)||"
+    #           "  ( (pdgId*tag_pdgId==-11*11||pdgId*tag_pdgId==-13*13)"
+    #           "&&abs(mass-91.)>15.&&met_pt>30.) )&&passDouble"),
 ]
 
 LEPSEL = [
     ('e',  'abs(pdgId)==11', 'Electrons'),
-    ('eb', 'abs(pdgId)==11&&abseta<1.479',  'Electrons Barrel (#eta < 1.479)'),
-    ('ee', 'abs(pdgId)==11&&abseta>=1.479', 'Electrons Endcap (#eta #geq 1.479)'),
+    ('eb', 'abs(pdgId)==11&&abseta<1.479',
+           'Electrons Barrel (#eta < 1.479)'),
+    ('ee', 'abs(pdgId)==11&&abseta>=1.479',
+           'Electrons Endcap (#eta #geq 1.479)'),
     ('m',  'abs(pdgId)==13', 'Muons'),
     ('mb', 'abs(pdgId)==13&&abseta<1.2',  'Muons Barrel (#eta < 1.2)'),
     ('me', 'abs(pdgId)==13&&abseta>=1.2', 'Muons Endcap (#eta #geq 1.2)'),
@@ -27,10 +31,12 @@ LEPSEL = [
 PTBINS    = [10.,15.,20.,25.,30.,37.5,45.,60.,80.,100.]
 ETABINS   = [0.,0.25,0.50,0.75,1.00,1.25,1.50,2.00,2.50]
 NVERTBINS = [0,4,7,8,9,10,11,12,13,14,15,16,17,19,22,25,30]
+NJETBINS  = [0,1,2,3]
 BINNINGS = [
     ('pt',     PTBINS,    'p_{T} [GeV]'),
     ('abseta', ETABINS,   '|#eta|'),
     ('nVert',  NVERTBINS, 'N_{vertices}'),
+    ('nJets',  NJETBINS,  'N_{jets}'),
 ]
 
 DENOMINATOR = "passLoose"
@@ -41,21 +47,16 @@ NUMERATORS  = [
 
 INPUTS = {
     'data':[
-        "DoubleEG_Run2015C_Oct05_runs_254231_254914",
-        "DoubleEG_Run2015D_Oct05_runs_256630_258158",
-        "DoubleEG_Run2015D_PromptV4_runs_258159_260627",
-        "DoubleMuon_Run2015C_Oct05_runs_254231_254914",
-        "DoubleMuon_Run2015D_Oct05_runs_256630_258158",
-        "DoubleMuon_Run2015D_PromptV4_runs_258159_260627",
-        "MuonEG_Run2015C_Oct05_runs_254231_254914",
-        "MuonEG_Run2015D_Oct05_runs_256630_258158",
-        "MuonEG_Run2015D_PromptV4_runs_258159_260627",
-        "SingleElectron_Run2015C_Oct05_runs_254231_254914",
-        "SingleElectron_Run2015D_Oct05_runs_256630_258158",
-        "SingleElectron_Run2015D_PromptV4_runs_258159_260627",
-        "SingleMuon_Run2015C_Oct05_runs_254231_254914",
-        "SingleMuon_Run2015D_Oct05_runs_256630_258158",
-        "SingleMuon_Run2015D_PromptV4_runs_258159_260627",
+        "DoubleEG_Run2015C_25ns_16Dec2015",
+        "DoubleEG_Run2015D_16Dec2015",
+        "DoubleMuon_Run2015C_25ns_16Dec2015",
+        "DoubleMuon_Run2015D_16Dec2015",
+        "MuonEG_Run2015C_25ns_16Dec2015",
+        "MuonEG_Run2015D_16Dec2015",
+        "SingleElectron_Run2015C_25ns_16Dec2015",
+        "SingleElectron_Run2015D_16Dec2015",
+        "SingleMuon_Run2015C_25ns_16Dec2015",
+        "SingleMuon_Run2015D_16Dec2015",
         ],
     'DY':["DYJetsToLL_M50"],
     'ttbar':[
@@ -81,7 +82,8 @@ class EfficiencyPlot(object):
         self.subtag = None
         self.subtagpos = (0.15,0.36)
 
-        self.colors = [ROOT.kBlack, ROOT.kAzure+1, ROOT.kOrange+8]
+        self.colors = [ROOT.kBlack, ROOT.kAzure+1,
+                       ROOT.kOrange+8, ROOT.kSpring-5]
 
     def add(self,eff,tag):
         self.effs.append(eff)
@@ -161,15 +163,19 @@ def getHistoFromTree(tree, sel, bins, var="mass",
     projectFromTree(histo, var, sel, tree)
     histo.SetLineWidth(2)
     histo.GetXaxis().SetTitle(titlex)
-    histo.Sumw2()
+    # histo.Sumw2()
     histo.SetDirectory(0)
     return histo
 
 def getEfficiency((tree, pairsel, probnum, probdenom, var, bins)):
     failedsel = '(%s)&&(%s)' % (pairsel, probdenom)
     passedsel = '(%s)&&(%s)' % (pairsel, probnum)
-    hfailed = getHistoFromTree(tree,failedsel,bins,var,hname="%s_failed"%var)
-    hpassed = getHistoFromTree(tree,passedsel,bins,var,hname="%s_passed"%var)
+    hfailed = getHistoFromTree(tree,failedsel,bins,var,
+                               hname="%s_failed"%var,
+                               weight=WEIGHT)
+    hpassed = getHistoFromTree(tree,passedsel,bins,var,
+                               hname="%s_passed"%var,
+                               weight=WEIGHT)
 
     eff = ROOT.TEfficiency(hpassed, hfailed)
     return eff
@@ -247,21 +253,9 @@ if __name__ == '__main__':
     from optparse import OptionParser
     usage = "%prog [options] tnpTreeDir"
     parser = OptionParser(usage=usage)
-    parser.add_option("-m", "--maxEntries", dest="maxEntries", type="int",
-                      default=-1, help="Max entries to process");
-    parser.add_option("-j", "--jobs", dest="jobs", type="int",
-                      default=0,
-                      help="Use N threads");
-    parser.add_option("-p", "--pretend", dest="pretend", action="store_true",
-                      default=False,
-                      help="Don't run anything");
-    parser.add_option("-o", "--outDir", default="tnptrees",
+    parser.add_option("-o", "--outDir", default="tnp_effs",
                       action="store", type="string", dest="outDir",
-                      help=("Output directory for tnp trees "
-                            "[default: %default/]"))
-    parser.add_option("-f", "--filter", default='Run2015,DYJetsToLL_M50',
-                      type="string", dest="filter",
-                      help=("Comma separated list of filters to apply "
+                      help=("Output directory for eff plots "
                             "[default: %default/]"))
     (options, args) = parser.parse_args()
 
