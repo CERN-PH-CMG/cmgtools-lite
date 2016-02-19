@@ -89,7 +89,7 @@ if __name__ == '__main__':
 
     Notes:
     - Compile lepTnPFriendTreeMaker.cc first with ACLiC like so:
-       > root -l lepTnPFriendTreeMaker.cc+
+       > root -l -b -q -n lepTnPFriendTreeMaker.cc+
       This will produce lepTnPFriendTreeMaker_cc.so
     - Errors of <TTree::SetBranchAddress>: unknown branch occur
       for the MC-only branches when running on data.

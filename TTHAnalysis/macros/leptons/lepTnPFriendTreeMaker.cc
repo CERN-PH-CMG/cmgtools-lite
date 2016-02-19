@@ -44,40 +44,40 @@ public :
    Float_t         minMllAFAS;
    Float_t         maxMllAFAS;
 
-   Int_t           nBJetLoose30;
-   Int_t           nBJetMedium30;
+   Int_t           nJet25;
+   Int_t           nBJetLoose25;
+   Int_t           nBJetMedium25;
 
-   Float_t         HLT_DoubleElHT;
-   Float_t         HLT_TripleEl;
-   Float_t         HLT_SingleMu;
-   Float_t         HLT_DoubleMuEl;
-   Float_t         HLT_TripleMu;
-   Float_t         HLT_DoubleElMu;
-   Float_t         HLT_DoubleMuNoIso;
-   Float_t         HLT_DoubleMuSS;
-   Float_t         HLT_SingleEl;
-   Float_t         HLT_TripleMuA;
-   Float_t         HLT_MuEG;
-   Float_t         HLT_DoubleMuHT;
-   Float_t         HLT_DoubleEl;
-   Float_t         HLT_DoubleMu;
-   Float_t         Flag_HBHENoiseIsoFilter;
-   Float_t         Flag_EcalDeadCellTriggerPrimitiveFilter;
-   Float_t         Flag_trkPOG_manystripclus53X;
-   Float_t         Flag_ecalLaserCorrFilter;
-   Float_t         Flag_trkPOG_toomanystripclus53X;
-   Float_t         Flag_hcalLaserEventFilter;
-   Float_t         Flag_trkPOG_logErrorTooManyClusters;
-   Float_t         Flag_trkPOGFilters;
-   Float_t         Flag_trackingFailureFilter;
-   Float_t         Flag_CSCTightHaloFilter;
-   Float_t         Flag_HBHENoiseFilter;
-   Float_t         Flag_goodVertices;
-   Float_t         Flag_METFilters;
-   Float_t         Flag_eeBadScFilter;
+   Int_t           HLT_DoubleElHT;
+   Int_t           HLT_TripleEl;
+   Int_t           HLT_SingleMu;
+   Int_t           HLT_DoubleMuEl;
+   Int_t           HLT_TripleMu;
+   Int_t           HLT_DoubleElMu;
+   Int_t           HLT_DoubleMuNoIso;
+   Int_t           HLT_DoubleMuSS;
+   Int_t           HLT_SingleEl;
+   Int_t           HLT_TripleMuA;
+   Int_t           HLT_MuEG;
+   Int_t           HLT_DoubleMuHT;
+   Int_t           HLT_DoubleEl;
+   Int_t           HLT_DoubleMu;
+   Int_t           Flag_HBHENoiseIsoFilter;
+   Int_t           Flag_EcalDeadCellTriggerPrimitiveFilter;
+   Int_t           Flag_trkPOG_manystripclus53X;
+   Int_t           Flag_ecalLaserCorrFilter;
+   Int_t           Flag_trkPOG_toomanystripclus53X;
+   Int_t           Flag_hcalLaserEventFilter;
+   Int_t           Flag_trkPOG_logErrorTooManyClusters;
+   Int_t           Flag_trkPOGFilters;
+   Int_t           Flag_trackingFailureFilter;
+   Int_t           Flag_CSCTightHaloFilter;
+   Int_t           Flag_HBHENoiseFilter;
+   Int_t           Flag_goodVertices;
+   Int_t           Flag_METFilters;
+   Int_t           Flag_eeBadScFilter;
 
    Int_t           nLepGood;
-   Float_t         LepGood_mvaIdPhys14[4];   //[nLepGood]
    Float_t         LepGood_mvaIdSpring15[4];   //[nLepGood]
    Float_t         LepGood_mvaTTH[4];   //[nLepGood]
    Float_t         LepGood_jetPtRatiov2[4];   //[nLepGood]
@@ -104,6 +104,13 @@ public :
    Float_t         LepGood_mass[4];   //[nLepGood]
    Float_t         LepGood_idEmu[4];   //[nLepGood]
 
+   Float_t         LepGood_hadronicOverEm[4];   //[nLepGood]
+   Float_t         LepGood_dEtaScTrkIn[4];   //[nLepGood]
+   Float_t         LepGood_dPhiScTrkIn[4];   //[nLepGood]
+   Float_t         LepGood_etaSc[4];   //[nLepGood]
+   Float_t         LepGood_eInvMinusPInv[4]; //[nLepGood]
+   Float_t         LepGood_sigmaIEtaIEta[4]; //[nLepGood]
+
    // List of branches
    TBranch *b_run;
    TBranch *b_lumi;
@@ -124,8 +131,9 @@ public :
    TBranch *b_maxMllAFSS;
    TBranch *b_minMllAFAS;
    TBranch *b_maxMllAFAS;
-   TBranch *b_nBJetLoose30;
-   TBranch *b_nBJetMedium30;
+   TBranch *b_nJet25;
+   TBranch *b_nBJetLoose25;
+   TBranch *b_nBJetMedium25;
    TBranch *b_HLT_DoubleElHT;
    TBranch *b_HLT_TripleEl;
    TBranch *b_HLT_SingleMu;
@@ -155,7 +163,6 @@ public :
    TBranch *b_Flag_METFilters;
    TBranch *b_Flag_eeBadScFilter;
    TBranch *b_nLepGood;
-   TBranch *b_LepGood_mvaIdPhys14;
    TBranch *b_LepGood_mvaIdSpring15;
    TBranch *b_LepGood_mvaTTH;
    TBranch *b_LepGood_jetPtRatiov2;
@@ -181,6 +188,14 @@ public :
    TBranch *b_LepGood_phi;
    TBranch *b_LepGood_mass;
    TBranch *b_LepGood_idEmu;
+   TBranch *b_LepGood_hadronicOverEm;
+   TBranch *b_LepGood_dEtaScTrkIn;
+   TBranch *b_LepGood_dPhiScTrkIn;
+   TBranch *b_LepGood_etaSc;
+   TBranch *b_LepGood_eInvMinusPInv;
+   TBranch *b_LepGood_sigmaIEtaIEta;
+
+
 
    lepTnPFriendTreeMaker(TTree *tree=0);
    virtual ~lepTnPFriendTreeMaker();
@@ -206,6 +221,8 @@ public :
    virtual bool     PassConvRejection(int);
    virtual bool     PassTightCharge(int);
    virtual float    ConePt(int);
+
+   virtual bool     _ttH_idEmu_cuts_E2(int);
 
    virtual int      SelectPair(int,int,float);
 
@@ -254,6 +271,10 @@ public :
    Float_t fT_mvaIdSpring15;
    Int_t   fT_mcMatchId;
    Float_t fT_idEmu;
+   Int_t   fT_nJet25;
+   Int_t   fT_nBJetLoose25;
+   Int_t   fT_nBJetMedium25;
+   Float_t fT_met_pt;
 
    Float_t fT_tag_pt;
    Float_t fT_tag_eta;
@@ -315,8 +336,9 @@ void lepTnPFriendTreeMaker::Init(TTree *tree){
    fChain->SetBranchAddress("maxMllAFSS"                              , &maxMllAFSS                              , &b_maxMllAFSS);
    fChain->SetBranchAddress("minMllAFAS"                              , &minMllAFAS                              , &b_minMllAFAS);
    fChain->SetBranchAddress("maxMllAFAS"                              , &maxMllAFAS                              , &b_maxMllAFAS);
-   fChain->SetBranchAddress("nBJetLoose30", &nBJetLoose30, &b_nBJetLoose30);
-   fChain->SetBranchAddress("nBJetMedium30", &nBJetMedium30, &b_nBJetMedium30);
+   fChain->SetBranchAddress("nJet25", &nJet25, &b_nJet25);
+   fChain->SetBranchAddress("nBJetLoose25", &nBJetLoose25, &b_nBJetLoose25);
+   fChain->SetBranchAddress("nBJetMedium25", &nBJetMedium25, &b_nBJetMedium25);
    fChain->SetBranchAddress("HLT_DoubleElHT"                          , &HLT_DoubleElHT                          , &b_HLT_DoubleElHT);
    fChain->SetBranchAddress("HLT_TripleEl"                            , &HLT_TripleEl                            , &b_HLT_TripleEl);
    fChain->SetBranchAddress("HLT_SingleMu"                            , &HLT_SingleMu                            , &b_HLT_SingleMu);
@@ -346,7 +368,6 @@ void lepTnPFriendTreeMaker::Init(TTree *tree){
    fChain->SetBranchAddress("Flag_METFilters"                         , &Flag_METFilters                         , &b_Flag_METFilters);
    fChain->SetBranchAddress("Flag_eeBadScFilter"                      , &Flag_eeBadScFilter                      , &b_Flag_eeBadScFilter);
    fChain->SetBranchAddress("nLepGood"                     , &nLepGood                    , &b_nLepGood);
-   fChain->SetBranchAddress("LepGood_mvaIdPhys14"          , LepGood_mvaIdPhys14          , &b_LepGood_mvaIdPhys14);
    fChain->SetBranchAddress("LepGood_mvaIdSpring15"        , LepGood_mvaIdSpring15        , &b_LepGood_mvaIdSpring15);
    fChain->SetBranchAddress("LepGood_mvaTTH"               , LepGood_mvaTTH               , &b_LepGood_mvaTTH);
    fChain->SetBranchAddress("LepGood_jetPtRatiov2"         , LepGood_jetPtRatiov2         , &b_LepGood_jetPtRatiov2);
@@ -371,7 +392,13 @@ void lepTnPFriendTreeMaker::Init(TTree *tree){
    fChain->SetBranchAddress("LepGood_eta"                  , LepGood_eta                  , &b_LepGood_eta);
    fChain->SetBranchAddress("LepGood_phi"                  , LepGood_phi                  , &b_LepGood_phi);
    fChain->SetBranchAddress("LepGood_mass"                 , LepGood_mass                 , &b_LepGood_mass);
-   fChain->SetBranchAddress("LepGood_idEmu"                , LepGood_idEmu,  &b_LepGood_idEmu);
+   fChain->SetBranchAddress("LepGood_idEmu"          , LepGood_idEmu          , &b_LepGood_idEmu);
+   fChain->SetBranchAddress("LepGood_hadronicOverEm" , LepGood_hadronicOverEm , &b_LepGood_hadronicOverEm);
+   fChain->SetBranchAddress("LepGood_dEtaScTrkIn"    , LepGood_dEtaScTrkIn    , &b_LepGood_dEtaScTrkIn);
+   fChain->SetBranchAddress("LepGood_dPhiScTrkIn"    , LepGood_dPhiScTrkIn    , &b_LepGood_dPhiScTrkIn);
+   fChain->SetBranchAddress("LepGood_etaSc"          , LepGood_etaSc          , &b_LepGood_etaSc);
+   fChain->SetBranchAddress("LepGood_eInvMinusPInv"  , LepGood_eInvMinusPInv  , &b_LepGood_eInvMinusPInv);
+   fChain->SetBranchAddress("LepGood_sigmaIEtaIEta"  , LepGood_sigmaIEtaIEta  , &b_LepGood_sigmaIEtaIEta);
 
    Notify();
 }
@@ -431,6 +458,11 @@ void lepTnPFriendTreeMaker::Begin(TFile *file){
    fTnPTree->Branch("mvaIdSpring15" ,&fT_mvaIdSpring15 ,"mvaIdSpring15/F");
    fTnPTree->Branch("mcMatchId"     ,&fT_mcMatchId     ,"mcMatchId/I");
    fTnPTree->Branch("idEmu"         ,&fT_idEmu         ,"idEmu/F");
+   fTnPTree->Branch("nJet25"        ,&fT_nJet25        ,"nJet25/I");
+   fTnPTree->Branch("nBJetLoose25"  ,&fT_nBJetLoose25  ,"nBJetLoose25/I");
+   fTnPTree->Branch("nBJetMedium25" ,&fT_nBJetMedium25 ,"nBJetMedium25/I");
+   fTnPTree->Branch("met_pt"        ,&fT_met_pt        ,"met_pt/F");
+
    fTnPTree->Branch("tag_pt"        ,&fT_tag_pt        ,"tag_pt/F");
    fTnPTree->Branch("tag_eta"       ,&fT_tag_eta       ,"tag_eta/F");
    fTnPTree->Branch("tag_pdgId"     ,&fT_tag_pdgId     ,"tag_pdgId/I");
@@ -483,6 +515,10 @@ void lepTnPFriendTreeMaker::ResetTnPTree(){
    fT_mvaIdPhys14   = -999.99;
    fT_mvaIdSpring15 = -999.99;
    fT_idEmu         = -999.99;
+   fT_nJet25        = -999;
+   fT_nBJetLoose25  = -999;
+   fT_nBJetMedium25 = -999;
+   fT_met_pt        = -999.99;
    fT_mcMatchId     = -999;
    fT_tag_pt        = -999.99;
    fT_tag_eta       = -999.99;
@@ -511,7 +547,7 @@ bool lepTnPFriendTreeMaker::SelectEvent(){
    if( abs(LepGood_pdgId[1]) != 13 && abs(LepGood_pdgId[1]) != 11)
       return false;
 
-   // DY selection
+   // Trigger selection
    if( !PassDoubleTriggers() && !PassSingleTriggers() ) return false;
 
    return true;
@@ -519,10 +555,10 @@ bool lepTnPFriendTreeMaker::SelectEvent(){
 
 int lepTnPFriendTreeMaker::PassTTBarSelection(){
    if( !SelectEvent() ) return 0;
-   if( nLepGood > 2 )      return 0;
+   if( nLepGood > 2 )   return 0;
 
    int evChan = LepGood_pdgId[0]*LepGood_pdgId[1];
-   if( nBJetMedium30>0 && nBJetLoose30>1 ){
+   if( nBJetMedium25>0 && nBJetLoose25>1 ){
       // emu
       if( evChan == -143 ) return 1;
 
@@ -555,26 +591,25 @@ float lepTnPFriendTreeMaker::ConePt(int i){
    if( abs(LepGood_pdgId[i]) == 13 && !(LepGood_mediumMuonId[i]>0) )
       return conept;
 
-   if( LepGood_mvaTTH[i] < 0.60 ) return conept;
+   if( LepGood_mvaTTH[i] < 0.75 ) return conept;
    return LepGood_pt[i];
+}
+
+bool lepTnPFriendTreeMaker::_ttH_idEmu_cuts_E2(int i){
+    if (abs(LepGood_pdgId[i]) != 11) return true;
+    if (LepGood_hadronicOverEm[i]    >= (0.10-0.03  *(fabs(LepGood_etaSc[i])>1.479))) return false;
+    if (fabs(LepGood_dEtaScTrkIn[i]) >= (0.01-0.002 *(fabs(LepGood_etaSc[i])>1.479))) return false;
+    if (fabs(LepGood_dPhiScTrkIn[i]) >= (0.04+0.03  *(fabs(LepGood_etaSc[i])>1.479))) return false;
+    if (LepGood_eInvMinusPInv[i]     <= -0.05)                                        return false;
+    if (LepGood_eInvMinusPInv[i]     >= (0.01-0.005 *(fabs(LepGood_etaSc[i])>1.479))) return false;
+    if (LepGood_sigmaIEtaIEta[i]     >= (0.011+0.019*(fabs(LepGood_etaSc[i])>1.479))) return false;
+    return true;
 }
 
 bool lepTnPFriendTreeMaker::PassLooseLepton(int i){
    if(LepGood_sip3d[i] > 8)         return false;
-   if(ConePt(i) < 10.)              return false;
 
-   // Electron specific
-   if (abs(LepGood_pdgId[i]) == 11){
-      if(ConePt(i) > 30. && LepGood_idEmu[i] < 1) return false;
-      return true;
-   }
-
-   // Muon specific
-   if (abs(LepGood_pdgId[i]) == 13){
-      if(!(LepGood_mediumMuonId[i]>0)) return false;
-      return true;
-   }
-   return false;
+   return true;
 }
 
 bool lepTnPFriendTreeMaker::PassConvRejection(int i){
@@ -592,30 +627,37 @@ bool lepTnPFriendTreeMaker::PassTightCharge(int i){
 
 bool lepTnPFriendTreeMaker::PassTightLepton(int i){
    if( !PassLooseLepton(i) ) return false;
-   if( LepGood_mvaTTH[i] < 0.60 ) return false;
-   if( LepGood_jetBTagCSV[i] > 0.89 ) return false;
+   if( LepGood_mvaTTH[i] < 0.75 ) return false;
+   if( LepGood_jetBTagCSV[i] > 0.89 ) return false; // Is this still the right threshold?
    if( LepGood_jetPtRatiov2[i] < 0.3 ) return false;
 
    // Tight electrons
    if (abs(LepGood_pdgId[i]) == 11){
+      if(LepGood_pt[i] > 30. && _ttH_idEmu_cuts_E2(i) < 1) return false;
       if(!PassConvRejection(i)) return false;
       return true;
    }
 
    // Tight muons
    if (abs(LepGood_pdgId[i]) == 13){
+      if(!(LepGood_mediumMuonId[i]>0)) return false;
       return true;
    }
    return false;
 }
 
 int lepTnPFriendTreeMaker::SelectPair(int lep1, int lep2, float mass){
+   // Disabled for now, want to keep all the pairs and apply the mass
+   // selection later on.
+   return 1;
+
+
    int chan = LepGood_pdgId[lep1]*LepGood_pdgId[lep2];
    int ttbarsel = PassTTBarSelection();
 
    // Same flavor, opposite sign (DY selection)
    if( chan == -11*11 || chan == -13*13){
-      if( mass > 60. && mass < 120. ) return 1;
+      if( mass > 10. ) return 1;
    }
 
    // Same flavor, opposite sign (ttbar selection)
@@ -657,8 +699,12 @@ void lepTnPFriendTreeMaker::Loop(){
       if(!SelectEvent()) continue;
       ResetTnPTree();
 
-      fT_passSingle = PassSingleTriggers();
-      fT_passDouble = PassDoubleTriggers();
+      fT_passSingle    = PassSingleTriggers();
+      fT_passDouble    = PassDoubleTriggers();
+      fT_nJet25        = nJet25;
+      fT_nBJetLoose25  = nBJetLoose25;
+      fT_nBJetMedium25 = nBJetMedium25;
+      fT_met_pt        = met_pt;
 
       // Find a tag lepton
       for (int lep1 = 0; lep1 < nLepGood; ++lep1){
@@ -681,7 +727,7 @@ void lepTnPFriendTreeMaker::Loop(){
                if( pairsel == 0 ) continue;
 
                // Found a pair!
-               fT_evSel = pairsel; // 1 for DY, 2 for SF ttbar, 3 for OF ttbar
+               fT_evSel = pairsel;
                fT_pair_probeMultiplicity++;
                fT_mass          = mass;
 
@@ -711,9 +757,8 @@ void lepTnPFriendTreeMaker::Loop(){
                fT_lostHits      = LepGood_lostHits[lep2];
                fT_tightCharge   = LepGood_tightCharge[lep2];
                fT_mediumMuonId  = LepGood_mediumMuonId[lep2];
-               fT_mvaIdPhys14   = LepGood_mvaIdPhys14[lep2];
                fT_mvaIdSpring15 = LepGood_mvaIdSpring15[lep2];
-               fT_idEmu         = LepGood_idEmu[lep2];
+               fT_idEmu         = _ttH_idEmu_cuts_E2(lep2);
                if( !fIsData ) fT_mcMatchId = LepGood_mcMatchId[lep2];
 
                // Save tag properties

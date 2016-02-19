@@ -5,12 +5,14 @@ import ROOT
 from array import array
 import os.path as osp
 
-PAIRSEL = "(evSel==1&&abs(mass-91.)<20.)"
+PAIRSEL = "((pdgId*tag_pdgId==-11*11||pdgId*tag_pdgId==-13*13)&&abs(mass-91.)<20.)"
 SELECTIONS = [
     ('inclusive',      PAIRSEL),
     ('singleTriggers', PAIRSEL+"&&passSingle"),
     ('doubleTriggers', PAIRSEL+"&&passDouble"),
-    # ('ttbar', "(evSel>1)"),
+    # ('ttbar', "(pdgId*tag_pdgId==-11*13)||"
+    #           "((pdgId*tag_pdgId==-11*11||pdgId*tag_pdgId==-13*13)"
+    #           "&&abs(mass-91.)>15.)&&met_pt>30.)&&passDouble"),
 ]
 
 LEPSEL = [
@@ -31,7 +33,7 @@ BINNINGS = [
     ('nVert',  NVERTBINS, 'N_{vertices}'),
 ]
 
-DENOMINATOR = "passLoose&&passConvRej"
+DENOMINATOR = "passLoose"
 NUMERATORS  = [
     ('2lss',"passTight&&passTCharge", 'same-sign 2 lepton definition'),
     ('3l',  "passTight", '3 lepton definition'),
