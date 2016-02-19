@@ -32,6 +32,7 @@ public :
    Float_t         rhoCN;
    Int_t           nVert;
    Float_t         met_pt;
+   Float_t         puWeight;
 
    Float_t         mZ1;
    Float_t         mZ1SFSS;
@@ -120,6 +121,7 @@ public :
    TBranch *b_rhoCN;
    TBranch *b_nVert;
    TBranch *b_met_pt;
+   TBranch *b_puWeight;
 
    TBranch *b_mZ1;
    TBranch *b_mZ1SFSS;
@@ -275,6 +277,7 @@ public :
    Int_t   fT_nBJetLoose25;
    Int_t   fT_nBJetMedium25;
    Float_t fT_met_pt;
+   Float_t fT_puWeight;
 
    Float_t fT_tag_pt;
    Float_t fT_tag_eta;
@@ -326,6 +329,7 @@ void lepTnPFriendTreeMaker::Init(TTree *tree){
    fChain->SetBranchAddress("rhoCN"                                   , &rhoCN                                   , &b_rhoCN);
    fChain->SetBranchAddress("nVert"                                   , &nVert                                   , &b_nVert);
    fChain->SetBranchAddress("met_pt", &met_pt, &b_met_pt);
+   fChain->SetBranchAddress("puWeight", &puWeight, &b_puWeight);
    fChain->SetBranchAddress("mZ1"                                     , &mZ1                                     , &b_mZ1);
    fChain->SetBranchAddress("mZ1SFSS"                                 , &mZ1SFSS                                 , &b_mZ1SFSS);
    fChain->SetBranchAddress("minMllSFOS"                              , &minMllSFOS                              , &b_minMllSFOS);
@@ -462,6 +466,7 @@ void lepTnPFriendTreeMaker::Begin(TFile *file){
    fTnPTree->Branch("nBJetLoose25"  ,&fT_nBJetLoose25  ,"nBJetLoose25/I");
    fTnPTree->Branch("nBJetMedium25" ,&fT_nBJetMedium25 ,"nBJetMedium25/I");
    fTnPTree->Branch("met_pt"        ,&fT_met_pt        ,"met_pt/F");
+   fTnPTree->Branch("puWeight"      ,&fT_puWeight      ,"puWeight/F");
 
    fTnPTree->Branch("tag_pt"        ,&fT_tag_pt        ,"tag_pt/F");
    fTnPTree->Branch("tag_eta"       ,&fT_tag_eta       ,"tag_eta/F");
@@ -519,6 +524,7 @@ void lepTnPFriendTreeMaker::ResetTnPTree(){
    fT_nBJetLoose25  = -999;
    fT_nBJetMedium25 = -999;
    fT_met_pt        = -999.99;
+   fT_puWeight      = -999.99;
    fT_mcMatchId     = -999;
    fT_tag_pt        = -999.99;
    fT_tag_eta       = -999.99;
@@ -705,6 +711,8 @@ void lepTnPFriendTreeMaker::Loop(){
       fT_nBJetLoose25  = nBJetLoose25;
       fT_nBJetMedium25 = nBJetMedium25;
       fT_met_pt        = met_pt;
+      if( fIsData ) fT_puWeight = 1.0;
+      else          fT_puWeight = puWeight;
 
       // Find a tag lepton
       for (int lep1 = 0; lep1 < nLepGood; ++lep1){
