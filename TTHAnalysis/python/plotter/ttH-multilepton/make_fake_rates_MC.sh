@@ -3,16 +3,12 @@
 ################################
 
 BCORE=" --s2v --tree treeProducerSusyMultilepton ttH-multilepton/lepton-mca-frstudies.txt object-studies/lepton-perlep.txt  "
-T="/afs/cern.ch/work/p/peruzzi/tthtrees/TREES_74X_140116_MiniIso_tauClean_Mor16lepMVA_1lepFR/"
-if hostname | grep -q cmsphys10; then
-    T="/data/p/peruzzi/TREES_74X_140116_MiniIso_tauClean_Mor16lepMVA_1lepFR"
-elif hostname | grep -q cmsco01; then
-    T="/data1/gpetrucc/TREES_74X_140116_MiniIso_tauClean_Mor16lepMVA_1lepFR"
-elif hostname | grep -q vinavx0.cern.ch; then
-    T="/home/gpetrucc/SKIM_TREES_140116_1lepFR"
+T="/afs/cern.ch/user/g/gpetrucc/w/TREES_TTH_260116_76X_1L/"
+if hostname | grep -q cmsco01; then
+    T="/data1/gpetrucc/TREES_TTH_260116_76X_1L"
 fi
 BASE="python mcEfficiencies.py $BCORE --ytitle 'Fake rate'   "
-PBASE="plots/74X/lepMVA/v5.0b3"
+PBASE="plots/76X/lepMVA/v1.0"
 
 BG=" -j 6 "; if [[ "$1" == "-b" ]]; then BG=" -j 4 & "; shift; fi
 
@@ -43,6 +39,7 @@ for WP in $*; do
         case $WP in
             *E)  SelDen="$SelDen -A pt20 eidden LepGood_idEmu "; Num="mvaPt_${WP%%b*}";;
             *E2) SelDen="$SelDen -A pt20 eidden LepGood_idEmu2"; Num="mvaPt_${WP%%b*}";;
+            *E2ptc30) SelDen="$SelDen -A pt20 eidden '(LepGood_idEmu2 || LepGood_pt*if3(LepGood_mvaTTH>0.75&&LepGood_mediumMuonId>0, 1.0, 0.85/LepGood_jetPtRatiov2) < 30)'"; Num="mvaPt_${WP%%b*}";;
         esac
         ptJI="ptJI85"
         B0="$BASE -P $T ttH-multilepton/make_fake_rates_sels.txt ttH-multilepton/make_fake_rates_xvars.txt --groupBy cut --sP ${Num} " 
