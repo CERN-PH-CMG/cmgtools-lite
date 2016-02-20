@@ -60,9 +60,6 @@ class MCAnalysis:
                 for k,v in defaults.iteritems():
                     if k not in extra: extra[k] = v
             if len(field) <= 1: continue
-            if field[1] == "-": 
-                self._optionsOnlyProcesses[field[0]] = extra
-                continue
             if "SkipMe" in extra and extra["SkipMe"] == True and not options.allProcesses: continue
             signal = False
             pname = field[0]
@@ -73,6 +70,17 @@ class MCAnalysis:
             for x,newname in self._premap:
                 if re.match(x,pname):
                     pname = newname
+           ## If we have a user-defined list of processes as signal
+            if len(options.processesAsSignal):
+                signal = False
+                for p0 in options.processesAsSignal:
+                    for p in p0.split(","):
+                        if re.match(p+"$", pname): signal = True
+            ## Options only processes
+            if field[1] == "-": 
+                self._optionsOnlyProcesses[field[0]] = extra
+                self._isSignal[field[0]] = signal
+                continue
             ## If we have a selection of process names, apply it
             skipMe = (len(options.processes) > 0)
             for p0 in options.processes:
@@ -85,14 +93,7 @@ class MCAnalysis:
                 for p in p0.split(","):
                     if re.match(p+"$", field[1]): skipMe = True
             if skipMe: continue
-            #endif
-            ## If we have a user-defined list of processes as signal
-            if len(options.processesAsSignal):
-                signal = False
-                for p0 in options.processesAsSignal:
-                    for p in p0.split(","):
-                        if re.match(p+"$", pname): signal = True
-            ## endif
+            ## 
             treename = extra["TreeName"] if "TreeName" in extra else options.tree 
             rootfile = "%s/%s/%s/%s_tree.root" % (options.path, field[1].strip(), treename, treename)
             if options.remotePath:
@@ -454,10 +455,15 @@ class MCAnalysis:
             mergemap[k2].append(v)
         return dict([ (k,mergePlots(pspec.name+"_"+k,v)) for k,v in mergemap.iteritems() ])
     def stylePlot(self,process,plot,pspec,mayBeMissing=False):
-        if mayBeMissing and process not in self._allData: return
-        for tty in self._allData[process]: 
-            tty._stylePlot(plot,pspec)
-            break
+        if process in self._allData:
+            for tty in self._allData[process]: 
+                tty._stylePlot(plot,pspec)
+                break
+        elif process in self._optionsOnlyProcesses:
+            opts = self._optionsOnlyProcesses[process]
+            stylePlot(plot, pspec, lambda key,default : opts[key] if key in opts else default)
+        elif not mayBeMissing:
+            raise KeyError, "Process %r not found" % process
 
 
 def addMCAnalysisOptions(parser,addTreeToYieldOnesToo=True):

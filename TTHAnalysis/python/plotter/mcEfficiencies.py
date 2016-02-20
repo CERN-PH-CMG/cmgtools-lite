@@ -13,6 +13,7 @@ def addMCEfficiencyOptions(parser):
     parser.add_option("--rebin", dest="globalRebin", type="int", default="0", help="Rebin all plots by this factor")
     parser.add_option("--xrange", dest="xrange", default=None, nargs=2, type='float', help="X axis range");
     parser.add_option("--xcut", dest="xcut", default=None, nargs=2, type='float', help="X axis cut");
+    parser.add_option("--xline", dest="xlines", default=[], action="append", type='float', help="Lines to draw at given X axis values");
     parser.add_option("--yrange", dest="yrange", default=None, nargs=2, type='float', help="Y axis range");
     parser.add_option("--logy", dest="logy", default=False, action='store_true', help="Do y axis in log scale");
     parser.add_option("--ytitle", dest="ytitle", default="Efficiency", type='string', help="Y axis title");
@@ -156,6 +157,10 @@ def stackEffs(outname,x,effs,options):
     if options.yrange:
         frame.GetYaxis().SetRangeUser(options.yrange[0], options.yrange[1])
 
+    liner = ROOT.TLine(); liner.SetLineStyle(2)
+    for x in options.xlines:
+        liner.DrawLine(x, frame.GetYaxis().GetXmin(), x, frame.GetYaxis().GetXmax())
+
     leg = doLegend(effs,options,textSize=options.fontsize)
     if doRatio:
         p2.cd()
@@ -265,6 +270,10 @@ def doEffRatio(x,effs,frame,options):
     unity.Draw("E2 SAME");
     for ratio in effrels[1:]:
         ratio.Draw("PZ SAME");
+
+    liner = ROOT.TLine(); liner.SetLineStyle(2)
+    for x in options.xlines: liner.DrawLine(x, rmin, x, rmax)
+
     return (cframe,line,effrels)
 
     

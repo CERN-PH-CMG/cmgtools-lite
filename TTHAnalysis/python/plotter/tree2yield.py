@@ -45,6 +45,26 @@ class PlotSpec:
     def allLogs(self):
         return self.logs.iteritems()
 
+def stylePlot(plot,spec,getOption):
+        ## Sample specific-options, from self
+        if getOption('FillColor',None) != None:
+            plot.SetFillColor(getOption('FillColor',0))
+            plot.SetFillStyle(getOption('FillStyle',1001))
+        else:
+            plot.SetFillStyle(0)
+            plot.SetLineWidth(getOption('LineWidth',1))
+        plot.SetLineColor(getOption('LineColor',1))
+        plot.SetLineStyle(getOption('LineStyle',1))
+        plot.SetMarkerColor(getOption('MarkerColor',1))
+        plot.SetMarkerStyle(getOption('MarkerStyle',20))
+        plot.SetMarkerSize(getOption('MarkerSize',1.1))
+        ## Plot specific-options, from spec
+        if "TH3" not in plot.ClassName():
+            plot.GetYaxis().SetTitle(spec.getOption('YTitle',"Events"))
+            plot.GetXaxis().SetTitle(spec.getOption('XTitle',spec.name))
+            plot.GetXaxis().SetNdivisions(spec.getOption('XNDiv',510))
+            plot.GetXaxis().SetMoreLogLabels(True)
+
 def makeHistFromBinsAndSpec(name,expr,bins,plotspec):
         profile1D      = plotspec.getOption('Profile1D',False) if plotspec != None else False
         profile2D      = plotspec.getOption('Profile2D',False) if plotspec != None else False
@@ -305,24 +325,7 @@ class TreeToYield:
             npass = tree.Draw("1",self.adaptExpr(cut,cut=True),"goff", self._options.maxEntries);
             return [ npass, sqrt(npass), npass ]
     def _stylePlot(self,plot,spec):
-        ## Sample specific-options, from self
-        if self.hasOption('FillColor'):
-            plot.SetFillColor(self.getOption('FillColor',0))
-            plot.SetFillStyle(self.getOption('FillStyle',1001))
-        else:
-            plot.SetFillStyle(0)
-            plot.SetLineWidth(self.getOption('LineWidth',1))
-        plot.SetLineColor(self.getOption('LineColor',1))
-        plot.SetLineStyle(self.getOption('LineStyle',1))
-        plot.SetMarkerColor(self.getOption('MarkerColor',1))
-        plot.SetMarkerStyle(self.getOption('MarkerStyle',20))
-        plot.SetMarkerSize(self.getOption('MarkerSize',1.1))
-        ## Plot specific-options, from spec
-        if "TH3" not in plot.ClassName():
-            plot.GetYaxis().SetTitle(spec.getOption('YTitle',"Events"))
-            plot.GetXaxis().SetTitle(spec.getOption('XTitle',spec.name))
-            plot.GetXaxis().SetNdivisions(spec.getOption('XNDiv',510))
-            plot.GetXaxis().SetMoreLogLabels(True)
+        return stylePlot(plot,spec,self.getOption)
     def getPlot(self,plotspec,cut):
         ret = self.getPlotRaw(plotspec.name, plotspec.expr, plotspec.bins, cut, plotspec)
         # fold overflow
