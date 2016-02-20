@@ -18,12 +18,12 @@ el) BCORE="${BCORE} -E ${lepton} "; ;;
 esac;
 
 what=$2;
-PBASE="plots/74X/ttH/fr-meas/z3l/v1.1/$lepton/$what"
+PBASE="plots/74X/ttH/fr-meas/z3l/v2.0/$lepton/$what"
 
 
 case $lepton in
-    el) BARREL="00_15"; ENDCAP="15_25"; ETA="1.479"; SC_EWK=1.54;  SC_DY=0.82;;
-    mu) BARREL="00_12"; ENDCAP="12_24"; ETA="1.2";   SC_EWK=1.55;  SC_DY=0.96;;
+    el) BARREL="00_15"; ENDCAP="15_25"; ETA="1.479"; SC_EWK=1.58;  SC_DY=0.86;;
+    mu) BARREL="00_12"; ENDCAP="12_24"; ETA="1.2";   SC_EWK=1.57;  SC_DY=0.84;;
 esac;
 
 SCALEWK=" --scale-process [WZ]Z $SC_EWK --scale-process DY $SC_DY  "
@@ -59,7 +59,7 @@ case $what in
         ;;
     fakerates)
         MCEFF="  python mcEfficiencies.py -f  $BCORE $PUW $SCALEWK --groupBy cut ttH-multilepton/fr-z3l_pass.txt  ttH-multilepton/fr-z3l_plots.txt  "
-        MCEFF="$MCEFF  --sp DY --sP mva06 "
+        MCEFF="$MCEFF  --sp DY --sP mva075 "
         case $lepton in
         el) MCEFF="$MCEFF --sP l3CPt_[c1]  " ;;
         mu) MCEFF="$MCEFF --sP l3CPt_1     " ;;

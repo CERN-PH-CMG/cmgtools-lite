@@ -51,15 +51,16 @@ if __name__ == "__main__":
        etabins_c_mu = [0, 1.2,   2.4]
        etaslices_c_el = [ (0.4,"00_15"), (1.8,"15_24") ]
        etaslices_c_mu = [ (0.4,"00_12"), (1.8,"12_24") ]
-       for WP in "060ibf30E",: #,"060ib":
+       for WP in "075ibf30E",: #,"060ib":
            WP0 = re.sub(r"^(\d+).*",r"\1",WP)   # for binning
            WP1 = re.sub(r"^(\d+i?).*",r"\1",WP) # for numerator
            num = "mvaPt_"+WP1
            ptj = "ptJI_mvaPt%s_coarse" % WP0
+           ptj2 = "ptJI85_mvaPt%s_coarse" % WP0
            for ptBin in "",:
                for src in "QCDMu", "TT": 
-                    assemble2D(outfile,"FR_wp%s_mu_%s_%s%s" % (WP,src,ptj,ptBin), ptbins_c, etabins_c_mu, path+"/mu_wp"+WP+"_rec30_bAny_eta_%s"+ptBin+".root", num+"_"+ptj+"_"+src+"_red", etaslices_c_mu)
+                    assemble2D(outfile,"FR_wp%s_mu_%s_%s%s" % (WP,src,ptj,ptBin), ptbins_c, etabins_c_mu, path+"/mu_wp"+WP+"_rec30_bAny_eta_%s"+ptBin+".root", num+"_"+ptj2+"_"+src+"_red", etaslices_c_mu)
            for ptBin in "",:
                for src in "QCDEl", "TT": 
-                    assemble2D(outfile,"FR_wp%s_el_%s_%s%s" % (WP,src,ptj,ptBin), ptbins_c, etabins_c_el, path+"/el_wp"+WP+"_rec30_bMedium_eta_%s"+ptBin+".root", num+"_"+ptj+"_"+src+"_red", etaslices_c_el)
+                    assemble2D(outfile,"FR_wp%s_el_%s_%s%s" % (WP,src,ptj,ptBin), ptbins_c, etabins_c_el, path+"/el_wp"+WP+"_rec30_bMedium_eta_%s"+ptBin+".root", num+"_"+ptj2+"_"+src+"_red", etaslices_c_el)
     outfile.ls()
