@@ -370,7 +370,7 @@ class TreeToYield:
 #        print expr
         if ROOT.gROOT.FindObject("dummy") != None: ROOT.gROOT.FindObject("dummy").Delete()
         histo = makeHistFromBinsAndSpec("dummy",expr,bins,plotspec)
-        canKeys = (histo.ClassName == "TH1D" and bins[0] != "[")
+        canKeys = (histo.ClassName() == "TH1D" and bins[0] != "[")
         if histo.ClassName != "TH2D" or self._name == "data": unbinnedData2D = False
         if unbinnedData2D:
             nent = self._tree.Draw("%s" % expr, cut, "", self._options.maxEntries)
@@ -380,12 +380,12 @@ class TreeToYield:
         drawOpt = "goff"
         if "TProfile" in histo.ClassName(): drawOpt += " PROF";
         self._tree.Draw("%s>>%s" % (expr,"dummy"), cut, drawOpt, self._options.maxEntries)
-        if canKeys and histo.GetEntries() > 0 and histo.GetEntries() < self.getOption('KeysPdfMinN',100) and not self._isdata and self.getOption("KeysPdf",False):
+        if canKeys and histo.GetEntries() > 0 and histo.GetEntries() < self.getOption('KeysPdfMinN',2000) and not self._isdata and self.getOption("KeysPdf",False):
             #print "Histogram for %s/%s has %d entries, so will use KeysPdf " % (self._cname, self._name, histo.GetEntries())
             if "/TH1Keys_cc.so" not in ROOT.gSystem.GetLibraries(): 
                 ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/TTHAnalysis/python/plotter/TH1Keys.cc+" % os.environ['CMSSW_BASE']);
             (nb,xmin,xmax) = bins.split(",")
-            histo = ROOT.TH1KeysNew("dummyk","dummyk",int(nb),float(xmin),float(xmax))
+            histo = ROOT.TH1KeysNew("dummyk","dummyk",int(nb),float(xmin),float(xmax),"a",1.0)
             self._tree.Draw("%s>>%s" % (expr,"dummyk"), cut, "goff", self._options.maxEntries)
             self.negativeCheck(histo)
             return histo.GetHisto().Clone(name)

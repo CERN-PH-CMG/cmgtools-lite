@@ -673,7 +673,6 @@ class PlotMaker:
                 total = hists[0].Clone(outputName+"_total"); total.Reset()
                 totalSyst = hists[0].Clone(outputName+"_totalSyst"); totalSyst.Reset()
 
-                print "Plotmode for %s: %s" % (outputName, plotmode)
                 if plotmode == "norm": 
                     if 'data' in pmap:
                         total.GetYaxis().SetTitle(total.GetYaxis().GetTitle()+" (normalized)")
