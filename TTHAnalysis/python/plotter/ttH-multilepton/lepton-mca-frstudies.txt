@@ -406,4 +406,4 @@ QCDEl_red_pt12idEmu2: QCD_Pt_80to170_bcToE      : xsec : LepGood_pt > 12 && LepG
 #QCDEl_red_pt12idEmu2A: QCD_Pt_30to80_bcToE       : xsec : LepGood_pt > 12 && LepGood_idEmu2A; FillColor=ROOT.kAzure+1, Label="QCDe idEmu2A"
 #QCDEl_red_pt12idEmu2A: QCD_Pt_80to170_bcToE      : xsec : LepGood_pt > 12 && LepGood_idEmu2A; FillColor=ROOT.kAzure+1, Label="QCDe idEmu2A"
 
-Z3l_red: DYJetsToLL_M50: xsec: LepGood_mcMatchId  == 0 ; FillColor=ROOT.kOrange+7, Label="non-pr (Z)", FakeRate="ttH-multilepton/lepton-mca-frstudies-z3l-fr.txt"
+Z3l_red: DYJetsToLL_M50_dilep: xsec: LepGood_mcMatchId  == 0 ; FillColor=ROOT.kOrange+7, Label="non-pr (Z)", FakeRate="ttH-multilepton/lepton-mca-frstudies-z3l-fr.txt"
