@@ -73,6 +73,7 @@ if __name__ == "__main__":
     parser.add_option("--shapeSystSignal", dest="shapeSystSig", type="string", default="l", help="Shape systematic for signal: l = linear, q = quadratic, s = stretch");
     parser.add_option("--shapeSystBackground", dest="shapeSystBkg", type="string", default="l", help="Shape systematic for background: l = linear, q = quadratic, s = stretch");
     parser.add_option("--fcut", dest="fcut", default=None, nargs=2, type='float', help="Cut in the discriminating variable");
+    parser.add_option("--fqcd-ranges", dest="fqcdRanges", default=(0.0, 20.0, 70.0, 120.0), nargs=4, type='float', help="Boundaries for the fqcd method");
     (options, args) = parser.parse_args()
     mca  = MCAnalysis(args[0],options)
     procs = mca.listProcesses()
@@ -222,8 +223,7 @@ if __name__ == "__main__":
                             myfz.SetBinError(iy, iz, h.GetBinError(ix,iy,iz))
                         mca.stylePlot(p, hproj, fspec, mayBeMissing=True)
                         cropNegativeBins(hproj)
-                        if options.globalRebin > 1: 
-                            hproj.Rebin(options.globalRebin)
+                        if options.globalRebin > 1: hproj.Rebin(options.globalRebin)
                         freport[p] = hproj
                         freport_num_den[bzname[1:]][p] = hproj
                         outfile.WriteTObject(hproj, hproj.GetName()+"_prefit")
@@ -251,7 +251,7 @@ if __name__ == "__main__":
                     feffname = myname.replace(".root",".dir/%s_vs_%s_%s%s.root" % (yspec.name,fspec.name,xspec.name,bxname))
                     stackEffs(feffname,fspec,effs,options)
                     # ==== Now split in high, low 
-                    r_s = [ 0, 20 ]; r_l = [ 70, 120 ]
+                    r_s = [ options.fqcdRanges[0], options.fqcdRanges[1] ]; r_l = [ options.fqcdRanges[2], options.fqcdRanges[3] ]
                     for (k,h) in fzreport.iteritems():
                         for iz in 1,2:
                             s_s, s_l = 0., 0.; s2_s, s2_l = 0., 0.
@@ -298,7 +298,7 @@ if __name__ == "__main__":
                     if options.subSyst > 0: 
                         r_slp_syst = hypot(r_slp_syst, r_slp * options.subSyst)
                     dr     = hypot(r_slp_stat, r_slp_syst)
-                    f_qcd  = (f_s[0] - r_slp*f_l[0])/(1-r_slp)
+                    f_qcd  = max(0,f_s[0] - r_slp*f_l[0])/(1-r_slp)
                     df_s = max(f_s[1],f_s[2])/(1-r_slp)
                     df_l = (r_slp*max(f_l[1],f_l[2]))/(1-r_slp)
                     df_r = 0.5*abs((f_s[0] - (r_slp-dr)*f_l[0])/(1-(r_slp-dr)) - (f_s[0] - (r_slp+dr)*f_l[0])/(1-(r_slp+dr)))
@@ -317,9 +317,11 @@ if __name__ == "__main__":
                     w = ROOT.RooWorkspace("w")
                     ROOT.gSystem.Load("libHiggsAnalysisCombinedLimit")
                     w.factory("num[pass=2,fail=1]")
-                    w.factory("f[%g,%g]" % (fitvarhist.GetXaxis().GetXmin(), fitvarhist.GetXaxis().GetXmax()))
-                    if fspec.bins[0] == "[": w.var("f").setBinning(ROOT.RooBinning(fitvarhist.GetNbinsX(),array('d',map(float,fspec.bins[1:-1].split(",")))))
-                    else:                    w.var("f").setBins(fitvarhist.GetNbinsX())
+                    hist = freport_num_den["pass"]["data"]
+                    w.factory("f[%g,%g]" % (hist.GetXaxis().GetXmin(), hist.GetXaxis().GetXmax()))
+                    fedges =  [ hist.GetXaxis().GetBinLowEdge(i) for i in xrange(1,hist.GetNbinsX()+1) ]
+                    fedges += [ hist.GetXaxis().GetXmax() ]
+                    w.var("f").setBinning(ROOT.RooBinning(hist.GetNbinsX(),array('d',fedges)))
                     Ndata = sum(freport_num_den[i]["data"].Integral() for i in ("pass", "fail"))
                     Newk  = sum(freport_num_den[i][p].Integral() for i in ("pass", "fail") for p in mca.listBackgrounds() if p in freport_num_den[i])
                     Nqcd  = sum(freport_num_den[i][p].Integral() for i in ("pass", "fail") for p in mca.listSignals()     if p in freport_num_den[i])
