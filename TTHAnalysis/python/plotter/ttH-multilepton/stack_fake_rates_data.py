@@ -23,18 +23,43 @@ def readGraphs(filename,pattern,keys):
     slicefile.Close()
     return ret
 
+def combine(graphs):
+    npoints = graphs[0].GetN()
+    for g in graphs[1:]: 
+        if g.GetN() != npoints: raise RuntimeError, "Mismatching number of points"
+    ret = ROOT.TGraphAsymmErrors(npoints)
+    for i in xrange(npoints):
+        yhli = [ (g.GetY()[i], g.GetErrorYhigh(i), g.GetErrorYlow(i)) for g in graphs ]
+        yavg = sum((y/(h**2+l**2)) for (y,h,l) in yhli)/sum(1.0/(h**2+l**2) for (y,h,l) in yhli)
+        ymax = max(y+h for (y,h,l) in yhli)
+        ymin = min(y-l for (y,h,l) in yhli)
+        ret.SetPoint(i, graphs[0].GetX()[i], yavg);
+        ret.SetPointError(i, graphs[0].GetErrorXlow(i), graphs[0].GetErrorXhigh(i), yavg-ymin, ymax-yavg);
+    return ret
+
+        
+
 def attrs(filename,process):
     if "globalFit"  in filename:
-        if "QCD"      in process: return { 'Label':'QCD MC, cut',        'Color':ROOT.kPink-5, '#':1 }
-        if "data_sub" in process: return { 'Label':'Data, cut & sub', 'Color':ROOT.kAzure+1, '#':2  }
+        if "QCD"      in process: return { 'Label':'QCD MC, cut',     'Color':ROOT.kPink-5,  '#':1, 'key':'QCD_cut'  }
+        if "data_sub" in process: return { 'Label':'Data, cut & sub', 'Color':ROOT.kAzure+1, '#':2, 'key':'data_sub' }
     elif "fitSimND" in filename:
-        if "QCD"       in process: return { 'Label':'QCD MC',        'Color':ROOT.kPink-2, '#':0  }
-        if "data_fit" in process: return { 'Label':'Data, sim. fit', 'Color':ROOT.kGreen+2, '#':3  }
+        if "QCD"      in process: return { 'Label':'QCD MC',         'Color':ROOT.kPink-2,  '#':0, 'key':'QCD'       }
+        if "data_fit" in process: return { 'Label':'Data, sim. fit', 'Color':ROOT.kGreen+2, '#':3, 'key':'data_fit'  }
     elif "fQCD" in filename:
-        if "QCD"       in process: return { 'Label':'QCD MC',        'Color':ROOT.kPink-2, '#':0  }
-        if "data_fqcd" in process: return { 'Label':'Data, unfolded', 'Color':ROOT.kGray+2, '#':4  }
+        if "QCD"       in process: return { 'Label':'QCD MC',         'Color':ROOT.kPink-2, '#':0, 'key':'QCD'       }
+        if "data_fqcd" in process: return { 'Label':'Data, unfolded', 'Color':ROOT.kGray+2, '#':4, 'key':'data_fqcd' }
     else: raise RuntimeError, "No idea of the file"
     raise RuntimeError, "No idea of the process"
+
+def setattrs(graph, opts):
+    graph.SetLineColor(opts['Color'])
+    graph.SetMarkerColor(opts['Color'])
+    graph.SetLineWidth(3)
+    graph.GetXaxis().SetTitle("lepton p_{T}^{corr} (GeV)")
+    graph.SetName(opts['key'])
+    graph.SetTitle(opts['Label'])
+
 
 if __name__ == "__main__":
     from CMGTools.TTHAnalysis.plotter.mcEfficiencies import stackEffs
@@ -74,11 +99,16 @@ if __name__ == "__main__":
         graphs = readGraphs(filename, pattern, processes)
         for p in processes:
             opts = attrs(filename, p)
+            setattrs(graphs[p], opts)
             alleffs.append( ( opts['Label'], graphs[p] ) )
-            graphs[p].SetLineColor(opts['Color'])
-            graphs[p].SetMarkerColor(opts['Color'])
-            graphs[p].SetLineWidth(2)
             graphs[p].order = opts['#']
-            graphs[p].GetXaxis().SetTitle("lepton p_{T}^{corr} (GeV)")
+            outfile.WriteTObject(graphs[p], opts['key'])
     alleffs.sort(key = lambda (l,g) : g.order)
     stackEffs(options.out,None,alleffs,options)
+    shortEffs = [ (l,g) for (l,g) in alleffs if g.GetName() == 'QCD' ]
+    cdata = combine([ g for (l,g) in alleffs if 'data' in g.GetName() ])
+    setattrs(cdata, { 'Color':ROOT.kBlack, 'key':'data_comb', 'Label':'Data, comb.' })
+    outfile.WriteTObject(cdata)
+    shortEffs.append( ( 'Data, comb.', cdata) )
+    stackEffs(options.out.replace(".root","_one.root"),None,shortEffs,options)
+    
