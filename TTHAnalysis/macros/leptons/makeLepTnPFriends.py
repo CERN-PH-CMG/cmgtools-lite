@@ -3,27 +3,29 @@ import sys, os, pickle
 import ROOT
 
 from array import array
+from ROOT import TEfficiency
 import os.path as osp
 
+LUMI = 2.26
 WEIGHT = "puWeight"
 PAIRSEL = ("((pdgId*tag_pdgId==-11*11||pdgId*tag_pdgId==-13*13)"
-           "&&abs(mass-91.)<20.)")
+           "&&abs(mass-91.)<20.&&abs(mcMatchId)>0)")
 SELECTIONS = [
     ('inclusive',      PAIRSEL),
-    ('singleTriggers', PAIRSEL+"&&passSingle"),
-    ('doubleTriggers', PAIRSEL+"&&passDouble"),
+    # ('singleTriggers', PAIRSEL+"&&passSingle"),
+    # ('doubleTriggers', PAIRSEL+"&&passDouble"),
     # ('ttbar', "( (pdgId*tag_pdgId==-11*13)||"
     #           "  ( (pdgId*tag_pdgId==-11*11||pdgId*tag_pdgId==-13*13)"
     #           "&&abs(mass-91.)>15.&&met_pt>30.) )&&passDouble"),
 ]
 
 LEPSEL = [
-    ('e',  'abs(pdgId)==11', 'Electrons'),
+    # ('e',  'abs(pdgId)==11', 'Electrons'),
     ('eb', 'abs(pdgId)==11&&abseta<1.479',
            'Electrons Barrel (#eta < 1.479)'),
     ('ee', 'abs(pdgId)==11&&abseta>=1.479',
            'Electrons Endcap (#eta #geq 1.479)'),
-    ('m',  'abs(pdgId)==13', 'Muons'),
+    # ('m',  'abs(pdgId)==13', 'Muons'),
     ('mb', 'abs(pdgId)==13&&abseta<1.2',  'Muons Barrel (#eta < 1.2)'),
     ('me', 'abs(pdgId)==13&&abseta>=1.2', 'Muons Endcap (#eta #geq 1.2)'),
 ]
@@ -31,12 +33,14 @@ LEPSEL = [
 PTBINS    = [10.,15.,20.,25.,30.,37.5,45.,60.,80.,100.]
 ETABINS   = [0.,0.25,0.50,0.75,1.00,1.25,1.50,2.00,2.50]
 NVERTBINS = [0,4,7,8,9,10,11,12,13,14,15,16,17,19,22,25,30]
-NJETBINS  = [0,1,2,3]
+NJETBINS  = [0,1,2,3,4,5,6]
+NBJETBINS = [0,1,2,3]
 BINNINGS = [
-    ('pt',     PTBINS,    'p_{T} [GeV]'),
-    ('abseta', ETABINS,   '|#eta|'),
-    ('nVert',  NVERTBINS, 'N_{vertices}'),
-    ('nJets',  NJETBINS,  'N_{jets}'),
+    ('pt',            PTBINS,    'p_{T} [GeV]'),
+    ('abseta',        ETABINS,   '|#eta|'),
+    ('nVert',         NVERTBINS, 'N_{vertices}'),
+    ('nJet25',        NJETBINS,  'N_{jets}'),
+    ('nBJetMedium25', NBJETBINS, 'N_{bjets, CSVM}'),
 ]
 
 DENOMINATOR = "passLoose"
@@ -66,6 +70,7 @@ INPUTS = {
         "TTJets_SingleLeptonFromT_ext",
         "TTJets_SingleLeptonFromT",
         ],
+    'ttH':["TTHnobb"],
 }
 
 class EfficiencyPlot(object):
@@ -78,9 +83,9 @@ class EfficiencyPlot(object):
         self.xtitle = ''
         self.ytitle = 'MVA tight efficiency'
         self.tag = None
-        self.tagpos = (0.15,0.4)
+        self.tagpos = (0.85,0.4)
         self.subtag = None
-        self.subtagpos = (0.15,0.36)
+        self.subtagpos = (0.85,0.36)
 
         self.colors = [ROOT.kBlack, ROOT.kAzure+1,
                        ROOT.kOrange+8, ROOT.kSpring-5]
@@ -93,6 +98,78 @@ class EfficiencyPlot(object):
         canv = ROOT.TCanvas("canv_%s"%(self.name), "efficiencies", 800, 800)
         canv.SetRightMargin(0.05)
         canv.SetTopMargin(0.05)
+
+        rangex = (self.effs[0].GetTotalHistogram().GetXaxis().GetXmin(),
+                  self.effs[0].GetTotalHistogram().GetXaxis().GetXmax())
+
+        axes = ROOT.TH2D("axes_%s"%(self.name),"axes",
+                         1, rangex[0], rangex[1], 1, 0.0, 1.0)
+        axes.GetXaxis().SetTitle(self.xtitle)
+        axes.GetYaxis().SetTitleOffset(1.2)
+        axes.GetYaxis().SetTitle(self.ytitle)
+        axes.Draw("axis")
+
+        leg = ROOT.TLegend(.65,.15,.89,.30+0.037*max(len(self.effs)-3,0))
+
+        leg.SetBorderSize(0)
+        leg.SetFillColor(0)
+        leg.SetFillStyle(0)
+        leg.SetShadowColor(0)
+        leg.SetTextFont(43)
+        leg.SetTextSize(26)
+
+        for eff,entry,color in zip(self.effs,self.legentries,self.colors):
+            eff.SetLineColor(color)
+            eff.SetLineWidth(2)
+            eff.SetMarkerStyle(20)
+            eff.SetMarkerSize(1.4)
+            eff.SetMarkerColor(color)
+            eff.Draw("PE same")
+            leg.AddEntry(eff, entry, 'PL')
+        leg.Draw()
+
+        tlat = ROOT.TLatex()
+        tlat.SetTextFont(43)
+        tlat.SetNDC(1)
+        tlat.SetTextAlign(33) # right aligned
+        if self.tag:
+            if self.tagpos[0] < 0.50:
+                # left aligned if on the left side
+                tlat.SetTextAlign(13)
+            tlat.SetTextSize(26)
+            tlat.DrawLatex(self.tagpos[0], self.tagpos[1], self.tag)
+        if self.subtag:
+            tlat.SetTextAlign(33) # right aligned
+            if self.subtagpos[0] < 0.50:
+                # left aligned if on the left side
+                tlat.SetTextAlign(13)
+            tlat.SetTextSize(22)
+            tlat.DrawLatex(self.subtagpos[0], self.subtagpos[1], self.subtag)
+
+        for ext in self.plotformats:
+            canv.SaveAs(osp.join(outdir, "%s%s"%(outname,ext)))
+
+    def show_with_ratio(self, outname, outdir):
+        canv = ROOT.TCanvas("canv_%s"%(self.name), "efficiencies", 800, 800)
+
+        p2 = ROOT.TPad("pad2","pad2",0,0,1,0.31);
+        ROOT.SetOwnership(p2, False)
+        p2.SetTopMargin(0);
+        p2.SetBottomMargin(0.3);
+        p2.SetLeftMargin(0.05)
+        p2.SetRightMargin(0.03)
+        p2.SetFillStyle(0);
+        p2.Draw();
+
+        p1 = ROOT.TPad("pad1","pad1",0,0.31,1,1);
+        ROOT.SetOwnership(p1, False)
+        p1.SetBottomMargin(0);
+        p1.SetLeftMargin(p2.GetLeftMargin())
+        p1.SetRightMargin(p2.GetRightMargin())
+        p1.Draw();
+
+        ## Main pad
+        p1.cd();
 
         rangex = (self.effs[0].GetTotalHistogram().GetXaxis().GetXmin(),
                   self.effs[0].GetTotalHistogram().GetXaxis().GetXmax())
@@ -141,6 +218,28 @@ class EfficiencyPlot(object):
             tlat.SetTextSize(22)
             tlat.DrawLatex(self.subtagpos[0], self.subtagpos[1], self.subtag)
 
+
+        ## Ratio pad
+        p2.cd()
+        ratioframe = axes.Clone('ratioframe')
+        ratioframe.Reset('ICE')
+        ratioframe.GetYaxis().SetRangeUser(0.50,1.50)
+        # if not self.ratiotitle:
+        ratioframe.GetYaxis().SetTitle('Ratio')
+        # else:
+        #     ratioframe.GetYaxis().SetTitle(self.ratiotitle)
+        # if not self.titlex:
+        #     ratioframe.GetXaxis().SetTitle(self.histos[0].GetXaxis().GetTitle())
+        # else:
+        #     ratioframe.GetXaxis().SetTitle(self.titlex)
+        ratioframe.GetXaxis().SetLabelSize(22)
+        ratioframe.GetXaxis().SetTitleSize(26)
+        ratioframe.GetYaxis().SetNdivisions(5)
+        ratioframe.GetYaxis().SetNoExponent()
+        ratioframe.GetYaxis().SetTitleOffset(axes.GetYaxis().GetTitleOffset())
+        ratioframe.GetXaxis().SetTitleOffset(3.0)
+        ratioframe.Draw()
+
         for ext in self.plotformats:
             canv.SaveAs(osp.join(outdir, "%s%s"%(outname,ext)))
 
@@ -167,7 +266,7 @@ def getHistoFromTree(tree, sel, bins, var="mass",
     histo.SetDirectory(0)
     return histo
 
-def getEfficiency((tree, pairsel, probnum, probdenom, var, bins)):
+def getPassFailHistos((tree, pairsel, probnum, probdenom, var, bins)):
     failedsel = '(%s)&&(%s)' % (pairsel, probdenom)
     passedsel = '(%s)&&(%s)' % (pairsel, probnum)
     hfailed = getHistoFromTree(tree,failedsel,bins,var,
@@ -177,19 +276,80 @@ def getEfficiency((tree, pairsel, probnum, probdenom, var, bins)):
                                hname="%s_passed"%var,
                                weight=WEIGHT)
 
-    eff = ROOT.TEfficiency(hpassed, hfailed)
-    return eff
+    return hpassed, hfailed
 
-def makeEfficiencies(tree):
+def makePassedFailed(proc,fnames,indir):
+    stump = '_treeProducerSusyMultilepton_tree.root'
+
+    try:
+        with open('.xsecweights.pck', 'r') as cachefile:
+            xsecweights = pickle.load(cachefile)
+            print '>>> Read xsecweights from cache (.xsecweights.pck)'
+    except IOError:
+        print "Please run makeXSecWeights.py first"
+        return None
+
     result = {}
-    for lep,lepsel,_ in LEPSEL:
-        for sname,sel in SELECTIONS:
-            finalsel = '(%s)&&(%s)' % (lepsel, sel)
-            for var,bins,_ in BINNINGS:
-                for nname,num,_ in NUMERATORS:
-                    effs = getEfficiency((tree, finalsel, num,
-                                          DENOMINATOR, var,bins))
-                    result[(lep,sname,nname,var)] = effs
+    for pname in fnames:
+        floc = osp.join(indir, "%s%s"%(pname,stump))
+        if not osp.isfile(floc):
+            print "Missing file: %s" % floc
+            print " ... continuing without"
+            continue
+
+        print '... processing', pname
+        weight = LUMI*xsecweights[pname]
+        print '    weighting histos by', weight
+
+        treefile = ROOT.TFile(floc,"READ")
+        tree = treefile.Get('fitter_tree')
+
+        for lep,lepsel,_ in LEPSEL:
+            for sname,sel in SELECTIONS:
+                finalsel = '(%s)&&(%s)' % (lepsel, sel)
+                for var,bins,_ in BINNINGS:
+                    for nname,num,_ in NUMERATORS:
+
+                        hpass, hfail = getPassFailHistos((tree, finalsel,
+                                              num, DENOMINATOR, var,bins))
+
+                        hpass.Scale(weight)
+                        hfail.Scale(weight)
+
+                        key = (lep,sname,nname,var)
+
+                        if key in result:
+                            result[key][0].Add(hpass)
+                            result[key][1].Add(hfail)
+                        else:
+                            result[key] = (hpass,hfail)
+
+    return result
+
+def makeEfficiencies(passedfailed):
+    result = {}
+
+    # Calculate raw efficiencies
+    for proc, histos in passedfailed.iteritems():
+        proc_effs = {}
+        for key,(p,f) in histos.iteritems():
+            eff = TEfficiency(p, f)
+            proc_effs[key] = eff
+        result[proc] = proc_effs
+
+    # Calculate background corrected efficiencies
+    # I.e. subtract ttbar MC from data
+    for key in passedfailed.values()[0].keys():
+        print '... processing', key
+        passdata,faildata = passedfailed['data'][key]
+        passtt,  failtt   = passedfailed['ttbar'][key]
+
+        pcorr = passdata.Clone("pass_corrected")
+        fcorr = faildata.Clone("fail_corrected")
+        pcorr.Add(passtt, -1.0)
+        fcorr.Add(failtt, -1.0)
+        result.setdefault('data_corr', {})[key] = TEfficiency(pcorr, fcorr)
+
     return result
 
 def makePlots(efficiencies, options):
@@ -198,8 +358,9 @@ def makePlots(efficiencies, options):
     ROOT.gStyle.SetOptStat(0)
 
     ptitle = {
-        'data' : 'Data',
-        'DY'   : 'DY MC'
+        'data'      : 'Data',
+        'data_corr' : 'Data (t#bar{t} subtracted',
+        'DY'        : 'DY MC'
     }
 
     seltitle = {
@@ -216,21 +377,18 @@ def makePlots(efficiencies, options):
                 if lep in ['ee','eb','mb','me'] and 'abseta' in var: continue
 
                 # Compare data/MC in each binning/selection
-                for sname,_ in SELECTIONS:
-                    if not sname == 'inclusive': continue
-                    plot = EfficiencyPlot('%s_%s_%s_%s'%(
-                                            lep,nname,var,sname))
-                    plot.xtitle = xtitle
-                    plot.tag = '%s%s'%(lname,
-                                         seltitle.get(sname, sname))
-                    plot.subtag = '%s'%(ntitle)
+                plot = EfficiencyPlot('%s_%s_%s'%(lep,nname,var))
+                plot.xtitle = xtitle
+                plot.tag = '%s'%(lname)
+                plot.subtag = '%s'%(ntitle)
 
-                    legentries, effs_to_plot = [], []
-                    for pname,effs in efficiencies.iteritems():
-                        plot.add(effs[(lep,sname,nname,var)],
-                                 ptitle.get(pname,pname))
+                legentries, effs_to_plot = [], []
+                for pname in ['data','data_corr','DY']:
+                    plot.add(efficiencies[pname]
+                                   [(lep,'inclusive',nname,var)],
+                             ptitle.get(pname,pname))
 
-                    plot.show('tnp_eff_%s'%(plot.name), options.outDir)
+                plot.show('tnp_eff_%s'%(plot.name), options.outDir)
 
                 # Compare single/double triggers:
                 if lep in ['ee','eb','mb','me']: continue
@@ -259,38 +417,28 @@ if __name__ == '__main__':
                             "[default: %default/]"))
     (options, args) = parser.parse_args()
 
-    # Make all the efficiencies
-    cachefilename = "tnpefficiencies.pck"
+    # Gather all the passed/failed histograms
+    cachefilename = "tnppassedfailed.pck"
     if not osp.isfile(cachefilename):
-        efficiencies = {}
-        for proc in ['data', 'DY']:
-            print '... processing', proc
-            # Read the files and combine trees to a chain
-            chain = ROOT.TChain('fitter_tree')
-            for fname in INPUTS[proc]:
-                stump = '_treeProducerSusyMultilepton_tree.root'
-                fpath = osp.join(args[0],
-                                 '%s%s'%(fname,stump))
-                if osp.isfile(fpath):
-                    chain.Add(fpath)
-                else:
-                    print "Missing file: %s" % fpath
-                    print " ... continuing without"
-
-            # Get the efficiencies for each chain
-            efficiencies[proc] = makeEfficiencies(chain)
+        passedfailed = {}
+        for proc,fnames in INPUTS.iteritems():
+            passedfailed[proc] = makePassedFailed(proc,fnames,args[0])
 
         cachefile = open(cachefilename, 'w')
-        pickle.dump(efficiencies, cachefile, pickle.HIGHEST_PROTOCOL)
-        print '>>> Wrote tnp efficiencies to cache (%s)' % cachefilename
+        pickle.dump(passedfailed, cachefile, pickle.HIGHEST_PROTOCOL)
+        print ('>>> Wrote tnp passed failed histograms to cache (%s)' %
+                                                    cachefilename)
         cachefile.close()
     else:
         cachefile = open(cachefilename, 'r')
-        efficiencies = pickle.load(cachefile)
-        print '>>> Read tnp efficiencies from cache (%s)' % cachefilename
+        passedfailed = pickle.load(cachefile)
+        print ('>>> Read tnp passed failed histograms from cache (%s)' %
+                                                    cachefilename)
         cachefile.close()
 
     os.system('mkdir -p %s'%options.outDir)
+
+    efficiencies = makeEfficiencies(passedfailed)
     makePlots(efficiencies, options)
 
 
