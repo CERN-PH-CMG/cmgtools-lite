@@ -756,6 +756,7 @@ void lepTnPFriendTreeMaker::Loop(){
                fT_mvaIdSpring15 = LepGood_mvaIdSpring15[lep2];
                fT_idEmu         = _ttH_idEmu_cuts_E2(lep2);
                if( !fIsData ) fT_mcMatchId = LepGood_mcMatchId[lep2];
+               else           fT_mcMatchId = 1;
 
                // Save tag properties
                fT_tag_pt        = LepGood_pt[lep1];
@@ -763,6 +764,7 @@ void lepTnPFriendTreeMaker::Loop(){
                fT_tag_pdgId     = LepGood_pdgId[lep1];
                fT_tag_relIso03  = LepGood_relIso03[lep1];
                if( !fIsData ) fT_tag_mcMatchId = LepGood_mcMatchId[lep1];
+               else           fT_tag_mcMatchId = 1;
 
                fTnPTree->Fill();
             }
