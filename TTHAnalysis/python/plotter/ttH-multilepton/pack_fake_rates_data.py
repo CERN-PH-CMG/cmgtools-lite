@@ -43,27 +43,28 @@ def make2D(out,name,xedges,yedges):
     return th2
 
 def styles(hs):
-    colors = { 'data':ROOT.kGreen+2, 'data_sub':ROOT.kRed, 'signal':ROOT.kAzure+1, 'total':ROOT.kBlue+1 }
+    colors = { 'Data':ROOT.kBlack, 'MC':ROOT.kAzure+1 }
     for label,h in hs:
         for n,c in colors.iteritems():
-            if str(h.GetName()).endswith("_"+n+"_sliceX"):
+            if n in label:
                 h.SetLineColor(c)
                 h.SetMarkerColor(c)
         h.SetLineWidth(3)
-        h.GetXaxis().SetTitle("lepton p_{T} w/ jet 0.85 (GeV)")
+        h.GetXaxis().SetTitle("lepton p_{T}^{corr} (GeV)")
 
 if __name__ == "__main__":
     from CMGTools.TTHAnalysis.plotter.mcEfficiencies import stackEffs, graphFromXSlice
     import os.path
     from optparse import OptionParser
-    parser = OptionParser(usage="%prog [options] what path out")
+    parser = OptionParser(usage="%prog [options] path out")
     parser.add_option("--pdir", dest="outdir", default=None, help="Output directory for plots");
     parser.add_option("--xcut", dest="xcut", default=None, nargs=2, type='float', help="X axis cut");
     parser.add_option("--xrange", dest="xrange", default=None, nargs=2, type='float', help="X axis range");
     parser.add_option("--yrange", dest="yrange", default=None, nargs=2, type='float', help="Y axis range");
     parser.add_option("--logy", dest="logy", default=False, action='store_true', help="Do y axis in log scale");
     parser.add_option("--ytitle", dest="ytitle", default="Fake rate", type='string', help="Y axis title");
-    parser.add_option("--fontsize", dest="fontsize", default=0.04, type='float', help="Legend font size");
+    parser.add_option("--fontsize", dest="fontsize", default=0.05, type='float', help="Legend font size");
+    parser.add_option("--legendWidth", dest="legendWidth", type="float", default=0.35, help="Width of the legend")
     parser.add_option("--grid", dest="showGrid", action="store_true", default=False, help="Show grid lines")
     parser.add_option("--legend",  dest="legend",  default="TL",  type="string", help="Legend position (BR, TR)")
     parser.add_option("--compare", dest="compare", default="", help="Samples to compare (by default, all except the totals)")
@@ -71,7 +72,8 @@ if __name__ == "__main__":
     parser.add_option("--rr", "--ratioRange", dest="ratioRange", type="float", nargs=2, default=(-1,-1), help="Min and max for the ratio")
     parser.add_option("--normEffUncToLumi", dest="normEffUncToLumi", action="store_true", default=False, help="Normalize the dataset to the given lumi for the uncertainties on the calculated efficiency")
     (options, args) = parser.parse_args()
-    (what,outname) = args
+    (outname) = args[0]
+    print outname
     outfile = ROOT.TFile.Open(outname,"RECREATE")
     if options.outdir:
         if not os.path.exists(options.outdir):
@@ -79,34 +81,35 @@ if __name__ == "__main__":
             if os.path.exists("/afs/cern.ch"): os.system("cp /afs/cern.ch/user/g/gpetrucc/php/index.php "+options.outdir)
         ROOT.gROOT.ProcessLine(".x tdrstyle.cc")
         ROOT.gStyle.SetOptStat(0)
-    if what == "mvaTTH":
+    if True:
        ptbins_el = [ 10,15,20,30,45,65,100 ]
        ptbins_mu = [ 10,   20,30,45,65,100 ]
        etabins_el = [0, 1.479, 2.5]
        etabins_mu = [0, 1.2,   2.4]
        etaslices_el = [ (0.4,"00_15"), (1.8,"15_25") ]
        etaslices_mu = [ (0.4,"00_12"), (1.8,"12_24") ]
-       Xs     = [ "signal",                        "signal_cut", "data_cut","total_cut","data_cut_sub","data_fqcd","data_simfit" ]
-       Xnices = [ "MC non-pr.", "MC non-pr., cut", "Data all, cut" ,"MC all, cut", "Data, cut & sub.", "Data, unfold", "Data, sim. fit"] 
-       h2d_el = dict([ (X, make2D(outfile,"FR_mva075_el_"+X, ptbins_el, etabins_el)) for X in Xs ])
-       h2d_mu = dict([ (X, make2D(outfile,"FR_mva075_mu_"+X, ptbins_mu, etabins_mu)) for X in Xs ])
+       XsQ    = [ "QCD", "data_comb" ]
+       XsD    = [ "DY",  "data_comb" ]
+       Xnices = [ "MC non-pr.", "Data, comb." ]
+       h2d_el = [ make2D(outfile,"FR_mva075_el_"+X, ptbins_el, etabins_el) for X in XsQ ]
+       h2d_mu = [ make2D(outfile,"FR_mva075_mu_"+X, ptbins_mu, etabins_mu) for X in XsQ ]
 
-       Plots="plots/74X/ttH/fr-meas"
-       Z3l="z3l/v2.0"
-       QCD="v2.0"
+       Plots="plots/76X/ttH/fr-meas"
+       Z3l="z3l/v1.0"
+       QCD="v1.0"
        #### Electrons: 
        # 10-30 from Z+l
-       readMany2D(Xs, h2d_el, "/".join([Plots, Z3l, "el/fakerates/fr_sub_eta_%s.root"]), "mva075_l3CPt_c_%s", etaslices_el, (10,30) )
+       readMany2D(XsD, h2d_el, "/".join([Plots, Z3l, "el/fakerates-mtW3R/fr_sub_eta_%s_comp.root"]), "%s", etaslices_el, (10,30) )
        # 30-inf from Ele12 bMedium
-       readMany2D(Xs, h2d_el, "/".join([Plots, QCD, "el/HLT_Ele12_CaloIdM_TrackIdM_PFJet30/fakerates/bMedium/fr_sub_eta_%s.root"]), "mvaPt_075i_ptJI85_mvaPt075_coarse_%s", etaslices_el, (30,999) )
+       readMany2D(XsQ, h2d_el, "/".join([Plots, QCD, "el/HLT_Ele12_CaloIdM_TrackIdM_PFJet30/fakerates-mtW1R/fr_sub_eta_%s_comp.root"]), "%s", etaslices_el, (30,999) )
 
        #### Muons: 
        # 10-20 from Z+l
-       readMany2D(Xs, h2d_mu, "/".join([Plots, Z3l, "mu/fakerates/fr_sub_eta_%s.root"]), "mva075_l3CPt_1_%s", etaslices_mu, (10,20) )
+       readMany2D(XsD, h2d_mu, "/".join([Plots, Z3l, "mu/fakerates-mtW3R/fr_sub_eta_%s_comp.root"]), "%s", etaslices_mu, (10,20) )
        # 20-45 from Mu8
-       readMany2D(Xs, h2d_mu, "/".join([Plots, QCD, "mu/HLT_Mu8/fakerates/fr_sub_eta_%s.root"]), "mvaPt_075i_ptJI85_mvaPt075_coarse_%s", etaslices_mu, (20,45) )
+       readMany2D(XsQ, h2d_mu, "/".join([Plots, QCD, "mu/HLT_Mu8/fakerates-mtW1R/fr_sub_eta_%s_comp.root"]), "%s", etaslices_mu, (20,45) )
        # 45-inf from Mu17
-       readMany2D(Xs, h2d_mu, "/".join([Plots, QCD, "mu/HLT_Mu17/fakerates/fr_sub_eta_%s.root"]), "mvaPt_075i_ptJI85_mvaPt075_coarse_%s", etaslices_mu, (45,999) )
+       readMany2D(XsQ, h2d_mu, "/".join([Plots, QCD, "mu/HLT_Mu17/fakerates-mtW1R/fr_sub_eta_%s_comp.root"]), "%s", etaslices_mu, (45,999) )
 
        # Serialize
        for h in h2d_el + h2d_mu: outfile.WriteTObject(h)
@@ -117,5 +120,6 @@ if __name__ == "__main__":
               for ieta,eta in enumerate(["barrel","endcap"]):
                   effs = [ (n,graphFromXSlice(h,ieta+1)) for (n,h) in zip(Xnices,h2d) ]
                   styles(effs)
+                  options.xlines = xcuts
                   stackEffs(options.outdir+"/fr_%s_%s.root"%(lep,eta), None,effs,options)
     outfile.ls()
