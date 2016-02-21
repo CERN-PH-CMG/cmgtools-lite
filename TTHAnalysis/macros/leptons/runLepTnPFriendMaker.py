@@ -107,7 +107,8 @@ if __name__ == '__main__':
                       action="store", type="string", dest="outDir",
                       help=("Output directory for tnp trees "
                             "[default: %default/]"))
-    parser.add_option("-f", "--filter", default='Run2015,DYJetsToLL_M50,TTJets',
+    parser.add_option("-f", "--filter",
+                      default='Run2015,DYJetsToLL_M50,TTJets',
                       type="string", dest="filter",
                       help=("Comma separated list of filters to apply "
                             "[default: %default/]"))
