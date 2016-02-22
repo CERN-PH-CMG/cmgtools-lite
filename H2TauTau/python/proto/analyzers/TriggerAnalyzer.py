@@ -11,6 +11,7 @@ class TriggerInfo(object):
         self.prescale = prescale
         self.objects = []
         self.objIds = set()
+        self.object_names = []
 
     def __str__(self):
         return 'TriggerInfo: name={name}, fired={fired}, n_objects={n_o}'.format(
@@ -140,11 +141,15 @@ class TriggerAnalyzer(Analyzer):
                         if self.triggerObjects:
                             if not any(n in to.filterLabels() for n in self.triggerObjects):
                                 continue
+                            info.object_names.append([obj_n for obj_n in self.triggerObjects if obj_n in to.filterLabels()])
+                        else:
+                            info.object_names.append('')
                         info.objects.append(to)
+
                         info.objIds.add(abs(to.pdgId()))
+                    
 
         event.trigger_infos = trigger_infos
-
 
         if self.cfg_ana.verbose:
             print 'run %d, lumi %d,event %d' %(event.run, event.lumi, event.eventId) , 'Triggers_fired: ', triggers_fired  

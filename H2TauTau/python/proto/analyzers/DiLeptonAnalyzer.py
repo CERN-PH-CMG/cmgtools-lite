@@ -292,7 +292,8 @@ class DiLeptonAnalyzer(Analyzer):
     def trigMatched(self, event, diL, requireAllMatched=False, ptMin=None,  etaMax=None, relaxIds=[11, 15], onlyLeg1=False, checkBothLegs=False):
         '''Check that at least one trigger object per pgdId from a given trigger 
         has a matched leg with the same pdg ID. If requireAllMatched is True, 
-        requires that each single trigger object has a match.'''
+        requires that each single trigger object name given in the sample
+        cfg has a match.'''
         matched = False
         legs = [diL.leg1(), diL.leg2()]
         diL.matchedPaths = set()
@@ -326,25 +327,27 @@ class DiLeptonAnalyzer(Analyzer):
 
             matchedIds = []
             matchedLegs = []
-            allMatched = True
             
-            for to in info.objects:
+            for to, to_names in zip(info.objects, info.object_names):
                 if ptMin and to.pt() < ptMin:
                     continue
                 if etaMax and abs(to.eta()) > etaMax:
                     continue
-                toMatched, objMatchedLegs = self.trigObjMatched(to, legs, relaxIds=relaxIds)
-                matchedLegs += objMatchedLegs
+                toMatched, objMatchedLegs = self.trigObjMatched(to, legs, names=to_names, relaxIds=relaxIds)
+                if requireAllMatched:
+                    objMatchedLegs = [mleg for mleg in objMatchedLegs if set(self.cfg_comp.triggerobjects) == mleg.triggernames]
+
+                else:
+                    matchedLegs += objMatchedLegs
                 if toMatched:
                     matchedIds.append(abs(to.pdgId()))
-                else:
-                    allMatched = False
+
+            
+
 
             if set(matchedIds) == info.objIds and \
                len(matchedIds) >= len(legs) * sameFlavour:
-                if requireAllMatched and not allMatched:
-                    matched = False
-                elif checkBothLegs:
+                if checkBothLegs:
                     if all(l in matchedLegs for l in legs):
                         matched = True
                         diL.matchedPaths.add(info.name)
@@ -356,7 +359,7 @@ class DiLeptonAnalyzer(Analyzer):
         
         return matched
 
-    def trigObjMatched(self, to, legs, dR2Max=0.25, relaxIds=[11, 15]):  # dR2Max=0.089999
+    def trigObjMatched(self, to, legs, names=None, dR2Max=0.25, relaxIds=[11, 15]):  # dR2Max=0.089999
         '''Returns true if the trigger object is matched to one of the given
         legs'''
         eta = to.eta()
@@ -380,5 +383,11 @@ class DiLeptonAnalyzer(Analyzer):
                             leg.triggerobjects.append(to)
                     else:
                         leg.triggerobjects = [to]
+
+                    if names:
+                        if hasattr(leg, 'triggernames'):
+                            leg.triggernames.update(names)
+                        else:
+                            leg.triggernames = set(names)
 
         return to.matched, matchedLegs

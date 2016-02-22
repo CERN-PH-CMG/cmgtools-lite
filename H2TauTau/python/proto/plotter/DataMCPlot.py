@@ -365,17 +365,24 @@ class DataMCPlot(object):
         return self.stack
 
     def DrawStack(self, opt='',
-                  xmin=None, xmax=None, ymin=None, ymax=None, print_norm=False):
+                  xmin=None, xmax=None, ymin=None, ymax=None, print_norm=False,
+                  scale_signal=''):
         '''Draw all histograms, some of them in a stack.
 
-        if Histogram.stack is True, the histogram is put in the stack.'''
+        if Histogram.stack is True, the histogram is put in the stack.
+        scale_signal: mc_int -> scale to stack integral'''
         self._BuildStack(self._SortedHistograms(), ytitle='Events')
         same = 'same'
         if len(self.nostack) == 0:
             same = ''
         self.supportHist = None
         for hist in self.nostack:
-            hist.Draw()
+            if hist.style.drawAsData:
+                hist.Draw('SAME' if self.supportHist else '')
+            else:
+                if scale_signal == 'mc_int':
+                    hist.Scale(hist.Yield(weighted=True)/self.stack.integral)
+                hist.Draw('SAME HIST' if self.supportHist else 'HIST')
             if not self.supportHist:
                 self.supportHist = hist
         self.stack.Draw(opt+same,
@@ -398,9 +405,12 @@ class DataMCPlot(object):
             self.supportHist.GetYaxis().SetRangeUser(ymin, ymax)
             self.axisWasSet = True
         for hist in self.nostack:
-            if self.blindminx:
+            if self.blindminx and hist.style.drawAsData:
                 hist.Blind(self.blindminx, self.blindmaxx)
-            hist.Draw('same')
+            if hist.style.drawAsData:
+                hist.Draw('SAME')
+            else:
+                hist.Draw('SAME HIST')
 
         if self.supportHist.weighted.GetMaximumBin() < self.supportHist.weighted.GetNbinsX()/2:
             self.legendBorders = 0.62, 0.46, 0.88, 0.89
@@ -449,6 +459,9 @@ class DataMCPlot(object):
             filename = self.name+'.root'
 
         outf = TFile(filename, mode)
+        if dir and outf.Get(dir):
+            print 'Directory', dir, 'already present in output file, recreate'
+            outf = TFile(filename, 'RECREATE')
         if dir:
             outf_dir = outf.mkdir(dir)
             outf_dir.cd()
