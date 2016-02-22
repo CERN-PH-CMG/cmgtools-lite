@@ -190,9 +190,13 @@ class HistDrawer:
         ensureDir(plot_dir)
         plotname += plot_name if plot_name else plot.name
         can.SaveAs(plotname + '.png')
+        can.SaveAs(plotname + '.pdf')
+
+        # Also save with log y
         h.GetYaxis().SetRangeUser(pad.GetUymax() * 5./10000., pad.GetUymax() * 5.)
         pad.SetLogy(True)
         can.SaveAs(plotname + '_log.png')
+        can.SaveAs(plotname + '_log.pdf')
         pad.SetLogy(0)
         return ratio
 

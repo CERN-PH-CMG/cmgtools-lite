@@ -365,10 +365,12 @@ class DataMCPlot(object):
         return self.stack
 
     def DrawStack(self, opt='',
-                  xmin=None, xmax=None, ymin=None, ymax=None, print_norm=False):
+                  xmin=None, xmax=None, ymin=None, ymax=None, print_norm=False,
+                  scale_signal=''):
         '''Draw all histograms, some of them in a stack.
 
-        if Histogram.stack is True, the histogram is put in the stack.'''
+        if Histogram.stack is True, the histogram is put in the stack.
+        scale_signal: mc_int -> scale to stack integral'''
         self._BuildStack(self._SortedHistograms(), ytitle='Events')
         same = 'same'
         if len(self.nostack) == 0:
@@ -376,9 +378,11 @@ class DataMCPlot(object):
         self.supportHist = None
         for hist in self.nostack:
             if hist.style.drawAsData:
-                hist.Draw()
+                hist.Draw('SAME' if self.supportHist else '')
             else:
-                hist.Draw('HIST')
+                if scale_signal == 'mc_int':
+                    hist.Scale(hist.Yield(weighted=True)/self.stack.integral)
+                hist.Draw('SAME HIST' if self.supportHist else 'HIST')
             if not self.supportHist:
                 self.supportHist = hist
         self.stack.Draw(opt+same,
