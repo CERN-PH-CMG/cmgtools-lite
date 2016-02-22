@@ -24,7 +24,7 @@ production = getHeppyOption('production')
 production = False
 
 # local switches
-syncntuple   = True
+syncntuple   = False
 computeSVfit = False
 pick_events  = False
 cmssw        = True
@@ -203,15 +203,15 @@ if not cmssw:
 ###################################################
 if pick_events:
 
-    import csv
-    fileName = '/afs/cern.ch/work/m/manzoni/diTau2015/CMSSW_7_4_3/src/CMGTools/H2TauTau/cfgPython/2015-sync/Imperial.csv'
-#     fileName = '/afs/cern.ch/work/m/manzoni/diTau2015/CMSSW_7_4_3/src/CMGTools/H2TauTau/cfgPython/2015-sync/CERN.csv'
-    f = open(fileName, 'rb')
-    reader = csv.reader(f)
-    evtsToPick = []
+#     import csv
+#     fileName = '/afs/cern.ch/work/m/manzoni/diTau2015/CMSSW_7_4_3/src/CMGTools/H2TauTau/cfgPython/2015-sync/Imperial.csv'
+# #     fileName = '/afs/cern.ch/work/m/manzoni/diTau2015/CMSSW_7_4_3/src/CMGTools/H2TauTau/cfgPython/2015-sync/CERN.csv'
+#     f = open(fileName, 'rb')
+#     reader = csv.reader(f)
+    evtsToPick = [158340]
 
-    for i, row in enumerate(reader):
-        evtsToPick += [int(j) for j in row]
+    # for i, row in enumerate(reader):
+    #     evtsToPick += [int(j) for j in row]
 
     eventSelector.toSelect = evtsToPick
     sequence.insert(0, eventSelector)
@@ -223,6 +223,7 @@ if not production:
   cache                = True
   comp                 = ggh160
   # comp = data_list[0]
+  comp = [s for s in selectedComponents if 'TBarToLeptons_tch_powheg' in s.name][0]
   selectedComponents   = [comp]
   comp.splitFactor     = 5
   comp.fineSplitFactor = 1
@@ -245,6 +246,3 @@ config = cfg.Config( components   = selectedComponents,
                      )
 
 printComps(config.components, True)
-
-def modCfgForPlot(config):
-  config.components = []

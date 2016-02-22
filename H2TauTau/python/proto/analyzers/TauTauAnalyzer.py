@@ -51,6 +51,7 @@ class TauTauAnalyzer(DiLeptonAnalyzer):
             'std::vector<l1extra::L1JetParticle>'   
         )
 
+
     def process(self, event):
 
         # method inherited from parent class DiLeptonAnalyzer
@@ -108,7 +109,7 @@ class TauTauAnalyzer(DiLeptonAnalyzer):
         '''Build di-leptons, associate best vertex to both legs.'''
         diLeptons = []
         for index, dil in enumerate(cmgDiLeptons):
-            pydil = TauTau(dil)
+            pydil = TauTau(dil, iso=self.cfg_ana.isolation)
             pydil.leg1().associatedVertex = event.goodVertices[0]
             pydil.leg2().associatedVertex = event.goodVertices[0]
             diLeptons.append(pydil)
@@ -224,15 +225,21 @@ class TauTauAnalyzer(DiLeptonAnalyzer):
 
         for leg in [diL.leg1(), diL.leg2()]:
             legMatched = False
+            bestDR = 0.5
             for l1 in l1objs:
                 if l1.pt() < 28.:
                     continue
                 dR = deltaR(l1.eta(), l1.phi(), leg.eta(), leg.phi())
-                if dR < 0.5:
+                if dR < bestDR:
                     legMatched = True
+                    bestDR = dR
+                    leg.L1 = l1
             if not legMatched:
                 allMatched = False
                 break
+
+        if allMatched and diL.leg1().L1 == diL.leg2().L1:
+            allMatched = False
 
         return allMatched
 
