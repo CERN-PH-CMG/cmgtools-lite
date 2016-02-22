@@ -83,12 +83,15 @@ class EfficiencyPlot(object):
         self.xtitle = ''
         self.ytitle = 'MVA tight efficiency'
         self.tag = None
-        self.tagpos = (0.85,0.4)
+        self.tagpos = (0.92,0.35)
         self.subtag = None
-        self.subtagpos = (0.85,0.36)
+        self.subtagpos = (0.92,0.29)
 
         self.colors = [ROOT.kBlack, ROOT.kAzure+1,
                        ROOT.kOrange+8, ROOT.kSpring-5]
+
+        self.reference = None # reference for ratios
+        self.ratiorange = (0.75, 1.15)
 
     def add(self,eff,tag):
         self.effs.append(eff)
@@ -149,14 +152,25 @@ class EfficiencyPlot(object):
         for ext in self.plotformats:
             canv.SaveAs(osp.join(outdir, "%s%s"%(outname,ext)))
 
+    def getRatio(self, eff1, eff2):
+        ratio = eff1.GetPassedHistogram().Clone("ratio")
+        ratio.Sumw2()
+        ratio.Divide(eff1.GetTotalHistogram())
+        ratio.Multiply(eff2.GetTotalHistogram())
+        ratio.Divide(eff2.GetPassedHistogram())
+        for att in ['LineWidth','LineColor','MarkerStyle',
+                    'MarkerSize','MarkerColor']:
+            getattr(ratio,'Set%s'%att)(getattr(eff2,'Get%s'%att)())
+        return ratio
+
     def show_with_ratio(self, outname, outdir):
-        canv = ROOT.TCanvas("canv_%s"%(self.name), "efficiencies", 800, 800)
+        canv = ROOT.TCanvas("canv_%s"%(self.name), "efficiencies", 600, 800)
 
         p2 = ROOT.TPad("pad2","pad2",0,0,1,0.31);
         ROOT.SetOwnership(p2, False)
         p2.SetTopMargin(0);
-        p2.SetBottomMargin(0.3);
-        p2.SetLeftMargin(0.05)
+        p2.SetBottomMargin(0.30);
+        p2.SetLeftMargin(0.1)
         p2.SetRightMargin(0.03)
         p2.SetFillStyle(0);
         p2.Draw();
@@ -171,17 +185,29 @@ class EfficiencyPlot(object):
         ## Main pad
         p1.cd();
 
-        rangex = (self.effs[0].GetTotalHistogram().GetXaxis().GetXmin(),
-                  self.effs[0].GetTotalHistogram().GetXaxis().GetXmax())
+        mainframe = self.effs[0].GetTotalHistogram().Clone('mainframe')
+        mainframe.Reset('ICE')
+        mainframe.GetXaxis().SetTitleFont(43)
+        mainframe.GetXaxis().SetLabelFont(43)
+        mainframe.GetYaxis().SetTitleFont(43)
+        mainframe.GetYaxis().SetLabelFont(43)
 
-        axes = ROOT.TH2D("axes_%s"%(self.name),"axes",
-                         1, rangex[0], rangex[1], 1, 0.0, 1.0)
-        axes.GetXaxis().SetTitle(self.xtitle)
-        axes.GetYaxis().SetTitleOffset(1.2)
-        axes.GetYaxis().SetTitle(self.ytitle)
-        axes.Draw("axis")
+        if not self.ytitle:
+            mainframe.GetYaxis().SetTitle('Efficiency')
+        else:
+            mainframe.GetYaxis().SetTitle(self.ytitle)
+        mainframe.GetYaxis().SetLabelSize(22)
+        mainframe.GetYaxis().SetTitleSize(26)
+        mainframe.GetYaxis().SetTitleOffset(1.5)
 
-        leg = ROOT.TLegend(.12,.15,.60,.30+0.037*max(len(self.effs)-3,0))
+        mainframe.GetXaxis().SetTitle('')
+        mainframe.GetXaxis().SetLabelSize(0)
+        mainframe.GetXaxis().SetTitleSize(0)
+        mainframe.GetYaxis().SetNoExponent()
+        mainframe.Draw()
+
+        # leg = ROOT.TLegend(.12,.15,.60,.30+0.037*max(len(self.effs)-3,0))
+        leg = ROOT.TLegend(.63,.12,.92,.22+0.037*max(len(self.effs)-3,0))
 
         leg.SetBorderSize(0)
         leg.SetFillColor(0)
@@ -221,24 +247,59 @@ class EfficiencyPlot(object):
 
         ## Ratio pad
         p2.cd()
-        ratioframe = axes.Clone('ratioframe')
+
+        if not self.reference: # no reference given, take first
+            self.reference = (len(self.effs)-1)*[self.effs[0]]
+
+        # Ratio axes
+        ratioframe = mainframe.Clone('ratioframe')
         ratioframe.Reset('ICE')
-        ratioframe.GetYaxis().SetRangeUser(0.50,1.50)
-        # if not self.ratiotitle:
-        ratioframe.GetYaxis().SetTitle('Ratio')
-        # else:
-        #     ratioframe.GetYaxis().SetTitle(self.ratiotitle)
-        # if not self.titlex:
-        #     ratioframe.GetXaxis().SetTitle(self.histos[0].GetXaxis().GetTitle())
-        # else:
-        #     ratioframe.GetXaxis().SetTitle(self.titlex)
+        ratioframe.GetYaxis().SetRangeUser(0.80,1.20)
+        ratioframe.GetYaxis().SetTitle('Data/MC')
         ratioframe.GetXaxis().SetLabelSize(22)
-        ratioframe.GetXaxis().SetTitleSize(26)
+        ratioframe.GetXaxis().SetTitleSize(32) # 26
         ratioframe.GetYaxis().SetNdivisions(5)
         ratioframe.GetYaxis().SetNoExponent()
-        ratioframe.GetYaxis().SetTitleOffset(axes.GetYaxis().GetTitleOffset())
+        ratioframe.GetYaxis().SetTitleOffset(
+                                 mainframe.GetYaxis().GetTitleOffset())
         ratioframe.GetXaxis().SetTitleOffset(3.0)
+
+        # Calculate ratios
+        self.ratios = []
+        for eff in self.effs[1:]:
+            self.ratios.append(self.getRatio(self.reference, eff))
+
+        if not self.xtitle:
+            ratioframe.GetXaxis().SetTitle(self.ratios[0].GetXaxis().GetTitle())
+        else:
+            ratioframe.GetXaxis().SetTitle(self.xtitle)
+
+        if self.ratiorange:
+            ratmin, ratmax = self.ratiorange
+            for ratio in self.ratios:
+                ratio.SetMinimum(ratmin)
+                ratio.SetMaximum(ratmax)
+            ratioframe.SetMinimum(ratmin)
+            ratioframe.SetMaximum(ratmax)
+            ratioframe.GetYaxis().SetRangeUser(ratmin, ratmax)
+
         ratioframe.Draw()
+
+        line = ROOT.TLine(self.ratios[0].GetXaxis().GetXmin(), 1.0,
+                          self.ratios[0].GetXaxis().GetXmax(), 1.0)
+        line.SetLineColor(ROOT.kGray)
+        line.Draw()
+
+        line2 = line.Clone("grid")
+        line2.SetLineStyle(3)
+        line2.DrawLine(self.ratios[0].GetXaxis().GetXmin(), 1.1,
+                      self.ratios[0].GetXaxis().GetXmax(), 1.1)
+
+        line2.DrawLine(self.ratios[0].GetXaxis().GetXmin(), 0.9,
+                      self.ratios[0].GetXaxis().GetXmax(), 0.9)
+
+        for ratio in reversed(self.ratios):
+            ratio.Draw("E1 same")
 
         for ext in self.plotformats:
             canv.SaveAs(osp.join(outdir, "%s%s"%(outname,ext)))
@@ -383,12 +444,13 @@ def makePlots(efficiencies, options):
                 plot.subtag = '%s'%(ntitle)
 
                 legentries, effs_to_plot = [], []
-                for pname in ['data','data_corr','DY']:
+                for pname in ['data','DY']:
                     plot.add(efficiencies[pname]
                                    [(lep,'inclusive',nname,var)],
                              ptitle.get(pname,pname))
+                plot.reference = efficiencies['data'][(lep,'inclusive',nname,var)]
 
-                plot.show('tnp_eff_%s'%(plot.name), options.outDir)
+                plot.show_with_ratio('tnp_eff_%s'%(plot.name), options.outDir)
 
                 # Compare single/double triggers:
                 if lep in ['ee','eb','mb','me']: continue
