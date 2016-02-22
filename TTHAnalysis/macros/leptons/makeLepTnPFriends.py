@@ -359,8 +359,10 @@ def makePassedFailed(proc,fnames,indir):
             continue
 
         print '... processing', pname
-        weight = LUMI*xsecweights[pname]
-        print '    weighting histos by', weight
+        if proc != 'data':
+            weight = LUMI*xsecweights[pname]
+            print '    weighting histos by', weight
+        else: weight = 1.0
 
         treefile = ROOT.TFile(floc,"READ")
         tree = treefile.Get('fitter_tree')
