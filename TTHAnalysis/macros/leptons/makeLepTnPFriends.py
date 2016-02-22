@@ -9,14 +9,15 @@ import os.path as osp
 LUMI = 2.26
 WEIGHT = "puWeight"
 PAIRSEL = ("((pdgId*tag_pdgId==-11*11||pdgId*tag_pdgId==-13*13)"
-           "&&abs(mass-91.)<20.&&abs(mcMatchId)>0)")
+           "&&abs(mass-91.)<30.&&abs(mcMatchId)>0)")
 SELECTIONS = [
     ('inclusive',      PAIRSEL),
     # ('singleTriggers', PAIRSEL+"&&passSingle"),
     # ('doubleTriggers', PAIRSEL+"&&passDouble"),
     # ('ttbar', "( (pdgId*tag_pdgId==-11*13)||"
     #           "  ( (pdgId*tag_pdgId==-11*11||pdgId*tag_pdgId==-13*13)"
-    #           "&&abs(mass-91.)>15.&&met_pt>30.) )&&passDouble"),
+    #           "&&abs(mass-91.)>15.&&met_pt>30.) )"
+    #           "&&passDouble&&nJet25>=2&&nBJetLoose25>=2"),
 ]
 
 LEPSEL = [
@@ -30,6 +31,7 @@ LEPSEL = [
     ('me', 'abs(pdgId)==13&&abseta>=1.2', 'Muons Endcap (#eta #geq 1.2)'),
 ]
 
+MASSBINS  = range(61,122,1)
 PTBINS    = [10.,15.,20.,25.,30.,37.5,45.,60.,80.,100.]
 ETABINS   = [0.,0.25,0.50,0.75,1.00,1.25,1.50,2.00,2.50]
 NVERTBINS = [0,4,7,8,9,10,11,12,13,14,15,16,17,19,22,25,30]
@@ -46,31 +48,32 @@ BINNINGS = [
 DENOMINATOR = "passLoose"
 NUMERATORS  = [
     ('2lss',"passTight&&passTCharge", 'same-sign 2 lepton definition'),
-    ('3l',  "passTight", '3 lepton definition'),
+    # ('3l',  "passTight", '3 lepton definition'),
 ]
 
 INPUTS = {
     'data':[
-        "DoubleEG_Run2015C_25ns_16Dec2015",
-        "DoubleEG_Run2015D_16Dec2015",
-        "DoubleMuon_Run2015C_25ns_16Dec2015",
-        "DoubleMuon_Run2015D_16Dec2015",
-        "MuonEG_Run2015C_25ns_16Dec2015",
-        "MuonEG_Run2015D_16Dec2015",
-        "SingleElectron_Run2015C_25ns_16Dec2015",
-        "SingleElectron_Run2015D_16Dec2015",
-        "SingleMuon_Run2015C_25ns_16Dec2015",
-        "SingleMuon_Run2015D_16Dec2015",
+        "Run2015",
+        # "DoubleEG_Run2015C_25ns_16Dec2015",
+        # "DoubleEG_Run2015D_16Dec2015",
+        # "DoubleMuon_Run2015C_25ns_16Dec2015",
+        # "DoubleMuon_Run2015D_16Dec2015",
+        # "MuonEG_Run2015C_25ns_16Dec2015",
+        # "MuonEG_Run2015D_16Dec2015",
+        # "SingleElectron_Run2015C_25ns_16Dec2015",
+        # "SingleElectron_Run2015D_16Dec2015",
+        # "SingleMuon_Run2015C_25ns_16Dec2015",
+        # "SingleMuon_Run2015D_16Dec2015",
         ],
     'DY':["DYJetsToLL_M50"],
-    'ttbar':[
-        "TTJets_DiLepton",
-        "TTJets_SingleLeptonFromTbar_ext",
-        "TTJets_SingleLeptonFromTbar",
-        "TTJets_SingleLeptonFromT_ext",
-        "TTJets_SingleLeptonFromT",
-        ],
-    'ttH':["TTHnobb"],
+    # 'ttbar':[
+    #     "TTJets_DiLepton",
+    #     "TTJets_SingleLeptonFromTbar_ext",
+    #     "TTJets_SingleLeptonFromTbar",
+    #     "TTJets_SingleLeptonFromT_ext",
+    #     "TTJets_SingleLeptonFromT",
+    #     ],
+    # 'ttH':["TTHnobb"],
 }
 
 class EfficiencyPlot(object):
@@ -270,7 +273,8 @@ class EfficiencyPlot(object):
             self.ratios.append(self.getRatio(self.reference, eff))
 
         if not self.xtitle:
-            ratioframe.GetXaxis().SetTitle(self.ratios[0].GetXaxis().GetTitle())
+            ratioframe.GetXaxis().SetTitle(
+                self.ratios[0].GetXaxis().GetTitle())
         else:
             ratioframe.GetXaxis().SetTitle(self.xtitle)
 
@@ -327,14 +331,89 @@ def getHistoFromTree(tree, sel, bins, var="mass",
     histo.SetDirectory(0)
     return histo
 
-def getNSignalEvents(histo):
-    ## Placeholder for the fit
-    err = ROOT.Double(0.0)
-    nev = histo.IntegralAndError(0,-1,err)
-    return nev,err
+def shushRooFit():
+    "Make RooFit shut up"
+    msgSI = ROOT.RooMsgService.instance()
+    msgSI.setSilentMode(True)
+    for s in [0,1]:
+        for t in ['Eval',
+                  'NumIntegration',
+                  'DataHandling',
+                  'ObjectHandling',
+                  'Minimization',
+                  'Fitting',
+                  'Plotting',
+                  'InputArguments']:
+            msgSI.getStream(s).removeTopic(getattr(ROOT.RooFit,t))
 
-def getPassFailHistos((tree, pairsel, probnum, probdenom, var, bins)):
-    failedsel = '(%s)&&(%s)' % (pairsel, probdenom)
+def shapeBreitWigner(ws):
+    ws.factory("RooBreitWigner::bw(mass, mZ0[91.188], gammaZ0[2.4952])")
+    ws.factory("RooCBShape::cb_pdf(mass, cbb[0.07, -3.0, 3.0],"
+                                        "cbw[1.0,0.0,5.0],"
+                                        "cba[1.2,0.03,2.0],"
+                                        "cbn[5])")
+    ws.factory("RooNumConvPdf::bw(mass, cb_pdf, bw)")
+
+def shapeExpBackgr(ws):
+    ws.factory("RooExponential::bg(mass,tau[-0.05,-40.,-0.04])")
+
+def shapeRooCMSShape(ws):
+    ws.factory("RooCMSShape::bg(mass, alpha[60.,50.,70.], "
+                                     "beta[0.001,0.,0.1], beta, "
+                                     "peak[90.0])")
+
+def getNSignalEvents(histo, dofit=True, odir='massfits/'):
+    if not dofit:
+        # Return cut&count values
+        binlo = histo.GetXaxis().FindBin(71.)
+        binhi = histo.GetXaxis().FindBin(101.)
+        err = ROOT.Double(0.0)
+        nev = histo.IntegralAndError(binlo,binhi,err)
+        return nev,err
+
+    os.system('mkdir -p %s'%odir)
+
+    ROOT.gROOT.SetBatch(1)
+    # shushRooFit()
+
+    ws = ROOT.RooWorkspace()
+    mass = ws.factory('mass[61,121]')
+    data = ROOT.RooDataHist(histo.GetName(),
+                            histo.GetTitle(),
+                            ROOT.RooArgList(mass),
+                            histo)
+    getattr(ws,'import')(data)
+
+    # Define the pdfs:
+    shapeBreitWigner(ws)
+    # shapeRooCMSShape(ws)
+    shapeExpBackgr(ws)
+
+    # Define the fit model:
+    nsig = ws.factory('nsig[0,%d]'  %(5*int(histo.Integral())))
+    nbkg = ws.factory('nbkg[1,0,%d]'%(5*int(histo.Integral())))
+    shape = ws.factory('SUM::model(nsig*bw, nbkg*bg)')
+    getattr(ws,'import')(shape)
+
+    # Do the fit
+    fitResult = shape.fitTo(data, ROOT.RooFit.Save())
+
+    # Plot the result
+    canv = ROOT.TCanvas('canv_%s'%histo.GetName(),'canvas', 800, 800)
+    frame = mass.frame()
+    data.plotOn(frame)
+    shape.plotOn(frame)
+    frame.Draw()
+    canv.SaveAs(osp.join(odir,"massfit_%s.pdf"%(histo.GetName())))
+
+    # print "    nsig=%f+-%f, nbkg=%f+-%f" % (nsig.getVal(), nsig.getError(),
+    #                                         nbkg.getVal(), nbkg.getError())
+    return nsig.getVal(), nsig.getError()
+
+def getPassTotalHistos((key, output,
+                        proc, floc, pairsel,
+                        probnum, probdenom, var, bins)):
+    totalsel  = '(%s)&&(%s)' % (pairsel, probdenom)
     passedsel = '(%s)&&(%s)' % (pairsel, probnum)
 
     bincut = "({var}>={binlo}&&{var}<{binhi})"
@@ -343,38 +422,48 @@ def getPassFailHistos((tree, pairsel, probnum, probdenom, var, bins)):
         binlo, binhi = bins[nbin], bins[nbin+1]
         binsels.append(bincut.format(var=var,binlo=binlo,binhi=binhi))
 
+    treefile = ROOT.TFile(floc,"READ")
+    tree = treefile.Get('fitter_tree')
+
     htemp = getHistoFromTree(tree,"0",bins,var,hname="htemp_%s"%(var))
     htemp.Reset("ICE")
 
     hpassed = htemp.Clone("%s_passed"%var)
     hpassed.SetDirectory(0)
-    hfailed = htemp.Clone("%s_failed"%var)
-    hfailed.SetDirectory(0)
+    htotal = htemp.Clone("%s_total"%var)
+    htotal.SetDirectory(0)
 
     for n,binsel in enumerate(binsels):
         print "  ... processing", binsel,
-        failedbinsel = "%s&&%s" % (failedsel, binsel)
-        hfailedbin = getHistoFromTree(tree,failedbinsel,bins,"mass",
-                                   hname="%s_failed_%d"%(var,n),
+        totalbinsel = "%s&&%s" % (totalsel, binsel)
+        htotalbin = getHistoFromTree(tree,totalbinsel,MASSBINS,"mass",
+                                   hname="%s_total_%d"%(var,n),
                                    weight=WEIGHT,
                                    titlex='Dilepton Mass [GeV]')
         passedbinsel = "%s&&%s" % (passedsel, binsel)
-        hpassedbin = getHistoFromTree(tree,passedbinsel,bins,"mass",
+        hpassedbin = getHistoFromTree(tree,passedbinsel,MASSBINS,"mass",
                                    hname="%s_passed_%d"%(var,n),
                                    weight=WEIGHT,
                                    titlex='Dilepton Mass [GeV]')
 
-        npass,passerr = getNSignalEvents(hpassedbin)
-        nfail,failerr = getNSignalEvents(hfailedbin)
+        npass,passerr = getNSignalEvents(hpassedbin,
+                                         # dofit=False,
+                                         dofit=(proc in ['data','DY']),
+                                         odir='massfits/%s'%proc)
+        ntot,toterr   = getNSignalEvents(htotalbin,
+                                         # dofit=False,
+                                         dofit=(proc in ['data','DY']),
+                                         odir='massfits/%s'%proc)
         print 'pass:',npass,'+-',passerr,
-        print 'fail:',nfail,'+-',failerr
+        print 'tot:',ntot,'+-',toterr,
 
         hpassed.SetBinContent(n+1, npass)
         hpassed.SetBinError(n+1, passerr)
-        hfailed.SetBinContent(n+1, nfail)
-        hfailed.SetBinError(n+1, failerr)
+        htotal.SetBinContent(n+1, ntot)
+        htotal.SetBinError(n+1, toterr)
 
-    return hpassed, hfailed
+    output[key] = (hpassed, htotal)
+    print "DONE"
 
 def makePassedFailed(proc,fnames,indir):
     stump = '_treeProducerSusyMultilepton_tree.root'
@@ -401,8 +490,11 @@ def makePassedFailed(proc,fnames,indir):
             print '    weighting histos by', weight
         else: weight = 1.0
 
-        treefile = ROOT.TFile(floc,"READ")
-        tree = treefile.Get('fitter_tree')
+        tasks = []
+        # from multiprocessing import Manager, Pool
+        # manager = Manager()
+        # result_dict = manager.dict()
+        result_dict = {}
 
         for lep,lepsel,_ in LEPSEL:
             for sname,sel in SELECTIONS:
@@ -410,45 +502,54 @@ def makePassedFailed(proc,fnames,indir):
                 for var,bins,_ in BINNINGS:
                     for nname,num,_ in NUMERATORS:
 
-                        hpass, hfail = getPassFailHistos((tree, finalsel,
-                                              num, DENOMINATOR, var,bins))
-
-                        hpass.Scale(weight)
-                        hfail.Scale(weight)
-
                         key = (lep,sname,nname,var)
+                        tasks.append((key, result_dict,
+                                      proc, floc, finalsel, num,
+                                      DENOMINATOR, var,bins))
 
-                        if key in result:
-                            result[key][0].Add(hpass)
-                            result[key][1].Add(hfail)
-                        else:
-                            result[key] = (hpass,hfail)
+        print 'Have %d tasks to process' % len(tasks)
+
+        # Pool(8).map(getPassTotalHistos, tasks)
+
+        # for key in [t[0] for t in tasks]:
+        for task in tasks:
+            getPassTotalHistos(task)
+            hpass, htot = result_dict[key]
+
+            hpass.Scale(weight)
+            htot.Scale(weight)
+
+            if key in result:
+                result[key][0].Add(hpass)
+                result[key][1].Add(htot)
+            else:
+                result[key] = (hpass,htot)
 
     return result
 
-def makeEfficiencies(passedfailed):
+def makeEfficiencies(passedtotal):
     result = {}
 
     # Calculate raw efficiencies
-    for proc, histos in passedfailed.iteritems():
+    for proc, histos in passedtotal.iteritems():
         proc_effs = {}
         for key,(p,f) in histos.iteritems():
             eff = TEfficiency(p, f)
             proc_effs[key] = eff
         result[proc] = proc_effs
 
-    # Calculate background corrected efficiencies
-    # I.e. subtract ttbar MC from data
-    for key in passedfailed.values()[0].keys():
-        print '... processing', key
-        passdata,faildata = passedfailed['data'][key]
-        passtt,  failtt   = passedfailed['ttbar'][key]
+    # # Calculate background corrected efficiencies
+    # # I.e. subtract ttbar MC from data
+    # for key in passedtotal.values()[0].keys():
+    #     print '... processing', key
+    #     passdata,totdata = passedtotal['data'][key]
+    #     passtt,  tottt   = passedtotal['ttbar'][key]
 
-        pcorr = passdata.Clone("pass_corrected")
-        fcorr = faildata.Clone("fail_corrected")
-        pcorr.Add(passtt, -1.0)
-        fcorr.Add(failtt, -1.0)
-        result.setdefault('data_corr', {})[key] = TEfficiency(pcorr, fcorr)
+    #     pcorr = passdata.Clone("pass_corrected")
+    #     fcorr = totdata.Clone("tot_corrected")
+    #     pcorr.Add(passtt, -1.0)
+    #     fcorr.Add(tottt, -1.0)
+    #     result.setdefault('data_corr', {})[key] = TEfficiency(pcorr, fcorr)
 
     return result
 
@@ -487,9 +588,10 @@ def makePlots(efficiencies, options):
                     plot.add(efficiencies[pname]
                                    [(lep,'inclusive',nname,var)],
                              ptitle.get(pname,pname))
-                plot.reference = efficiencies['data'][(lep,'inclusive',nname,var)]
+                plot.reference = efficiencies['data'][(lep,'inclusive',
+                                                       nname,var)]
 
-                plot.show_with_ratio('tnp_eff_%s'%(plot.name), options.outDir)
+                plot.show_with_ratio('tnp_eff_%s'%(plot.name),options.outDir)
 
                 # Compare single/double triggers:
                 if lep in ['ee','eb','mb','me']: continue
@@ -518,28 +620,28 @@ if __name__ == '__main__':
                             "[default: %default/]"))
     (options, args) = parser.parse_args()
 
-    # Gather all the passed/failed histograms
-    cachefilename = "tnppassedfailed.pck"
+    # Gather all the passed/total histograms
+    cachefilename = "tnppassedtotal.pck"
     if not osp.isfile(cachefilename):
-        passedfailed = {}
+        passedtotal = {}
         for proc,fnames in INPUTS.iteritems():
-            passedfailed[proc] = makePassedFailed(proc,fnames,args[0])
+            passedtotal[proc] = makePassedFailed(proc,fnames,args[0])
 
         cachefile = open(cachefilename, 'w')
-        pickle.dump(passedfailed, cachefile, pickle.HIGHEST_PROTOCOL)
-        print ('>>> Wrote tnp passed failed histograms to cache (%s)' %
+        pickle.dump(passedtotal, cachefile, pickle.HIGHEST_PROTOCOL)
+        print ('>>> Wrote tnp passed total histograms to cache (%s)' %
                                                     cachefilename)
         cachefile.close()
     else:
         cachefile = open(cachefilename, 'r')
-        passedfailed = pickle.load(cachefile)
-        print ('>>> Read tnp passed failed histograms from cache (%s)' %
+        passedtotal = pickle.load(cachefile)
+        print ('>>> Read tnp passed total histograms from cache (%s)' %
                                                     cachefilename)
         cachefile.close()
 
     os.system('mkdir -p %s'%options.outDir)
 
-    efficiencies = makeEfficiencies(passedfailed)
+    efficiencies = makeEfficiencies(passedtotal)
     makePlots(efficiencies, options)
 
 
