@@ -327,15 +327,52 @@ def getHistoFromTree(tree, sel, bins, var="mass",
     histo.SetDirectory(0)
     return histo
 
+def getNSignalEvents(histo):
+    ## Placeholder for the fit
+    err = ROOT.Double(0.0)
+    nev = histo.IntegralAndError(0,-1,err)
+    return nev,err
+
 def getPassFailHistos((tree, pairsel, probnum, probdenom, var, bins)):
     failedsel = '(%s)&&(%s)' % (pairsel, probdenom)
     passedsel = '(%s)&&(%s)' % (pairsel, probnum)
-    hfailed = getHistoFromTree(tree,failedsel,bins,var,
-                               hname="%s_failed"%var,
-                               weight=WEIGHT)
-    hpassed = getHistoFromTree(tree,passedsel,bins,var,
-                               hname="%s_passed"%var,
-                               weight=WEIGHT)
+
+    bincut = "({var}>={binlo}&&{var}<{binhi})"
+    binsels = []
+    for nbin in xrange(len(bins)-1):
+        binlo, binhi = bins[nbin], bins[nbin+1]
+        binsels.append(bincut.format(var=var,binlo=binlo,binhi=binhi))
+
+    htemp = getHistoFromTree(tree,"0",bins,var,hname="htemp_%s"%(var))
+    htemp.Reset("ICE")
+
+    hpassed = htemp.Clone("%s_passed"%var)
+    hpassed.SetDirectory(0)
+    hfailed = htemp.Clone("%s_failed"%var)
+    hfailed.SetDirectory(0)
+
+    for n,binsel in enumerate(binsels):
+        print "  ... processing", binsel,
+        failedbinsel = "%s&&%s" % (failedsel, binsel)
+        hfailedbin = getHistoFromTree(tree,failedbinsel,bins,"mass",
+                                   hname="%s_failed_%d"%(var,n),
+                                   weight=WEIGHT,
+                                   titlex='Dilepton Mass [GeV]')
+        passedbinsel = "%s&&%s" % (passedsel, binsel)
+        hpassedbin = getHistoFromTree(tree,passedbinsel,bins,"mass",
+                                   hname="%s_passed_%d"%(var,n),
+                                   weight=WEIGHT,
+                                   titlex='Dilepton Mass [GeV]')
+
+        npass,passerr = getNSignalEvents(hpassedbin)
+        nfail,failerr = getNSignalEvents(hfailedbin)
+        print 'pass:',npass,'+-',passerr,
+        print 'fail:',nfail,'+-',failerr
+
+        hpassed.SetBinContent(n+1, npass)
+        hpassed.SetBinError(n+1, passerr)
+        hfailed.SetBinContent(n+1, nfail)
+        hfailed.SetBinError(n+1, failerr)
 
     return hpassed, hfailed
 
