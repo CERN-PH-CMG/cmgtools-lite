@@ -21,15 +21,33 @@ SELECTIONS = [
 ]
 
 LEPSEL = [
-    # ('e',  'abs(pdgId)==11', 'Electrons'),
     ('eb', 'abs(pdgId)==11&&abseta<1.479',
            'Electrons Barrel (#eta < 1.479)'),
     ('ee', 'abs(pdgId)==11&&abseta>=1.479',
            'Electrons Endcap (#eta #geq 1.479)'),
-    # ('m',  'abs(pdgId)==13', 'Muons'),
-    ('mb', 'abs(pdgId)==13&&abseta<1.2',  'Muons Barrel (#eta < 1.2)'),
-    ('me', 'abs(pdgId)==13&&abseta>=1.2', 'Muons Endcap (#eta #geq 1.2)'),
+    ('mb', 'abs(pdgId)==13&&abseta<1.2',
+           'Muons Barrel (#eta < 1.2)'),
+    ('me', 'abs(pdgId)==13&&abseta>=1.2',
+           'Muons Endcap (#eta #geq 1.2)'),
 ]
+## Eta binning for 2d plots:
+LEPSEL2D = []
+ETABINS2D_EL = [0,0.74,1.479,2.0,2.5]
+for n in range(len(ETABINS2D_EL)-1):
+    LEPSEL2D.append(('e%d'%n,
+                   'abs(pdgId)==11&&abseta>={elo}&&abseta<{ehi}'.format(
+                       elo=ETABINS2D_EL[n], ehi=ETABINS2D_EL[n+1]),
+                   'Electrons {elo} #leq |#eta| < {ehi}'.format(
+                       elo=ETABINS2D_EL[n], ehi=ETABINS2D_EL[n+1]) ) )
+
+ETABINS2D_MU = [0,0.4,0.8,1.2,1.8,2.5]
+for n in range(len(ETABINS2D_MU)-1):
+    LEPSEL2D.append(('m%d'%n,
+                   'abs(pdgId)==13&&abseta>={elo}&&abseta<{ehi}'.format(
+                       elo=ETABINS2D_MU[n], ehi=ETABINS2D_MU[n+1]),
+                   'Muons {elo} #leq |#eta| < {ehi}'.format(
+                       elo=ETABINS2D_MU[n], ehi=ETABINS2D_MU[n+1]) ) )
+LEPSEL.extend(LEPSEL2D)
 
 MASSBINS  = range(61,122,1)
 PTBINS    = [10.,15.,20.,25.,30.,37.5,45.,60.,80.,100.]
@@ -39,7 +57,6 @@ NJETBINS  = [0,1,2,3,4,5,6]
 NBJETBINS = [0,1,2,3]
 BINNINGS = [
     ('pt',            PTBINS,    'p_{T} [GeV]'),
-    ('abseta',        ETABINS,   '|#eta|'),
     ('nVert',         NVERTBINS, 'N_{vertices}'),
     ('nJet25',        NJETBINS,  'N_{jets}'),
     ('nBJetMedium25', NBJETBINS, 'N_{bjets, CSVM}'),
@@ -76,6 +93,30 @@ INPUTS = {
     # 'ttH':["TTHnobb"],
 }
 
+PTITLE = {
+    'data'      : 'Data',
+    'data_corr' : 'Data (t#bar{t} subtracted',
+    'DY'        : 'DY MC'
+}
+
+SELTITLE = {
+    'inclusive'      : '',
+    'singleTriggers' : ', Single lepton triggers',
+    'doubleTriggers' : ', Double lepton triggers',
+    'ttbar'          : 'ttbar',
+}
+
+def getEfficiencyRatio(eff1, eff2):
+    ratio = eff1.GetPassedHistogram().Clone("ratio")
+    ratio.Sumw2()
+    ratio.Divide(eff1.GetTotalHistogram())
+    ratio.Multiply(eff2.GetTotalHistogram())
+    ratio.Divide(eff2.GetPassedHistogram())
+    for att in ['LineWidth','LineColor','MarkerStyle',
+                'MarkerSize','MarkerColor']:
+        getattr(ratio,'Set%s'%att)(getattr(eff2,'Get%s'%att)())
+    return ratio
+
 class EfficiencyPlot(object):
     """Simple class for making plots comparing TEfficiency objects"""
     def __init__(self, name):
@@ -101,6 +142,10 @@ class EfficiencyPlot(object):
         self.legentries.append(tag)
 
     def show(self, outname, outdir):
+        ROOT.gROOT.SetBatch(1)
+        ROOT.gStyle.SetOptTitle(0)
+        ROOT.gStyle.SetOptStat(0)
+
         canv = ROOT.TCanvas("canv_%s"%(self.name), "efficiencies", 800, 800)
         canv.SetRightMargin(0.05)
         canv.SetTopMargin(0.05)
@@ -155,18 +200,11 @@ class EfficiencyPlot(object):
         for ext in self.plotformats:
             canv.SaveAs(osp.join(outdir, "%s%s"%(outname,ext)))
 
-    def getRatio(self, eff1, eff2):
-        ratio = eff1.GetPassedHistogram().Clone("ratio")
-        ratio.Sumw2()
-        ratio.Divide(eff1.GetTotalHistogram())
-        ratio.Multiply(eff2.GetTotalHistogram())
-        ratio.Divide(eff2.GetPassedHistogram())
-        for att in ['LineWidth','LineColor','MarkerStyle',
-                    'MarkerSize','MarkerColor']:
-            getattr(ratio,'Set%s'%att)(getattr(eff2,'Get%s'%att)())
-        return ratio
-
     def show_with_ratio(self, outname, outdir):
+        ROOT.gROOT.SetBatch(1)
+        ROOT.gStyle.SetOptTitle(0)
+        ROOT.gStyle.SetOptStat(0)
+
         canv = ROOT.TCanvas("canv_%s"%(self.name), "efficiencies", 600, 800)
 
         p2 = ROOT.TPad("pad2","pad2",0,0,1,0.31);
@@ -270,7 +308,7 @@ class EfficiencyPlot(object):
         # Calculate ratios
         self.ratios = []
         for eff in self.effs[1:]:
-            self.ratios.append(self.getRatio(self.reference, eff))
+            self.ratios.append(getEfficiencyRatio(self.reference, eff))
 
         if not self.xtitle:
             ratioframe.GetXaxis().SetTitle(
@@ -307,7 +345,6 @@ class EfficiencyPlot(object):
 
         for ext in self.plotformats:
             canv.SaveAs(osp.join(outdir, "%s%s"%(outname,ext)))
-
 
 def projectFromTree(hist, varname, sel, tree, option=''):
     try:
@@ -469,7 +506,7 @@ def getPassTotalHistos((key, output,
     dofit = [proc in ['data','DY']] and not options.cutNCount
 
     for n,binsel in enumerate(binsels):
-        print "  ... processing", binsel,
+        print "  ... processing %-36s" % binsel,
         totalbinsel = "%s&&%s" % (totalsel, binsel)
         htotalbin = getHistoFromTree(tree,totalbinsel,MASSBINS,"mass",
                                    hname="%s_total_%d"%(var,n),
@@ -487,8 +524,8 @@ def getPassTotalHistos((key, output,
         ntot,toterr   = getNSignalEvents(htotalbin,
                                          dofit=dofit,
                                          odir=plotDir)
-        print 'pass:',npass,'+-',passerr,
-        print 'tot:',ntot,'+-',toterr,
+        print 'pass: %8.1f +- %5.1f' % (npass,passerr),
+        print 'tot:  %8.1f +- %5.1f' % (ntot,toterr),
 
         hpassed.SetBinContent(n+1, npass)
         hpassed.SetBinError(n+1, passerr)
@@ -506,8 +543,9 @@ def makePassedFailed(proc,fnames,indir):
             xsecweights = pickle.load(cachefile)
             print '>>> Read xsecweights from cache (.xsecweights.pck)'
     except IOError:
-        print "Please run makeXSecWeights.py first"
-        return None
+        print ("Please run makeXSecWeights.py first to apply "
+               "cross section weights.")
+        xsecweights = {}
 
     result = {}
     for pname in fnames:
@@ -519,36 +557,47 @@ def makePassedFailed(proc,fnames,indir):
 
         print '... processing', pname
         if proc != 'data':
-            weight = LUMI*xsecweights[pname]
+            weight = LUMI*xsecweights.get(pname, 1.0/LUMI)
             print '    weighting histos by', weight
         else: weight = 1.0
 
         tasks = []
-        # from multiprocessing import Manager, Pool
-        # manager = Manager()
-        # result_dict = manager.dict()
-        result_dict = {}
+
+        from multiprocessing import Manager, Pool
+        manager = Manager()
+        result_dict = manager.dict()
+        # result_dict = {}
 
         for lep,lepsel,_ in LEPSEL:
             for sname,sel in SELECTIONS:
                 finalsel = '(%s)&&(%s)' % (lepsel, sel)
-                for var,bins,_ in BINNINGS:
-                    for nname,num,_ in NUMERATORS:
+                for nname,num,_ in NUMERATORS:
+                    for var,bins,_ in BINNINGS:
+
+                        # Some special cases:
+                        # Skip eta binnings for non pt vars
+                        if (not lep in ['eb','ee','mb','me'] and
+                            var != 'pt'): continue
+
+                        # Cut at pt>30 for njet and nbjet binnings
+                        if 'Jet' in var: fsel = finalsel+'&&pt>30'
+                        else: fsel = finalsel
+
                         tag = '_'.join([proc, lep, nname])
                         key = (lep,sname,nname,var)
                         tasks.append((key, result_dict,
-                                      tag, floc, finalsel, num,
+                                      tag, floc, fsel, num,
                                       DENOMINATOR, var, bins,
                                       options))
 
         print 'Have %d tasks to process' % len(tasks)
 
-        # Pool(8).map(getPassTotalHistos, tasks)
+        Pool(8).map(getPassTotalHistos, tasks)
 
-        # for key in [t[0] for t in tasks]:
-        for task in tasks:
-            key = task[0]
-            getPassTotalHistos(task)
+        for key in [t[0] for t in tasks]:
+        # for task in tasks:
+        #     key = task[0]
+        #     getPassTotalHistos(task)
             hpass, htot = result_dict[key]
 
             hpass.Scale(weight)
@@ -559,6 +608,8 @@ def makePassedFailed(proc,fnames,indir):
                 result[key][1].Add(htot)
             else:
                 result[key] = (hpass,htot)
+
+        print '      %s done' % pname
 
     return result
 
@@ -589,61 +640,94 @@ def makeEfficiencies(passedtotal):
     return result
 
 def makePlots(efficiencies, options):
-    ROOT.gROOT.SetBatch(1)
-    ROOT.gStyle.SetOptTitle(0)
-    ROOT.gStyle.SetOptStat(0)
-
-    ptitle = {
-        'data'      : 'Data',
-        'data_corr' : 'Data (t#bar{t} subtracted',
-        'DY'        : 'DY MC'
-    }
-
-    seltitle = {
-        'inclusive'      : '',
-        'singleTriggers' : ', Single lepton triggers',
-        'doubleTriggers' : ', Double lepton triggers',
-        'ttbar'          : 'ttbar',
-    }
-
     for lep,_,lname in LEPSEL:
         for nname,_,ntitle in NUMERATORS:
             for var,bins,xtitle in BINNINGS:
 
                 if lep in ['ee','eb','mb','me'] and 'abseta' in var: continue
+                if not lep in ['ee','eb','mb','me']: continue
 
                 # Compare data/MC in each binning/selection
                 plot = EfficiencyPlot('%s_%s_%s'%(lep,nname,var))
                 plot.xtitle = xtitle
                 plot.tag = '%s'%(lname)
                 plot.subtag = '%s'%(ntitle)
+                if 'Jet' in var:
+                    plot.subtag = '%s, p_{T} > 30 GeV' % ntitle
 
                 legentries, effs_to_plot = [], []
                 for pname in ['data','DY']:
                     plot.add(efficiencies[pname]
                                    [(lep,'inclusive',nname,var)],
-                             ptitle.get(pname,pname))
+                             PTITLE.get(pname,pname))
                 plot.reference = efficiencies['data'][(lep,'inclusive',
                                                        nname,var)]
 
                 plot.show_with_ratio('tnp_eff_%s'%(plot.name),options.outDir)
 
-                # Compare single/double triggers:
-                if lep in ['ee','eb','mb','me']: continue
-                for pname,effs in efficiencies.iteritems():
-                    plot = EfficiencyPlot('%s_%s_%s_%s'%(
-                                            lep,nname,var,pname))
-                    plot.xtitle = xtitle
-                    plot.tag = '%s, %s'%(lname,
-                                         ptitle.get(pname, pname))
-                    plot.subtag = '%s'%(ntitle)
+def make2DMap(efficiencies, options):
+    outdir = osp.join(options.outDir, 'map')
+    os.system('mkdir -p %s'%outdir)
+    if 'www' in outdir: putPHPIndex(outdir)
 
-                    legentries, effs_to_plot = [], []
-                    for sname,_ in SELECTIONS:
-                        plot.add(effs[(lep,sname,nname,var)],
-                                 seltitle.get(sname,sname))
+    sfhistos = {}
 
-                    plot.show('tnp_eff_%s'%(plot.name), options.outDir)
+    for nname,_,ntitle in NUMERATORS:
+        for lepton in ['e', 'm']:
+            # Make data/MC plots
+            for lep,_,lname in LEPSEL2D:
+                if not lep.startswith(lepton): continue
+
+                plot = EfficiencyPlot('%s_%s_%s'%(lep,nname,'pt'))
+                plot.xtitle = 'p_{T} [GeV]'
+                plot.tag = '%s'%(lname)
+                plot.subtag = '%s'%(ntitle)
+
+                legentries, effs_to_plot = [], []
+                for pname in ['data','DY']:
+                    plot.add(efficiencies[pname]
+                                   [(lep,'inclusive',nname,'pt')],
+                             PTITLE.get(pname,pname))
+                plot.reference = efficiencies['data'][(lep,'inclusive',
+                                                       nname,'pt')]
+
+                plot.show_with_ratio('tnp_eff_%s'%(plot.name),outdir)
+
+            ## Make the 2D histograms
+            etabins = {'e': ETABINS2D_EL, 'm': ETABINS2D_MU}[lepton]
+            sfhisto_2d = ROOT.TH2F("sf_%s"%lepton,
+                                   "mva tight data/mc scale factors",
+                                   len(PTBINS)-1, array('d', PTBINS),
+                                   len(etabins)-1, array('d', etabins))
+            sfhisto_2d.SetName('%s_%s'%(lepton, nname))
+            sfhisto_2d.SetDirectory(0)
+
+            for ny in range(len(etabins)-1):
+                lep = '%s%d' % (lepton, ny)
+
+                # each of these is binned in pt:
+                sfhisto = getEfficiencyRatio(
+                    efficiencies['data'][(lep,'inclusive',nname,'pt')],
+                    efficiencies['DY']  [(lep,'inclusive',nname,'pt')])
+
+                for nx in range(len(PTBINS)):
+                    sfhisto_2d.SetBinContent(nx+1, ny+1,
+                                             sfhisto.GetBinContent(nx+1))
+                    sfhisto_2d.SetBinError(nx+1, ny+1,
+                                             sfhisto.GetBinError(nx+1))
+
+            sfhistos[(lepton,nname)] = sfhisto_2d
+
+    for (lepton,nname),histo in sfhistos.iteritems():
+        fname = 'lepMVAEffSF_%s_%s.root' % (lepton, nname)
+        floc = osp.join(options.outDir,fname)
+        ofile = ROOT.TFile(floc, 'RECREATE')
+        ofile.cd()
+        histo.Write('sf')
+        ofile.Write()
+        ofile.Close()
+        print " wrote %s" % floc
+
 
 if __name__ == '__main__':
     from optparse import OptionParser
@@ -665,38 +749,28 @@ if __name__ == '__main__':
         for proc,fnames in INPUTS.iteritems():
             passedtotal[proc] = makePassedFailed(proc,fnames,args[0])
 
-        cachefile = open(cachefilename, 'w')
-        pickle.dump(passedtotal, cachefile, pickle.HIGHEST_PROTOCOL)
-        print ('>>> Wrote tnp passed total histograms to cache (%s)' %
-                                                    cachefilename)
-        cachefile.close()
+        print "#"*30
+        print "ALL DONE"
+        print "#"*30
+
+        with open(cachefilename, 'w') as cachefile:
+            pickle.dump(passedtotal, cachefile, pickle.HIGHEST_PROTOCOL)
+            print ('>>> Wrote tnp passed total histograms to cache (%s)' %
+                                                        cachefilename)
     else:
-        cachefile = open(cachefilename, 'r')
-        passedtotal = pickle.load(cachefile)
-        print ('>>> Read tnp passed total histograms from cache (%s)' %
-                                                    cachefilename)
-        cachefile.close()
+        with open(cachefilename, 'r') as cachefile:
+            passedtotal = pickle.load(cachefile)
+            print ('>>> Read tnp passed total histograms from cache (%s)' %
+                                                        cachefilename)
 
     os.system('mkdir -p %s'%options.outDir)
+    if 'www' in options.outDir: putPHPIndex(options.outDir)
 
+    # Calculate efficiencies
     efficiencies = makeEfficiencies(passedtotal)
+
+    # Make plots
     makePlots(efficiencies, options)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    make2DMap(efficiencies, options)
 
 
