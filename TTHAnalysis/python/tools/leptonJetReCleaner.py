@@ -75,7 +75,7 @@ class LeptonJetReCleaner:
                     ])
             for bkey in self.systsBTAG:
                 thisvar = self.select_jec_btag_unc_combinations(key,bkey)
-                if thisvar:
+                if thisvar!=None:
                     biglist.extend([
                             ("eventBTagSF"+label+thisvar, "F")
                             ])
@@ -306,7 +306,7 @@ class LeptonJetReCleaner:
             cleanjets[var] = self.recleanJets(jetsc[var],jetsd[var],lepsc+taus_forclean,self.label+self.systsJEC[var],retwlabel,jetret,discjetret,(var==0))
             for btagsyst in self.systsBTAG:
                 thisvar = self.select_jec_btag_unc_combinations(var,btagsyst)
-                if thisvar: retwlabel["eventBTagSF"+self.label+thisvar] = self.bTag_eventRWT_SF(event,lepsc,cleanjets[var],self.systsBTAG[btagsyst]) if self.doBtagRWT else 1
+                if thisvar!=None: retwlabel["eventBTagSF"+self.label+thisvar] = self.bTag_eventRWT_SF(event,lepsc,cleanjets[var],self.systsBTAG[btagsyst]) if self.doBtagRWT else 1
 
         # calculate FOs and tight leptons using the cleaned HT, sorted by conept
         lepsf = []; lepsfv = [];
@@ -337,7 +337,7 @@ class LeptonJetReCleaner:
         for j in jets: sf = sf * getattr(j,"btagCSVWeight"+systlabel)
         return sf
     def select_jec_btag_unc_combinations(self,jetunc,btagunc):
-        if "JESUp" in self.systsBTAG[btagunc]: return "_jecUp " if self.systsJEC[jetunc]=="_jecUp" else None
+        if "JESUp" in self.systsBTAG[btagunc]: return "_jecUp" if self.systsJEC[jetunc]=="_jecUp" else None
         if "JESDown" in self.systsBTAG[btagunc]: return "_jecDown" if self.systsJEC[jetunc]=="_jecDown" else None
         return self.systsBTAG[btagunc]+self.systsJEC[jetunc] if self.systsJEC[jetunc]=="" else None
 

@@ -41,6 +41,9 @@ for syst in systsBTAG: # should be converted to lambda functions
     MODULES.append( ('btagRWJetDown%s'%syst, BTagReweightFriend(BTagReweight76X, jets=["Jet_jecDown","DiscJet_jecDown"], outlabel='btagCSVWeight%s'%syst.replace('nominal',''), rwtSyst=syst.replace('_','')) ))
     MODULES.append( ('btagRWLep%s'%syst, BTagLeptonReweightFriend(BTagReweight76X, outlabel='jetBTagCSVWeight%s'%syst.replace('nominal',''), rwtSyst=syst.replace('_','')) ))
 
+from CMGTools.TTHAnalysis.tools.eventBTagRWT import EventBTagRWT
+MODULES.append( ('eventBTagRWT', lambda: EventBTagRWT() ))
+
 #--- Susy multilep instances
 MODULES.append( ('leptonJetReCleanerTTH', lambda : LeptonJetReCleaner("Recl", # b1E2 definition of FO
                    looseLeptonSel = lambda lep : lep.miniRelIso < 0.4 and lep.sip3d < 8,
