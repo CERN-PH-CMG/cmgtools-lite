@@ -57,9 +57,9 @@ NJETBINS  = [0,1,2,3,4,5,6]
 NBJETBINS = [0,1,2,3]
 BINNINGS = [
     ('pt',            PTBINS,    'p_{T} [GeV]'),
-    ('nVert',         NVERTBINS, 'N_{vertices}'),
+    # ('nVert',         NVERTBINS, 'N_{vertices}'),
     ('nJet25',        NJETBINS,  'N_{jets}'),
-    ('nBJetMedium25', NBJETBINS, 'N_{bjets, CSVM}'),
+    # ('nBJetMedium25', NBJETBINS, 'N_{bjets, CSVM}'),
 ]
 
 DENOMINATOR = "passLoose"
@@ -396,7 +396,7 @@ def shapeCBBreitWigner(ws):
     ws.factory("RooBreitWigner::bw(mass, mZ0[91.188], gammaZ0[2.4952])")
     ws.factory("RooCBShape::cb_pdf(mass, cbb[0.07, -3.00, 3.0]," # bias
                                         "cbw[1.00,  0.00, 5.0]," # width
-                                        "cba[1.20,  0.03, 2.0]," # alpha
+                                        "cba[1.20,  0.03, 4.0]," # alpha
                                         "cbn[5])")               # power
 
     ws.factory("RooFFTConvPdf::sig(mass, bw, cb_pdf)")
@@ -406,9 +406,8 @@ def shapeExpBackgr(ws):
 
 def shapeRooCMSShape(ws):
     ws.factory("RooCMSShape::bg(mass, alpha[40.,20.,160.], "
-                                     "beta[ 0.001, 0., 0.1], "
-                                     # Marco: make gamma smaller!
-                                     "gamma[0.001, 0., 0.1], "
+                                     "beta[ 0.050, 0., 2.0], "
+                                     "gamma[0.050, 0., 2.0], "
                                      "peak[91.2])")
 
 def getNSignalEvents(histo, dofit=True, odir='tnpfits/'):
@@ -472,6 +471,15 @@ def getNSignalEvents(histo, dofit=True, odir='tnpfits/'):
     canv.SaveAs(osp.join(odir,"massfit_%s.pdf"%(histo.GetName())))
     canv.SaveAs(osp.join(odir,"massfit_%s.png"%(histo.GetName())))
     if 'www' in odir: putPHPIndex(odir)
+
+    for v in ['beta', 'gamma', 'alpha', 'cbb', 'cbw', 'cba']:
+        val = ws.var(v).getVal()
+        if abs(val - ws.var(v).getMax()) < 1e-5:
+            print ('########## %s is hitting maximum: %f (%f)' %
+                          (v, val, ws.var(v).getMax()))
+        if abs(val - ws.var(v).getMin()) < 1e-5:
+            print ('########## %s is hitting minimum: %f (%f)' %
+                          (v, val, ws.var(v).getMin()))
 
     # print "    nsig=%f+-%f, nbkg=%f+-%f" % (nsig.getVal(), nsig.getError(),
     #                                         nbkg.getVal(), nbkg.getError())
@@ -563,10 +571,12 @@ def makePassedFailed(proc,fnames,indir):
 
         tasks = []
 
-        from multiprocessing import Manager, Pool
-        manager = Manager()
-        result_dict = manager.dict()
-        # result_dict = {}
+        if options.jobs>1:
+            from multiprocessing import Manager, Pool
+            manager = Manager()
+            result_dict = manager.dict()
+        else:
+            result_dict = {}
 
         for lep,lepsel,_ in LEPSEL:
             for sname,sel in SELECTIONS:
@@ -592,12 +602,12 @@ def makePassedFailed(proc,fnames,indir):
 
         print 'Have %d tasks to process' % len(tasks)
 
-        Pool(8).map(getPassTotalHistos, tasks)
+        if options.jobs > 1:
+            Pool(options.jobs).map(getPassTotalHistos, tasks)
+        else:
+            map(getPassTotalHistos, tasks)
 
         for key in [t[0] for t in tasks]:
-        # for task in tasks:
-        #     key = task[0]
-        #     getPassTotalHistos(task)
             hpass, htot = result_dict[key]
 
             hpass.Scale(weight)
@@ -740,6 +750,10 @@ if __name__ == '__main__':
     parser.add_option('-c', '--cutNCount', dest='cutNCount',
                       action="store_true",
                       help='Do cut & count instead of fitting mass shape')
+    parser.add_option('-j', '--jobs', dest='jobs', action="store",
+                      type='int', default=1,
+                      help=('Number of jobs to run in parallel '
+                        '[default: single]'))
     (options, args) = parser.parse_args()
 
     # Gather all the passed/total histograms
