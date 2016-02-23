@@ -48,7 +48,7 @@ BINNINGS = [
 DENOMINATOR = "passLoose"
 NUMERATORS  = [
     ('2lss',"passTight&&passTCharge", 'same-sign 2 lepton definition'),
-    # ('3l',  "passTight", '3 lepton definition'),
+    ('3l',  "passTight", '3 lepton definition'),
 ]
 
 INPUTS = {
@@ -343,26 +343,38 @@ def shushRooFit():
                   'Minimization',
                   'Fitting',
                   'Plotting',
-                  'InputArguments']:
+                  'InputArguments',
+                  'Caching']:
             msgSI.getStream(s).removeTopic(getattr(ROOT.RooFit,t))
 
-def shapeBreitWigner(ws):
+def putPHPIndex(odir):
+    LOC = '/afs/cern.ch/user/s/stiegerb/www/ttH/index.php'
+    try:
+        os.symlink(LOC, os.path.join(odir,'index.php'))
+    except OSError, e:
+        if e.errno == 17:  # 'File exists'
+            pass
+
+def shapeCBBreitWigner(ws):
     ws.factory("RooBreitWigner::bw(mass, mZ0[91.188], gammaZ0[2.4952])")
-    ws.factory("RooCBShape::cb_pdf(mass, cbb[0.07, -3.0, 3.0],"
-                                        "cbw[1.0,0.0,5.0],"
-                                        "cba[1.2,0.03,2.0],"
-                                        "cbn[5])")
-    ws.factory("RooNumConvPdf::bw(mass, cb_pdf, bw)")
+    ws.factory("RooCBShape::cb_pdf(mass, cbb[0.07, -3.00, 3.0]," # bias
+                                        "cbw[1.00,  0.00, 5.0]," # width
+                                        "cba[1.20,  0.03, 2.0]," # alpha
+                                        "cbn[5])")               # power
+
+    ws.factory("RooFFTConvPdf::sig(mass, bw, cb_pdf)")
 
 def shapeExpBackgr(ws):
-    ws.factory("RooExponential::bg(mass,tau[-0.05,-40.,-0.04])")
+    ws.factory("RooExponential::bg(mass,tau[-0.05,-40.,-0.01])")
 
 def shapeRooCMSShape(ws):
-    ws.factory("RooCMSShape::bg(mass, alpha[60.,50.,70.], "
-                                     "beta[0.001,0.,0.1], beta, "
-                                     "peak[90.0])")
+    ws.factory("RooCMSShape::bg(mass, alpha[40.,20.,160.], "
+                                     "beta[ 0.001, 0., 0.1], "
+                                     # Marco: make gamma smaller!
+                                     "gamma[0.001, 0., 0.1], "
+                                     "peak[91.2])")
 
-def getNSignalEvents(histo, dofit=True, odir='massfits/'):
+def getNSignalEvents(histo, dofit=True, odir='tnpfits/'):
     if not dofit:
         # Return cut&count values
         binlo = histo.GetXaxis().FindBin(71.)
@@ -374,7 +386,7 @@ def getNSignalEvents(histo, dofit=True, odir='massfits/'):
     os.system('mkdir -p %s'%odir)
 
     ROOT.gROOT.SetBatch(1)
-    # shushRooFit()
+    shushRooFit()
 
     ws = ROOT.RooWorkspace()
     mass = ws.factory('mass[61,121]')
@@ -385,14 +397,15 @@ def getNSignalEvents(histo, dofit=True, odir='massfits/'):
     getattr(ws,'import')(data)
 
     # Define the pdfs:
-    shapeBreitWigner(ws)
-    # shapeRooCMSShape(ws)
-    shapeExpBackgr(ws)
+    shapeCBBreitWigner(ws)
+    shapeRooCMSShape(ws)
+    # shapeExpBackgr(ws)
 
     # Define the fit model:
-    nsig = ws.factory('nsig[0,%d]'  %(5*int(histo.Integral())))
-    nbkg = ws.factory('nbkg[1,0,%d]'%(5*int(histo.Integral())))
-    shape = ws.factory('SUM::model(nsig*bw, nbkg*bg)')
+    nev = histo.Integral()
+    nsig  = ws.factory('nsig[%.1f,%.1f,%.0f]'%(0.9*nev,0.2*nev,1.5*nev))
+    nbkg  = ws.factory('nbkg[%.1f,0,%.0f]'%(0.1*nev,1.5*nev))
+    shape = ws.factory('SUM::model(nsig*sig, nbkg*bg)')
     getattr(ws,'import')(shape)
 
     # Do the fit
@@ -402,17 +415,35 @@ def getNSignalEvents(histo, dofit=True, odir='massfits/'):
     canv = ROOT.TCanvas('canv_%s'%histo.GetName(),'canvas', 800, 800)
     frame = mass.frame()
     data.plotOn(frame)
-    shape.plotOn(frame)
+    shape.plotOn(frame,
+               ROOT.RooFit.Name('total'),
+               ROOT.RooFit.ProjWData(data),
+               ROOT.RooFit.LineColor(ROOT.kBlue),
+               ROOT.RooFit.LineWidth(2),
+               ROOT.RooFit.MoveToBack())
+    shape.plotOn(frame,
+               ROOT.RooFit.Name('bkg'),
+               ROOT.RooFit.ProjWData(data),
+               ROOT.RooFit.Components('*bg*'),
+               ROOT.RooFit.FillColor(ROOT.kGray),
+               ROOT.RooFit.LineColor(ROOT.kGray),
+               ROOT.RooFit.LineWidth(1),
+               ROOT.RooFit.DrawOption('f'),
+               ROOT.RooFit.FillStyle(1001),
+               ROOT.RooFit.MoveToBack())
     frame.Draw()
     canv.SaveAs(osp.join(odir,"massfit_%s.pdf"%(histo.GetName())))
+    canv.SaveAs(osp.join(odir,"massfit_%s.png"%(histo.GetName())))
+    if 'www' in odir: putPHPIndex(odir)
 
     # print "    nsig=%f+-%f, nbkg=%f+-%f" % (nsig.getVal(), nsig.getError(),
     #                                         nbkg.getVal(), nbkg.getError())
     return nsig.getVal(), nsig.getError()
 
 def getPassTotalHistos((key, output,
-                        proc, floc, pairsel,
-                        probnum, probdenom, var, bins)):
+                        tag, floc, pairsel,
+                        probnum, probdenom, var, bins,
+                        options)):
     totalsel  = '(%s)&&(%s)' % (pairsel, probdenom)
     passedsel = '(%s)&&(%s)' % (pairsel, probnum)
 
@@ -433,6 +464,10 @@ def getPassTotalHistos((key, output,
     htotal = htemp.Clone("%s_total"%var)
     htotal.SetDirectory(0)
 
+    plotDir = osp.join(options.outDir, 'tnpfits', *tuple(tag.split('_')))
+    proc = tag.split('_',1)[0]
+    dofit = [proc in ['data','DY']] and not options.cutNCount
+
     for n,binsel in enumerate(binsels):
         print "  ... processing", binsel,
         totalbinsel = "%s&&%s" % (totalsel, binsel)
@@ -447,13 +482,11 @@ def getPassTotalHistos((key, output,
                                    titlex='Dilepton Mass [GeV]')
 
         npass,passerr = getNSignalEvents(hpassedbin,
-                                         # dofit=False,
-                                         dofit=(proc in ['data','DY']),
-                                         odir='massfits/%s'%proc)
+                                         dofit=dofit,
+                                         odir=plotDir)
         ntot,toterr   = getNSignalEvents(htotalbin,
-                                         # dofit=False,
-                                         dofit=(proc in ['data','DY']),
-                                         odir='massfits/%s'%proc)
+                                         dofit=dofit,
+                                         odir=plotDir)
         print 'pass:',npass,'+-',passerr,
         print 'tot:',ntot,'+-',toterr,
 
@@ -461,9 +494,9 @@ def getPassTotalHistos((key, output,
         hpassed.SetBinError(n+1, passerr)
         htotal.SetBinContent(n+1, ntot)
         htotal.SetBinError(n+1, toterr)
+        print "DONE"
 
     output[key] = (hpassed, htotal)
-    print "DONE"
 
 def makePassedFailed(proc,fnames,indir):
     stump = '_treeProducerSusyMultilepton_tree.root'
@@ -501,11 +534,12 @@ def makePassedFailed(proc,fnames,indir):
                 finalsel = '(%s)&&(%s)' % (lepsel, sel)
                 for var,bins,_ in BINNINGS:
                     for nname,num,_ in NUMERATORS:
-
+                        tag = '_'.join([proc, lep, nname])
                         key = (lep,sname,nname,var)
                         tasks.append((key, result_dict,
-                                      proc, floc, finalsel, num,
-                                      DENOMINATOR, var,bins))
+                                      tag, floc, finalsel, num,
+                                      DENOMINATOR, var, bins,
+                                      options))
 
         print 'Have %d tasks to process' % len(tasks)
 
@@ -513,6 +547,7 @@ def makePassedFailed(proc,fnames,indir):
 
         # for key in [t[0] for t in tasks]:
         for task in tasks:
+            key = task[0]
             getPassTotalHistos(task)
             hpass, htot = result_dict[key]
 
@@ -618,6 +653,9 @@ if __name__ == '__main__':
                       action="store", type="string", dest="outDir",
                       help=("Output directory for eff plots "
                             "[default: %default/]"))
+    parser.add_option('-c', '--cutNCount', dest='cutNCount',
+                      action="store_true",
+                      help='Do cut & count instead of fitting mass shape')
     (options, args) = parser.parse_args()
 
     # Gather all the passed/total histograms
