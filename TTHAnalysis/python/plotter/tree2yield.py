@@ -172,10 +172,13 @@ class TreeToYield:
             self._FR = FakeRate(settings['FakeRate'],self._options.lumi)
             ## add additional weight correction.
             ## note that the weight receives the other mcCorrections, but not itself
-            self._weightString += "* (" + self.adaptExpr(self._FR.weight(), cut=True) + ")"
+            frweight = self.adaptExpr(self._FR.weight(), cut=True)
             ## modify cuts to get to control region. order is important
             self._mcCorrs = self._mcCorrs + self._FR.cutMods()  + self._FR.mods()
+            self._weightString = self.adaptExpr(self._weightString, cut=True) + "* (" + frweight + ")"
             self._weight = True
+        else:
+            self._weightString = self.adaptExpr(self._weightString, cut=True)
         for macro in self._options.loadMacro:
             libname = macro.replace(".cc","_cc.so").replace(".cxx","_cxx.so")
             if libname not in ROOT.gSystem.GetLibraries():

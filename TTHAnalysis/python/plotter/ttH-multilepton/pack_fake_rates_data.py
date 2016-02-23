@@ -87,9 +87,9 @@ if __name__ == "__main__":
        etaslices_el = [ (0.4,"00_15"), (1.8,"15_25") ]
        etaslices_mu = [ (0.4,"00_12"), (1.8,"12_24") ]
        Xs     = [ "signal",                        "signal_cut", "data_cut","total_cut","data_cut_sub","data_fqcd","data_simfit" ]
-       Xnices = [ "MC non-pr.", "MC non-pr., cut", "Data all, cut" ,"MC all, cut", "Data, cut & sub.", "Data, unfold", "Data, sim. fit") 
+       Xnices = [ "MC non-pr.", "MC non-pr., cut", "Data all, cut" ,"MC all, cut", "Data, cut & sub.", "Data, unfold", "Data, sim. fit"] 
        h2d_el = dict([ (X, make2D(outfile,"FR_mva075_el_"+X, ptbins_el, etabins_el)) for X in Xs ])
-       h2d_mu = dict([ [ make2D(outfile,"FR_mva075_mu_"+X, ptbins_mu, etabins_mu) for X in Xs ]
+       h2d_mu = dict([ (X, make2D(outfile,"FR_mva075_mu_"+X, ptbins_mu, etabins_mu)) for X in Xs ])
 
        Plots="plots/74X/ttH/fr-meas"
        Z3l="z3l/v2.0"

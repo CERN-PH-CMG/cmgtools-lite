@@ -1,51 +1,3 @@
-ttH+    : TTHnobb : 0.5071*0.418 
-
-TTW     : TTWToLNu : xsec 
-TTZ     : TTZToLLNuNu_LO : xsec 
-TTZ     : TTLLJets_m1to10 : xsec 
-TTZ	: TTJets_DiLepton : xsec 
-TTZ   	: TTJets_SingleLeptonFromT : xsec 
-TTZ     : TTJets_SingleLeptonFromTbar : xsec 
-
-WZ 	: WZTo3LNu : xsec 
-ZZ      : ZZTo4L : xsec 
-
-Gstar   : DYJetsToLL_M10to50: xsec 
-Gstar   : DYJetsToLL_M50: xsec 
-
-WWss: WpWpJJ : xsec 
-
-Rares: WWDouble : xsec 
-#Rares: WWZ : xsec 
-Rares: WZZ : xsec 
-#Rares: ZZZ : xsec 
-Rares: TTTT : xsec 
-Rares: tZq_ll : xsec 
-
-Convs	: TTGJets : xsec 
-Convs 	: WGToLNuG : xsec 
-Convs 	: ZGTo2LG : xsec 
-Convs 	: TGJets : xsec 
-
-TT      : TTJets_DiLepton : xsec 
-TT      : TTJets_SingleLeptonFromT : xsec 
-TT      : TTJets_SingleLeptonFromTbar : xsec 
-DY      : DYJetsToLL_M10to50: xsec 
-DY      : DYJetsToLL_M50: xsec 
-WJets   : WJetsToLNu: xsec 
-SingleTop: TToLeptons_tch_amcatnlo: xsec 
-SingleTop: TToLeptons_sch: xsec 
-SingleTop: T_tWch: xsec 
-SingleTop: TBar_tWch: xsec 
-WW: WWTo2L2Nu: xsec 
-
-Flips : TTJets_DiLepton : xsec 
-Flips : DYJetsToLL_M10to50 : xsec 
-Flips : DYJetsToLL_M50 : xsec 
-Flips : T_tWch : xsec 
-Flips : TBar_tWch : xsec 
-Flips : WWTo2L2Nu : xsec 
-
 data : DoubleEG_Run2015C_25ns_16Dec2015
 data : DoubleEG_Run2015D_16Dec2015
 data : DoubleMuon_Run2015C_25ns_16Dec2015
@@ -56,3 +8,37 @@ data : SingleElectron_Run2015C_25ns_16Dec2015
 data : SingleElectron_Run2015D_16Dec2015
 data : SingleMuon_Run2015C_25ns_16Dec2015
 data : SingleMuon_Run2015D_16Dec2015
+
+DYJetsToLL_M10to50 : DYJetsToLL_M10to50 : xsec
+DYJetsToLL_M50 : DYJetsToLL_M50 : xsec
+TBar_tWch : TBar_tWch : xsec
+TGJets : TGJets : xsec
+TTGJets : TTGJets : xsec
+TTHnobb : TTHnobb : xsec
+TTHnobb_pow : TTHnobb_pow : xsec
+TTJets : TTJets : xsec
+TTJets_DiLepton : TTJets_DiLepton : xsec
+TTJets_SingleLeptonFromT : TTJets_SingleLeptonFromT : xsec
+TTJets_SingleLeptonFromT_ext : TTJets_SingleLeptonFromT_ext : xsec
+TTJets_SingleLeptonFromTbar : TTJets_SingleLeptonFromTbar : xsec
+TTJets_SingleLeptonFromTbar_ext : TTJets_SingleLeptonFromTbar_ext : xsec
+TTLLJets_m1to10 : TTLLJets_m1to10 : xsec
+TTTT : TTTT : xsec
+TTWToLNu : TTWToLNu : 0.196
+TTWToLNu_LO : TTWToLNu_LO : 0.6008
+TTZToLLNuNu_LO : TTZToLLNuNu_LO : xsec
+TTZToLLNuNu_LO_withLHE : TTZToLLNuNu_LO_withLHE : xsec
+TT_pow_ext : TT_pow_ext : xsec
+TToLeptons_sch : TToLeptons_sch : xsec
+TToLeptons_tch_amcatnlo : TToLeptons_tch_amcatnlo : xsec
+T_tWch : T_tWch : xsec
+WGToLNuG : WGToLNuG : xsec
+WJetsToLNu : WJetsToLNu : xsec
+WWDouble : WWDouble : xsec
+WWTo2L2Nu : WWTo2L2Nu : xsec
+WZTo3LNu : WZTo3LNu : xsec
+WZZ : WZZ : xsec
+WpWpJJ : WpWpJJ : xsec
+ZGTo2LG : ZGTo2LG : xsec
+ZZTo4L : ZZTo4L : xsec
+tZq_ll : tZq_ll : xsec

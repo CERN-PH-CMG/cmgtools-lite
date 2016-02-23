@@ -6,23 +6,20 @@ ODIR=sys.argv[1]
 
 doplots=True
 
-purew = "-W 'puw(nTrueInt)'"
-
 def base(selection):
 
-    print 'echo WARNING: remember to add the missing samples!'
-    CORE="-P /data1/peruzzi/TREES_76X_150216_noLHE_jecV1_noJecUnc_skim_reclv8 -F sf/t {P}/2_recleaner_v8_b1E2_approx/evVarFriend_{cname}.root -F sf/t {P}/4_kinMVA_74XtrainingMilosJan31_v3_reclv8/evVarFriend_{cname}.root"
+    CORE="-P /data1/peruzzi/TREES_76X_200216_jecV1M2_skimOnlyMC_reclv8 -F sf/t {P}/2_recleaner_v8_b1E2/evVarFriend_{cname}.root -F sf/t {P}/4_kinMVA_trainFeb23_v0/evVarFriend_{cname}.root -F sf/t {P}/5_eventBTagRWT_onlyJets_v1/evVarFriend_{cname}.root"
 
-    CORE+=" -f -j 8 -l 2.26 --neg --s2v --tree treeProducerSusyMultilepton --mcc ttH-multilepton/lepchoice-ttH-FO.txt --mcc ttH-multilepton/ttH_2lss3l_triggerdefs.txt"
+    CORE+=" -f -j 8 -l 2.26 --s2v --tree treeProducerSusyMultilepton --mcc ttH-multilepton/lepchoice-ttH-FO.txt --mcc ttH-multilepton/ttH_2lss3l_triggerdefs.txt"# --neg"
     if doplots: CORE+=" --lspam '#bf{CMS} #it{Preliminary}' --legendWidth 0.20 --legendFontSize 0.035 --showRatio --maxRatioRange 0 3  --showMCError --rebin 2"
-
-    CORE+=" %s "%purew
 
     if selection=='2lss':
         GO="%s ttH-multilepton/mca-2lss-mc.txt ttH-multilepton/2lss_tight.txt "%CORE
+        GO="%s -W 'puw(nTrueInt)*leptonSF_ttH(LepGood_pdgId[iF_Recl[0]],LepGood_pt[iF_Recl[0]],LepGood_eta[iF_Recl[0]],2)*leptonSF_ttH(LepGood_pdgId[iF_Recl[1]],LepGood_pt[iF_Recl[1]],LepGood_eta[iF_Recl[1]],2)*triggerSF_ttH(LepGood_pdgId[iF_Recl[0]],LepGood_pt[iF_Recl[0]],LepGood_pdgId[iF_Recl[1]],LepGood_pt[iF_Recl[1]],2)*eventBTagSF'"%GO
         if doplots: GO+=" ttH-multilepton/2lss_3l_plots.txt --xP 'lep3_.*' --xP '3lep_.*' --xP 'kinMVA_3l_.*' --xP 'kinMVA_input.*' "
     elif selection=='3l':
         GO="%s ttH-multilepton/mca-3l-mc.txt ttH-multilepton/3l_tight.txt "%CORE
+        GO="%s -W 'puw(nTrueInt)*leptonSF_ttH(LepGood_pdgId[iF_Recl[0]],LepGood_pt[iF_Recl[0]],LepGood_eta[iF_Recl[0]],3)*leptonSF_ttH(LepGood_pdgId[iF_Recl[1]],LepGood_pt[iF_Recl[1]],LepGood_eta[iF_Recl[1]],3)*leptonSF_ttH(LepGood_pdgId[iF_Recl[2]],LepGood_pt[iF_Recl[2]],LepGood_eta[iF_Recl[2]],3)*triggerSF_ttH(LepGood_pdgId[iF_Recl[0]],LepGood_pt[iF_Recl[0]],LepGood_pdgId[iF_Recl[1]],LepGood_pt[iF_Recl[1]],3)*eventBTagSF'"%GO
         if doplots: GO+=" ttH-multilepton/2lss_3l_plots.txt --xP '2lep_.*' --xP 'kinMVA_2lss_.*' --xP 'kinMVA_input.*' "
     else:
         raise RuntimeError, 'Unknown selection'
@@ -44,15 +41,7 @@ def setwide(x):
     x2 = x2.replace('--legendWidth 0.35','--legendWidth 0.20')
     return x2
 def fulltrees(x):
-    return x.replace('/data1/peruzzi/TREES_76X_150216_noLHE_jecV1_noJecUnc_skim_reclv8','/data1/peruzzi/TREES_76X_150216_noLHE_jecV1_noJecUnc')
-def prep74vs76(x):
-    x = x.replace('ttH-multilepton/mca','ttH-multilepton/test_74vs76/mca')
-    x = x.replace(purew,"")
-    print 'echo NO PU REW'
-    x = add(x,"--plotmode nostack")
-    x = x.replace("-P /data1/peruzzi/TREES_76X_150216_noLHE_jecV1_noJecUnc_skim_reclv8 -F sf/t {P}/2_recleaner_v8_b1E2_approx/evVarFriend_{cname}.root -F sf/t {P}/4_kinMVA_74XtrainingMilosJan31_v3_reclv8/evVarFriend_{cname}.root",\
-                  "-P /data1/peruzzi/test_74vs76 -F sf/t {P}/2_recleaner/evVarFriend_{cname}.root -F sf/t {P}/4_kinMVA/evVarFriend_{cname}.root")
-    return x
+    return x.replace('TREES_76X_200216_jecV1M2_skimOnlyMC_reclv8','TREES_76X_200216_jecV1M2')
 
 if __name__ == '__main__':
 
@@ -73,15 +62,32 @@ if __name__ == '__main__':
             x = add(x,"--xp data")
             x = x.replace('mca-2lss-mcdata.txt','mca-2lss-mcdata-frdata.txt')
 
-        if '_closure' in torun:
-            x = x.replace("--xP 'kinMVA_input.*'","--sP 'kinMVA_input.*'")
+        if '_splitfakes' in torun:
+            x = x.replace('mca-2lss-mc.txt','mca-2lss-mc-flavsplit.txt')
+            
+        if '_closuretest' in torun:
+            x = x.replace('mca-2lss-mc.txt','mca-2lss-mc-closuretest.txt')
+#            x = x.replace("--xP 'kinMVA_input.*'","--sP 'kinMVA_input.*'")
+            x = x.replace("--maxRatioRange 0 3","--maxRatioRange 0.5 1.5")
             x = add(x,"--AP --plotmode nostack --sP kinMVA_2lss_ttbar --sP kinMVA_2lss_ttV")
-            x = procs(x,['TT_1lep','TT_frmc_tt','TT_frmc_qcd'])
-            x = add(x,"--ratioDen TT_1lep --ratioNums TT_frmc_tt,TT_frmc_qcd --rebin 4 --errors")
+            x = add(x,"--ratioDen FR_QCD --ratioNums FR_TT --rebin 4 --errors")
+            if '_closuretest_norm' in torun:
+                x = x.replace("--plotmode nostack","--plotmode norm")
+                x = add(x,"--fitRatio 1")
             if '_bloose' in torun: x = add(x,'-E BLoose')
             if '_btight' in torun: x = add(x,'-E BTight')
             if '_nobcut' in torun: x = add(x,'-X 2b1B')
             if '_notrigger' in torun: x = add(x,'-X trigger')
+
+        if '_varsFR' in torun:
+            torun += "_"+sys.argv[-1]
+            x = x.replace('mca-2lss-mc.txt','mca-2lss-data-frdata-%s.txt'%sys.argv[-1])
+            x = x.replace("--maxRatioRange 0 3","--maxRatioRange 0 2")
+            x = add(x,"--plotmode nostack --sP kinMVA_2lss_ttbar --sP kinMVA_2lss_ttV")
+            x = add(x,"--ratioDen fakes_data --ratioNums fakes_data_%s --rebin 4 --errors"%sys.argv[-1])
+            if '_varsFR_norm' in torun:
+                x = x.replace("--plotmode nostack","--plotmode norm")
+                x = add(x,"--fitRatio 1")
 
         runIt(x,'%s/all'%torun)
         if '_flav' in torun:
@@ -96,6 +102,25 @@ if __name__ == '__main__':
             if not '_data' in torun: raise RuntimeError
             x = add(x,"--xp data")
             x = x.replace('mca-3l-mcdata.txt','mca-3l-mcdata-frdata.txt')
+        if '_closuretest' in torun:
+            x = x.replace('mca-3l-mc.txt','mca-3l-mc-closuretest.txt')
+#            x = x.replace("--xP 'kinMVA_input.*'","--sP 'kinMVA_input.*'")
+            x = x.replace("--maxRatioRange 0 3","--maxRatioRange 0.5 1.5")
+            x = add(x,"--AP --plotmode nostack --sP kinMVA_3l_ttbar --sP kinMVA_3l_ttV")
+            x = add(x,"--ratioDen FR_QCD --ratioNums FR_TT --rebin 4 --errors")
+            if '_closuretest_norm' in torun:
+                x = x.replace("--plotmode nostack","--plotmode norm")
+                x = add(x,"--fitRatio 1")
+            if '_notrigger' in torun: x = add(x,'-X trigger')
+        if '_varsFR' in torun:
+            torun += "_"+sys.argv[-1]
+            x = x.replace('mca-3l-mc.txt','mca-3l-data-frdata-%s.txt'%sys.argv[-1])
+            x = x.replace("--maxRatioRange 0 3","--maxRatioRange 0 2")
+            x = add(x,"--plotmode nostack --sP kinMVA_3l_ttbar --sP kinMVA_3l_ttV")
+            x = add(x,"--ratioDen fakes_data --ratioNums fakes_data_%s --rebin 4 --errors"%sys.argv[-1])
+            if '_varsFR_norm' in torun:
+                x = x.replace("--plotmode nostack","--plotmode norm")
+                x = add(x,"--fitRatio 1")
         runIt(x,'%s'%torun)
 
     if 'cr_3j' in torun:
