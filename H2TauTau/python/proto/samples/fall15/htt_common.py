@@ -1,6 +1,6 @@
-from CMGTools.RootTools.samples.samples_13TeV_RunIIFall15MiniAODv2 import TT_pow_ext, DYJetsToLL_M50, WJetsToLNu, WJetsToLNu_HT100to200, WJetsToLNu_HT200to400, WJetsToLNu_HT400to600, WJetsToLNu_HT600toInf, WWTo2L2Nu, ZZ, WZ,  QCD_Mu5, DYJetsToLL_M50_LO, TBar_tWch, T_tWch, QCDPtEMEnriched, QCDPtbcToE, TToLeptons_tch_amcatnlo, TBarToLeptons_tch_powheg, TToLeptons_tch_powheg, DYNJets #QCD_Mu15, WJetsToLNu_LO
+from CMGTools.RootTools.samples.samples_13TeV_RunIIFall15MiniAODv2 import TT_pow_ext, DYJetsToLL_M50, WJetsToLNu, WJetsToLNu_HT100to200, WJetsToLNu_HT200to400, WJetsToLNu_HT400to600, WJetsToLNu_HT600toInf, WWTo2L2Nu, ZZ, WZ,  QCD_Mu5, DYJetsToLL_M50_LO, TBar_tWch, T_tWch, QCDPtEMEnriched, QCDPtbcToE, TToLeptons_tch_amcatnlo, TBarToLeptons_tch_powheg, TToLeptons_tch_powheg, DYNJets, QCD_Mu15, WJetsToLNu_LO, WNJets
 from CMGTools.RootTools.samples.samples_13TeV_DATA2015 import SingleMuon_Run2015D_16Dec, SingleElectron_Run2015D_16Dec, MuonEG_Run2015D_16Dec, Tau_Run2015D_16Dec
-from CMGTools.RootTools.samples.samples_13TeV_RunIIFall15MiniAODv2 import ZZTo4L, WZTo1L3Nu, WZTo3L, WWTo1L1Nu2Q#, WZTo1L1Nu2Q, VVTo2L2Nu, , ZZTo2L2Q, , WZTo2L2Q
+from CMGTools.RootTools.samples.samples_13TeV_RunIIFall15MiniAODv2 import ZZTo4L, WZTo1L3Nu, WZTo3L, WWTo1L1Nu2Q, WZTo1L1Nu2Q, ZZTo2L2Q, WZTo2L2Q#, VVTo2L2Nu
 
 from CMGTools.H2TauTau.proto.samples.fall15.higgs import HiggsGGH125, HiggsVBF125, HiggsTTH125
 from CMGTools.H2TauTau.proto.samples.fall15.higgs_susy import mc_higgs_susy_gg, mc_higgs_susy_bb
@@ -10,31 +10,45 @@ from CMGTools.H2TauTau.proto.samples.fall15.higgs_susy import HiggsSUSYGG160 as 
 # Set cross sections to HTT values
 
 # VVTo2L2Nu.xSection = 11.95
-# WWTo1L1Nu2Q.xSection = 49.997
-# ZZTo2L2Q.xSection = 3.22 
+WWTo1L1Nu2Q.xSection = 49.997
+ZZTo2L2Q.xSection = 3.22 
 ZZTo4L.xSection = 1.212
-# WZTo3L.xSection = 5.26
-# WZTo2L2Q.xSection = 5.595
+WZTo3L.xSection = 5.26
+WZTo2L2Q.xSection = 5.595
 WZTo1L3Nu.xSection = 3.05
-# WZTo1L1Nu2Q.xSection = 10.71
+WZTo1L1Nu2Q.xSection = 10.71
 
 DYJetsToLL_M50_LO.xSection = 6025.2
 DYJetsToLL_M50.xSection = 6025.2
 
+# From https://twiki.cern.ch/twiki/pub/CMS/HiggsToTauTauWorking2015/DYNjetWeights.xls r1
+for sample in [DYJetsToLL_M50_LO] + DYNJets:
+    sample.fractions = [0.7, 0.204374, 0.0671836, 0.0205415, 0.0110539]
+    sample.nevents = [7926922., 65314144., 20019059., 5701878., 4189017.]
+    sample.xSection = 6025.2
+
+for sample in [WJetsToLNu_LO] + WNJets:
+    # sample.fractions = [1., 1., 1., 1., 1.]
+    # sample.nevents = [1., 1., 1., 1., 1.]
+    sample.xSection = 61526.7
+
+
+
 # Backgrounds
 diboson_lo = [ZZ, WZ]
-diboson_nlo = [ZZTo4L, WZTo1L3Nu, WZTo3L, WWTo1L1Nu2Q] #, VVTo2L2Nu, ZZTo2L2Q,  WZTo2L2Q, WZTo1L1Nu2Q]
+diboson_nlo = [ZZTo4L, WZTo1L3Nu, WZTo3L, WWTo1L1Nu2Q, ZZTo2L2Q,  WZTo2L2Q, WZTo1L1Nu2Q] #, VVTo2L2Nu]
 
-essential = [TT_pow_ext, WJetsToLNu, DYJetsToLL_M50_LO, TBar_tWch, T_tWch] #WJetsToLNu_LO
+essential = [TT_pow_ext, WJetsToLNu, DYJetsToLL_M50_LO, TBar_tWch, T_tWch, TBarToLeptons_tch_powheg, TToLeptons_tch_powheg, WJetsToLNu_LO] #
 
 # Build default background list
 backgrounds = essential
 backgrounds += DYNJets
+backgrounds += WNJets
 backgrounds += diboson_nlo
 backgrounds += []
 
 backgrounds_mu = backgrounds[:]
-# backgrounds_mu += [QCD_Mu15]
+backgrounds_mu += [QCD_Mu15]
 
 backgrounds_ele = backgrounds[:]
 backgrounds_ele += QCDPtEMEnriched 
