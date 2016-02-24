@@ -57,9 +57,9 @@ NJETBINS  = [0,1,2,3,4,5,6]
 NBJETBINS = [0,1,2,3]
 BINNINGS = [
     ('pt',            PTBINS,    'p_{T} [GeV]'),
-    # ('nVert',         NVERTBINS, 'N_{vertices}'),
+    ('nVert',         NVERTBINS, 'N_{vertices}'),
     ('nJet25',        NJETBINS,  'N_{jets}'),
-    # ('nBJetMedium25', NBJETBINS, 'N_{bjets, CSVM}'),
+    ('nBJetMedium25', NBJETBINS, 'N_{bjets, CSVM}'),
 ]
 
 DENOMINATOR = "passLoose"
@@ -407,7 +407,7 @@ def shapeExpBackgr(ws):
 def shapeRooCMSShape(ws):
     ws.factory("RooCMSShape::bg(mass, alpha[40.,20.,160.], "
                                      "beta[ 0.050, 0., 2.0], "
-                                     "gamma[0.050, 0., 2.0], "
+                                     "gamma[0.020, 0., 0.1], "
                                      "peak[91.2])")
 
 def getNSignalEvents(histo, dofit=True, odir='tnpfits/'):
@@ -468,21 +468,30 @@ def getNSignalEvents(histo, dofit=True, odir='tnpfits/'):
                ROOT.RooFit.FillStyle(1001),
                ROOT.RooFit.MoveToBack())
     frame.Draw()
+
+    tlat = ROOT.TLatex()
+    tlat.SetTextFont(83)
+    tlat.SetNDC(1)
+    tlat.SetTextSize(22)
+    fitparms = ['cbb', 'cbw', 'cba', 'beta', 'gamma', 'alpha']
+    for v in fitparms:
+        val = ws.var(v).getVal()
+        # if abs(val - ws.var(v).getMax()) < 1e-5:
+        #     print ('########## %s is hitting maximum: %f (%f)' %
+        #                   (v, val, ws.var(v).getMax()))
+        # if abs(val - ws.var(v).getMin()) < 1e-5:
+        #     print ('########## %s is hitting minimum: %f (%f)' %
+        #                   (v, val, ws.var(v).getMin()))
+
+        tlat.DrawLatex(0.14, 0.80-0.03*fitparms.index(v), '%-5s: %6.3f' % (v, val))
+    tlat.DrawLatex(0.14, 0.86, 'Nsig : %8.1f' % (nsig.getVal()))
+    tlat.DrawLatex(0.14, 0.83, 'Nbkg : %8.1f' % (nbkg.getVal()))
+
+
     canv.SaveAs(osp.join(odir,"massfit_%s.pdf"%(histo.GetName())))
     canv.SaveAs(osp.join(odir,"massfit_%s.png"%(histo.GetName())))
     if 'www' in odir: putPHPIndex(odir)
 
-    for v in ['beta', 'gamma', 'alpha', 'cbb', 'cbw', 'cba']:
-        val = ws.var(v).getVal()
-        if abs(val - ws.var(v).getMax()) < 1e-5:
-            print ('########## %s is hitting maximum: %f (%f)' %
-                          (v, val, ws.var(v).getMax()))
-        if abs(val - ws.var(v).getMin()) < 1e-5:
-            print ('########## %s is hitting minimum: %f (%f)' %
-                          (v, val, ws.var(v).getMin()))
-
-    # print "    nsig=%f+-%f, nbkg=%f+-%f" % (nsig.getVal(), nsig.getError(),
-    #                                         nbkg.getVal(), nbkg.getError())
     return nsig.getVal(), nsig.getError()
 
 def getPassTotalHistos((key, output,
@@ -534,6 +543,13 @@ def getPassTotalHistos((key, output,
                                          odir=plotDir)
         print 'pass: %8.1f +- %5.1f' % (npass,passerr),
         print 'tot:  %8.1f +- %5.1f' % (ntot,toterr),
+
+        ## Some cheating (i.e. taking cut&count in some cases):
+        ##  npass > ntot (can only happen if the fit goes wrong)
+        ##  for the threshold bin containing pT of 50 GeV
+        if npass > ntot or (50.>=bins[n] and 50.<bins[n+1]):
+            npass,passerr = getNSignalEvents(hpassedbin,dofit=False)
+            ntot,toterr   = getNSignalEvents(htotalbin, dofit=False)
 
         hpassed.SetBinContent(n+1, npass)
         hpassed.SetBinError(n+1, passerr)
