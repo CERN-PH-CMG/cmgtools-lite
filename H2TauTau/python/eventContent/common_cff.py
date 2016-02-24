@@ -1,7 +1,7 @@
 import copy
 
 common = [
-    'drop *',
+    # 'drop *',
     'keep double_fixedGridRho*_*_*',
     'keep edmTriggerResults_TriggerResults_*_*',
     'keep patPackedTriggerPrescales_*_*_*',
@@ -15,7 +15,7 @@ common = [
     'keep patTrigger*_*_*_*',
     'keep recoVertexs_*_*_*',
     'keep cmgMETSignificances_*_*_*',
-    'keep patCompositeCandidates_cmg*CorSVFitFullSel_*_*',
+    'keep patCompositeCandidates_cmg*CorSVFitFullSel_*_H2TAUTAU',
     'keep patJets_patJetsAK4PF_*_*',
     'keep PileupSummaryInfos_*_*_*',
     'keep recoGenParticles_prunedGenParticles_*_*',
@@ -28,11 +28,12 @@ common = [
     'keep *_puppi_*_*',
     'keep *_slimmedMETsPuppi_*_*',
     'keep *_generator_*_*',
-    'keep *_genEvtWeightsCounter_*_*',
+    'keep *_genEvtWeightsCounter_*_H2TAUTAU',
     'keep *_offlineBeamSpot_*_*',
     'keep *_reducedEgamma_reducedConversions_*',
     'keep LHEEventProduct_externalLHEProducer_*_*',
-    'keep *_l1extraParticles_*_*'
+    'keep *_l1extraParticles_*_*',
+    # 'keep *_mvaMETTauMu_*_H2TAUTAU'
     ]
 
 commonDebug = copy.deepcopy(common) 
