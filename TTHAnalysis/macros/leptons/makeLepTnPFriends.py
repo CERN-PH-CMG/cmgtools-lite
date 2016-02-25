@@ -10,15 +10,17 @@ LUMI = 2.26
 WEIGHT = "puWeight"
 PAIRSEL = ("((pdgId*tag_pdgId==-11*11||pdgId*tag_pdgId==-13*13)"
            "&&abs(mass-91.)<30.&&abs(mcMatchId)>0)")
-SELECTIONS = [
-    ('inclusive',      PAIRSEL),
-    # ('singleTriggers', PAIRSEL+"&&passSingle"),
-    # ('doubleTriggers', PAIRSEL+"&&passDouble"),
-    # ('ttbar', "( (pdgId*tag_pdgId==-11*13)||"
-    #           "  ( (pdgId*tag_pdgId==-11*11||pdgId*tag_pdgId==-13*13)"
-    #           "&&abs(mass-91.)>15.&&met_pt>30.) )"
-    #           "&&passDouble&&nJet25>=2&&nBJetLoose25>=2"),
-]
+SELECTIONS = {
+    'inclusive':      PAIRSEL,
+    # 'singleTriggers': PAIRSEL+"&&passSingle",
+    # 'doubleTriggers': PAIRSEL+"&&passDouble",
+    'ttbar': "( (pdgId*tag_pdgId==-11*13)||"
+              "  ( (pdgId*tag_pdgId==-11*11||pdgId*tag_pdgId==-13*13)"
+              "&&abs(mass-91.)>15.&&met_pt>30.) )"
+              "&&passDouble&&nJet25>=2&&nBJetLoose25>=2"
+              "&&tag_pt>30&&abs(tag_mcMatchId)>0",
+    'ttH'  : "abs(mcMatchId)>0&&passDouble",
+}
 
 LEPSEL = [
     ('eb', 'abs(pdgId)==11&&abseta<1.479',
@@ -65,7 +67,7 @@ BINNINGS = [
 DENOMINATOR = "passLoose"
 NUMERATORS  = [
     ('2lss',"passTight&&passTCharge", 'same-sign 2 lepton definition'),
-    ('3l',  "passTight", '3 lepton definition'),
+    # ('3l',  "passTight", '3 lepton definition'),
 ]
 
 INPUTS = {
@@ -83,35 +85,24 @@ INPUTS = {
         # "SingleMuon_Run2015D_16Dec2015",
         ],
     'DY':["DYJetsToLL_M50"],
-    # 'ttbar':[
-    #     "TTJets_DiLepton",
-    #     "TTJets_SingleLeptonFromTbar_ext",
-    #     "TTJets_SingleLeptonFromTbar",
-    #     "TTJets_SingleLeptonFromT_ext",
-    #     "TTJets_SingleLeptonFromT",
-    #     ],
-    # 'ttH':["TTHnobb"],
-}
-
-PTITLE = {
-    'data'      : 'Data',
-    'data_corr' : 'Data (t#bar{t} subtracted',
-    'DY'        : 'DY MC'
-}
-
-SELTITLE = {
-    'inclusive'      : '',
-    'singleTriggers' : ', Single lepton triggers',
-    'doubleTriggers' : ', Double lepton triggers',
-    'ttbar'          : 'ttbar',
+    'ttbar':[
+        "TTJets_DiLepton",
+        "TTJets_SingleLeptonFromTbar_ext",
+        "TTJets_SingleLeptonFromTbar",
+        "TTJets_SingleLeptonFromT_ext",
+        "TTJets_SingleLeptonFromT",
+        ],
+    'ttH':["TTHnobb"],
 }
 
 def getEfficiencyRatio(eff1, eff2):
+    # This calculates eff1/eff2
     ratio = eff1.GetPassedHistogram().Clone("ratio")
     ratio.Sumw2()
     ratio.Divide(eff1.GetTotalHistogram())
     ratio.Multiply(eff2.GetTotalHistogram())
     ratio.Divide(eff2.GetPassedHistogram())
+    # Pass on the attributes of the second argument
     for att in ['LineWidth','LineColor','MarkerStyle',
                 'MarkerSize','MarkerColor']:
         getattr(ratio,'Set%s'%att)(getattr(eff2,'Get%s'%att)())
@@ -122,6 +113,7 @@ class EfficiencyPlot(object):
     def __init__(self, name):
         self.name = name
         self.effs = []
+        self.effsforratio = []
         self.legentries = []
         self.plotformats = ['.pdf', '.png']
         self.xtitle = ''
@@ -137,9 +129,11 @@ class EfficiencyPlot(object):
         self.reference = None # reference for ratios
         self.ratiorange = (0.75, 1.15)
 
-    def add(self,eff,tag):
+    def add(self,eff,tag,includeInRatio=True):
         self.effs.append(eff)
         self.legentries.append(tag)
+        if includeInRatio:
+            self.effsforratio.append(eff)
 
     def show(self, outname, outdir):
         ROOT.gROOT.SetBatch(1)
@@ -248,14 +242,14 @@ class EfficiencyPlot(object):
         mainframe.Draw()
 
         # leg = ROOT.TLegend(.12,.15,.60,.30+0.037*max(len(self.effs)-3,0))
-        leg = ROOT.TLegend(.63,.12,.92,.22+0.037*max(len(self.effs)-3,0))
+        leg = ROOT.TLegend(.35,.03,.85,.13+0.053*max(len(self.effs)-3,0))
 
         leg.SetBorderSize(0)
         leg.SetFillColor(0)
         leg.SetFillStyle(0)
         leg.SetShadowColor(0)
         leg.SetTextFont(43)
-        leg.SetTextSize(26)
+        leg.SetTextSize(22)
 
         for eff,entry,color in zip(self.effs,self.legentries,self.colors):
             eff.SetLineColor(color)
@@ -290,7 +284,10 @@ class EfficiencyPlot(object):
         p2.cd()
 
         if not self.reference: # no reference given, take first
-            self.reference = (len(self.effs)-1)*[self.effs[0]]
+            self.reference = len(self.effsforratio)*[self.effs[0]]
+        if len(self.reference) == 1: # one reference (compare all to this):
+            self.reference = len(self.effsforratio)*[self.reference[0]]
+        assert(len(self.reference) == len(self.effsforratio))
 
         # Ratio axes
         ratioframe = mainframe.Clone('ratioframe')
@@ -307,8 +304,8 @@ class EfficiencyPlot(object):
 
         # Calculate ratios
         self.ratios = []
-        for eff in self.effs[1:]:
-            self.ratios.append(getEfficiencyRatio(self.reference, eff))
+        for eff,ref in zip(self.effsforratio, self.reference):
+            self.ratios.append(getEfficiencyRatio(ref, eff))
 
         if not self.xtitle:
             ratioframe.GetXaxis().SetTitle(
@@ -559,6 +556,25 @@ def getPassTotalHistos((key, output,
 
     output[key] = (hpassed, htotal)
 
+def getPassTotalHistosSimple((key, output,
+                              tag, floc, pairsel,
+                              probnum, probdenom, var, bins,
+                              options)):
+    totalsel  = '(%s)&&(%s)' % (pairsel, probdenom)
+    passedsel = '(%s)&&(%s)' % (pairsel, probnum)
+
+    treefile = ROOT.TFile(floc,"READ")
+    tree = treefile.Get('fitter_tree')
+
+    htotal = getHistoFromTree(tree,totalsel,bins,var,
+                               hname="%s_total_simple_%s"%(var,tag),
+                               weight=WEIGHT)
+    hpassed = getHistoFromTree(tree,passedsel,bins,var,
+                               hname="%s_passed_simple_%s"%(var,tag),
+                               weight=WEIGHT)
+
+    output[key] = (hpassed, htotal)
+
 def makePassedFailed(proc,fnames,indir):
     stump = '_treeProducerSusyMultilepton_tree.root'
 
@@ -585,7 +601,8 @@ def makePassedFailed(proc,fnames,indir):
             print '    weighting histos by', weight
         else: weight = 1.0
 
-        tasks = []
+        tasks = []    # do the fit for these
+        tasks_cc = [] # do cut & count for these
 
         if options.jobs>1:
             from multiprocessing import Manager, Pool
@@ -595,7 +612,8 @@ def makePassedFailed(proc,fnames,indir):
             result_dict = {}
 
         for lep,lepsel,_ in LEPSEL:
-            for sname,sel in SELECTIONS:
+            for sname,sel in SELECTIONS.iteritems():
+                if sname == 'ttH' and proc != 'ttH': continue
                 finalsel = '(%s)&&(%s)' % (lepsel, sel)
                 for nname,num,_ in NUMERATORS:
                     for var,bins,_ in BINNINGS:
@@ -611,19 +629,26 @@ def makePassedFailed(proc,fnames,indir):
 
                         tag = '_'.join([proc, lep, nname])
                         key = (lep,sname,nname,var)
-                        tasks.append((key, result_dict,
-                                      tag, floc, fsel, num,
-                                      DENOMINATOR, var, bins,
-                                      options))
 
-        print 'Have %d tasks to process' % len(tasks)
+                        task = (key, result_dict, tag, floc, fsel, num,
+                                DENOMINATOR, var, bins, options)
+
+                        if sname=='inclusive' and proc in ['data', 'DY']:
+                            tasks.append(task)
+                        elif proc != 'DY':
+                            tasks_cc.append(task)
+
+
+        print 'Have %d tasks to process' % (len(tasks)+len(tasks_cc))
 
         if options.jobs > 1:
             Pool(options.jobs).map(getPassTotalHistos, tasks)
+            Pool(options.jobs).map(getPassTotalHistosSimple, tasks_cc)
         else:
             map(getPassTotalHistos, tasks)
+            map(getPassTotalHistosSimple, tasks_cc)
 
-        for key in [t[0] for t in tasks]:
+        for key in [t[0] for t in tasks+tasks_cc]:
             hpass, htot = result_dict[key]
 
             hpass.Scale(weight)
@@ -670,26 +695,40 @@ def makePlots(efficiencies, options):
         for nname,_,ntitle in NUMERATORS:
             for var,bins,xtitle in BINNINGS:
 
-                if lep in ['ee','eb','mb','me'] and 'abseta' in var: continue
                 if not lep in ['ee','eb','mb','me']: continue
 
-                # Compare data/MC in each binning/selection
+                # Compare data/MC for each binning
                 plot = EfficiencyPlot('%s_%s_%s'%(lep,nname,var))
                 plot.xtitle = xtitle
                 plot.tag = '%s'%(lname)
                 plot.subtag = '%s'%(ntitle)
+                plot.colors = [ROOT.kBlack,  ROOT.kAzure+1,
+                               ROOT.kGray+1, ROOT.kSpring-8,
+                               ROOT.kPink+9]
+
                 if 'Jet' in var:
                     plot.subtag = '%s, p_{T} > 30 GeV' % ntitle
 
-                legentries, effs_to_plot = [], []
-                for pname in ['data','DY']:
-                    plot.add(efficiencies[pname]
-                                   [(lep,'inclusive',nname,var)],
-                             PTITLE.get(pname,pname))
-                plot.reference = efficiencies['data'][(lep,'inclusive',
-                                                       nname,var)]
+                plot.add(efficiencies['data'][(lep,'inclusive',nname,var)],
+                         'Data, Z mass fit',
+                         includeInRatio=False)
+                plot.add(efficiencies['DY'][(lep,'inclusive',nname,var)],
+                         'DY MC, Z mass fit',
+                         includeInRatio=True)
+                plot.add(efficiencies['data'][(lep,'ttbar',nname,var)],
+                         'Data, t#bar{t} dilepton, cut & count',
+                         includeInRatio=False)
+                plot.add(efficiencies['ttbar'][(lep,'ttbar',nname,var)],
+                         't#bar{t} MC, t#bar{t} dilepton, cut & count',
+                         includeInRatio=True)
+                # plot.add(efficiencies['ttH'][(lep,'ttH',nname,var)],
+                #          't#bar{t}H MC, inclusive',
+                #          includeInRatio=False)
 
-                plot.show_with_ratio('tnp_eff_%s'%(plot.name),options.outDir)
+                plot.reference = [plot.effs[0], plot.effs[2]]
+
+                plot.show_with_ratio('tnp_eff_%s'%(plot.name),
+                                      options.outDir)
 
 def make2DMap(efficiencies, options):
     outdir = osp.join(options.outDir, 'map')
@@ -709,13 +748,12 @@ def make2DMap(efficiencies, options):
                 plot.tag = '%s'%(lname)
                 plot.subtag = '%s'%(ntitle)
 
-                legentries, effs_to_plot = [], []
-                for pname in ['data','DY']:
-                    plot.add(efficiencies[pname]
-                                   [(lep,'inclusive',nname,'pt')],
-                             PTITLE.get(pname,pname))
-                plot.reference = efficiencies['data'][(lep,'inclusive',
-                                                       nname,'pt')]
+                plot.add(efficiencies['data'][(lep,'inclusive',nname,'pt')],
+                         'Data, Z mass fit', includeInRatio=False)
+                plot.add(efficiencies['DY'][(lep,'inclusive',nname,'pt')],
+                         'DY MC, Z mass fit', includeInRatio=True)
+
+                plot.reference = [plot.effs[0]]
 
                 plot.show_with_ratio('tnp_eff_%s'%(plot.name),outdir)
 
