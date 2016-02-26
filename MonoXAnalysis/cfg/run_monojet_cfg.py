@@ -24,8 +24,7 @@ isTest = getHeppyOption("test",None) != None and not re.match("^\d+$",getHeppyOp
 # Define skims
 signalSkim = False
 diLepSkim = False
-singleLepSkim = True
-photonOrEleSkim = False
+singleLepSkim = False
 
 # --- MONOJET SKIMMING ---
 if signalSkim == True:
