@@ -25,6 +25,7 @@ isTest = getHeppyOption("test",None) != None and not re.match("^\d+$",getHeppyOp
 signalSkim = False
 diLepSkim = False
 singleLepSkim = True
+photonOrEleSkim = False
 
 # --- MONOJET SKIMMING ---
 if signalSkim == True:
@@ -39,6 +40,10 @@ if singleLepSkim == True:
     monoJetCtrlLepSkim.idCut = '(lepton.muonID("POG_ID_Tight") and lepton.relIso04 < 0.12) if abs(lepton.pdgId())==13 else \
 (lepton.electronID("POG_Cuts_ID_SPRING15_25ns_v1_ConvVetoDxyDz_Tight_full5x5") and (lepton.relIso03<0.0354 if abs(lepton.superCluster().eta())<1.479 else lepton.relIso03<0.0646))'
     monoJetCtrlLepSkim.ptCuts = [20]
+
+# --- Photon OR Electron SKIMMING ---
+#if photonOrEleSkim == True:
+    
 
 # run miniIso
 lepAna.doMiniIsolation = True
@@ -191,7 +196,7 @@ triggerFlagsAna.unrollbits = True
 triggerFlagsAna.saveIsUnprescaled = False
 triggerFlagsAna.checkL1Prescale = False
 
-from CMGTools.MonoXAnalysis.samples.samples_monojet_13TeV_74X import *
+from CMGTools.MonoXAnalysis.samples.samples_monojet_13TeV_76X import *
 from CMGTools.RootTools.samples.samples_13TeV_DATA2015 import *
 
 selectedComponents = [];
@@ -207,28 +212,33 @@ if scaleProdToLumi>0: # select only a subset of a sample, corresponding to a giv
         c.splitFactor = len(c.files)
         c.fineSplitFactor = 1
 
-json = "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions15/13TeV/Cert_246908-260627_13TeV_PromptReco_Collisions15_25ns_JSON.txt"
+json = "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions15/13TeV/Reprocessing/Cert_13TeV_16Dec2015ReReco_Collisions15_25ns_JSON.txt"
 if runData and not isTest: # For running on data
-    run_ranges = [ (246908,260627) ]; useAAA=False; is50ns=False
+    run_ranges = [ (254227,260627) ]; useAAA=False; is50ns=False
 
     compSelection = ""
     DatasetsAndTriggers = []
     selectedComponents = []; vetos = []
     ProcessingsAndRunRanges = []; Shorts = []
-    ProcessingsAndRunRanges.append( ("Run2015C_25ns-05Oct2015-v1", [254227,255031] ) ); Shorts.append("Run2015C_05Oct")
-    ProcessingsAndRunRanges.append( ("Run2015D-05Oct2015-v1", [256630,258158] ) ); Shorts.append("Run2015D_05Oct")
-    ProcessingsAndRunRanges.append( ("Run2015D-PromptReco-v4", [258159,999999] ) ); Shorts.append("Run2015D_v4")
+
+    # ProcessingsAndRunRanges.append( ("Run2015C_25ns-05Oct2015-v1", [254227,255031] ) ); Shorts.append("Run2015C_05Oct")
+    # ProcessingsAndRunRanges.append( ("Run2015D-05Oct2015-v1", [256630,258158] ) ); Shorts.append("Run2015D_05Oct")
+    # ProcessingsAndRunRanges.append( ("Run2015D-PromptReco-v4", [258159,999999] ) ); Shorts.append("Run2015D_v4")
+
+    ProcessingsAndRunRanges.append( ("Run2015C_25ns-16Dec2015-v1", [254227,254914] ) ); Shorts.append("Run2015C_16Dec")
+    ProcessingsAndRunRanges.append( ("Run2015D-16Dec2015-v1", [256630,260627] ) ); Shorts.append("Run2015D_16Dec")
     
     if diLepSkim == True:
         DatasetsAndTriggers.append( ("DoubleMuon", triggers_mumu_iso + triggers_mumu_ss + triggers_mumu_ht + triggers_3mu + triggers_3mu_alt + triggers_AllMonojet) )
         DatasetsAndTriggers.append( ("DoubleEG",   triggers_ee + triggers_ee_ht + triggers_3e) )
     if singleLepSkim == True:
-        DatasetsAndTriggers.append( ("DoubleMuon", triggers_mumu_iso + triggers_mumu_ss + triggers_mumu_ht + triggers_3mu + triggers_3mu_alt + triggers_AllMonojet) )
-        DatasetsAndTriggers.append( ("DoubleEG",   triggers_ee + triggers_ee_ht + triggers_3e) )
-        DatasetsAndTriggers.append( ("SingleMuon", triggers_1mu_iso + triggers_1mu_iso_50ns + triggers_1mu_noniso + triggers_AllMonojet) )
-        DatasetsAndTriggers.append( ("SingleElectron", triggers_1e + triggers_1e_50ns) )
+#        DatasetsAndTriggers.append( ("DoubleMuon", triggers_mumu_iso + triggers_mumu_ss + triggers_mumu_ht + triggers_3mu + triggers_3mu_alt + triggers_AllMonojet) )
+#        DatasetsAndTriggers.append( ("DoubleEG",   triggers_ee + triggers_ee_ht + triggers_3e) )
+#        DatasetsAndTriggers.append( ("SingleMuon", triggers_1mu_iso + triggers_1mu_iso_50ns + triggers_1mu_noniso + triggers_AllMonojet) )
+        DatasetsAndTriggers.append( ("SingleElectron", triggers_ee + triggers_ee_ht + triggers_3e + triggers_1e + triggers_1e_50ns) )
     if signalSkim == True:
         DatasetsAndTriggers.append( ("MET", triggers_AllMonojet ) )
+        
 
     for pd,triggers in DatasetsAndTriggers:
         iproc=0 
@@ -330,35 +340,25 @@ elif test == '5':
         comp.files = comp.files[:5]
         comp.splitFactor = 1
         comp.fineSplitFactor = 5
-elif test == 'synch-74X': # sync
+elif test == 'synch-76X': # sync
     #eventSelector.toSelect = [ (1,165,84628), ]
     #sequence = cfg.Sequence([eventSelector] + dmCoreSequence + [ ttHFatJetAna, monoJetVarAna, MonoJetEventAna, treeProducer, ])
     monoJetSkim.metCut = 0  
     what = getHeppyOption("sample")
     if what == "TTbarDM":
-        comp = kreator.makeMCComponent("TTbarDM","/TTbarDMJets_pseudoscalar_Mchi-1_Mphi-100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring15MiniAODv2-74X_mcRun2_asymptotic_v2-v1/MINIAODSIM", "CMS", ".*root", 1.0, useAAA=True)
-        #comp = TTLep_pow
-        #comp.files = [ '/tmp/emanuele/1486FE25-A16D-E511-93F2-001EC9ADE672.root' ]
-        selectedComponents = [ comp ]
-    elif what == "DMS":
-        comp = DMS_Mchi_100_gSM_1p0_gDM_1p0
-        comp.files = [ 'root://eoscms//eos/cms/store/mc/RunIISpring15MiniAODv2/DMS_NNPDF30_Scalar_Mphi-300_Mchi-100_gSM-1p0_gDM-1p0_13TeV-powheg/MINIAODSIM/74X_mcRun2_asymptotic_v2-v1/10000/6872703C-7972-E511-8228-0CC47A009E26.root' ]
-        selectedComponents = [ comp ]
-    elif what == "TTLep":
-        comp = TTLep_pow
-        comp.files = [ 'root://eoscms//eos/cms/store/mc/RunIISpring15MiniAODv2/TTTo2L2Nu_13TeV-powheg/MINIAODSIM/74X_mcRun2_asymptotic_v2-v1/60000/F8910E89-C56D-E511-BD90-003048F35244.root' ]
+        comp = kreator.makeMCComponent("TTbarDM","/TTbarDMJets_pseudoscalar_Mchi-1_Mphi-100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM", "CMS", ".*root", 1.0, useAAA=True)
         selectedComponents = [ comp ]
     elif what == "DYJets":
         comp = DYJetsToLL_M50
-        comp.files = [ 'root://eoscms//eos/cms/store/mc/RunIISpring15MiniAODv2/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/MINIAODSIM/74X_mcRun2_asymptotic_v2-v1/50000/00759690-D16E-E511-B29E-00261894382D.root' ]
+        comp.files = [ 'root://eoscms//eos/cms/store/mc/RunIIFall15MiniAODv2/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/MINIAODSIM/PU25nsData2015v1_HCALDebug_76X_mcRun2_asymptotic_v12-v1/00000/006C9F73-3FB9-E511-9AFE-001E67E95C52.root' ]
         selectedComponents = [ comp ]
     elif what == "TTJets":
         comp = TJets_LO
-        comp.files = [ 'root://eoscms//eos/cms/store/mc/RunIISpring15MiniAODv2/TTJets_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/74X_mcRun2_asymptotic_v2-v1/30000/001F4F14-786E-E511-804F-0025905A60FE.root' ]
+        comp.files = [ 'root://eoscms//eos/cms/store/mc/RunIIFall15MiniAODv2/TTJets_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/MINIAODSIM/PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/00000/00547C97-2FCC-E511-8D75-002590DB91D2.root' ]
         selectedComponents = [ comp ]
     elif what == "WJets":
         comp = WJetsToLNu_HT100to200
-        comp.files = [ 'root://eoscms//eos/cms/store/mc/RunIISpring15MiniAODv2/WJetsToLNu_HT-100To200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/74X_mcRun2_asymptotic_v2-v1/10000/003F1529-D36D-E511-9E33-001E6724816F.root' ]
+        comp.files = [ 'root://eoscms//eos/cms/store/mc/RunIIFall15MiniAODv2/WJetsToLNu_HT-400To600_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/50000/0CF84FB8-2CBC-E511-B255-001EC9AF22C6.root' ]
         selectedComponents = [ comp ]
     else:
         selectedComponents = mcSamples_monojet_Asymptotic25ns
@@ -366,18 +366,18 @@ elif test == 'synch-74X': # sync
     for comp in selectedComponents:
         comp.splitFactor = 1
         comp.fineSplitFactor = 1 if getHeppyOption("single") else 4
-elif test == '74X-Data':
+elif test == '76X-Data':
     what = getHeppyOption("sample")
     if what == "DoubleEG":
-        comp = DoubleEG_Run2015D_05Oct
-        comp.files = [ 'root://eoscms//eos/cms/store/data/Run2015D/DoubleEG/MINIAOD/05Oct2015-v1/50000/0014E86F-656F-E511-9D3F-002618943831.root' ]
+        comp = DoubleEG_Run2015D_16Dec
+        comp.files = [ 'root://eoscms//eos/cms/store/data/Run2015D/DoubleEG/MINIAOD/16Dec2015-v1/20000/40B59022-57A5-E511-B086-0CC47A4C8F26.root' ]
         selectedComponents = [ comp ]
     elif what == "DoubleMuon":
-        comp = DoubleMuon_Run2015D_05Oct
-        comp.files = [ 'root://eoscms//eos/cms/store/data/Run2015D/DoubleMuon/MINIAOD/05Oct2015-v1/30000/04008DF6-8A6F-E511-B034-0025905A6136.root' ]
+        comp = DoubleMuon_Run2015D_16Dec
+        comp.files = [ 'root://eoscms//eos/cms/store/data/Run2015D/DoubleMuon/MINIAOD/16Dec2015-v1/60000/B4354564-90B3-E511-8FC7-0025905B8598.root' ]
         selectedComponents = [ comp ]
     else:
-        selectedComponents = dataSamples_Run2015D_05Oct
+        selectedComponents = dataSamples_Run2015D_16Dec
     for comp in selectedComponents:
         comp.json = json
         comp.splitFactor = 1
