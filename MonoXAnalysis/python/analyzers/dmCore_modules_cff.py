@@ -135,8 +135,7 @@ lepAna = cfg.Analyzer(
     rhoMuon= 'fixedGridRhoFastjetAll',
     rhoElectron = 'fixedGridRhoFastjetAll',
     # energy scale corrections and ghost muon suppression (off by default)
-    doMuScleFitCorrections=False, # "rereco"
-    doRochesterCorrections=False,
+    doMuonScaleCorrections=False,
     doElectronScaleCorrections=False, # "embedded" in 5.18 for regression
     doSegmentBasedMuonCleaning=False,
     # inclusive very loose muon selection
@@ -313,8 +312,8 @@ jetAna = cfg.Analyzer(
     recalibrateJets = True, # "MC", # True, False, 'MC', 'Data'
     applyL2L3Residual = True, # Switch to 'Data' when they will become available for Data
     recalibrationType = "AK4PFchs",
-    mcGT     = "Summer15_25nsV2_MC",
-    dataGT   = "Summer15_25nsV5_DATA",
+    mcGT     = "76X_mcRun2_asymptotic_v12",
+    dataGT   = "76X_dataRun2_v15_Run2015D_25ns",
     jecPath = "%s/src/CMGTools/RootTools/data/jec/" % os.environ['CMSSW_BASE'],
     shiftJEC = 0, # set to +1 or -1 to get +/-1 sigma shifts
     addJECShifts = False, # if true, add  "corr", "corrJECUp", and "corrJECDown" for each jet (requires uncertainties to be available!)

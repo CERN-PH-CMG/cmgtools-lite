@@ -19,12 +19,11 @@ Top_MJ          = [ TTJets, TToLeptons_tch_amcatnlo, TToLeptons_tch_amcatnlo_ext
 DiBosons_MJ     = [ WW, WZ, ZZ ]
 
 mcSamples_monojet_Asymptotic25ns = DYJetsToNuNu_MJ + VJets_MJ + Top_MJ + DiBosons_MJ + QCDHT
-mcSamples_monojet_Asymptotic25ns_signals = DM_Scalars + DM_Pseudoscalars + DM_Vectors + DM_Axials
+#mcSamples_monojet_Asymptotic25ns_signals = DM_Scalars + DM_Pseudoscalars + DM_Vectors + DM_Axials
 
 
 ### ----------------------------- summary ----------------------------------------     
-mcSamples_monojet = mcSamples_monojet_Asymptotic25ns + mcSamples_monojet_Asymptotic25ns_signals
-
+mcSamples_monojet = mcSamples_monojet_Asymptotic25ns
 
 from CMGTools.TTHAnalysis.setup.Efficiencies import *
 dataDir = "$CMSSW_BASE/src/CMGTools/TTHAnalysis/data"
