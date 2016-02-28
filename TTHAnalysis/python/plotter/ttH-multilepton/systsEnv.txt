@@ -3,11 +3,11 @@ lumi_13TeV		: ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .* : 1.027
 
 # lepton efficiencies
 CMS_ttHl_lepEff_muloose : ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .*2lss_mm.* : 1.03
-CMS_ttHl_lepEff_muloose : ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .*2lss_em.* : 1.015
+CMS_ttHl_lepEff_muloose : ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .*2lss_em.*|.*2lss_1tau.* : 1.015
 CMS_ttHl_lepEff_muloose : ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .*3l.* : 1.03
 
 CMS_ttHl_lepEff_elloose : ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .*2lss_ee.* : 1.04
-CMS_ttHl_lepEff_elloose : ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .*2lss_em.* : 1.02
+CMS_ttHl_lepEff_elloose : ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .*2lss_em.*|.*2lss_1tau.* : 1.02
 CMS_ttHl_lepEff_elloose : ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .*3l.* : 1.04
 
 CMS_ttHl_lepEff_tight  	: ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .*2lss.* : 1.06
@@ -35,7 +35,11 @@ CMS_ttHl_btag_cErr2	: ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .* : bTag_cErr2 	: t
 CMS_ttHl_templstat 	: ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs|fakes_data|flips_data : .* : 1.0 : stat_foreach_shape_bins : .*
 
 # Diboson background
-CMS_ttHl_WZ : WZ : .*3l.* : 1.20 # to be updated together with WZ scale factor
+CMS_ttHl_WZ_stat : WZ : .*3l.* : 1.3
+CMS_ttHl_WZ_bkgs : WZ : .*3l.* : 1.2
+CMS_ttHl_WZ_btag : WZ : .*3l_bl.* : 1.1
+CMS_ttHl_WZ_btag : WZ : .*3l_bt.* : 1.4
+CMS_ttHl_WZ_theo : WZ : .*3l.* : 1.07
 CMS_ttHl_WZ_4j : WZ : .*2lss.* : 2.0 
 
 # Other normalizations
@@ -71,35 +75,35 @@ CMS_ttHl_thu_shape_ttZ_y  : TTZ : .* : 1.0 : shapeOnly2D_1X_1.02Y
 # Fake rate uncertainties
 # 1) Measurement of the fake rate: normalization
 CMS_ttHl_FRe_norm : fakes_data  : .*2lss_ee.* : 1.4
-CMS_ttHl_FRe_norm : fakes_data  : .*2lss_em.* : 1.3
+CMS_ttHl_FRe_norm : fakes_data  : .*2lss_em.*|.*2lss_1tau.* : 1.2
 CMS_ttHl_FRe_norm : fakes_data  : .*3l.*      : 1.4
 CMS_ttHl_FRm_norm : fakes_data  : .*2lss_mm.* : 1.5
-CMS_ttHl_FRm_norm : fakes_data  : .*2lss_em.* : 1.3
+CMS_ttHl_FRm_norm : fakes_data  : .*2lss_em.*|.*2lss_1tau.* : 1.2
 CMS_ttHl_FRm_norm : fakes_data  : .*3l.*      : 1.4
 # 2) Measurement of the fake rate: shape
 CMS_ttHl_FRe_shape_2lss_corr : fakes_data  : .*2lss_ee.* : 1.0 : shapeOnly2D_1.20X_1.20Y
-CMS_ttHl_FRe_shape_2lss_corr : fakes_data  : .*2lss_em.* : 1.0 : shapeOnly2D_1.20X_1.20Y
+CMS_ttHl_FRe_shape_2lss_corr : fakes_data  : .*2lss_em.*|.*2lss_1tau.* : 1.0 : shapeOnly2D_1.20X_1.15Y
 CMS_ttHl_FRm_shape_2lss_corr : fakes_data  : .*2lss_mm.* : 1.0 : shapeOnly2D_1.40X_1.30Y
-CMS_ttHl_FRm_shape_2lss_corr : fakes_data  : .*2lss_em.* : 1.0 : shapeOnly2D_1.20X_1.20Y
+CMS_ttHl_FRm_shape_2lss_corr : fakes_data  : .*2lss_em.*|.*2lss_1tau.* : 1.0 : shapeOnly2D_1.20X_1.15Y
 CMS_ttHl_FRe_shape_2lss_anticorr : fakes_data  : .*2lss_ee.* : 1.0 : shapeOnly2D_1.20X_0.83Y
-CMS_ttHl_FRe_shape_2lss_anticorr : fakes_data  : .*2lss_em.* : 1.0 : shapeOnly2D_1.20X_0.83Y
+CMS_ttHl_FRe_shape_2lss_anticorr : fakes_data  : .*2lss_em.*|.*2lss_1tau.* : 1.0 : shapeOnly2D_1.20X_0.87Y
 CMS_ttHl_FRm_shape_2lss_anticorr : fakes_data  : .*2lss_mm.* : 1.0 : shapeOnly2D_1.40X_0.77Y
-CMS_ttHl_FRm_shape_2lss_anticorr : fakes_data  : .*2lss_em.* : 1.0 : shapeOnly2D_1.20X_0.83Y
+CMS_ttHl_FRm_shape_2lss_anticorr : fakes_data  : .*2lss_em.*|.*2lss_1tau.* : 1.0 : shapeOnly2D_1.20X_0.87Y
 CMS_ttHl_FRe_shape_3l : fakes_data  : .*3l.*      : 1.0 : shapeOnly2D_1.20X_0.83Y
 CMS_ttHl_FRm_shape_3l : fakes_data  : .*3l.*      : 1.0 : shapeOnly2D_1.20X_0.83Y
 # 3) Closure: QCD vs. TT fake rate, normalization
 CMS_ttHl_Clos_e_norm : fakes_data  : .*2lss_ee.* : 0.9
-CMS_ttHl_Clos_e_norm : fakes_data  : .*2lss_em.* : 0.96
-CMS_ttHl_Clos_e_norm : fakes_data  : .*3l.*      : 1.1
+CMS_ttHl_Clos_e_norm : fakes_data  : .*2lss_em.*|.*2lss_1tau.* : 0.96
+CMS_ttHl_Clos_e_norm : fakes_data  : .*3l.*      : 0.9
 CMS_ttHl_Clos_m_norm : fakes_data  : .*2lss_mm.* : 1.1
-CMS_ttHl_Clos_m_norm : fakes_data  : .*2lss_em.* : 1.04
-CMS_ttHl_Clos_m_norm : fakes_data  : .*3l.*      : 1.1
+CMS_ttHl_Clos_m_norm : fakes_data  : .*2lss_em.*|.*2lss_1tau.* : 1.04
+CMS_ttHl_Clos_m_norm : fakes_data  : .*3l.*      : 0.95
 # 4) Closure: QCD vs. TT fake rate, shape
 CMS_ttHl_Clos_e_shape : fakes_data  : .*2lss_ee.* : 1.0 : shapeOnly2D_1.15X_1.30Y
-CMS_ttHl_Clos_e_shape : fakes_data  : .*2lss_em.* : 1.0 : shapeOnly2D_1.07X_1.30Y
+CMS_ttHl_Clos_e_shape : fakes_data  : .*2lss_em.*|.*2lss_1tau.* : 1.0 : shapeOnly2D_1.05X_1.20Y
 CMS_ttHl_Clos_e_shape : fakes_data  : .*3l.*      : 1.0 : shapeOnly2D_1.07X_1.07Y
 CMS_ttHl_Clos_m_shape : fakes_data  : .*2lss_mm.* : 1.0 : shapeOnly2D_1.05X_1.25Y
-CMS_ttHl_Clos_m_shape : fakes_data  : .*2lss_em.* : 1.0 : shapeOnly2D_1.07X_1.30Y
+CMS_ttHl_Clos_m_shape : fakes_data  : .*2lss_em.*|.*2lss_1tau.* : 1.0 : shapeOnly2D_1.05X_1.20Y
 CMS_ttHl_Clos_m_shape : fakes_data  : .*3l.*      : 1.0 : shapeOnly2D_1.07X_1.07Y
 
 # Charge flip uncertainty

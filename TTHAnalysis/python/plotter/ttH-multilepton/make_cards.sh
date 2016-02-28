@@ -2,7 +2,7 @@
 
 if [[ "$HOSTNAME" == "cmsco01.cern.ch" ]]; then
     T="/data1/peruzzi/TREES_76X_200216_jecV1M2_skimOnlyMC_reclv8";
-    J=14;
+    J=12;
 else
     T="/afs/cern.ch/work/p/peruzzi/tthtrees/TREES_76X_200216_jecV1M2";
     J=4;
@@ -13,7 +13,7 @@ OUTNAME=$1; shift;
 if [[ "X$1" == "X" ]]; then echo "Provide luminosity!"; exit; fi
 LUMI="$1"; shift
 echo "Normalizing to ${LUMI}/fb";
-OPTIONS=" -P $T --tree treeProducerSusyMultilepton --s2v -j $J -l ${LUMI} -f --asimov "
+OPTIONS=" -P $T --tree treeProducerSusyMultilepton --s2v -j $J -l ${LUMI} -f "
 test -d cards/$OUTNAME || mkdir -p cards/$OUTNAME
 OPTIONS="${OPTIONS} --od cards/$OUTNAME ";
 
@@ -25,16 +25,15 @@ OneTau=" -E 1tau "
 
 OPTIONS="${OPTIONS} --Fs {P}/2_recleaner_v8_b1E2 --Fs {P}/4_kinMVA_trainFeb23_v0 --Fs {P}/5_eventBTagRWT_onlyJets_v1"
 OPTIONS="${OPTIONS} --mcc ttH-multilepton/lepchoice-ttH-FO.txt --mcc ttH-multilepton/ttH_2lss3l_triggerdefs.txt --neg" # neg necessary for subsequent rebin
-OPTIONS="${OPTIONS} --xp data" # safety!
 
 FUNCTION_2L="kinMVA_2lss_ttV:kinMVA_2lss_ttbar 20,-1,1,20,-1,1"
 FUNCTION_3L="kinMVA_3l_ttV:kinMVA_3l_ttbar 20,-1,1,20,-1,1"
 
 if [[ "$2" == "save" ]]; then
-DOFILE="--savefile pippo"
+DOFILE="--savefile activate"
 fi
 if [[ "$2" == "read" ]]; then
-DOFILE="--infile pippo"
+DOFILE="--infile activate"
 fi
 
 if [[ "$1" == "all" || "$1" == "2lss" ]]; then

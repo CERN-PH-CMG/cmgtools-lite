@@ -339,15 +339,17 @@ for name in systsEnv.keys():
                 for bin in xrange(1,nominal.GetNbinsX()+1):
                     for binmatch in morefields[0]:
                         if re.match(binmatch+"$",'%d'%bin):
+                            if nominal.GetBinContent(bin) == 0 or nominal.GetBinError(bin) == 0:
+                                if nominal.Integral() != 0: 
+                                    print "WARNING: for process %s in truebinname %s, bin %d has zero yield or zero error." % (p,truebinname,bin)
+                                break
                             if (effect*nominal.GetBinError(bin)<0.1*sqrt(nominal.GetBinContent(bin)+1)):
                                 if options.verbose: print 'skipping stat_foreach_shape_bins %s %d because it is irrelevant'%(p,bin)
                                 break
                             p0Up = nominal.Clone("%s_%s_%s_%s_bin%dUp"% (nominal.GetName(),name,truebinname,p,bin))
                             p0Dn = nominal.Clone("%s_%s_%s_%s_bin%dDown"% (nominal.GetName(),name,truebinname,p,bin))
-                            p0Up.SetBinContent(bin,p0Up.GetBinContent(bin)+effect*p0Up.GetBinError(bin))
-                            p0Up.SetBinError(bin,p0Up.GetBinError(bin)*(p0Up.GetBinContent(bin)/nominal.GetBinContent(bin) if nominal.GetBinContent(bin)!=0 else 1))
-                            p0Dn.SetBinContent(bin,max(1e-5,p0Dn.GetBinContent(bin)-effect*p0Dn.GetBinError(bin)))
-                            p0Dn.SetBinError(bin,p0Dn.GetBinError(bin)*(p0Dn.GetBinContent(bin)/nominal.GetBinContent(bin) if nominal.GetBinContent(bin)!=0 else 1))
+                            p0Up.SetBinContent(bin,nominal.GetBinContent(bin)+effect*nominal.GetBinError(bin))
+                            p0Dn.SetBinContent(bin,nominal.GetBinContent(bin)**2/p0Up.GetBinContent(bin))
                             report[str(p0Up.GetName())[2:]] = p0Up
                             report[str(p0Dn.GetName())[2:]] = p0Dn
                             systsEnv2["%s_%s_%s_bin%d"%(name,truebinname,p,bin)] = (dict([(_p,"1" if _p==p else "-") for _p in procs]),dict([(_p,"1" if _p==p else "-") for _p in procs]),"templates")
@@ -357,15 +359,17 @@ for name in systsEnv.keys():
                     for biny in xrange(1,nominal.GetNbinsY()+1):
                         for binmatch in morefields[0]:
                             if re.match(binmatch+"$",'%d,%d'%(binx,biny)):
+                                if nominal.GetBinContent(binx,biny) == 0 or nominal.GetBinError(binx,biny) == 0:
+                                    if nominal.Integral() != 0: 
+                                        print "WARNING: for process %s in truebinname %s, bin %d,%d has zero yield or zero error." % (p,truebinname,binx,biny)
+                                    break
                                 if (effect*nominal.GetBinError(binx,biny)<0.1*sqrt(nominal.GetBinContent(binx,biny)+1)):
                                     if options.verbose: print 'skipping stat_foreach_shape_bins %s %d,%d because it is irrelevant'%(p,binx,biny)
                                     break
                                 p0Up = nominal.Clone("%s_%s_%s_%s_bin%d_%dUp"% (nominal.GetName(),name,truebinname,p,binx,biny))
                                 p0Dn = nominal.Clone("%s_%s_%s_%s_bin%d_%dDown"% (nominal.GetName(),name,truebinname,p,binx,biny))
-                                p0Up.SetBinContent(binx,biny,p0Up.GetBinContent(binx,biny)+effect*p0Up.GetBinError(binx,biny))
-                                p0Up.SetBinError(binx,biny,p0Up.GetBinError(binx,biny)*(p0Up.GetBinContent(binx,biny)/nominal.GetBinContent(binx,biny) if nominal.GetBinContent(binx,biny)!=0 else 1))
-                                p0Dn.SetBinContent(binx,biny,max(1e-5,p0Dn.GetBinContent(binx,biny)-effect*p0Dn.GetBinError(binx,biny)))
-                                p0Dn.SetBinError(binx,biny,p0Dn.GetBinError(binx,biny)*(p0Dn.GetBinContent(binx,biny)/nominal.GetBinContent(binx,biny) if nominal.GetBinContent(binx,biny)!=0 else 1))
+                                p0Up.SetBinContent(binx,biny,nominal.GetBinContent(binx,biny)+effect*nominal.GetBinError(binx,biny))
+                                p0Dn.SetBinContent(binx,biny,nominal.GetBinContent(binx,biny)**2/p0Up.GetBinContent(binx,biny))
                                 report[str(p0Up.GetName())[2:]] = p0Up
                                 report[str(p0Dn.GetName())[2:]] = p0Dn
                                 systsEnv2["%s_%s_%s_bin%d_%d"%(name,truebinname,p,binx,biny)] = (dict([(_p,"1" if _p==p else "-") for _p in procs]),dict([(_p,"1" if _p==p else "-") for _p in procs]),"templates")
