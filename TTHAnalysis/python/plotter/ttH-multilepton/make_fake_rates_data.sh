@@ -4,20 +4,56 @@
 T="/afs/cern.ch/user/g/gpetrucc/w/TREES_TTH_260116_76X_1L"
 if hostname | grep -q cmsco01; then
     T="/data1/gpetrucc/TREES_TTH_260116_76X_1L"
+elif hostname | grep -q vinavx; then
+    T="/home/gpetrucc/TREES_TTH_260116_76X_1L"
 fi
 BCORE=" --s2v --tree treeProducerSusyMultilepton ttH-multilepton/mca-qcd1l.txt ttH-multilepton/qcd1l.txt -P $T -l 2.26 --AP  "
+BCORE="${BCORE} --mcc ttH-multilepton/mcc-eleIdEmu2.txt  "; 
 
 BG=" -j 6 "; if [[ "$1" == "-b" ]]; then BG=" & "; shift; fi
 
 lepton=$1; if [[ "$1" == "" ]]; then exit 1; fi
 case $lepton in
-mu) BCORE="${BCORE} -E ${lepton} --xf 'DoubleEG.*'  "; QCD=QCDMu; ;;
-el) BCORE="${BCORE} -E ${lepton} --xf 'DoubleMu.*'  "; QCD=QCDEl; ;;
+mu) BCORE="${BCORE} -E ${lepton} --xf 'DoubleEG.*,JetHT.*'  "; QCD=QCDMu; ;;
+el) BCORE="${BCORE} -E ${lepton} --xf 'DoubleMu.*,JetHT.*'  "; QCD=QCDEl; ;;
+mu_jet) lepton="mu"; BCORE="${BCORE} -E ${lepton} --xf 'Double.*' -X idEmuCut -R minimal ptj40 ' LepGood_awayJet_pt > 40'  "; QCD=QCDMu; ;;
+mu_jet6) lepton="mu"; BCORE="${BCORE} -E ${lepton} --xf 'Double.*,JetHT_.*' -X idEmuCut -R minimal ptj40 ' LepGood_awayJet_pt > 60'  "; QCD=QCDMu; ;;
+mu_ht)  lepton="mu"; BCORE="${BCORE} -E ${lepton} --xf 'Double.*' -X idEmuCut -R minimal ptj40 ' LepGood_awayJet_pt > 40'  "; QCD=QCDMu; ;;
+mu_any)  lepton="mu"; BCORE="${BCORE} -E ${lepton} --xf 'DoubleEG.*' -X idEmuCut  "; QCD=QCDMu; ;;
 esac;
 
 trigger=$2; if [[ "$2" == "" ]]; then exit 1; fi
-BCORE="${BCORE} -A veto trigger HLT_FR_${trigger} --mcc ttH-multilepton/mcc-eleIdEmu2.txt  "; 
-PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw$trigger(nVert)' "
+case $trigger in
+PFJet40)
+    BCORE="${BCORE} -E HLT_FR_PFJet40   "; 
+    PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw$lepton$trigger(nVert)' "
+    ;;
+PFJet)
+    BCORE="${BCORE} -E HLT_PFJet   "; 
+    PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw$lepton$trigger(nVert)' "
+    ;;
+PFJet6)
+    BCORE="${BCORE} -E HLT_PFJet6   "; 
+    PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw$lepton$trigger(nVert)' "
+    ;;
+PFHT*)
+    BCORE="${BCORE} -E HLT_FR_$trigger   "; 
+    PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw$lepton$trigger(nVert)' "
+    ;;
+JHT)
+    BCORE="${BCORE} -E HLT_JHT   "; 
+    PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw$lepton$trigger(nVert)' "
+    ;;
+AnyM)
+    BCORE="${BCORE} -A veto trigger HLT_AnyM  ";
+    PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw$trigger(nVert)' "
+    ;;
+*)
+    BCORE="${BCORE} -A veto trigger HLT_FR_${trigger}  "; 
+    PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw$trigger(nVert)' "
+    ;;
+esac;
+
 
 what=$3;
 more=$4
@@ -25,7 +61,12 @@ PBASE="plots/76X/ttH/fr-meas/v1.0/$lepton/HLT_$trigger/$what/$more"
 
 EWKONE="-p ${QCD}_red,EWK,data"
 EWKSPLIT="-p ${QCD}_red,WJets,DYJets,data"
-FITEWK=" $EWKSPLIT --peg-process DYJets WJets --flp WJets,DYJets,${QCD}_red "
+QCDEWKSPLIT="-p ${QCD}_[bclg]jets,WJets,DYJets,data"
+FITEWK=" $EWKSPLIT --flp WJets,DYJets,${QCD}_red --peg-process DYJets WJets "
+QCDNORM=" $QCDEWKSPLIT --sp WJets,DYJets,${QCD}_.jets --scaleSigToData  "
+QCDFITEWK=" $QCDEWKSPLIT --flp WJets,DYJets,${QCD}_.jets --peg-process DYJets WJets --peg-process ${QCD}_[clg]jets ${QCD}_bjets "
+QCDFITQCD=" $QCDEWKSPLIT --flp WJets,DYJets,${QCD}_.jets --peg-process DYJets WJets --peg-process ${QCD}_[gl]jets WJets --peg-process ${QCD}_cjets ${QCD}_bjets "
+QCDFITALL=" $QCDEWKSPLIT --flp WJets,DYJets,${QCD}_.jets --peg-process DYJets WJets --peg-process ${QCD}_gjets WJets --peg-process ${QCD}_cjets ${QCD}_bjets "
 
 case $lepton in
     el) BARREL="00_15"; ENDCAP="15_25"; ETA="1.479";;
@@ -47,30 +88,30 @@ case $what in
     nvtx-closure)
         echo "python mcPlots.py -f -j 6 $BCORE $PUW ttH-multilepton/qcd1l_plots.txt --pdir $PBASE --sP nvtx $EWKONE  --showRatio --maxRatioRange 0.9 1.1 " 
         ;;
-    fitmtW1)
-        echo "python mcPlots.py -f -j 6 $BCORE $PUW ttH-multilepton/qcd1l_plots.txt --pdir $PBASE -E $what --fitData $FITEWK --sP ${what/fit/} --showRatio --maxRatioRange 0.0 1.99 " 
+    fit*)
+        echo "python mcPlots.py -f -j 6 $BCORE $PUW ttH-multilepton/qcd1l_plots.txt --pdir $PBASE -E $what $FITEWK --preFitData ${what/fit/} --showRatio --maxRatioRange 0.0 1.99 " 
         ;;
-    num-fitmtW1)
-        echo "python mcPlots.py -f -j 6 $BCORE $PUW ttH-multilepton/qcd1l_plots.txt --pdir $PBASE -E $what --fitData $FITEWK --sP ${what/num-fit/} --showRatio --maxRatioRange 0.0 1.99 -E num" 
+    num-fit*)
+        echo "python mcPlots.py -f -j 6 $BCORE $PUW ttH-multilepton/qcd1l_plots.txt --pdir $PBASE -E $what $FITEWK --preFitData ${what/num-fit/} --showRatio --maxRatioRange 0.0 1.99 -E num" 
         ;;
-    num|den)
-        echo "python mcPlots.py -f -j 6 $BCORE $PUW ttH-multilepton/qcd1l_plots.txt --pdir $PBASE -E $what $FITEWK --preFitData mtW1  --showRatio --maxRatioRange 0.0 1.99 " 
+    qcdflav-norm)
+        echo "python mcPlots.py -f -j 6 $BCORE $PUW ttH-multilepton/qcd1l_plots.txt --pdir $PBASE -E $what $QCDNORM --showRatio --maxRatioRange 0.0 1.99 " 
         ;;
-    cuts-num)
-        echo "python mcPlots.py -f -j 6 $BCORE $PUW ttH-multilepton/qcd1l_plots.txt --pdir $PBASE -E num $EWKONE --scale-process EWK $SC_EWK --scale-process ${QCD}_red $SC_QCD  --showRatio --maxRatioRange 0.0 1.99  -A veto mt25 'mt_2(met_pt,met_phi,LepGood_pt,LepGood_phi) < 15'  " 
+    qcdflav-fit)
+        echo "python mcPlots.py -f -j 6 $BCORE $PUW ttH-multilepton/qcd1l_plots.txt --pdir $PBASE -E $what $QCDFITEWK --preFitData ${what/flav-fit/} --showRatio --maxRatioRange 0.0 1.99 " 
         ;;
-    num45)
-        echo "python mcPlots.py -f -j 6 $BCORE $PUW ttH-multilepton/qcd1l_plots.txt --pdir $PBASE -E num $EWKONE --scale-process EWK $SC_EWK --scale-process ${QCD}_red $SC_QCD  --showRatio --maxRatioRange 0.0 1.99  -A veto pt45 'LepGood_pt > 45'  " 
+    flav-fit*)
+        echo "python mcPlots.py -f -j 6 $BCORE $PUW ttH-multilepton/qcd1l_plots.txt --pdir $PBASE -E $what $QCDFITQCD --preFitData ${what/flav-fit/} --showRatio --maxRatioRange 0.0 1.99 " 
         ;;
-    cuts-num45)
-        echo "python mcPlots.py -f -j 6 $BCORE $PUW ttH-multilepton/qcd1l_plots.txt --pdir $PBASE -E num $EWKONE --scale-process EWK $SC_EWK --scale-process ${QCD}_red $SC_QCD  --showRatio --maxRatioRange 0.0 1.99  -A veto mt25 'mt_2(met_pt,met_phi,LepGood_pt,LepGood_phi) < 15'  -A veto pt45 'LepGood_pt > 45' " 
+    flav3-fit*)
+        echo "python mcPlots.py -f -j 6 $BCORE $PUW ttH-multilepton/qcd1l_plots.txt --pdir $PBASE -E $what $QCDFITALL --preFitData ${what/flav3-fit/} --showRatio --maxRatioRange 0.0 1.99 " 
         ;;
     fakerates-*)
         fitVar=${what/fakerates-/}
-        BCORE="${BCORE/mca-qcd1l.txt/mca-qcd1l-fit.txt}"
+        XVAR="mvaPt075_coarse"
         MCEFF="  python ttH-multilepton/dataFakeRate.py -f  $BCORE $PUW $EWKONE  --groupBy cut ttH-multilepton/make_fake_rates_sels.txt ttH-multilepton/make_fake_rates_xvars.txt  "
         MCEFF="$MCEFF --sp ${QCD}_red  "
-        MCEFF="$MCEFF --sP mvaPt_075i --sP ptJI85_mvaPt075_coarse  --sP $fitVar $fitVar  --ytitle 'Fake rate' "
+        MCEFF="$MCEFF --sP mvaPt_075i --sP ptJI85_${XVAR}  --sP $fitVar $fitVar  --ytitle 'Fake rate' "
         MCEFF="$MCEFF  " # ratio for fake rates
         MCEFF="$MCEFF --fixRatioRange --maxRatioRange 0.7 1.29 " # ratio for other plots
         LEGEND=" --legend=TL --fontsize 0.05 --legendWidth 0.4"
@@ -83,6 +124,22 @@ case $what in
                  if [[ "$trigger" == "Mu17" ]]; then 
                      RANGES=${RANGES/--xcut 15 100/--xcut 30 100}; 
                      RANGES=${RANGES/--xline 20 --xline 45/--xline 45}; 
+                 elif [[ "$trigger" == "PFJet40" ]]; then
+                     MCEFF="${MCEFF/mvaPt075_coarse/mvaPt075_vcoarse}"
+                     RANGES=${RANGES/--xcut 15 100/--xcut 5 30};
+                     RANGES=${RANGES/--xline 20 --xline 45/--xline 10 --xline 20};
+                 elif [[ "$trigger" == "PFJet" ]]; then
+                     XVAR="mvaPt075_low"
+                     MCEFF="${MCEFF/mvaPt075_coarse/$XVAR}"
+                     RANGES=${RANGES/--xcut 15 100/--xcut 10 30};
+                     RANGES=${RANGES/--xline 20 --xline 45/--xline 10 --xline 20};
+                     RANGES=${RANGES/--yrange 0 0.??/--yrange 0 0.12};
+                 elif [[ "$trigger" == "PFJet6" ]]; then
+                     XVAR="mvaPt075_low"
+                     MCEFF="${MCEFF/mvaPt075_coarse/$XVAR}"
+                     RANGES=${RANGES/--xcut 15 100/--xcut 10 30};
+                     RANGES=${RANGES/--xline 20 --xline 45/--xline 10 --xline 20};
+                     RANGES=${RANGES/--yrange 0 0.??/--yrange 0 0.12};
                  fi;
             ;;
         esac;
@@ -106,7 +163,7 @@ case $what in
         echo " ( $MCGO -i $PBASE/fr_sub_eta_${BARREL}.root -o $PBASE/fr_sub_eta_${BARREL}_fQCD.root --algo=fQCD  $BG )"
         echo " ( $MCGO -i $PBASE/fr_sub_eta_${ENDCAP}.root -o $PBASE/fr_sub_eta_${ENDCAP}_fQCD.root --algo=fQCD  $BG )"
         STACK="python ttH-multilepton/stack_fake_rates_data.py $RANGES $LEGEND "
-        PATT="mvaPt_075i_vs_ptJI85_mvaPt075_coarse_mtW1R_%s"
+        PATT="mvaPt_075i_vs_ptJI85_${XVAR}_${fitVar}_%s"
         for E in ${BARREL} ${ENDCAP}; do
             echo "( $STACK -o $PBASE/fr_sub_eta_${E}_comp.root    $PBASE/fr_sub_eta_${E}_globalFit.root:$PATT:${QCD}_red_prefit,data_sub_syst_prefit  $PBASE/fr_sub_eta_${E}_fQCD.root:$PATT:${QCD}_red_prefit,data_fqcd   $PBASE/fr_sub_eta_${E}_fitSimND.root:$PATT:data_fit   )";
         done

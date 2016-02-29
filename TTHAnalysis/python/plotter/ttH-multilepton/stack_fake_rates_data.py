@@ -46,15 +46,15 @@ def combine(graphs):
 def attrs(filename,process):
     if "globalFit"  in filename:
         if "QCD"      in process: return { 'Label':'QCD MC, cut',     'Color':ROOT.kPink-5,  '#':1, 'key':'QCD_cut'  }
-        if "DY"       in process: return { 'Label':'DY MC, cut',      'Color':ROOT.kCyan-3,  '#':1, 'key':'DY_cut'  }
+        if "DY"       in process: return { 'Label':'DY MC, cut',      'Color':ROOT.kPink-5,  '#':1, 'key':'DY_cut'  }
         if "data_sub" in process: return { 'Label':'Data, cut & sub', 'Color':ROOT.kAzure+1, '#':2, 'key':'data_sub' }
     elif "fitSimND" in filename:
         if "QCD"      in process: return { 'Label':'QCD MC',         'Color':ROOT.kPink-2,  '#':0, 'key':'QCD'       }
-        if "DY"       in process: return { 'Label':'DY MC',          'Color':ROOT.kCyan,    '#':0, 'key':'DY'       }
+        if "DY"       in process: return { 'Label':'DY MC',          'Color':ROOT.kPink-2,    '#':0, 'key':'DY'       }
         if "data_fit" in process: return { 'Label':'Data, sim. fit', 'Color':ROOT.kGreen+2, '#':3, 'key':'data_fit'  }
     elif "fQCD" in filename:
         if "QCD"       in process: return { 'Label':'QCD MC',         'Color':ROOT.kPink-2, '#':0, 'key':'QCD'       }
-        if "DY"        in process: return { 'Label':'DY MC',          'Color':ROOT.kCyan,   '#':0, 'key':'DY'       }
+        if "DY"        in process: return { 'Label':'DY MC',          'Color':ROOT.kPink-2,   '#':0, 'key':'DY'       }
         if "data_fqcd" in process: return { 'Label':'Data, unfolded', 'Color':ROOT.kGray+2, '#':4, 'key':'data_fqcd' }
     else: raise RuntimeError, "No idea of the file"
     raise RuntimeError, "No idea of the process"

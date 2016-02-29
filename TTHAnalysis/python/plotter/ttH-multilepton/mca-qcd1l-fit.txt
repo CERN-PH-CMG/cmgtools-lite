@@ -6,6 +6,25 @@ QCDMu_red  : QCD_Pt50to80_Mu5  : xsec*(LepGood_pt<15.5) : 1; FillColor=ROOT.kVio
 QCDMu_red  : QCD_Pt80to120_Mu5 : xsec*(LepGood_pt<15.5) : 1; FillColor=ROOT.kViolet+1, Label="QCD (fit)"
 QCDMu_red  : QCD_Pt120to170_Mu5: xsec*(LepGood_pt<15.5) : 1; FillColor=ROOT.kViolet+1, Label="QCD (fit)"
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 QCDEl_red: QCD_Pt20to30_EMEnriched  : xsec : 1 ; FillColor=ROOT.kViolet+1, Label="QCD (fit)"
 QCDEl_red: QCD_Pt30to50_EMEnriched  : xsec : 1 ; FillColor=ROOT.kViolet+1, Label="QCD (fit)"
 QCDEl_red: QCD_Pt50to80_EMEnriched  : xsec : 1 ; FillColor=ROOT.kViolet+1, Label="QCD (fit)"
@@ -26,6 +45,8 @@ data : DoubleEG_Run2015C_25ns_16Dec2015;   FillColor=ROOT.kBlack, Label="Data"
 data : DoubleEG_Run2015D_16Dec2015;        FillColor=ROOT.kBlack, Label="Data"
 data : DoubleMuon_Run2015C_25ns_16Dec2015; FillColor=ROOT.kBlack, Label="Data"
 data : DoubleMuon_Run2015D_16Dec2015;      FillColor=ROOT.kBlack, Label="Data"
+data : JetHT_Run2015C_25ns_16Dec2015;      FillColor=ROOT.kBlack, Label="Data"
+data : JetHT_Run2015D_16Dec2015;           FillColor=ROOT.kBlack, Label="Data"
 
 ## Options only
 QCDMu_red_prefit : - ; FillColor=ROOT.kPink-2, Label="QCD MC"

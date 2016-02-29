@@ -3,7 +3,7 @@ WZ 	: WZTo3LNu           : xsec : LepGood3_mcMatchId != 0 ;  FillColor=ROOT.kVio
 ZZ      : ZZTo4L             : xsec : LepGood3_mcMatchId != 0 ;  FillColor=ROOT.kAzure-9, KeysPdf=True
 TT      : TTJets_DiLepton    : xsec : LepGood3_mcMatchId == 0; FillColor=ROOT.kGray
 #DY     : DYJetsToLL_M10to50 : xsec : LepGood3_mcMatchId == 0; FillColor=ROOT.kCyan
-DY      : DYJetsToLL_M50     : xsec : LepGood3_mcMatchId == 0; FillColor=ROOT.kCyan, KeysPdf=True
+DY      : DYJetsToLL_M50     : xsec : LepGood3_mcMatchId == 0; FillColor=ROOT.kPink-2, KeysPdf=True
 
 VZ 	: WZTo3LNu           : xsec : LepGood3_mcMatchId != 0 ;  FillColor=ROOT.kViolet-2, KeysPdf=True
 VZ      : ZZTo4L             : xsec : LepGood3_mcMatchId != 0 ;  FillColor=ROOT.kAzure-2, KeysPdf=True

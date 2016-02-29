@@ -3,7 +3,7 @@
 ################################
 T="NON_ESISTE"
 if hostname | grep -q cmsco01; then
-    T="/data1/peruzzi/mix_TREES_76X_jecOkCentral"
+    T="/data1/peruzzi/TREES_76X_200216_jecV1M2/"
 fi
 
 BCORE=" --s2v --tree treeProducerSusyMultilepton ttH-multilepton/mca-fr-z3l.txt ttH-multilepton/fr-z3l.txt -P $T -l 2.26 --AP  "
@@ -18,7 +18,7 @@ el) BCORE="${BCORE} -E ${lepton} "; ;;
 esac;
 
 what=$2; shift; shift;
-PBASE="plots/76X/ttH/fr-meas/z3l/v1.0/$lepton/$what"
+PBASE="plots/76X/ttH/fr-meas/z3l/v1.2/$lepton/$what"
 
 
 case $lepton in
@@ -76,8 +76,8 @@ case $what in
         MCEFF="$MCEFF --sp DY --sP mva075  "
         MCEFF="$MCEFF --sP $fitVar $fitVar  --ytitle 'Fake rate' "
         case $lepton in
-        el) MCEFF="$MCEFF --sP l3CPt_c " ; XVAR="l3CPt_c";;
-        mu) MCEFF="$MCEFF --sP l3CPt_1 " ; XVAR="l3CPt_1";;
+        el) XVAR="l3CPt_2"; MCEFF="$MCEFF --sP $XVAR " ;;
+        mu) XVAR="l3CPt_1"; MCEFF="$MCEFF --sP $XVAR " ;;
         esac;
         MCEFF="$MCEFF  " # ratio for fake rates
         MCEFF="$MCEFF --fixRatioRange --maxRatioRange 0.5 1.79 " # ratio for other plots
@@ -85,12 +85,12 @@ case $what in
         RANGES=" --showRatio  --ratioRange 0.00 2.99 "
         STACK="python ttH-multilepton/stack_fake_rates_data.py "
         case $lepton in  
-           el) RANGES="$RANGES  --yrange 0 0.10  --xcut 10 100 --xline 30 " ;;
-           mu) RANGES="$RANGES  --yrange 0 0.25  --xcut 10 100 --xline 20 "; MCEFF="$MCEFF --fqcd-ranges 0 40 40 140";;
+           el) RANGES="$RANGES  --yrange 0 0.10 --xline 30 "; MCEFF="$MCEFF --fqcd-ranges 0 40 40 140" ;;
+           mu) RANGES="$RANGES  --yrange 0 0.10 --xline 20 "; MCEFF="$MCEFF --fqcd-ranges 0 40 40 140" ;;
         esac;
         MCEFF="$MCEFF $LEGEND $RANGES"
-        echo " ( $MCEFF -o $PBASE/fr_sub_eta_${BARREL}.root --bare -A veto eta 'abs(LepGood_eta)<$ETA' $BG )"
-        echo " ( $MCEFF -o $PBASE/fr_sub_eta_${ENDCAP}.root --bare -A veto eta 'abs(LepGood_eta)>$ETA' $BG )"
+        echo " ( $MCEFF -o $PBASE/fr_sub_eta_${BARREL}.root --bare -A cleanup eta 'abs(LepGood_eta)<$ETA' $BG )"
+        echo " ( $MCEFF -o $PBASE/fr_sub_eta_${ENDCAP}.root --bare -A cleanup eta 'abs(LepGood_eta)>$ETA' $BG )"
         MCGO="$MCEFF --compare DY_prefit,data_sub_syst_prefit,data_sub_prefit --algo=globalFit "
         echo " ( $MCGO -i $PBASE/fr_sub_eta_${BARREL}.root -o $PBASE/fr_sub_eta_${BARREL}_globalFit.root --algo=globalFit --rebin 2 --fcut 0 40 --subSyst 0.1 $BG )"
         echo " ( $MCGO -i $PBASE/fr_sub_eta_${ENDCAP}.root -o $PBASE/fr_sub_eta_${ENDCAP}_globalFit.root --algo=globalFit --rebin 2 --fcut 0 40 --subSyst 0.1 $BG )"
@@ -99,8 +99,8 @@ case $what in
         echo " ( $MCGO -i $PBASE/fr_sub_eta_${BARREL}.root -o $PBASE/fr_sub_eta_${BARREL}_globalFit_full.root --algo=globalFit --rebin 2 --fcut 0 40 --subSyst 0.1 $BG )"
         echo " ( $MCGO -i $PBASE/fr_sub_eta_${ENDCAP}.root -o $PBASE/fr_sub_eta_${ENDCAP}_globalFit_full.root --algo=globalFit --rebin 2 --fcut 0 40 --subSyst 0.1 $BG )"
         MCGO="$MCEFF --compare DY_prefit,data_fit --algo=fitSimND --shapeSystSignal=l:0.2,s:0.1,b:0.01 --shapeSystBackground=l:0.1,s:0.05,b:0.01 "
-        echo " ( $MCGO -i $PBASE/fr_sub_eta_${BARREL}.root -o $PBASE/fr_sub_eta_${BARREL}_fitSimND.root --rebin 2 $BG )"
-        echo " ( $MCGO -i $PBASE/fr_sub_eta_${ENDCAP}.root -o $PBASE/fr_sub_eta_${ENDCAP}_fitSimND.root --rebin 2 $BG )"
+        echo " ( $MCGO -i $PBASE/fr_sub_eta_${BARREL}.root -o $PBASE/fr_sub_eta_${BARREL}_fitSimND.root --same-nd-templates --rebin 2 $BG )"
+        echo " ( $MCGO -i $PBASE/fr_sub_eta_${ENDCAP}.root -o $PBASE/fr_sub_eta_${ENDCAP}_fitSimND.root --same-nd-templates --rebin 2 $BG )"
         MCGO="$MCEFF --compare DY_prefit,data_fqcd --algo=fQCD "
         echo " ( $MCGO -i $PBASE/fr_sub_eta_${BARREL}.root -o $PBASE/fr_sub_eta_${BARREL}_fQCD.root --algo=fQCD  $BG )"
         echo " ( $MCGO -i $PBASE/fr_sub_eta_${ENDCAP}.root -o $PBASE/fr_sub_eta_${ENDCAP}_fQCD.root --algo=fQCD  $BG )"

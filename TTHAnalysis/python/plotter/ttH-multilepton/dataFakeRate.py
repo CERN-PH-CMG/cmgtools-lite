@@ -74,6 +74,7 @@ if __name__ == "__main__":
     parser.add_option("--shapeSystBackground", dest="shapeSystBkg", type="string", default="l", help="Shape systematic for background: l = linear, q = quadratic, s = stretch");
     parser.add_option("--fcut", dest="fcut", default=None, nargs=2, type='float', help="Cut in the discriminating variable");
     parser.add_option("--fqcd-ranges", dest="fqcdRanges", default=(0.0, 20.0, 70.0, 120.0), nargs=4, type='float', help="Boundaries for the fqcd method");
+    parser.add_option("--same-nd-templates", dest="sameNDTemplates", action="store_true", default=False, help="Just make the first histograms and stop");
     (options, args) = parser.parse_args()
     mca  = MCAnalysis(args[0],options)
     procs = mca.listProcesses()
@@ -195,8 +196,8 @@ if __name__ == "__main__":
                         h.Scale(gnorms[p]['post']/gnorms[p]['pre'])
             for ix in xrange(1,projection.GetNbinsX()+1):
                 bxname = "_bin_%g_%g" % (projection.GetXaxis().GetBinLowEdge(ix),projection.GetXaxis().GetBinUpEdge(ix))
+                xval = projection.GetXaxis().GetBinCenter(ix)
                 if options.xcut:
-                    xval = projection.GetXaxis().GetBinCenter(ix)
                     if not ( options.xcut[0] <= xval and xval <= options.xcut[1] ): continue
                 freport_num_den = {"pass":{},"fail":{}}
                 for (bzname,iz) in [("_pass",2),("_fail",1)]:
@@ -348,8 +349,14 @@ if __name__ == "__main__":
                     for zstate in "pass", "fail":
                         rep = freport_num_den[zstate];  
                         # make nominal templates 
-                        rep["signal"]     = mergePlots("signal_"+zstate,     [rep[p] for p in mca.listSignals()     if p in rep])
-                        rep["background"] = mergePlots("background_"+zstate, [rep[p] for p in mca.listBackgrounds() if p in rep])
+                        if options.sameNDTemplates:
+                            print [ (p,r[p].Integral()) for p in mca.listSignals()     for r in freport_num_den.values() if p in r]
+                            print [ (p,r[p].Integral()) for p in mca.listBackgrounds() for r in freport_num_den.values() if p in r]
+                            rep["signal"]     = mergePlots("signal_"+zstate,     [r[p] for p in mca.listSignals()     for r in freport_num_den.values() if p in r])
+                            rep["background"] = mergePlots("background_"+zstate, [r[p] for p in mca.listBackgrounds() for r in freport_num_den.values() if p in r])
+                        else: 
+                            rep["signal"]     = mergePlots("signal_"+zstate,     [rep[p] for p in mca.listSignals()     if p in rep])
+                            rep["background"] = mergePlots("background_"+zstate, [rep[p] for p in mca.listBackgrounds() if p in rep])
                         #rep["signal"].Smooth()
                         #rep["background"].Smooth()
                         # make dataset 
