@@ -17,7 +17,7 @@ def addMCEfficiencyOptions(parser):
     parser.add_option("--yrange", dest="yrange", default=None, nargs=2, type='float', help="Y axis range");
     parser.add_option("--logy", dest="logy", default=False, action='store_true', help="Do y axis in log scale");
     parser.add_option("--ytitle", dest="ytitle", default="Efficiency", type='string', help="Y axis title");
-    parser.add_option("--fontsize", dest="fontsize", default=0.035, type='float', help="Legend font size");
+    parser.add_option("--fontsize", dest="fontsize", default=0.045, type='float', help="Legend font size");
     parser.add_option("--grid", dest="showGrid", action="store_true", default=False, help="Show grid lines")
     parser.add_option("--groupBy",  dest="groupBy",  default="process",  type="string", help="Group by: cut, process")
     parser.add_option("--legend",  dest="legend",  default="TR",  type="string", help="Legend position (BR, TR)")
@@ -178,8 +178,8 @@ def stackEffs(outname,x,effs,options):
         dump.write("-------- --------    ----- ------ ------ \n")
         for i in xrange(e.GetN()):
             dump.write("%8.3f %8.3f    %.3f -%.3f +%.3f \n" % (
-                 e.GetX()[i]-e.GetErrorYlow(i),
-                 e.GetX()[i]+e.GetErrorYhigh(i),
+                 e.GetX()[i]-e.GetErrorXlow(i),
+                 e.GetX()[i]+e.GetErrorXhigh(i),
                  e.GetY()[i], e.GetErrorYlow(i), e.GetErrorYhigh(i) ))
         dump.write("\n\n");
 def graphFromSlice(h,axis,bins):
