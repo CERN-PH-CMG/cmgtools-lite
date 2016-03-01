@@ -13,6 +13,8 @@ CMS_ttHl_lepEff_elloose : ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .*3l.* : 1.04
 CMS_ttHl_lepEff_tight  	: ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .*2lss.* : 1.06
 CMS_ttHl_lepEff_tight  	: ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .*3l.* : 1.09
 
+CMS_ttHl_tauID		: ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .*2lss_1tau.* : 1.06
+
 # trigger efficiencies
 CMS_ttHl_trigger_ee	: ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .*2lss_ee.* : trigEff_ee : templates
 CMS_ttHl_trigger_uncorr	: ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .*2lss.* : 1.01

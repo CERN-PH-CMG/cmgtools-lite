@@ -39,7 +39,7 @@ if __name__ == "__main__":
     ROOT.gStyle.SetErrorX(0.5)
     ROOT.gStyle.SetOptStat(0)
     ROOT.gStyle.SetPaperSize(20.,25.)
-    for O,MLD in ("prefit","prefit"), ("postfit","fit_s"):
+    for O,MLD in ("prefit","prefit"), ("postfit_b","fit_b"), ("postfit_s","fit_s"):
       mldir  = mlfile.GetDirectory("shapes_"+MLD);
       if not mldir: raise RuntimeError, mlfile
       outfile = ROOT.TFile(basedir + "/"+O+"_" + basename(args[2]), "RECREATE")
@@ -105,6 +105,8 @@ if __name__ == "__main__":
       #htot.SetLabelOffset(9999.0);
       #htot.SetTitleOffset(9999.0);
       stack.Draw("HIST F SAME")
+      if options.showMCError:
+          totalError = doShadedUncertainty(htot)
       if options.poisson:
         hdata.poissonGraph.Draw("PZ SAME")
       else:
@@ -119,8 +121,10 @@ if __name__ == "__main__":
 #      hSigOutline.Scale(5)
 #      hSigOutline.Draw("HIST SAME")
       leg = doLegend(plots,mcap,corner='TL',textSize=0.045,cutoff=0.0001)
+      leg.SetHeader({'prefit': "Pre-fit", "postfit_b": "Post-fit, #mu = 1", "postfit_s": "Post-fit, #hat{#mu}"}[O]+"\n")
+      leg.SetLineColor(0)
 #      leg.AddEntry(hSigOutline, "ttH x 5", "L")
-      lspam = "CMS ttH" #, options.lspam
+#      lspam = "CMS Preliminary" #, options.lspam
 #      if "2lss" in args[2] and "/em/" in args[2]:
 #            lspam += r", e^{#pm}#mu^{#pm} channel"
 #      if "2lss" in args[2] and "/ee/" in args[2]:
@@ -132,7 +136,7 @@ if __name__ == "__main__":
 #      if "/4l" in args[2]:
 #            lspam += ", 4l channel"
       doTinyCmsPrelim(hasExpo = False,textSize=(0.045 if doRatio else 0.033), xoffs=-0.03,
-                      textLeft = lspam, textRight = options.rspam, lumi = options.lumi)
+                      textLeft = options.lspam, textRight = options.rspam, lumi = options.lumi)
       ## Draw relaive prediction in the bottom frame
       p2.cd() 
       rdata,rnorm,rnorm2,rline = doRatioHists(PlotSpec(var,var,"",{}),plots,htot, htot, maxRange=options.maxRatioRange, fitRatio=options.fitRatio)

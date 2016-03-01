@@ -343,7 +343,7 @@ for name in systsEnv.keys():
                                 if nominal.Integral() != 0: 
                                     print "WARNING: for process %s in truebinname %s, bin %d has zero yield or zero error." % (p,truebinname,bin)
                                 break
-                            if (effect*nominal.GetBinError(bin)<0.1*sqrt(nominal.GetBinContent(bin)+1)):
+                            if (effect*nominal.GetBinError(bin)<0.1*sqrt(nominal.GetBinContent(bin)+0.04)):
                                 if options.verbose: print 'skipping stat_foreach_shape_bins %s %d because it is irrelevant'%(p,bin)
                                 break
                             p0Up = nominal.Clone("%s_%s_%s_%s_bin%dUp"% (nominal.GetName(),name,truebinname,p,bin))
@@ -363,7 +363,7 @@ for name in systsEnv.keys():
                                     if nominal.Integral() != 0: 
                                         print "WARNING: for process %s in truebinname %s, bin %d,%d has zero yield or zero error." % (p,truebinname,binx,biny)
                                     break
-                                if (effect*nominal.GetBinError(binx,biny)<0.1*sqrt(nominal.GetBinContent(binx,biny)+1)):
+                                if (effect*nominal.GetBinError(binx,biny)<0.1*sqrt(nominal.GetBinContent(binx,biny)+0.04)):
                                     if options.verbose: print 'skipping stat_foreach_shape_bins %s %d,%d because it is irrelevant'%(p,binx,biny)
                                     break
                                 p0Up = nominal.Clone("%s_%s_%s_%s_bin%d_%dUp"% (nominal.GetName(),name,truebinname,p,binx,biny))
