@@ -26,7 +26,7 @@ class DYJetsFakeAnalyzer(Analyzer):
         self.mchandles['genInfo'] = AutoHandle(('generator','',''), 'GenEventInfoProduct' )
         self.mchandles['genJets'] = AutoHandle('slimmedGenJets', 'std::vector<reco::GenJet>')
 
-        self.handles['jets'] = AutoHandle('slimmedJets', 'std::vector<pat::Jet>')
+        self.handles['jets'] = AutoHandle(self.cfg_ana.jetCol, 'std::vector<pat::Jet>')
 
     def process(self, event):
 
