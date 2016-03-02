@@ -22,19 +22,37 @@ def createProcess(runOnMC=True, channel='tau-mu', runSVFit=False,
 
     sep_line = '-'*70
 
-
     process = cms.Process("H2TAUTAU")
 
     # Adding jet collection
     process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
-    process.GlobalTag.globaltag = '76X_mcRun2_asymptotic_v12'
+    process.GlobalTag.globaltag = '76X_mcRun2_asymptotic_RunIIFall15DR76_v1'
     if not runOnMC:
-        process.GlobalTag.globaltag = '76X_dataRun2_v15'
+        process.GlobalTag.globaltag = '76X_dataRun2_16Dec2015_v0'
 
     process.load('Configuration.StandardSequences.GeometryRecoDB_cff')
     process.load('Configuration.StandardSequences.MagneticField_38T_cff')
 
-    runMVAMET(process)
+    runMVAMET(process, jetCollectionPF="patJetsReapplyJEC")
+
+    
+    from PhysicsTools.PatAlgos.producersLayer1.jetUpdater_cff import patJetCorrFactorsUpdated
+    process.patJetCorrFactorsReapplyJEC = patJetCorrFactorsUpdated.clone(
+        src=cms.InputTag("slimmedJets"),
+        levels=['L1FastJet', 
+            'L2Relative', 
+            'L3Absolute'],
+      payload='AK4PFchs'
+    ) # Make sure to choose the appropriate levels and payload here!
+
+    if not runOnMC:
+        process.patJetCorrFactorsReapplyJEC.levels += ['L3Residual']
+
+    from PhysicsTools.PatAlgos.producersLayer1.jetUpdater_cff import patJetsUpdated
+    process.patJetsReapplyJEC = patJetsUpdated.clone(
+        jetSource = cms.InputTag("slimmedJets"),
+        jetCorrFactorsSource = cms.VInputTag(cms.InputTag("patJetCorrFactorsReapplyJEC"))
+    )
 
     process.maxEvents = cms.untracked.PSet(input=cms.untracked.int32(-1))
 
