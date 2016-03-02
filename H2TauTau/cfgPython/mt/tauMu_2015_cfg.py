@@ -27,6 +27,11 @@ syncntuple = True
 cmssw = True
 data = False
 
+# Just to be sure
+if production:
+    syncntuple = False
+    pick_events = False
+
 # Define extra modules
 tauIsoCalc = cfg.Analyzer(
     TauIsolationCalculator,
@@ -57,7 +62,7 @@ samples = backgrounds_mu + sm_signals + sync_list + mssm_signals
 
 
 split_factor = 5e3
-split_factor = 1e5
+# split_factor = 1e5
 
 for sample in samples:
     sample.triggers = mc_triggers
@@ -83,9 +88,9 @@ for mc in samples:
 ###################################################
 ###             SET COMPONENTS BY HAND          ###
 ###################################################
-selectedComponents = data_list if data else backgrounds_mu + sm_signals
+selectedComponents = data_list if data else backgrounds_mu + sm_signals + mssm_signals
 
-selectedComponents = [s for s in selectedComponents if 'DYJets' in s.name] + mssm_signals
+selectedComponents = [s for s in selectedComponents if 'DYJets' in s.name or 'HiggsGGH125' in s.name or 'GG250' in s.name] 
 
 ###################################################
 ###             CHERRY PICK EVENTS              ###
@@ -103,7 +108,6 @@ if not cmssw:
     module = [s for s in sequence if s.name == 'MCWeighter'][0]
     sequence.remove(module)
 
-selectedComponents = [s for s in selectedComponents if 'BB' in s.name]
 ###################################################
 ###            SET BATCH OR LOCAL               ###
 ###################################################
