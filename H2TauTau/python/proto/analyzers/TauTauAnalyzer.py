@@ -5,8 +5,9 @@ from collections import OrderedDict
 
 from PhysicsTools.HeppyCore.statistics.counter import Counters
 from PhysicsTools.HeppyCore.utils.deltar import matchObjectCollection
+from PhysicsTools.HeppyCore.utils.deltar import deltaR
 from PhysicsTools.Heppy.analyzers.core.AutoHandle import AutoHandle
-from PhysicsTools.Heppy.physicsobjects.PhysicsObjects import Tau, Muon, Jet, GenParticle
+from PhysicsTools.Heppy.physicsobjects.PhysicsObjects import Tau, Muon
 from PhysicsTools.Heppy.physicsobjects.Electron import Electron
 
 from CMGTools.H2TauTau.proto.analyzers.DiLeptonAnalyzer import DiLeptonAnalyzer
@@ -90,6 +91,12 @@ class TauTauAnalyzer(DiLeptonAnalyzer):
             'std::vector<pat::MET>'
         )
 
+        self.handles['l1IsoTau'] = AutoHandle( 
+            ('l1extraParticles', 'IsoTau'), 
+            'std::vector<l1extra::L1JetParticle>'   
+        )
+
+
     def process(self, event):
 
         # method inherited from parent class DiLeptonAnalyzer
@@ -103,23 +110,22 @@ class TauTauAnalyzer(DiLeptonAnalyzer):
 
         result = super(TauTauAnalyzer, self).process(event)
 
+        event.isSignal = False
         if result:
             event.isSignal = True
-        else:
-            # trying to get a dilepton from the control region.
-            # it must have well id'ed and trig matched legs,
-            # di-lepton and tri-lepton veto must pass
-            result = self.selectionSequence(event,
-                                            fillCounter=True,
-                                            leg1IsoCut=self.cfg_ana.looseiso1,
-                                            leg2IsoCut=self.cfg_ana.looseiso2)
+        # trying to get a dilepton from the control region.
+        # it must have well id'ed and trig matched legs,
+        # di-lepton and tri-lepton veto must pass
+        result = self.selectionSequence(event,
+                                        fillCounter=True,
+                                        leg1IsoCut=self.cfg_ana.looseiso1,
+                                        leg2IsoCut=self.cfg_ana.looseiso2)
 
-            if result is False:
-                # really no way to find a suitable di-lepton,
-                # even in the control region
-                return False
-            event.isSignal = False
-
+        if result is False:
+            # really no way to find a suitable di-lepton,
+            # even in the control region
+            return False
+        
         if not (hasattr(event, 'leg1') and hasattr(event, 'leg2')):
             return False
 
@@ -134,11 +140,13 @@ class TauTauAnalyzer(DiLeptonAnalyzer):
             self.scaleDiLep(event.diLepton)
 
         # RIC: agreed with Adinda to sort taus by isolation
-        iso = self.cfg_ana.isolation
-        if event.leg1.tauID(iso) < event.leg2.tauID(iso):
-            event.leg1 = event.diLepton.leg2()
-            event.leg2 = event.diLepton.leg1()
-            event.selectedLeptons = [event.leg2, event.leg1]
+        # JAN: This code however doesn't fix the order in the dilepton object -
+        #      added it there
+        # iso = self.cfg_ana.isolation
+        # if event.leg1.tauID(iso) < event.leg2.tauID(iso):
+        #     event.leg1 = event.diLepton.leg2()
+        #     event.leg2 = event.diLepton.leg1()
+        #     event.selectedLeptons = [event.leg2, event.leg1]
 
         if hasattr(event, 'calibratedPfMet'):
             event.pfmet = event.calibratedPfMet
@@ -156,7 +164,7 @@ class TauTauAnalyzer(DiLeptonAnalyzer):
         '''Build di-leptons, associate best vertex to both legs.'''
         diLeptons = []
         for index, dil in enumerate(cmgDiLeptons):
-            pydil = TauTau(dil)
+            pydil = TauTau(dil, iso=self.cfg_ana.isolation)
             pydil.leg1().associatedVertex = event.goodVertices[0]
             pydil.leg2().associatedVertex = event.goodVertices[0]
             diLeptons.append(pydil)
@@ -230,7 +238,7 @@ class TauTauAnalyzer(DiLeptonAnalyzer):
                 leg.tauID(iso) < isocut and
                 leg.pt() > leg_pt and
                 abs(leg.eta()) < leg_eta and
-                leg.tauID('decayModeFindingNewDMs') > 0.5)
+                leg.tauID('decayModeFinding') > 0.5)
 
     def testLeg1(self, leg, isocut):
         leg_pt = self.cfg_ana.pt1
@@ -267,7 +275,37 @@ class TauTauAnalyzer(DiLeptonAnalyzer):
 
     def trigMatched(self, event, diL, requireAllMatched=False):
         matched = super(TauTauAnalyzer, self).trigMatched(event, diL, requireAllMatched=requireAllMatched, checkBothLegs=True)
+
+        if not self.l1Matched(event, diL):
+            matched = False
+
         return matched
+
+    def l1Matched(self, event, diL):
+        '''Additional L1 matching for 2015 trigger bug.'''
+        allMatched = True
+
+        l1objs = self.handles['l1IsoTau'].product()
+
+        for leg in [diL.leg1(), diL.leg2()]:
+            legMatched = False
+            bestDR = 0.5
+            for l1 in l1objs:
+                if l1.pt() < 28.:
+                    continue
+                dR = deltaR(l1.eta(), l1.phi(), leg.eta(), leg.phi())
+                if dR < bestDR:
+                    legMatched = True
+                    bestDR = dR
+                    leg.L1 = l1
+            if not legMatched:
+                allMatched = False
+                break
+
+        if allMatched and diL.leg1().L1 == diL.leg2().L1:
+            allMatched = False
+
+        return allMatched
 
     def bestDiLepton(self, diLeptons):
         '''Returns the best diLepton (1st precedence most isolated opposite-sign,

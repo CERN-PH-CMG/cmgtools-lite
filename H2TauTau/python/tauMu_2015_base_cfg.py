@@ -62,8 +62,8 @@ muonWeighter = cfg.Analyzer(
     LeptonWeighter,
     name='LeptonWeighter_mu',
     scaleFactorFiles={
-        'trigger':'$CMSSW_BASE/src/CMGTools/H2TauTau/data/Muon_SingleMu_eff.root',
-        'idiso':'$CMSSW_BASE/src/CMGTools/H2TauTau/data/Muon_IdIso0p10_eff.root',
+        'trigger':'$CMSSW_BASE/src/CMGTools/H2TauTau/data/Muon_IsoMu18_fall15.root',
+        'idiso':'$CMSSW_BASE/src/CMGTools/H2TauTau/data/Muon_IdIso0p1_fall15.root',
     },
     lepton='leg1',
     disable=False

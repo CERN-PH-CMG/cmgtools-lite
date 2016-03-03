@@ -21,7 +21,7 @@ HiggsVBF130 = creator.makeMCComponent('HiggsVBF125', '/VBFHToTauTau_M130_13TeV_p
 
 
 
-HiggsTTH125 = creator.makeMCComponent('HiggsTTH125', '/ttHJetToTT_M125_13TeV_amcatnloFXFX_madspin_pythia8/RunIISpring15MiniAODv2-74X_mcRun2_asymptotic_v2-v1/MINIAODSIM', 'CMS', '.*root', 1.0)
+HiggsTTH125 = creator.makeMCComponent('HiggsTTH125', '/ttHJetToTT_M125_13TeV_amcatnloFXFX_madspin_pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM', 'CMS', '.*root', 1.0)
 
 
 #############

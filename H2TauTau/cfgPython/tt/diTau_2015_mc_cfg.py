@@ -12,6 +12,7 @@ from CMGTools.H2TauTau.proto.analyzers.TauDecayModeWeighter       import TauDeca
 from CMGTools.H2TauTau.proto.analyzers.LeptonWeighter             import LeptonWeighter
 from CMGTools.H2TauTau.proto.analyzers.TauP4Scaler                import TauP4Scaler
 from CMGTools.H2TauTau.proto.analyzers.SVfitProducer              import SVfitProducer
+from CMGTools.H2TauTau.proto.analyzers.L1TriggerAnalyzer import L1TriggerAnalyzer
 
 # common configuration and sequence
 from CMGTools.H2TauTau.htt_ntuple_base_cff import commonSequence, genAna, dyJetsFakeAna, puFileData, puFileMC, eventSelector
@@ -20,7 +21,7 @@ from CMGTools.H2TauTau.htt_ntuple_base_cff import commonSequence, genAna, dyJets
 
 # production = True run on batch, production = False (or unset) run locally
 production = getHeppyOption('production')
-production = True
+# production = True
 
 # local switches
 syncntuple    = False
@@ -28,6 +29,7 @@ computeSVfit  = True
 pick_events   = False
 cmssw         = True
 calibrateTaus = False
+data          = False
 
 dyJetsFakeAna.channel = 'tt'
 
@@ -50,7 +52,7 @@ tauTauAna = cfg.Analyzer(
   eta2                = 2.1                                ,
   iso2                = 1.                                 ,
   looseiso2           = 999999999.                         ,
-  isolation           = 'byIsolationMVArun2v1DBnewDMwLTraw',
+  isolation           = 'byIsolationMVArun2v1DBoldDMwLTraw',
   m_min               = 10                                 ,
   m_max               = 99999                              ,
   dR_min              = 0.5                                ,
@@ -64,6 +66,14 @@ tauTauAna = cfg.Analyzer(
 
 if not cmssw:
   tauTauAna.from_single_objects = True
+
+l1Ana = cfg.Analyzer(
+    class_object=L1TriggerAnalyzer,
+    name='L1TriggerAnalyzer',
+    collections=['IsoTau'],
+    requireMatches=['leg1', 'leg2'],
+    dR=0.5
+)
 
 fileCleaner = cfg.Analyzer(
   FileCleaner         ,
@@ -90,7 +100,7 @@ fileCleaner = cfg.Analyzer(
 
 tauDecayModeWeighter = cfg.Analyzer(
   TauDecayModeWeighter   ,
-  'TauDecayModeWeighter' ,
+  name='TauDecayModeWeighter' ,
   legs = ['leg1', 'leg2'],
   )
 
@@ -140,15 +150,15 @@ svfitProducer = cfg.Analyzer(
 ###################################################
 from CMGTools.RootTools.utils.splitFactor import splitFactor
 from CMGTools.H2TauTau.proto.samples.data15.data import data_tau
-from CMGTools.H2TauTau.proto.samples.fall15.higgs import HiggsGGH125 as ggh125
+from CMGTools.H2TauTau.proto.samples.fall15.htt_common import backgrounds, sm_signals, mssm_signals, data_tau, sync_list
 from CMGTools.H2TauTau.proto.samples.fall15.higgs_susy import HiggsSUSYGG160 as ggh160
 from CMGTools.H2TauTau.proto.samples.fall15.higgs_susy import HiggsSUSYGG90 as ggh90
 from CMGTools.H2TauTau.proto.samples.fall15.higgs_susy import HiggsSUSYGG1000 as ggh1000
 from CMGTools.H2TauTau.proto.samples.fall15.triggers_tauTau import mc_triggers, mc_triggerfilters, data_triggers, data_triggerfilters
 
 data_list = data_tau
-# MC_list = [ggh160]
 MC_list = [ggh90, ggh1000]
+# samples = backgrounds + sm_signals + mssm_signals
 
 split_factor = 1e5
 
@@ -156,8 +166,10 @@ for sample in data_list:
     sample.triggers = data_triggers
     sample.triggerobjects = data_triggerfilters
     sample.splitFactor = splitFactor(sample, split_factor)
+    sample.json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions15/13TeV/Cert_246908-260627_13TeV_PromptReco_Collisions15_25ns_JSON_v2.txt'
+    sample.lumi = 2260.
 
-for sample in MC_list:
+for sample in samples:
     sample.triggers = mc_triggers
     sample.triggerobjects = mc_triggerfilters
     sample.splitFactor = splitFactor(sample, split_factor)
@@ -165,14 +177,16 @@ for sample in MC_list:
 ###################################################
 ###              ASSIGN PU to MC                ###
 ###################################################
-for mc in MC_list:
+for mc in samples:
     mc.puFileData = puFileData
     mc.puFileMC = puFileMC
 
 ###################################################
 ###             SET COMPONENTS BY HAND          ###
 ###################################################
-selectedComponents = MC_list
+selectedComponents = samples
+if data:
+  selectedComponents = data_list
 
 ###################################################
 ###                  SEQUENCE                   ###
@@ -181,6 +195,9 @@ sequence = commonSequence
 if calibrateTaus:
     sequence.insert(sequence.index(genAna), tauP4Scaler)
 sequence.insert(sequence.index(genAna), tauTauAna)
+sequence.insert(sequence.index(genAna), l1Ana)
+# sequence.append(tau1Calibration)
+# sequence.append(tau2Calibration)
 sequence.append(tauDecayModeWeighter)
 sequence.append(tau1Weighter)
 sequence.append(tau2Weighter)
@@ -198,15 +215,15 @@ if not cmssw:
 ###################################################
 if pick_events:
 
-    import csv
-    fileName = '/afs/cern.ch/work/m/manzoni/diTau2015/CMSSW_7_4_3/src/CMGTools/H2TauTau/cfgPython/2015-sync/Imperial.csv'
-#     fileName = '/afs/cern.ch/work/m/manzoni/diTau2015/CMSSW_7_4_3/src/CMGTools/H2TauTau/cfgPython/2015-sync/CERN.csv'
-    f = open(fileName, 'rb')
-    reader = csv.reader(f)
-    evtsToPick = []
+#     import csv
+#     fileName = '/afs/cern.ch/work/m/manzoni/diTau2015/CMSSW_7_4_3/src/CMGTools/H2TauTau/cfgPython/2015-sync/Imperial.csv'
+# #     fileName = '/afs/cern.ch/work/m/manzoni/diTau2015/CMSSW_7_4_3/src/CMGTools/H2TauTau/cfgPython/2015-sync/CERN.csv'
+#     f = open(fileName, 'rb')
+#     reader = csv.reader(f)
+    evtsToPick = [158340]
 
-    for i, row in enumerate(reader):
-        evtsToPick += [int(j) for j in row]
+    # for i, row in enumerate(reader):
+    #     evtsToPick += [int(j) for j in row]
 
     eventSelector.toSelect = evtsToPick
     sequence.insert(0, eventSelector)
@@ -217,6 +234,8 @@ if pick_events:
 if not production:
   cache                = True
   comp                 = ggh160
+  # comp = data_list[0]
+  comp = [s for s in selectedComponents if 'TBarToLeptons_tch_powheg' in s.name][0]
   selectedComponents   = [comp]
   comp.splitFactor     = 1
   comp.fineSplitFactor = 1
@@ -225,7 +244,8 @@ if not production:
 preprocessor = None
 if cmssw:
     sequence.append(fileCleaner)
-    preprocessor = CmsswPreprocessor("$CMSSW_BASE/src/CMGTools/H2TauTau/prod/h2TauTauMiniAOD_ditau_cfg.py", addOrigAsSecondary=False)
+    cfg_name = "$CMSSW_BASE/src/CMGTools/H2TauTau/prod/h2TauTauMiniAOD_ditau_data_cfg.py" if data else "$CMSSW_BASE/src/CMGTools/H2TauTau/prod/h2TauTauMiniAOD_ditau_cfg.py"
+    preprocessor = CmsswPreprocessor(cfg_name, addOrigAsSecondary=False)
 
 # the following is declared in case this cfg is used in input to the
 # heppy.py script
@@ -238,6 +258,3 @@ config = cfg.Config( components   = selectedComponents,
                      )
 
 printComps(config.components, True)
-
-def modCfgForPlot(config):
-  config.components = []

@@ -153,16 +153,6 @@ class JetAnalyzer(Analyzer):
         for jet in event.cleanJets:
             jet.matchGenParton = 999.0
 
-        if self.cfg_comp.isMC and "BB" in self.cfg_comp.name:
-            genParticles = self.mchandles['genParticles'].product()
-            event.genParticles = map(GenParticle, genParticles)
-            for gen in genParticles:
-                if abs(gen.pdgId()) == 5 and gen.mother() and abs(gen.mother().pdgId()) == 21:
-                    for jet in event.cleanJets:
-                        dR = deltaR2(jet.eta(), jet.phi(), gen.eta(), gen.phi())
-                        if dR < jet.matchGenParton:
-                            jet.matchGenParton = dR
-
         event.jets30 = [jet for jet in event.jets if jet.pt() > 30]
         event.cleanJets30 = [jet for jet in event.cleanJets if jet.pt() > 30]
         if len(event.jets30) >= 2:

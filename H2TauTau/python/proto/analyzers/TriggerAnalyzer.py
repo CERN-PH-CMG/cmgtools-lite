@@ -14,6 +14,7 @@ class TriggerInfo(object):
         self.prescale = prescale
         self.objects = []
         self.objIds = set()
+        self.object_names = []
 
     def __str__(self):
         return 'TriggerInfo: name={name}, fired={fired}, n_objects={n_o}'.format(
@@ -145,12 +146,15 @@ class TriggerAnalyzer(Analyzer):
                 for info in trigger_infos:
 #                     if event.eventId == 104644585: import pdb ; pdb.set_trace()
                     if to.hasPathName(info.name):
+                        if to in info.objects:
+                            continue
                         # print 'TO name', [n for n in to.filterLabels()], to.hasPathName(info.name, False)
                         if self.triggerObjects or self.extraTriggerObjects:
                             if not any(n in to.filterLabels() for n in self.triggerObjects + self.extraTriggerObjects):
                                 continue
-                        if to in info.objects:
-                           continue
+                            info.object_names.append([obj_n for obj_n in self.triggerObjects if obj_n in to.filterLabels()])
+                        else:
+                            info.object_names.append('')
                         info.objects.append(to)
                         info.objIds.add(abs(to.pdgId()))
         
@@ -175,7 +179,6 @@ class TriggerAnalyzer(Analyzer):
 #                 for oo in info.objects: print oo.pt(), oo.eta(), oo.phi()
                                                 
         event.trigger_infos = trigger_infos
-
 
         if self.cfg_ana.verbose:
             print 'run %d, lumi %d,event %d' %(event.run, event.lumi, event.eventId) , 'Triggers_fired: ', triggers_fired  

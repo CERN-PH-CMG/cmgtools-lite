@@ -235,7 +235,7 @@ metAna = cfg.Analyzer(
     doMetNoMu = False,
     doMetNoEle = False,
     doMetNoPhoton = False,
-    recalibrate = True, # or "type1", or True
+    recalibrate = "type1", # or "type1", or True
     applyJetSmearing = False, # does nothing unless the jet smearing is turned on in the jet analyzer
     old74XMiniAODs = False, # set to True to get the correct Raw MET when running on old 74X MiniAODs
     jetAnalyzerPostFix = "",
@@ -244,32 +244,9 @@ metAna = cfg.Analyzer(
     dzMax = 0.1,
     collectionPostFix = "",
     )
-metNoHFAna = cfg.Analyzer(
-    METAnalyzer, name="metNoHFAnalyzer",
-    metCollection     = "slimmedMETsNoHF",
-    noPUMetCollection = "slimmedMETsNoHF",    
-    copyMETsByValue = False,
-    doTkMet = False,
-    includeTkMetCHS = False,
-    includeTkMetPVLoose = False,
-    includeTkMetPVTight = False,
-    doMetNoPU = False,
-    doMetNoMu = False,
-    doMetNoEle = False,
-    doMetNoPhoton = False,
-    recalibrate = True, # or "type1", or True
-    applyJetSmearing = False, # does nothing unless the jet smearing is turned on in the jet analyzer
-    old74XMiniAODs = False, # set to True to get the correct Raw MET when running on old 74X MiniAODs
-    jetAnalyzerPostFix = "",
-    candidates='packedPFCandidates',
-    candidatesTypes='std::vector<pat::PackedCandidate>',
-    dzMax = 0.1,
-    collectionPostFix = "NoHF",
-    )
-
 
 metPuppiAna = cfg.Analyzer(
-    METAnalyzer, name="metPuppiAnalyzer",
+    METAnalyzer, name="metAnalyzerPuppi",
     metCollection     = "slimmedMETsPuppi",
     noPUMetCollection = "slimmedMETsPuppi",    
     copyMETsByValue = False,
@@ -281,10 +258,10 @@ metPuppiAna = cfg.Analyzer(
     doMetNoMu = False,
     doMetNoEle = False,
     doMetNoPhoton = False,
-    recalibrate = False,
+    recalibrate = False, # or "type1", or True
     applyJetSmearing = False, # does nothing unless the jet smearing is turned on in the jet analyzer
     old74XMiniAODs = False, # set to True to get the correct Raw MET when running on old 74X MiniAODs
-    jetAnalyzerCalibrationPostFix = "",
+    jetAnalyzerCalibrationPostFix = "Puppi",
     candidates='packedPFCandidates',
     candidatesTypes='std::vector<pat::PackedCandidate>',
     dzMax = 0.1,
@@ -327,30 +304,69 @@ jetAna = cfg.Analyzer(
     jetLepArbitration = (lambda jet,lepton : lepton), # you can decide which to keep in case of overlaps; e.g. if the jet is b-tagged you might want to keep the jet
     cleanSelectedLeptons = True, #Whether to clean 'selectedLeptons' after disambiguation. Treat with care (= 'False') if running Jetanalyzer more than once
     minLepPt = 10,
-    relaxJetId = False,
+    relaxJetId = True,
     doPuId = False, # Not commissioned in 7.0.X
     recalibrateJets = True, #'MC', # True, False, 'MC', 'Data'
     applyL2L3Residual = True, # Switch to 'Data' when they will become available for Data
     recalibrationType = "AK4PFchs",
-    mcGT     = "Summer15_25nsV6_MC",
-    dataGT   = "Summer15_25nsV6_DATA",
+    mcGT     = "Fall15_25nsV2_MC",
+    dataGT   = "Fall15_25nsV2_DATA",
     jecPath = "${CMSSW_BASE}/src/CMGTools/RootTools/data/jec/",
     shiftJEC = 0, # set to +1 or -1 to apply +/-1 sigma shift to the nominal jet energies
-    addJECShifts = True, # if true, add  "corr", "corrJECUp", and "corrJECDown" for each jet (requires uncertainties to be available!)
+    addJECShifts = False, # if true, add  "corr", "corrJECUp", and "corrJECDown" for each jet (requires uncertainties to be available!)
     smearJets = False,
     shiftJER = 0, # set to +1 or -1 to get +/-1 sigma shifts
     alwaysCleanPhotons = False,
+    cleanGenJetsFromPhoton = False,
     cleanJetsFromFirstPhoton = False,
     cleanJetsFromTaus = False,
     cleanJetsFromIsoTracks = False,
     doQG = False,
     do_mc_match = False,
-    cleanGenJetsFromPhoton = False,
     calculateSeparateCorrections = True, # should be True if recalibrateJets is True, otherwise L1s will be inconsistent
-    calculateType1METCorrection  = False,
+    calculateType1METCorrection  = True,
     type1METParams = { 'jetPtThreshold':15., 'skipEMfractionThreshold':0.9, 'skipMuons':True },
     collectionPostFix = ""
     )
+
+jetPuppiAna = cfg.Analyzer(
+    JetAnalyzer, name='jetAnalyzerPuppi',
+    jetCol = 'slimmedJetsPuppi',
+    copyJetsByValue = False,      #Whether or not to copy the input jets or to work with references (should be 'True' if JetAnalyzer is run more than once)
+    genJetCol = 'slimmedGenJets',
+    rho = ('fixedGridRhoFastjetAll','',''),
+    jetPt = 25.,
+    jetEta = 4.7,
+    jetEtaCentral = 2.4,
+    jetLepDR = 0.4,
+    jetLepArbitration = (lambda jet,lepton : lepton), # you can decide which to keep in case of overlaps; e.g. if the jet is b-tagged you might want to keep the jet
+    cleanSelectedLeptons = True, #Whether to clean 'selectedLeptons' after disambiguation. Treat with care (= 'False') if running Jetanalyzer more than once
+    minLepPt = 10,
+    relaxJetId = True,
+    doPuId = False, # Not commissioned in 7.0.X
+    recalibrateJets = True, #'MC', # True, False, 'MC', 'Data'
+    applyL2L3Residual = True, # Switch to 'Data' when they will become available for Data
+    recalibrationType = "AK4PFPuppi", ## waiting for JEC those not exist yet
+    mcGT     = "Fall15_25nsV2_MC",
+    dataGT   = "Fall15_25nsV2_DATA",
+    jecPath = "${CMSSW_BASE}/src/CMGTools/RootTools/data/jec/",
+    shiftJEC = 0, # set to +1 or -1 to apply +/-1 sigma shift to the nominal jet energies
+    addJECShifts = False, # if true, add  "corr", "corrJECUp", and "corrJECDown" for each jet (requires uncertainties to be available!)
+    smearJets = False,
+    shiftJER = 0, # set to +1 or -1 to get +/-1 sigma shifts
+    alwaysCleanPhotons = False,
+    cleanGenJetsFromPhoton = False,
+    cleanJetsFromFirstPhoton = False,
+    cleanJetsFromTaus = False,
+    cleanJetsFromIsoTracks = False,
+    doQG = False,
+    do_mc_match = False,
+    calculateSeparateCorrections = True, # should be True if recalibrateJets is True, otherwise L1s will be inconsistent
+    calculateType1METCorrection  = True,
+    type1METParams = { 'jetPtThreshold':15., 'skipEMfractionThreshold':0.9, 'skipMuons':True },
+    collectionPostFix = ""
+    )
+
 
 # Jet-MET based Skim (generic, but requirements depend on the final state)
 from CMGTools.TTHAnalysis.analyzers.ttHJetMETSkimmer import ttHJetMETSkimmer
@@ -389,9 +405,9 @@ metCoreSequence = [
     photonAna,
 ##### jet modules below
     jetAna,
+##    jetPuppiAna,
 ##### met modules below
     metAna,
-    metNoHFAna,
     metPuppiAna,
     eventFlagsAna,
     hbheFilterAna,
