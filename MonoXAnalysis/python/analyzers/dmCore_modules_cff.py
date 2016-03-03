@@ -208,6 +208,17 @@ monoJetCtrlLepSkim = cfg.Analyzer(
     ptCuts = [10],                # can give a set of pt cuts on the leptons
     )
 
+## gamma+jets Skim
+from CMGTools.MonoXAnalysis.analyzers.gammaJetCtrlSkimmer import gammaJetCtrlSkimmer
+gammaJetCtrlSkim = cfg.Analyzer(
+    gammaJetCtrlSkimmer, name='gammaJetCtrlSkimmer',
+    minPhotons = 0,
+    minJets = 0,
+    photonIdCut = 'photon.photonID("PhotonCutBasedIDLoose")',
+    photonPtCut = 150,
+    jetPtCut = 100,
+    )
+
 ## Photon Analyzer (generic)
 photonAna = cfg.Analyzer(
     PhotonAnalyzer, name='photonAnalyzer',
@@ -215,7 +226,7 @@ photonAna = cfg.Analyzer(
     ptMin = 15,
     etaMax = 2.5,
     doPhotonScaleCorrections=False,
-    gammaID = "POG_SPRING15_50ns_Loose",
+    gammaID = "POG_SPRING15_25ns_Loose",
     rhoPhoton = 'fixedGridRhoFastjetAll',
     gamma_isoCorr = 'rhoArea',
     doFootprintRemovedIsolation = True,
@@ -426,7 +437,7 @@ def doECalElectronCorrections(sync=False,era="25ns"):
         'isSync': sync
     }
 def doECalPhotonCorrections(sync=False):
-    global photonAna
+    global photonAna, gammaJetCtrlSkimmer
     photonAna.doPhotonScaleCorrections = {
         'data' : 'EgammaAnalysis/ElectronTools/data/76X_16DecRereco_2015',
         'isSync': sync
@@ -463,7 +474,9 @@ dmCoreSequence = [
     jetAna,
     metAna,
     ttHCoreEventAna,
+    ttHFatJetAna,
     monoJetSkim,
+    gammaJetCtrlSkim,
     triggerFlagsAna,
     eventFlagsAna,
 ]

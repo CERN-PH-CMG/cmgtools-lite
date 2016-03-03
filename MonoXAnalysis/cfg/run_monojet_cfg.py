@@ -27,6 +27,7 @@ doPhotonCorr = getHeppyOption("doPhotonCorr",True)
 signalSkim = False
 diLepSkim = False
 singleLepSkim = False
+singlePhotonSkim = False
 
 # --- MONOJET SKIMMING ---
 if signalSkim == True:
@@ -41,6 +42,9 @@ if singleLepSkim == True:
     monoJetCtrlLepSkim.idCut = '(lepton.muonID("POG_ID_Tight") and lepton.relIso04 < 0.12) if abs(lepton.pdgId())==13 else \
 (lepton.electronID("POG_Cuts_ID_SPRING15_25ns_v1_ConvVetoDxyDz_Tight_full5x5") and (lepton.relIso03<0.0354 if abs(lepton.superCluster().eta())<1.479 else lepton.relIso03<0.0646))'
     monoJetCtrlLepSkim.ptCuts = [20]
+if singlePhotonSkim == True:
+    gammaJetCtrlSkim.minPhotons = 1
+    gammaJetCtrlSkim.minJets = 1
 
 # --- Photon OR Electron SKIMMING ---
 #if photonOrEleSkim == True:
@@ -179,7 +183,6 @@ if doPhotonCorr:
 sequence = cfg.Sequence(dmCoreSequence+[
 #   monoXRazorAna,
 #   monoXMT2Ana,
-   ttHFatJetAna,
    monoJetVarAna,
    MonoJetEventAna,
    treeProducer,
@@ -189,6 +192,7 @@ sequence = cfg.Sequence(dmCoreSequence+[
 from CMGTools.RootTools.samples.triggers_13TeV_Spring15 import *
 from CMGTools.RootTools.samples.triggers_8TeV import triggers_1mu_8TeV, triggers_mumu_8TeV, triggers_mue_8TeV, triggers_ee_8TeV;
 triggers_AllMonojet = triggers_metNoMu90_mhtNoMu90 + triggers_metNoMu120_mhtNoMu120 + triggers_AllMET170 + triggers_AllMET300
+triggers_SinglePhoton = triggers_photon155 + triggers_photon165_HE10 + triggers_photon175
 triggerFlagsAna.triggerBits = {
     'DoubleMu' : triggers_mumu_iso,
     'DoubleEl' : triggers_ee,
@@ -198,6 +202,7 @@ triggerFlagsAna.triggerBits = {
     'MonoJetMetNoMuMHT120' : triggers_metNoMu120_mhtNoMu120,
     'Met170'   : triggers_AllMET170,
     'Met300'   : triggers_AllMET300,
+    'SinglePho' : triggers_SinglePhoton,
 }
 triggerFlagsAna.unrollbits = True
 triggerFlagsAna.saveIsUnprescaled = False
@@ -239,10 +244,10 @@ if runData and not isTest: # For running on data
         DatasetsAndTriggers.append( ("DoubleMuon", triggers_mumu_iso + triggers_mumu_ss + triggers_mumu_ht + triggers_3mu + triggers_3mu_alt + triggers_AllMonojet) )
         DatasetsAndTriggers.append( ("DoubleEG",   triggers_ee + triggers_ee_ht + triggers_3e) )
     if singleLepSkim == True:
-#        DatasetsAndTriggers.append( ("DoubleMuon", triggers_mumu_iso + triggers_mumu_ss + triggers_mumu_ht + triggers_3mu + triggers_3mu_alt + triggers_AllMonojet) )
-#        DatasetsAndTriggers.append( ("DoubleEG",   triggers_ee + triggers_ee_ht + triggers_3e) )
-#        DatasetsAndTriggers.append( ("SingleMuon", triggers_1mu_iso + triggers_1mu_iso_50ns + triggers_1mu_noniso + triggers_AllMonojet) )
         DatasetsAndTriggers.append( ("SingleElectron", triggers_ee + triggers_ee_ht + triggers_3e + triggers_1e + triggers_1e_50ns) )
+        DatasetsAndTriggers.append( ("SinglePhoton",   triggers_SinglePhoton) )
+    if singlePhotonSkim == True:
+        DatasetsAndTriggers.append( ("SinglePhoton", triggers_SinglePhoton) )
     if signalSkim == True:
         DatasetsAndTriggers.append( ("MET", triggers_AllMonojet ) )
         
@@ -274,7 +279,8 @@ if runData and not isTest: # For running on data
                 comp.fineSplitFactor = 1
                 selectedComponents.append( comp )
             iproc += 1
-        # vetos += triggers # no need of this for monojet, since there are not overlapping datasets for signal region
+        if singleLepSkim and "SinglePhoton" in pd: 
+            vetos += triggers
     if json is None:
         dmCoreSequence.remove(jsonAna)
 
