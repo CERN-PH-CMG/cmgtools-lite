@@ -20,6 +20,8 @@ doT1METCorr = getHeppyOption("doT1METCorr",True)
 forcedSplitFactor = getHeppyOption("splitFactor",-1)
 forcedFineSplitFactor = getHeppyOption("fineSplitFactor",-1)
 isTest = getHeppyOption("test",None) != None and not re.match("^\d+$",getHeppyOption("test"))
+doLepCorr = getHeppyOption("doLepCorr",True)
+doPhotonCorr = getHeppyOption("doPhotonCorr",True)
 
 # Define skims
 signalSkim = False
@@ -166,6 +168,12 @@ if doT1METCorr:
     metAna.recalibrate = "type1"
     metAna.old74XMiniAODs = False
 
+# lepton scale / resolution corrections
+if doLepCorr: 
+    doECalElectronCorrections(era="25ns")
+    doKalmanMuonCorrections()
+if doPhotonCorr:
+    doECalPhotonCorrections()
 
 #-------- SEQUENCE
 sequence = cfg.Sequence(dmCoreSequence+[

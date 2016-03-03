@@ -214,6 +214,7 @@ photonAna = cfg.Analyzer(
     photons='slimmedPhotons',
     ptMin = 15,
     etaMax = 2.5,
+    doPhotonScaleCorrections=False,
     gammaID = "POG_SPRING15_50ns_Loose",
     rhoPhoton = 'fixedGridRhoFastjetAll',
     gamma_isoCorr = 'rhoArea',
@@ -414,6 +415,31 @@ ttHCoreEventAna = cfg.Analyzer(
     jetForBiasedDPhi = "cleanJets",
     jetPt = 40.,
     )
+
+# Electron and Photon calibrator (scale and smearings)
+def doECalElectronCorrections(sync=False,era="25ns"):
+    global lepAna, monoJetCtrlLepSkim
+    lepAna.doElectronScaleCorrections = {
+        'data' : 'EgammaAnalysis/ElectronTools/data/76X_16DecRereco_2015',
+        'GBRForest': ('$CMSSW_BASE/src/CMGTools/RootTools/data/egamma_epComb_GBRForest_76X.root',
+                      'gedelectron_p4combination_'+era),
+        'isSync': sync
+    }
+def doECalPhotonCorrections(sync=False):
+    global photonAna
+    photonAna.doPhotonScaleCorrections = {
+        'data' : 'EgammaAnalysis/ElectronTools/data/76X_16DecRereco_2015',
+        'isSync': sync
+    }
+def doKalmanMuonCorrections(sync=False,smear="basic"):
+    global lepAna
+    lepAna.doMuonScaleCorrections = ( 'Kalman', {
+        'MC': 'MC_76X_13TeV',
+        'Data': 'DATA_76X_13TeV',
+        'isSync': sync,
+        'smearMode':smear
+    })
+
 
 # Core sequence of all common modules
 dmCoreSequence = [
