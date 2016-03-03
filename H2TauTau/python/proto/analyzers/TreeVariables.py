@@ -132,7 +132,8 @@ muon_vars = [
 tau_vars = [
     Variable('decayMode', lambda tau : tau.decayMode()),
     Variable('zImpact', lambda tau : tau.zImpact()),
-    Variable('dz_selfvertex', lambda tau : tau.vertex().z() - tau.associatedVertex.position().z())
+    Variable('dz_selfvertex', lambda tau : tau.vertex().z() - tau.associatedVertex.position().z()),
+    Variable('ptScale', lambda tau : tau.ptScale if hasattr(tau, 'ptScale') else -999.),
 ]
 for tau_id in tauIDs:
     if type(tau_id) is str:

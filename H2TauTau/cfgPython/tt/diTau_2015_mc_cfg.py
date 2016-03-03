@@ -10,7 +10,7 @@ from CMGTools.H2TauTau.proto.analyzers.TauTauAnalyzer             import TauTauA
 from CMGTools.H2TauTau.proto.analyzers.H2TauTauTreeProducerTauTau import H2TauTauTreeProducerTauTau
 from CMGTools.H2TauTau.proto.analyzers.TauDecayModeWeighter       import TauDecayModeWeighter
 from CMGTools.H2TauTau.proto.analyzers.LeptonWeighter             import LeptonWeighter
-# from CMGTools.H2TauTau.proto.analyzers.TauP4Scaler                import TauP4Scaler
+from CMGTools.H2TauTau.proto.analyzers.TauP4Scaler                import TauP4Scaler
 from CMGTools.H2TauTau.proto.analyzers.SVfitProducer              import SVfitProducer
 
 # common configuration and sequence
@@ -20,26 +20,33 @@ from CMGTools.H2TauTau.htt_ntuple_base_cff import commonSequence, genAna, dyJets
 
 # production = True run on batch, production = False (or unset) run locally
 production = getHeppyOption('production')
-# production = True
+production = True
 
 # local switches
-syncntuple   = True
-computeSVfit = False
-pick_events  = False
-cmssw        = True
+syncntuple    = False
+computeSVfit  = True
+pick_events   = False
+cmssw         = True
+calibrateTaus = False
 
 dyJetsFakeAna.channel = 'tt'
 
 ### Define tau-tau specific modules
 
+tauP4Scaler = cfg.Analyzer(
+  class_object = TauP4Scaler  ,
+  name         = 'TauP4Scaler',
+)
+
+
 tauTauAna = cfg.Analyzer(
   class_object        = TauTauAnalyzer                     ,
   name                = 'TauTauAnalyzer'                   ,
-  pt1                 = 40.                                ,
+  pt1                 = 30.                                ,
   eta1                = 2.1                                ,
   iso1                = 1.                                 ,
   looseiso1           = 999999999.                         ,
-  pt2                 = 40.                                ,
+  pt2                 = 30.                                ,
   eta2                = 2.1                                ,
   iso2                = 1.                                 ,
   looseiso2           = 999999999.                         ,
@@ -52,6 +59,7 @@ tauTauAna = cfg.Analyzer(
   relaxJetId          = False                              ,
   verbose             = False                              ,
   from_single_objects = False                              ,
+  scaleTaus           = calibrateTaus                      ,
   )
 
 if not cmssw:
@@ -134,10 +142,13 @@ from CMGTools.RootTools.utils.splitFactor import splitFactor
 from CMGTools.H2TauTau.proto.samples.data15.data import data_tau
 from CMGTools.H2TauTau.proto.samples.fall15.higgs import HiggsGGH125 as ggh125
 from CMGTools.H2TauTau.proto.samples.fall15.higgs_susy import HiggsSUSYGG160 as ggh160
+from CMGTools.H2TauTau.proto.samples.fall15.higgs_susy import HiggsSUSYGG90 as ggh90
+from CMGTools.H2TauTau.proto.samples.fall15.higgs_susy import HiggsSUSYGG1000 as ggh1000
 from CMGTools.H2TauTau.proto.samples.fall15.triggers_tauTau import mc_triggers, mc_triggerfilters, data_triggers, data_triggerfilters
 
 data_list = data_tau
-MC_list = [ggh160]
+# MC_list = [ggh160]
+MC_list = [ggh90, ggh1000]
 
 split_factor = 1e5
 
@@ -167,9 +178,9 @@ selectedComponents = MC_list
 ###                  SEQUENCE                   ###
 ###################################################
 sequence = commonSequence
+if calibrateTaus:
+    sequence.insert(sequence.index(genAna), tauP4Scaler)
 sequence.insert(sequence.index(genAna), tauTauAna)
-# sequence.append(tau1Calibration)
-# sequence.append(tau2Calibration)
 sequence.append(tauDecayModeWeighter)
 sequence.append(tau1Weighter)
 sequence.append(tau2Weighter)
@@ -207,15 +218,14 @@ if not production:
   cache                = True
   comp                 = ggh160
   selectedComponents   = [comp]
-  comp.splitFactor     = 5
+  comp.splitFactor     = 1
   comp.fineSplitFactor = 1
-#   comp.files           = comp.files[:1]
+  comp.files           = comp.files[:1]
     
 preprocessor = None
 if cmssw:
     sequence.append(fileCleaner)
     preprocessor = CmsswPreprocessor("$CMSSW_BASE/src/CMGTools/H2TauTau/prod/h2TauTauMiniAOD_ditau_cfg.py", addOrigAsSecondary=False)
-#     preprocessor = CmsswPreprocessor("$CMSSW_BASE/src/CMGTools/H2TauTau/prod/h2TauTauMiniAOD_ditau_data_cfg.py", addOrigAsSecondary=False)
 
 # the following is declared in case this cfg is used in input to the
 # heppy.py script
