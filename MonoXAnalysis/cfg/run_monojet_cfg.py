@@ -255,6 +255,7 @@ if runData and not isTest: # For running on data
     for pd,triggers in DatasetsAndTriggers:
         iproc=0 
         for processing,run_dslimits in ProcessingsAndRunRanges:
+            if ("DoubleEG" in pd): processing.replace("v1","v2",1) 
             for run_range in run_ranges:
                 run_min = max(run_range[0],run_dslimits[0])
                 run_max = min(run_range[1],run_dslimits[1])
@@ -383,7 +384,7 @@ elif test == '76X-Data':
     what = getHeppyOption("sample")
     if what == "DoubleEG":
         comp = DoubleEG_Run2015D_16Dec
-        comp.files = [ 'root://eoscms//eos/cms/store/data/Run2015D/DoubleEG/MINIAOD/16Dec2015-v1/20000/40B59022-57A5-E511-B086-0CC47A4C8F26.root' ]
+        comp.files = [ 'root://eoscms//eos/cms/store/data/Run2015D/DoubleEG/MINIAOD/16Dec2015-v2/00000/043D5E4A-83A6-E511-B159-0CC47A4D76D6.root' ]
         selectedComponents = [ comp ]
     elif what == "DoubleMuon":
         comp = DoubleMuon_Run2015D_16Dec
