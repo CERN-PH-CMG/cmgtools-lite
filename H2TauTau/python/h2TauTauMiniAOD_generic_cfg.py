@@ -158,6 +158,17 @@ def createProcess(runOnMC=True, channel='tau-mu', runSVFit=False,
         if not runSVFit:
             process.cmgTauEleCorSVFitPreSel.SVFitVersion = 0
 
+    elif channel == 'mu-ele':
+        process.load('CMGTools.H2TauTau.objects.muEleObjectsMVAMET_cff')
+        process.mvaMETMuEle = process.MVAMET.clone()
+        process.mvaMETMuEle.srcLeptons = cms.VInputTag("muonPreSelectionMuEle", "electronPreSelectionMuEle")
+        process.mvaMETMuEle.MVAMETLabel = cms.string('mvaMETMuEle')
+        process.cmgMuEle.metCollection = cms.InputTag('mvaMETMuEle', 'mvaMETMuEle')
+        if not runSVFit:
+            process.cmgMuEleCorSVFitPreSel.SVFitVersion = 0
+        else:
+            process.cmgMuEleCorSVFitPreSel.SVFitVersion = 2
+
     # elif channel == 'mu-ele':
     #     process.MVAMET.srcLeptons = cms.VInputTag("electronPreSelectionMuEle", "muonPreSelectionMuEle")
     #     # process.muEleSequence.insert(4, process.MVAMET)
@@ -204,14 +215,14 @@ def createProcess(runOnMC=True, channel='tau-mu', runSVFit=False,
     #     # process.diTauSequence.remove(process.cmgDiTauCor)
     #     process.cmgDiTauTauPtSel.src = 'cmgDiTau'
 
-    if runSVFit:
-        process.cmgTauMuCorSVFitPreSel.SVFitVersion = 2
+#    if runSVFit:
+#        process.cmgTauMuCorSVFitPreSel.SVFitVersion = 2
         # process.cmgTauEleCorSVFitPreSel.SVFitVersion = 2
         # process.cmgDiTauCorSVFitPreSel.SVFitVersion = 2
         # process.cmgMuEleCorSVFitPreSel.SVFitVersion = 2
         # process.cmgDiMuCorSVFitPreSel.SVFitVersion = 2
-    else:
-        process.cmgTauMuCorSVFitPreSel.SVFitVersion = 0
+#    else:
+#        process.cmgTauMuCorSVFitPreSel.SVFitVersion = 0
         # process.cmgTauEleCorSVFitPreSel.SVFitVersion = 0
         # process.cmgDiTauCorSVFitPreSel.SVFitVersion = 0
         # process.cmgMuEleCorSVFitPreSel.SVFitVersion = 0
