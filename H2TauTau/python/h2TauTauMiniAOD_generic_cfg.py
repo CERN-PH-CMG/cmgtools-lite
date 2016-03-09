@@ -117,6 +117,22 @@ def createProcess(runOnMC=True, channel='tau-mu', runSVFit=False,
         allowUnscheduled=cms.untracked.bool(True)
     )
 
+    pickEvents = False
+
+    if pickEvents:
+        process.pickEvents = cms.EDFilter(
+            "PickEvents",
+            # the original format to input run/event -based selection is described in :
+            # DPGAnalysis/Skims/data/listrunev
+            # and kept as default, for historical reasons
+            RunEventList = cms.untracked.string("CMGTools/H2TauTau/data/eventList.txt"),
+
+            # run/lumiSection @json -based input of selection can be toggled (but not used in THIS example)
+            IsRunLsBased  = cms.bool(False),
+
+            # json is not used in this example -> list of LS left empty
+            LuminositySectionsBlockRange = cms.untracked.VLuminosityBlockRange( () )
+            )
 
     # process.load('JetMETCorrections.Configuration.DefaultJEC_cff')
     # process.load('JetMETCorrections.Configuration.JetCorrectors_cff')
@@ -138,6 +154,8 @@ def createProcess(runOnMC=True, channel='tau-mu', runSVFit=False,
 
     if channel == 'tau-mu':
         process.load('CMGTools.H2TauTau.objects.tauMuObjectsMVAMET_cff')
+        if pickEvents:
+            process.tauMuPath.insert(0, process.pickEvents)
         process.mvaMETTauMu = process.MVAMET.clone()
         process.mvaMETTauMu.srcLeptons = cms.VInputTag("tauPreSelectionTauMu", "muonPreSelectionTauMu")
         process.mvaMETTauMu.MVAMETLabel = cms.string('mvaMETTauMu')
@@ -157,6 +175,10 @@ def createProcess(runOnMC=True, channel='tau-mu', runSVFit=False,
         process.cmgTauEle.metCollection = cms.InputTag('mvaMETTauEle', 'mvaMETTauEle')
         if not runSVFit:
             process.cmgTauEleCorSVFitPreSel.SVFitVersion = 0
+        if integrateOverP4:
+            process.cmgTauEleCorSVFitPreSel.integrateOverP4 = integrateOverP4
+        if p4TransferFunctionFile:
+            process.cmgTauEleCorSVFitPreSel.p4TransferFunctionFile = p4TransferFunctionFile
 
     elif channel == 'mu-ele':
         process.load('CMGTools.H2TauTau.objects.muEleObjectsMVAMET_cff')
@@ -172,9 +194,19 @@ def createProcess(runOnMC=True, channel='tau-mu', runSVFit=False,
     # elif channel == 'mu-ele':
     #     process.MVAMET.srcLeptons = cms.VInputTag("electronPreSelectionMuEle", "muonPreSelectionMuEle")
     #     # process.muEleSequence.insert(4, process.MVAMET)
-    # elif channel == 'di-tau':
-    #     process.MVAMET.srcLeptons = cms.VInputTag("tauPreSelectionDiTau", "tauPreSelectionDiTau")
-    #     # process.diTauSequence.insert(2, process.MVAMET)
+    elif channel == 'di-tau':
+        process.load('CMGTools.H2TauTau.objects.diTauObjectsMVAMET_cff')
+        process.mvaMETDiTau = process.MVAMET.clone()
+        process.mvaMETDiTau.srcLeptons = cms.VInputTag("tauPreSelectionDiTau", "tauPreSelectionDiTau")
+        process.mvaMETDiTau.MVAMETLabel = cms.string('mvaMETDiTau')
+        process.cmgDiTau.metCollection = cms.InputTag('mvaMETDiTau', 'mvaMETDiTau')
+        if not runSVFit:
+            process.cmgDiTauCorSVFitPreSel.SVFitVersion = 0
+        if integrateOverP4:
+            process.cmgDiTauCorSVFitPreSel.integrateOverP4 = integrateOverP4
+        if p4TransferFunctionFile:
+            process.cmgDiTauCorSVFitPreSel.p4TransferFunctionFile = p4TransferFunctionFile
+
     # elif channel == 'di-mu':
     #     process.MVAMET.srcLeptons = cms.VInputTag("muonPreSelectionDiMu", "muonPreSelectionDiMu")
     #     # process.diMuSequence.insert(2, process.MVAMET)
@@ -215,14 +247,15 @@ def createProcess(runOnMC=True, channel='tau-mu', runSVFit=False,
     #     # process.diTauSequence.remove(process.cmgDiTauCor)
     #     process.cmgDiTauTauPtSel.src = 'cmgDiTau'
 
-#    if runSVFit:
-#        process.cmgTauMuCorSVFitPreSel.SVFitVersion = 2
+    # if runSVFit:
+    #     process.cmgTauMuCorSVFitPreSel.SVFitVersion = 2
         # process.cmgTauEleCorSVFitPreSel.SVFitVersion = 2
         # process.cmgDiTauCorSVFitPreSel.SVFitVersion = 2
         # process.cmgMuEleCorSVFitPreSel.SVFitVersion = 2
         # process.cmgDiMuCorSVFitPreSel.SVFitVersion = 2
-#    else:
-#        process.cmgTauMuCorSVFitPreSel.SVFitVersion = 0
+
+    # else:
+    #     process.cmgTauMuCorSVFitPreSel.SVFitVersion = 0
         # process.cmgTauEleCorSVFitPreSel.SVFitVersion = 0
         # process.cmgDiTauCorSVFitPreSel.SVFitVersion = 0
         # process.cmgMuEleCorSVFitPreSel.SVFitVersion = 0

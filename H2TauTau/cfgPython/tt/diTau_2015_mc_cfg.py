@@ -24,7 +24,7 @@ production = getHeppyOption('production')
 production = False
 
 # local switches
-syncntuple   = False
+syncntuple   = True
 computeSVfit = False
 pick_events  = False
 cmssw        = True
@@ -223,7 +223,7 @@ if not production:
   cache                = True
   comp                 = ggh160
   # comp = data_list[0]
-  comp = [s for s in selectedComponents if 'TBarToLeptons_tch_powheg' in s.name][0]
+  # comp = [s for s in selectedComponents if 'TBarToLeptons_tch_powheg' in s.name][0]
   selectedComponents   = [comp]
   comp.splitFactor     = 5
   comp.fineSplitFactor = 1

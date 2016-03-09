@@ -9,6 +9,8 @@ from CMGTools.H2TauTau.objects.tauEleSVFit_cfi import tauEleSVFit
 from CMGTools.H2TauTau.objects.tauCuts_cff import tauPreSelection
 from CMGTools.H2TauTau.objects.eleCuts_cff import electronPreSelection
 
+from CMGTools.H2TauTau.skims.skim_cff import tauEleFullSelSkimSequence, tauEleFullSelCount
+
 # tau pre-selection
 tauPreSelectionTauEle = tauPreSelection.clone()
 electronPreSelectionTauEle = electronPreSelection.clone()
@@ -58,4 +60,9 @@ tauEleSequence = cms.Sequence( #
     cmgTauEleTauPtSel +
     cmgTauEleCorSVFitPreSel +
     cmgTauEleCorSVFitFullSel
+    )
+
+tauElePath = cms.Path(
+    tauEleSequence *
+    tauEleFullSelSkimSequence
     )

@@ -84,8 +84,8 @@ eleWeighter = cfg.Analyzer(
     LeptonWeighter,
     name='LeptonWeighter_ele',
     scaleFactorFiles={
-        'trigger':'$CMSSW_BASE/src/CMGTools/H2TauTau/data/Electron_SingleEle_eff.root',
-        'idiso':'$CMSSW_BASE/src/CMGTools/H2TauTau/data/Electron_IdIso0p10_eff.root',
+        'trigger':'$CMSSW_BASE/src/CMGTools/H2TauTau/data/Electron_Ele23_fall15.root',
+        'idiso':'$CMSSW_BASE/src/CMGTools/H2TauTau/data/Electron_IdIso0p1_fall15.root',
     },
     lepton='leg1',
     disable=False
