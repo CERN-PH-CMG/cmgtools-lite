@@ -24,6 +24,7 @@ syncntuple   = True
 computeSVfit = False
 production   = False  # production = True run on batch, production = False run locally
 cmssw = True
+data = False
 
 muonIsoCalc = cfg.Analyzer(
     LeptonIsolationCalculator,
@@ -112,8 +113,8 @@ fileCleaner = cfg.Analyzer(
 if cmssw:
     muEleAna.from_single_objects = False
 
-#samples = backgrounds_mu + sm_signals + mssm_signals + sync_list
-samples = backgrounds_mu + sm_signals
+samples = backgrounds_mu + sm_signals + mssm_signals + sync_list
+#samples = backgrounds_mu + sm_signals
 
 split_factor = 1e5
 
@@ -165,6 +166,10 @@ sequence.insert(sequence.index(treeProducer), electronIsoCalc)
 treeProducer.addIsoInfo = True
 
 
+if not syncntuple:
+    module = [s for s in sequence if s.name == 'H2TauTauSyncTreeProducerTauMu'][0]
+    sequence.remove(module)
+
 if not cmssw:
     module = [s for s in sequence if s.name == 'MCWeighter'][0]
     sequence.remove(module)
@@ -184,14 +189,16 @@ if not production:
   cache                = True
   comp = sync_list[0]
   selectedComponents   = [comp]
-  comp.splitFactor     = 1
+  comp.splitFactor     = 6
   comp.fineSplitFactor = 1
 #  comp.files           = comp.files[:1]
 
 preprocessor = None
 if cmssw:
+    fname = "$CMSSW_BASE/src/CMGTools/H2TauTau/prod/h2TauTauMiniAOD_emu_data_cfg.py" if data else "$CMSSW_BASE/src/CMGTools/H2TauTau/prod/h2TauTauMiniAOD_emu_cfg.py"
+
     sequence.append(fileCleaner)
-    preprocessor = CmsswPreprocessor("$CMSSW_BASE/src/CMGTools/H2TauTau/prod/h2TauTauMiniAOD_emu_cfg.py", addOrigAsSecondary=False)
+    preprocessor = CmsswPreprocessor(fname, addOrigAsSecondary=False)
 
 # the following is declared in case this cfg is used in input to the
 # heppy.py script
