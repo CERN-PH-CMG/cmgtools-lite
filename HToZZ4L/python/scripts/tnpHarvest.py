@@ -117,6 +117,8 @@ def plotRatio(effs,ratio,options):
         r.GetYaxis().SetTitle("ratio")
         r.GetYaxis().SetTitleOffset(0.52);
     ratio.Draw("APZ")
+    if options.rrange: 
+        ratio.GetYaxis().SetRangeUser(options.rrange[0],options.rrange[1]);
     if ratiosyst:
         styleAsRef(ratiosyst,options)
         ratiosyst.SetFillColor(ROOT.kViolet+6)
@@ -267,6 +269,14 @@ def applyDiff2DAsUncertainty(graph,diff,relative=False):
         graph.SetPointEYlow(i, hypot(graph.GetErrorYlow(i),abs(dl)))
     return graph
 
+def capErrors(graph):
+    for i in xrange(graph.GetN()):
+        y = graph.GetY()[i]
+        yhi = graph.GetErrorYhigh(i)
+        ylo = graph.GetErrorYlow(i)
+        if y+yhi > 1.0: graph.SetPointEYhigh(i, max(1.0-y,0))
+        if y-ylo < 0.0: graph.SetPointEYlo(i, max(y,0))
+
 def diffAsGraphBand(graph,diff,relative=False):
     x = graph.GetX()
     y = graph.GetY()
@@ -311,6 +321,7 @@ def addTnPHarvestOptions(parser):
     parser.add_option("-b", "--backgroundModel",   dest="bkgModel", default='expo', help="Background model");
     parser.add_option("--salt", "--altSignalModel",   dest="altSigModel", default=[], action="append", help="Signal model");
     parser.add_option("--balt", "--altBackgroundModel",   dest="altBkgModel", default=[], action="append", help="Background model");
+    parser.add_option("--alt", "--altSetup",   dest="altSetups", default=[], action="append", help="Alternate setups (to be used with the nominal S & B model)");
     parser.add_option("--exclude", "--exclude", dest="exclude", type="string", default=[], action="append", nargs=2, help="make a single fit");
     parser.add_option("-N", "--name",    dest="name", type="string", help="name", default="eff")
     parser.add_option("--xtitle",   dest="xtitle", type="string", default=None, help="X title")
@@ -319,7 +330,7 @@ def addTnPHarvestOptions(parser):
     parser.add_option("--pdir", "--print-dir", dest="printDir", type="string", default="plots", help="print out plots in this directory");
     parser.add_option("--idir", "--in-dir", dest="inDir", type="string", default="plots", help="print out plots in this directory");
     parser.add_option("--yrange", dest="yrange", type="float", nargs=2, default=(0,1.025));
-    parser.add_option("--rrange", dest="rrange", type="float", nargs=2, default=(0.95,1.05));
+    parser.add_option("--rrange", dest="rrange", type="float", nargs=2, default=None);
     parser.add_option("--doRatio", dest="doRatio", action="store_true", default=False, help="Add a ratio plot at the bottom")
 
 
@@ -343,6 +354,7 @@ if __name__ == "__main__":
     allbkgs = [ options.bkgModel ] + options.altBkgModel
     altmods = [ (s,b) for s in allsigs for b in allbkgs if (s,b) != (options.sigModel, options.bkgModel) and (s,b) not in options.exclude ]
     altNames = [ pattern % (s,b) for (s,b) in altmods ]
+    altNames += [ pattern % (options.sigModel, options.bkgModel+"_"+altSetup) for altSetup in options.altSetups ]
     
     main = loadFile(nominal, options)
     alts = [ loadFile(alt, options) for alt in altNames ]
@@ -355,5 +367,15 @@ if __name__ == "__main__":
         applyDiff2DAsUncertainty(syst,fitShape[x])
         main[k].syst = syst
         main[k].systOnly = graphQSub(syst, main[k])
+        if k in ("data","ref"): 
+            capErrors(main[k])
+            capErrors(main[k].syst)
+            capErrors(main[k].systOnly)
     plotEffs(options.name, [ main['data'], main['ref'] ], main['ratioErr'], options)
+    fout = ROOT.TFile.Open(options.printDir+"/"+options.name+".root", "RECREATE")
+    for k in "data","ref","ratio","ratioErr":
+        fout.WriteTObject(main[k], k)
+        fout.WriteTObject(main[k].syst, k+"_syst")
+    fout.Close()
+    
 
