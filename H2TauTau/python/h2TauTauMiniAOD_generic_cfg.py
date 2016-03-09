@@ -180,6 +180,17 @@ def createProcess(runOnMC=True, channel='tau-mu', runSVFit=False,
         if p4TransferFunctionFile:
             process.cmgTauEleCorSVFitPreSel.p4TransferFunctionFile = p4TransferFunctionFile
 
+    elif channel == 'mu-ele':
+        process.load('CMGTools.H2TauTau.objects.muEleObjectsMVAMET_cff')
+        process.mvaMETMuEle = process.MVAMET.clone()
+        process.mvaMETMuEle.srcLeptons = cms.VInputTag("muonPreSelectionMuEle", "electronPreSelectionMuEle")
+        process.mvaMETMuEle.MVAMETLabel = cms.string('mvaMETMuEle')
+        process.cmgMuEle.metCollection = cms.InputTag('mvaMETMuEle', 'mvaMETMuEle')
+        if not runSVFit:
+            process.cmgMuEleCorSVFitPreSel.SVFitVersion = 0
+        else:
+            process.cmgMuEleCorSVFitPreSel.SVFitVersion = 2
+
     # elif channel == 'mu-ele':
     #     process.MVAMET.srcLeptons = cms.VInputTag("electronPreSelectionMuEle", "muonPreSelectionMuEle")
     #     # process.muEleSequence.insert(4, process.MVAMET)
@@ -242,6 +253,7 @@ def createProcess(runOnMC=True, channel='tau-mu', runSVFit=False,
         # process.cmgDiTauCorSVFitPreSel.SVFitVersion = 2
         # process.cmgMuEleCorSVFitPreSel.SVFitVersion = 2
         # process.cmgDiMuCorSVFitPreSel.SVFitVersion = 2
+
     # else:
     #     process.cmgTauMuCorSVFitPreSel.SVFitVersion = 0
         # process.cmgTauEleCorSVFitPreSel.SVFitVersion = 0
