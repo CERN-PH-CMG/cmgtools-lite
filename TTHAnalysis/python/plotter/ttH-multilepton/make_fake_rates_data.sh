@@ -7,7 +7,7 @@ if hostname | grep -q cmsco01; then
 elif hostname | grep -q vinavx; then
     T="/home/gpetrucc/TREES_TTH_260116_76X_1L"
 fi
-BCORE=" --s2v --tree treeProducerSusyMultilepton ttH-multilepton/mca-qcd1l.txt ttH-multilepton/qcd1l.txt -P $T -l 2.26 --AP  "
+BCORE=" --s2v --tree treeProducerSusyMultilepton ttH-multilepton/mca-qcd1l.txt ttH-multilepton/qcd1l.txt -P $T -l 2.32 --AP  "
 BCORE="${BCORE} --mcc ttH-multilepton/mcc-eleIdEmu2.txt  "; 
 
 BG=" -j 6 "; if [[ "$1" == "-b" ]]; then BG=" & "; shift; fi

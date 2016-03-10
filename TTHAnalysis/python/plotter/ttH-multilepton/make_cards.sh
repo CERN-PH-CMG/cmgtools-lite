@@ -23,6 +23,9 @@ BTight=" -E ^BTight "
 ZeroTau=" -E ^0tau "
 OneTau=" -E ^1tau "
 
+SPLITDECAYS=""
+#SPLITDECAYS="-splitdecays"
+
 OPTIONS="${OPTIONS} --Fs {P}/2_recleaner_v8_b1E2 --Fs {P}/4_kinMVA_trainFeb23_v0 --Fs {P}/5_eventBTagRWT_onlyJets_v1"
 OPTIONS="${OPTIONS} --mcc ttH-multilepton/lepchoice-ttH-FO.txt --mcc ttH-multilepton/ttH_2lss3l_triggerdefs.txt --neg" # neg necessary for subsequent rebin
 CATPOSTFIX=""
@@ -51,17 +54,17 @@ if [[ "$1" == "all" || "$1" == "2lss" || "$1" == "2lss_3j" ]]; then
         echo "2lss_${X}";
 	FLAV=" -E ^${X} "
 	if [[ "${X}" == "ee" ]]; then
-	    python makeShapeCards.py ${DOFILE} --2d-binning-function 6:ttH_MVAto1D_6_2lss_Marco ttH-multilepton/mca-2lss-mcdata-frdata.txt ttH-multilepton/2lss_tight.txt ${FUNCTION_2L} $SYSTS $OPT_2L -o 2lss_${X}_0tau_pos${CATPOSTFIX} $POS $FLAV $ZeroTau;
-            python makeShapeCards.py ${DOFILE} --2d-binning-function 6:ttH_MVAto1D_6_2lss_Marco ttH-multilepton/mca-2lss-mcdata-frdata.txt ttH-multilepton/2lss_tight.txt ${FUNCTION_2L} $SYSTS $OPT_2L -o 2lss_${X}_0tau_neg${CATPOSTFIX} $NEG $FLAV $ZeroTau;
+	    python makeShapeCards.py ${DOFILE} --2d-binning-function 6:ttH_MVAto1D_6_2lss_Marco ttH-multilepton/mca-2lss-mcdata-frdata${SPLITDECAYS}.txt ttH-multilepton/2lss_tight.txt ${FUNCTION_2L} $SYSTS $OPT_2L -o 2lss_${X}_0tau_pos${CATPOSTFIX} $POS $FLAV $ZeroTau;
+            python makeShapeCards.py ${DOFILE} --2d-binning-function 6:ttH_MVAto1D_6_2lss_Marco ttH-multilepton/mca-2lss-mcdata-frdata${SPLITDECAYS}.txt ttH-multilepton/2lss_tight.txt ${FUNCTION_2L} $SYSTS $OPT_2L -o 2lss_${X}_0tau_neg${CATPOSTFIX} $NEG $FLAV $ZeroTau;
 	else
-	    python makeShapeCards.py ${DOFILE} --2d-binning-function 6:ttH_MVAto1D_6_2lss_Marco ttH-multilepton/mca-2lss-mcdata-frdata.txt ttH-multilepton/2lss_tight.txt ${FUNCTION_2L} $SYSTS $OPT_2L -o 2lss_${X}_0tau_bl_pos${CATPOSTFIX} $POS $BLoose $FLAV $ZeroTau;
-            python makeShapeCards.py ${DOFILE} --2d-binning-function 6:ttH_MVAto1D_6_2lss_Marco ttH-multilepton/mca-2lss-mcdata-frdata.txt ttH-multilepton/2lss_tight.txt ${FUNCTION_2L} $SYSTS $OPT_2L -o 2lss_${X}_0tau_bl_neg${CATPOSTFIX} $NEG $BLoose $FLAV $ZeroTau;
-            python makeShapeCards.py ${DOFILE} --2d-binning-function 6:ttH_MVAto1D_6_2lss_Marco ttH-multilepton/mca-2lss-mcdata-frdata.txt ttH-multilepton/2lss_tight.txt ${FUNCTION_2L} $SYSTS $OPT_2L -o 2lss_${X}_0tau_bt_pos${CATPOSTFIX} $POS $BTight $FLAV $ZeroTau;
-            python makeShapeCards.py ${DOFILE} --2d-binning-function 6:ttH_MVAto1D_6_2lss_Marco ttH-multilepton/mca-2lss-mcdata-frdata.txt ttH-multilepton/2lss_tight.txt ${FUNCTION_2L} $SYSTS $OPT_2L -o 2lss_${X}_0tau_bt_neg${CATPOSTFIX} $NEG $BTight $FLAV $ZeroTau;
+	    python makeShapeCards.py ${DOFILE} --2d-binning-function 6:ttH_MVAto1D_6_2lss_Marco ttH-multilepton/mca-2lss-mcdata-frdata${SPLITDECAYS}.txt ttH-multilepton/2lss_tight.txt ${FUNCTION_2L} $SYSTS $OPT_2L -o 2lss_${X}_0tau_bl_pos${CATPOSTFIX} $POS $BLoose $FLAV $ZeroTau;
+            python makeShapeCards.py ${DOFILE} --2d-binning-function 6:ttH_MVAto1D_6_2lss_Marco ttH-multilepton/mca-2lss-mcdata-frdata${SPLITDECAYS}.txt ttH-multilepton/2lss_tight.txt ${FUNCTION_2L} $SYSTS $OPT_2L -o 2lss_${X}_0tau_bl_neg${CATPOSTFIX} $NEG $BLoose $FLAV $ZeroTau;
+            python makeShapeCards.py ${DOFILE} --2d-binning-function 6:ttH_MVAto1D_6_2lss_Marco ttH-multilepton/mca-2lss-mcdata-frdata${SPLITDECAYS}.txt ttH-multilepton/2lss_tight.txt ${FUNCTION_2L} $SYSTS $OPT_2L -o 2lss_${X}_0tau_bt_pos${CATPOSTFIX} $POS $BTight $FLAV $ZeroTau;
+            python makeShapeCards.py ${DOFILE} --2d-binning-function 6:ttH_MVAto1D_6_2lss_Marco ttH-multilepton/mca-2lss-mcdata-frdata${SPLITDECAYS}.txt ttH-multilepton/2lss_tight.txt ${FUNCTION_2L} $SYSTS $OPT_2L -o 2lss_${X}_0tau_bt_neg${CATPOSTFIX} $NEG $BTight $FLAV $ZeroTau;
 	fi
     done
 
-    python makeShapeCards.py ${DOFILE} --2d-binning-function 6:ttH_MVAto1D_6_2lss_Marco ttH-multilepton/mca-2lss-mcdata-frdata.txt ttH-multilepton/2lss_tight.txt ${FUNCTION_2L} $SYSTS $OPT_2L -o 2lss_1tau${CATPOSTFIX} $OneTau;
+    python makeShapeCards.py ${DOFILE} --2d-binning-function 6:ttH_MVAto1D_6_2lss_Marco ttH-multilepton/mca-2lss-mcdata-frdata${SPLITDECAYS}.txt ttH-multilepton/2lss_tight.txt ${FUNCTION_2L} $SYSTS $OPT_2L -o 2lss_1tau${CATPOSTFIX} $OneTau;
 
     echo "Done at $(date)"
 
@@ -78,10 +81,10 @@ if [[ "$1" == "all" || "$1" == "3l" || "$1" == "3l_zpeak" ]]; then
     fi
 
     echo "3l";
-    python makeShapeCards.py ${DOFILE} --2d-binning-function 3:ttH_MVAto1D_3_3l_Marco ttH-multilepton/mca-3l-mcdata-frdata.txt ttH-multilepton/3l_tight.txt ${FUNCTION_3L} $SYSTS $OPT_3L -o 3l_bl_pos${CATPOSTFIX} $POS $BLoose;
-    python makeShapeCards.py ${DOFILE} --2d-binning-function 3:ttH_MVAto1D_3_3l_Marco ttH-multilepton/mca-3l-mcdata-frdata.txt ttH-multilepton/3l_tight.txt ${FUNCTION_3L} $SYSTS $OPT_3L -o 3l_bl_neg${CATPOSTFIX} $NEG $BLoose;
-    python makeShapeCards.py ${DOFILE} --2d-binning-function 3:ttH_MVAto1D_3_3l_Marco ttH-multilepton/mca-3l-mcdata-frdata.txt ttH-multilepton/3l_tight.txt ${FUNCTION_3L} $SYSTS $OPT_3L -o 3l_bt_pos${CATPOSTFIX} $POS $BTight;
-    python makeShapeCards.py ${DOFILE} --2d-binning-function 3:ttH_MVAto1D_3_3l_Marco ttH-multilepton/mca-3l-mcdata-frdata.txt ttH-multilepton/3l_tight.txt ${FUNCTION_3L} $SYSTS $OPT_3L -o 3l_bt_neg${CATPOSTFIX} $NEG $BTight;
+    python makeShapeCards.py ${DOFILE} --2d-binning-function 3:ttH_MVAto1D_3_3l_Marco ttH-multilepton/mca-3l-mcdata-frdata${SPLITDECAYS}.txt ttH-multilepton/3l_tight.txt ${FUNCTION_3L} $SYSTS $OPT_3L -o 3l_bl_pos${CATPOSTFIX} $POS $BLoose;
+    python makeShapeCards.py ${DOFILE} --2d-binning-function 3:ttH_MVAto1D_3_3l_Marco ttH-multilepton/mca-3l-mcdata-frdata${SPLITDECAYS}.txt ttH-multilepton/3l_tight.txt ${FUNCTION_3L} $SYSTS $OPT_3L -o 3l_bl_neg${CATPOSTFIX} $NEG $BLoose;
+    python makeShapeCards.py ${DOFILE} --2d-binning-function 3:ttH_MVAto1D_3_3l_Marco ttH-multilepton/mca-3l-mcdata-frdata${SPLITDECAYS}.txt ttH-multilepton/3l_tight.txt ${FUNCTION_3L} $SYSTS $OPT_3L -o 3l_bt_pos${CATPOSTFIX} $POS $BTight;
+    python makeShapeCards.py ${DOFILE} --2d-binning-function 3:ttH_MVAto1D_3_3l_Marco ttH-multilepton/mca-3l-mcdata-frdata${SPLITDECAYS}.txt ttH-multilepton/3l_tight.txt ${FUNCTION_3L} $SYSTS $OPT_3L -o 3l_bt_neg${CATPOSTFIX} $NEG $BTight;
 
    echo "Done at $(date)"
 fi

@@ -6,7 +6,7 @@ if hostname | grep -q cmsco01; then
     T="/data1/peruzzi/TREES_76X_200216_jecV1M2/"
 fi
 
-BCORE=" --s2v --tree treeProducerSusyMultilepton ttH-multilepton/mca-fr-z3l.txt ttH-multilepton/fr-z3l.txt -P $T -l 2.26 --AP  "
+BCORE=" --s2v --tree treeProducerSusyMultilepton ttH-multilepton/mca-fr-z3l.txt ttH-multilepton/fr-z3l.txt -P $T -l 2.32 --AP  "
 BCORE="$BCORE --mcc ttH-multilepton/ttH_2lss3l_triggerdefs.txt "
 
 BG=" -j 6 "; if [[ "$1" == "-b" ]]; then BG=" & "; shift; fi

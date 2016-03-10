@@ -78,10 +78,13 @@ def mkOneSpline():
     return spline
 splines = {
     'ttH' : mkOneSpline(),
+    'hww' : mkOneSpline(),
+    'hzz' : mkOneSpline(),
+    'htt' : mkOneSpline(),
 #    'ttH' : mkspline(XStth, "XS_pb",   0.1271 * 1.00757982823 ), ## get 1 at 125.7
-    'hww' : mkspline(BRhvv, "H_WW",    2.15e-01 ),
-    'hzz' : mkspline(BRhvv, "H_ZZ",    2.64e-02 ),
-    'htt' : mkspline(BRhff, "H_tautau",6.32e-02 ),
+#    'hww' : mkspline(BRhvv, "H_WW",    2.15e-01 ),
+#    'hzz' : mkspline(BRhvv, "H_ZZ",    2.64e-02 ),
+#    'htt' : mkspline(BRhff, "H_tautau",6.32e-02 ),
 }
 def getYieldScale(mass,process):
     if "ttH_" not in process: return 1.0

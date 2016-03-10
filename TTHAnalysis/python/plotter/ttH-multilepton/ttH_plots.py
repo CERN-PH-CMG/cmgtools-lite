@@ -13,7 +13,7 @@ def base(selection):
 
     CORE="-P /data1/peruzzi/TREES_76X_200216_jecV1M2_skimOnlyMC_reclv8 -F sf/t {P}/2_recleaner_v8_b1E2/evVarFriend_{cname}.root -F sf/t {P}/4_kinMVA_trainFeb23_v0/evVarFriend_{cname}.root -F sf/t {P}/5_eventBTagRWT_onlyJets_v1/evVarFriend_{cname}.root"
 
-    CORE+=" -f -j 12 -l 2.26 --s2v --tree treeProducerSusyMultilepton --mcc ttH-multilepton/lepchoice-ttH-FO.txt --mcc ttH-multilepton/ttH_2lss3l_triggerdefs.txt"# --neg"
+    CORE+=" -f -j 12 -l 2.32 --s2v --tree treeProducerSusyMultilepton --mcc ttH-multilepton/lepchoice-ttH-FO.txt --mcc ttH-multilepton/ttH_2lss3l_triggerdefs.txt"# --neg"
     if dowhat == "plots": CORE+=" --lspam '#bf{CMS} #it{Preliminary}' --legendWidth 0.20 --legendFontSize 0.035 --showRatio --maxRatioRange 0 3  --showMCError --rebin 4"
 
     if selection=='2lss':
@@ -63,6 +63,8 @@ if __name__ == '__main__':
         if '_frdata' in torun:
             if not '_data' in torun: raise RuntimeError
             x = x.replace('mca-2lss-mcdata.txt','mca-2lss-mcdata-frdata.txt')
+            if '_table' in torun:
+                x = x.replace('mca-2lss-mcdata-frdata.txt','mca-2lss-mcdata-frdata-table.txt')
         if '_mll200' in torun:
             x = add(x,"-E ^mll200 ")
 
@@ -107,6 +109,8 @@ if __name__ == '__main__':
         if '_frdata' in torun:
             if not '_data' in torun: raise RuntimeError
             x = x.replace('mca-3l-mcdata.txt','mca-3l-mcdata-frdata.txt')
+            if '_table' in torun:
+                x = x.replace('mca-3l-mcdata-frdata.txt','mca-3l-mcdata-frdata-table.txt')
         if '_closuretest' in torun:
             x = x.replace('mca-3l-mc.txt','mca-3l-mc-closuretest.txt')
             x = x.replace("--maxRatioRange 0 3","--maxRatioRange 0.5 1.5")
@@ -171,13 +175,19 @@ if __name__ == '__main__':
     if 'cr_wz' in torun:
         x = base('3l')
         if '_data' in torun: x = x.replace('mca-3l-mc.txt','mca-3l-mcdata.txt')
-        x = add(x,"-I 'Zveto' -X ^4j -X ^2b1B -E ^Bveto ")
+        if '_frdata' in torun:
+            if not '_data' in torun: raise RuntimeError
+            x = x.replace('mca-3l-mcdata.txt','mca-3l-mcdata-frdata.txt')
+        x = add(x,"-I 'Zveto' -X ^2b1B -E ^Bveto ")
         plots = ['lep3_pt','metLD','nBJetLoose25','3lep_worseIso','minMllAFAS','3lep_worseMVA','3lep_mtW']
         runIt(x,'%s'%torun,plots)
 
     if 'cr_ttz' in torun:
         x = base('3l')
         if '_data' in torun: x = x.replace('mca-3l-mc.txt','mca-3l-mcdata.txt')
+        if '_frdata' in torun:
+            if not '_data' in torun: raise RuntimeError
+            x = x.replace('mca-3l-mcdata.txt','mca-3l-mcdata-frdata.txt')
         plots = ['lep2_pt','met','nJet25','mZ1']
         x = add(x,"-I 'Zveto' -X ^2b1B -E ^gt2b -E ^1B ")
         runIt(x,'%s'%torun,plots)
