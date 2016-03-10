@@ -502,6 +502,13 @@ float triggerSF_ttH(int pdgid1, float pt1, int pdgid2, float pt2, int nlep, floa
   else return 0.98;
 }
 
+float mass_3_cheap(float pt1, float eta1, float pt2, float eta2, float phi2, float pt3, float eta3, float phi3) {
+    typedef ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<double> > PtEtaPhiMVector;
+    PtEtaPhiMVector p41(pt1,eta1,0,   0.0);
+    PtEtaPhiMVector p42(pt2,eta2,phi2,0.0);
+    PtEtaPhiMVector p43(pt3,eta3,phi3,0.0);
+    return (p41+p42+p43).M();
+}
 
 
 void functions() {}
