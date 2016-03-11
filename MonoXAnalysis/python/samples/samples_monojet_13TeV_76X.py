@@ -18,7 +18,7 @@ VJets_MJ        = [ WJetsToLNu ] + WJetsToLNuHT + DYJetsM50HT + [ DYJetsToLL_M50
 Top_MJ          = [ TTJets, TToLeptons_tch_amcatnlo, TToLeptons_tch_amcatnlo_ext, TBar_tWch, T_tWch ]
 DiBosons_MJ     = [ WW, WZ, ZZ ]
 
-mcSamples_monojet_Asymptotic25ns = DYJetsToNuNu_MJ + VJets_MJ + Top_MJ + DiBosons_MJ + QCDHT
+mcSamples_monojet_Asymptotic25ns = DYJetsToNuNu_MJ + VJets_MJ + Top_MJ + DiBosons_MJ + QCDHT + GJetsHT
 #mcSamples_monojet_Asymptotic25ns_signals = DM_Scalars + DM_Pseudoscalars + DM_Vectors + DM_Axials
 
 
