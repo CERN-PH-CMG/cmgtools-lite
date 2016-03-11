@@ -7,6 +7,8 @@ from CMGTools.H2TauTau.objects.cmgDiTauCor_cfi import cmgDiTauCor
 from CMGTools.H2TauTau.objects.diTauSVFit_cfi  import diTauSVFit 
 from CMGTools.H2TauTau.objects.tauCuts_cff     import tauPreSelection
 
+from CMGTools.H2TauTau.skims.skim_cff import diTauFullSelSkimSequence, diTauFullSelCount
+
 # tau pre-selection
 tauPreSelectionDiTau = tauPreSelection.clone(
   #cut = 'pt > 40. && abs(eta) < 2.5 && tauID("decayModeFinding") > 0.5')
@@ -45,3 +47,9 @@ diTauSequence = cms.Sequence(
   cmgDiTauCorSVFitPreSel  +
   cmgDiTauCorSVFitFullSel
   )
+
+diTauPath = cms.Path(
+    # metRegressionSequence + 
+    diTauSequence *
+    diTauFullSelSkimSequence
+)

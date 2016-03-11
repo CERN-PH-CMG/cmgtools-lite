@@ -55,6 +55,6 @@ diMuPath = cms.Path(
 
 # mu-ele ---
 muElePath = cms.Path(
-    # muEleSequence +
+    muEleSequence +
     muEleFullSelSkimSequence     
     )
