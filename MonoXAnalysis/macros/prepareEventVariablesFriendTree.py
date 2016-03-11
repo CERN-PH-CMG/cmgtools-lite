@@ -18,8 +18,9 @@ vetoLists= ["cscfilter", "ecalfilter"]
 from CMGTools.MonoXAnalysis.tools.eventVetoListChecker import EventVetoListChecker
 MODULES.append( ('eventVetoChecker', EventVetoListChecker(pathvetolists,vetoLists)) )
 
-from CMGTools.MonoXAnalysis.tools.lepVars import residualCalibratedEcalEnergyFriend
-MODULES.append ( ('lepvars', residualCalibratedEcalEnergyFriend()) )
+# no more needed, since the leptons in the trees have already calibrations included
+#from CMGTools.MonoXAnalysis.tools.lepVars import residualCalibratedEcalEnergyFriend
+#MODULES.append ( ('lepvars', residualCalibratedEcalEnergyFriend()) )
 
 class VariableProducer(Module):
     def __init__(self,name,booker,sample_nevt,dataset,modules):
