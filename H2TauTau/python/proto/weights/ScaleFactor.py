@@ -16,16 +16,21 @@ class ScaleFactor(object):
 
         etaLabel = ''
         graphName = ''
-
+        
         for iBin in xrange(self.etaBinsH.GetNbinsX()):
             etaLabel = self.etaBinsH.GetXaxis().GetBinLabel(iBin+1)
 
             for label, eff_dict in [('_Data', self.eff_data), ('_MC', self.eff_mc)]:
-                graphName = histBaseName + etaLabel + label
-                eff_dict[etaLabel] = self.fileIn.Get(graphName)
+                graphName = histBaseName + etaLabel + label                
+                graph = self.fileIn.Get(graphName) # RM: this can be either a TGraph or a TF1
+                eff_dict[etaLabel] = graph
+                if isinstance(graph, ROOT.TF1):
+                    continue
                 self.setAxisBins(eff_dict[etaLabel])
 
-            if not self.checkSameBinning(self.eff_mc[etaLabel], self.eff_data[etaLabel]):
+            if isinstance(self.eff_mc[etaLabel], ROOT.TF1) and isinstance(self.eff_data[etaLabel], ROOT.TF1):
+                continue
+            elif not self.checkSameBinning(self.eff_mc[etaLabel], self.eff_data[etaLabel]):
                 raise RuntimeError('ERROR in ScaleFactor::init_ScaleFactor(TString inputRootFile) from LepEffInterface/src/ScaleFactor.cc . Can not proceed because ScaleFactor::check_SameBinning returned different pT binning for data and MC for eta label', etaLabel)
 
     def setAxisBins(self, graph):
@@ -55,7 +60,7 @@ class ScaleFactor(object):
         return True
 
     def getScaleFactor(self, pt, eta):
-        return self.getEfficiencyData(pt, eta)/self.getEfficiencyMC(pt, eta)
+        return self.getEfficiencyData(pt, eta)/max(self.getEfficiencyMC(pt, eta), 1.e-6)
 
     def getEfficiencyData(self, pt, eta):
         return self.getEfficiency(pt, eta, self.eff_data)
@@ -89,12 +94,18 @@ class ScaleFactor(object):
         label = self.findEtaLabel(eta, eff_dict)
         
         g_eff = eff_dict[label]
-        ptBin = self.findPtBin(pt, g_eff)
-
-        if ptBin == -99:
-            return 1.
-
-        eff = g_eff.GetY()[ptBin-1]
+        
+        if isinstance(g_eff, ROOT.TF1):
+            eff = g_eff.Eval(pt)
+        
+        else:
+            ptBin = self.findPtBin(pt, g_eff)
+    
+            if ptBin == -99:
+                return 1.
+    
+            eff = g_eff.GetY()[ptBin-1]
+        
         if eff > 1.:
             print 'Warning: Efficiency larger 1'
         elif eff < 0.:
@@ -104,8 +115,29 @@ class ScaleFactor(object):
         return 1.
 
 if __name__ == '__main__':
-    sf = ScaleFactor('$CMSSW_BASE/src/CMGTools/H2TauTau/data/Electron_Ele23_fall15.root')
-    for pt, eta in [(29.3577, 1.4845), (50., 0.2), (17., 0.05), (1000., 2.04)]:
+#     sf = ScaleFactor('$CMSSW_BASE/src/CMGTools/H2TauTau/data/Electron_Ele23_fall15.root')
+#     for pt, eta in [(29.3577, 1.4845), (50., 0.2), (17., 0.05), (1000., 2.04)]:
+#         print 'Eff data', sf.getEfficiencyData(pt, eta)
+#         print 'Eff MC', sf.getEfficiencyMC(pt, eta)
+#         print 'SF', sf.getScaleFactor(pt, eta)
+
+
+
+    sf = ScaleFactor('$CMSSW_BASE/src/CMGTools/H2TauTau/data/Tau_diTau35_fall15.root', 
+                     histBaseName='Eff')
+    for pt, eta in [(  29.3577, 1.4845), 
+                    (  50.    , 0.2   ), 
+                    (  17.    , 0.05  ), 
+                    (  45.    , 0.05  ), 
+                    (  50.    , 0.05  ), 
+                    (  55.    , 0.05  ), 
+                    (  60.    , 0.05  ), 
+                    (  80.    , 0.05  ), 
+                    ( 100.    , 0.05  ), 
+                    (1000.    , 2.04  )]:
+        print '\n==========>'
+        print 'pt %f, eta %f' %(pt, eta)
         print 'Eff data', sf.getEfficiencyData(pt, eta)
         print 'Eff MC', sf.getEfficiencyMC(pt, eta)
         print 'SF', sf.getScaleFactor(pt, eta)
+
