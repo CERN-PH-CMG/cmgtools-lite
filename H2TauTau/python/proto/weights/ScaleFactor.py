@@ -27,7 +27,7 @@ class ScaleFactor(object):
             else:            
                 explicitPathItems.append(p)
         explicitPath = '/'.join(explicitPathItems)
-        efficiencies = imp.load_source('efficiencies', explicitPath)
+        efficiencies = imp.load_source(explicitPathItems[-1].replace('.py', ''), explicitPath)
         self.eff_data = efficiencies.effData
         self.eff_mc   = efficiencies.effMC
 
