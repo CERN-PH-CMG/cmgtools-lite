@@ -46,7 +46,7 @@ def createProcess(runOnMC=True, channel='tau-mu', runSVFit=False,
     ) # Make sure to choose the appropriate levels and payload here!
 
     if not runOnMC:
-        process.patJetCorrFactorsReapplyJEC.levels += ['L3Residual']
+        process.patJetCorrFactorsReapplyJEC.levels += ['L2L3Residual']
 
     from PhysicsTools.PatAlgos.producersLayer1.jetUpdater_cff import patJetsUpdated
     process.patJetsReapplyJEC = patJetsUpdated.clone(
