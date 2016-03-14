@@ -1,3 +1,5 @@
+import os
+import imp
 import ROOT
 import array
 
@@ -5,7 +7,31 @@ class ScaleFactor(object):
     ''' HTT lepton scale factor class
     Translated to python from CMS-HTT/LeptonEff-interface
     '''
-    def __init__(self, inputRootFile, histBaseName='ZMass'):
+    def __init__(self, inputFile, histBaseName='ZMass'):
+        ''' Polymorphic: can either compute the scale factors from 
+        a root file containing either TGraph's or TF1's, or it can 
+        analytically compute the SF from functiond defined in python
+        '''
+        if inputFile.endswith('.root'):
+            self._initFromRoot(inputFile, histBaseName)
+        elif inputFile.endswith('.py'):
+            self._initFromPython(inputFile)
+
+    def _initFromPython(self, inputPythonFile):
+        path = inputPythonFile.split('/')
+        explicitPathItems =[]
+        for p in path:
+            if '$' in p:
+                p1 =  os.environ[p.replace('$', '')]
+                explicitPathItems.append(p1)
+            else:            
+                explicitPathItems.append(p)
+        explicitPath = '/'.join(explicitPathItems)
+        efficiencies = imp.load_source('efficiencies', explicitPath)
+        self.eff_data = efficiencies.effData
+        self.eff_mc   = efficiencies.effMC
+
+    def _initFromRoot(self, inputRootFile, histBaseName='ZMass'):
         self.fileIn = ROOT.TFile(inputRootFile, 'read')
         if self.fileIn.IsZombie():
             raise RuntimeError('Error in opening scale factor file', inputRootFile)
@@ -91,6 +117,12 @@ class ScaleFactor(object):
             return g_eff.GetXaxis().FindFixBin(pt)
 
     def getEfficiency(self, pt, eta, eff_dict):
+        
+        # return efficiency for when using analytical function
+        if not isinstance(eff_dict, dict):
+            eff = eff_dict(pt, eta)
+            return eff
+        
         label = self.findEtaLabel(eta, eff_dict)
         
         g_eff = eff_dict[label]
@@ -123,8 +155,11 @@ if __name__ == '__main__':
 
 
 
-    sf = ScaleFactor('$CMSSW_BASE/src/CMGTools/H2TauTau/data/Tau_diTau35_fall15.root', 
-                     histBaseName='Eff')
+#     sf = ScaleFactor('$CMSSW_BASE/src/CMGTools/H2TauTau/data/Tau_diTau35_fall15.root', 
+#                      histBaseName='Eff')
+
+    sf = ScaleFactor('$CMSSW_BASE/src/CMGTools/H2TauTau/data/Tau_diTau35_fall15.py', )
+
     for pt, eta in [(  29.3577, 1.4845), 
                     (  50.    , 0.2   ), 
                     (  17.    , 0.05  ), 
