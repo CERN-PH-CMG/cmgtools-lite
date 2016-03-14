@@ -1,6 +1,6 @@
 from CMGTools.H2TauTau.proto.weights.auxFunctions import _crystalBallPlusStep, _definitePositiveErrorFunction
 
-global parameters
+# global parameters
 
 parameters = {}
 
