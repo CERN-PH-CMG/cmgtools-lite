@@ -49,12 +49,6 @@ class Histogram( object ):
                          unweighted = self.Yield(weighted=False) )
         return tmp
 
-    def uwYield(self):
-        return self.Yield(weighted=False)
-
-    def wYield(self):
-        return self.Yield(weighted=True)
-
     def Yield(self, weighted=True):
         '''Returns the weighted number of entries in the histogram
         (under and overflow not counted).
