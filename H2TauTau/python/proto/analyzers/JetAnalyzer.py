@@ -165,12 +165,12 @@ class JetAnalyzer(Analyzer):
                 self.counters.counter('jets').inc('at least 2 b jets')
                 
         # save HTs
-        event.HT_allJets     = sum([jet.et() for jet in allJets          ])
-        event.HT_jets        = sum([jet.et() for jet in event.jets       ])
-        event.HT_bJets       = sum([jet.et() for jet in event.bJets      ])
-        event.HT_cleanJets   = sum([jet.et() for jet in event.cleanJets  ])
-        event.HT_jets30      = sum([jet.et() for jet in event.jets30     ])
-        event.HT_cleanJets30 = sum([jet.et() for jet in event.cleanJets30])
+        event.HT_allJets     = sum([jet.pt() for jet in allJets          ])
+        event.HT_jets        = sum([jet.pt() for jet in event.jets       ])
+        event.HT_bJets       = sum([jet.pt() for jet in event.bJets      ])
+        event.HT_cleanJets   = sum([jet.pt() for jet in event.cleanJets  ])
+        event.HT_jets30      = sum([jet.pt() for jet in event.jets30     ])
+        event.HT_cleanJets30 = sum([jet.pt() for jet in event.cleanJets30])
         
         return True
 
