@@ -181,6 +181,7 @@ jet_vars_extra = [
 geninfo_vars = [
     Variable('geninfo_mcweight', lambda ev : ev.mcweight if hasattr(ev, 'mcweight') else 1., type=int),
     Variable('geninfo_nup', lambda ev : ev.NUP if hasattr(ev, 'NUP') else -1, type=int),
+    Variable('geninfo_invmass', lambda ev : ev.geninvmass if hasattr(ev, 'geninvmass') else -1),
     Variable('geninfo_tt', type=int),
     Variable('geninfo_mt', type=int),
     Variable('geninfo_et', type=int),

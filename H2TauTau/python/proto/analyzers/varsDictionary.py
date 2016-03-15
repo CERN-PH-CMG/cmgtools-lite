@@ -25,6 +25,7 @@ vars['weight_vertex'] = {'std': 'weight_vertex', 'sync': 'puweight'}
 
 # PileUp
 vars['geninfo_nup'] = {'geninfo_nup': 'NUP', 'sync': 'NUP'}
+vars['geninfo_invmass'] = {'geninfo_invmass': 'geninvmass', 'sync': 'geninvmass'}
 vars['n_vertices'] = {'std': 'n_vertices', 'sync': 'npv'}
 vars['npu'] = {'std': 'npu', 'sync': 'npu'}
 vars['nPU'] = {'std': 'nPU', 'sync': 'npu'}
