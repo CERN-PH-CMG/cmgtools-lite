@@ -88,7 +88,8 @@ def createProcess(runOnMC=True, channel='tau-mu', runSVFit=False,
             "PoolSource",
             noEventSort = cms.untracked.bool(True),
             duplicateCheckMode = cms.untracked.string("noDuplicateCheck"),
-            fileNames = cms.untracked.vstring('root://eoscms.cern.ch//eos/cms/store/data/Run2015D/SingleMuon/MINIAOD/PromptReco-v4/000/258/159/00000/6CA1C627-246C-E511-8A6A-02163E014147.root')
+            fileNames = cms.untracked.vstring('root://eoscms.cern.ch//eos/cms/store/data/Run2015D/SingleMuon/MINIAOD/16Dec2015-v1/10000/FEA1FD2B-B5A8-E511-85F7-0025907B5048.root') # mu-tau
+#             fileNames = cms.untracked.vstring('root://eoscms.cern.ch//eos/cms/store/data/Run2015D/Tau/MINIAOD/16Dec2015-v1/00000/F8B6DB5A-69B0-E511-96D4-20CF305B0590.root') # tau-tau
         )
 
 
@@ -239,13 +240,16 @@ def createProcess(runOnMC=True, channel='tau-mu', runSVFit=False,
 
 
 
-    # if not runOnMC:
-    #     # process.tauMuSequence.remove(process.cmgTauMuCor)
-    #     process.cmgTauMuTauPtSel.src = 'cmgTauMu'
-    #     # process.tauEleSequence.remove(process.cmgTauEleCor)
-    #     process.cmgTauEleTauPtSel.src = 'cmgTauEle'
-    #     # process.diTauSequence.remove(process.cmgDiTauCor)
-    #     process.cmgDiTauTauPtSel.src = 'cmgDiTau'
+    if not runOnMC:
+        if channel == 'tau-mu' or 'all' in channel:
+            process.tauMuSequence.remove(process.cmgTauMuCor)
+            process.cmgTauMuTauPtSel.src = 'cmgTauMu'
+        if channel == 'tau-ele' or 'all' in channel:
+            process.tauEleSequence.remove(process.cmgTauEleCor)
+            process.cmgTauEleTauPtSel.src = 'cmgTauEle'
+        if channel == 'di-tau' or 'all' in channel:
+            process.diTauSequence.remove(process.cmgDiTauCor)
+            process.cmgDiTauTauPtSel.src = 'cmgDiTau'
 
     # if runSVFit:
     #     process.cmgTauMuCorSVFitPreSel.SVFitVersion = 2
