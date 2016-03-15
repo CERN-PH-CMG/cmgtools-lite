@@ -78,8 +78,8 @@ class LHEWeightAnalyzer( Analyzer ):
 # For Higgs signal 
 #            if a.find('PDF')!=-1:
 #                flag = False
-#                for _id in range(260000, 260101):
-#                    if a.find(str(_id))!=-1: flag = True
+#                for weight_id in range(260000, 260101):
+#                    if a.find(str(weight_id))!=-1: flag = True
 #
 #                if flag:
 #                    self.pdfindex.append(idx)
@@ -91,8 +91,8 @@ class LHEWeightAnalyzer( Analyzer ):
 # For LO Z->tautau
             if a.find('Member')!=-1:
                 flag = False
-                for _id in range(10, 111):
-                    if a.find('id=\"' + str(_id) + '\"')!=-1: flag = True
+                for weight_id in range(10, 111):
+                    if a.find('id=\"' + str(weight_id) + '\"')!=-1: flag = True
 
                 if flag:
                     self.pdfindex.append(idx)
@@ -136,27 +136,27 @@ class LHEWeightAnalyzer( Analyzer ):
         event.pdf_variation = []
         event.alpha_variation = []
 
-        for idx, ii in enumerate(self.index):
+        for ii, windex in enumerate(self.index):
 
-            LHE_weight = self.mchandles['LHEweights'].product().weights()[ii].wgt
+            LHE_weight = self.mchandles['LHEweights'].product().weights()[windex].wgt
             event.scale_variation.append(LHE_weight/event.LHE_originalWeight)
 
 
-            self.scale.Fill(idx, LHE_weight/event.LHE_originalWeight)
+            self.scale.Fill(ii, LHE_weight/event.LHE_originalWeight)
 
-        for idx, ii in enumerate(self.pdfindex):
+        for ii, windex in enumerate(self.pdfindex):
 
-            LHE_weight = self.mchandles['LHEweights'].product().weights()[ii].wgt
+            LHE_weight = self.mchandles['LHEweights'].product().weights()[windex].wgt
             event.pdf_variation.append(LHE_weight/event.LHE_originalWeight)
 
-            self.pdf.Fill(idx, LHE_weight/event.LHE_originalWeight)
+            self.pdf.Fill(ii, LHE_weight/event.LHE_originalWeight)
 
-        for idx, ii in enumerate(self.alphaindex):
+        for ii, windex in enumerate(self.alphaindex):
 
-            LHE_weight = self.mchandles['LHEweights'].product().weights()[ii].wgt
+            LHE_weight = self.mchandles['LHEweights'].product().weights()[windex].wgt
             event.alpha_variation.append(LHE_weight/event.LHE_originalWeight)
 
-            self.alpha_s.Fill(idx, LHE_weight/event.LHE_originalWeight)
+            self.alpha_s.Fill(ii, LHE_weight/event.LHE_originalWeight)
 
         return True
 
