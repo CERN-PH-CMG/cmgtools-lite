@@ -55,6 +55,13 @@ class H2TauTauTreeProducer(H2TauTauTreeProducerBase):
         self.bookJet(self.tree, 'bjet1')
         self.bookJet(self.tree, 'bjet2')
 
+        self.var(self.tree, 'HT_allJets'    )
+        self.var(self.tree, 'HT_jets'       )
+        self.var(self.tree, 'HT_bJets'      )
+        self.var(self.tree, 'HT_cleanJets'  )
+        self.var(self.tree, 'HT_jets30'     )
+        self.var(self.tree, 'HT_cleanJets30')
+
         # self.bookParticle(self.tree, 'pfmet')
 
         self.bookGenParticle(self.tree, 'genboson')
@@ -83,6 +90,13 @@ class H2TauTauTreeProducer(H2TauTauTreeProducerBase):
 
         for i, jet in enumerate(event.cleanBJets[:2]):
             self.fillJet(self.tree, 'bjet{n}'.format(n=str(i + 1)), jet)
+
+        self.fill(self.tree, 'HT_allJets'    , event.HT_allJets    ) 
+        self.fill(self.tree, 'HT_jets'       , event.HT_jets       ) 
+        self.fill(self.tree, 'HT_bJets'      , event.HT_bJets      ) 
+        self.fill(self.tree, 'HT_cleanJets'  , event.HT_cleanJets  ) 
+        self.fill(self.tree, 'HT_jets30'     , event.HT_jets30     ) 
+        self.fill(self.tree, 'HT_cleanJets30', event.HT_cleanJets30) 
 
         if hasattr(event, 'parentBoson'):
             self.fillGenParticle(self.tree, 'genboson', event.parentBoson)

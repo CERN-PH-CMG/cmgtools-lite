@@ -16,13 +16,23 @@ class DiObject(object):
         self.leg2Gen = None
         self.leg1DeltaR = -1
         self.leg2DeltaR = -1
-
+        self.diobject.setP4(self.p4())
+        
     def leg1(self):
         return self.daughter(0)
 
     def leg2(self):
         return self.daughter(1)
 
+    def mass(self):
+        return self.p4().mass()
+
+    def pt(self):
+        return self.p4().pt()
+
+    def p4(self):
+        return self.daughter(0).p4() + self.daughter(1).p4()
+    
     def sumPt(self):
         '''pt_leg1 + pt_leg2. used for finding the best DiTau.'''
         return self.leg1().pt() + self.leg2().pt()

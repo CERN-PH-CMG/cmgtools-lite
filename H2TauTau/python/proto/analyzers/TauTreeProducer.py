@@ -25,6 +25,14 @@ class TauTreeProducer(H2TauTauTreeProducerBase):
     def declareVariables(self, setup):
 
         self.bookTau(self.tree, 'tau')
+        self.bookParticle(self.tree, 'tau_lead_charged')
+        self.bookParticle(self.tree, 'tau_lead_neutral')
+        self.var(self.tree, 'tau_charged_iso')
+        self.var(self.tree, 'tau_gamma_iso')
+        self.var(self.tree, 'tau_neutral_iso')
+        self.var(self.tree, 'tau_charged_sig')
+        self.var(self.tree, 'tau_gamma_sig')
+        self.var(self.tree, 'tau_neutral_sign')
         self.bookGenParticle(self.tree, 'tau_gen')
         self.bookGenParticle(self.tree, 'tau_gen_vis')
         self.var(self.tree, 'tau_gen_decayMode')
@@ -66,9 +74,12 @@ class TauTreeProducer(H2TauTauTreeProducerBase):
         self.fill(self.tree, 'pfmet_pt', met.pt())
         self.fill(self.tree, 'pfmet_phi', met.phi())
 
-        puppimet = self.handles['puppi_met'].product()[0]
-        self.fill(self.tree, 'puppimet_pt', puppimet.pt())
-        self.fill(self.tree, 'puppimet_phi', puppimet.phi())
+        try:
+            puppimet = self.handles['puppi_met'].product()[0]
+            self.fill(self.tree, 'puppimet_pt', puppimet.pt())
+            self.fill(self.tree, 'puppimet_phi', puppimet.phi())
+        except:
+            pass 
 
         self.fill(self.tree, 'njets20', len(event.jets))
         self.fill(self.tree, 'njets30', len([j for j in event.jets if j.pt() > 30.]))
@@ -110,5 +121,15 @@ class TauTreeProducer(H2TauTauTreeProducerBase):
                     if tau.genJet():
                         self.fillGenParticle(self.tree, 'tau_gen_vis', tau.genJet())
                         self.fill(self.tree, 'tau_gen_decayMode', tauDecayModes.genDecayModeInt(tau.genJet()))
-
+                if not tau.leadNeutralCand().isNull():
+                    self.fillParticle(self.tree, 'tau_lead_neutral', tau.leadNeutralCand())
+                if not tau.leadChargedHadrCand().isNull():
+                    self.fillParticle(self.tree, 'tau_lead_charged', tau.leadChargedHadrCand())
+                self.fill(self.tree, 'tau_charged_iso' , tau.chargedPtSumIso )
+                self.fill(self.tree, 'tau_gamma_iso'   , tau.gammaPtSumIso   )
+                self.fill(self.tree, 'tau_neutral_iso' , tau.neutralPtSumIso )
+                self.fill(self.tree, 'tau_charged_sig' , tau.chargedSignalCandsPtSum)
+                self.fill(self.tree, 'tau_gamma_sig'   , tau.gammaSignalCandsPtSum  )
+                self.fill(self.tree, 'tau_neutral_sign', tau.neutralSignalCandsPtSum)
+        
                 self.fillTree(event)

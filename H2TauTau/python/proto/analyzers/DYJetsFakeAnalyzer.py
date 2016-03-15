@@ -210,6 +210,11 @@ class DYJetsFakeAnalyzer(Analyzer):
         #             leg.genp = leg.genJet()
         #             leg.genp.setPdgId(-15 * leg.genp.charge())
         #             leg.isTauHad = True
+        
+        # RM: needed to append genTauJets to the events,
+        #     when genMatch is used as a static method
+        if not hasattr(event, 'genTauJets'):
+            DYJetsFakeAnalyzer.getGenTauJets(event)
 
         l1match, dR2best = bestMatch(leg, event.genTauJets)
         if dR2best < best_dr2:

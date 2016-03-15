@@ -132,7 +132,8 @@ muon_vars = [
 tau_vars = [
     Variable('decayMode', lambda tau : tau.decayMode()),
     Variable('zImpact', lambda tau : tau.zImpact()),
-    Variable('dz_selfvertex', lambda tau : tau.vertex().z() - tau.associatedVertex.position().z())
+    Variable('dz_selfvertex', lambda tau : tau.vertex().z() - tau.associatedVertex.position().z()),
+    Variable('ptScale', lambda tau : tau.ptScale if hasattr(tau, 'ptScale') else -999.),
 ]
 for tau_id in tauIDs:
     if type(tau_id) is str:
@@ -160,6 +161,21 @@ jet_vars = [
     Variable('rawfactor', lambda jet : jet.rawFactor()),
     Variable('genjet_pt', lambda jet : jet.matchedGenJet.pt() if hasattr(jet, 'matchedGenJet') and jet.matchedGenJet else -999.),
 ]
+
+# extended jet vars
+jet_vars_extra = [
+    Variable('nConstituents', lambda jet : jet.nConstituents() if hasattr(jet, 'nConstituents') else -999.),
+    Variable('rawFactor', lambda jet : jet.rawFactor() if hasattr(jet, 'rawFactor') else -999.),
+    Variable('chargedHadronEnergy', lambda jet : jet.chargedHadronEnergy() if hasattr(jet, 'chargedHadronEnergy') else -999.),
+    Variable('neutralHadronEnergy', lambda jet : jet.neutralHadronEnergy() if hasattr(jet, 'neutralHadronEnergy') else -999.),
+    Variable('neutralEmEnergy', lambda jet : jet.neutralEmEnergy() if hasattr(jet, 'neutralEmEnergy') else -999.),
+    Variable('muonEnergy', lambda jet : jet.muonEnergy() if hasattr(jet, 'muonEnergy') else -999.),
+    Variable('chargedEmEnergy', lambda jet : jet.chargedEmEnergy() if hasattr(jet, 'chargedEmEnergy') else -999.),
+    Variable('chargedHadronMultiplicity', lambda jet : jet.chargedHadronMultiplicity() if hasattr(jet, 'chargedHadronMultiplicity') else -999.),
+    Variable('chargedMultiplicity', lambda jet : jet.chargedMultiplicity() if hasattr(jet, 'chargedMultiplicity') else -999.),
+    Variable('neutralMultiplicity', lambda jet : jet.neutralMultiplicity() if hasattr(jet, 'neutralMultiplicity') else -999.),
+]
+
 
 # gen info
 geninfo_vars = [
