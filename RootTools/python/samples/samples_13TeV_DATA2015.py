@@ -182,7 +182,7 @@ SingleElectron_Run2015D_16Dec = kreator.makeDataComponent("SingleElectron_Run201
 SingleMuon_Run2015D_16Dec     = kreator.makeDataComponent("SingleMuon_Run2015D_16Dec"    , "/SingleMuon/Run2015D-16Dec2015-v1/MINIAOD"    , "CMS", ".*root", json)
 SinglePhoton_Run2015D_16Dec   = kreator.makeDataComponent("SinglePhoton_Run2015D_16Dec"  , "/SinglePhoton/Run2015D-16Dec2015-v1/MINIAOD"  , "CMS", ".*root", json)
 DoubleEG_Run2015D_16Dec       = kreator.makeDataComponent("DoubleEG_Run2015D_16Dec"      , "/DoubleEG/Run2015D-16Dec2015-v1/MINIAOD"      , "CMS", ".*root", json)
-MuonEG_Run2015D_16Dec         = kreator.makeDataComponent("MuonEG_Run2015D_16Dec"        , "/MuonEG/Run2015D-16Dec2015-v2/MINIAOD"        , "CMS", ".*root", json)
+MuonEG_Run2015D_16Dec         = kreator.makeDataComponent("MuonEG_Run2015D_16Dec"        , "/MuonEG/Run2015D-16Dec2015-v1/MINIAOD"        , "CMS", ".*root", json)
 DoubleMuon_Run2015D_16Dec     = kreator.makeDataComponent("DoubleMuon_Run2015D_16Dec"    , "/DoubleMuon/Run2015D-16Dec2015-v1/MINIAOD"    , "CMS", ".*root", json)
 Tau_Run2015D_16Dec            = kreator.makeDataComponent("Tau_Run2015D_16Dec"           , "/Tau/Run2015D-16Dec2015-v1/MINIAOD"           , "CMS", ".*root", json)
 

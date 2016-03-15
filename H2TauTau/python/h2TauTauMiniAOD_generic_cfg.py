@@ -217,9 +217,9 @@ def createProcess(runOnMC=True, channel='tau-mu', runSVFit=False,
 
 
     if runOnMC:
-        pass
-        # process.genEvtWeightsCounterPath = cms.Path(process.genEvtWeightsCounter)
-        # process.schedule.insert(0, process.genEvtWeightsCounterPath)
+#        pass
+        process.genEvtWeightsCounterPath = cms.Path(process.genEvtWeightsCounter)
+#        process.schedule.insert(0, process.genEvtWeightsCounterPath)
 
     # Enable printouts like this:
     # process.cmgTauMuCorSVFitPreSel.verbose = True
