@@ -121,7 +121,7 @@ class H2TauTauTreeProducerBase(TreeAnalyzerNumpy):
     def fillLepton(self, tree, p_name, lepton):
         self.fillParticle(tree, p_name, lepton)
         if hasattr(lepton, 'jet'):
-            self.fillJet(tree, p_name + '_jet', lepton.jet)
+            self.fillParticle(tree, p_name + '_jet', lepton.jet)
         self.fillGeneric(tree, lepton_vars, lepton, p_name)
 
     # muon
