@@ -47,8 +47,6 @@ class DYJetsFakeAnalyzer(Analyzer):
         event.genmet_px = -99.
         event.genmet_py = -99.
         event.genmet_phi = -99.
-        event.geninfo_has_z = False
-        event.geninfo_has_w = False
         event.weight_gen = 1.
 
         if self.cfg_comp.isData:
@@ -137,7 +135,8 @@ class DYJetsFakeAnalyzer(Analyzer):
 
         return True
 
-    def attachGenStatusFlag(self, lepton):        
+    @staticmethod
+    def attachGenStatusFlag(lepton):        
         flag = 6
 
         gen_p = lepton.genp if hasattr(lepton, 'genp') else None

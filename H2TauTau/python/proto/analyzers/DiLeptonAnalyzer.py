@@ -193,6 +193,8 @@ class DiLeptonAnalyzer(Analyzer):
             if fillCounter:
                 self.counters.counter('DiLepton').inc('exactly 1 di-lepton')
 
+        event.selDiLeptons = selDiLeptons
+
         event.diLepton = self.bestDiLepton(selDiLeptons)
         event.leg1 = event.diLepton.leg1()
         event.leg2 = event.diLepton.leg2()

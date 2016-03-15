@@ -20,6 +20,9 @@ generic_vars = [
     VCfg(name='jet2_pt', binning={'nbinsx':40, 'xmin':0., 'xmax':200.}, unit='GeV', xtitle='jet 2 p_{T}'),
     VCfg(name='jet1_eta', binning={'nbinsx':40, 'xmin':-5., 'xmax':5.}, unit=None, xtitle='jet 1 #eta'),
     VCfg(name='jet2_eta', binning={'nbinsx':40, 'xmin':-5., 'xmax':5.}, unit=None, xtitle='jet 2 #eta'),
+    VCfg(name='pzeta_vis', binning={'nbinsx':40, 'xmin':0., 'xmax':200.}, unit=None, xtitle='p^{#zeta}_{vis} (GeV)'),
+    VCfg(name='pzeta_met', binning={'nbinsx':40, 'xmin':-150., 'xmax':150.}, unit=None, xtitle='p^{#zeta}_{MET} (GeV)'),
+    VCfg(name='pzeta_disc', binning={'nbinsx':40, 'xmin':-200., 'xmax':200.}, unit=None, xtitle='p^{#zeta}_{disc} (GeV)'),
 ]
 
 muon_l1_vars = [
@@ -33,6 +36,7 @@ muon_l1_vars = [
     VCfg(name='l1_dxy_sig', drawname='log(abs(l1_dxy/l1_dxy_error))', binning={'nbinsx':100, 'xmin':-20., 'xmax':20.}, unit=None, xtitle='muon log(d_{xy}/#sigma(d_{xy}))'),
     VCfg(name='l1_log_dz', drawname='log(abs(l1_dz))', binning={'nbinsx':40, 'xmin':-18., 'xmax':-2.}, unit='log(cm)', xtitle='log(muon d_{z})'),
     VCfg(name='l1_dz_sig', drawname='log(abs(l1_dz/l1_dz_error))', binning={'nbinsx':100, 'xmin':-20., 'xmax':20.}, unit=None, xtitle='muon log(d_{z}/#sigma(d_{z}))'),
+    VCfg(name='delta_phi_l1_met', binning={'nbinsx':40, 'xmin':-3.141593, 'xmax':3.141593}, unit=None, xtitle='#Delta #phi (muon, MET'),
 ]
 
 tau_l2_vars = [
@@ -48,8 +52,11 @@ tau_l2_vars = [
     VCfg(name='l2_log_dz', drawname='log(abs(l2_dz)+0.00001)', binning={'nbinsx':40, 'xmin':-18., 'xmax':0.5}, unit='log(cm)', xtitle='log(tau d_{z})'),
     VCfg(name='l2_dz_sig', drawname='log(abs(l2_dz/l2_dz_error))', binning={'nbinsx':100, 'xmin':-20., 'xmax':20.}, unit=None, xtitle='tau log(d_{z}/#sigma(d_{z}))'),
     VCfg(name='l2_byCombinedIsolationDeltaBetaCorrRaw3Hits', binning={'nbinsx':100, 'xmin':0., 'xmax':100.}, unit='GeV', xtitle='tau delta-beta corr. 3-hit isolation'),
+    VCfg(name='l2_byIsolationMVArun2v1DBoldDMwLTraw', binning={'nbinsx':100, 'xmin':-1., 'xmax':1.}, unit='', xtitle='tau isolation MVA (old DM w/LT)'),
+    VCfg(name='l2_byIsolationMVArun2v1DBdR03oldDMwLTraw', binning={'nbinsx':100, 'xmin':0., 'xmax':1.}, unit='', xtitle='tau isolation MVA (old DM w/LT cone 0.3)'),
     VCfg(name='l2_nc_ratio', binning={'nbinsx':20, 'xmin':-1., 'xmax':1.}, unit='GeV', xtitle='tau neutral-charged asymmetry'),
     VCfg(name='l2_gen_nc_ratio', binning={'nbinsx':20, 'xmin':-1., 'xmax':1.}, unit='GeV', xtitle='tau gen neutral-charged asymmetry'),
+    VCfg(name='delta_phi_l2_met', binning={'nbinsx':40, 'xmin':-3.141593, 'xmax':3.141593}, unit=None, xtitle='#Delta #phi (tau, MET'),
 ]
 
 muon_l2_vars = [
@@ -63,6 +70,7 @@ muon_l2_vars = [
     VCfg(name='l2_dxy_sig', drawname='log(abs(l2_dxy/l1_dxy_error))', binning={'nbinsx':100, 'xmin':-20., 'xmax':20.}, unit=None, xtitle='2nd muon log(d_{xy}/#sigma(d_{xy}))'),
     VCfg(name='l2_log_dz', drawname='log(abs(l2_dz))', binning={'nbinsx':40, 'xmin':-18., 'xmax':-2.}, unit='log(cm)', xtitle='log(2nd muon d_{z})'),
     VCfg(name='l2_dz_sig', drawname='log(abs(l2_dz/l2_dz_error))', binning={'nbinsx':100, 'xmin':-20., 'xmax':20.}, unit=None, xtitle='2nd muon log(d_{z}/#sigma(d_{z}))'),
+    VCfg(name='delta_phi_l2_met', binning={'nbinsx':40, 'xmin':-3.141593, 'xmax':3.141593}, unit=None, xtitle='#Delta #phi (2nd muon, MET'),
 ]
 
 tau_mu_special_vars = [
@@ -91,7 +99,7 @@ taumu_vars = generic_vars + muon_l1_vars + tau_l2_vars + tau_mu_special_vars
 
 mumu_vars = generic_vars + muon_l1_vars + muon_l2_vars + additional_tau_vars
 
-all_vars = generic_vars + muon_l1_vars + tau_l2_vars + additional_tau_vars + tau_mu_special_vars
+all_vars = generic_vars + muon_l1_vars + muon_l2_vars + tau_l2_vars + additional_tau_vars + tau_mu_special_vars
 
 dict_all_vars = {}
 for v in all_vars:

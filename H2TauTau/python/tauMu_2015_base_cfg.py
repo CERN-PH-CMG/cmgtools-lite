@@ -1,3 +1,5 @@
+import os
+
 import PhysicsTools.HeppyCore.framework.config as cfg
 
 # Tau-tau analyzers
@@ -15,7 +17,7 @@ from CMGTools.H2TauTau.htt_ntuple_base_cff import commonSequence, genAna, dyJets
 
 # mu-tau specific configuration settings
 syncntuple = True
-computeSVfit = False
+computeSVfit = True
 
 dyJetsFakeAna.channel = 'mt'
 
@@ -88,6 +90,8 @@ svfitProducer = cfg.Analyzer(
     integration='MarkovChain',
     # verbose=True,
     # order='21', # muon first, tau second
+    integrateOverVisPtResponse = True          ,
+    visPtResponseFile = os.environ['CMSSW_BASE']+'/src/CMGTools/SVfitStandalone/data/svFitVisMassAndPtResolutionPDF.root', 
     l1type='muon',
     l2type='tau'
 )
@@ -101,8 +105,6 @@ sequence.append(tauDecayModeWeighter)
 sequence.append(tauFakeRateWeighter)
 sequence.append(tauWeighter)
 sequence.append(muonWeighter)
-if computeSVfit:
-    sequence.append(svfitProducer)
 sequence.append(treeProducer)
 if syncntuple:
     sequence.append(syncTreeProducer)

@@ -224,7 +224,3 @@ config = cfg.Config(components=selectedComponents,
                     )
 
 printComps(config.components, True)
-
-
-def modCfgForPlot(config):
-    config.components = []

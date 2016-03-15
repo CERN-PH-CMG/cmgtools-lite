@@ -1,6 +1,6 @@
 import PhysicsTools.HeppyCore.framework.config as cfg
 
-from CMGTools.H2TauTau.tauMu_2015_base_cfg import sequence, treeProducer, tauMuAna
+from CMGTools.H2TauTau.tauMu_2015_base_cfg import sequence, treeProducer, tauMuAna, svfitProducer, muonWeighter
 
 from PhysicsTools.HeppyCore.framework.config import printComps
 from PhysicsTools.HeppyCore.framework.heppy_loop import getHeppyOption
@@ -21,11 +21,17 @@ from CMGTools.H2TauTau.htt_ntuple_base_cff import puFileData, puFileMC, eventSel
 
 # production = True run on batch, production = False (or unset) run locally
 production = getHeppyOption('production')
-production = False
+production = True
 pick_events = False
-syncntuple = True
+syncntuple = False
 cmssw = True
+computeSVfit = False
 data = False
+
+# Just to be sure
+if production:
+    syncntuple = False
+    pick_events = False
 
 # Define extra modules
 tauIsoCalc = cfg.Analyzer(
@@ -45,6 +51,9 @@ fileCleaner = cfg.Analyzer(
     name='FileCleaner'
 )
 
+if computeSVfit:
+    sequence.insert(sequence.index(muonWeighter), svfitProducer)
+
 sequence.insert(sequence.index(treeProducer), muonIsoCalc)
 sequence.insert(sequence.index(treeProducer), tauIsoCalc)
 
@@ -55,14 +64,17 @@ if cmssw:
 # Minimal list of samples
 samples = backgrounds_mu + sm_signals + sync_list + mssm_signals
 
-
-split_factor = 5e3
 split_factor = 1e5
+
+if computeSVfit:
+    split_factor = 5e3
 
 for sample in samples:
     sample.triggers = mc_triggers
     sample.triggerobjects = mc_triggerfilters
     sample.splitFactor = splitFactor(sample, split_factor)
+    sample.puFileData = puFileData
+    sample.puFileMC = puFileMC
 
 data_list = data_single_muon
 
@@ -73,20 +85,15 @@ for sample in data_list:
     sample.json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions15/13TeV/Cert_246908-260627_13TeV_PromptReco_Collisions15_25ns_JSON_v2.txt'
     sample.lumi = 2260.
 
-###################################################
-###              ASSIGN PU to MC                ###
-###################################################
-for mc in samples:
-    mc.puFileData = puFileData
-    mc.puFileMC = puFileMC
 
 ###################################################
 ###             SET COMPONENTS BY HAND          ###
 ###################################################
-selectedComponents = data_list if data else backgrounds_mu + sm_signals
+selectedComponents = data_list if data else backgrounds_mu + sm_signals + mssm_signals
 
-selectedComponents = [s for s in selectedComponents if 'DYJets' in s.name] + mssm_signals
-
+# selectedComponents = [s for s in selectedComponents if 'W1J' in s.name or 'W4J' in s.name]
+# selectedComponents = [s for s in selectedComponents if 'WJetsToLNu_LO' in s.name]
+selectedComponents = [s for s in selectedComponents if 'QCD' in s.name] 
 ###################################################
 ###             CHERRY PICK EVENTS              ###
 ###################################################
@@ -103,7 +110,6 @@ if not cmssw:
     module = [s for s in sequence if s.name == 'MCWeighter'][0]
     sequence.remove(module)
 
-selectedComponents = [s for s in selectedComponents if 'BB' in s.name]
 ###################################################
 ###            SET BATCH OR LOCAL               ###
 ###################################################
@@ -111,7 +117,7 @@ if not production:
     cache = True
     comp = sync_list[0]
     # comp = [s for s in selectedComponents if 'DYJets' in s.name][0]
-    # comp = [s for s in selectedComponents if 'HiggsSUSYBB110' in s.name][0]
+    comp = [s for s in selectedComponents if 'WJ' in s.name][0]
     selectedComponents = [comp]
     # selectedComponents = [selectedComponents[0]]
     # comp = selectedComponents[0]
@@ -136,6 +142,3 @@ config = cfg.Config(components=selectedComponents,
                     )
 
 printComps(config.components, True)
-
-def modCfgForPlot(config):
-    config.components = []

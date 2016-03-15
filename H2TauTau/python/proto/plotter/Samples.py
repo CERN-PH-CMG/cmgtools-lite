@@ -1,9 +1,9 @@
 from CMGTools.H2TauTau.proto.plotter.PlotConfigs import SampleCfg
 from CMGTools.H2TauTau.proto.plotter.HistCreator import setSumWeights
 
-from CMGTools.H2TauTau.proto.samples.fall15.htt_common import TT_pow_ext, DYJetsToLL_M50_LO, DYNJets, WJetsToLNu, WWTo2L2Nu, T_tWch, TBar_tWch, TToLeptons_tch_amcatnlo, ZZTo4L, WZTo3L, WZTo1L3Nu, WWTo1L1Nu2Q, ZZTo2L2Q, WZTo2L2Q, WZTo1L1Nu2Q, TBarToLeptons_tch_powheg, TToLeptons_tch_powheg, mssm_signals
+from CMGTools.H2TauTau.proto.samples.fall15.htt_common import TT_pow_ext, DYJetsToLL_M50_LO, DYNJets, WJetsToLNu,  WJetsToLNu_LO, WWTo2L2Nu, T_tWch, TBar_tWch, TToLeptons_tch_amcatnlo, VVTo2L2Nu, ZZTo4L, WZTo3L, WZTo1L3Nu, WWTo1L1Nu2Q, ZZTo2L2Q, WZTo2L2Q, WZTo1L1Nu2Q, TBarToLeptons_tch_powheg, TToLeptons_tch_powheg, mssm_signals, WJetsToLNu_HT100to200, WJetsToLNu_HT200to400, WJetsToLNu_HT400to600, WJetsToLNu_HT600toInf, QCD_Mu15
 
-# WJetsToLNu_LO, QCD_Mu15, ZZp8, WZp8, ZZTo2L2Q, WZTo2L2Q, WZTo1L1Nu2Q, VVTo2L2Nu, 
+# WJetsToLNu_LO, , ZZp8, WZp8, ZZTo2L2Q, WZTo2L2Q, WZTo1L1Nu2Q, , 
 
 def createSampleLists(analysis_dir='/afs/cern.ch/user/s/steggema/work/public/mt/NewProd', 
                       channel='mt', 
@@ -20,30 +20,42 @@ def createSampleLists(analysis_dir='/afs/cern.ch/user/s/steggema/work/public/mt/
         tree_prod_name='H2TauTauTreeProducerTauTau'
     elif channel == 'em':
         tree_prod_name='H2TauTauTreeProducerMuEle'
+    elif channel == 'tau_fr':
+        tree_prod_name = 'TauFRTreeProducer'
 
     samples_essential = [
         SampleCfg(name='ZTT', dir_name='DYJetsToLL_M50_LO', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=DYJetsToLL_M50_LO.xSection, sumweights=DYJetsToLL_M50_LO.nGenEvents, weight_expr=ztt_cut),
         SampleCfg(name='ZL', dir_name='DYJetsToLL_M50_LO', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=DYJetsToLL_M50_LO.xSection, sumweights=DYJetsToLL_M50_LO.nGenEvents, weight_expr=zl_cut),
         SampleCfg(name='ZJ', dir_name='DYJetsToLL_M50_LO', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=DYJetsToLL_M50_LO.xSection, sumweights=DYJetsToLL_M50_LO.nGenEvents, weight_expr=zj_cut),
-        SampleCfg(name='W', dir_name='WJetsToLNu', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=WJetsToLNu.xSection, sumweights=WJetsToLNu.nGenEvents, weight_expr='1.'),
-        # SampleCfg(name='W', dir_name='WJetsToLNu', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=WJetsToLNu_LO.xSection, sumweights=WJetsToLNu_LO.nGenEvents, weight_expr='1.'),
+        # SampleCfg(name='W', dir_name='WJetsToLNu', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=WJetsToLNu.xSection, sumweights=WJetsToLNu.nGenEvents, weight_expr='1.'),
+        SampleCfg(name='W', dir_name='WJetsToLNu_LO' if channel != 'mm' else 'WJetsToLNu', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=WJetsToLNu_LO.xSection, sumweights=WJetsToLNu_LO.nGenEvents, weight_expr='1.' if channel != 'tau_fr' else '(geninfo_htgen<100.)'),
         SampleCfg(name='TT', dir_name='TT_pow_ext', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=TT_pow_ext.xSection, sumweights=TT_pow_ext.nGenEvents),
         SampleCfg(name='T_tWch', dir_name='T_tWch', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=T_tWch.xSection, sumweights=T_tWch.nGenEvents),
         SampleCfg(name='TBar_tWch', dir_name='TBar_tWch', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=TBar_tWch.xSection, sumweights=TBar_tWch.nGenEvents),
-        # SampleCfg(name='QCD', dir_name='QCD_Mu15', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=QCD_Mu15.xSection)
+        SampleCfg(name='QCD', dir_name='QCD_Mu15', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=QCD_Mu15.xSection)
     ]
 
-    for sample in DYNJets:
-        n_jet_name = str(sample.name[sample.name.find('Jets')-1])+'Jets'
-        print 'WARNING - DY - using n(gen events)', DYJetsToLL_M50_LO.nevents[0]
+    if channel in ['tau_fr']:
+        k_factor = '1.'
         samples_essential += [
-            SampleCfg(name='ZTT'+n_jet_name, dir_name=sample.name, ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=sample.xSection, sumweights=DYJetsToLL_M50_LO.nevents[0], weight_expr=ztt_cut),
-            SampleCfg(name='ZL'+n_jet_name, dir_name=sample.name, ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=sample.xSection, sumweights=DYJetsToLL_M50_LO.nevents[0], weight_expr=zl_cut),
-            SampleCfg(name='ZJ'+n_jet_name, dir_name=sample.name, ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=sample.xSection, sumweights=DYJetsToLL_M50_LO.nevents[0], weight_expr=zj_cut),
+            SampleCfg(name='WJetsToLNu_HT100to200', dir_name='WJetsToLNu_HT100to200', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=WJetsToLNu_HT100to200.xSection, sumweights=WJetsToLNu_HT100to200.nGenEvents, weight_expr=k_factor),
+            SampleCfg(name='WJetsToLNu_HT200to400', dir_name='WJetsToLNu_HT200to400', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=WJetsToLNu_HT200to400.xSection, sumweights=WJetsToLNu_HT200to400.nGenEvents, weight_expr=k_factor),
+            SampleCfg(name='WJetsToLNu_HT400to600', dir_name='WJetsToLNu_HT400to600', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=WJetsToLNu_HT400to600.xSection, sumweights=WJetsToLNu_HT400to600.nGenEvents, weight_expr=k_factor),
+            SampleCfg(name='WJetsToLNu_HT600toInf', dir_name='WJetsToLNu_HT600toInf', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=WJetsToLNu_HT600toInf.xSection, sumweights=WJetsToLNu_HT600toInf.nGenEvents, weight_expr=k_factor),
         ]
 
+    if channel not in ['mm', 'tau_fr']:
+        for sample in DYNJets:
+            n_jet_name = str(sample.name[sample.name.find('Jets')-1])+'Jets'
+            print 'WARNING - DY - using n(gen events)', DYJetsToLL_M50_LO.nevents[0]
+            samples_essential += [
+                SampleCfg(name='ZTT'+n_jet_name, dir_name=sample.name, ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=sample.xSection, sumweights=DYJetsToLL_M50_LO.nevents[0], weight_expr=ztt_cut),
+                SampleCfg(name='ZL'+n_jet_name, dir_name=sample.name, ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=sample.xSection, sumweights=DYJetsToLL_M50_LO.nevents[0], weight_expr=zl_cut),
+                SampleCfg(name='ZJ'+n_jet_name, dir_name=sample.name, ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=sample.xSection, sumweights=DYJetsToLL_M50_LO.nevents[0], weight_expr=zj_cut),
+            ]
+
     samples_data = []
-    if channel in ['mt', 'mm']:
+    if channel in ['mt', 'mm', 'tau_fr']:
         samples_data = [
             SampleCfg(name='data_obs', dir_name='SingleMuon_Run2015D_16Dec', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
         ]
@@ -91,7 +103,7 @@ def createSampleLists(analysis_dir='/afs/cern.ch/user/s/steggema/work/public/mt/
         if sample.name not in ['ZTT1Jets', 'ZTT2Jets', 'ZTT3Jets', 'ZTT4Jets',
                                'ZJ1Jets', 'ZJ2Jets', 'ZJ3Jets', 'ZJ4Jets',
                                'ZL1Jets', 'ZL2Jets', 'ZL3Jets', 'ZL4Jets',]:
-            setSumWeights(sample)
+            setSumWeights(sample, 'MCWeighter' if channel not in ['tau_fr'] else 'SkimAnalyzerCount')
 
     sampleDict = {s.name:s for s in all_samples}
 
