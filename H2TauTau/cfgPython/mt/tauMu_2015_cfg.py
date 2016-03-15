@@ -64,7 +64,13 @@ if cmssw:
 # Minimal list of samples
 samples = backgrounds_mu + sm_signals + sync_list + mssm_signals
 
+<<<<<<< HEAD
 split_factor = 1e5
+=======
+
+split_factor = 5e3
+# split_factor = 1e5
+>>>>>>> origin/HTTUnscheduled
 
 if computeSVfit:
     split_factor = 5e3
@@ -90,10 +96,9 @@ for sample in data_list:
 ###             SET COMPONENTS BY HAND          ###
 ###################################################
 selectedComponents = data_list if data else backgrounds_mu + sm_signals + mssm_signals
-
 # selectedComponents = [s for s in selectedComponents if 'W1J' in s.name or 'W4J' in s.name]
 # selectedComponents = [s for s in selectedComponents if 'WJetsToLNu_LO' in s.name]
-selectedComponents = [s for s in selectedComponents if 'QCD' in s.name] 
+# selectedComponents = [s for s in selectedComponents if 'QCD' in s.name] 
 ###################################################
 ###             CHERRY PICK EVENTS              ###
 ###################################################

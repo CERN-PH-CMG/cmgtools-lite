@@ -1,7 +1,7 @@
 from PhysicsTools.Heppy.analyzers.core.TreeAnalyzerNumpy import TreeAnalyzerNumpy
 
 from CMGTools.H2TauTau.proto.analyzers.varsDictionary import vars as var_dict
-from CMGTools.H2TauTau.proto.analyzers.TreeVariables import event_vars, ditau_vars, particle_vars, lepton_vars, electron_vars, muon_vars, tau_vars, jet_vars, geninfo_vars, vbf_vars, svfit_vars
+from CMGTools.H2TauTau.proto.analyzers.TreeVariables import event_vars, ditau_vars, particle_vars, lepton_vars, electron_vars, muon_vars, tau_vars, jet_vars, jet_vars_extra, geninfo_vars, vbf_vars, svfit_vars
 
 from CMGTools.H2TauTau.proto.physicsobjects.DiObject import DiTau
 
@@ -163,6 +163,15 @@ class H2TauTauTreeProducerBase(TreeAnalyzerNumpy):
     def fillJet(self, tree, p_name, jet):
         self.fillParticle(tree, p_name, jet)
         self.fillGeneric(tree, jet_vars, jet, p_name)
+
+    # jet with extras
+    def bookJetExtra(self, tree, p_name):
+        self.bookJet(tree, p_name)
+        self.bookGeneric(tree, jet_vars_extra, p_name)
+        
+    def fillJetExtra(self, tree, p_name, jet):
+        self.fillJet(tree, p_name, jet)
+        self.fillGeneric(tree, jet_vars_extra, jet, p_name)
 
     # vbf
     def bookVBF(self, tree, p_name):

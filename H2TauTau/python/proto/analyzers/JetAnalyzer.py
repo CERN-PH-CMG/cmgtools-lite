@@ -110,6 +110,9 @@ class JetAnalyzer(Analyzer):
         leptons = []
         if hasattr(event, 'selectedLeptons'):
             leptons = event.selectedLeptons
+        if hasattr(self.cfg_ana, 'toClean'):
+            leptons = getattr(event, self.cfg_ana.toClean)
+            
 
         if hasattr(self.cfg_ana, 'leptonCollections'):
             for coll in self.cfg_ana.leptonCollections:
@@ -156,7 +159,7 @@ class JetAnalyzer(Analyzer):
         # Attach matched jets to selected + other leptons
         if hasattr(event, 'otherLeptons'):
             leptons += event.otherLeptons
-
+            
         pairs = matchObjectCollection(leptons, allJets, 0.5 * 0.5)
         # associating a jet to each lepton
         for lepton in leptons:
@@ -185,6 +188,15 @@ class JetAnalyzer(Analyzer):
             self.counters.counter('jets').inc('at least 1 b jet')
             if len(event.cleanBJets) > 1:
                 self.counters.counter('jets').inc('at least 2 b jets')
+                
+        # save HTs
+        event.HT_allJets     = sum([jet.pt() for jet in allJets          ])
+        event.HT_jets        = sum([jet.pt() for jet in event.jets       ])
+        event.HT_bJets       = sum([jet.pt() for jet in event.bJets      ])
+        event.HT_cleanJets   = sum([jet.pt() for jet in event.cleanJets  ])
+        event.HT_jets30      = sum([jet.pt() for jet in event.jets30     ])
+        event.HT_cleanJets30 = sum([jet.pt() for jet in event.cleanJets30])
+        
         return True
 
     def jerCorrection(self, jet):

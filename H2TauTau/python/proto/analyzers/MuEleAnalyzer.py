@@ -78,7 +78,7 @@ class MuEleAnalyzer(DiLeptonAnalyzer):
 
     def buildDiLeptonsSingle(self, leptons, event):
         di_leptons = []
-        met = self.handles['met'].product()[0]
+        met = self.handles['pfMET'].product()[0]
 
 #        import pdb; pdb.set_trace()
         for pat_e in leptons:
@@ -144,7 +144,7 @@ class MuEleAnalyzer(DiLeptonAnalyzer):
         else:
             event.isSignal = True
 
-        event.pfmet = self.handles['met'].product()[0]
+        event.pfmet = self.handles['pfMET'].product()[0]
         event.puppimet = self.handles['puppiMET'].product()[0]
 
         return True
@@ -186,7 +186,7 @@ class MuEleAnalyzer(DiLeptonAnalyzer):
                          self.testVertex(electron) and
                          electron.passConversionVeto() and 
                          electron.gsfTrack().hitPattern().numberOfHits(ROOT.reco.HitPattern.MISSING_INNER_HITS) <= 1 and
-                         electron.mvaIDRun2('NonTrigSpring15', 'POG90') and
+                         electron.mvaIDRun2('NonTrigSpring15MiniAOD', 'POG90') and
                          electron.relIsoR(R=0.3, dBetaFactor=0.5, allCharged=0) < 0.3]
 
         if len(vOtherLeptons) > 1:
@@ -209,7 +209,7 @@ class MuEleAnalyzer(DiLeptonAnalyzer):
         return True
 
     def testElectronID(self, electron):
-        return electron.mvaIDRun2('NonTrigSpring15', 'POG80')
+        return electron.mvaIDRun2('NonTrigSpring15MiniAOD', 'POG80')
 
     def leptonAccept(self, leptons, event):
         '''Loose e/mu veto to reject DY; passes for e-mu'''
@@ -262,6 +262,8 @@ class MuEleAnalyzer(DiLeptonAnalyzer):
         legs = [diL.leg1(), diL.leg2()]
         event.matchedPaths = set()
 
+#        import pdb; pdb.set_trace()
+
         for info in event.trigger_infos:
             if not info.fired:
                 continue
@@ -291,7 +293,7 @@ class MuEleAnalyzer(DiLeptonAnalyzer):
                     for ipath in to.filterLabels():
                         print '[DBG] \t\t filter name = ', ipath
 
-                if self.trigObjMatched(to, legs):
+                if self.trigObjMatched(to, legs)[0]:
                     matchedIds.add(abs(to.pdgId()))
                 else:
                     allMatched = False

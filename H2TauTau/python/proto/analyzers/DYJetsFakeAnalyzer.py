@@ -26,7 +26,7 @@ class DYJetsFakeAnalyzer(Analyzer):
         self.mchandles['genInfo'] = AutoHandle(('generator','',''), 'GenEventInfoProduct' )
         self.mchandles['genJets'] = AutoHandle('slimmedGenJets', 'std::vector<reco::GenJet>')
 
-        self.handles['jets'] = AutoHandle('slimmedJets', 'std::vector<pat::Jet>')
+        self.handles['jets'] = AutoHandle(self.cfg_ana.jetCol, 'std::vector<pat::Jet>')
 
     def process(self, event):
 
@@ -209,6 +209,11 @@ class DYJetsFakeAnalyzer(Analyzer):
         #             leg.genp = leg.genJet()
         #             leg.genp.setPdgId(-15 * leg.genp.charge())
         #             leg.isTauHad = True
+        
+        # RM: needed to append genTauJets to the events,
+        #     when genMatch is used as a static method
+        if not hasattr(event, 'genTauJets'):
+            DYJetsFakeAnalyzer.getGenTauJets(event)
 
         l1match, dR2best = bestMatch(leg, event.genTauJets)
         if dR2best < best_dr2:

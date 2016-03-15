@@ -6,7 +6,7 @@ from PhysicsTools.HeppyCore.statistics.average import Average
 
 from CMGTools.RootTools.statistics.TreeNumpy import TreeNumpy
 
-from ROOT import TFile, TH1F
+from ROOT import TFile, TH1F, TLorentzVector
 
 class NJetsAnalyzer(Analyzer):
     # class NJetsAnalyzer( GenParticleAnalyzer ):
@@ -92,7 +92,9 @@ class NJetsAnalyzer(Analyzer):
 
         sumpt = 0.
         outgoing = []
-       
+        mass = []
+
+
         # print [(a, b) for a, b in zip(hep.ISTUP, hep.IDUP)]
 
         for status, pdg, moth, mom in zip(hep.ISTUP, hep.IDUP, hep.MOTHUP, hep.PUP):
@@ -101,9 +103,17 @@ class NJetsAnalyzer(Analyzer):
                 sumpt += math.sqrt(mom.x[0]**2 + mom.x[1]**2)
                 outgoing.append(pdg)
 
+            if status==1 and abs(pdg) in [11, 12, 13, 14, 15, 16]:
+                l = TLorentzVector(mom.x[0], mom.x[1], mom.x[2], mom.x[3])
+                mass.append(l)
+
         njets = len(outgoing)
         event.NUP = hep.NUP
         event.NUP = njets
+        event.geninvmass = -1
+        if len(mass)==2:
+            event.geninvmass = (mass[0] + mass[1]).M()
+
 
         event.genPartonHT = sumpt
 
