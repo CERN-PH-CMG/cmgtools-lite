@@ -52,7 +52,8 @@ class LHEWeightAnalyzer( Analyzer ):
                 print itt
                 if itt.find('weight id') != -1: flag = True
 
-            if flag == True: break
+            if flag: 
+                break
             else: iterator.next()
         else:
             print 'Could not find any weight information !!'
