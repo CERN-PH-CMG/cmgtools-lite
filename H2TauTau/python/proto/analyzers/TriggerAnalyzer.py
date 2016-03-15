@@ -159,7 +159,6 @@ class TriggerAnalyzer(Analyzer):
                         info.objIds.add(abs(to.pdgId()))
         
         
-        from copy import deepcopy as dc
         # RIC: remove duplicated trigger objects 
         #      (is this something that may happen in first place?)
         for info in trigger_infos:
