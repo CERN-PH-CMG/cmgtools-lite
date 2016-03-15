@@ -10,6 +10,7 @@ from PhysicsTools.Heppy.analyzers.core.AutoHandle import AutoHandle
 from PhysicsTools.Heppy.physicsobjects.PhysicsObjects import Tau, Muon
 from PhysicsTools.Heppy.physicsobjects.Electron import Electron
 
+from CMGTools.H2TauTau.proto.analyzers.TauIsolationCalculator import TauIsolationCalculator
 from CMGTools.H2TauTau.proto.analyzers.DiLeptonAnalyzer import DiLeptonAnalyzer
 from CMGTools.H2TauTau.proto.physicsobjects.DiObject import TauTau, DirectDiTau
 
@@ -319,25 +320,6 @@ class TauTauAnalyzer(DiLeptonAnalyzer):
         # else           :
         return sorted(diLeptons, key=lambda dl: least_iso_highest_pt(dl), reverse=False)[0]
 
-    def tauIsoBreakdown(self, tau):
-
-        variables = {
-            'ptSumIso'           : tau.isolationCands()           ,
-            'chargedPtSumIso'    : tau.isolationChargedHadrCands(),
-            'gammaPtSumIso'      : tau.isolationGammaCands()      ,
-            'neutralPtSumIso'    : tau.isolationNeutrHadrCands()  ,
-            'ptSumSignal'        : tau.signalCands()              ,
-            'chargedPtSumSignal' : tau.signalChargedHadrCands()   ,
-            'gammaPtSumSignal'   : tau.signalGammaCands()         ,
-            'neutralPtSumSignal' : tau.signalNeutrHadrCands()     ,
-        }
-
-        for k, v in variables.items():
-            ptsum = 0.
-            for i in v:
-                ptsum += i.pt()
-            setattr(tau, k, ptsum)
-
     def scaleP4(self, tau, scale):
        
         modifiedP4 = ROOT.TLorentzVector()
@@ -388,7 +370,7 @@ class TauTauAnalyzer(DiLeptonAnalyzer):
         for tau in taus:
             if tau.decayMode() in (0, 1, 10) and hasattr(tau, 'jet'):
     
-                self.tauIsoBreakdown(tau)
+                TauIsolationCalculator.tauIsoBreakdown(tau)
     
                 self.variables['tau_pt'                     ][0] = tau.pt()               
                 self.variables['tau_eta'                    ][0] = tau.eta()              

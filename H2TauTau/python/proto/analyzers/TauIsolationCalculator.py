@@ -1,7 +1,6 @@
-from PhysicsTools.Heppy.analyzers.core.AutoHandle import AutoHandle
 from PhysicsTools.Heppy.analyzers.core.Analyzer import Analyzer
 
-from PhysicsTools.HeppyCore.utils.deltar import deltaPhi, deltaR
+from PhysicsTools.HeppyCore.utils.deltar import deltaR
 
 class TauIsolationCalculator(Analyzer):
 
@@ -55,8 +54,8 @@ class TauIsolationCalculator(Analyzer):
             
         return True
 
-
-    def tauIsoBreakdown(self, tau):
+    @staticmethod
+    def tauIsoBreakdown(tau):
 
         variables = {
             'ptSumIso'                : tau.isolationCands()           ,
