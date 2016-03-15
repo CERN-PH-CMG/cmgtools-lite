@@ -103,7 +103,7 @@ class NJetsAnalyzer(Analyzer):
                 sumpt += math.sqrt(mom.x[0]**2 + mom.x[1]**2)
                 outgoing.append(pdg)
 
-            if status==1 and abs(pdg) in [11, 13, 15]:
+            if status==1 and abs(pdg) in [11, 12, 13, 14, 15, 16]:
                 l = TLorentzVector(mom.x[0], mom.x[1], mom.x[2], mom.x[3])
                 mass.append(l)
 
