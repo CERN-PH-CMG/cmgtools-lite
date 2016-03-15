@@ -115,7 +115,7 @@ class H2TauTauTreeProducerBase(TreeAnalyzerNumpy):
     # lepton
     def bookLepton(self, tree, p_name):
         self.bookParticle(tree, p_name)
-        self.bookJet(tree, p_name + '_jet')
+        self.bookParticle(tree, p_name + '_jet')
         self.bookGeneric(tree, lepton_vars, p_name)
 
     def fillLepton(self, tree, p_name, lepton):
