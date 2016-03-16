@@ -219,6 +219,7 @@ ttHLepSkim = cfg.Analyzer(
 photonAna = cfg.Analyzer(
     PhotonAnalyzer, name='photonAnalyzer',
     photons='slimmedPhotons',
+    doPhotonScaleCorrections=False, 
     ptMin = 15,
     etaMax = 2.5,
     gammaID = "POG_PHYS14_25ns_Loose",
