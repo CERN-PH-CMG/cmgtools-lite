@@ -243,7 +243,7 @@ class JetAnalyzer(Analyzer):
 
     def testJet(self, jet):
         pt = jet.pt()
-        if self.cfg_ana.ptUncTolerance:
+        if hasattr(self.cfg_ana, 'ptUncTolerance') and self.cfg_ana.ptUncTolerance:
             pt = max(pt, pt * jet.corrJECUp/jet.corr, pt * jet.corrJECDown/jet.corr)
         return pt > self.cfg_ana.jetPt and \
             abs( jet.eta() ) < self.cfg_ana.jetEta and \
