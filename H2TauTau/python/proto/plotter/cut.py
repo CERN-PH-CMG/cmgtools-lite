@@ -13,7 +13,7 @@ class Cut(object):
 
     def __or__(self, other):
         newone = copy.deepcopy(self)
-        newone.cutstr = '({cut1}) || ({cut2})'.format(cut1=str(self), cut2=str(other))
+        newone.cutstr = '(({cut1}) || ({cut2}))'.format(cut1=str(self), cut2=str(other))
         return newone
 
     def __str__(self):
