@@ -18,8 +18,12 @@ class Cut(object):
 
     def __str__(self):
         return self.cutstr
-
-
+    
+    def __invert__(self):
+        newone = copy.deepcopy(self)
+        newone.cutstr = '!({cut})'.format(cut=str(self))
+        return newone
+        
 if __name__ == '__main__':
 
     sig_mu = Cut('l2_relIso05<0.1 && l2_tightId>0.5 && l2_dxy<0.045 && l2_dz<0.2')
@@ -28,3 +32,4 @@ if __name__ == '__main__':
     print sig_mu
     sig = sig_mu & sig_tau
     print sig
+    print ~sig_mu
