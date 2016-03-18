@@ -25,13 +25,16 @@ inc_sig_tau2_other = Cut(
 )
 
 inc_sig = inc_event & inc_sig_tau1_iso & inc_sig_tau1_other & inc_sig_tau2_iso & inc_sig_tau2_other
+inc_sig_no_iso = inc_event & inc_sig_tau1_other & inc_sig_tau2_other
 inc_anti_iso = (~inc_sig_tau1_iso | ~inc_sig_tau2_iso) & inc_event & inc_sig_tau1_other & inc_sig_tau2_other 
 
 cat_Inc = str(inc_sig)
+cat_Inc_NoIso = str(inc_sig_no_iso)
 cat_Inc_AntiIso = str(inc_anti_iso)
 
 categories = {
     'Xcat_IncX': cat_Inc,
+    'Xcat_Inc_NoIsoX': cat_Inc_NoIso,
     'Xcat_Inc_AntiIsoX': cat_Inc_AntiIso,
 }
 
