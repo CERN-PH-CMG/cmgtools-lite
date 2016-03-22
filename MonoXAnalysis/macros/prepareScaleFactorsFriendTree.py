@@ -81,7 +81,7 @@ for D in glob(args[0]+"/*"):
         short = os.path.basename(D)
         if options.datasets != []:
             if short not in options.datasets: continue
-        data = any(x in short for x in "DoubleMu DoubleEl DoubleEG MuEG MuonEG SingleMu SingleEl MET".split())
+        data = any(x in short for x in "DoubleMu DoubleEl DoubleEG MuEG MuonEG SingleMu SingleEl SinglePhoton MET".split())
         if data: continue
         f = ROOT.TFile.Open(fname);
         t = f.Get(treename)
