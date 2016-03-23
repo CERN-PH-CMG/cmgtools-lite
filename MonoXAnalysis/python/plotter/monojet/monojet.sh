@@ -10,9 +10,9 @@ WHAT=$1; if [[ "$1" == "" ]]; then echo "monojet.sh <what>"; exit 1; fi
 
 BASEDIR=""
 if [ "$WHAT" == "zee" ] || [ "$WHAT" == "zeeI" ] || [ "$WHAT" == "wenI" ] || [ "$WHAT" == "wen" ] ; then
-    BASEDIR="TREES_25ns_1LEPSKIM_23NOV2015"
+    BASEDIR="TREES_25ns_1TLEP1JETSKIM_76X"
 else 
-    BASEDIR="TREES_25ns_MET200SKIM_1DEC2015"
+    BASEDIR="TREES_25ns_MET200SKIM_76X"
 fi
 
 WORKDIR="monojet"
@@ -28,17 +28,17 @@ fi
 
 MCA=""
 if [ "$WHAT" == "wen" ] || [ "$WHAT" == "zee" ] ; then
-    MCA="${WORKDIR}/mca-74X-Ve.txt "
+    MCA="${WORKDIR}/mca-76X-Ve.txt "
 elif [ "$WHAT" == "wmn" ] || [ "$WHAT" == "zmm" ] ; then
-    MCA="${WORKDIR}/mca-74X-Vm.txt "
+    MCA="${WORKDIR}/mca-76X-Vm.txt "
 else
-    MCA="${WORKDIR}/mca-74X-sr.txt "
+    MCA="${WORKDIR}/mca-76X-sr.txt "
 fi
 
 ROOTPREF="plots/Summer15/v2.0"
 ROOT="${ROOTPREF}/${WHAT}"
 ROOTR="${ROOTPREF}/transfer_factors"
-COREOPT="-P $T --s2v -j $J -l 2.215 "
+COREOPT="-P $T --s2v -j $J -l 2.32 "
 COREY="mcAnalysis.py ${MCA} ${COREOPT} -G  "
 COREP="mcPlots.py ${MCA} ${COREOPT} -f --poisson --pdir ${ROOT} --showRatio --maxRatioRange 0.5 1.5 "
 CORER="mcSystematics.py ${MCA} ${COREOPT} -f --select-plot \"metnomu\" "
