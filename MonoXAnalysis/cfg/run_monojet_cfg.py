@@ -8,6 +8,8 @@ import re
 # Load all analyzers
 from CMGTools.MonoXAnalysis.analyzers.dmCore_modules_cff import * 
 from PhysicsTools.HeppyCore.framework.heppy_loop import getHeppyOption
+from CMGTools.HToZZ4L.tools.configTools import * 
+
 
 #-------- SET OPTIONS AND REDEFINE CONFIGURATIONS -----------
 
@@ -197,7 +199,6 @@ sequence = cfg.Sequence(dmCoreSequence+[
    treeProducer,
     ])
 
-
 from CMGTools.RootTools.samples.triggers_13TeV_Spring15 import *
 from CMGTools.RootTools.samples.triggers_8TeV import triggers_1mu_8TeV, triggers_mumu_8TeV, triggers_mue_8TeV, triggers_ee_8TeV;
 triggers_AllMonojet = triggers_metNoMu90_mhtNoMu90 + triggers_metNoMu120_mhtNoMu120 + triggers_AllMET170 + triggers_AllMET300
@@ -315,11 +316,11 @@ if runData==False and not isTest: # MC all
     ### 25 ns 74X MC samples
     is50ns = False
     mcSamples = mcSamples_monojet_Asymptotic25ns
-    if signalSkim:
+    #if signalSkim:
         # full signal scan (many datasets!)
         # mcSamples += mcSamples_monojet_Asymptotic25ns_signals
-        monojet_signals_cherrypick = [ DMS_Mphi_2000_Mchi_1_gSM_1p0_gDM_1p0, DMPS_Mphi_2000_Mchi_1_gSM_1p0_gDM_1p0, DMAV_Mphi_2000_Mchi_1_gSM_0p25_gDM_1p0]
-        mcSamples += monojet_signals_cherrypick
+        # monojet_signals_cherrypick = [ DMS_Mphi_2000_Mchi_1_gSM_1p0_gDM_1p0, DMPS_Mphi_2000_Mchi_1_gSM_1p0_gDM_1p0, DMAV_Mphi_2000_Mchi_1_gSM_0p25_gDM_1p0]
+        # mcSamples += monojet_signals_cherrypick
     selectedComponents = mcSamples 
 
 ### 50 ns 74X MC samples
@@ -328,6 +329,9 @@ if runData==False and not isTest: # MC all
         comp.splitFactor = len(comp.files)/4
         comp.fineSplitFactor = 1
 
+if not getHeppyOption("test"):
+    printSummary(selectedComponents)
+    autoAAA(selectedComponents)
 
 
 #-------- HOW TO RUN ----------- 
