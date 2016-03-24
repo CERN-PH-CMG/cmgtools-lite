@@ -1,4 +1,5 @@
 import math
+import re
 
 from ROOT import gSystem
 from ROOT import LorentzVector
@@ -17,6 +18,10 @@ class RecoilCorrector(Analyzer):
 
         self.rcMVAMET = RC('CMGTools/H2TauTau/data/recoilMvaMEt_76X_newTraining_MG5.root')
         self.rcPFMET = RC('CMGTools/H2TauTau/data/recoilPFMEt_76X_MG5.root')
+
+        wpat = re.compile('W\d?Jet.*')
+        match = wpat.match(self.cfg_comp.name)
+        self.isWJets = not (match is None)
 
     def getGenP4(self, event):
         leptons_prompt = [p for p in event.generatorSummary if abs(p.pdgId()) in [11, 12, 13, 14] and p.fromHardProcessFinalState()]
@@ -67,13 +72,18 @@ class RecoilCorrector(Analyzer):
         dil = event.diLepton
 
         n_jets_30 = len(event.cleanJets30)
+        
+        if self.isWJets:
+            n_jets_30 += 1
+
         gen_z_px, gen_z_py, gen_vis_z_px, gen_vis_z_py = self.getGenP4(event)
 
         # Correct MVA MET
         px_old = dil.met().px()
         py_old = dil.met().py()
 
-        new = self.rcMVAMET.Correct(
+        # Correct by mean and resolution as default (otherwise use .Correct(..))
+        new = self.rcMVAMET.CorrectByMeanResolution(
             px_old, 
             py_old, 
             gen_z_px,    
@@ -94,7 +104,8 @@ class RecoilCorrector(Analyzer):
         pfmet_px_old = event.pfmet.px()
         pfmet_py_old = event.pfmet.py()
 
-        new = self.rcPFMET.Correct(
+        # Correct by mean and resolution as default (otherwise use .Correct(..))
+        new = self.rcPFMET.CorrectByMeanResolution(
             pfmet_px_old, 
             pfmet_py_old, 
             gen_z_px,    

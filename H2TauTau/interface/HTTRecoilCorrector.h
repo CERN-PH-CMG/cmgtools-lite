@@ -45,6 +45,19 @@ class HTTRecoilCorrector {
     Correct(MetPx, MetPy, genZPx, genZPy, diLepPx, diLepPy, njets, px, py);
     return std::make_pair(px, py);
   }
+
+    std::pair<float, float> CorrectByMeanResolution(float MetPx,
+         float MetPy,
+         float genZPx, 
+         float genZPy,
+         float diLepPx,
+         float diLepPy,
+         int njets) {
+    float px = 0.;
+    float py = 0.;
+    CorrectByMeanResolution(MetPx, MetPy, genZPx, genZPy, diLepPx, diLepPy, njets, px, py);
+    return std::make_pair(px, py);
+  }
   
  private:
 
