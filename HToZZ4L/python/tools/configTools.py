@@ -6,6 +6,7 @@ def autoAAA(selectedComponents):
     from CMGTools.Production.localityChecker import LocalityChecker
     tier2Checker = LocalityChecker("T2_CH_CERN", datasets="/*/*/MINIAOD*")
     for comp in selectedComponents:
+        if len(comp.files) == 0: print "ERROR, comp %s (dataset %s) has no files!" % (comp.name, getattr(comp,'dataset',None))
         if not hasattr(comp,'dataset'): continue
         if not re.match("/[^/]+/[^/]+/MINIAOD(SIM)?", comp.dataset): continue
         if "/store/" not in comp.files[0]: continue

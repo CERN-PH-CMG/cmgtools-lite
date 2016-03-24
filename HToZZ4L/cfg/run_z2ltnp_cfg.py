@@ -38,6 +38,7 @@ selectedComponents = dataSamples + mcSamples
 printSummary(selectedComponents)
 if True: autoAAA(selectedComponents)
 #doECalCorrections(era="25ns")
+doKalmanMuonCorrections(smear="basic")
 
 
 from PhysicsTools.HeppyCore.framework.heppy_loop import getHeppyOption
