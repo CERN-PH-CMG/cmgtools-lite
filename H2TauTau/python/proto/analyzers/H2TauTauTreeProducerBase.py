@@ -156,22 +156,17 @@ class H2TauTauTreeProducerBase(TreeAnalyzerNumpy):
         self.fillGeneric(tree, tau_vars, tau, p_name)
 
     # jet
-    def bookJet(self, tree, p_name):
+    def bookJet(self, tree, p_name, fill_extra=False):
         self.bookParticle(tree, p_name)
         self.bookGeneric(tree, jet_vars, p_name)
+        if fill_extra:
+            self.bookGeneric(tree, jet_vars_extra, p_name)
         
-    def fillJet(self, tree, p_name, jet):
+    def fillJet(self, tree, p_name, jet, fill_extra=False):
         self.fillParticle(tree, p_name, jet)
         self.fillGeneric(tree, jet_vars, jet, p_name)
-
-    # jet with extras
-    def bookJetExtra(self, tree, p_name):
-        self.bookJet(tree, p_name)
-        self.bookGeneric(tree, jet_vars_extra, p_name)
-        
-    def fillJetExtra(self, tree, p_name, jet):
-        self.fillJet(tree, p_name, jet)
-        self.fillGeneric(tree, jet_vars_extra, jet, p_name)
+        if fill_extra:
+            self.fillGeneric(tree, jet_vars_extra, jet, p_name)
 
     # vbf
     def bookVBF(self, tree, p_name):
