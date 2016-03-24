@@ -207,15 +207,19 @@ ttHLepSkim = cfg.Analyzer(
 photonAna = cfg.Analyzer(
     PhotonAnalyzer, name='photonAnalyzer',
     photons='slimmedPhotons',
+    doPhotonScaleCorrections=False,
     ptMin = 30,
     etaMax = 2.5,
-    gammaID = "POG_SPRING15_50ns_Tight",
+    gammaID = "POG_SPRING15_25ns_Tight",
     rhoPhoton = 'fixedGridRhoFastjetAll',
     gamma_isoCorr = 'rhoArea',
-    conversionSafe_eleVeto = False,
+    doFootprintRemovedIsolation = True,
+    conversionSafe_eleVeto = True,
     do_mc_match = False,
     do_randomCone = False,
-)
+    packedCandidates = 'packedPFCandidates',
+    footprintRemovedIsolationPUCorr = 'rhoArea',
+    )
 
 
 ##------------------------------------------
