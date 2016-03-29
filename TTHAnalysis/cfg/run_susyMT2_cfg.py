@@ -33,18 +33,21 @@ lepAna.loose_electron_relIso = 0.15
 lepAna.loose_electron_isoCut = lambda electron : electron.miniRelIso < 0.1
 
 lepAna.loose_electron_id  = "POG_Cuts_ID_SPRING15_25ns_v1_ConvVetoDxyDz_Veto_full5x5"
+#lepAna.loose_electron_id  = "POG_Cuts_ID_PHYS14_25ns_v1_ConvVetoDxyDz_Veto_full5x5"
 lepAna.loose_electron_lostHits = 999. # no cut
 lepAna.loose_electron_dxy    = 999.
 lepAna.loose_electron_dz     = 999.
 
 lepAna.inclusive_electron_id  = "POG_Cuts_ID_SPRING15_25ns_v1_ConvVetoDxyDz_Veto_full5x5"
+#lepAna.inclusive_electron_id  = "POG_Cuts_ID_PHYS14_25ns_v1_ConvVetoDxyDz_Veto_full5x5"
 lepAna.inclusive_electron_lostHits = 999. # no cut since embedded in ID
 lepAna.inclusive_electron_dxy    = 999. # no cut since embedded in ID
 lepAna.inclusive_electron_dz     = 999. # no cut since embedded in ID
 
 lepAna.mu_isoCorr = "deltaBeta"
 lepAna.ele_isoCorr = "deltaBeta"
-lepAna.ele_tightId = "Cuts_PHYS14_25ns_v1_ConvVetoDxyDz"
+#lepAna.ele_tightId = "Cuts_PHYS14_25ns_v1_ConvVetoDxyDz"
+lepAna.ele_tightId = "Cuts_SPRING15_25ns_v1_ConvVetoDxyDz"
 lepAna.notCleaningElectrons = True
 lepAna.doMiniIsolation = True
 lepAna.miniIsolationPUCorr = 'rhoArea'
@@ -57,8 +60,26 @@ lepAna.mu_effectiveAreas = 'Spring15_25ns_v1'              #new default
 lepAna.rhoMuon= 'fixedGridRhoFastjetCentralNeutral',      #new default
 lepAna.rhoElectron = 'fixedGridRhoFastjetCentralNeutral', #new default
 
-
 lepAna.doIsoAnnulus = True
+
+#era="25ns"
+#sync=False
+#lepAna.doElectronScaleCorrections = {
+#    'data' : 'EgammaAnalysis/ElectronTools/data/76X_16DecRereco_2015',
+#    'GBRForest': ('$CMSSW_BASE/src/CMGTools/RootTools/data/egamma_epComb_GBRForest_76X.root',
+#                  'gedelectron_p4combination_'+era),
+#    'isSync': sync
+#    }
+#
+#
+#smear="basic"
+#lepAna.doMuonScaleCorrections = ( 'Kalman', {
+#        'MC': 'MC_76X_13TeV',
+#        'Data': 'DATA_76X_13TeV',
+#        'isSync': sync,
+#        'smearMode':smear
+#        })
+
 
 # JET (for event variables do apply the jetID and not PUID yet)
 jetAna.relaxJetId = False
@@ -66,9 +87,9 @@ jetAna.doPuId = False
 jetAna.doQG = True
 jetAna.jetEta = 4.7
 jetAna.jetEtaCentral = 2.5
-jetAna.jetPt = 10.
-jetAna.mcGT     = "Summer15_25nsV2_MC" # jec corrections
-jetAna.dataGT   = "Summer15_25nsV5_DATA" # jec corrections
+jetAna.jetPt = 20. #was 10
+jetAna.mcGT     = "Summer15_25nsV6_MC" # jec corrections
+jetAna.dataGT   = "Summer15_25nsV6_DATA" # jec corrections
 jetAna.recalibrateJets = False # True
 jetAna.applyL2L3Residual = False # 'Data'
 jetAna.calculateSeparateCorrections = False
@@ -198,6 +219,7 @@ from CMGTools.RootTools.samples.triggers_13TeV_Spring15 import triggers_dijet, t
 from CMGTools.RootTools.samples.triggers_13TeV_Spring15 import triggers_photon75, triggers_photon90, triggers_photon120, triggers_photon75ps 
 from CMGTools.RootTools.samples.triggers_13TeV_Spring15 import triggers_photon90ps, triggers_photon120ps, triggers_photon155, triggers_photon165_HE10, triggers_photon175
 from CMGTools.RootTools.samples.triggers_13TeV_Spring15 import triggers_met90_mht90, triggers_metNoMu90_mhtNoMu90, triggers_metNoMu120_mhtNoMu120, triggers_Jet80MET90
+from CMGTools.RootTools.samples.triggers_13TeV_Spring15 import triggers_doubleele33, triggers_mumu_noniso
 
 triggerFlagsAna.triggerBits = {
 'PFHT900' : triggers_HT900,
@@ -233,11 +255,15 @@ triggerFlagsAna.triggerBits = {
 'PFMETNoMu90_PFMHTNoMu90' : triggers_metNoMu90_mhtNoMu90,
 'PFMETNoMu120_PFMHTNoMu120' : triggers_metNoMu120_mhtNoMu120,
 'MonoCentralPFJet80_PFMETNoMu90_PFMHTNoMu90' : triggers_Jet80MET90,
+### ZGamma triggers
+'DoubleEle33' : triggers_doubleele33,
+'Mu30_TkMu11' : triggers_mumu_noniso,
 }
 
 ### Temporary replacement for hbheFilter
 eventFlagsAna.triggerBits = {
-    #        "HBHENoiseFilter" : [ "Flag_HBHENoiseFilter" ], ### hbheFilter temporary replaced
+    "HBHENoiseFilter" : [ "Flag_HBHENoiseFilter" ], ### hbheFilter temporary replaced
+    "HBHENoiseIsoFilter" : [ "Flag_HBHENoiseIsoFilter" ], ### hbheFilter temporary replaced
     "CSCTightHaloFilter" : [ "Flag_CSCTightHaloFilter" ],
     "hcalLaserEventFilter" : [ "Flag_hcalLaserEventFilter" ],
     "EcalDeadCellTriggerPrimitiveFilter" : [ "Flag_EcalDeadCellTriggerPrimitiveFilter" ],
@@ -249,6 +275,8 @@ eventFlagsAna.triggerBits = {
     "trkPOG_manystripclus53X" : [ "Flag_trkPOG_manystripclus53X" ],
     "trkPOG_toomanystripclus53X" : [ "Flag_trkPOG_toomanystripclus53X" ],
     "trkPOG_logErrorTooManyClusters" : [ "Flag_trkPOG_logErrorTooManyClusters" ],
+    "chargedHadronTrackResolutionFilter" : [ "Flag_chargedHadronTrackResolutionFilter" ],
+    "muonBadTrackFilter" : [ "Flag_muonBadTrackFilter" ],
     "METFilters" : [ "Flag_METFilters" ],
 }
 
@@ -286,7 +314,7 @@ sequence = cfg.Sequence(
     MT2Ana,
     ttHTopoJetAna,
     ttHFatJetAna,
-    hbheFilterAna,
+#    hbheFilterAna,
     treeProducer,
     ])
 
@@ -311,7 +339,8 @@ from PhysicsTools.HeppyCore.framework.heppy_loop import getHeppyOption
 # choose 2 for full mc production
 # choose 3 for data production
 # choose 4 for signal production
-test = int(getHeppyOption('test',1))
+#test = int(getHeppyOption('test',1))
+test = 1
 isData = False # will be changed accordingly if chosen to run on data
 doSpecialSettingsForMECCA = 1 # set to 1 for comparisons with americans
 runPreprocessor = False
@@ -367,9 +396,10 @@ elif test==1:
     
 #    from CMGTools.RootTools.samples.samples_13TeV_PHYS14 import *
 #    from CMGTools.RootTools.samples.samples_13TeV_74X import *
-    from CMGTools.RootTools.samples.samples_13TeV_RunIISpring15MiniAODv2 import *
+#    from CMGTools.RootTools.samples.samples_13TeV_RunIISpring15MiniAODv2 import *
+    from CMGTools.RootTools.samples.samples_13TeV_RunIIFall15MiniAODv2 import *
 #    from CMGTools.RootTools.samples.samples_8TeVReReco_74X import *
-    from CMGTools.RootTools.samples.samples_13TeV_DATA2015 import *
+#    from CMGTools.RootTools.samples.samples_13TeV_DATA2015 import *
 
 #    comp=GJets_HT200to400
 #    comp.files = ['/afs/cern.ch/user/d/dalfonso/public/TESTfilesPHY14/gjets_ht200to400_miniaodsim_fix.root']
@@ -388,12 +418,15 @@ elif test==1:
 #    comp=TTJets_LO
 #    comp.files = ['/afs/cern.ch/work/d/dalfonso/public/001F4F14-786E-E511-804F-0025905A60FE.root']
    
-    comp=JetHT_Run2015D_Promptv4
-    comp.files = ['/afs/cern.ch/work/d/dalfonso/public/8ED4BA45-706D-E511-8D36-02163E014418.root']
-    comp.json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions15/13TeV/DCSOnly/json_DCSONLY.txt'
+#    comp=JetHT_Run2015D_Promptv4
+#    comp.files = ['/afs/cern.ch/work/d/dalfonso/public/8ED4BA45-706D-E511-8D36-02163E014418.root']
+#    comp.json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions15/13TeV/DCSOnly/json_DCSONLY.txt'
 
-    selectedComponents = [comp]
-    comp.splitFactor = 1
+    selectedComponents = [TTJets_LO]
+    for comp in selectedComponents:
+        comp.files = ['root://xrootd.unl.edu//store/mc/RunIIFall15MiniAODv2/TTJets_SingleLeptFromT_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/00000/00D010B5-1EB9-E511-B950-02163E014965.root']
+        comp.splitFactor = 1200
+
 #    comp.triggers = triggers_HT900 + triggers_HTMET + triggers_photon155 + triggers_1mu_isolow + triggers_MT2_mumu + triggers_MT2_ee + triggers_MT2_mue # to apply trigger skimming
 
 elif test==2:
@@ -414,33 +447,46 @@ elif test==2:
 #DYJetsToLL_M50_HT100to200, DYJetsToLL_M50_HT200to400, DYJetsToLL_M50_HT400to600, DYJetsToLL_M50_HT600toInf # DYJetsToLL_M50_HT
 #]
 
-    from CMGTools.RootTools.samples.samples_13TeV_74X import *
-### 25 ns
-#    selectedComponents = [ 
-#TTJets, TTJets_LO, # TTJets
-#QCD_Pt80to120, QCD_Pt120to170, QCD_Pt300to470, QCD_Pt470to600, QCD_Pt1000to1400, QCD_Pt1400to1800, QCD_Pt1800to2400, QCD_Pt2400to3200, QCD_Pt3200toInf, # QCD_Pt
-#]
-
-### 25    
-#    selectedComponents = [DYJetsToLL_M50_Zpt150toInf_LO]
-
-    selectedComponents = ZJetsToNuNuHT + DYJetsM50HT + QCDPt + QCDHT + [
-TTJets_SingleLeptonFromT, TTJets_SingleLeptonFromTbar, TTJets_DiLepton,
-TTV, TToLeptons_tch, TbarToLeptons_tch, 
-TTJets_LO,
-#                                                                                                                                                                      
-GJets_HT100to200,
-GJets_HT200to400,
-GJets_HT400to600,
-GJets_HT600toInf,
+#    from CMGTools.RootTools.samples.samples_13TeV_74X import *
+#### 25 ns
+##    selectedComponents = [ 
+##TTJets, TTJets_LO, # TTJets
+##QCD_Pt80to120, QCD_Pt120to170, QCD_Pt300to470, QCD_Pt470to600, QCD_Pt1000to1400, QCD_Pt1400to1800, QCD_Pt1800to2400, QCD_Pt2400to3200, QCD_Pt3200toInf, # QCD_Pt
+##]
 #
-WJetsToLNu_HT100to200,
-WJetsToLNu_HT200to400,
-WJetsToLNu_HT400to600,
-WJetsToLNu_HT600toInf,
-] ### Full SM BG Spring15
+#### 25    
+##    selectedComponents = [DYJetsToLL_M50_Zpt150toInf_LO]
+#
+#    selectedComponents = ZJetsToNuNuHT + DYJetsM50HT + QCDPt + QCDHT + [
+#TTJets_SingleLeptonFromT, TTJets_SingleLeptonFromTbar, TTJets_DiLepton,
+#TTV, TToLeptons_tch, TbarToLeptons_tch, 
+#TTJets_LO,
+##                                                                                                                                                                      
+#GJets_HT100to200,
+#GJets_HT200to400,
+#GJets_HT400to600,
+#GJets_HT600toInf,
+##
+#WJetsToLNu_HT100to200,
+#WJetsToLNu_HT200to400,
+#WJetsToLNu_HT400to600,
+#WJetsToLNu_HT600toInf,
+#] ### Full SM BG Spring15
+#
+#    # test all components (1 thread per component).
+#    for comp in selectedComponents:
+#        comp.splitFactor = 1200
+#        #comp.fineSplitFactor = 2 # to run two jobs per file
+#        comp.files = comp.files[:]
+#        #comp.files = comp.files[:1]
+#        #comp.files = comp.files[57:58]  # to process only file [57]  
+#        # triggers on MC
+#        #comp.triggers = triggers_HT900 + triggers_HTMET + triggers_photon155 + triggers_1mu_isolow + triggers_MT2_mumu + triggers_MT2_ee + triggers_MT2_mue # to apply trigger skimming
 
-    # test all components (1 thread per component).
+    from CMGTools.RootTools.samples.samples_13TeV_RunIIFall15MiniAODv2 import ZGammaSig
+### 25 ns
+    selectedComponents = ZGammaSig
+
     for comp in selectedComponents:
         comp.splitFactor = 1200
         #comp.fineSplitFactor = 2 # to run two jobs per file
@@ -466,12 +512,15 @@ elif test==3:
     ##selectedComponents = [JetHT_Run2015B, HTMHT_Run2015B, MET_Run2015B, SingleElectron_Run2015B, SingleMuon_Run2015B, SinglePhoton_Run2015B, DoubleEG_Run2015B, DoubleMuon_Run2015B, MuonEG_Run2015B]
     #selectedComponents = [JetHT_Run2015B_17Jul2015, HTMHT_Run2015B_17Jul2015, MET_Run2015B_17Jul2015, SingleElectron_Run2015B_17Jul2015, SingleMuon_Run2015B_17Jul2015, SinglePhoton_Run2015B_17Jul2015, DoubleEG_Run2015B_17Jul2015, MuonEG_Run2015B_17Jul2015, DoubleMuon_Run2015B_17Jul2015, JetHT_Run2015B_PromptReco, HTMHT_Run2015B_PromptReco, MET_Run2015B_PromptReco, SingleElectron_Run2015B_PromptReco, SingleMuon_Run2015B_PromptReco, SinglePhoton_Run2015B_PromptReco, DoubleEG_Run2015B_PromptReco, MuonEG_Run2015B_PromptReco, DoubleMuon_Run2015B_PromptReco]
 
-    selectedComponents = [JetHT_Run2015D, HTMHT_Run2015D, MET_Run2015D, SingleElectron_Run2015D, SingleMuon_Run2015D, SinglePhoton_Run2015D, DoubleEG_Run2015D, MuonEG_Run2015D, DoubleMuon_Run2015D]
-    
+    #selectedComponents = [JetHT_Run2015D, HTMHT_Run2015D, MET_Run2015D, SingleElectron_Run2015D, SingleMuon_Run2015D, SinglePhoton_Run2015D, DoubleEG_Run2015D, MuonEG_Run2015D, DoubleMuon_Run2015D]
+###    selectedComponents  = dataSamples_Run2015C_27Jan + [ SingleElectron_Run2015D_16Dec, DoubleEG_Run2015D_16Dec, MuonEG_Run2015D_16Dec, DoubleMuon_Run2015D_16Dec ]
+#    selectedComponents = dataSamples_Run2015C_16Dec + [ SingleElectron_Run2015D_16Dec, SingleMuon_Run2015D_16Dec, DoubleEG_Run2015D_16Dec, MuonEG_Run2015D_16Dec, DoubleMuon_Run2015D_16Dec ] 
+    selectedComponents  = [ SinglePhoton_Run2015C_16Dec, SinglePhoton_Run2015D_16Dec ]
+
     for comp in selectedComponents:
         comp.json=json
+        comp.files=comp.files[:]
         
-
 elif test==4:
 
     from CMGTools.RootTools.samples.samples_13TeV_signals import *
@@ -492,10 +541,10 @@ elif test==4:
 
 if doSpecialSettingsForMECCA:
     jetAna.doQG = False
-    photonAna.do_randomCone = False
+#    photonAna.do_randomCone = False
     # Below slow things note: it will in any case try it only on MC, not on data
-    photonAna.do_mc_match = False
-    jetAna.do_mc_match = False
+#    photonAna.do_mc_match = False
+#    jetAna.do_mc_match = False
     lepAna.do_mc_match = False
     isoTrackAna.do_mc_match = False
     genAna.makeLHEweights = False
@@ -539,16 +588,16 @@ if runPreprocessor:
         #    uncFile = '$CMSSW_BASE/src/CMGTools/RootTools/data/jec/Summer15_50nsV4_DATA_UncertaintySources_AK4PFchs.txt'
         #    jecDBFile = '$CMSSW_BASE/src/CMGTools/RootTools/data/jec/Summer15_50nsV4_DATA.db'
         #    jecEra    = 'Summer15_50nsV4_DATA'
-        uncFile = '$CMSSW_BASE/src/CMGTools/RootTools/data/jec/Summer15_25nsV5_DATA_UncertaintySources_AK4PFchs.txt'
-        jecDBFile = '$CMSSW_BASE/src/CMGTools/RootTools/data/jec/Summer15_25nsV5_DATA.db'
-        jecEra    = 'Summer15_25nsV5_DATA'
+        uncFile = '$CMSSW_BASE/src/CMGTools/RootTools/data/jec/Summer15_25nsV6_DATA_UncertaintySources_AK4PFchs.txt'
+        jecDBFile = '$CMSSW_BASE/src/CMGTools/RootTools/data/jec/Summer15_25nsV6_DATA.db'
+        jecEra    = 'Summer15_25nsV6_DATA'
     else:
         #    uncFile = '$CMSSW_BASE/src/CMGTools/RootTools/data/jec/Summer15_50nsV4_DATA_UncertaintySources_AK4PFchs.txt'
         #    jecDBFile = '$CMSSW_BASE/src/CMGTools/RootTools/data/jec/Summer15_50nsV4_MC.db'
         #    jecEra    = 'Summer15_50nsV4_MC'
-        uncFile = '$CMSSW_BASE/src/CMGTools/RootTools/data/jec/Summer15_25nsV5_MC_UncertaintySources_AK4PFchs.txt'
-        jecDBFile = '$CMSSW_BASE/src/CMGTools/RootTools/data/jec/Summer15_25nsV5_MC.db'
-        jecEra    = 'Summer15_25nsV5_MC'
+        uncFile = '$CMSSW_BASE/src/CMGTools/RootTools/data/jec/Summer15_25nsV6_MC_UncertaintySources_AK4PFchs.txt'
+        jecDBFile = '$CMSSW_BASE/src/CMGTools/RootTools/data/jec/Summer15_25nsV6_MC.db'
+        jecEra    = 'Summer15_25nsV6_MC'
     preprocessorFile = "$CMSSW_BASE/tmp/MetType1_jec_%s.py"%(jecEra)
     extraArgs=[]
     if isData:
