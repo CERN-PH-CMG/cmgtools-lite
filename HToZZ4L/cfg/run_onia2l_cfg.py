@@ -11,7 +11,7 @@ from CMGTools.HToZZ4L.tools.configTools import *
 
 
 #-------- SEQUENCE
-sequence = cfg.Sequence(hzz4lPreSequence +  [ fastSkim2Mu3 ] + hzz4lObjSequence + [
+sequence = cfg.Sequence(hzz4lPreSequence +  [ fastSkim2L ] + hzz4lObjSequence + [
     twoLeptonAnalyzerOnia, 
     twoLeptonEventSkimmerOnia, 
     twoLeptonTreeProducerOnia 
@@ -26,24 +26,15 @@ for d in dataSamples:
     d.splitFactor = len(d.files)/3
     
 mcSamples = [ JpsiToMuMuPt8, UpsToMuMuPt6 ]
-#UpsToMuMuPt6.files = UpsToMuMuPt6.files[:len(UpsToMuMuPt6.files)/2+1]
+UpsToMuMuPt6.files = UpsToMuMuPt6.files[:len(UpsToMuMuPt6.files)/2+1]
 for d in mcSamples:
-    d.triggers = [] # triggers_jpsi2mu + triggers_upsilon2mu
+    d.triggers = triggers_jpsi2mu + triggers_upsilon2mu
     d.vetoTriggers = []
     d.splitFactor = len(d.files)/4
 
-selectedComponents = [ d for d in dataSamples if 'Charmonium' not in d.name ]
-configureSplittingFromTime([UpsToMuMuPt6], 15, 1)
-#configureSplittingFromTime(selectedComponents, 15, 1)
+selectedComponents = dataSamples + mcSamples
 
-if True:
-    lepAna.inclusive_muon_pt = 3
-    lepAna.loose_muon_pt = 3
-    #selectedComponents = [ UpsToMuMuPt6 ] #JpsiToMuMuPt8 ]
-
-if not getHeppyOption("test"):
-    printSummary(selectedComponents)
-    autoAAA(selectedComponents)
+if True: autoAAA(selectedComponents)
  
 
 from PhysicsTools.HeppyCore.framework.heppy_loop import getHeppyOption

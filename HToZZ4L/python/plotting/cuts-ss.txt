@@ -1,6 +1,0 @@
-hlt: HLT_Signal
-#blind: !isData || (zzSS1_mass < 110 || zzSS1_mass > 150)
-4l: zzSS1_mass > 0
-z4l: zzSS1_mass > 70 && zzSS1_mass < 110  ; Disable=True
-high: zzSS1_mass > 150                  ; Disable=True
-window: zzSS1_mass > 110 && zzSS1_mass < 150 ; Disable=True

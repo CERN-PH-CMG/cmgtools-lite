@@ -1,1 +1,0 @@
-../../../TTHAnalysis/python/plotter/tdrstyle.cc

@@ -1,2 +1,0 @@
-nvtx : nVert : 35,-0.5,34.5 ; XTitle="N(vertices)"
-mass : TnP_mass : 50, 40, 160 ; XTitle="Mass"

@@ -1,5 +1,0 @@
-hlt: HLT_Signal
-base: zz1_mass > 70
-z4l: zz1_mass > 70 && zz1_mass < 110  ; Disable=True
-high: zz1_mass > 150                  ; Disable=True
-window: zz1_mass > 110 and zz1_mass < 150 ; Disable=True

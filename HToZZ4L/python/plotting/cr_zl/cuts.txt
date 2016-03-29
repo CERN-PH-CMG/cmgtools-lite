@@ -1,4 +1,0 @@
-hlt: ( abs(WZ_z_l1_pdgId)==13 && HLT_DoubleMu ) || ( abs(WZ_z_l1_pdgId)==11 && HLT_DoubleEl )
-nWZ: nWZ == 1
-mZ1: WZ_z_mass  > 55
-num : WZ_lep3_relIsoAfterFSR  < if3(abs(WZ_lep3_pdgId)==11, 0.5, 0.4) && WZ_lep3_tightId 

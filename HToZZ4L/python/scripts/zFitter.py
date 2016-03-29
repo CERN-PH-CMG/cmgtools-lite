@@ -202,7 +202,7 @@ def fit1D(hist, options, modelOverride=False):
     spdf, sparams = makeSignalModel1D(options.signalModel if not modelOverride else modelOverride, w)
     bpdf, bparams = makeBackgroundModel(options.backgroundModel, w) if options.backgroundModel else (None, [])
     pdf = makeSumModel(spdf, bpdf, w)
-    result = pdf.fitTo(data, ROOT.RooFit.Save(True), ROOT.RooFit.Offset(True), ROOT.RooFit.Minimizer("Minuit","migradimproved"))
+    result = pdf.fitTo(data, ROOT.RooFit.Save(True))
     return (w,data,pdf,sparams+bparams,result)
 
 def getResolutionFOMs(w,pdf="resol",xvar="mass",xrange=[-10,10]):
@@ -256,20 +256,12 @@ def fit2D(hist, options):
 def makeCut(cut):
     if cut == "Zee-BB":
         return "abs(z_l1_pdgId[0]) == 11 && max(abs(z_l1_eta[0]),abs(z_l2_eta[0])) < 1.479"
-    elif cut == "Zee-BB_highR9":
-        return "abs(z_l1_pdgId[0]) == 11 && max(abs(z_l1_eta[0]),abs(z_l2_eta[0])) < 1.479 && min(z_l1_r9[0],z_l2_r9[0]) > 0.94"
-    elif cut == "Zee-BB_notHighR9":
-        return "abs(z_l1_pdgId[0]) == 11 && max(abs(z_l1_eta[0]),abs(z_l2_eta[0])) < 1.479 && min(z_l1_r9[0],z_l2_r9[0]) < 0.94"
     elif cut == "Zee-NonBB":
         return "abs(z_l1_pdgId[0]) == 11 && max(abs(z_l1_eta[0]),abs(z_l2_eta[0])) > 1.479"
     elif cut == "Zee-BE":
         return "abs(z_l1_pdgId[0]) == 11 && max(abs(z_l1_eta[0]),abs(z_l2_eta[0])) > 1.479 && min(abs(z_l1_eta[0]),abs(z_l2_eta[0])) < 1.479"
     elif cut == "Zee-EE":
         return "abs(z_l1_pdgId[0]) == 11 && min(abs(z_l1_eta[0]),abs(z_l2_eta[0])) > 1.479"
-    elif cut == "Zee-EE_highR9":
-        return "abs(z_l1_pdgId[0]) == 11 && min(abs(z_l1_eta[0]),abs(z_l2_eta[0])) > 1.479 && min(z_l1_r9[0],z_l2_r9[0]) > 0.94"
-    elif cut == "Zee-EE_notHighR9":
-        return "abs(z_l1_pdgId[0]) == 11 && min(abs(z_l1_eta[0]),abs(z_l2_eta[0])) > 1.479 && min(z_l1_r9[0],z_l2_r9[0]) < 0.94"
     elif cut == "Zee":
         return "abs(z_l1_pdgId[0]) == 11"
     elif cut == "Zee-dm132":
@@ -382,74 +374,6 @@ def processOnePtEtaBin(args):
             refres[x] = ( var.getVal(), var.getError() )
     return (bin,res,refres)
 
-def makeHist1D_HTSlices(tree, options, weightedMC = False):
-    xbins, xmin, xmax = map(float, options.xvar[1].split(","))
-    xedges = [ xmin + i * (xmax-xmin)/int(xbins) for i in xrange(0,int(xbins)+1) ]
-    yexpr  = "z_l1_pt[0]+z_l2_pt[0]"
-    yedges = [ 40, 50, 60, 70, 80, 90, 100, 120, 140, 160 ]
-    hist = ROOT.TH2D("hist","hist", len(xedges)-1,array('f',xedges),  len(yedges)-1,array('f',yedges))
-    finalCut =  makeCut(options.cut)
-    if weightedMC: finalCut = "(%s) * (genWeight/abs(genWeight)) " % finalCut
-    nent = tree.Draw("%s:%s>>hist" % (yexpr,options.xvar[0]), finalCut, "goff", options.maxEntries)
-    hist = ROOT.gROOT.FindObject("hist")
-    ret = []
-    for b in xrange(1,len(yedges)):
-        hist1D = ROOT.TH1D("hist%d" % b,"hist",int(xbins),xmin,xmax)
-        hist1D.SetDirectory(None)
-        for bx in xrange(1,hist.GetNbinsX()+1):
-            hist1D.SetBinContent(bx, hist.GetBinContent(bx,b))
-        hist1D.ht = [ hist.GetYaxis().GetBinLowEdge(b), hist.GetYaxis().GetBinUpEdge(b) ]
-        if options.xcut and (hist1D.ht[1] < options.xcut[0] or hist1D.ht[0] > options.xcut[1]):
-            continue
-        ret.append(hist1D)
-    return ret
-
-def graphDiff(g1,g2,algo="sub"):
-    ret = ROOT.TGraphAsymmErrors()
-    for i in xrange(g1.GetN()):
-        x = g1.GetX()[i]
-        match = False
-        for i2 in xrange(g2.GetN()):
-            if abs(g2.GetX()[i2] - x) < 1e-3*(1+abs(x)):
-                match = True
-                break
-        if not match: continue
-        if algo == "sub":
-            y  = g1.GetY()[i] - g2.GetY()[i2]
-            yl = hypot(g1.GetErrorYlow(i),  g2.GetErrorYhigh(i2))
-            yh = hypot(g1.GetErrorYhigh(i), g2.GetErrorYlow(i2))
-        elif algo == "div":
-            if g2.GetY()[i2] == 0: continue
-            y  = g1.GetY()[i] / g2.GetY()[i2]
-            yl = y * hypot(g1.GetErrorYlow(i)/g1.GetY()[i],  g2.GetErrorYhigh(i2)/g2.GetY()[i2])
-            yh = y * hypot(g1.GetErrorYhigh(i)/g1.GetY()[i], g2.GetErrorYlow(i2)/ g2.GetY()[i2])
-        else: raise RuntimeError, "Unknown algo "+algo
-        ir = ret.GetN(); ret.Set(ir+1);
-        ret.SetPoint(ir, g1.GetX()[i], y)
-        ret.SetPointError(ir, g1.GetErrorXlow(i), g1.GetErrorXhigh(i), yl, yh)
-    return ret
-
-def processOneHTSlice(args):
-    i,hist,ht,refhist,myparams,options = args
-    res = {}; refres = {}
-    name = options.name+"_ht_%.0f_%.0f" % (ht[0], ht[1])
-    (w,data,pdf, params, result) = fit1D(hist, options)
-    makePlot1D(w, data, pdf, params, result, name, options)
-    for x in myparams:
-        var = result.floatParsFinal().find(x)
-        res[x] = ( 0.5*(ht[0] + ht[1]), 0.5*(ht[1] - ht[0]), 
-                   var.getVal(), var.getError() )
-    if refhist:
-        (wref,dataref, pdfref, params, refresult) = fit1D(refhist, options)
-        makePlot1D(wref, dataref, pdfref, params, refresult, name+"_ref", options)
-        makePlot1DRef(w, data, pdf, pdfref, params, result, refresult, name+"_comp", options)
-        for x in myparams:
-            var = refresult.floatParsFinal().find(x)
-            refres[x] = ( 0.5*(ht[0] + ht[1]), 0.5*(ht[1] - ht[0]), 
-                          var.getVal(), var.getError() )
-    return (i,res,refres)
-
-
 def makeHist3D_(tree, y, z, options, weightedMC = False):
     print "Filling tree for cut %s" % options.cut
     finalCut =  makeCut(options.cut)
@@ -508,7 +432,7 @@ def addZFitterOptions(parser):
     parser.add_option("-t", "--tree",    dest="tree", default='tree', help="Tree name");
     parser.add_option("-c", "--cut",     dest="cut", type="string", default="z_mass[0] > 0", help="cut")
     parser.add_option("--xcut",     dest="xcut", type="float", nargs=2, default=None, help="x axis cut")
-    parser.add_option("-x", "--x-var",   dest="xvar", type="string", default=("z_mass[0]","160,70,110"), nargs=2, help="X var and bin")
+    parser.add_option("-x", "--x-var",   dest="xvar", type="string", default=("z_mass[0]","80,70,110"), nargs=2, help="X var and bin")
     parser.add_option("--xtitle",   dest="xtitle", type="string", default="mass (GeV)", help="X title")
     parser.add_option("--textSize",   dest="textSize", type="float", default=0.04, help="Text size")
     parser.add_option("-l","--lumi",   dest="lumi", type="float", default=1.54, help="Text size")
@@ -626,9 +550,8 @@ if __name__ == "__main__":
             gdata["sigma"].Draw("P SAME")
             printCanvas(c1, options.name+"_summary_eff", [], options)
     elif options.mode == "1D_PtEtaSlices":
-        #ptbins = [10,20,30,40,50,60,90]; 
-        ptbins = [10,25,35,45,60,90]; 
-        etabins = [0, 1.5, 2.5] if "Zee" in options.cut else [0, 1.1, 1.6, 2.4]
+        ptbins = [10,20,35,45,60,90]; 
+        etabins = [0, 1.5, 2.5] if "Zee" in options.cut else [0, 1.2, 2.4]
         #ptbins = [5,35,120]; etabins = [0, 1.5, 2.5]
         frame2D, hists = makeHistsMPtEta(tree, ptbins, etabins, options)
         if options.refmc:
@@ -740,68 +663,7 @@ if __name__ == "__main__":
                 styleScatterData(gdiff[x])
                 gdiff[x].Draw("PZ SAME")
                 printCanvas(c1, options.name+"_"+x+"_diff_summary", text[x], options)
-    elif options.mode == "1D_HTSlices":
-        hists =   makeHist1D_HTSlices(tree, options)
-        if options.refmc:
-            refhists = makeHist1D_HTSlices(reftree, options, weightedMC=True)
-        else: 
-            refhists = [None for h in hists]
-        myparams = [ "dm", "sigma" ]
-        tasks = [ (i,hist,hist.ht,refhist,myparams,options) for i,(hist, refhist) in enumerate(zip(hists,refhists)) ]
-        if options.jobs > 0:
-            from multiprocessing import Pool
-            fits = Pool(options.jobs).map(processOneDMSlice, tasks)
-        else:
-            fits = map(processOneDMSlice, tasks)
-        # strip clearly bad fits
-        fits = [ (i,res,refres) for (i,res,refres) in fits if abs(res["dm"][2]) < 3 ]
-        if len(refres):
-            fits = [ (i,res,refres) for (i,res,refres) in fits if abs(refres["dm"][2]) < 3 ]
-        gdata = dict([ (x,ROOT.TGraphErrors(len(fits))) for x in myparams ])
-        gref  = dict([ (x,ROOT.TGraphErrors(len(fits))) for x in myparams ])
-        for (i, res, refres) in fits:
-           for x in myparams:
-                gdata[x].SetPoint(i,      res[x][0], res[x][2] )
-                gdata[x].SetPointError(i, res[x][1], res[x][3] )
-           if len(refres):
-               for x in myparams:
-                    gref[x].SetPoint(i,      refres[x][0], refres[x][2] )
-                    gref[x].SetPointError(i, refres[x][1], refres[x][3] )
-        c1 = ROOT.TCanvas("c1","c1")
-        xmin = min(hist.ht[0] for hist in hists) 
-        xmax = max(hist.ht[1] for hist in hists) 
-        nice = { "dm" : "#Delta", "sigma" : "#sigma" }
-        for x in myparams:
-            ymax = max( [ g.GetY()[i]+g.GetErrorYhigh(i)*1.3 for g in (gdata[x], gref[x]) for i in xrange(g.GetN()) ] )
-            ymin = min( [ g.GetY()[i]-g.GetErrorYlow(i) *1.3 for g in (gdata[x], gref[x]) for i in xrange(g.GetN()) ] )
-            frame = ROOT.TH2D("frame",";p_{T}(l_{1}) + p_{T}(l_{2}) (GeV); "+nice[x],100,xmin,xmax,100,ymin,ymax)
-            frame.Draw(); ROOT.gStyle.SetOptStat(0)
-            styleScatterMC(gref[x])
-            gref[x].Draw("P SAME")
-            styleScatterData(gdata[x])
-            gdata[x].Draw("P SAME")
-            printCanvas(c1, options.name+"_"+x+"_summary", [], options)
-            gDiff = graphDiff(gdata[x], gref[x], algo="sub") 
-            ymax = max( [ gDiff.GetY()[i]+gDiff.GetErrorYhigh(i)*1.3 for i in xrange(gDiff.GetN()) ] )
-            ymin = min( [ gDiff.GetY()[i]-gDiff.GetErrorYlow(i) *1.3 for i in xrange(gDiff.GetN()) ] )
-            ymin = min(ymin, -ymax); ymax = -ymin;
-            frame = ROOT.TH2D("dframe",";p_{T}(l_{1}) + p_{T}(l_{2}) (GeV); %s - %s_{MC} (GeV)" % (nice[x],nice[x]), 100,xmin,xmax,100,ymin,ymax)
-            frame.Draw(); ROOT.gStyle.SetOptStat(0)
-            styleScatterData(gDiff)
-            gDiff.Draw("P SAME")
-            printCanvas(c1, options.name+"_"+x+"_diff_summary", [], options)
-            gDiff = graphDiff(gdata[x], gref[x], algo="div") 
-            ymax = max( [ gDiff.GetY()[i]+gDiff.GetErrorYhigh(i)*1.3 for i in xrange(gDiff.GetN()) ] )
-            ymin = min( [ gDiff.GetY()[i]-gDiff.GetErrorYlow(i) *1.3 for i in xrange(gDiff.GetN()) ] )
-            ymin = min(ymin, 2-ymax); ymax = 2-ymin;
-            frame = ROOT.TH2D("dframe",";p_{T}(l_{1}) + p_{T}(l_{2}) (GeV); %s/%s_{MC}" % (nice[x],nice[x]), 100,xmin,xmax,100,ymin,ymax)
-            frame.Draw(); ROOT.gStyle.SetOptStat(0)
-            styleScatterData(gDiff)
-            gDiff.Draw("P SAME")
-            printCanvas(c1, options.name+"_"+x+"_ratio_summary", [], options)
 
- 
-            
  
         
         
