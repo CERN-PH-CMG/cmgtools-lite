@@ -16,7 +16,7 @@ is25ns = True
 
 #-------- HOW TO RUN
 
-test = 19
+test = 23
 
 if test==0:
     selectedComponents = [DoubleMu_742, DoubleMu_740p9]
@@ -136,7 +136,7 @@ elif test==13:
 
 ### this is for the Wskim
 elif test==14:
-    is1PH=True
+    is1L=False
     selectedComponents = [ SingleMuon_Run2015D_16Dec ]
     for comp in selectedComponents:
         comp.splitFactor = 1000
@@ -189,13 +189,13 @@ elif test==17:
 
 # GJets
 elif test==18:
-    selectedComponents = [GJets_HT40to100, GJets_HT100to200, GJets_HT200to400, GJets_HT400to600, GJets_HT600toInf]
+    selectedComponents = [GJets_HT40to100,GJets_HT100to200, GJets_HT200to400, GJets_HT400to600, GJets_HT600toInf]
     is1PH=True
     for comp in selectedComponents:
         comp.splitFactor = 100
         comp.files = comp.files[:]   
 
-# WG/ZG (MonoPhoton)
+# WG/ZG 
 elif test==19:
     selectedComponents = [ZGJets, WGJets]
     is1PH=True
