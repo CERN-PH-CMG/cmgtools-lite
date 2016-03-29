@@ -169,23 +169,40 @@ elif test==15:
 ### this is for the PhotonSkim
 elif test==16:
     is1PH=True
-    if is25ns:
-        selectedComponents = [ SinglePhoton_Run2015D_16Dec ]
-    else:
-        selectedComponents = [ SinglePhoton_Run2015D_16Dec ] ## not sure the 50ns are ready in 76
+    selectedComponents = [ SinglePhoton_Run2015D_16Dec ]
     for comp in selectedComponents:
         comp.triggers = triggers_photon30 + triggers_photon50 + triggers_photon75 + triggers_photon90 + triggers_photon120
-        comp.splitFactor = 1
+        comp.splitFactor = 100
         comp.files = comp.files[:]
-        if is25ns:
-            comp.json = "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions15/13TeV/Reprocessing/Cert_13TeV_16Dec2015ReReco_Collisions15_25ns_JSON.txt"
-        else:
-            comp.json = "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions15/13TeV/Reprocessing/Cert_13TeV_16Dec2015ReReco_Collisions15_25ns_JSON.txt"
+        comp.json = "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions15/13TeV/Reprocessing/Cert_13TeV_16Dec2015ReReco_Collisions15_25ns_JSON.txt"
         comp.intLumi= 0.04003
-
     # ------------------------------------------------------------------------------------------- #
     #        --> 25ns MC here
 
+#QCD
+elif test==17:
+    selectedComponents = [QCD_HT100to200, QCD_HT200to300, QCD_HT300to500, QCD_HT_500to700, QCD_HT700to1000,QCD_HT1000to1500,QCD_HT1500to2000,QCD_HT2000toInf]
+    is1PH=True
+    for comp in selectedComponents:
+        comp.splitFactor = 100
+        comp.files = comp.files[:]   
+
+# GJets
+elif test==18:
+    selectedComponents = [GJets_HT40to100,GJets_HT100to200, GJets_HT200to400, GJets_HT400to600, GJets_HT600toInf]
+    is1PH=True
+    for comp in selectedComponents:
+        comp.splitFactor = 100
+        comp.files = comp.files[:]   
+
+# WG/ZG 
+elif test==19:
+    selectedComponents = [ZGJets, WGJets]
+    is1PH=True
+    for comp in selectedComponents:
+        comp.splitFactor = 100
+        comp.files = comp.files[:]   
+                                                                                                                                                                                
 elif test==23:
     isZSkim=True
     is25ns=True
@@ -272,6 +289,10 @@ triggerFlagsAna.triggerBits = {
             'DoubleMu' : triggers_mumu, # [ "HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v*", "HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v*" ]
             'DoubleEG' : triggers_ee, # [ "HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v*" ]
             'Photon30' : triggers_photon30, #["HLT_Photon30_R9Id90_HE10_IsoM_v*"]
+            'Photon50' : triggers_photon50, #["HLT_Photon50_R9Id90_HE10_IsoM_v*"]
+            'Photon75' : triggers_photon75, #["HLT_Photon75_R9Id90_HE10_IsoM_v*"]
+            'Photon90' : triggers_photon90, #["HLT_Photon90_R9Id90_HE10_IsoM_v*"]
+            'Photon120': triggers_photon120, #["HLT_Photon120_R9Id90_HE10_IsoM_v*"]
 }
 
 
