@@ -1,5 +1,10 @@
-2 E SF/OS: nLepGood == 2 && LepGood1_pdgId == -LepGood2_pdgId && abs(LepGood1_pdgId) == 11
-tightTag: LepGood1_relIso04 < 0.12 && LepGood1_tightId > 0.5 && LepGood1_lostHits <= 1 && LepGood1_chargedHadRelIso03 < 0.2
-tightProbe: LepGood2_relIso04 < 0.12 && LepGood2_tightId > 0.5 && LepGood2_lostHits <= 1 && LepGood2_chargedHadRelIso03 < 0.2 
-mll: mZ1 > 60 && mZ1 < 120 && mass_2_ene(LepGood1_superCluster_rawEnergy,LepGood1_eta,LepGood1_phi,LepGood1_mass, LepGood2_superCluster_rawEnergy,LepGood2_eta,LepGood2_phi,LepGood2_mass) > 60 && mass_2_ene(LepGood1_superCluster_rawEnergy,LepGood1_eta,LepGood1_phi,LepGood1_mass, LepGood2_superCluster_rawEnergy,LepGood2_eta,LepGood2_phi,LepGood2_mass) < 120
-
+trigger: HLT_SingleEl==1
+metfilters: cscfilter==1 && ecalfilter==1 && Flag_eeBadScFilter==1 && hbheFilterNew25ns==1 && hbheFilterIso==1
+2 loose ele: nEle10V == 2
+>=1 tight ele: nEle40T > 0 && LepGood1_pt > 40 && abs(LepGood1_pdgId)==11 
+SF/OS: LepGood1_pdgId == -LepGood2_pdgId
+mass: mZ1 > 60 && mZ1 < 120
+mu veto: nMu10V==0
+tau veto: nTauClean18V==0
+photonveto: nGamma15V==0
+btagveto: nBTag15==0
