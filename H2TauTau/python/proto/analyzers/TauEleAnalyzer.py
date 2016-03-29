@@ -22,10 +22,6 @@ class TauEleAnalyzer(DiLeptonAnalyzer):
                 'slimmedTaus',
                 'std::vector<pat::Tau>'
             )
-            self.handles['met'] = AutoHandle(
-                'slimmedMETs',
-                'std::vector<pat::MET>'
-            )
         else:
             self.handles['diLeptons'] = AutoHandle(
                 'cmgTauEleCorSVFitFullSel',
@@ -73,7 +69,7 @@ class TauEleAnalyzer(DiLeptonAnalyzer):
 
     def buildDiLeptonsSingle(self, leptons, event):
         di_leptons = []
-        met = self.handles['met'].product()[0]
+        met = self.handles['pfMET'].product()[0]
         for pat_ele in leptons:
             ele = self.__class__.LeptonClass(pat_ele)
             for pat_tau in self.handles['taus'].product():
@@ -152,7 +148,7 @@ class TauEleAnalyzer(DiLeptonAnalyzer):
 
         event.isSignal = event.isSignal and event.leptonAccept and event.thirdLeptonVeto
 
-        event.pfmet = self.handles['met'].product()[0]
+        event.pfmet = self.handles['pfMET'].product()[0]
         event.puppimet = self.handles['puppiMET'].product()[0]
 
         return True
@@ -172,7 +168,7 @@ class TauEleAnalyzer(DiLeptonAnalyzer):
     def testLeg2ID(self, tau):
         # Don't apply anti-e discriminator for relaxed tau ID
         # RIC: 9 March 2015
-        return  (tau.tauID('decayModeFindingNewDMs') > 0.5 and 
+        return  (tau.tauID('decayModeFinding') > 0.5 and 
                 abs(tau.charge()) == 1 and
                 # tau.tauID('againstElectronTightMVA5')  > 0.5  and
                 # tau.tauID('againstMuonLoose3')         > 0.5  and
@@ -286,37 +282,9 @@ class TauEleAnalyzer(DiLeptonAnalyzer):
         if len(diLeptons) == 1:
             return diLeptons[0]
 
-        minRelIso = min(d.leg1().relIsoR(R=0.3, dBetaFactor=0.5, allCharged=0) for d in diLeptons)
+        least_iso_highest_pt = lambda dl: (dl.leg1().relIsoR(R=0.3, dBetaFactor=0.5, allCharged=0), -dl.leg1().pt(), -dl.leg2().tauID("byIsolationMVArun2v1DBoldDMwLTraw"), -dl.leg2().pt())
 
-        diLeps = [dil for dil in diLeptons if dil.leg1().relIsoR(R=0.3, dBetaFactor=0.5, allCharged=0) == minRelIso]
-
-        if len(diLeps) == 1:
-            return diLeps[0]
-
-        maxPt = max(d.leg1().pt() for d in diLeps)
-
-        diLeps = [dil for dil in diLeps if dil.leg1().pt() == maxPt]
-
-        if len(diLeps) == 1:
-            return diLeps[0]
-
-        minIso = min(-d.leg2().tauID("byIsolationMVArun2v1DBnewDMwLTraw") for d in diLeps)
-
-        diLeps = [dil for dil in diLeps if -dil.leg2().tauID("byIsolationMVArun2v1DBnewDMwLTraw") == minIso]
-
-        if len(diLeps) == 1:
-            return diLeps[0]
-
-        maxPt = max(d.leg2().pt() for d in diLeps)
-
-        diLeps = [dil for dil in diLeps if dil.leg2().pt() == maxPt]
-
-        if len(diLeps) != 1:
-            print 'ERROR in finding best dilepton', diLeps
-            import pdb
-            pdb.set_trace()
-
-        return diLeps[0]
+        return sorted(diLeptons, key=lambda dil : least_iso_highest_pt(dil))[0]
 
     def trigMatched(self, event, diL, requireAllMatched=False):
 

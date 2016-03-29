@@ -24,7 +24,8 @@ production = getHeppyOption('production')
 production = False
 pick_events = False
 syncntuple = True
-cmssw = False
+cmssw = True
+data = False
 
 # Define extra modules
 tauIsoCalc = cfg.Analyzer(
@@ -52,16 +53,16 @@ if cmssw:
     tauMuAna.from_single_objects = False
 
 # Minimal list of samples
-samples = backgrounds_mu + sm_signals + mssm_signals + sync_list
+samples = backgrounds_mu + sm_signals + sync_list + mssm_signals
 
 
-split_factor = 2e4
+split_factor = 5e3
+split_factor = 1e5
 
 for sample in samples:
     sample.triggers = mc_triggers
     sample.triggerobjects = mc_triggerfilters
     sample.splitFactor = splitFactor(sample, split_factor)
-    sample.splitFactor = 50
 
 data_list = data_single_muon
 
@@ -82,10 +83,9 @@ for mc in samples:
 ###################################################
 ###             SET COMPONENTS BY HAND          ###
 ###################################################
-selectedComponents = samples + data_list
-# selectedComponents = data_list
-# selectedComponents = samples
-# selectedComponents = [s for s in samples if s.name == 'HiggsSUSYGG160']
+selectedComponents = data_list if data else backgrounds_mu + sm_signals
+
+selectedComponents = [s for s in selectedComponents if 'DYJets' in s.name] + mssm_signals
 
 ###################################################
 ###             CHERRY PICK EVENTS              ###
@@ -103,13 +103,15 @@ if not cmssw:
     module = [s for s in sequence if s.name == 'MCWeighter'][0]
     sequence.remove(module)
 
+selectedComponents = [s for s in selectedComponents if 'BB' in s.name]
 ###################################################
 ###            SET BATCH OR LOCAL               ###
 ###################################################
 if not production:
     cache = True
-    # comp = samples[0]
     comp = sync_list[0]
+    # comp = [s for s in selectedComponents if 'DYJets' in s.name][0]
+    # comp = [s for s in selectedComponents if 'HiggsSUSYBB110' in s.name][0]
     selectedComponents = [comp]
     # selectedComponents = [selectedComponents[0]]
     # comp = selectedComponents[0]
@@ -119,8 +121,9 @@ if not production:
 
 preprocessor = None
 if cmssw:
+    fname = "$CMSSW_BASE/src/CMGTools/H2TauTau/prod/h2TauTauMiniAOD_mutau_data_cfg.py" if data else "$CMSSW_BASE/src/CMGTools/H2TauTau/prod/h2TauTauMiniAOD_mutau_cfg.py"
     sequence.append(fileCleaner)
-    preprocessor = CmsswPreprocessor("$CMSSW_BASE/src/CMGTools/H2TauTau/prod/h2TauTauMiniAOD_mutau_cfg.py", addOrigAsSecondary=False)
+    preprocessor = CmsswPreprocessor(fname, addOrigAsSecondary=False)
 
 # the following is declared in case this cfg is used in input to the
 # heppy.py script

@@ -58,7 +58,7 @@ cmgDiMuCorSVFitFullSel = cmgDiMuSel.clone(src='cmgDiMuCorSVFitPreSel',
 diMuMuCounter = cms.EDFilter(
     "CandViewCountFilter",
     src = cms.InputTag("muonPreSelectionDiMu"),
-    minNumber = cms.uint32(2),
+    minNumber = cms.uint32(1),
     )
 
 diMuSequence = cms.Sequence(
