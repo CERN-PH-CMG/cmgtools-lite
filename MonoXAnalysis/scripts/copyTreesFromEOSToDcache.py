@@ -6,11 +6,11 @@ from optparse import OptionParser
 
 if __name__ == "__main__":
 
-    usage="""%prog [options] remoteEOSdir remoteDCACHEdir
+    usage="""%prog [options] remoteEOSdir remoteDCACHEdir [listfiles.txt]
 
 # This script can be used to copy files from EOS to DCache in Rome T2.
 #
-# It needs a valid grid proxy
+# It needs a valid grid proxy, it will use lcg-cp
 
 """
 
@@ -26,9 +26,13 @@ if __name__ == "__main__":
     eosdir = args[0]
     remdir = args[1]
     
+    listfiles=[]
+    if len(args)==3: listfiles=open(args[2]).readlines()
+    
     if not eostools.isEOS(eosdir): raise RuntimeError, 'Remote directory should be on EOS.'
 
-    files = eostools.ls(eosdir)
+    if len(listfiles)>0: files=listfiles
+    else: files = eostools.ls(eosdir)
     if options.select: files = [f for f in files if options.select in f]
     if options.remove: files = [f for f in files if options.remove not in f]
 
