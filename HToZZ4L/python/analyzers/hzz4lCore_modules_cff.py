@@ -27,6 +27,11 @@ fastSkim2L = fastSkim2LnoSip.clone(name="fastLepSkim2L",
 )
 fastSkim3L = fastSkim2L.clone(name="fastLepSkim3L", minLeptons = 3)
 fastSkim4L = fastSkim2L.clone(name="fastLepSkim3L", minLeptons = 4)
+fastSkim2Mu3 = fastSkim2LnoSip.clone(name="fastLepSkim2Mu3",
+        muCut = lambda mu : mu.pt() > 3 and abs(mu.dB(mu.PV3D) / mu.edB(mu.PV3D)) < 4,
+        eleCut = lambda ele : False,
+)
+
 
 genAna = cfg.Analyzer(
     GeneratorAnalyzer, name="GeneratorAnalyzer",
@@ -82,7 +87,7 @@ triggerFlagsAna = cfg.Analyzer(
     processName = 'HLT',
     prescaleProcessName = 'PAT',
     prescaleFallbackProcessName = 'RECO',
-    unrollbits = False,
+    unrollbits = True,
     saveIsUnprescaled = False,
     checkL1prescale = False,
     triggerBits = {
@@ -100,6 +105,9 @@ triggerFlagsAna = cfg.Analyzer(
         'SingleMu' : triggers_1mu,
         # Summaries 
         'Signal' : triggers_signal_real,
+        # Onia
+        'Jpsi' : triggers_jpsi2mu,
+        'Upsilon' : triggers_upsilon2mu,
         }
     )
 
@@ -329,19 +337,21 @@ treeProducer = cfg.Analyzer(
 def doECalCorrections(sync=False,era="25ns"):
     global lepAna, fastSkim4L, fastSkim2L, fastSkim3L
     lepAna.doElectronScaleCorrections = {
-        'GBRForest': ('$CMSSW_BASE/src/CMGTools/RootTools/data/egamma_epComb_GBRForest_74Xv2.root',
+        'data' : 'EgammaAnalysis/ElectronTools/data/76X_16DecRereco_2015',
+        'GBRForest': ('$CMSSW_BASE/src/CMGTools/RootTools/data/egamma_epComb_GBRForest_76X.root',
                       'gedelectron_p4combination_'+era),
         'isSync': sync
     }
     fastSkim2L.eleCut = lambda ele : ele.pt() > 7*0.97/(1+10*0.032) and (abs(ele.dB(ele.PV3D)) <= 4*ele.edB(ele.PV3D))
     fastSkim3L.eleCut = lambda ele : ele.pt() > 7*0.97/(1+10*0.032) and (abs(ele.dB(ele.PV3D)) <= 4*ele.edB(ele.PV3D))
     fastSkim4L.eleCut = lambda ele : ele.pt() > 7*0.97/(1+10*0.032) and (abs(ele.dB(ele.PV3D)) <= 4*ele.edB(ele.PV3D))
-def doKalmanMuonCorrections(sync=False):
+def doKalmanMuonCorrections(sync=False,smear="basic"):
     global lepAna, fastSkim4L, fastSkim2L, fastSkim3L
     lepAna.doMuonScaleCorrections = ( 'Kalman', {
-        'MC': 'MC_74X_13TeV',
-        'Data': 'DATA_Prompt_13TeV',
-        'isSync': sync
+        'MC': 'MC_76X_13TeV',
+        'Data': 'DATA_76X_13TeV',
+        'isSync': sync,
+        'smearMode':smear
     })
     fastSkim2L.muCut = lambda mu : mu.pt() > 3 and (abs(mu.dB(mu.PV3D)) <= 4*mu.edB(mu.PV3D))
     fastSkim3L.muCut = lambda mu : mu.pt() > 3 and (abs(mu.dB(mu.PV3D)) <= 4*mu.edB(mu.PV3D))
