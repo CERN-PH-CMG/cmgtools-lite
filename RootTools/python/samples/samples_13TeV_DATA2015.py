@@ -186,20 +186,7 @@ MuonEG_Run2015D_16Dec         = kreator.makeDataComponent("MuonEG_Run2015D_16Dec
 DoubleMuon_Run2015D_16Dec     = kreator.makeDataComponent("DoubleMuon_Run2015D_16Dec"    , "/DoubleMuon/Run2015D-16Dec2015-v1/MINIAOD"    , "CMS", ".*root", json)
 Tau_Run2015D_16Dec            = kreator.makeDataComponent("Tau_Run2015D_16Dec"           , "/Tau/Run2015D-16Dec2015-v1/MINIAOD"           , "CMS", ".*root", json)
 
-#dataSamples_Run2015D_16Dec = [JetHT_Run2015D_16Dec, HTMHT_Run2015D_16Dec, MET_Run2015D_16Dec, SingleElectron_Run2015D_16Dec, SingleMuon_Run2015D_16Dec, SinglePhoton_Run2015D_16Dec, DoubleEG_Run2015D_16Dec, MuonEG_Run2015D_16Dec, DoubleMuon_Run2015D_16Dec, Tau_Run2015D_16Dec]
-
-dataSamples_Run2015D_16Dec = [ SingleElectron_Run2015D_16Dec, SingleMuon_Run2015D_16Dec, DoubleEG_Run2015D_16Dec, MuonEG_Run2015D_16Dec, DoubleMuon_Run2015D_16Dec, SinglePhoton_Run2015D_16Dec ]
-
-
-
-### ----------------------------- Run2015C-27Jan2016 ----------------------------------------
-SingleElectron_Run2015C_27Jan = kreator.makeDataComponent("SingleElectron_Run2015C_27Jan", "/SingleElectron/Run2015C_25ns-27Jan2016-v2/MINIAOD", "CMS", ".*root", json)
-SingleMuon_Run2015C_27Jan     = kreator.makeDataComponent("SingleMuon_Run2015C_27Jan"    , "/SingleMuon/Run2015C_25ns-27Jan2016-v2/MINIAOD"    , "CMS", ".*root", json)
-DoubleEG_Run2015C_27Jan       = kreator.makeDataComponent("DoubleEG_Run2015C_27Jan"      , "/DoubleEG/Run2015C_25ns-27Jan2016-v2/MINIAOD"      , "CMS", ".*root", json)
-MuonEG_Run2015C_27Jan         = kreator.makeDataComponent("MuonEG_Run2015C_27Jan"        , "/MuonEG/Run2015C_25ns-27Jan2016-v2/MINIAOD"        , "CMS", ".*root", json)
-DoubleMuon_Run2015C_27Jan     = kreator.makeDataComponent("DoubleMuon_Run2015C_27Jan"    , "/DoubleMuon/Run2015C_25ns-27Jan2016-v2/MINIAOD"    , "CMS", ".*root", json)
-
-dataSamples_Run2015C_27Jan = [ SingleElectron_Run2015C_27Jan, SingleMuon_Run2015C_27Jan, DoubleEG_Run2015C_27Jan, MuonEG_Run2015C_27Jan, DoubleMuon_Run2015C_27Jan ]
+dataSamples_Run2015D_16Dec = [JetHT_Run2015D_16Dec, HTMHT_Run2015D_16Dec, MET_Run2015D_16Dec, SingleElectron_Run2015D_16Dec, SingleMuon_Run2015D_16Dec, SinglePhoton_Run2015D_16Dec, DoubleEG_Run2015D_16Dec, MuonEG_Run2015D_16Dec, DoubleMuon_Run2015D_16Dec, Tau_Run2015D_16Dec]
 
 
 ### ----------------------------- Run2015C-16Dec2016 ----------------------------------------
