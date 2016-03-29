@@ -429,14 +429,24 @@ TTTT = kreator.makeMCComponent("TTTT", "/TTTT_TuneCUETP8M1_13TeV-amcatnlo-pythia
 
 Rares = [TTTT]
 
+GluGluSpin0ToZG_ZToLL_W0p014_M750 = kreator.makeMCComponent("GluGluSpin0ToZG_ZToLL_W0p014_M750", "/GluGluSpin0ToZG_ZToLL_W-0p014_M-750_TuneCUEP8M1_13TeV-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_0T_76X_mcRun2_0T_v1-v1/MINIAODSIM", "CMS", ".*root", 1.0, useAAA=True)
+GluGluSpin0ToZG_ZToLL_W1p4_M500 = kreator.makeMCComponent("GluGluSpin0ToZG_ZToLL_W1p4_M500", "/GluGluSpin0ToZG_ZToLL_W-1p4_M-500_TuneCUEP8M1_13TeV-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_0T_76X_mcRun2_0T_v1-v1/MINIAODSIM", "CMS", ".*root", 1.0, useAAA=True)
+GluGluSpin0ToZG_ZToLL_W5p6_M500 = kreator.makeMCComponent("GluGluSpin0ToZG_ZToLL_W5p6_M500", "/GluGluSpin0ToZG_ZToLL_W-5p6_M-500_TuneCUEP8M1_13TeV-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_0T_76X_mcRun2_0T_v1-v1/MINIAODSIM", "CMS", ".*root", 1.0, useAAA=True)
+GluGluSpin0ToZG_ZToLL_W5p6_M750 = kreator.makeMCComponent("GluGluSpin0ToZG_ZToLL_W5p6_M750", "/GluGluSpin0ToZG_ZToLL_W-5p6_M-750_TuneCUEP8M1_13TeV-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_0T_76X_mcRun2_0T_v1-v1/MINIAODSIM", "CMS", ".*root", 1.0, useAAA=True)
+GluGluSpin0ToZG_ZToLL_W0p014_M1000 = kreator.makeMCComponent("GluGluSpin0ToZG_ZToLL_W0p014_M1000", "/GluGluSpin0ToZG_ZToLL_W-0p014_M-1000_TuneCUEP8M1_13TeV-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_0T_76X_mcRun2_0T_v1-v1/MINIAODSIM", "CMS", ".*root", 1.0, useAAA=True)
+GluGluSpin0ToZG_ZToLL_W0p014_M1750 = kreator.makeMCComponent("GluGluSpin0ToZG_ZToLL_W0p014_M1750", "/GluGluSpin0ToZG_ZToLL_W-0p014_M-1750_TuneCUEP8M1_13TeV-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_0T_76X_mcRun2_0T_v1-v1/MINIAODSIM", "CMS", ".*root", 1.0, useAAA=True)
+GluGluSpin0ToZG_ZToLL_W0p014_M500 = kreator.makeMCComponent("GluGluSpin0ToZG_ZToLL_W0p014_M500", "/GluGluSpin0ToZG_ZToLL_W-0p014_M-500_TuneCUEP8M1_13TeV-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_0T_76X_mcRun2_0T_v1-v1/MINIAODSIM", "CMS", ".*root", 1.0, useAAA=True)
+
+ZGammaSig = [ GluGluSpin0ToZG_ZToLL_W0p014_M750, GluGluSpin0ToZG_ZToLL_W1p4_M500, GluGluSpin0ToZG_ZToLL_W5p6_M500, GluGluSpin0ToZG_ZToLL_W5p6_M750, GluGluSpin0ToZG_ZToLL_W0p014_M1000, GluGluSpin0ToZG_ZToLL_W0p014_M1750, GluGluSpin0ToZG_ZToLL_W0p014_M500 ]
 
 
 ### ----------------------------- summary ----------------------------------------
 
 
-mcSamples_Asymptotic25ns = TTs + SingleTop + VJets + DYJetsM50HT + DYJetsM5to50HT + WJetsToLNuHT + GJetsHT + QCDHT + QCDPtbcToE + QCDPt + QCDPtEMEnriched + QCD_Mu5 +  DiBosons + TriBosons + TTV + Higgs + Rares
+mcSamples_Asymptotic25ns = TTs + SingleTop + VJets + DYJetsM50HT + DYJetsM5to50HT + WJetsToLNuHT + GJetsHT + QCDHT + QCDPtbcToE + QCDPt + QCDPtEMEnriched + QCD_Mu5 +  DiBosons + TriBosons + TTV + Higgs + Rares + ZGammaSig
 
-mcSamples = mcSamples_Asymptotic25ns
+#mcSamples = mcSamples_Asymptotic25ns
+mcSamples = ZGammaSig
 
 samples = mcSamples
 
