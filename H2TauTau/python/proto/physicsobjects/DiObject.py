@@ -16,7 +16,8 @@ class DiObject(object):
         self.leg2Gen = None
         self.leg1DeltaR = -1
         self.leg2DeltaR = -1
-        self.diobject.setP4(self.p4())
+        # JAN: this doesn't work with electrons - put into the derived classes
+        # self.diobject.setP4(self.p4())
         
     def leg1(self):
         return self.daughter(0)
@@ -31,7 +32,7 @@ class DiObject(object):
         return self.p4().pt()
 
     def p4(self):
-        return self.daughter(0).p4() + self.daughter(1).p4()
+        return self.leg1().p4() + self.leg2().p4()
     
     def sumPt(self):
         '''pt_leg1 + pt_leg2. used for finding the best DiTau.'''
@@ -241,6 +242,7 @@ class DiMuon(DiTau):
         super(DiMuon, self).__init__(diobject)
         self.mu1 = Muon(super(DiMuon, self).leg1())
         self.mu2 = Muon(super(DiMuon, self).leg2())
+        self.diobject.setP4(self.p4())
 
     def leg2(self):
         return self.mu2
@@ -261,6 +263,7 @@ class TauMuon(DiTau):
         super(TauMuon, self).__init__(diobject)
         self.tau = Tau(super(TauMuon, self).leg1())
         self.mu = Muon(super(TauMuon, self).leg2())
+        self.diobject.setP4(self.p4())
 
     def leg2(self):
         return self.tau
@@ -275,7 +278,7 @@ class TauElectron(DiTau):
         super(TauElectron, self).__init__(diobject)
         self.tau = Tau(super(TauElectron, self).leg1())
         self.ele = Electron(super(TauElectron, self).leg2())
-#         self.ele = HTauTauElectron( super(TauElectron, self).leg2() )
+        self.diobject.setP4(self.p4())
 
     def leg2(self):
         return self.tau
@@ -290,7 +293,7 @@ class MuonElectron(DiTau):
         super(MuonElectron, self).__init__(diobject)
         self.mu = Muon(super(MuonElectron, self).leg1())
         self.ele = Electron(super(MuonElectron, self).leg2())
-#         self.ele = HTauTauElectron( super(MuonElectron, self).leg2() )
+        self.diobject.setP4(self.p4())
 
     def leg2(self):
         return self.mu
@@ -310,6 +313,7 @@ class TauTau(DiTau):
             self.tau = Tau(super(TauTau, self).leg2())
             self.tau2 = Tau(super(TauTau, self).leg1())
         self.iso = iso
+        self.diobject.setP4(self.p4())
 
     def leg1(self):
         return self.tau
