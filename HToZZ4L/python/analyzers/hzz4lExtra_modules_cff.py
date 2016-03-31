@@ -98,7 +98,7 @@ twoLeptonTreeProducerTnP = cfg.Analyzer(
      globalVariables = hzz_globalVariables, # rho, nvertices, njets
      globalObjects = hzz_globalObjects, # met
      collections = {
-         "zTnP" : NTupleCollection("TnP",   ZType, 20, help="Dilepton Candidates"),    
+         "zTnP" : NTupleCollection("TnP",   ZTypeLite, 20, help="Dilepton Candidates"),    
      },
      defaultFloatType = 'F',
 )

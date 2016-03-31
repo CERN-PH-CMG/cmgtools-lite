@@ -185,7 +185,6 @@ lepAna = cfg.Analyzer(
     # do MC matching 
     do_mc_match = True, # note: it will in any case try it only on MC, not on data
     match_inclusiveLeptons = False, # match to all inclusive leptons
-    do_mc_match_photons = False, # do not do MC matching of electrons to photons
     )
 
 
@@ -209,13 +208,25 @@ monoJetCtrlLepSkim = cfg.Analyzer(
     ptCuts = [10],                # can give a set of pt cuts on the leptons
     )
 
+## gamma+jets Skim
+from CMGTools.MonoXAnalysis.analyzers.gammaJetCtrlSkimmer import gammaJetCtrlSkimmer
+gammaJetCtrlSkim = cfg.Analyzer(
+    gammaJetCtrlSkimmer, name='gammaJetCtrlSkimmer',
+    minPhotons = 0,
+    minJets = 0,
+    photonIdCut = 'photon.photonID("PhotonCutBasedIDLoose")',
+    photonPtCut = 150,
+    jetPtCut = 100,
+    )
+
 ## Photon Analyzer (generic)
 photonAna = cfg.Analyzer(
     PhotonAnalyzer, name='photonAnalyzer',
     photons='slimmedPhotons',
     ptMin = 15,
     etaMax = 2.5,
-    gammaID = "POG_SPRING15_50ns_Loose",
+    doPhotonScaleCorrections=False,
+    gammaID = "POG_SPRING15_25ns_Loose",
     rhoPhoton = 'fixedGridRhoFastjetAll',
     gamma_isoCorr = 'rhoArea',
     doFootprintRemovedIsolation = True,
@@ -313,8 +324,8 @@ jetAna = cfg.Analyzer(
     recalibrateJets = True, # "MC", # True, False, 'MC', 'Data'
     applyL2L3Residual = True, # Switch to 'Data' when they will become available for Data
     recalibrationType = "AK4PFchs",
-    mcGT     = "Summer15_25nsV2_MC",
-    dataGT   = "Summer15_25nsV5_DATA",
+    mcGT     = "76X_mcRun2_asymptotic_v12",
+    dataGT   = "76X_dataRun2_v15_Run2015D_25ns",
     jecPath = "%s/src/CMGTools/RootTools/data/jec/" % os.environ['CMSSW_BASE'],
     shiftJEC = 0, # set to +1 or -1 to get +/-1 sigma shifts
     addJECShifts = False, # if true, add  "corr", "corrJECUp", and "corrJECDown" for each jet (requires uncertainties to be available!)
@@ -416,6 +427,31 @@ ttHCoreEventAna = cfg.Analyzer(
     jetPt = 40.,
     )
 
+# Electron and Photon calibrator (scale and smearings)
+def doECalElectronCorrections(sync=False,era="25ns"):
+    global lepAna, monoJetCtrlLepSkim
+    lepAna.doElectronScaleCorrections = {
+        'data' : 'EgammaAnalysis/ElectronTools/data/76X_16DecRereco_2015',
+        'GBRForest': ('$CMSSW_BASE/src/CMGTools/RootTools/data/egamma_epComb_GBRForest_76X.root',
+                      'gedelectron_p4combination_'+era),
+        'isSync': sync
+    }
+def doECalPhotonCorrections(sync=False):
+    global photonAna, gammaJetCtrlSkimmer
+    photonAna.doPhotonScaleCorrections = {
+        'data' : 'EgammaAnalysis/ElectronTools/data/76X_16DecRereco_2015',
+        'isSync': sync
+    }
+def doKalmanMuonCorrections(sync=False,smear="basic"):
+    global lepAna
+    lepAna.doMuonScaleCorrections = ( 'Kalman', {
+        'MC': 'MC_76X_13TeV',
+        'Data': 'DATA_76X_13TeV',
+        'isSync': sync,
+        'smearMode':smear
+    })
+
+
 # Core sequence of all common modules
 dmCoreSequence = [
     lheWeightAna,
@@ -438,7 +474,9 @@ dmCoreSequence = [
     jetAna,
     metAna,
     ttHCoreEventAna,
+    ttHFatJetAna,
     monoJetSkim,
+    gammaJetCtrlSkim,
     triggerFlagsAna,
     eventFlagsAna,
 ]

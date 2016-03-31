@@ -18,6 +18,7 @@ from CMGTools.H2TauTau.proto.analyzers.DYJetsFakeAnalyzer import DYJetsFakeAnaly
 from CMGTools.H2TauTau.proto.analyzers.NJetsAnalyzer import NJetsAnalyzer
 from CMGTools.H2TauTau.proto.analyzers.HiggsPtWeighter import HiggsPtWeighter
 from CMGTools.H2TauTau.proto.analyzers.VBFAnalyzer import VBFAnalyzer
+from CMGTools.H2TauTau.proto.analyzers.RecoilCorrector import RecoilCorrector
 
 puFileMC = '$CMSSW_BASE/src/CMGTools/H2TauTau/data/MC_Fall15_PU25_V1.root'
 puFileData = '$CMSSW_BASE/src/CMGTools/H2TauTau/data/Data_Pileup_2015D_Feb02.root'
@@ -99,6 +100,11 @@ vbfAna = cfg.Analyzer(
     deltaEta=3.5
 )
 
+recoilCorr = cfg.Analyzer(
+    RecoilCorrector,
+    name='RecoilCorrector'
+)
+
 embedWeighter = cfg.Analyzer(
     EmbedWeighter,
     name='EmbedWeighter',
@@ -132,6 +138,7 @@ commonSequence = cfg.Sequence([
     dyJetsFakeAna,
     jetAna,
     vbfAna,
+    recoilCorr,
     pileUpAna,
     embedWeighter,
     NJetsAna,

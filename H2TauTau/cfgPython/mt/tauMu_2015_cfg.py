@@ -15,7 +15,7 @@ from CMGTools.H2TauTau.proto.samples.fall15.htt_common import backgrounds_mu, sm
 from CMGTools.H2TauTau.proto.samples.fall15.triggers_tauMu import mc_triggers, mc_triggerfilters
 from CMGTools.H2TauTau.proto.samples.fall15.triggers_tauMu import data_triggers, data_triggerfilters
 
-from CMGTools.H2TauTau.htt_ntuple_base_cff import puFileData, puFileMC, eventSelector
+from CMGTools.H2TauTau.htt_ntuple_base_cff import puFileData, puFileMC, eventSelector, dyJetsFakeAna, jetAna
 
 # Get all heppy options; set via "-o production" or "-o production=True"
 
@@ -23,10 +23,15 @@ from CMGTools.H2TauTau.htt_ntuple_base_cff import puFileData, puFileMC, eventSel
 production = getHeppyOption('production')
 production = True
 pick_events = False
-syncntuple = False
+syncntuple = True
 cmssw = True
 computeSVfit = False
-data = False
+data = True
+
+if not cmssw:
+    # FIXME - should recorrect jets in JetAnalyzer in this case
+    dyJetsFakeAna.jetCol = 'slimmedJets'
+    jetAna.jetCol = 'slimmedJets'
 
 # Just to be sure
 if production:
@@ -58,19 +63,16 @@ sequence.insert(sequence.index(treeProducer), muonIsoCalc)
 sequence.insert(sequence.index(treeProducer), tauIsoCalc)
 
 treeProducer.addIsoInfo = True
+treeProducer.addTauTrackInfo = True
+treeProducer.addMoreJetInfo = True
+
 if cmssw:
     tauMuAna.from_single_objects = False
 
 # Minimal list of samples
 samples = backgrounds_mu + sm_signals + sync_list + mssm_signals
 
-<<<<<<< HEAD
 split_factor = 1e5
-=======
-
-split_factor = 5e3
-# split_factor = 1e5
->>>>>>> origin/HTTUnscheduled
 
 if computeSVfit:
     split_factor = 5e3
@@ -95,7 +97,7 @@ for sample in data_list:
 ###################################################
 ###             SET COMPONENTS BY HAND          ###
 ###################################################
-selectedComponents = data_list if data else backgrounds_mu + sm_signals + mssm_signals
+selectedComponents = data_list if data else backgrounds_mu + sm_signals #+ mssm_signals
 # selectedComponents = [s for s in selectedComponents if 'W1J' in s.name or 'W4J' in s.name]
 # selectedComponents = [s for s in selectedComponents if 'WJetsToLNu_LO' in s.name]
 # selectedComponents = [s for s in selectedComponents if 'QCD' in s.name] 
@@ -122,11 +124,12 @@ if not production:
     cache = True
     comp = sync_list[0]
     # comp = [s for s in selectedComponents if 'DYJets' in s.name][0]
-    comp = [s for s in selectedComponents if 'WJ' in s.name][0]
+    # comp = [s for s in selectedComponents if 'TT' in s.name][0]
     selectedComponents = [comp]
-    # selectedComponents = [selectedComponents[0]]
+    if data:
+        selectedComponents = [selectedComponents[0]]
     # comp = selectedComponents[0]
-    comp.splitFactor = 5
+    comp.splitFactor = 1
     comp.fineSplitFactor = 1
     # comp.files = comp.files[]
 

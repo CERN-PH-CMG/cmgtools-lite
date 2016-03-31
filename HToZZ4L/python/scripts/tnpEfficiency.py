@@ -1,6 +1,6 @@
-import ROOT, os
+import ROOT, os, re
 from array import array
-from math import sqrt, hypot, log
+from math import sqrt, hypot, log, floor
 
 
 def hypsub(all,stat):
@@ -11,6 +11,16 @@ def uniformAxis_(expr):
     dx = (xmax-xmin)/int(bins)
     return [ (xmin + dx*i) for i in xrange(0,int(bins)+1) ]
 
+def fineSplitVals(vals,split):
+    ret = []
+    for i in range(1,len(vals)):
+        lo, hi = vals[i-1], vals[i]
+        dx = (hi-lo)/split
+        ret += [ lo + j*dx for j in xrange(split) ]
+    ret.append( vals[-1] )
+    return ( len(ret)-1, ret )
+    
+    
 
 def makeSignalModel(w, model, refhpass, refhfail, options):
     if model == None: model = getattr(options, "sigModel", "voigt")
@@ -18,8 +28,8 @@ def makeSignalModel(w, model, refhpass, refhfail, options):
         w.factory("Voigtian::signal(mass, mean[90,80,100], width[2.495], sigma[3,1,10])")
         return ("signal","signal")
     elif model == "dvoigt":
-        w.factory("Voigtian::signal1(mass, mean1[90,80,100], width[2.495], sigma1[2,1,3])")
-        w.factory("Voigtian::signal2(mass, mean2[90,80,100], width,        sigma2[4,2,10])")
+        w.factory("Voigtian::signal1(mass, mean1[90,80,100], width[2.495], sigma1[2,0.5,3])")
+        w.factory("Voigtian::signal2(mass, mean2[90,80,100], width,        sigma2[4,1.5,10])")
         w.factory("SUM::signal(vFrac[0.8,0,1]*signal1, signal2)")
         return ("signal","signal")
     elif model == "BWCB":
@@ -43,10 +53,43 @@ def makeSignalModel(w, model, refhpass, refhfail, options):
         if refhfail.Integral() <= 10 or refhpass.Integral() <= 10:
             return None
         print "Creating %s templates with %.2f pass, %.2f fail" % (model, refhpass.Integral(), refhfail.Integral())
-        if refhfail.Integral() < 1000:
-            refhfail.Smooth(2)
-        elif refhfail.Integral() < 10000:
-            refhfail.Smooth()
+        if options.fineBinning > 1: 
+            refrpass = refhpass.Clone().Rebin(options.fineBinning, refhpass.GetName()+"_rebinned")
+            refrfail = refhfail.Clone().Rebin(options.fineBinning, refhfail.GetName()+"_rebinned")
+            refrpass.SetDirectory(None); refrfail.SetDirectory(None)
+            for (hin,hout) in (refhfail,refrfail), (refhpass,refrpass):
+                if hin.Integral() > 10000: continue
+                print "Using kernel method smoothing"
+                if "/TH1Keys_cc.so" not in ROOT.gSystem.GetLibraries(): 
+                    ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/TTHAnalysis/python/plotter/TH1Keys.cc+" % os.environ['CMSSW_BASE']);
+                c1 = ROOT.TCanvas("c1","c1")
+                hin.Draw(); c1.Print("~/public_html/drop/h1.png");
+                hout.Draw(); c1.Print("~/public_html/drop/h2.png");
+                nb, xmin, xmax = hout.GetNbinsX(), hout.GetXaxis().GetXmin(), hout.GetXaxis().GetXmax()
+                hkeys = ROOT.TH1KeysNew("dummyk","dummyk",int(nb),float(xmin),float(xmax), "a", 1.0)
+                for b in xrange(1,hin.GetNbinsX()+1):
+                    nev = hin.GetBinContent(b)
+                    if nev == 0: continue
+                    elif nev == 1:
+                        hkeys.Fill(hin.GetXaxis().GetBinCenter(b), 1)
+                    else:
+                        print "\tfound %d events in bin %d, will spread them evenly" % (nev,b)
+                        x0 = hin.GetXaxis().GetBinLowEdge(b)
+                        dx = (hin.GetXaxis().GetBinUpEdge(b)-x0)/(nev+1)
+                        for ifake in xrange(1,int(nev)+1):
+                            hkeys.Fill(x0+ifake*dx, 1)
+                hist = hkeys.GetHisto()
+                for b in xrange(1,nb+1):
+                    hout.SetBinContent(b, hist.GetBinContent(b))
+                hout.Draw(); c1.Print("~/public_html/drop/h3.png");
+                del hkeys
+            refhpass = refrpass
+            refhfail = refrfail
+        else:
+            if refhfail.Integral() < 1000:
+                refhfail.Smooth(2)
+            elif refhfail.Integral() < 10000:
+                refhfail.Smooth()
         tpass = ROOT.RooDataHist("tpass","tpass", ROOT.RooArgList(w.var("mass")), refhpass)
         tfail = ROOT.RooDataHist("tfail","tfail", ROOT.RooArgList(w.var("mass")), refhfail)
         spass = ROOT.RooHistPdf("sigPassT","hpass", ROOT.RooArgSet(w.var("mass")), tpass)
@@ -64,7 +107,18 @@ def makeSignalModel(w, model, refhpass, refhfail, options):
         w.factory("FCONV::sigPassTS(mass,sigPassT,resol)")
         w.factory("FCONV::sigFailTS(mass,sigFailT,resol)")
         return ("sigPassTS","sigFailTS")
-
+    elif model == "JGauss":
+        w.factory("Gaussian::signal(mass, mean[3.1,3.0,3.2], sigma[0.05,0.01,0.1])")
+        return ("signal","signal")
+    elif model == "JDGauss":
+        w.factory("Gaussian::signal1(mass, mean1[3.1,3.0,3.2], sigma1[0.05,0.01,0.1])")
+        w.factory("Gaussian::signal2(mass, sum::mean2(mean1, dmean[0,-.05,0.05]), prod::sigma2(sigma1,sigmaSF[2,1.1,4]))")
+        w.factory("SUM::signal(gFrac[0.8,0,0.5]*signal1, signal2)")
+        return ("signal","signal")
+    elif model == "JCB":
+        w.factory("CBShape::signal(mass, mean[3.1,3.0,3.2], sigma[0.05,0.01,0.1], alpha[3., 0.5, 8], n[1,0.1,25])")
+        return ("signal","signal")
+ 
 
     raise RuntimeError, "Unknown signal model %s" % model
 
@@ -128,11 +182,11 @@ def chi2(hist, xvar, pdf, norm):
 def minimize(pdf, data, options, strategy=None):
     nll = pdf.createNLL(data, ROOT.RooFit.Extended(True))
     minim = ROOT.RooMinimizer(nll)
-    minim.setPrintLevel(-1)
+    minim.setPrintLevel(-1 if strategy is not None else 0)
     minim.setStrategy(strategy if strategy is not None else options.minimizerStrategy);
     minim.setEps(options.minimizerTolerance);
     minim.setOffsetting(1);
-    minim.optimizeConst(1);
+    minim.optimizeConst(2);
     minim.setPrintEvalErrors(0);
     minim.setVerbose(False)
     retval = minim.minimize("Minuit2","migrad");
@@ -267,30 +321,45 @@ def fitOneEfficiency(name, hpass, hfail, sigModel, bkgModel, refpass, reffail, o
     if not signals: return None
     backgrounds = makeBackgroundModel(w, bkgModel, options)
     if not backgrounds: return None
-    w.factory('expr::sigPass("@0*  @1",   Nsig[%g,0,%g], efficiency[0.9,0,1])' % (nsig,nall))
+    w.factory('expr::sigPass("@0*  @1",   Nsig[%g,0,%g], efficiency[0.95,0,1])' % (nsig,nall))
     w.factory('expr::sigFail("@0*(1-@1)", Nsig         , efficiency         )')
     w.factory('expr::bkgPass("@0*  @1",   Nbkg[%g,0,%g], effbkg[0.5,0,1])' % (nbkg,nall))
     w.factory('expr::bkgFail("@0*(1-@1)", Nbkg         , effbkg         )')
     w.factory('SUM::pdfPass(sigPass*{sigPdfPass}, bkgPass*{bkgPdfPass})'.format(sigPdfPass = signals[0], bkgPdfPass = backgrounds[0]))
     w.factory('SUM::pdfFail(sigFail*{sigPdfFail}, bkgFail*{bkgPdfFail})'.format(sigPdfFail = signals[1], bkgPdfFail = backgrounds[1]))
     w.factory('SIMUL::pdf(passing, yes=pdfPass, no=pdfFail)')   
+    #pdf = ROOT.RooSimultaneousOpt(w.pdf("pdf0"), "pdf")
+    #getattr(w,'import')(pdf, ROOT.RooFit.RecycleConflictNodes(True), ROOT.RooFit.Silence())
 
     getattr(w,'import')(dpass, ROOT.RooCmdArg())
     getattr(w,'import')(dfail, ROOT.RooCmdArg())
     # make FIT
 
+    if hfail.Integral() == 0:
+        w.var("efficiency").setVal(1)
+        w.var("effbkg").setVal(1)
+        w.var("efficiency").setConstant(True)
+        w.var("effbkg").setConstant(True)
     #result = w.pdf("pdf").fitTo(data, ROOT.RooFit.Save(True), ROOT.RooFit.Minos(ROOT.RooArgSet(w.var("efficiency"))))
     nll, minim, retval = minimize(w.pdf("pdf"), data, options, strategy=0)
+    minim.hesse()
     nll, minim, retval = minimize(w.pdf("pdf"), data, options, strategy=None)
-    if w.var("efficiency").getVal() > 0.9:
+    if hfail.Integral() > 0 and w.var("efficiency").getVal() > 0.9:
         w.var("efficiency").setMin(0.85)
         retval = minim.minimize("Minuit2","migrad");
     result = minim.save()
     effval = w.var("efficiency").getVal()
-    efferr, minoslog = manualMinos(w.pdf("pdf"), data, w.var("efficiency"), options)
-    #poi = ROOT.RooArgSet(w.var("efficiency"))
-    #ret = minim.minos(poi)
-    print "MANUAL MINOS: ",efferr,"\n\t","\n\t".join(minoslog)
+    if hfail.Integral() == 0:
+        cpcalc = ROOT.TEfficiency.ClopperPearson
+        nsig = int(floor(w.var("Nsig").getVal() - w.var("Nsig").getError()))
+        emin = cpcalc(nsig,nsig,0.6827,False)
+        efferr = [ emin-1, 0 ]
+        minoslog = [ "No passing probes: using clopper pearson for the fitted number of signal events minus -1 sigma from the fit."]
+        minoslog += [ "Nsig fit: %.1f +- %.1f " % (w.var("Nsig").getVal(), w.var("Nsig").getError()) ]
+        minoslog += [ "CP lower bound for %d events, all passing: %.4f" % (nsig,emin) ]
+    else:
+        efferr, minoslog = manualMinos(w.pdf("pdf"), data, w.var("efficiency"), options)
+    #print "MANUAL MINOS: ",efferr,"\n\t","\n\t".join(minoslog)
 
     # plot
     c1 = ROOT.TCanvas("c1","c1"); c1.SetCanvasSize(900,500);
@@ -361,6 +430,7 @@ def makeHistos2D(tree,numcut,dencut,x,mass,options,post="",reftree=None):
     if xbins[0] == "[": xvals = eval(xbins)
     else:               xvals = uniformAxis_(xbins)
     xbins = len(xvals)-1; massbins = len(massvals)-1
+    (fmassbins, fmassvals) = (massbins, massvals) if options.fineBinning <= 1 else fineSplitVals(massvals, options.fineBinning)
     weight = options.mcWeight if tree == reftree else "1"
     ROOT.gROOT.cd()
     den2d = ROOT.TH2D("hden","hden",xbins,array('f',xvals),massbins,array('f',massvals))
@@ -370,8 +440,8 @@ def makeHistos2D(tree,numcut,dencut,x,mass,options,post="",reftree=None):
     print "Reading numerator"
     tree.Draw("(%s):(%s)>>hnum" % (massvar,xvar), "((%s) && (%s)) * (%s)" % (numcut,dencut,weight), "goff", options.maxEntries)
     if reftree:
-        rden2d = ROOT.TH2D("rhden","rhden",xbins,array('f',xvals),massbins,array('f',massvals))
-        rnum2d = ROOT.TH2D("rhnum","rhnum",xbins,array('f',xvals),massbins,array('f',massvals))
+        rden2d = ROOT.TH2D("rhden","rhden",xbins,array('f',xvals),fmassbins,array('f',fmassvals))
+        rnum2d = ROOT.TH2D("rhnum","rhnum",xbins,array('f',xvals),fmassbins,array('f',fmassvals))
         print "Reading mc denominator"
         reftree.Draw("(%s):(%s)>>rhden" % (massvar,xvar), "(!(%s) && (%s) && (%s)) * (%s)" % (numcut,dencut,options.mcCut,options.mcWeight), "goff", options.maxEntries)
         print "Reading mc numerator"
@@ -393,8 +463,8 @@ def makeHistos2D(tree,numcut,dencut,x,mass,options,post="",reftree=None):
         rnum1d = None; rden1d = None
         rtnum1d = None; rtden1d = None
         if reftree:
-            rnum1d = ROOT.TH1D("rnum","rnum",massbins,array('f',massvals)); rnum1d.SetDirectory(None)
-            rden1d = ROOT.TH1D("rden","rden",massbins,array('f',massvals)); rden1d.SetDirectory(None)
+            rnum1d = ROOT.TH1D("rnum","rnum",fmassbins,array('f',fmassvals)); rnum1d.SetDirectory(None)
+            rden1d = ROOT.TH1D("rden","rden",fmassbins,array('f',fmassvals)); rden1d.SetDirectory(None)
             if options.mcMass != massvar:
                 rtnum1d = ROOT.TH1D("rtnum","rtnum",massbins,array('f',massvals)); rtnum1d.SetDirectory(None)
                 rtden1d = ROOT.TH1D("rtden","rtden",massbins,array('f',massvals)); rtden1d.SetDirectory(None)
@@ -403,25 +473,29 @@ def makeHistos2D(tree,numcut,dencut,x,mass,options,post="",reftree=None):
         for j in xrange(1,massbins+1):
             num1d.SetBinContent(j,num2d.GetBinContent(i,j))
             den1d.SetBinContent(j,den2d.GetBinContent(i,j))
-            if rnum1d:
-                rnum1d.SetBinContent(j,rnum2d.GetBinContent(i,j))
-                rden1d.SetBinContent(j,rden2d.GetBinContent(i,j))
             if rtnum1d:
                 rtnum1d.SetBinContent(j,rtnum2d.GetBinContent(i,j))
                 rtden1d.SetBinContent(j,rtden2d.GetBinContent(i,j))
+        if rnum1d:
+            for j in xrange(1,fmassbins+1):
+                rnum1d.SetBinContent(j,rnum2d.GetBinContent(i,j))
+                rden1d.SetBinContent(j,rden2d.GetBinContent(i,j))
         den1d.Add(num1d,-1.0)
         if options.request and "bin" in options.request and options.request != options.name+"_bin%d%s"%(i,post):
             continue
         x  = num2d.GetXaxis().GetBinCenter(i)
         xl = num2d.GetXaxis().GetBinLowEdge(i)-x
         xh = num2d.GetXaxis().GetBinUpEdge(i)-x
+        if num1d.Integral() + den1d.Integral() == 0: 
+            continue
         tofit.append( ( (x,xl,xh), (options.name+"_bin%d%s"%(i,post), num1d, den1d, rnum1d, rden1d, options) ) )
         #eff = fitEfficiency(options.name+"_bin%d%s"%(i,post), num1d, den1d, rnum1d, rden1d, options)
         ceff = cpeff(num1d,den1d)
-        ceffs.append( (x,xl,xh, ceff[0],ceff[1],ceff[2]) )
-        if rnum1d and tree == reftree:
-            teff = cpeff(rnum1d,rden1d)
-            teffs.append( (x,xl,xh, teff[0],teff[1],teff[2]) )
+        if ceff:
+            ceffs.append( (x,xl,xh, ceff[0],ceff[1],ceff[2]) )
+            if rnum1d and tree == reftree:
+                teff = cpeff(rnum1d,rden1d)
+                teffs.append( (x,xl,xh, teff[0],teff[1],teff[2]) )
     if options.jobs > 0:
         from multiprocessing import Pool
         fits = Pool(options.jobs).map(fitAndPass, tofit)
@@ -583,7 +657,6 @@ def plotRatios(effs,ratios,options):
         ymin = min(ratio.GetY()[i]-ratio.GetErrorYlow(i)  for i in xrange(ratio.GetN()))
     if unitysyst: allratios += [unitysyst]
     for r in allratios:
-        #r.GetYaxis().SetRangeUser(options.rrange[0],options.rrange[1]);
         r.GetYaxis().SetRangeUser(1+1.3*(min(0.99,ymin)-1),1+1.3*(max(1.01,ymax)-1));
         r.GetXaxis().SetTitleSize(0.14)
         r.GetYaxis().SetTitleSize(0.14)
@@ -593,6 +666,8 @@ def plotRatios(effs,ratios,options):
         r.GetYaxis().SetTitle("ratio")
         r.GetYaxis().SetTitleOffset(0.52);
     unity.Draw("AE2")
+    if options.rrange: 
+        unity.GetYaxis().SetRangeUser(options.rrange[0],options.rrange[1]);
     if unitysyst:
         unitysyst.Draw("E2 SAME")
     line = ROOT.TLine(unity.GetXaxis().GetXmin(),1,unity.GetXaxis().GetXmax(),1)
@@ -673,10 +748,11 @@ def addTnPEfficiencyOptions(parser):
     parser.add_option("-x", "--x-var",     dest="xvar", type="string", default=("TnP_l2_pt","[5,10,15,20,25,30,35,40,50,60,80]"), nargs=2, help="X var and bin")
     parser.add_option("-m", "--mass-var",  dest="mvar", type="string", default=("TnP_mass","80,72,115"), nargs=2, help="Mass var and binning")
     parser.add_option("-M", "--max-entries",    dest="maxEntries", default=99999999, type="long")
-    parser.add_option("-r", "--refmc",   dest="refmc", default=None, help="refmc");
+    parser.add_option("-r", "--refmc",   dest="refmc", default=[], action="append", help="refmc");
     parser.add_option("--mcm", "--mc-mass",  dest="mcMass", type="string", default="TnP_mass*sqrt(TnP_l1_mcPt*TnP_l2_mcPt/TnP_l1_pt/TnP_l2_pt)", help="mc Mass")
     parser.add_option("--mcc", "--mc-cut",  dest="mcCut", type="string", default="TnP_l1_mcMatchId != 0 && TnP_l2_mcMatchId != 0", help="mc Mass")
     parser.add_option("-W", "--mcw", "--mc-weight",  dest="mcWeight", type="string", default="1", help="mc Mass")
+    parser.add_option("--fine-binning",  dest="fineBinning", default=1, type="int")
     parser.add_option("--minimizer-strategy",  dest="minimizerStrategy", default=2, type="int")
     parser.add_option("--minimizer-tolerance", dest="minimizerTolerance", default=0.1, type="float")
     parser.add_option("--xtitle",   dest="xtitle", type="string", default=None, help="X title")
@@ -684,9 +760,10 @@ def addTnPEfficiencyOptions(parser):
     parser.add_option("--mtitle",   dest="mtitle", type="string", default="Mass (GeV)", help="M title")
     parser.add_option("--pdir", "--print-dir", dest="printDir", type="string", default="plots", help="print out plots in this directory");
     parser.add_option("--yrange", dest="yrange", type="float", nargs=2, default=(0,1.025));
-    parser.add_option("--rrange", dest="rrange", type="float", nargs=2, default=(0.95,1.05));
+    parser.add_option("--rrange", dest="rrange", type="float", nargs=2, default=None);
     parser.add_option("--doRatio", dest="doRatio", action="store_true", default=False, help="Add a ratio plot at the bottom")
     parser.add_option("--request", "--refit", dest="request", type="string", default=None, help="make a single fit");
+    parser.add_option("--reqname", dest="requestName", type="string", default=None, help="don't do anything unlesshe name (from -N) matches this");
     parser.add_option("-j", "--jobs",    dest="jobs",      type="int",    default=0, help="Use N threads");
 
 if __name__ == "__main__":
@@ -694,6 +771,7 @@ if __name__ == "__main__":
     parser = OptionParser(usage="%prog [options] tree reftree")
     addTnPEfficiencyOptions(parser)
     (options, args) = parser.parse_args()
+    if options.requestName and not re.match(options.requestName+"$", options.name): exit()
     if len(args) == 0:
         print "You must specify at least one tree to fit"
     ROOT.gROOT.SetBatch(True)
@@ -705,7 +783,7 @@ if __name__ == "__main__":
     if not os.path.exists(options.printDir):
         os.system("mkdir -p %s" % options.printDir)
         os.system("cp /afs/cern.ch/user/g/gpetrucc/php/index.php  %s/" % options.printDir)
-    options.printDirBins = options.printDir +("/%s_bins"%options.name)
+    options.printDirBins = options.printDir +("/%s.dir"%options.name)
     if not os.path.exists(options.printDirBins):
         os.system("mkdir -p %s" % options.printDirBins)
         os.system("cp /afs/cern.ch/user/g/gpetrucc/php/index.php  %s/" % options.printDirBins)
@@ -713,8 +791,9 @@ if __name__ == "__main__":
     for fname in args: tree.Add(fname)
     trees = [ (tree, "") ]
     if options.refmc:
-        reffile = ROOT.TFile.Open(options.refmc)
-        reftree = reffile.Get(options.tree)
+        reftree = ROOT.TChain(options.tree)
+        for url in options.refmc:
+            reftree.Add(url)
         trees += [ (reftree, "_ref") ]
     else:
         reftree = None
