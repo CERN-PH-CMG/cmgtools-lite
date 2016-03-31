@@ -52,6 +52,10 @@ class TauIsolationCalculator(Analyzer):
 
             self.tauIsoBreakdown(tau)
             
+            tau.trigger_iso = (tau.chargedPtSumIso + tau.gammaPtSumIso) < max(2., 0.06 * tau.pt() * (tau.pt() > 40.) ) 
+            
+            #import pdb ; pdb.set_trace()
+            
         return True
 
     @staticmethod

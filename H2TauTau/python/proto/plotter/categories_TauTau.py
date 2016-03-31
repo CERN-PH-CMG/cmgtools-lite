@@ -9,11 +9,13 @@ inc_event = Cut(
 )
 
 inc_sig_tau1_iso = Cut(
-    'l1_byIsolationMVArun2v1DBoldDMwLT>3.5'
+#     'l1_byIsolationMVArun2v1DBoldDMwLT>3.5'  # Tight WP
+    'l1_byIsolationMVArun2v1DBoldDMwLT>4.5' # VTight WP
 )
 
 inc_sig_tau2_iso = Cut(
-    'l2_byIsolationMVArun2v1DBoldDMwLT>3.5'
+#     'l2_byIsolationMVArun2v1DBoldDMwLT>3.5'  # Tight WP
+    'l2_byIsolationMVArun2v1DBoldDMwLT>4.5'  # VTight WP
 )
 
 inc_sig_tau1_other = Cut(

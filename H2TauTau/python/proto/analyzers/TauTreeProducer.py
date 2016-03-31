@@ -39,6 +39,7 @@ class TauTreeProducer(H2TauTauTreeProducerBase):
         self.var(self.tree, 'tau_puppi_iso_pt')
         self.var(self.tree, 'tau_puppi_iso04_pt')
         self.var(self.tree, 'tau_puppi_iso03_pt')
+        self.var(self.tree, 'tau_trigger_iso')
 
         self.declareJetMETVars()
 
@@ -116,6 +117,7 @@ class TauTreeProducer(H2TauTauTreeProducerBase):
                 self.fill(self.tree, 'tau_puppi_iso_pt', tau.puppi_iso_pt)
                 self.fill(self.tree, 'tau_puppi_iso04_pt', tau.puppi_iso04_pt)
                 self.fill(self.tree, 'tau_puppi_iso03_pt', tau.puppi_iso03_pt)
+                self.fill(self.tree, 'tau_trigger_iso', tau.trigger_iso)
                 if tau.genp:
                     self.fillGenParticle(self.tree, 'tau_gen', tau.genp)
                     if tau.genJet():
@@ -128,8 +130,8 @@ class TauTreeProducer(H2TauTauTreeProducerBase):
                 self.fill(self.tree, 'tau_charged_iso' , tau.chargedPtSumIso )
                 self.fill(self.tree, 'tau_gamma_iso'   , tau.gammaPtSumIso   )
                 self.fill(self.tree, 'tau_neutral_iso' , tau.neutralPtSumIso )
-                self.fill(self.tree, 'tau_charged_sig' , tau.chargedSignalCandsPtSum)
-                self.fill(self.tree, 'tau_gamma_sig'   , tau.gammaSignalCandsPtSum  )
-                self.fill(self.tree, 'tau_neutral_sign', tau.neutralSignalCandsPtSum)
+                self.fill(self.tree, 'tau_charged_sig' , tau.chargedCandsPtSumSignal)
+                self.fill(self.tree, 'tau_gamma_sig'   , tau.gammaCandsPtSumSignal  )
+                self.fill(self.tree, 'tau_neutral_sign', tau.neutralCandsPtSumSignal)
         
                 self.fillTree(event)
