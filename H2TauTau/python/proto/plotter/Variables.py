@@ -4,6 +4,7 @@ from CMGTools.H2TauTau.proto.plotter.binning import binning_svfitMass_finer
 
 generic_vars = [
     VCfg(name='_norm_', drawname='1.', binning={'nbinsx':5, 'xmin':-1.5, 'xmax':3.5}, unit='', xtitle='Normalisation'),
+    VCfg(name='svfit_mass', binning=binning_svfitMass_finer, unit='GeV', xtitle='m_{#tau#tau}'),
     VCfg(name='mvis', binning=binning_svfitMass_finer, unit='GeV', xtitle='m_{vis}'),
     VCfg(name='mvis_fine', drawname='mvis', binning={'nbinsx':200, 'xmin':0., 'xmax':200.}, unit='GeV', xtitle='m_{vis}'),
     VCfg(name='mvis_extended', drawname='mvis', binning={'nbinsx':50, 'xmin':0., 'xmax':1000.}, unit='GeV', xtitle='m_{vis}'),

@@ -28,18 +28,18 @@ vbf_cut  = inc_sig_no_iso & Cut(cat_VBF)
 
 # iso and charge cuts, need to have them explicitly for the QCD estimation
 iso_cut          = inc_sig_tau1_iso & inc_sig_tau2_iso
-max_iso_cut      = Cut('l1_byIsolationMVArun2v1DBoldDMwLT > 1.5 && l2_byIsolationMVArun2v1DBoldDMwLT > 1.5')
+max_iso_cut      = Cut('l1_byIsolationMVArun2v1DBoldDMwLT > 3.5 && l2_byIsolationMVArun2v1DBoldDMwLT > 3.5')
 iso_sideband_cut = (~iso_cut) & max_iso_cut
 charge_cut       = Cut('l1_charge != l2_charge')
 
 # append categories to plot
 cuts.append(myCut('inclusive', inc_cut ))
-cuts.append(myCut('1jet'     , jet1_cut))
-cuts.append(myCut('vbf'      , vbf_cut ))
+# cuts.append(myCut('1jet'     , jet1_cut))
+# cuts.append(myCut('vbf'      , vbf_cut ))
 
 # Taken from Variables.py, can get subset with e.g. getVars(['mt', 'mvis'])
 variables = all_vars
-variables = getVars(['mvis']) #, 'l1_pt', 'l2_pt'])
+variables = getVars(['mvis', 'svfit_mass']) #, 'l1_pt', 'l2_pt'])
 
 for cut in cuts:
     
@@ -65,8 +65,12 @@ for cut in cuts:
         plot.Group('ZL', ['ZL', 'ZL1Jets', 'ZL2Jets', 'ZL3Jets', 'ZL4Jets'])
         plot.Group('WJets'  , ['WJetsToLNu', 'W1JetsToLNu', 'W4JetsToLNu'])
         plot.Group('Single t', ['T_tWch', 'TBar_tWch', 'TToLeptons_sch', 'TToLeptons_tch'])
-        if variable.name == 'mvis':
-            plot.WriteDataCard(filename='datacard_mvis.root', dir='tt_' + cut.name, mode='UPDATE')
+
         HistDrawer.draw(plot, channel='#tau_{h}#tau_{h}', plot_dir='plot_%s' %cut.name)
         # HistDrawer.drawRatio(plot, channel='#tau_{h}#tau_{h}')
+
+        if variable.name == 'mvis':
+            plot.WriteDataCard(filename='plot_%s/htt_tt.inputs-sm-13TeV.root' %cut.name, dir='tt_' + cut.name, mode='UPDATE')
+        if variable.name == 'svfit_mass':
+            plot.WriteDataCard(filename='plot_%s/htt_tt.inputs-sm-13TeV_svFit.root' %cut.name, dir='tt_' + cut.name, mode='UPDATE')
     
