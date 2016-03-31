@@ -23,6 +23,10 @@ class RecoilCorrector(Analyzer):
         match = wpat.match(self.cfg_comp.name)
         self.isWJets = not (match is None)
 
+        # Apply to signal, DY, and W+jets samples
+        self.apply = 'Higgs' in self.cfg_comp.name or 'DY' in self.cfg_comp.name or self.isWJets
+
+
     def getGenP4(self, event):
         leptons_prompt = [p for p in event.generatorSummary if abs(p.pdgId()) in [11, 12, 13, 14] and p.fromHardProcessFinalState()]
 
@@ -66,7 +70,7 @@ class RecoilCorrector(Analyzer):
 
 
     def process(self, event):
-        if not self.cfg_comp.isMC:
+        if not self.cfg_comp.isMC or not self.apply:
             return
 
         dil = event.diLepton

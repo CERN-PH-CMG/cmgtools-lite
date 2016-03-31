@@ -6,7 +6,8 @@ from PhysicsTools.Heppy.physicsobjects.PhysicsObjects import Jet, GenJet
 
 from PhysicsTools.HeppyCore.utils.deltar import cleanObjectCollection, matchObjectCollection
 
-from PhysicsTools.Heppy.physicsutils.BTagSF import BTagSF
+# from PhysicsTools.Heppy.physicsutils.BTagSF import BTagSF
+from CMGTools.H2TauTau.proto.physicsobjects.BTagSF import BTagSF
 from PhysicsTools.Heppy.physicsutils.JetReCalibrator import JetReCalibrator
 
 # JAN: Kept this version of the jet analyzer in the tau-tau sequence
@@ -49,7 +50,7 @@ class JetAnalyzer(Analyzer):
 
     def __init__(self, cfg_ana, cfg_comp, looperName):
         super(JetAnalyzer, self).__init__(cfg_ana, cfg_comp, looperName)
-        self.btagSF = BTagSF(0)
+        self.btagSF = BTagSF(0, wp='medium')
         self.recalibrateJets = self.cfg_ana.recalibrateJets if hasattr(cfg_ana, 'recalibrateJets') else False
 
         mcGT = cfg_ana.mcGT if hasattr(cfg_ana, 'mcGT') else "76X_mcRun2_asymptotic_RunIIFall15DR76_v1"
@@ -249,22 +250,22 @@ class JetAnalyzer(Analyzer):
             abs( jet.eta() ) < self.cfg_ana.jetEta and \
             self.testJetID(jet)
 
-    def testBJet(self, jet):
+    def testBJet(self, jet, csv_cut=0.8):
         # medium csv working point
         # https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation74X
         jet.btagMVA = jet.btag('pfCombinedInclusiveSecondaryVertexV2BJetTags')
-        jet.btagFlag = jet.btagMVA > 0.8
+        # jet.btagFlag = jet.btagMVA > csv_cut
 
         # Use the following once we start applying data-MC scale factors:
-        # jet.btagFlag = self.btagSF.isbtagged(
-        #     jet.pt(),
-        #     jet.eta(),
-        #     jet.btag("combinedInclusiveSecondaryVertexV2BJetTags"),
-        #     abs(jet.partonFlavour()),
-        #     not self.cfg_comp.isMC,
-        #     0, 0,
-        #     self.is2012
-        # )
+        jet.btagFlag = self.btagSF.isBTagged(
+            pt=jet.pt(),
+            eta=jet.eta(),
+            csv=jet.btag("pfCombinedInclusiveSecondaryVertexV2BJetTags"),
+            jetflavor=abs(jet.partonFlavour()),
+            is_data=not self.cfg_comp.isMC,
+            csv_cut=csv_cut
+        )
+
         return self.testJet(jet) and \
             abs(jet.eta()) < 2.4 and \
             jet.btagFlag and \
