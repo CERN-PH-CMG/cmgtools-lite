@@ -172,7 +172,6 @@ from CMGTools.H2TauTau.proto.samples.fall15.triggers_tauTau import mc_triggers, 
 
 data_list = data_tau
 samples = backgrounds + sm_signals + mssm_signals
-
 split_factor = 1e5
 
 for sample in data_list:
@@ -245,14 +244,12 @@ if pick_events:
 ###            SET BATCH OR LOCAL               ###
 ###################################################
 if not production:
-  cache                = True
-  comp                 = ggh160
-  # comp = data_list[0]
-  # comp = [s for s in selectedComponents if 'TBarToLeptons_tch_powheg' in s.name][0]
+  # comp                 = ggh160
+  comp                 = data_list[0]
   selectedComponents   = [comp]
   comp.splitFactor     = 1
-  comp.fineSplitFactor = 4
-#   comp.files           = comp.files[:1]
+  comp.fineSplitFactor = 1
+  comp.files           = comp.files[:1]
     
 preprocessor = None
 if cmssw:
