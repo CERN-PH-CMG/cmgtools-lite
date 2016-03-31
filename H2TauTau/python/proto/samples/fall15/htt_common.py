@@ -41,13 +41,13 @@ dy_weight_dict = {
     (4, 150): 0.001226594/6025.2,
 }
 
+def getDYWeight(n_jets, m_gen):
+    if m_gen > 150.:
+        return dy_weight_dict[(n_jets, 150)]
+    return dy_weight_dict[(n_jets, 0)]
+
 for sample in [DYJetsToLL_M50_LO] + DYNJets + [DYJetsToTauTau_M150_LO]:
     # sample.fractions = [0.7, 0.204374, 0.0671836, 0.0205415, 0.0110539]
-
-    def getDYWeight(n_jets, m_gen):
-        if m_gen > 150.:
-            return dy_weight_dict[(n_jets, 150)]
-        return dy_weight_dict[(n_jets, 0)]
 
     sample.weight_func = getDYWeight
     sample.xSection = 6025.2
@@ -61,9 +61,10 @@ w_weight_dict = {
     4:0.06275589/61526.7
 }
 
+def getWWeight(n_jets, m_gen_dummy):
+    return w_weight_dict[n_jets]
+
 for sample in [WJetsToLNu_LO] + WNJets:
-    def getWWeight(n_jets, m_gen_dummy):
-        return w_weight_dict[n_jets]
 
     sample.weight_func = getWWeight
     sample.xSection = 61526.7
