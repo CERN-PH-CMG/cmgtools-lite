@@ -8,7 +8,7 @@ import re
 from CMGTools.HToZZ4L.analyzers.hzz4lCore_modules_cff import * 
 from CMGTools.HToZZ4L.analyzers.hzz4lExtra_modules_cff import * 
 from CMGTools.HToZZ4L.tools.configTools import * 
-
+from CMGTools.RootTools.samples.autoAAAconfig import *
 
 #-------- SEQUENCE
 sequence = cfg.Sequence(hzz4lPreSequence +  [ fastSkim2Mu3 ] + hzz4lObjSequence + [
