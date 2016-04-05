@@ -81,7 +81,7 @@ fi
 
 ### Here one should specify the weightes used to rescale the events in one or both samples ### 
 cat <<EOF > $outputFolder/inputs.txt
-ttHWW   : $labelB : 1.*puWeight ; FillColor=ROOT.kOrange+10 , Label="$labelB"
+ttHWW   : $labelB : 1.*puWeight*weight_btagsf*weight_lepsf*weight_isr ; FillColor=ROOT.kOrange+10 , Label="$labelB"
 ref_ttHWW+ : $labelA : 1. ; FillColor=ROOT.kAzure+2, Label="$labelA"
 EOF
 
