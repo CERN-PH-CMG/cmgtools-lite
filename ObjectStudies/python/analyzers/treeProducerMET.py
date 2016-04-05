@@ -19,8 +19,9 @@ met_globalVariables = [
 
    # ----------------------- MET filter information (temporary)  -------------------------------------------------------------------- #
 
-    NTupleVariable("Flag_HBHENoiseFilter", lambda ev: ev.hbheFilterNew, help="HBEHE temporary filter decision"),
-    NTupleVariable("Flag_HBHEIsoNoiseFilter", lambda ev: ev.hbheFilterIso, help="HBEHE isolation temporary filter decision"),
+    # comment to use the official as stored in miniAOD 76
+#    NTupleVariable("Flag_HBHENoiseFilter", lambda ev: ev.hbheFilterNew, help="HBEHE temporary filter decision"),
+#    NTupleVariable("Flag_HBHEIsoNoiseFilter", lambda ev: ev.hbheFilterIso, help="HBEHE isolation temporary filter decision"),
 
    # ----------------------- dedicated met info -------------------------------------------------------------------- #
 
