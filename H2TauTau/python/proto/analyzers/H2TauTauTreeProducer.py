@@ -67,6 +67,8 @@ class H2TauTauTreeProducer(H2TauTauTreeProducerBase):
         self.bookGenParticle(self.tree, 'genboson')
         self.bookExtraMetInfo(self.tree)
 
+	if hasattr(self.cfg_ana, 'TauSpinner') and self.cfg_ana.TauSpinner :
+	    self.bookTauSpinner(self.tree)
 
     def process(self, event):
 
@@ -108,3 +110,6 @@ class H2TauTauTreeProducer(H2TauTauTreeProducerBase):
 
         if type(self) is H2TauTauTreeProducer:
             self.fillTree(event)
+
+        if hasattr(self.cfg_ana, 'TauSpinner') and self.cfg_ana.TauSpinner :
+	    self.fillTauSpinner(self.tree, event)

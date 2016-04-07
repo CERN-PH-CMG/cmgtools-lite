@@ -205,3 +205,24 @@ class H2TauTauTreeProducerBase(TreeAnalyzerNumpy):
         self.fill(tree, 'pfmet_phi', event.pfmet.phi())
         self.fill(tree, 'pfmet_mt1', DiTau.calcMT(event.pfmet, event.leg1))
         self.fill(tree, 'pfmet_mt2', DiTau.calcMT(event.pfmet, event.leg2))
+
+    # TauSpinner information
+    def bookTauSpinner(self, tree):
+        self.var(tree, 'TauSpinnerWTisValid')
+        self.var(tree, 'TauSpinnerWT')
+        self.var(tree, 'TauSpinnerWThminus')
+        self.var(tree, 'TauSpinnerWThplus')
+        self.var(tree, 'TauSpinnerTauPolFromZ')
+        self.var(tree, 'TauSpinnerWRight')
+        self.var(tree, 'TauSpinnerWLeft')
+        self.var(tree, 'TauSpinnerIsRightLeft')
+
+    def fillTauSpinner(self, tree, event):
+        self.fill(tree, 'TauSpinnerWTisValid', event.TauSpinnerWTisValid )
+        self.fill(tree, 'TauSpinnerWT', float(event.TauSpinnerWT))
+        self.fill(tree, 'TauSpinnerWThminus', float(event.TauSpinnerWThminus))
+        self.fill(tree, 'TauSpinnerWThplus', float(event.TauSpinnerWThplus))
+        self.fill(tree, 'TauSpinnerTauPolFromZ', float(event.TauSpinnerTauPolFromZ))
+        self.fill(tree, 'TauSpinnerWRight', float(event.TauSpinnerWRight))
+        self.fill(tree, 'TauSpinnerWLeft', float(event.TauSpinnerWLeft  ))
+        self.fill(tree, 'TauSpinnerIsRightLeft', float(event.TauSpinnerIsRightLeft ))
