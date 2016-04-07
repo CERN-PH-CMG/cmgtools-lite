@@ -50,9 +50,15 @@ if __name__ == "__main__":
     command = 'lcg-cp -b --vo cms -D srmv2 -U srmv2 -v'
     eosconn='srm://srm-eoscms.cern.ch:8443/srm/v2/server?SFN='
     remconn=''
-    if options.destT2=="T2_IT_Rome": remconn='srm://cmsrm-se01.roma1.infn.it:8443/srm/managerv2?SFN='
-    else:
-        print 'Only T2_IT_Rome implemented. Exiting.'
+
+    wgetcomm = "wget -O- --no-check-certificate \"http://cmsweb.cern.ch/phedex/datasvc/xml/prod/lfn2pfn?node=%s&protocol=srmv2&lfn=/XXX\" | sed -e \"s/.*pfn='\([^']*\\).*/\\1\\n/\"" % options.destT2
+    os.system(wgetcomm+" > wget.txt")
+    lines = open("wget.txt").readlines()
+    remconn = (lines[-1]).rstrip()
+    remconn = (remconn.split("=",1))[0]
+    os.system("rm -f wget.txt")
+    if len(remconn)==0:
+        print "Not found a corresponding T2 in Phedex"
         exit()
 
     for f in tocopy:
