@@ -180,7 +180,7 @@ MuOnia_Run2015C_16Dec2015_25ns = kreator.makeDataComponent("MuOnia_Run2015C_16De
 
 DoubleMuon_Run2015D_16Dec2015_25ns = kreator.makeDataComponent("DoubleMuon_Run2015D_16Dec2015_25ns", "/DoubleMuon/Run2015D-16Dec2015-v1/MINIAOD", "CMS", ".*root", jsonFilter=jsonFilter, json=json_25ns)
 DoubleEG_Run2015D_16Dec2015_25ns = kreator.makeDataComponent("DoubleEG_Run2015D_16Dec2015_25ns", "/DoubleEG/Run2015D-16Dec2015-v2/MINIAOD", "CMS", ".*root", jsonFilter=jsonFilter, json=json_25ns)
-MuonEG_Run2015D_16Dec2015_25ns = kreator.makeDataComponent("MuonEG_Run2015D_16Dec2015_25ns", "/MuonEG/Run2015D-16Dec2015-v2/MINIAOD", "CMS", ".*root", jsonFilter=jsonFilter, json=json_25ns)
+MuonEG_Run2015D_16Dec2015_25ns = kreator.makeDataComponent("MuonEG_Run2015D_16Dec2015_25ns", "/MuonEG/Run2015D-16Dec2015-v1/MINIAOD", "CMS", ".*root", jsonFilter=jsonFilter, json=json_25ns)
 SingleMuon_Run2015D_16Dec2015_25ns = kreator.makeDataComponent("SingleMuon_Run2015D_16Dec2015_25ns", "/SingleMuon/Run2015D-16Dec2015-v1/MINIAOD", "CMS", ".*root", jsonFilter=jsonFilter, json=json_25ns)
 SingleElectron_Run2015D_16Dec2015_25ns = kreator.makeDataComponent("SingleElectron_Run2015D_16Dec2015_25ns", "/SingleElectron/Run2015D-16Dec2015-v1/MINIAOD", "CMS", ".*root", jsonFilter=jsonFilter, json=json_25ns)
 Charmonium_Run2015D_16Dec2015_25ns = kreator.makeDataComponent("Charmonium_Run2015D_16Dec2015_25ns", "/Charmonium/Run2015D-16Dec2015-v1/MINIAOD", "CMS", ".*root", jsonFilter=jsonFilter, json=json_25ns)
@@ -213,13 +213,13 @@ for comp in mcSamples:
     comp.efficiency = eff2012
 
 for comp in dataSamples_all:
-    comp.splitFactor = max(len(comp.files)/20,1)
-    if "Single" in comp.name: comp.splitFactor = max(1,comp.splitFactor/3)
+    comp.splitFactor = max(len(comp.files)/10,1)
+    if "Single" in comp.name: comp.splitFactor = max(1,comp.splitFactor/2)
     comp.fineSplitFactor = 1
 
 DatasetsAndTriggers = []
-DatasetsAndTriggers.append( ("DoubleMuon", triggers_mumu + triggers_3mu) )
 DatasetsAndTriggers.append( ("DoubleEG",   triggers_ee + triggers_3e) )
+DatasetsAndTriggers.append( ("DoubleMuon", triggers_mumu + triggers_3mu) )
 DatasetsAndTriggers.append( ("MuonEG",     triggers_mue + triggers_2mu1e + triggers_2e1mu) )
 DatasetsAndTriggers.append( ("SingleElectron", triggers_1e) )
 DatasetsAndTriggers.append( ("SingleMuon", triggers_1mu) )
@@ -235,5 +235,5 @@ if __name__ == '__main__':
     if True:
         from CMGTools.Production.cacheChecker import CacheChecker
         checker = CacheChecker()
-        for d in [ DoubleEG_Run2015D_16Dec2015_25ns, SingleMuon_Run2015D_16Dec2015_25ns, SingleElectron_Run2015D_16Dec2015_25ns, ]:
+        for d in dataSamples_all:
                 checker.checkComp(d, verbose=True)

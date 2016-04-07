@@ -6,7 +6,7 @@ import PhysicsTools.HeppyCore.framework.config as cfg
 #Load all analyzers
 from CMGTools.HToZZ4L.analyzers.hzz4lCore_modules_cff import * 
 from CMGTools.HToZZ4L.tools.configTools import * 
-
+from CMGTools.RootTools.samples.autoAAAconfig import *
 
 #-------- SAMPLES AND TRIGGERS -----------
 
@@ -39,6 +39,7 @@ for comp in mcSamples:
 
 
 #doECalCorrections(era="25ns")
+#doKalmanMuonCorrections(smear="basic")
 
 if not getHeppyOption("test"):
     printSummary(selectedComponents)
@@ -61,7 +62,8 @@ elif test == "data":
 elif test=="sync":
     comp = GGHZZ4L
     comp.name = 'HZZ4L'
-    comp.files = [ 'root://eoscms.cern.ch//eos/cms'+X for X in (
+    #comp.files = [ 'root://eoscms.cern.ch//eos/cms'+X for X in (
+    comp.files = [ 'root://cms-xrd-global.cern.ch//'+X for X in (
     '/store/mc/RunIIFall15MiniAODv1/VBF_HToZZTo4L_M125_13TeV_powheg2_JHUgenV6_pythia8/MINIAODSIM/PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/00000/E2490ECF-CBA7-E511-9B19-001E67398458.root', 
     '/store/mc/RunIIFall15MiniAODv1/WminusH_HToZZTo4L_M125_13TeV_powheg2-minlo-HWJ_JHUgenV6_pythia8/MINIAODSIM/PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/50000/282C35FB-68A3-E511-A0C4-0CC47A4C8E5E.root',
     '/store/mc/RunIIFall15MiniAODv1/WplusH_HToZZTo4L_M125_13TeV_powheg2-minlo-HWJ_JHUgenV6_pythia8/MINIAODSIM/PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/20000/E2DA5AA7-C5AC-E511-97E0-0CC47A4C8E98.root', 
@@ -74,7 +76,37 @@ elif test=="sync":
         comp.splitFactor = 1 if getHeppyOption('single') else 5
     selectedComponents = [ comp ]
     if getHeppyOption('events'): insertEventSelector(sequence)
-    #doECalCorrections(sync=True)
-    
+    doECalCorrections(sync=True)
+    doKalmanMuonCorrections(sync=True)
+elif test=="syncData25ns":
+    selectedComponents = [ DoubleMuon_Run2015D_16Dec2015_25ns, DoubleEG_Run2015D_16Dec2015_25ns, MuonEG_Run2015D_16Dec2015_25ns, 
+                           DoubleMuon_Run2015C_16Dec2015_25ns, DoubleEG_Run2015C_16Dec2015_25ns, MuonEG_Run2015C_16Dec2015_25ns ]
+    DoubleMuon_Run2015D_16Dec2015_25ns.files =  [ '/afs/cern.ch/user/g/gpetrucc/public/hzz-sync/DoubleMuon-Run2015D.root' ]
+    DoubleEG_Run2015D_16Dec2015_25ns.files =  [ '/afs/cern.ch/user/g/gpetrucc/public/hzz-sync/DoubleEG-Run2015D.root' ]
+    MuonEG_Run2015D_16Dec2015_25ns.files =  [ '/afs/cern.ch/user/g/gpetrucc/public/hzz-sync/MuonEG-Run2015D.root' ]
+    DoubleMuon_Run2015C_16Dec2015_25ns.files =  [ '/afs/cern.ch/user/g/gpetrucc/public/hzz-sync/DoubleMuon-Run2015C_25ns.root' ]
+    DoubleEG_Run2015C_16Dec2015_25ns.files =  [ '/afs/cern.ch/user/g/gpetrucc/public/hzz-sync/DoubleEG-Run2015C_25ns.root' ]
+    MuonEG_Run2015C_16Dec2015_25ns.files =  [ '/afs/cern.ch/user/g/gpetrucc/public/hzz-sync/MuonEG-Run2015C_25ns.root' ]
+    doECalCorrections(era="25ns")
+    doKalmanMuonCorrections(smear="basic")
+elif test=="syncData50ns":
+    selectedComponents = [ DoubleMuon_Run2015B_16Dec2015_50ns, DoubleEG_Run2015B_16Dec2015_50ns, MuonEG_Run2015B_16Dec2015_50ns,
+                           DoubleMuon_Run2015C_16Dec2015_50ns, DoubleEG_Run2015C_16Dec2015_50ns, MuonEG_Run2015C_16Dec2015_50ns ]
+    DoubleMuon_Run2015B_16Dec2015_50ns.files =  [ '/afs/cern.ch/user/g/gpetrucc/public/hzz-sync/DoubleMuon-Run2015B.root' ]
+    DoubleEG_Run2015B_16Dec2015_50ns.files =  [ '/afs/cern.ch/user/g/gpetrucc/public/hzz-sync/DoubleEG-Run2015B.root' ]
+    MuonEG_Run2015B_16Dec2015_50ns.files =  [ '/afs/cern.ch/user/g/gpetrucc/public/hzz-sync/MuonEG-Run2015B.root' ]
+    DoubleMuon_Run2015C_16Dec2015_50ns.files =  [ '/afs/cern.ch/user/g/gpetrucc/public/hzz-sync/DoubleMuon-Run2015C_50ns.root' ]
+    DoubleEG_Run2015C_16Dec2015_50ns.files =  [ '/afs/cern.ch/user/g/gpetrucc/public/hzz-sync/DoubleEG-Run2015C_50ns.root' ]
+    MuonEG_Run2015C_16Dec2015_50ns.files =  [ '/afs/cern.ch/user/g/gpetrucc/public/hzz-sync/MuonEG-Run2015C_50ns.root' ]
+    doKalmanMuonCorrections(smear="basic")
+elif test=="syncSR":
+    selectedComponents = [ DoubleMuon_Run2015D_16Dec2015_25ns, DoubleEG_Run2015D_16Dec2015_25ns, MuonEG_Run2015D_16Dec2015_25ns ]
+    DoubleMuon_Run2015D_16Dec2015_25ns.files =  [ '/afs/cern.ch/user/g/gpetrucc/public/hzz-sync/DoubleMuon-Run2015D_SR.root' ]
+    DoubleEG_Run2015D_16Dec2015_25ns.files =  [ '/afs/cern.ch/user/g/gpetrucc/public/hzz-sync/DoubleEG-Run2015D_SR.root' ]
+    MuonEG_Run2015D_16Dec2015_25ns.files =  [ '/afs/cern.ch/user/g/gpetrucc/public/hzz-sync/MuonEG-Run2015D_SR.root' ]
+    doECalCorrections(era="25ns")
+    doKalmanMuonCorrections(smear="basic")
+
 
 config = autoConfig(selectedComponents, sequence)
+

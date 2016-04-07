@@ -55,29 +55,22 @@ eventFlagsAna = cfg.Analyzer(
     processName = 'PAT',
     outprefix   = 'Flag',
     triggerBits = {
-###        "HBHENoiseFilter" : [ "Flag_HBHENoiseFilter" ], ## temporary replacement
+        "goodVertices" : [ "Flag_goodVertices" ],
+        "HBHENoiseFilter" : [ "Flag_HBHENoiseFilter" ],
         "HBHENoiseIsoFilter" : [ "Flag_HBHENoiseIsoFilter" ],
         "CSCTightHaloFilter" : [ "Flag_CSCTightHaloFilter" ],
-        "hcalLaserEventFilter" : [ "Flag_hcalLaserEventFilter" ],
-        "EcalDeadCellTriggerPrimitiveFilter" : [ "Flag_EcalDeadCellTriggerPrimitiveFilter" ],
-        "goodVertices" : [ "Flag_goodVertices" ],
-        "trackingFailureFilter" : [ "Flag_trackingFailureFilter" ],
+        "CSCTightHalo2015Filter" : [ "Flag_CSCTightHalo2015Filter" ],
         "eeBadScFilter" : [ "Flag_eeBadScFilter" ],
-        "ecalLaserCorrFilter" : [ "Flag_ecalLaserCorrFilter" ],
-        "trkPOGFilters" : [ "Flag_trkPOGFilters" ],
-        "trkPOG_manystripclus53X" : [ "Flag_trkPOG_manystripclus53X" ],
-        "trkPOG_toomanystripclus53X" : [ "Flag_trkPOG_toomanystripclus53X" ],
-        "trkPOG_logErrorTooManyClusters" : [ "Flag_trkPOG_logErrorTooManyClusters" ],
-        "METFilters" : [ "Flag_METFilters" ],
+        "EcalDeadCellTriggerPrimitiveFilter" : [ "Flag_EcalDeadCellTriggerPrimitiveFilter" ],
     }
     )
 
 
-from CMGTools.TTHAnalysis.analyzers.hbheAnalyzer import hbheAnalyzer
-hbheFilterAna = cfg.Analyzer(
-    hbheAnalyzer, name = 'hbheAnalyzer',
-    IgnoreTS4TS5ifJetInLowBVRegion = False
-)
+#from CMGTools.TTHAnalysis.analyzers.hbheAnalyzer import hbheAnalyzer
+#hbheFilterAna = cfg.Analyzer(
+#    hbheAnalyzer, name = 'hbheAnalyzer',
+#    IgnoreTS4TS5ifJetInLowBVRegion = False
+#)
 
 # Select a list of good primary vertices (generic)
 vertexAna = cfg.Analyzer(
@@ -207,15 +200,19 @@ ttHLepSkim = cfg.Analyzer(
 photonAna = cfg.Analyzer(
     PhotonAnalyzer, name='photonAnalyzer',
     photons='slimmedPhotons',
+    doPhotonScaleCorrections=False,
     ptMin = 30,
     etaMax = 2.5,
-    gammaID = "POG_SPRING15_50ns_Tight",
+    gammaID = "POG_SPRING15_25ns_Tight",
     rhoPhoton = 'fixedGridRhoFastjetAll',
     gamma_isoCorr = 'rhoArea',
-    conversionSafe_eleVeto = False,
+    doFootprintRemovedIsolation = True,
+    conversionSafe_eleVeto = True,
     do_mc_match = False,
     do_randomCone = False,
-)
+    packedCandidates = 'packedPFCandidates',
+    footprintRemovedIsolationPUCorr = 'rhoArea',
+    )
 
 
 ##------------------------------------------
@@ -410,7 +407,7 @@ metCoreSequence = [
     metAna,
     metPuppiAna,
     eventFlagsAna,
-    hbheFilterAna,
+##    hbheFilterAna,
 ##### tree
 ##    treeProducer,
 ]

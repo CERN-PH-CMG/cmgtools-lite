@@ -7,7 +7,7 @@ import PhysicsTools.HeppyCore.framework.config as cfg
 from CMGTools.HToZZ4L.analyzers.hzz4lCore_modules_cff import * 
 from CMGTools.HToZZ4L.analyzers.hzz4lExtra_modules_cff import * 
 from CMGTools.HToZZ4L.tools.configTools import * 
-
+from CMGTools.RootTools.samples.autoAAAconfig import *
 
 
 #-------- SEQUENCE
@@ -38,6 +38,7 @@ selectedComponents = dataSamples + mcSamples
 printSummary(selectedComponents)
 if True: autoAAA(selectedComponents)
 #doECalCorrections(era="25ns")
+doKalmanMuonCorrections(smear="basic")
 
 
 from PhysicsTools.HeppyCore.framework.heppy_loop import getHeppyOption
