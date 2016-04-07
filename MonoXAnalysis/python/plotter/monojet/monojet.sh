@@ -35,7 +35,7 @@ else
     MCA="${WORKDIR}/mca-76X-sr.txt "
 fi
 
-ROOTPREF="plots/Summer15/v2.0"
+ROOTPREF="plots/Fall15/"
 ROOT="${ROOTPREF}/${WHAT}"
 ROOTR="${ROOTPREF}/transfer_factors"
 COREOPT="-P $T --s2v -j $J -l 2.32 "
@@ -52,7 +52,7 @@ RUNY1M="${COREY} ${WORKDIR}/wmunu_twiki.txt "
 RUNY1E="${COREY} ${WORKDIR}/wenu_twiki.txt "
 RUNY1G="${COREY} ${WORKDIR}/gjets_twiki.txt "
 
-PLOTSR="${COREP} ${WORKDIR}/monojet_twiki.txt ${WORKDIR}/monojet_plots.txt --noStackSig --showSigShape "
+PLOTSR="${COREP} ${WORKDIR}/monojet_twiki.txt ${WORKDIR}/monojet_plots.txt "
 PLOT2M="${COREP} ${WORKDIR}/zmumu_twiki.txt ${WORKDIR}/zmumu_plots.txt "
 PLOT2E="${COREP} ${WORKDIR}/zee_twiki.txt ${WORKDIR}/zee_plots.txt "
 PLOT1M="${COREP} ${WORKDIR}/wmunu_twiki.txt ${WORKDIR}/wmunu_plots.txt "
