@@ -11,6 +11,8 @@ WHAT=$1; if [[ "$1" == "" ]]; then echo "monojet.sh <what>"; exit 1; fi
 BASEDIR=""
 if [ "$WHAT" == "zee" ] || [ "$WHAT" == "zeeI" ] || [ "$WHAT" == "wenI" ] || [ "$WHAT" == "wen" ] ; then
     BASEDIR="TREES_25ns_1TLEP1JETSKIM_76X"
+elif [ "$WHAT" == "gj" ] ; then
+    BASEDIR="TREES_25ns_1GSKIM_76X"
 else 
     BASEDIR="TREES_25ns_MET200SKIM_76X"
 fi
@@ -31,6 +33,8 @@ if [ "$WHAT" == "wen" ] || [ "$WHAT" == "zee" ] ; then
     MCA="${WORKDIR}/mca-76X-Ve.txt "
 elif [ "$WHAT" == "wmn" ] || [ "$WHAT" == "zmm" ] ; then
     MCA="${WORKDIR}/mca-76X-Vm.txt "
+elif [ "$WHAT" == "gj" ] ; then
+    MCA="${WORKDIR}/mca-76X-Gj.txt "
 else
     MCA="${WORKDIR}/mca-76X-sr.txt "
 fi
@@ -57,12 +61,14 @@ PLOT2M="${COREP} ${WORKDIR}/zmumu_twiki.txt ${WORKDIR}/zmumu_plots.txt "
 PLOT2E="${COREP} ${WORKDIR}/zee_twiki.txt ${WORKDIR}/zee_plots.txt "
 PLOT1M="${COREP} ${WORKDIR}/wmunu_twiki.txt ${WORKDIR}/wmunu_plots.txt "
 PLOT1E="${COREP} ${WORKDIR}/wenu_twiki.txt ${WORKDIR}/wenu_plots.txt "
+PLOT1G="${COREP} ${WORKDIR}/gjets_twiki.txt ${WORKDIR}/gjets_plots.txt "
 
 SYSTSR="${CORER} ${WORKDIR}/monojet_twiki.txt ${WORKDIR}/monojet_plots.txt monojet/syst_2l.txt "
 SYST2M="${CORER} ${WORKDIR}/zmumu_twiki.txt ${WORKDIR}/zmumu_plots.txt monojet/syst_2l.txt "
 SYST2E="${CORER} ${WORKDIR}/zee_twiki.txt ${WORKDIR}/zee_plots.txt monojet/syst_2l.txt "
 SYST1M="${CORER} ${WORKDIR}/wmunu_twiki.txt ${WORKDIR}/wmunu_plots.txt monojet/syst_1l.txt "
 SYST1E="${CORER} ${WORKDIR}/wenu_twiki.txt ${WORKDIR}/wenu_plots.txt monojet/syst_1l.txt "
+SYST1G="${CORER} ${WORKDIR}/wenu_twiki.txt ${WORKDIR}/gjets_plots.txt monojet/syst_1g.txt "
 
 case $WHAT in
 sr)
@@ -108,6 +114,15 @@ wen)
         else
             echo "python ${RUNY1E} ${FULLOPT} --sp WJetsHT "
             echo "python ${PLOT1E} ${FULLOPT} --sp WJetsHT "
+        fi;
+;;
+gj)
+        FULLOPT=" $FEV $SF -W 'vtxWeight*SF_BTag' "
+        if [[ "$RINPUTS" != "0" ]]; then
+            echo "python ${SYST1G} ${FULLOPT} -p GJetsHT -o ${ROOTR}/rinputs_GJetsHT_CR1G.root "
+        else
+            echo "python ${RUNY1G} ${FULLOPT} --sp GJetsHT "
+            echo "python ${PLOT1G} ${FULLOPT} --sp GJetsHT "
         fi;
 ;;
 TF)
