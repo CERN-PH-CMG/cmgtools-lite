@@ -8,7 +8,7 @@ import re
 # Load all analyzers
 from CMGTools.MonoXAnalysis.analyzers.dmCore_modules_cff import * 
 from PhysicsTools.HeppyCore.framework.heppy_loop import getHeppyOption
-from CMGTools.HToZZ4L.tools.configTools import * 
+from CMGTools.RootTools.samples.autoAAAconfig import *
 
 
 #-------- SET OPTIONS AND REDEFINE CONFIGURATIONS -----------
