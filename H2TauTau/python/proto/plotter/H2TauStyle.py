@@ -102,6 +102,7 @@ histPref['Electroweak'] = {'style':sHTT_VV, 'layer':0.7, 'legend':'Electroweak'}
 histPref['QCD*'] = {'style':sHTT_QCD, 'layer':2, 'legend':'QCD multijet'}
 histPref['W'] = {'style':sHTT_WJets, 'layer':3, 'legend':'W+jets'}  
 histPref['WJ*'] = {'style':sHTT_WJets, 'layer':3, 'legend':'W+jets'}  
+histPref['W*Jets'] = {'style':sHTT_WJets, 'layer':3, 'legend':'W+jets'}  
 histPref['EWK'] = {'style':sHTT_WJets, 'layer':3, 'legend':'EWK'}  
 histPref['ElectroWeak'] = {'style':sHTT_WJets, 'layer':3, 'legend':'ElectroWeak'}  
 histPref['ZJ*'] = {'style':sHTT_DYJets, 'layer':3.1, 'legend':'Z#rightarrow#tau#tau/Z#rightarrow ll, j#rightarrow#tau'}
