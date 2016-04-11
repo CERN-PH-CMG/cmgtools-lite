@@ -7,7 +7,7 @@
 
 #AAA
 ###
-def autoAAA(selectedComponents,onlyRemote=False,forceAAA=False):
+def autoAAA(selectedComponents,runOnlyRemoteSamples=False,forceAAA=False):
     newComp=[]
     import re
     from CMGTools.Production import changeComponentAccessMode
@@ -23,8 +23,10 @@ def autoAAA(selectedComponents,onlyRemote=False,forceAAA=False):
         if (not tier2Checker.available(comp.dataset)) or forceAAA:
             print "Dataset %s is not available, will use AAA" % comp.dataset
             changeComponentAccessMode.convertComponent(comp, "root://cms-xrd-global.cern.ch/%s")
+            if 'X509_USER_PROXY' not in os.environ or "/afs/" not in os.environ['X509_USER_PROXY']:
+                raise RuntimeError, "X509_USER_PROXY not defined or not pointing to /afs"
             newComp.append(comp)
-    if onlyRemote:
+    if runOnlyRemoteSamples:
         return newComp
     else:
         return selectedComponents
@@ -89,33 +91,13 @@ triggerFlagsAna.triggerBits ={
 
 
 #-------- HOW TO RUN
-test = 2
+test = 1
 if test==1:
     # test a single component, using a single thread.
-    selectedComponents = [VBF_RadionToZZ_narrow_4500]
+    selectedComponents = [BulkGravToWW_narrow_2500]
     for c in selectedComponents:
         c.files = c.files[:1]
         c.splitFactor = 1
-elif test==2:    
-    # test all components (1 thread per component).
-    selectedComponents = [BulkGravToWW_narrow_2500]
-    for comp in selectedComponents:
-        comp.splitFactor = 1
-#        comp.files = comp.files[:1]
-elif test==3:    
-    # test all components (1 thread per component).
-    selectedComponents = [DYJetsToLL_M50_HT600toInf]
-    for comp in selectedComponents:
-        comp.splitFactor = 1
-
-elif test==4:    
-    # test all components (1 thread per component).
-    selectedComponents = [RSGravToWWToLNQQ_kMpl01_4500]
-    for comp in selectedComponents:
-        comp.splitFactor = 1
-elif test==5:    
-    selectedComponents = [WJetsToLNu_HT2500toInf,VBF_RadionToZZ_narrow_4500,RSGravToWWToLNQQ_kMpl01_4500]
-
 
 selectedComponents=autoAAA(selectedComponents)
 config=autoConfig(selectedComponents,sequence)

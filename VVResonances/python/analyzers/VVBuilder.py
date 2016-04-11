@@ -105,7 +105,7 @@ class VVBuilder(Analyzer):
         jet.substructure.softDropSubjets = self.copyLV(interface.get(False))        
 
         #get NTau
-        jet.substructure.ntau = interface.nSubJettiness(0,4,0,6,1.0,0.8,-999.0,-999.0,-999)
+        jet.substructure.ntau = interface.nSubJettiness(0,4,0,6,1.0,0.8,999.0,999.0,999)
 
         
         #recluster with CA and do massdrop

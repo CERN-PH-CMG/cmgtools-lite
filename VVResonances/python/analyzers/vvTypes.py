@@ -47,13 +47,19 @@ PyTauType = NTupleObjectType("PyTau", baseObjectTypes=[fourVectorType], variable
 TauTauType = NTupleObjectType("TauTauType", baseObjectTypes=[], variables = [
   NTupleSubObject("LV",  lambda x : x.p4(),fourVectorType),
   NTupleSubObject("l1",   lambda x : x.leg1, PyTauType),       
+  NTupleSubObject("l1_t1",   lambda x : x.leg1.leg1, fourVectorType),       
+  NTupleSubObject("l1_t2",   lambda x : x.leg1.leg2, fourVectorType),       
   NTupleSubObject("l2",   lambda x : x.leg2, PyTauType),       
+  NTupleSubObject("l2_t1",   lambda x : x.leg2.leg1, fourVectorType),       
+  NTupleSubObject("l2_t2",   lambda x : x.leg2.leg2, fourVectorType),       
 
 ])
 
 TauJetType = NTupleObjectType("TauTauType", baseObjectTypes=[], variables = [
   NTupleSubObject("LV",  lambda x : x.p4(),fourVectorType),
   NTupleSubObject("l1",   lambda x : x.leg1, PyTauType),       
+  NTupleSubObject("l1_t1",   lambda x : x.leg1.leg1, fourVectorType),       
+  NTupleSubObject("l1_t2",   lambda x : x.leg1.leg2, fourVectorType),       
   NTupleSubObject("l2",   lambda x : x.leg2, jetType),       
   NTupleSubObject("l2_pruned",   lambda x : x.leg2.substructure.prunedJet,fourVectorType),
   NTupleSubObject("l2_softDrop",  lambda x : x.leg2.substructure.softDropJet,fourVectorType)

@@ -142,9 +142,9 @@ class PyJetToolbox(object):
         self.softdrop = {'beta':beta,'zcut':zcut,'R0':R0}
 
 
-    def setNtau(self,activate,NMAX = 4,measureDef = 0 , axesDef = 6 , beta= 1.0 , R0 = 0.8 , Rcutoff = -999.0,akAxisR0 = -999.0, nPass = -999 ):
+    def setNtau(self,activate,NMAX = 4,measureDef = 0 , axesDef = 6 , beta= 1.0 , R0 = 0.8 , Rcutoff = 999.0,akAxisR0 = 999.0, nPass = 999 ):
         self.doNTau = activate
-        self.ntau = {'NMAX':NMAX,'measureDef':measureDef,'axesDef':axesDef, 'beta':beta,'R0':R0,'Rcutoff':Rcutoff,'akAxesR0':-999.0, 'nPass':-999}
+        self.ntau = {'NMAX':NMAX,'measureDef':measureDef,'axesDef':axesDef, 'beta':beta,'R0':R0,'Rcutoff':Rcutoff,'akAxesR0':akAxisR0, 'nPass':nPass}
         
 
 
