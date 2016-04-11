@@ -107,48 +107,6 @@ def setSumWeights(sample, weight_dir='MCWeighter'):
         pass
         
 
-class getStichingWeightForDY(sample, NumberOfOutgoingPartons, Mass):
-    if isinstance(sample, HistogramCfg) or sample.is_data:
-        return
-
-    kFactor = 1.21622931
-
-    SampleDict = {
-        'DYJetsToLL_M50_LO':{'LOxs':4954},
-        'DY1JetsToLL_M50_LO':{'LOxs':1012.5},
-        'DY2JetsToLL_M50_LO':{'LOxs':332.8},
-        'DY3JetsToLL_M50_LO':{'LOxs':101.8},
-        'DY4JetsToLL_M50_LO':{'LOxs':54.8},
-        'DYJetsToTauTau_M150_LO':{'LOxs':6.7}
-        }
-    
-    if not sample.dir_name in SampleDict:
-        print '[warning] Selected sample should not have stitching weight'
-        return 1.
-    
-    NumberOfGeneratedEvents = None
-
-    pckfile = '/'.join([sample.ana_dir, sample.dir_name, weight_dir, 'SkimReport.pck'])
-    try:
-        pckobj  = pickle.load(open(pckfile,'r'))
-        counters = dict(pckobj)
-        if 'Sum Unity Weights' in counters:
-            NumberOfGeneratedEvents = counters['Sum Unity Weights']
-    except IOError:
-        print 'Warning: could not find sum unity weights information for sample', sample.name
-        return 1.
-        
-
-    effectiveLuminosity = NumberOfGeneratedEvents/sampleDict[sample.dir_name]
-    effectiveLuminosity_DY = NumberOfGeneratedEvents/sampleDict['DYJetsToLL_M50_LO']
-
-    if NumberOfOutgoingPartons==0:
-        return kFactor/effectiveLuminosity
-    else:
-        return kFactor/(effectiveLuminosity + effectiveLuminosity_DY)
-        
-
-
 class StitchingWeightForW(object):
 
     def __init__(self, Ninc=0, N1=0, N2=0, N3=0, N4=0):
