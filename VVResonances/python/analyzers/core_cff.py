@@ -44,11 +44,6 @@ triggerFlagsAna = cfg.Analyzer(
     )
 
 
-#Fix HBHE
-hbheFix = cfg.Analyzer(
-HBHENoiseFix,name ='hbheNoiseFix'
-)
-
 
 # Create flags for MET filter bits
 
@@ -227,8 +222,8 @@ jetAna = cfg.Analyzer(
     recalibrateJets = True, #'MC', # True, False, 'MC', 'Data'
     applyL2L3Residual = True, # Switch to 'Data' when they will become available for Data
     recalibrationType = "AK4PFchs",
-    mcGT     = "Summer15_25nsV6_MC",
-    dataGT   = "Summer15_25nsV6_DATA",
+    mcGT     = "76X_mcRun2_asymptotic_v12",
+    dataGT   = "76X_dataRun2_v15_Run2015D_25ns",
     jecPath = "${CMSSW_BASE}/src/CMGTools/RootTools/data/jec/",
     shiftJEC = 0, # set to +1 or -1 to apply +/-1 sigma shift to the nominal jet energies
     addJECShifts = False, # if true, add  "corr", "corrJECUp", and "corrJECDown" for each jet (requires uncertainties to be available!)
@@ -266,8 +261,8 @@ jetAnaAK8 = cfg.Analyzer(
     recalibrateJets = True, #'MC', # True, False, 'MC', 'Data'
     applyL2L3Residual = True, # Switch to 'Data' when they will become available for Data
     recalibrationType = "AK8PFchs",
-    mcGT     = "Summer15_25nsV6_MC",
-    dataGT   = "Summer15_25nsV6_DATA",
+    mcGT     = "Fall15_25nsV2_MC",
+    dataGT   = "76X_dataRun2_v15_Run2015D_25ns",
     jecPath = "${CMSSW_BASE}/src/CMGTools/RootTools/data/jec/",
     shiftJEC = 0, # set to +1 or -1 to apply +/-1 sigma shift to the nominal jet energies
     addJECShifts = False, # if true, add  "corr", "corrJECUp", and "corrJECDown" for each jet (requires uncertainties to be available!)
@@ -329,6 +324,5 @@ coreSequence = [
 #    packedAna,
 #    multiStateAna,
     eventFlagsAna,
-    hbheFix,
     triggerFlagsAna    
 ]
