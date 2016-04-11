@@ -106,3 +106,141 @@ def setSumWeights(sample, weight_dir='MCWeighter'):
         print 'Warning: could not find sum weights information for sample', sample.name
         pass
         
+
+class getStichingWeightForDY(sample, NumberOfOutgoingPartons, Mass):
+    if isinstance(sample, HistogramCfg) or sample.is_data:
+        return
+
+    kFactor = 1.21622931
+
+    SampleDict = {
+        'DYJetsToLL_M50_LO':{'LOxs':4954},
+        'DY1JetsToLL_M50_LO':{'LOxs':1012.5},
+        'DY2JetsToLL_M50_LO':{'LOxs':332.8},
+        'DY3JetsToLL_M50_LO':{'LOxs':101.8},
+        'DY4JetsToLL_M50_LO':{'LOxs':54.8},
+        'DYJetsToTauTau_M150_LO':{'LOxs':6.7}
+        }
+    
+    if not sample.dir_name in SampleDict:
+        print '[warning] Selected sample should not have stitching weight'
+        return 1.
+    
+    NumberOfGeneratedEvents = None
+
+    pckfile = '/'.join([sample.ana_dir, sample.dir_name, weight_dir, 'SkimReport.pck'])
+    try:
+        pckobj  = pickle.load(open(pckfile,'r'))
+        counters = dict(pckobj)
+        if 'Sum Unity Weights' in counters:
+            NumberOfGeneratedEvents = counters['Sum Unity Weights']
+    except IOError:
+        print 'Warning: could not find sum unity weights information for sample', sample.name
+        return 1.
+        
+
+    effectiveLuminosity = NumberOfGeneratedEvents/sampleDict[sample.dir_name]
+    effectiveLuminosity_DY = NumberOfGeneratedEvents/sampleDict['DYJetsToLL_M50_LO']
+
+    if NumberOfOutgoingPartons==0:
+        return kFactor/effectiveLuminosity
+    else:
+        return kFactor/(effectiveLuminosity + effectiveLuminosity_DY)
+        
+
+
+class StitchingWeightForW(object):
+
+    def __init__(self, Ninc=0, N1=0, N2=0, N3=0, N4=0):
+
+        self.kFactor = 1.22125248
+        self.SampleDict = {
+            'WJetsToLNu_LO':{'LOxs':50380},
+            'W1JetsToLNu_LO':{'LOxs':9644.5},
+            'W2JetsToLNu_LO':{'LOxs':3144.5},
+            'W3JetsToLNu_LO':{'LOxs':954.8},
+            'W4JetsToLNu_LO':{'LOxs':485.6},
+            }
+
+        self.effL_inc   = Ninc/self.sampleDict['WJetsToLNu_LO']['LOxs']
+        self.effL_1jet  = N1/self.sampleDict['W1JetsToLNu_LO']['LOxs']
+        self.effL_2jet  = N2/self.sampleDict['W2JetsToLNu_LO']['LOxs']
+        self.effL_3jet  = N3/self.sampleDict['W3JetsToLNu_LO']['LOxs']
+        self.effL_4jet  = N4/self.sampleDict['W4JetsToLNu_LO']['LOxs']
+
+        self.effL = [
+                     self.effL_1jet, 
+                     self.effL_2jet, 
+                     self.effL_3jet, 
+                     self.effL_4jet
+                     ]
+
+    def returnWeight(self, Nparton):
+        
+        if Nparton < 0 or Nparton > 4:
+            print '[ERROR] Not correct Nparton'
+        
+        if Nparton==0: 
+            return self.kFactor/self.effL_inc
+        else:
+            return self.kFactor/(self.effL_inc + self.effL[Nparton-1])
+        
+
+
+class StitchingWeightForDY(object):
+
+    def __init__(self, Ninc=0, Ninc_ext=0, N1=0, N2=0, N3=0, N4=0, Nhigh=0):
+
+        self.kFactor = 1.21622931
+
+        self.SampleDict = {
+            'DYJetsToLL_M50_LO':{'LOxs':4954},
+            'DY1JetsToLL_M50_LO':{'LOxs':1012.5},
+            'DY2JetsToLL_M50_LO':{'LOxs':332.8},
+            'DY3JetsToLL_M50_LO':{'LOxs':101.8},
+            'DY4JetsToLL_M50_LO':{'LOxs':54.8},
+            'DYJetsToTauTau_M150_LO':{'LOxs':6.7}
+        }
+
+        
+        self.effL_inc   = Ninc/self.sampleDict['DYJetsToLNu_LO']['LOxs']
+        self.effL_inc_ext   = Ninc_ext/self.sampleDict['DYJetsToLNu_LO']['LOxs']
+        self.effL_high = Nhigh/self.sampleDict['DYJetsToTauTau_M150_LO']['LOxs']
+        self.effL_1jet  = N1/self.sampleDict['DY1JetsToLNu_LO']['LOxs']
+        self.effL_2jet  = N2/self.sampleDict['DY2JetsToLNu_LO']['LOxs']
+        self.effL_3jet  = N3/self.sampleDict['DY3JetsToLNu_LO']['LOxs']
+        self.effL_4jet  = N4/self.sampleDict['DY4JetsToLNu_LO']['LOxs']
+
+         self.effL = [
+                      self.effL_1jet,
+                      self.effL_2jet,
+                      self.effL_3jet, 
+                      self.effL_4jet, 
+                      ]
+
+    def returnWeight(self, Nparton, Mass, Decay):
+        
+        if Nparton < 0 or Nparton > 4:
+            print '[ERROR] Not correct Nparton'
+
+        if Decay=='TauTau':
+            if Nparton==0: 
+                if Mass < 150: 
+                    return self.kFactor/(self.effL_inc + self.effL_inc_ext)
+                else: 
+                    return self.kFactor/(self.effL_inc + self.effL_inc_ext + self.effL_high)
+            else:
+                if Mass < 150: 
+                    return self.kFactor/(self.effL_inc + self.effL_inc_ext + self.effL[Nparton-1])
+                else: 
+                    return self.kFactor/(self.effL_inc + self.effL_inc_ext + self.effL[Nparton-1] + self.effL_high)
+                
+        else:
+            if Nparton==0: 
+                if Mass < 150: 
+                    return self.kFactor/(self.effL_inc + self.effL_inc_ext)
+            else:
+                if Mass < 150: 
+                    return self.kFactor/(self.effL_inc + self.effL_inc_ext + self.effL[Nparton-1])
+
+        
