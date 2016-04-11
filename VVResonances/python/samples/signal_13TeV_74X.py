@@ -1,5 +1,11 @@
 from CMGTools.RootTools.samples.ComponentCreator import ComponentCreator
 kreator = ComponentCreator()
+
+#test
+testSample=kreator.makeMCComponent("testSample", "/RadionTohhTohtatahbb_narrow_M-4500_13TeV-madgraph/RunIISpring15MiniAODv2-74X_mcRun2_asymptotic_v2-v2/MINIAODSIM", "CMS", ".*root",1.0)
+
+
+
 signalSamples=[] 
 BulkGravToZZToZhadZhad_narrow_1000=kreator.makeMCComponent("BulkGravToZZToZhadZhad_narrow_1000", "/BulkGravToZZToZhadZhad_narrow_M-1000_13TeV-madgraph/RunIISpring15MiniAODv2-74X_mcRun2_asymptotic_v2-v1/MINIAODSIM", "CMS", ".*root",1.0)
 signalSamples.append(BulkGravToZZToZhadZhad_narrow_1000)
@@ -649,3 +655,8 @@ ZprimeToZhToZlephbb_narrow_600=kreator.makeMCComponent("ZprimeToZhToZlephbb_narr
 signalSamples.append(ZprimeToZhToZlephbb_narrow_600)
 ZprimeToZhToZlephbb_narrow_800=kreator.makeMCComponent("ZprimeToZhToZlephbb_narrow_800", "/ZprimeToZhToZlephbb_narrow_M-800_13TeV-madgraph/RunIISpring15MiniAODv2-74X_mcRun2_asymptotic_v2-v1/MINIAODSIM", "CMS", ".*root",1.0)
 signalSamples.append(ZprimeToZhToZlephbb_narrow_800)
+
+
+
+
+

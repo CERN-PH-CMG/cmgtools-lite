@@ -8,11 +8,12 @@ if __name__ == '__main__':
 
     parser.add_option("-c","--counter",dest="trigcounter",default='skimAnalyzerCount/SkimReport.pck',help="counter")
     parser.add_option("-s","--sigma",dest="sigma",type=float,help="cross section",default=1.0)
+    parser.add_option("-f","--rootFile",dest="rootFile",default='vvTreeProducer/tree.root')
 
     (options,args) = parser.parse_args()
     #define output dictionary
     output=dict()
-    rootFile='vvTreeProducer/tree.root'
+    rootFile=options.rootFile
 
 
     for directory in os.listdir(args[0]):

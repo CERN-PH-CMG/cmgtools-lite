@@ -7,10 +7,10 @@ from CMGTools.RootTools.samples.samples_13TeV_RunIISpring15MiniAODv2 import *
 ####
 ####
 
-TTs = [ TTJets, TTJets_SingleLeptonFromTbar, TTJets_SingleLeptonFromTbar_ext, TTJets_SingleLeptonFromT, TTJets_SingleLeptonFromT_ext]+SingleTop
+TTs = [ TTJets]+SingleTop
 
 
-background = TTs+DYJetsM50HT+WJetsToLNuHT+ZJetsToNuNuHT+GJetsHT+QCDHT+QCDPt+DiBosons
+background = TTs+DYJetsM50HT+WJetsToLNuHT+ZJetsToNuNuHT+GJetsHT+QCDHT+QCDPt+DiBosons+DYJetsM5to50HT
 
 
 #background_50ns = [TTJets_50ns,TTJets_LO_50ns,WJetsToLNu_50ns]+QCDPt_50ns+DYJetsM50HT_50ns+DiBosons_50ns

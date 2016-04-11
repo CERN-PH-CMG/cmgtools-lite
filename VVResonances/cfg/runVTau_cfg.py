@@ -58,7 +58,7 @@ from CMGTools.VVResonances.analyzers.core_cff import *
 #-------- SAMPLES AND TRIGGERS -----------
 from CMGTools.VVResonances.samples.loadSamples import *
 
-selectedComponents = mcSamples
+selectedComponents =background+SingleMuon+SingleElectron
 
 
 
@@ -69,7 +69,7 @@ from CMGTools.VVResonances.analyzers.tree_cff import *
 
 #-------- SEQUENCE
 
-sequence = cfg.Sequence(coreSequence+[vvAna,vvSkimmer,vvTreeProducer])
+sequence = cfg.Sequence(coreSequence+[vTauAna,vTauSkimmer,vTauTreeProducer])
 
 
 from CMGTools.RootTools.samples.triggers_13TeV_Spring15 import *
@@ -89,7 +89,7 @@ triggerFlagsAna.triggerBits ={
 
 
 #-------- HOW TO RUN
-test = 2
+test = 0
 if test==1:
     # test a single component, using a single thread.
     selectedComponents = [VBF_RadionToZZ_narrow_4500]
@@ -98,7 +98,7 @@ if test==1:
         c.splitFactor = 1
 elif test==2:    
     # test all components (1 thread per component).
-    selectedComponents = [BulkGravToWW_narrow_2500]
+    selectedComponents = [testSample]
     for comp in selectedComponents:
         comp.splitFactor = 1
 #        comp.files = comp.files[:1]
@@ -117,5 +117,7 @@ elif test==5:
     selectedComponents = [WJetsToLNu_HT2500toInf,VBF_RadionToZZ_narrow_4500,RSGravToWWToLNQQ_kMpl01_4500]
 
 
-selectedComponents=autoAAA(selectedComponents)
+
+selectedComponents=[SingleElectron_Run2015D_05Oct]
+selectedComponents=autoAAA(selectedComponents,False,True)
 config=autoConfig(selectedComponents,sequence)
