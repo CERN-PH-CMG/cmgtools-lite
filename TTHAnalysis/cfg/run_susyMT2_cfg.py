@@ -96,6 +96,7 @@ jetAna.calculateSeparateCorrections = False
 jetAna.jetLepDR = 0.4
 jetAna.smearJets = False
 jetAna.jetGammaDR = 0.4
+jetAna.jetGammaLepDR = 0.4
 jetAna.minGammaPt = 20.
 jetAna.gammaEtaCentral = 2.4
 jetAna.cleanJetsFromFirstPhoton = True
