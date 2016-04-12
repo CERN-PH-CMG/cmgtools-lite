@@ -199,7 +199,7 @@ elif test==18:
 
 # WG/ZG 
 elif test==19:
-    selectedComponents = [ZGJets, WGJets]
+    selectedComponents = [ZGJets, WGJets, TTGJets]
     is1PH=True
     for comp in selectedComponents:
         comp.splitFactor = 100
