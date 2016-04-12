@@ -1,82 +1,16 @@
-import CMGTools.RootTools.fwlite.Config as cfg
+import PhysicsTools.HeppyCore.framework.config as cfg
 
-QCDEM10to20 = cfg.MCComponent(
-    name          = 'QCDEM10to20',
-    files         = []           ,
-    xSection      = 1.           ,
-    nGenEvents    = 1            ,
-    triggers      = []           ,
-    effCorrFactor = 1
-    )
+from CMGTools.RootTools.samples.ComponentCreator import ComponentCreator
 
-QCDEM20to30 = cfg.MCComponent(
-    name          = 'QCDEM20to30',
-    files         = []           ,
-    xSection      = 1.           ,
-    nGenEvents    = 1            ,
-    triggers      = []           ,
-    effCorrFactor = 1
-    )
+creator = ComponentCreator()
 
-QCDEM30to80 = cfg.MCComponent(
-    name          = 'QCDEM30to80',
-    files         = []           ,
-    xSection      = 1.           ,
-    nGenEvents    = 1            ,
-    triggers      = []           ,
-    effCorrFactor = 1
-    )
+QCDMu20ToInf = creator.makeMCComponent('QCDMu20ToInf', '/QCD_Pt-20toInf_MuEnrichedPt15_TuneCUETP8M1_13TeV_pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM', 'CMS', '.*root', 720648000 ) #  PY8            21948126    720648000     (LO)    filter eff. 0.00042
 
-QCDEM80to170 = cfg.MCComponent(
-    name          = 'QCDEM80to170',
-    files         = []            ,
-    xSection      = 1.            ,
-    nGenEvents    = 1             ,
-    triggers      = []            ,
-    effCorrFactor = 1
-    )
+qcd_total = [
+    QCDMu20ToInf
+]
 
-QCDMu30to50 = cfg.MCComponent(
-    name          = 'QCDMu30to50',
-    files         = []           ,
-    xSection      = 1.           ,
-    nGenEvents    = 1            ,
-    triggers      = []           ,
-    effCorrFactor = 1
-    )
-
-QCDMu50to80 = cfg.MCComponent(
-    name          = 'QCDMu50to80',
-    files         = []           ,
-    xSection      = 1.           ,
-    nGenEvents    = 1            ,
-    triggers      = []           ,
-    effCorrFactor = 1
-    )
-
-QCDMu80to120 = cfg.MCComponent(
-    name          = 'QCDMu80to120',
-    files         = []            ,
-    xSection      = 1.            ,
-    nGenEvents    = 1             ,
-    triggers      = []            ,
-    effCorrFactor = 1
-    )
-
-mc_qcd_em = [
-    QCDEM10to20 ,
-    QCDEM20to30 ,
-    QCDEM30to80 ,
-    QCDEM80to170,
-    ]
-
-mc_qcd_mu = [
-    QCDMu30to50 ,
-    QCDMu50to80 ,
-    QCDMu80to120,
-    ]
-
-mc_qcd = []
-mc_qcd += mc_qcd_em
-mc_qcd += mc_qcd_mu
+qcd_mu = [
+    QCDMu20ToInf
+]
 

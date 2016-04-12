@@ -12,39 +12,41 @@ from CMGTools.H2TauTau.proto.analyzers.TauIsolationCalculator import TauIsolatio
 from CMGTools.H2TauTau.proto.analyzers.MuonIsolationCalculator import MuonIsolationCalculator
 
 from CMGTools.RootTools.utils.splitFactor import splitFactor
-from CMGTools.H2TauTau.proto.samples.spring15.htt_common import backgrounds_mu, sm_signals, mssm_signals, data_single_muon, sync_list
-from CMGTools.H2TauTau.proto.samples.spring15.triggers_tauMu import mc_triggers, mc_triggerfilters
-from CMGTools.H2TauTau.proto.samples.spring15.triggers_tauMu import data_triggers, data_triggerfilters
-
+# from CMGTools.H2TauTau.proto.samples.spring15.htt_common import backgrounds_mu, sm_signals, mssm_signals, data_single_muon, sync_list
+# from CMGTools.H2TauTau.proto.samples.spring15.triggers_tauMu import mc_triggers, mc_triggerfilters
+from CMGTools.H2TauTau.proto.samples.data15.data import data_single_muon
+from CMGTools.H2TauTau.proto.samples.fall15.triggers_tauMu import data_triggers, data_triggerfilters
+from CMGTools.H2TauTau.proto.samples.fall15.higgs import HiggsGGH125, HiggsGGH130, HiggsVBF120, HiggsVBF125, HiggsVBF130
+from CMGTools.H2TauTau.proto.samples.fall15.ewk import dy_inclusive, dy_jet_bins, dy_ht_bins
 from CMGTools.H2TauTau.htt_ntuple_base_cff import puFileData, puFileMC, eventSelector
 
 # Get all heppy options; set via "-o production" or "-o production=True"
 
 # production = True run on batch, production = False (or unset) run locally
 production = getHeppyOption('production')
-production = False
-pick_events = False
-syncntuple = False
-cmssw = False
+production    = True
+pick_events   = False
+syncntuple    = False
+cmssw         = False
 singleObjects = True
-computeSVfit = False
+computeSVfit  = False
 
 # Define extra modules
 tauIsoCalc = cfg.Analyzer(
     TauIsolationCalculator,
-    name='TauIsolationCalculator',
-    getter=lambda event: [event.leg2]
+    name   = 'TauIsolationCalculator',
+    getter = lambda event: [event.leg2]
 )
 
 muonIsoCalc = cfg.Analyzer(
     MuonIsolationCalculator,
-    name='MuonIsolationCalculator',
-    getter=lambda event: [event.leg1]
+    name   = 'MuonIsolationCalculator',
+    getter = lambda event: [event.leg1]
 )
 
 fileCleaner = cfg.Analyzer(
     FileCleaner,
-    name='FileCleaner'
+    name = 'FileCleaner'
 )
 
 sequence.insert(sequence.index(treeProducer), muonIsoCalc)
@@ -52,16 +54,20 @@ sequence.insert(sequence.index(treeProducer), tauIsoCalc)
 
 treeProducer.addIsoInfo = True
 
-# Minimal list of samples
-samples = backgrounds_mu + sm_signals + mssm_signals + sync_list
-
+# samples = dy_inclusive + dy_jet_bins + dy_ht_bins + [HiggsGGH125, HiggsGGH130, HiggsVBF120, HiggsVBF125, HiggsVBF130]
+# samples = dy_inclusive + [HiggsGGH125, HiggsGGH130, HiggsVBF120, HiggsVBF125, HiggsVBF130]
+samples = dy_jet_bins + dy_ht_bins
 
 split_factor = 1e5
 
 for sample in samples:
 #     sample.triggers = mc_triggers # RIC: override if necessary with the trigger used for Tagging the event, e.g. sample.triggers = ['HLT_IsoMu17_eta2p1_v1', 'HLT_IsoMu17_eta2p1_v2']
-    sample.triggers = ['HLT_IsoMu17_eta2p1_v1', 'HLT_IsoMu17_eta2p1_v2'] # RIC: override if necessary with the trigger used for Tagging the event, e.g. sample.triggers = ['HLT_IsoMu17_eta2p1_v1', 'HLT_IsoMu17_eta2p1_v2']
-    sample.triggerobjects = mc_triggerfilters
+    sample.triggers  = ['HLT_IsoMu17_eta2p1_v%d' %i for i in range(1, 6)]
+    sample.triggers += ['HLT_IsoMu18_v%d'        %i for i in range(1, 6)]
+    sample.triggerobjects = [
+        'hltL3crIsoL1sMu16L1f0L2f10QL3f18QL3trkIsoFiltered0p09',
+        'hltL3crIsoL1sSingleMu16erL1f0L2f10QL3f17QL3trkIsoFiltered0p09'
+    ]
     sample.splitFactor = splitFactor(sample, split_factor)
 
 data_list = data_single_muon
@@ -78,24 +84,23 @@ for sample in data_list:
 ###################################################
 for mc in samples:
     mc.puFileData = puFileData
-    mc.puFileMC = puFileMC
+    mc.puFileMC   = puFileMC
 
 ###################################################
 ###             SET COMPONENTS BY HAND          ###
 ###################################################
-selectedComponents = samples + data_list
 # selectedComponents = data_list
-# selectedComponents = samples
+selectedComponents = samples
 
 ###################################################
 ###          AD HOC L1 TRIGGER ANALYZER         ###
 ###################################################
 L1TriggerAnalyzer = cfg.Analyzer(
     L1TriggerAnalyzer,
-    name='L1TriggerAnalyzer',
-    collections=['IsoTau', 'Tau', 'Muon'],
-    label='L1extraParticles', # RIC: 'hltL1extraPArticles' if L1 is rerun on MC
-    dR=0.5
+    name        = 'L1TriggerAnalyzer',
+    collections = ['IsoTau', 'Tau', 'Muon'],
+    label       = 'l1extraParticles', # RIC: 'hltL1extraPArticles' if L1 is rerun on MC
+    dR          = 0.5
 )
 
 ###################################################
@@ -110,46 +115,44 @@ if pick_events:
 ###                  SEQUENCE                   ###
 ###################################################
 
+for i, module in enumerate(sequence):
+
+    if module.name == 'TauMuAnalyzer': 
+        module.from_single_objects = singleObjects
+        # RIC: save the trigger objects with FILTERNAME
+        # that match to leg number LEG (1 or 2)
+        module.triggerObjectsHandle = ('selectedPatTrigger', '', 'PAT')
+        sequence.insert(i+1, L1TriggerAnalyzer)
+
+    if module.name == 'TriggerAnalyzer': 
+        module.addTriggerObjects = True
+        module.requireTrigger = True
+        # RIC: HLT paths to Probe
+#         module.extraTrig = [
+#             'HLT_IsoMu17_eta2p1_LooseIsoPFTau20_SingleL1_v4', 
+#         ]
+        module.extraTrig = ['HLT_IsoMu17_eta2p1_MediumIsoPFTau35_Trk1_eta2p1_Reg_v%d' %i for i in range(1, 6)]
+        module.saveFlag = True
+        # RIC specify the collections to be used. 
+        # Useful if trigger is rerun with another process name.
+        # Defaults to PAT
+        module.triggerResultsHandle = ('TriggerResults'    , '', 'HLT')
+        module.triggerObjectsHandle = ('selectedPatTrigger', '', 'PAT')
+
+    if module.name == 'H2TauTauTreeProducerTauMu': 
+        module.addTnPInfo = True
+
 if not syncntuple:
     module = [s for s in sequence if s.name == 'H2TauTauSyncTreeProducerTauMu'][0]
     sequence.remove(module)
 
-if not cmssw:
-    module = [s for s in sequence if s.name == 'MCWeighter'][0]
-    sequence.remove(module)
-
-if not singleObjects:
-    module = [s for s in sequence if s.name == 'MuTauAnalyzer'][0]
-    module.from_single_objects = True
-
-if not computeSVfit:
+if not computeSVfit and len([s for s in sequence if s.name == 'SVfitProducer']):
     module = [s for s in sequence if s.name == 'SVfitProducer'][0]
     sequence.remove(module)
 
-module = [s for s in sequence if s.name == 'TriggerAnalyzer'][0]
-module.requireTrigger = True
-# RIC: HLT paths to Probe
-module.extraTrig = [
-    'HLT_IsoMu17_eta2p1_MediumIsoPFTau35_Trk1_eta2p1_Reg_v1', 
-    'HLT_IsoMu17_eta2p1_MediumIsoPFTau35_Trk1_eta2p1_Reg_v2'
-]
-module.saveFlag = True
-# RIC specify the collections to be used. 
-# Useful if trigger is rerun with another process name.
-# Defaults to PAT
-module.triggerResultsHandle = ('TriggerResults', '', 'PAT')
-module.triggerObjectsHandle = ('selectedPatTrigger', '', 'PAT')
-
-module = [s for s in sequence if s.name == 'H2TauTauTreeProducerTauMu'][0]
-module.addTnPInfo = True
-
-module = [s for s in sequence if s.name == 'TauMuAnalyzer'][0]
-# RIC: save the trigger objects with FILTERNAME
-# that match to leg number LEG (1 or 2)
-# module.filtersToMatch = (['FILTERNAME'], LEG)
-# module.filtersToMatch = (['hltL2Tau30eta2p2'], 2)
-module.triggerObjectsHandle = ('selectedPatTrigger', '', 'PAT')
-sequence.insert(i+1, L1TriggerAnalyzer)
+if not cmssw and len([s for s in sequence if s.name == 'MCWeighter']):
+    module = [s for s in sequence if s.name == 'MCWeighter'][0]
+    sequence.remove(module)
     
 print sequence
 
@@ -157,13 +160,11 @@ print sequence
 ###            SET BATCH OR LOCAL               ###
 ###################################################
 if not production:
-    cache = True
-    # comp = samples[0]
-    comp = sync_list[0]
-    selectedComponents = [comp]
-    comp.splitFactor = 100
+    comp                 = HiggsGGH125
+    selectedComponents   = [comp]
+    comp.splitFactor     = 1
     comp.fineSplitFactor = 1
-    # comp.files = comp.files[]
+    comp.files           = comp.files[:1]
 
 preprocessor = None
 if cmssw:
@@ -173,12 +174,13 @@ if cmssw:
 # the following is declared in case this cfg is used in input to the
 # heppy.py script
 from PhysicsTools.HeppyCore.framework.eventsfwlite import Events
-config = cfg.Config(components=selectedComponents,
-                    sequence=sequence,
-                    services=[],
-                    preprocessor=preprocessor,
-                    events_class=Events
-                    )
+config = cfg.Config(
+    components   = selectedComponents,
+    sequence     = sequence,
+    services     = [],
+    preprocessor = preprocessor,
+    events_class = Events
+)
 
 printComps(config.components, True)
 

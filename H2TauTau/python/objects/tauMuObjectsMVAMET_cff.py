@@ -9,24 +9,11 @@ from CMGTools.H2TauTau.objects.tauMuSVFit_cfi import tauMuSVFit
 from CMGTools.H2TauTau.objects.tauCuts_cff import tauPreSelection
 from CMGTools.H2TauTau.objects.muCuts_cff import muonPreSelection
 
-from RecoMET.METPUSubtraction.mvaPFMET_cff import pfMVAMEt
+from CMGTools.H2TauTau.skims.skim_cff import tauMuFullSelSkimSequence, tauMuFullSelCount
 
 # tau pre-selection
 tauPreSelectionTauMu = tauPreSelection.clone()
 muonPreSelectionTauMu = muonPreSelection.clone()
-
-# mva MET
-mvaMETTauMu = cms.EDProducer('PFMETProducerMVATauTau', 
-                             **pfMVAMEt.parameters_())#pfMVAMEt.clone()
-
-mvaMETTauMu.srcPFCandidates = cms.InputTag("packedPFCandidates")
-mvaMETTauMu.srcVertices = cms.InputTag("offlineSlimmedPrimaryVertices")
-mvaMETTauMu.srcLeptons = cms.VInputTag(
-  cms.InputTag("tauPreSelectionTauMu", "", ""),
-  cms.InputTag("muonPreSelectionTauMu", "", ""),
-  )
-mvaMETTauMu.permuteLeptons = cms.bool(True)
-
 
 # Correct tau pt (after MVA MET according to current baseline)
 cmgTauMuCor = cmgTauMuCor.clone()
@@ -39,14 +26,6 @@ cmgTauMuTauPtSel = cms.EDFilter(
     )
 
 cmgTauMuTauPtSel = cmgTauMuTauPtSel.clone()
-
-
-# recoil correction
-# JAN: We don't know yet if we need this in 2015; re-include if necessary
-
-tauMuMVAMetSequence = cms.Sequence(
-    mvaMETTauMu
-  )
 
 # SVFit
 cmgTauMuCorSVFitPreSel = tauMuSVFit.clone()
@@ -73,7 +52,6 @@ tauMuSequence = cms.Sequence(
     tauMuTauCounter +  
     muonPreSelectionTauMu +   
     tauMuMuonCounter +
-    tauMuMVAMetSequence +
     cmgTauMu +
     cmgTauMuCor+
     cmgTauMuTauPtSel +
@@ -81,4 +59,9 @@ tauMuSequence = cms.Sequence(
     cmgTauMuCorSVFitFullSel
   )
 
-
+# tau-mu ---
+tauMuPath = cms.Path(
+    # metRegressionSequence + 
+    tauMuSequence *
+    tauMuFullSelSkimSequence
+    )

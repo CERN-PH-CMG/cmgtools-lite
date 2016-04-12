@@ -18,9 +18,12 @@ from CMGTools.H2TauTau.proto.analyzers.DYJetsFakeAnalyzer import DYJetsFakeAnaly
 from CMGTools.H2TauTau.proto.analyzers.NJetsAnalyzer import NJetsAnalyzer
 from CMGTools.H2TauTau.proto.analyzers.HiggsPtWeighter import HiggsPtWeighter
 from CMGTools.H2TauTau.proto.analyzers.VBFAnalyzer import VBFAnalyzer
+from CMGTools.H2TauTau.proto.analyzers.RecoilCorrector import RecoilCorrector
 
 puFileMC = '$CMSSW_BASE/src/CMGTools/H2TauTau/data/MC_Fall15_PU25_V1.root'
 puFileData = '$CMSSW_BASE/src/CMGTools/H2TauTau/data/Data_Pileup_2015D_Feb02.root'
+
+reapplyJEC = True
 
 eventSelector = cfg.Analyzer(
     EventSelector,
@@ -71,6 +74,7 @@ genAna.savePreFSRParticleIds = [1, 2, 3, 4, 5, 21]
 dyJetsFakeAna = cfg.Analyzer(
     DYJetsFakeAnalyzer,
     name='DYJetsFakeAnalyzer',
+    jetCol='patJetsReapplyJEC' if reapplyJEC else 'slimmedJets',
     channel='',
     genPtCut=8.
 )
@@ -78,8 +82,7 @@ dyJetsFakeAna = cfg.Analyzer(
 jetAna = cfg.Analyzer(
     JetAnalyzer,
     name='JetAnalyzer',
-    jetCol='slimmedJets',  # <- These are CHS jets
-    # jetCol = 'patJetsAK4PF', # <- These are plain PF jets
+    jetCol='patJetsReapplyJEC' if reapplyJEC else 'slimmedJets',
     jetPt=20.,
     jetEta=4.7,
     relaxJetId=False,
@@ -95,6 +98,11 @@ vbfAna = cfg.Analyzer(
     cjvPtCut=20.,
     Mjj=500.,
     deltaEta=3.5
+)
+
+recoilCorr = cfg.Analyzer(
+    RecoilCorrector,
+    name='RecoilCorrector'
 )
 
 embedWeighter = cfg.Analyzer(
@@ -130,6 +138,7 @@ commonSequence = cfg.Sequence([
     dyJetsFakeAna,
     jetAna,
     vbfAna,
+    recoilCorr,
     pileUpAna,
     embedWeighter,
     NJetsAna,

@@ -10,9 +10,9 @@ from CMGTools.H2TauTau.proto.analyzers.TauTauAnalyzer             import TauTauA
 from CMGTools.H2TauTau.proto.analyzers.H2TauTauTreeProducerTauTau import H2TauTauTreeProducerTauTau
 from CMGTools.H2TauTau.proto.analyzers.TauDecayModeWeighter       import TauDecayModeWeighter
 from CMGTools.H2TauTau.proto.analyzers.LeptonWeighter             import LeptonWeighter
-# from CMGTools.H2TauTau.proto.analyzers.TauP4Scaler                import TauP4Scaler
+from CMGTools.H2TauTau.proto.analyzers.TauP4Scaler                import TauP4Scaler
 from CMGTools.H2TauTau.proto.analyzers.SVfitProducer              import SVfitProducer
-from CMGTools.H2TauTau.proto.analyzers.L1TriggerAnalyzer import L1TriggerAnalyzer
+from CMGTools.H2TauTau.proto.analyzers.L1TriggerAnalyzer          import L1TriggerAnalyzer
 
 # common configuration and sequence
 from CMGTools.H2TauTau.htt_ntuple_base_cff import commonSequence, genAna, dyJetsFakeAna, puFileData, puFileMC, eventSelector
@@ -21,18 +21,25 @@ from CMGTools.H2TauTau.htt_ntuple_base_cff import commonSequence, genAna, dyJets
 
 # production = True run on batch, production = False (or unset) run locally
 production = getHeppyOption('production')
-production = False
+production = True
 
 # local switches
-syncntuple   = False
-computeSVfit = False
-pick_events  = False
-cmssw        = True
-data = False
+syncntuple    = False
+computeSVfit  = True
+pick_events   = False
+cmssw         = True
+calibrateTaus = False
+data          = True
 
 dyJetsFakeAna.channel = 'tt'
 
 ### Define tau-tau specific modules
+
+tauP4Scaler = cfg.Analyzer(
+  class_object = TauP4Scaler  ,
+  name         = 'TauP4Scaler',
+)
+
 
 tauTauAna = cfg.Analyzer(
   class_object        = TauTauAnalyzer                     ,
@@ -54,6 +61,7 @@ tauTauAna = cfg.Analyzer(
   relaxJetId          = False                              ,
   verbose             = False                              ,
   from_single_objects = False                              ,
+  scaleTaus           = calibrateTaus                      ,
   )
 
 if not cmssw:
@@ -99,19 +107,33 @@ tauDecayModeWeighter = cfg.Analyzer(
 tau1Weighter = cfg.Analyzer(
   LeptonWeighter                    ,
   name        ='LeptonWeighter_tau1',
-  scaleFactorFiles = {},
+  scaleFactorFiles = {
+      'trigger'     : '$CMSSW_BASE/src/CMGTools/H2TauTau/data/Tau_diTau35_fall15.py'     , # include in the event's overall weight
+  },
+
+  otherScaleFactorFiles = {
+      'trigger_up'  : '$CMSSW_BASE/src/CMGTools/H2TauTau/data/Tau_diTau35_fall15_up.py'  , # DO NOT include in the event's overall weight
+      'trigger_down': '$CMSSW_BASE/src/CMGTools/H2TauTau/data/Tau_diTau35_fall15_down.py', # DO NOT include in the event's overall weight
+  },
   lepton      = 'leg1'              ,
-  verbose     = False               ,
-  disable     = True                ,
+  verbose     = True                ,
+  disable     = False               ,
   )
 
 tau2Weighter = cfg.Analyzer(
   LeptonWeighter                    ,
   name        ='LeptonWeighter_tau2',
-  scaleFactorFiles = {},
+  scaleFactorFiles = {
+      'trigger'     : '$CMSSW_BASE/src/CMGTools/H2TauTau/data/Tau_diTau35_fall15.py'     , # include in the event's overall weight
+  },
+
+  otherScaleFactorFiles = {
+      'trigger_up'  : '$CMSSW_BASE/src/CMGTools/H2TauTau/data/Tau_diTau35_fall15_up.py'  , # DO NOT include in the event's overall weight
+      'trigger_down': '$CMSSW_BASE/src/CMGTools/H2TauTau/data/Tau_diTau35_fall15_down.py', # DO NOT include in the event's overall weight
+  },
   lepton      = 'leg2'              ,
-  verbose     = False               ,
-  disable     = True                ,
+  verbose     = True                ,
+  disable     = False               ,
   )
 
 treeProducer = cfg.Analyzer(
@@ -144,11 +166,12 @@ from CMGTools.RootTools.utils.splitFactor import splitFactor
 from CMGTools.H2TauTau.proto.samples.data15.data import data_tau
 from CMGTools.H2TauTau.proto.samples.fall15.htt_common import backgrounds, sm_signals, mssm_signals, data_tau, sync_list
 from CMGTools.H2TauTau.proto.samples.fall15.higgs_susy import HiggsSUSYGG160 as ggh160
+from CMGTools.H2TauTau.proto.samples.fall15.higgs_susy import HiggsSUSYGG90 as ggh90
+from CMGTools.H2TauTau.proto.samples.fall15.higgs_susy import HiggsSUSYGG1000 as ggh1000
 from CMGTools.H2TauTau.proto.samples.fall15.triggers_tauTau import mc_triggers, mc_triggerfilters, data_triggers, data_triggerfilters
 
 data_list = data_tau
 samples = backgrounds + sm_signals + mssm_signals
-
 split_factor = 1e5
 
 for sample in data_list:
@@ -168,7 +191,7 @@ for sample in samples:
 ###################################################
 for mc in samples:
     mc.puFileData = puFileData
-    mc.puFileMC = puFileMC
+    mc.puFileMC   = puFileMC
 
 ###################################################
 ###             SET COMPONENTS BY HAND          ###
@@ -181,9 +204,10 @@ if data:
 ###                  SEQUENCE                   ###
 ###################################################
 sequence = commonSequence
+if calibrateTaus:
+    sequence.insert(sequence.index(genAna), tauP4Scaler)
 sequence.insert(sequence.index(genAna), tauTauAna)
 sequence.insert(sequence.index(genAna), l1Ana)
-
 # sequence.append(tau1Calibration)
 # sequence.append(tau2Calibration)
 sequence.append(tauDecayModeWeighter)
@@ -220,14 +244,12 @@ if pick_events:
 ###            SET BATCH OR LOCAL               ###
 ###################################################
 if not production:
-  cache                = True
-  comp                 = ggh160
-  # comp = data_list[0]
-  comp = [s for s in selectedComponents if 'TBarToLeptons_tch_powheg' in s.name][0]
+  # comp                 = ggh160
+  comp                 = data_list[0]
   selectedComponents   = [comp]
-  comp.splitFactor     = 5
+  comp.splitFactor     = 1
   comp.fineSplitFactor = 1
-#   comp.files           = comp.files[:1]
+  comp.files           = comp.files[:1]
     
 preprocessor = None
 if cmssw:
