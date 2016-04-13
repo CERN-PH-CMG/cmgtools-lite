@@ -37,13 +37,13 @@ binning_mssm = array([0.,10.,20.,30.,40.,50.,60.,70.,80.,90.,100.,110.,120.,130.
 
 binning_mssm_btag = array([0.,20.,40.,60.,80.,100.,120.,140.,160.,180.,200.,250.,300.,350.,400.,500.,700.,900.,1100.,1300.,1500.,1700.,1900.,2100.,2300.,2500.,2700.,2900.,3100.,3300.,3500.,3700.,3900.])
 
-# cuts.append(Cut('inclusive', inc_cut + '&& l1_charge != l2_charge'))
+cuts.append(Cut('inclusive', inc_cut + '&& l1_charge != l2_charge'))
 # cuts.append(Cut('inclusive_tauisosideband', inc_cut.replace('l2_byIsolationMVArun2v1DBoldDMwLT>3.5', 'l2_byIsolationMVArun2v1DBoldDMwLT<3.5&&l2_byIsolationMVArun2v1DBoldDMwLT>0.5') + '&& l1_charge != l2_charge'))
 # cuts.append(Cut('inclusivemt40', inc_cut + '&& l1_charge != l2_charge && mt<40'))
 
 # MSSM Categories
 cuts.append(Cut('nobtag', inc_cut + '&& l1_charge != l2_charge && n_bjets==0 && mt<30'))
-# cuts.append(Cut('btag', inc_cut + '&& l1_charge != l2_charge && n_bjets>=1 && n_jets<=1 && mt<30'))
+cuts.append(Cut('btag', inc_cut + '&& l1_charge != l2_charge && n_bjets>=1 && n_jets<=1 && mt<30'))
 
 # cuts.append(Cut('inclusivemtgr40', inc_cut + '&& l1_charge != l2_charge && mt>40'))
 
@@ -102,6 +102,10 @@ if w_qcd_mssm_method:
             sample.scale = -1.
 
     for sample in samples_non_w_highmt_ss:
+        if sample.name != 'data_obs':
+            sample.scale = -1.
+
+    for sample in samples_non_w_ss:
         if sample.name != 'data_obs':
             sample.scale = -1.
 
@@ -204,8 +208,6 @@ for cut in cuts:
 
         wjets.total_scale = w_sf
         wjets_ss.total_scale = -w_sf
-
-        import pdb; pdb.set_trace()
 
     for variable in variables:
         cfg_main.var = variable

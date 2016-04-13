@@ -37,6 +37,7 @@ def createHistogram(hist_cfg, all_stack=False, verbose=False):
 
             if cfg.total_scale is not None:
                 total_hist.Scale(cfg.total_scale)
+                print 'Scaling total', hist_cfg.name, 'by', cfg.total_scale
         else:
             # It's a sample cfg
             hname = '_'.join([hist_cfg.name, cfg.name, vcfg.name, cfg.dir_name])
