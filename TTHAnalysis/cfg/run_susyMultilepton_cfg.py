@@ -23,7 +23,7 @@ SOS = getHeppyOption("SOS",False) ## switch True to overwrite settings for SOS s
 saveSuperClusterVariables = getHeppyOption("saveSuperClusterVariables",False)
 removeJetReCalibration = getHeppyOption("removeJetReCalibration",False)
 doMETpreprocessor = getHeppyOption("doMETpreprocessor",False)
-doT1METCorr = getHeppyOption("doT1METCorr",False)
+skipT1METCorr = getHeppyOption("skipT1METCorr",False)
 #doAK4PFCHSchargedJets = getHeppyOption("doAK4PFCHSchargedJets",False)
 forcedSplitFactor = getHeppyOption("splitFactor",-1)
 forcedFineSplitFactor = getHeppyOption("fineSplitFactor",-1)
@@ -254,7 +254,7 @@ metAna.doTkMet = True
 treeProducer.globalVariables.append(NTupleVariable("met_trkPt", lambda ev : ev.tkMet.pt() if  hasattr(ev,'tkMet') else  0, help="tkmet p_{T}"))
 treeProducer.globalVariables.append(NTupleVariable("met_trkPhi", lambda ev : ev.tkMet.phi() if  hasattr(ev,'tkMet') else  0, help="tkmet phi"))
 
-if doT1METCorr:
+if not skipT1METCorr:
     if doMETpreprocessor: 
         print "WARNING: you're running the MET preprocessor and also Type1 MET corrections. This is probably not intended."
     jetAna.calculateType1METCorrection = True
@@ -300,13 +300,11 @@ if runSMS:
     susyCoreSequence.remove(eventFlagsAna)
     ttHLepSkim.requireSameSignPair = True
 
-from CMGTools.RootTools.samples.samples_13TeV_RunIIFall15MiniAODv2 import *
-#from CMGTools.RootTools.samples.samples_13TeV_74X_susySignalsPriv import *
-#from CMGTools.RootTools.samples.samples_13TeV_signals import *
-from CMGTools.RootTools.samples.samples_13TeV_DATA2015 import *
+from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv1 import *
+from CMGTools.RootTools.samples.samples_13TeV_signals import *
+#from CMGTools.RootTools.samples.samples_13TeV_DATA2015 import *
 
-selectedComponents = [ TTLep_pow ];
-
+selectedComponents = [DYJetsToLL_M50_flatPu]
 
 #selectedComponents = SMS_miniAODv2_T1tttt
 #susyCounter.SMS_varying_masses = ['genSusyMGluino','genSusyMNeutralino']
