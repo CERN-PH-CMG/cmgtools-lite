@@ -13,6 +13,7 @@ isDiJet=False
 isMonoJet=False
 isZSkim=False
 is1L=False
+is1PH=False
 isEle = False # default is diMuon
 is25ns = True
 
@@ -219,6 +220,14 @@ elif test==23:
         comp.splitFactor = 1000
         comp.files = comp.files[:]
 
+elif test==25:
+    isDiJet=True
+    is25ns=True
+    selectedComponents = [ TTJets ] + WJetsToLNuHT + ZJetsToNuNuHT + QCDHT
+    for comp in selectedComponents:
+        comp.splitFactor = 1000
+        comp.files = comp.files[:]
+
     # ------------------------------------------------------------------------------------------- #
     # ------------------------------------------------------------------------------------------- #
 
@@ -266,6 +275,7 @@ if isZSkim:
         ttHZskim.lepId=[11] ## default is set To Muons
     metSequence.insert(metSequence.index(lepAna)+1,ttHLepSkim)
     metSequence.insert(metSequence.index(lepAna)+2,ttHZskim)
+    metSequence.remove(photonAna)
 
 if is1L:
     ttHLepSkim.minLeptons = 1
@@ -274,10 +284,17 @@ if is1L:
 if isDiJet:
     ttHJetMETSkim.jetPtCuts = [100,100]
     metSequence.insert(metSequence.index(photonAna)+2,ttHJetMETSkim)
+    metSequence.remove(photonAna)
 
 if isMonoJet:
     ttHJetMETSkim.jetPtCuts = [200]
     metSequence.insert(metSequence.index(photonAna)+2,ttHJetMETSkim)
+    metSequence.remove(photonAna)
+
+if is1PH:
+    met_collections.update({
+            "selectedPhotons"    : NTupleCollection("gamma", photonType, 50, help="photons with pt>20 and loose cut based ID"),
+            })
 
 if comp.isData:
     eventFlagsAna.processName = 'RECO'
