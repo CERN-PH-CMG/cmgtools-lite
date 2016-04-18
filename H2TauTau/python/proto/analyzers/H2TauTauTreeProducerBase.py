@@ -229,15 +229,14 @@ class H2TauTauTreeProducerBase(TreeAnalyzerNumpy):
 	self.fill(tree, 'TauSpinnerIsRightLeft', float(event.TauSpinnerIsRightLeft ))
 
     def bookTopPtReweighting(self, tree):
-	self.var(tree, 'gen_top_1_pt')
+        self.var(tree, 'gen_top_1_pt')
         self.var(tree, 'gen_top_2_pt')
         self.var(tree, 'gen_top_weight')
 
     def fillTopPtReweighting(self, tree, event):
-        
-#        import pdb; pdb.set_trace()
 
-	if self.cfg_comp.isMC and self.cfg_comp.name.find('TT')!=-1 and len(event.gentopquarks)==2:
+
+        if self.cfg_comp.isMC and self.cfg_comp.name.find('TT')!=-1 and len(event.gentopquarks)==2:
             top_1_pt = event.gentopquarks[0].pt()
             top_2_pt = event.gentopquarks[1].pt()
 
