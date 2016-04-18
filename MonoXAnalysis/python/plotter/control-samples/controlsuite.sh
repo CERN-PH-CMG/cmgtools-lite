@@ -2,36 +2,45 @@
 
 WHAT=$1; if [[ "$1" == "" ]]; then echo "monojet.sh <what>"; exit 1; fi
 
-if [[ "$HOSTNAME" == "cmsphys06" ]]; then
-    T="/data1/emanuele/monox/TREES_25ns_2LEPSKIM_15SEP2015_ECALSTUDY";
-    J=6;
-else
-    T="/cmshome/dimarcoe/TREES_25ns_2LEPSKIM_15SEP2015_ECALSTUDY";
-    J=6;
+WHAT=$1; if [[ "$1" == "" ]]; then echo "monojet.sh <what>"; exit 1; fi
+
+BASEDIR=""
+if [ "$WHAT" == "zee" ] ; then
+    BASEDIR="TREES_25ns_2LEPSKIM_76X"
+else 
+    BASEDIR="TREES_25ns_MET200SKIM_76X"
 fi
 
-LUMI="0.152"
-OPTCAPTION="--rspam '#sqrt{s} = 13 TeV, L = %(lumipb).1f pb^{-1}' "
+WORKDIR="control-samples"
 
-COREOPT="-P $T --s2v -j $J -l $LUMI "
-COREY="mcAnalysis.py ${COREOPT} -G "
-COREP="mcPlots.py  ${COREOPT} -f --poisson "
-#FEV=" -F mjvars/t \"$T/0_eventvars_mj_v1/evVarFriend_{cname}.root\" "
-FEV=" "
+if [[ "$HOSTNAME" == "cmsphys06" ]]; then
+    T="/data1/emanuele/monox/${BASEDIR}";
+    J=8;
+else
+    T="/cmshome/dimarcoe/${BASEDIR}";
+    J=3;
+fi
 
-ROOT="plots/Run2015B/v1.0/$WHAT"
+MCA=""
+if [ "$WHAT" == "zee" ] ; then
+    MCA="${WORKDIR}/mca-76X-Ve.txt "
+else [ "$WHAT" == "zmm" ] ; then
+    MCA="${WORKDIR}/mca-76X-Vm.txt "
+fi
 
-RUNY="${COREY} mca-74X.txt "
-SEL2MU="control-samples/zmumuincl.txt "
-SEL2E="control-samples/zeeincl.txt "
+ROOTPREF="plots/Fall15-Inclusive/v1"
+ROOT="${ROOTPREF}/${WHAT}"
+COREOPT="-P $T --s2v -j $J -l 2.32 "
+COREY="mcAnalysis.py ${MCA} ${COREOPT} -G  "
+COREP="mcPlots.py ${MCA} ${COREOPT} -f --poisson --pdir ${ROOT} --showRatio --maxRatioRange 0.5 1.5 "
+FEV=" -F mjvars/t \"$T/friends/evVarFriend_{cname}.root\" "
+SF=" --FM sf/t \"$T/friends/sfFriend_{cname}.root\" "
 
+RUNY2M="${COREY} ${WORKDIR}/zmumu_twiki.txt "
+RUNY2E="${COREY} ${WORKDIR}/zeeincl.txt "
 
-RUNY2MU="${RUNY} ${SEL2MU} "
-RUNY2E="${RUNY} ${SEL2E} "
-
-PLOT="${COREP} mca-74X.txt $OPTCAPTION --showRatio --maxRatioRange 0.0 2.0 "
-PLOT2MU="${PLOT} ${SEL2MU} control-samples/zmumu-plots.txt "
-PLOT2E="${PLOT} ${SEL2E} control-samples/zee-plots.txt "
+PLOT2M="${COREP} ${WORKDIR}/zmumu_twiki.txt ${WORKDIR}/zmumu_plots.txt "
+PLOT2E="${COREP} ${WORKDIR}/zeeincl.txt ${WORKDIR}/zee_incl_plots.txt "
 
 case $WHAT in
 zmumu)

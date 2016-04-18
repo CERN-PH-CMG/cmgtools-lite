@@ -56,7 +56,7 @@ class EventVarsMonojet:
     def gammaIdVeto(self,gamma):
         return gamma.pt > 15 and abs(gamma.eta) < 2.5
     def gammaIdTight(self,gamma):
-        return gamma.pt > 175 and abs(gamma.eta) < 2.5
+        return gamma.pt > 175 and abs(gamma.eta) < 2.5 and gamma.idCutBased==3
     def leadJetCleaning(self,jet):
         return jet.chHEF > 0.1 and jet.neHEF < 0.8
     def metNoPh(self,met,photons):

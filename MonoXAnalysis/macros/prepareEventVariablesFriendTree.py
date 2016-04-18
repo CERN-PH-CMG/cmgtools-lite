@@ -9,7 +9,7 @@ from CMGTools.MonoXAnalysis.tools.eventVars_monojet import EventVarsMonojet
 MODULES.append( ('vars_mj', EventVarsMonojet()) )
 
 from CMGTools.TTHAnalysis.tools.vertexWeightFriend import VertexWeightFriend
-pufile="/afs/cern.ch/work/e/emanuele/public/monox/pileup/nvtx_profile_runs_254227_260627.root"
+pufile="/afs/cern.ch/work/e/emanuele/public/monox/pileup/nvtx_profile_76X_runs_254227_260627.root"
 MODULES.append ( ('puWeights', VertexWeightFriend(pufile,pufile,"nvtx_signal","nvtx_data",verbose=True) ) )
 
 pathvetolists="/afs/cern.ch/work/e/emanuele/public/monox/met_vetolists/"
@@ -18,8 +18,9 @@ vetoLists= ["cscfilter", "ecalfilter"]
 from CMGTools.MonoXAnalysis.tools.eventVetoListChecker import EventVetoListChecker
 MODULES.append( ('eventVetoChecker', EventVetoListChecker(pathvetolists,vetoLists)) )
 
-from CMGTools.MonoXAnalysis.tools.lepVars import residualCalibratedEcalEnergyFriend
-MODULES.append ( ('lepvars', residualCalibratedEcalEnergyFriend()) )
+# no more needed, since the leptons in the trees have already calibrations included
+#from CMGTools.MonoXAnalysis.tools.lepVars import residualCalibratedEcalEnergyFriend
+#MODULES.append ( ('lepvars', residualCalibratedEcalEnergyFriend()) )
 
 class VariableProducer(Module):
     def __init__(self,name,booker,sample_nevt,dataset,modules):
@@ -97,7 +98,13 @@ for D in glob(args[0]+"/*"):
     if (not os.path.exists(fname)) and os.path.exists("%s/%s/tree.root" % (D,options.tree)):
         treename = "tree"
         fname    = "%s/%s/tree.root" % (D,options.tree)
-    if os.path.exists(fname):
+
+    if (not os.path.exists(fname)) and (os.path.exists("%s/%s/tree.root.url" % (D,options.tree)) ):
+        treename = "tree"
+        fname    = "%s/%s/tree.root" % (D,options.tree)
+        fname    = open(fname+".url","r").readline().strip()
+
+    if os.path.exists(fname) or (os.path.exists("%s/%s/tree.root.url" % (D,options.tree))):
         short = os.path.basename(D)
         if options.datasets != []:
             if short not in options.datasets: continue
@@ -106,7 +113,7 @@ for D in glob(args[0]+"/*"):
             for dm in  options.datasetMatches:
                 if re.match(dm,short): found = True
             if not found: continue
-        data = any(x in short for x in "DoubleMu DoubleEl DoubleEG MuEG MuonEG SingleMu SingleEl MET".split())
+        data = any(x in short for x in "DoubleMu DoubleEl DoubleEG MuEG MuonEG SingleMu SingleEl SinglePhoton MET".split())
         pckobj  = pickle.load(open(pckfile,'r'))
         counters = dict(pckobj)
         if ('Sum Weights' in counters):
@@ -166,8 +173,38 @@ maintimer = ROOT.TStopwatch()
 def _runIt(myargs):
     (name,fin,sample_nevt,fout,data,range,chunk) = myargs
     timer = ROOT.TStopwatch()
-    fb = ROOT.TFile(fin)
+
+    fetchedfile = None
+    if 'LSB_JOBID' in os.environ or 'LSF_JOBID' in os.environ:
+        if fin.startswith("root://"):
+            try:
+                tmpdir = os.environ['TMPDIR'] if 'TMPDIR' in os.environ else "/tmp"
+                tmpfile =  "%s/%s" % (tmpdir, os.path.basename(fin))
+                print "xrdcp %s %s" % (fin, tmpfile)
+                os.system("xrdcp %s %s" % (fin, tmpfile))
+                if os.path.exists(tmpfile):
+                    fin = tmpfile 
+                    fetchedfile = fin
+                    print "success :-)"
+            except:
+                pass
+        fb = ROOT.TFile.Open(fin)
+    elif "root://" in fin:        
+        ROOT.gEnv.SetValue("TFile.AsyncReading", 1);
+        ROOT.gEnv.SetValue("XNet.Debug", 0); # suppress output about opening connections
+        ROOT.gEnv.SetValue("XrdClientDebug.kUSERDEBUG", 0); # suppress output about opening connections
+        fb   = ROOT.TXNetFile(fin+"?readaheadsz=65535&DebugLevel=0")
+        os.environ["XRD_DEBUGLEVEL"]="0"
+        os.environ["XRD_DebugLevel"]="0"
+        os.environ["DEBUGLEVEL"]="0"
+        os.environ["DebugLevel"]="0"
+    else:
+        fb = ROOT.TFile.Open(fin)
+        print fb
+
+    print "getting tree.."
     tb = fb.Get(options.tree)
+
     if not tb: tb = fb.Get("tree") # new trees
     if options.vectorTree:
         tb.vectorTree = True
