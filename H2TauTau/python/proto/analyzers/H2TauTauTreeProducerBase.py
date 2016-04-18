@@ -234,6 +234,7 @@ class H2TauTauTreeProducerBase(TreeAnalyzerNumpy):
 
     def fillTopPtReweighting(self, tree, event):
         if self.cfg_comp.isMC and self.cfg_comp.name.find('TT') != -1 and len(event.gentopquarks) == 2:
+
             top_1_pt = event.gentopquarks[0].pt()
             top_2_pt = event.gentopquarks[1].pt()
 

@@ -32,9 +32,9 @@ class TauSpinnerWeights( Analyzer ):
                 
     def declareHandles(self):
 	super(TauSpinnerWeights,self).declareHandles()
-	self.handles['TauSpinnerWTisValid'] = AutoHandle(
+        self.handles['TauSpinnerWTisValid'] = AutoHandle(
                 ('TauSpinnerReco', 'TauSpinnerWTisValid'), 'bool' )
-	self.handles['TauSpinnerWT'] = AutoHandle(
+        self.handles['TauSpinnerWT'] = AutoHandle(
 		('TauSpinnerReco', 'TauSpinnerWT'), 'double' )
         self.handles['TauSpinnerWThminus'] = AutoHandle(
 		('TauSpinnerReco','TauSpinnerWThminus'), 'double' )
