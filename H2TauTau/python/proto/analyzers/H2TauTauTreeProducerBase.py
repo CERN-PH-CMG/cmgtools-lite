@@ -4,6 +4,8 @@ from CMGTools.H2TauTau.proto.analyzers.varsDictionary import vars as var_dict
 from CMGTools.H2TauTau.proto.analyzers.TreeVariables import event_vars, ditau_vars, particle_vars, lepton_vars, electron_vars, muon_vars, tau_vars, jet_vars, jet_vars_extra, geninfo_vars, vbf_vars, svfit_vars
 
 from CMGTools.H2TauTau.proto.physicsobjects.DiObject import DiTau
+import math
+
 
 class H2TauTauTreeProducerBase(TreeAnalyzerNumpy):
 
@@ -54,7 +56,6 @@ class H2TauTauTreeProducerBase(TreeAnalyzerNumpy):
         for var in var_list:
             names = [obj_name, var.name] if obj_name else [var.name]
             self.fill(tree, '_'.join(names), var.function(obj))
-
 
     def declareVariables(self, setup):
         ''' Declare all variables here in derived calss
@@ -161,7 +162,7 @@ class H2TauTauTreeProducerBase(TreeAnalyzerNumpy):
         self.bookGeneric(tree, jet_vars, p_name)
         if fill_extra:
             self.bookGeneric(tree, jet_vars_extra, p_name)
-        
+
     def fillJet(self, tree, p_name, jet, fill_extra=False):
         self.fillParticle(tree, p_name, jet)
         self.fillGeneric(tree, jet_vars, jet, p_name)
@@ -181,7 +182,6 @@ class H2TauTauTreeProducerBase(TreeAnalyzerNumpy):
 
     def fillGenInfo(self, tree, event):
         self.fillGeneric(tree, geninfo_vars, event)
-
 
     # additional METs
     def bookExtraMetInfo(self, tree):
@@ -218,11 +218,37 @@ class H2TauTauTreeProducerBase(TreeAnalyzerNumpy):
         self.var(tree, 'TauSpinnerIsRightLeft')
 
     def fillTauSpinner(self, tree, event):
-        self.fill(tree, 'TauSpinnerWTisValid', event.TauSpinnerWTisValid )
+        self.fill(tree, 'TauSpinnerWTisValid', event.TauSpinnerWTisValid)
         self.fill(tree, 'TauSpinnerWT', float(event.TauSpinnerWT))
         self.fill(tree, 'TauSpinnerWThminus', float(event.TauSpinnerWThminus))
         self.fill(tree, 'TauSpinnerWThplus', float(event.TauSpinnerWThplus))
         self.fill(tree, 'TauSpinnerTauPolFromZ', float(event.TauSpinnerTauPolFromZ))
         self.fill(tree, 'TauSpinnerWRight', float(event.TauSpinnerWRight))
-        self.fill(tree, 'TauSpinnerWLeft', float(event.TauSpinnerWLeft  ))
-        self.fill(tree, 'TauSpinnerIsRightLeft', float(event.TauSpinnerIsRightLeft ))
+        self.fill(tree, 'TauSpinnerWLeft', float(event.TauSpinnerWLeft))
+        self.fill(tree, 'TauSpinnerIsRightLeft', float(event.TauSpinnerIsRightLeft))
+
+    def bookTopPtReweighting(self, tree):
+        self.var(tree, 'gen_top_1_pt')
+        self.var(tree, 'gen_top_2_pt')
+        self.var(tree, 'gen_top_weight')
+
+    def fillTopPtReweighting(self, tree, event):
+        if self.cfg_comp.isMC and self.cfg_comp.name.find('TT') != -1 and len(event.gentopquarks) == 2:
+            top_1_pt = event.gentopquarks[0].pt()
+            top_2_pt = event.gentopquarks[1].pt()
+
+            self.fill(tree, 'gen_top_1_pt', top_1_pt)
+            self.fill(tree, 'gen_top_2_pt', top_2_pt)
+
+            if top_1_pt > 400:
+                top_1_pt = 400.
+            if top_2_pt > 400:
+                top_2_pt = 400.
+
+            topweight = math.sqrt(math.exp(0.156-0.00137*top_1_pt)*math.exp(0.156-0.00137*top_2_pt))
+
+            event.eventWeight *= topweight
+
+            self.fill(tree, 'gen_top_weight', topweight)
+        else:
+            self.fill(tree, 'gen_top_weight', 1.)
