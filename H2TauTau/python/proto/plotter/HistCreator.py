@@ -110,7 +110,7 @@ def setSumWeights(sample, weight_dir='MCWeighter'):
 class StitchingWeightForW(object):
 
     def __init__(self, Ninc=0, N1=0, N2=0, N3=0, N4=0):
-
+        
         self.kFactor = 1.22125248
         self.SampleDict = {
             'WJetsToLNu_LO':{'LOxs':50380},
@@ -119,7 +119,7 @@ class StitchingWeightForW(object):
             'W3JetsToLNu_LO':{'LOxs':954.8},
             'W4JetsToLNu_LO':{'LOxs':485.6},
             }
-
+        
         self.effL_inc   = Ninc/self.sampleDict['WJetsToLNu_LO']['LOxs']
         self.effL_1jet  = N1/self.sampleDict['W1JetsToLNu_LO']['LOxs']
         self.effL_2jet  = N2/self.sampleDict['W2JetsToLNu_LO']['LOxs']
@@ -127,11 +127,11 @@ class StitchingWeightForW(object):
         self.effL_4jet  = N4/self.sampleDict['W4JetsToLNu_LO']['LOxs']
 
         self.effL = [
-                     self.effL_1jet, 
-                     self.effL_2jet, 
-                     self.effL_3jet, 
-                     self.effL_4jet
-                     ]
+            self.effL_1jet, 
+            self.effL_2jet, 
+            self.effL_3jet, 
+            self.effL_4jet
+            ]
 
     def returnWeight(self, Nparton):
         
@@ -169,12 +169,12 @@ class StitchingWeightForDY(object):
         self.effL_3jet  = N3/self.sampleDict['DY3JetsToLNu_LO']['LOxs']
         self.effL_4jet  = N4/self.sampleDict['DY4JetsToLNu_LO']['LOxs']
 
-         self.effL = [
-                      self.effL_1jet,
-                      self.effL_2jet,
-                      self.effL_3jet, 
-                      self.effL_4jet, 
-                      ]
+        self.effL = [
+            self.effL_1jet,
+            self.effL_2jet,
+            self.effL_3jet, 
+            self.effL_4jet, 
+            ]
 
     def returnWeight(self, Nparton, Mass, Decay):
         

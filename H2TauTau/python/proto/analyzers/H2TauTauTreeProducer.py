@@ -68,8 +68,8 @@ class H2TauTauTreeProducer(H2TauTauTreeProducerBase):
         self.bookTopPtReweighting(self.tree)
         self.bookExtraMetInfo(self.tree)
 
-	if hasattr(self.cfg_ana, 'TauSpinner') and self.cfg_ana.TauSpinner :
-	    self.bookTauSpinner(self.tree)
+        if hasattr(self.cfg_ana, 'TauSpinner') and self.cfg_ana.TauSpinner :
+            self.bookTauSpinner(self.tree)
 
     def process(self, event):
 
@@ -116,5 +116,5 @@ class H2TauTauTreeProducer(H2TauTauTreeProducerBase):
             self.fillTree(event)
 
         if hasattr(self.cfg_ana, 'TauSpinner') and self.cfg_ana.TauSpinner :
-	    self.fillTauSpinner(self.tree, event)
+            self.fillTauSpinner(self.tree, event)
 
