@@ -209,24 +209,24 @@ class H2TauTauTreeProducerBase(TreeAnalyzerNumpy):
 
     # TauSpinner information
     def bookTauSpinner(self, tree):
-	self.var(tree, 'TauSpinnerWTisValid')
-	self.var(tree, 'TauSpinnerWT')
-	self.var(tree, 'TauSpinnerWThminus')
-	self.var(tree, 'TauSpinnerWThplus')
-	self.var(tree, 'TauSpinnerTauPolFromZ')
-	self.var(tree, 'TauSpinnerWRight')
-	self.var(tree, 'TauSpinnerWLeft')
-	self.var(tree, 'TauSpinnerIsRightLeft')
+        self.var(tree, 'TauSpinnerWTisValid')
+        self.var(tree, 'TauSpinnerWT')
+        self.var(tree, 'TauSpinnerWThminus')
+        self.var(tree, 'TauSpinnerWThplus')
+        self.var(tree, 'TauSpinnerTauPolFromZ')
+        self.var(tree, 'TauSpinnerWRight')
+        self.var(tree, 'TauSpinnerWLeft')
+        self.var(tree, 'TauSpinnerIsRightLeft')
 
     def fillTauSpinner(self, tree, event):
-	self.fill(tree, 'TauSpinnerWTisValid', event.TauSpinnerWTisValid )
-	self.fill(tree, 'TauSpinnerWT', float(event.TauSpinnerWT))
-	self.fill(tree, 'TauSpinnerWThminus', float(event.TauSpinnerWThminus))
-	self.fill(tree, 'TauSpinnerWThplus', float(event.TauSpinnerWThplus))
-	self.fill(tree, 'TauSpinnerTauPolFromZ', float(event.TauSpinnerTauPolFromZ))
-	self.fill(tree, 'TauSpinnerWRight', float(event.TauSpinnerWRight))
-	self.fill(tree, 'TauSpinnerWLeft', float(event.TauSpinnerWLeft  ))
-	self.fill(tree, 'TauSpinnerIsRightLeft', float(event.TauSpinnerIsRightLeft ))
+        self.fill(tree, 'TauSpinnerWTisValid', event.TauSpinnerWTisValid )
+        self.fill(tree, 'TauSpinnerWT', float(event.TauSpinnerWT))
+        self.fill(tree, 'TauSpinnerWThminus', float(event.TauSpinnerWThminus))
+        self.fill(tree, 'TauSpinnerWThplus', float(event.TauSpinnerWThplus))
+        self.fill(tree, 'TauSpinnerTauPolFromZ', float(event.TauSpinnerTauPolFromZ))
+        self.fill(tree, 'TauSpinnerWRight', float(event.TauSpinnerWRight))
+        self.fill(tree, 'TauSpinnerWLeft', float(event.TauSpinnerWLeft  ))
+        self.fill(tree, 'TauSpinnerIsRightLeft', float(event.TauSpinnerIsRightLeft ))
 
     def bookTopPtReweighting(self, tree):
         self.var(tree, 'gen_top_1_pt')
