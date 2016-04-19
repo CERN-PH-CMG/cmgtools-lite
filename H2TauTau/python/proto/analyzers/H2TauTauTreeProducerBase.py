@@ -237,7 +237,7 @@ class H2TauTauTreeProducerBase(TreeAnalyzerNumpy):
 
         ttbar = [p for p in event.genParticles if abs(p.pdgId())==6 and p.statusFlags().isLastCopy() and p.statusFlags().fromHardProcess()]
 
-        if self.cfg_comp.isMC and self.cfg_comp.name.find('TT')!=-1 and len(ttbar)==2:
+        if self.cfg_comp.isMC and self.cfg_comp.name.find('TT')!=-1 and self.cfg_comp.name.find('TTH')==-1 and len(ttbar)==2:
 
             top_1_pt = ttbar[0].pt()
             top_2_pt = ttbar[1].pt()
