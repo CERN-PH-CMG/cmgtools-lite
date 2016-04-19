@@ -4,6 +4,7 @@ from CMGTools.H2TauTau.proto.analyzers.varsDictionary import vars as var_dict
 from CMGTools.H2TauTau.proto.analyzers.TreeVariables import event_vars, ditau_vars, particle_vars, lepton_vars, electron_vars, muon_vars, tau_vars, jet_vars, jet_vars_extra, geninfo_vars, vbf_vars, svfit_vars
 
 from CMGTools.H2TauTau.proto.physicsobjects.DiObject import DiTau
+import math
 
 class H2TauTauTreeProducerBase(TreeAnalyzerNumpy):
 
@@ -206,6 +207,62 @@ class H2TauTauTreeProducerBase(TreeAnalyzerNumpy):
         self.fill(tree, 'pfmet_mt1', DiTau.calcMT(event.pfmet, event.leg1))
         self.fill(tree, 'pfmet_mt2', DiTau.calcMT(event.pfmet, event.leg2))
 
+    # TauSpinner information
+    def bookTauSpinner(self, tree):
+        self.var(tree, 'TauSpinnerWTisValid')
+        self.var(tree, 'TauSpinnerWT')
+        self.var(tree, 'TauSpinnerWThminus')
+        self.var(tree, 'TauSpinnerWThplus')
+        self.var(tree, 'TauSpinnerTauPolFromZ')
+        self.var(tree, 'TauSpinnerWRight')
+        self.var(tree, 'TauSpinnerWLeft')
+        self.var(tree, 'TauSpinnerIsRightLeft')
+
+    def fillTauSpinner(self, tree, event):
+        self.fill(tree, 'TauSpinnerWTisValid', event.TauSpinnerWTisValid )
+        self.fill(tree, 'TauSpinnerWT', float(event.TauSpinnerWT))
+        self.fill(tree, 'TauSpinnerWThminus', float(event.TauSpinnerWThminus))
+        self.fill(tree, 'TauSpinnerWThplus', float(event.TauSpinnerWThplus))
+        self.fill(tree, 'TauSpinnerTauPolFromZ', float(event.TauSpinnerTauPolFromZ))
+        self.fill(tree, 'TauSpinnerWRight', float(event.TauSpinnerWRight))
+        self.fill(tree, 'TauSpinnerWLeft', float(event.TauSpinnerWLeft  ))
+        self.fill(tree, 'TauSpinnerIsRightLeft', float(event.TauSpinnerIsRightLeft ))
+
+    def bookTopPtReweighting(self, tree):
+        self.var(tree, 'gen_top_1_pt')
+        self.var(tree, 'gen_top_2_pt')
+        self.var(tree, 'gen_top_weight')
+
+    def fillTopPtReweighting(self, tree, event):
+
+        ttbar = [p for p in event.genParticles if abs(p.pdgId())==6 and p.statusFlags().isLastCopy() and p.statusFlags().fromHardProcess()]
+
+        if self.cfg_comp.isMC and self.cfg_comp.name.find('TT')!=-1 and self.cfg_comp.name.find('TTH')==-1 and len(ttbar)==2:
+
+            top_1_pt = ttbar[0].pt()
+            top_2_pt = ttbar[1].pt()
+
+#            print 'top pT : ', top_1_pt, top_2_pt
+
+            self.fill(tree, 'gen_top_1_pt', top_1_pt)
+            self.fill(tree, 'gen_top_2_pt', top_2_pt)
+
+            if top_1_pt > 400: top_1_pt = 400.
+            if top_2_pt > 400: top_2_pt = 400.
+
+#            print 'top pT after mod. : ', top_1_pt, top_2_pt
+
+            topweight = math.sqrt(math.exp(0.156-0.00137*top_1_pt)*math.exp(0.156-0.00137*top_2_pt))
+#            print 'top pT weight : ', topweight
+#            print 'before weight =', event.eventWeight
+
+            event.eventWeight *= topweight
+            
+#            print 'after weight =', event.eventWeight
+
+            self.fill(tree, 'gen_top_weight', topweight)
+        else:
+            self.fill(tree, 'gen_top_weight', 1.)
 
     # quark and gluons
     def bookQG(self, tree, maxNGenJets=2):
