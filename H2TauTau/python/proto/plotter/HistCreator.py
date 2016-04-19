@@ -195,10 +195,8 @@ class StitchingWeightForDY(object):
                 
         else:
             if Nparton==0: 
-                if Mass < 150: 
-                    return self.kFactor/(self.effL_inc + self.effL_inc_ext)
+                return self.kFactor/(self.effL_inc + self.effL_inc_ext)
             else:
-                if Mass < 150: 
-                    return self.kFactor/(self.effL_inc + self.effL_inc_ext + self.effL[Nparton-1])
+                return self.kFactor/(self.effL_inc + self.effL_inc_ext + self.effL[Nparton-1])
 
         
