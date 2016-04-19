@@ -37,3 +37,52 @@ class PlotterBase(object):
     def drawTH1(self,var,cuts,lumi,bins,min,max,titlex = "",units = "",drawStyle = "HIST"):
         return None
 
+    def makeDataSet(self,var,cut):
+        return None
+
+
+
+    def drawTH2Keys(self,var,cuts,binsx,minx,maxx,binsy,miny,maxy):
+        data=self.makeDataSet(var,cuts)
+
+        varx=var.split(',')[0]
+        vary=var.split(',')[1]
+
+        data.get().find(varx).setMax(maxx)
+        data.get().find(varx).setMin(minx)
+
+        data.get().find(vary).setMax(maxy)
+        data.get().find(vary).setMin(miny)
+
+        argset=ROOT.RooArgList()
+        argset.add(data.get().find(varx))
+        argset.add(data.get().find(vary))
+
+        keys=ROOT.RooNDKeysPdf("keys","keys",argset,data)
+        return keys.createHistogram(var,binsx,binsy)
+
+    def drawTH2KeysFast(self,var,cuts,binsx,minx,maxx,binsy,miny,maxy,BINSCALE =5):
+        histo=self.drawTH2(var,cuts,"1",binsx*BINSCALE,minx,maxx,binsy*BINSCALE,miny,maxy)
+
+        varx=var.split(':')[1]
+        vary=var.split(':')[0]
+
+        w=ROOT.RooWorkspace("w")
+        w.factory(varx+"[{x},{X}]".format(x=minx,X=maxx))
+        w.factory(vary+"[{y},{Y}]".format(y=miny,Y=maxy))
+        w.factory("weight[-1e+15,1e+15]")
+
+        datahist=ROOT.RooDataHist("data","data",ROOT.RooArgList(w.var(varx),w.var(vary)),histo)
+        
+        dataset = ROOT.RooDataSet("dataset","dataset",ROOT.RooArgSet(w.var(varx),w.var(vary),w.var("weight")),"weight")
+        
+        for i in range(0,datahist.numEntries()):
+            line=datahist.get(i)
+            dataset.add(line,datahist.weight())
+            
+
+        keys=ROOT.RooNDKeysPdf("keys","keys",ROOT.RooArgList(w.var(varx),w.var(vary)),dataset)       
+        return keys.createHistogram(varx+','+vary,binsx,binsy)
+
+    
+

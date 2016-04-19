@@ -7,6 +7,7 @@
 
 #AAA
 ###
+
 def autoAAA(selectedComponents,runOnlyRemoteSamples=False,forceAAA=False):
     newComp=[]
     import re
@@ -60,7 +61,7 @@ from CMGTools.VVResonances.analyzers.core_cff import *
 #-------- SAMPLES AND TRIGGERS -----------
 from CMGTools.VVResonances.samples.loadSamples import *
 
-selectedComponents = mcSamples
+selectedComponents =background+SingleMuon+SingleElectron
 
 
 
@@ -71,7 +72,7 @@ from CMGTools.VVResonances.analyzers.tree_cff import *
 
 #-------- SEQUENCE
 
-sequence = cfg.Sequence(coreSequence+[vvAna,vvSkimmer,vvTreeProducer])
+sequence = cfg.Sequence(coreSequence+[vTauAna,vTauSkimmer,vTauTreeProducer])
 
 
 from CMGTools.RootTools.samples.triggers_13TeV_Spring15 import *
@@ -90,14 +91,12 @@ triggerFlagsAna.triggerBits ={
 }
 
 
-#-------- HOW TO RUN
+
 test = 1
 if test==1:
     # test a single component, using a single thread.
-    selectedComponents = [BulkGravToWW_narrow_2500]
+    selectedComponents = [BulkGravToZZToZlepZhad_narrow_3000]
     for c in selectedComponents:
-        c.files = c.files[:1]
         c.splitFactor = 1
-
-selectedComponents=autoAAA(selectedComponents)
+#selectedComponents=autoAAA(selectedComponents)
 config=autoConfig(selectedComponents,sequence)

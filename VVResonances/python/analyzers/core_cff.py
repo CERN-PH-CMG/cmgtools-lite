@@ -2,15 +2,10 @@ import PhysicsTools.HeppyCore.framework.config as cfg
 from PhysicsTools.Heppy.analyzers.core.all import *
 from PhysicsTools.Heppy.analyzers.objects.all import *
 from PhysicsTools.Heppy.analyzers.gen.all import *
-from CMGTools.VVResonances.analyzers.LNuJJ import *
-from CMGTools.VVResonances.analyzers.LLJJ import *
-from CMGTools.VVResonances.analyzers.JJ import *
-from CMGTools.VVResonances.analyzers.MultiFinalState  import *
-from CMGTools.VVResonances.analyzers.PackedCandidateLoader import *
-from CMGTools.VVResonances.analyzers.LeptonicVMaker import *
+from CMGTools.VVResonances.analyzers.LeptonIDOverloader import *
+from CMGTools.VVResonances.analyzers.VVBuilder import *
+from CMGTools.VVResonances.analyzers.VTauBuilder import *
 from CMGTools.VVResonances.analyzers.Skimmer import *
-from CMGTools.VVResonances.tools.leptonID  import *
-from PhysicsTools.HeppyCore.utils.deltar import *
 import os
 
 
@@ -46,6 +41,7 @@ triggerFlagsAna = cfg.Analyzer(
     triggerBits = {
     }
     )
+
 
 
 # Create flags for MET filter bits
@@ -130,21 +126,21 @@ lepAna = cfg.Analyzer(
     doSegmentBasedMuonCleaning=False,
     # inclusive very loose muon selection
     inclusive_muon_id  = "",
-    inclusive_muon_pt  = 15.0,
+    inclusive_muon_pt  = 20.0,
     inclusive_muon_eta = 2.4,
-    inclusive_muon_dxy = 0.2,
-    inclusive_muon_dz  = 0.5,
+    inclusive_muon_dxy = 0.3,
+    inclusive_muon_dz  = 20,
     muon_dxydz_track = "innerTrack",
     # loose muon selection
     loose_muon_id     = "",
     loose_muon_pt     = 20.0,
     loose_muon_eta    = 2.4,
-    loose_muon_dxy    = 0.2,
-    loose_muon_dz     = 0.5,
+    loose_muon_dxy    = 0.3,
+    loose_muon_dz     = 20.0,
     loose_muon_isoCut = lambda x:True,
     # inclusive very loose electron selection
     inclusive_electron_id  = "",
-    inclusive_electron_pt  = 15.0,
+    inclusive_electron_pt  = 35.0,
     inclusive_electron_eta = 2.5,
     inclusive_electron_dxy = 0.2,
     inclusive_electron_dz  = 0.2,
@@ -152,7 +148,7 @@ lepAna = cfg.Analyzer(
     # loose electron selection
     loose_electron_id     = "",
     loose_electron_pt     = 35.0,
-    loose_electron_eta    = 2.5,
+    loose_electron_eta    = 2.4,
     loose_electron_dxy    = 0.2,
     loose_electron_dz     = 0.2,
     loose_electron_lostHits = 1.0,
@@ -175,45 +171,19 @@ lepAna = cfg.Analyzer(
     # do MC matching 
     do_mc_match = True, # note: it will in any case try it only on MC, not on data
     match_inclusiveLeptons = False, # match to all inclusive leptons
-    do_mc_match_photons = False, # do not do MC matching of electrons to photons
     )
 
-tauAna = cfg.Analyzer(
-    TauAnalyzer, name="tauAnalyzer",
-    # inclusive very loose hadronic tau selection
-    inclusive_ptMin = 18,
-    inclusive_etaMax = 9999,
-    inclusive_dxyMax = 1000.,
-    inclusive_dzMax = 0.4,
-    inclusive_vetoLeptons = False,
-    inclusive_leptonVetoDR = 0.4,
-    inclusive_decayModeID = "decayModeFindingNewDMs", # ignored if not set or ""
-    inclusive_tauID = "decayModeFindingNewDMs",
-    inclusive_vetoLeptonsPOG = False, # If True, the following two IDs are required
-    inclusive_tauAntiMuonID = "",
-    inclusive_tauAntiElectronID = "",
-    # loose hadronic tau selection
-    loose_ptMin = 18,
-    loose_etaMax = 9999,
-    loose_dxyMax = 1000.,
-    loose_dzMax = 0.2,
-    loose_vetoLeptons = True,
-    loose_leptonVetoDR = 0.4,
-    loose_decayModeID = "decayModeFindingNewDMs", # ignored if not set or ""
-    loose_tauID = "byLooseCombinedIsolationDeltaBetaCorr3Hits",
-    loose_vetoLeptonsPOG = False, # If True, the following two IDs are required
-    loose_tauAntiMuonID = "againstMuonLoose3",
-    loose_tauAntiElectronID = "againstElectronLooseMVA5",
-    loose_tauLooseID = "decayModeFindingNewDMs"
 
+
+lepIDAna = cfg.Analyzer(
+    LeptonIDOverloader,
+    name='lepIDOverloader'
 )
-
-
 
 metAna = cfg.Analyzer(
     METAnalyzer, name="metAnalyzer",
-    metCollection     = "slimmedMETsPuppi",
-    noPUMetCollection = "slimmedMETsPuppi",    
+    metCollection     = "slimmedMETs",
+    noPUMetCollection = "slimmedMETs",    
     copyMETsByValue = False,
     doTkMet = False,
     doMetNoPU = True,
@@ -231,55 +201,101 @@ metAna = cfg.Analyzer(
     )
 
 
-leptonicVAna = cfg.Analyzer(
-    LeptonicVMaker,
-    name='leptonicVMaker',
-    selectLNuPair=(lambda x:  isolationW(x) and leptonIDW(x) ),
-    selectLLPair=(lambda x: x.mass()>60.0 and x.mass()<120.0 and isolationZ(x) and leptonIDZ(x) )
+
+jetAna = cfg.Analyzer(
+    JetAnalyzer, name='jetAnalyzer',
+    jetCol = 'slimmedJets',
+    copyJetsByValue = False,      #Whether or not to copy the input jets or to work with references (should be 'True' if JetAnalyzer is run more than once)
+    genJetCol = 'slimmedGenJets',
+    rho = ('fixedGridRhoFastjetAll','',''),
+    jetPt = 25.,
+    jetEta = 4.7,
+    jetEtaCentral = 2.4,
+    jetLepDR = 0.4,
+    cleanSelectedLeptons = False, #Whether to clean 'selectedLeptons' after disambiguation. Treat with care (= 'False') if running Jetanalyzer more than once
+    minLepPt = 10,
+    relaxJetId = False,  
+    doPuId = False, # Not commissioned in 7.0.X
+    recalibrateJets = True, #'MC', # True, False, 'MC', 'Data'
+    applyL2L3Residual = True, # Switch to 'Data' when they will become available for Data
+    recalibrationType = "AK4PFchs",
+    mcGT     = "76X_mcRun2_asymptotic_v12",
+    dataGT   = "76X_dataRun2_v15_Run2015D_25ns",
+    jecPath = "${CMSSW_BASE}/src/CMGTools/RootTools/data/jec/",
+    shiftJEC = 0, # set to +1 or -1 to apply +/-1 sigma shift to the nominal jet energies
+    addJECShifts = False, # if true, add  "corr", "corrJECUp", and "corrJECDown" for each jet (requires uncertainties to be available!)
+    smearJets = False,
+    shiftJER = 0, # set to +1 or -1 to get +/-1 sigma shifts  
+    alwaysCleanPhotons = False,
+    cleanGenJetsFromPhoton = False,
+    cleanJetsFromFirstPhoton = False,
+    cleanJetsFromTaus = False,
+    cleanJetsFromIsoTracks = False,
+    doQG = False,
+    do_mc_match = True,
+    collectionPostFix = "",
+    calculateSeparateCorrections = True, # should be True if recalibrateJets is True, otherwise L1s will be inconsistent
+    calculateType1METCorrection  = False,
+    type1METParams = { 'jetPtThreshold':15., 'skipEMfractionThreshold':0.9, 'skipMuons':True },
     )
 
 
-packedAna = cfg.Analyzer(
-    PackedCandidateLoader,
-    name = 'PackedCandidateLoader',
-    cut=lambda x: x.pt()<13000.0 or x.pt()!=float('Inf')
+jetAnaAK8 = cfg.Analyzer(
+    JetAnalyzer, name='jetAnalyzerAK8',
+    jetCol = 'slimmedJetsAK8',
+    copyJetsByValue = False,      #Whether or not to copy the input jets or to work with references (should be 'True' if JetAnalyzer is run more than once)
+    genJetCol = 'slimmedGenJetsAK8',
+    rho = ('fixedGridRhoFastjetAll','',''),
+    jetPt = 150.,
+    jetEta = 2.4,
+    jetEtaCentral = 2.4,
+    jetLepDR = 0.4,
+    cleanSelectedLeptons = False, #Whether to clean 'selectedLeptons' after disambiguation. Treat with care (= 'False') if running Jetanalyzer more than once
+    minLepPt = 10,
+    relaxJetId = False,  
+    doPuId = False, # Not commissioned in 7.0.X
+    recalibrateJets = True, #'MC', # True, False, 'MC', 'Data'
+    applyL2L3Residual = True, # Switch to 'Data' when they will become available for Data
+    recalibrationType = "AK8PFchs",
+    mcGT     = "Fall15_25nsV2_MC",
+    dataGT   = "76X_dataRun2_v15_Run2015D_25ns",
+    jecPath = "${CMSSW_BASE}/src/CMGTools/RootTools/data/jec/",
+    shiftJEC = 0, # set to +1 or -1 to apply +/-1 sigma shift to the nominal jet energies
+    addJECShifts = False, # if true, add  "corr", "corrJECUp", and "corrJECDown" for each jet (requires uncertainties to be available!)
+    smearJets = False,
+    shiftJER = 0, # set to +1 or -1 to get +/-1 sigma shifts  
+    alwaysCleanPhotons = False,
+    cleanGenJetsFromPhoton = False,
+    cleanJetsFromFirstPhoton = False,
+    cleanJetsFromTaus = False,
+    cleanJetsFromIsoTracks = False,
+    doQG = False,
+    do_mc_match = False,
+    collectionPostFix = "AK8",
+    calculateSeparateCorrections = True, # should be True if recalibrateJets is True, otherwise L1s will be inconsistent
+    calculateType1METCorrection  = False,
+    type1METParams = { 'jetPtThreshold':15., 'skipEMfractionThreshold':0.9, 'skipMuons':True },
+    )
 
+
+
+
+
+
+vvAna = cfg.Analyzer(
+    VVBuilder,name='vvAna',
+    suffix = '',
+    bDiscriminator = "pfCombinedInclusiveSecondaryVertexV2BJetTags"
 )
 
-multiStateAna = cfg.Analyzer(
-    MultiFinalState,
-    name='MultiFinalStateMaker',
-    ktPowerFat = -1.0,
-    rFat = 0.8,
-    massdrop=True,
-    subjets=2,
-    doCHS = False,
-    doPUPPI = True,
-    prunning=True,
-    softdrop = True,
-    softdrop_beta=0.0,
-    softdrop_zeta=0.1,
-    selectFat = (lambda x: x.pt()>200.0 and abs(x.eta())<2.4 and x.softDropJet.mass()>0.0 and len(x.subjets_SD)>1 and x.looseID),
-    ktPower=-1.0,
-    r = 0.4,
-    selectPairLL = (lambda x:  x.mass()>0 and x.deltaPhi()>1.5 and x.leg1.pt()>200),
-    selectPairLNu = (lambda x: x.deltaPhi()>1.5 and x.leg1.pt()>200 and  x.leg1.leg2.pt()>40),
-    selectPairJJ = (lambda x:  x.mass()>1000 and x.leg1.tightID and x.leg2.tightID),
-    selectPairJJNuNu = (lambda x: x.leg1.pt()>200 and x.deltaPhi()>1.5 ),
-    suffix = '',
-    recalibrateJets = True, # True, False, 'MC', 'Data'
-    recalibrationType = "AK4PFPuppi",
-    recalibrationTypeFAT = "AK8PFPuppi",
-    jecPath = "%s/src/CMGTools/RootTools/data/jec/" % os.environ['CMSSW_BASE'],
-    shiftJEC = 0, # set to +1 or -1 to get +/-1 sigma shifts
-    rho = ('fixedGridRhoFastjetAll','',''),
-    attachBTag = True,
-    btagDiscriminator = "pfCombinedInclusiveSecondaryVertexV2BJetTags",
-    standardJets = 'slimmedJets',
-    fatJets = 'slimmedJetsAK8',
-    subJets = 'slimmedJetsAK8PFCHSSoftDropPacked',
-    doSkim = True
-    )
+
+vTauAna = cfg.Analyzer(
+    VTauBuilder,name='vTauAna',
+    suffix = ''
+)
+    
+
+
 
 
 
@@ -294,14 +310,15 @@ coreSequence = [
     triggerAna,
     pileUpAna,
     genAna,
-#    pdfwAna,
     vertexAna,
     lepAna,
+    lepIDAna,
+    jetAna,
+    jetAnaAK8,
     metAna,
-    leptonicVAna,
 #    tauAna,
-    packedAna,
-    multiStateAna,
+#    packedAna,
+#    multiStateAna,
     eventFlagsAna,
     triggerFlagsAna    
 ]

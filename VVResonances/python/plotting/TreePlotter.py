@@ -62,6 +62,9 @@ class TreePlotter(PlotterBase):
 
         return h
 
+
+
+
     def drawProfile(self,var,cuts,lumi,binsx,minx,maxx,miny,maxy,titlex = "",unitsx = "",titley="",unitsy="", drawStyle = "COLZ"):
         h = ROOT.TProfile("tmpTH2","",binsx,minx,maxx,miny,maxy)
         h.Sumw2()
@@ -198,6 +201,38 @@ class TreePlotter(PlotterBase):
         hD.Sumw2()
         hN.Sumw2()
         return self.drawEff1D(hD,hN,var,denom,num,titlex,units)
+
+
+    def makeDataSet(self,var,cut):
+        variables=var.split(',')
+
+
+        ff=ROOT.TFile("cache.root","RECREATE")
+        w=ROOT.RooWorkspace("w","w")
+        argset=ROOT.RooArgSet()
+        argset2=ROOT.RooArgSet()
+        for v in variables:
+            w.factory(v+"[-1e+25,1e+25]")
+            argset.add(w.var(v))
+            argset2.add(w.var(v))
+        w.factory("weight[-1e+25,1e+25]")       
+        argset.add(w.var('weight'))
+        
+        data=ROOT.RooDataSet("data","data",argset,"weight")
+        reduced = self.tree.CopyTree(cut)
+        for event in reduced:
+            weight = 1.0
+            for c in self.corrFactors:
+                if c['model']=='flat':
+                    weight=weight*c['value']
+                if c['model']=='tree':
+                    weight=weight*getattr(event,c['value'])
+            for v in variables:
+                argset2.find(v).setVal(getattr(event,v)[0])
+            data.add(argset2,weight)
+        return data    
+
+
 
 
     def drawEfficiency2D(self,var,denom,num,bins1,mini1,maxi1,bins2,mini2,maxi2,titlex = "", unitsx = "",titley = "", unitsy = ""):
