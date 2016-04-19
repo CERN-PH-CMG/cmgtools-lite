@@ -92,16 +92,17 @@ def createHistogram(hist_cfg, all_stack=False, verbose=False):
     plot._ApplyPrefs()
     return plot
 
-def setSumWeights(sample):
+def setSumWeights(sample, weight_dir='MCWeighter'):
     if isinstance(sample, HistogramCfg) or sample.is_data:
         return
 
-    pckfile = '/'.join([sample.ana_dir, sample.dir_name, 'MCWeighter', 'SkimReport.pck'])
+    pckfile = '/'.join([sample.ana_dir, sample.dir_name, weight_dir, 'SkimReport.pck'])
     try:
         pckobj  = pickle.load(open(pckfile,'r'))
         counters = dict(pckobj)
         if 'Sum Weights' in counters:
             sample.sumweights = counters['Sum Weights']
     except IOError:
+        print 'Warning: could not find sum weights information for sample', sample.name
         pass
         

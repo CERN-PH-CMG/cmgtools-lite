@@ -23,7 +23,7 @@ class RooPlotter(object):
 
     def drawStack(self,var,varDesc,cat,suffix,cut="",visualizeError = False):
         #make frame
-        self.frame=self.w.var(var+"_"+suffix).frame()
+        self.frame=self.w.var(var).frame()
         #plot data 
         if cut !="":
             dataset=self.w.data("data_obs").reduce(cut)
@@ -47,10 +47,12 @@ class RooPlotter(object):
             self.w.pdf("model_s").plotOn(self.frame,ROOT.RooFit.Slice(self.w.cat("CMS_channel"),cat),ROOT.RooFit.Components(",".join(names)),ROOT.RooFit.ProjWData(dataset),ROOT.RooFit.Name(data['name']+"1"),ROOT.RooFit.LineStyle(data['linestyle']),\
                                              ROOT.RooFit.LineColor(data['linecolor']),ROOT.RooFit.FillStyle(data['fillstyle']),ROOT.RooFit.FillColor(data['fillcolor']),ROOT.RooFit.DrawOption("F"))
            
+
+
             self.w.pdf("model_s").plotOn(self.frame,ROOT.RooFit.Slice(self.w.cat("CMS_channel"),cat),ROOT.RooFit.Components(",".join(names)),ROOT.RooFit.ProjWData(dataset),ROOT.RooFit.Name(data['name']+"2"),ROOT.RooFit.LineStyle(data['linestyle']),\
                                              ROOT.RooFit.LineColor(data['linecolor']),ROOT.RooFit.FillStyle(data['fillstyle']),ROOT.RooFit.FillColor(data['fillcolor']),ROOT.RooFit.DrawOption("L"))
 
-            if (not data['signal']) and (not errorVisualized):
+            if (not data['signal']) and (not errorVisualized) and visualizeError:
                 self.w.pdf("model_s").plotOn(self.frame,ROOT.RooFit.Slice(self.w.cat("CMS_channel"),cat),ROOT.RooFit.Components(",".join(names)),ROOT.RooFit.ProjWData(dataset),ROOT.RooFit.Name(data['name']+"3"),ROOT.RooFit.LineStyle(data['linestyle']),\
                                                  ROOT.RooFit.LineColor(data['linecolor']),ROOT.RooFit.FillStyle(1),ROOT.RooFit.FillColor(ROOT.kOrange),ROOT.RooFit.VisualizeError(self.fitResult,1))
                 errorVisualized=True
@@ -73,13 +75,15 @@ class RooPlotter(object):
         for c in self.contributions:
             name=c['name']
             desc=c['description']
+#            isWhite=c['fillcolor']==ROOT.kWhite
+
             curve=self.frame.getCurve(name+"1")
-            self.legend.AddEntry(curve,desc,"lf")
+            self.legend.AddEntry(curve,desc,"f")
             
             
 
 
-        self.frame.SetTitle("CMS Preliminary, #sqrt{s} = 13 TeV, L = 1.3 fb^{-1}")    
+        self.frame.SetTitle("CMS Preliminary, #sqrt{s} = 13 TeV, L = 2.6 fb^{-1}")    
         self.frame.SetLabelSize(0.05,"X")    
         self.frame.SetLabelSize(0.05,"Y")    
         self.frame.SetTitleSize(0.05,"X")    

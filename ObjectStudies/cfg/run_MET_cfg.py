@@ -1,5 +1,7 @@
 import PhysicsTools.HeppyCore.framework.config as cfg
 
+from CMGTools.RootTools.samples.autoAAAconfig import *
+
 #-------- SAMPLES AND TRIGGERS -----------
 from CMGTools.RootTools.samples.samples_13TeV_RunIIFall15MiniAODv2 import * #<--miniAOD v2 samples_13TeV_RunIIFall15MiniAODv2
 from CMGTools.RootTools.samples.samples_13TeV_DATA2015 import *
@@ -185,7 +187,7 @@ elif test==17:
     is1PH=True
     for comp in selectedComponents:
         comp.splitFactor = 100
-        comp.files = comp.files[:]   
+        comp.files = comp.files[:]
 
 # GJets
 elif test==18:
@@ -376,6 +378,8 @@ else:
 #subprocess.call(args)
 #from PhysicsTools.Heppy.utils.cmsswPreprocessor import CmsswPreprocessor
 #preprocessor = CmsswPreprocessor(preprocessorFile)
+
+autoAAA(selectedComponents)
 
 #printComps(config.components, True)               
 config = cfg.Config( components = selectedComponents,

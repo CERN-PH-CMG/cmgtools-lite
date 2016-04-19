@@ -1,5 +1,8 @@
+from itertools import combinations
+
 from PhysicsTools.Heppy.analyzers.core.Analyzer import Analyzer
 from PhysicsTools.Heppy.analyzers.core.AutoHandle import AutoHandle
+from PhysicsTools.HeppyCore.utils.deltar import deltaR
 
 import PhysicsTools.HeppyCore.framework.config as cfg
 
@@ -65,12 +68,15 @@ class TriggerAnalyzer(Analyzer):
 
         self.triggerList = self.cfg_comp.triggers
         self.triggerObjects = []
+        self.extraTriggerObjects = []
         if hasattr(self.cfg_comp, 'triggerobjects'):
             self.triggerObjects = self.cfg_comp.triggerobjects
         if hasattr(self.cfg_ana, 'extraTrig'):
             self.extraTrig = self.cfg_ana.extraTrig
         else:
             self.extraTrig = []
+        if hasattr(self.cfg_ana, 'extraTrigObj'):
+            self.extraTriggerObjects = self.cfg_ana.extraTrigObj
 
         self.vetoTriggerList = None
 
@@ -130,25 +136,47 @@ class TriggerAnalyzer(Analyzer):
         if self.cfg_ana.requireTrigger:
             if not trigger_passed:
                 return False
-
+        
+#         if event.eventId == 104644585: import pdb ; pdb.set_trace()
         if self.cfg_ana.addTriggerObjects:
             triggerObjects = self.handles['triggerObjects'].product()
+#             if event.eventId == 104644585: import pdb ; pdb.set_trace()
             for to in triggerObjects:
                 to.unpackPathNames(names)
                 for info in trigger_infos:
+#                     if event.eventId == 104644585: import pdb ; pdb.set_trace()
                     if to.hasPathName(info.name):
+                        if to in info.objects:
+                            continue
                         # print 'TO name', [n for n in to.filterLabels()], to.hasPathName(info.name, False)
-                        if self.triggerObjects:
-                            if not any(n in to.filterLabels() for n in self.triggerObjects):
+                        if self.triggerObjects or self.extraTriggerObjects:
+                            if not any(n in to.filterLabels() for n in self.triggerObjects + self.extraTriggerObjects):
                                 continue
                             info.object_names.append([obj_n for obj_n in self.triggerObjects if obj_n in to.filterLabels()])
                         else:
                             info.object_names.append('')
                         info.objects.append(to)
-
                         info.objIds.add(abs(to.pdgId()))
-                    
-
+        
+        
+        # RIC: remove duplicated trigger objects 
+        #      (is this something that may happen in first place?)
+        for info in trigger_infos:
+#             if event.eventId == 104644585: 
+#                 for oo in info.objects: print oo.pt(), oo.eta(), oo.phi()
+            objs = info.objects     
+            for to1, to2 in combinations(info.objects, 2):
+                to1Filter = set(sorted(list(to1.filterLabels())))
+                to2Filter = set(sorted(list(to2.filterLabels())))
+                if to1Filter != to2Filter:
+                    continue
+                dR = deltaR(to1.eta(), to1.phi(), to2.eta(), to2.phi())
+                if dR<0.01 and to2 in objs:
+                    objs.remove(to2)
+            info.objects = objs
+#             if event.eventId == 104644585: 
+#                 for oo in info.objects: print oo.pt(), oo.eta(), oo.phi()
+                                                
         event.trigger_infos = trigger_infos
 
         if self.cfg_ana.verbose:

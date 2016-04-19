@@ -82,6 +82,34 @@ dataEMUPlotters=[singleMuA,singleMuB,singleEleA,singleEleB]
 dataJetPlotters=[jetA,jetB]
 dataMETPlotters=[metA,metB]
 
+
+
+WWLNUJJ = TreePlotter('samples/BulkGravToWWToWlepWhad_narrow_4000.root','tree')
+WWLNUJJ.setupFromFile('samples/BulkGravToWWToWlepWhad_narrow_4000.pck')
+WWLNUJJ.addCorrectionFactor('xsec','tree')
+WWLNUJJ.addCorrectionFactor('genWeight','tree')
+WWLNUJJ.addCorrectionFactor('puWeight','tree')
+WWLNUJJ.setFillProperties(0,ROOT.kWhite)
+WWLNUJJ.setLineProperties(1,ROOT.kRed,3)
+
+
+WZLNUJJ = TreePlotter('samples/WprimeToWZ_narrow_4000.root','tree')
+WZLNUJJ.setupFromFile('samples/WprimeToWZ_narrow_4000.pck')
+WZLNUJJ.addCorrectionFactor('3*xsec','tree')
+WZLNUJJ.addCorrectionFactor('genWeight','tree')
+WZLNUJJ.addCorrectionFactor('puWeight','tree')
+WZLNUJJ.setFillProperties(0,ROOT.kWhite)
+WZLNUJJ.setLineProperties(1,ROOT.kGreen+3,3)
+
+WHLNUJJ = TreePlotter('samples/WprimeToWhToWlephbb_narrow_4000.root','tree')
+WHLNUJJ.setupFromFile('samples/WprimeToWhToWlephbb_narrow_4000.pck')
+WHLNUJJ.addCorrectionFactor('xsec','tree')
+WHLNUJJ.addCorrectionFactor('genWeight','tree')
+WHLNUJJ.addCorrectionFactor('puWeight','tree')
+WHLNUJJ.setFillProperties(0,ROOT.kWhite)
+WHLNUJJ.setLineProperties(1,ROOT.kBlue+3,3)
+
+
 #Fill properties
 WJets.setFillProperties(1001,ROOT.kAzure-9)
 tt.setFillProperties(1001,ROOT.kGreen-5)
@@ -98,9 +126,12 @@ dataJet = MergedPlotter(dataJetPlotters)
 #Stack for lnu+J
 lnujjStack = StackPlotter()
 lnujjStack.addPlotter(QCD,"QCD","QCD multijet","background")
-lnujjStack.addPlotter(GJets,"GJets","#gamma+Jets","background")
-lnujjStack.addPlotter(tt,"tt","t#bar{t}","background")
+#lnujjStack.addPlotter(GJets,"GJets","#gamma+Jets","background")
 lnujjStack.addPlotter(WJets,"WJets","W+Jets","background")
+lnujjStack.addPlotter(tt,"tt","t#bar{t}","background")
+lnujjStack.addPlotter(WWLNUJJ,"X1","X #rightarrow WW","signal")
+lnujjStack.addPlotter(WZLNUJJ,"X2","X #rightarrow WZ","signal")
+lnujjStack.addPlotter(WHLNUJJ,"X3","X #rightarrow WH","signal")
 lnujjStack.addPlotter(dataEMU,"data_obs","Data","data")
 
 #Stack for ll+J

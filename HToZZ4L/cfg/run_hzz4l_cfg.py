@@ -6,7 +6,7 @@ import PhysicsTools.HeppyCore.framework.config as cfg
 #Load all analyzers
 from CMGTools.HToZZ4L.analyzers.hzz4lCore_modules_cff import * 
 from CMGTools.HToZZ4L.tools.configTools import * 
-
+from CMGTools.RootTools.samples.autoAAAconfig import *
 
 #-------- SAMPLES AND TRIGGERS -----------
 

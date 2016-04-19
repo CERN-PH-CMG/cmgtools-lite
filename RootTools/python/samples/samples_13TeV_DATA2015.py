@@ -225,6 +225,18 @@ dataSamples_Run2015C_25ns_16Dec = [JetHT_Run2015C_25ns_16Dec, HTMHT_Run2015C_25n
 dataSamples_Run2015D_16Dec = [JetHT_Run2015D_16Dec, HTMHT_Run2015D_16Dec, MET_Run2015D_16Dec, SingleElectron_Run2015D_16Dec, SingleMuon_Run2015D_16Dec, SinglePhoton_Run2015D_16Dec, DoubleEG_Run2015D_16Dec, MuonEG_Run2015D_16Dec, DoubleMuon_Run2015D_16Dec, Tau_Run2015D_16Dec]
 dataSamples_Run2015_16Dec = dataSamples_Run2015B_16Dec + dataSamples_Run2015C_50ns_16Dec + dataSamples_Run2015C_25ns_16Dec + dataSamples_Run2015D_16Dec
 
+### ----------------------------- Run2015C-16Dec2016 ----------------------------------------
+SingleElectron_Run2015C_16Dec = kreator.makeDataComponent("SingleElectron_Run2015C_16Dec", "/SingleElectron/Run2015C_25ns-16Dec2015-v1/MINIAOD", "CMS", ".*root", json)
+SinglePhoton_Run2015C_16Dec = kreator.makeDataComponent("SinglePhoton_Run2015C_16Dec", "/SinglePhoton/Run2015C_25ns-16Dec2015-v1/MINIAOD", "CMS", ".*root", json)
+SingleMuon_Run2015C_16Dec     = kreator.makeDataComponent("SingleMuon_Run2015C_16Dec"    , "/SingleMuon/Run2015C_25ns-16Dec2015-v1/MINIAOD"    , "CMS", ".*root", json)
+DoubleEG_Run2015C_16Dec       = kreator.makeDataComponent("DoubleEG_Run2015C_16Dec"      , "/DoubleEG/Run2015C_25ns-16Dec2015-v1/MINIAOD"      , "CMS", ".*root", json)
+MuonEG_Run2015C_16Dec         = kreator.makeDataComponent("MuonEG_Run2015C_16Dec"        , "/MuonEG/Run2015C_25ns-16Dec2015-v1/MINIAOD"        , "CMS", ".*root", json)
+DoubleMuon_Run2015C_16Dec     = kreator.makeDataComponent("DoubleMuon_Run2015C_16Dec"    , "/DoubleMuon/Run2015C_25ns-16Dec2015-v1/MINIAOD"    , "CMS", ".*root", json)
+
+dataSamples_Run2015C_16Dec = [ SingleElectron_Run2015C_16Dec, SingleMuon_Run2015C_16Dec, DoubleEG_Run2015C_16Dec, MuonEG_Run2015C_16Dec, DoubleMuon_Run2015C_16Dec, SinglePhoton_Run2015C_16Dec ]
+
+
+
 ### ----------------------------- Run2015B-05Oct2015 ----------------------------------------
 ## https://hypernews.cern.ch/HyperNews/CMS/get/datasets/4153.html
 
@@ -246,7 +258,8 @@ dataSamples_Run2015B_05Oct = [JetHT_Run2015B_05Oct, HTMHT_Run2015B_05Oct, MET_Ru
 ### ----------------------------- summary ----------------------------------------
 
 #dataSamples = dataSamples_Run2015B + dataSamples_17Jul + dataSamples_Run2015C + dataSamples_Run2015D
-dataSamples = dataSamples_Run2015D + dataSamples_Run2015D_v4 + dataSamples_Run2015B_05Oct + dataSamples_Run2015D_05Oct + dataSamples_Run2015_16Dec
+#dataSamples = dataSamples_Run2015D + dataSamples_Run2015D_v4 + dataSamples_Run2015B_05Oct + dataSamples_Run2015D_05Oct
+dataSamples = dataSamples_Run2015D_16Dec + dataSamples_Run2015C_16Dec
 samples = dataSamples
 
 ### ---------------------------------------------------------------------
