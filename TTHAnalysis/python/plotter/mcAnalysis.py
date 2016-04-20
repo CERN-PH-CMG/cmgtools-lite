@@ -98,24 +98,31 @@ class MCAnalysis:
                 for p in p0.split(","):
                     if re.match(p+"$", field[1]): skipMe = True
             if skipMe: continue
-            ## 
+            cnames = [ (x.strip(), (0,1)) for x in field[1].split("+") ]
+            if "SplitFactor" in extra and extra["SplitFactor"] > 1:
+                cnames = [ (cn, (i, extra["SplitFactor"])) for (cn,_) in cnames for i in xrange(extra["SplitFactor"]) ]
+            total_w = 0.; to_norm = False; ttys = [];
+            #for (cname,fsplit) in cnames:
+            if len(cnames) != 1: raise RuntimeError, "ASPETTA"
+            cname,fsplit = cnames[0]
+            first = (fsplit[0] == 0)
             treename = extra["TreeName"] if "TreeName" in extra else options.tree 
-            rootfile = "%s/%s/%s/%s_tree.root" % (options.path, field[1].strip(), treename, treename)
+            rootfile = "%s/%s/%s/%s_tree.root" % (options.path, cname, treename, treename)
             if options.remotePath:
-                rootfile = "root:%s/%s/%s_tree.root" % (options.remotePath, field[1].strip(), treename)
+                rootfile = "root:%s/%s/%s_tree.root" % (options.remotePath, cname, treename)
             elif os.path.exists(rootfile+".url"): #(not os.path.exists(rootfile)) and :
                 rootfile = open(rootfile+".url","r").readline().strip()
-            elif (not os.path.exists(rootfile)) and os.path.exists("%s/%s/%s/tree.root" % (options.path, field[1].strip(), treename)):
+            elif (not os.path.exists(rootfile)) and os.path.exists("%s/%s/%s/tree.root" % (options.path, cname, treename)):
                 # Heppy calls the tree just 'tree.root'
-                rootfile = "%s/%s/%s/tree.root" % (options.path, field[1].strip(), treename)
+                rootfile = "%s/%s/%s/tree.root" % (options.path, cname, treename)
                 treename = "tree"
-            elif (not os.path.exists(rootfile)) and os.path.exists("%s/%s/%s/tree.root.url" % (options.path, field[1].strip(), treename)):
+            elif (not os.path.exists(rootfile)) and os.path.exists("%s/%s/%s/tree.root.url" % (options.path, cname, treename)):
                 # Heppy calls the tree just 'tree.root'
-                rootfile = "%s/%s/%s/tree.root" % (options.path, field[1].strip(), treename)
+                rootfile = "%s/%s/%s/tree.root" % (options.path, cname, treename)
                 rootfile = open(rootfile+".url","r").readline().strip()
                 treename = "tree"
-            pckfile = options.path+"/%s/skimAnalyzerCount/SkimReport.pck" % field[1].strip()
-            tty = TreeToYield(rootfile, options, settings=extra, name=pname, cname=field[1].strip(), treename=treename)
+            pckfile = options.path+"/%s/skimAnalyzerCount/SkimReport.pck" % cname
+            tty = TreeToYield(rootfile, options, settings=extra, name=pname, cname=cname, treename=treename, fsplit=fsplit); ttys.append(tty)
             if signal: 
                 self._signals.append(tty)
                 self._isSignal[pname] = True
@@ -125,53 +132,31 @@ class MCAnalysis:
                 self._isSignal[pname] = False
                 self._backgrounds.append(tty)
             if pname in self._allData: self._allData[pname].append(tty)
-            else                        : self._allData[pname] =     [tty]
+            else                     : self._allData[pname] =     [tty]
             if "data" not in pname:
                 pckobj  = pickle.load(open(pckfile,'r'))
                 counters = dict(pckobj)
-                tty.setFullNevt(int(counters['All Events']))
                 if ('Sum Weights' in counters) and options.weight:
-                    nevt = counters['Sum Weights']
-                    scale = "genWeight*%s/%g" % (field[2], 0.001*nevt)
+                    is_w = True; 
+                    if first: total_w += counters['Sum Weights']
+                    scale = "genWeight*(%s)" % field[2]
                 else:
-                    nevt = counters['All Events']
-                    scale = "%s/%g" % (field[2], 0.001*nevt)
+                    if is_w: raise RuntimeError, "Can't put together a weighted and an unweighted component (%s)" % cnames
+                    if first: total_w += counters['All Events']
+                    scale = "(%s)" % field[2]
                 if len(field) == 4: scale += "*("+field[3]+")"
                 for p0,s in options.processesToScale:
                     for p in p0.split(","):
                         if re.match(p+"$", pname): scale += "*("+s+")"
-                tty.setScaleFactor(scale)
-                if options.fullSampleYields:
-                    fullYield = 0.0;
-                    try:
-                        fullYield = float(eval(field[2])) * 1000. * options.lumi
-                        if len(field) == 4:
-                            try:
-                                fullYield = fullYield * float(eval(field[3]))
-                            except:
-                                pass
-                    except:
-                        pass
-                    tty.setFullYield(fullYield)
+                to_norm = True
             elif len(field) == 3:
                 tty.setScaleFactor(field[2])
-                if options.fullSampleYields:
-                    try:
-                        pckobj  = pickle.load(open(pckfile,'r'))
-                        counters = dict(pckobj)
-                        nevt = counters['All Events']
-                        tty.setFullYield(nevt)
-                        tty.setFullNevt(int(nevt))
-                    except:
-                        tty.setFullYield(0)
-                        tty.setFullNevt(0)
             else:
                 try:
                     pckobj  = pickle.load(open(pckfile,'r'))
                     counters = dict(pckobj)
-                    tty.setFullNevt(int(counters['All Events']))
                 except:
-                    tty.setFullNevt(0)
+                    pass
             # Adjust free-float and fixed from command line
             for p0 in options.processesToFloat:
                 for p in p0.split(","):
@@ -183,6 +168,8 @@ class MCAnalysis:
                 for p in p0.split(","):
                     if re.match(p+"$", pname): tty.setOption('PegNormToProcess', p1)
             if pname not in self._rank: self._rank[pname] = len(self._rank)
+            if to_norm: 
+                for tty in ttys: tty.setScaleFactor("%s*%g" % (scale, 1000.0/total_w))
         #if len(self._signals) == 0: raise RuntimeError, "No signals!"
         #if len(self._backgrounds) == 0: raise RuntimeError, "No backgrounds!"
     def listProcesses(self):
