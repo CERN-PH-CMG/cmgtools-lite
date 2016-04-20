@@ -132,7 +132,7 @@ def cropNegativeBins(histo):
 
 
 class TreeToYield:
-    def __init__(self,root,options,scaleFactor=1.0,name=None,cname=None,settings={},treename=None):
+    def __init__(self,root,options,scaleFactor=1.0,name=None,cname=None,settings={},treename=None,fsplit=None):
         self._name  = name  if name != None else root
         self._cname = cname if cname != None else self._name
         self._fname = root
@@ -146,6 +146,7 @@ class TreeToYield:
         self._fullYield = 0 # yield of the full sample, as if it passed the full skim and all cuts
         self._fullNevt = 0 # number of events of the full sample, as if it passed the full skim and all cuts
         self._settings = settings
+        self._fsplit = fsplit if fsplit != (0,1) else None
         loadMCCorrections(options)            ## make sure this is loaded
         self._mcCorrs = globalMCCorrections() ##  get defaults
         if 'SkipDefaultMCCorrections' in settings: ## unless requested to 
@@ -247,8 +248,16 @@ class TreeToYield:
 #            print 'Adding friend',tf_tree,tf_file
             tf = self._tree.AddFriend(tf_tree, tf_file.format(name=self._name, cname=self._cname, P=getattr(self._options,'path',''))),
             self._friends.append(tf)
+        if self._fsplit:
+            allEntries = min(self._tree.GetEntries(), self._options.maxEntries)
+            chunkSize = int(ceil(allEntries/float(self._fsplit[1])))
+            self._firstEntry = chunkSize * self._fsplit[0]
+            self._maxEntries = chunkSize # the last chunk may go beyond the end of the tree, but ROOT stops anyway so we don't care
+        else:
+            self._maxEntries = self._options.maxEntries
+            self._firstEntry = 0
         self._isInit = True
-
+        
     def getTree(self):
         if not self._isInit: self._init()
         return self._tree
@@ -319,14 +328,14 @@ class TreeToYield:
             ROOT.gROOT.cd()
             if ROOT.gROOT.FindObject("dummy") != None: ROOT.gROOT.FindObject("dummy").Delete()
             histo = ROOT.TH1D("dummy","dummy",1,0.0,1.0); histo.Sumw2()
-            nev = tree.Draw("0.5>>dummy", cut, "goff", self._options.maxEntries)
+            nev = tree.Draw("0.5>>dummy", cut, "goff", self._maxEntries, self._firstEntry)
             self.negativeCheck(histo)
             return [ histo.GetBinContent(1), histo.GetBinError(1), nev ]
         else: 
             cut = self.adaptExpr(cut,cut=True)
             if self._options.doS2V:
                 cut  = scalarToVector(cut)
-            npass = tree.Draw("1",self.adaptExpr(cut,cut=True),"goff", self._options.maxEntries);
+            npass = tree.Draw("1",self.adaptExpr(cut,cut=True),"goff", self._maxEntries, self._firstEntry);
             return [ npass, sqrt(npass), npass ]
     def _stylePlot(self,plot,spec):
         return stylePlot(plot,spec,self.getOption)
@@ -383,20 +392,20 @@ class TreeToYield:
         canKeys = (histo.ClassName() == "TH1D" and bins[0] != "[")
         if histo.ClassName != "TH2D" or self._name == "data": unbinnedData2D = False
         if unbinnedData2D:
-            nent = self._tree.Draw("%s" % expr, cut, "", self._options.maxEntries)
+            nent = self._tree.Draw("%s" % expr, cut, "", self._maxEntries, self._firstEntry)
             if nent == 0: return ROOT.TGraph(0)
             graph = ROOT.gROOT.FindObject("Graph").Clone(name) #ROOT.gPad.GetPrimitive("Graph").Clone(name)
             return graph
         drawOpt = "goff"
         if "TProfile" in histo.ClassName(): drawOpt += " PROF";
-        self._tree.Draw("%s>>%s" % (expr,"dummy"), cut, drawOpt, self._options.maxEntries)
+        self._tree.Draw("%s>>%s" % (expr,"dummy"), cut, drawOpt, self._maxEntries, self._firstEntry)
         if canKeys and histo.GetEntries() > 0 and histo.GetEntries() < self.getOption('KeysPdfMinN',2000) and not self._isdata and self.getOption("KeysPdf",False):
             #print "Histogram for %s/%s has %d entries, so will use KeysPdf " % (self._cname, self._name, histo.GetEntries())
             if "/TH1Keys_cc.so" not in ROOT.gSystem.GetLibraries(): 
                 ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/TTHAnalysis/python/plotter/TH1Keys.cc+" % os.environ['CMSSW_BASE']);
             (nb,xmin,xmax) = bins.split(",")
             histo = ROOT.TH1KeysNew("dummyk","dummyk",int(nb),float(xmin),float(xmax),"a",1.0)
-            self._tree.Draw("%s>>%s" % (expr,"dummyk"), cut, "goff", self._options.maxEntries)
+            self._tree.Draw("%s>>%s" % (expr,"dummyk"), cut, "goff", self._maxEntries, self._firstEntry)
             self.negativeCheck(histo)
             return histo.GetHisto().Clone(name)
         #elif not self._isdata and self.getOption("KeysPdf",False):
