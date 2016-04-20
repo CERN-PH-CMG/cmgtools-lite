@@ -17,6 +17,11 @@ def _runPlot(args):
     #print "Done plot %s for %s, %s in %s s" % (plotspec.name,key,tty._cname,timer.RealTime())
     return ret
 
+## These must be defined as standalone functions, to allow runing them in parallel
+def _runApplyCut(args):
+    key,tty,cut = args
+    return (key, tty.cutToElist(cut))
+
 class MCAnalysis:
     def __init__(self,samples,options):
         self._options = options
@@ -326,6 +331,27 @@ class MCAnalysis:
                 ret['background'] = mergePlots(plotspec.name+"_background",allBg)
                 ret['background'].summary = True
         return ret
+    def applyCut(self,cut):
+        tasks = []; revmap = {}
+        for key,ttys in self._allData.iteritems():
+            for tty in ttys:
+                revmap[id(tty)] = tty
+                tasks.append( (id(tty), tty, cut) )
+        if self._options.jobs == 0: 
+            retlist = map(_runApplyCut, tasks)
+        else:
+            from multiprocessing import Pool
+            pool = Pool(self._options.jobs)
+            retlist = pool.map(_runApplyCut, tasks)
+            pool.close()
+            pool.join()
+        for ttid, elist in retlist:
+            tty = revmap[ttid]
+            tty.applyCutAndElist(cut, elist)
+    def clearCut(self):
+        for key,ttys in self._allData.iteritems():
+            for tty in ttys:
+                tty.clearCut() 
     def prettyPrint(self,reports,makeSummary=True):
         allSig = []; allBg = []
         for key in reports:

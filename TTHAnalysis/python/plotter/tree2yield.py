@@ -183,6 +183,7 @@ class TreeToYield:
             libname = macro.replace(".cc","_cc.so").replace(".cxx","_cxx.so")
             if libname not in ROOT.gSystem.GetLibraries():
                 ROOT.gROOT.ProcessLine(".L %s+" % macro);
+        self._appliedCut = None
         #print "Done creation  %s for task %s in pid %d " % (self._fname, self._name, os.getpid())
     def setScaleFactor(self,scaleFactor):
         if self._mcCorrs and scaleFactor and scaleFactor != 1.0:
@@ -357,6 +358,15 @@ class TreeToYield:
     def getPlotRaw(self,name,expr,bins,cut,plotspec):
         unbinnedData2D = plotspec.getOption('UnbinnedData2D',False) if plotspec != None else False
         if not self._isInit: self._init()
+        if self._appliedCut != None:
+            if cut != self._appliedCut: 
+                print "WARNING, for %s:%s, cut was set to '%s' but now plotting with cut '%s'. Will discard old cut and elist" % (self._name, self._cname, self._appliedCut, cut)
+                self.clearCut()
+            else:
+                #print "INFO, for %s:%s, cut was already set to '%s', will use elist for plotting (%d entries)" % (self._name, self._cname, cut, self._elist.GetN())
+                self._tree.SetEntryList(self._elist)
+                #self._tree.SetEventList(self._elist)
+        #print "for %s, %s, does my tree have an elist? %s " % ( self._name, self._cname, "yes" if self._tree.GetEntryList() else "no" )
         if self._weight:
             if self._isdata: cut = "(%s)     *(%s)*(%s)" % (self._weightString,                    self._scaleFactor, self.adaptExpr(cut,cut=True))
             else:            cut = "(%s)*(%s)*(%s)*(%s)" % (self._weightString,self._options.lumi, self._scaleFactor, self.adaptExpr(cut,cut=True))
@@ -413,7 +423,26 @@ class TreeToYield:
         eventLoop.beginComponent(self)
         eventLoop.loop(self._tree, getattr(self._options, 'maxEvents', -1), cut=cut)
         eventLoop.endComponent(self)
-
+    def applyCutAndElist(self,cut,elist):
+        if self._appliedCut != None and self._appliedCut != cut: 
+            print "WARNING: changing applied cut from %s to %s\n" % (self._appliedCut, cut)
+        self._appliedCut = cut
+        self._elist = elist
+    def cutToElist(self,cut):
+        if not self._isInit: self._init()
+        if self._weight:
+            if self._isdata: cut = "(%s)     *(%s)*(%s)" % (self._weightString,                    self._scaleFactor, self.adaptExpr(cut,cut=True))
+            else:            cut = "(%s)*(%s)*(%s)*(%s)" % (self._weightString,self._options.lumi, self._scaleFactor, self.adaptExpr(cut,cut=True))
+        else: cut = self.adaptExpr(cut,cut=True)
+        if self._options.doS2V: cut  = scalarToVector(cut)
+        self._tree.Draw('>>elist', cut, 'entrylist', self._maxEntries, self._firstEntry)
+        elist = ROOT.gDirectory.Get('elist')
+        return elist
+    def clearCut(self):
+        if not self._isInit: raise RuntimeError, "Error, clearing a cut on something that wasn't even initialized"
+        self._appliedCut = None
+        self._tree.SetEntryList(None)
+        self._elist = None
 def _copyPlotStyle(self,plotfrom,plotto):
         plotto.SetFillStyle(plotfrom.GetFillStyle())
         plotto.SetFillColor(plotfrom.GetFillColor())

@@ -582,6 +582,7 @@ class PlotMaker:
                 sets.append((cnsafe,cn,cv))
         for subname, title, cut in sets:
             print "cut set: ",title
+            if self._options.elist: mca.applyCut(cut)
             dir = self._dir
             if subname:
                 if self._dir.Get(subname):
@@ -662,6 +663,8 @@ class PlotMaker:
                                   makeCanvas=makeCanvas,
                                   outputDir=dir,
                                   printDir=self._options.printDir+(("/"+subname) if subname else ""))
+
+            if self._options.elist: mca.clearCut(cut)
 
     def printOnePlot(self,mca,pspec,pmap,makeCanvas=True,outputDir=None,printDir=None,xblind=[9e99,-9e99],extraProcesses=[],plotmode="auto",outputName=None):
                 options = self._options
@@ -953,6 +956,7 @@ def addPlotMakerOptions(parser, addAlsoMCAnalysis=True):
     parser.add_option("--toleranceForDiff", dest="toleranceForDiff", default=0.0, type="float", help="set numerical tollerance to define when two histogram bins are considered different");
     parser.add_option("--pseudoData", dest="pseudoData", type="string", default=None, help="If set to 'background' or 'all', it will plot also a pseudo-dataset made from background (or signal+background) with Poisson fluctuations in each bin.")
     parser.add_option("--wide", dest="wideplot", action="store_true", default=False, help="Draw a wide canvas")
+    parser.add_option("--elist", dest="elist", action="store_true", default=False, help="Use elist")
 
 if __name__ == "__main__":
     from optparse import OptionParser
