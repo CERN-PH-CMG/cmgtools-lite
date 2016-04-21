@@ -1,8 +1,8 @@
 ### SIGNAL AND CONTROL SAMPLES
-GJetsHT: GJets_HT100to200 :  xsec; FillColor=ROOT.kAzure+5,  Label="ZJets"
-GJetsHT: GJets_HT200to400 :  xsec; FillColor=ROOT.kAzure+5,  Label="ZJets"
-GJetsHT: GJets_HT400to600 :  xsec; FillColor=ROOT.kAzure+5,  Label="ZJets"
-GJetsHT: GJets_HT600toInf :  xsec; FillColor=ROOT.kAzure+5,  Label="ZJets"
+GJetsHT: GJets_HT100to200 :  xsec; FillColor=ROOT.kOrange+5,  Label="GJets"
+GJetsHT: GJets_HT200to400 :  xsec; FillColor=ROOT.kOrange+5,  Label="GJets"
+GJetsHT: GJets_HT400to600 :  xsec; FillColor=ROOT.kOrange+5,  Label="GJets"
+GJetsHT: GJets_HT600toInf :  xsec; FillColor=ROOT.kOrange+5,  Label="GJets"
 
 # ---- Spring15 25ns samples -------
 
