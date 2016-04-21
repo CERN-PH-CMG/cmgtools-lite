@@ -99,75 +99,74 @@ class MCAnalysis:
                     if re.match(p+"$", field[1]): skipMe = True
             if skipMe: continue
             cnames = [ (x.strip(), (0,1)) for x in field[1].split("+") ]
-            if "SplitFactor" in extra and extra["SplitFactor"] > 1:
-                cnames = [ (cn, (i, extra["SplitFactor"])) for (cn,_) in cnames for i in xrange(extra["SplitFactor"]) ]
+            splitFactor = extra["SplitFactor"] if "SplitFactor" in extra else options.splitFactor
+            if splitFactor > 1:
+                cnames = [ (cn, (i, splitFactor)) for (cn,_) in cnames for i in xrange(splitFactor) ]
             total_w = 0.; to_norm = False; ttys = [];
-            #for (cname,fsplit) in cnames:
-            if len(cnames) != 1: raise RuntimeError, "ASPETTA"
-            cname,fsplit = cnames[0]
-            first = (fsplit[0] == 0)
-            treename = extra["TreeName"] if "TreeName" in extra else options.tree 
-            rootfile = "%s/%s/%s/%s_tree.root" % (options.path, cname, treename, treename)
-            if options.remotePath:
-                rootfile = "root:%s/%s/%s_tree.root" % (options.remotePath, cname, treename)
-            elif os.path.exists(rootfile+".url"): #(not os.path.exists(rootfile)) and :
-                rootfile = open(rootfile+".url","r").readline().strip()
-            elif (not os.path.exists(rootfile)) and os.path.exists("%s/%s/%s/tree.root" % (options.path, cname, treename)):
-                # Heppy calls the tree just 'tree.root'
-                rootfile = "%s/%s/%s/tree.root" % (options.path, cname, treename)
-                treename = "tree"
-            elif (not os.path.exists(rootfile)) and os.path.exists("%s/%s/%s/tree.root.url" % (options.path, cname, treename)):
-                # Heppy calls the tree just 'tree.root'
-                rootfile = "%s/%s/%s/tree.root" % (options.path, cname, treename)
-                rootfile = open(rootfile+".url","r").readline().strip()
-                treename = "tree"
-            pckfile = options.path+"/%s/skimAnalyzerCount/SkimReport.pck" % cname
-            tty = TreeToYield(rootfile, options, settings=extra, name=pname, cname=cname, treename=treename, fsplit=fsplit); ttys.append(tty)
-            if signal: 
-                self._signals.append(tty)
-                self._isSignal[pname] = True
-            elif pname == "data":
-                self._data.append(tty)
-            else:
-                self._isSignal[pname] = False
-                self._backgrounds.append(tty)
-            if pname in self._allData: self._allData[pname].append(tty)
-            else                     : self._allData[pname] =     [tty]
-            if "data" not in pname:
-                pckobj  = pickle.load(open(pckfile,'r'))
-                counters = dict(pckobj)
-                if ('Sum Weights' in counters) and options.weight:
-                    is_w = True; 
-                    if first: total_w += counters['Sum Weights']
-                    scale = "genWeight*(%s)" % field[2]
+            for (cname,fsplit) in cnames:
+                first = (fsplit[0] == 0)
+                treename = extra["TreeName"] if "TreeName" in extra else options.tree 
+                rootfile = "%s/%s/%s/%s_tree.root" % (options.path, cname, treename, treename)
+                if options.remotePath:
+                    rootfile = "root:%s/%s/%s_tree.root" % (options.remotePath, cname, treename)
+                elif os.path.exists(rootfile+".url"): #(not os.path.exists(rootfile)) and :
+                    rootfile = open(rootfile+".url","r").readline().strip()
+                elif (not os.path.exists(rootfile)) and os.path.exists("%s/%s/%s/tree.root" % (options.path, cname, treename)):
+                    # Heppy calls the tree just 'tree.root'
+                    rootfile = "%s/%s/%s/tree.root" % (options.path, cname, treename)
+                    treename = "tree"
+                elif (not os.path.exists(rootfile)) and os.path.exists("%s/%s/%s/tree.root.url" % (options.path, cname, treename)):
+                    # Heppy calls the tree just 'tree.root'
+                    rootfile = "%s/%s/%s/tree.root" % (options.path, cname, treename)
+                    rootfile = open(rootfile+".url","r").readline().strip()
+                    treename = "tree"
+                pckfile = options.path+"/%s/skimAnalyzerCount/SkimReport.pck" % cname
+                tty = TreeToYield(rootfile, options, settings=extra, name=pname, cname=cname, treename=treename, fsplit=fsplit); ttys.append(tty)
+                if signal: 
+                    self._signals.append(tty)
+                    self._isSignal[pname] = True
+                elif pname == "data":
+                    self._data.append(tty)
                 else:
-                    if is_w: raise RuntimeError, "Can't put together a weighted and an unweighted component (%s)" % cnames
-                    if first: total_w += counters['All Events']
-                    scale = "(%s)" % field[2]
-                if len(field) == 4: scale += "*("+field[3]+")"
-                for p0,s in options.processesToScale:
-                    for p in p0.split(","):
-                        if re.match(p+"$", pname): scale += "*("+s+")"
-                to_norm = True
-            elif len(field) == 3:
-                tty.setScaleFactor(field[2])
-            else:
-                try:
+                    self._isSignal[pname] = False
+                    self._backgrounds.append(tty)
+                if pname in self._allData: self._allData[pname].append(tty)
+                else                     : self._allData[pname] =     [tty]
+                if "data" not in pname:
                     pckobj  = pickle.load(open(pckfile,'r'))
                     counters = dict(pckobj)
-                except:
-                    pass
-            # Adjust free-float and fixed from command line
-            for p0 in options.processesToFloat:
-                for p in p0.split(","):
-                    if re.match(p+"$", pname): tty.setOption('FreeFloat', True)
-            for p0 in options.processesToFix:
-                for p in p0.split(","):
-                    if re.match(p+"$", pname): tty.setOption('FreeFloat', False)
-            for p0, p1 in options.processesToPeg:
-                for p in p0.split(","):
-                    if re.match(p+"$", pname): tty.setOption('PegNormToProcess', p1)
-            if pname not in self._rank: self._rank[pname] = len(self._rank)
+                    if ('Sum Weights' in counters) and options.weight:
+                        is_w = True; 
+                        if first: total_w += counters['Sum Weights']
+                        scale = "genWeight*(%s)" % field[2]
+                    else:
+                        if is_w: raise RuntimeError, "Can't put together a weighted and an unweighted component (%s)" % cnames
+                        if first: total_w += counters['All Events']
+                        scale = "(%s)" % field[2]
+                    if len(field) == 4: scale += "*("+field[3]+")"
+                    for p0,s in options.processesToScale:
+                        for p in p0.split(","):
+                            if re.match(p+"$", pname): scale += "*("+s+")"
+                    to_norm = True
+                elif len(field) == 3:
+                    tty.setScaleFactor(field[2])
+                else:
+                    try:
+                        pckobj  = pickle.load(open(pckfile,'r'))
+                        counters = dict(pckobj)
+                    except:
+                        pass
+                # Adjust free-float and fixed from command line
+                for p0 in options.processesToFloat:
+                    for p in p0.split(","):
+                        if re.match(p+"$", pname): tty.setOption('FreeFloat', True)
+                for p0 in options.processesToFix:
+                    for p in p0.split(","):
+                        if re.match(p+"$", pname): tty.setOption('FreeFloat', False)
+                for p0, p1 in options.processesToPeg:
+                    for p in p0.split(","):
+                        if re.match(p+"$", pname): tty.setOption('PegNormToProcess', p1)
+                if pname not in self._rank: self._rank[pname] = len(self._rank)
             if to_norm: 
                 for tty in ttys: tty.setScaleFactor("%s*%g" % (scale, 1000.0/total_w))
         #if len(self._signals) == 0: raise RuntimeError, "No signals!"
@@ -229,7 +228,7 @@ class MCAnalysis:
             #stderr.write("Will run %d tasks on %d multiple treads\n" % (len(tasks),self._options.jobs))
             from multiprocessing import Pool
             pool = Pool(self._options.jobs)
-            retlist  = pool.map(_runYields, tasks)
+            retlist  = pool.map(_runYields, tasks, 1)
             pool.close()
             pool.join()
         ## then gather results with the same process
@@ -282,11 +281,14 @@ class MCAnalysis:
         else:
             #from sys import stderr
             #stderr.write("Will run %d tasks on %d multiple treads\n" % (len(tasks),self._options.jobs))
+            timer = ROOT.TStopwatch()
+            print "Starting plot %s with %d tasks, %d threads" % (plotspec.name,len(tasks),self._options.jobs)
             from multiprocessing import Pool
             pool = Pool(self._options.jobs)
-            retlist  = pool.map(_runPlot, tasks)
+            retlist  = pool.map(_runPlot, tasks, 1)
             pool.close()
             pool.join()
+            print "Done plot %s fin %s s" % (plotspec.name,timer.RealTime())
         ## then gather results with the same process
         mergemap = {}
         for (k,v) in retlist: 
@@ -329,7 +331,7 @@ class MCAnalysis:
         else:
             from multiprocessing import Pool
             pool = Pool(self._options.jobs)
-            retlist = pool.map(_runApplyCut, tasks)
+            retlist = pool.map(_runApplyCut, tasks, 1)
             pool.close()
             pool.join()
         for ttid, elist in retlist:
@@ -482,6 +484,7 @@ class MCAnalysis:
 def addMCAnalysisOptions(parser,addTreeToYieldOnesToo=True):
     if addTreeToYieldOnesToo: addTreeToYieldOptions(parser)
     parser.add_option("-j", "--jobs",           dest="jobs", type="int", default=0, help="Use N threads");
+    parser.add_option("--split-factor",         dest="splitFactor", type="int", default=0, help="Use N chunks per sample by default (if no SplitFactor in the MCA)");
     parser.add_option("-P", "--path",           dest="path",        type="string", default="./",      help="path to directory with input trees and pickle files (./)") 
     parser.add_option("--RP", "--remote-path",   dest="remotePath",  type="string", default=None,      help="path to remote directory with trees, but not other metadata (default: same as path)") 
     parser.add_option("-p", "--process", dest="processes", type="string", default=[], action="append", help="Processes to print (comma-separated list of regexp, can specify multiple ones)");

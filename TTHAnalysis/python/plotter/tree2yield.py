@@ -446,10 +446,10 @@ class TreeToYield:
         elist = ROOT.gDirectory.Get('elist')
         return elist
     def clearCut(self):
-        if not self._isInit: raise RuntimeError, "Error, clearing a cut on something that wasn't even initialized"
+        #if not self._isInit: raise RuntimeError, "Error, clearing a cut on something that wasn't even initialized"
         self._appliedCut = None
-        self._tree.SetEntryList(None)
         self._elist = None
+        if self._isInit: self._tree.SetEntryList(None)
 def _copyPlotStyle(self,plotfrom,plotto):
         plotto.SetFillStyle(plotfrom.GetFillStyle())
         plotto.SetFillColor(plotfrom.GetFillColor())

@@ -664,7 +664,7 @@ class PlotMaker:
                                   outputDir=dir,
                                   printDir=self._options.printDir+(("/"+subname) if subname else ""))
 
-            if self._options.elist: mca.clearCut(cut)
+            if self._options.elist: mca.clearCut()
 
     def printOnePlot(self,mca,pspec,pmap,makeCanvas=True,outputDir=None,printDir=None,xblind=[9e99,-9e99],extraProcesses=[],plotmode="auto",outputName=None):
                 options = self._options
