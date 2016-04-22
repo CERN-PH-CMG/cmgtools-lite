@@ -282,6 +282,7 @@ if is1L:
     metSequence.insert(metSequence.index(lepAna)+1,ttHLepSkim)
 
 if isDiJet:
+#vertexAna.keepFailingEvents = True # keep events with no good vertices
     ttHJetMETSkim.jetPtCuts = [100,100]
     metSequence.insert(metSequence.index(photonAna)+2,ttHJetMETSkim)
     metSequence.remove(photonAna)
@@ -323,6 +324,11 @@ triggerFlagsAna.triggerBits = {
             'MonoJet' : triggers_Jet80MET90, #["["HLT_MonoCentralPFJet80_PFMETNoMu90_NoiseCleaned_PFMHTNoMu90_IDTight_v*","HLT_MonoCentralPFJet80_PFMETNoMu90_JetIdCleaned_PFMHTNoMu90_IDTight_v*","HLT_MonoCentralPFJet80_PFMETNoMu90_PFMHTNoMu90_IDTight_v*"]
 
 }
+
+## to save prescale uncomment these
+#triggerFlagsAna.unrollbits = True
+#triggerFlagsAna.saveIsUnprescaled = True
+#triggerFlagsAna.checkL1prescale = True
 
 
 # ------------------------------------------------------------------------------------------- #
