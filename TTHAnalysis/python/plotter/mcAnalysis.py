@@ -2,25 +2,31 @@
 #from tree2yield import *
 from CMGTools.TTHAnalysis.plotter.tree2yield import *
 from CMGTools.TTHAnalysis.plotter.projections import *
-import pickle, re
+import pickle, re, random, time
+
+#_T0 = long(ROOT.gSystem.Now())
 
 ## These must be defined as standalone functions, to allow runing them in parallel
 def _runYields(args):
-    key,tty,cuts,noEntryLine = args
-    return (key, tty.getYields(cuts,noEntryLine=noEntryLine))
+    key,tty,cuts,noEntryLine,fsplit = args
+    return (key, tty.getYields(cuts,noEntryLine=noEntryLine,fsplit=fsplit))
 
 def _runPlot(args):
-    key,tty,plotspec,cut = args
-    #timer = ROOT.TStopwatch()
+    key,tty,plotspec,cut,fsplit = args
+    timer = ROOT.TStopwatch()
     #print "Starting plot %s for %s, %s" % (plotspec.name,key,tty._cname)
-    ret = (key,tty.getPlot(plotspec,cut))
-    #print "Done plot %s for %s, %s in %s s" % (plotspec.name,key,tty._cname,timer.RealTime())
+    ret = (key,tty.getPlot(plotspec,cut,fsplit=fsplit))
+    #print "Done plot %s for %s, %s, fsplit %s in %s s, at %.2f; entries = %d, time/entry = %.3f ms" % (plotspec.name,key,tty._cname,fsplit,timer.RealTime(), 0.001*(long(ROOT.gSystem.Now()) - _T0), ret[1].GetEntries(), (long(ROOT.gSystem.Now()) - _T0)/float(ret[1].GetEntries()))
     return ret
 
-## These must be defined as standalone functions, to allow runing them in parallel
 def _runApplyCut(args):
-    key,tty,cut = args
-    return (key, tty.cutToElist(cut))
+    key,tty,cut,fsplit = args
+    return (key, tty.cutToElist(cut,fsplit=fsplit))
+
+def _runGetEntries(args):
+    key,tty = args
+    return (key, tty.getEntries())
+
 
 class MCAnalysis:
     def __init__(self,samples,options):
@@ -98,13 +104,9 @@ class MCAnalysis:
                 for p in p0.split(","):
                     if re.match(p+"$", field[1]): skipMe = True
             if skipMe: continue
-            cnames = [ (x.strip(), (0,1)) for x in field[1].split("+") ]
-            splitFactor = extra["SplitFactor"] if "SplitFactor" in extra else options.splitFactor
-            if splitFactor > 1:
-                cnames = [ (cn, (i, splitFactor)) for (cn,_) in cnames for i in xrange(splitFactor) ]
+            cnames = [ x.strip() for x in field[1].split("+") ]
             total_w = 0.; to_norm = False; ttys = [];
-            for (cname,fsplit) in cnames:
-                first = (fsplit[0] == 0)
+            for cname in cnames:
                 treename = extra["TreeName"] if "TreeName" in extra else options.tree 
                 rootfile = "%s/%s/%s/%s_tree.root" % (options.path, cname, treename, treename)
                 if options.remotePath:
@@ -121,7 +123,7 @@ class MCAnalysis:
                     rootfile = open(rootfile+".url","r").readline().strip()
                     treename = "tree"
                 pckfile = options.path+"/%s/skimAnalyzerCount/SkimReport.pck" % cname
-                tty = TreeToYield(rootfile, options, settings=extra, name=pname, cname=cname, treename=treename, fsplit=fsplit); ttys.append(tty)
+                tty = TreeToYield(rootfile, options, settings=extra, name=pname, cname=cname, treename=treename); ttys.append(tty)
                 if signal: 
                     self._signals.append(tty)
                     self._isSignal[pname] = True
@@ -137,11 +139,11 @@ class MCAnalysis:
                     counters = dict(pckobj)
                     if ('Sum Weights' in counters) and options.weight:
                         is_w = True; 
-                        if first: total_w += counters['Sum Weights']
+                        total_w += counters['Sum Weights']
                         scale = "genWeight*(%s)" % field[2]
                     else:
                         if is_w: raise RuntimeError, "Can't put together a weighted and an unweighted component (%s)" % cnames
-                        if first: total_w += counters['All Events']
+                        total_w += counters['All Events']
                         scale = "(%s)" % field[2]
                     if len(field) == 4: scale += "*("+field[3]+")"
                     for p0,s in options.processesToScale:
@@ -218,19 +220,11 @@ class MCAnalysis:
             if key == 'data' and nodata: continue
             if process != None and key != process: continue
             for tty in ttys:
-                tasks.append((key,tty,cuts,noEntryLine))
+                tasks.append((key,tty,cuts,noEntryLine,None))
         ## then do the work
-        retlist = []
-        if self._options.jobs == 0: 
-            retlist = map(_runYields, tasks)
-        else:
-            #from sys import stderr
-            #stderr.write("Will run %d tasks on %d multiple treads\n" % (len(tasks),self._options.jobs))
-            from multiprocessing import Pool
-            pool = Pool(self._options.jobs)
-            retlist  = pool.map(_runYields, tasks, 1)
-            pool.close()
-            pool.join()
+        if self._options.splitFactor > 1 or  self._options.splitFactor == -1:
+            tasks = self._splitTasks(tasks)
+        retlist = self._processTasks(_runYields, tasks,name="yields")
         ## then gather results with the same process
         mergemap = {}
         for (k,v) in retlist: 
@@ -274,21 +268,10 @@ class MCAnalysis:
             if key == 'data' and nodata: continue
             if process != None and key != process: continue
             for tty in ttys:
-                tasks.append((key,tty,plotspec,cut))
-        retlist = []
-        if self._options.jobs == 0: 
-            retlist = map(_runPlot, tasks)
-        else:
-            #from sys import stderr
-            #stderr.write("Will run %d tasks on %d multiple treads\n" % (len(tasks),self._options.jobs))
-            timer = ROOT.TStopwatch()
-            print "Starting plot %s with %d tasks, %d threads" % (plotspec.name,len(tasks),self._options.jobs)
-            from multiprocessing import Pool
-            pool = Pool(self._options.jobs)
-            retlist  = pool.map(_runPlot, tasks, 1)
-            pool.close()
-            pool.join()
-            print "Done plot %s fin %s s" % (plotspec.name,timer.RealTime())
+                tasks.append((key,tty,plotspec,cut,None))
+        if self._options.splitFactor > 1 or  self._options.splitFactor == -1:
+            tasks = self._splitTasks(tasks)
+        retlist = self._processTasks(_runPlot, tasks, name="plot "+plotspec.name)
         ## then gather results with the same process
         mergemap = {}
         for (k,v) in retlist: 
@@ -319,21 +302,35 @@ class MCAnalysis:
             if self._backgrounds and not ret.has_key('background') and len(allBg) > 0:
                 ret['background'] = mergePlots(plotspec.name+"_background",allBg)
                 ret['background'].summary = True
+
+        #print "DONE getPlots at %.2f" % (0.001*(long(ROOT.gSystem.Now()) - _T0))
         return ret
+    def prepareForSplit(self):
+        ttymap = {}
+        for key,ttys in self._allData.iteritems():
+            for tty in ttys:
+                if not tty.hasEntries(): 
+                    #print "For tty %s/%s, I don't have the number of entries" % (tty._name, tty._cname)
+                    ttymap[id(tty)] = tty
+        if len(ttymap):
+            retlist = self._processTasks(_runGetEntries, ttymap.items(), name="GetEntries")
+            for ttid, entries in retlist:
+                ttymap[ttid].setEntries(entries)
     def applyCut(self,cut):
         tasks = []; revmap = {}
         for key,ttys in self._allData.iteritems():
             for tty in ttys:
                 revmap[id(tty)] = tty
-                tasks.append( (id(tty), tty, cut) )
-        if self._options.jobs == 0: 
-            retlist = map(_runApplyCut, tasks)
-        else:
-            from multiprocessing import Pool
-            pool = Pool(self._options.jobs)
-            retlist = pool.map(_runApplyCut, tasks, 1)
-            pool.close()
-            pool.join()
+                tasks.append( (id(tty), tty, cut, None) )
+        if self._options.splitFactor > 1 or self._options.splitFactor == -1:
+            tasks = self._splitTasks(tasks)
+        retlist = self._processTasks(_runApplyCut, tasks, name="apply cut "+cut)
+        if self._options.splitFactor > 1 or self._options.splitFactor == -1:
+            aggregated = {}
+            for ttid, elist in retlist:
+                if ttid not in aggregated: aggregated[ttid] = elist
+                else:                      aggregated[ttid].Add(elist)
+            retlist = aggregated.items()
         for ttid, elist in retlist:
             tty = revmap[ttid]
             tty.applyCutAndElist(cut, elist)
@@ -479,12 +476,60 @@ class MCAnalysis:
             stylePlot(plot, pspec, lambda key,default : opts[key] if key in opts else default)
         elif not mayBeMissing:
             raise KeyError, "Process %r not found" % process
+    def _processTasks(self,func,tasks,name=None):
+        #timer = ROOT.TStopwatch()
+        #print "Starting job %s with %d tasks, %d threads" % (name,len(tasks),self._options.jobs)
+        if self._options.jobs == 0: 
+            retlist = map(func, tasks)
+        else:
+            from multiprocessing import Pool
+            pool = Pool(self._options.jobs)
+            retlist = pool.map(func, tasks, 1)
+            pool.close()
+            pool.join()
+        #print "Done %s in %s s at %.2f " % (name,timer.RealTime(),0.001*(long(ROOT.gSystem.Now()) - _T0))
+        return retlist
+    def _splitTasks(self,tasks):
+        nsplit = self._options.splitFactor
+        if nsplit == -1: nsplit = self._options.jobs
+        if nsplit <= 1: return tasks
+        newtasks = []
+        if not self._options.splitDynamic:
+            for task in tasks:
+                for fsplit in [ (i,nsplit) for i in xrange(nsplit) ]:
+                    newtasks.append( tuple( (list(task)[:-1]) + [fsplit] ) )
+        else:
+            self.prepareForSplit() 
+            #print "Original task list has %d entries; split factor %d." % (len(tasks), nsplit)
+            maxent = max( task[1].getEntries() for task in tasks )
+            grain  = maxent / nsplit / 1 # factor 2 may be optimized
+            #print "Largest task has %d entries. Will use %d as grain " % (maxent, grain)
+            if grain < 10: return tasks # sanity check
+            newtasks_wsize = []
+            for task in tasks:
+                tty = task[1]; 
+                entries = tty.getEntries()
+                chunks  = min(max(1, int(round(entries/grain))), nsplit)
+                fsplits = [ (i,chunks) for i in xrange(chunks) ]
+                #print "    task %s/%s has %d entries. N/g = %.1f, chunks = %d" % (tty._name, tty._cname, entries, entries/float(grain), chunks)
+                for fsplit in fsplits:
+                    newtasks_wsize.append( (entries/float(chunks), tuple( (list(task)[:-1]) + [fsplit] ) ) )
+            if self._options.splitSort:
+                newtasks_wsize.sort(key = lambda (size,task) : size, reverse = True)
+                #for s,t in newtasks_wsize: print "\t%9d %s/%s %s" % (s,t[1]._name, t[1]._cname, t[-1])
+            newtasks = [ task for (size,task) in newtasks_wsize ]
+        #print "New task list has %d entries; actual split factor %.2f" % (len(newtasks), len(newtasks)/float(len(tasks)))
+        return newtasks
 
 
 def addMCAnalysisOptions(parser,addTreeToYieldOnesToo=True):
     if addTreeToYieldOnesToo: addTreeToYieldOptions(parser)
     parser.add_option("-j", "--jobs",           dest="jobs", type="int", default=0, help="Use N threads");
-    parser.add_option("--split-factor",         dest="splitFactor", type="int", default=0, help="Use N chunks per sample by default (if no SplitFactor in the MCA)");
+    parser.add_option("--split-factor",         dest="splitFactor", type="int", default=0, help="Use N chunks per sample (-1 means to use the same as what passed to -j, which appears to work well in the average case)");
+    #parser.add_option("--split-dynamic",         dest="splitDynamic", action="store_true", default=True, help="Make the splitting dynamic (reduce the chunks for small samples)");
+    parser.add_option("--split-static",         dest="splitDynamic", action="store_false", default=True, help="Make the splitting dynamic (reduce the chunks for small samples)");
+    #parser.add_option("--split-sort",         dest="splitSort", action="store_true", default=True, help="Make the splitting dynamic (reduce the chunks for small samples)");
+    parser.add_option("--split-nosort",         dest="splitSort", action="store_false", default=True, help="Make the splitting dynamic (reduce the chunks for small samples)");
     parser.add_option("-P", "--path",           dest="path",        type="string", default="./",      help="path to directory with input trees and pickle files (./)") 
     parser.add_option("--RP", "--remote-path",   dest="remotePath",  type="string", default=None,      help="path to remote directory with trees, but not other metadata (default: same as path)") 
     parser.add_option("-p", "--process", dest="processes", type="string", default=[], action="append", help="Processes to print (comma-separated list of regexp, can specify multiple ones)");
