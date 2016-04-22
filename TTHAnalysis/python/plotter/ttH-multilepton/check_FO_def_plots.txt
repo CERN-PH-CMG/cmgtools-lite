@@ -1,0 +1,12 @@
+nJetsFromTopWZ : Sum$(abs(JetSel_Recl_mcMatchId)!=0) : [1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5] ; XTitle='N(jet\, from tWZ)', XNDdiv=505
+
+accept: 1 : 1,0.5,1.5; XTitle = "Accepted events"
+nJet25 : nJet25 : [1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5] ; XTitle='N(jet\, p_{T} > 25)'
+nBJetLoose25 : nBJetLoose25 : [-0.5,0.5,1.5,2.5,3.5,4.5] ; XTitle='N(jet\, p_{T} > 25\, CSV Loose)', XNDdiv=505
+nBJetMedium25 : nBJetMedium25 : [-0.5,0.5,1.5,2.5,3.5,4.5] ; XTitle='N(jet\, p_{T} > 25\, CSV Medium)', XNDdiv=505
+
+lep1Pt:  LepGood1_pt       : 20,0,100; XTitle="Leading lepton p_{T} [GeV]"
+lep1ConePt:  LepGood1_conePt       : 20,0,100; XTitle="Leading lepton cone p_{T} [GeV]"
+lep2Pt:  LepGood2_pt       : 20,0,100; XTitle="Subleading lepton p_{T} [GeV]"
+lep2ConePt:  LepGood2_conePt       : 20,0,100; XTitle="Subleading lepton cone p_{T} [GeV]"
+

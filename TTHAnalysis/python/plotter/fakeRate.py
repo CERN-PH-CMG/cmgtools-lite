@@ -8,6 +8,7 @@ if "/fakeRate_cc.so" not in ROOT.gSystem.GetLibraries():
 from CMGTools.TTHAnalysis.plotter.mcCorrections import SimpleCorrection
 from CMGTools.TTHAnalysis.plotter.cutsFile import *
 
+_loads = {}
 class FakeRate:
     def __init__(self,filestring,lumi=None):
         files = filestring.split(",")
@@ -30,7 +31,17 @@ class FakeRate:
 	            self._cutMods.append( SimpleCorrection(fields[1],fields[2],onlyForCuts=True) )
 	        elif fields[0] == "load-histo":
 	            data = "%s/src/CMGTools/TTHAnalysis/data/" % os.environ['CMSSW_BASE'];
-	            ROOT.loadFRHisto(fields[1],fields[2].replace("$DATA",data),fields[3] if len(fields) >= 4 else fields[1])
+                    fname = fields[2].replace("$DATA",data)
+                    hname = fields[3] if len(fields) >= 4 else fields[1]
+                    if fields[1] in _loads:
+                        if _loads[fields[1]] != (fname,hname):
+                            print "Conflicting load for %s: %s, %s vs older " % (fields[1],fields[2],hname, _loads[fields[1]])
+                        else:
+                            #print "Duplicate load for %s: %s, %s" % (fields[1],fields[2],hname)
+                            pass
+                    else:
+                        _loads[fields[1]] = (fname,hname)
+	            ROOT.loadFRHisto(fields[1],fname,hname)
 	        elif fields[0] == 'norm-lumi-override':
 	            if self._weight is None: raise RuntimeError, "norm-lumi-override must follow weight declaration in fake rate file "+file
 	            if not lumi: raise RuntimeError, "lumi not set in options, cannot apply norm-lumi-override"
