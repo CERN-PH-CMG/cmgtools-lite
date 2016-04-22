@@ -313,32 +313,36 @@ if runSMS:
 
 from CMGTools.RootTools.samples.samples_13TeV_RunIIFall15MiniAODv2 import *
 from CMGTools.RootTools.samples.samples_13TeV_DATA2015 import *
+from CMGTools.HToZZ4L.tools.configTools import printSummary, configureSplittingFromTime, cropToLumi
 
 selectedComponents = [ TTLep_pow ];
 
-#TChiNeuWZ_mCh100_mChi100_mChi95 = kreator.makeMCComponentFromEOS('TChiNeuWZ_mCh100_mChi100_mChi95','/TChiWZDeg_miniAODSIM_76X_lepOnly_dM5gev/','/store/user/castello/susy/%s',".*root",1)
-#TChiNeuWZ_mCh100_mChi100_mChi90 = kreator.makeMCComponentFromEOS('TChiNeuWZ_mCh100_mChi100_mChi90','/TChiWZDeg_miniAODSIM_76X_lepOnly_dM10gev/','/store/user/castello/susy/%s',".*root",1)
-#TChiNeuWZ_mCh100_mChi100_mChi80 = kreator.makeMCComponentFromEOS('TChiNeuWZ_mCh100_mChi100_mChi80','/TChiWZDeg_miniAODSIM_76X_lepOnly_dM20gev/','/store/user/castello/susy/%s',".*root",1)
-#TChiNeuWZ_compressed = [TChiNeuWZ_mCh100_mChi100_mChi95,TChiNeuWZ_mCh100_mChi100_mChi90,TChiNeuWZ_mCh100_mChi100_mChi80]
-#for comp in TChiNeuWZ_compressed:
-#    comp.splitFactor = len(comp.files) / 100 # 100 ev. per file
-#
-#TChiNeuSlepSneu_mCh300_mChi270_SS = kreator.makeMCComponentFromEOS('TChiNeuSlepSneu_mCh300_mChi270_SS', '/TChiNeuSlepSneu_mCh300_mChi270_SS/', '/store/user/cheidegg/signals/miniaod76X/%s', ".*root", 0.386936  )
-#TChiNeuSlepSneu_mCh450_mChi300_SS = kreator.makeMCComponentFromEOS('TChiNeuSlepSneu_mCh450_mChi300_SS', '/TChiNeuSlepSneu_mCh450_mChi300_SS/', '/store/user/cheidegg/signals/miniaod76X/%s', ".*root", 0.0734361 )
-#TChiNeuSlepSneu_mCh750_mChi100    = kreator.makeMCComponentFromEOS('TChiNeuSlepSneu_mCh750_mChi100'   , '/TChiNeuSlepSneu_mCh750_mChi100/'   , '/store/user/cheidegg/signals/miniaod76X/%s', ".*root", 0.00669356)
-#TChiNeuWZ_mCh150_mChi120 = kreator.makeMCComponentFromEOS('TChiNeuWZ_mCh150_mChi120', '/TChiNeuWZ_mCh150_mChi120/', '/store/user/cheidegg/signals/miniaod76X/%s', ".*root", 5.18086 )
-#EWKino = [TChiNeuSlepSneu_mCh300_mChi270_SS,TChiNeuSlepSneu_mCh450_mChi300_SS,TChiNeuSlepSneu_mCh750_mChi100,TChiNeuWZ_mCh150_mChi120]
-#for comp in TChiNeuWZ_compressed:
-#    comp.splitFactor = len(comp.files) / 50 # 200 ev. per file
-#
-#selectedComponents = [WJetsToLNu_LO,TTJets_SingleLeptonFromTbar,TTJets_SingleLeptonFromT]
 
-#T2ttDeg_lepOnly_dM20gev = kreator.makeMCComponentFromEOS('T2ttDeg_lepOnly_dM20gev','/T2ttDeg_miniAODSIM_76X_lepOnly_dM20gev/','/store/user/castello/susy/%s',".*root",1)
-#T2ttDeg_lepOnly_dM20gev.splitFactor = len(T2ttDeg_lepOnly_dM20gev.files)/10 # 100 ev. per file
-#selectedComponents = [T2ttDeg_lepOnly_dM20gev]
+TChiNeuWZ_mCh100_mChi100_mChi95 = kreator.makeMCComponentFromEOS('TChiNeuWZ_mCh100_mChi100_mChi95','/TChiWZDeg_miniAODSIM_76X_lepOnly_dM5gev/','/store/user/castello/susy/%s',".*root",1)
+TChiNeuWZ_mCh100_mChi100_mChi90 = kreator.makeMCComponentFromEOS('TChiNeuWZ_mCh100_mChi100_mChi90','/TChiWZDeg_miniAODSIM_76X_lepOnly_dM10gev/','/store/user/castello/susy/%s',".*root",1)
+TChiNeuWZ_mCh100_mChi100_mChi80 = kreator.makeMCComponentFromEOS('TChiNeuWZ_mCh100_mChi100_mChi80','/TChiWZDeg_miniAODSIM_76X_lepOnly_dM20gev/','/store/user/castello/susy/%s',".*root",1)
+EWKino_compressed = [TChiNeuWZ_mCh100_mChi100_mChi95,TChiNeuWZ_mCh100_mChi100_mChi90,TChiNeuWZ_mCh100_mChi100_mChi80]
+for comp in EWKino_compressed:
+    comp.splitFactor = len(comp.files) / 30 # 100 ev. per file
 
+TChiNeuSlepSneu_mCh300_mChi270_SS = kreator.makeMCComponentFromEOS('TChiNeuSlepSneu_mCh300_mChi270_SS', '/TChiNeuSlepSneu_mCh300_mChi270_SS/', '/store/user/cheidegg/signals/miniaod76X/%s', ".*root", 0.386936  )
+TChiNeuSlepSneu_mCh450_mChi300_SS = kreator.makeMCComponentFromEOS('TChiNeuSlepSneu_mCh450_mChi300_SS', '/TChiNeuSlepSneu_mCh450_mChi300_SS/', '/store/user/cheidegg/signals/miniaod76X/%s', ".*root", 0.0734361 )
+TChiNeuSlepSneu_mCh750_mChi100    = kreator.makeMCComponentFromEOS('TChiNeuSlepSneu_mCh750_mChi100'   , '/TChiNeuSlepSneu_mCh750_mChi100/'   , '/store/user/cheidegg/signals/miniaod76X/%s', ".*root", 0.00669356)
+TChiNeuWZ_mCh150_mChi120 = kreator.makeMCComponentFromEOS('TChiNeuWZ_mCh150_mChi120', '/TChiNeuWZ_mCh150_mChi120/', '/store/user/cheidegg/signals/miniaod76X/%s', ".*root", 5.18086 )
+EWKino = [TChiNeuSlepSneu_mCh300_mChi270_SS,TChiNeuSlepSneu_mCh450_mChi300_SS,TChiNeuSlepSneu_mCh750_mChi100,TChiNeuWZ_mCh150_mChi120]
+for comp in EWKino:
+    comp.splitFactor = len(comp.files) / 15 # 200 ev. per file
 
-from CMGTools.HToZZ4L.tools.configTools import printSummary, configureSplittingFromTime, cropToLumi
+T2ttDeg_lepOnly_dM20gev = kreator.makeMCComponentFromEOS('T2ttDeg_lepOnly_dM20gev','/T2ttDeg_miniAODSIM_76X_lepOnly_dM20gev/','/store/user/castello/susy/%s',".*root",1)
+T2ttDeg_lepOnly_dM20gev.splitFactor = len(T2ttDeg_lepOnly_dM20gev.files) / 30 # 100 ev. per file
+sTop = [T2ttDeg_lepOnly_dM20gev]
+
+backgrounds = [TTJets_SingleLeptonFromT,TTJets_SingleLeptonFromTbar,WJetsToLNu_LO,DYJetsToLL_M10to50]
+configureSplittingFromTime([TTJets_SingleLeptonFromT,TTJets_SingleLeptonFromTbar],150,5)
+configureSplittingFromTime([WJetsToLNu_LO,DYJetsToLL_M10to50],20,5)
+
+selectedComponents = EWKino_compressed + EWKino + sTop + backgrounds
+
 
 #_Wjets_DY = [WJetsToLNu,DYJetsToLL_M10to50,DYJetsToLL_M50]
 #_fakes = [TTJets_DiLepton,TTJets_SingleLeptonFromT,TTJets_SingleLeptonFromTbar,WWTo2L2Nu]
@@ -354,7 +358,7 @@ from CMGTools.HToZZ4L.tools.configTools import printSummary, configureSplittingF
 #print 'Before cropping to lumi and adjusting the splitting:'
 #printSummary(selectedComponents)
 #
-#configureSplittingFromTime(selectedComponents,200,5)
+
 #
 #print 'After cropping to lumi and adjusting the splitting:'
 #printSummary(selectedComponents)
@@ -363,7 +367,7 @@ from CMGTools.HToZZ4L.tools.configTools import printSummary, configureSplittingF
 #selectedComponents += (TChiNeuWZ_compressed+EWKino)
 
 
-selectedComponents=[DYJetsToLL_M10to50]
+#selectedComponents=[DYJetsToLL_M10to50]
 #configureSplittingFromTime(selectedComponents,100,3)
 
 #SMS_T1tttt_mGluino1500_mLSP100 = kreator.makeMCComponent("SMS_T1tttt_mGluino1500_mLSP100", "/SMS-T1tttt_mGluino-1500_mLSP-100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v2/MINIAODSIM", "CMS", ".*root", 0.0141903)
@@ -659,8 +663,8 @@ if getHeppyOption("fast"):
     from CMGTools.TTHAnalysis.analyzers.ttHFastLepSkimmer import ttHFastLepSkimmer
     fastSkim = cfg.Analyzer(
         ttHFastLepSkimmer, name="ttHFastLepSkimmer2lep",
-        muons = 'slimmedMuons', muCut = lambda mu : mu.pt() > 5 and mu.isLooseMuon(),
-        electrons = 'slimmedElectrons', eleCut = lambda ele : ele.pt() > 7,
+        muons = 'slimmedMuons', muCut = lambda mu : mu.pt() > 3 and mu.isLooseMuon(),
+        electrons = 'slimmedElectrons', eleCut = lambda ele : ele.pt() > 5,
         minLeptons = 2, 
     )
     if jsonAna in sequence:
