@@ -132,10 +132,16 @@ T6ttWW = [ T6ttWW_mSbot600_mCh425_mChi50, T6ttWW_mSbot650_mCh150_mChi50 ]
 ##T6qqWW_mSq950_mCh325_mChi300 = kreator.makeMCComponentFromEOS('T6qqWW_mSq950_mCh325_mChi300', '/SMS_T6qqWW_mSq950_mChi325_mLSP300/', '/store/cmst3/group/susy/alobanov/MC/PHYS14/PU20_25ns/%s', '.*root', 0.0898112)
 T6qqWW = [ ]
 
+## TChiNeuWZ compressed
+TChiNeuWZ_mCh100_mChi100_mChi95 = kreator.makeMCComponentFromEOS('TChiNeuWZ_mCh100_mChi100_mChi95','/TChiWZDeg_miniAODSIM_V2_lepOnly_dM5gev/','/store/user/castello/susy/%s',".*root",1)
+TChiNeuWZ_mCh100_mChi100_mChi90 = kreator.makeMCComponentFromEOS('TChiNeuWZ_mCh100_mChi100_mChi90','/TChiWZDeg_miniAODSIM_V2_lepOnly_dM10gev/','/store/user/castello/susy/%s',".*root",1)
+TChiNeuWZ_mCh100_mChi100_mChi80 = kreator.makeMCComponentFromEOS('TChiNeuWZ_mCh100_mChi100_mChi80','/TChiWZDeg_miniAODSIM_V2_lepOnly_dM20gev/','/store/user/castello/susy/%s',".*root",1)
+TChiNeuWZ_compressed = [TChiNeuWZ_mCh100_mChi100_mChi95,TChiNeuWZ_mCh100_mChi100_mChi90,TChiNeuWZ_mCh100_mChi100_mChi80]
+
 
 ## mcSamplesPriv
 ## ------------------------------------------------------
-mcSamplesPriv = SqGltttt + T1ttbb + T1ttbbWW + T1tttt + T2tt + T2ttDeg + T5qqqqVV + T5qqqqVVDeg + T5ttttDeg + T6ttWW + T6qqWW
+mcSamplesPriv = SqGltttt + T1ttbb + T1ttbbWW + T1tttt + T2tt + T2ttDeg + T5qqqqVV + T5qqqqVVDeg + T5ttttDeg + T6ttWW + T6qqWW + TChiNeuWZ_compressed
 
 
 
