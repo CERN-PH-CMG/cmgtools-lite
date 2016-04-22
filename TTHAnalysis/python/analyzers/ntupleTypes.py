@@ -45,18 +45,19 @@ leptonTypeSusyExtraLight = NTupleObjectType("leptonSusyExtraLight", baseObjectTy
     NTupleVariable("mcPromptTau", lambda x : x.mcMatchAny_gp.isDirectPromptTauDecayProductFinalState() if getattr(x,"mcMatchAny_gp",None) else 0, int, mcOnly=True, help="isDirectPromptTauDecayProductFinalState"),
     NTupleVariable("mcPromptGamma", lambda x : x.mcPho.isPromptFinalState() if getattr(x,"mcPho",None) else 0, int, mcOnly=True, help="Photon isPromptFinalState"),
     NTupleVariable("mcGamma", lambda x : getattr(x,"mcPho",None) != None, int, mcOnly=True, help="Matched to a photon"),
-    NTupleVariable("RelIsoFix03",   lambda x : getattr(x,'AbsIsoFix03',-99)/x.pt()),
-    NTupleVariable("RelIsoChargedFix03",   lambda x : getattr(x,'AbsIsoChargedFix03',-99)/x.pt()),
-    NTupleVariable("RelIsoNeutralFix03",   lambda x : getattr(x,'AbsIsoNeutralFix03',-99)/x.pt()),
-    NTupleVariable("RelIsoFix04",   lambda x : getattr(x,'AbsIsoFix04',-99)/x.pt()),
-    NTupleVariable("RelIsoChargedFix04",   lambda x : getattr(x,'AbsIsoChargedFix04',-99)/x.pt()),
-    NTupleVariable("RelIsoNeutralFix04",   lambda x : getattr(x,'AbsIsoNeutralFix04',-99)/x.pt()),
+    NTupleVariable("RelIsoFix03",   lambda x : getattr(x,'miniAbsIsoFix03',-99)/x.pt()),
+    NTupleVariable("RelIsoChargedFix03",   lambda x : getattr(x,'miniAbsIsoChargedFix03',-99)/x.pt()),
+    NTupleVariable("RelIsoNeutralFix03",   lambda x : getattr(x,'miniAbsIsoNeutralFix03',-99)/x.pt()),
+    NTupleVariable("RelIsoFix04",   lambda x : getattr(x,'miniAbsIsoFix04',-99)/x.pt()),
+    NTupleVariable("RelIsoChargedFix04",   lambda x : getattr(x,'miniAbsIsoChargedFix04',-99)/x.pt()),
+    NTupleVariable("RelIsoNeutralFix04",   lambda x : getattr(x,'miniAbsIsoNeutralFix04',-99)/x.pt()),
     NTupleVariable("jetPtRelHv2", lambda lepton : ptRelHv2(lepton) if hasattr(lepton,'jet') else -1, help="pt of the jet (subtracting the lepton) transverse to the lepton axis - v2"),
     NTupleVariable("isoRelH02", lambda lepton : isoRelH(lepton,'02') if hasattr(lepton,'isoSumRawP4Charged02') else -1, help="transverse relative isolation R=0.2 H"),
     NTupleVariable("isoRelH03", lambda lepton : isoRelH(lepton,'03') if hasattr(lepton,'isoSumRawP4Charged03') else -1, help="transverse relative isolation R=0.3 H"),
     NTupleVariable("isoRelH04", lambda lepton : isoRelH(lepton,'04') if hasattr(lepton,'isoSumRawP4Charged04') else -1, help="transverse relative isolation R=0.4 H"),
     NTupleVariable("isoRelH05", lambda lepton : isoRelH(lepton,'05') if hasattr(lepton,'isoSumRawP4Charged05') else -1, help="transverse relative isolation R=0.5 H"),
     NTupleVariable("isoRelH06", lambda lepton : isoRelH(lepton,'06') if hasattr(lepton,'isoSumRawP4Charged06') else -1, help="transverse relative isolation R=0.6 H"),
+    NTupleVariable("jetBasedRelIsoCharged", lambda lepton : jetBasedRelIsoCharged(lepton) if hasattr(lepton,'jet') else -1, help="relative charged isolation from jet chH constituents"),
     # IVF variables
     NTupleVariable("hasSV",   lambda x : (2 if getattr(x,'ivfAssoc','') == "byref" else (0 if getattr(x,'ivf',None) == None else 1)), int, help="2 if lepton track is from a SV, 1 if loosely matched, 0 if no SV found."),
     NTupleVariable("svRedPt", lambda x : getattr(x, 'ivfRedPt', 0), help="pT of associated SV, removing the lepton track"),
@@ -288,4 +289,6 @@ def isoRelH(lep,tag):
     l = ROOT.TLorentzVector(p4l.Px(),p4l.Py(),p4l.Pz(),p4l.E())
     m = ROOT.TLorentzVector(iso.Px(),iso.Py(),iso.Pz(),iso.E())
     return m.Perp(l.Vect())
-   
+def jetBasedRelIsoCharged(lep):
+    if not hasattr(lep.jet,'rawFactor'): return 0
+    return lep.jet.pt()*lep.jet.rawFactor()*lep.jet.chargedHadronEnergyFraction()/lep.pt()
