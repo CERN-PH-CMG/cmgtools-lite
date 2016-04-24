@@ -329,7 +329,23 @@ TChiNeuSlepSneu_mCh300_mChi270_SS = kreator.makeMCComponentFromEOS('TChiNeuSlepS
 TChiNeuSlepSneu_mCh450_mChi300_SS = kreator.makeMCComponentFromEOS('TChiNeuSlepSneu_mCh450_mChi300_SS', '/TChiNeuSlepSneu_mCh450_mChi300_SS/', '/store/user/cheidegg/signals/miniaod76X/%s', ".*root", 0.0734361 )
 TChiNeuSlepSneu_mCh750_mChi100    = kreator.makeMCComponentFromEOS('TChiNeuSlepSneu_mCh750_mChi100'   , '/TChiNeuSlepSneu_mCh750_mChi100/'   , '/store/user/cheidegg/signals/miniaod76X/%s', ".*root", 0.00669356)
 TChiNeuWZ_mCh150_mChi120 = kreator.makeMCComponentFromEOS('TChiNeuWZ_mCh150_mChi120', '/TChiNeuWZ_mCh150_mChi120/', '/store/user/cheidegg/signals/miniaod76X/%s', ".*root", 5.18086 )
-EWKino = [TChiNeuSlepSneu_mCh300_mChi270_SS,TChiNeuSlepSneu_mCh450_mChi300_SS,TChiNeuSlepSneu_mCh750_mChi100,TChiNeuWZ_mCh150_mChi120]
+
+TChiChiSlepSneu_mCh350_mChi200 = kreator.makeMCComponentFromEOS('TChiChiSlepSneu_mCh350_mChi200','/TChiChiSlepSneu_mCh350_mChi200/','/store/user/cheidegg/signals/miniaod76X/%s', ".*root", 0.102199)
+TChiChiSlepSneu_mCh600_mChi50 = kreator.makeMCComponentFromEOS('TChiChiSlepSneu_mCh600_mChi50','/TChiChiSlepSneu_mCh600_mChi50/','/store/user/cheidegg/signals/miniaod76X/%s', ".*root", 0.00949913)
+TChiNeuSlepSneu_mCh300_mChi270 = kreator.makeMCComponentFromEOS('TChiNeuSlepSneu_mCh300_mChi270','/TChiNeuSlepSneu_mCh300_mChi270/','/store/user/cheidegg/signals/miniaod76X/%s', ".*root", 0.386936)
+TChiNeuSlepSneu_mCh450_mChi300 = kreator.makeMCComponentFromEOS('TChiNeuSlepSneu_mCh450_mChi300','/TChiNeuSlepSneu_mCh450_mChi300/','/store/user/cheidegg/signals/miniaod76X/%s', ".*root", 0.0734361)
+TChiNeuWH_mCh150_mChi20 = kreator.makeMCComponentFromEOS('TChiNeuWH_mCh150_mChi20','/TChiNeuWH_mCh150_mChi20/','/store/user/cheidegg/signals/miniaod76X/%s', ".*root", 5.18086)
+TChiNeuWH_mCh150_mChi20_SL = kreator.makeMCComponentFromEOS('TChiNeuWH_mCh150_mChi20_SL','/TChiNeuWH_mCh150_mChi20_SL/','/store/user/cheidegg/signals/miniaod76X/%s', ".*root", 5.18086)
+TChiNeuWH_mCh250_mChi20 = kreator.makeMCComponentFromEOS('TChiNeuWH_mCh250_mChi20','/TChiNeuWH_mCh250_mChi20/','/store/user/cheidegg/signals/miniaod76X/%s', ".*root", 0.782487)
+TChiNeuWH_mCh250_mChi20_SL = kreator.makeMCComponentFromEOS('TChiNeuWH_mCh250_mChi20_SL','/TChiNeuWH_mCh250_mChi20_SL/','/store/user/cheidegg/signals/miniaod76X/%s', ".*root", 0.782487)
+TChiNeuWZ_mCh200_mChi100 = kreator.makeMCComponentFromEOS('TChiNeuWZ_mCh200_mChi100','/TChiNeuWZ_mCh200_mChi100/','/store/user/cheidegg/signals/miniaod76X/%s', ".*root", 1.80739)
+TChiNeuWZ_mCh200_mChi100_OS = kreator.makeMCComponentFromEOS('TChiNeuWZ_mCh200_mChi100_OS','/TChiNeuWZ_mCh200_mChi100_OS/','/store/user/cheidegg/signals/miniaod76X/%s', ".*root", 1.80739)
+TChiNeuWZ_mCh350_mChi100 = kreator.makeMCComponentFromEOS('TChiNeuWZ_mCh350_mChi100','/TChiNeuWZ_mCh350_mChi100/','/store/user/cheidegg/signals/miniaod76X/%s', ".*root", 0.209439)
+TChiNeuWZ_mCh350_mChi100_OS = kreator.makeMCComponentFromEOS('TChiNeuWZ_mCh350_mChi100_OS','/TChiNeuWZ_mCh350_mChi100_OS/','/store/user/cheidegg/signals/miniaod76X/%s', ".*root", 0.209439)
+TChiNeuWZ_mCh350_mChi20 = kreator.makeMCComponentFromEOS('TChiNeuWZ_mCh350_mChi20','/TChiNeuWZ_mCh350_mChi20/','/store/user/cheidegg/signals/miniaod76X/%s', ".*root", 0.209439)
+TChiNeuWZ_mCh350_mChi20_OS = kreator.makeMCComponentFromEOS('TChiNeuWZ_mCh350_mChi20_OS','/TChiNeuWZ_mCh350_mChi20_OS/','/store/user/cheidegg/signals/miniaod76X/%s', ".*root", 0.209439)
+
+EWKino = [TChiNeuSlepSneu_mCh300_mChi270_SS,TChiNeuSlepSneu_mCh450_mChi300_SS,TChiNeuSlepSneu_mCh750_mChi100,TChiNeuWZ_mCh150_mChi120,TChiChiSlepSneu_mCh350_mChi200,TChiChiSlepSneu_mCh600_mChi50,TChiNeuSlepSneu_mCh300_mChi270,TChiNeuSlepSneu_mCh450_mChi300,TChiNeuWH_mCh150_mChi20,TChiNeuWH_mCh150_mChi20_SL,TChiNeuWH_mCh250_mChi20,TChiNeuWH_mCh250_mChi20_SL,TChiNeuWZ_mCh200_mChi100,TChiNeuWZ_mCh200_mChi100_OS,TChiNeuWZ_mCh350_mChi100,TChiNeuWZ_mCh350_mChi100_OS,TChiNeuWZ_mCh350_mChi20,TChiNeuWZ_mCh350_mChi20_OS]
 for comp in EWKino:
     comp.splitFactor = len(comp.files) / 15 # 200 ev. per file
 
@@ -337,8 +353,8 @@ T2ttDeg_lepOnly_dM20gev = kreator.makeMCComponentFromEOS('T2ttDeg_lepOnly_dM20ge
 T2ttDeg_lepOnly_dM20gev.splitFactor = len(T2ttDeg_lepOnly_dM20gev.files) / 30 # 100 ev. per file
 sTop = [T2ttDeg_lepOnly_dM20gev]
 
-backgrounds = [TTJets_SingleLeptonFromT,TTJets_SingleLeptonFromTbar,WJetsToLNu_LO,DYJetsToLL_M10to50]
-configureSplittingFromTime([TTJets_SingleLeptonFromT,TTJets_SingleLeptonFromTbar],150,5)
+backgrounds = [TTJets_SingleLeptonFromT,TTJets_SingleLeptonFromTbar,WJetsToLNu_LO,DYJetsToLL_M10to50,WWTo2L2Nu]
+configureSplittingFromTime([TTJets_SingleLeptonFromT,TTJets_SingleLeptonFromTbar,WWTo2L2Nu],150,2)
 configureSplittingFromTime([WJetsToLNu_LO,DYJetsToLL_M10to50],20,5)
 
 selectedComponents = EWKino_compressed + EWKino + sTop + backgrounds
