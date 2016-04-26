@@ -5,12 +5,16 @@ from CMGTools.H2TauTau.proto.samples.spring16.htt_common import TT_pow_ext, DYJe
 
 # WJetsToLNu_LO, TToLeptons_tch_amcatnlo, WZTo3LNu_amcatnlo, TToLeptons_tch_powheg, WJetsToLNu_HT100to200, WJetsToLNu_HT200to400, WJetsToLNu_HT400to600, WJetsToLNu_HT600toInf, QCD_Mu15, DYJetsToTauTau_M150_LO, DYJetsToLL_M10to50_ext1
 
-dy_exps = []
-for njet in xrange(0, 5):
-    weight = dy_weight_dict[(njet, 0)]
-    dy_exps.append('(geninfo_nup == {njet} && (geninfo_invmass<150. || !(l2_gen_match==5 || l1_gen_lepfromtau)))*{weight}'.format(njet=njet, weight=weight))
-    weight = dy_weight_dict[(njet, 150)]
-    dy_exps.append('(geninfo_nup == {njet} && (geninfo_invmass>=150. && (l2_gen_match==5 || l1_gen_lepfromtau)))*{weight}'.format(njet=njet, weight=weight))
+useDYWeight = False
+
+if useDYWeight:
+    dy_exps = []
+    for njet in xrange(0, 5):
+        weight = dy_weight_dict[(njet, 0)]
+        dy_exps.append('(geninfo_nup == {njet})*{weight}'.format(njet=njet, weight=weight))
+        # dy_exps.append('(geninfo_nup == {njet} && (geninfo_invmass<150. || !(l2_gen_match==5 || l1_gen_lepfromtau)))*{weight}'.format(njet=njet, weight=weight))
+        # weight = dy_weight_dict[(njet, 150)]
+        # dy_exps.append('(geninfo_nup == {njet} && (geninfo_invmass>=150. && (l2_gen_match==5 || l1_gen_lepfromtau)))*{weight}'.format(njet=njet, weight=weight))
 
 dy_exp = '*({})'.format(' + '.join(dy_exps))
 dy_exp = ''
@@ -22,21 +26,22 @@ for njet in xrange(0, 5):
 
 w_exp = '({})'.format(' + '.join(w_exps))
 
-def createSampleLists(analysis_dir='/afs/cern.ch/user/s/steggema/work/public/mt/NewProd', 
-                      channel='mt', 
+
+def createSampleLists(analysis_dir='/afs/cern.ch/user/s/steggema/work/public/mt/NewProd',
+                      channel='mt',
                       ztt_cut='(l2_gen_match == 5)', zl_cut='(l2_gen_match < 5)',
                       zj_cut='(l2_gen_match == 6)'):
     # -> Possibly from cfg like in the past, but may also make sense to enter directly
     if channel == 'mt':
-        tree_prod_name='H2TauTauTreeProducerTauMu'
+        tree_prod_name = 'H2TauTauTreeProducerTauMu'
     elif channel == 'et':
-        tree_prod_name='H2TauTauTreeProducerTauEle'
+        tree_prod_name = 'H2TauTauTreeProducerTauEle'
     elif channel == 'mm':
-        tree_prod_name='H2TauTauTreeProducerMuMu'
+        tree_prod_name = 'H2TauTauTreeProducerMuMu'
     elif channel == 'tt':
-        tree_prod_name='H2TauTauTreeProducerTauTau'
+        tree_prod_name = 'H2TauTauTreeProducerTauTau'
     elif channel == 'em':
-        tree_prod_name='H2TauTauTreeProducerMuEle'
+        tree_prod_name = 'H2TauTauTreeProducerMuEle'
     elif channel == 'tau_fr':
         tree_prod_name = 'TauFRTreeProducer'
 
@@ -44,16 +49,38 @@ def createSampleLists(analysis_dir='/afs/cern.ch/user/s/steggema/work/public/mt/
     # WJetsToLNu_LO.nGenEvents = 1000.
 
     samples_essential = [
-        SampleCfg(name='ZTT', dir_name='DYJetsToLL_M50_LO', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=DYJetsToLL_M50_LO.xSection, sumweights=DYJetsToLL_M50_LO.nGenEvents, weight_expr=ztt_cut+dy_exp),
-        SampleCfg(name='ZL', dir_name='DYJetsToLL_M50_LO', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=DYJetsToLL_M50_LO.xSection, sumweights=DYJetsToLL_M50_LO.nGenEvents, weight_expr=zl_cut+dy_exp),
-        SampleCfg(name='ZJ', dir_name='DYJetsToLL_M50_LO', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=DYJetsToLL_M50_LO.xSection, sumweights=DYJetsToLL_M50_LO.nGenEvents, weight_expr=zj_cut+dy_exp),
-        # SampleCfg(name='ZTTM10', dir_name='DYJetsToLL_M10to50', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=DYJetsToLL_M10to50_ext1.xSection, sumweights=DYJetsToLL_M10to50_ext1.nGenEvents, weight_expr=ztt_cut),
-        # SampleCfg(name='ZLM10', dir_name='DYJetsToLL_M10to50', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=DYJetsToLL_M10to50_ext1.xSection, sumweights=DYJetsToLL_M10to50_ext1.nGenEvents, weight_expr=zl_cut),
-        # SampleCfg(name='ZJM10', dir_name='DYJetsToLL_M10to50', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=DYJetsToLL_M10to50_ext1.xSection, sumweights=DYJetsToLL_M10to50_ext1.nGenEvents, weight_expr=zj_cut),
+        SampleCfg(name='ZTTM10', dir_name='DYJetsToLL_M10to50', ana_dir=analysis_dir, tree_prod_name=tree_prod_name,
+                      xsec=DYJetsToLL_M10to50_ext1.xSection, sumweights=DYJetsToLL_M10to50_ext1.nGenEvents, weight_expr=ztt_cut),
+        SampleCfg(name='ZLM10', dir_name='DYJetsToLL_M10to50', ana_dir=analysis_dir, tree_prod_name=tree_prod_name,
+                  xsec=DYJetsToLL_M10to50_ext1.xSection, sumweights=DYJetsToLL_M10to50_ext1.nGenEvents, weight_expr=zl_cut),
+        SampleCfg(name='ZJM10', dir_name='DYJetsToLL_M10to50', ana_dir=analysis_dir, tree_prod_name=tree_prod_name,
+                      xsec=DYJetsToLL_M10to50_ext1.xSection, sumweights=DYJetsToLL_M10to50_ext1.nGenEvents, weight_expr=zj_cut),
+    ]
+    if useDYWeight:
+        samples_essential += [
+            SampleCfg(name='ZTT', dir_name='DYJetsToLL_M50_LO', ana_dir=analysis_dir, tree_prod_name=tree_prod_name,
+                      xsec=DYJetsToLL_M50_LO.xSection, sumweights=DYJetsToLL_M50_LO.nGenEvents, weight_expr=ztt_cut+dy_exp),
+            SampleCfg(name='ZL', dir_name='DYJetsToLL_M50_LO', ana_dir=analysis_dir, tree_prod_name=tree_prod_name,
+                      xsec=DYJetsToLL_M50_LO.xSection, sumweights=DYJetsToLL_M50_LO.nGenEvents, weight_expr=zl_cut+dy_exp),
+            SampleCfg(name='ZJ', dir_name='DYJetsToLL_M50_LO', ana_dir=analysis_dir, tree_prod_name=tree_prod_name,
+                      xsec=DYJetsToLL_M50_LO.xSection, sumweights=DYJetsToLL_M50_LO.nGenEvents, weight_expr=zj_cut+dy_exp),
+            
+        ]
+    else:
+        samples_essential += [
+            SampleCfg(name='ZTT', dir_name='DYJetsToLL_M50_LO', ana_dir=analysis_dir, tree_prod_name=tree_prod_name,
+                      xsec=DYJetsToLL_M50_LO_ext1.xSection, sumweights=DYJetsToLL_M50_LO.nGenEvents, weight_expr=ztt_cut),
+            SampleCfg(name='ZL', dir_name='DYJetsToLL_M50_LO', ana_dir=analysis_dir, tree_prod_name=tree_prod_name,
+                      xsec=DYJetsToLL_M50_LO_ext1.xSection, sumweights=DYJetsToLL_M50_LO.nGenEvents, weight_expr=zl_cut),
+            SampleCfg(name='ZJ', dir_name='DYJetsToLL_M50_LO', ana_dir=analysis_dir, tree_prod_name=tree_prod_name,
+                      xsec=DYJetsToLL_M50_LO_ext1.xSection, sumweights=DYJetsToLL_M50_LO.nGenEvents, weight_expr=zj_cut),
+        ]
         # SampleCfg(name='ZTTM150', dir_name='DYJetsToTauTau_M150_LO', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=DYJetsToLL_M50_LO.xSection, sumweights=DYJetsToLL_M50_LO.nGenEvents, weight_expr=ztt_cut+dy_exp),
         # SampleCfg(name='ZLM150', dir_name='DYJetsToTauTau_M150_LO', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=DYJetsToLL_M50_LO.xSection, sumweights=DYJetsToLL_M50_LO.nGenEvents, weight_expr=zl_cut+dy_exp),
         # SampleCfg(name='ZJM150', dir_name='DYJetsToTauTau_M150_LO', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=DYJetsToLL_M50_LO.xSection, sumweights=DYJetsToLL_M50_LO.nGenEvents, weight_expr=zj_cut+dy_exp),
-        # SampleCfg(name='W', dir_name='WJetsToLNu_LO' if channel != 'mm' else 'WJetsToLNu', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=WJetsToLNu_LO.xSection, sumweights=WJetsToLNu_LO.nGenEvents, weight_expr=w_exp if channel != 'tau_fr' else '(geninfo_htgen<100.)'),
+    samples_essential += [
+        SampleCfg(name='W', dir_name='WJetsToLNu_LO' if channel != 'mm' else 'WJetsToLNu', ana_dir=analysis_dir, tree_prod_name=tree_prod_name,
+                  xsec=WJetsToLNu_LO.xSection, sumweights=WJetsToLNu_LO.nGenEvents, weight_expr=w_exp if channel != 'tau_fr' else '(geninfo_htgen<100.)'),
         SampleCfg(name='TT', dir_name='TT_pow_ext3', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=TT_pow_ext.xSection, sumweights=TT_pow_ext.nGenEvents),
         SampleCfg(name='T_tWch', dir_name='T_tWch', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=T_tWch.xSection, sumweights=T_tWch.nGenEvents),
         SampleCfg(name='TBar_tWch', dir_name='TBar_tWch', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=TBar_tWch.xSection, sumweights=TBar_tWch.nGenEvents),
@@ -69,7 +96,7 @@ def createSampleLists(analysis_dir='/afs/cern.ch/user/s/steggema/work/public/mt/
             # SampleCfg(name='WJetsToLNu_HT600toInf', dir_name='WJetsToLNu_HT600toInf', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=WJetsToLNu_HT600toInf.xSection, sumweights=WJetsToLNu_HT600toInf.nGenEvents, weight_expr=k_factor),
         ]
 
-    if channel not in ['mm', 'tau_fr']:
+    if useDYWeight and channel not in ['mm', 'tau_fr']:
         for sample in DYNJets:
             n_jet_name = str(sample.name[sample.name.find('Jets')-1])+'Jets'
             print 'WARNING - DY - using n(gen events)', DYJetsToLL_M50_LO.nevents[0], 'for DY', n_jet_name
@@ -103,6 +130,10 @@ def createSampleLists(analysis_dir='/afs/cern.ch/user/s/steggema/work/public/mt/
         # SampleCfg(name='TToLeptons_tch', dir_name='TToLeptons_tch_amcatnlo', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=TToLeptons_tch_amcatnlo.xSection, sumweights=TToLeptons_tch_amcatnlo.nGenEvents),
         # SampleCfg(name='TToLeptons_tch_powheg', dir_name='TToLeptons_tch_powheg', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=TToLeptons_tch_powheg.xSection, sumweights=TToLeptons_tch_powheg.nGenEvents),
         SampleCfg(name='TBarToLeptons_tch_powheg', dir_name='TBarToLeptons_tch_powheg', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=TBarToLeptons_tch_powheg.xSection, sumweights=TBarToLeptons_tch_powheg.nGenEvents),
+        SampleCfg(name='TToLeptons_tch_powheg', dir_name='TToLeptons_tch_powheg', ana_dir=analysis_dir,
+                  tree_prod_name=tree_prod_name, xsec=TToLeptons_tch_powheg.xSection, sumweights=TToLeptons_tch_powheg.nGenEvents),
+        SampleCfg(name='TBarToLeptons_tch_powheg', dir_name='TBarToLeptons_tch_powheg', ana_dir=analysis_dir,
+                  tree_prod_name=tree_prod_name, xsec=TBarToLeptons_tch_powheg.xSection, sumweights=TBarToLeptons_tch_powheg.nGenEvents),
     ]
 
     samples_additional += [
@@ -117,15 +148,16 @@ def createSampleLists(analysis_dir='/afs/cern.ch/user/s/steggema/work/public/mt/
     ]
 
     samples_mssm = []
-    mssm_names = ['HiggsSUSYBB80', 'HiggsSUSYBB90', 'HiggsSUSYBB100', 'HiggsSUSYBB110', 'HiggsSUSYBB120', 'HiggsSUSYBB130', 'HiggsSUSYBB140', 'HiggsSUSYBB160', 'HiggsSUSYBB180', 'HiggsSUSYBB200', 'HiggsSUSYBB250', 'HiggsSUSYBB300', 'HiggsSUSYBB350', 'HiggsSUSYBB400', 'HiggsSUSYBB450', 'HiggsSUSYBB500', 'HiggsSUSYBB600', 'HiggsSUSYBB700', 'HiggsSUSYBB900', 'HiggsSUSYBB1000', 'HiggsSUSYBB1200', 'HiggsSUSYBB1500', 'HiggsSUSYBB1600', 'HiggsSUSYBB1800', 'HiggsSUSYBB2000', 'HiggsSUSYBB2300', 'HiggsSUSYBB2600', 'HiggsSUSYBB2900', 'HiggsSUSYBB3200', 'HiggsSUSYGG80', 'HiggsSUSYGG90', 'HiggsSUSYGG100', 'HiggsSUSYGG110', 'HiggsSUSYGG120', 'HiggsSUSYGG130', 'HiggsSUSYGG140', 'HiggsSUSYGG160', 'HiggsSUSYGG180', 'HiggsSUSYGG200', 'HiggsSUSYGG250', 'HiggsSUSYGG300', 'HiggsSUSYGG400', 'HiggsSUSYGG450', 'HiggsSUSYGG500', 'HiggsSUSYGG600', 'HiggsSUSYGG700', 'HiggsSUSYGG800', 'HiggsSUSYGG900', 'HiggsSUSYGG1000', 'HiggsSUSYGG1200', 'HiggsSUSYGG1400', 'HiggsSUSYGG1500', 'HiggsSUSYGG1600', 'HiggsSUSYGG1800', 'HiggsSUSYGG2000', 'HiggsSUSYGG2300', 'HiggsSUSYGG2600', 'HiggsSUSYGG2900', 'HiggsSUSYGG3200'] # HiggsSUSYBB800, HiggsSUSYBB1400, HiggsSUSYGG350
+    mssm_names = ['HiggsSUSYBB80', 'HiggsSUSYBB90', 'HiggsSUSYBB100', 'HiggsSUSYBB110', 'HiggsSUSYBB120', 'HiggsSUSYBB130', 'HiggsSUSYBB140', 'HiggsSUSYBB160', 'HiggsSUSYBB180', 'HiggsSUSYBB200', 'HiggsSUSYBB250', 'HiggsSUSYBB300', 'HiggsSUSYBB350', 'HiggsSUSYBB400', 'HiggsSUSYBB450', 'HiggsSUSYBB500', 'HiggsSUSYBB600', 'HiggsSUSYBB700', 'HiggsSUSYBB900', 'HiggsSUSYBB1000', 'HiggsSUSYBB1200', 'HiggsSUSYBB1500', 'HiggsSUSYBB1600', 'HiggsSUSYBB1800', 'HiggsSUSYBB2000', 'HiggsSUSYBB2300', 'HiggsSUSYBB2600', 'HiggsSUSYBB2900', 'HiggsSUSYBB3200', 'HiggsSUSYGG80', 'HiggsSUSYGG90',
+                  'HiggsSUSYGG100', 'HiggsSUSYGG110', 'HiggsSUSYGG120', 'HiggsSUSYGG130', 'HiggsSUSYGG140', 'HiggsSUSYGG160', 'HiggsSUSYGG180', 'HiggsSUSYGG200', 'HiggsSUSYGG250', 'HiggsSUSYGG300', 'HiggsSUSYGG400', 'HiggsSUSYGG450', 'HiggsSUSYGG500', 'HiggsSUSYGG600', 'HiggsSUSYGG700', 'HiggsSUSYGG800', 'HiggsSUSYGG900', 'HiggsSUSYGG1000', 'HiggsSUSYGG1200', 'HiggsSUSYGG1400', 'HiggsSUSYGG1500', 'HiggsSUSYGG1600', 'HiggsSUSYGG1800', 'HiggsSUSYGG2000', 'HiggsSUSYGG2300', 'HiggsSUSYGG2600', 'HiggsSUSYGG2900', 'HiggsSUSYGG3200']  # HiggsSUSYBB800, HiggsSUSYBB1400, HiggsSUSYGG350
     for name in mssm_names:
-        samples_mssm.append(SampleCfg(name=name, dir_name=name, ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=1., sumweights=1., is_signal=True),)
+        samples_mssm.append(SampleCfg(name=name.replace('HiggsSUSYBB', 'bbH').replace('HiggsSUSYGG', 'ggH'), dir_name=name,
+                                      ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=1., sumweights=1., is_signal=True),)
         # SampleCfg(name='HiggsSUSYGG200', dir_name='HiggsSUSYGG200', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=100., sumweights=1., is_signal=True),
         # SampleCfg(name='HiggsSUSYGG500', dir_name='HiggsSUSYGG500', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=100., sumweights=1., is_signal=True),
         # SampleCfg(name='HiggsSUSYGG1000', dir_name='HiggsSUSYGG1000', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=100., sumweights=1., is_signal=True),
         # SampleCfg(name='HiggsSUSYGG1500', dir_name='HiggsSUSYGG1500', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=100., sumweights=1., is_signal=True),
     # ]
-
 
     samples_mc = samples_essential + samples_additional + samples_mssm
     samples = samples_essential + samples_data
@@ -133,18 +165,20 @@ def createSampleLists(analysis_dir='/afs/cern.ch/user/s/steggema/work/public/mt/
 
     # -> Can add cross sections for samples either explicitly, or from file, or from cfg
     #    (currently taken from htt_common)
+
+    weighted_list = ['W', 'W1Jets', 'W2Jets', 'W3Jets', 'W4Jets']
+    if useDYWeight:
+        weighted_list += ['ZTT', 'ZTT1Jets', 'ZTT2Jets', 'ZTT3Jets', 'ZTT4Jets',
+                          'ZJ', 'ZJ1Jets', 'ZJ2Jets', 'ZJ3Jets', 'ZJ4Jets',
+                          'ZL', 'ZL1Jets', 'ZL2Jets', 'ZL3Jets', 'ZL4Jets',
+                          'ZTTM150', 'ZJM150', 'ZLM150']
+
     for sample in samples_mc:
-        if sample.name not in ['W', 'W1Jets', 'W2Jets', 'W3Jets', 'W4Jets',
-                               # 'ZTT', 'ZTT1Jets', 'ZTT2Jets', 'ZTT3Jets', 'ZTT4Jets',
-                               # 'ZJ', 'ZJ1Jets', 'ZJ2Jets', 'ZJ3Jets', 'ZJ4Jets',
-                               # 'ZL', 'ZL1Jets', 'ZL2Jets', 'ZL3Jets', 'ZL4Jets',
-                               # 'ZTTM150', 'ZJM150', 'ZLM150'
-                               ]:
+        if sample.name not in weighted_list:
             setSumWeights(sample, 'MCWeighter' if channel not in ['tau_fr'] else 'SkimAnalyzerCount')
 
-    sampleDict = {s.name:s for s in all_samples}
+    sampleDict = {s.name: s for s in all_samples}
 
     return samples_mc, samples_data, samples, all_samples, sampleDict
 
 samples_mc, samples_data, samples, all_samples, sampleDict = createSampleLists()
-

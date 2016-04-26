@@ -4,12 +4,15 @@ from collections import namedtuple
 
 from CMGTools.H2TauTau.proto.plotter.PlotConfigs import HistogramCfg, VariableCfg
 from CMGTools.H2TauTau.proto.plotter.categories_TauMu import cat_Inc
-from CMGTools.H2TauTau.proto.plotter.HistCreator import createHistogram
+from CMGTools.H2TauTau.proto.plotter.HistCreator import createHistograms, createHistogram
 from CMGTools.H2TauTau.proto.plotter.HistDrawer import HistDrawer
-from CMGTools.H2TauTau.proto.plotter.Variables import all_vars, getVars
+from CMGTools.H2TauTau.proto.plotter.Variables import taumu_vars, getVars
 # from CMGTools.H2TauTau.proto.plotter.helper_methods import getPUWeight
 
 from CMGTools.H2TauTau.proto.plotter.Samples import createSampleLists
+
+# mode = 'mssm_signal' 
+mode = 'mssm_control'
 
 int_lumi = 2301. # from Alexei's email
 qcd_from_same_sign = True
@@ -19,10 +22,6 @@ r_qcd_os_ss = 1.17
 analysis_dir = '/data1/steggema/mt/070416/TauMuSVFitMC/'
 
 total_weight = 'weight'#*weight_njet'
-# total_weight = 'weight/l1_weight'
-# total_weight = 'geninfo_mcweight'
-# total_weight = 'weight/l1_weight/weight_njet'
-# total_weight = 'weight/l1_weight/weight_njet/weight_vertex'
 
 print total_weight
 
@@ -42,8 +41,25 @@ binning_mssm_btag = array([0.,20.,40.,60.,80.,100.,120.,140.,160.,180.,200.,250.
 # cuts.append(Cut('inclusivemt40', inc_cut + '&& l1_charge != l2_charge && mt<40'))
 
 # MSSM Categories
+<<<<<<< HEAD
 cuts.append(Cut('nobtag', inc_cut + '&& l1_charge != l2_charge && n_bjets==0 && mt<30'))
 # cuts.append(Cut('btag', inc_cut + '&& l1_charge != l2_charge && n_bjets>=1 && n_jets<=1 && mt<30'))
+=======
+
+if 'mssm' in mode:
+    cuts.append(Cut('nobtag', inc_cut + '&& l1_charge != l2_charge && n_bjets==0 && mt<30'))
+    cuts.append(Cut('btag', inc_cut + '&& l1_charge != l2_charge && n_bjets>=1 && n_jets<=1 && mt<30'))
+if mode == 'mssm_signal':
+    cuts.append(Cut('nobtag_highmtos', inc_cut + '&& l1_charge != l2_charge && n_bjets==0 && mt>70'))
+    cuts.append(Cut('nobtag_highmtss', inc_cut + '&& l1_charge == l2_charge && n_bjets==0 && mt>70'))
+    cuts.append(Cut('nobtag_lowmtss', inc_cut + '&& l1_charge == l2_charge && n_bjets==0 && mt<30'))
+
+if mode == 'mssm_signal':
+    cuts.append(Cut('btag_highmtos', inc_cut + '&& l1_charge != l2_charge && n_bjets>=1 && n_jets<=1 && mt>70'))
+    cuts.append(Cut('btag_highmtss', inc_cut + '&& l1_charge == l2_charge && n_bjets>=1 && n_jets<=1 && mt>70'))
+    cuts.append(Cut('btag_lowmtss', inc_cut + '&& l1_charge == l2_charge && n_bjets>=1 && n_jets<=1 && mt<30'))
+
+>>>>>>> b7291f6... Update plotting, in particular running mu-tau with multidraw and updating samples
 
 # cuts.append(Cut('inclusivemtgr40', inc_cut + '&& l1_charge != l2_charge && mt>40'))
 
@@ -53,6 +69,9 @@ cuts.append(Cut('nobtag', inc_cut + '&& l1_charge != l2_charge && n_bjets==0 && 
 # cuts.append(Cut('SShighmt40', inc_cut + '&& l1_charge == l2_charge && mt>40'))
 
 samples_mc, samples_data, samples, all_samples, sampleDict = createSampleLists(analysis_dir=analysis_dir)
+
+if mode == 'mssm_control' or not 'mssm' in mode:
+    all_samples = [s for s in all_samples if not 'ggH' in s.name and not 'bbH' in s.name]
 
 
 def createDefaultGroups(plot):
@@ -81,6 +100,8 @@ if w_qcd_mssm_method:
     samples_non_w = [s for s in all_samples if s.name != 'QCD' and s.name not in w_names and not s.is_signal]
     samples_non_w_ss = copy.deepcopy(samples_non_w)
     
+    samples_signal = [s for s in all_samples if s.is_signal]
+
     samples_w = copy.deepcopy([s for s in all_samples if s.name in w_names])
     samples_w_ss = copy.deepcopy(samples_w)
     
@@ -120,25 +141,25 @@ if w_qcd_mssm_method:
 
     qcd = HistogramCfg(name='QCD', var=None, cfgs=samples_non_w_ss + [wjets_ss], cut=inc_cut, total_scale=r_qcd_os_ss, lumi=int_lumi, weight=total_weight)
 
-    samples_mssm_method = samples_non_w + [wjets, qcd]
+    samples_mssm_method = samples_non_w + [wjets, qcd] + samples_signal
 
-# Taken from Variables.py, can get subset with e.g. getVars(['mt', 'mvis'])
-variables = all_vars
+# Taken from Variables.py; can get subset with e.g. getVars(['mt', 'mvis'])
+variables = taumu_vars
 # variables = getVars(['_norm_', 'mt', 'mvis', 'l1_pt', 'l2_pt', 'l1_eta', 'l2_eta', 'n_vertices', 'n_jets', 'n_bjets'])
-
 # variables = getVars(['_norm_', 'mt', 'mvis', 'n_vertices', 'met_pt', 'l1_pt', 'l2_pt'])
-
 # variables = getVars(['delta_phi_l2_met', 'met_pt', 'met_phi'])
-
-variables = getVars(['_norm_'])
+# variables = getVars(['_norm_'])
 # variables = getVars(['mvis'])
-variables = [
-    VariableCfg(name='mvis', binning={'nbinsx':35, 'xmin':0., 'xmax':350}, unit='GeV', xtitle='m_{vis}')
-]
-variables = [
-    VariableCfg(name='svfit_transverse_mass', binning=binning_mssm, unit='GeV', xtitle='m_{T,SVFit}'),
-    VariableCfg(name='svfit_mass', binning=binning_mssm, unit='GeV', xtitle='m_{SVFit}')
-]
+# variables = [
+#     VariableCfg(name='mvis', binning={'nbinsx':35, 'xmin':0., 'xmax':350}, unit='GeV', xtitle='m_{vis}')
+# ]
+
+if mode == 'mssm_signal':
+    variables = [
+        VariableCfg(name='svfit_transverse_mass', binning=binning_mssm, unit='GeV', xtitle='m_{T,SVFit}'),
+        VariableCfg(name='svfit_mass', binning=binning_mssm, unit='GeV', xtitle='m_{SVFit}'),
+        VariableCfg(name='mvis', binning=binning_mssm, unit='GeV', xtitle='m_{vis}'),
+    ]
 
 
 for cut in cuts:
@@ -205,24 +226,25 @@ for cut in cuts:
         wjets.total_scale = w_sf
         wjets_ss.total_scale = -w_sf
 
-        import pdb; pdb.set_trace()
+    cfg_main.vars = variables
+    if qcd_from_same_sign:
+        qcd.vars = variables # Can put into function but we will not want it by default if we take normalisations from e.g. high MT
+    if w_qcd_mssm_method:
+        wjets.vars = variables # Can put into function but we will not want it by default if we take normalisations from e.g. high MT
+        qcd.vars = variables
+        wjets_ss.vars = variables
 
     for variable in variables:
-        cfg_main.var = variable
-        if qcd_from_same_sign:
-            qcd.var = variable # Can put into function but we will not want it by default if we take normalisations from e.g. high MT
-        if w_qcd_mssm_method:
-            wjets.var = variable # Can put into function but we will not want it by default if we take normalisations from e.g. high MT
-            qcd.var = variable
-            wjets_ss.var = variable
-        
-        if variable.name in ['svfit_mass', 'svfit_transverse_mass']:
+        if variable.name in ['svfit_mass', 'svfit_transverse_mass', 'mvis']:
             if cut.name in ['inclusive', 'nobtag']:
                 variable.binning = binning_mssm
             elif cut.name in ['btag']:
                 variable.binning = binning_mssm_btag
 
-        plot = createHistogram(cfg_main, verbose=False)
+    plots = createHistograms(cfg_main, verbose=False)
+    for variable in variables:
+    # for plot in plots.itervalues():
+        plot = plots[variable.name]
         createDefaultGroups(plot)
         if not w_qcd_mssm_method:
             plot.Group('W', ['W', 'W1Jets', 'W2Jets', 'W3Jets', 'W4Jets'])
