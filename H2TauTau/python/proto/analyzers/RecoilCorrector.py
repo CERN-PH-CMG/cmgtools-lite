@@ -28,7 +28,7 @@ class RecoilCorrector(Analyzer):
 
 
     def getGenP4(self, event):
-        leptons_prompt = [p for p in event.generatorSummary if abs(p.pdgId()) in [11, 12, 13, 14] and p.fromHardProcessFinalState()]
+        leptons_prompt = [p for p in event.genParticles if abs(p.pdgId()) in [11, 12, 13, 14] and p.fromHardProcessFinalState()]
         leptons_prompt_vis = [p for p in leptons_prompt if abs(p.pdgId()) not in [12, 14]]
 
         taus_prompt = [p for p in event.genParticles if p.statusFlags().isDirectHardProcessTauDecayProduct()]
