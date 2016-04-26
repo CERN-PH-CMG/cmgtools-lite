@@ -117,7 +117,7 @@ wen)
         fi;
 ;;
 gj)
-        FULLOPT=" $FEV $SF -W 'vtxWeight*SF_BTag' "
+        FULLOPT=" $FEV $SF -W 'vtxWeight*SF_BTag*SF_NLO_QCD*SF_NLO_EWK' "
         if [[ "$RINPUTS" != "0" ]]; then
             echo "python ${SYST1G} ${FULLOPT} -p GJetsHT -o ${ROOTR}/rinputs_GJetsHT_CR1G.root "
         else
