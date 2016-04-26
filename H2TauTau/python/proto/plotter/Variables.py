@@ -24,9 +24,9 @@ generic_vars = [
     VCfg(name='pzeta_vis', binning={'nbinsx':40, 'xmin':0., 'xmax':200.}, unit=None, xtitle='p^{#zeta}_{vis} (GeV)'),
     VCfg(name='pzeta_met', binning={'nbinsx':40, 'xmin':-150., 'xmax':150.}, unit=None, xtitle='p^{#zeta}_{MET} (GeV)'),
     VCfg(name='pzeta_disc', binning={'nbinsx':40, 'xmin':-200., 'xmax':200.}, unit=None, xtitle='p^{#zeta}_{disc} (GeV)'),
-    VCfg(name='jet1_chargedHadronMultiplicity', binning={'nbinsx':40, 'xmin':-0.5, 'xmax':39.5}, unit=None, xtitle='jet 1 N_{CH}'),
-    VCfg(name='jet1_chargedMultiplicity', binning={'nbinsx':40, 'xmin':-0.5, 'xmax':39.5}, unit='', xtitle='jet 1 N_{charged}'),
-    VCfg(name='jet1_neutralMultiplicity', binning={'nbinsx':40, 'xmin':-0.5, 'xmax':39.5}, unit='', xtitle='jet 1 N_{neutral}'),
+    # VCfg(name='jet1_chargedHadronMultiplicity', binning={'nbinsx':40, 'xmin':-0.5, 'xmax':39.5}, unit=None, xtitle='jet 1 N_{CH}'),
+    # VCfg(name='jet1_chargedMultiplicity', binning={'nbinsx':40, 'xmin':-0.5, 'xmax':39.5}, unit='', xtitle='jet 1 N_{charged}'),
+    # VCfg(name='jet1_neutralMultiplicity', binning={'nbinsx':40, 'xmin':-0.5, 'xmax':39.5}, unit='', xtitle='jet 1 N_{neutral}'),
 ]
 
 muon_l1_vars = [
