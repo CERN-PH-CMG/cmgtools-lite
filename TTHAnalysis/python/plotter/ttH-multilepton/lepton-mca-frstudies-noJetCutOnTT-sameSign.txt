@@ -1,2 +1,3 @@
 change: LepGood_awayJet_\w+\s*(>|<|>=|<=)\s*\w+ : 1
+change: nLepGood == 1 : minMllAFAS > 12
 weight: nLepGood >= 2 && LepGood_charge[0]*LepGood_charge[1] > 0

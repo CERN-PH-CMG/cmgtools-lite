@@ -106,8 +106,8 @@ def plotDataOverMCEff(hist_mc_tight, hist_mc_loose, hist_data_tight, hist_data_l
 
     g_ratio.GetXaxis().SetTitle(g.GetXaxis().GetTitle())
 
-    # maxy = 1.1 * min(g.GetMaximum(), g_data.GetMaximum(), 0.2)
-    g.GetYaxis().SetRangeUser(0.001, 0.2)
+    maxy = 1.3 * max(g.GetMaximum(), g_data.GetMaximum(), 0.05)
+    g.GetYaxis().SetRangeUser(0.0011, maxy)
 
     cv, pad, padr = HistDrawer.buildCanvas()
 
@@ -128,10 +128,21 @@ def plotDataOverMCEff(hist_mc_tight, hist_mc_loose, hist_data_tight, hist_data_l
     legend.Draw()
 
     padr.cd()
-    g_ratio.GetYaxis().SetRangeUser(0.51, 1.49)
+    g_ratio.GetYaxis().SetRangeUser(0.01, 1.99)
     g_ratio.GetYaxis().SetTitle('Obs/MC')
     g_ratio.Draw('AP')
 
     drawRatioLines(g_ratio)
 
     cv.Print(plot_name)
+
+    g.GetYaxis().SetRangeUser(0.0001, 1)
+    pad.SetLogy(True)
+    cv.Print(plot_name.replace('.', '_log.'))
+    f = ROOT.TFile(plot_name.replace('.', '_log.').replace('.pdf', '.root'), 'RECREATE')
+    g.Write()
+    g_data.Write()
+    cv.Write()
+    f.Close()
+    
+

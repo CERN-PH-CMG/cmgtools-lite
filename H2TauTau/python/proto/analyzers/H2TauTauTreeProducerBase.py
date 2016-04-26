@@ -1,7 +1,7 @@
 from PhysicsTools.Heppy.analyzers.core.TreeAnalyzerNumpy import TreeAnalyzerNumpy
 
 from CMGTools.H2TauTau.proto.analyzers.varsDictionary import vars as var_dict
-from CMGTools.H2TauTau.proto.analyzers.TreeVariables import event_vars, ditau_vars, particle_vars, lepton_vars, electron_vars, muon_vars, tau_vars, jet_vars, geninfo_vars, vbf_vars
+from CMGTools.H2TauTau.proto.analyzers.TreeVariables import event_vars, ditau_vars, particle_vars, lepton_vars, electron_vars, muon_vars, tau_vars, jet_vars, jet_vars_extra, geninfo_vars, vbf_vars, svfit_vars
 
 from CMGTools.H2TauTau.proto.physicsobjects.DiObject import DiTau
 
@@ -99,18 +99,22 @@ class H2TauTauTreeProducerBase(TreeAnalyzerNumpy):
         self.fill(tree, '{p_name}_pdgId'.format(p_name=p_name), particle.pdgId() if not hasattr(particle, 'detFlavour') else particle.detFlavour)
 
     # di-tau
-    def bookDiLepton(self, tree):
+    def bookDiLepton(self, tree, fill_svfit=True):
         # RIC: to add
         # svfit 'fittedDiTauSystem', 'fittedMET', 'fittedTauLeptons'
         self.bookGeneric(tree, ditau_vars)
-        self.bookParticle(tree, 'svfit_l1')
-        self.bookParticle(tree, 'svfit_l2')
+        if fill_svfit:
+            self.bookGeneric(tree, svfit_vars)
+            self.bookParticle(tree, 'svfit_l1')
+            self.bookParticle(tree, 'svfit_l2')
 
-    def fillDiLepton(self, tree, diLepton):
+    def fillDiLepton(self, tree, diLepton, fill_svfit=True):
         self.fillGeneric(tree, ditau_vars, diLepton)
-        if hasattr(diLepton, 'svfit_Taus'):
-            for i, tau in enumerate(diLepton.svfitTaus()):
-                self.fillParticle(tree, 'svfit_l' + str(i + 1), tau)
+        if fill_svfit:
+            self.fillGeneric(tree, svfit_vars, diLepton)
+            if hasattr(diLepton, 'svfit_Taus'):
+                for i, tau in enumerate(diLepton.svfitTaus()):
+                    self.fillParticle(tree, 'svfit_l' + str(i + 1), tau)
 
     # lepton
     def bookLepton(self, tree, p_name):
@@ -152,13 +156,17 @@ class H2TauTauTreeProducerBase(TreeAnalyzerNumpy):
         self.fillGeneric(tree, tau_vars, tau, p_name)
 
     # jet
-    def bookJet(self, tree, p_name):
+    def bookJet(self, tree, p_name, fill_extra=False):
         self.bookParticle(tree, p_name)
         self.bookGeneric(tree, jet_vars, p_name)
+        if fill_extra:
+            self.bookGeneric(tree, jet_vars_extra, p_name)
         
-    def fillJet(self, tree, p_name, jet):
+    def fillJet(self, tree, p_name, jet, fill_extra=False):
         self.fillParticle(tree, p_name, jet)
         self.fillGeneric(tree, jet_vars, jet, p_name)
+        if fill_extra:
+            self.fillGeneric(tree, jet_vars_extra, jet, p_name)
 
     # vbf
     def bookVBF(self, tree, p_name):

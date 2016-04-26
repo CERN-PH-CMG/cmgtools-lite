@@ -31,12 +31,19 @@ MuonEG_Run2015D_Promptv4         = kreator.makeDataComponent('MuonEG_Run2015D_v4
 DoubleMuon_Run2015D_Promptv4     = kreator.makeDataComponent('DoubleMuon_Run2015D_v4'    , '/DoubleMuon/Run2015D-PromptReco-v4/MINIAOD'    , 'CMS', '.*root', json)
 Tau_Run2015D_Promptv4            = kreator.makeDataComponent('Tau_Run2015D_v4'           , '/Tau/Run2015D-PromptReco-v4/MINIAOD'           , 'CMS', '.*root', json)
 
-###
+### ----------------------------- Run2015D-16Dec2015 ----------------------------------------
+SingleElectron_Run2015D_16Dec = kreator.makeDataComponent('SingleElectron_Run2015D_16Dec', '/SingleElectron/Run2015D-16Dec2015-v1/MINIAOD', 'CMS', '.*root', json)
+SingleMuon_Run2015D_16Dec     = kreator.makeDataComponent('SingleMuon_Run2015D_16Dec'    , '/SingleMuon/Run2015D-16Dec2015-v1/MINIAOD'    , 'CMS', '.*root', json)
+DoubleEG_Run2015D_16Dec       = kreator.makeDataComponent('DoubleEG_Run2015D_16Dec'      , '/DoubleEG/Run2015D-16Dec2015-v2/MINIAOD'      , 'CMS', '.*root', json)
+MuonEG_Run2015D_16Dec         = kreator.makeDataComponent('MuonEG_Run2015D_16Dec'        , '/MuonEG/Run2015D-16Dec2015-v1/MINIAOD'        , 'CMS', '.*root', json)
+DoubleMuon_Run2015D_16Dec     = kreator.makeDataComponent('DoubleMuon_Run2015D_16Dec'    , '/DoubleMuon/Run2015D-16Dec2015-v1/MINIAOD'    , 'CMS', '.*root', json)
+Tau_Run2015D_16Dec            = kreator.makeDataComponent('Tau_Run2015D_16Dec'           , '/Tau/Run2015D-16Dec2015-v1/MINIAOD'           , 'CMS', '.*root', json)
 
-data_single_muon     = [SingleMuon_Run2015D_05Oct    , SingleMuon_Run2015D_Promptv4    ]
-data_single_electron = [SingleElectron_Run2015D_05Oct, SingleElectron_Run2015D_Promptv4]
-data_muon_electron   = [MuonEG_Run2015D_05Oct        , MuonEG_Run2015D_Promptv4        ]
-data_tau             = [Tau_Run2015D_05Oct           , Tau_Run2015D_Promptv4           ]
+
+data_single_muon     = [SingleMuon_Run2015D_16Dec    ] # SingleMuon_Run2015D_05Oct    , SingleMuon_Run2015D_Promptv4    ]
+data_single_electron = [SingleElectron_Run2015D_16Dec] # SingleElectron_Run2015D_05Oct, SingleElectron_Run2015D_Promptv4]
+data_muon_electron   = [MuonEG_Run2015D_16Dec        ] # MuonEG_Run2015D_05Oct        , MuonEG_Run2015D_Promptv4        ]
+data_tau             = [Tau_Run2015D_16Dec           ] # Tau_Run2015D_05Oct           , Tau_Run2015D_Promptv4           ]
 
 all_data = data_single_muon + data_single_electron + data_muon_electron + data_tau
 

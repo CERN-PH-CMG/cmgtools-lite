@@ -3,6 +3,7 @@
 #include "DataFormats/Common/interface/Wrapper.h"
 #include "CMGTools/H2TauTau/interface/TriggerEfficiency.h"
 #include "CMGTools/H2TauTau/interface/METSignificance.h"
+#include "CMGTools/H2TauTau/interface/HTTRecoilCorrector.h"
 
 #include "FWCore/Utilities/interface/GCC11Compatibility.h"
 #ifdef CMS_NOCXX11
@@ -21,8 +22,7 @@ namespace {
     edm::Wrapper<cmg::METSignificance> metsige_;
     std::vector<cmg::METSignificance> metsigv_;
     edm::Wrapper<std::vector<cmg::METSignificance> > metsigve_;
-
-
+    HTTRecoilCorrector reccorr_;
   };
 }
 

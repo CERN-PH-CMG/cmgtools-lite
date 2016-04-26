@@ -8,23 +8,8 @@ from CMGTools.H2TauTau.objects.diMuSVFit_cfi import diMuSVFit
 
 from CMGTools.H2TauTau.objects.muCuts_cff import muonPreSelection
 
-from RecoMET.METPUSubtraction.mvaPFMET_cff import pfMVAMEt
-
 # lepton pre-selection
 muonPreSelectionDiMu = muonPreSelection.clone()
-
-# mva MET
-mvaMETDiMu = cms.EDProducer('PFMETProducerMVATauTau',
-                            **pfMVAMEt.parameters_())
-
-mvaMETDiMu.srcPFCandidates = cms.InputTag("packedPFCandidates")
-mvaMETDiMu.srcVertices = cms.InputTag("offlineSlimmedPrimaryVertices")
-mvaMETDiMu.srcLeptons = cms.VInputTag(
-    cms.InputTag("muonPreSelectionDiMu", "", ""),
-    cms.InputTag("muonPreSelectionDiMu", "", ""),
-)
-mvaMETDiMu.permuteLeptons = cms.bool(True)
-
 
 # # Correct tau pt (after MVA MET according to current baseline)
 # cmgDiMuCor = cmgDiMuCor.clone()
@@ -37,14 +22,6 @@ cmgDiMuTauPtSel = cms.EDFilter(
 )
 
 cmgDiMuTauPtSel = cmgDiMuTauPtSel.clone()
-
-
-# recoil correction
-# JAN: We don't know yet if we need this in 2015; re-include if necessary
-
-diMuMVAMetSequence = cms.Sequence(
-    mvaMETDiMu
-)
 
 # SVFit
 cmgDiMuCorSVFitPreSel = diMuSVFit.clone()
@@ -64,7 +41,6 @@ diMuMuCounter = cms.EDFilter(
 diMuSequence = cms.Sequence(
     muonPreSelectionDiMu +
     diMuMuCounter + 
-    diMuMVAMetSequence +
     cmgDiMu +
     # cmgDiMuCor + # Correction only applies to taus, not needed for di-mu
     cmgDiMuTauPtSel +

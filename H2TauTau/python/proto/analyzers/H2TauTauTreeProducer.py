@@ -49,11 +49,18 @@ class H2TauTauTreeProducer(H2TauTauTreeProducerBase):
         self.bookGenInfo(self.tree)
         self.bookVBF(self.tree, 'vbf')
 
-        self.bookJet(self.tree, 'jet1')
-        self.bookJet(self.tree, 'jet2')
+        self.bookJet(self.tree, 'jet1', fill_extra=hasattr(self.cfg_ana, 'addMoreJetInfo') and self.cfg_ana.addMoreJetInfo)
+        self.bookJet(self.tree, 'jet2', fill_extra=hasattr(self.cfg_ana, 'addMoreJetInfo') and self.cfg_ana.addMoreJetInfo)
 
-        self.bookJet(self.tree, 'bjet1')
-        self.bookJet(self.tree, 'bjet2')
+        self.bookJet(self.tree, 'bjet1', fill_extra=hasattr(self.cfg_ana, 'addMoreJetInfo') and self.cfg_ana.addMoreJetInfo)
+        self.bookJet(self.tree, 'bjet2', fill_extra=hasattr(self.cfg_ana, 'addMoreJetInfo') and self.cfg_ana.addMoreJetInfo)
+
+        self.var(self.tree, 'HT_allJets')
+        self.var(self.tree, 'HT_jets')
+        self.var(self.tree, 'HT_bJets')
+        self.var(self.tree, 'HT_cleanJets')
+        self.var(self.tree, 'HT_jets30')
+        self.var(self.tree, 'HT_cleanJets30')
 
         # self.bookParticle(self.tree, 'pfmet')
 
@@ -79,10 +86,17 @@ class H2TauTauTreeProducer(H2TauTauTreeProducerBase):
             self.fillVBF(self.tree, 'vbf', event.vbf)
 
         for i, jet in enumerate(event.cleanJets[:2]):
-            self.fillJet(self.tree, 'jet{n}'.format(n=str(i + 1)), jet)
+            self.fillJet(self.tree, 'jet{n}'.format(n=str(i + 1)), jet, fill_extra=hasattr(self.cfg_ana, 'addMoreJetInfo') and self.cfg_ana.addMoreJetInfo)
 
         for i, jet in enumerate(event.cleanBJets[:2]):
-            self.fillJet(self.tree, 'bjet{n}'.format(n=str(i + 1)), jet)
+            self.fillJet(self.tree, 'bjet{n}'.format(n=str(i + 1)), jet, fill_extra=hasattr(self.cfg_ana, 'addMoreJetInfo') and self.cfg_ana.addMoreJetInfo)
+
+        self.fill(self.tree, 'HT_allJets', event.HT_allJets) 
+        self.fill(self.tree, 'HT_jets', event.HT_jets) 
+        self.fill(self.tree, 'HT_bJets', event.HT_bJets)
+        self.fill(self.tree, 'HT_cleanJets', event.HT_cleanJets)
+        self.fill(self.tree, 'HT_jets30', event.HT_jets30)
+        self.fill(self.tree, 'HT_cleanJets30', event.HT_cleanJets30) 
 
         if hasattr(event, 'parentBoson'):
             self.fillGenParticle(self.tree, 'genboson', event.parentBoson)

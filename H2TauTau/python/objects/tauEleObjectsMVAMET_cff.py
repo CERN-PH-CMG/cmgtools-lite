@@ -9,24 +9,11 @@ from CMGTools.H2TauTau.objects.tauEleSVFit_cfi import tauEleSVFit
 from CMGTools.H2TauTau.objects.tauCuts_cff import tauPreSelection
 from CMGTools.H2TauTau.objects.eleCuts_cff import electronPreSelection
 
-from RecoMET.METPUSubtraction.mvaPFMET_cff import pfMVAMEt
+from CMGTools.H2TauTau.skims.skim_cff import tauEleFullSelSkimSequence, tauEleFullSelCount
 
 # tau pre-selection
 tauPreSelectionTauEle = tauPreSelection.clone()
 electronPreSelectionTauEle = electronPreSelection.clone()
-
-# mva MET
-mvaMETTauEle = cms.EDProducer('PFMETProducerMVATauTau', 
-                             **pfMVAMEt.parameters_())
-
-mvaMETTauEle.srcPFCandidates = cms.InputTag("packedPFCandidates")
-mvaMETTauEle.srcVertices = cms.InputTag("offlineSlimmedPrimaryVertices")
-mvaMETTauEle.srcLeptons = cms.VInputTag(
-  cms.InputTag("tauPreSelectionTauEle", "", ""),
-  cms.InputTag("electronPreSelectionTauEle", "", ""),
-  )
-mvaMETTauEle.permuteLeptons = cms.bool(True)
-
 
 
 # Correct tau pt (after MVA MET according to current baseline)
@@ -41,13 +28,6 @@ cmgTauEleTauPtSel = cms.EDFilter(
 
 cmgTauEleTauPtSel = cmgTauEleTauPtSel.clone()
 
-
-# recoil correction
-# JAN: We don't know yet if we need this in 2015; re-include if necessary
-
-tauEleMVAMetSequence = cms.Sequence(
-    mvaMETTauEle
-  )
 
 # SVFit
 cmgTauEleCorSVFitPreSel = tauEleSVFit.clone()
@@ -75,10 +55,14 @@ tauEleSequence = cms.Sequence( #
     tauEleTauCounter +  
     electronPreSelectionTauEle +   
     tauEleEleCounter + 
-    tauEleMVAMetSequence +
     cmgTauEle +
     cmgTauEleCor+
     cmgTauEleTauPtSel +
     cmgTauEleCorSVFitPreSel +
     cmgTauEleCorSVFitFullSel
+    )
+
+tauElePath = cms.Path(
+    tauEleSequence *
+    tauEleFullSelSkimSequence
     )

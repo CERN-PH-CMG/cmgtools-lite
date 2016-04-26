@@ -24,7 +24,6 @@ class Event:
             self._tree.entry = self._entry
     def __getattr__(self,name):
         if name in self.__dict__: return self.__dict__[name]
-        if name == "metLD": return self._tree.met*0.00397 + self._tree.mhtJet25*0.00265
         self._sync()
         if "(" in name:
             self._isEval = True

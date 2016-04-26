@@ -18,6 +18,7 @@ event_vars = [
     Variable('event', lambda ev : ev.eventId, type=int),
     Variable('bx', lambda ev : (ev.input.eventAuxiliary().bunchCrossing() * ev.input.eventAuxiliary().isRealData()), type=int),
     Variable('orbit_number', lambda ev : (ev.input.eventAuxiliary().orbitNumber() * ev.input.eventAuxiliary().isRealData()), type=int),
+    Variable('is_data', lambda ev: ev.input.eventAuxiliary().isRealData(), type=int),
     Variable('nPU', lambda ev : ev.nPU if hasattr(ev, 'nPU') else -1, type=int),
     Variable('pass_leptons', lambda ev : ev.isSignal, type=int),
     Variable('veto_dilepton', lambda ev : not ev.leptonAccept, type=int),
@@ -33,34 +34,23 @@ event_vars = [
     Variable('rho', lambda ev : ev.rho),
     Variable('weight', lambda ev : ev.eventWeight),
     Variable('weight_vertex', lambda ev : ev.puWeight),
-    Variable('weight_embed', lambda ev : ev.embedWeight),
+    Variable('weight_embed', lambda ev : ev.embedWeight if hasattr(ev, 'embedWeight') else 1.),
     Variable('weight_njet', lambda ev : ev.NJetWeight),
-    Variable('weight_hqt', lambda ev : ev.higgsPtWeight),
-    Variable('weight_hqt_up', lambda ev : ev.higgsPtWeightUp),
-    Variable('weight_hqt_down', lambda ev : ev.higgsPtWeightDown),
+    Variable('weight_hqt', lambda ev : ev.higgsPtWeight if hasattr(ev, 'higgsPtWeight') else 1.),
+    Variable('weight_hqt_up', lambda ev : ev.higgsPtWeightUp if hasattr(ev, 'higgsPtWeightUp') else 1.),
+    Variable('weight_hqt_down', lambda ev : ev.higgsPtWeightDown if hasattr(ev, 'higgsPtWeightDown') else 1.),
 ]
 
 # di-tau object variables
 ditau_vars = [
     Variable('mvis', lambda dil : dil.mass()),
     Variable('mt_total', lambda dil : dil.mtTotal()),
-    Variable('svfit_mass', lambda dil : dil.svfitMass()),
-    Variable('svfit_transverse_mass', lambda dil : dil.svfitTransverseMass()),
-    Variable('svfit_mass_error', lambda dil : dil.svfitMassError()),
-    Variable('svfit_pt', lambda dil : dil.svfitPt()),
-    Variable('svfit_pt_error', lambda dil : dil.svfitPtError()),
-    Variable('svfit_eta', lambda dil : dil.svfitEta()),
-    Variable('svfit_phi', lambda dil : dil.svfitPhi()),
-    Variable('svfit_met_pt', lambda dil : dil.svfitMET().Rho() if hasattr(dil, 'svfitMET') else -999.),
-    Variable('svfit_met_e', lambda dil : dil.svfitMET().mag2() if hasattr(dil, 'svfitMET') else -999.),
-    Variable('svfit_met_phi', lambda dil : dil.svfitMET().phi() if hasattr(dil, 'svfitMET') else -999.),
-    Variable('svfit_met_eta', lambda dil : dil.svfitMET().eta() if hasattr(dil, 'svfitMET') else -999.),
     Variable('pzeta_met', lambda dil : dil.pZetaMET()),
     Variable('pzeta_vis', lambda dil : dil.pZetaVis()),
     Variable('pzeta_disc', lambda dil : dil.pZetaDisc()),
     Variable('mt', lambda dil : dil.mTLeg1()),
     Variable('mt_leg2', lambda dil : dil.mTLeg2()),
-    Variable('mt_leg1', lambda dil : dil.mTLeg1()),
+    # Variable('mt_leg1', lambda dil : dil.mTLeg1()),
     Variable('met_cov00', lambda dil : dil.mvaMetSig(0, 0) if dil.mvaMetSig else 0.),
     Variable('met_cov01', lambda dil : dil.mvaMetSig(0, 1) if dil.mvaMetSig else 0.),
     Variable('met_cov10', lambda dil : dil.mvaMetSig(1, 0) if dil.mvaMetSig else 0.),
@@ -75,6 +65,20 @@ ditau_vars = [
     Variable('delta_r_l1_l2', lambda dil : deltaR(dil.leg1().eta(), dil.leg1().phi(), dil.leg2().eta(), dil.leg2().phi())),
     Variable('delta_phi_l1_met', lambda dil : deltaPhi(dil.leg1().phi(), dil.met().phi())),
     Variable('delta_phi_l2_met', lambda dil : deltaPhi(dil.leg2().phi(), dil.met().phi())),
+]
+
+svfit_vars = [
+    Variable('svfit_mass', lambda dil : dil.svfitMass()),
+    Variable('svfit_transverse_mass', lambda dil : dil.svfitTransverseMass()),
+    Variable('svfit_mass_error', lambda dil : dil.svfitMassError()),
+    Variable('svfit_pt', lambda dil : dil.svfitPt()),
+    Variable('svfit_pt_error', lambda dil : dil.svfitPtError()),
+    Variable('svfit_eta', lambda dil : dil.svfitEta()),
+    Variable('svfit_phi', lambda dil : dil.svfitPhi()),
+    Variable('svfit_met_pt', lambda dil : dil.svfitMET().Rho() if hasattr(dil, 'svfitMET') else -999.),
+    Variable('svfit_met_e', lambda dil : dil.svfitMET().mag2() if hasattr(dil, 'svfitMET') else -999.),
+    Variable('svfit_met_phi', lambda dil : dil.svfitMET().phi() if hasattr(dil, 'svfitMET') else -999.),
+    Variable('svfit_met_eta', lambda dil : dil.svfitMET().eta() if hasattr(dil, 'svfitMET') else -999.),
 ]
 
 # generic particle
@@ -132,7 +136,8 @@ muon_vars = [
 tau_vars = [
     Variable('decayMode', lambda tau : tau.decayMode()),
     Variable('zImpact', lambda tau : tau.zImpact()),
-    Variable('dz_selfvertex', lambda tau : tau.vertex().z() - tau.associatedVertex.position().z())
+    Variable('dz_selfvertex', lambda tau : tau.vertex().z() - tau.associatedVertex.position().z()),
+    Variable('ptScale', lambda tau : tau.ptScale if hasattr(tau, 'ptScale') else -999.),
 ]
 for tau_id in tauIDs:
     if type(tau_id) is str:
@@ -161,28 +166,47 @@ jet_vars = [
     Variable('genjet_pt', lambda jet : jet.matchedGenJet.pt() if hasattr(jet, 'matchedGenJet') and jet.matchedGenJet else -999.),
 ]
 
+# extended jet vars
+jet_vars_extra = [
+    Variable('nConstituents', lambda jet : jet.nConstituents() if hasattr(jet, 'nConstituents') else -999.),
+    Variable('rawFactor', lambda jet : jet.rawFactor() if hasattr(jet, 'rawFactor') else -999.),
+    Variable('chargedHadronEnergy', lambda jet : jet.chargedHadronEnergy() if hasattr(jet, 'chargedHadronEnergy') else -999.),
+    Variable('neutralHadronEnergy', lambda jet : jet.neutralHadronEnergy() if hasattr(jet, 'neutralHadronEnergy') else -999.),
+    Variable('neutralEmEnergy', lambda jet : jet.neutralEmEnergy() if hasattr(jet, 'neutralEmEnergy') else -999.),
+    Variable('muonEnergy', lambda jet : jet.muonEnergy() if hasattr(jet, 'muonEnergy') else -999.),
+    Variable('chargedEmEnergy', lambda jet : jet.chargedEmEnergy() if hasattr(jet, 'chargedEmEnergy') else -999.),
+    Variable('chargedHadronMultiplicity', lambda jet : jet.chargedHadronMultiplicity() if hasattr(jet, 'chargedHadronMultiplicity') else -999.),
+    Variable('chargedMultiplicity', lambda jet : jet.chargedMultiplicity() if hasattr(jet, 'chargedMultiplicity') else -999.),
+    Variable('neutralMultiplicity', lambda jet : jet.neutralMultiplicity() if hasattr(jet, 'neutralMultiplicity') else -999.),
+]
+
+
 # gen info
 geninfo_vars = [
     Variable('geninfo_mcweight', lambda ev : ev.mcweight if hasattr(ev, 'mcweight') else 1., type=int),
     Variable('geninfo_nup', lambda ev : ev.NUP if hasattr(ev, 'NUP') else -1, type=int),
-    Variable('geninfo_tt', type=int),
-    Variable('geninfo_mt', type=int),
-    Variable('geninfo_et', type=int),
-    Variable('geninfo_ee', type=int),
-    Variable('geninfo_mm', type=int),
-    Variable('geninfo_em', type=int),
-    Variable('geninfo_EE', type=int),
-    Variable('geninfo_MM', type=int),
-    Variable('geninfo_TT', type=int),
-    Variable('geninfo_LL', type=int),
-    Variable('geninfo_fakeid', type=int),
+    Variable('geninfo_htgen', lambda ev : ev.genPartonHT if hasattr(ev, 'genPartonHT') else -1,),
+    Variable('geninfo_invmass', lambda ev : ev.geninvmass if hasattr(ev, 'geninvmass') else -1),
+    # The following variables were used in run 1 to define channels on gen level,
+    # but are not necessary anymore
+    # Variable('geninfo_tt', type=int),
+    # Variable('geninfo_mt', type=int),
+    # Variable('geninfo_et', type=int),
+    # Variable('geninfo_ee', type=int),
+    # Variable('geninfo_mm', type=int),
+    # Variable('geninfo_em', type=int),
+    # Variable('geninfo_EE', type=int),
+    # Variable('geninfo_MM', type=int),
+    # Variable('geninfo_TT', type=int),
+    # Variable('geninfo_LL', type=int),
+    # Variable('geninfo_fakeid', type=int),
     Variable('geninfo_has_w', type=int),
     Variable('geninfo_has_z', type=int),
     Variable('geninfo_mass'),
     Variable('weight_gen'),
     Variable('genmet_pt'),
-    Variable('genmet_eta'),
-    Variable('genmet_e'),
+    # Variable('genmet_eta'),
+    # Variable('genmet_e'),
     Variable('genmet_px'),
     Variable('genmet_py'),
     Variable('genmet_phi'),
