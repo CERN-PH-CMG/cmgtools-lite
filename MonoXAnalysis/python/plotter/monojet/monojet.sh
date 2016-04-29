@@ -116,7 +116,7 @@ fi
 
 CAT_CUT=""
 case $CATEGORY in
-monov) CAT_CUT=$MONOV_CUT ;;
+monov) CAT_CUT="{$MONOV_CUT} --rebin 2 " ;;
 monoj) CAT_CUT=$MONOJ_CUT ;;
 esac
 
