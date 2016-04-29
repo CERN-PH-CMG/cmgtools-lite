@@ -18,13 +18,17 @@ DYJetsHT: DYJetsToLL_M50_HT400to600 :  5.497; FillColor=ROOT.kAzure+5,  Label="Z
 DYJetsHT: DYJetsToLL_M50_HT600toInf :  2.210; FillColor=ROOT.kAzure+5,  Label="ZJets"
 
 # W+jets HT-binned: replace the xsec in the ntuple (NLO) with the LO, in order to apply the ptV-dependent k-factors
-WJetsHT: WJetsToLNu_HT100to200 :  1347; FillColor=ROOT.kCyan-7,  Label="WJets"
-WJetsHT: WJetsToLNu_HT200to400 :  360; FillColor=ROOT.kCyan-7,  Label="WJets"
-WJetsHT: WJetsToLNu_HT400to600 :  48.9; FillColor=ROOT.kCyan-7,  Label="WJets"
-WJetsHT: WJetsToLNu_HT600toInf :  18.77; FillColor=ROOT.kCyan-7,  Label="WJets"
+WJetsHT: WJetsToLNu_HT100to200   :  1347;    FillColor=ROOT.kCyan-7,  Label="WJets"
+WJetsHT: WJetsToLNu_HT200to400   :  360;     FillColor=ROOT.kCyan-7,  Label="WJets"
+WJetsHT: WJetsToLNu_HT400to600   :  48.9;    FillColor=ROOT.kCyan-7,  Label="WJets"
+WJetsHT: WJetsToLNu_HT600to800  :  12.8;    FillColor=ROOT.kCyan-7,  Label="WJets"
+WJetsHT: WJetsToLNu_HT800to1200  :  5.26;    FillColor=ROOT.kCyan-7,  Label="WJets"
+WJetsHT: WJetsToLNu_HT1200to2500 :  1.33;    FillColor=ROOT.kCyan-7,  Label="WJets"
+WJetsHT: WJetsToLNu_HT2500toInf  :  0.03089; FillColor=ROOT.kCyan-7,  Label="WJets"
+
 
 # -- Top --
-Top      : TTJets_LO : xsec; FillColor=ROOT.kGreen+2, Label="top", NormSystematic=0.5
+Top      : TTJets    : xsec; FillColor=ROOT.kGreen+2, Label="top", NormSystematic=0.5
 Top      : T_tWch    : xsec; FillColor=ROOT.kGreen+2, Label="top", NormSystematic=0.5
 Top      : TBar_tWch : xsec; FillColor=ROOT.kGreen+2, Label="top", NormSystematic=0.5
 Top      : TToLeptons_tch_amcatnlo : xsec; FillColor=ROOT.kGreen+2, Label="top", NormSystematic=0.5
@@ -46,6 +50,6 @@ QCD      : QCD_HT2000toInf  : xsec; FillColor=ROOT.kGray+1, Label="QCD", NormSys
 
 
 # 2015 25ns data
-data: MET_Run2015C_05Oct_runs_254227_255031 ;  Label="Data"
-data: MET_Run2015D_05Oct_runs_256630_258158 ;  Label="Data"
-data: MET_Run2015D_v4_runs_258159_260627 ;  Label="Data"
+data: MET_Run2015C_16Dec_runs_254227_254914 ;  Label="Data"
+data: MET_Run2015D_16Dec_runs_256630_260627 ;  Label="Data"
+

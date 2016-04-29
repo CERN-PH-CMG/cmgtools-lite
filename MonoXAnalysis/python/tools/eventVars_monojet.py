@@ -17,11 +17,13 @@ class EventVarsMonojet:
     def initSampleNormalization(self,sample_nevt):
         self.sample_nevt = sample_nevt        
     def listBranches(self):
-        biglist = [ ("nJetClean", "I"), ("nTauClean", "I"), ("nLepSel", "I"),
+        biglist = [ ("nJetClean", "I"), ("nFatJetClean","I"), ("nTauClean", "I"), ("nLepSel", "I"),
                     ("iL","I",10,"nLepSel"), ("iJ","I",10,"nJetClean"), ("iT","I",3,"nTauClean"),
-                    ("nJetClean30", "I"), ("nTauClean18V", "I") ] 
+                    ("iFJ","I",10,"nFatJetClean"), ("nJetClean30", "I"), ("nTauClean18V", "I") ] 
         for jfloat in "pt eta phi mass btagCSV rawPt leadClean".split():
             biglist.append( ("JetClean"+"_"+jfloat,"F",10,"nJetClean") )
+        for fjfloat in "pt eta phi prunedMass tau2 tau1".split():
+            biglist.append( ("FatJetClean"+"_"+fjfloat,"F",10,"nFatJetClean") )
         for tfloat in "pt eta phi".split():
             biglist.append( ("TauClean"+"_"+tfloat,"F",3,"nTauClean") )
         self.branches = self.branches + biglist
@@ -71,7 +73,7 @@ class EventVarsMonojet:
         return self._btagreweight.calcEventWeight(jets, rwtKind, rwtSyst)
     def __call__(self,event):
         # prepare output
-        ret = {}; jetret = {}; tauret = {}
+        ret = {}; jetret = {}; fatjetret = {}; tauret = {}
         ret['weight'] = event.xsec * 1000 * event.genWeight / self.sample_nevt if event.run == 1 else 1.0
         ret['events_ntot'] = self.sample_nevt
         leps = [l for l in Collection(event,"LepGood","nLepGood")]
@@ -89,6 +91,7 @@ class EventVarsMonojet:
         jetsFwd = [j for j in Collection(event,"JetFwd","nJetFwd")]
         alljets = jets + jetsFwd
         njet = len(jets)
+        fatjets = [f for f in Collection(event,"FatJet","nFatJet")]
         photonsT = [p for p in photons if self.gammaIdTight(p)]
         #print "check photonsT size is ", len(photonsT), " and nGamma175T = ",ret['nGamma175T']
         (met, metphi)  = event.metNoMu_pt, event.metNoMu_phi
@@ -166,6 +169,27 @@ class EventVarsMonojet:
 
         ret["SF_BTag"] = self.BTagEventReweight(lowptjets) if event.run == 1 else 1.0
 
+        ### fat-jet cleaning
+        ret['iFJ'] = []
+        # 1. clean the fatjets from close leptons
+        for ij,j in enumerate(fatjets):
+            j._clean = True if j.id > 0.5 else False
+            for il in ret["iL"]:
+                lep = leps[il]
+                if deltaR(lep,j) < 0.4: j._clean = False
+            if j._clean: ret['iFJ'].append(ij)
+        # 2. sort the fatjets by pt 
+        ret['iFJ'].sort(key = lambda idx : fatjets[idx].pt, reverse = True)
+        # 3. compute the cleaned fatjet variables
+        for jfloat in "pt eta phi prunedMass tau2 tau1".split():
+            fatjetret[jfloat] = []
+        for idx in ret['iFJ']:
+            jet = fatjets[idx]
+            for jfloat in "pt eta phi prunedMass tau2 tau1".split():
+                fatjetret[jfloat].append( getattr(jet,jfloat) )
+        # 4. compute the sums
+        ret["nFatJetClean"] = len(ret['iFJ'])
+
         ### muon-tau cleaning
         # Define cleaned taus
         ret["iT"] = []; 
@@ -207,6 +231,8 @@ class EventVarsMonojet:
             fullret[k] = v
         for k,v in jetret.iteritems():
             fullret["JetClean_%s" % k] = v
+        for k,v in fatjetret.iteritems():
+            fullret["FatJetClean_%s" % k] = v
         for k,v in tauret.iteritems():
             fullret["TauClean_%s" % k] = v
         return fullret
