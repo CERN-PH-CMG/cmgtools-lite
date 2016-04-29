@@ -10,7 +10,6 @@ tau veto: nTauClean18V==0
 photonveto: nGamma15V==0
 btagveto: nBTag15==0
 recoil>200: pt_3(met_pt,met_phi,LepGood1_pt,LepGood1_phi,LepGood2_pt,LepGood2_phi) > 200
-#recoil>200: pt_3(met_pt,met_phi,CalibEle1_pt,CalibEle1_phi,CalibEle2_pt,CalibEle2_phi) > 200
 jet100: nJetClean30 >= 1 && JetClean1_pt > 100
 jetclean: JetClean1_leadClean > 0.5
 dphijm: abs(dphijm) > 0.5

@@ -1,9 +1,33 @@
 #!/bin/bash
 
+RUNIT="echo "
+if [[ "$1" == "-e" ]]; then
+    echo "# will execute the program "
+    RUNIT="eval "; shift;
+fi;
+
+SAVEYIELD=0
+if [[ "$1" == "-y" ]]; then
+    echo "# save the yields in a text file"
+    SAVEYIELD=1; shift;
+fi;
+
+DOPLOTS=0
+if [[ "$1" == "-p" ]]; then
+    echo "# will do the plots"
+    DOPLOTS=1; shift;
+fi;
+
 RINPUTS=0
 if [[ "$1" == "-r" ]]; then
     echo "# will print the command to write the inputs for the R factors"
     RINPUTS=1; shift;
+fi;
+
+CATEGORY="inclusive"
+if [[ "$1" == "-c" ]]; then
+    CATEGORY=$2; shift; shift;
+    echo "# ${RUNIT} command for the category " $CATEGORY
 fi;
 
 WHAT=$1; if [[ "$1" == "" ]]; then echo "monojet.sh <what>"; exit 1; fi
@@ -39,8 +63,9 @@ else
     MCA="${WORKDIR}/mca-76X-sr.txt "
 fi
 
-ROOTPREF="plots/Fall15/"
+ROOTPREF="plots/${CATEGORY}"
 ROOT="${ROOTPREF}/${WHAT}"
+YIELDFILE="${ROOTPREF}/${WHAT}/${WHAT}_yields.txt"
 ROOTR="${ROOTPREF}/transfer_factors"
 COREOPT="-P $T --s2v -j $J -l 2.32 "
 COREY="mcAnalysis.py ${MCA} ${COREOPT} -G  "
@@ -70,59 +95,125 @@ SYST1M="${CORER} ${WORKDIR}/wmunu_twiki.txt ${WORKDIR}/wmunu_plots.txt monojet/s
 SYST1E="${CORER} ${WORKDIR}/wenu_twiki.txt ${WORKDIR}/wenu_plots.txt monojet/syst_1l.txt "
 SYST1G="${CORER} ${WORKDIR}/wenu_twiki.txt ${WORKDIR}/gjets_plots.txt monojet/syst_1g.txt "
 
+MONOV_CUT="-A dphijm monoV 'nFatJetClean>0 && FatJetClean1_pt>250 && abs(FatJetClean1_eta)<2.4 && abs(FatJetClean1_prunedMass-85)<20 && FatJetClean1_tau2/FatJetClean1_tau1<0.6"
+MONOJ_CUT="-A dphijm monoJ '!(nFatJetClean>0 && FatJetClean1_pt>250 && abs(FatJetClean1_eta)<2.4 && abs(FatJetClean1_prunedMass-85)<20 && FatJetClean1_tau2/FatJetClean1_tau1<0.6)"
+if [ "$WHAT" == "zmm" ] || [ "$WHAT" == "wmn" ] ; then
+    MONOV_CUT="${MONOV_CUT} && metNoMu_pt>250' "
+    MONOJ_CUT="${MONOJ_CUT} || metNoMu_pt<=250' "
+elif [ "$WHAT" == "zee" ] ; then
+    MONOV_CUT="${MONOV_CUT} && pt_3(met_pt,met_phi,LepGood1_pt,LepGood1_phi,LepGood2_pt,LepGood2_phi)>250' "
+    MONOJ_CUT="${MONOJ_CUT} || pt_3(met_pt,met_phi,LepGood1_pt,LepGood1_phi,LepGood2_pt,LepGood2_phi)<=250' "
+elif [ "$WHAT" == "wen" ] ; then
+    MONOV_CUT="${MONOV_CUT} && pt_2(met_pt,met_phi,LepGood1_pt,LepGood1_phi)>250' "
+    MONOJ_CUT="${MONOJ_CUT} || pt_2(met_pt,met_phi,LepGood1_pt,LepGood1_phi)<=250' "
+elif [ "$WHAT" == "gj" ] ; then
+    MONOV_CUT="${MONOV_CUT} && pt_2(met_pt,met_phi,GammaGood1_pt,GammaGood1_phi)>250' "
+    MONOJ_CUT="${MONOJ_CUT} || pt_2(met_pt,met_phi,GammaGood1_pt,GammaGood1_phi)<=250' "
+else
+    MONOV_CUT="${MONOV_CUT}' "
+    MONOJ_CUT="${MONOJ_CUT}' "
+fi
+
+CAT_CUT=""
+case $CATEGORY in
+monov) CAT_CUT=$MONOV_CUT ;;
+monoj) CAT_CUT=$MONOJ_CUT ;;
+esac
+
+REDIRECTYIELD=""
+if [[ "$SAVEYIELD" != "0" ]]; then
+    mkdir -p "${ROOT}";
+    echo "# will save the yields in the file: $YIELDFILE"
+    REDIRECTYIELD=" > ${YIELDFILE} "
+fi
+
 case $WHAT in
 sr)
-        FULLOPT=" $FEV $SF -W 'vtxWeight*SF_trigmetnomu*SF_BTag*SF_NLO_QCD*SF_NLO_EWK' "
+        FULLOPT=" $FEV $SF -W 'vtxWeight*SF_trigmetnomu*SF_BTag*SF_NLO_QCD*SF_NLO_EWK' $CAT_CUT "
         if [[ "$RINPUTS" != "0" ]]; then
-            echo "python ${SYSTSR} ${FULLOPT} -p 'ZNuNuHT,WJetsHT' -o ${ROOTR}/rinputs_SR.root "
+            comm="python ${SYSTSR} ${FULLOPT} -p 'ZNuNuHT,WJetsHT' -o ${ROOTR}/rinputs_SR.root "
+            $RUNIT $comm
         else
-            echo "python ${RUNYSR} ${FULLOPT} "
-            echo "python ${PLOTSR} ${FULLOPT} "
+            if [[ "$DOPLOTS" != "0" ]]; then
+                comm="python ${PLOTSR} ${FULLOPT} "
+                $RUNIT $comm
+            else
+                comm="python ${RUNYSR} ${FULLOPT} ${REDIRECTYIELD}"
+                $RUNIT $comm
+            fi
         fi;
 ;;
 zmm)
-        FULLOPT=" $FEV $SF -W 'vtxWeight*SF_trigmetnomu*SF_LepTightLoose*SF_BTag*SF_NLO_QCD*SF_NLO_EWK' "
+        FULLOPT=" $FEV $SF -W 'vtxWeight*SF_trigmetnomu*SF_LepTightLoose*SF_BTag*SF_NLO_QCD*SF_NLO_EWK' $CAT_CUT "
         if [[ "$RINPUTS" != "0" ]]; then
-            echo "python ${SYST2M} ${FULLOPT} -p DYJetsHT -o ${ROOTR}/rinputs_DYJetsHT_CR2MU.root "
+            comm="python ${SYST2M} ${FULLOPT} -p DYJetsHT -o ${ROOTR}/rinputs_DYJetsHT_CR2MU.root "
+            $RUNIT $comm
         else
-            echo "python ${RUNY2M} ${FULLOPT} --sp DYJetsHT "
-            echo "python ${PLOT2M} ${FULLOPT} --sp DYJetsHT "
+            if [[ "$DOPLOTS" != "0" ]]; then
+                comm="python ${PLOT2M} ${FULLOPT} --sp DYJetsHT "
+                $RUNIT $comm
+            else
+                comm="python ${RUNY2M} ${FULLOPT} --sp DYJetsHT ${REDIRECTYIELD}"
+                $RUNIT $comm
+            fi
         fi;
 ;;
 wmn)
-        FULLOPT=" $FEV $SF -W 'vtxWeight*SF_trigmetnomu*SF_LepTight*SF_BTag*SF_NLO_QCD*SF_NLO_EWK' "
+        FULLOPT=" $FEV $SF -W 'vtxWeight*SF_trigmetnomu*SF_LepTight*SF_BTag*SF_NLO_QCD*SF_NLO_EWK' $CAT_CUT "
         if [[ "$RINPUTS" != "0" ]]; then
-            echo "python ${SYST1M} ${FULLOPT} -p WJetsHT -o ${ROOTR}/rinputs_WJetsHT_CR1MU.root "
+            comm="python ${SYST1M} ${FULLOPT} -p WJetsHT -o ${ROOTR}/rinputs_WJetsHT_CR1MU.root "
+            $RUNIT $comm
         else
-            echo "python ${RUNY1M} ${FULLOPT} --sp WJetsHT "
-            echo "python ${PLOT1M} ${FULLOPT} --sp WJetsHT "
+            if [[ "$DOPLOTS" != "0" ]]; then
+                comm="python ${PLOT1M} ${FULLOPT} --sp WJetsHT "
+                $RUNIT $comm
+            else
+                comm="python ${RUNY1M} ${FULLOPT} --sp WJetsHT ${REDIRECTYIELD}"
+                $RUNIT $comm
+            fi
         fi;
 ;;
 zee)
-        FULLOPT=" $FEV $SF -W 'vtxWeight*SF_trig1lep*SF_LepTightLoose*SF_BTag*SF_NLO_QCD*SF_NLO_EWK' "
+        FULLOPT=" $FEV $SF -W 'vtxWeight*SF_trig1lep*SF_LepTightLoose*SF_BTag*SF_NLO_QCD*SF_NLO_EWK' $CAT_CUT "
         if [[ "$RINPUTS" != "0" ]]; then
-            echo "python ${SYST2E} ${FULLOPT} -p DYJetsHT -o ${ROOTR}/rinputs_DYJetsHT_CR2E.root "
+            comm="python ${SYST2E} ${FULLOPT} -p DYJetsHT -o ${ROOTR}/rinputs_DYJetsHT_CR2E.root "
         else
-            echo "python ${RUNY2E} ${FULLOPT} --sp DYJetsHT "
-            echo "python ${PLOT2E} ${FULLOPT} --sp DYJetsHT "
+            if [[ "$DOPLOTS" != "0" ]]; then
+                comm="python ${PLOT2E} ${FULLOPT} --sp DYJetsHT "
+                $RUNIT $comm
+            else
+                comm="python ${RUNY2E} ${FULLOPT} --sp DYJetsHT ${REDIRECTYIELD}"
+                $RUNIT $comm
+            fi
         fi;
 ;;
 wen)
-        FULLOPT=" $FEV $SF -W 'vtxWeight*SF_trig1lep*SF_LepTight*SF_BTag*SF_NLO_QCD*SF_NLO_EWK' "
+        FULLOPT=" $FEV $SF -W 'vtxWeight*SF_trig1lep*SF_LepTight*SF_BTag*SF_NLO_QCD*SF_NLO_EWK' $CAT_CUT "
         if [[ "$RINPUTS" != "0" ]]; then
-            echo "python ${SYST1E} ${FULLOPT} -p WJetsHT -o ${ROOTR}/rinputs_WJetsHT_CR1E.root "
+            comm="python ${SYST1E} ${FULLOPT} -p WJetsHT -o ${ROOTR}/rinputs_WJetsHT_CR1E.root "
+            $RUNIT $comm
         else
-            echo "python ${RUNY1E} ${FULLOPT} --sp WJetsHT "
-            echo "python ${PLOT1E} ${FULLOPT} --sp WJetsHT "
+            if [[ "$DOPLOTS" != "0" ]]; then
+                comm="python ${PLOT1E} ${FULLOPT} --sp WJetsHT "
+                $RUNIT $comm
+            else
+                comm="python ${RUNY1E} ${FULLOPT} --sp WJetsHT ${REDIRECTYIELD}"
+                $RUNIT $comm
+            fi
         fi;
 ;;
 gj)
-        FULLOPT=" $FEV $SF -W 'vtxWeight*SF_BTag*SF_NLO_QCD*SF_NLO_EWK' "
+        FULLOPT=" $FEV $SF -W 'vtxWeight*SF_BTag*SF_NLO_QCD*SF_NLO_EWK' $CAT_CUT "
         if [[ "$RINPUTS" != "0" ]]; then
-            echo "python ${SYST1G} ${FULLOPT} -p GJetsHT -o ${ROOTR}/rinputs_GJetsHT_CR1G.root "
+            comm="python ${SYST1G} ${FULLOPT} -p GJetsHT -o ${ROOTR}/rinputs_GJetsHT_CR1G.root "
         else
-            echo "python ${RUNY1G} ${FULLOPT} --sp GJetsHT "
-            echo "python ${PLOT1G} ${FULLOPT} --sp GJetsHT "
+            if [[ "$DOPLOTS" != "0" ]]; then
+                comm="python ${PLOT1G} ${FULLOPT} --sp GJetsHT "
+                $RUNIT $comm
+            else
+                comm="python ${RUNY1G} ${FULLOPT} --sp GJetsHT ${REDIRECTYIELD}"
+                $RUNIT $comm
+            fi
         fi;
 ;;
 TF)
