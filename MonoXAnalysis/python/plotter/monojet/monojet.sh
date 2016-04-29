@@ -74,6 +74,8 @@ CORER="mcSystematics.py ${MCA} ${COREOPT} -f --select-plot \"metnomu\" "
 FEV=" -F mjvars/t \"$T/friends/evVarFriend_{cname}.root\" "
 SF=" --FM sf/t \"$T/friends/sfFriend_{cname}.root\" "
 
+if [ "$CATEGORY" == "monov" ] ; then COREP="${COREP} --rebin 2 " ; fi
+
 RUNYSR="${COREY} ${WORKDIR}/monojet_twiki.txt "
 RUNY2M="${COREY} ${WORKDIR}/zmumu_twiki.txt "
 RUNY2E="${COREY} ${WORKDIR}/zee_twiki.txt "
@@ -116,7 +118,7 @@ fi
 
 CAT_CUT=""
 case $CATEGORY in
-monov) CAT_CUT="{$MONOV_CUT} --rebin 2 " ;;
+monov) CAT_CUT=$MONOV_CUT ;;
 monoj) CAT_CUT=$MONOJ_CUT ;;
 esac
 
