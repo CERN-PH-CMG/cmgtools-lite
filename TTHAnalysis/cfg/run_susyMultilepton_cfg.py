@@ -14,12 +14,12 @@ from PhysicsTools.HeppyCore.framework.heppy_loop import getHeppyOption
 #-------- SET OPTIONS AND REDEFINE CONFIGURATIONS -----------
 
 is50ns = getHeppyOption("is50ns",False)
+analysis = getHeppyOption("analysis","ttH")
 runData = getHeppyOption("runData",False)
 runDataQCD = getHeppyOption("runDataQCD",False)
 runFRMC = getHeppyOption("runFRMC",False)
 runSMS = getHeppyOption("runSMS",False)
 scaleProdToLumi = float(getHeppyOption("scaleProdToLumi",-1)) # produce rough equivalent of X /pb for MC datasets
-SOS = getHeppyOption("SOS",False) ## switch True to overwrite settings for SOS skim (N.B. default settings are those from multilepton preselection)
 saveSuperClusterVariables = getHeppyOption("saveSuperClusterVariables",False)
 removeJetReCalibration = getHeppyOption("removeJetReCalibration",False)
 removeJecUncertainty = getHeppyOption("removeJecUncertainty",False)
@@ -63,7 +63,7 @@ if not removeJecUncertainty:
 
 
 
-if SOS == True:
+if analysis in ['SOS']:
 ## -- SOS preselection settings ---
 
     # Lepton Skimming
@@ -90,8 +90,13 @@ if SOS == True:
     # otherwise with only absIso cut at 10 GeV and no relIso we risk cleaning away good jets
 
 if isolation == "miniIso": 
-    lepAna.loose_muon_isoCut     = lambda muon : muon.miniRelIso < 0.4 and muon.sip3D() < 8
-    lepAna.loose_electron_isoCut = lambda elec : elec.miniRelIso < 0.4 and elec.sip3D() < 8
+    if analysis=="ttH":
+        lepAna.loose_muon_isoCut     = lambda muon : muon.miniRelIso < 0.4 and muon.sip3D() < 8
+        lepAna.loose_electron_isoCut = lambda elec : elec.miniRelIso < 0.4 and elec.sip3D() < 8
+    elif analysis=="susy":
+        lepAna.loose_muon_isoCut     = lambda muon : muon.miniRelIso < 0.4
+        lepAna.loose_electron_isoCut = lambda elec : elec.miniRelIso < 0.4
+    else: raise RuntimeError,'analysis field is not correctly configured'
 elif isolation == None:
     lepAna.loose_muon_isoCut     = lambda muon : True
     lepAna.loose_electron_isoCut = lambda elec : True
@@ -120,7 +125,7 @@ tauAna.loose_etaMax = 2.3
 #tauAna.loose_vetoLeptonsPOG = True
 #tauAna.loose_tauAntiMuonID = "againstMuonTight"
 #tauAna.loose_tauAntiElectronID = "againstElectronLoose"
-if True: #if cleaning jet-loose tau cleaning
+if analysis in ["ttH"]: #if cleaning jet-loose tau cleaning
     jetAna.cleanJetsFromTaus = True
     jetAnaScaleUp.cleanJetsFromTaus = True
     jetAnaScaleDown.cleanJetsFromTaus = True
@@ -329,6 +334,7 @@ TChiNeuSlepSneu_mCh300_mChi270_SS = kreator.makeMCComponentFromEOS('TChiNeuSlepS
 TChiNeuSlepSneu_mCh450_mChi300_SS = kreator.makeMCComponentFromEOS('TChiNeuSlepSneu_mCh450_mChi300_SS', '/TChiNeuSlepSneu_mCh450_mChi300_SS/', '/store/user/cheidegg/signals/miniaod76X/%s', ".*root", 0.0734361 )
 TChiNeuSlepSneu_mCh750_mChi100    = kreator.makeMCComponentFromEOS('TChiNeuSlepSneu_mCh750_mChi100'   , '/TChiNeuSlepSneu_mCh750_mChi100/'   , '/store/user/cheidegg/signals/miniaod76X/%s', ".*root", 0.00669356)
 TChiNeuWZ_mCh150_mChi120 = kreator.makeMCComponentFromEOS('TChiNeuWZ_mCh150_mChi120', '/TChiNeuWZ_mCh150_mChi120/', '/store/user/cheidegg/signals/miniaod76X/%s', ".*root", 5.18086 )
+TChiNeuWZ_mCh150_mChi120_OS = kreator.makeMCComponentFromEOS('TChiNeuWZ_mCh150_mChi120_OS', '/TChiNeuWZ_mCh150_mChi120_OS/', '/store/user/cheidegg/signals/miniaod76X/%s', ".*root", 5.18086 )
 
 TChiChiSlepSneu_mCh350_mChi200 = kreator.makeMCComponentFromEOS('TChiChiSlepSneu_mCh350_mChi200','/TChiChiSlepSneu_mCh350_mChi200/','/store/user/cheidegg/signals/miniaod76X/%s', ".*root", 0.102199)
 TChiChiSlepSneu_mCh600_mChi50 = kreator.makeMCComponentFromEOS('TChiChiSlepSneu_mCh600_mChi50','/TChiChiSlepSneu_mCh600_mChi50/','/store/user/cheidegg/signals/miniaod76X/%s', ".*root", 0.00949913)
@@ -345,7 +351,7 @@ TChiNeuWZ_mCh350_mChi100_OS = kreator.makeMCComponentFromEOS('TChiNeuWZ_mCh350_m
 TChiNeuWZ_mCh350_mChi20 = kreator.makeMCComponentFromEOS('TChiNeuWZ_mCh350_mChi20','/TChiNeuWZ_mCh350_mChi20/','/store/user/cheidegg/signals/miniaod76X/%s', ".*root", 0.209439)
 TChiNeuWZ_mCh350_mChi20_OS = kreator.makeMCComponentFromEOS('TChiNeuWZ_mCh350_mChi20_OS','/TChiNeuWZ_mCh350_mChi20_OS/','/store/user/cheidegg/signals/miniaod76X/%s', ".*root", 0.209439)
 
-EWKino = [TChiNeuSlepSneu_mCh300_mChi270_SS,TChiNeuSlepSneu_mCh450_mChi300_SS,TChiNeuSlepSneu_mCh750_mChi100,TChiNeuWZ_mCh150_mChi120,TChiChiSlepSneu_mCh350_mChi200,TChiChiSlepSneu_mCh600_mChi50,TChiNeuSlepSneu_mCh300_mChi270,TChiNeuSlepSneu_mCh450_mChi300,TChiNeuWH_mCh150_mChi20,TChiNeuWH_mCh150_mChi20_SL,TChiNeuWH_mCh250_mChi20,TChiNeuWH_mCh250_mChi20_SL,TChiNeuWZ_mCh200_mChi100,TChiNeuWZ_mCh200_mChi100_OS,TChiNeuWZ_mCh350_mChi100,TChiNeuWZ_mCh350_mChi100_OS,TChiNeuWZ_mCh350_mChi20,TChiNeuWZ_mCh350_mChi20_OS]
+EWKino = [TChiNeuSlepSneu_mCh300_mChi270_SS,TChiNeuSlepSneu_mCh450_mChi300_SS,TChiNeuSlepSneu_mCh750_mChi100,TChiNeuWZ_mCh150_mChi120,TChiNeuWZ_mCh150_mChi120_OS,TChiChiSlepSneu_mCh350_mChi200,TChiChiSlepSneu_mCh600_mChi50,TChiNeuSlepSneu_mCh300_mChi270,TChiNeuSlepSneu_mCh450_mChi300,TChiNeuWH_mCh150_mChi20,TChiNeuWH_mCh150_mChi20_SL,TChiNeuWH_mCh250_mChi20,TChiNeuWH_mCh250_mChi20_SL,TChiNeuWZ_mCh200_mChi100,TChiNeuWZ_mCh200_mChi100_OS,TChiNeuWZ_mCh350_mChi100,TChiNeuWZ_mCh350_mChi100_OS,TChiNeuWZ_mCh350_mChi20,TChiNeuWZ_mCh350_mChi20_OS]
 for comp in EWKino:
     comp.splitFactor = len(comp.files) / 15 # 200 ev. per file
 
@@ -358,6 +364,8 @@ configureSplittingFromTime([TTJets_SingleLeptonFromT,TTJets_SingleLeptonFromTbar
 configureSplittingFromTime([WJetsToLNu_LO,DYJetsToLL_M10to50],20,5)
 
 selectedComponents = EWKino_compressed + EWKino + sTop + backgrounds
+
+selectedComponents = [TChiNeuWZ_mCh150_mChi120]
 
 
 #_Wjets_DY = [WJetsToLNu,DYJetsToLL_M10to50,DYJetsToLL_M50]
@@ -455,7 +463,7 @@ if runData and not isTest: # For running on data
     DatasetsAndTriggers = []
     selectedComponents = [];
  
-    if SOS == True:
+    if analysis in ['SOS']:
         DatasetsAndTriggers.append( ("MET", triggers_Jet80MET90 + triggers_Jet80MET120 + triggers_MET120Mu5 ) )
         #DatasetsAndTriggers.append( ("SingleMuon", triggers_1mu_iso + triggers_1mu_iso_50ns + triggers_1mu_noniso) )
     else:
@@ -557,8 +565,8 @@ if runFRMC:
         from CMGTools.TTHAnalysis.analyzers.ttHFastLepSkimmer import ttHFastLepSkimmer
         fastSkim = cfg.Analyzer(
             ttHFastLepSkimmer, name="ttHFastLepSkimmer1lep",
-            muons = 'slimmedMuons', muCut = lambda mu : mu.pt() > 5 and mu.isLooseMuon(),
-            electrons = 'slimmedElectrons', eleCut = lambda ele : ele.pt() > 7,
+            muons = 'slimmedMuons', muCut = lambda mu : mu.pt() > 3 and mu.isLooseMuon(),
+            electrons = 'slimmedElectrons', eleCut = lambda ele : ele.pt() > 5,
             minLeptons = 1,
         )
         susyCoreSequence.insert(susyCoreSequence.index(skimAnalyzer)+1, fastSkim)
@@ -669,6 +677,16 @@ elif test == '76X-Data':
             comp.fineSplitFactor = 2
         else:
             comp.splitFactor = len(comp.files)
+elif test == 'ttH-sync':
+    ttHLepSkim.minLeptons=0
+    selectedComponents = selectedComponents[:1]
+    comp = selectedComponents[0]
+    comp.files = ['/store/mc/RunIIFall15MiniAODv2/ttHToNonbb_M125_13TeV_powheg_pythia8/MINIAODSIM/PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/00000/021B993B-4DBB-E511-BBA6-008CFA1111B4.root']
+    tmpfil = os.path.expandvars("/tmp/$USER/021B993B-4DBB-E511-BBA6-008CFA1111B4.root")
+    if not os.path.exists(tmpfil):
+        os.system("xrdcp root://eoscms//eos/cms%s %s" % (comp.files[0],tmpfil))
+    comp.files = [ tmpfil ]
+    if not getHeppyOption("single"): comp.fineSplitFactor = 8
 elif test != None:
     raise RuntimeError, "Unknown test %r" % test
 
