@@ -20,10 +20,29 @@ class MVAVar:
 
 from CMGTools.TTHAnalysis.leptonMVA import MVATool, CategorizedMVA
 
-_CommonSpect = [ 
-]
+_CommonSpect = {
+    'forMoriond16': [],
+    'SoftALaMoriond16': [
+        MVAVar("LepGood_mcMatchAny",lambda x: x.mcMatchAny),
+        ],
+    'SoftJetLess': [
+        MVAVar("LepGood_mcMatchAny",lambda x: x.mcMatchAny),
+        ],
+    'SoftJetLessIVF': [
+        MVAVar("LepGood_mcMatchAny",lambda x: x.mcMatchAny),
+        ],
+    'SoftJetLessMuCBID': [
+        MVAVar("LepGood_mcMatchAny",lambda x: x.mcMatchAny),
+        ],
+    'SoftJetLessMuMVAID': [
+        MVAVar("LepGood_mcMatchAny",lambda x: x.mcMatchAny),
+        ],
+    'SoftJetLessIVFMuMVAID': [
+        MVAVar("LepGood_mcMatchAny",lambda x: x.mcMatchAny),
+        ],
+}
 _CommonVars = {
-'forMoriond16_76X': [
+'forMoriond16': [
     MVAVar("LepGood_pt",lambda x: x.pt),
     MVAVar("LepGood_eta",lambda x: x.eta),
     MVAVar("LepGood_jetNDauChargedMVASel",lambda x: x.jetNDauChargedMVASel),
@@ -55,7 +74,8 @@ _CommonVars = {
     MVAVar("LepGood_miniRelIsoCharged := min(LepGood_miniRelIsoCharged,4)",lambda x: x.miniRelIsoCharged),
     MVAVar("LepGood_miniRelIsoNeutral := min(LepGood_miniRelIsoNeutral,4)",lambda x: x.miniRelIsoNeutral),
     MVAVar("LepGood_isoRelH04",lambda x: x.isoRelH04),
-    MVAVar("LepGood_RelIsoFix03 := min(LepGood_RelIsoFix03,4)",lambda x: x.RelIsoFix03),
+    MVAVar("LepGood_RelIsoChargedFix04 := min(LepGood_RelIsoChargedFix04,4)",lambda x: x.RelIsoChargedFix04),
+    MVAVar("LepGood_RelIsoNeutralFix04 := min(LepGood_RelIsoNeutralFix04,4)",lambda x: x.RelIsoNeutralFix04),
     MVAVar("LepGood_jetBTagCSV := max(LepGood_jetBTagCSV,0)", lambda x : max(x.jetBTagCSV,0.)),
     MVAVar("LepGood_sip3d",lambda x: x.sip3d),
     MVAVar("LepGood_dxy := log(abs(LepGood_dxy))",lambda x: log(abs(x.dxy))),
@@ -67,12 +87,13 @@ _CommonVars = {
     MVAVar("LepGood_miniRelIsoCharged := min(LepGood_miniRelIsoCharged,4)",lambda x: x.miniRelIsoCharged),
     MVAVar("LepGood_miniRelIsoNeutral := min(LepGood_miniRelIsoNeutral,4)",lambda x: x.miniRelIsoNeutral),
     MVAVar("LepGood_isoRelH04",lambda x: x.isoRelH04),
-    MVAVar("LepGood_RelIsoFix03 := min(LepGood_RelIsoFix03,4)",lambda x: x.RelIsoFix03),
+    MVAVar("LepGood_RelIsoChargedFix04 := min(LepGood_RelIsoChargedFix04,4)",lambda x: x.RelIsoChargedFix04),
+    MVAVar("LepGood_RelIsoNeutralFix04 := min(LepGood_RelIsoNeutralFix04,4)",lambda x: x.RelIsoNeutralFix04),
     MVAVar("LepGood_hasSV", lambda x: x.hasSV),
-    MVAVar("LepGood_svSip3d := max(LepGood_svSip3d,-1)", lambda x: max(x.svSip3d,-1)),
-    MVAVar("LepGood_svRedPt := max(LepGood_svRedPt,-1)", lambda x: max(x.svRedPt,-1)),
-    MVAVar("LepGood_svMass := max(LepGood_svMass,-1)", lambda x: max(x.svMass,-1)),
-    MVAVar("LepGood_svNTracks := max(LepGood_svNTracks,-1)", lambda x: max(x.svNTracks,-1)),
+    MVAVar("LepGood_svSip3d := max(LepGood_svSip3d,0)", lambda x: max(x.svSip3d,0)),
+    MVAVar("LepGood_svRedPt := max(LepGood_svRedPt,0)", lambda x: max(x.svRedPt,0)),
+    MVAVar("LepGood_svMass := max(LepGood_svMass,0)", lambda x: max(x.svMass,0)),
+    MVAVar("LepGood_svNTracks := max(LepGood_svNTracks,0)", lambda x: max(x.svNTracks,0)),
     MVAVar("LepGood_sip3d",lambda x: x.sip3d),
     MVAVar("LepGood_dxy := log(abs(LepGood_dxy))",lambda x: log(abs(x.dxy))),
     MVAVar("LepGood_dz  := log(abs(LepGood_dz))", lambda x: log(abs(x.dz))),
@@ -83,7 +104,8 @@ _CommonVars = {
     MVAVar("LepGood_miniRelIsoCharged := min(LepGood_miniRelIsoCharged,4)",lambda x: x.miniRelIsoCharged),
     MVAVar("LepGood_miniRelIsoNeutral := min(LepGood_miniRelIsoNeutral,4)",lambda x: x.miniRelIsoNeutral),
     MVAVar("LepGood_isoRelH04",lambda x: x.isoRelH04),
-    MVAVar("LepGood_RelIsoFix03 := min(LepGood_RelIsoFix03,4)",lambda x: x.RelIsoFix03),
+    MVAVar("LepGood_RelIsoChargedFix04 := min(LepGood_RelIsoChargedFix04,4)",lambda x: x.RelIsoChargedFix04),
+    MVAVar("LepGood_RelIsoNeutralFix04 := min(LepGood_RelIsoNeutralFix04,4)",lambda x: x.RelIsoNeutralFix04),
     MVAVar("LepGood_jetBTagCSV := max(LepGood_jetBTagCSV,0)", lambda x : max(x.jetBTagCSV,0.)),
     MVAVar("LepGood_sip3d",lambda x: x.sip3d),
     MVAVar("LepGood_dxy := log(abs(LepGood_dxy))",lambda x: log(abs(x.dxy))),
@@ -95,7 +117,8 @@ _CommonVars = {
     MVAVar("LepGood_miniRelIsoCharged := min(LepGood_miniRelIsoCharged,4)",lambda x: x.miniRelIsoCharged),
     MVAVar("LepGood_miniRelIsoNeutral := min(LepGood_miniRelIsoNeutral,4)",lambda x: x.miniRelIsoNeutral),
     MVAVar("LepGood_isoRelH04",lambda x: x.isoRelH04),
-    MVAVar("LepGood_RelIsoFix03 := min(LepGood_RelIsoFix03,4)",lambda x: x.RelIsoFix03),
+    MVAVar("LepGood_RelIsoChargedFix04 := min(LepGood_RelIsoChargedFix04,4)",lambda x: x.RelIsoChargedFix04),
+    MVAVar("LepGood_RelIsoNeutralFix04 := min(LepGood_RelIsoNeutralFix04,4)",lambda x: x.RelIsoNeutralFix04),
     MVAVar("LepGood_jetBTagCSV := max(LepGood_jetBTagCSV,0)", lambda x : max(x.jetBTagCSV,0.)),
     MVAVar("LepGood_sip3d",lambda x: x.sip3d),
     MVAVar("LepGood_dxy := log(abs(LepGood_dxy))",lambda x: log(abs(x.dxy))),
@@ -107,12 +130,13 @@ _CommonVars = {
     MVAVar("LepGood_miniRelIsoCharged := min(LepGood_miniRelIsoCharged,4)",lambda x: x.miniRelIsoCharged),
     MVAVar("LepGood_miniRelIsoNeutral := min(LepGood_miniRelIsoNeutral,4)",lambda x: x.miniRelIsoNeutral),
     MVAVar("LepGood_isoRelH04",lambda x: x.isoRelH04),
-    MVAVar("LepGood_RelIsoFix03 := min(LepGood_RelIsoFix03,4)",lambda x: x.RelIsoFix03),
+    MVAVar("LepGood_RelIsoChargedFix04 := min(LepGood_RelIsoChargedFix04,4)",lambda x: x.RelIsoChargedFix04),
+    MVAVar("LepGood_RelIsoNeutralFix04 := min(LepGood_RelIsoNeutralFix04,4)",lambda x: x.RelIsoNeutralFix04),
     MVAVar("LepGood_hasSV", lambda x: x.hasSV),
-    MVAVar("LepGood_svSip3d := max(LepGood_svSip3d,-1)", lambda x: max(x.svSip3d,-1)),
-    MVAVar("LepGood_svRedPt := max(LepGood_svRedPt,-1)", lambda x: max(x.svRedPt,-1)),
-    MVAVar("LepGood_svMass := max(LepGood_svMass,-1)", lambda x: max(x.svMass,-1)),
-    MVAVar("LepGood_svNTracks := max(LepGood_svNTracks,-1)", lambda x: max(x.svNTracks,-1)),
+    MVAVar("LepGood_svSip3d := max(LepGood_svSip3d,0)", lambda x: max(x.svSip3d,0)),
+    MVAVar("LepGood_svRedPt := max(LepGood_svRedPt,0)", lambda x: max(x.svRedPt,0)),
+    MVAVar("LepGood_svMass := max(LepGood_svMass,0)", lambda x: max(x.svMass,0)),
+    MVAVar("LepGood_svNTracks := max(LepGood_svNTracks,0)", lambda x: max(x.svNTracks,0)),
     MVAVar("LepGood_sip3d",lambda x: x.sip3d),
     MVAVar("LepGood_dxy := log(abs(LepGood_dxy))",lambda x: log(abs(x.dxy))),
     MVAVar("LepGood_dz  := log(abs(LepGood_dz))", lambda x: log(abs(x.dz))),
@@ -125,7 +149,7 @@ _ElectronVars = [
 ]
 
 _MuonVars = {
-    'forMoriond16_76X': [
+    'forMoriond16': [
         MVAVar("LepGood_segmentCompatibility",lambda x: x.segmentCompatibility)
         ],
     'SoftJetLess': [
@@ -171,13 +195,13 @@ class LeptonMVA:
             self.mu = lambda mu, ncorr : -37.0;
         else:
             self.mu = CategorizedMVA([
-                ( lambda x: True , MVATool("BDTG",basepathmu%"mu",_CommonSpect,muVars) ),
+                ( lambda x: True , MVATool("BDTG",basepathmu%"mu",_CommonSpect[training],muVars) ),
             ])
         if not elVars:
             self.el = lambda el, ncorr : -37.0;
         else:
             self.el = CategorizedMVA([
-                ( lambda x: True, MVATool("BDTG",basepathel%"el",_CommonSpect,elVars) ),
+                ( lambda x: True, MVATool("BDTG",basepathel%"el",_CommonSpect[training],elVars) ),
             ])
     def __call__(self,lep,ncorr=0):
         if   abs(lep.pdgId) == 11: return self.el(lep,ncorr)
