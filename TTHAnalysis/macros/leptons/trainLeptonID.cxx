@@ -1,8 +1,10 @@
-void trainLeptonID(TString name, TString sigfile, TString bkg1file, TString bkg2file="", bool doMultiClass = false) {
-    TFile *_f_s = new TFile(sigfile.Data(),"read");
+void trainLeptonID(TString name, TString sig1file, TString sig2file, TString bkg1file, TString bkg2file, bool doMultiClass = false) {
+    TFile *_f_s1 = new TFile(sig1file.Data(),"read");
+    TFile *_f_s2 =  (sig2file=="") ? NULL : new TFile(sig2file.Data(),"read");
     TFile *_f_b1 = new TFile(bkg1file.Data(),"read");
     TFile *_f_b2 =  (bkg2file=="") ? NULL : new TFile(bkg2file.Data(),"read");
-    TTree *dSig = (TTree*) _f_s->Get("tree");
+    TTree *dSig1 = (TTree*) _f_s1->Get("tree");
+    TTree *dSig2 = (_f_s2) ? ((TTree*) _f_s2->Get("tree")) : NULL;
     TTree *dBg1 = (TTree*) _f_b1->Get("tree");
     TTree *dBg2 = (_f_b2) ? ((TTree*) _f_b2->Get("tree")) : NULL;
     TFile *fOut = new TFile(name+".root","RECREATE");
@@ -40,19 +42,21 @@ void trainLeptonID(TString name, TString sigfile, TString bkg1file, TString bkg2
     }
 
     else if (name.Contains("SoftJetLess")){
+      factory->AddSpectator("LepGood_mcMatchAny", 'D');
       factory->AddVariable("LepGood_pt", 'D');
       factory->AddVariable("LepGood_eta", 'D');
       factory->AddVariable("LepGood_miniRelIsoCharged := min(LepGood_miniRelIsoCharged,4)", 'D');
       factory->AddVariable("LepGood_miniRelIsoNeutral := min(LepGood_miniRelIsoNeutral,4)", 'D');
       factory->AddVariable("LepGood_isoRelH04", 'D');
-      factory->AddVariable("LepGood_RelIsoFix03 := min(LepGood_RelIsoFix03,4)", 'D');
+      factory->AddVariable("LepGood_RelIsoChargedFix04 := min(LepGood_RelIsoChargedFix04,4)", 'D');
+      factory->AddVariable("LepGood_RelIsoNeutralFix04 := min(LepGood_RelIsoNeutralFix04,4)", 'D');
 
       if (name.Contains("IVF")){
 	factory->AddVariable("LepGood_hasSV", 'D');
-	factory->AddVariable("LepGood_svSip3d := max(LepGood_svSip3d,-1)", 'D');
-	factory->AddVariable("LepGood_svRedPt := max(LepGood_svRedPt,-1)", 'D');
-	factory->AddVariable("LepGood_svMass := max(LepGood_svMass,-1)", 'D');
-	factory->AddVariable("LepGood_svNTracks := max(LepGood_svNTracks,-1)", 'D');
+	factory->AddVariable("LepGood_svSip3d := max(LepGood_svSip3d,0)", 'D');
+	factory->AddVariable("LepGood_svRedPt := max(LepGood_svRedPt,0)", 'D');
+	factory->AddVariable("LepGood_svMass := max(LepGood_svMass,0)", 'D');
+	factory->AddVariable("LepGood_svNTracks := max(LepGood_svNTracks,0)", 'D');
       }
       else {
 	factory->AddVariable("LepGood_jetBTagCSV := max(LepGood_jetBTagCSV,0)", 'D');
@@ -62,7 +66,7 @@ void trainLeptonID(TString name, TString sigfile, TString bkg1file, TString bkg2
       factory->AddVariable("LepGood_dxy := log(abs(LepGood_dxy))", 'D');
       factory->AddVariable("LepGood_dz  := log(abs(LepGood_dz))",  'D');
 
-      lepton += "LepGood_pt<10 && LepGood_pt>3.5 && abs(LepGood_eta)<1 && LepGood_RelIsoFix03<4";
+      lepton += "LepGood_pt<20 && LepGood_pt>3.5 && LepGood_miniRelIso<0.4 && LepGood_sip3d<8";
 
 	if (name.Contains("_mu")) {
 	  if (name.Contains("MuMVAID")){
@@ -82,6 +86,7 @@ void trainLeptonID(TString name, TString sigfile, TString bkg1file, TString bkg2
 
     }
     else if (name.Contains("SoftALaMoriond16")) {
+      factory->AddSpectator("LepGood_mcMatchAny", 'D');
         factory->AddVariable("LepGood_pt", 'D');
         factory->AddVariable("LepGood_eta", 'D');
 	factory->AddVariable("LepGood_jetNDauChargedMVASel", 'D');
@@ -94,7 +99,7 @@ void trainLeptonID(TString name, TString sigfile, TString bkg1file, TString bkg2
         factory->AddVariable("LepGood_dxy := log(abs(LepGood_dxy))", 'D');
         factory->AddVariable("LepGood_dz  := log(abs(LepGood_dz))",  'D');
 
-	lepton += "LepGood_pt<10 && LepGood_pt>3.5 && abs(LepGood_eta)<1 && LepGood_RelIsoFix03<4";
+	lepton += "LepGood_pt<20 && LepGood_pt>3.5 && LepGood_miniRelIso<0.4 && LepGood_sip3d<8";
 
 	if (name.Contains("_mu")) {
 	  factory->AddVariable("LepGood_segmentCompatibility",'D');
@@ -114,7 +119,13 @@ void trainLeptonID(TString name, TString sigfile, TString bkg1file, TString bkg2
 
     double wSig = 1.0, wBkg = 1.0;
     if (!doMultiClass){
-      factory->AddSignalTree(dSig, wSig);
+      if (!dSig2) factory->AddSignalTree(dSig1, wSig);
+      else {
+	double int1 = dSig1->GetEntries();
+	double int2 = dSig2->GetEntries();
+	factory->AddSignalTree(dSig1, wSig/int1/2.);
+	factory->AddSignalTree(dSig2, wSig/int2/2.);
+      }
       if (!dBg2) factory->AddBackgroundTree(dBg1, wBkg);
       else {
 	double int1 = dBg1->GetEntries();
@@ -124,7 +135,13 @@ void trainLeptonID(TString name, TString sigfile, TString bkg1file, TString bkg2
       }
     }
     else {
-      factory->AddTree(dSig,"signal",wSig, "LepGood_mcMatchId!=0");
+      if (!dSig2) factory->AddTree(dSig1,"signal",wSig, "LepGood_mcMatchId!=0");
+      else {
+	double int1 = dSig1->GetEntries();
+	double int2 = dSig2->GetEntries();
+	factory->AddTree(dSig1, "signal", wSig/int1/2., "LepGood_mcMatchId!=0");
+	factory->AddTree(dSig2, "signal", wSig/int2/2., "LepGood_mcMatchId!=0");
+      }
       if (!dBg2) {
 	factory->AddTree(dBg1, "bfake", wBkg, "LepGood_mcMatchId==0 && (abs(LepGood_mcMatchAny)==4 || abs(LepGood_mcMatchAny)==5)");
 	factory->AddTree(dBg1, "light", wBkg, "LepGood_mcMatchId==0 && (abs(LepGood_mcMatchAny)<4 || abs(LepGood_mcMatchAny)>5)");
