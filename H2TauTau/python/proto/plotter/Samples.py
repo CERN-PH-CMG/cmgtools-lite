@@ -1,9 +1,17 @@
+import os
+import ROOT
+from ROOT import gSystem, gROOT
+
 from CMGTools.H2TauTau.proto.plotter.PlotConfigs import SampleCfg
 from CMGTools.H2TauTau.proto.plotter.HistCreator import setSumWeights
 
 from CMGTools.H2TauTau.proto.samples.spring16.htt_common import TT_pow_ext, DYJetsToLL_M50_LO, DYNJets, WJetsToLNu,  WNJets, WWTo2L2Nu, T_tWch, TBar_tWch, VVTo2L2Nu, ZZTo4L, WZTo1L3Nu, WWTo1L1Nu2Q, ZZTo2L2Q, WZTo2L2Q, WZTo1L1Nu2Q, TBarToLeptons_tch_powheg, mssm_signals, dy_weight_dict, w_weight_dict
 
 # WJetsToLNu_LO, TToLeptons_tch_amcatnlo, WZTo3LNu_amcatnlo, TToLeptons_tch_powheg, WJetsToLNu_HT100to200, WJetsToLNu_HT200to400, WJetsToLNu_HT400to600, WJetsToLNu_HT600toInf, QCD_Mu15, DYJetsToTauTau_M150_LO, DYJetsToLL_M10to50_ext1
+
+# if "/sDYReweighting_cc.so" not in gSystem.GetLibraries(): 
+#     gROOT.ProcessLine(".L %s/src/CMGTools/H2TauTau/python/proto/plotter/DYReweighting.cc+" % os.environ['CMSSW_BASE']);
+#     from ROOT import getDYWeight
 
 useDYWeight = False
 
@@ -24,7 +32,7 @@ for njet in xrange(0, 5):
     weight = w_weight_dict[njet]
     w_exps.append('(geninfo_nup == {njet})*{weight}'.format(njet=njet, weight=weight))
 
-w_exp = '({})'.format(' + '.join(w_exps))
+w_exp = '({w})'.format(w=' + '.join(w_exps))
 
 
 def createSampleLists(analysis_dir='/afs/cern.ch/user/s/steggema/work/public/mt/NewProd',
@@ -84,6 +92,8 @@ def createSampleLists(analysis_dir='/afs/cern.ch/user/s/steggema/work/public/mt/
         SampleCfg(name='TT', dir_name='TT_pow_ext3', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=TT_pow_ext.xSection, sumweights=TT_pow_ext.nGenEvents),
         SampleCfg(name='T_tWch', dir_name='T_tWch', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=T_tWch.xSection, sumweights=T_tWch.nGenEvents),
         SampleCfg(name='TBar_tWch', dir_name='TBar_tWch', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=TBar_tWch.xSection, sumweights=TBar_tWch.nGenEvents),
+        SampleCfg(name='HiggsGGH125', dir_name='HiggsGGH125', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=HiggsGGH125.xSection, sumweights=HiggsGGH125.nGenEvents),
+        SampleCfg(name='HiggsVBF125', dir_name='HiggsVBF125', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=HiggsVBF125.xSection, sumweights=HiggsVBF125.nGenEvents),
         #SampleCfg(name='QCD', dir_name='QCD_Mu15', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=QCD_Mu15.xSection)
     ]
 
@@ -177,7 +187,10 @@ def createSampleLists(analysis_dir='/afs/cern.ch/user/s/steggema/work/public/mt/
         if sample.name not in weighted_list:
             setSumWeights(sample, 'MCWeighter' if channel not in ['tau_fr'] else 'SkimAnalyzerCount')
 
-    sampleDict = {s.name: s for s in all_samples}
+    # sampleDict = {s.name: s for s in all_samples}
+    sampleDict = {}
+    for s in all_samples:
+        sampleDict[s.name] = s
 
     return samples_mc, samples_data, samples, all_samples, sampleDict
 

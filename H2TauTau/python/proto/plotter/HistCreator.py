@@ -21,7 +21,7 @@ def initHist(hist, vcfg):
     hist.SetStats(False)
 
 
-def createHistograms(hist_cfg, all_stack=False, verbose=False):
+def createHistograms(hist_cfg, all_stack=False, verbose=False, friend_func=None):
     '''Method to create actual histogram (DataMCPlot) instances from histogram 
     config; this version handles multiple variables via MultiDraw.
     '''
@@ -78,7 +78,7 @@ def createHistograms(hist_cfg, all_stack=False, verbose=False):
 
             # attach the trees to the first DataMCPlot
             plot = plots[vcfgs[0].name]
-            ttree = plot.readTree(file_name, cfg.tree_name, verbose=verbose)
+            ttree = plot.readTree(file_name, cfg.tree_name, verbose=verbose, friend_func=friend_func)
 
             norm_cut = hist_cfg.cut
             shape_cut = hist_cfg.cut
@@ -138,7 +138,7 @@ def createHistograms(hist_cfg, all_stack=False, verbose=False):
     return plots
 
 
-def createHistogram(hist_cfg, all_stack=False, verbose=False):
+def createHistogram(hist_cfg, all_stack=False, verbose=False, friend_func=None):
     '''Method to create actual histogram (DataMCPlot) instance from histogram 
     config.
     '''
@@ -173,7 +173,7 @@ def createHistogram(hist_cfg, all_stack=False, verbose=False):
 
             file_name = '/'.join([cfg.ana_dir, cfg.dir_name, cfg.tree_prod_name, 'tree.root'])
 
-            ttree = plot.readTree(file_name, cfg.tree_name, verbose=verbose)
+            ttree = plot.readTree(file_name, cfg.tree_name, verbose=verbose, friend_func=friend_func)
 
             norm_cut = hist_cfg.cut
             shape_cut = hist_cfg.cut
@@ -226,7 +226,7 @@ def setSumWeights(sample, weight_dir='MCWeighter'):
         if 'Sum Weights' in counters:
             sample.sumweights = counters['Sum Weights']
     except IOError:
-        print 'Warning: could not find sum weights information for sample', sample.name
+        # print 'Warning: could not find sum weights information for sample', sample.name
         pass
 
 
