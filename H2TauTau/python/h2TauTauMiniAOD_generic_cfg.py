@@ -9,7 +9,7 @@ from RecoMET.METPUSubtraction.MVAMETConfiguration_cff import runMVAMET
 
 def createProcess(runOnMC=True, channel='tau-mu', runSVFit=False,
                   p4TransferFunctionFile='CMGTools/SVfitStandalone/data/svFitVisMassAndPtResolutionPDF.root', # Christians's default. If not touched, it would default to this anyways
-                  integrateOverP4=False):
+                  integrateOverP4=False, scaleTau=0.):
     '''Set up CMSSW process to run MVA MET and SVFit.
 
     Args:
@@ -172,6 +172,8 @@ def createProcess(runOnMC=True, channel='tau-mu', runSVFit=False,
             process.cmgTauMuCorSVFitPreSel.integrateOverP4 = integrateOverP4
         if p4TransferFunctionFile:
             process.cmgTauMuCorSVFitPreSel.p4TransferFunctionFile = p4TransferFunctionFile
+        if scaleTau:
+            process.cmgTauMuCor.nSigma = scaleTau
 
     elif channel == 'tau-ele':
         process.load('CMGTools.H2TauTau.objects.tauEleObjectsMVAMET_cff')

@@ -36,10 +36,8 @@ syncntuple = True
 cmssw = False
 computeSVfit = False
 data = True
+tes_string = '' # '_tesup' '_tesdown'
 
-
-# mu-tau specific settings
-dyJetsFakeAna.channel = 'mt'
 
 if not cmssw:
     # FIXME - should recorrect jets in JetAnalyzer in this case
@@ -209,7 +207,6 @@ if not cmssw:
 if not production:
     cache = True
     comp = sync_list[0]
-    
     selectedComponents = [comp]
     if data:
         selectedComponents = [selectedComponents[0]]
@@ -220,7 +217,7 @@ if not production:
 
 preprocessor = None
 if cmssw:
-    fname = "$CMSSW_BASE/src/CMGTools/H2TauTau/prod/h2TauTauMiniAOD_mutau_data_cfg.py" if data else "$CMSSW_BASE/src/CMGTools/H2TauTau/prod/h2TauTauMiniAOD_mutau_cfg.py"
+    fname = "$CMSSW_BASE/src/CMGTools/H2TauTau/prod/h2TauTauMiniAOD_mutau_data_cfg.py" if data else "$CMSSW_BASE/src/CMGTools/H2TauTau/prod/h2TauTauMiniAOD_mutau{tes_string}_cfg.py".format(tes_string=tes_string)
     sequence.append(fileCleaner)
     preprocessor = CmsswPreprocessor(fname, addOrigAsSecondary=False)
 
