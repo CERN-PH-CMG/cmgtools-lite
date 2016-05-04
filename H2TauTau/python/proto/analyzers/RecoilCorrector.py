@@ -67,6 +67,10 @@ class RecoilCorrector(Analyzer):
 
         p4 = p4sum(all)
         p4_vis = p4sum(vis)
+
+        event.parentBoson = p4
+        event.parentBoson.detFlavour = 0
+
         return p4.px(), p4.py(), p4_vis.px(), p4_vis.py()
 
 
