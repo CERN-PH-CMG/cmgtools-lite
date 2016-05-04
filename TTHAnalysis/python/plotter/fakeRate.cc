@@ -863,7 +863,7 @@ float multiIso_singleWP(float LepGood_miniRelIso, float LepGood_jetPtRatiov2, fl
         default:
             std::cerr << "Working point " << wp << " not implemented for multiIso_singleWP" << std::endl;
             abort();
-    }e
+    }
 }
 
 float multiIso_singleWP(float LepGood_miniRelIso, float LepGood_jetPtRatiov2, float LepGood_jetPtRelv2, int wp) {
