@@ -27,6 +27,8 @@ syncntuple = True
 cmssw = True
 computeSVfit = True
 data = False
+tes_string = '' # '_tesup' '_tesdown'
+# tes_string = '_tesdown'
 
 if not cmssw:
     # FIXME - should recorrect jets in JetAnalyzer in this case
@@ -101,9 +103,12 @@ for sample in data_list:
 ###             SET COMPONENTS BY HAND          ###
 ###################################################
 selectedComponents = data_list if data else backgrounds_mu + sm_signals + mssm_signals
-# selectedComponents = [s for s in selectedComponents if 'W1J' in s.name or 'W2J' in s.name or 'W3J' in s.name or 'W4J' in s.name or 'WJetsToLNu_LO' in s.name]
-#selectedComponents = [s for s in selectedComponents if 'DY' in s.name and 'ext1' in s.name and 'LO' in s.name]
-selectedComponents = [s for s in selectedComponents if 'TT_pow' in s.name] 
+
+# These are the TES up/down samples
+selectedComponents = [s for s in selectedComponents if 'DY' in s.name and 'ext1' in s.name and 'LO' in s.name] + [s for s in selectedComponents if 'Higgs' in s.name]
+
+selectedComponents = [s for s in selectedComponents if 'DY' in s.name and 'ext1' in s.name and 'LO' in s.name] 
+# selectedComponents = [s for s in selectedComponents if 'TT_pow' in s.name] 
 # selectedComponents = [s for s in selectedComponents if s.name in ['HiggsSUSYBB800', 'HiggsSUSYBB1400', 'HiggsSUSYGG350']]
 
 ###################################################
@@ -128,8 +133,8 @@ if not cmssw:
 if not production:
     cache = True
     comp = sync_list[0]
-    # comp = [s for s in selectedComponents if 'DYJets' in s.name][0]
-    comp = [s for s in selectedComponents if 'TT' in s.name][0]
+    comp = [s for s in selectedComponents if 'DYJets' in s.name][0]
+    # comp = [s for s in selectedComponents if 'TT' in s.name][0]
     selectedComponents = [comp]
     if data:
         selectedComponents = [selectedComponents[0]]
@@ -140,7 +145,7 @@ if not production:
 
 preprocessor = None
 if cmssw:
-    fname = "$CMSSW_BASE/src/CMGTools/H2TauTau/prod/h2TauTauMiniAOD_mutau_data_cfg.py" if data else "$CMSSW_BASE/src/CMGTools/H2TauTau/prod/h2TauTauMiniAOD_mutau_cfg.py"
+    fname = "$CMSSW_BASE/src/CMGTools/H2TauTau/prod/h2TauTauMiniAOD_mutau_data_cfg.py" if data else "$CMSSW_BASE/src/CMGTools/H2TauTau/prod/h2TauTauMiniAOD_mutau{tes_string}_cfg.py".format(tes_string=tes_string)
     sequence.append(fileCleaner)
     preprocessor = CmsswPreprocessor(fname, addOrigAsSecondary=False)
 

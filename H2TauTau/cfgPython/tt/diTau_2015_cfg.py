@@ -21,15 +21,15 @@ from CMGTools.H2TauTau.htt_ntuple_base_cff import commonSequence, genAna, dyJets
 
 # production = True run on batch, production = False (or unset) run locally
 production = getHeppyOption('production')
-production = True
+production = False
 
 # local switches
-syncntuple    = False
-computeSVfit  = True
+syncntuple    = True
+computeSVfit  = False
 pick_events   = False
 cmssw         = True
 calibrateTaus = False
-data          = True
+data          = False
 
 dyJetsFakeAna.channel = 'tt'
 
@@ -244,12 +244,13 @@ if pick_events:
 ###            SET BATCH OR LOCAL               ###
 ###################################################
 if not production:
-  # comp                 = ggh160
-  comp                 = data_list[0]
+  comp                 = ggh160
+  if data:
+    comp                 = data_list[0]
   selectedComponents   = [comp]
-  comp.splitFactor     = 1
+  comp.splitFactor     = 5
   comp.fineSplitFactor = 1
-  comp.files           = comp.files[:1]
+  # comp.files           = comp.files[:1]
     
 preprocessor = None
 if cmssw:
