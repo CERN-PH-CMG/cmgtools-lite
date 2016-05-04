@@ -56,7 +56,7 @@ class DataMCPlot(object):
     def __getitem__(self, name):
         return self.histosDict[name]
 
-    def readTree(self, file_name, tree_name='tree', verbose=False):
+    def readTree(self, file_name, tree_name='tree', verbose=False, friend_func=None):
         '''Cache files/trees'''
         if file_name in self.__class__._t_keeper:
             ttree = self.__class__._t_keeper[file_name]
@@ -67,6 +67,11 @@ class DataMCPlot(object):
             ttree = self.__class__._t_keeper[file_name] = tfile.Get(tree_name)
             if verbose:
                 print 'read tree', ttree, 'from file', file_name
+
+        if friend_func:
+            file_name = friend_func(file_name)
+            friend_tree = self.readTree(file_name, tree_name, verbose)
+            ttree.AddFriend(friend_tree)
 
         gROOT.cd()
 
