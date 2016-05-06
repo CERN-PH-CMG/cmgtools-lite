@@ -84,7 +84,7 @@ vertexAna = cfg.Analyzer(
 pileUpAna = cfg.Analyzer(
     PileUpAnalyzer, name="PileUpAnalyzer",
     true = True,  # use number of true interactions for reweighting
-    makeHists=True
+    makeHists=False
     )
 
 
