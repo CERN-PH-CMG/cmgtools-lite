@@ -94,18 +94,10 @@ triggerFlagsAna.triggerBits ={
 test = 0
 if test==1:
     # test a single component, using a single thread.
-#    selectedComponents = [BulkGravToWW_narrow_2500]
-#    selectedComponents = [WprimeToWhToWhadhbb_narrow_1000,RadionTohhTohbbhbb_narrow_1000]
-    selectedComponents = [WJetsToLNu_HT400to600,WJetsToLNu_HT2500toInf,DYJetsToLL_M50_HT100to200,DYJetsToLL_M50_HT200to400,DYJetsToLL_M50_HT400to600,DYJetsToLL_M50_HT600toInf,DYJetsToLL_M5to50_HT600toInf,GJets_HT400to600,QCD_HT500to700]
+    selectedComponents = [BulkGravToWW_narrow_2500]
     for c in selectedComponents:
         c.files = c.files[:1]
         c.splitFactor = 1
-
-#selectedComponents = dataSamples
-#selectedComponents = [WJetsToLNu_HT400to600,WJetsToLNu_HT2500toInf,DYJetsToLL_M50_HT100to200,DYJetsToLL_M50_HT200to400,DYJetsToLL_M50_HT400to600,DYJetsToLL_M50_HT600toInf,DYJetsToLL_M5to50_HT600toInf,GJets_HT400to600,QCD_HT500to700]
-#selectedComponents = MET
-#selectedComponents = [SingleMuon_Run2015D_16Dec,SingleElectron_Run2015D_16Dec,JetHT_Run2015D_16Dec]
-selectedComponents = [TTJets_ext]
 
 selectedComponents=autoAAA(selectedComponents)
 config=autoConfig(selectedComponents,sequence)
