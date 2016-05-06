@@ -18,6 +18,7 @@ for sample in ["WJetsToLNu_HT1200to2500","WJetsToLNu_HT2500toInf","WJetsToLNu_HT
 
 WJets = MergedPlotter(wjPlotters)
 
+#create the tt+jets plotters
 tt=TreePlotter('samples/TTJets.root','tree')
 tt.setupFromFile('samples/TTJets.pck')
 tt.addCorrectionFactor('xsec','tree')
@@ -28,7 +29,6 @@ tt.addCorrectionFactor('puWeight','tree')
 
 
 #create the Z+jets plotters
-
 zPlotters=[]
 for sample in ['DYJetsToLL_M50_HT100to200','DYJetsToLL_M50_HT200to400','DYJetsToLL_M50_HT400to600','DYJetsToLL_M50_HT600toInf']:  
     zPlotters.append(TreePlotter('samples/'+sample+'.root','tree'))
@@ -40,6 +40,7 @@ ZJets = MergedPlotter(zPlotters)
 
 
 
+#create the gamma+jets plotters (?)
 gPlotters=[]
 for sample in ['GJets_HT100to200','GJets_HT200to400','GJets_HT400to600','GJets_HT40to100','GJets_HT600toInf']:
     gPlotters.append(TreePlotter('samples/'+sample+'.root','tree'))
@@ -50,7 +51,7 @@ for sample in ['GJets_HT100to200','GJets_HT200to400','GJets_HT400to600','GJets_H
 GJets = MergedPlotter(gPlotters)
 
 
-
+#create the QCD plotters
 qcdPlotters=[]
 for sample in ["QCD_HT1000to1500","QCD_HT1500to2000","QCD_HT2000toInf","QCD_HT200to300","QCD_HT300to500","QCD_HT500to700","QCD_HT700to1000"]:
     qcdPlotters.append(TreePlotter('samples/'+sample+'.root','tree'))
@@ -135,15 +136,20 @@ lnujjStack.addPlotter(WHLNUJJ,"X3","X #rightarrow WH","signal")
 lnujjStack.addPlotter(dataEMU,"data_obs","Data","data")
 
 #Stack for ll+J
-
 lljjStack = StackPlotter()
-lljjStack.addPlotter(tt,"tt","t#bar{t}","background")
-lljjStack.addPlotter(ZJets,"ZJets","Z+Jets","background")
+lljjStack.addPlotter(tt,     "tt",      "t#bar{t}",    "background")
+lljjStack.addPlotter(ZJets,  "ZJets",   "Z+Jets",      "background")
+lljjStack.addPlotter(GJets,  "GJets",   "#gamma+Jets", "background")
+lljjStack.addPlotter(WJets,  "WJets",   "W+Jets",      "background")
+lljjStack.addPlotter(QCD,    "QCD",     "QCD multijet","background")
 lljjStack.addPlotter(dataEMU,"data_obs","Data","data")
 
 jjStack = StackPlotter()
-jjStack.addPlotter(QCD,"QCD","QCD multijet","background")
-jjStack.addPlotter(tt,"tt","t#bar{t}","background")
+jjStack.addPlotter(QCD,    "QCD",     "QCD multijet","background")
+jjStack.addPlotter(tt,     "tt",      "t#bar{t}",    "background")
+jjStack.addPlotter(ZJets,  "ZJets",   "Z+Jets",      "background")
+jjStack.addPlotter(WJets,  "WJets",   "W+Jets",      "background")
+jjStack.addPlotter(GJets,  "GJets",   "#gamma+Jets", "background")
 jjStack.addPlotter(dataJet,"data_obs","Data","data")
 
 
