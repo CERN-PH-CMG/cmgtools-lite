@@ -90,7 +90,7 @@ if analysis in ['SOS']:
     # otherwise with only absIso cut at 10 GeV and no relIso we risk cleaning away good jets
 
 if isolation == "miniIso": 
-    if analysis=="ttH":
+    if (analysis=="ttH") or (analysis =="SOS"):
         lepAna.loose_muon_isoCut     = lambda muon : muon.miniRelIso < 0.4 and muon.sip3D() < 8
         lepAna.loose_electron_isoCut = lambda elec : elec.miniRelIso < 0.4 and elec.sip3D() < 8
     elif analysis=="susy":
