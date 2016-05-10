@@ -105,14 +105,14 @@ class LeptonChoiceRA5:
             self.checked_fastsim_data = True
 
         leps = [l for l in Collection(event,"LepGood","nLepGood")]
-        lepsl = [leps[il] for il in getattr(event,"iL"+self.inputlabel)]
-#        lepsc = [leps[il] for il in getattr(event,"iC"+self.inputlabel)]
-#        lepsf = [leps[il] for il in getattr(event,"iF"+self.inputlabel)]
-        lepst = [leps[il] for il in getattr(event,"iT"+self.inputlabel)]
-#        lepslv = [leps[il] for il in getattr(event,"iLV"+self.inputlabel)]
-#        lepscv = [leps[il] for il in getattr(event,"iCV"+self.inputlabel)]
-        lepsfv = [leps[il] for il in getattr(event,"iFV"+self.inputlabel)]
-        lepstv = [leps[il] for il in getattr(event,"iTV"+self.inputlabel)]
+        lepsl = [leps[il] for il in getattr(event,"iL"+self.inputlabel)[0:getattr(event,"nLepLoose"+self.inputlabel)]]
+#        lepsc = [leps[il] for il in getattr(event,"iC"+self.inputlabel)[0:getattr(event,"nLepCleaning"+self.inputlabel)]]
+#        lepsf = [leps[il] for il in getattr(event,"iF"+self.inputlabel)[0:getattr(event,"nLepFO"+self.inputlabel)]]
+        lepst = [leps[il] for il in getattr(event,"iT"+self.inputlabel)[0:getattr(event,"nLepTight"+self.inputlabel)]]
+#        lepslv = [leps[il] for il in getattr(event,"iLV"+self.inputlabel)[0:getattr(event,"nLepLooseVeto"+self.inputlabel)]]
+#        lepscv = [leps[il] for il in getattr(event,"iCV"+self.inputlabel)[0:getattr(event,"nLepCleaningVeto"+self.inputlabel)]]
+        lepsfv = [leps[il] for il in getattr(event,"iFV"+self.inputlabel)[0:getattr(event,"nLepFOVeto"+self.inputlabel)]]
+        lepstv = [leps[il] for il in getattr(event,"iTV"+self.inputlabel)[0:getattr(event,"nLepTightVeto"+self.inputlabel)]]
 
         bjets25 = [j for j in Collection(event,"JetSel"+self.inputlabel,"nJetSel"+self.inputlabel) if (j.pt>25 and j.btagCSV>0.89)]
         jets40 = [j for j in Collection(event,"JetSel"+self.inputlabel,"nJetSel"+self.inputlabel) if j.pt>40]
