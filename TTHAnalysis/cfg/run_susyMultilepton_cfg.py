@@ -324,9 +324,9 @@ selectedComponents = [ TTLep_pow ];
 
 #branching fraction to be fixed for the following signal samples cross section
 
-TChiNeuWZ_mCh100_mChi100_mChi95 = kreator.makeMCComponentFromEOS('TChiNeuWZ_mCh100_mChi100_mChi95','/TChiWZDeg_miniAODSIM_76X_lepOnly_dM5gev/','/store/user/castello/susy/%s',".*root",2.267*1)
-TChiNeuWZ_mCh100_mChi100_mChi90 = kreator.makeMCComponentFromEOS('TChiNeuWZ_mCh100_mChi100_mChi90','/TChiWZDeg_miniAODSIM_76X_lepOnly_dM10gev/','/store/user/castello/susy/%s',".*root",2.267*1)
-TChiNeuWZ_mCh100_mChi100_mChi80 = kreator.makeMCComponentFromEOS('TChiNeuWZ_mCh100_mChi100_mChi80','/TChiWZDeg_miniAODSIM_76X_lepOnly_dM20gev/','/store/user/castello/susy/%s',".*root",2.267*1)
+TChiNeuWZ_mCh100_mChi100_mChi95 = kreator.makeMCComponentFromEOS('TChiNeuWZ_mCh100_mChi100_mChi95','/TChiWZDeg_miniAODSIM_76X_lepOnly_dM5gev/','/store/user/castello/susy/%s',".*root",2.267*0.112)
+TChiNeuWZ_mCh100_mChi100_mChi90 = kreator.makeMCComponentFromEOS('TChiNeuWZ_mCh100_mChi100_mChi90','/TChiWZDeg_miniAODSIM_76X_lepOnly_dM10gev/','/store/user/castello/susy/%s',".*root",2.267*0.112)
+TChiNeuWZ_mCh100_mChi100_mChi80 = kreator.makeMCComponentFromEOS('TChiNeuWZ_mCh100_mChi100_mChi80','/TChiWZDeg_miniAODSIM_76X_lepOnly_dM20gev/','/store/user/castello/susy/%s',".*root",2.267*0.112)
 TChiNeuWZ_mCh150_mChi120_OS = kreator.makeMCComponentFromEOS('TChiNeuWZ_mCh150_mChi120_OS', '/TChiNeuWZ_mCh150_mChi120_OS/', '/store/user/cheidegg/signals/miniaod76X/%s', ".*root", 5.18086*(3*0.03366))
 EWKino_compressed = [TChiNeuWZ_mCh100_mChi100_mChi95,TChiNeuWZ_mCh100_mChi100_mChi90,TChiNeuWZ_mCh100_mChi100_mChi80,TChiNeuWZ_mCh150_mChi120_OS]
 for comp in EWKino_compressed:
