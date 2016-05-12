@@ -246,6 +246,21 @@ metAna = cfg.Analyzer(
     collectionPostFix = "",
     )
 
+metAnaScaleUp = metAna.clone(name="metAnalyzerScaleUp",
+    copyMETsByValue = True,
+    recalibrate = "type1",
+    jetAnalyzerPostFix = "_jecUp",
+    collectionPostFix = "_jecUp",
+    )
+
+metAnaScaleDown = metAna.clone(name="metAnalyzerScaleDown",
+    copyMETsByValue = True,
+    recalibrate = "type1",
+    jetAnalyzerPostFix = "_jecDown",
+    collectionPostFix = "_jecDown",
+    )
+
+
 metPuppiAna = cfg.Analyzer(
     METAnalyzer, name="metAnalyzerPuppi",
     metCollection     = "slimmedMETsPuppi",
@@ -330,6 +345,23 @@ jetAna = cfg.Analyzer(
     collectionPostFix = ""
     )
 
+## Jets Analyzer (generic)
+jetAnaScaleUp = jetAna.clone(name='jetAnalyzerScaleUp',
+    jetCol = 'slimmedJets',
+    shiftJEC = +1, # set to +1 or -1 to apply +/-1 sigma shift to the nominal jet energies
+    collectionPostFix = "_jecUp",
+    calculateType1METCorrection  = True,
+   )
+
+## Jets Analyzer (generic)
+jetAnaScaleDown = jetAna.clone(name='jetAnalyzerScaleDown',
+    jetCol = 'slimmedJets',
+    shiftJEC = -1, # set to +1 or -1 to apply +/-1 sigma shift to the nominal jet energies
+    collectionPostFix = "_jecDown",
+    calculateType1METCorrection  = True,
+    )
+
+
 jetPuppiAna = cfg.Analyzer(
     JetAnalyzer, name='jetAnalyzerPuppi',
     jetCol = 'slimmedJetsPuppi',
@@ -406,9 +438,13 @@ metCoreSequence = [
     photonAna,
 ##### jet modules below
     jetAna,
+    jetAnaScaleUp,
+    jetAnaScaleDown,
 ##    jetPuppiAna,
 ##### met modules below
     metAna,
+    metAnaScaleUp,
+    metAnaScaleDown,
     metPuppiAna,
     eventFlagsAna,
 ##    hbheFilterAna,
