@@ -769,7 +769,7 @@ class PlotMaker:
 
                 if not self._options.emptyStack and stack.GetNhists() == 0:
                     print "ERROR: for %s, all histograms are empty\n " % pspec.name
-                    continue
+                    return
 
                 # define aspect ratio
                 plotformat = (1200,600) if self._options.wideplot else (600,600)
@@ -782,7 +782,7 @@ class PlotMaker:
                 stack.GetXaxis().SetNdivisions(pspec.getOption('XNDiv',510))
                 if outputDir: outputDir.WriteTObject(stack)
                 # 
-                if not makeCanvas and not self._options.printPlots: continue
+                if not makeCanvas and not self._options.printPlots: return
                 doRatio = self._options.showRatio and ("TH2" not in total.ClassName())
                 islog = pspec.hasOption('Logy'); 
                 if doRatio: ROOT.gStyle.SetPaperSize(20.,sf*(plotformat[1]+150))
