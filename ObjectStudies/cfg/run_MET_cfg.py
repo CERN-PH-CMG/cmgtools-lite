@@ -359,58 +359,49 @@ if getHeppyOption("nofetch"):
 
 
 # -------------------- Running pre-processor
+
 import subprocess
 if comp.isData:
-    if not is25ns:
-        removeResiduals = False
-        uncFile = os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/jec/Summer15_50nsV4_DATA_UncertaintySources_AK4PFchs.txt'
-        jecDBFile = os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/jec/Summer15_50nsV4_DATA.db'
-        jecEra    = 'Summer15_50nsV4_DATA'
-    else:
-        ## DATA 25ns
-        ## runD residuals not yet available
-        removeResiduals = False
-        uncFile = os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/jec/Summer15_25nsV5_DATA_UncertaintySources_AK4PFchs.txt'
-        jecDBFile = os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/jec/Summer15_25nsV5_DATA.db'
-        jecEra    = 'Summer15_25nsV5_DATA'
+    ## DATA 25ns
+    removeResiduals = False
+    uncFile = os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/jec/Summer15_25nsV5_DATA_Uncertainty_AK4PFchs.txt'
+    jecDBFile = os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/jec/Fall15_25nsV2_DATA.db'
+    jecEra    = 'Fall15_25nsV2_DATA'
+    jerDBFile = os.environ['CMSSW_BASE']+'/src/PhysicsTools/PatUtils/data/Fall15_25nsV2_DATA.db'
+    jerEra    = 'Fall15_25nsV2'
 else:
-    if not is25ns:
-        removeResiduals = False
-        uncFile = os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/jec/Summer15_50nsV4_MC_UncertaintySources_AK4PFchs.txt'
-        jecDBFile = os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/jec/Summer15_50nsV4_MC.db'
-        jecEra    = 'Summer15_50nsV4_MC'
-    else:
-        ## MC 25ns
-        removeResiduals = True
-        uncFile = os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/jec/Summer15_25nsV2_MC_UncertaintySources_AK4PFchs.txt'
-        jecDBFile = os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/jec/Summer15_25nsV2_MC.db'
-        jecEra    = 'Summer15_25nsV2_MC'
+    ## MC 25ns
+    removeResiduals = False
+    uncFile = os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/jec/Summer15_25nsV2_MC_Uncertainty_AK4PFchs.txt'
+    jecDBFile = os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/jec/Fall15_25nsV2_MC.db'
+    jecEra    = 'Fall15_25nsV2_MC'
+    jerDBFile = os.environ['CMSSW_BASE']+'/src/PhysicsTools/PatUtils/data/Fall15_25nsV2_MC.db'
+    jerEra    = 'Fall15_25nsV2'
 
+preprocessorFile = "$CMSSW_BASE/tmp/MetType1_jec_%s.py"%(jecEra)
+extraArgs=[]
+if comp.isData:
+    extraArgs.append('--isData')
+    GT= '76X_dataRun2_16Dec2015_v0'
+else:
+    GT= '76X_mcRun2_asymptotic_RunIIFall15DR76_v1'
 
+if removeResiduals:extraArgs.append('--removeResiduals')
+args = ['python',
+  os.path.expandvars(os.environ['CMSSW_BASE']+'/python/CMGTools/ObjectStudies/corMETMiniAOD_cfgCreator.py'),\
+  '--GT='+GT,
+  '--outputFile='+preprocessorFile,
+  '--jecDBFile='+jecDBFile,
+  '--jecEra='+jecEra,
+  '--jerDBFile='+jerDBFile,
+  '--jerEra='+jerEra
+  ] + extraArgs
+#print "Making pre-processorfile:"
+#print " ".join(args)
 
-#preprocessorFile = "$CMSSW_BASE/tmp/MetType1_jec_%s.py"%(jecEra)
-#extraArgs=[]
-#if comp.isData:
-#    extraArgs.append('--isData')
-#    GT= '74X_dataRun2_Prompt_v2'
-#else:
-#    if not is25ns:
-#        GT= 'MCRUN2_74_V9A'
-#    else:
-#        GT= 'MCRUN2_74_V9'
-#if removeResiduals:extraArgs.append('--removeResiduals')
-#args = ['python',
-#  os.path.expandvars(os.environ['CMSSW_BASE']+'/python/CMGTools/ObjectStudies/corMETMiniAOD_cfgCreator.py'),\
-#  '--GT='+GT,
-#  '--outputFile='+preprocessorFile,
-#  '--jecDBFile='+jecDBFile,
-#  '--jecEra='+jecEra
-#  ] + extraArgs
-##print "Making pre-processorfile:"
-##print " ".join(args)
-#subprocess.call(args)
-#from PhysicsTools.Heppy.utils.cmsswPreprocessor import CmsswPreprocessor
-#preprocessor = CmsswPreprocessor(preprocessorFile)
+subprocess.call(args)
+from PhysicsTools.Heppy.utils.cmsswPreprocessor import CmsswPreprocessor
+preprocessor = CmsswPreprocessor(preprocessorFile)
 
 autoAAA(selectedComponents)
 
