@@ -6,7 +6,7 @@ from CMGTools.RootTools.samples.autoAAAconfig import *
 from CMGTools.RootTools.samples.samples_13TeV_RunIIFall15MiniAODv2 import * #<--miniAOD v2 samples_13TeV_RunIIFall15MiniAODv2
 from CMGTools.RootTools.samples.samples_13TeV_DATA2015 import *
 
-from CMGTools.RootTools.samples.triggers_13TeV_Spring15 import triggers_1mu_iso_50ns, triggers_mumu, triggers_ee, triggers_photon30, triggers_photon50, triggers_photon75, triggers_photon90, triggers_photon120, triggers_dijet, triggers_HT350, triggers_HT475, triggers_HT600, triggers_HT800, triggers_HT900, triggers_Jet80MET90
+from CMGTools.RootTools.samples.triggers_13TeV_Spring15 import triggers_1mu_iso_50ns, triggers_mumu, triggers_ee, triggers_photon30, triggers_photon50, triggers_photon75, triggers_photon90, triggers_photon120, triggers_jet, triggers_dijet, triggers_HT350, triggers_HT475, triggers_HT600, triggers_HT800, triggers_HT900, triggers_Jet80MET90
 
 #-------- INITIAL FLAG
 isDiJet=False
@@ -315,6 +315,7 @@ triggerFlagsAna.triggerBits = {
             'Photon90' : triggers_photon90, #["HLT_Photon90_R9Id90_HE10_IsoM_v*"]
             'Photon120': triggers_photon120, #["HLT_Photon120_R9Id90_HE10_IsoM_v*"]
             ######
+            'SingleJet': triggers_jet,
             'DiJet'    : triggers_dijet, #["HLT_DiPFJetAve40_v*", "HLT_DiPFJetAve60_v*"]
             'PFHT350_Prescale' : triggers_HT350, #["HLT_PFHT350_v*"] # prescaled
             'PFHT475_Prescale' : triggers_HT475, #["HLT_PFHT475_v*"] # prescaled
