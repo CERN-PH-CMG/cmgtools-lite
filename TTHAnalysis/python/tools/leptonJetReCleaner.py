@@ -53,7 +53,6 @@ class LeptonJetReCleaner:
             ("LepGood_isCleaning"+label,"I",20,"nLepGood"),("LepGood_isCleaningVeto"+label,"I",20,"nLepGood"),
             ("LepGood_isFO"+label,"I",20,"nLepGood"),("LepGood_isFOVeto"+label,"I",20,"nLepGood"),
             ("LepGood_isTight"+label,"I",20,"nLepGood"),("LepGood_isTightVeto"+label,"I",20,"nLepGood"),
-            ("LepGood_mcUSCXMatch","I",20,"nLepGood"), # calculate match code [prompt -> 0, prompt but charge flip -> 1, light flavour fake -> 2, heavy flavor fake -> 3, isolated photon conversion -> 4]
             ]
 
         biglist.extend([
@@ -155,64 +154,6 @@ class LeptonJetReCleaner:
         ret["mhtJet"+self.strJetPt+"j"+postfix] = mhtJetPtvec.Pt()
         return cleanjets
 
-
-    def USMatchingLeptons(self, ret, leps, genParts, event):
-        
-        bottoms=[5,511,521 ]
-        charms=[4,411,421,441,443 ]
-        lights=[1,2,3,111,211,130,210,321,551,553 ]
-        promptMothers=[23,24,-24,1000024,-1000024]
-
-        myleps = [MyVarProxy(lep) for lep in leps]
-        mygenPs = [MyVarProxy(glep) for glep in genParts]
-
-        def lepMatch(rec, gen):
-            if gen.status !=1 and not (abs(gen.pdgId())==15 and gen.status ==2 ): return False
-            #if min(rec.pt(), gen.pt())/max(rec.pt(), gen.pt())<0.1: return False
-            if abs(rec.pdgId()) != abs(gen.pdgId()) and abs(gen.pdgId())!=15: return False
-            #dr2 = deltaR2(rec.eta(),rec.phi(),gen.eta(),gen.phi())
-            #if dr2 > 0.04: return False
-            return True
-        
-        matchLep = matchObjectCollection3(myleps,mygenPs, 
-                                          deltaRMax = 0.2, filter = lepMatch)
-        
-        def generalMatch(rec, gen):
-            if gen.status !=1 and gen.status !=71: return False
-            #if min(rec.pt(), gen.pt())/max(rec.pt(), gen.pt())<0.1: return False
-            return True
-        
-        matchPart = matchObjectCollection3(myleps,mygenPs, 
-                                           deltaRMax = 0.2, filter = generalMatch)
-        
-        for il, mylep in  enumerate(myleps):
-            mygen = matchLep[mylep] if matchLep[mylep] else matchPart[mylep]
-            code=-1
-            
-            if not mygen: 
-                ret["LepGood_mcUSCXMatch"][il] =-1
-                continue
-            
-            prompt = mygen.isPromptHard
-            if mygen.pdgId()==22 or (mygen.motherId!=-9999 and mygen.motherId==22 and mygen.pdgId()==mylep.pdgId() ):
-                if prompt: code= 4#-3
-                else: code= -1#0
-
-            if prompt or ((abs(mygen.pdgId())==abs(mylep.pdgId()) or abs(mygen.pdgId())==15 ) and ((mygen.motherId in promptMothers) or (abs(mygen.motherId)==15 and (mygen.grandMotherId in promptMothers)) ) ) :
-                if mygen.pdgId()*mylep.pdgId()>0: code= 0#1
-                else : code= 1 #2
-            
-            if (abs(mygen.pdgId()) in bottoms) or (mygen.motherId in bottoms) : code= 3#-1
-            if (abs(mygen.pdgId()) in charms) or (mygen.motherId in charms) : code= 3#-2
-            if (abs(mygen.pdgId()) in lights) or (mygen.motherId in lights) : code= 2#-2
-
-            ret["LepGood_mcUSCXMatch"][il] =code
-
-
-
-
-
-
     def bestZ1TL(self,lepsl,lepst,cut=lambda lep:True):
           pairs = []
           for l1 in lepst:
@@ -287,8 +228,6 @@ class LeptonJetReCleaner:
         ### attach labels and return
         fullret["nLepGood"]=len(leps)
         fullret["LepGood_conePt"] = [lep.conept for lep in leps]
-        fullret["LepGood_mcUSCXMatch"] = [-1] * len(leps)
-        if not event.isData: self.USMatchingLeptons(fullret, leps, Collection(event,'GenPart','nGenPart'),event)
         for k,v in ret.iteritems(): 
             fullret[k+self.label] = v
         fullret.update(retwlabel)
