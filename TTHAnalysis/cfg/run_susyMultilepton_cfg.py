@@ -38,7 +38,7 @@ ttHLepSkim.maxLeptons = 999
 
 # Run miniIso
 lepAna.doMiniIsolation = True
-lepAna.doDirectionalIsolation = True
+lepAna.doDirectionalIsolation = False
 lepAna.packedCandidates = 'packedPFCandidates'
 lepAna.miniIsolationPUCorr = 'rhoArea'
 lepAna.miniIsolationVetoLeptons = None # use 'inclusive' to veto inclusive leptons and their footprint in all isolation cones
@@ -66,6 +66,8 @@ if not removeJecUncertainty:
 if analysis in ['SOS']:
 ## -- SOS preselection settings ---
 
+    lepAna.doDirectionalIsolation = True
+
     # Lepton Skimming
     ttHLepSkim.minLeptons = 2
     ttHLepSkim.maxLeptons = 999
@@ -74,6 +76,7 @@ if analysis in ['SOS']:
 #    # Jet-Met Skimming
 #    ttHJetMETSkim.jetPtCuts = [0,]
     ttHJetMETSkim.metCut    = 50
+    susyCoreSequence.append(ttHJetMETSkim)
 
     # Lepton Preselection
     lepAna.inclusive_muon_pt  = 3
@@ -321,90 +324,6 @@ from CMGTools.RootTools.samples.samples_13TeV_DATA2015 import *
 from CMGTools.HToZZ4L.tools.configTools import printSummary, configureSplittingFromTime, cropToLumi
 
 selectedComponents = [ TTLep_pow ];
-
-#branching fraction to be fixed for the following signal samples cross section
-
-TChiNeuWZ_mCh100_mChi100_mChi95 = kreator.makeMCComponentFromEOS('TChiNeuWZ_mCh100_mChi100_mChi95','/TChiWZDeg_miniAODSIM_76X_lepOnly_dM5gev/','/store/user/castello/susy/%s',".*root",2.267*0.112)
-TChiNeuWZ_mCh100_mChi100_mChi90 = kreator.makeMCComponentFromEOS('TChiNeuWZ_mCh100_mChi100_mChi90','/TChiWZDeg_miniAODSIM_76X_lepOnly_dM10gev/','/store/user/castello/susy/%s',".*root",2.267*0.112)
-TChiNeuWZ_mCh100_mChi100_mChi80 = kreator.makeMCComponentFromEOS('TChiNeuWZ_mCh100_mChi100_mChi80','/TChiWZDeg_miniAODSIM_76X_lepOnly_dM20gev/','/store/user/castello/susy/%s',".*root",2.267*0.112)
-TChiNeuWZ_mCh150_mChi120_OS = kreator.makeMCComponentFromEOS('TChiNeuWZ_mCh150_mChi120_OS', '/TChiNeuWZ_mCh150_mChi120_OS/', '/store/user/cheidegg/signals/miniaod76X/%s', ".*root", 5.18086*(3*0.03366))
-EWKino_compressed = [TChiNeuWZ_mCh100_mChi100_mChi95,TChiNeuWZ_mCh100_mChi100_mChi90,TChiNeuWZ_mCh100_mChi100_mChi80,TChiNeuWZ_mCh150_mChi120_OS]
-for comp in EWKino_compressed:
-    comp.splitFactor = len(comp.files) / 30 # 100 ev. per file
-
-TChiNeuSlepSneu_mCh300_mChi270_SS = kreator.makeMCComponentFromEOS('TChiNeuSlepSneu_mCh300_mChi270_SS', '/TChiNeuSlepSneu_mCh300_mChi270_SS/', '/store/user/cheidegg/signals/miniaod76X/%s', ".*root", 0.386936)
-TChiNeuSlepSneu_mCh450_mChi300_SS = kreator.makeMCComponentFromEOS('TChiNeuSlepSneu_mCh450_mChi300_SS', '/TChiNeuSlepSneu_mCh450_mChi300_SS/', '/store/user/cheidegg/signals/miniaod76X/%s', ".*root", 0.0734361)
-TChiNeuSlepSneu_mCh750_mChi100    = kreator.makeMCComponentFromEOS('TChiNeuSlepSneu_mCh750_mChi100'   , '/TChiNeuSlepSneu_mCh750_mChi100/'   , '/store/user/cheidegg/signals/miniaod76X/%s', ".*root", 0.00669356)
-TChiChiSlepSneu_mCh350_mChi200 = kreator.makeMCComponentFromEOS('TChiChiSlepSneu_mCh350_mChi200','/TChiChiSlepSneu_mCh350_mChi200/','/store/user/cheidegg/signals/miniaod76X/%s', ".*root", 0.102199)
-TChiChiSlepSneu_mCh600_mChi50 = kreator.makeMCComponentFromEOS('TChiChiSlepSneu_mCh600_mChi50','/TChiChiSlepSneu_mCh600_mChi50/','/store/user/cheidegg/signals/miniaod76X/%s', ".*root", 0.00949913)
-TChiNeuSlepSneu_mCh300_mChi270 = kreator.makeMCComponentFromEOS('TChiNeuSlepSneu_mCh300_mChi270','/TChiNeuSlepSneu_mCh300_mChi270/','/store/user/cheidegg/signals/miniaod76X/%s', ".*root", 0.386936)
-TChiNeuSlepSneu_mCh450_mChi300 = kreator.makeMCComponentFromEOS('TChiNeuSlepSneu_mCh450_mChi300','/TChiNeuSlepSneu_mCh450_mChi300/','/store/user/cheidegg/signals/miniaod76X/%s', ".*root", 0.0734361)
-TChiNeuWH_mCh150_mChi20 = kreator.makeMCComponentFromEOS('TChiNeuWH_mCh150_mChi20','/TChiNeuWH_mCh150_mChi20/','/store/user/cheidegg/signals/miniaod76X/%s', ".*root", 5.18086)
-TChiNeuWH_mCh150_mChi20_SL = kreator.makeMCComponentFromEOS('TChiNeuWH_mCh150_mChi20_SL','/TChiNeuWH_mCh150_mChi20_SL/','/store/user/cheidegg/signals/miniaod76X/%s', ".*root", 5.18086)
-TChiNeuWH_mCh250_mChi20 = kreator.makeMCComponentFromEOS('TChiNeuWH_mCh250_mChi20','/TChiNeuWH_mCh250_mChi20/','/store/user/cheidegg/signals/miniaod76X/%s', ".*root", 0.782487)
-TChiNeuWH_mCh250_mChi20_SL = kreator.makeMCComponentFromEOS('TChiNeuWH_mCh250_mChi20_SL','/TChiNeuWH_mCh250_mChi20_SL/','/store/user/cheidegg/signals/miniaod76X/%s', ".*root", 0.782487)
-TChiNeuWZ_mCh200_mChi100 = kreator.makeMCComponentFromEOS('TChiNeuWZ_mCh200_mChi100','/TChiNeuWZ_mCh200_mChi100/','/store/user/cheidegg/signals/miniaod76X/%s', ".*root", 1.80739)
-TChiNeuWZ_mCh200_mChi100_OS = kreator.makeMCComponentFromEOS('TChiNeuWZ_mCh200_mChi100_OS','/TChiNeuWZ_mCh200_mChi100_OS/','/store/user/cheidegg/signals/miniaod76X/%s', ".*root", 1.80739)
-TChiNeuWZ_mCh350_mChi100 = kreator.makeMCComponentFromEOS('TChiNeuWZ_mCh350_mChi100','/TChiNeuWZ_mCh350_mChi100/','/store/user/cheidegg/signals/miniaod76X/%s', ".*root", 0.209439)
-TChiNeuWZ_mCh350_mChi100_OS = kreator.makeMCComponentFromEOS('TChiNeuWZ_mCh350_mChi100_OS','/TChiNeuWZ_mCh350_mChi100_OS/','/store/user/cheidegg/signals/miniaod76X/%s', ".*root", 0.209439)
-TChiNeuWZ_mCh350_mChi20 = kreator.makeMCComponentFromEOS('TChiNeuWZ_mCh350_mChi20','/TChiNeuWZ_mCh350_mChi20/','/store/user/cheidegg/signals/miniaod76X/%s', ".*root", 0.209439)
-TChiNeuWZ_mCh350_mChi20_OS = kreator.makeMCComponentFromEOS('TChiNeuWZ_mCh350_mChi20_OS','/TChiNeuWZ_mCh350_mChi20_OS/','/store/user/cheidegg/signals/miniaod76X/%s', ".*root", 0.209439)
-TChiNeuWZ_mCh150_mChi120 = kreator.makeMCComponentFromEOS('TChiNeuWZ_mCh150_mChi120', '/TChiNeuWZ_mCh150_mChi120/', '/store/user/cheidegg/signals/miniaod76X/%s', ".*root", 5.18086 )
-
-EWKino = [TChiNeuSlepSneu_mCh300_mChi270_SS,TChiNeuSlepSneu_mCh450_mChi300_SS,TChiNeuSlepSneu_mCh750_mChi100,TChiChiSlepSneu_mCh350_mChi200,TChiChiSlepSneu_mCh600_mChi50,TChiNeuSlepSneu_mCh300_mChi270,TChiNeuSlepSneu_mCh450_mChi300,TChiNeuWH_mCh150_mChi20,TChiNeuWH_mCh150_mChi20_SL,TChiNeuWH_mCh250_mChi20,TChiNeuWH_mCh250_mChi20_SL,TChiNeuWZ_mCh200_mChi100,TChiNeuWZ_mCh200_mChi100_OS,TChiNeuWZ_mCh350_mChi100,TChiNeuWZ_mCh350_mChi100_OS,TChiNeuWZ_mCh350_mChi20,TChiNeuWZ_mCh350_mChi20_OS,TChiNeuWZ_mCh150_mChi120]
-for comp in EWKino:
-    comp.splitFactor = len(comp.files) / 15 # 200 ev. per file
-
-T2ttDeg_lepOnly_dM20gev = kreator.makeMCComponentFromEOS('T2ttDeg_lepOnly_dM20gev','/T2ttDeg_miniAODSIM_76X_lepOnly_dM20gev/','/store/user/castello/susy/%s',".*root",0.003787*(0.332)*(0.332))
-T2ttDeg_lepOnly_dM20gev.splitFactor = len(T2ttDeg_lepOnly_dM20gev.files) / 30 # 100 ev. per file
-sTop = [T2ttDeg_lepOnly_dM20gev]
-
-#backgrounds = [TTJets_SingleLeptonFromT,TTJets_SingleLeptonFromTbar,WJetsToLNu_LO,DYJetsToLL_M10to50,WWTo2L2Nu]
-backgrounds = [TTJets_SingleLeptonFromT,TTJets_SingleLeptonFromTbar,TTJets_DiLepton,ZZTo2L2Nu,WWTo2L2Nu,WZTo3LNu]
-configureSplittingFromTime([TTJets_SingleLeptonFromT,TTJets_SingleLeptonFromTbar,WWTo2L2Nu],150,2)
-configureSplittingFromTime([WJetsToLNu_LO,DYJetsToLL_M10to50],20,5)
-
-selectedComponents = EWKino_compressed + sTop + backgrounds
-
-#selectedComponents = [TChiNeuWZ_mCh150_mChi120]
-
-
-#_Wjets_DY = [WJetsToLNu,DYJetsToLL_M10to50,DYJetsToLL_M50]
-#_fakes = [TTJets_DiLepton,TTJets_SingleLeptonFromT,TTJets_SingleLeptonFromTbar,WWTo2L2Nu]
-#_ttH = [TTHnobb,TTHnobb_pow]
-#_TTV = [TTWToLNu,TTZToLLNuNu_LO,TTLLJets_m1to10]
-#_convs = [TTGJets,TGJets,WGToLNuG,ZGTo2LG]
-#_singleTop = [TToLeptons_sch_amcatnlo,TToLeptons_tch_amcatnlo,T_tWch,TBar_tWch]
-#_diboson = [WZTo3LNu,ZZTo4L]
-#_other = [tZq_ll,TTTT,WpWpJJ,WWDouble,WZZ] # WWZ ZZZ
-#_fast = [DYJetsToLL_M10to50,WJetsToLNu,WJetsToLNu_LO,TTJets_SingleLeptonFromT,TTJets_SingleLeptonFromTbar,TTGJets,TGJets,WGToLNuG]+_singleTop
-#_slow = [DYJetsToLL_M50,TTJets_DiLepton,ZGTo2LG,WWTo2L2Nu]+_TTV+_ttH+_diboson+_other+TChiNeuWZ_compressed
-
-#print 'Before cropping to lumi and adjusting the splitting:'
-#printSummary(selectedComponents)
-#
-
-#
-#print 'After cropping to lumi and adjusting the splitting:'
-#printSummary(selectedComponents)
-## Use the dropLHEweights option if you don't need the per-event LHE weights! It saves a lot of space.
-#
-#selectedComponents += (TChiNeuWZ_compressed+EWKino)
-
-
-#selectedComponents=[DYJetsToLL_M10to50]
-#configureSplittingFromTime(selectedComponents,100,3)
-
-#SMS_T1tttt_mGluino1500_mLSP100 = kreator.makeMCComponent("SMS_T1tttt_mGluino1500_mLSP100", "/SMS-T1tttt_mGluino-1500_mLSP-100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v2/MINIAODSIM", "CMS", ".*root", 0.0141903)
-#
-#selectedComponents = [SMS_T1tttt_mGluino1500_mLSP100]
-#SMS_T1tttt_mGluino1500_mLSP100.splitFactor = 1
-#SMS_T1tttt_mGluino1500_mLSP100.fineSplitFactor = 4
-
-printSummary(selectedComponents)
-
-
-
 
 #selectedComponents = SMS_miniAODv2_T1tttt
 #susyCounter.SMS_varying_masses = ['genSusyMGluino','genSusyMNeutralino']
@@ -727,6 +646,9 @@ output_service = cfg.Service(
     option='recreate'
     )    
 outputService.append(output_service)
+
+# print summary of components to process
+printSummary(selectedComponents)
 
 # the following is declared in case this cfg is used in input to the heppy.py script
 from PhysicsTools.HeppyCore.framework.eventsfwlite import Events
