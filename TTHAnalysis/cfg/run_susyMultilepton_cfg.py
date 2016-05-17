@@ -121,13 +121,10 @@ jetAnaScaleDown.doQG = True
 photonAna.do_mc_match = False
 
 # Loose Tau configuration
-tauAna.loose_decayModeID = "decayModeFinding"
 tauAna.loose_ptMin = 20
 tauAna.loose_etaMax = 2.3
-# Current ra7 config (but not ttH)
-#tauAna.loose_vetoLeptonsPOG = True
-#tauAna.loose_tauAntiMuonID = "againstMuonTight"
-#tauAna.loose_tauAntiElectronID = "againstElectronLoose"
+tauAna.loose_decayModeID = "decayModeFindingOldDMs"
+tauAna.loose_tauID = "byLooseIsolationMVArun2v1DBdR03oldDMwLT"
 if analysis in ["ttH"]: #if cleaning jet-loose tau cleaning
     jetAna.cleanJetsFromTaus = True
     jetAnaScaleUp.cleanJetsFromTaus = True
