@@ -740,6 +740,34 @@ class LeptonChoiceRA7:
         return False
 
 
+def _susy3l_multiIso(lep):
+    # CH: looser WP than for RA5 (electrons -> medium, muons -> loose)
+    if abs(lep.pdgId) == 13: A,B,C = (0.20,0.69,6.0)
+    else:                    A,B,C = (0.16,0.76,7.2)
+    return lep.miniRelIso < A and (lep.jetPtRatiov2 > B or lep.jetPtRelv2 > C)
+
+def _susy3l_lepId_loosestFO(lep):
+    # CH: the same as the 2lss one but without tightCharge
+    if not _susy2lss_lepId_CBloose(lep): return False
+    if abs(lep.pdgId) == 13:
+        return lep.mediumMuonId > 0
+    elif abs(lep.pdgId) == 11:
+        return (lep.convVeto and lep.lostHits == 0)
+    return False
+
+def _susy3l_lepId_CB(lep):
+    # CH: the same as the 2lss one but without tightCharge
+    if not _susy2lss_lepId_CBloose(lep): return False
+    if not _susy2lss_lepId_IPcuts(lep): return False
+    if abs(lep.pdgId) == 13:
+        return lep.mediumMuonId > 0
+    elif abs(lep.pdgId) == 11:
+        if not (lep.convVeto and lep.lostHits == 0): 
+            return False
+        return lep.mvaIdSpring15 > 0.87+(0.60-0.87)*(abs(lep.eta)>0.8)+(0.17-0.60)*(abs(lep.eta)>1.479)
+    return False
+
+
 
 if __name__ == '__main__':
     from sys import argv
