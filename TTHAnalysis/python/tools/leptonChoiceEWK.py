@@ -3,35 +3,12 @@ from CMGTools.TTHAnalysis.tools.leptonJetReCleaner import passTripleMllVeto,pass
 from ROOT import TFile,TH1F
 import copy, os
 
-for extlib in ["fakerate/fake_rates_UCSx_v5_03.cc","fliprate/flip_rates_UCSx_v5_01.cc","triggerSF/triggerSF_fullsim_UCSx_v5_01.cc","leptonSF/lepton_SF_UCSx_v5_03.cc","triggerSF/FastSimTriggerEff.cc"]:
+for extlib in ["triggerSF/triggerSF_fullsim_UCSx_v5_01.cc","leptonSF/lepton_SF_UCSx_v5_03.cc","triggerSF/FastSimTriggerEff.cc"]:
     if not extlib.endswith(".cc"): raise RuntimeError
     if "/%s"%extlib.replace(".cc","_cc.so") not in ROOT.gSystem.GetLibraries():
         ROOT.gROOT.LoadMacro(os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/%s"+extlib)
-        #ROOT.gROOT.LoadMacro("/afs/cern.ch/work/p/peruzzi/ra5trees/cms_utility_files/%s+"extlib)
 from ROOT import triggerScaleFactorFullSim
 from ROOT import FastSimTriggerEfficiency
-#from ROOT import electronFakeRate_UCSx
-#from ROOT import electronFakeRate_UCSx_Error
-#from ROOT import electronAlternativeFakeRate_UCSx
-#from ROOT import electronQCDMCFakeRate_UCSx
-#from ROOT import muonFakeRate_UCSx
-#from ROOT import muonFakeRate_UCSx_Error
-#from ROOT import muonAlternativeFakeRate_UCSx
-#from ROOT import muonQCDMCFakeRate_UCSx
-#from ROOT import electronFakeRate_UCSx_IsoTrigs
-#from ROOT import electronFakeRate_UCSx_Error_IsoTrigs
-#from ROOT import electronAlternativeFakeRate_UCSx_IsoTrigs
-#from ROOT import electronQCDMCFakeRate_UCSx_IsoTrigs
-#from ROOT import flipRate_UCSx
-#from ROOT import flipRate_UCSx_Error
-#from ROOT import muonFakeRate_UCSx_IsoTrigs
-#from ROOT import muonFakeRate_UCSx_Error_IsoTrigs
-#from ROOT import muonAlternativeFakeRate_UCSx_IsoTrigs
-#from ROOT import muonQCDMCFakeRate_UCSx_IsoTrigs
-#from ROOT import electronScaleFactorHighHT_UCSx
-#from ROOT import electronScaleFactorLowHT_UCSx
-#from ROOT import muonScaleFactor_UCSx
-#from ROOT import leptonScaleFactor_UCSx
 
 class LeptonChoiceEWK:
 
@@ -240,11 +217,11 @@ class LeptonChoiceEWK:
         self.leps       = [l             for l  in Collection(event, "LepGood", "nLepGood")  ]
         self.setAttributes(self.leps, False)
 
-        self.lepsl      = [self.leps[il] for il in getattr   (event, "iL"  + self.inputlabel)]
-        self.lepst      = [self.leps[il] for il in getattr   (event, "iT"  + self.inputlabel)]
-        self.lepsfv     = [self.leps[il] for il in getattr   (event, "iFV" + self.inputlabel) \
-                                      if not il in getattr   (event, "iTV" + self.inputlabel)]
-        self.lepstv     = [self.leps[il] for il in getattr   (event, "iTV" + self.inputlabel)]
+        self.lepsl      = [self.leps[il] for il in getattr   (event, "iL"  + self.inputlabel)[0:getattr(event,"nLepLoose"+self.inputlabel)]]
+        self.lepst      = [self.leps[il] for il in getattr   (event, "iT"  + self.inputlabel)[0:getattr(event,"nLepTight"+self.inputlabel)]]
+        self.lepsfv     = [self.leps[il] for il in getattr   (event, "iFV" + self.inputlabel)[0:getattr(event,"nLepFOVeto"+self.inputlabel)] \
+                                      if not il in getattr   (event, "iTV" + self.inputlabel)[0:getattr(event,"nLepTightVeto"+self.inputlabel)]]
+        self.lepstv     = [self.leps[il] for il in getattr   (event, "iTV" + self.inputlabel)[0:getattr(event,"nLepTightVeto"+self.inputlabel)]]
 
         self.taus       = [t             for t  in Collection(event, "TauGood", "nTauGood") if t.pt > 20]
         self.setAttributes(self.taus, True)

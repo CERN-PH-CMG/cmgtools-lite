@@ -1,5 +1,5 @@
 from CMGTools.TTHAnalysis.treeReAnalyzer import *
-from CMGTools.TTHAnalysis.tools.leptonJetReCleaner import passMllVeto
+from CMGTools.TTHAnalysis.tools.leptonJetReCleaner import bestZ1TL,minMllTL,passMllVeto
 from ROOT import TFile,TH1F
 import os
 
@@ -7,7 +7,6 @@ for extlib in ["fakerate/fake_rates_UCSx_v5_03.cc","fliprate/flip_rates_UCSx_v5_
     if not extlib.endswith(".cc"): raise RuntimeError
     if "/%s"%extlib.replace(".cc","_cc.so") not in ROOT.gSystem.GetLibraries():
         ROOT.gROOT.LoadMacro(os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/%s"+extlib)
-        #ROOT.gROOT.LoadMacro("/afs/cern.ch/work/p/peruzzi/ra5trees/cms_utility_files/%s+"extlib)
 from ROOT import electronFakeRate_UCSx
 from ROOT import electronFakeRate_UCSx_Error
 from ROOT import electronAlternativeFakeRate_UCSx
@@ -90,7 +89,9 @@ class LeptonChoiceRA5:
             ("SR_jecUp"+label,"I",20,"nPairs"+label),
             ("SR_jecDown"+label,"I",20,"nPairs"+label),
             ("hasTT"+label, "I"), ("hasTF"+label, "I"), ("hasFF"+label, "I"),
-            ("mZ1"+label,"F"), ("mZ1cut10TL"+label,"F"),("minMllAFAS"+label,"F"),("minMllAFASTT"+label,"F"), ("minMllAFASTL"+label,"F"), ("minMllSFOS"+label,"F"), ("minMllSFOSTL"+label,"F"), ("minMllSFOSTT"+label,"F"),
+            ("mZ1"+label,"F"), ("mZ1cut10TL"+label,"F"),("minMllAFAS"+label,"F"),
+            ("minMllAFASTT"+label,"F"), ("minMllAFASTL"+label,"F"), ("minMllSFOS"+label,"F"),
+            ("minMllSFOSTL"+label,"F"), ("minMllSFOSTT"+label,"F"),
             ("triggerSF"+label,"F",20,"nPairs"+label),
             ("maxDeltaPhiLepJet"+label,"F",20,"nPairs"+label),
             ("maxDeltaPhiLepBJet"+label,"F",20,"nPairs"+label),
@@ -117,14 +118,6 @@ class LeptonChoiceRA5:
         lepsfv = [leps[il] for il in getattr(event,"iFV"+self.inputlabel)[0:getattr(event,"nLepFOVeto"+self.inputlabel)]]
         lepstv = [leps[il] for il in getattr(event,"iTV"+self.inputlabel)[0:getattr(event,"nLepTightVeto"+self.inputlabel)]]
 
-        nlepst = getattr(event,"nLepTight"+self.inputlabel)
-        #nlepsfv = getattr(event,"nLepTight"+self.inputlabel)
-        lepst=lepst[0:nlepst]
-        
-
-
-        bjets25 = [j for j in Collection(event,"JetSel"+self.inputlabel,"nJetSel"+self.inputlabel) if (j.pt>25 and j.btagCSV>0.89)]
-        jets40 = [j for j in Collection(event,"JetSel"+self.inputlabel,"nJetSel"+self.inputlabel) if j.pt>40]
         
         systsFR={0:"", 1:"_ewkUp", -1:"_ewkDown"}
         systsJEC={0:"", 1:"_jecUp", -1:"_jecDown"}
@@ -139,7 +132,6 @@ class LeptonChoiceRA5:
 
         ret = {};
 
-        ### 2lss specific things - still useful?
         ret['mZ1'] = self.bestZ1TL(lepsl, lepsl)
         ret['mZ1cut10TL'] = self.bestZ1TL(lepsl, lepst, cut=lambda l:l.conePt>(10 if abs(l.pdgId)==13 else 15))
         ret['minMllAFAS'] = self.minMllTL(lepsl, lepsl) 
@@ -175,7 +167,7 @@ class LeptonChoiceRA5:
 
         if self.whichApplication == self.appl_Fakes:
             if self.lepChoiceMethod==self.style_TTSync:
-                choice = self.findPairs(lepst,lepst,byflav=True,bypassMV=True,choose_SS_else_OS=True,event=event)
+                choice = self.findPairs(lepst,lepst,byflav=True,bypassMV=True,choose_SS_else_OS=True)
                 if choice:
                     ret["hasTT"]=True
                     choice=choice[:1]
@@ -299,8 +291,6 @@ class LeptonChoiceRA5:
             self.useFakesHardCodedUCSx = True
         else:    
             self.FRfile = ROOT.TFile(FRFileName,"read")
-#            self.FR_mu = (self.FRfile.Get("FRMuPtCorr_ETH_non"),self.FRfile.Get("FRMuPtCorr_ETH_iso"))
-#            self.FR_el = (self.FRfile.Get("FRElPtCorr_ETH_non"),self.FRfile.Get("FRElPtCorr_ETH_iso"))
             self.FR_mu={}
             self.FR_el={}
             self.FR_mu[0] = (self.FRfile.Get("FRMuPtCorr_UCSX_non"),self.FRfile.Get("FRMuPtCorr_UCSX_iso"))
@@ -411,34 +401,7 @@ class LeptonChoiceRA5:
         if sf==0: raise RuntimeError, "Returning null lepton SF for FastSim (%d, %f, %f, %d)"%(pdgId,pt,eta,pu)
         return sf,(sferr/sf)
 
-    def bestZ1TL(self,lepsl,lepst,cut=lambda lep:True):
-          pairs = []
-          for l1 in lepst:
-            if not cut(l1): continue
-            for l2 in lepsl:
-                if not cut(l2): continue
-                if l1.pdgId == -l2.pdgId:
-                   mz = (l1.p4() + l2.p4()).M()
-                   diff = abs(mz-91.2)
-                   pairs.append( (diff,mz) )
-          if len(pairs):
-              pairs.sort()
-              return pairs[0][1]
-          return 0.
-    def minMllTL(self, lepsl, lepst, bothcut=lambda lep:True, onecut=lambda lep:True, paircut=lambda lep1,lep2:True):
-            pairs = []
-            for l1 in lepst:
-                if not bothcut(l1): continue
-                for l2 in lepsl:
-                    if l2 == l1 or not bothcut(l2): continue
-                    if not onecut(l1) and not onecut(l2): continue
-                    if not paircut(l1,l2): continue
-                    mll = (l1.p4() + l2.p4()).M()
-                    pairs.append(mll)
-            if len(pairs):
-                return min(pairs)
-            return -1
-    def findPairs(self,leps1,leps2,byflav,bypassMV,choose_SS_else_OS=True,event=None):
+    def findPairs(self,leps1,leps2,byflav,bypassMV,choose_SS_else_OS=True):
         ret = None
         pairs = []
         _p = []
@@ -455,7 +418,8 @@ class LeptonChoiceRA5:
             pairs.sort()
             ret = [(pair[2],pair[3]) for pair in pairs]
         return ret
-    def SR(self, _l1pt, _l2pt, ht, met, nj, nb, mtw,event=None):
+
+    def SR(self, _l1pt, _l2pt, ht, met, nj, nb, mtw):
         l1pt, l2pt = (_l1pt,_l2pt) if _l1pt>=_l2pt else (_l2pt,_l1pt)
         if l1pt > 25 and l2pt > 25 and ht < 300 and met > 50 and met < 200 and nj >= 2 and nj <= 4 and nb == 0 and mtw < 120 : SR = 1
         elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1125 and met > 50 and met < 200 and nj >= 2 and nj <= 4 and nb == 0 and mtw < 120  : SR = 2
