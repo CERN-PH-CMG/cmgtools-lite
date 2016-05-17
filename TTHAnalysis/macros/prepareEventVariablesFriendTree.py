@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 #!/usr/bin/env python
 from CMGTools.TTHAnalysis.treeReAnalyzer import *
 from glob import glob
@@ -8,36 +7,36 @@ MODULES = []
 
 from CMGTools.TTHAnalysis.tools.leptonJetReCleaner import LeptonJetReCleaner,_ttH_idEmu_cuts_E2,_susy2lss_lepId_CB,_susy2lss_lepId_CBloose,_susy2lss_multiIso,_tthlep_lepId,_susy2lss_idEmu_cuts,_susy2lss_idIsoEmu_cuts,_susy2lss_lepId_loosestFO,_susy2lss_lepId_tighterFO,_susy2lss_lepId_IPcuts,_susy2lss_lepConePt1015,_susy2lss_lepId_inSituLoosestFO,_susy2lss_lepId_inSituTighterFO,_susy2lss_multiIso_relaxedForInSituApp
 
-from CMGTools.TTHAnalysis.tools.leptonChoiceRA5 import LeptonChoiceRA5
-from CMGTools.TTHAnalysis.tools.leptonChoiceRA7 import LeptonChoiceRA7
-from CMGTools.TTHAnalysis.tools.leptonChoiceEWK import LeptonChoiceEWK
+#from CMGTools.TTHAnalysis.tools.leptonChoiceRA5 import LeptonChoiceRA5
+#from CMGTools.TTHAnalysis.tools.leptonChoiceRA7 import LeptonChoiceRA7
+#from CMGTools.TTHAnalysis.tools.leptonChoiceEWK import LeptonChoiceEWK
 
 from CMGTools.TTHAnalysis.tools.conept import conept_RA5, conept_RA7, conept_TTH
-from CMGTools.TTHAnalysis.tools.btagRWTs_ND import BTagWeightCalculator,BTagReweightFriend,BTagLeptonReweightFriend
+#from CMGTools.TTHAnalysis.tools.btagRWTs_ND import BTagWeightCalculator,BTagReweightFriend,BTagLeptonReweightFriend
 
 isFastSim = False
 
 utility_files_dir = os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/"
-btagSF = utility_files_dir+"/btag/CSVv2_25ns.csv"
-btagEFF = utility_files_dir+"/btag/btageff__ttbar_powheg_pythia8_25ns.root"
-btagSF_FastSim = utility_files_dir+"/btag/CSV_13TEV_Combined_20_11_2015_FullSim_FastSim.csv"
+#btagSF = utility_files_dir+"/btag/CSVv2_25ns.csv"
+#btagEFF = utility_files_dir+"/btag/btageff__ttbar_powheg_pythia8_25ns.root"
+#btagSF_FastSim = utility_files_dir+"/btag/CSV_13TEV_Combined_20_11_2015_FullSim_FastSim.csv"
 
 
-# btag reweighting in 76X
-BTagReweight76X = lambda : BTagWeightCalculator(utility_files_dir_tth+"/csv_rwt_fit_hf_76x_2016_02_08.root",
-                                                utility_files_dir_tth+"/csv_rwt_fit_lf_76x_2016_02_08.root")
-systsBTAG = ["nominal", "_JESUp", "_JESDown", "_LFUp", "_LFDown", "_HFUp", "_HFDown", \
-                 "_HFStats1Up", "_HFStats1Down", "_HFStats2Up", "_HFStats2Down", \
-                 "_LFStats1Up", "_LFStats1Down", "_LFStats2Up", "_LFStats2Down", \
-                 "_cErr1Up", "_cErr1Down", "_cErr2Up", "_cErr2Down" ]
-for syst in systsBTAG: # should be converted to lambda functions
-    MODULES.append( ('btagRWJet%s'%syst, BTagReweightFriend(BTagReweight76X, outlabel='btagCSVWeight%s'%syst.replace('nominal',''), rwtSyst=syst.replace('_','')) ))
-    MODULES.append( ('btagRWJetUp%s'%syst, BTagReweightFriend(BTagReweight76X, jets=["Jet_jecUp","DiscJet_jecUp"], outlabel='btagCSVWeight%s'%syst.replace('nominal',''), rwtSyst=syst.replace('_','')) ))
-    MODULES.append( ('btagRWJetDown%s'%syst, BTagReweightFriend(BTagReweight76X, jets=["Jet_jecDown","DiscJet_jecDown"], outlabel='btagCSVWeight%s'%syst.replace('nominal',''), rwtSyst=syst.replace('_','')) ))
-    MODULES.append( ('btagRWLep%s'%syst, BTagLeptonReweightFriend(BTagReweight76X, outlabel='jetBTagCSVWeight%s'%syst.replace('nominal',''), rwtSyst=syst.replace('_','')) ))
-
-from CMGTools.TTHAnalysis.tools.eventBTagRWT import EventBTagRWT
-MODULES.append( ('eventBTagRWT', lambda: EventBTagRWT() ))
+## btag reweighting in 76X
+#BTagReweight76X = lambda : BTagWeightCalculator(utility_files_dir_tth+"/csv_rwt_fit_hf_76x_2016_02_08.root",
+#                                                utility_files_dir_tth+"/csv_rwt_fit_lf_76x_2016_02_08.root")
+#systsBTAG = ["nominal", "_JESUp", "_JESDown", "_LFUp", "_LFDown", "_HFUp", "_HFDown", \
+#                 "_HFStats1Up", "_HFStats1Down", "_HFStats2Up", "_HFStats2Down", \
+#                 "_LFStats1Up", "_LFStats1Down", "_LFStats2Up", "_LFStats2Down", \
+#                 "_cErr1Up", "_cErr1Down", "_cErr2Up", "_cErr2Down" ]
+#for syst in systsBTAG: # should be converted to lambda functions
+#    MODULES.append( ('btagRWJet%s'%syst, BTagReweightFriend(BTagReweight76X, outlabel='btagCSVWeight%s'%syst.replace('nominal',''), rwtSyst=syst.replace('_','')) ))
+#    MODULES.append( ('btagRWJetUp%s'%syst, BTagReweightFriend(BTagReweight76X, jets=["Jet_jecUp","DiscJet_jecUp"], outlabel='btagCSVWeight%s'%syst.replace('nominal',''), rwtSyst=syst.replace('_','')) ))
+#    MODULES.append( ('btagRWJetDown%s'%syst, BTagReweightFriend(BTagReweight76X, jets=["Jet_jecDown","DiscJet_jecDown"], outlabel='btagCSVWeight%s'%syst.replace('nominal',''), rwtSyst=syst.replace('_','')) ))
+#    MODULES.append( ('btagRWLep%s'%syst, BTagLeptonReweightFriend(BTagReweight76X, outlabel='jetBTagCSVWeight%s'%syst.replace('nominal',''), rwtSyst=syst.replace('_','')) ))
+#
+#from CMGTools.TTHAnalysis.tools.eventBTagRWT import EventBTagRWT
+#MODULES.append( ('eventBTagRWT', lambda: EventBTagRWT() ))
 
 #--- Recleaner instances
 MODULES.append( ('leptonJetReCleanerSusyRA5', lambda : LeptonJetReCleaner("Mini", 
@@ -115,12 +114,12 @@ RA7_fast_lepSF = [[utility_files_dir+"/leptonSF/ra7_lepsf_fastsim/muons/sf_mu_me
                    utility_files_dir+"/leptonSF/ra7_lepsf_fastsim/electrons/sf_el_multi.root::histo3D"]]
 RA7_puweights = utility_files_dir+"/pileup/ra7_puWeights.root::pileup"
 
-MODULES.append( ('leptonChoiceRA5', lambda : LeptonChoiceRA5("Loop","Mini",whichApplication="Fakes",lepChoiceMethod="TT_loopTF_2FF",FRFileName=FRname,isFastSim=isFastSim,lepSFFileNameFastSim=FS_lepSF))) 
-MODULES.append( ('leptonChoiceRA5_Flips', lambda : LeptonChoiceRA5("Flips","Mini",whichApplication="Flips",FRFileName="hardcodedUCSx",isFastSim=isFastSim,lepSFFileNameFastSim=FS_lepSF)))
-
-MODULES.append( ('leptonChoiceRA7', lambda : LeptonChoiceRA7("Loop","Mini",whichApplication="Fakes",isFastSim=isFastSim,filePathFakeRate=RA7_FRname,filePathLeptonSFfull=RA7_full_lepSF,filePathLeptonSFfast=RA7_fast_lepSF,filePathPileUp=RA7_puweights))) 
-MODULES.append( ('leptonChoiceEWK', lambda : LeptonChoiceEWK("Loop","Mini",whichApplication="Fakes",isFastSim=isFastSim,filePathFakeRate=RA7_FRname,filePathLeptonSFfull=RA7_full_lepSF,filePathLeptonSFfast=RA7_fast_lepSF,filePathPileUp=RA7_puweights))) 
-
+#MODULES.append( ('leptonChoiceRA5', lambda : LeptonChoiceRA5("Loop","Mini",whichApplication="Fakes",lepChoiceMethod="TT_loopTF_2FF",FRFileName=FRname,isFastSim=isFastSim,lepSFFileNameFastSim=FS_lepSF))) 
+#MODULES.append( ('leptonChoiceRA5_Flips', lambda : LeptonChoiceRA5("Flips","Mini",whichApplication="Flips",FRFileName="hardcodedUCSx",isFastSim=isFastSim,lepSFFileNameFastSim=FS_lepSF)))
+#
+#MODULES.append( ('leptonChoiceRA7', lambda : LeptonChoiceRA7("Loop","Mini",whichApplication="Fakes",isFastSim=isFastSim,filePathFakeRate=RA7_FRname,filePathLeptonSFfull=RA7_full_lepSF,filePathLeptonSFfast=RA7_fast_lepSF,filePathPileUp=RA7_puweights))) 
+#MODULES.append( ('leptonChoiceEWK', lambda : LeptonChoiceEWK("Loop","Mini",whichApplication="Fakes",isFastSim=isFastSim,filePathFakeRate=RA7_FRname,filePathLeptonSFfull=RA7_full_lepSF,filePathLeptonSFfast=RA7_fast_lepSF,filePathPileUp=RA7_puweights))) 
+#
 
 
 FRname="hardcodedUCSx"

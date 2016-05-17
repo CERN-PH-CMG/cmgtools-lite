@@ -1,5 +1,5 @@
 from CMGTools.TTHAnalysis.treeReAnalyzer import *
-from CMGTools.TTHAnalysis.tools.conept import coneptRA5
+from CMGTools.TTHAnalysis.tools.conept import conept_RA5
 
 class LeptonFakeRateQCDVars:
     def __init__(self,leptonSel,jetSel, jetSort = lambda jet:jet.pt, label=None, isMC=True, coneptdef = None):
@@ -22,7 +22,7 @@ class LeptonFakeRateQCDVars:
             #ret["LepGood_CorrConePt"] = [-99.0] * event.nLepGood
         for il,lep in enumerate(leps):
             if not self.leptonSel(lep): continue
-            ret["LepGood_CorrConePt"][il] = coneptRA5(lep.pt,lep.miniRelIso,lep.jetPtRatiov2,lep.jetPtRelv2,lep.pdgId,2)
+            ret["LepGood_CorrConePt"][il] = conept_RA5(lep.pt,lep.miniRelIso,lep.jetPtRatiov2,lep.jetPtRelv2,lep.pdgId,2)
             raise RuntimeError, 'Make more generic'
             jets = [ j for j in jetsc if self.jetSel(j,lep,deltaR(j,lep)) ]
             if len(jets) == 0: continue 

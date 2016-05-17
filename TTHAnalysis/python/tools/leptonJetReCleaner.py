@@ -19,7 +19,7 @@ class MyVarProxy:
 
 class LeptonJetReCleaner:
 
-    def __init__(self,label,looseLeptonSel,cleaningLeptonSel,FOLeptonSel,tightLeptonSel,cleanJet,selectJet,cleanWithTaus,doVetoZ,doVetoLMl,doVetoLMt,jetPt,bJetPt,coneptdef):
+    def __init__(self,label,looseLeptonSel,cleaningLeptonSel,FOLeptonSel,tightLeptonSel,cleanJet,selectJet,cleanWithTaus,doVetoZ,doVetoLMf,doVetoLMt,jetPt,bJetPt,coneptdef):
         self.label = "" if (label in ["",None]) else ("_"+label)
         self.looseLeptonSel = looseLeptonSel
         self.cleaningLeptonSel = cleaningLeptonSel # applied on top of looseLeptonSel
@@ -29,10 +29,13 @@ class LeptonJetReCleaner:
         self.selectJet = selectJet
         self.cleanWithTaus = cleanWithTaus
         self.doVetoZ = doVetoZ
-        self.doVetoLM = doVetoLM
+        self.doVetoLMf = doVetoLMf
+        self.doVetoLMt = doVetoLMt
         self.coneptdef = coneptdef
         self.jetPt = jetPt
         self.bJetPt = bJetPt
+        self.strJetPt = str(int(jetPt))
+        self.strBJetPt = str(int(bJetPt))
         self.systsJEC = {0:"", 1:"_jecUp", -1:"_jecDown"}
         self.debugprinted = False
 
@@ -205,9 +208,9 @@ class LeptonJetReCleaner:
         ret = {}; retwlabel = {}; jetret = {}; discjetret = {};
 
         lepsl = []; lepslv = [];
-        ret, lepsl, lepslv = self.fillCollWithVeto(ret,leps,leps,'L','Loose',self.looseLeptonSel, doVetoZ=self.doVetoZ, doVetoLM=self.doVetoLMf)
+        ret, lepsl, lepslv = self.fillCollWithVeto(ret,leps,leps,'L','Loose',self.looseLeptonSel, lepsforveto=None, doVetoZ=self.doVetoZ, doVetoLM=self.doVetoLMf, sortby=None)
         lepsc = []; lepscv = [];
-        ret, lepsc, lepscv = self.fillCollWithVeto(ret,leps,lepsl,'C','Cleaning',self.cleaningLeptonSel,lepsv, doVetoZ=self.doVetoZ, doVetoLM=self.doVetoLMf)
+        ret, lepsc, lepscv = self.fillCollWithVeto(ret,leps,lepsl,'C','Cleaning',self.cleaningLeptonSel, lepsforveto=lepsl, doVetoZ=self.doVetoZ, doVetoLM=self.doVetoLMf, sortby=None)
 
         ret['mZ1'] = self.bestZ1TL(lepsl, lepsl)
         ret['minMllAFAS'] = self.minMllTL(lepsl, lepsl) 
@@ -221,9 +224,9 @@ class LeptonJetReCleaner:
 
         # calculate FOs and tight leptons using the cleaned HT, sorted by conept
         lepsf = []; lepsfv = [];
-        ret, lepsf, lepsfv = self.fillCollWithVeto(ret,leps,lepsl,'F','FO',self.FOLeptonSel,lepsl,retwlabel["htJet"+self.strJetPt+"j"+self.label],sortby = lambda x: x.conept, doVetoZ=self.doVetoZ, doVetoLM=self.doVetoLMf)
+        ret, lepsf, lepsfv = self.fillCollWithVeto(ret,leps,lepsl,'F','FO',self.FOLeptonSel,lepsforveto=lepsl,ht=retwlabel["htJet"+self.strJetPt+"j"+self.label],sortby = lambda x: x.conept, doVetoZ=self.doVetoZ, doVetoLM=self.doVetoLMf)
         lepst = []; lepstv = [];
-        ret, lepst, lepstv = self.fillCollWithVeto(ret,leps,lepsl,'T','Tight',self.tightLeptonSel,lepsl,retwlabel["htJet"+self.strJetPt+"j"+self.label],sortby = lambda x: x.conept, doVetoZ=self.doVetoZ, doVetoLM=self.doVetoLMt)
+        ret, lepst, lepstv = self.fillCollWithVeto(ret,leps,lepsl,'T','Tight',self.tightLeptonSel,lepsforveto=lepsl,ht=retwlabel["htJet"+self.strJetPt+"j"+self.label],sortby = lambda x: x.conept, doVetoZ=self.doVetoZ, doVetoLM=self.doVetoLMt)
 
         ### attach labels and return
         fullret["nLepGood"]=len(leps)
