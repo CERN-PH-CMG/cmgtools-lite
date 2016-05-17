@@ -22,6 +22,8 @@ from CMGTools.TTHAnalysis.leptonMVA import MVATool, CategorizedMVA
 
 _CommonSpect = {
     'forMoriond16': [],
+    'forMoriond16NoJetChDau': [],
+    'mvaMultiIso' : [],
     'SoftALaMoriond16': [
         MVAVar("LepGood_mcMatchAny",lambda x: x.mcMatchAny),
         ],
@@ -50,6 +52,19 @@ _CommonVars = {
 'forMoriond16': [
     MVAVar("LepGood_pt",lambda x: x.pt),
     MVAVar("LepGood_eta",lambda x: x.eta),
+    MVAVar("LepGood_jetNDauChargedMVASel",lambda x: x.jetNDauChargedMVASel),
+    MVAVar("LepGood_miniRelIsoCharged",lambda x: x.miniRelIsoCharged),
+    MVAVar("LepGood_miniRelIsoNeutral",lambda x: x.miniRelIsoNeutral),
+    MVAVar("LepGood_jetPtRelv2",lambda x: x.jetPtRelv2),
+    MVAVar("LepGood_jetPtRatio := min(LepGood_jetPtRatiov2,1.5)", lambda x : min(x.jetPtRatiov2,1.5)),
+    MVAVar("LepGood_jetBTagCSV := max(LepGood_jetBTagCSV,0)", lambda x : max(x.jetBTagCSV,0.)),
+    MVAVar("LepGood_sip3d",lambda x: x.sip3d),
+    MVAVar("LepGood_dxy := log(abs(LepGood_dxy))",lambda x: log(abs(x.dxy))),
+    MVAVar("LepGood_dz  := log(abs(LepGood_dz))", lambda x: log(abs(x.dz))),
+],
+'forMoriond16NoJetChDau': [
+    MVAVar("LepGood_pt",lambda x: x.pt),
+    MVAVar("LepGood_eta",lambda x: x.eta),
     #MVAVar("LepGood_jetNDauChargedMVASel",lambda x: x.jetNDauChargedMVASel),
     MVAVar("LepGood_miniRelIsoCharged",lambda x: x.miniRelIsoCharged),
     MVAVar("LepGood_miniRelIsoNeutral",lambda x: x.miniRelIsoNeutral),
@@ -63,7 +78,7 @@ _CommonVars = {
 'SoftALaMoriond16': [
     MVAVar("LepGood_pt",lambda x: x.pt),
     MVAVar("LepGood_eta",lambda x: x.eta),
-    #MVAVar("LepGood_jetNDauChargedMVASel",lambda x: x.jetNDauChargedMVASel),
+    MVAVar("LepGood_jetNDauChargedMVASel",lambda x: x.jetNDauChargedMVASel),
     MVAVar("LepGood_miniRelIsoCharged",lambda x: x.miniRelIsoCharged),
     MVAVar("LepGood_miniRelIsoNeutral",lambda x: x.miniRelIsoNeutral),
     MVAVar("LepGood_jetPtRelv2",lambda x: x.jetPtRelv2),
@@ -154,7 +169,11 @@ _ElectronVars = [
 ]
 
 _MuonVars = {
+    'mvaMultiIso': [],
     'forMoriond16': [
+        MVAVar("LepGood_segmentCompatibility",lambda x: x.segmentCompatibility)
+        ],
+    'forMoriond16NoJetChDau': [
         MVAVar("LepGood_segmentCompatibility",lambda x: x.segmentCompatibility)
         ],
     'SoftJetLess': [
