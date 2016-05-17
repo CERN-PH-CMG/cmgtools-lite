@@ -5,7 +5,8 @@ from PhysicsTools.Heppy.analyzers.objects.autophobj import  *
 from PhysicsTools.HeppyCore.utils.deltar import deltaR
 
 from CMGTools.TTHAnalysis.signedSip import *
-from CMGTools.TTHAnalysis.tools.emulateElectronTriggerCuts import _susy2lss_idEmu_cuts,_susy2lss_idIsoEmu_cuts
+from CMGTools.TTHAnalysis.tools.functionsTTH import _ttH_idEmu_cuts_E2_obj
+from CMGTools.TTHAnalysis.tools.leptonChoiceRA5 import _susy2lss_idEmu_cuts_obj,_susy2lss_idIsoEmu_cuts_obj
 
 ##------------------------------------------  
 ## LEPTON
@@ -40,8 +41,9 @@ leptonTypeSusyExtraLight = NTupleObjectType("leptonSusyExtraLight", baseObjectTy
     NTupleVariable("hcalPFClusterIso", lambda lepton :  lepton.hcalPFClusterIso() if abs(lepton.pdgId())==11 else -999, help="Electron hcalPFClusterIso"),
     NTupleVariable("dr03TkSumPt", lambda lepton: lepton.dr03TkSumPt() if abs(lepton.pdgId())==11 else -999, help="Electron dr03TkSumPt isolation"),
     NTupleVariable("trackIso", lambda lepton :  lepton.trackIso() if abs(lepton.pdgId())==11 else -999, help="Electron trackIso (in cone of 0.4)"),
-    NTupleVariable("idEmu", lambda lepton: _susy2lss_idEmu_cuts(lepton), help="Electron pass trigger ID emulation cuts"),
-    NTupleVariable("idIsoEmu", lambda lepton: _susy2lss_idIsoEmu_cuts(lepton), help="Electron pass trigger ID+ISO emulation cuts"),
+    NTupleVariable("idEmuTTH", lambda lepton: _ttH_idEmu_cuts_E2(lepton), help="Electron pass trigger ID emulation cuts (TTH, E2)"),
+    NTupleVariable("idEmuRA5", lambda lepton: _susy2lss_idEmu_cuts(lepton), help="Electron pass trigger ID emulation cuts (RA5)"),
+    NTupleVariable("idIsoEmuRA5", lambda lepton: _susy2lss_idIsoEmu_cuts(lepton), help="Electron pass trigger ID+ISO emulation cuts (RA5)"),
     NTupleVariable("mcPrompt",    lambda x : x.mcMatchAny_gp.isPromptFinalState() if getattr(x,"mcMatchAny_gp",None) else 0, int, mcOnly=True, help="isPromptFinalState"),
     NTupleVariable("mcPromptTau", lambda x : x.mcMatchAny_gp.isDirectPromptTauDecayProductFinalState() if getattr(x,"mcMatchAny_gp",None) else 0, int, mcOnly=True, help="isDirectPromptTauDecayProductFinalState"),
     NTupleVariable("mcPromptGamma", lambda x : x.mcPho.isPromptFinalState() if getattr(x,"mcPho",None) else 0, int, mcOnly=True, help="Photon isPromptFinalState"),
