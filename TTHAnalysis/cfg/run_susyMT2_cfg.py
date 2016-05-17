@@ -364,8 +364,8 @@ if test==0:
 #        comp.isMC = True
 #        comp.isData = False
         comp.splitFactor = 250 
-        comp.puFileMC=dataDir+"/puProfile_Summer12_53X.root"
-        comp.puFileData=dataDir+"/puProfile_Data12.root"
+        comp.puFileMC=dataDir+"/pileup/puProfile_Summer12_53X.root"
+        comp.puFileData=dataDir+"/pileup/puProfile_Data12.root"
         comp.efficiency = eff2012
         comp.json = json
     # ------------------------------------------------------------------------------------------- #
