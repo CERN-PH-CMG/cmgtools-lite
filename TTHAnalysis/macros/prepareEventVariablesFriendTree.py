@@ -45,6 +45,24 @@ from CMGTools.TTHAnalysis.tools.eventBTagRWT import EventBTagRWT
 MODULES.append( ('eventBTagRWT', lambda: EventBTagRWT() ))
 
 #--- Susy multilep instances
+MODULES.append( ('leptonJetReCleanerSusyRA5', lambda : LeptonJetReCleaner("Mini", 
+                   lambda lep : lep.miniRelIso < 0.4 and _susy2lss_lepId_CBloose(lep), #and (ht>300 or _susy2lss_idIsoEmu_cuts(lep)), 
+                   lambda lep : lep.pt>10 and _susy2lss_lepId_loosestFO(lep) and _susy2lss_lepId_IPcuts(lep), # cuts applied on top of loose
+                   lambda lep,ht : lep.pt>10 and _susy2lss_lepConePt1015(lep) and _susy2lss_lepId_IPcuts(lep) and (_susy2lss_lepId_loosestFO(lep) if ht>300 else _susy2lss_lepId_tighterFO(lep)), # cuts applied on top of loose
+                   lambda lep,ht : lep.pt>10 and _susy2lss_lepConePt1015(lep) and _susy2lss_multiIso(lep) and _susy2lss_lepId_CB(lep) and (ht>300 or _susy2lss_idIsoEmu_cuts(lep)), # cuts applied on top of loose
+                   cleanJet = lambda lep,jet,dr : dr<0.4,
+                   selectJet = lambda jet: abs(jet.eta)<2.4,
+                   isFastSim = isFastSim,
+                   doBtagRWT = False,
+                   cleanWithTaus = False,
+                   coneptdef = lambda lep: conept_RA5(lep)
+                 #  jetPt = 40,
+                 #  bJetPt = 25,
+                  # CSVbtagFileName = btagSF, 
+                  # EFFbtagFileName = btagEFF, 
+                  # CSVbtagFileNameFastSim = btagSF_FastSim 
+                 ) ))
+
 MODULES.append( ('leptonJetReCleanerTTH', lambda : LeptonJetReCleaner("Recl", # b1E2 definition of FO
                    looseLeptonSel = lambda lep : lep.miniRelIso < 0.4 and lep.sip3d < 8,
                    cleaningLeptonSel = lambda lep : lep.conept>10 and lep.jetBTagCSV<0.89 and (abs(lep.pdgId)!=11 or lep.conept<30 or _ttH_idEmu_cuts_E2(lep)) and ((lep.jetPtRatiov2>0.3 and lep.jetBTagCSV<0.605) or lep.mvaTTH>0.75), # cuts applied on top of loose
@@ -102,7 +120,8 @@ MODULES.append( ('leptonJetReCleanerSusyQCD', lambda : LeptonJetReCleaner("Mini"
                    isFastSim = isFastSim,
                    cleanWithTaus = False,
                    coneptdef = lambda lep: conept_RA5(lep),
-                   CSVbtagFileName = btagSF, EFFbtagFileName = btagEFF, CSVbtagFileNameFastSim = btagSF_FastSim ) ))
+                   #CSVbtagFileName = btagSF, EFFbtagFileName = btagEFF, CSVbtagFileNameFastSim = btagSF_FastSim 
+                                                                          ) ))
 
 #MODULES.append( ('leptonJetReCleanerSusyInSitu', lambda : LeptonJetReCleaner("MiniInSitu", 
 #                lambda lep : lep.miniRelIso < 0.4 and _susy2lss_lepId_CBloose(lep), 
@@ -117,8 +136,9 @@ MODULES.append( ('leptonJetReCleanerSusyQCD', lambda : LeptonJetReCleaner("Mini"
 #FRname=utility_files_dir+"/FakeRatesUCSXMethod_301115_withEWKsyst_v6.root"
 FRname="hardcodedUCSx"
 FS_lepSF=[utility_files_dir+"/sf_mu_mediumID_multi.root",utility_files_dir+"/sf_el_tight_IDEmu_ISOEMu_ra5.root"]
-
-MODULES.append( ('leptonChoiceRA5', lambda : LeptonChoiceRA5("Loop","Mini",whichApplication="Fakes",lepChoiceMethod="TT_loopTF_2FF",FRFileName=FRname,isFastSim=isFastSim,lepSFFileNameFastSim=FS_lepSF))) 
+#TTSync
+MODULES.append( ('leptonChoiceRA5', lambda : LeptonChoiceRA5("Loop","Mini",whichApplication="Fakes",lepChoiceMethod="TTSync",isFastSim=isFastSim,lepSFFileNameFastSim=FS_lepSF)))  #,FRFileName=FRname 
+#MODULES.append( ('leptonChoiceRA5', lambda : LeptonChoiceRA5("Loop","Mini",whichApplication="Fakes",lepChoiceMethod="TT_loopTF_2FF",isFastSim=isFastSim,lepSFFileNameFastSim=FS_lepSF)))  #,FRFileName=FRname 
 #MODULES.append( ('leptonChoiceRA5_FO', lambda : LeptonChoiceRA5("SortFO","Mini",whichApplication="Fakes",lepChoiceMethod="sort_FO",FRFileName=FRname,isFastSim=isFastSim,lepSFFileNameFastSim=FS_lepSF))) 
 #MODULES.append( ('leptonChoiceRA5_InSitu', lambda : LeptonChoiceRA5("InSitu","MiniInSitu",whichApplication="Fakes",lepChoiceMethod="TT_loopTF_2FF",FRFileName="InSituHardCoded",isFastSim=isFastSim,lepSFFileNameFastSim=FS_lepSF))) 
 MODULES.append( ('leptonChoiceRA5_Flips', lambda : LeptonChoiceRA5("Flips","Mini",whichApplication="Flips",FRFileName="hardcodedUCSx",isFastSim=isFastSim,lepSFFileNameFastSim=FS_lepSF)))

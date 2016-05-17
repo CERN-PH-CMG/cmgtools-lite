@@ -37,6 +37,7 @@ class LeptonChoiceRA5:
     # enum
     style_TT_loopTF_2FF = 0
     style_sort_FO = 1
+    style_TTSync = 2
 
     # enum
     appl_Fakes = 0
@@ -60,7 +61,8 @@ class LeptonChoiceRA5:
         self.lepChoiceMethod = None
         self.apply = False
         if self.whichApplication == self.appl_Fakes:
-            if lepChoiceMethod=="TT_loopTF_2FF": self.lepChoiceMethod = self.style_TT_loopTF_2FF
+            if lepChoiceMethod=="TTSync": self.lepChoiceMethod = self.style_TTSync
+            elif lepChoiceMethod=="TT_loopTF_2FF": self.lepChoiceMethod = self.style_TT_loopTF_2FF
             elif lepChoiceMethod=="sort_FO": self.lepChoiceMethod = self.style_sort_FO
             else: raise RuntimeError, 'Unknown lepChoiceMethod'
             if FRFileName:
@@ -114,6 +116,12 @@ class LeptonChoiceRA5:
         lepsfv = [leps[il] for il in getattr(event,"iFV"+self.inputlabel)[0:getattr(event,"nLepFOVeto"+self.inputlabel)]]
         lepstv = [leps[il] for il in getattr(event,"iTV"+self.inputlabel)[0:getattr(event,"nLepTightVeto"+self.inputlabel)]]
 
+        nlepst = getattr(event,"nLepTight"+self.inputlabel)
+        #nlepsfv = getattr(event,"nLepTight"+self.inputlabel)
+        lepst=lepst[0:nlepst]
+        
+
+
         bjets25 = [j for j in Collection(event,"JetSel"+self.inputlabel,"nJetSel"+self.inputlabel) if (j.pt>25 and j.btagCSV>0.89)]
         jets40 = [j for j in Collection(event,"JetSel"+self.inputlabel,"nJetSel"+self.inputlabel) if j.pt>40]
         
@@ -165,6 +173,12 @@ class LeptonChoiceRA5:
         ret["minDeltaRLepBJet"] = [0]*20
 
         if self.whichApplication == self.appl_Fakes:
+            if self.lepChoiceMethod==self.style_TTSync:
+                choice = self.findPairs(lepst,lepst,byflav=True,bypassMV=True,choose_SS_else_OS=True,event=event)
+                if choice:
+                    ret["hasTT"]=True
+                    choice=choice[:1]
+
             if self.lepChoiceMethod==self.style_TT_loopTF_2FF:
                 choice = self.findPairs(lepstv,lepstv,byflav=True,bypassMV=False,choose_SS_else_OS=True)
                 if choice:
@@ -218,7 +232,8 @@ class LeptonChoiceRA5:
                 ret["i1"][npair], ret["i2"][npair] = (i1,i2) if leps[i1].conePt>=leps[i2].conePt else (i2,i1) # warning: they are not necessarily ordered by pt!
                 for var in systsJEC:
                     mtwmin = min(sqrt(2*leps[i1].conePt*met[var]*(1-cos(leps[i1].phi-metphi[var]))),sqrt(2*leps[i2].conePt*met[var]*(1-cos(leps[i2].phi-metphi[var]))))
-                    ret["SR"+systsJEC[var]][npair]=self.SR(leps[i1].conePt,leps[i2].conePt,getattr(event,"htJet40j"+systsJEC[var]+self.inputlabel),met[var],getattr(event,"nJet40"+systsJEC[var]+self.inputlabel),getattr(event,"nBJetMedium25"+systsJEC[var]+self.inputlabel),mtwmin)
+                    ret["SR"+systsJEC[var]][npair]=self.SR(leps[i1].conePt,leps[i2].conePt,getattr(event,"htJet40j"+self.inputlabel+systsJEC[var]),met[var],getattr(event,"nJet40"+self.inputlabel+systsJEC[var]),getattr(event,"nBJetMedium25"+self.inputlabel+systsJEC[var]),mtwmin, event)
+
                 ht = getattr(event,"htJet40j"+self.inputlabel) # central value
                 ret["triggerSF"][npair] = triggerScaleFactorFullSim(leps[i1].pdgId,leps[i2].pdgId,leps[i1].pt,leps[i2].pt,ht) if not event.isData else 1
                 if self.isFastSim: ret["triggerSF"][npair] = ret["triggerSF"][npair] * FastSimTriggerEfficiency(ht,leps[i1].pt,leps[i1].pdgId,leps[i2].pt,leps[i2].pdgId)
@@ -422,7 +437,7 @@ class LeptonChoiceRA5:
             if len(pairs):
                 return min(pairs)
             return -1
-    def findPairs(self,leps1,leps2,byflav,bypassMV,choose_SS_else_OS=True):
+    def findPairs(self,leps1,leps2,byflav,bypassMV,choose_SS_else_OS=True,event=None):
         ret = None
         pairs = []
         _p = []
@@ -430,16 +445,16 @@ class LeptonChoiceRA5:
             if (p[1],p[0]) not in _p:
                 _p.append(p)
         for (l1,l2) in _p:
-                if not passMllVeto(l1, l2, 0, 8, False) and not bypassMV: continue
-                flav = abs(l1.pdgId) + abs(l2.pdgId) if byflav else 0
-                ht   = l1.conePt + l2.conePt
-                if ((l1.charge == l2.charge) if choose_SS_else_OS else (l1.charge != l2.charge)):
-                    pairs.append( (-flav,-ht,l1,l2) )
+            if not passMllVeto(l1, l2, 0, 8, False) and not bypassMV: continue
+            flav = abs(l1.pdgId) + abs(l2.pdgId) if byflav else 0
+            ht   = l1.conePt + l2.conePt
+            if ((l1.charge == l2.charge) if choose_SS_else_OS else (l1.charge != l2.charge)):
+                pairs.append( (-flav,-ht,l1,l2) )
         if len(pairs):
             pairs.sort()
             ret = [(pair[2],pair[3]) for pair in pairs]
         return ret
-    def SR(self, _l1pt, _l2pt, ht, met, nj, nb, mtw):
+    def SR(self, _l1pt, _l2pt, ht, met, nj, nb, mtw,event=None):
         l1pt, l2pt = (_l1pt,_l2pt) if _l1pt>=_l2pt else (_l2pt,_l1pt)
         if l1pt > 25 and l2pt > 25 and ht < 300 and met > 50 and met < 200 and nj >= 2 and nj <= 4 and nb == 0 and mtw < 120 : SR = 1
         elif l1pt > 25 and l2pt > 25 and ht > 300 and ht < 1125 and met > 50 and met < 200 and nj >= 2 and nj <= 4 and nb == 0 and mtw < 120  : SR = 2

@@ -569,6 +569,20 @@ elif test == '5':
         comp.files = comp.files[:5]
         comp.splitFactor = 1
         comp.fineSplitFactor = 5
+elif test == "ra5-sync-mc":
+
+    #eventSelector = cfg.Analyzer(
+    #    'EventSelector',
+    #    toSelect = [
+    #        # here put the event numbers (actual event numbers from CMSSW)
+    #        ]
+    #    )
+
+
+    comp = cfg.MCComponent( files = ["root://eoscms.cern.ch//store/mc/RunIIFall15MiniAODv2/TTWJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8/MINIAODSIM/PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/60000/14C51DB0-D6B8-E511-8D9B-8CDCD4A9A484.root"], name="TTW_RA5_sync" )
+    comp.triggers = []
+    selectedComponents = [ comp ]
+    sequence.remove(jsonAna)
 elif test == '76X-MC':
     what = getHeppyOption("sample","TTLep")
     if what == "TTLep":
