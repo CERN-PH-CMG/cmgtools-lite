@@ -217,19 +217,21 @@ class LeptonChoiceEWK:
         self.leps       = [l             for l  in Collection(event, "LepGood", "nLepGood")  ]
         self.setAttributes(self.leps, False)
 
-        self.lepsl      = [self.leps[il] for il in getattr   (event, "iL"  + self.inputlabel)[0:getattr(event,"nLepLoose"+self.inputlabel)]]
-        self.lepst      = [self.leps[il] for il in getattr   (event, "iT"  + self.inputlabel)[0:getattr(event,"nLepTight"+self.inputlabel)]]
-        self.lepsfv     = [self.leps[il] for il in getattr   (event, "iFV" + self.inputlabel)[0:getattr(event,"nLepFOVeto"+self.inputlabel)] \
-                                      if not il in getattr   (event, "iTV" + self.inputlabel)[0:getattr(event,"nLepTightVeto"+self.inputlabel)]]
-        self.lepstv     = [self.leps[il] for il in getattr   (event, "iTV" + self.inputlabel)[0:getattr(event,"nLepTightVeto"+self.inputlabel)]]
+        self.lepsl      = [self.leps[il] for il in getattr   (event, "iL"  + self.inputlabel)][0:getattr(event,"nLepLoose"+self.inputlabel)]
+        self.lepst      = [self.leps[il] for il in getattr   (event, "iT"  + self.inputlabel)][0:getattr(event,"nLepTight"+self.inputlabel)]
+        self.lepsfv     = [self.leps[il] for il in getattr   (event, "iFV" + self.inputlabel)][0:getattr(event,"nLepFOVeto"+self.inputlabel)]
+        self.lepstv     = [self.leps[il] for il in getattr   (event, "iTV" + self.inputlabel)][0:getattr(event,"nLepTightVeto"+self.inputlabel)]
+        self.lepsfv     = [x for x in self.lepsfv if x not in self.lepstv]
 
         self.taus       = [t             for t  in Collection(event, "TauGood", "nTauGood") if t.pt > 20]
         self.setAttributes(self.taus, True)
         self.taust      = self.taus
         self.tausf      = self.taust # THESE ARE THE TAU FAKES, NEED TO BE CHANGED!
 
-        self.jets30     = [j for j in Collection(event, "JetSel" + self.inputlabel, "nJetSel" + self.inputlabel) if j.pt      > 30.  ]
-        self.bJets30    = [j for j in self.jets30                                                                if j.btagCSV >  0.89]
+        jetcollcleaned  = [j for j in Collection(event,"Jet","nJet")]
+        jetcolldiscarded = [j for j in Collection(event,"DiscJet","nDiscJet")]
+        self.jets30     = filter(lambda x: x.pt > 30., [ (jetcollcleaned[idx] if idx>=0 else jetcolldiscarded[-1-idx]) for idx in getattr(event,"iJSel"+self.inputlabel) ])
+        self.bJets30    = filter(lambda j: j.btagCSV >  0.89, self.jets30)
         self.ht         = sum([j.pt for j in self.jets30])
 
         self.met        = {}
