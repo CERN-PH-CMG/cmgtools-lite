@@ -13,10 +13,13 @@ parser.add_option("--GT", dest="GT", default='MCRUN2_74_V9A', type="string", act
 parser.add_option("--jecDBFile", dest="jecDBFile", default="", type="string", action="store", help="jec DB File")
 parser.add_option("--uncFile", dest="uncFile", default="", type="string", action="store", help="jec Uncer File")
 parser.add_option("--jecEra", dest="jecEra", default='', type="string", action="store", help="jecEra")
+parser.add_option("--jerDBFile", dest="jerDBFile", default="", type="string", action="store", help="jer DB File")
+parser.add_option("--jerEra", dest="jerEra", default='', type="string", action="store", help="jerEra")
 parser.add_option("--maxEvents", dest="maxEvents", default=-1, type="int", action="store", help="maxEvents")
-parser.add_option("--removeResiduals", dest="removeResiduals", action="store_true", default=False, help="remove residual JEC?") 
-parser.add_option("--isData", dest="isData", action="store_true", default=False, help="is data?") 
-parser.add_option("--addReclusterTrackJetsAK4", dest="reclusterTrackJets", action="store_true", default=False, help="recluster AK4 track jets") 
+parser.add_option("--removeResiduals", dest="removeResiduals", action="store_true", default=False, help="remove residual JEC?")
+parser.add_option("--isData", dest="isData", action="store_true", default=False, help="is data?")
+parser.add_option("--redoPuppi", dest="redoPuppi", action="store_true", default=True, help="re-run puppi")
+parser.add_option("--addReclusterTrackJetsAK4", dest="reclusterTrackJets", action="store_true", default=False, help="recluster AK4 track jets")
 (options, args) = parser.parse_args()
 
 print "cmsswPreprocessor options: isData: %s, GT:%s, removeResiduals: %s jecEra: %s"%(options.isData, options.GT,  options.removeResiduals, options.jecEra)
@@ -34,6 +37,7 @@ process.load('Configuration.StandardSequences.MagneticField_38T_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
 
 #configurable options =======================================================================
+useHFCandidates=True #create an additionnal NoHF slimmed MET collection if the option is set to false
 usePrivateSQlite=True #use external JECs (sqlite file)
 applyResiduals=False #application of residual corrections. Have to be set to True once the 13 TeV residual corrections are available. False to be kept meanwhile. Can be kept to False later for private tests or for analysis checks and developments (not the official recommendation!).
 #===================================================================
@@ -80,6 +84,40 @@ if usePrivateSQlite:
     process.es_prefer_jec = cms.ESPrefer("PoolDBESSource",'jec')
 
 ### =====================================================================================================
+#process.load("JetMETCorrections.Modules.JetResolutionESProducer_cfi")
+from CondCore.DBCommon.CondDBSetup_cfi import *
+
+##___________________________External JER file________________________________||
+##https://github.com/cms-jet/JRDatabase/tree/master/SQLiteFiles
+process.jer = cms.ESSource("PoolDBESSource",CondDBSetup,
+##                           connect = cms.string("sqlite:PhysicsTools/PatUtils/data/Fall15_25nsV2_MC.db"),
+                           connect = cms.string('sqlite_file:'+os.path.expandvars(options.jerDBFile)),
+                           toGet =  cms.VPSet(
+    cms.PSet(
+      record = cms.string('JetResolutionRcd'),
+      #tag    = cms.string('JR_MC_PtResolution_Summer15_25nsV6_AK4PF'),
+      tag    = cms.string('JR_'+options.jerEra+'_MC_PtResolution_AK4PFchs'),
+      label  = cms.untracked.string('AK4PFchs_pt')
+      ),
+    cms.PSet(
+      record = cms.string("JetResolutionRcd"),
+      #tag = cms.string("JR_MC_PhiResolution_Summer15_25nsV6_AK4PF"),
+      tag = cms.string('JR_'+options.jerEra+'_MC_PhiResolution_AK4PFchs'),
+      label= cms.untracked.string("AK4PFchs_phi")
+      ),
+    cms.PSet(
+      record = cms.string('JetResolutionScaleFactorRcd'),
+      #tag    = cms.string('JR_DATAMCSF_Summer15_25nsV6_AK4PFchs'),
+      tag    = cms.string('JR_'+options.jerEra+'_MC_SF_AK4PFchs'),
+      label  = cms.untracked.string('AK4PFchs')
+      ),
+
+    ) )
+process.es_prefer_jer = cms.ESPrefer("PoolDBESSource",'jer')
+
+
+
+### =====================================================================================================
 
 fname = 'root://eoscms.cern.ch//store/data/Run2015B/JetHT/MINIAOD/PromptReco-v1/000/251/252/00000/263D331F-AF27-E511-969B-02163E012627.root' if options.isData else 'root://eoscms//eos/cms/store/mc/RunIISpring15DR74/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/MINIAODSIM/Asympt50ns_MCRUN2_74_V9A-v2/60000/001C7571-0511-E511-9B8E-549F35AE4FAF.root'
 # Define the input source
@@ -95,91 +133,41 @@ process.noHFCands = cms.EDFilter("CandPtrSelector",
                                  cut=cms.string("abs(pdgId)!=1 && abs(pdgId)!=2 && abs(eta)<3.0")
                                  )
 
-
-
 ### =====================================================================================================
-def runMetCorAndUncFromMiniAOD_74Xv1(process, metType="PF",
-                               jetCollUnskimmed="patJets",
-                               jetColl="selectedPatJets",
-                               photonColl="slimmedPhotons",
-                               electronColl="slimmedElectrons",
-                               muonColl="slimmedMuons",
-                               tauColl="slimmedTaus",
-                               pfCandColl = "packedPFCandidates",
-                               jetFlav="AK4PFchs",
-                               jetCleaning="LepClean",
-                               isData=False,
-                               jetConfig=False,
-                               jetCorLabelL3=cms.InputTag('ak4PFCHSL1FastL2L3Corrector'),
-                               jetCorLabelRes=cms.InputTag('ak4PFCHSL1FastL2L3ResidualCorrector'),
-                               jecUncFile="CondFormats/JetMETObjects/data/Summer15_50nsV5_DATA_UncertaintySources_AK4PFchs.txt",
-                               postfix=""):
-    from PhysicsTools.PatUtils.tools.runMETCorrectionsAndUncertainties import RunMETCorrectionsAndUncertainties
-    runMETCorrectionsAndUncertainties = RunMETCorrectionsAndUncertainties()
-    #MET T1 uncertainties
-    runMETCorrectionsAndUncertainties(process, metType="PF",
-                                      correctionLevel=["T1"],
-                                      computeUncertainties=True,
-                                      produceIntermediateCorrections=False,
-                                      addToPatDefaultSequence=False,
-                                      jetCollection=jetColl,
-                                      electronCollection=electronColl,
-                                      muonCollection=muonColl,
-                                      tauCollection=tauColl,
-                                      photonCollection=photonColl,
-                                      pfCandCollection =pfCandColl,
-                                      runOnData=isData,
-                                      onMiniAOD=True,
-                                      repro74X=True,
-                                      autoJetCleaning=jetCleaning,
-                                      manualJetConfig=jetConfig,
-                                      jetFlavor=jetFlav,
-                                      jetCorLabelUpToL3=jetCorLabelL3,
-                                      jetCorLabelL3Res=jetCorLabelRes,
-                                      jecUncertaintyFile=jecUncFile,
-                                      postfix=postfix,
-                                      )
-    
-    #MET T1+Txy
-    runMETCorrectionsAndUncertainties(process, metType="PF",
-                                      correctionLevel=["T1","Txy"],
-                                      computeUncertainties=False,
-                                      produceIntermediateCorrections=True,
-                                      addToPatDefaultSequence=False,
-                                      jetCollection=jetColl,
-                                      electronCollection=electronColl,
-                                      muonCollection=muonColl,
-                                      tauCollection=tauColl,
-                                      photonCollection=photonColl,
-                                      pfCandCollection =pfCandColl,
-                                      runOnData=isData,
-                                      onMiniAOD=True,
-                                      repro74X=True,
-                                      autoJetCleaning=jetCleaning,
-                                      manualJetConfig=jetConfig,
-                                      jetFlavor=jetFlav,
-                                      jetCorLabelUpToL3=jetCorLabelL3,
-                                      jetCorLabelL3Res=jetCorLabelRes,
-                                      jecUncertaintyFile=jecUncFile,
-                                      postfix=postfix,
-                                      )
 
-#uncertainty file
-###jecUncertaintyFile="$CMSSW_BASE/src/CMGTools/RootTools/data/jec/Summer15_50nsV4_DATA_UncertaintySources_AK4PFchs.txt"
+from PhysicsTools.PatUtils.tools.runMETCorrectionsAndUncertainties import runMetCorAndUncFromMiniAOD
 
 #default configuration for miniAOD reprocessing, change the isData flag to run on data
 #for a full met computation, remove the pfCandColl input
-runMetCorAndUncFromMiniAOD_74Xv1(process,
+runMetCorAndUncFromMiniAOD(process,
                            isData=options.isData,
-#                           jecUncFile=uncFile
                            )
 
-runMetCorAndUncFromMiniAOD_74Xv1(process,
-                           isData=options.isData,
-                           pfCandColl=cms.InputTag("noHFCands"),
-#                           jecUncFile=uncFile,
-                           postfix="NoHF"
-                           )
+if not useHFCandidates:
+    runMetCorAndUncFromMiniAOD(process,
+                               isData=options.isData,
+                               pfCandColl=cms.InputTag("noHFCands"),
+                               reclusterJets=True, #needed for NoHF
+                               recoMetFromPFCs=True, #needed for NoHF
+                               postfix="NoHF"
+                               )
+
+if options.redoPuppi:
+    from PhysicsTools.PatAlgos.slimming.puppiForMET_cff import makePuppiesFromMiniAOD
+    makePuppiesFromMiniAOD( process );
+
+    runMetCorAndUncFromMiniAOD(process,
+                               isData=options.isData,
+                               pfCandColl=cms.InputTag("puppiForMET"),
+                               recoMetFromPFCs=True,
+                               reclusterJets=True,
+                               jetFlavor="AK4PFPuppi",
+                               postfix="Puppi"
+                               )
+
+
+#uncertainty file
+###jecUncertaintyFile="$CMSSW_BASE/src/CMGTools/RootTools/data/jec/Summer15_50nsV4_DATA_UncertaintySources_AK4PFchs.txt"
 
 ### -------------------------------------------------------------------
 ### the lines below remove the L2L3 residual corrections when processing data
@@ -210,6 +198,7 @@ process.MINIAODSIMoutput = cms.OutputModule("PoolOutputModule",
                                             "keep *_patPFMetT1Txy_*_*",
 #                                            "keep patJets_*_*_RERUN", #for debugging only
                                             "keep *_slimmedMETsNoHF_*_*",
+                                            "keep *_slimmedMETsPuppi_*_*",
                                             "keep *_patPFMetT1TxyNoHF_*_*",
                                             ),
     fileName = cms.untracked.string('corMETMiniAOD.root'),
