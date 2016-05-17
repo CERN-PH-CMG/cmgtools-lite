@@ -200,7 +200,11 @@ ttHLepSkim = cfg.Analyzer(
 photonAna = cfg.Analyzer(
     PhotonAnalyzer, name='photonAnalyzer',
     photons='slimmedPhotons',
-    doPhotonScaleCorrections=False,
+#    doPhotonScaleCorrections=False,
+    doPhotonScaleCorrections = {
+        'data' : 'EgammaAnalysis/ElectronTools/data/76X_16DecRereco_2015',
+        'isSync': False
+        },
     ptMin = 30,
     etaMax = 2.5,
     gammaID = "POG_SPRING15_25ns_Tight",
@@ -301,7 +305,7 @@ jetAna = cfg.Analyzer(
     jetLepArbitration = (lambda jet,lepton : lepton), # you can decide which to keep in case of overlaps; e.g. if the jet is b-tagged you might want to keep the jet
     cleanSelectedLeptons = True, #Whether to clean 'selectedLeptons' after disambiguation. Treat with care (= 'False') if running Jetanalyzer more than once
     minLepPt = 10,
-    relaxJetId = True,
+    relaxJetId = False,
     doPuId = False, # Not commissioned in 7.0.X
     recalibrateJets = True, #'MC', # True, False, 'MC', 'Data'
     applyL2L3Residual = True, # Switch to 'Data' when they will become available for Data

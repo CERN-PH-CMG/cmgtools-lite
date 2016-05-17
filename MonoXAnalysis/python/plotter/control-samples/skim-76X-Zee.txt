@@ -1,0 +1,5 @@
+trigger: HLT_SingleEl==1
+metfilters: cscfilter==1 && ecalfilter==1 && Flag_eeBadScFilter==1 && hbheFilterNew25ns==1 && hbheFilterIso==1
+1 eleT40: nEle40T > 0 && LepGood1_pt > 40 && abs(LepGood1_pdgId)==11 
+1 eleT20: nEle10V > 1 && LepGood2_pt > 20 && abs(LepGood2_pdgId)==11 && LepGood2_tightId > 0 && LepGood2_relIso03 < if3(abs(LepGood2_etaSc)<1.479,0.126,0.144) && LepGood2_convVeto==1 && LepGood2_lostHits<=if3(abs(LepGood2_etaSc)<1.479,2,3) 
+

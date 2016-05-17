@@ -8,7 +8,7 @@ elel         : abs(LepGood_pdgId[0]) == 11 && abs(LepGood_pdgId[1]) == 11
 
 leptonMVA    : LepGood_mvaTTH[0]>0.65 &&  LepGood_mvaTTH[1]>0.65
 
-minMllAFAS   : (minMllAFAS > 60 && minMllAFAS < 120)
+minMllAFAS   : (minMllAFAS > 76 && minMllAFAS < 106)
 tight-charge : LepGood_tightCharge[0] > 1 && LepGood_tightCharge[1] > 1
 same-sign    : LepGood_charge[0]*LepGood_charge[1] > 0
 

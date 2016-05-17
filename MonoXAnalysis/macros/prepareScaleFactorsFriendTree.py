@@ -71,11 +71,17 @@ jobs = []
 for D in glob(args[0]+"/*"):
     treename = "tree"
     fname    = "%s/%s/tree.root" % (D,options.tree)
-    if os.path.exists(fname):
+
+    if (not os.path.exists(fname)) and (os.path.exists("%s/%s/tree.root.url" % (D,options.tree)) ):
+        treename = "tree"
+        fname    = "%s/%s/tree.root" % (D,options.tree)
+        fname    = open(fname+".url","r").readline().strip()
+
+    if os.path.exists(fname) or (os.path.exists("%s/%s/tree.root.url" % (D,options.tree))):
         short = os.path.basename(D)
         if options.datasets != []:
             if short not in options.datasets: continue
-        data = any(x in short for x in "DoubleMu DoubleEl DoubleEG MuEG MuonEG SingleMu SingleEl MET".split())
+        data = any(x in short for x in "DoubleMu DoubleEl DoubleEG MuEG MuonEG SingleMu SingleEl SinglePhoton MET".split())
         if data: continue
         f = ROOT.TFile.Open(fname);
         t = f.Get(treename)
@@ -115,8 +121,38 @@ maintimer = ROOT.TStopwatch()
 def _runIt(myargs):
     (name,fin,fout,data,range,chunk) = myargs
     timer = ROOT.TStopwatch()
-    fb = ROOT.TFile(fin)
+
+    fetchedfile = None
+    if 'LSB_JOBID' in os.environ or 'LSF_JOBID' in os.environ:
+        if fin.startswith("root://"):
+            try:
+                tmpdir = os.environ['TMPDIR'] if 'TMPDIR' in os.environ else "/tmp"
+                tmpfile =  "%s/%s" % (tmpdir, os.path.basename(fin))
+                print "xrdcp %s %s" % (fin, tmpfile)
+                os.system("xrdcp %s %s" % (fin, tmpfile))
+                if os.path.exists(tmpfile):
+                    fin = tmpfile 
+                    fetchedfile = fin
+                    print "success :-)"
+            except:
+                pass
+        fb = ROOT.TFile.Open(fin)
+    elif "root://" in fin:        
+        ROOT.gEnv.SetValue("TFile.AsyncReading", 1);
+        ROOT.gEnv.SetValue("XNet.Debug", 0); # suppress output about opening connections
+        ROOT.gEnv.SetValue("XrdClientDebug.kUSERDEBUG", 0); # suppress output about opening connections
+        fb   = ROOT.TXNetFile(fin+"?readaheadsz=65535&DebugLevel=0")
+        os.environ["XRD_DEBUGLEVEL"]="0"
+        os.environ["XRD_DebugLevel"]="0"
+        os.environ["DEBUGLEVEL"]="0"
+        os.environ["DebugLevel"]="0"
+    else:
+        fb = ROOT.TFile.Open(fin)
+        print fb
+
+    print "getting tree.."  
     tb = fb.Get(options.tree)
+
     if not tb: tb = fb.Get("tree") # new trees 
     if options.vectorTree:
         tb.vectorTree = True

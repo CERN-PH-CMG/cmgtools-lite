@@ -1,0 +1,12 @@
+
+fakes_data_BLABLA+: DoubleEG_Run2015C_25ns_16Dec2015 ; FakeRate="ttH-multilepton/fakeRate-2lss-frdata-BLABLA.txt", Label="FR BLABLA", FillColor=ROOT.kRed
+fakes_data_BLABLA+: DoubleEG_Run2015D_16Dec2015 ; FakeRate="ttH-multilepton/fakeRate-2lss-frdata-BLABLA.txt", Label="FR BLABLA", FillColor=ROOT.kRed
+fakes_data_BLABLA+: DoubleMuon_Run2015C_25ns_16Dec2015 ; FakeRate="ttH-multilepton/fakeRate-2lss-frdata-BLABLA.txt", Label="FR BLABLA", FillColor=ROOT.kRed
+fakes_data_BLABLA+: DoubleMuon_Run2015D_16Dec2015 ; FakeRate="ttH-multilepton/fakeRate-2lss-frdata-BLABLA.txt", Label="FR BLABLA", FillColor=ROOT.kRed
+fakes_data_BLABLA+: MuonEG_Run2015C_25ns_16Dec2015 ; FakeRate="ttH-multilepton/fakeRate-2lss-frdata-BLABLA.txt", Label="FR BLABLA", FillColor=ROOT.kRed
+fakes_data_BLABLA+: MuonEG_Run2015D_16Dec2015 ; FakeRate="ttH-multilepton/fakeRate-2lss-frdata-BLABLA.txt", Label="FR BLABLA", FillColor=ROOT.kRed
+fakes_data_BLABLA+: SingleElectron_Run2015C_25ns_16Dec2015 ; FakeRate="ttH-multilepton/fakeRate-2lss-frdata-BLABLA.txt", Label="FR BLABLA", FillColor=ROOT.kRed
+fakes_data_BLABLA+: SingleElectron_Run2015D_16Dec2015 ; FakeRate="ttH-multilepton/fakeRate-2lss-frdata-BLABLA.txt", Label="FR BLABLA", FillColor=ROOT.kRed
+fakes_data_BLABLA+: SingleMuon_Run2015C_25ns_16Dec2015 ; FakeRate="ttH-multilepton/fakeRate-2lss-frdata-BLABLA.txt", Label="FR BLABLA", FillColor=ROOT.kRed
+fakes_data_BLABLA+: SingleMuon_Run2015D_16Dec2015 ; FakeRate="ttH-multilepton/fakeRate-2lss-frdata-BLABLA.txt", Label="FR BLABLA", FillColor=ROOT.kRed
+
