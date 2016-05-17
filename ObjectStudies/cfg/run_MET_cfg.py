@@ -3,7 +3,7 @@ import PhysicsTools.HeppyCore.framework.config as cfg
 from CMGTools.RootTools.samples.autoAAAconfig import *
 
 #-------- SAMPLES AND TRIGGERS -----------
-from CMGTools.RootTools.samples.samples_13TeV_RunIIFall15MiniAODv2 import * #<--miniAOD v2 samples_13TeV_RunIIFall15MiniAODv2
+from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv1 import * #<--miniAOD v1 2016
 from CMGTools.RootTools.samples.samples_13TeV_DATA2015 import *
 
 from CMGTools.RootTools.samples.triggers_13TeV_Spring15 import triggers_1mu_iso_50ns, triggers_mumu, triggers_ee, triggers_photon30, triggers_photon50, triggers_photon75, triggers_photon90, triggers_photon120, triggers_jet, triggers_dijet, triggers_HT350, triggers_HT475, triggers_HT600, triggers_HT800, triggers_HT900, triggers_Jet80MET90
