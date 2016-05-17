@@ -93,11 +93,6 @@ class LeptonChoiceRA5:
             ("minMllAFASTT"+label,"F"), ("minMllAFASTL"+label,"F"), ("minMllSFOS"+label,"F"),
             ("minMllSFOSTL"+label,"F"), ("minMllSFOSTT"+label,"F"),
             ("triggerSF"+label,"F",20,"nPairs"+label),
-            ("maxDeltaPhiLepJet"+label,"F",20,"nPairs"+label),
-            ("maxDeltaPhiLepBJet"+label,"F",20,"nPairs"+label),
-            ("maxDeltaPhiJetJet"+label,"F",20,"nPairs"+label),
-            ("minDeltaRLepJet"+label,"F",20,"nPairs"+label),
-            ("minDeltaRLepBJet"+label,"F",20,"nPairs"+label),
             ]
         for var in self.systsLEPSF: biglist.append(("leptonSF"+self.systsLEPSF[var]+label,"F",20,"nPairs"+label))
         return biglist
@@ -109,14 +104,14 @@ class LeptonChoiceRA5:
             self.checked_fastsim_data = True
 
         leps = [l for l in Collection(event,"LepGood","nLepGood")]
-        lepsl = [leps[il] for il in getattr(event,"iL"+self.inputlabel)[0:getattr(event,"nLepLoose"+self.inputlabel)]]
-#        lepsc = [leps[il] for il in getattr(event,"iC"+self.inputlabel)[0:getattr(event,"nLepCleaning"+self.inputlabel)]]
-#        lepsf = [leps[il] for il in getattr(event,"iF"+self.inputlabel)[0:getattr(event,"nLepFO"+self.inputlabel)]]
-        lepst = [leps[il] for il in getattr(event,"iT"+self.inputlabel)[0:getattr(event,"nLepTight"+self.inputlabel)]]
-#        lepslv = [leps[il] for il in getattr(event,"iLV"+self.inputlabel)[0:getattr(event,"nLepLooseVeto"+self.inputlabel)]]
-#        lepscv = [leps[il] for il in getattr(event,"iCV"+self.inputlabel)[0:getattr(event,"nLepCleaningVeto"+self.inputlabel)]]
-        lepsfv = [leps[il] for il in getattr(event,"iFV"+self.inputlabel)[0:getattr(event,"nLepFOVeto"+self.inputlabel)]]
-        lepstv = [leps[il] for il in getattr(event,"iTV"+self.inputlabel)[0:getattr(event,"nLepTightVeto"+self.inputlabel)]]
+        lepsl = [leps[il] for il in getattr(event,"iL"+self.inputlabel)][0:getattr(event,"nLepLoose"+self.inputlabel)]
+#        lepsc = [leps[il] for il in getattr(event,"iC"+self.inputlabel)][0:getattr(event,"nLepCleaning"+self.inputlabel)]
+#        lepsf = [leps[il] for il in getattr(event,"iF"+self.inputlabel)][0:getattr(event,"nLepFO"+self.inputlabel)]
+        lepst = [leps[il] for il in getattr(event,"iT"+self.inputlabel)][0:getattr(event,"nLepTight"+self.inputlabel)]
+#        lepslv = [leps[il] for il in getattr(event,"iLV"+self.inputlabel)][0:getattr(event,"nLepLooseVeto"+self.inputlabel)]
+#        lepscv = [leps[il] for il in getattr(event,"iCV"+self.inputlabel)][0:getattr(event,"nLepCleaningVeto"+self.inputlabel)]
+        lepsfv = [leps[il] for il in getattr(event,"iFV"+self.inputlabel)][0:getattr(event,"nLepFOVeto"+self.inputlabel)]
+        lepstv = [leps[il] for il in getattr(event,"iTV"+self.inputlabel)][0:getattr(event,"nLepTightVeto"+self.inputlabel)]
 
         
         systsFR={0:"", 1:"_ewkUp", -1:"_ewkDown"}
@@ -132,17 +127,17 @@ class LeptonChoiceRA5:
 
         ret = {};
 
-        ret['mZ1'] = self.bestZ1TL(lepsl, lepsl)
-        ret['mZ1cut10TL'] = self.bestZ1TL(lepsl, lepst, cut=lambda l:l.conePt>(10 if abs(l.pdgId)==13 else 15))
-        ret['minMllAFAS'] = self.minMllTL(lepsl, lepsl) 
-#        ret['minMllAFOS'] = self.minMllTL(lepsl, lepsl, paircut = lambda l1,l2 : l1.charge !=  l2.charge) 
-        ret['minMllSFOS'] = self.minMllTL(lepsl, lepsl, paircut = lambda l1,l2 : l1.pdgId  == -l2.pdgId) 
-        ret['minMllAFASTL'] = self.minMllTL(lepsl, lepst) 
- #       ret['minMllAFOSTL'] = self.minMllTL(lepsl, lepst, paircut = lambda l1,l2 : l1.charge !=  l2.charge) 
-        ret['minMllSFOSTL'] = self.minMllTL(lepsl, lepst, paircut = lambda l1,l2 : l1.pdgId  == -l2.pdgId) 
-        ret['minMllAFASTT'] = self.minMllTL(lepst, lepst)
-#        ret['minMllAFOSTT'] = self.minMllTL(lepst, lepst, paircut = lambda l1,l2 : l1.charge !=  l2.charge) 
-        ret['minMllSFOSTT'] = self.minMllTL(lepst, lepst, paircut = lambda l1,l2 : l1.pdgId  == -l2.pdgId) 
+        ret['mZ1'] = bestZ1TL(lepsl, lepsl)
+        ret['mZ1cut10TL'] = bestZ1TL(lepsl, lepst, cut=lambda l:l.conePt>(10 if abs(l.pdgId)==13 else 15))
+        ret['minMllAFAS'] = minMllTL(lepsl, lepsl) 
+#        ret['minMllAFOS'] = minMllTL(lepsl, lepsl, paircut = lambda l1,l2 : l1.charge !=  l2.charge) 
+        ret['minMllSFOS'] = minMllTL(lepsl, lepsl, paircut = lambda l1,l2 : l1.pdgId  == -l2.pdgId) 
+        ret['minMllAFASTL'] = minMllTL(lepsl, lepst) 
+ #       ret['minMllAFOSTL'] = minMllTL(lepsl, lepst, paircut = lambda l1,l2 : l1.charge !=  l2.charge) 
+        ret['minMllSFOSTL'] = minMllTL(lepsl, lepst, paircut = lambda l1,l2 : l1.pdgId  == -l2.pdgId) 
+        ret['minMllAFASTT'] = minMllTL(lepst, lepst)
+#        ret['minMllAFOSTT'] = minMllTL(lepst, lepst, paircut = lambda l1,l2 : l1.charge !=  l2.charge) 
+        ret['minMllSFOSTT'] = minMllTL(lepst, lepst, paircut = lambda l1,l2 : l1.pdgId  == -l2.pdgId) 
 
         ret["nPairs"]=0
         ret["i1"] = [0]*20
@@ -159,11 +154,6 @@ class LeptonChoiceRA5:
         ret["hasFF"]=False
         ret["triggerSF"] = [0]*20
         for var in self.systsLEPSF: ret["leptonSF"+self.systsLEPSF[var]] = [0]*20
-        ret["maxDeltaPhiLepJet"] = [0]*20
-        ret["maxDeltaPhiLepBJet"] = [0]*20
-        ret["maxDeltaPhiJetJet"] = [0]*20
-        ret["minDeltaRLepJet"] = [0]*20
-        ret["minDeltaRLepBJet"] = [0]*20
 
         if self.whichApplication == self.appl_Fakes:
             if self.lepChoiceMethod==self.style_TTSync:
@@ -225,7 +215,7 @@ class LeptonChoiceRA5:
                 ret["i1"][npair], ret["i2"][npair] = (i1,i2) if leps[i1].conePt>=leps[i2].conePt else (i2,i1) # warning: they are not necessarily ordered by pt!
                 for var in systsJEC:
                     mtwmin = min(sqrt(2*leps[i1].conePt*met[var]*(1-cos(leps[i1].phi-metphi[var]))),sqrt(2*leps[i2].conePt*met[var]*(1-cos(leps[i2].phi-metphi[var]))))
-                    ret["SR"+systsJEC[var]][npair]=self.SR(leps[i1].conePt,leps[i2].conePt,getattr(event,"htJet40j"+self.inputlabel+systsJEC[var]),met[var],getattr(event,"nJet40"+self.inputlabel+systsJEC[var]),getattr(event,"nBJetMedium25"+self.inputlabel+systsJEC[var]),mtwmin, event)
+                    ret["SR"+systsJEC[var]][npair]=self.SR(leps[i1].conePt,leps[i2].conePt,getattr(event,"htJet40j"+self.inputlabel+systsJEC[var]),met[var],getattr(event,"nJet40"+self.inputlabel+systsJEC[var]),getattr(event,"nBJetMedium25"+self.inputlabel+systsJEC[var]),mtwmin)
 
                 ht = getattr(event,"htJet40j"+self.inputlabel) # central value
                 ret["triggerSF"][npair] = triggerScaleFactorFullSim(leps[i1].pdgId,leps[i2].pdgId,leps[i1].pt,leps[i2].pt,ht) if not event.isData else 1
@@ -241,11 +231,6 @@ class LeptonChoiceRA5:
                             if var==-2: lepsf[i] *= (addsf*(1-addsferr))
                             else: lepsf[i] *= addsf
                     ret["leptonSF"+self.systsLEPSF[var]][npair] = lepsf[0]*lepsf[1]
-                ret["maxDeltaPhiLepJet"][npair] = max([abs(deltaPhi(l.phi,j.phi)) for l in [leps[i1],leps[i2]] for j in jets40]+[-999])
-                ret["maxDeltaPhiLepBJet"][npair] = max([abs(deltaPhi(l.phi,j.phi)) for l in [leps[i1],leps[i2]] for j in bjets25]+[-999])
-                ret["maxDeltaPhiJetJet"][npair] = max([(abs(deltaPhi(j1.phi,j2.phi)) if j1!=j2 else -999) for j1 in jets40 for j2 in jets40]+[-999])
-                ret["minDeltaRLepJet"][npair] = min([abs(deltaR(l,j)) for l in [leps[i1],leps[i2]] for j in jets40]+[999])
-                ret["minDeltaRLepBJet"][npair] = min([abs(deltaR(l,j)) for l in [leps[i1],leps[i2]] for j in bjets25]+[999])
 
                 if self.apply:
                     if self.whichApplication == self.appl_Fakes:
