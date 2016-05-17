@@ -182,11 +182,11 @@ class LeptonJetReCleaner:
         lepsc = []; lepscv = [];
         ret, lepsc, lepscv = self.fillCollWithVeto(ret,leps,lepsl,'C','Cleaning',self.cleaningLeptonSel, lepsforveto=lepsl, doVetoZ=self.doVetoZ, doVetoLM=self.doVetoLMf, sortby=None)
 
-        ret['mZ1'] = self.bestZ1TL(lepsl, lepsl)
-        ret['minMllAFAS'] = self.minMllTL(lepsl, lepsl) 
-        ret['minMllAFOS'] = self.minMllTL(lepsl, lepsl, paircut = lambda l1,l2 : l1.charge !=  l2.charge) 
-        ret['minMllAFSS'] = self.minMllTL(lepsl, lepsl, paircut = lambda l1,l2 : l1.charge ==  l2.charge) 
-        ret['minMllSFOS'] = self.minMllTL(lepsl, lepsl, paircut = lambda l1,l2 : l1.pdgId  == -l2.pdgId) 
+        ret['mZ1'] = bestZ1TL(lepsl, lepsl)
+        ret['minMllAFAS'] = minMllTL(lepsl, lepsl) 
+        ret['minMllAFOS'] = minMllTL(lepsl, lepsl, paircut = lambda l1,l2 : l1.charge !=  l2.charge) 
+        ret['minMllAFSS'] = minMllTL(lepsl, lepsl, paircut = lambda l1,l2 : l1.charge ==  l2.charge) 
+        ret['minMllSFOS'] = minMllTL(lepsl, lepsl, paircut = lambda l1,l2 : l1.pdgId  == -l2.pdgId) 
 
         cleanjets={}
         for var in self.systsJEC:
@@ -211,7 +211,7 @@ class LeptonJetReCleaner:
         return fullret
 
 
-def bestZ1TL(self,lepsl,lepst,cut=lambda lep:True):
+def bestZ1TL(lepsl,lepst,cut=lambda lep:True):
       pairs = []
       for l1 in lepst:
         if not cut(l1): continue
@@ -226,7 +226,7 @@ def bestZ1TL(self,lepsl,lepst,cut=lambda lep:True):
           return pairs[0][1]
       return 0.
 
-def minMllTL(self, lepsl, lepst, bothcut=lambda lep:True, onecut=lambda lep:True, paircut=lambda lep1,lep2:True):
+def minMllTL(lepsl, lepst, bothcut=lambda lep:True, onecut=lambda lep:True, paircut=lambda lep1,lep2:True):
         pairs = []
         for l1 in lepst:
             if not bothcut(l1): continue
