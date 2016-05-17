@@ -1,4 +1,5 @@
 from CMGTools.TTHAnalysis.treeReAnalyzer import *
+from CMGTools.TTHAnalysis.tools.conept import coneptRA5, coneptRA7
 from PhysicsTools.HeppyCore.utils.deltar import matchObjectCollection3
 import ROOT
 import numpy as num
@@ -24,12 +25,15 @@ class MyVarProxy:
     def pdgId(self): return self._ob.pdgId
 
 class LeptonJetReCleaner:
-    def __init__(self,label,looseLeptonSel,cleaningLeptonSel,FOLeptonSel,tightLeptonSel,cleanJet,selectJet,doBtagRWT=False,isFastSim=False,cleanWithTaus=False,coneptdef=None):
+#    def __init__(self,label,looseLeptonSel,cleaningLeptonSel,FOLeptonSel,tightLeptonSel,cleanJet,selectJet,doBtagRWT=False,isFastSim=False,cleanWithTaus=False,coneptdef=None):
+    def __init__(self,label,looseLeptonSel,cleaningLeptonSel,FOLeptonSel,tightLeptonSel,cleanJet,selectJet,CSVbtagFileName=None,EFFbtagFileName=None,CSVbtagFileNameFastSim=None,isFastSim=False, jetPt=40, bJetPt=25, doVeto="RA5"):
+        self.corr = "RA7" if doVeto=="RA7" else "RA5"
         self.label = "" if (label in ["",None]) else ("_"+label)
         self.looseLeptonSel = looseLeptonSel
         self.cleaningLeptonSel = cleaningLeptonSel # applied on top of looseLeptonSel
         self.FOLeptonSel = FOLeptonSel # applied on top of looseLeptonSel
         self.tightLeptonSel = tightLeptonSel # applied on top of looseLeptonSel
+        self.doVeto = doVeto # version of mll vetos at tight and fake lepton selections (either RA5 or RA7)
         self.cleanJet = cleanJet
         self.selectJet = selectJet
         self.doBtagRWT = doBtagRWT
@@ -46,6 +50,8 @@ class LeptonJetReCleaner:
         self.cleanWithTaus = cleanWithTaus
         self.coneptdef = coneptdef
         self.debugprinted = False
+        self.jetPt = str(jetPt)
+        self.bJetPt = str(bJetPt) if bJetPt != jetPt else str(jetPt-5)
     def listBranches(self):
         label = self.label
 
@@ -89,6 +95,9 @@ class LeptonJetReCleaner:
                     ("nJet40"+label+self.systsJEC[key], "I"), "htJet40j"+label+self.systsJEC[key], ("nBJetLoose40"+label+self.systsJEC[key], "I"), ("nBJetMedium40"+label+self.systsJEC[key], "I"),
                     ("nJet25"+label+self.systsJEC[key], "I"), "htJet25j"+label+self.systsJEC[key], ("nBJetLoose25"+label+self.systsJEC[key], "I"), ("nBJetMedium25"+label+self.systsJEC[key], "I"),
                     "mhtJet25"+label+self.systsJEC[key],
+#                    ("nJetSel"+self.systsJEC[key]+label, "I"), ("iJ"+self.systsJEC[key]+label,"I",20,"nJetSel"+self.systsJEC[key]+label), # index >= 0 if in Jet; -1-index (<0) if in DiscJet
+                    ("nJet"+self.jetPt+self.systsJEC[key]+label, "I"), "htJet"+self.jetPt + "j"+self.systsJEC[key]+label, ("nBJetLoose"+self.jetPt+self.systsJEC[key]+label, "I"), ("nBJetMedium"+self.jetPt+self.systsJEC[key]+label, "I"),
+                    ("nJet"+self.bJetPt+self.systsJEC[key]+label, "I"), "htJet"+self.bJetPt+"j"+self.systsJEC[key]+label, ("nBJetLoose"+self.bJetPt+self.systsJEC[key]+label, "I"), ("nBJetMedium"+self.bJetPt+self.systsJEC[key]+label, "I"),
                     ])
             for bkey in self.systsBTAG:
                 thisvar = self.select_jec_btag_unc_combinations(key,bkey)
@@ -108,7 +117,11 @@ class LeptonJetReCleaner:
         biglist.append( ("DiscJetSel"+label+"_mcMatchId","I",20,"nDiscJetSel"+label) )
         return biglist
 
+<<<<<<< HEAD
     def fillCollWithVeto(self,ret,refcollection,leps,lab,labext,selection,lepsforveto=None,ht=-1,sortby=None,pad_zeros_up_to=20, event=None):
+=======
+    def fillCollWithVeto(self,ret,refcollection,leps,lab,labext,selection,lepsforveto,ht=-1,doVetoZ=True,doVetoLM=True):
+>>>>>>> 9fab09c... changes at recleaner level and config
         ret['i'+lab] = [];
         ret['i'+lab+'V'] = [];
         for lep in leps:
@@ -120,7 +133,8 @@ class LeptonJetReCleaner:
         lepspass = [ refcollection[il] for il in ret['i'+lab]  ]
         if lepsforveto==None: lepsforveto = lepspass # if lepsforveto==None, veto selected leptons among themselves
         for lep in lepspass:
-            if passMllTLVeto(lep, lepsforveto, 76, 106, True) and passMllTLVeto(lep, lepsforveto, 0, 12, True):
+            if (not doVetoZ  or passMllTLVeto(lep, lepsforveto, 76, 106, True)) and \
+               (not doVetoLM or passMllTLVeto(lep, lepsforveto,  0,  12, True)):
                 ret['i'+lab+'V'].append(refcollection.index(lep))
         ret['i'+lab+'V'] = self.sortIndexListByFunction(ret['i'+lab+'V'],refcollection,sortby)
         ret['nLep'+labext+'Veto'] = len(ret['i'+lab+'V'])
@@ -332,14 +346,21 @@ class LeptonJetReCleaner:
                 for jmc in "mcPt mcFlavour mcMatchId".split():
                     discjetret[jmc].append( getattr(jet,jmc,-999) )
         # 5. compute the sums
+<<<<<<< HEAD
         ret["nJet25"+postfix] = 0; ret["htJet25j"+postfix] = 0; ret["nBJetLoose25"+postfix] = 0; ret["nBJetMedium25"+postfix] = 0
         ret["nJet40"+postfix] = 0; ret["htJet40j"+postfix] = 0; ret["nBJetLoose40"+postfix] = 0; ret["nBJetMedium40"+postfix] = 0
         cleanjets = [];
         mhtJet25vec = ROOT.TLorentzVector(0,0,0,0)
         for x in lepcoll: mhtJet25vec = mhtJet25vec - x.p4()
+=======
+        ret["nJet"+self.bJetPt+postfix] = 0; ret["htJet"+self.bJetPt+"j"+postfix] = 0; ret["nBJetLoose"+self.bJetPt+postfix] = 0; ret["nBJetMedium"+self.bJetPt+postfix] = 0
+        ret["nJet"+self.jetPt+postfix] = 0; ret["htJet"+self.jetPt+"j"+postfix] = 0; ret["nBJetLoose"+self.jetPt+postfix] = 0; ret["nBJetMedium"+self.jetPt+postfix] = 0
+        cleanjets = []; cleanBjets = []
+>>>>>>> 9fab09c... changes at recleaner level and config
         for j in jetcollcleaned+jetcolldiscarded:
             if not (j._clean and self.selectJet(j)): continue
             cleanjets.append(j)
+<<<<<<< HEAD
             if j.pt > 25:
                 ret["nJet25"+postfix] += 1; ret["htJet25j"+postfix] += j.pt; 
                 if j.btagCSV>0.460: ret["nBJetLoose25"+postfix] += 1
@@ -379,12 +400,34 @@ class LeptonJetReCleaner:
             if len(pairs):
                 return min(pairs)
             return -1
+=======
+            if j.btagCSV>0.890: cleanBjets.append(j)
+            if j.pt > float(self.bJetPt):
+                ret["nJet"+self.bJetPt+postfix] += 1; ret["htJet"+self.bJetPt+"j"+postfix] += j.pt; 
+                if j.btagCSV>0.605: ret["nBJetLoose"+self.bJetPt+postfix] += 1
+                if j.btagCSV>0.890: ret["nBJetMedium"+self.bJetPt+postfix] += 1
+            if j.pt > float(self.jetPt):
+                ret["nJet"+self.jetPt+postfix] += 1; ret["htJet"+self.jetPt+"j"+postfix] += j.pt; 
+                if j.btagCSV>0.605: ret["nBJetLoose"+self.jetPt+postfix] += 1
+                if j.btagCSV>0.890: ret["nBJetMedium"+self.jetPt+postfix] += 1
+        return (cleanjets,cleanBjets)
+
+>>>>>>> 9fab09c... changes at recleaner level and config
 
     def __call__(self,event):
+        self.ev = event
+        fullret = {}
         leps = [l for l in Collection(event,"LepGood","nLepGood")]
+<<<<<<< HEAD
         if not self.coneptdef: raise RuntimeError, 'Choose the definition to be used for cone pt'
         for lep in leps: lep.conept = self.coneptdef(lep)
         taus_forclean = [t for t in Collection(event,"TauGood","nTauGood")] if self.cleanWithTaus else []
+=======
+        if self.corr == "RA7": 
+            for lep in leps: lep.conept = coneptRA7(lep.pt,lep.miniRelIso,lep.jetPtRatiov2,lep.jetPtRelv2,lep.pdgId,2)
+        else: 
+            for lep in leps: lep.conept = coneptRA5(lep.pt,lep.miniRelIso,lep.jetPtRatiov2,lep.jetPtRelv2,lep.pdgId,2)
+>>>>>>> 9fab09c... changes at recleaner level and config
         jetsc={}
         jetsd={}
         for var in self.systsJEC:
@@ -401,9 +444,13 @@ class LeptonJetReCleaner:
         ret = {}; retwlabel = {}; jetret = {}; discjetret = {};
 
         lepsl = []; lepslv = [];
+<<<<<<< HEAD
         ret, lepsl, lepslv = self.fillCollWithVeto(ret,leps,leps,'L','Loose',self.looseLeptonSel,event=event)
+=======
+        ret, lepsl, lepslv = self.fillCollWithVeto(ret,leps,leps,'L','Loose',self.looseLeptonSel,None,-1,self.doVeto)
+>>>>>>> 9fab09c... changes at recleaner level and config
         lepsc = []; lepscv = [];
-        ret, lepsc, lepscv = self.fillCollWithVeto(ret,leps,lepsl,'C','Cleaning',self.cleaningLeptonSel,lepsl)
+        ret, lepsc, lepscv = self.fillCollWithVeto(ret,leps,lepsl,'C','Cleaning',self.cleaningLeptonSel,lepsl,-1,self.doVeto)
 
         ret['mZ1'] = self.bestZ1TL(lepsl, lepsl)
         ret['minMllAFAS'] = self.minMllTL(lepsl, lepsl) 
@@ -418,14 +465,23 @@ class LeptonJetReCleaner:
                 thisvar = self.select_jec_btag_unc_combinations(var,btagsyst)
                 if thisvar!=None: retwlabel["eventBTagSF"+self.label+thisvar] = self.bTag_eventRWT_SF(event,lepsc,cleanjets[var],self.systsBTAG[btagsyst]) if self.doBtagRWT else 1
 
+<<<<<<< HEAD
         # calculate FOs and tight leptons using the cleaned HT, sorted by conept
         lepsf = []; lepsfv = [];
         ret, lepsf, lepsfv = self.fillCollWithVeto(ret,leps,lepsl,'F','FO',self.FOLeptonSel,lepsl,retwlabel["htJet40j"+self.label],sortby = lambda x: x.conept)
         lepst = []; lepstv = [];
         ret, lepst, lepstv = self.fillCollWithVeto(ret,leps,lepsl,'T','Tight',self.tightLeptonSel,lepsl,retwlabel["htJet40j"+self.label],sortby = lambda x: x.conept, event=event)
+=======
+        # calculate FOs and tight leptons using the cleaned HT
+        veto = lepsl; doZ = True; doLMf = True; doLMt = True
+        if self.doVeto == "RA7": veto = None; doZ = False; doLMf = False; doLMt = True
+        lepsf = []; lepsfv = [];
+        ret, lepsf, lepsfv = self.fillCollWithVeto(ret,leps,lepsl,'F','FO'   , self.FOLeptonSel   ,veto,ret["htJet"+self.jetPt+"j"],doZ,doLMf)
+        lepst = []; lepstv = [];
+        ret, lepst, lepstv = self.fillCollWithVeto(ret,leps,lepsl,'T','Tight', self.tightLeptonSel,veto,ret["htJet"+self.jetPt+"j"],doZ,doLMt)
+>>>>>>> 9fab09c... changes at recleaner level and config
 
         ### attach labels and return
-        fullret = {}
         fullret["nLepGood"]=len(leps)
         fullret["LepGood_conePt"] = [lep.conept for lep in leps]
         fullret["LepGood_mcMatchPdgId"] = [0] * len(leps)
@@ -461,12 +517,20 @@ def passMllVeto(l1, l2, mZmin, mZmax, isOSSF ):
         if mz > mZmin and  mz < mZmax:
             return False
     return True
+
 def passMllTLVeto(lep, lepsl, mZmin, mZmax, isOSSF):
     for ll in lepsl:
         if ll == lep: continue
         if not passMllVeto(lep, ll, mZmin, mZmax, isOSSF):
             return False
     return True
+
+def passTripleMllVeto(l1, l2, l3, mZmin, mZmax, isOSSF ):
+    ls = [passMllVeto(l1, l2, mZmin, mZmax, isOSSF), \
+          passMllVeto(l1, l3, mZmin, mZmax, isOSSF), \
+          passMllVeto(l2, l3, mZmin, mZmax, isOSSF)]
+    if all(ls): return True
+    return False
 
 def _tthlep_lepId(lep):
         #if lep.pt <= 10: return False
@@ -600,6 +664,35 @@ def _susy2lss_multiIso_relaxedForInSituApp(lep):
 #        elif abs(lep.pdgId) == 11:
 #            return lep.tightId >= 2 and lep.convVeto and lep.tightCharge > 1 and lep.lostHits == 0
 #        return False
+
+## CH: RA7 selection for Moriond
+
+def _susy3l_multiIso(lep):
+    # CH: looser WP than for RA5 (electrons -> medium, muons -> loose)
+    if abs(lep.pdgId) == 13: A,B,C = (0.20,0.69,6.0)
+    else:                    A,B,C = (0.16,0.76,7.2)
+    return lep.miniRelIso < A and (lep.jetPtRatiov2 > B or lep.jetPtRelv2 > C)
+
+def _susy3l_lepId_loosestFO(lep):
+    # CH: the same as the 2lss one but without tightCharge
+    if not _susy2lss_lepId_CBloose(lep): return False
+    if abs(lep.pdgId) == 13:
+        return lep.mediumMuonId > 0
+    elif abs(lep.pdgId) == 11:
+        return (lep.convVeto and lep.lostHits == 0)
+    return False
+
+def _susy3l_lepId_CB(lep):
+    # CH: the same as the 2lss one but without tightCharge
+    if not _susy2lss_lepId_CBloose(lep): return False
+    if not _susy2lss_lepId_IPcuts(lep): return False
+    if abs(lep.pdgId) == 13:
+        return lep.mediumMuonId > 0
+    elif abs(lep.pdgId) == 11:
+        if not (lep.convVeto and lep.lostHits == 0): 
+            return False
+        return lep.mvaIdSpring15 > 0.87+(0.60-0.87)*(abs(lep.eta)>0.8)+(0.17-0.60)*(abs(lep.eta)>1.479)
+    return False
 
 if __name__ == '__main__':
     from sys import argv

@@ -42,10 +42,15 @@ _CommonSpect = {
         ],
 }
 _CommonVars = {
+'mvaMultiIso' : [ 
+    MVAVar("LepGood_miniRelIso",lambda x: x.miniRelIso),
+    MVAVar("LepGood_jetPtRelv2",lambda x: x.jetPtRelv2),
+    MVAVar("LepGood_jetPtRatiov2 := min(LepGood_jetPtRatiov2,1.5)", lambda x : min(x.jetPtRatiov2,1.5)),
+],
 'forMoriond16': [
     MVAVar("LepGood_pt",lambda x: x.pt),
     MVAVar("LepGood_eta",lambda x: x.eta),
-    MVAVar("LepGood_jetNDauChargedMVASel",lambda x: x.jetNDauChargedMVASel),
+    #MVAVar("LepGood_jetNDauChargedMVASel",lambda x: x.jetNDauChargedMVASel),
     MVAVar("LepGood_miniRelIsoCharged",lambda x: x.miniRelIsoCharged),
     MVAVar("LepGood_miniRelIsoNeutral",lambda x: x.miniRelIsoNeutral),
     MVAVar("LepGood_jetPtRelv2",lambda x: x.jetPtRelv2),
@@ -58,7 +63,7 @@ _CommonVars = {
 'SoftALaMoriond16': [
     MVAVar("LepGood_pt",lambda x: x.pt),
     MVAVar("LepGood_eta",lambda x: x.eta),
-    MVAVar("LepGood_jetNDauChargedMVASel",lambda x: x.jetNDauChargedMVASel),
+    #MVAVar("LepGood_jetNDauChargedMVASel",lambda x: x.jetNDauChargedMVASel),
     MVAVar("LepGood_miniRelIsoCharged",lambda x: x.miniRelIsoCharged),
     MVAVar("LepGood_miniRelIsoNeutral",lambda x: x.miniRelIsoNeutral),
     MVAVar("LepGood_jetPtRelv2",lambda x: x.jetPtRelv2),

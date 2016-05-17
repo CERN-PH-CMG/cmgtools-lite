@@ -21,3 +21,15 @@ def conept_TTH_production(lep):
     if (abs(lep.pdgId())!=11 and abs(lep.pdgId())!=13): return lep.pt()
     if (abs(lep.pdgId())!=13 or lep.muonID("POG_ID_Medium")>0) and getattr(lep, 'mvaValueTTH', -1) > 0.75: return lep.pt()
     else: return 0.85*jetLepAwareJEC(lep).Pt() if hasattr(lep,'jet') else -1
+
+def conept_RA7(ptlep,minireliso,ptratio,ptrel,pdgid,wp):
+    assert (wp==2)
+    if (abs(pdgid)!=11 and abs(pdgid)!=13):
+        return ptlep
+    A = 0.16 if (abs(pdgid)==11) else 0.20
+    B = 0.76 if (abs(pdgid)==11) else 0.69
+    C = 7.2 if (abs(pdgid)==11) else 6.0
+    if (ptrel>C):
+        return ptlep*(1+max(minireliso-A,0))
+    else:
+        return max(ptlep,ptlep/ptratio*B)
