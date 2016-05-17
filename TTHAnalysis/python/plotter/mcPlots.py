@@ -584,7 +584,7 @@ def doLegend(pmap,mca,corner="TR",textSize=0.035,cutoff=1e-2,cutoffSignals=True,
         return leg
 
 class PlotMaker:
-    def __init__(self,tdir):
+    def __init__(self,tdir,options):
         self._sf = 1.0
         self._options = options
         self._dir = tdir
