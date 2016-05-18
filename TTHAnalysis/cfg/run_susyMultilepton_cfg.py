@@ -320,6 +320,7 @@ if runSMS:
     ttHLepSkim.requireSameSignPair = True
 
 from CMGTools.RootTools.samples.samples_13TeV_RunIIFall15MiniAODv2 import *
+from CMGTools.RootTools.samples.samples_13TeV_76X_susySignalsPriv import *
 from CMGTools.RootTools.samples.samples_13TeV_DATA2015 import *
 from CMGTools.HToZZ4L.tools.configTools import printSummary, configureSplittingFromTime, cropToLumi
 
