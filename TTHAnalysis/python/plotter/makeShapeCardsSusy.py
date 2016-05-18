@@ -60,7 +60,8 @@ cuts = CutsFile(args[1],options)
 binname = os.path.basename(args[1]).replace(".txt","") if options.outname == None else options.outname
 outdir  = options.outdir+"/" if options.outdir else ""
 
-report = mca.getPlotsRaw("x", args[2], args[3], cuts.allCuts(), nodata=options.asimov, options={"IncludeOverflows":True})
+report = mca.getPlotsRaw("x", args[2], args[3], cuts.allCuts(), nodata=options.asimov)
+
 
 for post in postfixes:
     for rep in report:
