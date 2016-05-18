@@ -30,6 +30,9 @@ forcedSplitFactor = getHeppyOption("splitFactor",-1)
 forcedFineSplitFactor = getHeppyOption("fineSplitFactor",-1)
 isTest = getHeppyOption("test",None) != None and not re.match("^\d+$",getHeppyOption("test"))
 
+if analysis not in ['ttH','susy','SOS']: raise RuntimeError, 'Analysis type unknown'
+print 'Using analysis type: %s'%analysis
+
 # Lepton Skimming
 ttHLepSkim.minLeptons = 2
 ttHLepSkim.maxLeptons = 999
