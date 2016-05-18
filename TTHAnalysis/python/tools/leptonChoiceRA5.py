@@ -570,7 +570,7 @@ def _susy2lss_idIsoEmu_cuts(lep):
     return True
 def _susy2lss_idIsoEmu_cuts_obj(lep):
     if (abs(lep.pdgId())!=11): return True
-    if not _susy2lss_idEmu_cuts(lep): return False
+    if not _susy2lss_idEmu_cuts_obj(lep): return False
     if (lep.ecalPFClusterIso()>=0.45*lep.pt()): return False
     if (lep.hcalPFClusterIso()>=0.25*lep.pt()): return False
     if (lep.dr03TkSumPt()>=0.2*lep.pt()): return False
