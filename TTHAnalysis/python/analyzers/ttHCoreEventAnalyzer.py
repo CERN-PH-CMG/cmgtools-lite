@@ -16,6 +16,10 @@ class ttHCoreEventAnalyzer( Analyzer ):
         self.leptonMVAPathTTH = getattr(self.cfg_ana, "leptonMVAPathTTH", "CMGTools/TTHAnalysis/data/leptonMVA/tth/%s_BDTG.weights.xml")
         if self.leptonMVAPathTTH[0] != "/": self.leptonMVAPathTTH = "%s/src/%s" % ( os.environ['CMSSW_BASE'], self.leptonMVAPathTTH)
         self.leptonMVATTH = LeptonMVA(self.leptonMVAKindTTH, self.leptonMVAPathTTH, self.cfg_comp.isMC)
+        self.leptonMVAKindSUSY = getattr(self.cfg_ana, "leptonMVAKindSUSY", "forMoriond16")
+        self.leptonMVAPathSUSY = getattr(self.cfg_ana, "leptonMVAPathSUSY", "CMGTools/TTHAnalysis/data/leptonMVA/susy/%s_BDTG.weights.xml")
+        if self.leptonMVAPathSUSY[0] != "/": self.leptonMVAPathSUSY = "%s/src/%s" % ( os.environ['CMSSW_BASE'], self.leptonMVAPathSUSY)
+        self.leptonMVASUSY = LeptonMVA(self.leptonMVAKindSUSY, self.leptonMVAPathSUSY, self.cfg_comp.isMC)
         self.jetPt = cfg_ana.jetPt
 
     def declareHandles(self):
@@ -378,9 +382,11 @@ class ttHCoreEventAnalyzer( Analyzer ):
 
         for lep in event.selectedLeptons:
             lep.mvaValueTTH     = self.leptonMVATTH(lep)
+            lep.mvaValueSUSY     = self.leptonMVASUSY(lep)
         for lep in event.inclusiveLeptons:
             if lep not in event.selectedLeptons:
                 lep.mvaValueTTH     = self.leptonMVATTH(lep)
+                lep.mvaValueSUSY     = self.leptonMVASUSY(lep)
 
 
         # absolute value of the vectorial difference between met and mht

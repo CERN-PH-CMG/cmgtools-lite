@@ -5,7 +5,8 @@ from PhysicsTools.Heppy.analyzers.objects.autophobj import  *
 from PhysicsTools.HeppyCore.utils.deltar import deltaR
 
 from CMGTools.TTHAnalysis.signedSip import *
-from CMGTools.TTHAnalysis.tools.emulateElectronTriggerCuts import _susy2lss_idEmu_cuts,_susy2lss_idIsoEmu_cuts
+from CMGTools.TTHAnalysis.tools.functionsTTH import _ttH_idEmu_cuts_E2_obj
+from CMGTools.TTHAnalysis.tools.leptonChoiceRA5 import _susy2lss_idEmu_cuts_obj,_susy2lss_idIsoEmu_cuts_obj
 
 ##------------------------------------------  
 ## LEPTON
@@ -15,6 +16,7 @@ leptonTypeSusy = NTupleObjectType("leptonSusy", baseObjectTypes = [ leptonType ]
     NTupleVariable("mvaIdSpring15",   lambda lepton : lepton.mvaRun2("NonTrigSpring15MiniAOD") if abs(lepton.pdgId()) == 11 else 1, help="EGamma POG MVA ID for non-triggering electrons, Spring15 re-training; 1 for muons"),
     # Lepton MVA-id related variables
     NTupleVariable("mvaTTH",    lambda lepton : getattr(lepton, 'mvaValueTTH', -1), help="Lepton MVA (TTH version)"),
+    NTupleVariable("mvaSUSY",    lambda lepton : getattr(lepton, 'mvaValueSUSY', -1), help="Lepton MVA (SUSY version)"),
     NTupleVariable("jetPtRatiov1", lambda lepton : lepton.pt()/lepton.jet.pt() if hasattr(lepton,'jet') else -1, help="pt(lepton)/pt(nearest jet)"),
     NTupleVariable("jetPtRelv1", lambda lepton : ptRelv1(lepton.p4(),lepton.jet.p4()) if hasattr(lepton,'jet') else -1, help="pt of the lepton transverse to the jet axis (subtracting the lepton)"),
     NTupleVariable("jetPtRatiov2", lambda lepton: lepton.pt()/jetLepAwareJEC(lepton).Pt() if hasattr(lepton,'jet') else -1, help="pt(lepton)/[rawpt(jet-PU-lep)*L2L3Res+pt(lepton)]"),
@@ -39,12 +41,28 @@ leptonTypeSusyExtraLight = NTupleObjectType("leptonSusyExtraLight", baseObjectTy
     NTupleVariable("hcalPFClusterIso", lambda lepton :  lepton.hcalPFClusterIso() if abs(lepton.pdgId())==11 else -999, help="Electron hcalPFClusterIso"),
     NTupleVariable("dr03TkSumPt", lambda lepton: lepton.dr03TkSumPt() if abs(lepton.pdgId())==11 else -999, help="Electron dr03TkSumPt isolation"),
     NTupleVariable("trackIso", lambda lepton :  lepton.trackIso() if abs(lepton.pdgId())==11 else -999, help="Electron trackIso (in cone of 0.4)"),
-    NTupleVariable("idEmu", lambda lepton: _susy2lss_idEmu_cuts(lepton), help="Electron pass trigger ID emulation cuts"),
-    NTupleVariable("idIsoEmu", lambda lepton: _susy2lss_idIsoEmu_cuts(lepton), help="Electron pass trigger ID+ISO emulation cuts"),
+    NTupleVariable("idEmuTTH", lambda lepton: _ttH_idEmu_cuts_E2_obj(lepton), help="Electron pass trigger ID emulation cuts (TTH, E2)"),
+    NTupleVariable("idEmuRA5", lambda lepton: _susy2lss_idEmu_cuts_obj(lepton), help="Electron pass trigger ID emulation cuts (RA5)"),
+    NTupleVariable("idIsoEmuRA5", lambda lepton: _susy2lss_idIsoEmu_cuts_obj(lepton), help="Electron pass trigger ID+ISO emulation cuts (RA5)"),
     NTupleVariable("mcPrompt",    lambda x : x.mcMatchAny_gp.isPromptFinalState() if getattr(x,"mcMatchAny_gp",None) else 0, int, mcOnly=True, help="isPromptFinalState"),
     NTupleVariable("mcPromptTau", lambda x : x.mcMatchAny_gp.isDirectPromptTauDecayProductFinalState() if getattr(x,"mcMatchAny_gp",None) else 0, int, mcOnly=True, help="isDirectPromptTauDecayProductFinalState"),
     NTupleVariable("mcPromptGamma", lambda x : x.mcPho.isPromptFinalState() if getattr(x,"mcPho",None) else 0, int, mcOnly=True, help="Photon isPromptFinalState"),
     NTupleVariable("mcGamma", lambda x : getattr(x,"mcPho",None) != None, int, mcOnly=True, help="Matched to a photon"),
+    NTupleVariable("RelIsoFix03",   lambda x : getattr(x,'miniAbsIsoFix03',-99)/x.pt()),
+    NTupleVariable("RelIsoChargedFix03",   lambda x : getattr(x,'miniAbsIsoChargedFix03',-99)/x.pt()),
+    NTupleVariable("RelIsoNeutralFix03",   lambda x : getattr(x,'miniAbsIsoNeutralFix03',-99)/x.pt()),
+    NTupleVariable("RelIsoFix04",   lambda x : getattr(x,'miniAbsIsoFix04',-99)/x.pt()),
+    NTupleVariable("RelIsoChargedFix04",   lambda x : getattr(x,'miniAbsIsoChargedFix04',-99)/x.pt()),
+    NTupleVariable("RelIsoNeutralFix04",   lambda x : getattr(x,'miniAbsIsoNeutralFix04',-99)/x.pt()),
+    NTupleVariable("jetPtRelHv2", lambda lepton : ptRelHv2(lepton) if hasattr(lepton,'jet') else -1, help="pt of the jet (subtracting the lepton) transverse to the lepton axis - v2"),
+    NTupleVariable("isoRelH04", lambda lepton : isoRelH(lepton,'04') if hasattr(lepton,'isoSumRawP4Charged04') else -1, help="transverse relative isolation R=0.4 H"),
+    NTupleVariable("jetBasedRelIsoCharged", lambda lepton : jetBasedRelIsoCharged(lepton) if hasattr(lepton,'jet') else -1, help="relative charged isolation from jet chH constituents"),
+    # IVF variables
+    NTupleVariable("hasSV",   lambda x : (2 if getattr(x,'ivfAssoc','') == "byref" else (0 if getattr(x,'ivf',None) == None else 1)), int, help="2 if lepton track is from a SV, 1 if loosely matched, 0 if no SV found."),
+    NTupleVariable("svSip3d", lambda x : x.ivf.d3d.significance() if getattr(x,'ivf',None) != None else -99, help="S_{ip3d} of associated SV"),
+    NTupleVariable("svRedPt", lambda x : getattr(x, 'ivfRedPt', 0), help="pT of associated SV, removing the lepton track"),
+    NTupleVariable("svMass", lambda x : x.ivf.mass() if getattr(x,'ivf',None) != None else -99, help="mass of associated SV"),
+    NTupleVariable("svNTracks", lambda x : x.ivf.numberOfDaughters() if getattr(x,'ivf',None) != None else -99, help="Number of tracks of associated SV"),
 ])
 leptonTypeSusyExtraLight.addSubObjects([
         NTupleSubObject("jetLepAwareJEC",lambda x: jetLepAwareJEC(x), tlorentzFourVectorType)
@@ -52,16 +70,16 @@ leptonTypeSusyExtraLight.addSubObjects([
 
 
 leptonTypeSusyExtra = NTupleObjectType("leptonSusyExtra", baseObjectTypes = [ leptonTypeSusyExtraLight ], variables = [
+    # more directional isolations
+    NTupleVariable("isoRelH02", lambda lepton : isoRelH(lepton,'02') if hasattr(lepton,'isoSumRawP4Charged02') else -1, help="transverse relative isolation R=0.2 H"),
+    NTupleVariable("isoRelH03", lambda lepton : isoRelH(lepton,'03') if hasattr(lepton,'isoSumRawP4Charged03') else -1, help="transverse relative isolation R=0.3 H"),
+    NTupleVariable("isoRelH05", lambda lepton : isoRelH(lepton,'05') if hasattr(lepton,'isoSumRawP4Charged05') else -1, help="transverse relative isolation R=0.5 H"),
+    NTupleVariable("isoRelH06", lambda lepton : isoRelH(lepton,'06') if hasattr(lepton,'isoSumRawP4Charged06') else -1, help="transverse relative isolation R=0.6 H"),
     # IVF variables
-    NTupleVariable("hasSV",   lambda x : (2 if getattr(x,'ivfAssoc','') == "byref" else (0 if getattr(x,'ivf',None) == None else 1)), int, help="2 if lepton track is from a SV, 1 if loosely matched, 0 if no SV found."),
-    NTupleVariable("svRedPt", lambda x : getattr(x, 'ivfRedPt', 0), help="pT of associated SV, removing the lepton track"),
     NTupleVariable("svRedM",  lambda x : getattr(x, 'ivfRedM', 0), help="mass of associated SV, removing the lepton track"),
     NTupleVariable("svLepSip3d", lambda x : getattr(x, 'ivfSip3d', 0), help="sip3d of lepton wrt SV"),
-    NTupleVariable("svSip3d", lambda x : x.ivf.d3d.significance() if getattr(x,'ivf',None) != None else -99, help="S_{ip3d} of associated SV"),
-    NTupleVariable("svNTracks", lambda x : x.ivf.numberOfDaughters() if getattr(x,'ivf',None) != None else -99, help="Number of tracks of associated SV"),
     NTupleVariable("svChi2n", lambda x : x.ivf.vertexChi2()/x.ivf.vertexNdof() if getattr(x,'ivf',None) != None else -99, help="Normalized chi2 of associated SV"),
     NTupleVariable("svDxy", lambda x : x.ivf.dxy.value() if getattr(x,'ivf',None) != None else -99, help="dxy of associated SV"),
-    NTupleVariable("svMass", lambda x : x.ivf.mass() if getattr(x,'ivf',None) != None else -99, help="mass of associated SV"),
     NTupleVariable("svPt", lambda x : x.ivf.pt() if getattr(x,'ivf',None) != None else -99, help="pt of associated SV"),
     NTupleVariable("svMCMatchFraction", lambda x : x.ivf.mcMatchFraction if getattr(x,'ivf',None) != None else -99, mcOnly=True, help="Fraction of mc-matched tracks from b/c matched to a single hadron (if >= 2 tracks found), for associated SV"),
     NTupleVariable("svMva", lambda x : x.ivf.mva if getattr(x,'ivf',None) != None else -99, help="mva value of associated SV"),
@@ -89,7 +107,6 @@ leptonTypeSusyExtra = NTupleObjectType("leptonSusyExtra", baseObjectTypes = [ le
     NTupleVariable("jetDec02PrunedMass", lambda lepton :  lepton.jetDec02PrunedMass if hasattr(lepton,'jetDec02PrunedMass') else -1, help="pt(lepton)/pt(nearest jet) after declustering 02 and pruning"),
     NTupleVariable("jetRawPt", lambda x: x.jet.pt() * x.jet.rawFactor() if x.jet!=x else x.pt(), help="matched jet raw pt"),
     NTupleVariable("jetPtRatio_Raw", lambda lepton : -1 if not hasattr(lepton,'jet') else lepton.pt()/lepton.jet.pt() if not hasattr(lepton.jet,'rawFactor') else lepton.pt()/(lepton.jet.pt()*lepton.jet.rawFactor()), help="pt(lepton)/rawpt(nearest jet)"),
-    NTupleVariable("jetPtRelHv2", lambda lepton : ptRelHv2(lepton) if hasattr(lepton,'jet') else -1, help="pt of the jet (subtracting the lepton) transverse to the lepton axis - v2"),
 ])
 
 
@@ -98,6 +115,7 @@ leptonTypeSusyExtra = NTupleObjectType("leptonSusyExtra", baseObjectTypes = [ le
 ##------------------------------------------  
 
 tauTypeSusy = NTupleObjectType("tauSusy",  baseObjectTypes = [ tauType ], variables = [
+        NTupleVariable("idMVAOldDMRun2dR03", lambda x : x.idMVAOldDMRun2dR03, int, help="1,2,3 if the tau passes the loose to tight WP of the IsolationMVArun2v1DBdR03oldDMwLT discriminator"),
 ])
 
 ##------------------------------------------  
@@ -271,4 +289,12 @@ def ptRelHv2(lep): # use only if jetAna.calculateSeparateCorrections==True
     p4l = lep.p4()
     l = ROOT.TLorentzVector(p4l.Px(),p4l.Py(),p4l.Pz(),p4l.E())
     return (m-l).Perp(l.Vect())
-   
+def isoRelH(lep,tag):
+    iso = getattr(lep,'isoSumRawP4Charged'+tag)+getattr(lep,'isoSumRawP4Neutral'+tag)
+    p4l = lep.p4()
+    l = ROOT.TLorentzVector(p4l.Px(),p4l.Py(),p4l.Pz(),p4l.E())
+    m = ROOT.TLorentzVector(iso.Px(),iso.Py(),iso.Pz(),iso.E())
+    return m.Perp(l.Vect())
+def jetBasedRelIsoCharged(lep):
+    if not hasattr(lep.jet,'rawFactor'): return 0
+    return lep.jet.pt()*lep.jet.rawFactor()*lep.jet.chargedHadronEnergyFraction()/lep.pt()

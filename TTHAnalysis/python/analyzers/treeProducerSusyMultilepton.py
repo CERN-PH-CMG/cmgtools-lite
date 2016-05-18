@@ -163,6 +163,7 @@ susyMultilepton_collections.update({
             "jetsNonTauIdx" : NTupleCollection("JetNoTauIdx",objectInt, 10, help="index of jets not associated to taus"),
             ##------------------------------------------------
             "LHE_weights"    : NTupleCollection("LHEweight",  weightsInfoType, 1000, mcOnly=True, help="LHE weight info"),
- 
+
+#            "LeptonTrackMuPairs"    : NTupleCollection("LepTrkPair", leptonTrackPairType, 1000, help="Lepton + Mu track pairs"),
 
 })

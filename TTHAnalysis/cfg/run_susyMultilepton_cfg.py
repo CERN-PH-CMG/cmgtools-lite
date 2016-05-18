@@ -14,21 +14,24 @@ from PhysicsTools.HeppyCore.framework.heppy_loop import getHeppyOption
 #-------- SET OPTIONS AND REDEFINE CONFIGURATIONS -----------
 
 is50ns = getHeppyOption("is50ns",False)
+analysis = getHeppyOption("analysis","ttH")
 runData = getHeppyOption("runData",False)
 runDataQCD = getHeppyOption("runDataQCD",False)
 runFRMC = getHeppyOption("runFRMC",False)
 runSMS = getHeppyOption("runSMS",False)
 scaleProdToLumi = float(getHeppyOption("scaleProdToLumi",-1)) # produce rough equivalent of X /pb for MC datasets
-SOS = getHeppyOption("SOS",False) ## switch True to overwrite settings for SOS skim (N.B. default settings are those from multilepton preselection)
 saveSuperClusterVariables = getHeppyOption("saveSuperClusterVariables",False)
 removeJetReCalibration = getHeppyOption("removeJetReCalibration",False)
 removeJecUncertainty = getHeppyOption("removeJecUncertainty",False)
 doMETpreprocessor = getHeppyOption("doMETpreprocessor",False)
-doT1METCorr = getHeppyOption("doT1METCorr",False)
+skipT1METCorr = getHeppyOption("skipT1METCorr",False)
 #doAK4PFCHSchargedJets = getHeppyOption("doAK4PFCHSchargedJets",False)
 forcedSplitFactor = getHeppyOption("splitFactor",-1)
 forcedFineSplitFactor = getHeppyOption("fineSplitFactor",-1)
 isTest = getHeppyOption("test",None) != None and not re.match("^\d+$",getHeppyOption("test"))
+
+if analysis not in ['ttH','susy','SOS']: raise RuntimeError, 'Analysis type unknown'
+print 'Using analysis type: %s'%analysis
 
 # Lepton Skimming
 ttHLepSkim.minLeptons = 2
@@ -38,6 +41,7 @@ ttHLepSkim.maxLeptons = 999
 
 # Run miniIso
 lepAna.doMiniIsolation = True
+lepAna.doDirectionalIsolation = False
 lepAna.packedCandidates = 'packedPFCandidates'
 lepAna.miniIsolationPUCorr = 'rhoArea'
 lepAna.miniIsolationVetoLeptons = None # use 'inclusive' to veto inclusive leptons and their footprint in all isolation cones
@@ -62,24 +66,28 @@ if not removeJecUncertainty:
 
 
 
-if SOS == True:
+if analysis in ['SOS']:
 ## -- SOS preselection settings ---
+
+    lepAna.doDirectionalIsolation = True
 
     # Lepton Skimming
     ttHLepSkim.minLeptons = 2
     ttHLepSkim.maxLeptons = 999
     ttHLepSkim.ptCuts = [5,3]
     
-    # Jet-Met Skimming
-    ttHJetMETSkim.jetPtCuts = [100,]
-    ttHJetMETSkim.metCut    = 100
+#    # Jet-Met Skimming
+#    ttHJetMETSkim.jetPtCuts = [0,]
+    ttHJetMETSkim.metCut    = 50
+    susyCoreSequence.append(ttHJetMETSkim)
 
     # Lepton Preselection
     lepAna.inclusive_muon_pt  = 3
     lepAna.loose_muon_pt  = 3
     lepAna.inclusive_electron_pt  = 5
     lepAna.loose_electron_pt  = 5
-    isolation = "absIso03"
+#    isolation = None
+#    lepAna.loose_electron_id = ""
 
     # Lepton-Jet Cleaning
     jetAna.minLepPt = 20 
@@ -88,8 +96,13 @@ if SOS == True:
     # otherwise with only absIso cut at 10 GeV and no relIso we risk cleaning away good jets
 
 if isolation == "miniIso": 
-    lepAna.loose_muon_isoCut     = lambda muon : muon.miniRelIso < 0.4 and muon.sip3D() < 8
-    lepAna.loose_electron_isoCut = lambda elec : elec.miniRelIso < 0.4 and elec.sip3D() < 8
+    if (analysis=="ttH") or (analysis =="SOS"):
+        lepAna.loose_muon_isoCut     = lambda muon : muon.miniRelIso < 0.4 and muon.sip3D() < 8
+        lepAna.loose_electron_isoCut = lambda elec : elec.miniRelIso < 0.4 and elec.sip3D() < 8
+    elif analysis=="susy":
+        lepAna.loose_muon_isoCut     = lambda muon : muon.miniRelIso < 0.4
+        lepAna.loose_electron_isoCut = lambda elec : elec.miniRelIso < 0.4
+    else: raise RuntimeError,'analysis field is not correctly configured'
 elif isolation == None:
     lepAna.loose_muon_isoCut     = lambda muon : True
     lepAna.loose_electron_isoCut = lambda elec : True
@@ -111,14 +124,11 @@ jetAnaScaleDown.doQG = True
 photonAna.do_mc_match = False
 
 # Loose Tau configuration
-tauAna.loose_decayModeID = "decayModeFinding"
 tauAna.loose_ptMin = 20
 tauAna.loose_etaMax = 2.3
-# Current ra7 config (but not ttH)
-#tauAna.loose_vetoLeptonsPOG = True
-#tauAna.loose_tauAntiMuonID = "againstMuonTight"
-#tauAna.loose_tauAntiElectronID = "againstElectronLoose"
-if True: #if cleaning jet-loose tau cleaning
+tauAna.loose_decayModeID = "decayModeFinding"
+tauAna.loose_tauID = "byLooseIsolationMVArun2v1DBdR03oldDMwLT"
+if analysis in ["ttH"]: #if cleaning jet-loose tau cleaning
     jetAna.cleanJetsFromTaus = True
     jetAnaScaleUp.cleanJetsFromTaus = True
     jetAnaScaleDown.cleanJetsFromTaus = True
@@ -263,7 +273,7 @@ metAna.doTkMet = True
 treeProducer.globalVariables.append(NTupleVariable("met_trkPt", lambda ev : ev.tkMet.pt() if  hasattr(ev,'tkMet') else  0, help="tkmet p_{T}"))
 treeProducer.globalVariables.append(NTupleVariable("met_trkPhi", lambda ev : ev.tkMet.phi() if  hasattr(ev,'tkMet') else  0, help="tkmet phi"))
 
-if doT1METCorr:
+if not skipT1METCorr:
     if doMETpreprocessor: 
         print "WARNING: you're running the MET preprocessor and also Type1 MET corrections. This is probably not intended."
     jetAna.calculateType1METCorrection = True
@@ -310,40 +320,11 @@ if runSMS:
     ttHLepSkim.requireSameSignPair = True
 
 from CMGTools.RootTools.samples.samples_13TeV_RunIIFall15MiniAODv2 import *
-#from CMGTools.RootTools.samples.samples_13TeV_74X_susySignalsPriv import *
-#from CMGTools.RootTools.samples.samples_13TeV_signals import *
+from CMGTools.RootTools.samples.samples_13TeV_76X_susySignalsPriv import *
 from CMGTools.RootTools.samples.samples_13TeV_DATA2015 import *
-
-selectedComponents = [ TTLep_pow ];
-
-
 from CMGTools.HToZZ4L.tools.configTools import printSummary, configureSplittingFromTime, cropToLumi
 
-_Wjets_DY = [WJetsToLNu,DYJetsToLL_M10to50,DYJetsToLL_M50]
-_fakes = [TTJets_DiLepton,TTJets_SingleLeptonFromT,TTJets_SingleLeptonFromTbar,WWTo2L2Nu]
-_ttH = [TTHnobb,TTHnobb_pow]
-_TTV = [TTWToLNu,TTZToLLNuNu_LO,TTLLJets_m1to10]
-_convs = [TTGJets,TGJets,WGToLNuG,ZGTo2LG]
-_singleTop = [TToLeptons_sch_amcatnlo,TToLeptons_tch_amcatnlo,T_tWch,TBar_tWch]
-_diboson = [WZTo3LNu,ZZTo4L]
-_other = [tZq_ll,TTTT,WpWpJJ,WWDouble,WZZ] # WWZ ZZZ
-
-#selectedComponents = _Wjets_DY + _fakes + _ttH + _TTV + _convs + _singleTop + _diboson + _other
-print 'Before cropping to lumi and adjusting the splitting:'
-printSummary(selectedComponents)
-
-_fast = [DYJetsToLL_M10to50,WJetsToLNu,TTJets_SingleLeptonFromT,TTJets_SingleLeptonFromTbar,TTGJets,TGJets,WGToLNuG]+_singleTop
-_slow = [DYJetsToLL_M50,TTJets_DiLepton,ZGTo2LG,WWTo2L2Nu]+_TTV+_ttH+_diboson+_other
-
-cropToLumi(_convs+_diboson+_other,50)
-
-configureSplittingFromTime(_fast,30,5)
-configureSplittingFromTime(_slow,100,5)
-
-print 'After cropping to lumi and adjusting the splitting:'
-printSummary(selectedComponents)
-# Use the dropLHEweights option if you don't need the per-event LHE weights! It saves a lot of space.
-
+selectedComponents = [ TTLep_pow ];
 
 #selectedComponents = SMS_miniAODv2_T1tttt
 #susyCounter.SMS_varying_masses = ['genSusyMGluino','genSusyMNeutralino']
@@ -372,8 +353,6 @@ if runData and not isTest: # For running on data
 #    processing = "Run2015B-PromptReco-v1"; short = "Run2015B_v1"; run_ranges = [ (251643,251883) ]; useAAA=False; is50ns=True; triggerFlagsAna.checkL1Prescale = False;
 #    json = "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions15/13TeV/Cert_254833_13TeV_PromptReco_Collisions15_JSON.txt"; # taken at 50 ns with 25 ns reconstruction
 #    processing = "Run2015C-PromptReco-v1"; short = "Run2015C_v1"; run_ranges = [ (254833,254833) ]; useAAA=False; is50ns=True; triggerFlagsAna.checkL1Prescale = False;
-
-#    normalize with: brilcalc lumi --normtag /afs/cern.ch/user/c/cmsbril/public/normtag_json/OfflineNormtagV1.json -i jsonfile.txt
 
     is50ns = False
     dataChunks = []
@@ -405,7 +384,7 @@ if runData and not isTest: # For running on data
     DatasetsAndTriggers = []
     selectedComponents = [];
  
-    if SOS == True:
+    if analysis in ['SOS']:
         DatasetsAndTriggers.append( ("MET", triggers_Jet80MET90 + triggers_Jet80MET120 + triggers_MET120Mu5 ) )
         #DatasetsAndTriggers.append( ("SingleMuon", triggers_1mu_iso + triggers_1mu_iso_50ns + triggers_1mu_noniso) )
     else:
@@ -507,8 +486,8 @@ if runFRMC:
         from CMGTools.TTHAnalysis.analyzers.ttHFastLepSkimmer import ttHFastLepSkimmer
         fastSkim = cfg.Analyzer(
             ttHFastLepSkimmer, name="ttHFastLepSkimmer1lep",
-            muons = 'slimmedMuons', muCut = lambda mu : mu.pt() > 5 and mu.isLooseMuon(),
-            electrons = 'slimmedElectrons', eleCut = lambda ele : ele.pt() > 7,
+            muons = 'slimmedMuons', muCut = lambda mu : mu.pt() > 3 and mu.isLooseMuon(),
+            electrons = 'slimmedElectrons', eleCut = lambda ele : ele.pt() > 5,
             minLeptons = 1,
         )
         susyCoreSequence.insert(susyCoreSequence.index(skimAnalyzer)+1, fastSkim)
@@ -591,6 +570,20 @@ elif test == '5':
         comp.files = comp.files[:5]
         comp.splitFactor = 1
         comp.fineSplitFactor = 5
+elif test == "ra5-sync-mc":
+
+    #eventSelector = cfg.Analyzer(
+    #    'EventSelector',
+    #    toSelect = [
+    #        # here put the event numbers (actual event numbers from CMSSW)
+    #        ]
+    #    )
+
+
+    comp = cfg.MCComponent( files = ["root://eoscms.cern.ch//store/mc/RunIIFall15MiniAODv2/TTWJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8/MINIAODSIM/PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/60000/14C51DB0-D6B8-E511-8D9B-8CDCD4A9A484.root"], name="TTW_RA5_sync" )
+    comp.triggers = []
+    selectedComponents = [ comp ]
+    sequence.remove(jsonAna)
 elif test == '76X-MC':
     what = getHeppyOption("sample","TTLep")
     if what == "TTLep":
@@ -619,6 +612,16 @@ elif test == '76X-Data':
             comp.fineSplitFactor = 2
         else:
             comp.splitFactor = len(comp.files)
+elif test == 'ttH-sync':
+    ttHLepSkim.minLeptons=0
+    selectedComponents = selectedComponents[:1]
+    comp = selectedComponents[0]
+    comp.files = ['/store/mc/RunIIFall15MiniAODv2/ttHToNonbb_M125_13TeV_powheg_pythia8/MINIAODSIM/PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/00000/021B993B-4DBB-E511-BBA6-008CFA1111B4.root']
+    tmpfil = os.path.expandvars("/tmp/$USER/021B993B-4DBB-E511-BBA6-008CFA1111B4.root")
+    if not os.path.exists(tmpfil):
+        os.system("xrdcp root://eoscms//eos/cms%s %s" % (comp.files[0],tmpfil))
+    comp.files = [ tmpfil ]
+    if not getHeppyOption("single"): comp.fineSplitFactor = 8
 elif test != None:
     raise RuntimeError, "Unknown test %r" % test
 
@@ -629,8 +632,8 @@ if getHeppyOption("fast"):
     from CMGTools.TTHAnalysis.analyzers.ttHFastLepSkimmer import ttHFastLepSkimmer
     fastSkim = cfg.Analyzer(
         ttHFastLepSkimmer, name="ttHFastLepSkimmer2lep",
-        muons = 'slimmedMuons', muCut = lambda mu : mu.pt() > 5 and mu.isLooseMuon(),
-        electrons = 'slimmedElectrons', eleCut = lambda ele : ele.pt() > 7,
+        muons = 'slimmedMuons', muCut = lambda mu : mu.pt() > 3 and mu.isLooseMuon(),
+        electrons = 'slimmedElectrons', eleCut = lambda ele : ele.pt() > 5,
         minLeptons = 2, 
     )
     if jsonAna in sequence:
@@ -643,21 +646,9 @@ if getHeppyOption("dropLHEweights",False):
     susyCounter.doLHE = False
 
 ## Auto-AAA
+from CMGTools.RootTools.samples.autoAAAconfig import *
 if not getHeppyOption("isCrab"):
-    from CMGTools.Production import changeComponentAccessMode
-    from CMGTools.Production.localityChecker import LocalityChecker
-    tier2Checker = LocalityChecker("T2_CH_CERN", datasets="/*/*/MINIAOD*")
-    for comp in selectedComponents:
-        if len(comp.files) == 0: raise RuntimeError, "Empty component: "+comp.name
-        if not hasattr(comp,'dataset'): continue
-        if not re.match("/[^/]+/[^/]+/MINIAOD(SIM)?", comp.dataset): continue
-        if "/store/" not in comp.files[0]: continue
-        if re.search("/store/(group|user|cmst3)/", comp.files[0]): continue
-        if not tier2Checker.available(comp.dataset):
-            print "Dataset %s is not available, will use AAA" % comp.dataset
-            changeComponentAccessMode.convertComponent(comp, "root://cms-xrd-global.cern.ch/%s")
-            if 'X509_USER_PROXY' not in os.environ or "/afs/" not in os.environ['X509_USER_PROXY']:
-                raise RuntimeError, "X509_USER_PROXY not defined or not pointing to /afs"
+    autoAAA(selectedComponents)
 
 ## output histogram
 outputService=[]
@@ -670,6 +661,9 @@ output_service = cfg.Service(
     option='recreate'
     )    
 outputService.append(output_service)
+
+# print summary of components to process
+printSummary(selectedComponents)
 
 # the following is declared in case this cfg is used in input to the heppy.py script
 from PhysicsTools.HeppyCore.framework.eventsfwlite import Events

@@ -108,7 +108,7 @@ genAna = cfg.Analyzer(
     # Particles of which we want to save the pre-FSR momentum (a la status 3).
     # Note that for quarks and gluons the post-FSR doesn't make sense,
     # so those should always be in the list
-    savePreFSRParticleIds = [ 1,2,3,4,5, 11,12,13,14,15,16, 21 ],
+    savePreFSRParticleIds = [ 1,2,3,4,5, 11,12,13,14,15,16, 21,22 ],
     # Make also the list of all genParticles, for other analyzers to handle
     makeAllGenParticles = True,
     # Make also the splitted lists
@@ -464,19 +464,19 @@ ttHCoreEventAna = cfg.Analyzer(
     jetPt = 40.,
     )
 
-## Jet-MET based Skim (generic, but requirements depend on the final state)
-# from CMGTools.TTHAnalysis.analyzers.ttHJetMETSkimmer import ttHJetMETSkimmer
-# ttHJetMETSkim = cfg.Analyzer(
-#    ttHJetMETSkimmer, name='ttHJetMETSkimmer',
-#    jets      = "cleanJets", # jet collection to use
-#    jetPtCuts = [],  # e.g. [60,40,30,20] to require at least four jets with pt > 60,40,30,20
-#    jetVetoPt =  0,  # if non-zero, veto additional jets with pt > veto beyond the ones in jetPtCuts
-#    metCut    =  0,  # MET cut
-#    htCut     = ('htJet40j', 0), # cut on HT defined with only jets and pt cut 40, at zero; i.e. no cut
-#                                 # see ttHCoreEventAnalyzer for alternative definitions
-#    mhtCut    = ('mhtJet40', 0), # cut on MHT defined with all leptons, and jets with pt > 40.
-#    nBJet     = ('CSVv2IVFM', 0, "jet.pt() > 30"),     # require at least 0 jets passing CSV medium and pt > 30
-#    )
+# Jet-MET based Skim (generic, but requirements depend on the final state)
+from CMGTools.TTHAnalysis.analyzers.ttHJetMETSkimmer import ttHJetMETSkimmer
+ttHJetMETSkim = cfg.Analyzer(
+   ttHJetMETSkimmer, name='ttHJetMETSkimmer',
+   jets      = "cleanJets", # jet collection to use
+   jetPtCuts = [],  # e.g. [60,40,30,20] to require at least four jets with pt > 60,40,30,20
+   jetVetoPt =  0,  # if non-zero, veto additional jets with pt > veto beyond the ones in jetPtCuts
+   metCut    =  0,  # MET cut
+   htCut     = ('htJet40j', 0), # cut on HT defined with only jets and pt cut 40, at zero; i.e. no cut
+                                # see ttHCoreEventAnalyzer for alternative definitions
+   mhtCut    = ('mhtJet40', 0), # cut on MHT defined with all leptons, and jets with pt > 40.
+   nBJet     = ('CSVv2IVFM', 0, "jet.pt() > 30"),     # require at least 0 jets passing CSV medium and pt > 30
+   )
 
 
 # Core sequence of all common modules
@@ -504,7 +504,7 @@ susyCoreSequence = [
     #ttHSVAna, # out of core sequence for now
     metAna,
     ttHCoreEventAna,
-    #ttHJetMETSkim
+    # ttHJetMETSkim,
     triggerFlagsAna,
     eventFlagsAna,
 ]
