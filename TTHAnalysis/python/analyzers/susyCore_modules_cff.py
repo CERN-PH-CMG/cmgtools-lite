@@ -201,7 +201,7 @@ lepAna = cfg.Analyzer(
     min_dr_electron_muon = 0.05,
     # do MC matching 
     do_mc_match = True, # note: it will in any case try it only on MC, not on data
-    do_mc_match_photons = False,
+    do_mc_match_photons = "all",
     match_inclusiveLeptons = False, # match to all inclusive leptons
     )
 
@@ -311,8 +311,8 @@ jetAna = cfg.Analyzer(
     recalibrateJets = True, #'MC', # True, False, 'MC', 'Data'
     applyL2L3Residual = True, # Switch to 'Data' when they will become available for Data
     recalibrationType = "AK4PFchs",
-    mcGT     = "76X_mcRun2_asymptotic_v12",
-    dataGT   = "76X_dataRun2_v15_Run2015D_25ns",
+    mcGT     = "Fall15_25nsV2_MC",
+    dataGT   = "Fall15_25nsV2_DATA",
     jecPath = "${CMSSW_BASE}/src/CMGTools/RootTools/data/jec/",
     shiftJEC = 0, # set to +1 or -1 to apply +/-1 sigma shift to the nominal jet energies
     addJECShifts = False, # if true, add  "corr", "corrJECUp", and "corrJECDown" for each jet (requires uncertainties to be available!)

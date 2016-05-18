@@ -8,7 +8,7 @@ import os, sys
 
 dsets = sys.argv[3:]
 if len(sys.argv)<4:
-    dsets = [d.replace('evVarFriend_','').replace('.root','') for d in os.listdir(sys.argv[2]) if 'evVarFriend' in d]
+    dsets = [d.replace('evVarFriend_','').replace('.root','') for d in os.listdir(sys.argv[2]) if ('evVarFriend' in d and 'chunk' not in d)]
 
 def openRootOrUrl(myfile):
     _f_t = None

@@ -93,6 +93,8 @@ triggers_HT600 = ["HLT_PFHT600_v*"] # prescaled
 
 triggers_dijet = ["HLT_DiPFJetAve40_v*", "HLT_DiPFJetAve60_v*"]
 
+triggers_jet = ["HLT_PFJet40_v*", "HLT_PFJet60_v*", "HLT_PFJet80_v*", "HLT_PFJet140_v*", "HLT_PFJet200_v*", "HLT_PFJet260_v*", "HLT_PFJet320_v*", "HLT_PFJet400_v*", "HLT_PFJet450_v*", "HLT_PFJet500_v*"]
+
 triggers_dijet70met120 = [ "HLT_dijet70met120" ]
 triggers_dijet55met110 = [ "HLT_dijet55met110" ]
 
