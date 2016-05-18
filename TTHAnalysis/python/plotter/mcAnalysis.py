@@ -107,23 +107,23 @@ class MCAnalysis:
             cnames = [ x.strip() for x in field[1].split("+") ]
             total_w = 0.; to_norm = False; ttys = [];
             for cname in cnames:
-
                 treename = extra["TreeName"] if "TreeName" in extra else options.tree 
-                objname  = extra["ObjName"]  if "ObjName"  in extra else options.objname 
-                rootfile = "%s/%s/%s/%s_tree.root" % (options.path, field[1].strip(), treename, treename)
+                rootfile = "%s/%s/%s/%s_tree.root" % (options.path, cname, treename, treename)
                 if options.remotePath:
-                    rootfile = "root:%s/%s/%s_tree.root" % (options.remotePath, field[1].strip(), treename)
+                    rootfile = "root:%s/%s/%s_tree.root" % (options.remotePath, cname, treename)
                 elif os.path.exists(rootfile+".url"): #(not os.path.exists(rootfile)) and :
                     rootfile = open(rootfile+".url","r").readline().strip()
-                elif (not os.path.exists(rootfile)) and os.path.exists("%s/%s/%s/tree.root" % (options.path, field[1].strip(), treename)):
+                elif (not os.path.exists(rootfile)) and os.path.exists("%s/%s/%s/tree.root" % (options.path, cname, treename)):
                     # Heppy calls the tree just 'tree.root'
-                    rootfile = "%s/%s/%s/tree.root" % (options.path, field[1].strip(), treename)
-                elif (not os.path.exists(rootfile)) and os.path.exists("%s/%s/%s/tree.root.url" % (options.path, field[1].strip(), treename)):
+                    rootfile = "%s/%s/%s/tree.root" % (options.path, cname, treename)
+                    treename = "tree"
+                elif (not os.path.exists(rootfile)) and os.path.exists("%s/%s/%s/tree.root.url" % (options.path, cname, treename)):
                     # Heppy calls the tree just 'tree.root'
-                    rootfile = "%s/%s/%s/tree.root" % (options.path, field[1].strip(), treename)
+                    rootfile = "%s/%s/%s/tree.root" % (options.path, cname, treename)
                     rootfile = open(rootfile+".url","r").readline().strip()
-                pckfile = options.path+"/%s/skimAnalyzerCount/SkimReport.pck" % field[1].strip()
-                tty = TreeToYield(rootfile, options, settings=extra, name=pname, cname=field[1].strip(), objname=objname)
+                    treename = "tree"
+                pckfile = options.path+"/%s/skimAnalyzerCount/SkimReport.pck" % cname
+                tty = TreeToYield(rootfile, options, settings=extra, name=pname, cname=cname, treename=treename); ttys.append(tty)
                 if signal: 
                     self._signals.append(tty)
                     self._isSignal[pname] = True
@@ -258,8 +258,8 @@ class MCAnalysis:
             if self._backgrounds and not ret.has_key('background') and len(allBg) > 0:
                 ret['background'] = mergeReports(allBg)
         return ret
-    def getPlotsRaw(self,name,expr,bins,cut,process=None,nodata=False,makeSummary=False,options={}):
-        return self.getPlots(PlotSpec(name,expr,bins,options),cut,process,nodata,makeSummary)
+    def getPlotsRaw(self,name,expr,bins,cut,process=None,nodata=False,makeSummary=False):
+        return self.getPlots(PlotSpec(name,expr,bins,{}),cut,process,nodata,makeSummary)
     def getPlots(self,plotspec,cut,process=None,nodata=False,makeSummary=False):
         ret = { }
         allSig = []; allBg = []
@@ -537,7 +537,6 @@ def addMCAnalysisOptions(parser,addTreeToYieldOnesToo=True):
     parser.add_option("--xf", "--exclude-files", dest="filesToExclude", type="string", default=[], action="append", help="Files to exclude (comma-separated list of regexp, can specify multiple ones)");
     parser.add_option("--xp", "--exclude-process", dest="processesToExclude", type="string", default=[], action="append", help="Processes to exclude (comma-separated list of regexp, can specify multiple ones)");
     parser.add_option("--sp", "--signal-process", dest="processesAsSignal", type="string", default=[], action="append", help="Processes to set as signal (overriding the '+' in the text file)");
-    parser.add_option("-t", "--tree",          dest="tree", default='ttHLepTreeProducerTTH', help="Pattern for tree name");
     parser.add_option("--float-process", "--flp", dest="processesToFloat", type="string", default=[], action="append", help="Processes to set as freely floating (overriding the 'FreeFloat' in the text file; affects e.g. mcPlots with --fitData)");
     parser.add_option("--fix-process", "--fxp", dest="processesToFix", type="string", default=[], action="append", help="Processes to set as not freely floating (overriding the 'FreeFloat' in the text file; affects e.g. mcPlots with --fitData)");
     parser.add_option("--peg-process", dest="processesToPeg", type="string", default=[], nargs=2, action="append", help="--peg-process X Y make X scale as Y (equivalent to set PegNormToProcess=Y in the mca.txt)");

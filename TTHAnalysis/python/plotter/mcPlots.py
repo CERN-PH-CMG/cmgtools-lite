@@ -585,7 +585,6 @@ def doLegend(pmap,mca,corner="TR",textSize=0.035,cutoff=1e-2,cutoffSignals=True,
 
 class PlotMaker:
     def __init__(self,tdir,options):
-        self._sf = 1.0
         self._options = options
         self._dir = tdir
         ROOT.gROOT.ProcessLine(".x tdrstyle.cc")
@@ -783,7 +782,7 @@ class PlotMaker:
                 if outputDir: outputDir.WriteTObject(stack)
                 # 
                 if not makeCanvas and not self._options.printPlots: return
-                doRatio = self._options.showRatio and ("TH2" not in total.ClassName())
+                doRatio = self._options.showRatio and ('data' in pmap or (plotmode != "stack")) and ("TH2" not in total.ClassName())
                 islog = pspec.hasOption('Logy'); 
                 if doRatio: ROOT.gStyle.SetPaperSize(20.,sf*(plotformat[1]+150))
                 else:       ROOT.gStyle.SetPaperSize(20.,sf*plotformat[1])
@@ -845,15 +844,15 @@ class PlotMaker:
                         blindbox.Draw()
                         xblind.append(blindbox) # so it doesn't get deleted
                     if options.doStatTests:
-                        doStatTests(totalSyst, pmap['data'], options.doStatTests, legendCorner=pspec.getOption('Legend','TR') if self._options.legendCorner == "" else self._options.legendCorner)
+                        doStatTests(totalSyst, pmap['data'], options.doStatTests, legendCorner=pspec.getOption('Legend','TR'))
                 if pspec.hasOption('YMin') and pspec.hasOption('YMax'):
                     total.GetYaxis().SetRangeUser(pspec.getOption('YMin',1.0), pspec.getOption('YMax',1.0))
                 if options.yrange: 
                     total.GetYaxis().SetRangeUser(options.yrange[0], options.yrange[1])
                 legendCutoff = pspec.getOption('LegendCutoff', 1e-5 if c1.GetLogy() else 1e-2)
-                if self._options.plotmode == "norm": legendCutoff = 0
-                doLegend(pmap,mca,corner=pspec.getOption('Legend','TR') if self._options.legendCorner == "" else self._options.legendCorner,
-                                  cutoff=legendCutoff, mcStyle=("F" if self._options.plotmode == "stack" else "L"),
+                if plotmode == "norm": legendCutoff = 0 
+                doLegend(pmap,mca,corner=pspec.getOption('Legend','TR'),
+                                  cutoff=legendCutoff, mcStyle=("F" if plotmode == "stack" else "L"),
                                   cutoffSignals=not(options.showSigShape or options.showIndivSigShapes or options.showSFitShape), 
                                   textSize=( (0.045 if doRatio else 0.035) if options.legendFontSize <= 0 else options.legendFontSize ),
                                   legWidth=options.legendWidth, legBorder=options.legendBorder, signalPlotScale=options.signalPlotScale)
@@ -906,11 +905,10 @@ class PlotMaker:
                             os.makedirs(fdir); 
                             if os.path.exists("/afs/cern.ch"): os.system("cp /afs/cern.ch/user/g/gpetrucc/php/index.php "+fdir)
                         if ext == "txt":
-                            cols =  [p for p in (mca.listSignals(allProcs=True)+mca.listBackgrounds(allProcs=True)) if p in pmap]
-                            dump = open("%s/%s.%s" % (fdir, pspec.name, ext), "w")
-                            maxlen = max([len(mca.getProcessOption(p,'Label',p)) for p in cols]+[7])
+                            dump = open("%s/%s.%s" % (fdir, outputName, ext), "w")
+                            maxlen = max([len(mca.getProcessOption(p,'Label',p)) for p in mca.listSignals(allProcs=True) + mca.listBackgrounds(allProcs=True)]+[7])
                             fmt    = "%%-%ds %%9.2f +/- %%9.2f (stat)" % (maxlen+1)
-                            for p in cols + ["signal", "background"]:
+                            for p in mca.listSignals(allProcs=True) + mca.listBackgrounds(allProcs=True) + ["signal", "background"]:
                                 if p not in pmap: continue
                                 plot = pmap[p]
                                 if plot.Integral() <= 0: continue
@@ -997,7 +995,6 @@ def addPlotMakerOptions(parser, addAlsoMCAnalysis=True):
     parser.add_option("--legendWidth", dest="legendWidth", type="float", default=0.25, help="Width of the legend")
     parser.add_option("--legendBorder", dest="legendBorder", type="int", default=0, help="Use a border in the legend (1=yes, 0=no)")
     parser.add_option("--legendFontSize", dest="legendFontSize", type="float", default=0.055, help="Font size in the legend (if <=0, use the default)")
-    parser.add_option("--legendCorner", dest="legendCorner", type="string", default="", help="Replace legend for individual plots")
     parser.add_option("--flagDifferences", dest="flagDifferences", action="store_true", default=False, help="Flag plots that are different (when using only two processes, and plotmode nostack")
     parser.add_option("--toleranceForDiff", dest="toleranceForDiff", default=0.0, type="float", help="set numerical tollerance to define when two histogram bins are considered different");
     parser.add_option("--pseudoData", dest="pseudoData", type="string", default=None, help="If set to 'background' or 'all', it will plot also a pseudo-dataset made from background (or signal+background) with Poisson fluctuations in each bin.")

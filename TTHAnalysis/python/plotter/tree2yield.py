@@ -132,13 +132,13 @@ def cropNegativeBins(histo):
 
 
 class TreeToYield:
-    def __init__(self,root,options,scaleFactor=1.0,name=None,cname=None,settings={},objname=None):
+    def __init__(self,root,options,scaleFactor=1.0,name=None,cname=None,settings={},treename=None):
         self._name  = name  if name != None else root
         self._cname = cname if cname != None else self._name
         self._fname = root
         self._isInit = False
         self._options = options
-        self._objname = objname if objname else options.objname
+        self._treename = treename if treename else options.tree
         self._weight  = (options.weight and 'data' not in self._name and '2012' not in self._name and '2011' not in self._name )
         self._isdata = 'data' in self._name
         self._weightString  = options.weightString if not self._isdata else "1"
@@ -232,10 +232,9 @@ class TreeToYield:
             #self._tfile = ROOT.TFile.Open(self._fname+"?readaheadsz=0") #worse than 65k
         else:
             self._tfile = ROOT.TFile.Open(self._fname)
-
         if not self._tfile: raise RuntimeError, "Cannot open %s\n" % self._fname
-        t = self._tfile.Get(self._objname)
-        if not t: raise RuntimeError, "Cannot find tree %s in file %s\n" % (self._objname, self._fname)
+        t = self._tfile.Get(self._treename)
+        if not t: raise RuntimeError, "Cannot find tree %s in file %s\n" % (self._treename, self._fname)
         self._tree  = t
         #self._tree.SetCacheSize(10*1000*1000)
         if "root://" in self._fname: self._tree.SetCacheSize()
@@ -510,7 +509,7 @@ def addTreeToYieldOptions(parser):
     parser.add_option("-R", "--replace-cut", dest="cutsToReplace", action="append", default=[], nargs=3, help="Cuts to invert (regexp of old cut name, new name, new cut); can specify multiple times.") 
     parser.add_option("-A", "--add-cut",     dest="cutsToAdd",     action="append", default=[], nargs=3, help="Cuts to insert (regexp of cut name after which this cut should go, new name, new cut); can specify multiple times.") 
     parser.add_option("-N", "--n-minus-one", dest="nMinusOne", action="store_true", help="Compute n-minus-one yields and plots")
-    parser.add_option("--obj", "--objname",    dest="objname", default='tree', help="Pattern for the name of the TTree inside the file");
+    parser.add_option("-t", "--tree",          dest="tree", default='ttHLepTreeProducerTTH', help="Pattern for tree name");
     parser.add_option("-G", "--no-fractions",  dest="fractions",action="store_false", default=True, help="Don't print the fractions");
     parser.add_option("-F", "--add-friend",    dest="friendTrees",  action="append", default=[], nargs=2, help="Add a friend tree (treename, filename). Can use {name}, {cname} patterns in the treename") 
     parser.add_option("--Fs", "--add-friend-simple",    dest="friendTreesSimple",  action="append", default=[], nargs=1, help="Add friends in a directory. The rootfile must be called evVarFriend_{cname}.root and tree must be called 't' in a subdir 'sf' inside the rootfile.") 
