@@ -1,0 +1,7 @@
+nvtx   : nVert       : 40,0.5,40.5 ; XTitle="N_{vtx}", Legend='TR'
+nJet30 : nJetClean30 : 8,0.5,8.5  ; XTitle='N(jet\, p_{T} > 30 GeV)', Legend='TR'
+recoil: pt_2(met_pt,met_phi,GammaGood1_pt,GammaGood1_phi) : [200, 230, 260, 290, 320, 350, 390, 430, 470, 510, 550, 590, 640, 690, 740, 790, 840, 900, 960, 1020, 1090, 1160]  ; XTitle="Recoil [GeV]",Logy, LegendCutoff=1e-3, YMin=1, YMax=1e5
+j1pt   : JetClean1_pt: 22,100,1200 ; XTitle="Leading jet p_{T}  [GeV]" ,  Legend='TR',Logy,LegendCutoff=1e-4, YMin=1, YMax=1e5
+HT     : htJet25     : 50,0,1200  ; XTitle="H_{T}^{jet 25 GeV} [GeV]", Logy, Legend='TR'
+mpruned: FatJetClean1_prunedMass : 16,65,105 ; XTitle="m_{pruned} [GeV]", Legend='TR'
+t2t1   : FatJetClean1_tau2/FatJetClean1_tau1: 20,0.1,1.0 ; XTitle="#tau_{2}/#tau_{1}", Legend='TR'
