@@ -202,7 +202,7 @@ lepAna = cfg.Analyzer(
     # do MC matching 
     do_mc_match = True, # note: it will in any case try it only on MC, not on data
     do_mc_match_photons = "all",
-    do_mc_match_susy=True,
+    do_mc_match_susy=False,
     match_inclusiveLeptons = False, # match to all inclusive leptons
     )
 
