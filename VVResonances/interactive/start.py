@@ -152,6 +152,3 @@ jjStack.addPlotter(dataJet,"data_obs","Data","data")
 #jjnunuStack.addPlotter(QCD,"QCD","QCD multijet","background")
 #jjnunuStack.addPlotter(tt,"tt","t#bar{t}","background")
 #jjnunuStack.addPlotter(dataMET,"data_obs","Data","data")
-
-
-
