@@ -183,6 +183,13 @@ susyCoreSequence.insert(susyCoreSequence.index(ttHFatJetAna)+1, ttHDecluster)
 
 from CMGTools.TTHAnalysis.analyzers.treeProducerSusyMultilepton import * 
 
+if analysis=="susy":
+    lepAna.do_mc_susy_match=True
+    leptonTypeSusyExtraLight.addVariables([
+            NTupleVariable("mcUCSXMatchId", lambda x : x.mcUCSXMatchId if hasattr(x,'mcUCSXMatchId') else -1, help="MC truth matching a la UCSX"),
+            ])
+
+
 if lepAna.doIsolationScan:
     leptonTypeSusyExtraLight.addVariables([
             NTupleVariable("scanAbsIsoCharged005", lambda x : x.ScanAbsIsoCharged005 if hasattr(x,'ScanAbsIsoCharged005') else -999, help="PF abs charged isolation dR=0.05, no pile-up correction"),
@@ -571,15 +578,6 @@ elif test == '5':
         comp.splitFactor = 1
         comp.fineSplitFactor = 5
 elif test == "ra5-sync-mc":
-
-    #eventSelector = cfg.Analyzer(
-    #    'EventSelector',
-    #    toSelect = [
-    #        # here put the event numbers (actual event numbers from CMSSW)
-    #        ]
-    #    )
-
-
     comp = cfg.MCComponent( files = ["root://eoscms.cern.ch//store/mc/RunIIFall15MiniAODv2/TTWJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8/MINIAODSIM/PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/60000/14C51DB0-D6B8-E511-8D9B-8CDCD4A9A484.root"], name="TTW_RA5_sync" )
     comp.triggers = []
     selectedComponents = [ comp ]
