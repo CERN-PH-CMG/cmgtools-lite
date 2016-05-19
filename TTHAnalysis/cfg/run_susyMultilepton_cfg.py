@@ -184,7 +184,7 @@ susyCoreSequence.insert(susyCoreSequence.index(ttHFatJetAna)+1, ttHDecluster)
 from CMGTools.TTHAnalysis.analyzers.treeProducerSusyMultilepton import * 
 
 if analysis=="susy":
-    leptonAna.do_mc_susy_match=True
+    lepAna.do_mc_susy_match=True
     leptonTypeSusyExtraLight.addVariables([
             NTupleVariable("mcUCSXMatchId", lambda x : x.mcUCSXMatchId if hasattr(x,'mcUCSXMatchId') else -1, help="MC truth matching a la UCSX"),
             ])
