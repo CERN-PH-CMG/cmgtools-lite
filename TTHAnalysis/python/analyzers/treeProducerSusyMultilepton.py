@@ -2,6 +2,12 @@ from CMGTools.TTHAnalysis.analyzers.treeProducerSusyCore import *
 from CMGTools.TTHAnalysis.analyzers.ntupleTypes import *
 
 susyMultilepton_globalVariables = susyCore_globalVariables + [
+
+
+            ## ------- lheHT, needed for merging HT binned samples 
+            NTupleVariable("lheHT", lambda ev : ev.lheHT, mcOnly=True, help="H_{T} computed from quarks and gluons in Heppy LHEAnalyzer"),
+            NTupleVariable("lheHTIncoming", lambda ev : ev.lheHTIncoming, mcOnly=True, help="H_{T} computed from quarks and gluons in Heppy LHEAnalyzer (only LHE status<0 as mothers)"),
+
             ##-------- custom jets ------------------------------------------
             NTupleVariable("htJet25", lambda ev : ev.htJet25, help="H_{T} computed from leptons and jets (with |eta|<2.4, pt > 25 GeV)"),
             NTupleVariable("mhtJet25", lambda ev : ev.mhtJet25, help="H_{T}^{miss} computed from leptons and jets (with |eta|<2.4, pt > 25 GeV)"),
