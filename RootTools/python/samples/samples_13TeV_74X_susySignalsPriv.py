@@ -133,9 +133,88 @@ T6ttWW = [ T6ttWW_mSbot600_mCh425_mChi50, T6ttWW_mSbot650_mCh150_mChi50 ]
 T6qqWW = [ ]
 
 
+## TChiNeuSlepSneu (flavor-democratic)
+## ------------------------------------------------------
+## xsec: https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SUSYCrossSections13TeVn2x1wino
+## BR: chi2->sleplep (0.5)
+TChiNeuSlepSneu_mCh750_mChi100    = kreator.makeMCComponentFromEOS('TChiNeuSlepSneu_mCh750_mChi100'   , '/TChiNeuSlepSneu_mCh750_mChi100/'   , '/store/group/phys_susy/cheidegg/EWKSignals_74X_MiniAODv2/%s', ".*root", 0.00669356*0.5)
+TChiNeuSlepSneu_mCh450_mChi300    = kreator.makeMCComponentFromEOS('TChiNeuSlepSneu_mCh450_mChi300'   , '/TChiNeuSlepSneu_mCh450_mChi300/'   , '/store/group/phys_susy/cheidegg/EWKSignals_74X_MiniAODv2/%s', ".*root", 0.0734361 *0.5)
+TChiNeuSlepSneu_mCh300_mChi270    = kreator.makeMCComponentFromEOS('TChiNeuSlepSneu_mCh300_mChi270'   , '/TChiNeuSlepSneu_mCh300_mChi270/'   , '/store/group/phys_susy/cheidegg/EWKSignals_74X_MiniAODv2/%s', ".*root", 0.386936  *0.5)
+TChiNeuSlepSneu = [TChiNeuSlepSneu_mCh750_mChi100, TChiNeuSlepSneu_mCh450_mChi300, TChiNeuSlepSneu_mCh300_mChi270]
+
+
+## TChiNeuSlepSneu_SS (flavor-democratic, same-sign)
+## ------------------------------------------------------
+## xsec: https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SUSYCrossSections13TeVn2x1wino
+## BR: chi2->sleplep (0.5)
+TChiNeuSlepSneu_mCh450_mChi300_SS95 = kreator.makeMCComponentFromEOS('TChiNeuSlepSneu_mCh450_mChi300_SS95', '/TChiNeuSlepSneu_mCh450_mChi300_SS95/', '/store/group/phys_susy/cheidegg/EWKSignals_74X_MiniAODv2/%s', ".*root", 0.0734361*0.5)
+TChiNeuSlepSneu_mCh300_mChi270_SS95 = kreator.makeMCComponentFromEOS('TChiNeuSlepSneu_mCh300_mChi270_SS95', '/TChiNeuSlepSneu_mCh300_mChi270_SS95/', '/store/group/phys_susy/cheidegg/EWKSignals_74X_MiniAODv2/%s', ".*root", 0.386936 *0.5)
+TChiNeuSlepSneu_SS = [TChiNeuSlepSneu_mCh450_mChi300_SS95, TChiNeuSlepSneu_mCh300_mChi270_SS95 ]
+
+
+## TChiChiSlepSneu (flavor-democratic)
+## ------------------------------------------------------
+## xsec: https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SUSYCrossSections13TeVn2x1wino
+## BR: 1.0
+TChiChiSlepSneu_mCh350_mChi200    = kreator.makeMCComponentFromEOS('TChiChiSlepSneu_mCh350_mChi200'   , '/TChiChiSlepSneu_mCh350_mChi200/'   , '/store/group/phys_susy/cheidegg/EWKSignals_74X_MiniAODv2/%s', ".*root", 0.209439  )
+TChiChiSlepSneu_mCh600_mChi50     = kreator.makeMCComponentFromEOS('TChiChiSlepSneu_mCh600_mChi50'    , '/TChiChiSlepSneu_mCh600_mChi50/'    , '/store/group/phys_susy/cheidegg/EWKSignals_74X_MiniAODv2/%s', ".*root", 0.0201372 )
+TChiChiSlepSneu = [ TChiChiSlepSneu_mCh350_mChi200, TChiChiSlepSneu_mCh600_mChi50]
+
+
+## TChiNeuWH (multi-lepton)
+## ------------------------------------------------------
+## xsec: https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SUSYCrossSections13TeVn2x1wino
+## BR: H->tautau, ZZ, WW (0.0632+0.264+0.022), Z->ll (0.10099), W->lnu (0.3257)
+TChiNeuWH_mCh250_mChi20  = kreator.makeMCComponentFromEOS('TChiNeuWH_mCh250_mChi20', '/TChiNeuWH_mCh250_mChi20/', '/store/group/phys_susy/cheidegg/EWKSignals_74X_MiniAODv2/%s', ".*root", 0.782487*0.3492*0.10099*0.3257*0.3257)
+TChiNeuWH_mCh150_mChi20  = kreator.makeMCComponentFromEOS('TChiNeuWH_mCh150_mChi20', '/TChiNeuWH_mCh150_mChi20/', '/store/group/phys_susy/cheidegg/EWKSignals_74X_MiniAODv2/%s', ".*root", 5.18086 *0.3492*0.10099*0.3257*0.3257)
+TChiNeuWH  = [ TChiNeuWH_mCh250_mChi20, TChiNeuWH_mCh150_mChi20 ]
+
+
+## TChiNeuWH_SL (single-lepton)
+## ------------------------------------------------------
+## xsec: https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SUSYCrossSections13TeVn2x1wino
+## BR: W->lnu (0.3257)
+TChiNeuWH_mCh250_mChi20_SL  = kreator.makeMCComponentFromEOS('TChiNeuWH_mCh250_mChi20_SL', '/TChiNeuWH_mCh250_mChi20_SL/', '/store/group/phys_susy/cheidegg/EWKSignals_74X_MiniAODv2/%s', ".*root", 0.782487*0.3257)
+TChiNeuWH_mCh150_mChi20_SL  = kreator.makeMCComponentFromEOS('TChiNeuWH_mCh150_mChi20_SL', '/TChiNeuWH_mCh150_mChi20_SL/', '/store/group/phys_susy/cheidegg/EWKSignals_74X_MiniAODv2/%s', ".*root", 5.18086 *0.3257)
+TChiNeuWH_SL  = [ TChiNeuWH_mCh250_mChi20_SL, TChiNeuWH_mCh150_mChi20_SL ]
+
+
+## TChiNeuWZ (multi-lepton)
+## ------------------------------------------------------
+## xsec: https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SUSYCrossSections13TeVn2x1wino
+## BR: Z->ll (0.10099), W->lnu (0.3257)
+TChiNeuWZ_mCh350_mChi20  = kreator.makeMCComponentFromEOS('TChiNeuWZ_mCh350_mChi20' , '/TChiNeuWZ_mCh350_mChi20/'                 , '/store/group/phys_susy/cheidegg/EWKSignals_74X_MiniAODv2/%s', ".*root", 0.209439*0.10099*0.3257)
+TChiNeuWZ_mCh350_mChi100 = kreator.makeMCComponentFromEOS('TChiNeuWZ_mCh350_mChi100', '/TChiNeuWZ_mCh350_mChi100/'                , '/store/group/phys_susy/cheidegg/EWKSignals_74X_MiniAODv2/%s', ".*root", 0.209439*0.10099*0.3257)
+TChiNeuWZ_mCh200_mChi100 = kreator.makeMCComponentFromEOS('TChiNeuWZ_mCh200_mChi100', '/TChiNeuWZ_mCh200_mChi100/'                , '/store/group/phys_susy/cheidegg/EWKSignals_74X_MiniAODv2/%s', ".*root", 1.80739 *0.10099*0.3257)
+TChiNeuWZ_mCh150_mChi120 = kreator.makeMCComponentFromEOS('TChiNeuWZ_mCh150_mChi120', '/TChiNeuWZ_mCh150_mChi120/'                , '/store/group/phys_susy/cheidegg/EWKSignals_74X_MiniAODv2/%s', ".*root", 5.18086 *0.10099*0.3257)
+TChiNeuWZ  = [ TChiNeuWZ_mCh350_mChi100, TChiNeuWZ_mCh350_mChi20, TChiNeuWZ_mCh200_mChi100, TChiNeuWZ_mCh150_mChi120 ]
+
+
+## TChiNeuWZ_OS (opposite-sign)
+## ------------------------------------------------------
+## xsec: https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SUSYCrossSections13TeVn2x1wino
+## BR: Z->ll (0.10099)
+TChiNeuWZ_mCh400_mChi20_OS  = kreator.makeMCComponentFromEOS('TChiNeuWZ_mCh400_mChi20_OS' , '/TChiNeuWZ_mCh400_mChi20_OS/' , '/store/group/phys_susy/cheidegg/EWKSignals_74X_MiniAODv2/%s', ".*root", 0.121013*0.10099)
+TChiNeuWZ_mCh350_mChi20_OS  = kreator.makeMCComponentFromEOS('TChiNeuWZ_mCh350_mChi20_OS' , '/TChiNeuWZ_mCh350_mChi20_OS/' , '/store/group/phys_susy/cheidegg/EWKSignals_74X_MiniAODv2/%s', ".*root", 0.209439*0.10099)
+TChiNeuWZ_mCh350_mChi100_OS = kreator.makeMCComponentFromEOS('TChiNeuWZ_mCh350_mChi100_OS', '/TChiNeuWZ_mCh350_mChi100_OS/', '/store/group/phys_susy/cheidegg/EWKSignals_74X_MiniAODv2/%s', ".*root", 0.209439*0.10099)
+TChiNeuWZ_mCh300_mChi20_OS  = kreator.makeMCComponentFromEOS('TChiNeuWZ_mCh300_mChi20_OS' , '/TChiNeuWZ_mCh300_mChi20_OS/' , '/store/group/phys_susy/cheidegg/EWKSignals_74X_MiniAODv2/%s', ".*root", 0.386936*0.10099)
+TChiNeuWZ_mCh200_mChi100_OS = kreator.makeMCComponentFromEOS('TChiNeuWZ_mCh200_mChi100_OS', '/TChiNeuWZ_mCh200_mChi100_OS/', '/store/group/phys_susy/cheidegg/EWKSignals_74X_MiniAODv2/%s', ".*root", 1.80739 *0.10099)
+TChiNeuWZ_mCh150_mChi120_OS = kreator.makeMCComponentFromEOS('TChiNeuWZ_mCh150_mChi120_OS', '/TChiNeuWZ_mCh150_mChi120_OS/', '/store/group/phys_susy/cheidegg/EWKSignals_74X_MiniAODv2/%s', ".*root", 5.18086 *0.10099)
+TChiNeuWZ_OS = [ TChiNeuWZ_mCh400_mChi20_OS, TChiNeuWZ_mCh350_mChi100_OS, TChiNeuWZ_mCh350_mChi20_OS, TChiNeuWZ_mCh300_mChi20_OS, TChiNeuWZ_mCh200_mChi100_OS, TChiNeuWZ_mCh150_mChi120_OS ]
+
+
+## TSlepSlep
+## ------------------------------------------------------
+## NO XSEC IS PUT HERE! samples are inclusive in handedness, need
+## to put the value separately in your analyzer code!
+TSlepSlep_mSlep300_mChi20 = kreator.makeMCComponentFromEOS('TSlepSlep_mSlep300_mChi20' , '/TSlepSlep_mSlep300_mChi20/' , '/store/group/phys_susy/cheidegg/EWKSignals_74X_MiniAODv2/%s', ".*root", 1.)
+TSlepSlep_mSlep150_mChi60 = kreator.makeMCComponentFromEOS('TSlepSlep_mSlep150_mChi60' , '/TSlepSlep_mSlep150_mChi60/' , '/store/group/phys_susy/cheidegg/EWKSignals_74X_MiniAODv2/%s', ".*root", 1.)
+TSlepSlep = [ TSlepSlep_mSlep300_mChi20, TSlepSlep_mSlep150_mChi60 ]
+
+
 ## mcSamplesPriv
 ## ------------------------------------------------------
-mcSamplesPriv = SqGltttt + T1ttbb + T1ttbbWW + T1tttt + T2tt + T2ttDeg + T5qqqqVV + T5qqqqVVDeg + T5ttttDeg + T6ttWW + T6qqWW
+mcSamplesPriv = SqGltttt + T1ttbb + T1ttbbWW + T1tttt + T2tt + T2ttDeg + T5qqqqVV + T5qqqqVVDeg + T5ttttDeg + T6ttWW + T6qqWW + TChiChiSlepSneu + TChiNeuSlepSneu + TChiNeuSlepSneu_SS + TChiNeuSlepSneu_TD + TChiNeuWH + TChiNeuWH_SL + TChiNeuWZ + TChiNeuWZ_OS + TSlepSlep
 
 
 

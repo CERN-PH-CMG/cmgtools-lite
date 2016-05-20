@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-ODIR="test_ra5plots_dec03"
+ODIR="test_ra5plots_redo_jan31"
 
 #lumi_unblinded = 0.13314
 #lumi_all = 1.28
@@ -8,7 +8,7 @@ lumi_all = 2.16
 
 def base(unbl=False):
 
-    T="-P /data1/p/peruzzi/skimmed_mix_nov22"
+    T="-P /data1/p/peruzzi/skims_ra5_dec2015/skimmed_mix_nov22"
     CORE="%s --neg --s2v --tree treeProducerSusyMultilepton  -F sf/t {P}/5_allnewfriends_v7/evVarFriend_{cname}.root --mcc susy-multilepton/susy_2lssinc_triggerdefs.txt"%T
 #    CORE="%s --neg --s2v --tree treeProducerSusyMultilepton  -F sf/t {P}/5_allnewfriends_v8_ECOmaps/evVarFriend_{cname}.root --mcc susy-multilepton/susy_2lssinc_triggerdefs.txt"%T
 #    CORE="%s --neg --s2v --tree treeProducerSusyMultilepton -F sf/t {P}/3_recleaner/evVarFriend_{cname}.root -F sf/t {P}/4_choice/evVarFriend_{cname}.root --mcc susy-multilepton/susy_2lssinc_triggerdefs.txt"%T

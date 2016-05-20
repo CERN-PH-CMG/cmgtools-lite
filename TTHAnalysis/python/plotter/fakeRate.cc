@@ -82,11 +82,28 @@ bool loadFRHisto(const std::string &histoName, const char *file, const char *nam
         return 0;
     }
 
+    TFile *f = TFile::Open(file);
     if (*histo != 0) {
-      std::cerr << "WARNING: overwriting histogram " << (*histo)->GetName() << std::endl;
+      if (std::string(name) != (*histo)->GetName()) {
+          std::cerr << "WARNING: overwriting histogram " << (*histo)->GetName() << std::endl;
+      } else {
+          TH2* hnew = (TH2*) f->Get(name);
+          if (hnew == 0 || hnew->GetNbinsX() != (*histo)->GetNbinsX() || hnew->GetNbinsY() != (*histo)->GetNbinsY()) {
+              std::cerr << "WARNING: overwriting histogram " << (*histo)->GetName() << std::endl;
+          } else {
+              bool fail = false;
+              for (int ix = 1; ix <= (*histo)->GetNbinsX(); ++ix) {
+                  for (int iy = 1; iy <= (*histo)->GetNbinsX(); ++iy) {
+                      if ((*histo)->GetBinContent(ix,iy) != hnew->GetBinContent(ix,iy)) {
+                          fail = true; break;
+                      }
+                  }
+              }
+              if (fail) std::cerr << "WARNING: overwriting histogram " << (*histo)->GetName() << std::endl;
+          }
+      }
       delete *histo;
     }
-    TFile *f = TFile::Open(file);
     if (f->Get(name) == 0) {
         std::cerr << "ERROR: could not find " << name << " in " << file << std::endl;
         *histo = 0;
@@ -99,7 +116,7 @@ bool loadFRHisto(const std::string &histoName, const char *file, const char *nam
     return histo != 0;
 }
 
-float fakeRateWeight_2lss(float l1pt, float l1eta, int l1pdgId, float l1mva,
+float fakeRateWeight_2lssMVA(float l1pt, float l1eta, int l1pdgId, float l1mva,
                          float l2pt, float l2eta, int l2pdgId, float l2mva, float WP) 
 {
     int nfail = (l1mva < WP)+(l2mva < WP);
@@ -141,20 +158,26 @@ float fakeRateWeight_2lssCB_i(float l1pt, float l1eta, int l1pdgId, float l1relI
             if (l1relIso > l2relIso) { fpt = l1pt; feta = std::abs(l1eta); fid = abs(l1pdgId); }
             else                     { fpt = l2pt; feta = std::abs(l2eta); fid = abs(l2pdgId); }
             TH2 *hist = (fid == 11 ? FRi_el[iFR] : FRi_mu[iFR]);
+            if (hist == 0) { std::cerr << "ERROR, missing FR for pdgId " << fid << ", iFR " << iFR << std::endl; std::abort(); }
             int ptbin  = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(fpt)));
             int etabin = std::max(1, std::min(hist->GetNbinsY(), hist->GetYaxis()->FindBin(feta)));
             double fr = hist->GetBinContent(ptbin,etabin);
+            if (fr <= 0)  { std::cerr << "WARNING, FR is " << fr << " for " << hist->GetName() << ", pt " << fpt << " eta " << feta << std::endl; if (fr<0) std::abort(); }
             return fr/(1-fr);
         }
         case 2: {
             TH2 *hist1 = (abs(l1pdgId) == 11 ? FRi_el[iFR] : FRi_mu[iFR]);
+            if (hist1 == 0) { std::cerr << "ERROR, missing FR for pdgId " << l1pdgId << ", iFR " << iFR << std::endl; std::abort(); }
             int ptbin1  = std::max(1, std::min(hist1->GetNbinsX(), hist1->GetXaxis()->FindBin(l1pt)));
             int etabin1 = std::max(1, std::min(hist1->GetNbinsY(), hist1->GetYaxis()->FindBin(std::abs(l1eta))));
             double fr1 = hist1->GetBinContent(ptbin1,etabin1);
+            if (fr1 <= 0)  { std::cerr << "WARNING, FR is " << fr1 << " for " << hist1->GetName() << ", pt " << l1pt << " eta " << l1eta << std::endl; if (fr1<0) std::abort(); }
             TH2 *hist2 = (abs(l2pdgId) == 11 ? FRi_el[iFR] : FRi_mu[iFR]);
+            if (hist2 == 0) { std::cerr << "ERROR, missing FR for pdgId " << l2pdgId << ", iFR " << iFR << std::endl; std::abort(); }
             int ptbin2  = std::max(1, std::min(hist2->GetNbinsX(), hist2->GetXaxis()->FindBin(l2pt)));
             int etabin2 = std::max(1, std::min(hist2->GetNbinsY(), hist2->GetYaxis()->FindBin(std::abs(l2eta))));
             double fr2 = hist2->GetBinContent(ptbin2,etabin2);
+            if (fr2 <= 0)  { std::cerr << "WARNING, FR is " << fr2 << " for " << hist2->GetName() << ", pt " << l2pt << " eta " << l2eta << std::endl; if (fr2<0) std::abort(); }
             return -fr1*fr2/((1-fr1)*(1-fr2));
         }
         default: return 0;
@@ -166,6 +189,19 @@ float fakeRateWeight_2lssCB(float l1pt, float l1eta, int l1pdgId, float l1relIso
 {
     return fakeRateWeight_2lssCB_i(l1pt, l1eta, l1pdgId, l1relIso,
                             l2pt, l2eta, l2pdgId, l2relIso, WP, 0);
+}
+
+float fakeRateWeight_2lss(float l1pt, float l1eta, int l1pdgId, float l1pass,
+                            float l2pt, float l2eta, int l2pdgId, float l2pass) 
+{
+    return fakeRateWeight_2lssCB_i(l1pt, l1eta, l1pdgId, -l1pass,
+                            l2pt, l2eta, l2pdgId, -l2pass, -0.5, 0);
+}
+float fakeRateWeight_2lss_2(float l1pt, float l1eta, int l1pdgId, float l1pass,
+                            float l2pt, float l2eta, int l2pdgId, float l2pass) 
+{
+    return fakeRateWeight_2lssCB_i(l1pt, l1eta, l1pdgId, -l1pass,
+                            l2pt, l2eta, l2pdgId, -l2pass, -0.5, 2);
 }
 
 
@@ -530,7 +566,7 @@ float fakeRateWeight_3lSyst(float l1pt, float l1eta, int l1pdgId, float l1mva,
     return ret;
 }
 
-float fakeRateWeight_3l(float l1pt, float l1eta, int l1pdgId, float l1mva,
+float fakeRateWeight_3lMVA(float l1pt, float l1eta, int l1pdgId, float l1mva,
                         float l2pt, float l2eta, int l2pdgId, float l2mva,
                         float l3pt, float l3eta, int l3pdgId, float l3mva,
                         float WP)
@@ -608,6 +644,27 @@ float fakeRateWeight_3lCB(float l1pt, float l1eta, int l1pdgId, float l1relIso,
             ret *= -fr/(1.0f-fr);
         }
     }
+    if (ret == -1.0f) ret = 0.0f;
+    return ret;
+}
+
+float fetchFR_i(float l1pt, float l1eta, int l1pdgId, int iFR) 
+{
+    TH2 *hist1 = (abs(l1pdgId) == 11 ? FRi_el[iFR] : FRi_mu[iFR]);
+    if (hist1 == 0) { std::cerr << "ERROR, missing FR for pdgId " << l1pdgId << ", iFR " << iFR << std::endl; std::abort(); }
+    int ptbin1  = std::max(1, std::min(hist1->GetNbinsX(), hist1->GetXaxis()->FindBin(l1pt)));
+    int etabin1 = std::max(1, std::min(hist1->GetNbinsY(), hist1->GetYaxis()->FindBin(std::abs(l1eta))));
+    double fr1 = hist1->GetBinContent(ptbin1,etabin1);
+    if (fr1 <= 0)  { std::cerr << "WARNING, FR is " << fr1 << " for " << hist1->GetName() << ", pt " << l1pt << " eta " << l1eta << std::endl; if (fr1<0) std::abort(); }
+    return fr1;
+}
+   
+float fakeRateWeight_3l(float l1fr, int l1pass, float l2fr, int l2pass, float l3fr, int l3pass) 
+{
+    float ret = -1.0f;
+    if (!l1pass) ret *=  -l1fr/(1.0f-l1fr);
+    if (!l2pass) ret *=  -l2fr/(1.0f-l2fr);
+    if (!l3pass) ret *=  -l2fr/(1.0f-l2fr);
     if (ret == -1.0f) ret = 0.0f;
     return ret;
 }
@@ -794,6 +851,7 @@ float fakeRateReader_2lss_fHT_FO(float l1eta, float l1pt, float l2eta, float l2p
 namespace WP {
     enum WPId { V=0, VL=0, VVL=-1, L=1, M=2, T=3, VT=4, HT=5 } ;
 }
+
 float multiIso_singleWP(float LepGood_miniRelIso, float LepGood_jetPtRatiov2, float LepGood_jetPtRelv2, WP::WPId wp) {
     switch (wp) {
         case WP::VT: return LepGood_miniRelIso < 0.09  && (LepGood_jetPtRatiov2>0.84  || LepGood_jetPtRelv2>7.2 );
@@ -807,6 +865,12 @@ float multiIso_singleWP(float LepGood_miniRelIso, float LepGood_jetPtRatiov2, fl
             abort();
     }
 }
+
+float multiIso_singleWP(float LepGood_miniRelIso, float LepGood_jetPtRatiov2, float LepGood_jetPtRelv2, int wp) {
+     WP::WPId wpid = static_cast<WP::WPId>(wp);
+     return multiIso_singleWP(LepGood_miniRelIso, LepGood_jetPtRatiov2, LepGood_jetPtRelv2, wpid);
+}
+
 float multiIso_multiWP(int LepGood_pdgId, float LepGood_pt, float LepGood_eta, float LepGood_miniRelIso, float LepGood_jetPtRatiov2, float LepGood_jetPtRelv2, WP::WPId wp) {
     switch (wp) {
         case WP::VT: 
@@ -873,5 +937,39 @@ float mvaIdSpring15(int LepGood_pdgId, float LepGood_eta, float LepGood_mvaIdSpr
     abort();
   }
 }
+
+float ttHl_ptFO(int LepGood_pdgId, float LepGood_pt, float LepGood_jetPtRatio, float LepGood_mva, float WP) {
+    if (LepGood_mva > WP) return LepGood_pt;
+    float corr = 1.0;
+    if (std::abs(WP-0.65)<0.05) { 
+        if (std::abs(LepGood_pdgId) == 11) {
+            if (LepGood_pt > 20) corr = 0.85;
+            else if (LepGood_pt < 10) corr = 1.0;
+            else corr = 0.85+0.015*(20.-LepGood_pt); // interpolate
+        } else {
+            if (LepGood_pt > 20) corr = 0.76;
+            else if (LepGood_pt < 10) corr = 1.0;
+            else corr = 0.76+0.024*(20.-LepGood_pt); // interpolate up from 0.75 to 1.0
+        }
+    } else if (std::abs(WP-0.40)<0.05) { 
+        if (std::abs(LepGood_pdgId) == 11) {
+            if (LepGood_pt > 20) corr = 0.80;
+            else corr = 0.80+0.20*(20.-LepGood_pt)/13.; // interpolate
+        } else {
+            if (LepGood_pt > 20) corr = 0.74;
+            else if (LepGood_pt < 10) corr = 1.0;
+            else corr = 0.74+0.026*(20.-LepGood_pt); // interpolate up from 0.74 to 1.0
+        }
+
+    } else {
+        static int warn = 0; if (++warn < 2) std::cout << "Warning: ttHl_ptFO requested for unexpected WP " << WP << std::endl; 
+    }
+    return corr * LepGood_pt/LepGood_jetPtRatio;
+}
+float ttHl_ptFO_ab(int LepGood_pdgId, float LepGood_pt, float LepGood_jetPtRatio, float LepGood_mva, float WP, float a, float b) {
+    if (LepGood_mva > WP) return LepGood_pt;
+    return std::max(LepGood_pt, a*(LepGood_pt/LepGood_jetPtRatio - b));
+}
+
 
 void fakeRate() {}
