@@ -487,13 +487,13 @@ susyCoreSequence = [
     jsonAna,
     triggerAna,
     pileUpAna,
-    genAna, #
-#    genHiggsAna,
-    genHFAna, #
+    genAna,
+    genHiggsAna,
+    genHFAna,
     pdfwAna,
     susyScanAna,
     vertexAna,
-    lepAna, ##
+    lepAna,
     ttHLepSkim,
     #ttHLepMCAna,
     photonAna,

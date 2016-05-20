@@ -39,28 +39,6 @@ MODULES.append( ('leptonJetReCleanerSusyQCD', lambda : LeptonJetReCleaner("Mini"
                    isFastSim = isFastSim,
                    CSVbtagFileName = btagSF, EFFbtagFileName = btagEFF, CSVbtagFileNameFastSim = btagSF_FastSim ) ))
 
-
-
-#--- Susy multilep instances
-MODULES.append( ('leptonJetReCleanerSusyRA5', lambda : LeptonJetReCleaner("Mini", 
-                   lambda lep : lep.miniRelIso < 0.4 and _susy2lss_lepId_CBloose(lep), #and (ht>300 or _susy2lss_idIsoEmu_cuts(lep)), 
-                   lambda lep : lep.pt>10 and _susy2lss_lepId_loosestFO(lep) and _susy2lss_lepId_IPcuts(lep), # cuts applied on top of loose
-                   lambda lep,ht : lep.pt>10 and _susy2lss_lepConePt1015(lep) and _susy2lss_lepId_IPcuts(lep) and (_susy2lss_lepId_loosestFO(lep) if ht>300 else _susy2lss_lepId_tighterFO(lep)), # cuts applied on top of loose
-                   lambda lep,ht : lep.pt>10 and _susy2lss_lepConePt1015(lep) and _susy2lss_multiIso(lep) and _susy2lss_lepId_CB(lep) and (ht>300 or _susy2lss_idIsoEmu_cuts(lep)), # cuts applied on top of loose
-                   cleanJet = lambda lep,jet,dr : dr<0.4,
-                   selectJet = lambda jet: abs(jet.eta)<2.4,
-                   isFastSim = isFastSim,
-                   doBtagRWT = False,
-                  # cleanWithTaus = False,
-                   coneptdef = lambda lep: conept_RA5(lep)
-                 #  jetPt = 40,
-                 #  bJetPt = 25,
-                  # CSVbtagFileName = btagSF, 
-                  # EFFbtagFileName = btagEFF, 
-                  # CSVbtagFileNameFastSim = btagSF_FastSim 
-                 ) ))
-
-
 #MODULES.append( ('leptonJetReCleanerSusyInSitu', lambda : LeptonJetReCleaner("MiniInSitu", 
 #                lambda lep : lep.miniRelIso < 0.4 and _susy2lss_lepId_CBloose(lep), 
 #                lambda lep : lep.pt>10 and _susy2lss_lepId_loosestFO(lep) and _susy2lss_lepId_IPcuts(lep), # cuts applied on top of loose
@@ -90,7 +68,6 @@ MODULES.append( ('leptonChoiceRA5_Flips', lambda : LeptonChoiceRA5("Flips","Mini
 #                selectJet = lambda jet: abs(jet.eta)<2.4,
 #                isMC = True ) )) # SET TO THE RIGHT THING
 from CMGTools.TTHAnalysis.tools.leptonFakeRateQCDVars import LeptonFakeRateQCDVars
-
 #--- TTH instances
 MODULES.append( ('leptonFakeRateQCDVarsTTH', lambda : LeptonFakeRateQCDVars(
                 lambda lep : lep.sip3d < 8, # and lep.relIso03 < 0.5 and _tthlep_lepId(lep),

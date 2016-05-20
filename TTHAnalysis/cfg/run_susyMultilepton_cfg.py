@@ -476,12 +476,11 @@ if forcedSplitFactor>0 or forcedFineSplitFactor>0:
 
 #-------- SEQUENCE -----------
 
-sequence = cfg.Sequence(susyCoreSequence
-        +[ ttHJetTauAna,
+sequence = cfg.Sequence(susyCoreSequence+[
+        ttHJetTauAna,
         ttHEventAna,
         treeProducer,
-           ]
-)
+    ])
 preprocessor = None
 
 #-------- HOW TO RUN -----------
@@ -508,12 +507,6 @@ elif test == '5':
         comp.files = comp.files[:5]
         comp.splitFactor = 1
         comp.fineSplitFactor = 5
-elif test == "ra5-sync-mc":
-#"root://eoscms.cern.ch//store/mc/RunIISpring16MiniAODv1/TTWJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8/MINIAODSIM/PUSpring16_80X_mcRun2_asymptotic_2016_v3-v1/00000/D6EB7E27-8F02-E611-9246-008CFA197418.root"
-    comp = cfg.MCComponent( files = ["/afs/cern.ch/user/m/mmarionn/public/SUSY/syncTTW80_SSDL2016.root"], name="TTW_RA5_sync" )
-    comp.triggers = []
-    selectedComponents = [ comp ]
-    sequence.remove(jsonAna)
 elif test == '76X-MC':
     what = getHeppyOption("sample","TTLep")
     if what == "TTLep":
