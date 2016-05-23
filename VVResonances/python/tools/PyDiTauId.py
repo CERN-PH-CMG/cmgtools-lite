@@ -11,6 +11,8 @@ class PyDiTau(object):
         self.allConstituents=allConstituents
         self.decayMode=decayMode
         self.q=q
+        self.leadMuonPt=0.0
+        self.leadElectronPt=0.0
 
     def p4(self):
         return self.LV
@@ -24,6 +26,10 @@ class PyDiTau(object):
     def calculateMembers(self):
         self.nPions=0
         self.nMuons=0
+        self.nPosMuons=0
+        self.nNegMuons=0
+        self.nPosElectrons=0
+        self.nNegElectrons=0
         self.nElectrons=0
         self.nPhotons=0
         self.chargedIso=0
@@ -37,9 +43,23 @@ class PyDiTau(object):
             if abs(c.pdgId())==211:
                 self.nPions+=1
             elif abs(c.pdgId()) ==11:
+                if c.pt()>self.leadElectronPt:
+                    self.leadElectronPt=c.pt()
                 self.nElectrons+=1
+                if c.charge()>0:
+                    self.nPosElectrons+=1
+                else:
+                    self.nNegElectrons+=1
+                    
             elif abs(c.pdgId()) ==13:
+                if c.pt()>self.leadMuonPt:
+                    self.leadMuonPt=c.pt()
                 self.nMuons+=1
+                if c.charge()>0:
+                    self.nPosMuons+=1
+                else:
+                    self.nNegMuons+=1
+
             elif abs(c.pdgId()) ==22:
                 self.nPhotons+=1
                

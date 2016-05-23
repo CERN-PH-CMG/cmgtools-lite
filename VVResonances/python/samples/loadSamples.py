@@ -35,6 +35,11 @@ background = TTs+WJets+ZJetsToNuNuHT+GJetsHT+QCDHT+DiBosons+DYJetsM5to50HT
 #Load signal from here 
 from CMGTools.VVResonances.samples.signal_13TeV_76X import *
 
+
+#and the 750 GeV samples for the tau analysis
+from CMGTools.VVResonances.samples.signal_750 import *
+
+
 mcSamples = background+signalSamples
 #load triggers
 from CMGTools.RootTools.samples.triggers_13TeV_Spring15 import *
