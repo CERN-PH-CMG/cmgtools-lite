@@ -1,3 +1,5 @@
+import ROOT
+
 from CMGTools.H2TauTau.proto.analyzers.H2TauTauTreeProducer import H2TauTauTreeProducer
 from PhysicsTools.Heppy.physicsutils.TauDecayModes import tauDecayModes
 
@@ -43,6 +45,12 @@ class H2TauTauTreeProducerTauMu(H2TauTauTreeProducer):
             self.var(self.tree, 'l1_mini_iso')
             self.var(self.tree, 'l1_mini_reliso')
 
+        if hasattr(self.cfg_ana, 'addTauTrackInfo') and self.cfg_ana.addTauTrackInfo:
+            self.var(self.tree, 'tau_iso_n_ch')
+            self.var(self.tree, 'tau_iso_n_gamma')
+            self.bookTrackInfo('tau_lead_ch')
+            self.bookTrackInfo('tau_leadiso_ch')
+
         if hasattr(self.cfg_ana, 'addTnPInfo') and self.cfg_ana.addTnPInfo:
             self.var(self.tree, 'tag')
             self.var(self.tree, 'probe')
@@ -56,6 +64,48 @@ class H2TauTauTreeProducerTauMu(H2TauTauTreeProducer):
             #    I cannot find a better solution for the moment 14/10/2015
             self.bookParticle(self.tree, 'l2_hltL2Tau30eta2p2')
 
+
+    def bookTrackInfo(self, name):
+        self.var(self.tree, name + '_pt')
+        self.var(self.tree, name + '_dxy')
+        self.var(self.tree, name + '_dz')
+        self.var(self.tree, name + '_ndof')
+        self.var(self.tree, name + '_chi2')
+        self.var(self.tree, name + '_normchi2')
+        self.var(self.tree, name + '_n_layers_pixel')
+        self.var(self.tree, name + '_n_hits_pixel')
+        self.var(self.tree, name + '_n_layers_tracker')
+        self.var(self.tree, name + '_n_hits')
+        self.var(self.tree, name + '_n_missing_inner')
+        self.var(self.tree, name + '_high_purity')
+
+    def fillTrackInfo(self, track, name='tau_track'):
+        pt = track.pt()
+        ndof = track.pseudoTrack().ndof()
+        dxy = track.dxy()
+        dz = track.dz()
+        chi2 = track.pseudoTrack().chi2()
+        norm_chi2 = track.pseudoTrack().normalizedChi2()
+
+        n_layers_pixel = track.pseudoTrack().hitPattern().pixelLayersWithMeasurement()
+        n_hits_pixel = track.pseudoTrack().hitPattern().numberOfValidPixelHits()
+        n_layers_tracker = track.pseudoTrack().hitPattern().trackerLayersWithMeasurement()
+        n_hits = track.pseudoTrack().hitPattern().numberOfValidHits()
+        n_missing_inner = track.pseudoTrack().hitPattern().numberOfHits(ROOT.reco.HitPattern.MISSING_INNER_HITS)
+        high_purity = track.pseudoTrack().quality(ROOT.reco.TrackBase.highPurity)
+
+        self.fill(self.tree, name + '_pt', pt)
+        self.fill(self.tree, name + '_dxy', dxy)
+        self.fill(self.tree, name + '_dz', dz)
+        self.fill(self.tree, name + '_ndof', ndof)
+        self.fill(self.tree, name + '_chi2', chi2)
+        self.fill(self.tree, name + '_normchi2', norm_chi2)
+        self.fill(self.tree, name + '_n_layers_pixel', n_layers_pixel)
+        self.fill(self.tree, name + '_n_hits_pixel', n_hits_pixel)
+        self.fill(self.tree, name + '_n_layers_tracker', n_layers_tracker)
+        self.fill(self.tree, name + '_n_hits', n_hits)
+        self.fill(self.tree, name + '_n_missing_inner', n_missing_inner)
+        self.fill(self.tree, name + '_high_purity', high_purity)
 
     def process(self, event):
 
@@ -114,6 +164,34 @@ class H2TauTauTreeProducerTauMu(H2TauTauTreeProducer):
         self.fill(self.tree, 'l2_weight_fakerate', event.tauFakeRateWeightUp)
         self.fill(self.tree, 'l2_weight_fakerate_up', event.tauFakeRateWeightDown)
         self.fill(self.tree, 'l2_weight_fakerate_down', event.tauFakeRateWeight)
+
+        if hasattr(self.cfg_ana, 'addTauTrackInfo') and self.cfg_ana.addTauTrackInfo:
+            # Leading CH part
+            if tau.signalChargedHadrCands().size() == 0:
+                print 'Uh, tau w/o charged hadron???'
+            
+            leading_ch = tau.signalChargedHadrCands()[0].get()
+            self.fillTrackInfo(leading_ch, 'tau_lead_ch')
+
+            # Iso part
+            i_lead_ch = -1
+            n_ch = len(tau.isolationChargedHadrCands())
+            n_gamma = len(tau.isolationGammaCands())
+
+            self.fill(self.tree, 'tau_iso_n_ch', n_ch)
+            self.fill(self.tree, 'tau_iso_n_gamma', n_gamma)
+
+            for i_cand in xrange(n_ch):
+                if i_lead_ch >= 0:
+                    if tau.isolationChargedHadrCands()[i_cand].get().pt() > tau.isolationChargedHadrCands()[i_lead_ch].get().pt():
+                        i_lead_ch = i_cand
+                else:
+                    i_lead_ch = i_cand
+
+            if i_lead_ch >= 0 and tau.isolationChargedHadrCands()[i_lead_ch].get().pt() > 0.95:
+                track = tau.isolationChargedHadrCands()[i_lead_ch].get()
+                self.fillTrackInfo(track, 'tau_leadiso_ch')
+
 
         if hasattr(self.cfg_ana, 'addIsoInfo') and self.cfg_ana.addIsoInfo:
             self.fill(self.tree, 'l1_puppi_iso_pt', muon.puppi_iso_pt)

@@ -8,25 +8,25 @@ from CMGTools.TTHAnalysis.tools.plotDecorations import *
 from CMGTools.TTHAnalysis.plotter.mcPlots import *
 
 mergeMap = { 
-    "ttH_hww" : "ttH",
-    "ttH_hzz" : "ttH",
-    "ttH_htt" : "ttH",
-    "TTWW" : "RARE",
-    "TBZ" : "RARE",
-    "WWqq" : "RARE",
-    "WWDPI" : "RARE",
-    "VVV" : "RARE",
-    "TTGStar" : "TTZ",
+#    "ttH_hww" : "ttH",
+#    "ttH_hzz" : "ttH",
+#    "ttH_htt" : "ttH",
+#    "TTWW" : "RARE",
+#    "TBZ" : "RARE",
+#    "WWqq" : "RARE",
+#    "WWDPI" : "RARE",
+#    "VVV" : "RARE",
+#    "TTGStar" : "TTZ",
 }
 
 options = None
 if __name__ == "__main__":
     from optparse import OptionParser
-    parser = OptionParser(usage="%prog [options] mcaplot.txt mcafit.txt plot mlfile channel")
+    parser = OptionParser(usage="%prog [options] mcaplot.txt mcafit.txt plotfile varname mlfile channel")
     addPlotMakerOptions(parser)
     (options, args) = parser.parse_args()
-    options.path = "/afs/cern.ch/work/g/gpetrucc/TREES_250513_HADD"
-    options.lumi = 19.5
+    options.path = "/data1/peruzzi/TREES_76X_200216_jecV1M2_skimOnlyMC_reclv8"
+    options.lumi = 2.26
     mcap = MCAnalysis(args[0],options)
     mca  = MCAnalysis(args[1],options)
     basedir = dirname(args[2]);
@@ -39,17 +39,17 @@ if __name__ == "__main__":
     ROOT.gStyle.SetErrorX(0.5)
     ROOT.gStyle.SetOptStat(0)
     ROOT.gStyle.SetPaperSize(20.,25.)
-    for O,MLD in ("prefit","prefit"), ("postfit","fit_b"):
+    for O,MLD in ("prefit","prefit"), ("postfit_b","fit_b"), ("postfit_s","fit_s"):
       mldir  = mlfile.GetDirectory("shapes_"+MLD);
+      if not mldir: raise RuntimeError, mlfile
       outfile = ROOT.TFile(basedir + "/"+O+"_" + basename(args[2]), "RECREATE")
-      processes = mca.listBackgrounds() + mca.listSignals()
+      processes = [p for p in reversed(mca.listBackgrounds())] + mca.listSignals()
       hdata = infile.Get(var+"_data")
       stack = ROOT.THStack(var+"_stack","")
       plots = {'data':hdata}
       if options.poisson:
             pdata = getDataPoissonErrors(hdata, False, True)
             hdata.poissonGraph = pdata ## attach it so it doesn't get deleted
-      if "/4l" not in args[2]: mergeMap["ZZ"] = "RARE"
       for p in processes:
         pout = mergeMap[p] if p in mergeMap else p
         h = infile.Get(var+"_"+pout)
@@ -63,9 +63,8 @@ if __name__ == "__main__":
             if h.Integral() > 0 and p not in mergeMap: raise RuntimeError, "Could not find post-fit shape for %s" % p
             continue
         for b in xrange(1, h.GetNbinsX()+1):
-            bi = b if "/4l" not in args[2] else b+1
-            h.SetBinContent(b, hpf.GetBinContent(bi))
-            h.SetBinError(b, hpf.GetBinError(bi))
+            h.SetBinContent(b, hpf.GetBinContent(b))
+            h.SetBinError(b, hpf.GetBinError(b))
         #pout = "ttH" if "ttH_" in p else p;
         #if pout in plots:
         #    plots[pout].Add(h)
@@ -81,17 +80,14 @@ if __name__ == "__main__":
       hbkg = hdata.Clone(var+"_total_background")
       hbkgpf = mldir.Get(channel+"/total_background")
       for b in xrange(1, h.GetNbinsX()+1):
-          bi = b if "/4l" not in args[2] else b+1
-          htot.SetBinContent(b, htotpf.GetBinContent(bi))
-          htot.SetBinError(b, htotpf.GetBinError(bi))
-          hbkg.SetBinContent(b, hbkgpf.GetBinContent(bi))
-          hbkg.SetBinError(b, hbkgpf.GetBinError(bi))
+          htot.SetBinContent(b, htotpf.GetBinContent(b))
+          htot.SetBinError(b, htotpf.GetBinError(b))
+          hbkg.SetBinContent(b, hbkgpf.GetBinContent(b))
+          hbkg.SetBinError(b, hbkgpf.GetBinError(b))
       for h in plots.values() + [htot]:
          outfile.WriteTObject(h)
       doRatio = True
       htot.GetYaxis().SetRangeUser(0, 1.8*max(htot.GetMaximum(), hdata.GetMaximum()))
-      if "/4l" in args[2]: 
-        htot.GetYaxis().SetRangeUser(0, 1.3*max(htot.GetMaximum(), hdata.GetMaximum()))
       ## Prepare split screen
       c1 = ROOT.TCanvas("c1", "c1", 600, 750); c1.Draw()
       c1.SetWindowSize(600 + (600 - c1.GetWw()), (750 + (750 - c1.GetWh())));
@@ -106,40 +102,41 @@ if __name__ == "__main__":
       p1.cd();
       ## Draw absolute prediction in top frame
       htot.Draw("HIST")
-      if (htot.GetXaxis().GetTitle() == "N(jet"):
-        htot.GetXaxis().SetTitle("N(jet)")
       #htot.SetLabelOffset(9999.0);
       #htot.SetTitleOffset(9999.0);
       stack.Draw("HIST F SAME")
+      if options.showMCError:
+          totalError = doShadedUncertainty(htot)
       if options.poisson:
         hdata.poissonGraph.Draw("PZ SAME")
       else:
         hdata.Draw("E SAME")
       htot.Draw("AXIS SAME")
-      hSigOutline = plots["ttH"].Clone()
-      hSigOutline.SetLineWidth(5)
-      hSigOutline.SetLineStyle(7)
-      hSigOutline.SetLineColor(205)
-      hSigOutline.SetFillColor(0)
-      hSigOutline.SetFillStyle(1)
-      hSigOutline.Scale(5)
-      hSigOutline.Draw("HIST SAME")
-      #doLegend(plots,mcap,corner=('TL' if '2LSS' in var or "/4l" in args[2] else 'TR'),textSize=0.037,cutoff=0.0001)
-      leg = doLegend(plots,mcap,corner=('TL' if '2LSS' in var or "/4l" in args[2] else 'TR'),textSize=0.045,cutoff=0.0001)
-      leg.AddEntry(hSigOutline, "ttH x 5", "L")
-      lspam = "CMS ttH" #, options.lspam
-      if "2lss" in args[2] and "/em/" in args[2]:
-            lspam += r", e^{#pm}#mu^{#pm} channel"
-      if "2lss" in args[2] and "/ee/" in args[2]:
-            lspam += r", e^{#pm}e^{#pm} channel"
-      if "2lss" in args[2] and "/mumu/" in args[2]:
-            lspam += r", #mu^{#pm}#mu^{#pm} channel"
-      if "/3l" in args[2]:
-            lspam += ", 3l channel"
-      if "/4l" in args[2]:
-            lspam += ", 4l channel"
+#      hSigOutline = plots["ttH"].Clone()
+#      hSigOutline.SetLineWidth(5)
+#      hSigOutline.SetLineStyle(7)
+#      hSigOutline.SetLineColor(205)
+#      hSigOutline.SetFillColor(0)
+#      hSigOutline.SetFillStyle(1)
+#      hSigOutline.Scale(5)
+#      hSigOutline.Draw("HIST SAME")
+      leg = doLegend(plots,mcap,corner='TL',textSize=0.045,cutoff=0.0001)
+      leg.SetHeader({'prefit': "Pre-fit", "postfit_b": "Post-fit, #mu = 1", "postfit_s": "Post-fit, #hat{#mu}"}[O]+"\n")
+      leg.SetLineColor(0)
+#      leg.AddEntry(hSigOutline, "ttH x 5", "L")
+#      lspam = "CMS Preliminary" #, options.lspam
+#      if "2lss" in args[2] and "/em/" in args[2]:
+#            lspam += r", e^{#pm}#mu^{#pm} channel"
+#      if "2lss" in args[2] and "/ee/" in args[2]:
+#            lspam += r", e^{#pm}e^{#pm} channel"
+#      if "2lss" in args[2] and "/mumu/" in args[2]:
+#            lspam += r", #mu^{#pm}#mu^{#pm} channel"
+#      if "/3l" in args[2]:
+#            lspam += ", 3l channel"
+#      if "/4l" in args[2]:
+#            lspam += ", 4l channel"
       doTinyCmsPrelim(hasExpo = False,textSize=(0.045 if doRatio else 0.033), xoffs=-0.03,
-                      textLeft = lspam, textRight = options.rspam, lumi = options.lumi)
+                      textLeft = options.lspam, textRight = options.rspam, lumi = options.lumi)
       ## Draw relaive prediction in the bottom frame
       p2.cd() 
       rdata,rnorm,rnorm2,rline = doRatioHists(PlotSpec(var,var,"",{}),plots,htot, htot, maxRange=options.maxRatioRange, fitRatio=options.fitRatio)

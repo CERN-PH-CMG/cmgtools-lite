@@ -19,6 +19,16 @@ class H2TauTauTreeProducerTauTau( H2TauTauTreeProducer ):
 
     self.var(self.tree, 'l1_gen_decaymode', int)
     self.var(self.tree, 'l2_gen_decaymode', int)
+
+    self.var(self.tree, 'l1_trigger_weight'     )
+    self.var(self.tree, 'l1_trigger_weight_up'  )
+    self.var(self.tree, 'l1_trigger_weight_down')
+
+    self.var(self.tree, 'l2_trigger_weight'     )
+    self.var(self.tree, 'l2_trigger_weight_up'  )
+    self.var(self.tree, 'l2_trigger_weight_down')
+
+
     
   def process(self, event):
              
@@ -48,5 +58,13 @@ class H2TauTauTreeProducerTauTau( H2TauTauTreeProducer ):
         self.fillParticle(self.tree, 'l2_gen_vis', tau2.physObj.genJet() )
         tau_gen_dm = tauDecayModes.translateGenModeToInt(tauDecayModes.genDecayModeFromGenJet(tau2.physObj.genJet()))
         self.fill(self.tree, 'l2_gen_decaymode', tau_gen_dm)
+
+    self.fill(self.tree, 'l1_trigger_weight'     , tau1.weight_trigger     )
+    self.fill(self.tree, 'l1_trigger_weight_up'  , tau1.weight_trigger_up  )
+    self.fill(self.tree, 'l1_trigger_weight_down', tau1.weight_trigger_down)
+
+    self.fill(self.tree, 'l2_trigger_weight'     , tau2.weight_trigger     )
+    self.fill(self.tree, 'l2_trigger_weight_up'  , tau2.weight_trigger_up  )
+    self.fill(self.tree, 'l2_trigger_weight_down', tau2.weight_trigger_down)
       
     self.fillTree(event)

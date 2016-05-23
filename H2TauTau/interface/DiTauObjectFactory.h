@@ -120,22 +120,39 @@ void cmg::DiTauObjectFactory<T, U>::produce(edm::Event& iEvent, const edm::Event
   bool patMet = false;
 
   const bool sameCollection = (leg1Cands.id () == leg2Cands.id());
+  bool found = false;
   for (auto& metCand : *metCands) {
     const pat::MET* patMET = dynamic_cast<const pat::MET*>(&metCand);
     if (patMET) {
       patMet = true;
-      if (! patMET->hasUserCand("lepton1") || ! patMET->hasUserCand("lepton2"))
-        edm::LogWarning("produce") << "Cannot access MET user candidates" << std::endl;
-      const T* first = dynamic_cast<const T*>(patMET->userCand("lepton1").get());
-      const U* second = dynamic_cast<const U*>(patMET->userCand("lepton2").get());
-      if (!first || !second)
-        edm::LogWarning("produce") << "MET user candidates have incompatible type" << std::endl;
+      if (! patMET->hasUserCand("lepton0") || ! patMET->hasUserCand("lepton1")) {
+        edm::LogWarning("produce") << "Cannot access MET user candidates (0: " << patMET->hasUserCand("lepton0") << ", 1: " << patMET->hasUserCand("lepton1") << std::endl;
+        continue;
+      }
+      // JAN - not sure how to code this nicer w/o avoiding extra casts...
+      const T* first = dynamic_cast<const T*>(patMET->userCand("lepton0").get());
+      const U* second = nullptr;
+      if (!first) {
+        first = dynamic_cast<const T*>(patMET->userCand("lepton1").get());
+        if (!first) {
+          // edm::LogWarning("produce") << "MET user candidate 0 not of type T" << std::endl;
+          continue;
+        }
+        second = dynamic_cast<const U*>(patMET->userCand("lepton0").get());
+      }
+      second = dynamic_cast<const U*>(patMET->userCand("lepton1").get());
+      if (!second) {
+        // edm::LogWarning("produce") << "MET user candidate 1 not of type U" << std::endl;
+        continue;
+      }
       cmg::DiTauObject cmgTmp = sameCollection ? cmg::makeDiTau<T>(*first, *second) : cmg::makeDiTau<T, U>(*first, *second); 
       cmg::DiTauObjectFactory<T, U>::set(*patMET, cmgTmp);
+      found = true;
       result->push_back(cmgTmp);
     }
   }
-
+  if (! found)
+    edm::LogWarning("produce") << "Did not find suitable user candidates in the pat::MET of types T and U" << std::endl;
 
   if (!patMet) {
     for (size_t i1 = 0; i1 < leg1Cands->size(); ++i1) {

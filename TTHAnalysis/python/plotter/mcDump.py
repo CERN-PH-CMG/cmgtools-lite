@@ -46,6 +46,7 @@ class MCDumpModule(Module):
         if len(out)>0:
             self.passing_entries += 1
             if self.dumpFile: self.dumpFile.write(out+'\n')
+            else:             print(out)
         return True
     
 

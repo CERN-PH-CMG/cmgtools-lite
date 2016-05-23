@@ -1,0 +1,27 @@
+### SIGNAL AND CONTROL SAMPLES
+
+# ---- Spring15 25ns samples -------
+
+# Z+jets HT-binned: replace the xsec in the ntuple (NLO) with the LO, in order to apply the ptV-dependent k-factors
+DYJets: DYJetsToLL_M50 : xsec; FillColor=ROOT.kAzure+5,  Label="ZJets"
+DYJets: DYJetsToLL_M10to50 : xsec; FillColor=ROOT.kAzure+5,  Label="ZJets"
+
+# W+jets 
+WJets: WJetsToLNu : xsec; FillColor=ROOT.kCyan-7,  Label="WJets"
+
+# -- Top --
+Top      : TTJets    : xsec; FillColor=ROOT.kGreen+2, Label="top", NormSystematic=0.5
+Top      : T_tWch    : xsec; FillColor=ROOT.kGreen+2, Label="top", NormSystematic=0.5
+Top      : TBar_tWch : xsec; FillColor=ROOT.kGreen+2, Label="top", NormSystematic=0.5
+Top      : TToLeptons_tch_amcatnlo : xsec; FillColor=ROOT.kGreen+2, Label="top", NormSystematic=0.5
+
+# -- DiBosons --
+DiBosons  : WW : xsec; FillColor=ROOT.kRed+2, Label="VV"
+DiBosons  : WZ : xsec; FillColor=ROOT.kRed+2, Label="VV"
+DiBosons  : ZZ : xsec; FillColor=ROOT.kRed+2, Label="VV"
+
+
+# 2015 25ns data
+data: SingleElectron_Run2015C_16Dec_runs_254227_254914 ;  Label="Data"
+data: SingleElectron_Run2015D_16Dec_runs_256630_260627 ;  Label="Data"
+

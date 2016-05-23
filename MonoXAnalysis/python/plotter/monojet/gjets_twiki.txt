@@ -1,8 +1,12 @@
-jet110: nJetClean30 >= 1 && JetClean1_pt > 110 && abs(JetClean1_eta) < 2.5 && jetclean1 > 0.5
-dphijj: nJetClean30 == 1 || (nJetClean30>=2 && abs(dphijj)<2.5 && jetclean2 > 0.5)
-njets<=2: nJetClean30 <= 2
-ele veto: nEle10V==0
+trigger: HLT_SinglePho==1
+metfilters: cscfilter==1 && ecalfilter==1 && Flag_eeBadScFilter==1 && hbheFilterNew25ns==1 && hbheFilterIso==1
+1 loose photon: nGamma15V == 1
+1 tight photon: nGamma175T == 1 && abs(GammaGood_eta)<1.4442
+ele veto: nEle10V == 0
+mu veto: nMu10V==0
 tau veto: nTauClean18V==0
-muon veto: nMu10V==0
-1G: nGamma175T == 1
-Fake MET>200: phmet_pt > 200
+btagveto: nBTag15==0
+recoil>200: pt_2(met_pt,met_phi,GammaGood1_pt,GammaGood1_phi) > 200
+jet100: nJetClean30 >= 1 && JetClean1_pt > 100
+jetclean: JetClean1_leadClean > 0.5
+dphijm: abs(dphijm) > 0.5

@@ -285,7 +285,10 @@ jetAnaAK8 = cfg.Analyzer(
 vvAna = cfg.Analyzer(
     VVBuilder,name='vvAna',
     suffix = '',
-    bDiscriminator = "pfCombinedInclusiveSecondaryVertexV2BJetTags"
+    bDiscriminator = "pfCombinedInclusiveSecondaryVertexV2BJetTags",
+#    boostedBdiscriminator = "pfBoostedDoubleSecondaryVertexAK8BJetTags",
+    cDiscriminatorL = "pfCombinedCvsLJetTags",
+    cDiscriminatorB = "pfCombinedCvsBJetTags"
 )
 
 

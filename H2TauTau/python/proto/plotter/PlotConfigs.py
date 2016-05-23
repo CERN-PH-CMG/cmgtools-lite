@@ -4,7 +4,7 @@ class VariableCfg(object):
     "binning" is a dict with either nbinsx, xmin, xmax for equidistant binning
     or nbinsx, bins=array([...]).
     '''
-    def __init__(self, name='m_svfit', binning=None, xtitle=None, unit=None, drawname=None):
+    def __init__(self, name='mvis', binning=None, xtitle=None, unit=None, drawname=None):
         self.name = name
         self.drawname = name if drawname is None else drawname
         self.binning = {'nbinsx':10, 'xmin':0., 'xmax':200.} if binning is None else binning
@@ -58,7 +58,7 @@ class HistogramCfg(object):
                  weight='weight', norm_cfg=None, use_signal_for_stack=False,
                  total_scale=None):
         self.name = name # e.g. 'vbf tight'
-        self.var = VariableCfg() if var is None else var # e.g. 'm_svfit'
+        self.var = VariableCfg() if var is None else var # e.g. 'mvis'
         self.cfgs = [] if cfgs is None else cfgs # List of sample and/or histogram cfgs
         self.cut = cut
         self.lumi = lumi
