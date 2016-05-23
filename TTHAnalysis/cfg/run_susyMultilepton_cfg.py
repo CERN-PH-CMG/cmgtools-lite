@@ -136,6 +136,10 @@ if analysis in ["ttH"]: #if cleaning jet-loose tau cleaning
 
 #-------- ADDITIONAL ANALYZERS -----------
 
+#Adding LHE Analyzer for saving lheHT
+from PhysicsTools.Heppy.analyzers.gen.LHEAnalyzer import LHEAnalyzer 
+LHEAna = LHEAnalyzer.defaultConfig
+
 ## Event Analyzer for susy multi-lepton (at the moment, it's the TTH one)
 from CMGTools.TTHAnalysis.analyzers.ttHLepEventAnalyzer import ttHLepEventAnalyzer
 ttHEventAna = cfg.Analyzer(
@@ -540,6 +544,7 @@ if forcedSplitFactor>0 or forcedFineSplitFactor>0:
 #-------- SEQUENCE -----------
 
 sequence = cfg.Sequence(susyCoreSequence+[
+        LHEAna,
         ttHJetTauAna,
         ttHEventAna,
         treeProducer,
