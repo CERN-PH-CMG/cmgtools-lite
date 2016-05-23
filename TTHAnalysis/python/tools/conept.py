@@ -22,6 +22,11 @@ def conept_RA7(lep):
     else:
         return max(lep.pt,lep.pt/lep.jetPtRatiov2*B)
 
+def conept_SSDL(lep):
+    if (abs(lep.pdgId)!=11 and abs(lep.pdgId)!=13): return lep.pt
+    if (abs(lep.pdgId)!=13 or lep.mediumMuonId>0) and lep.mvaTTH > 0.75: return lep.pt
+    else: return 0.85 * lep.pt / lep.jetPtRatiov2
+
 def conept_TTH(lep):
     if (abs(lep.pdgId)!=11 and abs(lep.pdgId)!=13): return lep.pt
     if (abs(lep.pdgId)!=13 or lep.mediumMuonId>0) and lep.mvaTTH > 0.75: return lep.pt

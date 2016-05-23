@@ -256,6 +256,31 @@ int regroupSignalRegions_RA5(int SR){
 
 }
 
+int SR_ewk_ss2l(int nj, float ptl1, float phil1, float ptl2, float phil2, float met, float metphi){
+  
+  float mtw1 = mt_2(ptl1,phil1, met, metphi);
+  float mtw2 = mt_2(ptl2,phil2, met, metphi);
+  float mtw  = std::min(mtw1,mtw2);
+  float ptdil = pt_2(ptl1,phil1,ptl2,phil2);
+  
+  if (nj==0 && met<100)        return -1;  //validation region 0-jet
+  else if (nj==1 && met<100)   return -2;  //validation region 1-jet
+  else if (nj==0 && mtw<40 && met>100 && met<200)             return 1;
+  else if (nj==0 && mtw<40 && met>200)                        return 2;
+  else if (nj==0 && mtw>40 && mtw<120 && met>100 && met<200)  return 3;
+  else if (nj==0 && mtw>40 && mtw<120 && met>200)             return 4;
+  else if (nj==0 && mtw>120 && mtw<120 && met>100 && met<200) return 5;
+  else if (nj==0 && mtw>120 && mtw<120 &&  met>200)           return 6;
+  else if (nj==1 && mtw<40 && met>100 && met<200)             return 11;
+  else if (nj==1 && mtw<40 && met>200)                        return 12;
+  else if (nj==1 && mtw>40 && mtw<120 && met>100 && met<200)  return 13;
+  else if (nj==1 && mtw>40 && mtw<120 && met>200)             return 14;
+  else if (nj==1 && mtw>120 && mtw<120 && met>100 && met<200) return 15;
+  else if (nj==1 && mtw>120 && mtw<120 &&  met>200)           return 16;
+  
+  return -99;
+  
+}
 //float MVAto1D_6_sorted_ee(float kinMVA_2lss_ttbar, float kinMVA_2lss_ttV) {
 //    
 //    float MVA_binned_6 = 0; 		

@@ -32,10 +32,10 @@ isFastSim = False
 
 #--- Recleaner instances
 
-from CMGTools.TTHAnalysis.tools.leptonChoiceRA5 import _susy2lss_lepId_CBloose,_susy2lss_lepId_loosestFO,_susy2lss_lepId_IPcuts,_susy2lss_lepConePt1015,_susy2lss_lepId_tighterFO,_susy2lss_multiIso,_susy2lss_lepId_CB,_susy2lss_idIsoEmu_cuts
+from CMGTools.TTHAnalysis.tools.leptonChoiceRA5 import _susy2lss_lepId_CBloose,_susy2lss_lepId_loosestFO,_susy2lss_lepId_IPcuts,_susy2lss_lepConePt1015,_susy2lss_lepId_tighterFO,_susy2lss_multiIso,_susy2lss_lepId_CB,_susy2lss_idIsoEmu_cuts, _susy2lss_leptonMVA
 from CMGTools.TTHAnalysis.tools.leptonChoiceRA7 import _susy3l_lepId_loosestFO,_susy3l_lepId_loosestFO,_susy3l_multiIso,_susy3l_lepId_CB
 from CMGTools.TTHAnalysis.tools.functionsTTH import _ttH_idEmu_cuts_E2
-from CMGTools.TTHAnalysis.tools.conept import conept_RA5, conept_RA7, conept_TTH
+from CMGTools.TTHAnalysis.tools.conept import conept_RA5, conept_RA7, conept_TTH, conept_SSDL
 
 MODULES.append( ('leptonJetReCleanerSusyRA5', lambda : LeptonJetReCleaner("Mini", 
                    lambda lep : lep.miniRelIso < 0.4 and _susy2lss_lepId_CBloose(lep), #and (ht>300 or _susy2lss_idIsoEmu_cuts(lep)), 
@@ -67,6 +67,22 @@ MODULES.append( ('leptonJetReCleanerSusyRA7', lambda : LeptonJetReCleaner("Mini"
                    jetPt = 30,
                    bJetPt = 25,
                    coneptdef = lambda lep: conept_RA7(lep)
+                 ) ))
+
+MODULES.append( ('leptonJetReCleanerSusySSDL', lambda : LeptonJetReCleaner("Recl", 
+                   looseLeptonSel = lambda lep : lep.miniRelIso < 0.4 and _susy2lss_lepId_CBloose(lep), 
+                   cleaningLeptonSel = lambda lep : lep.pt>10 and _susy2lss_lepId_loosestFO(lep) and _susy2lss_lepId_IPcuts(lep), # cuts applied on top of loose
+                   FOLeptonSel = lambda lep,ht : lep.pt>10 and _susy2lss_lepConePt1015(lep) and _susy2lss_lepId_IPcuts(lep) and _susy2lss_lepId_tighterFO(lep) and _susy2lss_idIsoEmu_cuts(lep), # cuts applied on top of loose
+                   tightLeptonSel = lambda lep,ht : lep.pt>10 and _susy2lss_lepConePt1015(lep) and _susy2lss_leptonMVA(lep) and _susy2lss_lepId_tighterFO(lep) and _susy2lss_idIsoEmu_cuts(lep), # cuts applied on top of loose
+                   cleanJet = lambda lep,jet,dr : dr<0.4,
+                   selectJet = lambda jet: abs(jet.eta)<2.4,
+                   cleanWithTaus = False,
+                   doVetoZ = True,
+                   doVetoLMf = True,
+                   doVetoLMt = True,
+                   jetPt = 40,
+                   bJetPt = 25,
+                   coneptdef = lambda lep: conept_SSDL(lep)
                  ) ))
 
 MODULES.append( ('leptonJetReCleanerTTH', lambda : LeptonJetReCleaner("Recl", # b1E2 definition of FO
