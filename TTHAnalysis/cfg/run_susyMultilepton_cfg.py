@@ -29,6 +29,7 @@ skipT1METCorr = getHeppyOption("skipT1METCorr",False)
 forcedSplitFactor = getHeppyOption("splitFactor",-1)
 forcedFineSplitFactor = getHeppyOption("fineSplitFactor",-1)
 isTest = getHeppyOption("test",None) != None and not re.match("^\d+$",getHeppyOption("test"))
+selectedEvents=getHeppyOption("selectEvents","")
 
 if analysis not in ['ttH','susy','SOS']: raise RuntimeError, 'Analysis type unknown'
 print 'Using analysis type: %s'%analysis
@@ -543,6 +544,14 @@ if forcedSplitFactor>0 or forcedFineSplitFactor>0:
 #        NTupleVariable("matchedTrgObj_Ele27_WP85_Gsf_pt", lambda x: getattr(x,'matchedTrgObjEle27_WP85_Gsf').pt() if getattr(x,'matchedTrgObjEle27_WP85_Gsf',None) else -999, help="Electron trigger pt")
 #])
 
+if selectedEvents!="":
+    events=[ int(evt) for evt in selectedEvents.split(",") ]
+    print "selecting only the following events : ", events
+    eventSelector= cfg.Analyzer(
+        EventSelector,'EventSelector',
+        toSelect = events
+        )
+    susyCoreSequence.insert(susyCoreSequence.index(lheWeightAna), eventSelector)
 
 #-------- SEQUENCE -----------
 
@@ -578,8 +587,10 @@ elif test == '5':
         comp.splitFactor = 1
         comp.fineSplitFactor = 5
 elif test == "ra5-sync-mc":
-    comp = cfg.MCComponent( files = ["root://eoscms.cern.ch//store/mc/RunIIFall15MiniAODv2/TTWJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8/MINIAODSIM/PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/60000/14C51DB0-D6B8-E511-8D9B-8CDCD4A9A484.root"], name="TTW_RA5_sync" )
+    comp = cfg.MCComponent( files = ["root://eoscms.cern.ch//store/mc/RunIISpring16MiniAODv1/TTWJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8/MINIAODSIM/PUSpring16_80X_mcRun2_asymptotic_2016_v3-v1/00000/6E02CA07-BA02-E611-A59E-14187741208F.root"], name="TTW_RA5_sync" )
     comp.triggers = []
+    comp.splitFactor = 1
+    comp.fineSplitFactor = 1
     selectedComponents = [ comp ]
     sequence.remove(jsonAna)
 elif test == '76X-MC':
