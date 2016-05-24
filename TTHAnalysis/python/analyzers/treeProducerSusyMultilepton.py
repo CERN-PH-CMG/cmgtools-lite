@@ -5,8 +5,8 @@ susyMultilepton_globalVariables = susyCore_globalVariables + [
 
 
             ## ------- lheHT, needed for merging HT binned samples 
-            NTupleVariable("lheHT", lambda ev : ev.lheHT, mcOnly=True, help="H_{T} computed from quarks and gluons in Heppy LHEAnalyzer"),
-            NTupleVariable("lheHTIncoming", lambda ev : ev.lheHTIncoming, mcOnly=True, help="H_{T} computed from quarks and gluons in Heppy LHEAnalyzer (only LHE status<0 as mothers)"),
+            NTupleVariable("lheHT", lambda ev : getattr(ev,"lheHT",-999), mcOnly=True, help="H_{T} computed from quarks and gluons in Heppy LHEAnalyzer"),
+            NTupleVariable("lheHTIncoming", lambda ev : getattr(ev,"lheHTIncoming",-999), mcOnly=True, help="H_{T} computed from quarks and gluons in Heppy LHEAnalyzer (only LHE status<0 as mothers)"),
 
             ##-------- custom jets ------------------------------------------
             NTupleVariable("htJet25", lambda ev : ev.htJet25, help="H_{T} computed from leptons and jets (with |eta|<2.4, pt > 25 GeV)"),
