@@ -32,6 +32,8 @@ FatJetType = NTupleObjectType("FatJetType", baseObjectTypes=[jetType], variables
     NTupleVariable("s2CTagL",   lambda x : x.subJetCTagL[1], float),       
     NTupleVariable("s1CTagB",   lambda x : x.subJetCTagB[0], float),       
     NTupleVariable("s2CTagB",   lambda x : x.subJetCTagB[1], float),
+    NTupleVariable("mergedVTruth",   lambda x : x.mergedTrue, int,"",-1,True),       
+    NTupleVariable("nearestBDRTruth",   lambda x : x.nearestBDR, float,"",-99.0,True)       
 ])
 
 
