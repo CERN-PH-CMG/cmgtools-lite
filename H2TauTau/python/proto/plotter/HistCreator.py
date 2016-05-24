@@ -53,25 +53,9 @@ def createHistograms(hist_cfg, all_stack=False, verbose=False, friend_func=None)
 
                 if cfg.total_scale is not None:
                     total_hist.Scale(cfg.total_scale)
-                    print 'Scaling total', hist_cfg.name, 'by', cfg.total_scale
+                    # print 'Scaling total', hist_cfg.name, 'by', cfg.total_scale
         else:
             # It's a sample cfg
-
-            # First initialise all hists:
-            hists = {}
-
-            for vcfg in vcfgs:
-                # plot = plots[vcfg.name]
-
-                hname = '_'.join([hist_cfg.name, cfg.name, vcfg.name, cfg.dir_name])
-                if 'xmin' in vcfg.binning:
-                    hist = TH1F(hname, '', vcfg.binning['nbinsx'],
-                                vcfg.binning['xmin'], vcfg.binning['xmax'])
-                else:
-                    hist = TH1F(hname, '', len(vcfg.binning)-1, vcfg.binning)
-
-                initHist(hist, vcfg)
-                hists[vcfg.name] = hist
 
             # Now read the tree
             file_name = '/'.join([cfg.ana_dir, cfg.dir_name, cfg.tree_prod_name, 'tree.root'])
@@ -97,7 +81,21 @@ def createHistograms(hist_cfg, all_stack=False, verbose=False, friend_func=None)
                 norm_cut = '({c}) * {we}'.format(c=norm_cut, we=weight)
                 shape_cut = '({c}) * {we}'.format(c=shape_cut, we=weight)
 
-            # Implement the multidraw.
+            # Initialise all hists before the multidraw
+            hists = {}
+
+            for vcfg in vcfgs:
+                # plot = plots[vcfg.name]
+
+                hname = '_'.join([hist_cfg.name, cfg.name, vcfg.name, cfg.dir_name])
+                if 'xmin' in vcfg.binning:
+                    hist = TH1F(hname, '', vcfg.binning['nbinsx'],
+                                vcfg.binning['xmin'], vcfg.binning['xmax'])
+                else:
+                    hist = TH1F(hname, '', len(vcfg.binning)-1, vcfg.binning)
+
+                initHist(hist, vcfg)
+                hists[vcfg.name] = hist
 
             var_hist_tuples = []
 
@@ -105,8 +103,7 @@ def createHistograms(hist_cfg, all_stack=False, verbose=False, friend_func=None)
                 # var_hist_tuples.append(('{var} >> {hist}'.format(var=vcfg.drawname, hist=hists[vcfg.name].GetName()), '1.'))
                 var_hist_tuples.append('{var} >> {hist}'.format(var=vcfg.drawname, hist=hists[vcfg.name].GetName()))
 
-            # Do the multidraw here:
-                # ttree.Project(hname, vcfg.drawname, norm_cut)
+            # Implement the multidraw.
             ttree.MultiDraw(var_hist_tuples, norm_cut)
 
             # Do another multidraw here, if needed, and reset the scales in a separate loop
