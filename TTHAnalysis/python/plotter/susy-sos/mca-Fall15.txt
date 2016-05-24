@@ -1,5 +1,5 @@
 # ---- TTbar Backgrounds
-TT		: TTJets_DiLepton: xsec; FillColor=ROOT.kGray+1, Label="tt(2l)", NormSystematic=0.5
+TT		: TTJets_DiLepton: xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0; FillColor=ROOT.kGray+1, Label="tt(2l)", NormSystematic=0.5
 
 # ---- Diboson
 WZ 	 : WZTo3LNu: xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ;  Label="WZ", FillColor=ROOT.kViolet-4,  NormSystematic=0.3
