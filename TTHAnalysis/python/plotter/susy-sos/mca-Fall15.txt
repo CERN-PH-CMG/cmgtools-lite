@@ -7,24 +7,24 @@ ZZ 	 : ZZTo2L2Nu: xsec: LepGood1_isMatchRightCharge && LepGood2_isMatchRightChar
 WW       : WWTo2L2Nu: xsec: LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge    ;  Label="WW", FillColor=ROOT.kAzure-8,  NormSystematic=0.3	
 
 # ---- DY Inclusive LO (overwriting the cross sections)
-DYJets       : DYJetsToLL_M5to50_LO: 7131.0:lheHT<=100  ; Label="DY+jets", FillColor=ROOT.kCyan
-DYJets       : DYJetsToLL_M50_LO   : 4895.0:lheHT<=100   ; Label="DY+jets", FillColor=ROOT.kCyan
+DYJets       : DYJetsToLL_M5to50_LO: 7131.0: LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge && lheHT<=100  ; Label="DY+jets", FillColor=ROOT.kCyan
+DYJets       : DYJetsToLL_M50_LO   : 4895.0: LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge && lheHT<=100   ; Label="DY+jets", FillColor=ROOT.kCyan
 
 # ---- DY Inclusive NLO
-#DYJets       : DYJetsToLL_M10to50: xsec: lheHT<=100 ; Label="DY+jets", FillColor=ROOT.kCyan
-#DYJets       : DYJetsToLL_M50   : xsec: lheHT<=100  ; Label="DY+jets", FillColor=ROOT.kCyan
+#DYJets       : DYJetsToLL_M10to50: xsec:  LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge && lheHT<=100 ; Label="DY+jets", FillColor=ROOT.kCyan
+#DYJets       : DYJetsToLL_M50   : xsec:  LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge && lheHT<=100  ; Label="DY+jets", FillColor=ROOT.kCyan
 
 
 # ---- DY HT bins:
-DYJets       : DYJetsToLL_M50_HT100to200 :  xsec; Label="DY+jets", FillColor=ROOT.kCyan, NormSystematic=0.5
-DYJets       : DYJetsToLL_M50_HT200to400 :  xsec; Label="DY+jets", FillColor=ROOT.kCyan, NormSystematic=0.5
-DYJets       : DYJetsToLL_M50_HT400to600 :  xsec; Label="DY+jets", FillColor=ROOT.kCyan, NormSystematic=0.5
-DYJets       : DYJetsToLL_M50_HT600toInf :  xsec; Label="DY+jets", FillColor=ROOT.kCyan, NormSystematic=0.5
+DYJets       : DYJetsToLL_M50_HT100to200 :  xsec: LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge; Label="DY+jets", FillColor=ROOT.kCyan, NormSystematic=0.5
+DYJets       : DYJetsToLL_M50_HT200to400 :  xsec: LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge; Label="DY+jets", FillColor=ROOT.kCyan, NormSystematic=0.5
+DYJets       : DYJetsToLL_M50_HT400to600 :  xsec: LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge; Label="DY+jets", FillColor=ROOT.kCyan, NormSystematic=0.5
+DYJets       : DYJetsToLL_M50_HT600toInf :  xsec: LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge; Label="DY+jets", FillColor=ROOT.kCyan, NormSystematic=0.5
 
-DYJets       : DYJetsToLL_M5to50_HT100to200 :  xsec; Label="DY+jets", FillColor=ROOT.kCyan, NormSystematic=0.5
-DYJets       : DYJetsToLL_M5to50_HT200to400 :  xsec; Label="DY+jets", FillColor=ROOT.kCyan, NormSystematic=0.5
-DYJets       : DYJetsToLL_M5to50_HT400to600 :  xsec; Label="DY+jets", FillColor=ROOT.kCyan, NormSystematic=0.5
-DYJets       : DYJetsToLL_M5to50_HT600toInf :  xsec; Label="DY+jets", FillColor=ROOT.kCyan, NormSystematic=0.5
+DYJets       : DYJetsToLL_M5to50_HT100to200 :  xsec: LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge; Label="DY+jets", FillColor=ROOT.kCyan, NormSystematic=0.5
+DYJets       : DYJetsToLL_M5to50_HT200to400 :  xsec: LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge; Label="DY+jets", FillColor=ROOT.kCyan, NormSystematic=0.5
+DYJets       : DYJetsToLL_M5to50_HT400to600 :  xsec: LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge; Label="DY+jets", FillColor=ROOT.kCyan, NormSystematic=0.5
+DYJets       : DYJetsToLL_M5to50_HT600toInf :  xsec: LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge; Label="DY+jets", FillColor=ROOT.kCyan, NormSystematic=0.5
 
 # ---- Non prompt:
 
