@@ -17,7 +17,7 @@ class MyVarProxy:
 
 class LeptonJetReCleaner:
 
-    def __init__(self,label,looseLeptonSel,cleaningLeptonSel,FOLeptonSel,tightLeptonSel,cleanJet,selectJet,cleanWithTaus,doVetoZ,doVetoLMf,doVetoLMt,jetPt,bJetPt,coneptdef):
+    def __init__(self,label,looseLeptonSel,cleaningLeptonSel,FOLeptonSel,tightLeptonSel,cleanJet,selectJet,cleanWithTaus,doVetoZ,doVetoLMf,doVetoLMt,jetPt,bJetPt,coneptdef, storeJetVariables=False):
         self.label = "" if (label in ["",None]) else ("_"+label)
         self.looseLeptonSel = looseLeptonSel
         self.cleaningLeptonSel = cleaningLeptonSel # applied on top of looseLeptonSel
@@ -36,6 +36,7 @@ class LeptonJetReCleaner:
         self.strBJetPt = str(int(bJetPt))
         self.systsJEC = {0:"", 1:"_jecUp", -1:"_jecDown"}
         self.debugprinted = False
+        self.storeJetVariables = storeJetVariables
 
     def listBranches(self):
         label = self.label
@@ -69,6 +70,14 @@ class LeptonJetReCleaner:
                     ("nJet"+self.strBJetPt+label+self.systsJEC[key], "I"), "htJet"+self.strBJetPt+"j"+label+self.systsJEC[key],
                     "mhtJet"+self.strBJetPt + "j"+label+self.systsJEC[key], ("nBJetLoose"+self.strBJetPt+label+self.systsJEC[key], "I"), ("nBJetMedium"+self.strBJetPt+label+self.systsJEC[key], "I"),
                     ])
+
+
+        if self.storeJetVariables:
+            for jfloat in "pt eta phi mass btagCSV rawPt".split():
+                for key in self.systsJEC:
+                    biglist.append( ("JetSel"+label+self.systsJEC[key]+"_"+jfloat,"F",20,"nJetSel"+label) )
+                    biglist.append( ("DiscJetSel"+label+self.systsJEC[key]+"_"+jfloat,"F",20,"nDiscJetSel"+label) )
+
         return biglist
 
     def fillCollWithVeto(self,ret,refcollection,leps,lab,labext,selection,lepsforveto,doVetoZ,doVetoLM,sortby,ht=-1,pad_zeros_up_to=20):
@@ -130,7 +139,22 @@ class LeptonJetReCleaner:
         ret["iDiscJSel"+postfix].sort(key = lambda idx : jetcollcleaned[idx].pt if idx >= 0 else jetcolldiscarded[-1-idx].pt, reverse = True)
         ret["nJetSel"+postfix] = len(ret["iJSel"+postfix])
         ret["nDiscJetSel"+postfix] = len(ret["iDiscJSel"+postfix])
-        # 5. compute the sums
+        # 4. if needed, store the jet 4-vectors
+        if self.storeJetVariables:
+            #print postfix, self.label
+            if postfix==self.label:
+                for jfloat in "pt eta phi mass btagCSV rawPt".split():
+                    jetret[jfloat] = []
+                    discjetret[jfloat] = []
+                for idx in ret["iJSel"+postfix]:
+                    jet = jetcollcleaned[idx] if idx >= 0 else jetcolldiscarded[-1-idx]
+                    for jfloat in "pt eta phi mass btagCSV rawPt".split():
+                        jetret[jfloat].append( getattr(jet,jfloat) )
+                for idx in ret["iDiscJSel"+postfix]:
+                    jet = jetcollcleaned[idx] if idx >= 0 else jetcolldiscarded[-1-idx]
+                    for jfloat in "pt eta phi mass btagCSV rawPt".split():
+                        discjetret[jfloat].append( getattr(jet,jfloat) )
+         # 5. compute the sums
         ret["nJet"+self.strBJetPt+postfix] = 0; ret["htJet"+self.strBJetPt+"j"+postfix] = 0; ret["mhtJet"+self.strBJetPt+"j"+postfix] = 0; ret["nBJetLoose"+self.strBJetPt+postfix] = 0; ret["nBJetMedium"+self.strBJetPt+postfix] = 0
         ret["nJet"+self.strJetPt+postfix] = 0; ret["htJet"+self.strJetPt+"j"+postfix] = 0; ret["mhtJet"+self.strJetPt+"j"+postfix] = 0; ret["nBJetLoose"+self.strJetPt+postfix] = 0; ret["nBJetMedium"+self.strJetPt+postfix] = 0
         cleanjets = [];
