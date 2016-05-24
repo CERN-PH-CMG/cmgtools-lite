@@ -9,9 +9,9 @@ from CMGTools.H2TauTau.proto.samples.spring16.htt_common import TT_pow_ext, DYJe
 
 # WJetsToLNu_LO, TToLeptons_tch_amcatnlo, WZTo3LNu_amcatnlo, TToLeptons_tch_powheg, WJetsToLNu_HT100to200, WJetsToLNu_HT200to400, WJetsToLNu_HT400to600, WJetsToLNu_HT600toInf, QCD_Mu15, DYJetsToTauTau_M150_LO, DYJetsToLL_M10to50_ext1
 
-# if "/sDYReweighting_cc.so" not in gSystem.GetLibraries(): 
-#     gROOT.ProcessLine(".L %s/src/CMGTools/H2TauTau/python/proto/plotter/DYReweighting.cc+" % os.environ['CMSSW_BASE']);
-#     from ROOT import getDYWeight
+if "/sDYReweighting_cc.so" not in gSystem.GetLibraries(): 
+    gROOT.ProcessLine(".L %s/src/CMGTools/H2TauTau/python/proto/plotter/DYReweighting.cc+" % os.environ['CMSSW_BASE']);
+    from ROOT import getDYWeight
 
 useDYWeight = False
 
@@ -37,8 +37,8 @@ w_exp = '({w})'.format(w=' + '.join(w_exps))
 
 def createSampleLists(analysis_dir='/afs/cern.ch/user/s/steggema/work/public/mt/NewProd',
                       channel='mt',
-                      ztt_cut='(l2_gen_match == 5)', zl_cut='(l2_gen_match < 5)',
-                      zj_cut='(l2_gen_match == 6)'):
+                      ztt_cut='(l2_gen_match == 5)*getDYWeight(genboson_mass, genboson_pt)', zl_cut='(l2_gen_match < 5)*getDYWeight(genboson_mass, genboson_pt)',
+                      zj_cut='(l2_gen_match == 6)*getDYWeight(genboson_mass, genboson_pt)'):
     # -> Possibly from cfg like in the past, but may also make sense to enter directly
     if channel == 'mt':
         tree_prod_name = 'H2TauTauTreeProducerTauMu'
@@ -94,7 +94,7 @@ def createSampleLists(analysis_dir='/afs/cern.ch/user/s/steggema/work/public/mt/
         SampleCfg(name='TBar_tWch', dir_name='TBar_tWch', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=TBar_tWch.xSection, sumweights=TBar_tWch.nGenEvents),
         SampleCfg(name='HiggsGGH125', dir_name='HiggsGGH125', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=HiggsGGH125.xSection, sumweights=HiggsGGH125.nGenEvents),
         SampleCfg(name='HiggsVBF125', dir_name='HiggsVBF125', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=HiggsVBF125.xSection, sumweights=HiggsVBF125.nGenEvents),
-        #SampleCfg(name='QCD', dir_name='QCD_Mu15', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=QCD_Mu15.xSection)
+        SampleCfg(name='QCD', dir_name='QCD_Mu15', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=QCD_Mu15.xSection)
     ]
 
     if channel in ['tau_fr']:
