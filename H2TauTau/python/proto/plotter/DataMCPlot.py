@@ -95,7 +95,8 @@ class DataMCPlot(object):
         self.histosDict[name] = tmp
         return tmp
 
-    def Group(self, groupName, namesToGroup, layer=None, style=None):
+    def Group(self, groupName, namesToGroup, layer=None, style=None, 
+              silent=False):
         '''Group all histos with names in namesToGroup into a single
         histo with name groupName. All histogram properties are taken
         from the first histogram in namesToGroup.
@@ -107,7 +108,8 @@ class DataMCPlot(object):
         for name in namesToGroup:
             hist = self.histosDict.get(name, None)
             if hist is None:
-                print 'warning, no histo with name', name
+                if not silent:
+                    print 'warning, no histo with name', name
                 continue
             if groupHist is None:
                 groupHist = hist.Clone(groupName)
@@ -458,22 +460,26 @@ class DataMCPlot(object):
             hist.NormalizeToBinWidth()
 
     def WriteDataCard(self, filename=None, verbose=True, 
-                      mode='RECREATE', dir=None):
+                      mode='RECREATE', dir=None, postfix=''):
         '''Export current plot to datacard'''
         if not filename:
             filename = self.name+'.root'
 
         outf = TFile(filename, mode)
         if dir and outf.Get(dir):
-            print 'Directory', dir, 'already present in output file, recreate'
-            outf = TFile(filename, 'RECREATE')
+            print 'Directory', dir, 'already present in output file'
+            if any(outf.Get(dir+'/'+hist.name+postfix) for hist in self._SortedHistograms()):
+                print 'Recreating file because histograms already present'
+                outf = TFile(filename, 'RECREATE')
         if dir:
-            outf_dir = outf.mkdir(dir)
+            outf_dir = outf.Get(dir)
+            if not outf_dir:
+                outf_dir = outf.mkdir(dir)
             outf_dir.cd()
 
         for hist in self._SortedHistograms():
             'Writing', hist, 'as', hist.name
-            hist.weighted.Write(hist.name)
+            hist.weighted.Write(hist.name + postfix)
         outf.Write()
 
     def _BuildStack(self, hists, ytitle=None):
