@@ -8,6 +8,7 @@ exclusive: nLepTight<=2
 same-sign: LepGood1_charge*LepGood2_charge > 0
 met: met_pt > 60
 0bjetM: nBJetMedium25 == 0
+0and1jet: nJet40<=1
 
 # some cuts that are off by default but can be turned on with -E
 tightMVA070: LepGood1_mvaTTHMoriond16>0.70 && LepGood2_mvaTTHMoriond16>0.70 ; Disable=True
@@ -23,6 +24,7 @@ tightMVA095: LepGood1_mvaTTHMoriond16>0.95 && LepGood2_mvaTTHMoriond16>0.95 ; Di
 ee: abs(LepGood1_pdgId)==11 && abs(LepGood2_pdgId)==11; Disable=True
 em: abs(LepGood1_pdgId) != abs(LepGood2_pdgId);         Disable=True
 mm: abs(LepGood1_pdgId)==13 && abs(LepGood2_pdgId)==13; Disable=True
+sr: SR_ewk_ss2l(nJet40,LepGood1_pt,LepGood1_phi, LepGood2_pt,LepGood2_phi, met_pt,met_phi)>0; Disable=True
 met100: met_pt > 100 && met_pt < 200 ; Disable=True
 met200: met_pt > 200 ; Disable=True
 mtmin0: min(mt_2(LepGood1_pt,LepGood1_phi,met_pt,met_phi),mt_2(LepGood2_pt,LepGood2_phi,met_pt,met_phi)) < 40 ; Disable=True
