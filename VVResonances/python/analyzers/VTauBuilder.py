@@ -54,6 +54,7 @@ class VTauBuilder(Analyzer):
         
         outputJets = interface.get(True)
         if len(outputJets)==0:
+            print 'NO RECLUSTERED JETS'
             return
         
         jet.substructure=Substructure()
@@ -77,6 +78,7 @@ class VTauBuilder(Analyzer):
 
     def makeTauJet(self,event,taus,jets):
         output=[]
+
         #If two di-taus build pair but you need a lepton!
         if len(taus)>0 and len(jets)>0:
             #since we trigger with lepton find taus that have a lepton
@@ -85,10 +87,10 @@ class VTauBuilder(Analyzer):
                 if t.nMuons+t.nElectrons>0:
                     leptonsOK=False
                     for c in t.signalConstituents:
-                        if abs(c.pdgId()) ==11 and c.pt()>100.0:
+                        if abs(c.pdgId()) ==11:
                             leptonsOK=True
                             break;
-                        if abs(c.pdgId()) ==13 and c.pt()>55.0:
+                        if abs(c.pdgId()) ==13:
                             leptonsOK=True
                             break;
                     if leptonsOK:
@@ -99,17 +101,24 @@ class VTauBuilder(Analyzer):
 
             tau=max(tausWithLeptons,key=lambda x:x.pt())
 
-            jet=max(jets,key=lambda x:x.pt())
+            #cross clean jets
+            crossCleanedJets = []
+            for jet in jets:
+                if deltaR(jet.eta(),jet.phi(),tau.eta(),tau.phi())>0.5:
+                    if deltaPhi(jet.phi(),tau.phi())>0.5:
+                        crossCleanedJets.append(jet)
 
-            if deltaPhi(tau.phi(),jet.phi())<1:
-                return output
+            if len(crossCleanedJets)==0:
+                return output;
+
+            jet=max(crossCleanedJets,key=lambda x:x.pt())
 
             self.substructure(jet)
             if not hasattr(jet,'substructure'):
                 print 'No substructure'
                 return output
             VV=Pair(tau,jet)
-            VV.LV=VV.LV+event.met.p4()
+            VV.LVWithMET=VV.LV+event.met.p4()
             output.append(VV)
         return output
       
@@ -119,30 +128,27 @@ class VTauBuilder(Analyzer):
 
         #Take The jets
         jets= filter(lambda x: x.pt()>100.0 and abs(x.eta())<2.4,event.jets)       
-
         taus=[]
-        untaggedJets=[]
+
+
+
 
         looseTaus=[]
         looseJets=[]
-        #Run Tau ID
+
         for j in jets:
             result = self.tauID.run(j)
-            if result==None or result.chargedIso/result.pt()>0.4:
-                untaggedJets.append(j)
-            else:
+            if not (result==None or (result.chargedIso+result.photonIso)/result.pt()>0.4):
                 taus.append(result)
-            if result==None or result.chargedIso/result.pt()>2:
-                looseJets.append(j)
-            else:
+            if not (result==None or result.chargedIso/result.pt()>2):
                 looseTaus.append(result)
 
 
 
         TauTau=self.makeTauTau(event,taus)
-        TauJet =self.makeTauJet(event,taus,untaggedJets)
+        TauJet =self.makeTauJet(event,taus,jets)
         TauTauLoose=self.makeTauTau(event,looseTaus)
-        TauJetLoose =self.makeTauJet(event,looseTaus,looseJets)
+        TauJetLoose =self.makeTauJet(event,looseTaus,jets)
 
         setattr(event,'TauTau'+self.cfg_ana.suffix,TauTau)
         setattr(event,'TauJet'+self.cfg_ana.suffix,TauJet)

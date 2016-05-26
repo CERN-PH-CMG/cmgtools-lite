@@ -95,8 +95,8 @@ triggerFlagsAna.triggerBits ={
 test = 1
 if test==1:
     # test a single component, using a single thread.
-    selectedComponents = [BulkGravToZZToZlepZhad_narrow_3000]
+    selectedComponents = signalSamples750
     for c in selectedComponents:
-        c.splitFactor = 1
+        c.splitFactor = 5
 #selectedComponents=autoAAA(selectedComponents)
 config=autoConfig(selectedComponents,sequence)
