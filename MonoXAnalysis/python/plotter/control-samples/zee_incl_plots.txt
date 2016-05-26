@@ -1,7 +1,18 @@
 nvtx: nVert: 40,0.5,40.5 ; XTitle="N(vertices)", Legend='TR'
-mass_e5x5: mass_2_ene(LepGood1_full5x5_e5x5,LepGood1_eta,LepGood1_phi,LepGood1_mass, LepGood2_full5x5_e5x5,LepGood2_eta,LepGood2_phi,LepGood2_mass): 80,50,130; XTitle="m(e^{+}e^{-})_{5x5} [GeV]", IncludeOverflows=False
-mass_ScRaw: mass_2_ene(LepGood1_superCluster_rawEnergy,LepGood1_eta,LepGood1_phi,LepGood1_mass, LepGood2_superCluster_rawEnergy,LepGood2_eta,LepGood2_phi,LepGood2_mass): 80,50,130; XTitle="m(e^{+}e^{-})_{raw}  [GeV]", IncludeOverflows=False
-mass_ScRawES: mass_2_ene(LepGood1_superCluster_rawEnergy+LepGood1_superCluster_preshowerEnergy,LepGood1_eta,LepGood1_phi,LepGood1_mass, LepGood2_superCluster_rawEnergy+LepGood2_superCluster_preshowerEnergy,LepGood2_eta,LepGood2_phi,LepGood2_mass): 80,50,130; XTitle="m(e^{+}e^{-})_{rawES}  [GeV]", IncludeOverflows=False
-mass_corrEcEnergy: mass_2_ene(LepGood1_correctedEcalEnergy,LepGood1_eta,LepGood1_phi,LepGood1_mass, LepGood2_correctedEcalEnergy,LepGood2_eta,LepGood2_phi,LepGood2_mass): 40,70,110; XTitle="m(e^{+}e^{-})_{corr ECAL} [GeV]", IncludeOverflows=False
-mZ1: mZ1: 120,60,120 ; XTitle="m(e^{+}e^{-})  [GeV]", Legend='TL', IncludeOverflows=False
+mass_e5x5: mass_2_ene(LepGood1_full5x5_e5x5,LepGood1_eta,LepGood1_phi,LepGood1_mass, LepGood2_full5x5_e5x5,LepGood2_eta,LepGood2_phi,LepGood2_mass): 100,50,110; XTitle="m(e^{+}e^{-})_{5x5} [GeV]", IncludeOverflows=False
+mass_ScRaw: mass_2_ene(LepGood1_superCluster_rawEnergy,LepGood1_eta,LepGood1_phi,LepGood1_mass, LepGood2_superCluster_rawEnergy,LepGood2_eta,LepGood2_phi,LepGood2_mass): 100,65,110; XTitle="m(e^{+}e^{-})_{raw}  [GeV]", IncludeOverflows=False
+mass_ScRawES: mass_2_ene(LepGood1_superCluster_rawEnergy+LepGood1_superCluster_preshowerEnergy,LepGood1_eta,LepGood1_phi,LepGood1_mass, LepGood2_superCluster_rawEnergy+LepGood2_superCluster_preshowerEnergy,LepGood2_eta,LepGood2_phi,LepGood2_mass): 100,65,110; XTitle="m(e^{+}e^{-})_{rawES}  [GeV]", IncludeOverflows=False
+mass_corrEcEnergy: mass_2_ene(LepGood1_correctedEcalEnergy,LepGood1_eta,LepGood1_phi,LepGood1_mass, LepGood2_correctedEcalEnergy,LepGood2_eta,LepGood2_phi,LepGood2_mass): 100,75,110; XTitle="m(e^{+}e^{-})_{corr ECAL} [GeV]", IncludeOverflows=False
+mZ1: mZ1: 100,75,110 ; XTitle="m(e^{+}e^{-})  [GeV]", Legend='TL', IncludeOverflows=False
 ptZ: pt_2(LepGood1_pt,LepGood1_phi,LepGood2_pt,LepGood2_phi): 100,0,100 ; XTitle="di-lep p_{T} [GeV]", IncludeOverflows=False
+
+esenergy: LepGood2_superCluster_preshowerEnergy: 100,0,40; XTitle="preshower SC energy [GeV]",  Legend='TR', IncludeOverflows=False
+iso: LepGood2_relIso04: 100,0,.4; XTitle="PF rel. isolation", IncludeOverflows=False, Logy
+r9: LepGood2_r9: 100,0.2,1.01; XTitle=" #sigma_{i#etai#eta}", Legend='TL', IncludeOverflows=False
+r9zoom: LepGood2_r9: 100,0.8,1; XTitle=" #sigma_{i#etai#eta}", Legend='TL', IncludeOverflows=False
+sieie: LepGood2_sigmaIEtaIEta: 100,0.005,0.01; XTitle=" #sigma_{i#etai#eta}", Legend='TL', IncludeOverflows=False
+#sieie: LepGood2_sigmaIEtaIEta: 100,0.015,0.03; XTitle=" #sigma_{i#etai#eta}", Legend='TL', IncludeOverflows=False
+deta: LepGood2_dEtaScTrkIn: 100,-0.007,0.007; XTitle=" #Delta#eta", Legend='TL', IncludeOverflows=False
+#deta: LepGood2_dEtaScTrkIn: 100,-0.01,0.01; XTitle=" #Delta#eta", Legend='TL', IncludeOverflows=False
+dphi: LepGood2_dPhiScTrkIn: 100,-0.1,0.1; XTitle=" #Delta#phi", Legend='TL', IncludeOverflows=False
+hoe: LepGood2_hadronicOverEm: 40,0,0.1; XTitle=" H/E", IncludeOverflows=False, Logy
