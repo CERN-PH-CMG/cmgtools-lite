@@ -65,7 +65,7 @@ report = mca.getPlotsRaw("x", args[2], args[3], cuts.allCuts(), nodata=options.a
 
 for post in postfixes:
     for rep in report:
-        if re.match(post[0]+"$",rep): post[1](mca,cuts.allCuts(),rep,report)
+        if re.match(post[0],rep): post[1](mca,cuts.allCuts(),rep,report)
 if '_special_TT_foremptybins' in report: del report['_special_TT_foremptybins']
 
 #def fixClopperPearsonForXG0b(mca,cut,pname,oldplot):
@@ -135,7 +135,7 @@ for name in systs.keys():
     for p in procs:
         effect = "-"
         for (procmap,amount) in systs[name]:
-            if re.match(procmap+"$", p): effect = amount
+            if re.match(procmap, p): effect = amount
         effmap[p] = effect
     systs[name] = effmap
 
@@ -148,7 +148,7 @@ for name in systsEnv.keys():
         effect12 = "-"
         for entry in systsEnv[name]:
             (procmap,amount,mode) = entry[:3]
-            if re.match(procmap+"$", p): effect = float(amount) if mode not in ["templates","alternateShape", "alternateShapeOnly"] else amount
+            if re.match(procmap, p): effect = float(amount) if mode not in ["templates","alternateShape", "alternateShapeOnly"] else amount
             morefields=entry[3:]
         if mca._projection != None and effect not in ["-","0","1",1.0,0.0] and type(effect) == type(1.0):
             effect = mca._projection.scaleSyst(name, effect)

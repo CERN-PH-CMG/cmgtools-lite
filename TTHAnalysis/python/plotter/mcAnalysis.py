@@ -106,6 +106,7 @@ class MCAnalysis:
             if skipMe: continue
             cnames = [ x.strip() for x in field[1].split("+") ]
             total_w = 0.; to_norm = False; ttys = [];
+            is_w = -1
             for cname in cnames:
                 treename = extra["TreeName"] if "TreeName" in extra else options.tree 
                 rootfile = "%s/%s/%s/%s_tree.root" % (options.path, cname, treename, treename)
@@ -138,11 +139,13 @@ class MCAnalysis:
                     pckobj  = pickle.load(open(pckfile,'r'))
                     counters = dict(pckobj)
                     if ('Sum Weights' in counters) and options.weight:
-                        is_w = True; 
+                        if (is_w==0): raise RuntimeError, "Can't put together a weighted and an unweighted component (%s)" % cnames
+                        is_w = 1; 
                         total_w += counters['Sum Weights']
                         scale = "genWeight*(%s)" % field[2]
                     else:
-                        if is_w: raise RuntimeError, "Can't put together a weighted and an unweighted component (%s)" % cnames
+                        if (is_w==1): raise RuntimeError, "Can't put together a weighted and an unweighted component (%s)" % cnames
+                        is_w = 0;
                         total_w += counters['All Events']
                         scale = "(%s)" % field[2]
                     if len(field) == 4: scale += "*("+field[3]+")"
