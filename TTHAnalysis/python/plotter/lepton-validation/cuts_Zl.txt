@@ -1,5 +1,5 @@
 filters : hbheFilterNew25ns==1 && Flag_CSCTightHaloFilter==1 && Flag_eeBadScFilter==1
-trigger : HLT_DoubleMu || HLT_DoubleEl || HLT_MuEG
+trigger : HLT_DoubleMu || HLT_DoubleEl || HLT_MuEG || (!isData)
 3L : nLepGood == 3
 SF/OS : LepGood1_pdgId == -LepGood2_pdgId
 lep3_pt30 : LepGood3_pt < 50

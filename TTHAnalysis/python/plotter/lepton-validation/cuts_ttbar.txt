@@ -1,5 +1,5 @@
 filters : hbheFilterNew25ns==1 && Flag_CSCTightHaloFilter==1 && Flag_eeBadScFilter==1
-trigger : HLT_DoubleMu || HLT_DoubleEl || HLT_MuEG
+trigger : HLT_DoubleMu || HLT_DoubleEl || HLT_MuEG || (!isData)
 nL : nLepGood >= 2
 EE_MuMu_MuE : LepGood1_pdgId == -LepGood2_pdgId || abs(LepGood1_pdgId+LepGood2_pdgId)==2
 pt2515 : LepGood1_pt>25 && LepGood2_pt>15

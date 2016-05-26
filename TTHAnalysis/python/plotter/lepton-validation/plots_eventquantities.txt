@@ -8,8 +8,8 @@ htJet40j: htJet40j: 20,0,800; XTitle="H_{T}  [GeV]", Legend='TR', LegendCutoff=1
 nBJetLoose25 : nBJetLoose25 : 8,-0.5,7.5 ; XTitle='N(bJet\, p_{T} > 25 \,loose)', Legend='TR', LegendCutoff=1e-4, Logy
 nBJetMedium25 : nBJetMedium25 : 8,-0.5,7.5 ; XTitle='N(bJet\, p_{T} > 25 \,medium)', Legend='TR', LegendCutoff=1e-4, Logy
 nBJetMedium40 : nBJetMedium40 : 8,-0.5,7.5 ; XTitle='N(bJet\, p_{T} > 40 \,medium)', Legend='TR', LegendCutoff=1e-4, Logy
-lep1_pt: LepGood1_pt: 20,0,200; XTitle="Leading lepton p_{T}  [GeV]", Legend='TR', LegendCutoff=1e-2
-lep2_pt: LepGood2_pt: 20,0,200; XTitle="Subleading lepton p_{T}  [GeV]", Legend='TR', LegendCutoff=1e-2
+lep1_pt: LepGood1_pt: 20,0,100; XTitle="Leading lepton p_{T}  [GeV]", Legend='TR', LegendCutoff=1e-2
+lep2_pt: LepGood2_pt: 20,0,100; XTitle="Subleading lepton p_{T}  [GeV]", Legend='TR', LegendCutoff=1e-2
 lep1_eta: LepGood1_eta: 25,-2.5,2.5; XTitle="Leading lepton #eta", Legend='TR', LegendCutoff=1e-2
 lep2_eta: LepGood2_eta: 25,-2.5,2.5; XTitle="Subleading lepton #eta", Legend='TR', LegendCutoff=1e-2
 
