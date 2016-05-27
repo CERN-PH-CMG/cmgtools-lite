@@ -26,7 +26,7 @@ fastSkim2L = fastSkim2LnoSip.clone(name="fastLepSkim2L",
         eleCut = lambda ele : ele.pt() > 7 and (abs(ele.dB(ele.PV3D)) <= 4*ele.edB(ele.PV3D)),
 )
 fastSkim3L = fastSkim2L.clone(name="fastLepSkim3L", minLeptons = 3)
-fastSkim4L = fastSkim2L.clone(name="fastLepSkim3L", minLeptons = 4)
+fastSkim4L = fastSkim2L.clone(name="fastLepSkim4L", minLeptons = 4)
 fastSkim2Mu3 = fastSkim2LnoSip.clone(name="fastLepSkim2Mu3",
         muCut = lambda mu : mu.pt() > 3 and abs(mu.dB(mu.PV3D) / mu.edB(mu.PV3D)) < 4,
         eleCut = lambda ele : False,
