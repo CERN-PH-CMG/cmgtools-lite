@@ -6,6 +6,8 @@ from CMGTools.VVResonances.analyzers.LeptonIDOverloader import *
 from CMGTools.VVResonances.analyzers.VVBuilder import *
 from CMGTools.VVResonances.analyzers.VTauBuilder import *
 from CMGTools.VVResonances.analyzers.Skimmer import *
+from CMGTools.VVResonances.analyzers.TopMergingAnalyzer import *
+
 import os
 
 
@@ -280,6 +282,8 @@ jetAnaAK8 = cfg.Analyzer(
 
 
 
+mergedTruthAna = cfg.Analyzer(TopMergingAnalyzer,name='mergeTruthAna')
+
 
 
 vvAna = cfg.Analyzer(
@@ -323,5 +327,6 @@ coreSequence = [
 #    packedAna,
 #    multiStateAna,
     eventFlagsAna,
-    triggerFlagsAna    
+    triggerFlagsAna,
+    mergedTruthAna
 ]
