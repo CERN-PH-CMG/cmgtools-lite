@@ -34,7 +34,7 @@ selectedComponents = [ d for d in data_50ns if "SingleMu" not in d.name ]
 sequence = cfg.Sequence(hzz4lCoreSequence)
 
 for comp in mcSamples:
-    comp.triggers = triggers_any
+    comp.triggers = []
     comp.vetoTriggers = []
 
 
