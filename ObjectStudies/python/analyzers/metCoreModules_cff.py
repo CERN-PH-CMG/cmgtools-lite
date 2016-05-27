@@ -181,7 +181,7 @@ lepAna = cfg.Analyzer(
     # minimum deltaR between a loose electron and a loose muon (on overlaps, discard the electron)
     min_dr_electron_muon = 0.02,
     # do MC matching 
-    do_mc_match = True, # note: it will in any case try it only on MC, not on data
+    do_mc_match = False, # note: it will in any case try it only on MC, not on data
     match_inclusiveLeptons = False, # match to all inclusive leptons
     do_mc_match_photons = False, # do not do MC matching of electrons to photons
     )
@@ -340,7 +340,7 @@ jetAna = cfg.Analyzer(
     applyL2L3Residual = True, # Switch to 'Data' when they will become available for Data
     recalibrationType = "AK4PFchs",
     mcGT     = "Spring16_25nsV1_MC",
-    dataGT   = "Spring16_25nsV1_DATA",
+    dataGT   = "Spring16_25nsV1_MC",
     jecPath = "${CMSSW_BASE}/src/CMGTools/RootTools/data/jec/",
     shiftJEC = 0, # set to +1 or -1 to apply +/-1 sigma shift to the nominal jet energies
     addJECShifts = False, # if true, add  "corr", "corrJECUp", and "corrJECDown" for each jet (requires uncertainties to be available!)
@@ -395,7 +395,7 @@ jetPuppiAna = cfg.Analyzer(
     applyL2L3Residual = True, # Switch to 'Data' when they will become available for Data
     recalibrationType = "AK4PFPuppi", ## waiting for JEC those not exist yet
     mcGT     = "Spring16_25nsV1_MC",
-    dataGT   = "Spring16_25nsV1_DATA",
+    dataGT   = "Spring16_25nsV1_MC",
     jecPath = "${CMSSW_BASE}/src/CMGTools/RootTools/data/jec/",
     shiftJEC = 0, # set to +1 or -1 to apply +/-1 sigma shift to the nominal jet energies
     addJECShifts = False, # if true, add  "corr", "corrJECUp", and "corrJECDown" for each jet (requires uncertainties to be available!)
