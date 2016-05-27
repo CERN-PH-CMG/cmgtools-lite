@@ -172,7 +172,7 @@ lepAna = cfg.Analyzer(
     # muon isolation correction method (can be "rhoArea" or "deltaBeta")
     mu_isoCorr = "deltaBeta" ,
     mu_effectiveAreas = "Phys14_25ns_v1", #(can be 'Data2012' or 'Phys14_25ns_v1')
-    mu_tightId = "POG_ID_Loose",
+    mu_tightId = "HZZ_ID_LooseOrTkHighPt",
     # electron isolation correction method (can be "rhoArea" or "deltaBeta")
     ele_isoCorr = "rhoArea" ,
     ele_effectiveAreas = "Spring15_25ns_v1" , #(can be 'Data2012' or 'Phys14_25ns_v1')
@@ -202,7 +202,7 @@ fsrRecovery = cfg.Analyzer(
     FSRPhotonMaker, name="fsrPhotonMaker",
     leptons="selectedLeptons",
     electronID = lambda x: True, #x.electronID("POG_MVA_ID_Run2_NonTrig_HZZ")
-    electronVeto = "superclusterEta", # alternatives: "electronEta" and in the future "pfCandReference"
+    electronVeto = "pfCandReference", # alternatives:  "superclusterEta" (as in 2015), "electronEta" 
     drOverET2Cut = 0.012,
     relIsoCut = 1.8, 
 )
@@ -227,7 +227,7 @@ jetAna = cfg.Analyzer(
     recalibrateJets = True, # True, False, 'MC', 'Data'
     applyL2L3Residual = True, # Switch to 'Data' when they will become available for Data
     recalibrationType = "AK4PFchs",
-    mcGT     = "Fall15_25nsV2_MC",
+    mcGT     = "Spring16_25nsV1_MC",
     dataGT   = "Fall15_25nsV2_DATA",
     jecPath = "${CMSSW_BASE}/src/CMGTools/RootTools/data/jec/",
     shiftJEC = 0, # set to +1 or -1 to get +/-1 sigma shifts
