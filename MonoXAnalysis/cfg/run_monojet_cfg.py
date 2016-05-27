@@ -118,7 +118,6 @@ from CMGTools.MonoXAnalysis.analyzers.treeProducerDarkMatterMonoJet import *
 if saveSuperClusterVariables:
     leptonTypeExtra.addVariables([
             NTupleVariable("e5x5", lambda x: x.e5x5() if (abs(x.pdgId())==11 and hasattr(x,"e5x5")) else -999, help="Electron e5x5"),
-            NTupleVariable("r9", lambda x: x.r9() if (abs(x.pdgId())==11 and hasattr(x,"r9")) else -999, help="Electron r9"),
             NTupleVariable("sigmaIetaIeta", lambda x: x.sigmaIetaIeta() if (abs(x.pdgId())==11 and hasattr(x,"sigmaIetaIeta")) else -999, help="Electron sigmaIetaIeta"),
             NTupleVariable("sigmaIphiIphi", lambda x: x.sigmaIphiIphi() if (abs(x.pdgId())==11 and hasattr(x,"sigmaIphiIphi")) else -999, help="Electron sigmaIphiIphi"),
             NTupleVariable("hcalOverEcal", lambda x: x.hcalOverEcal() if (abs(x.pdgId())==11 and hasattr(x,"hcalOverEcal")) else -999, help="Electron hcalOverEcal"),
@@ -138,6 +137,7 @@ if saveSuperClusterVariables:
             NTupleVariable("superCluster_seed.energy", lambda x: x.superCluster().seed().energy() if (abs(x.pdgId())==11 and hasattr(x,"superCluster")) else -999, help="Electron superCluster.seed.energy"),
 ])
 
+
 # for applying fatjet ID
 if saveFatJetIDVariables:
     fatJetType.addVariables([
@@ -146,6 +146,7 @@ if saveFatJetIDVariables:
             NTupleVariable("chEmEF", lambda x : x.chargedEmEnergyFraction(), float, mcOnly = False,help="chargedEmEnergyFraction (relative to uncorrected jet energy)"),
             NTupleVariable("neEmEF", lambda x : x.neutralEmEnergyFraction(), float, mcOnly = False,help="neutralEmEnergyFraction (relative to uncorrected jet energy)"),
 ])
+
 
 ## Tree Producer
 treeProducer = cfg.Analyzer(
@@ -218,8 +219,10 @@ triggerFlagsAna.unrollbits = True
 triggerFlagsAna.saveIsUnprescaled = False
 triggerFlagsAna.checkL1Prescale = False
 
-from CMGTools.MonoXAnalysis.samples.samples_monojet_13TeV_76X import *
-from CMGTools.RootTools.samples.samples_13TeV_DATA2015 import *
+from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv1 import *
+from CMGTools.MonoXAnalysis.samples.samples_monojet_13TeV_80X import *
+#from CMGTools.MonoXAnalysis.samples.samples_monojet_13TeV_76X import *
+#from CMGTools.RootTools.samples.samples_13TeV_DATA2015 import *
 
 selectedComponents = [];
 
@@ -234,9 +237,17 @@ if scaleProdToLumi>0: # select only a subset of a sample, corresponding to a giv
         c.splitFactor = len(c.files)
         c.fineSplitFactor = 1
 
-json = "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions15/13TeV/Reprocessing/Cert_13TeV_16Dec2015ReReco_Collisions15_25ns_JSON.txt"
+#json = "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions15/13TeV/Reprocessing/Cert_13TeV_16Dec2015ReReco_Collisions15_25ns_JSON.txt"
+json = "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/DCSOnly/json_DCSONLY.txt"
+if False:
+    is50ns = False
+    selectedComponents = PrivateSamplesData
+    for comp in selectedComponents:
+        comp.splitFactor = 100     
+        comp.fineSplitFactor = 1
+
 if runData and not isTest: # For running on data
-    run_ranges = [ (254227,260627) ]; useAAA=False; is50ns=False
+    run_ranges = [ (272021,273730) ]; useAAA=False; is50ns=False
 
     compSelection = ""
     DatasetsAndTriggers = []
@@ -247,9 +258,12 @@ if runData and not isTest: # For running on data
     # ProcessingsAndRunRanges.append( ("Run2015D-05Oct2015-v1", [256630,258158] ) ); Shorts.append("Run2015D_05Oct")
     # ProcessingsAndRunRanges.append( ("Run2015D-PromptReco-v4", [258159,999999] ) ); Shorts.append("Run2015D_v4")
 
-    ProcessingsAndRunRanges.append( ("Run2015C_25ns-16Dec2015-v1", [254227,254914] ) ); Shorts.append("Run2015C_16Dec")
-    ProcessingsAndRunRanges.append( ("Run2015D-16Dec2015-v1", [256630,260627] ) ); Shorts.append("Run2015D_16Dec")
+    # ProcessingsAndRunRanges.append( ("Run2015C_25ns-16Dec2015-v1", [254227,254914] ) ); Shorts.append("Run2015C_16Dec")
+    # ProcessingsAndRunRanges.append( ("Run2015D-16Dec2015-v1", [256630,260627] ) ); Shorts.append("Run2015D_16Dec")
     
+    ProcessingsAndRunRanges.append( ("Run2016B-PromptReco-v1", [272021,273148] ) ); Shorts.append("PromptReco_v1")
+    ProcessingsAndRunRanges.append( ("Run2016B-PromptReco-v2", [273158,273730] ) ); Shorts.append("PromptReco_v2")
+
     if diLepSkim == True:
         DatasetsAndTriggers.append( ("DoubleMuon", triggers_mumu_iso + triggers_mumu_ss + triggers_mumu_ht + triggers_3mu + triggers_3mu_alt + triggers_AllMonojet) )
         DatasetsAndTriggers.append( ("DoubleEG",   triggers_ee + triggers_ee_ht + triggers_3e) )
@@ -260,12 +274,13 @@ if runData and not isTest: # For running on data
         DatasetsAndTriggers.append( ("SinglePhoton", triggers_SinglePhoton) )
     if signalSkim == True:
         DatasetsAndTriggers.append( ("MET", triggers_AllMonojet ) )
-        
+    else:
+        DatasetsAndTriggers.append( ("DoubleEG",   triggers_ee + triggers_ee_ht + triggers_3e) )
 
     for pd,triggers in DatasetsAndTriggers:
         iproc=0 
         for processing,run_dslimits in ProcessingsAndRunRanges:
-            if ("DoubleEG" in pd): processing.replace("v1","v2",1) 
+            # if ("DoubleEG" in pd): processing.replace("v1","v2",1) 
             for run_range in run_ranges:
                 run_min = max(run_range[0],run_dslimits[0])
                 run_max = min(run_range[1],run_dslimits[1])
@@ -329,6 +344,8 @@ if runData==False and not isTest: # MC all
         comp.splitFactor = len(comp.files)/4
         comp.fineSplitFactor = 1
 
+from CMGTools.HToZZ4L.tools.configTools import printSummary
+
 if not getHeppyOption("test"):
     printSummary(selectedComponents)
     autoAAA(selectedComponents)
@@ -367,7 +384,7 @@ elif test == '5':
         comp.files = comp.files[:5]
         comp.splitFactor = 1
         comp.fineSplitFactor = 5
-elif test == 'synch-76X': # sync
+elif test == 'synch-80X': # sync
     #eventSelector.toSelect = [ (1,165,84628), ]
     #sequence = cfg.Sequence([eventSelector] + dmCoreSequence + [ ttHFatJetAna, monoJetVarAna, MonoJetEventAna, treeProducer, ])
     monoJetSkim.metCut = 0  
@@ -377,15 +394,15 @@ elif test == 'synch-76X': # sync
         selectedComponents = [ comp ]
     elif what == "DYJets":
         comp = DYJetsToLL_M50
-        comp.files = [ 'root://eoscms//eos/cms/store/mc/RunIIFall15MiniAODv2/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/MINIAODSIM/PU25nsData2015v1_HCALDebug_76X_mcRun2_asymptotic_v12-v1/00000/006C9F73-3FB9-E511-9AFE-001E67E95C52.root' ]
+        comp.files = [ 'root://eoscms//eos/cms/store/mc/RunIISpring16MiniAODv1/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/MINIAODSIM/PUSpring16_80X_mcRun2_asymptotic_2016_v3-v1/60000/E0553CDE-0300-E611-B2C4-0CC47A4C8F1C.root' ]
         selectedComponents = [ comp ]
     elif what == "TTJets":
-        comp = TJets_LO
-        comp.files = [ 'root://eoscms//eos/cms/store/mc/RunIIFall15MiniAODv2/TTJets_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/MINIAODSIM/PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/00000/00547C97-2FCC-E511-8D75-002590DB91D2.root' ]
+        comp = TTJets
+        comp.files = [ 'root://eoscms//eos/cms/store/mc/RunIISpring16MiniAODv1/TTJets_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/MINIAODSIM/PUSpring16RAWAODSIM_80X_mcRun2_asymptotic_2016_v3-v2/70000/C81219FD-150C-E611-BF27-002590A88736.root' ]
         selectedComponents = [ comp ]
     elif what == "WJets":
         comp = WJetsToLNu_HT100to200
-        comp.files = [ 'root://eoscms//eos/cms/store/mc/RunIIFall15MiniAODv2/WJetsToLNu_HT-400To600_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/50000/0CF84FB8-2CBC-E511-B255-001EC9AF22C6.root' ]
+        comp.files = [ 'root://eoscms//eos/cms/store/mc/RunIISpring16MiniAODv1/WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/MINIAODSIM/PUSpring16_80X_mcRun2_asymptotic_2016_v3-v1/60000/00DD003D-4201-E611-A6F7-0CC47A745282.root' ]
         selectedComponents = [ comp ]
     else:
         selectedComponents = mcSamples_monojet_Asymptotic25ns
@@ -393,15 +410,15 @@ elif test == 'synch-76X': # sync
     for comp in selectedComponents:
         comp.splitFactor = 1
         comp.fineSplitFactor = 1 if getHeppyOption("single") else 4
-elif test == '76X-Data':
+elif test == '80X-Data':
     what = getHeppyOption("sample")
     if what == "DoubleEG":
-        comp = DoubleEG_Run2015D_16Dec
-        comp.files = [ 'root://eoscms//eos/cms/store/data/Run2015D/DoubleEG/MINIAOD/16Dec2015-v2/00000/043D5E4A-83A6-E511-B159-0CC47A4D76D6.root' ]
+        comp = kreator.makeDataComponent('DoubleEG_Run2016B', '/DoubleEG/Run2016B-PromptReco-v2/MINIAOD', "CMS", ".*root", json, (272021,273523) )
+        comp.files = [ 'root://eoscms//eos/cms/store/data/Run2016B/DoubleEG/MINIAOD/PromptReco-v2/000/273/448/00000/28E31C7B-1C1C-E611-988C-02163E011BAC.root' ]
         selectedComponents = [ comp ]
     elif what == "DoubleMuon":
-        comp = DoubleMuon_Run2015D_16Dec
-        comp.files = [ 'root://eoscms//eos/cms/store/data/Run2015D/DoubleMuon/MINIAOD/16Dec2015-v1/60000/B4354564-90B3-E511-8FC7-0025905B8598.root' ]
+        comp = kreator.makeDataComponent('DoubleMuon_Run2016B', '/DoubleMuon/Run2016B-PromptReco-v2/MINIAOD', "CMS", ".*root", json, (272021,273523) )
+        comp.files = [ 'root://eoscms//eos/cms/store/data/Run2016B/DoubleMuon/MINIAOD/PromptReco-v2/000/273/448/00000/7ED72389-581C-E611-BF09-02163E011BF0.root' ]
         selectedComponents = [ comp ]
     else:
         selectedComponents = dataSamples_Run2015D_16Dec
