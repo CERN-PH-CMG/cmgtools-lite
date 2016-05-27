@@ -8,8 +8,8 @@ ptZ: pt_2(LepGood1_pt,LepGood1_phi,LepGood2_pt,LepGood2_phi): 100,0,100 ; XTitle
 
 esenergy: LepGood2_superCluster_preshowerEnergy: 100,0,40; XTitle="preshower SC energy [GeV]",  Legend='TR', IncludeOverflows=False
 iso: LepGood2_relIso04: 100,0,.4; XTitle="PF rel. isolation", IncludeOverflows=False, Logy
-r9: LepGood2_r9: 100,0.2,1.01; XTitle=" #sigma_{i#etai#eta}", Legend='TL', IncludeOverflows=False
-r9zoom: LepGood2_r9: 100,0.8,1; XTitle=" #sigma_{i#etai#eta}", Legend='TL', IncludeOverflows=False
+r9: LepGood2_r9: 100,0.2,1.01; XTitle=" R_{9}", Legend='TL', IncludeOverflows=False
+r9zoom: LepGood2_r9: 100,0.8,1; XTitle=" R_{9}", Legend='TL', IncludeOverflows=False
 sieie: LepGood2_sigmaIEtaIEta: 100,0.005,0.01; XTitle=" #sigma_{i#etai#eta}", Legend='TL', IncludeOverflows=False
 #sieie: LepGood2_sigmaIEtaIEta: 100,0.015,0.03; XTitle=" #sigma_{i#etai#eta}", Legend='TL', IncludeOverflows=False
 deta: LepGood2_dEtaScTrkIn: 100,-0.007,0.007; XTitle=" #Delta#eta", Legend='TL', IncludeOverflows=False
