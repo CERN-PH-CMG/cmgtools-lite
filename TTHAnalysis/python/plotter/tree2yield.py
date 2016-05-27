@@ -462,6 +462,7 @@ class TreeToYield:
         (firstEntry, maxEntries) = self._rangeToProcess(fsplit)
         self._tree.Draw('>>elist', cut, 'entrylist', maxEntries, firstEntry)
         elist = ROOT.gDirectory.Get('elist')
+        if self._tree.GetEntries()==0 and elist==None: elist = ROOT.TEntryList("elist",cut) # empty list if tree is empty, elist would be a ROOT.nullptr TObject otherwise
         return elist
     def clearCut(self):
         #if not self._isInit: raise RuntimeError, "Error, clearing a cut on something that wasn't even initialized"

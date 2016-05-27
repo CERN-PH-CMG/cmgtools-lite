@@ -1,5 +1,5 @@
 filters : hbheFilterNew25ns==1 && Flag_CSCTightHaloFilter==1 && Flag_eeBadScFilter==1
-Trigger : HLT_BIT_HLT_IsoMu20_v || HLT_BIT_HLT_Ele27_WPLoose_Gsf_v || HLT_BIT_HLT_Ele27_WP85_Gsf_v
+trigger : HLT_BIT_HLT_IsoMu20_v || HLT_BIT_HLT_Ele23_WPLoose_Gsf_v || (!isData)
 2L : nLepGood == 2
 SS/OF : LepGood1_charge*LepGood2_charge > 0
 lep2_pt10 : nLepGood10 == 2
