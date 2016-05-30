@@ -1,0 +1,23 @@
+== 1 tight lep: nLep == 1 && Lep_pt > 25 && nVeto == 0
+#sele: Selected == 1
+#anti: Selected == -1
+
+== 1 ele: nEl == 1
+
+Trigger: !isData || (isData && (HLT_EleHT350 || HLT_MuHT350))
+## use the following line to pick leptons only from the corresponding PD
+XOR: !isData || (isData && ((PD_SingleEle && nEl==1) || (PD_SingleMu && nMu==1)))
+
+#nJets30Clean > 2: 2 <= nJets30Clean
+nJets30Clean = 3,4: 3 <= nJets30Clean && nJets30Clean <= 4
+2.JetPt > 80: Jet2_pt > 80
+
+LT > 250: LT > 250
+HT > 500: HT > 500
+
+# Filters
+#Filters: !isData || (isData && Flag_goodVertices && Flag_HBHENoiseFilter_fix && Flag_CSCTightHaloFilter && Flag_eeBadScFilter && Flag_HBHENoiseIsoFilter && passCSCFilterList )
+Filters: !isData || (isData && passFilters)
+
+#Nb >= 1: nBJet >= 1
+Nb = 0: nBJet == 0

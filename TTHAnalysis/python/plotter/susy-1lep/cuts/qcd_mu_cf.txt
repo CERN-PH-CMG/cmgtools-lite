@@ -1,0 +1,22 @@
+== 1 hard lep: nLep == 1 && Lep_pt > 25
+veto: nVeto == 0
+#ele: nEl == 1
+mu: nMu == 1
+#selected: Selected == 1
+anti: Selected == -1
+
+## Jets
+nJetsClean >= 2: nJets30Clean >= 2
+#nJetsClean >= 6: nJets30Clean >= 6
+#nJetsClean 3,4: nJets30Clean >= 3 && nJets30Clean <= 4
+#nJetsClean 4,5: nJets30Clean >= 4 && nJets30Clean <= 5
+# 2. jet pt cut
+2.JetPt > 80: Jet2_pt > 80
+
+HT > 500: HT > 500
+LT > 250: LT > 250
+
+#Nb >= 1: nBJet >= 1
+#Nb = 0: nBJet == 0
+
+#SR: isSR == 1

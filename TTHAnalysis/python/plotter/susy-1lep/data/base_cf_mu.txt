@@ -1,0 +1,33 @@
+# blind data
+#blind: !isData || (isData && run <= 257599)
+#CR: isSR == 0
+
+Trigger: !isData || (isData && (HLT_EleHT350 || HLT_MuHT350))
+## use the following line to pick leptons only from the corresponding PD
+XOR: !isData || (isData && ((PD_SingleEle && nEl==1) || (PD_SingleMu && nMu==1)))
+
+#### Leptons ####
+== 1 hard lep: nLep == 1 && Selected == 1 && Lep_pt > 25
+mu: nMu == 1
+veto: nVeto == 0
+
+#### Jets ####
+nJets30Clean = 4,5: 4 <= nJets30Clean && nJets30Clean <= 5
+#nJets30Clean >= 2: nJets30Clean >= 2
+2.JetPt > 80: Jet2_pt > 80
+
+HT > 500: HT > 500
+LT > 250: LT > 250
+
+Nb >= 1: nBJet >= 1
+#Nb = 0: nBJet == 0
+
+
+#F_HBHENoiseFilter: !isData || (isData && Flag_HBHENoiseFilter_fix)
+#F_goodVertices: !isData || (isData && Flag_goodVertices)
+#F_CSCTightHaloFilter: !isData || (isData && Flag_CSCTightHaloFilter)
+#F_eeBadScFilter: !isData || (isData && Flag_eeBadScFilter)
+
+Filters: !isData || (isData && Flag_goodVertices && Flag_HBHENoiseFilter_fix && Flag_CSCTightHaloFilter && Flag_eeBadScFilter && Flag_HBHENoiseIsoFilter)
+
+CSC: passCSCFilterList

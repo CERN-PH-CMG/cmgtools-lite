@@ -1,0 +1,5 @@
+# SELECTED
+Lp_sel_HT:   if3(Selected == 1, HT, -99)  : [0,500,750,1000,3000]   ; XTitle="HT(e)", IncludeOverflows=False
+
+# ANTI-SELECTED
+Lp_anti_HT:   if3(Selected == -1, HT, -99)  : [0,500,750,1000,3000]   ; XTitle="HT(e)", IncludeOverflows=False

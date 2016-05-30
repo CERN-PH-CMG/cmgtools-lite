@@ -1,0 +1,24 @@
+dPhiLepW:   fabs(DeltaPhiLepW)  : 20,0,3.141   ; XTitle="#Delta #varphi (lep\,W)", IncludeOverflows=False, Logy
+HT:     HT : 40,0,2799.9999;  XTitle="H_{T} [GeV]", Logy
+ST:     ST : 40,0,1599.9999;  XTitle="S_{T} [GeV]", Logy
+nJet:       nCentralJet30                            : 20,0,20   ;  XTitle="jet multiplicity", Logy
+nBJet:      nBJetMedium30                          : 10,0,10   ;  XTitle="b-jet multiplicity (Med)", Logy
+
+# LP
+Lp:   	Lp      : 30,-0.5,2.5   ; XTitle="L_{p}", IncludeOverflows=False
+Lp_bin: Lp      : 1,-0.5,2.5   ; XTitle="L_{p}", IncludeOverflows=False
+Lp_log:	Lp      : 30,-0.5,2.5   ; XTitle="L_{p}", IncludeOverflows=False, Logy, MoreY=100
+
+#Selected: Selected == 1
+dPhiLepW_sel:   if3(Selected == 1,fabs(DeltaPhiLepW),-99)  : 20,0,3.141   ; XTitle="#Delta #varphi (lep\,W)", IncludeOverflows=False, Logy
+dPhiLepW_anti:  if3(Selected == -1,fabs(DeltaPhiLepW),-99)  : 20,0,3.141   ; XTitle="#Delta #varphi (lep\,W)", IncludeOverflows=False, Logy
+
+Lp_sel:   	if3(Selected == 1,Lp,-99)      : 30,-0.5,2.5   ; XTitle="L_{p}", IncludeOverflows=False
+#Lp_sel_log:   	if3(Selected == 1,Lp,-99)      : 30,-0.5,2.5   ; XTitle="L_{p}", IncludeOverflows=False, Logy, MoreY=100
+Lp_anti:   	if3(Selected == -1,Lp,-99)      : 30,-0.5,2.5   ; XTitle="L_{p}", IncludeOverflows=False
+#Lp_anti_log:   	if3(Selected == -1,Lp,-99)      : 30,-0.5,2.5   ; XTitle="L_{p}", IncludeOverflows=False,Logy, MoreY=100
+
+#Lp_sel_ele:   	if3(Selected == 1 && LepGood1_pdgId == 11,Lp,-99)      : 30,-0.5,2.5   ; XTitle="Lp(e-)", IncludeOverflows=False
+#Lp_sel_pos:   	if3(Selected == 1 && LepGood1_pdgId == -11,Lp,-99)      : 30,-0.5,2.5   ; XTitle="Lp(e+)", IncludeOverflows=False
+#Lp_anti_ele:   	if3(Selected == -1 && LepGood1_pdgId == 11,Lp,-99)      : 30,-0.5,2.5   ; XTitle="Lp(e-)", IncludeOverflows=False
+#Lp_anti_pos:   	if3(Selected == -1 && LepGood1_pdgId == -11,Lp,-99)      : 30,-0.5,2.5   ; XTitle="Lp(e+)", IncludeOverflows=False

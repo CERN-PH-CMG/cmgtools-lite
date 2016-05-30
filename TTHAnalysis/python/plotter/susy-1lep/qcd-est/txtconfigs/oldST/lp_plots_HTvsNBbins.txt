@@ -1,0 +1,4 @@
+HT_NB0:   if3(nBJet == 0, HT, -99) : [500,750,1250,1600]   ; XTitle="H_{T}", IncludeOverflows=False
+HT_NB1:   if3(nBJet == 1, HT, -99) : [500,750,1250,1600]   ; XTitle="H_{T}", IncludeOverflows=False
+HT_NB2:   if3(nBJet == 2, HT, -99) : [500,750,1250,1600]   ; XTitle="H_{T}", IncludeOverflows=False
+HT_NB3i:   if3(nBJet >= 3, HT, -99) : [500,750,1250,1600]   ; XTitle="H_{T}", IncludeOverflows=False

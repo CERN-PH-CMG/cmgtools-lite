@@ -1,0 +1,13 @@
+# SELECTED
+Lp_sel_incl:   if3(Selected == 1, Lp, -99)  : 1,-0.5,2.5   ; XTitle="Lp(e)", IncludeOverflows=False
+Lp_sel_NB0:	if3(Selected == 1 && nBJetMedium30 == 0, Lp, -99) : 1,-0.5,2.5   ; XTitle="Lp(e)", IncludeOverflows=False
+Lp_sel_NB1:	if3(Selected == 1 && nBJetMedium30 == 1, Lp, -99) : 1,-0.5,2.5   ; XTitle="Lp(e)", IncludeOverflows=False
+Lp_sel_NB2:	if3(Selected == 1 && nBJetMedium30 == 2, Lp, -99) : 1,-0.5,2.5   ; XTitle="Lp(e)", IncludeOverflows=False
+Lp_sel_NB3:	if3(Selected == 1 && nBJetMedium30 >= 3, Lp, -99) : 1,-0.5,2.5   ; XTitle="Lp(e)", IncludeOverflows=False
+
+# ANTI-SELECTED
+Lp_anti_incl:   if3(Selected == -1, Lp, -99)  : 1,-0.5,2.5   ; XTitle="Lp(e)", IncludeOverflows=False
+Lp_anti_NB0:	if3(Selected == -1 && nBJetMedium30 == 0, Lp, -99) : 1,-0.5,2.5   ; XTitle="Lp(e)", IncludeOverflows=False
+Lp_anti_NB1:	if3(Selected == -1 && nBJetMedium30 == 1, Lp, -99) : 1,-0.5,2.5   ; XTitle="Lp(e)", IncludeOverflows=False
+Lp_anti_NB2:	if3(Selected == -1 && nBJetMedium30 == 2, Lp, -99) : 1,-0.5,2.5   ; XTitle="Lp(e)", IncludeOverflows=False
+Lp_anti_NB3:	if3(Selected == -1 && nBJetMedium30 >= 3, Lp, -99) : 1,-0.5,2.5   ; XTitle="Lp(e)", IncludeOverflows=False

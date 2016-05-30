@@ -1,0 +1,28 @@
+# SELECTED
+Lp_sel_incl:   if3(Selected == 1, Lp, -99)  : 30,-0.5,2.5   ; XTitle="L_{p}", IncludeOverflows=False
+Lp_sel_NJ45:	if3(Selected == 1 && nCentralJet30 >= 4 && nCentralJet30 <= 5, Lp, -99) : 30,-0.5,2.5   ; XTitle="L_{p}", IncludeOverflows=False
+Lp_sel_NJ68:	if3(Selected == 1 && nCentralJet30 >= 6 && nCentralJet30 <= 8, Lp, -99) : 30,-0.5,2.5   ; XTitle="L_{p}", IncludeOverflows=False
+Lp_sel_NJ9inf:   if3(Selected == 1 && nCentralJet30 >= 9, Lp, -99) : 30,-0.5,2.5   ; XTitle="L_{p}", IncludeOverflows=False
+Lp_sel_NJ6inf:   if3(Selected == 1 && nCentralJet30 >= 6, Lp, -99) : 30,-0.5,2.5   ; XTitle="L_{p}", IncludeOverflows=False
+
+# ANTI-SELECTED
+Lp_anti_incl:   if3(Selected == -1, Lp, -99)  : 30,-0.5,2.5   ; XTitle="L_{p}", IncludeOverflows=False
+Lp_anti_NJ45:	if3(Selected == -1 && nCentralJet30 >= 4 && nCentralJet30 <= 5, Lp, -99) : 30,-0.5,2.5   ; XTitle="L_{p}", IncludeOverflows=False
+Lp_anti_NJ68:	if3(Selected == -1 && nCentralJet30 >= 6 && nCentralJet30 <= 8, Lp, -99) : 30,-0.5,2.5   ; XTitle="L_{p}", IncludeOverflows=False
+Lp_anti_NJ9inf:   if3(Selected == -1 && nCentralJet30 >= 9, Lp, -99) : 30,-0.5,2.5   ; XTitle="L_{p}", IncludeOverflows=False
+Lp_anti_NJ6inf:   if3(Selected == -1 && nCentralJet30 >= 6, Lp, -99) : 30,-0.5,2.5   ; XTitle="L_{p}", IncludeOverflows=False
+
+
+# SELECTED
+dPhi_sel_incl:   if3(Selected == 1, fabs(DeltaPhiLepW), -99)  : 60,0,3.141   ; XTitle="#Delta#phi", IncludeOverflows=False, Logy
+dPhi_sel_NJ45:	if3(Selected == 1 && nCentralJet30 >= 4 && nCentralJet30 <= 5, fabs(DeltaPhiLepW), -99) : 60,0,3.141   ; XTitle="#Delta#phi", IncludeOverflows=False, Logy
+dPhi_sel_NJ68:	if3(Selected == 1 && nCentralJet30 >= 6 && nCentralJet30 <= 8, fabs(DeltaPhiLepW), -99) : 60,0,3.141   ; XTitle="#Delta#phi", IncludeOverflows=False, Logy
+dPhi_sel_NJ9inf:   if3(Selected == 1 && nCentralJet30 >= 9, fabs(DeltaPhiLepW), -99) : 60,0,3.141   ; XTitle="#Delta#phi", IncludeOverflows=False, Logy
+dPhi_sel_NJ6inf:   if3(Selected == 1 && nCentralJet30 >= 6, fabs(DeltaPhiLepW), -99) : 60,0,3.141   ; XTitle="#Delta#phi", IncludeOverflows=False, Logy
+
+# ANTI-SELECTED
+dPhi_anti_incl:   if3(Selected == -1, fabs(DeltaPhiLepW), -99)  : 60,0,3.141   ; XTitle="#Delta#phi", IncludeOverflows=False, Logy
+dPhi_anti_NJ45:	if3(Selected == -1 && nCentralJet30 >= 4 && nCentralJet30 <= 5, fabs(DeltaPhiLepW), -99) : 60,0,3.141   ; XTitle="#Delta#phi", IncludeOverflows=False, Logy
+dPhi_anti_NJ68:	if3(Selected == -1 && nCentralJet30 >= 6 && nCentralJet30 <= 8, fabs(DeltaPhiLepW), -99) : 60,0,3.141   ; XTitle="#Delta#phi", IncludeOverflows=False, Logy
+dPhi_anti_NJ9inf:   if3(Selected == -1 && nCentralJet30 >= 9, fabs(DeltaPhiLepW), -99) : 60,0,3.141   ; XTitle="#Delta#phi", IncludeOverflows=False, Logy
+dPhi_anti_NJ6inf:   if3(Selected == -1 && nCentralJet30 >= 6, fabs(DeltaPhiLepW), -99) : 60,0,3.141   ; XTitle="#Delta#phi", IncludeOverflows=False, Logy

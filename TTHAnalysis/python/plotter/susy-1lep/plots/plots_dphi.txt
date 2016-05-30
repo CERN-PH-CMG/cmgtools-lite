@@ -1,0 +1,13 @@
+# dPhi,Lp
+#dPhi_log:	dPhi	: 30,0,3.141   ; XTitle="#Delta #varphi (lep\,W)", IncludeOverflows=False, XNDiv=505, Logy
+#dPhi_wide:	dPhi	: [0,0.1,0.2,0.3,0.4,0.5,0.75,1.0,1.5,2,3.15]   ; XTitle="#Delta #varphi (lep\,W)", IncludeOverflows=False, XNDiv=505, Logy, MoreY=10
+
+# nj = 4,5
+dPhi_NJ45_NB1:	if3(nJet >= 4 && nJet <= 5 && nBJet == 1, dPhi, -1)	: 30,0,3.145   ; XTitle="#Delta#varphi", IncludeOverflows=False, Logy
+dPhi_NJ45_NB2:	if3(nJet >= 4 && nJet <= 5 && nBJet == 2, dPhi, -1)	: 30,0,3.145   ; XTitle="#Delta#varphi", IncludeOverflows=False, Logy
+dPhi_NJ45_NB2i:	if3(nJet >= 4 && nJet <= 5 && nBJet >= 2, dPhi, -1)	: 30,0,3.145   ; XTitle="#Delta#varphi", IncludeOverflows=False, Logy
+
+# nj = 6-8
+dPhi_NJ68_NB1:	if3(nJet >= 6 && nJet <= 8 && nBJet == 1, dPhi, -1)	: 30,0,3.145   ; XTitle="#Delta#varphi", IncludeOverflows=False, Logy
+dPhi_NJ68_NB2:	if3(nJet >= 6 && nJet <= 8 && nBJet == 2, dPhi, -1)	: 30,0,3.145   ; XTitle="#Delta#varphi", IncludeOverflows=False, Logy
+dPhi_NJ68_NB3i:	if3(nJet >= 6 && nJet <= 8 && nBJet >= 3, dPhi, -1)	: 30,0,3.145   ; XTitle="#Delta#varphi", IncludeOverflows=False, Logy
