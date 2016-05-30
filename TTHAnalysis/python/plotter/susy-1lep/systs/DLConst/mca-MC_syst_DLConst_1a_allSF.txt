@@ -1,0 +1,100 @@
+### ./makeBinYields.py --mca ../systs/DLConst/mca-MC_syst_DLConst_1a_allSF.txt -P ../systs/DLConst/links -F sf/t ../systs/DLConst/links/Friends/DileptonPreapproval/evVarFriend_{cname}.root -l 2.2 --grid -v 2 --od lumi22fb/DLConst --syst -b
+### CENTRAL
+# TTJets
+TTJets	: TTJets_LO 		: xsec*lepSF*TopPtWeight*0.94*btagSF : ngenTau+ngenLep == 0 && lheHTIncoming <= 600 && HT < 1250;
+TTJets	: TTJets_DiLepton		: xsec*lepSF*TopPtWeight*0.94*btagSF : lheHTIncoming <= 600;
+TTJets	: TTJets_SingleLepton		: 2*xsec*lepSF*TopPtWeight*0.94*btagSF : lheHTIncoming <= 600;
+TTJets	: TTJets_LO_HT600to800		: xsec*lepSF*TopPtWeight*0.94*btagSF ;
+TTJets	: TTJets_LO_HT800to1200 	: xsec*lepSF*TopPtWeight*0.94*btagSF ;
+TTJets	: TTJets_LO_HT1200to2500 	: xsec*lepSF*TopPtWeight*0.94*btagSF ;
+TTJets	: TTJets_LO_HT2500toInf 	: xsec*lepSF*TopPtWeight*0.94*btagSF ;
+# WJets
+WJets	: WJetsToLNu_HT100to200		: xsec*lepSF*TopPtWeight*0.94*btagSF ;
+WJets	: WJetsToLNu_HT200to400 	: xsec*lepSF*TopPtWeight*0.94*btagSF ;
+WJets	: WJetsToLNu_HT400to600 	: xsec*lepSF*TopPtWeight*0.94*btagSF ;
+WJets	: WJetsToLNu_HT600to800 	: xsec*lepSF*TopPtWeight*0.94*btagSF ;
+WJets	: WJetsToLNu_HT800to1200 	: xsec*lepSF*TopPtWeight*0.94*btagSF ;
+WJets	: WJetsToLNu_HT1200to2500 	: xsec*lepSF*TopPtWeight*0.94*btagSF ;
+WJets	: WJetsToLNu_HT2500toInf 	: xsec*lepSF*TopPtWeight*0.94*btagSF ;
+# Single Top
+SingleTop	: TToLeptons_tch_amcatnlo	: xsec*lepSF*TopPtWeight*0.94*btagSF ;
+SingleTop	: TToLeptons_sch	 	: xsec*lepSF*TopPtWeight*0.94*btagSF ;
+SingleTop	: T_tWch	 		: xsec*lepSF*TopPtWeight*0.94*btagSF ;
+SingleTop	: TBar_tWch	 		: xsec*lepSF*TopPtWeight*0.94*btagSF ;
+# DY
+DY	: DYJetsToLL_M50_HT100to200	: xsec*lepSF*TopPtWeight*0.94*btagSF ;
+DY	: DYJetsToLL_M50_HT200to400 	: xsec*lepSF*TopPtWeight*0.94*btagSF ;
+DY	: DYJetsToLL_M50_HT400to600 	: xsec*lepSF*TopPtWeight*0.94*btagSF ;
+DY	: DYJetsToLL_M50_HT600toInf 	: xsec*lepSF*TopPtWeight*0.94*btagSF ;
+# TTV
+TTV	: TTWToLNu			: xsec*lepSF*TopPtWeight*0.94*btagSF ;
+TTV	: TTWToQQ 			: xsec*lepSF*TopPtWeight*0.94*btagSF ;
+TTV	: TTZToLLNuNu 			: xsec*lepSF*TopPtWeight*0.94*btagSF ;
+TTV	: TTZToQQ 			: xsec*lepSF*TopPtWeight*0.94*btagSF ;
+
+#### HEAVY FLAVOUR VARIATION
+### UP
+# TTJets
+TTJets_DLConst-Up	: TTJets_LO 			: xsec*lepSF*TopPtWeight*0.94*btagSF*DilepNJetWeightConstUp : ngenTau+ngenLep == 0 && lheHTIncoming <= 600 && HT < 1250;
+TTJets_DLConst-Up	: TTJets_DiLepton		: xsec*lepSF*TopPtWeight*0.94*btagSF*DilepNJetWeightConstUp : lheHTIncoming <= 600;
+TTJets_DLConst-Up	: TTJets_SingleLepton 		: 2*xsec*lepSF*TopPtWeight*0.94*btagSF*DilepNJetWeightConstUp : lheHTIncoming <= 600;
+TTJets_DLConst-Up	: TTJets_LO_HT600to800		: xsec*lepSF*TopPtWeight*0.94*btagSF*DilepNJetWeightConstUp ;
+TTJets_DLConst-Up	: TTJets_LO_HT800to1200 	: xsec*lepSF*TopPtWeight*0.94*btagSF*DilepNJetWeightConstUp ;
+TTJets_DLConst-Up	: TTJets_LO_HT1200to2500 	: xsec*lepSF*TopPtWeight*0.94*btagSF*DilepNJetWeightConstUp ;
+TTJets_DLConst-Up	: TTJets_LO_HT2500toInf 	: xsec*lepSF*TopPtWeight*0.94*btagSF*DilepNJetWeightConstUp ;
+# WJets
+WJets_DLConst-Up	: WJetsToLNu_HT100to200		: xsec*lepSF*TopPtWeight*0.94*btagSF*DilepNJetWeightConstUp ;
+WJets_DLConst-Up	: WJetsToLNu_HT200to400 	: xsec*lepSF*TopPtWeight*0.94*btagSF*DilepNJetWeightConstUp ;
+WJets_DLConst-Up	: WJetsToLNu_HT400to600 	: xsec*lepSF*TopPtWeight*0.94*btagSF*DilepNJetWeightConstUp ;
+WJets_DLConst-Up	: WJetsToLNu_HT600to800 	: xsec*lepSF*TopPtWeight*0.94*btagSF*DilepNJetWeightConstUp ;
+WJets_DLConst-Up	: WJetsToLNu_HT800to1200 	: xsec*lepSF*TopPtWeight*0.94*btagSF*DilepNJetWeightConstUp ;
+WJets_DLConst-Up	: WJetsToLNu_HT1200to2500 	: xsec*lepSF*TopPtWeight*0.94*btagSF*DilepNJetWeightConstUp ;
+WJets_DLConst-Up	: WJetsToLNu_HT2500toInf 	: xsec*lepSF*TopPtWeight*0.94*btagSF*DilepNJetWeightConstUp ;
+# Single Top
+SingleTop_DLConst-Up	: TToLeptons_tch_amcatnlo	: xsec*lepSF*TopPtWeight*0.94*btagSF*DilepNJetWeightConstUp ;
+SingleTop_DLConst-Up	: TToLeptons_sch	 	: xsec*lepSF*TopPtWeight*0.94*btagSF*DilepNJetWeightConstUp ;
+SingleTop_DLConst-Up	: T_tWch	 		: xsec*lepSF*TopPtWeight*0.94*btagSF*DilepNJetWeightConstUp ;
+SingleTop_DLConst-Up	: TBar_tWch	 		: xsec*lepSF*TopPtWeight*0.94*btagSF*DilepNJetWeightConstUp ;
+# DY
+DY_DLConst-Up	: DYJetsToLL_M50_HT100to200	: xsec*lepSF*TopPtWeight*0.94*btagSF*DilepNJetWeightConstUp ;
+DY_DLConst-Up	: DYJetsToLL_M50_HT200to400 	: xsec*lepSF*TopPtWeight*0.94*btagSF*DilepNJetWeightConstUp ;
+DY_DLConst-Up	: DYJetsToLL_M50_HT400to600 	: xsec*lepSF*TopPtWeight*0.94*btagSF*DilepNJetWeightConstUp ;
+DY_DLConst-Up	: DYJetsToLL_M50_HT600toInf 	: xsec*lepSF*TopPtWeight*0.94*btagSF*DilepNJetWeightConstUp ;
+# TTV
+TTV_DLConst-Up	: TTWToLNu			: xsec*lepSF*TopPtWeight*0.94*btagSF*DilepNJetWeightConstUp ;
+TTV_DLConst-Up	: TTWToQQ 			: xsec*lepSF*TopPtWeight*0.94*btagSF*DilepNJetWeightConstUp ;
+TTV_DLConst-Up	: TTZToLLNuNu 			: xsec*lepSF*TopPtWeight*0.94*btagSF*DilepNJetWeightConstUp ;
+TTV_DLConst-Up	: TTZToQQ 			: xsec*lepSF*TopPtWeight*0.94*btagSF*DilepNJetWeightConstUp ;
+
+### DOWN
+# TTJets
+TTJets_DLConst-Down	: TTJets_LO		: xsec*lepSF*TopPtWeight*0.94*btagSF*DilepNJetWeightConstDn : ngenTau+ngenLep == 0 && lheHTIncoming <= 600 && HT < 1250;
+TTJets_DLConst-Down	: TTJets_DiLepton		: xsec*lepSF*TopPtWeight*0.94*btagSF*DilepNJetWeightConstDn : lheHTIncoming <= 600;
+TTJets_DLConst-Down	: TTJets_SingleLepton   	: 2*xsec*lepSF*TopPtWeight*0.94*btagSF*DilepNJetWeightConstDn : lheHTIncoming <= 600;
+TTJets_DLConst-Down	: TTJets_LO_HT600to800		: xsec*lepSF*TopPtWeight*0.94*btagSF*DilepNJetWeightConstDn ;
+TTJets_DLConst-Down	: TTJets_LO_HT800to1200 	: xsec*lepSF*TopPtWeight*0.94*btagSF*DilepNJetWeightConstDn ;
+TTJets_DLConst-Down	: TTJets_LO_HT1200to2500 	: xsec*lepSF*TopPtWeight*0.94*btagSF*DilepNJetWeightConstDn ;
+TTJets_DLConst-Down	: TTJets_LO_HT2500toInf 	: xsec*lepSF*TopPtWeight*0.94*btagSF*DilepNJetWeightConstDn ;
+# WJets
+WJets_DLConst-Down	: WJetsToLNu_HT100to200		: xsec*lepSF*TopPtWeight*0.94*btagSF*DilepNJetWeightConstDn ;
+WJets_DLConst-Down	: WJetsToLNu_HT200to400 	: xsec*lepSF*TopPtWeight*0.94*btagSF*DilepNJetWeightConstDn ;
+WJets_DLConst-Down	: WJetsToLNu_HT400to600 	: xsec*lepSF*TopPtWeight*0.94*btagSF*DilepNJetWeightConstDn ;
+WJets_DLConst-Down	: WJetsToLNu_HT600to800 	: xsec*lepSF*TopPtWeight*0.94*btagSF*DilepNJetWeightConstDn ;
+WJets_DLConst-Down	: WJetsToLNu_HT800to1200 	: xsec*lepSF*TopPtWeight*0.94*btagSF*DilepNJetWeightConstDn ;
+WJets_DLConst-Down	: WJetsToLNu_HT1200to2500 	: xsec*lepSF*TopPtWeight*0.94*btagSF*DilepNJetWeightConstDn ;
+WJets_DLConst-Down	: WJetsToLNu_HT2500toInf 	: xsec*lepSF*TopPtWeight*0.94*btagSF*DilepNJetWeightConstDn ;
+# Single Top
+SingleTop_DLConst-Down	: TToLeptons_tch_amcatnlo	: xsec*lepSF*TopPtWeight*0.94*btagSF*DilepNJetWeightConstDn ;
+SingleTop_DLConst-Down	: TToLeptons_sch	 	: xsec*lepSF*TopPtWeight*0.94*btagSF*DilepNJetWeightConstDn ;
+SingleTop_DLConst-Down	: T_tWch	 		: xsec*lepSF*TopPtWeight*0.94*btagSF*DilepNJetWeightConstDn ;
+SingleTop_DLConst-Down	: TBar_tWch	 		: xsec*lepSF*TopPtWeight*0.94*btagSF*DilepNJetWeightConstDn ;
+# DY
+DY_DLConst-Down	: DYJetsToLL_M50_HT100to200	: xsec*lepSF*TopPtWeight*0.94*btagSF*DilepNJetWeightConstDn ;
+DY_DLConst-Down	: DYJetsToLL_M50_HT200to400 	: xsec*lepSF*TopPtWeight*0.94*btagSF*DilepNJetWeightConstDn ;
+DY_DLConst-Down	: DYJetsToLL_M50_HT400to600 	: xsec*lepSF*TopPtWeight*0.94*btagSF*DilepNJetWeightConstDn ;
+DY_DLConst-Down	: DYJetsToLL_M50_HT600toInf 	: xsec*lepSF*TopPtWeight*0.94*btagSF*DilepNJetWeightConstDn ;
+# TTV
+TTV_DLConst-Down	: TTWToLNu			: xsec*lepSF*TopPtWeight*0.94*btagSF*DilepNJetWeightConstDn ;
+TTV_DLConst-Down	: TTWToQQ 			: xsec*lepSF*TopPtWeight*0.94*btagSF*DilepNJetWeightConstDn ;
+TTV_DLConst-Down	: TTZToLLNuNu 			: xsec*lepSF*TopPtWeight*0.94*btagSF*DilepNJetWeightConstDn ;
+TTV_DLConst-Down	: TTZToQQ 			: xsec*lepSF*TopPtWeight*0.94*btagSF*DilepNJetWeightConstDn ;

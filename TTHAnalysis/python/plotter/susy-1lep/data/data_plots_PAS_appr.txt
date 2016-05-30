@@ -1,0 +1,18 @@
+HT_log:		HT	: 50,500,3000;  XTitle="H_{T} [GeV]", YTitle="Events / 50 GeV",Logy, IncludeOverflows=True, YMin=0.2, XNDiv=505
+LT_log:		LT	: 40,250,1250;  XTitle="L_{T} [GeV]", YTitle="Events / 40 GeV",Logy, IncludeOverflows=True, YMin=0.2, XNDiv=510
+#LT_log:	LT	: 42,200,1250;  XTitle="L_{T} [GeV]", Logy, IncludeOverflows=True, YMin=0.2, XNDiv=505
+
+# (range(500,700,25) + range(700,900,100) + range(900,1500,100) + range(1500,2500,250))
+#HT_wide:	HT	: [500, 525, 550, 575, 600, 625, 650, 675, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1750, 2000, 2250];  XTitle="H_{T} [GeV]", Logy, IncludeOverflows=True, YMin=0.2, XNDiv=505
+#LT_wide:	LT	: 50,250,1250;  XTitle="L_{T} [GeV]", Logy, IncludeOverflows=True, YMin=0.2, XNDiv=505
+
+# dPhi,Lp
+dPhi_log:	dPhi	: 30,0,3.141   ; XTitle="#Delta#Phi(W\,l)", IncludeOverflows=True, Logy, YMin=0.2, XNDiv=508, MoreY=50, YTitle="< Events >"
+#dPhi_wide2:	dPhi	: [0.0, 0.2, 0.4, 0.7, 1.0, 2.0, 3.141]   ; XTitle="#Delta#Phi(W\,l)", IncludeOverflows=True, Logy, YMin=0.2, XNDiv=508, MoreY=50, YTitle="< Events >"
+#dPhi_wide:	dPhi	: [0,0.1,0.2,0.3,0.4,0.5,0.75,1.0,1.5,2,3.15] ; XTitle="#Delta#Phi(W\,l)", IncludeOverflows=True, YMin=0.2, XNDiv=508, YTitle="< Events >"
+dPhi_wide:	dPhi	: [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.7, 1.0, 1.5, 2.0, 3.141] ; XTitle="#Delta#Phi(W\,l)", IncludeOverflows=True, YMin=0.2, XNDiv=508, YTitle="< Events >"
+dPhi_wide_log:	dPhi	: [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.7, 1.0, 1.5, 2.0, 3.141] ; XTitle="#Delta#Phi(W\,l)", IncludeOverflows=True, Logy, YMin=0.2, XNDiv=508, MoreY=50, YTitle="< Events >"
+
+#dPhi_wide2_log:	dPhi	: [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9,1.0,1.5,2,3.15] ; XTitle="#Delta#Phi(W\,l)", IncludeOverflows=True, Logy, YMin=0.2, XNDiv=508, MoreY=50
+
+nBJet:		nBJets30	: 10,0,10   ;  XTitle="b-jet multiplicity (CSVM)", Logy, MoreY=10, IncludeOverflows=True, XNDiv=505

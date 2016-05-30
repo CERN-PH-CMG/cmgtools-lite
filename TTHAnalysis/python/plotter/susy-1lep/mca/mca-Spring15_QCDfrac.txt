@@ -1,0 +1,30 @@
+####
+# Background for 25ns
+
+# QCD
+QCD+      : QCD_HT300to500     : xsec ; Label ="QCD", FillColor=ROOT.kCyan-6
+QCD+      : QCD_HT500to700     : xsec ; Label ="QCD", FillColor=ROOT.kCyan-6
+QCD+      : QCD_HT700to1000    : xsec ; Label ="QCD", FillColor=ROOT.kCyan-6
+QCD+      : QCD_HT1000to1500   : xsec ; Label ="QCD", FillColor=ROOT.kCyan-6
+QCD+      : QCD_HT1500to2000   : xsec ; Label ="QCD", FillColor=ROOT.kCyan-6
+QCD+      : QCD_HT2000toInf    : xsec ; Label ="QCD", FillColor=ROOT.kCyan-6
+
+# QCD as MC component
+MC      : QCD_HT300to500     : xsec ; Label ="MC", FillColor=ROOT.kRed
+MC      : QCD_HT500to700     : xsec ; Label ="MC", FillColor=ROOT.kRed
+MC      : QCD_HT700to1000    : xsec ; Label ="MC", FillColor=ROOT.kRed
+MC      : QCD_HT1000to1500   : xsec ; Label ="MC", FillColor=ROOT.kRed
+MC      : QCD_HT1500to2000   : xsec ; Label ="MC", FillColor=ROOT.kRed
+MC      : QCD_HT2000toInf    : xsec ; Label ="MC", FillColor=ROOT.kRed
+
+# TT inclusive
+MC      : TTJets_LO      : xsec; Label ="MC", FillColor=ROOT.kRed
+
+
+# WJets HT-binned
+MC    : WJetsToLNu_HT200to400 :  xsec ; Label ="MC", FillColor=ROOT.kRed
+MC    : WJetsToLNu_HT400to600 :  xsec ; Label ="MC", FillColor=ROOT.kRed
+MC    : WJetsToLNu_HT600to800 :  xsec ; Label ="MC", FillColor=ROOT.kRed
+MC    : WJetsToLNu_HT800to1200 :  xsec ; Label ="MC", FillColor=ROOT.kRed
+MC    : WJetsToLNu_HT1200to2500 :  xsec ; Label ="MC", FillColor=ROOT.kRed
+MC    : WJetsToLNu_HT2500toInf :  xsec ; Label ="MC", FillColor=ROOT.kRed

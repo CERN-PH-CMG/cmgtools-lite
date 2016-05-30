@@ -1,0 +1,24 @@
+#dPhiLepW:   fabs(DeltaPhiLepW)  : 60,0,3.141   ; XTitle="#Delta #varphi (lep\,W)", IncludeOverflows=False, Logy
+# Selected key: +1 -- selected, -1 -- anti-selected
+#Select_incl: Selected : 3,-1.5,1.5; XTitle="Selected", IncludeOverflows=False, Logy
+# Nb bins
+#Select_NB0: if3(nBJetMedium30 == 0, Selected, -99) : 3,-1.5,1.5; XTitle="Selected (Nb0)", IncludeOverflows=False, Logy
+#Select_NB1: if3(nBJetMedium30 == 1, Selected, -99) : 3,-1.5,1.5; XTitle="Selected (Nb1)", IncludeOverflows=False, Logy
+#Select_NB2: if3(nBJetMedium30 == 2, Selected, -99) : 3,-1.5,1.5; XTitle="Selected (Nb2)", IncludeOverflows=False, Logy
+#Select_NB3: if3(nBJetMedium30 >= 3, Selected, -99) : 3,-1.5,1.5; XTitle="Selected (Nb3)", IncludeOverflows=False, Logy
+
+Yield_incl: Selected : 1,0.5,1.5; XTitle="N_{all}", IncludeOverflows=False, Logy
+
+# Nb bins
+Yield_sel_incl: if3(Selected == 1 && nBJetMedium30 >= 0, 1, -99) : 1,0.5,1.5; XTitle="N_{selected} (Nb0)", IncludeOverflows=False, Logy
+Yield_sel_NB0: if3(Selected == 1 && nBJetMedium30 == 0, 1, -99) : 1,0.5,1.5; XTitle="N_{selected} (Nb0)", IncludeOverflows=False, Logy
+Yield_sel_NB1: if3(Selected == 1 && nBJetMedium30 == 1, 1, -99) : 1,0.5,1.5; XTitle="N_{selected} (Nb1)", IncludeOverflows=False, Logy
+Yield_sel_NB2: if3(Selected == 1 && nBJetMedium30 == 2, 1, -99) : 1,0.5,1.5; XTitle="N_{selected} (Nb2)", IncludeOverflows=False, Logy
+Yield_sel_NB3: if3(Selected == 1 && nBJetMedium30 >= 3, 1, -99) : 1,0.5,1.5; XTitle="N_{selected} (Nb3)", IncludeOverflows=False, Logy
+
+# anti-select
+Yield_anti_incl: if3(Selected == -1 && nBJetMedium30 >= 0, 1, -99) : 1,0.5,1.5; XTitle="N_{anti} (Nb0)", IncludeOverflows=False, Logy
+Yield_anti_NB0: if3(Selected == -1 && nBJetMedium30 == 0, 1, -99) : 1,0.5,1.5; XTitle="N_{anti} (Nb0)", IncludeOverflows=False, Logy
+Yield_anti_NB1: if3(Selected == -1 && nBJetMedium30 == 1, 1, -99) : 1,0.5,1.5; XTitle="N_{anti} (Nb1)", IncludeOverflows=False, Logy
+Yield_anti_NB2: if3(Selected == -1 && nBJetMedium30 == 2, 1, -99) : 1,0.5,1.5; XTitle="N_{anti} (Nb2)", IncludeOverflows=False, Logy
+Yield_anti_NB3: if3(Selected == -1 && nBJetMedium30 >= 3, 1, -99) : 1,0.5,1.5; XTitle="N_{anti} (Nb3)", IncludeOverflows=False, Logy

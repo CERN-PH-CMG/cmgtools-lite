@@ -1,0 +1,23 @@
+== 1 hard ele: nTightLeps == 1 && nTightEl == 1 && LepGood1_pt > 25
+#Selected: Selected == 1
+#AntiSelected: Selected == -1
+no VetoLeps: nVetoLeps==0
+ST > 200: ST > 200
+# add ons
+#Nj >= 4: nCentralJet30 >= 4
+Nj >= 6: nCentralJet30 >= 6
+#Nj >= 9: nCentralJet30 >= 9
+#Nj = 4,5: nCentralJet30 == 4 || nCentralJet30 == 5
+#Nj = 6,8: nCentralJet30 == 6 || nCentralJet30 == 8
+lead Jpt > 80: LSLjetptGT80==1
+HT > 500: HT > 500
+#HT > 200: HT > 200
+#0b medium: nBJetMedium30 == 0
+#1b medium: nBJetMedium30 >= 1
+#dphi>0.5: fabs(DeltaPhiLepW)> 0.5
+#ConvVeto: LepGood_convVeto[tightLepsIdx[0]] == 1
+#LostHits<=1: LepGood_lostHits[tightLepsIdx[0]] <= 1
+#LostHits==0: LepGood_lostHits[tightLepsIdx[0]] == 0
+#SIP3D < 4: LepGood_sip3d[tightLepsIdx[0]] < 4.0
+#MiniIso < 0.4: LepGood_miniRelIso[tightLepsIdx[0]] < 0.4
+#MiniIso < 0.1: LepGood_miniRelIso[tightLepsIdx[0]] < 0.1

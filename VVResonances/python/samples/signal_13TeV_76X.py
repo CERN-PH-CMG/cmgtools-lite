@@ -273,3 +273,5 @@ RadionTohhTohbbhbb_narrow_3000=kreator.makeMCComponent("RadionTohhTohbbhbb_narro
 signalSamples.append(RadionTohhTohbbhbb_narrow_3000)
 RadionTohhTohbbhbb_narrow_3500=kreator.makeMCComponent("RadionTohhTohbbhbb_narrow_3500", "/RadionTohhTohbbhbb_narrow_M-3500_13TeV-madgraph/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM", "CMS", ".*root",1.0)
 signalSamples.append(RadionTohhTohbbhbb_narrow_3500)
+hh2bbbb_sm=kreator.makeMCComponent("hh2bbbb_sm", "/GluGluToHHTo4B_node_SM_13TeV-madgraph/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM", "CMS", ".*root",1.0)
+signalSamples.append(hh2bbbb_sm)

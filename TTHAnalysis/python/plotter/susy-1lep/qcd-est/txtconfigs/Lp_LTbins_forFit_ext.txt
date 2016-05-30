@@ -1,0 +1,29 @@
+# SELECTED
+#Lp_sel_incl:   if3(Selected == 1, Lp, -99)  : 31,-0.55,2.55   ; XTitle="L_{p}(e)", IncludeOverflows=False
+#Lp_sel_NJ34:	if3(Selected == 1 && nJets30Clean >= 3 && nJets30Clean <= 4, Lp, -99) : 31,-0.55,2.55   ; XTitle="L_{p}(e)", IncludeOverflows=False
+Lp_sel_LTi_NJ34:   if3(Selected == 1 && LT > 250 && nJets30Clean >= 3 && nJets30Clean <= 4, Lp, -99) : 31,-0.55,2.55   ; XTitle="L_{p}(e)", IncludeOverflows=False
+
+# ANTI-SELECTED
+#Lp_anti_incl:   if3(Selected == -1, Lp, -99)  : 31,-0.55,2.55   ; XTitle="L_{p}(e)", IncludeOverflows=False
+#Lp_anti_NJ34:	if3(Selected == -1 && nJets30Clean >= 3 && nJets30Clean <= 4, Lp, -99) : 31,-0.55,2.55   ; XTitle="L_{p}(e)", IncludeOverflows=False
+Lp_anti_LTi_NJ34:   if3(Selected == -1 && LT > 250 && nJets30Clean >= 3 && nJets30Clean <= 4, Lp, -99) : 31,-0.55,2.55   ; XTitle="L_{p}(e)", IncludeOverflows=False
+
+## SELECTED LT,NJ bins
+# Nj : 3,4
+Lp_sel_LT1_NJ34:   if3(Selected == 1 && 250 < LT && LT < 350 && nJets30Clean >= 3 && nJets30Clean <= 4, Lp, -99) : 31,-0.55,2.55   ; XTitle="L_{p}(e)", IncludeOverflows=False
+Lp_sel_LT1i_NJ34:   if3(Selected == 1 && 250 < LT && nJets30Clean >= 3 && nJets30Clean <= 4, Lp, -99) : 31,-0.55,2.55   ; XTitle="L_{p}(e)", IncludeOverflows=False
+Lp_sel_LT2_NJ34:   if3(Selected == 1 && 350 < LT && LT < 450 && nJets30Clean >= 3 && nJets30Clean <= 4, Lp, -99) : 31,-0.55,2.55   ; XTitle="L_{p}(e)", IncludeOverflows=False
+Lp_sel_LT2i_NJ34:   if3(Selected == 1 && 350 < LT && nJets30Clean >= 3 && nJets30Clean <= 4, Lp, -99) : 31,-0.55,2.55   ; XTitle="L_{p}(e)", IncludeOverflows=False
+Lp_sel_LT3_NJ34:   if3(Selected == 1 && 450 < LT && LT < 600 && nJets30Clean >= 3 && nJets30Clean <= 4, Lp, -99) : 31,-0.55,2.55   ; XTitle="L_{p}(e)", IncludeOverflows=False
+Lp_sel_LT3i_NJ34:   if3(Selected == 1 && 450 < LT && nJets30Clean >= 3 && nJets30Clean <= 4, Lp, -99) : 31,-0.55,2.55   ; XTitle="L_{p}(e)", IncludeOverflows=False
+Lp_sel_LT4_NJ34:   if3(Selected == 1 && 600 < LT && nJets30Clean >= 3 && nJets30Clean <= 4, Lp, -99) : 31,-0.55,2.55   ; XTitle="L_{p}(e)", IncludeOverflows=False
+
+# ANTI-SELECTED
+# Nj : 3,4
+Lp_anti_LT1_NJ34:   if3(Selected == -1 && 250 < LT && LT < 350 && nJets30Clean >= 3 && nJets30Clean <= 4, Lp, -99) : 31,-0.55,2.55   ; XTitle="L_{p}(e)", IncludeOverflows=False
+Lp_anti_LT1i_NJ34:   if3(Selected == -1 && 250 < LT && nJets30Clean >= 3 && nJets30Clean <= 4, Lp, -99) : 31,-0.55,2.55   ; XTitle="L_{p}(e)", IncludeOverflows=False
+Lp_anti_LT2_NJ34:   if3(Selected == -1 && 350 < LT && LT < 450 && nJets30Clean >= 3 && nJets30Clean <= 4, Lp, -99) : 31,-0.55,2.55   ; XTitle="L_{p}(e)", IncludeOverflows=False
+Lp_anti_LT2i_NJ34:   if3(Selected == -1 && 350 < LT && nJets30Clean >= 3 && nJets30Clean <= 4, Lp, -99) : 31,-0.55,2.55   ; XTitle="L_{p}(e)", IncludeOverflows=False
+Lp_anti_LT3_NJ34:   if3(Selected == -1 && 450 < LT && LT < 600 && nJets30Clean >= 3 && nJets30Clean <= 4, Lp, -99) : 31,-0.55,2.55   ; XTitle="L_{p}(e)", IncludeOverflows=False
+Lp_anti_LT3i_NJ34:   if3(Selected == -1 && 450 < LT && nJets30Clean >= 3 && nJets30Clean <= 4, Lp, -99) : 31,-0.55,2.55   ; XTitle="L_{p}(e)", IncludeOverflows=False
+Lp_anti_LT4_NJ34:   if3(Selected == -1 && 600 < LT && nJets30Clean >= 3 && nJets30Clean <= 4, Lp, -99) : 31,-0.55,2.55   ; XTitle="L_{p}(e)", IncludeOverflows=False

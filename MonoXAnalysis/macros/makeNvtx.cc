@@ -7,11 +7,11 @@
 
 void makeNvtx(bool ismc=false, const char* option="recreate") {
 
-  TString treeDir = "/data1/emanuele/monox/TREES_25ns_1LEPSKIM_23NOV2015/";
+  TString treeDir = "/data1/emanuele/monox/TREES_25ns_1LEPSKIM_76X/";
   std::vector<TString> dataDirs;
-  dataDirs.push_back("DoubleMuon_Run2015C_05Oct_runs_254227_255031");
-  dataDirs.push_back("DoubleMuon_Run2015D_05Oct_runs_256630_258158");
-  dataDirs.push_back("DoubleMuon_Run2015D_v4_runs_258159_260627");
+  
+  dataDirs.push_back("SingleElectron_Run2015C_16Dec_runs_254227_254914");
+  dataDirs.push_back("SingleElectron_Run2015D_16Dec_runs_256630_260627");
   TString mcDir = treeDir+"DYJetsToLL_M50";
 
 

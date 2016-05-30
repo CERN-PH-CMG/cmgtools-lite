@@ -19,13 +19,12 @@ susySingleLepton_globalVariables = susyCore_globalVariables + [
             NTupleVariable("metNoHF_rawPt", lambda ev : ev.metNoHF.uncorPt() if  hasattr(ev,'metNoHF') else  0, help="raw noHF met p_{T}"),
             NTupleVariable("metNoHF_rawPhi", lambda ev : ev.metNoHF.uncorPhi() if  hasattr(ev,'metNoHF') else  0, help="raw noHF met phi"),
             NTupleVariable("metNoHF_rawSumEt", lambda ev : ev.metNoHF.uncorSumEt() if  hasattr(ev,'metNoHF') else  0, help="raw noHF met sumEt"),
-                
+
             ##--------------------------------------------------
             ## MET filter information (temporary)
             ##--------------------------------------------------
             NTupleVariable("Flag_HBHENoiseFilter_fix", lambda ev: ev.hbheFilterNew if hasattr(ev,'hbheFilterNew') else  0, help="HBEHE baseline temporary filter decision"),
             NTupleVariable("Flag_HBHEIsoNoiseFilter_fix", lambda ev: ev.hbheFilterIso if hasattr(ev,'hbheFilterIso') else  0, help="HBEHE isolation temporary filter decision"),
-   
             # ----------------------- HT from LHE event (requires LHE analyzer to have run)  --------------------------------------------------------- #
             NTupleVariable("lheHT", lambda ev : ev.lheHT, help="H_{T} computed from quarks and gluons in Heppy LHEAnalyzer"),
             NTupleVariable("lheHTIncoming", lambda ev : ev.lheHTIncoming, help="H_{T} computed from quarks and gluons in Heppy LHEAnalyzer (only LHE status<0 as mothers)"),

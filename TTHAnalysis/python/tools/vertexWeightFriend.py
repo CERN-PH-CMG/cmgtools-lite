@@ -45,6 +45,8 @@ class VertexWeightFriend:
         tf = ROOT.TFile.Open(filename)
         hist = tf.Get(hname)
         vals = [ hist.GetBinContent(i) for i in xrange(1,hist.GetNbinsX()+1) ]
+        if self.verbose:
+            print "Normalization of ",hname,": ",sum(vals)
         tf.Close()
         if norm: 
             scale = 1.0/sum(vals)
@@ -59,9 +61,6 @@ class VertexWeightFriend:
 
 if __name__ == '__main__':
     from sys import argv
-    file = ROOT.TFile(argv[1])
-    tree = file.Get("tree")
-    tree.vectorTree = True
     class Tester(Module):
         def __init__(self, name):
             Module.__init__(self,name,None)
@@ -71,4 +70,9 @@ if __name__ == '__main__':
             print ev.nVert, ret.values()[0]
     test = Tester("tester")              
     el = EventLoop([ test ])
-    el.loop([tree], maxEvents = 100000 if len(argv) < 4 else int(argv[3]))
+    import os.path
+    if os.path.exists(argv[1]):
+        file = ROOT.TFile(argv[1])
+        tree = file.Get("tree")
+        tree.vectorTree = True
+        el.loop([tree], maxEvents = 100000 if len(argv) < 4 else int(argv[3]))

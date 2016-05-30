@@ -6,13 +6,14 @@ from CMGTools.RootTools.samples.autoAAAconfig import *
 from CMGTools.RootTools.samples.samples_13TeV_RunIIFall15MiniAODv2 import * #<--miniAOD v2 samples_13TeV_RunIIFall15MiniAODv2
 from CMGTools.RootTools.samples.samples_13TeV_DATA2015 import *
 
-from CMGTools.RootTools.samples.triggers_13TeV_Spring15 import triggers_1mu_iso_50ns, triggers_mumu, triggers_ee, triggers_photon30, triggers_photon50, triggers_photon75, triggers_photon90, triggers_photon120
+from CMGTools.RootTools.samples.triggers_13TeV_Spring15 import triggers_1mu_iso_50ns, triggers_mumu, triggers_ee, triggers_photon30, triggers_photon50, triggers_photon75, triggers_photon90, triggers_photon120, triggers_jet, triggers_dijet, triggers_HT350, triggers_HT475, triggers_HT600, triggers_HT800, triggers_HT900, triggers_Jet80MET90
 
 #-------- INITIAL FLAG
 isDiJet=False
 isMonoJet=False
 isZSkim=False
 is1L=False
+is1PH=False
 isEle = False # default is diMuon
 is25ns = True
 
@@ -197,9 +198,9 @@ elif test==18:
         comp.splitFactor = 100
         comp.files = comp.files[:]   
 
-# WG/ZG 
+# WG/ZG/TTG
 elif test==19:
-    selectedComponents = [ZGJets, WGJets]
+    selectedComponents = [ZGJets, WGJets, TTGJets]
     is1PH=True
     for comp in selectedComponents:
         comp.splitFactor = 100
@@ -216,6 +217,14 @@ elif test==23:
             comp.triggers = triggers_mumu
 #        comp.splitFactor = 1
 #        comp.files = comp.files[:1]
+        comp.splitFactor = 1000
+        comp.files = comp.files[:]
+
+elif test==25:
+    isDiJet=True
+    is25ns=True
+    selectedComponents = [ TTJets ] + WJetsToLNuHT + ZJetsToNuNuHT + QCDHT
+    for comp in selectedComponents:
         comp.splitFactor = 1000
         comp.files = comp.files[:]
 
@@ -266,17 +275,27 @@ if isZSkim:
         ttHZskim.lepId=[11] ## default is set To Muons
     metSequence.insert(metSequence.index(lepAna)+1,ttHLepSkim)
     metSequence.insert(metSequence.index(lepAna)+2,ttHZskim)
+    metSequence.remove(photonAna)
 
 if is1L:
     ttHLepSkim.minLeptons = 1
     metSequence.insert(metSequence.index(lepAna)+1,ttHLepSkim)
 
 if isDiJet:
+#vertexAna.keepFailingEvents = True # keep events with no good vertices
+    ttHJetMETSkim.jetPtCuts = [100,100]
     metSequence.insert(metSequence.index(photonAna)+2,ttHJetMETSkim)
+    metSequence.remove(photonAna)
 
 if isMonoJet:
     ttHJetMETSkim.jetPtCuts = [200]
     metSequence.insert(metSequence.index(photonAna)+2,ttHJetMETSkim)
+    metSequence.remove(photonAna)
+
+if is1PH:
+    met_collections.update({
+            "selectedPhotons"    : NTupleCollection("gamma", photonType, 50, help="photons with pt>20 and loose cut based ID"),
+            })
 
 if comp.isData:
     eventFlagsAna.processName = 'RECO'
@@ -295,7 +314,22 @@ triggerFlagsAna.triggerBits = {
             'Photon75' : triggers_photon75, #["HLT_Photon75_R9Id90_HE10_IsoM_v*"]
             'Photon90' : triggers_photon90, #["HLT_Photon90_R9Id90_HE10_IsoM_v*"]
             'Photon120': triggers_photon120, #["HLT_Photon120_R9Id90_HE10_IsoM_v*"]
+            ######
+            'SingleJet': triggers_jet,
+            'DiJet'    : triggers_dijet, #["HLT_DiPFJetAve40_v*", "HLT_DiPFJetAve60_v*"]
+            'PFHT350_Prescale' : triggers_HT350, #["HLT_PFHT350_v*"] # prescaled
+            'PFHT475_Prescale' : triggers_HT475, #["HLT_PFHT475_v*"] # prescaled
+            'PFHT600_Prescale' : triggers_HT600, #["HLT_PFHT600_v*"] # prescaled
+            'PFHT900' : triggers_HT900, #["HLT_PFHT900_v*"]
+            'PFHT800' : triggers_HT800, #["HLT_PFHT800_v*"]
+            'MonoJet' : triggers_Jet80MET90, #["["HLT_MonoCentralPFJet80_PFMETNoMu90_NoiseCleaned_PFMHTNoMu90_IDTight_v*","HLT_MonoCentralPFJet80_PFMETNoMu90_JetIdCleaned_PFMHTNoMu90_IDTight_v*","HLT_MonoCentralPFJet80_PFMETNoMu90_PFMHTNoMu90_IDTight_v*"]
+
 }
+
+## to save prescale uncomment these
+#triggerFlagsAna.unrollbits = True
+#triggerFlagsAna.saveIsUnprescaled = True
+#triggerFlagsAna.checkL1prescale = True
 
 
 # ------------------------------------------------------------------------------------------- #
@@ -326,58 +360,49 @@ if getHeppyOption("nofetch"):
 
 
 # -------------------- Running pre-processor
+
 import subprocess
 if comp.isData:
-    if not is25ns:
-        removeResiduals = False
-        uncFile = os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/jec/Summer15_50nsV4_DATA_UncertaintySources_AK4PFchs.txt'
-        jecDBFile = os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/jec/Summer15_50nsV4_DATA.db'
-        jecEra    = 'Summer15_50nsV4_DATA'
-    else:
-        ## DATA 25ns
-        ## runD residuals not yet available
-        removeResiduals = False
-        uncFile = os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/jec/Summer15_25nsV5_DATA_UncertaintySources_AK4PFchs.txt'
-        jecDBFile = os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/jec/Summer15_25nsV5_DATA.db'
-        jecEra    = 'Summer15_25nsV5_DATA'
+    ## DATA 25ns
+    removeResiduals = False
+    uncFile = os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/jec/Summer15_25nsV5_DATA_Uncertainty_AK4PFchs.txt'
+    jecDBFile = os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/jec/Fall15_25nsV2_DATA.db'
+    jecEra    = 'Fall15_25nsV2_DATA'
+    jerDBFile = os.environ['CMSSW_BASE']+'/src/PhysicsTools/PatUtils/data/Fall15_25nsV2_DATA.db'
+    jerEra    = 'Fall15_25nsV2'
 else:
-    if not is25ns:
-        removeResiduals = False
-        uncFile = os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/jec/Summer15_50nsV4_MC_UncertaintySources_AK4PFchs.txt'
-        jecDBFile = os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/jec/Summer15_50nsV4_MC.db'
-        jecEra    = 'Summer15_50nsV4_MC'
-    else:
-        ## MC 25ns
-        removeResiduals = True
-        uncFile = os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/jec/Summer15_25nsV2_MC_UncertaintySources_AK4PFchs.txt'
-        jecDBFile = os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/jec/Summer15_25nsV2_MC.db'
-        jecEra    = 'Summer15_25nsV2_MC'
+    ## MC 25ns
+    removeResiduals = False
+    uncFile = os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/jec/Summer15_25nsV2_MC_Uncertainty_AK4PFchs.txt'
+    jecDBFile = os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/jec/Fall15_25nsV2_MC.db'
+    jecEra    = 'Fall15_25nsV2_MC'
+    jerDBFile = os.environ['CMSSW_BASE']+'/src/PhysicsTools/PatUtils/data/Fall15_25nsV2_MC.db'
+    jerEra    = 'Fall15_25nsV2'
 
+preprocessorFile = "$CMSSW_BASE/tmp/MetType1_jec_%s.py"%(jecEra)
+extraArgs=[]
+if comp.isData:
+    extraArgs.append('--isData')
+    GT= '76X_dataRun2_16Dec2015_v0'
+else:
+    GT= '76X_mcRun2_asymptotic_RunIIFall15DR76_v1'
 
+if removeResiduals:extraArgs.append('--removeResiduals')
+args = ['python',
+  os.path.expandvars(os.environ['CMSSW_BASE']+'/python/CMGTools/ObjectStudies/corMETMiniAOD_cfgCreator.py'),\
+  '--GT='+GT,
+  '--outputFile='+preprocessorFile,
+  '--jecDBFile='+jecDBFile,
+  '--jecEra='+jecEra,
+  '--jerDBFile='+jerDBFile,
+  '--jerEra='+jerEra
+  ] + extraArgs
+#print "Making pre-processorfile:"
+#print " ".join(args)
 
-#preprocessorFile = "$CMSSW_BASE/tmp/MetType1_jec_%s.py"%(jecEra)
-#extraArgs=[]
-#if comp.isData:
-#    extraArgs.append('--isData')
-#    GT= '74X_dataRun2_Prompt_v2'
-#else:
-#    if not is25ns:
-#        GT= 'MCRUN2_74_V9A'
-#    else:
-#        GT= 'MCRUN2_74_V9'
-#if removeResiduals:extraArgs.append('--removeResiduals')
-#args = ['python',
-#  os.path.expandvars(os.environ['CMSSW_BASE']+'/python/CMGTools/ObjectStudies/corMETMiniAOD_cfgCreator.py'),\
-#  '--GT='+GT,
-#  '--outputFile='+preprocessorFile,
-#  '--jecDBFile='+jecDBFile,
-#  '--jecEra='+jecEra
-#  ] + extraArgs
-##print "Making pre-processorfile:"
-##print " ".join(args)
-#subprocess.call(args)
-#from PhysicsTools.Heppy.utils.cmsswPreprocessor import CmsswPreprocessor
-#preprocessor = CmsswPreprocessor(preprocessorFile)
+subprocess.call(args)
+from PhysicsTools.Heppy.utils.cmsswPreprocessor import CmsswPreprocessor
+preprocessor = CmsswPreprocessor(preprocessorFile)
 
 autoAAA(selectedComponents)
 

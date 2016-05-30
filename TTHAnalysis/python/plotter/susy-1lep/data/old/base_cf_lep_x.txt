@@ -1,0 +1,22 @@
+== 1 hard lep: nLep == 1 && Selected == 1 && Lep_pt > 25 && nVeto == 0
+HT > 500: HT > 500
+LTNoHF > 250: LTNoHF > 250
+
+Trigger: !isData || (isData && (HLT_EleHT350MET70 || HLT_Ele105 || HLT_MuHT350MET70 || HLT_Mu50 ) && !((HLT_EleHT350MET70 || HLT_Ele105) && (HLT_MuHT350MET70 || HLT_Mu50)) )
+
+nJet >= 2: nJet >= 2
+LSL JetPt> 80: LSLjetptGT80 == 1
+#2.JetPt > 80: Jet2Pt > 80
+
+# Filters
+#Filters: !isData || (isData && Flag_goodVertices && Flag_HBHENoiseFilter_fix && Flag_CSCTightHaloFilter && Flag_eeBadScFilter)
+#Filters: !isData || (isData && Flag_goodVertices && Flag_HBHENoiseFilter_fix && Flag_CSCTightHaloFilter && Flag_eeBadScFilter)
+#Filters: !isData || (isData && Flag_goodVertices && Flag_CSCTightHaloFilter && Flag_eeBadScFilter)
+Filters: !isData || (isData && Flag_goodVertices && Flag_CSCTightHaloFilter && Flag_eeBadScFilter)
+#F_goodVertices: !isData || (isData && Flag_goodVertices)
+#F_CSCTightHaloFilter: !isData || (isData && Flag_CSCTightHaloFilter)
+#F_eeBadScFilter: !isData || (isData && Flag_eeBadScFilter)
+
+#Nb >= 1: nBJet >= 1
+Nb = 0: nBJet == 0
+#F_HBHENoiseFilter: !isData || (isData && Flag_HBHENoiseFilter_fix)

@@ -1,0 +1,3 @@
+alwaystrue: 1
+lep: nLepFO>=2
+sign: (nLepFO>=3) || (LepGood1_charge*LepGood2_charge > 0)

@@ -1,0 +1,11 @@
+nLepGO > 0: nLepGood + nLepOther > 0
+HTskim > 350: HT > 350
+nLepGood > 0: nLepGood > 0
+
+HT > 500: HT > 500
+
+nLep = 1: nLep == 1
+nEle = 1: nEl == 1
+#nMu = 1: nMu == 1
+#Sele: Selected == 1
+Anti: Selected == -1

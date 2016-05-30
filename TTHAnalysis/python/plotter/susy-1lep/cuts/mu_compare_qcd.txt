@@ -1,0 +1,14 @@
+1lep: nLepGood == 1 || nLepOther == 1
+#1lep: nLepOther > 0 && nLepGood == 0
+#ele: abs(LepGood_pdgId) == 11 || abs(LepOther_pdgId) == 11
+mu: abs(LepGood_pdgId) == 13 || abs(LepOther_pdgId) == 13
+#mu: abs(LepOther_pdgId) == 13
+
+#nJets 3,4: nJets >= 3 && nJets <= 4
+nJets >= 2: nJets >= 2
+
+HT > 500: HT > 500
+LT > 250: LT > 250
+
+#Nb >= 1: nBJet >= 1
+#Nb = 0: nBJet == 0

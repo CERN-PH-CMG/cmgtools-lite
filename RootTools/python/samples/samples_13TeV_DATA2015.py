@@ -25,37 +25,6 @@ json=dataDir+'/json/Cert_246908-256869_13TeV_PromptReco_Collisions15_25ns_JSON.t
 #    )
 
 
-### ----------------------------- Magnetic Field On ----------------------------------------
-
-#Jet_Run2015B            = kreator.makeDataComponent("Jet_Run2015B"           , "/Jet/Run2015B-PromptReco-v1/MINIAOD"           , "CMS", ".*root", json)
-#SingleMu_Run2015B       = kreator.makeDataComponent("SingleMu_Run2015B"      , "/SingleMu/Run2015B-PromptReco-v1/MINIAOD"      , "CMS", ".*root", json)
-#EGamma_Run2015B         = kreator.makeDataComponent("EGamma_Run2015B"        , "/EGamma/Run2015B-PromptReco-v1/MINIAOD"        , "CMS", ".*root", json)
-
-#JetHT_Run2015B          = kreator.makeDataComponent("JetHT_Run2015B"         , "/JetHT/Run2015B-PromptReco-v1/MINIAOD"         , "CMS", ".*root", json)
-#HTMHT_Run2015B          = kreator.makeDataComponent("HTMHT_Run2015B"         , "/HTMHT/Run2015B-PromptReco-v1/MINIAOD"         , "CMS", ".*root", json)
-#MET_Run2015B            = kreator.makeDataComponent("MET_Run2015B"           , "/MET/Run2015B-PromptReco-v1/MINIAOD"           , "CMS", ".*root", json)
-#SingleElectron_Run2015B = kreator.makeDataComponent("SingleElectron_Run2015B", "/SingleElectron/Run2015B-PromptReco-v1/MINIAOD", "CMS", ".*root", json)
-#SingleMuon_Run2015B     = kreator.makeDataComponent("SingleMuon_Run2015B"    , "/SingleMuon/Run2015B-PromptReco-v1/MINIAOD"    , "CMS", ".*root", json)
-#SinglePhoton_Run2015B   = kreator.makeDataComponent("SinglePhoton_Run2015B"  , "/SinglePhoton/Run2015B-PromptReco-v1/MINIAOD"  , "CMS", ".*root", json)
-#DoubleEG_Run2015B       = kreator.makeDataComponent("DoubleEG_Run2015B"      , "/DoubleEG/Run2015B-PromptReco-v1/MINIAOD"      , "CMS", ".*root", json)
-#MuonEG_Run2015B         = kreator.makeDataComponent("MuonEG_Run2015B"        , "/MuonEG/Run2015B-PromptReco-v1/MINIAOD"        , "CMS", ".*root", json)
-#DoubleMuon_Run2015B     = kreator.makeDataComponent("DoubleMuon_Run2015B"    , "/DoubleMuon/Run2015B-PromptReco-v1/MINIAOD"    , "CMS", ".*root", json)
-
-# July17 for run<=251561 with MINIAOD reprocessed with correct MET filters
-run_range = (251244, 251562)
-label = "_runs%s_%s"%(run_range[0], run_range[1])
-
-JetHT_Run2015B_17Jul2015          = kreator.makeDataComponent("JetHT_Run2015B_17Jul2015"         , "/JetHT/Run2015B-17Jul2015-v1/MINIAOD"         , "CMS", ".*root", json, run_range)
-HTMHT_Run2015B_17Jul2015          = kreator.makeDataComponent("HTMHT_Run2015B_17Jul2015"         , "/HTMHT/Run2015B-17Jul2015-v1/MINIAOD"         , "CMS", ".*root", json, run_range)
-MET_Run2015B_17Jul2015            = kreator.makeDataComponent("MET_Run2015B_17Jul2015"           , "/MET/Run2015B-17Jul2015-v1/MINIAOD"           , "CMS", ".*root", json, run_range)
-SingleElectron_Run2015B_17Jul2015 = kreator.makeDataComponent("SingleElectron_Run2015B_17Jul2015", "/SingleElectron/Run2015B-17Jul2015-v1/MINIAOD", "CMS", ".*root", json, run_range)
-SingleMuon_Run2015B_17Jul2015     = kreator.makeDataComponent("SingleMuon_Run2015B_17Jul2015"    , "/SingleMuon/Run2015B-17Jul2015-v1/MINIAOD"    , "CMS", ".*root", json, run_range)
-SinglePhoton_Run2015B_17Jul2015   = kreator.makeDataComponent("SinglePhoton_Run2015B_17Jul2015"  , "/SinglePhoton/Run2015B-17Jul2015-v1/MINIAOD"  , "CMS", ".*root", json, run_range)
-DoubleEG_Run2015B_17Jul2015       = kreator.makeDataComponent("DoubleEG_Run2015B_17Jul2015"      , "/DoubleEG/Run2015B-17Jul2015-v1/MINIAOD"      , "CMS", ".*root", json, run_range)
-MuonEG_Run2015B_17Jul2015         = kreator.makeDataComponent("MuonEG_Run2015B_17Jul2015"        , "/MuonEG/Run2015B-17Jul2015-v1/MINIAOD"        , "CMS", ".*root", json, run_range)
-DoubleMuon_Run2015B_17Jul2015     = kreator.makeDataComponent("DoubleMuon_Run2015B_17Jul2015"    , "/DoubleMuon/Run2015B-17Jul2015-v1/MINIAOD"    , "CMS", ".*root", json, run_range)
-
-
 # PromptReco-v1 for run > 251561
 run_range = (251643, 251883)
 label = "_runs%s_%s"%(run_range[0], run_range[1])
@@ -69,7 +38,6 @@ SinglePhoton_Run2015B_PromptReco   = kreator.makeDataComponent("SinglePhoton_Run
 DoubleEG_Run2015B_PromptReco       = kreator.makeDataComponent("DoubleEG_Run2015B_PromptReco"      , "/DoubleEG/Run2015B-PromptReco-v1/MINIAOD"      , "CMS", ".*root", json, run_range)
 MuonEG_Run2015B_PromptReco         = kreator.makeDataComponent("MuonEG_Run2015B_PromptReco"        , "/MuonEG/Run2015B-PromptReco-v1/MINIAOD"        , "CMS", ".*root", json, run_range)
 DoubleMuon_Run2015B_PromptReco     = kreator.makeDataComponent("DoubleMuon_Run2015B_PromptReco"    , "/DoubleMuon/Run2015B-PromptReco-v1/MINIAOD"    , "CMS", ".*root", json, run_range)
-
 
 #minBias_Run2015B  = kreator.makeDataComponent("minBias_Run2015B" , "/MinimumBias/Run2015B-PromptReco-v1/MINIAOD", "CMS", ".*root", json)
 #zeroBias_Run2015B = kreator.makeDataComponent("zeroBias_Run2015B", "/ZeroBias/Run2015B-PromptReco-v1/MINIAOD"   , "CMS", ".*root", json)
@@ -92,23 +60,21 @@ DoubleEG_Run2015B_17Jul       = kreator.makeDataComponent("DoubleEG_Run2015B_17J
 MuonEG_Run2015B_17Jul         = kreator.makeDataComponent("MuonEG_Run2015B_17Jul"        , "/MuonEG/Run2015B-17Jul2015-v1/MINIAOD"        , "CMS", ".*root", json)
 DoubleMuon_Run2015B_17Jul     = kreator.makeDataComponent("DoubleMuon_Run2015B_17Jul"    , "/DoubleMuon/Run2015B-17Jul2015-v1/MINIAOD"    , "CMS", ".*root", json)
 
-minBias_Run2015B_17Jul  = kreator.makeDataComponent("minBias_Run2015B_17Jul" , "/MinimumBias/Run2015B-17Jul2015-v1/MINIAOD", "CMS", ".*root", json)
+#minBias_Run2015B_17Jul  = kreator.makeDataComponent("minBias_Run2015B_17Jul" , "/MinimumBias/Run2015B-17Jul2015-v1/MINIAOD", "CMS", ".*root", json)
 zeroBias_Run2015B_17Jul = kreator.makeDataComponent("zeroBias_Run2015B_17Jul", "/ZeroBias/Run2015B-17Jul2015-v1/MINIAOD"   , "CMS", ".*root", json)
 
-
-#dataSamples = [JetHT_Run2015B_17Jul2015, HTMHT_Run2015B_17Jul2015, MET_Run2015B_17Jul2015, SingleElectron_Run2015B_17Jul2015, SingleMuon_Run2015B_17Jul2015, SinglePhoton_Run2015B_17Jul2015, DoubleEG_Run2015B_17Jul2015, MuonEG_Run2015B_17Jul2015, DoubleMuon_Run2015B_17Jul2015, JetHT_Run2015B_PromptReco, HTMHT_Run2015B_PromptReco, MET_Run2015B_PromptReco, SingleElectron_Run2015B_PromptReco, SingleMuon_Run2015B_PromptReco, SinglePhoton_Run2015B_PromptReco, DoubleEG_Run2015B_PromptReco, MuonEG_Run2015B_PromptReco, DoubleMuon_Run2015B_PromptReco]
-dataSamples_17Jul = [Jet_Run2015B_17Jul, JetHT_Run2015B_17Jul, HTMHT_Run2015B_17Jul, MET_Run2015B_17Jul, SingleElectron_Run2015B_17Jul, SingleMu_Run2015B_17Jul, SingleMuon_Run2015B_17Jul, SinglePhoton_Run2015B_17Jul, EGamma_Run2015B_17Jul, DoubleEG_Run2015B_17Jul, MuonEG_Run2015B_17Jul, DoubleMuon_Run2015B_17Jul, minBias_Run2015B_17Jul, zeroBias_Run2015B_17Jul]
+dataSamples_17Jul = [Jet_Run2015B_17Jul, JetHT_Run2015B_17Jul, HTMHT_Run2015B_17Jul, MET_Run2015B_17Jul, SingleElectron_Run2015B_17Jul, SingleMu_Run2015B_17Jul, SingleMuon_Run2015B_17Jul, SinglePhoton_Run2015B_17Jul, EGamma_Run2015B_17Jul, DoubleEG_Run2015B_17Jul, MuonEG_Run2015B_17Jul, DoubleMuon_Run2015B_17Jul, zeroBias_Run2015B_17Jul]
 
 ### ----------------------------- Run2015C ----------------------------------------
 
-Jet_Run2015C            = kreator.makeDataComponent("Jet_Run2015C"           , "/Jet/Run2015C-PromptReco-v1/MINIAOD"           , "CMS", ".*root", json)
+#Jet_Run2015C            = kreator.makeDataComponent("Jet_Run2015C"           , "/Jet/Run2015C-PromptReco-v1/MINIAOD"           , "CMS", ".*root", json)
 JetHT_Run2015C          = kreator.makeDataComponent("JetHT_Run2015C"         , "/JetHT/Run2015C-PromptReco-v1/MINIAOD"         , "CMS", ".*root", json)
 HTMHT_Run2015C          = kreator.makeDataComponent("HTMHT_Run2015C"         , "/HTMHT/Run2015C-PromptReco-v1/MINIAOD"         , "CMS", ".*root", json)
 MET_Run2015C            = kreator.makeDataComponent("MET_Run2015C"           , "/MET/Run2015C-PromptReco-v1/MINIAOD"           , "CMS", ".*root", json)
 SingleElectron_Run2015C = kreator.makeDataComponent("SingleElectron_Run2015C", "/SingleElectron/Run2015C-PromptReco-v1/MINIAOD", "CMS", ".*root", json)
 SingleMuon_Run2015C     = kreator.makeDataComponent("SingleMuon_Run2015C"    , "/SingleMuon/Run2015C-PromptReco-v1/MINIAOD"    , "CMS", ".*root", json)
 SinglePhoton_Run2015C   = kreator.makeDataComponent("SinglePhoton_Run2015C"  , "/SinglePhoton/Run2015C-PromptReco-v1/MINIAOD"  , "CMS", ".*root", json)
-EGamma_Run2015C         = kreator.makeDataComponent("EGamma_Run2015C"        , "/EGamma/Run2015C-PromptReco-v1/MINIAOD"        , "CMS", ".*root", json)
+#EGamma_Run2015C         = kreator.makeDataComponent("EGamma_Run2015C"        , "/EGamma/Run2015C-PromptReco-v1/MINIAOD"        , "CMS", ".*root", json)
 DoubleEG_Run2015C       = kreator.makeDataComponent("DoubleEG_Run2015C"      , "/DoubleEG/Run2015C-PromptReco-v1/MINIAOD"      , "CMS", ".*root", json)
 MuonEG_Run2015C         = kreator.makeDataComponent("MuonEG_Run2015C"        , "/MuonEG/Run2015C-PromptReco-v1/MINIAOD"        , "CMS", ".*root", json)
 DoubleMuon_Run2015C     = kreator.makeDataComponent("DoubleMuon_Run2015C"    , "/DoubleMuon/Run2015C-PromptReco-v1/MINIAOD"    , "CMS", ".*root", json)
@@ -116,7 +82,7 @@ DoubleMuon_Run2015C     = kreator.makeDataComponent("DoubleMuon_Run2015C"    , "
 minBias_Run2015C  = kreator.makeDataComponent("minBias_Run2015C" , "/MinimumBias/Run2015C-PromptReco-v1/MINIAOD", "CMS", ".*root", json)
 zeroBias_Run2015C = kreator.makeDataComponent("zeroBias_Run2015C", "/ZeroBias/Run2015C-PromptReco-v1/MINIAOD"   , "CMS", ".*root", json)
 
-dataSamples_Run2015C = [Jet_Run2015C, JetHT_Run2015C, HTMHT_Run2015C, MET_Run2015C, SingleElectron_Run2015C, SingleMuon_Run2015C, SinglePhoton_Run2015C, EGamma_Run2015C, DoubleEG_Run2015C, MuonEG_Run2015C, DoubleMuon_Run2015C, minBias_Run2015C, zeroBias_Run2015C]
+dataSamples_Run2015C = [JetHT_Run2015C, HTMHT_Run2015C, MET_Run2015C, SingleElectron_Run2015C, SingleMuon_Run2015C, SinglePhoton_Run2015C, DoubleEG_Run2015C, MuonEG_Run2015C, DoubleMuon_Run2015C, minBias_Run2015C, zeroBias_Run2015C]
 
 ### ----------------------------- Run2015D miniAODv1 ----------------------------------------
 
@@ -140,7 +106,6 @@ dataSamples_Run2015D = [JetHT_Run2015D, HTMHT_Run2015D, MET_Run2015D, SingleElec
 
 
 ### ----------------------------- Run2015D miniAODv2 ----------------------------------------
-###https://hypernews.cern.ch/HyperNews/CMS/get/physics-announcements/3561.html
 
 JetHT_Run2015D_Promptv4          = kreator.makeDataComponent("JetHT_Run2015D_v4"         , "/JetHT/Run2015D-PromptReco-v4/MINIAOD"         , "CMS", ".*root", json)
 HTMHT_Run2015D_Promptv4          = kreator.makeDataComponent("HTMHT_Run2015D_v4"         , "/HTMHT/Run2015D-PromptReco-v4/MINIAOD"         , "CMS", ".*root", json)
@@ -156,8 +121,40 @@ Tau_Run2015D_Promptv4            = kreator.makeDataComponent("Tau_Run2015D_v4"  
 dataSamples_Run2015D_v4 = [JetHT_Run2015D_Promptv4, HTMHT_Run2015D_Promptv4, MET_Run2015D_Promptv4, SingleElectron_Run2015D_Promptv4, SingleMuon_Run2015D_Promptv4, SinglePhoton_Run2015D_Promptv4, DoubleEG_Run2015D_Promptv4, MuonEG_Run2015D_Promptv4, DoubleMuon_Run2015D_Promptv4, Tau_Run2015D_Promptv4]
 
 
-### ----------------------------- Run2015D-05Oct2015 ----------------------------------------
-## https://hypernews.cern.ch/HyperNews/CMS/get/datasets/4154.html
+
+### --- 05Oct2015 --- miniAOD 74X v2
+
+JetHT_Run2015B_05Oct          = kreator.makeDataComponent("JetHT_Run2015B_05Oct"         , "/JetHT/Run2015B-05Oct2015-v1/MINIAOD"         , "CMS", ".*root", json)
+HTMHT_Run2015B_05Oct          = kreator.makeDataComponent("HTMHT_Run2015B_05Oct"         , "/HTMHT/Run2015B-05Oct2015-v1/MINIAOD"         , "CMS", ".*root", json)
+MET_Run2015B_05Oct            = kreator.makeDataComponent("MET_Run2015B_05Oct"           , "/MET/Run2015B-05Oct2015-v1/MINIAOD"           , "CMS", ".*root", json)
+SingleElectron_Run2015B_05Oct = kreator.makeDataComponent("SingleElectron_Run2015B_05Oct", "/SingleElectron/Run2015B-05Oct2015-v1/MINIAOD", "CMS", ".*root", json)
+SingleMuon_Run2015B_05Oct     = kreator.makeDataComponent("SingleMuon_Run2015B_05Oct"    , "/SingleMuon/Run2015B-05Oct2015-v1/MINIAOD"    , "CMS", ".*root", json)
+SinglePhoton_Run2015B_05Oct   = kreator.makeDataComponent("SinglePhoton_Run2015B_05Oct"  , "/SinglePhoton/Run2015B-05Oct2015-v1/MINIAOD"  , "CMS", ".*root", json)
+DoubleEG_Run2015B_05Oct       = kreator.makeDataComponent("DoubleEG_Run2015B_05Oct"      , "/DoubleEG/Run2015B-05Oct2015-v1/MINIAOD"      , "CMS", ".*root", json)
+MuonEG_Run2015B_05Oct         = kreator.makeDataComponent("MuonEG_Run2015B_05Oct"        , "/MuonEG/Run2015B-05Oct2015-v1/MINIAOD"        , "CMS", ".*root", json)
+DoubleMuon_Run2015B_05Oct     = kreator.makeDataComponent("DoubleMuon_Run2015B_05Oct"    , "/DoubleMuon/Run2015B-05Oct2015-v1/MINIAOD"    , "CMS", ".*root", json)
+
+JetHT_Run2015C_50ns_05Oct          = kreator.makeDataComponent("JetHT_Run2015C_50ns_05Oct"         , "/JetHT/Run2015C_50ns-05Oct2015-v1/MINIAOD"         , "CMS", ".*root", json)
+HTMHT_Run2015C_50ns_05Oct          = kreator.makeDataComponent("HTMHT_Run2015C_50ns_05Oct"         , "/HTMHT/Run2015C_50ns-05Oct2015-v1/MINIAOD"         , "CMS", ".*root", json)
+MET_Run2015C_50ns_05Oct            = kreator.makeDataComponent("MET_Run2015C_50ns_05Oct"           , "/MET/Run2015C_50ns-05Oct2015-v1/MINIAOD"           , "CMS", ".*root", json)
+SingleElectron_Run2015C_50ns_05Oct = kreator.makeDataComponent("SingleElectron_Run2015C_50ns_05Oct", "/SingleElectron/Run2015C_50ns-05Oct2015-v1/MINIAOD", "CMS", ".*root", json)
+SingleMuon_Run2015C_50ns_05Oct     = kreator.makeDataComponent("SingleMuon_Run2015C_50ns_05Oct"    , "/SingleMuon/Run2015C_50ns-05Oct2015-v1/MINIAOD"    , "CMS", ".*root", json)
+SinglePhoton_Run2015C_50ns_05Oct   = kreator.makeDataComponent("SinglePhoton_Run2015C_50ns_05Oct"  , "/SinglePhoton/Run2015C_50ns-05Oct2015-v1/MINIAOD"  , "CMS", ".*root", json)
+DoubleEG_Run2015C_50ns_05Oct       = kreator.makeDataComponent("DoubleEG_Run2015C_50ns_05Oct"      , "/DoubleEG/Run2015C_50ns-05Oct2015-v1/MINIAOD"      , "CMS", ".*root", json)
+MuonEG_Run2015C_50ns_05Oct         = kreator.makeDataComponent("MuonEG_Run2015C_50ns_05Oct"        , "/MuonEG/Run2015C_50ns-05Oct2015-v1/MINIAOD"        , "CMS", ".*root", json)
+DoubleMuon_Run2015C_50ns_05Oct     = kreator.makeDataComponent("DoubleMuon_Run2015C_50ns_05Oct"    , "/DoubleMuon/Run2015C_50ns-05Oct2015-v1/MINIAOD"    , "CMS", ".*root", json)
+Tau_Run2015C_50ns_05Oct            = kreator.makeDataComponent("Tau_Run2015C_50ns_05Oct"           , "/Tau/Run2015C_50ns-05Oct2015-v1/MINIAOD"           , "CMS", ".*root", json)
+
+JetHT_Run2015C_25ns_05Oct          = kreator.makeDataComponent("JetHT_Run2015C_25ns_05Oct"         , "/JetHT/Run2015C_25ns-05Oct2015-v1/MINIAOD"         , "CMS", ".*root", json)
+HTMHT_Run2015C_25ns_05Oct          = kreator.makeDataComponent("HTMHT_Run2015C_25ns_05Oct"         , "/HTMHT/Run2015C_25ns-05Oct2015-v1/MINIAOD"         , "CMS", ".*root", json)
+MET_Run2015C_25ns_05Oct            = kreator.makeDataComponent("MET_Run2015C_25ns_05Oct"           , "/MET/Run2015C_25ns-05Oct2015-v1/MINIAOD"           , "CMS", ".*root", json)
+SingleElectron_Run2015C_25ns_05Oct = kreator.makeDataComponent("SingleElectron_Run2015C_25ns_05Oct", "/SingleElectron/Run2015C_25ns-05Oct2015-v1/MINIAOD", "CMS", ".*root", json)
+SingleMuon_Run2015C_25ns_05Oct     = kreator.makeDataComponent("SingleMuon_Run2015C_25ns_05Oct"    , "/SingleMuon/Run2015C_25ns-05Oct2015-v1/MINIAOD"    , "CMS", ".*root", json)
+SinglePhoton_Run2015C_25ns_05Oct   = kreator.makeDataComponent("SinglePhoton_Run2015C_25ns_05Oct"  , "/SinglePhoton/Run2015C_25ns-05Oct2015-v1/MINIAOD"  , "CMS", ".*root", json)
+DoubleEG_Run2015C_25ns_05Oct       = kreator.makeDataComponent("DoubleEG_Run2015C_25ns_05Oct"      , "/DoubleEG/Run2015C_25ns-05Oct2015-v1/MINIAOD"      , "CMS", ".*root", json)
+MuonEG_Run2015C_25ns_05Oct         = kreator.makeDataComponent("MuonEG_Run2015C_25ns_05Oct"        , "/MuonEG/Run2015C_25ns-05Oct2015-v1/MINIAOD"        , "CMS", ".*root", json)
+DoubleMuon_Run2015C_25ns_05Oct     = kreator.makeDataComponent("DoubleMuon_Run2015C_25ns_05Oct"    , "/DoubleMuon/Run2015C_25ns-05Oct2015-v1/MINIAOD"    , "CMS", ".*root", json)
+Tau_Run2015C_25ns_05Oct            = kreator.makeDataComponent("Tau_Run2015C_25ns_05Oct"           , "/Tau/Run2015C_25ns-05Oct2015-v1/MINIAOD"           , "CMS", ".*root", json)
 
 JetHT_Run2015D_05Oct          = kreator.makeDataComponent("JetHT_Run2015D_05Oct"         , "/JetHT/Run2015D-05Oct2015-v1/MINIAOD"         , "CMS", ".*root", json)
 HTMHT_Run2015D_05Oct          = kreator.makeDataComponent("HTMHT_Run2015D_05Oct"         , "/HTMHT/Run2015D-05Oct2015-v1/MINIAOD"         , "CMS", ".*root", json)
@@ -170,10 +167,48 @@ MuonEG_Run2015D_05Oct         = kreator.makeDataComponent("MuonEG_Run2015D_05Oct
 DoubleMuon_Run2015D_05Oct     = kreator.makeDataComponent("DoubleMuon_Run2015D_05Oct"    , "/DoubleMuon/Run2015D-05Oct2015-v1/MINIAOD"    , "CMS", ".*root", json)
 Tau_Run2015D_05Oct            = kreator.makeDataComponent("Tau_Run2015D_05Oct"           , "/Tau/Run2015D-05Oct2015-v1/MINIAOD"           , "CMS", ".*root", json)
 
+dataSamples_Run2015B_05Oct = [JetHT_Run2015B_05Oct, HTMHT_Run2015B_05Oct, MET_Run2015B_05Oct, SingleElectron_Run2015B_05Oct, SingleMuon_Run2015B_05Oct, SinglePhoton_Run2015B_05Oct, DoubleEG_Run2015B_05Oct, MuonEG_Run2015B_05Oct, DoubleMuon_Run2015B_05Oct]
+dataSamples_Run2015C_25ns_05Oct = [JetHT_Run2015C_25ns_05Oct, HTMHT_Run2015C_25ns_05Oct, MET_Run2015C_25ns_05Oct, SingleElectron_Run2015C_25ns_05Oct, SingleMuon_Run2015C_25ns_05Oct, SinglePhoton_Run2015C_25ns_05Oct, DoubleEG_Run2015C_25ns_05Oct, MuonEG_Run2015C_25ns_05Oct, DoubleMuon_Run2015C_25ns_05Oct]
+dataSamples_Run2015C_50ns_05Oct = [JetHT_Run2015C_50ns_05Oct, HTMHT_Run2015C_50ns_05Oct, MET_Run2015C_50ns_05Oct, SingleElectron_Run2015C_50ns_05Oct, SingleMuon_Run2015C_50ns_05Oct, SinglePhoton_Run2015C_50ns_05Oct, DoubleEG_Run2015C_50ns_05Oct, MuonEG_Run2015C_50ns_05Oct, DoubleMuon_Run2015C_50ns_05Oct]
 dataSamples_Run2015D_05Oct = [JetHT_Run2015D_05Oct, HTMHT_Run2015D_05Oct, MET_Run2015D_05Oct, SingleElectron_Run2015D_05Oct, SingleMuon_Run2015D_05Oct, SinglePhoton_Run2015D_05Oct, DoubleEG_Run2015D_05Oct, MuonEG_Run2015D_05Oct, DoubleMuon_Run2015D_05Oct, Tau_Run2015D_05Oct]
+dataSamples_Run2015_05Oct = dataSamples_Run2015B_05Oct + dataSamples_Run2015C_25ns_05Oct + dataSamples_Run2015C_50ns_05Oct + dataSamples_Run2015D_05Oct
 
-### ----------------------------- Run2015D-16Dec2015 ----------------------------------------
-## https://hypernews.cern.ch/HyperNews/CMS/get/datasets/4154.html
+
+
+### --- 16Dec2015 --- miniAOD 76X
+
+#JetHT_Run2015B_16Dec          = kreator.makeDataComponent("JetHT_Run2015B_16Dec"         , "/JetHT/Run2015B-16Dec2015-v1/MINIAOD"         , "CMS", ".*root", json)
+HTMHT_Run2015B_16Dec          = kreator.makeDataComponent("HTMHT_Run2015B_16Dec"         , "/HTMHT/Run2015B-16Dec2015-v1/MINIAOD"         , "CMS", ".*root", json)
+MET_Run2015B_16Dec            = kreator.makeDataComponent("MET_Run2015B_16Dec"           , "/MET/Run2015B-16Dec2015-v1/MINIAOD"           , "CMS", ".*root", json)
+SingleElectron_Run2015B_16Dec = kreator.makeDataComponent("SingleElectron_Run2015B_16Dec", "/SingleElectron/Run2015B-16Dec2015-v1/MINIAOD", "CMS", ".*root", json)
+SingleMuon_Run2015B_16Dec     = kreator.makeDataComponent("SingleMuon_Run2015B_16Dec"    , "/SingleMuon/Run2015B-16Dec2015-v1/MINIAOD"    , "CMS", ".*root", json)
+SinglePhoton_Run2015B_16Dec   = kreator.makeDataComponent("SinglePhoton_Run2015B_16Dec"  , "/SinglePhoton/Run2015B-16Dec2015-v1/MINIAOD"  , "CMS", ".*root", json)
+DoubleEG_Run2015B_16Dec       = kreator.makeDataComponent("DoubleEG_Run2015B_16Dec"      , "/DoubleEG/Run2015B-16Dec2015-v1/MINIAOD"      , "CMS", ".*root", json)
+MuonEG_Run2015B_16Dec         = kreator.makeDataComponent("MuonEG_Run2015B_16Dec"        , "/MuonEG/Run2015B-16Dec2015-v1/MINIAOD"        , "CMS", ".*root", json)
+DoubleMuon_Run2015B_16Dec     = kreator.makeDataComponent("DoubleMuon_Run2015B_16Dec"    , "/DoubleMuon/Run2015B-16Dec2015-v1/MINIAOD"    , "CMS", ".*root", json)
+Tau_Run2015B_16Dec            = kreator.makeDataComponent("Tau_Run2015B_16Dec"           , "/Tau/Run2015B-16Dec2015-v1/MINIAOD"           , "CMS", ".*root", json)
+
+JetHT_Run2015C_50ns_16Dec          = kreator.makeDataComponent("JetHT_Run2015C_50ns_16Dec"         , "/JetHT/Run2015C_50ns-16Dec2015-v1/MINIAOD"         , "CMS", ".*root", json)
+HTMHT_Run2015C_50ns_16Dec          = kreator.makeDataComponent("HTMHT_Run2015C_50ns_16Dec"         , "/HTMHT/Run2015C_50ns-16Dec2015-v1/MINIAOD"         , "CMS", ".*root", json)
+MET_Run2015C_50ns_16Dec            = kreator.makeDataComponent("MET_Run2015C_50ns_16Dec"           , "/MET/Run2015C_50ns-16Dec2015-v1/MINIAOD"           , "CMS", ".*root", json)
+SingleElectron_Run2015C_50ns_16Dec = kreator.makeDataComponent("SingleElectron_Run2015C_50ns_16Dec", "/SingleElectron/Run2015C_50ns-16Dec2015-v1/MINIAOD", "CMS", ".*root", json)
+SingleMuon_Run2015C_50ns_16Dec     = kreator.makeDataComponent("SingleMuon_Run2015C_50ns_16Dec"    , "/SingleMuon/Run2015C_50ns-16Dec2015-v1/MINIAOD"    , "CMS", ".*root", json)
+SinglePhoton_Run2015C_50ns_16Dec   = kreator.makeDataComponent("SinglePhoton_Run2015C_50ns_16Dec"  , "/SinglePhoton/Run2015C_50ns-16Dec2015-v1/MINIAOD"  , "CMS", ".*root", json)
+DoubleEG_Run2015C_50ns_16Dec       = kreator.makeDataComponent("DoubleEG_Run2015C_50ns_16Dec"      , "/DoubleEG/Run2015C_50ns-16Dec2015-v1/MINIAOD"      , "CMS", ".*root", json)
+MuonEG_Run2015C_50ns_16Dec         = kreator.makeDataComponent("MuonEG_Run2015C_50ns_16Dec"        , "/MuonEG/Run2015C_50ns-16Dec2015-v1/MINIAOD"        , "CMS", ".*root", json)
+DoubleMuon_Run2015C_50ns_16Dec     = kreator.makeDataComponent("DoubleMuon_Run2015C_50ns_16Dec"    , "/DoubleMuon/Run2015C_50ns-16Dec2015-v1/MINIAOD"    , "CMS", ".*root", json)
+Tau_Run2015C_50ns_16Dec            = kreator.makeDataComponent("Tau_Run2015C_50ns_16Dec"           , "/Tau/Run2015C_50ns-16Dec2015-v1/MINIAOD"           , "CMS", ".*root", json)
+
+JetHT_Run2015C_25ns_16Dec          = kreator.makeDataComponent("JetHT_Run2015C_25ns_16Dec"         , "/JetHT/Run2015C_25ns-16Dec2015-v1/MINIAOD"         , "CMS", ".*root", json)
+HTMHT_Run2015C_25ns_16Dec          = kreator.makeDataComponent("HTMHT_Run2015C_25ns_16Dec"         , "/HTMHT/Run2015C_25ns-16Dec2015-v1/MINIAOD"         , "CMS", ".*root", json)
+MET_Run2015C_25ns_16Dec            = kreator.makeDataComponent("MET_Run2015C_25ns_16Dec"           , "/MET/Run2015C_25ns-16Dec2015-v1/MINIAOD"           , "CMS", ".*root", json)
+SingleElectron_Run2015C_25ns_16Dec = kreator.makeDataComponent("SingleElectron_Run2015C_25ns_16Dec", "/SingleElectron/Run2015C_25ns-16Dec2015-v1/MINIAOD", "CMS", ".*root", json)
+SingleMuon_Run2015C_25ns_16Dec     = kreator.makeDataComponent("SingleMuon_Run2015C_25ns_16Dec"    , "/SingleMuon/Run2015C_25ns-16Dec2015-v1/MINIAOD"    , "CMS", ".*root", json)
+SinglePhoton_Run2015C_25ns_16Dec   = kreator.makeDataComponent("SinglePhoton_Run2015C_25ns_16Dec"  , "/SinglePhoton/Run2015C_25ns-16Dec2015-v1/MINIAOD"  , "CMS", ".*root", json)
+DoubleEG_Run2015C_25ns_16Dec       = kreator.makeDataComponent("DoubleEG_Run2015C_25ns_16Dec"      , "/DoubleEG/Run2015C_25ns-16Dec2015-v1/MINIAOD"      , "CMS", ".*root", json)
+MuonEG_Run2015C_25ns_16Dec         = kreator.makeDataComponent("MuonEG_Run2015C_25ns_16Dec"        , "/MuonEG/Run2015C_25ns-16Dec2015-v1/MINIAOD"        , "CMS", ".*root", json)
+DoubleMuon_Run2015C_25ns_16Dec     = kreator.makeDataComponent("DoubleMuon_Run2015C_25ns_16Dec"    , "/DoubleMuon/Run2015C_25ns-16Dec2015-v1/MINIAOD"    , "CMS", ".*root", json)
+Tau_Run2015C_25ns_16Dec            = kreator.makeDataComponent("Tau_Run2015C_25ns_16Dec"           , "/Tau/Run2015C_25ns-16Dec2015-v1/MINIAOD"           , "CMS", ".*root", json)
 
 JetHT_Run2015D_16Dec          = kreator.makeDataComponent("JetHT_Run2015D_16Dec"         , "/JetHT/Run2015D-16Dec2015-v1/MINIAOD"         , "CMS", ".*root", json)
 HTMHT_Run2015D_16Dec          = kreator.makeDataComponent("HTMHT_Run2015D_16Dec"         , "/HTMHT/Run2015D-16Dec2015-v1/MINIAOD"         , "CMS", ".*root", json)
@@ -181,36 +216,25 @@ MET_Run2015D_16Dec            = kreator.makeDataComponent("MET_Run2015D_16Dec"  
 SingleElectron_Run2015D_16Dec = kreator.makeDataComponent("SingleElectron_Run2015D_16Dec", "/SingleElectron/Run2015D-16Dec2015-v1/MINIAOD", "CMS", ".*root", json)
 SingleMuon_Run2015D_16Dec     = kreator.makeDataComponent("SingleMuon_Run2015D_16Dec"    , "/SingleMuon/Run2015D-16Dec2015-v1/MINIAOD"    , "CMS", ".*root", json)
 SinglePhoton_Run2015D_16Dec   = kreator.makeDataComponent("SinglePhoton_Run2015D_16Dec"  , "/SinglePhoton/Run2015D-16Dec2015-v1/MINIAOD"  , "CMS", ".*root", json)
-DoubleEG_Run2015D_16Dec       = kreator.makeDataComponent("DoubleEG_Run2015D_16Dec"      , "/DoubleEG/Run2015D-16Dec2015-v1/MINIAOD"      , "CMS", ".*root", json)
+DoubleEG_Run2015D_16Dec       = kreator.makeDataComponent("DoubleEG_Run2015D_16Dec"      , "/DoubleEG/Run2015D-16Dec2015-v2/MINIAOD"      , "CMS", ".*root", json)
 MuonEG_Run2015D_16Dec         = kreator.makeDataComponent("MuonEG_Run2015D_16Dec"        , "/MuonEG/Run2015D-16Dec2015-v1/MINIAOD"        , "CMS", ".*root", json)
 DoubleMuon_Run2015D_16Dec     = kreator.makeDataComponent("DoubleMuon_Run2015D_16Dec"    , "/DoubleMuon/Run2015D-16Dec2015-v1/MINIAOD"    , "CMS", ".*root", json)
 Tau_Run2015D_16Dec            = kreator.makeDataComponent("Tau_Run2015D_16Dec"           , "/Tau/Run2015D-16Dec2015-v1/MINIAOD"           , "CMS", ".*root", json)
 
+dataSamples_Run2015B_16Dec = [HTMHT_Run2015B_16Dec, MET_Run2015B_16Dec, SingleElectron_Run2015B_16Dec, SingleMuon_Run2015B_16Dec, SinglePhoton_Run2015B_16Dec, DoubleEG_Run2015B_16Dec, MuonEG_Run2015B_16Dec, DoubleMuon_Run2015B_16Dec, Tau_Run2015B_16Dec]
+dataSamples_Run2015C_50ns_16Dec = [JetHT_Run2015C_50ns_16Dec, HTMHT_Run2015C_50ns_16Dec, MET_Run2015C_50ns_16Dec, SingleElectron_Run2015C_50ns_16Dec, SingleMuon_Run2015C_50ns_16Dec, SinglePhoton_Run2015C_50ns_16Dec, DoubleEG_Run2015C_50ns_16Dec, MuonEG_Run2015C_50ns_16Dec, DoubleMuon_Run2015C_50ns_16Dec, Tau_Run2015C_50ns_16Dec]
+dataSamples_Run2015C_25ns_16Dec = [JetHT_Run2015C_25ns_16Dec, HTMHT_Run2015C_25ns_16Dec, MET_Run2015C_25ns_16Dec, SingleElectron_Run2015C_25ns_16Dec, SingleMuon_Run2015C_25ns_16Dec, SinglePhoton_Run2015C_25ns_16Dec, DoubleEG_Run2015C_25ns_16Dec, MuonEG_Run2015C_25ns_16Dec, DoubleMuon_Run2015C_25ns_16Dec, Tau_Run2015C_25ns_16Dec]
 dataSamples_Run2015D_16Dec = [JetHT_Run2015D_16Dec, HTMHT_Run2015D_16Dec, MET_Run2015D_16Dec, SingleElectron_Run2015D_16Dec, SingleMuon_Run2015D_16Dec, SinglePhoton_Run2015D_16Dec, DoubleEG_Run2015D_16Dec, MuonEG_Run2015D_16Dec, DoubleMuon_Run2015D_16Dec, Tau_Run2015D_16Dec]
-
-
-### ----------------------------- Run2015B-05Oct2015 ----------------------------------------
-## https://hypernews.cern.ch/HyperNews/CMS/get/datasets/4153.html
-
-JetHT_Run2015B_05Oct          = kreator.makeDataComponent("JetHT_Run2015B_05Oct"         , "/JetHT/Run2015B-05Oct2015-v1/MINIAOD"         , "CMS", ".*root", json)
-HTMHT_Run2015B_05Oct          = kreator.makeDataComponent("HTMHT_Run2015B_05Oct"         , "/HTMHT/Run2015B-05Oct2015-v1/MINIAOD"         , "CMS", ".*root", json)
-MET_Run2015B_05Oct            = kreator.makeDataComponent("MET_Run2015B_05Oct"           , "/MET/Run2015B-05Oct2015-v1/MINIAOD"           , "CMS", ".*root", json)
-SingleElectron_Run2015B_05Oct = kreator.makeDataComponent("SingleElectron_Run2015B_05Oct", "/SingleElectron/Run2015B-05Oct2015-v1/MINIAOD", "CMS", ".*root", json)
-SingleMuon_Run2015B_05Oct     = kreator.makeDataComponent("SingleMuon_Run2015B_05Oct"    , "/SingleMuon/Run2015B-05Oct2015-v1/MINIAOD"    , "CMS", ".*root", json)
-SinglePhoton_Run2015B_05Oct   = kreator.makeDataComponent("SinglePhoton_Run2015B_05Oct"  , "/SinglePhoton/Run2015B-05Oct2015-v1/MINIAOD"  , "CMS", ".*root", json)
-DoubleEG_Run2015B_05Oct       = kreator.makeDataComponent("DoubleEG_Run2015B_05Oct"      , "/DoubleEG/Run2015B-05Oct2015-v1/MINIAOD"      , "CMS", ".*root", json)
-MuonEG_Run2015B_05Oct         = kreator.makeDataComponent("MuonEG_Run2015B_05Oct"        , "/MuonEG/Run2015B-05Oct2015-v1/MINIAOD"        , "CMS", ".*root", json)
-DoubleMuon_Run2015B_05Oct     = kreator.makeDataComponent("DoubleMuon_Run2015B_05Oct"    , "/DoubleMuon/Run2015B-05Oct2015-v1/MINIAOD"    , "CMS", ".*root", json)
-
-dataSamples_Run2015B_05Oct = [JetHT_Run2015B_05Oct, HTMHT_Run2015B_05Oct, MET_Run2015B_05Oct, SingleElectron_Run2015B_05Oct, SingleMuon_Run2015B_05Oct, SinglePhoton_Run2015B_05Oct, DoubleEG_Run2015B_05Oct, MuonEG_Run2015B_05Oct, DoubleMuon_Run2015B_05Oct]
-
+dataSamples_Run2015_16Dec = dataSamples_Run2015B_16Dec + dataSamples_Run2015C_50ns_16Dec + dataSamples_Run2015C_25ns_16Dec + dataSamples_Run2015D_16Dec
 
 
 
 ### ----------------------------- summary ----------------------------------------
 
-#dataSamples = dataSamples_Run2015B + dataSamples_17Jul + dataSamples_Run2015C + dataSamples_Run2015D
-dataSamples = dataSamples_Run2015D + dataSamples_Run2015D_v4 + dataSamples_Run2015B_05Oct + dataSamples_Run2015D_05Oct
+dataSamples_74Xv1 = dataSamples_Run2015B + dataSamples_Run2015C + dataSamples_Run2015D + dataSamples_17Jul
+dataSamples_74Xv2 = dataSamples_Run2015_05Oct + dataSamples_Run2015D_v4
+dataSamples_76X = dataSamples_Run2015_16Dec
+dataSamples = dataSamples_74Xv1 + dataSamples_74Xv2 + dataSamples_76X
 samples = dataSamples
 
 ### ---------------------------------------------------------------------
@@ -228,3 +252,23 @@ if __name__ == "__main__":
    if "test" in sys.argv:
        from CMGTools.RootTools.samples.ComponentCreator import testSamples
        testSamples(samples)
+if __name__ == "__main__":
+   import sys
+   if "test" in sys.argv:
+       from CMGTools.RootTools.samples.ComponentCreator import testSamples
+       testSamples(samples)
+   if "locality" in sys.argv:
+       import re
+       from CMGTools.Production.localityChecker import LocalityChecker
+       tier2Checker = LocalityChecker("T2_CH_CERN", datasets="/*/*/MINIAOD*")
+       for comp in samples:
+           if len(comp.files) == 0: 
+               print '\033[34mE: Empty component: '+comp.name+'\033[0m'
+               continue
+           if not hasattr(comp,'dataset'): continue
+           if not re.match("/[^/]+/[^/]+/MINIAOD(SIM)?", comp.dataset): continue
+           if "/store/" not in comp.files[0]: continue
+           if re.search("/store/(group|user|cmst3)/", comp.files[0]): continue
+           if not tier2Checker.available(comp.dataset):
+               print "\033[1;31mN: Dataset %s (%s) is not available on T2_CH_CERN\033[0m" % (comp.name,comp.dataset)
+           else: print "Y: Dataset %s (%s) is available on T2_CH_CERN" % (comp.name,comp.dataset)

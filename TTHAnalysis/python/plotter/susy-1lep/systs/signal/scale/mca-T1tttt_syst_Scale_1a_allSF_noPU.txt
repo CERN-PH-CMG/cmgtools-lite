@@ -1,0 +1,6 @@
+### CENTRAL
+T1tttt_Scan		: T1tttt_Scan 	: lepSF*0.94*susyXsec*93743963/susyNgen*btagSF ;
+
+#### Gluino - ISR
+T1tttt_Scan_ISR-Up	: T1tttt_Scan	: lepSF*0.94*susyXsec*93743963/susyNgen*btagSF*ISRSigUp ;
+T1tttt_Scan_ISR-Down	: T1tttt_Scan	: lepSF*0.94*susyXsec*93743963/susyNgen*btagSF*ISRSigDown ;
