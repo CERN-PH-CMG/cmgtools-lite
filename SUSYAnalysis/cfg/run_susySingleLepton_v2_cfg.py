@@ -90,7 +90,7 @@ jetAna.jetEta = 2.4
 jetAna.minLepPt = 10
 
 ## JEC
-jetAna.mcGT = "80X_mcRun2_asymptotic_2016_miniAODv2" #"76X_mcRun2_asymptotic_v12"
+jetAna.mcGT = "Spring16_25nsV1_MC" #"76X_mcRun2_asymptotic_v12"
 #jetAna.dataGT = "Summer15_25nsV6_DATA"
 jetAna.dataGT = "Summer15_25nsV7_DATA"
 
@@ -99,8 +99,11 @@ jetAna.addJECShifts = True
 
 jetAna.doQG = True
 jetAna.smearJets = False #should be false in susycore, already
-jetAna.recalibrateJets = False # false for miniAOD v2!
+jetAna.recalibrateJets = True # false for miniAOD v2!
 jetAna.applyL2L3Residual = True
+
+#jetAna.calculateType1METCorrection = False
+
 
 #jetAna.calculateType1METCorrection = True
 ## MET (can be used for MiniAODv2)

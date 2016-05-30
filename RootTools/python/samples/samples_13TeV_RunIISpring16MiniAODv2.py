@@ -170,7 +170,7 @@ VJets = [
 #DYJetsToLL_M50, 
 #DYJetsToLL_M50_LO, 
 #DYJetsToNuNu_M50,
-DYJetsToLL_M50_flatPu,
+#DYJetsToLL_M50_flatPu,
 ]
 
 # DY njet bins
