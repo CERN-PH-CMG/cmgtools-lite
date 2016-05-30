@@ -19,6 +19,11 @@ is25ns = True
 
 #-------- HOW TO RUN
 
+# diJet = 15(Data) 25(MC)
+# diMu  = 13(Data) 23(MC)
+
+#-------- HOW TO RUN
+
 test = 23
 
 if test==0:
@@ -124,7 +129,7 @@ elif test==13:
             comp.triggers = triggers_ee
         else:
             comp.triggers = triggers_mumu
-        comp.json = "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-273450_13TeV_PromptReco_Collisions16_JSON_NoL1T.txt"
+        comp.json = "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-273730_13TeV_PromptReco_Collisions16_JSON.txt"
         comp.intLumi= 0.04003
         print comp
 
@@ -135,7 +140,7 @@ elif test==14:
     for comp in selectedComponents:
         comp.splitFactor = 1000
         comp.files = comp.files[:]
-        comp.json = "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-273450_13TeV_PromptReco_Collisions16_JSON_NoL1T.txt"
+        comp.json = "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-273730_13TeV_PromptReco_Collisions16_JSON.txt"
         comp.intLumi= 0.04003
 
 ### this is for the QCDlike
@@ -145,7 +150,7 @@ elif test==15:
     for comp in selectedComponents:
         comp.splitFactor = 1000
         comp.files = comp.files[:]
-        comp.json = "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-273450_13TeV_PromptReco_Collisions16_JSON_NoL1T.txt"
+        comp.json = "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-273730_13TeV_PromptReco_Collisions16_JSON.txt"
         comp.intLumi= 0.04003
 #        if isEarlyRun:
 #            comp.run_range=(251027,251585) # in 17july runInJSON: 251244,251251,251252,251561,251562
@@ -162,7 +167,7 @@ elif test==16:
         comp.triggers = triggers_photon30 + triggers_photon50 + triggers_photon75 + triggers_photon90 + triggers_photon120
         comp.splitFactor = 100
         comp.files = comp.files[:]
-        comp.json = "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-273450_13TeV_PromptReco_Collisions16_JSON_NoL1T.txt"
+        comp.json = "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-273730_13TeV_PromptReco_Collisions16_JSON.txt"
         comp.intLumi= 0.04003
     # ------------------------------------------------------------------------------------------- #
     #        --> 25ns MC here
@@ -194,7 +199,7 @@ elif test==19:
 elif test==23:
     isZSkim=True
     is25ns=True
-    selectedComponents = [ DYJetsToLL_M50, TTJets_DiLepton ]
+    selectedComponents = [ DYJetsToLL_M50, TTJets_DiLepton, ZZTo4L, ZZTo2L2Q, WWTo2L2Nu, WZTo2L2Q ]
     for comp in selectedComponents:
 # no trigger on MC for now
 #        if isEle:
@@ -211,7 +216,7 @@ elif test==25:
     is25ns=True
     selectedComponents = [ TTJets ] + WJetsToLNuHT + ZJetsToNuNuHT + QCDHT
     for comp in selectedComponents:
-        comp.splitFactor = 1000
+        comp.splitFactor = 200
         comp.files = comp.files[:]
 
     # ------------------------------------------------------------------------------------------- #
@@ -268,7 +273,7 @@ if is1L:
     metSequence.insert(metSequence.index(lepAna)+1,ttHLepSkim)
 
 if isDiJet:
-#vertexAna.keepFailingEvents = True # keep events with no good vertices
+    vertexAna.keepFailingEvents = True # keep events with no good vertices
     ttHJetMETSkim.jetPtCuts = [100,100]
     metSequence.insert(metSequence.index(photonAna)+2,ttHJetMETSkim)
     metSequence.remove(photonAna)
@@ -312,10 +317,11 @@ triggerFlagsAna.triggerBits = {
 
 }
 
+if comp.isData:
 ## to save prescale uncomment these
-#triggerFlagsAna.unrollbits = True
-#triggerFlagsAna.saveIsUnprescaled = True
-#triggerFlagsAna.checkL1prescale = True
+    triggerFlagsAna.unrollbits = True
+    triggerFlagsAna.saveIsUnprescaled = True
+    triggerFlagsAna.checkL1prescale = True
 
 
 # ------------------------------------------------------------------------------------------- #
