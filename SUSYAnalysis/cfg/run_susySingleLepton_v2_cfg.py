@@ -90,7 +90,7 @@ jetAna.jetEta = 2.4
 jetAna.minLepPt = 10
 
 ## JEC
-jetAna.mcGT = "76X_mcRun2_asymptotic_v12"
+jetAna.mcGT = "80X_mcRun2_asymptotic_2016_miniAODv2" #"76X_mcRun2_asymptotic_v12"
 #jetAna.dataGT = "Summer15_25nsV6_DATA"
 jetAna.dataGT = "Summer15_25nsV7_DATA"
 
@@ -99,7 +99,7 @@ jetAna.addJECShifts = True
 
 jetAna.doQG = True
 jetAna.smearJets = False #should be false in susycore, already
-jetAna.recalibrateJets = True # false for miniAOD v2!
+jetAna.recalibrateJets = False # false for miniAOD v2!
 jetAna.applyL2L3Residual = True
 
 #jetAna.calculateType1METCorrection = True
@@ -208,10 +208,11 @@ if sample == "MC":
   #anyLepSkim.minLeptons = 1
   ttHLepSkim.minLeptons = 0
   
-  from CMGTools.RootTools.samples.samples_13TeV_RunIIFall15MiniAODv2 import *
-  selectedComponents = TTJets
+  #from CMGTools.RootTools.samples.samples_13TeV_RunIIFall15MiniAODv2 import *
+  from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv2 import *
+  selectedComponents = TTJets_SingleLeptonFromTbar
   if test == 1 :
-    comp = TTJets
+    comp = TTJets_SingleLeptonFromTbar
     print comp.files
     comp.files = comp.files[:1]
     selectedComponents = [comp] 
