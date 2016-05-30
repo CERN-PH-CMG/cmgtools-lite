@@ -10,7 +10,8 @@ def loadLibs():
     #load the libaries needed
     from ROOT import gROOT,gSystem
     gSystem.Load("libFWCoreFWLite")
-    gROOT.ProcessLine('AutoLibraryLoader::enable();')
+#    gROOT.ProcessLine('AutoLibraryLoader::enable();')
+    gROOT.ProcessLine('FWLiteEnabler::enable();')
     gSystem.Load("libFWCoreFWLite")
     #gSystem.Load("libCintex")
     #gROOT.ProcessLine('ROOT::Cintex::Cintex::Enable();')

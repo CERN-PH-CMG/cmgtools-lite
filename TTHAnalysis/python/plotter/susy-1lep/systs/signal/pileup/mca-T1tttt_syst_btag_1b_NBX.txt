@@ -1,0 +1,10 @@
+### CENTRAL
+T1tttt_Scan		: T1tttt 	: xsec*btagW_NBX_SF ;
+
+#### HEAVY FLAVOUR VARIATION
+T1tttt_Scan_btagHF-Up	: T1tttt	: xsec*btagW_NBX_SF_b_Up ;
+T1tttt_Scan_btagHF-Down	: T1tttt	: xsec*btagW_NBX_SF_b_Down ;
+
+#### LIGHT FLAVOUR VARIATION
+T1tttt_Scan_btagLF-Up	: T1tttt	: xsec*btagW_NBX_SF_light_Up ;
+T1tttt_Scan_btagLF-Down	: T1tttt	: xsec*btagW_NBX_SF_light_Down ;

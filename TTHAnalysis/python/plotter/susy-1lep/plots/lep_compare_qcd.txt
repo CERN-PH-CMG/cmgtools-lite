@@ -1,0 +1,33 @@
+# Yield
+#Yield: 1 : 1,0,1; XTitle="Yield", Logy, MoreY=100
+
+#Lep_MiniIso: LepOther_miniRelIso+LepGood_miniRelIso : 50,0,0.8 ;XTitle="MiniIso", Logy, MoreY=10, XNDiv=505
+
+LepG_SIP3D: LepGood_sip3d : 50,0,10 ;XTitle="SIP3D", Logy, MoreY=10, XNDiv=505
+LepO_SIP3D: LepOther_sip3d : 50,0,10 ;XTitle="SIP3D", Logy, MoreY=10, XNDiv=505
+
+LepG_MiniIso: LepGood_miniRelIso : 50,0,0.4 ;XTitle="MiniIso", Logy, MoreY=10, XNDiv=505
+LepO_MiniIso: LepOther_miniRelIso : 50,0,0.8 ;XTitle="MiniIso", Logy, MoreY=10, XNDiv=505
+
+LepG_MedID: LepGood_mediumMuonId : 3,0,2 ;XTitle="Med ID", Logy, MoreY=10, XNDiv=505
+LepO_MedID: LepOther_mediumMuonId : 3,0,2 ;XTitle="Med ID", Logy, MoreY=10, XNDiv=505
+
+# Leptons
+LepPt:	Lep_pt	: 40,25,625;  XTitle="Lep p_{T} [GeV]", Logy, IncludeOverflows=False, XNDiv=505
+EtaLep:		Lep_eta	: 40,-2.4,2.4 ;  XTitle="Lep #eta", Logy, MoreY=100,
+
+#LepMiniIso: Lep_miniIso : 50,0,0.4 ;XTitle="MiniIso", Logy, MoreY=10, XNDiv=505
+#LepRelIso: Lep_relIso : 50,0,0.4 ;XTitle="RelIso", Logy, MoreY=10, XNDiv=505
+#LepMedID: LepGood_mediumMuonId[Lep_Idx] : 3,0,2 ;XTitle="Med ID", Logy, MoreY=10, XNDiv=505
+
+LepHoverE: Lep_hOverE : 50,0,0.2 ;XTitle="H/E", Logy, MoreY=10, XNDiv=505
+#Lep_ooEmooP: LepOther_ooEmooP[Lep_Idx] : 50,0,0.2 ;XTitle="1/E-1/P", Logy, MoreY=10, XNDiv=505
+
+LepO_dxy: LepOther_dxy[Lep_Idx] : 50,0,0.2 ; XTitle="dxy", Logy, MoreY=10, XNDiv=505
+LepG_dxy: LepGood_dxy[Lep_Idx] : 50,0,0.2 ; XTitle="dxy", Logy, MoreY=10, XNDiv=505
+
+LepO_dz: LepOther_dz[Lep_Idx] : 50,0,0.2 ; XTitle="dz", Logy, MoreY=10, XNDiv=505
+LepG_dz: LepGood_dz[Lep_Idx] : 50,0,0.2 ; XTitle="dz", Logy, MoreY=10, XNDiv=505
+
+# Lp
+Lp:     Lp      : 30,-0.5,2.5   ; XTitle="L_{p}", IncludeOverflows=False, XNDiv=505

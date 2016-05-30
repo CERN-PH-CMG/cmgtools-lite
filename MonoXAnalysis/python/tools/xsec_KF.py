@@ -6,11 +6,15 @@ class xsec_KF:
 
     def getQCDHistosFromFile(self, systematics):
         ret = {}
-        bosons = {"z":23, "w":24}
+        bosons = {"z":23, "w":24, "a":22}
         for k,v in bosons.iteritems():
             for s in systematics:
-                hnlo = self.tfile.Get("%snlo012/%snlo012_%s" % (k,k,s)).Clone("kfac")
-                hlo = self.tfile.Get("%slo/%slo_nominal" % (k,k)).Clone()
+                if k=="a": 
+                    hnlo = self.tfile.Get("%snlo1/%snlo1_%s" % (k,k,s)).Clone("kfac")
+                    hlo = self.tfile.Get("%slo/%slo_nominal" % (k,k)).Clone()
+                else:
+                    hnlo = self.tfile.Get("%snlo012/%snlo012_%s" % (k,k,s)).Clone("kfac")
+                    hlo = self.tfile.Get("%slo/%slo_nominal" % (k,k)).Clone()
                 hnlo.Divide(hlo)
                 hnlo.SetDirectory(None)
                 ret[(v,s)] = hnlo
@@ -18,7 +22,7 @@ class xsec_KF:
 
     def getEWKHistosFromFile(self):
         ret = {}
-        bosons = {"z":23, "w":24}
+        bosons = {"z":23, "w":24, "a":22}
         for k,v in bosons.iteritems():
             kFac = self.tfile.Get("%s_ewkcorr/%s_ewkcorr" % (k,k)).Clone("kfac")
             kFac.SetDirectory(None)
@@ -74,7 +78,7 @@ class xsec_KF:
     def __call__(self,event):
         ret = {}
         genParts = Collection(event,"GenPart","nGenPart")
-        searchedIds = [23,24]
+        searchedIds = [22,23,24]
         for k in self.branches:
             ret[k] = 1.0
         qcddic = dict(zip(self.qcdsysts,self.qcdhists))

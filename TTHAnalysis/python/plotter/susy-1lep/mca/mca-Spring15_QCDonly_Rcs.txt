@@ -1,0 +1,17 @@
+####
+# Background for 25ns
+# QCD SR
+QCD_SR+      : QCD_HT300to500         : xsec*puRatio*(isSR == 1) ; Label ="QCD SR", FillColor=ROOT.kRed, NormSystematic=0.5
+QCD_SR+      : QCD_HT500to700         : xsec*puRatio*(isSR == 1) ; Label ="QCD SR", FillColor=ROOT.kRed, NormSystematic=0.5
+QCD_SR+      : QCD_HT700to1000         : xsec*puRatio*(isSR == 1) ; Label ="QCD SR", FillColor=ROOT.kRed, NormSystematic=0.5
+QCD_SR+      : QCD_HT1000to1500         : xsec*puRatio*(isSR == 1) ; Label ="QCD SR", FillColor=ROOT.kRed, NormSystematic=0.5
+QCD_SR+      : QCD_HT1500to2000         : xsec*puRatio*(isSR == 1) ; Label ="QCD SR", FillColor=ROOT.kRed, NormSystematic=0.5
+QCD_SR+      : QCD_HT2000toInf         : xsec*puRatio*(isSR == 1) ; Label ="QCD SR", FillColor=ROOT.kRed, NormSystematic=0.5
+
+# QCD CR
+QCD_CR      : QCD_HT300to500         : xsec*puRatio*(isSR == 0) ; Label ="QCD CR", FillColor=ROOT.kBlue, NormSystematic=0.5
+QCD_CR      : QCD_HT500to700         : xsec*puRatio*(isSR == 0) ; Label ="QCD CR", FillColor=ROOT.kBlue, NormSystematic=0.5
+QCD_CR      : QCD_HT700to1000         : xsec*puRatio*(isSR == 0) ; Label ="QCD CR", FillColor=ROOT.kBlue, NormSystematic=0.5
+QCD_CR      : QCD_HT1000to1500         : xsec*puRatio*(isSR == 0) ; Label ="QCD CR", FillColor=ROOT.kBlue, NormSystematic=0.5
+QCD_CR      : QCD_HT1500to2000         : xsec*puRatio*(isSR == 0) ; Label ="QCD CR", FillColor=ROOT.kBlue, NormSystematic=0.5
+QCD_CR      : QCD_HT2000toInf         : xsec*puRatio*(isSR == 0) ; Label ="QCD CR", FillColor=ROOT.kBlue, NormSystematic=0.5

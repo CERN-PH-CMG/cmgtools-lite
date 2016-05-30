@@ -1,6 +1,6 @@
 #!/bin/bash
 
-T="/data1/p/peruzzi/skimmed_mix_nov22"
+T="/data1/p/peruzzi/skims_ra5_dec2015/skimmed_mix_nov22"
 CORE="-P $T --s2v --tree treeProducerSusyMultilepton"
 CORE="${CORE} -F sf/t {P}/5_allnewfriends_v7/evVarFriend_{cname}.root"
 
@@ -9,9 +9,10 @@ CORE="${CORE} -F sf/t {P}/5_allnewfriends_v7/evVarFriend_{cname}.root"
 #CORE="${CORE} -F sf/t {P}/0_allfriends/evVarFriend_{cname}.root"
 
 #CORE="${CORE} -p TTWv2_RA5_sync --mcc susy-multilepton/susy_2lssinc_triggerdefs.txt -A alwaystrue TT '(hasTT)'"
+CORE="${CORE} -p data --mcc susy-multilepton/susy_2lssinc_triggerdefs.txt -A alwaystrue TT '(hasTT)' -A alwaystrue TT 'hasTT' -A alwaystrue SR 'SR>0'"
 FMT='"{run:1d} {lumi:9d} {evt:12d}\t{LepGood1_pdgId:+2d} {LepGood1_conePt:5.1f}\t{LepGood2_pdgId:+2d} {LepGood2_conePt:5.1f}\t{nJet40}\t{nBJetMedium25:2d}\t{met_pt:5.1f}\t{htJet40j:6.1f}\t{SR:2d}\t{appWeight_Loop:5f}"'
 
-CORE="${CORE} -p TT2l --mcc susy-multilepton/susy_2lssinc_triggerdefs.txt -A alwaystrue not_hasTT '(hasTF || hasFF)' -A alwaystrue SR '(SR==2)'"
+#CORE="${CORE} -p TT2l --mcc susy-multilepton/susy_2lssinc_triggerdefs.txt -A alwaystrue not_hasTT '(hasTF || hasFF)' -A alwaystrue SR '(SR==2)'"
 #FMT='"{evt:1d}\t{LepGood1_pt:5.2f}\t{LepGood2_pt:5.2f}\t{LepGood2_conePt:5.2f}\t{LepGood2_jetPtRelv2:5.2f}\t{LepGood2_pt/LepGood2_jetPtRatiov2:5.2f}\tHH SR{SR:2d}"'
 
 #CORE="${CORE} -p data_forflips --mcc susy-multilepton/susy_2lssinc_triggerdefs.txt -A alwaystrue onlyTF 'hasTF' -A alwaystrue SR 'SR>0' -A alwaystrue nomumu '(abs(LepGood1_pdgId)!=13 || abs(LepGood2_pdgId)!=13)' -A alwaystrue etares '(abs(LepGood1_eta)>0.8 && abs(LepGood2_eta)>0.8)'" #-A alwaystrue weightnon0 'appWeight!=0'"

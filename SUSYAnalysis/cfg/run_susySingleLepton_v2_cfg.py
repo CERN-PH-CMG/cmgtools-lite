@@ -69,6 +69,7 @@ elif isolation == "relIso03":
 	lepAna.loose_electron_relIso = 0.5
 	lepAna.loose_muon_relIso = 0.5
 
+<<<<<<< HEAD
 #########################
 # --- LEPTON SKIMMING ---
 #########################
@@ -115,6 +116,8 @@ isoTrackAna.setOff=False
 # store all taus by default
 genAna.allGenTaus = True
 
+=======
+>>>>>>> branch-from-basil
 ########################
 ###### ANALYZERS #######
 ########################
@@ -135,6 +138,18 @@ susyCoreSequence.insert(susyCoreSequence.index(ttHCoreEventAna),
 #susyCoreSequence.insert(susyCoreSequence.index(ttHCoreEventAna),
 #			ttHSVAna)
 
+<<<<<<< HEAD
+=======
+# Add anyLepSkimmer
+from CMGTools.TTHAnalysis.analyzers.anyLepSkimmer import anyLepSkimmer
+anyLepSkim = cfg.Analyzer(
+    anyLepSkimmer, name='anyLepSkimmer',
+    minLeptons = 0,
+    maxLeptons = 999,
+)
+susyCoreSequence.insert(susyCoreSequence.index(lepAna)+1, anyLepSkim)
+
+>>>>>>> branch-from-basil
 ## Single lepton + ST skim
 from CMGTools.TTHAnalysis.analyzers.ttHSTSkimmer import ttHSTSkimmer
 ttHSTSkimmer = cfg.Analyzer(
@@ -191,12 +206,60 @@ triggerFlagsAna.triggerBits = {
 	'EleHT400B': triggers_el_ht400_btag
 	}
 
+<<<<<<< HEAD
+=======
+#########################
+# --- LEPTON SKIMMING ---
+#########################
+
+## OTHER LEPTON SKIMMER
+anyLepSkim.minLeptons = 0
+anyLepSkim.maxLeptons = 999
+
+# GOOD LEPTON SKIMMER -- FROM TTH (in Core already)
+ttHLepSkim.minLeptons = 0
+ttHLepSkim.maxLeptons = 999
+
+####### JETS #########
+jetAna.jetPt = 20
+jetAna.jetEta = 2.4
+
+# --- JET-LEPTON CLEANING ---
+#jetAna.cleanSelectedLeptons = True
+jetAna.minLepPt = 10
+
+## JEC
+#jetAna.mcGT = "Summer15_25nsV6_MC"
+jetAna.mcGT = "Spring16_25nsV1_MC"
+#jetAna.dataGT = "Summer15_25nsV6_DATA"
+jetAna.dataGT = "Summer15_25nsV7_DATA"
+
+# add also JEC up/down shifts corrections
+jetAna.addJECShifts = True
+
+jetAna.doQG = True
+jetAna.smearJets = False #should be false in susycore, already
+jetAna.recalibrateJets = True # false for miniAOD v2!
+jetAna.applyL2L3Residual = True
+
+#jetAna.calculateType1METCorrection = True
+## MET (can be used for MiniAODv2)
+metAna.recalibrate = True
+
+## Iso Track
+isoTrackAna.setOff=False
+
+# store all taus by default
+genAna.allGenTaus = True
+
+>>>>>>> branch-from-basil
 #-------- HOW TO RUN
 isData = True # default, but will be overwritten below
 
 sample = 'MC'
 #sample = 'data'
 #sample = 'Signal'
+<<<<<<< HEAD
 
 test = 1
 
@@ -227,6 +290,62 @@ if sample == "MC":
   #comp.files = comp.files[0]
   #selectedComponents = [comp]
   #comp.splitFactor = 1
+=======
+test = 1
+
+if sample == "MC":
+
+	print 'Going to process MC'
+
+	isData = False
+	isSignal = False
+
+	# modify skim
+	anyLepSkim.minLeptons = 1
+	ttHLepSkim.minLeptons = 0
+
+	# -- new 74X samples
+	#from CMGTools.RootTools.samples.samples_13TeV_74X import *
+	# -- samples at DESY
+	# MiniAODv1
+	#from CMGTools.SUSYAnalysis.samples.samples_13TeV_74X_desy import *
+	# MiniAODv2
+	#from CMGTools.SUSYAnalysis.samples.samples_13TeV_RunIISpring15MiniAODv2_desy import *
+	#from CMGTools.SUSYAnalysis.samples.samples_13TeV_RunIISpring15MiniAODv2_desy_Compact import *
+	from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv2 import *
+
+	selectedComponents = TTs + SingleTop #TTJets_SingleLepton
+
+	if test==1:
+		# test a single component, using a single thread.
+		comp = WJetsToLNu
+		comp.files = comp.files[:1]
+		selectedComponents = [comp]
+		comp.splitFactor = 1
+	elif test==2:
+		# test all components (1 thread per component).
+		for comp in selectedComponents:
+			comp.splitFactor = 1
+			comp.fineSplitFactor = 1
+			comp.files = comp.files[:1]
+	elif test==3:
+		# run all components (1 thread per component).
+		for comp in selectedComponents:
+			comp.fineSplitFactor = 1
+			comp.splitFactor = len(comp.files)
+	elif test==0:
+		# PRODUCTION
+		# run on everything
+
+		#selectedComponents =  [TTJets_LO , TTJets_LO_HT600to800, TTJets_LO_HT800to1200, TTJets_LO_HT1200to2500, TTJets_LO_HT2500toInf] + QCDHT + WJetsToLNuHT + SingleTop + DYJetsM50HT + TTV
+		#selectedComponents =  #SingleTop + DYJetsM50HT + TTV
+		#selectedComponents = [TTJets_SingleLeptonFromTbar, TTJets_SingleLeptonFromTbar_ext, TTJets_SingleLeptonFromT, TTJets_SingleLeptonFromT_ext, TTJets_DiLepton, TTJets_DiLepton_ext]
+
+		for comp in selectedComponents:
+			comp.fineSplitFactor = 1
+			comp.splitFactor = len(comp.files)
+
+>>>>>>> branch-from-basil
 elif sample == "Signal":
 
 	print 'Going to process Signal'

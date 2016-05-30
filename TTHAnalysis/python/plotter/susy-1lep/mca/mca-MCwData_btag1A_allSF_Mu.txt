@@ -1,0 +1,57 @@
+#TT 	 : TTJets_LO : xsec*puRatio*lepSF*btagSF*TopPtWeight*0.94 : ngenTau+ngenLep == 0 && lheHTIncoming <= 600 && HT < 1250; FillColor=ROOT.kBlue, Label="t\#bar{t}"
+##############################
+#dileptoic ttbar
+TTdiLep 	 : TTJets_DiLepton : xsec*puRatio*lepSF*btagSF*TopPtWeight*0.94 : lheHTIncoming <= 600; FillColor=ROOT.kBlue, Label="t\#bar{t}"
+TTdiLep 	 : TTJets_LO_HT600to800 : xsec*puRatio*lepSF*btagSF*TopPtWeight*0.94 : ngenTau+ngenLep ==2 ; FillColor=ROOT.kBlue, Label="t\#bar{t}"
+TTdiLep 	 : TTJets_LO_HT800to1200 : xsec*puRatio*lepSF*btagSF*TopPtWeight*0.94 : ngenTau+ngenLep ==2; FillColor=ROOT.kBlue, Label="t\#bar{t}"
+TTdiLep 	 : TTJets_LO_HT1200to2500 : xsec*puRatio*lepSF*btagSF*TopPtWeight*0.94 : ngenTau+ngenLep ==2; FillColor=ROOT.kBlue, Label="t\#bar{t}"
+TTdiLep 	 : TTJets_LO_HT2500toInf : xsec*puRatio*lepSF*btagSF*TopPtWeight*0.94 : ngenTau+ngenLep ==2; FillColor=ROOT.kBlue, Label="t\#bar{t}"
+###############################
+#semileptonic ttbar
+TTsemiLep      : TTJets_SingleLepton     : 2*xsec*puRatio*lepSF*btagSF*TopPtWeight*0.94 : lheHTIncoming <= 600; FillColor=ROOT.kBlue-4, Label="t\#bar{t} semilept"
+TTsemiLep 	 : TTJets_LO 		 : xsec*puRatio*lepSF*btagSF*TopPtWeight*0.94 : ngenTau+ngenLep == 0 && lheHTIncoming <= 600  && HT < 1250; FillColor=ROOT.kBlue, Label="t\#bar{t}"
+TTsemiLep 	 : TTJets_LO_HT600to800  : xsec*puRatio*lepSF*btagSF*TopPtWeight*0.94 : ngenTau+ngenLep <2  ; FillColor=ROOT.kBlue-4, Label="t\#bar{t}"
+TTsemiLep 	 : TTJets_LO_HT800to1200 : xsec*puRatio*lepSF*btagSF*TopPtWeight*0.94 : ngenTau+ngenLep <2 ; FillColor=ROOT.kBlue-4, Label="t\#bar{t}"
+TTsemiLep 	 : TTJets_LO_HT1200to2500  : xsec*puRatio*lepSF*btagSF*TopPtWeight*0.94 : ngenTau+ngenLep <2 ; FillColor=ROOT.kBlue-4, Label="t\#bar{t}"
+TTsemiLep 	 : TTJets_LO_HT2500toInf   : xsec*puRatio*lepSF*btagSF*TopPtWeight*0.94 : ngenTau+ngenLep <2 ; FillColor=ROOT.kBlue-4, Label="t\#bar{t}"
+
+
+WJets    : WJetsToLNu_HT100to200 :  xsec*puRatio*lepSF*btagSF*TopPtWeight*0.94  ; Label="W+jets", FillColor=ROOT.kGreen-2
+WJets    : WJetsToLNu_HT200to400 :  xsec*puRatio*lepSF*btagSF*TopPtWeight*0.94  ; Label="W+jets", FillColor=ROOT.kGreen-2
+WJets    : WJetsToLNu_HT400to600 :  xsec*puRatio*lepSF*btagSF*TopPtWeight*0.94  ; Label="W+jets", FillColor=ROOT.kGreen-2
+WJets    : WJetsToLNu_HT600to800 :  xsec*puRatio*lepSF*btagSF*TopPtWeight*0.94  ; Label="W+jets", FillColor=ROOT.kGreen-2
+WJets    : WJetsToLNu_HT800to1200 :  xsec*puRatio*lepSF*btagSF*TopPtWeight*0.94  ; Label="W+jets", FillColor=ROOT.kGreen-2
+WJets    : WJetsToLNu_HT1200to2500 :  xsec*puRatio*lepSF*btagSF*TopPtWeight*0.94  ; Label="W+jets", FillColor=ROOT.kGreen-2
+WJets    : WJetsToLNu_HT2500toInf :  xsec*puRatio*lepSF*btagSF*TopPtWeight*0.94  ; Label="W+jets", FillColor=ROOT.kGreen-2
+
+# QCD
+QCD      : QCD_HT300to500         : xsec*puRatio*lepSF*btagSF*TopPtWeight*0.94 ; Label ="QCD", FillColor=ROOT.kCyan-6
+QCD      : QCD_HT500to700         : xsec*puRatio*lepSF*btagSF*TopPtWeight*0.94 ; Label ="QCD", FillColor=ROOT.kCyan-6
+QCD      : QCD_HT700to1000         : xsec*puRatio*lepSF*btagSF*TopPtWeight*0.94 ; Label ="QCD", FillColor=ROOT.kCyan-6
+QCD      : QCD_HT1000to1500         : xsec*puRatio*lepSF*btagSF*TopPtWeight*0.94 ; Label ="QCD", FillColor=ROOT.kCyan-6
+QCD      : QCD_HT1500to2000         : xsec*puRatio*lepSF*btagSF*TopPtWeight*0.94 ; Label ="QCD", FillColor=ROOT.kCyan-6
+QCD      : QCD_HT2000toInf         : xsec*puRatio*lepSF*btagSF*TopPtWeight*0.94 ; Label ="QCD", FillColor=ROOT.kCyan-6
+
+SingleT  : TToLeptons_tch_amcatnlo	 : xsec*puRatio*lepSF*btagSF*TopPtWeight*0.94 ; FillColor = ROOT.kViolet+5, Label= "t/\#bar{t}"
+SingleT  : TToLeptons_sch	 : xsec*puRatio*lepSF*btagSF*TopPtWeight*0.94 ; FillColor = ROOT.kViolet+5, Label= "t/\#bar{t}"
+SingleT  : T_tWch	 : xsec*puRatio*lepSF*btagSF*TopPtWeight*0.94 ; FillColor = ROOT.kViolet+5, Label= "t/\#bar{t}"
+SingleT  : TBar_tWch	 : xsec*puRatio*lepSF*btagSF*TopPtWeight*0.94 ; FillColor = ROOT.kViolet+5, Label= "t/\#bar{t}"
+
+DY       : DYJetsToLL_M50_HT100to200 :  xsec*puRatio*lepSF*btagSF*TopPtWeight*0.94 ; Label="DY+jets", FillColor=ROOT.kRed-6, NormSystematic=0.5
+DY       : DYJetsToLL_M50_HT200to400 :   xsec*puRatio*lepSF*btagSF*TopPtWeight*0.94 ; Label="DY+jets", FillColor=ROOT.kRed-6, NormSystematic=0.5
+DY       : DYJetsToLL_M50_HT400to600 :    xsec*puRatio*lepSF*btagSF*TopPtWeight*0.94 ; Label="DY+jets", FillColor=ROOT.kRed-6, NormSystematic=0.5
+DY       : DYJetsToLL_M50_HT600toInf :    xsec*puRatio*lepSF*btagSF*TopPtWeight*0.94 ; Label="DY+jets", FillColor=ROOT.kRed-6, NormSystematic=0.5
+
+TTV : TTWToLNu : xsec*puRatio*lepSF*btagSF*TopPtWeight*0.94 ; FillColor=ROOT.kOrange-3, Label="ttV(W/Z/H)", NormSystematic=0.2
+TTV : TTWToQQ : xsec*puRatio*lepSF*btagSF*TopPtWeight*0.94 ; FillColor=ROOT.kOrange-3, Label="ttV(W/Z/H)", NormSystematic=0.2
+TTV : TTZToLLNuNu : xsec*puRatio*lepSF*btagSF*TopPtWeight*0.94 ; FillColor=ROOT.kOrange-3, Label="ttV(W/Z/H)", NormSystematic=0.2
+TTV : TTZToQQ : xsec*puRatio*lepSF*btagSF*TopPtWeight*0.94 ; FillColor=ROOT.kOrange-3, Label="ttV(W/Z/H)", NormSystematic=0.2
+
+
+## Data
+
+#data: SingleElectron_Run2015D_05Oct
+#data: SingleElectron_Run2015D_v4
+
+data: SingleMuon_Run2015D_05Oct
+data: SingleMuon_Run2015D_v4

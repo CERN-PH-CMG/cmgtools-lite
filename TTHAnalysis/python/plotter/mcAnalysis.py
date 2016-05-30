@@ -28,6 +28,7 @@ class MCAnalysis:
         self._rank        = {} ## keep ranks as in the input text file
         self._projection  = Projections(options.project, options) if options.project != None else None
         self._premap = []
+        self._optionsOnlyProcesses = {}
         defaults = {}
         for premap in options.premap:
             to,fro = premap.split("=")
@@ -69,6 +70,17 @@ class MCAnalysis:
             for x,newname in self._premap:
                 if re.match(x,pname):
                     pname = newname
+           ## If we have a user-defined list of processes as signal
+            if len(options.processesAsSignal):
+                signal = False
+                for p0 in options.processesAsSignal:
+                    for p in p0.split(","):
+                        if re.match(p+"$", pname): signal = True
+            ## Options only processes
+            if field[1] == "-": 
+                self._optionsOnlyProcesses[field[0]] = extra
+                self._isSignal[field[0]] = signal
+                continue
             ## If we have a selection of process names, apply it
             skipMe = (len(options.processes) > 0)
             for p0 in options.processes:
@@ -81,14 +93,7 @@ class MCAnalysis:
                 for p in p0.split(","):
                     if re.match(p+"$", field[1]): skipMe = True
             if skipMe: continue
-            #endif
-            ## If we have a user-defined list of processes as signal
-            if len(options.processesAsSignal):
-                signal = False
-                for p0 in options.processesAsSignal:
-                    for p in p0.split(","):
-                        if re.match(p+"$", pname): signal = True
-            ## endif
+            ## 
             treename = extra["TreeName"] if "TreeName" in extra else options.tree 
             rootfile = "%s/%s/%s/%s_tree.root" % (options.path, field[1].strip(), treename, treename)
             if options.remotePath:
@@ -179,6 +184,8 @@ class MCAnalysis:
         ret = self._allData.keys()[:]
         ret.sort(key = lambda n : self._rank[n])
         return ret
+    def listOptionsOnlyProcesses(self):
+        return self._optionsOnlyProcesses.keys()
     def isBackground(self,process):
         return process != 'data' and not self._isSignal[process]
     def isSignal(self,process):
@@ -199,9 +206,18 @@ class MCAnalysis:
         for tty in self._allData[process]: 
             tty.setScaleFactor( "((%s) * (%s))" % (tty.getScaleFactor(),scaleFactor) )
     def getProcessOption(self,process,name,default=None):
-        return self._allData[process][0].getOption(name,default=default)
+        if process in self._allData:
+            return self._allData[process][0].getOption(name,default=default)
+        elif process in self._optionsOnlyProcesses:
+            options = self._optionsOnlyProcesses[process]
+            return options[name] if name in options else default
+        else: raise RuntimeError, "Can't get option %s for undefined process %s" % (name,process)
     def setProcessOption(self,process,name,value):
-        return self._allData[process][0].setOption(name,value)
+        if process in self._allData:
+            return self._allData[process][0].setOption(name,value)
+        elif process in self._optionsOnlyProcesses:
+            self._optionsOnlyProcesses[process][name] = value
+        else: raise RuntimeError, "Can't set option %s for undefined process %s" % (name,process)
     def getScales(self,process):
         return [ tty.getScaleFactor() for tty in self._allData[process] ] 
     def getYields(self,cuts,process=None,nodata=False,makeSummary=False,noEntryLine=False):
@@ -371,6 +387,24 @@ class MCAnalysis:
                     if self._options.weight and nev < 1000: print ( nfmtS if nev > 0.2 else nfmtX) % toPrint,
                     else                                  : print nfmtL % toPrint,
                 print ""
+        elif self._options.txtfmt in ("tsv","csv","dsv","ssv"):
+            sep = { 'tsv':"\t", 'csv':",", 'dsv':';', 'ssv':' ' }[self._options.txtfmt]
+            if len(table[0][1]) == 1:
+                for k,r in table:
+                    if sep in k:
+                        if self._options.txtfmt in ("tsv","ssv"):
+                            k = k.replace(sep,"_")
+                        else:
+                            k = '"'+k.replace('"','""')+'"'
+                    (nev,err,fraction) = r[0][1][0], r[0][1][1], 1.0
+                    toPrint = (nev,)
+                    if self._options.errors:    toPrint+=(err,)
+                    if self._options.fractions: toPrint+=(fraction*100,)
+                    if self._options.weight and nev < 1000: ytxt = ( nfmtS if nev > 0.2 else nfmtX) % toPrint
+                    else                                  : ytxt = nfmtL % toPrint
+                    print "%s%s%s" % (k,sep,sep.join(ytxt.split()))
+                print ""
+
     def _getYields(self,ttylist,cuts):
         return mergeReports([tty.getYields(cuts) for tty in ttylist])
     def __str__(self):
@@ -420,6 +454,17 @@ class MCAnalysis:
             if k2 not in mergemap: mergemap[k2]=[]
             mergemap[k2].append(v)
         return dict([ (k,mergePlots(pspec.name+"_"+k,v)) for k,v in mergemap.iteritems() ])
+    def stylePlot(self,process,plot,pspec,mayBeMissing=False):
+        if process in self._allData:
+            for tty in self._allData[process]: 
+                tty._stylePlot(plot,pspec)
+                break
+        elif process in self._optionsOnlyProcesses:
+            opts = self._optionsOnlyProcesses[process]
+            stylePlot(plot, pspec, lambda key,default : opts[key] if key in opts else default)
+        elif not mayBeMissing:
+            raise KeyError, "Process %r not found" % process
+
 
 def addMCAnalysisOptions(parser,addTreeToYieldOnesToo=True):
     if addTreeToYieldOnesToo: addTreeToYieldOptions(parser)

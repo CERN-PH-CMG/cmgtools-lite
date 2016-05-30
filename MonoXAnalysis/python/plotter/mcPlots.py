@@ -836,7 +836,7 @@ if __name__ == "__main__":
         outname = options.printDir + "/"+os.path.basename(args[2].replace(".txt","")+".root")
     if os.path.dirname(outname) and not os.path.exists(os.path.dirname(outname)):
         os.system("mkdir -p "+os.path.dirname(outname))
-        if os.path.exists("/afs/cern.ch"): os.system("cp /afs/cern.ch/user/g/gpetrucc/php/index.php "+os.path.dirname(outname))
+    if os.path.exists("/afs/cern.ch"): os.system("cp /afs/cern.ch/user/g/gpetrucc/php/index.php "+os.path.dirname(outname))
     print "Will save plots to ",outname
     fcmd = open(re.sub("\.root$","",outname)+"_command.txt","w")
     fcmd.write("%s\n\n" % " ".join(sys.argv))

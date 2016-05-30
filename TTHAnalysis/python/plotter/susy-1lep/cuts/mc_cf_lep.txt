@@ -1,0 +1,32 @@
+#LepGood > 0: nLepGood > 0
+
+== 1 tight lep: nLep == 1 && Lep_pt > 25
+#1 Mu: nMu == 1
+selected: Selected == 1
+veto: nVeto == 0
+
+#HTskim > 350: HT > 350
+
+#nJets30 >= 5: nJets30 >= 5
+nJets30Clean >= 6: nJets30Clean >= 6
+2.JetPt > 80: Jet2_pt > 80
+
+HT > 500: HT > 500
+LT > 250: LT > 250
+
+Nb >= 1: nBJet >= 1
+#Nb = 0: nBJet == 0
+
+SR: isSR == 1
+#CR: isSR == 0
+
+## Cut tails
+dMET < 2.5TeV: MET - met_genPt < 2500
+
+#mcMatch: JetForMET_mcPt[0] == 0
+
+#MET < 5TeV: MET < 5000
+#Jet_pt < 5TeV: JetForMET_pt[0] < 5000
+
+#MET < 2.5TeV: MET < 2500
+#Jet_pt < 2.5TeV: JetForMET_pt[0] < 2500

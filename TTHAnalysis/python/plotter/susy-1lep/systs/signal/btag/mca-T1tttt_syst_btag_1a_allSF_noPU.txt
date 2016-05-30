@@ -1,0 +1,10 @@
+### CENTRAL
+T1tttt_Scan		: T1tttt_Scan 	: lepSF*TopPtWeight*0.94*susyXsec*93743963/susyNgen*btagSF ;
+
+#### HEAVY FLAVOUR VARIATION
+T1tttt_Scan_btagHF-Up	: T1tttt_Scan	: lepSF*TopPtWeight*0.94*susyXsec*93743963/susyNgen*btagSF_b_up ;
+T1tttt_Scan_btagHF-Down	: T1tttt_Scan	: lepSF*TopPtWeight*0.94*susyXsec*93743963/susyNgen*btagSF_b_down ;
+
+#### LIGHT FLAVOUR VARIATION
+T1tttt_Scan_btagLF-Up	: T1tttt_Scan	: lepSF*TopPtWeight*0.94*susyXsec*93743963/susyNgen*btagSF_l_up ;
+T1tttt_Scan_btagLF-Down	: T1tttt_Scan	: lepSF*TopPtWeight*0.94*susyXsec*93743963/susyNgen*btagSF_l_down ;

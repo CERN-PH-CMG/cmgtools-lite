@@ -82,6 +82,8 @@ class VVBuilder(Analyzer):
 
         #getv the btag of the pruned subjets
         jet.subJetTags=[-1.0,-1.0]
+        jet.subJetCTagL=[-1.0,-1.0]
+        jet.subJetCTagB=[-1.0,-1.0]
 
         for i,s in enumerate(jet.substructure.prunedSubjets):
             for o in jet.subjets("SoftDrop"):
@@ -89,6 +91,8 @@ class VVBuilder(Analyzer):
                 if dr<0.1:
                     found=True
                     jet.subJetTags[i] = o.bDiscriminator(self.cfg_ana.bDiscriminator)
+                    jet.subJetCTagL[i] = o.bDiscriminator(self.cfg_ana.cDiscriminatorL)
+                    jet.subJetCTagB[i] = o.bDiscriminator(self.cfg_ana.cDiscriminatorB)
                     break;
 
 
@@ -142,8 +146,7 @@ class VVBuilder(Analyzer):
         VV.nMediumBTags = len(filter(lambda x: x.bDiscriminator(self.cfg_ana.bDiscriminator)>0.89,jetsCentral))
         VV.nTightBTags = len(filter(lambda x: x.bDiscriminator(self.cfg_ana.bDiscriminator)>0.97,jetsCentral))
         VV.nOtherLeptons = len(leptons)
-
-
+        
     def selectJets(self,jets,func,otherObjects,DR,otherObjects2=None,DR2=0.0):
         output=[]
         for j in jets:
@@ -347,12 +350,9 @@ class VVBuilder(Analyzer):
 
         VV=Pair(fatJets[0],fatJets[1])
 
-
         #kinematics
         if abs(VV.leg1.eta()-VV.leg2.eta())>1.3 or VV.mass()<1000:
             return output
-
-
 
         self.substructure(VV.leg1)
         self.substructure(VV.leg2)

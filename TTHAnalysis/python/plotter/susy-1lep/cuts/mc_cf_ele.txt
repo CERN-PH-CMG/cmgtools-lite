@@ -1,0 +1,32 @@
+#HTskim > 350: HT > 350
+
+== 1 tight lep: nLep == 1 && Lep_pt > 25
+#selected: Selected == 1
+anti: Selected == -1
+== 1 ele: nEl == 1
+veto: nVeto == 0
+
+#nJets = 3,4: 3 <= nJets && nJets <= 4
+#nJets = 4,5: 4 <= nJets && nJets <= 5
+#nJets >= 6: nJets >= 6
+#HT > 500: HT > 500
+
+nJets40 >= 6: nJets40 >= 6
+HT > 500: htJet40j > 500
+
+2.JetPt > 80: Jet2_pt > 80
+
+LT > 250: LT > 250
+
+#Nb >= 1: nBJets40 >= 1
+Nb = 0: nBJets40 == 0
+
+MiniIso > 0: Lep_miniIso > 0
+Lp > 0.5: Lp > 0.5
+
+#relIso03 > 0.: Lep_relIso > 0.
+#relIso03 > 0.1: Lep_relIso > 0.1
+#MiniIso > 0.01: Lep_miniIso > 0.01
+#MiniIso > 0.1: Lep_miniIso > 0.1
+
+HoE > 0.05: Lep_hOverE > 0.05

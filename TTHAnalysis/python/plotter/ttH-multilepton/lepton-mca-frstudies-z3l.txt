@@ -1,0 +1,6 @@
+3l: nLepGood == 3
+Z1: 60 < mZ1 && mZ1 < 120
+trailing: LepGood_pt < LepGood2_pt
+zVeto1: (LepGood_pdgId + LepGood1_pdgId != 0 || abs(mass_2(LepGood_pt,LepGood_eta,LepGood_phi,LepGood_mass, LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_mass)-90)>30)
+zVeto2: (LepGood_pdgId + LepGood2_pdgId != 0 || abs(mass_2(LepGood_pt,LepGood_eta,LepGood_phi,LepGood_mass, LepGood2_pt,LepGood2_eta,LepGood2_phi,LepGood2_mass)-90)>30)
+zVeto3: (LepGood_pdgId + LepGood3_pdgId != 0 || abs(mass_2(LepGood_pt,LepGood_eta,LepGood_phi,LepGood_mass, LepGood3_pt,LepGood3_eta,LepGood3_phi,LepGood3_mass)-90)>30)
