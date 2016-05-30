@@ -175,7 +175,8 @@ jetAna.jetEta = 2.4
 jetAna.minLepPt = 10
 
 ## JEC
-jetAna.mcGT = "Summer15_25nsV6_MC"
+#jetAna.mcGT = "Summer15_25nsV6_MC"
+jetAna.mcGT = "Spring16_25nsV1_MC"
 #jetAna.dataGT = "Summer15_25nsV6_DATA"
 jetAna.dataGT = "Summer15_25nsV7_DATA"
 
