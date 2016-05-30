@@ -155,10 +155,9 @@ float DPhi_CMLep_Zboost(float l_pt, float l_eta, float l_phi, float l_M, float l
   return deltaPhi(l1.Phi(),Z.Phi());
 }
 
+// May 2016: This is func which takes the 4vectors of MET, L1,L2 and reconstructs 2 taus and returns the effective Z(-->tautau) mass.                                                                                       
 
-// May 2016: This is func which takes the 4vectors of MET, L1,L2 and reconstructs 2 taus and returns the effective Z(-->tautau) mass.                                                                                        // To be investigated: do not allow to insert more than 9 parameter; Skipped the lepton types/masses...                                                                                                         
-
-float mass_tautau( float Met_Pt, float Met_Phi, float l1_Pt, float l1_Eta, float l1_Phi, float l2_Pt, float l2_Eta, float l2_Phi ) {
+float mass_tautau( float Met_Pt, float Met_Phi,  float l1_Pt, float l1_Eta, float l1_Phi, float l2_Pt, float l2_Eta, float l2_Phi ) {
   typedef ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<double> > PtEtaPhiMVector;
   typedef ROOT::Math::LorentzVector<ROOT::Math::PxPyPzM4D<double>   > PxPyPzMVector;
   PtEtaPhiMVector Met( Met_Pt, 0.     , Met_Phi , 0.   );
@@ -174,6 +173,66 @@ float mass_tautau( float Met_Pt, float Met_Phi, float l1_Pt, float l1_Eta, float
   PxPyPzMVector T2( L2.Px()*X1 , L2.Py()*X1 , L2.Pz()*X1 , 1.777 );
   if(X0>0.&&X1>0.)return  (T1+T2).M();
   else            return -(T1+T2).M();
+}
+
+// May 2016: This is func to plot the yields for the different SRs                                                                                         
+
+// float SR_bins_EWKino(float pt1, float eta1, float phi1, float m1, float pt2, float eta2, float phi2, float m2, float met_pt){
+//     typedef ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<double> > PtEtaPhiMVector;
+//     PtEtaPhiMVector p41(pt1,eta1,phi1,m1);
+//     PtEtaPhiMVector p42(pt2,eta2,phi2,m2);
+//     float           Mll=(p41+p42).M();
+//     if     (met_pt<200.&& 4.<Mll&&Mll<10.) return 0.5;
+//     else if(met_pt<200.&&10.<Mll&&Mll<20.) return 1.5;
+//     else if(met_pt<200.&&20.<Mll&&Mll<30.) return 2.5;
+//     else if(met_pt<200.&&30.<Mll&&Mll<50.) return 3.5;
+//     else if(met_pt>200.&& 4.<Mll&&Mll<10.) return 4.5;
+//     else if(met_pt>200.&&10.<Mll&&Mll<20.) return 5.5;
+//     else if(met_pt>200.&&20.<Mll&&Mll<30.) return 6.5;
+//     else if(met_pt>200.&&30.<Mll&&Mll<50.) return 7.5;
+//     else return -0.5;
+// }
+
+int SR_bins_EWKino_mm(float Mll, float met_pt, Int_t pdgId_1, Int_t pdgId_2){
+  // mm
+  if     (met_pt>100. && met_pt<=200. && 4.<Mll&&Mll<=10.&& pdgId_1*pdgId_2==-169) return 1;
+  else if(met_pt>100. && met_pt<=200. &&10.<Mll&&Mll<=20.&& pdgId_1*pdgId_2==-169) return 2;
+  else if(met_pt>100. && met_pt<=200. &&20.<Mll&&Mll<=30.&& pdgId_1*pdgId_2==-169) return 3;
+  else if(met_pt>100. && met_pt<=200. &&30.<Mll&&Mll<=50.&& pdgId_1*pdgId_2==-169) return 4;
+  else if(met_pt>200.&& 4.<Mll&&Mll<=10.&& pdgId_1*pdgId_2==-169) return 5;
+  else if(met_pt>200.&&10.<Mll&&Mll<=20.&& pdgId_1*pdgId_2==-169) return 6;
+  else if(met_pt>200.&&20.<Mll&&Mll<=30.&& pdgId_1*pdgId_2==-169) return 7;
+  else if(met_pt>200.&&30.<Mll&&Mll<=50.&& pdgId_1*pdgId_2==-169) return 8;   
+  else return -99;
+}
+
+int SR_bins_EWKino_ee(float Mll, float met_pt, Int_t pdgId_1, Int_t pdgId_2){
+  // ee
+  if(met_pt>200.&& 4.<Mll&&Mll<10.&&pdgId_1*pdgId_2==-121) return 1;
+  else if(met_pt>200.&&10.<Mll&&Mll<20.&& pdgId_1*pdgId_2==-121) return 2;
+  else if(met_pt>200.&&20.<Mll&&Mll<30.&& pdgId_1*pdgId_2==-121) return 3;
+  else if(met_pt>200.&&30.<Mll&&Mll<50.&& pdgId_1*pdgId_2==-121) return 4;
+  else return -99;
+}
+
+
+int SR_bins_EWKino_mm_inclusive(float met_pt, Int_t pdgId_1, Int_t pdgId_2){
+  // mm                                                                                                                                                    
+  if(met_pt>100.&& met_pt<=200.&& pdgId_1*pdgId_2==-169) return 1;
+  else if(met_pt>200.&&pdgId_1*pdgId_2==-169) return 2;
+  else return -99;
+}
+
+int SR_bins_EWKino_ee_inclusive(float met_pt, Int_t pdgId_1, Int_t pdgId_2){
+  // ee                                                                                                                                                      
+  if(met_pt>200.&& pdgId_1*pdgId_2==-121) return 1;
+  else return -99;
+}
+
+int SR_bins_EWKino_em_inclusive(float met_pt, Int_t pdgId_1, Int_t pdgId_2){
+  // em                                                                                                                                                     
+  if(met_pt>200.&& pdgId_1*pdgId_2==-143) return 1;
+  else return -99;
 }
 
 
