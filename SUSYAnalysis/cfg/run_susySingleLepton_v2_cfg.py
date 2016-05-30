@@ -200,10 +200,10 @@ genAna.allGenTaus = True
 #-------- HOW TO RUN
 isData = True # default, but will be overwritten below
 
-#sample = 'MC'
+sample = 'MC'
 #sample = 'data'
-sample = 'Signal'
-test = 0
+#sample = 'Signal'
+test = 1
 
 if sample == "MC":
 
@@ -223,13 +223,14 @@ if sample == "MC":
 	#from CMGTools.SUSYAnalysis.samples.samples_13TeV_74X_desy import *
 	# MiniAODv2
 	#from CMGTools.SUSYAnalysis.samples.samples_13TeV_RunIISpring15MiniAODv2_desy import *
-	from CMGTools.SUSYAnalysis.samples.samples_13TeV_RunIISpring15MiniAODv2_desy_Compact import *
+	#from CMGTools.SUSYAnalysis.samples.samples_13TeV_RunIISpring15MiniAODv2_desy_Compact import *
+	from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv1 import *
 
 	selectedComponents = TTs + SingleTop #TTJets_SingleLepton
 
 	if test==1:
 		# test a single component, using a single thread.
-		comp = TTJets_LO
+		comp = DYJetsToLL_M50_flatPu
 		comp.files = comp.files[:1]
 		selectedComponents = [comp]
 		comp.splitFactor = 1
