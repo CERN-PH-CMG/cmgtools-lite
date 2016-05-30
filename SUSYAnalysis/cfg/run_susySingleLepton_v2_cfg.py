@@ -225,13 +225,13 @@ if sample == "MC":
 	# MiniAODv2
 	#from CMGTools.SUSYAnalysis.samples.samples_13TeV_RunIISpring15MiniAODv2_desy import *
 	#from CMGTools.SUSYAnalysis.samples.samples_13TeV_RunIISpring15MiniAODv2_desy_Compact import *
-	from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv1 import *
+	from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv2 import *
 
 	selectedComponents = TTs + SingleTop #TTJets_SingleLepton
 
 	if test==1:
 		# test a single component, using a single thread.
-		comp = DYJetsToLL_M50_flatPu
+		comp = WJetsToLNu
 		comp.files = comp.files[:1]
 		selectedComponents = [comp]
 		comp.splitFactor = 1
