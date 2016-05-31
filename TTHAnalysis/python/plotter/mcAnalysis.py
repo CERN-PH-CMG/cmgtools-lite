@@ -106,8 +106,10 @@ class MCAnalysis:
             if skipMe: continue
             cnames = [ x.strip() for x in field[1].split("+") ]
             total_w = 0.; to_norm = False; ttys = [];
+            is_w = -1
             for cname in cnames:
                 treename = extra["TreeName"] if "TreeName" in extra else options.tree 
+                objname  = extra["ObjName"]  if "ObjName"  in extra else options.obj
                 rootfile = "%s/%s/%s/%s_tree.root" % (options.path, cname, treename, treename)
                 if options.remotePath:
                     rootfile = "root:%s/%s/%s_tree.root" % (options.remotePath, cname, treename)
@@ -116,14 +118,12 @@ class MCAnalysis:
                 elif (not os.path.exists(rootfile)) and os.path.exists("%s/%s/%s/tree.root" % (options.path, cname, treename)):
                     # Heppy calls the tree just 'tree.root'
                     rootfile = "%s/%s/%s/tree.root" % (options.path, cname, treename)
-                    treename = "tree"
                 elif (not os.path.exists(rootfile)) and os.path.exists("%s/%s/%s/tree.root.url" % (options.path, cname, treename)):
                     # Heppy calls the tree just 'tree.root'
                     rootfile = "%s/%s/%s/tree.root" % (options.path, cname, treename)
                     rootfile = open(rootfile+".url","r").readline().strip()
-                    treename = "tree"
                 pckfile = options.path+"/%s/skimAnalyzerCount/SkimReport.pck" % cname
-                tty = TreeToYield(rootfile, options, settings=extra, name=pname, cname=cname, treename=treename); ttys.append(tty)
+                tty = TreeToYield(rootfile, options, settings=extra, name=pname, cname=cname, objname=objname); ttys.append(tty)
                 if signal: 
                     self._signals.append(tty)
                     self._isSignal[pname] = True
@@ -138,11 +138,13 @@ class MCAnalysis:
                     pckobj  = pickle.load(open(pckfile,'r'))
                     counters = dict(pckobj)
                     if ('Sum Weights' in counters) and options.weight:
-                        is_w = True; 
+                        if (is_w==0): raise RuntimeError, "Can't put together a weighted and an unweighted component (%s)" % cnames
+                        is_w = 1; 
                         total_w += counters['Sum Weights']
                         scale = "genWeight*(%s)" % field[2]
                     else:
-                        if is_w: raise RuntimeError, "Can't put together a weighted and an unweighted component (%s)" % cnames
+                        if (is_w==1): raise RuntimeError, "Can't put together a weighted and an unweighted component (%s)" % cnames
+                        is_w = 0;
                         total_w += counters['All Events']
                         scale = "(%s)" % field[2]
                     if len(field) == 4: scale += "*("+field[3]+")"
@@ -545,6 +547,7 @@ def addMCAnalysisOptions(parser,addTreeToYieldOnesToo=True):
     parser.add_option("--project", dest="project", type="string", help="Project to a scenario (e.g 14TeV_300fb_scenario2)")
     parser.add_option("--plotgroup", dest="plotmergemap", type="string", default=[], action="append", help="Group plots into one. Syntax is '<newname> := (comma-separated list of regexp)', can specify multiple times. Note it is applied after plotting.")
     parser.add_option("--scaleplot", dest="plotscalemap", type="string", default=[], action="append", help="Scale plots by this factor (before grouping). Syntax is '<newname> := (comma-separated list of regexp)', can specify multiple times.")
+    parser.add_option("-t", "--tree",          dest="tree", default='ttHLepTreeProducerTTH', help="Pattern for tree name");
 
 if __name__ == "__main__":
     from optparse import OptionParser

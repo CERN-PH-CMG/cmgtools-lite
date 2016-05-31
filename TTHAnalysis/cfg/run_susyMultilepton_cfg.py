@@ -137,6 +137,13 @@ if analysis in ["ttH"]: #if cleaning jet-loose tau cleaning
 
 #-------- ADDITIONAL ANALYZERS -----------
 
+if analysis in ['SOS']:
+    #Adding LHE Analyzer for saving lheHT
+    from PhysicsTools.Heppy.analyzers.gen.LHEAnalyzer import LHEAnalyzer 
+    LHEAna = LHEAnalyzer.defaultConfig
+    susyCoreSequence.insert(susyCoreSequence.index(ttHCoreEventAna), 
+                            LHEAna)
+
 ## Event Analyzer for susy multi-lepton (at the moment, it's the TTH one)
 from CMGTools.TTHAnalysis.analyzers.ttHLepEventAnalyzer import ttHLepEventAnalyzer
 ttHEventAna = cfg.Analyzer(
@@ -586,6 +593,13 @@ elif test == '5':
         comp.files = comp.files[:5]
         comp.splitFactor = 1
         comp.fineSplitFactor = 5
+elif test == "ewkinosync":
+    comp = cfg.MCComponent( files = ["root://eoscms.cern.ch//store/mc/RunIIFall15MiniAODv2/TTWJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8/MINIAODSIM/PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/60000/14C51DB0-D6B8-E511-8D9B-8CDCD4A9A484.root"], name="TTW_EWK_sync" )
+    comp.triggers = []
+    comp.splitFactor = 1
+    comp.fineSplitFactor = 1
+    selectedComponents = [comp]
+    sequence.remove(jsonAna)
 elif test == "ra5-sync-mc":
     comp = cfg.MCComponent( files = ["root://eoscms.cern.ch//store/mc/RunIISpring16MiniAODv1/TTWJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8/MINIAODSIM/PUSpring16_80X_mcRun2_asymptotic_2016_v3-v1/00000/6E02CA07-BA02-E611-A59E-14187741208F.root"], name="TTW_RA5_sync" )
     comp.triggers = []
