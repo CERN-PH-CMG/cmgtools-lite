@@ -42,7 +42,7 @@ T2tt = []
 ## T2ttDeg
 ## ------------------------------------------------------
 #T2ttDeg_mStop350_mChi330_4bodydec = kreator.makeMCComponentFromEOS('T2ttDeg_mStop350_mChi330_4bodydec', '/T2ttDeg_mStop350_mChi330_4bodydec/', '/store/cmst3/group/susy/gpetrucc/13TeV/RunIISpring15DR74/%s',".*root", 0.003787)
-T2ttDeg_mStop350_mChi330_4bodydec_lepOnly = kreator.makeMCComponentFromEOS('T2ttDeg_mStop350_mChi330_4bodydec_lepOnly', '/T2ttDeg_miniAODSIM_76X_lepOnly_dM20gev/','/store/user/castello/susy/%s',".*root", 0.003787*(0.332)*(0.332))
+T2ttDeg_mStop350_mChi330_4bodydec_lepOnly = kreator.makeMCComponentFromEOS('T2ttDeg_mStop350_mChi330_4bodydec_lepOnly', '/T2ttDeg_miniAODSIM_76X_lepOnly_dM20gev/','/store/user/castello/susy/%s',".*root", 3.787*(0.332)*(0.332))
 T2ttDeg = [ T2ttDeg_mStop350_mChi330_4bodydec_lepOnly ]
 
 
