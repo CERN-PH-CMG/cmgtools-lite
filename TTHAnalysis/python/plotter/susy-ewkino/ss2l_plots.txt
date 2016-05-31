@@ -37,5 +37,8 @@ mtW1_log   : mt_2(LepGood1_pt,LepGood1_phi,met_pt,met_phi) : 25,0,200; XTitle="M
 mtW2_log   : mt_2(LepGood2_pt,LepGood2_phi,met_pt,met_phi) : 25,0,200; XTitle="M_{T}(l_{2}\,E_{T}^{miss}) [GeV]"	, Logy
 
 ##### SEARCH STRATEGY
+SR_old :   SR_ewk_ss2l(nJet40,LepGood1_pt,LepGood1_phi, LepGood2_pt,LepGood2_phi, met_pt,met_phi):  19,0.5,19.5; XTitle="SR"
+SR_old_log : SR_ewk_ss2l(nJet40,LepGood1_pt,LepGood1_phi, LepGood2_pt,LepGood2_phi, met_pt,met_phi)  :  19,0.5,19.5; XTitle="SR", Logy
+
 SR :   SR_ewk_ss2l(nJet40,LepGood1_pt,LepGood1_phi, LepGood2_pt,LepGood2_phi, met_pt,met_phi):  25,0.5,25.5; XTitle="SR"
 SR_log : SR_ewk_ss2l(nJet40,LepGood1_pt,LepGood1_phi, LepGood2_pt,LepGood2_phi, met_pt,met_phi)  :  25,0.5,25.5; XTitle="SR", Logy
