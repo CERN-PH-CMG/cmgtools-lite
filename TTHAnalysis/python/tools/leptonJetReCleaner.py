@@ -99,7 +99,6 @@ class LeptonJetReCleaner:
     def fillCollWithVeto(self,ret,refcollection,leps,lab,labext,selection,lepsforveto,doVetoZ,doVetoLM,sortby,ht=-1,pad_zeros_up_to=20):
         ret['i'+lab] = [];
         ret['i'+lab+'V'] = [];
-        print "before selection: " + str(leps)
         for lep in leps:
             if (selection(lep) if ht<0 else selection(lep,ht)):
                 ret['i'+lab].append(refcollection.index(lep))
@@ -107,7 +106,6 @@ class LeptonJetReCleaner:
         ret['nLep'+labext] = len(ret['i'+lab])
         ret['LepGood_is'+labext] = [(1 if i in ret['i'+lab] else 0) for i in xrange(len(refcollection))]
         lepspass = [ refcollection[il] for il in ret['i'+lab]  ]
-        print "after selection: " + str(lepspass)
         if lepsforveto==None: lepsforveto = lepspass # if lepsforveto==None, veto selected leptons among themselves
         for lep in lepspass:
             if (not doVetoZ  or passMllTLVeto(lep, lepsforveto, 76, 106, True)) and \
@@ -117,7 +115,6 @@ class LeptonJetReCleaner:
         ret['nLep'+labext+'Veto'] = len(ret['i'+lab+'V'])
         ret['LepGood_is'+labext+'Veto'] = [(1 if i in ret['i'+lab+'V'] else 0) for i in xrange(len(refcollection))]
         lepspassveto = [ refcollection[il] for il in ret['i'+lab+'V']  ]
-        print "after veto " + str(lepspassveto)
         ret['i'+lab] = ret['i'+lab] + [0]*(pad_zeros_up_to-len(ret['i'+lab]))
         ret['i'+lab+'V'] = ret['i'+lab+'V'] + [0]*(pad_zeros_up_to-len(ret['i'+lab+'V']))
         return (ret,lepspass,lepspassveto)
@@ -201,20 +198,14 @@ class LeptonJetReCleaner:
     def recleanTaus(self, taucollcleaned, taucolldiscarded, lepcoll, postfix, ret, tauret):
         ### Define taus
         alltaus = taucollcleaned + taucolldiscarded
-        #print lepcoll
-        #print [l.pt for l in lepcoll]
         # 0. mark each tau as clean
         for t in alltaus: t._clean = True
         # 1. check for every tau if it is too close to a loose lepton
         for t in alltaus:
             for lep in lepcoll:
                 dr = deltaR(lep, t)
-                #print str(t) + " and " + str(lep) + ": " + str(dr)
                 if self.cleanTau(lep, t, dr):
                     t._clean = False
-        #print [t.pt     for t in alltaus]
-        #print [t.dz     for t in alltaus]
-        #print [t._clean for t in alltaus]
         # 2. compute the tau list
         goodtaus = []
         for itc, t in enumerate(taucollcleaned):
@@ -235,13 +226,11 @@ class LeptonJetReCleaner:
             goodtaus.append(t)
         # 3. sort the taus by pt
         goodtaus.sort(key = lambda g: g.pt, reverse = True)
-        #print [t.pt     for t in goodtaus]
         ret["nTauSel"      + postfix] = len(goodtaus)
         ret["nLooseTauSel" + postfix] = len(goodtaus) # maybe put all clean taus into TauSel, also the ones not satisfying the loose selection?
         ret["nTightTauSel" + postfix] = sum([1 for g in goodtaus if g.ewkId == 2])
         ret["nDiscTauSel"  + postfix] = len(alltaus) - len(goodtaus)
         # 4. if needed, store the tau 4-vectors
-        #print postfix, self.label
         if postfix==self.label:
             for tfloat in "pt eta phi mass pdgId ewkId idxTauGood idxTauOther".split():
                 tauret[tfloat] = []
@@ -252,8 +241,6 @@ class LeptonJetReCleaner:
     def __call__(self,event):
         self.ev = event
         fullret = {}
-        if not event.evt == 222490: return fullret
-        #if not event.evt == 151484: return fullret
         leps = [l for l in Collection(event,"LepGood","nLepGood")]
         if not self.coneptdef: raise RuntimeError, 'Choose the definition to be used for cone pt'
         for lep in leps: lep.conept = self.coneptdef(lep)
@@ -296,7 +283,6 @@ class LeptonJetReCleaner:
         lepsf = []; lepsfv = [];
         ret, lepsf, lepsfv = self.fillCollWithVeto(ret,leps,lepsl,'F','FO',self.FOLeptonSel,lepsforveto=lepsl,ht=retwlabel["htJet"+self.strJetPt+"j"+self.label],sortby = lambda x: x.conept, doVetoZ=self.doVetoZ, doVetoLM=self.doVetoLMf)
         lepst = []; lepstv = [];
-        print "TIGHT"
         ret, lepst, lepstv = self.fillCollWithVeto(ret,leps,lepsl,'T','Tight',self.tightLeptonSel,lepsforveto=lepsl,ht=retwlabel["htJet"+self.strJetPt+"j"+self.label],sortby = lambda x: x.conept, doVetoZ=self.doVetoZ, doVetoLM=self.doVetoLMt)
 
 

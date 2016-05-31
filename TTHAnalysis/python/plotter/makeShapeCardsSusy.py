@@ -15,7 +15,7 @@ parser.add_option("--postfix-pred",dest="postfixmap", type="string", default=[],
 (options, args) = parser.parse_args()
 options.weight = True
 options.final  = True
-#options.allProcesses  = True
+options.allProcesses  = True
 
 def cutCentralValueAtZero(mca,cut,pname,oldplots):
     if pname=='data': return
