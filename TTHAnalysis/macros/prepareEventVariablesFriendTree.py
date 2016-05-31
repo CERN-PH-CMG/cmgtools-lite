@@ -34,6 +34,7 @@ isFastSim = False
 
 from CMGTools.TTHAnalysis.tools.leptonChoiceRA5 import _susy2lss_lepId_CBloose,_susy2lss_lepId_loosestFO,_susy2lss_lepId_IPcuts,_susy2lss_lepConePt1015,_susy2lss_lepId_tighterFO,_susy2lss_multiIso,_susy2lss_lepId_CB,_susy2lss_idIsoEmu_cuts, _susy2lss_leptonMVA
 from CMGTools.TTHAnalysis.tools.leptonChoiceRA7 import _susy3l_lepId_loosestFO,_susy3l_lepId_loosestFO,_susy3l_multiIso,_susy3l_lepId_CB
+from CMGTools.TTHAnalysis.tools.leptonChoiceEWK import _susy3l_lepId_IPcutsMVA,_susy3l_lepId_CBlooseMVA,_susy3l_lepId_CBloose
 from CMGTools.TTHAnalysis.tools.functionsTTH import _ttH_idEmu_cuts_E2
 from CMGTools.TTHAnalysis.tools.conept import conept_RA5, conept_RA7, conept_TTH, conept_SSDL
 
@@ -44,7 +45,7 @@ MODULES.append( ('leptonJetReCleanerSusyRA5', lambda : LeptonJetReCleaner("Mini"
                    lambda lep,ht : lep.pt>10 and _susy2lss_lepConePt1015(lep) and _susy2lss_multiIso(lep) and _susy2lss_lepId_CB(lep) and (ht>300 or _susy2lss_idIsoEmu_cuts(lep)), # cuts applied on top of loose
                    cleanJet = lambda lep,jet,dr : dr<0.4,
                    selectJet = lambda jet: abs(jet.eta)<2.4,
-                   cleanWithTaus = False,
+                   cleanJetsWithTaus = False,
                    doVetoZ = True,
                    doVetoLMf = True,
                    doVetoLMt = True,
@@ -54,14 +55,54 @@ MODULES.append( ('leptonJetReCleanerSusyRA5', lambda : LeptonJetReCleaner("Mini"
                    storeJetVariables = True                                                       
                  ) ))
 
-MODULES.append( ('leptonJetReCleanerSusyRA7', lambda : LeptonJetReCleaner("Mini", 
-                   lambda lep : lep.miniRelIso < 0.4 and _susy2lss_lepId_CBloose(lep), #and (ht>300 or _susy2lss_idIsoEmu_cuts(lep)), 
-                   lambda lep : lep.pt>10 and _susy3l_lepId_loosestFO(lep) and _susy2lss_lepId_IPcuts(lep), # cuts applied on top of loose
-                   lambda lep,ht : lep.pt>10 and _susy2lss_lepId_IPcuts(lep) and _susy3l_lepId_loosestFO(lep), # cuts applied on top of loose
-                   lambda lep,ht : lep.pt>10 and _susy3l_multiIso(lep) and _susy3l_lepId_CB(lep), # cuts applied on top of loose
+## OLD RA7, in sync with JAN
+#MODULES.append( ('leptonJetReCleanerSusyRA7', lambda : LeptonJetReCleaner("Mini", 
+#                   lambda lep : lep.miniRelIso < 0.4 and _susy2lss_lepId_CBloose(lep), #and (ht>300 or _susy2lss_idIsoEmu_cuts(lep)), 
+#                   lambda lep : lep.pt>10 and _susy3l_lepId_loosestFO(lep) and _susy2lss_lepId_IPcuts(lep), # cuts applied on top of loose
+#                   lambda lep,ht : lep.pt>10 and _susy2lss_lepId_IPcuts(lep) and _susy3l_lepId_loosestFO(lep), # cuts applied on top of loose
+#                   lambda lep,ht : lep.pt>10 and _susy3l_multiIso(lep) and _susy3l_lepId_CB(lep), # cuts applied on top of loose
+#                   cleanJet = lambda lep,jet,dr : dr<0.4,
+#                   selectJet = lambda jet: abs(jet.eta)<2.4,
+#                   cleanJetsWithTaus = False,
+#                   doVetoZ = False,
+#                   doVetoLMf = False,
+#                   doVetoLMt = True,
+#                   jetPt = 30,
+#                   bJetPt = 25,
+#                   coneptdef = lambda lep: conept_RA7(lep)
+#                 ) ))
+
+## updated cut-based RA7
+#MODULES.append( ('leptonJetReCleanerSusyRA7', lambda : LeptonJetReCleaner("Mini", 
+#                   lambda lep : lep.miniRelIso < 0.4 and _susy3l_lepId_CBloose(lep), #and (ht>300 or _susy2lss_idIsoEmu_cuts(lep)), 
+#                   lambda lep : lep.pt>10 and _susy3l_lepId_loosestFO(lep) and _susy2lss_lepId_IPcuts(lep), # cuts applied on top of loose
+#                   lambda lep,ht : lep.pt>10 and _susy2lss_lepId_IPcuts(lep) and _susy3l_lepId_loosestFO(lep), # cuts applied on top of loose
+#                   lambda lep,ht : lep.pt>10 and _susy3l_multiIso(lep) and _susy3l_lepId_CB(lep), # cuts applied on top of loose
+#                   cleanJet = lambda lep,jet,dr : dr<0.4,
+#                   selectJet = lambda jet: abs(jet.eta)<2.4,
+#                   cleanJetsWithTaus = False,
+#                   doVetoZ = False,
+#                   doVetoLMf = False,
+#                   doVetoLMt = True,
+#                   jetPt = 30,
+#                   bJetPt = 25,
+#                   coneptdef = lambda lep: conept_RA7(lep)
+#                 ) ))
+
+# MVA
+MODULES.append( ('leptonJetReCleanerSusyRA7mva', lambda : LeptonJetReCleaner("Mini", 
+                   lambda lep : lep.miniRelIso < 0.4 and _susy3l_lepId_CBlooseMVA(lep) and _susy3l_lepId_IPcutsMVA(lep), 
+                   lambda lep : True, # cuts applied on top of loose
+                   lambda lep,ht : lep.pt>10 and _susy3l_lepId_loosestFO(lep), # cuts applied on top of loose
+                   #lambda lep,ht : (abs(lep.pdgId) == 13 and lep.mvaTTZMoriond16>-0.60 and lep.mediumMuonId>0) or (abs(lep.pdgId)==11 and lep.mvaTTZMoriond16>0.25), # loose WP 
+                   lambda lep,ht : (abs(lep.pdgId) == 13 and lep.mvaTTZMoriond16>-0.20 and lep.mediumMuonId>0) or (abs(lep.pdgId)==11 and lep.mvaTTZMoriond16>0.5), # medium WP
                    cleanJet = lambda lep,jet,dr : dr<0.4,
                    selectJet = lambda jet: abs(jet.eta)<2.4,
-                   cleanWithTaus = False,
+                   cleanTau = lambda lep,tau,dr: dr<0.4,
+                   looseTau = lambda tau: tau.pt > 20 and abs(tau.eta)<2.3 and abs(tau.dxy) < 1000 and abs(tau.dz) < 0.2 and tau.idMVAOldDMRun2dR03 >= 1 and tau.idDecayMode, # used in cleaning 
+                   tightTau = lambda tau: True, # cuts applied on top of loose
+                   #tightTau = lambda tau: tau.idMVAOldDMRun2dR03 >= 2, # cuts applied on top of loose
+                   cleanJetsWithTaus = True,
                    doVetoZ = False,
                    doVetoLMf = False,
                    doVetoLMt = True,
@@ -70,6 +111,7 @@ MODULES.append( ('leptonJetReCleanerSusyRA7', lambda : LeptonJetReCleaner("Mini"
                    coneptdef = lambda lep: conept_RA7(lep)
                  ) ))
 
+
 MODULES.append( ('leptonJetReCleanerSusySSDL', lambda : LeptonJetReCleaner("Recl", 
                    looseLeptonSel = lambda lep : lep.miniRelIso < 0.4 and _susy2lss_lepId_CBloose(lep), 
                    cleaningLeptonSel = lambda lep : lep.pt>10 and _susy2lss_lepId_loosestFO(lep) and _susy2lss_lepId_IPcuts(lep), # cuts applied on top of loose
@@ -77,7 +119,7 @@ MODULES.append( ('leptonJetReCleanerSusySSDL', lambda : LeptonJetReCleaner("Recl
                    tightLeptonSel = lambda lep,ht : lep.pt>10 and _susy2lss_lepConePt1015(lep) and _susy2lss_leptonMVA(lep) and _susy2lss_lepId_tighterFO(lep) and _susy2lss_idIsoEmu_cuts(lep), # cuts applied on top of loose
                    cleanJet = lambda lep,jet,dr : dr<0.4,
                    selectJet = lambda jet: abs(jet.eta)<2.4,
-                   cleanWithTaus = False,
+                   cleanJetsWithTaus = False,
                    doVetoZ = True,
                    doVetoLMf = True,
                    doVetoLMt = True,
@@ -93,7 +135,7 @@ MODULES.append( ('leptonJetReCleanerTTH', lambda : LeptonJetReCleaner("Recl", # 
                    tightLeptonSel = lambda lep,ht : lep.conept>10 and lep.jetBTagCSV<0.89 and (abs(lep.pdgId)!=11 or lep.conept<30 or _ttH_idEmu_cuts_E2(lep)) and ((lep.jetPtRatiov2>0.3 and lep.jetBTagCSV<0.605) or lep.mvaTTH>0.75) and (abs(lep.pdgId)!=13 or lep.mediumMuonId>0) and lep.mvaTTH > 0.75, # cuts applied on top of loose
                    cleanJet = lambda lep,jet,dr : dr<0.4,
                    selectJet = lambda jet: abs(jet.eta)<2.4,
-                   cleanWithTaus = True,
+                   cleanJetsWithTaus = True,
                    doVetoZ = True,
                    doVetoLMf = True,
                    doVetoLMt = True,
@@ -140,7 +182,7 @@ RA7_fast_lepSF = [[utility_files_dir+"/leptonSF/ra7_lepsf_fastsim/muons/sf_mu_me
 RA7_puweights = utility_files_dir+"/pileup/ra7_puWeights.root::pileup"
 
 MODULES.append( ('leptonChoiceRA7', lambda : LeptonChoiceRA7("Loop","Mini",whichApplication="Fakes",isFastSim=isFastSim,filePathFakeRate=RA7_FRname,filePathLeptonSFfull=RA7_full_lepSF,filePathLeptonSFfast=RA7_fast_lepSF,filePathPileUp=RA7_puweights))) 
-MODULES.append( ('leptonChoiceEWK', lambda : LeptonChoiceEWK("Loop","Mini",whichApplication="Fakes",isFastSim=isFastSim,filePathFakeRate=RA7_FRname,filePathLeptonSFfull=RA7_full_lepSF,filePathLeptonSFfast=RA7_fast_lepSF,filePathPileUp=RA7_puweights))) 
+MODULES.append( ('leptonChoiceEWK', lambda : LeptonChoiceEWK("Loop","Mini",whichApplication="Super",isFastSim=isFastSim,filePathFakeRate=RA7_FRname,filePathLeptonSFfull=RA7_full_lepSF,filePathLeptonSFfast=RA7_fast_lepSF,filePathPileUp=RA7_puweights))) 
 
 
 #--- Friend trees for fake rate calculation
@@ -243,6 +285,7 @@ parser.add_option("-L", "--list-modules",  dest="listModules", action="store_tru
 parser.add_option("-n", "--new",  dest="newOnly", action="store_true", default=False, help="Make only missing trees");
 parser.add_option("-I", "--import", dest="imports",  type="string", default=[], action="append", help="Modules to import");
 parser.add_option("--fastsim",  dest="isFastSim", action="store_true", default=False, help="Run with configuration for FastSim samples");
+parser.add_option("--log", "--log-dir", dest="logdir", type="string", default=None, help="Directory of stdout and stderr");
 (options, args) = parser.parse_args()
 
 if options.imports:
@@ -333,10 +376,20 @@ print "I have %d task(s) to process" % len(jobs)
 
 if options.queue:
     import os, sys
-    basecmd = "bsub -q {queue} {dir}/lxbatch_runner.sh {dir} {cmssw} python {self} -N {chunkSize} -T '{tdir}' -t {tree} {data} {output}".format(
-                queue = options.queue, dir = os.getcwd(), cmssw = os.environ['CMSSW_BASE'], 
-                self=sys.argv[0], chunkSize=options.chunkSize, tdir=options.treeDir, tree=options.tree, data=args[0], output=args[1]
-            )
+
+    runner = "lxbatch_runner.sh"
+    super  = "bsub -q {queue}".format(queue = options.queue)
+    if options.queue in ["all.q", "short.q", "long.q"]:
+        super  = "qsub -q {queue} -N friender".format(queue = options.queue)
+        runner = "psibatch_runner.sh"
+
+    basecmd = "{dir}/{runner} {dir} {cmssw} python {self} -N {chunkSize} -T {tdir} -t {tree} {data} {output}".format(
+                dir = os.getcwd(), runner=runner, cmssw = os.environ['CMSSW_BASE'],
+                self=sys.argv[0], chunkSize=options.chunkSize, tdir=options.treeDir,
+                tree=options.tree, data=args[0], output=args[1])
+    logdir = options.logdir if options.logdir else args[1]
+    logdir = logdir.rstrip("/")
+
     if options.vectorTree: basecmd += " --vector "
     friendPost =  "".join(["  -F  %s %s " % (fn,ft) for fn,ft in options.friendTrees])
     friendPost += "".join([" --FM %s %s " % (fn,ft) for fn,ft in options.friendTreesMC])
@@ -344,9 +397,12 @@ if options.queue:
     friendPost += "".join(["  -m  '%s'  " % m for m in options.modules])
     for (name,fin,fout,data,range,chunk) in jobs:
         if chunk != -1:
-            print "{base} -d {data} -c {chunk} {post}".format(base=basecmd, data=name, chunk=chunk, post=friendPost)
+            cmd = "{super} -o {logdir}/{data}_{chunk}.out -e {logdir}/{data}_{chunk}.err {base} -d {data} -c {chunk} {post}".format(super=super, logdir=logdir, base=basecmd, data=name, chunk=chunk, post=friendPost)
         else:
-            print "{base} -d {data} {post}".format(base=basecmd, data=name, chunk=chunk, post=friendPost)
+            cmd = "{super} -o {logdir}/{data}.out -e {logdir}/{data}.err {base} -d {data} {post}".format(super=super, logdir=logdir, base=basecmd, data=name, chunk=chunk, post=friendPost)
+
+        print cmd
+        os.system(cmd)
         
     exit()
 

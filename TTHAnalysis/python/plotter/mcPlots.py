@@ -686,12 +686,6 @@ class PlotMaker:
                 elif options.fitData: doNormFit(pspec,pmap,mca)
                 elif options.preFitData and pspec.name == options.preFitData: 
                     doNormFit(pspec,pmap,mca,saveScales=True)
-                binlabels = pspec.getOption("xBinLabels","")
-                if binlabels != "" and len(binlabels.split(",")) == total.GetNbinsX():
-                    blist = binlabels.split(",")
-                    for i in range(1,total.GetNbinsX()+1): 
-                        total.GetXaxis().SetBinLabel(i,blist[i-1]) 
-                        total.GetYaxis().SetLabelSize(0.05)
                 #
                 for k,v in pmap.iteritems():
                     if v.InheritsFrom("TH1"): v.SetDirectory(dir) 
@@ -765,6 +759,12 @@ class PlotMaker:
                         else:
                             plot.SetMarkerStyle(0)
 
+                binlabels = pspec.getOption("xBinLabels","")
+                if binlabels != "" and len(binlabels.split(",")) == total.GetNbinsX():
+                    blist = binlabels.split(",")
+                    for i in range(1,total.GetNbinsX()+1): 
+                        total.GetXaxis().SetBinLabel(i,blist[i-1]) 
+                        total.GetYaxis().SetLabelSize(0.05)
 
                 if not self._options.emptyStack and stack.GetNhists() == 0:
                     print "ERROR: for %s, all histograms are empty\n " % pspec.name
