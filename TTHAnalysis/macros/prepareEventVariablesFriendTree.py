@@ -388,8 +388,10 @@ if options.queue:
                 dir = os.getcwd(), runner=runner, cmssw = os.environ['CMSSW_BASE'],
                 self=sys.argv[0], chunkSize=options.chunkSize, tdir=options.treeDir,
                 tree=options.tree, data=args[0], output=args[1])
-    logdir = options.logdir if options.logdir else args[1]
-    logdir = logdir.rstrip("/")
+
+    writelog = ""
+    logdir   = ""
+    if options.logdir: logdir = options.logdir.rstrip("/")
 
     if options.vectorTree: basecmd += " --vector "
     friendPost =  "".join(["  -F  %s %s " % (fn,ft) for fn,ft in options.friendTrees])
@@ -398,12 +400,15 @@ if options.queue:
     friendPost += "".join(["  -m  '%s'  " % m for m in options.modules])
     for (name,fin,fout,data,range,chunk) in jobs:
         if chunk != -1:
-            cmd = "{super} -o {logdir}/{data}_{chunk}.out -e {logdir}/{data}_{chunk}.err {base} -d {data} -c {chunk} {post}".format(super=super, logdir=logdir, base=basecmd, data=name, chunk=chunk, post=friendPost)
+            if options.logdir: writelog = "-o {logdir}/{data}_{chunk}.out -e {logdir}/{data}_{chunk}.err".format(logdir=logdir, data=name, chunk=chunk)
+            cmd = "{super} {writelogdir} {base} -d {data} -c {chunk} {post}".format(super=super, writelog=writelog, base=basecmd, data=name, chunk=chunk, post=friendPost)
         else:
-            cmd = "{super} -o {logdir}/{data}.out -e {logdir}/{data}.err {base} -d {data} {post}".format(super=super, logdir=logdir, base=basecmd, data=name, chunk=chunk, post=friendPost)
+            if options.logdir: writelog = "-o {logdir}/{data}.out -e {logdir}/{data}.err".format(logdir=logdir, data=name)
+            cmd = "{super} {writelog} {base} -d {data} {post}".format(super=super, writelog=writelog, base=basecmd, data=name, chunk=chunk, post=friendPost)
 
         print cmd
-        os.system(cmd)
+        if not options.pretend: 
+            os.system(cmd)
         
     exit()
 
