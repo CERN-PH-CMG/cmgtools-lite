@@ -1,0 +1,4 @@
+# use cmg intern HT variable: htJet30j
+HT500: htJet30j > 500
+1lep: nLepGood > 0
+LT250: met_pt + LepGood_pt[0] > 250

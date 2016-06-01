@@ -1,0 +1,5 @@
+NJ_NB0:   if3(nBJet == 0, nJets30Clean, -99) : [3,4,5,6,7,8,9,12]   ; XTitle="N_{jets}", IncludeOverflows=False, Logy
+NJ_NB1:   if3(nBJet == 1, nJets30Clean, -99) : [3,4,5,6,7,8,9,12]   ; XTitle="N_{jets}", IncludeOverflows=False, Logy
+NJ_NB2:   if3(nBJet == 2, nJets30Clean, -99) : [3,4,5,6,7,8,9,12]   ; XTitle="N_{jets}", IncludeOverflows=False, Logy
+NJ_NB2i:   if3(nBJet >= 2, nJets30Clean, -99) : [3,4,5,6,7,8,9,12]   ; XTitle="N_{jets}", IncludeOverflows=False, Logy
+NJ_NB3i:   if3(nBJet >= 3, nJets30Clean, -99) : [3,4,5,6,7,8,9,12]   ; XTitle="N_{jets}", IncludeOverflows=False, Logy

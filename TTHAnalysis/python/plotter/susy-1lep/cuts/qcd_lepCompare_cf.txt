@@ -1,0 +1,27 @@
+HT > 500: HT > 500
+
+== 1 lep: nLep == 1 && Lep_pt > 25
+#selected: Selected == 1
+anti: Selected == -1
+#1 ele: nEl == 1
+1 mu: nMu == 1
+veto: nVeto == 0
+
+#nJets 3,4: nJets >= 3 && nJets <= 4
+nJets >= 2: nJets >= 2
+#nJets >= 4: nJets >= 4
+
+LT > 250: LT > 250
+
+#Nb >= 1: nBJet >= 1
+#Nb = 0: nBJet == 0
+
+#SR: isSR == 1
+
+# extra cuts for Anti
+#Lp > 0.5: Lp > 0.5
+#mIso > 0: Lep_miniIso > 0
+#rIso > 0: Lep_relIso > 0
+
+#updAnti: (Selected == 1) || (Selected == -1 && Lp > 0.5 && Lep_miniIso > 0)
+#updAnti: (Selected == 1) || (Selected == -1 && Lp > 0.5)

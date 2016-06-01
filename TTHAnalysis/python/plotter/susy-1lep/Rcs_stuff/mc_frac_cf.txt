@@ -1,0 +1,12 @@
+== 1 hard lep: nLep == 1 && Selected == 1 && Lep_pt > 25 && nVeto == 0
+
+nJet >= 2: nJet >= 2
+2.JetPt > 80: Jet2_pt > 80
+
+nJet >= 4: nJet >= 4
+
+LT > 250: LT > 250
+HT > 500: HT > 500
+
+#Nb >= 1: nBJet >= 1
+#Nb = 0: nBJet == 0

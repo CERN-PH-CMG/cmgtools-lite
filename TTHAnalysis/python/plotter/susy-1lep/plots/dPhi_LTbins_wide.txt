@@ -1,0 +1,13 @@
+# NJ= 4,5
+dPhi_LTi_NJ45:   if3(nJets30Clean>=4 && nJets30Clean<=5, dPhi, -99) : [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.7, 1.0, 1.5, 2.0, 3.141]   ; XTitle="#Delta#Phi(W\,l)", IncludeOverflows=False, Logy, YMin=0.2, XNDiv=108, MoreY=1, YTitle="< Events / 0.1 >"
+dPhi_LT1_NJ45:   if3(250 < LT && LT < 350 && nJets30Clean>=4 && nJets30Clean<=5, dPhi, -99) : [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.7, 1.0, 1.5, 2.0, 3.141]   ; XTitle="#Delta#Phi(W\,l)", IncludeOverflows=False, Logy, YMin=0.2, XNDiv=108, MoreY=1, YTitle="< Events / 0.1 >"
+dPhi_LT2_NJ45:   if3(350 < LT && LT < 450 && nJets30Clean>=4 && nJets30Clean<=5, dPhi, -99) : [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.7, 1.0, 1.5, 2.0, 3.141]   ; XTitle="#Delta#Phi(W\,l)", IncludeOverflows=False, Logy, YMin=0.2, XNDiv=108, MoreY=1, YTitle="< Events / 0.1 >"
+dPhi_LT3_NJ45:   if3(450 < LT && LT < 600 && nJets30Clean>=4 && nJets30Clean<=5, dPhi, -99) : [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.7, 1.0, 1.5, 2.0, 3.141]   ; XTitle="#Delta#Phi(W\,l)", IncludeOverflows=False, Logy, YMin=0.2, XNDiv=108, MoreY=1, YTitle="< Events / 0.1 >"
+dPhi_LT4_NJ45:   if3(600 < LT && nJets30Clean>=4 && nJets30Clean<=5, dPhi, -99) : [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.7, 1.0, 1.5, 2.0, 3.141]   ; XTitle="#Delta#Phi(W\,l)", IncludeOverflows=False, Logy, YMin=0.2, XNDiv=108, MoreY=1, YTitle="< Events / 0.1 >"
+
+# NJ= 6+
+dPhi_LTi_NJ6i:   if3(nJets30Clean >= 6, dPhi, -99) : [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.7, 1.0, 1.5, 2.0, 3.141]   ; XTitle="#Delta#Phi(W\,l)", IncludeOverflows=False, Logy, YMin=0.2, XNDiv=108, MoreY=1, YTitle="< Events / 0.1 >"
+dPhi_LT1_NJ6i:   if3(250 < LT && LT < 350 && nJets30Clean >= 6, dPhi, -99) : [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.7, 1.0, 1.5, 2.0, 3.141]   ; XTitle="#Delta#Phi(W\,l)", IncludeOverflows=False, Logy, YMin=0.2, XNDiv=108, MoreY=1, YTitle="< Events / 0.1 >"
+dPhi_LT2_NJ6i:   if3(350 < LT && LT < 450 && nJets30Clean >= 6, dPhi, -99) : [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.7, 1.0, 1.5, 2.0, 3.141]   ; XTitle="#Delta#Phi(W\,l)", IncludeOverflows=False, Logy, YMin=0.2, XNDiv=108, MoreY=1, YTitle="< Events / 0.1 >"
+dPhi_LT3_NJ6i:   if3(450 < LT && LT < 600 && nJets30Clean >= 6, dPhi, -99) : [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.7, 1.0, 1.5, 2.0, 3.141]   ; XTitle="#Delta#Phi(W\,l)", IncludeOverflows=False, Logy, YMin=0.2, XNDiv=108, MoreY=1, YTitle="< Events / 0.1 >"
+dPhi_LT4_NJ6i:   if3(600 < LT && nJets30Clean >= 6, dPhi, -99) : [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.7, 1.0, 1.5, 2.0, 3.141]   ; XTitle="#Delta#Phi(W\,l)", IncludeOverflows=False, Logy, YMin=0.2, XNDiv=108, MoreY=1, YTitle="< Events / 0.1 >"

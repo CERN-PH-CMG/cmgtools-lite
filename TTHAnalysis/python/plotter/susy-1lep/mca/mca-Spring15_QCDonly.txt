@@ -1,0 +1,17 @@
+####
+# Background for 25ns
+# QCD selected
+QCDsele+      : QCD_HT300to500         : xsec*puRatio*(Selected == 1) ; Label ="QCD selected", FillColor=ROOT.kRed, NormSystematic=0.5
+QCDsele+      : QCD_HT500to700         : xsec*puRatio*(Selected == 1) ; Label ="QCD selected", FillColor=ROOT.kRed, NormSystematic=0.5
+QCDsele+      : QCD_HT700to1000         : xsec*puRatio*(Selected == 1) ; Label ="QCD selected", FillColor=ROOT.kRed, NormSystematic=0.5
+QCDsele+      : QCD_HT1000to1500         : xsec*puRatio*(Selected == 1) ; Label ="QCD selected", FillColor=ROOT.kRed, NormSystematic=0.5
+QCDsele+      : QCD_HT1500to2000         : xsec*puRatio*(Selected == 1) ; Label ="QCD selected", FillColor=ROOT.kRed, NormSystematic=0.5
+QCDsele+      : QCD_HT2000toInf         : xsec*puRatio*(Selected == 1) ; Label ="QCD selected", FillColor=ROOT.kRed, NormSystematic=0.5
+
+# QCD ant-selected
+QCDanti      : QCD_HT300to500         : xsec*puRatio*(Selected == -1) ; Label ="QCD anti", FillColor=ROOT.kBlue, NormSystematic=0.5
+QCDanti      : QCD_HT500to700         : xsec*puRatio*(Selected == -1) ; Label ="QCD anti", FillColor=ROOT.kBlue, NormSystematic=0.5
+QCDanti      : QCD_HT700to1000         : xsec*puRatio*(Selected == -1) ; Label ="QCD anti", FillColor=ROOT.kBlue, NormSystematic=0.5
+QCDanti      : QCD_HT1000to1500         : xsec*puRatio*(Selected == -1) ; Label ="QCD anti", FillColor=ROOT.kBlue, NormSystematic=0.5
+QCDanti      : QCD_HT1500to2000         : xsec*puRatio*(Selected == -1) ; Label ="QCD anti", FillColor=ROOT.kBlue, NormSystematic=0.5
+QCDanti      : QCD_HT2000toInf         : xsec*puRatio*(Selected == -1) ; Label ="QCD anti", FillColor=ROOT.kBlue, NormSystematic=0.5

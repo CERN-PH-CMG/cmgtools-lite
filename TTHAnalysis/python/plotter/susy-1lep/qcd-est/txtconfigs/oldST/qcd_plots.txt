@@ -1,0 +1,5 @@
+dPhiLepW:   fabs(DeltaPhiLepW)  : 20,0,3.141   ; XTitle="#Delta #varphi (lep\,W)", IncludeOverflows=False,
+dPhiLepW_log:   fabs(DeltaPhiLepW)  : 20,0,3.141   ; XTitle="#Delta #varphi (lep\,W)", IncludeOverflows=False, Logy
+
+Lp:	Lp      : 30,-0.5,2.5   ; XTitle="L_{p}", IncludeOverflows=False
+Lp_log:	Lp      : 30,-0.5,2.5   ; XTitle="L_{p}", IncludeOverflows=False, Logy, MoreY=100

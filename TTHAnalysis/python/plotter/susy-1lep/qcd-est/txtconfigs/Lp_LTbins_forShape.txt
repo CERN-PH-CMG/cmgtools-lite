@@ -1,0 +1,13 @@
+# NJ= 3,
+Lp_LTi_NJ34:   if3(nJets30Clean >= 3 && nJets30Clean <= 4, Lp, -99) : 30,-0.5,2.5   ; XTitle="L_{p}(e)", IncludeOverflows=False, YMax=0.4, YTitle="[a.u.]"
+Lp_LT1_NJ34:   if3(250 < LT && LT < 350 && nJets30Clean >= 3 && nJets30Clean <= 4, Lp, -99) : 30,-0.5,2.5   ; XTitle="L_{p}(e)", IncludeOverflows=False
+Lp_LT2_NJ34:   if3(350 < LT && LT < 450 && nJets30Clean >= 3 && nJets30Clean <= 4, Lp, -99) : 30,-0.5,2.5   ; XTitle="L_{p}(e)", IncludeOverflows=False
+Lp_LT3_NJ34:   if3(450 < LT && LT < 600 && nJets30Clean >= 3 && nJets30Clean <= 4, Lp, -99) : 30,-0.5,2.5   ; XTitle="L_{p}(e)", IncludeOverflows=False
+Lp_LT4_NJ34:   if3(600 < LT && nJets30Clean >= 3 && nJets30Clean <= 4, Lp, -99) : 30,-0.5,2.5   ; XTitle="L_{p}(e)", IncludeOverflows=False
+
+# NJ= 6+
+Lp_LTi_NJ6i:   if3(nJets30Clean >= 6, Lp, -99) : 30,-0.5,2.5   ; XTitle="L_{p}(e)", IncludeOverflows=False
+Lp_LT1_NJ6i:   if3(250 < LT && LT < 350 && nJets30Clean >= 6, Lp, -99) : 30,-0.5,2.5   ; XTitle="L_{p}(e)", IncludeOverflows=False
+Lp_LT2_NJ6i:   if3(350 < LT && LT < 450 && nJets30Clean >= 6, Lp, -99) : 30,-0.5,2.5   ; XTitle="L_{p}(e)", IncludeOverflows=False
+Lp_LT3_NJ6i:   if3(450 < LT && LT < 600 && nJets30Clean >= 6, Lp, -99) : 30,-0.5,2.5   ; XTitle="L_{p}(e)", IncludeOverflows=False
+Lp_LT4_NJ6i:   if3(600 < LT && nJets30Clean >= 6, Lp, -99) : 30,-0.5,2.5   ; XTitle="L_{p}(e)", IncludeOverflows=False

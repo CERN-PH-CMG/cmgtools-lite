@@ -1,0 +1,2 @@
+LT_NJ45:   if3(4 <= nJets30Clean && nJets30Clean <= 5, LT, -99) : [250,350,450,600,1000]   ; XTitle="L_{T}", IncludeOverflows=False, Logy
+LT_NJ6i:   if3(6 <= nJets30Clean, LT, -99) : [250,350,450,600,1000]   ; XTitle="L_{T}", IncludeOverflows=False, Logy

@@ -1,0 +1,13 @@
+# nj=4,5
+#HT_NJ45:   if3(nJet >= 4 && nJet <= 5, HT, -1)  : 25,500,2000;  XTitle="H_{T} [GeV]", YTitle="Fraction", IncludeOverflows=False, XNDiv=505
+HT_NJ45_NB0:   if3(nJet >= 4 && nJet <= 5 && nBJet == 0, HT, -1)  : 25,500,2000;  XTitle="H_{T} [GeV]", YTitle="Fraction", IncludeOverflows=False, XNDiv=505
+HT_NJ45_NB1:   if3(nJet >= 4 && nJet <= 5 && nBJet == 1, HT, -1)  : 25,500,2000;  XTitle="H_{T} [GeV]", YTitle="Fraction", IncludeOverflows=False, XNDiv=505
+HT_NJ45_NB1i:   if3(nJet >= 4 && nJet <= 5 && nBJet >= 1, HT, -1)  : 25,500,2000;  XTitle="H_{T} [GeV]", YTitle="Fraction", IncludeOverflows=False, XNDiv=505
+HT_NJ45_NB2i:   if3(nJet >= 4 && nJet <= 5 && nBJet >= 2, HT, -1)  : 25,500,2000;  XTitle="H_{T} [GeV]", YTitle="Fraction", IncludeOverflows=False, XNDiv=505
+
+# nj >= 6
+HT_NJ6i:   if3(nJet >= 6, HT, -1)  : 25,500,2000;  XTitle="H_{T} [GeV]", YTitle="Fraction", IncludeOverflows=False, XNDiv=505
+HT_NJ6i_NB0:   if3(nJet >= 6 && nBJet == 0, HT, -1)  : 25,500,2000;  XTitle="H_{T} [GeV]", YTitle="Fraction", IncludeOverflows=False, XNDiv=505
+HT_NJ6i_NB1:   if3(nJet >= 6 && nBJet == 1, HT, -1)  : 25,500,2000;  XTitle="H_{T} [GeV]", YTitle="Fraction", IncludeOverflows=False, XNDiv=505
+HT_NJ6i_NB1i:   if3(nJet >= 6 && nBJet >= 1, HT, -1)  : 25,500,2000;  XTitle="H_{T} [GeV]", YTitle="Fraction", IncludeOverflows=False, XNDiv=505
+HT_NJ6i_NB2i:   if3(nJet >= 6 && nBJet >= 2, HT, -1)  : 25,500,2000;  XTitle="H_{T} [GeV]", YTitle="Fraction", IncludeOverflows=False, XNDiv=505

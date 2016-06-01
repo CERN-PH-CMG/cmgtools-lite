@@ -1,0 +1,17 @@
+# Selected key: +1 -- selected, -1 -- anti-selected
+
+Yield_incl: Selected : 1,0.5,1.5; XTitle="N_{all}", IncludeOverflows=False, Logy
+
+# Nb bins
+Yield_sel_HT500toInf:   if3(Selected == 1 && HT >= 500, 1, -99) : 1,0.5,1.5   ; XTitle="N_{selected} HT #geq 500", IncludeOverflows=False
+Yield_sel_HT500to1000:	if3(Selected == 1 && HT >= 500 && HT < 1000, 1, -99) : 1,0.5,1.5  ; XTitle="N_{selected} 500 #leq HT #leq 1000", IncludeOverflows=False
+Yield_sel_HT500to750:	if3(Selected == 1 && HT >= 500 && HT < 750, 1, -99) : 1,0.5,1.5   ; XTitle="N_{selected} 500 #leq HT #leq 750", IncludeOverflows=False
+Yield_sel_HT750to1000:	if3(Selected == 1 && HT >= 750 && HT < 1000, 1, -99) : 1,0.5,1.5   ; XTitle="N_{selected} 750 #leq HT #leq 1000", IncludeOverflows=False
+Yield_sel_HT1000toInf:	if3(Selected == 1 && HT >= 1000, 1, -99) : 1,0.5,1.5   ; XTitle="N_{selected} HT #geq 1000", IncludeOverflows=False
+
+# ANTI-SELECTED
+Yield_anti_HT500toInf:   if3(Selected == -1 && HT >= 500, 1, -99) : 1,0.5,1.5   ; XTitle="N_{anti} HT #geq 500", IncludeOverflows=False
+Yield_anti_HT500to1000:	if3(Selected == -1 && HT >= 500 && HT < 1000, 1, -99) : 1,0.5,1.5  ; XTitle="N_{anti} 500 #leq HT #leq 1000", IncludeOverflows=False
+Yield_anti_HT500to750:	if3(Selected == -1 && HT >= 500 && HT < 750, 1, -99) : 1,0.5,1.5   ; XTitle="N_{anti} 500 #leq HT #leq 750", IncludeOverflows=False
+Yield_anti_HT750to1000:	if3(Selected == -1 && HT >= 750 && HT < 1000, 1, -99) : 1,0.5,1.5   ; XTitle="N_{anti} 750 #leq HT #leq 1000", IncludeOverflows=False
+Yield_anti_HT1000toInf:	if3(Selected == -1 && HT >= 1000, 1, -99) : 1,0.5,1.5   ; XTitle="N_{anti} HT #geq 1000", IncludeOverflows=False

@@ -1,0 +1,101 @@
+### CENTRAL
+# TTJets
+EWK	: TTJets_LO 			: xsec*puRatio : ngenTau+ngenLep == 0 && lheHTIncoming <= 600 && HT < 1250;
+EWK	: TTJets_DiLepton		: xsec*puRatio : lheHTIncoming <= 600;
+EWK	: TTJets_SingleLeptonFromT      : xsec*puRatio : lheHTIncoming <= 600;
+EWK	: TTJets_SingleLeptonFromTbar   : xsec*puRatio : lheHTIncoming <= 600;
+EWK	: TTJets_LO_HT600to800		: xsec*puRatio ;
+EWK	: TTJets_LO_HT800to1200 	: xsec*puRatio ;
+EWK	: TTJets_LO_HT1200to2500 	: xsec*puRatio ;
+EWK	: TTJets_LO_HT2500toInf 	: xsec*puRatio ;
+# WJets
+EWK	: WJetsToLNu_HT100to200		: xsec*puRatio ;
+EWK	: WJetsToLNu_HT200to400 	: xsec*puRatio ;
+EWK	: WJetsToLNu_HT400to600 	: xsec*puRatio ;
+EWK	: WJetsToLNu_HT600to800 	: xsec*puRatio ;
+EWK	: WJetsToLNu_HT800to1200 	: xsec*puRatio ;
+EWK	: WJetsToLNu_HT1200to2500 	: xsec*puRatio ;
+EWK	: WJetsToLNu_HT2500toInf 	: xsec*puRatio ;
+# Single Top
+EWK	: TToLeptons_tch_amcatnlo_full	: xsec*puRatio ;
+EWK	: TToLeptons_sch	 	: xsec*puRatio ;
+EWK	: T_tWch	 		: xsec*puRatio ;
+EWK	: TBar_tWch	 		: xsec*puRatio ;
+# DY
+EWK	: DYJetsToLL_M50_HT100to200	: xsec*puRatio ;
+EWK	: DYJetsToLL_M50_HT200to400 	: xsec*puRatio ;
+EWK	: DYJetsToLL_M50_HT400to600 	: xsec*puRatio ;
+EWK	: DYJetsToLL_M50_HT600toInf 	: xsec*puRatio ;
+# TTV
+EWK	: TTWToLNu			: xsec*puRatio ;
+EWK	: TTWToQQ 			: xsec*puRatio ;
+EWK	: TTZToLLNuNu 			: xsec*puRatio ;
+EWK	: TTZToQQ 			: xsec*puRatio ;
+
+### UP
+# TTJets
+EWK_PU-Up	: TTJets_LO 			: xsec*puRatio_up : ngenTau+ngenLep == 0 && lheHTIncoming <= 600 && HT < 1250;
+EWK_PU-Up	: TTJets_DiLepton		: xsec*puRatio_up : lheHTIncoming <= 600;
+EWK_PU-Up	: TTJets_SingleLeptonFromT      : xsec*puRatio_up : lheHTIncoming <= 600;
+EWK_PU-Up	: TTJets_SingleLeptonFromTbar   : xsec*puRatio_up : lheHTIncoming <= 600;
+EWK_PU-Up	: TTJets_LO_HT600to800		: xsec*puRatio_up ;
+EWK_PU-Up	: TTJets_LO_HT800to1200 	: xsec*puRatio_up ;
+EWK_PU-Up	: TTJets_LO_HT1200to2500 	: xsec*puRatio_up ;
+EWK_PU-Up	: TTJets_LO_HT2500toInf 	: xsec*puRatio_up ;
+# WJets
+EWK_PU-Up	: WJetsToLNu_HT100to200		: xsec*puRatio_up ;
+EWK_PU-Up	: WJetsToLNu_HT200to400 	: xsec*puRatio_up ;
+EWK_PU-Up	: WJetsToLNu_HT400to600 	: xsec*puRatio_up ;
+EWK_PU-Up	: WJetsToLNu_HT600to800 	: xsec*puRatio_up ;
+EWK_PU-Up	: WJetsToLNu_HT800to1200 	: xsec*puRatio_up ;
+EWK_PU-Up	: WJetsToLNu_HT1200to2500 	: xsec*puRatio_up ;
+EWK_PU-Up	: WJetsToLNu_HT2500toInf 	: xsec*puRatio_up ;
+# Single Top
+EWK_PU-Up	: TToLeptons_tch_amcatnlo_full	: xsec*puRatio_up ;
+EWK_PU-Up	: TToLeptons_sch	 	: xsec*puRatio_up ;
+EWK_PU-Up	: T_tWch	 		: xsec*puRatio_up ;
+EWK_PU-Up	: TBar_tWch	 		: xsec*puRatio_up ;
+# DY
+EWK_PU-Up	: DYJetsToLL_M50_HT100to200	: xsec*puRatio_up ;
+EWK_PU-Up	: DYJetsToLL_M50_HT200to400 	: xsec*puRatio_up ;
+EWK_PU-Up	: DYJetsToLL_M50_HT400to600 	: xsec*puRatio_up ;
+EWK_PU-Up	: DYJetsToLL_M50_HT600toInf 	: xsec*puRatio_up ;
+# TTV
+EWK_PU-Up	: TTWToLNu			: xsec*puRatio_up ;
+EWK_PU-Up	: TTWToQQ 			: xsec*puRatio_up ;
+EWK_PU-Up	: TTZToLLNuNu 			: xsec*puRatio_up ;
+EWK_PU-Up	: TTZToQQ 			: xsec*puRatio_up ;
+
+### DOWN
+# TTJets
+EWK_PU-Down	: TTJets_LO 			: xsec*puRatio_down : ngenTau+ngenLep == 0 && lheHTIncoming <= 600 && HT < 1250;
+EWK_PU-Down	: TTJets_DiLepton		: xsec*puRatio_down : lheHTIncoming <= 600;
+EWK_PU-Down	: TTJets_SingleLeptonFromT      : xsec*puRatio_down : lheHTIncoming <= 600;
+EWK_PU-Down	: TTJets_SingleLeptonFromTbar   : xsec*puRatio_down : lheHTIncoming <= 600;
+EWK_PU-Down	: TTJets_LO_HT600to800		: xsec*puRatio_down ;
+EWK_PU-Down	: TTJets_LO_HT800to1200 	: xsec*puRatio_down ;
+EWK_PU-Down	: TTJets_LO_HT1200to2500 	: xsec*puRatio_down ;
+EWK_PU-Down	: TTJets_LO_HT2500toInf 	: xsec*puRatio_down ;
+# WJets
+EWK_PU-Down	: WJetsToLNu_HT100to200		: xsec*puRatio_down ;
+EWK_PU-Down	: WJetsToLNu_HT200to400 	: xsec*puRatio_down ;
+EWK_PU-Down	: WJetsToLNu_HT400to600 	: xsec*puRatio_down ;
+EWK_PU-Down	: WJetsToLNu_HT600to800 	: xsec*puRatio_down ;
+EWK_PU-Down	: WJetsToLNu_HT800to1200 	: xsec*puRatio_down ;
+EWK_PU-Down	: WJetsToLNu_HT1200to2500 	: xsec*puRatio_down ;
+EWK_PU-Down	: WJetsToLNu_HT2500toInf 	: xsec*puRatio_down ;
+# Single Top
+EWK_PU-Down	: TToLeptons_tch_amcatnlo_full	: xsec*puRatio_down ;
+EWK_PU-Down	: TToLeptons_sch	 	: xsec*puRatio_down ;
+EWK_PU-Down	: T_tWch	 		: xsec*puRatio_down ;
+EWK_PU-Down	: TBar_tWch	 		: xsec*puRatio_down ;
+# DY
+EWK_PU-Down	: DYJetsToLL_M50_HT100to200	: xsec*puRatio_down ;
+EWK_PU-Down	: DYJetsToLL_M50_HT200to400 	: xsec*puRatio_down ;
+EWK_PU-Down	: DYJetsToLL_M50_HT400to600 	: xsec*puRatio_down ;
+EWK_PU-Down	: DYJetsToLL_M50_HT600toInf 	: xsec*puRatio_down ;
+# TTV
+EWK_PU-Down	: TTWToLNu			: xsec*puRatio_down ;
+EWK_PU-Down	: TTWToQQ 			: xsec*puRatio_down ;
+EWK_PU-Down	: TTZToLLNuNu 			: xsec*puRatio_down ;
+EWK_PU-Down	: TTZToQQ 			: xsec*puRatio_down ;

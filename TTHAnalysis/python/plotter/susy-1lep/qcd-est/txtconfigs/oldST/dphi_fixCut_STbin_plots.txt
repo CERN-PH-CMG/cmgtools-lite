@@ -1,0 +1,14 @@
+dPhiLepW_incl:   fabs(DeltaPhiLepW)  : 60,0,3.141   ; XTitle="#Delta #varphi (lep\,W)", IncludeOverflows=False, Logy
+# baseline: ST > 200
+dPhiLepW_ST0_NJ6inf:   if3(ST < 250, fabs(DeltaPhiLepW), -1) : 60,0,3.141   ; XTitle="#Delta #varphi (lep\,W)", IncludeOverflows=False, Logy
+dPhiLepW_ST1_NJ6inf:   if3(250 < ST && ST < 350, fabs(DeltaPhiLepW), -1) : 60,0,3.141   ; XTitle="#Delta #varphi (lep\,W)", IncludeOverflows=False, Logy
+dPhiLepW_ST2_NJ6inf:   if3(350 < ST && ST < 450, fabs(DeltaPhiLepW), -1) : 60,0,3.141   ; XTitle="#Delta #varphi (lep\,W)", IncludeOverflows=False, Logy
+dPhiLepW_ST3_NJ6inf:   if3(450 < ST && ST < 600, fabs(DeltaPhiLepW), -1) : 60,0,3.141   ; XTitle="#Delta #varphi (lep\,W)", IncludeOverflows=False, Logy
+dPhiLepW_ST4_NJ6inf:   if3(600 < ST, fabs(DeltaPhiLepW), -1) : 60,0,3.141   ; XTitle="#Delta #varphi (lep\,W)", IncludeOverflows=False, Logy
+
+# Nj : 6,8
+dPhiLepW_ST0_NJ68:   if3(ST < 250 && nCentralJet30 <= 8, fabs(DeltaPhiLepW), -1) : 60,0,3.141   ; XTitle="#Delta #varphi (lep\,W)", IncludeOverflows=False, Logy
+dPhiLepW_ST1_NJ68:   if3(250 < ST && ST < 350 && nCentralJet30 <= 8, fabs(DeltaPhiLepW), -1) : 60,0,3.141   ; XTitle="#Delta #varphi (lep\,W)", IncludeOverflows=False, Logy
+dPhiLepW_ST2_NJ68:   if3(350 < ST && ST < 450 && nCentralJet30 <= 8, fabs(DeltaPhiLepW), -1) : 60,0,3.141   ; XTitle="#Delta #varphi (lep\,W)", IncludeOverflows=False, Logy
+dPhiLepW_ST3_NJ68:   if3(450 < ST && ST < 600 && nCentralJet30 <= 8, fabs(DeltaPhiLepW), -1) : 60,0,3.141   ; XTitle="#Delta #varphi (lep\,W)", IncludeOverflows=False, Logy
+dPhiLepW_ST4_NJ68:   if3(600 < ST && nCentralJet30 <= 8, fabs(DeltaPhiLepW), -1) : 60,0,3.141   ; XTitle="#Delta #varphi (lep\,W)", IncludeOverflows=False, Logy
