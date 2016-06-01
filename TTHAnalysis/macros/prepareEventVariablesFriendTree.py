@@ -371,7 +371,7 @@ def _runIt(myargs):
         fb = ROOT.TFile.Open(fin)
     elif "root://" in fin:        
         ROOT.gEnv.SetValue("TFile.AsyncReading", 1);
-        ROOT.gEnv.SetValue("XNet.Debug", 0); # suppress output about opening connections
+#        ROOT.gEnv.SetValue("XNet.Debug", 0); # suppress output about opening connections
         ROOT.gEnv.SetValue("XrdClientDebug.kUSERDEBUG", 0); # suppress output about opening connections
         fb   = ROOT.TXNetFile(fin+"?readaheadsz=65535&DebugLevel=0")
         os.environ["XRD_DEBUGLEVEL"]="0"
