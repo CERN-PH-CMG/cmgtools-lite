@@ -25,11 +25,10 @@ hsig = ROOT.gDirectory.Get('htemp').Clone('hsig')
 tbkg.Draw("%s>>htemp(%s)"%(var,bins),sys.argv[4])
 hbkg = ROOT.gDirectory.Get('htemp').Clone('hbkg')
 
-hsig.Print()
-hbkg.Print()
+print 'normalization (with under/overflow): signal %f, background %f'%(hsig.Integral(0,hsig.GetNbinsX()+1),hbkg.Integral(0,hbkg.GetNbinsX()+1))
 
-hsig.Scale(1./hsig.Integral())
-hbkg.Scale(1./hbkg.Integral())
+hsig.Scale(1./hsig.Integral(0,hsig.GetNbinsX()+1))
+hbkg.Scale(1./hbkg.Integral(0,hbkg.GetNbinsX()+1))
 hw = hbkg.Clone('h_weights')
 hw.Divide(hsig)
 
