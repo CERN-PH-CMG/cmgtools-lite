@@ -40,7 +40,7 @@ TT        : TTJets_SingleLeptonFromTbar : xsec : ((LepGood1_mcMatchId==0 && LepG
 DY        : DYJetsToLL_M10to50          : xsec : ((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==0) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==0)) ; FillColor=ROOT.kCyan, Label="DY (fakes)"
 DY        : DYJetsToLL_M50              : xsec : ((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==0) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==0)) ; FillColor=ROOT.kCyan, Label="DY (fakes)"
 WJets     : WJetsToLNu                  : xsec : ((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==0) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==0)) ; FillColor=ROOT.kCyan+2, Label="W+jets (fakes)"
-SingleTop : TToLeptons_tch_amcatnlo     : xsec : ((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==0) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==0)) ; FillColor=ROOT.kGray+2, Label="Single T (fakes)"
+SingleTop : TToLeptons_tch_powheg     : xsec : ((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==0) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==0)) ; FillColor=ROOT.kGray+2, Label="Single T (fakes)"
 SingleTop : TToLeptons_sch              : xsec : ((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==0) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==0)) ; FillColor=ROOT.kGray+2, Label="Single T (fakes)"
 SingleTop : T_tWch                      : xsec : ((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==0) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==0)) ; FillColor=ROOT.kGray+2, Label="Single T (fakes)"
 SingleTop : TBar_tWch                   : xsec : ((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==0) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==0)) ; FillColor=ROOT.kGray+2, Label="Single T (fakes)"
