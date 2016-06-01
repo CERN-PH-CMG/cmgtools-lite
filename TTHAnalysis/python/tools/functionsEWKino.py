@@ -60,8 +60,10 @@ def _ewkino_2lss_lepConePt1015(lep):
     return True
 
 def _ewkino_2lss_leptonMVA(lep):
-    if abs(lep.pdgId) == 13: return (lep.mvaSUSY > 0.45)
-    if abs(lep.pdgId) == 11: return (lep.mvaSUSY > 0.75)
+#    if abs(lep.pdgId) == 13: return (lep.mvaSUSY > 0.45)
+#    if abs(lep.pdgId) == 11: return (lep.mvaSUSY > 0.75)
+    if abs(lep.pdgId) == 13: return (lep.mvaTTHMoriond16 > 0.45)
+    if abs(lep.pdgId) == 11: return (lep.mvaTTHMoriond16 > 0.75)
     return False
 
 
