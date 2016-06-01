@@ -3,8 +3,8 @@ import PhysicsTools.HeppyCore.framework.config as cfg
 from CMGTools.RootTools.samples.autoAAAconfig import *
 
 #-------- SAMPLES AND TRIGGERS -----------
-from CMGTools.RootTools.samples.samples_13TeV_RunIIFall15MiniAODv2 import * #<--miniAOD v2 samples_13TeV_RunIIFall15MiniAODv2
-from CMGTools.RootTools.samples.samples_13TeV_DATA2015 import *
+from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv1 import * #<--miniAOD v1 2016 MC
+from CMGTools.RootTools.samples.samples_13TeV_DATA2016 import *  #<--miniAOD v1 2016 DATA
 
 from CMGTools.RootTools.samples.triggers_13TeV_Spring15 import triggers_1mu_iso_50ns, triggers_mumu, triggers_ee, triggers_photon30, triggers_photon50, triggers_photon75, triggers_photon90, triggers_photon120, triggers_jet, triggers_dijet, triggers_HT350, triggers_HT475, triggers_HT600, triggers_HT800, triggers_HT900, triggers_Jet80MET90
 
@@ -16,6 +16,11 @@ is1L=False
 is1PH=False
 isEle = False # default is diMuon
 is25ns = True
+
+#-------- HOW TO RUN
+
+# diJet = 15(Data) 25(MC)
+# diMu  = 13(Data) 23(MC)
 
 #-------- HOW TO RUN
 
@@ -111,15 +116,9 @@ elif test==7:
 elif test==13:
     isZSkim=True
     if isEle:
-        if is25ns:
-            selectedComponents = [ DoubleEG_Run2015D_16Dec ]
-        else:
-            selectedComponents = [ DoubleEG_Run2015D_16Dec ] ## not sure the 50ns are ready in 76
+        selectedComponents = [ DoubleEG_Run2016B_PromptReco_v2 ]
     else:
-        if is25ns:
-            selectedComponents = [ DoubleMuon_Run2015D_16Dec ]
-        else:
-            selectedComponents = [ DoubleMuon_Run2015D_16Dec ] ## not sure the 50ns are ready in 76
+        selectedComponents = [ DoubleMuon_Run2016B_PromptReco_v2 ]
     for comp in selectedComponents:
 #        comp.splitFactor = 1
 #        comp.files = comp.files[5:10]
@@ -130,37 +129,28 @@ elif test==13:
             comp.triggers = triggers_ee
         else:
             comp.triggers = triggers_mumu
-        if is25ns:
-            comp.json = "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions15/13TeV/Reprocessing/Cert_13TeV_16Dec2015ReReco_Collisions15_25ns_JSON.txt"
-        else:
-            comp.json = "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions15/13TeV/Reprocessing/Cert_13TeV_16Dec2015ReReco_Collisions15_25ns_JSON.txt"
+        comp.json = "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-273730_13TeV_PromptReco_Collisions16_JSON.txt"
         comp.intLumi= 0.04003
         print comp
 
 ### this is for the Wskim
 elif test==14:
     is1L=False
-    selectedComponents = [ SingleMuon_Run2015D_16Dec ]
+    selectedComponents = [ SingleMuon_Run2016B_PromptReco_v2 ]
     for comp in selectedComponents:
         comp.splitFactor = 1000
         comp.files = comp.files[:]
-        comp.json = "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions15/13TeV/Reprocessing/Cert_13TeV_16Dec2015ReReco_Collisions15_25ns_JSON.txt"
+        comp.json = "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-273730_13TeV_PromptReco_Collisions16_JSON.txt"
         comp.intLumi= 0.04003
 
 ### this is for the QCDlike
 elif test==15:
     isDiJet=True
-    if is25ns:
-        selectedComponents = [ JetHT_Run2015D_16Dec ]
-    else:
-        selectedComponents = [ JetHT_Run2015D_16Dec ] ## not sure the 50ns are ready in 76
+    selectedComponents = [ JetHT_Run2016B_PromptReco_v2 ]
     for comp in selectedComponents:
         comp.splitFactor = 1000
         comp.files = comp.files[:]
-        if is25ns:
-            comp.json = "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions15/13TeV/Reprocessing/Cert_13TeV_16Dec2015ReReco_Collisions15_25ns_JSON.txt"
-        else:
-            comp.json = "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions15/13TeV/Reprocessing/Cert_13TeV_16Dec2015ReReco_Collisions15_25ns_JSON.txt"
+        comp.json = "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-273730_13TeV_PromptReco_Collisions16_JSON.txt"
         comp.intLumi= 0.04003
 #        if isEarlyRun:
 #            comp.run_range=(251027,251585) # in 17july runInJSON: 251244,251251,251252,251561,251562
@@ -172,12 +162,12 @@ elif test==15:
 ### this is for the PhotonSkim
 elif test==16:
     is1PH=True
-    selectedComponents = [ SinglePhoton_Run2015D_16Dec ]
+    selectedComponents = [ SinglePhoton_Run2016B_PromptReco_v2 ]
     for comp in selectedComponents:
         comp.triggers = triggers_photon30 + triggers_photon50 + triggers_photon75 + triggers_photon90 + triggers_photon120
         comp.splitFactor = 100
         comp.files = comp.files[:]
-        comp.json = "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions15/13TeV/Reprocessing/Cert_13TeV_16Dec2015ReReco_Collisions15_25ns_JSON.txt"
+        comp.json = "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-273730_13TeV_PromptReco_Collisions16_JSON.txt"
         comp.intLumi= 0.04003
     # ------------------------------------------------------------------------------------------- #
     #        --> 25ns MC here
@@ -209,12 +199,13 @@ elif test==19:
 elif test==23:
     isZSkim=True
     is25ns=True
-    selectedComponents = [ DYJetsToLL_M50, TTJets_DiLepton ]
+    selectedComponents = [ DYJetsToLL_M50, TTJets_DiLepton, ZZTo4L, ZZTo2L2Q, WWTo2L2Nu, WZTo2L2Q ]
     for comp in selectedComponents:
-        if isEle:
-            comp.triggers = triggers_ee
-        else:
-            comp.triggers = triggers_mumu
+# no trigger on MC for now
+#        if isEle:
+#            comp.triggers = triggers_ee
+#        else:
+#            comp.triggers = triggers_mumu
 #        comp.splitFactor = 1
 #        comp.files = comp.files[:1]
         comp.splitFactor = 1000
@@ -225,7 +216,7 @@ elif test==25:
     is25ns=True
     selectedComponents = [ TTJets ] + WJetsToLNuHT + ZJetsToNuNuHT + QCDHT
     for comp in selectedComponents:
-        comp.splitFactor = 1000
+        comp.splitFactor = 200
         comp.files = comp.files[:]
 
     # ------------------------------------------------------------------------------------------- #
@@ -282,7 +273,7 @@ if is1L:
     metSequence.insert(metSequence.index(lepAna)+1,ttHLepSkim)
 
 if isDiJet:
-#vertexAna.keepFailingEvents = True # keep events with no good vertices
+    vertexAna.keepFailingEvents = True # keep events with no good vertices
     ttHJetMETSkim.jetPtCuts = [100,100]
     metSequence.insert(metSequence.index(photonAna)+2,ttHJetMETSkim)
     metSequence.remove(photonAna)
@@ -326,10 +317,11 @@ triggerFlagsAna.triggerBits = {
 
 }
 
+if comp.isData:
 ## to save prescale uncomment these
-#triggerFlagsAna.unrollbits = True
-#triggerFlagsAna.saveIsUnprescaled = True
-#triggerFlagsAna.checkL1prescale = True
+    triggerFlagsAna.unrollbits = True
+    triggerFlagsAna.saveIsUnprescaled = True
+    triggerFlagsAna.checkL1prescale = True
 
 
 # ------------------------------------------------------------------------------------------- #
