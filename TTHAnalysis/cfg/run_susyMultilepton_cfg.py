@@ -320,9 +320,10 @@ triggerFlagsAna.triggerBits = {
     'DoubleElMu' : triggers_2e1mu,
     'SingleMu' : triggers_1mu_iso,
     'SingleEl'     : triggers_1e,
-    'MonoJet80MET90' : triggers_Jet80MET90,
-    'MonoJet80MET120' : triggers_Jet80MET120,
-    'METMu5' : triggers_MET120Mu5,
+    'MET' : triggers_metNoMu90_mhtNoMu90,
+    #'MonoJet80MET90' : triggers_Jet80MET90,
+    #'MonoJet80MET120' : triggers_Jet80MET120,
+    #'METMu5' : triggers_MET120Mu5,
 }
 triggerFlagsAna.unrollbits = True
 triggerFlagsAna.saveIsUnprescaled = True
@@ -340,6 +341,11 @@ from CMGTools.RootTools.samples.samples_13TeV_DATA2015 import *
 from CMGTools.HToZZ4L.tools.configTools import printSummary, configureSplittingFromTime, cropToLumi
 
 selectedComponents = [ TTLep_pow ];
+
+#components for SOS
+#selectedComponents = [WJetsToLNu_LO, WZZ, WWZ, ZZZ, TToLeptons_tch_amcatnlo, TToLeptons_sch_amcatnlo, TBar_tWch, T_tWch, TTHnobb, TTW_LO, TTZ_LO];
+#selectedComponents = DYJetsM50HT + DYJetsM5to50HT + WJetsToLNuHT + [DYJetsToLL_M5to50_LO, DYJetsToLL_M50_LO, TTJets_SingleLeptonFromTbar, TTJets_SingleLeptonFromT, TTJets_DiLepton, WWTo2L2Nu, WZTo3LNu ];
+#selectedComponents = [T2ttDeg_lepOnly_dM20gev, TChiNeuWZ_mCh100_mChi100_mChi90, TChiNeuWZ_mCh100_mChi100_mChi95];
 
 #selectedComponents = SMS_miniAODv2_T1tttt
 #susyCounter.SMS_varying_masses = ['genSusyMGluino','genSusyMNeutralino']
@@ -400,7 +406,8 @@ if runData and not isTest: # For running on data
     selectedComponents = [];
  
     if analysis in ['SOS']:
-        DatasetsAndTriggers.append( ("MET", triggers_Jet80MET90 + triggers_Jet80MET120 + triggers_MET120Mu5 ) )
+        DatasetsAndTriggers.append( ("MET", triggers_metNoMu90_mhtNoMu90) )
+        #DatasetsAndTriggers.append( ("MET", triggers_Jet80MET90 + triggers_Jet80MET120 + triggers_MET120Mu5 ) )
         #DatasetsAndTriggers.append( ("SingleMuon", triggers_1mu_iso + triggers_1mu_iso_50ns + triggers_1mu_noniso) )
     else:
         DatasetsAndTriggers.append( ("DoubleMuon", triggers_mumu_iso + triggers_mumu_ss + triggers_mumu_ht + triggers_3mu + triggers_3mu_alt) )
