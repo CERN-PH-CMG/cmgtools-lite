@@ -41,6 +41,8 @@ WJets    : WJetsToLNu_HT1200to2500 :  xsec; Label="W+jets", FillColor=ROOT.kCyan
 WJets    : WJetsToLNu_HT2500toInf :  xsec; Label="W+jets", FillColor=ROOT.kCyan+2, NormSystematic=0.5
 TT1l     : TTJets_SingleLeptonFromTbar : xsec ; FillColor=ROOT.kGray+2, Label="tt(1l)", NormSystematic=0.5
 TT1l     : TTJets_SingleLeptonFromT : xsec ; FillColor=ROOT.kGray+2, Label="tt(1l)", NormSystematic=0.5
+T 	 : TToLeptons_tch_amcatnlo :  xsec ; Label="single t", FillColor=ROOT.kBlue-7, NormSystematic=0.5
+T        : TToLeptons_sch :  xsec ; Label="single t", FillColor=ROOT.kBlue-7, NormSystematic=0.5
 
 # ---- Rare:
 ttW : TTWToLNu_LO :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0; Label="ttH", FillColor=ROOT.kBlue+2, NormSystematic=0.5
@@ -51,11 +53,10 @@ WWZ : WWZ :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0; Label="Tribos
 ZZZ : ZZZ :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0;Label="Triboson", FillColor=ROOT.kMagenta+2, NormSystematic=0.5
 TW : T_tWch :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0;Label="tW", FillColor=ROOT.kBlue-3, NormSystematic=0.5
 TW : TBar_tWch :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0;Label="tW", FillColor=ROOT.kBlue-3, NormSystematic=0.5
-T : TToLeptons_tch_amcatnlo :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0;Label="single t", FillColor=ROOT.kBlue-7, NormSystematic=0.5
-T : TToLeptons_sch :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0;Label="single t", FillColor=ROOT.kBlue-7, NormSystematic=0.5
+
 
 # ---- SUSY private signal:
-TChiNeuWZ_80+: TChiNeuWZ_mCh100_mChi100_mChi80 : xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ;FillColor=ROOT.kRed,   Label="TChiNeu(100-80)" 
+#TChiNeuWZ_80+: TChiNeuWZ_mCh100_mChi100_mChi80 : xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ;FillColor=ROOT.kRed,   Label="TChiNeu(100-80)" 
 #TChiNeuWZ_90+: TChiNeuWZ_mCh100_mChi100_mChi90 : xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ;FillColor=ROOT.kRed+1,   Label="TChiNeu(100-90)" 
 #TChiNeuWZ_95+: TChiNeuWZ_mCh100_mChi100_mChi95 : xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ;FillColor=ROOT.kRed+2,   Label="TChiNeu(100-95)" 
-#T2ttDeg_330+: T2ttDeg_lepOnly_dM20gev : 3.787*(0.332)*(0.332) : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ;FillColor=ROOT.kOrange,   Label="T2tt(350-330)" 
+T2ttDeg_330+: T2ttDeg_lepOnly_dM20gev : 3.787*(0.332)*(0.332) : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ;FillColor=ROOT.kOrange,   Label="T2tt(350-330)" 
