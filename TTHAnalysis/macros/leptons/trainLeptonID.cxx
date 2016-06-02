@@ -1,10 +1,12 @@
-void trainLeptonID(TString name, TString sig1file, TString sig2file, TString bkg1file, TString bkg2file, bool doMultiClass = false) {
+void trainLeptonID(TString name, TString sig1file, TString sig2file, TString bkg1file, TString bkg2file, bool doMultiClass = false, TString file_for_sigW_1="", TString file_for_sigW_2="") {
     TFile *_f_s1 = new TFile(sig1file.Data(),"read");
     TFile *_f_s2 =  (sig2file=="") ? NULL : new TFile(sig2file.Data(),"read");
     TFile *_f_b1 = new TFile(bkg1file.Data(),"read");
     TFile *_f_b2 =  (bkg2file=="") ? NULL : new TFile(bkg2file.Data(),"read");
     TTree *dSig1 = (TTree*) _f_s1->Get("tree");
     TTree *dSig2 = (_f_s2) ? ((TTree*) _f_s2->Get("tree")) : NULL;
+    if (file_for_sigW_1!="") dSig1->AddFriend("wtree",file_for_sigW_1.Data());
+    if (file_for_sigW_2!="") dSig2->AddFriend("wtree",file_for_sigW_2.Data());
     TTree *dBg1 = (TTree*) _f_b1->Get("tree");
     TTree *dBg2 = (_f_b2) ? ((TTree*) _f_b2->Get("tree")) : NULL;
     TFile *fOut = new TFile(name+".root","RECREATE");
@@ -155,6 +157,8 @@ void trainLeptonID(TString name, TString sig1file, TString sig2file, TString bkg
 	factory->AddTree(dBg2, "light", wBkg/int2/2., "LepGood_mcMatchId==0 && (abs(LepGood_mcMatchAny)<4 || abs(LepGood_mcMatchAny)>5)");
       }
     }
+
+    if (file_for_sigW_1!="" || file_for_sigW_2!="") factory->SetSignalWeightExpression("addW");
 
     if (!doMultiClass) factory->PrepareTrainingAndTestTree( lepton+" LepGood_mcMatchId != 0", lepton+" LepGood_mcMatchId == 0", "" );
     else factory->PrepareTrainingAndTestTree(lepton,"SplitMode=Random:NormMode=NumEvents:!V");
