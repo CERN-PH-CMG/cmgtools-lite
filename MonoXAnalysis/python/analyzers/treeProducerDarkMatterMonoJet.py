@@ -97,9 +97,9 @@ dmMonoJet_collections.update({
             "selectedLeptons"   : NTupleCollection("LepGood",  leptonTypeSusyExtra, 10, help="Leptons after the preselection"),
             "selectedPhotons"   : NTupleCollection("GammaGood", photonTypeSusy, 20, help="photons with pt>20 and loose cut based ID"),
             ##------------------------------------------------
-            "cleanJets"       : NTupleCollection("Jet",     jetTypeSusyExtra, 10, help="Cental jets after full selection and cleaning, sorted by pt"),
+            "cleanJets"       : NTupleCollection("Jet",     jetTypeSusyExtra, 20, help="Cental jets after full selection and cleaning, sorted by pt"),
             "cleanJetsFwd"    : NTupleCollection("JetFwd",  jetTypeSusyExtra,  5, help="Forward jets after full selection and cleaning, sorted by pt"),
-            "fatJets"         : NTupleCollection("FatJet",  fatJetType,       10, help="AK8 jets, sorted by pt"),
+            "fatJets"         : NTupleCollection("FatJet",  fatJetType,       20, help="AK8 jets, sorted by pt"),
             ##------------------------------------------------
             #"discardedJets"    : NTupleCollection("DiscJet", jetTypeSusyExtra, 10, help="Jets discarted in the jet-lepton cleaning"),
             #"discardedLeptons" : NTupleCollection("DiscLep", leptonTypeSusyExtra, 8, help="Leptons discarded in the jet-lepton cleaning"),
@@ -112,4 +112,14 @@ dmMonoJet_collections.update({
             #"genDHadrons"  : NTupleCollection("GenDHad", heavyFlavourHadronType, 20, mcOnly=True, help="Gen-level D hadrons"),
 })
         
-            
+jetTypeSusyExtra.addVariables([
+        NTupleVariable("puMva", lambda x: x.puMva(), help="Value of the pu MVA discriminator")
+])
+
+fatJetType.addVariables([
+        NTupleVariable("puMva", lambda x: x.puMva(), help="Value of the pu MVA discriminator")
+])
+
+photonTypeSusy.addVariables([
+        NTupleVariable("etaSc", lambda x : x.superCluster().eta(), help="Photon supercluster pseudorapidity")
+])
