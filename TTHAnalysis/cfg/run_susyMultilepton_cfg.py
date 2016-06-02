@@ -371,14 +371,8 @@ if runData and not isTest: # For running on data
     is50ns = False
     dataChunks = []
 
-    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_271036-273450_13TeV_PromptReco_Collisions16_JSON_NoL1T.txt'
-    processing = "Run2016B-PromptReco-v1"; short = "Run2016B_PromptReco_v1"; run_ranges = [(273013,273149)]; useAAA=False;
-    dataChunks.append((json,processing,short,run_ranges,useAAA))
-    processing = "Run2016B-PromptReco-v2"; short = "Run2016B_PromptReco_v2"; run_ranges = [(273150,273450)]; useAAA=False;
-    dataChunks.append((json,processing,short,run_ranges,useAAA))
-
-    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/json_DCSONLY.txt'
-    processing = "Run2016B-PromptReco-v2"; short = "Run2016B_PromptReco_v2"; run_ranges = [(273492,273504),(273554,273555),(273725,273730)]; useAAA=False;
+    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_271036-273730_13TeV_PromptReco_Collisions16_JSON.txt'
+    processing = "Run2016B-PromptReco-v2"; short = "Run2016B_PromptReco_v2"; run_ranges = [(273150,273730)]; useAAA=False; # -v2 starts from 273150
     dataChunks.append((json,processing,short,run_ranges,useAAA))
 
     compSelection = ""; compVeto = ""
@@ -437,7 +431,7 @@ if runData and not isTest: # For running on data
                                                  useAAA=useAAA)
                 print "Will process %s (%d files)" % (comp.name, len(comp.files))
     #            print "\ttrigger sel %s, veto %s" % (triggers, vetos)
-                comp.splitFactor = len(comp.files)/8
+                comp.splitFactor = len(comp.files)/4
                 comp.fineSplitFactor = 1
                 selectedComponents.append( comp )
             vetos += triggers
