@@ -44,7 +44,7 @@ config.Data.publication = False
 config.Data.unitsPerJob = 10
 
 config.section_("Site")
-config.Site.blacklist = ['T2_US_Purdue', 'T2_BE_IIHE', 'T2_US_Wisconsin', 'T2_UK_SGrid_Bristol', 'T2_US_Nebraska']
+#config.Site.blacklist = ['T2_US_Purdue', 'T2_BE_IIHE', 'T2_US_Wisconsin', 'T2_UK_SGrid_Bristol', 'T2_US_Nebraska']
 config.Site.storageSite = 'T2_AT_Vienna'
 #config.Data.ignoreLocality = True
 
