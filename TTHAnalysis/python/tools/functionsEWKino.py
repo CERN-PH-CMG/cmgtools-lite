@@ -36,7 +36,7 @@ def _ewkino_2lss_lepId_CBloose(lep):
 def _ewkino_2lss_lepId_loosestFO(lep):
     if not _ewkino_2lss_lepId_CBloose(lep): return False
     if abs(lep.pdgId) == 13:
-        return lep.mediumMuonId > 0 and lep.tightCharge > 0
+        return lep.tightCharge > 0
     elif abs(lep.pdgId) == 11:
         return (lep.convVeto and lep.tightCharge > 1 and lep.lostHits == 0)
     return False
@@ -44,13 +44,12 @@ def _ewkino_2lss_lepId_loosestFO(lep):
 def _ewkino_2lss_lepId_tighterFO(lep):
     if not _ewkino_2lss_lepId_loosestFO(lep): return False
     if abs(lep.pdgId)==11:
-        if not lep.mvaIdSpring15 > -0.155+(-0.56+0.155)*(abs(lep.etaSc)>0.8)+(-0.76+0.56)*(abs(lep.etaSc)>1.479):
-            return False
         if not _ewkino_idEmu_cuts_E2(lep): return False
+    if abs(lep.pdgId) == 13: return lep.mediumMuonId > 0
     return True
 
 def _ewkino_2lss_lepId_IPcuts(lep):
-    if not lep.sip3d<4: return False
+    if not lep.sip3d<8: return False
     if not (abs(lep.dxy)<0.05): return False
     if not (abs(lep.dz)<0.1): return False
     return True
@@ -59,11 +58,14 @@ def _ewkino_2lss_lepConePt1015(lep):
     if lep.conept <= (10 if abs(lep.pdgId)==13 else 15): return False
     return True
 
-def _ewkino_2lss_leptonMVA(lep):
-#    if abs(lep.pdgId) == 13: return (lep.mvaSUSY > 0.45)
-#    if abs(lep.pdgId) == 11: return (lep.mvaSUSY > 0.75)
-    if abs(lep.pdgId) == 13: return (lep.mvaTTHMoriond16 > 0.45)
-    if abs(lep.pdgId) == 11: return (lep.mvaTTHMoriond16 > 0.75)
+def _ewkino_2lss_leptonMVA_VT(lep):
+    if abs(lep.pdgId) == 13: return (lep.mvaSUSY > 0.45)
+    if abs(lep.pdgId) == 11: return (lep.mvaSUSY > 0.75)
+    return False
+
+def _ewkino_2lss_leptonMVA_T(lep):
+    if abs(lep.pdgId) == 13: return (lep.mvaSUSY > 0.15)
+    if abs(lep.pdgId) == 11: return (lep.mvaSUSY > 0.65)
     return False
 
 

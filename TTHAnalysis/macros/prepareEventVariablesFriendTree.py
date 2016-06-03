@@ -36,7 +36,7 @@ from CMGTools.TTHAnalysis.tools.leptonChoiceRA5 import _susy2lss_lepId_CBloose,_
 from CMGTools.TTHAnalysis.tools.leptonChoiceRA7 import _susy3l_lepId_loosestFO,_susy3l_lepId_loosestFO,_susy3l_multiIso,_susy3l_lepId_CB
 from CMGTools.TTHAnalysis.tools.leptonChoiceEWK import _susy3l_lepId_IPcutsMVA,_susy3l_lepId_CBlooseMVA,_susy3l_lepId_CBloose
 from CMGTools.TTHAnalysis.tools.functionsTTH import _ttH_idEmu_cuts_E2
-from CMGTools.TTHAnalysis.tools.functionsEWKino import _ewkino_idEmu_cuts_E2, _ewkino_2lss_lepId_CBloose,_ewkino_2lss_lepId_loosestFO, _ewkino_2lss_lepId_tighterFO, _ewkino_2lss_lepId_IPcuts, _ewkino_2lss_lepConePt1015, _ewkino_2lss_leptonMVA
+from CMGTools.TTHAnalysis.tools.functionsEWKino import _ewkino_idEmu_cuts_E2, _ewkino_2lss_lepId_CBloose,_ewkino_2lss_lepId_loosestFO, _ewkino_2lss_lepId_tighterFO, _ewkino_2lss_lepId_IPcuts, _ewkino_2lss_lepConePt1015, _ewkino_2lss_leptonMVA_T, _ewkino_2lss_leptonMVA_VT
 from CMGTools.TTHAnalysis.tools.conept import conept_RA5, conept_RA7, conept_TTH, conept_SSDL
 
 MODULES.append( ('leptonJetReCleanerSusyRA5', lambda : LeptonJetReCleaner("Mini", 
@@ -112,29 +112,16 @@ MODULES.append( ('leptonJetReCleanerSusyRA7mva', lambda : LeptonJetReCleaner("Mi
                    coneptdef = lambda lep: conept_RA7(lep)
                  ) ))
 
-MODULES.append( ('leptonJetReCleanerSusySSDLMVA', lambda : LeptonJetReCleaner("Recl", 
-                   looseLeptonSel = lambda lep : lep.miniRelIso < 0.4 and _ewkino_2lss_lepId_CBloose(lep), 
-                   cleaningLeptonSel = lambda lep : lep.pt>10 and _ewkino_2lss_lepId_loosestFO(lep) and _ewkino_2lss_lepId_IPcuts(lep), # cuts applied on top of loose
-                   FOLeptonSel = lambda lep,ht : lep.pt>10 and _ewkino_2lss_lepConePt1015(lep) and _ewkino_2lss_lepId_IPcuts(lep) and _ewkino_2lss_lepId_tighterFO(lep) and _ewkino_idEmu_cuts_E2(lep), # on top of loose
-                   tightLeptonSel = lambda lep,ht : lep.pt>10 and _ewkino_2lss_lepConePt1015(lep) and _ewkino_2lss_leptonMVA(lep) and _ewkino_2lss_lepId_tighterFO(lep) and _ewkino_idEmu_cuts_E2(lep), # on top of loose 
+MODULES.append( ('leptonJetReCleanerSusySSDL', lambda : LeptonJetReCleaner("Recl", 
+                   looseLeptonSel = lambda lep : lep.miniRelIso < 0.4 and _ewkino_2lss_lepId_IPcuts(lep),
+                   cleaningLeptonSel = lambda lep : lep.conept>10 and _ewkino_2lss_lepId_CBloose(lep), # cuts applied on top of loose (pt 5, 7, conveto, lotHist<=1 && emulation)
+                   FOLeptonSel = lambda lep,ht : lep.conept>10 and _ewkino_2lss_lepId_loosestFO(lep), # cuts on top of loose (previous + tight charge and lostHits==0)
+                   tightLeptonSel = lambda lep,ht : lep.conept>10 and _ewkino_2lss_lepConePt1015(lep) and _ewkino_2lss_leptonMVA_T(lep) and _ewkino_2lss_lepId_tighterFO(lep), # on top of loose 
                    cleanJet = lambda lep,jet,dr : dr<0.4,
                    selectJet = lambda jet: abs(jet.eta)<2.4,
-                   cleanWithTaus = False,
-                   doVetoZ = True,
-                   doVetoLMf = True,
-                   doVetoLMt = True,
-                   jetPt = 40,
-                   bJetPt = 25,
-                   coneptdef = lambda lep: conept_SSDL(lep)
-                 ) ))
-
-MODULES.append( ('leptonJetReCleanerSusySSDLCutBased', lambda : LeptonJetReCleaner("Recl", 
-                   looseLeptonSel = lambda lep : lep.miniRelIso < 0.4 and _susy2lss_lepId_CBloose(lep), #and (ht>300 or _susy2lss_idIsoEmu_cuts(lep)), 
-                   cleaningLeptonSel =  lambda lep : lep.pt>10 and _susy2lss_lepId_loosestFO(lep) and _susy2lss_lepId_IPcuts(lep), # cuts applied on top of loose
-                   FOLeptonSel = lambda lep,ht : lep.pt>10 and _susy2lss_lepConePt1015(lep) and _susy2lss_lepId_IPcuts(lep) and (_susy2lss_lepId_loosestFO(lep) if ht>300 else _susy2lss_lepId_tighterFO(lep)), # cuts applied on top of loose
-                   tightLeptonSel = lambda lep,ht : lep.pt>10 and _susy2lss_lepConePt1015(lep) and _susy2lss_multiIso(lep) and _susy2lss_lepId_CB(lep) and (ht>300 or _susy2lss_idIsoEmu_cuts(lep)), # cuts applied on top of loose
-                   cleanJet = lambda lep,jet,dr : dr<0.4,
-                   selectJet = lambda jet: abs(jet.eta)<2.4,
+                   cleanTau = lambda lep,tau,dr: dr<0.4,
+                   looseTau = lambda tau: tau.pt > 20 and abs(tau.eta)<2.3 and abs(tau.dxy) < 1000 and abs(tau.dz) < 0.2 and tau.idMVAOldDMRun2dR03 >= 1 and tau.idDecayMode, # used in cleaning 
+                   tightTau = lambda tau: True, # cuts applied on top of loose                                                                           
                    cleanJetsWithTaus = False,
                    doVetoZ = True,
                    doVetoLMf = True,
@@ -143,6 +130,7 @@ MODULES.append( ('leptonJetReCleanerSusySSDLCutBased', lambda : LeptonJetReClean
                    bJetPt = 25,
                    coneptdef = lambda lep: conept_SSDL(lep)
                  ) ))
+
 
 MODULES.append( ('leptonJetReCleanerTTH', lambda : LeptonJetReCleaner("Recl", # b1E2 definition of FO
                    looseLeptonSel = lambda lep : lep.miniRelIso < 0.4 and lep.sip3d < 8,
@@ -449,8 +437,6 @@ def _runIt(myargs):
         fb = ROOT.TFile.Open(fin)
     elif "root://" in fin:        
         ROOT.gEnv.SetValue("TFile.AsyncReading", 1);
-        ROOT.gEnv.SetValue("XNet.Debug", 0); # suppress output about opening connections
-        ROOT.gEnv.SetValue("XrdClientDebug.kUSERDEBUG", 0); # suppress output about opening connections
         fb   = ROOT.TXNetFile(fin+"?readaheadsz=65535&DebugLevel=0")
         os.environ["XRD_DEBUGLEVEL"]="0"
         os.environ["XRD_DebugLevel"]="0"
