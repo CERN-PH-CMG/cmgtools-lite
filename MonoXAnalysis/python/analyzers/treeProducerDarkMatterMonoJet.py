@@ -119,6 +119,8 @@ jetTypeSusyExtra.addVariables([
 fatJetType.addVariables([
         NTupleVariable("puMva", lambda x: x.puMva(), help="Value of the pu MVA discriminator")
 ])
+fatJetType.removeVariable("trimmedMass")
+fatJetType.removeVariable("filteredMass")
 
 photonTypeSusy.addVariables([
         NTupleVariable("etaSc", lambda x : x.superCluster().eta(), help="Photon supercluster pseudorapidity")
