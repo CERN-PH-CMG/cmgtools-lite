@@ -178,7 +178,7 @@ jetAna.minLepPt = 10
 #jetAna.mcGT = "Summer15_25nsV6_MC"
 jetAna.mcGT = "Spring16_25nsV1_MC"
 #jetAna.dataGT = "Summer15_25nsV6_DATA"
-jetAna.dataGT = "Summer15_25nsV7_DATA"
+jetAna.dataGT = "Spring16_25nsV1_MC"
 
 # add also JEC up/down shifts corrections
 jetAna.addJECShifts = True
@@ -201,8 +201,8 @@ genAna.allGenTaus = True
 #-------- HOW TO RUN
 isData = True # default, but will be overwritten below
 
-#sample = 'MC'
-sample = 'data'
+sample = 'MC'
+#sample = 'data'
 #sample = 'Signal'
 test = 1
 
@@ -352,7 +352,9 @@ elif sample == "data":
   if test!=0 and jsonAna in susyCoreSequence: susyCoreSequence.remove(jsonAna)
   if test==1:
     comp = SingleElectron_Run2016B_PromptReco
-    comp.files = comp.files[:1]
+#    comp.files = comp.files[:1]
+#    comp.files = comp.files[:1]
+    comp.files = comp.files[10:11]
     selectedComponents = [comp]
     comp.splitFactor = 1
     comp.splitFactor = len(comp.files)
