@@ -201,8 +201,8 @@ genAna.allGenTaus = True
 #-------- HOW TO RUN
 isData = True # default, but will be overwritten below
 
-sample = 'MC'
-#sample = 'data'
+#sample = 'MC'
+sample = 'data'
 #sample = 'Signal'
 test = 1
 
@@ -225,10 +225,9 @@ if sample == "MC":
 	# MiniAODv2
 	#from CMGTools.SUSYAnalysis.samples.samples_13TeV_RunIISpring15MiniAODv2_desy import *
 	#from CMGTools.SUSYAnalysis.samples.samples_13TeV_RunIISpring15MiniAODv2_desy_Compact import *
-	from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv2 import *
+	# from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv2 import *
 
-	#selectedComponents = TTs + SingleTop #TTJets_SingleLepton
-        selectedComponents = TTJets_LO_HT600to800_ext
+	selectedComponents = TTs + SingleTop #TTJets_SingleLepton
 
 	if test==1:
 		# test a single component, using a single thread.
@@ -286,7 +285,7 @@ elif sample == "Signal":
 	#from CMGTools.SUSYAnalysis.samples.samples_13TeV_74X_Signals_desy import *
 	# MiniAODv2
 	#from CMGTools.SUSYAnalysis.samples.samples_13TeV_RunIISpring15MiniAODv2_desy import *
-	from CMGTools.SUSYAnalysis.samples.samples_13TeV_MiniAODv2_Signals_AAA import *
+	# from CMGTools.SUSYAnalysis.samples.samples_13TeV_MiniAODv2_Signals_AAA import *
 
 	# Benchmarks
 	#selectedComponents = [ T1tttt_mGo_1475to1500_mLSP_1to1250, T1tttt_mGo_1500to1525_mLSP_50to1125, T1tttt_mGo_1200_mLSP_1to825, T1tttt_mGo_1900to1950_mLSP_0to1450 ]
@@ -345,36 +344,36 @@ elif sample == "data":
   jetAna.applyL2L3Residual = False
   print jetAna.shiftJEC , jetAna.recalibrateJets , jetAna.addJECShifts , jetAna.calculateSeparateCorrections , jetAna.calculateType1METCorrection
 
-  # central samples
-  from CMGTools.RootTools.samples.samples_13TeV_DATA2016 import *
+#  # central samples
+#  from CMGTools.RootTools.samples.samples_13TeV_DATA2016 import *
 
-  selectedComponents = [SingleElectron_Run2016B_PromptReco, SingleMuon_Run2016B_PromptReco]
+#  selectedComponents = [SingleElectron_Run2016B_PromptReco, SingleMuon_Run2016B_PromptReco]
 
   if test!=0 and jsonAna in susyCoreSequence: susyCoreSequence.remove(jsonAna)
-  if test==1:
-    comp = SingleElectron_Run2016B_PromptReco
-    comp.files = comp.files[:1]
-    selectedComponents = [comp]
-    comp.splitFactor = 1
-    comp.splitFactor = len(comp.files)
-  elif test==2:
-    # test all components (1 thread per component).
-    for comp in selectedComponents:
-      comp.splitFactor = 1
-      comp.fineSplitFactor = 1
-      comp.files = comp.files[:1]
-  elif test==3:
-    # run all components (10 files per component).
-    for comp in selectedComponents:
-      comp.files = comp.files[20:30]
-      comp.fineSplitFactor = 1
-      comp.splitFactor = len(comp.files)
-  elif test==0:
-    # PRODUCTION
-    # run on everything
-    for comp in selectedComponents:
-      comp.fineSplitFactor = 1
-      comp.splitFactor = len(comp.files)
+#  if test==1:
+#    comp = SingleElectron_Run2016B_PromptReco
+#    comp.files = comp.files[:1]
+#    selectedComponents = [comp]
+#    comp.splitFactor = 1
+#    comp.splitFactor = len(comp.files)
+#  elif test==2:
+#    # test all components (1 thread per component).
+#    for comp in selectedComponents:
+#      comp.splitFactor = 1
+#      comp.fineSplitFactor = 1
+#      comp.files = comp.files[:1]
+#  elif test==3:
+#    # run all components (10 files per component).
+#    for comp in selectedComponents:
+#      comp.files = comp.files[20:30]
+#      comp.fineSplitFactor = 1
+#      comp.splitFactor = len(comp.files)
+#  elif test==0:
+#    # PRODUCTION
+#    # run on everything
+#    for comp in selectedComponents:
+#      comp.fineSplitFactor = 1
+#      comp.splitFactor = len(comp.files)
 
 
 
@@ -456,6 +455,8 @@ output_service = cfg.Service(
     )
 outputService.append(output_service)
 
+selectedComponents = [ ]
+preprocessor = None
 
 from PhysicsTools.HeppyCore.framework.eventsfwlite import Events
 config = cfg.Config( components = selectedComponents,

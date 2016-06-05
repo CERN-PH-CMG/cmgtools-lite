@@ -5,6 +5,7 @@
 import imp
 file = open( "heppy_crab_config.py", 'r' )
 cfg = imp.load_source( 'cfg', "heppy_crab_config.py", file)
+
 config = cfg.config
 import os
 import re
@@ -17,6 +18,11 @@ if not m :
 sample=m.group(1)+"_"+m.group(2)
 print "sample = ",sample
 
+#
+# try to identify data
+#
+if m.group(2).startswith("Run201"):
+  config.Data.splitting = "LumiBased"
 
 #NJOBS=int(os.environ["NJOBS"])
 production_label = os.environ["CMG_PROD_LABEL"]
@@ -26,10 +32,12 @@ if "CMG_TOTAL_UNITS" in os.environ:
   config.Data.totalUnits = int(os.environ["CMG_TOTAL_UNITS"])
 
 config.Data.inputDataset = dataset
-config.Data.publishDataName = m.group(2)+"_"+production_label
+#config.Data.publishDataName = m.group(2)+"_"+production_label
+config.Data.outputDatasetTag = m.group(2)+"_"+production_label
 lumiMask =  os.environ["CMG_LUMI_MASK"]
 if lumiMask != "None":
   config.Data.lumiMask = lumiMask
+
 print "Using lumiMask: %s"%lumiMask
 #config.Data.publishDataName += "_"+sample
 print "Will send dataset", dataset , "with", config.Data.unitsPerJob, " files / jobs"
@@ -67,3 +75,7 @@ if "INPUT_DBS" in os.environ:
 #else:
 #    config.JobType.scriptArgs += ["nevents="+str(NEVENTS)]
 
+
+print ""
+print "CONFIG"
+print config

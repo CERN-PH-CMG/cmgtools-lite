@@ -36,6 +36,7 @@ for i in xrange(0,len(crabFiles)) :
 import imp
 handle = open("heppy_config.py", 'r')
 cfo = imp.load_source("heppy_config", "heppy_config.py", handle)
+
 #config = cfo.config
 cfg = cfo.cfg
 seq = cfo.sequence
