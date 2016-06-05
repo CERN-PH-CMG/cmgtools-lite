@@ -344,36 +344,36 @@ elif sample == "data":
   jetAna.applyL2L3Residual = False
   print jetAna.shiftJEC , jetAna.recalibrateJets , jetAna.addJECShifts , jetAna.calculateSeparateCorrections , jetAna.calculateType1METCorrection
 
-#  # central samples
-#  from CMGTools.RootTools.samples.samples_13TeV_DATA2016 import *
+  # central samples
+  from CMGTools.RootTools.samples.samples_13TeV_DATA2016 import *
 
-#  selectedComponents = [SingleElectron_Run2016B_PromptReco, SingleMuon_Run2016B_PromptReco]
+  selectedComponents = [SingleElectron_Run2016B_PromptReco, SingleMuon_Run2016B_PromptReco]
 
   if test!=0 and jsonAna in susyCoreSequence: susyCoreSequence.remove(jsonAna)
-#  if test==1:
-#    comp = SingleElectron_Run2016B_PromptReco
-#    comp.files = comp.files[:1]
-#    selectedComponents = [comp]
-#    comp.splitFactor = 1
-#    comp.splitFactor = len(comp.files)
-#  elif test==2:
-#    # test all components (1 thread per component).
-#    for comp in selectedComponents:
-#      comp.splitFactor = 1
-#      comp.fineSplitFactor = 1
-#      comp.files = comp.files[:1]
-#  elif test==3:
-#    # run all components (10 files per component).
-#    for comp in selectedComponents:
-#      comp.files = comp.files[20:30]
-#      comp.fineSplitFactor = 1
-#      comp.splitFactor = len(comp.files)
-#  elif test==0:
-#    # PRODUCTION
-#    # run on everything
-#    for comp in selectedComponents:
-#      comp.fineSplitFactor = 1
-#      comp.splitFactor = len(comp.files)
+  if test==1:
+    comp = SingleElectron_Run2016B_PromptReco
+    comp.files = comp.files[20:30]
+    selectedComponents = [comp]
+    comp.splitFactor = 1
+    comp.splitFactor = len(comp.files)
+  elif test==2:
+    # test all components (1 thread per component).
+    for comp in selectedComponents:
+      comp.splitFactor = 1
+      comp.fineSplitFactor = 1
+      comp.files = comp.files[:1]
+  elif test==3:
+    # run all components (10 files per component).
+    for comp in selectedComponents:
+      comp.files = comp.files[20:30]
+      comp.fineSplitFactor = 1
+      comp.splitFactor = len(comp.files)
+  elif test==0:
+    # PRODUCTION
+    # run on everything
+    for comp in selectedComponents:
+      comp.fineSplitFactor = 1
+      comp.splitFactor = len(comp.files)
 
 
 
