@@ -87,8 +87,8 @@ if analysis in ['SOS']:
     lepAna.loose_muon_pt  = 3
     lepAna.inclusive_electron_pt  = 5
     lepAna.loose_electron_pt  = 5
-#    isolation = None
-#    lepAna.loose_electron_id = ""
+    isolation = "absIso03"
+    lepAna.loose_electron_id = "POG_MVA_ID_Spring15_NonTrig_VLooseIdEmu"
 
     # Lepton-Jet Cleaning
     jetAna.minLepPt = 20 
@@ -340,12 +340,10 @@ from CMGTools.RootTools.samples.samples_13TeV_76X_susySignalsPriv import *
 from CMGTools.RootTools.samples.samples_13TeV_DATA2015 import *
 from CMGTools.HToZZ4L.tools.configTools import printSummary, configureSplittingFromTime, cropToLumi
 
-selectedComponents = [ TTLep_pow ];
+selectedComponents = [TTLep_pow];
 
 #components for SOS
-#selectedComponents = [WJetsToLNu_LO, WZZ, WWZ, ZZZ, TToLeptons_tch_amcatnlo, TToLeptons_sch_amcatnlo, TBar_tWch, T_tWch, TTHnobb, TTW_LO, TTZ_LO];
-#selectedComponents = DYJetsM50HT + DYJetsM5to50HT + WJetsToLNuHT + [DYJetsToLL_M5to50_LO, DYJetsToLL_M50_LO, TTJets_SingleLeptonFromTbar, TTJets_SingleLeptonFromT, TTJets_DiLepton, WWTo2L2Nu, WZTo3LNu ];
-#selectedComponents = [T2ttDeg_lepOnly_dM20gev, TChiNeuWZ_mCh100_mChi100_mChi90, TChiNeuWZ_mCh100_mChi100_mChi95];
+#selectedComponents = [WZZ, WWZ, ZZZ, TToLeptons_tch_amcatnlo, TToLeptons_sch_amcatnlo, TBar_tWch, T_tWch, TTHnobb, TTW_LO, TTZ_LO, TTLLJets_m1to10, TTGJets, WGToLNuG, ZGTo2LG, TGJets] + DYJetsM50HT + DYJetsM5to50HT + WJetsToLNuHT + [WJetsToLNu_LO, DYJetsToLL_M5to50_LO, DYJetsToLL_M50_LO, TTJets_SingleLeptonFromTbar, TTJets_SingleLeptonFromT, TTJets_DiLepton, WWTo2L2Nu, WZTo3LNu,T2ttDeg_mStop350_mChi330_4bodydec_lepOnly, TChiNeuWZ_mCh100_mChi80, TChiNeuWZ_mCh100_mChi90, WZTo1L3Nu, WZTo1L1Nu2Q, WZTo2L2Q, ZZTo2L2Q, ZZTo2L2Nu, ZZTo4L, WWToLNuQQ, WWDouble,WpWpJJ];
 
 #selectedComponents = SMS_miniAODv2_T1tttt
 #susyCounter.SMS_varying_masses = ['genSusyMGluino','genSusyMNeutralino']
