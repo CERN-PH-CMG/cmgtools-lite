@@ -352,7 +352,7 @@ elif sample == "data":
   if test!=0 and jsonAna in susyCoreSequence: susyCoreSequence.remove(jsonAna)
   if test==1:
     comp = SingleElectron_Run2016B_PromptReco
-    comp.files = comp.files[:1]
+    comp.files = comp.files[:10]
     selectedComponents = [comp]
     comp.splitFactor = 1
     comp.splitFactor = len(comp.files)
