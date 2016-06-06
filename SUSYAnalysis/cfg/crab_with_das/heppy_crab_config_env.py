@@ -18,9 +18,9 @@ if not m :
 sample=m.group(1)+"_"+m.group(2)
 print "sample = ",sample
 
-#
-# try to identify data
-#
+##
+## try to identify data
+##
 if m.group(2).startswith("Run201"):
   config.Data.splitting = "LumiBased"
 
@@ -79,3 +79,4 @@ if "INPUT_DBS" in os.environ:
 print ""
 print "CONFIG"
 print config
+
