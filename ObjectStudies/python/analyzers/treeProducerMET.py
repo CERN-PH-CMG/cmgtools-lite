@@ -25,6 +25,7 @@ met_globalVariables = [
     # comment to use the official as stored in miniAOD 76
 #    NTupleVariable("Flag_HBHENoiseFilter", lambda ev: ev.hbheFilterNew, help="HBEHE temporary filter decision"),
 #    NTupleVariable("Flag_HBHEIsoNoiseFilter", lambda ev: ev.hbheFilterIso, help="HBEHE isolation temporary filter decision"),
+    NTupleVariable("Flag_badChargedHadronFilter", lambda ev: ev.badChargedHadron, help="bad charged hadron filter decision"),
 
    # ----------------------- Leading jet info  --------------------------------------------------------------------- #
 
