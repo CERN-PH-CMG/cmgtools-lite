@@ -2,6 +2,7 @@
 TT		: TTJets_DiLepton: xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0; FillColor=ROOT.kGray+1, Label="tt(2l)", NormSystematic=0.5
 
 # ---- Diboson
+WW       : WWTo2L2Nu: xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0;  Label="WW", FillColor=ROOT.kAzure-8,  NormSystematic=0.3
 WZ 	 : WZTo3LNu: xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ;  Label="WZ", FillColor=ROOT.kViolet-4,  NormSystematic=0.3
 WZ 	 : WZTo2L2Q: xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ;  Label="WZ", FillColor=ROOT.kViolet-4,  NormSystematic=0.3
 ZZ 	 : ZZTo2L2Nu: xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0  ;  Label="ZZ", FillColor=ROOT.kAzure-9,  NormSystematic=0.3
