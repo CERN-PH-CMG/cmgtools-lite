@@ -752,7 +752,7 @@ if __name__ == "__main__":
         ## Ele + Mu
         lumi = 42.0 # SingleEl/Mu RunB
 
-        basecuts += ' (PD_SingleMu + PD_SingleEl == 1) &&' # doesn't work
+        basecuts += ' (PD_SingleMu + PD_SingleEle == 1) &&' # doesn't work
 
         refTrig = 'HLT_IsoMu27||HLT_IsoEle32'
         testTrig = ['MuHT350MET50||EleHT350MET50']
