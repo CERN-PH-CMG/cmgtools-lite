@@ -250,7 +250,7 @@ class EventVars1L_base:
             'MT',
             "DeltaPhiLepW", 'dPhi','Lp',
             # no HF stuff
-            'METNoHF', 'LTNoHF', 'dPhiNoHF',
+#            'METNoHF', 'LTNoHF', 'dPhiNoHF',
             ## jets
             'HT','nJets','nBJet',
             ("nJets30","I"),("Jets30Idx","I",50,"nJets30"),'nBJets30','nJets30Clean',
@@ -379,7 +379,9 @@ class EventVars1L_base:
 
                 if eleID == 'CB':
                     # ELE CutBased ID
-                    if hasattr(lep,"eleCBID_SPRING15_25ns_ConvVetoDxyDz"):
+                    if hasattr(lep,"eleCutIdSpring15_25ns_v1"):
+                        eidCB = lep.eleCutIdSpring15_25ns_v1
+                    elif hasattr(lep,"eleCBID_SPRING15_25ns_ConvVetoDxyDz"):
                         eidCB = lep.eleCBID_SPRING15_25ns_ConvVetoDxyDz
                     elif hasattr(lep,"SPRING15_25ns_v1"):
                         eidCB = lep.SPRING15_25ns_v1
@@ -426,7 +428,9 @@ class EventVars1L_base:
                     # Iso check
                     passIso = lep.miniRelIso < Lep_miniIsoCut # should be true anyway
                     # other checks
-                    passOther = lep.hOverE > 0.01
+                    passOther = False
+                    if hasattr(lep,"hOverE"):
+                        passOther = lep.hOverE > 0.01
 
                     # fill
                     if passIso and passOther:
@@ -489,7 +493,9 @@ class EventVars1L_base:
                 ## Set Ele IDs
                 if eleID == 'CB':
                     # ELE CutBased ID
-                    if hasattr(lep,"eleCBID_SPRING15_25ns"):
+                    if hasattr(lep,"eleCutIdSpring15_25ns_v1"):
+                        eidCB = lep.eleCutIdSpring15_25ns_v1
+                    elif hasattr(lep,"eleCBID_SPRING15_25ns"):
                         eidCB = lep.eleCBID_SPRING15_25ns
                     else:
                         eidCB = -1
@@ -505,7 +511,9 @@ class EventVars1L_base:
                     # should always be true for LepOther
 
                     # other checks
-                    passOther = lep.hOverE > 0.01
+                    passOther = False
+                    if hasattr(lep,"hOverE"):
+                        passOther = lep.hOverE > 0.01
 
                     #if not lep.conVeto:
                     if passOther:
@@ -727,9 +735,9 @@ class EventVars1L_base:
         ret["MET"] = metp4.Pt()
 
         ## MET NO HF
-        metNoHFp4 = ROOT.TLorentzVector(0,0,0,0)
-        metNoHFp4.SetPtEtaPhiM(event.metNoHF_pt,event.metNoHF_eta,event.metNoHF_phi,event.metNoHF_mass)
-        ret["METNoHF"] = metNoHFp4.Pt()
+#        metNoHFp4 = ROOT.TLorentzVector(0,0,0,0)
+#        metNoHFp4.SetPtEtaPhiM(event.metNoHF_pt,event.metNoHF_eta,event.metNoHF_phi,event.metNoHF_mass)
+#        ret["METNoHF"] = metNoHFp4.Pt()
 
         ## MET FILTERS for data
         if event.isData:
@@ -746,10 +754,10 @@ class EventVars1L_base:
 
         # deltaPhi between the (single) lepton and the reconstructed W (lep + MET)
         dPhiLepW = -999 # set default value to -999 to spot "empty" entries
-        dPhiLepWNoHF = -999 # set default value to -999 to spot "empty" entries
+#        dPhiLepWNoHF = -999 # set default value to -999 to spot "empty" entries
         # LT of lepton and MET
         LT = -999
-        LTNoHF = -999
+#        LTNoHF = -999
         Lp = -99
         MT = -99
 
@@ -764,9 +772,9 @@ class EventVars1L_base:
             MT = sqrt(2*metp4.Pt()*tightLeps[0].pt * (1-cos(dPhiLepW)))
 
             ## no HF
-            recoWNoHFp4 =  tightLeps[0].p4() + metNoHFp4
-            dPhiLepWNoHF = tightLeps[0].p4().DeltaPhi(recoWNoHFp4)
-            LTNoHF = tightLeps[0].pt + event.metNoHF_pt
+#            recoWNoHFp4 =  tightLeps[0].p4() + metNoHFp4
+#            dPhiLepWNoHF = tightLeps[0].p4().DeltaPhi(recoWNoHFp4)
+#            LTNoHF = tightLeps[0].pt + event.metNoHF_pt
 
         ret["DeltaPhiLepW"] = dPhiLepW
         dPhi = abs(dPhiLepW) # nickname for absolute dPhiLepW
@@ -777,9 +785,9 @@ class EventVars1L_base:
         ret['MT'] = MT
 
         # no HF
-        dPhiNoHF = abs(dPhiLepWNoHF) # nickname for absolute dPhiLepW
-        ret['dPhiNoHF'] = dPhiNoHF
-        ret['LTNoHF'] = LTNoHF
+#        dPhiNoHF = abs(dPhiLepWNoHF) # nickname for absolute dPhiLepW
+#        ret['dPhiNoHF'] = dPhiNoHF
+#        ret['LTNoHF'] = LTNoHF
 
         #####################
         ## SIGNAL REGION FLAG
