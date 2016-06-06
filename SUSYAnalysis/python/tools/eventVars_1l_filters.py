@@ -11,7 +11,8 @@ from CMGTools.TTHAnalysis.treeReAnalyzer import *
 ###############
 
 
-filterName = "/afs/desy.de/user/l/lobanov/public/SUSY/Run2/METfilters/Recent/Jan2016/skim/combine.txt"
+filterName = "/afs/cern.ch/user/k/kirschen/public/forSUSY/dummyFilterlist.txt" #to process 2016 data quickly...
+#filterName = "/afs/desy.de/user/l/lobanov/public/SUSY/Run2/METfilters/Recent/Jan2016/skim/combine.txt"
 #filterName = "/afs/desy.de/user/l/lobanov/public/SUSY/Run2/METfilters/SingleLepton_csc2015.txt"
 #filterName = "/afs/desy.de/user/l/lobanov/public/SUSY/Run2/METfilters/JetHT_csc2015.txt"
 #filterList = readList(filterName)
