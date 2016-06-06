@@ -201,10 +201,10 @@ genAna.allGenTaus = True
 #-------- HOW TO RUN
 isData = True # default, but will be overwritten below
 
-sample = 'MC'
-#sample = 'data'
+#sample = 'MC'
+sample = 'data'
 #sample = 'Signal'
-test = 1
+test = 0
 
 if sample == "MC":
 
@@ -347,11 +347,12 @@ elif sample == "data":
   # central samples
   from CMGTools.RootTools.samples.samples_13TeV_DATA2016 import *
 
-  selectedComponents = [SingleElectron_Run2016B_PromptReco, SingleMuon_Run2016B_PromptReco]
+  selectedComponents = [SingleElectron_Run2016B_PromptReco_v2, SingleMuon_Run2016B_PromptReco_v2, JetHT_Run2016B_PromptReco_v2_HT800Only]
 
   if test!=0 and jsonAna in susyCoreSequence: susyCoreSequence.remove(jsonAna)
   if test==1:
-    comp = SingleElectron_Run2016B_PromptReco
+    comp = JetHT_Run2016B_PromptReco_v2_HT800Only
+#SingleElectron_Run2016B_PromptReco_v2
 #    comp.files = comp.files[:1]
 #    comp.files = comp.files[:1]
     comp.files = comp.files[10:11]
@@ -363,7 +364,8 @@ elif sample == "data":
     for comp in selectedComponents:
       comp.splitFactor = 1
       comp.fineSplitFactor = 1
-      comp.files = comp.files[:1]
+#      comp.files = comp.files[:1]
+      comp.files = comp.files[10:11]
   elif test==3:
     # run all components (10 files per component).
     for comp in selectedComponents:
