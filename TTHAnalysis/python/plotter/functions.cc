@@ -192,7 +192,7 @@ int SR_bins_EWKino_200(float Mll, float met_pt, Int_t pdgId_1, Int_t pdgId_2){
   if     (met_pt>200.&& 4.<Mll&&Mll<=10.&& pdgId_1*pdgId_2==-169) return 1;
   else if(met_pt>200.&&10.<Mll&&Mll<=20.&& pdgId_1*pdgId_2==-169) return 2;
   else if(met_pt>200.&&20.<Mll&&Mll<=30.&& pdgId_1*pdgId_2==-169) return 3;
-  else if(met_pt>200.&&30.<Mll&&Mll<=50.&& pdgId_1*pdgId_2==-169) return 4;   
+  else if(met_pt>200.&&30.<Mll && pdgId_1*pdgId_2==-169) return 4;   
   else if(met_pt>200.&& 4.<Mll&&Mll<=10.&&pdgId_1*pdgId_2==-121) return 5;
   else if(met_pt>200.&&10.<Mll&&Mll<=20.&& pdgId_1*pdgId_2==-121) return 6;
   else if(met_pt>200.&&20.<Mll&&Mll<=30.&& pdgId_1*pdgId_2==-121) return 7;
