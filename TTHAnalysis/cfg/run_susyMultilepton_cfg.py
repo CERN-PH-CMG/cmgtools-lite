@@ -87,7 +87,8 @@ if analysis in ['SOS']:
     lepAna.loose_muon_pt  = 3
     lepAna.inclusive_electron_pt  = 5
     lepAna.loose_electron_pt  = 5
-    isolation = "absIso03"
+    lepAna.loose_electron
+    isolation = "absIso04"
     lepAna.loose_electron_id = "POG_MVA_ID_Spring15_NonTrig_VLooseIdEmu"
 
     # Lepton-Jet Cleaning
@@ -97,7 +98,7 @@ if analysis in ['SOS']:
     # otherwise with only absIso cut at 10 GeV and no relIso we risk cleaning away good jets
 
 if isolation == "miniIso": 
-    if (analysis=="ttH") or (analysis =="SOS"):
+    if (analysis=="ttH"):
         lepAna.loose_muon_isoCut     = lambda muon : muon.miniRelIso < 0.4 and muon.sip3D() < 8
         lepAna.loose_electron_isoCut = lambda elec : elec.miniRelIso < 0.4 and elec.sip3D() < 8
     elif analysis=="susy":
@@ -107,11 +108,9 @@ if isolation == "miniIso":
 elif isolation == None:
     lepAna.loose_muon_isoCut     = lambda muon : True
     lepAna.loose_electron_isoCut = lambda elec : True
-elif isolation == "absIso03":
-    lepAna.loose_muon_absIso = 10.0
-    lepAna.loose_electron_relIso = 99.0
-    lepAna.loose_muon_relIso = 99.0
-    lepAna.loose_electron_absIso = 10.0
+elif isolation == "absIso04":
+    lepAna.loose_muon_isoCut     = lambda muon : muon.RelIsoFix04*muon.pt() < 10 and muon.sip3D() < 8
+    lepAna.loose_electron_isoCut     = lambda muon : muon.RelIsoFix04*elec.pt() < 10 and elec.sip3D() < 8
 else:
     # nothing to do, will use normal relIso03
     pass
