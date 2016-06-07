@@ -110,7 +110,7 @@ elif isolation == None:
     lepAna.loose_electron_isoCut = lambda elec : True
 elif isolation == "absIso04":
     lepAna.loose_muon_isoCut     = lambda muon : muon.RelIsoFix04*muon.pt() < 10 and muon.sip3D() < 8
-    lepAna.loose_electron_isoCut     = lambda muon : muon.RelIsoFix04*elec.pt() < 10 and elec.sip3D() < 8
+    lepAna.loose_electron_isoCut = lambda elec : elec.RelIsoFix04*elec.pt() < 10 and elec.sip3D() < 8
 else:
     # nothing to do, will use normal relIso03
     pass
