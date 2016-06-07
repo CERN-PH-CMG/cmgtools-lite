@@ -2,6 +2,7 @@
 pt1     : LepGood1_pt          : 20,0,300     ; XTitle="p_{T}(hardest reco lep) [GeV]"
 pt2     : LepGood2_pt          : 20,0,300     ; XTitle="p_{T}(subleading reco lep) [GeV]"
 ptdil   : pt_2(LepGood1_pt, LepGood1_phi, LepGood2_pt, LepGood2_phi): 20, 0., 300. ;  XTitle="p_{T}(dilepton) [GeV]"
+ptll    : LepGood1_pt+LepGood2_pt : 20, 0., 300. ;  XTitle="p_{T}(dilepton) [GeV]"
 dphi    : abs(deltaPhi(LepGood1_phi,LepGood2_phi)):  30, -1.5, 3.5;  XTitle="#Delta #phi(ll) [GeV]", Legend='TL'
 lep1_jetPtRelv2:  LepGood1_jetPtRelv2: 40,0,40; XTitle="LepGood1 Jet p_{T} Relv2  [GeV]", Legend='TR'
 lep1_jetPtRatiov2: LepGood1_jetPtRatiov2: 40,0,1.2; XTitle="LepGood1 Jet p_{T} Ratiov2 ", Legend='TL'
