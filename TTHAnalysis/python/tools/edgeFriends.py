@@ -8,6 +8,7 @@ ROOT.gSystem.Load("libFWCoreFWLite.so")
 ROOT.gSystem.Load("libDataFormatsFWLite.so")
 ROOT.AutoLibraryLoader.enable()
 print 'done loading MT2 stuff.'
+import time
 
 #ROOT.gSystem.Load('libCondFormatsBTagObjects') 
 ROOT.gSystem.Load("pluginRecoBTagPerformanceDBplugins.so")
@@ -44,6 +45,10 @@ class edgeFriends:
             self.badResolutionTrackTaggerSet.add(i.rstrip('\n'))
         for i in list(self.badMuonTrackTaggerFile):
             self.badMuonTrackTaggerSet.add(i.rstrip('\n'))
+        self.beamHaloListFile.close()
+        self.fourthBadEESuperCrystalFile.close()
+        self.badResolutionTrackTaggerFile.close()
+        self.badMuonTrackTaggerFile.close()
         ##B-tagging stuff
         self.calib = ROOT.BTagCalibration("csvv2", "/afs/cern.ch/user/p/pablom/public/CSVv2.csv")
         self.reader_heavy    = ROOT.BTagCalibrationReader(self.calib, 1, "mujets", "central")
@@ -66,18 +71,14 @@ class edgeFriends:
         self.h_btag_eff_c    = copy.deepcopy(self.f_btag_eff.Get("h2_BTaggingEff_csv_med_Eff_c"   ))
         self.h_btag_eff_udsg = copy.deepcopy(self.f_btag_eff.Get("h2_BTaggingEff_csv_med_Eff_udsg"))
         self.f_btag_eff.Close()
-        self.beamHaloListFile.close()
-        self.fourthBadEESuperCrystalFile.close()
-        self.badResolutionTrackTaggerFile.close()
-        self.badMuonTrackTaggerFile.close()
         ## =================
         ## pdf things
         ## =================
-        self.an_file = ROOT.TFile("/afs/cern.ch/work/m/mdunser/public/pdfsForLikelihood/pdfs_version23_savingTheWorkspace_may2016.root")
+        self.an_file = ROOT.TFile("/afs/cern.ch/work/m/mdunser/public/pdfsForLikelihood/pdfs_version24_savingTheWorkspace_june2016.root")
         self.wspace = copy.deepcopy( self.an_file.Get('w') )
         # data
         for t in ['DA','MC']:
-            for var in [['mlb','sum_mlb_Edge'],['met','met_Edge'],['zpt','lepsZPt_Edge'],['ldr','lepsDR_Edge'],['a3d','d3D_Edge']]:
+            for var in [['mlb','sum_mlb_Edge'],['met','met_Edge'],['zpt','lepsZPt_Edge'],['ldr','lepsDR_Edge'],['a3d','d3D_Edge'],['ldp','lepsDPhi_Edge']]:
                 print 'loading likelihoods for variable %s in %s'%(var[0],t)
                 setattr(self,'h_lh_ana_%s_%s' %(var[0],t), self.wspace.pdf('%s_analyticalPDF_%s'%(var[0],t)))
                 setattr(self,'var_ana_%s_%s'  %(var[0],t), self.wspace.var(var[1]))
@@ -101,6 +102,8 @@ class edgeFriends:
                             'HLT_DoubleElHT', 'HLT_DoubleMuHT' , 'HLT_MuEGHT'     , 
                             'HLT_HTJet'     , 'HLT_HTMET'      , 
                             'HLT_SingleEl'  , 'HLT_SingleMu']
+        self.btagMediumCut = 0.800
+        self.btagLooseCut  = 0.460
 
     def listBranches(self):
         label = self.label
@@ -109,6 +112,7 @@ class edgeFriends:
                     ("lumi"+label, "I"),
                     ("nVert"+label, "I"),
                     ("nLepTight"+label, "I"),
+                    ("nLepLoose"+label, "I"),
                     ("nJetSel"+label, "I"),
                     ("bestMjj"+label, "F"),
                     ("minMjj"+label, "F"),
@@ -118,8 +122,8 @@ class edgeFriends:
                     ("hardJJDR"+label, "F"),
                     ("j1MetDPhi"+label, "F"),
                     ("j2MetDPhi"+label, "F"),
-                    ("isLefthanded"+label, "I"),
-                    ("isRighthanded"+label, "I"),
+                    ## not really needed for much ("isLefthanded"+label, "I"),
+                    ## not really needed for much ("isRighthanded"+label, "I"),
                     ("nPairLep"+label, "I"),
                     ("iLT"+label,"I",20,"nLepTight"+label), 
                     ("iJ"+label,"I",20,"nJetSel"+label), # index >= 0 if in Jet; -1-index (<0) if in DiscJet
@@ -127,9 +131,8 @@ class edgeFriends:
                     ("nLepGood20T"+label, "I"),
                     ("nJet35"+label, "I"), 
                     ("htJet35j"+label),
-                    ("nBJetLoose25"+label, "I"),
-                    ("nBJetLoose35"+label, "I"),
                     ("nBJetMedium25"+label, "I"), 
+                    ("nBJetLoose35"+label, "I"), 
                     ("nBJetMedium35"+label, "I"), 
                     ("iL1T"+label, "I"),
                     ("iL2T"+label, "I"), 
@@ -171,21 +174,25 @@ class edgeFriends:
                     ("lh_met_data"+label, "F"), 
                     ("lh_mlb_data"+label, "F"), 
                     ("lh_ldr_data"+label, "F"),
+                    ("lh_ldp_data"+label, "F"),
                     ("lh_zpt_mc"+label  , "F"),
                     ("lh_a3d_mc"+label  , "F"),
                     ("lh_met_mc"+label  , "F") , 
                     ("lh_mlb_mc"+label  , "F") , 
                     ("lh_ldr_mc"+label  , "F") ,
+                    ("lh_ldp_mc"+label  , "F") ,
                     ("lh_ana_zpt_data"+label, "F") ,
                     ("lh_ana_a3d_data"+label, "F") ,
                     ("lh_ana_met_data"+label, "F") ,
                     ("lh_ana_mlb_data"+label, "F") , 
                     ("lh_ana_ldr_data"+label, "F") ,
+                    ("lh_ana_ldp_data"+label, "F") ,
                     ("lh_ana_zpt_mc"+label  , "F") , 
                     ("lh_ana_met_mc"+label  , "F") , 
                     ("lh_ana_mlb_mc"+label  , "F") , 
                     ("lh_ana_ldr_mc"+label  , "F") ,
                     ("lh_ana_a3d_mc"+label  , "F") ,
+                    ("lh_ana_ldp_mc"+label  , "F") ,
                     ("weight_btagsf"+label  , "F") ,
                     ("weight_btagsf_heavy_UP"+label, "F") ,
                     ("weight_btagsf_heavy_DN"+label, "F") ,
@@ -217,6 +224,7 @@ class edgeFriends:
         biglist.append( ("JetSel"+label+"_mcMatchId","I",20,"nJetSel"+label) )
         return biglist
     def __call__(self,event):
+        t0 = time.time()
         leps  = [l for l in Collection(event,"LepGood","nLepGood")]
         lepso = [l for l in Collection(event,"LepOther","nLepOther")]
         jetsc = [j for j in Collection(event,"Jet","nJet")]
@@ -224,7 +232,8 @@ class edgeFriends:
         metco = [m for m in Collection(event,"metcJet","nDiscJet")]
         (met, metphi)  = event.met_pt, event.met_phi
         (met_raw, metphi_raw)  = event.met_rawPt, event.met_rawPhi
-        if not event.isData:
+        isData = event.isData
+        if not isData:
             gentaus  = [t for t in Collection(event,"genTau","ngenTau")]
             ntrue = event.nTrueInt
         ## nvtx = event.nVert
@@ -241,27 +250,34 @@ class edgeFriends:
         ret['evt'] = event.evt
         ret['nVert'] = event.nVert
         
+        t01 = time.time()
         ## copy the triggers, susy masses and filters!!
         for mass in self.susymasslist:
             ret[mass] = (-1 if not hasattr(event, mass) else getattr(event, mass) )
         for trig in self.triggerlist:
-            trigret[trig] = (-1 if not hasattr(event, trig) else getattr(event, trig) )
-
-        ## this will be slow
-        ret['isLefthanded' ] = 0
-        ret['isRighthanded'] = 0
-        if not event.isData:
-            genparts = [p for p in Collection(event,"GenPart","nGenPart")]
-            for p in genparts:
-                if p.status == 62:
-                    if   abs(p.pdgId)-1000000 in [11, 13]: ret['isLefthanded' ] = 1
-                    elif abs(p.pdgId)-2000000 in [11, 13]: ret['isRighthanded'] = 1
-                    break
+            if not isData:
+                trigret[trig] = -1
+            else:
+                trigret[trig] = (-1 if not hasattr(event, trig) else getattr(event, trig) )
+        t1 = time.time()
 
         ret['genWeight']          = ( 1. if not hasattr(event, 'genWeight'         ) else getattr(event, 'genWeight') )
         ret['hbheFilterIso'     ] = ( 1  if not hasattr(event, 'hbheFilterIso'     ) else int(getattr(event, 'hbheFilterIso'     )) )
         ret['hbheFilterNew25ns' ] = ( 1  if not hasattr(event, 'hbheFilterNew25ns' ) else int(getattr(event, 'hbheFilterNew25ns' )) )
         ret['Flag_eeBadScFilter'] = ( 1  if not hasattr(event, 'Flag_eeBadScFilter') else int(getattr(event, 'Flag_eeBadScFilter')) )
+
+        ## this will be slow
+        ## ret['isLefthanded' ] = 0
+        ## ret['isRighthanded'] = 0
+        ## if not isData:
+        ##     genparts = [p for p in Collection(event,"GenPart","nGenPart")]
+        ##     for p in genparts:
+        ##         if p.status == 62:
+        ##             if   abs(p.pdgId)-1000000 in [11, 13]: ret['isLefthanded' ] = 1
+        ##             elif abs(p.pdgId)-2000000 in [11, 13]: ret['isRighthanded'] = 1
+        ##             break
+
+        t2 = time.time()
 
         #
         ### Define tight leptons
@@ -270,28 +286,36 @@ class edgeFriends:
         # ====================
         # do pileupReweighting
         # ====================
-        puWt = self.pu_dict[int(ntrue)] if not event.isData else 1.
+        puWt = self.pu_dict[int(ntrue)] if not isData else 1.
         #if puWt > 10: puWt = 10.
         ret["PileupW"] = puWt
+        t21 = time.time()
 
         # ===============================
         # new, simpler sorting of leptons
         # ===============================
+        nLepLoose = 0
         for il,lep in enumerate(leps):
-            clean = True
-            if self.tightLeptonSel(lep) and clean:
-                ret["iLT"].append(il)
-                if lep.pt > 20: ret["nLepGood20T"] += 1
+            if not self._susyEdgeLoose(lep): continue
+            nLepLoose+= 1
+            if not self.tightLeptonSel(lep): continue
+            ret["iLT"].append(il)
+            ret["nLepGood20T"] += 1
         # other leptons, negative indices
         for il,lep in enumerate(lepso):
-            clean = True
-            if self.tightLeptonSel(lep) and clean:
-                ret["iLT"].append(-1-il)
-                if lep.pt > 20: ret["nLepGood20T"] += 1
+            if not self._susyEdgeLoose(lep): continue
+            nLepLoose+= 1
+            if not self.tightLeptonSel(lep): continue
+            ret["iLT"].append(-1-il)
+            ret["nLepGood20T"] += 1
+        ret["nLepLoose"] = nLepLoose
         ret["nLepTight"] = len(ret["iLT"])
+
+        t22 = time.time()
         #
         # sort the leptons by pT:
         ret["iLT"].sort(key = lambda idx : leps[idx].pt if idx >= 0 else lepso[-1-idx].pt, reverse = True)
+        t23 = time.time()
 
         ## search for the lepton pair
         #lepst  = [ leps [il] for il in ret["iLT"] ]
@@ -304,6 +328,7 @@ class edgeFriends:
                 lepst.append(lepso[-1-il])
         #
         iL1iL2 = self.getPairVariables(lepst, metp4, metp4_raw)
+        t24 = time.time()
         ret['iL1T'] = ret["iLT"][ iL1iL2[0] ] if (len(ret["iLT"]) >=1 and iL1iL2[0] != -999) else -999
         ret['iL2T'] = ret["iLT"][ iL1iL2[1] ] if (len(ret["iLT"]) >=2 and iL1iL2[1] != -999) else -999
         ret['lepsMll'] = iL1iL2[2] 
@@ -317,6 +342,7 @@ class edgeFriends:
         ret['parPt']    = iL1iL2[10]
         ret['ortPt']    = iL1iL2[11]
         ret['dTheta']    = iL1iL2[12]
+        t3 = time.time()
 
         #print 'new event =================================================='
         l1 = ROOT.TLorentzVector()
@@ -338,7 +364,7 @@ class edgeFriends:
             for idx in [ret['iL1T'], ret['iL2T']]:
                 lep = leps[idx] if idx >= 0 else lepso[-1-idx]
                 minDRTau = 99.
-                if not event.isData:
+                if not isData:
                     for tau in gentaus:
                         tmp_dr = deltaR(lep, tau)
                         if tmp_dr < minDRTau:
@@ -353,6 +379,7 @@ class edgeFriends:
                 #print 'good lepton', getattr(lep,'pt'), getattr(lep,'eta'), getattr(lep,'phi'), getattr(lep,'pdgId') 
         else:
             ret['nPairLep'] = 0
+        t4 = time.time()
 
         mt2 = -1.
         if ret['nPairLep'] == 2:
@@ -361,14 +388,17 @@ class edgeFriends:
             metp4obj = ROOT.reco.Particle.LorentzVector(met*cos(metphi),met*sin(metphi),0,met)
             mt2 = computeMT2(l1mt2, l2mt2, metp4obj)
         ret['mt2'] = mt2
+        t5 = time.time()
             
         ### Define jets
         ret["iJ"] = []
         # 0. mark each jet as clean
-        for j in jetsc+jetsd: j._clean = True
-        # set _clean flag of bad jets to False
         for j in jetsc+jetsd:
-            if abs(j.eta) > 2.4 or j.pt < 35:
+            j._clean = True
+            if abs(j.eta) > 2.4 or j.pt < 25.:
+                j._clean = False
+                continue
+            if j.pt < 35 and j.btagCSV < self.btagMediumCut: 
                 j._clean = False
                 continue
             for l in lepst:
@@ -376,29 +406,34 @@ class edgeFriends:
                 if deltaR(l,j) < 0.4:
                     j._clean = False
 
-        ## look for number of 25 GeV b-jets
-        ret['nBJetLoose25' ] = 0
-        ret['nBJetMedium25'] = 0
-        for j in jetsc+jetsd:
-            if abs(j.eta) < 2.4 and j.pt > 25. and j.btagCSV > 0.423:
-                lepclear = True
-                for l in lepst:
-                    if deltaR(l,j) < 0.4: lepclear = False
-                if lepclear: 
-                    ret['nBJetLoose25'] += 1
-                    if j.btagCSV > 0.890:
-                        ret['nBJetMedium25'] += 1
+        nb25 = 0
+        nb35 = 0
+        n35 = 0
+        for ijc,j in enumerate(jetsc):
+            if not j._clean: continue
+            bt = j.btagCSV
+            pt = j.pt
+            if pt > 25 and bt > self.btagMediumCut: nb25 += 1
+            if pt > 35 and bt > self.btagMediumCut: nb35 += 1
+            if pt > 35:
+                n35 += 1
+                ret["iJ"].append(ijc)
+        for ijd,j in enumerate(jetsd):
+            if not j._clean: continue
+            bt = j.btagCSV
+            pt = j.pt
+            if pt > 25 and bt > self.btagMediumCut: nb25 += 1
+            if pt > 35 and bt > self.btagMediumCut: nb35 += 1
+            if pt > 35:
+                n35 += 1
+                ret["iJ"].append(-1-ijd)
 
-        ## done looking for 25 GeV b-jets
+        ## look for number of 25 GeV b-jets
+        ret['nBJetMedium25'] = nb25
+        ret['nBJetMedium35'] = nb35
 
         # 2. compute the jet list
         
-        for ijc,j in enumerate(jetsc):
-            if not j._clean: continue
-            ret["iJ"].append(ijc)
-        for ijd,j in enumerate(jetsd):
-            if not j._clean: continue
-            ret["iJ"].append(-1-ijd)
         ret['nJetSel'] = len(ret["iJ"])
 
         # 3. sort the jets by pt
@@ -409,33 +444,38 @@ class edgeFriends:
         
         for jfloat in "pt eta phi mass btagCSV rawPt".split():
             jetret[jfloat] = []
-        if not event.isData:
+        if not isData:
             for jmc in "mcPt mcFlavour mcMatchId".split():
                 jetret[jmc] = []
         for idx in ret["iJ"]:
             jet = jetsc[idx] if idx >= 0 else jetsd[-1-idx]
             for jfloat in "pt eta phi mass btagCSV rawPt".split():
                 jetret[jfloat].append( getattr(jet,jfloat) )
-            if not event.isData:
+            if not isData:
                 for jmc in "mcPt mcFlavour mcMatchId".split():
-                    jetret[jmc].append( getattr(jet,jmc) if not event.isData else -1.)
+                    jetret[jmc].append( getattr(jet,jmc) if not isData else -1.)
+        t6 = time.time()
         
         # 5. compute the sums
         
         ret["nJet35"] = 0; ret["htJet35j"] = 0; ret["nBJetLoose35"] = 0; ret["nBJetMedium35"] = 0
         totalRecoil = ROOT.TLorentzVector()
         theJets = []
+        theBJets = []
         for j in jetsc+jetsd:
-            if not j._clean: continue
+            if not j._clean or j.pt < 35: continue
             theJets.append(j)
             ret["nJet35"] += 1; ret["htJet35j"] += j.pt; 
-            if j.btagCSV>0.423: ret["nBJetLoose35"] += 1
-            if j.btagCSV>0.890: ret["nBJetMedium35"] += 1
+            if j.btagCSV>self.btagLooseCut : ret["nBJetLoose35"] += 1
+            if j.btagCSV>self.btagMediumCut: 
+                theBJets.append(j)
+                ret["nBJetMedium35"] += 1
             jet = ROOT.TLorentzVector()
             jet.SetPtEtaPhiM(j.pt, j.eta, j.phi, j.mass)
             totalRecoil = totalRecoil + jet
           ## compute mlb for the two lepton  
-        theJets = sorted(theJets, key = lambda j : j.pt, reverse = True)
+        theJets  = sorted(theJets , key = lambda j : j.pt, reverse = True)
+        theBJets = sorted(theBJets, key = lambda j : j.pt, reverse = True)
         ret['lepsJZB_recoil'] = totalRecoil.Pt() - ret['lepsZPt']
         ret['bestMjj'] = self.getBestMjj(theJets)
         ret['minMjj']  = self.getMinMjj (theJets)
@@ -446,63 +486,60 @@ class edgeFriends:
         ret['j1MetDPhi'] = deltaPhi(metphi, theJets[0].phi) if len(theJets) > 0 else -99.
         ret['j2MetDPhi'] = deltaPhi(metphi, theJets[1].phi) if len(theJets) > 1 else -99.
          
-        [wtbtag, wtbtagUp_heavy, wtbtagUp_light, wtbtagDown_heavy, wtbtagDown_light] = (self.getWeightBtag(theJets) if not event.isData else [1., 1., 1., 1., 1.])
+        t7 = time.time()
+        [wtbtag, wtbtagUp_heavy, wtbtagUp_light, wtbtagDown_heavy, wtbtagDown_light] = (self.getWeightBtag(theJets) if not isData else [1., 1., 1., 1., 1.])
 
         ret['weight_btagsf'] = wtbtag
         ret['weight_btagsf_heavy_UP'] = wtbtagUp_heavy
         ret['weight_btagsf_heavy_DN'] = wtbtagDown_heavy
         ret['weight_btagsf_light_UP'] = wtbtagUp_light
         ret['weight_btagsf_light_DN'] = wtbtagDown_light
+        t8 = time.time()
+        ##print 'njets: %.0d nbjets35medium: %.0d / %.0d'%(ret["nJet35"], len(theBJets), ret["nBJetMedium35"])
 	
         jet = ROOT.TLorentzVector()
         min_mlb = 1e6
         max_mlb = 1e6
-        _lind, _jind = -99, -99
+        _lmin, _jmin = -1, -1
+        _lmax, _jmax = -1, -1
         leplist = [l1, l2]
+        ## DO MLB CALCULATION HERE
         # find the global minimum mlb (or mlj)
-        jetIsB = False
-        for lepton in leplist:
-            if ret['nPairLep'] < 2: continue
-            for j in jetsc+jetsd:
-                if not j._clean: continue
-                jet.SetPtEtaPhiM(j.pt, j.eta, j.phi, j.mass)           
-                tmp = (lepton+jet).M()
-                if j.btagCSV>0.814:   
-                   if tmp < min_mlb: 
-                         min_mlb  = tmp
-                         jetisB = True 
-                         _lind = leplist.index(lepton)
-                         _jind = j
-                else:
-                     if tmp < min_mlb and jetIsB == False:
-                         min_mlb = tmp
-                         _lind = leplist.index(lepton)
-                         _jind = j
-        
-        # compute the minimum mlb (or mlj) for the other lepton
-        jetIsB = False
-        for lepton in leplist: 
-            if ret['nPairLep'] < 2: continue 
-            for j in jetsc+jetsd: 
-                if not j._clean: continue
-                if j == _jind: continue
-                jet.SetPtEtaPhiM(j.pt, j.eta, j.phi, j.mass)           
-                tmp = ( (l1 if _lind == 1 else l2) +jet).M()
-                if j.btagCSV>0.814:  
-                    if tmp < max_mlb: 
-                        max_mlb  = tmp
-                        jetIsB = True
-                else:
-                    if tmp < max_mlb and jetIsB == False:
-                        max_mlb = tmp   
+        # new mlb calculations
+        jet1coll = (theBJets if len(theBJets) >= 1 else theJets)
+        jet2coll = (theBJets if len(theBJets) >= 2 else theJets)
+        if ret['nPairLep'] > 1:
+            for _il,lep in enumerate(leplist):
+                for _ij,j in enumerate(jet1coll):
+                    jet.SetPtEtaPhiM(j.pt, j.eta, j.phi, j.mass)           
+                    tmp_mlb = (lep+jet).M()
+                    if tmp_mlb < min_mlb:
+                        min_mlb = tmp_mlb
+                        _lmin = _il
+                        _jmin = _ij
+            for _il,lep in enumerate(leplist):
+                if _il == _lmin: continue
+                for _ij,j in enumerate(jet2coll):
+                    if len(theBJets) == 1 and j.btagCSV >= self.btagMediumCut:
+                        continue
+                    if (len(theBJets) == 0 or len(theBJets) >= 2) and _ij == _jmin: continue
+                    jet.SetPtEtaPhiM(j.pt, j.eta, j.phi, j.mass)           
+                    tmp_mlb = (lep+jet).M()
+                    if tmp_mlb < max_mlb:
+                        max_mlb = tmp_mlb
+                        _lmax = _il
+                        _jmax = _ij
+        ##print '%15d : min_mlb : %15.2f max_mlb : %15.2f nb: %d nj: %d'%(event.evt, min_mlb, max_mlb, len(theBJets), len(theJets))
+            
         ret["min_mlb1"] = min_mlb if min_mlb < 1e6  else -1.
         ret["min_mlb2"] = max_mlb if max_mlb < 1e6  else -1.
         ret["sum_mlb"] = ret["min_mlb1"] + ret["min_mlb2"]
         ret["st"] = met+lepret["Lep1_pt"+self.label]+lepret["Lep2_pt"+self.label]
+        t9 = time.time()
 
         ## beam halo filter list file:
         ## do this only for data
-        if event.isData:
+        if isData:
             evt_str = '%d:%d:%d'%(event.run, event.lumi, event.evt)
             if evt_str in self.beamHaloSet:
                 ret['nPairLep'] = -1
@@ -529,7 +566,7 @@ class edgeFriends:
                 for u in ['_ana']:
                     for var in [['mlb',ret['sum_mlb'],'sum_mlb_Edge'],['met',met,'met_Edge'],
                                 ['zpt',ret['lepsZPt'],'lepsZPt_Edge'],['ldr',ret['lepsDR'],'lepsDR_Edge'],
-                                ['a3d',ret['d3D'],'d3D_Edge']]:
+                                ['a3d',ret['d3D'],'d3D_Edge'],['ldp',ret['lepsDPhi'],'lepsDPhi_Edge']]:
                         self.wspace.var(var[2]).setVal(var[1])
                         ret["lh%s_%s_%s"%(u,var[0],t)] = getattr(self,'h_lh_ana_%s_%s'%(var[0],nam)).getVal(getattr(self,'obs_ana%s_%s'%(var[0],nam)))
                     
@@ -538,17 +575,7 @@ class edgeFriends:
                     if not ret["lh%s_met_%s"%(u,t)]: ret["lh%s_met_%s"%(u,t)] = 1e-50
                     if not ret["lh%s_zpt_%s"%(u,t)]: ret["lh%s_zpt_%s"%(u,t)] = 1e-50
                     if not ret["lh%s_a3d_%s"%(u,t)]: ret["lh%s_a3d_%s"%(u,t)] = 1e-50
-                ## for u in ['']:
-                ##     ret["lh%s_zpt_%s"%(u,t)] = getattr(self, 'h_lh%s_zpt_%s'%(u,t)).GetBinContent( getattr(self, 'h_lh%s_zpt_%s'%(u,t)).FindBin( ret["lepsZPt"]  ) ) 
-                ##     ret["lh%s_met_%s"%(u,t)] = getattr(self, 'h_lh%s_met_%s'%(u,t)).GetBinContent( getattr(self, 'h_lh%s_met_%s'%(u,t)).FindBin( met             ) ) 
-                ##     ret["lh%s_mlb_%s"%(u,t)] = getattr(self, 'h_lh%s_mlb_%s'%(u,t)).GetBinContent( getattr(self, 'h_lh%s_mlb_%s'%(u,t)).FindBin( ret["sum_mlb"]  ) ) 
-                ##     ret["lh%s_ldr_%s"%(u,t)] = getattr(self, 'h_lh%s_ldr_%s'%(u,t)).GetBinContent( getattr(self, 'h_lh%s_ldr_%s'%(u,t)).FindBin( ret["lepsDR" ]  ) ) 
-                ##     ret["lh%s_a3d_%s"%(u,t)] = getattr(self, 'h_lh%s_a3d_%s'%(u,t)).GetBinContent( getattr(self, 'h_lh%s_a3d_%s'%(u,t)).FindBin( ret['d3D'] )  )
-                ##     if not ret["lh%s_mlb_%s"%(u,t)]: ret["lh%s_mlb_%s"%(u,t)] = 1e-50
-                ##     if not ret["lh%s_ldr_%s"%(u,t)]: ret["lh%s_ldr_%s"%(u,t)] = 1e-50
-                ##     if not ret["lh%s_met_%s"%(u,t)]: ret["lh%s_met_%s"%(u,t)] = 1e-50
-                ##     if not ret["lh%s_zpt_%s"%(u,t)]: ret["lh%s_zpt_%s"%(u,t)] = 1e-50
-                ##     if not ret["lh%s_a3d_%s"%(u,t)]: ret["lh%s_a3d_%s"%(u,t)] = 1e-50
+                    if not ret["lh%s_ldp_%s"%(u,t)]: ret["lh%s_ldp_%s"%(u,t)] = 1e-50
         else:
             ret["srID"]      = -99
             for t in ['data', 'mc']:
@@ -558,7 +585,24 @@ class edgeFriends:
                     ret["lh%s_met_%s"%(u,t)] = -999.
                     ret["lh%s_zpt_%s"%(u,t)] = -999.
                     ret["lh%s_a3d_%s"%(u,t)] = -999.
+                    ret["lh%s_ldp_%s"%(u,t)] = -999.
+        t10 = time.time()
 
+        ## print 'time from start to pre trigloaded: %.3f mus'%( (t01-t0)*1000000. )
+        ## print 'time from pretrig to posttrigload: %.3f mus'%( (t1 -t01)*1000000. )
+        ## print 'time from trigger loaded to l-r-h: %.3f mus'%( (t2 -t1)*1000000. )
+        ## print '  time for puW: %.3f'%( (t21-t2)*1000000.  )
+        ## print '  time for lepstuff: %.3f'%( (t22-t21)*1000000.  )
+        ## print '  time for lepsort : %.3f'%( (t23-t22)*1000000.  )
+        ## print '  time for npairlep: %.3f'%( (t24-t23)*1000000.  )
+        ## print 'time from l-r-h to done with leps: %.3f mus'%( (t3 -t2)*1000000. )
+        ## print 'time from done with lep to premt2: %.3f mus'%( (t4 -t3)*1000000. )
+        ## print 'time from premt2 to post mt2     : %.3f mus'%( (t5 -t4)*1000000. )
+        ## print 'time from post mt2 to jet filled : %.3f mus'%( (t6 -t5)*1000000. )
+        ## print 'time from jet filled to pre btag : %.3f mus'%( (t7 -t6)*1000000. )
+        ## print 'time from prebtag to post btag   : %.3f mus'%( (t8 -t7)*1000000. )
+        ## print 'time from post btag to poost mlbe: %.3f mus'%( (t9 -t8)*1000000. )
+        ## print 'time from post mlb etc to post LH: %.3f mus'%( (t10-t9)*1000000. )
         
         fullret = {}
         for k,v in ret.iteritems(): 
@@ -746,7 +790,7 @@ class edgeFriends:
             if(pt < 20): continue
             eff = self.getBtagEffFromFile(pt, eta, mcFlavor)
 
-            istag = csv > 0.890 and eta < 2.5 and pt > 20
+            istag = csv > self.btagMediumCut and eta < 2.5 and pt > 20
             SF = self.get_SF_btag(pt, eta, mcFlavor)
             if(istag):
                  mcTag = mcTag * eff
@@ -777,15 +821,36 @@ class edgeFriends:
         return [wtbtag, wtbtagUp_heavy, wtbtagUp_light, wtbtagDown_heavy, wtbtagDown_light]
 
 
+    def _susyEdgeLoose(self, lep):
+            if lep.pt <= 10.: return False
+            if abs(lep.dxy) > 0.05: return False
+            if abs(lep.dz ) > 0.10: return False
+            if lep.sip3d > 8: return False
+            lepeta = abs(lep.eta)
+            ## muons
+            if abs(lep.pdgId) == 13:
+              if lepeta > 2.4: return False
+              if lep.mediumMuonId != 1: return False
+              if lep.miniRelIso > 0.4: return False
+            ## electrons
+            if abs(lep.pdgId) == 11:
+              if lepeta > 2.5: return False
+              if lep.miniRelIso > 0.4: return False
+              if (lep.convVeto == 0) or (lep.lostHits > 0) : return False
+              if (lepeta < 0.8   and lep.mvaIdSpring15 < -0.70) : return False
+              if (lepeta > 0.8   and lepeta < 1.479 and lep.mvaIdSpring15 < -0.83) : return False
+              if (lepeta > 1.479 and lep.mvaIdSpring15 < -0.92) : return False
+              if hasattr(lep, 'idEmuRA5'):
+                if lep.idEmuRA5 == 0: return False
+            return True
 
  
-def _susyEdge(lep):
-        if lep.pt <= 10.: return False
+def _susyEdgeTight(lep):
+        if lep.pt <= 20.: return False
         if abs(lep.eta) > 2.4: return False
         if abs(lep.dxy) > 0.05: return False
         if abs(lep.dz ) > 0.10: return False
         if abs(lep.eta) > 1.4 and abs(lep.eta) < 1.6: return False
-        # marc aug07 if abs(lep.pdgId) == 13 and lep.muonMediumId != 1: return False
         if abs(lep.pdgId) == 13:
           if lep.mediumMuonId != 1: return False
           if lep.miniRelIso > 0.2: return False
@@ -794,9 +859,6 @@ def _susyEdge(lep):
           etatest = (abs(lep.etaSc) if hasattr(lep, 'etaSc') else abs(lep.eta))
           if (etatest > 1.4442 and etatest < 1.566) : return False
           if (lep.convVeto == 0) or (lep.lostHits > 0) : return False
-          ## phys14 training if (abs(lep.eta) < 0.8 and lep.mvaIdPhys14 < 0.73) : return False
-          ## phys14 training if (abs(lep.eta) > 0.8 and abs(lep.eta) < 1.479 and lep.mvaIdPhys14 < 0.57) : return False
-          ## phys14 training if (abs(lep.eta) > 1.479 and lep.mvaIdPhys14 < 0.05) : return False
           if (abs(lep.eta) < 0.8 and lep.mvaIdSpring15 < 0.87) : return False
           if (abs(lep.eta) > 0.8 and abs(lep.eta) < 1.479 and lep.mvaIdSpring15 < 0.60) : return False
           if (abs(lep.eta) > 1.479 and lep.mvaIdSpring15 < 0.17) : return False
@@ -812,7 +874,7 @@ if __name__ == '__main__':
         def __init__(self, name):
             Module.__init__(self,name,None)
             self.sf1 = edgeFriends("Edge", 
-                lambda lep : _susyEdge(lep),
+                lambda lep : _susyEdgeTight(lep),
                 cleanJet = lambda lep,jet,dr : (jet.pt < 35 and dr < 0.4 and abs(jet.eta) > 2.4))
         def analyze(self,ev):
             print "\nrun %6d lumi %4d event %d: leps %d" % (ev.run, ev.lumi, ev.evt, ev.nLepGood)
