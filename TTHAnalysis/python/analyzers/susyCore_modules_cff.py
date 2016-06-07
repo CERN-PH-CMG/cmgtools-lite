@@ -333,18 +333,22 @@ jetAna = cfg.Analyzer(
 
 ## Jets Analyzer (generic)
 jetAnaScaleUp = jetAna.clone(name='jetAnalyzerScaleUp',
+    copyJetsByValue = True,
     jetCol = 'slimmedJets',
     shiftJEC = +1, # set to +1 or -1 to apply +/-1 sigma shift to the nominal jet energies
     collectionPostFix = "_jecUp",
     calculateType1METCorrection  = True,
+    cleanSelectedLeptons = False,
    )
 
 ## Jets Analyzer (generic)
 jetAnaScaleDown = jetAna.clone(name='jetAnalyzerScaleDown',
+    copyJetsByValue = True,
     jetCol = 'slimmedJets',
     shiftJEC = -1, # set to +1 or -1 to apply +/-1 sigma shift to the nominal jet energies
     collectionPostFix = "_jecDown",
     calculateType1METCorrection  = True,
+    cleanSelectedLeptons = False,
     )
 
 ##PFcharged jets analyzer
