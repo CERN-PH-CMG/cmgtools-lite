@@ -27,13 +27,14 @@ class badChargedHadronAnalyzer( Analyzer ):
         maxDR = 0.001
         minMuonTrackRelErr = 0.5
         minPtDiffRel = -0.5
-        minMuPt = 20
+        minMuPt = 100
         flagged = False
 
         for muon in self.handles['muons'].product():
             if muon.pt()<minMuPt : continue
             if muon.innerTrack().isNonnull():
                 it = muon.innerTrack()
+                if it.quality(ROOT.reco.TrackBase.highPurity): continue
                 # All events had a drastically high pt error on the inner muon track (fac. ~10). Require at least 0.5
                 if it.ptError()/it.pt() < minMuonTrackRelErr: continue
                 for c in self.handles['packedCandidates'].product():
