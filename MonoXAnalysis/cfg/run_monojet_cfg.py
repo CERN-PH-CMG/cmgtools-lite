@@ -14,7 +14,7 @@ from CMGTools.RootTools.samples.autoAAAconfig import *
 #-------- SET OPTIONS AND REDEFINE CONFIGURATIONS -----------
 
 is50ns = getHeppyOption("is50ns",False)
-runData = getHeppyOption("runData",True)
+runData = getHeppyOption("runData",False)
 scaleProdToLumi = float(getHeppyOption("scaleProdToLumi",-1)) # produce rough equivalent of X /pb for MC datasets
 saveSuperClusterVariables = getHeppyOption("saveSuperClusterVariables",True)
 saveFatJetIDVariables = getHeppyOption("saveFatJetIDVariables",True)
@@ -22,9 +22,9 @@ removeJetReCalibration = getHeppyOption("removeJetReCalibration",False)
 doT1METCorr = getHeppyOption("doT1METCorr",True)
 forcedSplitFactor = getHeppyOption("splitFactor",-1)
 forcedFineSplitFactor = getHeppyOption("fineSplitFactor",-1)
-isTest = getHeppyOption("test",None) != None and not re.match("^\d+$",getHeppyOption("test"))
-doLepCorr = getHeppyOption("doLepCorr",True)
-doPhotonCorr = getHeppyOption("doPhotonCorr",True)
+isTest = getHeppyOption("isTest",True)
+doLepCorr = getHeppyOption("doLepCorr",False)
+doPhotonCorr = getHeppyOption("doPhotonCorr",False)
 
 # Define skims
 signalSkim = False
@@ -315,6 +315,8 @@ if is50ns:
     jetAna.dataGT   = "Summer15_50nsV5_DATA"
     pfChargedCHSjetAna.mcGT     = "Summer15_50nsV5_MC"
     pfChargedCHSjetAna.dataGT   = "Summer15_50nsV5_DATA"
+else: 
+    jetAna.mcGT = "Spring16_25nsV1_MC"
 
 if removeJetReCalibration:
     ## NOTE: jets will still be recalibrated, since calculateSeparateCorrections is True,
@@ -337,12 +339,18 @@ if runData==False and not isTest: # MC all
         # monojet_signals_cherrypick = [ DMS_Mphi_2000_Mchi_1_gSM_1p0_gDM_1p0, DMPS_Mphi_2000_Mchi_1_gSM_1p0_gDM_1p0, DMAV_Mphi_2000_Mchi_1_gSM_0p25_gDM_1p0]
         # mcSamples += monojet_signals_cherrypick
     selectedComponents = mcSamples 
-
-### 50 ns 74X MC samples
-#selectedComponents = mcSamples_monojet_Asymptotic50ns ; is50ns = True
     for comp in selectedComponents:
         comp.splitFactor = len(comp.files)/4
         comp.fineSplitFactor = 1
+
+if runData==False and isTest: # Synch MC sample
+    is50ns = False
+    comp = kreator.makeMCComponent("TTbarDM","/TTbarDMJets_pseudoscalar_Mchi-1_Mphi-100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring16MiniAODv2-PUSpring16RAWAODSIM_80X_mcRun2_asymptotic_2016_miniAODv2_v0_ext1-v1/MINIAODSIM", "CMS", ".*root", 1.0)
+    selectedComponents = [ comp ]
+    for comp in selectedComponents:
+        comp.splitFactor = len(comp.files)
+        comp.fineSplitFactor = 1
+
 
 from CMGTools.HToZZ4L.tools.configTools import printSummary
 
@@ -390,7 +398,7 @@ elif test == 'synch-80X': # sync
     monoJetSkim.metCut = 0  
     what = getHeppyOption("sample")
     if what == "TTbarDM":
-        comp = kreator.makeMCComponent("TTbarDM","/TTbarDMJets_pseudoscalar_Mchi-1_Mphi-100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM", "CMS", ".*root", 1.0, useAAA=True)
+        comp = kreator.makeMCComponent("TTbarDM","/TTbarDMJets_pseudoscalar_Mchi-1_Mphi-100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring16MiniAODv1-PUSpring16RAWAODSIM_80X_mcRun2_asymptotic_2016_v3_ext1-v1/MINIAODSIM", "CMS", ".*root", 1.0)
         selectedComponents = [ comp ]
     elif what == "DYJets":
         comp = DYJetsToLL_M50
@@ -409,7 +417,7 @@ elif test == 'synch-80X': # sync
     jetAna.smearJets       = False
     for comp in selectedComponents:
         comp.splitFactor = 1
-        comp.fineSplitFactor = 1 if getHeppyOption("single") else 4
+        comp.fineSplitFactor = 1 if getHeppyOption("single") else 2
 elif test == '80X-Data':
     what = getHeppyOption("sample")
     if what == "DoubleEG":
@@ -424,7 +432,7 @@ elif test == '80X-Data':
         selectedComponents = dataSamples_Run2015D_16Dec
     for comp in selectedComponents:
         comp.json = json
-        comp.splitFactor = 1
+        comp.splitFactor = 7
         comp.fineSplitFactor = 1 if getHeppyOption("single") else 8
         if not getHeppyOption("all"):
             comp.files = comp.files[:1]
