@@ -10,6 +10,9 @@ leptonTypeTnP = NTupleObjectType("leptonTnP", baseObjectTypes = [ leptonType ], 
     NTupleVariable("etaSc", lambda x : x.superCluster().eta() if abs(x.pdgId())==11 else -100, help="Electron supercluster pseudorapidity"),
     NTupleVariable("isGap", lambda x : x.isGap() if abs(x.pdgId())==11 else False, int, help="is this a Gap electron"),
     NTupleVariable("r9",    lambda x : x.r9() if abs(x.pdgId())==11 else 1.0, help="electron r9"),
+    # ----------------------
+    NTupleVariable("trkIso03", lambda x : (x.dr03TkSumPt() if abs(x.pdgId())==11 else x.isolationR03().sumPt)/x.pt(), help="TrkIso R=0.3"),
+    NTupleVariable("trkIso045", lambda x : (x.dr04TkSumPt() if abs(x.pdgId())==11 else x.isolationR05().sumPt)/x.pt(), help="TrkIso R=0.4 (e), 0.5 (mu)"),
 ])
 
 tnpType = NTupleObjectType("tnpType", baseObjectTypes=[fourVectorType], variables = [
