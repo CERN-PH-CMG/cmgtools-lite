@@ -345,9 +345,9 @@ jetAna = cfg.Analyzer(
     )
 
 ## Fat Jets Analyzer (generic)
-from CMGTools.TTHAnalysis.analyzers.ttHFatJetAnalyzer import ttHFatJetAnalyzer
-ttHFatJetAna = cfg.Analyzer(
-    ttHFatJetAnalyzer, name = 'ttHFatJetAnalyzer',
+from CMGTools.MonoXAnalysis.analyzers.monoXFatJetAnalyzer import monoXFatJetAnalyzer
+monoXFatJetAna = cfg.Analyzer(
+    monoXFatJetAnalyzer, name = 'monoXFatJetAnalyzer',
     jetCol = 'slimmedJetsAK8',
     jetPt = 100.,
     jetEta = 2.4,
@@ -358,8 +358,15 @@ ttHFatJetAna = cfg.Analyzer(
     relaxJetId = False,  
     # v--- not implemented for AK8
     #doPuId = False, # Not commissioned in 7.0.X
-    #recalibrateJets = False,
-    #shiftJEC = 0, # set to +1 or -1 to get +/-1 sigma shifts
+    recalibrateJets = True,
+    applyL2L3Residual = True, # Switch to 'Data' when they will become available for Data
+    recalibrationType = "AK8PFchs",
+    mcGT     = "Spring16_25nsV1_MC",
+    dataGT   = "Fall15_25nsV2", # update with the new one when available in 8.0.X
+    jecPath = "%s/src/CMGTools/RootTools/data/jec/" % os.environ['CMSSW_BASE'],
+    shiftJEC = 0, # set to +1 or -1 to get +/-1 sigma shifts
+    addJECShifts = False, # if true, add  "corr", "corrJECUp", and "corrJECDown" for each jet (requires uncertainties to be available!)
+    rho = ('fixedGridRhoFastjetAll','',''),
     )
 
 
@@ -475,7 +482,7 @@ dmCoreSequence = [
     monoxTauAna,
     isoTrackAna,
     ttHCoreEventAna,
-    ttHFatJetAna,
+    monoXFatJetAna,
     gammaJetCtrlSkim,
     triggerFlagsAna,
     eventFlagsAna,

@@ -113,14 +113,18 @@ dmMonoJet_collections.update({
 })
         
 jetTypeSusyExtra.addVariables([
-        NTupleVariable("puMva", lambda x: x.puMva(), help="Value of the pu MVA discriminator")
+        NTupleVariable("puMva", lambda x: x.puMva(), float, help="Value of the pu MVA discriminator")
 ])
 
-fatJetType.addVariables([
-        NTupleVariable("puMva", lambda x: x.puMva(), help="Value of the pu MVA discriminator")
-])
+# no more present in MINIAOD V2 in 8.0.X
 fatJetType.removeVariable("trimmedMass")
 fatJetType.removeVariable("filteredMass")
+# substitute this with the JEC corrected one
+fatJetType.removeVariable("prunedMass")
+fatJetType.addVariables([
+        NTupleVariable("puMva", lambda x: x.puMva(), float, help="Value of the pu MVA discriminator"),
+        NTupleVariable("prunedMass", lambda x: x.userFloat("ak8PFJetsCHSPrunedMass") * (x.corr if hasattr(x,'corr') else 1.0), float, help="pruned mass"),
+])
 
 photonTypeSusy.addVariables([
         NTupleVariable("etaSc", lambda x : x.superCluster().eta(), help="Photon supercluster pseudorapidity")
