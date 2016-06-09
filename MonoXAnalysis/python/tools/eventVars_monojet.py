@@ -52,7 +52,7 @@ class EventVarsMonojet:
             if lep.dxy > (0.0111 if abs(lep.etaSc)<1.479 else 0.0351): return False
             if lep.dz > (0.0466 if abs(lep.etaSc)<1.479 else 0.417): return False
             if lep.lostHits > (2 if abs(lep.etaSc)<1.479 else 1): return False
-            return abs(lep.eta) < 2.5 and lep.tightId >=3  and lep.convVeto
+            return abs(lep.etaSc) < 2.5 and lep.tightId >=3  and lep.convVeto
     def tauIdVeto(self,tau):
         if tau.pt <= 18 or abs(tau.eta) > 2.3: return False
         return tau.idDecayMode > 0.5 and tau.isoCI3hit < 5.0
@@ -114,7 +114,9 @@ class EventVarsMonojet:
         # 0. mark each identified jet as clean
         puId76X = PuJetIDWP()
         for j in alljets: 
-            j._clean = True if (puId76X.passWP(j,"loose") and j.id > 0.5) else False
+            # remove PU jet ID for the time being
+            # j._clean = True if (puId76X.passWP(j,"loose") and j.id > 0.5) else False
+            j._clean = True if j.id > 0.5 else False
             j._central = True if (abs(j.eta) < 2.5) else False
         # 1. associate to each loose lepton its nearest jet 
         for il in ret["iL"]:
