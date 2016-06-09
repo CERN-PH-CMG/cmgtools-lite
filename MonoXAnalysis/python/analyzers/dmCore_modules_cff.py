@@ -174,7 +174,7 @@ lepAna = cfg.Analyzer(
     # electron isolation correction method (can be "rhoArea" or "deltaBeta")
     ele_isoCorr = "rhoArea" ,
     ele_effectiveAreas = "Spring15_25ns_v1" , #(can be 'Data2012' or 'Phys14_25ns_v1' or 'Spring15_25ns_v1' or 'Spring15_50ns_v1')
-    ele_tightId = "Cuts_2012" ,
+    ele_tightId = "Cuts_SPRING15_25ns_v1_ConvVetoDxyDz" ,
     # Mini-isolation, with pT dependent cone: will fill in the miniRelIso, miniRelIsoCharged, miniRelIsoNeutral variables of the leptons (see https://indico.cern.ch/event/368826/ )
     doMiniIsolation = False, # off by default since it requires access to all PFCandidates 
     packedCandidates = 'packedPFCandidates',
