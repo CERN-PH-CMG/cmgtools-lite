@@ -257,22 +257,22 @@ int SR_bins_stopMET_200(float met_pt, Int_t pdgId_1, Int_t pdgId_2){
 
 int SR_bins_stopPt_100(float met_pt, float ptlep1, Int_t pdgId_1, Int_t pdgId_2){
   // mm
-  if     (met_pt>100.&& met_pt<=200. && ptlep2>5. && && ptlep1<=10. && pdgId_1*pdgId_2==-169) return 1;
-  else if(met_pt>100.&& met_pt<=200. && ptlep2>5. && ptlep1>10.  && ptlep1<= 20. && pdgId_1*pdgId_2==-169) return 2;
+  if     (met_pt>100.&& met_pt<=200. && ptlep2>5. && ptlep1<=12. && pdgId_1*pdgId_2==-169) return 1;
+  else if(met_pt>100.&& met_pt<=200. && ptlep2>5. && ptlep1>12.  && ptlep1<= 20. && pdgId_1*pdgId_2==-169) return 2;
   else if(met_pt>100.&& met_pt<=200. && ptlep2>5. && ptlep1>20.  && pdgId_1*pdgId_2==-169) return 3; 
   else return -99;
 }
 
 int SR_bins_stopPt_200(float met_pt, float ptlep1, Int_t pdgId_1, Int_t pdgId_2){
   // mm/ee/em
-  if     (met_pt>200 && ptlep1 <=10. && pdgId_1*pdgId_2==-169) return 1;
-  else if(met_pt>200 && ptlep1 > 10. && ptlep1<= 20. && pdgId_1*pdgId_2==-169) return 2;
+  if     (met_pt>200 && ptlep1 <=12. && pdgId_1*pdgId_2==-169) return 1;
+  else if(met_pt>200 && ptlep1 > 12. && ptlep1<= 20. && pdgId_1*pdgId_2==-169) return 2;
   else if(met_pt>200 && ptlep1 > 20. && pdgId_1*pdgId_2==-169) return 3;
-  else if(met_pt>200 && ptlep1 <=10. && pdgId_1*pdgId_2==-121) return 4;
-  else if(met_pt>200 && ptlep1 > 10. && ptlep1<= 20. && pdgId_1*pdgId_2==-121) return 5;
+  else if(met_pt>200 && ptlep1 <=12. && pdgId_1*pdgId_2==-121) return 4;
+  else if(met_pt>200 && ptlep1 > 12. && ptlep1<= 20. && pdgId_1*pdgId_2==-121) return 5;
   else if(met_pt>200 && ptlep1 > 20. && pdgId_1*pdgId_2==-121) return 6;
-  else if(met_pt>200 && ptlep1 <=10. && pdgId_1*pdgId_2==-143) return 7;
-  else if(met_pt>200 && ptlep1 >10.  && ptlep1<= 20. && pdgId_1*pdgId_2==-143) return 8;
+  else if(met_pt>200 && ptlep1 <=12. && pdgId_1*pdgId_2==-143) return 7;
+  else if(met_pt>200 && ptlep1 >12.  && ptlep1<= 20. && pdgId_1*pdgId_2==-143) return 8;
   else if(met_pt>200 && ptlep1 >20.  && pdgId_1*pdgId_2==-143) return 9;
   else return -99;
 }
