@@ -1,9 +1,23 @@
 ## Signal regions ##############
-SR_mm:SR_bins_EWKino_mm(mass_2(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_mass,LepGood2_pt,LepGood2_eta,LepGood2_phi,LepGood2_mass),met_pt,LepGood1_pdgId,LepGood2_pdgId):8,1,9;XTitle="M(ll)-MET-bins",Legend='TL',IncludeOverflows=False, IncludeUnderflows=False
-SR_ee:SR_bins_EWKino_ee(mass_2(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_mass,LepGood2_pt,LepGood2_eta,LepGood2_phi,LepGood2_mass),met_pt,LepGood1_pdgId,LepGood2_pdgId):4,1,5;XTitle="M(ll)-bins",Legend='TL',IncludeOverflows=False, IncludeUnderflows=False
-SR_mm_inclusive:SR_bins_EWKino_mm_inclusive(met_pt,LepGood1_pdgId,LepGood2_pdgId):2,1,3;XTitle="MET-bins",Legend='TL',IncludeOverflows=False, IncludeUnderflows=False
-SR_ee_inclusive:SR_bins_EWKino_ee_inclusive(met_pt,LepGood1_pdgId,LepGood2_pdgId):1,1,2;XTitle="MET-bin",Legend='TL',IncludeOverflows=False, IncludeUnderflows=False
-SR_em_inclusive:SR_bins_EWKino_em_inclusive(met_pt,LepGood1_pdgId,LepGood2_pdgId):1,1,2;XTitle="MET-bin",Legend='TL',IncludeOverflows=False, IncludeUnderflows=False
+
+### old illustrative SR
+#SR_mm:SR_bins_EWKino_mm(mass_2(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_mass,LepGood2_pt,LepGood2_eta,LepGood2_phi,LepGood2_mass),met_pt,LepGood1_pdgId,LepGood2_pdgId):8,1,9;XTitle="M(ll)-MET-bins",Legend='TL',IncludeOverflows=False, IncludeUnderflows=False
+#SR_ee:SR_bins_EWKino_ee(mass_2(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_mass,LepGood2_pt,LepGood2_eta,LepGood2_phi,LepGood2_mass),met_pt,LepGood1_pdgId,LepGood2_pdgId):4,1,5;XTitle="M(ll)-bins",Legend='TL',IncludeOverflows=False, IncludeUnderflows=False
+#SR_mm_inclusive:SR_bins_EWKino_mm_inclusive(met_pt,LepGood1_pdgId,LepGood2_pdgId):2,1,3;XTitle="MET-bins",Legend='TL',IncludeOverflows=False, IncludeUnderflows=False
+#SR_mm_inclusive:SR_bins_EWKino_mm_inclusive(met_pt,LepGood1_pdgId,LepGood2_pdgId):1,1,2;XTitle="MET-bins",Legend='TL',IncludeOverflows=False, IncludeUnderflows=False
+#SR_ee_inclusive:SR_bins_EWKino_ee_inclusive(met_pt,LepGood1_pdgId,LepGood2_pdgId):1,1,2;XTitle="MET-bin",Legend='TL',IncludeOverflows=False, IncludeUnderflows=False
+#SR_em_inclusive:SR_bins_EWKino_em_inclusive(met_pt,LepGood1_pdgId,LepGood2_pdgId):1,1,2;XTitle="MET-bin",Legend='TL',IncludeOverflows=False, IncludeUnderflows=False
+
+
+### illustrative SR
+SR_bins_EWKino_100:SR_bins_EWKino_100(mass_2(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_mass,LepGood2_pt,LepGood2_eta,LepGood2_phi,LepGood2_mass),met_pt,LepGood1_pdgId,LepGood2_pdgId):4,1,5;XTitle="M(ll)-MET-bins",Legend='TR',IncludeOverflows=False, IncludeUnderflows=False
+SR_bins_EWKino_200:SR_bins_EWKino_200(mass_2(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_mass,LepGood2_pt,LepGood2_eta,LepGood2_phi,LepGood2_mass),met_pt,LepGood1_pdgId,LepGood2_pdgId):8,1,9;XTitle="M(ll)-MET-bins",Legend='TR',IncludeOverflows=False, IncludeUnderflows=False
+SR_bins_stop_100:SR_bins_stop_100(met_pt,LepGood1_pdgId,LepGood2_pdgId):1,1,2;XTitle="MET-bins",Legend='TR',IncludeOverflows=False, IncludeUnderflows=False
+SR_bins_stop_200:SR_bins_stop_200(met_pt,LepGood1_pdgId,LepGood2_pdgId):3,1,4;XTitle="MET-bins",Legend='TR',IncludeOverflows=False, IncludeUnderflows=False
+SR_bins_stopMET_200:SR_bins_stopMET_200(met_pt,LepGood1_pdgId,LepGood2_pdgId):6,1,7;XTitle="MET-bins",Legend='TR',IncludeOverflows=False, IncludeUnderflows=False
+SR_bins_stopPt_100:SR_bins_stopPt_100(met_pt,LepGood1_pt,LepGood1_pdgId,LepGood2_pdgId):2,1,3;XTitle="MET-p_{T}-bins",Legend='TR',IncludeOverflows=False, IncludeUnderflows=False
+SR_bins_stopPt_200:SR_bins_stopPt_200(met_pt,LepGood1_pt,LepGood1_pdgId,LepGood2_pdgId):6,1,7;XTitle="MET-p_{T}-bins",Legend='TR',IncludeOverflows=False, IncludeUnderflows=False
+
 ################################
 #yields   : nJet25        : 1,-0.5,0.5; YTitle='Total Event Yields';
 #st_mll_l1_l2:(htJet25+met_pt-LepGood1_pt-LepGood2_pt)/ (mass_2(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_mass,LepGood2_pt,LepGood2_eta,LepGood2_phi,LepGood2_mass)): 10,0.,50.; XTitle="Ht+MEt/Mll", Legend='TR'

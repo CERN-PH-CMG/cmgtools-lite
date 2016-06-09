@@ -175,65 +175,75 @@ float mass_tautau( float Met_Pt, float Met_Phi,  float l1_Pt, float l1_Eta, floa
   else            return -(T1+T2).M();
 }
 
-// May 2016: This is func to plot the yields for the different SRs                                                                                         
+// Plotting SR SOS
 
-// float SR_bins_EWKino(float pt1, float eta1, float phi1, float m1, float pt2, float eta2, float phi2, float m2, float met_pt){
-//     typedef ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<double> > PtEtaPhiMVector;
-//     PtEtaPhiMVector p41(pt1,eta1,phi1,m1);
-//     PtEtaPhiMVector p42(pt2,eta2,phi2,m2);
-//     float           Mll=(p41+p42).M();
-//     if     (met_pt<200.&& 4.<Mll&&Mll<10.) return 0.5;
-//     else if(met_pt<200.&&10.<Mll&&Mll<20.) return 1.5;
-//     else if(met_pt<200.&&20.<Mll&&Mll<30.) return 2.5;
-//     else if(met_pt<200.&&30.<Mll&&Mll<50.) return 3.5;
-//     else if(met_pt>200.&& 4.<Mll&&Mll<10.) return 4.5;
-//     else if(met_pt>200.&&10.<Mll&&Mll<20.) return 5.5;
-//     else if(met_pt>200.&&20.<Mll&&Mll<30.) return 6.5;
-//     else if(met_pt>200.&&30.<Mll&&Mll<50.) return 7.5;
-//     else return -0.5;
-// }
-
-int SR_bins_EWKino_mm(float Mll, float met_pt, Int_t pdgId_1, Int_t pdgId_2){
+int SR_bins_EWKino_100(float Mll, float met_pt, Int_t pdgId_1, Int_t pdgId_2){
   // mm
   if     (met_pt>100. && met_pt<=200. && 4.<Mll&&Mll<=10.&& pdgId_1*pdgId_2==-169) return 1;
   else if(met_pt>100. && met_pt<=200. &&10.<Mll&&Mll<=20.&& pdgId_1*pdgId_2==-169) return 2;
   else if(met_pt>100. && met_pt<=200. &&20.<Mll&&Mll<=30.&& pdgId_1*pdgId_2==-169) return 3;
-  else if(met_pt>100. && met_pt<=200. &&30.<Mll&&Mll<=50.&& pdgId_1*pdgId_2==-169) return 4;
-  else if(met_pt>200.&& 4.<Mll&&Mll<=10.&& pdgId_1*pdgId_2==-169) return 5;
-  else if(met_pt>200.&&10.<Mll&&Mll<=20.&& pdgId_1*pdgId_2==-169) return 6;
-  else if(met_pt>200.&&20.<Mll&&Mll<=30.&& pdgId_1*pdgId_2==-169) return 7;
-  else if(met_pt>200.&&30.<Mll&&Mll<=50.&& pdgId_1*pdgId_2==-169) return 8;   
-  else return -99;
-}
-
-int SR_bins_EWKino_ee(float Mll, float met_pt, Int_t pdgId_1, Int_t pdgId_2){
-  // ee
-  if(met_pt>200.&& 4.<Mll&&Mll<10.&&pdgId_1*pdgId_2==-121) return 1;
-  else if(met_pt>200.&&10.<Mll&&Mll<20.&& pdgId_1*pdgId_2==-121) return 2;
-  else if(met_pt>200.&&20.<Mll&&Mll<30.&& pdgId_1*pdgId_2==-121) return 3;
-  else if(met_pt>200.&&30.<Mll&&Mll<50.&& pdgId_1*pdgId_2==-121) return 4;
+  else if(met_pt>100. && met_pt<=200. &&30.<Mll && pdgId_1*pdgId_2==-169) return 4;
   else return -99;
 }
 
 
-int SR_bins_EWKino_mm_inclusive(float met_pt, Int_t pdgId_1, Int_t pdgId_2){
-  // mm                                                                                                                                                    
-  if(met_pt>100.&& met_pt<=200.&& pdgId_1*pdgId_2==-169) return 1;
-  else if(met_pt>200.&&pdgId_1*pdgId_2==-169) return 2;
+int SR_bins_EWKino_200(float Mll, float met_pt, Int_t pdgId_1, Int_t pdgId_2){
+  // mm/ee
+  if     (met_pt>200.&& 4.<Mll&&Mll<=10.&& pdgId_1*pdgId_2==-169) return 1;
+  else if(met_pt>200.&&10.<Mll&&Mll<=20.&& pdgId_1*pdgId_2==-169) return 2;
+  else if(met_pt>200.&&20.<Mll&&Mll<=30.&& pdgId_1*pdgId_2==-169) return 3;
+  else if(met_pt>200.&&30.<Mll && pdgId_1*pdgId_2==-169) return 4;   
+  else if(met_pt>200.&& 4.<Mll&&Mll<=10.&&pdgId_1*pdgId_2==-121) return 5;
+  else if(met_pt>200.&&10.<Mll&&Mll<=20.&& pdgId_1*pdgId_2==-121) return 6;
+  else if(met_pt>200.&&20.<Mll&&Mll<=30.&& pdgId_1*pdgId_2==-121) return 7;
+  else if(met_pt>200.&&30.<Mll && pdgId_1*pdgId_2==-121) return 8;
   else return -99;
 }
 
-int SR_bins_EWKino_ee_inclusive(float met_pt, Int_t pdgId_1, Int_t pdgId_2){
-  // ee                                                                                                                                                      
-  if(met_pt>200.&& pdgId_1*pdgId_2==-121) return 1;
+
+int SR_bins_stop_100(float met_pt, Int_t pdgId_1, Int_t pdgId_2){
+  // mm
+  if     (met_pt>100.&& met_pt<=200.&& pdgId_1*pdgId_2==-169) return 1;
   else return -99;
 }
 
-int SR_bins_EWKino_em_inclusive(float met_pt, Int_t pdgId_1, Int_t pdgId_2){
-  // em                                                                                                                                                     
-  if(met_pt>200.&& pdgId_1*pdgId_2==-143) return 1;
+int SR_bins_stop_200(float met_pt, Int_t pdgId_1, Int_t pdgId_2){
+  // mm
+  if     (met_pt>200.&& pdgId_1*pdgId_2==-169) return 1;
+  else if(met_pt>200.&& pdgId_1*pdgId_2==-121) return 2;
+  else if(met_pt>200.&& pdgId_1*pdgId_2==-143) return 3;
   else return -99;
 }
+
+int SR_bins_stopMET_200(float met_pt, Int_t pdgId_1, Int_t pdgId_2){
+  // mm/ee/em
+  if     (met_pt>200.&& met_pt<=350.&& pdgId_1*pdgId_2==-169) return 1;
+  else if(met_pt>350.&& pdgId_1*pdgId_2==-169)return 2;
+  else if(met_pt>200.&& met_pt<=350.&& pdgId_1*pdgId_2==-121) return 3;
+  else if(met_pt>350.&& pdgId_1*pdgId_2==-121)return 4;
+  else if(met_pt>200.&& met_pt<=350.&& pdgId_1*pdgId_2==-143) return 5;
+  else if(met_pt>350.&& pdgId_1*pdgId_2==-143)return 6;
+  else return -99;
+}
+
+int SR_bins_stopPt_100(float met_pt, float ptlep1, Int_t pdgId_1, Int_t pdgId_2){
+  // mm/ee/em
+  if     (met_pt>100.&& met_pt<=200. && ptlep1 < 12. && pdgId_1*pdgId_2==-169) return 1;
+  else if(met_pt>100.&& met_pt<=200. && ptlep1 > 12. && pdgId_1*pdgId_2==-169) return 2;
+  else return -99;
+}
+
+int SR_bins_stopPt_200(float met_pt, float ptlep1, Int_t pdgId_1, Int_t pdgId_2){
+  // mm/ee/em
+  if     (met_pt>200 && ptlep1 < 12. && pdgId_1*pdgId_2==-169) return 1;
+  else if(met_pt>200 && ptlep1 > 12. && pdgId_1*pdgId_2==-169) return 2;
+  else if(met_pt>200 && ptlep1 < 12. && pdgId_1*pdgId_2==-121) return 3;
+  else if(met_pt>200 && ptlep1 > 12. && pdgId_1*pdgId_2==-121) return 4;
+  else if(met_pt>200 && ptlep1 < 12. && pdgId_1*pdgId_2==-143) return 5;
+  else if(met_pt>200 && ptlep1 > 12. && pdgId_1*pdgId_2==-143) return 6;   
+  else return -99;
+}
+
 
 
 float relax_cut_in_eta_bins(float val, float eta, float eta1, float eta2, float eta3, float val1, float val2, float val3, float val1t, float val2t, float val3t){
