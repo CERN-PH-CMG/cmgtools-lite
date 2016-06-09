@@ -22,7 +22,7 @@ class VVBuilder(Analyzer):
             self.doPUPPI=False
 
     def declareHandles(self):
-        super(PackedCandidateLoader, self).declareHandles()
+        super(VVBuilder, self).declareHandles()
         self.handles['packed'] = AutoHandle( 'packedPFCandidates', 'std::vector<pat::PackedCandidate>' )
 
     def copyLV(self,LV):
@@ -31,7 +31,7 @@ class VVBuilder(Analyzer):
             out.append(ROOT.math.XYZTLorentzVector(i.px(),i.py(),i.pz(),i.energy()))
         return out    
 
-    def substructure(self,jet):
+    def substructure(self,jet,event):
         #if we already filled it exit
         if hasattr(jet,'substructure'):
             return
@@ -58,7 +58,7 @@ class VVBuilder(Analyzer):
 
         #if PUPPI reset the jet four vector
         if self.doPUPPI:
-            jet.setP4(outputJets[0]*corrNoL1)
+            jet.setP4(outputJets[0]*jet.corr)
         
         jet.substructure=Substructure()
         #OK!Now save the area
@@ -100,7 +100,7 @@ class VVBuilder(Analyzer):
 
         interface.softDrop(True,0,0.0,0.1,0.8)
         jet.substructure.softDropJet = self.copyLV(interface.get(False))[0]*corrNoL1
-        jet.substructure.softDropMassUp = 1.05*jet.substructure.softDropJet.mass()
+        jet.substructure.softDropJetUp = 1.05*jet.substructure.softDropJet.mass()
         jet.substructure.softDropJetDown = 0.95*jet.substructure.softDropJet.mass()
         jet.substructure.softDropJetSmear = jet.substructure.softDropJet.mass()*self.smearing.Gaus(1.0,0.1)
 
@@ -202,7 +202,7 @@ class VVBuilder(Analyzer):
             return output
         
         #substructure
-        self.substructure(VV.leg2)
+        self.substructure(VV.leg2,event)
         if not hasattr(VV.leg2,'substructure'):
             return output
 
@@ -260,7 +260,7 @@ class VVBuilder(Analyzer):
             return output
         
         #substructure
-        self.substructure(VV.leg2)
+        self.substructure(VV.leg2,event)
 
         if not hasattr(VV.leg2,"substructure"):
             return output
@@ -317,7 +317,7 @@ class VVBuilder(Analyzer):
         VV=Pair(bestZ,bestJet)
         
         #substructure
-        self.substructure(VV.leg2)
+        self.substructure(VV.leg2,event)
 
         if not hasattr(VV.leg2,"substructure"):
             return output
@@ -353,8 +353,8 @@ class VVBuilder(Analyzer):
         if abs(VV.leg1.eta()-VV.leg2.eta())>1.3 or VV.mass()<1000:
             return output
 
-        self.substructure(VV.leg1)
-        self.substructure(VV.leg2)
+        self.substructure(VV.leg1,event)
+        self.substructure(VV.leg2,event)
 
 
         if not hasattr(VV.leg1,"substructure"):
@@ -394,7 +394,7 @@ class VVBuilder(Analyzer):
         if VV.deltaPhi()<2.0 or VV.leg1.pt()<200:
             return output
 
-        self.substructure(VV.leg2)
+        self.substructure(VV.leg2,event)
 
         if not hasattr(VV.leg2,"substructure"):
             return output

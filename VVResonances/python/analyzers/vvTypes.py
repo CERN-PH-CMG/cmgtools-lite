@@ -143,10 +143,9 @@ JJType = NTupleObjectType("JJType", baseObjectTypes=[VJType], variables = [
     NTupleVariable("l1_softDrop_massUp",  lambda x : x.leg1.substructure.softDropJetUp,float),
     NTupleVariable("l1_softDrop_massDown",  lambda x : x.leg1.substructure.softDropJetDown,float),
     NTupleVariable("l1_softDrop_massSmear",  lambda x : x.leg1.substructure.softDropJetSmear,float),
-
     NTupleVariable("l1_softDrop_nSubJets",  lambda x : len(x.leg1.substructure.softDropSubjets),int),
     NTupleSubObject("l1_softDrop_s1",  lambda x : x.leg1.substructure.softDropSubjets[0] if len(x.leg1.substructure.softDropSubjets)>0 else dummyLV,fourVectorType),
-    NTupleSubObject("l1_softDrop_s1",  lambda x : x.leg1.substructure.softDropSubjets[1] if len(x.leg1.substructure.softDropSubjets)>1 else dummyLV,fourVectorType),
+    NTupleSubObject("l1_softDrop_s2",  lambda x : x.leg1.substructure.softDropSubjets[1] if len(x.leg1.substructure.softDropSubjets)>1 else dummyLV,fourVectorType),
 
 
 ])
