@@ -289,6 +289,7 @@ mergedTruthAna = cfg.Analyzer(TopMergingAnalyzer,name='mergeTruthAna')
 vvAna = cfg.Analyzer(
     VVBuilder,name='vvAna',
     suffix = '',
+    doPUPPI=True,
     bDiscriminator = "pfCombinedInclusiveSecondaryVertexV2BJetTags",
 #    boostedBdiscriminator = "pfBoostedDoubleSecondaryVertexAK8BJetTags",
     cDiscriminatorL = "pfCombinedCvsLJetTags",
