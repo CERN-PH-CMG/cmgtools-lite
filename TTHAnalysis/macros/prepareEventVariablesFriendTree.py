@@ -187,6 +187,47 @@ MODULES.append( ('LepMVAFriendTTH', lambda: LepMVAFriend((os.environ["CMSSW_BASE
 MODULES.append( ('LepMVAFriendSUSY', lambda: LepMVAFriend((os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/leptonMVA/susy/%s_BDTG.weights.xml",
                                                            os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/leptonMVA/susy/%s_BDTG.weights.xml",),
                                                           training="forMoriond16", label="TTZMoriond16")) )
+MODULES.append( ('LepMVAFriendJetLessIVF', lambda: LepMVAFriend((os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/leptonMVA/jetless/SoftJetLessIVF_%s_BDTG.weights.xml",
+                                                                 os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/leptonMVA/jetless/SoftJetLessIVF_%s_BDTG.weights.xml",),
+                                                                training="SoftJetLessIVF", label="JetLessIVF")) )
+MODULES.append( ('LepMVAFriendNoPtRewJetLess', lambda: LepMVAFriend((os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/leptonMVA/jetless/%s_noPtRew_BDTG.weights.xml",
+                                                                     os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/leptonMVA/jetless/%s_noPtRew_BDTG.weights.xml",),
+                                                                    training="SoftJetLessIVF", label="JetLessNoPtRew")) )
+MODULES.append( ('LepMVAFriendJetLessCSV', lambda: LepMVAFriend((os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/leptonMVA/jetless/SoftJetLess_%s_BDTG.weights.xml",
+                                                                 os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/leptonMVA/jetless/SoftJetLess_%s_BDTG.weights.xml",),
+                                                                training="SoftJetLess", label="JetLessCSV")) )
+MODULES.append( ('LepMVAFriendJetLessSVSafe', lambda: LepMVAFriend((os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/leptonMVA/jetless/SoftJetLessSVSafe_%s_BDTG.weights.xml",
+                                                                    os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/leptonMVA/jetless/SoftJetLessSVSafe_%s_BDTG.weights.xml",),
+                                                                   training="SoftJetLessIVFSVSafe", label="JetLessSVSafe")) )
+MODULES.append( ('LepMVAFriendJetLessNOBTAG', lambda: LepMVAFriend((os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/leptonMVA/jetless/SoftJetLessNOBTAG_%s_BDTG.weights.xml",
+                                                                    os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/leptonMVA/jetless/SoftJetLessNOBTAG_%s_BDTG.weights.xml",),
+                                                                   training="SoftJetLessNOBTAG", label="JetLessNOBTAG")) )
+MODULES.append( ('LepMVAFriendJetLessNO04ISO', lambda: LepMVAFriend((os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/leptonMVA/jetless/SoftJetLessNO04ISO_%s_BDTG.weights.xml",
+                                                                    os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/leptonMVA/jetless/SoftJetLessNO04ISO_%s_BDTG.weights.xml",),
+                                                                   training="SoftJetLessNO04ISO", label="JetLessNO04ISO")) )
+
+MODULES.append( ('LepMVAFriendJetLessNOBTAGNOTAU_SIGT2tt', lambda: LepMVAFriend((os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/leptonMVA/jetless/SoftJetLessNOBTAGNOTAU_SIGT2tt_%s_BDTG.weights.xml",
+                                                                    os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/leptonMVA/jetless/SoftJetLessNOBTAGNOTAU_SIGT2tt_%s_BDTG.weights.xml",),
+                                                                   training="SoftJetLessNOBTAG", label="JetLessNOBTAGNOTAU_SIGT2tt")) )
+MODULES.append( ('LepMVAFriendJetLessNOBTAGNOTAU_SIGTChiNeu8090', lambda: LepMVAFriend((os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/leptonMVA/jetless/SoftJetLessNOBTAGNOTAU_SIGTChiNeu8090_%s_BDTG.weights.xml",
+                                                                    os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/leptonMVA/jetless/SoftJetLessNOBTAGNOTAU_SIGTChiNeu8090_%s_BDTG.weights.xml",),
+                                                                   training="SoftJetLessNOBTAG", label="JetLessNOBTAGNOTAU_SIGTChiNeu8090")) )
+
+MODULES.append( ('LepMVAFriendJetLessNOBTAGNOTAU_SIGDY', lambda: LepMVAFriend((os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/leptonMVA/jetless/SoftJetLessNOBTAGNOTAU_SIGDY_%s_BDTG.weights.xml",
+                                                                    os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/leptonMVA/jetless/SoftJetLessNOBTAGNOTAU_SIGDY_%s_BDTG.weights.xml",),
+                                                                   training="SoftJetLessNOBTAG", label="JetLessNOBTAGNOTAU_SIGDY")) )
+MODULES.append( ('LepMVAFriendJetLessIVFNOTAU_SIGT2tt', lambda: LepMVAFriend((os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/leptonMVA/jetless/SoftJetLessIVFNOTAU_SIGT2tt_%s_BDTG.weights.xml",
+                                                                    os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/leptonMVA/jetless/SoftJetLessIVFNOTAU_SIGT2tt_%s_BDTG.weights.xml",),
+                                                                   training="SoftJetLessIVF", label="JetLessIVFNOTAU_SIGT2tt")) )
+MODULES.append( ('LepMVAFriendJetLessIVFNOTAU_SIGTChiNeu8090', lambda: LepMVAFriend((os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/leptonMVA/jetless/SoftJetLessIVFNOTAU_SIGTChiNeu8090_%s_BDTG.weights.xml",
+                                                                    os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/leptonMVA/jetless/SoftJetLessIVFNOTAU_SIGTChiNeu8090_%s_BDTG.weights.xml",),
+                                                                   training="SoftJetLessIVF", label="JetLessIVFNOTAU_SIGTChiNeu8090")) )
+
+MODULES.append( ('LepMVAFriendJetLessIVFNOTAU_SIGDY', lambda: LepMVAFriend((os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/leptonMVA/jetless/SoftJetLessIVFNOTAU_SIGDY_%s_BDTG.weights.xml",
+                                                                    os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/leptonMVA/jetless/SoftJetLessIVFNOTAU_SIGDY_%s_BDTG.weights.xml",),
+                                                                   training="SoftJetLessIVF", label="JetLessIVFNOTAU_SIGDY")) )
+
+
 
 class VariableProducer(Module):
     def __init__(self,name,booker,modules):
