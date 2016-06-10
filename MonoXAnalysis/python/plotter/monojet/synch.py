@@ -14,7 +14,7 @@ if __name__ == "__main__":
     (options, args) = parser.parse_args()
 
     #T='/afs/cern.ch/work/e/emanuele/TREES/SYNCH_80X/'
-    T='/afs/cern.ch/work/e/emanuele/monox/heppy/CMSSW_8_0_5/src/CMGTools/MonoXAnalysis/cfg/SynchTreesV2/'
+    T='/afs/cern.ch/work/e/emanuele/monox/heppy/CMSSW_8_0_5/src/CMGTools/MonoXAnalysis/cfg/SynchTreesV4/'
 
     coreopt = '-P '+T+' --s2v -j 6 -l 1.0'
     corey = 'mcAnalysis.py ' + coreopt + ' -G '
@@ -37,7 +37,12 @@ if __name__ == "__main__":
     monov_ak8jetAcc="-A recoil ak8jetAcc 'nFatJetClean>0 && FatJetClean1_pt>250 && abs(FatJetClean1_eta)<2.4' "
     monov_ak8jetT2T1="-A recoil ak8jetT2T1 'FatJetClean1_tau2/FatJetClean1_tau1<0.6' "
     monov_ak8jetMpruned="-A recoil ak8jetMpruned 'abs(FatJetClean1_prunedMass-85)<20' "
-    monov_tightMET="-A recoil tightMET 'metNoMu_pt>250' "
+    if options.region in ['signal','zmumu','wmunu']: monov_tightMET="-A recoil tightMET 'metNoMu_pt>250' "
+    elif options.region == 'zee': monov_tightMET="-A recoil tightMET 'pt_3(met_pt,met_phi,LepGood1_pt,LepGood1_phi,LepGood2_pt,LepGood2_phi)>250' "
+    elif options.region == 'wenu': monov_tightMET="-A recoil tightMET 'pt_2(met_pt,met_phi,LepGood1_pt,LepGood1_phi)>250' "
+    elif options.region == 'gjets': monov_tightMET="-A recoil tightMET 'pt_2(met_pt,met_phi,GammaGood1_pt,GammaGood1_phi)>250' "
+    else: monov_tightMET = ' '
+
     print "==> Yields for category: ",options.category
     if options.category != '': cat_cut = monov_ak8jetAcc+monov_ak8jetT2T1+monov_ak8jetMpruned+monov_tightMET if options.category=='monov' else monoj_cut
     else: cat_cut = ''
