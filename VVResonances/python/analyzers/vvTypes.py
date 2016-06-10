@@ -32,6 +32,8 @@ FatJetType = NTupleObjectType("FatJetType", baseObjectTypes=[jetType], variables
     NTupleVariable("s2CTagL",   lambda x : x.subJetCTagL[1], float),       
     NTupleVariable("s1CTagB",   lambda x : x.subJetCTagB[0], float),       
     NTupleVariable("s2CTagB",   lambda x : x.subJetCTagB[1], float),
+    NTupleVariable("mergedVTruth",   lambda x : x.mergedTrue, int,"",-1,True),       
+    NTupleVariable("nearestBDRTruth",   lambda x : x.nearestBDR, float,"",-99.0,True)       
 ])
 
 
@@ -39,12 +41,19 @@ FatJetType = NTupleObjectType("FatJetType", baseObjectTypes=[jetType], variables
 PyTauType = NTupleObjectType("PyTau", baseObjectTypes=[fourVectorType], variables = [
     NTupleVariable("nPions",   lambda x : x.nPions, int),       
     NTupleVariable("nMuons", lambda x : x.nMuons, int),       
+    NTupleVariable("nPosMuons", lambda x : x.nPosMuons, int),       
+    NTupleVariable("nNegMuons", lambda x : x.nNegMuons, int),       
     NTupleVariable("nElectrons", lambda x : x.nElectrons, int),       
+    NTupleVariable("nPosElectrons", lambda x : x.nPosElectrons, int),       
+    NTupleVariable("nNegElectrons", lambda x : x.nNegElectrons, int),       
+
     NTupleVariable("nPhotons", lambda x : x.nPhotons, int),       
     NTupleVariable("chargedIso", lambda x : x.chargedIso, float),       
     NTupleVariable("photonIso", lambda x : x.photonIso, float),       
     NTupleVariable("neutralIso", lambda x : x.neutralIso, float),       
-    NTupleVariable("decayMode", lambda x : x.decayMode, int)       
+    NTupleVariable("decayMode", lambda x : x.decayMode, int),       
+    NTupleVariable("leadMuPt", lambda x : x.leadMuonPt, float),       
+    NTupleVariable("leadElePt", lambda x : x.leadElectronPt, float)       
 
 ])
 
@@ -62,6 +71,7 @@ TauTauType = NTupleObjectType("TauTauType", baseObjectTypes=[], variables = [
 
 TauJetType = NTupleObjectType("TauJetType", baseObjectTypes=[], variables = [
   NTupleSubObject("LV",  lambda x : x.p4(),fourVectorType),
+  NTupleSubObject("LVWithMET",  lambda x : x.LVWithMET,fourVectorType),
   NTupleSubObject("l1",   lambda x : x.leg1, PyTauType),       
   NTupleSubObject("l1_t1",   lambda x : x.leg1.leg1, fourVectorType),       
   NTupleSubObject("l1_t2",   lambda x : x.leg1.leg2, fourVectorType),       

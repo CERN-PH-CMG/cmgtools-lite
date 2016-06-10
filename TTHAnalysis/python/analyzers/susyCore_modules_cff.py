@@ -197,12 +197,13 @@ lepAna = cfg.Analyzer(
     packedCandidates = 'packedPFCandidates',
     miniIsolationPUCorr = 'rhoArea', # Allowed options: 'rhoArea' (EAs for 03 cone scaled by R^2), 'deltaBeta', 'raw' (uncorrected), 'weights' (delta beta weights; not validated)
     miniIsolationVetoLeptons = None, # use 'inclusive' to veto inclusive leptons and their footprint in all isolation cones
+    doDirectionalIsolation = [], # calculate directional isolation with leptons (works only with doMiniIsolation, pass list of cone sizes)
+    doFixedConeIsoWithMiniIsoVeto = False, # calculate fixed cone isolations with the same vetoes used for miniIso,
     # minimum deltaR between a loose electron and a loose muon (on overlaps, discard the electron)
     min_dr_electron_muon = 0.05,
     # do MC matching 
     do_mc_match = True, # note: it will in any case try it only on MC, not on data
     do_mc_match_photons = "all",
-    do_mc_susy_match=False,
     match_inclusiveLeptons = False, # match to all inclusive leptons
     )
 
@@ -483,6 +484,11 @@ ttHJetMETSkim = cfg.Analyzer(
    nBJet     = ('CSVv2IVFM', 0, "jet.pt() > 30"),     # require at least 0 jets passing CSV medium and pt > 30
    )
 
+# Tailored lepton MC matching for SUSY
+from CMGTools.TTHAnalysis.analyzers.susyLeptonMatchAnalyzer import susyLeptonMatchAnalyzer
+susyLeptonMatchAna = cfg.Analyzer(
+    susyLeptonMatchAnalyzer, name="susyLeptonMatchAna",
+    )
 
 # Core sequence of all common modules
 susyCoreSequence = [
@@ -510,6 +516,7 @@ susyCoreSequence = [
     metAna,
     ttHCoreEventAna,
     # ttHJetMETSkim,
+    # susyLeptonMatchAna,
     triggerFlagsAna,
     eventFlagsAna,
 ]
