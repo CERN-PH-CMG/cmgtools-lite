@@ -20,7 +20,8 @@ is25ns = True
 #-------- HOW TO RUN
 
 # diJet = 15(Data) 25(MC)
-# diMu  = 13(Data) 23(MC)
+# diMu/diEle  = 13(Data) 23(MC)
+# gamma  = 16(Data) 17,18,19(MC)
 
 #-------- HOW TO RUN
 
@@ -190,7 +191,7 @@ elif test==18:
 
 # WG/ZG/TTG
 elif test==19:
-    selectedComponents = [ZGJets, WGJets, TTGJets]
+    selectedComponents = [ZGJets, ZGTo2LG, WGJets, TTGJets]
     is1PH=True
     for comp in selectedComponents:
         comp.splitFactor = 100
@@ -199,7 +200,7 @@ elif test==19:
 elif test==23:
     isZSkim=True
     is25ns=True
-    selectedComponents = [ DYJetsToLL_M50, TTJets_DiLepton, ZZTo4L, ZZTo2L2Q, WWTo2L2Nu, WZTo2L2Q ]
+    selectedComponents = [ DYJetsToLL_M50, TTJets_DiLepton, ZZTo4L, ZZTo2L2Q, WWTo2L2Nu, WZTo2L2Q, WZTo3LNu ]
     for comp in selectedComponents:
 # no trigger on MC for now
 #        if isEle:
@@ -283,10 +284,30 @@ if isMonoJet:
     metSequence.insert(metSequence.index(photonAna)+2,ttHJetMETSkim)
     metSequence.remove(photonAna)
 
+
+# --------------------
+# -------------------- FINE TUNE CONTENT
+# --------------------
+
+if isZSkim or is1PH:
+    met_globalObjects.update({
+            "met_jecUp" : NTupleObject("met_jecUp", metType, help="PF E_{T}^{miss}, after type 1 corrections with JEC up variation"),
+            "met_jecDown" : NTupleObject("met_jecDown", metType, help="PF E_{T}^{miss}, after type 1 corrections with JEC down variation"),
+            "metPuppi_jecUp" : NTupleObject("metPuppi_jecUp", metType, help="PF E_{T}^{miss}, after type 1 corrections with JEC up variation (Puppi)"),
+            "metPuppi_jecDown" : NTupleObject("metPuppi_jecDown", metType, help="PF E_{T}^{miss}, after type 1 corrections with JEC down variation (Puppi)"),
+            })
 if is1PH:
     met_collections.update({
+            "generatorSummary" : NTupleCollection("GenPart", genParticleWithLinksType, 100 , help="Hard scattering particles, with ancestry and links"),     
             "selectedPhotons"    : NTupleCollection("gamma", photonType, 50, help="photons with pt>20 and loose cut based ID"),
             })
+
+#if isDiJet:
+#    met_collections.update({
+#            "cleanJetsAll"       : NTupleCollection("jet", jetType, 100, help="all jets (w/ x-cleaning, w/ ID applied w/o PUID applied pt>20 |eta|<5.2) , sorted by pt", filter=lambda l : l.pt()>100  )
+#            })
+
+# --------------------
 
 if comp.isData:
     eventFlagsAna.processName = 'RECO'

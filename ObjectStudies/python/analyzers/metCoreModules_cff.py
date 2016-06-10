@@ -49,6 +49,15 @@ triggerFlagsAna = cfg.Analyzer(
         # "<name>" : [ 'HLT_<Something>_v*', 'HLT_<SomethingElse>_v*' ] 
     }
     )
+
+from CMGTools.TTHAnalysis.analyzers.badChargedHadronAnalyzer import badChargedHadronAnalyzer
+badChargedHadronAna = cfg.Analyzer(
+    badChargedHadronAnalyzer, name = 'badChargedHadronAna',
+    muons='slimmedMuons',
+    packedCandidates = 'packedPFCandidates',
+)
+
+
 # Create flags for MET filter bits
 eventFlagsAna = cfg.Analyzer(
     TriggerBitAnalyzer, name="EventFlags",
@@ -60,6 +69,7 @@ eventFlagsAna = cfg.Analyzer(
         "HBHENoiseIsoFilter" : [ "Flag_HBHENoiseIsoFilter" ],
         "CSCTightHaloFilter" : [ "Flag_CSCTightHaloFilter" ],
         "CSCTightHalo2015Filter" : [ "Flag_CSCTightHalo2015Filter" ],
+        "globalTightHalo2016Filter" : [ "Flag_globalTightHalo2016Filter" ],
         "eeBadScFilter" : [ "Flag_eeBadScFilter" ],
         "EcalDeadCellTriggerPrimitiveFilter" : [ "Flag_EcalDeadCellTriggerPrimitiveFilter" ],
     }
@@ -361,18 +371,22 @@ jetAna = cfg.Analyzer(
 
 ## Jets Analyzer (generic)
 jetAnaScaleUp = jetAna.clone(name='jetAnalyzerScaleUp',
+    copyJetsByValue = True,
     jetCol = 'slimmedJets',
     shiftJEC = +1, # set to +1 or -1 to apply +/-1 sigma shift to the nominal jet energies
     collectionPostFix = "_jecUp",
     calculateType1METCorrection  = True,
+    cleanSelectedLeptons = False,
    )
 
 ## Jets Analyzer (generic)
 jetAnaScaleDown = jetAna.clone(name='jetAnalyzerScaleDown',
+    copyJetsByValue = True,
     jetCol = 'slimmedJets',
     shiftJEC = -1, # set to +1 or -1 to apply +/-1 sigma shift to the nominal jet energies
     collectionPostFix = "_jecDown",
     calculateType1METCorrection  = True,
+    cleanSelectedLeptons = False,
     )
 
 
@@ -480,6 +494,7 @@ metCoreSequence = [
     metPuppiAna,
     metPuppiAnaScaleUp,
     metPuppiAnaScaleDown,
+    badChargedHadronAna,
     eventFlagsAna,
 ##    hbheFilterAna,
 ##### tree
