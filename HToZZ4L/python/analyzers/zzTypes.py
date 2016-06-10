@@ -31,6 +31,9 @@ leptonTypeHZZ = NTupleObjectType("leptonHZZ", baseObjectTypes = [ leptonTypeExtr
     NTupleVariable("fbrem",   lambda x : x.fbrem() if abs(x.pdgId())==11 else 0.0, help="electron fbrem"),
     NTupleVariable("eleClass",   lambda x : x.classification() if abs(x.pdgId())==11 else -1, int, help="electron classification"),
     # ----------------------
+    NTupleVariable("muIdLoose", lambda x : x.muonID("POG_ID_Loose") if abs(x.pdgId())==13 else 1, help="Mu Loose ID"),
+    NTupleVariable("muIdTrkHighPt", lambda x : x.muonID("HZZ_ID_TkHighPt") if abs(x.pdgId())==13 else 1, help="Mu Loose ID"),
+    # ----------------------
     NTupleVariable("mcPrompt",    lambda x : x.mcMatchAny_gp.isPromptFinalState() if getattr(x,"mcMatchAny_gp",None) else 0, int, mcOnly=True, help="isPromptFinalState"),
     NTupleVariable("mcPromptTau", lambda x : x.mcMatchAny_gp.isDirectPromptTauDecayProductFinalState() if getattr(x,"mcMatchAny_gp",None) else 0, int, mcOnly=True, help="isDirectPromptTauDecayProductFinalState"),
     NTupleVariable("mcPromptGamma", lambda x : x.mcPho.isPromptFinalState() if getattr(x,"mcPho",None) else 0, int, mcOnly=True, help="Photon isPromptFinalState"),

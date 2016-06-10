@@ -99,39 +99,19 @@ FRSS1_data : SingleElectron_Run2015D_PromptV4_25ns;  FakeRate="fakeRate-SS-unit.
 FRSS1_data : SingleElectron_Run2015D_Silver_05Oct2015_25ns;  FakeRate="fakeRate-SS-unit.txt", Label="Z+X (SS data)", Friends=[('sf/t'\,'{P}/1_fr_v0/evVarFriend_{cname}.root')], FillColor=ROOT.TColor.GetColor("\#669966")
 FRSS1_data : SingleElectron_Run2015D_Silver_PromptV4_25ns;  FakeRate="fakeRate-SS-unit.txt", Label="Z+X (SS data)", Friends=[('sf/t'\,'{P}/1_fr_v0/evVarFriend_{cname}.root')], FillColor=ROOT.TColor.GetColor("\#669966")
 
-
-data : DoubleEG_Run2015B_05Oct2015_50ns
-data : DoubleEG_Run2015C_05Oct2015_25ns
-data : DoubleEG_Run2015C_05Oct2015_50ns
-data : DoubleEG_Run2015D_05Oct2015_25ns
-data : DoubleEG_Run2015D_PromptV4_25ns
-data : DoubleEG_Run2015D_Silver_05Oct2015_25ns
-data : DoubleEG_Run2015D_Silver_PromptV4_25ns
-data : DoubleMuon_Run2015B_05Oct2015_50ns
-data : DoubleMuon_Run2015C_05Oct2015_25ns
-data : DoubleMuon_Run2015C_05Oct2015_50ns
-data : DoubleMuon_Run2015D_05Oct2015_25ns
-data : DoubleMuon_Run2015D_PromptV4_25ns
-data : DoubleMuon_Run2015D_Silver_05Oct2015_25ns
-data : DoubleMuon_Run2015D_Silver_PromptV4_25ns
-data : MuonEG_Run2015B_05Oct2015_50ns
-data : MuonEG_Run2015C_05Oct2015_25ns
-data : MuonEG_Run2015C_05Oct2015_50ns
-data : MuonEG_Run2015D_05Oct2015_25ns
-data : MuonEG_Run2015D_PromptV4_25ns
-data : MuonEG_Run2015D_Silver_05Oct2015_25ns
-data : MuonEG_Run2015D_Silver_PromptV4_25ns
-data : SingleElectron_Run2015B_05Oct2015_50ns
-data : SingleElectron_Run2015C_05Oct2015_25ns
-data : SingleElectron_Run2015C_05Oct2015_50ns
-data : SingleElectron_Run2015D_05Oct2015_25ns
-data : SingleElectron_Run2015D_PromptV4_25ns
-data : SingleElectron_Run2015D_Silver_05Oct2015_25ns
-data : SingleElectron_Run2015D_Silver_PromptV4_25ns
-#data : SingleMuon_Run2015B_05Oct2015_50ns
-#data : SingleMuon_Run2015C_05Oct2015_25ns
-#data : SingleMuon_Run2015C_05Oct2015_50ns
-#data : SingleMuon_Run2015D_05Oct2015_25ns
-#data : SingleMuon_Run2015D_PromptV4_25ns
-#data : SingleMuon_Run2015D_Silver_05Oct2015_25ns
-#data : SingleMuon_Run2015D_Silver_PromptV4_25ns
+data : DoubleEG_Run2015B_16Dec2015_50ns
+data : DoubleEG_Run2015C_16Dec2015_25ns
+data : DoubleEG_Run2015C_16Dec2015_50ns
+data : DoubleEG_Run2015D_16Dec2015_25ns
+data : DoubleMuon_Run2015B_16Dec2015_50ns
+data : DoubleMuon_Run2015C_16Dec2015_25ns
+data : DoubleMuon_Run2015C_16Dec2015_50ns
+data : DoubleMuon_Run2015D_16Dec2015_25ns
+data : MuonEG_Run2015B_16Dec2015_50ns
+data : MuonEG_Run2015C_16Dec2015_25ns
+data : MuonEG_Run2015C_16Dec2015_50ns
+data : MuonEG_Run2015D_16Dec2015_25ns
+data : SingleElectron_Run2015B_16Dec2015_50ns
+data : SingleElectron_Run2015C_16Dec2015_25ns
+data : SingleElectron_Run2015C_16Dec2015_50ns
+data : SingleElectron_Run2015D_16Dec2015_25ns

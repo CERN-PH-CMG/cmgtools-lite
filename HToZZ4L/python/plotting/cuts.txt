@@ -1,11 +1,21 @@
 hlt: HLT_Signal
 #blind: !isData || (zz1_mass < 110 || zz1_mass > 150)
 4l: zz1_mass > 0
+any: zz1_mass > 70
 z4l: zz1_mass > 70 && zz1_mass < 110  ; Disable=True
 high: zz1_mass > 150                  ; Disable=True
 window: zz1_mass > 110 && zz1_mass < 150 ; Disable=True
+w2p5GeV: zz1_mass > 122.5 && zz1_mass < 127.5 ; Disable=True
+w1p5GeV: zz1_mass > 123.5 && zz1_mass < 126.5 ; Disable=True
 2l2m: abs(zz1_z2_l1_pdgId)==13; Disable=True
 2l2e: abs(zz1_z2_l1_pdgId)==11; Disable=True
+4e: abs(zz1_z1_l1_pdgId)==11 && abs(zz1_z2_l1_pdgId)==11; Disable=True
+4m: abs(zz1_z1_l1_pdgId)==13 && abs(zz1_z2_l1_pdgId)==13; Disable=True
+2e2m: abs(zz1_z1_l1_pdgId) != abs(zz1_z2_l1_pdgId); Disable=True
 4p0f: (zz1_z2_l1_tightId && zz1_z2_l1_relIsoAfterFSR<0.4+0.1*(abs(zz1_z2_l1_pdgId)==11)) + (zz1_z2_l2_tightId && zz1_z2_l2_relIsoAfterFSR<0.4+0.1*(abs(zz1_z2_l2_pdgId)==11)) == 2 ; Disable=True
 3p1f: (zz1_z2_l1_tightId && zz1_z2_l1_relIsoAfterFSR<0.4+0.1*(abs(zz1_z2_l1_pdgId)==11)) + (zz1_z2_l2_tightId && zz1_z2_l2_relIsoAfterFSR<0.4+0.1*(abs(zz1_z2_l2_pdgId)==11)) == 1 ; Disable=True
 2p2f: (zz1_z2_l1_tightId && zz1_z2_l1_relIsoAfterFSR<0.4+0.1*(abs(zz1_z2_l1_pdgId)==11)) + (zz1_z2_l2_tightId && zz1_z2_l2_relIsoAfterFSR<0.4+0.1*(abs(zz1_z2_l2_pdgId)==11)) == 0 ; Disable=True
+fsr: zz1_hasFSR; Disable=True
+mu_pt200 : (abs(zz1_z1_l1_pdgId)==13 && zz1_z1_l1_pt > 200) || (abs(zz1_z1_l2_pdgId)==13 && zz1_z1_l2_pt > 200) \
+        || (abs(zz1_z2_l1_pdgId)==13 && zz1_z2_l1_pt > 200) || (abs(zz1_z2_l2_pdgId)==13 && zz1_z2_l2_pt > 200) ; Disable=True
+z2_mu_pt200 : (abs(zz1_z2_l1_pdgId)==13 && zz1_z2_l1_pt > 200) || (abs(zz1_z2_l2_pdgId)==13 && zz1_z2_l2_pt > 200) ; Disable=True

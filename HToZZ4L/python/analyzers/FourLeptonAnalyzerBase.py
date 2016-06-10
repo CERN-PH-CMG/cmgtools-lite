@@ -44,7 +44,11 @@ class EventBox(object):
 class FourLeptonAnalyzerBase( Analyzer ):
     def __init__(self, cfg_ana, cfg_comp, looperName ):
         super(FourLeptonAnalyzerBase,self).__init__(cfg_ana,cfg_comp,looperName)
-        self._MEMs = ROOT.MEMCalculatorsWrapper(13.0,125.0)
+        doMEs = getattr(cfg_ana, 'doMEs', True)
+        if doMEs:
+            self._MEMs = ROOT.MEMCalculatorsWrapper(13.0,125.0)
+        else:
+            self._MEMs = False
 
     def declareHandles(self):
         super(FourLeptonAnalyzerBase, self).declareHandles()
@@ -180,6 +184,10 @@ class FourLeptonAnalyzerBase( Analyzer ):
 
  
     def fillMEs(self,quad,jets):
+        if not self._MEMs:
+            quad.KDs = collections.defaultdict(lambda : -999)
+            quad.KD  = -999
+            return
         legs = [ quad.leg1.leg1, quad.leg1.leg2, quad.leg2.leg1, quad.leg2.leg2 ]
         lvs  = [ l.p4WithFSR() for l in legs ]
         ids  = [ l.pdgId()     for l in legs ]
