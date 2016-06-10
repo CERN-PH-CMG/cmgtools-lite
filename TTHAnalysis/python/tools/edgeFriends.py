@@ -93,27 +93,34 @@ class edgeFriends:
                              'GenSusyMNeutralino', 'GenSusyMNeutralino2', 'GenSusyMNeutralino3', 'GenSusyMNeutralino4',
                              'GenSusyMChargino'  , 'GenSusyMChargino2']
 
-        self.triggerlist = ['HLT_at51'      , 'HLT_at52'       , 'HLT_at53'       , 'HLT_at55'        , 'HLT_at57'     ,
-                            'HLT_DoubleEl'  , 'HLT_el17el12_dz', 'HLT_el23el12_dz', 'HLT_ele33ele33'  ,
-                            'HLT_DoubleMu'  , 'HLT_mu17mu8'    , 'HLT_mu17mu8_dz' , 'HLT_mu17tkmu8_dz', 'HLT_mu27tkmu8',
-                            'HLT_MuEG'      , 'HLT_mu17el12'   , 'HLT_mu30ele30'  , 'HLT_mu8el17'     , 'HLT_mu8el23'  ,
-                            'HLT_pfht200'   , 'HLT_pfht250'    , 'HLT_pfht300'    , 'HLT_pfht350'     , 'HLT_pfht400'  , 
-                            'HLT_pfht475'   , 'HLT_pfht600'    , 'HLT_pfht800'    , 'HLT_pfht900'     ,
-                            'HLT_DoubleElHT', 'HLT_DoubleMuHT' , 'HLT_MuEGHT'     , 
-                            'HLT_HTJet'     , 'HLT_HTMET'      , 
-                            'HLT_SingleEl'  , 'HLT_SingleMu']
+        self.triggerlist2015 = ['HLT_at51'      , 'HLT_at52'       , 'HLT_at53'       , 'HLT_at55'        , 'HLT_at57'     ,
+                                'HLT_DoubleEl'  , 'HLT_el17el12_dz', 'HLT_el23el12_dz', 'HLT_ele33ele33'  ,
+                                'HLT_DoubleMu'  , 'HLT_mu17mu8'    , 'HLT_mu17mu8_dz' , 'HLT_mu17tkmu8_dz', 'HLT_mu27tkmu8',
+                                'HLT_MuEG'      , 'HLT_mu17el12'   , 'HLT_mu30ele30'  , 'HLT_mu8el17'     , 'HLT_mu8el23'  ,
+                                'HLT_pfht200'   , 'HLT_pfht250'    , 'HLT_pfht300'    , 'HLT_pfht350'     , 'HLT_pfht400'  , 
+                                'HLT_pfht475'   , 'HLT_pfht600'    , 'HLT_pfht800'    , 'HLT_pfht900'     ,
+                                'HLT_DoubleElHT', 'HLT_DoubleMuHT' , 'HLT_MuEGHT'     , 
+                                'HLT_HTJet'     , 'HLT_HTMET'      , 
+                                'HLT_SingleEl'  , 'HLT_SingleMu']
+
+        self.triggerlist = ['HLT_DoubleEl'  , #('HLT_Ele17_Ele12_CaloIdL_TrackIdL_IsoVL_DZ', 'HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ')
+                            'HLT_DoubleMu'  , #('HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ', 'HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ') 
+                            'HLT_MuEG'      , #('HLT_Mu17_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL', 'HLT_Mu8_TrkIsoVVL_Ele17_CaloIdL_TrackIdL_IsoVL', 'HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL', 'HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL')
+                            'HLT_SingleMu'  , #('HLT_IsoMu24_eta2p1', 'HLT_IsoTkMu24_eta2p1', 'HLT_IsoMu18', 'HLT_IsoMu20', 'HLT_IsoTkMu20', 'HLT_IsoMu27', 'HLT_IsoTkMu27')
+                            'HLT_SingleEl'    #('HLT_Ele23_WPLoose_Gsf', 'HLT_Ele23_CaloIdL_TrackIdL_IsoVL', 'HLT_Ele27_WPLoose_Gsf', 'HLT_Ele27_eta2p1_WPLoose_Gsf', 'HLT_Ele32_eta2p1_WPLoose_Gsf', 'HLT_Ele27_WP85_Gsf', 'HLT_Ele27_eta2p    1_WP75_Gsf', 'HLT_Ele32_eta2p1_WP75_Gsf')
+                            ]
         self.btagMediumCut = 0.800
         self.btagLooseCut  = 0.460
 
     def listBranches(self):
         label = self.label
-        biglist = [ ("evt"+label, "I"),
+        biglist = [ ("evt"+label, "D"),
                     ("run"+label, "I"),
                     ("lumi"+label, "I"),
                     ("nVert"+label, "I"),
                     ("nLepTight"+label, "I"),
                     ("nLepLoose"+label, "I"),
-                    ("nJetSel"+label, "I"),
+                    ("nJetSel"+label, "I"), ("nJetSel_jecUp"+label, "I"), ("nJetSel_jecDn"+label, "I"),
                     ("bestMjj"+label, "F"),
                     ("minMjj"+label, "F"),
                     ("maxMjj"+label, "F"),
@@ -129,11 +136,11 @@ class edgeFriends:
                     ("iJ"+label,"I",20,"nJetSel"+label), # index >= 0 if in Jet; -1-index (<0) if in DiscJet
                     ("nLepGood20"+label, "I"),
                     ("nLepGood20T"+label, "I"),
-                    ("nJet35"+label, "I"), 
-                    ("htJet35j"+label),
-                    ("nBJetMedium25"+label, "I"), 
-                    ("nBJetLoose35"+label, "I"), 
-                    ("nBJetMedium35"+label, "I"), 
+                    ("nJet35"+label        , "I") , ("nJet35_jecUp"+label        , "I") , ("nJet35_jecDn"+label        , "I") ,
+                    ("htJet35j"+label      , "F") , ("htJet35j_jecUp"+label      , "F") , ("htJet35j_jecDn"+label      , "F") ,
+                    ("nBJetMedium25"+label , "I") , ("nBJetMedium25_jecUp"+label , "I") , ("nBJetMedium25_jecDn"+label , "I") ,
+                    ("nBJetLoose35"+label  , "I") , ("nBJetLoose35_jecUp"+label  , "I") , ("nBJetLoose35_jecDn"+label  , "I") ,
+                    ("nBJetMedium35"+label , "I") , ("nBJetMedium35_jecUp"+label , "I") , ("nBJetMedium35_jecDn"+label , "I") ,
                     ("iL1T"+label, "I"),
                     ("iL2T"+label, "I"), 
                     ("lepsMll"+label, "F"),
@@ -145,8 +152,7 @@ class edgeFriends:
                     ("lepsZPt"+label, "F"),
                     ("metl1DPhi"+label, "F"),
                     ("metl2DPhi"+label, "F"),
-                    ("met"+label, "F"),
-                    ("met_phi"+label, "F"),
+                    ("met"+label, "F"), ("met_phi"+label, "F"), ("met_jecUp"+label, "F"), ("met_jecDn"+label, "F"),
                     ("lepsDPhi"+label, "F"),
                     ("Lep1_pt"+label, "F"), 
                     ("Lep1_eta"+label, "F"), 
@@ -168,19 +174,7 @@ class edgeFriends:
                     ("sum_mlb"+label, "F"), 
                     ("st"+label,"F"), 
                     ("srID"+label, "I"), 
-                    ("mt2"+label, "F"),
-                    ("lh_zpt_data"+label, "F"),
-                    ("lh_a3d_data"+label, "F"),
-                    ("lh_met_data"+label, "F"), 
-                    ("lh_mlb_data"+label, "F"), 
-                    ("lh_ldr_data"+label, "F"),
-                    ("lh_ldp_data"+label, "F"),
-                    ("lh_zpt_mc"+label  , "F"),
-                    ("lh_a3d_mc"+label  , "F"),
-                    ("lh_met_mc"+label  , "F") , 
-                    ("lh_mlb_mc"+label  , "F") , 
-                    ("lh_ldr_mc"+label  , "F") ,
-                    ("lh_ldp_mc"+label  , "F") ,
+                    ("mt2"+label, "F"), ("mt2_jecUp"+label, "F"), ("mt2_jecDn"+label, "F"),
                     ("lh_ana_zpt_data"+label, "F") ,
                     ("lh_ana_a3d_data"+label, "F") ,
                     ("lh_ana_met_data"+label, "F") ,
@@ -193,6 +187,8 @@ class edgeFriends:
                     ("lh_ana_ldr_mc"+label  , "F") ,
                     ("lh_ana_a3d_mc"+label  , "F") ,
                     ("lh_ana_ldp_mc"+label  , "F") ,
+                    ("nll"+label, "F"), ("nll_jecUp"+label, "F"), ("nll_jecDn"+label, "F"),
+                    ("nll_mc"+label, "F"), ("nll_mc_jecUp"+label, "F"), ("nll_mc_jecDn"+label, "F"),
                     ("weight_btagsf"+label  , "F") ,
                     ("weight_btagsf_heavy_UP"+label, "F") ,
                     ("weight_btagsf_heavy_DN"+label, "F") ,
@@ -229,7 +225,11 @@ class edgeFriends:
         lepso = [l for l in Collection(event,"LepOther","nLepOther")]
         jetsc = [j for j in Collection(event,"Jet","nJet")]
         jetsd = [j for j in Collection(event,"DiscJet","nDiscJet")]
-        metco = [m for m in Collection(event,"metcJet","nDiscJet")]
+        jetsc_jecUp = [j for j in Collection(event,"Jet_jecUp","nJet_jecUp")]
+        jetsd_jecUp = [j for j in Collection(event,"DiscJet_jecUp","nDiscJet_jecUp")]
+        jetsc_jecDn = [j for j in Collection(event,"Jet_jecDown","nJet_jecDown")]
+        jetsd_jecDn = [j for j in Collection(event,"DiscJet_jecDown","nDiscJet_jecDown")]
+        #metco = [m for m in Collection(event,"metcJet","nDiscJet")]
         (met, metphi)  = event.met_pt, event.met_phi
         (met_raw, metphi_raw)  = event.met_rawPt, event.met_rawPhi
         isData = event.isData
@@ -245,9 +245,10 @@ class edgeFriends:
         lepret  = {}
         trigret = {}
         ret['met'] = met; ret['met_phi'] = metphi;
+        ret['met_jecUp'] = event.met_jecUp_pt; ret['met_jecDn'] = event.met_jecDown_pt 
         ret['run'] = event.run
         ret['lumi'] = event.lumi
-        ret['evt'] = event.evt
+        ret['evt'] = long(event.evt)
         ret['nVert'] = event.nVert
         
         t01 = time.time()
@@ -381,64 +382,85 @@ class edgeFriends:
             ret['nPairLep'] = 0
         t4 = time.time()
 
-        mt2 = -1.
+        mt2 = -1.; mt2_jecUp = -1.; mt2_jecDn = -1.
         if ret['nPairLep'] == 2:
             l1mt2 = ROOT.reco.Particle.LorentzVector(lepvectors[0].p4().Px(), lepvectors[0].p4().Py(),lepvectors[0].p4().Pz(),lepvectors[0].p4().Energy())
             l2mt2 = ROOT.reco.Particle.LorentzVector(lepvectors[1].p4().Px(), lepvectors[1].p4().Py(),lepvectors[1].p4().Pz(),lepvectors[1].p4().Energy())
             metp4obj = ROOT.reco.Particle.LorentzVector(met*cos(metphi),met*sin(metphi),0,met)
-            mt2 = computeMT2(l1mt2, l2mt2, metp4obj)
+            metp4obj_jecUp = ROOT.reco.Particle.LorentzVector(ret['met_jecUp']*cos(metphi),ret['met_jecUp']*sin(metphi),0,ret['met_jecUp'])
+            metp4obj_jecDn = ROOT.reco.Particle.LorentzVector(ret['met_jecDn']*cos(metphi),ret['met_jecDn']*sin(metphi),0,ret['met_jecDn'])
+            mt2       = computeMT2(l1mt2, l2mt2, metp4obj)
+            mt2_jecUp = computeMT2(l1mt2, l2mt2, metp4obj_jecUp)
+            mt2_jecDn = computeMT2(l1mt2, l2mt2, metp4obj_jecDn)
+            del metp4obj, metp4obj_jecUp, metp4obj_jecDn
         ret['mt2'] = mt2
+        ret['mt2_jecUp'] = mt2_jecUp
+        ret['mt2_jecDn'] = mt2_jecDn
         t5 = time.time()
             
         ### Define jets
         ret["iJ"] = []
         # 0. mark each jet as clean
-        for j in jetsc+jetsd:
-            j._clean = True
-            if abs(j.eta) > 2.4 or j.pt < 25.:
-                j._clean = False
-                continue
-            if j.pt < 35 and j.btagCSV < self.btagMediumCut: 
-                j._clean = False
-                continue
-            for l in lepst:
-                #lep = leps[l]
-                if deltaR(l,j) < 0.4:
-                    j._clean = False
+        ## for j in jetsc+jetsd:
+        ##     j._clean = True
+        ##     if abs(j.eta) > 2.4 or j.pt < 25.:
+        ##         j._clean = False
+        ##         continue
+        ##     if j.pt < 35 and j.btagCSV < self.btagMediumCut: 
+        ##         j._clean = False
+        ##         continue
+        ##     for l in lepst:
+        ##         #lep = leps[l]
+        ##         if deltaR(l,j) < 0.4:
+        ##             j._clean = False
+        jetsc       = self.setJetCollection(jetsc, lepst)      ; jetsd       = self.setJetCollection(jetsd, lepst);
+        jetsc_jecUp = self.setJetCollection(jetsc_jecUp, lepst); jetsd_jecUp = self.setJetCollection(jetsd_jecUp, lepst);
+        jetsc_jecDn = self.setJetCollection(jetsc_jecDn, lepst); jetsd_jecDn = self.setJetCollection(jetsd_jecDn, lepst);
 
-        nb25 = 0
-        nb35 = 0
-        n35 = 0
-        for ijc,j in enumerate(jetsc):
-            if not j._clean: continue
-            bt = j.btagCSV
-            pt = j.pt
-            if pt > 25 and bt > self.btagMediumCut: nb25 += 1
-            if pt > 35 and bt > self.btagMediumCut: nb35 += 1
-            if pt > 35:
-                n35 += 1
-                ret["iJ"].append(ijc)
-        for ijd,j in enumerate(jetsd):
-            if not j._clean: continue
-            bt = j.btagCSV
-            pt = j.pt
-            if pt > 25 and bt > self.btagMediumCut: nb25 += 1
-            if pt > 35 and bt > self.btagMediumCut: nb35 += 1
-            if pt > 35:
-                n35 += 1
-                ret["iJ"].append(-1-ijd)
+        ## nb25 = 0; nb25_jecUp = 0; nb25_jecDn = 0
+        ## nb35 = 0; nb35_jecUp = 0; nb35_jecDn = 0
+        ## n35  = 0; n35_jecUp  = 0; n35_jecDn  = 0
 
-        ## look for number of 25 GeV b-jets
-        ret['nBJetMedium25'] = nb25
-        ret['nBJetMedium35'] = nb35
+        ## for ijc,j in enumerate(jetsc):
+        ##     if not j._clean: continue
+        ##     bt = j.btagCSV
+        ##     pt = j.pt
+        ##     if pt > 25 and bt > self.btagMediumCut: nb25 += 1
+        ##     if pt > 35 and bt > self.btagMediumCut: nb35 += 1
+        ##     if pt > 35:
+        ##         n35 += 1
+        ##         ret["iJ"].append(ijc)
+        ## for ijd,j in enumerate(jetsd):
+        ##     if not j._clean: continue
+        ##     bt = j.btagCSV
+        ##     pt = j.pt
+        ##     if pt > 25 and bt > self.btagMediumCut: nb25 += 1
+        ##     if pt > 35 and bt > self.btagMediumCut: nb35 += 1
+        ##     if pt > 35:
+        ##         n35 += 1
+        ##         ret["iJ"].append(-1-ijd)
+
+        (ret["iJ"]      , nb25      , nb35      , nl35      , n35      , ht35      , theJets      , theBJets      ) = self.countJets(jetsc      , jetsd      )
+        (ijlist_jecup   , nb25_jecUp, nb35_jecUp, nl35_jecUp, n35_jecUp, ht35_jecUp, theJets_jecUp, theBJets_jecUp) = self.countJets(jetsc_jecUp, jetsd_jecUp)
+        (ijlist_jecdn   , nb25_jecDn, nb35_jecDn, nl35_jecDn, n35_jecDn, ht35_jecDn, theJets_jecDn, theBJets_jecDn) = self.countJets(jetsc_jecDn, jetsd_jecDn)
+
+        ret['nJet35']        = n35 ; ret['nJet35_jecUp']        = n35_jecUp ; ret['nJet35_jecDn']        = n35_jecDn
+        ret['nBJetMedium25'] = nb25; ret['nBJetMedium25_jecUp'] = nb25_jecUp; ret['nBJetMedium25_jecDn'] = nb25_jecDn
+        ret['nBJetMedium35'] = nb35; ret['nBJetMedium35_jecUp'] = nb35_jecUp; ret['nBJetMedium35_jecDn'] = nb35_jecDn
+        ret['nBJetLoose35']  = nl35; ret['nBJetLoose35_jecUp']  = nl35_jecUp; ret['nBJetLoose35_jecDn']  = nl35_jecDn
+        ret["htJet35j"]      = ht35; ret["htJet35j_jecUp"]      = ht35_jecUp; ret["htJet35j_jecDn"]      = ht35_jecDn
 
         # 2. compute the jet list
+        ret['nJetSel']       = len(ret["iJ"])
+        ret['nJetSel_jecUp'] = len(ijlist_jecup)
+        ret['nJetSel_jecDn'] = len(ijlist_jecdn)
         
-        ret['nJetSel'] = len(ret["iJ"])
 
         # 3. sort the jets by pt
         
         ret["iJ"].sort(key = lambda idx : jetsc[idx].pt if idx >= 0 else jetsd[-1-idx].pt, reverse = True)
+        ## ret["iJ_jecUp"].sort(key = lambda idx : jetsc_jecUp[idx].pt if idx >= 0 else jetsd_jecUp[-1-idx].pt, reverse = True)
+        ## ret["iJ_jecDn"].sort(key = lambda idx : jetsc_jecDn[idx].pt if idx >= 0 else jetsd_jecDn[-1-idx].pt, reverse = True)
 
         # 4. compute the variables
         
@@ -456,24 +478,34 @@ class edgeFriends:
                     jetret[jmc].append( getattr(jet,jmc) if not isData else -1.)
         t6 = time.time()
         
-        # 5. compute the sums
-        
-        ret["nJet35"] = 0; ret["htJet35j"] = 0; ret["nBJetLoose35"] = 0; ret["nBJetMedium35"] = 0
+        ## # 5. compute the sums
+        ## 
+        ## ret["nJet35"] = 0       ; ret["htJet35j"] = 0       ; ret["nBJetLoose35"] = 0       ; ret["nBJetMedium35"] = 0
+        ## ret["nJet35_jecUp"] = 0 ; ret["htJet35j_jecUp"] = 0 ; ret["nBJetLoose35_jecUp"] = 0 ; ret["nBJetMedium35_jecUp"] = 0
+        ## ret["nJet35_jecDn"] = 0 ; ret["htJet35j_jecDn"] = 0 ; ret["nBJetLoose35_jecDn"] = 0 ; ret["nBJetMedium35_jecDn"] = 0
+        ## totalRecoil = ROOT.TLorentzVector()
+        ## theJets = []
+        ## theBJets = []
+        ## for j in jetsc+jetsd:
+        ##     if not j._clean or j.pt < 35: continue
+        ##     theJets.append(j)
+        ##     ret["nJet35"] += 1; ret["htJet35j"] += j.pt; 
+        ##     if j.btagCSV>self.btagLooseCut : ret["nBJetLoose35"] += 1
+        ##     if j.btagCSV>self.btagMediumCut: 
+        ##         theBJets.append(j)
+        ##         ret["nBJetMedium35"] += 1
+        ##     jet = ROOT.TLorentzVector()
+        ##     jet.SetPtEtaPhiM(j.pt, j.eta, j.phi, j.mass)
+        ##     totalRecoil = totalRecoil + jet
         totalRecoil = ROOT.TLorentzVector()
-        theJets = []
-        theBJets = []
-        for j in jetsc+jetsd:
-            if not j._clean or j.pt < 35: continue
-            theJets.append(j)
-            ret["nJet35"] += 1; ret["htJet35j"] += j.pt; 
-            if j.btagCSV>self.btagLooseCut : ret["nBJetLoose35"] += 1
-            if j.btagCSV>self.btagMediumCut: 
-                theBJets.append(j)
-                ret["nBJetMedium35"] += 1
+        for j in theJets:
             jet = ROOT.TLorentzVector()
             jet.SetPtEtaPhiM(j.pt, j.eta, j.phi, j.mass)
             totalRecoil = totalRecoil + jet
-          ## compute mlb for the two lepton  
+            
+
+        ## compute mlb for the two lepton  
+
         theJets  = sorted(theJets , key = lambda j : j.pt, reverse = True)
         theBJets = sorted(theBJets, key = lambda j : j.pt, reverse = True)
         ret['lepsJZB_recoil'] = totalRecoil.Pt() - ret['lepsZPt']
@@ -576,16 +608,20 @@ class edgeFriends:
                     if not ret["lh%s_zpt_%s"%(u,t)]: ret["lh%s_zpt_%s"%(u,t)] = 1e-50
                     if not ret["lh%s_a3d_%s"%(u,t)]: ret["lh%s_a3d_%s"%(u,t)] = 1e-50
                     if not ret["lh%s_ldp_%s"%(u,t)]: ret["lh%s_ldp_%s"%(u,t)] = 1e-50
+            ret['nll']    = -1.*math.log(ret["lh_ana_mlb_data"]*ret["lh_ana_met_data"]*ret["lh_ana_zpt_data"]*ret["lh_ana_ldp_data"])
+            ret['nll_mc'] = -1.*math.log(ret["lh_ana_mlb_mc"]  *ret["lh_ana_met_mc"]  *ret["lh_ana_zpt_mc"]  *ret["lh_ana_ldp_mc"]  )
         else:
             ret["srID"]      = -99
             for t in ['data', 'mc']:
-                for u in ['_ana', '']:
+                for u in ['_ana']:
                     ret["lh%s_mlb_%s"%(u,t)] = -999.
                     ret["lh%s_ldr_%s"%(u,t)] = -999.
                     ret["lh%s_met_%s"%(u,t)] = -999.
                     ret["lh%s_zpt_%s"%(u,t)] = -999.
                     ret["lh%s_a3d_%s"%(u,t)] = -999.
                     ret["lh%s_ldp_%s"%(u,t)] = -999.
+            ret['nll']    = 0.
+            ret['nll_mc'] = 0.
         t10 = time.time()
 
         ## print 'time from start to pre trigloaded: %.3f mus'%( (t01-t0)*1000000. )
@@ -616,6 +652,59 @@ class edgeFriends:
         for k,v in trigret.iteritems(): 
             fullret[k+self.label] = v
         return fullret
+
+    def setJetCollection(self, jetcoll, lepst):
+        for j in jetcoll:
+            j._clean = True
+            if abs(j.eta) > 2.4 or j.pt < 25.:
+                j._clean = False
+                continue
+            if j.pt < 35 and j.btagCSV < self.btagMediumCut: 
+                j._clean = False
+                continue
+            for l in lepst:
+                #lep = leps[l]
+                if deltaR(l,j) < 0.4:
+                    j._clean = False
+        return jetcoll
+
+    def countJets(self, coll1, coll2):
+        nb25 = 0; nb25 = 0; nb35 = 0; ht35 = 0.; nl35 = 0; n35 = 0
+        thejets = []; thebjets = []
+        retlist = []
+        for ijc,j in enumerate(coll1):
+            if not j._clean: continue
+            bt = j.btagCSV
+            pt = j.pt
+            if pt > 25 and bt > self.btagMediumCut: nb25 += 1
+            #if pt > 25 and bt > self.btagLooseCut : nl25 += 1
+            #if pt > 35 and bt > self.btagMediumCut: nb35 += 1
+            if pt > 35:
+                thejets.append(j)
+                n35 += 1; ht35 += pt
+                retlist.append(ijc)
+                if bt > self.btagMediumCut:
+                    nb35 += 1
+                    thebjets.append(j)
+                if bt > self.btagLooseCut:
+                    nl35 += 1
+        for ijd,j in enumerate(coll2):
+            if not j._clean: continue
+            bt = j.btagCSV
+            pt = j.pt
+            if pt > 25 and bt > self.btagMediumCut: nb25 += 1
+            #if pt > 25 and bt > self.btagLooseCut : nl25 += 1
+            #if pt > 35 and bt > self.btagMediumCut: nb35 += 1
+            if pt > 35:
+                thejets.append(j)
+                n35 += 1; ht35 += pt
+                retlist.append(-1-ijd)
+                if bt > self.btagMediumCut:
+                    nb35 += 1
+                    thebjets.append(j)
+                if bt > self.btagLooseCut:
+                    nl35 += 1
+        return retlist, nb25, nb35, nl35, n35, ht35, thejets, thebjets
 
     def getMll_JZB(self, l1, l2, met, met_raw):
         metrecoil = (met + l1 + l2).Pt()
