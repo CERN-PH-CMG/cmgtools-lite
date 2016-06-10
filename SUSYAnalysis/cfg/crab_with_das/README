@@ -1,0 +1,9 @@
+Files for heppy submission with CRAB. CRAB is also used to retrieve the files associated to a dataset 
+and to dispatch the jobs accordingly (following Andrea's setup).
+
+Relevant files:
+* launch.py: submit job(s) for one or more dataset. The sample (component) short names are passed as arguments. For options use ./launch.py -h
+* heppy_samples.py: defines all available samples (components). 
+* heppy_crab_config.py: basic CRAB configuration
+* heppy_crab_config_env.py: replaces some of the options defined in heppy_crab_config.py according to the options passed to launch.py
+* heppy_config.py: configuration file for heppy (used when executing the job)
