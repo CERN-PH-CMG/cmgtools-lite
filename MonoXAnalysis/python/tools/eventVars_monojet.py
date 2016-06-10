@@ -37,29 +37,21 @@ class EventVarsMonojet:
             return lep.relIso04 < 0.25
         elif abs(lep.pdgId) == 11:
             if abs(lep.etaSc) > 2.5: return False
-            if lep.relIso03 > (0.126 if abs(lep.etaSc)<1.479 else 0.144): return False
-            if lep.dxy > (0.0564 if abs(lep.etaSc)<1.479 else 0.222): return False
-            if lep.dz > (0.472 if abs(lep.etaSc)<1.479 else 0.921): return False
-            if not lep.convVeto: return False
-            return lep.lostHits <= (2 if abs(lep.etaSc)<1.479 else 3)
+            return lep.relIso03 < (0.126 if abs(lep.etaSc)<1.479 else 0.144)
     def lepIdTight(self,lep):
         if abs(lep.pdgId) == 13:
             if lep.pt <= 20: return False
             return abs(lep.eta) < 2.4 and lep.tightId >=1  and lep.relIso04 < 0.15
         elif abs(lep.pdgId) == 11:
-            if lep.pt <= 40: return False
             if lep.relIso03 > (0.0354 if abs(lep.etaSc)<1.479 else 0.0646): return False
-            if lep.dxy > (0.0111 if abs(lep.etaSc)<1.479 else 0.0351): return False
-            if lep.dz > (0.0466 if abs(lep.etaSc)<1.479 else 0.417): return False
-            if lep.lostHits > (2 if abs(lep.etaSc)<1.479 else 1): return False
-            return abs(lep.etaSc) < 2.5 and lep.tightId >=3  and lep.convVeto
+            return lep.pt > 40 and abs(lep.etaSc) < 2.5 and lep.tightId >=3
     def tauIdVeto(self,tau):
         if tau.pt <= 18 or abs(tau.eta) > 2.3: return False
         return tau.idDecayMode > 0.5 and tau.isoCI3hit < 5.0
     def gammaIdVeto(self,gamma):
-        return gamma.pt > 15 and abs(gamma.eta) < 2.5
+        return gamma.pt > 15 and abs(gamma.etaSc) < 2.5
     def gammaIdTight(self,gamma):
-        return gamma.pt > 175 and abs(gamma.eta) < 2.5 and gamma.idCutBased==3
+        return gamma.pt > 175 and abs(gamma.etaSc) < 1.4442 and gamma.idCutBased>=2
     def leadJetCleaning(self,jet):
         return jet.chHEF > 0.1 and jet.neHEF < 0.8
     def metNoPh(self,met,photons):
@@ -180,7 +172,7 @@ class EventVarsMonojet:
             j._clean = True if j.id > 0.5 else False
             for il in ret["iL"]:
                 lep = leps[il]
-                if deltaR(lep,j) < 0.4: j._clean = False
+                if deltaR(lep,j) < 0.8: j._clean = False
             if j._clean: ret['iFJ'].append(ij)
         # 2. sort the fatjets by pt 
         ret['iFJ'].sort(key = lambda idx : fatjets[idx].pt, reverse = True)
