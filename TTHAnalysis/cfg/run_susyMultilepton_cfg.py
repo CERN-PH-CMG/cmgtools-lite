@@ -42,7 +42,6 @@ ttHLepSkim.maxLeptons = 999
 
 # Run miniIso
 lepAna.doMiniIsolation = True
-lepAna.doDirectionalIsolation = False
 lepAna.packedCandidates = 'packedPFCandidates'
 lepAna.miniIsolationPUCorr = 'rhoArea'
 lepAna.miniIsolationVetoLeptons = None # use 'inclusive' to veto inclusive leptons and their footprint in all isolation cones
@@ -70,7 +69,8 @@ if not removeJecUncertainty:
 if analysis in ['SOS']:
 ## -- SOS preselection settings ---
 
-    lepAna.doDirectionalIsolation = True
+    lepAna.doDirectionalIsolation = [0.3,0.4]
+    lepAna.doFixedConeIsoWithMiniIsoVeto = True
 
     # Lepton Skimming
     ttHLepSkim.minLeptons = 2
@@ -190,7 +190,8 @@ susyCoreSequence.insert(susyCoreSequence.index(ttHFatJetAna)+1, ttHDecluster)
 from CMGTools.TTHAnalysis.analyzers.treeProducerSusyMultilepton import * 
 
 if analysis=="susy":
-    lepAna.do_mc_susy_match=True
+    susyCoreSequence.insert(susyCoreSequence.index(ttHCoreEventAna),
+                            susyLeptonMatchAna)
     leptonTypeSusyExtraLight.addVariables([
             NTupleVariable("mcUCSXMatchId", lambda x : x.mcUCSXMatchId if hasattr(x,'mcUCSXMatchId') else -1, help="MC truth matching a la UCSX"),
             ])
