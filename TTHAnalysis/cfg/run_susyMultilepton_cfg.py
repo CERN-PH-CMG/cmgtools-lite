@@ -195,7 +195,9 @@ if analysis=="susy":
     leptonTypeSusyExtraLight.addVariables([
             NTupleVariable("mcUCSXMatchId", lambda x : x.mcUCSXMatchId if hasattr(x,'mcUCSXMatchId') else -1, help="MC truth matching a la UCSX"),
             ])
-
+    susyMultilepton_collections.update({ # for conversion studies
+            "selectedPhotons"    : NTupleCollection("PhoGood", photonTypeSusy, 10, help="Selected photons"),
+            }) 
 
 if lepAna.doIsolationScan:
     leptonTypeSusyExtraLight.addVariables([
