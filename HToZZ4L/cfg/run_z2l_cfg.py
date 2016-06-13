@@ -10,6 +10,8 @@ from CMGTools.HToZZ4L.tools.configTools import *
 from CMGTools.RootTools.samples.autoAAAconfig import *
 
 #-------- SEQUENCE
+hzz4lObjSequence.remove(jetAna)
+hzz4lObjSequence.remove(metAna)
 sequence = cfg.Sequence(hzz4lPreSequence +  [ fastSkim2L ] + hzz4lObjSequence + [
     twoLeptonAnalyzer, 
     twoLeptonEventSkimmer, 

@@ -11,6 +11,9 @@ from CMGTools.HToZZ4L.tools.configTools import *
 from CMGTools.RootTools.samples.autoAAAconfig import *
 
 #-------- SEQUENCE
+fsrRecovery.enable = False
+hzz4lObjSequence.remove(jetAna)
+hzz4lObjSequence.remove(metAna)
 sequence = cfg.Sequence(hzz4lPreSequence +  [ fastSkim2Mu3 ] + hzz4lObjSequence + [
     twoLeptonAnalyzerOnia, 
     twoLeptonEventSkimmerOnia, 

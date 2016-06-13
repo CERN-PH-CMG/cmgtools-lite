@@ -22,7 +22,7 @@ fastSkim2LnoSip = cfg.Analyzer( ttHFastLepSkimmer, name="fastLepSkim2LnoSIP",
         minLeptons = 2,
 )
 fastSkim2L = fastSkim2LnoSip.clone(name="fastLepSkim2L",
-        muCut = lambda mu : mu.pt() > 5 and abs(mu.dB(mu.PV3D) / mu.edB(mu.PV3D)) < 4,
+        muCut = lambda mu : mu.pt() > 5 and abs(mu.dB(mu.PV3D)) <= 4*mu.edB(mu.PV3D),
         eleCut = lambda ele : ele.pt() > 7 and (abs(ele.dB(ele.PV3D)) <= 4*ele.edB(ele.PV3D)),
 )
 fastSkim3L = fastSkim2L.clone(name="fastLepSkim3L", minLeptons = 3)
