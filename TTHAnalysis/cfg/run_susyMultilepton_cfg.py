@@ -585,34 +585,33 @@ elif test == "ra5-sync-mc":
     comp.fineSplitFactor = 1
     selectedComponents = [ comp ]
     sequence.remove(jsonAna)
-elif test == '76X-MC':
+elif test == '80X-MC':
     what = getHeppyOption("sample","TTLep")
     if what == "TTLep":
+        TTLep_pow = kreator.makeMCComponent("TTLep_pow", "/TTTo2L2Nu_13TeV-powheg/RunIISpring16MiniAODv1-PUSpring16_80X_mcRun2_asymptotic_2016_v3_ext1-v1/MINIAODSIM", "CMS", ".*root", 831.76*((3*0.108)**2) )
         selectedComponents = [ TTLep_pow ]
         comp = selectedComponents[0]
-        comp.files = [ '/store/mc/RunIIFall15MiniAODv2/TTTo2L2Nu_13TeV-powheg/MINIAODSIM/PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/00000/089A3E7B-C1B9-E511-9B9F-001EC9ADDC63.root' ]
-        tmpfil = os.path.expandvars("/tmp/$USER/089A3E7B-C1B9-E511-9B9F-001EC9ADDC63.root")
+        comp.triggers = []
+        comp.files = [ '/store/mc/RunIISpring16MiniAODv1/TTTo2L2Nu_13TeV-powheg/MINIAODSIM/PUSpring16_80X_mcRun2_asymptotic_2016_v3_ext1-v1/00000/002606A5-C909-E611-85DA-44A8423D7E31.root' ]
+        tmpfil = os.path.expandvars("/tmp/$USER/002606A5-C909-E611-85DA-44A8423D7E31.root")
         if not os.path.exists(tmpfil):
             os.system("xrdcp root://eoscms//eos/cms%s %s" % (comp.files[0],tmpfil))
         comp.files = [ tmpfil ]
         if not getHeppyOption("single"): comp.fineSplitFactor = 4
     else: raise RuntimeError, "Unknown MC sample: %s" % what
-elif test == '76X-Data':
-    DoubleMuon = kreator.makeDataComponent("DoubleMuon_Run2015D_run260577", 
-                            "/DoubleMuon/Run2015D-16Dec2015-v1/MINIAOD", "CMS", ".*root", 
-                            run_range = (260577,260577), triggers = triggers_mumu_iso)
-    DoubleEG = kreator.makeDataComponent("DoubleEG_Run2015D_run260577",
-                            "/DoubleEG/Run2015D-16Dec2015-v2/MINIAOD", "CMS", ".*root",
-                            run_range = (260577,260577), triggers = triggers_ee)
+elif test == '80X-Data':
+    DoubleMuon = kreator.makeDataComponent("DoubleMuon_Run2016B_run274315", "/DoubleMuon/Run2016B-PromptReco-v2/MINIAOD", "CMS", ".*root", run_range = (274315,274315), triggers = triggers_mumu)
+    DoubleEG = kreator.makeDataComponent("DoubleEG_Run2016B_run274315", "/DoubleEG/Run2016B-PromptReco-v2/MINIAOD", "CMS", ".*root", run_range = (274315,274315), triggers = triggers_ee)
+    DoubleMuon.files = [ 'root://eoscms//eos/cms/store/data/Run2016B/DoubleMuon/MINIAOD/PromptReco-v2/000/274/315/00000/A287989F-E129-E611-B5FB-02163E0142C2.root' ]
+    DoubleEG.files = [ 'root://eoscms//eos/cms/store/data/Run2016B/DoubleEG/MINIAOD/PromptReco-v2/000/274/315/00000/FEF59D1D-EE29-E611-8793-02163E0143AE.root' ]
     selectedComponents = [ DoubleMuon, DoubleEG ]
     for comp in selectedComponents:
-        comp.json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions15/13TeV/Cert_246908-260627_13TeV_PromptReco_Collisions15_25ns_JSON_v2.txt'
+        comp.json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/DCSOnly/json_DCSONLY.txt'
+        tmpfil = os.path.expandvars("/tmp/$USER/%s" % os.path.basename(comp.files[0]))
+        if not os.path.exists(tmpfil): os.system("xrdcp %s %s" % (comp.files[0],tmpfil)) 
+        comp.files = [tmpfil]
         comp.splitFactor = 1
-        if not getHeppyOption("full"):
-            comp.files = comp.files[:1]
-            comp.fineSplitFactor = 2
-        else:
-            comp.splitFactor = len(comp.files)
+        comp.fineSplitFactor = 4
 elif test == 'ttH-sync':
     ttHLepSkim.minLeptons=0
     selectedComponents = selectedComponents[:1]
