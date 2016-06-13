@@ -13,7 +13,7 @@ from CMGTools.HToZZ4L.analyzers.FSRPhotonMaker import *
 from CMGTools.HToZZ4L.analyzers.GenFSRAnalyzer import *
 from CMGTools.HToZZ4L.analyzers.fourLeptonTree import *
 from CMGTools.HToZZ4L.analyzers.GenDPhiZZWeight import GenDPhiZZWeight
-from CMGTools.HToZZ4L.samples.samples_13TeV_Fall15 import *
+from CMGTools.HToZZ4L.samples.samples_13TeV_2016 import *
 
 from CMGTools.TTHAnalysis.analyzers.ttHFastLepSkimmer import ttHFastLepSkimmer
 fastSkim2LnoSip = cfg.Analyzer( ttHFastLepSkimmer, name="fastLepSkim2LnoSIP",

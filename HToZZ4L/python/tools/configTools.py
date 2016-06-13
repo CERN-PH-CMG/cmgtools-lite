@@ -1,7 +1,7 @@
 from PhysicsTools.HeppyCore.framework.heppy_loop import getHeppyOption
 
 def redefineRunRange(selectedComponents,run_range):
-    from CMGTools.HToZZ4L.samples.samples_13TeV_Fall15 import kreator
+    from CMGTools.HToZZ4L.samples.samples_13TeV_2016 import kreator
     from math import ceil
     for comp in selectedComponents:
         if comp.isMC or not hasattr(comp, 'dataset') or comp.dataset.count("/") != 3: continue
