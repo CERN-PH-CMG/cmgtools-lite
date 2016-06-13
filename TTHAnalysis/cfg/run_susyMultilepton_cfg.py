@@ -195,6 +195,7 @@ if analysis=="susy":
     leptonTypeSusyExtraLight.addVariables([
             NTupleVariable("mcUCSXMatchId", lambda x : x.mcUCSXMatchId if hasattr(x,'mcUCSXMatchId') else -1, help="MC truth matching a la UCSX"),
             ])
+    photonAna.do_mc_match = True
     susyMultilepton_collections.update({ # for conversion studies
             "selectedPhotons"    : NTupleCollection("PhoGood", photonTypeSusy, 10, help="Selected photons"),
             }) 
@@ -403,6 +404,7 @@ if runData and not isTest: # For running on data
     compSelection = ""; compVeto = ""
     DatasetsAndTriggers = []
     selectedComponents = [];
+    exclusiveDatasets = True; # this will veto triggers from previous PDs in each PD, so that there are no duplicate events
  
     if analysis in ['SOS']:
         DatasetsAndTriggers.append( ("MET", triggers_metNoMu90_mhtNoMu90) )
@@ -414,6 +416,26 @@ if runData and not isTest: # For running on data
         DatasetsAndTriggers.append( ("MuonEG",     triggers_mue + triggers_mue_ht + triggers_2mu1e + triggers_2e1mu) )
         DatasetsAndTriggers.append( ("SingleMuon", triggers_1mu_iso + triggers_1mu_iso_50ns + triggers_1mu_noniso) )
         DatasetsAndTriggers.append( ("SingleElectron", triggers_1e + triggers_1e_50ns) )
+
+        if runDataQCD: # for fake rate measurements in data
+            FRTrigs_mu = triggers_FR_1mu_iso + triggers_FR_1mu_noiso
+            FRTrigs_el = triggers_FR_1e_noiso + triggers_FR_1e_iso + triggers_FR_1e_b2g
+            DatasetsAndTriggers = [
+                #("DoubleMuon", FRTrigs_mu ),
+                #("DoubleEG",   FRTrigs_el ),
+                #("JetHT",   triggers_FR_jetHT )
+                ("JetHT",   triggers_FR_jet2 )
+            ]
+            exclusiveDatasets = False
+        if runDataQCD and runQCDBM: # for fake rate measurements in data
+            FRTrigs_mu = triggers_FR_1mu_iso + triggers_FR_1mu_noiso
+            FRTrigs_el = triggers_FR_1e_noiso + triggers_FR_1e_iso + triggers_FR_1e_b2g
+            DatasetsAndTriggers = [
+                ("SingleMuon", triggers_FR_muNoIso ),
+                #("DoubleMuon",  triggers_FR_1mu_noiso ),
+            ]
+            exclusiveDatasets = True
+
 
         if runDataQCD: # for fake rate measurements in data
             ttHLepSkim.minLeptons = 1
@@ -458,24 +480,45 @@ if runData and not isTest: # For running on data
                                                  triggers=triggers[:], vetoTriggers = vetos[:],
                                                  useAAA=useAAA)
                 print "Will process %s (%d files)" % (comp.name, len(comp.files))
-    #            print "\ttrigger sel %s, veto %s" % (triggers, vetos)
                 comp.splitFactor = len(comp.files)/8
                 comp.fineSplitFactor = 1
                 selectedComponents.append( comp )
-            vetos += triggers
+            if exclusiveDatasets: vetos += triggers
     if json is None:
         susyCoreSequence.remove(jsonAna)
 
+
+
 if runFRMC: 
+    QCD_Mu5 = [ QCD_Pt20to30_Mu5, QCD_Pt30to50_Mu5, QCD_Pt50to80_Mu5, QCD_Pt80to120_Mu5, QCD_Pt120to170_Mu5 ]
+    QCDPtEMEnriched = [ QCD_Pt20to30_EMEnriched, QCD_Pt30to50_EMEnriched, QCD_Pt50to80_EMEnriched, QCD_Pt80to120_EMEnriched, QCD_Pt120to170_EMEnriched ]
+    QCDPtbcToE = [ QCD_Pt_20to30_bcToE, QCD_Pt_30to80_bcToE, QCD_Pt_80to170_bcToE ]
+    QCDHT = [ QCD_HT100to200, QCD_HT200to300, QCD_HT300to500, QCD_HT500to700 ]
     selectedComponents = [QCD_Mu15] + QCD_Mu5 + QCDPtEMEnriched + QCDPtbcToE + [WJetsToLNu_LO,DYJetsToLL_M10to50,DYJetsToLL_M50]
-    printSummary(selectedComponents)
-    ttHLepSkim.minLeptons = 1
-    if getHeppyOption("fast"): raise RuntimeError, 'Already added ttHFastLepSkimmer with 2-lep configuration, this is wrong.'
-    FRTrigs = triggers_FR_1mu_iso + triggers_FR_1mu_noiso + triggers_FR_1e_noiso + triggers_FR_1e_iso + triggers_FR_1e_b2g
+    selectedComponents = [ QCD_Pt_170to250_bcToE, QCD_Pt120to170_EMEnriched, QCD_Pt170to300_EMEnriched ]
+    selectedComponents = [QCD_Mu15]
+    time = 1.0
+    configureSplittingFromTime([WJetsToLNu,WJetsToLNu_LO],20,time)
+    configureSplittingFromTime([DYJetsToLL_M10to50],10,time)
+    configureSplittingFromTime([DYJetsToLL_M50],30,time)
+    configureSplittingFromTime([QCD_Mu15]+QCD_Mu5,70,time)
+    configureSplittingFromTime(QCDPtbcToE,50,time)
+    configureSplittingFromTime(QCDPtEMEnriched,25,time)
+    configureSplittingFromTime([ QCD_HT100to200, QCD_HT200to300 ],10,time)
+    configureSplittingFromTime([ QCD_HT300to500, QCD_HT500to700 ],15,time)
+    configureSplittingFromTime([ QCD_Pt120to170_EMEnriched,QCD_Pt170to300_EMEnriched ], 15, time)
+    configureSplittingFromTime([ QCD_Pt_170to250_bcToE ], 30, time)
+    if runQCDBM:
+        configureSplittingFromTime([QCD_Mu15]+QCD_Mu5,15,time)
     for c in selectedComponents:
         c.triggers = []
         c.vetoTriggers = [] 
-        c.splitFactor = len(c.files)/4
+    printSummary(selectedComponents)
+
+if runFRMC or runDataQCD:
+    ttHLepSkim.minLeptons = 1
+    if getHeppyOption("fast"): raise RuntimeError, 'Already added ttHFastLepSkimmer with 2-lep configuration, this is wrong.'
+    FRTrigs = triggers_FR_1mu_iso + triggers_FR_1mu_noiso + triggers_FR_1e_noiso + triggers_FR_1e_iso + triggers_FR_1e_b2g + triggers_FR_jetHT + triggers_FR_jet2 + triggers_FR_muNoIso + triggers_FR_ZB
     for t in FRTrigs:
         tShort = t.replace("HLT_","FR_").replace("_v*","")
         triggerFlagsAna.triggerBits[tShort] = [ t ]
@@ -490,10 +533,6 @@ if runFRMC:
             pairSel = lambda lep, jet: deltaR(lep.eta(),lep.phi(), jet.eta(), jet.phi()) > 0.7,
         )
         susyCoreSequence.insert(susyCoreSequence.index(jetAna)+1, ttHLepQCDFakeRateAna)
-        treeProducer.collections = {
-            "selectedLeptons" : NTupleCollection("LepGood",  leptonTypeSusyExtraLight, 8, help="Leptons after the preselection"),
-            "cleanJets"       : NTupleCollection("Jet",     jetTypeSusyExtraLight, 15, help="Cental jets after full selection and cleaning, sorted by pt"),
-        }
         leptonTypeSusyExtraLight.addVariables([
             NTupleVariable("awayJet_pt", lambda x: x.awayJet.pt() if x.awayJet else 0, help="pT of away jet"),
             NTupleVariable("awayJet_eta", lambda x: x.awayJet.eta() if x.awayJet else 0, help="eta of away jet"),
@@ -514,9 +553,35 @@ if runFRMC:
         susyCoreSequence.insert(susyCoreSequence.index(skimAnalyzer)+1, fastSkim)
         susyCoreSequence.remove(lheWeightAna)
         susyCounter.doLHE = False
+    if runQCDBM:
+        fastSkimBM = cfg.Analyzer(
+            ttHFastLepSkimmer, name="ttHFastLepSkimmerBM",
+            muons = 'slimmedMuons', muCut = lambda mu : mu.pt() > 8,
+            electrons = 'slimmedElectrons', eleCut = lambda ele : False,
+            minLeptons = 1,
+        )
+        fastSkim.minLeptons = 2
+        ttHLepSkim.maxLeptons = 1
+        susyCoreSequence.insert(susyCoreSequence.index(skimAnalyzer)+1, fastSkimBM)
+        from PhysicsTools.Heppy.analyzers.core.TriggerMatchAnalyzer import TriggerMatchAnalyzer
+        trigMatcher1Mu2J = cfg.Analyzer(
+            TriggerMatchAnalyzer, name="trigMatcher1Mu",
+            label='1Mu',
+            processName = 'PAT',
+            fallbackProcessName = 'RECO',
+            unpackPathNames = True,
+            trgObjSelectors = [ lambda t : t.path("HLT_Mu8_v*",1,0) or t.path("HLT_Mu17_v*",1,0) or t.path("HLT_Mu22_v*",1,0) or t.path("HLT_Mu27_v*",1,0) or t.path("HLT_Mu45_eta2p1_v*",1,0) or t.path("HLT_L2Mu10_v*",1,0) ],
+            collToMatch = 'cleanJetsAll',
+            collMatchSelectors = [ lambda l,t : True ],
+            collMatchDRCut = 0.4,
+            univoqueMatching = True,
+            verbose = False,
+            )
+        susyCoreSequence.insert(susyCoreSequence.index(jetAna)+1, trigMatcher1Mu2J)
+        ttHLepQCDFakeRateAna.jetSel = lambda jet : jet.pt() > 25 and abs(jet.eta()) < 2.4 and jet.matchedTrgObj1Mu
 
 
-    
+
 
 if is50ns:
     # no change in MC GT since there's no 76X 50ns MC
