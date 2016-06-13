@@ -669,16 +669,16 @@ elif test == '76X-MC':
         comp.files = [ tmpfil ]
         if not getHeppyOption("single"): comp.fineSplitFactor = 4
     else: raise RuntimeError, "Unknown MC sample: %s" % what
-elif test == '76X-Data':
-    DoubleMuon = kreator.makeDataComponent("DoubleMuon_Run2015D_run260577", 
-                            "/DoubleMuon/Run2015D-16Dec2015-v1/MINIAOD", "CMS", ".*root", 
-                            run_range = (260577,260577), triggers = triggers_mumu_iso)
-    DoubleEG = kreator.makeDataComponent("DoubleEG_Run2015D_run260577",
-                            "/DoubleEG/Run2015D-16Dec2015-v2/MINIAOD", "CMS", ".*root",
-                            run_range = (260577,260577), triggers = triggers_ee)
+elif test == '80X-Data':
+    DoubleMuon = kreator.makeDataComponent("DoubleMuon_Run2016B_run274421",
+                            "/DoubleMuon/Run2016B-PromptReco-v2/MINIAOD", "CMS", ".*root",
+                            run_range = (274421,274421), triggers = triggers_mumu_iso)
+    DoubleEG = kreator.makeDataComponent("DoubleEG_Run2016B_run274421",
+                            "/DoubleMuon/Run2016B-PromptReco-v2/MINIAOD", "CMS", ".*root",
+                            run_range = (274421,274421), triggers = triggers_ee)
     selectedComponents = [ DoubleMuon, DoubleEG ]
     for comp in selectedComponents:
-        comp.json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions15/13TeV/Cert_246908-260627_13TeV_PromptReco_Collisions15_25ns_JSON_v2.txt'
+        comp.json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-274421_13TeV_PromptReco_Collisions16_JSON.txt'
         comp.splitFactor = 1
         if not getHeppyOption("full"):
             comp.files = comp.files[:1]
