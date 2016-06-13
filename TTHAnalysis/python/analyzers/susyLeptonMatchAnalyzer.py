@@ -81,6 +81,8 @@ class susyLeptonMatchAnalyzer( Analyzer ):
     def process(self, event):
         self.readCollections(event.input)
 
+        if not self.cfg_comp.isMC: return True
+
         self.SUSYMatchLeptons(event)
 
         return True
