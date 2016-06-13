@@ -1,0 +1,6 @@
+### DATA - DATA COMPARISON
+
+# 2016 data
+dataref: DoubleEG_ZElectron_std ; FillColor=ROOT.kAzure+5,  Label="Prompt-Reco"
+data: DoubleEG_ZElectron_ReReco ;  Label="Re-Reco"
+
