@@ -187,8 +187,6 @@ jetTypeSusyExtra = NTupleObjectType("jetSusyExtra",  baseObjectTypes = [ jetType
 
 fatJetType = NTupleObjectType("fatJet",  baseObjectTypes = [ jetType ], variables = [
     NTupleVariable("prunedMass",  lambda x : x.userFloat("ak8PFJetsCHSPrunedMass"),  float, help="pruned mass"),
-#    NTupleVariable("trimmedMass", lambda x : x.userFloat("ak8PFJetsCHSTrimmedMass"), float, help="trimmed mass"), # not there in 80X
-#    NTupleVariable("filteredMass", lambda x : x.userFloat("ak8PFJetsCHSFilteredMass"), float, help="filtered mass"), # not there in 80X
     NTupleVariable("softDropMass", lambda x : x.userFloat("ak8PFJetsCHSSoftDropMass"), float, help="trimmed mass"),
     NTupleVariable("tau1", lambda x : x.userFloat("NjettinessAK8:tau1"), float, help="1-subjettiness"),
     NTupleVariable("tau2", lambda x : x.userFloat("NjettinessAK8:tau2"), float, help="2-subjettiness"),
