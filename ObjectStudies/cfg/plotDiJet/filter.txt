@@ -1,0 +1,3 @@
+weight: (Flag_EcalDeadCellTriggerPrimitiveFilter==1 && Flag_HBHENoiseFilter==1 && Flag_HBHENoiseIsoFilter==1 && Flag_CSCTightHalo2015Filter==1 && Flag_goodVertices==1 && Flag_eeBadScFilter==1)
+
+

@@ -1,0 +1,5 @@
+weight: (1 + (jet1_pt>60 && jet1_pt<80 )*(HLT_BIT_HLT_PFJet60_v_Prescale-1) + (jet1_pt>80 && jet1_pt<140 )*(HLT_BIT_HLT_PFJet80_v_Prescale-1) + (jet1_pt>140 && jet1_pt<200 )*(HLT_BIT_HLT_PFJet140_v_Prescale-1) + (jet1_pt>200 && jet1_pt<260 )*(HLT_BIT_HLT_PFJet200_v_Prescale-1) + (jet1_pt>260 && jet1_pt<320 )*(HLT_BIT_HLT_PFJet260_v_Prescale-1) + (jet1_pt>320 && jet1_pt<400 )*(HLT_BIT_HLT_PFJet320_v_Prescale-1) + (jet1_pt>400 && jet1_pt<450 )*(HLT_BIT_HLT_PFJet400_v_Prescale-1) + (jet1_pt>450 && jet1_pt<500)*(HLT_BIT_HLT_PFJet450_v_Prescale-1) + (jet1_pt>500 )* (HLT_BIT_HLT_PFJet500_v_Prescale-1))*(Flag_EcalDeadCellTriggerPrimitiveFilter==1 && Flag_HBHENoiseFilter==1 && Flag_HBHENoiseIsoFilter==1 && Flag_CSCTightHalo2015Filter==1 && Flag_goodVertices==1 && Flag_eeBadScFilter==1)
+
+
+
+

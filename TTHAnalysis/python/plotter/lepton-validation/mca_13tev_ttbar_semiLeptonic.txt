@@ -30,28 +30,8 @@ Single top    : TBarToLeptons_tch_powheg:     xsec ;  FillColor=ROOT.kGray+2
 
 WJets    : WJetsToLNu :  xsec; FillColor=ROOT.kCyan+2
 
-data : DoubleEG_Run2016B_PromptReco_v1_runs_273013_273149
-data : DoubleEG_Run2016B_PromptReco_v2_runs_273150_273450
-data : DoubleEG_Run2016B_PromptReco_v2_runs_273492_273504
-data : DoubleEG_Run2016B_PromptReco_v2_runs_273554_273555
-data : DoubleEG_Run2016B_PromptReco_v2_runs_273725_273730
-data : DoubleMuon_Run2016B_PromptReco_v1_runs_273013_273149
-data : DoubleMuon_Run2016B_PromptReco_v2_runs_273150_273450
-data : DoubleMuon_Run2016B_PromptReco_v2_runs_273492_273504
-data : DoubleMuon_Run2016B_PromptReco_v2_runs_273554_273555
-data : DoubleMuon_Run2016B_PromptReco_v2_runs_273725_273730
-data : MuonEG_Run2016B_PromptReco_v1_runs_273013_273149
-data : MuonEG_Run2016B_PromptReco_v2_runs_273150_273450
-data : MuonEG_Run2016B_PromptReco_v2_runs_273492_273504
-data : MuonEG_Run2016B_PromptReco_v2_runs_273554_273555
-data : MuonEG_Run2016B_PromptReco_v2_runs_273725_273730
-data : SingleMuon_Run2016B_PromptReco_v1_runs_273013_273149
-data : SingleMuon_Run2016B_PromptReco_v2_runs_273150_273450
-data : SingleMuon_Run2016B_PromptReco_v2_runs_273492_273504
-data : SingleMuon_Run2016B_PromptReco_v2_runs_273554_273555
-data : SingleMuon_Run2016B_PromptReco_v2_runs_273725_273730
-data : SingleElectron_Run2016B_PromptReco_v1_runs_273013_273149
-data : SingleElectron_Run2016B_PromptReco_v2_runs_273150_273450
-data : SingleElectron_Run2016B_PromptReco_v2_runs_273492_273504
-data : SingleElectron_Run2016B_PromptReco_v2_runs_273554_273555
-data : SingleElectron_Run2016B_PromptReco_v2_runs_273725_273730
+data : DoubleEG_Run2016B_PromptReco_v2_runs_273150_273730
+data : DoubleMuon_Run2016B_PromptReco_v2_runs_273150_273730
+data : MuonEG_Run2016B_PromptReco_v2_runs_273150_273730
+data : SingleElectron_Run2016B_PromptReco_v2_runs_273150_273730
+data : SingleMuon_Run2016B_PromptReco_v2_runs_273150_273730
