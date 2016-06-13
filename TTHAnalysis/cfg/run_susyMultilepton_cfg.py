@@ -125,8 +125,8 @@ photonAna.do_mc_match = False
 # Loose Tau configuration
 tauAna.loose_ptMin = 20
 tauAna.loose_etaMax = 2.3
-tauAna.loose_decayModeID = "decayModeFinding"
-tauAna.loose_tauID = "byLooseIsolationMVArun2v1DBdR03oldDMwLT"
+tauAna.loose_decayModeID = "decayModeFindingNewDMs"
+tauAna.loose_tauID = "decayModeFindingNewDMs"
 if analysis in ["ttH"]: #if cleaning jet-loose tau cleaning
     jetAna.cleanJetsFromTaus = True
     jetAnaScaleUp.cleanJetsFromTaus = True
