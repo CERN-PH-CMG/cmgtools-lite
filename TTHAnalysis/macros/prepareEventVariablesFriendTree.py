@@ -116,7 +116,7 @@ MODULES.append( ('leptonJetReCleanerSusySSDL', lambda : LeptonJetReCleaner("Recl
                    looseLeptonSel = lambda lep : lep.miniRelIso < 0.4 and _ewkino_2lss_lepId_IPcuts(lep),
                    cleaningLeptonSel = lambda lep : lep.conept>10 and _ewkino_2lss_lepId_CBloose(lep), # cuts applied on top of loose (pt 5, 7, conveto, lotHist<=1 && emulation)
                    FOLeptonSel = lambda lep,ht : lep.conept>10 and _ewkino_2lss_lepId_loosestFO(lep), # cuts on top of loose (previous + tight charge and lostHits==0)
-                   tightLeptonSel = lambda lep,ht : lep.conept>10 and _ewkino_2lss_lepConePt1015(lep) and _ewkino_2lss_leptonMVA_T(lep) and _ewkino_2lss_lepId_tighterFO(lep), # on top of loose 
+                   tightLeptonSel = lambda lep,ht : lep.conept>10 and _ewkino_2lss_lepConePt1015(lep) and _ewkino_2lss_leptonMVA_VT(lep) and _ewkino_2lss_lepId_tighterFO(lep), # on top of loose 
                    cleanJet = lambda lep,jet,dr : dr<0.4,
                    selectJet = lambda jet: abs(jet.eta)<2.4,
                    cleanTau = lambda lep,tau,dr: dr<0.4,

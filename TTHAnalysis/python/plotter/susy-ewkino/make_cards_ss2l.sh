@@ -10,14 +10,14 @@ LUMI="$1"; shift
 echo "Normalizing to ${LUMI}/fb";
 OPTIONS=" --asimov -P $T --tree treeProducerSusyMultilepton --s2v -j $J -l ${LUMI} -f "
 test -d cards/$OUTNAME || mkdir -p cards/$OUTNAME
-OPTIONS="${OPTIONS} --od cards/160602/$OUTNAME ";
+OPTIONS="${OPTIONS} --od cards/160606/$OUTNAME ";
 
 SYSTS="susy-ewkino/syst_dummy.txt"
 SPLITDECAYS=""
 #SPLITDECAYS="-splitdecays"
 
 #OPTIONS="${OPTIONS} --Fs  {P}/3_recleaner_cbId "
-OPTIONS="${OPTIONS} --Fs  {P}/3_recleaner_mva "
+OPTIONS="${OPTIONS} --Fs  {P}/3_recleaner_MVAT_FO "
 OPTIONS="${OPTIONS} --mcc susy-ewkino/lepchoice-ss2l-FO.txt --mcc susy-ewkino/susy_ss2l_triggerdefs.txt --neg" # neg necessary for subsequent rebin
 CATPOSTFIX=""
 
@@ -25,7 +25,8 @@ FUNCTION_2L="SR_ewk_ss2l(nJet40,LepGood1_pt,LepGood1_phi,LepGood2_pt,LepGood2_ph
 #FUNCTION_2L="SR_ewk_ss2l(nJet40,LepGood1_pt,LepGood1_phi,LepGood2_pt,LepGood2_phi,met_pt,met_phi) 12,0.5,12.5"
 
 if [[ "$1" == "ss2l" ]]; then
-    OPT_2L="${OPTIONS} -R TT TTloose '(LepGood1_isTight&&LepGood2_isTight)||(abs(LepGood1_pdgId)==11&&LepGood1_mvaSUSY>0.65)||(abs(LepGood1_pdgId)==13 && LepGood1_mvaSUSY>0.15)' -E sr"
+    OPT_2L="${OPTIONS} -E sr -E tightMVAVT"
+#    OPT_2L="${OPTIONS} -E sr"
     
     echo "making cards for ss2l with following command: "
     echo python makeShapeCardsSusy.py susy-ewkino/mca-ss2l-mc${SPLITDECAYS}.txt susy-ewkino/susy_ss2l_cuts.txt $FUNCTION_2L $SYSTS $OPT_2L -o ss2l ; 
