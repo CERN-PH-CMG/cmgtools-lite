@@ -193,7 +193,7 @@ if analysis=="susy":
     susyCoreSequence.insert(susyCoreSequence.index(ttHCoreEventAna),
                             susyLeptonMatchAna)
     leptonTypeSusyExtraLight.addVariables([
-            NTupleVariable("mcUCSXMatchId", lambda x : x.mcUCSXMatchId if hasattr(x,'mcUCSXMatchId') else -1, help="MC truth matching a la UCSX"),
+            NTupleVariable("mcUCSXMatchId", lambda x : x.mcUCSXMatchId if hasattr(x,'mcUCSXMatchId') else -1, mcOnly=True, help="MC truth matching a la UCSX"),
             ])
     photonAna.do_mc_match = True
     susyMultilepton_collections.update({ # for conversion studies
