@@ -16,3 +16,12 @@ mela_mass_2d_high: zz1_D_bkg_kin\:zz1_mass : 36,150,700,24,0,1; YTitle="D_{bkg}^
 m4l_all : zz1_mass : 126,70,700; XTitle="m(4l) [GeV]", Blinded="110 < x < 150", Logx
 m4l_coarse : zz1_mass : 63,70,700; XTitle="m(4l) [GeV]", Blinded="110 < x < 150", Logx
 m4l_logm : zz1_mass : [70, 76, 81, 88, 95, 102, 110, 119, 129, 139, 150, 161, 174, 188, 203, 219, 236, 255, 275, 297, 320, 345, 372, 402, 434, 468, 505, 545, 588, 634, 684, 738, 796, 859, 927, 1000]; XTitle="m(4l) [GeV]", Blinded="110 < x < 150", Logx
+m4l_coarselog : zz1_mass : [70, 110, 150, 300,  450, 600, 1000]; XTitle="m(4l) [GeV]", Blinded="110 < x < 150", Logx, Logy
+
+lead_mu_pt : max( max( (abs(zz1_z1_l1_pdgId)==13) * zz1_z1_l1_pt, (abs(zz1_z1_l2_pdgId)==13) * zz1_z1_l2_pt ), \
+                  max( (abs(zz1_z2_l1_pdgId)==13) * zz1_z2_l1_pt, (abs(zz1_z2_l2_pdgId)==13) * zz1_z2_l2_pt ) ) : [5,25,50,125,200,625,1000]; XTitle="Max p_{T}(#mu)", Logx, Logy, IncludeOverflows=False
+
+
+m4l_window : zz1_mass : 160,100,140; XTitle="m(4l) [GeV]", IncludeOverflows=False, LegendCutoff=1e-5, Legend='TL'
+m4l_window_ofl : zz1_mass : 160,100,140; XTitle="m(4l) [GeV]", IncludeOverflows=True, LegendCutoff=1e-5, Legend='TL'
+m4l_window_log : zz1_mass : 160,100,140; XTitle="m(4l) [GeV]", IncludeOverflows=False, LegendCutoff=1e-5, Legend='TL', Logy

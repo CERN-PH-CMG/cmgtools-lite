@@ -52,6 +52,10 @@ triggers_FR_1mu_noiso = [ "HLT_Mu%d_v*" % pt for pt in (8,17) ]
 triggers_FR_1e_noiso = [ "HLT_Ele%d_CaloIdM_TrackIdM_PFJet30_v*" % pt for pt in (8,12,23,33) ]
 triggers_FR_1e_iso   = [ "HLT_Ele%d_CaloIdL_TrackIdL_IsoVL_PFJet30_v*" % pt for pt in (12,23,33) ]
 triggers_FR_1e_b2g = [ "HLT_Ele17_CaloIdL_TrkIdL_IsoVL_v*", "HLT_Ele12_CaloIdL_TrackIdL_IsoVL_v*" ]
+triggers_FR_jetHT  = [ "HLT_PFJet40_v*", "HLT_PFHT200_v*", "HLT_PFHT250_v*", "HLT_PFHT350_v*" ]
+triggers_FR_jet2  =  [ "HLT_PFJet60_v*", "HLT_PFJet80_v*" ]
+triggers_FR_muNoIso = [ "HLT_Mu%d_v*" % pt for pt in (20,27,) ] + [ "HLT_Mu%d_eta2p1_v*" % pt for pt in (45,) ] + [ "HLT_L2Mu%d_v*" % pt for pt in (10,) ]
+triggers_FR_ZB      = [ "HLT_ZeroBias_v*" ] + [ "HLT_ZeroBias_part%d_v*" % i for i in xrange(1,9) ]
 
 ### GP: did not look at anything below this
 
