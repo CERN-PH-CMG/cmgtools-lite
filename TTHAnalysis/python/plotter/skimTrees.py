@@ -75,8 +75,9 @@ def _runIt(args):
         out = mytree.CopyTree('1')
         npass = out.GetEntries()
         friends = out.GetListOfFriends() or []
-        for tf in friends:
-                out.RemoveFriend(tf.GetTree())
+        while friends and friends.GetSize() > 0:
+            out.RemoveFriend(friends.At(0).GetTree())
+            friends = out.GetListOfFriends() or []
         fout.WriteTObject(out,options.tree if options.oldstyle else "tree")
         if histo: histo.Write()
         fout.Close(); timer.Stop()

@@ -181,7 +181,7 @@ for sysfile in args[4:]:
             (name, procmap, binmap, amount) = field[:4]
             if re.match(binmap+"$",truebinname) == None: continue
             if name not in systsEnv: systsEnv[name] = []
-            systsEnv[name].append((re.compile(procmap),amount,field[4],field[5].split(',')))
+            systsEnv[name].append((re.compile(procmap+"$"),amount,field[4],field[5].split(',')))
         else:
             raise RuntimeError, "Unknown systematic type %s" % field[4]
     if options.verbose:

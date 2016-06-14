@@ -2,6 +2,9 @@
 #from mcPlots import *
 from CMGTools.TTHAnalysis.plotter.mcPlots import *
 
+if "/fakeRate_cc.so" not in ROOT.gSystem.GetLibraries():
+    ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/TTHAnalysis/python/plotter/fakeRate.cc+" % os.environ['CMSSW_BASE']);
+
 
 def hist2ROC1d(hsig,hbg):
     bins = hsig.GetNbinsX()+2

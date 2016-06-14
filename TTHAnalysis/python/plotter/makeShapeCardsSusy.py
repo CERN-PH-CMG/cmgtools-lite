@@ -110,19 +110,19 @@ for sysfile in args[4:]:
             raise RuntimeError, "Malformed line %s in file %s"%(line.strip(),sysfile)
         elif len(field) == 4 or field[4] == "lnN":
             (name, procmap, binmap, amount) = field[:4]
-            if re.match(binmap,binname) == None: continue
+            if re.match(binmap+"$",binname) == None: continue
             if name not in systs: systs[name] = []
-            systs[name].append((re.compile(procmap),amount))
+            systs[name].append((re.compile(procmap+"$"),amount))
         elif field[4] in ["envelop","shapeOnly","templates","alternateShapeOnly"]:
             (name, procmap, binmap, amount) = field[:4]
-            if re.match(binmap,binname) == None: continue
+            if re.match(binmap+"$",binname) == None: continue
             if name not in systsEnv: systsEnv[name] = []
-            systsEnv[name].append((re.compile(procmap),amount,field[4]))
+            systsEnv[name].append((re.compile(procmap+"$"),amount,field[4]))
         elif field[4] in ["lnN_in_shape_bins","stat_foreach_shape_bins"]:
             (name, procmap, binmap, amount) = field[:4]
-            if re.match(binmap,binname) == None: continue
+            if re.match(binmap+"$",binname) == None: continue
             if name not in systsEnv: systsEnv[name] = []
-            systsEnv[name].append((re.compile(procmap),amount,field[4],field[5].split(',')))
+            systsEnv[name].append((re.compile(procmap+"$"),amount,field[4],field[5].split(',')))
         else:
             raise RuntimeError, "Unknown systematic type %s" % field[4]
     if options.verbose > 0:
@@ -210,7 +210,7 @@ for name in systsEnv.keys():
             p0Dn = nominal.Clone("%s_%sDn"% (nominal.GetName(),name))
             for bin in xrange(1,nominal.GetNbinsX()+1):
                 for binmatch in morefields[0]:
-                    if re.match(binmatch,'%d'%bin):
+                    if re.match(binmatch+"$",'%d'%bin):
                         p0Up.SetBinContent(bin,p0Up.GetBinContent(bin)*effect)
                         p0Up.SetBinError(bin,p0Up.GetBinError(bin)*effect)
                         p0Dn.SetBinContent(bin,p0Dn.GetBinContent(bin)/effect)
@@ -229,7 +229,7 @@ for name in systsEnv.keys():
             nominal = report[p]
             for bin in xrange(1,nominal.GetNbinsX()+1):
                 for binmatch in morefields[0]:
-                    if re.match(binmatch,'%d'%bin):
+                    if re.match(binmatch+"$",'%d'%bin):
                         p0Up = nominal.Clone("%s_%s_%s_bin%dUp"% (nominal.GetName(),name,p,bin))
                         p0Dn = nominal.Clone("%s_%s_%s_bin%dDown"% (nominal.GetName(),name,p,bin))
                         p0Up.SetBinContent(bin,p0Up.GetBinContent(bin)+effect*p0Up.GetBinError(bin))
