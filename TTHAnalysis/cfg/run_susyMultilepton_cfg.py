@@ -335,15 +335,25 @@ if runSMS:
     susyCoreSequence.remove(eventFlagsAna)
     ttHLepSkim.requireSameSignPair = True
 
-from CMGTools.RootTools.samples.samples_13TeV_RunIIFall15MiniAODv2 import *
+from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv1 import *
+from CMGTools.RootTools.samples.samples_13TeV_signals import *
 from CMGTools.RootTools.samples.samples_13TeV_76X_susySignalsPriv import *
 from CMGTools.RootTools.samples.samples_13TeV_DATA2015 import *
 from CMGTools.HToZZ4L.tools.configTools import printSummary, configureSplittingFromTime, cropToLumi
 
-selectedComponents = [ TTLep_pow ];
-
+selectedComponents = [TTLep_pow_ext]
 #selectedComponents = SMS_miniAODv2_T1tttt
 #susyCounter.SMS_varying_masses = ['genSusyMGluino','genSusyMNeutralino']
+
+if analysis=='susy':
+    samples_2l = [DYJetsToLL_M10to50,DYJetsToLL_M50,WWTo2L2Nu,ZZTo2L2Q,WZTo3LNu,TTWToLNu,TTZToLLNuNu,TTJets_DiLepton,TTHnobb_mWCutfix_ext1]
+    samples_1l = [WJetsToLNu,TTJets_SingleLeptonFromT,TTJets_SingleLeptonFromTbar,TBarToLeptons_tch_powheg,TToLeptons_sch_amcatnlo,TBar_tWch,T_tWch]
+    selectedComponents = samples_1l+samples_2l
+    cropToLumi(selectedComponents,2)
+    configureSplittingFromTime(samples_1l,50,3)
+    configureSplittingFromTime(samples_2l,100,3)
+    printSummary(selectedComponents)
+
 
 if scaleProdToLumi>0: # select only a subset of a sample, corresponding to a given luminosity (assuming ~30k events per MiniAOD file, which is ok for central production)
     target_lumi = scaleProdToLumi # in inverse picobarns
@@ -359,41 +369,17 @@ if scaleProdToLumi>0: # select only a subset of a sample, corresponding to a giv
 
 if runData and not isTest: # For running on data
 
-#    # low-PU 50ns run (251721)
-#    json = "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions15/13TeV/Cert_246908-252126_13TeV_PromptReco_Collisions15_LOWPU_50ns_JSON.txt";
-#    processing = "Run2015B-PromptReco-v1"; short = "Run2015B_v1"; run_ranges = [ (251721,251721) ]; useAAA=False; is50ns=True; triggerFlagsAna.checkL1Prescale = False;
-
-#    # Run2015B, 50 ns, 3.8T + one run at 50 ns in Run2015C
-#    json = "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions15/13TeV/Cert_246908-255031_13TeV_PromptReco_Collisions15_50ns_JSON.txt";
-#    processing = "Run2015B-17Jul2015-v1"; short = "Run2015B_17Jul2015"; run_ranges = [ (251244, 251562) ]; useAAA=False; is50ns=True; triggerFlagsAna.checkL1Prescale = False;
-#    processing = "Run2015B-PromptReco-v1"; short = "Run2015B_v1"; run_ranges = [ (251643,251883) ]; useAAA=False; is50ns=True; triggerFlagsAna.checkL1Prescale = False;
-#    json = "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions15/13TeV/Cert_254833_13TeV_PromptReco_Collisions15_JSON.txt"; # taken at 50 ns with 25 ns reconstruction
-#    processing = "Run2015C-PromptReco-v1"; short = "Run2015C_v1"; run_ranges = [ (254833,254833) ]; useAAA=False; is50ns=True; triggerFlagsAna.checkL1Prescale = False;
-
     is50ns = False
     dataChunks = []
 
-#    # Oct05 rereco of Run2015C
-#    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_246908-260627_13TeV_PromptReco_Collisions15_25ns_JSON_v2.txt'
-#    processing = "Run2015C_25ns-05Oct2015-v1"; short = "Run2015C_Oct05"; run_ranges = [ (254231,254914) ]; useAAA=False;
-#    dataChunks.append((json,processing,short,run_ranges,useAAA))
-#
-#    # Oct05 rereco of Run2015D-PromptReco-v3 (up to run 258158)
-#    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_246908-260627_13TeV_PromptReco_Collisions15_25ns_JSON_v2.txt'
-#    processing = "Run2015D-05Oct2015-v1"; short = "Run2015D_Oct05"; run_ranges = [ (256630,258158) ]; useAAA=False;
-#    dataChunks.append((json,processing,short,run_ranges,useAAA))
-#
-#    # Run2015D PromptReco-v4 (258159-260627) - WARNING: beware of CACHING in .cmgdataset
-#    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_246908-260627_13TeV_PromptReco_Collisions15_25ns_JSON_v2.txt'
-#    processing = "Run2015D-PromptReco-v4"; short = "Run2015D_PromptV4"; run_ranges = [ (258159,260627) ]; useAAA=False;
-#    dataChunks.append((json,processing,short,run_ranges,useAAA))
-
-    # Run2015C_25ns + Run2015D, 16Dec2015 rereco (76X)
-    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_13TeV_16Dec2015ReReco_Collisions15_25ns_JSON.txt'
-    processing = "Run2015C_25ns-16Dec2015-v1"; short = "Run2015C_25ns_16Dec2015"; run_ranges = []; useAAA=False;
+    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_271036-273450_13TeV_PromptReco_Collisions16_JSON_NoL1T.txt'
+    processing = "Run2016B-PromptReco-v1"; short = "Run2016B_PromptReco_v1"; run_ranges = [(273013,273149)]; useAAA=False;
     dataChunks.append((json,processing,short,run_ranges,useAAA))
-    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_13TeV_16Dec2015ReReco_Collisions15_25ns_JSON.txt'
-    processing = "Run2015D-16Dec2015-v1"; short = "Run2015D_16Dec2015"; run_ranges = []; useAAA=False;
+    processing = "Run2016B-PromptReco-v2"; short = "Run2016B_PromptReco_v2"; run_ranges = [(273150,273450)]; useAAA=False;
+    dataChunks.append((json,processing,short,run_ranges,useAAA))
+
+    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/json_DCSONLY.txt'
+    processing = "Run2016B-PromptReco-v2"; short = "Run2016B_PromptReco_v2"; run_ranges = [(273492,273504),(273554,273555),(273725,273730)]; useAAA=False;
     dataChunks.append((json,processing,short,run_ranges,useAAA))
 
     compSelection = ""; compVeto = ""
@@ -443,8 +429,6 @@ if runData and not isTest: # For running on data
                         print "Will skip %s" % (compname)
                         continue
                 myprocessing = processing
-                if pd=="MuonEG" and ("Run2015D-05Oct2015" in processing): myprocessing = myprocessing.replace("05Oct2015-v1","05Oct2015-v2")
-                if pd=="DoubleEG" and ("Run2015D-16Dec2015" in processing): myprocessing = myprocessing.replace("16Dec2015-v1","16Dec2015-v2")
                 comp = kreator.makeDataComponent(compname, 
                                                  "/"+pd+"/"+myprocessing+"/MINIAOD", 
                                                  "CMS", ".*root", 
@@ -601,34 +585,33 @@ elif test == "ra5-sync-mc":
     comp.fineSplitFactor = 1
     selectedComponents = [ comp ]
     sequence.remove(jsonAna)
-elif test == '76X-MC':
+elif test == '80X-MC':
     what = getHeppyOption("sample","TTLep")
     if what == "TTLep":
+        TTLep_pow = kreator.makeMCComponent("TTLep_pow", "/TTTo2L2Nu_13TeV-powheg/RunIISpring16MiniAODv1-PUSpring16_80X_mcRun2_asymptotic_2016_v3_ext1-v1/MINIAODSIM", "CMS", ".*root", 831.76*((3*0.108)**2) )
         selectedComponents = [ TTLep_pow ]
         comp = selectedComponents[0]
-        comp.files = [ '/store/mc/RunIIFall15MiniAODv2/TTTo2L2Nu_13TeV-powheg/MINIAODSIM/PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/00000/089A3E7B-C1B9-E511-9B9F-001EC9ADDC63.root' ]
-        tmpfil = os.path.expandvars("/tmp/$USER/089A3E7B-C1B9-E511-9B9F-001EC9ADDC63.root")
+        comp.triggers = []
+        comp.files = [ '/store/mc/RunIISpring16MiniAODv1/TTTo2L2Nu_13TeV-powheg/MINIAODSIM/PUSpring16_80X_mcRun2_asymptotic_2016_v3_ext1-v1/00000/002606A5-C909-E611-85DA-44A8423D7E31.root' ]
+        tmpfil = os.path.expandvars("/tmp/$USER/002606A5-C909-E611-85DA-44A8423D7E31.root")
         if not os.path.exists(tmpfil):
             os.system("xrdcp root://eoscms//eos/cms%s %s" % (comp.files[0],tmpfil))
         comp.files = [ tmpfil ]
         if not getHeppyOption("single"): comp.fineSplitFactor = 4
     else: raise RuntimeError, "Unknown MC sample: %s" % what
-elif test == '76X-Data':
-    DoubleMuon = kreator.makeDataComponent("DoubleMuon_Run2015D_run260577", 
-                            "/DoubleMuon/Run2015D-16Dec2015-v1/MINIAOD", "CMS", ".*root", 
-                            run_range = (260577,260577), triggers = triggers_mumu_iso)
-    DoubleEG = kreator.makeDataComponent("DoubleEG_Run2015D_run260577",
-                            "/DoubleEG/Run2015D-16Dec2015-v2/MINIAOD", "CMS", ".*root",
-                            run_range = (260577,260577), triggers = triggers_ee)
+elif test == '80X-Data':
+    DoubleMuon = kreator.makeDataComponent("DoubleMuon_Run2016B_run274315", "/DoubleMuon/Run2016B-PromptReco-v2/MINIAOD", "CMS", ".*root", run_range = (274315,274315), triggers = triggers_mumu)
+    DoubleEG = kreator.makeDataComponent("DoubleEG_Run2016B_run274315", "/DoubleEG/Run2016B-PromptReco-v2/MINIAOD", "CMS", ".*root", run_range = (274315,274315), triggers = triggers_ee)
+    DoubleMuon.files = [ 'root://eoscms//eos/cms/store/data/Run2016B/DoubleMuon/MINIAOD/PromptReco-v2/000/274/315/00000/A287989F-E129-E611-B5FB-02163E0142C2.root' ]
+    DoubleEG.files = [ 'root://eoscms//eos/cms/store/data/Run2016B/DoubleEG/MINIAOD/PromptReco-v2/000/274/315/00000/FEF59D1D-EE29-E611-8793-02163E0143AE.root' ]
     selectedComponents = [ DoubleMuon, DoubleEG ]
     for comp in selectedComponents:
-        comp.json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions15/13TeV/Cert_246908-260627_13TeV_PromptReco_Collisions15_25ns_JSON_v2.txt'
+        comp.json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/DCSOnly/json_DCSONLY.txt'
+        tmpfil = os.path.expandvars("/tmp/$USER/%s" % os.path.basename(comp.files[0]))
+        if not os.path.exists(tmpfil): os.system("xrdcp %s %s" % (comp.files[0],tmpfil)) 
+        comp.files = [tmpfil]
         comp.splitFactor = 1
-        if not getHeppyOption("full"):
-            comp.files = comp.files[:1]
-            comp.fineSplitFactor = 2
-        else:
-            comp.splitFactor = len(comp.files)
+        comp.fineSplitFactor = 4
 elif test == 'ttH-sync':
     ttHLepSkim.minLeptons=0
     selectedComponents = selectedComponents[:1]
@@ -657,7 +640,7 @@ if getHeppyOption("fast"):
         sequence.insert(sequence.index(jsonAna)+1, fastSkim)
     else:
         sequence.insert(sequence.index(skimAnalyzer)+1, fastSkim)
-if getHeppyOption("dropLHEweights",False):
+if getHeppyOption("dropLHEweights",True):
     treeProducer.collections.pop("LHE_weights")
     if lheWeightAna in sequence: sequence.remove(lheWeightAna)
     susyCounter.doLHE = False
