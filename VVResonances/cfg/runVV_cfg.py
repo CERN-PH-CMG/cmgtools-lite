@@ -99,5 +99,9 @@ if test==1:
         c.files = c.files[:1]
         c.splitFactor = 1
 
+if test==2:
+    # test a single component, using a single thread.
+    selectedComponents = [TTJets]
+
 selectedComponents=autoAAA(selectedComponents)
 config=autoConfig(selectedComponents,sequence)
