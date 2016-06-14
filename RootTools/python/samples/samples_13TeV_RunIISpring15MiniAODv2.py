@@ -64,7 +64,8 @@ tZq_ll = kreator.makeMCComponent("tZq_ll", "/tZq_ll_4f_13TeV-amcatnlo-pythia8_Tu
 tZq_nunu = kreator.makeMCComponent("tZq_nunu", "/tZq_nunu_4f_13TeV-amcatnlo-pythia8_TuneCUETP8M1/RunIISpring15MiniAODv2-74X_mcRun2_asymptotic_v2-v1/MINIAODSIM", "CMS", ".*root", 0.1379 )
 
 SingleTop = [
-    TToLeptons_tch_amcatnlo, TToLeptons_tch_amcatnlo_ext,  TToLeptons_sch_amcatnlo, TBar_tWch, T_tWch, T_tWch_DS, TBar_tWch_DS, TGJets, tZq_ll, tZq_nunu, 
+    TToLeptons_tch_amcatnlo, TToLeptons_tch_amcatnlo_ext,  TToLeptons_sch_amcatnlo, TBar_tWch, T_tWch, #T_tWch_DS, 
+    TBar_tWch_DS, TGJets, tZq_ll, tZq_nunu, 
 ]
 
 ### V+jets inclusive (from https://twiki.cern.ch/twiki/bin/viewauth/CMS/StandardModelCrossSectionsat13TeV)
