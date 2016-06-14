@@ -6,6 +6,7 @@ from CMGTools.VVResonances.plotting.StackPlotter import StackPlotter
 
 
 
+
 cuts={}
 
 cuts['common'] = '(HLT_MU||HLT_ELE)&&Flag_goodVertices&&Flag_CSCTightHaloFilter&&Flag_HBHENoiseFilter&&Flag_HBHENoiseIsoFilter&&Flag_eeBadScFilter&&lnujj_nOtherLeptons==0'
@@ -115,10 +116,10 @@ WHLNUJJ.setLineProperties(1,ROOT.kBlue+3,3)
 
 #Fill properties
 WJets.setFillProperties(1001,ROOT.kAzure-9)
-tt.setFillProperties(1001,ROOT.kGreen-5)
+tt.setFillProperties(1001,ROOT.kTeal-1)
 #ZJets.setFillProperties(1001,ROOT.kAzure+5)
-GJets.setFillProperties(1001,ROOT.kYellow)
-QCD.setFillProperties(1001,ROOT.kGray)
+#GJets.setFillProperties(1001,ROOT.kYellow)
+#QCD.setFillProperties(1001,ROOT.kGray)
 
 
 
@@ -155,6 +156,8 @@ lnujjStack.addPlotter(dataEMU,"data_obs","Data","data")
 #jjnunuStack.addPlotter(QCD,"QCD","QCD multijet","background")
 #jjnunuStack.addPlotter(tt,"tt","t#bar{t}","background")
 #jjnunuStack.addPlotter(dataMET,"data_obs","Data","data")
+
+
 
 
 
