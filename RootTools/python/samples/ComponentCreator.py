@@ -165,7 +165,7 @@ class ComponentCreator(object):
             )
         component.json = json
         component.vetoTriggers = vetoTriggers
-        component.dataset_entries = self.getPrimaryDatasetEntries(dataset,user,pattern)
+        component.dataset_entries = self.getPrimaryDatasetEntries(dataset,user,pattern,run_range=run_range)
         component.dataset = dataset
         component.run_range = run_range
         return component
@@ -178,9 +178,9 @@ class ComponentCreator(object):
         if useAAA: mapping = 'root://cms-xrd-global.cern.ch/%s'
         return [ mapping % f for f in files]
 
-    def getPrimaryDatasetEntries(self, dataset, user, pattern, useAAA=False):
+    def getPrimaryDatasetEntries(self, dataset, user, pattern, useAAA=False, run_range=None):
         # print 'getting files for', dataset,user,pattern
-        ds = createDataset( user, dataset, pattern, True )
+        ds = createDataset( user, dataset, pattern, True, run_range=run_range )
         return ds.primaryDatasetEntries
 
     def getMyFiles(self, dataset, user, pattern, dbsInstance, useAAA=False):

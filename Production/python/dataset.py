@@ -173,8 +173,10 @@ class CMSDataset( BaseDataset ):
         runs = (-1,-1)
         if self.run_range is not None:
             runs = self.run_range
-        num_files=self.findPrimaryDatasetNumFiles(self.name.rstrip('/'),
+        if not hasattr(self,'summaries'):
+            self.summaries = self.findPrimaryDatasetSummaries(self.name.rstrip('/'),
                                                   runs[0],runs[1])
+        num_files = self.summaries['files']
 
         limit = 10000
         if num_files > limit:
@@ -221,7 +223,7 @@ class CMSDataset( BaseDataset ):
         self.files = self.buildListOfFilesDBS(pattern)
             
     @staticmethod
-    def findPrimaryDatasetEntries(dataset, runmin, runmax):
+    def findPrimaryDatasetSummaries(dataset, runmin, runmax):
 
         query, qwhat = dataset, "dataset"
         if "#" in dataset: qwhat = "block"
@@ -234,37 +236,30 @@ class CMSDataset( BaseDataset ):
         dbs='das_client.py --query="summary %s=%s"'%(qwhat,query)
         dbsOut = _dasPopen(dbs).readlines()
 
-        entries = []
+        events = []
+        files = []
+        lumis = []
         for line in dbsOut:
             line = line.replace('\n','')
             if "nevents" in line:
-                entries.append(int(line.split(":")[1]))
-        if entries:
-            return sum(entries)
-        return -1
+                events.append(int(line.split(":")[1]))
+            if "nfiles" in line:
+                files.append(int(line.split(":")[1]))
+            if "nlumis" in line:
+                lumis.append(int(line.split(":")[1]))
+        if not events: events = [-1]
+        if not files:  files  = [-1]
+        if not lumis:  lumis  = [-1]
+        return { 'files':sum(files), 'events':sum(events), 'lumis':sum(lumis) }
+
+
+    @staticmethod
+    def findPrimaryDatasetEntries(dataset, runmin, runmax):
+        return self.findPrimaryDatasetSummaries(dataset, runmin, runmax)['events']
 
     @staticmethod
     def findPrimaryDatasetNumFiles(dataset, runmin, runmax):
-
-        query, qwhat = dataset, "dataset"
-        if "#" in dataset: qwhat = "block"
-        if runmin >0 or runmax > 0:
-            if runmin == runmax:
-                query = "%s run=%d" % (query,runmin)
-            else:
-                print "WARNING: queries with run ranges are slow in DAS"
-                query = "%s run between [%d, %d]" % (query,runmin if runmin > 0 else 1, runmax if runmax > 0 else 999999)
-        dbs='das_client.py --query="summary %s=%s"'%(qwhat,query)
-        dbsOut = _dasPopen(dbs).readlines()
-
-        entries = []
-        for line in dbsOut:
-            line = line.replace('\n','')
-            if "nfiles" in line:
-                entries.append(int(line.split(":")[1]))
-        if entries:
-            return sum(entries)
-        return -1
+        return self.findPrimaryDatasetSummaries(dataset, runmin, runmax)['files']
 
     def getPrimaryDatasetEntries(self):
         runmin = -1
@@ -272,7 +267,9 @@ class CMSDataset( BaseDataset ):
         if self.run_range is not None:
             runmin = self.run_range[0]
             runmax = self.run_range[1]
-        return self.findPrimaryDatasetEntries(self.name, runmin, runmax)
+        if not hasattr(self,'summaries'):
+            self.summaries = self.findPrimaryDatasetSummaries(self.name, runmin, runmax)
+        return self.summaries['events']
 
 class LocalDataset( BaseDataset ):
 
