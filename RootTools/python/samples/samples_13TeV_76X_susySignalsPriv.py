@@ -242,66 +242,66 @@ TSlepSlep = [ TSlepSlep_mSlep300_mChi20, TSlepSlep_mSlep150_mChi60 ]
 ## ------------------------------------------------------
 ## xsec: https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SUSYCrossSections13TeVn1n2hino
 ## BR: ZZ->4l (0.10099*0.10099)
-#TNeuNeuZZ_mNeu400_mChi1 = kreator.makeMCComponentFromEOS('TNeuNeuZZ_mNeu400_mChi1' , '/TNeuNeuZZ_mNeu400_mChi1/' , '/store/group/phys_susy/cheidegg/EWKSignals_76X_MiniAODv2/%s', ".*root", 0.0156691*0.10099*0.10099)
-#TNeuNeuZZ_mNeu450_mChi1 = kreator.makeMCComponentFromEOS('TNeuNeuZZ_mNeu450_mChi1' , '/TNeuNeuZZ_mNeu450_mChi1/' , '/store/group/phys_susy/cheidegg/EWKSignals_76X_MiniAODv2/%s', ".*root", 0.00944017*0.10099*0.10099)
-#TNeuNeuZZ = [ TNeuNeuZZ_mNeu400_mChi1, TNeuNeuZZ_mNeu450_mChi1 ]
+TNeuNeuZZ_mNeu400_mChi1 = kreator.makeMCComponentFromEOS('TNeuNeuZZ_mNeu400_mChi1' , '/TNeuNeuZZ_mNeu400_mChi1/' , '/store/group/phys_susy/cheidegg/EWKSignals_76X_MiniAODv2/%s', ".*root", 0.0887325*0.10099*0.10099)
+TNeuNeuZZ_mNeu450_mChi1 = kreator.makeMCComponentFromEOS('TNeuNeuZZ_mNeu450_mChi1' , '/TNeuNeuZZ_mNeu450_mChi1/' , '/store/group/phys_susy/cheidegg/EWKSignals_76X_MiniAODv2/%s', ".*root", 0.0537702*0.10099*0.10099)
+TNeuNeuZZ = [ TNeuNeuZZ_mNeu400_mChi1, TNeuNeuZZ_mNeu450_mChi1 ]
 
 
 ## TNeuNeuZZ_OS (opposite-sign)
 ## ------------------------------------------------------
 ## xsec: https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SUSYCrossSections13TeVn1n2hino
 ## BR: exactly one Z->ll (0.10099)
-#TNeuNeuZZ_mNeu400_mChi1_OS = kreator.makeMCComponentFromEOS('TNeuNeuZZ_mNeu400_mChi1_OS' , '/TNeuNeuZZ_mNeu400_mChi1_OS/' , '/store/group/phys_susy/cheidegg/EWKSignals_76X_MiniAODv2/%s', ".*root", 0.0156691*0.10099)
-#TNeuNeuZZ_mNeu450_mChi1_OS = kreator.makeMCComponentFromEOS('TNeuNeuZZ_mNeu450_mChi1_OS' , '/TNeuNeuZZ_mNeu450_mChi1_OS/' , '/store/group/phys_susy/cheidegg/EWKSignals_76X_MiniAODv2/%s', ".*root", 0.00944017*0.10099)
-#TNeuNeuZZ_OS = [ TNeuNeuZZ_mNeu400_mChi1_OS, TNeuNeuZZ_mNeu450_mChi1_OS ]
-
-
-## TNeuNeuHZ
-## ------------------------------------------------------
-## xsec: https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SUSYCrossSections13TeVn1n2hino
-## BR: Z->ll (0.10099), H->tautau, ZZ, WW (0.0632+0.264+0.022)
-#TNeuNeuHZ_mNeu300_mChi1 = kreator.makeMCComponentFromEOS('TNeuNeuHZ_mNeu300_mChi1' , '/TNeuNeuHZ_mNeu300_mChi1/' , '/store/group/phys_susy/cheidegg/EWKSignals_76X_MiniAODv2/%s', ".*root", 0.0509994*0.10099*0.3492)
-#TNeuNeuHZ_mNeu350_mChi1 = kreator.makeMCComponentFromEOS('TNeuNeuHZ_mNeu350_mChi1' , '/TNeuNeuHZ_mNeu350_mChi1/' , '/store/group/phys_susy/cheidegg/EWKSignals_76X_MiniAODv2/%s', ".*root", 0.0273286*0.10099*0.3492)
-#TNeuNeuHZ_mNeu400_mChi1 = kreator.makeMCComponentFromEOS('TNeuNeuHZ_mNeu400_mChi1' , '/TNeuNeuHZ_mNeu400_mChi1/' , '/store/group/phys_susy/cheidegg/EWKSignals_76X_MiniAODv2/%s', ".*root", 0.0156691*0.10099*0.3492)
-#TNeuNeuHZ_mNeu450_mChi1 = kreator.makeMCComponentFromEOS('TNeuNeuHZ_mNeu450_mChi1' , '/TNeuNeuHZ_mNeu450_mChi1/' , '/store/group/phys_susy/cheidegg/EWKSignals_76X_MiniAODv2/%s', ".*root", 0.00944017*0.10099*0.3492)
-#TNeuNeuHZ = [ TNeuNeuHZ_mNeu300_mChi1, TNeuNeuHZ_mNeu350_mChi1, TNeuNeuHZ_mNeu400_mChi1, TNeuNeuHZ_mNeu450_mChi1 ]
+TNeuNeuZZ_mNeu400_mChi1_OS = kreator.makeMCComponentFromEOS('TNeuNeuZZ_mNeu400_mChi1_OS' , '/TNeuNeuZZ_mNeu400_mChi1_OS/' , '/store/group/phys_susy/cheidegg/EWKSignals_76X_MiniAODv2/%s', ".*root", 0.0887325*0.10099)
+TNeuNeuZZ_mNeu450_mChi1_OS = kreator.makeMCComponentFromEOS('TNeuNeuZZ_mNeu450_mChi1_OS' , '/TNeuNeuZZ_mNeu450_mChi1_OS/' , '/store/group/phys_susy/cheidegg/EWKSignals_76X_MiniAODv2/%s', ".*root", 0.0537702*0.10099)
+TNeuNeuZZ_OS = [ TNeuNeuZZ_mNeu400_mChi1_OS, TNeuNeuZZ_mNeu450_mChi1_OS ]
 
 
 ## TNeuNeuHZ_OS
 ## ------------------------------------------------------
 ## xsec: https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SUSYCrossSections13TeVn1n2hino
+## BR: Z->ll (0.10099), H->tautau, ZZ, WW (0.0632+0.264+0.022)
+TNeuNeuHZ_mNeu300_mChi1_OS = kreator.makeMCComponentFromEOS('TNeuNeuHZ_mNeu300_mChi1_OS' , '/TNeuNeuHZ_mNeu300_mChi1_OS/' , '/store/group/phys_susy/cheidegg/EWKSignals_76X_MiniAODv2/%s', ".*root", 0.284855*0.10099*0.3492)
+TNeuNeuHZ_mNeu350_mChi1_OS = kreator.makeMCComponentFromEOS('TNeuNeuHZ_mNeu350_mChi1_OS' , '/TNeuNeuHZ_mNeu350_mChi1_OS/' , '/store/group/phys_susy/cheidegg/EWKSignals_76X_MiniAODv2/%s', ".*root", 0.153841*0.10099*0.3492)
+TNeuNeuHZ_mNeu400_mChi1_OS = kreator.makeMCComponentFromEOS('TNeuNeuHZ_mNeu400_mChi1_OS' , '/TNeuNeuHZ_mNeu400_mChi1_OS/' , '/store/group/phys_susy/cheidegg/EWKSignals_76X_MiniAODv2/%s', ".*root", 0.0887325*0.10099*0.3492)
+TNeuNeuHZ_mNeu450_mChi1_OS = kreator.makeMCComponentFromEOS('TNeuNeuHZ_mNeu450_mChi1_OS' , '/TNeuNeuHZ_mNeu450_mChi1_OS/' , '/store/group/phys_susy/cheidegg/EWKSignals_76X_MiniAODv2/%s', ".*root", 0.0537702*0.10099*0.3492)
+TNeuNeuHZ_OS = [ TNeuNeuHZ_mNeu300_mChi1_OS, TNeuNeuHZ_mNeu350_mChi1_OS, TNeuNeuHZ_mNeu400_mChi1_OS, TNeuNeuHZ_mNeu450_mChi1_OS ]
+
+
+## TNeuNeuHZ_SL
+## ------------------------------------------------------
+## xsec: https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SUSYCrossSections13TeVn1n2hino
 ## BR: Z->ll (0.10099), H->bbar (0.577)
-#TNeuNeuHZ_mNeu300_mChi1_OS = kreator.makeMCComponentFromEOS('TNeuNeuHZ_mNeu300_mChi1_OS' , '/TNeuNeuHZ_mNeu300_mChi1_OS/' , '/store/group/phys_susy/cheidegg/EWKSignals_76X_MiniAODv2/%s', ".*root", 0.0509994*0.10099*0.577 )
-#TNeuNeuHZ_mNeu350_mChi1_OS = kreator.makeMCComponentFromEOS('TNeuNeuHZ_mNeu350_mChi1_OS' , '/TNeuNeuHZ_mNeu350_mChi1_OS/' , '/store/group/phys_susy/cheidegg/EWKSignals_76X_MiniAODv2/%s', ".*root", 0.0273286*0.10099*0.577 )
-#TNeuNeuHZ_mNeu400_mChi1_OS = kreator.makeMCComponentFromEOS('TNeuNeuHZ_mNeu400_mChi1_OS' , '/TNeuNeuHZ_mNeu400_mChi1_OS/' , '/store/group/phys_susy/cheidegg/EWKSignals_76X_MiniAODv2/%s', ".*root", 0.0156691*0.10099*0.577 )
-#TNeuNeuHZ_mNeu450_mChi1_OS = kreator.makeMCComponentFromEOS('TNeuNeuHZ_mNeu450_mChi1_OS' , '/TNeuNeuHZ_mNeu450_mChi1_OS/' , '/store/group/phys_susy/cheidegg/EWKSignals_76X_MiniAODv2/%s', ".*root", 0.00944017*0.10099*0.577 )
-#TNeuNeuHZ_OS = [ TNeuNeuHZ_mNeu300_mChi1_OS, TNeuNeuHZ_mNeu350_mChi1_OS, TNeuNeuHZ_mNeu400_mChi1_OS, TNeuNeuHZ_mNeu450_mChi1_OS ]
+TNeuNeuHZ_mNeu300_mChi1_SL = kreator.makeMCComponentFromEOS('TNeuNeuHZ_mNeu300_mChi1_SL' , '/TNeuNeuHZ_mNeu300_mChi1_SL/' , '/store/group/phys_susy/cheidegg/EWKSignals_76X_MiniAODv2/%s', ".*root", 0.284855*0.10099*0.577 )
+TNeuNeuHZ_mNeu350_mChi1_SL = kreator.makeMCComponentFromEOS('TNeuNeuHZ_mNeu350_mChi1_SL' , '/TNeuNeuHZ_mNeu350_mChi1_SL/' , '/store/group/phys_susy/cheidegg/EWKSignals_76X_MiniAODv2/%s', ".*root", 0.153841*0.10099*0.577 )
+TNeuNeuHZ_mNeu400_mChi1_SL = kreator.makeMCComponentFromEOS('TNeuNeuHZ_mNeu400_mChi1_SL' , '/TNeuNeuHZ_mNeu400_mChi1_SL/' , '/store/group/phys_susy/cheidegg/EWKSignals_76X_MiniAODv2/%s', ".*root", 0.0887325*0.10099*0.577 )
+TNeuNeuHZ_mNeu450_mChi1_SL = kreator.makeMCComponentFromEOS('TNeuNeuHZ_mNeu450_mChi1_SL' , '/TNeuNeuHZ_mNeu450_mChi1_SL/' , '/store/group/phys_susy/cheidegg/EWKSignals_76X_MiniAODv2/%s', ".*root", 0.0537702*0.10099*0.577 )
+TNeuNeuHZ_SL = [ TNeuNeuHZ_mNeu300_mChi1_SL, TNeuNeuHZ_mNeu350_mChi1_SL, TNeuNeuHZ_mNeu400_mChi1_SL, TNeuNeuHZ_mNeu450_mChi1_SL ]
 
 
 ## TNeuNeuHH
 ## ------------------------------------------------------
 ## xsec: https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SUSYCrossSections13TeVn1n2hino
 ## BR: H->tautau, ZZ, WW (0.0632+0.264+0.022)**2
-#TNeuNeuHH_mNeu350_mChi1 = kreator.makeMCComponentFromEOS('TNeuNeuHH_mNeu350_mChi1' , '/TNeuNeuHH_mNeu350_mChi1/' , '/store/group/phys_susy/cheidegg/EWKSignals_76X_MiniAODv2/%s', ".*root", 0.0273286*0.3492*0.3492)
-#TNeuNeuHH_mNeu400_mChi1 = kreator.makeMCComponentFromEOS('TNeuNeuHH_mNeu400_mChi1' , '/TNeuNeuHH_mNeu400_mChi1/' , '/store/group/phys_susy/cheidegg/EWKSignals_76X_MiniAODv2/%s', ".*root", 0.0156691*0.3492*0.3492)
-#TNeuNeuHH_mNeu450_mChi1 = kreator.makeMCComponentFromEOS('TNeuNeuHH_mNeu450_mChi1' , '/TNeuNeuHH_mNeu450_mChi1/' , '/store/group/phys_susy/cheidegg/EWKSignals_76X_MiniAODv2/%s', ".*root", 0.00944017*0.3492*0.3492)
-#TNeuNeuHH = [ TNeuNeuHH_mNeu350_mChi1, TNeuNeuHH_mNeu400_mChi1, TNeuNeuHH_mNeu450_mChi1 ]
+TNeuNeuHH_mNeu350_mChi1 = kreator.makeMCComponentFromEOS('TNeuNeuHH_mNeu350_mChi1' , '/TNeuNeuHH_mNeu350_mChi1/' , '/store/group/phys_susy/cheidegg/EWKSignals_76X_MiniAODv2/%s', ".*root", 0.153841*0.3492*0.3492)
+TNeuNeuHH_mNeu400_mChi1 = kreator.makeMCComponentFromEOS('TNeuNeuHH_mNeu400_mChi1' , '/TNeuNeuHH_mNeu400_mChi1/' , '/store/group/phys_susy/cheidegg/EWKSignals_76X_MiniAODv2/%s', ".*root", 0.0887325*0.3492*0.3492)
+TNeuNeuHH_mNeu450_mChi1 = kreator.makeMCComponentFromEOS('TNeuNeuHH_mNeu450_mChi1' , '/TNeuNeuHH_mNeu450_mChi1/' , '/store/group/phys_susy/cheidegg/EWKSignals_76X_MiniAODv2/%s', ".*root", 0.0537702*0.3492*0.3492)
+TNeuNeuHH = [ TNeuNeuHH_mNeu350_mChi1, TNeuNeuHH_mNeu400_mChi1, TNeuNeuHH_mNeu450_mChi1 ]
 
 
 ## TNeuNeuHH_BB
 ## ------------------------------------------------------
 ## xsec: https://twiki.cern.ch/twiki/bin/view/LHCPhysics/SUSYCrossSections13TeVn1n2hino
 ## BR: H->bbbar (0.577)**2
-#TNeuNeuHH_mNeu350_mChi1_BB = kreator.makeMCComponentFromEOS('TNeuNeuHH_mNeu350_mChi1_BB' , '/TNeuNeuHH_mNeu350_mChi1_BB/' , '/store/group/phys_susy/cheidegg/EWKSignals_76X_MiniAODv2/%s', ".*root", 0.0273286*0.577*0.577)
-#TNeuNeuHH_mNeu400_mChi1_BB = kreator.makeMCComponentFromEOS('TNeuNeuHH_mNeu400_mChi1_BB' , '/TNeuNeuHH_mNeu400_mChi1_BB/' , '/store/group/phys_susy/cheidegg/EWKSignals_76X_MiniAODv2/%s', ".*root", 0.0156691*0.577*0.577)
-#TNeuNeuHH_mNeu450_mChi1_BB = kreator.makeMCComponentFromEOS('TNeuNeuHH_mNeu450_mChi1_BB' , '/TNeuNeuHH_mNeu450_mChi1_BB/' , '/store/group/phys_susy/cheidegg/EWKSignals_76X_MiniAODv2/%s', ".*root", 0.00944017*0.577*0.577)
-#TNeuNeuHH_BB = [ TNeuNeuHH_mNeu350_mChi1_BB, TNeuNeuHH_mNeu400_mChi1_BB, TNeuNeuHH_mNeu450_mChi1_BB ]
+TNeuNeuHH_mNeu350_mChi1_BB = kreator.makeMCComponentFromEOS('TNeuNeuHH_mNeu350_mChi1_BB' , '/TNeuNeuHH_mNeu350_mChi1_BB/' , '/store/group/phys_susy/cheidegg/EWKSignals_76X_MiniAODv2/%s', ".*root", 0.153841*0.577*0.577)
+TNeuNeuHH_mNeu400_mChi1_BB = kreator.makeMCComponentFromEOS('TNeuNeuHH_mNeu400_mChi1_BB' , '/TNeuNeuHH_mNeu400_mChi1_BB/' , '/store/group/phys_susy/cheidegg/EWKSignals_76X_MiniAODv2/%s', ".*root", 0.0887325*0.577*0.577)
+TNeuNeuHH_mNeu450_mChi1_BB = kreator.makeMCComponentFromEOS('TNeuNeuHH_mNeu450_mChi1_BB' , '/TNeuNeuHH_mNeu450_mChi1_BB/' , '/store/group/phys_susy/cheidegg/EWKSignals_76X_MiniAODv2/%s', ".*root", 0.0537702*0.577*0.577)
+TNeuNeuHH_BB = [ TNeuNeuHH_mNeu350_mChi1_BB, TNeuNeuHH_mNeu400_mChi1_BB, TNeuNeuHH_mNeu450_mChi1_BB ]
 
 
 
 ## mcSamplesPriv
 ## ------------------------------------------------------
-mcSamplesPriv = SqGltttt + T1ttbb + T1ttbbWW + T1tttt + T2tt + T2ttDeg + T5qqqqVV + T5qqqqVVDeg + T5ttttDeg + T6ttWW + T6qqWW + TChiChiSlepSneu + TChiNeuSlepSneu + TChiNeuSlepSneu_SS + TChiNeuSlepSneu_TD + TChiNeuWH + TChiNeuWH_SL + TChiNeuWZ + TChiNeuWZ_OS + TSlepSlep# + TNeuNeuZZ + TNeuNeuZZ_OS + TNeuNeuHZ + TNeuNeuHZ_OS + TNeuNeuHH + TNeuNeuHH_BB
+mcSamplesPriv = SqGltttt + T1ttbb + T1ttbbWW + T1tttt + T2tt + T2ttDeg + T5qqqqVV + T5qqqqVVDeg + T5ttttDeg + T6ttWW + T6qqWW + TChiChiSlepSneu + TChiNeuSlepSneu + TChiNeuSlepSneu_SS + TChiNeuSlepSneu_TD + TChiNeuWH + TChiNeuWH_SL + TChiNeuWZ + TChiNeuWZ_OS + TSlepSlep + TNeuNeuZZ + TNeuNeuZZ_OS + TNeuNeuHZ_OS + TNeuNeuHZ_SL + TNeuNeuHH + TNeuNeuHH_BB
 
 
 

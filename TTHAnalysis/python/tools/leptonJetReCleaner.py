@@ -272,7 +272,7 @@ class LeptonJetReCleaner:
         ret['minMllAFSS'] = minMllTL(lepsl, lepsl, paircut = lambda l1,l2 : l1.charge ==  l2.charge) 
         ret['minMllSFOS'] = minMllTL(lepsl, lepsl, paircut = lambda l1,l2 : l1.pdgId  == -l2.pdgId) 
 
-        cleantaus={}; rettlabel = {}; tauret = {}; 
+        cleantaus=[]; rettlabel={}; tauret={}
         cleantaus = self.recleanTaus(tausc, tausd, lepsc, self.label, rettlabel, tauret)
 
         cleanjets={}
