@@ -400,45 +400,9 @@ class edgeFriends:
             
         ### Define jets
         ret["iJ"] = []
-        # 0. mark each jet as clean
-        ## for j in jetsc+jetsd:
-        ##     j._clean = True
-        ##     if abs(j.eta) > 2.4 or j.pt < 25.:
-        ##         j._clean = False
-        ##         continue
-        ##     if j.pt < 35 and j.btagCSV < self.btagMediumCut: 
-        ##         j._clean = False
-        ##         continue
-        ##     for l in lepst:
-        ##         #lep = leps[l]
-        ##         if deltaR(l,j) < 0.4:
-        ##             j._clean = False
         jetsc       = self.setJetCollection(jetsc, lepst)      ; jetsd       = self.setJetCollection(jetsd, lepst);
         jetsc_jecUp = self.setJetCollection(jetsc_jecUp, lepst); jetsd_jecUp = self.setJetCollection(jetsd_jecUp, lepst);
         jetsc_jecDn = self.setJetCollection(jetsc_jecDn, lepst); jetsd_jecDn = self.setJetCollection(jetsd_jecDn, lepst);
-
-        ## nb25 = 0; nb25_jecUp = 0; nb25_jecDn = 0
-        ## nb35 = 0; nb35_jecUp = 0; nb35_jecDn = 0
-        ## n35  = 0; n35_jecUp  = 0; n35_jecDn  = 0
-
-        ## for ijc,j in enumerate(jetsc):
-        ##     if not j._clean: continue
-        ##     bt = j.btagCSV
-        ##     pt = j.pt
-        ##     if pt > 25 and bt > self.btagMediumCut: nb25 += 1
-        ##     if pt > 35 and bt > self.btagMediumCut: nb35 += 1
-        ##     if pt > 35:
-        ##         n35 += 1
-        ##         ret["iJ"].append(ijc)
-        ## for ijd,j in enumerate(jetsd):
-        ##     if not j._clean: continue
-        ##     bt = j.btagCSV
-        ##     pt = j.pt
-        ##     if pt > 25 and bt > self.btagMediumCut: nb25 += 1
-        ##     if pt > 35 and bt > self.btagMediumCut: nb35 += 1
-        ##     if pt > 35:
-        ##         n35 += 1
-        ##         ret["iJ"].append(-1-ijd)
 
         (ret["iJ"]      , nb25      , nb35      , nl35      , n35      , ht35      , theJets      , theBJets      ) = self.countJets(jetsc      , jetsd      )
         (ijlist_jecup   , nb25_jecUp, nb35_jecUp, nl35_jecUp, n35_jecUp, ht35_jecUp, theJets_jecUp, theBJets_jecUp) = self.countJets(jetsc_jecUp, jetsd_jecUp)
@@ -459,8 +423,6 @@ class edgeFriends:
         # 3. sort the jets by pt
         
         ret["iJ"].sort(key = lambda idx : jetsc[idx].pt if idx >= 0 else jetsd[-1-idx].pt, reverse = True)
-        ## ret["iJ_jecUp"].sort(key = lambda idx : jetsc_jecUp[idx].pt if idx >= 0 else jetsd_jecUp[-1-idx].pt, reverse = True)
-        ## ret["iJ_jecDn"].sort(key = lambda idx : jetsc_jecDn[idx].pt if idx >= 0 else jetsd_jecDn[-1-idx].pt, reverse = True)
 
         # 4. compute the variables
         
@@ -478,25 +440,6 @@ class edgeFriends:
                     jetret[jmc].append( getattr(jet,jmc) if not isData else -1.)
         t6 = time.time()
         
-        ## # 5. compute the sums
-        ## 
-        ## ret["nJet35"] = 0       ; ret["htJet35j"] = 0       ; ret["nBJetLoose35"] = 0       ; ret["nBJetMedium35"] = 0
-        ## ret["nJet35_jecUp"] = 0 ; ret["htJet35j_jecUp"] = 0 ; ret["nBJetLoose35_jecUp"] = 0 ; ret["nBJetMedium35_jecUp"] = 0
-        ## ret["nJet35_jecDn"] = 0 ; ret["htJet35j_jecDn"] = 0 ; ret["nBJetLoose35_jecDn"] = 0 ; ret["nBJetMedium35_jecDn"] = 0
-        ## totalRecoil = ROOT.TLorentzVector()
-        ## theJets = []
-        ## theBJets = []
-        ## for j in jetsc+jetsd:
-        ##     if not j._clean or j.pt < 35: continue
-        ##     theJets.append(j)
-        ##     ret["nJet35"] += 1; ret["htJet35j"] += j.pt; 
-        ##     if j.btagCSV>self.btagLooseCut : ret["nBJetLoose35"] += 1
-        ##     if j.btagCSV>self.btagMediumCut: 
-        ##         theBJets.append(j)
-        ##         ret["nBJetMedium35"] += 1
-        ##     jet = ROOT.TLorentzVector()
-        ##     jet.SetPtEtaPhiM(j.pt, j.eta, j.phi, j.mass)
-        ##     totalRecoil = totalRecoil + jet
         totalRecoil = ROOT.TLorentzVector()
         for j in theJets:
             jet = ROOT.TLorentzVector()
@@ -916,30 +859,30 @@ class edgeFriends:
             if abs(lep.dz ) > 0.10: return False
             if lep.sip3d > 8: return False
             lepeta = abs(lep.eta)
+            if lep.miniRelIso > 0.4: return False
             ## muons
             if abs(lep.pdgId) == 13:
               if lepeta > 2.4: return False
               if lep.mediumMuonId != 1: return False
-              if lep.miniRelIso > 0.4: return False
             ## electrons
             if abs(lep.pdgId) == 11:
               if lepeta > 2.5: return False
-              if lep.miniRelIso > 0.4: return False
               if (lep.convVeto == 0) or (lep.lostHits > 0) : return False
               if (lepeta < 0.8   and lep.mvaIdSpring15 < -0.70) : return False
               if (lepeta > 0.8   and lepeta < 1.479 and lep.mvaIdSpring15 < -0.83) : return False
               if (lepeta > 1.479 and lep.mvaIdSpring15 < -0.92) : return False
-              if hasattr(lep, 'idEmuRA5'):
-                if lep.idEmuRA5 == 0: return False
+              if hasattr(lep, 'idEmu2'):
+                if lep.idEmu2 == 0: return False
             return True
 
  
 def _susyEdgeTight(lep):
         if lep.pt <= 20.: return False
-        if abs(lep.eta) > 2.4: return False
+        eta = abs(lep.eta)
+        if eta          > 2.4: return False
         if abs(lep.dxy) > 0.05: return False
         if abs(lep.dz ) > 0.10: return False
-        if abs(lep.eta) > 1.4 and abs(lep.eta) < 1.6: return False
+        if eta > 1.4 and eta < 1.6: return False
         if abs(lep.pdgId) == 13:
           if lep.mediumMuonId != 1: return False
           if lep.miniRelIso > 0.2: return False
@@ -948,9 +891,9 @@ def _susyEdgeTight(lep):
           etatest = (abs(lep.etaSc) if hasattr(lep, 'etaSc') else abs(lep.eta))
           if (etatest > 1.4442 and etatest < 1.566) : return False
           if (lep.convVeto == 0) or (lep.lostHits > 0) : return False
-          if (abs(lep.eta) < 0.8 and lep.mvaIdSpring15 < 0.87) : return False
-          if (abs(lep.eta) > 0.8 and abs(lep.eta) < 1.479 and lep.mvaIdSpring15 < 0.60) : return False
-          if (abs(lep.eta) > 1.479 and lep.mvaIdSpring15 < 0.17) : return False
+          if (eta < 0.8 and lep.mvaIdSpring15 < 0.87) : return False
+          if (eta > 0.8 and eta < 1.479 and lep.mvaIdSpring15 < 0.60) : return False
+          if (eta > 1.479 and lep.mvaIdSpring15 < 0.17) : return False
           if lep.miniRelIso > 0.1: return False
         return True
 
