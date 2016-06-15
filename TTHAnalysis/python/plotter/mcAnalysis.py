@@ -554,7 +554,6 @@ if __name__ == "__main__":
     parser = OptionParser(usage="%prog [options] tree.root cuts.txt")
     addMCAnalysisOptions(parser)
     (options, args) = parser.parse_args()
-    if options.ypb and len(options.ypb[0]) == 2: options.final=True
     tty = TreeToYield(args[0],options) if ".root" in args[0] else MCAnalysis(args[0],options)
     cf  = CutsFile(args[1],options)
     for cutFile in args[2:]:

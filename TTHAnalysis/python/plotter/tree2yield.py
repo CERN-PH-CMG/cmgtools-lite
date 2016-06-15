@@ -331,7 +331,7 @@ class TreeToYield:
             if self._weight and nev < 1000: print nfmtS % toPrint,
             else                          : print nfmtL % toPrint,
             print ""
-    def _getYield(self,tree,cut,fsplit=None,addCut=""):
+    def _getYield(self,tree,cut,fsplit=None):
         if self._weight:
             if self._isdata: cut = "(%s)     *(%s)*(%s)" % (self._weightString,                    self._scaleFactor, self.adaptExpr(cut,cut=True))
             else:            cut = "(%s)*(%s)*(%s)*(%s)" % (self._weightString,self._options.lumi, self._scaleFactor, self.adaptExpr(cut,cut=True))
