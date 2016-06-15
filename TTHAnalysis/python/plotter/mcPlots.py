@@ -591,7 +591,8 @@ class PlotMaker:
         ROOT.gROOT.ProcessLine(".L smearer.cc+")
         ROOT.gStyle.SetOptStat(0)
         ROOT.gStyle.SetOptTitle(0)
-        
+        if self._options.perBin and not "txt" in self._options.printPlots: raise RuntimeError, "Error: cannot print yields per bin if txt option not given" 
+ 
     def run(self,mca,cuts,plots,makeStack=True,makeCanvas=True):
         if self._options.wideplot: ROOT.gStyle.SetTitleYOffset(0.55)
         sets = [ (None, 'all cuts', cuts.allCuts()) ]
@@ -904,6 +905,43 @@ class PlotMaker:
                         if not os.path.exists(fdir): 
                             os.makedirs(fdir); 
                             if os.path.exists("/afs/cern.ch"): os.system("cp /afs/cern.ch/user/g/gpetrucc/php/index.php "+fdir)
+                        if ext == "txt" and self._options.perBin:
+                            dump = open("%s/%s_perBin.%s" % (fdir, outputName, ext), "w")
+                            maxlen = max([len(mca.getProcessOption(p,'Label',p)) for p in mca.listSignals(allProcs=True) + mca.listBackgrounds(allProcs=True)]+[7])
+                            step = (plot.GetXaxis().GetXmax()-plot.GetXaxis().GetXmin())/plot.GetNbinsX()
+                            bins = [plot.GetXaxis().GetXmin()+i*step for i in range(plot.GetNbinsX())]
+                            fmh    = "%%-%ds" % (maxlen+1)
+                            fmt    = "%9.2f +/- %9.2f (stat)"
+                            dump.write(fmh % pspec.expr + " " + " ".join("%d" % (i) for i in bins) + "\n")
+                            dump.write(("-"*(maxlen+45))+"\n");
+                            for p in mca.listSignals(allProcs=True) + mca.listBackgrounds(allProcs=True) + ["signal", "background"]:
+                                if p not in pmap: continue
+                                plot = pmap[p]
+                                if plot.Integral() <= 0: continue
+                                norm = plot.Integral()
+                                if p not in ["signal","background"] and mca.isSignal(p): norm /= options.signalPlotScale # un-scale what was scaled
+                                if p == "signal": dump.write(("-"*(maxlen+45))+"\n");
+                                dump.write(fmh % (_unTLatex(mca.getProcessOption(p,'Label',p) if p not in ["signal", "background"] else p.upper())))
+                                bins = []
+                                for b in range(1,plot.GetNbinsX()+1):
+                                    syst = plot.GetBinContent(b) * mca.getProcessOption(p,'NormSystematic',0.0) if p not in ["signal", "background"] else 0;
+                                    line = fmt % (plot.GetBinContent(b), plot.GetBinError(b))
+                                    if syst: line += " +/- %9.2f (syst)"  % syst
+                                    bins.append(line)
+                                dump.write(" ".join(bins) + "\n")
+                            if 'data' in pmap: 
+                                dump.write(("-"*(maxlen+45))+"\n");
+                                dump.write("%%ds " % (maxlen+1) % ('DATA'))
+                                plot = pmap['data']
+                                bins = []
+                                for b in range(1,plot.GetNbinsX()+1):
+                                    bins.append("%7.0f" % plot.GetBinContent(b))
+                                dump.write(" ".join(bins) + "\n")
+                            for logname, loglines in pspec.allLogs():
+                                dump.write("\n\n --- %s --- \n" % logname)
+                                for line in loglines: dump.write("%s\n" % line)
+                                dump.write("\n")
+                            dump.close()
                         if ext == "txt":
                             dump = open("%s/%s.%s" % (fdir, outputName, ext), "w")
                             maxlen = max([len(mca.getProcessOption(p,'Label',p)) for p in mca.listSignals(allProcs=True) + mca.listBackgrounds(allProcs=True)]+[7])
@@ -1003,6 +1041,7 @@ def addPlotMakerOptions(parser, addAlsoMCAnalysis=True):
     parser.add_option("--no-elist", dest="elist", action="store_false", default='auto', help="Don't elist (which are on by default if making more than 2 plots)")
     parser.add_option("--yrange", dest="yrange", default=None, nargs=2, type='float', help="Y axis range");
     parser.add_option("--emptyStack", dest="emptyStack", action="store_true", default=False, help="Allow empty stack in order to plot, for example, only signals but no backgrounds.")
+    parser.add_option("--perBin", dest="perBin", action="store_true", default=False, help="Print the contents of every bin in another txt file");
 
 if __name__ == "__main__":
     from optparse import OptionParser

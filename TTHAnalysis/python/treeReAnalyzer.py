@@ -70,8 +70,6 @@ class Object:
         self._event = event
         self._prefix = prefix+"_"
         self._index = index
-        self.p4vec = ROOT.TLorentzVector()
-        self.p4vec.SetPtEtaPhiM(self.pt,self.eta,self.phi,self.mass)
     def __getattr__(self,name):
         if name in self.__dict__: return self.__dict__[name]
         if name == "pdgLabel": return self.pdgLabel_()
@@ -100,10 +98,9 @@ class Object:
         if self.pdgId == +11: return "e-";
         if self.pdgId == -11: return "e+";
     def p4(self):
+        if not hasattr(self, p4vec): self.p4vec = ROOT.TLorentzVector()
+        self.p4vec.SetPtEtaPhiM(self.pt,self.eta,self.phi,self.mass)
         return self.p4vec
-        #ret = ROOT.TLorentzVector()
-        #ret.SetPtEtaPhiM(self.pt,self.eta,self.phi,self.mass)
-        #return ret
     def subObj(self,prefix):
         return Object(self._event,self._prefix+prefix)
     def __repr__(self):
@@ -111,8 +108,9 @@ class Object:
     def __str__(self):
         return self.__repr__()
     def __del__(self):
-        self.p4vec.Delete()
-        del self.p4vec
+        if hasattr(self, p4vec):
+            self.p4vec.Delete()
+            del self.p4vec
 
 class Collection:
     def __init__(self,event,prefix,len=None,maxlen=None,testVar="pt"):

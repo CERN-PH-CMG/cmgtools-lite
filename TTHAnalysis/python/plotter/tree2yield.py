@@ -276,17 +276,7 @@ class TreeToYield:
         return (self._entries != None)
     def setEntries(self,entries):
         self._entries = entries
-    def getYieldsPerBin(self,cuts,expr,bining,noEntryLine=False,fsplit=None):
-        sb = binning.split(",")
-        stepsize = (float(sb[2])-float(sb[1]))/float(sb[0])
-        reports = []
-        for i in range(int(sb[0])):
-            start = float(sb[1]) +  i    * stepsize
-            end   = float(sb[1]) + (i+1) * stepsize
-            addCut = "("+expr+">="+str(start)+" && "+expr+"<"+str(end)+")"
-            reports.append(self.getYields(cuts,noEntryLine,fsplit,addCut))
-        return reports
-    def getYields(self,cuts,noEntryLine=False,fsplit=None,addCut=""):
+    def getYields(self,cuts,noEntryLine=False,fsplit=None):
         if not self._isInit: self._init()
         report = []; cut = ""
         cutseq = [ ['entry point','1'] ]
@@ -307,33 +297,8 @@ class TreeToYield:
                 cut += "(%s)" % cv
             else:
                 cut = cv
-            report.append((cn,self._getYield(self._tree,cut,fsplit=fsplit,addCut=addCut)))
+            report.append((cn,self._getYield(self._tree,cut,fsplit=fsplit)))
         return report
-    def prettyPrintPerBin(self,expr,binning,reportlist):
-        if len(reportlist) == 0: return
-        sb = binning.split(",")
-        stepsize = (float(sb[2])-float(sb[1]))/float(sb[0])
-        print reportlist
-        toPrintBkg = ""
-        toPrintSig = ""
-        for key in reportlist[0]: 
-            if key != 'data':
-                if self._isSignal[key]: toPrintSig += " : " + key
-                else                  : toPrintBkg += " : " + key
-        print expr + toPrintBkg + toPrintSig
-        for i,reports in enumerate(reportlist): ## loop over signal region
-            bin = float(sb[1]) + i * stepsize
-            sig = []; bkg = []
-            if 'data' in reports: data = (reports['data'][0], reports['data'][1])
-            for key in reports:
-                if key != 'data':
-                    if self._isSignal[key]: sig.append((reports[key][0][1][0], reports[key][0][1][1]))
-                    else                  : bkg.append((reports[key][0][1][0], reports[key][0][1][1]))
-            toPrint = ""
-            for b in bkg: toPrint += " %5.3f +/- %5.3f" % (b[0], b[1])
-            for s in sig: toPrint += " %5.3f +/- %5.3f" % (s[0], s[1])
-            if 'data' in reports: toPrint += " %5.3f +/- %5.3f" % (reports['data'][0], reports['data'][1])
-            print str(bin) + ": " + toPrint
     def prettyPrint(self,report):
         # maximum length of the cut descriptions
         clen = max([len(cut) for cut,yields in report]) + 3
@@ -377,8 +342,7 @@ class TreeToYield:
             if ROOT.gROOT.FindObject("dummy") != None: ROOT.gROOT.FindObject("dummy").Delete()
             histo = ROOT.TH1D("dummy","dummy",1,0.0,1.0); histo.Sumw2()
             (firstEntry, maxEntries) = self._rangeToProcess(fsplit)
-            cutstring = cut+"*"+addCut if addCut != "" else cut
-            nev = tree.Draw("0.5>>dummy", cutstring, "goff", maxEntries, firstEntry)
+            nev = tree.Draw("0.5>>dummy", cut, "goff", maxEntries, firstEntry)
             self.negativeCheck(histo)
             return [ histo.GetBinContent(1), histo.GetBinError(1), nev ]
         else: 
@@ -386,8 +350,7 @@ class TreeToYield:
             if self._options.doS2V:
                 cut  = scalarToVector(cut)
             (firstEntry, maxEntries) = self._rangeToProcess(fsplit)
-            cutstring = self.adaptExpr(cut,cut=True)+"*"+addCut if addCut!="" else self.adaptExpr(cut,cut=True)
-            npass = tree.Draw("1",cutstring,"goff", maxEntries, firstEntry);
+            npass = tree.Draw("1",self.adaptExpr(cut,cut=True),"goff", maxEntries, firstEntry);
             return [ npass, sqrt(npass), npass ]
     def _stylePlot(self,plot,spec):
         return stylePlot(plot,spec,self.getOption)
