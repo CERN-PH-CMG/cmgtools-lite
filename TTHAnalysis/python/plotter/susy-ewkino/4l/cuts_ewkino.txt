@@ -1,0 +1,7 @@
+alwaystrue: 1
+4l        : is4l
+inSR      : SR > 0
+haspair   : isTight || isFake
+trigger   : Triggers_ee || Triggers_mm || Triggers_em
+bJetVeto  : nBJetMedium25 == 0
+met       : met_pt > 50
