@@ -17,6 +17,8 @@ leptonTypeSusy = NTupleObjectType("leptonSusy", baseObjectTypes = [ leptonType ]
     # Lepton MVA-id related variables
     NTupleVariable("mvaTTH",    lambda lepton : getattr(lepton, 'mvaValueTTH', -1), help="Lepton MVA (TTH version)"),
     NTupleVariable("mvaSUSY",    lambda lepton : getattr(lepton, 'mvaValueSUSY', -1), help="Lepton MVA (SUSY version)"),
+    NTupleVariable("mvaSoftT2tt",    lambda lepton : getattr(lepton, 'mvaValueSoftT2tt', -1), help="Lepton MVA (Soft T2tt version)"),
+    NTupleVariable("mvaSoftEWK",    lambda lepton : getattr(lepton, 'mvaValueSoftEWK', -1), help="Lepton MVA (Soft EWK version)"),
     NTupleVariable("jetPtRatiov1", lambda lepton : lepton.pt()/lepton.jet.pt() if hasattr(lepton,'jet') else -1, help="pt(lepton)/pt(nearest jet)"),
     NTupleVariable("jetPtRelv1", lambda lepton : ptRelv1(lepton.p4(),lepton.jet.p4()) if hasattr(lepton,'jet') else -1, help="pt of the lepton transverse to the jet axis (subtracting the lepton)"),
     NTupleVariable("jetPtRatiov2", lambda lepton: lepton.pt()/jetLepAwareJEC(lepton).Pt() if hasattr(lepton,'jet') else -1, help="pt(lepton)/[rawpt(jet-PU-lep)*L2L3Res+pt(lepton)]"),
@@ -48,12 +50,12 @@ leptonTypeSusyExtraLight = NTupleObjectType("leptonSusyExtraLight", baseObjectTy
     NTupleVariable("mcPromptTau", lambda x : x.mcMatchAny_gp.isDirectPromptTauDecayProductFinalState() if getattr(x,"mcMatchAny_gp",None) else 0, int, mcOnly=True, help="isDirectPromptTauDecayProductFinalState"),
     NTupleVariable("mcPromptGamma", lambda x : x.mcPho.isPromptFinalState() if getattr(x,"mcPho",None) else 0, int, mcOnly=True, help="Photon isPromptFinalState"),
     NTupleVariable("mcGamma", lambda x : getattr(x,"mcPho",None) != None, int, mcOnly=True, help="Matched to a photon"),
-    NTupleVariable("RelIsoFix03",   lambda x : getattr(x,'miniAbsIsoFix03',-99)/x.pt()),
-    NTupleVariable("RelIsoChargedFix03",   lambda x : getattr(x,'miniAbsIsoChargedFix03',-99)/x.pt()),
-    NTupleVariable("RelIsoNeutralFix03",   lambda x : getattr(x,'miniAbsIsoNeutralFix03',-99)/x.pt()),
-    NTupleVariable("RelIsoFix04",   lambda x : getattr(x,'miniAbsIsoFix04',-99)/x.pt()),
-    NTupleVariable("RelIsoChargedFix04",   lambda x : getattr(x,'miniAbsIsoChargedFix04',-99)/x.pt()),
-    NTupleVariable("RelIsoNeutralFix04",   lambda x : getattr(x,'miniAbsIsoNeutralFix04',-99)/x.pt()),
+    NTupleVariable("RelIsoMIV03",   lambda x : getattr(x,'AbsIsoMIV03',-99)/x.pt()),
+    NTupleVariable("RelIsoMIVCharged03",   lambda x : getattr(x,'AbsIsoMIVCharged03',-99)/x.pt()),
+    NTupleVariable("RelIsoMIVNeutral03",   lambda x : getattr(x,'AbsIsoMIVNeutral03',-99)/x.pt()),
+    NTupleVariable("RelIsoMIV04",   lambda x : getattr(x,'AbsIsoMIV04',-99)/x.pt()),
+    NTupleVariable("RelIsoMIVCharged04",   lambda x : getattr(x,'AbsIsoMIVCharged04',-99)/x.pt()),
+    NTupleVariable("RelIsoMIVNeutral04",   lambda x : getattr(x,'AbsIsoMIVNeutral04',-99)/x.pt()),
     NTupleVariable("jetPtRelHv2", lambda lepton : ptRelHv2(lepton) if hasattr(lepton,'jet') else -1, help="pt of the jet (subtracting the lepton) transverse to the lepton axis - v2"),
     NTupleVariable("isoRelH04", lambda lepton : isoRelH(lepton,'04') if hasattr(lepton,'isoSumRawP4Charged04') else -1, help="transverse relative isolation R=0.4 H"),
     NTupleVariable("jetBasedRelIsoCharged", lambda lepton : jetBasedRelIsoCharged(lepton) if hasattr(lepton,'jet') else -1, help="relative charged isolation from jet chH constituents"),
@@ -115,8 +117,8 @@ leptonTypeSusyExtra = NTupleObjectType("leptonSusyExtra", baseObjectTypes = [ le
 ##------------------------------------------  
 
 tauTypeSusy = NTupleObjectType("tauSusy",  baseObjectTypes = [ tauType ], variables = [
-        NTupleVariable("idMVAOldDMRun2", lambda x : x.idMVAOldDMRun2, int, help="1,2,3 if the tau passes the loose to tight WP of the IsolationMVArun2v1DBoldDMwLT discriminator"),
-        NTupleVariable("idMVAOldDMRun2dR03", lambda x : x.idMVAOldDMRun2dR03, int, help="1,2,3 if the tau passes the loose to tight WP of the IsolationMVArun2v1DBdR03oldDMwLT discriminator"),
+        NTupleVariable("idMVAOldDMRun2", lambda x : x.idMVAOldDMRun2, int, help="1,2,3,4,5 if the tau passes the very loose to very tight WP of the IsolationMVArun2v1DBoldDMwLT discriminator"),
+        NTupleVariable("idMVAOldDMRun2dR03", lambda x : x.idMVAOldDMRun2dR03, int, help="1,2,3,4 if the tau passes the loose to very tight WP of the IsolationMVArun2v1DBdR03oldDMwLT discriminator"),
 ])
 
 ##------------------------------------------  

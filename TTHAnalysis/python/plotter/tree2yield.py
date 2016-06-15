@@ -23,7 +23,7 @@ if "/functions_cc.so" not in ROOT.gSystem.GetLibraries():
 
 def scalarToVector(x):
     x0 = x
-    x = re.sub(r"(LepGood|Lep|JetFwd|Jet|GenTop|SV|TauGood|Tau)(\d)_(\w+)", lambda m : "%s_%s[%d]" % (m.group(1),m.group(3),int(m.group(2))-1), x)
+    x = re.sub(r"(LepGood|Lep|JetFwd|Jet|GenTop|SV|PhoGood|TauGood|Tau)(\d)_(\w+)", lambda m : "%s_%s[%d]" % (m.group(1),m.group(3),int(m.group(2))-1), x)
     x = re.sub(r"\bmet\b", "met_pt", x)
     return x
 
@@ -226,7 +226,7 @@ class TreeToYield:
     def _init(self):
         if "root://" in self._fname:
             ROOT.gEnv.SetValue("TFile.AsyncReading", 1);
-            ROOT.gEnv.SetValue("XNet.Debug", -1); # suppress output about opening connections
+#            ROOT.gEnv.SetValue("XNet.Debug", -1); # suppress output about opening connections
             #self._tfile = ROOT.TFile.Open(self._fname+"?readaheadsz=200000") # worse than 65k
             #self._tfile = ROOT.TFile.Open(self._fname+"?readaheadsz=32768") # worse than 65k
             self._tfile = ROOT.TFile.Open(self._fname+"?readaheadsz=65535") # good

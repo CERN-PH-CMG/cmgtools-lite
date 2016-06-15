@@ -20,6 +20,14 @@ class ttHCoreEventAnalyzer( Analyzer ):
         self.leptonMVAPathSUSY = getattr(self.cfg_ana, "leptonMVAPathSUSY", "CMGTools/TTHAnalysis/data/leptonMVA/susy/%s_BDTG.weights.xml")
         if self.leptonMVAPathSUSY[0] != "/": self.leptonMVAPathSUSY = "%s/src/%s" % ( os.environ['CMSSW_BASE'], self.leptonMVAPathSUSY)
         self.leptonMVASUSY = LeptonMVA(self.leptonMVAKindSUSY, self.leptonMVAPathSUSY, self.cfg_comp.isMC)
+        self.leptonMVAKindSoftT2tt = getattr(self.cfg_ana, "leptonMVAKindSoftT2tt", "SoftJetLessNOBTAG")
+        self.leptonMVAPathSoftT2tt = getattr(self.cfg_ana, "leptonMVAPathSoftT2tt", "CMGTools/TTHAnalysis/data/leptonMVA/jetless/SoftJetLessNOBTAGNOTAU_SIGT2tt_%s_BDTG.weights.xml")
+        if self.leptonMVAPathSoftT2tt[0] != "/": self.leptonMVAPathSoftT2tt = "%s/src/%s" % ( os.environ['CMSSW_BASE'], self.leptonMVAPathSoftT2tt)
+        self.leptonMVASoftT2tt = LeptonMVA(self.leptonMVAKindSoftT2tt, self.leptonMVAPathSoftT2tt, self.cfg_comp.isMC)
+        self.leptonMVAKindSoftEWK = getattr(self.cfg_ana, "leptonMVAKindSoftEWK", "SoftJetLessNOBTAG")
+        self.leptonMVAPathSoftEWK = getattr(self.cfg_ana, "leptonMVAPathSoftEWK", "CMGTools/TTHAnalysis/data/leptonMVA/jetless/SoftJetLessNOBTAGNOTAU_SIGTChiNeu8090_%s_BDTG.weights.xml")
+        if self.leptonMVAPathSoftEWK[0] != "/": self.leptonMVAPathSoftEWK = "%s/src/%s" % ( os.environ['CMSSW_BASE'], self.leptonMVAPathSoftEWK)
+        self.leptonMVASoftEWK = LeptonMVA(self.leptonMVAKindSoftEWK, self.leptonMVAPathSoftEWK, self.cfg_comp.isMC)
         self.jetPt = cfg_ana.jetPt
 
     def declareHandles(self):
@@ -165,6 +173,7 @@ class ttHCoreEventAnalyzer( Analyzer ):
         objects30 = [ j for j in event.cleanJets if j.pt() > 30 ] + event.selectedLeptons
         objects40 = [ j for j in event.cleanJets if j.pt() > 40 ] + event.selectedLeptons
         objectsX  = [ j for j in event.cleanJets if j.pt() > self.jetPt ] + event.selectedLeptons
+        objects25j = [ j for j in event.cleanJets if j.pt() > 25 ] 
         objects40j = [ j for j in event.cleanJets if j.pt() > 40 ] 
         objects50j = [ j for j in event.cleanJets if j.pt() > 50 ] 
         objectsXj = [ j for j in event.cleanJets if j.pt() > self.jetPt ]
@@ -203,6 +212,7 @@ class ttHCoreEventAnalyzer( Analyzer ):
         event.mhtJetX = event.mhtJetXvec.pt()
         event.mhtPhiJetX = event.mhtJetXvec.phi()
 
+        event.htJet25j = sum([x.pt() for x in objects25j])
         event.htJet40j = sum([x.pt() for x in objects40j])
         event.mhtJet40jvec = ROOT.reco.Particle.LorentzVector(-1.*(sum([x.px() for x in objects40j])) , -1.*(sum([x.py() for x in objects40j])), 0, 0 )               
         event.mhtJet40j = event.mhtJet40jvec.pt()
@@ -381,12 +391,20 @@ class ttHCoreEventAnalyzer( Analyzer ):
 
 
         for lep in event.selectedLeptons:
-            lep.mvaValueTTH     = self.leptonMVATTH(lep)
-            lep.mvaValueSUSY     = self.leptonMVASUSY(lep)
-        for lep in event.inclusiveLeptons:
-            if lep not in event.selectedLeptons:
+            if hasattr(lep,'miniAbsIsoCharged'):
                 lep.mvaValueTTH     = self.leptonMVATTH(lep)
                 lep.mvaValueSUSY     = self.leptonMVASUSY(lep)
+                if (hasattr(lep,'AbsIsoMIVCharged04') and hasattr(lep,'isoSumRawP4Charged04')):
+                    lep.mvaValueSoftT2tt     = self.leptonMVASoftT2tt(lep)
+                    lep.mvaValueSoftEWK     = self.leptonMVASoftEWK(lep)
+        for lep in event.inclusiveLeptons:
+            if lep not in event.selectedLeptons:
+                if hasattr(lep,'miniAbsIsoCharged'):
+                    lep.mvaValueTTH     = self.leptonMVATTH(lep)
+                    lep.mvaValueSUSY     = self.leptonMVASUSY(lep)
+                    if (hasattr(lep,'AbsIsoMIVCharged04') and hasattr(lep,'isoSumRawP4Charged04')):
+                        lep.mvaValueSoftT2tt     = self.leptonMVASoftT2tt(lep)
+                        lep.mvaValueSoftEWK     = self.leptonMVASoftEWK(lep)
 
 
         # absolute value of the vectorial difference between met and mht
