@@ -18,23 +18,47 @@ sequence = cfg.Sequence(hzz4lPreSequence +  [ fastSkim2L ] + hzz4lObjSequence + 
     twoLeptonTreeProducerTnP 
 ])
 
+#run = "Both"
+#run = "Mu" 
+run = "El"
+
 #-------- SAMPLES AND TRIGGERS -----------
 from CMGTools.HToZZ4L.samples.samples_13TeV_Fall15 import *
-dataSamples = [ d for d in dataSamples if 'Single' in d.name and "25ns" in d.name ] 
+if   run == "Mu": dataSamples = [ d for d in dataSamples if "SingleM" in d.name ]
+elif run == "El": dataSamples = [ d for d in dataSamples if "SingleE" in d.name ]
+else            : dataSamples = [ d for d in dataSamples if "Single"  in d.name ]
 for d in dataSamples:
     d.triggers = triggers_1mu if 'Muon' in d.name else triggers_1e
     d.vetoTriggers = []
     d.splitFactor = max((len(d.files)+4)/7,1)
 configureSplittingFromTime([d for d in dataSamples if "Silver" not in d.name], 10.0, 2)
     
-mcSamples = [ DYJetsToLL_LO_M50, DYJetsToLL_M50 ]
+mcSamples = [ DYJetsToLL_LO_M50 ] # , DYJetsToLL_M50 ]
 for d in mcSamples:
     d.triggers = triggers_1mu + triggers_1e
     d.vetoTriggers = []
-    d.splitFactor = max(len(d.files)/5,1)
 configureSplittingFromTime(mcSamples, 25.0, 2)
 
+if True:
+    prescaleComponents(mcSamples, 10)
+    dataSamples = [ d for d in dataSamples if 'Run2015D' in d.name ]
+    redefineRunRange(dataSamples,[258214,258214])
+
 selectedComponents = dataSamples + mcSamples
+if run == "Mu":
+    doKalmanMuonCorrections(smear="basic")
+    fastSkim2L.eleCut = lambda ele : False
+    lepAna.loose_electron_isoCut = lambda ele : False
+elif run == "El":
+    doECalCorrections(era="25ns")
+    fastSkim2L.muCut = lambda mu : False
+    lepAna.loose_muon_isoCut = lambda mu : False
+    configureSplittingFromTime(dataSamples, 4.0, 1)
+    configureSplittingFromTime(mcSamples, 10.0, 1)
+else:
+    doECalCorrections(era="25ns")
+    doKalmanMuonCorrections(smear="basic")
+
 printSummary(selectedComponents)
 if True: autoAAA(selectedComponents)
 #doECalCorrections(era="25ns")

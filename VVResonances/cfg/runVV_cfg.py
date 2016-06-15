@@ -60,7 +60,7 @@ from CMGTools.VVResonances.analyzers.core_cff import *
 #-------- SAMPLES AND TRIGGERS -----------
 from CMGTools.VVResonances.samples.loadSamples import *
 
-selectedComponents = mcSamples
+selectedComponents = mcSamples+dataSamples
 
 
 
@@ -94,10 +94,14 @@ triggerFlagsAna.triggerBits ={
 test = 1
 if test==1:
     # test a single component, using a single thread.
-    selectedComponents = [BulkGravToWW_narrow_2500]
+    selectedComponents = [BulkGravToWWToWlepWhad_narrow_4500]
     for c in selectedComponents:
         c.files = c.files[:1]
         c.splitFactor = 1
+
+if test==2:
+    # test a single component, using a single thread.
+    selectedComponents = [TTJets]
 
 selectedComponents=autoAAA(selectedComponents)
 config=autoConfig(selectedComponents,sequence)
