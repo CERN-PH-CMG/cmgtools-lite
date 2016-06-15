@@ -1,0 +1,22 @@
+#weight: 1.0
+weight: appWeight_Loop*(!isTight_Loop)
+
+change: LepSel1_(\w+)  : LepSel_\1_Loop[li1_Loop[]]
+change: LepSel2_(\w+)  : LepSel_\1_Loop[li2_Loop[]]
+change: LepSel3_(\w+)  : LepSel_\1_Loop[li3_Loop[]]
+change: LepSel4_(\w+)  : LepSel_\1_Loop[li4_Loop[]]
+change: nJet30\b       : nJet30_Mini
+change: htJet30j\b     : htJet30j_Mini
+change: nBJetMedium25\b: nBJetMedium25_Mini
+change: nTriples\b     : nTriples_Loop
+change: categ\b        : categ_Loop
+change: isTight\b      : isTight_Loop
+change: isFake\b       : isFake_Loop
+change: categ\b        : categ_Loop
+change: BR\b           : BR_Loop
+change: SR\b           : SR_Loop
+change: appWeight\b    : appWeight_Loop
+change: bestMt\b       : bestMt_Loop
+change: bestMll\b      : bestMll_Loop
+change: mT2L\b         : mT2L_Loop
+change: mT2T\b         : mT2T_Loop

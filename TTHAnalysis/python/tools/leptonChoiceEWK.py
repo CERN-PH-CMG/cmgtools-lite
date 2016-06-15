@@ -2,79 +2,48 @@ from CMGTools.TTHAnalysis.treeReAnalyzer import *
 from CMGTools.TTHAnalysis.tools.leptonJetReCleaner import passTripleMllVeto,passMllTLVeto
 from ROOT import TFile,TH1F
 import copy, os
+import array
 
-#for extlib in ["fake_rates_UCSx_v5_03.cc","flip_rates_UCSx_v5_01.cc","triggerSF_fullsim_UCSx_v5_01.cc","lepton_SF_UCSx_v5_03.cc","FastSimTriggerEff.cc"]:
-#    if not extlib.endswith(".cc"): raise RuntimeError
-#    if "/%s"%extlib.replace(".cc","_cc.so") not in ROOT.gSystem.GetLibraries():
-#        ROOT.gROOT.LoadMacro("/mnt/t3nfs01/data01/shome/cheidegg/o/2016-05-02_cmg74X_utility-files/%s+"%extlib)
-#        #ROOT.gROOT.LoadMacro("/afs/cern.ch/work/c/cheidegg/eco/2016-05-02_cmg74X_utility-files/%s+"%extlib)
-#from ROOT import triggerScaleFactorFullSim
-#from ROOT import FastSimTriggerEfficiency
-#from ROOT import electronFakeRate_UCSx
-#from ROOT import electronFakeRate_UCSx_Error
-#from ROOT import electronAlternativeFakeRate_UCSx
-#from ROOT import electronQCDMCFakeRate_UCSx
-#from ROOT import muonFakeRate_UCSx
-#from ROOT import muonFakeRate_UCSx_Error
-#from ROOT import muonAlternativeFakeRate_UCSx
-#from ROOT import muonQCDMCFakeRate_UCSx
-#from ROOT import electronFakeRate_UCSx_IsoTrigs
-#from ROOT import electronFakeRate_UCSx_Error_IsoTrigs
-#from ROOT import electronAlternativeFakeRate_UCSx_IsoTrigs
-#from ROOT import electronQCDMCFakeRate_UCSx_IsoTrigs
-#from ROOT import flipRate_UCSx
-#from ROOT import flipRate_UCSx_Error
-#from ROOT import muonFakeRate_UCSx_IsoTrigs
-#from ROOT import muonFakeRate_UCSx_Error_IsoTrigs
-#from ROOT import muonAlternativeFakeRate_UCSx_IsoTrigs
-#from ROOT import muonQCDMCFakeRate_UCSx_IsoTrigs
-#from ROOT import electronScaleFactorHighHT_UCSx
-#from ROOT import electronScaleFactorLowHT_UCSx
-#from ROOT import muonScaleFactor_UCSx
-#from ROOT import leptonScaleFactor_UCSx
+ROOT.gROOT.LoadMacro(os.environ["CMSSW_BASE"]+"/src/PhysicsTools/Heppy/src/mt2_bisect.cc")
+from ROOT import mt2_bisect
 
-class LeptonChoiceEWK:
 
-    # enum
-    appl_Super   = 0
-    appl_Fakes   = 1
-    appl_Flips   = 2
-    appl_Taus    = 3
-    appl_TwoTaus = 4
-    appl_WZ      = 5
+## FakeHisto
+## ___________________________________________________________________
+class FakeHisto:
 
 
     ## __init__
     ## _______________________________________________________________
-    def __init__(self, label, inputlabel, whichApplication, isFastSim=False, filePathFakeRate=None, filePathLeptonSFfull=None, filePathLeptonSFfast=None, filePathPileUp=None, noTausOS=True):
+    def __init__(self, accesspath):
 
-        self.label      = "" if (label in ["", None]) else ("_" + label)
-        self.inputlabel = '_' + inputlabel
-        self.isFastSim = isFastSim
-        self.noTausOS  = noTausOS # set to true if you do NOT want to use taus in the OSSF/OSOF pairing for mll
-
-        if self.isFastSim:
-            print '-'*15
-            print 'WARNING: will apply trigger efficiency for FastSim'
-            print '-'*15
-
-        self.collectSysts()
-        self.setApplication(whichApplication, filePathFakeRate)
-        self.loadLeptonScaleFactorHistos(filePathLeptonSFfull, filePathLeptonSFfast)
-        self.loadPileUpHisto(filePathPileUp)
+        self.histo = Histo(accesspath)
 
 
-
-    ## __call__
+    ## getFakeRate
     ## _______________________________________________________________
-    def __call__(self, event):
+    def getFakeRate(self, lep, var = 0): 
+        idx = 0 if abs(lep.pdgId) == 13 else 1
+        return self.histo.readHisto(idx, var, lep.conePt, abs(lep.eta))
 
-        self.checkEvent(event)
-        self.collectObjects(event)
-        self.resetMemory()
-        self.collectTriples()
-        self.categorizeEvent(event)
-        return self.attachLabels()
+
+    ## getFakeTransfer
+    ## _______________________________________________________________
+    def getFakeTransfer(self, lep, var = 0):
+        prob = self.getFakeRate(lep, var)
+        return prob/(1 - prob)
+
+## Histo
+## ___________________________________________________________________
+class Histo:
+
+    ## __init__
+    ## _______________________________________________________________
+    def __init__(self, accessline):
+        # format: [muonFilePath::histo[::upvar::downvar], electronFilePath::histo[::upvar::downvar]]
+        # self.list[i][var] where list = mus or els, i = number of the histogram, var = 0 (central), +1 (up), -1 (down)
+
+        self.accessHistos(accessline)
 
 
     ## accessHisto
@@ -94,20 +63,245 @@ class LeptonChoiceEWK:
     ## accessHistos
     ## _______________________________________________________________
     def accessHistos(self, fullList):
-        # format: [muonFilePath::histo[::upvar::downvar], electronFilePath::histo[::upvar::downvar]]
-        # returns list[idx][i][var] where idx = 0 (mu) or 1 (el), i = number of the histogram, var = 0 (central), +1 (up), -1 (down)
-
-        mus, els = [], []
+        self.mus = []
+        self.els = []
 
         for i, entry in enumerate(fullList):
             for item in entry:
                 if not item: continue
                 e = self.accessHisto(item)
 
-                if i == 0: mus.append(e)
-                else     : els.append(e)
+                if i == 0: self.mus.append(e)
+                else     : self.els.append(e)
 
-        return mus, els
+
+    ## readHisto
+    ## _______________________________________________________________
+    def readHisto(self, mu, idx, var, valx, valy, valz = 0):
+        hist = self.mus[idx][var] if mu else self.els[idx][var]
+        if hist.GetDimension() == 3:
+            return hist.GetBinContent(max(1, min(hist.GetNbinsX(), hist.GetXaxis().FindBin(valx))),\
+                                      max(1, min(hist.GetNbinsY(), hist.GetYaxis().FindBin(valy))),\
+                                      max(1, min(hist.GetNbinsZ(), hist.GetZaxis().FindBin(valz))))
+        return hist.GetBinContent(max(1, min(hist.GetNbinsX(), hist.GetXaxis().FindBin(valx))),\
+                                  max(1, min(hist.GetNbinsY(), hist.GetYaxis().FindBin(valy)))) 
+
+
+    ## readHistos
+    ## _______________________________________________________________
+    def readHistos(self, mu, var, valx, valy, valz = 0):
+        value = 1.
+        hists = self.mus if mu else self.els
+        for idx in range(len(hists)): 
+            value *= self.readHisto(mu, idx, var, valx, valy, valz)
+        return value
+
+
+## OSpair
+## ___________________________________________________________________
+class OSpair:
+
+    ## __init__
+    ## _______________________________________________________________
+    def __init__(self, l1, l2):
+        self.l1   = l1
+        self.l2   = l2
+        self.load()
+
+    ## debug
+    ## _______________________________________________________________
+    def debug(self):
+        add = "SF" if self.isSF else "OF"
+        return "OSpair (%s, %3.1f) made up of (%3.1f, %d) and (%3.1f, %d)" % (add, self.mll, self.l1.pt, self.l1.pdgId, self.l2.pt, self.l2.pdgId)
+
+
+    ## load
+    ## _______________________________________________________________
+    def load(self):
+
+        self.isSF = False
+        self.wTau = False
+
+        if     self.l1.pdgId  ==          -self.l2.pdgId       : self.isSF = True
+        if abs(self.l1.pdgId) == 15 or abs(self.l2.pdgId) == 15: self.wTau = True
+
+        if   self.isSF                                           : self.target = 91.2
+        elif abs(self.l1.pdgId) == 15 or abs(self.l2.pdgId) == 15: self.target = 60
+        else                                                     : self.target = 50
+
+        self.mll  = (self.l1.p4() + self.l2.p4()).M()
+        self.diff = abs(self.target - self.mll)
+
+
+## LeptonTriple
+## ___________________________________________________________________
+class LeptonTriple:
+
+
+    ## __init__
+    ## _______________________________________________________________
+    def __init__(self, l1, l2, l3, FakeHisto = None, listOfFakes = [], systs = {}):
+        self.l1 = l1
+        self.l2 = l2
+        self.l3 = l3
+
+        self.collectOSpairs()
+        self.OSLF  = [p for p in self.OS if not p.wTau]
+        self.OSTF  = [p for p in self.OS if     p.wTau]
+        self.OSSF  = [p for p in self.OS if     p.isSF]
+
+        self.nOSLF = len(self.OSLF)
+        self.nOSTF = len(self.OSTF)
+        self.nOSSF = len(self.OSSF)
+
+        self.setFakes()
+        self.setBestPair()
+        self.setAppWeight()
+
+
+    ## collectOSpairs
+    ## _______________________________________________________________
+    def collectOSpairs(self, useTaus = False, needSF = True):
+        leps    = [self.l1, self.l2, self.l3]
+        self.OS = []       
+
+        if self.l1.pdgId * self.l2.pdgId < 0: self.OS.append(OSpair(self.l1, self.l2))
+        if self.l1.pdgId * self.l3.pdgId < 0: self.OS.append(OSpair(self.l1, self.l3))
+        if self.l2.pdgId * self.l3.pdgId < 0: self.OS.append(OSpair(self.l2, self.l3))
+
+
+    ## debug
+    ## _______________________________________________________________
+    def debug(self):
+        oslist = [os.debug() for os in self.OS]
+        return "LeptonTriple made up of (%3.1f, %d), (%3.1f, %d) and (%3.1f, %d)\nwith OSpairs:\n" % (self.l1.pt, self.l1.pdgId, self.l2.pt, self.l2.pdgId, self.l3.pt, self.l3.pdgId) + "\n".join(oslist)
+
+
+    ## getL
+    ## _______________________________________________________________
+    def getL(self):
+        buffer = []
+        if abs(self.l1.pdgId) != 15: buffer.append(self.l1)
+        if abs(self.l2.pdgId) != 15: buffer.append(self.l2)
+        if abs(self.l3.pdgId) != 15: buffer.append(self.l3)
+        return buffer
+
+
+    ## getLeps
+    ## _______________________________________________________________
+    def getLeps(self):
+        return [self.l1, self.l2, self.l3]
+
+
+    ## getOSLF
+    ## _______________________________________________________________
+    def getOSLF(self):
+        return [(p, p.l1, p.l2) for p in self.OSLF]
+
+
+    ## getOSSF
+    ## _______________________________________________________________
+    def getOSSF(self):
+        return [(p, p.l1, p.l2) for p in self.OSSF]
+
+
+    ## getOSTF
+    ## _______________________________________________________________
+    def getOSTF(self):
+        return [(p, p.l1, p.l2) for p in self.OSTF]
+
+
+    ## getT
+    ## _______________________________________________________________
+    def getT(self):
+        buffer = []
+        if abs(self.l1.pdgId) == 15: buffer.append(self.l1)
+        if abs(self.l2.pdgId) == 15: buffer.append(self.l2)
+        if abs(self.l3.pdgId) == 15: buffer.append(self.l3)
+        return buffer
+
+
+    ## setAppWeight
+    ## _______________________________________________________________
+    def setAppWeight(self):
+        self.appWeight = {}
+        if self.nFakes == 1:
+            for var in self.systs:
+                self.appWeight[var] =   FakeHisto.read(self.fakes[0], var)
+        elif self.nFakes == 2:
+            for var in self.systs:
+                self.appWeight[var] = - FakeHisto.read(self.fakes[0], var) \
+                                      * FakeHisto.read(self.fakes[1], var)
+        elif self.nFakes == 3:
+            for var in self.systs:
+                self.appWeight[var] =   FakeHisto.read(self.fakes[0], var) \
+                                      * FakeHisto.read(self.fakes[1], var) \
+                                      * FakeHisto.read(self.fakes[2], var) 
+
+
+    ## setBestPair
+    ## _______________________________________________________________
+    def setBestPair(self):
+
+        self.bestPair = None
+        buffer = []
+        if   self.nOSSF > 0: buffer = [(p.diff, p) for p in self.OSSF]
+        elif self.nOSLF > 0: buffer = [(p.diff, p) for p in self.OSLF]
+        else               : buffer = [(p.diff, p) for p in self.OSTF]
+
+        if buffer:
+            buffer.sort()
+            self.bestPair = buffer[0][0]
+
+
+    ## setFakes
+    ## _______________________________________________________________
+    def setFakes(self, listOfFakes = []):
+        self.fakes  = filter(None, listOfFakes)
+        self.nFakes = len(self.fakes)
+
+
+    ## test
+    ## _______________________________________________________________
+    def test(self, leps):
+        if len(leps) > 3: return False
+        ll = [self.l1, self.l2, self.l3]
+        return all([l in ll for l in leps])
+            
+
+
+## LeptonChoiceEWK
+## ___________________________________________________________________
+class LeptonChoiceEWK:
+
+
+    ## __init__
+    ## _______________________________________________________________
+    def __init__(self, label, inputlabel, isFastSim=False, filePathFakeRate=None, filePathLeptonSFfull=None, filePathLeptonSFfast=None):
+
+        self.mt2maker = mt2_bisect.mt2()
+
+        self.label      = "" if (label in ["", None]) else ("_" + label)
+        self.inputlabel = '_' + inputlabel
+        self.isFastSim = isFastSim
+
+        self.collectSysts()
+        self.loadFakeRateHistos(filePathFakeRate)
+        self.loadLeptonScaleFactorHistos(filePathLeptonSFfull, filePathLeptonSFfast)
+
+
+    ## __call__
+    ## _______________________________________________________________
+    def __call__(self, event):
+
+        self.resetMemory()
+        self.checkEvent(event)
+        self.collectObjects(event)
+        self.collectTriples()
+        self.countTriples()
+        self.firstCategorization()
+        self.categorizeEvent(event)
+        return self.attachLabels()
 
 
     ## attachLabels
@@ -121,135 +315,24 @@ class LeptonChoiceEWK:
         return fullret
 
 
-    ## bestZ1TLsuper
-    ## _______________________________________________________________
-    def bestZ1TLsuper(self, lepst, lepsl, mZ = 91.2, needSF = True, useTaus = False):
-          ## returns the Mll, i1 and i2 of the OSSF lepton pair whose Mll is closest to mZ
-
-          pairs = []
-          for i1, l1 in enumerate(lepst):
-            for i2, l2 in enumerate(lepsl):
-                if l1 == l2: continue
-                if l1.pdgId * l2.pdgId >= 0: continue
-                if not useTaus and (abs(l1.pdgId) == 15 or abs(l2.pdgId) == 15): continue
-                if (needSF and l1.pdgId == -l2.pdgId) or (not needSF and abs(l1.pdgId) != abs(l2.pdgId)):
-                   mll = (l1.p4() + l2.p4()).M()
-                   diff = abs(mll - mZ)
-                   pairs.append( (diff, mll, l1.trIdx, l2.trIdx, l1.isTau, l2.isTau) )
-          if len(pairs):
-              pairs.sort()
-              return pairs[0]
-          return (0., -1,  -1, -1, 0, 0)
-
-
-    ## bestZ1TL
-    ## _______________________________________________________________
-    #def bestZ1TL(self, lepsl, lepst):
-    #      ## returns the Mll, i1 and i2 of the OSSF lepton pair whose Mll is closest to mZ
-
-    #      pairs = []
-    #      for i1, l1 in enumerate(lepst):
-    #        if not cut(l1): continue
-    #        for i2, l2 in enumerate(lepsl):
-    #            if not cut(l2): continue
-    #            if l1.isTau or l2.isTau: continue # dedicated function for that..
-    #            if l1 == l2: continue
-    #            if needSF and l1.pdgId == -l2.pdgId:
-    #               mz = (l1.p4() + l2.p4()).M()
-    #               if 
-    #               dm = 50. #if abs(l1.pdgId) + abs(l1.pdgId)
-    #               if abs(l1.pdgId) == 15 or abs(l2.pdgId) == 15: dm = 60.
-    #               diff = abs(mz-91)
-    #               pairs.append( (diff, mz, l1.trIdx, l2.trIdx, l1.isTau, l2.isTau) )
-    #            elif not needSF and abs(l1.pdgId) != abs(l2.pdgId):
-    #               dm = 50.
-    #      if len(pairs):
-    #          pairs.sort()
-    #          return pairs[0]
-    #      return (0., -1,  -1, -1, 0, 0)
-
-
-    ## bestZtauTL
-    ## _______________________________________________________________
-    #def bestZtauTL(self, lepsl, lepst, cut=lambda lep:True):
-    #      ## returns the Mll, i1 and i2 of the OS lepton pair whose Mll is closest to corresponding
-    #      ## dilepton mass (50 for emu)
-
-    #      pairs = []
-    #      for i1, l1 in enumerate(lepst):
-    #        if not cut(l1): continue
-    #        for i2, l2 in enumerate(lepsl):
-    #            if not cut(l2): continue
-    #            if self.noTausOS and (l1.isTau or l2.isTau): continue
-    #            if l1 == l2: continue
-    #            if l1.charge == -l2.charge and l1.pdgId != -l2.pdgId:
-    #               mz = (l1.p4() + l2.p4()).M()
-    #               dm = 50. #if abs(l1.pdgId) + abs(l1.pdgId)
-    #               if abs(l1.pdgId) == 15 or abs(l2.pdgId) == 15: dm = 60.
-    #               diff = abs(mz-dm)
-    #               pairs.append( (diff, mz, l1.trIdx, l2.trIdx, l1.isTau, l2.isTau) )
-    #      if len(pairs):
-    #          pairs.sort()
-    #          return pairs[0]
-    #      return (0., -1, -1, -1, 0, 0)
-          
-
     ## categorizeEvent
     ## _______________________________________________________________
     def categorizeEvent(self, event):
 
-        self.fillVtxWeight(event, 0)
-
         if not self.triples: return
 
+        self.findBestOSpair()
+        self.findMtMin()
+
         for var in self.systs["JEC"]:
-            self.fillMllMtMinOnZ(var)
-            self.fillSR(var)
+           self.fillMllMt(var)
+           self.fillBR(event, var)
+           self.fillSR(var)
 
-        #if len(self.trueTriples) < 1: return
+        #self.fillTriggerSF(event) # flat uncertainty for now
 
-        #printed = False
-        for t in xrange(len(self.triples)):
-
-            i1 = self.triples[t][0].trIdx
-            i2 = self.triples[t][1].trIdx
-            i3 = self.triples[t][2].trIdx
-            t1 = self.triples[t][0].isTau
-            t2 = self.triples[t][1].isTau
-            t3 = self.triples[t][2].isTau
-
-            #self.fillTriggerSF(event, t, i1, i2, i3) # flat uncertainty for now
-
-            for var in self.systs["LEPSF"]:
-                self.fillLeptonSF(event, t, i1, i2, i3, t1, t2, t3, var)
-
-            #self.fillJetQuantities(t, i1, i2, i3, t1, t2, t3)
-            self.fillAppWeights(t, i1, i2, i3, t1, t2, t3)  
-
-            ## debugging and synching
-            #if not printed and len(self.trueTriples) >=1 and self.passTrigger() and \
-            #if not printed and self.passTrigger() and \
-            #    (len(self.jets30) >= 2 and len(self.bJets30) >= 0 and  50 <= self.met[0] and  60 <= self.ht): 
-            #    #vtxWeight*btagMediumSF_Mini*triggerSF_Loop*leptonSF_Loop
-            #    #weight = self.ev.vtxWeight*self.ev.btagMediumSF_Mini*self.ret["leptonSF"][t]
-            #    ll = []
-            #    for i in range(len(self.trueTriples)):
-            #        for l in self.trueTriples[i]:
-            #            if not l in ll: ll.append(l)
-            #    nels = sum([1 if abs(l.pdgId) == 11 else 0 for l in ll])
-            #    nmus = sum([1 if abs(l.pdgId) == 13 else 0 for l in ll])
-            #    appWeight = 0.
-            #    for t in xrange(len(self.triples)): 
-            #        appWeight += self.ret["appWeight"][t]
-            #    lepsf = 1.
-            #    for l in ll: 
-            #        idx = 0 if abs(l.pdgId) == 13 else 1
-            #        lepsf *= self.readHistos(self.leptonScaleFactorHistosFull[idx], var, l.pt, abs(l.eta))
-            #    #print "%d %d %d %d %d %d %d %d %3.3f %3.3f %d" % (self.ev.run, self.ev.lumi, self.ev.evt, nmus, nels, 0, len(self.jets30), len(self.bJets30), self.met[0], self.ht, self.ret["isOnZ"])
-            #    #print "%d %d %d %d %d %d %d %d %3.3f %3.3f %1.5f %1.5f %d %d %1.5f" % (self.ev.run, self.ev.lumi, self.ev.evt, nmus, nels, 0, len(self.jets30), len(self.bJets30), self.met[0], self.ht, self.ev.btagMediumSF_Mini, lepsf, self.ret["isOnZ"], (not self.ret["hasTTT"]), appWeight)
-            #    print "%d %d %d %d %d %d %d %d %3.3f %3.3f %1.5f %1.5f %1.5f %1.5f %d %d %1.5f" % (self.ev.run, self.ev.lumi, self.ev.evt, nmus, nels, 0, len(self.jets30), len(self.bJets30), self.met[0], self.ht, self.ev.genWeight, self.ret["vtxWeight"], self.ev.btagMediumSF_Mini, lepsf, self.ret["isOnZ"], (len(self.trueTriples) < len(self.triples)), appWeight)
-            #    #print "%d %d %d %d %d %d %d %d %3.3f %3.3f %1.5f %1.5f %1.5f %1.5f %d" % (self.ev.run, self.ev.lumi, self.ev.evt, nmus, nels, 0, len(self.jets30), len(self.bJets30), self.met[0], self.ht, self.ev.genWeight, self.ev.vtxWeight, self.ev.btagMediumSF_Mini, self.ret["leptonSF"][t], self.ret["isOnZ"])
-            #    printed = True
+        #for var in self.systs["LEPSF"]:
+        #    self.fillLeptonSF(event)
 
 
     ## checkEvent
@@ -266,28 +349,35 @@ class LeptonChoiceEWK:
     def collectObjects(self, event):
 
         self.leps       = [l             for l  in Collection(event, "LepGood", "nLepGood")  ]
-        self.setAttributes(self.leps, False)
+        for i, l in enumerate(self.leps): setattr(l, "trIdx", i)
 
         self.lepsl      = [self.leps[il] for il in list(getattr   (event, "iL"  + self.inputlabel))[0:int(getattr(event,"nLepLoose"+self.inputlabel))]]
         self.lepst      = [self.leps[il] for il in list(getattr   (event, "iT"  + self.inputlabel))[0:int(getattr(event,"nLepTight"+self.inputlabel))]]
         self.lepsfv     = [self.leps[il] for il in list(getattr   (event, "iFV" + self.inputlabel))[0:int(getattr(event,"nLepFOVeto"+self.inputlabel))] \
-                                      if not il in list(getattr   (event, "iTV" + self.inputlabel))]
+                                      if not il in list(getattr   (event, "iTV" + self.inputlabel))[0:int(getattr(event,"nLepTightVeto"+self.inputlabel))]]
         self.lepstv     = [self.leps[il] for il in list(getattr   (event, "iTV" + self.inputlabel))[0:int(getattr(event,"nLepTightVeto"+self.inputlabel))]]
 
         self.tausl      = [t             for t  in Collection(event, "TauSel" + self.inputlabel , "nTauSel" + self.inputlabel )]
-        self.setAttributes(self.tausl, True)
+        for i, l in enumerate(self.tausl): setattr(l, "trIdx", i)
         self.taust      = [t             for t in self.tausl if t.ewkId == 2]
-        #self.tausg      = [t             for t  in Collection(event, "TauGood" , "nTauGood" )]
-        #self.tauso      = [t             for t  in Collection(event, "TauOther", "nTauOther")]
-        #self.setAttributes(self.tausg, True)
-        #self.setAttributes(self.tauso, True, True)
-        #self.tausl      = [self.tausg[it] if it >= 0 else self.tauso[-1-it] for it in list(getattr   (event, "iLTSel" + self.inputlabel))[0:int(getattr(event,"nLooseTauSel"+self.inputlabel))]]
-        #self.taust      = [self.tausg[it] if it >= 0 else self.tauso[-1-it] for it in list(getattr   (event, "iTTSel" + self.inputlabel))[0:int(getattr(event,"nTightTauSel"+self.inputlabel))]]
         self.tausf      = self.taust # THESE ARE THE TAU FAKES, NEED TO BE CHANGED!
 
-        #self.jets30     = [j for j in Collection(event, "JetSel" + self.inputlabel, "nJetSel" + self.inputlabel) if j.pt      > 30. ]
-        #self.bJets30    = [j for j in self.jets30                                                                if j.btagCSV > 0.80]
-        #self.ht         = sum([j.pt for j in self.jets30])
+        self.alltight   = self.lepstv + self.taust
+
+        self.lepsFO     = [self.leps[il] for il in list(getattr   (event, "iFV" + self.inputlabel))[0:int(getattr(event,"nLepFOVeto"+self.inputlabel))]]
+        self.tausFO     = [t             for t in self.tausl if t.ewkId >= 1]
+        self.lepSelFO   = self.lepsFO  + self.tausFO
+
+        self.setAttributes(self.lepSelFO)
+        self.lepSelFO   = sorted(self.lepSelFO , key = lambda x: x.conePt, reverse=True)
+
+        self.ret["nLepSel"] = len(self.lepSelFO)
+        for i, l in enumerate(self.lepSelFO):
+            for var in ["pt", "eta", "phi", "mass", "conePt", "pdgId", "isTight", "mcMatchId", "mcPromptGamma"]:
+                self.ret["LepSel_" + var][i] = getattr(l, var)
+        
+        for i, l in enumerate(self.leps ): setattr(l, "selIdx", self.lepSelFO.index(l) if l in self.lepSelFO else -1)
+        for i, l in enumerate(self.tausl): setattr(l, "selIdx", self.lepSelFO.index(l) if l in self.lepSelFO else -1)
 
         self.met        = {}
         self.met[0]     = event.met_pt
@@ -304,495 +394,451 @@ class LeptonChoiceEWK:
     ## _______________________________________________________________
     def collectSysts(self): 
         self.systs = {}       
-        self.systs["FR"   ] = {0: "", 1: "_ewkUp"  , -1: "_ewkDown"  }
-        self.systs["JEC"  ] = {0: "", 1: "_jecUp"  , -1: "_jecDown"  }
-        self.systs["LEPSF"] = {0: "", 1: "_lepSFUp", -1: "_lepSFDown", 2: "_lepSF_FS_Up", -2: "_lepSF_FS_Down"}
+        self.systs["FR"    ] = {0: "", 1: "_ewkUp"   , -1: "_ewkDown"  }
+        self.systs["JEC"   ] = {0: "", 1: "_jecUp"   , -1: "_jecDown"  }
+        self.systs["LEPSF" ] = {0: "", 1: "_lepSFUp" , -1: "_lepSFDown" , 2: "_lepSF_FS_Up" , -2: "_lepSF_FS_Down" }
+        self.systs["TRIGSF"] = {0: "", 1: "_trigSFUp", -1: "_trigSFDown", 2: "_trigSF_FS_Up", -2: "_trigSF_FS_Down"}
 
 
     ## collectTriples
     ## _______________________________________________________________
     def collectTriples(self):
-        ## searches for the three leptons in the event
-
-        self.triples = []
-
-        if self.whichApplication == self.appl_Super:
-            self.collectTriplesSuper(byflav = True, bypassMV = False)
-        elif self.whichApplication == self.appl_Fakes:
-            self.collectTriplesFakes(byflav = True, bypassMV = False)
-        elif self.whichApplication == self.appl_Flips:
-            self.collectTriplesFlips(byflav = True, bypassMV = False)
-        elif self.whichApplication == self.appl_Taus:
-            self.collectTriplesTaus(byflav = True, bypassMV = False)
-        elif self.whichApplication == self.appl_TwoTaus:
-            self.collectTriplesTwoTaus(byflav = True, bypassMV = False)
-        elif self.whichApplication == self.appl_WZ:
-            self.collectTriplesWZ(byflav = True, bypassMV = False)
-
-        self.ret["nTriples"] = len(self.triples)
-        if self.ret["nTriples"] > 20: raise RuntimeError,'Too many lepton pairs'
-
-        for i in range(len(self.triples)):
-            self.storeIdx(i, 0)
-            self.storeIdx(i, 1)
-            self.storeIdx(i, 2)
-
-
-
-    ## collectTriplesFakes
-    ## _______________________________________________________________
-    def collectTriplesFakes(self, byflav, bypassMV):
-        ## encodes the logic of finding the three leptons in the event
-        ## if we have TTT -> event only goes into SR
-        ## if not, we look for all possible triples (c.f. findTriples())
-        ## made of tight leptons and fakes
-
-        self.trueTriples = []
-        self.triples, self.fakes = self.findTriples([], self.lepstv, self.lepstv, self.lepstv, bypassMV=False)
-
-        if self.triples:
-            self.ret["hasTTT"] = True
-            self.trueTriples   = self.triples
-        else:
-            tr1f, f1 = self.findTriples(self.triples, self.lepstv, self.lepstv, self.lepsfv, bypassMV=False, nF=1)
-            self.triples += tr1f
-            tr2f, f2 = self.findTriples(self.triples, self.lepstv, self.lepsfv, self.lepsfv, bypassMV=False, nF=2)
-            self.triples += tr2f
-            tr3f, f3 = self.findTriples(self.triples, self.lepsfv, self.lepsfv, self.lepsfv, bypassMV=False, nF=3)
-            self.triples += tr3f
-
-            if tr1f: self.ret["hasTTF"] = True
-            if tr2f: self.ret["hasTFF"] = True
-            if tr3f: self.ret["hasFFF"] = True
-
-            self.fakes       = f1 + f2 + f3
-
-
-    ## collectTriplesFlips
-    ## _______________________________________________________________
-    def collectTriplesFlips(self, byflav, bypassMV):
-
-        print "do stuff"
-        #FIXME
-        #    choice = self.findPairs(lepstv,lepstv,byflav=True,bypassMV=False,choose_SS_else_OS=True)
-        #    if choice:
-        #        ret["hasTT"]=True
-        #        choice=choice[:1]
-        #    else:
-        #        choice = self.findPairs(lepst,lepst,byflav=True,bypassMV=False,choose_SS_else_OS=False)
-        #        if choice:
-        #            ret["hasTF"]=True
-        #            choice=choice[:1]
-
-
-    ## collectTriplesSuper
-    ## _______________________________________________________________
-    def collectTriplesSuper(self, byflav, bypassMV):
         ## encodes the logic of finding the three leptons in the event
         ## if we have TTT -> event only goes into SR
         ## if not, we look for all possible triples (c.f. findTriples())
         ## priority is given to the light flavor leptons, if less than 
         ## 3 are present (tight or fake), fill up with taus
 
+        self.ret["nLep" ] = len(self.lepstv) + len(self.taust)
+        self.ret["nL"   ] = len(self.lepstv)
+        self.ret["nT"   ] = len(self.taust)
+
+        ## for testing
         ## 3 light leptons tight
+        self.triples     = []
         self.trueTriples = []
-        self.triples, self.fakes = self.findTriples([], self.lepstv, self.lepstv, self.lepstv, bypassMV=False)
+        self.triples = self.findTriples([], self.lepstv, self.lepstv, self.lepstv, bypassMV=False)
 
         if self.triples:
-            self.ret["isLight"] = True
-            self.ret["hasTTT" ] = True
+            self.ret["isTight"] = True
             self.trueTriples    = self.triples
             return
 
-        ## 3 light leptons tight and fake
-        #tr1f, f1 = self.findTriples(self.triples, self.lepstv, self.lepstv, self.lepsfv, bypassMV=False, nF=1)
-        #tr2f, f2 = self.findTriples(self.triples, self.lepstv, self.lepsfv, self.lepsfv, bypassMV=False, nF=2)
-        #tr3f, f3 = self.findTriples(self.triples, self.lepsfv, self.lepsfv, self.lepsfv, bypassMV=False, nF=3)
-
-        #self.triples = tr1f + tr2f + tr3f
-        #self.fakes   = f1 + f2 + f3
-
-        #if self.triples:
-        #    self.ret["isLight"] = True
-        #    if tr1f: self.ret["hasTTF"] = True
-        #    if tr2f: self.ret["hasTFF"] = True
-        #    if tr3f: self.ret["hasFFF"] = True
-        #    return
-
         ## 2 light leptons tight + 1 tau tight
-        self.trueTriples = []
-        self.triples, self.fakes = self.findTriples([], self.lepstv, self.lepstv, self.taust, bypassMV=False)
+        self.triples = self.findTriples([], self.lepstv, self.lepstv, self.taust, bypassMV=False)
 
         if self.triples:
-            self.ret["isTau" ] = True
-            self.ret["hasTTT"] = True
+            self.ret["isTight"] = True
             self.trueTriples   = self.triples
             return
 
         ## 1 light leptons tight + 2 tau tight
-        self.trueTriples = []
-        self.triples, self.fakes = self.findTriples([], self.lepstv, self.taust, self.taust, bypassMV=False)
+        self.triples = self.findTriples([], self.lepstv, self.taust, self.taust, bypassMV=False)
 
         if self.triples:
-            self.ret["isDTau"] = True
-            self.ret["hasTTT"] = True
+            self.ret["isTight"] = True
             self.trueTriples   = self.triples
             return
 
 
-    ## collectTriplesTaus 
+
+        return
+
+
+        nLep = self.ret["nLep" ]
+        nL   = self.ret["nL"   ]
+        nT   = self.ret["nT"   ]
+       
+        if nL < 3: return
+
+        return
+
+        ## light flavor
+        if categ < 2: 
+
+            ## 3 light leptons tight
+            self.triples     = []
+            self.trueTriples = []
+            self.triples = self.findTriples([], self.lepstv, self.lepstv, self.lepstv, bypassMV=False)
+
+            if self.triples:
+                self.ret["isTight"] = True
+                self.trueTriples    = self.triples
+                return
+
+            ## 3 light leptons tight and fake
+            tr1f = self.findTriples(self.triples, self.lepstv, self.lepstv, self.lepsfv, bypassMV=False, nF=1)
+            tr2f = self.findTriples(self.triples, self.lepstv, self.lepsfv, self.lepsfv, bypassMV=False, nF=2)
+            tr3f = self.findTriples(self.triples, self.lepsfv, self.lepsfv, self.lepsfv, bypassMV=False, nF=3)
+
+            self.triples = tr1f + tr2f + tr3f
+
+            if self.triples:
+                self.ret["isFake" ] = True
+                return
+
+        ## 1 tau
+        if categ < 5: 
+
+            ## 2 light leptons tight + 1 tau tight
+            self.triples = self.findTriples([], self.lepstv, self.lepstv, self.taust, bypassMV=False)
+
+            if self.triples:
+                self.ret["isTight"] = True
+                self.trueTriples   = self.triples
+                return
+
+
+        ## 2 tau
+        if categ >= 5:
+
+            ## 1 light leptons tight + 2 tau tight
+            self.triples = self.findTriples([], self.lepstv, self.taust, self.taust, bypassMV=False)
+
+            if self.triples:
+                self.ret["isTight"] = True
+                self.trueTriples   = self.triples
+                return
+
+
+    ## countOSLF
     ## _______________________________________________________________
-    def collectTriplesTaus(self, byflav, bypassMV):
-        ## encodes the logic of finding the three leptons in the event
-        ## if we have TTT -> event only goes into SR
-        ## if not, we look for all possible triples (c.f. findTriples())
-        ## made of tight leptons and fakes
-        ## hadronic taus included
+    def countOSLF(self):
 
-        self.trueTriples = []
-        self.triples, self.fakes = self.findTriples([], self.lepstv, self.lepstv, self.taust, bypassMV=False, nF=0)
-
-        if self.triples:
-            self.ret["hasTTT"] = True
-            self.trueTriples   = self.triples
-
-        #FIXME: fake taus not included yet
-        #else:
-        #    #tr1f, f1 = self.findTriples(self.triples, self.lepstv, self.lepstv, self.tausf, bypassMV=False, nF=1)
-        #    #tr2f, f2 = self.findTriples(self.triples, self.lepstv, self.lepsfv, self.tausf, bypassMV=False, nF=2)
-        #    #tr3f, f3 = self.findTriples(self.triples, self.lepsfv, self.lepsfv, self.tausf, bypassMV=False, nF=3)
-
-        #    #if tr1f: self.ret["hasTTF"] = True
-        #    #if tr2f: self.ret["hasTFF"] = True
-        #    #if tr3f: self.ret["hasFFF"] = True
-
-        #    #self.triples     = tr1f + tr2f + tr3f
-        #    #self.fakes       = f1 + f2 + f3
+        all = []; leps = []
+        for t in self.triples:
+            for p in t.getOSLF():
+                if (p[1], p[2]) not in leps:
+                    all.append(p[0]); leps.append((p[1], p[2]))
+        return len(all)
 
 
-    ## collectTriplesTwoTaus 
+    ## countOSSF
     ## _______________________________________________________________
-    def collectTriplesTwoTaus(self, byflav, bypassMV):
-        ## encodes the logic of finding the three leptons in the event
-        ## if we have TTT -> event only goes into SR
-        ## if not, we look for all possible triples (c.f. findTriples())
-        ## made of tight leptons and fakes
-        ## hadronic taus included
+    def countOSSF(self):
 
-        self.trueTriples = []
-        self.triples, self.fakes = self.findTriples([], self.lepstv, self.taust, self.taust, bypassMV=False, nF=0)
-
-        if self.triples:
-            self.ret["hasTTT"] = True
-            self.trueTriples   = self.triples
+        all = []; leps = []
+        for t in self.triples:
+            for p in t.getOSSF():
+                if not (p[1], p[2]) in leps:
+                    all.append(p[0]); leps.append((p[1], p[2]))
+        return len(all)
 
 
-    ## collectTriplesWZ
+    ## countOSTF
     ## _______________________________________________________________
-    def collectTriplesWZ(self, byflav, bypassMV):
+    def countOSTF(self):
 
-        print "do more stuff"
-        #FIXME
-        #    choice = self.findPairs(lepst,lepst,byflav=True,bypassMV=True,choose_SS_else_OS=True)
-        #    if choice:
-        #        ret["hasTT"]=True
-        #    else:
-        #        choice = self.findPairs(lepst,lepst,byflav=True,bypassMV=True,choose_SS_else_OS=False)
-        #        if choice:
-        #            ret["hasTF"]=True
-        #            choice=choice[:1]
-         
+        all = []; leps = []
+        for t in self.triples:
+            for p in t.getOSTF():
+                if (p[1], p[2]) not in leps:
+                    all.append(p[0]); leps.append((p[1], p[2]))
+        return len(all)
 
-    ## fillAppWeights
+
+    ## countTriples
     ## _______________________________________________________________
-    def fillAppWeights(self, t, i1, i2, i3, t1, t2, t3):
+    def countTriples(self):
 
-        if not self.apply: return
+        self.ret["nTriples"] = len(self.triples)
+        if self.ret["nTriples"] > 40: raise RuntimeError,'Too many lepton pairs'
 
-        if   self.whichApplication == self.appl_Fakes: self.fillAppWeightsFakes(t)
-        elif self.whichApplication == self.appl_Flips: self.fillAppWeightsFlips(t, i1, i2, i3)
-        elif self.whichApplication == self.appl_WZ   : self.fillAppWeightsWZ   (t, i1, i2, i3)
+        for i, t in enumerate(self.triples):
+            for j, lep   in enumerate(t.getLeps()):
+                self.ret["t" + str(j+1)][i] = (abs(lep.pdgId) == 15)
+                self.ret["i" + str(j+1)][i] = lep.selIdx
+            ## FIXME: add hasOSSF, hasOSLF, bestMll, nOSSF
 
 
-    ## fillAppWeightsFakes
+    ## fillBR
     ## _______________________________________________________________
-    def fillAppWeightsFakes(self, t):
+    def fillBR(self, event, var = 0):
 
-        if self.ret["hasTTT"]: 
-            for var in self.systs["FR"]:
-                self.ret["appWeight" + self.systs["FR"][var]][t] = 0.0
-        else:
-            for var in self.systs["FR"]:
-                fk = filter(None, self.fakes[t])
-                nF = len(fk)
-
-                if nF == 1:
-                    self.ret["appWeight" + self.systs["FR"][var]][t] =   self.getFakeTransfer(fk[0], var)
-
-                elif nF == 2:
-                    self.ret["appWeight" + self.systs["FR"][var]][t] = - self.getFakeTransfer(fk[0], var) \
-                                                                       * self.getFakeTransfer(fk[1], var)
-                elif nF == 3:
-                    self.ret["appWeight" + self.systs["FR"][var]][t] =   self.getFakeTransfer(fk[0], var) \
-                                                                       * self.getFakeTransfer(fk[1], var) \
-                                                                       * self.getFakeTransfer(fk[2], var)
-
-
-    ## fillAppWeightsFlips
-    ## _______________________________________________________________
-    def fillAppWeightsFlips(self, t):
-        print "do stuff"
-        #FIXME
-        #ret["appWeight"][npair] = self.flipRate(leps[i1])+self.flipRate(leps[i2])
-
-
-    ## fillAppWeightsWZ
-    ## _______________________________________________________________
-    def fillAppWeightsWZ(self, t):
-        print "do stuff"
-        #FIXME
-
-
-    ## fillJetQuantities
-    ## _______________________________________________________________
-    def fillJetQuantities(self, t, i1, i2, i3, t1, t2, t3):
-
-        lepcoll = [self.findObj(i1, t1), self.findObj(i2, t2), self.findObj(i3, t3)]
-        self.ret["maxDeltaPhiLepJet" ][t] = max([ abs(deltaPhi(l.phi, j.phi)) for l in lepcoll for j in self.jets30 ]+[-999])
-        self.ret["maxDeltaPhiLepBJet"][t] = max([ abs(deltaPhi(l.phi, j.phi)) for l in lepcoll for j in self.bJets30]+[-999])
-        self.ret["maxDeltaPhiJetJet" ][t] = max([(abs(deltaPhi(j1.phi, j2.phi)) if j1!=j2 else -999) for j1 in self.jets30 for j2 in self.jets30]+[-999])
-        self.ret["minDeltaRLepJet"   ][t] = min([ abs(deltaR(l, j)) for l in lepcoll for j in self.jets30]+[999])
-        self.ret["minDeltaRLepBJet"  ][t] = min([ abs(deltaR(l, j)) for l in lepcoll for j in self.bJets30]+[999])
+        BR = 0
+        if   self.met[var] >= 50 and getattr(event, "nBJetMedium25_Mini" + self.systs["JEC"][var], "nBJetMedium25_Mini") <= 0: BR = 1
+        elif                         getattr(event, "nBJetMedium25_Mini" + self.systs["JEC"][var], "nBJetMedium25_Mini") <= 0: BR = 2
+        self.ret["BR" + self.systs["JEC"][var]] = BR
 
 
     ## fillLeptonSF
     ## _______________________________________________________________
     def fillLeptonSF(self, event, t, i1, i2, i3, t1, t2, t3, var = 0):
 
-        self.ret["leptonSF" + self.systs["LEPSF"][var]][t] = 1.;
-        if event.isData: return
+        print "fixme"
+        ## FIXME
+        ##self.ret["leptonSF" + self.systs["LEPSF"][var]][t] = 1.;
+        ##if event.isData: return
 
-        lepsf = [1]*3
-        for i, (idx, ist) in enumerate([(i1, t1), (i2, t2), (i3, t3)]):
-            if ist == 1: continue
-            idxs = 0 if abs(self.leps[idx].pdgId) == 13 else 1
-            lepsf[i] *= self.readHistos(self.leptonScaleFactorHistosFull[idxs], var, self.leps[idx].pt, abs(self.leps[idx].eta))
+        ##lepsf = [1]*3
+        ##for i, (idx, ist) in enumerate([(i1, t1), (i2, t2), (i3, t3)]):
+        ##    if ist == 1: continue
+        ##    idxs = 0 if abs(self.leps[idx].pdgId) == 13 else 1
+        ##    lepsf[i] *= self.readHistos(self.leptonScaleFactorHistosFull[idxs], var, self.leps[idx].pt, abs(self.leps[idx].eta))
 
-            #FIXME: fast sim lepton SF not yet included
-            #if self.isFastSim:
-            #    sf    = self.readHistos(self.leptonScaleFactorHistosFast[idxs], var, self.leps[idx].pt,  abs(self.leps[idx].eta), event.nVert)
-            #    sferr = 0 # error ignored for now
-            #    err = sferr / sf
-            #    lepsf[i] *= sf
-            #    if   var ==  2: lepsf[i] *= (1+err)
-            #    elif var == -2: lepsf[i] *= (1-err)
-        self.ret["leptonSF" + self.systs["LEPSF"][var]][t] = lepsf[0] * lepsf[1] * lepsf[2]
+        ##    #FIXME: fast sim lepton SF not yet included
+        ##    #if self.isFastSim:
+        ##    #    sf    = self.readHistos(self.leptonScaleFactorHistosFast[idxs], var, self.leps[idx].pt,  abs(self.leps[idx].eta), event.nVert)
+        ##    #    sferr = 0 # error ignored for now
+        ##    #    err = sferr / sf
+        ##    #    lepsf[i] *= sf
+        ##    #    if   var ==  2: lepsf[i] *= (1+err)
+        ##    #    elif var == -2: lepsf[i] *= (1-err)
+        ##self.ret["leptonSF" + self.systs["LEPSF"][var]][t] = lepsf[0] * lepsf[1] * lepsf[2]
 
 
-    ## fillMllMtMinOnZ
+    ## fillMllMt
     ## _______________________________________________________________
-    def fillMllMtMinOnZ(self, var = 0):
+    def fillMllMt(self, var = 0):
 
-        m , i1_mll , i2_mll, t1_mll, t2_mll, os = self.mll   (var)
-        mT, i_mTmin, t_mTmin                    = self.findmt(i1_mll, i2_mll, t1_mll, t2_mll, var)
-
-        self.ret["mll"     + self.systs["JEC"][var]] = m
-        self.ret["i1_mll"  + self.systs["JEC"][var]] = i1_mll
-        self.ret["i2_mll"  + self.systs["JEC"][var]] = i2_mll
-        self.ret["t1_mll"  + self.systs["JEC"][var]] = t1_mll
-        self.ret["t2_mll"  + self.systs["JEC"][var]] = t2_mll
-        self.ret["mTmin"   + self.systs["JEC"][var]] = mT
-        self.ret["i_mTmin" + self.systs["JEC"][var]] = i_mTmin
-        self.ret["t_mTmin" + self.systs["JEC"][var]] = t_mTmin
-        self.ret["isOnZ"   + self.systs["JEC"][var]] = 0
-
-        if   os == 1: self.ret["hasOSSF" + self.systs["JEC"][var]] = 1
-        elif os == 0: self.ret["hasOSOF" + self.systs["JEC"][var]] = 1
-        elif os == 2: self.ret["hasOSTF" + self.systs["JEC"][var]] = 1
-        else        : self.ret["hasSS"   + self.systs["JEC"][var]] = 1
-
-        if abs(m - 91) < 15:
-            self.ret["isOnZ" + self.systs["JEC"][var]] = 1
+        self.ret["bestMll"] = self.bestOSPair.mll if self.bestOSPair else -1
+        for var in self.systs["JEC"]:
+            self.ret["bestMt" + self.systs["JEC"][var]] = self.mTmin[var]
 
 
     ## fillSR
     ## _______________________________________________________________
-    def fillSR(self, var = ""):
+    def fillSR(self, var = 0):
 
-        BR      = self.findBR(var)
-        SRlight = self.findSRlight(var, BR)
-        SRtau   = self.findSRtau  (var, BR)
+        categ = self.ret["categ"]
+        mll   = self.bestOSPair.mll if self.bestOSPair else -1
+        mt    = self.mTmin[var]
+        met   = self.met[var]
 
-        self.ret["BR"      + self.systs["JEC"][var]] = BR
-        self.ret["SRlight" + self.systs["JEC"][var]] = SRlight
-        self.ret["SRtau"   + self.systs["JEC"][var]] = SRtau
+        SR = -1
+        if   categ ==  1: SR = self.findSRcategA(mll, mt, met,   0) # category A
+        elif categ ==  2: SR = self.findSRcategB(mll, mt, met,  36) # category B
+        elif categ ==  3: SR = self.findSRcategA(mll, mt, met,  60) # category C
+        elif categ ==  4: SR = self.findSRcategB(mll, mt, met,  96) # category D
+        elif categ ==  5: SR = self.findSRcategB(mll, mt, met, 120) # category E
+        elif categ ==  6: SR = 145                                  # category F
+        elif categ ==  7: SR = self.findSRcategG(mll, mt, met, 145) # category G
+        elif categ ==  8: SR = self.findSRcategG(mll, mt, met, 149) # category H
+        elif categ ==  9: SR = self.findSRcategG(mll, mt, met, 153) # category I
+        elif categ == 10: SR = self.findSRcategG(mll, mt, met, 157) # category J
+        elif categ == 11: SR = self.findSRcategG(mll, mt, met, 161) # category K
+
+        self.ret["SR" + self.systs["JEC"][var]] = SR
 
 
     ## fillTriggerSF
     ## _______________________________________________________________
     def fillTriggerSF(self, event, t, i1, i2, i3):
 
-        self.ret["triggerSF"][t] = 1.
-        if event.isData: return
-        self.ret["triggerSF"][t] = triggerScaleFactorFullSim(self.leps[i1].pdgId, self.leps[i2].pdgId, \
-                                                             self.leps[i1].pt   , self.leps[i2].pt   , self.ht)
-        if self.isFastSim:
-            self.ret["triggerSF"][t] *= FastSimTriggerEfficiency( self.ht, self.leps[i1].pt, self.leps[i1].pdgId, \
-                                                                           self.leps[i2].pt, self.leps[i2].pdgId)
+        print "fixme"
+        ## FIXME
+        ##self.ret["triggerSF"][t] = 1.
+        ##if event.isData: return
+        ##self.ret["triggerSF"][t] = triggerScaleFactorFullSim(self.leps[i1].pdgId, self.leps[i2].pdgId, \
+        ##                                                     self.leps[i1].pt   , self.leps[i2].pt   , self.ht)
+        ##if self.isFastSim:
+        ##    self.ret["triggerSF"][t] *= FastSimTriggerEfficiency( self.ht, self.leps[i1].pt, self.leps[i1].pdgId, \
+        ##                                                                   self.leps[i2].pt, self.leps[i2].pdgId)
 
 
-    ## fillVtxWeight
+    ## findBestOSpair
     ## _______________________________________________________________
-    def fillVtxWeight(self, event, var = 0):
-        if event.isData: return
-        nvtx = int(getattr(event,"nTrueInt"))
-        self.ret["vtxWeight"] = self.puWeights[var][nvtx] if nvtx < len(self.puWeights[var]) else 1
-        
+    def findBestOSpair(self):
 
-    ## findBR
+        self.bestOSPair = None
+        all = []; leps = []
+
+        # priority to SF
+        for t in self.triples:
+            for p in t.getOSSF():
+                if (p[1], p[2]) not in leps:
+                    all.append((p[0].diff, p[0])); leps.append((p[1], p[2]))
+        if all:
+            all.sort()
+            self.bestOSPair = all[0][1]
+            return # priority to SF!
+
+        # light flavor OSOF
+        for t in self.triples:
+            for p in t.getOSLF():
+                if (p[1], p[2]) not in leps:
+                    all.append((p[0].diff, p[0])); leps.append((p[1], p[2]))
+        if all:
+            all.sort()
+            self.bestOSPair = all[0][1]
+            return # priority to LF!
+
+        # tau flavor OSOF
+        for t in self.triples:
+            for p in t.getOSTF():
+                if (p[1], p[2]) not in leps:
+                    all.append((p[0].diff, p[0])); leps.append((p[1], p[2]))
+        if all:
+            all.sort()
+            self.bestOSPair = all[0][1]
+
+
+    ## findCateg
     ## _______________________________________________________________
-    def findBR(self, var):
-        # BR number = 0, 1, 2 = not in BR, with OSOF pair, with OSSF pair
+    def findCateg(self):
 
-        ossf = self.ret["hasOSSF" + self.systs["JEC"][var]]
-        osof = self.ret["hasOSOF" + self.systs["JEC"][var]]
-        met  = self.met[var]
+        nLep  = self.ret["nLep"]
+        nL    = self.ret["nL"] 
+        nT    = self.ret["nT"] 
 
-        if met < 50        : return 0
-        if ossf + osof == 0: return 0
-        if osof            : return 1
-        if ossf            : return 2
+        nOSSF = self.ret["nOSSF"]
+        nOSLF = self.ret["nOSLF"]
+        nOSTF = self.ret["nOSTF"]
 
-        return 0
+        categ = 0
+
+        ## at least three leptons
+        if nLep < 3: return categ
+
+        ## TTW sync
+        if   nL == 3: categ = 1
+        elif nL == 2: categ = 2
+        elif nL == 1: categ = 3
+        return categ
+
+        ## WZ sync
+        if   nL == 3 and nOSSF >= 1: categ = 1
+        else: categ = 2
+        return categ
+
+        ## final
+        if   nLep == 3 and nT == 0 and nOSSF >= 1               : categ =  1 # A
+        elif nLep == 3 and nT == 0 and nOSSF == 0               : categ =  2 # B
+        elif nLep == 3 and nT == 1 and nOSSF >= 1               : categ =  3 # C
+        elif nLep == 3 and nT == 1 and nOSSF == 0 and nOSLF == 1: categ =  4 # D
+        elif nLep == 3 and nT == 1 and nOSLF == 0               : categ =  5 # E
+        elif nLep == 3 and nT == 2                              : categ =  6 # F
+        elif nLep >  3 and nT == 0 and nOSSF >= 2               : categ =  7 # G
+        elif nLep >  3 and nT == 0 and nOSSF == 1               : categ =  8 # H
+        elif nLep >  3 and nT == 0 and nOSSF == 0               : categ =  9 # I
+        elif nLep >  3 and nT == 1 and nOSSF >= 1               : categ = 10 # J
+        elif nLep >  3 and nT == 1 and nOSSF == 0               : categ = 11 # K
+
+        return categ
 
 
-    ## findmt
+    ## findMtMin
     ## _______________________________________________________________
-    def findmt(self, i1, i2, t1, t2, var = 0):
-        ## compute the MT of the third lepton of that triple, that was
-        ## used to compute the mll
+    def findMtMin(self):
 
-        buffer = []
-        for (l1, l2, l3) in self.triples:
-            idxs = [(l1.trIdx, l1.isTau), (l2.trIdx, l2.isTau), (l3.trIdx, l3.isTau)]
-            if (i1, t1) in idxs and (i2, t2) in idxs:
-                idxs.remove((i1, t1))
-                idxs.remove((i2, t2))
-                buffer.append((self.mtW(self.findObj(idxs[0][0], idxs[0][1]).pt, self.findObj(idxs[0][0], idxs[0][1]).phi, var), idxs[0][0], idxs[0][1]))
-        if len(buffer):
-            buffer.sort()
-            return buffer[0]
-        return (0., -1, 0)
+        self.mTmin = {}
+        used = [self.bestOSPair.l1, self.bestOSPair.l2] if self.bestOSPair else []
+        leps = []
+
+        if len(used) == 2: 
+            for t in self.triples:
+                if not pairInTriple(self.bestOSPair, t): continue
+                list = t.getLeps()
+                list.remove(used[0]); list.remove(used[1])
+                if len(list) == 1: leps.append(list[0])
+        else:
+            for l in self.alltight:
+                if not l in used: leps.append(l) 
+
+        for var in self.systs["JEC"]:
+            buffer = [] 
+            self.mTmin[var] = -1
+            for l in leps:
+                buffer.append(self.mtW(l, var))
+            if len(buffer):
+                buffer.sort()
+                self.mTmin[var] = buffer[0]
 
 
-    ## findObj
+    ## firstCategorization
     ## _______________________________________________________________
-    def findObj(self, idx, isTau = 0):
-        if   isTau == 1 and idx >= 0: return self.tausl[idx]
-        return self.leps[idx]
+    def firstCategorization(self):
+
+        self.ret["nOSSF"] = self.countOSSF()
+        self.ret["nOSTF"] = self.countOSTF()
+        self.ret["nOSLF"] = self.countOSLF()
+
+        self.ret["categ"] = self.findCateg()
 
 
-    ## findOSpair
+    ## findSRcategA
     ## _______________________________________________________________
-    def findOSpair(self, mZ = 91.2, needSF = True, useTaus = True, case = 1):
-
-        buffer = []
-        for (l1, l2, l3) in self.triples:
-            leps = [l1, l2, l3]
-            buffer.append(self.bestZ1TLsuper(leps, leps, mZ, needSF, useTaus))
-        
-        if len(buffer) and buffer[0][1] != -1:
-            buffer.sort()
-            return (buffer[0][1], buffer[0][2], buffer[0][3], buffer[0][4], buffer[0][5], case)
-        return (-1, -1, -1, 0, 0, -1)
-
-
-    ## findSRlight
-    ## _______________________________________________________________
-    def findSRlight(self, var, BR):
+    def findSRcategA(self, mll, mT, met, offset = 0): 
+        ## category A: trilepton-0taus-1ossf
 
         SR = 0
 
-        ossf  = self.ret["hasOSSF" + self.systs["JEC"][var]]
-        osof  = self.ret["hasOSOF" + self.systs["JEC"][var]]
-        ss    = self.ret["hasSS"   + self.systs["JEC"][var]]
-        m     = self.ret["mll"     + self.systs["JEC"][var]]
-        mT    = self.ret["mTmin"   + self.systs["JEC"][var]]
-        met   = self.met[var]
+        if 0 <= mll < 75:
+            if     0 <= mT < 120 and  50 <= met < 100: SR =  1
+            elif   0 <= mT < 120 and 100 <= met < 150: SR =  2
+            elif   0 <= mT < 120 and 150 <= met < 200: SR =  3
+            elif   0 <= mT < 120 and 200 <= met      : SR =  4
+            elif 120 <= mT < 160 and  50 <= met < 100: SR =  5
+            elif 120 <= mT < 160 and 100 <= met < 150: SR =  6
+            elif 120 <= mT < 160 and 150 <= met < 200: SR =  7
+            elif 120 <= mT < 160 and 200 <= met      : SR =  8
+            elif 160 <= mT       and  50 <= met < 100: SR =  9
+            elif 160 <= mT       and 100 <= met < 150: SR = 10
+            elif 160 <= mT       and 150 <= met < 200: SR = 11
+            elif 160 <= mT       and 200 <= met      : SR = 12
+        elif 75 <= mll < 105:
+            if     0 <= mT < 120 and  50 <= met < 100: SR = 13
+            elif   0 <= mT < 120 and 100 <= met < 150: SR = 14
+            elif   0 <= mT < 120 and 150 <= met < 200: SR = 15
+            elif   0 <= mT < 120 and 200 <= met      : SR = 16
+            elif 120 <= mT < 160 and  50 <= met < 100: SR = 17
+            elif 120 <= mT < 160 and 100 <= met < 150: SR = 18
+            elif 120 <= mT < 160 and 150 <= met < 200: SR = 19
+            elif 120 <= mT < 160 and 200 <= met      : SR = 20
+            elif 160 <= mT       and  50 <= met < 100: SR = 21
+            elif 160 <= mT       and 100 <= met < 150: SR = 22
+            elif 160 <= mT       and 150 <= met < 200: SR = 23
+            elif 160 <= mT       and 200 <= met      : SR = 24
+        elif 105 <= mll:
+            if     0 <= mT < 120 and  50 <= met < 100: SR = 25
+            elif   0 <= mT < 120 and 100 <= met < 150: SR = 26
+            elif   0 <= mT < 120 and 150 <= met < 200: SR = 27
+            elif   0 <= mT < 120 and 200 <= met      : SR = 28
+            elif 120 <= mT < 160 and  50 <= met < 100: SR = 29
+            elif 120 <= mT < 160 and 100 <= met < 150: SR = 30
+            elif 120 <= mT < 160 and 150 <= met < 200: SR = 31
+            elif 120 <= mT < 160 and 200 <= met      : SR = 32
+            elif 160 <= mT       and  50 <= met < 100: SR = 33
+            elif 160 <= mT       and 100 <= met < 150: SR = 34
+            elif 160 <= mT       and 150 <= met < 200: SR = 35
+            elif 160 <= mT       and 200 <= met      : SR = 36
 
-        #if BR == 0: return 0
+        return SR + offset
 
-        ## SS category
-        if ss:
-            SR = 1
 
-        # OSSF category
-        elif ossf:
-            if          m <  75 and        mT < 120 and  50 <= met < 100: SR =  2
-            elif        m <  75 and        mT < 120 and 100 <= met < 150: SR =  3
-            elif        m <  75 and        mT < 120 and 150 <= met < 200: SR =  4
-            elif        m <  75 and        mT < 120 and 200 <= met      : SR =  5
-            elif        m <  75 and 120 <= mT < 160 and  50 <= met < 100: SR =  6
-            elif        m <  75 and 120 <= mT < 160 and 100 <= met < 150: SR =  7
-            elif        m <  75 and 120 <= mT < 160 and 150 <= met < 200: SR =  8
-            elif        m <  75 and 120 <= mT < 160 and 200 <= met      : SR =  9
-            elif        m <  75 and 160 <= mT       and  50 <= met < 100: SR = 10
-            elif        m <  75 and 160 <= mT       and 100 <= met < 150: SR = 11
-            elif        m <  75 and 160 <= mT       and 150 <= met < 200: SR = 12
-            elif        m <  75 and 160 <= mT       and 200 <= met      : SR = 13
-            elif  75 <= m < 105 and        mT < 120 and  50 <= met < 100: SR = 14
-            elif  75 <= m < 105 and        mT < 120 and 100 <= met < 150: SR = 15
-            elif  75 <= m < 105 and        mT < 120 and 150 <= met < 200: SR = 16
-            elif  75 <= m < 105 and        mT < 120 and 200 <= met      : SR = 17
-            elif  75 <= m < 105 and 120 <= mT < 160 and  50 <= met < 100: SR = 18
-            elif  75 <= m < 105 and 120 <= mT < 160 and 100 <= met < 150: SR = 19
-            elif  75 <= m < 105 and 120 <= mT < 160 and 150 <= met < 200: SR = 20
-            elif  75 <= m < 105 and 120 <= mT < 160 and 200 <= met      : SR = 21
-            elif  75 <= m < 105 and 160 <= mT       and  50 <= met < 100: SR = 22
-            elif  75 <= m < 105 and 160 <= mT       and 100 <= met < 150: SR = 23
-            elif  75 <= m < 105 and 160 <= mT       and 150 <= met < 200: SR = 24
-            elif  75 <= m < 105 and 160 <= mT       and 200 <= met      : SR = 25
-            elif 105 <= m       and        mT < 120 and  50 <= met < 100: SR = 26
-            elif 105 <= m       and        mT < 120 and 100 <= met < 150: SR = 27
-            elif 105 <= m       and        mT < 120 and 150 <= met < 200: SR = 28
-            elif 105 <= m       and        mT < 120 and 200 <= met      : SR = 29
-            elif 105 <= m       and 120 <= mT < 160 and  50 <= met < 100: SR = 30
-            elif 105 <= m       and 120 <= mT < 160 and 100 <= met < 150: SR = 31
-            elif 105 <= m       and 120 <= mT < 160 and 150 <= met < 200: SR = 32
-            elif 105 <= m       and 120 <= mT < 160 and 200 <= met      : SR = 33
-            elif 105 <= m       and 160 <= mT       and  50 <= met < 100: SR = 34
-            elif 105 <= m       and 160 <= mT       and 100 <= met < 150: SR = 35
-            elif 105 <= m       and 160 <= mT       and 150 <= met < 200: SR = 36
-            elif 105 <= m       and 160 <= mT       and 200 <= met      : SR = 37
+    ## findSRcategB
+    ## _______________________________________________________________
+    def findSRcategB(self, mll, mT, met, offset = 0): 
+        ## category B: trilepton-0taus-0ossf
 
-        # OSOF category
-        elif osof:
+        SR = 0
 
-            ## old
-            if          m < 100 and        mT < 120 and  50 <= met < 100: SR = 38
-            elif        m < 100 and        mT < 120 and 100 <= met < 150: SR = 39
-            elif        m < 100 and        mT < 120 and 150 <= met < 200: SR = 40
-            elif        m < 100 and        mT < 120 and 200 <= met      : SR = 41
-            elif        m < 100 and 120 <= mT < 160 and  50 <= met < 100: SR = 42
-            elif        m < 100 and 120 <= mT < 160 and 100 <= met < 150: SR = 43
-            elif        m < 100 and 120 <= mT < 160 and 150 <= met < 200: SR = 44
-            elif        m < 100 and 120 <= mT < 160 and 200 <= met      : SR = 45
-            elif        m < 100 and 160 <= mT       and  50 <= met < 100: SR = 46
-            elif        m < 100 and 160 <= mT       and 100 <= met < 150: SR = 47
-            elif        m < 100 and 160 <= mT       and 150 <= met < 200: SR = 48
-            elif        m < 100 and 160 <= mT       and 200 <= met      : SR = 49
-            elif 100 <= m       and        mT < 120 and  50 <= met < 100: SR = 50
-            elif 100 <= m       and        mT < 120 and 100 <= met < 150: SR = 51
-            elif 100 <= m       and        mT < 120 and 150 <= met < 200: SR = 52
-            elif 100 <= m       and        mT < 120 and 200 <= met      : SR = 53
-            elif 100 <= m       and 120 <= mT < 160 and  50 <= met < 100: SR = 54
-            elif 100 <= m       and 120 <= mT < 160 and 100 <= met < 150: SR = 55
-            elif 100 <= m       and 120 <= mT < 160 and 150 <= met < 200: SR = 56
-            elif 100 <= m       and 120 <= mT < 160 and 200 <= met      : SR = 57
-            elif 100 <= m       and 160 <= mT       and  50 <= met < 100: SR = 58
-            elif 100 <= m       and 160 <= mT       and 100 <= met < 150: SR = 59
-            elif 100 <= m       and 160 <= mT       and 150 <= met < 200: SR = 60
-            elif 100 <= m       and 160 <= mT       and 200 <= met      : SR = 61
+        if 0 <= mll < 100:
+            if          mT < 120 and  50 <= met < 100: SR =  1
+            elif        mT < 120 and 100 <= met < 150: SR =  2
+            elif        mT < 120 and 150 <= met < 200: SR =  3
+            elif        mT < 120 and 200 <= met      : SR =  4
+            elif 120 <= mT < 160 and  50 <= met < 100: SR =  5
+            elif 120 <= mT < 160 and 100 <= met < 150: SR =  6
+            elif 120 <= mT < 160 and 150 <= met < 200: SR =  7
+            elif 120 <= mT < 160 and 200 <= met      : SR =  8
+            elif 160 <= mT       and  50 <= met < 100: SR =  9
+            elif 160 <= mT       and 100 <= met < 150: SR = 10
+            elif 160 <= mT       and 150 <= met < 200: SR = 11
+            elif 160 <= mT       and 200 <= met      : SR = 12
+        elif 100 <= mll:
+            if          mT < 120 and  50 <= met < 100: SR = 13
+            elif        mT < 120 and 100 <= met < 150: SR = 14 
+            elif        mT < 120 and 150 <= met < 200: SR = 15
+            elif        mT < 120 and 200 <= met      : SR = 16
+            elif 120 <= mT < 160 and  50 <= met < 100: SR = 17
+            elif 120 <= mT < 160 and 100 <= met < 150: SR = 18
+            elif 120 <= mT < 160 and 150 <= met < 200: SR = 19
+            elif 120 <= mT < 160 and 200 <= met      : SR = 20
+            elif 160 <= mT       and  50 <= met < 100: SR = 21
+            elif 160 <= mT       and 100 <= met < 150: SR = 22
+            elif 160 <= mT       and 150 <= met < 200: SR = 23
+            elif 160 <= mT       and 200 <= met      : SR = 24
 
             ## new
             #if          m < 100 and        mT < 120 and  50 <= met < 100: SR = 38
@@ -802,186 +848,22 @@ class LeptonChoiceEWK:
             #elif 100 <= m       and        mT < 120 and 100 <= met      : SR = 42
             #elif 100 <= m       and 120 <= mT       and  50 <= met      : SR = 43
 
-            ## new (binning #1)
-            #if          m < 100 and        mT < 120 and  50 <= met < 150: SR = 38
-            #elif        m < 100 and        mT < 120 and 150 <= met      : SR = 39
-            #elif        m < 100 and 120 <= mT < 160 and  50 <= met < 150: SR = 40
-            #elif        m < 100 and 120 <= mT < 160 and 150 <= met      : SR = 41
-            #elif        m < 100 and 160 <= mT       and  50 <= met < 150: SR = 42
-            #elif        m < 100 and 160 <= mT       and 150 <= met      : SR = 43
-            #elif 100 <= m       and        mT < 120 and  50 <= met < 150: SR = 44
-            #elif 100 <= m       and        mT < 120 and 150 <= met      : SR = 45
-            #elif 100 <= m       and 120 <= mT < 160 and  50 <= met < 150: SR = 46
-            #elif 100 <= m       and 120 <= mT < 160 and 150 <= met      : SR = 47
-            #elif 100 <= m       and 160 <= mT       and  50 <= met < 150: SR = 48
-            #elif 100 <= m       and 160 <= mT       and 150 <= met      : SR = 49
-
-            ## new (binning #2)
-            #if          m < 100 and        mT < 120 and  50 <= met      : SR = 38
-            #elif        m < 100 and 120 <= mT < 160 and  50 <= met      : SR = 39
-            #elif        m < 100 and 160 <= mT       and  50 <= met      : SR = 40
-            #elif 100 <= m       and        mT < 120 and  50 <= met      : SR = 41
-            #elif 100 <= m       and 120 <= mT < 160 and  50 <= met      : SR = 42
-            #elif 100 <= m       and 160 <= mT       and  50 <= met      : SR = 43
-
-            ### new (binning #3)
-            #if          m < 100                                         : SR = 38 
-            #elif 100 <= m                                               : SR = 39 
-
-            ### new (binning #4)
-            #if          m < 100 and        mT < 120 and  50 <= met < 100: SR = 38
-            #elif        m < 100 and        mT < 120 and 100 <= met < 150: SR = 39
-            #elif        m < 100 and        mT < 120 and 150 <= met < 200: SR = 40
-            #elif        m < 100 and        mT < 120 and 200 <= met      : SR = 41
-            #elif        m < 100 and 120 <= mT < 160 and  50 <= met < 100: SR = 42
-            #elif        m < 100 and 120 <= mT < 160 and 100 <= met < 150: SR = 43
-            #elif        m < 100 and 120 <= mT < 160 and 150 <= met < 200: SR = 44
-            #elif        m < 100 and 120 <= mT < 160 and 200 <= met      : SR = 45
-            #elif        m < 100 and 160 <= mT       and  50 <= met < 100: SR = 46
-            #elif        m < 100 and 160 <= mT       and 100 <= met < 150: SR = 47
-            #elif        m < 100 and 160 <= mT       and 150 <= met < 200: SR = 48
-            #elif        m < 100 and 160 <= mT       and 200 <= met      : SR = 49
-            #elif 100 <= m                                               : SR = 50
-
-            ### new (binning #5)
-            #if          m < 100 and        mT < 120 and  50 <= met < 150: SR = 38
-            #elif        m < 100 and        mT < 120 and 150 <= met      : SR = 39
-            #elif        m < 100 and 120 <= mT       and  50 <= met      : SR = 40
-            #elif 100 <= m       and        mT < 120 and  50 <= met < 150: SR = 41
-            #elif 100 <= m       and        mT < 120 and 150 <= met      : SR = 42
-            #elif 100 <= m       and 120 <= mT       and  50 <= met      : SR = 43
-
-            ### new (binning #6)
-            #if          m < 100 and        mT < 120 and  50 <= met < 150: SR = 38
-            #elif        m < 100 and        mT < 120 and 150 <= met      : SR = 39
-            #elif        m < 100 and 120 <= mT < 160 and  50 <= met      : SR = 40
-            #elif        m < 100 and 160 <= mT       and  50 <= met < 150: SR = 41
-            #elif        m < 100 and 160 <= mT       and 150 <= met      : SR = 42
-            #elif 100 <= m       and        mT < 120 and  50 <= met < 150: SR = 43
-            #elif 100 <= m       and        mT < 120 and 150 <= met      : SR = 44
-            #elif 100 <= m       and 120 <= mT < 160 and  50 <= met      : SR = 45
-            #elif 100 <= m       and 160 <= mT       and  50 <= met < 150: SR = 46
-            #elif 100 <= m       and 160 <= mT       and 150 <= met      : SR = 47
+        return SR + offset
 
 
-        return SR        
-
-
-
-    ## findSRtau
+    ## findSRcategG
     ## _______________________________________________________________
-    def findSRtau(self, var, BR):
+    def findSRcategG(self, mll, mT, met, offset = 0): 
+        ## category G: four lepton
 
         SR = 0
 
-        ossf  = self.ret["hasOSSF" + self.systs["JEC"][var]]
-        osof  = self.ret["hasOSOF" + self.systs["JEC"][var]]
-        ostf  = self.ret["hasOSTF" + self.systs["JEC"][var]]
-        ss    = self.ret["hasSS"   + self.systs["JEC"][var]]
-        m     = self.ret["mll"     + self.systs["JEC"][var]]
-        mT    = self.ret["mTmin"   + self.systs["JEC"][var]]
-        met   = self.met[var]
+        if     0 <= met <  30: SR = 1
+        elif  30 <= met <  50: SR = 2
+        elif  50 <= met < 100: SR = 3
+        elif 100 <= met      : SR = 4
 
-        #if BR == 0: return 0
-
-        ## SS category
-        if ss:
-            SR = 1
-
-        # OSSF category
-        elif ossf:
-            if          m <  75 and        mT < 120 and  50 <= met < 100: SR =  2
-            elif        m <  75 and        mT < 120 and 100 <= met < 150: SR =  3
-            elif        m <  75 and        mT < 120 and 150 <= met < 200: SR =  4
-            elif        m <  75 and        mT < 120 and 200 <= met      : SR =  5
-            elif        m <  75 and 120 <= mT < 160 and  50 <= met < 100: SR =  6
-            elif        m <  75 and 120 <= mT < 160 and 100 <= met < 150: SR =  7
-            elif        m <  75 and 120 <= mT < 160 and 150 <= met < 200: SR =  8
-            elif        m <  75 and 120 <= mT < 160 and 200 <= met      : SR =  9
-            elif        m <  75 and 160 <= mT       and  50 <= met < 100: SR = 10
-            elif        m <  75 and 160 <= mT       and 100 <= met < 150: SR = 11
-            elif        m <  75 and 160 <= mT       and 150 <= met < 200: SR = 12
-            elif        m <  75 and 160 <= mT       and 200 <= met      : SR = 13
-            elif  75 <= m < 105 and        mT < 120 and  50 <= met < 100: SR = 14
-            elif  75 <= m < 105 and        mT < 120 and 100 <= met < 150: SR = 15
-            elif  75 <= m < 105 and        mT < 120 and 150 <= met < 200: SR = 16
-            elif  75 <= m < 105 and        mT < 120 and 200 <= met      : SR = 17
-            elif  75 <= m < 105 and 120 <= mT < 160 and  50 <= met < 100: SR = 18
-            elif  75 <= m < 105 and 120 <= mT < 160 and 100 <= met < 150: SR = 19
-            elif  75 <= m < 105 and 120 <= mT < 160 and 150 <= met < 200: SR = 20
-            elif  75 <= m < 105 and 120 <= mT < 160 and 200 <= met      : SR = 21
-            elif  75 <= m < 105 and 160 <= mT       and  50 <= met < 100: SR = 22
-            elif  75 <= m < 105 and 160 <= mT       and 100 <= met < 150: SR = 23
-            elif  75 <= m < 105 and 160 <= mT       and 150 <= met < 200: SR = 24
-            elif  75 <= m < 105 and 160 <= mT       and 200 <= met      : SR = 25
-            elif 105 <= m       and        mT < 120 and  50 <= met < 100: SR = 26
-            elif 105 <= m       and        mT < 120 and 100 <= met < 150: SR = 27
-            elif 105 <= m       and        mT < 120 and 150 <= met < 200: SR = 28
-            elif 105 <= m       and        mT < 120 and 200 <= met      : SR = 29
-            elif 105 <= m       and 120 <= mT < 160 and  50 <= met < 100: SR = 30
-            elif 105 <= m       and 120 <= mT < 160 and 100 <= met < 150: SR = 31
-            elif 105 <= m       and 120 <= mT < 160 and 150 <= met < 200: SR = 32
-            elif 105 <= m       and 120 <= mT < 160 and 200 <= met      : SR = 33
-            elif 105 <= m       and 160 <= mT       and  50 <= met < 100: SR = 34
-            elif 105 <= m       and 160 <= mT       and 100 <= met < 150: SR = 35
-            elif 105 <= m       and 160 <= mT       and 150 <= met < 200: SR = 36
-            elif 105 <= m       and 160 <= mT       and 200 <= met      : SR = 37
-
-        # OSOF category
-        elif osof:
-            if          m < 100 and        mT < 120 and  50 <= met < 100: SR = 38
-            elif        m < 100 and        mT < 120 and 100 <= met < 150: SR = 39
-            elif        m < 100 and        mT < 120 and 150 <= met < 200: SR = 40
-            elif        m < 100 and        mT < 120 and 200 <= met      : SR = 41
-            elif        m < 100 and 120 <= mT < 160 and  50 <= met < 100: SR = 42
-            elif        m < 100 and 120 <= mT < 160 and 100 <= met < 150: SR = 43
-            elif        m < 100 and 120 <= mT < 160 and 150 <= met < 200: SR = 44
-            elif        m < 100 and 120 <= mT < 160 and 200 <= met      : SR = 45
-            elif        m < 100 and 160 <= mT       and  50 <= met < 100: SR = 46
-            elif        m < 100 and 160 <= mT       and 100 <= met < 150: SR = 47
-            elif        m < 100 and 160 <= mT       and 150 <= met < 200: SR = 48
-            elif        m < 100 and 160 <= mT       and 200 <= met      : SR = 49
-            elif 100 <= m       and        mT < 120 and  50 <= met < 100: SR = 50
-            elif 100 <= m       and        mT < 120 and 100 <= met < 150: SR = 51
-            elif 100 <= m       and        mT < 120 and 150 <= met < 200: SR = 52
-            elif 100 <= m       and        mT < 120 and 200 <= met      : SR = 53
-            elif 100 <= m       and 120 <= mT < 160 and  50 <= met < 100: SR = 54
-            elif 100 <= m       and 120 <= mT < 160 and 100 <= met < 150: SR = 55
-            elif 100 <= m       and 120 <= mT < 160 and 150 <= met < 200: SR = 56
-            elif 100 <= m       and 120 <= mT < 160 and 200 <= met      : SR = 57
-            elif 100 <= m       and 160 <= mT       and  50 <= met < 100: SR = 58
-            elif 100 <= m       and 160 <= mT       and 100 <= met < 150: SR = 59
-            elif 100 <= m       and 160 <= mT       and 150 <= met < 200: SR = 60
-            elif 100 <= m       and 160 <= mT       and 200 <= met      : SR = 61
-
-        # OSTF category
-        elif ostf:
-            if          m < 100 and        mT < 120 and  50 <= met < 100: SR = 62
-            elif        m < 100 and        mT < 120 and 100 <= met < 150: SR = 63
-            elif        m < 100 and        mT < 120 and 150 <= met < 200: SR = 64
-            elif        m < 100 and        mT < 120 and 200 <= met      : SR = 65
-            elif        m < 100 and 120 <= mT < 160 and  50 <= met < 100: SR = 66
-            elif        m < 100 and 120 <= mT < 160 and 100 <= met < 150: SR = 67
-            elif        m < 100 and 120 <= mT < 160 and 150 <= met < 200: SR = 68
-            elif        m < 100 and 120 <= mT < 160 and 200 <= met      : SR = 69
-            elif        m < 100 and 160 <= mT       and  50 <= met < 100: SR = 70
-            elif        m < 100 and 160 <= mT       and 100 <= met < 150: SR = 71
-            elif        m < 100 and 160 <= mT       and 150 <= met < 200: SR = 72
-            elif        m < 100 and 160 <= mT       and 200 <= met      : SR = 73
-            elif 100 <= m       and        mT < 120 and  50 <= met < 100: SR = 74
-            elif 100 <= m       and        mT < 120 and 100 <= met < 150: SR = 75
-            elif 100 <= m       and        mT < 120 and 150 <= met < 200: SR = 76
-            elif 100 <= m       and        mT < 120 and 200 <= met      : SR = 77
-            elif 100 <= m       and 120 <= mT < 160 and  50 <= met < 100: SR = 78
-            elif 100 <= m       and 120 <= mT < 160 and 100 <= met < 150: SR = 79
-            elif 100 <= m       and 120 <= mT < 160 and 150 <= met < 200: SR = 80
-            elif 100 <= m       and 120 <= mT < 160 and 200 <= met      : SR = 81
-            elif 100 <= m       and 160 <= mT       and  50 <= met < 100: SR = 82
-            elif 100 <= m       and 160 <= mT       and 100 <= met < 150: SR = 83
-            elif 100 <= m       and 160 <= mT       and 150 <= met < 200: SR = 84
-            elif 100 <= m       and 160 <= mT       and 200 <= met      : SR = 85
-
-        return SR        
+        return SR + offset
 
 
     ## findTriples
@@ -992,7 +874,6 @@ class LeptonChoiceEWK:
         ## fakes in the triple
 
         triples   = []
-        fakes     = []
         tr_raw    = []
         tr_sorted = []
         fk_raw    = []
@@ -1019,194 +900,94 @@ class LeptonChoiceEWK:
                 fk_sorted.append((fk_raw[i][ls[0][1]], fk_raw[i][ls[1][1]], fk_raw[i][ls[2][1]]))
                 pt_sorted.append((p        [ls[0][1]], p        [ls[1][1]], p        [ls[2][1]]))
 
-
         ## selection: only keep the good ones
         for i,(l1, l2, l3) in enumerate(tr_sorted):
-            if (l1, l2, l3) in already: continue # fake-not-tight!
+            if any([t.test([l1, l2, l3]) for t in already]): continue
+            if any([t.test([l1, l2, l3]) for t in triples]): continue
             if not bypassMV and not passTripleMllVeto(l1, l2, l3, 0, 12, True): continue
-            #if pt_sorted[i][0] > 20 and pt_sorted[i][1] > 15 and pt_sorted[i][2] > 10:
-            if pt_sorted[i][0] > 20 and pt_sorted[i][2] > 10 and \
-               ((    tr_sorted[i][1].isTau ==1  and pt_sorted[i][1] > 20) or \
-                (abs(tr_sorted[i][1].pdgId)==11 and pt_sorted[i][1] > 15) or \
-                (abs(tr_sorted[i][1].pdgId)==13 and pt_sorted[i][1] > 10)):
-            #if pt_sorted[i][0] > 10 and pt_sorted[i][1] > 10 and pt_sorted[i][2] > 10:
-                triples.append((l1, l2, l3))
-                fakes  .append(fk_sorted[i])
+            if passPtCutTriple(tr_sorted[i][0], tr_sorted[i][1], tr_sorted[i][2]):
+                triples.append(LeptonTriple(l1, l2, l3, self.fakeHisto, fk_sorted[i], self.systs["FR"]))
 
-        if len(triples):
-             return triples, fakes
-        return [], []
-
-
-    ## getFakeRate
-    ## _______________________________________________________________
-    def getFakeRate(self, lep, var = 0): 
-        idx = 0 if abs(lep.pdgId) == 13 else 1
-        return self.readHistos(self.fakeRatioMap[idx], var, lep.conePt, abs(lep.eta))
-
-
-    ## getFakeTransfer
-    ## _______________________________________________________________
-    def getFakeTransfer(self, lep, var = 0):
-        prob = self.getFakeRate(lep, var)
-        return prob/(1 - prob)
-
-
-    ## getFlipRate
-    ## _______________________________________________________________
-    def getFlipRate(self, lep, var = 0):
-        if abs(lep.pdgId) != 11: return 0.
-        idx = 0 if abs(lep.pdgId) == 13 else 1
-        sf = 3.6 if (lep.eta < -1.5 and lep.eta > -2) else 1.15
-        return sf * self.readHistos(self.flipRatioMap[idx], var, lep.conePt, abs(lep.eta))
+        return triples
 
 
     ## listBranches
     ## _______________________________________________________________
     def listBranches(self):
-        biglist = [ 
-            ("vtxWeight"          + self.label, "F"),
-            ("nTriples"           + self.label, "I"),
-            ("li1"                + self.label, "I", 20, "nTriples" + self.label),
-            ("li2"                + self.label, "I", 20, "nTriples" + self.label),
-            ("li3"                + self.label, "I", 20, "nTriples" + self.label),
-            ("ti1"                + self.label, "I", 20, "nTriples" + self.label),
-            ("ti2"                + self.label, "I", 20, "nTriples" + self.label),
-            ("ti3"                + self.label, "I", 20, "nTriples" + self.label),
-            ("t1"                 + self.label, "I", 20, "nTriples" + self.label),
-            ("t2"                 + self.label, "I", 20, "nTriples" + self.label),
-            ("t3"                 + self.label, "I", 20, "nTriples" + self.label),
-            ("isLight"            + self.label, "I"), 
-            ("isTau"              + self.label, "I"), 
-            ("isDTau"             + self.label, "I"), 
-            ("hasTTT"             + self.label, "I"), 
-            ("hasTTF"             + self.label, "I"), 
-            ("hasTFF"             + self.label, "I"), 
-            ("hasFFF"             + self.label, "I"), 
-            ("triggerSF"          + self.label, "F", 20, "nTriples" + self.label),
-            ("maxDeltaPhiLepJet"  + self.label, "F", 20, "nTriples" + self.label),
-            ("maxDeltaPhiLepBJet" + self.label, "F", 20, "nTriples" + self.label),
-            ("maxDeltaPhiJetJet"  + self.label, "F", 20, "nTriples" + self.label),
-            ("minDeltaRLepJet"    + self.label, "F", 20, "nTriples" + self.label),
-            ("minDeltaRLepBJet"   + self.label, "F", 20, "nTriples" + self.label),
-            ]
+
+        biglist = [
+            ("nLep"      + self.label, "I"),
+            ("nL"        + self.label, "I"),
+            ("nT"        + self.label, "I"),
+            ("nOSSF"     + self.label, "I"),
+            ("nOSLF"     + self.label, "I"),
+            ("nOSTF"     + self.label, "I"),
+            ("categ"     + self.label, "I"),
+            ("bestMll"   + self.label, "F"),
+            ("isTight"   + self.label, "I"),
+            ("isFake"    + self.label, "I"),
+
+            ("nTriples"  + self.label, "I"),
+            ("i1"        + self.label, "I", 40, "nTriples" + self.label),
+            ("i2"        + self.label, "I", 40, "nTriples" + self.label),
+            ("i3"        + self.label, "I", 40, "nTriples" + self.label),
+            ("t1"        + self.label, "I", 40, "nTriples" + self.label),
+            ("t2"        + self.label, "I", 40, "nTriples" + self.label),
+            ("t3"        + self.label, "I", 40, "nTriples" + self.label),
+            ("mll"       + self.label, "F", 40, "nTriples" + self.label),
+            ("hasFake"   + self.label, "I", 40, "nTriples" + self.label),
+            ("hasOSSF"   + self.label, "I", 40, "nTriples" + self.label),
+            ("hasOSLF"   + self.label, "I", 40, "nTriples" + self.label)]
+ 
+        biglist.append(("nLepSel"   + self.label, "I"))
+        for var in ["pt", "eta", "phi", "mass", "conePt"]:
+            biglist.append(("LepSel_" + var + self.label, "F", 20, "nLepSel" + self.label))
+        for var in ["pdgId", "isTight", "mcMatchId", "mcPromptGamma", "trIdx"]:
+            biglist.append(("LepSel_" + var + self.label, "I", 20, "nLepSel" + self.label))
+ 
         for var in self.systs["FR"]:
-            biglist.append(("appWeight" + self.systs["FR"   ][var] + self.label, "F", 20, "nTriples" + self.label))
-        for var in self.systs["JEC"]:
-            biglist.append(("mTmin"     + self.systs["JEC"  ][var] + self.label, "F")) 
-            biglist.append(("i_mTmin"   + self.systs["JEC"  ][var] + self.label, "I")) 
-            biglist.append(("t_mTmin"   + self.systs["JEC"  ][var] + self.label, "I")) 
-            biglist.append(("mll"       + self.systs["JEC"  ][var] + self.label, "F")) 
-            biglist.append(("i1_mll"    + self.systs["JEC"  ][var] + self.label, "I")) 
-            biglist.append(("i2_mll"    + self.systs["JEC"  ][var] + self.label, "I")) 
-            biglist.append(("t1_mll"    + self.systs["JEC"  ][var] + self.label, "I")) 
-            biglist.append(("t2_mll"    + self.systs["JEC"  ][var] + self.label, "I")) 
-            biglist.append(("isOnZ"     + self.systs["JEC"  ][var] + self.label, "I"))
-            biglist.append(("hasOSSF"   + self.systs["JEC"  ][var] + self.label, "I"))
-            biglist.append(("hasOSOF"   + self.systs["JEC"  ][var] + self.label, "I"))
-            biglist.append(("hasOSTF"   + self.systs["JEC"  ][var] + self.label, "I"))
-            biglist.append(("hasSS"     + self.systs["JEC"  ][var] + self.label, "I"))
-            biglist.append(("BR"        + self.systs["JEC"  ][var] + self.label, "I"))
-            biglist.append(("SRlight"   + self.systs["JEC"  ][var] + self.label, "I"))
-            biglist.append(("SRtau"     + self.systs["JEC"  ][var] + self.label, "I"))
+            biglist.append(("appWeight" + self.systs["FR"    ][var] + self.label, "F", 40, "nTriples" + self.label))
         for var in self.systs["LEPSF"]: 
-            biglist.append(("leptonSF"  + self.systs["LEPSF"][var] + self.label, "F", 20, "nTriples" + self.label))
+            biglist.append(("leptonSF"  + self.systs["LEPSF" ][var] + self.label, "F", 40, "nTriples" + self.label))
+        for var in self.systs["TRIGSF"]: 
+            biglist.append(("triggerSF" + self.systs["TRIGSF"][var] + self.label, "F", 40, "nTriples" + self.label))
+        for var in self.systs["JEC"]:
+            biglist.append(("BR"      + self.systs["JEC"][var] + self.label, "I"))
+            biglist.append(("SR"      + self.systs["JEC"][var] + self.label, "I"))
+            biglist.append(("bestMt"  + self.systs["JEC"][var] + self.label, "F"))
+            biglist.append(("mT"      + self.systs["JEC"][var] + self.label, "F", 40, "nTriples" + self.label))
+            biglist.append(("mT2L"    + self.systs["JEC"][var] + self.label, "F"))
+            biglist.append(("mT2T"    + self.systs["JEC"][var] + self.label, "F"))
+
         return biglist
 
 
     ## loadFakeRateHistos
     ## _______________________________________________________________
-    def loadFakeRateHistos(self, filePath):
-        if not filePath: return
-        mu, el = self.accessHistos(filePath)
-        self.fakeRatioMap = [mu, el]
-        return (mu and el)
-
-
-    ## loadFlipRateHistos
-    ## _______________________________________________________________
-    def loadFlipRateHistos(self, filePath):
-        if not filePath: return
-        mu, el = self.accessHistos(filePath)
-        self.flipRatioMap = [mu, el]
-        return (mu and el)
+    def loadFakeRateHistos(self, accessLine):
+        if not accessLine: return
+        self.fakeHisto = FakeHisto(accessLine)
 
 
     ## loadLeptonScaleFactorHistos
     ## _______________________________________________________________
     def loadLeptonScaleFactorHistos(self, filePathsFull, filePathsFast):
         if not filePathsFull: return
-        mu, el = self.accessHistos(filePathsFull)
-        self.leptonScaleFactorHistosFull = [mu, el]
+        self.leptonScaleFactorHistosFull = Histo(filePathsFull)
         if not filePathsFast: return
-        mu, el = self.accessHistos(filePathsFast)
-        self.leptonScaleFactorHistosFast = [mu, el]
+        self.leptonScaleFactorHistosFast = Histo(filePathsFast)
 
 
-    ## loadPileUpHisto
+    ## makeMt2
     ## _______________________________________________________________
-    def loadPileUpHisto(self, filePath):
-        if not filePath: return
-        self.pileupHisto = self.accessHisto(filePath)
-        self.puWeights = {}
-        for key, val in self.pileupHisto.iteritems():
-            self.puWeights[key] = [val.GetBinContent(i) for i in xrange(1, val.GetNbinsX()+1)]
+    def makeMt2(self):
 
+        if not self.mt2maker: return False
 
-    ## mTmin
-    ## _______________________________________________________________
-    #def mTmin(self, lepst, lepsf, var = 0, excl = []):
-    #      list = []
-    #      ll = lepst if len(self.trueTriples) > 0 else lepst + lepsf
-    #      for i, l in enumerate(ll):
-    #          if len(excl) > 0 and l.trIdx in excl: continue
-    #          list.append((self.mtW(l.pt, l.phi, var), l.trIdx))
-    #      if len(list):
-    #          list.sort()
-    #          return (list[0][0], list[0][1])
-    #      return (0., -1)
-
-
-    ## mll
-    ## _______________________________________________________________
-    def mll(self, var = 0):
-
-        ## note: the "amount of taus" involved is already defined in the function feeding the triples
-
-        ## search for OSSF (ee, mm, tt) pair first
-        buffer = self.findOSpair(91.2, True, True, 1)
-        if buffer[5] != -1: return buffer
-
-        ## search for OSOF (em) pair if no OSSF pair is found
-        buffer = self.findOSpair(50, False, False, 0)
-        if buffer[5] != -1: return buffer
-
-        ## search for OSOF (et, mt) pair if no OSOF (em) pair is found
-        buffer = self.findOSpair(60, False, True , 2)
-        if buffer[5] != -1: return buffer
-
-        ## search for OSOF (et, mt) pair second
-        #buffer = []
-        #for (l1, l2, l3) in self.triples:
-        #    leps = [l1, l2, l3]
-        #    buffer.append(self.bestZtauTL(leps, leps))
-        #
-        #if len(buffer) and buffer[0][1] != -1:
-        #    buffer.sort()
-        #    return (buffer[0][1], buffer[0][2], buffer[0][3], buffer[0][4], buffer[0][5], 2)
-
-        ## no OS pair, take any SS pair from light-flavor leptons
-        #for (l1, l2, l3) in self.triples:
-        #    if l1.isTau + l2.isTau + l3.isTau > 1: continue
-        #    lep1 = l1; lep2 = l2
-        #    if l1.isTau: lep1 = l2; lep2 = l3
-        #    if l2.isTau: lep2 = l3
-        #    mz = (lep1.p4() + lep2.p4()).M()
-        #    return (mz, lep1.trIdx, lep2.trIdx, lep1.isTau, lep2.isTau, 2)
-
-        ## nothing useful found, same-sign event
-        return (-1, -1, -1, 0, 0, -1)
-
+        for var in self.systs["JEC"]:
+            for os in self.OS:
+                if os.wTau: self.ret["mT2T" + self.systs["JEC"][var]] = self.mt2(os.l1, os.l2, var)
+                else      : self.ret["mT2L" + self.systs["JEC"][var]] = self.mt2(os.l1, os.l2, var)
 
 
     ## mt  
@@ -1215,129 +996,104 @@ class LeptonChoiceEWK:
         return sqrt(2*pt1*pt2*(1-cos(phi1-phi2)))
 
 
+    ## mt2
+    ## _______________________________________________________________
+    def mt2(self, obj1, obj2, var):
+
+        vector_met  = array.array('d', [0, self.met[var]*cos(self.metphi[var]), self.met[var]*sin(self.metphi[var])])
+        vector_obj1 = array.array('d', [obj1.mass, obj1.p4().Px(), obj1.p4().Py()])
+        vector_obj2 = array.array('d', [obj2.mass, obj2.p4().Px(), obj2.p4().Py()])
+
+        self.mt2maker.set_momenta(vector_obj1, vector_obj2, vector_met)
+        self.mt2maker.set_mn(0)
+
+        return self.mt2maker.get_mt2()
+    
+    
     ## mtW
     ## _______________________________________________________________
-    def mtW(self, pt, phi, var):
-        return self.mt(pt, self.met[var], phi, self.metphi[var])
-
-
-    ## readHisto
-    ## _______________________________________________________________
-    def readHisto(self, hist, valx, valy, valz = 0):
-        if hist.GetDimension() == 3:
-            return hist.GetBinContent(max(1, min(hist.GetNbinsX(), hist.GetXaxis().FindBin(valx))),\
-                                      max(1, min(hist.GetNbinsY(), hist.GetYaxis().FindBin(valy))),\
-                                      max(1, min(hist.GetNbinsZ(), hist.GetZaxis().FindBin(valz))))
-        return hist.GetBinContent(max(1, min(hist.GetNbinsX(), hist.GetXaxis().FindBin(valx))),\
-                                  max(1, min(hist.GetNbinsY(), hist.GetYaxis().FindBin(valy)))) 
-
-
-    ## readHistos
-    ## _______________________________________________________________
-    def readHistos(self, hists, var, valx, valy, valz = 0):
-        value = 1.
-        for hist in hists: 
-            if not var in hist.keys(): var = 0
-            value *= self.readHisto(hist[var], valx, valy, valz)
-        return value
+    def mtW(self, lep, var):
+        return self.mt(lep.pt, self.met[var], lep.phi, self.metphi[var])
 
 
     ## resetMemory
     ## _______________________________________________________________
     def resetMemory(self):
+
         self.ret = {};
-        self.ret["vtxWeight"         ] = 1.
+
+        self.ret["nLep"              ] = 0
+        self.ret["nL"                ] = 0
+        self.ret["nT"                ] = 0
+        self.ret["nOSSF"             ] = 0
+        self.ret["nOSLF"             ] = 0
+        self.ret["nOSTF"             ] = 0
+        self.ret["categ"             ] = 0
+        self.ret["bestMll"           ] = 0
+        self.ret["isTight"           ] = 0
+        self.ret["isFake"            ] = 0
+
         self.ret["nTriples"          ] = 0
-        self.ret["li1"               ] = [-1]*20
-        self.ret["li2"               ] = [-1]*20
-        self.ret["li3"               ] = [-1]*20
-        self.ret["ti1"               ] = [-1]*20
-        self.ret["ti2"               ] = [-1]*20
-        self.ret["ti3"               ] = [-1]*20
-        self.ret["t1"                ] = [0]*20
-        self.ret["t2"                ] = [0]*20
-        self.ret["t3"                ] = [0]*20
-        self.ret["isLight"           ] = False
-        self.ret["isTau"             ] = False
-        self.ret["isDTau"            ] = False
-        self.ret["hasTTT"            ] = False
-        self.ret["hasTTF"            ] = False
-        self.ret["hasTFF"            ] = False
-        self.ret["hasFFF"            ] = False
-        self.ret["triggerSF"         ] = [0]*20
-        self.ret["maxDeltaPhiLepJet" ] = [0]*20
-        self.ret["maxDeltaPhiLepBJet"] = [0]*20
-        self.ret["maxDeltaPhiJetJet" ] = [0]*20
-        self.ret["minDeltaRLepJet"   ] = [0]*20
-        self.ret["minDeltaRLepBJet"  ] = [0]*20
-
+        self.ret["i1"                ] = [-1]*40
+        self.ret["i2"                ] = [-1]*40
+        self.ret["i3"                ] = [-1]*40
+        self.ret["t1"                ] = [0]*40
+        self.ret["t2"                ] = [0]*40
+        self.ret["t3"                ] = [0]*40
+        self.ret["mll"               ] = [0]*40
+        self.ret["hasFake"           ] = [0]*40
+        self.ret["hasOSSF"           ] = [0]*40
+        self.ret["hasOSLF"           ] = [0]*40
+ 
+        self.ret["nLepSel"] = 0
+        for var in ["pt", "eta", "phi", "mass", "conePt"]:
+            self.ret["LepSel_" + var] = [0.]*20
+        for var in ["pdgId", "isTight", "mcMatchId", "mcPromptGamma", "trIdx"]:
+            self.ret["LepSel_" + var] = [0]*20
+ 
         for var in self.systs["FR"]: 
-            self.ret["appWeight" + self.systs["FR"   ][var]] = [0]*20
-        for var in self.systs["JEC"]: 
-            self.ret["mTmin"     + self.systs["JEC"  ][var]] = -1.
-            self.ret["mll"       + self.systs["JEC"  ][var]] = -1.
-            self.ret["i_mTmin"   + self.systs["JEC"  ][var]] = 0
-            self.ret["t_mTmin"   + self.systs["JEC"  ][var]] = 0
-            self.ret["i1_mll"    + self.systs["JEC"  ][var]] = 0
-            self.ret["i2_mll"    + self.systs["JEC"  ][var]] = 0
-            self.ret["t1_mll"    + self.systs["JEC"  ][var]] = 0
-            self.ret["t2_mll"    + self.systs["JEC"  ][var]] = 0
-            self.ret["isOnZ"     + self.systs["JEC"  ][var]] = 0
-            self.ret["hasOSSF"   + self.systs["JEC"  ][var]] = 0
-            self.ret["hasOSOF"   + self.systs["JEC"  ][var]] = 0
-            self.ret["hasOSTF"   + self.systs["JEC"  ][var]] = 0
-            self.ret["hasSS"     + self.systs["JEC"  ][var]] = 0
-            self.ret["BR"        + self.systs["JEC"  ][var]] = 0 
-            self.ret["SRlight"   + self.systs["JEC"  ][var]] = 0 
-            self.ret["SRtau"     + self.systs["JEC"  ][var]] = 0 
+            self.ret["appWeight" + self.systs["FR"    ][var]] = [0.]*40
         for var in self.systs["LEPSF"]: 
-            self.ret["leptonSF"  + self.systs["LEPSF"][var]] = [0]*20
-
-
-    ## setApplication
-    ## _______________________________________________________________
-    def setApplication(self, whichApplication, filePathFakeRate):
-
-        self.apply            = False
-        self.whichApplication = -1
-
-        if   whichApplication == "Super"  : self.whichApplication = self.appl_Super
-        elif whichApplication == "Fakes"  : self.whichApplication = self.appl_Fakes
-        elif whichApplication == "Flips"  : self.whichApplication = self.appl_Flips
-        elif whichApplication == "Taus"   : self.whichApplication = self.appl_Taus
-        elif whichApplication == "TwoTaus": self.whichApplication = self.appl_TwoTaus
-        elif whichApplication == "WZ"     : self.whichApplication = self.appl_WZ
-        else                              : raise RuntimeError, 'Unknown whichApplication'
-
-        if self.whichApplication == self.appl_Fakes or self.whichApplication == self.appl_Super:
-            if filePathFakeRate and self.loadFakeRateHistos(filePathFakeRate):
-                self.apply = True
-        elif self.whichApplication == self.appl_Flips:
-            if filePathFakeRate and self.loadFlipRateHistos(filePathFakeRate):
-                self.apply = True
-        if not self.apply:
-            print 'WARNING: running leptonChoiceEWK in pure tagging mode (no weights applied)'
+            self.ret["leptonSF"  + self.systs["LEPSF" ][var]] = [1.]*40
+        for var in self.systs["TRIGSF"]: 
+            self.ret["triggerSF" + self.systs["TRIGSF"][var]] = [1.]*40
+        for var in self.systs["JEC"]:
+            self.ret["BR"        + self.systs["JEC"   ][var]] = 0
+            self.ret["SR"        + self.systs["JEC"   ][var]] = 0
+            self.ret["bestMt"    + self.systs["JEC"   ][var]] = 0.
+            self.ret["mT"        + self.systs["JEC"   ][var]] = [0.]*40
+            self.ret["mT2L"      + self.systs["JEC"   ][var]] = 0.
+            self.ret["mT2T"      + self.systs["JEC"   ][var]] = 0.
 
 
     ## setAttributes 
     ## _______________________________________________________________
-    def setAttributes(self, leps, isTau = False, offset = False):
-        
-        for i, l in enumerate(leps): 
-            setattr(l, "trIdx", -1-i if offset else i)
-            setattr(l, "isTau", 1    if isTau else 0)
+    def setAttributes(self, lepSel):
+
+        for i, l in enumerate(lepSel):
+            if abs(l.pdgId) == 15:
+                setattr(l, "conePt"       , l.pt               ) # FIXME: to be moved to recleaner once settled
+                setattr(l, "isTight"      , (l.ewkId == 2)     )
+                setattr(l, "mcMatchId"    , 1                  )
+                setattr(l, "mcPromptGamma", 0                  )
+                setattr(l, "trIdx"        , self.tausl.index(l))
+            else:
+                setattr(l, "isTight"      , (l in self.lepstv) )
+                setattr(l, "mcMatchId"    , l.mcMatchId        )
+                setattr(l, "mcPromptGamma", l.mcPromptGamma    )
+                setattr(l, "trIdx"        , self.leps.index(l) )
 
 
-    ## storeIdx
-    ## _______________________________________________________________
-    def storeIdx(self, t, num):
-        nL=sum([1 for i,l in enumerate(self.triples[t]) if not l.isTau and i < num])
-        nT=sum([1 for i,l in enumerate(self.triples[t]) if     l.isTau and i < num])
+    ### storeIdx
+    ### _______________________________________________________________
+    #def storeIdx(self, t, num):
+    #    nL=sum([1 for i,l in enumerate(self.triples[t]) if not l.isTau and i < num])
+    #    nT=sum([1 for i,l in enumerate(self.triples[t]) if     l.isTau and i < num])
 
-        label = "li" + str(nL+1)
-        if self.triples[t][num].isTau: label = "ti" + str(nT+1)
-        self.ret[label][t] = self.triples[t][num].trIdx
-        self.ret["t"+str(num+1)][t] = self.triples[t][num].isTau
+    #    label = "li" + str(nL+1)
+    #    if self.triples[t][num].isTau: label = "ti" + str(nT+1)
+    #    self.ret[label][t] = self.triples[t][num].trIdx
+    #    self.ret["t"+str(num+1)][t] = self.triples[t][num].isTau
 
 
     ## for debugging only
@@ -1360,6 +1116,30 @@ class LeptonChoiceEWK:
         return False
 
 
+## passPtCutTriple
+## _______________________________________________________________
+def passPtCutTriple(l1, l2, l3):
+
+    leps = [l1, l2, l3]
+    light = [l for l in leps if abs(l.pdgId) == 11 or abs(l.pdgId) == 13]
+    tau   = [l for l in leps if abs(l.pdgId) == 15                      ]
+
+    for t in tau:
+        if t.pt < 20: return False
+
+    for i,l in enumerate(light):
+        if l.pt < 10: return False
+        if i == 0:
+            if l.pt < 20: return False
+            continue
+        if i == 1:
+            if abs(l.pdgId) == 11 and l.pt < 15: return False
+            continue
+    return True 
+
+
+## _susy3l_lepId_CBlooseMVA
+## _______________________________________________________________
 def _susy3l_lepId_CBlooseMVA(lep):
         if abs(lep.pdgId) == 13:
             if lep.pt <= 5: return False
@@ -1374,6 +1154,9 @@ def _susy3l_lepId_CBlooseMVA(lep):
             return True
         return False
 
+
+## _susy3l_lepId_CBloose
+## _______________________________________________________________
 def _susy3l_lepId_CBloose(lep):
         if abs(lep.pdgId) == 13:
             if lep.pt <= 5: return False
@@ -1388,6 +1171,9 @@ def _susy3l_lepId_CBloose(lep):
             return True
         return False
 
+
+## _susy3l_idEmu_cuts
+## _______________________________________________________________
 def _susy3l_idEmu_cuts(lep):
     if (abs(lep.pdgId)!=11): return True
     if (lep.hadronicOverEm>=(0.10-0.03*(abs(lep.etaSc)>1.479))): return False
@@ -1398,17 +1184,52 @@ def _susy3l_idEmu_cuts(lep):
     if (lep.sigmaIEtaIEta>=(0.011+0.019*(abs(lep.etaSc)>1.479))): return False
     return True
 
+
+## _susy3l_lepId_IPcuts
+## _______________________________________________________________
 def _susy3l_lepId_IPcuts(lep):
     if not (lep.sip3d<4): return False
     if not (abs(lep.dxy)<0.05): return False
     if not (abs(lep.dz)<0.1): return False
     return True
 
+
+## _susy3l_lepIdx_IPcutsMVA
+## _______________________________________________________________
 def _susy3l_lepId_IPcutsMVA(lep):
     if not (lep.sip3d<8): return False
     if not (abs(lep.dxy)<0.05): return False
     if not (abs(lep.dz)<0.1): return False
     return True
+
+
+## equalPairs
+## _______________________________________________________________
+def equalPairs(pair1, pair2):
+    if pair1.l1 == pair2.l1 and pair1.l2 == pair2.l2: return True
+    if pair1.l1 == pair2.l2 and pair1.l2 == pair2.l1: return True
+    return False
+
+
+## equalTriples
+## _______________________________________________________________
+def equalTriples(triple1, triple2):
+    if triple1.l1 == triple2.l1 and triple1.l2 == triple2.l2 and triple1.l3 == triple2.l3: return True
+    if triple1.l1 == triple2.l1 and triple1.l2 == triple2.l3 and triple1.l3 == triple2.l2: return True
+    if triple1.l1 == triple2.l2 and triple1.l2 == triple2.l1 and triple1.l3 == triple2.l3: return True
+    if triple1.l1 == triple2.l2 and triple1.l2 == triple2.l3 and triple1.l3 == triple2.l1: return True
+    if triple1.l1 == triple2.l3 and triple1.l2 == triple2.l1 and triple1.l3 == triple2.l2: return True
+    if triple1.l1 == triple2.l3 and triple1.l2 == triple2.l2 and triple1.l3 == triple2.l1: return True
+    return False
+
+
+## pairInTriple
+## _______________________________________________________________
+def pairInTriple(pair, triple):
+    for pairs in triple.OS:
+        if equalPairs(pair, pairs): return True
+    return False
+
 
 
 if __name__ == '__main__':

@@ -98,15 +98,19 @@ class Object:
         if self.pdgId == +11: return "e-";
         if self.pdgId == -11: return "e+";
     def p4(self):
-        ret = ROOT.TLorentzVector()
-        ret.SetPtEtaPhiM(self.pt,self.eta,self.phi,self.mass)
-        return ret
+        if not hasattr(self, "p4vec"): self.p4vec = ROOT.TLorentzVector()
+        self.p4vec.SetPtEtaPhiM(self.pt,self.eta,self.phi,self.mass)
+        return self.p4vec
     def subObj(self,prefix):
         return Object(self._event,self._prefix+prefix)
     def __repr__(self):
         return ("<%s[%s]>" % (self._prefix[:-1],self._index)) if self._index != None else ("<%s>" % self._prefix[:-1])
     def __str__(self):
         return self.__repr__()
+    def __del__(self):
+        if hasattr(self, "p4vec"):
+            self.p4vec.Delete()
+            del self.p4vec
 
 class Collection:
     def __init__(self,event,prefix,len=None,maxlen=None,testVar="pt"):
@@ -249,6 +253,7 @@ class BookDir:
         o.Draw()
         for e in "png", "pdf":
             c1.Print("%s/%s.%s" % (dir, on, e))
+        c1.Delete()
     def printAll(self,dir):
         ROOT.gSystem.Exec("mkdir -p %s" % dir)
         for on,o in self._objects.iteritems():
