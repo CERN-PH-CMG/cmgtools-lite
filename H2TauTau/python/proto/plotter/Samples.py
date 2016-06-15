@@ -5,7 +5,7 @@ from ROOT import gSystem, gROOT
 from CMGTools.H2TauTau.proto.plotter.PlotConfigs import SampleCfg
 from CMGTools.H2TauTau.proto.plotter.HistCreator import setSumWeights
 
-from CMGTools.H2TauTau.proto.samples.fall15.htt_common import TT_pow_ext, DYJetsToLL_M50_LO, DYNJets, WJetsToLNu,  WJetsToLNu_LO, WNJets, WWTo2L2Nu, T_tWch, TBar_tWch, TToLeptons_tch_amcatnlo, VVTo2L2Nu, ZZTo4L, WZTo3LNu_amcatnlo, WZTo1L3Nu, WWTo1L1Nu2Q, ZZTo2L2Q, WZTo2L2Q, WZTo1L1Nu2Q, TBarToLeptons_tch_powheg, TToLeptons_tch_powheg, mssm_signals, WJetsToLNu_HT100to200, WJetsToLNu_HT200to400, WJetsToLNu_HT400to600, WJetsToLNu_HT600toInf, QCD_Mu15, DYJetsToTauTau_M150_LO, DYJetsToLL_M10to50_ext1, dy_weight_dict, w_weight_dict, DYJetsToLL_M50_LO_ext1, HiggsGGH125, HiggsVBF125
+from CMGTools.H2TauTau.proto.samples.fall15.htt_common import TT_pow_ext, DYJetsToLL_M50_LO, DYNJets, WJetsToLNu,  WJetsToLNu_LO, WNJets, WWTo2L2Nu, T_tWch, TBar_tWch, TToLeptons_tch_amcatnlo, VVTo2L2Nu, ZZTo4L, WZTo3LNu_amcatnlo, WZTo1L3Nu, WWTo1L1Nu2Q, ZZTo2L2Q, WZTo2L2Q, WZTo1L1Nu2Q, TBarToLeptons_tch_powheg, TToLeptons_tch_powheg, mssm_signals, WJetsToLNu_HT100to200, WJetsToLNu_HT200to400, WJetsToLNu_HT400to600, WJetsToLNu_HT600toInf, QCD_Mu15, DYJetsToTauTau_M150_LO, DYJetsToLL_M10to50_ext, dy_weight_dict, w_weight_dict, DYJetsToLL_M50_LO_ext, HiggsGGH125, HiggsVBF125
 
 # WJetsToLNu_LO, , ZZp8, WZp8, ZZTo2L2Q, WZTo2L2Q, WZTo1L1Nu2Q, ,
 
@@ -57,11 +57,11 @@ def createSampleLists(analysis_dir='/afs/cern.ch/user/s/steggema/work/public/mt/
 
     samples_essential = [
         SampleCfg(name='ZTTM10', dir_name='DYJetsToLL_M10to50', ana_dir=analysis_dir, tree_prod_name=tree_prod_name,
-                      xsec=DYJetsToLL_M10to50_ext1.xSection, sumweights=DYJetsToLL_M10to50_ext1.nGenEvents, weight_expr=ztt_cut),
+                      xsec=DYJetsToLL_M10to50_ext.xSection, sumweights=DYJetsToLL_M10to50_ext.nGenEvents, weight_expr=ztt_cut),
         SampleCfg(name='ZLM10', dir_name='DYJetsToLL_M10to50', ana_dir=analysis_dir, tree_prod_name=tree_prod_name,
-                  xsec=DYJetsToLL_M10to50_ext1.xSection, sumweights=DYJetsToLL_M10to50_ext1.nGenEvents, weight_expr=zl_cut),
+                  xsec=DYJetsToLL_M10to50_ext.xSection, sumweights=DYJetsToLL_M10to50_ext.nGenEvents, weight_expr=zl_cut),
         SampleCfg(name='ZJM10', dir_name='DYJetsToLL_M10to50', ana_dir=analysis_dir, tree_prod_name=tree_prod_name,
-                      xsec=DYJetsToLL_M10to50_ext1.xSection, sumweights=DYJetsToLL_M10to50_ext1.nGenEvents, weight_expr=zj_cut),
+                      xsec=DYJetsToLL_M10to50_ext.xSection, sumweights=DYJetsToLL_M10to50_ext.nGenEvents, weight_expr=zj_cut),
     ]
     if useDYWeight:
         samples_essential += [
@@ -75,12 +75,12 @@ def createSampleLists(analysis_dir='/afs/cern.ch/user/s/steggema/work/public/mt/
         ]
     else:
         samples_essential += [
-            SampleCfg(name='ZTT', dir_name='DYJetsToLL_M50_LO_ext1', ana_dir=analysis_dir, tree_prod_name=tree_prod_name,
-                      xsec=DYJetsToLL_M50_LO_ext1.xSection, sumweights=DYJetsToLL_M50_LO_ext1.nGenEvents, weight_expr=ztt_cut),
-            SampleCfg(name='ZL', dir_name='DYJetsToLL_M50_LO_ext1', ana_dir=analysis_dir, tree_prod_name=tree_prod_name,
-                      xsec=DYJetsToLL_M50_LO_ext1.xSection, sumweights=DYJetsToLL_M50_LO_ext1.nGenEvents, weight_expr=zl_cut),
-            SampleCfg(name='ZJ', dir_name='DYJetsToLL_M50_LO_ext1', ana_dir=analysis_dir, tree_prod_name=tree_prod_name,
-                      xsec=DYJetsToLL_M50_LO_ext1.xSection, sumweights=DYJetsToLL_M50_LO_ext1.nGenEvents, weight_expr=zj_cut),
+            SampleCfg(name='ZTT', dir_name='DYJetsToLL_M50_LO_ext', ana_dir=analysis_dir, tree_prod_name=tree_prod_name,
+                      xsec=DYJetsToLL_M50_LO_ext.xSection, sumweights=DYJetsToLL_M50_LO_ext.nGenEvents, weight_expr=ztt_cut),
+            SampleCfg(name='ZL', dir_name='DYJetsToLL_M50_LO_ext', ana_dir=analysis_dir, tree_prod_name=tree_prod_name,
+                      xsec=DYJetsToLL_M50_LO_ext.xSection, sumweights=DYJetsToLL_M50_LO_ext.nGenEvents, weight_expr=zl_cut),
+            SampleCfg(name='ZJ', dir_name='DYJetsToLL_M50_LO_ext', ana_dir=analysis_dir, tree_prod_name=tree_prod_name,
+                      xsec=DYJetsToLL_M50_LO_ext.xSection, sumweights=DYJetsToLL_M50_LO_ext.nGenEvents, weight_expr=zj_cut),
         ]
         # SampleCfg(name='ZTTM150', dir_name='DYJetsToTauTau_M150_LO', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=DYJetsToLL_M50_LO.xSection, sumweights=DYJetsToLL_M50_LO.nGenEvents, weight_expr=ztt_cut+dy_exp),
         # SampleCfg(name='ZLM150', dir_name='DYJetsToTauTau_M150_LO', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=DYJetsToLL_M50_LO.xSection, sumweights=DYJetsToLL_M50_LO.nGenEvents, weight_expr=zl_cut+dy_exp),
