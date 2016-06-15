@@ -98,7 +98,7 @@ class Object:
         if self.pdgId == +11: return "e-";
         if self.pdgId == -11: return "e+";
     def p4(self):
-        if not hasattr(self, p4vec): self.p4vec = ROOT.TLorentzVector()
+        if not hasattr(self, "p4vec"): self.p4vec = ROOT.TLorentzVector()
         self.p4vec.SetPtEtaPhiM(self.pt,self.eta,self.phi,self.mass)
         return self.p4vec
     def subObj(self,prefix):
@@ -108,7 +108,7 @@ class Object:
     def __str__(self):
         return self.__repr__()
     def __del__(self):
-        if hasattr(self, p4vec):
+        if hasattr(self, "p4vec"):
             self.p4vec.Delete()
             del self.p4vec
 
