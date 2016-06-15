@@ -1,0 +1,4 @@
+15/15    : LepGood1_pt > 15 && LepGood2_pt > 15 
+SameSign : LepGood1_charge * LepGood2_charge > 0
+jetVeto  : nBJetLoose25 == 0
+lepMVA : min(LepGood1_mvaTTH,LepGood2_mvaTTH) > 0.85
