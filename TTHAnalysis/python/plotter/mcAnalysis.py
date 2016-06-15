@@ -8,8 +8,8 @@ import pickle, re, random, time
 
 ## These must be defined as standalone functions, to allow runing them in parallel
 def _runYields(args):
-    key,tty,cuts,noEntryLine,fsplit = args
-    return (key, tty.getYields(cuts,noEntryLine=noEntryLine,fsplit=fsplit))
+    key,tty,cuts,noEntryLine,fsplit,addCut = args
+    return (key, tty.getYields(cuts,noEntryLine=noEntryLine,fsplit=fsplit,addCut=addCut))
 
 def _runPlot(args):
     key,tty,plotspec,cut,fsplit = args
@@ -215,14 +215,25 @@ class MCAnalysis:
         else: raise RuntimeError, "Can't set option %s for undefined process %s" % (name,process)
     def getScales(self,process):
         return [ tty.getScaleFactor() for tty in self._allData[process] ] 
-    def getYields(self,cuts,process=None,nodata=False,makeSummary=False,noEntryLine=False):
+    def getYieldsPerBin(self,cuts,expr,binning,process=None,nodata=False,makeSummary=False,noEntryLine=False):
+        sb = binning.split(",")
+        stepsize = (float(sb[2])-float(sb[1]))/float(sb[0])
+        reports = []
+        for i in range(int(sb[0])):
+            start = float(sb[1]) +  i    * stepsize
+            end   = float(sb[1]) + (i+1) * stepsize
+            addCut = "("+expr+">="+str(start)+" && "+expr+"<"+str(end)+")"
+            reports.append(self.getYields(cuts,process,nodata,makeSummary,noEntryLine,addCut))
+        return reports
+
+    def getYields(self,cuts,process=None,nodata=False,makeSummary=False,noEntryLine=False,addCut=""):
         ## first figure out what we want to do
         tasks = []
         for key,ttys in self._allData.iteritems():
             if key == 'data' and nodata: continue
             if process != None and key != process: continue
             for tty in ttys:
-                tasks.append((key,tty,cuts,noEntryLine,None))
+                tasks.append((key,tty,cuts,noEntryLine,None,addCut))
         ## then do the work
         if self._options.splitFactor > 1 or  self._options.splitFactor == -1:
             tasks = self._splitTasks(tasks)
@@ -340,6 +351,31 @@ class MCAnalysis:
         for key,ttys in self._allData.iteritems():
             for tty in ttys:
                 tty.clearCut() 
+    def prettyPrintPerBin(self,expr,binning,reportlist):
+        if len(reportlist) == 0: return
+        sb = binning.split(",")
+        stepsize = (float(sb[2])-float(sb[1]))/float(sb[0])
+        print reportlist
+        toPrintBkg = ""
+        toPrintSig = ""
+        for key in reportlist[0]: 
+            if key != 'data':
+                if self._isSignal[key]: toPrintSig += " : " + key
+                else                  : toPrintBkg += " : " + key
+        print expr + toPrintBkg + toPrintSig
+        for i,reports in enumerate(reportlist): ## loop over signal region
+            bin = float(sb[1]) + i * stepsize
+            sig = []; bkg = []
+            if 'data' in reports: data = (reports['data'][0], reports['data'][1])
+            for key in reports:
+                if key != 'data':
+                    if self._isSignal[key]: sig.append((reports[key][0][1][0], reports[key][0][1][1]))
+                    else                  : bkg.append((reports[key][0][1][0], reports[key][0][1][1]))
+            toPrint = ""
+            for b in bkg: toPrint += " %5.3f +/- %5.3f" % (b[0], b[1])
+            for s in sig: toPrint += " %5.3f +/- %5.3f" % (s[0], s[1])
+            if 'data' in reports: toPrint += " %5.3f +/- %5.3f" % (reports['data'][0], reports['data'][1])
+            print str(bin) + ": " + toPrint
     def prettyPrint(self,reports,makeSummary=True):
         allSig = []; allBg = []
         for key in reports:
@@ -548,12 +584,14 @@ def addMCAnalysisOptions(parser,addTreeToYieldOnesToo=True):
     parser.add_option("--plotgroup", dest="plotmergemap", type="string", default=[], action="append", help="Group plots into one. Syntax is '<newname> := (comma-separated list of regexp)', can specify multiple times. Note it is applied after plotting.")
     parser.add_option("--scaleplot", dest="plotscalemap", type="string", default=[], action="append", help="Scale plots by this factor (before grouping). Syntax is '<newname> := (comma-separated list of regexp)', can specify multiple times.")
     parser.add_option("-t", "--tree",          dest="tree", default='ttHLepTreeProducerTTH', help="Pattern for tree name");
+    parser.add_option("--yieldPerBin", dest="ypb", type="string", default=[], nargs=2, action="append", help="Expression and binning of how the yields should be obtained.")
 
 if __name__ == "__main__":
     from optparse import OptionParser
     parser = OptionParser(usage="%prog [options] tree.root cuts.txt")
     addMCAnalysisOptions(parser)
     (options, args) = parser.parse_args()
+    if options.ypb and len(options.ypb[0]) == 2: options.final=True
     tty = TreeToYield(args[0],options) if ".root" in args[0] else MCAnalysis(args[0],options)
     cf  = CutsFile(args[1],options)
     for cutFile in args[2:]:
@@ -562,3 +600,6 @@ if __name__ == "__main__":
             cf.add(cut[0],cut[1])
     report = tty.getYields(cf)#, process=options.process)
     tty.prettyPrint(report)
+    if options.ypb and len(options.ypb[0]) == 2:
+        reports = tty.getYieldsPerBin(cf, options.ypb[0][0], options.ypb[0][1])
+        tty.prettyPrintPerBin(options.ypb[0][0], options.ypb[0][1], reports)
