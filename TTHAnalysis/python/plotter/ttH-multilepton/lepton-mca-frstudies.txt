@@ -163,6 +163,13 @@ QCDMu_red_pt8 : QCD_Pt50to80_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  
 QCDMu_red_pt8 : QCD_Pt80to120_Mu5 : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_pt > 8; FillColor=ROOT.kViolet+1, Label="QCD p_{T} 8"
 QCDMu_red_pt8 : QCD_Pt120to170_Mu5: xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_pt > 8; FillColor=ROOT.kViolet+1, Label="QCD p_{T} 8"
 
+QCDMu_red_pt17 : QCD_Mu15          : xsec*(LepGood_pt>15.5) : LepGood_mcMatchId  == 0 && LepGood_pt > 17; FillColor=ROOT.kOrange, Label="QCD p_{T} 17"
+QCDMu_red_pt17 : QCD_Pt20to30_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_pt > 17; FillColor=ROOT.kOrange, Label="QCD p_{T} 17"
+QCDMu_red_pt17 : QCD_Pt30to50_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_pt > 17; FillColor=ROOT.kOrange, Label="QCD p_{T} 17"
+QCDMu_red_pt17 : QCD_Pt50to80_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_pt > 17; FillColor=ROOT.kOrange, Label="QCD p_{T} 17"
+QCDMu_red_pt17 : QCD_Pt80to120_Mu5 : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_pt > 17; FillColor=ROOT.kOrange, Label="QCD p_{T} 17"
+QCDMu_red_pt17 : QCD_Pt120to170_Mu5: xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_pt > 17; FillColor=ROOT.kOrange, Label="QCD p_{T} 17"
+
 #QCDMu_red_pt8T : QCD_Mu15          : xsec*(LepGood_pt>15.5) : LepGood_pt > 8 && LepGood_tightId;  FillColor=ROOT.kViolet+3, Label="QCD p_{T} 8T"
 #QCDMu_red_pt8T : QCD_Pt20to30_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_pt > 8 && LepGood_tightId;  FillColor=ROOT.kViolet+3, Label="QCD p_{T} 8T"
 #QCDMu_red_pt8T : QCD_Pt30to50_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_pt > 8 && LepGood_tightId;  FillColor=ROOT.kViolet+3, Label="QCD p_{T} 8T"
