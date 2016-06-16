@@ -871,8 +871,8 @@ class edgeFriends:
               if (lepeta < 0.8   and lep.mvaIdSpring15 < -0.70) : return False
               if (lepeta > 0.8   and lepeta < 1.479 and lep.mvaIdSpring15 < -0.83) : return False
               if (lepeta > 1.479 and lep.mvaIdSpring15 < -0.92) : return False
-              if hasattr(lep, 'idEmu2'):
-                if lep.idEmu2 == 0: return False
+              if hasattr(lep, 'idEmuTTH'):
+                if lep.idEmuTTH == 0: return False
             return True
 
  
