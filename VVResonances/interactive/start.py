@@ -4,6 +4,18 @@ from CMGTools.VVResonances.plotting.TreePlotter import TreePlotter
 from CMGTools.VVResonances.plotting.MergedPlotter import MergedPlotter
 from CMGTools.VVResonances.plotting.StackPlotter import StackPlotter
 
+def compare(p1,p2,var,cut1,cut2,bins,mini,maxi,title,unit,leg1,leg2):
+    h1=p1.drawTH1(var,cut1,"1",bins,mini,maxi,title,units)
+    h2=p2.drawTH1(var,cut2,"1",bins,mini,maxi,title,units)
+    c=ROOT.TCanvas('c')
+    c.cd()
+    h1.DrawNormalized("HIST")
+    h2.DrawNormalized("SAME")
+    l=ROOT.TLegend(0.6,0.6,0.8,0.8)
+    l.AddEntry(h1,leg1,"LF")
+    l.AddEntry(h2,leg2,"P")
+    l.Draw()
+    return c,h1,h2,l
 
 
 cuts={}
@@ -115,10 +127,10 @@ WHLNUJJ.setLineProperties(1,ROOT.kBlue+3,3)
 
 #Fill properties
 WJets.setFillProperties(1001,ROOT.kAzure-9)
-tt.setFillProperties(1001,ROOT.kGreen-5)
+tt.setFillProperties(1001,ROOT.kTeal-1)
 #ZJets.setFillProperties(1001,ROOT.kAzure+5)
-GJets.setFillProperties(1001,ROOT.kYellow)
-QCD.setFillProperties(1001,ROOT.kGray)
+#GJets.setFillProperties(1001,ROOT.kYellow)
+#QCD.setFillProperties(1001,ROOT.kGray)
 
 
 
