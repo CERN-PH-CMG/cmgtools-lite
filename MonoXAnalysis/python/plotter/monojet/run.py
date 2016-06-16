@@ -10,6 +10,7 @@ if __name__ == "__main__":
     parser = OptionParser(usage=usage)
     parser.add_option("-y", "--yields", dest="yields", action="store_true", default=False, help='Run the yields and save them to a file')
     parser.add_option("-p", "--plots", dest="plots", action="store_true", default=False, help='Run the plots and save them to afs')
+    parser.add_option("-s", "--systs", dest="systs", action="store_true", default=False, help='Run the systematics propagation')
     parser.add_option("-d", "--dry-run", dest="dryrun", action="store_true", default=False, help='Do not run the commands, just print them')
     (options, args) = parser.parse_args()
     if len(args) < 1: raise RuntimeError, "Expect a listy of categories as input"
@@ -22,7 +23,7 @@ if __name__ == "__main__":
     else: bashopts='-e -y '
 
     CRs=['zmm','zee','wmn','wen','gj']
-    
+
     for c in categories:
         print "--> Category ",c
         for r in CRs:
@@ -35,6 +36,8 @@ if __name__ == "__main__":
                     commands.append('./monojet/monojet.sh -e -y -c '+c+' '+r)
                 if options.plots==True:
                     commands.append('./monojet/monojet.sh -e -p -c '+c+' '+r)
+                if options.systs==True:
+                    commands.append('./monojet/monojet.sh -e -r -c '+c+' '+r)                
             for exe in commands:
                 if options.dryrun: exe = re.sub(" -e","",exe)
                 print '\tExecuting command',exe

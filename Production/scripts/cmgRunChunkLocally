@@ -1,4 +1,5 @@
 #!/bin/bash
+BG=true; if [[ "$1" == "-f" ]]; then BG=false; shift; fi;
 test -f $1/batchScript.sh || echo "Missing $1/batchScript.sh";
 test -f $1/batchScript.sh || exit 1;
 
@@ -9,5 +10,10 @@ export LS_SUBCWD=$PWD
 cd /tmp
 WORK=$(mktemp --tmpdir -d chunk-${NAME}-XXXXXXXXXX)
 cd $WORK
-( bash $LS_SUBCWD/batchScript.sh > log.txt 2>&1 & )
-echo "Running: look at $WORK/log.txt"
+if $BG; then
+    ( bash $LS_SUBCWD/batchScript.sh > log.txt 2>&1 & )
+    echo "Running: look at $WORK/log.txt"
+else
+    echo "Running in $WORK"
+    bash $LS_SUBCWD/batchScript.sh 2>&1 | tee log.txt
+fi
