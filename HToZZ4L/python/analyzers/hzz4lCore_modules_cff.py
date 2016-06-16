@@ -26,11 +26,16 @@ fastSkim2L = fastSkim2LnoSip.clone(name="fastLepSkim2L",
         eleCut = lambda ele : ele.pt() > 7 and (abs(ele.dB(ele.PV3D)) <= 4*ele.edB(ele.PV3D)),
 )
 fastSkim3L = fastSkim2L.clone(name="fastLepSkim3L", minLeptons = 3)
-fastSkim4L = fastSkim2L.clone(name="fastLepSkim3L", minLeptons = 4)
+fastSkim4L = fastSkim2L.clone(name="fastLepSkim4L", minLeptons = 4)
 fastSkim2Mu3 = fastSkim2LnoSip.clone(name="fastLepSkim2Mu3",
         muCut = lambda mu : mu.pt() > 3 and abs(mu.dB(mu.PV3D) / mu.edB(mu.PV3D)) < 4,
         eleCut = lambda ele : False,
 )
+fastSkim2El5 = fastSkim2LnoSip.clone(name="fastLepSkim2El5",
+        muCut = lambda mu : False,
+        eleCut = lambda ele : ele.pt() > 5,
+)
+
 
 
 genAna = cfg.Analyzer(
@@ -172,7 +177,7 @@ lepAna = cfg.Analyzer(
     # muon isolation correction method (can be "rhoArea" or "deltaBeta")
     mu_isoCorr = "deltaBeta" ,
     mu_effectiveAreas = "Phys14_25ns_v1", #(can be 'Data2012' or 'Phys14_25ns_v1')
-    mu_tightId = "POG_ID_Loose",
+    mu_tightId = "HZZ_ID_LooseOrTkHighPt",
     # electron isolation correction method (can be "rhoArea" or "deltaBeta")
     ele_isoCorr = "rhoArea" ,
     ele_effectiveAreas = "Spring15_25ns_v1" , #(can be 'Data2012' or 'Phys14_25ns_v1')
@@ -202,7 +207,7 @@ fsrRecovery = cfg.Analyzer(
     FSRPhotonMaker, name="fsrPhotonMaker",
     leptons="selectedLeptons",
     electronID = lambda x: True, #x.electronID("POG_MVA_ID_Run2_NonTrig_HZZ")
-    electronVeto = "superclusterEta", # alternatives: "electronEta" and in the future "pfCandReference"
+    electronVeto = "pfCandReference", # alternatives: "electronEta" and "superclusterEta"
     drOverET2Cut = 0.012,
     relIsoCut = 1.8, 
 )

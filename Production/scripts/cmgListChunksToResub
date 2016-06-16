@@ -19,6 +19,11 @@ if [[ "$1" == "-t" ]]; then
     echo "# Will test for the presence of file $F "
 fi;
 
+LOC=0
+if [[ "$1" == "-l" ]]; then
+    LOC=1; shift;
+fi;
+
 Q=8nh
 if [[ "$1" == "-q" ]]; then
     Q=$2; shift; shift;
@@ -45,7 +50,11 @@ echo "# Will print out the commands to resubmit the chunks that failed "
 for D in *_Chunk[0-9]*; do
     if test \! -s $D/$F; then
         if [[ "${LSFL}" == "0"  ]] || find $D -maxdepth 1 -type d -name 'LSFJOB_*' | grep -q LSFJ; then
-            echo "cmgResubChunk -q $Q ${BASE}${D} "; 
+            if [[ "$LOC" == "1" ]]; then
+                echo "cmgRunChunkLocally ${BASE}${D} "; 
+            else
+                echo "cmgResubChunk -q $Q ${BASE}${D} "; 
+            fi
         else
             echo "# Chunk ${BASE}${D} does not have a LSFJOB directory, maybe still running? "; 
         fi;
@@ -56,7 +65,11 @@ if [[ "$Z" != "0" ]]; then
     for Z in $(cmgListZombies  "*_Chunk[0-9]*/$F"); do
         if test -s $Z; then # empty files have already been found
             D=${Z%%/*};
-            echo "cmgResubChunk -q $Q ${BASE}${D}    # zombie";
+            if [[ "$LOC" == "1" ]]; then
+                echo "cmgRunChunkLocally ${BASE}${D}     # zombie"; 
+            else
+                echo "cmgResubChunk -q $Q ${BASE}${D}    # zombie";
+            fi
         fi;
     done
 fi;
