@@ -170,9 +170,9 @@ def runFits(data,options):
 
     #create json
     data={}
-    data['p0']=returnString(pol0,options)
-    data['p1']=returnString(pol2,options)
-    data['p2']=returnString(pol1,options)
+    data['p0']=returnString(parameter0,options)
+    data['p1']=returnString(parameter1,options)
+    data['p2']=returnString(parameter2,options)
     f=open(options.output+".json","w")
     json.dump(data,f)
     f.close()
