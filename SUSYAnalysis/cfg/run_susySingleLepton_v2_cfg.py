@@ -175,11 +175,9 @@ jetAna.jetEta = 2.4
 jetAna.minLepPt = 10
 
 ## JEC
-#jetAna.mcGT = "Summer15_25nsV6_MC"
 jetAna.mcGT = "Spring16_25nsV1_MC"
 #jetAna.dataGT = "Summer15_25nsV6_DATA"
 jetAna.dataGT = "Spring16_25nsV1_MC"
-
 # add also JEC up/down shifts corrections
 jetAna.addJECShifts = True
 
@@ -335,27 +333,27 @@ elif sample == "data":
   ttHLepSkim.minLeptons = 0
 
   #For now no JEC  
-  print jetAna.shiftJEC , jetAna.recalibrateJets , jetAna.addJECShifts , jetAna.calculateSeparateCorrections , jetAna.calculateType1METCorrection
-  jetAna.addJECShifts = False
-  jetAna.doQG = False
-  jetAna.smearJets = False #should be false in susycore, already
-  jetAna.recalibrateJets = False # false for miniAOD v2!
-  jetAna.calculateSeparateCorrections = False
-  jetAna.applyL2L3Residual = False
-  print jetAna.shiftJEC , jetAna.recalibrateJets , jetAna.addJECShifts , jetAna.calculateSeparateCorrections , jetAna.calculateType1METCorrection
+  #print jetAna.shiftJEC , jetAna.recalibrateJets , jetAna.addJECShifts , jetAna.calculateSeparateCorrections , jetAna.calculateType1METCorrection
+  #jetAna.addJECShifts = False
+  #jetAna.doQG = False
+  #jetAna.smearJets = False #should be false in susycore, already
+  #jetAna.recalibrateJets = False # false for miniAOD v2!
+  #jetAna.calculateSeparateCorrections = False
+  #jetAna.applyL2L3Residual = False
+  #print jetAna.shiftJEC , jetAna.recalibrateJets , jetAna.addJECShifts , jetAna.calculateSeparateCorrections , jetAna.calculateType1METCorrection
 
   # central samples
   from CMGTools.RootTools.samples.samples_13TeV_DATA2016 import *
 
-  selectedComponents = [SingleElectron_Run2016B_PromptReco_v2, SingleMuon_Run2016B_PromptReco_v2, JetHT_Run2016B_PromptReco_v2_HT800Only]
+  selectedComponents = [SingleElectron_Run2016B_PromptReco_v2, SingleMuon_Run2016B_PromptReco_v2] #, JetHT_Run2016B_PromptReco_v2_HT800Only]
 
   if test!=0 and jsonAna in susyCoreSequence: susyCoreSequence.remove(jsonAna)
   if test==1:
-    comp = JetHT_Run2016B_PromptReco_v2_HT800Only
+    comp = SingleElectron_Run2016B_PromptReco_v2 #JetHT_Run2016B_PromptReco_v2_HT800Only
 #SingleElectron_Run2016B_PromptReco_v2
 #    comp.files = comp.files[:1]
-#    comp.files = comp.files[:1]
-    comp.files = comp.files[10:11]
+    comp.files = comp.files[:1]
+    #comp.files = comp.files[10:11]
     selectedComponents = [comp]
     comp.splitFactor = 1
     comp.splitFactor = len(comp.files)
