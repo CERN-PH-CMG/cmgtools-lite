@@ -390,7 +390,8 @@ if runData and not isTest: # For running on data
     if analysis in ['SOS']:
         DatasetsAndTriggers.append( ("MET", triggers_metNoMu90_mhtNoMu90) )
         #DatasetsAndTriggers.append( ("MET", triggers_Jet80MET90 + triggers_Jet80MET120 + triggers_MET120Mu5 ) )
-        #DatasetsAndTriggers.append( ("SingleMuon", triggers_1mu_iso + triggers_1mu_iso_50ns + triggers_1mu_noniso) )
+        DatasetsAndTriggers.append( ("SingleMuon", triggers_1mu_iso + triggers_1mu_iso_50ns + triggers_1mu_noniso) )
+        DatasetsAndTriggers.append( ("SingleElectron", triggers_1e + triggers_1e_50ns) )
     else:
         DatasetsAndTriggers.append( ("DoubleMuon", triggers_mumu_iso + triggers_mumu_ss + triggers_mumu_ht + triggers_3mu + triggers_3mu_alt) )
         DatasetsAndTriggers.append( ("DoubleEG",   triggers_ee + triggers_ee_ht + triggers_3e) )
@@ -459,7 +460,7 @@ if runData and not isTest: # For running on data
                                                  triggers=triggers[:], vetoTriggers = vetos[:],
                                                  useAAA=useAAA)
                 print "Will process %s (%d files)" % (comp.name, len(comp.files))
-                comp.splitFactor = len(comp.files)/8
+                comp.splitFactor = len(comp.files)/6
                 comp.fineSplitFactor = 1
                 selectedComponents.append( comp )
             if exclusiveDatasets: vetos += triggers
@@ -720,7 +721,7 @@ if getHeppyOption("dropLHEweights",True):
 
 ## Auto-AAA
 from CMGTools.RootTools.samples.autoAAAconfig import *
-if not getHeppyOption("isCrab"):
+if not (getHeppyOption("isCrab") or runData):
     autoAAA(selectedComponents)
 
 ## output histogram
