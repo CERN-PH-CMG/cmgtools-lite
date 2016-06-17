@@ -14,6 +14,7 @@ from PhysicsTools.Heppy.analyzers.gen.all import *
 from CMGTools.ObjectStudies.analyzers.treeProducerLepTnP import treeProducerTnP
 from CMGTools.ObjectStudies.analyzers.ZTagAndProbeAnalyzer import ZTagAndProbeAnalyzer
 from CMGTools.TTHAnalysis.analyzers.ttHFastLepSkimmer import ttHFastLepSkimmer
+from CMGTools.ObjectStudies.analyzers.leptonTriggerMatching_cff import LeptonTriggerMatchersSequence
 
 skimAnalyzer = cfg.Analyzer(
     SkimAnalyzerCount, name='skimAnalyzerCount',
@@ -166,7 +167,7 @@ trigMatcher1Mu = cfg.Analyzer(
     trgObjSelectors = [ lambda t : t.path("HLT_IsoMu22_v*",1,0) or t.path("HLT_IsoMu20_v*",1,0) ],
     collToMatch = 'selectedLeptons',
     collMatchSelectors = [ lambda l,t : abs(l.pdgId()) == 13 ],
-    collMatchDRCut = 0.3,
+    collMatchDRCut = 0.2,
     univoqueMatching = True,
     verbose = False,
 )
@@ -198,6 +199,7 @@ tnpSequence = [
     genAna,
     vertexAna,
     lepAna,
+] + LeptonTriggerMatchersSequence + [
     trigMatcher1Mu,
     trigMatcher1El,
     analyzerTnP,
