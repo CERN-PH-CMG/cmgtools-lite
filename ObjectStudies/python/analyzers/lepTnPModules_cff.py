@@ -164,7 +164,7 @@ trigMatcher1Mu = cfg.Analyzer(
     processName = 'PAT',
     fallbackProcessName = 'RECO',
     unpackPathNames = True,
-    trgObjSelectors = [ lambda t : t.path("HLT_IsoMu22_v*",1,0) or t.path("HLT_IsoMu20_v*",1,0) ],
+    trgObjSelectors = [ lambda t : t.path("HLT_IsoMu22_v*",1,0) or t.path("HLT_IsoMu20_v*",1,0) or t.path("HLT_IsoTkMu22_v*",1,0) or t.path("HLT_IsoTkMu20_v*",1,0)],
     collToMatch = 'selectedLeptons',
     collMatchSelectors = [ lambda l,t : abs(l.pdgId()) == 13 ],
     collMatchDRCut = 0.2,
@@ -174,7 +174,7 @@ trigMatcher1Mu = cfg.Analyzer(
 trigMatcher1El = trigMatcher1Mu.clone(
     name="trigMatcher1El",
     label='1El',
-    trgObjSelectors = [ lambda t : t.path("HLT_Ele23_WPLoose_Gsf_v*",1,0) ],
+    trgObjSelectors = [ lambda t : t.path("HLT_Ele23_WPLoose_Gsf_v*",1,0) or t.path("HLT_Ele27_WPLoose_Gsf_v*",1,0) or t.path("HLT_Ele27_WPTight_Gsf_v*",1,0) or t.path("HLT_Ele25_eta2p1_WPLoose_Gsf_v*",1,0) or t.path("HLT_Ele25_eta2p1_WPTight_Gsf_v*",1,0) ],
     collMatchSelectors = [ lambda l,t : abs(l.pdgId()) == 11 ],
 )
 
@@ -182,7 +182,8 @@ analyzerTnP = cfg.Analyzer(
     ZTagAndProbeAnalyzer, name="analyzerTnP",
     probeCollection = "selectedLeptons", 
     probeSelection  = lambda lep : True,
-    tagSelection    = lambda lep : lep.pt() > 25 and lep.tightId() and lep.relIso03 < 0.2 and (lep.matchedTrgObj1El if abs(lep.pdgId())==11 else lep.matchedTrgObj1Mu),
+    tagSelectionMC  = lambda lep : lep.pt() > 25 and lep.tightId() and lep.relIso03 < 0.2,
+    tagSelectionData = lambda lep : lep.pt() > 25 and lep.tightId() and lep.relIso03 < 0.2 and (lep.matchedTrgObj1El if abs(lep.pdgId())==11 else lep.matchedTrgObj1Mu),
     massRange = (50,130),
     filter = True,
 )
