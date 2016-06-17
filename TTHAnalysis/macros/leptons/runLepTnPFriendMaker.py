@@ -8,7 +8,9 @@ def getEOSlslist(directory, mask='', prepend='root://eoscms//eos/cms'):
     from subprocess import Popen, PIPE
     print 'looking into:',directory,'...'
 
-    eos_cmd = '/afs/cern.ch/project/eos/installation/0.2.41/bin/eos.select'
+    eos_cmd = '/afs/cern.ch/project/eos/installation/0.3.84-aquamarine/bin/eos.select'
+    if not osp.exists(eos_cmd):
+        raise RuntimeError('check eos alias: %s'%eos_cmd)
     data = Popen([eos_cmd, 'ls', '/eos/cms/'+directory],
                 stdout=PIPE)
     out,err = data.communicate()
@@ -100,9 +102,6 @@ if __name__ == '__main__':
     parser.add_option("-j", "--jobs", dest="jobs", type="int",
                       default=0,
                       help="Use N threads");
-    parser.add_option("-p", "--pretend", dest="pretend", action="store_true",
-                      default=False,
-                      help="Don't run anything");
     parser.add_option("-o", "--outDir", default="tnptrees",
                       action="store", type="string", dest="outDir",
                       help=("Output directory for tnp trees "
