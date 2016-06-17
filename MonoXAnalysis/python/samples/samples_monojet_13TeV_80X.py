@@ -6,26 +6,22 @@ from CMGTools.RootTools.samples.ComponentCreator import ComponentCreator
 kreator = ComponentCreator()
 
 ### common MC samples
-from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv1 import *
+from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv2 import *
 ### DM MC samples
 #from CMGTools.RootTools.samples.samples_monojet_13TeV_74X_signals import *
 
 ### --- mc ---
 
 # --- 25 ns background samples ---
-#DYJetsToNuNu_MJ = [ DYJetsToNuNu_M50 ] + ZJetsToNuNuHT
-#VJets_MJ        = [ WJetsToLNu ] + WJetsToLNuHT + DYJetsM50HT + [ DYJetsToLL_M50, DYJetsToLL_M10to50 ]
+ZJetsToNuNu_MJ = ZJetsToNuNuHT
+VJets_MJ       = WJetsToLNuHT
 #Top_MJ          = [ TTJets, TToLeptons_tch_amcatnlo, TToLeptons_tch_amcatnlo_ext, TBar_tWch, T_tWch ]
-#DiBosons_MJ     = [ WW, WZ, ZZ ]
+Top_MJ         = [ TTJets, TToLeptons_sch_amcatnlo, TBar_tWch, T_tWch ]
+DiBosons_MJ    = [ WW, WZ, ZZ ]
 
-# temporary lists
-VJets_MJ = VJets
-Top_MJ = TTs
-
-#mcSamples_monojet_Asymptotic25ns = DYJetsToNuNu_MJ + VJets_MJ + Top_MJ + DiBosons_MJ + QCDHT + GJetsHT
+mcSamples_monojet_Asymptotic25ns = ZJetsToNuNu_MJ + VJets_MJ + Top_MJ + DiBosons_MJ + QCDHT + GJetsHT
 #mcSamples_monojet_Asymptotic25ns_signals = DM_Scalars + DM_Pseudoscalars + DM_Vectors + DM_Axials
 
-mcSamples_monojet_Asymptotic25ns = VJets_MJ + Top_MJ
 
 ### ----------------------------- summary ----------------------------------------     
 mcSamples_monojet = mcSamples_monojet_Asymptotic25ns
