@@ -18,6 +18,8 @@ def returnString(func):
 parser = optparse.OptionParser()
 parser.add_option("-g","--graphs",dest="graphs",default='',help="Comma   separated graphs and functions to fit  like MEAN:pol3,SIGMA:pol2")
 parser.add_option("-o","--output",dest="output",help="Output JSON",default='')
+parser.add_option("-m","--min",dest="min",type=float, help="minimum x",default=0)
+parser.add_option("-M","--max",dest="max",type=float, help="maximum x",default=0)
 
 
 (options,args) = parser.parse_args()
@@ -40,7 +42,7 @@ for string in graphStr:
         func=ROOT.TF1("llog","[0]+[1]*log(x)",1,13000)
         func.SetParameters(1,1)
     
-    graph.Fit(func)
+    graph.Fit(func,"","",options.min,options.max)
     parameterization[comps[0]]=returnString(func)
 
 
