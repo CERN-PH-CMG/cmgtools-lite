@@ -35,7 +35,7 @@ ttHLepSkim.maxLeptons = 999
 #ttHLepSkim.idCut  = ""
 #ttHLepSkim.ptCuts = [10, 10]
 
-runData = True
+#runData = False
 
 # Run miniIso
 lepAna.doMiniIsolation = True
@@ -255,17 +255,16 @@ from CMGTools.HToZZ4L.tools.configTools import printSummary, configureSplittingF
 #selectedComponents = SMS_miniAODv2_T1tttt
 #susyCounter.SMS_varying_masses = ['genSusyMGluino','genSusyMNeutralino']
 
-if scaleProdToLumi>0: # select only a subset of a sample, corresponding to a given luminosity (assuming ~30k events per MiniAOD file, which is ok for central production)
-    target_lumi = scaleProdToLumi # in inverse picobarns
-    for c in selectedComponents:
-        if not c.isMC: continue
-        nfiles = int(min(ceil(target_lumi * c.xSection / 30e3), len(c.files)))
-        #if nfiles < 50: nfiles = min(4*nfiles, len(c.files))
-        print "For component %s, will want %d/%d files; AAA %s" % (c.name, nfiles, len(c.files), "eoscms" not in c.files[0])
-        c.files = c.files[:nfiles]
-        c.splitFactor = len(c.files)
-        c.fineSplitFactor = 1
-
+selectedComponents = [TTJets_DiLepton, TTJets_DiLepton_ext, TTLep_pow_ext,
+                      TBar_tWch, T_tWch,
+                      DYJetsToLL_M10to50, DYJetsToLL_M50,
+                      #DY1JetsToLL_M50_LO, DY2JetsToLL_M50_LO, DY3JetsToLL_M50_LO, DY4JetsToLL_M50_LO  ]
+                      DYJetsToLL_M50_HT100to200_ext, DYJetsToLL_M50_HT200to400_ext, DYJetsToLL_M50_HT400to600_ext, DYJetsToLL_M50_HT600toInf, DYJetsToLL_M50_HT600toInf_ext,
+                      ZZ, WZTo2L2Q, WZTo3LNu, WWTo2L2Nu, TTZToLLNuNu, TTWToLNu ]
+for comp in selectedComponents:
+    comp.splitFactor = 100
+    comp.fineSplitFactor = 1
+                      
 
 if runData and not isTest: # For running on data
 
@@ -404,7 +403,9 @@ if getHeppyOption("fast"):
         sequence.insert(sequence.index(jsonAna)+1, fastSkim)
     else:
         sequence.insert(sequence.index(skimAnalyzer)+1, fastSkim)
-if getHeppyOption("dropLHEweights",False):
+
+dropLHEWeights = True
+if dropLHEWeights:
     treeProducer.collections.pop("LHE_weights")
     if lheWeightAna in sequence: sequence.remove(lheWeightAna)
     susyCounter.doLHE = False
