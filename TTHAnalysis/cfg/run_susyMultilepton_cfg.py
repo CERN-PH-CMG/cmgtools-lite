@@ -348,19 +348,21 @@ selectedComponents = [TTLep_pow_ext]
 
 
 if analysis=='SOS':
+    selectedComponents = selectedComponents
     #bkg
-    selectedComponents = [WWTo2L2Nu, WWToLNuQQ, WZTo3LNu, WZTo2L2Q, ZZTo2L2Q, ZZTo2L2Nu, ZZTo4L, WWW, WZZ, WWZ, ZZZ, TBar_tWch, T_tWch, TToLeptons_tch_amcatnlo, TToLeptons_sch_amcatnlo, TTJets_SingleLeptonFromTbar, TTJets_SingleLeptonFromT, TTJets_DiLepton] + DYJetsM50HT + DYJetsM5to50HT + WJetsToLNuHT + [WJetsToLNu_LO, DYJetsToLL_M5to50_LO, DYJetsToLL_M50]
+#    selectedComponents = [WWTo2L2Nu, WWToLNuQQ, WZTo3LNu, WZTo2L2Q, ZZTo2L2Q, ZZTo2L2Nu, ZZTo4L, WWW, WZZ, WWZ, ZZZ, TBar_tWch, T_tWch, TToLeptons_tch_amcatnlo, TToLeptons_sch_amcatnlo, TTJets_SingleLeptonFromTbar, TTJets_SingleLeptonFromT, TTJets_DiLepton] + DYJetsM50HT + DYJetsM5to50HT + WJetsToLNuHT + [WJetsToLNu_LO, DYJetsToLL_M5to50_LO, DYJetsToLL_M50]
     #signal (only 76X)
-    selectedComponents = [T2ttDeg_mStop350_mChi315_4bodydec_lepOnly, T2ttDeg_mStop350_mChi300_4bodydec_lepOnly, T2ttDeg_mStop350_mChi330_4bodydec_lepOnly, TChiNeuWZ_mCh100_mChi80, TChiNeuWZ_mCh100_mChi90, TChiNeuWZ_mCh150_mChi120_OS, TChiNeuWZ_mCh100_mChi95]
+#    selectedComponents = [T2ttDeg_mStop350_mChi315_4bodydec_lepOnly, T2ttDeg_mStop350_mChi300_4bodydec_lepOnly, T2ttDeg_mStop350_mChi330_4bodydec_lepOnly, TChiNeuWZ_mCh100_mChi80, TChiNeuWZ_mCh100_mChi90, TChiNeuWZ_mCh150_mChi120_OS, TChiNeuWZ_mCh100_mChi95]
  
 if analysis=='susy' or analysis=="ttH":
-    samples_2l = [WJetsToLNu_LO, WJetsToLNu, DYJetsToLL_M10to50_LO, DYJetsToLL_M10to50, DYJetsToLL_M50, DYJetsToLL_M50_LO, TTJets, TT_pow, TTJets_SingleLeptonFromTbar, TTJets_SingleLeptonFromT, TTJets_DiLepton, TBar_tWch, T_tWch, TToLeptons_tch_amcatnlo, TToLeptons_sch_amcatnlo, TTGJets, WGToLNuG, ZGTo2LG, TGJets, WWDouble, WpWpJJ, TTTT, VHToNonbb, GGHZZ4L,tZq_ll, WZTo3LNu, ZZTo4L, WWTo2L2Nu, WWW, WWZ, WZZ, ZZZ, TTHnobb_pow, TTW_LO, TTZ_LO, TTWToLNu, TTZToLLNuNu, TTLLJets_m1to10] + TTHnobb_mWCutfix
-    samples_1l = [QCD_Mu15] + QCD_Mu5 + [WJetsToLNu_LO,DYJetsToLL_M10to50_LO,DYJetsToLL_M50_LO,TT_pow] + QCDPtEMEnriched + QCDPtbcToE
-    selectedComponents = samples_1l+samples_2l
-    cropToLumi(selectedComponents,2)
-    configureSplittingFromTime(samples_1l,50,3)
-    configureSplittingFromTime(samples_2l,100,3)
-    printSummary(selectedComponents)
+    selectedComponents = selectedComponents
+#    samples_2l = [WJetsToLNu_LO, WJetsToLNu, DYJetsToLL_M10to50_LO, DYJetsToLL_M10to50, DYJetsToLL_M50, DYJetsToLL_M50_LO, TTJets, TT_pow, TTJets_SingleLeptonFromTbar, TTJets_SingleLeptonFromT, TTJets_DiLepton, TBar_tWch, T_tWch, TToLeptons_tch_amcatnlo, TToLeptons_sch_amcatnlo, TTGJets, WGToLNuG, ZGTo2LG, TGJets, WWDouble, WpWpJJ, TTTT, VHToNonbb, GGHZZ4L,tZq_ll, WZTo3LNu, ZZTo4L, WWTo2L2Nu, WWW, WWZ, WZZ, ZZZ, TTHnobb_pow, TTW_LO, TTZ_LO, TTWToLNu, TTZToLLNuNu, TTLLJets_m1to10] + TTHnobb_mWCutfix
+#    samples_1l = [QCD_Mu15] + QCD_Mu5 + [WJetsToLNu_LO,DYJetsToLL_M10to50_LO,DYJetsToLL_M50_LO,TT_pow] + QCDPtEMEnriched + QCDPtbcToE
+#    selectedComponents = samples_1l+samples_2l
+#    cropToLumi(selectedComponents,2)
+#    configureSplittingFromTime(samples_1l,50,3)
+#    configureSplittingFromTime(samples_2l,100,3)
+#    printSummary(selectedComponents)
 
 
 if scaleProdToLumi>0: # select only a subset of a sample, corresponding to a given luminosity (assuming ~30k events per MiniAOD file, which is ok for central production)
