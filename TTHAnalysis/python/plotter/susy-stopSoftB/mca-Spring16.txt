@@ -1,0 +1,16 @@
+# vim: syntax=sh
+* ; TreeName="treeProducerStopSoftB"
+#T2cc_mStop300_mChi290+            : T2cc_mStop300_mChi290             : xsec : 1 ; FillColor=ROOT.kGreen+1, Label="cc 300/10"
+#T2cc_mStop300_mChi295+             : T2cc_mStop300_mChi295             : xsec : 1 ; FillColor=ROOT.kGreen+2, Label="cc 300/5"
+#T2cc_mStop350_mChi340+            : T2cc_mStop350_mChi340             : xsec : 1 ; FillColor=ROOT.kAzure+1, Label="cc 350/10"
+#T2cc_mStop350_mChi345+             : T2cc_mStop350_mChi345             : xsec : 1 ; FillColor=ROOT.kAzure+2, Label="cc 350/5"
+#T2ttDeg_mStop350_mChi330+ : T2ttDeg_mStop350_mChi330_4bodydec : xsec : 1 ; FillColor=ROOT.kRed+1, Label="4b 350/20"
+T2ttDeg_mStop425_mChi405+ : T2ttDeg_mStop425_mChi405_4bodydec : xsec : 1 ; FillColor=ROOT.kPink+10, Label="4b 425/20"
+
+TT : TT_pow_scaleup: xsec : 1 ; FillColor=ROOT.kGray+1, Label="tt"
+WJets : WJetsToLNu_HT200to400: xsec : 1 ; FillColor=ROOT.kOrange-5, Label="W+jets"
+WJets : WJetsToLNu_HT400to600: xsec : 1 ; FillColor=ROOT.kOrange-5, Label="W+jets"
+WJets : WJetsToLNu_HT600toInf: xsec : 1 ; FillColor=ROOT.kOrange-5, Label="W+jets"
+ZNuNu : ZJetsToNuNu_HT200to400_ext: xsec : 1 ; FillColor=ROOT.kCyan-6, Label="Z\#nu\#nu"
+#ZNuNu : ZJetsToNuNu_HT400to600: xsec : 1 ; FillColor=ROOT.kCyan-6, Label="Z\#nu\#nu"
+#ZNuNu : ZJetsToNuNu_HT600toInf: xsec : 1 ; FillColor=ROOT.kCyan-6, Label="Z\#nu\#nu"
