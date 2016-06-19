@@ -40,6 +40,11 @@ from CMGTools.VVResonances.samples.signal_13TeV_80X import *
 from CMGTools.VVResonances.samples.signal_750 import *
 
 
+
+#and the 750 GeV samples for the tau analysis
+from CMGTools.VVResonances.samples.signal_750 import *
+
+
 mcSamples = background+signalSamples
 #load triggers
 from CMGTools.RootTools.samples.triggers_13TeV_Spring15 import *
@@ -49,10 +54,10 @@ from CMGTools.RootTools.samples.samples_13TeV_DATA2016 import *
 
 
 
-SingleMuon=[SingleMuon_Run2016B_PromptReco,SingleMuon_Run2016B_PromptReco_v2]
-SingleElectron=[SingleElectron_Run2016B_PromptReco,SingleElectron_Run2016B_PromptReco_v2]
-JetHT=[JetHT_Run2016B_PromptReco,JetHT_Run2016B_PromptReco_v2]
-MET=[MET_Run2016B_PromptReco,MET_Run2016B_PromptReco_v2]
+SingleMuon=[SingleMuon_Run2016B_PromptReco_v2]
+SingleElectron=[SingleElectron_Run2016B_PromptReco_v2]
+JetHT=[JetHT_Run2016B_PromptReco_v2]
+MET=[MET_Run2016B_PromptReco_v2]
 
 
 #Load JSON

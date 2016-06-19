@@ -108,7 +108,7 @@ genAna = cfg.Analyzer(
     # Particles of which we want to save the pre-FSR momentum (a la status 3).
     # Note that for quarks and gluons the post-FSR doesn't make sense,
     # so those should always be in the list
-    savePreFSRParticleIds = [ 1,2,3,4,5, 11,12,13,14,15,16, 21 ],
+    savePreFSRParticleIds = [ 1,2,3,4,5, 11,12,13,14,15,16, 21,22 ],
     # Make also the list of all genParticles, for other analyzers to handle
     makeAllGenParticles = True,
     # Make also the splitted lists
@@ -197,6 +197,8 @@ lepAna = cfg.Analyzer(
     packedCandidates = 'packedPFCandidates',
     miniIsolationPUCorr = 'rhoArea', # Allowed options: 'rhoArea' (EAs for 03 cone scaled by R^2), 'deltaBeta', 'raw' (uncorrected), 'weights' (delta beta weights; not validated)
     miniIsolationVetoLeptons = None, # use 'inclusive' to veto inclusive leptons and their footprint in all isolation cones
+    doDirectionalIsolation = [], # calculate directional isolation with leptons (works only with doMiniIsolation, pass list of cone sizes)
+    doFixedConeIsoWithMiniIsoVeto = False, # calculate fixed cone isolations with the same vetoes used for miniIso,
     # minimum deltaR between a loose electron and a loose muon (on overlaps, discard the electron)
     min_dr_electron_muon = 0.05,
     # do MC matching 
@@ -311,8 +313,8 @@ jetAna = cfg.Analyzer(
     recalibrateJets = True, #'MC', # True, False, 'MC', 'Data'
     applyL2L3Residual = True, # Switch to 'Data' when they will become available for Data
     recalibrationType = "AK4PFchs",
-    mcGT     = "Fall15_25nsV2_MC",
-    dataGT   = "Fall15_25nsV2_DATA",
+    mcGT     = "Spring16_25nsV1_MC",
+    dataGT   = "Spring16_25nsV1_MC",
     jecPath = "${CMSSW_BASE}/src/CMGTools/RootTools/data/jec/",
     shiftJEC = 0, # set to +1 or -1 to apply +/-1 sigma shift to the nominal jet energies
     addJECShifts = False, # if true, add  "corr", "corrJECUp", and "corrJECDown" for each jet (requires uncertainties to be available!)
@@ -468,20 +470,25 @@ ttHCoreEventAna = cfg.Analyzer(
     jetPt = 40.,
     )
 
-## Jet-MET based Skim (generic, but requirements depend on the final state)
-# from CMGTools.TTHAnalysis.analyzers.ttHJetMETSkimmer import ttHJetMETSkimmer
-# ttHJetMETSkim = cfg.Analyzer(
-#    ttHJetMETSkimmer, name='ttHJetMETSkimmer',
-#    jets      = "cleanJets", # jet collection to use
-#    jetPtCuts = [],  # e.g. [60,40,30,20] to require at least four jets with pt > 60,40,30,20
-#    jetVetoPt =  0,  # if non-zero, veto additional jets with pt > veto beyond the ones in jetPtCuts
-#    metCut    =  0,  # MET cut
-#    htCut     = ('htJet40j', 0), # cut on HT defined with only jets and pt cut 40, at zero; i.e. no cut
-#                                 # see ttHCoreEventAnalyzer for alternative definitions
-#    mhtCut    = ('mhtJet40', 0), # cut on MHT defined with all leptons, and jets with pt > 40.
-#    nBJet     = ('CSVv2IVFM', 0, "jet.pt() > 30"),     # require at least 0 jets passing CSV medium and pt > 30
-#    )
+# Jet-MET based Skim (generic, but requirements depend on the final state)
+from CMGTools.TTHAnalysis.analyzers.ttHJetMETSkimmer import ttHJetMETSkimmer
+ttHJetMETSkim = cfg.Analyzer(
+   ttHJetMETSkimmer, name='ttHJetMETSkimmer',
+   jets      = "cleanJets", # jet collection to use
+   jetPtCuts = [],  # e.g. [60,40,30,20] to require at least four jets with pt > 60,40,30,20
+   jetVetoPt =  0,  # if non-zero, veto additional jets with pt > veto beyond the ones in jetPtCuts
+   metCut    =  0,  # MET cut
+   htCut     = ('htJet40j', 0), # cut on HT defined with only jets and pt cut 40, at zero; i.e. no cut
+                                # see ttHCoreEventAnalyzer for alternative definitions
+   mhtCut    = ('mhtJet40', 0), # cut on MHT defined with all leptons, and jets with pt > 40.
+   nBJet     = ('CSVv2IVFM', 0, "jet.pt() > 30"),     # require at least 0 jets passing CSV medium and pt > 30
+   )
 
+# Tailored lepton MC matching for SUSY
+from CMGTools.TTHAnalysis.analyzers.susyLeptonMatchAnalyzer import susyLeptonMatchAnalyzer
+susyLeptonMatchAna = cfg.Analyzer(
+    susyLeptonMatchAnalyzer, name="susyLeptonMatchAna",
+    )
 
 # Core sequence of all common modules
 susyCoreSequence = [
@@ -508,7 +515,8 @@ susyCoreSequence = [
     #ttHSVAna, # out of core sequence for now
     metAna,
     ttHCoreEventAna,
-    #ttHJetMETSkim
+    # ttHJetMETSkim,
+    # susyLeptonMatchAna,
     triggerFlagsAna,
     eventFlagsAna,
 ]

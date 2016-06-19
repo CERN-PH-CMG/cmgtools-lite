@@ -31,6 +31,11 @@ fastSkim2Mu3 = fastSkim2LnoSip.clone(name="fastLepSkim2Mu3",
         muCut = lambda mu : mu.pt() > 3 and abs(mu.dB(mu.PV3D) / mu.edB(mu.PV3D)) < 4,
         eleCut = lambda ele : False,
 )
+fastSkim2El5 = fastSkim2LnoSip.clone(name="fastLepSkim2El5",
+        muCut = lambda mu : False,
+        eleCut = lambda ele : ele.pt() > 5,
+)
+
 
 
 genAna = cfg.Analyzer(
