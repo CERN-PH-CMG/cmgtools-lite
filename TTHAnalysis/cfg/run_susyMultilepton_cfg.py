@@ -17,6 +17,7 @@ is50ns = getHeppyOption("is50ns",False)
 analysis = getHeppyOption("analysis","ttH")
 runData = getHeppyOption("runData",False)
 runDataQCD = getHeppyOption("runDataQCD",False)
+runQCDBM = False
 runFRMC = getHeppyOption("runFRMC",False)
 runSMS = getHeppyOption("runSMS",False)
 scaleProdToLumi = float(getHeppyOption("scaleProdToLumi",-1)) # produce rough equivalent of X /pb for MC datasets
@@ -379,8 +380,9 @@ if runData and not isTest: # For running on data
     is50ns = False
     dataChunks = []
 
-    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_271036-274421_13TeV_PromptReco_Collisions16_JSON.txt' # 2.07/fb
-    processing = "Run2016B-PromptReco-v2"; short = "Run2016B_PromptReco_v2"; run_ranges = [(273150,274421)]; useAAA=False; # -v2 starts from 273150
+#    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_271036-274421_13TeV_PromptReco_Collisions16_JSON.txt' # 2.07/fb
+    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_271036-274443_13TeV_PromptReco_Collisions16_JSON.txt' # 2.6/fb
+    processing = "Run2016B-PromptReco-v2"; short = "Run2016B_PromptReco_v2"; run_ranges = [(273150,274443)]; useAAA=False; # -v2 starts from 273150
     dataChunks.append((json,processing,short,run_ranges,useAAA))
 
     compSelection = ""; compVeto = ""
@@ -404,8 +406,8 @@ if runData and not isTest: # For running on data
             FRTrigs_mu = triggers_FR_1mu_iso + triggers_FR_1mu_noiso
             FRTrigs_el = triggers_FR_1e_noiso + triggers_FR_1e_iso + triggers_FR_1e_b2g
             DatasetsAndTriggers = [
-                #("DoubleMuon", FRTrigs_mu ),
-                #("DoubleEG",   FRTrigs_el ),
+                ("DoubleMuon", FRTrigs_mu ),
+                ("DoubleEG",   FRTrigs_el ),
                 #("JetHT",   triggers_FR_jetHT )
                 ("JetHT",   triggers_FR_jet2 )
             ]
@@ -418,26 +420,6 @@ if runData and not isTest: # For running on data
                 #("DoubleMuon",  triggers_FR_1mu_noiso ),
             ]
             exclusiveDatasets = True
-
-
-        if runDataQCD: # for fake rate measurements in data
-            ttHLepSkim.minLeptons = 1
-            if getHeppyOption("fast"): raise RuntimeError, 'Already added ttHFastLepSkimmer with 2-lep configuration, this is wrong.'
-            FRTrigs = triggers_FR_1mu_iso + triggers_FR_1mu_noiso + triggers_FR_1e_noiso + triggers_FR_1e_iso + triggers_FR_1e_b2g
-            for t in FRTrigs:
-                tShort = t.replace("HLT_","FR_").replace("_v*","")
-                triggerFlagsAna.triggerBits[tShort] = [ t ]
-                FRTrigs_mu = triggers_FR_1mu_iso + triggers_FR_1mu_noiso
-                FRTrigs_el = triggers_FR_1e_noiso + triggers_FR_1e_iso + triggers_FR_1e_b2g
-                DatasetsAndTriggers = [ (pd,trig) for pd,trig in DatasetsAndTriggers if pd in ['DoubleMuon','DoubleEG'] ]
-                for pd,trig in DatasetsAndTriggers:
-                    if pd in ['DoubleMuon','SingleMuon']:
-                        trig.extend(FRTrigs_mu)
-                    elif pd in ['DoubleEG','SingleElectron']:
-                        trig.extend(FRTrigs_el)
-                    else:
-                        print 'the strategy for trigger selection on MuonEG for FR studies should yet be implemented'
-                        assert(False)
 
     for json,processing,short,run_ranges,useAAA in dataChunks:
         if len(run_ranges)==0: run_ranges=[None]
@@ -580,6 +562,9 @@ if removeJetReCalibration:
     jetAnaScaleUp.recalibrateJets = False
     jetAnaScaleDown.recalibrateJets = False
 
+if getHeppyOption("noLepSkim",False):
+    ttHLepSkim.minLeptons=0
+
 if forcedSplitFactor>0 or forcedFineSplitFactor>0:
     if forcedFineSplitFactor>0 and forcedSplitFactor!=1: raise RuntimeError, 'splitFactor must be 1 if setting fineSplitFactor'
     for c in selectedComponents:
@@ -716,7 +701,7 @@ if getHeppyOption("fast"):
     else:
         sequence.insert(sequence.index(skimAnalyzer)+1, fastSkim)
 if getHeppyOption("dropLHEweights",True):
-    treeProducer.collections.pop("LHE_weights")
+    if "LHE_weights" in treeProducer.collections: treeProducer.collections.pop("LHE_weights")
     if lheWeightAna in sequence: sequence.remove(lheWeightAna)
     susyCounter.doLHE = False
 
