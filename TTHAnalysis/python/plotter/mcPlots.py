@@ -3,6 +3,8 @@
 from CMGTools.TTHAnalysis.plotter.mcAnalysis import *
 import itertools
 
+_global_workspaces=[] # avoid crash in 80X, to be investigated
+
 if "/bin2Dto1Dlib_cc.so" not in ROOT.gSystem.GetLibraries():
     ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/TTHAnalysis/python/plotter/bin2Dto1Dlib.cc+" % os.environ['CMSSW_BASE']);
 if "/fakeRate_cc.so" not in ROOT.gSystem.GetLibraries(): 
@@ -277,9 +279,11 @@ def doScaleBkgNormData(pspec,pmap,mca,list = []):
 
 
 def doNormFit(pspec,pmap,mca,saveScales=False):
+    global _global_workspaces
     if "data" not in pmap: return -1.0
     data = pmap["data"]
     w = ROOT.RooWorkspace("w","w")
+    _global_workspaces.append(w)
     x = w.factory("x[%g,%g]" % (data.GetXaxis().GetXmin(), data.GetXaxis().GetXmax()))
     x.setBins(data.GetNbinsX())
     obs = ROOT.RooArgList(w.var("x"))
