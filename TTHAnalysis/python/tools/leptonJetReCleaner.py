@@ -67,8 +67,6 @@ class LeptonJetReCleaner:
         biglist.extend([
                     ("nTauSel"     +label, "I"), 
                     ("nTightTauSel"+label, "I"), 
-                    ("nLooseTauSel"+label, "I"), 
-                    ("nDiscTauSel" +label, "I"),
                       ])
 
         for tfloat in "pt eta phi mass".split():
@@ -227,10 +225,8 @@ class LeptonJetReCleaner:
         # 3. sort the taus by pt
         goodtaus.sort(key = lambda g: g.pt, reverse = True)
         ret["nTauSel"      + postfix] = len(goodtaus)
-        ret["nLooseTauSel" + postfix] = len(goodtaus) # maybe put all clean taus into TauSel, also the ones not satisfying the loose selection?
         ret["nTightTauSel" + postfix] = sum([1 for g in goodtaus if g.ewkId == 2])
-        ret["nDiscTauSel"  + postfix] = len(alltaus) - len(goodtaus)
-        # 4. if needed, store the tau 4-vectors
+        # 4. store the tau 4-vectors
         if postfix==self.label:
             for tfloat in "pt eta phi mass pdgId ewkId idxTauGood idxTauOther".split():
                 tauret[tfloat] = []
@@ -272,12 +268,12 @@ class LeptonJetReCleaner:
         ret['minMllAFSS'] = minMllTL(lepsl, lepsl, paircut = lambda l1,l2 : l1.charge ==  l2.charge) 
         ret['minMllSFOS'] = minMllTL(lepsl, lepsl, paircut = lambda l1,l2 : l1.pdgId  == -l2.pdgId) 
 
-        cleantaus={}; rettlabel = {}; tauret = {}; 
-        cleantaus = self.recleanTaus(tausc, tausd, lepsc, self.label, rettlabel, tauret)
+        loosetaus=[]; rettlabel = {}; tauret = {}; 
+        loosetaus = self.recleanTaus(tausc, tausd, lepsc, self.label, rettlabel, tauret)
 
         cleanjets={}
         for var in self.systsJEC:
-            cleanjets[var] = self.recleanJets(jetsc[var],jetsd[var],lepsc+cleantaus if self.cleanJetsWithTaus else lepsc,self.label+self.systsJEC[var],retwlabel,jetret,discjetret)
+            cleanjets[var] = self.recleanJets(jetsc[var],jetsd[var],lepsc+loosetaus if self.cleanJetsWithTaus else lepsc,self.label+self.systsJEC[var],retwlabel,jetret,discjetret)
 
         # calculate FOs and tight leptons using the cleaned HT, sorted by conept
         lepsf = []; lepsfv = [];
