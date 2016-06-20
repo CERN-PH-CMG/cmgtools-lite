@@ -345,7 +345,9 @@ if __name__ == "__main__":
                             w.factory("Gaussian::nuis_{0}_shapePdf(nuis_{0}_shape[0,-3,3], 0, 1)".format(k+n))
                             constraints.append(w.pdf("nuis_{0}_shapePdf".format(k+n)))
                             for s in "pass","fail": nuislists[k][s].add(w.var("nuis_{0}_shape".format(k+n)))
-                        allnuis.add(nuislists[k]["pass"], False)
+#                        allnuis.add(nuislists[k]["pass"], False)
+                        for idx in xrange(nuislists[k]["pass"].getSize()):
+                            allnuis.add(nuislists[k]["pass"].at(idx),False)
                     for zstate in "pass", "fail":
                         rep = freport_num_den[zstate];  
                         # make nominal templates 
@@ -409,7 +411,7 @@ if __name__ == "__main__":
                     minim.setPrintLevel(-1); minim.setStrategy(0);
                     minim.minimize("Minuit2","migrad")
                     minim.setPrintLevel(-1); minim.setStrategy(1);
-                    nll.setZeroPoint()
+#                    nll.setZeroPoint()
                     minim.minimize("Minuit2","migrad")
                     minim.hesse();
                     result = minim.save()
@@ -471,7 +473,7 @@ if __name__ == "__main__":
                     # minos for the efficiency
                     w.allVars().assignValueOnly(result.floatParsFinal())
                     nll = sim.createNLL(data, cmdArgs)
-                    nll.setZeroPoint()
+#                    nll.setZeroPoint()
                     var = w.var("fsig"); var.setConstant(True)
                     minim = ROOT.RooMinimizer(nll)
                     minim.setPrintLevel(-1); minim.setStrategy(0);
