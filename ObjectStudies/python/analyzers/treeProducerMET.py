@@ -9,8 +9,11 @@ met_globalVariables = [
 ##    NTupleVariable("ndofPV",  lambda ev: ev.goodVertices[0].ndof() , int, help="Degrees of freedom of the fit"),
 
    # ----------------------- lepton info -------------------------------------------------------------------- #     
-
     NTupleVariable("nLeptons",   lambda x : len(x.leptons) if  hasattr(x,'leptons') else  0 , float, mcOnly=False,help="Number of associated leptons"),
+    NTupleVariable("nLepGood20", lambda ev: sum([l.pt() > 20 for l in ev.selectedLeptons]), int, help="Number of leptons with pt > 20"),
+    NTupleVariable("nLepGood15", lambda ev: sum([l.pt() > 15 for l in ev.selectedLeptons]), int, help="Number of leptons with pt > 15"),
+    NTupleVariable("nLepGood10", lambda ev: sum([l.pt() > 10 for l in ev.selectedLeptons]), int, help="Number of leptons with pt > 10"),
+
 
     NTupleVariable("zll_pt", lambda ev : ev.zll_p4.Pt() if  hasattr(ev,'zll_p4') else  0 , help="Pt of di-lepton system"),
     NTupleVariable("zll_eta", lambda ev : ev.zll_p4.Eta() if  hasattr(ev,'zll_p4') else  0, help="Eta of di-lepton system"),
@@ -28,14 +31,20 @@ met_globalVariables = [
     NTupleVariable("met_uPara_zll", lambda ev : ev.met.upara_zll if  hasattr(ev,'zll_p4') else -999 , help="recoil MET"),
     NTupleVariable("met_uPerp_zll", lambda ev : ev.met.uperp_zll if  hasattr(ev,'zll_p4') else -999 , help="recoil MET"),
 
+    NTupleVariable("met_jecDown_uPara_zll", lambda ev : ev.met_jecDown.upara_zll if  hasattr(ev,'zll_p4') else -999 , help="recoil MET jecDown"),
+    NTupleVariable("met_jecDown_uPerp_zll", lambda ev : ev.met_jecDown.uperp_zll if  hasattr(ev,'zll_p4') else -999 , help="recoil MET jecDown"),
+
+    NTupleVariable("met_jecUp_uPara_zll", lambda ev : ev.met_jecUp.upara_zll if  hasattr(ev,'zll_p4') else -999 , help="recoil MET jecUp"),
+    NTupleVariable("met_jecUp_uPerp_zll", lambda ev : ev.met_jecUp.uperp_zll if  hasattr(ev,'zll_p4') else -999 , help="recoil MET jecUp"),
+
 #    NTupleVariable("metNoHF_uPara_zll", lambda ev : ev.metNoHF.upara_zll if hasattr(ev,'metNoHF') and hasattr(ev,'zll_p4') else -999 , help="recoil MET"),
 #    NTupleVariable("metNoHF_uPerp_zll", lambda ev : ev.metNoHF.uperp_zll if hasattr(ev,'metNoHF') and hasattr(ev,'zll_p4') else -999 , help="recoil MET"),
 
-    NTupleVariable("metPuppi_uPara_zll", lambda ev : ev.metPuppi.upara_zll if hasattr(ev,'metPuppi') and hasattr(ev,'zll_p4') else -999 , help="recoil MET"),
-    NTupleVariable("metPuppi_uPerp_zll", lambda ev : ev.metPuppi.uperp_zll if hasattr(ev,'metPuppi') and hasattr(ev,'zll_p4') else -999 , help="recoil MET"),
+    NTupleVariable("metPuppi_uPara_zll", lambda ev : ev.metPuppi.upara_zll if hasattr(ev,'metPuppi') and hasattr(ev,'zll_p4') else -999 , help="recoil MET puppi"),
+    NTupleVariable("metPuppi_uPerp_zll", lambda ev : ev.metPuppi.uperp_zll if hasattr(ev,'metPuppi') and hasattr(ev,'zll_p4') else -999 , help="recoil MET puppi"),
 
-    NTupleVariable("met_raw_uPara_zll", lambda ev : ev.met_raw.upara_zll if  hasattr(ev,'zll_p4') else -999 , help="recoil MET"),
-    NTupleVariable("met_raw_uPerp_zll", lambda ev : ev.met_raw.uperp_zll if  hasattr(ev,'zll_p4') else -999 , help="recoil MET"),
+    NTupleVariable("met_raw_uPara_zll", lambda ev : ev.met_raw.upara_zll if  hasattr(ev,'zll_p4') else -999 , help="recoil MET raw"),
+    NTupleVariable("met_raw_uPerp_zll", lambda ev : ev.met_raw.uperp_zll if  hasattr(ev,'zll_p4') else -999 , help="recoil MET raw"),
 
     NTupleVariable("met_caloPt", lambda ev : ev.met.caloMETPt(), help="calo met p_{T}"),
     NTupleVariable("met_caloPhi", lambda ev : ev.met.caloMETPhi(), help="calo met phi"),
@@ -43,11 +52,11 @@ met_globalVariables = [
 
    # ----------------------- type1met studies info -------------------------------------------------------------------- #     
 
-    NTupleVariable("met_JetEnUp_Pt", lambda ev : ev.met.shiftedPt(ev.met.JetEnUp, ev.met.Raw), help="type1, JetEnUp, pt"),
-    NTupleVariable("met_JetEnUp_Phi", lambda ev : ev.met.shiftedPhi(ev.met.JetEnUp, ev.met.Raw), help="type1, JetEnUp, phi"),
+#    NTupleVariable("met_JetEnUp_Pt", lambda ev : ev.met.shiftedPt(ev.met.JetEnUp, ev.met.Raw), help="type1, JetEnUp, pt"),
+#    NTupleVariable("met_JetEnUp_Phi", lambda ev : ev.met.shiftedPhi(ev.met.JetEnUp, ev.met.Raw), help="type1, JetEnUp, phi"),
 
-    NTupleVariable("met_JetEnDown_Pt", lambda ev : ev.met.shiftedPt(ev.met.JetEnDown, ev.met.Raw), help="type1, JetEnDown, pt"),
-    NTupleVariable("met_JetEnDown_Phi", lambda ev : ev.met.shiftedPhi(ev.met.JetEnDown, ev.met.Raw), help="type1, JetEnDown, phi"),
+#    NTupleVariable("met_JetEnDown_Pt", lambda ev : ev.met.shiftedPt(ev.met.JetEnDown, ev.met.Raw), help="type1, JetEnDown, pt"),
+#    NTupleVariable("met_JetEnDown_Phi", lambda ev : ev.met.shiftedPhi(ev.met.JetEnDown, ev.met.Raw), help="type1, JetEnDown, phi"),
 
 #    NTupleVariable("metNoHF_JetEnUp_Pt", lambda ev : ev.metNoHF.shiftedPt(ev.met.JetEnUp, ev.met.Raw) if hasattr(ev,'metNoHF') else -999, help="type1 noHF , JetEnUp, pt"),
 #    NTupleVariable("metNoHF_JetEnUp_Phi", lambda ev : ev.metNoHF.shiftedPhi(ev.met.JetEnUp, ev.met.Raw) if hasattr(ev,'metNoHF') else -999, help="type1 noHF , JetEnUp, phi"),
@@ -105,8 +114,12 @@ met_globalVariables = [
 
 met_globalObjects = {
     "met" : NTupleObject("met", metType, help="PF E_{T}^{miss}, after type 1 corrections"),
+    "met_jecUp" : NTupleObject("met_jecUp", metType, help="PF E_{T}^{miss}, after type 1 corrections with JEC up variation"),
+    "met_jecDown" : NTupleObject("met_jecDown", metType, help="PF E_{T}^{miss}, after type 1 corrections with JEC down variation"),
 #    "metNoHF" : NTupleObject("metNoHF", metType, help="PF E_{T}^{miss}, after type 1 corrections (NoHF)"),
     "metPuppi" : NTupleObject("metPuppi", metType, help="PF E_{T}^{miss}, after type 1 corrections (Puppi)"),
+    "metPuppi_jecUp" : NTupleObject("metPuppi_jecUp", metType, help="PF E_{T}^{miss}, after type 1 corrections with JEC up variation (Puppi)"),
+    "metPuppi_jecDown" : NTupleObject("metPuppi_jecDown", metType, help="PF E_{T}^{miss}, after type 1 corrections with JEC down variation (Puppi)"),
 #    "metraw" : NTupleObject("metraw", metType, help="PF E_{T}^{miss}"),
 #    "metType1chs" : NTupleObject("metType1chs", metType, help="PF E_{T}^{miss}, after type 1 CHS jets"),
     #"tkMet" : NTupleObject("tkmet", metType, help="TK PF E_{T}^{miss}"),
@@ -118,6 +131,7 @@ met_collections = {
     "gentauleps"      : NTupleCollection("genLepFromTau", genParticleWithLinksType, 10, help="Generated leptons (e/mu) from decays of taus from W/Z/h decays"),
     "gentaus"         : NTupleCollection("genTau",     genParticleWithLinksType, 10, help="Generated leptons (tau) from W/Z decays"),                            
     "generatorSummary" : NTupleCollection("GenPart", genParticleWithLinksType, 100 , help="Hard scattering particles, with ancestry and links"),
-#    "selectedLeptons" : NTupleCollection("lep", leptonType, 50, help="Leptons after the preselection", filter=lambda l : l.pt()>10 ),
-    "selectedPhotons"    : NTupleCollection("gamma", photonType, 50, help="photons with pt>20 and loose cut based ID"),
+    "selectedLeptons" : NTupleCollection("lep", leptonType, 50, help="Leptons after the preselection", filter=lambda l : l.pt()>10 ),
+#    "selectedPhotons"    : NTupleCollection("gamma", photonType, 50, help="photons with pt>20 and loose cut based ID"),
+    "cleanJetsAll"       : NTupleCollection("jet", jetType, 100, help="all jets (w/ x-cleaning, w/ ID applied w/o PUID applied pt>20 |eta|<5.2) , sorted by pt", filter=lambda l : l.pt()>100  ),
     }

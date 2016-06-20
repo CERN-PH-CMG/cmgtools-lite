@@ -6,6 +6,8 @@ from CMGTools.VVResonances.analyzers.LeptonIDOverloader import *
 from CMGTools.VVResonances.analyzers.VVBuilder import *
 from CMGTools.VVResonances.analyzers.VTauBuilder import *
 from CMGTools.VVResonances.analyzers.Skimmer import *
+from CMGTools.VVResonances.analyzers.TopMergingAnalyzer import *
+
 import os
 
 
@@ -204,7 +206,7 @@ metAna = cfg.Analyzer(
 
 jetAna = cfg.Analyzer(
     JetAnalyzer, name='jetAnalyzer',
-    jetCol = 'slimmedJets',
+    jetCol = 'slimmedJetsPuppi',
     copyJetsByValue = False,      #Whether or not to copy the input jets or to work with references (should be 'True' if JetAnalyzer is run more than once)
     genJetCol = 'slimmedGenJets',
     rho = ('fixedGridRhoFastjetAll','',''),
@@ -218,9 +220,9 @@ jetAna = cfg.Analyzer(
     doPuId = False, # Not commissioned in 7.0.X
     recalibrateJets = True, #'MC', # True, False, 'MC', 'Data'
     applyL2L3Residual = True, # Switch to 'Data' when they will become available for Data
-    recalibrationType = "AK4PFchs",
-    mcGT     = "76X_mcRun2_asymptotic_v12",
-    dataGT   = "76X_dataRun2_v15_Run2015D_25ns",
+    recalibrationType = "AK4PFPuppi",
+    mcGT     = "Fall15_25nsV2_MC",
+    dataGT   = "Fall15_25nsV2_DATA",
     jecPath = "${CMSSW_BASE}/src/CMGTools/RootTools/data/jec/",
     shiftJEC = 0, # set to +1 or -1 to apply +/-1 sigma shift to the nominal jet energies
     addJECShifts = False, # if true, add  "corr", "corrJECUp", and "corrJECDown" for each jet (requires uncertainties to be available!)
@@ -256,9 +258,9 @@ jetAnaAK8 = cfg.Analyzer(
     doPuId = False, # Not commissioned in 7.0.X
     recalibrateJets = True, #'MC', # True, False, 'MC', 'Data'
     applyL2L3Residual = True, # Switch to 'Data' when they will become available for Data
-    recalibrationType = "AK8PFchs",
+    recalibrationType = "AK8PFPuppi",
     mcGT     = "Fall15_25nsV2_MC",
-    dataGT   = "76X_dataRun2_v15_Run2015D_25ns",
+    dataGT   = "Fall15_25nsV2_DATA",
     jecPath = "${CMSSW_BASE}/src/CMGTools/RootTools/data/jec/",
     shiftJEC = 0, # set to +1 or -1 to apply +/-1 sigma shift to the nominal jet energies
     addJECShifts = False, # if true, add  "corr", "corrJECUp", and "corrJECDown" for each jet (requires uncertainties to be available!)
@@ -280,12 +282,18 @@ jetAnaAK8 = cfg.Analyzer(
 
 
 
+mergedTruthAna = cfg.Analyzer(TopMergingAnalyzer,name='mergeTruthAna')
+
 
 
 vvAna = cfg.Analyzer(
     VVBuilder,name='vvAna',
     suffix = '',
-    bDiscriminator = "pfCombinedInclusiveSecondaryVertexV2BJetTags"
+    doPUPPI=True,
+    bDiscriminator = "pfCombinedInclusiveSecondaryVertexV2BJetTags",
+#    boostedBdiscriminator = "pfBoostedDoubleSecondaryVertexAK8BJetTags",
+    cDiscriminatorL = "pfCombinedCvsLJetTags",
+    cDiscriminatorB = "pfCombinedCvsBJetTags"
 )
 
 
@@ -320,5 +328,6 @@ coreSequence = [
 #    packedAna,
 #    multiStateAna,
     eventFlagsAna,
-    triggerFlagsAna    
+    triggerFlagsAna,
+    mergedTruthAna
 ]

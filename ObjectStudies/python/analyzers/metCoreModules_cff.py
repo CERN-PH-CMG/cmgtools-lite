@@ -200,7 +200,11 @@ ttHLepSkim = cfg.Analyzer(
 photonAna = cfg.Analyzer(
     PhotonAnalyzer, name='photonAnalyzer',
     photons='slimmedPhotons',
-    doPhotonScaleCorrections=False,
+#    doPhotonScaleCorrections=False,
+    doPhotonScaleCorrections = {
+        'data' : 'EgammaAnalysis/ElectronTools/data/76X_16DecRereco_2015',
+        'isSync': False
+        },
     ptMin = 30,
     etaMax = 2.5,
     gammaID = "POG_SPRING15_25ns_Tight",
@@ -242,6 +246,21 @@ metAna = cfg.Analyzer(
     collectionPostFix = "",
     )
 
+metAnaScaleUp = metAna.clone(name="metAnalyzerScaleUp",
+    copyMETsByValue = True,
+    recalibrate = "type1",
+    jetAnalyzerPostFix = "_jecUp",
+    collectionPostFix = "_jecUp",
+    )
+
+metAnaScaleDown = metAna.clone(name="metAnalyzerScaleDown",
+    copyMETsByValue = True,
+    recalibrate = "type1",
+    jetAnalyzerPostFix = "_jecDown",
+    collectionPostFix = "_jecDown",
+    )
+
+
 metPuppiAna = cfg.Analyzer(
     METAnalyzer, name="metAnalyzerPuppi",
     metCollection     = "slimmedMETsPuppi",
@@ -255,7 +274,7 @@ metPuppiAna = cfg.Analyzer(
     doMetNoMu = False,
     doMetNoEle = False,
     doMetNoPhoton = False,
-    recalibrate = False, # or "type1", or True
+    recalibrate = "type1", # or "type1", or True
     applyJetSmearing = False, # does nothing unless the jet smearing is turned on in the jet analyzer
     old74XMiniAODs = False, # set to True to get the correct Raw MET when running on old 74X MiniAODs
     jetAnalyzerCalibrationPostFix = "Puppi",
@@ -263,6 +282,20 @@ metPuppiAna = cfg.Analyzer(
     candidatesTypes='std::vector<pat::PackedCandidate>',
     dzMax = 0.1,
     collectionPostFix = "Puppi",
+    )
+
+metPuppiAnaScaleUp = metAna.clone(name="metAnalyzerPuppiScaleUp",
+    copyMETsByValue = True,
+    recalibrate = "type1",
+    jetAnalyzerPostFix = "Puppi_jecUp",
+    collectionPostFix = "Puppi_jecUp",
+    )
+
+metPuppiAnaScaleDown = metAna.clone(name="metAnalyzerPuppiScaleDown",
+    copyMETsByValue = True,
+    recalibrate = "type1",
+    jetAnalyzerPostFix = "Puppi_jecDown",
+    collectionPostFix = "Puppi_jecDown",
     )
 
 
@@ -301,7 +334,7 @@ jetAna = cfg.Analyzer(
     jetLepArbitration = (lambda jet,lepton : lepton), # you can decide which to keep in case of overlaps; e.g. if the jet is b-tagged you might want to keep the jet
     cleanSelectedLeptons = True, #Whether to clean 'selectedLeptons' after disambiguation. Treat with care (= 'False') if running Jetanalyzer more than once
     minLepPt = 10,
-    relaxJetId = True,
+    relaxJetId = False,
     doPuId = False, # Not commissioned in 7.0.X
     recalibrateJets = True, #'MC', # True, False, 'MC', 'Data'
     applyL2L3Residual = True, # Switch to 'Data' when they will become available for Data
@@ -325,6 +358,23 @@ jetAna = cfg.Analyzer(
     type1METParams = { 'jetPtThreshold':15., 'skipEMfractionThreshold':0.9, 'skipMuons':True },
     collectionPostFix = ""
     )
+
+## Jets Analyzer (generic)
+jetAnaScaleUp = jetAna.clone(name='jetAnalyzerScaleUp',
+    jetCol = 'slimmedJets',
+    shiftJEC = +1, # set to +1 or -1 to apply +/-1 sigma shift to the nominal jet energies
+    collectionPostFix = "_jecUp",
+    calculateType1METCorrection  = True,
+   )
+
+## Jets Analyzer (generic)
+jetAnaScaleDown = jetAna.clone(name='jetAnalyzerScaleDown',
+    jetCol = 'slimmedJets',
+    shiftJEC = -1, # set to +1 or -1 to apply +/-1 sigma shift to the nominal jet energies
+    collectionPostFix = "_jecDown",
+    calculateType1METCorrection  = True,
+    )
+
 
 jetPuppiAna = cfg.Analyzer(
     JetAnalyzer, name='jetAnalyzerPuppi',
@@ -361,7 +411,23 @@ jetPuppiAna = cfg.Analyzer(
     calculateSeparateCorrections = True, # should be True if recalibrateJets is True, otherwise L1s will be inconsistent
     calculateType1METCorrection  = True,
     type1METParams = { 'jetPtThreshold':15., 'skipEMfractionThreshold':0.9, 'skipMuons':True },
-    collectionPostFix = ""
+    collectionPostFix = "Puppi"
+    )
+
+## Jets Analyzer (generic)
+jetPuppiAnaScaleUp = jetPuppiAna.clone(name='jetAnalyzerPuppiScaleUp',
+    jetCol = 'slimmedJetsPuppi',
+    shiftJEC = +1, # set to +1 or -1 to apply +/-1 sigma shift to the nominal jet energies
+    collectionPostFix = "Puppi_jecUp",
+    calculateType1METCorrection  = True,
+   )
+
+## Jets Analyzer (generic)
+jetPuppiAnaScaleDown = jetPuppiAna.clone(name='jetAnalyzerPuppiScaleDown',
+    jetCol = 'slimmedJetsPuppi',
+    shiftJEC = -1, # set to +1 or -1 to apply +/-1 sigma shift to the nominal jet energies
+    collectionPostFix = "Puppi_jecDown",
+    calculateType1METCorrection  = True,
     )
 
 
@@ -402,10 +468,18 @@ metCoreSequence = [
     photonAna,
 ##### jet modules below
     jetAna,
-##    jetPuppiAna,
+    jetAnaScaleUp,
+    jetAnaScaleDown,
+    jetPuppiAna,
+    jetPuppiAnaScaleUp,
+    jetPuppiAnaScaleDown,
 ##### met modules below
     metAna,
+    metAnaScaleUp,
+    metAnaScaleDown,
     metPuppiAna,
+    metPuppiAnaScaleUp,
+    metPuppiAnaScaleDown,
     eventFlagsAna,
 ##    hbheFilterAna,
 ##### tree

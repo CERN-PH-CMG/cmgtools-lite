@@ -94,7 +94,7 @@ def haddChunks(idir, removeDestDir, cleanUp=False, ignoreDirs=None):
               ignoreDirs.remove(compdir) 
               skipDir = True
             try:
-                prefix,num = compdir.split('_Chunk')
+                prefix,num = compdir.rsplit('_Chunk',1)
             except ValueError:
                 # ok, not a chunk
                 continue

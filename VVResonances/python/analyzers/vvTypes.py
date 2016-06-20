@@ -25,8 +25,15 @@ FatJetType = NTupleObjectType("FatJetType", baseObjectTypes=[jetType], variables
     NTupleVariable("massDropMu",   lambda x : x.substructure.massDrop[0], float),       
     NTupleVariable("massDropY",   lambda x : x.substructure.massDrop[1], float),       
     NTupleVariable("s1BTag",   lambda x : x.subJetTags[0], float),       
-    NTupleVariable("s2BTag",   lambda x : x.subJetTags[1], float)       
-
+    NTupleVariable("s2BTag",   lambda x : x.subJetTags[1], float),
+    # BTV-15-002: AK8 jets (w/ JEC applied, jetID applied, |eta| < 2.4, efficiency are computed by using pT > 300 GeV and pruned m_jet > 50 GeV)
+    NTupleVariable("btagBOOSTED",   lambda x : x.btag("pfBoostedDoubleSecondaryVertexAK8BJetTags"), float),
+    NTupleVariable("s1CTagL",   lambda x : x.subJetCTagL[0], float),       
+    NTupleVariable("s2CTagL",   lambda x : x.subJetCTagL[1], float),       
+    NTupleVariable("s1CTagB",   lambda x : x.subJetCTagB[0], float),       
+    NTupleVariable("s2CTagB",   lambda x : x.subJetCTagB[1], float),
+    NTupleVariable("mergedVTruth",   lambda x : x.mergedTrue, int,"",-1,True),       
+    NTupleVariable("nearestBDRTruth",   lambda x : x.nearestBDR, float,"",-99.0,True)       
 ])
 
 
@@ -34,12 +41,19 @@ FatJetType = NTupleObjectType("FatJetType", baseObjectTypes=[jetType], variables
 PyTauType = NTupleObjectType("PyTau", baseObjectTypes=[fourVectorType], variables = [
     NTupleVariable("nPions",   lambda x : x.nPions, int),       
     NTupleVariable("nMuons", lambda x : x.nMuons, int),       
+    NTupleVariable("nPosMuons", lambda x : x.nPosMuons, int),       
+    NTupleVariable("nNegMuons", lambda x : x.nNegMuons, int),       
     NTupleVariable("nElectrons", lambda x : x.nElectrons, int),       
+    NTupleVariable("nPosElectrons", lambda x : x.nPosElectrons, int),       
+    NTupleVariable("nNegElectrons", lambda x : x.nNegElectrons, int),       
+
     NTupleVariable("nPhotons", lambda x : x.nPhotons, int),       
     NTupleVariable("chargedIso", lambda x : x.chargedIso, float),       
     NTupleVariable("photonIso", lambda x : x.photonIso, float),       
     NTupleVariable("neutralIso", lambda x : x.neutralIso, float),       
-    NTupleVariable("decayMode", lambda x : x.decayMode, int)       
+    NTupleVariable("decayMode", lambda x : x.decayMode, int),       
+    NTupleVariable("leadMuPt", lambda x : x.leadMuonPt, float),       
+    NTupleVariable("leadElePt", lambda x : x.leadElectronPt, float)       
 
 ])
 
@@ -55,8 +69,9 @@ TauTauType = NTupleObjectType("TauTauType", baseObjectTypes=[], variables = [
 
 ])
 
-TauJetType = NTupleObjectType("TauTauType", baseObjectTypes=[], variables = [
+TauJetType = NTupleObjectType("TauJetType", baseObjectTypes=[], variables = [
   NTupleSubObject("LV",  lambda x : x.p4(),fourVectorType),
+  NTupleSubObject("LVWithMET",  lambda x : x.LVWithMET,fourVectorType),
   NTupleSubObject("l1",   lambda x : x.leg1, PyTauType),       
   NTupleSubObject("l1_t1",   lambda x : x.leg1.leg1, fourVectorType),       
   NTupleSubObject("l1_t2",   lambda x : x.leg1.leg2, fourVectorType),       
@@ -81,7 +96,7 @@ VVType = NTupleObjectType("VVType", baseObjectTypes=[], variables = [
   NTupleVariable("nLooseBTags",   lambda x : x.nLooseBTags, int),       
   NTupleVariable("nMediumBTags",   lambda x : x.nMediumBTags, int),       
   NTupleVariable("nTightBTags",   lambda x : x.nTightBTags, int),      
-  NTupleVariable("nOtherLeptons",   lambda x : x.nOtherLeptons, int)      
+  NTupleVariable("nOtherLeptons",   lambda x : x.nOtherLeptons, int),      
 ])
 
 
@@ -89,15 +104,14 @@ VJType = NTupleObjectType("VJType", baseObjectTypes=[VVType], variables = [
     NTupleSubObject("l2",  lambda x : x.leg2,FatJetType),
     NTupleSubObject("l2_softDrop",  lambda x : x.leg2.substructure.softDropJet,fourVectorType),
     NTupleSubObject("l2_pruned",  lambda x : x.leg2.substructure.prunedJet,fourVectorType),
-    NTupleVariable("l2_pruned_massUp",  lambda x : x.leg2.substructure.prunedJetUp,float),
-    NTupleVariable("l2_pruned_massDown",  lambda x : x.leg2.substructure.prunedJetDown,float),
-    NTupleVariable("l2_pruned_massSmear",  lambda x : x.leg2.substructure.prunedJetSmear,float),
+    NTupleVariable("l2_softDrop_massUp",  lambda x : x.leg2.substructure.softDropJetUp,float),
+    NTupleVariable("l2_softDrop_massDown",  lambda x : x.leg2.substructure.softDropJetDown,float),
+    NTupleVariable("l2_softDrop_massSmear",  lambda x : x.leg2.substructure.softDropJetSmear,float),
 
-    NTupleVariable("l2_pruned_nSubJets",  lambda x : len(x.leg2.substructure.prunedSubjets),int),
-    NTupleSubObject("l2_pruned_s1",  lambda x : x.leg2.substructure.prunedSubjets[0] if len(x.leg2.substructure.prunedSubjets)>0 else dummyLV,fourVectorType),
-    NTupleSubObject("l2_pruned_s2",  lambda x : x.leg2.substructure.prunedSubjets[1] if len(x.leg2.substructure.prunedSubjets)>1 else dummyLV,fourVectorType),
-
-
+    NTupleVariable("l2_softDrop_nSubJets",  lambda x : len(x.leg2.substructure.softDropSubjets),int),
+    NTupleSubObject("l2_softDrop_s1",  lambda x : x.leg2.substructure.softDropSubjets[0] if len(x.leg2.substructure.softDropSubjets)>0 else dummyLV,fourVectorType),
+    NTupleSubObject("l2_softDrop_s2",  lambda x : x.leg2.substructure.softDropSubjets[1] if len(x.leg2.substructure.softDropSubjets)>1 else dummyLV,fourVectorType),
+    
 ])
 
 
@@ -121,15 +135,18 @@ LLJJType = NTupleObjectType("LLJJType", baseObjectTypes=[VJType], variables = [
 
 
 JJType = NTupleObjectType("JJType", baseObjectTypes=[VJType], variables = [
+
+
     NTupleSubObject("l1",  lambda x : x.leg1,FatJetType),
     NTupleSubObject("l1_softDrop",  lambda x : x.leg1.substructure.softDropJet,fourVectorType),
     NTupleSubObject("l1_pruned",  lambda x : x.leg1.substructure.prunedJet,fourVectorType),
-    NTupleSubObject("l1_pruned_s1",  lambda x : x.leg1.substructure.prunedSubjets[0] if len(x.leg1.substructure.prunedSubjets)>0 else dummyLV,fourVectorType),
-    NTupleSubObject("l1_pruned_s2",  lambda x : x.leg1.substructure.prunedSubjets[1] if len(x.leg1.substructure.prunedSubjets)>1 else dummyLV,fourVectorType),
-    NTupleVariable("l1_pruned_nSubJets",  lambda x : len(x.leg1.substructure.prunedSubjets),int),
-    NTupleVariable("l1_pruned_massUp",  lambda x : x.leg1.substructure.prunedJetUp,float),
-    NTupleVariable("l1_pruned_massDown",  lambda x : x.leg1.substructure.prunedJetDown,float),
-    NTupleVariable("l1_pruned_massSmear",  lambda x : x.leg1.substructure.prunedJetSmear,float),
+    NTupleVariable("l1_softDrop_massUp",  lambda x : x.leg1.substructure.softDropJetUp,float),
+    NTupleVariable("l1_softDrop_massDown",  lambda x : x.leg1.substructure.softDropJetDown,float),
+    NTupleVariable("l1_softDrop_massSmear",  lambda x : x.leg1.substructure.softDropJetSmear,float),
+    NTupleVariable("l1_softDrop_nSubJets",  lambda x : len(x.leg1.substructure.softDropSubjets),int),
+    NTupleSubObject("l1_softDrop_s1",  lambda x : x.leg1.substructure.softDropSubjets[0] if len(x.leg1.substructure.softDropSubjets)>0 else dummyLV,fourVectorType),
+    NTupleSubObject("l1_softDrop_s2",  lambda x : x.leg1.substructure.softDropSubjets[1] if len(x.leg1.substructure.softDropSubjets)>1 else dummyLV,fourVectorType),
+
 
 ])
 

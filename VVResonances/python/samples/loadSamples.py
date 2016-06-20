@@ -35,6 +35,11 @@ background = TTs+WJets+ZJetsToNuNuHT+GJetsHT+QCDHT+DiBosons+DYJetsM5to50HT
 #Load signal from here 
 from CMGTools.VVResonances.samples.signal_13TeV_76X import *
 
+
+#and the 750 GeV samples for the tau analysis
+from CMGTools.VVResonances.samples.signal_750 import *
+
+
 mcSamples = background+signalSamples
 #load triggers
 from CMGTools.RootTools.samples.triggers_13TeV_Spring15 import *
@@ -53,7 +58,7 @@ MET=[MET_Run2015D_16Dec]
 
 #Load JSON
 silverJSON='/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions15/13TeV/Reprocessing/Cert_13TeV_16Dec2015ReReco_Collisions15_25ns_JSON_Silver_v2.txt'
-goldenJSON='/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions15/13TeV/Reprocessing/Cert_13TeV_16Dec2015ReReco_Collisions15_25ns_JSON_v2.txt.txt'
+goldenJSON='/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions15/13TeV/Reprocessing/Cert_13TeV_16Dec2015ReReco_Collisions15_25ns_JSON_v2.txt'
 
 
 #Single electron or muon to be used for lnu+J and ll+J (silver)

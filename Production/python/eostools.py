@@ -17,7 +17,13 @@ def setCAFPath():
     if caf not in sys.path:
         sys.path.append(caf)
 setCAFPath()
-import cmsIO
+try:
+    import cmsIO
+except ImportError as e:
+    import logging
+    logger = logging.getLogger(__name__)
+    logger.warning(str(e))
+    logger.warning("wasn't able to import cmsIO, which this job might not need unless it uses EOS.")
 
 def runXRDCommand(path, cmd, *args):
     """Run an xrd command.

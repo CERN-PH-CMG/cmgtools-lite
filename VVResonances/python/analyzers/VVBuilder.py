@@ -1,5 +1,5 @@
 from PhysicsTools.Heppy.analyzers.core.Analyzer import Analyzer
-
+from PhysicsTools.Heppy.analyzers.core.AutoHandle import AutoHandle
 from CMGTools.VVResonances.tools.Pair import Pair
 from PhysicsTools.HeppyCore.utils.deltar import *
 from CMGTools.VVResonances.tools.VectorBosonToolBox import VectorBosonToolBox
@@ -16,6 +16,14 @@ class VVBuilder(Analyzer):
         super(VVBuilder,self).__init__(cfg_ana, cfg_comp, looperName)
         self.vbTool = VectorBosonToolBox()
         self.smearing=ROOT.TRandom(10101982)
+        if hasattr(self.cfg_ana,"doPUPPI") and self.cfg_ana.doPUPPI:
+            self.doPUPPI=True
+        else:
+            self.doPUPPI=False
+
+    def declareHandles(self):
+        super(VVBuilder, self).declareHandles()
+        self.handles['packed'] = AutoHandle( 'packedPFCandidates', 'std::vector<pat::PackedCandidate>' )
 
     def copyLV(self,LV):
         out=[]
@@ -23,7 +31,7 @@ class VVBuilder(Analyzer):
             out.append(ROOT.math.XYZTLorentzVector(i.px(),i.py(),i.pz(),i.energy()))
         return out    
 
-    def substructure(self,jet):
+    def substructure(self,jet,event):
         #if we already filled it exit
         if hasattr(jet,'substructure'):
             return
@@ -31,24 +39,10 @@ class VVBuilder(Analyzer):
         constituents=[]
         LVs = ROOT.std.vector("math::XYZTLorentzVector")()
 
-        for i in range(0,jet.numberOfDaughters()):
-            if jet.daughter(i).numberOfDaughters()==0:
-                if jet.daughter(i).pt()>13000 or jet.daughter(i).pt()==float('Inf'):
-                    continue
-                if hasattr(self.cfg_ana,"doPUPPI") and self.cfg_ana.doPUPPI and jet.daughter(i).puppiWeight()>0.0:
-                    
-                    LVs.push_back(jet.daughter(i).p4()*jet.daughter(i).puppiWeight())
-                else:
-                    LVs.push_back(jet.daughter(i).p4())
-            else:
-                for j in range(0,jet.daughter(i).numberOfDaughters()):
-                    if jet.daughter(i).daughter(j).pt()>13000 or jet.daughter(i).daughter(j).pt()==float('Inf'):
-                        continue
-                    if jet.daughter(i).daughter(j).numberOfDaughters()==0:
-                        if hasattr(self.cfg_ana,"doPUPPI") and self.cfg_ana.doPUPPI and jet.daughter(i).daughter(j).puppiWeight()>0.0:
-                            LVs.push_back(jet.daughter(i).daughter(j).p4()*jet.daughter(i).daughter(j).puppiWeight())
-                        else:
-                            LVs.push_back(jet.daughter(i).daughter(j).p4())
+        #we take LVs around the jets and recluster
+        for LV in event.LVs:
+            if deltaR(LV.eta(),LV.phi(),jet.eta(),jet.phi())<1.2:
+                LVs.push_back(LV)
         
         interface = ROOT.cmg.FastJetInterface(LVs,-1.0,0.8,1,0.01,5.0,4.4)
         #make jets
@@ -57,14 +51,19 @@ class VVBuilder(Analyzer):
         outputJets = interface.get(True)
         if len(outputJets)==0:
             return
+
+        #For the pruned sub jets +PUPPIcalculate the correction
+        #without L1
+        corrNoL1 = jet.corr/jet.CorrFactor_L1
+
+        #if PUPPI reset the jet four vector
+        if self.doPUPPI:
+            jet.setP4(outputJets[0]*jet.corr)
         
         jet.substructure=Substructure()
         #OK!Now save the area
         jet.substructure.area=interface.getArea(1,0)
 
-        #For the pruned sub jets calculate the correction
-        #without L1
-        corrNoL1 = jet.corr/jet.CorrFactor_L1
 
 
         #Get pruned lorentzVector and subjets
@@ -82,6 +81,8 @@ class VVBuilder(Analyzer):
 
         #getv the btag of the pruned subjets
         jet.subJetTags=[-1.0,-1.0]
+        jet.subJetCTagL=[-1.0,-1.0]
+        jet.subJetCTagB=[-1.0,-1.0]
 
         for i,s in enumerate(jet.substructure.prunedSubjets):
             for o in jet.subjets("SoftDrop"):
@@ -89,6 +90,8 @@ class VVBuilder(Analyzer):
                 if dr<0.1:
                     found=True
                     jet.subJetTags[i] = o.bDiscriminator(self.cfg_ana.bDiscriminator)
+                    jet.subJetCTagL[i] = o.bDiscriminator(self.cfg_ana.cDiscriminatorL)
+                    jet.subJetCTagB[i] = o.bDiscriminator(self.cfg_ana.cDiscriminatorB)
                     break;
 
 
@@ -97,7 +100,7 @@ class VVBuilder(Analyzer):
 
         interface.softDrop(True,0,0.0,0.1,0.8)
         jet.substructure.softDropJet = self.copyLV(interface.get(False))[0]*corrNoL1
-        jet.substructure.softDropMassUp = 1.05*jet.substructure.softDropJet.mass()
+        jet.substructure.softDropJetUp = 1.05*jet.substructure.softDropJet.mass()
         jet.substructure.softDropJetDown = 0.95*jet.substructure.softDropJet.mass()
         jet.substructure.softDropJetSmear = jet.substructure.softDropJet.mass()*self.smearing.Gaus(1.0,0.1)
 
@@ -142,8 +145,7 @@ class VVBuilder(Analyzer):
         VV.nMediumBTags = len(filter(lambda x: x.bDiscriminator(self.cfg_ana.bDiscriminator)>0.89,jetsCentral))
         VV.nTightBTags = len(filter(lambda x: x.bDiscriminator(self.cfg_ana.bDiscriminator)>0.97,jetsCentral))
         VV.nOtherLeptons = len(leptons)
-
-
+        
     def selectJets(self,jets,func,otherObjects,DR,otherObjects2=None,DR2=0.0):
         output=[]
         for j in jets:
@@ -200,7 +202,7 @@ class VVBuilder(Analyzer):
             return output
         
         #substructure
-        self.substructure(VV.leg2)
+        self.substructure(VV.leg2,event)
         if not hasattr(VV.leg2,'substructure'):
             return output
 
@@ -258,7 +260,7 @@ class VVBuilder(Analyzer):
             return output
         
         #substructure
-        self.substructure(VV.leg2)
+        self.substructure(VV.leg2,event)
 
         if not hasattr(VV.leg2,"substructure"):
             return output
@@ -315,7 +317,7 @@ class VVBuilder(Analyzer):
         VV=Pair(bestZ,bestJet)
         
         #substructure
-        self.substructure(VV.leg2)
+        self.substructure(VV.leg2,event)
 
         if not hasattr(VV.leg2,"substructure"):
             return output
@@ -347,15 +349,12 @@ class VVBuilder(Analyzer):
 
         VV=Pair(fatJets[0],fatJets[1])
 
-
         #kinematics
         if abs(VV.leg1.eta()-VV.leg2.eta())>1.3 or VV.mass()<1000:
             return output
 
-
-
-        self.substructure(VV.leg1)
-        self.substructure(VV.leg2)
+        self.substructure(VV.leg1,event)
+        self.substructure(VV.leg2,event)
 
 
         if not hasattr(VV.leg1,"substructure"):
@@ -395,7 +394,7 @@ class VVBuilder(Analyzer):
         if VV.deltaPhi()<2.0 or VV.leg1.pt()<200:
             return output
 
-        self.substructure(VV.leg2)
+        self.substructure(VV.leg2,event)
 
         if not hasattr(VV.leg2,"substructure"):
             return output
@@ -420,6 +419,27 @@ class VVBuilder(Analyzer):
 
 
     def process(self, event):
+        self.readCollections( event.input )
+        #first create a set of four vectors to recluster jets later
+        event.LVs = ROOT.std.vector("math::XYZTLorentzVector")()
+        #load packed candidatyes
+        cands = self.handles['packed'].product()
+
+        #if use PUPPI weigh them or lese just pass through
+        if self.doPUPPI:
+            for c in cands:
+                if c.pt()>13000 or c.pt()==float('Inf'):
+                    continue;
+                if c.puppiWeight()>0:
+                    event.LVs.push_back(c.p4()*c.puppiWeight())
+        else:
+           for c in cands:
+                if c.pt()>13000 or c.pt()==float('Inf'):
+                    continue;
+                event.LVs.push_back(c.p4())
+ 
+
+
 
         LNuJJ=self.makeWV(event)
         LLJJ =self.makeZV(event)

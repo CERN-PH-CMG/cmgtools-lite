@@ -1,5 +1,5 @@
 import ROOT
-
+import json
 
 class Fitter(object):
     def __init__(self,poi = ['x']):
@@ -62,6 +62,36 @@ class Fitter(object):
 
         bernsteinPDF = ROOT.FastVerticalInterpHistPdf(name,name,self.w.var(poi),pdfList,cList)
         getattr(self.w,'import')(bernsteinPDF,ROOT.RooFit.Rename(name))
+
+
+
+
+    def mjjParamErfExp(self,name,jsonFile):
+        self.w.factory("MH[2000]")
+        self.w.var("MH").setConstant(1)
+        varToReplace='x'
+
+        f=open(jsonFile)
+        info=json.load(f)
+
+        self.w.factory("expr::{name}('({param})',x)".format(name='mean',param=info['mean']).replace("MH",varToReplace))
+        self.w.factory("expr::{name}('({param})',x)".format(name='sigma',param=info['sigma']).replace("MH",varToReplace))
+        self.w.factory("expr::{name}('MH*0+{param}',x)".format(name='alpha',param=info['alpha']).replace("MH",varToReplace))
+        self.w.factory("expr::{name}('MH*0+{param}',x)".format(name='n',param=info['n']).replace("MH",varToReplace))
+        vvMass = ROOT.RooCBShape(name+'Peak','peak',self.w.var('y'),self.w.function('mean'),self.w.function('sigma'),self.w.function('alpha'),self.w.function('n'))
+        getattr(self.w,'import')(vvMass,ROOT.RooFit.Rename(name+'Peak'))
+
+
+        self.w.factory("expr::{name}('MH*0+{param}',MH)".format(name='slope',param=info['slope']).replace("MH",varToReplace))
+        self.w.factory("expr::{name}('MH*0+{param}',MH)".format(name='f',param=info['f']).replace("MH",varToReplace))
+        self.w.factory("RooExponential::{name}({var},{SLOPE})".format(name=name+'Expo',var='y',SLOPE='slope').replace("MH",varToReplace))
+        self.w.factory("SUM::{name}1({f}*{PDF1},{PDF2})".format(name=name,f='f',PDF1=name+"Peak",PDF2=name+'Expo'))
+        f.close()
+        self.erfexp(name+'2','y')
+        self.w.factory("SUM::{name}(c_3[0.5,0,1]*{name}1,{name}2)".format(name=name))
+        
+
+
 
 
 
@@ -152,11 +182,59 @@ class Fitter(object):
     def erfexp(self,name = 'model',poi='x'):      
         ROOT.gSystem.Load("libHiggsAnalysisCombinedLimit")
 
-        self.w.factory("c_0[1,-1000,1000]")
-        self.w.factory("c_1[20,-30000,30000]")
-        self.w.factory("c_2[-5,-1000000,100000]")
+        self.w.factory("c_0[-0.1,-1000,0]")
+        self.w.factory("c_1[10,-30000,30000]")
+        self.w.factory("c_2[10,-100000,100000]")
         erfexp = ROOT.RooErfExpPdf(name,name,self.w.var(poi),self.w.var("c_0"),self.w.var("c_1"),self.w.var("c_2"))
         getattr(self.w,'import')(erfexp,ROOT.RooFit.Rename(name))
+
+
+    def erfexpCB(self,name = 'model',poi='x'):      
+        ROOT.gSystem.Load("libHiggsAnalysisCombinedLimit")
+        self.erfexp(name+'NonRes',poi)
+        ROOT.gSystem.Load("libHiggsAnalysisCombinedLimit")
+        self.w.factory("mean[80,75,85]")
+        self.w.factory("sigma[10,10,30]")
+        self.w.factory("alpha1[1]")
+        self.w.factory("n1[10,1,100]")
+        self.w.factory("alpha2[1]")
+        self.w.factory("n2[10,1,100]")
+
+        peak = ROOT.RooDoubleCB(name+'S','modelS',self.w.var('x'),self.w.var('mean'),self.w.var('sigma'),self.w.var('alpha1'),self.w.var('n1'),self.w.var('alpha2'),self.w.var('n2'))
+        getattr(self.w,'import')(peak,ROOT.RooFit.Rename(name+'S'))
+        self.w.factory("SUM::{name}(fR[0.2,0,1]*{name}NonRes,{name}S)".format(name=name))
+
+
+    def erfexpTimesCB(self,name = 'model',poi='x'):      
+        ROOT.gSystem.Load("libHiggsAnalysisCombinedLimit")
+        self.erfexp(name+'NonRes',poi)
+        ROOT.gSystem.Load("libHiggsAnalysisCombinedLimit")
+        self.w.factory("mean[80,75,85]")
+        self.w.factory("sigma[10,10,30]")
+        self.w.factory("alpha1[1]")
+        self.w.factory("n1[10,1,100]")
+        self.w.factory("alpha2[1]")
+        self.w.factory("n2[10,1,100]")
+
+        peak = ROOT.RooDoubleCB(name+'S','modelS',self.w.var('x'),self.w.var('mean'),self.w.var('sigma'),self.w.var('alpha1'),self.w.var('n1'),self.w.var('alpha2'),self.w.var('n2'))
+        getattr(self.w,'import')(peak,ROOT.RooFit.Rename(name+'S'))
+        self.w.factory("PROD::{name}({name}NonRes,{name}S)".format(name=name))
+
+
+
+    def erfexp2Gaus(self,name = 'model',poi='x'):      
+        ROOT.gSystem.Load("libHiggsAnalysisCombinedLimit")
+
+        self.w.factory("c_0[0,-1000,1000]")
+        self.w.factory("c_1[20,-30000,30000]")
+        self.w.factory("c_2[-10,-1000000,100000]")
+        erfexp = ROOT.RooErfExpPdf(name+"Erf",name,self.w.var(poi),self.w.var("c_0"),self.w.var("c_1"),self.w.var("c_2"))
+        getattr(self.w,'import')(erfexp,ROOT.RooFit.Rename(name))
+        self.w.factory("RooGaussian::gaus1("+poi+",mean1[80,60,100],sigma1[10,0,200])")
+        self.w.factory("RooGaussian::gaus2("+poi+",mean2[0,200],sigma2[0,200])")
+        self.w.factory("SUM::gaus(f[0,1]*gaus1,gaus2)")
+        self.w.factory("PROD::"+name+"(gaus,"+name+"Erf)")
+
 
 
     def twoErfexp(self,name = 'model',poi='x'):      
@@ -270,6 +348,90 @@ class Fitter(object):
         self.w.factory("RooExponential::"+name+'MJJ2('+poi[1]+',slope[-1,-2,2])')
         self.w.factory("SUM::"+name+'MJJ(f[0.9,0,1]*'+name+'MJJ1,'+name+'MJJ2)')
         self.w.factory("PROD::"+name+"("+name+"MJJ,"+name+"MVV)")
+
+
+
+    def signalMJJ(self,name,poi):
+        ROOT.gSystem.Load("libHiggsAnalysisCombinedLimit")
+        self.w.factory("c_0[80,40,300]")
+        self.w.factory("c_1[10,1,30]")
+        self.w.factory("c_2[0.5,5]")
+        self.w.factory("c_3[6]")
+        peak_jj = ROOT.RooCBShape(name+"MJJ1",'modelMJJ',self.w.var(poi),self.w.var('c_0'),self.w.function('c_1'),self.w.var('c_2'),self.w.var('c_3'))
+        getattr(self.w,'import')(peak_jj,ROOT.RooFit.Rename(name+"MJJ1"))
+        self.w.factory("RooExponential::"+name+'MJJ2('+poi+',c_4[-1,-2,2])')
+        self.w.factory("SUM::"+name+'(c_5[0.9,0,1]*'+name+'MJJ1,'+name+'MJJ2)')
+
+
+    def signalMJJCB(self,name,poi):
+        ROOT.gSystem.Load("libHiggsAnalysisCombinedLimit")
+        self.w.factory("c_0[80,40,300]")
+        self.w.factory("c_1[10,1,30]")
+        self.w.factory("c_2[0.5,5]")
+        self.w.factory("c_3[6]")
+        self.w.factory("c_4[0.5,5]")
+        self.w.factory("c_5[6]")
+        peak_jj = ROOT.RooDoubleCB(name,'modelMJJ',self.w.var(poi),self.w.var('c_0'),self.w.function('c_1'),self.w.var('c_2'),self.w.var('c_3'),self.w.var("c_4"),self.w.var("c_5"))
+        getattr(self.w,'import')(peak_jj,ROOT.RooFit.Rename(name))
+
+
+
+
+    def signalMJJPara(self,name,poi):
+        ROOT.gSystem.Load("libHiggsAnalysisCombinedLimit")
+
+        self.w.factory("mean0[80,50,100]")
+        self.w.factory("mean1[0,-0.005,0.005]")
+        self.w.factory("mean2[0,-2e-5,2e-5]")
+        self.w.factory("mean3[0]")
+        self.w.factory("mean4[0]")
+
+        self.w.factory("expr::mean('(mean0+mean1*{x}+mean2*{x}*{x}+mean3*{x}*{x}*{x}+mean4*{x}*{x}*{x}*{x})',mean0,mean1,mean2,mean3,mean4,{x})".format(x=poi[1]))
+
+        self.w.factory("sigma0[10,0,20]")
+        self.w.factory("sigma1[0,-0.002,0.002]")
+        self.w.factory("sigma2[0,-2e-5,2e-5]")
+        self.w.factory("sigma3[0]")
+        self.w.factory("sigma4[0]")
+        self.w.factory("expr::sigma('(sigma0+sigma1*{x}+sigma2*{x}*{x}+sigma3*{x}*{x}*{x}+sigma4*{x}*{x}*{x}*{x})',sigma0,sigma1,sigma2,sigma3,sigma4,{x})".format(x=poi[1]))
+
+        self.w.factory("alpha10[3,0.5,10]")
+        self.w.factory("alpha11[0.0,-0.002,0.002]")
+        self.w.factory("alpha12[0.0,-5e-5,5e-5]")
+        self.w.factory("alpha13[0.0]")
+        self.w.factory("alpha14[0.0]")
+        self.w.factory("expr::alpha1('(alpha10+alpha11*{x}+alpha12*{x}*{x}+alpha13*{x}*{x}*{x}+alpha14*{x}*{x}*{x}*{x})',alpha10,alpha11,alpha12,alpha13,alpha14,{x})".format(x=poi[1]))
+        self.w.factory("alpha20[3,0.5,10]")
+        self.w.factory("alpha21[0.0,-0.002,0.002]")
+        self.w.factory("alpha22[0.0,-2e-5,2e-5]")
+        self.w.factory("alpha23[0.0]")
+        self.w.factory("alpha24[0.0]")
+        self.w.factory("expr::alpha2('(alpha20+alpha21*{x}+alpha22*{x}*{x}+alpha23*{x}*{x}*{x}+alpha24*{x}*{x}*{x}*{x})',alpha20,alpha21,alpha22,alpha23,alpha24,{x})".format(x=poi[1]))
+
+        self.w.factory("n1[6]")
+        self.w.factory("n2[6]")
+
+
+        self.w.factory("slope0[0.0,-1,1]")
+        self.w.factory("slope1[0,-0.0005,0.0005]")
+        self.w.factory("slope2[0,-2e-5,23-5]")
+        self.w.factory("slope3[0]")
+        self.w.factory("slope4[0]")
+        self.w.factory("expr::slope('(slope0+slope1*{x}+slope2*{x}*{x}+slope3*{x}*{x}*{x}+slope4*{x}*{x}*{x}*{x})',slope0,slope1,slope2,slope3,slope4,{x})".format(x=poi[1]))
+
+        self.w.factory("f0[0.8,0,1]")
+        self.w.factory("f1[0,-0.0003,0.0003]")
+        self.w.factory("f2[0,-2e-5,2e-5]")
+        self.w.factory("f3[0]")
+        self.w.factory("f4[0]")
+        self.w.factory("expr::f('(f0+f1*{x}+f2*{x}*{x}+f3*{x}*{x}*{x}+f4*{x}*{x}*{x}*{x})',f0,f1,f2,f3,f4,{x})".format(x=poi[1]))
+
+
+#        peak_jj = ROOT.RooDoubleCB(name+"MJJ1",'modelMJJ',self.w.var(poi[0]),self.w.function('mean'),self.w.function('sigma'),self.w.function('alpha1'),self.w.var('n1'),self.w.function('alpha2'),self.w.var('n2'))
+        peak_jj = ROOT.RooDoubleCB(name,'modelMJJ',self.w.var(poi[0]),self.w.function('mean'),self.w.function('sigma'),self.w.function('alpha1'),self.w.var('n1'),self.w.function('alpha2'),self.w.var('n2'))
+        getattr(self.w,'import')(peak_jj,ROOT.RooFit.Rename(name+"MJJ1"))
+#        self.w.factory("RooExponential::"+name+'MJJ2('+poi[0]+',slope)')
+#        self.w.factory("SUM::"+name+'(f*'+name+'MJJ1,'+name+'MJJ2)')
 
 
     def doublePol(self,name = 'model',poi='x'):
@@ -456,11 +618,33 @@ class Fitter(object):
 
 
     def erfpow(self,name = 'model',poi='x'):      
-        self.w.factory("c_0[0,-20,0]")
-        self.w.factory("c_1[800,0,2000]")
-        self.w.factory("c_2[1000,100,5000]")      
+        ROOT.gSystem.Load("libHiggsAnalysisCombinedLimit")
+        self.w.factory("c_0[-4.6,-9.0,0.0]")
+        self.w.factory("c_1[600,500,20000]")
+        self.w.factory("c_2[500,100,10000]")      
         erfexp = ROOT.RooErfPowPdf(name,name,self.w.var(poi),self.w.var("c_0"),self.w.var("c_1"),self.w.var("c_2"))
         getattr(self.w,'import')(erfexp,ROOT.RooFit.Rename(name))
+
+
+
+    def erfpowParam(self,name = 'model',poi=['x','X']):      
+        ROOT.gSystem.Load("libHiggsAnalysisCombinedLimit")
+        self.w.factory("c0[-4.6,-9.0,0.0]")
+        self.w.factory("c1_0[1000,500,20000]")
+        self.w.factory("c1_1[-1,-500,500]")
+        self.w.factory("c1_2[0,-5,5]")
+        self.w.factory("c1_3[0,-0.01,0.01]")
+        self.w.factory("expr::c1('c1_0+c1_1*{x}+c1_2*{x}*{x}+c1_3*{x}*{x}*{x}',c1_0,c1_1,c1_2,c1_3,{x})".format(x=poi[1]))
+
+        self.w.factory("c2_0[1000,500,20000]")
+        self.w.factory("c2_1[-1,-500,500]")
+        self.w.factory("c2_2[0,-1,1]")
+        self.w.factory("expr::c2('c2_0+c2_1*{x}+c2_2*{x}*{x}',c2_0,c2_1,c2_2,{x})".format(x=poi[1]))
+
+        erfexp = ROOT.RooErfPowPdf(name,name,self.w.var(poi[0]),self.w.var("c0"),self.w.function("c1"),self.w.function("c2"))
+        getattr(self.w,'import')(erfexp,ROOT.RooFit.Rename(name))
+
+
 
     def erfpow2(self,name = 'model',poi='x'):      
         self.w.factory("c_0[0,-20,0]")
@@ -564,6 +748,18 @@ class Fitter(object):
         self.frame=self.w.var(poi).frame()
         self.w.data(data).plotOn(self.frame)
         self.w.pdf(model).plotOn(self.frame)
+        self.c=ROOT.TCanvas("c","c")
+        self.c.cd()
+        self.frame.Draw()
+        self.c.SaveAs(filename)
+        return self.frame.chiSquare()
+
+
+    def projectionCond(self,model = "model",data="data",poi="y",otherpoi="x",filename="fit.root"):
+        
+        self.frame=self.w.var(poi).frame()
+        self.w.data(data).plotOn(self.frame)
+        self.w.pdf(model).plotOn(self.frame,ROOT.RooFit.ProjWData(ROOT.RooArgSet(self.w.var(otherpoi)),self.w.data(data)))
         self.c=ROOT.TCanvas("c","c")
         self.c.cd()
         self.frame.Draw()

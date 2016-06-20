@@ -1,5 +1,4 @@
 from CMGTools.TTHAnalysis.treeReAnalyzer import *
-from CMGTools.TTHAnalysis.tools.conept import conept
 
 class LeptonFakeRateQCDVars:
     def __init__(self,leptonSel,jetSel, jetSort = lambda jet:jet.pt, label=None, isMC=True):
@@ -10,18 +9,15 @@ class LeptonFakeRateQCDVars:
         self.jetvars = "pt eta phi btagCSV mcFlavour".split()
     def listBranches(self):
         label = self.label
-        return [ ("nLepGood","I") ] + [ ("LepGood_awayJet%s_%s"%(self.label,var),"F",8,"nLepGood") for var in self.jetvars ] + [ ("LepGood_CorrConePt","F",8,"nLepGood") ]
+        return [ ("nLepGood","I") ] + [ ("LepGood_awayJet%s_%s"%(self.label,var),"F",8,"nLepGood") for var in self.jetvars ]
     def __call__(self,event):
         leps = [l for l in Collection(event,"LepGood","nLepGood")]
         jetsc = [j for j in Collection(event,"Jet","nJet")]
         ret = { "nLepGood" : event.nLepGood }
         for var in self.jetvars:
             ret["LepGood_awayJet%s_%s"%(self.label,var)] = [-99.0] * event.nLepGood
-            ret["LepGood_CorrConePt"] = [-99.0] * event.nLepGood
         for il,lep in enumerate(leps):
             if not self.leptonSel(lep): continue
-            ret["LepGood_CorrConePt"][il] = conept(lep.pt,lep.miniRelIso,lep.jetPtRatiov2,lep.jetPtRelv2,lep.pdgId,2)
-#            print ret["LepGood_CorrConePt"][il]/lep.pt,lep.miniRelIso,lep.jetPtRatiov2,lep.jetPtRelv2,lep.pdgId
             jets = [ j for j in jetsc if self.jetSel(j,lep,deltaR(j,lep)) ]
             if len(jets) == 0: continue 
             jet = max(jets, key=self.jetSort)
