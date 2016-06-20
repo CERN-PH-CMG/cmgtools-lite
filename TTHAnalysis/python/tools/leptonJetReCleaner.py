@@ -65,14 +65,12 @@ class LeptonJetReCleaner:
                 ])
 
         biglist.extend([
-                    ("nTauSel"     +label, "I"), 
-                    ("nTightTauSel"+label, "I"), 
-                      ])
-
-        for tfloat in "pt eta phi mass".split():
+                ("nTauSel"     +label, "I"), 
+                ("nTightTauSel"+label, "I"), 
+                ("iTauSel"+label,"I",20,"nTauSel"+label)
+                ])
+        for tfloat in "pt eta phi mass reclTauId".split():
             biglist.append( ("TauSel"+label+"_"+tfloat,"F",20,"nTauSel"+label) )
-        for tfloat in "pdgId ewkId idxTauGood idxTauOther".split():
-            biglist.append( ("TauSel"+label+"_"+tfloat,"I",20,"nTauSel"+label) )
 
         for key in self.systsJEC:
             biglist.extend([
@@ -89,8 +87,6 @@ class LeptonJetReCleaner:
             for jfloat in "pt eta phi mass btagCSV rawPt".split():
                 for key in self.systsJEC:
                     biglist.append( ("JetSel"+label+self.systsJEC[key]+"_"+jfloat,"F",20,"nJetSel"+label) )
-                    biglist.append( ("DiscJetSel"+label+self.systsJEC[key]+"_"+jfloat,"F",20,"nDiscJetSel"+label) )
-
 
         return biglist
 
@@ -205,30 +201,25 @@ class LeptonJetReCleaner:
                 if self.cleanTau(lep, t, dr):
                     t._clean = False
         # 2. compute the tau list
-        goodtaus = []
+        ret["iTauSel"+postfix]=[]
         for itc, t in enumerate(taucollcleaned):
             if not t._clean        : continue
             if not self.looseTau(t): continue
-            setattr(t, "idxTauGood" , itc)
-            setattr(t, "idxTauOther", -1 )
-            setattr(t, "pdgId"      , -1 * t.charge * 15  )
-            setattr(t, "ewkId"      , 1 + self.tightTau(t))
-            goodtaus.append(t)
+            setattr(t, "reclTauId", 1 + self.tightTau(t))
+            ret["iTauSel"+postfix].append(itc)
         for itd, t in enumerate(taucolldiscarded):
             if not t._clean        : continue
             if not self.looseTau(t): continue
-            setattr(t, "idxTauGood" , -1                  )
-            setattr(t, "idxTauOther", itd                 )
-            setattr(t, "pdgId"      , -1 * t.charge * 15  )
-            setattr(t, "ewkId"      , 1 + self.tightTau(t))
-            goodtaus.append(t)
+            setattr(t, "reclTauId", 1 + self.tightTau(t))
+            ret["iTauSel"+postfix].append(-1-itd)
         # 3. sort the taus by pt
-        goodtaus.sort(key = lambda g: g.pt, reverse = True)
+        ret["iTauSel"+postfix].sort(key = lambda idx : taucollcleaned[idx].pt if idx >= 0 else taucolldiscarded[-1-idx].pt, reverse = True)
+        goodtaus = [(taucollcleaned[idx] if idx >= 0 else taucolldiscarded[-1-idx]) for idx in ret["iTauSel"+postfix]]
         ret["nTauSel"      + postfix] = len(goodtaus)
-        ret["nTightTauSel" + postfix] = sum([1 for g in goodtaus if g.ewkId == 2])
+        ret["nTightTauSel" + postfix] = sum([1 for g in goodtaus if g.reclTauId == 2])
         # 4. store the tau 4-vectors
         if postfix==self.label:
-            for tfloat in "pt eta phi mass pdgId ewkId idxTauGood idxTauOther".split():
+            for tfloat in "pt eta phi mass reclTauId".split():
                 tauret[tfloat] = []
                 for g in goodtaus:
                     tauret[tfloat].append( getattr(g, tfloat) )
@@ -293,8 +284,6 @@ class LeptonJetReCleaner:
             fullret["TauSel%s_%s" % (self.label,k)] = v
         for k,v in jetret.iteritems(): 
             fullret["JetSel%s_%s" % (self.label,k)] = v
-        for k,v in discjetret.iteritems(): 
-            fullret["DiscJetSel%s_%s" % (self.label,k)] = v
         return fullret
 
 
