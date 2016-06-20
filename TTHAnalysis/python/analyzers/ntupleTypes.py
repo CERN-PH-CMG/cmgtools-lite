@@ -222,6 +222,8 @@ svType = NTupleObjectType("sv", baseObjectTypes = [ fourVectorType ], variables 
     NTupleVariable("cosTheta", lambda x : x.cosTheta, help="Cosine of the angle between the 3D displacement and the momentum"),
     NTupleVariable("mva", lambda x : x.mva, help="MVA discriminator"),
     NTupleVariable("jetPt",  lambda x : x.jet.pt() if x.jet != None else 0, help="pT of associated jet"),
+    NTupleVariable("jetEta",  lambda x : x.jet.eta() if x.jet != None else 0, help="eta of associated jet"),
+    NTupleVariable("jetDR",  lambda x : deltaR(x.jet.eta(),x.jet.phi(),x.eta(),x.phi()) if x.jet != None else 0, help="deltaR to associated jet"),
     NTupleVariable("jetBTagCSV",   lambda x : x.jet.btag('pfCombinedInclusiveSecondaryVertexV2BJetTags') if x.jet != None else -99, help="CSV b-tag of associated jet"),
     NTupleVariable("jetBTagCMVA",  lambda x : x.jet.btag('pfCombinedMVABJetTags') if x.jet != None else -99, help="CMVA b-tag of associated jet"),
     NTupleVariable("mcMatchNTracks", lambda x : getattr(x, 'mcMatchNTracks', -1), int, mcOnly=True, help="Number of mc-matched tracks in SV"),

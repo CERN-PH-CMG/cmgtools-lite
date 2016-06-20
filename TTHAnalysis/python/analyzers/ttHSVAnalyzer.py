@@ -35,6 +35,10 @@ class ttHSVAnalyzer( Analyzer ):
     def __init__(self, cfg_ana, cfg_comp, looperName ):
         super(ttHSVAnalyzer,self).__init__(cfg_ana,cfg_comp,looperName)
 	self.SVMVA = SVMVA("%s/src/CMGTools/TTHAnalysis/data/btag/ivf/%%s_BDTG.weights.xml" % os.environ['CMSSW_BASE'])
+        self.preselection = getattr(cfg_ana, 'preselection', lambda ivf : True)
+        self.associatedJetsByRef = getattr(cfg_ana, 'associatedJetsByRef', True)
+        self.vertexChoice = getattr(cfg_ana, 'vertexChoice', 'goodVertices')
+        self.jetCollection = getattr(cfg_ana, 'jets', 'jetsIdOnly')        
 
     def declareHandles(self):
         super(ttHSVAnalyzer, self).declareHandles()
@@ -52,7 +56,8 @@ class ttHSVAnalyzer( Analyzer ):
         allivf = [ v for v in self.handles['ivf'].product() ]
        
         # attach distances to PV
-        pv = event.goodVertices[0] if len(event.goodVertices)>0 else event.vertices[0]
+        goodVertices = getattr(event, self.vertexChoice)
+        pv = goodVertices[0] if len(goodVertices)>0 else event.vertices[0]
         for sv in allivf:
              #sv.dz  = SignedImpactParameterComputer.vertexDz(sv, pv)
              sv.dxy = SignedImpactParameterComputer.vertexDxy(sv, pv)
@@ -70,9 +75,8 @@ class ttHSVAnalyzer( Analyzer ):
 	     svtracks.sort(key = lambda t : t.sip3d, reverse = True)	     
 	     sv.maxD3dTracks = svtracks[0].sip3d if len(svtracks) > 0 else -99
 	     sv.secD3dTracks = svtracks[1].sip3d if len(svtracks) > 1 else -99
-	     
 
-        event.ivf = allivf
+        event.ivf = filter(self.preselection, allivf)
 
 	if self.cfg_comp.isMC and self.cfg_ana.do_mc_match:
             event.packedGenForHadMatch = [ (p.eta(),p.phi(),p) for p in self.mchandles['packedGen'].product() if p.charge() != 0 and abs(p.eta()) < 2.7 ]
@@ -130,39 +134,42 @@ class ttHSVAnalyzer( Analyzer ):
                         #print " \==> ancestor  pdgId %+6d with %d/%d hits at depth %d at %s" % (mom.pdgId(), hits, matchable, depth, hash(mom))
                         #if hits == maxhits and depth == mindepth: print "           ^^^^^--- this is our best match"
 
-        # get the full id from a ref
         def ref2id(ref):
             return (ref.id().processIndex(), ref.id().productIndex(), ref.key())
 
-        # Attach SVs to Jets 
-        daumap = {}
-        for s in event.ivf:
-            s.jet = None
-            for i in xrange(s.numberOfDaughters()):
-                daumap[ref2id(s.daughterPtr(i))] = s
-        for j in event.jetsIdOnly:
-            #print "jet with pt %5.2f, eta %+4.2f, phi %+4.2f: " % (j.pt(), j.eta(), j.phi())
-            jdaus = [ref2id(j.daughterPtr(i)) for i in xrange(j.numberOfDaughters())]
-            j.svs = []
-            for jdau in jdaus:
-                if jdau in daumap:
-                    #print " --> matched by ref with SV with pt %5.2f, eta %+4.2f, phi %+4.2f: " % (daumap[jdau].pt(), daumap[jdau].eta(), daumap[jdau].phi())
-                    j.svs.append(daumap[jdau])
-                    daumap[jdau].jet = j	    
+        # ====== Matching IVF <-> JET by candidate reference (optional) ==========
+        if self.associatedJetsByRef:  
+            # Attach SVs to Jets 
+            daumap = {}
+            for s in event.ivf:
+                s.jet = None
+                for i in xrange(s.numberOfDaughters()):
+                    daumap[ref2id(s.daughterPtr(i))] = s
+            for j in getattr(event, self.jetCollection):
+                #print "jet with pt %5.2f, eta %+4.2f, phi %+4.2f: " % (j.pt(), j.eta(), j.phi())
+                jdaus = [ref2id(j.daughterPtr(i)) for i in xrange(j.numberOfDaughters())]
+                j.svs = []
+                for jdau in jdaus:
+                    if jdau in daumap:
+                        #print " --> matched by ref with SV with pt %5.2f, eta %+4.2f, phi %+4.2f: " % (daumap[jdau].pt(), daumap[jdau].eta(), daumap[jdau].phi())
+                        j.svs.append(daumap[jdau])
+                        daumap[jdau].jet = j	    
+        else:
+            for s in event.ivf: s.jet = None
+
+        # ====== Matching IVF <-> JET by DR ==========
         for s in event.ivf:
             if s.jet != None: continue
             #print "Unassociated SV with %d tracks, mass %5.2f, pt %5.2f, eta %+4.2f, phi %+4.2f: " % (s.numberOfDaughters(), s.mass(), s.pt(), s.eta(), s.phi())
             bestDr = 0.4
-            for j in event.jetsIdOnly:
+            for j in getattr(event, self.jetCollection):
                 dr = deltaR(s.eta(),s.phi(),j.eta(),j.phi())
                 if dr < bestDr:
                    bestDr = dr
                    s.jet = j
                    #print "   close to jet with pt %5.2f, eta %+4.2f, phi %+4.2f: dr = %.3f" % (j.pt(), j.eta(), j.phi(), dr)
 
-
-
-        #Attach SVs to leptons
+        # ====== Matching IVF <-> Lepton ==========
         #print "\n\nNew event: "
         for l in event.selectedLeptons:
             #print "Lepton pdgId %+2d pt %5.2f, eta %+4.2f, phi %+4.2f, sip3d %5.2f, mcMatchAny %d, mcMatchId %d: " % (l.pdgId(), l.pt(), l.eta(), l.phi(), l.sip3D(), getattr(l,'mcMatchAny',-37), getattr(l,'mcMatchId',-37))
