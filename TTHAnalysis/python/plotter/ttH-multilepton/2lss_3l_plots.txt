@@ -48,7 +48,8 @@ nT_3lep_miniIso: if3((nLepFO>2)*(LepGood1_isTight+LepGood2_isTight+LepGood3_isTi
 
 nBJetLoose40:	nBJetLoose40				: [-0.5,0.5,1.5,2.5,3.5,4.5,5.5] ; XTitle='N(jet\, p_{T} > 40 GeV\, CSVL)', XNDdiv=505
 nBJetMedium40:	nBJetMedium40				: [-0.5,0.5,1.5,2.5,3.5,4.5,5.5] ; XTitle='N(jet\, p_{T} > 40 GeV\, CSVM)', XNDdiv=505
-nTau:	    	nTauGood				: [-0.5,0.5,1.5,2.5] ; XTitle='N(#tau\, p_{T} > 20 GeV)', XNDdiv=505
+nTauFO:	    	nTauFO					: [-0.5,0.5,1.5,2.5] ; XTitle='N(#tau FO\, p_{T} > 20 GeV)', XNDdiv=505
+nTauTight:    	nTauTight				: [-0.5,0.5,1.5,2.5] ; XTitle='N(#tau tight\, p_{T} > 20 GeV)', XNDdiv=505
 
 htJet25j:   	htJet25j 				: 40,0,1000 ; XTitle="H_{T}(jet p_{T} > 25) [GeV]"
 mhtJet25:   	mhtJet25 				: 40,0,400 ; XTitle="H_{T}^{miss}(p_{T} > 25) [GeV]"
