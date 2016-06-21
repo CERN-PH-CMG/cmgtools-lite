@@ -569,7 +569,7 @@ def getPassTotalHistosSimple((key, output,
     output[key] = (hpassed, htotal)
 
 def makePassedFailed(proc,fnames,indir,
-                     stump='.root'):
+                     options, stump='.root'):
 
     try:
         with open('.xsecweights.pck', 'r') as cachefile:
@@ -585,7 +585,7 @@ def makePassedFailed(proc,fnames,indir,
         floc = osp.join(indir, "%s%s"%(pname,stump))
         if not osp.isfile(floc):
             print "Missing file: %s" % floc
-            print " ... continuing without"
+            raw_input(" ... press key to continuing without")
             continue
 
         print '... processing', pname
@@ -708,17 +708,18 @@ def makePlots(efficiencies, options):
                 plot.add(efficiencies['DY'][(lep,'inclusive',nname,var)],
                          'DY MC, Z mass fit',
                          includeInRatio=True)
-                plot.add(efficiencies['data'][(lep,'ttbar',nname,var)],
-                         'Data, t#bar{t} dilepton, cut & count',
-                         includeInRatio=False)
-                plot.add(efficiencies['ttbar'][(lep,'ttbar',nname,var)],
-                         't#bar{t} MC, t#bar{t} dilepton, cut & count',
-                         includeInRatio=True)
+                # plot.add(efficiencies['data'][(lep,'ttbar',nname,var)],
+                #          'Data, t#bar{t} dilepton, cut & count',
+                #          includeInRatio=False)
+                # plot.add(efficiencies['ttbar'][(lep,'ttbar',nname,var)],
+                #          't#bar{t} MC, t#bar{t} dilepton, cut & count',
+                #          includeInRatio=True)
                 # plot.add(efficiencies['ttH'][(lep,'ttH',nname,var)],
                 #          't#bar{t}H MC, inclusive',
                 #          includeInRatio=False)
 
-                plot.reference = [plot.effs[0], plot.effs[2]]
+                # plot.reference = [plot.effs[0], plot.effs[1]]
+                # plot.reference = [plot.effs[0], plot.effs[2]]
 
                 plot.show_with_ratio('tnp_eff_%s'%(plot.name),
                                       options.outDir)
@@ -785,24 +786,7 @@ def make2DMap(efficiencies, options):
         ofile.Close()
         print " wrote %s" % floc
 
-
-if __name__ == '__main__':
-    from optparse import OptionParser
-    usage = "%prog [options] tnptrees/"
-    parser = OptionParser(usage=usage)
-    parser.add_option("-o", "--outDir", default="tnp_effs",
-                      action="store", type="string", dest="outDir",
-                      help=("Output directory for eff plots "
-                            "[default: %default/]"))
-    parser.add_option('-c', '--cutNCount', dest='cutNCount',
-                      action="store_true",
-                      help='Do cut & count instead of fitting mass shape')
-    parser.add_option('-j', '--jobs', dest='jobs', action="store",
-                      type='int', default=1,
-                      help=('Number of jobs to run in parallel '
-                        '[default: single]'))
-    (options, args) = parser.parse_args()
-
+def main(args, options):
     try:
         if not osp.exists(args[0]):
             print "Input directory does not exists: %s" % args[0]
@@ -816,7 +800,7 @@ if __name__ == '__main__':
     if not osp.isfile(cachefilename):
         passedtotal = {}
         for proc,fnames in INPUTS.iteritems():
-            passedtotal[proc] = makePassedFailed(proc,fnames,args[0],stump='.root')
+            passedtotal[proc] = makePassedFailed(proc,fnames,args[0],options,stump='.root')
 
         print "#"*30
         print "ALL DONE"
@@ -842,4 +826,23 @@ if __name__ == '__main__':
     makePlots(efficiencies, options)
     make2DMap(efficiencies, options)
 
+
+if __name__ == '__main__':
+    from optparse import OptionParser
+    usage = "%prog [options] tnptrees/"
+    parser = OptionParser(usage=usage)
+    parser.add_option("-o", "--outDir", default="tnp_effs",
+                      action="store", type="string", dest="outDir",
+                      help=("Output directory for eff plots "
+                            "[default: %default/]"))
+    parser.add_option('-c', '--cutNCount', dest='cutNCount',
+                      action="store_true",
+                      help='Do cut & count instead of fitting mass shape')
+    parser.add_option('-j', '--jobs', dest='jobs', action="store",
+                      type='int', default=1,
+                      help=('Number of jobs to run in parallel '
+                        '[default: single]'))
+    (options, args) = parser.parse_args()
+
+    main(args, options)
 

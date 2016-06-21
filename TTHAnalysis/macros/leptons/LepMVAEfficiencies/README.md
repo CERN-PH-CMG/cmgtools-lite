@@ -6,7 +6,7 @@
 
 - `runLepTnPFriendMaker.py`: Python script to steer the `lepTnPFriendTreeMaker` class and run it on all input files in a given directory (locally or on eos). Note that for remote files it will copy them to a local temp directory first (`/tmp/username/` by default) to speed up the process. When running on data, some of the MC-only branches are not found in the tree, so errors like `<TTree::SetBranchAddress>: unknown branch` are expected.
 
-- `makeLepTnPFriends.py`: Python script to do the mass fit for each pt/eta/nvertex/... bin and produce the efficiency plots and maps.
+- `makeLepTnPFriends.py`: Python script to do the mass fit for each bin in pt, eta, nvertices, etc. and produce the efficiency plots and maps. Note that by default it expects a merged file for the data trees.
 
 - `makeXSecWeights.py`: Use the sample definition file (by `default samples_13TeV_RunIISpring16MiniAODv2.py`) to find cross sections and the `SkimReport.pck` pickle files to find number of processed events, and generate sample weights. These are used to weight MC samples when running `makeLepTnPFriends.py`.
 
@@ -26,11 +26,26 @@ This will process all events for all samples containing `Run2016`,`DYJetsToLL_M5
 
 By default, the output is stored in a directory called `tnptrees/`. You can change this with the `-o/--outDir` option.
 
+Merge the data trees:
+
+```
+hadd tnptrees/Run2016.root tnptrees/*PromptReco*.root
+```
+
 Generate the cross section weights (stored in `.xsecweights.pck` by default):
 
 ```
 python makeXSecWeights.py treeDir/
 ```
+
+Finally, run the fits and make the plots using `makeLepTnPFriends.py`. Modify the global variables at the top of the script to configure the binnings, pair selections, event selections, probe selections, and input files. The script caches the passed and total histograms in a pickle file (`tnppassedtotal.pck` by default).
+
+```
+python makeLepTnPFriends.py tnptrees/ -j 8
+```
+
+
+
 
 
 
