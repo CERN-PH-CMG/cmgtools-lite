@@ -136,6 +136,8 @@ triggerFlagsAna.triggerBits = {
   'MuHT350MET70' : triggers_mu_ht350_met70,
   'MuHT350MET50' : triggers_mu_ht350_met50,
   'MuHT350' : triggers_mu_ht350,
+  'MuHT400' : triggers_mu_ht400,
+  'Mu50HT400' : triggers_mu50_ht400,
   'MuHTMET' : triggers_mu_ht350_met70 + triggers_mu_ht400_met70,
   'MuMET120' : triggers_mu_met120,
   'MuHT400B': triggers_mu_ht400_btag,
@@ -149,6 +151,8 @@ triggerFlagsAna.triggerBits = {
   'EleHT350MET70' : triggers_el_ht350_met70,
   'EleHT350MET50' : triggers_el_ht350_met50,
   'EleHT350' : triggers_el_ht350,
+  'EleHT400' : triggers_el_ht400,
+  'Ele50HT400' : triggers_el50_ht400,
   'EleHTMET' : triggers_el_ht350_met70 + triggers_el_ht400_met70,
   'EleHT200' :triggers_el_ht200,
   'EleHT400B': triggers_el_ht400_btag
@@ -177,13 +181,13 @@ jetAna.minLepPt = 10
 ## JEC
 jetAna.mcGT = "Spring16_25nsV1_MC"
 #jetAna.dataGT = "Summer15_25nsV6_DATA"
-jetAna.dataGT = "Spring16_25nsV1_MC"
+jetAna.dataGT = "Spring16_25nsV3_DATA"
 # add also JEC up/down shifts corrections
 jetAna.addJECShifts = True
 
 jetAna.doQG = True
 jetAna.smearJets = False #should be false in susycore, already
-jetAna.recalibrateJets = True # false for miniAOD v2!
+jetAna.recalibrateJets = False # false for miniAOD v2!
 jetAna.applyL2L3Residual = True
 
 #jetAna.calculateType1METCorrection = True
@@ -202,7 +206,7 @@ isData = True # default, but will be overwritten below
 #sample = 'MC'
 sample = 'data'
 #sample = 'Signal'
-test = 0
+test = 1
 
 if sample == "MC":
 
@@ -223,16 +227,17 @@ if sample == "MC":
   # MiniAODv2
   #from CMGTools.SUSYAnalysis.samples.samples_13TeV_RunIISpring15MiniAODv2_desy import *
   #from CMGTools.SUSYAnalysis.samples.samples_13TeV_RunIISpring15MiniAODv2_desy_Compact import *
-  from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv2 import *
+  from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv2_dummy import *
+#  from CMGTools.RootTools.samples.samples_13TeV_MiniAODv2_Signals_desy import *
+#  selectedComponents = TTs + SingleTop #TTJets_SingleLepton
 
-  selectedComponents = TTs + SingleTop #TTJets_SingleLepton
-
+  selectedComponents = QCDHT
   if test==1:
     # test a single component, using a single thread.
-    comp = WJetsToLNu
+    comp = QCD_HT300to500
     comp.files = comp.files[:1]
     selectedComponents = [comp]
-    comp.splitFactor = 1
+    comp.splitFactor = 2
   elif test==2:
     # test all components (1 thread per component).
     for comp in selectedComponents:
@@ -266,7 +271,7 @@ elif sample == "Signal":
   # Set FastSim JEC
   #jetAna.mcGT = "FastSim_MCRUN2_74_V9"
   #jetAna.mcGT = "MCRUN2_74_V9"
-  jetAna.mcGT = "FastSim_Summer15_25nsV6_MC"
+#  jetAna.mcGT = "FastSim_Summer15_25nsV6_MC"
 
   #### REMOVE JET ID FOR FASTSIM
   jetAna.relaxJetId = True
@@ -283,18 +288,18 @@ elif sample == "Signal":
   #from CMGTools.SUSYAnalysis.samples.samples_13TeV_74X_Signals_desy import *
   # MiniAODv2
   #from CMGTools.SUSYAnalysis.samples.samples_13TeV_RunIISpring15MiniAODv2_desy import *
-  from CMGTools.SUSYAnalysis.samples.samples_13TeV_MiniAODv2_Signals_AAA import *
-
+#  from CMGTools.SUSYAnalysis.samples.samples_13TeV_MiniAODv2_Signals_AAA import *
+  from CMGTools.RootTools.samples.samples_13TeV_MiniAODv2_Signals_desy import *
   # Benchmarks
   #selectedComponents = [ T1tttt_mGo_1475to1500_mLSP_1to1250, T1tttt_mGo_1500to1525_mLSP_50to1125, T1tttt_mGo_1200_mLSP_1to825, T1tttt_mGo_1900to1950_mLSP_0to1450 ]
   # Rest
   #selectedComponents = mcSamplesT1tttt
   #selectedComponents = [T1tttt_mGo_1000to1050_mLSP_1to800, T1tttt_mGo_1225to1250_mLSP_1to1025, T1tttt_mGo_1325to1350_mLSP_1to1125, T1tttt_mGo_600to625_mLSP_250to375]
-  selectedComponents = [T1tttt_mGo_1475to1500_mLSP_1to1250, T1tttt_mGo_1200_mLSP_1to825 ]
+  selectedComponents = [T1tttt_TuneCUETP8M1]#[T1tttt_mGo_1475to1500_mLSP_1to1250, T1tttt_mGo_1200_mLSP_1to825 ]
 
   if test==1:
     # test a single component, using a single thread.
-    comp = T1tttt_mGo_1475to1500_mLSP_1to1250
+    comp  = T1tttt_TuneCUETP8M1
     comp.files = comp.files[:1]
     selectedComponents = [comp]
     comp.splitFactor = 1
@@ -337,7 +342,7 @@ elif sample == "data":
   #jetAna.addJECShifts = False
   #jetAna.doQG = False
   #jetAna.smearJets = False #should be false in susycore, already
-  #jetAna.recalibrateJets = False # false for miniAOD v2!
+  jetAna.recalibrateJets = True # false for miniAOD v2!
   #jetAna.calculateSeparateCorrections = False
   #jetAna.applyL2L3Residual = False
   #print jetAna.shiftJEC , jetAna.recalibrateJets , jetAna.addJECShifts , jetAna.calculateSeparateCorrections , jetAna.calculateType1METCorrection
@@ -407,6 +412,7 @@ hbheFilterAna = cfg.Analyzer(
     hbheAnalyzer, name = 'hbheAnalyzer',IgnoreTS4TS5ifJetInLowBVRegion=False
 )
 
+
 if isSignal:
   ## SUSY Counter
   ## histo counter
@@ -426,8 +432,8 @@ if isSignal:
 sequence = cfg.Sequence(susyCoreSequence+[
     LHEAna,
     ttHEventAna,
-#   ttHSTSkimmer,
-#   ttHHTSkimmer,
+    ttHSTSkimmer,
+    ttHHTSkimmer,
     hbheFilterAna,
     treeProducer,
 #   susyCounter
@@ -457,7 +463,7 @@ output_service = cfg.Service(
     )
 outputService.append(output_service)
 
-
+print "running"
 from PhysicsTools.HeppyCore.framework.eventsfwlite import Events
 config = cfg.Config( components = selectedComponents,
          sequence = sequence,
