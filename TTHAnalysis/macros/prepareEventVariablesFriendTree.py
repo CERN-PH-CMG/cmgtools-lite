@@ -132,11 +132,11 @@ MODULES.append( ('leptonJetReCleanerSusySSDL', lambda : LeptonJetReCleaner("Recl
                  ) ))
 
 
-MODULES.append( ('leptonJetReCleanerTTH', lambda : LeptonJetReCleaner("Recl", # b1E2 definition of FO
+MODULES.append( ('leptonJetReCleanerTTH', lambda : LeptonJetReCleaner("Recl", # b1E2 definition of FO, 80X b-tag WP
                    looseLeptonSel = lambda lep : lep.miniRelIso < 0.4 and lep.sip3d < 8,
-                   cleaningLeptonSel = lambda lep : lep.conept>10 and lep.jetBTagCSV<0.89 and (abs(lep.pdgId)!=11 or lep.conept<30 or _ttH_idEmu_cuts_E2(lep)) and ((lep.jetPtRatiov2>0.3 and lep.jetBTagCSV<0.605) or lep.mvaTTH>0.75), # cuts applied on top of loose
-                   FOLeptonSel = lambda lep,ht : lep.conept>10 and lep.jetBTagCSV<0.89 and (abs(lep.pdgId)!=11 or lep.conept<30 or _ttH_idEmu_cuts_E2(lep)) and ((lep.jetPtRatiov2>0.3 and lep.jetBTagCSV<0.605) or lep.mvaTTH>0.75), # cuts applied on top of loose
-                   tightLeptonSel = lambda lep,ht : lep.conept>10 and lep.jetBTagCSV<0.89 and (abs(lep.pdgId)!=11 or lep.conept<30 or _ttH_idEmu_cuts_E2(lep)) and ((lep.jetPtRatiov2>0.3 and lep.jetBTagCSV<0.605) or lep.mvaTTH>0.75) and (abs(lep.pdgId)!=13 or lep.mediumMuonId>0) and lep.mvaTTH > 0.75, # cuts applied on top of loose
+                   cleaningLeptonSel = lambda lep : lep.conept>10 and lep.jetBTagCSV<0.80 and (abs(lep.pdgId)!=11 or lep.conept<30 or _ttH_idEmu_cuts_E2(lep)) and ((lep.jetPtRatiov2>0.3 and lep.jetBTagCSV<0.46) or lep.mvaTTH>0.75), # cuts applied on top of loose
+                   FOLeptonSel = lambda lep,ht : lep.conept>10 and lep.jetBTagCSV<0.80 and (abs(lep.pdgId)!=11 or lep.conept<30 or _ttH_idEmu_cuts_E2(lep)) and ((lep.jetPtRatiov2>0.3 and lep.jetBTagCSV<0.46) or lep.mvaTTH>0.75), # cuts applied on top of loose
+                   tightLeptonSel = lambda lep,ht : lep.conept>10 and lep.jetBTagCSV<0.80 and (abs(lep.pdgId)!=11 or lep.conept<30 or _ttH_idEmu_cuts_E2(lep)) and ((lep.jetPtRatiov2>0.3 and lep.jetBTagCSV<0.46) or lep.mvaTTH>0.75) and (abs(lep.pdgId)!=13 or lep.mediumMuonId>0) and lep.mvaTTH > 0.75, # cuts applied on top of loose
                    cleanJet = lambda lep,jet,dr : dr<0.4,
                    selectJet = lambda jet: abs(jet.eta)<2.4,
                    cleanTau = lambda lep,tau,dr: dr<0.4,
