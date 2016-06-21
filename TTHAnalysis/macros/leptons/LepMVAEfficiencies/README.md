@@ -8,6 +8,7 @@
 
 - `makeLepTnPFriends.py`: Python script to do the mass fit for each pt/eta/nvertex/... bin and produce the efficiency plots and maps.
 
+- `makeXSecWeights.py`: Use the sample definition file (by `default samples_13TeV_RunIISpring16MiniAODv2.py`) to find cross sections and the `SkimReport.pck` pickle files to find number of processed events, and generate sample weights. These are used to weight MC samples when running `makeLepTnPFriends.py`.
 
 ------------
 
@@ -24,6 +25,12 @@ python runLepTnPFriendMaker.py /store/user/mmarionn/heppyTrees/809_June9/
 This will process all events for all samples containing `Run2016`,`DYJetsToLL_M50`, or `TTJets` strings. For debugging, you can use the `-f/--filter` option to restrict to individual samples and the `-m` option to process only a certain number of events. To run in parallel, use the `-j/--jobs` option.
 
 By default, the output is stored in a directory called `tnptrees/`. You can change this with the `-o/--outDir` option.
+
+Generate the cross section weights (stored in `.xsecweights.pck` by default):
+
+```
+python makeXSecWeights.py treeDir/
+```
 
 
 

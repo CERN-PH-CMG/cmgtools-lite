@@ -72,27 +72,20 @@ NUMERATORS  = [
 
 INPUTS = {
     'data':[
-        "Run2015",
-        # "DoubleEG_Run2015C_25ns_16Dec2015",
-        # "DoubleEG_Run2015D_16Dec2015",
-        # "DoubleMuon_Run2015C_25ns_16Dec2015",
-        # "DoubleMuon_Run2015D_16Dec2015",
-        # "MuonEG_Run2015C_25ns_16Dec2015",
-        # "MuonEG_Run2015D_16Dec2015",
-        # "SingleElectron_Run2015C_25ns_16Dec2015",
-        # "SingleElectron_Run2015D_16Dec2015",
-        # "SingleMuon_Run2015C_25ns_16Dec2015",
-        # "SingleMuon_Run2015D_16Dec2015",
+        "Run2016",
+        # "DoubleEG_Run2016B_PromptReco_v2_runs_271036_274421",
+        # "DoubleMuon_Run2016B_PromptReco_v2_runs_271036_274421",
+        # "MuonEG_Run2016B_PromptReco_v2_runs_271036_274421",
         ],
     'DY':["DYJetsToLL_M50"],
-    'ttbar':[
-        "TTJets_DiLepton",
-        "TTJets_SingleLeptonFromTbar_ext",
-        "TTJets_SingleLeptonFromTbar",
-        "TTJets_SingleLeptonFromT_ext",
-        "TTJets_SingleLeptonFromT",
-        ],
-    'ttH':["TTHnobb"],
+    # 'ttbar':[
+    #     "TTJets_DiLepton",
+    #     "TTJets_SingleLeptonFromTbar_ext",
+    #     "TTJets_SingleLeptonFromTbar",
+    #     "TTJets_SingleLeptonFromT_ext",
+    #     "TTJets_SingleLeptonFromT",
+    #     ],
+    # 'ttH':["TTHnobb"],
 }
 
 def getEfficiencyRatio(eff1, eff2):
@@ -575,8 +568,8 @@ def getPassTotalHistosSimple((key, output,
 
     output[key] = (hpassed, htotal)
 
-def makePassedFailed(proc,fnames,indir):
-    stump = '_treeProducerSusyMultilepton_tree.root'
+def makePassedFailed(proc,fnames,indir,
+                     stump='.root'):
 
     try:
         with open('.xsecweights.pck', 'r') as cachefile:
@@ -795,7 +788,7 @@ def make2DMap(efficiencies, options):
 
 if __name__ == '__main__':
     from optparse import OptionParser
-    usage = "%prog [options] tnpTreeDir"
+    usage = "%prog [options] tnptrees/"
     parser = OptionParser(usage=usage)
     parser.add_option("-o", "--outDir", default="tnp_effs",
                       action="store", type="string", dest="outDir",
@@ -810,12 +803,20 @@ if __name__ == '__main__':
                         '[default: single]'))
     (options, args) = parser.parse_args()
 
+    try:
+        if not osp.exists(args[0]):
+            print "Input directory does not exists: %s" % args[0]
+            sys.exit(-1)
+    except IndexError:
+        parser.print_usage()
+        sys.exit(-1)
+
     # Gather all the passed/total histograms
     cachefilename = "tnppassedtotal.pck"
     if not osp.isfile(cachefilename):
         passedtotal = {}
         for proc,fnames in INPUTS.iteritems():
-            passedtotal[proc] = makePassedFailed(proc,fnames,args[0])
+            passedtotal[proc] = makePassedFailed(proc,fnames,args[0],stump='.root')
 
         print "#"*30
         print "ALL DONE"
