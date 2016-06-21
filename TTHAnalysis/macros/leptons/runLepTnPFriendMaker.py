@@ -107,7 +107,7 @@ if __name__ == '__main__':
                       help=("Output directory for tnp trees "
                             "[default: %default/]"))
     parser.add_option("-f", "--filter",
-                      default='Run2015,DYJetsToLL_M50,TTJets',
+                      default='Run2016,DYJetsToLL_M50,TTJets',
                       type="string", dest="filter",
                       help=("Comma separated list of filters to apply "
                             "[default: %default/]"))
@@ -133,6 +133,9 @@ if __name__ == '__main__':
         print "Will filter for", filters
         inputfiles = [i for i in inputfiles if
                                     any([(f in i) for f in filters])]
+
+        ## Hardcoded removal of DYJetsToLL_M50_LO:
+        inputfiles = [i for i in inputfiles if not 'DYJetsToLL_M50_LO' in i]
 
     print "Will process the following files:"
     for ifile in inputfiles: print ifile

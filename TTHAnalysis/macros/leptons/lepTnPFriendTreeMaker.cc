@@ -13,6 +13,7 @@
 #include <TChain.h>
 #include <TFile.h>
 #include <TLorentzVector.h>
+#include <TH1I.h>
 
 // Header file for the classes stored in the TTree if any.
 
@@ -184,6 +185,8 @@ public :
    Long64_t fMaxEvents;
    virtual inline void setMaxEvents(int maxevents){fMaxEvents = maxevents;};
 
+   TH1I *fHCutFlow;
+
    TTree *fTnPTree;
 
    Int_t   fT_evSel;
@@ -241,6 +244,14 @@ lepTnPFriendTreeMaker::lepTnPFriendTreeMaker(TTree *tree) : fChain(0){
    Init(tree);
    fTnPTree = 0;
    fMaxEvents = -1;
+   fHCutFlow = new TH1I("CutFlow", "CutFlow", 10, 0, 10);
+   fHCutFlow->GetXaxis()->SetBinLabel(1, "All events");
+   fHCutFlow->GetXaxis()->SetBinLabel(2, "Two loose leptons");
+   fHCutFlow->GetXaxis()->SetBinLabel(3, "ee, e#mu, #mu#mu channels");
+   fHCutFlow->GetXaxis()->SetBinLabel(4, "Pass triggers");
+   fHCutFlow->GetXaxis()->SetBinLabel(5, "Found a tag lepton");
+   fHCutFlow->GetXaxis()->SetBinLabel(6, "Found a probe lepton");
+   fHCutFlow->GetXaxis()->SetBinLabel(7, "--");
 }
 
 lepTnPFriendTreeMaker::~lepTnPFriendTreeMaker(){
@@ -467,6 +478,7 @@ void lepTnPFriendTreeMaker::Begin(TFile *file){
 void lepTnPFriendTreeMaker::End(TFile *file){
    file->cd();
    fTnPTree->Write(fTnPTree->GetName());
+   fHCutFlow->Write(fHCutFlow->GetName());
    file->Write();
    file->Close();
 }
@@ -534,12 +546,15 @@ bool lepTnPFriendTreeMaker::PassDoubleTriggers(){
 
 bool lepTnPFriendTreeMaker::SelectEvent(){
    if( nLepGood < 2 ) return false;
+   fHCutFlow->Fill(1);
 
    // Force e or mu (no taus)
    if( abs(LepGood_pdgId[0]) != 13 && abs(LepGood_pdgId[0]) != 11)
       return false;
    if( abs(LepGood_pdgId[1]) != 13 && abs(LepGood_pdgId[1]) != 11)
       return false;
+
+   fHCutFlow->Fill(2);
 
    // Trigger selection
    if( !PassDoubleTriggers() && !PassSingleTriggers() ) return false;
@@ -690,7 +705,10 @@ void lepTnPFriendTreeMaker::Loop(){
          std::cout << std::flush;
       }
 
+      fHCutFlow->Fill(0);
+
       if(!SelectEvent()) continue;
+      fHCutFlow->Fill(3);
       ResetTnPTree();
 
       fT_passSingle    = PassSingleTriggers();
@@ -706,6 +724,8 @@ void lepTnPFriendTreeMaker::Loop(){
       for (int lep1 = 0; lep1 < nLepGood; ++lep1){
          if (  (abs(LepGood_pdgId[lep1])==11 && SelectTagElectron(lep1))
             || (abs(LepGood_pdgId[lep1])==13 && SelectTagMuon(lep1)) ) {
+
+            fHCutFlow->Fill(4);
 
             // Find a probe lepton
             for (int lep2 = lep1+1; lep2 < nLepGood; ++lep2){
@@ -723,6 +743,7 @@ void lepTnPFriendTreeMaker::Loop(){
                if( pairsel == 0 ) continue;
 
                // Found a pair!
+               fHCutFlow->Fill(5);
                fT_evSel = pairsel;
                fT_pair_probeMultiplicity++;
                fT_mass          = mass;
