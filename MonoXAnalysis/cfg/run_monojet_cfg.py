@@ -14,7 +14,7 @@ from CMGTools.RootTools.samples.autoAAAconfig import *
 #-------- SET OPTIONS AND REDEFINE CONFIGURATIONS -----------
 
 is50ns = getHeppyOption("is50ns",False)
-runData = getHeppyOption("runData",False)
+runData = getHeppyOption("runData",True)
 scaleProdToLumi = float(getHeppyOption("scaleProdToLumi",-1)) # produce rough equivalent of X /pb for MC datasets
 saveSuperClusterVariables = getHeppyOption("saveSuperClusterVariables",True)
 saveFatJetIDVariables = getHeppyOption("saveFatJetIDVariables",True)
@@ -295,6 +295,8 @@ if is50ns:
 else: 
     jetAna.mcGT   = "Spring16_25nsV3_MC"
     jetAna.dataGT = "Spring16_25nsV3_DATA"
+    monoXFatJetAna.mcGT = "Spring16_25nsV3_MC"
+    monoXFatJetAna.dataGT = "Spring16_25nsV3_DATA"
 
 if removeJetReCalibration:
     ## NOTE: jets will still be recalibrated, since calculateSeparateCorrections is True,
