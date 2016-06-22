@@ -60,7 +60,7 @@ for D in *_Chunk[0-9]*; do
 
             else if [[ "$CheckRun" == "1" ]]; then
 		found=0
-		for item in $(bjobs -w | grep ${D} | awk '{print $7}');do
+		for item in $(bjobs -w -J ${D});do
 #			echo '   still running' $item
 		    found=1
 		done
