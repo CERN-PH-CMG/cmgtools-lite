@@ -116,8 +116,7 @@ class TauMuAnalyzer(DiLeptonAnalyzer):
         return otherLeptons
 
     def process(self, event):
-        # FIXME - JAN - for current 2015 sync, but shall we really discard
-        # the vertex cuts?
+        # Take the pre-sorted vertices from miniAOD
         event.goodVertices = event.vertices
 
         result = super(TauMuAnalyzer, self).process(event)
