@@ -638,7 +638,7 @@ bool lepTnPFriendTreeMaker::PassTightCharge(int i){
 bool lepTnPFriendTreeMaker::PassTightLepton(int i){
    if( !PassLooseLepton(i) ) return false;
    if( LepGood_mvaTTH[i] < 0.75 ) return false;
-   if( LepGood_jetBTagCSV[i] > 0.89 ) return false; // Is this still the right threshold?
+   if( LepGood_jetBTagCSV[i] > 0.80 ) return false; // Is this still the right threshold?
    if( LepGood_jetPtRatiov2[i] < 0.3 ) return false;
 
    // Tight electrons
