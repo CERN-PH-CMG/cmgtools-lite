@@ -252,6 +252,18 @@ if pick_events:
     eventSelector.toSelect = evtsToPick
     sequence.insert(0, eventSelector)
 
+## output histogram
+outputService=[]
+from PhysicsTools.HeppyCore.framework.services.tfile import TFileService
+output_service = cfg.Service(
+    TFileService,
+    'outputfile',
+    name="outputfile",
+    fname='testtree.root',
+    option='recreate'
+    )    
+outputService.append(output_service)
+
 ###################################################
 ###            SET BATCH OR LOCAL               ###
 ###################################################
@@ -275,7 +287,8 @@ if cmssw:
 from PhysicsTools.HeppyCore.framework.eventsfwlite import Events
 config = cfg.Config( components   = selectedComponents,
                      sequence     = sequence          ,
-                     services     = []                ,
+                     #services     = []                ,
+		     services = outputService, 
                      preprocessor = preprocessor      ,
                      events_class = Events
                      )
