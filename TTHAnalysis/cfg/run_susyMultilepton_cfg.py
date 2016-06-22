@@ -717,7 +717,7 @@ if getHeppyOption("dropLHEweights",True):
 
 ## Auto-AAA
 from CMGTools.RootTools.samples.autoAAAconfig import *
-if not (getHeppyOption("isCrab") or runData):
+if not (getHeppyOption("isCrab") ):#or runData):
     autoAAA(selectedComponents)
 
 ## output histogram
