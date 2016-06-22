@@ -20,10 +20,11 @@ from CMGTools.H2TauTau.proto.analyzers.HiggsPtWeighter import HiggsPtWeighter
 from CMGTools.H2TauTau.proto.analyzers.VBFAnalyzer import VBFAnalyzer
 from CMGTools.H2TauTau.proto.analyzers.RecoilCorrector import RecoilCorrector
 
-puFileMC = '$CMSSW_BASE/src/CMGTools/H2TauTau/data/MC_Fall15_PU25_V1.root'
-puFileData = '$CMSSW_BASE/src/CMGTools/H2TauTau/data/Data_Pileup_2015D_Feb02.root'
+puFileMC = '$CMSSW_BASE/src/CMGTools/H2TauTau/data/MC_Spring16_PU25_Startup.root'
+puFileData = '$CMSSW_BASE/src/CMGTools/H2TauTau/data/data_pu_22-06-2016_713mb_80.root'
 
-reapplyJEC = True
+reapplyJEC = False
+applyRecoil = False
 
 eventSelector = cfg.Analyzer(
     EventSelector,
@@ -138,9 +139,11 @@ commonSequence = cfg.Sequence([
     dyJetsFakeAna,
     jetAna,
     vbfAna,
-    recoilCorr,
     pileUpAna,
     embedWeighter,
     NJetsAna,
     higgsWeighter
 ])
+
+if applyRecoil:
+    commonSequence.insert(commonSequence.index(pileUpAna), recoilCorr)
