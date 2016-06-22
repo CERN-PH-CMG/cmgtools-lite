@@ -140,14 +140,14 @@ lepAna = cfg.Analyzer(
     doSegmentBasedMuonCleaning=False,
     # inclusive very loose muon selection
     inclusive_muon_id  = "POG_ID_Loose",
-    inclusive_muon_pt  = 3,
+    inclusive_muon_pt  = 30,
     inclusive_muon_eta = 2.4,
     inclusive_muon_dxy = 1000,
     inclusive_muon_dz  = 1000,
     muon_dxydz_track = "innerTrack",
     # veto muon selection
     loose_muon_id     = "POG_ID_Loose",
-    loose_muon_pt     = 10,
+    loose_muon_pt     = 30,
     loose_muon_eta    = 2.4,
     loose_muon_dxy    = 1000,
     loose_muon_dz     = 1000,
@@ -155,14 +155,14 @@ lepAna = cfg.Analyzer(
     loose_muon_relIso = 0.4,
     # inclusive very loose electron selection
     inclusive_electron_id  = "",
-    inclusive_electron_pt  = 5,
+    inclusive_electron_pt  = 30,
     inclusive_electron_eta = 2.5,
     inclusive_electron_dxy = 0.5,
     inclusive_electron_dz  = 1.0,
     inclusive_electron_lostHits = 5.0,
     # veto electron selection
     loose_electron_id     = "POG_Cuts_ID_SPRING15_25ns_v1_ConvVetoDxyDz_Veto_full5x5",
-    loose_electron_pt     = 10,
+    loose_electron_pt     = 30,
     loose_electron_eta    = 2.5,
     loose_electron_dxy    = 0.5,
     loose_electron_dz     = 1.0,
@@ -206,6 +206,16 @@ monoJetCtrlLepSkim = cfg.Analyzer(
     #idCut  = "lepton.relIso03 < 0.2" # can give a cut
     idCut = 'lepton.muonID("POG_ID_Loose") if abs(lepton.pdgId())==13 else lepton.electronID("POG_Cuts_ID_SPRING15_25ns_v1_ConvVetoDxyDz_Veto_full5x5")',
     ptCuts = [10],                # can give a set of pt cuts on the leptons
+    )
+
+## number of FatJets (ak08) Skim
+from CMGTools.MonoXAnalysis.analyzers.monoJetCtrlFatJetSkimmer import monoJetCtrlFatJetSkimmer
+monoJetCtrlFatJetSkim = cfg.Analyzer(
+    monoJetCtrlFatJetSkimmer, name='monoJetCtrlFatJetSkimmer',
+    minFatJets = 0,
+    maxFatJets = 999,
+    idCut= '',
+    ptCuts     = [160],
     )
 
 ## gamma+jets Skim
@@ -324,8 +334,8 @@ jetAna = cfg.Analyzer(
     recalibrateJets = True, # "MC", # True, False, 'MC', 'Data'
     applyL2L3Residual = True, # Switch to 'Data' when they will become available for Data
     recalibrationType = "AK4PFchs",
-    mcGT     = "76X_mcRun2_asymptotic_v12",
-    dataGT   = "76X_dataRun2_v15_Run2015D_25ns",
+    mcGT     = "Spring16_25nsV3_MC",
+    dataGT   = "Spring16_25nsV3_DATA",
     jecPath = "%s/src/CMGTools/RootTools/data/jec/" % os.environ['CMSSW_BASE'],
     shiftJEC = 0, # set to +1 or -1 to get +/-1 sigma shifts
     addJECShifts = False, # if true, add  "corr", "corrJECUp", and "corrJECDown" for each jet (requires uncertainties to be available!)
@@ -349,7 +359,7 @@ from CMGTools.MonoXAnalysis.analyzers.monoXFatJetAnalyzer import monoXFatJetAnal
 monoXFatJetAna = cfg.Analyzer(
     monoXFatJetAnalyzer, name = 'monoXFatJetAnalyzer',
     jetCol = 'slimmedJetsAK8',
-    jetPt = 100.,
+    jetPt = 120.,
     jetEta = 2.4,
     jetLepDR = 0.4,
     # v--- not implemented for AK8
@@ -361,8 +371,8 @@ monoXFatJetAna = cfg.Analyzer(
     recalibrateJets = True,
     applyL2L3Residual = True, # Switch to 'Data' when they will become available for Data
     recalibrationType = "AK8PFchs",
-    mcGT     = "Spring16_25nsV1_MC",
-    dataGT   = "Fall15_25nsV2", # update with the new one when available in 8.0.X
+    mcGT     = "Spring16_25nsV3_MC",
+    dataGT   = "Spring16_25nsV3_DATA", # update with the new one when available in 8.0.X
     jecPath = "%s/src/CMGTools/RootTools/data/jec/" % os.environ['CMSSW_BASE'],
     shiftJEC = 0, # set to +1 or -1 to get +/-1 sigma shifts
     addJECShifts = False, # if true, add  "corr", "corrJECUp", and "corrJECDown" for each jet (requires uncertainties to be available!)
@@ -483,6 +493,7 @@ dmCoreSequence = [
     isoTrackAna,
     ttHCoreEventAna,
     monoXFatJetAna,
+    monoJetCtrlFatJetSkim,
     gammaJetCtrlSkim,
     triggerFlagsAna,
     eventFlagsAna,
