@@ -324,6 +324,7 @@ triggerFlagsAna.triggerBits = {
     'SingleMu' : triggers_1mu_iso,
     'SingleEl'     : triggers_1e,
     'MET' : triggers_metNoMu90_mhtNoMu90,
+    'SOSDoubleMuLowMET' : triggers_SOS_doublemulowMET,
     #'MonoJet80MET90' : triggers_Jet80MET90,
     #'MonoJet80MET120' : triggers_Jet80MET120,
     #'METMu5' : triggers_MET120Mu5,
@@ -341,7 +342,7 @@ if runSMS:
 from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv2 import *
 from CMGTools.RootTools.samples.samples_13TeV_signals import *
 from CMGTools.RootTools.samples.samples_13TeV_76X_susySignalsPriv import *
-from CMGTools.RootTools.samples.samples_13TeV_DATA2015 import *
+from CMGTools.RootTools.samples.samples_13TeV_DATA2016 import *
 from CMGTools.HToZZ4L.tools.configTools import printSummary, configureSplittingFromTime, cropToLumi
 
 selectedComponents = [TTLep_pow_ext]
@@ -383,8 +384,10 @@ if runData and not isTest: # For running on data
     dataChunks = []
 
 #    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_271036-274421_13TeV_PromptReco_Collisions16_JSON.txt' # 2.07/fb
-    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_271036-274443_13TeV_PromptReco_Collisions16_JSON.txt' # 2.6/fb
-    processing = "Run2016B-PromptReco-v2"; short = "Run2016B_PromptReco_v2"; run_ranges = [(273150,274443)]; useAAA=False; # -v2 starts from 273150
+#    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_271036-274443_13TeV_PromptReco_Collisions16_JSON.txt' # 2.6/fb
+    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_271036-275125_13TeV_PromptReco_Collisions16_JSON.txt' # 4.0/fb
+    processing = "Run2016B-PromptReco-v2"; short = "Run2016B_PromptReco_v2"; run_ranges = [(273150,275125)]; useAAA=False; # -v2 starts from 273150
+#    processing = "Run2016B-PromptReco-v2"; short = "Run2016B_PromptReco_v2"; run_ranges = [(274444,275125)]; useAAA=False; # -v2 starts from 273150
     dataChunks.append((json,processing,short,run_ranges,useAAA))
 
     compSelection = ""; compVeto = ""
@@ -393,10 +396,10 @@ if runData and not isTest: # For running on data
     exclusiveDatasets = True; # this will veto triggers from previous PDs in each PD, so that there are no duplicate events
  
     if analysis in ['SOS']:
-        DatasetsAndTriggers.append( ("MET", triggers_metNoMu90_mhtNoMu90) )
+        DatasetsAndTriggers.append( ("MET", triggers_metNoMu90_mhtNoMu90 + triggers_SOS_doublemulowMET) )
         #DatasetsAndTriggers.append( ("MET", triggers_Jet80MET90 + triggers_Jet80MET120 + triggers_MET120Mu5 ) )
-        DatasetsAndTriggers.append( ("SingleMuon", triggers_1mu_iso + triggers_1mu_iso_50ns + triggers_1mu_noniso) )
-        DatasetsAndTriggers.append( ("SingleElectron", triggers_1e + triggers_1e_50ns) )
+        #DatasetsAndTriggers.append( ("SingleMuon", triggers_1mu_iso + triggers_1mu_iso_50ns + triggers_1mu_noniso) )
+        #DatasetsAndTriggers.append( ("SingleElectron", triggers_1e + triggers_1e_50ns) )
     else:
         DatasetsAndTriggers.append( ("DoubleMuon", triggers_mumu_iso + triggers_mumu_ss + triggers_mumu_ht + triggers_3mu + triggers_3mu_alt) )
         DatasetsAndTriggers.append( ("DoubleEG",   triggers_ee + triggers_ee_ht + triggers_3e) )
@@ -456,23 +459,29 @@ if runData and not isTest: # For running on data
 
 if runFRMC: 
     QCD_Mu5 = [ QCD_Pt20to30_Mu5, QCD_Pt30to50_Mu5, QCD_Pt50to80_Mu5, QCD_Pt80to120_Mu5, QCD_Pt120to170_Mu5 ]
-    QCDPtEMEnriched = [ QCD_Pt20to30_EMEnriched, QCD_Pt30to50_EMEnriched, QCD_Pt50to80_EMEnriched, QCD_Pt80to120_EMEnriched, QCD_Pt120to170_EMEnriched ]
-    QCDPtbcToE = [ QCD_Pt_20to30_bcToE, QCD_Pt_30to80_bcToE, QCD_Pt_80to170_bcToE ]
-    QCDHT = [ QCD_HT100to200, QCD_HT200to300, QCD_HT300to500, QCD_HT500to700 ]
-    selectedComponents = [QCD_Mu15] + QCD_Mu5 + QCDPtEMEnriched + QCDPtbcToE + [WJetsToLNu_LO,DYJetsToLL_M10to50,DYJetsToLL_M50]
-    selectedComponents = [ QCD_Pt_170to250_bcToE, QCD_Pt120to170_EMEnriched, QCD_Pt170to300_EMEnriched ]
-    selectedComponents = [QCD_Mu15]
-    time = 1.0
-    configureSplittingFromTime([WJetsToLNu,WJetsToLNu_LO],20,time)
+#    QCDPtEMEnriched = [ QCD_Pt20to30_EMEnriched, QCD_Pt30to50_EMEnriched, QCD_Pt50to80_EMEnriched, QCD_Pt80to120_EMEnriched, QCD_Pt120to170_EMEnriched ]
+#    QCDPtbcToE = [ QCD_Pt_20to30_bcToE, QCD_Pt_30to80_bcToE, QCD_Pt_80to170_bcToE ]
+#    QCDHT = [ QCD_HT100to200, QCD_HT200to300, QCD_HT300to500, QCD_HT500to700 ]
+#    selectedComponents = [QCD_Mu15] + QCD_Mu5 + QCDPtEMEnriched + QCDPtbcToE + [WJetsToLNu_LO,DYJetsToLL_M10to50,DYJetsToLL_M50]
+#    selectedComponents = [ QCD_Pt_170to250_bcToE, QCD_Pt120to170_EMEnriched, QCD_Pt170to300_EMEnriched ]
+#    selectedComponents = [QCD_Mu15]
+
+#    selectedComponents = [TTJets_SingleLeptonFromT,TTJets_SingleLeptonFromTbar]
+
+    selectedComponents = [QCD_Mu15] + QCD_Mu5 + [WJetsToLNu,DYJetsToLL_M10to50,DYJetsToLL_M50] 
+
+    time = 5.0
+    configureSplittingFromTime([WJetsToLNu],20,time)
+#    configureSplittingFromTime([WJetsToLNu_LO],20,time)
     configureSplittingFromTime([DYJetsToLL_M10to50],10,time)
     configureSplittingFromTime([DYJetsToLL_M50],30,time)
     configureSplittingFromTime([QCD_Mu15]+QCD_Mu5,70,time)
-    configureSplittingFromTime(QCDPtbcToE,50,time)
-    configureSplittingFromTime(QCDPtEMEnriched,25,time)
-    configureSplittingFromTime([ QCD_HT100to200, QCD_HT200to300 ],10,time)
-    configureSplittingFromTime([ QCD_HT300to500, QCD_HT500to700 ],15,time)
-    configureSplittingFromTime([ QCD_Pt120to170_EMEnriched,QCD_Pt170to300_EMEnriched ], 15, time)
-    configureSplittingFromTime([ QCD_Pt_170to250_bcToE ], 30, time)
+#    configureSplittingFromTime(QCDPtbcToE,50,time)
+#    configureSplittingFromTime(QCDPtEMEnriched,25,time)
+#    configureSplittingFromTime([ QCD_HT100to200, QCD_HT200to300 ],10,time)
+#    configureSplittingFromTime([ QCD_HT300to500, QCD_HT500to700 ],15,time)
+#    configureSplittingFromTime([ QCD_Pt120to170_EMEnriched,QCD_Pt170to300_EMEnriched ], 15, time)
+#    configureSplittingFromTime([ QCD_Pt_170to250_bcToE ], 30, time)
     if runQCDBM:
         configureSplittingFromTime([QCD_Mu15]+QCD_Mu5,15,time)
     for c in selectedComponents:

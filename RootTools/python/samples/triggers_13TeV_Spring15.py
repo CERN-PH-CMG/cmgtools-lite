@@ -28,7 +28,7 @@ triggers_ee_ht =  [ "HLT_DoubleEle8_CaloIdM_TrackIdM_Mass8_PFHT300_v*" ]
 triggers_mue_ht = [ "HLT_Mu8_Ele8_CaloIdM_TrackIdM_Mass8_PFHT300_v*" ]
 
 triggers_3e = [ "HLT_Ele16_Ele12_Ele8_CaloIdL_TrackIdL_v*" ]
-triggers_3mu = [ "HLT_TripleMu_12_10_5_v*" ]
+triggers_3mu = [ "HLT_TripleMu_12_10_5_v*", "HLT_TripleMu_5_3_3_v*" ]
 triggers_3mu_alt = [ "HLT_TrkMu15_DoubleTrkMu5NoFiltersNoVtx_v*" ]
 triggers_2mu1e = [ "HLT_DiMu9_Ele9_CaloIdL_TrackIdL_v*" ]
 triggers_2e1mu = [ "HLT_Mu8_DiEle12_CaloIdL_TrackIdL_v*" ]
@@ -58,6 +58,8 @@ triggers_FR_muNoIso = [ "HLT_Mu%d_v*" % pt for pt in (20,27,) ] + [ "HLT_Mu%d_et
 triggers_FR_ZB      = [ "HLT_ZeroBias_v*" ] + [ "HLT_ZeroBias_part%d_v*" % i for i in xrange(1,9) ]
 
 ### GP: did not look at anything below this
+
+triggers_SOS_doublemulowMET = ["HLT_DoubleMu3_PFMET50_v*"]
 
 ### Mike ---> for the VV analysis 
 triggers_dijet_fat=["HLT_PFHT650_WideJetMJJ900DEtaJJ1p5_v*","HLT_PFHT650_WideJetMJJ950DEtaJJ1p5_v*"]
