@@ -18,6 +18,7 @@ runData = getHeppyOption("runData",False)#True)
 scaleProdToLumi = float(getHeppyOption("scaleProdToLumi",-1)) # produce rough equivalent of X /pb for MC datasets
 saveSuperClusterVariables = getHeppyOption("saveSuperClusterVariables",True)
 saveFatJetIDVariables = getHeppyOption("saveFatJetIDVariables",True)
+saveHEEPVariables     = getHeppyOption("saveHEEPVariables",True)
 removeJetReCalibration = getHeppyOption("removeJetReCalibration",False)
 doT1METCorr = getHeppyOption("doT1METCorr",True)
 forcedSplitFactor = getHeppyOption("splitFactor",-1)
@@ -29,9 +30,10 @@ doPhotonCorr = getHeppyOption("doPhotonCorr",False)
 # Define skims
 signalSkim = False
 diLepSkim = False
-singleLepSkim = True
-singleFatJetSkim = True
+singleLepSkim = False
+singleFatJetSkim = False
 singlePhotonSkim = False
+dibosonSkim = True
 
 # --- MONOJET SKIMMING ---
 if signalSkim == True:
@@ -57,6 +59,16 @@ if singlePhotonSkim == True:
 if singleFatJetSkim == True:
     print "Vetoing on less than 1 jet"
     monoJetCtrlFatJetSkim.minFatJets = 1
+
+if dibosonSkim == True:
+    monoJetCtrlFatJetSkim.minFatJets = 1
+    monoJetCtrlLepSkim.minLeptons = 1
+    monoJetCtrlLepSkim.idCut = '(lepton.muonID("POG_ID_Loose")) if abs(lepton.pdgId())==13 else (lepton.electronID("POG_Cuts_ID_SPRING15_25ns_v1_ConvVetoDxyDz_Veto_full5x5"))'
+    monoJetCtrlLepSkim.ptCuts = [40]
+    lepAna.inclusive_muon_pt = 30
+    lepAna.loose_muon_pt     = 30
+    lepAna.inclusive_electron_pt = 30
+    lepAna.loose_electron_pt     = 30
 
 # --- Photon OR Electron SKIMMING ---
 #if photonOrEleSkim == True:
@@ -135,6 +147,21 @@ if saveFatJetIDVariables:
 
 ])
 
+if saveHEEPVariables:
+    leptonTypeMonoJet.addVariables([
+            NTupleVariable("e2x5Max",    lambda x : x.e2x5Max() if abs(x.pdgId())==11 else -999., help="e2x5Max for electrons"),
+            NTupleVariable("e1x5",    lambda x : x.e1x5() if abs(x.pdgId())==11 else -999., help="e1x5 for electrons"),
+            NTupleVariable("isolTrkPt",    lambda x : x.dr03TkSumPt() if abs(x.pdgId())==11 else -999., help="isolTrkPt for electrons"),
+            NTupleVariable("isolEmHadDepth1",    lambda x : x.dr03EcalRecHitSumEt() + x.dr03HcalDepth1TowerSumEt() if abs(x.pdgId())==11 else -999., help="isolEmHadDepth1 for lectrons"),
+            NTupleVariable("eleClusterDEta", lambda x : x.deltaEtaSeedClusterTrackAtVtx() if abs(x.pdgId())==11 else -999., help="Electron Supercluster DEta"),
+            NTupleVariable("isEcalDriven", lambda x : x.ecalDrivenSeed() if abs(x.pdgId()) == 11 else -999, int, help="is Ecal Driven to cut on ID"), #added
+            NTupleVariable("muonDB", lambda x : x.dB() if abs(x.pdgId()) == 13 else -999, help="muon DB"),
+            NTupleVariable("pixelHits", lambda x : x.innerTrack().hitPattern().numberOfValidPixelHits() if abs(x.pdgId()) == 13 and x.innerTrack().isNonnull() else -999, help="Number of pi            xel hits (-1 for electrons)"),
+            NTupleVariable("muTrackIso", lambda x: x.trackIso() if abs(x.pdgId()) == 13 else -999, help="muon track isolation"),
+            NTupleVariable("muon_dz", lambda x : x.muonBestTrack().dz() if abs(x.pdgId()) == 13 else -999, help="dz for muons"),
+            NTupleVariable("nChamberHits", lambda x: x.globalTrack().hitPattern().numberOfValidMuonHits() if abs(x.pdgId()) == 13 and x.globalTrack().isNonnull() else -999, help="Number of muon chamber hits (-1 for electrons)"),
+            NTupleVariable("muonPtRatio", lambda x : x.muonBestTrack().ptError()/x.muonBestTrack().pt() if abs(x.pdgId()) == 13 else -999, help="Ratio between ptError and pt"),
+])
 
 ## Tree Producer
 treeProducer = cfg.Analyzer(

@@ -25,9 +25,6 @@ class monoJetCtrlFatJetSkimmer( Analyzer ):
         self.readCollections( event.input )
         self.counters.counter('events').inc('all events')
 
-       # for j in (event.fatJets):
-       #   print "1"
-        
         fatJets = []
         for jet, ptCut in zip(event.fatJets, self.ptCuts):
             #if not self.idFunc(lep):
