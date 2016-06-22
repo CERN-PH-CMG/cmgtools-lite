@@ -6,7 +6,7 @@ from array import array
 from ROOT import TEfficiency
 import os.path as osp
 
-LUMI = 2.26
+LUMI = 2.07 ## /store/user/mmarionn/heppyTrees/809_June9/
 WEIGHT = "puWeight"
 PAIRSEL = ("((pdgId*tag_pdgId==-11*11||pdgId*tag_pdgId==-13*13)"
            "&&abs(mass-91.)<30.&&abs(mcMatchId)>0)")
@@ -14,12 +14,12 @@ SELECTIONS = {
     'inclusive':      PAIRSEL,
     # 'singleTriggers': PAIRSEL+"&&passSingle",
     # 'doubleTriggers': PAIRSEL+"&&passDouble",
-    'ttbar': "( (pdgId*tag_pdgId==-11*13)||"
-              "  ( (pdgId*tag_pdgId==-11*11||pdgId*tag_pdgId==-13*13)"
-              "&&abs(mass-91.)>15.&&met_pt>30.) )"
-              "&&passDouble&&nJet25>=2&&nBJetLoose25>=2"
-              "&&tag_pt>30&&abs(tag_mcMatchId)>0",
-    'ttH'  : "abs(mcMatchId)>0&&passDouble",
+    # 'ttbar': "( (pdgId*tag_pdgId==-11*13)||"
+    #           "  ( (pdgId*tag_pdgId==-11*11||pdgId*tag_pdgId==-13*13)"
+    #           "&&abs(mass-91.)>15.&&met_pt>30.) )"
+    #           "&&passDouble&&nJet25>=2&&nBJetLoose25>=2"
+    #           "&&tag_pt>30&&abs(tag_mcMatchId)>0",
+    # 'ttH'  : "abs(mcMatchId)>0&&passDouble",
 }
 
 LEPSEL = [
@@ -703,7 +703,7 @@ def makePlots(efficiencies, options):
                     plot.subtag = '%s, p_{T} > 30 GeV' % ntitle
 
                 plot.add(efficiencies['data'][(lep,'inclusive',nname,var)],
-                         'Data, Z mass fit',
+                         'Data (%.2f fb^{-1}), Z mass fit' % LUMI,
                          includeInRatio=False)
                 plot.add(efficiencies['DY'][(lep,'inclusive',nname,var)],
                          'DY MC, Z mass fit',

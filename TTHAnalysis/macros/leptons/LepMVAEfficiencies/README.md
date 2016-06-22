@@ -26,6 +26,8 @@ This will process all events for all samples containing `Run2016`,`DYJetsToLL_M5
 
 By default, the output is stored in a directory called `tnptrees/`. You can change this with the `-o/--outDir` option.
 
+Note that samples are checked to be data or not depending on whether their name contains the string `PromptReco`.
+
 Merge the data trees:
 
 ```
@@ -43,6 +45,8 @@ Finally, run the fits and make the plots using `makeLepTnPFriends.py`. Modify th
 ```
 python makeLepTnPFriends.py tnptrees/ -j 8
 ```
+
+Note: when running in parallel mode, a warning message (`*** Break *** write on a pipe with no one to read it`) is normal.
 
 
 

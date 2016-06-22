@@ -78,7 +78,7 @@ def run((infile, outfile, options)):
         ana.setMaxEvents(options.maxEntries)
 
     ## Check if it's data or MC
-    isdata = 'Run2015' in osp.basename(infile)
+    isdata = 'PromptReco' in osp.basename(infile)
 
     ## Run the loop
     ana.RunJob(outfile, isdata)
