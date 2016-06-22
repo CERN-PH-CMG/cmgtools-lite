@@ -23,7 +23,18 @@ from CMGTools.H2TauTau.proto.analyzers.RecoilCorrector import RecoilCorrector
 puFileMC = '$CMSSW_BASE/src/CMGTools/H2TauTau/data/MC_Fall15_PU25_V1.root'
 puFileData = '$CMSSW_BASE/src/CMGTools/H2TauTau/data/Data_Pileup_2015D_Feb02.root'
 
-reapplyJEC = True
+reapplyJEC = False
+
+from CMGTools.TTHAnalysis.analyzers.ttHhistoCounterAnalyzer import ttHhistoCounterAnalyzer
+susyCounter = cfg.Analyzer(
+    ttHhistoCounterAnalyzer, name="ttHhistoCounterAnalyzer",
+    SMS_max_mass = 3000, # maximum mass allowed in the scan
+    SMS_mass_1 = 'genSusyMScan1', # first scanned mass
+    SMS_mass_2 = 'genSusyMScan2', # second scanned mass
+    SMS_varying_masses = ['genSusyMChargino','genSusyMNeutralino'], # other mass variables that are expected to change in the tree (e.g., in T1tttt it should be set to ['genSusyMGluino','genSusyMNeutralino'])
+    SMS_regexp_evtGenMass = 'genSusyM.+',
+    bypass_trackMass_check = True # bypass check that non-scanned masses are the same in all events
+    )
 
 eventSelector = cfg.Analyzer(
     EventSelector,
@@ -70,6 +81,13 @@ pileUpAna = cfg.Analyzer(
 genAna = GeneratorAnalyzer.defaultConfig
 
 genAna.savePreFSRParticleIds = [1, 2, 3, 4, 5, 21]
+
+# Save SUSY masses
+from CMGTools.TTHAnalysis.analyzers.susyParameterScanAnalyzer import susyParameterScanAnalyzer
+susyScanAna = cfg.Analyzer(
+    susyParameterScanAnalyzer, name="susyParameterScanAnalyzer",
+    doLHE=True,
+    )
 
 dyJetsFakeAna = cfg.Analyzer(
     DYJetsFakeAnalyzer,
@@ -135,6 +153,7 @@ commonSequence = cfg.Sequence([
     triggerAna,
     vertexAna,
     genAna,
+    susyScanAna,
     dyJetsFakeAna,
     jetAna,
     vbfAna,

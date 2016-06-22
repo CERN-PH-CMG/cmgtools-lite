@@ -28,7 +28,16 @@ class H2TauTauTreeProducerTauTau( H2TauTauTreeProducer ):
     self.var(self.tree, 'l2_trigger_weight_up'  )
     self.var(self.tree, 'l2_trigger_weight_down')
 
+    self.var(self.tree, 'mt2')
 
+    self.var(self.tree, 'GenSusyMScan1')
+    self.var(self.tree, 'GenSusyMScan2')
+    self.var(self.tree, 'GenSusyMScan3')
+    self.var(self.tree, 'GenSusyMScan4')
+    self.var(self.tree, 'GenSusyMNeutralino')
+    self.var(self.tree, 'GenSusyMChargino')
+    self.var(self.tree, 'GenSusyMStau')
+    self.var(self.tree, 'GenSusyMStau2')
     
   def process(self, event):
              
@@ -66,5 +75,17 @@ class H2TauTauTreeProducerTauTau( H2TauTauTreeProducer ):
     self.fill(self.tree, 'l2_trigger_weight'     , tau2.weight_trigger     )
     self.fill(self.tree, 'l2_trigger_weight_up'  , tau2.weight_trigger_up  )
     self.fill(self.tree, 'l2_trigger_weight_down', tau2.weight_trigger_down)
+
+    self.fill(self.tree, 'mt2'     ,  event.mt2_lep   )
+
+    self.fill(self.tree, 'GenSusyMScan1'     ,  event.genSusyMScan1   )
+    self.fill(self.tree, 'GenSusyMScan2'     ,  event.genSusyMScan2   )
+    self.fill(self.tree, 'GenSusyMScan3'     ,  event.genSusyMScan3   )
+    self.fill(self.tree, 'GenSusyMScan4'     ,  event.genSusyMScan4   )
+    self.fill(self.tree, 'GenSusyMNeutralino'     ,  event.genSusyMNeutralino   )
+    self.fill(self.tree, 'GenSusyMChargino'     ,  event.genSusyMChargino   )
+    self.fill(self.tree, 'GenSusyMStau'     ,  event.genSusyMStau   )
+    self.fill(self.tree, 'GenSusyMStau2'     ,  event.genSusyMStau2   )
       
+
     self.fillTree(event)

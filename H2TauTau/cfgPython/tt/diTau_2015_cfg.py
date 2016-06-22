@@ -15,19 +15,19 @@ from CMGTools.H2TauTau.proto.analyzers.SVfitProducer              import SVfitPr
 from CMGTools.H2TauTau.proto.analyzers.L1TriggerAnalyzer          import L1TriggerAnalyzer
 
 # common configuration and sequence
-from CMGTools.H2TauTau.htt_ntuple_base_cff import commonSequence, genAna, dyJetsFakeAna, puFileData, puFileMC, eventSelector
+from CMGTools.H2TauTau.htt_ntuple_base_cff import commonSequence, genAna, dyJetsFakeAna, puFileData, puFileMC, eventSelector, susyCounter, skimAna
 
 # Get all heppy options; set via '-o production' or '-o production=True'
 
 # production = True run on batch, production = False (or unset) run locally
 production = getHeppyOption('production')
-production = True
+production = False
 
 # local switches
 syncntuple    = False
-computeSVfit  = True
+computeSVfit  = False
 pick_events   = False
-cmssw         = True
+cmssw         = False
 calibrateTaus = False
 data          = True
 
@@ -66,6 +66,16 @@ tauTauAna = cfg.Analyzer(
 
 if not cmssw:
   tauTauAna.from_single_objects = True
+
+from CMGTools.H2TauTau.proto.analyzers.MT2Analyzer import MT2Analyzer
+tauTauMT2Ana = cfg.Analyzer(
+    MT2Analyzer, name = 'MT2Analyzer',
+    metCollection     = "slimmedMETs",
+    doOnlyDefault = False,
+    jetPt = 40.,
+    collectionPostFix = "",
+    verbose = True
+    )
 
 l1Ana = cfg.Analyzer(
     class_object=L1TriggerAnalyzer,
@@ -213,6 +223,8 @@ sequence.insert(sequence.index(genAna), l1Ana)
 sequence.append(tauDecayModeWeighter)
 sequence.append(tau1Weighter)
 sequence.append(tau2Weighter)
+sequence.append(tauTauMT2Ana)
+sequence.insert(sequence.index(skimAna), susyCounter)
 if computeSVfit:
     sequence.append(svfitProducer)
 sequence.append(treeProducer)
@@ -249,6 +261,7 @@ if not production:
   selectedComponents   = [comp]
   comp.splitFactor     = 1
   comp.fineSplitFactor = 1
+  #comp.files           = ['/afs/cern.ch/work/m/mzeinali/public/020136C0-B12B-E611-8695-00145EFC5B60.root']
   comp.files           = comp.files[:1]
     
 preprocessor = None
