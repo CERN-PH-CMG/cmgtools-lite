@@ -3,7 +3,7 @@ import PhysicsTools.HeppyCore.framework.config as cfg
 from CMGTools.RootTools.samples.autoAAAconfig import *
 
 #-------- SAMPLES AND TRIGGERS -----------
-from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv1 import * #<--miniAOD v1 2016 MC
+from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv2 import * #<--miniAOD v2 2016 MC for ICHEP
 from CMGTools.RootTools.samples.samples_13TeV_DATA2016 import *  #<--miniAOD v1 2016 DATA
 
 from CMGTools.RootTools.samples.triggers_13TeV_Spring15 import triggers_1mu_iso_50ns, triggers_mumu, triggers_ee, triggers_photon30, triggers_photon50, triggers_photon75, triggers_photon90, triggers_photon120, triggers_jet, triggers_dijet, triggers_HT350, triggers_HT475, triggers_HT600, triggers_HT800, triggers_HT900, triggers_Jet80MET90
@@ -175,7 +175,8 @@ elif test==16:
 
 #QCD
 elif test==17:
-    selectedComponents = [QCD_HT100to200, QCD_HT200to300, QCD_HT300to500, QCD_HT_500to700, QCD_HT700to1000,QCD_HT1000to1500,QCD_HT1500to2000,QCD_HT2000toInf]
+#    selectedComponents = [QCD_HT100to200, QCD_HT200to300, QCD_HT300to500, QCD_HT_500to700, QCD_HT700to1000,QCD_HT1000to1500,QCD_HT1500to2000,QCD_HT2000toInf]
+    selectedComponents = QCD_HT
     is1PH=True
     for comp in selectedComponents:
         comp.splitFactor = 100
@@ -191,7 +192,7 @@ elif test==18:
 
 # WG/ZG/TTG
 elif test==19:
-    selectedComponents = [ZGJets, ZGTo2LG, WGJets, TTGJets]
+    selectedComponents = [ZGJets, ZGTo2LG, WGJets, TTGJets, TGJets_ext]
     is1PH=True
     for comp in selectedComponents:
         comp.splitFactor = 100
@@ -200,7 +201,8 @@ elif test==19:
 elif test==23:
     isZSkim=True
     is25ns=True
-    selectedComponents = [ DYJetsToLL_M50, TTJets_DiLepton, ZZTo4L, ZZTo2L2Q, WWTo2L2Nu, WZTo2L2Q, WZTo3LNu ]
+    selectedComponents = [ DYJetsToLL_M50 ]
+#    selectedComponents = [ DYJetsToLL_M50, TTJets_DiLepton, TTJets_DiLepton_ext, ZZTo4L, ZZTo2L2Q, ZZTo2L2Nu, WWTo2L2Nu, WZTo2L2Q, WZTo3LNu ]
     for comp in selectedComponents:
 # no trigger on MC for now
 #        if isEle:
@@ -209,7 +211,7 @@ elif test==23:
 #            comp.triggers = triggers_mumu
 #        comp.splitFactor = 1
 #        comp.files = comp.files[:1]
-        comp.splitFactor = 1000
+        comp.splitFactor = 200
         comp.files = comp.files[:]
 
 elif test==25:
@@ -293,8 +295,12 @@ if isZSkim or is1PH:
     met_globalObjects.update({
             "met_jecUp" : NTupleObject("met_jecUp", metType, help="PF E_{T}^{miss}, after type 1 corrections with JEC up variation"),
             "met_jecDown" : NTupleObject("met_jecDown", metType, help="PF E_{T}^{miss}, after type 1 corrections with JEC down variation"),
+            "met_shifted_UnclusteredEnUp" : NTupleObject("met_shifted_UnclusteredEnUp", metType, help="PF E_{T}^{miss}, after type 1 corrections with met unclustered Up"),
+            "met_shifted_UnclusteredEnDown" : NTupleObject("met_shifted_UnclusteredEnDown", metType, help="PF E_{T}^{miss}, after type 1 corrections with met unclustered Down"),
             "metPuppi_jecUp" : NTupleObject("metPuppi_jecUp", metType, help="PF E_{T}^{miss}, after type 1 corrections with JEC up variation (Puppi)"),
             "metPuppi_jecDown" : NTupleObject("metPuppi_jecDown", metType, help="PF E_{T}^{miss}, after type 1 corrections with JEC down variation (Puppi)"),
+            "metPuppi_shifted_UnclusteredEnUp" : NTupleObject("metPuppi_shifted_UnclusteredEnUp", metType, help="PF E_{T}^{miss}, after type 1 corrections with met unclustered Up"),
+            "metPuppi_shifted_UnclusteredEnDown" : NTupleObject("metPuppi_shifted_UnclusteredEnDown", metType, help="PF E_{T}^{miss}, after type 1 corrections with met unclustered Down"),
             })
 if is1PH:
     met_collections.update({
