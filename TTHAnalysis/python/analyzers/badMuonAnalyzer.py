@@ -55,7 +55,7 @@ class badMuonAnalyzer( Analyzer ):
                             break
             if flagged: break
 
-        event.badMuon=flagged
+        event.badMuon = (not flagged)
 #        self.printInfo(event)
         return True
 
