@@ -24,11 +24,6 @@ if [[ "$1" == "-l" ]]; then
     LOC=1; shift;
 fi;
 
-CheckRun=0
-if [[ "$1" == "-check" ]]; then
-    CheckRun=1; shift;
-fi;
-
 Q=8nh
 if [[ "$1" == "-q" ]]; then
     Q=$2; shift; shift;
@@ -57,17 +52,6 @@ for D in *_Chunk[0-9]*; do
         if [[ "${LSFL}" == "0"  ]] || find $D -maxdepth 1 -type d -name 'LSFJOB_*' | grep -q LSFJ; then
             if [[ "$LOC" == "1" ]]; then
                 echo "cmgRunChunkLocally ${BASE}${D} ";
-
-            else if [[ "$CheckRun" == "1" ]]; then
-		found=0
-		for item in $(bjobs -w -J ${D});do
-#			echo '   still running' $item
-		    found=1
-		done
-		if [ "${found}" == "0"  ]; then
-		    echo "cmgResubChunk -q $Q ${BASE}${D} ";
-		    found=0
-		fi;
 	    else
 		echo "cmgResubChunk -q $Q ${BASE}${D} ";
             fi
