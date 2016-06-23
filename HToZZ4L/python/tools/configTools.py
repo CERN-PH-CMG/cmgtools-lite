@@ -8,6 +8,8 @@ def redefineRunRange(selectedComponents,run_range):
         pre = len(comp.files)
         comp.files = kreator.getFiles(comp.dataset,"CMS",".*root",run_range=run_range)
         comp.splitFactor = max(1, int(ceil(comp.splitFactor * len(comp.files)/float(pre))) )
+        if hasattr(comp, 'dataset_entries'):
+            comp.dataset_entries = int(comp.dataset_entries * len(comp.files)/float(pre))
 
 def printSummary(selectedComponents):
     print "%-55s | %8s %12s | %7s | %8s %11s | %11s" % ("Component", "N(files)", "N(k ev)", "N(jobs)", "file/job", "k ev/job", "lumi eq [1/fb]")
@@ -89,6 +91,14 @@ def doTest1(comp, url=None, sequence=None, cache=False):
     if getHeppyOption('events'): insertEventSelector(sequence)
     if not getHeppyOption('fetch'): setHeppyOption('nofetch')
     return [ comp ]
+
+def switchOffMEs(sequence, verbose=False):
+    import CMGTools.HToZZ4L.analyzers.FourLeptonAnalyzerBase
+    base = CMGTools.HToZZ4L.analyzers.FourLeptonAnalyzerBase.FourLeptonAnalyzerBase
+    for item in sequence:
+        if issubclass(item.class_object, base):
+            if verbose: print "Switch off MEs for %s (%s)" % (item.name, item.class_object)
+            item.doMEs = False
 
 def doTestN(test, selectedComponents):
     if test == '2':

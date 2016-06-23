@@ -23,7 +23,7 @@ if "/functions_cc.so" not in ROOT.gSystem.GetLibraries():
 
 def scalarToVector(x):
     x0 = x
-    x = re.sub(r"(LepGood|Lep|JetFwd|Jet|GenTop|SV|TauGood|Tau)(\d)_(\w+)", lambda m : "%s_%s[%d]" % (m.group(1),m.group(3),int(m.group(2))-1), x)
+    x = re.sub(r"(LepGood|Lep|JetFwd|Jet|GenTop|SV|PhoGood|TauGood|Tau)(\d)_(\w+)", lambda m : "%s_%s[%d]" % (m.group(1),m.group(3),int(m.group(2))-1), x)
     x = re.sub(r"\bmet\b", "met_pt", x)
     return x
 
@@ -179,6 +179,7 @@ class TreeToYield:
             self._weight = True
         else:
             self._weightString = self.adaptExpr(self._weightString, cut=True)
+        if self._options.forceunweight: self._weight = False
         for macro in self._options.loadMacro:
             libname = macro.replace(".cc","_cc.so").replace(".cxx","_cxx.so")
             if libname not in ROOT.gSystem.GetLibraries():
@@ -462,6 +463,7 @@ class TreeToYield:
         (firstEntry, maxEntries) = self._rangeToProcess(fsplit)
         self._tree.Draw('>>elist', cut, 'entrylist', maxEntries, firstEntry)
         elist = ROOT.gDirectory.Get('elist')
+        if self._tree.GetEntries()==0 and elist==None: elist = ROOT.TEntryList("elist",cut) # empty list if tree is empty, elist would be a ROOT.nullptr TObject otherwise
         return elist
     def clearCut(self):
         #if not self._isInit: raise RuntimeError, "Error, clearing a cut on something that wasn't even initialized"
@@ -496,7 +498,8 @@ def _copyPlotStyle(self,plotfrom,plotto):
 
 def addTreeToYieldOptions(parser):
     parser.add_option("-l", "--lumi",           dest="lumi",   type="float", default="19.7", help="Luminosity (in 1/fb)");
-    parser.add_option("-u", "--unweight",       dest="weight",       action="store_false", default=True, help="Don't use weights (in MC events)");
+    parser.add_option("-u", "--unweight",       dest="weight",       action="store_false", default=True, help="Don't use weights (in MC events), note weights are still used if a fake rate file is given");
+    parser.add_option("--uf", "--unweight-forced",  dest="forceunweight", action="store_true", default=False, help="Do not use weight even if a fake rate file is given.");
     parser.add_option("-W", "--weightString",   dest="weightString", type="string", default="1", help="Use weight (in MC events)");
     parser.add_option("-f", "--final",  dest="final", action="store_true", help="Just compute final yield after all cuts");
     parser.add_option("-e", "--errors",  dest="errors", action="store_true", help="Include uncertainties in the reports");

@@ -718,7 +718,8 @@ class LeptonChoiceRA7:
         if self.ev.HLT_BIT_HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v           == 1: return True
         return False
 
-from CMGTools.TTHAnalysis.tools.leptonChoiceRA5 import _susy2lss_lepId_CBloose,_susy2lss_lepId_IPcuts
+from CMGTools.TTHAnalysis.tools.leptonChoiceRA5 import _susy2lss_lepId_IPcuts
+from CMGTools.TTHAnalysis.tools.leptonChoiceEWK import _susy3l_idEmu_cuts
 
 def _susy3l_multiIso(lep):
     # CH: looser WP than for RA5 (electrons -> medium, muons -> loose)
@@ -726,9 +727,23 @@ def _susy3l_multiIso(lep):
     else:                    A,B,C = (0.16,0.76,7.2)
     return lep.miniRelIso < A and (lep.jetPtRatiov2 > B or lep.jetPtRelv2 > C)
 
+def _susy3l_lepId_CBloose(lep):
+        if abs(lep.pdgId) == 13:
+            if lep.pt <= 5: return False
+            return True #lep.mediumMuonId > 0
+        elif abs(lep.pdgId) == 11:
+            if lep.pt <= 7: return False
+            if not (lep.convVeto and lep.lostHits <= 1): 
+                return False
+            if not lep.mvaIdSpring15 > -0.70+(-0.83+0.70)*(abs(lep.etaSc)>0.8)+(-0.92+0.83)*(abs(lep.etaSc)>1.479):
+                return False
+            if not _susy3l_idEmu_cuts(lep): return False
+            return True
+        return False
+
 def _susy3l_lepId_loosestFO(lep):
     # CH: the same as the 2lss one but without tightCharge
-    if not _susy2lss_lepId_CBloose(lep): return False
+    if not _susy3l_lepId_CBloose(lep): return False
     if abs(lep.pdgId) == 13:
         return lep.mediumMuonId > 0
     elif abs(lep.pdgId) == 11:
@@ -737,7 +752,7 @@ def _susy3l_lepId_loosestFO(lep):
 
 def _susy3l_lepId_CB(lep):
     # CH: the same as the 2lss one but without tightCharge
-    if not _susy2lss_lepId_CBloose(lep): return False
+    if not _susy3l_lepId_CBloose(lep): return False
     if not _susy2lss_lepId_IPcuts(lep): return False
     if abs(lep.pdgId) == 13:
         return lep.mediumMuonId > 0

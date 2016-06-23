@@ -1,7 +1,0 @@
-filters : hbheFilterNew25ns==1 && Flag_CSCTightHaloFilter==1 && Flag_eeBadScFilter==1
-trigger : HLT_DoubleEl || HLT_BIT_HLT_Ele27_WPLoose_Gsf_v || HLT_BIT_HLT_Ele27_WP85_Gsf_v
-2L SF/OS : nLepGood >= 2 && LepGood1_pdgId == -LepGood2_pdgId
-electron: abs(LepGood_pdgId[iChosen])==11 
-best mll[60,120] : (60 < mZ1 && mZ1 < 120)
-lepton: LepGood_pt[!(iChosen)]>30 && LepGood_relIso03[!(iChosen)]<0.2 && abs(LepGood_eta[!(iChosen)])<=2.1
-lep10: LepGood_pt[iChosen]>10

@@ -1,0 +1,115 @@
+
+## baseline region
+## ----------------------------------------------------------
+BR          : BR            : 3,-0.5,2.5  ; XTitle="Baseline Region", Legend="TR", LegendCutoff=1e-5, xBinLabels="none\,3l\,>3l"
+
+## signal regions
+## ----------------------------------------------------------
+SR_3l_light : SR            : 36,0.5,36.5 ; XTitle="Signal Region", Legend="TR", IncludeOverflows=False, LegendCutoff=1e-5
+SR_3l_1tau  : SR-36         : 84,0.5,84.5 ; XTitle="Signal Region", Legend="TR", IncludeOverflows=False, LegendCutoff=1e-5 
+SR_3l_2tau  : SR-120        : 60,0.5,60.5 ; XTitle="Signal Region", Legend="TR", IncludeOverflows=False, LegendCutoff=1e-5 
+SR_4l       : SR-144        : 12,0.5,12.5 ; XTitle="Signal Region", Legend="TR", IncludeOverflows=False, LegendCutoff=1e-5
+
+
+## signal region per mll
+## ----------------------------------------------------------
+SR_A_i      : SR            : 12,0.5,12.5 ; XTitle="Signal Region (below Z)"  , Legend="TR", IncludeOverflows=False, LegendCutoff=1e-5, xBinLabels="A01\,A02\,A03\,A04\,A05\,A06\,A07\,A08\,A09\,A10\,A11\,A12" 
+SR_A_ii     : SR-12         : 12,0.5,12.5 ; XTitle="Signal Region (on Z)"     , Legend="TR", IncludeOverflows=False, LegendCutoff=1e-5, xBinLabels="A13\,A14\,A15\,A16\,A17\,A18\,A19\,A20\,A21\,A22\,A23\,A24" 
+SR_A_iii    : SR-24         : 12,0.5,12.5 ; XTitle="Signal Region (above Z)"  , Legend="TR", IncludeOverflows=False, LegendCutoff=1e-5, xBinLabels="A25\,A26\,A27\,A28\,A29\,A30\,A31\,A32\,A33\,A34\,A35\,A36" 
+SR_B_i      : SR-36         : 12,0.5,12.5 ; XTitle="Signal Region (low mll)"  , Legend="TR", IncludeOverflows=False, LegendCutoff=1e-5, xBinLabels="B01\,B02\,B03\,B04\,B05\,B06\,B07\,B08\,B09\,B10\,B11\,B12" 
+SR_B_ii     : SR-48         : 12,0.5,12.5 ; XTitle="Signal Region (high mll)" , Legend="TR", IncludeOverflows=False, LegendCutoff=1e-5, xBinLabels="B13\,B14\,B15\,B16\,B17\,B18\,B19\,B20\,B21\,B22\,B23\,B24" 
+SR_C_i      : SR-60         : 12,0.5,12.5 ; XTitle="Signal Region (below Z)"  , Legend="TR", IncludeOverflows=False, LegendCutoff=1e-5, xBinLabels="C01\,C02\,C03\,C04\,C05\,C06\,C07\,C08\,C09\,C10\,C11\,C12" 
+SR_C_ii     : SR-72         : 12,0.5,12.5 ; XTitle="Signal Region (on Z)"     , Legend="TR", IncludeOverflows=False, LegendCutoff=1e-5, xBinLabels="C13\,C14\,C15\,C16\,C17\,C18\,C19\,C20\,C21\,C22\,C23\,C24" 
+SR_C_iii    : SR-84         : 12,0.5,12.5 ; XTitle="Signal Region (above Z)"  , Legend="TR", IncludeOverflows=False, LegendCutoff=1e-5, xBinLabels="C25\,C26\,C27\,C28\,C29\,C30\,C31\,C32\,C33\,C34\,C35\,C36" 
+SR_D_i      : SR-96         : 12,0.5,12.5 ; XTitle="Signal Region (low mll)"  , Legend="TR", IncludeOverflows=False, LegendCutoff=1e-5, xBinLabels="D01\,D02\,D03\,D04\,D05\,D06\,D07\,D08\,D09\,D10\,D11\,D12" 
+SR_D_ii     : SR-108        : 12,0.5,12.5 ; XTitle="Signal Region (high mll)" , Legend="TR", IncludeOverflows=False, LegendCutoff=1e-5, xBinLabels="D13\,D14\,D15\,D16\,D17\,D18\,D19\,D20\,D21\,D22\,D23\,D24" 
+SR_E_i      : SR-120        : 12,0.5,12.5 ; XTitle="Signal Region (low mll)"  , Legend="TR", IncludeOverflows=False, LegendCutoff=1e-5, xBinLabels="E01\,E02\,E03\,E04\,E05\,E06\,E07\,E08\,E09\,E10\,E11\,E12" 
+SR_E_ii     : SR-132        : 12,0.5,12.5 ; XTitle="Signal Region (high mll)" , Legend="TR", IncludeOverflows=False, LegendCutoff=1e-5, xBinLabels="E13\,E14\,E15\,E16\,E17\,E18\,E19\,E20\,E21\,E22\,E23\,E24" 
+SR_GHI      : SR-144        : 12,0.5,12.5 ; XTitle="Signal Region (4l)"       , Legend="TR", IncludeOverflows=False, LegendCutoff=1e-5, xBinLabels="G01\,G02\,G03\,G04\,H01\,H02\,H03\,H04\,I01\,I02\,I03\,I04" 
+
+
+## signal region per mT, 3l light nOSSF = 1 
+## ----------------------------------------------------------
+SR_A_p1     : SR            : 4,0.5,4.5   ; XTitle="Signal Region", Legend="TR", IncludeOverflows=False, LegendCutoff=1e-5, xBinLabels="A01\,A02\,A03\,A04", YMin=0, YMax=120
+SR_A_p2     : SR-4          : 4,0.5,4.5   ; XTitle="Signal Region", Legend="TR", IncludeOverflows=False, LegendCutoff=1e-5, xBinLabels="A05\,A06\,A07\,A08", YMin=0, YMax=12
+SR_A_p3     : SR-8          : 4,0.5,4.5   ; XTitle="Signal Region", Legend="TR", IncludeOverflows=False, LegendCutoff=1e-5, xBinLabels="A09\,A10\,A11\,A12", YMin=0, YMax=7
+SR_A_p4     : SR-12         : 4,0.5,4.5   ; XTitle="Signal Region", Legend="TR", IncludeOverflows=False, LegendCutoff=1e-5, xBinLabels="A13\,A14\,A15\,A16", YMin=0, YMax=650
+SR_A_p5     : SR-16         : 4,0.5,4.5   ; XTitle="Signal Region", Legend="TR", IncludeOverflows=False, LegendCutoff=1e-5, xBinLabels="A17\,A18\,A19\,A20", YMin=0, YMax=20
+SR_A_p6     : SR-20         : 4,0.5,4.5   ; XTitle="Signal Region", Legend="TR", IncludeOverflows=False, LegendCutoff=1e-5, xBinLabels="A21\,A22\,A23\,A24", YMin=0, YMax=6
+SR_A_p7     : SR-24         : 4,0.5,4.5   ; XTitle="Signal Region", Legend="TR", IncludeOverflows=False, LegendCutoff=1e-5, xBinLabels="A25\,A26\,A27\,A28", YMin=0, YMax=40
+SR_A_p8     : SR-28         : 4,0.5,4.5   ; XTitle="Signal Region", Legend="TR", IncludeOverflows=False, LegendCutoff=1e-5, xBinLabels="A29\,A30\,A31\,A32", YMin=0, YMax=3.5
+SR_A_p9     : SR-32         : 4,0.5,4.5   ; XTitle="Signal Region", Legend="TL", IncludeOverflows=False, LegendCutoff=1e-5, xBinLabels="A33\,A34\,A35\,A36", YMin=0, YMax=6
+
+## signal region per mT, 3l light nOSSF = 0
+## ----------------------------------------------------------
+SR_B_p1     : SR-36         : 4,0.5,4.5   ; XTitle="Signal Region", Legend="TR", IncludeOverflows=False, LegendCutoff=1e-5, xBinLabels="B01\,B02\,B03\,B04", YMin=0, YMax=12
+SR_B_p2     : SR-40         : 4,0.5,4.5   ; XTitle="Signal Region", Legend="TR", IncludeOverflows=False, LegendCutoff=1e-5, xBinLabels="B05\,B06\,B07\,B08", YMin=0, YMax=2.5
+SR_B_p3     : SR-44         : 4,0.5,4.5   ; XTitle="Signal Region", Legend="TR", IncludeOverflows=False, LegendCutoff=1e-5, xBinLabels="B09\,B10\,B11\,B12", YMin=0, YMax=1.7
+SR_B_p4     : SR-48         : 4,0.5,4.5   ; XTitle="Signal Region", Legend="TR", IncludeOverflows=False, LegendCutoff=1e-5, xBinLabels="B13\,B14\,B15\,B16", YMin=0, YMax=1.5
+SR_B_p5     : SR-52         : 4,0.5,4.5   ; XTitle="Signal Region", Legend="TR", IncludeOverflows=False, LegendCutoff=1e-5, xBinLabels="B17\,B18\,B19\,B20", YMin=0, YMax=0.5
+SR_B_p6     : SR-56         : 4,0.5,4.5   ; XTitle="Signal Region", Legend="TR", IncludeOverflows=False, LegendCutoff=1e-5, xBinLabels="B21\,B22\,B23\,B24", YMin=0, YMax=0.5
+
+## signal region per mT, 3l 1tau nOSSF = 1 
+## ----------------------------------------------------------
+SR_C_p1     : SR-60         : 4,0.5,4.5   ; XTitle="Signal Region", Legend="TR", IncludeOverflows=False, LegendCutoff=1e-5, xBinLabels="C01\,C02\,C03\,C04", YMin=0, YMax=120
+SR_C_p2     : SR-64         : 4,0.5,4.5   ; XTitle="Signal Region", Legend="TR", IncludeOverflows=False, LegendCutoff=1e-5, xBinLabels="C05\,C06\,C07\,C08", YMin=0, YMax=7
+SR_C_p3     : SR-68         : 4,0.5,4.5   ; XTitle="Signal Region", Legend="TR", IncludeOverflows=False, LegendCutoff=1e-5, xBinLabels="C09\,C10\,C11\,C12", YMin=0, YMax=5
+SR_C_p4     : SR-72         : 4,0.5,4.5   ; XTitle="Signal Region", Legend="TR", IncludeOverflows=False, LegendCutoff=1e-5, xBinLabels="C13\,C14\,C15\,C16", YMin=0, YMax=350
+SR_C_p5     : SR-76         : 4,0.5,4.5   ; XTitle="Signal Region", Legend="TR", IncludeOverflows=False, LegendCutoff=1e-5, xBinLabels="C17\,C18\,C19\,C20", YMin=0, YMax=11
+SR_C_p6     : SR-80         : 4,0.5,4.5   ; XTitle="Signal Region", Legend="TR", IncludeOverflows=False, LegendCutoff=1e-5, xBinLabels="C21\,C22\,C23\,C24", YMin=0, YMax=7
+SR_C_p7     : SR-84         : 4,0.5,4.5   ; XTitle="Signal Region", Legend="TR", IncludeOverflows=False, LegendCutoff=1e-5, xBinLabels="C25\,C26\,C27\,C28", YMin=0, YMax=80
+SR_C_p8     : SR-88         : 4,0.5,4.5   ; XTitle="Signal Region", Legend="TR", IncludeOverflows=False, LegendCutoff=1e-5, xBinLabels="C29\,C30\,C31\,C32", YMin=0, YMax=6
+SR_C_p9     : SR-92         : 4,0.5,4.5   ; XTitle="Signal Region", Legend="TR", IncludeOverflows=False, LegendCutoff=1e-5, xBinLabels="C33\,C34\,C35\,C36", YMin=0, YMax=2
+
+## signal region per mT, 3l 1tau nOSSF = 0 nOSLF = 1
+## ----------------------------------------------------------
+SR_D        : SR-96         : 2,0.5,2.5   ; XTitle="Signal Region", Legend="TR", IncludeOverflows=False, LegendCutoff=1e-5, xBinLabels="D01\,D02", YMin=0, YMax=90
+
+## signal region per mT, 3l 1tau nOSSF = 0 nOSLF = 0
+## ----------------------------------------------------------
+SR_E_p1     : SR-120        : 4,0.5,4.5   ; XTitle="Signal Region", Legend="TR", IncludeOverflows=False, LegendCutoff=1e-5, xBinLabels="E01\,E02\,E03\,E04", YMin=0, YMax=35
+SR_E_p2     : SR-124        : 4,0.5,4.5   ; XTitle="Signal Region", Legend="TR", IncludeOverflows=False, LegendCutoff=1e-5, xBinLabels="E05\,E06\,E07\,E08", YMin=0, YMax=5
+SR_E_p3     : SR-128        : 4,0.5,4.5   ; XTitle="Signal Region", Legend="TR", IncludeOverflows=False, LegendCutoff=1e-5, xBinLabels="E09\,E10\,E11\,E12", YMin=0, YMax=2
+SR_E_p4     : SR-132        : 4,0.5,4.5   ; XTitle="Signal Region", Legend="TR", IncludeOverflows=False, LegendCutoff=1e-5, xBinLabels="E13\,E14\,E15\,E16", YMin=0, YMax=1
+SR_E_p5     : SR-136        : 4,0.5,4.5   ; XTitle="Signal Region", Legend="TR", IncludeOverflows=False, LegendCutoff=1e-5, xBinLabels="E17\,E18\,E19\,E20", YMin=0, YMax=0.5
+SR_E_p6     : SR-140        : 4,0.5,4.5   ; XTitle="Signal Region", Legend="TR", IncludeOverflows=False, LegendCutoff=1e-5, xBinLabels="E21\,E22\,E23\,E24", YMin=0, YMax=0.5
+
+## signal region, 3l 2tau
+## ----------------------------------------------------------
+SR_F        : SR-145        : 2,0.5,2.5   ; XTitle="Signal Region", Legend="TR", IncludeOverflows=False, LegendCutoff=1e-5, xBinLabels="F01\,F02", YMin=0, YMax=120
+
+## signal region, 4l 0tau nOSSF >= 2
+## ----------------------------------------------------------
+SR_G        : SR-145        : 4,0.5,4.5   ; XTitle="Signal Region", Legend="TR", IncludeOverflows=False, LegendCutoff=1e-5, xBinLabels="G01\,G02\,G03\,G04", YMin=0, YMax=120
+
+## signal region, 4l 0tau nOSSF <= 1
+## ----------------------------------------------------------
+SR_H        : SR-149        : 4,0.5,4.5   ; XTitle="Signal Region", Legend="TR", IncludeOverflows=False, LegendCutoff=1e-5, xBinLabels="H01\,H02\,H03\,H04", YMin=0, YMax=4
+
+## signal region, 4l 1tau nOSSF <= 1
+## ----------------------------------------------------------
+SR_I        : SR-157        : 4,0.5,4.5   ; XTitle="Signal Region", Legend="TR", IncludeOverflows=False, LegendCutoff=1e-5, xBinLabels="I01\,I02\,I03\,I04", YMin=0, YMax=13
+
+
+## lepton and event observables
+## ----------------------------------------------------------
+
+lep1_pt   : LepGood1_pt   : 20,0,200    ; XTitle="p_{T\,cone}(leading lep.)"
+lep2_pt   : LepGood2_pt   : 20,0,200    ; XTitle="p_{T\,cone}(subleading lep.)"
+lep3_pt   : LepGood3_pt   : 20,0,200    ; XTitle="p_{T\,cone}(third lep.)"
+
+mt2       : mt_2(LepGood1_pt, LepGood1_phi, LepGood2_pt, LepGood2_phi) : 20,0,200 ; XTitle="m_{T2}(l\,l)"
+
+appWeight : appWeight     : 30,-0.5,1   ; XTitle = "appWeight", Legend="TL", LegendCutoff=1e-3
+htJet30j  : htJet30j      : 20,0,800    ; XTitle="H_{T}(jet p_{T} > 30)  [GeV]"
+met       : met_pt        : 35,0,700    ; XTitle="E_{T}^{miss}  [GeV]", LegendCutoff=1e-3
+mtW       : mTmin_Loop    : 20,0,200    ; XTitle="M_{T}^W [GeV]", LegendCutoff=1e-3
+nJet30    : nJet30        : 10,-0.5,9.5 ; XTitle='N(jet\, p_{T} > 30)'
+nBJet30   : nBJetMedium30 : 5,-0.5,4.5  ; XTitle='N(b-jet\, p_{T} > 30\, CSVM)'
+
+flavor    : (abs(LepGood1_pdgId)+abs(LepGood2_pdgId)+abs(LepGood3_pdgId)-33)/2 ; 4,-0.5,3.5 ; XTitle="eee/ee#mu/e#mu#mu/#mu#mu#mu", Legend="TL", LegendCutoff=1e-5, MoreY=2.0 
+mll       : mass_2(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_mass, LepGood2_pt,LepGood2_eta,LepGood2_phi,LepGood2_mass): 10,0,200; XTitle="m(ll\,cone) [GeV]"
+mtWmin    : min(mt_2(LepGood1_conePt,LepGood1_phi,met_pt,met_phi),mt_2(LepGood2_conePt,LepGood2_phi,met_pt,met_phi)) : 20,0,200; XTitle="min M_{T}(l_{i}\,E_{T}^{miss}) [GeV]"
+
+
+
