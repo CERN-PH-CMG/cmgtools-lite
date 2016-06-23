@@ -851,6 +851,7 @@ float fakeRateReader_2lss_fHT_FO(float l1eta, float l1pt, float l2eta, float l2p
 namespace WP {
     enum WPId { V=0, VL=0, VVL=-1, L=1, M=2, T=3, VT=4, HT=5 } ;
 }
+
 float multiIso_singleWP(float LepGood_miniRelIso, float LepGood_jetPtRatiov2, float LepGood_jetPtRelv2, WP::WPId wp) {
     switch (wp) {
         case WP::VT: return LepGood_miniRelIso < 0.09  && (LepGood_jetPtRatiov2>0.84  || LepGood_jetPtRelv2>7.2 );
@@ -864,6 +865,12 @@ float multiIso_singleWP(float LepGood_miniRelIso, float LepGood_jetPtRatiov2, fl
             abort();
     }
 }
+
+float multiIso_singleWP(float LepGood_miniRelIso, float LepGood_jetPtRatiov2, float LepGood_jetPtRelv2, int wp) {
+     WP::WPId wpid = static_cast<WP::WPId>(wp);
+     return multiIso_singleWP(LepGood_miniRelIso, LepGood_jetPtRatiov2, LepGood_jetPtRelv2, wpid);
+}
+
 float multiIso_multiWP(int LepGood_pdgId, float LepGood_pt, float LepGood_eta, float LepGood_miniRelIso, float LepGood_jetPtRatiov2, float LepGood_jetPtRelv2, WP::WPId wp) {
     switch (wp) {
         case WP::VT: 

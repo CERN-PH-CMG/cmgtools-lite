@@ -14,7 +14,7 @@ fi
 matchString="Complete"
 jobList="resub.list"
 
-if [ -f jobList ]; then
+if [ -f $jobList ]; then
     rm $jobList
 fi
 
@@ -28,8 +28,8 @@ do
 	#echo "Checking $log"
 	subcmd=$(grep "prepareEventVariablesFriendTree.py" $log)
 	#subcmd=$(cat $log | grep prepare)
-	#echo $subcmd
-	echo $subcmd > $jobList
+	echo $subcmd
+	echo $subcmd >> $jobList
     fi
 done
 

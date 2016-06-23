@@ -8,9 +8,8 @@ import shutil
 import pickle
 import math
 
-from CMGTools.Production.batchmanager import BatchManager
-#from PhysicsTools.HeppyCore.utils.batchmanager import BatchManager
-from PhysicsTools.HeppyCore.framework.heppy import split
+from PhysicsTools.HeppyCore.utils.batchmanager import BatchManager
+from PhysicsTools.HeppyCore.framework.heppy_loop import split
 
 def batchScriptNAF( jobDir='/nfs/dust/cms/user/lobanov/SUSY/Run2/CMG/CMSSW_7_0_6_patch1/src/CMGTools/TTHAnalysis/cfg/output_Directory/TTJets_PU20bx25_V52'):
    '''prepare the NAF version of the batch script, to run on NAF'''
@@ -18,9 +17,9 @@ def batchScriptNAF( jobDir='/nfs/dust/cms/user/lobanov/SUSY/Run2/CMG/CMSSW_7_0_6
 ## make sure the right shell will be used
 #$ -S /bin/zsh
 ## the cpu time for this job
-#$ -l h_rt=02:59:00
+#$ -l h_rt=23:59:00
 ## the maximum memory usage of this job
-#$ -l h_vmem=1900M
+#$ -l h_vmem=7900M
 ## operating system
 #$ -l distro=sld6
 ## architecture
@@ -28,7 +27,7 @@ def batchScriptNAF( jobDir='/nfs/dust/cms/user/lobanov/SUSY/Run2/CMG/CMSSW_7_0_6
 ## stderr and stdout are merged together to stdout
 #$ -j y
 ##(send mail on job's end and abort)
-##$ -m a
+#$ -m a
 #$ -l site=hh
 ## transfer env var from submission host
 #$ -V
@@ -46,26 +45,90 @@ def batchScriptNAF( jobDir='/nfs/dust/cms/user/lobanov/SUSY/Run2/CMG/CMSSW_7_0_6
    script += """/logs"""
    script += """
 #start of script
+export XRD_ENABLEFORKHANDLERS=1
 echo job start at `date`
 echo "Running on machine" `uname -a`
 echo $(lsb_release -a | grep Description)
 echo "Locating in" `pwd`
 
-#cd $CMSSW_BASE/src
+cd $CMSSW_BASE/src
 eval `/cvmfs/cms.cern.ch/common/scramv1 runtime -sh`
 echo "CMSSW version:" $CMSSW_VERSION
 echo "CMSSW base:" $CMSSW_BASE
 echo "Python version" `python --version`
 
 cd $OUTDIR
-TaskID=$((SGE_TASK_ID+1))
-#cd *_Chunk$TaskID
-JobDir=$(find . -maxdepth 1 -type d ! -name "logs" | sed ''$TaskID'q;d')
+TaskID=$((SGE_TASK_ID))
+JobDir=$(find . -maxdepth 1 -type d -name "*_Chunk*" | sed ''$TaskID'q;d')
+
+if [[ $JobDir != *"_Chunk"* ]]
+then
+   echo "$Jobdir is not a chunk!"
+   exit 0
+fi
+
 echo "Changing to job dir" $JobDir
 cd $JobDir
 
 echo 'Running in dir' `pwd`
-python $CMSSW_BASE/src/PhysicsTools/HeppyCore/python/framework/looper.py pycfg.py config.pck
+
+if [ -f processing ]; then
+    echo "Already processing that chunk now"
+    exit 0
+fi
+
+if [ -f processed ]; then
+    echo "Already processed that chunk"
+    exit 0
+fi
+
+if [ -f failed ]; then
+    echo "Going to reprocess this chunk"
+    rm failed
+    # do clean up magic (TODO)
+fi
+
+touch processing
+
+LOOPER=$CMSSW_BASE/src/PhysicsTools/HeppyCore/python/framework/looper.py
+python $LOOPER  pycfg.py config.pck > looper.log
+
+echo "Looper finished!"
+echo "Checking output..."
+
+if grep -r "number of events processed" looper.log; then
+   echo "Job succeeded"
+   touch processed
+
+   mv Loop/* ./
+   rm -r Loop/
+else
+   echo "Couldn't find processed events!"
+   echo "Job failed!"
+   mv looper.log Loop/
+   mv Loop Loop_failed_`date +%s`
+   touch failed
+fi
+
+# # check output quality
+# root -b -q treeProducerSusySingleLepton/tree.root 2>&1 > .filetest
+# if grep -r "Error" .filetest ; then
+#    echo "Job failed!"
+#    touch failed
+# elif grep -r "0x0" .filetest ; then
+#    echo "Job failed!"
+#    touch failed
+# elif grep -r "File" .filetest; then
+#    echo "Successfully" $log
+#    touch processed
+#    rm .filetest
+# else
+#    echo "Job failed!"
+#    touch failed
+# fi
+
+rm processing
+
 echo
 echo job end at `date`
 """

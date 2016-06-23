@@ -33,13 +33,15 @@ selectedComponents = [ d for d in data_50ns if "SingleMu" not in d.name ]
 
 sequence = cfg.Sequence(hzz4lCoreSequence)
 
+#switchOffMEs(sequence)
+
 for comp in mcSamples:
     comp.triggers = triggers_any
     comp.vetoTriggers = []
 
 
-#doECalCorrections(era="25ns")
-#doKalmanMuonCorrections(smear="basic")
+doECalCorrections(era="25ns")
+doKalmanMuonCorrections(smear="basic")
 
 if not getHeppyOption("test"):
     printSummary(selectedComponents)

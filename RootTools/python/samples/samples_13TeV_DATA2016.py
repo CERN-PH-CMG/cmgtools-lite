@@ -9,7 +9,7 @@ kreator = ComponentCreator()
 ### ----------------------------- Zero Tesla run  ----------------------------------------
 
 dataDir = "$CMSSW_BASE/src/CMGTools/TTHAnalysis/data"  # use environmental variable, useful for instance to run on CRAB
-json=dataDir+'/json/Cert_271036-274240_13TeV_PromptReco_Collisions16_JSON.txt'
+json=dataDir+'/json/Cert_271036-274443_13TeV_PromptReco_Collisions16_JSON.txt'
 #https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/
 #https://hypernews.cern.ch/HyperNews/CMS/get/physics-validation/2657.html
 #with recorded luminosity: 804.2/pb
@@ -26,7 +26,7 @@ json=dataDir+'/json/Cert_271036-274240_13TeV_PromptReco_Collisions16_JSON.txt'
 #    )
 
 
-run_range = (271036, 274240)
+run_range = (271036, 274443)
 label = "_runs%s_%s"%(run_range[0], run_range[1])
 
 ### ----------------------------- Run2016 PromptReco v1 ----------------------------------------
