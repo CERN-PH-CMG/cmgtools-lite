@@ -27,8 +27,10 @@ gStyle.SetTitleFont(62)
 _colorList = [2,4,8,9,7,3,6] + range(10,50)
 
 eta_bins = []#-2.5,-2.25,-2.,-1.75,]
-for ieta in range(-10,11):
-    eta_bins += [ieta*2.4/10]
+#for ieta in range(-10,11):
+#    eta_bins += [ieta*2.4/10]
+for ieta in range(-20,21):
+    eta_bins += [ieta*2.4/20]
 
 eta_bins_2d = [-2.4,-2,-1.5,-1.,-0.5,0,0.5,1.,1.5,2.,2.4]
 
