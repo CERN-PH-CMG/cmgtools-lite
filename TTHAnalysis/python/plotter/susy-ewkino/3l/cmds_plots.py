@@ -2,13 +2,13 @@ import os
 
 # principal output dir (tags will be added)
 #O    = "/afs/cern.ch/user/c/cheidegg/www/heppy/2016-06-22_ewk80X_plots_FRappl/"
-O    = "/afs/cern.ch/user/c/cheidegg/www/heppy/2016-06-23_ewk80X_4fb_plots_followUp"
+O    = "/afs/cern.ch/user/c/cheidegg/www/heppy/2016-06-23_ewk80X_4fb_plots_followUp/"
 
 # tree input dir
 T    = "/mnt/t3nfs01/data01/shome/cheidegg/o/2016-06-09_ewktrees80X_2LL_mix/"
 #T    = "/scratch/cheidegg/2016-05-03_ewktrees76X"
 jlr  = "leptonJetReCleanerSusyEWK"
-lch  = "leptonBuilderEWK"
+lch  = "leptonBuilderEWKgoodMcAny"
 
 # lumi in /fb
 #lumi = 0.8042 # blinding
@@ -17,7 +17,7 @@ lspam = "#bf{CMS} #it{Preliminary}"
 #lspam = "#bf{CMS} #it{Simulation}" 
 
 # do
-what = "data" # data, bkg, sig, both (=bkg+sig)
+what  = "data" # data, bkg, sig, both (=bkg+sig)
 
 # category
 categ = [
@@ -34,15 +34,18 @@ categ = [
 
 # plot binning
 plots = [
-         #"br"   , 
+         #"all"     , # everything
+         #"br"      , # wide plots for all BR
          #"perCateg", # one plot per principal category
          #"perMll"  , # one plot per mll bin
-         "perMt"   , # one plot per mT bin
+         #"perMt"   , # one plot per mT bin
+         "lep"     , # lepton quantities in BR
+         #"evt"     , # event quantities in BR
         ]
 
 scenario = [
-            #["SR"     , ""                                   ], # signal region
-            ["SBfakes", "-X blinding"], # sideband BE SURE THAT YOU PUT !isTight in the fakerate file!
+            #["SR"     , ""                      ], # signal region
+            ["SBfakes", "-X blinding -I isTight"], # sideband 
            ]
 
 
@@ -71,20 +74,18 @@ def getCuts(categ):
 	return ""
 
 def getPlots(plot, categ):
-	#return ["lep1_pt", "lep2_pt", "lep3_pt", "mll", "met", "mtW","htJet30j","nJet30","nBJet25","flavor"]
-	if plot == "br"      : return ["BR", "SR_3l_light", "SR_3l_1tau", "SR_3l_2tau", "SR_4l"]
-	if plot == "perCateg": return []
-	if plot == "perMll"  : 
-		if categ in ["G", "H", "I"]:
-			return ["SR_GHI"]
-		if categ == "A":
-			return ["SR_A_i.*"]
-		return ["SR_" + categ]
-	if plot == "perMt"   :
-		if categ in ["G", "H", "I"]:
-			return ["SR_" + categ]
-		return ["SR_" + categ + "_p.*"]
-	return []	
+	return ["m3l"]
+	lop = []
+	if plot in ["all", "lep"     ]                                 : lop.extend(["lep1_pt", "lep2_pt", "lep3_pt", "flavor"])
+	if plot in ["all", "evt"     ]                                 : lop.extend(["mll", "met", "mtW","htJet30j","nJet30","nBJet25"])
+	if plot in ["all", "br"      ]                                 : lop.extend(["BR", "SR_3l_light", "SR_3l_1tau", "SR_3l_2tau", "SR_4l"])
+	if plot in ["all", "perCateg"]                                 : lop.extend([])
+	if plot in ["all", "perMll"  ] and not categ in ["G", "H", "I"]: lop.extend(["SR_" + categ])
+	if plot in ["all", "perMll"  ] and     categ in ["G", "H", "I"]: lop.extend(["SR_GHI"])
+	if plot in ["all", "perMll"  ] and     categ in ["A"]          : lop.extend(["SR_A_i.*"])
+	if plot in ["all", "perMt"   ] and     categ in ["G", "H", "I"]: lop.extend(["SR_" + categ])
+	if plot in ["all", "perMt"   ] and not categ in ["G", "H", "I"]: lop.extend(["SR_" + categ + "_p.*"])
+	return lop
 
 def getSigs(categ):
 	if categ == "A": return ["_sig_TChiNeu_WZ_.*", "_sig_TChiNeu_WH_.*", "_sig_TChiNeu_SlepSneu_FD_.*"]
@@ -98,7 +99,7 @@ def getSigs(categ):
 	if categ == "I": return ["_sig_TNeuNeu_ZZ_.*", "_sig_TNeuNeu_HZ_.*", "_sig_TNeuNeu_HH_.*"]
 	return []
 
-base = "python mcPlots.py susy-ewkino/3l/mca_ewkino.txt susy-ewkino/3l/cuts_ewkino.txt susy-ewkino/3l/plots_ewkino.txt -P {T} --neg --s2v --tree treeProducerSusyMultilepton -f -j 8 --lspam '{LSPAM}' --legendWidth 0.20 --legendFontSize 0.035 --mcc susy-ewkino/mcc_triggerdefs.txt --mcc susy-ewkino/3l/mcc_ewkino.txt --showMCError -l {L} --pdir {O} -F sf/t {JLR} -F sf/t {LCH} {PROC} --sP {PLOT} {CUTS} {SC}"
+base = "python mcPlots.py susy-ewkino/3l/mca_ewkino.txt susy-ewkino/3l/cuts_ewkino.txt susy-ewkino/3l/plots_ewkino.txt -P {T} --neg --s2v --tree treeProducerSusyMultilepton -f -j 8 --lspam '{LSPAM}' --legendWidth 0.20 --legendFontSize 0.035 --mcc susy-ewkino/mcc_triggerdefs.txt --mcc susy-ewkino/3l/mcc_ewkino.txt --showMCError -l {L} --pdir {O} -F sf/t {JLR} -F sf/t {LCH} --load-macro susy-ewkino/3l/functions3L.cc {PROC} --sP {PLOT} {CUTS} {SC}"
 
 for s in scenario:
 	for p in plots:

@@ -94,6 +94,8 @@ lep2_pt   : LepSel2_conePt : 20,0,200    ; XTitle="p_{T\,cone}(subleading lep.)"
 lep3_pt   : LepSel3_conePt : 20,0,200    ; XTitle="p_{T\,cone}(third lep.)"     , LegendCutoff=1e-4
 lep4_pt   : LepSel4_conePt : 20,0,200    ; XTitle="p_{T\,cone}(forth lep.)"     , LegendCutoff=1e-4
 
+m3l       : mass_3_cheap(LepSel1_pt,LepSel1_eta,LepSel2_pt,LepSel2_eta,deltaPhi(LepSel1_phi,LepSel2_phi),LepSel3_pt,LepSel3_eta,deltaPhi(LepSel1_phi,LepSel3_phi)) : 10,0,200 ; XTitle="m_{3L} [GeV]", LegendCutoff=1e-4 
+#m3l       : mass_3_cheap(LepSel1_conePt,LepSel1_eta,LepSel2_conePt,LepSel2_eta,deltaPhi(LepSel1_phi,LepSel2_phi),LepSel3_conePt,LepSel3_eta,deltaPhi(LepSel1_phi,LepSel3_phi)) : 10,0,200 ; XTitle="m_{3L} [GeV]", LegendCutoff=1e-4 
 mll       : mll_3l         : 10,0,200    ; XTitle="M(ll) [GeV]"                 , LegendCutoff=1e-4
 met       : met_pt         : 35,0,700    ; XTitle="E_{T}^{miss}  [GeV]"         , LegendCutoff=1e-4
 mtW       : mT_3l          : 10,0,200    ; XTitle="M_{T}^W [GeV]"               , LegendCutoff=1e-4

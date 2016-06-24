@@ -459,7 +459,8 @@ def passPtCutTriple(l1, l2, l3):
     for i,l in enumerate(light):
         if l.conePt < 10: return False
         if i == 0:
-            if l.conePt < 20: return False
+            if abs(l.pdgId) == 11 and l.conePt < 25: return False
+            if abs(l.pdgId) == 13 and l.conePt < 20: return False
             continue
         if i == 1:
             if abs(l.pdgId) == 11 and l.conePt < 15: return False

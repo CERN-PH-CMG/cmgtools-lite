@@ -973,3 +973,38 @@ float ttHl_ptFO_ab(int LepGood_pdgId, float LepGood_pt, float LepGood_jetPtRatio
 
 
 void fakeRate() {}
+
+
+float EWK3L_fakeRate(float pt, float eta, int pdgId) {
+    TH2 *hist = (abs(pdgId) == 11 ? FR_el : FR_mu);
+    int ptbin  = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(pt)));
+    int etabin = std::max(1, std::min(hist->GetNbinsY(), hist->GetYaxis()->FindBin(abs(eta))));
+    double fr = hist->GetBinContent(ptbin,etabin);
+    if (fr <= 0)  { std::cerr << "WARNING, FR is " << fr << " for " << hist->GetName() << ", pt " << pt << " eta " << eta << std::endl; if (fr<0) std::abort(); }
+    return fr/(1-fr);
+}
+
+float EWK3L_fakeTransfer(unsigned int nLep, float l1fr    , int l1isFake,
+                                            float l2fr    , int l2isFake,
+                                            float l3fr    , int l3isFake,
+                                            float l4fr = 0, int l4isFake = 0) {
+    int nfail = l1isFake + l2isFake + l3isFake + l4isFake;
+    if(nLep == 3) nfail = l1isFake + l2isFake + l3isFake;
+
+    if(nfail == 1){
+        if      (l1isFake) return l1fr;
+        else if (l2isFake) return l2fr;
+        else if (l3isFake) return l3fr;
+    }
+    else if(nfail == 2){
+        if      (!l1isFake) return -1 * l2fr * l3fr;
+        else if (!l2isFake) return -1 * l1fr * l3fr;
+        else if (!l3isFake) return -1 * l1fr * l2fr;
+    }
+    else if(nfail == 3){
+        return l1fr * l2fr * l3fr;
+    }
+
+    return 0;
+}
+
