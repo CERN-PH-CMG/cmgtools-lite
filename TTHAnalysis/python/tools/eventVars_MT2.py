@@ -8,7 +8,7 @@ def computeMT2(visaVec, visbVec, metVec):
     import array
     import numpy
 
-    from ROOT import Davismt2
+    from ROOT.heppy import Davismt2
     davismt2 = Davismt2()    
 
     metVector = array.array('d',[0.,metVec.px(), metVec.py()])
