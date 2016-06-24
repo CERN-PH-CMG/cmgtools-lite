@@ -11,6 +11,7 @@ parser.add_option("--od", "--outdir", dest="outdir", type="string", default=None
 parser.add_option("-v", "--verbose",  dest="verbose",  default=0,  type="int",    help="Verbosity level (0 = quiet, 1 = verbose, 2+ = more)")
 parser.add_option("--asimov", dest="asimov", action="store_true", help="Asimov")
 parser.add_option("--postfix-pred",dest="postfixmap", type="string", default=[], action="append", help="Function to apply to prediction, to correct it before running limits")
+parser.add_option("--bk",   dest="bookkeeping",  action="store_true", default=False, help="If given the command used to run the datacards will be stored");
 
 (options, args) = parser.parse_args()
 options.weight = True
@@ -339,3 +340,10 @@ workspace.Close()
 
 if options.verbose > -1:
     print "Wrote to ",myout+binname+".input.root"
+
+if options.bookkeeping:
+    fcmd = open(outdir+"/makeShapeCardsSusy_command.txt", "w")
+    fcmd.write("%s\n\n" % " ".join(sys.argv))
+    fcmd.write("%s\n%s\n" % (args,options))
+    fcmd.close()
+

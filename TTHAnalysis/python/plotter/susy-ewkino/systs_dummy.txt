@@ -1,0 +1,12 @@
+### experimental uncertainties
+
+fakes      : _matched_fakes_.*      : .* : 1.3
+simulation : _standard_prompt_WZ    : .* : 1.25
+simulation : _standard_prompt_Rares : .* : 1.5
+simulation : _standard_prompt_XG    : .* : 1.5
+simulation : _standard_prompt_ttZH  : .* : 1.5
+simulation : _standard_prompt_ttW   : .* : 1.5
+signals    : _sig_.*                : .* : 1.2
+
+
+

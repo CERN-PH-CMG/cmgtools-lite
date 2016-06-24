@@ -2,6 +2,9 @@ alwaystrue: 1
 trigger: Triggers_ee || Triggers_mm || Triggers_em
 cleanup: minMllAFAS > 12
 dilep: nLepFO>=2
+pt1010: LepGood1_pt>10 && LepGood2_pt>10
+denom: LepGood1_mediumMuonId > 0 && LepGood2_mediumMuonId > 0
+denom2: if3(LepGood1_isTight, 1, (abs(LepGood1_pdgId)!=11 || (abs(LepGood1_eta)<1.479 && LepGood1_mvaIdSpring15>0.0) || (abs(LepGood1_eta)>1.479 && LepGood1_mvaIdSpring15>0.3))) && if3(LepGood2_isTight, 1, (abs(LepGood2_pdgId)!=11 || (abs(LepGood2_eta)<1.479 && LepGood2_mvaIdSpring15>0.0) || (abs(LepGood2_eta)>1.479 && LepGood2_mvaIdSpring15>0.3)))
 pt2010: LepGood1_conePt>20 && LepGood2_conePt>10 && (abs(LepGood2_pdgId)!=11 || LepGood2_conePt>15)
 TT: LepGood1_isTight && LepGood2_isTight
 exclusive: nLepTight<=2

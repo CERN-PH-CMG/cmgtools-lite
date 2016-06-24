@@ -23,10 +23,31 @@ def conept_RA7(lep):
         return max(lep.pt,lep.pt/lep.jetPtRatiov2*B)
 
 def conept_SSDL(lep):
+    ## New proposal from MARCO - 160617
     if (abs(lep.pdgId)!=11 and abs(lep.pdgId)!=13): return lep.pt
-    if (abs(lep.pdgId)==13 and lep.mediumMuonId>0 and lep.mvaSUSY > 0.15): return lep.pt
-    if (abs(lep.pdgId)==11 and lep.mvaSUSY > 0.65): return lep.pt
-    else:  return 0.85 * lep.pt / lep.jetPtRatiov2
+    if (abs(lep.pdgId)==13):
+        if (lep.mediumMuonId>0 and lep.mvaSUSY > 0.45): return lep.pt
+        else :  return 0.80 * lep.pt / lep.jetPtRatiov2
+    if (abs(lep.pdgId)==11):
+        if (lep.mvaSUSY > 0.75):  return lep.pt
+        else:   return 0.90 * lep.pt / lep.jetPtRatiov2
+
+def conept_SSDL_for3l(lep):
+
+    ## New proposal from MARCO - 160617
+    if (abs(lep.pdgId)!=11 and abs(lep.pdgId)!=13): return lep.pt
+    if (abs(lep.pdgId)==13):
+        if (lep.mediumMuonId>0 and lep.mvaSUSY > -0.2): return lep.pt
+        else :  return 0.75 * lep.pt / lep.jetPtRatiov2
+    if (abs(lep.pdgId)==11):
+        if (lep.mvaSUSY > 0.5):  return lep.pt
+        else:   return 0.80 * lep.pt / lep.jetPtRatiov2
+
+##  OLD DEF
+##    if (abs(lep.pdgId)!=11 and abs(lep.pdgId)!=13): return lep.pt
+##    if (abs(lep.pdgId)==13 and lep.mediumMuonId>0 and lep.mvaSUSY > 0.15): return lep.pt
+##    if (abs(lep.pdgId)==11 and lep.mvaSUSY > 0.65): return lep.pt
+##    else:  return 0.85 * lep.pt / lep.jetPtRatiov2
 
 def conept_TTH(lep):
     if (abs(lep.pdgId)!=11 and abs(lep.pdgId)!=13): return lep.pt
