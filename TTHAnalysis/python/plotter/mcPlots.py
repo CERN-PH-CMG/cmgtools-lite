@@ -122,6 +122,7 @@ def doSpam(text,x1,y1,x2,y2,align=12,fill=False,textSize=0.033,_noDelete={}):
     cmsprel.SetTextAlign(align);
     cmsprel.SetTextFont(42);
     cmsprel.AddText(text);
+    for line in text.split("\\n"): cmsprel.AddText(line);
     cmsprel.Draw("same");
     _noDelete[text] = cmsprel; ## so it doesn't get deleted by PyROOT
     return cmsprel
@@ -143,6 +144,14 @@ def doTinyCmsPrelim(textLeft="_default_",textRight="_default_",hasExpo=False,tex
         doSpam(textLeft, (.28 if hasExpo else .17)+xoffs, .955, .60+xoffs, .995, align=12, textSize=textSize)
     if textRight not in ['', None]:
         doSpam(textRight,.68+xoffs, .955, .99+xoffs, .995, align=32, textSize=textSize)
+
+def printExtraLabel(labeltext, legPosition):
+    nLines = len(labeltext.split("\\n"))
+
+    if legPosition  == "TR":
+        doSpam(labeltext, .30, .90-nLines*0.03, .48, .90, align=11, textSize=0.03)
+    elif legPosition == "TL":
+        doSpam(labeltext, .75, .90-nLines*0.03, .93, .90, align=11, textSize=0.03)
 
 def reMax(hist,hist2,islog,factorLin=1.3,factorLog=2.0):
     if  hist.ClassName() == 'THStack':
