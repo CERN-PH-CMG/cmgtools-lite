@@ -1,1 +1,1 @@
-all3prompt: LepSel1_mcMatchId!=0 && LepSel2_mcMatchId!=0 && LepSel3_mcMatchId!=0
+allprompt: LepSel_mcMatchId[0]!=0 && LepSel_mcMatchId[1]!=0 && LepSel_mcMatchId[2]!=0

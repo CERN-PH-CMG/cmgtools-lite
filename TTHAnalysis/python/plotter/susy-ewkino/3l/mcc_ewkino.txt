@@ -1,0 +1,3 @@
+isFake\b: !EWK3L_isTight(3, LepSel1_isTight, LepSel2_isTight, LepSel3_isTight) ; AlsoData
+BR\b    : EWK3L_BR(nLepSel, EWK3L_countTaus(nLepSel, LepSel1_pdgId, LepSel2_pdgId, LepSel3_pdgId), nOSSF_3l, nOSLF_3l, nOSTF_3l) ; AlsoData
+SR\b    : EWK3L_SR(nLepSel, EWK3L_countTaus(nLepSel, LepSel1_pdgId, LepSel2_pdgId, LepSel3_pdgId), nOSSF_3l, nOSLF_3l, mT2L_3l, mT2T_3l, mll_3l, mT_3l, met_pt) ; AlsoData
