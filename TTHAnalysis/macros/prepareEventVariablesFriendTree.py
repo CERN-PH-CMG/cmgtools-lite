@@ -37,7 +37,7 @@ from CMGTools.TTHAnalysis.tools.leptonChoiceRA7 import _susy3l_lepId_CBloose, _s
 from CMGTools.TTHAnalysis.tools.leptonBuilderEWK import _susyEWK_lepId_CBloose, _susyEWK_lepId_IPcuts, _susyEWK_lepId_MVAFO, _susyEWK_lepId_MVAmedium, _susyEWK_tauId_CBloose, _susyEWK_tauId_CBtight
 from CMGTools.TTHAnalysis.tools.functionsTTH import _ttH_idEmu_cuts_E2
 from CMGTools.TTHAnalysis.tools.functionsEWKino import _ewkino_idEmu_cuts_E2, _ewkino_2lss_lepId_CBloose,_ewkino_2lss_lepId_loosestFO, _ewkino_2lss_lepId_tighterFO, _ewkino_2lss_lepId_IPcuts, _ewkino_2lss_lepConePt1015, _ewkino_2lss_leptonMVA_T, _ewkino_2lss_leptonMVA_VT
-from CMGTools.TTHAnalysis.tools.conept import conept_RA5, conept_RA7, conept_EWK, conept_TTH
+from CMGTools.TTHAnalysis.tools.conept import conept_RA5, conept_RA7, conept_EWK, conept_TTH, conept_SSDL
 
 MODULES.append( ('leptonJetReCleanerSusyRA5', lambda : LeptonJetReCleaner("Mini", 
                    lambda lep : lep.miniRelIso < 0.4 and _susy2lss_lepId_CBloose(lep), #and (ht>300 or _susy2lss_idIsoEmu_cuts(lep)), 
@@ -113,7 +113,7 @@ MODULES.append( ('leptonJetReCleanerSusyEWK2L', lambda : LeptonJetReCleaner("Rec
                    doVetoLMt = True,
                    jetPt = 40,
                    bJetPt = 25,
-                   coneptdef = lambda lep: conept_EWK(lep, 4)
+                   coneptdef = lambda lep: conept_SSDL(lep)
                  ) ))
 
 
