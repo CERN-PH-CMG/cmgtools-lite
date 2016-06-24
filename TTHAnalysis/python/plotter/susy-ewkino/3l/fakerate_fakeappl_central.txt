@@ -1,5 +1,5 @@
 weight         : EWK3L_fakeTransfer(3,EWK3L_fakeRate(LepSel_conePt[0],LepSel_eta[0],LepSel_pdgId[0]),isFake(LepSel_pt[0],LepSel_isTight[0]),EWK3L_fakeRate(LepSel_conePt[1],LepSel_eta[1],LepSel_pdgId[1]),isFake(LepSel_pt[1],LepSel_isTight[1]),EWK3L_fakeRate(LepSel_conePt[2],LepSel_eta[2],LepSel_pdgId[2]),isFake(LepSel_pt[2],LepSel_isTight[2]))*(!EWK3L_isTight(3, LepSel_isTight[0], LepSel_isTight[1], LepSel_isTight[2]))
-cut-change     : isTight         : !isTight(3, LepSel_isTight[0], LepSel_isTight[1], LepSel_isTight[2]) 
+cut-change     : SRevent         : !allTight(3, LepSel_isTight[0], LepSel_isTight[1], LepSel_isTight[2]) 
 
 change: LepSel1_(\w+)  : LepSel_\1[0]
 change: LepSel2_(\w+)  : LepSel_\1[1]

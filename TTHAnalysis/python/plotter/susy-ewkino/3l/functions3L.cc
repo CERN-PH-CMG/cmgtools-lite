@@ -5,7 +5,7 @@ int isFake(float pt, int isTight) {
     return 1;
 }
 
-int isTight(int nLep, int l1isTight, int l2isTight, int l3isTight, int l4isTight = 0){
+int allTight(int nLep, int l1isTight, int l2isTight, int l3isTight, int l4isTight = 0){
     if(nLep == 3) return ((l1isTight+l2isTight+l3isTight)==3);
     return ((l1isTight+l2isTight+l3isTight+l4isTight)==4);
 }
