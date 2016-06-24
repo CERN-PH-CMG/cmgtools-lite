@@ -2,7 +2,10 @@
 pt1     : LepGood1_pt          : 20,0,300     ; XTitle="p_{T}(hardest reco lep) [GeV]"
 pt2     : LepGood2_pt          : 20,0,300     ; XTitle="p_{T}(subleading reco lep) [GeV]"
 pt3     : LepGood3_pt          : 20,0,300     ; XTitle="p_{T}(trailing reco lep) [GeV]"
-ptdil   : pt_2(LepGood1_pt, LepGood1_phi, LepGood2_pt, LepGood2_phi): 20, 0., 300. ;  XTitle="p_{T}(dilepton) [GeV]"
+conept1 : LepGood1_conePt      : 20,0,300     ; XTitle="p_{T}(hardest corr lep) [GeV]" 
+conept2 : LepGood2_conePt      : 20,0,300     ; XTitle="p_{T}(subleading corr lep) [GeV]" 
+conept3 : LepGood3_conePt      : 20,0,300     ; XTitle="p_{T}(traling corr lep) [GeV]" 
+ptdil   : pt_2(LepGood1_conePt, LepGood1_phi, LepGood2_conePt, LepGood2_phi): 20, 0., 300. ;  XTitle="p_{T}(dilepton) [GeV]"
 ptll    : LepGood1_pt+LepGood2_pt : 20, 0., 300. ;  XTitle="p_{T}(dilepton) [GeV]"
 dphi    : abs(deltaPhi(LepGood1_phi,LepGood2_phi)):  30, -1.5, 3.5;  XTitle="#Delta #phi(ll) [GeV]", Legend='TL'
 lep1_jetPtRelv2:  LepGood1_jetPtRelv2: 40,0,40; XTitle="LepGood1 Jet p_{T} Relv2  [GeV]", Legend='TR'
@@ -19,6 +22,8 @@ lep2_lostHits:	 LepGood2_lostHits				 : [-0.5,0.5,1.5,2.5,3.5]; XTitle="Sub-Lead
 lep3_lostHits:	 LepGood3_lostHits				 : [-0.5,0.5,1.5,2.5,3.5]; XTitle="Trailing lepton lost hits", XNDdiv=505, Logy
 lep_lostHits:    max(max(LepGood1_lostHits,LepGood2_lostHits),LepGood3_lostHits)  : [-0.5,0.5,1.5,2.5,3.5]; XTitle="Max lepton lost hits", XNDdiv=505, Logy
 
+nT_2lep_conePt: if3((nLepFO>1)*(LepGood1_isTight+LepGood2_isTight==1),if3(LepGood1_isTight,LepGood2_conePt,LepGood1_conePt),-99) : 100,0, 200; XTitle="Lepton cone p_{T} [GeV] in TL ev."
+
 #### JET-RELATED VARIABLES 
 nJet40 	   : nJet40               : 10,-0.5,9.5  ; XTitle='N(jet\, p_{T} > 40)'
 nJet40_log : nJet40 : 10,-0.5,9.5 ; XTitle='N(jet\, p_{T} > 40)', Logy
@@ -31,27 +36,27 @@ htJet40j_log:   htJet40j: 40,0,800    ; XTitle="H_{T}(jet p_{T} > 40)  [GeV]", L
 jet1Pt:  Jet1_pt: 18,0,300; XTitle="Leading jet p_{T}  [GeV]", Legend='TR'
 
 #### MET-RELATED VARIABLES
-MET        : met_pt               : 20,0,50     ; XTitle="E_{T}^{miss} [GeV]"
-#MET        : met_pt               : 35,0,700     ; XTitle="E_{T}^{miss} [GeV]"
+#MET        : met_pt               : 20,0,50     ; XTitle="E_{T}^{miss} [GeV]"
+MET        : met_pt               : 35,0,500     ; XTitle="E_{T}^{miss} [GeV]"
 MET_log    : met_pt               : 35,0,700     ; XTitle="E_{T}^{miss} [GeV]", Logy
 MET_SR     : met_pt               : [60.,100.,150.,500]; XTitle="E_{T}^{miss} [GeV]"
 MET_SR_log : met_pt               : [60.,100.,150.,500]; XTitle="E_{T}^{miss} [GeV]", Logy
 MET_JetRatio:      met_pt/Jet1_pt : 20,0,10; XTitle="E_{T}^{miss} / jet p_{T}  [GeV]"
 MET_JetRatio_log:  met_pt/Jet1_pt : 20,0,10; XTitle="E_{T}^{miss} / jet p_{T}  [GeV]", Logy
 
-mtWmin	   : min(mt_2(LepGood1_pt,LepGood1_phi,met_pt,met_phi),mt_2(LepGood2_pt,LepGood2_phi,met_pt,met_phi)) : 25,0,200; XTitle="min M_{T}(l_{i}\,E_{T}^{miss}) [GeV]"
-mtW1 	   : mt_2(LepGood1_pt,LepGood1_phi,met_pt,met_phi) : 25,0,200; XTitle="M_{T}(l_{1}\,E_{T}^{miss}) [GeV]"	
-mtW2 	   : mt_2(LepGood2_pt,LepGood2_phi,met_pt,met_phi) : 25,0,200; XTitle="M_{T}(l_{2}\,E_{T}^{miss}) [GeV]"	
+mtWmin	   : min(mt_2(LepGood1_conePt,LepGood1_phi,met_pt,met_phi),mt_2(LepGood2_conePt,LepGood2_phi,met_pt,met_phi)) : 25,0,200; XTitle="min M_{T}(l_{i}\,E_{T}^{miss}) [GeV]"
+mtW1 	   : mt_2(LepGood1_conePt,LepGood1_phi,met_pt,met_phi) : 25,0,200; XTitle="M_{T}(l_{1}\,E_{T}^{miss}) [GeV]"	
+mtW2 	   : mt_2(LepGood2_conePt,LepGood2_phi,met_pt,met_phi) : 25,0,200; XTitle="M_{T}(l_{2}\,E_{T}^{miss}) [GeV]"	
 
-mtWmin_log: min(mt_2(LepGood1_pt,LepGood1_phi,met_pt,met_phi),mt_2(LepGood2_pt,LepGood2_phi,met_pt,met_phi)) : 25,0,200; XTitle="min M_{T}(l_{i}\,E_{T}^{miss}) [GeV]", Logy
-mtW1_log   : mt_2(LepGood1_pt,LepGood1_phi,met_pt,met_phi) : 25,0,200; XTitle="M_{T}(l_{1}\,E_{T}^{miss}) [GeV]"	, Logy
-mtW2_log   : mt_2(LepGood2_pt,LepGood2_phi,met_pt,met_phi) : 25,0,200; XTitle="M_{T}(l_{2}\,E_{T}^{miss}) [GeV]"	, Logy
+mtWmin_log: min(mt_2(LepGood1_conePt,LepGood1_phi,met_pt,met_phi),mt_2(LepGood2_conePt,LepGood2_phi,met_pt,met_phi)) : 25,0,200; XTitle="min M_{T}(l_{i}\,E_{T}^{miss}) [GeV]", Logy
+mtW1_log   : mt_2(LepGood1_conePt,LepGood1_phi,met_pt,met_phi) : 25,0,200; XTitle="M_{T}(l_{1}\,E_{T}^{miss}) [GeV]"	, Logy
+mtW2_log   : mt_2(LepGood2_conePt,LepGood2_phi,met_pt,met_phi) : 25,0,200; XTitle="M_{T}(l_{2}\,E_{T}^{miss}) [GeV]"	, Logy
 
-mtWll : mt_llv(LepGood1_pt,LepGood1_phi,LepGood2_pt,LepGood2_phi,met_pt,met_phi): 25,0,200; XTitle="M_{T}(ll\,E_{T}^{miss}) [GeV]"
+mtWll : mt_llv(LepGood1_conePt,LepGood1_phi,LepGood2_conePt,LepGood2_phi,met_pt,met_phi): 25,0,200; XTitle="M_{T}(ll\,E_{T}^{miss}) [GeV]"
 
 ##### SEARCH STRATEGY
-SR_old :   SR_ewk_ss2l(nJet40,LepGood1_pt,LepGood1_phi, LepGood2_pt,LepGood2_phi, met_pt,met_phi):  19,0.5,19.5; XTitle="SR"
-SR_old_log : SR_ewk_ss2l(nJet40,LepGood1_pt,LepGood1_phi, LepGood2_pt,LepGood2_phi, met_pt,met_phi)  :  19,0.5,19.5; XTitle="SR", Logy
+SR_old :   SR_ewk_ss2l(nJet40,LepGood1_conePt,LepGood1_phi, LepGood2_conePt,LepGood2_phi, met_pt,met_phi):  19,0.5,19.5; XTitle="SR"
+SR_old_log : SR_ewk_ss2l(nJet40,LepGood1_conePt,LepGood1_phi, LepGood2_conePt,LepGood2_phi, met_pt,met_phi)  :  19,0.5,19.5; XTitle="SR", Logy
 
-SR :   SR_ewk_ss2l(nJet40,LepGood1_pt,LepGood1_phi, LepGood2_pt,LepGood2_phi, met_pt,met_phi):  25,0.5,25.5; XTitle="SR"
-SR_log : SR_ewk_ss2l(nJet40,LepGood1_pt,LepGood1_phi, LepGood2_pt,LepGood2_phi, met_pt,met_phi)  :  25,0.5,25.5; XTitle="SR", Logy
+SR :   SR_ewk_ss2l(nJet40,LepGood1_conePt,LepGood1_phi, LepGood2_conePt,LepGood2_phi, met_pt,met_phi):  25,0.5,25.5; XTitle="SR"
+SR_log : SR_ewk_ss2l(nJet40,LepGood1_conePt,LepGood1_phi, LepGood2_conePt,LepGood2_phi, met_pt,met_phi)  :  25,0.5,25.5; XTitle="SR", Logy

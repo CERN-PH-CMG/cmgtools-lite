@@ -36,8 +36,8 @@ from CMGTools.TTHAnalysis.tools.leptonChoiceRA5 import _susy2lss_lepId_CBloose,_
 from CMGTools.TTHAnalysis.tools.leptonChoiceRA7 import _susy3l_lepId_CBloose, _susy3l_lepId_loosestFO,_susy3l_lepId_loosestFO,_susy3l_multiIso,_susy3l_lepId_CB
 from CMGTools.TTHAnalysis.tools.leptonChoiceEWK import _susy3l_lepId_IPcutsMVA,_susy3l_lepId_CBlooseMVA
 from CMGTools.TTHAnalysis.tools.functionsTTH import _ttH_idEmu_cuts_E2
-from CMGTools.TTHAnalysis.tools.functionsEWKino import _ewkino_idEmu_cuts_E2, _ewkino_2lss_lepId_CBloose,_ewkino_2lss_lepId_loosestFO, _ewkino_2lss_lepId_tighterFO, _ewkino_2lss_lepId_IPcuts, _ewkino_2lss_lepConePt1015, _ewkino_2lss_leptonMVA_T, _ewkino_2lss_leptonMVA_VT
-from CMGTools.TTHAnalysis.tools.conept import conept_RA5, conept_RA7, conept_TTH, conept_SSDL
+from CMGTools.TTHAnalysis.tools.functionsEWKino import _ewkino_idEmu_cuts_E2, _ewkino_2lss_lepId_CBloose, _ewkino_2lss_lepId_FO, _ewkino_2lss_lepId_num,_ewkino_3l_lepId_FO, _ewkino_3l_lepId_num, _ewkino_2lss_lepId_IPcuts, _ewkino_leptonMVA_VT, _ewkino_leptonMVA_M
+from CMGTools.TTHAnalysis.tools.conept import conept_RA5, conept_RA7, conept_TTH, conept_SSDL, conept_SSDL_for3l
 
 MODULES.append( ('leptonJetReCleanerSusyRA5', lambda : LeptonJetReCleaner("Mini", 
                    lambda lep : lep.miniRelIso < 0.4 and _susy2lss_lepId_CBloose(lep), #and (ht>300 or _susy2lss_idIsoEmu_cuts(lep)), 
@@ -120,8 +120,8 @@ MODULES.append( ('leptonJetReCleanerSusyEWK', lambda : LeptonJetReCleaner("Mini"
 MODULES.append( ('leptonJetReCleanerSusySSDL', lambda : LeptonJetReCleaner("Recl", 
                    looseLeptonSel = lambda lep : lep.miniRelIso < 0.4 and _ewkino_2lss_lepId_IPcuts(lep),
                    cleaningLeptonSel = lambda lep : lep.conept>10 and _ewkino_2lss_lepId_CBloose(lep), # cuts applied on top of loose (pt 5, 7, conveto, lotHist<=1 && emulation)
-                   FOLeptonSel = lambda lep,ht : lep.conept>10 and _ewkino_2lss_lepId_loosestFO(lep), # cuts on top of loose (previous + tight charge and lostHits==0)
-                   tightLeptonSel = lambda lep,ht : lep.conept>10 and _ewkino_2lss_lepConePt1015(lep) and _ewkino_2lss_leptonMVA_VT(lep) and _ewkino_2lss_lepId_tighterFO(lep), # on top of loose 
+                   FOLeptonSel = lambda lep,ht : lep.pt>10 and lep.conept>10 and (_ewkino_2lss_lepId_num(lep) or _ewkino_2lss_lepId_FO(lep)), # cuts on top of loose (previous + tight charge and lostHits==0)
+                   tightLeptonSel = lambda lep,ht : lep.pt>10 and lep.conept>10 and _ewkino_2lss_lepId_num(lep), # on top of loose 
                    cleanJet = lambda lep,jet,dr : dr<0.4,
                    selectJet = lambda jet: abs(jet.eta)<2.4,
                    cleanTau = lambda lep,tau,dr: dr<0.4,
@@ -134,6 +134,25 @@ MODULES.append( ('leptonJetReCleanerSusySSDL', lambda : LeptonJetReCleaner("Recl
                    jetPt = 40,
                    bJetPt = 25,
                    coneptdef = lambda lep: conept_SSDL(lep)
+                 ) ))
+
+MODULES.append( ('leptonJetReCleanerSusy3L', lambda : LeptonJetReCleaner("Recl", 
+                   looseLeptonSel = lambda lep : lep.miniRelIso < 0.4 and _ewkino_2lss_lepId_IPcuts(lep),
+                   cleaningLeptonSel = lambda lep : lep.conept>10 and _ewkino_2lss_lepId_CBloose(lep), # cuts applied on top of loose (pt 5, 7, conveto, lotHist<=1 && emulation)
+                   FOLeptonSel = lambda lep,ht : lep.conept>10 and (_ewkino_3l_lepId_num(lep) or _ewkino_3l_lepId_FO(lep)), # cuts on top of loose (previous + tight charge and lostHits==0)
+                   tightLeptonSel = lambda lep,ht : lep.conept>10 and _ewkino_3l_lepId_num(lep), # on top of loose 
+                   cleanJet = lambda lep,jet,dr : dr<0.4,
+                   selectJet = lambda jet: abs(jet.eta)<2.4,
+                   cleanTau = lambda lep,tau,dr: dr<0.4,
+                   looseTau = lambda tau: tau.pt > 20 and abs(tau.eta)<2.3 and abs(tau.dxy) < 1000 and abs(tau.dz) < 0.2 and tau.idMVAOldDMRun2dR03 >= 1 and tau.idDecayMode, # used in cleaning 
+                   tightTau = lambda tau: True, # cuts applied on top of loose                                                                           
+                   cleanJetsWithTaus = False,
+                   doVetoZ = True,
+                   doVetoLMf = True,
+                   doVetoLMt = True,
+                   jetPt = 30,
+                   bJetPt = 25,
+                   coneptdef = lambda lep: conept_SSDL_for3l(lep)
                  ) ))
 
 

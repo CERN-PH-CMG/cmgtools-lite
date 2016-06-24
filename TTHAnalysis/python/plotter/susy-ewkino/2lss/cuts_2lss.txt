@@ -1,20 +1,25 @@
 alwaystrue: 1
 trigger: Triggers_ee || Triggers_mm || Triggers_em
 cleanup: minMllAFAS > 12
-trilep: nLepFO>=2
+dilep: nLepFO>=2
+pt1010: LepGood1_pt>10 && LepGood2_pt>10
+denom: LepGood1_mediumMuonId > 0 && LepGood2_mediumMuonId > 0
+denom2: if3(LepGood1_isTight, 1, (abs(LepGood1_pdgId)!=11 || (abs(LepGood1_eta)<1.479 && LepGood1_mvaIdSpring15>0.0) || (abs(LepGood1_eta)>1.479 && LepGood1_mvaIdSpring15>0.3))) && if3(LepGood2_isTight, 1, (abs(LepGood2_pdgId)!=11 || (abs(LepGood2_eta)<1.479 && LepGood2_mvaIdSpring15>0.0) || (abs(LepGood2_eta)>1.479 && LepGood2_mvaIdSpring15>0.3)))
 pt2010: LepGood1_conePt>20 && LepGood2_conePt>10 && (abs(LepGood2_pdgId)!=11 || LepGood2_conePt>15)
 TT: LepGood1_isTight && LepGood2_isTight
-exclusive: nLepTight==2
+exclusive: nLepTight<=2
 same-sign: LepGood1_charge*LepGood2_charge > 0
-#mtW1: abs(mt_2(LepGood1_pt,LepGood1_phi,met_pt,met_phi) - 80.385) > 40 
-#mtW2: abs(mt_2(LepGood2_pt,LepGood2_phi,met_pt,met_phi) - 80.385) > 40
-mtWll: abs(mt_llv(LepGood1_pt,LepGood1_phi,LepGood2_pt,LepGood2_phi,met_pt,met_phi) - 80.385) < 40
-met: met_pt > 50							    
+met: met_pt > 60
 0bjetM: nBJetMedium25 == 0
+0and1jet: nJet40<=1
 
 # some cuts that are off by default but can be turned on with -E
-ee: abs(LepGood1_pdgId)==11 && abs(LepGood2_pdgId)==11; Disable=True
-mm: abs(LepGood1_pdgId)==13 && abs(LepGood2_pdgId)==13; Disable=True
+tightMVAVL: (LepGood1_mvaSUSY>-0.90+(0.90-0.30)*(abs(LepGood1_pdgId)==11)) && (LepGood2_mvaSUSY>-0.90+(0.90-0.30)*(abs(LepGood2_pdgId)==11)); Disable=True
+tightMVAL : (LepGood1_mvaSUSY>-0.60+(0.60+0.25)*(abs(LepGood1_pdgId)==11)) && (LepGood2_mvaSUSY>-0.60+(0.60+0.25)*(abs(LepGood2_pdgId)==11)); Disable=True
+tightMVAM : (LepGood1_mvaSUSY>-0.20+(0.20+0.50)*(abs(LepGood1_pdgId)==11)) && (LepGood2_mvaSUSY>-0.20+(0.20+0.50)*(abs(LepGood2_pdgId)==11)); Disable=True
+tightMVAT : (LepGood1_mvaSUSY>0.15+(-0.15+0.65)*(abs(LepGood1_pdgId)==11)) && (LepGood2_mvaSUSY>0.15+(-0.15+0.65)*(abs(LepGood2_pdgId)==11)); Disable=True
+tightMVAVT: (LepGood1_mvaSUSY>0.45+(-0.45+0.75)*(abs(LepGood1_pdgId)==11)) && (LepGood2_mvaSUSY>0.45+(-0.45+0.75)*(abs(LepGood2_pdgId)==11)); Disable=True
+tightMVAET: (LepGood1_mvaSUSY>0.65+(-0.65-0.85)*(abs(LepGood1_pdgId)==11)) && (LepGood2_mvaSUSY>0.65+(-0.65+0.85)*(abs(LepGood2_pdgId)==11)); Disable=True
 1j: nJet40==1 ; Disable=True
 0j: nJet40==0 ; Disable=True
 0tau: nTauGood==0 ; Disable=True
