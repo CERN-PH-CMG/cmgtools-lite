@@ -1,0 +1,45 @@
+yields: nLepGood : 1,-0.5,0.5; YTitle='Total Event Yields';
+lep1Pt:  LepGood1_pt: 20,0,40; XTitle="Leading lepton p_{T}  [GeV]",Legend='TR'
+lep2Pt:  LepGood2_pt: 20,0,40; XTitle="Second lepton p_{T}  [GeV]",Legend='TR', MoreY=1.5
+lep1Eta:  abs(LepGood1_eta): 10,0,2.5; XTitle="Lepton 1 #eta",Legend='TR', MoreY=1.5
+lep2Eta:  abs(LepGood2_eta): 10,0,2.5; XTitle="Lepton 2 #eta",Legend='TR', MoreY=1.5
+dRll: deltaR(LepGood1_eta, LepGood1_phi, LepGood2_eta, LepGood2_phi): 18,0,6; XTitle="dR(ll)"
+mll  : mass_2(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_mass,LepGood2_pt,LepGood2_eta,LepGood2_phi,LepGood2_mass): 20,0,100; XTitle="m(ll) [GeV]"
+ptll : pt_2(LepGood1_pt,LepGood1_phi, LepGood2_pt,LepGood2_phi): 10,0,50; XTitle="p_{T}(ll) [GeV]"
+met: met_pt: 14,100,450;  XTitle="E_{T}^{miss}  [GeV]"
+metbins  : met_pt : 2,125.,275.; XTitle="E_{T}^{miss}  [GeV]", Legend='TR'
+metovht: (met_pt/(htJet25-LepGood1_pt-LepGood2_pt)): 10,0,2; XTitle="E_{T}^{miss}/H_{T}(jet p_{T} > 25)"
+lep1MetDphi: abs(deltaPhi(LepGood1_phi, met_phi)) : 7,0,3.14 ; XTitle="#Delta#phi(l1\,E_{T}^{miss})", MoreY=1.5
+lep2MetDphi: abs(deltaPhi(LepGood2_phi, met_phi)) : 7,0,3.14 ; XTitle="#Delta#phi(l2\,E_{T}^{miss})", MoreY=1.5
+lep1MetMT: mt_2(LepGood1_pt,LepGood1_phi, met_pt,met_phi) : 8,0,120 ; XTitle="M_{T}(l1\,E_{T}^{miss})", MoreY=1.5
+lep2MetMT: mt_2(LepGood2_pt,LepGood2_phi, met_pt,met_phi) : 8,0,120 ; XTitle="M_{T}(l2\,E_{T}^{miss})", MoreY=1.5
+fine_lep1MetMT: mt_2(LepGood1_pt,LepGood1_phi, met_pt,met_phi) : 14,0,70 ; XTitle="M_{T}(l1\,E_{T}^{miss})", MoreY=1.5
+fine_lep2MetMT: mt_2(LepGood2_pt,LepGood2_phi, met_pt,met_phi) : 14,0,70 ; XTitle="M_{T}(l2\,E_{T}^{miss})", MoreY=1.5
+llMetDphi: abs(deltaPhi(phi_2(LepGood1_pt,LepGood1_phi,LepGood2_pt,LepGood2_phi), met_phi)) : 7,0,3.14 ; XTitle="#Delta#phi(ll\,E_{T}^{miss})", MoreY=1.5
+mtautau_veto: mass_tautau(met_pt,met_phi,LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood2_pt,LepGood2_eta,LepGood2_phi)<0||mass_tautau(met_pt,met_phi,LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood2_pt,LepGood2_eta,LepGood2_phi)>170 : 2,-0.5,1.5; XTitle="m(#tau#tau) veto", Legend='TL'
+mtautau: mass_tautau(met_pt,met_phi,LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood2_pt,LepGood2_eta,LepGood2_phi): 26,-10,250; XTitle="m(#tau#tau) [GeV]"
+nJet25 : nJet25 : [-0.5,0.5,1.5,2.5,3.5,4.5,5.5,6.5] ; XTitle='N(jet\, p_{T} > 25)'
+nJet40 : nJet40 : [-0.5,0.5,1.5,2.5,3.5,4.5,5.5,6.5] ; XTitle='N(jet\, p_{T} > 40)'
+ht:  htJet25-LepGood1_pt-LepGood2_pt :8,0.,400.; XTitle="Ht", Legend='TR'
+htJet25:   htJet25: 14,0,700  ; XTitle="H_{T}(jet p_{T} > 25)  [GeV]"
+htJet40j:   htJet40j: 14,0,700 ; XTitle="H_{T}(jet p_{T} > 40)  [GeV]"
+mhtJet25:   mhtJet25: 8,0,600  ; XTitle="H_{T}^{miss}(lep + jet p_{T} > 25)  [GeV]"
+mhtJet40:   mhtJet40: 8,0,600  ; XTitle="H_{T}^{miss}(lep + jet p_{T} > 40)  [GeV]"
+nBJet25L : nBJetLoose25  : [-0.5,0.5,1.5,2.5,3.5,4.5] ; XTitle='N(b-jet\, p_{T} > 25\, CSVL)'
+jet1Pt:  Jet1_pt: 12,0,600; XTitle="Leading jet p_{T}  [GeV]",Legend='TR'
+
+SR_bins_EWKino_100:SR_bins_EWKino_100(mass_2(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_mass,LepGood2_pt,LepGood2_eta,LepGood2_phi,LepGood2_mass),met_pt,LepGood1_pdgId,LepGood2_pdgId):4,1,5;XTitle="M(ll)-flavour-bins",Legend='TR',IncludeOverflows=False, IncludeUnderflows=False, Legend='TR'
+SR_bins_EWKino_200:SR_bins_EWKino_200(mass_2(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_mass,LepGood2_pt,LepGood2_eta,LepGood2_phi,LepGood2_mass),met_pt,LepGood1_pdgId,LepGood2_pdgId):8,1,9;XTitle="M(ll)-flavour-bins",Legend='TR',IncludeOverflows=False, IncludeUnderflows=False, Legend='TR'
+SR_bins_stopPt_100:SR_bins_stopPt_100(met_pt,LepGood1_pt,LepGood1_pdgId,LepGood2_pdgId):3,1,4;XTitle="p_{T}-bins",Legend='TR',IncludeOverflows=False, IncludeUnderflows=False, Legend='TL'
+SR_bins_stopPt_200:SR_bins_stopPt_200(met_pt,LepGood1_pt,LepGood1_pdgId,LepGood2_pdgId):9,1,10;XTitle="MET-p_{T}-bins",Legend='TR',IncludeOverflows=False, IncludeUnderflows=False, Legend='TL'
+
+
+
+
+
+
+
+
+
+
+
