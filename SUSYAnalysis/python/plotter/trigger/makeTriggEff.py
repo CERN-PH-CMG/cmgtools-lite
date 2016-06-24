@@ -625,6 +625,7 @@ if __name__ == "__main__":
     basecuts = 'passFilters && nLep == 1 &&'
     #basecuts = 'METfilters && nLep == 1 && nVeto == 0 &&'
     basecuts += 'Selected == 1 &&'
+    if '218pbMuonFix' in fileName: basecuts += 'Run >= 274094 &&'
 
     doFit = True
 
@@ -774,12 +775,19 @@ if __name__ == "__main__":
             lumi = 2.1
         elif 'test' in fileName:
             lumi = 666
+        elif '804pb' in fileName:
+            lumi = 804
+        elif '2056pb' in fileName:
+            lumi = 2056
+        elif '218pbMuonFix' in fileName:
+            lumi = 218
         else:
             lumi = 147.0
 
 
         ### Reference trigger
         refTrig = 'HLT_HT800'
+#        refTrig = 'HLT_HT400'
         #refTrig = 'HLT_HT350MET100'
         #refTrig = 'JetHT'#-eleCBID'
         #refTrig = 'HLT_MET170'
@@ -848,6 +856,18 @@ if __name__ == "__main__":
         cuts = basecuts + 'nMu == 1 && Lep_pt > 5 && HT > 500'
         makeEffPlots(tree, lumi, maxEntries, doFit, varList, refTrig, testTrig, cuts)
 
+        ### LEPTON ETA
+        varList = ['Lep_eta']
+
+        testTrig = ['EleHT350']
+        cuts = basecuts + 'nEl == 1 && Lep_pt > 20 && HT > 500'
+        makeEffPlots(tree, lumi, maxEntries, doFit, varList, refTrig, testTrig, cuts)
+
+        testTrig = ['MuHT350']
+        cuts = basecuts + 'nMu == 1 && Lep_pt > 20 && HT > 500'
+        makeEffPlots(tree, lumi, maxEntries, doFit, varList, refTrig, testTrig, cuts)
+
+        
         '''
         ## more triggers
         varList = ['Lep_eta']

@@ -1,12 +1,12 @@
 from CMGTools.TTHAnalysis.treeReAnalyzer import *
-from CMGTools.TTHAnalysis.tools.leptonJetReCleaner import passMllVeto
+from CMGTools.TTHAnalysis.tools.leptonJetReCleaner import bestZ1TL,minMllTL,passMllVeto
 from ROOT import TFile,TH1F
 import os
 
-for extlib in ["fake_rates_UCSx_v5_03.cc","flip_rates_UCSx_v5_01.cc","triggerSF_fullsim_UCSx_v5_01.cc","lepton_SF_UCSx_v5_03.cc","FastSimTriggerEff.cc"]:
+for extlib in ["fakerate/fake_rates_UCSx_v5_03.cc","fliprate/flip_rates_UCSx_v5_01.cc","triggerSF/triggerSF_fullsim_UCSx_v5_01.cc","leptonSF/lepton_SF_UCSx_v5_03.cc","triggerSF/FastSimTriggerEff.cc"]:
     if not extlib.endswith(".cc"): raise RuntimeError
     if "/%s"%extlib.replace(".cc","_cc.so") not in ROOT.gSystem.GetLibraries():
-        ROOT.gROOT.LoadMacro("/afs/cern.ch/work/p/peruzzi/ra5trees/cms_utility_files/%s+"%extlib)
+        ROOT.gROOT.LoadMacro(os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/%s+"%extlib)
 from ROOT import electronFakeRate_UCSx
 from ROOT import electronFakeRate_UCSx_Error
 from ROOT import electronAlternativeFakeRate_UCSx
@@ -37,6 +37,7 @@ class LeptonChoiceRA5:
     # enum
     style_TT_loopTF_2FF = 0
     style_sort_FO = 1
+    style_TTSync = 2
 
     # enum
     appl_Fakes = 0
@@ -60,7 +61,8 @@ class LeptonChoiceRA5:
         self.lepChoiceMethod = None
         self.apply = False
         if self.whichApplication == self.appl_Fakes:
-            if lepChoiceMethod=="TT_loopTF_2FF": self.lepChoiceMethod = self.style_TT_loopTF_2FF
+            if lepChoiceMethod=="TTSync": self.lepChoiceMethod = self.style_TTSync
+            elif lepChoiceMethod=="TT_loopTF_2FF": self.lepChoiceMethod = self.style_TT_loopTF_2FF
             elif lepChoiceMethod=="sort_FO": self.lepChoiceMethod = self.style_sort_FO
             else: raise RuntimeError, 'Unknown lepChoiceMethod'
             if FRFileName:
@@ -87,13 +89,10 @@ class LeptonChoiceRA5:
             ("SR_jecUp"+label,"I",20,"nPairs"+label),
             ("SR_jecDown"+label,"I",20,"nPairs"+label),
             ("hasTT"+label, "I"), ("hasTF"+label, "I"), ("hasFF"+label, "I"),
-            ("mZ1"+label,"F"), ("mZ1cut10TL"+label,"F"),("minMllAFAS"+label,"F"),("minMllAFASTT"+label,"F"), ("minMllAFASTL"+label,"F"), ("minMllSFOS"+label,"F"), ("minMllSFOSTL"+label,"F"), ("minMllSFOSTT"+label,"F"),
+            ("mZ1"+label,"F"), ("mZ1cut10TL"+label,"F"),("minMllAFAS"+label,"F"),
+            ("minMllAFASTT"+label,"F"), ("minMllAFASTL"+label,"F"), ("minMllSFOS"+label,"F"),
+            ("minMllSFOSTL"+label,"F"), ("minMllSFOSTT"+label,"F"),
             ("triggerSF"+label,"F",20,"nPairs"+label),
-            ("maxDeltaPhiLepJet"+label,"F",20,"nPairs"+label),
-            ("maxDeltaPhiLepBJet"+label,"F",20,"nPairs"+label),
-            ("maxDeltaPhiJetJet"+label,"F",20,"nPairs"+label),
-            ("minDeltaRLepJet"+label,"F",20,"nPairs"+label),
-            ("minDeltaRLepBJet"+label,"F",20,"nPairs"+label),
             ]
         for var in self.systsLEPSF: biglist.append(("leptonSF"+self.systsLEPSF[var]+label,"F",20,"nPairs"+label))
         return biglist
@@ -105,17 +104,15 @@ class LeptonChoiceRA5:
             self.checked_fastsim_data = True
 
         leps = [l for l in Collection(event,"LepGood","nLepGood")]
-        lepsl = [leps[il] for il in getattr(event,"iL"+self.inputlabel)]
-#        lepsc = [leps[il] for il in getattr(event,"iC"+self.inputlabel)]
-#        lepsf = [leps[il] for il in getattr(event,"iF"+self.inputlabel)]
-        lepst = [leps[il] for il in getattr(event,"iT"+self.inputlabel)]
-#        lepslv = [leps[il] for il in getattr(event,"iLV"+self.inputlabel)]
-#        lepscv = [leps[il] for il in getattr(event,"iCV"+self.inputlabel)]
-        lepsfv = [leps[il] for il in getattr(event,"iFV"+self.inputlabel)]
-        lepstv = [leps[il] for il in getattr(event,"iTV"+self.inputlabel)]
+        lepsl = [leps[il] for il in getattr(event,"iL"+self.inputlabel)][0:getattr(event,"nLepLoose"+self.inputlabel)]
+#        lepsc = [leps[il] for il in getattr(event,"iC"+self.inputlabel)][0:getattr(event,"nLepCleaning"+self.inputlabel)]
+#        lepsf = [leps[il] for il in getattr(event,"iF"+self.inputlabel)][0:getattr(event,"nLepFO"+self.inputlabel)]
+        lepst = [leps[il] for il in getattr(event,"iT"+self.inputlabel)][0:getattr(event,"nLepTight"+self.inputlabel)]
+#        lepslv = [leps[il] for il in getattr(event,"iLV"+self.inputlabel)][0:getattr(event,"nLepLooseVeto"+self.inputlabel)]
+#        lepscv = [leps[il] for il in getattr(event,"iCV"+self.inputlabel)][0:getattr(event,"nLepCleaningVeto"+self.inputlabel)]
+        lepsfv = [leps[il] for il in getattr(event,"iFV"+self.inputlabel)][0:getattr(event,"nLepFOVeto"+self.inputlabel)]
+        lepstv = [leps[il] for il in getattr(event,"iTV"+self.inputlabel)][0:getattr(event,"nLepTightVeto"+self.inputlabel)]
 
-        bjets25 = [j for j in Collection(event,"JetSel"+self.inputlabel,"nJetSel"+self.inputlabel) if (j.pt>25 and j.btagCSV>0.89)]
-        jets40 = [j for j in Collection(event,"JetSel"+self.inputlabel,"nJetSel"+self.inputlabel) if j.pt>40]
         
         systsFR={0:"", 1:"_ewkUp", -1:"_ewkDown"}
         systsJEC={0:"", 1:"_jecUp", -1:"_jecDown"}
@@ -130,18 +127,17 @@ class LeptonChoiceRA5:
 
         ret = {};
 
-        ### 2lss specific things - still useful?
-        ret['mZ1'] = self.bestZ1TL(lepsl, lepsl)
-        ret['mZ1cut10TL'] = self.bestZ1TL(lepsl, lepst, cut=lambda l:l.conePt>(10 if abs(l.pdgId)==13 else 15))
-        ret['minMllAFAS'] = self.minMllTL(lepsl, lepsl) 
-#        ret['minMllAFOS'] = self.minMllTL(lepsl, lepsl, paircut = lambda l1,l2 : l1.charge !=  l2.charge) 
-        ret['minMllSFOS'] = self.minMllTL(lepsl, lepsl, paircut = lambda l1,l2 : l1.pdgId  == -l2.pdgId) 
-        ret['minMllAFASTL'] = self.minMllTL(lepsl, lepst) 
- #       ret['minMllAFOSTL'] = self.minMllTL(lepsl, lepst, paircut = lambda l1,l2 : l1.charge !=  l2.charge) 
-        ret['minMllSFOSTL'] = self.minMllTL(lepsl, lepst, paircut = lambda l1,l2 : l1.pdgId  == -l2.pdgId) 
-        ret['minMllAFASTT'] = self.minMllTL(lepst, lepst)
-#        ret['minMllAFOSTT'] = self.minMllTL(lepst, lepst, paircut = lambda l1,l2 : l1.charge !=  l2.charge) 
-        ret['minMllSFOSTT'] = self.minMllTL(lepst, lepst, paircut = lambda l1,l2 : l1.pdgId  == -l2.pdgId) 
+        ret['mZ1'] = bestZ1TL(lepsl, lepsl)
+        ret['mZ1cut10TL'] = bestZ1TL(lepsl, lepst, cut=lambda l:l.conePt>(10 if abs(l.pdgId)==13 else 15))
+        ret['minMllAFAS'] = minMllTL(lepsl, lepsl) 
+#        ret['minMllAFOS'] = minMllTL(lepsl, lepsl, paircut = lambda l1,l2 : l1.charge !=  l2.charge) 
+        ret['minMllSFOS'] = minMllTL(lepsl, lepsl, paircut = lambda l1,l2 : l1.pdgId  == -l2.pdgId) 
+        ret['minMllAFASTL'] = minMllTL(lepsl, lepst) 
+ #       ret['minMllAFOSTL'] = minMllTL(lepsl, lepst, paircut = lambda l1,l2 : l1.charge !=  l2.charge) 
+        ret['minMllSFOSTL'] = minMllTL(lepsl, lepst, paircut = lambda l1,l2 : l1.pdgId  == -l2.pdgId) 
+        ret['minMllAFASTT'] = minMllTL(lepst, lepst)
+#        ret['minMllAFOSTT'] = minMllTL(lepst, lepst, paircut = lambda l1,l2 : l1.charge !=  l2.charge) 
+        ret['minMllSFOSTT'] = minMllTL(lepst, lepst, paircut = lambda l1,l2 : l1.pdgId  == -l2.pdgId) 
 
         ret["nPairs"]=0
         ret["i1"] = [0]*20
@@ -158,13 +154,14 @@ class LeptonChoiceRA5:
         ret["hasFF"]=False
         ret["triggerSF"] = [0]*20
         for var in self.systsLEPSF: ret["leptonSF"+self.systsLEPSF[var]] = [0]*20
-        ret["maxDeltaPhiLepJet"] = [0]*20
-        ret["maxDeltaPhiLepBJet"] = [0]*20
-        ret["maxDeltaPhiJetJet"] = [0]*20
-        ret["minDeltaRLepJet"] = [0]*20
-        ret["minDeltaRLepBJet"] = [0]*20
 
         if self.whichApplication == self.appl_Fakes:
+            if self.lepChoiceMethod==self.style_TTSync:
+                choice = self.findPairs(lepst,lepst,byflav=True,bypassMV=True,choose_SS_else_OS=True)
+                if choice:
+                    ret["hasTT"]=True
+                    choice=choice[:1]
+
             if self.lepChoiceMethod==self.style_TT_loopTF_2FF:
                 choice = self.findPairs(lepstv,lepstv,byflav=True,bypassMV=False,choose_SS_else_OS=True)
                 if choice:
@@ -218,7 +215,8 @@ class LeptonChoiceRA5:
                 ret["i1"][npair], ret["i2"][npair] = (i1,i2) if leps[i1].conePt>=leps[i2].conePt else (i2,i1) # warning: they are not necessarily ordered by pt!
                 for var in systsJEC:
                     mtwmin = min(sqrt(2*leps[i1].conePt*met[var]*(1-cos(leps[i1].phi-metphi[var]))),sqrt(2*leps[i2].conePt*met[var]*(1-cos(leps[i2].phi-metphi[var]))))
-                    ret["SR"+systsJEC[var]][npair]=self.SR(leps[i1].conePt,leps[i2].conePt,getattr(event,"htJet40j"+systsJEC[var]+self.inputlabel),met[var],getattr(event,"nJet40"+systsJEC[var]+self.inputlabel),getattr(event,"nBJetMedium25"+systsJEC[var]+self.inputlabel),mtwmin)
+                    ret["SR"+systsJEC[var]][npair]=self.SR(leps[i1].conePt,leps[i2].conePt,getattr(event,"htJet40j"+self.inputlabel+systsJEC[var]),met[var],getattr(event,"nJet40"+self.inputlabel+systsJEC[var]),getattr(event,"nBJetMedium25"+self.inputlabel+systsJEC[var]),mtwmin)
+
                 ht = getattr(event,"htJet40j"+self.inputlabel) # central value
                 ret["triggerSF"][npair] = triggerScaleFactorFullSim(leps[i1].pdgId,leps[i2].pdgId,leps[i1].pt,leps[i2].pt,ht) if not event.isData else 1
                 if self.isFastSim: ret["triggerSF"][npair] = ret["triggerSF"][npair] * FastSimTriggerEfficiency(ht,leps[i1].pt,leps[i1].pdgId,leps[i2].pt,leps[i2].pdgId)
@@ -233,11 +231,6 @@ class LeptonChoiceRA5:
                             if var==-2: lepsf[i] *= (addsf*(1-addsferr))
                             else: lepsf[i] *= addsf
                     ret["leptonSF"+self.systsLEPSF[var]][npair] = lepsf[0]*lepsf[1]
-                ret["maxDeltaPhiLepJet"][npair] = max([abs(deltaPhi(l.phi,j.phi)) for l in [leps[i1],leps[i2]] for j in jets40]+[-999])
-                ret["maxDeltaPhiLepBJet"][npair] = max([abs(deltaPhi(l.phi,j.phi)) for l in [leps[i1],leps[i2]] for j in bjets25]+[-999])
-                ret["maxDeltaPhiJetJet"][npair] = max([(abs(deltaPhi(j1.phi,j2.phi)) if j1!=j2 else -999) for j1 in jets40 for j2 in jets40]+[-999])
-                ret["minDeltaRLepJet"][npair] = min([abs(deltaR(l,j)) for l in [leps[i1],leps[i2]] for j in jets40]+[999])
-                ret["minDeltaRLepBJet"][npair] = min([abs(deltaR(l,j)) for l in [leps[i1],leps[i2]] for j in bjets25]+[999])
 
                 if self.apply:
                     if self.whichApplication == self.appl_Fakes:
@@ -283,8 +276,6 @@ class LeptonChoiceRA5:
             self.useFakesHardCodedUCSx = True
         else:    
             self.FRfile = ROOT.TFile(FRFileName,"read")
-#            self.FR_mu = (self.FRfile.Get("FRMuPtCorr_ETH_non"),self.FRfile.Get("FRMuPtCorr_ETH_iso"))
-#            self.FR_el = (self.FRfile.Get("FRElPtCorr_ETH_non"),self.FRfile.Get("FRElPtCorr_ETH_iso"))
             self.FR_mu={}
             self.FR_el={}
             self.FR_mu[0] = (self.FRfile.Get("FRMuPtCorr_UCSX_non"),self.FRfile.Get("FRMuPtCorr_UCSX_iso"))
@@ -395,33 +386,6 @@ class LeptonChoiceRA5:
         if sf==0: raise RuntimeError, "Returning null lepton SF for FastSim (%d, %f, %f, %d)"%(pdgId,pt,eta,pu)
         return sf,(sferr/sf)
 
-    def bestZ1TL(self,lepsl,lepst,cut=lambda lep:True):
-          pairs = []
-          for l1 in lepst:
-            if not cut(l1): continue
-            for l2 in lepsl:
-                if not cut(l2): continue
-                if l1.pdgId == -l2.pdgId:
-                   mz = (l1.p4() + l2.p4()).M()
-                   diff = abs(mz-91.2)
-                   pairs.append( (diff,mz) )
-          if len(pairs):
-              pairs.sort()
-              return pairs[0][1]
-          return 0.
-    def minMllTL(self, lepsl, lepst, bothcut=lambda lep:True, onecut=lambda lep:True, paircut=lambda lep1,lep2:True):
-            pairs = []
-            for l1 in lepst:
-                if not bothcut(l1): continue
-                for l2 in lepsl:
-                    if l2 == l1 or not bothcut(l2): continue
-                    if not onecut(l1) and not onecut(l2): continue
-                    if not paircut(l1,l2): continue
-                    mll = (l1.p4() + l2.p4()).M()
-                    pairs.append(mll)
-            if len(pairs):
-                return min(pairs)
-            return -1
     def findPairs(self,leps1,leps2,byflav,bypassMV,choose_SS_else_OS=True):
         ret = None
         pairs = []
@@ -430,15 +394,16 @@ class LeptonChoiceRA5:
             if (p[1],p[0]) not in _p:
                 _p.append(p)
         for (l1,l2) in _p:
-                if not passMllVeto(l1, l2, 0, 8, False) and not bypassMV: continue
-                flav = abs(l1.pdgId) + abs(l2.pdgId) if byflav else 0
-                ht   = l1.conePt + l2.conePt
-                if ((l1.charge == l2.charge) if choose_SS_else_OS else (l1.charge != l2.charge)):
-                    pairs.append( (-flav,-ht,l1,l2) )
+            if not passMllVeto(l1, l2, 0, 8, False) and not bypassMV: continue
+            flav = abs(l1.pdgId) + abs(l2.pdgId) if byflav else 0
+            ht   = l1.conePt + l2.conePt
+            if ((l1.charge == l2.charge) if choose_SS_else_OS else (l1.charge != l2.charge)):
+                pairs.append( (-flav,-ht,l1,l2) )
         if len(pairs):
             pairs.sort()
             ret = [(pair[2],pair[3]) for pair in pairs]
         return ret
+
     def SR(self, _l1pt, _l2pt, ht, met, nj, nb, mtw):
         l1pt, l2pt = (_l1pt,_l2pt) if _l1pt>=_l2pt else (_l2pt,_l1pt)
         if l1pt > 25 and l2pt > 25 and ht < 300 and met > 50 and met < 200 and nj >= 2 and nj <= 4 and nb == 0 and mtw < 120 : SR = 1
@@ -512,6 +477,120 @@ class LeptonChoiceRA5:
         elif l1pt < 25 and l2pt < 25 and ht > 300 and mtw > 120 : SR = 66 #C8 
         else : SR = 0 
         return SR
+
+def _susy2lss_lepId_CBloose(lep):
+        if abs(lep.pdgId) == 13:
+            if lep.pt <= 5: return False
+            return True #lep.mediumMuonId > 0
+        elif abs(lep.pdgId) == 11:
+            if lep.pt <= 7: return False
+            if not (lep.convVeto and lep.lostHits <= 1): 
+                return False
+            if not lep.mvaIdSpring15 > -0.70+(-0.83+0.70)*(abs(lep.etaSc)>0.8)+(-0.92+0.83)*(abs(lep.etaSc)>1.479):
+                return False
+            if not _susy2lss_idEmu_cuts(lep): return False
+            return True
+        return False
+
+def _susy2lss_lepConePt1015(lep):
+    if lep.conept <= (10 if abs(lep.pdgId)==13 else 15): return False
+    return True
+
+def _susy2lss_lepId_loosestFO(lep):
+    if not _susy2lss_lepId_CBloose(lep): return False
+    if abs(lep.pdgId) == 13:
+        return lep.mediumMuonId > 0 and lep.tightCharge > 0
+    elif abs(lep.pdgId) == 11:
+        return (lep.convVeto and lep.tightCharge > 1 and lep.lostHits == 0)
+    return False
+
+def _susy2lss_lepId_tighterFO(lep):
+    if not _susy2lss_lepId_loosestFO(lep): return False
+    if abs(lep.pdgId)==11:
+        if not lep.mvaIdSpring15 > -0.155+(-0.56+0.155)*(abs(lep.etaSc)>0.8)+(-0.76+0.56)*(abs(lep.etaSc)>1.479):
+            return False
+        if not _susy2lss_idIsoEmu_cuts(lep): return False
+    return True
+
+def _susy2lss_lepId_inSituLoosestFO(lep):
+    if not _susy2lss_lepId_loosestFO(lep): return False
+    if abs(lep.pdgId)==11:
+        if not lep.mvaIdSpring15 > -0.363+(-0.579+0.363)*(abs(lep.etaSc)>0.8)+(-0.623+0.579)*(abs(lep.etaSc)>1.479):
+            return False
+    return True
+
+def _susy2lss_lepId_inSituTighterFO(lep):
+    if not _susy2lss_lepId_loosestFO(lep): return False
+    if abs(lep.pdgId)==11:
+        if not lep.mvaIdSpring15 > 0.051+(-0.261-0.051)*(abs(lep.etaSc)>0.8)+(-0.403+0.261)*(abs(lep.etaSc)>1.479):
+            return False
+        if not _susy2lss_idIsoEmu_cuts(lep): return False
+    return True
+
+def _susy2lss_lepId_IPcuts(lep):
+    if not lep.sip3d<4: return False
+    if not (abs(lep.dxy)<0.05): return False
+    if not (abs(lep.dz)<0.1): return False
+    return True
+
+def _susy2lss_lepId_CB(lep):
+    if not _susy2lss_lepId_CBloose(lep): return False
+    if not _susy2lss_lepId_IPcuts(lep): return False
+    if abs(lep.pdgId) == 13:
+        return lep.mediumMuonId > 0 and lep.tightCharge > 0
+    elif abs(lep.pdgId) == 11:
+        if not (lep.convVeto and lep.tightCharge > 1 and lep.lostHits == 0): 
+            return False
+        return lep.mvaIdSpring15 > 0.87+(0.60-0.87)*(abs(lep.etaSc)>0.8)+(0.17-0.60)*(abs(lep.etaSc)>1.479)
+    return False
+
+def _susy2lss_idEmu_cuts(lep):
+    if (abs(lep.pdgId)!=11): return True
+    if (lep.sigmaIEtaIEta>=(0.011 if abs(lep.etaSc)<1.479 else 0.031)): return False
+    if (lep.hadronicOverEm>=0.08): return False
+    if (abs(lep.dEtaScTrkIn)>=0.01): return False
+    if (abs(lep.dPhiScTrkIn)>=(0.04 if abs(lep.etaSc)<1.479 else 0.08)): return False
+    if (abs(lep.eInvMinusPInv)>=0.01): return False
+    return True
+def _susy2lss_idEmu_cuts_obj(lep):
+    if (abs(lep.pdgId())!=11): return True
+    if (lep.full5x5_sigmaIetaIeta()>=(0.011 if abs(lep.superCluster().eta())<1.479 else 0.031)): return False
+    if (lep.hadronicOverEm()>=0.08): return False
+    if (abs(lep.deltaEtaSuperClusterTrackAtVtx())>=0.01): return False
+    if (abs(lep.deltaPhiSuperClusterTrackAtVtx())>=(0.04 if abs(lep.superCluster().eta())<1.479 else 0.08)): return False
+    if (abs((1.0/lep.ecalEnergy() - lep.eSuperClusterOverP()/lep.ecalEnergy()) if lep.ecalEnergy()>0. else 9e9)>=0.01): return False
+    return True
+
+def _susy2lss_idIsoEmu_cuts(lep):
+    if (abs(lep.pdgId)!=11): return True
+    if not _susy2lss_idEmu_cuts(lep): return False
+    if (lep.ecalPFClusterIso>=0.45*lep.pt): return False
+    if (lep.hcalPFClusterIso>=0.25*lep.pt): return False
+    if (lep.dr03TkSumPt>=0.2*lep.pt): return False
+    return True
+def _susy2lss_idIsoEmu_cuts_obj(lep):
+    if (abs(lep.pdgId())!=11): return True
+    if not _susy2lss_idEmu_cuts_obj(lep): return False
+    if (lep.ecalPFClusterIso()>=0.45*lep.pt()): return False
+    if (lep.hcalPFClusterIso()>=0.25*lep.pt()): return False
+    if (lep.dr03TkSumPt()>=0.2*lep.pt()): return False
+    return True
+
+def _susy2lss_leptonMVA(lep):
+    if abs(lep.pdgId) == 13: return (lep.mvaTTHMoriond16 > 0.45)
+    if abs(lep.pdgId) == 11: return (lep.mvaTTHMoriond16 > 0.75)
+    return False
+    
+def _susy2lss_multiIso(lep):
+        if abs(lep.pdgId) == 13: A,B,C = (0.16,0.76,7.2)
+        else:                    A,B,C = (0.12,0.80,7.2)
+        return lep.miniRelIso < A and (lep.jetPtRatiov2 > B or lep.jetPtRelv2 > C)
+
+def _susy2lss_multiIso_relaxedForInSituApp(lep):
+        if abs(lep.pdgId) == 13: A,B,C = (0.4,0.76,7.2)
+        else:                    A,B,C = (0.4,0.80,7.2)
+        return lep.miniRelIso < A and (1/lep.jetPtRatiov2 < (1/B + lep.miniRelIso) or lep.jetPtRelv2 > C)
+
 
 if __name__ == '__main__':
     from sys import argv

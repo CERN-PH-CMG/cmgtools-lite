@@ -155,6 +155,28 @@ float DPhi_CMLep_Zboost(float l_pt, float l_eta, float l_phi, float l_M, float l
   return deltaPhi(l1.Phi(),Z.Phi());
 }
 
+
+// May 2016: This is func which takes the 4vectors of MET, L1,L2 and reconstructs 2 taus and returns the effective Z(-->tautau) mass.                                                                                        // To be investigated: do not allow to insert more than 9 parameter; Skipped the lepton types/masses...                                                                                                         
+
+float mass_tautau( float Met_Pt, float Met_Phi, float l1_Pt, float l1_Eta, float l1_Phi, float l2_Pt, float l2_Eta, float l2_Phi ) {
+  typedef ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<double> > PtEtaPhiMVector;
+  typedef ROOT::Math::LorentzVector<ROOT::Math::PxPyPzM4D<double>   > PxPyPzMVector;
+  PtEtaPhiMVector Met( Met_Pt, 0.     , Met_Phi , 0.   );
+  PtEtaPhiMVector L1(  l1_Pt , l1_Eta , l1_Phi  , 0.106 );
+  PtEtaPhiMVector L2(  l2_Pt , l2_Eta , l2_Phi  , 0.106 );   // 0.106 mu mass                                                                                                                                                 
+  float A00,A01,A10,A11,  C0,C1,  X0,X1,  inv_det;     // Define A:2x2 matrix, C,X 2x1 vectors & det[A]^-1                                                                                                                    
+  inv_det = 1./( L1.Px()*L2.Py() - L2.Px()*L1.Py() );
+  A00 = inv_det*L2.Py();     A01 =-inv_det*L2.Px();
+  A10 =-inv_det*L1.Py();     A11 = inv_det*L1.Px();
+  C0  = (Met+L1+L2).Px();    C1  = (Met+L1+L2).Py();
+  X0  = A00*C0 + A01*C1;     X1  = A10*C0 + A11*C1;
+  PxPyPzMVector T1( L1.Px()*X0 , L1.Py()*X0 , L1.Pz()*X0 , 1.777 );    // 1.777 tau mass                                                                                                                                      
+  PxPyPzMVector T2( L2.Px()*X1 , L2.Py()*X1 , L2.Pz()*X1 , 1.777 );
+  if(X0>0.&&X1>0.)return  (T1+T2).M();
+  else            return -(T1+T2).M();
+}
+
+
 float relax_cut_in_eta_bins(float val, float eta, float eta1, float eta2, float eta3, float val1, float val2, float val3, float val1t, float val2t, float val3t){
 
 // Return a new value of val (variable on which a cut is applied), in such a way that the thresholds (val1,val2,val3)
@@ -256,6 +278,31 @@ int regroupSignalRegions_RA5(int SR){
 
 }
 
+int SR_ewk_ss2l(int nj, float ptl1, float phil1, float ptl2, float phil2, float met, float metphi){
+  
+  float mtw1 = mt_2(ptl1,phil1, met, metphi);
+  float mtw2 = mt_2(ptl2,phil2, met, metphi);
+  float mtw  = std::min(mtw1,mtw2);
+  float ptdil = pt_2(ptl1,phil1,ptl2,phil2);
+  
+  if (nj==0 && met<100)        return -1;  //validation region 0-jet
+  else if (nj==1 && met<100)   return -2;  //validation region 1-jet
+  else if (nj==0 && mtw<40 && met>100 && met<200)             return 1;
+  else if (nj==0 && mtw<40 && met>200)                        return 2;
+  else if (nj==0 && mtw>40 && mtw<120 && met>100 && met<200)  return 3;
+  else if (nj==0 && mtw>40 && mtw<120 && met>200)             return 4;
+  else if (nj==0 && mtw>120 && mtw<120 && met>100 && met<200) return 5;
+  else if (nj==0 && mtw>120 && mtw<120 &&  met>200)           return 6;
+  else if (nj==1 && mtw<40 && met>100 && met<200)             return 11;
+  else if (nj==1 && mtw<40 && met>200)                        return 12;
+  else if (nj==1 && mtw>40 && mtw<120 && met>100 && met<200)  return 13;
+  else if (nj==1 && mtw>40 && mtw<120 && met>200)             return 14;
+  else if (nj==1 && mtw>120 && mtw<120 && met>100 && met<200) return 15;
+  else if (nj==1 && mtw>120 && mtw<120 &&  met>200)           return 16;
+  
+  return -99;
+  
+}
 //float MVAto1D_6_sorted_ee(float kinMVA_2lss_ttbar, float kinMVA_2lss_ttV) {
 //    
 //    float MVA_binned_6 = 0; 		
@@ -386,6 +433,11 @@ float ttH_MVAto1D_6_flex (float kinMVA_2lss_ttbar, float kinMVA_2lss_ttV, int pd
 float _puw_true[50] = {0.5269234785559587, 0.6926695654592266, 1.080004829553802, 1.379105403255213, 1.819531519703243, 2.212948765398841, 1.591693852037577, 1.3246151544739415, 1.332963823519763, 1.252466214103506, 1.1890944076884082, 1.1546479191424708, 1.0968414518989904, 0.9606172752657895, 0.7612068106342116, 0.5447695822686637, 0.373924851932163, 0.27930793003309273, 0.24795243534715622, 0.2166027139283378, 0.1428710628614267, 0.06602338110497821, 0.021980743935920363, 0.006398279132023322, 0.0017936194597459384, 0.0006009500899246867, 0.00024768297660153493, 0.00011533171910677974, 5.940474255383892e-05, 3.0175857564910636e-05, 1.6223458431650605e-05, 8.845524938467253e-06, 4.8328429446258596e-06, 2.435353948121383e-06, 1.1669731534545345e-06, 5.843672017481929e-07, 2.975267432326348e-07, 1.3319634853069228e-07, 4.880943490079542e-08, 1.8002534751187506e-08, 1.2438479691035926e-08, 5.881024897175279e-09, 1.559130111354315e-09, 4.399999147793046e-10, 5.222167998741082e-11, 2.6387645368250217e-11, 1.0, 1.0, 1.0, 1.0};
 
 float puw(int nTrueInt) { if (nTrueInt<50) return _puw_true[nTrueInt]; else return 0; }
+
+// for 80X miniAOD v1, data up to run 273730
+float _puw2016_vtx[40] = {0.19692137176564317, 0.5512893955944992, 0.9770490049006523, 1.5347221311033268, 1.9692615705153973, 2.1491195749572007, 2.1780114323780513, 2.1476769294879037, 2.034380632552017, 1.87588545290878, 1.706600023753648, 1.5343743090394626, 1.3432450969258811, 1.1510269674496358, 0.9801083154979298, 0.8092391449359286, 0.6641103531512786, 0.5447223215449378, 0.4295029198143936, 0.3338937564649758, 0.2631617941891352, 0.20079880107279335, 0.15986742978997262, 0.11445737335104854, 0.08137048173588282, 0.06446688279958453, 0.051602567961013174, 0.03886047839947285, 0.02639331456382827, 0.019479110921421926, 0.016802825802323017, 0.008207196793826336, 0.005048555458954462, 0.009915180991460402, 0.0032609928594136157, 0.009591155468863447, 0.0, 0.0, 0.0, 0.0};
+float puw2016_vtx(int nVtx) { if (nVtx<40) return _puw2016_vtx[nVtx]; else return 0; }
+
 //
 //float puwMu8(int nVert) { return _puw_Mu8[nVert] * 0.001; }
 //float puwMu17(int nVert) { return _puw_Mu17[nVert] * (2305428/29339.)*0.002/2.26; }
@@ -502,6 +554,13 @@ float triggerSF_ttH(int pdgid1, float pt1, int pdgid2, float pt2, int nlep, floa
   else return 0.98;
 }
 
+float mass_3_cheap(float pt1, float eta1, float pt2, float eta2, float phi2, float pt3, float eta3, float phi3) {
+    typedef ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<double> > PtEtaPhiMVector;
+    PtEtaPhiMVector p41(pt1,eta1,0,   0.0);
+    PtEtaPhiMVector p42(pt2,eta2,phi2,0.0);
+    PtEtaPhiMVector p43(pt3,eta3,phi3,0.0);
+    return (p41+p42+p43).M();
+}
 
 
 void functions() {}
