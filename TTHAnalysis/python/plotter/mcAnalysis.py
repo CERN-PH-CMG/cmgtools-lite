@@ -176,8 +176,8 @@ class MCAnalysis:
         #if len(self._signals) == 0: raise RuntimeError, "No signals!"
         #if len(self._backgrounds) == 0: raise RuntimeError, "No backgrounds!"
     def listProcesses(self):
-        ret = self._allData.keys()[:]
-        ret.sort(key = lambda n : self._rank[n])
+        ret = self.listSignals() + self.listBackgrounds() 
+        if 'data' in self._allData.keys(): ret.append('data')
         return ret
     def listOptionsOnlyProcesses(self):
         return self._optionsOnlyProcesses.keys()

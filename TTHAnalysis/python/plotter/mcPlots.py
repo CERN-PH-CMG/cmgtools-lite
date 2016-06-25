@@ -392,9 +392,10 @@ def doNormFit(pspec,pmap,mca,saveScales=False):
 def doRatioHists(pspec,pmap,total,totalSyst,maxRange,fixRange=False,fitRatio=None,errorsOnRef=True,ratioNums="signal",ratioDen="background"):
     numkeys = [ "data" ]
     if "data" not in pmap: 
-        if len(pmap) >= 4 and ratioDen in pmap:
+        if len(pmap) >= 2 and ratioDen in pmap:
             numkeys = []
             for p in pmap.iterkeys():
+                if p == ratioDen: continue
                 for s in ratioNums.split(","):
                     if re.match(s,p): 
                         numkeys.append(p)
@@ -851,8 +852,8 @@ class PlotMaker:
                         doStatTests(totalSyst, pmap['data'], options.doStatTests, legendCorner=pspec.getOption('Legend','TR'))
                 if pspec.hasOption('YMin') and pspec.hasOption('YMax'):
                     total.GetYaxis().SetRangeUser(pspec.getOption('YMin',1.0), pspec.getOption('YMax',1.0))
-                if options.yrange: 
-                    total.GetYaxis().SetRangeUser(options.yrange[0], options.yrange[1])
+                #if options.yrange: 
+                #    total.GetYaxis().SetRangeUser(options.yrange[0], options.yrange[1])
                 legendCutoff = pspec.getOption('LegendCutoff', 1e-5 if c1.GetLogy() else 1e-2)
                 if plotmode == "norm": legendCutoff = 0 
                 doLegend(pmap,mca,corner=pspec.getOption('Legend','TR'),
@@ -1005,7 +1006,7 @@ def addPlotMakerOptions(parser, addAlsoMCAnalysis=True):
     parser.add_option("--wide", dest="wideplot", action="store_true", default=False, help="Draw a wide canvas")
     parser.add_option("--elist", dest="elist", action="store_true", default='auto', help="Use elist (on by default if making more than 2 plots)")
     parser.add_option("--no-elist", dest="elist", action="store_false", default='auto', help="Don't elist (which are on by default if making more than 2 plots)")
-    if not parser.has_option("--yrange"): parser.add_option("--yrange", dest="yrange", default=None, nargs=2, type='float', help="Y axis range");
+    #if not parser.has_option("--yrange"): parser.add_option("--yrange", dest="yrange", default=None, nargs=2, type='float', help="Y axis range");
     parser.add_option("--emptyStack", dest="emptyStack", action="store_true", default=False, help="Allow empty stack in order to plot, for example, only signals but no backgrounds.")
 
 if __name__ == "__main__":
