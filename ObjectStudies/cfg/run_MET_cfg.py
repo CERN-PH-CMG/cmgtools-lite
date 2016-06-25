@@ -387,7 +387,7 @@ if comp.isData:
     uncFile = os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/jec/Spring16_25nsV3_DATA_Uncertainty_AK4PFchs.txt'
     jecDBFile = os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/jec/Spring16_25nsV3_DATA.db'
     jecEra    = 'Spring16_25nsV3_DATA'
-    jerDBFile = os.environ['CMSSW_BASE']+'/src/PhysicsTools/PatUtils/data/JER/Fall15_25nsV2_DATA.db'
+    jerDBFile = os.environ['CMSSW_BASE']+'/src/PhysicsTools/PatUtils/data/JER/Fall15_25nsV2_MC.db'
     jerEra    = 'Fall15_25nsV2'
 else:
     ## MC 25ns
@@ -402,9 +402,9 @@ preprocessorFile = "$CMSSW_BASE/tmp/MetType1_jec_%s.py"%(jecEra)
 extraArgs=[]
 if comp.isData:
     extraArgs.append('--isData')
-    GT= '76X_dataRun2_16Dec2015_v0'
+    GT= '80X_dataRun2_Prompt_v8'
 else:
-    GT= '76X_mcRun2_asymptotic_RunIIFall15DR76_v1'
+    GT= '80X_mcRun2_asymptotic_2016_v3'
 
 if removeResiduals:extraArgs.append('--removeResiduals')
 args = ['python',
