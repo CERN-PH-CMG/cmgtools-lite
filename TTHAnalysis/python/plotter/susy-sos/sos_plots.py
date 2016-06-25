@@ -108,17 +108,20 @@ if __name__ == '__main__':
    
     if '2los_CR_DY_vars' in torun:
         x = base('2los')
-        x = add(x,"--noStackSig --showIndivSigs --xp TChiNeuWZ_95,T2ttDeg_300,T2ttDeg_315")
+        x = add(x,"--noStackSig --showIndivSigs --xp TChiNeuWZ_95")
         if '_notrigger' in torun: x = add(x,'-X ^trigger ')
         if '_data' in torun: 
             x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt')
             x = add(x,"--showRatio --maxRatioRange 0 3") #--showMCError
         if '_met200' in torun:             
-            x = add(x,"-R ^ISRjet ISRjetnoID 'Jet1_pt > 25 && fabs(Jet1_eta)<2.4' -R ^ledlepPt ledlepPtNoUp '5 < LepGood1_pt' -E ^MT -E ^highMET -X ^HT -X ^Upsilon_veto -R ^TT TTCR 'LepGood1_isTightCR && LepGood2_isTightCR' -R METovHT METovHTrelax '(met_pt/(htJet25-LepGood1_pt-LepGood2_pt))>(2/3)' -R mtautau mtautauInv '0.<mass_tautau(met_pt,met_phi,LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood2_pt,LepGood2_eta,LepGood2_phi)&&mass_tautau(met_pt,met_phi,LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood2_pt,LepGood2_eta,LepGood2_phi)<160.' -X ^FF")
+            x = add(x,"-R ^ISRjet ISRjetnoID 'Jet1_pt > 25 && fabs(Jet1_eta)<2.4' -R ^ledlepPt ledlepPtNoUp '5 < LepGood1_pt' -E ^MT -E ^highMET -X ^HT -X ^Upsilon_veto -R ^TT TTCR 'LepGood1_isTightCR && LepGood2_isTightCR' -R METovHT METovHTrelax '(met_pt/(htJet25-LepGood1_pt-LepGood2_pt))>(2/3)' -R mtautau mtautauInv '0.<mass_tautau(met_pt,met_phi,LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood2_pt,LepGood2_eta,LepGood2_phi)&&mass_tautau(met_pt,met_phi,LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood2_pt,LepGood2_eta,LepGood2_phi)<160.'")
             x = x.replace('-l 5.0','-l 4.0')
+        if '_met100' in torun:             
+            x = add(x,"-E ^mm -R ^ledlepPt ledlepPtNoUp '5 < LepGood1_pt' -E ^MT -E ^upperMET -R ^TT TTCR 'LepGood1_isTightCR && LepGood2_isTightCR' -R METovHT METovHTrelax '(met_pt/(htJet25-LepGood1_pt-LepGood2_pt))>(2/3)' -R mtautau mtautauInv '0.<mass_tautau(met_pt,met_phi,LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood2_pt,LepGood2_eta,LepGood2_phi)&&mass_tautau(met_pt,met_phi,LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood2_pt,LepGood2_eta,LepGood2_phi)<160.' -E ^runRange")
+            x = x.replace('-l 5.0','-l 1.4')        
         runIt(x,'%s/all'%torun,[],['SR_bins_EWKino','SR_bins_stop'])      
 
-      
+      #,T2ttDeg_300,T2ttDeg_315
 
     #### still to be adapted to SOS        
     # if '2lss_' in torun:

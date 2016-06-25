@@ -29,4 +29,4 @@ ee: abs(LepGood1_pdgId)==11 && abs(LepGood2_pdgId)==11; Disable=True
 em: abs(LepGood1_pdgId) != abs(LepGood2_pdgId);         Disable=True
 mm: abs(LepGood1_pdgId)==13 && abs(LepGood2_pdgId)==13; Disable=True
 dphiMETl2: fabs(deltaPhi(met_phi,LepGood2_phi))<2. ; Disable=True
-
+runRange: (!isData) || run >= 274954 ; Disable=True
