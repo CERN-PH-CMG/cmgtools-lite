@@ -9,4 +9,4 @@ sip : LepGood1_sip3d < 4
 tight charge : LepGood1_tightCharge > (abs(LepGood1_pdgId) == 11)
 lep_tight : ((abs(LepGood1_pdgId) == 11 && LepGood1_pt > 30 ) || ( abs(LepGood1_pdgId) == 13  && LepGood1_pt > 20 ) )&& abs(LepGood1_eta) < 2.1
 nJet/bJet : nJet25>=3 && nJet25<=4 && nBJetMedium25 == 1
-veto_prompt_2nd: LepGood2_mvaTTH<0.8
+veto_prompt_2nd: LepGood_mvaTTH[iChosen]<0.8 && LepGood_mvaSUSY[iChosen]<0.8
