@@ -1,17 +1,18 @@
 alwaystrue: 1
-trigger: Triggers_MET\b || Triggers_mmMET\b
+trigger: Triggers_MET || Triggers_mmMET
 dilep: nLepGood == 2
 ledlepPt: 5 < LepGood1_pt && LepGood1_pt < 30
 sublepPt: (fabs(LepGood2_pdgId)==13 && LepGood2_pt > 3.5) || (fabs(LepGood2_pdgId)==11 && LepGood2_pt > 5)
 eta: ((fabs(LepGood1_pdgId)==13 && fabs(LepGood1_eta) < 2.4) || (fabs(LepGood1_pdgId)==11 && fabs(LepGood1_eta)<2.5)) &&  ((fabs(LepGood2_pdgId)==13 && fabs(LepGood2_eta) < 2.4) || (fabs(LepGood2_pdgId)==11 && fabs(LepGood2_eta)<2.5))
 opposite-sign: LepGood1_pdgId*LepGood2_pdgId<0
-Mll: mass_2(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_mass,LepGood2_pt,LepGood2_eta,LepGood2_phi,LepGood2_mass)>4.
-TT: LepGood1_isTight && LepGood2_isTight
-eleConvVeto: (LepGood1_pdgId*LepGood2_pdgId==-169) || (LepGood1_pdgId*LepGood2_pdgId==-121 && LepGood1_lostHits==0 && LepGood2_lostHits==0 && LepGood1_convVeto==1 && LepGood2_convVeto==1) || (LepGood1_pdgId*LepGood2_pdgId==-143 && fabs(LepGood1_pdgId)==11 && LepGood1_convVeto==1 && LepGood1_lostHits==0) || (LepGood1_pdgId*LepGood2_pdgId==-143 && fabs(LepGood2_pdgId)==11 && LepGood2_convVeto==1 && LepGood2_lostHits==0)
-ISRjet:Jet1_pt > 25 && fabs(Jet1_eta)<2.4 
+Upsilon_veto:9>mass_2(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_mass,LepGood2_pt,LepGood2_eta,LepGood2_phi,LepGood2_mass)||mass_2(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_mass,LepGood2_pt,LepGood2_eta,LepGood2_phi,LepGood2_mass)>10.5
+FF: ((abs(LepGood1_pdgId)==13 || (abs(LepGood1_pdgId)==11 && LepGood1_eleIdVVL)) && (abs(LepGood1_pdgId)==13 || (LepGood1_lostHits==0 && LepGood1_convVeto))) && ((abs(LepGood2_pdgId)==13 || (abs(LepGood2_pdgId)==11 && LepGood2_eleIdVVL)) && (abs(LepGood2_pdgId)==13 || (LepGood2_lostHits==0 && LepGood2_convVeto)))
+TT: (((fabs(LepGood1_pdgId)==13 && LepGood1_softMuonId>0) || (fabs(LepGood1_pdgId)==11 && ((LepGood1_pt<=10.0 && ((fabs(LepGood1_etaSc)<0.8 &&LepGood1_mvaIdSpring15>-0.265) || (fabs(LepGood1_etaSc)>=0.8 && fabs(LepGood1_etaSc)<1.479&&LepGood1_mvaIdSpring15>-0.556)||(fabs(LepGood1_etaSc)>=1.479 && LepGood1_mvaIdSpring15 > -0.551))) || (LepGood1_pt>10.0 && ((fabs(LepGood1_etaSc)<0.8 && LepGood1_mvaIdSpring15>0.87)||(fabs(LepGood1_etaSc)>=0.8 && fabs(LepGood1_etaSc)<1.479 && LepGood1_mvaIdSpring15>0.60)||(fabs(LepGood1_etaSc)>=1.479 && LepGood1_mvaIdSpring15 >0.17)))))) && LepGood1_relIso03<0.5 && (LepGood1_relIso03*LepGood1_pt)<5. && fabs(LepGood1_dxy)<0.01 && fabs(LepGood1_dz)<0.01)&&(((fabs(LepGood2_pdgId)==13 && LepGood2_softMuonId>0) || (fabs(LepGood2_pdgId)==11 && ((LepGood2_pt<=10.0 && ((fabs(LepGood2_etaSc)<0.8 &&LepGood2_mvaIdSpring15>-0.265) || (fabs(LepGood2_etaSc)>=0.8 && fabs(LepGood2_etaSc)<1.479&&LepGood2_mvaIdSpring15>-0.556)||(fabs(LepGood2_etaSc)>=1.479 && LepGood2_mvaIdSpring15 > -0.551))) || (LepGood2_pt>10.0 && ((fabs(LepGood2_etaSc)<0.8 && LepGood2_mvaIdSpring15>0.87)||(fabs(LepGood2_etaSc)>=0.8 && fabs(LepGood2_etaSc)<1.479 && LepGood2_mvaIdSpring15>0.60)||(fabs(LepGood2_etaSc)>=1.479 && LepGood2_mvaIdSpring15 >0.17)))))) && LepGood2_relIso03<0.5 && (LepGood2_relIso03*LepGood2_pt)<5. && fabs(LepGood2_dxy)<0.01 && fabs(LepGood2_dz)<0.01)
+ISRjet:Jet1_pt > 25 && fabs(Jet1_eta)<2.4 && Jet1_id == 5 
 lowMET: met_pt > 100
-MET/HT : (met_pt/(htJet25-LepGood1_pt-LepGood2_pt))>(2/3)
-bveto : nBJetLoose25==0
+METovHT: (met_pt/(htJet25-LepGood1_pt-LepGood2_pt))>(2/3) && (met_pt/(htJet25-LepGood1_pt-LepGood2_pt)) < 1.4
+HT: (htJet25-LepGood1_pt-LepGood2_pt) > 100 
+bveto : Sum$(Jet_btagCSV>0.46)==0
 mtautau : 0.>mass_tautau(met_pt,met_phi,LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood2_pt,LepGood2_eta,LepGood2_phi)||mass_tautau(met_pt,met_phi,LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood2_pt,LepGood2_eta,LepGood2_phi)>160.
 
 
@@ -27,29 +28,5 @@ SF: LepGood1_pdgId*LepGood2_pdgId==-169 || LepGood1_pdgId*LepGood2_pdgId==-121 ;
 ee: abs(LepGood1_pdgId)==11 && abs(LepGood2_pdgId)==11; Disable=True
 em: abs(LepGood1_pdgId) != abs(LepGood2_pdgId);         Disable=True
 mm: abs(LepGood1_pdgId)==13 && abs(LepGood2_pdgId)==13; Disable=True
-mll1_mm_met100: met_pt>100. && met_pt<=200. && mass_2(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_mass,LepGood2_pt,LepGood2_eta,LepGood2_phi,LepGood2_mass)<=10.&& LepGood1_pdgId*LepGood2_pdgId_2==-169 ; Disable=True
-mll2_mm_met100: met_pt>100. && met_pt<=200. && 10.<mass_2(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_mass,LepGood2_pt,LepGood2_eta,LepGood2_phi,LepGood2_mass)&&mass_2(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_mass,LepGood2_pt,LepGood2_eta,LepGood2_phi,LepGood2_mass)<=20.&& LepGood1_pdgId*LepGood2_pdgId_2==-169 ; Disable=True
-mll3_mm_met100: met_pt>100. && met_pt<=200. && 20.<mass_2(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_mass,LepGood2_pt,LepGood2_eta,LepGood2_phi,LepGood2_mass)&&mass_2(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_mass,LepGood2_pt,LepGood2_eta,LepGood2_phi,LepGood2_mass)<=30.&& LepGood1_pdgId*LepGood2_pdgId_2==-169 ; Disable=True
-mll4_mm_met100: met_pt>100. && met_pt<=200. && 30.<mass_2(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_mass,LepGood2_pt,LepGood2_eta,LepGood2_phi,LepGood2_mass)&& LepGood1_pdgId*LepGood2_pdgId_2==-169 ; Disable=True
-mll1_mm_met200: met_pt>200. && met_pt<=200. && mass_2(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_mass,LepGood2_pt,LepGood2_eta,LepGood2_phi,LepGood2_mass)<=10.&& LepGood1_pdgId*LepGood2_pdgId_2==-169 ; Disable=True
-mll2_mm_met200: met_pt>200. && met_pt<=200. && 10.<mass_2(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_mass,LepGood2_pt,LepGood2_eta,LepGood2_phi,LepGood2_mass)&&mass_2(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_mass,LepGood2_pt,LepGood2_eta,LepGood2_phi,LepGood2_mass)<=20.&& LepGood1_pdgId*LepGood2_pdgId_2==-169 ; Disable=True
-mll3_mm_met200: met_pt>200. && met_pt<=200. && 20.<mass_2(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_mass,LepGood2_pt,LepGood2_eta,LepGood2_phi,LepGood2_mass)&&mass_2(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_mass,LepGood2_pt,LepGood2_eta,LepGood2_phi,LepGood2_mass)<=30.&& LepGood1_pdgId*LepGood2_pdgId_2==-169 ; Disable=True
-mll4_mm_met200: met_pt>200. && met_pt<=200. && 30.<mass_2(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_mass,LepGood2_pt,LepGood2_eta,LepGood2_phi,LepGood2_mass)&& LepGood1_pdgId*LepGood2_pdgId_2==-121 ; Disable=True
-mll1_ee_met200: met_pt>200. && met_pt<=200. && mass_2(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_mass,LepGood2_pt,LepGood2_eta,LepGood2_phi,LepGood2_mass)<=10.&& LepGood1_pdgId*LepGood2_pdgId_2==-121 ; Disable=True
-mll2_ee_met200: met_pt>200. && met_pt<=200. && 10.<mass_2(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_mass,LepGood2_pt,LepGood2_eta,LepGood2_phi,LepGood2_mass)&&mass_2(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_mass,LepGood2_pt,LepGood2_eta,LepGood2_phi,LepGood2_mass)<=20.&& LepGood1_pdgId*LepGood2_pdgId_2==-121 ; Disable=True
-mll3_ee_met200: met_pt>200. && met_pt<=200. && 20.<mass_2(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_mass,LepGood2_pt,LepGood2_eta,LepGood2_phi,LepGood2_mass)&&mass_2(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_mass,LepGood2_pt,LepGood2_eta,LepGood2_phi,LepGood2_mass)<=30.&& LepGood1_pdgId*LepGood2_pdgId_2==-121 ; Disable=True
-mll4_ee_met200: met_pt>200. && met_pt<=200. && 30.<mass_2(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_mass,LepGood2_pt,LepGood2_eta,LepGood2_phi,LepGood2_mass)&& LepGood1_pdgId*LepGood2_pdgId_2==-121 ; Disable=True
-pt1_mm_met100: met_pt>100.&& met_pt<=200. && LepGood1_pt<=12. && LepGood1_pdgId*LepGood2_pdgId_2==-169 ; Disable=True
-pt2_mm_met100: met_pt>100.&& met_pt<=200. && LepGood1_pt > 12. && LepGood1_pt<= 20. && LepGood1_pdgId*LepGood2_pdgId_2==-169 ; Disable=True
-pt3_mm_met100: met_pt>100.&& met_pt<=200. && LepGood1_pt > 20. && LepGood1_pdgId*LepGood2_pdgId_2==-169 ; Disable=True
-pt1_mm_met200: met_pt>200.&& met_pt<=200. && LepGood1_pt<=12. && LepGood1_pdgId*LepGood2_pdgId_2==-169 ; Disable=True
-pt2_mm_met200: met_pt>200.&& met_pt<=200. && LepGood1_pt > 12. && LepGood1_pt<= 20. && LepGood1_pdgId*LepGood2_pdgId_2==-169 ; Disable=True
-pt3_mm_met200: met_pt>200.&& met_pt<=200. && LepGood1_pt > 20. && LepGood1_pdgId*LepGood2_pdgId_2==-169 ; Disable=True
-pt1_em_met200: met_pt>200.&& met_pt<=200. && LepGood1_pt<=12. && LepGood1_pdgId*LepGood2_pdgId_2==-143 ; Disable=True
-pt2_em_met200: met_pt>200.&& met_pt<=200. && LepGood1_pt > 12. && LepGood1_pt<= 20. && LepGood1_pdgId*LepGood2_pdgId_2==-143 ; Disable=True
-pt3_em_met200: met_pt>200.&& met_pt<=200. && LepGood1_pt > 20. && LepGood1_pdgId*LepGood2_pdgId_2==-143 ; Disable=True
-pt1_ee_met200: met_pt>200.&& met_pt<=200. && LepGood1_pt<=12. && LepGood1_pdgId*LepGood2_pdgId_2==-121 ; Disable=True
-pt2_ee_met200: met_pt>200.&& met_pt<=200. && LepGood1_pt > 12. && LepGood1_pt<= 20. && LepGood1_pdgId*LepGood2_pdgId_2==-121 ; Disable=True
-pt3_ee_met200: met_pt>200.&& met_pt<=200. && LepGood1_pt > 20. && LepGood1_pdgId*LepGood2_pdgId_2==-121 ; Disable=True
 dphiMETl2: fabs(deltaPhi(met_phi,LepGood2_phi))<2. ; Disable=True
 

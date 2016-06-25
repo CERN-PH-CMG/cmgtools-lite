@@ -177,103 +177,18 @@ float mass_tautau( float Met_Pt, float Met_Phi,  float l1_Pt, float l1_Eta, floa
 
 // Plotting SR SOS
 
-int SR_bins_EWKino_100(float Mll, float met_pt, Int_t pdgId_1, Int_t pdgId_2){
-  // mm
-  if     (met_pt>100. && met_pt<=200. && 4.<Mll&&Mll<=10.&& pdgId_1*pdgId_2==-169) return 1;
-  else if(met_pt>100. && met_pt<=200. &&10.<Mll&&Mll<=20.&& pdgId_1*pdgId_2==-169) return 2;
-  else if(met_pt>100. && met_pt<=200. &&20.<Mll&&Mll<=30.&& pdgId_1*pdgId_2==-169) return 3;
-  else if(met_pt>100. && met_pt<=200. &&30.<Mll && pdgId_1*pdgId_2==-169) return 4;
+int SR_bins_EWKino(float Mll){
+  if     (4.<Mll && Mll<9.5) return 1;
+  else if(10.5<Mll && Mll<=20.) return 2;
+  else if(20.<Mll && Mll<=30.) return 3;
+  else if(30.<Mll) return 4;
   else return -99;
 }
 
-
-int SR_bins_EWKino_200(float Mll, float met_pt, Int_t pdgId_1, Int_t pdgId_2){
-  // mm/ee
-  if     (met_pt>200.&& 4.<Mll&&Mll<=10.&& pdgId_1*pdgId_2==-169) return 1;
-  else if(met_pt>200.&&10.<Mll&&Mll<=20.&& pdgId_1*pdgId_2==-169) return 2;
-  else if(met_pt>200.&&20.<Mll&&Mll<=30.&& pdgId_1*pdgId_2==-169) return 3;
-  else if(met_pt>200.&&30.<Mll && pdgId_1*pdgId_2==-169) return 4;   
-  else if(met_pt>200.&& 4.<Mll&&Mll<=10.&&pdgId_1*pdgId_2==-121) return 5;
-  else if(met_pt>200.&&10.<Mll&&Mll<=20.&& pdgId_1*pdgId_2==-121) return 6;
-  else if(met_pt>200.&&20.<Mll&&Mll<=30.&& pdgId_1*pdgId_2==-121) return 7;
-  else if(met_pt>200.&&30.<Mll && pdgId_1*pdgId_2==-121) return 8;
-  else return -99;
-}
-
-//------- Additional for limits
-int SR_bins_EWKino_200_ee(float Mll, float met_pt, Int_t pdgId_1, Int_t pdgId_2){
-  // ee
-  if(met_pt>200.&& 4.<Mll&&Mll<=10.&&pdgId_1*pdgId_2==-121) return 1;
-  else if(met_pt>200.&&10.<Mll&&Mll<=20.&& pdgId_1*pdgId_2==-121) return 2;
-  else if(met_pt>200.&&20.<Mll&&Mll<=30.&& pdgId_1*pdgId_2==-121) return 3;
-  else if(met_pt>200.&&30.<Mll && pdgId_1*pdgId_2==-121) return 4;
-  else return -99;
-}
-
-int SR_bins_EWKino_200_mm(float Mll, float met_pt, Int_t pdgId_1, Int_t pdgId_2){
-  // mm
-  if     (met_pt>200.&& 4.<Mll&&Mll<=10.&& pdgId_1*pdgId_2==-169) return 1;
-  else if(met_pt>200.&&10.<Mll&&Mll<=20.&& pdgId_1*pdgId_2==-169) return 2;
-  else if(met_pt>200.&&20.<Mll&&Mll<=30.&& pdgId_1*pdgId_2==-169) return 3;
-  else if(met_pt>200.&&30.<Mll && pdgId_1*pdgId_2==-169) return 4;
-  else return -99;
-}
-//-----------------------------
-
-
-int SR_bins_stop_100(float met_pt, Int_t pdgId_1, Int_t pdgId_2){
-  // mm
-  if     (met_pt>100.&& met_pt<=200.&& pdgId_1*pdgId_2==-169) return 1;
-  else return -99;
-}
-
-int SR_bins_stop_200(float met_pt, Int_t pdgId_1, Int_t pdgId_2){
-  // mm/ee/em
-  if     (met_pt>200.&& pdgId_1*pdgId_2==-169) return 1;
-  else if(met_pt>200.&& pdgId_1*pdgId_2==-121) return 2;
-  else if(met_pt>200.&& pdgId_1*pdgId_2==-143) return 3;
-  else return -99;
-}
-
-//------- Additional for limits
-int SR_bins_stop_200_mmem(float met_pt, Int_t pdgId_1, Int_t pdgId_2){
-  // mm/em
-  if     (met_pt>200.&& pdgId_1*pdgId_2==-169) return 1;
-  else if(met_pt>200.&& pdgId_1*pdgId_2==-143) return 2;
-  else return -99;
-}
-//-----------------------------------
-
-int SR_bins_stopMET_200(float met_pt, Int_t pdgId_1, Int_t pdgId_2){
-  // mm/ee/em
-  if     (met_pt>200.&& met_pt<=350.&& pdgId_1*pdgId_2==-169) return 1;
-  else if(met_pt>350.&& pdgId_1*pdgId_2==-169)return 2;
-  else if(met_pt>200.&& met_pt<=350.&& pdgId_1*pdgId_2==-121) return 3;
-  else if(met_pt>350.&& pdgId_1*pdgId_2==-121)return 4;
-  else if(met_pt>200.&& met_pt<=350.&& pdgId_1*pdgId_2==-143) return 5;
-  else if(met_pt>350.&& pdgId_1*pdgId_2==-143)return 6;
-  else return -99;
-}
-
-int SR_bins_stopPt_100(float met_pt, float ptlep1, Int_t pdgId_1, Int_t pdgId_2){
-  // mm
-  if     (met_pt>100.&& met_pt<=200. && ptlep1<=12. && pdgId_1*pdgId_2==-169) return 1;
-  else if(met_pt>100.&& met_pt<=200. && ptlep1>12.  && ptlep1<= 20. && pdgId_1*pdgId_2==-169) return 2;
-  else if(met_pt>100.&& met_pt<=200. && ptlep1>20.  && pdgId_1*pdgId_2==-169) return 3; 
-  else return -99;
-}
-
-int SR_bins_stopPt_200(float met_pt, float ptlep1, Int_t pdgId_1, Int_t pdgId_2){
-  // mm/ee/em
-  if     (met_pt>200 && ptlep1 <=12. && pdgId_1*pdgId_2==-169) return 1;
-  else if(met_pt>200 && ptlep1 > 12. && ptlep1<= 20. && pdgId_1*pdgId_2==-169) return 2;
-  else if(met_pt>200 && ptlep1 > 20. && pdgId_1*pdgId_2==-169) return 3;
-  else if(met_pt>200 && ptlep1 <=12. && pdgId_1*pdgId_2==-121) return 4;
-  else if(met_pt>200 && ptlep1 > 12. && ptlep1<= 20. && pdgId_1*pdgId_2==-121) return 5;
-  else if(met_pt>200 && ptlep1 > 20. && pdgId_1*pdgId_2==-121) return 6;
-  else if(met_pt>200 && ptlep1 <=12. && pdgId_1*pdgId_2==-143) return 7;
-  else if(met_pt>200 && ptlep1 >12.  && ptlep1<= 20. && pdgId_1*pdgId_2==-143) return 8;
-  else if(met_pt>200 && ptlep1 >20.  && pdgId_1*pdgId_2==-143) return 9;
+int SR_bins_stop(float ptlep1){
+  if     (ptlep1 <=12.) return 1;
+  else if(ptlep1 >12. && ptlep1 <=20.) return 2;
+  else if(ptlep1 >20.) return 3; 
   else return -99;
 }
 
@@ -563,13 +478,6 @@ float puw2016_vtx(int nVtx) { if (nVtx<60) return _puw2016_vtx[nVtx]; else retur
 // for up to 275125
 float _puw2016_vtx_4fb[60] = {1.0, 0.05100939489406209, 0.10753683801507614, 0.22479210497504293, 0.4061194548857097, 0.6424861757674111, 0.8699208198466813, 1.0886008554762319, 1.276892560891215, 1.4184863274330797, 1.4865216108423305, 1.5122068499515893, 1.4790079191970888, 1.4196901839857483, 1.3216638995044172, 1.2217703342251016, 1.0976458888260794, 0.9796814642869479, 0.8639064021650553, 0.7535695441176858, 0.6555461235682296, 0.5641253790572658, 0.4834647260351342, 0.4164426860491679, 0.35606001606142423, 0.30497669791734305, 0.2592054182625056, 0.22335323942907434, 0.19192071849647147, 0.1672517813653499, 0.14683806760557278, 0.13614259650259863, 0.11857021273678048, 0.11205636298564389, 0.10212521715621654, 0.08684353771752344, 0.08864604848027625, 0.09804676288437263, 0.09235565349796869, 0.07943403772193891, 0.14417507424675546, 0.08136302667712911, 0.05135680407279777, 0.1569931571656257, 0.12873438887581296, 0.3218359721895326, 0.1609179860947663, 0.8045899304738313, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 1.0, 1.0 };
 float puw2016_vtx_4fb(int nVtx) { if (nVtx<60) return _puw2016_vtx_4fb[nVtx]; else return 0; }
-
-
-// for up to 275125
-float _puw2016_vtx_4fb[60] = {1.0, 0.05100939489406209, 0.10753683801507614, 0.22479210497504293, 0.4061194548857097, 0.6424861757674111, 0.8699208198466813, 1.0886008554762319, 1.276892560891215, 1.4184863274330797, 1.4865216108423305, 1.5122068499515893, 1.4790079191970888, 1.4196901839857483, 1.3216638995044172, 1.2217703342251016, 1.0976458888260794, 0.9796814642869479, 0.8639064021650553, 0.7535695441176858, 0.6555461235682296, 0.5641253790572658, 0.4834647260351342, 0.4164426860491679, 0.35606001606142423, 0.30497669791734305, 0.2592054182625056, 0.22335323942907434, 0.19192071849647147, 0.1672517813653499, 0.14683806760557278, 0.13614259650259863, 0.11857021273678048, 0.11205636298564389, 0.10212521715621654, 0.08684353771752344, 0.08864604848027625, 0.09804676288437263, 0.09235565349796869, 0.07943403772193891, 0.14417507424675546, 0.08136302667712911, 0.05135680407279777, 0.1569931571656257, 0.12873438887581296, 0.3218359721895326, 0.1609179860947663, 0.8045899304738313, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 1.0, 1.0 };
-float puw2016_vtx_4fb(int nVtx) { if (nVtx<60) return _puw2016_vtx_4fb[nVtx]; else return 0; }
-
-
 
 //
 //float puwMu8(int nVert) { return _puw_Mu8[nVert] * 0.001; }
