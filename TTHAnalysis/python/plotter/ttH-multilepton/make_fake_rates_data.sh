@@ -3,14 +3,15 @@
 ################################
 T="/afs/cern.ch/user/g/gpetrucc/w/TREES_TTH_260116_76X_1L"
 if hostname | grep -q cmsco01; then
-    T="/data1/gpetrucc/TREES_TTH_260116_76X_1L"
+#    T="/data1/gpetrucc/TREES_TTH_260116_76X_1L"
+    T="/data1/peruzzi/TREES_80X_210616_1lep" # warning: QCDEl from 76X
 elif hostname | grep -q vinavx; then
     T="/home/gpetrucc/TREES_TTH_260116_76X_1L"
 fi
-BCORE=" --s2v --tree treeProducerSusyMultilepton ttH-multilepton/mca-qcd1l.txt ttH-multilepton/qcd1l.txt -P $T -l 2.32 --AP  "
+BCORE=" --s2v --tree treeProducerSusyMultilepton ttH-multilepton/mca-qcd1l.txt ttH-multilepton/qcd1l.txt -P $T -l 3.99 --AP  "
 BCORE="${BCORE} --mcc ttH-multilepton/mcc-eleIdEmu2.txt  "; 
 
-BG=" -j 6 "; if [[ "$1" == "-b" ]]; then BG=" & "; shift; fi
+BG=" -j 8 "; if [[ "$1" == "-b" ]]; then BG=" & "; shift; fi
 
 lepton=$1; if [[ "$1" == "" ]]; then exit 1; fi
 case $lepton in
@@ -28,8 +29,8 @@ PFJet40)
     BCORE="${BCORE} -E HLT_FR_PFJet40   "; 
     PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw$lepton$trigger(nVert)' "
     ;;
-PFJet)
-    BCORE="${BCORE} -E HLT_PFJet   "; 
+PFJetAll)
+    BCORE="${BCORE} -E '^HLT_PFJetAll'   "; 
     PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw$lepton$trigger(nVert)' "
     ;;
 PFJet6)
@@ -45,11 +46,27 @@ JHT)
     PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw$lepton$trigger(nVert)' "
     ;;
 AnyM)
-    BCORE="${BCORE} -A veto trigger HLT_AnyM  ";
+    BCORE="${BCORE} -E HLT_AnyM  ";
+    PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw$trigger(nVert)' "
+    ;;
+Mu3_PFJet40)
+    BCORE="${BCORE} -A veto trigger 'HLT_FR_${trigger} || (!isData)' -A veto recoptfortrigger 'LepGood_pt>4.0 && LepGood_awayJet_pt > 40'  "; 
+    PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw$trigger(nVert)' "
+    ;;
+Mu8)
+    BCORE="${BCORE} -A veto trigger 'HLT_FR_${trigger} || (!isData)' -A veto recoptfortrigger 'LepGood_pt>8.5'  "; 
+    PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw$trigger(nVert)' "
+    ;;
+Mu17)
+    BCORE="${BCORE} -A veto trigger 'HLT_FR_${trigger} || (!isData)' -A veto recoptfortrigger 'LepGood_pt>17.5'  "; 
+    PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw$trigger(nVert)' "
+    ;;
+Ele12_CaloIdM_TrackIdM_PFJet30)
+    BCORE="${BCORE} -A veto trigger 'HLT_FR_${trigger} || (!isData)' -A veto recoptfortrigger 'LepGood_pt>15'  "; 
     PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw$trigger(nVert)' "
     ;;
 *)
-    BCORE="${BCORE} -A veto trigger HLT_FR_${trigger}  "; 
+    BCORE="${BCORE} -A veto trigger 'HLT_FR_${trigger} || (!isData)'  "; 
     PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw$trigger(nVert)' "
     ;;
 esac;
@@ -57,7 +74,7 @@ esac;
 
 what=$3;
 more=$4
-PBASE="~/www/plots_FR/76X/lepMVA/v1.0_150616/fr-meas/$lepton/HLT_$trigger/$what/$more"
+PBASE="~/www/plots_FR/80X/lepMVA/v1.4_250616/fr-meas/$lepton/HLT_$trigger/$what/$more"
 
 EWKONE="-p ${QCD}_red,EWK,data"
 EWKSPLIT="-p ${QCD}_red,WJets,DYJets,data"
@@ -108,7 +125,7 @@ case $what in
         ;;
     fakerates-*)
         fitVar=${what/fakerates-/}
-        XVAR="mvaPt075_coarse"
+        XVAR="mvaPt075_coarselongbin"
         MCEFF="  python ttH-multilepton/dataFakeRate.py -f  $BCORE $PUW $EWKONE  --groupBy cut ttH-multilepton/make_fake_rates_sels.txt ttH-multilepton/make_fake_rates_xvars.txt  "
         MCEFF="$MCEFF --sp ${QCD}_red  "
         MCEFF="$MCEFF --sP mvaPt_075i --sP ptJI85_${XVAR}  --sP $fitVar $fitVar  --ytitle 'Fake rate' "
@@ -124,6 +141,9 @@ case $what in
                  if [[ "$trigger" == "Mu17" ]]; then 
                      RANGES=${RANGES/--xcut 15 100/--xcut 30 100}; 
                      RANGES=${RANGES/--xline 20 --xline 45/--xline 45}; 
+                 elif [[ "$trigger" == "Mu3_PFJet40" ]]; then
+                     RANGES=${RANGES/--xcut 15 100/--xcut 5 30};
+                     RANGES=${RANGES/--xline 20 --xline 45/--xline 10 --xline 20};
                  elif [[ "$trigger" == "PFJet40" ]]; then
                      MCEFF="${MCEFF/mvaPt075_coarse/mvaPt075_vcoarse}"
                      RANGES=${RANGES/--xcut 15 100/--xcut 5 30};

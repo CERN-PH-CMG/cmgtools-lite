@@ -59,11 +59,11 @@ def attrs(filename,process):
     else: raise RuntimeError, "No idea of the file"
     raise RuntimeError, "No idea of the process"
 
-def setattrs(graph, opts):
+def setattrs(graph, opts, xtitle):
     graph.SetLineColor(opts['Color'])
     graph.SetMarkerColor(opts['Color'])
     graph.SetLineWidth(3)
-    graph.GetXaxis().SetTitle("lepton p_{T}^{corr} (GeV)")
+    graph.GetXaxis().SetTitle(xtitle)
     graph.SetName(opts['key'])
     graph.SetTitle(opts['Label'])
 
@@ -76,6 +76,7 @@ if __name__ == "__main__":
     parser.add_option("-o", "--out", dest="out", default=None, help="Output file name. by default equal to plots -'.txt' +'.root'");
     parser.add_option("--xcut", dest="xcut", default=None, nargs=2, type='float', help="X axis cut");
     parser.add_option("--xline", dest="xlines", default=[], action="append", type='float', help="Lines to draw at given X axis values");
+    parser.add_option("--xtitle", dest="xtitle", default="lepton p_{T}^{corr} (GeV)", type='string', help="X axis title");
     parser.add_option("--xrange", dest="xrange", default=None, nargs=2, type='float', help="X axis range");
     parser.add_option("--yrange", dest="yrange", default=None, nargs=2, type='float', help="Y axis range");
     parser.add_option("--logy", dest="logy", default=False, action='store_true', help="Do y axis in log scale");
@@ -106,7 +107,7 @@ if __name__ == "__main__":
         graphs = readGraphs(filename, pattern, processes)
         for p in processes:
             opts = attrs(filename, p)
-            setattrs(graphs[p], opts)
+            setattrs(graphs[p], opts, options.xtitle)
             alleffs.append( ( opts['Label'], graphs[p] ) )
             graphs[p].order = opts['#']
             outfile.WriteTObject(graphs[p], opts['key'])
@@ -114,7 +115,7 @@ if __name__ == "__main__":
     stackEffs(options.out,None,alleffs,options)
     shortEffs = [ (l,g) for (l,g) in alleffs if g.order == 0 ]
     cdata = combine([ g for (l,g) in alleffs if 'data' in g.GetName() ])
-    setattrs(cdata, { 'Color':ROOT.kBlack, 'key':'data_comb', 'Label':'Data, comb.' })
+    setattrs(cdata, { 'Color':ROOT.kBlack, 'key':'data_comb', 'Label':'Data, comb.' }, options.xtitle)
     outfile.WriteTObject(cdata)
     shortEffs.append( ( 'Data, comb.', cdata) )
     stackEffs(options.out.replace(".root","_one.root"),None,shortEffs,options)

@@ -3,11 +3,11 @@
 ################################
 T="NON_ESISTE"
 if hostname | grep -q cmsco01; then
-    T="/data1/peruzzi/TREES_76X_200216_jecV1M2/"
+    T="/data1/peruzzi/809_June9_ttH/"
 fi
 
-BCORE=" --s2v --tree treeProducerSusyMultilepton ttH-multilepton/mca-fr-z3l.txt ttH-multilepton/fr-z3l.txt -P $T -l 2.32 --AP  "
-BCORE="$BCORE --mcc ttH-multilepton/ttH_2lss3l_triggerdefs.txt "
+BCORE=" --s2v --tree treeProducerSusyMultilepton ttH-multilepton/mca-fr-z3l.txt ttH-multilepton/fr-z3l.txt -P $T -l 3.99 --AP  "
+BCORE="$BCORE --mcc ttH-multilepton/ttH_2lss3l_triggerdefs.txt -X ^Trig -A Z1 ptcuts 'LepGood_pt[0]>25 && LepGood_pt[1]>15' " # no trigger selection
 
 BG=" -j 6 "; if [[ "$1" == "-b" ]]; then BG=" & "; shift; fi
 
@@ -18,8 +18,7 @@ el) BCORE="${BCORE} -E ${lepton} "; ;;
 esac;
 
 what=$2; shift; shift;
-PBASE="plots/76X/ttH/fr-meas/z3l/v1.2/$lepton/$what"
-
+PBASE="~/www/plots_FR/80X/lepMVA/v1.4_250616/fr-meas/$lepton/z3l/$what"
 
 case $lepton in
     el) BARREL="00_15"; ENDCAP="15_25"; ETA="1.479"; SC_EWK=1.58;  SC_DY=0.86;;
@@ -89,8 +88,8 @@ case $what in
            mu) RANGES="$RANGES  --yrange 0 0.10 --xline 20 "; MCEFF="$MCEFF --fqcd-ranges 0 40 40 140" ;;
         esac;
         MCEFF="$MCEFF $LEGEND $RANGES"
-        echo " ( $MCEFF -o $PBASE/fr_sub_eta_${BARREL}.root --bare -A cleanup eta 'abs(LepGood_eta)<$ETA' $BG )"
-        echo " ( $MCEFF -o $PBASE/fr_sub_eta_${ENDCAP}.root --bare -A cleanup eta 'abs(LepGood_eta)>$ETA' $BG )"
+        echo " ( $MCEFF -o $PBASE/fr_sub_eta_${BARREL}.root --bare -A cleanup eta 'abs(LepGood_eta[2])<$ETA' $BG )"
+        echo " ( $MCEFF -o $PBASE/fr_sub_eta_${ENDCAP}.root --bare -A cleanup eta 'abs(LepGood_eta[2])>$ETA' $BG )"
         MCGO="$MCEFF --compare DY_prefit,data_sub_syst_prefit,data_sub_prefit --algo=globalFit "
         echo " ( $MCGO -i $PBASE/fr_sub_eta_${BARREL}.root -o $PBASE/fr_sub_eta_${BARREL}_globalFit.root --algo=globalFit --rebin 2 --fcut 0 40 --subSyst 0.1 $BG )"
         echo " ( $MCGO -i $PBASE/fr_sub_eta_${ENDCAP}.root -o $PBASE/fr_sub_eta_${ENDCAP}_globalFit.root --algo=globalFit --rebin 2 --fcut 0 40 --subSyst 0.1 $BG )"
