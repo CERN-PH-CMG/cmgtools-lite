@@ -8,6 +8,7 @@ from PhysicsTools.Heppy.analyzers.core.EventSelector import EventSelector
 from PhysicsTools.Heppy.analyzers.objects.VertexAnalyzer import VertexAnalyzer
 from PhysicsTools.Heppy.analyzers.core.PileUpAnalyzer import PileUpAnalyzer
 from PhysicsTools.Heppy.analyzers.gen.GeneratorAnalyzer import GeneratorAnalyzer
+from PhysicsTools.Heppy.analyzers.gen.LHEWeightAnalyzer import LHEWeightAnalyzer
 
 # Tau-tau analyzers
 from CMGTools.H2TauTau.proto.analyzers.MCWeighter import MCWeighter
@@ -31,7 +32,7 @@ susyCounter = cfg.Analyzer(
     SMS_max_mass = 3000, # maximum mass allowed in the scan
     SMS_mass_1 = 'genSusyMScan1', # first scanned mass
     SMS_mass_2 = 'genSusyMScan2', # second scanned mass
-    SMS_varying_masses = ['genSusyMChargino','genSusyMNeutralino'], # other mass variables that are expected to change in the tree (e.g., in T1tttt it should be set to ['genSusyMGluino','genSusyMNeutralino'])
+    SMS_varying_masses = [], # other mass variables that are expected to change in the tree (e.g., in T1tttt it should be set to ['genSusyMGluino','genSusyMNeutralino'])
     SMS_regexp_evtGenMass = 'genSusyM.+',
     bypass_trackMass_check = True # bypass check that non-scanned masses are the same in all events
     )
@@ -40,6 +41,10 @@ eventSelector = cfg.Analyzer(
     EventSelector,
     name='EventSelector',
     toSelect=[]
+)
+
+lheWeightAna = cfg.Analyzer(
+    LHEWeightAnalyzer, name="LHEWeightAnalyzer",
 )
 
 jsonAna = cfg.Analyzer(
@@ -147,6 +152,7 @@ higgsWeighter = cfg.Analyzer(
 ###                  SEQUENCE                   ###
 ###################################################
 commonSequence = cfg.Sequence([
+    lheWeightAna,
     jsonAna,
     skimAna,
     mcWeighter,

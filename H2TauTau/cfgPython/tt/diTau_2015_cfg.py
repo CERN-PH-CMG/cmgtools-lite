@@ -29,7 +29,7 @@ computeSVfit  = False
 pick_events   = False
 cmssw         = False
 calibrateTaus = False
-data          = True
+data          = False
 
 dyJetsFakeAna.channel = 'tt'
 
@@ -176,6 +176,7 @@ from CMGTools.RootTools.utils.splitFactor import splitFactor
 from CMGTools.H2TauTau.proto.samples.data15.data import data_tau
 from CMGTools.H2TauTau.proto.samples.fall15.htt_common import backgrounds, sm_signals, mssm_signals, data_tau, sync_list
 from CMGTools.H2TauTau.proto.samples.fall15.higgs_susy import HiggsSUSYGG160 as ggh160
+from CMGTools.H2TauTau.proto.samples.fall15.sms import SMS
 from CMGTools.H2TauTau.proto.samples.fall15.higgs_susy import HiggsSUSYGG90 as ggh90
 from CMGTools.H2TauTau.proto.samples.fall15.higgs_susy import HiggsSUSYGG1000 as ggh1000
 from CMGTools.H2TauTau.proto.samples.fall15.triggers_tauTau import mc_triggers, mc_triggerfilters, data_triggers, data_triggerfilters
@@ -269,12 +270,13 @@ outputService.append(output_service)
 ###################################################
 if not production:
   # comp                 = ggh160
-  comp                 = data_list[0]
+  # comp                 = data_list[0]
+  comp                 = SMS # sm_signals[0] 
   selectedComponents   = [comp]
   comp.splitFactor     = 1
   comp.fineSplitFactor = 1
   #comp.files           = ['/afs/cern.ch/work/m/mzeinali/public/020136C0-B12B-E611-8695-00145EFC5B60.root']
-  comp.files           = comp.files[:1]
+  comp.files           = comp.files[:5]
     
 preprocessor = None
 if cmssw:
