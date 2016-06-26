@@ -18,8 +18,8 @@ mtautau : 0.>mass_tautau(met_pt,met_phi,LepGood1_pt,LepGood1_eta,LepGood1_phi,Le
 
 
 # some cuts that are off by default but can be turned on with -E
-sublepPt5: (fabs(LepGood2_pdgId)==13 && LepGood2_pt > 5) || (fabs(LepGood2_pdgId)==11 && LepGood2_pt > 5) ; Disable=True
-sublepPtUp: LepGood2_pt < 15 ; Disable=True
+pt5sublep: (fabs(LepGood2_pdgId)==13 && LepGood2_pt > 5) || (fabs(LepGood2_pdgId)==11 && LepGood2_pt > 5) ; Disable=True
+upSublepPtUp: LepGood2_pt < 15 ; Disable=True
 inclusiveMET: met_pt > 200 || (LepGood1_pdgId*LepGood2_pdgId==-169 && met_pt>100) ; Disable=True
 highMET: met_pt > 200 ; Disable=True
 upperMET: met_pt < 200 ; Disable=True

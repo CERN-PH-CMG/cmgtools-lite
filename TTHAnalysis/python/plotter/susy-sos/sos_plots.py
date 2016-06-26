@@ -20,7 +20,7 @@ def base(selection):
         GO="%s susy-sos/mca-2los-mc.txt susy-sos/2los_tight.txt "%CORE
         #GO="%s -W 'puw(nTrueInt)*leptonSF_ttH(LepGood_pdgId[iF_Recl[0]],LepGood_pt[iF_Recl[0]],LepGood_eta[iF_Recl[0]],2)*leptonSF_ttH(LepGood_pdgId[iF_Recl[1]],LepGood_pt[iF_Recl[1]],LepGood_eta[iF_Recl[1]],2)*triggerSF_ttH(LepGood_pdgId[iF_Recl[0]],LepGood_pt[iF_Recl[0]],LepGood_pdgId[iF_Recl[1]],LepGood_pt[iF_Recl[1]],2)*eventBTagSF'"%GO
         #GO="%s -W 'puw(nTrueInt)'"%GO
-        GO="%s -W 'puw2016_vtx_4fb(nTrueInt)'"%GO
+        GO="%s -W 'puw2016_vtx_4fb(nVert)'"%GO
         if dowhat == "plots": GO+=" susy-sos/2los_plots.txt"
     else:
         raise RuntimeError, 'Unknown selection'
@@ -64,25 +64,25 @@ if __name__ == '__main__':
         x = base('2los')
         if '_notrigger' in torun: x = add(x,'-X ^trigger ')
         if '_ewk10_met100_mm' in torun: 
-            x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_315,T2ttDeg_330 -E ^sublepPt5 -E ^MT -E ^mm -E ^upperMET")
+            x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_315,T2ttDeg_330 -E ^pt5sublep -E ^MT -E ^mm -E ^upperMET")
             runIt(x,'%s/all'%torun,['SR_bins_EWKino'])
         if '_ewk10_met200_mm' in torun: 
-            x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_315,T2ttDeg_330 -E ^sublepPt5 -E ^MT -E ^mm -E ^highMET")
+            x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_315,T2ttDeg_330 -E ^pt5sublep -E ^MT -E ^mm -E ^highMET")
             runIt(x,'%s/all'%torun,['SR_bins_EWKino'])
         if '_ewk10_met200_ee' in torun: 
-            x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_315,T2ttDeg_330 -E ^sublepPt5 -E ^MT -E ^ee -E ^highMET")
+            x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_315,T2ttDeg_330 -E ^pt5sublep -E ^MT -E ^ee -E ^highMET")
             runIt(x,'%s/all'%torun,['SR_bins_EWKino'])    
         if '_ewk20_met100_mm' in torun: 
-            x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_90,T2ttDeg_300,T2ttDeg_315,T2ttDeg_330 -E ^sublepPt5 -E ^MT -E ^mm -E ^upperMET")
+            x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_90,T2ttDeg_300,T2ttDeg_315,T2ttDeg_330 -E ^pt5sublep -E ^MT -E ^mm -E ^upperMET")
             runIt(x,'%s/all'%torun,['SR_bins_EWKino'])
         if '_ewk20_met200_mm' in torun: 
-            x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_90,T2ttDeg_300,T2ttDeg_315,T2ttDeg_330 -E ^sublepPt5 -E ^MT -E ^mm -E ^highMET")
+            x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_90,T2ttDeg_300,T2ttDeg_315,T2ttDeg_330 -E ^pt5sublep -E ^MT -E ^mm -E ^highMET")
             runIt(x,'%s/all'%torun,['SR_bins_EWKino'])
         if '_ewk20_met200_ee' in torun: 
-            x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_90,T2ttDeg_300,T2ttDeg_315,T2ttDeg_330 -E ^sublepPt5 -E ^MT -E ^ee -E ^highMET")
+            x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_90,T2ttDeg_300,T2ttDeg_315,T2ttDeg_330 -E ^pt5sublep -E ^MT -E ^ee -E ^highMET")
             runIt(x,'%s/all'%torun,['SR_bins_EWKino'])
         if '_stop20_met100_mm' in torun: 
-            x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_90,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_315 -E ^sublepPt5 -E ^mm -E ^upperMET")
+            x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_90,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_315 -E ^pt5sublep -E ^mm -E ^upperMET")
             runIt(x,'%s/all'%torun,['SR_bins_stop'])
         if '_stop20_met200_mm' in torun: 
             x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_90,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_315 -E ^mm -E ^highMET")
@@ -94,7 +94,7 @@ if __name__ == '__main__':
             x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_90,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_315 -E ^em -E ^highMET")
             runIt(x,'%s/all'%torun,['SR_bins_stop'])  
         if '_stop35_met100_mm' in torun: 
-            x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_90,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_330 -E ^sublepPt5 -E ^mm -E ^upperMET")
+            x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_90,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_330 -E ^pt5sublep -E ^mm -E ^upperMET")
             runIt(x,'%s/all'%torun,['SR_bins_stop'])
         if '_stop35_met200_mm' in torun: 
             x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_90,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_330 -E ^mm -E ^highMET")
