@@ -126,7 +126,7 @@ if __name__ == '__main__':
     if '2los_CR_TT_vars' in torun:
         x = base('2los')
         x = add(x,"--noStackSig --showIndivSigs --xp TChiNeuWZ_95")
-        if '_notrigger' in torun: x = add(x,'-X ^triggerAll ')
+        if '_notrigger' in torun: x = add(x,'-X ^triggerAll')
         if '_met200' in torun:             
             x = add(x,"-X ^HT -X ^Upsilon_veto -R ^ISRjet noIDISRjet 'Jet1_pt > 25 && fabs(Jet1_eta)<2.4' -R ^ledlepPt NoUpledlepPt '5 < LepGood1_pt' -R METovHT relaxMETovHT '(met_pt/(htJet25-LepGood1_pt-LepGood2_pt))>(2/3)' -E ^highMET -R ^TT CRTTTT 'LepGood1_isTightCRTT && LepGood2_isTightCRTT' -X ^bveto -E ^btag -X ^triggerAll -E ^triggerMET")
             if '_data' in torun: 
