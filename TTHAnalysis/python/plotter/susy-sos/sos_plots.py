@@ -13,14 +13,14 @@ def base(selection):
 
     #CORE="-P /data1/botta/trees_SOS_newpresel_030616/"
     CORE="-P /data1/botta/trees_SOS_80X_170616/"
-    CORE+=" -f -j 12 -l 5.0 --s2v --tree treeProducerSusyMultilepton --mcc susy-sos/mcc-lepWP.txt --mcc susy-sos/2los_triggerdefs.txt"# --neg"
+    CORE+=" -f -j 8 -l 5.0 --s2v --tree treeProducerSusyMultilepton --mcc susy-sos/mcc-lepWP.txt "#--mcc susy-sos/2los_triggerdefs.txt # --neg"
     if dowhat == "plots": CORE+=" --lspam CMSsimulation --legendWidth 0.14 --legendFontSize 0.04"
 
     if selection=='2los':
         GO="%s susy-sos/mca-2los-mc.txt susy-sos/2los_tight.txt "%CORE
         #GO="%s -W 'puw(nTrueInt)*leptonSF_ttH(LepGood_pdgId[iF_Recl[0]],LepGood_pt[iF_Recl[0]],LepGood_eta[iF_Recl[0]],2)*leptonSF_ttH(LepGood_pdgId[iF_Recl[1]],LepGood_pt[iF_Recl[1]],LepGood_eta[iF_Recl[1]],2)*triggerSF_ttH(LepGood_pdgId[iF_Recl[0]],LepGood_pt[iF_Recl[0]],LepGood_pdgId[iF_Recl[1]],LepGood_pt[iF_Recl[1]],2)*eventBTagSF'"%GO
         #GO="%s -W 'puw(nTrueInt)'"%GO
-        GO="%s -W 'puw2016_vtx_4fb(nTrueInt)'"%GO
+        #GO="%s -W 'puw2016_vtx_4fb(nVert)'"%GO
         if dowhat == "plots": GO+=" susy-sos/2los_plots.txt"
     else:
         raise RuntimeError, 'Unknown selection'
@@ -64,25 +64,25 @@ if __name__ == '__main__':
         x = base('2los')
         if '_notrigger' in torun: x = add(x,'-X ^trigger ')
         if '_ewk10_met100_mm' in torun: 
-            x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_315,T2ttDeg_330 -E ^sublepPt5 -E ^MT -E ^mm -E ^upperMET")
+            x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_315,T2ttDeg_330 -E ^pt5sublep -E ^MT -E ^mm -E ^upperMET")
             runIt(x,'%s/all'%torun,['SR_bins_EWKino'])
         if '_ewk10_met200_mm' in torun: 
-            x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_315,T2ttDeg_330 -E ^sublepPt5 -E ^MT -E ^mm -E ^highMET")
+            x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_315,T2ttDeg_330 -E ^pt5sublep -E ^MT -E ^mm -E ^highMET")
             runIt(x,'%s/all'%torun,['SR_bins_EWKino'])
         if '_ewk10_met200_ee' in torun: 
-            x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_315,T2ttDeg_330 -E ^sublepPt5 -E ^MT -E ^ee -E ^highMET")
+            x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_315,T2ttDeg_330 -E ^pt5sublep -E ^MT -E ^ee -E ^highMET")
             runIt(x,'%s/all'%torun,['SR_bins_EWKino'])    
         if '_ewk20_met100_mm' in torun: 
-            x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_90,T2ttDeg_300,T2ttDeg_315,T2ttDeg_330 -E ^sublepPt5 -E ^MT -E ^mm -E ^upperMET")
+            x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_90,T2ttDeg_300,T2ttDeg_315,T2ttDeg_330 -E ^pt5sublep -E ^MT -E ^mm -E ^upperMET")
             runIt(x,'%s/all'%torun,['SR_bins_EWKino'])
         if '_ewk20_met200_mm' in torun: 
-            x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_90,T2ttDeg_300,T2ttDeg_315,T2ttDeg_330 -E ^sublepPt5 -E ^MT -E ^mm -E ^highMET")
+            x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_90,T2ttDeg_300,T2ttDeg_315,T2ttDeg_330 -E ^pt5sublep -E ^MT -E ^mm -E ^highMET")
             runIt(x,'%s/all'%torun,['SR_bins_EWKino'])
         if '_ewk20_met200_ee' in torun: 
-            x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_90,T2ttDeg_300,T2ttDeg_315,T2ttDeg_330 -E ^sublepPt5 -E ^MT -E ^ee -E ^highMET")
+            x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_90,T2ttDeg_300,T2ttDeg_315,T2ttDeg_330 -E ^pt5sublep -E ^MT -E ^ee -E ^highMET")
             runIt(x,'%s/all'%torun,['SR_bins_EWKino'])
         if '_stop20_met100_mm' in torun: 
-            x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_90,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_315 -E ^sublepPt5 -E ^mm -E ^upperMET")
+            x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_90,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_315 -E ^pt5sublep -E ^mm -E ^upperMET")
             runIt(x,'%s/all'%torun,['SR_bins_stop'])
         if '_stop20_met200_mm' in torun: 
             x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_90,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_315 -E ^mm -E ^highMET")
@@ -94,7 +94,7 @@ if __name__ == '__main__':
             x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_90,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_315 -E ^em -E ^highMET")
             runIt(x,'%s/all'%torun,['SR_bins_stop'])  
         if '_stop35_met100_mm' in torun: 
-            x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_90,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_330 -E ^sublepPt5 -E ^mm -E ^upperMET")
+            x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_90,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_330 -E ^pt5sublep -E ^mm -E ^upperMET")
             runIt(x,'%s/all'%torun,['SR_bins_stop'])
         if '_stop35_met200_mm' in torun: 
             x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_90,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_330 -E ^mm -E ^highMET")
@@ -106,22 +106,76 @@ if __name__ == '__main__':
             x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_90,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_330 -E ^em -E ^highMET")
             runIt(x,'%s/all'%torun,['SR_bins_stop'])      
    
-    if '2los_CR_DY_vars' in torun:
+
+ 
+    if '2los_CR_FF_vars' in torun:
         x = base('2los')
         x = add(x,"--noStackSig --showIndivSigs --xp TChiNeuWZ_95")
-        if '_notrigger' in torun: x = add(x,'-X ^trigger ')
+        if '_notrigger' in torun: x = add(x,'-X ^triggerAll ')
         if '_data' in torun: 
             x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt')
             x = add(x,"--showRatio --maxRatioRange 0 3") #--showMCError
         if '_met200' in torun:             
-            x = add(x,"-R ^ISRjet ISRjetnoID 'Jet1_pt > 25 && fabs(Jet1_eta)<2.4' -R ^ledlepPt ledlepPtNoUp '5 < LepGood1_pt' -E ^MT -E ^highMET -X ^HT -X ^Upsilon_veto -R ^TT TTCR 'LepGood1_isTightCR && LepGood2_isTightCR' -R METovHT METovHTrelax '(met_pt/(htJet25-LepGood1_pt-LepGood2_pt))>(2/3)' -R mtautau mtautauInv '0.<mass_tautau(met_pt,met_phi,LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood2_pt,LepGood2_eta,LepGood2_phi)&&mass_tautau(met_pt,met_phi,LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood2_pt,LepGood2_eta,LepGood2_phi)<160.'")
+            x = add(x,"-E ^highMET -X ^triggerAll -E ^triggerMET -I ^TT ")
             x = x.replace('-l 5.0','-l 4.0')
         if '_met100' in torun:             
-            x = add(x,"-E ^mm -R ^ledlepPt ledlepPtNoUp '5 < LepGood1_pt' -E ^MT -E ^upperMET -R ^TT TTCR 'LepGood1_isTightCR && LepGood2_isTightCR' -R METovHT METovHTrelax '(met_pt/(htJet25-LepGood1_pt-LepGood2_pt))>(2/3)' -R mtautau mtautauInv '0.<mass_tautau(met_pt,met_phi,LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood2_pt,LepGood2_eta,LepGood2_phi)&&mass_tautau(met_pt,met_phi,LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood2_pt,LepGood2_eta,LepGood2_phi)<160.' -E ^runRange")
-            x = x.replace('-l 5.0','-l 1.4')        
-        runIt(x,'%s/all'%torun,[],['SR_bins_EWKino','SR_bins_stop'])      
+            x = add(x,"-E ^mm -E ^upperMET -X  -E ^runRange -X ^triggerAll -E ^triggerDoubleMuMET -I ^TT ")
+            x = x.replace('-l 5.0','-l 1.4')  
+        runIt(x,'%s/all'%torun,[],['SR_bins_EWKino','SR_bins_stop'])
 
-      #,T2ttDeg_300,T2ttDeg_315
+
+
+
+    if '2los_CR_DY_vars' in torun:
+        x = base('2los')
+        x = add(x,"--noStackSig --showIndivSigs --xp TChiNeuWZ_95")
+        if '_notrigger' in torun: x = add(x,'-X ^triggerAll ')
+        if '_data' in torun: 
+            x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt')
+            x = add(x,"--showRatio --maxRatioRange 0 3") #--showMCError
+        if '_met200' in torun:             
+            x = add(x,"-X ^HT -X ^Upsilon_veto -R ^ISRjet noIDISRjet 'Jet1_pt > 25 && fabs(Jet1_eta)<2.4' -R ^ledlepPt NoUpledlepPtNoUp '20 < LepGood1_pt' -R METovHT relaxMETovHT '(met_pt/(htJet25-LepGood1_pt-LepGood2_pt))>(2/3)' -E ^highMET -E ^MT -R ^TT CRDYTT 'LepGood1_isTightCRDY && LepGood2_isTightCRDY' -R mtautau Invmtautau '0.<mass_tautau(met_pt,met_phi,LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood2_pt,LepGood2_eta,LepGood2_phi)&&mass_tautau(met_pt,met_phi,LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood2_pt,LepGood2_eta,LepGood2_phi)<160.' -X ^triggerAll -E ^triggerMET")
+            x = x.replace('-l 5.0','-l 4.0')
+        if '_met100' in torun:             
+            x = add(x,"-E ^mm -E ^upperMET -E ^MT -R ^ledlepPt NoUpledlepPt '20 < LepGood1_pt' -R ^TT CRDYTT 'LepGood1_isTightCRDY && LepGood2_isTightCRDY' -R mtautau Invmtautau '0.<mass_tautau(met_pt,met_phi,LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood2_pt,LepGood2_eta,LepGood2_phi)&&mass_tautau(met_pt,met_phi,LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood2_pt,LepGood2_eta,LepGood2_phi)<160.' -E ^runRange -X ^triggerAll -E ^triggerDoubleMuMET")
+            x = x.replace('-l 5.0','-l 1.4')  
+        runIt(x,'%s/all'%torun,[],['SR_bins_EWKino','SR_bins_stop'])
+
+
+
+
+    if '2los_CR_TT_vars' in torun:
+        x = base('2los')
+        x = add(x,"--noStackSig --showIndivSigs --xp TChiNeuWZ_95")
+        if '_notrigger' in torun: x = add(x,'-X ^triggerAll')
+        if '_data' in torun: x = add(x,"--showRatio --maxRatioRange 0 3") #--showMCError
+        if '_met200' in torun:             
+            x = add(x,"-X ^HT -X ^Upsilon_veto -R ^ISRjet noIDISRjet 'Jet1_pt > 25 && fabs(Jet1_eta)<2.4' -R METovHT relaxMETovHT '(met_pt/(htJet25-LepGood1_pt-LepGood2_pt))>(2/3)' -E ^highMET -R ^TT CRTTTT 'LepGood1_isTightCRTT && LepGood2_isTightCRTT' -X ^bveto -E ^btag")
+            if '_datasingleMu' in torun: 
+                x = x.replace('mca-2los-mc.txt','mca-2los-mcdatacr.txt')
+                x = x.replace('-l 5.0','-l 2.1')               
+                x = add(x,"-E ^mm -R ^ledlepPt NoUpledlepPt '25 < LepGood1_pt' -E ^resEta -X ^triggerAll -E ^triggerMu ")                
+            if '_dataMET' in torun: 
+                x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt')
+                x = x.replace('-l 5.0','-l 4.0')
+                x = add(x,"-R ^ledlepPt NoUpledlepPt '5 < LepGood1_pt' -X ^triggerAll")# -E ^triggerMET")
+        if '_met100' in torun:             
+            x = add(x,"-E ^mm -E ^upperMET -R ^TT TTCRDY 'LepGood1_isTightCRTT && LepGood2_isTightCRTT' -X ^bveto -E ^btag ")
+            if '_datasingleMu' in torun: 
+                x = x.replace('mca-2los-mc.txt','mca-2los-mcdatacr.txt')
+                x = x.replace('-l 5.0','-l 2.1')
+                x = add(x,"-R ^ledlepPt NoUpledlepPt '25 < LepGood1_pt' -E ^resEta -X ^triggerAll -E ^triggerMu ")
+            if '_dataMET' in torun: 
+                x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt')
+                x = x.replace('-l 5.0','-l 1.4')    
+                x = add(x," -R ^ledlepPt NoUpledlepPt '5 < LepGood1_pt' -E ^runRange -X ^triggerAll -E ^triggerDoubleMuMET")
+        runIt(x,'%s/all'%torun,[],['SR_bins_EWKino','SR_bins_stop'])
+
+  
+
+
+
+
 
     #### still to be adapted to SOS        
     # if '2lss_' in torun:
