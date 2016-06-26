@@ -115,9 +115,9 @@ def returnJERSmearedPt(jetpt,aeta,genpt,smearJER):
 #btag_TightWP = 0.941
 
 ## CSV v2 (CSV-IVF) (Spring15 50ns)
-btag_LooseWP = 0.605
-btag_MediumWP = 0.890
-btag_TightWP = 0.990
+btag_LooseWP = 0.605 #old
+btag_MediumWP = 0.80 #updated to Spring16
+btag_TightWP = 0.990 #old
 
 
 ###########
