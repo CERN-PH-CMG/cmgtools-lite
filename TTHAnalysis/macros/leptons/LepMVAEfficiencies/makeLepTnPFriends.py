@@ -67,7 +67,7 @@ BINNINGS = [
 DENOMINATOR = "passLoose"
 NUMERATORS  = [
     ('2lss',"passTight&&passTCharge", 'same-sign 2 lepton definition'),
-    # ('3l',  "passTight", '3 lepton definition'),
+    ('3l',  "passTight", '3 lepton definition'),
 ]
 
 INPUTS = {
