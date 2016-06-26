@@ -1,5 +1,5 @@
 alwaystrue: 1
-trigger: Triggers_MET || Triggers_mmMET
+triggerAll: (!isData) || HLT_BIT_HLT_PFMETNoMu90_NoiseCleaned_PFMHTNoMu90_IDTight_v || HLT_BIT_HLT_PFMETNoMu90_JetIdCleaned_PFMHTNoMu90_IDTight_v || HLT_BIT_HLT_PFMETNoMu90_PFMHTNoMu90_IDTight_v || ($DATA{HLT_BIT_HLT_DoubleMu3_PFMET50_v} $MC{1})
 dilep: nLepGood == 2
 ledlepPt: 5 < LepGood1_pt && LepGood1_pt < 30
 sublepPt: (fabs(LepGood2_pdgId)==13 && LepGood2_pt > 3.5) || (fabs(LepGood2_pdgId)==11 && LepGood2_pt > 5)
@@ -23,6 +23,7 @@ sublepPtUp: LepGood2_pt < 15 ; Disable=True
 inclusiveMET: met_pt > 200 || (LepGood1_pdgId*LepGood2_pdgId==-169 && met_pt>100) ; Disable=True
 highMET: met_pt > 200 ; Disable=True
 upperMET: met_pt < 200 ; Disable=True
+btag : Sum$(Jet_btagCSV>0.46 && Jet_pt>40)>0
 MT: mt_2(LepGood1_pt, LepGood1_phi, met_pt, met_phi)<70. && mt_2(LepGood2_pt, LepGood2_phi, met_pt, met_phi)<70. ; Disable=True
 SF: LepGood1_pdgId*LepGood2_pdgId==-169 || LepGood1_pdgId*LepGood2_pdgId==-121 ; Disable=True
 ee: abs(LepGood1_pdgId)==11 && abs(LepGood2_pdgId)==11; Disable=True
@@ -30,3 +31,7 @@ em: abs(LepGood1_pdgId) != abs(LepGood2_pdgId);         Disable=True
 mm: abs(LepGood1_pdgId)==13 && abs(LepGood2_pdgId)==13; Disable=True
 dphiMETl2: fabs(deltaPhi(met_phi,LepGood2_phi))<2. ; Disable=True
 runRange: (!isData) || run >= 274954 ; Disable=True
+eta2p1: fabs(LepGood1_eta) < 2.1 || fabs(LepGood2_eta) < 2.1
+triggerMu: (!isData) || HLT_SingleMu
+triggerMuMuMET: $DATA{HLT_BIT_HLT_DoubleMu3_PFMET50_v} $MC{1}
+triggerMET: (!isData) || HLT_BIT_HLT_PFMETNoMu90_NoiseCleaned_PFMHTNoMu90_IDTight_v || HLT_BIT_HLT_PFMETNoMu90_JetIdCleaned_PFMHTNoMu90_IDTight_v || HLT_BIT_HLT_PFMETNoMu90_PFMHTNoMu90_IDTight_v
