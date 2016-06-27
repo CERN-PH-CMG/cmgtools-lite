@@ -200,11 +200,11 @@ class FourLeptonAnalyzerBase( Analyzer ):
         quad.KD = quad.KDs["D_bkg^kin"]
         # now the mixed discriminants
         if len(jets) >= 2:
-            PgPq2 =  (1/jets[0].qgl() - 1) * (1/jets[1].qgl() - 1) 
-            quad.KDs["D_VBF2J"] = 1/(1 + (1./quad.KDs["D_HJJ^VBF"] - 1.) * pow(PgPq2, 1/.3)) if PgPq2 > 0 else -99
+            PgPq2 =  (1/jets[0].qgl() - 1 if jets[0].qgl() > 0 else 1) * (1/jets[1].qgl() - 1 if jets[1].qgl() > 0 else 1) 
+            quad.KDs["D_VBF2J"] = 1/(1 + (1./quad.KDs["D_HJJ^VBF"] - 1.) * pow(PgPq2, 1./3)) if PgPq2 > 0 else -99
             quad.KDs["D_WHh"]   = 1/(1 + (1./quad.KDs["D_HJJ^WH"]  - 1.) * PgPq2) if PgPq2 > 0 else -99
             quad.KDs["D_ZHh"]   = 1/(1 + (1./quad.KDs["D_HJJ^ZH"]  - 1.) * PgPq2) if PgPq2 > 0 else -99
         elif len(jets) == 1:
-            PgPq1 =  (1/jets[0].qgl() - 1)
-            quad.KDs["D_VBF1J"] = 1/(1 + (1./quad.KDs["D_HJJ^VBF"] - 1.) * pow(PgPq1, 1/.3)) if  PgPq1 > 0 else -99
+            PgPq1 =  (1/jets[0].qgl() - 1 if jets[0].qgl() > 0 else 1)
+            quad.KDs["D_VBF1J"] = 1/(1 + (1./quad.KDs["D_HJJ^VBF"] - 1.) * pow(PgPq1, 1./3)) if  PgPq1 > 0 else -99
 
