@@ -8,6 +8,8 @@ triggers_mumu_ss = [ "HLT_Mu17_Mu8_SameSign_v*", "HLT_Mu17_Mu8_SameSign_DZ_v*", 
 triggers_mumu = triggers_mumu_iso
 
 triggers_ee = [ "HLT_Ele17_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v*", "HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v*" ] # 17/12 prescaled in column 0
+triggers_ee_noniso = ["HLT_DoubleEle33_CaloIdL_v*", "LT_DoubleEle37_Ele27_CaloIdL_GsfTrkIdVL_v*", "HLT_DoubleEle33_CaloIdL_GsfTrkIdVL_v" ]
+
 # warning: ee trigger without DZ is prescaled
 triggers_ee_nodz = [ "HLT_Ele17_Ele12_CaloIdL_TrackIdL_IsoVL_v*" ]
 
@@ -67,21 +69,21 @@ triggers_MT2_e = ["HLT_Ele23_WPLoose_Gsf_v*", "HLT_Ele22_eta2p1_WPLoose_Gsf_v*",
 
 triggers_HT900 = ["HLT_PFHT900_v*"]
 triggers_HT800 = ["HLT_PFHT800_v*"]
-triggers_MET170 = ["HLT_PFMET170_NoiseCleaned_v*"]
+#triggers_MET170 = ["HLT_PFMET170_NoiseCleaned_v*"] #removed from menu
 #other paths added in data:
-triggers_MET170_NotCleaned = ["HLT_PFMET170_v*"]
+triggers_MET170_NotCleaned = ["HLT_PFMET170_NotCleaned_v*"]
 triggers_MET170_HBHECleaned = ["HLT_PFMET170_HBHECleaned_v*"]
-triggers_MET170_JetIdCleaned = ["HLT_PFMET170_JetIdCleaned_v*"]
-triggers_AllMET170 = triggers_MET170 + triggers_MET170_NotCleaned + triggers_MET170_HBHECleaned + triggers_MET170_JetIdCleaned
+triggers_MET170_BeamHaloCleaned = ["HLT_PFMET170_BeamHaloCleaned_v*"] # removed from the menu
+triggers_AllMET170 = triggers_MET170_NotCleaned + triggers_MET170_HBHECleaned 
 
-triggers_MET300 = ["HLT_PFMET300_NoiseCleaned_v*"]
-triggers_MET300_NotCleaned = ["HLT_PFMET300_v*"]
-triggers_MET300_JetIdCleaned = ["HLT_PFMET300_JetIdCleaned_v*"]
-triggers_AllMET300 = triggers_MET300 + triggers_MET300_NotCleaned + triggers_MET300_JetIdCleaned
+triggers_MET300 = ["HLT_PFMET300_v*"] #not in 2016 menu anymore
+#triggers_MET300_NotCleaned = ["HLT_PFMET300_v*"]
+#triggers_MET300_JetIdCleaned = ["HLT_PFMET300_JetIdCleaned_v*"] #not in 2016 menu anymore
+triggers_AllMET300 = triggers_MET300 
 
-triggers_HT350_MET120 = ["HLT_PFHT350_PFMET120_NoiseCleaned_v*"]
+#triggers_HT350_MET120 = ["HLT_PFHT350_PFMET120_NoiseCleaned_v*"] # not in 2016 menu anymore
 #triggers_HTMET100 = ["HLT_PFHT350_PFMET100_NoiseCleaned_v*"]
-triggers_HT350_MET100 = ["HLT_PFHT350_PFMET100_JetIdCleaned_v*","HLT_PFHT350_PFMET100_NoiseCleaned_v*","HLT_PFHT350_PFMET100_v"]
+triggers_HT350_MET100 = ["HLT_PFHT350_PFMET100_v"]
 
 triggers_HT350 = ["HLT_PFHT350_v*"] # prescaled
 triggers_HT475 = ["HLT_PFHT475_v*"] # prescaled
@@ -91,8 +93,8 @@ triggers_dijet = ["HLT_DiPFJetAve40_v*", "HLT_DiPFJetAve60_v*"]
 
 triggers_jet = ["HLT_PFJet40_v*", "HLT_PFJet60_v*", "HLT_PFJet80_v*", "HLT_PFJet140_v*", "HLT_PFJet200_v*", "HLT_PFJet260_v*", "HLT_PFJet320_v*", "HLT_PFJet400_v*", "HLT_PFJet450_v*", "HLT_PFJet500_v*"]
 
-triggers_dijet70met120 = [ "HLT_dijet70met120" ]
-triggers_dijet55met110 = [ "HLT_dijet55met110" ]
+triggers_dijet70met120 = [ "HLT_DiCentralPFJet70_PFMET120_v*" ]
+triggers_dijet55met110 = [ "HLT_DiCentralPFJet55_PFMET110_v*" ]
 
 triggers_photon75ps = ["HLT_Photon75_v*"]
 triggers_photon90ps = ["HLT_Photon90_v*"]
@@ -106,17 +108,17 @@ triggers_photon155 = ["HLT_Photon155_v*"]
 triggers_photon175 = ["HLT_Photon175_v*"]
 triggers_photon165_HE10 = ["HLT_Photon165_HE10_v*"]
 
-
+# there is no jetId or Noise Cleaned path in 2016 menu  all met, met cross paths by defult have HBHE cleaning applied
 # monojets triggers
-#MC is NoiseCleaned but data will be JetIdCleaned
 triggers_met90_mht90 = ["HLT_PFMET90_PFMHT90_IDTight_v*","HLT_PFMET90_PFMHT90_IDLoose_v*"]
 triggers_met100_mht100 = ["HLT_PFMET100_PFMHT100_IDTight_v*","HLT_PFMET100_PFMHT100_IDLoose_v*"]
 triggers_met120_mht120 = ["HLT_PFMET120_PFMHT120_IDTight_v*"]
-triggers_metNoMu90_mhtNoMu90 = ["HLT_PFMETNoMu90_NoiseCleaned_PFMHTNoMu90_IDTight_v*","HLT_PFMETNoMu90_JetIdCleaned_PFMHTNoMu90_IDTight_v*","HLT_PFMETNoMu90_PFMHTNoMu90_IDTight_v*"]
-triggers_metNoMu120_mhtNoMu120 = ["HLT_PFMETNoMu120_NoiseCleaned_PFMHTNoMu120_IDTight_v*","HLT_PFMETNoMu120_JetIdCleaned_PFMHTNoMu120_IDTight_v*","HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v*"]
-triggers_Jet80MET90 = ["HLT_MonoCentralPFJet80_PFMETNoMu90_NoiseCleaned_PFMHTNoMu90_IDTight_v*","HLT_MonoCentralPFJet80_PFMETNoMu90_JetIdCleaned_PFMHTNoMu90_IDTight_v*","HLT_MonoCentralPFJet80_PFMETNoMu90_PFMHTNoMu90_IDTight_v*"]
-triggers_Jet80MET120 = ["HLT_MonoCentralPFJet80_PFMETNoMu120_NoiseCleaned_PFMHTNoMu120_IDTight_v*","HLT_MonoCentralPFJet80_PFMETNoMu90_JetIdCleaned_PFMHTNoMu120_IDTight_v*","HLT_MonoCentralPFJet80_PFMETNoMu120_PFMHTNoMu120_IDTight_v*"]
-triggers_MET120Mu5 = ["HLT_PFMET120_NoiseCleaned_Mu5_v*"]
+#triggers_metNoMu90_mhtNoMu90 = ["HLT_PFMETNoMu90_NoiseCleaned_PFMHTNoMu90_IDTight_v*","HLT_PFMETNoMu90_JetIdCleaned_PFMHTNoMu90_IDTight_v*","HLT_PFMETNoMu90_PFMHTNoMu90_IDTight_v*"]
+triggers_metNoMu90_mhtNoMu90 = ["HLT_PFMETNoMu90_PFMHTNoMu90_IDTight_v*"]
+triggers_metNoMu120_mhtNoMu120 = ["HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v*"]
+triggers_Jet80MET90 = ["HLT_MonoCentralPFJet80_PFMETNoMu90_PFMHTNoMu90_IDTight_v*"]
+triggers_Jet80MET120 = ["HLT_MonoCentralPFJet80_PFMETNoMu120_PFMHTNoMu120_IDTight_v*"]
+triggers_MET120Mu5 = ["HLT_PFMET120_Mu5_v*"]
 
 ### ----> for the edgeZ analysis. 
 ### we want them separately for detailed trigger efficiency studies
