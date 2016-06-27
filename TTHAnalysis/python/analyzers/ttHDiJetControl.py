@@ -107,12 +107,12 @@ class ttHDiJetControl( Analyzer ):
             event.zll_mhtJetXj = event.mhtJetXj
             event.zll_mhtPhiJetXj = event.mhtPhiJetXj
 
-            # look for minimal deltaPhi between MET and four leading jets with pt>40 and |eta|<2.4                                                                                                                                
+            # look for minimal deltaPhi between MET and three leading jets with pt>40 and |eta|<2.4                                                                                                                                
             event.zll_deltaPhiMin = 999.
-            objects40jc = [ j for j in event.cleanJets if j.pt() > 40 and abs(j.eta())<2.5 ]
-            objects40ja = [ j for j in event.cleanJets if j.pt() > 40]
-            event.zll_ht = sum([x.pt() for x in objects40jc])
-            for n,j in enumerate(objects40ja):
+            objects30jc = [ j for j in event.cleanJets if j.pt() > 30 and abs(j.eta())<2.5 ]
+            objects30ja = [ j for j in event.cleanJets if j.pt() > 30 ]
+            event.zll_ht = sum([x.pt() for x in objects30jc])
+            for n,j in enumerate(objects30ja):
                 if n>3:  break
                 thisDeltaPhi = abs( deltaPhi( j.phi(), event.zll_met.phi() ) )
                 if thisDeltaPhi < event.zll_deltaPhiMin : event.zll_deltaPhiMin = thisDeltaPhi
