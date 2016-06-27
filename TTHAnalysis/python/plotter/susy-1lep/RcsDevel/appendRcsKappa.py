@@ -271,6 +271,7 @@ def replaceEmptyDataBinsWithMC(fileList):
         tfile = TFile(fname,"UPDATE")
         if 1==1:
             for bindir in bindirs:
+                print tfile.GetName(),bindir+"/data"
                 histData = tfile.Get(bindir+"/data").Clone()
                 histBkg = tfile.Get(bindir+"/background").Clone()
 
@@ -286,6 +287,36 @@ def replaceEmptyDataBinsWithMC(fileList):
                     histData.SetBinError(ix+1, iy, histBkg.GetBinContent(ix+1,iy))
                     histData.SetBinContent(ix-1, iy, histBkg.GetBinContent(ix-1,iy))
                     histData.SetBinError(ix-1, iy, histBkg.GetBinContent(ix-1,iy))
+
+                if histData:
+                    tfile.cd(bindir)
+                    # overwrite old hist
+                    histData.Write("",TObject.kOverwrite)
+                tfile.cd()
+        tfile.Close()
+    print ''
+
+
+
+def blindDataBins(fileList):
+    # hists to make QCD estimation
+    bindirs =  ['SR_MB']
+    print ''
+    print "Replacing empty data bins with MC for CR_MB, SR_SB, CR_SB, 100% error"
+    for fname in fileList:
+        tfile = TFile(fname,"UPDATE")
+        if 1==1:
+            for bindir in bindirs:
+                ix = 2
+                iy = 2
+                histData = tfile.Get(bindir+"/data").Clone()
+                print '!!! ATTENTION: Blinding DATA'
+                histData.SetBinContent(ix, iy, 0)
+                histData.SetBinError(ix, iy, 0)
+                histData.SetBinContent(ix+1, iy, 0)
+                histData.SetBinError(ix+1, iy, 0)
+                histData.SetBinContent(ix-1, iy, 0)
+                histData.SetBinError(ix-1, iy, 0)
 
                 if histData:
                     tfile.cd(bindir)
@@ -538,6 +569,7 @@ if __name__ == "__main__":
     predSaps = [s for s in predSamps if s in allSamps]
 
     replaceEmptyDataBinsWithMC(fileList)
+    #blindDataBins(fileList)
 
     makePoissonErrors(fileList, poisSamps)
     makeQCDsubtraction(fileList, qcdPredSamps)
