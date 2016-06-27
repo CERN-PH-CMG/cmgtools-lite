@@ -28,7 +28,7 @@ class RooPlotter(object):
         if cut !="":
             dataset=self.w.data("data_obs").reduce(cut)
         else:
-            dataset=self.w.data("data_obs")
+            dataset=self.w.data("data_obs").reduce("CMS_channel==CMS_channel::"+cat)
 
         dataset.plotOn(self.frame,ROOT.RooFit.Cut("CMS_channel==CMS_channel::"+cat))
         #OK now stack for each curve add all the others
@@ -44,13 +44,22 @@ class RooPlotter(object):
                 else:
                     names.append('shapeBkg_'+self.contributions[j]['name']+"_"+cat)
 
-            self.w.pdf("model_s").plotOn(self.frame,ROOT.RooFit.Slice(self.w.cat("CMS_channel"),cat),ROOT.RooFit.Components(",".join(names)),ROOT.RooFit.ProjWData(dataset),ROOT.RooFit.Name(data['name']+"1"),ROOT.RooFit.LineStyle(data['linestyle']),\
-                                             ROOT.RooFit.LineColor(data['linecolor']),ROOT.RooFit.FillStyle(data['fillstyle']),ROOT.RooFit.FillColor(data['fillcolor']),ROOT.RooFit.DrawOption("F"))
+#            self.w.pdf("model_s").plotOn(self.frame,ROOT.RooFit.Slice(self.w.cat("CMS_channel"),cat),ROOT.RooFit.Components(",".join(names)),ROOT.RooFit.ProjWData(dataset),ROOT.RooFit.Name(data['name']+"1"),ROOT.RooFit.LineStyle(data['linestyle']),\
+#                                             ROOT.RooFit.LineColor(data['linecolor']),ROOT.RooFit.FillStyle(data['fillstyle']),ROOT.RooFit.FillColor(data['fillcolor']),ROOT.RooFit.DrawOption("F"))
+
+            self.w.pdf("model_s").plotOn(self.frame,ROOT.RooFit.Slice(self.w.cat("CMS_channel"),cat),ROOT.RooFit.Components(",".join(names)),ROOT.RooFit.ProjWData(ROOT.RooArgSet(self.w.var("MLNuJ")),dataset),ROOT.RooFit.Name(data['name']+"1"),ROOT.RooFit.LineStyle(data['linestyle']),\
+                                             ROOT.RooFit.LineColor(data['linecolor']),ROOT.RooFit.FillStyle(data['fillstyle']),ROOT.RooFit.FillColor(data['fillcolor']),ROOT.RooFit.LineWidth(data['linewidth']),ROOT.RooFit.DrawOption("F"))
+
            
 
 
-            self.w.pdf("model_s").plotOn(self.frame,ROOT.RooFit.Slice(self.w.cat("CMS_channel"),cat),ROOT.RooFit.Components(",".join(names)),ROOT.RooFit.ProjWData(dataset),ROOT.RooFit.Name(data['name']+"2"),ROOT.RooFit.LineStyle(data['linestyle']),\
-                                             ROOT.RooFit.LineColor(data['linecolor']),ROOT.RooFit.FillStyle(data['fillstyle']),ROOT.RooFit.FillColor(data['fillcolor']),ROOT.RooFit.DrawOption("L"))
+#            self.w.pdf("model_s").plotOn(self.frame,ROOT.RooFit.Slice(self.w.cat("CMS_channel"),cat),ROOT.RooFit.Components(",".join(names)),ROOT.RooFit.ProjWData(dataset),ROOT.RooFit.Name(data['name']+"2"),ROOT.RooFit.LineStyle(data['linestyle']),\
+#                                             ROOT.RooFit.LineColor(data['linecolor']),ROOT.RooFit.FillStyle(data['fillstyle']),ROOT.RooFit.FillColor(data['fillcolor']),ROOT.RooFit.DrawOption("L"))
+
+            self.w.pdf("model_s").plotOn(self.frame,ROOT.RooFit.Slice(self.w.cat("CMS_channel"),cat),ROOT.RooFit.Components(",".join(names)),ROOT.RooFit.ProjWData(ROOT.RooArgSet(self.w.var("MLNuJ")),dataset),ROOT.RooFit.Name(data['name']+"2"),ROOT.RooFit.LineStyle(data['linestyle']),\
+                                             ROOT.RooFit.LineColor(data['linecolor']),ROOT.RooFit.FillStyle(data['fillstyle']),ROOT.RooFit.LineWidth(data['linewidth']),ROOT.RooFit.DrawOption("L"))
+
+
 
             if (not data['signal']) and (not errorVisualized) and visualizeError:
                 self.w.pdf("model_s").plotOn(self.frame,ROOT.RooFit.Slice(self.w.cat("CMS_channel"),cat),ROOT.RooFit.Components(",".join(names)),ROOT.RooFit.ProjWData(dataset),ROOT.RooFit.Name(data['name']+"3"),ROOT.RooFit.LineStyle(data['linestyle']),\
