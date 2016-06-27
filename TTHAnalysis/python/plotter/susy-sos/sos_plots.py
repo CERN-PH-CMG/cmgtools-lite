@@ -20,7 +20,7 @@ def base(selection):
         GO="%s susy-sos/mca-2los-mc.txt susy-sos/2los_tight.txt "%CORE
         #GO="%s -W 'puw(nTrueInt)*leptonSF_ttH(LepGood_pdgId[iF_Recl[0]],LepGood_pt[iF_Recl[0]],LepGood_eta[iF_Recl[0]],2)*leptonSF_ttH(LepGood_pdgId[iF_Recl[1]],LepGood_pt[iF_Recl[1]],LepGood_eta[iF_Recl[1]],2)*triggerSF_ttH(LepGood_pdgId[iF_Recl[0]],LepGood_pt[iF_Recl[0]],LepGood_pdgId[iF_Recl[1]],LepGood_pt[iF_Recl[1]],2)*eventBTagSF'"%GO
         #GO="%s -W 'puw(nTrueInt)'"%GO
-        #GO="%s -W 'puw2016_vtx_4fb(nVert)'"%GO
+        GO="%s -W 'puw2016_vtx_4fb(nVert)'"%GO
         if dowhat == "plots": GO+=" susy-sos/2los_plots.txt"
     else:
         raise RuntimeError, 'Unknown selection'
@@ -124,6 +124,11 @@ if __name__ == '__main__':
         runIt(x,'%s/all'%torun,[],['SR_bins_EWKino','SR_bins_stop'])
 
 
+    if '2los_FR_Closure_vars' in torun:
+        x = base('2los')
+        x = add(x,"--plotmode nostack")
+        x = x.replace('mca-2los-mc.txt','mca-2los-mc-closuretest.txt')
+        runIt(x,'%s/all'%torun)
 
 
     if '2los_CR_DY_vars' in torun:

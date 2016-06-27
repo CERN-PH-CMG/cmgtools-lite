@@ -1,4 +1,5 @@
 yields: nLepGood : 1,-0.5,0.5; YTitle='Total Event Yields';
+nVert: nVert : 40,-0.5,41.5; XTitle="N_{vtx}"
 lep1Pt:  LepGood1_pt: 20,0,40; XTitle="Leading lepton p_{T}  [GeV]",Legend='TR'
 lep2Pt:  LepGood2_pt: 20,0,40; XTitle="Second lepton p_{T}  [GeV]",Legend='TR', MoreY=1.5
 lep1Eta:  abs(LepGood1_eta): 10,0,2.5; XTitle="Lepton 1 #eta",Legend='TR', MoreY=1.5
@@ -16,7 +17,7 @@ lep2MetMT: mt_2(LepGood2_pt,LepGood2_phi, met_pt,met_phi) : 8,0,120 ; XTitle="M_
 fine_lep1MetMT: mt_2(LepGood1_pt,LepGood1_phi, met_pt,met_phi) : 14,0,70 ; XTitle="M_{T}(l1\,E_{T}^{miss})", MoreY=1.5
 fine_lep2MetMT: mt_2(LepGood2_pt,LepGood2_phi, met_pt,met_phi) : 14,0,70 ; XTitle="M_{T}(l2\,E_{T}^{miss})", MoreY=1.5
 llMetDphi: abs(deltaPhi(phi_2(LepGood1_pt,LepGood1_phi,LepGood2_pt,LepGood2_phi), met_phi)) : 7,0,3.14 ; XTitle="#Delta#phi(ll\,E_{T}^{miss})", MoreY=1.5
-mtautau_veto: mass_tautau(met_pt,met_phi,LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood2_pt,LepGood2_eta,LepGood2_phi)<0||mass_tautau(met_pt,met_phi,LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood2_pt,LepGood2_eta,LepGood2_phi)>170 : 2,-0.5,1.5; XTitle="m(#tau#tau) veto", Legend='TL'
+mtautau_veto: mass_tautau(met_pt,met_phi,LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood2_pt,LepGood2_eta,LepGood2_phi)<0||mass_tautau(met_pt,met_phi,LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood2_pt,LepGood2_eta,LepGood2_phi)>160 : 2,-0.5,1.5; XTitle="m(#tau#tau) veto", Legend='TL'
 mtautau: mass_tautau(met_pt,met_phi,LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood2_pt,LepGood2_eta,LepGood2_phi): 26,-10,250; XTitle="m(#tau#tau) [GeV]"
 nJet25 : nJet25 : [-0.5,0.5,1.5,2.5,3.5,4.5,5.5,6.5] ; XTitle='N(jet\, p_{T} > 25)'
 nJet40 : nJet40 : [-0.5,0.5,1.5,2.5,3.5,4.5,5.5,6.5] ; XTitle='N(jet\, p_{T} > 40)'
