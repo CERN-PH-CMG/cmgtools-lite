@@ -130,6 +130,14 @@ if __name__ == '__main__':
         x = x.replace('mca-2los-mc.txt','mca-2los-mc-closuretest.txt')
         runIt(x,'%s/all'%torun)
 
+    
+    if '2los_syst_shapes_vars' in torun:
+        x = base('2los')
+        x = x.replace('mca-2los-mc.txt','mca-2los-mc-syst.txt')
+        x = add(x,"--plotmode nostack -F sf/t /data1/botta/trees_SOS_80X_170616/TT2l_friends/evVarFriend_{cname}.root")        
+        runIt(x,'%s/all'%torun)
+    
+
 
     if '2los_CR_DY_vars' in torun:
         x = base('2los')
@@ -158,7 +166,7 @@ if __name__ == '__main__':
             x = add(x,"-X ^HT -X ^Upsilon_veto -R ^ISRjet noIDISRjet 'Jet1_pt > 25 && fabs(Jet1_eta)<2.4' -R METovHT relaxMETovHT '(met_pt/(htJet25-LepGood1_pt-LepGood2_pt))>(2/3)' -E ^highMET -R ^TT CRTTTT 'LepGood1_isTightCRTT && LepGood2_isTightCRTT' -X ^bveto -E ^btag")
             if '_datasingleMu' in torun: 
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdatacr.txt')
-                x = x.replace('-l 5.0','-l 2.1')               
+                x = x.replace('-l 5.0','-l 4.0')               
                 x = add(x,"-E ^mm -R ^ledlepPt NoUpledlepPt '25 < LepGood1_pt' -E ^resEta -X ^triggerAll -E ^triggerMu ")                
             if '_dataMET' in torun: 
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt')
@@ -168,7 +176,7 @@ if __name__ == '__main__':
             x = add(x,"-E ^mm -E ^upperMET -R ^TT TTCRDY 'LepGood1_isTightCRTT && LepGood2_isTightCRTT' -X ^bveto -E ^btag ")
             if '_datasingleMu' in torun: 
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdatacr.txt')
-                x = x.replace('-l 5.0','-l 2.1')
+                x = x.replace('-l 5.0','-l 4.0')
                 x = add(x,"-R ^ledlepPt NoUpledlepPt '25 < LepGood1_pt' -E ^resEta -X ^triggerAll -E ^triggerMu ")
             if '_dataMET' in torun: 
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt')
