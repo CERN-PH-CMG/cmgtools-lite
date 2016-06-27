@@ -25,6 +25,7 @@ parser.add_option("-m","--minMVV",dest="min",type=float,help="mVV variable",defa
 parser.add_option("-M","--maxMVV",dest="max",type=float, help="mVV variable",default=1)
 parser.add_option("-f","--function",dest="function",help="interpolating function",default='')
 parser.add_option("-b","--BR",dest="BR",type=float, help="branching ratio",default=1)
+parser.add_option("-x","--minMass",dest="minMass",type=float, help="minimumMass",default=0.0)
 
 (options,args) = parser.parse_args()
 #define output dictionary
@@ -46,7 +47,9 @@ for filename in os.listdir(args[0]):
 
     mass = float(fname.split('_')[-1])
 
-        
+    if mass<options.minMass:
+        continue
+
 
     samples[mass] = fname
 

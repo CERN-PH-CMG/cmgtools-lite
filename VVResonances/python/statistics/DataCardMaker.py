@@ -38,7 +38,7 @@ class DataCardMaker:
         scaleSysts=[]
         resolutionSysts=[]
         for syst,factor in scale.iteritems():
-            self.w.factory(syst+"[0,0.1,0.1]")
+            self.w.factory(syst+"[0,-0.1,0.1]")
             scaleStr=scaleStr+"+{factor}*{syst}".format(factor=factor,syst=syst)
             scaleSysts.append(syst)
         for syst,factor in resolution.iteritems():
@@ -90,7 +90,7 @@ class DataCardMaker:
         scaleSysts=[]
         resolutionSysts=[]
         for syst,factor in scale.iteritems():
-            self.w.factory(syst+"[0,0.1,0.1]")
+            self.w.factory(syst+"[0,-0.1,0.1]")
             scaleStr=scaleStr+"+{factor}*{syst}".format(factor=factor,syst=syst)
             scaleSysts.append(syst)
         for syst,factor in resolution.iteritems():
@@ -136,6 +136,176 @@ class DataCardMaker:
         self.w.factory("SUM::{name}({f}*{PDF1},{PDF2})".format(name=pdfName3,f=FVar,PDF1=pdfName,PDF2=pdfName2))
 
         f.close()
+
+
+
+    def addMJJSignalParametricShapeCB(self,name,variable,jsonFile,scale ={},resolution={},varToReplace="MH"):
+        self.w.factory("MH[2000]")
+        self.w.var("MH").setConstant(1)
+       
+        scaleStr='0'
+        resolutionStr='0'
+
+        scaleSysts=[]
+        resolutionSysts=[]
+        for syst,factor in scale.iteritems():
+            self.w.factory(syst+"[0,-0.1,0.1]")
+            scaleStr=scaleStr+"+{factor}*{syst}".format(factor=factor,syst=syst)
+            scaleSysts.append(syst)
+        for syst,factor in resolution.iteritems():
+            self.w.factory(syst+"[0,-0.5,0.5]")
+            resolutionStr=resolutionStr+"+{factor}*{syst}".format(factor=factor,syst=syst)
+            resolutionSysts.append(syst)
+       
+        MJJ=variable            
+        self.w.factory(variable+"[0,1000]")
+
+        
+        f=open(jsonFile)
+        info=json.load(f)
+
+        SCALEVar="_".join(["mean",name,self.tag])
+        self.w.factory("expr::{name}('({param})*(1+{vv_syst})',MH,{vv_systs})".format(name=SCALEVar,param=info['mean'],vv_syst=scaleStr,vv_systs=','.join(scaleSysts)).replace("MH",varToReplace))
+
+        SIGMAVar="_".join(["sigma",name,self.tag])
+        self.w.factory("expr::{name}('({param})*(1+{vv_syst})',MH,{vv_systs})".format(name=SIGMAVar,param=info['sigma'],vv_syst=resolutionStr,vv_systs=','.join(resolutionSysts)).replace("MH",varToReplace))
+
+        ALPHA1Var="_".join(["alpha1",name,self.tag])
+        self.w.factory("expr::{name}('MH*0+{param}',MH)".format(name=ALPHA1Var,param=info['alpha1']).replace("MH",varToReplace))
+
+        N1Var="_".join(["n1",name,self.tag])
+        self.w.factory("expr::{name}('MH*0+{param}',MH)".format(name=N1Var,param=info['n1']).replace("MH",varToReplace))
+
+        ALPHA2Var="_".join(["alpha2",name,self.tag])
+        self.w.factory("expr::{name}('MH*0+{param}',MH)".format(name=ALPHA2Var,param=info['alpha2']).replace("MH",varToReplace))
+
+        N2Var="_".join(["n2",name,self.tag])
+        self.w.factory("expr::{name}('MH*0+{param}',MH)".format(name=N2Var,param=info['n2']).replace("MH",varToReplace))
+
+        pdfName="_".join([name,self.tag])
+        vvMass = ROOT.RooDoubleCB(pdfName,pdfName,self.w.var(MJJ),self.w.function(SCALEVar),self.w.function(SIGMAVar),self.w.function(ALPHA1Var),self.w.function(N1Var),self.w.function(ALPHA2Var),self.w.function(N2Var))
+        getattr(self.w,'import')(vvMass,ROOT.RooFit.Rename(pdfName))
+        f.close()
+
+
+    def addMJJTopShapeCB(self,name,variable,jsonFile,scale ={},resolution={},varToReplace="MH",uncertainties=[0,0,0,0],newTag=""):
+        self.w.factory("MH[2000]")
+        self.w.var("MH").setConstant(1)
+
+
+        if newTag !="":
+            tag=newTag
+        else:
+            tag=name+"_"+self.tag
+       
+        scaleStr='0'
+        resolutionStr='0'
+
+        scaleSysts=[]
+        resolutionSysts=[]
+        for syst,factor in scale.iteritems():
+            self.w.factory(syst+"[0,-0.1,0.1]")
+            scaleStr=scaleStr+"+{factor}*{syst}".format(factor=factor,syst=syst)
+            scaleSysts.append(syst)
+        for syst,factor in resolution.iteritems():
+            self.w.factory(syst+"[0,-0.5,0.5]")
+            resolutionStr=resolutionStr+"+{factor}*{syst}".format(factor=factor,syst=syst)
+            resolutionSysts.append(syst)
+       
+        MJJ=variable            
+        self.w.factory(variable+"[0,1000]")
+
+        
+        f=open(jsonFile)
+        info=json.load(f)
+
+        SCALEVar="_".join(["mean",name,self.tag])
+        self.w.factory("expr::{name}('({param})*(1+{vv_syst})',MH,{vv_systs})".format(name=SCALEVar,param=info['mean'],vv_syst=scaleStr,vv_systs=','.join(scaleSysts)).replace("MH",varToReplace))
+
+        SIGMAVar="_".join(["sigma",name,self.tag])
+        self.w.factory("expr::{name}('({param})*(1+{vv_syst})',MH,{vv_systs})".format(name=SIGMAVar,param=info['sigma'],vv_syst=resolutionStr,vv_systs=','.join(resolutionSysts)).replace("MH",varToReplace))
+
+        ALPHAVar1="_".join(["alpha1",name,self.tag])
+        self.w.factory("expr::{name}('MH*0+{param}',MH)".format(name=ALPHAVar1,param=info['alpha1']).replace("MH",varToReplace))
+
+        NVar1="_".join(["n1",name,self.tag])
+        self.w.factory("expr::{name}('MH*0+{param}',MH)".format(name=NVar1,param=info['n1']).replace("MH",varToReplace))
+
+        ALPHAVar2="_".join(["alpha2",name,self.tag])
+        self.w.factory("expr::{name}('MH*0+{param}',MH)".format(name=ALPHAVar2,param=info['alpha2']).replace("MH",varToReplace))
+
+        NVar2="_".join(["n2",name,self.tag])
+        self.w.factory("expr::{name}('MH*0+{param}',MH)".format(name=NVar2,param=info['n2']).replace("MH",varToReplace))
+
+
+        pdfName1="_".join([name,self.tag,'CB'])
+        vvMass = ROOT.RooDoubleCB(pdfName1,pdfName1,self.w.var(MJJ),self.w.function(SCALEVar),self.w.function(SIGMAVar),self.w.function(ALPHAVar1),self.w.function(NVar1),self.w.function(ALPHAVar2),self.w.function(NVar2))
+        getattr(self.w,'import')(vvMass,ROOT.RooFit.Rename(pdfName1))
+
+
+
+        p0="_".join(["c0",tag])
+        p0Syst="_".join(["syst_c0",tag])
+
+        if uncertainties[0] !=0:
+            self.w.factory("{name}[-5,5]".format(name=p0Syst))
+            self.w.factory("expr::{name}('({p0})*(1+{syst})',{syst})".format(name=p0,p0=info['c_0'],syst=p0Syst))
+
+            self.addSystematic(p0Syst,"param",[0.0,uncertainties[0]])
+            p0VAR = self.w.function(p0)
+
+        else:    
+            self.w.factory("{name}[{val}]".format(name=p0,val=info['c_0']))
+            p0VAR = self.w.var(p0)
+
+
+        p1="_".join(["c1",tag])
+        p1Syst="_".join(["syst_c1",tag])
+
+        if uncertainties[1] !=0:
+            self.w.factory("{name}[-5,5]".format(name=p1Syst))
+            self.w.factory("expr::{name}('({p1})*(1+{syst})',{syst})".format(name=p1,p1=info['c_1'],syst=p1Syst))
+            self.addSystematic(p1Syst,"param",[0.0,uncertainties[1]])
+            p1VAR = self.w.function(p0)
+        else:    
+            self.w.factory("{name}[{val}]".format(name=p1,val=info['c_1']))
+            p1VAR = self.w.var(p1)
+
+        p2="_".join(["c2",tag])
+        p2Syst="_".join(["syst_c2",tag])
+
+        if uncertainties[2] !=0:
+            self.w.factory("{name}[-5,5]".format(name=p2Syst))
+            self.w.factory("expr::{name}('({p2})*(1+{syst})',{syst})".format(name=p2,p2=info['c_2'],syst=p2Syst))
+            self.addSystematic(p2Syst,"param",[0.0,uncertainties[2]])
+            p2VAR = self.w.function(p2)
+        else:    
+            self.w.factory("{name}[{val}]".format(name=p2,val=info['c_2']))
+            p2VAR = self.w.var(p2)
+
+        pdfName2="_".join([name,self.tag,'Erf'])
+        erfexp = ROOT.RooErfExpPdf(pdfName2,pdfName2,self.w.var(MJJ),p0VAR,p1VAR,p2VAR)
+        getattr(self.w,'import')(erfexp,ROOT.RooFit.Rename(pdfName2))
+
+
+        fR="_".join(["fR",tag])
+        fRSyst="_".join(["syst_fR",tag])
+
+        if uncertainties[3] !=0:
+            self.w.factory("{name}[-0.5,0.5]".format(name=fRSyst))
+            self.w.factory("expr::{name}('({fR})*(1+{syst})',{syst})".format(name=fR,fR=info['fR'],syst=fRSyst))
+            self.addSystematic(fRSyst,"param",[0.0,uncertainties[3]])
+            fRVAR = self.w.function(fR)
+        else:    
+            self.w.factory("{name}[{val}]".format(name=fR,val=info['fR']))
+            fRVAR = self.w.var(fR)
+
+
+
+        pdfName="_".join([name,self.tag])
+        self.w.factory("SUM::{name}({fR}*{name}_Erf,{name}_CB)".format(name=pdfName,fR=fR))    
+        f.close()
+
 
 
 
@@ -241,98 +411,125 @@ class DataCardMaker:
           self.w.factory("SUM::{name}({f}*{name1},{name2})".format(name=pdfName,name1=pdfName1,name2=pdfName2,f=fname))
 
 
-    def addMJJParametricBackgroundShapeErfExp(self,name,variable,jsonFile,newTag="",uncertainties = [0,0,0]):
+    def addMJJParametricBackgroundShapeErfExp(self,name,variable,jsonFile,systP0={},systP1={},systP2={}):
 
         MJJ=variable
         self.w.factory(MJJ+"[0,10000]")
-
-        if newTag !="":
-            tag=newTag
-        else:
-            tag=name+"_"+self.tag
-
-
         f=open(jsonFile)
         info=json.load(f)
 
 
-        p0="_".join(["c0",tag])
-        p0Syst="_".join(["syst_c0",tag])
+        p0Systs=[]
+        p1Systs=[]
+        p2Systs=[]
 
-        if uncertainties[0] !=0:
-            self.w.factory("{name}[-5,5]".format(name=p0Syst))
-            self.w.factory("expr::{name}('({p0})*(1+{syst})',{syst})".format(name=p0,p0=info['c_0'],syst=p0Syst))
+        p0SystStr='0'
+        p1SystStr='0'
+        p2SystStr='0'
 
-            self.addSystematic(p0Syst,"param",[0.0,uncertainties[0]])
-            p0VAR = self.w.function(p0)
+        for syst,factor in systP0.iteritems():
+            self.w.factory(syst+"[0,-0.5,0.5]")
+            p0SystStr+="+{factor}*{syst}".format(factor=factor,syst=syst)
+            p0Systs.append(syst)
+        for syst,factor in systP1.iteritems():
+            self.w.factory(syst+"[0,-0.5,0.5]")
+            p1SystStr+="+{factor}*{syst}".format(factor=factor,syst=syst)
+            p1Systs.append(syst)
+        for syst,factor in systP2.iteritems():
+            self.w.factory(syst+"[0,-0.5,0.5]")
+            p2SystStr+="+{factor}*{syst}".format(factor=factor,syst=syst)
+            p2Systs.append(syst)
 
-        else:    
-            self.w.factory("{name}[{val}]".format(name=p0,val=info['c_0']))
-            p0VAR = self.w.var(p0)
 
 
-        p1="_".join(["c1",tag])
-        p1Syst="_".join(["syst_c1",tag])
+        p0="_".join(["p0",name,self.tag])
+        self.w.factory("expr::{name}('({param})*(1+{vv_syst})',MLNuJ,{vv_systs})".format(name=p0,param=info['c_0'],vv_syst=p0SystStr,vv_systs=','.join(p0Systs)))
 
-        if uncertainties[1] !=0:
-            self.w.factory("{name}[-5,5]".format(name=p1Syst))
-            self.w.factory("expr::{name}('({p1})*(1+{syst})',{syst})".format(name=p1,p1=info['c_1'],syst=p1Syst))
-            self.addSystematic(p1Syst,"param",[0.0,uncertainties[1]])
-            p1VAR = self.w.function(p0)
-        else:    
-            self.w.factory("{name}[{val}]".format(name=p1,val=info['c_1']))
-            p1VAR = self.w.var(p1)
+        p1="_".join(["p1",name,self.tag])
+        self.w.factory("expr::{name}('({param})*(1+{vv_syst})',MLNuJ,{vv_systs})".format(name=p1,param=info['c_1'],vv_syst=p1SystStr,vv_systs=','.join(p1Systs)))
 
-        p2="_".join(["c2",tag])
-        p2Syst="_".join(["syst_c2",tag])
-
-        if uncertainties[2] !=0:
-            self.w.factory("{name}[-5,5]".format(name=p2Syst))
-            self.w.factory("expr::{name}('({p2})*(1+{syst})',{syst})".format(name=p2,p2=info['c_2'],syst=p2Syst))
-            self.addSystematic(p2Syst,"param",[0.0,uncertainties[2]])
-            p2VAR = self.w.function(p2)
-        else:    
-            self.w.factory("{name}[{val}]".format(name=p2,val=info['c_2']))
-            p2VAR = self.w.var(p2)
+        p2="_".join(["p2",name,self.tag])
+        self.w.factory("expr::{name}('({param})*(1+{vv_syst})',MLNuJ,{vv_systs})".format(name=p2,param=info['c_2'],vv_syst=p2SystStr,vv_systs=','.join(p2Systs)))
 
         pdfName="_".join([name,self.tag])
-        erfexp = ROOT.RooErfExpPdf(pdfName,pdfName,self.w.var(MJJ),p0VAR,p1VAR,p2VAR)
+        erfexp = ROOT.RooErfExpPdf(pdfName,pdfName,self.w.var(MJJ),self.w.function(p0),self.w.function(p1),self.w.function(p2))
         getattr(self.w,'import')(erfexp,ROOT.RooFit.Rename(pdfName))
         f.close()
 
 
 
-    def addMJJParametricBackgroundShapeExpo(self,name,variable,jsonFile,newTag="",uncertainty=0):
+
+
+
+    def addMJJParametricBackgroundShapeExpo(self,name,variable,jsonFile,systP0={}):
 
         MJJ=variable
         self.w.factory(MJJ+"[0,10000]")
 
-        if newTag !="":
-            tag=newTag
-        else:
-            tag=name+"_"+self.tag
-
-
         f=open(jsonFile)
         info=json.load(f)
 
+        p0Systs=[]
+        p0SystStr='0'
+        for syst,factor in systP0.iteritems():
+            self.w.factory(syst+"[0,-0.5,0.5]")
+            p0SystStr+="+{factor}*{syst}".format(factor=factor,syst=syst)
+            p0Systs.append(syst)
 
-        p0="_".join(["c0",tag])
-        p0Syst="_".join(["syst_c0",tag])
+        p0="_".join(["p0",name,self.tag])
+        self.w.factory("expr::{name}('({param})*(1+{vv_syst})',MLNuJ,{vv_systs})".format(name=p0,param=info['c_0'],vv_syst=p0SystStr,vv_systs=','.join(p0Systs)))
 
-        if uncertainty !=0:
-            self.w.factory("{name}[-5,5]".format(name=p0Syst))
-            self.w.factory("expr::{name}('({p0})*(1+{syst})',{syst})".format(name=p0,p0=info['c_0'],syst=p0Syst))
-            self.addSystematic(p0Syst,"param",[0.0,uncertainty])
-        else:    
-            self.w.factory("{name}[{val}]".format(name=p0,val=info['c_0']))
 
         pdfName="_".join([name,self.tag])
         self.w.factory("RooExponential::{name}({x},{slope})".format(name=pdfName,x=MJJ,slope=p0))
         f.close()
 
 
-    def addMJJFloatingBackgroundShapeBernstein(self,name,variable,newTag="",order=3):
+    def addMJJFloatingBackgroundShapeErfExp(self,name,variable,newTag=""):
+        MJJ=variable
+        self.w.factory(MJJ+"[0,1000]")
+
+        if newTag !="":
+            tag=newTag
+        else:
+            tag=name+"_"+self.tag
+
+
+        p0="_".join(["c_0",tag])
+        self.w.factory(p0+"[-0.03,-10,10]")
+        p1="_".join(["c_1",tag])
+        self.w.factory(p1+"[50,40,160]")
+        p2="_".join(["c_2",tag])
+        self.w.factory(p2+"[20,1,200]")
+
+        pdfName="_".join([name,self.tag])
+        bernsteinPDF = ROOT.RooErfExpPdf(pdfName,pdfName,self.w.var(MJJ),self.w.var(p0),self.w.var(p1),self.w.var(p2))
+        getattr(self.w,'import')(bernsteinPDF,ROOT.RooFit.Rename(pdfName))
+
+    def addMJJFloatingBackgroundShapeBifur(self,name,variable,newTag=""):
+        MJJ=variable
+        self.w.factory(MJJ+"[0,1000]")
+
+        if newTag !="":
+            tag=newTag
+        else:
+            tag=name+"_"+self.tag
+
+
+        p0="_".join(["c_0",tag])
+        self.w.factory(p0+"[60,40,160]")
+        p1="_".join(["c_1",tag])
+        self.w.factory(p1+"[20,1,200]")
+        p2="_".join(["c_2",tag])
+        self.w.factory(p2+"[20,1,200]")
+
+
+        pdfName="_".join([name,self.tag])
+        self.w.factory("RooBifurGauss::{name}({var},{p0},{p1},{p2})".format(name=pdfName,var=MJJ,p0=p0,p1=p1,p2=p2))
+
+
+
+    def addMJJFloatingBackgroundShapeExpo(self,name,variable,newTag=""):
         MJJ=variable
         self.w.factory(MJJ+"[0,10000]")
 
@@ -341,16 +538,15 @@ class DataCardMaker:
         else:
             tag=name+"_"+self.tag
 
-        cList = ROOT.RooArgList()
-        for i in range(0,order):
-            p0="_".join(["c"+str(i),tag])
-            self.w.factory(p0+"[0,100]")
-            cList.add(self.w.var(p0))
+
+        p0="_".join(["c_0",tag])
+
+        self.w.factory(p0+"[-10,0]")
 
         pdfName="_".join([name,self.tag])
-        bernsteinPDF = ROOT.RooBernsteinFast(order)(pdfName,pdfName,self.w.var(MJJ),cList)
-        getattr(self.w,'import')(bernsteinPDF,ROOT.RooFit.Rename(pdfName))
-                       
+        self.w.factory("RooExponential::{name}({var},{p0})".format(name=pdfName,var=MJJ,p0=p0))
+
+
 
 
 
@@ -432,7 +628,80 @@ class DataCardMaker:
 
 
 
-    def addParametricMVVBKGShapeErfPow(self,name,MVV,MJJ,jsonFile,newTag=""):
+    def addMVVBackgroundShapeErfPow(self,name,variable,newTag="",preconstrains={}):
+        
+        MVV=variable
+        self.w.factory(MVV+"[0,13000]")
+
+        if newTag !="":
+            tag=newTag
+        else:
+            tag=name+"_"+self.tag
+
+        p0="_".join(["p0",tag])
+        if "p0" in preconstrains.keys():
+            val = preconstrains['p0']['val']
+            err = preconstrains['p0']['err']
+            self.addSystematic(p0,"param",[val,err])
+        else:
+            val = -0.1
+        self.w.factory("{name}[{val},-20,0]".format(name=p0,val=val))
+
+
+        p1="_".join(["p1",tag])
+        if "p1" in preconstrains.keys():
+            val = preconstrains['p1']['val']
+            err = preconstrains['p1']['err']
+            self.addSystematic(p1,"param",[val,err])
+        else:
+            val = 700
+        self.w.factory("{name}[{val},0,2000]".format(name=p1,val=val))
+
+
+        p2="_".join(["p2",tag])
+        if "p2" in preconstrains.keys():
+            val = preconstrains['p2']['val']
+            err = preconstrains['p2']['err']
+            self.addSystematic(p2,"param",[val,err])
+        else:
+            val = 1000
+        self.w.factory("{name}[{val},0,5000]".format(name=p2,val=val))
+
+
+        pdfName="_".join([name,self.tag])
+        qcd = ROOT.RooErfPowPdf(pdfName,pdfName,self.w.var(MVV),self.w.function(p0),self.w.function(p1),self.w.function(p2))
+
+        getattr(self.w,'import')(qcd,ROOT.RooFit.Rename(pdfName))
+
+
+
+    def addParametricMVVBKGShapeErfPow(self,name,MVV,MJJ,jsonFile,newTag="",systs0={},systs1={},systs2={}):
+
+        syst0Str='0'
+        syst1Str='0'
+        syst2Str='0'
+
+
+        systsV0=[]
+        systsV1=[]
+        systsV2=[]
+
+        for syst,factor in systs0.iteritems():
+            self.w.factory(syst+"[0,-0.1,0.1]")
+            syst0Str+="+{factor}*{syst}".format(factor=factor,syst=syst)
+            systsV0.append(syst)
+
+        for syst,factor in systs1.iteritems():
+            self.w.factory(syst+"[0,-0.1,0.1]")
+            syst1Str+="+{factor}*{syst}".format(factor=factor,syst=syst)
+            systsV1.append(syst)
+
+        for syst,factor in systs2.iteritems():
+            self.w.factory(syst+"[0,-0.1,0.1]")
+            syst2Str+="+{factor}*{syst}".format(factor=factor,syst=syst)
+            systsV2.append(syst)
+
+
        
         self.w.factory(MVV+"[0,13000]")
         self.w.factory(MJJ+"[0,1000]")
@@ -446,18 +715,52 @@ class DataCardMaker:
         f=open(jsonFile)
         info=json.load(f)
 
-        p0="_".join(["p0",name,self.tag])
-        self.w.factory("expr::{name}('({param})*(1+0*{MJJ})',{MJJ})".format(name=p0,param=info['p0'].replace("mjj",MJJ),MJJ=MJJ))
 
-        p1="_".join(["p1",name,self.tag])
-        self.w.factory("expr::{name}('({param})*(1+0*{MJJ})',{MJJ})".format(name=p1,param=info['p1'].replace("mjj",MJJ),MJJ=MJJ))
 
-        p2="_".join(["p2",name,self.tag])
-        self.w.factory("expr::{name}('({param})*(1+0*{MJJ})',{MJJ})".format(name=p2,param=info['p2'].replace("mjj",MJJ),MJJ=MJJ))
+        p0="_".join(["p0",name,tag])
+        self.w.factory("expr::{name}('({param})*(1+0*{MJJ}+{syst})',{MJJ},{systs})".format(name=p0,param=str(info['p0']).replace("mjj",MJJ),MJJ=MJJ,syst=syst0Str,systs=','.join(systsV0)))
+
+        p1="_".join(["p1",name,tag])
+        self.w.factory("expr::{name}('({param})*(1+0*{MJJ}+{syst})',{MJJ},{systs})".format(name=p1,param=str(info['p1']).replace("mjj",MJJ),MJJ=MJJ,syst=syst1Str,systs=','.join(systsV1)))
+
+        p2="_".join(["p2",name,tag])
+        self.w.factory("expr::{name}('({param})*(1+0*{MJJ}+{syst})',{MJJ},{systs})".format(name=p2,param=str(info['p2']).replace("mjj",MJJ),MJJ=MJJ,syst=syst2Str,systs=','.join(systsV2)))
 
         pdfName="_".join([name,self.tag])
         erfexp = ROOT.RooErfPowPdf(pdfName,pdfName,self.w.var(MVV),self.w.function(p0),self.w.function(p1),self.w.function(p2))
         getattr(self.w,'import')(erfexp,ROOT.RooFit.Rename(name))
+
+
+
+    def addParametricMVVBKGShapePow(self,name,MVV,MJJ,jsonFile,newTag="",systs0={}):
+        syst0Str='0'
+        systsV0=[]
+        for syst,factor in systs0.iteritems():
+            self.w.factory(syst+"[0,-0.1,0.1]")
+            syst0Str+="+{factor}*{syst}".format(factor=factor,syst=syst)
+            systsV0.append(syst)
+       
+        self.w.factory(MVV+"[0,13000]")
+        self.w.factory(MJJ+"[0,1000]")
+
+        if newTag !="":
+            tag=newTag
+        else:
+            tag=name+"_"+self.tag
+
+
+        f=open(jsonFile)
+        info=json.load(f)
+
+
+
+        p0="_".join(["p0",name,tag])
+        self.w.factory("expr::{name}('({param})*(1+0*{MJJ}+{syst})',{MJJ},{systs})".format(name=p0,param=info['p0'].replace("mjj",MJJ),MJJ=MJJ,syst=syst0Str,systs=','.join(systsV0)))
+
+        pdfName="_".join([name,self.tag])
+        qcd = ROOT.RooPower(pdfName,pdfName,self.w.var(MVV),self.w.function(p0))
+        getattr(self.w,'import')(erfexp,ROOT.RooFit.Rename(name))
+
 
 
 
@@ -466,7 +769,7 @@ class DataCardMaker:
         pdfName1="_".join([pdf1,self.tag])
         pdfName2="_".join([pdf2,self.tag])
         if sumVarExpr=='':
-            self.w.factory(sumVar+"[-1,1]")
+            self.w.factory(sumVar+"[0,1]")
         else:    
             self.w.factory("expr::"+sumVar+"("+sumVarExpr+")")
         self.w.factory("SUM::{name}({f}*{name1},{name2})".format(name=pdfName,name1=pdfName1,f=sumVar,name2=pdfName2))
@@ -477,6 +780,12 @@ class DataCardMaker:
         pdfName1="_".join([pdf1,self.tag])
         pdfName2="_".join([pdf2,self.tag])
         self.w.factory("PROD::{name}({name1}|{x},{name2})".format(name=pdfName,name1=pdfName1,x=varName,name2=pdfName2))
+
+    def product(self,name,pdf1,pdf2):
+        pdfName="_".join([name,self.tag])
+        pdfName1="_".join([pdf1,self.tag])
+        pdfName2="_".join([pdf2,self.tag])
+        self.w.factory("PROD::{name}({name1},{name2})".format(name=pdfName,name1=pdfName1,name2=pdfName2))
 
 
 

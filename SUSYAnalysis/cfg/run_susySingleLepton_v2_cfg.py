@@ -350,14 +350,14 @@ elif sample == "data":
   # central samples
   from CMGTools.RootTools.samples.samples_13TeV_DATA2016 import *
 
-  selectedComponents = [SingleElectron_Run2016B_PromptReco_v2, SingleMuon_Run2016B_PromptReco_v2] #, JetHT_Run2016B_PromptReco_v2_HT800Only]
+  selectedComponents = [SingleElectron_Run2016B_PromptReco_v2, SingleMuon_Run2016B_PromptReco_v2, JetHT_Run2016B_PromptReco_v2_HT800Only]
 
   if test!=0 and jsonAna in susyCoreSequence: susyCoreSequence.remove(jsonAna)
   if test==1:
     comp = SingleElectron_Run2016B_PromptReco_v2 #JetHT_Run2016B_PromptReco_v2_HT800Only
 #SingleElectron_Run2016B_PromptReco_v2
 #    comp.files = comp.files[:1]
-    comp.files = comp.files[:1]
+    comp.files = comp.files[10:11]
     #comp.files = comp.files[10:11]
     selectedComponents = [comp]
     comp.splitFactor = 1
@@ -405,13 +405,6 @@ treeProducer = cfg.Analyzer(
   collections = susySingleLepton_collections,
   )
 
-## Recompute HBHE filters
-# HBHE filter analyzer
-from CMGTools.TTHAnalysis.analyzers.hbheAnalyzer import hbheAnalyzer
-hbheFilterAna = cfg.Analyzer(
-    hbheAnalyzer, name = 'hbheAnalyzer',IgnoreTS4TS5ifJetInLowBVRegion=False
-)
-
 
 if isSignal:
   ## SUSY Counter
@@ -432,9 +425,8 @@ if isSignal:
 sequence = cfg.Sequence(susyCoreSequence+[
     LHEAna,
     ttHEventAna,
-    ttHSTSkimmer,
+#    ttHSTSkimmer,
     ttHHTSkimmer,
-    hbheFilterAna,
     treeProducer,
 #   susyCounter
     ])

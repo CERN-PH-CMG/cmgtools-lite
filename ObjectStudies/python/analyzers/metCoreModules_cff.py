@@ -57,6 +57,13 @@ badChargedHadronAna = cfg.Analyzer(
     packedCandidates = 'packedPFCandidates',
 )
 
+from CMGTools.TTHAnalysis.analyzers.badMuonAnalyzer import badMuonAnalyzer
+badMuonAna = cfg.Analyzer(
+    badMuonAnalyzer, name = 'badMuonAna',
+    muons='slimmedMuons',
+    packedCandidates = 'packedPFCandidates',
+)
+
 
 # Create flags for MET filter bits
 eventFlagsAna = cfg.Analyzer(
@@ -495,6 +502,7 @@ metCoreSequence = [
     metPuppiAnaScaleUp,
     metPuppiAnaScaleDown,
     badChargedHadronAna,
+    badMuonAna,
     eventFlagsAna,
 ##    hbheFilterAna,
 ##### tree

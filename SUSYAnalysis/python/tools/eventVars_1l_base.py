@@ -604,7 +604,7 @@ class EventVars1L_base:
             ret['Lep_relIso'] = leps[0].relIso03
             ret['Lep_miniIso'] = leps[0].miniRelIso
             if hasattr(leps[0],"hOverE"):
-                ret['Lep_hOverE'] = ret['Lep_hOverE'] = leps[0].hOverE
+                ret['Lep_hOverE'] = leps[0].hOverE
 
         ########
         ### Jets

@@ -512,6 +512,8 @@ if __name__ == "__main__":
         #lumi = 42.0
         if '147pb' in fileName:
             lumi = 147.0
+        elif '804pb' in fileName:
+            lumi = 804
         elif '1260pb' in fileName:
             lumi = 1260
 
