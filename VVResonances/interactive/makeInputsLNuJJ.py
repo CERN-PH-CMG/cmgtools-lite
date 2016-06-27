@@ -7,7 +7,7 @@ import os
 
 cuts={}
 
-cuts['common'] = '(HLT_MU||HLT_ELE)&&Flag_goodVertices&&Flag_CSCTightHaloFilter&&Flag_HBHENoiseFilter&&Flag_HBHENoiseIsoFilter&&Flag_eeBadScFilter&&lnujj_nOtherLeptons==0'
+cuts['common'] = '(HLT_MU||HLT_ELE)&&Flag_goodVertices&&Flag_CSCTightHaloFilter&&Flag_HBHENoiseFilter&&Flag_HBHENoiseIsoFilter&&Flag_eeBadScFilter&&Flag_BadPFMuonFilter&&Flag_BadChargedCandidateFilter&&lnujj_nOtherLeptons==0'
 cuts['mu'] = 'abs(lnujj_l1_l_pdgId)==13'
 cuts['e'] = 'abs(lnujj_l1_l_pdgId)==11'
 cuts['HP'] = 'lnujj_l2_tau2/lnujj_l2_tau1<0.6'
@@ -49,8 +49,8 @@ binsMJJ=40
 binsMVV=100
 
 
-cuts['acceptance']= "lnujj_LV_mass>{minMVV}&&lnujj_LV_mass<{maxMVV}&&lnujj_l2_pruned_mass>{minMJJ}&&lnujj_l2_pruned_mass<{maxMJJ}".format(minMVV=minMVV,maxMVV=maxMVV,minMJJ=minMJJ,maxMJJ=maxMJJ)                
-cuts['acceptanceMJJ']= "lnujj_l2_pruned_mass>{minMJJ}&&lnujj_l2_pruned_mass<{maxMJJ}".format(minMJJ=minMJJ,maxMJJ=maxMJJ)                
+cuts['acceptance']= "lnujj_LV_mass>{minMVV}&&lnujj_LV_mass<{maxMVV}&&lnujj_l2_pruned_mass>{minMJJ}&&lnujj_l2_pruned_mass<{maxMJJ}".format(minMVV=minMVV,maxMVV=maxMVV,minMJJ=minMJJ,maxMJJ=maxMJJ)
+cuts['acceptanceMJJ']= "lnujj_l2_pruned_mass>{minMJJ}&&lnujj_l2_pruned_mass<{maxMJJ}".format(minMJJ=minMJJ,maxMJJ=maxMJJ)
 
 
 
@@ -85,7 +85,7 @@ def makeBackgroundShapes(name,filename,template,addCut=""):
                 cut='&&'.join([cuts['common'],cuts[p],cuts[l]])
             else:
                 cut='&&'.join([cuts['common'],cuts[p],cuts[l],addCut])
-                
+
             mvvFile=filename+"_MVV_"+name+"_"+l+"_"+p
             cmd='vvMakeBackgroundMVVConditionalShapes.py -s "{template}" -c "{cut}"  -o "{rootFile}" -v "lnujj_LV_mass" -V "lnujj_l2_pruned_mass"  -b 100  -x {minMVV} -X {maxMVV}   -B 8 -y {minMJJ} -Y {maxMJJ}   samples'.format(template=template,cut=cut,rootFile=mvvFile,minMVV=minMVV,maxMVV=maxMVV,minMJJ=minMJJ,maxMJJ=maxMJJ)
             os.system(cmd)
@@ -103,7 +103,7 @@ def makeBackgroundShapes(name,filename,template,addCut=""):
                 function='erfexp'
 #                if name.find('top')!=-1:
 #                    function='erfexpCB'
-                    
+
             if p=="LP":
                 function='erfexp'
                 if name.find('top')!=-1:
@@ -112,7 +112,7 @@ def makeBackgroundShapes(name,filename,template,addCut=""):
             rootFile="tmp.root"
             cmd='vvMakeData.py -s "{samples}"  -c "{cut}"  -o "{rootFile}" -v "lnujj_l2_pruned_mass" -b "{bins}" -m "{mini}" -M "{maxi}"  -n "{name}"  -d 0 samples'.format(samples=template,cut=cut,rootFile=rootFile,bins=binsMJJ,mini=minMJJ,maxi=maxMJJ,name=name)
             os.system(cmd)
-            
+
             jsonFile=filename+"_MJJ_"+name+"_"+l+"_"+p
             cmd='vvSimpleFit.py -o {jsonFile} -i {histo} -f {function} {rootFile}'.format(jsonFile=jsonFile,rootFile=rootFile,histo=name,function=function)
             os.system(cmd)
@@ -126,7 +126,7 @@ def makeBackgroundShapesPerCat(name,filename,template,addCut=""):
                     cut='&&'.join([cuts['common'],cuts[p],cuts[l],cuts[c]])
                 else:
                     cut='&&'.join([cuts['common'],cuts[p],cuts[l],cuts[c],addCut])
-                
+
                 mvvFile=filename+"_MVV_"+name+"_"+l+"_"+p+"_"+c
                 cmd='vvMakeBackgroundMVVConditionalShapes.py -s "{template}" -c "{cut}"  -o "{rootFile}" -v "lnujj_LV_mass" -V "lnujj_l2_pruned_mass"  -b 100  -x {minMVV} -X {maxMVV}   -B 8 -y {minMJJ} -Y {maxMJJ}   samples'.format(template=template,cut=cut,rootFile=mvvFile,minMVV=minMVV,maxMVV=maxMVV,minMJJ=minMJJ,maxMJJ=maxMJJ)
                 os.system(cmd)
@@ -142,14 +142,14 @@ def makeBackgroundShapesPerCat(name,filename,template,addCut=""):
 
                 if p=="HP":
                     function='erfexp'
-                    
+
                 if p=="LP":
                     function='expo'
 
                 rootFile="tmp.root"
                 cmd='vvMakeData.py -s "{samples}"  -c "{cut}"  -o "{rootFile}" -v "lnujj_l2_pruned_mass" -b "{bins}" -m "{mini}" -M "{maxi}"  -n "{name}"  -d 0 samples'.format(samples=template,cut=cut,rootFile=rootFile,bins=binsMJJ,mini=minMJJ,maxi=maxMJJ,name=name)
                 os.system(cmd)
-            
+
                 jsonFile=filename+"_MJJ_"+name+"_"+l+"_"+p+"_"+c
                 cmd='vvSimpleFit.py -o {jsonFile} -i {histo} -f {function} {rootFile}'.format(jsonFile=jsonFile,rootFile=rootFile,histo=name,function=function)
                 os.system(cmd)
@@ -170,13 +170,13 @@ def makeTopShapes(name,filename,template,addCut=""):
                 cut='&&'.join([cuts['common']])
             else:
                 cut='&&'.join([cuts['common'],addCut])
-                       
+
         mjjFile=filename+"_MJJ_"+name+"_"+p
         cmd='vvMakeTopMJJConditionalShapes.py -s "{template}" -c "{cut}"  -o "{rootFile}" -v "lnujj_l2_pruned_mass" -V "lnujj_LV_mass"  -b 20  -x {minMJJ} -X {maxMJJ}   -B 5 -y {minMVV} -Y {maxMVV}   samples'.format(template=template,cut=cut,rootFile=mjjFile,minMVV=minMVV,maxMVV=2000,minMJJ=minMJJ,maxMJJ=maxMJJ)
         os.system(cmd)
 
 
-    for l in leptons:    
+    for l in leptons:
         for p in purities:
             if addCut=='':
                 cut='&&'.join([cuts['common'],cuts[p],cuts[l]])
@@ -186,7 +186,7 @@ def makeTopShapes(name,filename,template,addCut=""):
             rootFile="tmp.root"
             cmd='vvMakeData.py -s "{samples}"  -c "{cut}"  -o "{rootFile}" -v "lnujj_LV_mass" -b "{bins}" -m "{mini}" -M "{maxi}"  -n "{name}"  -d 0 samples'.format(samples=template,cut=cut,rootFile=rootFile,bins=100,mini=500,maxi=maxMVV,name=name)
             os.system(cmd)
-            
+
             jsonFile=filename+"_MVV_"+name+"_"+l+"_"+p
             cmd='vvSimpleFit.py -o {jsonFile} -i {histo} -f erfpow {rootFile}'.format(jsonFile=jsonFile,rootFile=rootFile,histo=name)
             os.system(cmd)
@@ -201,7 +201,7 @@ def makeTopShapes(name,filename,template,addCut=""):
 #            else:
 #                cut='&&'.join([cuts['common'],cuts[p],addCut,cuts[l]])
 #
-#                
+#
 #            mjjFile=filename+"_MJJ_"+name+"_"+l+"_"+p
 #            cmd='vvMakeTopMJJConditionalShapesSim.py -s "{template}" -c "{cut}"  -o "{rootFile}" -v "lnujj_l2_pruned_mass" -V "lnujj_LV_mass"  -b 40  -x {minMJJ} -X {maxMJJ}   -B 15 -y {minMVV} -Y {maxMVV}   samples'.format(template=template,cut=cut,rootFile=mjjFile,minMVV=minMVV,maxMVV=2000,minMJJ=minMJJ,maxMJJ=m#axMJJ)
 #            os.system(cmd)
@@ -226,7 +226,7 @@ def makeNormalizations(name,filename,template,data=0,addCut=''):
 
 
 
-                   
+
 
 
 
@@ -244,4 +244,3 @@ makeTopShapes("topRes","LNuJJ",topTemplateExt,"lnujj_l2_mergedVTruth&&lnujj_l2_n
 #makeNormalizations("topNonRes","LNuJJ",topTemplate,0,"!(lnujj_l2_mergedVTruth&&lnujj_l2_nearestBDRTruth>0.8)")
 #makeNormalizations("top","LNuJJ",topTemplate,0)
 #makeNormalizations("data","LNuJJ",dataTemplate,1)
-

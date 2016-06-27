@@ -51,7 +51,7 @@ triggerFlagsAna = cfg.Analyzer(
 eventFlagsAna = cfg.Analyzer(
     TriggerBitAnalyzer, name="EventFlags",
     processName = 'PAT',
-    fallbackProcessName = 'RECO', 
+    fallbackProcessName = 'RECO',
     outprefix   = 'Flag',
     triggerBits = {
         "HBHENoiseFilter" : [ "Flag_HBHENoiseFilter" ],
@@ -67,6 +67,9 @@ eventFlagsAna = cfg.Analyzer(
         "trkPOG_manystripclus53X" : [ "Flag_trkPOG_manystripclus53X" ],
         "trkPOG_toomanystripclus53X" : [ "Flag_trkPOG_toomanystripclus53X" ],
         "trkPOG_logErrorTooManyClusters" : [ "Flag_trkPOG_logErrorTooManyClusters" ],
+        "globalTightHalo2016Filter" : [ "Flag_globalTightHalo2016Filter" ],
+        "BadPFMuonFilter" : [ "Flag_BadPFMuonFilter" ],
+        "BadChargedCandidateFilter" : [ "Flag_BadChargedCandidateFilter" ],
         "METFilters" : [ "Flag_METFilters" ],
     }
     )
@@ -164,13 +167,13 @@ lepAna = cfg.Analyzer(
     el_effectiveAreas = "Spring15_25ns_v1" , #(can be 'Data2012' or 'Phys14_25ns_v1')
     ele_tightId = "" ,
     # Mini-isolation, with pT dependent cone: will fill in the miniRelIso, miniRelIsoCharged, miniRelIsoNeutral variables of the leptons (see https://indico.cern.ch/event/368826/ )
-    doMiniIsolation = False, # off by default since it requires access to all PFCandidates 
+    doMiniIsolation = False, # off by default since it requires access to all PFCandidates
     packedCandidates = 'packedPFCandidates',
     miniIsolationPUCorr = 'deltaBeta', # Allowed options: 'rhoArea' (EAs for 03 cone scaled by R^2), 'deltaBeta', 'raw' (uncorrected), 'weights' (delta beta weights; not validated)
     miniIsolationVetoLeptons = 'inclusive', # use 'inclusive' to veto inclusive leptons and their footprint in all isolation cones
     # minimum deltaR between a loose electron and a loose muon (on overlaps, discard the electron)
     min_dr_electron_muon = 0.0,
-    # do MC matching 
+    # do MC matching
     do_mc_match = True, # note: it will in any case try it only on MC, not on data
     match_inclusiveLeptons = False, # match to all inclusive leptons
     )
@@ -185,7 +188,7 @@ lepIDAna = cfg.Analyzer(
 metAna = cfg.Analyzer(
     METAnalyzer, name="metAnalyzer",
     metCollection     = "slimmedMETs",
-    noPUMetCollection = "slimmedMETs",    
+    noPUMetCollection = "slimmedMETs",
     copyMETsByValue = False,
     doTkMet = False,
     doMetNoPU = True,
@@ -216,7 +219,7 @@ jetAna = cfg.Analyzer(
     jetLepDR = 0.4,
     cleanSelectedLeptons = False, #Whether to clean 'selectedLeptons' after disambiguation. Treat with care (= 'False') if running Jetanalyzer more than once
     minLepPt = 10,
-    relaxJetId = False,  
+    relaxJetId = False,
     doPuId = False, # Not commissioned in 7.0.X
     recalibrateJets = True, #'MC', # True, False, 'MC', 'Data'
     applyL2L3Residual = True, # Switch to 'Data' when they will become available for Data
@@ -227,7 +230,7 @@ jetAna = cfg.Analyzer(
     shiftJEC = 0, # set to +1 or -1 to apply +/-1 sigma shift to the nominal jet energies
     addJECShifts = False, # if true, add  "corr", "corrJECUp", and "corrJECDown" for each jet (requires uncertainties to be available!)
     smearJets = False,
-    shiftJER = 0, # set to +1 or -1 to get +/-1 sigma shifts  
+    shiftJER = 0, # set to +1 or -1 to get +/-1 sigma shifts
     alwaysCleanPhotons = False,
     cleanGenJetsFromPhoton = False,
     cleanJetsFromFirstPhoton = False,
@@ -254,7 +257,7 @@ jetAnaAK8 = cfg.Analyzer(
     jetLepDR = 0.4,
     cleanSelectedLeptons = False, #Whether to clean 'selectedLeptons' after disambiguation. Treat with care (= 'False') if running Jetanalyzer more than once
     minLepPt = 10,
-    relaxJetId = False,  
+    relaxJetId = False,
     doPuId = False, # Not commissioned in 7.0.X
     recalibrateJets = True, #'MC', # True, False, 'MC', 'Data'
     applyL2L3Residual = True, # Switch to 'Data' when they will become available for Data
@@ -265,7 +268,7 @@ jetAnaAK8 = cfg.Analyzer(
     shiftJEC = 0, # set to +1 or -1 to apply +/-1 sigma shift to the nominal jet energies
     addJECShifts = False, # if true, add  "corr", "corrJECUp", and "corrJECDown" for each jet (requires uncertainties to be available!)
     smearJets = False,
-    shiftJER = 0, # set to +1 or -1 to get +/-1 sigma shifts  
+    shiftJER = 0, # set to +1 or -1 to get +/-1 sigma shifts
     alwaysCleanPhotons = False,
     cleanGenJetsFromPhoton = False,
     cleanJetsFromFirstPhoton = False,
@@ -301,7 +304,6 @@ vTauAna = cfg.Analyzer(
     VTauBuilder,name='vTauAna',
     suffix = ''
 )
-    
 
 
 
@@ -309,7 +311,8 @@ vTauAna = cfg.Analyzer(
 
 
 
-    
+
+
 
 coreSequence = [
    #eventSelector,

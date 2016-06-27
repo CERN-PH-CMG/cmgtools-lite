@@ -8,7 +8,7 @@ from CMGTools.VVResonances.plotting.StackPlotter import StackPlotter
 
 cuts={}
 
-cuts['common'] = '(HLT_MU||HLT_ELE)&&Flag_goodVertices&&Flag_CSCTightHaloFilter&&Flag_HBHENoiseFilter&&Flag_HBHENoiseIsoFilter&&Flag_eeBadScFilter&&lnujj_nOtherLeptons==0'
+cuts['common'] = '(HLT_MU||HLT_ELE)&&Flag_goodVertices&&Flag_globalTightHalo2016Filter&&Flag_HBHENoiseFilter&&Flag_HBHENoiseIsoFilter&&Flag_eeBadScFilter&&Flag_EcalDeadCellTriggerPrimitiveFilter&&Flag_BadPFMuonFilter&&Flag_BadChargedCandidateFilter&&lnujj_nOtherLeptons==0'
 cuts['mu'] = 'abs(lnujj_l1_l_pdgId)==13'
 cuts['e'] = 'abs(lnujj_l1_l_pdgId)==11'
 cuts['HP'] = 'lnujj_l2_tau2/lnujj_l2_tau1<0.6'
@@ -16,7 +16,7 @@ cuts['LP'] = 'lnujj_l2_tau2/lnujj_l2_tau1>0.6&&lnujj_l2_tau2/lnujj_l2_tau1<0.75'
 cuts['nob'] = 'lnujj_nMediumBTags==0'
 cuts['b'] = 'lnujj_nMediumBTags>0'
 
- 
+
 
 #create the W+jets plotters
 wjPlotters=[]
@@ -43,7 +43,7 @@ tt.addCorrectionFactor('puWeight','tree')
 #create the Z+jets plotters
 
 #zPlotters=[]
-#for sample in ['DYJetsToLL_M50_HT100to200','DYJetsToLL_M50_HT200to400','DYJetsToLL_M50_HT400to600','DYJetsToLL_M50_HT600toInf']:  
+#for sample in ['DYJetsToLL_M50_HT100to200','DYJetsToLL_M50_HT200to400','DYJetsToLL_M50_HT400to600','DYJetsToLL_M50_HT600toInf']:
 #    zPlotters.append(TreePlotter('samples/'+sample+'.root','tree'))
 #    zPlotters[-1].setupFromFile('samples/'+sample+'.pck')
 #    zPlotters[-1].addCorrectionFactor('xsec','tree')
@@ -155,6 +155,3 @@ lnujjStack.addPlotter(dataEMU,"data_obs","Data","data")
 #jjnunuStack.addPlotter(QCD,"QCD","QCD multijet","background")
 #jjnunuStack.addPlotter(tt,"tt","t#bar{t}","background")
 #jjnunuStack.addPlotter(dataMET,"data_obs","Data","data")
-
-
-
