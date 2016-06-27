@@ -1,0 +1,25 @@
+# vim: syntax=sh
+* ; TreeName="treeProducerStopSoftB"
+
+#TT+: TTJets   : xsec : 1 ; FillColor=ROOT.kGray+1, Label="tt"
+#TT_softMuB  : TTJets   : xsec : LepOther_mcMatchAny >= 4 ; FillColor=ROOT.kGray+1, Label="tt\, b/c \#rightarrow \#mu"
+#TT_softMuNotB: TTJets   : xsec : LepOther_mcMatchAny <  4 ; FillColor=ROOT.kGray+1, Label="tt\, other"
+TT_goodIVF+: TTJets   : xsec : SV_mcMatchFraction > 0.66 ; FillColor=ROOT.kGreen-9, Label="tt\, b/c SV"
+TT_fakeIVF: TTJets   : xsec : SV_mcMatchFraction < 0.66 ; FillColor=ROOT.kGray+1, Label="tt\, other"
+TW : T_tWch   : xsec : 1 ; FillColor=ROOT.kGray+2, Label="tW"
+TW : TBar_tWch: xsec : 1 ; FillColor=ROOT.kGray+2, Label="tW"
+
+VV : WWTo2L2Nu: xsec : 1 ; FillColor=ROOT.kAzure-9, Label="VV"
+VV : WZTo3LNu:  xsec : 1 ; FillColor=ROOT.kAzure-9, Label="VV"
+
+T  : TBarToLeptons_tch_powheg: xsec*3 : 1 ; FillColor=ROOT.kGray+3, Label="tW"
+
+DY : DYJetsToLL_M10to50 : xsec : 1 ; FillColor=ROOT.kCyan, Label="Z+jets"
+DY : DYJetsToLL_M50     : xsec : 1 ; FillColor=ROOT.kCyan, Label="Z+jets"
+WJets : WJetsToLNu: xsec : 1 ; FillColor=ROOT.kCyan+2, Label="W+jets"
+
+
+
+data : DoubleEG_Run2016B_PromptReco_v2
+data : DoubleMuon_Run2016B_PromptReco_v2
+data : MuonEG_Run2016B_PromptReco_v2
