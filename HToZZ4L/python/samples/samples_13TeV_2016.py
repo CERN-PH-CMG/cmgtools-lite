@@ -131,7 +131,7 @@ mcSamples = mcSamples_4l + mcSamples_onia
 
 #-----------DATA---------------
 dataDir = os.environ['CMSSW_BASE']+"/src/CMGTools/TTHAnalysis/data"
-json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-274421_13TeV_PromptReco_Collisions16_JSON.txt'
+json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-274443_13TeV_PromptReco_Collisions16_JSON.txt'
 from CMGTools.TTHAnalysis.setup.Efficiencies import eff2012
 
 jsonFilter=False
@@ -185,5 +185,5 @@ if __name__ == '__main__':
     if "refresh" in sys.argv:
         from CMGTools.Production.cacheChecker import CacheChecker
         checker = CacheChecker()
-        for d in dataSamples_all:
+        for d in (dataSamples_all if "all" in sys.argv else dataSamples):
                 checker.checkComp(d, verbose=True)

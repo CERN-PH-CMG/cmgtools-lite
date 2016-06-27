@@ -133,11 +133,14 @@ class BaseDumper(Module):
         jets = Collection(ev,"Jet")
         print "run %6d lumi %4d event %11d (id: %d:%d:%d) " % (ev.run, ev.lumi, ev.evt, ev.run, ev.lumi, ev.evt)
         for i,l in enumerate(leps):
-            print "    lepton %d: id %+2d pt %5.1f eta %+4.2f phi %+4.2f   tightId %d/%d/%d relIso %5.3f sip3d %5.2f dxy %+4.3f dz %+4.3f bdt %+5.3f lostHits %1d fsr %1d/%1d" % (
-                    i+1, l.pdgId,l.pt,l.eta,l.phi, l.tightId, l.muIdLoose, l.muIdTrkHighPt, l.relIsoAfterFSR, l.sip3d, l.dxy, l.dz, l.mvaIdSpring15, l.lostHits, l.hasFSR, l.hasOwnFSR),
+            print "    lepton %d: id %+2d pt %5.1f eta %+4.2f phi %+4.2f   tightId %d relIso %5.3f sip3d %5.2f dxy %+4.3f dz %+4.3f bdt %+6.4f lostHits %1d fsr %1d/%1d" % (
+                    i+1, l.pdgId,l.pt,l.eta,l.phi, l.tightId, l.relIsoAfterFSR, l.sip3d, l.dxy, l.dz, l.mvaIdSpring16, l.lostHits, l.hasFSR, l.hasOwnFSR),
             if self.options.ismc:
                 print "   mcMatch id %+4d, any %+2d" % (l.mcMatchId, l.mcMatchAny),
-            print "   stations %d, layers %d, pixels %d, glb %d" % (l.nStations, l.trackerLayers, l.pixelLayers, l.globalTrackChi2>0),
+            if abs(l.pdgId) == 13:
+                print "   pog loose %d trkHighPt %d stations %d, layers %d, pixels %d, glb %d" % (l.muIdLoose, l.muIdTrkHighPt, l.nStations, l.trackerLayers, l.pixelLayers, l.globalTrackChi2>0),
+            if abs(l.pdgId) == 11:
+                print "   etaSc %+6.4f spring15 bdt %+6.4f" % (l.etaSc, l.mvaIdSpring15),
             print ""
             if self.options.ismore:
                 print "\t\t iso 04 ch %5.2f nh %5.2f ph %5.2f pu %5.2f rho %5.2f ea %4.3f preFSR %5.3f" % ( l.chargedHadIso04, l.neutralHadIso04, l.photonIso04, l.puChargedHadIso04, l.rho, l.EffectiveArea04, l.relIso04 )

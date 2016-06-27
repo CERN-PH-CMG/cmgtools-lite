@@ -13,7 +13,7 @@ from CMGTools.RootTools.samples.autoAAAconfig import *
 #-------- SEQUENCE
 from CMGTools.HToZZ4L.samples.samples_13TeV_2016 import *
 
-selectedComponents = [ d for d in data if "SingleMu" not in d.name ]
+selectedComponents = [ d for d in dataSamples if "SingleMu" not in d.name ]
 #redefineRunRange(selectedComponents,[258158,258158])
 #selectedComponents = [ DoubleMuon_Run2015D_16Dec2015_25ns, DoubleEG_Run2015D_16Dec2015_25ns, MuonEG_Run2015D_16Dec2015_25ns, SingleMuon_Run2015D_16Dec2015_25ns, SingleElectron_Run2015D_16Dec2015_25ns ]
 #redefineRunRange(selectedComponents,[258214,258214])
@@ -40,12 +40,12 @@ for comp in mcSamples:
     comp.vetoTriggers = []
 
 
-doECalCorrections(era="25ns")
-doKalmanMuonCorrections(smear="basic")
+#doECalCorrections(era="25ns")
+#doKalmanMuonCorrections(smear="basic")
 
 if not getHeppyOption("test"):
     printSummary(selectedComponents)
-autoAAA(selectedComponents)
+#autoAAA(selectedComponents)
 
 
 from PhysicsTools.HeppyCore.framework.heppy_loop import getHeppyOption
