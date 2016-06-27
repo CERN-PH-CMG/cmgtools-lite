@@ -158,7 +158,7 @@ if __name__ == '__main__':
             x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt')
             x = add(x,"--showRatio --maxRatioRange 0 3") #--showMCError
         if '_met200' in torun:             
-            x = add(x,"-E ^mm -E ^highMET -X ^triggerAll -E ^triggerMET -I ^TT ")
+            x = add(x,"-E ^highMET -X ^triggerAll -E ^triggerMET -I ^TT ")
             x = x.replace('-l 5.0','-l 4.0')
         if '_met100' in torun:             
             x = add(x,"-E ^mm -E ^upperMET -X  -E ^runRange -X ^triggerAll -E ^triggerDoubleMuMET -I ^TT ")
