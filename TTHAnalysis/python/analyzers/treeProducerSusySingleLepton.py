@@ -21,11 +21,18 @@ susySingleLepton_globalVariables = susyCore_globalVariables + [
             NTupleVariable("metNoHF_rawPhi", lambda ev : ev.metNoHF.uncorPhi() if  hasattr(ev,'metNoHF') else  0, help="raw noHF met phi"),
             NTupleVariable("metNoHF_rawSumEt", lambda ev : ev.metNoHF.uncorSumEt() if  hasattr(ev,'metNoHF') else  0, help="raw noHF met sumEt"),
 
+            #include caloMET (for e.g. a la RA2-cross checks)
+            NTupleVariable("met_caloPt", lambda ev : ev.met.caloMETPt(), help="calo met p_{T}"),
+            NTupleVariable("met_caloPhi", lambda ev : ev.met.caloMETPhi(), help="calo met phi"),
+            NTupleVariable("met_caloSumEt", lambda ev : ev.met.caloMETSumEt(), help="calo met sumEt"),
+
             ##--------------------------------------------------
             ## MET filter information (temporary)
             ##--------------------------------------------------
-            NTupleVariable("Flag_HBHENoiseFilter_fix", lambda ev: ev.hbheFilterNew if hasattr(ev,'hbheFilterNew') else  0, help="HBEHE baseline temporary filter decision"),
-            NTupleVariable("Flag_HBHEIsoNoiseFilter_fix", lambda ev: ev.hbheFilterIso if hasattr(ev,'hbheFilterIso') else  0, help="HBEHE isolation temporary filter decision"),
+            #            NTupleVariable("Flag_HBHENoiseFilter_fix", lambda ev: ev.hbheFilterNew if hasattr(ev,'hbheFilterNew') else  0, help="HBEHE baseline temporary filter decision"),
+            #            NTupleVariable("Flag_HBHEIsoNoiseFilter_fix", lambda ev: ev.hbheFilterIso if hasattr(ev,'hbheFilterIso') else  0, help="HBEHE isolation temporary filter decision"),
+            NTupleVariable("Flag_badChargedHadronFilter", lambda ev: ev.badChargedHadron, help="bad charged hadron filter decision"),
+            NTupleVariable("Flag_badMuonFilter", lambda ev: ev.badMuon, help="bad muon filter decision"),
             # ----------------------- HT from LHE event (requires LHE analyzer to have run)  --------------------------------------------------------- #
             NTupleVariable("lheHT", lambda ev : ev.lheHT, mcOnly=True, help="H_{T} computed from quarks and gluons in Heppy LHEAnalyzer"),
             NTupleVariable("lheHTIncoming", lambda ev : ev.lheHTIncoming, mcOnly=True, help="H_{T} computed from quarks and gluons in Heppy LHEAnalyzer (only LHE status<0 as mothers)"),
