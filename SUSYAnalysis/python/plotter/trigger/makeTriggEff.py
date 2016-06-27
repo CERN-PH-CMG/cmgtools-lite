@@ -625,6 +625,7 @@ if __name__ == "__main__":
     basecuts = 'passFilters && nLep == 1 &&'
     #basecuts = 'METfilters && nLep == 1 && nVeto == 0 &&'
     basecuts += 'Selected == 1 &&'
+#    basecuts += 'Selected == -1 &&'
     if '218pbMuonFix' in fileName: basecuts += 'Run >= 274094 &&'
 
     doFit = True
@@ -643,6 +644,8 @@ if __name__ == "__main__":
             lumi = 1260
         elif '2p1' in fileName:
             lumi = 2.1
+        elif '2p6fb' in fileName:
+            lumi = 2.57
         else:
             lumi = 666
 
@@ -702,6 +705,8 @@ if __name__ == "__main__":
             lumi = 1260
         elif '2p1' in fileName:
             lumi = 2.1
+        elif '2p6fb' in fileName:
+            lumi = 2.57
         elif 'test' in fileName:
             lumi = 666
 
@@ -781,6 +786,8 @@ if __name__ == "__main__":
             lumi = 2056
         elif '218pbMuonFix' in fileName:
             lumi = 218
+        elif '2p6fb' in fileName:
+            lumi = 2.57
         else:
             lumi = 147.0
 
