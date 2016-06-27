@@ -1,4 +1,5 @@
 from math import *
+from collections import defaultdict
 from CMGTools.HToZZ4L.analyzers.FourLeptonAnalyzerBase import *
 
         
@@ -6,6 +7,9 @@ class FourLeptonAnalyzer( FourLeptonAnalyzerBase ):
     def __init__(self, cfg_ana, cfg_comp, looperName ):
         super(FourLeptonAnalyzer,self).__init__(cfg_ana,cfg_comp,looperName)
         self.tag = cfg_ana.tag
+        self.sortAlgo =  getattr(cfg_ana, 'sortAlgo', 'legacy')
+        self.debug =  getattr(cfg_ana, 'debug', False)
+
     def declareHandles(self):
         super(FourLeptonAnalyzer, self).declareHandles()
 
@@ -69,8 +73,45 @@ class FourLeptonAnalyzer( FourLeptonAnalyzerBase ):
 
         #Save the best
         if len(subevent.fourLeptonsFinal)>0:
-            subevent.fourLeptonsFinal=sorted(subevent.fourLeptonsFinal,key=lambda x: x.leg2.leg1.pt()+x.leg2.leg2.pt(),reverse=True)
-            subevent.fourLeptonsFinal=sorted(subevent.fourLeptonsFinal,key=lambda x: abs(x.leg1.M()-91.1876))
+            if self.sortAlgo == "legacy":
+                subevent.fourLeptonsFinal.sort(key = lambda x: x.leg2.leg1.pt()+x.leg2.leg2.pt(), reverse = True)
+                subevent.fourLeptonsFinal.sort(key = lambda x: abs(x.leg1.M()-91.1876))
+            elif self.sortAlgo == "bestKD":
+                debug = self.debug
+
+                # 0) assign to each 4l set a short unique identifier instead of the full tuple of 4 ids
+                uid_short = {}
+                for ic, cand in enumerate(subevent.fourLeptonsFinal):
+                    if cand.uid() not in uid_short: uid_short[cand.uid()] = ic
+
+                # 1) first make groups of candidates that share the same 4l events, by id
+                candidates = defaultdict(list)
+                for ic,cand in enumerate(subevent.fourLeptonsFinal):
+                    candidates[cand.uid()].append(cand)
+
+                # 2) sort each set of candidates by MZ1 a la legacy
+                for candlist in candidates.values():
+                    candlist.sort(key = lambda x: abs(x.leg1.M()-91.1876))
+
+                # 2b) check that al items in the list have the same KD. 
+                #     however, they don't, so the check is commented out for now
+                #
+                # for candlist in candidates.values():
+                #    kds = [ c.KD for c in candlist ]
+                #    if max(kds)-min(kds) > 1e-5: 
+                #        print "Event %d:%d:%d with mismatching KDs for the same set of 4 leptons " % (event.run, event.lumi, event.input.eventAuxiliary().id().event())
+                #        debug = True
+
+                # 3) sort the sets using tke KD value of the first candidate in each set
+                sortedCandidates = []
+                uids_sorted = sorted(candidates.keys(), key = lambda u : candidates[u][0].KD, reverse=True)
+                for uid in uids_sorted:
+                    candlist = candidates[uid]
+                    for cand in candlist:
+                        if debug: print "Cand %d %6.2f %6.2f %6.2f %8.6f  %2d  %d"  % (len(sortedCandidates)+1, cand.mass(), cand.leg1.mass(), cand.leg2.mass(), cand.KD, uid_short[cand.uid()], len(cand.daughterPhotons()))
+                        sortedCandidates.append(cand)
+                if debug: print "" 
+                subevent.fourLeptonsFinal = sortedCandidates
             setattr(event,'bestFourLeptons'+self.tag,subevent.fourLeptonsFinal[:getattr(self.cfg_ana,'maxCand',1)])
         else:    
             setattr(event,'bestFourLeptons'+self.tag,[])

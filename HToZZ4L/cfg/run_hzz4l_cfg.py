@@ -83,6 +83,8 @@ elif test=="sync":
     if getHeppyOption('events'): 
         insertEventSelector(sequence)
         selectedComponents[0].splitFactor = 1
+        fourLeptonAnalyzerSignal.debug = True
+        fourLeptonAnalyzerSignal.maxCand = 999
     #doECalCorrections(sync=True)
     #doKalmanMuonCorrections(sync=True)
 elif test=="sync76X":

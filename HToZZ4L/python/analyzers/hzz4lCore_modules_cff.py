@@ -284,13 +284,16 @@ metNoHFAna = metAna.clone(
 
 fourLeptonAnalyzerSignal = cfg.Analyzer(
     FourLeptonAnalyzer, name="fourLeptonAnalyzerSignal",
-    tag = "Signal",
+    tag = "Signal", 
+    sortAlgo = "bestKD",
     attachFsrToGlobalClosestLeptonOnly = True
 )
 
 fourLeptonAnalyzer2P2F = cfg.Analyzer(
     FourLeptonAnalyzer2P2F, name="fourLeptonAnalyzer2P2F",
     tag = "2P2F",
+    #sortAlgo = "bestKD",
+    doMEs = False,
     maxCand = 999, # save all, not just the best one
     attachFsrToGlobalClosestLeptonOnly = True
 )
@@ -298,6 +301,8 @@ fourLeptonAnalyzer2P2F = cfg.Analyzer(
 fourLeptonAnalyzer3P1F = cfg.Analyzer(
     FourLeptonAnalyzer3P1F, name="fourLeptonAnalyzer3P1F",
     tag = "3P1F",
+    #sortAlgo = "bestKD",
+    doMEs = False,
     maxCand = 999, # save all, not just the best one
     attachFsrToGlobalClosestLeptonOnly = True
 )
@@ -305,6 +310,8 @@ fourLeptonAnalyzer3P1F = cfg.Analyzer(
 fourLeptonAnalyzerSS = cfg.Analyzer(
     FourLeptonAnalyzerSS, name="fourLeptonAnalyzerSS",
     tag = "SS",
+    #sortAlgo = "bestKD",
+    doMEs = False,
     maxCand = 999, # save all, not just the best one
     attachFsrToGlobalClosestLeptonOnly = True
 )
@@ -312,6 +319,8 @@ fourLeptonAnalyzerSS = cfg.Analyzer(
 fourLeptonAnalyzerRelaxIdIso = cfg.Analyzer(
     FourLeptonAnalyzerRelaxIdIso, name="fourLeptonAnalyzerRelaxIdIso",
     tag = "RelaxIdIso",
+    #sortAlgo = "bestKD",
+    doMEs = False,
     maxCand = 999, # save all, not just the best one
     attachFsrToGlobalClosestLeptonOnly = True
 )
