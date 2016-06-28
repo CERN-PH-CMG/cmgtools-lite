@@ -18,6 +18,8 @@ nLepLoose\b : nLepLoose_Recl; AlsoData
 nLepCleaning\b : nLepCleaning_Recl; AlsoData
 nLepFO\b : nLepFO_Recl; AlsoData
 nLepTight\b : nLepTight_Recl; AlsoData
+nTauFO\b : nTauSel_Recl; AlsoData
+nTauTight\b : nTightTauSel_Recl; AlsoData
 nJet25\b: nJet25_Recl; AlsoData
 htJet25j\b: htJet25j_Recl; AlsoData
 mhtJet25\b: mhtJet25_Recl; AlsoData

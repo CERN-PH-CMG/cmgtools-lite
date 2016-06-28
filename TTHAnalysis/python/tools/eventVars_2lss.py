@@ -27,7 +27,7 @@ class EventVars2LSS:
             if not hasattr(event,"nJet"+self.systsJEC[var]): _var = 0
             jetsc = [j for j in Collection(event,"Jet"+self.systsJEC[_var],"nJet"+self.systsJEC[_var])]
             jetsd = [j for j in Collection(event,"DiscJet"+self.systsJEC[_var],"nDiscJet"+self.systsJEC[_var])]
-            _ijets_list = getattr(event,"iJ"+self.inputlabel+self.systsJEC[_var])
+            _ijets_list = getattr(event,"iJSel"+self.inputlabel+self.systsJEC[_var])
             _ijets = [ij for ij in _ijets_list]
             jets = [ (jetsc[ij] if ij>=0 else jetsd[-ij-1]) for ij in _ijets]
 

@@ -3,10 +3,10 @@ metfilters: cscfilter==1 && ecalfilter==1 && Flag_eeBadScFilter==1 && hbheFilter
 1 loose mu: nMu10V == 1
 1 tight mu: nMu20T == 1
 ele veto: nEle10V==0
+photon veto: nGamma15V==0
 tau veto: nTauClean18V==0
-photonveto: nGamma15V==0
-btagveto: nBTag15==0
-recoil>200: metNoMu_pt > 200
+btag veto: nBTag15==0
 jet100: nJetClean30 >= 1 && JetClean1_pt > 100
 jetclean: JetClean1_leadClean > 0.5
 dphijm: abs(dphijm) > 0.5
+recoil>200: metNoMu_pt > 200

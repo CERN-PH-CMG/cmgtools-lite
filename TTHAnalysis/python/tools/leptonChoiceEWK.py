@@ -3,20 +3,45 @@ from CMGTools.TTHAnalysis.tools.leptonJetReCleaner import passTripleMllVeto,pass
 from ROOT import TFile,TH1F
 import copy, os
 
-for extlib in ["triggerSF/triggerSF_fullsim_UCSx_v5_01.cc","leptonSF/lepton_SF_UCSx_v5_03.cc","triggerSF/FastSimTriggerEff.cc"]:
-    if not extlib.endswith(".cc"): raise RuntimeError
-    if "/%s"%extlib.replace(".cc","_cc.so") not in ROOT.gSystem.GetLibraries():
-        ROOT.gROOT.LoadMacro(os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/%s+"%extlib)
-from ROOT import triggerScaleFactorFullSim
-from ROOT import FastSimTriggerEfficiency
+#for extlib in ["fake_rates_UCSx_v5_03.cc","flip_rates_UCSx_v5_01.cc","triggerSF_fullsim_UCSx_v5_01.cc","lepton_SF_UCSx_v5_03.cc","FastSimTriggerEff.cc"]:
+#    if not extlib.endswith(".cc"): raise RuntimeError
+#    if "/%s"%extlib.replace(".cc","_cc.so") not in ROOT.gSystem.GetLibraries():
+#        ROOT.gROOT.LoadMacro("/mnt/t3nfs01/data01/shome/cheidegg/o/2016-05-02_cmg74X_utility-files/%s+"%extlib)
+#        #ROOT.gROOT.LoadMacro("/afs/cern.ch/work/c/cheidegg/eco/2016-05-02_cmg74X_utility-files/%s+"%extlib)
+#from ROOT import triggerScaleFactorFullSim
+#from ROOT import FastSimTriggerEfficiency
+#from ROOT import electronFakeRate_UCSx
+#from ROOT import electronFakeRate_UCSx_Error
+#from ROOT import electronAlternativeFakeRate_UCSx
+#from ROOT import electronQCDMCFakeRate_UCSx
+#from ROOT import muonFakeRate_UCSx
+#from ROOT import muonFakeRate_UCSx_Error
+#from ROOT import muonAlternativeFakeRate_UCSx
+#from ROOT import muonQCDMCFakeRate_UCSx
+#from ROOT import electronFakeRate_UCSx_IsoTrigs
+#from ROOT import electronFakeRate_UCSx_Error_IsoTrigs
+#from ROOT import electronAlternativeFakeRate_UCSx_IsoTrigs
+#from ROOT import electronQCDMCFakeRate_UCSx_IsoTrigs
+#from ROOT import flipRate_UCSx
+#from ROOT import flipRate_UCSx_Error
+#from ROOT import muonFakeRate_UCSx_IsoTrigs
+#from ROOT import muonFakeRate_UCSx_Error_IsoTrigs
+#from ROOT import muonAlternativeFakeRate_UCSx_IsoTrigs
+#from ROOT import muonQCDMCFakeRate_UCSx_IsoTrigs
+#from ROOT import electronScaleFactorHighHT_UCSx
+#from ROOT import electronScaleFactorLowHT_UCSx
+#from ROOT import muonScaleFactor_UCSx
+#from ROOT import leptonScaleFactor_UCSx
 
 class LeptonChoiceEWK:
 
     # enum
-    appl_Fakes = 0
-    appl_Flips = 1
-    appl_Taus  = 2
-    appl_WZ    = 3
+    appl_Super   = 0
+    appl_Fakes   = 1
+    appl_Flips   = 2
+    appl_Taus    = 3
+    appl_TwoTaus = 4
+    appl_WZ      = 5
 
 
     ## __init__
@@ -96,51 +121,77 @@ class LeptonChoiceEWK:
         return fullret
 
 
-    ## bestZ1TL
+    ## bestZ1TLsuper
     ## _______________________________________________________________
-    def bestZ1TL(self, lepsl, lepst, cut=lambda lep:True):
+    def bestZ1TLsuper(self, lepst, lepsl, mZ = 91.2, needSF = True, useTaus = False):
           ## returns the Mll, i1 and i2 of the OSSF lepton pair whose Mll is closest to mZ
 
           pairs = []
           for i1, l1 in enumerate(lepst):
-            if not cut(l1): continue
             for i2, l2 in enumerate(lepsl):
-                if not cut(l2): continue
-                if self.noTausOS and (l1.isTau or l2.isTau): continue
                 if l1 == l2: continue
-                if l1.pdgId == -l2.pdgId:
-                   mz = (l1.p4() + l2.p4()).M()
-                   diff = abs(mz-91)
-                   pairs.append( (diff, mz, l1.trIdx, l2.trIdx, l1.isTau, l2.isTau) )
+                if l1.pdgId * l2.pdgId >= 0: continue
+                if not useTaus and (abs(l1.pdgId) == 15 or abs(l2.pdgId) == 15): continue
+                if (needSF and l1.pdgId == -l2.pdgId) or (not needSF and abs(l1.pdgId) != abs(l2.pdgId)):
+                   mll = (l1.p4() + l2.p4()).M()
+                   diff = abs(mll - mZ)
+                   pairs.append( (diff, mll, l1.trIdx, l2.trIdx, l1.isTau, l2.isTau) )
           if len(pairs):
               pairs.sort()
               return pairs[0]
           return (0., -1,  -1, -1, 0, 0)
 
 
+    ## bestZ1TL
+    ## _______________________________________________________________
+    #def bestZ1TL(self, lepsl, lepst):
+    #      ## returns the Mll, i1 and i2 of the OSSF lepton pair whose Mll is closest to mZ
+
+    #      pairs = []
+    #      for i1, l1 in enumerate(lepst):
+    #        if not cut(l1): continue
+    #        for i2, l2 in enumerate(lepsl):
+    #            if not cut(l2): continue
+    #            if l1.isTau or l2.isTau: continue # dedicated function for that..
+    #            if l1 == l2: continue
+    #            if needSF and l1.pdgId == -l2.pdgId:
+    #               mz = (l1.p4() + l2.p4()).M()
+    #               if 
+    #               dm = 50. #if abs(l1.pdgId) + abs(l1.pdgId)
+    #               if abs(l1.pdgId) == 15 or abs(l2.pdgId) == 15: dm = 60.
+    #               diff = abs(mz-91)
+    #               pairs.append( (diff, mz, l1.trIdx, l2.trIdx, l1.isTau, l2.isTau) )
+    #            elif not needSF and abs(l1.pdgId) != abs(l2.pdgId):
+    #               dm = 50.
+    #      if len(pairs):
+    #          pairs.sort()
+    #          return pairs[0]
+    #      return (0., -1,  -1, -1, 0, 0)
+
+
     ## bestZtauTL
     ## _______________________________________________________________
-    def bestZtauTL(self, lepsl, lepst, cut=lambda lep:True):
-          ## returns the Mll, i1 and i2 of the OS lepton pair whose Mll is closest to corresponding
-          ## dilepton mass (50 for emu)
+    #def bestZtauTL(self, lepsl, lepst, cut=lambda lep:True):
+    #      ## returns the Mll, i1 and i2 of the OS lepton pair whose Mll is closest to corresponding
+    #      ## dilepton mass (50 for emu)
 
-          pairs = []
-          for i1, l1 in enumerate(lepst):
-            if not cut(l1): continue
-            for i2, l2 in enumerate(lepsl):
-                if not cut(l2): continue
-                if self.noTausOS and (l1.isTau or l2.isTau): continue
-                if l1 == l2: continue
-                if l1.charge == -l2.charge and l1.pdgId != -l2.pdgId:
-                   mz = (l1.p4() + l2.p4()).M()
-                   dm = 50. #if abs(l1.pdgId) + abs(l1.pdgId)
-                   if abs(l1.pdgId) == 15 or abs(l2.pdgId) == 15: dm = 60.
-                   diff = abs(mz-dm)
-                   pairs.append( (diff, mz, l1.trIdx, l2.trIdx, l1.isTau, l2.isTau) )
-          if len(pairs):
-              pairs.sort()
-              return pairs[0]
-          return (0., -1, -1, -1, 0, 0)
+    #      pairs = []
+    #      for i1, l1 in enumerate(lepst):
+    #        if not cut(l1): continue
+    #        for i2, l2 in enumerate(lepsl):
+    #            if not cut(l2): continue
+    #            if self.noTausOS and (l1.isTau or l2.isTau): continue
+    #            if l1 == l2: continue
+    #            if l1.charge == -l2.charge and l1.pdgId != -l2.pdgId:
+    #               mz = (l1.p4() + l2.p4()).M()
+    #               dm = 50. #if abs(l1.pdgId) + abs(l1.pdgId)
+    #               if abs(l1.pdgId) == 15 or abs(l2.pdgId) == 15: dm = 60.
+    #               diff = abs(mz-dm)
+    #               pairs.append( (diff, mz, l1.trIdx, l2.trIdx, l1.isTau, l2.isTau) )
+    #      if len(pairs):
+    #          pairs.sort()
+    #          return pairs[0]
+    #      return (0., -1, -1, -1, 0, 0)
           
 
     ## categorizeEvent
@@ -172,7 +223,7 @@ class LeptonChoiceEWK:
             for var in self.systs["LEPSF"]:
                 self.fillLeptonSF(event, t, i1, i2, i3, t1, t2, t3, var)
 
-            self.fillJetQuantities(t, i1, i2, i3, t1, t2, t3)
+            #self.fillJetQuantities(t, i1, i2, i3, t1, t2, t3)
             self.fillAppWeights(t, i1, i2, i3, t1, t2, t3)  
 
             ## debugging and synching
@@ -217,22 +268,26 @@ class LeptonChoiceEWK:
         self.leps       = [l             for l  in Collection(event, "LepGood", "nLepGood")  ]
         self.setAttributes(self.leps, False)
 
-        self.lepsl      = [self.leps[il] for il in getattr   (event, "iL"  + self.inputlabel)][0:getattr(event,"nLepLoose"+self.inputlabel)]
-        self.lepst      = [self.leps[il] for il in getattr   (event, "iT"  + self.inputlabel)][0:getattr(event,"nLepTight"+self.inputlabel)]
-        self.lepsfv     = [self.leps[il] for il in getattr   (event, "iFV" + self.inputlabel)][0:getattr(event,"nLepFOVeto"+self.inputlabel)]
-        self.lepstv     = [self.leps[il] for il in getattr   (event, "iTV" + self.inputlabel)][0:getattr(event,"nLepTightVeto"+self.inputlabel)]
-        self.lepsfv     = [x for x in self.lepsfv if x not in self.lepstv]
+        self.lepsl      = [self.leps[il] for il in list(getattr   (event, "iL"  + self.inputlabel))[0:int(getattr(event,"nLepLoose"+self.inputlabel))]]
+        self.lepst      = [self.leps[il] for il in list(getattr   (event, "iT"  + self.inputlabel))[0:int(getattr(event,"nLepTight"+self.inputlabel))]]
+        self.lepsfv     = [self.leps[il] for il in list(getattr   (event, "iFV" + self.inputlabel))[0:int(getattr(event,"nLepFOVeto"+self.inputlabel))] \
+                                      if not il in list(getattr   (event, "iTV" + self.inputlabel))]
+        self.lepstv     = [self.leps[il] for il in list(getattr   (event, "iTV" + self.inputlabel))[0:int(getattr(event,"nLepTightVeto"+self.inputlabel))]]
 
-        self.taus       = [t             for t  in Collection(event, "TauGood", "nTauGood") if t.pt > 20]
-        self.setAttributes(self.taus, True)
-        self.taust      = self.taus
+        self.tausl      = [t             for t  in Collection(event, "TauSel" + self.inputlabel , "nTauSel" + self.inputlabel )]
+        self.setAttributes(self.tausl, True)
+        self.taust      = [t             for t in self.tausl if t.ewkId == 2]
+        #self.tausg      = [t             for t  in Collection(event, "TauGood" , "nTauGood" )]
+        #self.tauso      = [t             for t  in Collection(event, "TauOther", "nTauOther")]
+        #self.setAttributes(self.tausg, True)
+        #self.setAttributes(self.tauso, True, True)
+        #self.tausl      = [self.tausg[it] if it >= 0 else self.tauso[-1-it] for it in list(getattr   (event, "iLTSel" + self.inputlabel))[0:int(getattr(event,"nLooseTauSel"+self.inputlabel))]]
+        #self.taust      = [self.tausg[it] if it >= 0 else self.tauso[-1-it] for it in list(getattr   (event, "iTTSel" + self.inputlabel))[0:int(getattr(event,"nTightTauSel"+self.inputlabel))]]
         self.tausf      = self.taust # THESE ARE THE TAU FAKES, NEED TO BE CHANGED!
 
-        jetcollcleaned  = [j for j in Collection(event,"Jet","nJet")]
-        jetcolldiscarded = [j for j in Collection(event,"DiscJet","nDiscJet")]
-        self.jets30     = filter(lambda x: x.pt > 30., [ (jetcollcleaned[idx] if idx>=0 else jetcolldiscarded[-1-idx]) for idx in getattr(event,"iJSel"+self.inputlabel) ])
-        self.bJets30    = filter(lambda j: j.btagCSV >  0.89, self.jets30)
-        self.ht         = sum([j.pt for j in self.jets30])
+        #self.jets30     = [j for j in Collection(event, "JetSel" + self.inputlabel, "nJetSel" + self.inputlabel) if j.pt      > 30. ]
+        #self.bJets30    = [j for j in self.jets30                                                                if j.btagCSV > 0.80]
+        #self.ht         = sum([j.pt for j in self.jets30])
 
         self.met        = {}
         self.met[0]     = event.met_pt
@@ -261,12 +316,16 @@ class LeptonChoiceEWK:
 
         self.triples = []
 
-        if self.whichApplication == self.appl_Fakes:
+        if self.whichApplication == self.appl_Super:
+            self.collectTriplesSuper(byflav = True, bypassMV = False)
+        elif self.whichApplication == self.appl_Fakes:
             self.collectTriplesFakes(byflav = True, bypassMV = False)
         elif self.whichApplication == self.appl_Flips:
             self.collectTriplesFlips(byflav = True, bypassMV = False)
         elif self.whichApplication == self.appl_Taus:
             self.collectTriplesTaus(byflav = True, bypassMV = False)
+        elif self.whichApplication == self.appl_TwoTaus:
+            self.collectTriplesTwoTaus(byflav = True, bypassMV = False)
         elif self.whichApplication == self.appl_WZ:
             self.collectTriplesWZ(byflav = True, bypassMV = False)
 
@@ -274,9 +333,10 @@ class LeptonChoiceEWK:
         if self.ret["nTriples"] > 20: raise RuntimeError,'Too many lepton pairs'
 
         for i in range(len(self.triples)):
-            self.ret["i1"][i] = self.triples[i][0].trIdx; self.ret["t1"][i] = self.triples[i][0].isTau
-            self.ret["i2"][i] = self.triples[i][1].trIdx; self.ret["t2"][i] = self.triples[i][1].isTau
-            self.ret["i3"][i] = self.triples[i][2].trIdx; self.ret["t3"][i] = self.triples[i][2].isTau
+            self.storeIdx(i, 0)
+            self.storeIdx(i, 1)
+            self.storeIdx(i, 2)
+
 
 
     ## collectTriplesFakes
@@ -325,6 +385,61 @@ class LeptonChoiceEWK:
         #            choice=choice[:1]
 
 
+    ## collectTriplesSuper
+    ## _______________________________________________________________
+    def collectTriplesSuper(self, byflav, bypassMV):
+        ## encodes the logic of finding the three leptons in the event
+        ## if we have TTT -> event only goes into SR
+        ## if not, we look for all possible triples (c.f. findTriples())
+        ## priority is given to the light flavor leptons, if less than 
+        ## 3 are present (tight or fake), fill up with taus
+
+        ## 3 light leptons tight
+        self.trueTriples = []
+        self.triples, self.fakes = self.findTriples([], self.lepstv, self.lepstv, self.lepstv, bypassMV=False)
+
+        if self.triples:
+            self.ret["isLight"] = True
+            self.ret["hasTTT" ] = True
+            self.trueTriples    = self.triples
+            return
+
+        ## 3 light leptons tight and fake
+        #tr1f, f1 = self.findTriples(self.triples, self.lepstv, self.lepstv, self.lepsfv, bypassMV=False, nF=1)
+        #tr2f, f2 = self.findTriples(self.triples, self.lepstv, self.lepsfv, self.lepsfv, bypassMV=False, nF=2)
+        #tr3f, f3 = self.findTriples(self.triples, self.lepsfv, self.lepsfv, self.lepsfv, bypassMV=False, nF=3)
+
+        #self.triples = tr1f + tr2f + tr3f
+        #self.fakes   = f1 + f2 + f3
+
+        #if self.triples:
+        #    self.ret["isLight"] = True
+        #    if tr1f: self.ret["hasTTF"] = True
+        #    if tr2f: self.ret["hasTFF"] = True
+        #    if tr3f: self.ret["hasFFF"] = True
+        #    return
+
+        ## 2 light leptons tight + 1 tau tight
+        self.trueTriples = []
+        self.triples, self.fakes = self.findTriples([], self.lepstv, self.lepstv, self.taust, bypassMV=False)
+
+        if self.triples:
+            self.ret["isTau" ] = True
+            self.ret["hasTTT"] = True
+            self.trueTriples   = self.triples
+            return
+
+        ## 1 light leptons tight + 2 tau tight
+        self.trueTriples = []
+        self.triples, self.fakes = self.findTriples([], self.lepstv, self.taust, self.taust, bypassMV=False)
+
+        if self.triples:
+            self.ret["isDTau"] = True
+            self.ret["hasTTT"] = True
+            self.trueTriples   = self.triples
+            return
+
+
     ## collectTriplesTaus 
     ## _______________________________________________________________
     def collectTriplesTaus(self, byflav, bypassMV):
@@ -353,6 +468,23 @@ class LeptonChoiceEWK:
 
         #    #self.triples     = tr1f + tr2f + tr3f
         #    #self.fakes       = f1 + f2 + f3
+
+
+    ## collectTriplesTwoTaus 
+    ## _______________________________________________________________
+    def collectTriplesTwoTaus(self, byflav, bypassMV):
+        ## encodes the logic of finding the three leptons in the event
+        ## if we have TTT -> event only goes into SR
+        ## if not, we look for all possible triples (c.f. findTriples())
+        ## made of tight leptons and fakes
+        ## hadronic taus included
+
+        self.trueTriples = []
+        self.triples, self.fakes = self.findTriples([], self.lepstv, self.taust, self.taust, bypassMV=False, nF=0)
+
+        if self.triples:
+            self.ret["hasTTT"] = True
+            self.trueTriples   = self.triples
 
 
     ## collectTriplesWZ
@@ -476,7 +608,8 @@ class LeptonChoiceEWK:
 
         if   os == 1: self.ret["hasOSSF" + self.systs["JEC"][var]] = 1
         elif os == 0: self.ret["hasOSOF" + self.systs["JEC"][var]] = 1
-        elif os == 2: self.ret["hasSS"   + self.systs["JEC"][var]] = 1
+        elif os == 2: self.ret["hasOSTF" + self.systs["JEC"][var]] = 1
+        else        : self.ret["hasSS"   + self.systs["JEC"][var]] = 1
 
         if abs(m - 91) < 15:
             self.ret["isOnZ" + self.systs["JEC"][var]] = 1
@@ -486,11 +619,13 @@ class LeptonChoiceEWK:
     ## _______________________________________________________________
     def fillSR(self, var = ""):
 
-        BR = self.findBR(var)
-        SR = self.findSR(var, BR)
+        BR      = self.findBR(var)
+        SRlight = self.findSRlight(var, BR)
+        SRtau   = self.findSRtau  (var, BR)
 
-        self.ret["BR" + self.systs["JEC"][var]] = BR
-        self.ret["SR" + self.systs["JEC"][var]] = SR
+        self.ret["BR"      + self.systs["JEC"][var]] = BR
+        self.ret["SRlight" + self.systs["JEC"][var]] = SRlight
+        self.ret["SRtau"   + self.systs["JEC"][var]] = SRtau
 
 
     ## fillTriggerSF
@@ -553,114 +688,298 @@ class LeptonChoiceEWK:
     ## findObj
     ## _______________________________________________________________
     def findObj(self, idx, isTau = 0):
-        if isTau == 1: return self.taus[idx]
+        if   isTau == 1 and idx >= 0: return self.tausl[idx]
         return self.leps[idx]
 
 
-    ## findSR
+    ## findOSpair
     ## _______________________________________________________________
-    def findSR(self, var, BR):
+    def findOSpair(self, mZ = 91.2, needSF = True, useTaus = True, case = 1):
+
+        buffer = []
+        for (l1, l2, l3) in self.triples:
+            leps = [l1, l2, l3]
+            buffer.append(self.bestZ1TLsuper(leps, leps, mZ, needSF, useTaus))
+        
+        if len(buffer) and buffer[0][1] != -1:
+            buffer.sort()
+            return (buffer[0][1], buffer[0][2], buffer[0][3], buffer[0][4], buffer[0][5], case)
+        return (-1, -1, -1, 0, 0, -1)
+
+
+    ## findSRlight
+    ## _______________________________________________________________
+    def findSRlight(self, var, BR):
 
         SR = 0
 
-        ossf = self.ret["hasOSSF" + self.systs["JEC"][var]]
-        osof = self.ret["hasOSOF" + self.systs["JEC"][var]]
-        ss   = self.ret["hasSS"   + self.systs["JEC"][var]]
-        m    = self.ret["mll"     + self.systs["JEC"][var]]
-        mT   = self.ret["mTmin"   + self.systs["JEC"][var]]
-        met  = self.met[var]
+        ossf  = self.ret["hasOSSF" + self.systs["JEC"][var]]
+        osof  = self.ret["hasOSOF" + self.systs["JEC"][var]]
+        ss    = self.ret["hasSS"   + self.systs["JEC"][var]]
+        m     = self.ret["mll"     + self.systs["JEC"][var]]
+        mT    = self.ret["mTmin"   + self.systs["JEC"][var]]
+        met   = self.met[var]
 
-        if BR == 0: return 0
+        #if BR == 0: return 0
+
+        ## SS category
+        if ss:
+            SR = 1
 
         # OSSF category
-        if   ossf and        m <  75 and        mT < 120 and  50 <= met < 100: SR =  1
-        elif ossf and        m <  75 and        mT < 120 and 100 <= met < 150: SR =  2
-        elif ossf and        m <  75 and        mT < 120 and 150 <= met < 200: SR =  3
-        elif ossf and        m <  75 and        mT < 120 and 200 <= met      : SR =  4
-        elif ossf and        m <  75 and 120 <= mT < 160 and  50 <= met < 100: SR =  5
-        elif ossf and        m <  75 and 120 <= mT < 160 and 100 <= met < 150: SR =  6
-        elif ossf and        m <  75 and 120 <= mT < 160 and 150 <= met < 200: SR =  7
-        elif ossf and        m <  75 and 120 <= mT < 160 and 200 <= met      : SR =  8
-        elif ossf and        m <  75 and 160 <= mT       and  50 <= met < 100: SR =  9
-        elif ossf and        m <  75 and 160 <= mT       and 100 <= met < 150: SR = 10
-        elif ossf and        m <  75 and 160 <= mT       and 150 <= met < 200: SR = 11
-        elif ossf and        m <  75 and 160 <= mT       and 200 <= met      : SR = 12
-        elif ossf and  75 <= m < 105 and        mT < 120 and  50 <= met < 100: SR = 13
-        elif ossf and  75 <= m < 105 and        mT < 120 and 100 <= met < 150: SR = 14
-        elif ossf and  75 <= m < 105 and        mT < 120 and 150 <= met < 200: SR = 15
-        elif ossf and  75 <= m < 105 and        mT < 120 and 200 <= met      : SR = 16
-        elif ossf and  75 <= m < 105 and 120 <= mT < 160 and  50 <= met < 100: SR = 17
-        elif ossf and  75 <= m < 105 and 120 <= mT < 160 and 100 <= met < 150: SR = 18
-        elif ossf and  75 <= m < 105 and 120 <= mT < 160 and 150 <= met < 200: SR = 19
-        elif ossf and  75 <= m < 105 and 120 <= mT < 160 and 200 <= met      : SR = 20
-        elif ossf and  75 <= m < 105 and 160 <= mT       and  50 <= met < 100: SR = 21
-        elif ossf and  75 <= m < 105 and 160 <= mT       and 100 <= met < 150: SR = 22
-        elif ossf and  75 <= m < 105 and 160 <= mT       and 150 <= met < 200: SR = 23
-        elif ossf and  75 <= m < 105 and 160 <= mT       and 200 <= met      : SR = 24
-        elif ossf and 105 <= m       and        mT < 120 and  50 <= met < 100: SR = 25
-        elif ossf and 105 <= m       and        mT < 120 and 100 <= met < 150: SR = 26
-        elif ossf and 105 <= m       and        mT < 120 and 150 <= met < 200: SR = 27
-        elif ossf and 105 <= m       and        mT < 120 and 200 <= met      : SR = 28
-        elif ossf and 105 <= m       and 120 <= mT < 160 and  50 <= met < 100: SR = 29
-        elif ossf and 105 <= m       and 120 <= mT < 160 and 100 <= met < 150: SR = 30
-        elif ossf and 105 <= m       and 120 <= mT < 160 and 150 <= met < 200: SR = 31
-        elif ossf and 105 <= m       and 120 <= mT < 160 and 200 <= met      : SR = 32
-        elif ossf and 105 <= m       and 160 <= mT       and  50 <= met < 100: SR = 33
-        elif ossf and 105 <= m       and 160 <= mT       and 100 <= met < 150: SR = 34
-        elif ossf and 105 <= m       and 160 <= mT       and 150 <= met < 200: SR = 35
-        elif ossf and 105 <= m       and 160 <= mT       and 200 <= met      : SR = 36
+        elif ossf:
+            if          m <  75 and        mT < 120 and  50 <= met < 100: SR =  2
+            elif        m <  75 and        mT < 120 and 100 <= met < 150: SR =  3
+            elif        m <  75 and        mT < 120 and 150 <= met < 200: SR =  4
+            elif        m <  75 and        mT < 120 and 200 <= met      : SR =  5
+            elif        m <  75 and 120 <= mT < 160 and  50 <= met < 100: SR =  6
+            elif        m <  75 and 120 <= mT < 160 and 100 <= met < 150: SR =  7
+            elif        m <  75 and 120 <= mT < 160 and 150 <= met < 200: SR =  8
+            elif        m <  75 and 120 <= mT < 160 and 200 <= met      : SR =  9
+            elif        m <  75 and 160 <= mT       and  50 <= met < 100: SR = 10
+            elif        m <  75 and 160 <= mT       and 100 <= met < 150: SR = 11
+            elif        m <  75 and 160 <= mT       and 150 <= met < 200: SR = 12
+            elif        m <  75 and 160 <= mT       and 200 <= met      : SR = 13
+            elif  75 <= m < 105 and        mT < 120 and  50 <= met < 100: SR = 14
+            elif  75 <= m < 105 and        mT < 120 and 100 <= met < 150: SR = 15
+            elif  75 <= m < 105 and        mT < 120 and 150 <= met < 200: SR = 16
+            elif  75 <= m < 105 and        mT < 120 and 200 <= met      : SR = 17
+            elif  75 <= m < 105 and 120 <= mT < 160 and  50 <= met < 100: SR = 18
+            elif  75 <= m < 105 and 120 <= mT < 160 and 100 <= met < 150: SR = 19
+            elif  75 <= m < 105 and 120 <= mT < 160 and 150 <= met < 200: SR = 20
+            elif  75 <= m < 105 and 120 <= mT < 160 and 200 <= met      : SR = 21
+            elif  75 <= m < 105 and 160 <= mT       and  50 <= met < 100: SR = 22
+            elif  75 <= m < 105 and 160 <= mT       and 100 <= met < 150: SR = 23
+            elif  75 <= m < 105 and 160 <= mT       and 150 <= met < 200: SR = 24
+            elif  75 <= m < 105 and 160 <= mT       and 200 <= met      : SR = 25
+            elif 105 <= m       and        mT < 120 and  50 <= met < 100: SR = 26
+            elif 105 <= m       and        mT < 120 and 100 <= met < 150: SR = 27
+            elif 105 <= m       and        mT < 120 and 150 <= met < 200: SR = 28
+            elif 105 <= m       and        mT < 120 and 200 <= met      : SR = 29
+            elif 105 <= m       and 120 <= mT < 160 and  50 <= met < 100: SR = 30
+            elif 105 <= m       and 120 <= mT < 160 and 100 <= met < 150: SR = 31
+            elif 105 <= m       and 120 <= mT < 160 and 150 <= met < 200: SR = 32
+            elif 105 <= m       and 120 <= mT < 160 and 200 <= met      : SR = 33
+            elif 105 <= m       and 160 <= mT       and  50 <= met < 100: SR = 34
+            elif 105 <= m       and 160 <= mT       and 100 <= met < 150: SR = 35
+            elif 105 <= m       and 160 <= mT       and 150 <= met < 200: SR = 36
+            elif 105 <= m       and 160 <= mT       and 200 <= met      : SR = 37
 
         # OSOF category
-        elif osof and        m < 100 and        mT < 120 and  50 <= met < 100: SR = 37
-        elif osof and        m < 100 and        mT < 120 and 100 <= met < 150: SR = 38
-        elif osof and        m < 100 and        mT < 120 and 150 <= met < 200: SR = 39
-        elif osof and        m < 100 and        mT < 120 and 200 <= met      : SR = 40
-        elif osof and        m < 100 and 120 <= mT < 160 and  50 <= met < 100: SR = 41
-        elif osof and        m < 100 and 120 <= mT < 160 and 100 <= met < 150: SR = 42
-        elif osof and        m < 100 and 120 <= mT < 160 and 150 <= met < 200: SR = 43
-        elif osof and        m < 100 and 120 <= mT < 160 and 200 <= met      : SR = 44
-        elif osof and        m < 100 and 160 <= mT       and  50 <= met < 100: SR = 45
-        elif osof and        m < 100 and 160 <= mT       and 100 <= met < 150: SR = 46
-        elif osof and        m < 100 and 160 <= mT       and 150 <= met < 200: SR = 47
-        elif osof and        m < 100 and 160 <= mT       and 200 <= met      : SR = 48
-        elif osof and 100 <= m       and        mT < 120 and  50 <= met < 100: SR = 49
-        elif osof and 100 <= m       and        mT < 120 and 100 <= met < 150: SR = 50
-        elif osof and 100 <= m       and        mT < 120 and 150 <= met < 200: SR = 51
-        elif osof and 100 <= m       and        mT < 120 and 200 <= met      : SR = 52
-        elif osof and 100 <= m       and 120 <= mT < 160 and  50 <= met < 100: SR = 53
-        elif osof and 100 <= m       and 120 <= mT < 160 and 100 <= met < 150: SR = 54
-        elif osof and 100 <= m       and 120 <= mT < 160 and 150 <= met < 200: SR = 55
-        elif osof and 100 <= m       and 120 <= mT < 160 and 200 <= met      : SR = 56
-        elif osof and 100 <= m       and 160 <= mT       and  50 <= met < 100: SR = 57
-        elif osof and 100 <= m       and 160 <= mT       and 100 <= met < 150: SR = 58
-        elif osof and 100 <= m       and 160 <= mT       and 150 <= met < 200: SR = 59
-        elif osof and 100 <= m       and 160 <= mT       and 200 <= met      : SR = 60
+        elif osof:
 
-        # SS category
-        elif ss   and        m < 100 and        mT < 120 and  50 <= met < 100: SR = 61
-        elif ss   and        m < 100 and        mT < 120 and 100 <= met < 150: SR = 62
-        elif ss   and        m < 100 and        mT < 120 and 150 <= met < 200: SR = 63
-        elif ss   and        m < 100 and        mT < 120 and 200 <= met      : SR = 64
-        elif ss   and        m < 100 and 120 <= mT < 160 and  50 <= met < 100: SR = 65
-        elif ss   and        m < 100 and 120 <= mT < 160 and 100 <= met < 150: SR = 66
-        elif ss   and        m < 100 and 120 <= mT < 160 and 150 <= met < 200: SR = 67
-        elif ss   and        m < 100 and 120 <= mT < 160 and 200 <= met      : SR = 68
-        elif ss   and        m < 100 and 160 <= mT       and  50 <= met < 100: SR = 69
-        elif ss   and        m < 100 and 160 <= mT       and 100 <= met < 150: SR = 70
-        elif ss   and        m < 100 and 160 <= mT       and 150 <= met < 200: SR = 71
-        elif ss   and        m < 100 and 160 <= mT       and 200 <= met      : SR = 72
-        elif ss   and 100 <= m       and        mT < 120 and  50 <= met < 100: SR = 73
-        elif ss   and 100 <= m       and        mT < 120 and 100 <= met < 150: SR = 74
-        elif ss   and 100 <= m       and        mT < 120 and 150 <= met < 200: SR = 75
-        elif ss   and 100 <= m       and        mT < 120 and 200 <= met      : SR = 76
-        elif ss   and 100 <= m       and 120 <= mT < 160 and  50 <= met < 100: SR = 77
-        elif ss   and 100 <= m       and 120 <= mT < 160 and 100 <= met < 150: SR = 78
-        elif ss   and 100 <= m       and 120 <= mT < 160 and 150 <= met < 200: SR = 79
-        elif ss   and 100 <= m       and 120 <= mT < 160 and 200 <= met      : SR = 80
-        elif ss   and 100 <= m       and 160 <= mT       and  50 <= met < 100: SR = 81
-        elif ss   and 100 <= m       and 160 <= mT       and 100 <= met < 150: SR = 82
-        elif ss   and 100 <= m       and 160 <= mT       and 150 <= met < 200: SR = 83
-        elif ss   and 100 <= m       and 160 <= mT       and 200 <= met      : SR = 84
+            ## old
+            if          m < 100 and        mT < 120 and  50 <= met < 100: SR = 38
+            elif        m < 100 and        mT < 120 and 100 <= met < 150: SR = 39
+            elif        m < 100 and        mT < 120 and 150 <= met < 200: SR = 40
+            elif        m < 100 and        mT < 120 and 200 <= met      : SR = 41
+            elif        m < 100 and 120 <= mT < 160 and  50 <= met < 100: SR = 42
+            elif        m < 100 and 120 <= mT < 160 and 100 <= met < 150: SR = 43
+            elif        m < 100 and 120 <= mT < 160 and 150 <= met < 200: SR = 44
+            elif        m < 100 and 120 <= mT < 160 and 200 <= met      : SR = 45
+            elif        m < 100 and 160 <= mT       and  50 <= met < 100: SR = 46
+            elif        m < 100 and 160 <= mT       and 100 <= met < 150: SR = 47
+            elif        m < 100 and 160 <= mT       and 150 <= met < 200: SR = 48
+            elif        m < 100 and 160 <= mT       and 200 <= met      : SR = 49
+            elif 100 <= m       and        mT < 120 and  50 <= met < 100: SR = 50
+            elif 100 <= m       and        mT < 120 and 100 <= met < 150: SR = 51
+            elif 100 <= m       and        mT < 120 and 150 <= met < 200: SR = 52
+            elif 100 <= m       and        mT < 120 and 200 <= met      : SR = 53
+            elif 100 <= m       and 120 <= mT < 160 and  50 <= met < 100: SR = 54
+            elif 100 <= m       and 120 <= mT < 160 and 100 <= met < 150: SR = 55
+            elif 100 <= m       and 120 <= mT < 160 and 150 <= met < 200: SR = 56
+            elif 100 <= m       and 120 <= mT < 160 and 200 <= met      : SR = 57
+            elif 100 <= m       and 160 <= mT       and  50 <= met < 100: SR = 58
+            elif 100 <= m       and 160 <= mT       and 100 <= met < 150: SR = 59
+            elif 100 <= m       and 160 <= mT       and 150 <= met < 200: SR = 60
+            elif 100 <= m       and 160 <= mT       and 200 <= met      : SR = 61
+
+            ## new
+            #if          m < 100 and        mT < 120 and  50 <= met < 100: SR = 38
+            #elif        m < 100 and        mT < 120 and 100 <= met      : SR = 39
+            #elif        m < 100 and 120 <= mT       and  50 <= met      : SR = 40
+            #elif 100 <= m       and        mT < 120 and  50 <= met < 100: SR = 41
+            #elif 100 <= m       and        mT < 120 and 100 <= met      : SR = 42
+            #elif 100 <= m       and 120 <= mT       and  50 <= met      : SR = 43
+
+            ## new (binning #1)
+            #if          m < 100 and        mT < 120 and  50 <= met < 150: SR = 38
+            #elif        m < 100 and        mT < 120 and 150 <= met      : SR = 39
+            #elif        m < 100 and 120 <= mT < 160 and  50 <= met < 150: SR = 40
+            #elif        m < 100 and 120 <= mT < 160 and 150 <= met      : SR = 41
+            #elif        m < 100 and 160 <= mT       and  50 <= met < 150: SR = 42
+            #elif        m < 100 and 160 <= mT       and 150 <= met      : SR = 43
+            #elif 100 <= m       and        mT < 120 and  50 <= met < 150: SR = 44
+            #elif 100 <= m       and        mT < 120 and 150 <= met      : SR = 45
+            #elif 100 <= m       and 120 <= mT < 160 and  50 <= met < 150: SR = 46
+            #elif 100 <= m       and 120 <= mT < 160 and 150 <= met      : SR = 47
+            #elif 100 <= m       and 160 <= mT       and  50 <= met < 150: SR = 48
+            #elif 100 <= m       and 160 <= mT       and 150 <= met      : SR = 49
+
+            ## new (binning #2)
+            #if          m < 100 and        mT < 120 and  50 <= met      : SR = 38
+            #elif        m < 100 and 120 <= mT < 160 and  50 <= met      : SR = 39
+            #elif        m < 100 and 160 <= mT       and  50 <= met      : SR = 40
+            #elif 100 <= m       and        mT < 120 and  50 <= met      : SR = 41
+            #elif 100 <= m       and 120 <= mT < 160 and  50 <= met      : SR = 42
+            #elif 100 <= m       and 160 <= mT       and  50 <= met      : SR = 43
+
+            ### new (binning #3)
+            #if          m < 100                                         : SR = 38 
+            #elif 100 <= m                                               : SR = 39 
+
+            ### new (binning #4)
+            #if          m < 100 and        mT < 120 and  50 <= met < 100: SR = 38
+            #elif        m < 100 and        mT < 120 and 100 <= met < 150: SR = 39
+            #elif        m < 100 and        mT < 120 and 150 <= met < 200: SR = 40
+            #elif        m < 100 and        mT < 120 and 200 <= met      : SR = 41
+            #elif        m < 100 and 120 <= mT < 160 and  50 <= met < 100: SR = 42
+            #elif        m < 100 and 120 <= mT < 160 and 100 <= met < 150: SR = 43
+            #elif        m < 100 and 120 <= mT < 160 and 150 <= met < 200: SR = 44
+            #elif        m < 100 and 120 <= mT < 160 and 200 <= met      : SR = 45
+            #elif        m < 100 and 160 <= mT       and  50 <= met < 100: SR = 46
+            #elif        m < 100 and 160 <= mT       and 100 <= met < 150: SR = 47
+            #elif        m < 100 and 160 <= mT       and 150 <= met < 200: SR = 48
+            #elif        m < 100 and 160 <= mT       and 200 <= met      : SR = 49
+            #elif 100 <= m                                               : SR = 50
+
+            ### new (binning #5)
+            #if          m < 100 and        mT < 120 and  50 <= met < 150: SR = 38
+            #elif        m < 100 and        mT < 120 and 150 <= met      : SR = 39
+            #elif        m < 100 and 120 <= mT       and  50 <= met      : SR = 40
+            #elif 100 <= m       and        mT < 120 and  50 <= met < 150: SR = 41
+            #elif 100 <= m       and        mT < 120 and 150 <= met      : SR = 42
+            #elif 100 <= m       and 120 <= mT       and  50 <= met      : SR = 43
+
+            ### new (binning #6)
+            #if          m < 100 and        mT < 120 and  50 <= met < 150: SR = 38
+            #elif        m < 100 and        mT < 120 and 150 <= met      : SR = 39
+            #elif        m < 100 and 120 <= mT < 160 and  50 <= met      : SR = 40
+            #elif        m < 100 and 160 <= mT       and  50 <= met < 150: SR = 41
+            #elif        m < 100 and 160 <= mT       and 150 <= met      : SR = 42
+            #elif 100 <= m       and        mT < 120 and  50 <= met < 150: SR = 43
+            #elif 100 <= m       and        mT < 120 and 150 <= met      : SR = 44
+            #elif 100 <= m       and 120 <= mT < 160 and  50 <= met      : SR = 45
+            #elif 100 <= m       and 160 <= mT       and  50 <= met < 150: SR = 46
+            #elif 100 <= m       and 160 <= mT       and 150 <= met      : SR = 47
+
+
+        return SR        
+
+
+
+    ## findSRtau
+    ## _______________________________________________________________
+    def findSRtau(self, var, BR):
+
+        SR = 0
+
+        ossf  = self.ret["hasOSSF" + self.systs["JEC"][var]]
+        osof  = self.ret["hasOSOF" + self.systs["JEC"][var]]
+        ostf  = self.ret["hasOSTF" + self.systs["JEC"][var]]
+        ss    = self.ret["hasSS"   + self.systs["JEC"][var]]
+        m     = self.ret["mll"     + self.systs["JEC"][var]]
+        mT    = self.ret["mTmin"   + self.systs["JEC"][var]]
+        met   = self.met[var]
+
+        #if BR == 0: return 0
+
+        ## SS category
+        if ss:
+            SR = 1
+
+        # OSSF category
+        elif ossf:
+            if          m <  75 and        mT < 120 and  50 <= met < 100: SR =  2
+            elif        m <  75 and        mT < 120 and 100 <= met < 150: SR =  3
+            elif        m <  75 and        mT < 120 and 150 <= met < 200: SR =  4
+            elif        m <  75 and        mT < 120 and 200 <= met      : SR =  5
+            elif        m <  75 and 120 <= mT < 160 and  50 <= met < 100: SR =  6
+            elif        m <  75 and 120 <= mT < 160 and 100 <= met < 150: SR =  7
+            elif        m <  75 and 120 <= mT < 160 and 150 <= met < 200: SR =  8
+            elif        m <  75 and 120 <= mT < 160 and 200 <= met      : SR =  9
+            elif        m <  75 and 160 <= mT       and  50 <= met < 100: SR = 10
+            elif        m <  75 and 160 <= mT       and 100 <= met < 150: SR = 11
+            elif        m <  75 and 160 <= mT       and 150 <= met < 200: SR = 12
+            elif        m <  75 and 160 <= mT       and 200 <= met      : SR = 13
+            elif  75 <= m < 105 and        mT < 120 and  50 <= met < 100: SR = 14
+            elif  75 <= m < 105 and        mT < 120 and 100 <= met < 150: SR = 15
+            elif  75 <= m < 105 and        mT < 120 and 150 <= met < 200: SR = 16
+            elif  75 <= m < 105 and        mT < 120 and 200 <= met      : SR = 17
+            elif  75 <= m < 105 and 120 <= mT < 160 and  50 <= met < 100: SR = 18
+            elif  75 <= m < 105 and 120 <= mT < 160 and 100 <= met < 150: SR = 19
+            elif  75 <= m < 105 and 120 <= mT < 160 and 150 <= met < 200: SR = 20
+            elif  75 <= m < 105 and 120 <= mT < 160 and 200 <= met      : SR = 21
+            elif  75 <= m < 105 and 160 <= mT       and  50 <= met < 100: SR = 22
+            elif  75 <= m < 105 and 160 <= mT       and 100 <= met < 150: SR = 23
+            elif  75 <= m < 105 and 160 <= mT       and 150 <= met < 200: SR = 24
+            elif  75 <= m < 105 and 160 <= mT       and 200 <= met      : SR = 25
+            elif 105 <= m       and        mT < 120 and  50 <= met < 100: SR = 26
+            elif 105 <= m       and        mT < 120 and 100 <= met < 150: SR = 27
+            elif 105 <= m       and        mT < 120 and 150 <= met < 200: SR = 28
+            elif 105 <= m       and        mT < 120 and 200 <= met      : SR = 29
+            elif 105 <= m       and 120 <= mT < 160 and  50 <= met < 100: SR = 30
+            elif 105 <= m       and 120 <= mT < 160 and 100 <= met < 150: SR = 31
+            elif 105 <= m       and 120 <= mT < 160 and 150 <= met < 200: SR = 32
+            elif 105 <= m       and 120 <= mT < 160 and 200 <= met      : SR = 33
+            elif 105 <= m       and 160 <= mT       and  50 <= met < 100: SR = 34
+            elif 105 <= m       and 160 <= mT       and 100 <= met < 150: SR = 35
+            elif 105 <= m       and 160 <= mT       and 150 <= met < 200: SR = 36
+            elif 105 <= m       and 160 <= mT       and 200 <= met      : SR = 37
+
+        # OSOF category
+        elif osof:
+            if          m < 100 and        mT < 120 and  50 <= met < 100: SR = 38
+            elif        m < 100 and        mT < 120 and 100 <= met < 150: SR = 39
+            elif        m < 100 and        mT < 120 and 150 <= met < 200: SR = 40
+            elif        m < 100 and        mT < 120 and 200 <= met      : SR = 41
+            elif        m < 100 and 120 <= mT < 160 and  50 <= met < 100: SR = 42
+            elif        m < 100 and 120 <= mT < 160 and 100 <= met < 150: SR = 43
+            elif        m < 100 and 120 <= mT < 160 and 150 <= met < 200: SR = 44
+            elif        m < 100 and 120 <= mT < 160 and 200 <= met      : SR = 45
+            elif        m < 100 and 160 <= mT       and  50 <= met < 100: SR = 46
+            elif        m < 100 and 160 <= mT       and 100 <= met < 150: SR = 47
+            elif        m < 100 and 160 <= mT       and 150 <= met < 200: SR = 48
+            elif        m < 100 and 160 <= mT       and 200 <= met      : SR = 49
+            elif 100 <= m       and        mT < 120 and  50 <= met < 100: SR = 50
+            elif 100 <= m       and        mT < 120 and 100 <= met < 150: SR = 51
+            elif 100 <= m       and        mT < 120 and 150 <= met < 200: SR = 52
+            elif 100 <= m       and        mT < 120 and 200 <= met      : SR = 53
+            elif 100 <= m       and 120 <= mT < 160 and  50 <= met < 100: SR = 54
+            elif 100 <= m       and 120 <= mT < 160 and 100 <= met < 150: SR = 55
+            elif 100 <= m       and 120 <= mT < 160 and 150 <= met < 200: SR = 56
+            elif 100 <= m       and 120 <= mT < 160 and 200 <= met      : SR = 57
+            elif 100 <= m       and 160 <= mT       and  50 <= met < 100: SR = 58
+            elif 100 <= m       and 160 <= mT       and 100 <= met < 150: SR = 59
+            elif 100 <= m       and 160 <= mT       and 150 <= met < 200: SR = 60
+            elif 100 <= m       and 160 <= mT       and 200 <= met      : SR = 61
+
+        # OSTF category
+        elif ostf:
+            if          m < 100 and        mT < 120 and  50 <= met < 100: SR = 62
+            elif        m < 100 and        mT < 120 and 100 <= met < 150: SR = 63
+            elif        m < 100 and        mT < 120 and 150 <= met < 200: SR = 64
+            elif        m < 100 and        mT < 120 and 200 <= met      : SR = 65
+            elif        m < 100 and 120 <= mT < 160 and  50 <= met < 100: SR = 66
+            elif        m < 100 and 120 <= mT < 160 and 100 <= met < 150: SR = 67
+            elif        m < 100 and 120 <= mT < 160 and 150 <= met < 200: SR = 68
+            elif        m < 100 and 120 <= mT < 160 and 200 <= met      : SR = 69
+            elif        m < 100 and 160 <= mT       and  50 <= met < 100: SR = 70
+            elif        m < 100 and 160 <= mT       and 100 <= met < 150: SR = 71
+            elif        m < 100 and 160 <= mT       and 150 <= met < 200: SR = 72
+            elif        m < 100 and 160 <= mT       and 200 <= met      : SR = 73
+            elif 100 <= m       and        mT < 120 and  50 <= met < 100: SR = 74
+            elif 100 <= m       and        mT < 120 and 100 <= met < 150: SR = 75
+            elif 100 <= m       and        mT < 120 and 150 <= met < 200: SR = 76
+            elif 100 <= m       and        mT < 120 and 200 <= met      : SR = 77
+            elif 100 <= m       and 120 <= mT < 160 and  50 <= met < 100: SR = 78
+            elif 100 <= m       and 120 <= mT < 160 and 100 <= met < 150: SR = 79
+            elif 100 <= m       and 120 <= mT < 160 and 150 <= met < 200: SR = 80
+            elif 100 <= m       and 120 <= mT < 160 and 200 <= met      : SR = 81
+            elif 100 <= m       and 160 <= mT       and  50 <= met < 100: SR = 82
+            elif 100 <= m       and 160 <= mT       and 100 <= met < 150: SR = 83
+            elif 100 <= m       and 160 <= mT       and 150 <= met < 200: SR = 84
+            elif 100 <= m       and 160 <= mT       and 200 <= met      : SR = 85
 
         return SR        
 
@@ -705,10 +1024,11 @@ class LeptonChoiceEWK:
         for i,(l1, l2, l3) in enumerate(tr_sorted):
             if (l1, l2, l3) in already: continue # fake-not-tight!
             if not bypassMV and not passTripleMllVeto(l1, l2, l3, 0, 12, True): continue
-            if pt_sorted[i][0] > 20 and pt_sorted[i][1] > 15 and pt_sorted[i][2] > 10:
-            #if pt_sorted[i][0] > 20 and pt_sorted[i][2] > 5 and \
-            #   ((abs(tr_sorted[i][1].pdgId)==11 and pt_sorted[i][1] > 15) or \
-            #    (abs(tr_sorted[i][1].pdgId)==13 and pt_sorted[i][1] > 10)):
+            #if pt_sorted[i][0] > 20 and pt_sorted[i][1] > 15 and pt_sorted[i][2] > 10:
+            if pt_sorted[i][0] > 20 and pt_sorted[i][2] > 10 and \
+               ((    tr_sorted[i][1].isTau ==1  and pt_sorted[i][1] > 20) or \
+                (abs(tr_sorted[i][1].pdgId)==11 and pt_sorted[i][1] > 15) or \
+                (abs(tr_sorted[i][1].pdgId)==13 and pt_sorted[i][1] > 10)):
             #if pt_sorted[i][0] > 10 and pt_sorted[i][1] > 10 and pt_sorted[i][2] > 10:
                 triples.append((l1, l2, l3))
                 fakes  .append(fk_sorted[i])
@@ -747,12 +1067,18 @@ class LeptonChoiceEWK:
         biglist = [ 
             ("vtxWeight"          + self.label, "F"),
             ("nTriples"           + self.label, "I"),
-            ("i1"                 + self.label, "I", 20, "nTriples" + self.label),
-            ("i2"                 + self.label, "I", 20, "nTriples" + self.label),
-            ("i3"                 + self.label, "I", 20, "nTriples" + self.label),
+            ("li1"                + self.label, "I", 20, "nTriples" + self.label),
+            ("li2"                + self.label, "I", 20, "nTriples" + self.label),
+            ("li3"                + self.label, "I", 20, "nTriples" + self.label),
+            ("ti1"                + self.label, "I", 20, "nTriples" + self.label),
+            ("ti2"                + self.label, "I", 20, "nTriples" + self.label),
+            ("ti3"                + self.label, "I", 20, "nTriples" + self.label),
             ("t1"                 + self.label, "I", 20, "nTriples" + self.label),
             ("t2"                 + self.label, "I", 20, "nTriples" + self.label),
             ("t3"                 + self.label, "I", 20, "nTriples" + self.label),
+            ("isLight"            + self.label, "I"), 
+            ("isTau"              + self.label, "I"), 
+            ("isDTau"             + self.label, "I"), 
             ("hasTTT"             + self.label, "I"), 
             ("hasTTF"             + self.label, "I"), 
             ("hasTFF"             + self.label, "I"), 
@@ -778,9 +1104,11 @@ class LeptonChoiceEWK:
             biglist.append(("isOnZ"     + self.systs["JEC"  ][var] + self.label, "I"))
             biglist.append(("hasOSSF"   + self.systs["JEC"  ][var] + self.label, "I"))
             biglist.append(("hasOSOF"   + self.systs["JEC"  ][var] + self.label, "I"))
+            biglist.append(("hasOSTF"   + self.systs["JEC"  ][var] + self.label, "I"))
             biglist.append(("hasSS"     + self.systs["JEC"  ][var] + self.label, "I"))
             biglist.append(("BR"        + self.systs["JEC"  ][var] + self.label, "I"))
-            biglist.append(("SR"        + self.systs["JEC"  ][var] + self.label, "I"))
+            biglist.append(("SRlight"   + self.systs["JEC"  ][var] + self.label, "I"))
+            biglist.append(("SRtau"     + self.systs["JEC"  ][var] + self.label, "I"))
         for var in self.systs["LEPSF"]: 
             biglist.append(("leptonSF"  + self.systs["LEPSF"][var] + self.label, "F", 20, "nTriples" + self.label))
         return biglist
@@ -843,36 +1171,40 @@ class LeptonChoiceEWK:
     ## _______________________________________________________________
     def mll(self, var = 0):
 
-        ## search for OSSF pair first
-        buffer = []
-        for (l1, l2, l3) in self.triples:
-            leps = [l1, l2, l3]
-            buffer.append(self.bestZ1TL(leps, leps))
-        
-        if len(buffer) and buffer[0][1] != -1:
-            buffer.sort()
-            return (buffer[0][1], buffer[0][2], buffer[0][3], buffer[0][4], buffer[0][5], 1)
+        ## note: the "amount of taus" involved is already defined in the function feeding the triples
 
-        ## search for OSOF pair second
-        buffer = []
-        for (l1, l2, l3) in self.triples:
-            leps = [l1, l2, l3]
-            buffer.append(self.bestZtauTL(leps, leps))
-        
-        if len(buffer) and buffer[0][1] != -1:
-            buffer.sort()
-            return (buffer[0][1], buffer[0][2], buffer[0][3], buffer[0][4], buffer[0][5], 0)
+        ## search for OSSF (ee, mm, tt) pair first
+        buffer = self.findOSpair(91.2, True, True, 1)
+        if buffer[5] != -1: return buffer
+
+        ## search for OSOF (em) pair if no OSSF pair is found
+        buffer = self.findOSpair(50, False, False, 0)
+        if buffer[5] != -1: return buffer
+
+        ## search for OSOF (et, mt) pair if no OSOF (em) pair is found
+        buffer = self.findOSpair(60, False, True , 2)
+        if buffer[5] != -1: return buffer
+
+        ## search for OSOF (et, mt) pair second
+        #buffer = []
+        #for (l1, l2, l3) in self.triples:
+        #    leps = [l1, l2, l3]
+        #    buffer.append(self.bestZtauTL(leps, leps))
+        #
+        #if len(buffer) and buffer[0][1] != -1:
+        #    buffer.sort()
+        #    return (buffer[0][1], buffer[0][2], buffer[0][3], buffer[0][4], buffer[0][5], 2)
 
         ## no OS pair, take any SS pair from light-flavor leptons
-        for (l1, l2, l3) in self.triples:
-            if l1.isTau + l2.isTau + l3.isTau > 1: continue
-            lep1 = l1; lep2 = l2
-            if l1.isTau: lep1 = l2; lep2 = l3
-            if l2.isTau: lep2 = l3
-            mz = (lep1.p4() + lep2.p4()).M()
-            return (mz, lep1.trIdx, lep2.trIdx, lep1.isTau, lep2.isTau, 2)
+        #for (l1, l2, l3) in self.triples:
+        #    if l1.isTau + l2.isTau + l3.isTau > 1: continue
+        #    lep1 = l1; lep2 = l2
+        #    if l1.isTau: lep1 = l2; lep2 = l3
+        #    if l2.isTau: lep2 = l3
+        #    mz = (lep1.p4() + lep2.p4()).M()
+        #    return (mz, lep1.trIdx, lep2.trIdx, lep1.isTau, lep2.isTau, 2)
 
-        ## nothing useful found
+        ## nothing useful found, same-sign event
         return (-1, -1, -1, 0, 0, -1)
 
 
@@ -916,12 +1248,18 @@ class LeptonChoiceEWK:
         self.ret = {};
         self.ret["vtxWeight"         ] = 1.
         self.ret["nTriples"          ] = 0
-        self.ret["i1"                ] = [0]*20
-        self.ret["i2"                ] = [0]*20
-        self.ret["i3"                ] = [0]*20
+        self.ret["li1"               ] = [-1]*20
+        self.ret["li2"               ] = [-1]*20
+        self.ret["li3"               ] = [-1]*20
+        self.ret["ti1"               ] = [-1]*20
+        self.ret["ti2"               ] = [-1]*20
+        self.ret["ti3"               ] = [-1]*20
         self.ret["t1"                ] = [0]*20
         self.ret["t2"                ] = [0]*20
         self.ret["t3"                ] = [0]*20
+        self.ret["isLight"           ] = False
+        self.ret["isTau"             ] = False
+        self.ret["isDTau"            ] = False
         self.ret["hasTTT"            ] = False
         self.ret["hasTTF"            ] = False
         self.ret["hasTFF"            ] = False
@@ -947,9 +1285,11 @@ class LeptonChoiceEWK:
             self.ret["isOnZ"     + self.systs["JEC"  ][var]] = 0
             self.ret["hasOSSF"   + self.systs["JEC"  ][var]] = 0
             self.ret["hasOSOF"   + self.systs["JEC"  ][var]] = 0
+            self.ret["hasOSTF"   + self.systs["JEC"  ][var]] = 0
             self.ret["hasSS"     + self.systs["JEC"  ][var]] = 0
             self.ret["BR"        + self.systs["JEC"  ][var]] = 0 
-            self.ret["SR"        + self.systs["JEC"  ][var]] = 0 
+            self.ret["SRlight"   + self.systs["JEC"  ][var]] = 0 
+            self.ret["SRtau"     + self.systs["JEC"  ][var]] = 0 
         for var in self.systs["LEPSF"]: 
             self.ret["leptonSF"  + self.systs["LEPSF"][var]] = [0]*20
 
@@ -961,13 +1301,15 @@ class LeptonChoiceEWK:
         self.apply            = False
         self.whichApplication = -1
 
-        if   whichApplication == "Fakes": self.whichApplication = self.appl_Fakes
-        elif whichApplication == "Flips": self.whichApplication = self.appl_Flips
-        elif whichApplication == "Taus" : self.whichApplication = self.appl_Taus
-        elif whichApplication == "WZ"   : self.whichApplication = self.appl_WZ
-        else                            : raise RuntimeError, 'Unknown whichApplication'
+        if   whichApplication == "Super"  : self.whichApplication = self.appl_Super
+        elif whichApplication == "Fakes"  : self.whichApplication = self.appl_Fakes
+        elif whichApplication == "Flips"  : self.whichApplication = self.appl_Flips
+        elif whichApplication == "Taus"   : self.whichApplication = self.appl_Taus
+        elif whichApplication == "TwoTaus": self.whichApplication = self.appl_TwoTaus
+        elif whichApplication == "WZ"     : self.whichApplication = self.appl_WZ
+        else                              : raise RuntimeError, 'Unknown whichApplication'
 
-        if self.whichApplication == self.appl_Fakes:
+        if self.whichApplication == self.appl_Fakes or self.whichApplication == self.appl_Super:
             if filePathFakeRate and self.loadFakeRateHistos(filePathFakeRate):
                 self.apply = True
         elif self.whichApplication == self.appl_Flips:
@@ -979,12 +1321,23 @@ class LeptonChoiceEWK:
 
     ## setAttributes 
     ## _______________________________________________________________
-    def setAttributes(self, leps, isTau = False):
+    def setAttributes(self, leps, isTau = False, offset = False):
         
         for i, l in enumerate(leps): 
-            setattr(l, "trIdx", i)
-            setattr(l, "isTau", 1 if isTau else 0)
+            setattr(l, "trIdx", -1-i if offset else i)
+            setattr(l, "isTau", 1    if isTau else 0)
 
+
+    ## storeIdx
+    ## _______________________________________________________________
+    def storeIdx(self, t, num):
+        nL=sum([1 for i,l in enumerate(self.triples[t]) if not l.isTau and i < num])
+        nT=sum([1 for i,l in enumerate(self.triples[t]) if     l.isTau and i < num])
+
+        label = "li" + str(nL+1)
+        if self.triples[t][num].isTau: label = "ti" + str(nT+1)
+        self.ret[label][t] = self.triples[t][num].trIdx
+        self.ret["t"+str(num+1)][t] = self.triples[t][num].isTau
 
 
     ## for debugging only
@@ -1007,6 +1360,55 @@ class LeptonChoiceEWK:
         return False
 
 
+def _susy3l_lepId_CBlooseMVA(lep):
+        if abs(lep.pdgId) == 13:
+            if lep.pt <= 5: return False
+            return True
+        elif abs(lep.pdgId) == 11:
+            if lep.pt <= 7: return False
+            if not (lep.convVeto and lep.lostHits == 0): 
+                return False
+            if not lep.mvaIdSpring15 > -0.70+(-0.83+0.70)*(abs(lep.etaSc)>0.8)+(-0.92+0.83)*(abs(lep.etaSc)>1.479):
+                return False
+            if not _susy3l_idEmu_cuts(lep): return False
+            return True
+        return False
+
+def _susy3l_lepId_CBloose(lep):
+        if abs(lep.pdgId) == 13:
+            if lep.pt <= 5: return False
+            return True
+        elif abs(lep.pdgId) == 11:
+            if lep.pt <= 7: return False
+            if not (lep.convVeto and lep.lostHits <= 1): 
+                return False
+            if not lep.mvaIdSpring15 > -0.70+(-0.83+0.70)*(abs(lep.etaSc)>0.8)+(-0.92+0.83)*(abs(lep.etaSc)>1.479):
+                return False
+            if not _susy3l_idEmu_cuts(lep): return False
+            return True
+        return False
+
+def _susy3l_idEmu_cuts(lep):
+    if (abs(lep.pdgId)!=11): return True
+    if (lep.hadronicOverEm>=(0.10-0.03*(abs(lep.etaSc)>1.479))): return False
+    if (abs(lep.dEtaScTrkIn)>=(0.01-0.002*(abs(lep.etaSc)>1.479))): return False
+    if (abs(lep.dPhiScTrkIn)>=(0.04+0.03*(abs(lep.etaSc)>1.479))): return False
+    if (lep.eInvMinusPInv<=-0.05): return False
+    if (lep.eInvMinusPInv>=(0.01-0.005*(abs(lep.etaSc)>1.479))): return False
+    if (lep.sigmaIEtaIEta>=(0.011+0.019*(abs(lep.etaSc)>1.479))): return False
+    return True
+
+def _susy3l_lepId_IPcuts(lep):
+    if not (lep.sip3d<4): return False
+    if not (abs(lep.dxy)<0.05): return False
+    if not (abs(lep.dz)<0.1): return False
+    return True
+
+def _susy3l_lepId_IPcutsMVA(lep):
+    if not (lep.sip3d<8): return False
+    if not (abs(lep.dxy)<0.05): return False
+    if not (abs(lep.dz)<0.1): return False
+    return True
 
 
 if __name__ == '__main__':

@@ -3,6 +3,8 @@
 from CMGTools.TTHAnalysis.plotter.mcAnalysis import *
 import itertools
 
+_global_workspaces=[] # avoid crash in 80X, to be investigated
+
 if "/bin2Dto1Dlib_cc.so" not in ROOT.gSystem.GetLibraries():
     ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/TTHAnalysis/python/plotter/bin2Dto1Dlib.cc+" % os.environ['CMSSW_BASE']);
 if "/fakeRate_cc.so" not in ROOT.gSystem.GetLibraries(): 
@@ -277,9 +279,11 @@ def doScaleBkgNormData(pspec,pmap,mca,list = []):
 
 
 def doNormFit(pspec,pmap,mca,saveScales=False):
+    global _global_workspaces
     if "data" not in pmap: return -1.0
     data = pmap["data"]
     w = ROOT.RooWorkspace("w","w")
+    _global_workspaces.append(w)
     x = w.factory("x[%g,%g]" % (data.GetXaxis().GetXmin(), data.GetXaxis().GetXmax()))
     x.setBins(data.GetNbinsX())
     obs = ROOT.RooArgList(w.var("x"))
@@ -388,9 +392,10 @@ def doNormFit(pspec,pmap,mca,saveScales=False):
 def doRatioHists(pspec,pmap,total,totalSyst,maxRange,fixRange=False,fitRatio=None,errorsOnRef=True,ratioNums="signal",ratioDen="background"):
     numkeys = [ "data" ]
     if "data" not in pmap: 
-        if len(pmap) >= 4 and ratioDen in pmap:
+        if len(pmap) >= 2 and ratioDen in pmap:
             numkeys = []
             for p in pmap.iterkeys():
+                if p == ratioDen: continue
                 for s in ratioNums.split(","):
                     if re.match(s,p): 
                         numkeys.append(p)
@@ -686,12 +691,6 @@ class PlotMaker:
                 elif options.fitData: doNormFit(pspec,pmap,mca)
                 elif options.preFitData and pspec.name == options.preFitData: 
                     doNormFit(pspec,pmap,mca,saveScales=True)
-                binlabels = pspec.getOption("xBinLabels","")
-                if binlabels != "" and len(binlabels.split(",")) == total.GetNbinsX():
-                    blist = binlabels.split(",")
-                    for i in range(1,total.GetNbinsX()+1): 
-                        total.GetXaxis().SetBinLabel(i,blist[i-1]) 
-                        total.GetYaxis().SetLabelSize(0.05)
                 #
                 for k,v in pmap.iteritems():
                     if v.InheritsFrom("TH1"): v.SetDirectory(dir) 
@@ -765,6 +764,12 @@ class PlotMaker:
                         else:
                             plot.SetMarkerStyle(0)
 
+                binlabels = pspec.getOption("xBinLabels","")
+                if binlabels != "" and len(binlabels.split(",")) == total.GetNbinsX():
+                    blist = binlabels.split(",")
+                    for i in range(1,total.GetNbinsX()+1): 
+                        total.GetXaxis().SetBinLabel(i,blist[i-1]) 
+                        total.GetYaxis().SetLabelSize(0.05)
 
                 if not self._options.emptyStack and stack.GetNhists() == 0:
                     print "ERROR: for %s, all histograms are empty\n " % pspec.name
@@ -847,8 +852,8 @@ class PlotMaker:
                         doStatTests(totalSyst, pmap['data'], options.doStatTests, legendCorner=pspec.getOption('Legend','TR'))
                 if pspec.hasOption('YMin') and pspec.hasOption('YMax'):
                     total.GetYaxis().SetRangeUser(pspec.getOption('YMin',1.0), pspec.getOption('YMax',1.0))
-                if options.yrange: 
-                    total.GetYaxis().SetRangeUser(options.yrange[0], options.yrange[1])
+                #if options.yrange: 
+                #    total.GetYaxis().SetRangeUser(options.yrange[0], options.yrange[1])
                 legendCutoff = pspec.getOption('LegendCutoff', 1e-5 if c1.GetLogy() else 1e-2)
                 if plotmode == "norm": legendCutoff = 0 
                 doLegend(pmap,mca,corner=pspec.getOption('Legend','TR'),
@@ -1001,7 +1006,7 @@ def addPlotMakerOptions(parser, addAlsoMCAnalysis=True):
     parser.add_option("--wide", dest="wideplot", action="store_true", default=False, help="Draw a wide canvas")
     parser.add_option("--elist", dest="elist", action="store_true", default='auto', help="Use elist (on by default if making more than 2 plots)")
     parser.add_option("--no-elist", dest="elist", action="store_false", default='auto', help="Don't elist (which are on by default if making more than 2 plots)")
-    parser.add_option("--yrange", dest="yrange", default=None, nargs=2, type='float', help="Y axis range");
+    #if not parser.has_option("--yrange"): parser.add_option("--yrange", dest="yrange", default=None, nargs=2, type='float', help="Y axis range");
     parser.add_option("--emptyStack", dest="emptyStack", action="store_true", default=False, help="Allow empty stack in order to plot, for example, only signals but no backgrounds.")
 
 if __name__ == "__main__":
