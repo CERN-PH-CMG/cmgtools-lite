@@ -3,14 +3,21 @@
 ################################
 T="/afs/cern.ch/user/g/gpetrucc/w/TREES_TTH_260116_76X_1L"
 if hostname | grep -q cmsco01; then
-    T="/data1/gpetrucc/TREES_TTH_260116_76X_1L"
+#    T="/data1/gpetrucc/TREES_TTH_260116_76X_1L"
+    T="/data1/peruzzi/TREES_80X_210616_1lep" # warning: QCDEl from 76X
 elif hostname | grep -q vinavx; then
     T="/home/gpetrucc/TREES_TTH_260116_76X_1L"
 fi
-BCORE=" --s2v --tree treeProducerSusyMultilepton ttH-multilepton/mca-qcd1l.txt ttH-multilepton/qcd1l.txt -P $T -l 2.32 --AP  "
+ANALYSIS=$1; if [[ "$1" == "" ]]; then exit 1; fi; shift;
+case $ANALYSIS in
+ttH) CUTFILE="ttH-multilepton/qcd1l.txt"; XVAR="ptJI85_mvaPt075_coarselongbin"; NUM="mvaPt_075i";;
+susy_wpM) CUTFILE="susy-ewkino/qcd1l_wpM.txt"; XVAR="ptJIMIX4_mvaSusy_sMi_coarselongbin"; NUM="mvaSusy_sMi";;
+susy_wpV) CUTFILE="susy-ewkino/qcd1l_wpV.txt"; XVAR="ptJIMIX3_mvaSusy_sVi_coarselongbin"; NUM="mvaSusy_sVi";;
+esac;
+BCORE=" --s2v --tree treeProducerSusyMultilepton ttH-multilepton/mca-qcd1l.txt ${CUTFILE} -P $T -l 3.99 --AP  "
 BCORE="${BCORE} --mcc ttH-multilepton/mcc-eleIdEmu2.txt  "; 
 
-BG=" -j 6 "; if [[ "$1" == "-b" ]]; then BG=" & "; shift; fi
+BG=" -j 8 "; if [[ "$1" == "-b" ]]; then BG=" & "; shift; fi
 
 lepton=$1; if [[ "$1" == "" ]]; then exit 1; fi
 case $lepton in
@@ -28,8 +35,8 @@ PFJet40)
     BCORE="${BCORE} -E HLT_FR_PFJet40   "; 
     PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw$lepton$trigger(nVert)' "
     ;;
-PFJet)
-    BCORE="${BCORE} -E HLT_PFJet   "; 
+PFJetAll)
+    BCORE="${BCORE} -E '^HLT_PFJetAll'   "; 
     PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw$lepton$trigger(nVert)' "
     ;;
 PFJet6)
@@ -45,11 +52,27 @@ JHT)
     PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw$lepton$trigger(nVert)' "
     ;;
 AnyM)
-    BCORE="${BCORE} -A veto trigger HLT_AnyM  ";
+    BCORE="${BCORE} -E HLT_AnyM  ";
+    PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw$trigger(nVert)' "
+    ;;
+Mu3_PFJet40)
+    BCORE="${BCORE} -A veto trigger 'HLT_FR_${trigger} || (!isData)' -A veto recoptfortrigger 'LepGood_pt>4.0 && LepGood_awayJet_pt > 40'  "; 
+    PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw$trigger(nVert)' "
+    ;;
+Mu8)
+    BCORE="${BCORE} -A veto trigger 'HLT_FR_${trigger} || (!isData)' -A veto recoptfortrigger 'LepGood_pt>8.5'  "; 
+    PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw$trigger(nVert)' "
+    ;;
+Mu17)
+    BCORE="${BCORE} -A veto trigger 'HLT_FR_${trigger} || (!isData)' -A veto recoptfortrigger 'LepGood_pt>17.5'  "; 
+    PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw$trigger(nVert)' "
+    ;;
+Ele12_CaloIdM_TrackIdM_PFJet30)
+    BCORE="${BCORE} -A veto trigger 'HLT_FR_${trigger} || (!isData)' -A veto recoptfortrigger 'LepGood_pt>15'  "; 
     PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw$trigger(nVert)' "
     ;;
 *)
-    BCORE="${BCORE} -A veto trigger HLT_FR_${trigger}  "; 
+    BCORE="${BCORE} -A veto trigger 'HLT_FR_${trigger} || (!isData)'  "; 
     PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw$trigger(nVert)' "
     ;;
 esac;
@@ -57,7 +80,7 @@ esac;
 
 what=$3;
 more=$4
-PBASE="~/www/plots_FR/76X/lepMVA/v1.0_150616/fr-meas/$lepton/HLT_$trigger/$what/$more"
+PBASE="~/www/plots_FR/80X/lepMVA_${ANALYSIS}/v1.4_250616/fr-meas/$lepton/HLT_$trigger/$what/$more"
 
 EWKONE="-p ${QCD}_red,EWK,data"
 EWKSPLIT="-p ${QCD}_red,WJets,DYJets,data"
@@ -108,10 +131,10 @@ case $what in
         ;;
     fakerates-*)
         fitVar=${what/fakerates-/}
-        XVAR="mvaPt075_coarse"
+
         MCEFF="  python ttH-multilepton/dataFakeRate.py -f  $BCORE $PUW $EWKONE  --groupBy cut ttH-multilepton/make_fake_rates_sels.txt ttH-multilepton/make_fake_rates_xvars.txt  "
         MCEFF="$MCEFF --sp ${QCD}_red  "
-        MCEFF="$MCEFF --sP mvaPt_075i --sP ptJI85_${XVAR}  --sP $fitVar $fitVar  --ytitle 'Fake rate' "
+        MCEFF="$MCEFF --sP ${NUM} --sP ${XVAR}  --sP $fitVar $fitVar  --ytitle 'Fake rate' "
         MCEFF="$MCEFF  " # ratio for fake rates
         MCEFF="$MCEFF --fixRatioRange --maxRatioRange 0.7 1.29 " # ratio for other plots
         LEGEND=" --legend=TL --fontsize 0.05 --legendWidth 0.4"
@@ -121,28 +144,35 @@ case $what in
            el) RANGES="$RANGES  --yrange 0 0.25  --xcut 20 100 --xline 30 " ;;
            mu)
                  RANGES="$RANGES  --yrange 0 0.25  --xcut 15 100 --xline 20 --xline 45" ;
+		 if [[ "$ANALYSIS" == "susy_wpM" ]]; then RANGES=${RANGES/--xcut 15 100/--xcut 10 100}; fi
+		 if [[ "$ANALYSIS" == "susy_wpV" ]]; then RANGES=${RANGES/--xcut 15 100/--xcut 10 100}; fi
+
                  if [[ "$trigger" == "Mu17" ]]; then 
                      RANGES=${RANGES/--xcut 15 100/--xcut 30 100}; 
+		     if [[ "$ANALYSIS" == "susy_wpM" ]]; then RANGES=${RANGES/--xcut 10 100/--xcut 30 100}; fi
+		     if [[ "$ANALYSIS" == "susy_wpV" ]]; then RANGES=${RANGES/--xcut 10 100/--xcut 30 100}; fi
                      RANGES=${RANGES/--xline 20 --xline 45/--xline 45}; 
+                 elif [[ "$trigger" == "Mu3_PFJet40" ]]; then
+                     RANGES=${RANGES/--xcut 15 100/--xcut 5 30};
+                     RANGES=${RANGES/--xline 20 --xline 45/--xline 10 --xline 20};
                  elif [[ "$trigger" == "PFJet40" ]]; then
-                     MCEFF="${MCEFF/mvaPt075_coarse/mvaPt075_vcoarse}"
+                     MCEFF="${MCEFF/_coarse/_vcoarse}"
                      RANGES=${RANGES/--xcut 15 100/--xcut 5 30};
                      RANGES=${RANGES/--xline 20 --xline 45/--xline 10 --xline 20};
                  elif [[ "$trigger" == "PFJet" ]]; then
-                     XVAR="mvaPt075_low"
-                     MCEFF="${MCEFF/mvaPt075_coarse/$XVAR}"
+                     MCEFF="${MCEFF/_coarse/_low}"
                      RANGES=${RANGES/--xcut 15 100/--xcut 10 30};
                      RANGES=${RANGES/--xline 20 --xline 45/--xline 10 --xline 20};
                      RANGES=${RANGES/--yrange 0 0.??/--yrange 0 0.12};
                  elif [[ "$trigger" == "PFJet6" ]]; then
-                     XVAR="mvaPt075_low"
-                     MCEFF="${MCEFF/mvaPt075_coarse/$XVAR}"
+                     MCEFF="${MCEFF/_coarse/_low}"
                      RANGES=${RANGES/--xcut 15 100/--xcut 10 30};
                      RANGES=${RANGES/--xline 20 --xline 45/--xline 10 --xline 20};
                      RANGES=${RANGES/--yrange 0 0.??/--yrange 0 0.12};
                  fi;
             ;;
         esac;
+	if [[ "$ANALYSIS" == "susy_wpM" ]]; then RANGES=${RANGES/--yrange 0 0.??/--yrange 0 0.50}; fi
         MCEFF="$MCEFF $LEGEND $RANGES"
         echo " ( $MCEFF -o $PBASE/fr_sub_eta_${BARREL}.root --bare -A veto eta 'abs(LepGood_eta)<$ETA' $BG )"
         echo " ( $MCEFF -o $PBASE/fr_sub_eta_${ENDCAP}.root --bare -A veto eta 'abs(LepGood_eta)>$ETA' $BG )"
@@ -163,7 +193,7 @@ case $what in
         echo " ( $MCGO -i $PBASE/fr_sub_eta_${BARREL}.root -o $PBASE/fr_sub_eta_${BARREL}_fQCD.root --algo=fQCD  $BG )"
         echo " ( $MCGO -i $PBASE/fr_sub_eta_${ENDCAP}.root -o $PBASE/fr_sub_eta_${ENDCAP}_fQCD.root --algo=fQCD  $BG )"
         STACK="python ttH-multilepton/stack_fake_rates_data.py $RANGES $LEGEND "
-        PATT="mvaPt_075i_vs_ptJI85_${XVAR}_${fitVar}_%s"
+        PATT="${NUM}_vs_${XVAR}_${fitVar}_%s"
         for E in ${BARREL} ${ENDCAP}; do
             echo "( $STACK -o $PBASE/fr_sub_eta_${E}_comp.root    $PBASE/fr_sub_eta_${E}_globalFit.root:$PATT:${QCD}_red_prefit,data_sub_syst_prefit  $PBASE/fr_sub_eta_${E}_fQCD.root:$PATT:${QCD}_red_prefit,data_fqcd   $PBASE/fr_sub_eta_${E}_fitSimND.root:$PATT:data_fit   )";
         done

@@ -249,6 +249,7 @@ if __name__ == "__main__":
                     ereport = dict([(title, effFromH2D(hist,options)) for (title, hist) in fzrebinrep.iteritems()])
                     procsToStack = mca.listSignals()+mca.listBackgrounds()+["data"]
                     effs = styleEffsByProc(ereport,procsToStack,mca)
+                    if not effs: continue # cases of completely empty bins
                     feffname = myname.replace(".root",".dir/%s_vs_%s_%s%s.root" % (yspec.name,fspec.name,xspec.name,bxname))
                     stackEffs(feffname,fspec,effs,options)
                     # ==== Now split in high, low 
@@ -326,8 +327,9 @@ if __name__ == "__main__":
                     Ndata = sum(freport_num_den[i]["data"].Integral() for i in ("pass", "fail"))
                     Newk  = sum(freport_num_den[i][p].Integral() for i in ("pass", "fail") for p in mca.listBackgrounds() if p in freport_num_den[i])
                     Nqcd  = sum(freport_num_den[i][p].Integral() for i in ("pass", "fail") for p in mca.listSignals()     if p in freport_num_den[i])
-                    fewk  = sum(freport_num_den["pass"][p].Integral() for p in mca.listBackgrounds() if p in freport_num_den["pass"])/Newk
-                    fqcd  = sum(freport_num_den["pass"][p].Integral() for p in mca.listSignals()     if p in freport_num_den["pass"])/Nqcd
+                    if Newk+Nqcd == 0: continue
+                    fewk  = sum(freport_num_den["pass"][p].Integral() for p in mca.listBackgrounds() if p in freport_num_den["pass"])/(Newk if Newk else 1)
+                    fqcd  = sum(freport_num_den["pass"][p].Integral() for p in mca.listSignals()     if p in freport_num_den["pass"])/(Nqcd if Nqcd else 1)
                     Nqcd, Newk = Nqcd*Ndata/(Nqcd+Newk), Newk*Ndata/(Nqcd+Newk)
                     w.factory("expr::Nsig_pass(\"@0* @1   \",N_sig[%g,0,%g], fsig[%g,0,1])" % (Nqcd,Ndata,fqcd))
                     w.factory("expr::Nbkg_pass(\"@0* @1   \",N_bkg[%g,0,%g], fbkg[%g,0,1])" % (Newk,Ndata,fewk))

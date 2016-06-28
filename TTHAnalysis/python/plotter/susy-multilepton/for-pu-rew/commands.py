@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 MYTREEDIR="/data1/peruzzi/809_June9_ttH"
-MYLUMI="2.6"
+MYLUMI="3.99"
 
 EXE="python mcPlots.py"
 WDIR="susy-multilepton/for-pu-rew"

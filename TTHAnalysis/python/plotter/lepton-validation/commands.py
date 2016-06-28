@@ -1,16 +1,17 @@
 #!/usr/bin/env python
 import sys
 
-ODIR="~/www/run2016b_validation_may29"
-MYTREEDIR="/data/peruzzi/TREES_80X_susy_270516"
-MYLUMI="0.5893"
+ODIR="~/www/run2016b_validation_jun23"
+MYTREEDIR="/data1/peruzzi/809_June9_ttH"
+MYLUMI="3.99"
 
 EXE="python mcPlots.py"
 WDIR="lepton-validation"
-COMMOPT='--s2v --tree treeProducerSusyMultilepton --rspam "%(lumi) (13 TeV)  " --lspam "#bf{CMS} #it{Internal}" --legendBorder=0 --legendFontSize 0.055 --legendWidth=0.30  -j 8 -f --sp ".*" --showMCError --showRatio --maxRatioRange 0 2 -W "puw2016_vtx(nVert)" '+(' '.join(sys.argv[1:]))
+COMMOPT='--s2v --tree treeProducerSusyMultilepton --rspam "%(lumi) (13 TeV)  " --lspam "#bf{CMS} #it{Internal}" --legendBorder=0 --legendFontSize 0.055 --legendWidth=0.30  -j 8 -f --sp ".*" --showMCError --showRatio --maxRatioRange 0 2 -W "puw2016_vtx_4fb(nVert)" -A filters sip8 "LepGood_sip3d[iChosen]<8" '+(' '.join(sys.argv[1:]))
 # --FMC sf/t {P}/1_pu_full2015/evVarFriend_{cname}.root -W vtxWeight --noErrorBandOnRatio 
 
 SELECTIONS=["ZtoEE","ZtoMuMu","ttbar","Wl","Zl","ttbar_semiLeptonic"]
+SELECTIONS=["ttbar_semiLeptonic"]
 
 for SEL in SELECTIONS:
     print '#'+SEL
