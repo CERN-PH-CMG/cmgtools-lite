@@ -337,7 +337,7 @@ if runSMS:
     susyCoreSequence.remove(eventFlagsAna)
     ttHLepSkim.requireSameSignPair = True
 
-from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv1 import *
+from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv2 import *
 from CMGTools.RootTools.samples.samples_13TeV_signals import *
 from CMGTools.RootTools.samples.samples_13TeV_76X_susySignalsPriv import *
 from CMGTools.RootTools.samples.samples_13TeV_DATA2015 import *
@@ -352,12 +352,12 @@ selectedComponents = [TTLep_pow_ext]
 #susyCounter.SMS_varying_masses = ['genSusyMGluino','genSusyMNeutralino']
 
 if analysis=='susy':
-    samples_2l = [DYJetsToLL_M10to50,DYJetsToLL_M50,WWTo2L2Nu,ZZTo2L2Q,WZTo3LNu,TTWToLNu,TTZToLLNuNu,TTJets_DiLepton,TTHnobb_mWCutfix_ext1]
-    samples_1l = [WJetsToLNu,TTJets_SingleLeptonFromT,TTJets_SingleLeptonFromTbar,TBarToLeptons_tch_powheg,TToLeptons_sch_amcatnlo,TBar_tWch,T_tWch]
-    selectedComponents = samples_1l+samples_2l
-    cropToLumi(selectedComponents,2)
-    configureSplittingFromTime(samples_1l,50,3)
-    configureSplittingFromTime(samples_2l,100,3)
+    samples_2l = [TTW_LO,TTZ_LO] #[DYJetsToLL_M10to50,DYJetsToLL_M50,WWTo2L2Nu,ZZTo2L2Q,WZTo3LNu,TTWToLNu,TTZToLLNuNu,TTJets_DiLepton,TTHnobb_mWCutfix_ext1]
+    #samples_1l = [WJetsToLNu,TTJets_SingleLeptonFromT,TTJets_SingleLeptonFromTbar,TBarToLeptons_tch_powheg,TToLeptons_sch_amcatnlo,TBar_tWch,T_tWch]
+    selectedComponents = samples_2l #+samples_1l
+    #cropToLumi(selectedComponents,2)
+    #configureSplittingFromTime(samples_1l,50,3)
+    #configureSplittingFromTime(samples_2l,100,3)
     printSummary(selectedComponents)
 
 
@@ -378,8 +378,8 @@ if runData and not isTest: # For running on data
     is50ns = False
     dataChunks = []
 
-    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_271036-274421_13TeV_PromptReco_Collisions16_JSON.txt' # 2.07/fb
-    processing = "Run2016B-PromptReco-v2"; short = "Run2016B_PromptReco_v2"; run_ranges = [(273150,274421)]; useAAA=False; # -v2 starts from 273150
+    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_271036-275125_13TeV_PromptReco_Collisions16_JSON.txt' # 2.07/fb
+    processing = "Run2016B-PromptReco-v2"; short = "Run2016B_PromptReco_v2"; run_ranges = [(273150,275125)]; useAAA=False; # -v2 starts from 273150
     dataChunks.append((json,processing,short,run_ranges,useAAA))
 
     compSelection = ""; compVeto = ""
@@ -503,7 +503,11 @@ if runFRMC or runDataQCD:
         triggerFlagsAna.triggerBits[tShort] = [ t ]
     treeProducer.collections = {
         "selectedLeptons" : NTupleCollection("LepGood",  leptonTypeSusyExtraLight, 8, help="Leptons after the preselection"),
+        "otherLeptons"    : NTupleCollection("LepOther", leptonTypeSusy, 8, help="Leptons after the preselection"),
         "cleanJets"       : NTupleCollection("Jet",     jetTypeSusyExtraLight, 15, help="Cental jets after full selection and cleaning, sorted by pt"),
+        "discardedJets"    : NTupleCollection("DiscJet", jetTypeSusyExtraLight, 15, help="Jets discarted in the jet-lepton cleaning"),
+        "selectedTaus"    : NTupleCollection("TauGood",  tauTypeSusy, 8, help="Taus after the preselection"),
+        "otherTaus"       : NTupleCollection("TauOther",  tauTypeSusy, 8, help="Taus after the preselection not selected"),
     }
     if True: # 
         from CMGTools.TTHAnalysis.analyzers.ttHLepQCDFakeRateAnalyzer import ttHLepQCDFakeRateAnalyzer
@@ -673,16 +677,16 @@ elif test == '80X-Data':
     DoubleMuon = kreator.makeDataComponent("DoubleMuon_Run2016B_run274421",
                             "/DoubleMuon/Run2016B-PromptReco-v2/MINIAOD", "CMS", ".*root",
                             run_range = (274421,274421), triggers = triggers_mumu_iso)
-    DoubleEG = kreator.makeDataComponent("DoubleEG_Run2016B_run274421",
-                            "/DoubleMuon/Run2016B-PromptReco-v2/MINIAOD", "CMS", ".*root",
-                            run_range = (274421,274421), triggers = triggers_ee)
-    selectedComponents = [ DoubleMuon, DoubleEG ]
+    #DoubleEG = kreator.makeDataComponent("DoubleEG_Run2016B_run274421",
+    #                        "/DoubleMuon/Run2016B-PromptReco-v2/MINIAOD", "CMS", ".*root",
+    #                        run_range = (274421,274421), triggers = triggers_ee)
+    selectedComponents = [ DoubleMuon ] #, DoubleEG ]
     for comp in selectedComponents:
         comp.json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-274421_13TeV_PromptReco_Collisions16_JSON.txt'
         comp.splitFactor = 1
         if not getHeppyOption("full"):
             comp.files = comp.files[:1]
-            comp.fineSplitFactor = 2
+            comp.fineSplitFactor = 1
         else:
             comp.splitFactor = len(comp.files)
 elif test == 'ttH-sync':
@@ -713,7 +717,7 @@ if getHeppyOption("fast"):
         sequence.insert(sequence.index(jsonAna)+1, fastSkim)
     else:
         sequence.insert(sequence.index(skimAnalyzer)+1, fastSkim)
-if getHeppyOption("dropLHEweights",True):
+if getHeppyOption("dropLHEweights"):
     treeProducer.collections.pop("LHE_weights")
     if lheWeightAna in sequence: sequence.remove(lheWeightAna)
     susyCounter.doLHE = False

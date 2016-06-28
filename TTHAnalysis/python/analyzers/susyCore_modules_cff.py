@@ -69,6 +69,7 @@ eventFlagsAna = cfg.Analyzer(
         "HBHENoiseIsoFilter" : [ "Flag_HBHENoiseIsoFilter" ],
         "CSCTightHalo2015Filter" : [ "Flag_CSCTightHalo2015Filter" ],
         "CSCTightHaloFilter" : [ "Flag_CSCTightHaloFilter" ],
+        "CSCTightHalo2016Filter" : [ "Flag_globalTightHalo2016Filter" ],
         "hcalLaserEventFilter" : [ "Flag_hcalLaserEventFilter" ],
         "EcalDeadCellTriggerPrimitiveFilter" : [ "Flag_EcalDeadCellTriggerPrimitiveFilter" ],
         "goodVertices" : [ "Flag_goodVertices" ],
