@@ -21,15 +21,15 @@ from CMGTools.H2TauTau.htt_ntuple_base_cff import commonSequence, genAna, dyJets
 
 # production = True run on batch, production = False (or unset) run locally
 production = getHeppyOption('production')
-production = True
+production = False
 
 # local switches
 syncntuple = False
-computeSVfit = True
+computeSVfit = False
 pick_events = False
-cmssw = True
+cmssw = False
 calibrateTaus = False
-data = True
+data = False
 
 dyJetsFakeAna.channel = 'tt'
 
@@ -108,12 +108,12 @@ tau1Weighter = cfg.Analyzer(
     LeptonWeighter,
     name='LeptonWeighter_tau1',
     scaleFactorFiles={
-        'trigger': '$CMSSW_BASE/src/CMGTools/H2TauTau/data/Tau_diTau35_spring16.py',  # include in the event's overall weight
+        #'trigger': '$CMSSW_BASE/src/CMGTools/H2TauTau/data/Tau_diTau35_spring16.py',  # include in the event's overall weight
     },
 
     otherScaleFactorFiles={
-        'trigger_up': '$CMSSW_BASE/src/CMGTools/H2TauTau/data/Tau_diTau35_spring16_up.py',  # DO NOT include in the event's overall weight
-        'trigger_down': '$CMSSW_BASE/src/CMGTools/H2TauTau/data/Tau_diTau35_spring16_down.py',  # DO NOT include in the event's overall weight
+        #'trigger_up': '$CMSSW_BASE/src/CMGTools/H2TauTau/data/Tau_diTau35_spring16_up.py',  # DO NOT include in the event's overall weight
+        #'trigger_down': '$CMSSW_BASE/src/CMGTools/H2TauTau/data/Tau_diTau35_spring16_down.py',  # DO NOT include in the event's overall weight
     },
     lepton='leg1',
     verbose=True,
@@ -124,12 +124,12 @@ tau2Weighter = cfg.Analyzer(
     LeptonWeighter,
     name='LeptonWeighter_tau2',
     scaleFactorFiles={
-        'trigger': '$CMSSW_BASE/src/CMGTools/H2TauTau/data/Tau_diTau35_spring16.py',  # include in the event's overall weight
+        #'trigger': '$CMSSW_BASE/src/CMGTools/H2TauTau/data/Tau_diTau35_spring16.py',  # include in the event's overall weight
     },
 
     otherScaleFactorFiles={
-        'trigger_up': '$CMSSW_BASE/src/CMGTools/H2TauTau/data/Tau_diTau35_spring16_up.py',  # DO NOT include in the event's overall weight
-        'trigger_down': '$CMSSW_BASE/src/CMGTools/H2TauTau/data/Tau_diTau35_spring16_down.py',  # DO NOT include in the event's overall weight
+        #'trigger_up': '$CMSSW_BASE/src/CMGTools/H2TauTau/data/Tau_diTau35_spring16_up.py',  # DO NOT include in the event's overall weight
+        #'trigger_down': '$CMSSW_BASE/src/CMGTools/H2TauTau/data/Tau_diTau35_spring16_down.py',  # DO NOT include in the event's overall weight
     },
     lepton='leg2',
     verbose=True,
@@ -242,12 +242,12 @@ if pick_events:
 ###            SET BATCH OR LOCAL               ###
 ###################################################
 if not production:
-    # comp                 = ggh160
-    comp = data_list[0]
+    comp                 = ggh160
+    # comp = data_list[0]
     selectedComponents = [comp]
     comp.splitFactor = 1
     comp.fineSplitFactor = 1
-    comp.files = comp.files[:1]
+    comp.files = comp.files[13:20]
 
 preprocessor = None
 if cmssw:

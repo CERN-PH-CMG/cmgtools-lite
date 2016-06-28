@@ -87,11 +87,12 @@ def createProcess(runOnMC=True, channel='tau-mu', runSVFit=False,
         )
     else:
         # from CMGTools.RootTools.samples.samples_13TeV_DATA2015 import SingleMuon_Run2015D_Promptv4
+        from CMGTools.H2TauTau.proto.samples.spring16.htt_common import data_single_muon
         process.source = cms.Source(
             "PoolSource",
             noEventSort = cms.untracked.bool(True),
             duplicateCheckMode = cms.untracked.string("noDuplicateCheck"),
-            fileNames = cms.untracked.vstring('root://eoscms.cern.ch//eos/cms/store/data/Run2015D/SingleMuon/MINIAOD/16Dec2015-v1/10000/FEA1FD2B-B5A8-E511-85F7-0025907B5048.root') # mu-tau
+            fileNames = cms.untracked.vstring(data_single_muon[0].files) # mu-tau
 #             fileNames = cms.untracked.vstring('root://eoscms.cern.ch//eos/cms/store/data/Run2015D/Tau/MINIAOD/16Dec2015-v1/00000/F8B6DB5A-69B0-E511-96D4-20CF305B0590.root') # tau-tau
         )
 
@@ -108,8 +109,9 @@ def createProcess(runOnMC=True, channel='tau-mu', runSVFit=False,
     print 'Run on MC?', runOnMC, process.source.fileNames[0]
 
     if not runOnMC:
-        print 'Running on data, setting up JSON file'
-        json = setupJSON(process)
+        from CMGTools.H2TauTau.proto.samples.spring16.htt_common import json
+        # print 'Running on data, setting up JSON file'
+        # json = setupJSON(process)
 
 
     # Message logger setup.
@@ -211,9 +213,18 @@ def createProcess(runOnMC=True, channel='tau-mu', runSVFit=False,
         if p4TransferFunctionFile:
             process.cmgDiTauCorSVFitPreSel.p4TransferFunctionFile = p4TransferFunctionFile
 
-    # elif channel == 'di-mu':
-    #     process.MVAMET.srcLeptons = cms.VInputTag("muonPreSelectionDiMu", "muonPreSelectionDiMu")
-    #     # process.diMuSequence.insert(2, process.MVAMET)
+    elif channel == 'di-mu':
+        process.load('CMGTools.H2TauTau.objects.diMuObjectsMVAMET_cff')
+        process.mvaMETDiMu = process.MVAMET.clone()
+        process.mvaMETDiMu.srcLeptons = cms.VInputTag("muonPreSelectionDiMu", "muonPreSelectionDiMu")
+        process.mvaMETDiMu.MVAMETLabel = cms.string('mvaMETDiMu')
+        process.cmgDiMu.metCollection = cms.InputTag('mvaMETDiMu', 'mvaMETDiMu')
+        if not runSVFit:
+            process.cmgDiMuCorSVFitPreSel.SVFitVersion = 0
+        if integrateOverP4:
+            process.cmgDiMuCorSVFitPreSel.integrateOverP4 = integrateOverP4
+        if p4TransferFunctionFile:
+            process.cmgDiMuCorSVFitPreSel.p4TransferFunctionFile = p4TransferFunctionFile
 
 
     # OUTPUT definition ----------------------------------------------------------

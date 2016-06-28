@@ -10,12 +10,13 @@ from CMGTools.H2TauTau.proto.analyzers.SVfitProducer import SVfitProducer
 from PhysicsTools.Heppy.utils.cmsswPreprocessor import CmsswPreprocessor
 from CMGTools.H2TauTau.proto.analyzers.FileCleaner import FileCleaner
 
-from CMGTools.H2TauTau.proto.samples.fall15.htt_common import backgrounds_mu, sm_signals, mssm_signals, data_single_muon, sync_list
+from CMGTools.H2TauTau.proto.samples.spring16.htt_common import backgrounds_mu, sm_signals, mssm_signals, data_single_muon, sync_list
 
 from CMGTools.RootTools.utils.splitFactor import splitFactor
-from CMGTools.H2TauTau.proto.samples.fall15.triggers_muMu import mc_triggers, mc_triggerfilters
-from CMGTools.H2TauTau.proto.samples.fall15.triggers_muMu import data_triggers, data_triggerfilters
+from CMGTools.H2TauTau.proto.samples.spring16.triggers_muMu import mc_triggers, mc_triggerfilters
+from CMGTools.H2TauTau.proto.samples.spring16.triggers_muMu import data_triggers, data_triggerfilters
 
+from CMGTools.RootTools.samples.autoAAAconfig import autoAAA
 
 # common configuration and sequence
 from CMGTools.H2TauTau.htt_ntuple_base_cff import commonSequence, genAna, dyJetsFakeAna, puFileData, puFileMC, eventSelector
@@ -27,6 +28,7 @@ pick_events = False
 computeSVfit = False
 production = True
 cmssw = True
+data = False
 
 # When ready, include weights from CMGTools.H2TauTau.proto.weights.weighttable
 mc_tauEffWeight_mc = None
@@ -66,7 +68,7 @@ muonWeighter1 = cfg.Analyzer(
         'idiso':'$CMSSW_BASE/src/CMGTools/H2TauTau/data/Muon_IdIso0p10_eff.root',
     },
     lepton='leg1',
-    disable=False
+    disable=True # WARNING
 )
 
 muonWeighter2 = cfg.Analyzer(
@@ -76,7 +78,7 @@ muonWeighter2 = cfg.Analyzer(
         'idiso':'$CMSSW_BASE/src/CMGTools/H2TauTau/data/Muon_IdIso0p10_eff.root',
     },
     lepton='leg2',
-    disable=False
+    disable=True # WARNING
 )
 
 treeProducer = cfg.Analyzer(
@@ -124,28 +126,14 @@ for sample in data_list:
     sample.triggers = data_triggers
     sample.triggerobjects = data_triggerfilters
     sample.splitFactor = splitFactor(sample, split_factor)
-    sample.json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions15/13TeV/Cert_246908-260627_13TeV_PromptReco_Collisions15_25ns_JSON_v2.txt'
-    sample.lumi = 2260.
 
-###################################################
-###              ASSIGN PU to MC                ###
-###################################################
 for mc in samples:
     mc.puFileData = puFileData
     mc.puFileMC = puFileMC
 
-###################################################
-###             SET COMPONENTS BY HAND          ###
-###################################################
 selectedComponents = samples
-# selectedComponents = data_list
-# selectedComponents = samples + data_list
-# selectedComponents = [ggh160]
-# for c in selectedComponents : c.splitFactor *= 5
+selectedComponents = data_list if data else samples
 
-###################################################
-###                  SEQUENCE                   ###
-###################################################
 sequence = commonSequence
 sequence.insert(sequence.index(genAna), MuMuAna)
 sequence.append(muonWeighter1)
@@ -156,9 +144,6 @@ sequence.append(treeProducer)
 if syncntuple:
     sequence.append(syncTreeProducer)
 
-###################################################
-###             CHERRY PICK EVENTS              ###
-###################################################
 if pick_events:
     eventSelector.toSelect = []
     sequence.insert(0, eventSelector)
@@ -167,22 +152,20 @@ if not cmssw:
     module = [s for s in sequence if s.name == 'MCWeighter'][0]
     sequence.remove(module)
 
-###################################################
-###            SET BATCH OR LOCAL               ###
-###################################################
 if not production:
-    # comp = DYJetsToLL_M50_LO
-    # comp = sync_list[0]
     comp = [b for b in backgrounds_mu if b.name == 'DYJetsToLL_M50_LO'][0]
+    comp = data_list[0] if data else sync_list[0]
     selectedComponents = [comp]
     comp.splitFactor = 1
+    comp.files = comp.files[14:16]
 
+# autoAAA(selectedComponents)
 
 preprocessor = None
 if cmssw:
     sequence.append(fileCleaner)
     preprocessor = CmsswPreprocessor(
-        "$CMSSW_BASE/src/CMGTools/H2TauTau/prod/h2TauTauMiniAOD_mumu_cfg.py", addOrigAsSecondary=False)
+        "$CMSSW_BASE/src/CMGTools/H2TauTau/prod/h2TauTauMiniAOD_mumu_data_cfg.py" if data else "$CMSSW_BASE/src/CMGTools/H2TauTau/prod/h2TauTauMiniAOD_mumu_cfg.py", addOrigAsSecondary=False)
 
 # the following is declared in case this cfg is used in input to the
 # heppy.py script

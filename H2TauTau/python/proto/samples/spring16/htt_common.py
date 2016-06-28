@@ -109,9 +109,9 @@ data_single_electron = [SingleElectron_Run2016B_PromptReco_v2]
 data_muon_electron = [MuonEG_Run2016B_PromptReco_v2]
 data_tau = [Tau_Run2016B_PromptReco_v2]
 
-for s in [data_single_muon, data_single_electron, data_muon_electron, data_tau]:
-    s.json = json
-    s.lumi = lumi
+for sample in data_single_muon + data_single_electron + data_muon_electron + data_tau:
+    sample.json = json
+    sample.lumi = lumi
 
 # Signals
 sm_signals = [HiggsGGH125, HiggsVBF125, HiggsTTH125]

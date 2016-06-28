@@ -84,8 +84,8 @@ eleWeighter = cfg.Analyzer(
     LeptonWeighter,
     name='LeptonWeighter_ele',
     scaleFactorFiles={
-        'trigger':'$CMSSW_BASE/src/CMGTools/H2TauTau/data/Electron_Ele23_fall15.root',
-        'idiso':'$CMSSW_BASE/src/CMGTools/H2TauTau/data/Electron_IdIso0p1_fall15.root',
+        'trigger':'$CMSSW_BASE/src/CMGTools/H2TauTau/data/Electron_Ele23_spring16.root',
+        'idiso':'$CMSSW_BASE/src/CMGTools/H2TauTau/data/Electron_IdIso0p1_spring16.root',
     },
     lepton='leg1',
     disable=False
@@ -120,19 +120,10 @@ fileCleaner = cfg.Analyzer(
     name='FileCleaner'
 )
 
-###################################################
-### CONNECT SAMPLES TO THEIR ALIASES AND FILES  ###
-###################################################
-# from CMGTools.H2TauTau.proto.samples.phys14.connector import httConnector
-# my_connect = httConnector('htt_6mar15_manzoni_nom', 'htautau_group',
-#                           '.*root', 'et', production=production)
-# my_connect.connect()
-# MC_list = my_connect.MC_list
+from CMGTools.H2TauTau.proto.samples.spring16.htt_common import backgrounds_ele, sm_signals, mssm_signals, data_single_electron, sync_list
 
-from CMGTools.H2TauTau.proto.samples.fall15.htt_common import backgrounds_ele, sm_signals, mssm_signals, data_single_electron, sync_list
-
-from CMGTools.H2TauTau.proto.samples.fall15.triggers_tauEle import mc_triggers, mc_triggerfilters
-from CMGTools.H2TauTau.proto.samples.fall15.triggers_tauEle import data_triggers, data_triggerfilters
+from CMGTools.H2TauTau.proto.samples.spring16.triggers_tauEle import mc_triggers, mc_triggerfilters
+from CMGTools.H2TauTau.proto.samples.spring16.triggers_tauEle import data_triggers, data_triggerfilters
 
 from CMGTools.RootTools.utils.splitFactor import splitFactor
 
@@ -155,21 +146,12 @@ for sample in data_list:
     sample.splitFactor = splitFactor(sample, split_factor)
 
 
-###################################################
-###              ASSIGN PU to MC                ###
-###################################################
 for mc in samples:
     mc.puFileData = puFileData
     mc.puFileMC = puFileMC
 
-###################################################
-###             SET COMPONENTS BY HAND          ###
-###################################################
 selectedComponents = samples + data_list
 
-###################################################
-###                  SEQUENCE                   ###
-###################################################
 sequence = commonSequence
 sequence.insert(sequence.index(genAna), tauEleAna)
 sequence.append(tauDecayModeWeighter)
@@ -188,15 +170,6 @@ if not cmssw:
     module = [s for s in sequence if s.name == 'MCWeighter'][0]
     sequence.remove(module)
 
-###################################################
-###             CHERRY PICK EVENTS              ###
-###################################################
-# eventSelector.toSelect = [186583]
-# sequence.insert(0, eventSelector)
-
-###################################################
-###            SET BATCH OR LOCAL               ###
-###################################################
 if not production:
     cache = True
     # comp = my_connect.mc_dict['HiggsGGH125']
