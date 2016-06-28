@@ -7,7 +7,7 @@ import os
 
 cuts={}
 
-cuts['common'] = '((HLT_HT800||HLT_HT900)&&Flag_goodVertices&&Flag_CSCTightHaloFilter&&Flag_HBHENoiseFilter&&Flag_HBHENoiseIsoFilter&&Flag_eeBadScFilter&&jj_nOtherLeptons==0)'
+cuts['common'] = '((HLT_HT800||HLT_HT900)&&Flag_goodVertices&&Flag_CSCTightHaloFilter&&Flag_HBHENoiseFilter&&Flag_HBHENoiseIsoFilter&&Flag_eeBadScFilter&&Flag_BadPFMuonFilter&&Flag_BadChargedCandidateFilter&&jj_nOtherLeptons==0)'
 cuts['HP'] = '(jj_l1_tau2/jj_l1_tau1<0.45&&jj_l2_tau2/jj_l2_tau1<0.45)'
 cuts['LP'] = '((jj_l1_tau2/jj_l1_tau1<0.45&&jj_l2_tau2/jj_l2_tau1>0.45&&jj_l2_tau2/jj_l2_tau1<0.75)||(jj_l2_tau1/jj_l2_tau1<0.45&&jj_l1_tau2/jj_l1_tau1>0.45&&jj_l1_tau2/jj_l1_tau1<0.75))'
 cuts['WW'] = '(jj_l1_pruned_mass>65&&jj_l1_pruned_mass<85&&jj_l2_pruned_mass>65&&jj_l2_pruned_mass<85)'
@@ -73,10 +73,9 @@ def makeNormalizations(name,filename,template,data=0,addCut=''):
             os.system(cmd)
 
 
-              
+
 
 
 #makeSignalShapes("JJ_XWW",WWTemplate)
 #makeSignalYields("JJ_XWW",WWTemplate,BRWW)
 makeNormalizations("data","JJ",dataTemplate,1)
-
