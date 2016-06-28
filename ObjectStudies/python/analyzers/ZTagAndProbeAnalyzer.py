@@ -3,7 +3,11 @@ from PhysicsTools.Heppy.analyzers.core.Analyzer import Analyzer
 class ZTagAndProbeAnalyzer( Analyzer ):
     def __init__(self, cfg_ana, cfg_comp, looperName ):
         super(ZTagAndProbeAnalyzer,self).__init__(cfg_ana,cfg_comp,looperName)
-        self.tagSelection = cfg_ana.tagSelection
+        if self.cfg_comp.isMC:
+            self.tagSelection = getattr(cfg_ana, 'tagSelectionMC', getattr(cfg_ana, 'tagSelection', None))
+        else:
+            self.tagSelection = getattr(cfg_ana, 'tagSelectionData', getattr(cfg_ana, 'tagSelection', None))
+        if not self.tagSelection: raise RuntimeError, "Need to specify tagSelection(MC|Data) or tagSelection"
         self.probeSelection = cfg_ana.probeSelection
         self.probeCollection = cfg_ana.probeCollection
         self.massRange = cfg_ana.massRange

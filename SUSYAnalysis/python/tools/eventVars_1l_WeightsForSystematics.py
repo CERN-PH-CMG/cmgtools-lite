@@ -251,17 +251,24 @@ class EventVars1LWeightsForSystematics:
         #        Const weight
         # const: 0.85 +-0.06
         #        16%
+        constVariation=0.16
         wmean = 5.82 - 0.5
         # slope: 0.03 +/-0.05
         slopevariation = sqrt(0.03*0.03 +0.05*0.05)
+
+
+        #2016 update
+        constVariation=0.16
+        slopevariation = sqrt(0.05*0.05 +0.04*0.04)
+        wmean = 5.54 - 0.5
 
         if "nJets30Clean" in base: nJets30Clean = base["nJets30Clean"]
         else: nJets30Clean = event.nJet
 
         if (event.ngenLep+event.ngenTau)==2:
-            ret['DilepNJetWeightConstUp'] = 0.84
+            ret['DilepNJetWeightConstUp'] = 1-constVariation
             ret['DilepNJetWeightSlopeUp'] = 1+ (nJets30Clean-wmean)*slopevariation
-            ret['DilepNJetWeightConstDn'] = 1.16
+            ret['DilepNJetWeightConstDn'] = 1+constVariation
             ret['DilepNJetWeightSlopeDn'] = 1- (nJets30Clean-wmean)*slopevariation
         else:
             ret['DilepNJetWeightConstUp'] = 1.

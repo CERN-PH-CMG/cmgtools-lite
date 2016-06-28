@@ -2,6 +2,7 @@
 from CMGTools.TTHAnalysis.treeReAnalyzer import *
 from glob import glob
 import os.path, re
+import time
 
 MODULES = []
 
@@ -185,8 +186,12 @@ if options.queue:
     for (name,fin,fout,data,range,chunk) in jobs:
         if chunk != -1:
             print "{base} -d {data} -c {chunk} {post}".format(base=basecmd, data=name, chunk=chunk, post=friendPost)
+            os.system( "{base} -d {data} -c {chunk} {post}".format(base=basecmd, data=name, chunk=chunk, post=friendPost))
+            time.sleep(0.1)
         else:
             print "{base} -d {data} {post}".format(base=basecmd, data=name, chunk=chunk, post=friendPost)
+            os.system("{base} -d {data} {post}".format(base=basecmd, data=name, chunk=chunk, post=friendPost))
+            time.sleep(0.1)
 
     exit()
 

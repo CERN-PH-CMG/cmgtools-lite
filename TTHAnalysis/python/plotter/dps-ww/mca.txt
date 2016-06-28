@@ -1,0 +1,16 @@
+# vim: syntax=sh
+* ; TreeName="treeProducerSusyMultilepton"
+
+
+DPSWW+ : WWDouble                    : xsec : 1 ; FillColor=ROOT.kRed+1   , Label="DPS WW"
+ttH    : TTHnobb_pow                 : xsec : 1 ; FillColor=ROOT.kGreen+1 , Label="ttH"
+TT     : TTJets_SingleLeptonFromT    : xsec : 1 ; FillColor=ROOT.kGray+1  , Label="tt(1l)"
+TT     : TTJets_SingleLeptonFromTbar : xsec : 1 ; FillColor=ROOT.kGray+1  , Label="tt(1l)"
+TTW    : TTWToLNu                    : xsec : 1 ; FillColor=ROOT.kCyan+1  , Label="ttW"
+WWss   : WpWpJJ                      : xsec : 1 ; FillColor=ROOT.kYellow+1, Label="WWss"
+WZ     : WZTo3LNu                    : xsec : 1 ; FillColor=ROOT.kBlue+1  , Label="WZ"
+WGamma : WGToLNuG                    : xsec : 1 ; FillColor=ROOT.kGreen-3 , Label="W+gamma"
+WJets  : W1JetsToLNu_LO              : xsec : 1 ; FillColor=ROOT.kOrange-5, Label="W+jets"
+WJets  : W2JetsToLNu_LO              : xsec : 1 ; FillColor=ROOT.kOrange-5, Label="W+jets"
+WJets  : W3JetsToLNu_LO              : xsec : 1 ; FillColor=ROOT.kOrange-5, Label="W+jets"
+WJets  : W4JetsToLNu_LO              : xsec : 1 ; FillColor=ROOT.kOrange-5, Label="W+jets"
