@@ -196,26 +196,11 @@ int SR_bins_stop(float ptlep1){
 
 
 float metmm_pt(int pdg1, float pt1, float phi1, int pdg2, float pt2, float phi2, float metpt, float metphi) {
-  if (abs(pdg1)==13 && abs(pdg2)==13){
-    phi2 -= phi1;
-    metphi -= phi1;
-    return hypot(pt1 + pt2 * std::cos(phi2) + metpt * std::cos(metphi), pt2*std::sin(phi2) + metpt*std::sin(metphi));
-  }
-  else if (abs(pdg1)==13 && !(abs(pdg2)==13)){
-    metphi -= phi1;
-    return hypot(pt1 + metpt * std::cos(metphi), metpt*std::sin(metphi));  
-  }
-  else if (!(abs(pdg1)==13) && abs(pdg2)==13){
-    metphi -= phi2;
-    return hypot(pt2 + metpt * std::cos(metphi), metpt*std::sin(metphi));  
-  }
-  else if (!(abs(pdg1)==13) && !(abs(pdg2)==13)){
-    metphi -= phi2;
-    return metpt;  
-  }
-
+  if (abs(pdg1)==13 && abs(pdg2)==13) return pt_3(pt1,phi1,pt2,phi2,metpt,metphi);
+  else if (abs(pdg1)==13 && !(abs(pdg2)==13)) return pt_2(pt1,phi1,metpt,metphi);
+  else if (!(abs(pdg1)==13) && abs(pdg2)==13) return pt_2(pt2,phi2,metpt,metphi);
+  else if (!(abs(pdg1)==13) && !(abs(pdg2)==13)) return metpt;
 }
-
 
 
 float relax_cut_in_eta_bins(float val, float eta, float eta1, float eta2, float eta3, float val1, float val2, float val3, float val1t, float val2t, float val3t){
