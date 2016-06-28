@@ -6,7 +6,7 @@ import random as rd
 inDir = sys.argv[1]
 dirList = glob.glob(inDir+'/cmg*')
 print dirList
-execute = True
+execute = False
 
 print "Run with python makeCMGStructure.py FOLDER_WITH_CRAB_NTUPLES"
 print "Default is to not really do the change of filestructure, change execute to true, if you are happy with the pritout"
