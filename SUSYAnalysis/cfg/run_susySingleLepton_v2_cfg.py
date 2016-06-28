@@ -204,8 +204,8 @@ genAna.allGenTaus = True
 isData = True # default, but will be overwritten below
 
 #sample = 'MC'
-sample = 'data'
-#sample = 'Signal'
+#sample = 'data'
+sample = 'Signal'
 test = 1
 
 if sample == "MC":
@@ -351,6 +351,7 @@ elif sample == "data":
   from CMGTools.RootTools.samples.samples_13TeV_DATA2016 import *
 
   selectedComponents = [SingleElectron_Run2016B_PromptReco_v2, SingleMuon_Run2016B_PromptReco_v2, JetHT_Run2016B_PromptReco_v2_HT800Only]
+
 
   if test!=0 and jsonAna in susyCoreSequence: susyCoreSequence.remove(jsonAna)
   if test==1:

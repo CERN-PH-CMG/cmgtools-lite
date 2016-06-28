@@ -29,7 +29,7 @@ names = ['JetHT','SingleElectron','SingleMuon',
 
 for d in dirList:
     newName = ''
-    newName = [name for name in names if name in d]
+    newName = [name for name in names if '_'+name in d]
     cmd = './makeDirStruct.sh ' + d
     print cmd
     if execute:
