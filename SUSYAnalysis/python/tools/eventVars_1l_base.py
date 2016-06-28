@@ -745,7 +745,10 @@ class EventVars1L_base:
             #ret['METfilters'] = event.nVert > 0 and event.Flag_HBHENoiseFilter_fix and event.Flag_CSCTightHaloFilter and event.Flag_eeBadScFilter
             # add HCAL Iso Noise
             if hasattr(event,"Flag_eeBadScFilter"):
-                ret['METfilters'] = event.Flag_goodVertices and event.Flag_CSCTightHaloFilter and event.Flag_eeBadScFilter and event.Flag_HBHENoiseFilter_fix and event.Flag_HBHENoiseIsoFilter
+                #old ret['METfilters'] = event.Flag_goodVertices and event.Flag_CSCTightHaloFilter and event.Flag_eeBadScFilter and event.Flag_HBHENoiseFilter_fix and event.Flag_HBHENoiseIsoFilter
+                #for ICHEP; same as in eventVars_1l_filters.py
+                ret['METfilters'] = event.Flag_HBHENoiseFilter and event.Flag_HBHENoiseIsoFilter and event.Flag_EcalDeadCellTriggerPrimitiveFilter and  event.Flag_goodVertices and event.Flag_eeBadScFilter and event.Flag_globalTightHalo2016Filter and event.Flag_badChargedHadronFilter and event.Flag_badMuonFilter
+
             else:
                 ret['METfilters'] = 1
         else:

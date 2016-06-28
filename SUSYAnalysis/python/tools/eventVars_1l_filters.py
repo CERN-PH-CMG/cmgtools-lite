@@ -66,7 +66,7 @@ class EventVars1L_filters:
             # check filters present in event (not FastSim)
             if hasattr(event,"Flag_eeBadScFilter"):
                 #for2016ICHEP https://twiki.cern.ch/twiki/bin/viewauth/CMS/MissingETOptionalFiltersRun2#MiniAOD_8011_ICHEP_dataset
-                ret['passFilters'] = event.Flag_HBHENoiseFilter and event.Flag_HBHENoiseIsoFilter and event.Flag_EcalDeadCellTriggerPrimitiveFilter and  event.Flag_goodVertices and event.Flag_eeBadScFilter and event.Flag_globalTightHalo2016Filter and event.badMuon and event.badChargedHadron 
+                ret['passFilters'] = event.Flag_HBHENoiseFilter and event.Flag_HBHENoiseIsoFilter and event.Flag_EcalDeadCellTriggerPrimitiveFilter and  event.Flag_goodVertices and event.Flag_eeBadScFilter and event.Flag_globalTightHalo2016Filter and event.Flag_badChargedHadronFilter and event.Flag_badMuonFilter
                 #201574X:ret['passFilters'] = event.Flag_goodVertices and event.Flag_eeBadScFilter and event.Flag_HBHENoiseFilter_fix and event.Flag_HBHENoiseIsoFilter and ret['passCSCFilterList']
                 #ret['passFilters'] = event.Flag_goodVertices and event.Flag_eeBadScFilter and event.Flag_HBHENoiseFilter and event.Flag_HBHENoiseIsoFilter  and event.Flag_CSCTightHaloFilter and ret['passCSCFilterList']
             else:
