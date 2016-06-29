@@ -2,13 +2,15 @@ yields: nLepGood : 1,-0.5,0.5; YTitle='Total Event Yields';
 nVert: nVert : 40,-0.5,41.5; XTitle="N_{vtx}"
 lep1Pt:  LepGood1_pt: 20,0,40; XTitle="Leading lepton p_{T}  [GeV]",Legend='TR'
 lep2Pt:  LepGood2_pt: 20,0,40; XTitle="Second lepton p_{T}  [GeV]",Legend='TR', MoreY=1.5
-lep1Eta:  abs(LepGood1_eta): 10,0,2.5; XTitle="Lepton 1 #eta",Legend='TR', MoreY=1.5
-lep2Eta:  abs(LepGood2_eta): 10,0,2.5; XTitle="Lepton 2 #eta",Legend='TR', MoreY=1.5
+lep1Eta: abs(LepGood1_eta): 10,0,2.5; XTitle="Lepton 1 #eta",Legend='TR', MoreY=1.5
+lep2Eta: abs(LepGood2_eta): 10,0,2.5; XTitle="Lepton 2 #eta",Legend='TR', MoreY=1.5
+lepflav: if3(abs(LepGood1_pdgId)!=abs(LepGood2_pdgId),1,abs(LepGood1_pdgId)-11) : [-0.5,0.5,1.5,2.5]; XTitle="ee/e#mu/#mu#mu", XNDdiv=505, MoreY=2.0
 dRll: deltaR(LepGood1_eta, LepGood1_phi, LepGood2_eta, LepGood2_phi): 18,0,6; XTitle="dR(ll)"
 mll  : mass_2(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_mass,LepGood2_pt,LepGood2_eta,LepGood2_phi,LepGood2_mass): 20,0,100; XTitle="m(ll) [GeV]"
 ptll : pt_2(LepGood1_pt,LepGood1_phi, LepGood2_pt,LepGood2_phi): 10,0,50; XTitle="p_{T}(ll) [GeV]"
 met: met_pt: 14,100,450;  XTitle="E_{T}^{miss}  [GeV]"
-metbins  : met_pt : 2,125.,275.; XTitle="E_{T}^{miss}  [GeV]", Legend='TR'
+metbins : met_pt : 2,125.,275.; XTitle="E_{T}^{miss}  [GeV]", Legend='TR'
+metmm: metmm_pt(LepGood1_pdgId, LepGood1_pt, LepGood2_phi, LepGood2_pdgId, LepGood2_pt, LepGood2_phi, met_pt, met_phi): 14,100,450;  XTitle="E_{T}^{miss}  [GeV]"
 metovht: (met_pt/(htJet25-LepGood1_pt-LepGood2_pt)): 10,0,2; XTitle="E_{T}^{miss}/H_{T}(jet p_{T} > 25)"
 lep1MetDphi: abs(deltaPhi(LepGood1_phi, met_phi)) : 7,0,3.14 ; XTitle="#Delta#phi(l1\,E_{T}^{miss})", MoreY=1.5
 lep2MetDphi: abs(deltaPhi(LepGood2_phi, met_phi)) : 7,0,3.14 ; XTitle="#Delta#phi(l2\,E_{T}^{miss})", MoreY=1.5
