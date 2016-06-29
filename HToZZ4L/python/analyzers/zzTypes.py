@@ -3,6 +3,7 @@ from PhysicsTools.Heppy.analyzers.core.AutoFillTreeProducer  import *
 leptonTypeHZZ = NTupleObjectType("leptonHZZ", baseObjectTypes = [ leptonTypeExtra ], variables = [
     NTupleVariable("looseId",     lambda x : x.looseIdSusy, int, help="Loose HZZ ID"),
     NTupleVariable("mvaIdSpring15",   lambda lepton : lepton.mvaRun2("NonTrigSpring15MiniAOD") if abs(lepton.pdgId()) == 11 else 1, help="EGamma POG MVA ID for non-triggering electrons, Spring15 re-training; 1 for muons"),
+    NTupleVariable("mvaIdSpring16",   lambda lepton : lepton.mvaRun2("Spring16") if abs(lepton.pdgId()) == 11 else 1, help="EGamma POG MVA ID, Spring16 training; 1 for muons"),
     # ----------------------
     # Extra isolation variables
     NTupleVariable("relIsoAfterFSR",    lambda x : x.relIsoAfterFSR,   help="RelIso after FSR"),
@@ -117,6 +118,10 @@ ZZType = NTupleObjectType("ZZType", baseObjectTypes=[fourVectorType], variables 
     NTupleVariable("mll_34",   lambda x : (x.leg2.leg1.p4()+x.leg2.leg2.p4()).M()),
     # -------
     NTupleVariable("nJet30", lambda x : len(x.cleanJets), int, help="Number of jets (after cleaning with tight leptons + leptons of the candidate, and their FSR photons)"),
+    NTupleVariable("j1ptzs", lambda x : x.cleanJets[1-1].pt() if len(x.cleanJets) >= 1 else -1, help="Jet 1 pt, or -1 if not found"),
+    NTupleVariable("j2ptzs", lambda x : x.cleanJets[2-1].pt() if len(x.cleanJets) >= 2 else -1, help="Jet 2 pt, or -1 if not found"),
+    NTupleVariable("j1qglzs", lambda x : x.cleanJets[1-1].qgl() if len(x.cleanJets) >= 1 else -1, help="Jet 1 QGL, or -1 if not found"),
+    NTupleVariable("j2qglzs", lambda x : x.cleanJets[2-1].qgl() if len(x.cleanJets) >= 2 else -1, help="Jet 2 QGL, or -1 if not found"),
     NTupleVariable("ij1",    lambda x : x.cleanJetIndices[1-1] if len(x.cleanJetIndices) >= 1 else -1, int, help="Index of 1st jet after cleaning"),
     NTupleVariable("ij2",    lambda x : x.cleanJetIndices[2-1] if len(x.cleanJetIndices) >= 2 else -1, int, help="Index of 2nd jet after cleaning"),
     NTupleVariable("ij3",    lambda x : x.cleanJetIndices[3-1] if len(x.cleanJetIndices) >= 3 else -1, int, help="Index of 3rd jet after cleaning"),
@@ -143,7 +148,15 @@ ZZType = NTupleObjectType("ZZType", baseObjectTypes=[fourVectorType], variables 
     NTupleVariable("D_bkg",   lambda x : x.KDs["D_bkg"], help="MELA D_bkg"),
     NTupleVariable("D_gg",   lambda x : x.KDs["D_gg"], help="MELA D_gg"),
     NTupleVariable("D_0m",   lambda x : x.KDs["D_0-"], help="MELA D_0-"),
-    NTupleVariable("D_HJJ_VBF",   lambda x : x.KDs["D_HJJ^VBF"], help="MELA D_HJJ^VBF"),
+    NTupleVariable("Dkin_HJJ_VBF",   lambda x : x.KDs["D_HJJ^VBF"], help="MELA D_HJJ^VBF"),
+    NTupleVariable("Dkin_HJJ_VBF_2", lambda x : x.KDs["D_HJJ^VBF"] if len(x.cleanJets) >= 2 else -1, help="MELA D_HJJ^VBF (2-jet version)"),
+    NTupleVariable("Dkin_HJJ_VBF_1", lambda x : x.KDs["D_HJJ^VBF"] if len(x.cleanJets) == 1 else -1, help="MELA D_HJJ^VBF (1-jet version)"),
+    NTupleVariable("Dkin_HJJ_WH",    lambda x : x.KDs["D_HJJ^WH"], help="MELA D_HJJ^WH"),
+    NTupleVariable("Dkin_HJJ_ZH",    lambda x : x.KDs["D_HJJ^ZH"], help="MELA D_HJJ^ZH"),
+    NTupleVariable("Dfull_HJJ_VBF_2", lambda x : x.KDs["D_VBF2J"] if len(x.cleanJets) >= 2 else -1, help="Full D_HJJ^VBF (2-jet version)"),
+    NTupleVariable("Dfull_HJJ_VBF_1", lambda x : x.KDs["D_VBF1J"] if len(x.cleanJets) == 1 else -1, help="Full D_HJJ^VBF (1-jet version)"),
+    NTupleVariable("Dfull_HJJ_WH",    lambda x : x.KDs["D_WHh"] if len(x.cleanJets) >= 2 else -1, help="Full D_HJJ^WH"),
+    NTupleVariable("Dfull_HJJ_ZH",    lambda x : x.KDs["D_ZHh"] if len(x.cleanJets) >= 2 else -1, help="Full D_HJJ^ZH"),
 ])
 
 
