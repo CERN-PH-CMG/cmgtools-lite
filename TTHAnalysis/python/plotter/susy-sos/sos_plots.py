@@ -13,7 +13,7 @@ def base(selection):
 
     #CORE="-P /data1/botta/trees_SOS_newpresel_030616/"
     CORE="-P /data1/botta/trees_SOS_80X_170616/"
-    CORE+=" -f -j 8 -l 5.0 --s2v --tree treeProducerSusyMultilepton --mcc susy-sos/mcc-lepWP.txt "#--mcc susy-sos/2los_triggerdefs.txt # --neg"
+    CORE+=" -f -j 8 -l 5.0 --s2v --tree treeProducerSusyMultilepton --mcc susy-sos/mcc-lepWP.txt --mcc susy-sos/mcc-sf1.txt "#--mcc susy-sos/2los_triggerdefs.txt # --neg"
     if dowhat == "plots": CORE+=" --lspam CMSsimulation --legendWidth 0.14 --legendFontSize 0.04"
 
     if selection=='2los':
@@ -53,7 +53,7 @@ if __name__ == '__main__':
         x = base('2los')
         if '_notrigger' in torun: x = add(x,'-X ^trigger ')
         if '_met200' in torun: x = add(x,'-E ^highMET ')
-        if '_met100' in torun: x = add(x,'-E ^upperMET -E ^mm')
+        if '_met125' in torun: x = add(x,'-E ^upperMET -E ^mm')
         if '_nminus1' in torun: 
             x = add(x,"--n-minus-one")
             x = x.replace('-f','')
@@ -63,7 +63,7 @@ if __name__ == '__main__':
     if '2los_SR_bins' in torun:
         x = base('2los')
         if '_notrigger' in torun: x = add(x,'-X ^trigger ')
-        if '_ewk10_met100_mm' in torun: 
+        if '_ewk10_met125_mm' in torun: 
             x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_315,T2ttDeg_330 -E ^pt5sublep -E ^MT -E ^mm -E ^upperMET")           
             if '_syst' in torun: 
                 x = x.replace('mca-2los-mc.txt','mca-2los-mc-syst.txt')
@@ -87,7 +87,7 @@ if __name__ == '__main__':
             if '_ddbkg' in torun: 
                 x = x.replace('mca-2los-mc.txt','mca-2los-mc-frdata.txt')
             runIt(x,'%s/all'%torun,['SR_bins_EWKino'])    
-        if '_ewk20_met100_mm' in torun: 
+        if '_ewk20_met125_mm' in torun: 
             x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_90,T2ttDeg_300,T2ttDeg_315,T2ttDeg_330 -E ^pt5sublep -E ^MT -E ^mm -E ^upperMET")
             if '_syst' in torun: 
                 x = x.replace('mca-2los-mc.txt','mca-2los-mc-syst.txt')
@@ -111,7 +111,7 @@ if __name__ == '__main__':
             if '_ddbkg' in torun: 
                 x = x.replace('mca-2los-mc.txt','mca-2los-mc-frdata.txt')
             runIt(x,'%s/all'%torun,['SR_bins_EWKino'])
-        if '_stop20_met100_mm' in torun: 
+        if '_stop20_met125_mm' in torun: 
             x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_90,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_315 -E ^pt5sublep -E ^mm -E ^upperMET")
             if '_syst' in torun: 
                 x = x.replace('mca-2los-mc.txt','mca-2los-mc-syst.txt')
@@ -143,11 +143,13 @@ if __name__ == '__main__':
             if '_ddbkg' in torun: 
                 x = x.replace('mca-2los-mc.txt','mca-2los-mc-frdata.txt')
             runIt(x,'%s/all'%torun,['SR_bins_stop'])  
-        if '_stop35_met100_mm' in torun: 
+        if '_stop35_met125_mm' in torun: 
             x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_90,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_330 -E ^pt5sublep -E ^mm -E ^upperMET")
             if '_syst' in torun: 
                 x = x.replace('mca-2los-mc.txt','mca-2los-mc-syst.txt')
                 x = add(x,"--plotmode nostack -F sf/t /data1/botta/trees_SOS_80X_170616/TT2l_friends/evVarFriend_{cname}.root")
+            if '_ddbkg' in torun: 
+                x = x.replace('mca-2los-mc.txt','mca-2los-mc-frdata.txt')
             runIt(x,'%s/all'%torun,['SR_bins_stop'])
         if '_stop35_met200_mm' in torun: 
             x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_90,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_330 -E ^mm -E ^highMET")
@@ -202,12 +204,15 @@ if __name__ == '__main__':
             x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt')
             x = add(x,"--showRatio --maxRatioRange 0 3") #--showMCError
         if '_met200' in torun:             
-            x = add(x,"-R ^ledlepPt NoUpledlepPtNoUp '20 < LepGood1_pt' -E ^highMET -E ^MT -R ^TT CRDYTT 'LepGood1_isTightCRDY && LepGood2_isTightCRDY' -R mtautau Invmtautau '0.<mass_tautau(met_pt,met_phi,LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood2_pt,LepGood2_eta,LepGood2_phi)&&mass_tautau(met_pt,met_phi,LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood2_pt,LepGood2_eta,LepGood2_phi)<160.' -X ^triggerAll -E ^triggerMET")
+            x = add(x,"-E ^highMET -E ^MT -R ^TT CRDYTT 'LepGood1_isTightCRDY && LepGood2_isTightCRDY' -R ^ledlepPt NoUpledlepPt '20 < LepGood1_pt || fabs(LepGood1_dxy)>0.01 || fabs(LepGood1_dz)>0.01 || fabs(LepGood2_dxy)>0.01 || fabs(LepGood2_dz)>0.01' -R mtautau Invmtautau '0.<mass_tautau(met_pt,met_phi,LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood2_pt,LepGood2_eta,LepGood2_phi)&&mass_tautau(met_pt,met_phi,LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood2_pt,LepGood2_eta,LepGood2_phi)<160.' -X ^triggerAll -E ^triggerMET")
             x = x.replace('-l 5.0','-l 4.0')
-        if '_met100' in torun:             
-            x = add(x,"-E ^mm -E ^upperMET -E ^MT -R ^ledlepPt NoUpledlepPt '20 < LepGood1_pt' -R ^TT CRDYTT 'LepGood1_isTightCRDY && LepGood2_isTightCRDY' -R mtautau Invmtautau '0.<mass_tautau(met_pt,met_phi,LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood2_pt,LepGood2_eta,LepGood2_phi)&&mass_tautau(met_pt,met_phi,LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood2_pt,LepGood2_eta,LepGood2_phi)<160.' -E ^runRange -X ^triggerAll -E ^triggerDoubleMuMET")
+        if '_met125' in torun:             
+            x = add(x,"-E ^mm -E ^upperMET -E ^MT -R ^TT CRDYTT 'LepGood1_isTightCRDY && LepGood2_isTightCRDY' -R ^ledlepPt NoUpledlepPt '20 < LepGood1_pt || fabs(LepGood1_dxy)>0.01 || fabs(LepGood1_dz)>0.01 || fabs(LepGood2_dxy)>0.01 || fabs(LepGood2_dz)>0.01' -R mtautau Invmtautau '0.<mass_tautau(met_pt,met_phi,LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood2_pt,LepGood2_eta,LepGood2_phi)&&mass_tautau(met_pt,met_phi,LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood2_pt,LepGood2_eta,LepGood2_phi)<160.' -E ^runRange -X ^triggerAll -E ^triggerDoubleMuMET")
             x = x.replace('-l 5.0','-l 1.4')  
         runIt(x,'%s/all'%torun,[],['SR_bins_EWKino','SR_bins_stop'])
+
+
+     #was #-R ^ledlepPt NoUpledlepPt '20 < LepGood1_pt'
 
 
     if '2los_CR_TT_vars' in torun:
@@ -232,7 +237,7 @@ if __name__ == '__main__':
                 x = add(x,"--plotmode nostack -F sf/t /data1/botta/trees_SOS_80X_170616/TT2l_friends/evVarFriend_{cname}.root")   
                 x = add(x,"-R ^ledlepPt NoUpledlepPt '5 < LepGood1_pt' -X ^triggerAll")# -E ^triggerMET")
                 x = add(x,"--sP yields")
-        if '_met100' in torun:             
+        if '_met125' in torun:             
             x = add(x,"-E ^mm -E ^upperMET -R ^TT CRTTTT 'LepGood1_isTightCRTT && LepGood2_isTightCRTT' -X ^bveto -E ^btag ")
             if '_datasingleMu' in torun: 
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdatacr.txt')
