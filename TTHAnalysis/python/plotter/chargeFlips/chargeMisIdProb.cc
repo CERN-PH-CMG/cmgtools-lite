@@ -40,6 +40,8 @@
 #include <RooCBShape.h>
 #include <RooExponential.h>
 
+#include "RooCMSShape.h"
+
 #include <Math/Functor.h>
 #include <Fit/Fitter.h>
 
@@ -80,10 +82,10 @@ RooNumConvPdf* shapeZ(string tag, RooRealVar* x) {
     RooRealVar* gammaZ0 = new RooRealVar( ("gamma_Z0_"+tag).c_str(), "Z0 width",2.4952, "GeV/c^{2}" );
     RooBreitWigner* bw0 = new RooBreitWigner( ("bw0"+tag).c_str(),"true BW",*x, *mZ0, *gammaZ0);
 
-    RooRealVar* cb_bias = new RooRealVar( ("cbb_"+tag).c_str(), "bias",0.07, -3.0, 3.0 );
-    RooRealVar* cb_width = new RooRealVar( ("cbw_"+tag).c_str(),"width", 1.,0.0,5 );
-    RooRealVar* cb_alpha = new RooRealVar( ("cba_"+tag).c_str(),"alpha", 1.2,0.03,2.0 );
-    RooRealVar* cb_power = new RooRealVar( ("cbn_"+tag).c_str(),"power", 5 );
+    RooRealVar* cb_bias  = new RooRealVar( ("cbb_"+tag).c_str(), "bias",  0.07, -3.00, 3.00 );
+    RooRealVar* cb_width = new RooRealVar( ("cbw_"+tag).c_str(), "width", 1.00,  0.00, 5.00 );
+    RooRealVar* cb_alpha = new RooRealVar( ("cba_"+tag).c_str(), "alpha", 1.20,  0.03, 2.00 );
+    RooRealVar* cb_power = new RooRealVar( ("cbn_"+tag).c_str(), "power", 5.00 );
 
     RooCBShape* cb_pdf = new RooCBShape( ("cb_pdf_"+tag).c_str(), "CB shape",
                                          *x,*cb_bias, *cb_width, *cb_alpha, *cb_power );
@@ -101,8 +103,15 @@ RooAbsPdf* shapeSB(string tag, RooRealVar* x, RooRealVar* nSig, RooRealVar* nBkg
 
     RooNumConvPdf* bw = shapeZ(tag, x);
 
-    RooRealVar* exp_tau = new RooRealVar( ("expt_"+tag).c_str(), "tau", -0.05, -40., -0.04);
-    RooExponential* exp_pdf = new RooExponential( ("exp_pdf_"+tag).c_str(), "bkg shape", *x, *exp_tau );
+    // RooRealVar* exp_tau     = new RooRealVar( ("expt_"+tag).c_str(), "tau", -0.05, -40., -0.04);
+    // RooExponential* exp_pdf = new RooExponential( ("exp_pdf_"+tag).c_str(), "bkg shape", *x, *exp_tau );
+
+    RooRealVar* exp_alpha = new RooRealVar( ("expa_"+tag).c_str(), "alpha", 40.0, 20.0, 160.0);
+    RooRealVar* exp_beta  = new RooRealVar( ("expb_"+tag).c_str(), "beta",  0.05, 0.0, 2.0);
+    RooRealVar* exp_gamma = new RooRealVar( ("expg_"+tag).c_str(), "gamma", 0.02, 0.0, 0.1);
+    RooRealVar* exp_peak  = new RooRealVar( ("expp_"+tag).c_str(), "peak",  91.2);
+    RooCMSShape* exp_pdf = new RooCMSShape( ("exp_pdf_"+tag).c_str(), string("bkg shape").c_str(),
+                                            *x, *exp_alpha, *exp_beta, *exp_gamma, *exp_peak);
 
     // RooRealVar* n_Z   = new RooRealVar( ("N_{sig} "+tag).c_str(),"n Z events",501.0, 500., 10000000.);
     // RooRealVar* n_bkg = new RooRealVar( ("N_{bkg} "+tag).c_str(),"n bkg events", 3., 0., 600000.);
@@ -124,32 +133,32 @@ vector<float> doSingleFit(TH1* histo, bool isData) {
     RooRealVar mass("mass","m_{ll}",60,120,"GeV");
     RooDataHist data("hist","hist",mass,histo);
 
-    vector<float> v(4,0);
+    vector<float> values(4,0);
 
     if(data.sumEntries() < 0.001 || data.numEntries() <10 ) {
-        v[0] = histo->Integral(histo->GetXaxis()->FindBin(70), histo->GetXaxis()->FindBin(110) );
-        v[1] = sqrt( v[0] ); //not true for MC
-        v[2] = histo->Integral()-v[0];
-        v[3] = sqrt( v[2] );
-        cout << "result:\t" << histo->GetName() << "\t" << v[0] << "\t" << v[1] << endl;
-        return v;
+        values[0] = histo->Integral(histo->GetXaxis()->FindBin(70), histo->GetXaxis()->FindBin(110) );
+        values[1] = sqrt( values[0] ); //not true for MC
+        values[2] = histo->Integral()-values[0];
+        values[3] = sqrt( values[2] );
+        cout << "result:\t" << histo->GetName() << "\t" << values[0] << "\t" << values[1] << endl;
+        return values;
     }
 
     RooRealVar nSig("nSig","nSig",data.sumEntries(),0,10000000);
     RooRealVar nBkg("nBkg","nBkg",1.,0,10000000);
 
-    // ostringstream os;
-    // os << categ;
     string os = (string)histo->GetName();
-    RooAbsPdf* shape = shapeSB( ("s"+os),&mass, &nSig, &nBkg);
+    RooAbsPdf* shape = shapeSB(("s"+os), &mass, &nSig, &nBkg);
 
     RooFitResult* result;
-    result = shape->fitTo( data ,RooFit::SumW2Error(kFALSE), RooFit::Save(kTRUE), RooFit::PrintLevel(-1) );
+    result = shape->fitTo(data,
+                          RooFit::SumW2Error(kFALSE),
+                          RooFit::Save(kTRUE),
+                          RooFit::PrintLevel(-1) );
 
-    double N = nSig.getVal();
-    double eN = nSig.getError();
-
-    double NB = nBkg.getVal();
+    double N   = nSig.getVal();
+    double eN  = nSig.getError();
+    double NB  = nBkg.getVal();
     double eNB = nBkg.getError();
 
     cout << "result:\t" << histo->GetName() << "\t" << N<<"\t" << eN << endl;
@@ -170,17 +179,15 @@ vector<float> doSingleFit(TH1* histo, bool isData) {
 
     delete frame;
     delete c;
-
     delete shape;
     //delete data;
 
+    values[0] = N;
+    values[1] = eN;
+    values[2] = NB;
+    values[3] = eNB;
 
-    v[0] = N;
-    v[1] = eN;
-    v[2] = NB;
-    v[3] = eNB;
-
-    return v;
+    return values;
 }
 
 void appendDataBase(string name, vector<float> vs, bool appendDb, string dbname) {
@@ -517,7 +524,7 @@ int main(int argc, char* argv[]) {
                  << "-d proceed with a database reading instead of making fits (0 per default). \n "
                  << "-s <categ> perform a fit over a single Z category.\n "
                  << "-D run on data (0 per default). \n "
-                 << "-a do not store the numbers into a b (1 per default). \n "
+                 << "-a do not store the numbers into a db (1 per default). \n "
                  << "-n set the database file name for reading (database.db per default). \n "
                  <<"-h help \n" << endl;
             return 0; }
@@ -527,7 +534,7 @@ int main(int argc, char* argv[]) {
                  << "-d proceed with a database reading instead of making fits (0 per default). \n "
                  << "-s <categ> perform a fit over a single Z category.\n "
                  << "-D run on data (0 per default). \n "
-                 << "-a do not store the numbers into a b (1 per default). \n "
+                 << "-a do not store the numbers into a db (1 per default). \n "
                  << "-n set the database file name for reading (database.db per default). \n "
                  <<"-h help \n" << endl;
             return 0; }
