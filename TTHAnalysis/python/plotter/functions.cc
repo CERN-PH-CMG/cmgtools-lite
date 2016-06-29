@@ -62,6 +62,7 @@ float pt_3(float pt1, float phi1, float pt2, float phi2, float pt3, float phi3) 
     return hypot(pt1 + pt2 * std::cos(phi2) + pt3 * std::cos(phi3), pt2*std::sin(phi2) + pt3*std::sin(phi3));
 }
 
+
 float mass_3(float pt1, float eta1, float phi1, float m1, float pt2, float eta2, float phi2, float m2, float pt3, float eta3, float phi3, float m3) {
     typedef ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<double> > PtEtaPhiMVector;
     PtEtaPhiMVector p41(pt1,eta1,phi1,m1);
@@ -69,6 +70,7 @@ float mass_3(float pt1, float eta1, float phi1, float m1, float pt2, float eta2,
     PtEtaPhiMVector p43(pt3,eta3,phi3,m3);
     return (p41+p42+p43).M();
 }
+
 
 float pt_4(float pt1, float phi1, float pt2, float phi2, float pt3, float phi3, float pt4, float phi4) {
     phi2 -= phi1;
@@ -175,7 +177,7 @@ float mass_tautau( float Met_Pt, float Met_Phi,  float l1_Pt, float l1_Eta, floa
   else            return -(T1+T2).M();
 }
 
-// Plotting SR SOS
+// SOS stuff
 
 int SR_bins_EWKino(float Mll){
   if     (4.<Mll && Mll<9.5) return 1;
@@ -191,6 +193,31 @@ int SR_bins_stop(float ptlep1){
   else if(ptlep1 >20.) return 3; 
   else return -99;
 }
+
+
+float metmm_pt(int pdg1, float pt1, float phi1, int pdg2, float pt2, float phi2, float metpt, float metphi) {
+  if (abs(pdg1)==13 && abs(pdg2)==13) return pt_3(pt1,phi1,pt2,phi2,metpt,metphi);
+  else if (abs(pdg1)==13 && !(abs(pdg2)==13)) return pt_2(pt1,phi1,metpt,metphi);
+  else if (!(abs(pdg1)==13) && abs(pdg2)==13) return pt_2(pt2,phi2,metpt,metphi);
+  else if (!(abs(pdg1)==13) && !(abs(pdg2)==13)) return metpt;
+  else return -99;
+}
+
+
+
+float eleWPVVL(float pt, float etaSc, float mva){
+  if (pt<=10 && ((abs(etaSc)<0.8 && mva>-0.265) || (abs(etaSc)>=0.8 && abs(etaSc)<1.479 && mva > -0.556) || (abs(etaSc)>=1.479 && mva>-0.6))) return 1;
+  else if (pt>10 && ((abs(etaSc)<0.8 && mva > 0.87) || (abs(etaSc)>=0.8 && abs(etaSc)<1.479 && mva > 0.30) || (abs(etaSc)>=1.479 && mva >-0.30))) return 1;
+  else return 0;
+}
+
+
+float eleWPT(float pt, float etaSc, float mva){
+  if (pt<=10 && ((abs(etaSc)<0.8 && mva>-0.265) || (abs(etaSc)>=0.8 && abs(etaSc)<1.479 && mva > -0.556) || (abs(etaSc)>=1.479 && mva>-0.551))) return 1;
+  else if (pt>10 && ((abs(etaSc)<0.8 && mva > 0.87) || (abs(etaSc)>=0.8 && abs(etaSc)<1.479 && mva > 0.60) || (abs(etaSc)>=1.479 && mva >0.17))) return 1;
+  else return 0;
+}
+
 
 
 
