@@ -233,7 +233,7 @@ if __name__ == '__main__':
                 x = add(x,"-R ^ledlepPt NoUpledlepPt '5 < LepGood1_pt' -X ^triggerAll")# -E ^triggerMET")
                 x = add(x,"--sP yields")
         if '_met100' in torun:             
-            x = add(x,"-E ^mm -E ^upperMET -R ^TT TTCRDY 'LepGood1_isTightCRTT && LepGood2_isTightCRTT' -X ^bveto -E ^btag ")
+            x = add(x,"-E ^mm -E ^upperMET -R ^TT CRTTTT 'LepGood1_isTightCRTT && LepGood2_isTightCRTT' -X ^bveto -E ^btag ")
             if '_datasingleMu' in torun: 
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdatacr.txt')
                 x = x.replace('-l 5.0','-l 4.0')
