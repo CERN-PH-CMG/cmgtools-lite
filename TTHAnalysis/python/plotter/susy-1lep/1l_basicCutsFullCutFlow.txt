@@ -1,5 +1,6 @@
 1 hard lep: nLep == 1 && Lep_pt > 25 && nVeto == 0
 Selected: Selected == 1
+
 Trigger: !isData || (isData && (HLT_EleHT350 || HLT_EleHT400 || HLT_MuHT400 || HLT_MuHT350))
 
 # use the following line to pick leptons only from the corresponding PD
