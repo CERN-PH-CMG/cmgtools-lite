@@ -27,9 +27,7 @@ selectedComponents = [ d for d in dataSamples if "SingleMu" not in d.name ]
 #configureSplittingFromTime([DYJetsToLL_M10to50], 5.0, 1)
 #configureSplittingFromTime([ ZZTo4L, ZZTo4L_aMC, GGZZTo2mu2tau, GGZZTo2e2tau ], 25.0, 1)
 #configureSplittingFromTime( H4L + [ GGZZTo4mu, GGZZTo4e, GGZZTo2e2mu], 100.0, 1)
-#selectedComponents = [ DYJetsToLL_M50, DYJetsToLL_LO_M50, DYBJetsToLL, DYBBJetsToLL ] + DYJetsM50HT
-#configureSplittingFromTime([DYJetsToLL_M50_HT400to600], 40.0, 1)
-#configureSplittingFromTime([DYJetsToLL_M50_HT600toInf], 60.0, 1)
+#selectedComponents = [ DYJetsToLL_M50, DYJetsToLL_LO_M50 ] + DYJetsM50HT
 
 sequence = cfg.Sequence(hzz4lCoreSequence)
 
@@ -51,10 +49,8 @@ if not getHeppyOption("test"):
 from PhysicsTools.HeppyCore.framework.heppy_loop import getHeppyOption
 test = getHeppyOption('test')
 if test == "1":
-    raise RuntimeError, "GGHZZ4L not yet available"
-    #selectedComponents = doTest1( GGHZZ4L, sequence=sequence, cache=True )
+    selectedComponents = doTest1( GGHZZ4L, sequence=sequence, cache=True )
 elif test == "1ZZ":
-    ZZTo4L.files = [ 'root://eoscms//eos/cms/store/mc/RunIISpring16MiniAODv1/ZZTo4L_13TeV_powheg_pythia8/MINIAODSIM/PUSpring16_80X_mcRun2_asymptotic_2016_v3-v1/00000/046E1689-FD0D-E611-BE90-002590791D60.root' ]
     selectedComponents = doTest1( ZZTo4L, sequence=sequence, cache=True )
 elif test == "1F":
     selectedComponents = doTest1( DYJetsToLL_M50, sequence=sequence, cache=False )
