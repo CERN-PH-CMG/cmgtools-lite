@@ -25,8 +25,12 @@ class SVfitProducer(Analyzer):
                                   'svFitVisMassAndPtResolutionPDF.root'])
                                   
         self.inputFile_visPtResolution = TFile(file_name)
+        if hasattr(self.cfg_ana, 'skimFunction'):
+            self.skimFunction = self.cfg_ana.skimFunction
 
     def process(self, event):
+        if not eval(self.skimFunction):
+            return True
 
         decayMode1 = -1
         decayMode2 = -1

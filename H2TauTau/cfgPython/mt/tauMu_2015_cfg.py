@@ -25,8 +25,10 @@ production = True
 pick_events = False
 syncntuple = True
 cmssw = True
-computeSVfit = False
-data = True
+computeSVfit = True
+data = False
+tes_string = '' # '_tesup' '_tesdown'
+# tes_string = '_tesdown'
 
 if not cmssw:
     # FIXME - should recorrect jets in JetAnalyzer in this case
@@ -62,9 +64,12 @@ if computeSVfit:
 sequence.insert(sequence.index(treeProducer), muonIsoCalc)
 sequence.insert(sequence.index(treeProducer), tauIsoCalc)
 
-treeProducer.addIsoInfo = True
-treeProducer.addTauTrackInfo = True
-treeProducer.addMoreJetInfo = True
+# treeProducer.addIsoInfo = True
+# treeProducer.addTauTrackInfo = True
+# treeProducer.addMoreJetInfo = True
+
+treeProducer.skimFunction = 'event.leptonAccept and event.thirdLeptonVeto and event.otherLeptonVeto and event.diLepton.leg2().tauID("againstMuonTight3")>0.5 and event.diLepton.leg2().tauID("againstElectronVLooseMVA6")>0.5'
+svfitProducer.skimFunction = 'event.leptonAccept and event.thirdLeptonVeto and event.otherLeptonVeto and event.diLepton.leg2().tauID("againstMuonTight3")>0.5 and event.diLepton.leg2().tauID("againstElectronVLooseMVA6")>0.5'
 
 if cmssw:
     tauMuAna.from_single_objects = False
@@ -97,10 +102,15 @@ for sample in data_list:
 ###################################################
 ###             SET COMPONENTS BY HAND          ###
 ###################################################
-selectedComponents = data_list if data else backgrounds_mu + sm_signals #+ mssm_signals
-# selectedComponents = [s for s in selectedComponents if 'W1J' in s.name or 'W4J' in s.name]
-# selectedComponents = [s for s in selectedComponents if 'WJetsToLNu_LO' in s.name]
-# selectedComponents = [s for s in selectedComponents if 'QCD' in s.name] 
+selectedComponents = data_list if data else backgrounds_mu + sm_signals + mssm_signals
+
+# These are the TES up/down samples
+selectedComponents = [s for s in selectedComponents if 'DY' in s.name and 'ext1' in s.name and 'LO' in s.name] + [s for s in selectedComponents if 'Higgs' in s.name]
+
+selectedComponents = [s for s in selectedComponents if 'DY' in s.name and 'ext1' in s.name and 'LO' in s.name] 
+# selectedComponents = [s for s in selectedComponents if 'TT_pow' in s.name] 
+# selectedComponents = [s for s in selectedComponents if s.name in ['HiggsSUSYBB800', 'HiggsSUSYBB1400', 'HiggsSUSYGG350']]
+
 ###################################################
 ###             CHERRY PICK EVENTS              ###
 ###################################################
@@ -123,19 +133,19 @@ if not cmssw:
 if not production:
     cache = True
     comp = sync_list[0]
-    # comp = [s for s in selectedComponents if 'DYJets' in s.name][0]
+    comp = [s for s in selectedComponents if 'DYJets' in s.name][0]
     # comp = [s for s in selectedComponents if 'TT' in s.name][0]
     selectedComponents = [comp]
     if data:
         selectedComponents = [selectedComponents[0]]
     # comp = selectedComponents[0]
     comp.splitFactor = 1
-    comp.fineSplitFactor = 1
+    # comp.fineSplitFactor = 1
     # comp.files = comp.files[]
 
 preprocessor = None
 if cmssw:
-    fname = "$CMSSW_BASE/src/CMGTools/H2TauTau/prod/h2TauTauMiniAOD_mutau_data_cfg.py" if data else "$CMSSW_BASE/src/CMGTools/H2TauTau/prod/h2TauTauMiniAOD_mutau_cfg.py"
+    fname = "$CMSSW_BASE/src/CMGTools/H2TauTau/prod/h2TauTauMiniAOD_mutau_data_cfg.py" if data else "$CMSSW_BASE/src/CMGTools/H2TauTau/prod/h2TauTauMiniAOD_mutau{tes_string}_cfg.py".format(tes_string=tes_string)
     sequence.append(fileCleaner)
     preprocessor = CmsswPreprocessor(fname, addOrigAsSecondary=False)
 

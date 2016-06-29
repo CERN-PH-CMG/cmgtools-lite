@@ -2,7 +2,7 @@ import ROOT
 
 from PhysicsTools.Heppy.analyzers.core.AutoHandle import AutoHandle
 from PhysicsTools.Heppy.analyzers.core.Analyzer import Analyzer
-from PhysicsTools.HeppyCore.utils.deltar import bestMatch, deltaR2
+from PhysicsTools.HeppyCore.utils.deltar import bestMatch
 
 from PhysicsTools.Heppy.physicsobjects.PhysicsObject import PhysicsObject
 from PhysicsTools.Heppy.physicsobjects.GenParticle import GenParticle
@@ -11,14 +11,7 @@ from CMGTools.H2TauTau.proto.analyzers.TauGenTreeProducer import TauGenTreeProdu
 
 class DYJetsFakeAnalyzer(Analyzer):
 
-    '''Checks which kind of DYJet of Higgs event this is.
-    isFake gets written to the event.
-    - Z->tau tau : isFake = 0
-    - Z->tau tau with matched rec hadr. tau->l: isFake = 3
-    - Z->l l matched : isFake = 1
-    - other : isFake = 2
-    set the lepton type as leptonType in the configuration.
-    In case of VH events, only the Higgs is considered.
+    '''Add generator information to hard leptons.
     '''
     def declareHandles(self):
         super(DYJetsFakeAnalyzer, self).declareHandles()
@@ -29,18 +22,6 @@ class DYJetsFakeAnalyzer(Analyzer):
         self.handles['jets'] = AutoHandle(self.cfg_ana.jetCol, 'std::vector<pat::Jet>')
 
     def process(self, event):
-
-        event.geninfo_tt = False
-        event.geninfo_mt = False
-        event.geninfo_et = False
-        event.geninfo_ee = False
-        event.geninfo_mm = False
-        event.geninfo_em = False
-        event.geninfo_EE = False
-        event.geninfo_MM = False
-        event.geninfo_TT = False
-        event.geninfo_LL = False
-        event.geninfo_mass = -99.
         event.genmet_pt = -99.
         event.genmet_eta = -99.
         event.genmet_e = -99.
@@ -100,38 +81,6 @@ class DYJetsFakeAnalyzer(Analyzer):
         if hasattr(event, 'selectedTaus'):
             for tau in event.selectedTaus:
                 self.genMatch(event, tau, self.ptSelGentauleps, self.ptSelGenleps, self.ptSelGenSummary)
-
-        if 'Higgs' in self.cfg_comp.name:
-            theZs = [bos for bos in event.generatorSummary if abs(bos.pdgId()) in (25, 35, 36, 37)]
-        elif 'DY' in self.cfg_comp.name:
-            theZs = [bos for bos in event.genVBosons if bos.pdgId() == 23]
-        elif 'WJets' in self.cfg_comp.name:
-            theZs = [bos for bos in event.genVBosons if abs(bos.pdgId()) == 24]
-        else:
-            return True
-
-        # There isn't always a gen boson with Pythia 8, so gracefully return
-        if len(theZs) != 1:
-            # print 'WARNING: cannot find any H, W or Z in the sample'
-            return True
-
-        event.parentBoson = theZs[0]
-
-        # check SM H associated production
-        if event.parentBoson.pdgId() == 25:
-            if any([bos.pdgId() == 23 for bos in event.genVBosons]):
-                event.hasZ = True
-            if any([abs(bos.pdgId()) == 24 for bos in event.genVBosons]):
-                event.hasW = True
-
-        # gen mass of the Higgs or Z boson
-        event.geninfo_mass = event.parentBoson.mass()
-
-        # move on if this is a W sample
-        if abs(event.parentBoson.pdgId()) == 24:
-            return True
-
-        self.getGenType(event)
 
         return True
 
@@ -201,6 +150,11 @@ class DYJetsFakeAnalyzer(Analyzer):
         leg.genp = None
 
         best_dr2 = dR2
+
+        # The following would work for pat::Taus, but we also want to flag a 
+        # muon/electron as coming from a hadronic tau with the usual definition
+        # if this happens
+
         # if hasattr(leg, 'genJet') and leg.genJet():
         #     if leg.genJet().pt() > 15.:
         #         dr2 = deltaR2(leg.eta(), leg.phi(), leg.genJet().eta(), leg.genJet().phi())
@@ -221,6 +175,10 @@ class DYJetsFakeAnalyzer(Analyzer):
             leg.genp = GenParticle(l1match)
             leg.genp.setPdgId(-15 * leg.genp.charge())
             leg.isTauHad = True
+            # if not leg.genJet():
+            #     print 'Warning, tau does not have matched gen tau'
+            # elif leg.genJet().pt() < 15.:
+            #     print 'Warning, tau has matched gen jet but with pt =', leg.genJet().pt()
 
         # to generated leptons from taus
         l1match, dR2best = bestMatch(leg, ptSelGentauleps)
@@ -281,57 +239,4 @@ class DYJetsFakeAnalyzer(Analyzer):
                     leg.genp.detFlavour = jet.partonFlavour()
                 else:
                     print 'no match found', leg.pt(), leg.eta()
-
-
-    def getGenType(self, event):
-        '''Check the Z or H boson decay mode at gen level.
-           Saves a bunch of flags in the event
-           (capital e/m denotes prompt electron/muon).
-           event.geninfo_tt : Z/H -> tautau -> tau_h tau_h
-           event.geninfo_mt : Z/H -> tautau -> m tau_h
-           event.geninfo_et : Z/H -> tautau -> e tau_h
-           event.geninfo_ee : Z/H -> tautau -> ee
-           event.geninfo_mm : Z/H -> tautau -> mm
-           event.geninfo_em : Z/H -> tautau -> em
-           event.geninfo_EE : Z/H -> ee
-           event.geninfo_MM : Z/H -> mm
-           event.geninfo_TT : Z/H -> tautau
-           event.geninfo_LL : Z/H -> ll (ee or mm)
-        '''
-        # Z->TT
-
-        h_taus = event.gentaus
-        l_taus = event.gentauleps
-        ls = event.genleps
-
-        if len(l_taus) + len(h_taus) == 2:
-            event.geninfo_TT = True
-
-            # full hadronic first
-            if len(h_taus) == 2:
-                event.geninfo_tt = True
-
-            # semi leptonic
-            elif len(h_taus) == 1:
-                if abs(l_taus[0].pdgId()) == 11:
-                    event.geninfo_et = True
-                if abs(l_taus[0].pdgId()) == 13:
-                    event.geninfo_mt = True
-
-            # fully leptonic
-            elif len(h_taus) == 0:
-                if abs(l_taus[0].pdgId()) == 11 and abs(l_taus[1].pdgId()) == 11:
-                    event.geninfo_ee = True
-                elif abs(l_taus[0].pdgId()) == 13 and abs(l_taus[1].pdgId()) == 13:
-                    event.geninfo_mm = True
-                else:
-                    event.geninfo_em = True
-        # Z->LL
-        elif len(ls) == 2:
-            event.geninfo_LL = True
-            if abs(ls[0].pdgId()) == 11 and abs(ls[1].pdgId()) == 11:
-                event.geninfo_EE = True
-            elif abs(ls[0].pdgId()) == 13 and abs(ls[1].pdgId()) == 13:
-                event.geninfo_MM = True
-
 

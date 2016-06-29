@@ -67,12 +67,12 @@ leptonWeighter = cfg.Analyzer(
     DiLeptonWeighter,
     name='DiLeptonWeighter',
     scaleFactorFiles={
-        'trigger_mu_low':'$CMSSW_BASE/src/CMGTools/H2TauTau/data/Muon_Mu8_eff.root',
-        'trigger_mu_high':'$CMSSW_BASE/src/CMGTools/H2TauTau/data/Muon_Mu17_eff.root',
-        'trigger_e_low':'$CMSSW_BASE/src/CMGTools/H2TauTau/data/Electron_Ele12_eff.root',
-        'trigger_e_high':'$CMSSW_BASE/src/CMGTools/H2TauTau/data/Electron_Ele17_eff.root',
-        'idiso_mu':'$CMSSW_BASE/src/CMGTools/H2TauTau/data/Muon_IdIso0p15_eff.root',
-        'idiso_e':'$CMSSW_BASE/src/CMGTools/H2TauTau/data/Electron_IdIso0p15_eff.root',
+        'trigger_mu_low':'$CMSSW_BASE/src/CMGTools/H2TauTau/data/Muon_Mu8_fall15.root',
+        'trigger_mu_high':'$CMSSW_BASE/src/CMGTools/H2TauTau/data/Muon_Mu17_fall15.root',
+        'trigger_e_low':'$CMSSW_BASE/src/CMGTools/H2TauTau/data/Electron_Ele12_fall15.root',
+        'trigger_e_high':'$CMSSW_BASE/src/CMGTools/H2TauTau/data/Electron_Ele17_fall15.root',
+        'idiso_mu':'$CMSSW_BASE/src/CMGTools/H2TauTau/data/Muon_IdIso0p15_fall15.root',
+        'idiso_e':'$CMSSW_BASE/src/CMGTools/H2TauTau/data/Electron_IdIso0p15_fall15.root',
     },
     lepton_e='leg1',
     lepton_mu='leg2',
@@ -130,7 +130,7 @@ for sample in data_list:
     sample.triggerobjects = data_triggerfilters
     sample.splitFactor = splitFactor(sample, split_factor)
     sample.json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions15/13TeV/Cert_246908-260627_13TeV_PromptReco_Collisions15_25ns_JSON_v2.txt'
-    sample.lumi = 2260.
+    sample.lumi = 2300.
 
 
 ###################################################
@@ -189,7 +189,7 @@ if not production:
   cache                = True
   comp = sync_list[0]
   selectedComponents   = [comp]
-  comp.splitFactor     = 6
+  comp.splitFactor     = 5
   comp.fineSplitFactor = 1
 #  comp.files           = comp.files[:1]
 
