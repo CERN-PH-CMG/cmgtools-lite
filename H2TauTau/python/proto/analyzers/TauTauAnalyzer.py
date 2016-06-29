@@ -277,8 +277,10 @@ class TauTauAnalyzer(DiLeptonAnalyzer):
     def trigMatched(self, event, diL, requireAllMatched=False):
         matched = super(TauTauAnalyzer, self).trigMatched(event, diL, requireAllMatched=requireAllMatched, checkBothLegs=True)
 
-        if not self.l1Matched(event, diL):
-            matched = False
+        # Not needed in 2016, for the moment
+        
+        # if not self.l1Matched(event, diL):
+        #     matched = False
 
         return matched
 

@@ -205,19 +205,3 @@ class H2TauTauTreeProducerBase(TreeAnalyzerNumpy):
         self.fill(tree, 'pfmet_phi', event.pfmet.phi())
         self.fill(tree, 'pfmet_mt1', DiTau.calcMT(event.pfmet, event.leg1))
         self.fill(tree, 'pfmet_mt2', DiTau.calcMT(event.pfmet, event.leg2))
-
-
-    # quark and gluons
-    def bookQG(self, tree, maxNGenJets=2):
-        for i in range(0, maxNGenJets):
-            self.bookGenParticle(self.tree, 'genqg_{i}'.format(i=i))
-
-    def fillQG(self, tree, event, maxNGenJets=2):
-        # Fill hard quarks/gluons
-        quarksGluons = [p for p in event.genParticles if abs(p.pdgId()) in (1, 2, 3, 4, 5, 21) and
-                        p.status() == 3 and
-                        (p.numberOfDaughters() == 0 or p.daughter(0).status() != 3)]
-        quarksGluons.sort(key=lambda x: -x.pt())
-        for i in range(0, min(maxNGenJets, len(quarksGluons))):
-            self.fillGenParticle(
-                tree, 'genqg_{i}'.format(i=i), quarksGluons[i])
