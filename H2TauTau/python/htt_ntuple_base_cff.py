@@ -8,6 +8,7 @@ from PhysicsTools.Heppy.analyzers.core.EventSelector import EventSelector
 from PhysicsTools.Heppy.analyzers.objects.VertexAnalyzer import VertexAnalyzer
 from PhysicsTools.Heppy.analyzers.core.PileUpAnalyzer import PileUpAnalyzer
 from PhysicsTools.Heppy.analyzers.gen.GeneratorAnalyzer import GeneratorAnalyzer
+from PhysicsTools.Heppy.analyzers.gen.LHEWeightAnalyzer import LHEWeightAnalyzer
 
 # Tau-tau analyzers
 from CMGTools.H2TauTau.proto.analyzers.MCWeighter import MCWeighter
@@ -26,10 +27,25 @@ puFileData = '$CMSSW_BASE/src/CMGTools/H2TauTau/data/data_pu_22-06-2016_713mb_80
 reapplyJEC = False
 applyRecoil = False
 
+from CMGTools.TTHAnalysis.analyzers.ttHhistoCounterAnalyzer import ttHhistoCounterAnalyzer
+susyCounter = cfg.Analyzer(
+    ttHhistoCounterAnalyzer, name="ttHhistoCounterAnalyzer",
+    SMS_max_mass=3000,  # maximum mass allowed in the scan
+    SMS_mass_1='genSusyMScan1',  # first scanned mass
+    SMS_mass_2='genSusyMScan2',  # second scanned mass
+    SMS_varying_masses=[],  # other mass variables that are expected to change in the tree (e.g., in T1tttt it should be set to ['genSusyMGluino','genSusyMNeutralino'])
+    SMS_regexp_evtGenMass='genSusyM.+',
+    bypass_trackMass_check=True  # bypass check that non-scanned masses are the same in all events
+)
+
 eventSelector = cfg.Analyzer(
     EventSelector,
     name='EventSelector',
     toSelect=[]
+)
+
+lheWeightAna = cfg.Analyzer(
+    LHEWeightAnalyzer, name="LHEWeightAnalyzer",
 )
 
 jsonAna = cfg.Analyzer(
@@ -71,6 +87,13 @@ pileUpAna = cfg.Analyzer(
 genAna = GeneratorAnalyzer.defaultConfig
 
 genAna.savePreFSRParticleIds = [1, 2, 3, 4, 5, 21]
+
+# Save SUSY masses
+from CMGTools.TTHAnalysis.analyzers.susyParameterScanAnalyzer import susyParameterScanAnalyzer
+susyScanAna = cfg.Analyzer(
+    susyParameterScanAnalyzer, name="susyParameterScanAnalyzer",
+    doLHE=True,
+)
 
 dyJetsFakeAna = cfg.Analyzer(
     DYJetsFakeAnalyzer,
@@ -130,12 +153,14 @@ higgsWeighter = cfg.Analyzer(
 ###                  SEQUENCE                   ###
 ###################################################
 commonSequence = cfg.Sequence([
+    lheWeightAna,
     jsonAna,
     skimAna,
     mcWeighter,
     triggerAna,
     vertexAna,
     genAna,
+    susyScanAna,
     dyJetsFakeAna,
     jetAna,
     vbfAna,

@@ -15,7 +15,7 @@ from CMGTools.H2TauTau.proto.analyzers.SVfitProducer import SVfitProducer
 from CMGTools.H2TauTau.proto.analyzers.L1TriggerAnalyzer import L1TriggerAnalyzer
 
 # common configuration and sequence
-from CMGTools.H2TauTau.htt_ntuple_base_cff import commonSequence, genAna, dyJetsFakeAna, puFileData, puFileMC, eventSelector
+from CMGTools.H2TauTau.htt_ntuple_base_cff import commonSequence, genAna, dyJetsFakeAna, puFileData, puFileMC, eventSelector, susyCounter, susyScanAna
 
 # Get all heppy options; set via '-o production' or '-o production=True'
 
@@ -67,13 +67,25 @@ tauTauAna = cfg.Analyzer(
 if not cmssw:
     tauTauAna.from_single_objects = True
 
-l1Ana = cfg.Analyzer(
-    class_object=L1TriggerAnalyzer,
-    name='L1TriggerAnalyzer',
-    collections=['IsoTau'],
-    requireMatches=['leg1', 'leg2'],
-    dR=0.5
+from CMGTools.H2TauTau.proto.analyzers.MT2Analyzer import MT2Analyzer
+tauTauMT2Ana = cfg.Analyzer(
+    MT2Analyzer, name='MT2Analyzer',
+    metCollection="slimmedMETs",
+    doOnlyDefault=False,
+    jetPt=40.,
+    collectionPostFix="",
+    verbose=True
 )
+
+# For the moment not needed in 2016
+
+# l1Ana = cfg.Analyzer(
+#     class_object=L1TriggerAnalyzer,
+#     name='L1TriggerAnalyzer',
+#     collections=['IsoTau'],
+#     requireMatches=['leg1', 'leg2'],
+#     dR=0.5
+# )
 
 fileCleaner = cfg.Analyzer(
     FileCleaner,
@@ -166,12 +178,13 @@ from CMGTools.RootTools.utils.splitFactor import splitFactor
 from CMGTools.H2TauTau.proto.samples.spring16.htt_common import Tau_Run2016B_PromptReco_v2 as data_tau
 from CMGTools.H2TauTau.proto.samples.spring16.htt_common import backgrounds, sm_signals, mssm_signals, data_tau, sync_list
 from CMGTools.H2TauTau.proto.samples.spring16.higgs_susy import HiggsSUSYGG160 as ggh160
+from CMGTools.H2TauTau.proto.samples.fall15.sms import SMS
 # from CMGTools.H2TauTau.proto.samples.spring16.higgs_susy import HiggsSUSYGG90 as ggh90
 # from CMGTools.H2TauTau.proto.samples.spring16.higgs_susy import HiggsSUSYGG1000 as ggh1000
 from CMGTools.H2TauTau.proto.samples.spring16.triggers_tauTau import mc_triggers, mc_triggerfilters, data_triggers, data_triggerfilters
 
 data_list = data_tau
-samples = backgrounds + sm_signals + mssm_signals
+samples = backgrounds + sm_signals + mssm_signals + [SMS]
 split_factor = 1e5
 
 for sample in data_list:
@@ -205,12 +218,14 @@ sequence = commonSequence
 if calibrateTaus:
     sequence.insert(sequence.index(genAna), tauP4Scaler)
 sequence.insert(sequence.index(genAna), tauTauAna)
-sequence.insert(sequence.index(genAna), l1Ana)
+# sequence.insert(sequence.index(genAna), l1Ana)
 # sequence.append(tau1Calibration)
 # sequence.append(tau2Calibration)
 sequence.append(tauDecayModeWeighter)
 sequence.append(tau1Weighter)
 sequence.append(tau2Weighter)
+sequence.append(tauTauMT2Ana)
+sequence.insert(sequence.index(susyScanAna) + 1, susyCounter)
 if computeSVfit:
     sequence.append(svfitProducer)
 sequence.append(treeProducer)
@@ -238,11 +253,23 @@ if pick_events:
     eventSelector.toSelect = evtsToPick
     sequence.insert(0, eventSelector)
 
+# output histogram
+outputService = []
+from PhysicsTools.HeppyCore.framework.services.tfile import TFileService
+output_service = cfg.Service(
+    TFileService,
+    'outputfile',
+    name="outputfile",
+    fname='H2TauTauTreeProducerTauTau/tree.root',
+    option='recreate'
+)
+outputService.append(output_service)
+
 ###################################################
 ###            SET BATCH OR LOCAL               ###
 ###################################################
 if not production:
-    comp                 = ggh160
+    comp = SMS
     # comp = data_list[0]
     selectedComponents = [comp]
     comp.splitFactor = 1
@@ -258,9 +285,10 @@ if cmssw:
 # the following is declared in case this cfg is used in input to the
 # heppy.py script
 from PhysicsTools.HeppyCore.framework.eventsfwlite import Events
+
 config = cfg.Config(components=selectedComponents,
                     sequence=sequence,
-                    services=[],
+                    services=outputService,
                     preprocessor=preprocessor,
                     events_class=Events
                     )
