@@ -14,6 +14,8 @@ class LeptonIDOverloader( Analyzer ):
 
 
     def heepID(self,lepton):    
+#        for leptonid in lepton.electronIDs():
+#            print leptonid.first,leptonid.second
         return lepton.electronID("heepElectronID-HEEPV60")>0.0
 
 
@@ -50,11 +52,14 @@ class LeptonIDOverloader( Analyzer ):
         
     def process(self, event):
         self.readCollections( event.input )
-        
+#        for l in event.genleps:
+#            if l.pt()>30:
+#                print l.pdgId(),l.pt(),l.eta()
+
         for lepton in event.selectedLeptons:
             if abs(lepton.pdgId())==11:
                 lepton.heepID = self.heepID(lepton)
-                lepton.heepIDNoIso = self.heepID(lepton)
+                lepton.heepIDNoIso = self.heepIDNoIso(lepton)
             else:
                 lepton.highPtID = self.muonIDHighPt(lepton)
                 lepton.highPtTrackID = self.muonIDTrackerHighPt(lepton)
