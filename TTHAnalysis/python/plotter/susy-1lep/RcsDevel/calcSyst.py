@@ -163,7 +163,8 @@ def makeSystHists(fileList):
 
     #hnames = ["T1tttt_Scan"] # process name
     #hnames = ["EWK"] # process name
-    hnames = ["EWK","TTJets","WJets","SingleTop","DY","TTV"] # process name
+    #hnames = ["EWK","TTJets","WJets","SingleTop","DY","TTV"] # process name
+    hnames = ["EWK","TTJets","WJets","SingleT","DY","TTV"] # process name
     #hnames = ['T_tWch','TToLeptons_tch','TBar_tWch', 'EWK', 'TToLeptons_sch'] # process name
     #hnames = ["TTJets","WJets","SingleTop","DY","TTV"] # process name
     #hnames = getHnames(fileList[0],'SR_MB') # get process names from file
@@ -179,7 +180,7 @@ def makeSystHists(fileList):
     #systNames = ["TTVxsec"]
     systNames = ["lepSF"]
     #systNames = ["JEC"]
-    #systNames = ["DLSlope"]
+    systNames = ["DLSlope"]
     #systNames = ["DLConst"]
     #systNames = ["JER"]
     #systNames = ["Wpol"]
@@ -190,7 +191,8 @@ def makeSystHists(fileList):
     #bindirs =  ['SR_MB','CR_MB','SR_SB','CR_SB','Kappa','Rcs_MB','Rcs_SB']
     bindirs = getDirNames(fileList[0])# + [""]
     print "Found those dirs:", bindirs
-
+    bindirs = [bin for bin in bindirs if "DL" not in bin]
+    print bindirs
     # dir to store
     sysdir = os.path.dirname(fileList[0]) + "/syst/"
     if not os.path.exists(sysdir): os.makedirs(sysdir)
