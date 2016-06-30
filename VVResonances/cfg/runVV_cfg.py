@@ -91,7 +91,7 @@ triggerFlagsAna.triggerBits ={
 
 
 #-------- HOW TO RUN
-test = 0
+test = 3
 if test==1:
     # test a single component, using a single thread.
     selectedComponents = [BulkGravToWWToWlepWhad_narrow_4500]
@@ -102,6 +102,11 @@ if test==1:
 if test==2:
     # test a single component, using a single thread.
     selectedComponents = [TTJets]
-
+if test==3:
+    selectedComponents = [WJetsToLNu_HT2500toInf]
+    for c in selectedComponents:
+        c.files = c.files[:1]
+        c.splitFactor = 1
+    
 selectedComponents=autoAAA(selectedComponents)
 config=autoConfig(selectedComponents,sequence)
