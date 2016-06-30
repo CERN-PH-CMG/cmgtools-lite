@@ -157,10 +157,10 @@ commonSequence = cfg.Sequence([
     jsonAna,
     skimAna,
     mcWeighter,
-    triggerAna,
-    vertexAna,
     genAna,
     susyScanAna,
+    triggerAna, # First analyser that applies selections
+    vertexAna,
     dyJetsFakeAna,
     jetAna,
     vbfAna,

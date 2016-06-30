@@ -179,12 +179,13 @@ from CMGTools.H2TauTau.proto.samples.spring16.htt_common import Tau_Run2016B_Pro
 from CMGTools.H2TauTau.proto.samples.spring16.htt_common import backgrounds, sm_signals, mssm_signals, data_tau, sync_list
 from CMGTools.H2TauTau.proto.samples.spring16.higgs_susy import HiggsSUSYGG160 as ggh160
 from CMGTools.H2TauTau.proto.samples.fall15.sms import SMS
+from CMGTools.RootTools.samples.samples_13TeV_signals import SignalSUSY
 # from CMGTools.H2TauTau.proto.samples.spring16.higgs_susy import HiggsSUSYGG90 as ggh90
 # from CMGTools.H2TauTau.proto.samples.spring16.higgs_susy import HiggsSUSYGG1000 as ggh1000
 from CMGTools.H2TauTau.proto.samples.spring16.triggers_tauTau import mc_triggers, mc_triggerfilters, data_triggers, data_triggerfilters
 
 data_list = data_tau
-samples = backgrounds + sm_signals + mssm_signals + [SMS]
+samples = backgrounds + sm_signals + mssm_signals + [SMS] + SignalSUSY[:1]
 split_factor = 1e5
 
 for sample in data_list:
@@ -216,8 +217,8 @@ if data:
 ###################################################
 sequence = commonSequence
 if calibrateTaus:
-    sequence.insert(sequence.index(genAna), tauP4Scaler)
-sequence.insert(sequence.index(genAna), tauTauAna)
+    sequence.insert(sequence.index(dyJetsFakeAna), tauP4Scaler)
+sequence.insert(sequence.index(dyJetsFakeAna), tauTauAna)
 # sequence.insert(sequence.index(genAna), l1Ana)
 # sequence.append(tau1Calibration)
 # sequence.append(tau2Calibration)
@@ -270,11 +271,12 @@ outputService.append(output_service)
 ###################################################
 if not production:
     comp = SMS
+    comp = SignalSUSY[0]
     # comp = data_list[0]
     selectedComponents = [comp]
     comp.splitFactor = 1
     comp.fineSplitFactor = 1
-    comp.files = comp.files[13:20]
+    # comp.files = comp.files[13:20]
 
 preprocessor = None
 if cmssw:
