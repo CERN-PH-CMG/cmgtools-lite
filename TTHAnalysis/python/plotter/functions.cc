@@ -616,14 +616,10 @@ float leptonSF_ttH(int pdgid, float pt, float eta, int nlep, float var=0){
 float triggerSF_ttH(int pdgid1, float pt1, int pdgid2, float pt2, int nlep, float var_ee=0){
   if (var_ee!=0) assert(0); // NOT IMPLEMENTED
   if (nlep>2) return 1;
-  if (abs(pdgid1)==11 && abs(pdgid2)==11){
-    if (std::max(pt1,pt2)<40) return 0.95;
-    else return 0.99;
-  }
-  else if (abs(pdgid1)==13 && abs(pdgid2)==13) {
-    return 1.;
-  }
-  else return 0.98;
+  int x = (abs(pdgid1)==11) + (abs(pdgid2)==11);
+  if (x==2) return 1.02;
+  else if (x==1) return 1.02;
+  else return 1.01;
 }
 
 float mass_3_cheap(float pt1, float eta1, float pt2, float eta2, float phi2, float pt3, float eta3, float phi3) {
