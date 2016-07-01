@@ -389,7 +389,7 @@ def doNormFit(pspec,pmap,mca,saveScales=False):
     pspec.setLog("Fitting", fitlog)
     
 
-def doRatioHists(pspec,pmap,total,totalSyst,maxRange,fixRange=False,fitRatio=None,errorsOnRef=True,ratioNums="signal",ratioDen="background"):
+def doRatioHists(pspec,pmap,total,totalSyst,maxRange,fixRange=False,fitRatio=None,errorsOnRef=True,ratioNums="signal",ratioDen="background",ylabel="Data/Pred."):
     numkeys = [ "data" ]
     if "data" not in pmap: 
         if len(pmap) >= 4 and ratioDen in pmap:
@@ -485,13 +485,18 @@ def doRatioHists(pspec,pmap,total,totalSyst,maxRange,fixRange=False,fitRatio=Non
     unity.GetXaxis().SetLabelSize(0.11)
     unity.GetYaxis().SetLabelSize(0.11)
     unity.GetYaxis().SetNdivisions(505)
-    unity.GetYaxis().SetDecimals(True)
-    unity.GetYaxis().SetTitle("Data/Pred.")
+    unity.GetYaxis().SetDecimals(True) 
+    unity.GetYaxis().SetTitle(ylabel)
     unity.GetYaxis().SetTitleOffset(0.52);
     total.GetXaxis().SetLabelOffset(999) ## send them away
     total.GetXaxis().SetTitleOffset(999) ## in outer space
     total.GetYaxis().SetLabelSize(0.05)
     #ratio.SetMarkerSize(0.7*ratio.GetMarkerSize()) # no it is confusing
+    binlabels = pspec.getOption("xBinLabels","")
+    if binlabels != "" and len(binlabels.split(",")) == unity.GetNbinsX():
+        blist = binlabels.split(",")
+        for i in range(1,unity.GetNbinsX()+1): 
+            unity.GetXaxis().SetBinLabel(i,blist[i-1]) 
     #$ROOT.gStyle.SetErrorX(0.0);
     line = ROOT.TLine(unity.GetXaxis().GetXmin(),1,unity.GetXaxis().GetXmax(),1)
     line.SetLineWidth(2);
@@ -776,7 +781,8 @@ class PlotMaker:
                     return
 
                 # define aspect ratio
-                plotformat = (1200,600) if self._options.wideplot else (600,600)
+                doWide = True if self._options.wideplot or pspec.getOption("Wide",False) else False
+                plotformat = (1200,600) if doWide else (600,600)
                 sf = 20./plotformat[0]
                 ROOT.gStyle.SetPadLeftMargin(600.*0.18/plotformat[0])
 
@@ -902,7 +908,7 @@ class PlotMaker:
                     p2.cd(); 
                     rdata,rnorm,rnorm2,rline = doRatioHists(pspec,pmap,total,totalSyst, maxRange=options.maxRatioRange, fixRange=options.fixRatioRange,
                                                             fitRatio=options.fitRatio, errorsOnRef=options.errorBandOnRatio, 
-                                                            ratioNums=options.ratioNums, ratioDen=options.ratioDen)
+                                                            ratioNums=options.ratioNums, ratioDen=options.ratioDen, ylabel=options.ratioYLabel)
                 if self._options.printPlots:
                     for ext in self._options.printPlots.split(","):
                         fdir = printDir;
@@ -1017,6 +1023,7 @@ def addPlotMakerOptions(parser, addAlsoMCAnalysis=True):
     parser.add_option("--showRatio", dest="showRatio", action="store_true", default=False, help="Add a data/sim ratio plot at the bottom")
     parser.add_option("--ratioDen", dest="ratioDen", type="string", default="background", help="Denominator of the ratio, when comparing MCs")
     parser.add_option("--ratioNums", dest="ratioNums", type="string", default="signal", help="Numerator(s) of the ratio, when comparing MCs (comma separated list of regexps)")
+    parser.add_option("--ratioYLabel", dest="ratioYLabel", type="string", default="Data/Pred.", help="Y axis label of the ratio histogram.")
     parser.add_option("--noErrorBandOnRatio", dest="errorBandOnRatio", action="store_false", default=True, help="Do not show the error band on the reference in the ratio plots")
     parser.add_option("--fitRatio", dest="fitRatio", type="int", default=None, help="Fit the ratio with a polynomial of the specified order")
     parser.add_option("--scaleSigToData", dest="scaleSignalToData", action="store_true", default=False, help="Scale all signal processes so that the overall event yield matches the observed one")

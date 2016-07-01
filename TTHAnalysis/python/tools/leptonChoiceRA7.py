@@ -719,7 +719,17 @@ class LeptonChoiceRA7:
         return False
 
 from CMGTools.TTHAnalysis.tools.leptonChoiceRA5 import _susy2lss_lepId_IPcuts
-from CMGTools.TTHAnalysis.tools.leptonChoiceEWK import _susy3l_idEmu_cuts
+
+
+def _susyEWK_idEmu_cuts(lep):
+    if (abs(lep.pdgId)!=11): return True
+    if (lep.hadronicOverEm>=(0.10-0.03*(abs(lep.etaSc)>1.479))): return False
+    if (abs(lep.dEtaScTrkIn)>=(0.01-0.002*(abs(lep.etaSc)>1.479))): return False
+    if (abs(lep.dPhiScTrkIn)>=(0.04+0.03*(abs(lep.etaSc)>1.479))): return False
+    if (lep.eInvMinusPInv<=-0.05): return False
+    if (lep.eInvMinusPInv>=(0.01-0.005*(abs(lep.etaSc)>1.479))): return False
+    if (lep.sigmaIEtaIEta>=(0.011+0.019*(abs(lep.etaSc)>1.479))): return False
+    return True
 
 def _susy3l_multiIso(lep):
     # CH: looser WP than for RA5 (electrons -> medium, muons -> loose)
