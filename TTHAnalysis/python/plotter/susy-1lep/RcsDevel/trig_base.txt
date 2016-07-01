@@ -3,7 +3,7 @@
 triggHT: HT > 500
 triggLT: LT > 250
 
-Trigger: !isData || (isData && (HLT_EleHT350 || HLT_MuHT350))
+Trigger: !isData || (isData && (HLT_EleHT350 || HLT_EleHT400 || HLT_MuHT400 || HLT_MuHT350))
 # use the following line to pick leptons only from the corresponding PD
 XOR: !isData || (isData && ((PD_SingleEle && nEl==1) || (PD_SingleMu && nMu==1)))
 
@@ -11,9 +11,7 @@ nJetBase: nJets30Clean >= 3
 
 2.JetPt > 80: Jet2_pt > 80
 
-#Filters: (!isData(isData &&  && Flag_eeBadScFilter && Flag_HBHENoiseIsoFilter) || (isData && passFilters)
-#Filters: !isData || (isData && Flag_goodVertices && Flag_HBHENoiseFilter_fix && Flag_eeBadScFilter && Flag_HBHENoiseIsoFilter && passCSCFilterList )
-Filters: passFilters
+Filters: !isData || (isData && METfilters == 1)
 
 ## Filter strange FastSim events
 #clean: (mGo == 0) || (mGo > 0 && met_pt < 3000)
