@@ -6,7 +6,7 @@ from array import array
 from ROOT import TEfficiency
 import os.path as osp
 
-LUMI = 2.26
+LUMI = 2.07 ## /store/user/mmarionn/heppyTrees/809_June9/
 WEIGHT = "puWeight"
 PAIRSEL = ("((pdgId*tag_pdgId==-11*11||pdgId*tag_pdgId==-13*13)"
            "&&abs(mass-91.)<30.&&abs(mcMatchId)>0)")
@@ -14,12 +14,12 @@ SELECTIONS = {
     'inclusive':      PAIRSEL,
     # 'singleTriggers': PAIRSEL+"&&passSingle",
     # 'doubleTriggers': PAIRSEL+"&&passDouble",
-    'ttbar': "( (pdgId*tag_pdgId==-11*13)||"
-              "  ( (pdgId*tag_pdgId==-11*11||pdgId*tag_pdgId==-13*13)"
-              "&&abs(mass-91.)>15.&&met_pt>30.) )"
-              "&&passDouble&&nJet25>=2&&nBJetLoose25>=2"
-              "&&tag_pt>30&&abs(tag_mcMatchId)>0",
-    'ttH'  : "abs(mcMatchId)>0&&passDouble",
+    # 'ttbar': "( (pdgId*tag_pdgId==-11*13)||"
+    #           "  ( (pdgId*tag_pdgId==-11*11||pdgId*tag_pdgId==-13*13)"
+    #           "&&abs(mass-91.)>15.&&met_pt>30.) )"
+    #           "&&passDouble&&nJet25>=2&&nBJetLoose25>=2"
+    #           "&&tag_pt>30&&abs(tag_mcMatchId)>0",
+    # 'ttH'  : "abs(mcMatchId)>0&&passDouble",
 }
 
 LEPSEL = [
@@ -67,32 +67,25 @@ BINNINGS = [
 DENOMINATOR = "passLoose"
 NUMERATORS  = [
     ('2lss',"passTight&&passTCharge", 'same-sign 2 lepton definition'),
-    # ('3l',  "passTight", '3 lepton definition'),
+    ('3l',  "passTight", '3 lepton definition'),
 ]
 
 INPUTS = {
     'data':[
-        "Run2015",
-        # "DoubleEG_Run2015C_25ns_16Dec2015",
-        # "DoubleEG_Run2015D_16Dec2015",
-        # "DoubleMuon_Run2015C_25ns_16Dec2015",
-        # "DoubleMuon_Run2015D_16Dec2015",
-        # "MuonEG_Run2015C_25ns_16Dec2015",
-        # "MuonEG_Run2015D_16Dec2015",
-        # "SingleElectron_Run2015C_25ns_16Dec2015",
-        # "SingleElectron_Run2015D_16Dec2015",
-        # "SingleMuon_Run2015C_25ns_16Dec2015",
-        # "SingleMuon_Run2015D_16Dec2015",
+        "Run2016",
+        # "DoubleEG_Run2016B_PromptReco_v2_runs_271036_274421",
+        # "DoubleMuon_Run2016B_PromptReco_v2_runs_271036_274421",
+        # "MuonEG_Run2016B_PromptReco_v2_runs_271036_274421",
         ],
     'DY':["DYJetsToLL_M50"],
-    'ttbar':[
-        "TTJets_DiLepton",
-        "TTJets_SingleLeptonFromTbar_ext",
-        "TTJets_SingleLeptonFromTbar",
-        "TTJets_SingleLeptonFromT_ext",
-        "TTJets_SingleLeptonFromT",
-        ],
-    'ttH':["TTHnobb"],
+    # 'ttbar':[
+    #     "TTJets_DiLepton",
+    #     "TTJets_SingleLeptonFromTbar_ext",
+    #     "TTJets_SingleLeptonFromTbar",
+    #     "TTJets_SingleLeptonFromT_ext",
+    #     "TTJets_SingleLeptonFromT",
+    #     ],
+    # 'ttH':["TTHnobb"],
 }
 
 def getEfficiencyRatio(eff1, eff2):
@@ -575,8 +568,8 @@ def getPassTotalHistosSimple((key, output,
 
     output[key] = (hpassed, htotal)
 
-def makePassedFailed(proc,fnames,indir):
-    stump = '_treeProducerSusyMultilepton_tree.root'
+def makePassedFailed(proc,fnames,indir,
+                     options, stump='.root'):
 
     try:
         with open('.xsecweights.pck', 'r') as cachefile:
@@ -592,7 +585,7 @@ def makePassedFailed(proc,fnames,indir):
         floc = osp.join(indir, "%s%s"%(pname,stump))
         if not osp.isfile(floc):
             print "Missing file: %s" % floc
-            print " ... continuing without"
+            raw_input(" ... press key to continuing without")
             continue
 
         print '... processing', pname
@@ -710,22 +703,23 @@ def makePlots(efficiencies, options):
                     plot.subtag = '%s, p_{T} > 30 GeV' % ntitle
 
                 plot.add(efficiencies['data'][(lep,'inclusive',nname,var)],
-                         'Data, Z mass fit',
+                         'Data (%.2f fb^{-1}), Z mass fit' % LUMI,
                          includeInRatio=False)
                 plot.add(efficiencies['DY'][(lep,'inclusive',nname,var)],
                          'DY MC, Z mass fit',
                          includeInRatio=True)
-                plot.add(efficiencies['data'][(lep,'ttbar',nname,var)],
-                         'Data, t#bar{t} dilepton, cut & count',
-                         includeInRatio=False)
-                plot.add(efficiencies['ttbar'][(lep,'ttbar',nname,var)],
-                         't#bar{t} MC, t#bar{t} dilepton, cut & count',
-                         includeInRatio=True)
+                # plot.add(efficiencies['data'][(lep,'ttbar',nname,var)],
+                #          'Data, t#bar{t} dilepton, cut & count',
+                #          includeInRatio=False)
+                # plot.add(efficiencies['ttbar'][(lep,'ttbar',nname,var)],
+                #          't#bar{t} MC, t#bar{t} dilepton, cut & count',
+                #          includeInRatio=True)
                 # plot.add(efficiencies['ttH'][(lep,'ttH',nname,var)],
                 #          't#bar{t}H MC, inclusive',
                 #          includeInRatio=False)
 
-                plot.reference = [plot.effs[0], plot.effs[2]]
+                # plot.reference = [plot.effs[0], plot.effs[1]]
+                # plot.reference = [plot.effs[0], plot.effs[2]]
 
                 plot.show_with_ratio('tnp_eff_%s'%(plot.name),
                                       options.outDir)
@@ -792,30 +786,21 @@ def make2DMap(efficiencies, options):
         ofile.Close()
         print " wrote %s" % floc
 
-
-if __name__ == '__main__':
-    from optparse import OptionParser
-    usage = "%prog [options] tnpTreeDir"
-    parser = OptionParser(usage=usage)
-    parser.add_option("-o", "--outDir", default="tnp_effs",
-                      action="store", type="string", dest="outDir",
-                      help=("Output directory for eff plots "
-                            "[default: %default/]"))
-    parser.add_option('-c', '--cutNCount', dest='cutNCount',
-                      action="store_true",
-                      help='Do cut & count instead of fitting mass shape')
-    parser.add_option('-j', '--jobs', dest='jobs', action="store",
-                      type='int', default=1,
-                      help=('Number of jobs to run in parallel '
-                        '[default: single]'))
-    (options, args) = parser.parse_args()
+def main(args, options):
+    try:
+        if not osp.exists(args[0]):
+            print "Input directory does not exists: %s" % args[0]
+            sys.exit(-1)
+    except IndexError:
+        parser.print_usage()
+        sys.exit(-1)
 
     # Gather all the passed/total histograms
     cachefilename = "tnppassedtotal.pck"
     if not osp.isfile(cachefilename):
         passedtotal = {}
         for proc,fnames in INPUTS.iteritems():
-            passedtotal[proc] = makePassedFailed(proc,fnames,args[0])
+            passedtotal[proc] = makePassedFailed(proc,fnames,args[0],options,stump='.root')
 
         print "#"*30
         print "ALL DONE"
@@ -841,4 +826,23 @@ if __name__ == '__main__':
     makePlots(efficiencies, options)
     make2DMap(efficiencies, options)
 
+
+if __name__ == '__main__':
+    from optparse import OptionParser
+    usage = "%prog [options] tnptrees/"
+    parser = OptionParser(usage=usage)
+    parser.add_option("-o", "--outDir", default="tnp_effs",
+                      action="store", type="string", dest="outDir",
+                      help=("Output directory for eff plots "
+                            "[default: %default/]"))
+    parser.add_option('-c', '--cutNCount', dest='cutNCount',
+                      action="store_true",
+                      help='Do cut & count instead of fitting mass shape')
+    parser.add_option('-j', '--jobs', dest='jobs', action="store",
+                      type='int', default=1,
+                      help=('Number of jobs to run in parallel '
+                        '[default: single]'))
+    (options, args) = parser.parse_args()
+
+    main(args, options)
 
