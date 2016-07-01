@@ -57,7 +57,7 @@ esac;
 
 what=$3;
 more=$4
-PBASE="plots/76X/ttH/fr-meas/v1.0/$lepton/HLT_$trigger/$what/$more"
+PBASE="~/www/plots_FR/76X/lepMVA/v1.0_150616/fr-meas/$lepton/HLT_$trigger/$what/$more"
 
 EWKONE="-p ${QCD}_red,EWK,data"
 EWKSPLIT="-p ${QCD}_red,WJets,DYJets,data"

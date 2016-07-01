@@ -885,6 +885,10 @@ float multiIso_multiWP(int LepGood_pdgId, float LepGood_pt, float LepGood_eta, f
            return abs(LepGood_pdgId)==13 ? 
                     multiIso_singleWP(LepGood_miniRelIso,LepGood_jetPtRatiov2,LepGood_jetPtRelv2, WP::M) :
                     multiIso_singleWP(LepGood_miniRelIso,LepGood_jetPtRatiov2,LepGood_jetPtRelv2, WP::T) ;
+        case WP::L:
+           return abs(LepGood_pdgId)==13 ? 
+                    multiIso_singleWP(LepGood_miniRelIso,LepGood_jetPtRatiov2,LepGood_jetPtRelv2, WP::L) :
+                    multiIso_singleWP(LepGood_miniRelIso,LepGood_jetPtRatiov2,LepGood_jetPtRelv2, WP::M) ;
         case WP::VVL: return LepGood_miniRelIso < 0.4;
         default:
             std::cerr << "Working point " << wp << " not implemented for multiIso_multiWP" << std::endl;
@@ -893,6 +897,29 @@ float multiIso_multiWP(int LepGood_pdgId, float LepGood_pt, float LepGood_eta, f
 }
 float multiIso_multiWP(int LepGood_pdgId, float LepGood_pt, float LepGood_eta, float LepGood_miniRelIso, float LepGood_jetPtRatiov2, float LepGood_jetPtRelv2, int wp) {
     return multiIso_multiWP(LepGood_pdgId,LepGood_pt,LepGood_eta,LepGood_miniRelIso,LepGood_jetPtRatiov2,LepGood_jetPtRelv2,WP::WPId(wp));
+}
+
+
+float conept_RA5(int LepGood_pdgId, float LepGood_pt, float LepGood_eta, float LepGood_miniRelIso, float LepGood_jetPtRatiov2, float LepGood_jetPtRelv2) {
+
+  float A = (abs(LepGood_pdgId)==11) ? 0.12 : 0.16;
+  float B = (abs(LepGood_pdgId)==11) ? 0.80 : 0.76;
+  float C = (abs(LepGood_pdgId)==11) ? 7.2 : 7.2;
+  
+  if (LepGood_jetPtRelv2>C) return LepGood_pt*(1+std::max(float(LepGood_miniRelIso-A),float(0.)));
+  else return std::max(float(LepGood_pt),float(LepGood_pt/LepGood_jetPtRatiov2*B));
+
+}
+
+float conept_RA7(int LepGood_pdgId, float LepGood_pt, float LepGood_eta, float LepGood_miniRelIso, float LepGood_jetPtRatiov2, float LepGood_jetPtRelv2) {
+
+  float A = (abs(LepGood_pdgId)==11) ? 0.16 : 0.20;
+  float B = (abs(LepGood_pdgId)==11) ? 0.76 : 0.69;
+  float C = (abs(LepGood_pdgId)==11) ? 7.2 : 6.0;
+
+  if (LepGood_jetPtRelv2>C) return LepGood_pt*(1+std::max(float(LepGood_miniRelIso-A),float(0.)));
+  else return std::max(float(LepGood_pt),float(LepGood_pt/LepGood_jetPtRatiov2*B));
+
 }
 
 float multiIso_singleWP_relaxFO3(int LepGood_pdgId, float LepGood_pt, float LepGood_CorrConePt, float LepGood_eta, float LepGood_miniRelIso, float LepGood_jetPtRatiov2, float LepGood_jetPtRelv2, WP::WPId wp) {
