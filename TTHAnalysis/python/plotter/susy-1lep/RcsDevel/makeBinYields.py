@@ -8,13 +8,13 @@ from math import hypot
 
 ## Trees -- skimmed with trig_base
 
-Tdir = "/afs/desy.de/user/l/lobanov/public/CMG/SampLinks/MiniAODv2_hadrFlav_2p2fb/"
+Tdir = "samples_HT350/"
 # MC
-mcFTdir = "/afs/desy.de/user/l/lobanov/public/CMG/SampLinks/MiniAODv2_hadrFlav_2p2fb/Friends/MC/pu69mb_JECcentr/"
-sigFTdir = "/afs/desy.de/user/l/lobanov/public/CMG/SampLinks/MiniAODv2_hadrFlav_2p2fb/T1tttt_Scan/../Friends/pu_69mb_allSF_wScale/"
+mcFTdir = "samples_HT350/Friends/"
+sigFTdir = "samples_HT350/Friends/"
 
 # new data
-dataFTdir = "/afs/desy.de/user/l/lobanov/public/CMG/SampLinks/MiniAODv2_hadrFlav_2p2fb/Friends/Data/trig_skim_2p2fb/"
+dataFTdir = "samples_HT350/Friends/"
 
 
 #Dilepton stuff
@@ -452,7 +452,7 @@ if __name__ == "__main__":
         if doDLCR: cDict.update(cutDictDLCRf9)
 
 
-    doNjet5 = False
+    doNjet5 = True
     if doNjet5:
         cDict.update(cutDictSRf5)
         cDict.update(cutDictCRf5)
