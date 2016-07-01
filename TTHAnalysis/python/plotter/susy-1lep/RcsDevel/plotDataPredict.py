@@ -5,8 +5,8 @@ import makeYieldPlots as yp
 yp._batchMode = False
 yp._alpha = 0.8
 
-
-yp.CMS_lumi.lumi_13TeV = str(2.24) + " fb^{-1}"
+lum = "4.0"
+yp.CMS_lumi.lumi_13TeV = lum +  " fb^{-1}"
 yp.CMS_lumi.extraText = "Preliminary"
 
 doPoisErr = True
@@ -43,6 +43,7 @@ if __name__ == "__main__":
     yds.addFromFiles(pattern,("lep","sele"))
     yds.showStats()
 
+  #  mcSamps = ['DY','TTV','SingleT','WJets','TT']#
     mcSamps = ['DY','TTV','SingleT','WJets','TT']#
     #mcSamps = ['WJets','TT','QCD']
 
@@ -101,7 +102,7 @@ if __name__ == "__main__":
 
         mcStack = yp.getStack(mcHists)
         hUncert = hDataPred.Clone("uncert")
-        hUncert.SetTitle("Pred. Uncertainty")
+        hUncert.SetTitle("Statistical Uncertainty only")
         yp.setUnc(hUncert)
 
         #canv = plotHists("DataNJ45_"+cat,[stack,hMCpred,hDataPred,hData,total],ratio)
@@ -110,7 +111,7 @@ if __name__ == "__main__":
         else:
             canv = yp.plotHists("SR_MB_Prediction",[mcStack,hUncert,hData],ratio,'TM', 1200, 600, logY = True)
 
-        cname = "Data_2p24fb_"+mask
+        cname = "Data_"+lum.replace('.','p')+"_"+mask
 
         if doPoisErr: cname += "poisErr_"
 

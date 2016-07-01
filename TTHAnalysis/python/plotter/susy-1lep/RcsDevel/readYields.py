@@ -13,12 +13,12 @@ from ROOT import *
 base = 5
 
 def getLepYield(hist,leptype = ('lep','sele')):
-
     if hist.GetNbinsX() == 1:
         return (hist.GetBinContent(1),hist.GetBinError(1))
 
 #    elif hist.GetNbinsX() == 4 and hist.GetNbinsY() == 2:
-    elif hist.GetNbinsX() == 5 and hist.GetNbinsY() == 2:
+    
+    elif hist.GetNbinsX() <= 5 and hist.GetNbinsY() <= 3:
 
         if leptype == ('mu','anti'):
             return (hist.GetBinContent(1,1),hist.GetBinError(1,1))

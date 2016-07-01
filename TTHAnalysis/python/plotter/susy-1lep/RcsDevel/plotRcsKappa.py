@@ -101,7 +101,7 @@ if __name__ == "__main__":
 
                     exts = [".pdf",".png",".root"]
 
-                    odir = "BinPlots/MC/RcsKappa/lumi2p3fb/"+mask+"/"
+                    odir = "BinPlots/"+mask+"/"
                     if not os.path.exists(odir): os.makedirs(odir)
 
                     for ext in exts:
