@@ -18,7 +18,7 @@ class EventVars1L_triggers:
             #'HLT_MuHT600', 'HLT_MuMET120', 'HLT_MuHT400B', #aux
             'HLT_IsoEle32','HLT_IsoEle22','HLT_IsoEle23','HLT_Ele105', # single ele
             'HLT_EleHT400MET70','HLT_EleHT350MET70','HLT_EleHT350MET50','HLT_EleHTMET','HLT_EleHT350', # for analysis
-            'HLT_EleHT400', 'HLT_MuHT400', 'HLT_Ele50HT400', 'HLT_Ele50HT400', #latest additions 
+            'HLT_EleHT400', 'HLT_MuHT400', 'HLT_Ele50HT400', 'HLT_Mu50HT400', #latest additions 
             #'HLT_EleHT600','HLT_EleHT200', 'HLT_EleHT400B', # aux
             ## custom names
             #'HLT_EleOR', 'HLT_MuOR','HLT_LepOR'
