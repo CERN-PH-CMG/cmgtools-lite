@@ -1,3 +1,5 @@
+blinded = False
+
 # LT bins
 binsLT = {}
 binsLT['LTi'] = ('250 < LT','$\geq$ 250')
@@ -133,7 +135,7 @@ dPhiCuts['NJ6']['LT1']['SR'] = ('dPhi > 1','$\delta \phi > $ x')
 dPhiCuts['NJ6']['LT1']['CR'] = ('dPhi < 1','$\delta \phi < $ x')
 '''
 
-def getSRcut(nj_bin, lt_bin, sr_bin):
+def getSRcut(nj_bin, lt_bin, sr_bin, blinded):
 
     dPhiCut = "dPhi "
     cutLbl = "$\delta \phi "
@@ -163,6 +165,9 @@ def getSRcut(nj_bin, lt_bin, sr_bin):
     else:
         print "No cut found for", nj_bin, lt_bin
         cut = 0
+
+    if blinded and ('68' in nj_bin or '9i' in nj_bin) and "SR" in sr_bin:
+        cut = 99.0
 
     dPhiCut += str(cut)
     cutLbl += str(cut)
@@ -367,7 +372,7 @@ for nj_bin in ['NJ45f6','NJ68']:#binsNJ.iteritems():
                     # use isSR var
                     #sr_cut = binsSR[sr_bin][0]
                     # use varying dPhi
-                    sr_cut = getSRcut(nj_bin, lt_bin, sr_bin)[0]
+                    sr_cut = getSRcut(nj_bin, lt_bin, sr_bin, blinded)[0]
 
                     binname = "%s_%s_%s_%s_%s" %(lt_bin,ht_bin,nb_bin,nj_bin,sr_bin)
                     cutDictSR[binname] = [("base",lt_bin,lt_cut),("base",ht_bin,ht_cut),("base",nb_bin,nb_cut),("base",nj_bin,nj_cut),("base",sr_bin,sr_cut)]
@@ -376,7 +381,7 @@ for nj_bin in ['NJ45f6','NJ68']:#binsNJ.iteritems():
                     # use isSR var
                     #cr_cut = binsCR[cr_bin][0]
                     # use varying dPhi
-                    cr_cut = getSRcut(nj_bin, lt_bin, cr_bin)[0]
+                    cr_cut = getSRcut(nj_bin, lt_bin, cr_bin, blinded)[0]
                     DLcr_bin = 'DL'+cr_bin
                     DLcr_cut = binsCR[DLcr_bin][0]
 
@@ -453,7 +458,7 @@ for nj_bin in ['NJ45f9','NJ9i']:#binsNJ.iteritems():
                     # use isSR var
                     #sr_cut = binsSR[sr_bin][0]
                     # use varying dPhi
-                    sr_cut = getSRcut(nj_bin, lt_bin, sr_bin)[0]
+                    sr_cut = getSRcut(nj_bin, lt_bin, sr_bin, blinded)[0]
 
                     binname = "%s_%s_%s_%s_%s" %(lt_bin,ht_bin,nb_bin,nj_bin,sr_bin)
                     cutDictSRf9[binname] = [("base",lt_bin,lt_cut),("base",ht_bin,ht_cut),("base",nb_bin,nb_cut),("base",nj_bin,nj_cut),("base",sr_bin,sr_cut)]
@@ -462,7 +467,7 @@ for nj_bin in ['NJ45f9','NJ9i']:#binsNJ.iteritems():
                     # use isSR var
                     #cr_cut = binsCR[cr_bin][0]
                     # use varying dPhi
-                    cr_cut = getSRcut(nj_bin, lt_bin, cr_bin)[0]
+                    cr_cut = getSRcut(nj_bin, lt_bin, cr_bin, blinded)[0]
                     DLcr_bin = 'DL'+cr_bin
                     DLcr_cut = binsCR[DLcr_bin][0]
 
@@ -528,7 +533,7 @@ for nj_bin in ['NJ4f5','NJ5']:#binsNJ.iteritems():
                     # use isSR var
                     #sr_cut = binsSR[sr_bin][0]
                     # use varying dPhi
-                    sr_cut = getSRcut(nj_bin, lt_bin, sr_bin)[0]
+                    sr_cut = getSRcut(nj_bin, lt_bin, sr_bin, blinded)[0]
 
                     binname = "%s_%s_%s_%s_%s" %(lt_bin,ht_bin,nb_bin,nj_bin,sr_bin)
                     cutDictSRf5[binname] = [("base",lt_bin,lt_cut),("base",ht_bin,ht_cut),("base",nb_bin,nb_cut),("base",nj_bin,nj_cut),("base",sr_bin,sr_cut)]
@@ -537,7 +542,7 @@ for nj_bin in ['NJ4f5','NJ5']:#binsNJ.iteritems():
                     # use isSR var
                     #cr_cut = binsCR[cr_bin][0]
                     # use varying dPhi
-                    cr_cut = getSRcut(nj_bin, lt_bin, cr_bin)[0]
+                    cr_cut = getSRcut(nj_bin, lt_bin, cr_bin, blinded)[0]
 
                     binname = "%s_%s_%s_%s_%s" %(lt_bin,ht_bin,nb_bin,nj_bin,cr_bin)
                     cutDictCRf5[binname] = [("base",lt_bin,lt_cut),("base",ht_bin,ht_cut),("base",nb_bin,nb_cut),("base",nj_bin,nj_cut),("base",cr_bin,cr_cut)]
@@ -588,7 +593,7 @@ for nj_bin in ['NJ45f6','NJ68']:#binsNJ.iteritems():
                     # use isSR var
                     #sr_cut = binsSR[sr_bin][0]
                     # use varying dPhi
-                    sr_cut = getSRcut(nj_bin, lt_bin, sr_bin)[0]
+                    sr_cut = getSRcut(nj_bin, lt_bin, sr_bin, blinded)[0]
 
                     binname = "%s_%s_%s_%s_%s_Few" %(lt_bin,ht_bin,nb_bin,nj_bin,sr_bin)
                     cutDictSRf68Few[binname] = [("base",lt_bin,lt_cut),("base",ht_bin,ht_cut),("base",nb_bin,nb_cut),("base",nj_bin,nj_cut),("base",sr_bin,sr_cut)]
@@ -597,7 +602,7 @@ for nj_bin in ['NJ45f6','NJ68']:#binsNJ.iteritems():
                     # use isSR var
                     #cr_cut = binsCR[cr_bin][0]
                     # use varying dPhi
-                    cr_cut = getSRcut(nj_bin, lt_bin, cr_bin)[0]
+                    cr_cut = getSRcut(nj_bin, lt_bin, cr_bin, blinded)[0]
 
                     binname = "%s_%s_%s_%s_%s_Few" %(lt_bin,ht_bin,nb_bin,nj_bin,cr_bin)
                     cutDictCRf68Few[binname] = [("base",lt_bin,lt_cut),("base",ht_bin,ht_cut),("base",nb_bin,nb_cut),("base",nj_bin,nj_cut),("base",cr_bin,cr_cut)]
@@ -629,7 +634,7 @@ for nj_bin in ['NJ45f9','NJ9i']:#binsNJ.iteritems():
                     # use isSR var
                     #sr_cut = binsSR[sr_bin][0]
                     # use varying dPhi
-                    sr_cut = getSRcut(nj_bin, lt_bin, sr_bin)[0]
+                    sr_cut = getSRcut(nj_bin, lt_bin, sr_bin, blinded)[0]
 
                     binname = "%s_%s_%s_%s_%s_Few" %(lt_bin,ht_bin,nb_bin,nj_bin,sr_bin)
                     cutDictSRf9Few[binname] = [("base",lt_bin,lt_cut),("base",ht_bin,ht_cut),("base",nb_bin,nb_cut),("base",nj_bin,nj_cut),("base",sr_bin,sr_cut)]
@@ -638,7 +643,7 @@ for nj_bin in ['NJ45f9','NJ9i']:#binsNJ.iteritems():
                     # use isSR var
                     #cr_cut = binsCR[cr_bin][0]
                     # use varying dPhi
-                    cr_cut = getSRcut(nj_bin, lt_bin, cr_bin)[0]
+                    cr_cut = getSRcut(nj_bin, lt_bin, cr_bin, blinded)[0]
 
                     binname = "%s_%s_%s_%s_%s_Few" %(lt_bin,ht_bin,nb_bin,nj_bin,cr_bin)
                     cutDictCRf9Few[binname] = [("base",lt_bin,lt_cut),("base",ht_bin,ht_cut),("base",nb_bin,nb_cut),("base",nj_bin,nj_cut),("base",cr_bin,cr_cut)]
