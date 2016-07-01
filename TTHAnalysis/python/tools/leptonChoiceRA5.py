@@ -575,11 +575,6 @@ def _susy2lss_idIsoEmu_cuts_obj(lep):
     if (lep.hcalPFClusterIso()>=0.25*lep.pt()): return False
     if (lep.dr03TkSumPt()>=0.2*lep.pt()): return False
     return True
-
-def _susy2lss_leptonMVA(lep):
-    if abs(lep.pdgId) == 13: return (lep.mvaTTHMoriond16 > 0.45)
-    if abs(lep.pdgId) == 11: return (lep.mvaTTHMoriond16 > 0.75)
-    return False
     
 def _susy2lss_multiIso(lep):
         if abs(lep.pdgId) == 13: A,B,C = (0.16,0.76,7.2)
