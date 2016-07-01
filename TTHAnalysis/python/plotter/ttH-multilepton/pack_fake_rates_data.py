@@ -164,18 +164,23 @@ if __name__ == "__main__":
 
        # SUSY M
        elif 'susy' in an:
-           h2d_el = [ make2D(outfile,"FR_mva075_el_"+X, ptbins_el, etabins_el) for X in XsQ ]
-           h2d_mu = [ make2D(outfile,"FR_mva075_mu_"+X, ptbins_mu, etabins_mu) for X in XsQ ]
-           h2d_el_tt = [ make2D(outfile,"FR_mva075_el_TT", ptbins_el, etabins_el) ]
-           h2d_mu_tt = [ make2D(outfile,"FR_mva075_mu_TT", ptbins_mu, etabins_mu) ]
+
+           ptbins_el = [ 10,15,20,30,45,100 ]
+
+           h2d_el = [ make2D(outfile,"FR_%s_el_"%an+X, ptbins_el, etabins_el) for X in XsQ ]
+           h2d_mu = [ make2D(outfile,"FR_%s_mu_"%an+X, ptbins_mu, etabins_mu) for X in XsQ ]
+           h2d_el_tt = [ make2D(outfile,"FR_%s_el_TT"%an, ptbins_el, etabins_el) ]
+           h2d_mu_tt = [ make2D(outfile,"FR_%s_mu_TT"%an, ptbins_mu, etabins_mu) ]
 
            Plots="~/www/plots_FR/80X/lepMVA_%s/v1.4_250616/fr-meas/"%an
            Z3l="/"
            QCD="/"
            #### Electrons: 
-           # 10-30 from Z+l
-           readMany2D(XsD, h2d_el, "/".join([Plots, Z3l, "el/z3l/fakerates-mtW3R/fr_sub_eta_%s_comp.root"]), "%s", etaslices_el, (10,30) )
-           # 30-inf from Ele12 bMedium
+#           # 10-30 from Z+l
+#           readMany2D(XsD, h2d_el, "/".join([Plots, Z3l, "el/z3l/fakerates-mtW3R/fr_sub_eta_%s_comp.root"]), "%s", etaslices_el, (10,30) )
+           # 10-30 from Ele8
+           readMany2D(XsQ, h2d_el, "/".join([Plots, QCD, "el/HLT_Ele8_CaloIdM_TrackIdM_PFJet30/fakerates-mtW1R/fr_sub_eta_%s_comp.root"]), "%s", etaslices_el, (10,30) )
+           # 30-inf from Ele12
            readMany2D(XsQ, h2d_el, "/".join([Plots, QCD, "el/HLT_Ele12_CaloIdM_TrackIdM_PFJet30/fakerates-mtW1R/fr_sub_eta_%s_comp.root"]), "%s", etaslices_el, (30,999) )
 
            #### Muons: 
@@ -196,8 +201,8 @@ if __name__ == "__main__":
            if an=='susy_wpV':
                ID="wpsViX4mrE2";
                XVar="mvaSusy_sVi_ptJIMIX3_mvaSusy_sVi"
-           readMany2D(["TT_red"], h2d_el_tt, "/".join([MCPlots, "el_ttz3l_"+ID+"_rec30_bAny_eta_%s.root"]),  XVar+"_zcoarse2_%s", etaslices_el, (10,30) )
-           readMany2D(["TT_red"], h2d_el_tt, "/".join([MCPlots, "el_lbin_"+ID+"_rec30_bAny_eta_%s.root"]), XVar+"_coarselongbin_%s",   etaslices_el, (30,999) )
+#           readMany2D(["TT_red"], h2d_el_tt, "/".join([MCPlots, "el_ttz3l_"+ID+"_rec30_bAny_eta_%s.root"]),  XVar+"_zcoarse2_%s", etaslices_el, (10,30) )
+           readMany2D(["TT_red"], h2d_el_tt, "/".join([MCPlots, "el_lbin_"+ID+"_rec30_bAny_eta_%s.root"]), XVar+"_coarselongbin_%s",   etaslices_el, (10,999) )
     #       readMany2D(["TT_red"], h2d_mu_tt, "/".join([MCPlots, "mu_low_"+ID+"_rec30_bAny_eta_%s.root"]),    XVar+"_low_%s",      etaslices_mu, (10,20) )
            readMany2D(["TT_red"], h2d_mu_tt, "/".join([MCPlots, "mu_lbin_"+ID+"_rec30_bAny_eta_%s.root"]), XVar+"_coarselongbin_%s",   etaslices_mu, (10,999) )
 
