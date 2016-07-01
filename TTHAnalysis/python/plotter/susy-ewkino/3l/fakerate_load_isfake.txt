@@ -1,1 +1,1 @@
-cut-file: susy-multilepton/ewk_upperlimits/fakerate_isfake.txt
+cut-file: susy-ewkino/3l/fakerate_isfake.txt

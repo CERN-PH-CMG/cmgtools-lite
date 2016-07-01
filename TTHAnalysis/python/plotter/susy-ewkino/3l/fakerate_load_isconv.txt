@@ -1,1 +1,1 @@
-cut-file: susy-multilepton/ewk_upperlimits/fakerate_isconv.txt
+cut-file: susy-ewkino/3l/fakerate_isconv.txt
