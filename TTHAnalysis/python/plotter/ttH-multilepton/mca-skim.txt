@@ -25,7 +25,8 @@ TTZToLLNuNu_LO : TTZToLLNuNu_LO : xsec
 TTZToLLNuNu_LO_withLHE : TTZToLLNuNu_LO_withLHE : xsec
 TT_pow_ext : TT_pow_ext : xsec
 TToLeptons_sch : TToLeptons_sch : xsec
-TToLeptons_tch_amcatnlo : TToLeptons_tch_amcatnlo : xsec
+TToLeptons_tch_powheg : TToLeptons_tch_powheg : xsec
+TBarToLeptons_tch_powheg : TBarToLeptons_tch_powheg : xsec
 T_tWch : T_tWch : xsec
 WGToLNuG : WGToLNuG : xsec
 WJetsToLNu : WJetsToLNu : xsec

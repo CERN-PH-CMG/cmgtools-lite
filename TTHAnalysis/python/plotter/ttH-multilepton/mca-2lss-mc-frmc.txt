@@ -34,7 +34,8 @@ Fakes : TTJets_SingleLeptonFromTbar : xsec : ((LepGood1_mcMatchId==0 && 0==0) ||
 Fakes : DYJetsToLL_M10to50 : xsec : ((LepGood1_mcMatchId==0 && 0==0) || (LepGood2_mcMatchId==0 && 0==0)) ; FakeRate="ttH-multilepton/fakeRate-2lss-frmc-tt.txt", Label="Fakes", FillStyle=3005
 Fakes : DYJetsToLL_M50 : xsec : ((LepGood1_mcMatchId==0 && 0==0) || (LepGood2_mcMatchId==0 && 0==0)) ; FakeRate="ttH-multilepton/fakeRate-2lss-frmc-tt.txt", Label="Fakes", FillStyle=3005
 Fakes : WJetsToLNu : xsec : ((LepGood1_mcMatchId==0 && 0==0) || (LepGood2_mcMatchId==0 && 0==0)) ; FakeRate="ttH-multilepton/fakeRate-2lss-frmc-tt.txt", Label="Fakes", FillStyle=3005
-Fakes : TToLeptons_tch_amcatnlo : xsec : ((LepGood1_mcMatchId==0 && 0==0) || (LepGood2_mcMatchId==0 && 0==0)) ; FakeRate="ttH-multilepton/fakeRate-2lss-frmc-tt.txt", Label="Fakes", FillStyle=3005
+Fakes : TToLeptons_tch_powheg : xsec : ((LepGood1_mcMatchId==0 && 0==0) || (LepGood2_mcMatchId==0 && 0==0)) ; FakeRate="ttH-multilepton/fakeRate-2lss-frmc-tt.txt", Label="Fakes", FillStyle=3005
+Fakes : TBarToLeptons_tch_powheg : xsec : ((LepGood1_mcMatchId==0 && 0==0) || (LepGood2_mcMatchId==0 && 0==0)) ; FakeRate="ttH-multilepton/fakeRate-2lss-frmc-tt.txt", Label="Fakes", FillStyle=3005
 Fakes : TToLeptons_sch : xsec : ((LepGood1_mcMatchId==0 && 0==0) || (LepGood2_mcMatchId==0 && 0==0)) ; FakeRate="ttH-multilepton/fakeRate-2lss-frmc-tt.txt", Label="Fakes", FillStyle=3005
 Fakes : T_tWch : xsec : ((LepGood1_mcMatchId==0 && 0==0) || (LepGood2_mcMatchId==0 && 0==0)) ; FakeRate="ttH-multilepton/fakeRate-2lss-frmc-tt.txt", Label="Fakes", FillStyle=3005
 Fakes : TBar_tWch : xsec : ((LepGood1_mcMatchId==0 && 0==0) || (LepGood2_mcMatchId==0 && 0==0)) ; FakeRate="ttH-multilepton/fakeRate-2lss-frmc-tt.txt", Label="Fakes", FillStyle=3005
