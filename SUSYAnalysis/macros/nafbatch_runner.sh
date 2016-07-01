@@ -6,9 +6,9 @@
 ##$ -l h=!bird234.desy.de
 #######################################################
 ## the cpu time for this job
-#$ -l h_rt=02:59:00
+#$ -l h_rt=04:59:00
 ## the maximum memory usage of this job
-#$ -l h_vmem=3900M
+#$ -l h_vmem=7900M
 ## operating system
 #$ -l distro=sld6
 ## architecture
