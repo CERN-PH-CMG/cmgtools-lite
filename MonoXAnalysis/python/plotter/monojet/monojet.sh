@@ -70,11 +70,12 @@ ROOTR="${ROOTPREF}/transfer_factors"
 COREOPT="-P $T --s2v -j $J -l 2.32 "
 COREY="mcAnalysis.py ${MCA} ${COREOPT} -G  "
 COREP="mcPlots.py ${MCA} ${COREOPT} -f --poisson --pdir ${ROOT} --showRatio --maxRatioRange 0.5 1.5 "
-CORER="mcSystematics.py ${MCA} ${COREOPT} -f --select-plot \"metnomu\" "
+CORER="mcSystematics.py ${MCA} ${COREOPT} -f --select-plot \"recoil\" "
 FEV=" -F mjvars/t \"$T/friends/evVarFriend_{cname}.root\" "
 SF=" --FM sf/t \"$T/friends/sfFriend_{cname}.root\" "
 
 if [ "$CATEGORY" == "monov" ] ; then COREP="${COREP} --rebin 2 " ; fi
+if [ "$RINPUTS" != "0" ] ; then mkdir -p $ROOTR ; fi
 
 RUNYSR="${COREY} ${WORKDIR}/monojet_twiki.txt "
 RUNY2M="${COREY} ${WORKDIR}/zmumu_twiki.txt "
@@ -95,7 +96,7 @@ SYST2M="${CORER} ${WORKDIR}/zmumu_twiki.txt ${WORKDIR}/zmumu_plots.txt monojet/s
 SYST2E="${CORER} ${WORKDIR}/zee_twiki.txt ${WORKDIR}/zee_plots.txt monojet/syst_2l.txt "
 SYST1M="${CORER} ${WORKDIR}/wmunu_twiki.txt ${WORKDIR}/wmunu_plots.txt monojet/syst_1l.txt "
 SYST1E="${CORER} ${WORKDIR}/wenu_twiki.txt ${WORKDIR}/wenu_plots.txt monojet/syst_1l.txt "
-SYST1G="${CORER} ${WORKDIR}/wenu_twiki.txt ${WORKDIR}/gjets_plots.txt monojet/syst_1g.txt "
+SYST1G="${CORER} ${WORKDIR}/gjets_twiki.txt ${WORKDIR}/gjets_plots.txt monojet/syst_1g.txt "
 
 MONOV_CUT="-A dphijm monoV 'nFatJetClean>0 && FatJetClean1_pt>250 && abs(FatJetClean1_eta)<2.4 && abs(FatJetClean1_prunedMass-85)<20 && FatJetClean1_tau2/FatJetClean1_tau1<0.6"
 MONOJ_CUT="-A dphijm monoJ '!(nFatJetClean>0 && FatJetClean1_pt>250 && abs(FatJetClean1_eta)<2.4 && abs(FatJetClean1_prunedMass-85)<20 && FatJetClean1_tau2/FatJetClean1_tau1<0.6)"
@@ -179,6 +180,7 @@ zee)
         FULLOPT=" $FEV $SF -W 'vtxWeight*SF_trig1lep*SF_LepTightLoose*SF_BTag*SF_NLO_QCD*SF_NLO_EWK' $CAT_CUT "
         if [[ "$RINPUTS" != "0" ]]; then
             comm="python ${SYST2E} ${FULLOPT} -p DYJetsHT -o ${ROOTR}/rinputs_DYJetsHT_CR2E.root "
+            $RUNIT $comm
         else
             if [[ "$DOPLOTS" != "0" ]]; then
                 comm="python ${PLOT2E} ${FULLOPT} --sp DYJetsHT "
@@ -208,6 +210,7 @@ gj)
         FULLOPT=" $FEV $SF -W 'vtxWeight*SF_BTag*SF_NLO_QCD*SF_NLO_EWK' $CAT_CUT "
         if [[ "$RINPUTS" != "0" ]]; then
             comm="python ${SYST1G} ${FULLOPT} -p GJetsHT -o ${ROOTR}/rinputs_GJetsHT_CR1G.root "
+            $RUNIT $comm
         else
             if [[ "$DOPLOTS" != "0" ]]; then
                 comm="python ${PLOT1G} ${FULLOPT} --sp GJetsHT "
