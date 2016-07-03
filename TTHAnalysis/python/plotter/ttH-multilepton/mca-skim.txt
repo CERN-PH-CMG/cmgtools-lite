@@ -9,8 +9,8 @@ DYJetsToLL_M50 : DYJetsToLL_M50 : xsec
 TBar_tWch : TBar_tWch : xsec
 TGJets : TGJets : xsec
 TTGJets : TTGJets : xsec
-TTHnobb_pow : TTHnobb_pow : xsec
-TTHnobb_pow : TTHnobb_pow : xsec
+TTHnobb_mWCutfix_ext1 : TTHnobb_mWCutfix_ext1 : xsec
+TTHnobb_mWCutfix_ext1 : TTHnobb_mWCutfix_ext1 : xsec
 TTJets : TTJets : xsec
 TTJets_DiLepton : TTJets_DiLepton : xsec
 TTJets_SingleLeptonFromT : TTJets_SingleLeptonFromT : xsec
