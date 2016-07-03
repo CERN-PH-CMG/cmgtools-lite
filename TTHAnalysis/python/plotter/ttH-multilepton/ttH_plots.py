@@ -12,7 +12,7 @@ dowhat = "plots"
 def base(selection):
 
 #    CORE="-P /data1/peruzzi/TREES_76X_200216_jecV1M2_skimOnlyMC_reclv8 -F sf/t {P}/2_recleaner_v8_b1E2/evVarFriend_{cname}.root -F sf/t {P}/4_kinMVA_trainFeb23_v0/evVarFriend_{cname}.root -F sf/t {P}/5_eventBTagRWT_onlyJets_v1/evVarFriend_{cname}.root"
-    CORE="-P /data1/peruzzi/809_June9_ttH --Fs {P}/2_recleaner_v4_b1E2 --Fs {P}/3_kinMVA_v4"
+    CORE="-P /data1/peruzzi/809_June9_ttH --Fs {P}/2_recleaner_v4_b1E2 --Fs {P}/3_kinMVA_v4 --Fs {P}/4_kinMVAmulticlass_v4"
 
     CORE+=" -f -j 8 -l 3.99 --s2v --tree treeProducerSusyMultilepton --mcc ttH-multilepton/lepchoice-ttH-FO.txt --mcc ttH-multilepton/ttH_2lss3l_triggerdefs.txt"# --neg"
     if dowhat == "plots": CORE+=" --lspam '#bf{CMS} #it{Internal}' --legendWidth 0.20 --legendFontSize 0.035 --showRatio --maxRatioRange 0 3  --showMCError --rebin 4 --xP 'nT_.*' --xP 'debug_.*' --mcc ttH-multilepton/mcc-bTagSFOne.txt"
