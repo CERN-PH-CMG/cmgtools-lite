@@ -41,9 +41,18 @@ puFileName_norm = "../python/tools/pileup/pu_ratio_70mb.root"
 puFileName_down = "../python/tools/pileup/pu_ratio_66mb.root"
 '''
 
+'''
+#2015 final
 puFileName_up = "../python/tools/pileup/pu_ratio_72p45mb.root"
 puFileName_norm = "../python/tools/pileup/pu_ratio_69mb.root"
 puFileName_down = "../python/tools/pileup/pu_ratio_65p55mb.root"
+'''
+
+#2016 4/fb
+puFileName_up   = "$CMSSW_BASE/src/CMGTools/TTHAnalysis/python/plotter/susy-1lep/pileup/pufiles/pu_ratio_4fb_Run2016B_74.9mb.root"
+puFileName_norm = "$CMSSW_BASE/src/CMGTools/TTHAnalysis/python/plotter/susy-1lep/pileup/pufiles/pu_ratio_4fb_Run2016B_71.3mb.root"
+puFileName_down = "$CMSSW_BASE/src/CMGTools/TTHAnalysis/python/plotter/susy-1lep/pileup/pufiles/pu_ratio_4fb_Run2016B_67.7mb.root"
+
 
 puNorm =  getPUdict(puFileName_norm)
 puUp =  getPUdict(puFileName_up)
