@@ -67,6 +67,9 @@ if 'MultiClassICHEP16' in options.training:
     factory.AddVariable("mindr_lep2_jet := mindr_lep2_jet", 'F')
     factory.AddVariable("LepGood_conePt[iF_Recl[0]] := LepGood_conePt[iF_Recl[0]]", 'F') 
     factory.AddVariable("LepGood_conePt[iF_Recl[1]] := LepGood_conePt[iF_Recl[1]]", 'F')
+    factory.AddVariable("avg_dr_jet : = avg_dr_jet", 'F');
+    factory.AddVariable("met := min(met_pt, 400)", 'F');
+
 else: raise RuntimeError
 
 for trainclass,name,tree,treew in dsets:
@@ -76,7 +79,8 @@ for trainclass,name,tree,treew in dsets:
 fOut.cd()
 for trainclass in set([x[0] for x in dsets]): factory.SetWeightExpression("genWeight*xsec",trainclass)
 factory.PrepareTrainingAndTestTree(allcuts,"!V")
-factory.BookMethod(ROOT.TMVA.Types.kBDT,'BDTG','!H:!V:NTrees=500:BoostType=Grad:Shrinkage=0.10:!UseBaggedGrad:nCuts=2000:MaxDepth=8:NegWeightTreatment=PairNegWeightsGlobal')
+#factory.BookMethod(ROOT.TMVA.Types.kBDT,'BDTG','!H:!V:NTrees=500:BoostType=Grad:Shrinkage=0.10:!UseBaggedGrad:nCuts=2000:MaxDepth=8:NegWeightTreatment=PairNegWeightsGlobal')
+factory.BookMethod(ROOT.TMVA.Types.kBDT,'BDTG','!H:!V:NTrees=200:BoostType=Grad:Shrinkage=0.10:!UseBaggedGrad:nCuts=200:MaxDepth=8:NegWeightTreatment=PairNegWeightsGlobal')
 factory.TrainAllMethods()
 factory.TestAllMethods()
 factory.EvaluateAllMethods()

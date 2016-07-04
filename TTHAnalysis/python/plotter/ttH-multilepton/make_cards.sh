@@ -26,7 +26,7 @@ OneTau=" -E ^1tau "
 SPLITDECAYS=""
 #SPLITDECAYS="-splitdecays"
 
-OPTIONS="${OPTIONS} --Fs {P}/2_recleaner_v4_b1E2 --Fs {P}/3_kinMVA_v4 --Fs {P}/4_kinMVAmulticlass_v4 --mcc ttH-multilepton/mcc-bTagSFOne.txt" # WARNING B-TAG SF OFF
+OPTIONS="${OPTIONS} --Fs {P}/2_recleaner_v4_b1E2 --Fs {P}/3_kinMVA_v4 --Fs {P}/4_kinMVAmulticlassV2_v4 --mcc ttH-multilepton/mcc-bTagSFOne.txt" # WARNING B-TAG SF OFF
 OPTIONS="${OPTIONS} --mcc ttH-multilepton/lepchoice-ttH-FO.txt --mcc ttH-multilepton/ttH_2lss3l_triggerdefs.txt --neg" # neg necessary for subsequent rebin
 CATPOSTFIX=""
 

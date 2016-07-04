@@ -22,6 +22,8 @@ class KinMVA_MultiClass:
             MVAVar("mindr_lep2_jet:=mindr_lep2_jet", func = lambda ev: ev.mindr_lep2_jet),
             MVAVar("LepGood_conePt[iF_Recl[0]]:=LepGood_conePt[iF_Recl[0]]", func = lambda ev : ev.LepGood_conePt[int(ev.iF_Recl[0])]),
             MVAVar("LepGood_conePt[iF_Recl[1]]:=LepGood_conePt[iF_Recl[1]]", func = lambda ev : ev.LepGood_conePt[int(ev.iF_Recl[1])]),
+            MVAVar("avg_dr_jet : = avg_dr_jet", func = lambda ev : ev.avg_dr_jet),
+            MVAVar("met := min(met_pt, 400)", func = lambda ev : ev.met_pt),
             ]
 
         self._vars_jecUp = [
@@ -32,6 +34,8 @@ class KinMVA_MultiClass:
             MVAVar("mindr_lep2_jet:=mindr_lep2_jet", func = lambda ev: ev.mindr_lep2_jet_jecUp),
             MVAVar("LepGood_conePt[iF_Recl[0]]:=LepGood_conePt[iF_Recl[0]]", func = lambda ev : ev.LepGood_conePt[int(ev.iF_Recl[0])]),
             MVAVar("LepGood_conePt[iF_Recl[1]]:=LepGood_conePt[iF_Recl[1]]", func = lambda ev : ev.LepGood_conePt[int(ev.iF_Recl[1])]),
+            MVAVar("avg_dr_jet : = avg_dr_jet", func = lambda ev : ev.avg_dr_jet),
+            MVAVar("met := min(met_pt, 400)", func = lambda ev : ev.met_jecUp_pt),
             ]
 
         self._vars_jecDown = [
@@ -42,6 +46,8 @@ class KinMVA_MultiClass:
             MVAVar("mindr_lep2_jet:=mindr_lep2_jet", func = lambda ev: ev.mindr_lep2_jet_jecDown),
             MVAVar("LepGood_conePt[iF_Recl[0]]:=LepGood_conePt[iF_Recl[0]]", func = lambda ev : ev.LepGood_conePt[int(ev.iF_Recl[0])]),
             MVAVar("LepGood_conePt[iF_Recl[1]]:=LepGood_conePt[iF_Recl[1]]", func = lambda ev : ev.LepGood_conePt[int(ev.iF_Recl[1])]),
+            MVAVar("avg_dr_jet : = avg_dr_jet", func = lambda ev : ev.avg_dr_jet),
+            MVAVar("met := min(met_pt, 400)", func = lambda ev : ev.met_jecDown_pt),
             ]
 
         for var in self.systsJEC:
