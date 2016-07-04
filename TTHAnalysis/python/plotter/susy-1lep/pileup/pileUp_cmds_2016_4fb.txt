@@ -1,0 +1,9 @@
+pileupCalc.py -i /afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-275125_13TeV_PromptReco_Collisions16_JSON.txt --inputLumiJSON /afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/PileUp/pileup_latest.txt --calcMode true --minBiasXsec 71300 --maxPileupBin 50 --numPileupBins 50  DataPileupHisto4fb_Run2016B_71.3mb.root
+pileupCalc.py -i /afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-275125_13TeV_PromptReco_Collisions16_JSON.txt --inputLumiJSON /afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/PileUp/pileup_latest.txt --calcMode true --minBiasXsec 67735 --maxPileupBin 50 --numPileupBins 50  DataPileupHisto4fb_Run2016B_67.7mb.root
+pileupCalc.py -i /afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-275125_13TeV_PromptReco_Collisions16_JSON.txt --inputLumiJSON /afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/PileUp/pileup_latest.txt --calcMode true --minBiasXsec 74865 --maxPileupBin 50 --numPileupBins 50  DataPileupHisto4fb_Run2016B_74.9mb.root
+./makePUweightHisto.py pufiles/DataPileupHisto4fb_Run2016B_67.7mb.root pufiles/mcSpring16_25ns_pu.root 
+mv pu_ratio.root pufiles/pu_ratio_4fb_Run2016B_67.7mb.root
+./makePUweightHisto.py pufiles/DataPileupHisto4fb_Run2016B_71.3mb.root pufiles/mcSpring16_25ns_pu.root 
+mv pu_ratio.root pufiles/pu_ratio_4fb_Run2016B_71.3mb.root
+./makePUweightHisto.py pufiles/DataPileupHisto4fb_Run2016B_74.9mb.root pufiles/mcSpring16_25ns_pu.root 
+mv pu_ratio.root pufiles/pu_ratio_4fb_Run2016B_74.9mb.root
