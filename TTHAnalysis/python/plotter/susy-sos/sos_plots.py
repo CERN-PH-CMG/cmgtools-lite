@@ -4,20 +4,29 @@ import re
 
 ODIR=sys.argv[1]
 
-dowhat = "plots" 
+#dowhat = "plots" 
 #dowhat = "dumps" 
 #dowhat = "yields" 
 
+## ---- rc - LIMITS ----
+dowhat = "limits"
+if dowhat == "limits":
+    SYST="susy-sos/syst/susy_sos_dummy.txt"
+    PLOTandCUTS="susy-sos/mca-2los-mc.txt susy-sos/2los_tight.txt"
+## --------
 
 def base(selection):
 
     #CORE="-P /data1/botta/trees_SOS_newpresel_030616/"
     CORE="-P /data1/botta/trees_SOS_80X_170616/"
-    CORE+=" -f -j 8 -l 5.0 --s2v --tree treeProducerSusyMultilepton --mcc susy-sos/mcc-lepWP.txt --mcc susy-sos/mcc-sf1.txt "#--mcc susy-sos/2los_triggerdefs.txt # --neg"
+    CORE+=" -f -j 8 -l 10.0 --s2v --tree treeProducerSusyMultilepton --mcc susy-sos/mcc-lepWP.txt --mcc susy-sos/mcc-sf1.txt "#--mcc susy-sos/2los_triggerdefs.txt # --neg"
     if dowhat == "plots": CORE+=" --lspam CMSsimulation --legendWidth 0.14 --legendFontSize 0.04"
-
+    GO = ""
     if selection=='2los':
-        GO="%s susy-sos/mca-2los-mc.txt susy-sos/2los_tight.txt "%CORE
+        ## rc -----
+        if (dowhat != "limits") : GO="%s susy-sos/mca-2los-mc.txt susy-sos/2los_tight.txt "       
+        GO="%s %s"%(CORE,GO) 
+        # ---------
         #GO="%s -W 'puw(nTrueInt)*leptonSF_ttH(LepGood_pdgId[iF_Recl[0]],LepGood_pt[iF_Recl[0]],LepGood_eta[iF_Recl[0]],2)*leptonSF_ttH(LepGood_pdgId[iF_Recl[1]],LepGood_pt[iF_Recl[1]],LepGood_eta[iF_Recl[1]],2)*triggerSF_ttH(LepGood_pdgId[iF_Recl[0]],LepGood_pt[iF_Recl[0]],LepGood_pdgId[iF_Recl[1]],LepGood_pt[iF_Recl[1]],2)*eventBTagSF'"%GO
         #GO="%s -W 'puw(nTrueInt)'"%GO
         GO="%s -W 'puw2016_vtx_4fb(nVert)'"%GO
@@ -36,6 +45,9 @@ def runIt(GO,name,plots=[],noplots=[]):
     if   dowhat == "plots":  print 'python mcPlots.py',"--pdir %s/%s"%(ODIR,name),GO,' '.join(['--sP %s'%p for p in plots]),' '.join(['--xP %s'%p for p in noplots]),' '.join(sys.argv[3:])
     elif dowhat == "yields": print 'echo %s; python mcAnalysis.py'%name,GO,' '.join(sys.argv[3:])
     elif dowhat == "dumps":  print 'echo %s; python mcDump.py'%name,GO,' '.join(sys.argv[3:])
+    ## rc -------------
+    elif dowhat == "limits" : print 'echo %s; python makeShapeCardsSusy.py'%name,PLOTandCUTS,' '.join(['%s'%p for p in plots]),' '.join(['%s'%p for p in noplots]),SYST,' -o %s'%name,' ',GO," --od %s"%(ODIR),' --asimov',' '.join(sys.argv[3:])
+    ## ------------------
 def add(GO,opt):
     return '%s %s'%(GO,opt)
 def setwide(x):
@@ -64,13 +76,18 @@ if __name__ == '__main__':
         x = base('2los')
         if '_notrigger' in torun: x = add(x,'-X ^trigger ')
         if '_ewk10_met125_mm' in torun: 
-            x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_315,T2ttDeg_330 -E ^pt5sublep -E ^MT -E ^mm -E ^upperMET")           
+            x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_315,T2ttDeg_330 -E ^pt5sublep -E ^MT -E ^mm -E ^upperMET")         
             if '_syst' in torun: 
                 x = x.replace('mca-2los-mc.txt','mca-2los-mc-syst.txt')
                 x = add(x,"--plotmode nostack -F sf/t /data1/botta/trees_SOS_80X_170616/TT2l_friends/evVarFriend_{cname}.root")
             if '_ddbkg' in torun: 
                 x = x.replace('mca-2los-mc.txt','mca-2los-mc-frdata.txt')
-            runIt(x,'%s/all'%torun,['SR_bins_EWKino'])             
+            # rc -------------------
+            if dowhat == "limits":
+                runIt(x,torun,["'SR_bins_EWKino(mass_2(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_mass,LepGood2_pt,LepGood2_eta,LepGood2_phi,LepGood2_mass))'"],["4,1,5"])
+            else:
+            #-------------------                   
+                runIt(x,'%s/all'%torun,['SR_bins_EWKino'])             
         if '_ewk10_met200_mm' in torun: 
             x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_315,T2ttDeg_330 -E ^pt5sublep -E ^MT -E ^mm -E ^highMET")
             if '_syst' in torun: 
@@ -78,7 +95,12 @@ if __name__ == '__main__':
                 x = add(x,"--plotmode nostack -F sf/t /data1/botta/trees_SOS_80X_170616/TT2l_friends/evVarFriend_{cname}.root")
             if '_ddbkg' in torun: 
                 x = x.replace('mca-2los-mc.txt','mca-2los-mc-frdata.txt')
-            runIt(x,'%s/all'%torun,['SR_bins_EWKino'])
+            # rc -------------------
+            if dowhat == "limits":
+                runIt(x,torun,["'SR_bins_EWKino(mass_2(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_mass,LepGood2_pt,LepGood2_eta,LepGood2_phi,LepGood2_mass))'"],["4,1,5"])
+            else:
+            #-------------------            
+                runIt(x,'%s/all'%torun,['SR_bins_EWKino'])
         if '_ewk10_met200_ee' in torun: 
             x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_315,T2ttDeg_330 -E ^pt5sublep -E ^MT -E ^ee -E ^highMET")
             if '_syst' in torun: 
@@ -86,7 +108,12 @@ if __name__ == '__main__':
                 x = add(x,"--plotmode nostack -F sf/t /data1/botta/trees_SOS_80X_170616/TT2l_friends/evVarFriend_{cname}.root")
             if '_ddbkg' in torun: 
                 x = x.replace('mca-2los-mc.txt','mca-2los-mc-frdata.txt')
-            runIt(x,'%s/all'%torun,['SR_bins_EWKino'])    
+            # rc -------------------
+            if dowhat == "limits":
+                runIt(x,torun,["'SR_bins_EWKino(mass_2(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_mass,LepGood2_pt,LepGood2_eta,LepGood2_phi,LepGood2_mass))'"],["4,1,5"])
+            else:
+            #-------------------  
+                runIt(x,'%s/all'%torun,['SR_bins_EWKino'])    
         if '_ewk20_met125_mm' in torun: 
             x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_90,T2ttDeg_300,T2ttDeg_315,T2ttDeg_330 -E ^pt5sublep -E ^MT -E ^mm -E ^upperMET")
             if '_syst' in torun: 
@@ -94,7 +121,12 @@ if __name__ == '__main__':
                 x = add(x,"--plotmode nostack -F sf/t /data1/botta/trees_SOS_80X_170616/TT2l_friends/evVarFriend_{cname}.root")
             if '_ddbkg' in torun: 
                 x = x.replace('mca-2los-mc.txt','mca-2los-mc-frdata.txt')
-            runIt(x,'%s/all'%torun,['SR_bins_EWKino'])
+            # rc -------------------
+            if dowhat == "limits":
+                runIt(x,torun,["'SR_bins_EWKino(mass_2(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_mass,LepGood2_pt,LepGood2_eta,LepGood2_phi,LepGood2_mass))'"],["4,1,5"])
+            else:
+            #-------------------              
+                runIt(x,'%s/all'%torun,['SR_bins_EWKino'])
         if '_ewk20_met200_mm' in torun: 
             x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_90,T2ttDeg_300,T2ttDeg_315,T2ttDeg_330 -E ^pt5sublep -E ^MT -E ^mm -E ^highMET")
             if '_syst' in torun: 
@@ -102,7 +134,12 @@ if __name__ == '__main__':
                 x = add(x,"--plotmode nostack -F sf/t /data1/botta/trees_SOS_80X_170616/TT2l_friends/evVarFriend_{cname}.root")
             if '_ddbkg' in torun: 
                 x = x.replace('mca-2los-mc.txt','mca-2los-mc-frdata.txt')
-            runIt(x,'%s/all'%torun,['SR_bins_EWKino'])
+            # rc -------------------
+            if dowhat == "limits":
+                runIt(x,torun,["'SR_bins_EWKino(mass_2(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_mass,LepGood2_pt,LepGood2_eta,LepGood2_phi,LepGood2_mass))'"],["4,1,5"])
+            else:
+            #-------------------  
+                runIt(x,'%s/all'%torun,['SR_bins_EWKino'])
         if '_ewk20_met200_ee' in torun: 
             x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_90,T2ttDeg_300,T2ttDeg_315,T2ttDeg_330 -E ^pt5sublep -E ^MT -E ^ee -E ^highMET")
             if '_syst' in torun: 
@@ -110,7 +147,12 @@ if __name__ == '__main__':
                 x = add(x,"--plotmode nostack -F sf/t /data1/botta/trees_SOS_80X_170616/TT2l_friends/evVarFriend_{cname}.root")
             if '_ddbkg' in torun: 
                 x = x.replace('mca-2los-mc.txt','mca-2los-mc-frdata.txt')
-            runIt(x,'%s/all'%torun,['SR_bins_EWKino'])
+            # rc -------------------
+            if dowhat == "limits":
+                runIt(x,torun,["'SR_bins_EWKino(mass_2(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_mass,LepGood2_pt,LepGood2_eta,LepGood2_phi,LepGood2_mass))'"],["4,1,5"])
+            else:
+            #-------------------  
+                runIt(x,'%s/all'%torun,['SR_bins_EWKino'])
         if '_stop20_met125_mm' in torun: 
             x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_90,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_315 -E ^pt5sublep -E ^mm -E ^upperMET")
             if '_syst' in torun: 
@@ -118,7 +160,12 @@ if __name__ == '__main__':
                 x = add(x,"--plotmode nostack -F sf/t /data1/botta/trees_SOS_80X_170616/TT2l_friends/evVarFriend_{cname}.root")
             if '_ddbkg' in torun: 
                 x = x.replace('mca-2los-mc.txt','mca-2los-mc-frdata.txt')
-            runIt(x,'%s/all'%torun,['SR_bins_stop'])
+            # rc -------------------
+            if dowhat == "limits":
+                runIt(x,torun,["'SR_bins_stop(LepGood1_pt)'"],["3,1,4"])
+            else:
+            #-------------------  
+                runIt(x,'%s/all'%torun,['SR_bins_stop'])
         if '_stop20_met200_mm' in torun: 
             x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_90,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_315 -E ^mm -E ^highMET")
             if '_syst' in torun: 
@@ -126,7 +173,12 @@ if __name__ == '__main__':
                 x = add(x,"--plotmode nostack -F sf/t /data1/botta/trees_SOS_80X_170616/TT2l_friends/evVarFriend_{cname}.root")
             if '_ddbkg' in torun: 
                 x = x.replace('mca-2los-mc.txt','mca-2los-mc-frdata.txt')
-            runIt(x,'%s/all'%torun,['SR_bins_stop'])
+            # rc -------------------
+            if dowhat == "limits":
+                runIt(x,torun,["'SR_bins_stop(LepGood1_pt)'"],["3,1,4"])
+            else:
+            #-------------------   
+                runIt(x,'%s/all'%torun,['SR_bins_stop'])
         if '_stop20_met200_ee' in torun: 
             x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_90,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_315 -E ^ee -E ^highMET")
             if '_syst' in torun: 
@@ -134,7 +186,12 @@ if __name__ == '__main__':
                 x = add(x,"--plotmode nostack -F sf/t /data1/botta/trees_SOS_80X_170616/TT2l_friends/evVarFriend_{cname}.root")
             if '_ddbkg' in torun: 
                 x = x.replace('mca-2los-mc.txt','mca-2los-mc-frdata.txt')
-            runIt(x,'%s/all'%torun,['SR_bins_stop'])
+            # rc -------------------
+            if dowhat == "limits":
+                runIt(x,torun,["'SR_bins_stop(LepGood1_pt)'"],["3,1,4"])
+            else:
+            #-------------------             
+                runIt(x,'%s/all'%torun,['SR_bins_stop'])
         if '_stop20_met200_em' in torun: 
             x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_90,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_315 -E ^em -E ^highMET")
             if '_syst' in torun: 
@@ -142,7 +199,12 @@ if __name__ == '__main__':
                 x = add(x,"--plotmode nostack -F sf/t /data1/botta/trees_SOS_80X_170616/TT2l_friends/evVarFriend_{cname}.root")
             if '_ddbkg' in torun: 
                 x = x.replace('mca-2los-mc.txt','mca-2los-mc-frdata.txt')
-            runIt(x,'%s/all'%torun,['SR_bins_stop'])  
+            # rc -------------------
+            if dowhat == "limits":
+                runIt(x,torun,["'SR_bins_stop(LepGood1_pt)'"],["3,1,4"])
+            else:
+            #-------------------  
+                runIt(x,'%s/all'%torun,['SR_bins_stop'])  
         if '_stop35_met125_mm' in torun: 
             x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_90,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_330 -E ^pt5sublep -E ^mm -E ^upperMET")
             if '_syst' in torun: 
@@ -150,7 +212,12 @@ if __name__ == '__main__':
                 x = add(x,"--plotmode nostack -F sf/t /data1/botta/trees_SOS_80X_170616/TT2l_friends/evVarFriend_{cname}.root")
             if '_ddbkg' in torun: 
                 x = x.replace('mca-2los-mc.txt','mca-2los-mc-frdata.txt')
-            runIt(x,'%s/all'%torun,['SR_bins_stop'])
+            # rc -------------------
+            if dowhat == "limits":
+                runIt(x,torun,["'SR_bins_stop(LepGood1_pt)'"],["3,1,4"])
+            else:
+            #-------------------              
+                runIt(x,'%s/all'%torun,['SR_bins_stop'])
         if '_stop35_met200_mm' in torun: 
             x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_90,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_330 -E ^mm -E ^highMET")
             if '_syst' in torun: 
@@ -158,7 +225,12 @@ if __name__ == '__main__':
                 x = add(x,"--plotmode nostack -F sf/t /data1/botta/trees_SOS_80X_170616/TT2l_friends/evVarFriend_{cname}.root")
             if '_ddbkg' in torun: 
                 x = x.replace('mca-2los-mc.txt','mca-2los-mc-frdata.txt')
-            runIt(x,'%s/all'%torun,['SR_bins_stop'])
+            # rc -------------------
+            if dowhat == "limits":
+                runIt(x,torun,["'SR_bins_stop(LepGood1_pt)'"],["3,1,4"])
+            else:
+            #-------------------  
+                runIt(x,'%s/all'%torun,['SR_bins_stop'])
         if '_stop35_met200_ee' in torun: 
             x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_90,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_330 -E ^ee -E ^highMET")
             if '_syst' in torun: 
@@ -166,7 +238,12 @@ if __name__ == '__main__':
                 x = add(x,"--plotmode nostack -F sf/t /data1/botta/trees_SOS_80X_170616/TT2l_friends/evVarFriend_{cname}.root")
             if '_ddbkg' in torun: 
                 x = x.replace('mca-2los-mc.txt','mca-2los-mc-frdata.txt')
-            runIt(x,'%s/all'%torun,['SR_bins_stop'])
+            # rc -------------------
+            if dowhat == "limits":
+                runIt(x,torun,["'SR_bins_stop(LepGood1_pt)'"],["3,1,4"])
+            else:
+            #-------------------  
+                runIt(x,'%s/all'%torun,['SR_bins_stop'])
         if '_stop35_met200_em' in torun: 
             x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_90,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_330 -E ^em -E ^highMET")
             if '_syst' in torun: 
@@ -174,9 +251,13 @@ if __name__ == '__main__':
                 x = add(x,"--plotmode nostack -F sf/t /data1/botta/trees_SOS_80X_170616/TT2l_friends/evVarFriend_{cname}.root")
             if '_ddbkg' in torun: 
                 x = x.replace('mca-2los-mc.txt','mca-2los-mc-frdata.txt')
-            runIt(x,'%s/all'%torun,['SR_bins_stop'])      
+            # rc -------------------
+            if dowhat == "limits":
+                runIt(x,torun,["'SR_bins_stop(LepGood1_pt)'"],["3,1,4"])
+            else:
+            #-------------------   
+                runIt(x,'%s/all'%torun,['SR_bins_stop'])      
    
-
  
     if '2los_CR_FF_vars' in torun:
         x = base('2los')
@@ -209,7 +290,12 @@ if __name__ == '__main__':
         if '_met125' in torun:             
             x = add(x,"-E ^mm -E ^upperMET -E ^MT -R ^TT CRDYTT 'LepGood1_isTightCRDY && LepGood2_isTightCRDY' -R ^ledlepPt NoUpledlepPt '20 < LepGood1_pt || fabs(LepGood1_dxy)>0.01 || fabs(LepGood1_dz)>0.01 || fabs(LepGood2_dxy)>0.01 || fabs(LepGood2_dz)>0.01' -R mtautau Invmtautau '0.<mass_tautau(met_pt,met_phi,LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood2_pt,LepGood2_eta,LepGood2_phi)&&mass_tautau(met_pt,met_phi,LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood2_pt,LepGood2_eta,LepGood2_phi)<160.' -E ^runRange -X ^triggerAll -E ^triggerDoubleMuMET")
             x = x.replace('-l 5.0','-l 1.4')  
-        runIt(x,'%s/all'%torun,[],['SR_bins_EWKino','SR_bins_stop'])
+            # rc -------------------
+        if dowhat == "limits":
+            runIt(x,torun,["'nLepGood'"],["1,-0.5,0.5"])
+        else:
+            #-------------------  
+            runIt(x,'%s/all'%torun,[],['SR_bins_EWKino','SR_bins_stop'])
 
 
      #was #-R ^ledlepPt NoUpledlepPt '20 < LepGood1_pt'
@@ -254,7 +340,12 @@ if __name__ == '__main__':
                 x = add(x,"--plotmode nostack -F sf/t /data1/botta/trees_SOS_80X_170616/TT2l_friends/evVarFriend_{cname}.root")   
                 x = add(x," -R ^ledlepPt NoUpledlepPt '5 < LepGood1_pt' -E ^runRange -X ^triggerAll -E ^triggerDoubleMuMET")
                 x = add(x,"--sP yields")    
-        runIt(x,'%s/all'%torun)
+            # rc -------------------
+            if dowhat == "limits":
+                runIt(x,torun,["'nLepGood'"],["1,-0.5,0.5"])
+            else:
+            #-------------------  
+                runIt(x,'%s/all'%torun)
 
 
 
