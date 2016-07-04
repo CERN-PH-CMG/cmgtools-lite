@@ -49,6 +49,8 @@ if __name__ == '__main__':
 
     torun = sys.argv[2]
 
+
+    ### MC Distributions with Signal shapes normalized to Bkg, n-minus1 option
     if '2los_SR_vars' in torun:
         x = base('2los')
         if '_notrigger' in torun: x = add(x,'-X ^trigger ')
@@ -60,6 +62,7 @@ if __name__ == '__main__':
         x = add(x,"--noStackSig --showIndivSigShapes --xp TChiNeuWZ_95,T2ttDeg_300,T2ttDeg_315")
         runIt(x,'%s/all'%torun,[],['SR_bins_EWKino','SR_bins_stop'])
 
+    ### SR plots: Pure MC Sig+Bkg, Data-Driven Bkgs, Variations for TT and DY syst
     if '2los_SR_bins' in torun:
         x = base('2los')
         if '_notrigger' in torun: x = add(x,'-X ^trigger ')
@@ -233,33 +236,35 @@ if __name__ == '__main__':
             runIt(x,'%s/all'%torun,['SR_bins_stop'])      
    
 
-
+    ### FR Application region, Data-MC, LowMET and HighMET 
     if '2los_CR_FF_vars' in torun:
         x = base('2los')
         x = add(x,"--noStackSig --showIndivSigs --xp TChiNeuWZ_95")
         if '_notrigger' in torun: x = add(x,'-X ^triggerAll ')
         if '_data' in torun: 
             x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt')
-            x = add(x,"--showRatio --maxRatioRange 0 3") #--showMCError
+            x = add(x,"--showRatio --maxRatioRange 0 3 ") #--showMCError
         if '_met200' in torun:             
             x = add(x,"-E ^highMET -X ^triggerAll -E ^triggerMET -I ^TT ")
             x = x.replace('-l 5.0','-l 4.0')
-        if '_met125' in torun:             
+        if '_met125' in torun: 
+            x = x.replace('puw2016_vtx_4fb(nVert)', 'puw2016_vtx_postTS_1p4fb(nVert)' )
             x = add(x,"-E ^mm -E ^upperMET -X  -E ^runRange -X ^triggerAll -E ^triggerDoubleMuMET -I ^TT ")
             x = x.replace('-l 5.0','-l 1.4')  
         runIt(x,'%s/all'%torun,[],['SR_bins_EWKino','SR_bins_stop'])
 
 
-
+        
+    ### FR WJets closure
     if '2los_FR_Closure_vars' in torun:
         x = base('2los')
         x = add(x,"--plotmode nostack")
         x = x.replace('mca-2los-mc.txt','mca-2los-mc-closuretest.txt')
-        x = add(x,"--showRatio --maxRatioRange 0.5 1.5 --showMCError --ratioDen QCDFR_WJets --ratioNums WJets") 
+        x = add(x,"-X lowMET -X HT -X METovHT --showRatio --maxRatioRange 0.5 1.5 --ratioDen QCDFR_WJets --ratioNums WJets") 
         runIt(x,'%s/all'%torun)
 
     
-
+    ### DY Control Region Data-MC and syst variations, LowMET and HighMET     
     if '2los_CR_DY_vars' in torun:
         x = base('2los')
         x = add(x,"--noStackSig --showIndivSigs --xp TChiNeuWZ_95")
@@ -274,7 +279,8 @@ if __name__ == '__main__':
                 x = x.replace('mca-2los-mc.txt','mca-2los-mc-syst-dy.txt')
                 x = add(x,"--plotmode nostack -F sf/t /data1/botta/trees_SOS_80X_170616/SOS13TeV_Friends/evVarFriend_{cname}.root")  
                 x = add(x,"--sP yields")
-        if '_met125' in torun:             
+        if '_met125' in torun:
+            x = x.replace('puw2016_vtx_4fb(nVert)', 'puw2016_vtx_postTS_1p4fb(nVert)' )
             x = add(x,"-E ^mm -E ^upperMET -E ^MT -R ^TT CRDYTT 'LepGood1_isTightCRDY && LepGood2_isTightCRDY' -R ^ledlepPt NoUpledlepPt '20 < LepGood1_pt || fabs(LepGood1_dxy)>0.01 || fabs(LepGood1_dz)>0.01 || fabs(LepGood2_dxy)>0.01 || fabs(LepGood2_dz)>0.01' -R mtautau Invmtautau '0.<mass_tautau(met_pt,met_phi,LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood2_pt,LepGood2_eta,LepGood2_phi)&&mass_tautau(met_pt,met_phi,LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood2_pt,LepGood2_eta,LepGood2_phi)<160.' -E ^runRange -X ^triggerAll -E ^triggerDoubleMuMET")
             x = x.replace('-l 5.0','-l 1.4') 
             if '_syst' in torun: 
@@ -284,9 +290,7 @@ if __name__ == '__main__':
         runIt(x,'%s/all'%torun,[],['SR_bins_EWKino','SR_bins_stop'])
 
 
-     #was #-R ^ledlepPt NoUpledlepPt '20 < LepGood1_pt'
-
-
+    ### TT Control Region Data-MC and syst variations, LowMET and HighMET         
     if '2los_CR_TT_vars' in torun:
         x = base('2los')
         x = add(x,"--noStackSig --showIndivSigs --xp TChiNeuWZ_95 --xp TChiNeuWZ_90")
@@ -294,6 +298,8 @@ if __name__ == '__main__':
         if '_data' in torun: x = add(x,"--showRatio --maxRatioRange 0 3") #--showMCError
         if '_met200' in torun:             
             x = add(x,"-E ^highMET -R ^TT CRTTTT 'LepGood1_isTightCRTT && LepGood2_isTightCRTT' -X ^bveto -E ^btag")
+            #x = add(x,"-E ^highMET -R ^TT CRTTTT 'LepGood1_isTightCRTT && LepGood2_isTightCRTT' -X ^bveto -E ^ISRnobtag -E ^btag")
+            #x = add(x,"-E ^highMET -R ^TT CRTTTT 'LepGood1_isTightCRTT && LepGood2_isTightCRTT' -X ^bveto -E ^ISRnobtag -E ^btag -X METovHT")
             if '_datasingleMu' in torun: 
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdatacr.txt')
                 x = x.replace('-l 5.0','-l 4.0')               
@@ -311,13 +317,16 @@ if __name__ == '__main__':
                 x = add(x,"-R ^ledlepPt NoUpledlepPt '5 < LepGood1_pt' -X ^triggerAll")# -E ^triggerMET")
                 x = add(x,"--sP yields")
         if '_met125' in torun:             
-            x = add(x,"-E ^mm -E ^upperMET -R ^TT CRTTTT 'LepGood1_isTightCRTT && LepGood2_isTightCRTT' -X ^bveto -E ^btag ")
+            x = add(x,"-E ^mm -E ^upperMET -R ^TT CRTTTT 'LepGood1_isTightCRTT && LepGood2_isTightCRTT' -X ^bveto -E ^btag")
+            #x = add(x,"-E ^mm -E ^upperMET -R ^TT CRTTTT 'LepGood1_isTightCRTT && LepGood2_isTightCRTT' -X ^bveto -E ^ISRnobtag -E ^btag")
+            #x = add(x,"-E ^mm -E ^upperMET -R ^TT CRTTTT 'LepGood1_isTightCRTT && LepGood2_isTightCRTT' -X ^bveto -E ^ISRnobtag -E ^btag -X METovHT")
             if '_datasingleMu' in torun: 
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdatacr.txt')
                 x = x.replace('-l 5.0','-l 4.0')
                 x = add(x,"-R ^ledlepPt NoUpledlepPt '25 < LepGood1_pt' -E ^resEta -X ^triggerAll -E ^triggerMu ")
                 x = add(x,"--xP SR_bins_EWKino,SR_bins_stop")
             if '_dataMET' in torun: 
+                x = x.replace('puw2016_vtx_4fb(nVert)', 'puw2016_vtx_postTS_1p4fb(nVert)' )
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt')
                 x = x.replace('-l 5.0','-l 1.4')    
                 x = add(x," -R ^ledlepPt NoUpledlepPt '5 < LepGood1_pt' -E ^runRange -X ^triggerAll -E ^triggerDoubleMuMET")
@@ -326,171 +335,60 @@ if __name__ == '__main__':
                 x = x.replace('mca-2los-mc.txt','mca-2los-mc-syst-tt.txt')
                 x = x.replace('-l 5.0','-l 1.4')    
                 x = add(x,"--plotmode nostack -F sf/t /data1/botta/trees_SOS_80X_170616/SOS13TeV_Friends/evVarFriend_{cname}.root")   
-                x = add(x," -R ^ledlepPt NoUpledlepPt '5 < LepGood1_pt' -E ^runRange -X ^triggerAll -E ^triggerDoubleMuMET")
+                x = add(x,"-R ^ledlepPt NoUpledlepPt '5 < LepGood1_pt' -E ^runRange -X ^triggerAll -E ^triggerDoubleMuMET")
                 x = add(x,"--sP yields")    
         runIt(x,'%s/all'%torun)
 
 
-
-# to be added if we want to relax these cuts in CR with MET>200
-#-X ^HT -X ^Upsilon_veto -R ^ISRjet noIDISRjet 'Jet1_pt > 25 && fabs(Jet1_eta)<2.4' -R METovHT relaxMETovHT '(met_pt/(htJet25-LepGood1_pt-LepGood2_pt))>(2/3)'
-
-
-    # if '2los_Validation_vars' in torun:
+    # ### WZ Control Region, Data-MC, HighMET         
+    # if '2los_CR_WZ_vars' in torun:
     #     x = base('2los')
     #     x = add(x,"--noStackSig --showIndivSigs --xp TChiNeuWZ_95")
     #     if '_notrigger' in torun: x = add(x,'-X ^triggerAll ')
-    #     x = add(x,"-R ^ledlepPt NoUpledlepPt '30 < LepGood1_pt && LepGood1_pt<70'")   
-    #     x = add(x,"--xP SR_bins_EWKino,SR_bins_stop")
-    #     x = add(x,"-I ^lowMET -E ^upSublepPtUp -R ^ledlepPt NoUpledlepPt '15 < LepGood1_pt'")
-    #     if '_met125' in torun:   
-    #         x = add(x,"-E ^mm -I ^lowMET")
-    #     if '_met200' in torun:   
-    #         x = add(x,"-E ^highMET")    
-    #     runIt(x,'%s/all'%torun)       
+    #     if '_data' in torun: 
+    #         x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt')
+    #         x = add(x,"--showRatio --maxRatioRange 0 3") #--showMCError
+    #     if '_met200' in torun:             
+    #         x = add(x,"-E ^highMET -E ^MT -R ^TT CRTTTT 'LepGood1_isTightCRTT && LepGood2_isTightCRTT' -R ^ledlepPt NoUpledlepPt '20 < LepGood1_pt' -X ^dilep -X ^opposite-sign -X ^Mll -E ^minMll -E ^triLep -E ^Zpeak -X ^triggerAll -E ^triggerMET -X ^HT -X ^Upsilon_veto -R METovHT relaxMETovHT '(met_pt/(htJet25-LepGood1_pt-LepGood2_pt))>(2/3)' ")
+    #         x = x.replace('-l 5.0','-l 4.0')
+    #     runIt(x,'%s/all'%torun,[],['SR_bins_EWKino','SR_bins_stop'])
+
+
+    ### WW Control Region, Data-MC, HighMET             
+    if '2los_CR_WW_vars' in torun:
+        x = base('2los')
+        x = add(x,"--noStackSig --showIndivSigs --xp TChiNeuWZ_95,T2ttDeg_300")
+        if '_notrigger' in torun: x = add(x,'-X ^triggerAll ')
+        if '_data' in torun: 
+            x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt')
+            x = add(x,"--showRatio --maxRatioRange 0 3") #--showMCError
+        if '_met200' in torun:             
+            x = add(x,"-E ^highMET -R ^TT CRTTTT 'LepGood1_isTightCRTT && LepGood2_isTightCRTT' -R ^ledlepPt NoUpledlepPt '20 < LepGood1_pt' -E ^ZVeto -X ^MT -E ^InvMT -X ^triggerAll -E ^triggerMET")
+            x = x.replace('-l 5.0','-l 4.0')
+        if '_met125' in torun:    
+            x = x.replace('puw2016_vtx_4fb(nVert)', 'puw2016_vtx_postTS_1p4fb(nVert)' )
+            x = add(x,"-E ^mm -E ^upperMET -R ^TT CRTTTT 'LepGood1_isTightCRTT && LepGood2_isTightCRTT' -R ^ledlepPt NoUpledlepPt '20 < LepGood1_pt' -E ^ZVeto -X ^MT -E ^InvMT -E ^runRange -X ^triggerAll -E ^triggerDoubleMuMET")
+            x = x.replace('-l 5.0','-l 1.4')          
+        runIt(x,'%s/all'%torun,[],['SR_bins_EWKino','SR_bins_stop'])
+        
+
+
+    ### HT/MET check      
+    if '2los_CR_HTMET_vars' in torun:
+        x = base('2los')
+        x = add(x,"--noStackSig --showIndivSigs --xp TChiNeuWZ_95,T2ttDeg_300")
+        if '_notrigger' in torun: x = add(x,'-X ^triggerAll ')
+        #if '_data' in torun: 
+            #x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt')
+            #x = add(x,"--showRatio --maxRatioRange 0 3") #--showMCError
+        if '_met125' in torun:    
+            x = x.replace('puw2016_vtx_4fb(nVert)', 'puw2016_vtx_postTS_1p4fb(nVert)' )
+            x = add(x,"-E ^mm -E ^upperMET -I ^METovHT")
+            x = x.replace('-l 5.0','-l 1.4')          
+        runIt(x,'%s/all'%torun,[],['SR_bins_EWKino','SR_bins_stop'])
+        
+        
     
-
-    #### still to be adapted to SOS        
-    # if '2lss_' in torun:
-    #     x = base('2lss')
-    #     if '_appl' in torun: x = add(x,'-I ^TT ')
-    #     if '_1fo' in torun:
-    #         x = add(x,"-A alwaystrue 1FO 'LepGood1_isTight+LepGood2_isTight==1'")
-    #         x = x.replace("--xP 'nT_.*'","")
-    #     if '_2fo' in torun: x = add(x,"-A alwaystrue 2FO 'LepGood1_isTight+LepGood2_isTight==0'")
-    #     if '_relax' in torun: x = add(x,'-X ^TT ')
-    #     if '_data' in torun: x = x.replace('mca-2lss-mc.txt','mca-2lss-mcdata.txt')
-    #     if '_frdata' in torun:
-    #         if not '_data' in torun: raise RuntimeError
-    #         x = x.replace('mca-2lss-mcdata.txt','mca-2lss-mcdata-frdata.txt')
-    #         if '_table' in torun:
-    #             x = x.replace('mca-2lss-mcdata-frdata.txt','mca-2lss-mcdata-frdata-table.txt')
-    #     if '_mll200' in torun:
-    #         x = add(x,"-E ^mll200 ")
-
-    #     if '_splitfakes' in torun:
-    #         x = x.replace('mca-2lss-mc.txt','mca-2lss-mc-flavsplit.txt')
-            
-    #     if '_closuretest' in torun:
-    #         x = x.replace('mca-2lss-mc.txt','mca-2lss-mc-closuretest.txt')
-    #         x = x.replace("--maxRatioRange 0 3","--maxRatioRange 0.5 1.5")
-    #         x = add(x,"--AP --plotmode nostack --sP kinMVA_2lss_ttbar --sP kinMVA_2lss_ttV")
-    #         x = add(x,"--ratioDen FR_QCD --ratioNums FR_TT --errors")
-    #         if '_closuretest_norm' in torun:
-    #             x = x.replace("--plotmode nostack","--plotmode norm")
-    #             x = add(x,"--fitRatio 1")
-    #         if '_bloose' in torun: x = add(x,'-E ^BLoose ')
-    #         if '_btight' in torun: x = add(x,'-E ^BTight ')
-    #         if '_nobcut' in torun: x = add(x,'-X ^2b1B ')
-    #         if '_notrigger' in torun: x = add(x,'-X ^trigger ')
-
-    #     if '_varsFR' in torun:
-    #         torun += "_"+sys.argv[-1]
-    #         x = x.replace('mca-2lss-mc.txt','mca-2lss-data-frdata-%s.txt'%sys.argv[-1])
-    #         x = x.replace("--maxRatioRange 0 3","--maxRatioRange 0 2")
-    #         x = add(x,"--plotmode nostack --sP kinMVA_2lss_ttbar --sP kinMVA_2lss_ttV")
-    #         x = add(x,"--ratioDen fakes_data --ratioNums fakes_data_%s --errors"%sys.argv[-1])
-    #         if '_varsFR_norm' in torun:
-    #             x = x.replace("--plotmode nostack","--plotmode norm")
-    #             x = add(x,"--fitRatio 1")
-
-    #     runIt(x,'%s/all'%torun)
-    #     if '_flav' in torun:
-    #         for flav in ['mm','ee','em']: runIt(add(x,'-E ^%s'%flav),'%s/%s'%(torun,flav))
-
-    # if '3l_' in torun:
-    #     x = base('3l')
-    #     if '_appl' in torun: x = add(x,'-I ^TTT ')
-    #     if '_1fo' in torun:
-    #         x = add(x,"-A alwaystrue 1FO 'LepGood1_isTight+LepGood2_isTight+LepGood3_isTight==2'")
-    #         x = x.replace("--xP 'nT_.*'","")
-    #     if '_relax' in torun: x = add(x,'-X ^TTT ')
-    #     if '_data' in torun: x = x.replace('mca-3l-mc.txt','mca-3l-mcdata.txt')
-    #     if '_frdata' in torun:
-    #         if not '_data' in torun: raise RuntimeError
-    #         x = x.replace('mca-3l-mcdata.txt','mca-3l-mcdata-frdata.txt')
-    #         if '_table' in torun:
-    #             x = x.replace('mca-3l-mcdata-frdata.txt','mca-3l-mcdata-frdata-table.txt')
-    #     if '_closuretest' in torun:
-    #         x = x.replace('mca-3l-mc.txt','mca-3l-mc-closuretest.txt')
-    #         x = x.replace("--maxRatioRange 0 3","--maxRatioRange 0.5 1.5")
-    #         x = add(x,"--AP --plotmode nostack --sP kinMVA_3l_ttbar --sP kinMVA_3l_ttV")
-    #         x = add(x,"--ratioDen FR_QCD --ratioNums FR_TT --errors")
-    #         if '_closuretest_norm' in torun:
-    #             x = x.replace("--plotmode nostack","--plotmode norm")
-    #             x = add(x,"--fitRatio 1")
-    #         if '_notrigger' in torun: x = add(x,'-X ^trigger ')
-    #     if '_varsFR' in torun:
-    #         torun += "_"+sys.argv[-1]
-    #         x = x.replace('mca-3l-mc.txt','mca-3l-data-frdata-%s.txt'%sys.argv[-1])
-    #         x = x.replace("--maxRatioRange 0 3","--maxRatioRange 0 2")
-    #         x = add(x,"--plotmode nostack --sP kinMVA_3l_ttbar --sP kinMVA_3l_ttV")
-    #         x = add(x,"--ratioDen fakes_data --ratioNums fakes_data_%s --errors"%sys.argv[-1])
-    #         if '_varsFR_norm' in torun:
-    #             x = x.replace("--plotmode nostack","--plotmode norm")
-    #             x = add(x,"--fitRatio 1")
-    #     if '_x2j' in torun:
-    #         x = add(x,"-E ^x2j ")
-    #     runIt(x,'%s'%torun)
-
-    # if 'cr_3j' in torun:
-    #     x = base('2lss')
-    #     if '_data' in torun: x = x.replace('mca-2lss-mc.txt','mca-2lss-mcdata.txt')
-    #     if '_frdata' in torun:
-    #         if not '_data' in torun: raise RuntimeError
-    #         x = x.replace('mca-2lss-mcdata.txt','mca-2lss-mcdata-frdata.txt')
-    #     x = add(x,"-R ^4j 3j 'nJet25==3'")
-    #     plots = ['nJet25','nBJetLoose25','nBJetMedium25','met','metLD','htJet25j','mhtJet25','mtWmin','htllv','kinMVA_2lss_ttbar','kinMVA_2lss_ttV','kinMVA_2lss_bins']
-    #     runIt(x,'%s/all'%torun,plots)
-    #     if '_flav' in torun:
-    #         for flav in ['mm','ee','em']:
-    #             runIt(add(x,'-E ^%s '%flav),'%s/%s'%(torun,flav),plots)
-
-    # if 'cr_ttbar' in torun:
-    #     x = base('2lss')
-    #     x = fulltrees(x) # for mc same-sign
-    #     x = x.replace('mca-2lss-mc.txt','mca-2lss-mcdata-ttbar.txt')
-    #     if '_data' not in torun: x = add(x,'--xp data')
-    #     if '_appl' in torun: x = add(x,'-I ^TT ')
-    #     if '_1fo' in torun: x = add(x,"-A alwaystrue 1FO 'LepGood1_isTight+LepGood2_isTight==1'")
-    #     if '_leadmupt25' in torun: x = add(x,"-A 'entry point' leadmupt25 'abs(LepGood1_pdgId)==13 && LepGood1_pt>25'")
-    #     x = add(x,"-I same-sign -X ^4j -X ^2b1B -E ^2j -E ^em ")
-    #     if '_highMetNoBCut' in torun: x = add(x,"-A 'entry point' highMET 'met_pt>60'")
-    #     else: x = add(x,"-E ^1B ")
-    #     plots = ['2lep_bestMVA','2lep_worseMVA','met','metLD','nVert','nJet25','nBJetMedium25','nBJetLoose25','nBJetLoose40','nBJetMedium40']
-    #     runIt(x,'%s'%torun,plots)
-
-    # if 'cr_zjets' in torun:
-    #     x = base('2lss')
-    #     x = fulltrees(x) # for mc same-sign
-    #     x = x.replace('mca-2lss-mc.txt','mca-2lss-mcdata-ttbar.txt')
-    #     x = x.replace('--maxRatioRange 0 3','--maxRatioRange 0.8 1.2')
-    #     if '_data' not in torun: x = add(x,'--xp data')
-    #     x = add(x,"-I same-sign -X ^2b1B -X ^Zee_veto -A alwaystrue mZ 'mZ1>60 && mZ1<120'")
-    #     for flav in ['mm','ee']:
-    #         runIt(add(x,'-E ^%s -X ^4j'%flav),'%s/%s'%(torun,flav))
-    #         runIt(add(x,'-E ^%s -X ^4j -E ^2j '%flav),'%s_2j/%s'%(torun,flav))
-    #         runIt(add(x,'-E ^%s '%flav),'%s_4j/%s'%(torun,flav))
-
-    # if 'cr_wz' in torun:
-    #     x = base('3l')
-    #     if '_data' in torun: x = x.replace('mca-3l-mc.txt','mca-3l-mcdata.txt')
-    #     if '_frdata' in torun:
-    #         if not '_data' in torun: raise RuntimeError
-    #         x = x.replace('mca-3l-mcdata.txt','mca-3l-mcdata-frdata.txt')
-    #     x = add(x,"-I 'Zveto' -X ^2b1B -E ^Bveto ")
-    #     plots = ['lep3_pt','metLD','nBJetLoose25','3lep_worseIso','minMllAFAS','3lep_worseMVA','3lep_mtW']
-    #     runIt(x,'%s'%torun,plots)
-
-    # if 'cr_ttz' in torun:
-    #     x = base('3l')
-    #     if '_data' in torun: x = x.replace('mca-3l-mc.txt','mca-3l-mcdata.txt')
-    #     if '_frdata' in torun:
-    #         if not '_data' in torun: raise RuntimeError
-    #         x = x.replace('mca-3l-mcdata.txt','mca-3l-mcdata-frdata.txt')
-    #     plots = ['lep2_pt','met','nJet25','mZ1']
-    #     x = add(x,"-I 'Zveto' -X ^2b1B -E ^gt2b -E ^1B ")
-    #     runIt(x,'%s'%torun,plots)
-    #     x = add(x,"-E ^4j ")
-    #     runIt(x,'%s_4j'%torun,plots)
+# to be added if we want to relax these cuts in CR with MET>200
+#-X ^HT -X ^Upsilon_veto -R ^ISRjet noIDISRjet 'Jet1_pt > 25 && fabs(Jet1_eta)<2.4' -R METovHT relaxMETovHT '(met_pt/(htJet25-LepGood1_pt-LepGood2_pt))>(2/3)'
 
