@@ -12,12 +12,10 @@ import os
 
 
 
-
-
 # Pick individual events (normally not in the path)
 eventSelector = cfg.Analyzer(
     EventSelector,name="EventSelector",
-    toSelect = []  # here put the event numbers (actual event numbers from CMSSW)
+    toSelect = [2]  # here put the event numbers (actual event numbers from CMSSW)
     )
 
 skimAnalyzer = cfg.Analyzer(
@@ -219,13 +217,14 @@ jetAna = cfg.Analyzer(
     relaxJetId = False,  
     doPuId = False, # Not commissioned in 7.0.X
     recalibrateJets = True, #'MC', # True, False, 'MC', 'Data'
-    applyL2L3Residual = True, # Switch to 'Data' when they will become available for Data
+    applyL2L3Residual = 'Data', # Switch to 'Data' when they will become available for Data
     recalibrationType = "AK4PFPuppi",
     mcGT     = "Fall15_25nsV2_MC",
     dataGT   = "Fall15_25nsV2_DATA",
     jecPath = "${CMSSW_BASE}/src/CMGTools/RootTools/data/jec/",
     shiftJEC = 0, # set to +1 or -1 to apply +/-1 sigma shift to the nominal jet energies
-    addJECShifts = False, # if true, add  "corr", "corrJECUp", and "corrJECDown" for each jet (requires uncertainties to be available!)
+    addJECShifts = True, # if true, add  "corr", "corrJECUp", and "corrJECDown" for each jet (requires uncertainties to be available!)
+    addJERShifts = True, # if true, add  "corr", "corrJECUp", and "corrJECDown" for each jet (requires uncertainties to be available!)
     smearJets = False,
     shiftJER = 0, # set to +1 or -1 to get +/-1 sigma shifts  
     alwaysCleanPhotons = False,
@@ -257,13 +256,14 @@ jetAnaAK8 = cfg.Analyzer(
     relaxJetId = False,  
     doPuId = False, # Not commissioned in 7.0.X
     recalibrateJets = True, #'MC', # True, False, 'MC', 'Data'
-    applyL2L3Residual = True, # Switch to 'Data' when they will become available for Data
+    applyL2L3Residual = 'Data', # Switch to 'Data' when they will become available for Data
     recalibrationType = "AK8PFPuppi",
-    mcGT     = "Fall15_25nsV2_MC",
-    dataGT   = "Fall15_25nsV2_DATA",
+    mcGT     = "76X_mcRun2_asymptotic_v12",
+    dataGT   = "76X_dataRun2_v15_Run2015D_25ns",
     jecPath = "${CMSSW_BASE}/src/CMGTools/RootTools/data/jec/",
     shiftJEC = 0, # set to +1 or -1 to apply +/-1 sigma shift to the nominal jet energies
-    addJECShifts = False, # if true, add  "corr", "corrJECUp", and "corrJECDown" for each jet (requires uncertainties to be available!)
+    addJECShifts = True, # if true, add  "corr", "corrJECUp", and "corrJECDown" for each jet (requires uncertainties to be available!) 
+    addJERShifts = True,
     smearJets = False,
     shiftJER = 0, # set to +1 or -1 to get +/-1 sigma shifts  
     alwaysCleanPhotons = False,
@@ -308,11 +308,30 @@ vTauAna = cfg.Analyzer(
 
 
 
+def doPruning():
+    print "Switching to prunning" 
+    jetAna.jetCol = 'slimmedJets'
+    jetAna.mcGT     = "76X_mcRun2_asymptotic_v12"
+    jetAna.dataGT   = "76X_dataRun2_v15_Run2015D_25ns"
+    jetAna.recalibrationType = "AK4PFchs"
+
+#    jetAnaAK8.mcGT     = "Fall15_25nsV2_MC"
+
+    jetAnaAK8.mcGT     = "76X_mcRun2_asymptotic_v12"
+    jetAnaAK8.dataGT   = "76X_dataRun2_v15_Run2015D_25ns"
+    jetAnaAK8.recalibrationType = "AK8PFchs"
+
+    vvAna.doPUPPI=False
+
+    
+
+
+
 
     
 
 coreSequence = [
-   #eventSelector,
+#    eventSelector,
     skimAnalyzer,
     jsonAna,
     triggerAna,
