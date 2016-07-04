@@ -54,8 +54,16 @@ from CMGTools.RootTools.fwlite.Config import printComps
 from CMGTools.RootTools.RootTools import *
 from PhysicsTools.HeppyCore.framework.heppy_loop import getHeppyOption
 
+
+
+
 #Load all common analyzers
 from CMGTools.VVResonances.analyzers.core_cff import * 
+
+#PUPPI by default 
+doPruning()
+
+
 
 #-------- SAMPLES AND TRIGGERS -----------
 from CMGTools.VVResonances.samples.loadSamples import *
@@ -91,10 +99,10 @@ triggerFlagsAna.triggerBits ={
 
 
 #-------- HOW TO RUN
-test = 0
+test = 1
 if test==1:
     # test a single component, using a single thread.
-    selectedComponents = [BulkGravToWW_narrow_2500]
+    selectedComponents = [WprimeToWhToWhadhbb_narrow_2000]
     for c in selectedComponents:
         c.files = c.files[:1]
         c.splitFactor = 1
