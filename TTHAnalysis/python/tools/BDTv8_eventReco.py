@@ -22,9 +22,10 @@ class BDTv8_eventReco: # has to run on a recleaner with label _Recl
             ]
 
         self.MVA = MVATool("BDTv8_eventReco", weightfile, self.vars)
+        self.branches = [x.name for x in self.vars] + ["mvaValue"]
 
     def listBranches(self):
-        return [ "BDTv8_eventReco"+self.systsJEC[var] for var in self.systsJEC ]
+        return [ "BDTv8_eventReco_%s"%k+self.systsJEC[var] for k in branches for var in self.systsJEC ]
     def getp4(self,obj):
         if not obj: return ROOT.TLorentzVector(0,0,0,0)
         return obj.p4()
@@ -57,30 +58,42 @@ class BDTv8_eventReco: # has to run on a recleaner with label _Recl
             max_mva_value = -99
             best_permutation = None
 
-            _jets = []
-            for j in jets: _jets.append(j)
-            if len(jets)<8: _jets.extend([None]*3)
-            elif len(jets)==8: _jets.extend([None]*2)
-            else: _jets.extend([None])
-            _leps = [None]*2
-            for i,l in enumerate(_leps[:2]): _leps[i]=l
+            _jets = range(len(jets))
+            if len(jets)<8: _jets.extend([-1]*3)
+            elif len(jets)==8: _jets.extend([-1]*2)
+            else: _jets.extend([-1])
+            _leps = range(len(leps))
 
-            print len(_leps), len(_jets), math.factorial(len(_jets))*math.factorial(len(_leps))
+            permutations_leps = [x for x in itertools.permutations(_leps,2)]
+            permutations_jets = set()
+            if len(permutations_leps)>0:
+                for x in itertools.permutations(_jets,6):
+                    permutations_jets.add(x)
+
+            permutations_jets = set(permutations_jets) # remove duplicates from null jets
+            _permutations_jets = set()
+            for x in permutations_jets:
+                _x = list(x); _x[2]=x[3]; _x[3]=x[2];
+                _permutations_jets.add(tuple(_x))
+            permutations_jets = _permutations_jets # remove duplicates from W hadTop assignment
+            _permutations_jets = set()
+            for x in permutations_jets:
+                _x = list(x); _x[4]=x[5]; _x[5]=x[4]; # remove duplicates from W Higgs assignment
+                _permutations_jets.add(tuple(_x))
+            permutations_jets = _permutations_jets
 
             nperm = 0
             nperm_full = 0
-            for permleps in itertools.permutations(_leps):
-                for permjets in itertools.permutations(_jets):
 
-                    if len(_jets)<6 or len(_leps)<2: break
+            for permleps in permutations_leps:
+                for permjets in permutations_jets:
 
                     nperm += 1
-                    if nperm%100000==0: print 'testing permutation %d' % nperm
 
-                    bjet_fromHadTop = permjets[0]
-                    bjet_fromLepTop = permjets[1]
-                    wjet1_fromHadTop = permjets[2]
-                    wjet2_fromHadTop = permjets[3]
+                    bjet_fromHadTop = jets[permjets[0]] if permjets[0]>=0 else None
+                    bjet_fromLepTop = jets[permjets[1]] if permjets[1]>=0 else None
+                    wjet1_fromHadTop = jets[permjets[2]] if permjets[2]>=0 else None # careful, unordered
+                    wjet2_fromHadTop = jets[permjets[3]] if permjets[3]>=0 else None # careful, unordered
 
                     btags = (self.getbtag(bjet_fromHadTop),self.getbtag(bjet_fromLepTop))
                     if max(btags)<0.80 and min(btags)<0.46: continue
@@ -91,14 +104,13 @@ class BDTv8_eventReco: # has to run on a recleaner with label _Recl
                     if hadTop_W.M() > 120: continue
                     if hadTop.M() > 220: continue
 
-                    wjet1_fromHiggs = permjets[4]
-                    wjet2_fromHiggs = permjets[5]
+                    wjet1_fromHiggs = jets[permjets[4]] if permjets[4]>=0 else None # careful, unordered
+                    wjet2_fromHiggs = jets[permjets[5]] if permjets[5]>=0 else None # careful, unordered
 
                     higgs_W = self.getp4(wjet1_fromHiggs) + self.getp4(wjet2_fromHiggs)
-                    if higgs_W.M() > 120: continue
 
-                    lep_fromTop = permleps[0]
-#                    lep_fromHiggs = permleps[1]
+                    lep_fromTop = leps[permleps[0]]
+#                    lep_fromHiggs = leps[permleps[1]]
 
                     lepTop = self.getp4lep(lep_fromTop) + self.getp4(bjet_fromLepTop)
 #                    higgs = higgs_W + self.getp4lep(lep_fromHiggs)
@@ -121,10 +133,18 @@ class BDTv8_eventReco: # has to run on a recleaner with label _Recl
                     mva_value = self.MVA(my_inputs)
                     if mva_value>max_mva_value:
                         max_mva_value = mva_value
-                        best_permutation = [permjets[:],permleps[:],copy.copy(my_inputs)]
+                        best_permutation = copy.copy(my_inputs)
 
-            print 'perms',nperm,nperm_full
-            out["BDTv8_eventReco"+self.systsJEC[var]] = max_mva_value
+                    my_inputs["qJet1_fromW_fromHadTop_CSV"] = self.getbtag(wjet2_fromHadTop)
+                    mva_value = self.MVA(my_inputs)
+                    if mva_value>max_mva_value:
+                        max_mva_value = mva_value
+                        best_permutation = copy.copy(my_inputs)
+
+            out["BDTv8_eventReco_mvaValue"+self.systsJEC[var]] = max_mva_value
+            for k in self.branches:
+                if k=='mvaValue': continue
+                out["BDTv8_eventReco_%s"%k+self.systsJEC[var]] = best_permutation[k] if best_permutation else -99
 
         return out
 
