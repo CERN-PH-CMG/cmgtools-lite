@@ -472,6 +472,29 @@ float ttH_MVAto1D_6_flex (float kinMVA_2lss_ttbar, float kinMVA_2lss_ttV, int pd
 
 }
 
+float ttH_MultiClass_1D_6 (float kinMVA_MultiClass_ttH, float kinMVA_MultiClass_ttV){
+
+  float kinMVA_MultiClass_ttbar = 1.0-kinMVA_MultiClass_ttH-kinMVA_MultiClass_ttV;
+  return 3*(kinMVA_MultiClass_ttbar<0.2) + (kinMVA_MultiClass_ttH-kinMVA_MultiClass_ttV>=0.25)+(kinMVA_MultiClass_ttH-kinMVA_MultiClass_ttV>=0.4) + 1;
+
+}
+
+float ttH_MultiClass_1D_4 (float kinMVA_MultiClass_ttH, float kinMVA_MultiClass_ttV){
+
+  float kinMVA_MultiClass_ttbar = 1.0-kinMVA_MultiClass_ttH-kinMVA_MultiClass_ttV;
+  return 2*(kinMVA_MultiClass_ttH>=0.5) + (kinMVA_MultiClass_ttbar<kinMVA_MultiClass_ttV) + 1;
+
+}
+
+float ttH_MultiClass_1D_3 (float kinMVA_MultiClass_ttH, float kinMVA_MultiClass_ttV){
+  
+  float kinMVA_MultiClass_ttbar = 1.0-kinMVA_MultiClass_ttH-kinMVA_MultiClass_ttV;
+  if ((kinMVA_MultiClass_ttH>=kinMVA_MultiClass_ttV) && (kinMVA_MultiClass_ttH>=kinMVA_MultiClass_ttbar)) return 1;
+  else if ((kinMVA_MultiClass_ttV>=kinMVA_MultiClass_ttH) && (kinMVA_MultiClass_ttV>=kinMVA_MultiClass_ttbar)) return 2;
+  else return 3;
+
+}
+
 //float ttH_MVAto1D_6_2lss_Milos (float kinMVA_2lss_ttbar, float kinMVA_2lss_ttV, int pdg1, int pdg2){
 //
 //  if (abs(pdg1)==11 && abs(pdg2)==11) return MVAto1D_6_sorted_ee(kinMVA_2lss_ttbar,kinMVA_2lss_ttV);

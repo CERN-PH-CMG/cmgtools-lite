@@ -12,7 +12,7 @@ dowhat = "plots"
 def base(selection):
 
 #    CORE="-P /data1/peruzzi/TREES_76X_200216_jecV1M2_skimOnlyMC_reclv8 -F sf/t {P}/2_recleaner_v8_b1E2/evVarFriend_{cname}.root -F sf/t {P}/4_kinMVA_trainFeb23_v0/evVarFriend_{cname}.root -F sf/t {P}/5_eventBTagRWT_onlyJets_v1/evVarFriend_{cname}.root"
-    CORE="-P /data1/peruzzi/809_June9_ttH --Fs {P}/2_recleaner_v4_b1E2 --Fs {P}/3_kinMVA_v4"
+    CORE="-P /data1/peruzzi/809_June9_ttH_skimOnlyMC --Fs {P}/2_recleaner_v4_b1E2 --Fs {P}/3_kinMVA_v4 --Fs {P}/4_kinMVAmulticlassV2_v4"
 
     CORE+=" -f -j 8 -l 3.99 --s2v --tree treeProducerSusyMultilepton --mcc ttH-multilepton/lepchoice-ttH-FO.txt --mcc ttH-multilepton/ttH_2lss3l_triggerdefs.txt"# --neg"
     if dowhat == "plots": CORE+=" --lspam '#bf{CMS} #it{Internal}' --legendWidth 0.20 --legendFontSize 0.035 --showRatio --maxRatioRange 0 3  --showMCError --rebin 4 --xP 'nT_.*' --xP 'debug_.*' --mcc ttH-multilepton/mcc-bTagSFOne.txt"
@@ -53,7 +53,7 @@ def setwide(x):
     x2 = x2.replace('--legendWidth 0.35','--legendWidth 0.20')
     return x2
 def fulltrees(x):
-    return x#.replace('TREES_76X_200216_jecV1M2_skimOnlyMC_reclv8','TREES_76X_200216_jecV1M2')
+    return x.replace('809_June9_ttH_skimOnlyMC','809_June9_ttH')
 
 allow_unblinding = False
 
@@ -92,8 +92,8 @@ if __name__ == '__main__':
         if '_closuretest' in torun:
             x = x.replace('mca-2lss-mc.txt','mca-2lss-mc-closuretest.txt')
             x = x.replace("--maxRatioRange 0 3","--maxRatioRange 0.5 1.5")
-            x = add(x,"--AP --plotmode nostack --sP kinMVA_2lss_ttbar --sP kinMVA_2lss_ttV")
-            x = add(x,"--ratioDen FR_QCD --ratioNums FR_TT,TT_all --errors ")
+            x = add(x,"--AP --plotmode nostack --sP 'kinMVA.*2lss.*'")
+            x = add(x,"-p FR_QCD -p FR_TT -p TT_all --ratioDen FR_QCD --ratioNums FR_TT,TT_all --errors ")
             if '_closuretest_norm' in torun:
                 x = x.replace("--plotmode nostack","--plotmode norm")
                 x = add(x,"--fitRatio 1")
@@ -137,8 +137,8 @@ if __name__ == '__main__':
         if '_closuretest' in torun:
             x = x.replace('mca-3l-mc.txt','mca-3l-mc-closuretest.txt')
             x = x.replace("--maxRatioRange 0 3","--maxRatioRange 0.5 1.5")
-            x = add(x,"--AP --plotmode nostack --sP kinMVA_3l_ttbar --sP kinMVA_3l_ttV")
-            x = add(x,"--ratioDen FR_QCD --ratioNums FR_TT,TT_all --errors --xf '^TTJets.*_ext'")
+            x = add(x,"--AP --plotmode nostack --sP 'kinMVA_.*3l.*'")
+            x = add(x,"-p FR_QCD -p FR_TT -p TT_all --ratioDen FR_QCD --ratioNums FR_TT,TT_all --errors --xf '^TTJets.*_ext'")
             if '_closuretest_norm' in torun:
                 x = x.replace("--plotmode nostack","--plotmode norm")
                 x = add(x,"--fitRatio 1")
@@ -215,7 +215,7 @@ if __name__ == '__main__':
             if not '_data' in torun: raise RuntimeError
             x = x.replace('mca-3l-mcdata.txt','mca-3l-mcdata-frdata.txt')
         x = add(x,"-I 'Zveto' -X ^2b1B -E ^Bveto ")
-        plots = ['lep3_pt','metLD','nBJetLoose25','3lep_worseIso','minMllAFAS','3lep_worseMVA','3lep_mtW']
+        plots = ['lep3_pt','metLD','nBJetLoose25','3lep_worseIso','minMllAFAS','3lep_worseMVA','3lep_mtW','kinMVA.*','htJet25j','nJet25']
         runIt(x,'%s'%torun,plots)
 
     if 'cr_ttz' in torun:
