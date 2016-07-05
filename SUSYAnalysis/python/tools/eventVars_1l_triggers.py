@@ -38,11 +38,11 @@ class EventVars1L_triggers:
 
         # Trigger efficiencies:
         if hasattr(self,'sample'):
-            if 'Ele' in self.sample: ret['TrigEff'] = 0.94 # ele efficieny
-            elif 'Mu' in self.sample: ret['TrigEff'] = 0.94 # mu efficieny
+            if 'Ele' in self.sample: ret['TrigEff'] = 0.963 # ele efficieny (for 2016 4/fb)
+            elif 'Mu' in self.sample: ret['TrigEff'] = 0.926 # mu efficieny (for 2016 4/fb)
             else: ret['TrigEff'] = 1.0
         else:
-            ret['TrigEff'] = 0.94
+            ret['TrigEff'] = 1.00 # to make clear that this is not the accurate value
 
         ## print out all HLT names
         #for line in vars(event)['_tree'].GetListOfBranches():
