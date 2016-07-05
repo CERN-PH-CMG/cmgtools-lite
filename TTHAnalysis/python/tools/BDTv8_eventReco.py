@@ -25,7 +25,7 @@ class BDTv8_eventReco: # has to run on a recleaner with label _Recl
         self.branches = [x.name for x in self.vars] + ["mvaValue"]
 
     def listBranches(self):
-        return [ "BDTv8_eventReco_%s"%k+self.systsJEC[var] for k in branches for var in self.systsJEC ]
+        return [ "BDTv8_eventReco_%s"%k+self.systsJEC[var] for k in self.branches for var in self.systsJEC ]
     def getp4(self,obj):
         if not obj: return ROOT.TLorentzVector(0,0,0,0)
         return obj.p4()
