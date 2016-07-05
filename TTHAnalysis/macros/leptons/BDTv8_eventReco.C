@@ -4,7 +4,6 @@
 #include "TLorentzVector.h"
 #include "TMVA/Reader.h"
 #include <iostream>
-#include <assert.h>
 
 class BDTv8_eventReco_Jet {
  public:
@@ -113,16 +112,22 @@ std::vector<float> BDTv8_eventReco::EvalMVA(){
 
   std::vector<int> permlep;
   for (int i=0; i<int(leps.size()); i++) permlep.push_back(i);
+  std::sort(permlep.begin(),permlep.end());
   std::vector<int> permjet;
   for (int i=0; i<int(jets.size()); i++) permjet.push_back(i);
-  if (permjet.size()<8) for (int i=0; i<3; i++) permjet.push_back(-1);
-  else if (permjet.size()==8) for (int i=0; i<2; i++) permjet.push_back(-1);
+  if (permjet.size()<8) for (int i=0; i<3; i++) permjet.push_back(-1-i);
+  else if (permjet.size()==8) for (int i=0; i<2; i++) permjet.push_back(-1-i);
+  else permjet.push_back(-1);
+  std::sort(permjet.begin(),permjet.end());
 
   float max_mva_value = -99;
   std::vector<float> best_permutation;
   
   std::unordered_set<std::string> done_perms;
   
+
+  long long nperm = 0;
+
   do {
     do {
       if (permjet.size()<6) break;
@@ -130,8 +135,10 @@ std::vector<float> BDTv8_eventReco::EvalMVA(){
       std::string _x;
       for (auto k : permjet) {
 	if (_x.size()==6) break;
-	_x.push_back((char)k);
+	char _k = (k<0) ? -1 : k;
+	_x.push_back(_k);
       }
+      nperm++;
 //      for (auto k : _x) std::cout << (int)k << " ";
 //      std::cout << std::endl;
       if (done_perms.find(_x) != done_perms.end()) continue;
@@ -207,8 +214,10 @@ std::vector<float> BDTv8_eventReco::EvalMVA(){
 	best_permutation.push_back(LepTop_HadTop_dR_var);
       }
       
-    } while (std::prev_permutation(permjet.begin(),permjet.end()));
-  } while (std::prev_permutation(permlep.begin(),permlep.end()));
+    } while (std::next_permutation(permjet.begin(),permjet.end()));
+  } while (std::next_permutation(permlep.begin(),permlep.end()));
+
+  //  std::cout << "done " << nperm << " permutation from sizes " << permjet.size() << " " << permlep.size() << std::endl;
 
   if (max_mva_value>-99) return best_permutation;
   else return std::vector<float>(9,-99);
