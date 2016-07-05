@@ -164,5 +164,5 @@ if __name__ == '__main__':
             print "\nrun %6d lumi %4d event %d: leps %d" % (ev.run, ev.lumi, ev.evt, ev.nLepGood)
             print self.sf(ev)
     el = EventLoop([ Tester("tester") ])
-    el.loop([tree], maxEvents = 50)
+    el.loop([tree], maxEvents = 5)
 

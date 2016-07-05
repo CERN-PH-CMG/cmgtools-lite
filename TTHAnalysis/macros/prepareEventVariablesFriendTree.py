@@ -225,8 +225,12 @@ from CMGTools.TTHAnalysis.tools.kinMVA_2D_2lss_3l import KinMVA_2D_2lss_3l
 MODULES.append( ('kinMVA_2D_2lss_3l', lambda : KinMVA_2D_2lss_3l(os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/kinMVA/tth/%s_BDTG.weights.xml")) )
 from CMGTools.TTHAnalysis.tools.kinMVA_MultiClass import KinMVA_MultiClass
 MODULES.append( ('kinMVA_MultiClass', lambda : KinMVA_MultiClass(os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/macros/leptons/weights/MultiClassICHEP16_%s_BDTG.weights.xml")) )
+from CMGTools.TTHAnalysis.tools.HadTopSimple import HadTopSimple
+MODULES.append( ('HadTopSimple', lambda : HadTopSimple()) )
 from CMGTools.TTHAnalysis.tools.BDT2_HadTop import BDT2_HadTop
 MODULES.append( ('BDT2_HadTop', lambda : BDT2_HadTop(os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/kinMVA/tth/TMVAClassification_BDTG.weights_BDT2.xml")) )
+from CMGTools.TTHAnalysis.tools.BDTv8_eventReco_cpp import BDTv8_eventReco
+MODULES.append( ('BDTv8_eventReco', lambda : BDTv8_eventReco(os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/kinMVA/tth/TMVAClassification_BDTG_slimmed_v8.weights.xml")) )
 
 # retuned soft muon ID for 2016 conditions
 from CMGTools.TTHAnalysis.tools.objTagger import ObjTagger
