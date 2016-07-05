@@ -82,6 +82,21 @@ kinMVA_3l_ttV: kinMVA_3l_ttV : 40,-1,1 ; XTitle="MVA (ttH\,ttV)", MoreY=2.0, Leg
 #kinMVA_3l_2D: kinMVA_3l_ttV\:kinMVA_3l_ttbar : 20,-1,1,20,-1,1 ; XTitle="3l kinMVA vs. ttbar", YTitle="3l kinMVA vs. ttV", PlotMode="COLZ"
 kinMVA_3l_bins: ttH_MVAto1D_3_3l_Marco(kinMVA_3l_ttbar,kinMVA_3l_ttV) : [0.5,1.5,2.5,3.5]; XTitle="MVA (ttH\,tt/ttV) bin", MoreY=2.0, Legend='TL'
 
+kinMVA_2lss_MultiClass_ttH : kinMVA_2lss_MultiClass_ttH : 40,0,1 ; XTitle="MVA multicl. (ttH)", MoreY=2.0, Legend='TL'
+kinMVA_2lss_MultiClass_ttV : kinMVA_2lss_MultiClass_ttV : 40,0,1 ; XTitle="MVA multicl. (ttV)", MoreY=2.0, Legend='TL'
+kinMVA_2lss_MultiClass_ttbar : kinMVA_2lss_MultiClass_ttbar : 40,0,1 ; XTitle="MVA multicl. (tt)", MoreY=2.0, Legend='TL'
+kinMVA_2lss_MultiClass_bins : ttH_MultiClass_1D_4(kinMVA_2lss_MultiClass_ttH,kinMVA_2lss_MultiClass_ttV) : [0.5,1.5,2.5,3.5,4.5]; XTitle="MultiClass BDT bin", MoreY=2.0, Legend='TL'
+kinMVA_2lss_MultiClass_binsprob : ttH_MultiClass_1D_3(kinMVA_2lss_MultiClass_ttH,kinMVA_2lss_MultiClass_ttV) : [0.5,1.5,2.5,3.5]; XTitle="Max MultiClass BDT", MoreY=2.0, Legend='TL'
+kinMVA_2lss_MultiClass_binsvsTT : ttH_MultiClass_1D_6(kinMVA_2lss_MultiClass_ttH,kinMVA_2lss_MultiClass_ttV) : [0.5,1.5,2.5,3.5,4.5,5.5,6.5]; XTitle="MultiClass BDT bin", MoreY=2.0, Legend='TL'
+kinMVA_2lss_MultiClass_triangle : kinMVA_2lss_MultiClass_ttH\:(kinMVA_2lss_MultiClass_ttH/1.732+kinMVA_2lss_MultiClass_ttbar/0.866) : 20,0,1,20,0,1; XTitle="ttV #rightarrow tt", YTitle="ttV #rightarrow ttH", Legend='TR'
+kinMVA_3l_MultiClass_ttH : kinMVA_3l_MultiClass_ttH : 40,0,1 ; XTitle="MVA multicl. (ttH)", MoreY=2.0, Legend='TL'
+kinMVA_3l_MultiClass_ttV : kinMVA_3l_MultiClass_ttV : 40,0,1 ; XTitle="MVA multicl. (ttV)", MoreY=2.0, Legend='TL'
+kinMVA_3l_MultiClass_ttbar : kinMVA_3l_MultiClass_ttbar : 40,0,1 ; XTitle="MVA multicl. (tt)", MoreY=2.0, Legend='TL'
+kinMVA_3l_MultiClass_bins : ttH_MultiClass_1D_4(kinMVA_3l_MultiClass_ttH,kinMVA_3l_MultiClass_ttV) : [0.5,1.5,2.5,3.5,4.5]; XTitle="MultiClass BDT bin", MoreY=2.0, Legend='TL'
+kinMVA_3l_MultiClass_binsprob : ttH_MultiClass_1D_3(kinMVA_3l_MultiClass_ttH,kinMVA_3l_MultiClass_ttV) : [0.5,1.5,2.5,3.5]; XTitle="Max MultiClass BDT", MoreY=2.0, Legend='TL'
+kinMVA_3l_MultiClass_binsvsTT : ttH_MultiClass_1D_6(kinMVA_3l_MultiClass_ttH,kinMVA_3l_MultiClass_ttV) : [0.5,1.5,2.5,3.5,4.5,5.5,6.5]; XTitle="MultiClass BDT bin", MoreY=2.0, Legend='TL'
+kinMVA_3l_MultiClass_triangle : kinMVA_3l_MultiClass_ttH\:(kinMVA_3l_MultiClass_ttH/1.732+kinMVA_3l_MultiClass_ttbar/0.866) : 20,0,1,20,0,1; XTitle="ttV #rightarrow tt", YTitle="ttV #rightarrow ttH", Legend='TR'
+
 kinMVA_input_max_Lep_eta: max(abs(LepGood1_eta),abs(LepGood2_eta)) : 40,0,2.5 ; XTitle="max lepton |#eta|"
 kinMVA_input_numJets: nJet25_Recl : [-0.5,0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5]; XTitle="nJets"
 kinMVA_input_mindr_lep1_jet: mindr_lep1_jet : 40,0,4; XTitle="min #DeltaR(lep1\,jet)"

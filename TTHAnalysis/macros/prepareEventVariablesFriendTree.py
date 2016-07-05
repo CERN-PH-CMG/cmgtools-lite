@@ -223,8 +223,26 @@ from CMGTools.TTHAnalysis.tools.eventVars_2lss import EventVars2LSS
 MODULES.append( ('ttH2lss', lambda : EventVars2LSS()) )
 from CMGTools.TTHAnalysis.tools.kinMVA_2D_2lss_3l import KinMVA_2D_2lss_3l
 MODULES.append( ('kinMVA_2D_2lss_3l', lambda : KinMVA_2D_2lss_3l(os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/kinMVA/tth/%s_BDTG.weights.xml")) )
+from CMGTools.TTHAnalysis.tools.kinMVA_MultiClass import KinMVA_MultiClass
+MODULES.append( ('kinMVA_MultiClass', lambda : KinMVA_MultiClass(os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/macros/leptons/weights/MultiClassICHEP16_%s_BDTG.weights.xml")) )
 from CMGTools.TTHAnalysis.tools.BDT2_HadTop import BDT2_HadTop
 MODULES.append( ('BDT2_HadTop', lambda : BDT2_HadTop(os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/kinMVA/tth/TMVAClassification_BDTG.weights_BDT2.xml")) )
+
+# retuned soft muon ID for 2016 conditions
+from CMGTools.TTHAnalysis.tools.objTagger import ObjTagger
+MODULES.append( ('SoftMuonID2016', lambda : ObjTagger(label='SoftMuonID2016', coll='LepGood',
+                                                      sel = [lambda x : abs(x.pdgId)==13,
+                                                             lambda x : x.TMOneStationTightMuonId,
+                                                             lambda x : x.trackerLayers > 5,
+                                                             lambda x : x.pixelLayers > 0,
+                                                             lambda x : abs(x.dxy)<0.3 and abs(x.dz)<20.,
+                                                             ])) )
+MODULES.append( ('MediumMuonID2016', lambda : ObjTagger(label='MediumMuonID2016', coll='LepGood',
+                                                      sel = [lambda x : abs(x.pdgId)==13,
+                                                             lambda x : x.isGlobalMuon or x.isTrackerMuon,
+                                                             lambda x : x.innerTrackValidHitFraction>0.49,
+                                                             lambda x : x.segmentCompatibility>0.451 or (x.isGlobalMuon and x.globalTrackChi2<3 and x.chi2LocalPosition<12 and x.trkKink<20 and x.segmentCompatibility>0.303)
+                                                             ])) )
 
 #--- Lepton MVA in friend tree
 

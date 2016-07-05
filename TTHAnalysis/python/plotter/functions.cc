@@ -472,6 +472,29 @@ float ttH_MVAto1D_6_flex (float kinMVA_2lss_ttbar, float kinMVA_2lss_ttV, int pd
 
 }
 
+float ttH_MultiClass_1D_6 (float kinMVA_MultiClass_ttH, float kinMVA_MultiClass_ttV){
+
+  float kinMVA_MultiClass_ttbar = 1.0-kinMVA_MultiClass_ttH-kinMVA_MultiClass_ttV;
+  return 3*(kinMVA_MultiClass_ttbar<0.2) + (kinMVA_MultiClass_ttH-kinMVA_MultiClass_ttV>=0.25)+(kinMVA_MultiClass_ttH-kinMVA_MultiClass_ttV>=0.4) + 1;
+
+}
+
+float ttH_MultiClass_1D_4 (float kinMVA_MultiClass_ttH, float kinMVA_MultiClass_ttV){
+
+  float kinMVA_MultiClass_ttbar = 1.0-kinMVA_MultiClass_ttH-kinMVA_MultiClass_ttV;
+  return 2*(kinMVA_MultiClass_ttH>=0.5) + (kinMVA_MultiClass_ttbar<kinMVA_MultiClass_ttV) + 1;
+
+}
+
+float ttH_MultiClass_1D_3 (float kinMVA_MultiClass_ttH, float kinMVA_MultiClass_ttV){
+  
+  float kinMVA_MultiClass_ttbar = 1.0-kinMVA_MultiClass_ttH-kinMVA_MultiClass_ttV;
+  if ((kinMVA_MultiClass_ttH>=kinMVA_MultiClass_ttV) && (kinMVA_MultiClass_ttH>=kinMVA_MultiClass_ttbar)) return 1;
+  else if ((kinMVA_MultiClass_ttV>=kinMVA_MultiClass_ttH) && (kinMVA_MultiClass_ttV>=kinMVA_MultiClass_ttbar)) return 2;
+  else return 3;
+
+}
+
 //float ttH_MVAto1D_6_2lss_Milos (float kinMVA_2lss_ttbar, float kinMVA_2lss_ttV, int pdg1, int pdg2){
 //
 //  if (abs(pdg1)==11 && abs(pdg2)==11) return MVAto1D_6_sorted_ee(kinMVA_2lss_ttbar,kinMVA_2lss_ttV);
@@ -529,11 +552,11 @@ float _get_recoToLoose_leptonSF_ttH(int pdgid, float pt, float eta, int nlep, fl
   if (var!=0) assert(0); // NOT IMPLEMENTED
 
   if (!_histo_recoToLoose_leptonSF_mu) {
-    _file_recoToLoose_leptonSF_mu = new TFile("/afs/cern.ch/user/p/peruzzi/work/tthtrees/cms_utility_files/mu_eff_recoToLoose_ttH.root","read");
+    _file_recoToLoose_leptonSF_mu = new TFile("","read");
     _histo_recoToLoose_leptonSF_mu = (TH2F*)(_file_recoToLoose_leptonSF_mu->Get("FINAL"));
   }
   if (!_histo_recoToLoose_leptonSF_el1) {
-    _file_recoToLoose_leptonSF_el = new TFile("/afs/cern.ch/user/p/peruzzi/work/tthtrees/cms_utility_files/kinematicBinSFele.root","read");
+    _file_recoToLoose_leptonSF_el = new TFile("","read");
     _histo_recoToLoose_leptonSF_el1 = (TH2F*)(_file_recoToLoose_leptonSF_el->Get("MVAVLooseFO_and_IDEmu_and_TightIP2D"));
     _histo_recoToLoose_leptonSF_el2 = (TH2F*)(_file_recoToLoose_leptonSF_el->Get("MiniIso0p4_vs_AbsEta"));
   }
@@ -577,19 +600,19 @@ float _get_looseToTight_leptonSF_ttH(int pdgid, float _pt, float eta, int nlep, 
   if (var!=0) assert(0); // NOT IMPLEMENTED
 
   if (!_histo_looseToTight_leptonSF_mu_2lss) {
-    _file_looseToTight_leptonSF_mu_2lss = new TFile("/afs/cern.ch/user/p/peruzzi/work/tthtrees/cms_utility_files/lepMVAEffSF_m_2lss.root","read");
+    _file_looseToTight_leptonSF_mu_2lss = new TFile("../../data/lepMVAEffSF_m_2lss.root","read");
     _histo_looseToTight_leptonSF_mu_2lss = (TH2F*)(_file_looseToTight_leptonSF_mu_2lss->Get("sf"));
   }
   if (!_histo_looseToTight_leptonSF_el_2lss) {
-    _file_looseToTight_leptonSF_el_2lss = new TFile("/afs/cern.ch/user/p/peruzzi/work/tthtrees/cms_utility_files/lepMVAEffSF_e_2lss.root","read");
+    _file_looseToTight_leptonSF_el_2lss = new TFile("../../data/lepMVAEffSF_e_2lss.root","read");
     _histo_looseToTight_leptonSF_el_2lss = (TH2F*)(_file_looseToTight_leptonSF_el_2lss->Get("sf"));
   }
   if (!_histo_looseToTight_leptonSF_mu_3l) {
-    _file_looseToTight_leptonSF_mu_3l = new TFile("/afs/cern.ch/user/p/peruzzi/work/tthtrees/cms_utility_files/lepMVAEffSF_m_3l.root","read");
+    _file_looseToTight_leptonSF_mu_3l = new TFile("../../data/lepMVAEffSF_m_3l.root","read");
     _histo_looseToTight_leptonSF_mu_3l = (TH2F*)(_file_looseToTight_leptonSF_mu_3l->Get("sf"));
   }
   if (!_histo_looseToTight_leptonSF_el_3l) {
-    _file_looseToTight_leptonSF_el_3l = new TFile("/afs/cern.ch/user/p/peruzzi/work/tthtrees/cms_utility_files/lepMVAEffSF_e_3l.root","read");
+    _file_looseToTight_leptonSF_el_3l = new TFile("../../data/lepMVAEffSF_e_3l.root","read");
     _histo_looseToTight_leptonSF_el_3l = (TH2F*)(_file_looseToTight_leptonSF_el_3l->Get("sf"));
   }
 
@@ -605,7 +628,7 @@ float _get_looseToTight_leptonSF_ttH(int pdgid, float _pt, float eta, int nlep, 
 
 float leptonSF_ttH(int pdgid, float pt, float eta, int nlep, float var=0){
 
-  float recoToLoose = _get_recoToLoose_leptonSF_ttH(pdgid,pt,eta,nlep,var);
+  float recoToLoose = 1; //_get_recoToLoose_leptonSF_ttH(pdgid,pt,eta,nlep,var);
   float looseToTight = _get_looseToTight_leptonSF_ttH(pdgid,pt,eta,nlep,var);
   float res = recoToLoose*looseToTight;
   assert (res>0);
@@ -616,14 +639,10 @@ float leptonSF_ttH(int pdgid, float pt, float eta, int nlep, float var=0){
 float triggerSF_ttH(int pdgid1, float pt1, int pdgid2, float pt2, int nlep, float var_ee=0){
   if (var_ee!=0) assert(0); // NOT IMPLEMENTED
   if (nlep>2) return 1;
-  if (abs(pdgid1)==11 && abs(pdgid2)==11){
-    if (std::max(pt1,pt2)<40) return 0.95;
-    else return 0.99;
-  }
-  else if (abs(pdgid1)==13 && abs(pdgid2)==13) {
-    return 1.;
-  }
-  else return 0.98;
+  int x = (abs(pdgid1)==11) + (abs(pdgid2)==11);
+  if (x==2) return 1.02;
+  else if (x==1) return 1.02;
+  else return 1.01;
 }
 
 float mass_3_cheap(float pt1, float eta1, float pt2, float eta2, float phi2, float pt3, float eta3, float phi3) {
