@@ -228,6 +228,16 @@ MODULES.append( ('kinMVA_MultiClass', lambda : KinMVA_MultiClass(os.environ["CMS
 from CMGTools.TTHAnalysis.tools.BDT2_HadTop import BDT2_HadTop
 MODULES.append( ('BDT2_HadTop', lambda : BDT2_HadTop(os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/kinMVA/tth/TMVAClassification_BDTG.weights_BDT2.xml")) )
 
+# retuned soft muon ID for 2016 conditions
+from CMGTools.TTHAnalysis.tools.objTagger import ObjTagger
+MODULES.append( ('SoftMuonID2016', lambda : ObjTagger(label='softID2016', coll='LepGood',
+                                                      sel = [lambda x : abs(x.pdgId)==13,
+                                                             lambda x : x.TMOneStationTightMuonId,
+                                                             lambda x : x.trackerLayers > 5,
+                                                             lambda x : x.pixelLayers > 0,
+                                                             lambda x : abs(x.dxy)<0.3 and abs(x.dz)<20.,
+                                                             ])) )
+
 #--- Lepton MVA in friend tree
 
 from CMGTools.TTHAnalysis.tools.LepMVAFriend import LepMVAFriend
