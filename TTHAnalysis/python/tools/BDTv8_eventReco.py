@@ -35,7 +35,7 @@ class BDTv8_eventReco: # has to run on a recleaner with label _Recl
         return p4
     def getbtag(self,obj):
         if not obj: return -0.2
-        return obj.btagCSV
+        return max(-0.1,obj.btagCSV)
 
     def __call__(self,event):
         out = {}
@@ -98,20 +98,20 @@ class BDTv8_eventReco: # has to run on a recleaner with label _Recl
                     if higgs_W.M() > 120: continue
 
                     lep_fromTop = permleps[0]
-                    lep_fromHiggs = permleps[1]
+#                    lep_fromHiggs = permleps[1]
 
                     lepTop = self.getp4lep(lep_fromTop) + self.getp4(bjet_fromLepTop)
-                    higgs = higgs_W + self.getp4lep(lep_fromHiggs)
+#                    higgs = higgs_W + self.getp4lep(lep_fromHiggs)
 
                     if lepTop.M() > 180: continue
-                    if higgs.M() > 130: continue
+#                    if higgs.M() > 130: continue
 
                     nperm_full += 1
 
                     my_inputs = {}
-                    my_inputs["bJet_fromLepTop_CSV"] = max(-1,self.getbtag(bjet_fromLepTop))
-                    my_inputs["bJet_fromHadTop_CSV"] = max(-1,self.getbtag(bjet_fromHadTop))
-                    my_inputs["qJet1_fromW_fromHadTop_CSV"] = max(-1,self.getbtag(wjet1_fromHadTop))
+                    my_inputs["bJet_fromLepTop_CSV"] = self.getbtag(bjet_fromLepTop)
+                    my_inputs["bJet_fromHadTop_CSV"] = self.getbtag(bjet_fromHadTop)
+                    my_inputs["qJet1_fromW_fromHadTop_CSV"] = self.getbtag(wjet1_fromHadTop)
                     my_inputs["HadTop_pT"] = hadTop.Pt()
                     my_inputs["W_fromHadTop_mass"] = hadTop_W.M()
                     my_inputs["HadTop_mass"] = hadTop.M()
