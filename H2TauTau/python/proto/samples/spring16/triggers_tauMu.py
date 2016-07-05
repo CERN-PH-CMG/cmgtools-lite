@@ -12,11 +12,9 @@ data_triggerfilters = [
 ]
 
 mc_triggers = [
-    'HLT_IsoMu18_v2',
     ]
 
 mc_triggerfilters = [
-    'hltL3crIsoL1sMu16L1f0L2f10QL3f18QL3trkIsoFiltered0p09'
 ]
 
 embed_triggers = [

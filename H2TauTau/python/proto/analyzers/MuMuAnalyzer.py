@@ -125,15 +125,15 @@ class MuMuAnalyzer(DiLeptonAnalyzer):
     def process(self, event):
         event.goodVertices = event.vertices
 
-        result = super(MuMuAnalyzer, self).process(event)
+        result = super(MuMuAnalyzer, self).process(event, fillCounter=True)
 
         if result is False:
             # trying to get a dilepton from the control region.
             # it must have well id'ed and trig matched legs,
             # di-lepton and tri-lepton veto must pass
-            result = self.selectionSequence(event, fillCounter=True,
-                                            leg1IsoCut=-9999,
-                                            leg2IsoCut=9999)
+            # result = self.selectionSequence(event, fillCounter=False,
+            #                                 leg1IsoCut=9999,
+            #                                 leg2IsoCut=9999)
             if result is False:
                 # really no way to find a suitable di-lepton,
                 # even in the control region
@@ -218,8 +218,8 @@ class MuMuAnalyzer(DiLeptonAnalyzer):
         
         matched = super(MuMuAnalyzer, self).trigMatched(event, diL, requireAllMatched=requireAllMatched, ptMin=18., etaMax=2.1, onlyLeg1=True)
 
-        if matched and len(diL.matchedPaths) == 1 and diL.leg1().pt() < 25. and 'IsoMu24' in list(diL.matchedPaths)[0]:
-            matched = False
+        # if matched and len(diL.matchedPaths) == 1 and diL.leg1().pt() < 25. and 'IsoMu24' in list(diL.matchedPaths)[0]:
+            # matched = False
 
         return matched
 

@@ -3,10 +3,10 @@ from PhysicsTools.HeppyCore.framework.config import printComps
 from PhysicsTools.Heppy.utils.cmsswPreprocessor import CmsswPreprocessor
 
 # Tau-tau analyzers
-from CMGTools.H2TauTau.proto.analyzers.MuEleAnalyzer             import MuEleAnalyzer
+from CMGTools.H2TauTau.proto.analyzers.MuEleAnalyzer import MuEleAnalyzer
 from CMGTools.H2TauTau.proto.analyzers.H2TauTauTreeProducerMuEle import H2TauTauTreeProducerMuEle
-from CMGTools.H2TauTau.proto.analyzers.DiLeptonWeighter            import DiLeptonWeighter
-from CMGTools.H2TauTau.proto.analyzers.SVfitProducer              import SVfitProducer
+from CMGTools.H2TauTau.proto.analyzers.DiLeptonWeighter import DiLeptonWeighter
+from CMGTools.H2TauTau.proto.analyzers.SVfitProducer import SVfitProducer
 from CMGTools.H2TauTau.proto.analyzers.LeptonIsolationCalculator import LeptonIsolationCalculator
 from CMGTools.H2TauTau.proto.analyzers.FileCleaner import FileCleaner
 
@@ -14,15 +14,15 @@ from CMGTools.H2TauTau.proto.analyzers.FileCleaner import FileCleaner
 from CMGTools.H2TauTau.htt_ntuple_base_cff import commonSequence, genAna, dyJetsFakeAna, puFileData, puFileMC, eventSelector
 
 from CMGTools.RootTools.utils.splitFactor import splitFactor
-from CMGTools.H2TauTau.proto.samples.fall15.triggers_muEle import mc_triggers, mc_triggerfilters, data_triggers, data_triggerfilters
+from CMGTools.H2TauTau.proto.samples.spring16.triggers_muEle import mc_triggers, mc_triggerfilters, data_triggers, data_triggerfilters
 
-from CMGTools.H2TauTau.proto.samples.fall15.htt_common import backgrounds_mu, sm_signals, mssm_signals, data_muon_electron, sync_list
+from CMGTools.H2TauTau.proto.samples.spring16.htt_common import backgrounds_mu, sm_signals, mssm_signals, data_muon_electron, sync_list
 
 
 # local switches
-syncntuple   = True
+syncntuple = True
 computeSVfit = False
-production   = False  # production = True run on batch, production = False run locally
+production = False  # production = True run on batch, production = False run locally
 cmssw = True
 data = False
 
@@ -43,36 +43,36 @@ electronIsoCalc = cfg.Analyzer(
 
 dyJetsFakeAna.channel = 'em'
 
-### Define mu-ele specific modules
+# Define mu-ele specific modules
 
 muEleAna = cfg.Analyzer(
-  MuEleAnalyzer                 ,
-  'MuEleAnalyzer'               ,
-  pt1          = 13.            ,
-  eta1         = 2.5            ,
-  iso1         = 0.15           ,
-  looseiso1    = 9999.            ,
-  pt2          = 10.            ,
-  eta2         = 2.4            ,
-  iso2         = 0.15           ,
-  looseiso2    = 9999.            ,
-  m_min        = 0.             ,
-  m_max        = 99999          ,
-  dR_min       = 0.3            ,
-  from_single_objects=True,
-  verbose      = False          ,
-  )
+    MuEleAnalyzer,
+    'MuEleAnalyzer',
+    pt1=13.,
+    eta1=2.5,
+    iso1=0.15,
+    looseiso1=9999.,
+    pt2=10.,
+    eta2=2.4,
+    iso2=0.15,
+    looseiso2=9999.,
+    m_min=0.,
+    m_max=99999,
+    dR_min=0.3,
+    from_single_objects=True,
+    verbose=False,
+)
 
 leptonWeighter = cfg.Analyzer(
     DiLeptonWeighter,
     name='DiLeptonWeighter',
     scaleFactorFiles={
-        'trigger_mu_low':'$CMSSW_BASE/src/CMGTools/H2TauTau/data/Muon_Mu8_eff.root',
-        'trigger_mu_high':'$CMSSW_BASE/src/CMGTools/H2TauTau/data/Muon_Mu17_eff.root',
-        'trigger_e_low':'$CMSSW_BASE/src/CMGTools/H2TauTau/data/Electron_Ele12_eff.root',
-        'trigger_e_high':'$CMSSW_BASE/src/CMGTools/H2TauTau/data/Electron_Ele17_eff.root',
-        'idiso_mu':'$CMSSW_BASE/src/CMGTools/H2TauTau/data/Muon_IdIso0p15_eff.root',
-        'idiso_e':'$CMSSW_BASE/src/CMGTools/H2TauTau/data/Electron_IdIso0p15_eff.root',
+        'trigger_mu_low': '$CMSSW_BASE/src/CMGTools/H2TauTau/data/Muon_Mu8_eff.root',
+        'trigger_mu_high': '$CMSSW_BASE/src/CMGTools/H2TauTau/data/Muon_Mu17_eff.root',
+        'trigger_e_low': '$CMSSW_BASE/src/CMGTools/H2TauTau/data/Electron_Ele12_eff.root',
+        'trigger_e_high': '$CMSSW_BASE/src/CMGTools/H2TauTau/data/Electron_Ele17_eff.root',
+        'idiso_mu': '$CMSSW_BASE/src/CMGTools/H2TauTau/data/Muon_IdIso0p15_eff.root',
+        'idiso_e': '$CMSSW_BASE/src/CMGTools/H2TauTau/data/Electron_IdIso0p15_eff.root',
     },
     lepton_e='leg1',
     lepton_mu='leg2',
@@ -80,29 +80,28 @@ leptonWeighter = cfg.Analyzer(
 )
 
 
-
 treeProducer = cfg.Analyzer(
-  H2TauTauTreeProducerMuEle         ,
-  name = 'H2TauTauTreeProducerMuEle'
-  )
+    H2TauTauTreeProducerMuEle,
+    name='H2TauTauTreeProducerMuEle'
+)
 
 syncTreeProducer = cfg.Analyzer(
-  H2TauTauTreeProducerMuEle                     ,
-  name         = 'H2TauTauSyncTreeProducerMuEle',
-  varStyle     = 'sync'                         ,
-#  skimFunction = 'event.isSignal'
-  )
+    H2TauTauTreeProducerMuEle,
+    name='H2TauTauSyncTreeProducerMuEle',
+    varStyle='sync',
+    #  skimFunction = 'event.isSignal'
+)
 
 svfitProducer = cfg.Analyzer(
-  SVfitProducer                ,
-  name        = 'SVfitProducer',
-  # integration = 'VEGAS'        ,
-  integration = 'MarkovChain'  ,
-  # verbose     = True           ,
-  # order       = '21'           , # muon first, tau second
-  l1type      = 'muon'         ,
-  l2type      = 'ele'
-  )
+    SVfitProducer,
+    name='SVfitProducer',
+    # integration = 'VEGAS'        ,
+    integration='MarkovChain',
+    # verbose     = True           ,
+    # order       = '21'           , # muon first, tau second
+    l1type='muon',
+    l2type='ele'
+)
 
 fileCleaner = cfg.Analyzer(
     FileCleaner,
@@ -129,8 +128,6 @@ for sample in data_list:
     sample.triggers = data_triggers
     sample.triggerobjects = data_triggerfilters
     sample.splitFactor = splitFactor(sample, split_factor)
-    sample.json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions15/13TeV/Cert_246908-260627_13TeV_PromptReco_Collisions15_25ns_JSON_v2.txt'
-    sample.lumi = 2260.
 
 
 ###################################################
@@ -175,7 +172,6 @@ if not cmssw:
     sequence.remove(module)
 
 
-
 ###################################################
 ###             CHERRY PICK EVENTS              ###
 ###################################################
@@ -186,11 +182,11 @@ if not cmssw:
 ###            SET BATCH OR LOCAL               ###
 ###################################################
 if not production:
-  cache                = True
-  comp = sync_list[0]
-  selectedComponents   = [comp]
-  comp.splitFactor     = 6
-  comp.fineSplitFactor = 1
+    cache = True
+    comp = sync_list[0]
+    selectedComponents = [comp]
+    comp.splitFactor = 6
+    comp.fineSplitFactor = 1
 #  comp.files           = comp.files[:1]
 
 preprocessor = None
@@ -203,14 +199,15 @@ if cmssw:
 # the following is declared in case this cfg is used in input to the
 # heppy.py script
 from PhysicsTools.HeppyCore.framework.eventsfwlite import Events
-config = cfg.Config( components   = selectedComponents,
-                     sequence     = sequence          ,
-                     services     = []                ,
-                     preprocessor=preprocessor,
-                     events_class = Events
-                     )
+config = cfg.Config(components=selectedComponents,
+                    sequence=sequence,
+                    services=[],
+                    preprocessor=preprocessor,
+                    events_class=Events
+                    )
 
 printComps(config.components, True)
 
+
 def modCfgForPlot(config):
-  config.components = []
+    config.components = []

@@ -12,11 +12,9 @@ data_triggerfilters = [
 ]
 
 mc_triggers = [
-    'HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg_v2'
     ]
 
 mc_triggerfilters = [
-    'hltDoublePFTau35TrackPt1MediumIsolationDz02Reg'
 ]
 
 embed_triggers = [
