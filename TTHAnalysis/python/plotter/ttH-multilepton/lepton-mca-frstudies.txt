@@ -17,8 +17,8 @@ TT_fake:  TTJets_SingleLeptonFromTbar: xsec: LepGood_mcMatchAny == 0 ; FillColor
 TT_conv:  TTJets_SingleLeptonFromT   : xsec: LepGood_mcMatchAny == 0; FillColor=ROOT.kYellow+2, Label="\#gamma (tt)", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT.txt"
 TT_conv:  TTJets_SingleLeptonFromTbar: xsec: LepGood_mcMatchAny == 0; FillColor=ROOT.kYellow+2, Label="\#gamma (tt)", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT.txt"
 
-Wjets_red: WJetsToLNu_LO  : xsec: LepGood_mcMatchId  == 0; FillColor=ROOT.kCyan, Label="non-pr (Wj)", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT.txt"
-Wjets_ljets: WJetsToLNu_LO  : xsec: LepGood_mcMatchId  == 0 && LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4; FillColor=ROOT.kGreen+2, Label="l-jets (Wj)", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT.txt"
+Wjets_red: WJetsToLNu  : xsec: LepGood_mcMatchId  == 0; FillColor=ROOT.kCyan, Label="non-pr (Wj)", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT.txt"
+Wjets_ljets: WJetsToLNu  : xsec: LepGood_mcMatchId  == 0 && LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4; FillColor=ROOT.kGreen+2, Label="l-jets (Wj)", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT.txt"
 
 DY_red:   DYJetsToLL_M10to50  : xsec: LepGood_mcMatchId  == 0; FillColor=ROOT.kCyan, Label="non-pr (DY)", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT.txt"
 DY_red:   DYJetsToLL_M50  : xsec: LepGood_mcMatchId  == 0; FillColor=ROOT.kCyan, Label="non-pr (DY)", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT.txt"

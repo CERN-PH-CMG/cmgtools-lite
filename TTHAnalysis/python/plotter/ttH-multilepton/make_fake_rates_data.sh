@@ -67,6 +67,10 @@ Mu17)
     BCORE="${BCORE} -A veto trigger 'HLT_FR_${trigger} || (!isData)' -A veto recoptfortrigger 'LepGood_pt>17.5'  "; 
     PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw$trigger(nVert)' "
     ;;
+Ele8_CaloIdM_TrackIdM_PFJet30)
+    BCORE="${BCORE} -A veto trigger 'HLT_FR_${trigger} || (!isData)' -A veto recoptfortrigger 'LepGood_pt>10'  "; 
+    PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw$trigger(nVert)' "
+    ;;
 Ele12_CaloIdM_TrackIdM_PFJet30)
     BCORE="${BCORE} -A veto trigger 'HLT_FR_${trigger} || (!isData)' -A veto recoptfortrigger 'LepGood_pt>15'  "; 
     PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw$trigger(nVert)' "
@@ -141,7 +145,12 @@ case $what in
         RANGES=" --showRatio  --ratioRange 0.00 2.99 "
         STACK="python ttH-multilepton/stack_fake_rates_data.py "
         case $lepton in  # 0,5,10,15,20,30,45,65,100
-           el) RANGES="$RANGES  --yrange 0 0.25  --xcut 20 100 --xline 30 " ;;
+           el) 
+		RANGES="$RANGES  --yrange 0 0.25  --xcut 20 100 --xline 30 " ;
+	        if [[ "$trigger" == "Ele8_CaloIdM_TrackIdM_PFJet30" ]]; then
+		    RANGES=${RANGES/--xcut 20 100/--xcut 10 100};
+		fi;
+		;;
            mu)
                  RANGES="$RANGES  --yrange 0 0.25  --xcut 15 100 --xline 20 --xline 45" ;
 		 if [[ "$ANALYSIS" == "susy_wpM" ]]; then RANGES=${RANGES/--xcut 15 100/--xcut 10 100}; fi

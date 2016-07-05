@@ -5,6 +5,7 @@ TTZ     : TTZToLLNuNu : 0.2526 : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 
 TTZ     : TTLLJets_m1to10 : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ;  FillColor=ROOT.kSpring+2
 
 WZ 	: WZTo3LNu : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ;  FillColor=ROOT.kViolet-4
+WZ 	: WJetsToLNu_LO : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ;  FillColor=ROOT.kViolet-4
 Rares      : ZZTo4L : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ;  FillColor=ROOT.kAzure-9
 
 WWss: WpWpJJ : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ; FillColor=ROOT.kOrange-3
@@ -22,7 +23,8 @@ TT      : TTJets_SingleLeptonFromTbar : xsec  ; FillColor=ROOT.kGray
 DY      : DYJetsToLL_M10to50: xsec  ; FillColor=ROOT.kCyan
 DY      : DYJetsToLL_M50: xsec  ; FillColor=ROOT.kCyan
 WJets   : WJetsToLNu_LO  : xsec  ; FillColor=ROOT.kCyan+2
-#SingleTop: TToLeptons_tch_amcatnlo: xsec  ; FillColor=ROOT.kGray+2, Label="Single T"
+SingleTop: TToLeptons_tch_powheg: xsec  ; FillColor=ROOT.kGray+2, Label="Single T"
+SingleTop: TBarToLeptons_tch_powheg: xsec  ; FillColor=ROOT.kGray+2, Label="Single T"
 SingleTop: TToLeptons_sch: xsec  ; FillColor=ROOT.kGray+2, Label="Single T"
 SingleTop: T_tWch: xsec  ; FillColor=ROOT.kGray+2, Label="Single T"
 SingleTop: TBar_tWch: xsec  ; FillColor=ROOT.kGray+2, Label="Single T"

@@ -506,6 +506,10 @@ float puw2016_vtx(int nVtx) { if (nVtx<60) return _puw2016_vtx[nVtx]; else retur
 float _puw2016_vtx_4fb[60] = {1.0, 0.05100939489406209, 0.10753683801507614, 0.22479210497504293, 0.4061194548857097, 0.6424861757674111, 0.8699208198466813, 1.0886008554762319, 1.276892560891215, 1.4184863274330797, 1.4865216108423305, 1.5122068499515893, 1.4790079191970888, 1.4196901839857483, 1.3216638995044172, 1.2217703342251016, 1.0976458888260794, 0.9796814642869479, 0.8639064021650553, 0.7535695441176858, 0.6555461235682296, 0.5641253790572658, 0.4834647260351342, 0.4164426860491679, 0.35606001606142423, 0.30497669791734305, 0.2592054182625056, 0.22335323942907434, 0.19192071849647147, 0.1672517813653499, 0.14683806760557278, 0.13614259650259863, 0.11857021273678048, 0.11205636298564389, 0.10212521715621654, 0.08684353771752344, 0.08864604848027625, 0.09804676288437263, 0.09235565349796869, 0.07943403772193891, 0.14417507424675546, 0.08136302667712911, 0.05135680407279777, 0.1569931571656257, 0.12873438887581296, 0.3218359721895326, 0.1609179860947663, 0.8045899304738313, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 1.0, 1.0 };
 float puw2016_vtx_4fb(int nVtx) { if (nVtx<60) return _puw2016_vtx_4fb[nVtx]; else return 0; }
 
+// for runs 274954-275125
+float _puw2016_vtx_postTS_1p4fb[60] = {1.0, 0.0436628547984852, 0.0842489361361326, 0.17821945962362193, 0.3359458176736438, 0.5602926533570876, 0.7949986470183944, 1.009956832499392, 1.2171719031951709, 1.3352425499300327, 1.440211942752969, 1.461874846281358, 1.442598177264856, 1.3933114880260349, 1.303895089233208, 1.2175329549318987, 1.1119038703640942, 1.0164455216655062, 0.9118520665638973, 0.8059572090329304, 0.7155624000589931, 0.6289173123131537, 0.551810715512236, 0.4833237093643216, 0.4192621566956886, 0.3644494058922173, 0.30458903411821625, 0.2707118142127595, 0.2278811064155144, 0.20083759822187328, 0.17416091877224055, 0.16340944020160908, 0.14995476800202442, 0.12504239103683595, 0.12132829462778992, 0.09634514689836478, 0.1269739863549877, 0.1477893939541658, 0.12321393664515852, 0.03694734848854124, 0.10072796682909534, 0.06010102020802678, 0.11268941289005037, 0.0, 0.20488984161827345, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 1.0, 1.0};
+float puw2016_vtx_postTS_1p4fb(int nVtx) { if (nVtx<60) return _puw2016_vtx_postTS_1p4fb[nVtx]; else return 0; }
+
 //
 //float puwMu8(int nVert) { return _puw_Mu8[nVert] * 0.001; }
 //float puwMu17(int nVert) { return _puw_Mu17[nVert] * (2305428/29339.)*0.002/2.26; }
@@ -525,11 +529,11 @@ float _get_recoToLoose_leptonSF_ttH(int pdgid, float pt, float eta, int nlep, fl
   if (var!=0) assert(0); // NOT IMPLEMENTED
 
   if (!_histo_recoToLoose_leptonSF_mu) {
-    _file_recoToLoose_leptonSF_mu = new TFile("/afs/cern.ch/user/p/peruzzi/work/tthtrees/cms_utility_files/mu_eff_recoToLoose_ttH.root","read");
+    _file_recoToLoose_leptonSF_mu = new TFile("","read");
     _histo_recoToLoose_leptonSF_mu = (TH2F*)(_file_recoToLoose_leptonSF_mu->Get("FINAL"));
   }
   if (!_histo_recoToLoose_leptonSF_el1) {
-    _file_recoToLoose_leptonSF_el = new TFile("/afs/cern.ch/user/p/peruzzi/work/tthtrees/cms_utility_files/kinematicBinSFele.root","read");
+    _file_recoToLoose_leptonSF_el = new TFile("","read");
     _histo_recoToLoose_leptonSF_el1 = (TH2F*)(_file_recoToLoose_leptonSF_el->Get("MVAVLooseFO_and_IDEmu_and_TightIP2D"));
     _histo_recoToLoose_leptonSF_el2 = (TH2F*)(_file_recoToLoose_leptonSF_el->Get("MiniIso0p4_vs_AbsEta"));
   }
@@ -573,19 +577,19 @@ float _get_looseToTight_leptonSF_ttH(int pdgid, float _pt, float eta, int nlep, 
   if (var!=0) assert(0); // NOT IMPLEMENTED
 
   if (!_histo_looseToTight_leptonSF_mu_2lss) {
-    _file_looseToTight_leptonSF_mu_2lss = new TFile("/afs/cern.ch/user/p/peruzzi/work/tthtrees/cms_utility_files/lepMVAEffSF_m_2lss.root","read");
+    _file_looseToTight_leptonSF_mu_2lss = new TFile("../../data/lepMVAEffSF_m_2lss.root","read");
     _histo_looseToTight_leptonSF_mu_2lss = (TH2F*)(_file_looseToTight_leptonSF_mu_2lss->Get("sf"));
   }
   if (!_histo_looseToTight_leptonSF_el_2lss) {
-    _file_looseToTight_leptonSF_el_2lss = new TFile("/afs/cern.ch/user/p/peruzzi/work/tthtrees/cms_utility_files/lepMVAEffSF_e_2lss.root","read");
+    _file_looseToTight_leptonSF_el_2lss = new TFile("../../data/lepMVAEffSF_e_2lss.root","read");
     _histo_looseToTight_leptonSF_el_2lss = (TH2F*)(_file_looseToTight_leptonSF_el_2lss->Get("sf"));
   }
   if (!_histo_looseToTight_leptonSF_mu_3l) {
-    _file_looseToTight_leptonSF_mu_3l = new TFile("/afs/cern.ch/user/p/peruzzi/work/tthtrees/cms_utility_files/lepMVAEffSF_m_3l.root","read");
+    _file_looseToTight_leptonSF_mu_3l = new TFile("../../data/lepMVAEffSF_m_3l.root","read");
     _histo_looseToTight_leptonSF_mu_3l = (TH2F*)(_file_looseToTight_leptonSF_mu_3l->Get("sf"));
   }
   if (!_histo_looseToTight_leptonSF_el_3l) {
-    _file_looseToTight_leptonSF_el_3l = new TFile("/afs/cern.ch/user/p/peruzzi/work/tthtrees/cms_utility_files/lepMVAEffSF_e_3l.root","read");
+    _file_looseToTight_leptonSF_el_3l = new TFile("../../data/lepMVAEffSF_e_3l.root","read");
     _histo_looseToTight_leptonSF_el_3l = (TH2F*)(_file_looseToTight_leptonSF_el_3l->Get("sf"));
   }
 
@@ -601,7 +605,7 @@ float _get_looseToTight_leptonSF_ttH(int pdgid, float _pt, float eta, int nlep, 
 
 float leptonSF_ttH(int pdgid, float pt, float eta, int nlep, float var=0){
 
-  float recoToLoose = _get_recoToLoose_leptonSF_ttH(pdgid,pt,eta,nlep,var);
+  float recoToLoose = 1; //_get_recoToLoose_leptonSF_ttH(pdgid,pt,eta,nlep,var);
   float looseToTight = _get_looseToTight_leptonSF_ttH(pdgid,pt,eta,nlep,var);
   float res = recoToLoose*looseToTight;
   assert (res>0);
@@ -612,14 +616,10 @@ float leptonSF_ttH(int pdgid, float pt, float eta, int nlep, float var=0){
 float triggerSF_ttH(int pdgid1, float pt1, int pdgid2, float pt2, int nlep, float var_ee=0){
   if (var_ee!=0) assert(0); // NOT IMPLEMENTED
   if (nlep>2) return 1;
-  if (abs(pdgid1)==11 && abs(pdgid2)==11){
-    if (std::max(pt1,pt2)<40) return 0.95;
-    else return 0.99;
-  }
-  else if (abs(pdgid1)==13 && abs(pdgid2)==13) {
-    return 1.;
-  }
-  else return 0.98;
+  int x = (abs(pdgid1)==11) + (abs(pdgid2)==11);
+  if (x==2) return 1.02;
+  else if (x==1) return 1.02;
+  else return 1.01;
 }
 
 float mass_3_cheap(float pt1, float eta1, float pt2, float eta2, float phi2, float pt3, float eta3, float phi3) {
