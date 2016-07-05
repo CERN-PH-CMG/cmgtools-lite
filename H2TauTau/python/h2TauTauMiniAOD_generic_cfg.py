@@ -1,3 +1,5 @@
+import os
+
 import FWCore.ParameterSet.Config as cms
 # from CMGTools.Production.datasetToSource import datasetToSource
 from CMGTools.H2TauTau.tools.setupJSON import setupJSON
@@ -7,8 +9,31 @@ from CMGTools.H2TauTau.tools.setupJSON import setupJSON
 from CMGTools.H2TauTau.tools.setupOutput import addTauMuOutput, addTauEleOutput, addDiTauOutput, addMuEleOutput, addDiMuOutput
 from RecoMET.METPUSubtraction.MVAMETConfiguration_cff import runMVAMET
 
+
+# def loadLocalSqlite(process, sqliteFilename, tag='JetCorrectorParametersCollection_Spring16_25nsV3_DATA_AK4PFchs'):
+#     process.load("CondCore.CondDB.CondDB_cfi")
+#     print 'Loading local sqlite file:', sqliteFilename
+#     process.jec = cms.ESSource("PoolDBESSource",
+#                                DBParameters=cms.PSet(
+#                                    messageLevel=cms.untracked.int32(0)
+#                                ),
+#                                timetype=cms.string('runnumber'),
+#                                toGet=cms.VPSet(
+#                                    cms.PSet(
+#                                        record=cms.string('JetCorrectionsRecord'),
+#                                        tag=cms.string(tag),
+#                                        label=cms.untracked.string('AK4PFchs')
+#                                    ),
+#                                ),
+#                                connect=cms.string('sqlite:' + sqliteFilename)
+#                                )
+#     # add an es_prefer statement to resolve a possible conflict from simultaneous connection to a global tag
+#     process.es_prefer_jec = cms.ESPrefer('PoolDBESSource', 'jec')
+
+
 def createProcess(runOnMC=True, channel='tau-mu', runSVFit=False,
-                  p4TransferFunctionFile='CMGTools/SVfitStandalone/data/svFitVisMassAndPtResolutionPDF.root', # Christians's default. If not touched, it would default to this anyways
+                  # Christians's default. If not touched, it would default to this anyways
+                  p4TransferFunctionFile='CMGTools/SVfitStandalone/data/svFitVisMassAndPtResolutionPDF.root',
                   integrateOverP4=False, scaleTau=0.):
     '''Set up CMSSW process to run MVA MET and SVFit.
 
@@ -28,34 +53,36 @@ def createProcess(runOnMC=True, channel='tau-mu', runSVFit=False,
     process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
     process.GlobalTag.globaltag = '80X_mcRun2_asymptotic_2016_miniAODv2'
     if not runOnMC:
-        process.GlobalTag.globaltag = '80X_dataRun2_Prompt_v8'
+        process.GlobalTag.globaltag = '80X_dataRun2_Prompt_v9'
 
     process.load('Configuration.StandardSequences.GeometryRecoDB_cff')
     process.load('Configuration.StandardSequences.MagneticField_38T_cff')
 
-    runMVAMET(process)
+    if runOnMC:
+        runMVAMET(process)
 
+    else:
+        runMVAMET(process, jetCollectionPF="patJetsReapplyJEC")
 
+        # loadLocalSqlite(process, 'Spring16_25nsV3_DATA.db') #os.environ['CMSSW_BASE'] + '/src/CMGTools/RootTools/data/jec/'
 
-    # runMVAMET(process, jetCollectionPF="patJetsReapplyJEC")
-    
-    # from PhysicsTools.PatAlgos.producersLayer1.jetUpdater_cff import patJetCorrFactorsUpdated
-    # process.patJetCorrFactorsReapplyJEC = patJetCorrFactorsUpdated.clone(
-    #     src=cms.InputTag("slimmedJets"),
-    #     levels=['L1FastJet', 
-    #         'L2Relative', 
-    #         'L3Absolute'],
-    #   payload='AK4PFchs'
-    # ) # Make sure to choose the appropriate levels and payload here!
+        from PhysicsTools.PatAlgos.producersLayer1.jetUpdater_cff import updatedPatJetCorrFactors
+        process.patJetCorrFactorsReapplyJEC = updatedPatJetCorrFactors.clone(
+            src=cms.InputTag("slimmedJets"),
+            levels=['L1FastJet',
+                    'L2Relative',
+                    'L3Absolute'],
+            payload='AK4PFchs'
+        )  # Make sure to choose the appropriate levels and payload here!
 
-    # if not runOnMC:
-    #     process.patJetCorrFactorsReapplyJEC.levels += ['L2L3Residual']
+        if not runOnMC:
+            process.patJetCorrFactorsReapplyJEC.levels += ['L2L3Residual']
 
-    # from PhysicsTools.PatAlgos.producersLayer1.jetUpdater_cff import patJetsUpdated
-    # process.patJetsReapplyJEC = patJetsUpdated.clone(
-    #     jetSource = cms.InputTag("slimmedJets"),
-    #     jetCorrFactorsSource = cms.VInputTag(cms.InputTag("patJetCorrFactorsReapplyJEC"))
-    # )
+        from PhysicsTools.PatAlgos.producersLayer1.jetUpdater_cff import updatedPatJets
+        process.patJetsReapplyJEC = updatedPatJets.clone(
+            jetSource=cms.InputTag("slimmedJets"),
+            jetCorrFactorsSource=cms.VInputTag(cms.InputTag("patJetCorrFactorsReapplyJEC"))
+        )
 
     process.maxEvents = cms.untracked.PSet(input=cms.untracked.int32(-1))
 
@@ -81,26 +108,27 @@ def createProcess(runOnMC=True, channel='tau-mu', runSVFit=False,
         from CMGTools.H2TauTau.proto.samples.spring16.higgs_susy import HiggsSUSYGG160 as ggh160
         process.source = cms.Source(
             "PoolSource",
-            noEventSort = cms.untracked.bool(True),
-            duplicateCheckMode = cms.untracked.string("noDuplicateCheck"),
-            fileNames = cms.untracked.vstring(ggh160.files)
+            noEventSort=cms.untracked.bool(True),
+            duplicateCheckMode=cms.untracked.string("noDuplicateCheck"),
+            fileNames=cms.untracked.vstring(ggh160.files)
         )
     else:
         # from CMGTools.RootTools.samples.samples_13TeV_DATA2015 import SingleMuon_Run2015D_Promptv4
         from CMGTools.H2TauTau.proto.samples.spring16.htt_common import data_single_muon
         process.source = cms.Source(
             "PoolSource",
-            noEventSort = cms.untracked.bool(True),
-            duplicateCheckMode = cms.untracked.string("noDuplicateCheck"),
-            fileNames = cms.untracked.vstring(data_single_muon[0].files) # mu-tau
-#             fileNames = cms.untracked.vstring('root://eoscms.cern.ch//eos/cms/store/data/Run2015D/Tau/MINIAOD/16Dec2015-v1/00000/F8B6DB5A-69B0-E511-96D4-20CF305B0590.root') # tau-tau
+            noEventSort=cms.untracked.bool(True),
+            duplicateCheckMode=cms.untracked.string("noDuplicateCheck"),
+            fileNames=cms.untracked.vstring(data_single_muon[0].files)  # mu-tau
+            # fileNames =
+            # cms.untracked.vstring('root://eoscms.cern.ch//eos/cms/store/data/Run2015D/Tau/MINIAOD/16Dec2015-v1/00000/F8B6DB5A-69B0-E511-96D4-20CF305B0590.root')
+            # # tau-tau
         )
-
 
     if runOnMC:
         process.genEvtWeightsCounter = cms.EDProducer(
             'GenEvtWeightCounter',
-            verbose = cms.untracked.bool(False)
+            verbose=cms.untracked.bool(False)
         )
 
     if numberOfFilesToProcess > 0:
@@ -112,7 +140,6 @@ def createProcess(runOnMC=True, channel='tau-mu', runSVFit=False,
         from CMGTools.H2TauTau.proto.samples.spring16.htt_common import json
         # print 'Running on data, setting up JSON file'
         # json = setupJSON(process)
-
 
     # Message logger setup.
     process.load("FWCore.MessageLogger.MessageLogger_cfi")
@@ -131,18 +158,17 @@ def createProcess(runOnMC=True, channel='tau-mu', runSVFit=False,
             # the original format to input run/event -based selection is described in :
             # DPGAnalysis/Skims/data/listrunev
             # and kept as default, for historical reasons
-            RunEventList = cms.untracked.string("CMGTools/H2TauTau/data/eventList.txt"),
+            RunEventList=cms.untracked.string("CMGTools/H2TauTau/data/eventList.txt"),
 
             # run/lumiSection @json -based input of selection can be toggled (but not used in THIS example)
-            IsRunLsBased  = cms.bool(False),
+            IsRunLsBased=cms.bool(False),
 
             # json is not used in this example -> list of LS left empty
-            LuminositySectionsBlockRange = cms.untracked.VLuminosityBlockRange( () )
-            )
+            LuminositySectionsBlockRange=cms.untracked.VLuminosityBlockRange(())
+        )
 
     # process.load('JetMETCorrections.Configuration.DefaultJEC_cff')
     # process.load('JetMETCorrections.Configuration.JetCorrectors_cff')
-
 
     # # if '25ns' in process.source.fileNames[0] or 'mcRun2_asymptotic_v2' in process.source.fileNames[0]:
     # print 'Using 25 ns MVA MET training'
@@ -228,13 +254,11 @@ def createProcess(runOnMC=True, channel='tau-mu', runSVFit=False,
         if p4TransferFunctionFile:
             process.cmgDiMuCorSVFitPreSel.p4TransferFunctionFile = p4TransferFunctionFile
 
-
     # OUTPUT definition ----------------------------------------------------------
     process.outpath = cms.EndPath()
 
-
     if runOnMC:
-#        pass
+        #        pass
         process.genEvtWeightsCounterPath = cms.Path(process.genEvtWeightsCounter)
 #        process.schedule.insert(0, process.genEvtWeightsCounterPath)
 
@@ -253,8 +277,6 @@ def createProcess(runOnMC=True, channel='tau-mu', runSVFit=False,
         addDiMuOutput(process, debugEventContent, addPreSel=False, oneFile=oneFile)
     if channel == 'di-tau' or 'all' in channel:
         addDiTauOutput(process, debugEventContent, addPreSel=False, oneFile=oneFile)
-
-
 
     if not runOnMC:
         if channel == 'tau-mu' or 'all' in channel:

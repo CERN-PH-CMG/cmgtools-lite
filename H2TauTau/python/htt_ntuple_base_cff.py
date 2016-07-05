@@ -24,7 +24,7 @@ from CMGTools.H2TauTau.proto.analyzers.RecoilCorrector import RecoilCorrector
 puFileMC = '$CMSSW_BASE/src/CMGTools/H2TauTau/data/MC_Spring16_PU25_Startup.root'
 puFileData = '$CMSSW_BASE/src/CMGTools/H2TauTau/data/data_pu_22-06-2016_713mb_80.root'
 
-reapplyJEC = False
+reapplyJEC = True
 applyRecoil = False
 
 from CMGTools.TTHAnalysis.analyzers.ttHhistoCounterAnalyzer import ttHhistoCounterAnalyzer

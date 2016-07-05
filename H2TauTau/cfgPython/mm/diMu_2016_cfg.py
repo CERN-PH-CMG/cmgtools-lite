@@ -19,7 +19,7 @@ from CMGTools.H2TauTau.proto.samples.spring16.triggers_muMu import data_triggers
 from CMGTools.RootTools.samples.autoAAAconfig import autoAAA
 
 # common configuration and sequence
-from CMGTools.H2TauTau.htt_ntuple_base_cff import commonSequence, genAna, dyJetsFakeAna, puFileData, puFileMC, eventSelector
+from CMGTools.H2TauTau.htt_ntuple_base_cff import commonSequence,  dyJetsFakeAna, puFileData, puFileMC, eventSelector
 
 # mu-mu specific configuration settings
 
@@ -28,7 +28,7 @@ pick_events = False
 computeSVfit = False
 production = True
 cmssw = True
-data = False
+data = True
 
 # When ready, include weights from CMGTools.H2TauTau.proto.weights.weighttable
 mc_tauEffWeight_mc = None
@@ -135,7 +135,7 @@ selectedComponents = samples
 selectedComponents = data_list if data else samples
 
 sequence = commonSequence
-sequence.insert(sequence.index(genAna), MuMuAna)
+sequence.insert(sequence.index(dyJetsFakeAna), MuMuAna)
 sequence.append(muonWeighter1)
 sequence.append(muonWeighter2)
 if computeSVfit:
