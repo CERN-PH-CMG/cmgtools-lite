@@ -8,6 +8,9 @@ if "mt2_bisect_cc.so" not in ROOT.gSystem.GetLibraries():
     ROOT.gROOT.LoadMacro("/afs/cern.ch/work/c/cheidegg/eco/2016-06-24_cmg76X-friender_mT2code/mt2_bisect.cc")
 from ROOT import mt2_bisect
 
+# FIXME: additional variables were once written to the LepSel but now commented in order
+# to keep the leptonBuilder from becoming too fat
+
 
 ## OSpair
 ## ___________________________________________________________________
@@ -88,12 +91,14 @@ class LeptonBuilderEWK:
 
         self.ret["is_3l"] = 1 # the sanity bit
         self.collectOSpairs(3)
+        self.makeMass(3)
         self.makeMt2(3)
         self.findBestOSpair(3)
         self.findMtMin(3)
 
         self.ret["is_4l"] = 1 # the sanity bit
-        self.collectOSpairs(4)
+        self.collectOSpairs(4, True)
+        self.makeMass(4)
         self.makeMt2(4)
         self.findBestOSpair(4)
         self.findMtMin(4)
@@ -103,12 +108,15 @@ class LeptonBuilderEWK:
     ## _______________________________________________________________
     def collectObjects(self, event):
 
+
         ## light leptons
         self.leps       = [l             for l  in Collection(event, "LepGood", "nLepGood")  ]
         self.lepsFO     = [self.leps[il] for il in list(getattr   (event, "iFV" + self.inputlabel))[0:int(getattr(event,"nLepFOVeto"+self.inputlabel))]]
         self.lepsT      = [self.leps[il] for il in list(getattr   (event, "iTV" + self.inputlabel))[0:int(getattr(event,"nLepTightVeto"+self.inputlabel))]]
 
         ## taus
+        self.goodtaus   = [t             for t  in Collection(event, "TauGood" , "nTauGood" )]
+        self.disctaus   = [t             for t  in Collection(event, "TauOther", "nTauOther")]
         self.taus       = [t             for t  in Collection(event, "TauSel" + self.inputlabel , "nTauSel" + self.inputlabel )]
         for t in self.taus: t.conePt = t.pt
         self.tausFO     = self.taus
@@ -134,16 +142,24 @@ class LeptonBuilderEWK:
         self.metphi[1]  = getattr(event, "met_jecUp_phi"  , event.met_phi)
         self.metphi[-1] = getattr(event, "met_jecDown_phi", event.met_phi)
 
+        self.OS = []
+
             
     ## collectOSpairs
     ## _______________________________________________________________
-    def collectOSpairs(self, max):
+    def collectOSpairs(self, max, useBuffer = False):
+        ## useBuffer is only for OSSF pairs used
 
         self.OS = []
+        used = []
         for i in range(min(max, len(self.lepSelFO))):
+            if useBuffer and self.lepSelFO[i] in used: continue
             for j in range(i+1,min(max, len(self.lepSelFO))):
-                if self.lepSelFO[i].pdgId * self.lepSelFO[j].pdgId < 0: 
+                if useBuffer and self.lepSelFO[j] in used: continue
+                if self.lepSelFO[i].pdgId * self.lepSelFO[j].pdgId < 0 and (not useBuffer or abs(self.lepSelFO[i].pdgId) == abs(self.lepSelFO[j].pdgId)): 
                     self.OS.append(OSpair(self.lepSelFO[i], self.lepSelFO[j]))
+                    used.append(self.lepSelFO[i]); used.append(self.lepSelFO[j]) 
+                    if useBuffer: break
 
         self.ret["nOSSF_" + str(max) + "l"] = self.countOSSF(max)
         self.ret["nOSTF_" + str(max) + "l"] = self.countOSTF(max)
@@ -210,6 +226,25 @@ class LeptonBuilderEWK:
             self.ret["mT_" + str(max) + "l" + self.systsJEC[var]] = -1
 
 
+    ## findTau
+    ## _______________________________________________________________
+    def findTau(self, tau):
+        idx = self.isIn(tau, self.goodtaus)
+        if idx > -1: return self.goodtaus[idx]
+        idx = self.isIn(tau, self.disctaus)
+        if idx > -1: return self.disctaus[idx]
+        return None
+
+
+    ## isIn
+    ## _______________________________________________________________
+    def isIn(self, object, collection):
+        for i in range(len(collection)):
+            it = collection[i]
+            if it.pt == object.pt and it.eta == object.eta and it.phi == object.eta and it.mass == object.mass: return i
+        return -1
+
+
     ## listBranches
     ## _______________________________________________________________
     def listBranches(self):
@@ -220,16 +255,23 @@ class LeptonBuilderEWK:
             ("nOSLF_3l"    , "I"),
             ("nOSTF_3l"    , "I"),
             ("mll_3l"      , "F"),
+            ("m3L"         , "F"),
             ("is_4l"       , "I"),
             ("nOSSF_4l"    , "I"),
             ("nOSLF_4l"    , "I"),
             ("nOSTF_4l"    , "I"),
-            ("mll_4l"     , "F")]
+            ("mll_4l"      , "F"),
+            ("m4L"         , "F")]
+
+        biglist.append(("nOS"   , "I"))
+        biglist.append(("mll"   , "F", 20, "nOS"))
+        biglist.append(("mll_i1", "I", 20, "nOS"))
+        biglist.append(("mll_i2", "I", 20, "nOS"))
 
         biglist.append(("nLepSel"   , "I"))
-        for var in ["pt", "eta", "phi", "mass", "conePt"]:
+        for var in ["pt", "eta", "phi", "mass", "conePt"]:#, "dxy", "dz", "sip3d", "miniRelIso", "relIso", "ptratio", "ptrel", "mva"]:
             biglist.append(("LepSel_" + var, "F", 4))
-        for var in ["pdgId", "isTight", "mcMatchId", "mcMatchAny", "mcPromptGamma"]:
+        for var in ["pdgId", "isTight", "mcMatchId", "mcMatchAny", "mcPromptGamma", "trIdx"]:
             biglist.append(("LepSel_" + var, "I", 4))
   
         for var in self.systsJEC:
@@ -241,6 +283,17 @@ class LeptonBuilderEWK:
             biglist.append(("mT2T_4l" + self.systsJEC[var], "F"))
 
         return biglist
+
+
+    ## makeMass
+    ## _______________________________________________________________
+    def makeMass(self, max):
+       
+        if len(self.lepSelFO) < 3: return 
+        sum = self.lepSelFO[0].p4()
+        for i in range(1,min(max,len(self.lepSelFO))):
+            sum += self.lepSelFO[i].p4()
+        self.ret["m" + str(max) + "L"] = sum.M()
 
 
     ## makeMt2
@@ -307,16 +360,23 @@ class LeptonBuilderEWK:
         self.ret["nOSLF_3l"             ] = 0
         self.ret["nOSTF_3l"             ] = 0
         self.ret["mll_3l"               ] = 0
+        self.ret["m3L"                  ] = 0
         self.ret["is_4l"                ] = 0
         self.ret["nOSSF_4l"             ] = 0
         self.ret["nOSLF_4l"             ] = 0
         self.ret["nOSTF_4l"             ] = 0
         self.ret["mll_4l"               ] = 0
+        self.ret["m4L"                  ] = 0
+
+        self.ret["nOS"   ] = 0
+        self.ret["mll"   ] = [0]*20
+        self.ret["mll_i1"] = [-1]*20
+        self.ret["mll_i2"] = [-1]*20
 
         self.ret["nLepSel"] = 0
-        for var in ["pt", "eta", "phi", "mass", "conePt"]:
+        for var in ["pt", "eta", "phi", "mass", "conePt"]:#, "dxy", "dz", "sip3d", "miniRelIso", "relIso", "ptratio", "ptrel", "mva"]:
             self.ret["LepSel_" + var] = [0.]*20
-        for var in ["pdgId", "isTight", "mcMatchId", "mcMatchAny", "mcPromptGamma"]:
+        for var in ["pdgId", "isTight", "mcMatchId", "mcMatchAny", "mcPromptGamma", "trIdx"]:
             self.ret["LepSel_" + var] = [0 ]*20
 
         for var in self.systsJEC:
@@ -331,20 +391,37 @@ class LeptonBuilderEWK:
     ## setAttributes 
     ## _______________________________________________________________
     def setAttributes(self, lepSel, isData = False):
-        
+
         for i, l in enumerate(lepSel): 
             if abs(l.pdgId) == 15: 
+                tau = self.findTau(l)
                 setattr(l, "isTight"      , (l.ewkId == 2)                      )
                 setattr(l, "mcMatchId"    , 1                                   )
                 setattr(l, "mcMatchAny"   , 0                                   )
                 setattr(l, "mcPromptGamma", 0                                   )
                 setattr(l, "trIdx"        , self.taus.index(l)                  )
+                #setattr(l, "dxy"          , tau.dxy if not tau is None else 0   )
+                #setattr(l, "dz"           , tau.dz  if not tau is None else 0   )
+                #setattr(l, "sip3d"        , 0                                   )
+                #setattr(l, "miniRelIso"   , 0                                   )
+                #setattr(l, "relIso"       , 0                                   )
+                #setattr(l, "ptratio"      , 0                                   )
+                #setattr(l, "ptrel"        , 0                                   )
+                #setattr(l, "mva"          , tau.idMVAOldDMRun2 if not tau is None else 0 )
             else:
                 setattr(l, "isTight"      , (l in self.lepsT  )                 )
                 setattr(l, "mcMatchId"    , l.mcMatchId     if not isData else 1)
                 setattr(l, "mcMatchAny"   , l.mcMatchAny    if not isData else 0)
                 setattr(l, "mcPromptGamma", l.mcPromptGamma if not isData else 0)
                 setattr(l, "trIdx"        , self.leps.index(l)                  )
+                #setattr(l, "dxy"          , l.dxy                               )
+                #setattr(l, "dz"           , l.dz                                )
+                #setattr(l, "sip3d"        , l.sip3d                             )
+                #setattr(l, "miniRelIso"   , l.miniRelIso                        )
+                #setattr(l, "relIso"       , l.relIso03                          )
+                #setattr(l, "ptratio"      , l.jetPtRatiov2                      )
+                #setattr(l, "ptrel"        , l.jetPtRelv2                        )
+                #setattr(l, "mva"          , l.mvaSUSY                           )
 
 
     ## writeLepSel
@@ -354,10 +431,21 @@ class LeptonBuilderEWK:
         self.ret["nLepSel"] = len(self.lepSelFO)
         for i, l in enumerate(self.lepSelFO):
             if i == 4: break # only keep the first 4 entries
-            for var in ["pt", "eta", "phi", "mass", "conePt"]:
+            for var in ["pt", "eta", "phi", "mass", "conePt"]:#, "dxy", "dz", "sip3d", "miniRelIso", "relIso", "ptratio", "ptrel", "mva"]:
                 self.ret["LepSel_" + var][i] = getattr(l, var, 0)
-            for var in ["pdgId", "isTight", "mcMatchId", "mcMatchAny", "mcPromptGamma"]:
+            for var in ["pdgId", "isTight", "mcMatchId", "mcMatchAny", "mcPromptGamma", "trIdx"]:
                 self.ret["LepSel_" + var][i] = getattr(l, var, 0)
+
+        all = []
+        for os in self.OS:
+            all.append((0 if os.isSF else 1, 1 if os.wTau else 0, os.diff, os)) # priority to SF, then light, then difference to target
+        if all:
+            all.sort()
+            self.ret["nOS"] = len(all)
+            for i,os in enumerate(all):
+                self.ret["mll"][i] = os[3].mll
+                self.ret["mll_i1"][i] = self.lepSelFO.index(os[3].l1)
+                self.ret["mll_i2"][i] = self.lepSelFO.index(os[3].l2)
 
 
 

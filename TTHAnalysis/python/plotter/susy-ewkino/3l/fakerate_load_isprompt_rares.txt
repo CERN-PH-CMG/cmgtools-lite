@@ -1,1 +1,0 @@
-cut-file: susy-ewkino/3l/fakerate_isprompt_rares.txt
