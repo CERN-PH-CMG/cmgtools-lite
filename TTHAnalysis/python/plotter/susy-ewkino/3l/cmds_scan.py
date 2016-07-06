@@ -71,9 +71,8 @@ def cleandir(path):
 
 def getBkgs(sig = False):
 	if not sig:
-		return ["_fakeappl_data", "_promptsub", "_standard_prompt_.*"]
-	return ["_fakeappl_data", "_standard_prompt_.*"]
-	return ["_matched_fakes_.*", "_standard_prompt_.*"]
+		return ["fakes_appldata", "promptsub", "prompt_.*"]
+	return ["fakes_appldata", "prompt_.*"]
 
 def getBinning(categs):
 	nb = sum(getNBins(categ) for categ in categs)

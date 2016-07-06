@@ -203,20 +203,20 @@ int SR3l(int nTau, int nOSSF, int nOSLF, float mT2L, float mT2T, float mll, floa
     if(nTau == 0 && nOSSF <  1              ) return SR3lB(mT2L, mT2T, mll, mT, met, 36);
     // 2 light + 1 tau
     if(nTau == 1 && nOSSF >= 1              ) return SR3lC(mT2L, mT2T, mll, mT, met, 42);
-    if(nTau == 1 && nOSSF <  1 && nOSLF >= 1) return SR3lD(mT2L, mT2T, mll, mT, met, 55);
-    if(nTau == 1 && nOSLF <  1              ) return SR3lE(mT2L, mT2T, mll, mT, met, 68);
+    if(nTau == 1 && nOSSF <  1 && nOSLF >= 1) return SR3lD(mT2L, mT2T, mll, mT, met, 56);
+    if(nTau == 1 && nOSLF <  1              ) return SR3lE(mT2L, mT2T, mll, mT, met, 70);
     // 1 light + 2 tau
-    if(nTau == 2                            ) return SR3lF(mT2L, mT2T, mll, mT, met, 78);
+    if(nTau == 2                            ) return SR3lF(mT2L, mT2T, mll, mT, met, 81);
     return 0;
 }
 
 int SR4l(int nTau, int nOSSF, int nOSLF, float mT2L, float mT2T, float mll, float mT, float met){
 
     // 4 light
-    if(nTau == 0 && nOSSF >= 2              ) return SR4lG(mT2L, mT2T, mll, mT, met, 85);
-    if(nTau == 0 && nOSSF <= 1              ) return SR4lG(mT2L, mT2T, mll, mT, met, 89);
+    if(nTau == 0 && nOSSF >= 2              ) return SR4lG(mT2L, mT2T, mll, mT, met, 91);
+    if(nTau == 0 && nOSSF <= 1              ) return SR4lG(mT2L, mT2T, mll, mT, met, 95);
     // 3light + 1 tau
-    if(nTau == 1                            ) return SR4lG(mT2L, mT2T, mll, mT, met, 93);
+    if(nTau == 1                            ) return SR4lG(mT2L, mT2T, mll, mT, met, 99);
     return 0;
 }
 
