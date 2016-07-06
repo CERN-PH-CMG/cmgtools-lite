@@ -157,7 +157,10 @@ def runAll():
 	if not batch: return
 	ls = os.listdir(W + "/run")
 	mkdir(W + "/log", False)
-	super = "qsub -q " + queue + " -N scanner -o {W}/log/job_{J}.out -e {W}/log/job_{J}.err "
+	ss = "bsub -q " + queue + " -J scanner"
+	if queue in ["all.q", "long.q", "short.q"]:
+		ss = "qsub -q " + queue + " -N scanner"
+	super = ss + " -o {W}/log/job_{J}.out -e {W}/log/job_{J}.err "
 	for f in ls:
 		if f.find("run_job") == -1: continue
 		job = f.replace("run_job_","").replace(".sh","")
