@@ -1,5 +1,6 @@
 alwaystrue: 1
-filters: (!isData) || (Flag_EcalDeadCellTriggerPrimitiveFilter && Flag_HBHENoiseIsoFilter && Flag_HBHENoiseFilter && Flag_eeBadScFilter) 
+filters: $DATA{ Flag_EcalDeadCellTriggerPrimitiveFilter && Flag_HBHENoiseIsoFilter && Flag_HBHENoiseFilter && Flag_eeBadScFilter && Flag_goodVertices && Flag_CSCTightHalo2016Filter && Flag_globalTightHalo2016Filter && Flag_badChargedHadronFilter && Flag_badMuonFilter } $MC{1}
+filters: (!isData) || (Flag_EcalDeadCellTriggerPrimitiveFilter)
 trigger: (Triggers_ee || Triggers_mm || Triggers_em) || (!isData)
 cleanup: minMllAFAS > 12
 dilep: nLepFO>=2
