@@ -1,65 +1,119 @@
 #!/usr/bin/env python
-import sys, pickle
+import sys, os, pickle
 import ROOT
 
-from optparse import OptionParser
-parser = OptionParser(usage="%prog [options] OUTFILE")
-parser.add_option("-T","--training", dest="training",  type="string", default="MultiClassICHEP16")
-parser.add_option("-P","--treepath", dest="treepath",  type="string", default=None)
-parser.add_option("-F","--friend", dest="friends",  type="string", default=[], action="append")
-parser.add_option("-c","--cut", dest="addcuts", type="string", default=[], action="append")
-(options, args) = parser.parse_args()
+_treepath = None
+_allfiles = []
 
-if len(args)<1 or not options.treepath: raise RuntimeError
-fOutName = args[0]
+def get_file_or_copy_local(url, copy_local=True):
+    if os.path.exists(url):
+        return url
+    if not os.path.exists('%s.url'%url):
+        raise RuntimeError('File not found: %s'%url)
 
-_allfiles=[]
-dsets=[]
-def load_dataset(name,trainclass,addw=1,path=options.treepath):
-    f_ttw = ROOT.TFile('/'.join([path,name,'treeProducerSusyMultilepton/tree.root']))
-    _allfiles.append(f_ttw)
-    t_ttw = f_ttw.tree
-    for friend in options.friends: t_ttw.AddFriend('sf/t','/'.join([path,friend,'evVarFriend_%s.root'%name]))
-    pckfile = '/'.join([path,name,"skimAnalyzerCount/SkimReport.pck"])
+    url = open('%s.url'%url, 'r').read().strip()
+    if not copy_local:
+        return url
+
+    else:
+        from LepMVAEfficiencies.runLepTnPFriendMaker import cacheLocally
+        return cacheLocally(url, os.environ.get('TMPDIR', '/tmp'))
+
+def load_dataset(name, trainclass, addw=1, path=None, friends=[]):
+    if not path:
+        path = _treepath
+        if not path:
+            raise RuntimeError('No default tree path set')
+
+    fileloc = get_file_or_copy_local(
+                os.path.join(path, name, 'treeProducerSusyMultilepton/tree.root'))
+    print 'Using %s' % fileloc
+    infile = ROOT.TFile.Open(fileloc)
+    _allfiles.append(infile)
+    tree = infile.Get('tree')
+
+    # Check if tree was loaded
+    try: tree.GetName()
+    except ReferenceError:
+        raise RuntimeError("'tree' not found in %s" % fileloc)
+
+    for friend in friends:
+        friendloc = get_file_or_copy_local(os.path.join(path, friend, 'evVarFriend_%s.root' % name))
+        print "Adding friend from", friendloc
+        tree.AddFriend('sf/t', friendloc)
+
+    pckfile = os.path.join(path, name, "skimAnalyzerCount/SkimReport.pck")
     pckobj  = pickle.load(open(pckfile,'r'))
     counters = dict(pckobj)
-    if not ('Sum Weights' in counters): raise RuntimeError
-    w = 1.0*addw/(counters['Sum Weights'])
-    dsets.append((trainclass,name,t_ttw,w))
-    print 'Added %s dataset, category %s, with weight %f/%f*xsec*genWeight'%(name,trainclass,addw,counters['Sum Weights'])
+    weight = 1.0*addw/(counters['Sum Weights'])
+    print ('Added %s dataset, category %s, with weight %f/%f*xsec*genWeight' %
+             (name, trainclass, addw, counters['Sum Weights']))
 
-load_dataset('TTHnobb_pow','ttH')
-load_dataset('TTW_LO','ttV')
-load_dataset('TTZ_LO','ttV')
-if '_3l' in options.training:
-    load_dataset('TTJets_DiLepton','tt',addw=0.1)
-    load_dataset('TTJets_DiLepton_ext_skim3l','tt',addw=0.9)
-else:
-    load_dataset('TTJets_SingleLeptonFromT','tt',addw=0.1)
-    load_dataset('TTJets_SingleLeptonFromTbar','tt',addw=0.1)
-    load_dataset('TTJets_SingleLeptonFromT_ext','tt',addw=0.9)
-    load_dataset('TTJets_SingleLeptonFromTbar_ext','tt',addw=0.9)
+    return tree, weight
 
-fOut = ROOT.TFile(fOutName,"recreate")
-fOut.cd()
-factory = ROOT.TMVA.Factory(options.training, fOut, "!V:!Color:Transformations=I:AnalysisType=Multiclass")
-allcuts = ROOT.TCut('1')
-for cut in options.addcuts: allcuts += cut
+def train_multiclass(fOutName, options):
+    dsets = [
+        ('TTHnobb_pow', 'ttH', 1),
+        ('TTW_LO', 'ttV', 1),
+        ('TTZ_LO', 'ttV', 1),
+    ]
 
-if 'MultiClassICHEP16' in options.training:
-
-    allcuts += "nLepFO_Recl>=2 && LepGood_conePt[iF_Recl[0]]>20 && (abs(LepGood_pdgId[iF_Recl[0]])!=11 || LepGood_conePt[iF_Recl[0]]>25) && LepGood_conePt[iF_Recl[1]]>10 && (abs(LepGood_pdgId[iF_Recl[1]])!=11 || LepGood_conePt[iF_Recl[1]]>15)"
-    allcuts += "abs(mZ1_Recl-91.2) > 10 && (met_pt*0.00397 + mhtJet25_Recl*0.00265 > 0.2) && (nBJetLoose25_Recl >= 2 || nBJetMedium25_Recl >= 1) && minMllAFAS_Recl>12"
     if '_3l' in options.training:
-        allcuts += "nLepFO_Recl>=3 && LepGood_conePt[iF_Recl[2]]>10 && nJet25_Recl>=2"
-#        allcuts += "LepGood_isTight_Recl[iF_Recl[0]] && LepGood_isTight_Recl[iF_Recl[1]] && LepGood_isTight_Recl[iF_Recl[2]]"
+        dsets += [
+            ('TTJets_DiLepton',            'tt', 0.1),
+            ('TTJets_DiLepton_ext_skim3l', 'tt', 0.9),
+        ]
     else:
-        allcuts += "nLepTight_Recl<=2 && nJet25_Recl>=4 && (LepGood_charge[iF_Recl[0]]*LepGood_charge[iF_Recl[1]] > 0)"
-#        allcuts += "LepGood_isTight_Recl[iF_Recl[0]] && LepGood_isTight_Recl[iF_Recl[1]]"
+        dsets += [
+            ('TTJets_SingleLeptonFromT',        'tt', 0.1),
+            ('TTJets_SingleLeptonFromTbar',     'tt', 0.1),
+            ('TTJets_SingleLeptonFromT_ext',    'tt', 0.9),
+            ('TTJets_SingleLeptonFromTbar_ext', 'tt', 0.9),
+        ]
+
+    datasets = []
+    for name, trainclass, addw in dsets:
+        tree, weight = load_dataset(name, trainclass, addw,
+                                    path=options.treepath,
+                                    friends=options.friends)
+        datasets.append((name, trainclass, tree, weight))
+
+    fOut = ROOT.TFile(fOutName,"recreate")
+    fOut.cd()
+    factory = ROOT.TMVA.Factory(options.training, fOut, "!V:!Color:Transformations=I:AnalysisType=Multiclass")
+    allcuts = ROOT.TCut('1')
+    for cut in options.addcuts:
+        allcuts += cut
+
+    allcuts += "nLepFO_Recl>=2"
+    allcuts += "LepGood_conePt[iF_Recl[0]]>20"
+    allcuts += "(abs(LepGood_pdgId[iF_Recl[0]])!=11 || LepGood_conePt[iF_Recl[0]]>25)" #!
+    allcuts += "LepGood_conePt[iF_Recl[1]]>10"
+    allcuts += "(abs(LepGood_pdgId[iF_Recl[1]])!=11 || LepGood_conePt[iF_Recl[1]]>15)" #!
+
+    allcuts += "abs(mZ1_Recl-91.2) > 10"
+    allcuts += "(met_pt*0.00397 + mhtJet25_Recl*0.00265 > 0.2)"
+    allcuts += "(nBJetLoose25_Recl >= 2 || nBJetMedium25_Recl >= 1)"
+    allcuts += "minMllAFAS_Recl>12"
+
+    if '_3l' in options.training:
+        allcuts += "nLepFO_Recl>=3"
+        allcuts += "LepGood_conePt[iF_Recl[2]]>10"
+        allcuts += "nJet25_Recl>=2"
+        # allcuts += "LepGood_isTight_Recl[iF_Recl[0]]"
+        # allcuts += "LepGood_isTight_Recl[iF_Recl[1]]"
+        # allcuts += "LepGood_isTight_Recl[iF_Recl[2]]"
+    else:
+        allcuts += "nLepTight_Recl<=2"
+        allcuts += "nJet25_Recl>=4"
+        allcuts += "(LepGood_charge[iF_Recl[0]]*LepGood_charge[iF_Recl[1]] > 0)" #!
+        # allcuts += "LepGood_isTight_Recl[iF_Recl[0]]"
+        # allcuts += "LepGood_isTight_Recl[iF_Recl[1]]"
 
     factory.AddSpectator("iF0 := iF_Recl[0]","F") # do not remove this!
     factory.AddSpectator("iF1 := iF_Recl[1]","F") # do not remove this!
     factory.AddSpectator("iF2 := iF_Recl[2]","F") # do not remove this!
+
     factory.AddVariable("higher_Lep_eta := max(abs(LepGood_eta[iF_Recl[0]]),abs(LepGood_eta[iF_Recl[1]]))", 'F')
     factory.AddVariable("MT_met_lep1 := MT_met_lep1", 'F')
     factory.AddVariable("numJets_float := nJet25_Recl", 'F')
@@ -67,23 +121,60 @@ if 'MultiClassICHEP16' in options.training:
     factory.AddVariable("mindr_lep2_jet := mindr_lep2_jet", 'F')
     factory.AddVariable("LepGood_conePt[iF_Recl[0]] := LepGood_conePt[iF_Recl[0]]", 'F')
     factory.AddVariable("LepGood_conePt[iF_Recl[1]] := LepGood_conePt[iF_Recl[1]]", 'F')
-    factory.AddVariable("avg_dr_jet : = avg_dr_jet", 'F');
-    factory.AddVariable("met := min(met_pt, 400)", 'F');
+    factory.AddVariable("avg_dr_jet : = avg_dr_jet", 'F')
+    factory.AddVariable("met := min(met_pt, 400)", 'F')
 
-else: raise RuntimeError
+    ## Add the datasets
+    for name,trainclass,tree,weight in datasets:
+        factory.AddTree(tree, trainclass, weight, allcuts)
 
-for trainclass,name,tree,treew in dsets:
-    factory.AddTree(tree,trainclass,treew,allcuts)
-    print 'Added tree',name
+    fOut.cd()
+    for trainclass in set([x[1] for x in dsets]):
+        factory.SetWeightExpression("genWeight*xsec", trainclass)
 
-fOut.cd()
-for trainclass in set([x[0] for x in dsets]): factory.SetWeightExpression("genWeight*xsec",trainclass)
-factory.PrepareTrainingAndTestTree(allcuts,"!V")
-#factory.BookMethod(ROOT.TMVA.Types.kBDT,'BDTG','!H:!V:NTrees=500:BoostType=Grad:Shrinkage=0.10:!UseBaggedGrad:nCuts=2000:MaxDepth=8:NegWeightTreatment=PairNegWeightsGlobal')
-factory.BookMethod(ROOT.TMVA.Types.kBDT,'BDTG','!H:!V:NTrees=200:BoostType=Grad:Shrinkage=0.10:!UseBaggedGrad:nCuts=200:MaxDepth=8:NegWeightTreatment=PairNegWeightsGlobal')
-factory.TrainAllMethods()
-factory.TestAllMethods()
-factory.EvaluateAllMethods()
+    ## Start the training
+    factory.PrepareTrainingAndTestTree(allcuts, "!V")
+    factory.BookMethod(ROOT.TMVA.Types.kBDT, 'BDTG',
+                            ':'.join([
+                                '!H',
+                                '!V',
+                                'NTrees=200',
+                                # 'NTrees=500',
+                                'BoostType=Grad',
+                                'Shrinkage=0.10',
+                                '!UseBaggedGrad',
+                                'nCuts=200',
+                                # 'nCuts=2000',
+                                'MaxDepth=8',
+                                'NegWeightTreatment=PairNegWeightsGlobal',
+                                ]))
+    factory.TrainAllMethods()
+    factory.TestAllMethods()
+    factory.EvaluateAllMethods()
 
-fOut.Close()
+    fOut.Close()
 
+def main(args, options):
+    global _treepath
+    _treepath = options.treepath
+    if 'MultiClassICHEP16' in options.training:
+        train_multiclass(args[0], options)
+
+if __name__ == '__main__':
+    from optparse import OptionParser
+    parser = OptionParser(usage="%prog [options] OUTFILE")
+    parser.add_option("-T","--training", dest="training",
+                      type="string", default="MultiClassICHEP16")
+    parser.add_option("-P","--treepath", dest="treepath",
+                      type="string", default=None)
+    parser.add_option("-F","--friend", dest="friends",
+                      type="string", default=[], action="append")
+    parser.add_option("-c","--cut", dest="addcuts",
+                      type="string", default=[], action="append")
+    (options, args) = parser.parse_args()
+
+    if not len(args) or not options.treepath:
+        parser.print_help()
+        sys.exit(-1)
+
+    main(args, options)
