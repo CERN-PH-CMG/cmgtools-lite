@@ -65,7 +65,7 @@ if 'MultiClassICHEP16' in options.training:
     factory.AddVariable("numJets_float := nJet25_Recl", 'F')
     factory.AddVariable("mindr_lep1_jet := mindr_lep1_jet", 'F')
     factory.AddVariable("mindr_lep2_jet := mindr_lep2_jet", 'F')
-    factory.AddVariable("LepGood_conePt[iF_Recl[0]] := LepGood_conePt[iF_Recl[0]]", 'F') 
+    factory.AddVariable("LepGood_conePt[iF_Recl[0]] := LepGood_conePt[iF_Recl[0]]", 'F')
     factory.AddVariable("LepGood_conePt[iF_Recl[1]] := LepGood_conePt[iF_Recl[1]]", 'F')
     factory.AddVariable("avg_dr_jet : = avg_dr_jet", 'F');
     factory.AddVariable("met := min(met_pt, 400)", 'F');
