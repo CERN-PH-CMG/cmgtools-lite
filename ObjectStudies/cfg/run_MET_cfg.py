@@ -192,7 +192,7 @@ elif test==18:
 
 # WG/ZG/TTG
 elif test==19:
-    selectedComponents = [ZGJets, ZGTo2LG, WGToLNuG, WGJets, TTGJets, TGJets, TGJets_ext]
+    selectedComponents = [ZGJets, ZNuNuGJets_40130, ZGTo2LG, WGToLNuG, WGJets, TTGJets, TGJets, TGJets_ext]
     is1PH=True
     for comp in selectedComponents:
         comp.splitFactor = 1000
@@ -398,16 +398,16 @@ if comp.isData:
     uncFile = os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/jec/Spring16_25nsV6_DATA_Uncertainty_AK4PFchs.txt'
     jecDBFile = os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/jec/Spring16_25nsV6_DATA.db'
     jecEra    = 'Spring16_25nsV6_DATA'
-    jerDBFile = os.environ['CMSSW_BASE']+'/src/PhysicsTools/PatUtils/data/JER/Fall15_25nsV2_MC.db'
-    jerEra    = 'Fall15_25nsV2'
+    jerDBFile = os.environ['CMSSW_BASE']+'/src/PhysicsTools/PatUtils/data/JER/Spring16_25nsV6_MC.db'
+    jerEra    = 'Spring16_25nsV6'
 else:
     ## MC 25ns
     removeResiduals = False
     uncFile = os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/jec/Spring16_25nsV6_MC_Uncertainty_AK4PFchs.txt'
     jecDBFile = os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/jec/Spring16_25nsV6_MC.db'
     jecEra    = 'Spring16_25nsV6_MC'
-    jerDBFile = os.environ['CMSSW_BASE']+'/src/PhysicsTools/PatUtils/data/JER/Fall15_25nsV2_MC.db'
-    jerEra    = 'Fall15_25nsV2'
+    jerDBFile = os.environ['CMSSW_BASE']+'/src/PhysicsTools/PatUtils/data/JER/Spring16_25nsV6_MC.db'
+    jerEra    = 'Spring16_25nsV6'
 
 preprocessorFile = "$CMSSW_BASE/tmp/MetType1_jec_%s.py"%(jecEra)
 extraArgs=[]
