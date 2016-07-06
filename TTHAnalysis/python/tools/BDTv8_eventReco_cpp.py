@@ -5,10 +5,11 @@ import copy
 import math
 
 class BDTv8_eventReco: # has to run on a recleaner with label _Recl
-    def __init__(self, weightfile, recllabel='Recl'):
+    def __init__(self, weightfile, recllabel='Recl', selection = []):
 
         self.inputlabel = '_'+recllabel
         self.systsJEC = {0:"", 1:"_jecUp", -1:"_jecDown"}
+        self.selection = selection
 
         if "/BDTv8_eventReco_C.so" not in ROOT.gSystem.GetLibraries():
             ROOT.gSystem.CompileMacro("%s/src/CMGTools/TTHAnalysis/macros/leptons/BDTv8_eventReco.C" % os.environ['CMSSW_BASE'],"kO");
@@ -47,10 +48,20 @@ class BDTv8_eventReco: # has to run on a recleaner with label _Recl
             _ijets = [ij for ij in _ijets_list]
             jets = [ (jetsc[ij] if ij>=0 else jetsd[-ij-1]) for ij in _ijets]
 
-            self.run.clear()
-            for j in jets: self.run.addJet(j.pt,j.eta,j.phi,j.mass,j.btagCSV)
-            for l in leps: self.run.addLep(l.pt,l.eta,l.phi,l.mass)
-            res = self.run.EvalMVA()
+
+            res = [-100]*len(self.branches)
+
+            good = True
+            for sel in self.selection:
+                if not sel(leps,jets,event):
+                    good = False
+                    break
+
+            if good:
+                self.run.clear()
+                for j in jets: self.run.addJet(j.pt,j.eta,j.phi,j.mass,j.btagCSV)
+                for l in leps: self.run.addLep(l.conePt,l.eta,l.phi,l.mass)
+                res = self.run.EvalMVA()
 
             for i,x in enumerate(res): out["BDTv8_eventReco_%s"%self.branches[i]+self.systsJEC[var]] = res[i]
 
