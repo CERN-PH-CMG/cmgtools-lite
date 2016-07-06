@@ -140,14 +140,14 @@ lepAna = cfg.Analyzer(
     doSegmentBasedMuonCleaning=False,
     # inclusive very loose muon selection
     inclusive_muon_id  = "POG_ID_Loose",
-    inclusive_muon_pt  = 30,
+    inclusive_muon_pt  = 3,
     inclusive_muon_eta = 2.4,
     inclusive_muon_dxy = 1000,
     inclusive_muon_dz  = 1000,
     muon_dxydz_track = "innerTrack",
     # veto muon selection
     loose_muon_id     = "POG_ID_Loose",
-    loose_muon_pt     = 30,
+    loose_muon_pt     = 10,
     loose_muon_eta    = 2.4,
     loose_muon_dxy    = 1000,
     loose_muon_dz     = 1000,
@@ -155,14 +155,14 @@ lepAna = cfg.Analyzer(
     loose_muon_relIso = 0.4,
     # inclusive very loose electron selection
     inclusive_electron_id  = "",
-    inclusive_electron_pt  = 30,
+    inclusive_electron_pt  = 5,
     inclusive_electron_eta = 2.5,
     inclusive_electron_dxy = 0.5,
     inclusive_electron_dz  = 1.0,
     inclusive_electron_lostHits = 5.0,
     # veto electron selection
     loose_electron_id     = "POG_Cuts_ID_SPRING15_25ns_v1_ConvVetoDxyDz_Veto_full5x5",
-    loose_electron_pt     = 30,
+    loose_electron_pt     = 10,
     loose_electron_eta    = 2.5,
     loose_electron_dxy    = 0.5,
     loose_electron_dz     = 1.0,
@@ -359,7 +359,7 @@ from CMGTools.MonoXAnalysis.analyzers.monoXFatJetAnalyzer import monoXFatJetAnal
 monoXFatJetAna = cfg.Analyzer(
     monoXFatJetAnalyzer, name = 'monoXFatJetAnalyzer',
     jetCol = 'slimmedJetsAK8',
-    jetPt = 120.,
+    jetPt = 100.,
     jetEta = 2.4,
     jetLepDR = 0.4,
     # v--- not implemented for AK8
@@ -474,7 +474,7 @@ dmCoreSequence = [
     lheWeightAna,
     skimAnalyzer,
    #eventSelector,
-    jsonAna,
+    ###jsonAna,
     triggerAna,
     pileUpAna,
     genAna,

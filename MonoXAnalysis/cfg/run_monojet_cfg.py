@@ -14,7 +14,7 @@ from CMGTools.RootTools.samples.autoAAAconfig import *
 #-------- SET OPTIONS AND REDEFINE CONFIGURATIONS -----------
 
 is50ns = getHeppyOption("is50ns",False)
-runData = getHeppyOption("runData",False)#True)
+runData = getHeppyOption("runData",False)
 scaleProdToLumi = float(getHeppyOption("scaleProdToLumi",-1)) # produce rough equivalent of X /pb for MC datasets
 saveSuperClusterVariables = getHeppyOption("saveSuperClusterVariables",True)
 saveFatJetIDVariables = getHeppyOption("saveFatJetIDVariables",True)
@@ -257,7 +257,7 @@ if runData and not isTest: # For running on data
         DatasetsAndTriggers.append( ("DoubleEG",   triggers_ee + triggers_ee_ht + triggers_3e) )
     if singleLepSkim == True:
         DatasetsAndTriggers.append( ("SingleElectron", triggers_ee + triggers_ee_ht + triggers_3e + triggers_1e + triggers_1e_50ns) )
-        DatasetsAndTriggers.append( ("SingleMuon", triggers_1mu_iso + triggers_mumu_iso + triggers_mumu_ss + triggers_mumu_ht + triggers_3mu + triggers_3mu_alt) )
+       # DatasetsAndTriggers.append( ("SingleMuon", triggers_1mu_iso + triggers_mumu_iso + triggers_mumu_ss + triggers_mumu_ht + triggers_3mu + triggers_3mu_alt) )
         #DatasetsAndTriggers.append( ("SinglePhoton",   triggers_SinglePhoton) )
     if singlePhotonSkim == True:
         DatasetsAndTriggers.append( ("SinglePhoton", triggers_SinglePhoton) )

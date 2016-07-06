@@ -23,7 +23,7 @@ removeJetReCalibration = getHeppyOption("removeJetReCalibration",False)
 doT1METCorr = getHeppyOption("doT1METCorr",True)
 forcedSplitFactor = getHeppyOption("splitFactor",-1)
 forcedFineSplitFactor = getHeppyOption("fineSplitFactor",-1)
-isTest = getHeppyOption("isTest",False)
+isTest = getHeppyOption("isTest",True)#False)
 doLepCorr = getHeppyOption("doLepCorr",False)
 doPhotonCorr = getHeppyOption("doPhotonCorr",False)
 
@@ -34,6 +34,7 @@ singleLepSkim = False
 singleFatJetSkim = False
 singlePhotonSkim = False
 dibosonSkim = True
+vGammaSkim = False
 
 # --- MONOJET SKIMMING ---
 if signalSkim == True:
@@ -65,11 +66,18 @@ if dibosonSkim == True:
     monoJetCtrlLepSkim.minLeptons = 1
     monoJetCtrlLepSkim.idCut = '(lepton.muonID("POG_ID_Loose")) if abs(lepton.pdgId())==13 else (lepton.electronID("POG_Cuts_ID_SPRING15_25ns_v1_ConvVetoDxyDz_Veto_full5x5"))'
     monoJetCtrlLepSkim.ptCuts = [40]
+    monoXFatJetAna.jetPt = 120
     lepAna.inclusive_muon_pt = 30
     lepAna.loose_muon_pt     = 30
     lepAna.inclusive_electron_pt = 30
     lepAna.loose_electron_pt     = 30
 
+if vGammaSkim == True:
+    monoJetCtrlFatJetSkim.minFatJets = 1
+    gammaJetCtrlSkim.minPhotons = 1
+    gammaJetCtrlSkim.minJets = 1
+    photonAna.ptMin = 50
+    
 # --- Photon OR Electron SKIMMING ---
 #if photonOrEleSkim == True:
     
@@ -219,6 +227,7 @@ from CMGTools.RootTools.samples.triggers_13TeV_Spring15 import *
 from CMGTools.RootTools.samples.triggers_8TeV import triggers_1mu_8TeV, triggers_mumu_8TeV, triggers_mue_8TeV, triggers_ee_8TeV;
 triggers_AllMonojet = triggers_metNoMu90_mhtNoMu90 + triggers_metNoMu120_mhtNoMu120 + triggers_AllMET170 + triggers_AllMET300
 triggers_SinglePhoton = triggers_photon155 + triggers_photon165_HE10 + triggers_photon175 + triggers_jet  # last ones added to recover L1 issue of tight H/E cut
+trigger_JetHT = triggers_HT800 #remember to do the NOT of (Photon165 || Photon175)
 triggerFlagsAna.triggerBits = {
     'DoubleMu' : triggers_mumu_iso,
     'DoubleEl' : triggers_ee,
@@ -229,6 +238,7 @@ triggerFlagsAna.triggerBits = {
     'Met170'   : triggers_AllMET170,
     'Met300'   : triggers_AllMET300,
     'SinglePho' : triggers_SinglePhoton,
+    'Jet_HT'   : trigger_JetHT
 }
 triggerFlagsAna.unrollbits = True
 triggerFlagsAna.saveIsUnprescaled = False
@@ -282,10 +292,13 @@ if runData and not isTest: # For running on data
     if diLepSkim == True:
         DatasetsAndTriggers.append( ("DoubleMuon", triggers_mumu_iso + triggers_mumu_ss + triggers_mumu_ht + triggers_3mu + triggers_3mu_alt + triggers_AllMonojet) )
         DatasetsAndTriggers.append( ("DoubleEG",   triggers_ee + triggers_ee_ht + triggers_3e) )
-    if singleLepSkim == True:
+    if singleLepSkim == True or dibosonSkim == True:
         DatasetsAndTriggers.append( ("SingleElectron", triggers_ee + triggers_ee_ht + triggers_3e + triggers_1e + triggers_1e_50ns) )
         DatasetsAndTriggers.append( ("SingleMuon", triggers_1mu_iso + triggers_mumu_iso + triggers_mumu_ss + triggers_mumu_ht + triggers_3mu + triggers_3mu_alt) )
         #DatasetsAndTriggers.append( ("SinglePhoton",   triggers_SinglePhoton) )
+    if vGammaSkim == True:
+        DatasetsAndTriggers.append( ("SinglePhoton", triggers_SinglePhoton) )
+        DatasetsAndTriggers.append( ("JetHT", trigger_JetHT, triggers_photon165_HE10 + triggers_photon175))
     if singlePhotonSkim == True:
         DatasetsAndTriggers.append( ("SinglePhoton", triggers_SinglePhoton) )
     if signalSkim == True:
@@ -461,9 +474,10 @@ elif test == 'simone':
     sample = cfg.MCComponent(
            files = [
           # "root://eoscms//eos/cms/store/data/Run2016B/DoubleMuon/MINIAOD/PromptReco-v2/000/273/448/00000/7ED72389-581C-E611-BF09-02163E011BF0.root"
-           "root://cms-xrd-global.cern.ch//store/data/Run2016B/SingleElectron/MINIAOD/PromptReco-v2/000/273/158/00000/06277EC1-181A-E611-870F-02163E0145E5.root"
+           #"root://cms-xrd-global.cern.ch//store/data/Run2016B/SingleElectron/MINIAOD/PromptReco-v2/000/273/158/00000/06277EC1-181A-E611-870F-02163E0145E5.root"
            #"root://xrootd.unl.edu//store/mc/RunIISpring16DR80/TT_TuneCUETP8M1_13TeV-powheg-pythia8/MINIAODSIM/PUSpring16_80X_mcRun2_asymptotic_2016_v3_ext3-v1/60000/08078977-2F1F-E611-AF79-001E675053A5.root"
            #"root://cms-xrd-global.cern.ch//store/mc/RunIISpring16MiniAODv2/TT_TuneCUETP8M1_13TeV-powheg-pythia8/MINIAODSIM/PUSpring16RAWAODSIM_80X_mcRun2_asymptotic_2016_miniAODv2_v0_ext3-v1/00000/00A10CC4-4227-E611-BBF1-C4346BBCD528.root"
+           "root://cms-xrd-global.cern.ch//store/mc/RunIISpring16MiniAODv1/TT_TuneCUETP8M1_13TeV-powheg-pythia8-evtgen/MINIAODSIM/PUSpring16_80X_mcRun2_asymptotic_2016_v3-v1/00000/4603CC0B-D012-E611-972B-90B11C06E1A0.root"
                  ],
            name="ZHLL125", isEmbed=False,
            puFileMC="puMC.root",
@@ -471,7 +485,7 @@ elif test == 'simone':
            splitFactor = 5
     )
     
-    sample.isMC=False
+    sample.isMC=True
     selectedComponents = [sample]
 
 ## output histogram

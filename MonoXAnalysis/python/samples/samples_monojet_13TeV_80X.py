@@ -18,19 +18,31 @@ VJets_MJ       = WJetsToLNuHT
 #Top_MJ          = [ TTJets, TToLeptons_tch_amcatnlo, TToLeptons_tch_amcatnlo_ext, TBar_tWch, T_tWch ]
 Top_MJ         = [ TTJets, TToLeptons_sch_amcatnlo, TBar_tWch, T_tWch ]
 DiBosons_MJ    = [ WW, WZ, ZZ ]
+
+#diboson analysis samples
 TTBar          = [ TT_pow_ext3 ]
 WJetsToLNu     = [ WJetsToLNu_HT100to200, WJetsToLNu_HT200to400, WJetsToLNu_HT400to600, WJetsToLNu_HT600to800, WJetsToLNu_HT800to1200_ext, WJetsToLNu_HT1200to2500, WJetsToLNu_HT2500toInf ]
 SingleTop      = [ TToLeptons_sch_amcatnlo, TBar_tWch, T_tWch ]
 
+#V+gamma samples
+from CMGTools.MonoXAnalysis.samples.samples_13TeV_VJETS_RunIISpring16MiniAODv2 import *
+TTBar_amcatnlo = [ TTJets ]
+TTGammaJets    = [ TTGJets ]
+WJetsToLNu_amcatnlo = [ WJetsToLNu ]
+QCD = QCDHT
+GammaJets = GJets
+VV_VBosonGamma = VV_VGamma
+
 mcSamples_monojet_Asymptotic25ns = ZJetsToNuNu_MJ + VJets_MJ + Top_MJ + DiBosons_MJ + QCDHT + GJetsHT
 #mcSamples_monojet_Asymptotic25ns_signals = DM_Scalars + DM_Pseudoscalars + DM_Vectors + DM_Axials
 mcSamples_diboson_Asymptotic25ns = TTBar + SingleTop + WJetsToLNu + DiBosons_MJ 
+mcSamples_zgamma_Asymptotic25ns  = TTBar_amcatnlo + TTGammaJets + WJetsToLNu_amcatnlo + QCD + GammaJets + VV_VBosonGamma
 
 
 ### ----------------------------- summary ----------------------------------------     
 mcSamples_monojet = mcSamples_monojet_Asymptotic25ns
 mcSamples_diboson = mcSamples_diboson_Asymptotic25ns
-
+mcSamples_zgamma  = mcSamples_zgamma_Asymptotic25ns
 
 ### --------- private DATA re-recoes for ECAL validation ---------
 dcsjson = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/DCSOnly/json_DCSONLY.txt'

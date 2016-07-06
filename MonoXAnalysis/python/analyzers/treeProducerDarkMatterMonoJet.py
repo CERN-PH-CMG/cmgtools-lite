@@ -108,18 +108,18 @@ leptonTypeMonoJet = NTupleObjectType("leptonMonoJet", baseObjectTypes = [ lepton
         NTupleVariable("superCluster_energy", lambda x: x.superCluster().energy() if (abs(x.pdgId())==11 and hasattr(x,"superCluster")) else -999, help="Electron superCluster.energy"),
         NTupleVariable("superCluster_clustersSize", lambda x: x.superCluster().clustersSize() if (abs(x.pdgId())==11 and hasattr(x,"superCluster")) else -999, help="Electron superCluster.clustersSize"),
         NTupleVariable("superCluster_seed.energy", lambda x: x.superCluster().seed().energy() if (abs(x.pdgId())==11 and hasattr(x,"superCluster")) else -999, help="Electron superCluster.seed.energy"),
-        NTupleVariable("e2x5Max",    lambda x : x.e2x5Max() if abs(x.pdgId())==11 else -999., help="e2x5Max for electrons"),
-        NTupleVariable("e1x5",    lambda x : x.e1x5() if abs(x.pdgId())==11 else -999., help="e1x5 for electrons"),
-        NTupleVariable("isolTrkPt",    lambda x : x.dr03TkSumPt() if abs(x.pdgId())==11 else -999., help="isolTrkPt for electrons"),
-        NTupleVariable("isolEmHadDepth1",    lambda x : x.dr03EcalRecHitSumEt() + x.dr03HcalDepth1TowerSumEt() if abs(x.pdgId())==11 else -999., help="isolEmHadDepth1 for lectrons"),
-        NTupleVariable("eleClusterDEta", lambda x : x.deltaEtaSeedClusterTrackAtVtx() if abs(x.pdgId())==11 else -999., help="Electron Supercluster DEta"),
-        NTupleVariable("isEcalDriven", lambda x : x.ecalDrivenSeed() if abs(x.pdgId()) == 11 else -999, int, help="is Ecal Driven to cut on ID"), #added
-        NTupleVariable("muonDB", lambda x : x.dB() if abs(x.pdgId()) == 13 else -999, help="muon DB"),
-        NTupleVariable("pixelHits", lambda x : x.innerTrack().hitPattern().numberOfValidPixelHits() if abs(x.pdgId()) == 13 and x.innerTrack().isNonnull() else -999, help="Number of pi        xel hits (-1 for electrons)"),
-        NTupleVariable("muTrackIso", lambda x: x.trackIso() if abs(x.pdgId()) == 13 else -999, help="muon track isolation"),
-        NTupleVariable("muon_dz", lambda x : x.muonBestTrack().dz() if abs(x.pdgId()) == 13 else -999, help="dz for muons"),
-        NTupleVariable("nChamberHits", lambda x: x.globalTrack().hitPattern().numberOfValidMuonHits() if abs(x.pdgId()) == 13 and x.globalTrack().isNonnull() else -999, help="Number of muon chamber hits (-1 for electrons)"),
-        NTupleVariable("muonPtRatio", lambda x : x.muonBestTrack().ptError()/x.muonBestTrack().pt() if abs(x.pdgId()) == 13 else -999, help="Ratio between ptError and pt")    ,
+       # NTupleVariable("e2x5Max",    lambda x : x.e2x5Max() if abs(x.pdgId())==11 else -999., help="e2x5Max for electrons"),
+       # NTupleVariable("e1x5",    lambda x : x.e1x5() if abs(x.pdgId())==11 else -999., help="e1x5 for electrons"),
+       # NTupleVariable("isolTrkPt",    lambda x : x.dr03TkSumPt() if abs(x.pdgId())==11 else -999., help="isolTrkPt for electrons"),
+       # NTupleVariable("isolEmHadDepth1",    lambda x : x.dr03EcalRecHitSumEt() + x.dr03HcalDepth1TowerSumEt() if abs(x.pdgId())==11 else -999., help="isolEmHadDepth1 for lectrons"),
+       # NTupleVariable("eleClusterDEta", lambda x : x.deltaEtaSeedClusterTrackAtVtx() if abs(x.pdgId())==11 else -999., help="Electron Supercluster DEta"),
+       # NTupleVariable("isEcalDriven", lambda x : x.ecalDrivenSeed() if abs(x.pdgId()) == 11 else -999, int, help="is Ecal Driven to cut on ID"), #added
+       # NTupleVariable("muonDB", lambda x : x.dB() if abs(x.pdgId()) == 13 else -999, help="muon DB"),
+       # NTupleVariable("pixelHits", lambda x : x.innerTrack().hitPattern().numberOfValidPixelHits() if abs(x.pdgId()) == 13 and x.innerTrack().isNonnull() else -999, help="Number of pi        xel hits (-1 for electrons)"),
+       # NTupleVariable("muTrackIso", lambda x: x.trackIso() if abs(x.pdgId()) == 13 else -999, help="muon track isolation"),
+       # NTupleVariable("muon_dz", lambda x : x.muonBestTrack().dz() if abs(x.pdgId()) == 13 else -999, help="dz for muons"),
+       # NTupleVariable("nChamberHits", lambda x: x.globalTrack().hitPattern().numberOfValidMuonHits() if abs(x.pdgId()) == 13 and x.globalTrack().isNonnull() else -999, help="Number of muon chamber hits (-1 for electrons)"),
+       # NTupleVariable("muonPtRatio", lambda x : x.muonBestTrack().ptError()/x.muonBestTrack().pt() if abs(x.pdgId()) == 13 else -999, help="Ratio between ptError and pt")    ,
 
 ])
 
