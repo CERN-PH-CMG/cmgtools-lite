@@ -329,8 +329,8 @@ jetAna = cfg.Analyzer(
     recalibrateJets = True, #'MC', # True, False, 'MC', 'Data'
     applyL2L3Residual = True, # Switch to 'Data' when they will become available for Data
     recalibrationType = "AK4PFchs",
-    mcGT     = "Spring16_25nsV3_MC",
-    dataGT   = "Spring16_25nsV3_DATA",
+    mcGT     = "Spring16_25nsV6_MC",
+    dataGT   = "Spring16_25nsV6_DATA",
     jecPath = "${CMSSW_BASE}/src/CMGTools/RootTools/data/jec/",
     shiftJEC = 0, # set to +1 or -1 to apply +/-1 sigma shift to the nominal jet energies
     addJECShifts = False, # if true, add  "corr", "corrJECUp", and "corrJECDown" for each jet (requires uncertainties to be available!)
@@ -504,6 +504,17 @@ ttHJetMETSkim = cfg.Analyzer(
 from CMGTools.TTHAnalysis.analyzers.susyLeptonMatchAnalyzer import susyLeptonMatchAnalyzer
 susyLeptonMatchAna = cfg.Analyzer(
     susyLeptonMatchAnalyzer, name="susyLeptonMatchAna",
+    collection = "inclusiveLeptons",
+    deltaR     = 0.2,
+    statusOne  = True # put True if trying to match to genParticle with same pdgId and status 1, but False if only require same pdgId
+    )
+
+# same as above for taus
+susyTauMatchAna = cfg.Analyzer(
+    susyLeptonMatchAnalyzer, name="susyTauMatchAna",
+    collection = "inclusiveTaus",
+    deltaR     = 0.2,
+    statusOne  = False # put True if trying to match to genParticle with same pdgId and status 1, but False if only require same pdgId
     )
 
 # Core sequence of all common modules

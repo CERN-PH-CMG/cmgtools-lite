@@ -58,6 +58,13 @@ triggers_FR_jet2  =  [ "HLT_PFJet60_v*", "HLT_PFJet80_v*" ]
 triggers_FR_muNoIso = [ "HLT_Mu%d_v*" % pt for pt in (20,27,) ] + [ "HLT_Mu%d_eta2p1_v*" % pt for pt in (45,) ] + [ "HLT_L2Mu%d_v*" % pt for pt in (10,) ]
 triggers_FR_ZB      = [ "HLT_ZeroBias_v*" ] + [ "HLT_ZeroBias_part%d_v*" % i for i in xrange(1,9) ]
 
+# tau triggers for EWKino
+triggers_leptautau = ["HLT_IsoTkMu22_v*", "HLT_IsoMu22_v*",
+                      "HLT_IsoMu19_eta2p1_LooseIsoPFTau20_v*",
+                      "HLT_Ele27_eta2p1_WPLoose_Gsf_v*", 
+                      "HLT_Ele22_eta2p1_WPLoose_GSF_LooseIsoPFtau20_SingleL1_v*",
+                      "HLT_DoubleMediumIsoPFTau32_Trk1_eta2p1_Reg_v"]
+
 ### GP: did not look at anything below this
 
 ### Mike ---> for the VV analysis 
