@@ -13,7 +13,7 @@ from CMGTools.HToZZ4L.analyzers.FSRPhotonMaker import *
 from CMGTools.HToZZ4L.analyzers.GenFSRAnalyzer import *
 from CMGTools.HToZZ4L.analyzers.fourLeptonTree import *
 from CMGTools.HToZZ4L.analyzers.GenDPhiZZWeight import GenDPhiZZWeight
-from CMGTools.HToZZ4L.samples.samples_13TeV_Fall15 import *
+from CMGTools.HToZZ4L.samples.samples_13TeV_2016 import *
 
 from CMGTools.TTHAnalysis.analyzers.ttHFastLepSkimmer import ttHFastLepSkimmer
 fastSkim2LnoSip = cfg.Analyzer( ttHFastLepSkimmer, name="fastLepSkim2LnoSIP",
@@ -22,7 +22,7 @@ fastSkim2LnoSip = cfg.Analyzer( ttHFastLepSkimmer, name="fastLepSkim2LnoSIP",
         minLeptons = 2,
 )
 fastSkim2L = fastSkim2LnoSip.clone(name="fastLepSkim2L",
-        muCut = lambda mu : mu.pt() > 5 and abs(mu.dB(mu.PV3D) / mu.edB(mu.PV3D)) < 4,
+        muCut = lambda mu : mu.pt() > 5 and abs(mu.dB(mu.PV3D)) <= 4*mu.edB(mu.PV3D),
         eleCut = lambda ele : ele.pt() > 7 and (abs(ele.dB(ele.PV3D)) <= 4*ele.edB(ele.PV3D)),
 )
 fastSkim3L = fastSkim2L.clone(name="fastLepSkim3L", minLeptons = 3)
@@ -181,7 +181,7 @@ lepAna = cfg.Analyzer(
     # electron isolation correction method (can be "rhoArea" or "deltaBeta")
     ele_isoCorr = "rhoArea" ,
     ele_effectiveAreas = "Spring15_25ns_v1" , #(can be 'Data2012' or 'Phys14_25ns_v1')
-    ele_tightId = "MVA_ID_NonTrig_Spring15_HZZ",
+    ele_tightId = "MVA_ID_NonTrig_Spring16_HZZ",
     # Mini-isolation, with pT dependent cone: will fill in the miniRelIso, miniRelIsoCharged, miniRelIsoNeutral variables of the leptons (see https://indico.cern.ch/event/368826/ )
     doMiniIsolation = False, # off by default since it requires access to all PFCandidates 
     packedCandidates = 'packedPFCandidates',
@@ -207,7 +207,7 @@ fsrRecovery = cfg.Analyzer(
     FSRPhotonMaker, name="fsrPhotonMaker",
     leptons="selectedLeptons",
     electronID = lambda x: True, #x.electronID("POG_MVA_ID_Run2_NonTrig_HZZ")
-    electronVeto = "pfCandReference", # alternatives: "electronEta" and "superclusterEta"
+    electronVeto = "pfCandReference", # alternatives:  "superclusterEta" (as in 2015), "electronEta" 
     drOverET2Cut = 0.012,
     relIsoCut = 1.8, 
 )
@@ -232,8 +232,8 @@ jetAna = cfg.Analyzer(
     recalibrateJets = True, # True, False, 'MC', 'Data'
     applyL2L3Residual = True, # Switch to 'Data' when they will become available for Data
     recalibrationType = "AK4PFchs",
-    mcGT     = "Fall15_25nsV2_MC",
-    dataGT   = "Fall15_25nsV2_DATA",
+    mcGT     = "Spring16_25nsV3_MC",
+    dataGT   = "Spring16_25nsV3_DATA",
     jecPath = "${CMSSW_BASE}/src/CMGTools/RootTools/data/jec/",
     shiftJEC = 0, # set to +1 or -1 to get +/-1 sigma shifts
     addJECShifts = False,
@@ -244,7 +244,10 @@ jetAna = cfg.Analyzer(
     cleanJetsFromFirstPhoton = False,
     cleanJetsFromTaus = False,
     cleanJetsFromIsoTracks = False,
-    doQG = False,
+    doQG = True,
+    #QGpath = "{CMSSW_BASE}/src/PhysicsTools/Heppy/data/pdfQG_AK4chs_13TeV_v2_PU20bx25_QCD_AllPtBins.root",
+    #QGpath = "/afs/cern.ch/user/t/tomc/public/qgTagger/QGLikelihoodDBFiles/QGL_v2b/pdfQG_AK4chs_13TeV_v2b.root",
+    QGpath = "/afs/cern.ch/user/t/tomc/public/qgTagger/QGLikelihoodDBFiles/QGL_v1/pdfQG_AK4chs_13TeV_v1.root",
     do_mc_match = True,
     collectionPostFix = "",
     calculateSeparateCorrections = False,
@@ -284,13 +287,16 @@ metNoHFAna = metAna.clone(
 
 fourLeptonAnalyzerSignal = cfg.Analyzer(
     FourLeptonAnalyzer, name="fourLeptonAnalyzerSignal",
-    tag = "Signal",
+    tag = "Signal", 
+    sortAlgo = "bestKD",
     attachFsrToGlobalClosestLeptonOnly = True
 )
 
 fourLeptonAnalyzer2P2F = cfg.Analyzer(
     FourLeptonAnalyzer2P2F, name="fourLeptonAnalyzer2P2F",
     tag = "2P2F",
+    #sortAlgo = "bestKD",
+    doMEs = False,
     maxCand = 999, # save all, not just the best one
     attachFsrToGlobalClosestLeptonOnly = True
 )
@@ -298,6 +304,8 @@ fourLeptonAnalyzer2P2F = cfg.Analyzer(
 fourLeptonAnalyzer3P1F = cfg.Analyzer(
     FourLeptonAnalyzer3P1F, name="fourLeptonAnalyzer3P1F",
     tag = "3P1F",
+    sortAlgo = "bestKD",
+    #doMEs = False,
     maxCand = 999, # save all, not just the best one
     attachFsrToGlobalClosestLeptonOnly = True
 )
@@ -305,6 +313,8 @@ fourLeptonAnalyzer3P1F = cfg.Analyzer(
 fourLeptonAnalyzerSS = cfg.Analyzer(
     FourLeptonAnalyzerSS, name="fourLeptonAnalyzerSS",
     tag = "SS",
+    sortAlgo = "bestKD",
+    #doMEs = False,
     maxCand = 999, # save all, not just the best one
     attachFsrToGlobalClosestLeptonOnly = True
 )
@@ -312,6 +322,8 @@ fourLeptonAnalyzerSS = cfg.Analyzer(
 fourLeptonAnalyzerRelaxIdIso = cfg.Analyzer(
     FourLeptonAnalyzerRelaxIdIso, name="fourLeptonAnalyzerRelaxIdIso",
     tag = "RelaxIdIso",
+    sortAlgo = "bestKD",
+    #doMEs = False,
     maxCand = 999, # save all, not just the best one
     attachFsrToGlobalClosestLeptonOnly = True
 )

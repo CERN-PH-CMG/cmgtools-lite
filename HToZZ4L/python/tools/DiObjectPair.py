@@ -32,7 +32,8 @@ class DiObjectPair( TLorentzVector ):
     def mass(self):
          return self.M()
 
-
+    def uid(self):
+        return tuple(sorted(map(id, self.daughterLeptons())))
 
     def sortedPtLeg(self,N):
         ''' Gives the Nth highest pt lepton. 0 is the highest'''

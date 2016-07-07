@@ -3,13 +3,13 @@
 # here the list of BKG
 
 ####
-data0: DATA/JetHT_Run2015D_16Dec ; FakeRate="../../../ObjectStudies/cfg/plotDiJet/filter.txt", Label="data(w/filter)", FillColor=ROOT.kGreen+1, LineColor=ROOT.kGreen+1
+data0: DATA/JetHT_Run2015D_16Dec ; FakeRate="../../../ObjectStudies/cfg/plotDiJet/filter.txt", Label="data(w/filter)", FillColor=ROOT.kBlue, LineColor=ROOT.kBlue
 
-data1: DATA/JetHT_Run2015D_16Dec ; FakeRate="../../../ObjectStudies/cfg/plotDiJet/prescale.txt", Label="data(prescale corr)", FillColor=ROOT.kBlue, LineColor=ROOT.kBlue
+#data1: DATA/JetHT_Run2015D_16Dec ; FakeRate="../../../ObjectStudies/cfg/plotDiJet/prescale.txt", Label="data(prescale corr)",  Label="(final)", FillColor=ROOT.kGreen+1, LineColor=ROOT.kGreen+1
 
 data2: DATA/JetHT_Run2015D_16Dec ; FakeRate="../../../ObjectStudies/cfg/plotDiJet/const.txt", Label="data(RAW)", FillColor=ROOT.kRed, LineColor=ROOT.kRed
 
-data:  DATA/JetHT_Run2015D_16Dec ; FakeRate="../../../ObjectStudies/cfg/plotDiJet/prescaleFilter.txt",  Label="(final)"
+#data:  DATA/JetHT_Run2015D_16Dec ; FakeRate="../../../ObjectStudies/cfg/plotDiJet/prescaleFilter.txt",  Label="(final)"
 
 
 
