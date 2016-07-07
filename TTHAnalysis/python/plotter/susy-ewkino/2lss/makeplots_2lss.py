@@ -93,7 +93,8 @@ if __name__ == '__main__':
             x = x.replace('mca-2lss-mcdata.txt','mca-2lss-mcdata-frdata.txt')
         
         if '_flav' in torun:
-            for flav in ['mm','ee','em']: runIt(add(x,'-E ^%s'%flav),'%s/%s'%(torun.rstrip('_flav'),flav),queue)
+            for flav in ['mm','ee','em']: runIt(add(x,'-E ^%s'%flav),'%sa/%s'%(torun.rstrip('_flav'),flav),queue)
+
         elif '_jet' in torun:
             runIt(add(x,'-E ^0j'),'%s/%s'%(torun.rstrip('_jet'),'0jet'),queue)
             runIt(add(x,'-E ^1j'),'%s/%s'%(torun.rstrip('_jet'),'1jet'),queue)

@@ -1,5 +1,9 @@
 tot_weight: 1 : 1,0.5,1.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
 
+##### SEARCH STRATEGY
+SR :   SR_ewk_ss2l(nJet40,LepGood1_conePt,LepGood1_phi, LepGood2_conePt,LepGood2_phi, met_pt,met_phi):  25,0.5,25.5; XTitle="SR"
+SR_log : SR_ewk_ss2l(nJet40,LepGood1_conePt,LepGood1_phi, LepGood2_conePt,LepGood2_phi, met_pt,met_phi)  :  25,0.5,25.5; XTitle="SR", Logy
+
 ptdil   : pt_2(LepGood1_conePt, LepGood1_phi, LepGood2_conePt, LepGood2_phi): 20, 0., 300. ;  XTitle="p_{T}(dilepton) [GeV]"
 ptll    : LepGood1_pt+LepGood2_pt : 20, 0., 300. ;  XTitle="p_{T}(dilepton) [GeV]"
 dphi    : abs(deltaPhi(LepGood1_phi,LepGood2_phi)):  30, -1.5, 3.5;  XTitle="#Delta #phi(ll) [GeV]", Legend='TL'
@@ -46,9 +50,6 @@ mtW2_log   : mt_2(LepGood2_conePt,LepGood2_phi,met_pt,met_phi) : 25,0,200; XTitl
 
 mtWll : mt_llv(LepGood1_conePt,LepGood1_phi,LepGood2_conePt,LepGood2_phi,met_pt,met_phi): 25,0,200; XTitle="M_{T}(ll\,E_{T}^{miss}) [GeV]"
 
-##### SEARCH STRATEGY
-SR :   SR_ewk_ss2l(nJet40,LepGood1_conePt,LepGood1_phi, LepGood2_conePt,LepGood2_phi, met_pt,met_phi):  25,0.5,25.5; XTitle="SR"
-SR_log : SR_ewk_ss2l(nJet40,LepGood1_conePt,LepGood1_phi, LepGood2_conePt,LepGood2_phi, met_pt,met_phi)  :  25,0.5,25.5; XTitle="SR", Logy
 
 #### Lepton--RELATED VARIABLES
 lep1_pt: 	 LepGood1_pt					 : 40,0,200; XTitle="Leading lepton p_{T} [GeV]"

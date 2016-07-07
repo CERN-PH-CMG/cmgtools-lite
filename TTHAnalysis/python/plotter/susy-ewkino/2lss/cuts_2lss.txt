@@ -6,9 +6,7 @@ cleanup: minMllAFAS > 12
 dilep: nLepFO>=2
 pt2010: LepGood1_conePt>20 && (abs(LepGood1_pdgId)!=11 || LepGood1_conePt>25) && LepGood2_conePt>10 && (abs(LepGood2_pdgId)!=11 || LepGood2_conePt>15)
 TT: LepGood1_isTight && LepGood2_isTight
-exclusive: nLepTight<=2 && if3(nLepFO>2,LepGood3_mvaSUSY<-0.20+(0.20+0.50)*(abs(LepGood3_pdgId)==11),1) && nTauSel==0 
-#Zee_veto : abs(LepGood1_pdgId)!=11 || abs(LepGood2_pdgId) != 11 || abs(mass()-91.2) > 10
-#veto2l1tau: if3(nTauSel>0, !((LepGood1_mvaSUSY>-0.20+(0.20+0.50)*(abs(LepGood1_pdgId)==11)) && (LepGood2_mvaSUSY>-0.20+(0.20+0.50)*(abs(LepGood2_pdgId)==11))), 1)
+exclusive: nLepTight<=2 && if3(nLepFO>2,LepGood3_mvaSUSY<-0.20+(0.20+0.50)*(abs(LepGood3_pdgId)==11),1) && nTightTauSel==0
 same-sign: LepGood1_charge*LepGood2_charge > 0
 met: met_pt > 60
 0bjetM: nBJetMedium25 == 0
