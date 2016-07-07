@@ -30,7 +30,11 @@ susyDiJet_globalVariables = susyCore_globalVariables + [
 
     NTupleVariable("nBJet40", lambda ev: sum([j.btagWP("CSVv2IVFM") for j in ev.cleanJets if j.pt() > 40]), int, help="Number of jets with pt > 40 passing CSV medium"),
     NTupleVariable("nBJet30", lambda ev: sum([j.btagWP("CSVv2IVFM") for j in ev.cleanJets if j.pt() > 30]), int, help="Number of jets with pt > 25 passing CSV medium"),
+    NTupleVariable("nBJet20", lambda ev: sum([j.btagWP("CSVv2IVFM") for j in ev.cleanJets if j.pt() > 20]), int, help="Number of jets with pt > 20 passing CSV medium"),
     NTupleVariable("nBJet25", lambda ev: sum([j.btagWP("CSVv2IVFM") for j in ev.cleanJets if j.pt() > 25]), int, help="Number of jets with pt > 25 passing CSV medium"),
+    NTupleVariable("nSoftB25", lambda ev: sum([(sv.mva>0.7 and (sv.jet == None or sv.jet.pt() < 25)) for sv in ev.ivf]), int, help="SV from ivf with medium sv mva not matched to a jet with pt > 25 GeV"),
+    NTupleVariable("nSoftB20", lambda ev: sum([(sv.mva>0.7 and (sv.jet == None or sv.jet.pt() < 20)) for sv in ev.ivf]), int, help="SV from ivf with medium sv mva not matched to a jet with pt > 20 GeV"),
+
     NTupleVariable("nMuons10", lambda ev: sum([l.pt() > 10 and abs(l.pdgId()) == 13 for l in ev.selectedLeptons]), int, help="Number of muons with pt > 10"),
     NTupleVariable("nElectrons10", lambda ev: sum([l.pt() > 10 and abs(l.pdgId()) == 11 for l in ev.selectedLeptons]), int, help="Number of electrons with pt > 10"),
     NTupleVariable("nTaus20", lambda ev: sum([l.pt() > 20 for l in ev.selectedTaus]), int, help="Number of taus with pt > 20"),
@@ -64,8 +68,8 @@ susyDiJet_globalObjects = susyCore_globalObjects.copy()
 susyDiJet_globalObjects.update({
 
 
-        "met" : NTupleObject("met", metType, help="PF E_{T}^{miss}, after type 1 corrections"),
-        "metNoHF" : NTupleObject("metNoHF", metType, help="PF E_{T}^{miss}, after type 1 corrections (NoHF)"),
+    #    "met" : NTupleObject("met", metType, help="PF E_{T}^{miss}, after type 1 corrections"),
+    #    "metNoHF" : NTupleObject("metNoHF", metType, help="PF E_{T}^{miss}, after type 1 corrections (NoHF)"),
 #            # put more here
 })
 
@@ -75,9 +79,10 @@ susyDiJet_collections.update({
         "selectedLeptons" : NTupleCollection("lep", leptonType, 50, help="Leptons after the preselection", filter=lambda l : l.pt()>10 ),
         "selectedTaus"    : NTupleCollection("tau", tauTypeSusy, 50, help="Taus after the preselection"),
         "cleanJets"       : NTupleCollection("jet",     jetTypeSusyExtra, 100, help="all jets (w/ x-cleaning, w/ ID applied w/o PUID applied pt>20 |eta|<2.5) , sorted by pt", filter=lambda l : l.pt()>10  ),
-        "selectedPhotons"    : NTupleCollection("gamma", photonTypeSusy, 50, help="photons with pt>20 and loose cut based ID"),
+        #"selectedPhotons"    : NTupleCollection("gamma", photonTypeSusy, 50, help="photons with pt>20 and loose cut based ID"),
         "selectedIsoTrack"    : NTupleCollection("isoTrack", isoTrackType, 50, help="isoTrack, sorted by pt"),
         "genParticles" : NTupleCollection("genPart", genParticleWithMotherId, 300, help="all pruned genparticles"),
+    #    "ivf"       : NTupleCollection("SV",     svType, 20, help="SVs from IVF"),
         "LHE_weights"    : NTupleCollection("LHEweight",  weightsInfoType, 1000, help="LHE weight info"),
 })
         
