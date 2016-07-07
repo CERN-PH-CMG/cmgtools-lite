@@ -230,7 +230,12 @@ MODULES.append( ('HadTopSimple', lambda : HadTopSimple()) )
 from CMGTools.TTHAnalysis.tools.BDT2_HadTop import BDT2_HadTop
 MODULES.append( ('BDT2_HadTop', lambda : BDT2_HadTop(os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/kinMVA/tth/TMVAClassification_BDTG.weights_BDT2.xml")) )
 from CMGTools.TTHAnalysis.tools.BDTv8_eventReco_cpp import BDTv8_eventReco
-MODULES.append( ('BDTv8_eventReco', lambda : BDTv8_eventReco(os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/kinMVA/tth/TMVAClassification_BDTG_slimmed_v8.weights.xml")) )
+MODULES.append( ('BDTv8_eventReco', lambda : BDTv8_eventReco(os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/kinMVA/tth/TMVAClassification_BDTG_bdt_v8_80x.weights.xml",
+                                                             selection = [
+                lambda leps,jets,event : event.nJet25_Recl >= 2 and event.nLepFO_Recl >= 2 and (event.nLepFO_Recl >= 3 or leps[0].charge*leps[1].charge > 0),
+                lambda leps,jets,event : event.nBJetLoose25_Recl >= 2 or event.nBJetMedium25_Recl >= 1,
+                lambda leps,jets,event : leps[0].conePt > 20 and leps[1].conePt > 10,
+                                                             ])) )
 
 # retuned soft muon ID for 2016 conditions
 from CMGTools.TTHAnalysis.tools.objTagger import ObjTagger
