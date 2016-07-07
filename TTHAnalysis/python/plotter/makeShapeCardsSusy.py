@@ -11,6 +11,8 @@ parser.add_option("--od", "--outdir", dest="outdir", type="string", default=None
 parser.add_option("-v", "--verbose",  dest="verbose",  default=0,  type="int",    help="Verbosity level (0 = quiet, 1 = verbose, 2+ = more)")
 parser.add_option("--asimov", dest="asimov", action="store_true", help="Asimov")
 parser.add_option("--postfix-pred",dest="postfixmap", type="string", default=[], action="append", help="Function to apply to prediction, to correct it before running limits")
+parser.add_option("--infile",dest="infile", type="string", default=None, help="File to read histos from")
+parser.add_option("--ip", "--infile-prefix", dest="infilepfx", type="string", default=None, help="Prefix to the process names as the histo name in the infile")
 parser.add_option("--bk",   dest="bookkeeping",  action="store_true", default=False, help="If given the command used to run the datacards will be stored");
 
 (options, args) = parser.parse_args()
@@ -61,7 +63,23 @@ cuts = CutsFile(args[1],options)
 binname = os.path.basename(args[1]).replace(".txt","") if options.outname == None else options.outname
 outdir  = options.outdir+"/" if options.outdir else ""
 
-report = mca.getPlotsRaw("x", args[2], args[3], cuts.allCuts(), nodata=options.asimov)
+report={}
+
+## load histos from infile, make only the missing ones on the fly
+if options.infile!=None:
+    infile = ROOT.TFile(options.infile,"read")
+    todo = []
+    for p in mca.listSignals(True)+mca.listBackgrounds(True)+['data']:
+        n = p if options.infilepfx==None else options.infilepfx+"_"+p
+        h = infile.Get(n)
+        if h: report[p] = h
+        else: todo.append(p)
+    for p in todo:
+        report.update(mca.getPlotsRaw("x", args[2], args[3], cuts.allCuts(), nodata=options.asimov, process=p))
+## no infile given, process all histos
+else:
+    report = mca.getPlotsRaw("x", args[2], args[3], cuts.allCuts(), nodata=options.asimov)
+
 
 
 for post in postfixes:

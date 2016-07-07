@@ -42,3 +42,126 @@ mtW1 : mt_2(met_pt,met_phi,LepGood_pt,LepGood_phi) : 40,0,160; XTitle="M_{T}(l\,
 mtW1R : mt_2(met_pt,met_phi,35,LepGood_phi) : 20,0,140; XTitle="M_{T}^{fix}(l\, E_{T}^{miss}) (GeV)"
 met : met_pt : 25,0,100; XTitle="E_{T}^{miss} (GeV)"
 
+
+conePt_RA5_coarse:  conept_RA5(LepGood_pdgId,LepGood_pt,LepGood_eta,LepGood_miniRelIso,LepGood_jetPtRatiov2,LepGood_jetPtRelv2): [ 0,5,10,15,20,30,45,65,100 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+conePt_RA5_low: conept_RA5(LepGood_pdgId,LepGood_pt,LepGood_eta,LepGood_miniRelIso,LepGood_jetPtRatiov2,LepGood_jetPtRelv2): [ 0,5,10,20,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+conePt_RA5_flow: conept_RA5(LepGood_pdgId,LepGood_pt,LepGood_eta,LepGood_miniRelIso,LepGood_jetPtRatiov2,LepGood_jetPtRelv2): [ 0,5,10,15,20,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+conePt_RA5_zcoarse: conept_RA5(LepGood_pdgId,LepGood_pt,LepGood_eta,LepGood_miniRelIso,LepGood_jetPtRatiov2,LepGood_jetPtRelv2): [ 0,5,10,20,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+conePt_RA5_zcoarse2: conept_RA5(LepGood_pdgId,LepGood_pt,LepGood_eta,LepGood_miniRelIso,LepGood_jetPtRatiov2,LepGood_jetPtRelv2): [ 0,5,10,15,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+
+conePt_RA7_coarse:  conept_RA7(LepGood_pdgId,LepGood_pt,LepGood_eta,LepGood_miniRelIso,LepGood_jetPtRatiov2,LepGood_jetPtRelv2): [ 0,5,10,15,20,30,45,65,100 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+conePt_RA7_low: conept_RA7(LepGood_pdgId,LepGood_pt,LepGood_eta,LepGood_miniRelIso,LepGood_jetPtRatiov2,LepGood_jetPtRelv2): [ 0,5,10,20,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+conePt_RA7_flow: conept_RA7(LepGood_pdgId,LepGood_pt,LepGood_eta,LepGood_miniRelIso,LepGood_jetPtRatiov2,LepGood_jetPtRelv2): [ 0,5,10,15,20,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+conePt_RA7_zcoarse: conept_RA7(LepGood_pdgId,LepGood_pt,LepGood_eta,LepGood_miniRelIso,LepGood_jetPtRatiov2,LepGood_jetPtRelv2): [ 0,5,10,20,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+conePt_RA7_zcoarse2: conept_RA7(LepGood_pdgId,LepGood_pt,LepGood_eta,LepGood_miniRelIso,LepGood_jetPtRatiov2,LepGood_jetPtRelv2): [ 0,5,10,15,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+
+
+ptJI85_mvaSusy_sMi_coarse:  LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,-0.2,0.5)&&LepGood_mediumMuonId>0, 1.0, 0.85/LepGood_jetPtRatiov2): [ 0,5,10,15,20,30,45,65,100 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJI85_mvaSusy_sMi_coarseOldBin:  LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,-0.2,0.5)&&LepGood_mediumMuonId>0, 1.0, 0.85/LepGood_jetPtRatiov2): [ 10,15,25,35,50,70 ] ; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJI85_mvaSusy_sMi_low: LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,-0.2,0.5)&&LepGood_mediumMuonId>0, 1.0, 0.85/LepGood_jetPtRatiov2): [ 0,5,10,20,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJI85_mvaSusy_sMi_flow: LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,-0.2,0.5)&&LepGood_mediumMuonId>0, 1.0, 0.85/LepGood_jetPtRatiov2): [ 0,5,10,15,20,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJI85_mvaSusy_sMi_zcoarse: LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,-0.2,0.5)&&LepGood_mediumMuonId>0, 1.0, 0.85/LepGood_jetPtRatiov2): [ 0,5,10,20,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJI85_mvaSusy_sMi_zcoarse2: LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,-0.2,0.5)&&LepGood_mediumMuonId>0, 1.0, 0.85/LepGood_jetPtRatiov2): [ 0,5,10,15,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJI85_mvaSusy_sVi_coarse:  LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,0.45,0.75)&&LepGood_mediumMuonId>0, 1.0, 0.85/LepGood_jetPtRatiov2): [ 0,5,10,15,20,30,45,65,100 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJI85_mvaSusy_sVi_coarseOldBin:  LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,0.45,0.75)&&LepGood_mediumMuonId>0, 1.0, 0.85/LepGood_jetPtRatiov2): [ 10,15,25,35,50,70 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJI85_mvaSusy_sVi_low: LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,0.45,0.75)&&LepGood_mediumMuonId>0, 1.0, 0.85/LepGood_jetPtRatiov2): [ 0,5,10,20,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJI85_mvaSusy_sVi_flow: LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,0.45,0.75)&&LepGood_mediumMuonId>0, 1.0, 0.85/LepGood_jetPtRatiov2): [ 0,5,10,15,20,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJI85_mvaSusy_sVi_zcoarse: LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,0.45,0.75)&&LepGood_mediumMuonId>0, 1.0, 0.85/LepGood_jetPtRatiov2): [ 0,5,10,20,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJI85_mvaSusy_sVi_zcoarse2: LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,0.45,0.75)&&LepGood_mediumMuonId>0, 1.0, 0.85/LepGood_jetPtRatiov2): [ 0,5,10,15,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+
+ptJI75_mvaSusy_sMi_coarse:  LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,-0.2,0.5)&&LepGood_mediumMuonId>0, 1.0, 0.75/LepGood_jetPtRatiov2): [ 0,5,10,15,20,30,45,65,100 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJI75_mvaSusy_sMi_low: LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,-0.2,0.5)&&LepGood_mediumMuonId>0, 1.0, 0.75/LepGood_jetPtRatiov2): [ 0,5,10,20,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJI75_mvaSusy_sMi_flow: LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,-0.2,0.5)&&LepGood_mediumMuonId>0, 1.0, 0.75/LepGood_jetPtRatiov2): [ 0,5,10,15,20,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJI75_mvaSusy_sMi_zcoarse: LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,-0.2,0.5)&&LepGood_mediumMuonId>0, 1.0, 0.75/LepGood_jetPtRatiov2): [ 0,5,10,20,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJI75_mvaSusy_sMi_zcoarse2: LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,-0.2,0.5)&&LepGood_mediumMuonId>0, 1.0, 0.75/LepGood_jetPtRatiov2): [ 0,5,10,15,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJI75_mvaSusy_sVi_coarse:  LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,0.45,0.75)&&LepGood_mediumMuonId>0, 1.0, 0.75/LepGood_jetPtRatiov2): [ 0,5,10,15,20,30,45,65,100 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJI75_mvaSusy_sVi_low: LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,0.45,0.75)&&LepGood_mediumMuonId>0, 1.0, 0.75/LepGood_jetPtRatiov2): [ 0,5,10,20,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJI75_mvaSusy_sVi_flow: LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,0.45,0.75)&&LepGood_mediumMuonId>0, 1.0, 0.75/LepGood_jetPtRatiov2): [ 0,5,10,15,20,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJI75_mvaSusy_sVi_zcoarse: LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,0.45,0.75)&&LepGood_mediumMuonId>0, 1.0, 0.75/LepGood_jetPtRatiov2): [ 0,5,10,20,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJI75_mvaSusy_sVi_zcoarse2: LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,0.45,0.75)&&LepGood_mediumMuonId>0, 1.0, 0.75/LepGood_jetPtRatiov2): [ 0,5,10,15,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+
+ptJI80_mvaSusy_sMi_coarse:  LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,-0.2,0.5)&&LepGood_mediumMuonId>0, 1.0, 0.80/LepGood_jetPtRatiov2): [ 0,5,10,15,20,30,45,65,100 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJI80_mvaSusy_sMi_low: LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,-0.2,0.5)&&LepGood_mediumMuonId>0, 1.0, 0.80/LepGood_jetPtRatiov2): [ 0,5,10,20,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJI80_mvaSusy_sMi_flow: LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,-0.2,0.5)&&LepGood_mediumMuonId>0, 1.0, 0.80/LepGood_jetPtRatiov2): [ 0,5,10,15,20,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJI80_mvaSusy_sMi_zcoarse: LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,-0.2,0.5)&&LepGood_mediumMuonId>0, 1.0, 0.80/LepGood_jetPtRatiov2): [ 0,5,10,20,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJI80_mvaSusy_sMi_zcoarse2: LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,-0.2,0.5)&&LepGood_mediumMuonId>0, 1.0, 0.80/LepGood_jetPtRatiov2): [ 0,5,10,15,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJI80_mvaSusy_sVi_coarse:  LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,0.45,0.75)&&LepGood_mediumMuonId>0, 1.0, 0.80/LepGood_jetPtRatiov2): [ 0,5,10,15,20,30,45,65,100 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJI80_mvaSusy_sVi_low: LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,0.45,0.75)&&LepGood_mediumMuonId>0, 1.0, 0.80/LepGood_jetPtRatiov2): [ 0,5,10,20,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJI80_mvaSusy_sVi_flow: LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,0.45,0.75)&&LepGood_mediumMuonId>0, 1.0, 0.80/LepGood_jetPtRatiov2): [ 0,5,10,15,20,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJI80_mvaSusy_sVi_zcoarse: LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,0.45,0.75)&&LepGood_mediumMuonId>0, 1.0, 0.80/LepGood_jetPtRatiov2): [ 0,5,10,20,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJI80_mvaSusy_sVi_zcoarse2: LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,0.45,0.75)&&LepGood_mediumMuonId>0, 1.0, 0.80/LepGood_jetPtRatiov2): [ 0,5,10,15,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+
+ptJIMIX_mvaSusy_sMi_coarse:  LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,-0.2,0.5)&&LepGood_mediumMuonId>0, 1.0, if3(abs(LepGood_pdgId)==13,0.80,0.85)/LepGood_jetPtRatiov2): [ 0,5,10,15,20,30,45,65,100 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJIMIX_mvaSusy_sMi_low: LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,-0.2,0.5)&&LepGood_mediumMuonId>0, 1.0, if3(abs(LepGood_pdgId)==13,0.80,0.85)/LepGood_jetPtRatiov2): [ 0,5,10,20,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJIMIX_mvaSusy_sMi_flow: LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,-0.2,0.5)&&LepGood_mediumMuonId>0, 1.0, if3(abs(LepGood_pdgId)==13,0.80,0.85)/LepGood_jetPtRatiov2): [ 0,5,10,15,20,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJIMIX_mvaSusy_sMi_zcoarse: LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,-0.2,0.5)&&LepGood_mediumMuonId>0, 1.0, if3(abs(LepGood_pdgId)==13,0.80,0.85)/LepGood_jetPtRatiov2): [ 0,5,10,20,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJIMIX_mvaSusy_sMi_zcoarse2: LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,-0.2,0.5)&&LepGood_mediumMuonId>0, 1.0, if3(abs(LepGood_pdgId)==13,0.80,0.85)/LepGood_jetPtRatiov2): [ 0,5,10,15,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJIMIX_mvaSusy_sVi_coarse:  LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,0.45,0.75)&&LepGood_mediumMuonId>0, 1.0, if3(abs(LepGood_pdgId)==13,0.80,0.85)/LepGood_jetPtRatiov2): [ 0,5,10,15,20,30,45,65,100 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJIMIX_mvaSusy_sVi_low: LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,0.45,0.75)&&LepGood_mediumMuonId>0, 1.0, if3(abs(LepGood_pdgId)==13,0.80,0.85)/LepGood_jetPtRatiov2): [ 0,5,10,20,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJIMIX_mvaSusy_sVi_flow: LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,0.45,0.75)&&LepGood_mediumMuonId>0, 1.0, if3(abs(LepGood_pdgId)==13,0.80,0.85)/LepGood_jetPtRatiov2): [ 0,5,10,15,20,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJIMIX_mvaSusy_sVi_zcoarse: LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,0.45,0.75)&&LepGood_mediumMuonId>0, 1.0, if3(abs(LepGood_pdgId)==13,0.80,0.85)/LepGood_jetPtRatiov2): [ 0,5,10,20,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJIMIX_mvaSusy_sVi_zcoarse2: LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,0.45,0.75)&&LepGood_mediumMuonId>0, 1.0, if3(abs(LepGood_pdgId)==13,0.80,0.85)/LepGood_jetPtRatiov2): [ 0,5,10,15,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+
+ptJIMIX2_mvaSusy_sMi_coarse:  LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,-0.2,0.5)&&LepGood_mediumMuonId>0, 1.0, if3(abs(LepGood_pdgId)==13,0.75,0.80)/LepGood_jetPtRatiov2): [ 0,5,10,15,20,30,45,65,100 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJIMIX2_mvaSusy_sMi_low: LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,-0.2,0.5)&&LepGood_mediumMuonId>0, 1.0, if3(abs(LepGood_pdgId)==13,0.75,0.80)/LepGood_jetPtRatiov2): [ 0,5,10,20,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJIMIX2_mvaSusy_sMi_flow: LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,-0.2,0.5)&&LepGood_mediumMuonId>0, 1.0, if3(abs(LepGood_pdgId)==13,0.75,0.80)/LepGood_jetPtRatiov2): [ 0,5,10,15,20,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJIMIX2_mvaSusy_sMi_zcoarse: LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,-0.2,0.5)&&LepGood_mediumMuonId>0, 1.0, if3(abs(LepGood_pdgId)==13,0.75,0.80)/LepGood_jetPtRatiov2): [ 0,5,10,20,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJIMIX2_mvaSusy_sMi_zcoarse2: LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,-0.2,0.5)&&LepGood_mediumMuonId>0, 1.0, if3(abs(LepGood_pdgId)==13,0.75,0.80)/LepGood_jetPtRatiov2): [ 0,5,10,15,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJIMIX2_mvaSusy_sVi_coarse:  LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,0.45,0.75)&&LepGood_mediumMuonId>0, 1.0, if3(abs(LepGood_pdgId)==13,0.75,0.80)/LepGood_jetPtRatiov2): [ 0,5,10,15,20,30,45,65,100 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJIMIX2_mvaSusy_sVi_low: LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,0.45,0.75)&&LepGood_mediumMuonId>0, 1.0, if3(abs(LepGood_pdgId)==13,0.75,0.80)/LepGood_jetPtRatiov2): [ 0,5,10,20,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJIMIX2_mvaSusy_sVi_flow: LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,0.45,0.75)&&LepGood_mediumMuonId>0, 1.0, if3(abs(LepGood_pdgId)==13,0.75,0.80)/LepGood_jetPtRatiov2): [ 0,5,10,15,20,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJIMIX2_mvaSusy_sVi_zcoarse: LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,0.45,0.75)&&LepGood_mediumMuonId>0, 1.0, if3(abs(LepGood_pdgId)==13,0.75,0.80)/LepGood_jetPtRatiov2): [ 0,5,10,20,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJIMIX2_mvaSusy_sVi_zcoarse2: LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,0.45,0.75)&&LepGood_mediumMuonId>0, 1.0, if3(abs(LepGood_pdgId)==13,0.75,0.80)/LepGood_jetPtRatiov2): [ 0,5,10,15,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+
+ptJIMIX3_mvaSusy_sMi_coarse:  LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,-0.2,0.5)&&LepGood_mediumMuonId>0, 1.0, if3(abs(LepGood_pdgId)==13,0.80,0.90)/LepGood_jetPtRatiov2): [ 0,5,10,15,20,30,45,65,100 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJIMIX3_mvaSusy_sMi_low: LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,-0.2,0.5)&&LepGood_mediumMuonId>0, 1.0, if3(abs(LepGood_pdgId)==13,0.80,0.90)/LepGood_jetPtRatiov2): [ 0,5,10,20,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJIMIX3_mvaSusy_sMi_flow: LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,-0.2,0.5)&&LepGood_mediumMuonId>0, 1.0, if3(abs(LepGood_pdgId)==13,0.80,0.90)/LepGood_jetPtRatiov2): [ 0,5,10,15,20,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJIMIX3_mvaSusy_sMi_zcoarse: LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,-0.2,0.5)&&LepGood_mediumMuonId>0, 1.0, if3(abs(LepGood_pdgId)==13,0.80,0.90)/LepGood_jetPtRatiov2): [ 0,5,10,20,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJIMIX3_mvaSusy_sMi_zcoarse2: LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,-0.2,0.5)&&LepGood_mediumMuonId>0, 1.0, if3(abs(LepGood_pdgId)==13,0.80,0.90)/LepGood_jetPtRatiov2): [ 0,5,10,15,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJIMIX3_mvaSusy_sVi_coarse:  LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,0.45,0.75)&&LepGood_mediumMuonId>0, 1.0, if3(abs(LepGood_pdgId)==13,0.80,0.90)/LepGood_jetPtRatiov2): [ 0,5,10,15,20,30,45,65,100 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJIMIX3_mvaSusy_sVi_low: LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,0.45,0.75)&&LepGood_mediumMuonId>0, 1.0, if3(abs(LepGood_pdgId)==13,0.80,0.90)/LepGood_jetPtRatiov2): [ 0,5,10,20,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJIMIX3_mvaSusy_sVi_flow: LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,0.45,0.75)&&LepGood_mediumMuonId>0, 1.0, if3(abs(LepGood_pdgId)==13,0.80,0.90)/LepGood_jetPtRatiov2): [ 0,5,10,15,20,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJIMIX3_mvaSusy_sVi_zcoarse: LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,0.45,0.75)&&LepGood_mediumMuonId>0, 1.0, if3(abs(LepGood_pdgId)==13,0.80,0.90)/LepGood_jetPtRatiov2): [ 0,5,10,20,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJIMIX3_mvaSusy_sVi_zcoarse2: LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,0.45,0.75)&&LepGood_mediumMuonId>0, 1.0, if3(abs(LepGood_pdgId)==13,0.80,0.90)/LepGood_jetPtRatiov2): [ 0,5,10,15,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+
+ptJIMIX4_mvaSusy_sMi_coarse:  LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,-0.2,0.5)&&LepGood_mediumMuonId>0, 1.0, if3(abs(LepGood_pdgId)==13,0.75,0.85)/LepGood_jetPtRatiov2): [ 0,5,10,15,20,30,45,65,100 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJIMIX4_mvaSusy_sMi_low: LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,-0.2,0.5)&&LepGood_mediumMuonId>0, 1.0, if3(abs(LepGood_pdgId)==13,0.75,0.85)/LepGood_jetPtRatiov2): [ 0,5,10,20,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJIMIX4_mvaSusy_sMi_flow: LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,-0.2,0.5)&&LepGood_mediumMuonId>0, 1.0, if3(abs(LepGood_pdgId)==13,0.75,0.85)/LepGood_jetPtRatiov2): [ 0,5,10,15,20,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJIMIX4_mvaSusy_sMi_zcoarse: LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,-0.2,0.5)&&LepGood_mediumMuonId>0, 1.0, if3(abs(LepGood_pdgId)==13,0.75,0.85)/LepGood_jetPtRatiov2): [ 0,5,10,20,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJIMIX4_mvaSusy_sMi_zcoarse2: LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,-0.2,0.5)&&LepGood_mediumMuonId>0, 1.0, if3(abs(LepGood_pdgId)==13,0.75,0.85)/LepGood_jetPtRatiov2): [ 0,5,10,15,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJIMIX4_mvaSusy_sVi_coarse:  LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,0.45,0.75)&&LepGood_mediumMuonId>0, 1.0, if3(abs(LepGood_pdgId)==13,0.75,0.85)/LepGood_jetPtRatiov2): [ 0,5,10,15,20,30,45,65,100 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJIMIX4_mvaSusy_sVi_low: LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,0.45,0.75)&&LepGood_mediumMuonId>0, 1.0, if3(abs(LepGood_pdgId)==13,0.75,0.85)/LepGood_jetPtRatiov2): [ 0,5,10,20,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJIMIX4_mvaSusy_sVi_flow: LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,0.45,0.75)&&LepGood_mediumMuonId>0, 1.0, if3(abs(LepGood_pdgId)==13,0.75,0.85)/LepGood_jetPtRatiov2): [ 0,5,10,15,20,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJIMIX4_mvaSusy_sVi_zcoarse: LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,0.45,0.75)&&LepGood_mediumMuonId>0, 1.0, if3(abs(LepGood_pdgId)==13,0.75,0.85)/LepGood_jetPtRatiov2): [ 0,5,10,20,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJIMIX4_mvaSusy_sVi_zcoarse2: LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,0.45,0.75)&&LepGood_mediumMuonId>0, 1.0, if3(abs(LepGood_pdgId)==13,0.75,0.85)/LepGood_jetPtRatiov2): [ 0,5,10,15,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+
+
+
+
+
+ptJI90_mvaSusy_sMi_coarse:  LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,-0.2,0.5)&&LepGood_mediumMuonId>0, 1.0, 0.90/LepGood_jetPtRatiov2): [ 0,5,10,15,20,30,45,65,100 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJI90_mvaSusy_sMi_low: LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,-0.2,0.5)&&LepGood_mediumMuonId>0, 1.0, 0.90/LepGood_jetPtRatiov2): [ 0,5,10,20,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJI90_mvaSusy_sMi_flow: LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,-0.2,0.5)&&LepGood_mediumMuonId>0, 1.0, 0.90/LepGood_jetPtRatiov2): [ 0,5,10,15,20,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJI90_mvaSusy_sMi_zcoarse: LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,-0.2,0.5)&&LepGood_mediumMuonId>0, 1.0, 0.90/LepGood_jetPtRatiov2): [ 0,5,10,20,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJI90_mvaSusy_sMi_zcoarse2: LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,-0.2,0.5)&&LepGood_mediumMuonId>0, 1.0, 0.90/LepGood_jetPtRatiov2): [ 0,5,10,15,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJI90_mvaSusy_sVi_coarse:  LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,0.45,0.75)&&LepGood_mediumMuonId>0, 1.0, 0.90/LepGood_jetPtRatiov2): [ 0,5,10,15,20,30,45,65,100 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJI90_mvaSusy_sVi_low: LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,0.45,0.75)&&LepGood_mediumMuonId>0, 1.0, 0.90/LepGood_jetPtRatiov2): [ 0,5,10,20,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJI90_mvaSusy_sVi_flow: LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,0.45,0.75)&&LepGood_mediumMuonId>0, 1.0, 0.90/LepGood_jetPtRatiov2): [ 0,5,10,15,20,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJI90_mvaSusy_sVi_zcoarse: LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,0.45,0.75)&&LepGood_mediumMuonId>0, 1.0, 0.90/LepGood_jetPtRatiov2): [ 0,5,10,20,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJI90_mvaSusy_sVi_zcoarse2: LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,0.45,0.75)&&LepGood_mediumMuonId>0, 1.0, 0.90/LepGood_jetPtRatiov2): [ 0,5,10,15,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+
+ptJI100_mvaSusy_sMi_coarse:  LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,-0.2,0.5)&&LepGood_mediumMuonId>0, 1.0, 1.0/LepGood_jetPtRatiov2): [ 0,5,10,15,20,30,45,65,100 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJI100_mvaSusy_sMi_low: LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,-0.2,0.5)&&LepGood_mediumMuonId>0, 1.0, 1.0/LepGood_jetPtRatiov2): [ 0,5,10,20,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJI100_mvaSusy_sMi_flow: LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,-0.2,0.5)&&LepGood_mediumMuonId>0, 1.0, 1.0/LepGood_jetPtRatiov2): [ 0,5,10,15,20,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJI100_mvaSusy_sMi_zcoarse: LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,-0.2,0.5)&&LepGood_mediumMuonId>0, 1.0, 1.0/LepGood_jetPtRatiov2): [ 0,5,10,20,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJI100_mvaSusy_sMi_zcoarse2: LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,-0.2,0.5)&&LepGood_mediumMuonId>0, 1.0, 1.0/LepGood_jetPtRatiov2): [ 0,5,10,15,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJI100_mvaSusy_sVi_coarse:  LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,0.45,0.75)&&LepGood_mediumMuonId>0, 1.0, 1.0/LepGood_jetPtRatiov2): [ 0,5,10,15,20,30,45,65,100 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJI100_mvaSusy_sVi_low: LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,0.45,0.75)&&LepGood_mediumMuonId>0, 1.0, 1.0/LepGood_jetPtRatiov2): [ 0,5,10,20,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJI100_mvaSusy_sVi_flow: LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,0.45,0.75)&&LepGood_mediumMuonId>0, 1.0, 1.0/LepGood_jetPtRatiov2): [ 0,5,10,15,20,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJI100_mvaSusy_sVi_zcoarse: LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,0.45,0.75)&&LepGood_mediumMuonId>0, 1.0, 1.0/LepGood_jetPtRatiov2): [ 0,5,10,20,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJI100_mvaSusy_sVi_zcoarse2: LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,0.45,0.75)&&LepGood_mediumMuonId>0, 1.0, 1.0/LepGood_jetPtRatiov2): [ 0,5,10,15,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+
+pt_mvaSusy_sMi_coarse: LepGood_pt: [ 0,5,10,15,20,30,45,65,100 ] ; XTitle="lepton p_{T} (GeV)", Density=True
+pt_mvaSusy_sVi_coarse: LepGood_pt: [ 0,5,10,15,20,30,45,65,100 ] ; XTitle="lepton p_{T} (GeV)", Density=True
+ptJ_mvaSusy_sMi_coarse:  LepGood_pt/LepGood_jetPtRatiov2: [ 0,5,10,15,20,30,45,65,100 ]; XTitle="lepton p_{T} w/ jet (GeV)", Density=True
+ptJ_mvaSusy_sVi_coarse:  LepGood_pt/LepGood_jetPtRatiov2: [ 0,5,10,15,20,30,45,65,100 ]; XTitle="lepton p_{T} w/ jet (GeV)", Density=True

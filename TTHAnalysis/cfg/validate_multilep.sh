@@ -23,10 +23,10 @@ function do_plot {
     if [[ "${LABEL}" != "MANUAL" ]]; then 
         test -L ${DIR}/Ref && rm ${DIR}/Ref    
         test -L ${DIR}/New && rm ${DIR}/New    
-        if test -d ~/Reference_76X_${PROCR}${LABEL}; then
-             ln -sd ~/Reference_76X_${PROCR}${LABEL} ${DIR}/Ref;
+        if test -d ~/Reference_80X_${PROCR}${LABEL}; then
+             ln -sd ~/Reference_80X_${PROCR}${LABEL} ${DIR}/Ref;
         else
-             ln -sd $PWD/Reference_76X_${PROCR}${LABEL} ${DIR}/Ref;
+             ln -sd $PWD/Reference_80X_${PROCR}${LABEL} ${DIR}/Ref;
         fi
     else
         test -L ${DIR}/Ref && rm ${DIR}/Ref    
@@ -47,7 +47,7 @@ function do_plot {
       CUTS=susy-multilepton/validation.txt;
       if [ -f susy-multilepton/validation-${PROC}.txt ]; then 
         CUTS=susy-multilepton/validation-${PROC}.txt
-      elif echo $PROC | grep -q Run2015; then
+      elif echo $PROC | grep -q Run2016; then
         if echo $PROC | grep -q Single; then
              CUTS=susy-multilepton/validation-data-single.txt
         else
@@ -55,7 +55,7 @@ function do_plot {
         fi;
       fi
       python mcPlots.py -f --s2v --tree treeProducerSusyMultilepton  -P ${DIR} $MCA $CUTS ${CUTS/.txt/_plots.txt} \
-              --pdir plots/76X/validation/${OUTNAME}${LABEL} -p new,ref -u -e \
+              --pdir plots/80X/validation/${OUTNAME}${LABEL} -p new,ref -u -e \
               --plotmode=nostack --showRatio --maxRatioRange 0.65 1.35 --flagDifferences
     );
 }
@@ -63,12 +63,12 @@ function do_plot {
 
 case $WHAT in
     Data)
-        $RUN && do_run $DIR -o test=76X-Data  -N 5000 -o runData -o doT1METCorr  ;
-        do_plot DoubleMuon_Run2015D_run260577 DoubleMuon_Run2015D_run260577
-        do_plot DoubleEG_Run2015D_run260577 DoubleEG_Run2015D_run260577
+        $RUN && do_run $DIR -o test=80X-Data  -N 10000 -o runData;
+        do_plot DoubleMuon_Run2016B_run274315 DoubleMuon_Run2016B_run274315
+        do_plot DoubleEG_Run2016B_run274315 DoubleEG_Run2016B_run274315
         ;;
     MC)
-        $RUN && do_run $DIR -o test=76X-MC -o sample=TTLep -N 2000 -o doT1METCorr;
+        $RUN && do_run $DIR -o test=80X-MC -o sample=TTLep -N 2000;
         do_plot TTLep_pow TTLep_pow
         ;;
     -manual)

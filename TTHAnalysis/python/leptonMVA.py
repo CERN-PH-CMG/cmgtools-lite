@@ -48,7 +48,7 @@ class CategorizedMVA:
 _CommonSpect = {
  'forMoriond16': [],
  'SoftJetLessNOBTAG': [
-    MVAVar("LepGood_mcMatchAny",lambda x: x.mcMatchAny),
+    MVAVar("LepGood_mcMatchAny",lambda x: getattr(x,'mcMatchAny',-999)),
   ],
 }
 _CommonVars = {

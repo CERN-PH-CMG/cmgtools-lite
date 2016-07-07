@@ -1,1 +1,1 @@
-atleastonefake: (LepSel1_mcMatchId == 0 && LepSel1_mcPromptGamma == 0) || (LepSel2_mcMatchId == 0 && LepSel2_mcPromptGamma == 0) || (LepSel3_mcMatchId == 0 && LepSel3_mcPromptGamma == 0)
+atleastonefake: (LepSel_mcMatchId[0] == 0 && LepSel_mcPromptGamma[0] == 0) || (LepSel_mcMatchId[1] == 0 && LepSel_mcPromptGamma[1] == 0) || (LepSel_mcMatchId[2] == 0 && LepSel_mcPromptGamma[2] == 0)

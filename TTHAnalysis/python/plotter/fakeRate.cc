@@ -16,7 +16,8 @@ TH2 * FR3_el = 0;
 TH2 * FR4_el = 0;
 TH2 * FR5_el = 0;
 TH2 * QF_el = 0;
-TH2 * FRi_mu[6], *FRi_el[6];
+TH2 * FRi_mu[6], *FRi_el[6], *FRi_tau[6];
+TH2 * FR_tau = 0;
 
 TH2 * FR_mu_FO1_QCD    = 0;
 TH2 * FR_mu_FO1_insitu = 0;
@@ -46,7 +47,8 @@ TH2 * FRi_fHT_FO_el[2];
 
 bool loadFRHisto(const std::string &histoName, const char *file, const char *name) {
     TH2 **histo = 0, **hptr2 = 0;
-    if      (histoName == "FR_mu")  { histo = & FR_mu;  hptr2 = & FRi_mu[0]; }
+    if      (histoName == "FR_tau") { histo = & FR_tau; hptr2 = & FRi_tau[0]; }
+    else if (histoName == "FR_mu")  { histo = & FR_mu;  hptr2 = & FRi_mu[0]; }
     else if (histoName == "FR_el")  { histo = & FR_el;  hptr2 = & FRi_el[0]; }
     else if (histoName == "FR2_mu") { histo = & FR2_mu; hptr2 = & FRi_mu[2]; }
     else if (histoName == "FR2_el") { histo = & FR2_el; hptr2 = & FRi_el[2]; }
@@ -885,6 +887,10 @@ float multiIso_multiWP(int LepGood_pdgId, float LepGood_pt, float LepGood_eta, f
            return abs(LepGood_pdgId)==13 ? 
                     multiIso_singleWP(LepGood_miniRelIso,LepGood_jetPtRatiov2,LepGood_jetPtRelv2, WP::M) :
                     multiIso_singleWP(LepGood_miniRelIso,LepGood_jetPtRatiov2,LepGood_jetPtRelv2, WP::T) ;
+        case WP::L:
+           return abs(LepGood_pdgId)==13 ? 
+                    multiIso_singleWP(LepGood_miniRelIso,LepGood_jetPtRatiov2,LepGood_jetPtRelv2, WP::L) :
+                    multiIso_singleWP(LepGood_miniRelIso,LepGood_jetPtRatiov2,LepGood_jetPtRelv2, WP::M) ;
         case WP::VVL: return LepGood_miniRelIso < 0.4;
         default:
             std::cerr << "Working point " << wp << " not implemented for multiIso_multiWP" << std::endl;
@@ -893,6 +899,29 @@ float multiIso_multiWP(int LepGood_pdgId, float LepGood_pt, float LepGood_eta, f
 }
 float multiIso_multiWP(int LepGood_pdgId, float LepGood_pt, float LepGood_eta, float LepGood_miniRelIso, float LepGood_jetPtRatiov2, float LepGood_jetPtRelv2, int wp) {
     return multiIso_multiWP(LepGood_pdgId,LepGood_pt,LepGood_eta,LepGood_miniRelIso,LepGood_jetPtRatiov2,LepGood_jetPtRelv2,WP::WPId(wp));
+}
+
+
+float conept_RA5(int LepGood_pdgId, float LepGood_pt, float LepGood_eta, float LepGood_miniRelIso, float LepGood_jetPtRatiov2, float LepGood_jetPtRelv2) {
+
+  float A = (abs(LepGood_pdgId)==11) ? 0.12 : 0.16;
+  float B = (abs(LepGood_pdgId)==11) ? 0.80 : 0.76;
+  float C = (abs(LepGood_pdgId)==11) ? 7.2 : 7.2;
+  
+  if (LepGood_jetPtRelv2>C) return LepGood_pt*(1+std::max(float(LepGood_miniRelIso-A),float(0.)));
+  else return std::max(float(LepGood_pt),float(LepGood_pt/LepGood_jetPtRatiov2*B));
+
+}
+
+float conept_RA7(int LepGood_pdgId, float LepGood_pt, float LepGood_eta, float LepGood_miniRelIso, float LepGood_jetPtRatiov2, float LepGood_jetPtRelv2) {
+
+  float A = (abs(LepGood_pdgId)==11) ? 0.16 : 0.20;
+  float B = (abs(LepGood_pdgId)==11) ? 0.76 : 0.69;
+  float C = (abs(LepGood_pdgId)==11) ? 7.2 : 6.0;
+
+  if (LepGood_jetPtRelv2>C) return LepGood_pt*(1+std::max(float(LepGood_miniRelIso-A),float(0.)));
+  else return std::max(float(LepGood_pt),float(LepGood_pt/LepGood_jetPtRatiov2*B));
+
 }
 
 float multiIso_singleWP_relaxFO3(int LepGood_pdgId, float LepGood_pt, float LepGood_CorrConePt, float LepGood_eta, float LepGood_miniRelIso, float LepGood_jetPtRatiov2, float LepGood_jetPtRelv2, WP::WPId wp) {
@@ -971,5 +1000,40 @@ float ttHl_ptFO_ab(int LepGood_pdgId, float LepGood_pt, float LepGood_jetPtRatio
     return std::max(LepGood_pt, a*(LepGood_pt/LepGood_jetPtRatio - b));
 }
 
+float EWK3L_fakeRate(float pt, float eta, int pdgId) {
+    TH2 *hist = FR_el;
+    if(abs(pdgId)==13) hist=FR_mu;
+    if(abs(pdgId)==15) hist=FR_tau;
+    int ptbin  = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(pt)));
+    int etabin = std::max(1, std::min(hist->GetNbinsY(), hist->GetYaxis()->FindBin(abs(eta))));
+    double fr = hist->GetBinContent(ptbin,etabin);
+    if (fr <= 0)  { std::cerr << "WARNING, FR is " << fr << " for " << hist->GetName() << ", pt " << pt << " eta " << eta << std::endl; if (fr<0) std::abort(); }
+    return fr/(1-fr);
+}
+
+float EWK3L_fakeTransfer(unsigned int nLep, float l1fr    , int l1isFake,
+                                            float l2fr    , int l2isFake,
+                                            float l3fr    , int l3isFake,
+                                            float l4fr = 0, int l4isFake = 0) {
+    int nfail = l1isFake + l2isFake + l3isFake + l4isFake;
+    if(nLep == 3) nfail = l1isFake + l2isFake + l3isFake;
+
+    if(nfail == 1){
+        if      (l1isFake) return l1fr;
+        else if (l2isFake) return l2fr;
+        else if (l3isFake) return l3fr;
+    }
+    else if(nfail == 2){
+        if      (!l1isFake) return -1 * l2fr * l3fr;
+        else if (!l2isFake) return -1 * l1fr * l3fr;
+        else if (!l3isFake) return -1 * l1fr * l2fr;
+    }
+    else if(nfail == 3){
+        return l1fr * l2fr * l3fr;
+    }
+
+    return 0;
+}
 
 void fakeRate() {}
+

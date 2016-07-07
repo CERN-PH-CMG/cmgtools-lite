@@ -1,0 +1,38 @@
+TT_all : TTJets_DiLepton : xsec : (LepGood1_mcMatchId==0 || LepGood2_mcMatchId==0) ; Label="TT fakes+convs", FillColor=ROOT.kBlack
+TT_all : TTJets_SingleLeptonFromT : xsec : (LepGood1_mcMatchId==0 || LepGood2_mcMatchId==0) ; Label="TT fakes+convs", FillColor=ROOT.kBlack
+#TT_all : TTJets_SingleLeptonFromT_ext : 0.8*xsec : (LepGood1_mcMatchId==0 || LepGood2_mcMatchId==0) ; Label="TT fakes+convs", FillColor=ROOT.kBlack
+TT_all : TTJets_SingleLeptonFromTbar : xsec : (LepGood1_mcMatchId==0 || LepGood2_mcMatchId==0) ; Label="TT fakes+convs", FillColor=ROOT.kBlack
+#TT_all : TTJets_SingleLeptonFromTbar_ext : 0.8*xsec : (LepGood1_mcMatchId==0 || LepGood2_mcMatchId==0) ; Label="TT fakes+convs", FillColor=ROOT.kBlack
+
+#WJets : WJetsToLNu_LO : xsec : (LepGood1_mcMatchId==0 || LepGood2_mcMatchId==0) ; Label="W+jets fakes+convs", FillColor=ROOT.kBlue
+
+###TT_fake : TTJets_DiLepton : xsec : ((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==0) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==0)) ; Label="TT fakes", FillColor=ROOT.kGray+2
+###TT_fake : TTJets_SingleLeptonFromT : 0.2*xsec : ((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==0) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==0)) ; Label="TT fakes", FillColor=ROOT.kGray+2
+###TT_fake : TTJets_SingleLeptonFromT_ext : 0.8*xsec : ((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==0) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==0)) ; Label="TT fakes", FillColor=ROOT.kGray+2
+###TT_fake : TTJets_SingleLeptonFromTbar : 0.2*xsec : ((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==0) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==0)) ; Label="TT fakes", FillColor=ROOT.kGray+2
+###TT_fake : TTJets_SingleLeptonFromTbar_ext : 0.8*xsec : ((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==0) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==0)) ; Label="TT fakes", FillColor=ROOT.kGray+2
+
+##
+##TT_gamma : TTJets_DiLepton : xsec : ((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==1) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==1)) ; Label="Convs", FillColor=ROOT.kOrange
+##TT_gamma : TTJets_SingleLeptonFromT : 0.2*xsec : ((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==1) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==1)) ; Label="Convs", FillColor=ROOT.kOrange
+##TT_gamma : TTJets_SingleLeptonFromT_ext : 0.8*xsec : ((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==1) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==1)) ; Label="Convs", FillColor=ROOT.kOrange
+##TT_gamma : TTJets_SingleLeptonFromTbar : 0.2*xsec : ((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==1) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==1)) ; Label="Convs", FillColor=ROOT.kOrange
+##TT_gamma : TTJets_SingleLeptonFromTbar_ext : 0.8*xsec : ((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==1) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==1)) ; Label="Convs", FillColor=ROOT.kOrange
+##
+##TT_gamma_appl : TTJets_DiLepton : xsec : ((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==1) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==1)) ; Label="Convs in appl.", FillColor=ROOT.kOrange-3, FakeRate="susy-ewkino/fakeRate-2lss-appl.txt"
+##TT_gamma_appl : TTJets_SingleLeptonFromT : 0.2*xsec : ((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==1) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==1)) ; Label="Convs in appl.", FillColor=ROOT.kOrange-3, FakeRate="susy-ewkino/fakeRate-2lss-appl.txt"
+##TT_gamma_appl : TTJets_SingleLeptonFromT_ext : 0.8*xsec : ((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==1) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==1)) ; Label="Convs in appl.", FillColor=ROOT.kOrange-3, FakeRate="susy-ewkino/fakeRate-2lss-appl.txt"
+##TT_gamma_appl : TTJets_SingleLeptonFromTbar : 0.2*xsec : ((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==1) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==1)) ; Label="Convs in appl.", FillColor=ROOT.kOrange-3, FakeRate="susy-ewkino/fakeRate-2lss-appl.txt"
+##TT_gamma_appl : TTJets_SingleLeptonFromTbar_ext : 0.8*xsec : ((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==1) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==1)) ; Label="Convs in appl.", FillColor=ROOT.kOrange-3, FakeRate="susy-ewkino/fakeRate-2lss-appl.txt"
+
+##SF FR_TT : TTJets_DiLepton : xsec : (LepGood1_mcMatchId==0 || LepGood2_mcMatchId==0) ; FakeRate="susy-ewkino/2lss/fakeRate-2lss-frmc-tt.txt", Label="FR (TT)", FillColor=ROOT.kBlue
+##SF FR_TT : TTJets_SingleLeptonFromT : xsec : (LepGood1_mcMatchId==0 || LepGood2_mcMatchId==0) ; FakeRate="susy-ewkino/2lss/fakeRate-2lss-frmc-tt.txt", Label="FR (TT)", FillColor=ROOT.kBlue
+##SF #FR_TT : TTJets_SingleLeptonFromT_ext : 0.8*xsec : (LepGood1_mcMatchId==0 || LepGood2_mcMatchId==0) ; FakeRate="susy-ewkino/2lss/fakeRate-2lss-frmc-tt.txt", Label="FR (TT)", FillColor=ROOT.kBlue
+##SF FR_TT : TTJets_SingleLeptonFromTbar : xsec : (LepGood1_mcMatchId==0 || LepGood2_mcMatchId==0) ; FakeRate="susy-ewkino/2lss/fakeRate-2lss-frmc-tt.txt", Label="FR (TT)", FillColor=ROOT.kBlue
+##SF #FR_TT : TTJets_SingleLeptonFromTbar_ext : 0.8*xsec : (LepGood1_mcMatchId==0 || LepGood2_mcMatchId==0) ; FakeRate="susy-ewkino/2lss/fakeRate-2lss-frmc-tt.txt", Label="FR (TT)", FillColor=ROOT.kBlue
+
+FR_QCD : TTJets_DiLepton : xsec : (LepGood1_mcMatchId==0 || LepGood2_mcMatchId==0) ; FakeRate="susy-ewkino/2lss/fakeRate-2lss-frmc-qcd.txt", Label="FR (QCD)", FillColor=ROOT.kRed
+FR_QCD : TTJets_SingleLeptonFromT : xsec : (LepGood1_mcMatchId==0 || LepGood2_mcMatchId==0) ; FakeRate="susy-ewkino/2lss/fakeRate-2lss-frmc-qcd.txt", Label="FR (QCD)", FillColor=ROOT.kRed
+#FR_QCD : TTJets_SingleLeptonFromT_ext : 0.8*xsec : (LepGood1_mcMatchId==0 || LepGood2_mcMatchId==0) ; FakeRate="susy-ewkino/2lss/fakeRate-2lss-frmc-qcd.txt", Label="FR (QCD)", FillColor=ROOT.kRed
+FR_QCD : TTJets_SingleLeptonFromTbar : xsec : (LepGood1_mcMatchId==0 || LepGood2_mcMatchId==0) ; FakeRate="susy-ewkino/2lss/fakeRate-2lss-frmc-qcd.txt", Label="FR (QCD)", FillColor=ROOT.kRed
+#FR_QCD : TTJets_SingleLeptonFromTbar_ext : 0.8*xsec : (LepGood1_mcMatchId==0 || LepGood2_mcMatchId==0) ; FakeRate="susy-ewkino/2lss/fakeRate-2lss-frmc-qcd.txt", Label="FR (QCD)", FillColor=ROOT.kRed
