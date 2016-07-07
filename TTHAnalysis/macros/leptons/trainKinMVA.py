@@ -47,7 +47,7 @@ def load_dataset(name, trainclass, addw=1, path=None, friends=[]):
     pckobj  = pickle.load(open(pckfile,'r'))
     counters = dict(pckobj)
     weight = 1.0*addw/(counters['Sum Weights'])
-    print ('Added %s dataset, category %s, with weight %f/%f*xsec*genWeight' %
+    print ('Added %s dataset, category %s, with weight %f/%f' %
              (name, trainclass, addw, counters['Sum Weights']))
 
     return tree, weight
@@ -146,6 +146,7 @@ def train_multiclass(fOutName, options):
                                 '!UseBaggedGrad',
                                 'nCuts=200',
                                 # 'nCuts=2000',
+                                'nEventsMin=100',
                                 'MaxDepth=8',
                                 'NegWeightTreatment=PairNegWeightsGlobal',
                                 ]))
@@ -287,6 +288,43 @@ def train_2d(fOutName, training, options):
             ('TTJets_SingleLeptonFromT_ext',    'Background', 0.9),
             ('TTJets_SingleLeptonFromTbar_ext', 'Background', 0.9),
         ]
+
+    if 'bdtv8_bestchoice' in training:
+        variables += [
+            'BDTv8_eventReco_mvaValue := max(-0.2,BDTv8_eventReco_mvaValue)',
+            "BDTv8_eventReco_bJet_fromHadTop_CSV := max(-0.2,BDTv8_eventReco_bJet_fromHadTop_CSV)",
+            "BDTv8_eventReco_HadTop_pT := max(-10,BDTv8_eventReco_HadTop_pT)",
+            "BDTv8_eventReco_HadTop_mass := max(-10,BDTv8_eventReco_HadTop_mass)",
+            ]
+    if 'bdtv8_onlymass' in training:
+        variables += [
+            'BDTv8_eventReco_mvaValue := max(-0.2,BDTv8_eventReco_mvaValue)',
+            "BDTv8_eventReco_HadTop_mass := max(-10,BDTv8_eventReco_HadTop_mass)",
+            ]
+    if 'bdtv8_value' in training:
+        variables += [
+            'BDTv8_eventReco_mvaValue := max(-1.1,BDTv8_eventReco_mvaValue)',
+            ]
+    if 'bdtv8_reco' in training:
+        variables += [
+            "BDTv8_eventReco_bJet_fromLepTop_CSV := max(-1.1,BDTv8_eventReco_bJet_fromLepTop_CSV)",
+            "BDTv8_eventReco_bJet_fromHadTop_CSV := max(-1.1,BDTv8_eventReco_bJet_fromHadTop_CSV)",
+            "BDTv8_eventReco_qJet1_fromW_fromHadTop_CSV := max(-1.1,BDTv8_eventReco_qJet1_fromW_fromHadTop_CSV)",
+            "BDTv8_eventReco_HadTop_pT := BDTv8_eventReco_HadTop_pT",
+            "BDTv8_eventReco_W_fromHadTop_mass := BDTv8_eventReco_W_fromHadTop_mass",
+            "BDTv8_eventReco_HadTop_mass := BDTv8_eventReco_HadTop_mass",
+            "BDTv8_eventReco_W_fromHiggs_mass := BDTv8_eventReco_W_fromHiggs_mass",
+            "BDTv8_eventReco_LepTop_HadTop_dR := BDTv8_eventReco_LepTop_HadTop_dR",
+            ]
+    if 'bdtv8_simple' in training:
+        variables += [
+            "HadTopSimple_bJet_fromHadTop_CSV := max(-1.1,bJet_fromHadTop_CSV)",
+            "HadTopSimple_lJet_fromHadTop_CSV2 := max(-1.1,lJet_fromHadTop_CSV2)",
+            "HadTopSimple_HadTop_Mass := HadTop_Mass",
+            "HadTopSimple_HadTop_Pt := HadTop_Pt",
+            "HadTopSimple_W_fromHadTop_Mass := W_fromHadTop_Mass",
+            "HadTopSimple_bJet_notFromHadTop_CSV := max(-1.1,bJet_notFromHadTop_CSV)"
+            ]
 
     outname = fOutName+'_'+training
     train_single(allcuts, variables, dsets, outname, options)
