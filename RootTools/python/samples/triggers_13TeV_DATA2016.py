@@ -8,7 +8,7 @@ triggers_mumu_ss = [ "HLT_Mu17_Mu8_SameSign_v*", "HLT_Mu17_Mu8_SameSign_DZ_v*", 
 triggers_mumu = triggers_mumu_iso
 
 triggers_ee = [ "HLT_Ele17_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v*", "HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v*" ] # 17/12 prescaled in column 0
-triggers_ee_noniso = ["HLT_DoubleEle33_CaloIdL_v*", "LT_DoubleEle37_Ele27_CaloIdL_GsfTrkIdVL_v*", "HLT_DoubleEle33_CaloIdL_GsfTrkIdVL_v" ]
+triggers_ee_noniso = ["HLT_DoubleEle33_CaloIdL_v*", "HLT_DoubleEle37_Ele27_CaloIdL_GsfTrkIdVL_v*", "HLT_DoubleEle33_CaloIdL_GsfTrkIdVL_v" ]
 
 # warning: ee trigger without DZ is prescaled
 triggers_ee_nodz = [ "HLT_Ele17_Ele12_CaloIdL_TrackIdL_IsoVL_v*" ]
