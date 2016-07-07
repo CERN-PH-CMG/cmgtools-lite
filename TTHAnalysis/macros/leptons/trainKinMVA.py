@@ -209,7 +209,7 @@ def train_single(allcuts, variables, dsets, fOutName, options):
 
     fOut.Close()
 
-def train_2d(training, options):
+def train_2d(fOutName, training, options):
     allcuts = ROOT.TCut('1')
     if '2lss' in training:
         allcuts += "nLepFO_Recl>=2"
@@ -246,7 +246,7 @@ def train_2d(training, options):
             "LepGood_conePt[iF_Recl[0]] := LepGood_conePt[iF_Recl[0]]"
         ]
         dsets += [
-            ('TTW_LO', 'Background', 1)
+            ('TTW_LO', 'Background', 1),
             ('TTZ_LO', 'Background', 1),
         ]
     if '2lss' in training and 'ttbar' in training:
@@ -271,7 +271,7 @@ def train_2d(training, options):
             "LepGood_conePt[iF_Recl[0]] := LepGood_conePt[iF_Recl[0]]"
         ]
         dsets += [
-            ('TTW_LO', 'Background', 1)
+            ('TTW_LO', 'Background', 1),
             ('TTZ_LO', 'Background', 1),
         ]
     if '3l' in training and 'ttbar' in training:
@@ -282,9 +282,13 @@ def train_2d(training, options):
         dsets += [
             ('TTJets_DiLepton',            'Background', 0.1),
             ('TTJets_DiLepton_ext_skim3l', 'Background', 0.9),
+            ('TTJets_SingleLeptonFromT',        'Background', 0.1),
+            ('TTJets_SingleLeptonFromTbar',     'Background', 0.1),
+            ('TTJets_SingleLeptonFromT_ext',    'Background', 0.9),
+            ('TTJets_SingleLeptonFromTbar_ext', 'Background', 0.9),
         ]
 
-    outname = 'kinMVA_%s.root' % training
+    outname = fOutName+'_'+training
     train_single(allcuts, variables, dsets, outname, options)
 
 def main(args, options):
@@ -295,12 +299,12 @@ def main(args, options):
         return
 
     if len(options.training):
-        train_2d(options.training.lower(), options)
+        train_2d(args[0], options.training.lower(), options)
     else:
-        train_2d('2lss_ttv',   options)
-        train_2d('2lss_ttbar', options)
-        train_2d('3l_ttv',     options)
-        train_2d('3l_ttbar',   options)
+        train_2d(args[0], '2lss_ttv',   options)
+        train_2d(args[0], '2lss_ttbar', options)
+        train_2d(args[0], '3l_ttv',     options)
+        train_2d(args[0], '3l_ttbar',   options)
 
 
 if __name__ == '__main__':
