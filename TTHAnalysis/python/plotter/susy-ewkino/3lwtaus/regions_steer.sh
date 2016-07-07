@@ -25,39 +25,22 @@ PLOTSDIR=~/www/susyRA7/
 
 NPROC=8
 
-LUMI=10.0
-
-PAR=" & "
-#PAR=""
-
+LUMI=4.0
 
 if [ "${1}" = "anal" ]; then
 
-    python ${ANALYZER} ${MCA} ${CUTS} --path ${TREESPATH} --tree ${TREE}  --lumi ${LUMI} --s2v -j ${NPROC} --Fs ${TREESPATH}${FT_LJCLEANER} ${LCHOICE} --mcc ${MCCTRIGDEF} --mcc ${MCCUTSDEF} -f -G
+    # final only -f
+    python ${ANALYZER} ${MCA} ${CUTS} -G --path ${TREESPATH} --tree ${TREE}  --lumi ${LUMI} --s2v -j ${NPROC} --Fs ${TREESPATH}${FT_LJCLEANER} ${LCHOICE} --mcc ${MCCTRIGDEF} --mcc ${MCCCUTSDEF}  
 
-elif [ "${1}" = "plot" ]; then
-
-    rm -r ${PLOTSDIR}TT/
-    rm -r ${PLOTSDIR}DY/
-    rm -r ${PLOTSDIR}data/
-    
-    mkdir -p ${PLOTSDIR}TT/
-    mkdir -p ${PLOTSDIR}DY/
-    mkdir -p ${PLOTSDIR}data/
+elif [ "${1}" = "plot" ]; then                                                                                                                          
+    rm -r ${PLOTSDIR}baseline/
+    mkdir -p ${PLOTSDIR}baseline/
 
     cp ${PLOTSDIR}index.php ${PLOTSDIR}
-    cp ${PLOTSDIR}index.php ${PLOTSDIR}TT/
-    cp ${PLOTSDIR}index.php ${PLOTSDIR}DY/
-    cp ${PLOTSDIR}index.php ${PLOTSDIR}data/
-    
-    # TT
-    python ${PLOTTER} --exclude-process data --exclude-process DY ${MCA} ${CUTS} ${PLOTS} --path ${TREESPATH} --tree ${TREE} --lumi ${LUMI} --s2v -j ${NPROC} --Fs ${TREESPATH}${FT_LJCLEANER} ${LCHOICE} --mcc ${MCCTRIGDEF} --mcc ${MCCCUTSDEF} --rspam "%(lumi) (13 TeV)" --lspam "#bf{CMS} #it{Preliminary}" --legendBorder=0 --legendFontSize 0.055 --legendWidth=0.30 --showMCError --pdir ${PLOTSDIR}TT/ ${PAR}
+    cp ${PLOTSDIR}index.php ${PLOTSDIR}baseline/
+    #--exclude-process data
+    python ${PLOTTER}  ${MCA} ${CUTS} ${PLOTS} --path ${TREESPATH} --AP --tree ${TREE} --lumi ${LUMI} --s2v -j ${NPROC} --Fs ${TREESPATH}${FT_LJCLEANER} ${LCHOICE} --mcc ${MCCTRIGDEF} --mcc ${MCCCUTSDEF} --rspam "%(lumi) (13 TeV)" --lspam "#bf{CMS} #it{Preliminary}" --legendBorder=0 --legendFontSize 0.055 --legendWidth=0.30 --showMCError --pdir ${PLOTSDIR}baseline/
 
-    # DY
-    python ${PLOTTER} --exclude-process data --exclude-process TT ${MCA} ${CUTS} ${PLOTS} --path ${TREESPATH} --tree ${TREE} --lumi ${LUMI} --s2v -j ${NPROC} --Fs ${TREESPATH}${FT_LJCLEANER} ${LCHOICE} --mcc ${MCCTRIGDEF} --mcc ${MCCCUTSDEF} --rspam "%(lumi) (13 TeV)" --lspam "#bf{CMS} #it{Preliminary}" --legendBorder=0 --legendFontSize 0.055 --legendWidth=0.30 --showMCError --pdir ${PLOTSDIR}DY/ ${PAR}
-
-    # Data
-    python ${PLOTTER} --exclude-process TT --exclude-process DY ${MCA} ${CUTS} ${PLOTS} --path ${TREESPATH} --tree ${TREE} --lumi ${LUMI} --s2v -j ${NPROC} --Fs ${TREESPATH}${FT_LJCLEANER} ${LCHOICE} --mcc ${MCCTRIGDEF} --mcc ${MCCCUTSDEF} --rspam "%(lumi) (13 TeV)" --lspam "#bf{CMS} #it{Preliminary}" --legendBorder=0 --legendFontSize 0.055 --legendWidth=0.30 --showMCError --pdir ${PLOTSDIR}data/ ${PAR}
 
 
 fi

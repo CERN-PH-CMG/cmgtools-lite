@@ -21,6 +21,8 @@
 # Baseline 
 >= 2 tight leptons : geq2tightleptons
 E_{T}^{miss} > 50 : met_pt > 50
+M_{ll} < 12 : vetolowmassres12
+Z window veto : vetoZwindow15
 
 # Request one tau
 =1 tau noid : eq1tauwithoutid
