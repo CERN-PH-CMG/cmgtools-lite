@@ -40,12 +40,14 @@ if signalSkim == True:
 # --- Z->ll control sample SKIMMING ---
 if diLepSkim == True:
     monoJetCtrlLepSkim.minLeptons = 2
+# --- 1 Lep tight + 1 Jet pT>100 GeV
 if singleLepSkim == True:
     monoJetCtrlLepSkim.minLeptons = 1
     # this skim is only used for the SingleElectron CR, so Tight cuts on PT and ID
     monoJetCtrlLepSkim.idCut = '(lepton.muonID("POG_ID_Tight") and lepton.relIso04 < 0.15) if abs(lepton.pdgId())==13 else \
 (lepton.electronID("POG_Cuts_ID_SPRING15_25ns_v1_ConvVetoDxyDz_Tight_full5x5") and (lepton.relIso03<0.0354 if abs(lepton.superCluster().eta())<1.479 else lepton.relIso03<0.0646))'
     monoJetCtrlLepSkim.ptCuts = [40]
+    monoJetSkim.jetPtCuts = [100]
 if singlePhotonSkim == True:
     gammaJetCtrlSkim.minPhotons = 1
     gammaJetCtrlSkim.minJets = 1
@@ -378,7 +380,7 @@ elif test == 'synch-80X': # sync
     monoJetSkim.metCut = 0  
     what = getHeppyOption("sample")
     if what == "TTbarDM":
-        comp = kreator.makeMCComponent("TTbarDM","/TTbarDMJets_pseudoscalar_Mchi-1_Mphi-100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring16MiniAODv1-PUSpring16RAWAODSIM_80X_mcRun2_asymptotic_2016_v3_ext1-v1/MINIAODSIM", "CMS", ".*root", 1.0)
+        comp = kreator.makeMCComponent("TTbarDM","/TTbarDMJets_pseudoscalar_Mchi-1_Mphi-100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring16MiniAODv2-PUSpring16RAWAODSIM_80X_mcRun2_asymptotic_2016_miniAODv2_v0_ext1-v1/MINIAODSIM", "CMS", ".*root", 1.0)
         selectedComponents = [ comp ]
     elif what == "DYJets":
         comp = DYJetsToLL_M50
