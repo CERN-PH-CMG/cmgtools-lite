@@ -1,20 +1,15 @@
-data : DoubleEG_Run2015C_25ns_16Dec2015
-data : DoubleEG_Run2015D_16Dec2015
-data : DoubleMuon_Run2015C_25ns_16Dec2015
-data : DoubleMuon_Run2015D_16Dec2015
-data : MuonEG_Run2015C_25ns_16Dec2015
-data : MuonEG_Run2015D_16Dec2015
-data : SingleElectron_Run2015C_25ns_16Dec2015
-data : SingleElectron_Run2015D_16Dec2015
-data : SingleMuon_Run2015C_25ns_16Dec2015
-data : SingleMuon_Run2015D_16Dec2015
+data : DoubleEG_Run2016B_PromptReco_v2_runs_273150_274443
+data : DoubleMuon_Run2016B_PromptReco_v2_runs_273150_274443
+data : MuonEG_Run2016B_PromptReco_v2_runs_273150_274443
+data : SingleElectron_Run2016B_PromptReco_v2_runs_273150_274443
+data : SingleMuon_Run2016B_PromptReco_v2_runs_273150_274443
 
 DYJetsToLL_M10to50 : DYJetsToLL_M10to50 : xsec
 DYJetsToLL_M50 : DYJetsToLL_M50 : xsec
 TBar_tWch : TBar_tWch : xsec
 TGJets : TGJets : xsec
 TTGJets : TTGJets : xsec
-TTHnobb : TTHnobb : xsec
+TTHnobb_pow : TTHnobb_pow : xsec
 TTHnobb_pow : TTHnobb_pow : xsec
 TTJets : TTJets : xsec
 TTJets_DiLepton : TTJets_DiLepton : xsec

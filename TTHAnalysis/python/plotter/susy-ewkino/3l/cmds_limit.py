@@ -1,22 +1,23 @@
 import os
 
 # principal output dir (tags will be added)
-O    = "/afs/cern.ch/user/c/cheidegg/www/heppy/2016-06-10_ewk76X_limitsFinalMVA"
+O    = "/afs/cern.ch/user/c/cheidegg/www/heppy/2016-06-26_ewk80X_limits_test"
 
 # tree input dir
-T    = "/mnt/t3nfs01/data01/shome/cheidegg/o/2016-06-01_ewktrees76X_2LL"
-jlr  = "THEGREATESTBESTEVERFRIENDTREES/leptonJetReCleanerSusyRA7mva"
-lch  = "THEGREATESTBESTEVERFRIENDTREES/leptonChoiceEWK"
+T    = "/mnt/t3nfs01/data01/shome/cheidegg/o/2016-06-09_ewktrees80X_2LL_mix/"
+jlr  = "leptonJetReCleanerSusyEWK3L"
+lch  = "leptonBuilderEWK"
 sys  = "systs_dummy.txt"
+flags = "--asimov"
 
 # lumi in /fb
-lumi = 3
+lumi = 4
 
 # model
 model = [
          "TChiNeu_WZ",
-         "TChiNeu_WH", 
          "TChiNeu_SlepSneu_FD", 
+         #"TChiNeu_WH", 
          #"TChiNeu_SlepSneu_TE", 
          #"TChiNeu_SlepSneu_TD", 
          #"TNeuNeu_ZZ", 
@@ -40,29 +41,30 @@ def mkdir(path):
 	cmd("cp /afs/cern.ch/user/g/gpetrucc/php/index.php " + path)
 
 def getBkgs():
-	return ["_matched_fakes_.*", "_standard_prompt_.*", "_standard3l_prompt_.*"]
+	return ["_matched_fakes_.*", "_standard_prompt_.*"]
 
 def getBinning(categs):
 	nb = sum(getNBins(categ) for categ in categs)
 	return str(nb) + ",0.5,"+str(nb)+".5"	
 
 def getCategs(model):
+	return ["B"]
 	if model == "TChiNeu_WZ"         : return ["A"]
 	if model == "TChiNeu_WH"         : return ["A"]
 	if model == "TChiNeu_SlepSneu_FD": return ["A"]
 	if model == "TChiNeu_SlepSneu_TE": return ["C"]
-	if model == "TChiNeu_SlepSneu_TD": return ["C", "D", "E"]
-	if model == "TNeuNeu_ZZ"         : return ["G"]
-	if model == "TNeuNeu_HZ"         : return ["H", "I"]
-	if model == "TNeuNeu_HH"         : return ["H", "I"]
+	if model == "TChiNeu_SlepSneu_TD": return ["B", "D", "E", "F"]
+	if model == "TNeuNeu_ZZ"         : return ["G", "H", "I"]
+	if model == "TNeuNeu_HZ"         : return ["G", "H", "I"]
+	if model == "TNeuNeu_HH"         : return ["G", "H", "I"]
 	return []	
 
 def getCategNum(categ):
-	categs = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K"]
+	categs = ["A", "B", "C", "D", "E", "F", "G", "H", "I"]
 	return categs.index(categ)+1
 
 def getCut1(categs):
-	return "-A alwaystrue goodCateg '" + " || ".join("categ == " + str(getCategNum(c)) for c in categs) + "'"
+	return "-A alwaystrue goodCateg '" + " || ".join("BR == " + str(getCategNum(c)) for c in categs) + "'"
 
 def getCut2(categs):
 	offset = getOffset(categs[0]) 
@@ -76,20 +78,18 @@ def getExpr(categ):
 
 def getNBins(categ):
 	if categ == "A": return 36
-	if categ == "B": return 24
-	if categ == "C": return 36
-	if categ == "D": return 24
-	if categ == "E": return 24
-	if categ == "F": return 1
+	if categ == "B": return 6
+	if categ == "C": return 14
+	if categ == "D": return 14
+	if categ == "E": return 11
+	if categ == "F": return 10
 	if categ == "G": return 4
 	if categ == "H": return 4
 	if categ == "I": return 4
-	if categ == "J": return 4
-	if categ == "K": return 4
 	return 0
 
 def getOffset(categ):
-	categs = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K"]
+	categs = ["A", "B", "C", "D", "E", "F", "G", "H", "I"]
 	idx = categs.index(categ)
 	offset = 0
 	for i in range(idx):
@@ -99,13 +99,11 @@ def getOffset(categ):
 def getSigs(model):
 	return ["_sig_" + model + "_.*"]
 
-base = "python makeShapeCardsSusy.py susy-ewkino/3l/mca_ewkino.txt susy-ewkino/3l/cuts_ewkino.txt \"{EXPR}\" \"{BINS}\" susy-ewkino/{SYSTS} -o SR --asimov -P {T} --mcc susy-ewkino/3l/mcc_triggerdefs.txt --neg --s2v --tree treeProducerSusyMultilepton -F sf/t {JLR} -F sf/t {LCH} -f -j 8 --od {O} -l {L} {BKG} {SIG} {CUTS}"
-#base = "python makeShapeCardsSusy.py susy-ewkino/3l/mca_ewkino.txt susy-ewkino/3l/cuts_ewkino.txt \"{EXPR}\" \"{BINS}\" susy-ewkino/{SYSTS} -o SR --asimov -P {T} --mcc susy-ewkino/3l/mcc_triggerdefs.txt --neg --s2v --tree treeProducerSusyMultilepton -F sf/t {JLR} -F sf/t {LCH} -f -j 8 --od {O} -l {L} {BKG} {SIG} {CUTS} -A haspair categA 'nTriples == 1' -A haspair tightMVAT '(LepGood1_mvaSUSY>0.15+(-0.15+0.65)*(abs(LepGood1_pdgId)==11)) && (LepGood2_mvaSUSY>0.15+(-0.15+0.65)*(abs(LepGood2_pdgId)==11)) && (LepGood3_mvaSUSY>0.15+(-0.15+0.65)*(abs(LepGood3_pdgId)==11))'"
+base = "python makeShapeCardsSusy.py susy-ewkino/3l/mca_ewkino.txt susy-ewkino/3l/cuts_ewkino.txt \"{EXPR}\" \"{BINS}\" susy-ewkino/{SYSTS} -o SR -P {T} --mcc susy-ewkino/mcc_triggerdefs.txt --mcc susy-ewkino/3l/mcc_ewkino.txt --neg --s2v --tree treeProducerSusyMultilepton -F sf/t {JLR} -F sf/t {LCH} -f -j 8 --od {O} -l {L} {BKG} {SIG} {CUTS} {FLAGS} --load-macro susy-ewkino/3l/functionsEWK.cc"
 
 for m in model:
 	output = O + "/" + str(lumi) + "fb/" + m
 	mkdir(output)
-
 	categs = getCategs(m) ## assume categories are consecutive for every model
 	expr = getExpr(categs[0]) ## first one because of offset
 	bins = getBinning(categs)	
@@ -114,4 +112,4 @@ for m in model:
 	cut1 = getCut1(categs)
 	cut2 = getCut2(categs)
 
-	cmd(base.format(O=output, T=T, L=lumi, JLR="{P}/"+jlr+"/evVarFriend_{cname}.root", LCH="{P}/"+lch+"/evVarFriend_{cname}.root", EXPR=expr, BINS=bins, SYSTS=sys, CUTS=cut1+" "+cut2, BKG=bkg, SIG=sig))
+	cmd(base.format(O=output, T=T, L=lumi, JLR="{P}/"+jlr+"/evVarFriend_{cname}.root", LCH="{P}/"+lch+"/evVarFriend_{cname}.root", EXPR=expr, BINS=bins, SYSTS=sys, CUTS=cut1+" "+cut2, BKG=bkg, SIG=sig, FLAGS=flags))

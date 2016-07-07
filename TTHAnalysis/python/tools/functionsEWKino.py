@@ -36,7 +36,7 @@ def _ewkino_2lss_lepId_CBloose(lep):
 def _ewkino_2lss_lepId_loosestFO(lep):
     if not _ewkino_2lss_lepId_CBloose(lep): return False
     if abs(lep.pdgId) == 13:
-        return lep.tightCharge > 0
+        return lep.tightCharge > 0 and lep.mediumMuonId > 0
     elif abs(lep.pdgId) == 11:
         return (lep.convVeto and lep.tightCharge > 1 and lep.lostHits == 0)
     return False
@@ -46,22 +46,7 @@ def _ewkino_2lss_lepId_FO(lep):
     if (abs(lep.pdgId) == 13):  
         return  (lep.jetPtRatiov2 > 0.3 and lep.jetBTagCSV < 0.3 and lep.mediumMuonId > 0)
     elif (abs(lep.pdgId) == 11): 
-        return lep.jetPtRatiov2 > 0.3 and lep.jetBTagCSV < 0.3 and ((abs(LepGood_eta)<1.479 and LepGood_mvaIdSpring15>0.0) or (abs(LepGood_eta)>1.479 and LepGood_mvaIdSpring15>0.3))
-
-def _ewkino_3l_lepId_loosestFO(lep):
-    if not _ewkino_2lss_lepId_CBloose(lep): return False
-    if abs(lep.pdgId) == 13:
-        return True
-    elif abs(lep.pdgId) == 11:
-        return (lep.convVeto and lep.lostHits == 0)
-    return False
-
-def _ewkino_3l_lepId_FO(lep):
-    if not _ewkino_3l_lepId_loosestFO(lep): return False
-    if (abs(lep.pdgId) == 13):  
-        return  (lep.jetPtRatiov2 > 0.3 and lep.jetBTagCSV < 0.3 and lep.mediumMuonId > 0)
-    elif (abs(lep.pdgId) == 11): 
-        return lep.jetPtRatiov2 > 0.3 and lep.jetBTagCSV < 0.3 and ((abs(LepGood_eta)<1.479 and LepGood_mvaIdSpring15>0.0) or (abs(LepGood_eta)>1.479 and LepGood_mvaIdSpring15>0.3))
+        return lep.jetPtRatiov2 > 0.3 and lep.jetBTagCSV < 0.3 and ((abs(lep.eta)<1.479 and lep.mvaIdSpring15>0.0) or (abs(lep.eta)>1.479 and lep.mvaIdSpring15>0.3))
 
 def _ewkino_2lss_lepId_IPcuts(lep):
     if not lep.sip3d<8: return False
@@ -89,12 +74,27 @@ def _ewkino_leptonMVA_M(lep):
     return False
 
 def _ewkino_2lss_lepId_num(lep):
-    if not _ewkino_2lss_lepId_FO(lep): return False
+    if not _ewkino_2lss_lepId_loosestFO(lep): return False
     if not _ewkino_leptonMVA_VT(lep): return False
     if abs(lep.pdgId)==11:
         if not _ewkino_idEmu_cuts_E2(lep): return False
     if abs(lep.pdgId) == 13: return lep.mediumMuonId > 0
     return True
+
+def _ewkino_3l_lepId_loosestFO(lep):
+    if not _ewkino_2lss_lepId_CBloose(lep): return False
+    if abs(lep.pdgId) == 13:
+        return True
+    elif abs(lep.pdgId) == 11:
+        return (lep.convVeto and lep.lostHits == 0)
+    return False
+
+def _ewkino_3l_lepId_FO(lep):
+    if not _ewkino_3l_lepId_loosestFO(lep): return False
+    if (abs(lep.pdgId) == 13):  
+        return  (lep.jetPtRatiov2 > 0.3 and lep.jetBTagCSV < 0.3 and lep.mediumMuonId > 0)
+    elif (abs(lep.pdgId) == 11): 
+        return lep.jetPtRatiov2 > 0.3 and lep.jetBTagCSV < 0.3 and ((abs(lep.eta)<1.479 and lep.mvaIdSpring15>0.0) or (abs(lep.eta)>1.479 and lep.mvaIdSpring15>0.3))
 
 def _ewkino_3l_lepId_num(lep):
     if not _ewkino_3l_lepId_FO(lep): return False
