@@ -127,7 +127,7 @@ def train_multiclass(fOutName, options):
 
     ## Add the datasets
     for name,trainclass,tree,weight in datasets:
-        factory.AddTree(tree, trainclass, weight, allcuts)
+        factory.AddTree(tree, trainclass, weight)
 
     fOut.cd()
     for trainclass in set([x[1] for x in dsets]):
@@ -180,7 +180,7 @@ def train_single(allcuts, variables, dsets, fOutName, options):
 
     ## Add the datasets
     for name,trainclass,tree,weight in datasets:
-        factory.AddTree(tree, trainclass, weight, allcuts)
+        factory.AddTree(tree, trainclass, weight)
 
     fOut.cd()
     for trainclass in set([x[1] for x in dsets]):
