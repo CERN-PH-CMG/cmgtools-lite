@@ -72,7 +72,7 @@ if __name__ == '__main__':
     ### SR plots: Pure MC Sig+Bkg, Data-Driven Bkgs, Variations for TT and DY syst, Application region Bins, DATA!
     if '2los_SR_bins' in torun:
         x = base('2los')
-        #x = add(x,"--perBin")
+        x = add(x,"--perBin")
         if '_ewk10_met125_mm' in torun: 
             x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_315,T2ttDeg_330 -E ^pt5sublep -E ^MT -E ^mm -E ^upperMET -E ^runRange -X ^triggerAll -E ^triggerDoubleMuMET ")  
             x = x.replace('-l 4.0','-l 1.4')  
@@ -106,7 +106,7 @@ if __name__ == '__main__':
                 x = x.replace('mcc-sf1.txt','mcc-sf-highmet.txt')
             if '_appl' in torun:
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt')
-                x = add(x,"-I ^TT ")    
+                x = add(x,"-I ^TT ")
             if '_unblind' in torun:
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt') 
                 x = x.replace('mcc-sf1.txt','mcc-sf-highmet.txt')
@@ -127,7 +127,7 @@ if __name__ == '__main__':
                 x = x.replace('mcc-sf1.txt','mcc-sf-lowmet.txt')
             if '_appl' in torun:
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt')
-                x = add(x,"-I ^TT ")    
+                x = add(x,"-I ^TT ")  
             if '_unblind' in torun:
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt') 
                 x = x.replace('mcc-sf1.txt','mcc-sf-lowmet.txt')
@@ -144,8 +144,8 @@ if __name__ == '__main__':
                 x = x.replace('mca-2los-mc.txt','mca-2los-mc-frdata.txt')
                 x = x.replace('mcc-sf1.txt','mcc-sf-highmet.txt')
             if '_appl' in torun:
-                x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt')
-                x = add(x,"-I ^TT ")    
+                x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt') 
+                x = add(x,"-I ^TT ")
             if '_unblind' in torun:
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt') 
                 x = x.replace('mcc-sf1.txt','mcc-sf-highmet.txt')
@@ -166,7 +166,7 @@ if __name__ == '__main__':
                 x = x.replace('mcc-sf1.txt','mcc-sf-lowmet.txt')
             if '_appl' in torun:
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt')
-                x = add(x,"-I ^TT ")    
+                x = add(x,"-I ^TT ")
             if '_unblind' in torun:
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt')  
                 x = x.replace('mcc-sf1.txt','mcc-sf-lowmet.txt')
@@ -184,7 +184,7 @@ if __name__ == '__main__':
                 x = x.replace('mcc-sf1.txt','mcc-sf-highmet.txt')
             if '_appl' in torun:
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt')
-                x = add(x,"-I ^TT ")    
+                x = add(x,"-I ^TT ")   
             if '_unblind' in torun:
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt')  
                 x = x.replace('mcc-sf1.txt','mcc-sf-highmet.txt')
@@ -205,7 +205,7 @@ if __name__ == '__main__':
                 x = x.replace('mcc-sf1.txt','mcc-sf-lowmet.txt')
             if '_appl' in torun:
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt')
-                x = add(x,"-I ^TT ")    
+                x = add(x,"-I ^TT ")
             if '_unblind' in torun:
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt')
                 x = x.replace('mcc-sf1.txt','mcc-sf-lowmet.txt')
@@ -223,7 +223,7 @@ if __name__ == '__main__':
                 x = x.replace('mcc-sf1.txt','mcc-sf-highmet.txt')
             if '_appl' in torun:
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt')
-                x = add(x,"-I ^TT ")    
+                x = add(x,"-I ^TT ")
             if '_unblind' in torun:
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt') 
                 x = x.replace('mcc-sf1.txt','mcc-sf-highmet.txt')
@@ -241,13 +241,13 @@ if __name__ == '__main__':
         x = add(x,"--noStackSig --showIndivSigs --xp TChiNeuWZ_95")
         if '_data' in torun: 
             x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt')
-            x = add(x,"--showRatio --maxRatioRange 0 3 ") #--showMCError
+            x = add(x,"--showRatio --maxRatioRange 0 3 ") #--showMCError 
         if '_met200' in torun:             
-            x = add(x,"-E ^highMET -X ^triggerAll -E ^triggerMET -I ^TT ")
+            x = add(x,"-E ^highMET -X ^triggerAll -E ^triggerMET -I ^TT ") #-E ^MT
             x = x.replace('-l 4.0','-l 4.0')
         if '_met125' in torun: 
             x = x.replace('puw2016_vtx_4fb(nVert)', 'puw2016_vtx_postTS_1p4fb(nVert)' )
-            x = add(x,"-E ^mm -E ^upperMET -E ^runRange -X ^triggerAll -E ^triggerDoubleMuMET -I ^TT ")
+            x = add(x,"-E ^mm -E ^upperMET -E ^runRange -X ^triggerAll -E ^triggerDoubleMuMET -I ^TT ") #-E ^MT
             x = x.replace('-l 4.0','-l 1.4')  
         runIt(x,'%s/all'%torun,[],['SR_bins_EWKino','SR_bins_stop'])
 
