@@ -57,7 +57,7 @@ from PhysicsTools.HeppyCore.framework.heppy_loop import getHeppyOption
 #Load all common analyzers
 from CMGTools.VVResonances.analyzers.core_cff import * 
 
-#PUPPI by default 
+#PUPPI by default #uncomment for prunning
 doPruning()
 
 
