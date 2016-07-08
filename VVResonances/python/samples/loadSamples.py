@@ -37,7 +37,7 @@ from CMGTools.VVResonances.samples.signal_13TeV_76X import *
 
 
 #and the 750 GeV samples for the tau analysis
-from CMGTools.VVResonances.samples.signal_750 import *
+# from CMGTools.VVResonances.samples.signal_750 import *
 
 
 mcSamples = background+signalSamples
