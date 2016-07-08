@@ -117,6 +117,8 @@ VJType = NTupleObjectType("VJType", baseObjectTypes=[VVType], variables = [
     NTupleVariable("l2_softDrop_nSubJets",  lambda x : len(x.leg2.substructure.softDropSubjets),int),
     NTupleSubObject("l2_softDrop_s1",  lambda x : x.leg2.substructure.softDropSubjets[0] if len(x.leg2.substructure.softDropSubjets)>0 else dummyLV,fourVectorType),
     NTupleSubObject("l2_softDrop_s2",  lambda x : x.leg2.substructure.softDropSubjets[1] if len(x.leg2.substructure.softDropSubjets)>1 else dummyLV,fourVectorType),
+    NTupleSubObject("l2_pruned_s1",  lambda x : x.leg2.substructure.prunedSubjets[0] if len(x.leg2.substructure.prunedSubjets)>0 else dummyLV,fourVectorType),
+    NTupleSubObject("l2_pruned_s2",  lambda x : x.leg2.substructure.prunedSubjets[1] if len(x.leg2.substructure.prunedSubjets)>1 else dummyLV,fourVectorType),
 
 ])
 
@@ -152,6 +154,8 @@ JJType = NTupleObjectType("JJType", baseObjectTypes=[VJType], variables = [
     NTupleVariable("l1_softDrop_nSubJets",  lambda x : len(x.leg1.substructure.softDropSubjets),int),
     NTupleSubObject("l1_softDrop_s1",  lambda x : x.leg1.substructure.softDropSubjets[0] if len(x.leg1.substructure.softDropSubjets)>0 else dummyLV,fourVectorType),
     NTupleSubObject("l1_softDrop_s2",  lambda x : x.leg1.substructure.softDropSubjets[1] if len(x.leg1.substructure.softDropSubjets)>1 else dummyLV,fourVectorType),
+    NTupleSubObject("l1_pruned_s1",  lambda x : x.leg1.substructure.prunedSubjets[0] if len(x.leg1.substructure.prunedSubjets)>0 else dummyLV,fourVectorType),
+    NTupleSubObject("l1_pruned_s2",  lambda x : x.leg1.substructure.prunedSubjets[1] if len(x.leg1.substructure.prunedSubjets)>1 else dummyLV,fourVectorType),
 
 
 ])
