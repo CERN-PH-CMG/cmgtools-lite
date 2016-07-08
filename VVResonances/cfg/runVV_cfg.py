@@ -95,7 +95,7 @@ triggerFlagsAna.triggerBits ={
 
 
 #-------- HOW TO RUN
-test = 1
+test = 3
 if test==1:
     # test a single component, using a single thread.
     selectedComponents = [BulkGravToWWToWlepWhad_narrow_4500]
