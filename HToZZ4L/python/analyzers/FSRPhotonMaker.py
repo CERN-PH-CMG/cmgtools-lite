@@ -17,18 +17,33 @@ import itertools
 class FSRPhotonMaker( Analyzer ):
     def __init__(self, cfg_ana, cfg_comp, looperName ):
         super(FSRPhotonMaker,self).__init__(cfg_ana,cfg_comp,looperName)
+        self.enable = getattr(cfg_ana, 'enable', True)
         self.leptonTag  = cfg_ana.leptons
         self.electronID = cfg_ana.electronID
         self.IsolationComputer = heppy.IsolationComputer(0.3)
 
     def declareHandles(self):
         super(FSRPhotonMaker, self).declareHandles()
-        self.handles['pf'] = AutoHandle( "packedPFCandidates",'std::vector<pat::PackedCandidate>')
+        if self.enable:
+            self.handles['pf'] = AutoHandle( "packedPFCandidates",'std::vector<pat::PackedCandidate>')
 
     def beginLoop(self, setup):
         super(FSRPhotonMaker,self).beginLoop(setup)
 
+    def dummyProcess(self, event):
+        leptons = getattr(event,self.leptonTag)
+        event.attachedFsrPhotons = []
+        event.selectedPhotons = []
+        for l in leptons:
+            l.ownFsrPhotons = [];
+            l.fsrPhotons = []
+            l.relIsoAfterFSR = l.absIsoWithFSR(R=0.3)/l.pt()
+
     def process(self, event):
+        if not self.enable:
+            self.dummyProcess(event)
+            return True
+
         self.readCollections( event.input )
         pf = self.handles['pf'].product()
         leptons = getattr(event,self.leptonTag)
