@@ -97,6 +97,8 @@ VVType = NTupleObjectType("VVType", baseObjectTypes=[], variables = [
   NTupleVariable("nMediumBTags",   lambda x : x.nMediumBTags, int),       
   NTupleVariable("nTightBTags",   lambda x : x.nTightBTags, int),      
   NTupleVariable("nOtherLeptons",   lambda x : x.nOtherLeptons, int),      
+  NTupleVariable("highestOtherBTag",   lambda x : x.highestEventBTag, float),      
+
 ])
 
 

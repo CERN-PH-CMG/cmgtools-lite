@@ -147,6 +147,15 @@ class VVBuilder(Analyzer):
         VV.nTightBTags = len(filter(lambda x: x.bDiscriminator(self.cfg_ana.bDiscriminator)>0.935,jetsCentral))
         VV.nOtherLeptons = len(leptons)
 
+        maxbtag=-100.0
+        for  j in jetsCentral:
+            btag=j.bDiscriminator(self.cfg_ana.bDiscriminator)
+            if btag>maxbtag:
+                maxbtag=btag
+        VV.highestEventBTag = maxbtag        
+
+
+
     def selectJets(self,jets,func,otherObjects,DR,otherObjects2=None,DR2=0.0):
         output=[]
         for j in jets:

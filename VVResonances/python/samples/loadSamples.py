@@ -18,15 +18,7 @@ TTs = [TTJets]
 background = TTs+SingleTop+DYJetsM50HT+WJetsToLNuHT+QCDHT+DiBosons
 
 #Load signal from here 
-from CMGTools.VVResonances.samples.signal_13TeV_80X import *
-
-#and the 750 GeV samples for the tau analysis
-from CMGTools.VVResonances.samples.signal_750 import *
-
-
-
-#and the 750 GeV samples for the tau analysis
-from CMGTools.VVResonances.samples.signal_750 import *
+from CMGTools.VVResonances.samples.signal_13TeV_80X_reHLT import *
 
 
 mcSamples = background+signalSamples
@@ -58,17 +50,20 @@ for s in SingleElectron:
     s.json=json
 
 
+#MET to be used for jj +MET but also to recover trigger efficiency for leptons
+for s in MET:
+    s.triggers = triggers_metNoMu120_mhtNoMu120
+    s.vetoTriggers = triggers_1mu_noniso+triggers_1mu_iso+triggers_1e_noniso+triggers_1e
+    s.json=json
+
+
+
 #Jet HT to be used for jj (silver)
 for s in JetHT:
     s.triggers = triggers_HT800+triggers_HT900+triggers_dijet_fat
-    s.vetoTriggers = []
+    s.vetoTriggers = triggers_1mu_noniso+triggers_1mu_iso+triggers_1e_noniso+triggers_1e+triggers_metNoMu120_mhtNoMu120
     s.json=json
 
-#MET to be used for jj +MET
-for s in MET:
-    s.triggers = triggers_met90_mht90+triggers_metNoMu90_mhtNoMu90+triggers_metNoMu120_mhtNoMu120
-    s.vetoTriggers = []
-    s.json=json
 
 dataSamples=SingleMuon+SingleElectron+JetHT+MET
 
