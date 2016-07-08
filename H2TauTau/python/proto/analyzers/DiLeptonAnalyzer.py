@@ -321,7 +321,8 @@ class DiLeptonAnalyzer(Analyzer):
                     setattr(leg, filter, to)
                     
         if not self.cfg_comp.triggerobjects:
-            print 'No trigger objects configured; auto-passing trigger matching'
+            if self.cfg_ana.verbose:
+                print 'No trigger objects configured; auto-passing trigger matching'
             return True
 
         for info in event.trigger_infos:

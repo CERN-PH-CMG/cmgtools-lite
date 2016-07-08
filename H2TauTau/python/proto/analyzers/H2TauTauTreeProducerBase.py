@@ -55,7 +55,12 @@ class H2TauTauTreeProducerBase(TreeAnalyzerNumpy):
     def fillGeneric(self, tree, var_list, obj, obj_name=None):
         for var in var_list:
             names = [obj_name, var.name] if obj_name else [var.name]
-            self.fill(tree, '_'.join(names), var.function(obj))
+            try:
+                self.fill(tree, '_'.join(names), var.function(obj))
+            except TypeError:
+                print 'Problem in filling value into tree'
+                print var.name, var.function(obj), obj
+                raise
 
     def declareVariables(self, setup):
         ''' Declare all variables here in derived calss

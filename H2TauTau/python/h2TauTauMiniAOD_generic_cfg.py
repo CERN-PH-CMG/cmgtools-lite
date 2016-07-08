@@ -51,9 +51,9 @@ def createProcess(runOnMC=True, channel='tau-mu', runSVFit=False,
 
     # Adding jet collection
     process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
-    process.GlobalTag.globaltag = '80X_mcRun2_asymptotic_2016_miniAODv2'
+    process.GlobalTag.globaltag = '80X_mcRun2_asymptotic_2016_miniAODv2_v1'
     if not runOnMC:
-        process.GlobalTag.globaltag = '80X_dataRun2_Prompt_v9'
+        process.GlobalTag.globaltag = '80X_dataRun2_Prompt_ICHEP16JEC_v0'
 
     process.load('Configuration.StandardSequences.GeometryRecoDB_cff')
     process.load('Configuration.StandardSequences.MagneticField_38T_cff')
