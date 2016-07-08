@@ -26,7 +26,7 @@ from CMGTools.H2TauTau.htt_ntuple_base_cff import commonSequence,  dyJetsFakeAna
 syncntuple = False
 pick_events = False
 computeSVfit = False
-production = True
+production = False
 cmssw = True
 data = True
 
@@ -43,18 +43,18 @@ dyJetsFakeAna.channel = 'mm'
 MuMuAna = cfg.Analyzer(
     MuMuAnalyzer,
     name='MuMuAnalyzer',
-    pt1=20,
+    pt1=23,
     eta1=2.3,
-    iso1=0.1,
+    iso1=0.15,
     pt2=10,
     eta2=2.3,
-    iso2=0.1,
+    iso2=0.15,
     m_min=10,
     m_max=99999,
     dR_min=0.5,
     # triggerMap = pathsAndFilters,
     from_single_objects=True,
-    verbose=True
+    verbose=False
 )
 
 if cmssw:

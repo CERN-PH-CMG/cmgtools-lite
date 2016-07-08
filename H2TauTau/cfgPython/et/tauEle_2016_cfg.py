@@ -153,7 +153,7 @@ for mc in samples:
 selectedComponents = samples + data_list
 
 sequence = commonSequence
-sequence.insert(sequence.index(genAna), tauEleAna)
+sequence.insert(sequence.index(dyJetsFakeAna), tauEleAna)
 sequence.append(tauDecayModeWeighter)
 sequence.append(tauFakeRateWeighter)
 sequence.append(tauWeighter)

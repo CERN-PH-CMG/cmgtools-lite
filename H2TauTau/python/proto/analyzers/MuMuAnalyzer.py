@@ -173,7 +173,7 @@ class MuMuAnalyzer(DiLeptonAnalyzer):
 
     def testLeg2ID(self, muon):
         '''Tight muon selection, no isolation requirement'''
-        return muon.muonID('POG_ID_Medium') and self.testVertex(muon)
+        return muon.muonID('POG_ID_Medium_ICHEP') and self.testVertex(muon)
                
 
     def testLeg2Iso(self, muon, isocut):
@@ -181,7 +181,7 @@ class MuMuAnalyzer(DiLeptonAnalyzer):
         if isocut is None:
             isocut = self.cfg_ana.iso2
 
-        return muon.relIsoR(R=0.3, dBetaFactor=0.5, allCharged=0) < isocut    
+        return muon.relIsoR(R=0.4, dBetaFactor=0.5, allCharged=0) < isocut    
 
     def testElectronID(self, electron):
         return electron.mvaIDRun2('NonTrigSpring15MiniAOD', 'POG90')
@@ -207,7 +207,7 @@ class MuMuAnalyzer(DiLeptonAnalyzer):
                          self.testElectronID(electron) and
                          electron.passConversionVeto() and
                          electron.physObj.gsfTrack().hitPattern().numberOfHits(ROOT.reco.HitPattern.MISSING_INNER_HITS) <= 1 and
-                         electron.relIsoR(R=0.3, dBetaFactor=0.5, allCharged=0) < 0.3]
+                         electron.relIsoR(R=0.4, dBetaFactor=0.5, allCharged=0) < 0.3]
 
         if len(vOtherLeptons) > 0:
             return False
@@ -234,7 +234,7 @@ class MuMuAnalyzer(DiLeptonAnalyzer):
         if len(diLeptons) == 1:
             return diLeptons[0]
 
-        least_iso_highest_pt = lambda dl: (dl.leg1().relIsoR(R=0.3, dBetaFactor=0.5, allCharged=0), -dl.leg1().pt(), dl.leg2().relIsoR(R=0.3, dBetaFactor=0.5, allCharged=0), -dl.leg2().pt())
+        least_iso_highest_pt = lambda dl: (dl.leg1().relIsoR(R=0.4, dBetaFactor=0.5, allCharged=0), -dl.leg1().pt(), dl.leg2().relIsoR(R=0.4, dBetaFactor=0.5, allCharged=0), -dl.leg2().pt())
 
         return sorted(diLeptons, key=lambda dil : least_iso_highest_pt(dil))[0]
 

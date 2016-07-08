@@ -11,7 +11,7 @@ from CMGTools.H2TauTau.proto.analyzers.LeptonIsolationCalculator import LeptonIs
 from CMGTools.H2TauTau.proto.analyzers.FileCleaner import FileCleaner
 
 # common configuration and sequence
-from CMGTools.H2TauTau.htt_ntuple_base_cff import commonSequence, genAna, dyJetsFakeAna, puFileData, puFileMC, eventSelector
+from CMGTools.H2TauTau.htt_ntuple_base_cff import commonSequence, dyJetsFakeAna, puFileData, puFileMC, eventSelector
 
 from CMGTools.RootTools.utils.splitFactor import splitFactor
 from CMGTools.H2TauTau.proto.samples.spring16.triggers_muEle import mc_triggers, mc_triggerfilters, data_triggers, data_triggerfilters
@@ -150,7 +150,7 @@ selectedComponents = samples + data_list
 ###                  SEQUENCE                   ###
 ###################################################
 sequence = commonSequence
-sequence.insert(sequence.index(genAna), muEleAna)
+sequence.insert(sequence.index(dyJetsFakeAna), muEleAna)
 sequence.append(leptonWeighter)
 if computeSVfit:
     sequence.append(svfitProducer)
@@ -207,7 +207,3 @@ config = cfg.Config(components=selectedComponents,
                     )
 
 printComps(config.components, True)
-
-
-def modCfgForPlot(config):
-    config.components = []
