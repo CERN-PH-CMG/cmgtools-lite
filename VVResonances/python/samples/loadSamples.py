@@ -10,11 +10,6 @@ from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv2 import *
 
 
 TTs = [TTJets]
-
-
-
-
-
 background = TTs+SingleTop+DYJetsM50HT+WJetsToLNuHT+QCDHT+DiBosons
 
 #Load signal from here 
@@ -77,7 +72,7 @@ dataDir = "$CMSSW_BASE/src/CMGTools/VVResonances/data"
 for comp in mcSamples:
     comp.isMC = True
     comp.isData = False
-    comp.splitFactor = 250   
+    comp.splitFactor = 300   
     comp.puFileMC=dataDir+"/pileup_MC.root"
     comp.puFileData=dataDir+"/pileup_DATA.root"
     comp.efficiency = eff2012
@@ -85,7 +80,7 @@ for comp in mcSamples:
 #    comp.globalTag = "Summer15_25nsV6_MC"
 
 for comp in dataSamples:
-    comp.splitFactor = 250
+    comp.splitFactor = 500
     comp.isMC = False
     comp.isData = True
 #    comp.globalTag = "Summer15_25nsV6_DATA"
