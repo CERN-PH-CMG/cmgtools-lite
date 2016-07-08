@@ -25,14 +25,30 @@ from CMGTools.RootTools.samples.samples_13TeV_DATA2016 import *
 
 
 
-SingleMuon=[SingleMuon_Run2016B_PromptReco_v2]
-SingleElectron=[SingleElectron_Run2016B_PromptReco_v2]
-JetHT=[JetHT_Run2016B_PromptReco_v2]
-MET=[MET_Run2016B_PromptReco_v2]
 
 
 #Load JSON
 json='/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-275125_13TeV_PromptReco_Collisions16_JSON.txt'
+
+SingleMuon_Run2016C_PromptReco_v2=kreator.makeDataComponent("SingleMuon_Run2016C_PromptReco_v2","/SingleMuon/Run2016C-PromptReco-v2/MINIAOD","CMS",".*root",json)
+SingleElectron_Run2016C_PromptReco_v2=kreator.makeDataComponent("SingleElectron_Run2016C_PromptReco_v2","/SingleElectron/Run2016C-PromptReco-v2/MINIAOD","CMS",".*root",json)
+JetHT_Run2016C_PromptReco_v2=kreator.makeDataComponent("JetHT_Run2016C_PromptReco_v2","/JetHT/Run2016C-PromptReco-v2/MINIAOD","CMS",".*root",json)
+MET_Run2016C_PromptReco_v2=kreator.makeDataComponent("MET_Run2016C_PromptReco_v2","/MET/Run2016C-PromptReco-v2/MINIAOD","CMS",".*root",json)
+
+
+SingleMuon_Run2016D_PromptReco_v2=kreator.makeDataComponent("SingleMuon_Run2016D_PromptReco_v2","/SingleMuon/Run2016D-PromptReco-v2/MINIAOD","CMS",".*root",json)
+SingleElectron_Run2016D_PromptReco_v2=kreator.makeDataComponent("SingleElectron_Run2016D_PromptReco_v2","/SingleElectron/Run2016D-PromptReco-v2/MINIAOD","CMS",".*root",json)
+JetHT_Run2016D_PromptReco_v2=kreator.makeDataComponent("JetHT_Run2016D_PromptReco_v2","/JetHT/Run2016D-PromptReco-v2/MINIAOD","CMS",".*root",json)
+MET_Run2016D_PromptReco_v2=kreator.makeDataComponent("MET_Run2016D_PromptReco_v2","/MET/Run2016D-PromptReco-v2/MINIAOD","CMS",".*root",json)
+
+
+
+SingleMuon=[SingleMuon_Run2016B_PromptReco_v2,SingleMuon_Run2016C_PromptReco_v2,SingleMuon_Run2016D_PromptReco_v2]
+SingleElectron=[SingleElectron_Run2016B_PromptReco_v2,SingleElectron_Run2016C_PromptReco_v2,SingleElectron_Run2016D_PromptReco_v2]
+JetHT=[JetHT_Run2016B_PromptReco_v2,JetHT_Run2016C_PromptReco_v2,JetHT_Run2016D_PromptReco_v2]
+MET=[MET_Run2016B_PromptReco_v2,MET_Run2016C_PromptReco_v2,MET_Run2016D_PromptReco_v2]
+
+
 
 #Single electron or muon to be used for lnu+J and ll+J (silver)
 for s in SingleMuon:
