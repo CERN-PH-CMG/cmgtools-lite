@@ -90,7 +90,6 @@ triggerFlagsAna.triggerBits ={
     "HT800":triggers_HT800,
     "HT900":triggers_HT900,
     "JJ":triggers_dijet_fat,  
-    "MET90":triggers_met90_mht90+triggers_metNoMu90_mhtNoMu90,
     "MET120":triggers_metNoMu120_mhtNoMu120
 }
 
