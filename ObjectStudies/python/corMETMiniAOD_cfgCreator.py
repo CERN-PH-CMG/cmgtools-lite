@@ -79,6 +79,10 @@ if usePrivateSQlite:
                 tag = cms.string("JetCorrectorParametersCollection_"+options.jecEra+"_AK4PFchs"),
                 label= cms.untracked.string("AK4PFchs")
                 ),
+           cms.PSet(record  = cms.string("JetCorrectionsRecord"),
+                tag     = cms.string("JetCorrectorParametersCollection_"+options.jecEra+"_AK4PFPuppi"),
+                label   = cms.untracked.string("AK4PFPuppi")
+                ),
             )
                                )
     process.es_prefer_jec = cms.ESPrefer("PoolDBESSource",'jec')
@@ -93,6 +97,9 @@ process.jer = cms.ESSource("PoolDBESSource",CondDBSetup,
 ##                           connect = cms.string("sqlite:PhysicsTools/PatUtils/data/Fall15_25nsV2_MC.db"),
                            connect = cms.string('sqlite_file:'+os.path.expandvars(options.jerDBFile)),
                            toGet =  cms.VPSet(
+    #######
+    ### read the PFchs JER
+
     cms.PSet(
       record = cms.string('JetResolutionRcd'),
       #tag    = cms.string('JR_MC_PtResolution_Summer15_25nsV6_AK4PF'),
@@ -111,6 +118,29 @@ process.jer = cms.ESSource("PoolDBESSource",CondDBSetup,
       tag    = cms.string('JR_'+options.jerEra+'_MC_SF_AK4PFchs'),
       label  = cms.untracked.string('AK4PFchs')
       ),
+
+    #######
+    ### read the Puppi JER
+
+    cms.PSet(
+      record = cms.string('JetResolutionRcd'),
+      #tag    = cms.string('JR_MC_PtResolution_Summer15_25nsV6_AK4PF'),
+      tag    = cms.string('JR_'+options.jerEra+'_MC_PtResolution_AK4PFPuppi'),
+      label  = cms.untracked.string('AK4PFPuppi_pt')
+      ),
+    cms.PSet(
+      record = cms.string("JetResolutionRcd"),
+      #tag = cms.string("JR_MC_PhiResolution_Summer15_25nsV6_AK4PF"),
+      tag = cms.string('JR_'+options.jerEra+'_MC_PhiResolution_AK4PFPuppi'),
+      label= cms.untracked.string("AK4PFPuppi_phi")
+      ),
+    cms.PSet(
+      record = cms.string('JetResolutionScaleFactorRcd'),
+      #tag    = cms.string('JR_DATAMCSF_Summer15_25nsV6_AK4PFchs'),
+      tag    = cms.string('JR_'+options.jerEra+'_MC_SF_AK4PFPuppi'),
+      label  = cms.untracked.string('AK4PFPuppi')
+      ),
+
 
     ) )
 process.es_prefer_jer = cms.ESPrefer("PoolDBESSource",'jer')
