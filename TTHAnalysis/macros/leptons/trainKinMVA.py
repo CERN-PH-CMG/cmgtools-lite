@@ -316,7 +316,7 @@ def train_2d(fOutName, training, options):
             "BDTv8_eventReco_W_fromHiggs_mass := BDTv8_eventReco_W_fromHiggs_mass",
             "BDTv8_eventReco_LepTop_HadTop_dR := BDTv8_eventReco_LepTop_HadTop_dR",
             ]
-    if 'bdtv8_simple' in training:
+    if 'hadtopsimple' in training:
         variables += [
             "HadTopSimple_bJet_fromHadTop_CSV := max(-1.1,bJet_fromHadTop_CSV)",
             "HadTopSimple_lJet_fromHadTop_CSV2 := max(-1.1,lJet_fromHadTop_CSV2)",
