@@ -67,6 +67,7 @@ eventFlagsAna = cfg.Analyzer(
     triggerBits = {
         "HBHENoiseFilter" : [ "Flag_HBHENoiseFilter" ],
         "HBHENoiseIsoFilter" : [ "Flag_HBHENoiseIsoFilter" ],
+        "globalTightHalo2016Filter" : [ "Flag_globalTightHalo2016Filter" ],
         "CSCTightHalo2015Filter" : [ "Flag_CSCTightHalo2015Filter" ],
         "CSCTightHaloFilter" : [ "Flag_CSCTightHaloFilter" ],
         "hcalLaserEventFilter" : [ "Flag_hcalLaserEventFilter" ],
@@ -82,6 +83,20 @@ eventFlagsAna = cfg.Analyzer(
         "METFilters" : [ "Flag_METFilters" ],
     }
     )
+
+from CMGTools.TTHAnalysis.analyzers.badChargedHadronAnalyzer import badChargedHadronAnalyzer
+badChargedHadronAna = cfg.Analyzer(
+    badChargedHadronAnalyzer, name = 'badChargedHadronAna',
+    muons='slimmedMuons',
+    packedCandidates = 'packedPFCandidates',
+)
+
+from CMGTools.TTHAnalysis.analyzers.badMuonAnalyzer import badMuonAnalyzer
+badMuonAna = cfg.Analyzer(
+    badMuonAnalyzer, name = 'badMuonAna',
+    muons='slimmedMuons',
+    packedCandidates = 'packedPFCandidates',
+)
 
 # Select a list of good primary vertices (generic)
 vertexAna = cfg.Analyzer(
@@ -519,4 +534,6 @@ susyCoreSequence = [
     # susyLeptonMatchAna,
     triggerFlagsAna,
     eventFlagsAna,
+    badMuonAna,
+    badChargedHadronAna,
 ]

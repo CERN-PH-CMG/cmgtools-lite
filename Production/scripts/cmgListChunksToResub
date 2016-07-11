@@ -51,9 +51,9 @@ for D in *_Chunk[0-9]*; do
     if test \! -s $D/$F; then
         if [[ "${LSFL}" == "0"  ]] || find $D -maxdepth 1 -type d -name 'LSFJOB_*' | grep -q LSFJ; then
             if [[ "$LOC" == "1" ]]; then
-                echo "cmgRunChunkLocally ${BASE}${D} "; 
-            else
-                echo "cmgResubChunk -q $Q ${BASE}${D} "; 
+                echo "cmgRunChunkLocally ${BASE}${D} ";
+	    else
+		echo "cmgResubChunk -q $Q ${BASE}${D} ";
             fi
         else
             echo "# Chunk ${BASE}${D} does not have a LSFJOB directory, maybe still running? "; 
