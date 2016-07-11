@@ -85,6 +85,8 @@ def stackEfficiencies(base,ref,options):
     styleAsData(base,options)
     styleAsRef(ref,options)
     ref.Draw("AE2");
+    if options.xrange: 
+        ref.GetXaxis().SetRangeUser(options.xrange[0], options.xrange[1])
     if hasattr(ref,"syst"):
         ref.syst.Draw("E2 SAME");
         ref.Draw("E2 SAME");
@@ -117,6 +119,8 @@ def plotRatio(effs,ratio,options):
         r.GetYaxis().SetTitle("ratio")
         r.GetYaxis().SetTitleOffset(0.52);
     ratio.Draw("APZ")
+    if options.xrange: 
+        ratio.GetXaxis().SetRangeUser(options.xrange[0], options.xrange[1])
     if options.rrange: 
         ratio.GetYaxis().SetRangeUser(options.rrange[0],options.rrange[1]);
     if ratiosyst:
@@ -244,6 +248,7 @@ def diffBbB(numeff,deneff,relative=False):
     return FetchByX(ret.items())
 
 def applyDiff1DAsUncertainty(graph,diff,relative=False,oneSided=False):
+    if diff == None: return
     x = graph.GetX()
     for i in xrange(graph.GetN()):
         d = diff[x[i]]
@@ -258,6 +263,7 @@ def applyDiff1DAsUncertainty(graph,diff,relative=False,oneSided=False):
     return graph
 
 def applyDiff2DAsUncertainty(graph,diff,relative=False):
+    if diff == None: return
     x = graph.GetX()
     for i in xrange(graph.GetN()):
         d = diff[x[i]]
@@ -305,6 +311,7 @@ def closureSystematic(data):
     return diffBbB(data['ref'],data['truth'],relative=True)    
 
 def fitShapeSystematic(data,alts,key):
+    if len(alts) == 0: return None
     diffs = [ diffBbB(data[key],alt[key]) for alt in alts ]
     return envelopeOfDiffs(data[key],diffs)
 
@@ -324,11 +331,13 @@ def addTnPHarvestOptions(parser):
     parser.add_option("--alt", "--altSetup",   dest="altSetups", default=[], action="append", help="Alternate setups (to be used with the nominal S & B model)");
     parser.add_option("--exclude", "--exclude", dest="exclude", type="string", default=[], action="append", nargs=2, help="make a single fit");
     parser.add_option("-N", "--name",    dest="name", type="string", help="name", default="eff")
+    parser.add_option("--postfix",    dest="postfix", type="string", help="Postfix for the output", default="")
     parser.add_option("--xtitle",   dest="xtitle", type="string", default=None, help="X title")
     parser.add_option("--ytitle",   dest="ytitle", type="string", default="Efficiency", help="Y title")
     parser.add_option("--mtitle",   dest="mtitle", type="string", default="Mass (GeV)", help="M title")
     parser.add_option("--pdir", "--print-dir", dest="printDir", type="string", default="plots", help="print out plots in this directory");
     parser.add_option("--idir", "--in-dir", dest="inDir", type="string", default="plots", help="print out plots in this directory");
+    parser.add_option("--xrange", dest="xrange", type="float", nargs=2, default=None);
     parser.add_option("--yrange", dest="yrange", type="float", nargs=2, default=(0,1.025));
     parser.add_option("--rrange", dest="rrange", type="float", nargs=2, default=None);
     parser.add_option("--doRatio", dest="doRatio", action="store_true", default=False, help="Add a ratio plot at the bottom")
@@ -371,8 +380,8 @@ if __name__ == "__main__":
             capErrors(main[k])
             capErrors(main[k].syst)
             capErrors(main[k].systOnly)
-    plotEffs(options.name, [ main['data'], main['ref'] ], main['ratioErr'], options)
-    fout = ROOT.TFile.Open(options.printDir+"/"+options.name+".root", "RECREATE")
+    plotEffs(options.name+options.postfix, [ main['data'], main['ref'] ], main['ratioErr'], options)
+    fout = ROOT.TFile.Open(options.printDir+"/"+options.name+options.postfix+".root", "RECREATE")
     for k in "data","ref","ratio","ratioErr":
         fout.WriteTObject(main[k], k)
         fout.WriteTObject(main[k].syst, k+"_syst")
