@@ -361,10 +361,10 @@ selectedComponents = [TTLep_pow_ext]
 #susyCounter.SMS_varying_masses = ['genSusyMGluino','genSusyMNeutralino']
 
 if analysis=='susy':
-    samples = [DYJetsToLL_M10to50, DYJetsToLL_M50, GGHZZ4L, TBarToLeptons_tch_powheg, TBar_tWch, TGJets, TTGJets, TTJets, TTJets_DiLepton, TTJets_SingleLeptonFromT, 
+    samples = [DYJetsToLL_M10to50, DYJetsToLL_M50, DYJetsToLL_M10to50_LO, DYJetsToLL_M50_LO, GGHZZ4L, TBarToLeptons_tch_powheg, TBar_tWch, TGJets, TTGJets, TTJets, TTJets_DiLepton, TTJets_SingleLeptonFromT, 
                TTJets_SingleLeptonFromTbar, TTTT, TT_pow_ext4, TToLeptons_sch_amcatnlo, TToLeptons_tch_amcatnlo, TToLeptons_tch_powheg, T_tWch, VHToNonbb, WGToLNuG, WJetsToLNu, WJetsToLNu_LO, 
                WWDouble, WWTo2L2Nu, WWW, WWZ, WZTo3LNu, WZTo3LNu_amcatnlo, WZZ, WpWpJJ, ZGTo2LG, ZZTo4L, ZZZ, tZq_ll]
-    
+   
     samples_LHE = [TTHnobb_mWCutfix_ext1, TTHnobb_pow, TTLLJets_m1to10, TTWToLNu, TTW_LO, TTZToLLNuNu, TTZ_LO,]
     
     #samples_2l = [TTW_LO,TTZ_LO,WZTo3LNu_amcatnlo,DYJetsToLL_M10to50,DYJetsToLL_M50,WWTo2L2Nu,ZZTo2L2Q,WZTo3LNu,TTWToLNu,TTZToLLNuNu,TTJets_DiLepton,TTHnobb_mWCutfix_ext1,TTHnobb_pow]
@@ -410,8 +410,8 @@ if runData and not isTest: # For running on data
     is50ns = False
     dataChunks = []
 
-    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_271036-275125_13TeV_PromptReco_Collisions16_JSON.txt' # 2.07/fb
-    processing = "Run2016B-PromptReco-v2"; short = "Run2016B_PromptReco_v2"; run_ranges = [(274443,275125)]; useAAA=False; # -v2 starts from 273150 275125
+    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_271036-275783_13TeV_PromptReco_Collisions16_JSON.txt' # 2.07/fb
+    processing = "Run2016B-PromptReco-v2"; short = "Run2016B_PromptReco_v2"; run_ranges = [(271350,275783)]; useAAA=False; # -v2 starts from 273150 275125
     dataChunks.append((json,processing,short,run_ranges,useAAA))
 
     compSelection = ""; compVeto = ""
@@ -424,11 +424,11 @@ if runData and not isTest: # For running on data
         #DatasetsAndTriggers.append( ("MET", triggers_Jet80MET90 + triggers_Jet80MET120 + triggers_MET120Mu5 ) )
         #DatasetsAndTriggers.append( ("SingleMuon", triggers_1mu_iso + triggers_1mu_iso_50ns + triggers_1mu_noniso) )
     else:
-        #DatasetsAndTriggers.append( ("DoubleMuon", triggers_mumu_iso + triggers_mumu_ss + triggers_mumu_ht + triggers_3mu + triggers_3mu_alt) )
-        #DatasetsAndTriggers.append( ("DoubleEG",   triggers_ee + triggers_ee_ht + triggers_3e) )
-        #DatasetsAndTriggers.append( ("MuonEG",     triggers_mue + triggers_mue_ht + triggers_2mu1e + triggers_2e1mu) )
-        #DatasetsAndTriggers.append( ("SingleMuon", triggers_1mu_iso + triggers_1mu_iso_50ns + triggers_1mu_noniso) )
-        #DatasetsAndTriggers.append( ("SingleElectron", triggers_1e + triggers_1e_50ns) )
+        DatasetsAndTriggers.append( ("DoubleMuon", triggers_mumu_iso + triggers_mumu_ss + triggers_mumu_ht + triggers_3mu + triggers_3mu_alt) )
+        DatasetsAndTriggers.append( ("DoubleEG",   triggers_ee + triggers_ee_ht + triggers_3e) )
+        DatasetsAndTriggers.append( ("MuonEG",     triggers_mue + triggers_mue_ht + triggers_2mu1e + triggers_2e1mu) )
+        DatasetsAndTriggers.append( ("SingleMuon", triggers_1mu_iso + triggers_1mu_iso_50ns + triggers_1mu_noniso) )
+        DatasetsAndTriggers.append( ("SingleElectron", triggers_1e + triggers_1e_50ns) )
         DatasetsAndTriggers.append( ("Tau", triggers_leptautau) )
 
         if runDataQCD: # for fake rate measurements in data
@@ -719,14 +719,14 @@ elif test == '80X-MC':
         if not getHeppyOption("single"): comp.fineSplitFactor = 4
     else: raise RuntimeError, "Unknown MC sample: %s" % what
 elif test == '80X-Data':
-    DoubleMuon = kreator.makeDataComponent("DoubleMuon_Run2016B_run274315", "/DoubleMuon/Run2016B-PromptReco-v2/MINIAOD", "CMS", ".*root", run_range = (274315,274315), triggers = triggers_mumu + triggers_mumu_ht + triggers_ee + triggers_ee_ht )
+    DoubleMuon = kreator.makeDataComponent("DoubleMuon_Run2016B_run275783", "/DoubleMuon/Run2016B-PromptReco-v2/MINIAOD", "CMS", ".*root", run_range = (274315,274315), triggers = triggers_mumu + triggers_mumu_ht + triggers_ee + triggers_ee_ht )
     #DoubleEG = kreator.makeDataComponent("DoubleEG_Run2016B_run274315", "/DoubleEG/Run2016B-PromptReco-v2/MINIAOD", "CMS", ".*root", run_range = (274315,274315), triggers = triggers_ee)
     #DoubleMuon.files = [ 'root://eoscms//eos/cms/store/data/Run2016B/DoubleMuon/MINIAOD/PromptReco-v2/000/274/315/00000/A287989F-E129-E611-B5FB-02163E0142C2.root' ]
-    DoubleMuon.files = ["pickevents.root"] #["DoubleMuon.root","DoubleEG.root"]
+    #DoubleMuon.files = ["pickevents.root"] #["DoubleMuon.root","DoubleEG.root"]
     #DoubleEG.files = [ 'root://eoscms//eos/cms/store/data/Run2016B/DoubleEG/MINIAOD/PromptReco-v2/000/274/315/00000/FEF59D1D-EE29-E611-8793-02163E0143AE.root' ]
     selectedComponents = [ DoubleMuon] #, DoubleEG ]
     for comp in selectedComponents:
-        comp.json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-275125_13TeV_PromptReco_Collisions16_JSON.txt'
+        comp.json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-275783_13TeV_PromptReco_Collisions16_JSON.txt'
         #tmpfil = os.path.expandvars("/tmp/$USER/%s" % os.path.basename(comp.files[0]))
         #if not os.path.exists(tmpfil): os.system("xrdcp %s %s" % (comp.files[0],tmpfil)) 
         #comp.files = [tmpfil]

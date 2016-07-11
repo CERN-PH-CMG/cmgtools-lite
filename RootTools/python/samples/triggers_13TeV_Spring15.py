@@ -34,8 +34,10 @@ triggers_3mu_alt = [ "HLT_TrkMu15_DoubleTrkMu5NoFiltersNoVtx_v*" ]
 triggers_2mu1e = [ "HLT_DiMu9_Ele9_CaloIdL_TrackIdL_v*" ]
 triggers_2e1mu = [ "HLT_Mu8_DiEle12_CaloIdL_TrackIdL_v*" ]
 
-triggers_1mu_iso_r  = [ 'HLT_IsoMu24_eta2p1_v*', 'HLT_IsoTkMu24_eta2p1_v*'  ]
-triggers_1mu_iso_w  = [ 'HLT_IsoMu18_v*', 'HLT_IsoMu20_v*', 'HLT_IsoTkMu20_v*', 'HLT_IsoMu27_v*', 'HLT_IsoTkMu27_v*'  ]
+triggers_1mu_iso_r  = [ 'HLT_IsoMu24_eta2p1_v*', 'HLT_IsoTkMu24_eta2p1_v*' ]
+triggers_1mu_iso_w  = [ 'HLT_IsoMu18_v*', 'HLT_IsoMu20_v*', 'HLT_IsoTkMu20_v*',
+                        "HLT_IsoTkMu22_v*", "HLT_IsoMu22_v*", 'HLT_IsoMu27_v*',
+                        'HLT_IsoTkMu27_v*'  ]
 triggers_1mu_iso_r_50ns = [ 'HLT_IsoMu17_eta2p1_v*', 'HLT_IsoTkMu17_eta2p1_v*'  ]
 triggers_1mu_iso_w_50ns = [ 'HLT_IsoMu20_v*', 'HLT_IsoTkMu20_v*'  ]
 triggers_1mu_noniso = [ 'HLT_Mu45_eta2p1_v*', 'HLT_Mu50_v*' ]
@@ -59,9 +61,7 @@ triggers_FR_muNoIso = [ "HLT_Mu%d_v*" % pt for pt in (20,27,) ] + [ "HLT_Mu%d_et
 triggers_FR_ZB      = [ "HLT_ZeroBias_v*" ] + [ "HLT_ZeroBias_part%d_v*" % i for i in xrange(1,9) ]
 
 # tau triggers for EWKino
-triggers_leptautau = ["HLT_IsoTkMu22_v*", "HLT_IsoMu22_v*",
-                      "HLT_IsoMu19_eta2p1_LooseIsoPFTau20_v*",
-                      "HLT_Ele27_eta2p1_WPLoose_Gsf_v*", 
+triggers_leptautau = ["HLT_IsoMu19_eta2p1_LooseIsoPFTau20_v*",
                       "HLT_Ele22_eta2p1_WPLoose_GSF_LooseIsoPFtau20_SingleL1_v*",
                       "HLT_DoubleMediumIsoPFTau32_Trk1_eta2p1_Reg_v"]
 
