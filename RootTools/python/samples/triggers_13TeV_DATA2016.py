@@ -25,7 +25,7 @@ triggers_ee_ht =  [ "HLT_DoubleEle8_CaloIdM_TrackIdM_Mass8_PFHT300_v*" ]
 triggers_mue_ht = [ "HLT_Mu8_Ele8_CaloIdM_TrackIdM_Mass8_PFHT300_v*" ]
 
 triggers_3e = [ "HLT_Ele16_Ele12_Ele8_CaloIdL_TrackIdL_v*" ]
-triggers_3mu = [ "HLT_TripleMu_12_10_5_v*", "HLT_TripleMu_5_5_3_v*" ] # 553 only in part of the dataset
+triggers_3mu = [ "HLT_TripleMu_12_10_5_v*", "HLT_TripleMu_5_3_3_v*" ] # 533 only in part of the dataset
 triggers_3mu_alt = [ "HLT_TrkMu15_DoubleTrkMu5NoFiltersNoVtx_v*" ]
 triggers_2mu1e = [ "HLT_DiMu9_Ele9_CaloIdL_TrackIdL_v*" ]
 triggers_2e1mu = [ "HLT_Mu8_DiEle12_CaloIdL_TrackIdL_v*" ]
