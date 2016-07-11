@@ -22,7 +22,7 @@ def printSummary(selectedComponents):
         totj += njobs; totf += len(comp.files); tote += nev     
         print "%-55s | %8d %12.3f | %7d | %8.2f %11.3f | %11.3f " % (comp.name, len(comp.files), nev/1000., njobs, len(comp.files)/float(njobs) if njobs else 0, (nev/njobs if njobs else 0)/1000, lumi)
     print "%-55s | %8s %12s | %7s | %8s %11s | %11s" % (55*"-", 8*"-", 12*"-", 7*"-", 8*"-", 11*"-", 11*"-")
-    print "%-55s | %8d %12.3f | %7d | %8.2f %11.3f |" % ("TOTAL", totf, tote/1000., totj, totf/totj, tote/totj/1000.)
+    print "%-55s | %8d %12.3f | %7d | %8.2f %11.3f |" % ("TOTAL", totf, tote/1000., totj, totf/totj if totj else -1, tote/totj/1000. if totj else -1)
 
 def configureSplittingFromTime(selectedComponents,msPerEvent,jobTimeInHours):
     from math import ceil, floor
