@@ -3,7 +3,7 @@ import PhysicsTools.HeppyCore.framework.config as cfg
 from CMGTools.RootTools.samples.autoAAAconfig import *
 
 #-------- SAMPLES AND TRIGGERS -----------
-from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv1 import * #<--miniAOD v1 2016 MC
+from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv2 import * #<--miniAOD v2 2016 MC for ICHEP
 from CMGTools.RootTools.samples.samples_13TeV_DATA2016 import *  #<--miniAOD v1 2016 DATA
 
 from CMGTools.RootTools.samples.triggers_13TeV_Spring15 import triggers_1mu_iso_50ns, triggers_mumu, triggers_ee, triggers_photon30, triggers_photon50, triggers_photon75, triggers_photon90, triggers_photon120, triggers_jet, triggers_dijet, triggers_HT350, triggers_HT475, triggers_HT600, triggers_HT800, triggers_HT900, triggers_Jet80MET90
@@ -130,7 +130,7 @@ elif test==13:
             comp.triggers = triggers_ee
         else:
             comp.triggers = triggers_mumu
-        comp.json = "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-273730_13TeV_PromptReco_Collisions16_JSON.txt"
+        comp.json = "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-275125_13TeV_PromptReco_Collisions16_JSON.txt"
         comp.intLumi= 0.04003
         print comp
 
@@ -141,7 +141,7 @@ elif test==14:
     for comp in selectedComponents:
         comp.splitFactor = 1000
         comp.files = comp.files[:]
-        comp.json = "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-273730_13TeV_PromptReco_Collisions16_JSON.txt"
+        comp.json = "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-275125_13TeV_PromptReco_Collisions16_JSON.txt"
         comp.intLumi= 0.04003
 
 ### this is for the QCDlike
@@ -151,7 +151,7 @@ elif test==15:
     for comp in selectedComponents:
         comp.splitFactor = 1000
         comp.files = comp.files[:]
-        comp.json = "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-273730_13TeV_PromptReco_Collisions16_JSON.txt"
+        comp.json = "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-275125_13TeV_PromptReco_Collisions16_JSON.txt"
         comp.intLumi= 0.04003
 #        if isEarlyRun:
 #            comp.run_range=(251027,251585) # in 17july runInJSON: 251244,251251,251252,251561,251562
@@ -168,14 +168,15 @@ elif test==16:
         comp.triggers = triggers_photon30 + triggers_photon50 + triggers_photon75 + triggers_photon90 + triggers_photon120
         comp.splitFactor = 100
         comp.files = comp.files[:]
-        comp.json = "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-273730_13TeV_PromptReco_Collisions16_JSON.txt"
+        comp.json = "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-275125_13TeV_PromptReco_Collisions16_JSON.txt"
         comp.intLumi= 0.04003
     # ------------------------------------------------------------------------------------------- #
     #        --> 25ns MC here
 
 #QCD
 elif test==17:
-    selectedComponents = [QCD_HT100to200, QCD_HT200to300, QCD_HT300to500, QCD_HT_500to700, QCD_HT700to1000,QCD_HT1000to1500,QCD_HT1500to2000,QCD_HT2000toInf]
+#    selectedComponents = [QCD_HT100to200, QCD_HT200to300, QCD_HT300to500, QCD_HT_500to700, QCD_HT700to1000,QCD_HT1000to1500,QCD_HT1500to2000,QCD_HT2000toInf]
+    selectedComponents = QCD_HT
     is1PH=True
     for comp in selectedComponents:
         comp.splitFactor = 100
@@ -191,7 +192,7 @@ elif test==18:
 
 # WG/ZG/TTG
 elif test==19:
-    selectedComponents = [ZGJets, ZGTo2LG, WGJets, TTGJets]
+    selectedComponents = [ZGJets, ZGTo2LG, WGJets, TTGJets, TGJets_ext]
     is1PH=True
     for comp in selectedComponents:
         comp.splitFactor = 100
@@ -200,7 +201,8 @@ elif test==19:
 elif test==23:
     isZSkim=True
     is25ns=True
-    selectedComponents = [ DYJetsToLL_M50, TTJets_DiLepton, ZZTo4L, ZZTo2L2Q, WWTo2L2Nu, WZTo2L2Q, WZTo3LNu ]
+    selectedComponents = [ DYJetsToLL_M50 ]
+#    selectedComponents = [ DYJetsToLL_M50, TTJets_DiLepton, TTJets_DiLepton_ext, ZZTo4L, ZZTo2L2Q, ZZTo2L2Nu, WWTo2L2Nu, WZTo2L2Q, WZTo3LNu ]
     for comp in selectedComponents:
 # no trigger on MC for now
 #        if isEle:
@@ -209,7 +211,7 @@ elif test==23:
 #            comp.triggers = triggers_mumu
 #        comp.splitFactor = 1
 #        comp.files = comp.files[:1]
-        comp.splitFactor = 1000
+        comp.splitFactor = 200
         comp.files = comp.files[:]
 
 elif test==25:
@@ -293,8 +295,12 @@ if isZSkim or is1PH:
     met_globalObjects.update({
             "met_jecUp" : NTupleObject("met_jecUp", metType, help="PF E_{T}^{miss}, after type 1 corrections with JEC up variation"),
             "met_jecDown" : NTupleObject("met_jecDown", metType, help="PF E_{T}^{miss}, after type 1 corrections with JEC down variation"),
+            "met_shifted_UnclusteredEnUp" : NTupleObject("met_shifted_UnclusteredEnUp", metType, help="PF E_{T}^{miss}, after type 1 corrections with met unclustered Up"),
+            "met_shifted_UnclusteredEnDown" : NTupleObject("met_shifted_UnclusteredEnDown", metType, help="PF E_{T}^{miss}, after type 1 corrections with met unclustered Down"),
             "metPuppi_jecUp" : NTupleObject("metPuppi_jecUp", metType, help="PF E_{T}^{miss}, after type 1 corrections with JEC up variation (Puppi)"),
             "metPuppi_jecDown" : NTupleObject("metPuppi_jecDown", metType, help="PF E_{T}^{miss}, after type 1 corrections with JEC down variation (Puppi)"),
+            "metPuppi_shifted_UnclusteredEnUp" : NTupleObject("metPuppi_shifted_UnclusteredEnUp", metType, help="PF E_{T}^{miss}, after type 1 corrections with met unclustered Up"),
+            "metPuppi_shifted_UnclusteredEnDown" : NTupleObject("metPuppi_shifted_UnclusteredEnDown", metType, help="PF E_{T}^{miss}, after type 1 corrections with met unclustered Down"),
             })
 if is1PH:
     met_collections.update({
@@ -378,27 +384,27 @@ import subprocess
 if comp.isData:
     ## DATA 25ns
     removeResiduals = False
-    uncFile = os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/jec/Summer15_25nsV5_DATA_Uncertainty_AK4PFchs.txt'
-    jecDBFile = os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/jec/Fall15_25nsV2_DATA.db'
-    jecEra    = 'Fall15_25nsV2_DATA'
-    jerDBFile = os.environ['CMSSW_BASE']+'/src/PhysicsTools/PatUtils/data/Fall15_25nsV2_DATA.db'
+    uncFile = os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/jec/Spring16_25nsV3_DATA_Uncertainty_AK4PFchs.txt'
+    jecDBFile = os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/jec/Spring16_25nsV3_DATA.db'
+    jecEra    = 'Spring16_25nsV3_DATA'
+    jerDBFile = os.environ['CMSSW_BASE']+'/src/PhysicsTools/PatUtils/data/JER/Fall15_25nsV2_MC.db'
     jerEra    = 'Fall15_25nsV2'
 else:
     ## MC 25ns
     removeResiduals = False
-    uncFile = os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/jec/Summer15_25nsV2_MC_Uncertainty_AK4PFchs.txt'
-    jecDBFile = os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/jec/Fall15_25nsV2_MC.db'
-    jecEra    = 'Fall15_25nsV2_MC'
-    jerDBFile = os.environ['CMSSW_BASE']+'/src/PhysicsTools/PatUtils/data/Fall15_25nsV2_MC.db'
+    uncFile = os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/jec/Spring16_25nsV3_MC_Uncertainty_AK4PFchs.txt'
+    jecDBFile = os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/jec/Spring16_25nsV3_MC.db'
+    jecEra    = 'Spring16_25nsV3_MC'
+    jerDBFile = os.environ['CMSSW_BASE']+'/src/PhysicsTools/PatUtils/data/JER/Fall15_25nsV2_MC.db'
     jerEra    = 'Fall15_25nsV2'
 
 preprocessorFile = "$CMSSW_BASE/tmp/MetType1_jec_%s.py"%(jecEra)
 extraArgs=[]
 if comp.isData:
     extraArgs.append('--isData')
-    GT= '76X_dataRun2_16Dec2015_v0'
+    GT= '80X_dataRun2_Prompt_v8'
 else:
-    GT= '76X_mcRun2_asymptotic_RunIIFall15DR76_v1'
+    GT= '80X_mcRun2_asymptotic_2016_v3'
 
 if removeResiduals:extraArgs.append('--removeResiduals')
 args = ['python',
