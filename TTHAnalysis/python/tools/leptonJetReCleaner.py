@@ -69,7 +69,7 @@ class LeptonJetReCleaner:
                 ("nTightTauSel"+label, "I"), 
                 ("iTauSel"+label,"I",20,"nTauSel"+label)
                 ])
-        for tfloat in "pt eta phi mass reclTauId".split():
+        for tfloat in "pt eta phi mass reclTauId mcMatchId".split():
             biglist.append( ("TauSel"+label+"_"+tfloat,"F",20,"nTauSel"+label) )
 
         for key in self.systsJEC:
@@ -223,6 +223,10 @@ class LeptonJetReCleaner:
                 tauret[tfloat] = []
                 for g in goodtaus:
                     tauret[tfloat].append( getattr(g, tfloat) )
+            for tfloat in "mcMatchId".split():
+                tauret[tfloat] = []
+                for g in goodtaus:
+                    tauret[tfloat].append( getattr(g, tfloat) if hasattr(event,"TauGood_"+tfloat) else -99 )
         return goodtaus
 
     def __call__(self,event):
