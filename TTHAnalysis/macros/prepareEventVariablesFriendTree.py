@@ -346,6 +346,8 @@ parser.add_option("-m", "--modules", dest="modules",  type="string", default=[],
 parser.add_option("-d", "--dataset", dest="datasets",  type="string", default=[], action="append", help="Process only this dataset (or dataset if specified multiple times)");
 parser.add_option("-D", "--dm", "--dataset-match", dest="datasetMatches",  type="string", default=[], action="append", help="Process only this dataset (or dataset if specified multiple times): REGEXP");
 parser.add_option("-c", "--chunk",   dest="chunks",    type="int",    default=[], action="append", help="Process only these chunks (works only if a single dataset is selected with -d)");
+parser.add_option("--subChunk", dest="subChunk",    type="int",    default=None, nargs=1, help="Process sub-chunk iof this chunk");
+parser.add_option("--fineSplit", dest="fineSplit",    type="int",    default=None, nargs=1, help="Split each chunk in N subchunks");
 parser.add_option("-N", "--events",  dest="chunkSize", type="int",    default=500000, help="Default chunk size when splitting trees");
 parser.add_option("-j", "--jobs",    dest="jobs",      type="int",    default=1, help="Use N threads");
 parser.add_option("-p", "--pretend", dest="pretend",   action="store_true", default=False, help="Don't run anything");
@@ -438,15 +440,22 @@ for D in glob(args[0]+"/*"):
         chunk = options.chunkSize
         if entries < chunk:
             print "  ",os.path.basename(D),("  DATA" if data else "  MC")," single chunk"
-            jobs.append((short,fname,"%s/evVarFriend_%s.root" % (args[1],short),data,xrange(entries),-1))
+            jobs.append((short,fname,"%s/evVarFriend_%s.root" % (args[1],short),data,xrange(entries),-1,None))
         else:
             nchunk = int(ceil(entries/float(chunk)))
             print "  ",os.path.basename(D),("  DATA" if data else "  MC")," %d chunks" % nchunk
             for i in xrange(nchunk):
                 if options.chunks != []:
                     if i not in options.chunks: continue
-                r = xrange(int(i*chunk),min(int((i+1)*chunk),entries))
-                jobs.append((short,fname,"%s/evVarFriend_%s.chunk%d.root" % (args[1],short,i),data,r,i))
+                if not options.fineSplit:
+                    r = xrange(int(i*chunk),min(int((i+1)*chunk),entries))
+                    jobs.append((short,fname,"%s/evVarFriend_%s.chunk%d.root" % (args[1],short,i),data,r,i,None))
+                else:
+                    ev_per_fs = int(ceil(chunk/float(options.fineSplit)))
+                    for ifs in xrange(options.fineSplit):
+                        if options.subChunk and ifs != options.subChunk: continue
+                        r = xrange(i*chunk + ifs*ev_per_fs, min(i*chunk + min((ifs+1)*ev_per_fs, chunk),entries))
+                        jobs.append((short,fname,"%s/evVarFriend_%s.chunk%d.sub%d.root" % (args[1],short,i,ifs),data,r,i,(ifs,options.fineSplit)))
 print "\n"
 print "I have %d task(s) to process" % len(jobs)
 
@@ -473,14 +482,16 @@ if options.queue:
     friendPost += "".join([" --FM %s %s " % (fn,ft) for fn,ft in options.friendTreesMC])
     friendPost += "".join([" --FD %s %s " % (fn,ft) for fn,ft in options.friendTreesData])
     friendPost += "".join(["  -m  '%s'  " % m for m in options.modules])
-    for (name,fin,fout,data,range,chunk) in jobs:
+    friendPost += "".join(["  -I  '%s'  " % m for m in options.imports])
+    for (name,fin,fout,data,range,chunk,fs) in jobs:
         if chunk != -1:
             if options.logdir: writelog = "-o {logdir}/{data}_{chunk}.out -e {logdir}/{data}_{chunk}.err".format(logdir=logdir, data=name, chunk=chunk)
             cmd = "{super} {writelog} {base} -d {data} -c {chunk} {post}".format(super=super, writelog=writelog, base=basecmd, data=name, chunk=chunk, post=friendPost)
+            if fs:
+                cmd += " --fineSplit %d --subChunk %d" % (fs[1], fs[0])
         else:
             if options.logdir: writelog = "-o {logdir}/{data}.out -e {logdir}/{data}.err".format(logdir=logdir, data=name)
             cmd = "{super} {writelog} {base} -d {data} {post}".format(super=super, writelog=writelog, base=basecmd, data=name, chunk=chunk, post=friendPost)
-
         print cmd
         if not options.pretend: 
             os.system(cmd)
@@ -489,7 +500,7 @@ if options.queue:
 
 maintimer = ROOT.TStopwatch()
 def _runIt(myargs):
-    (name,fin,fout,data,range,chunk) = myargs
+    (name,fin,fout,data,range,chunk,fineSplit) = myargs
     timer = ROOT.TStopwatch()
     fetchedfile = None
     if 'LSB_JOBID' in os.environ or 'LSF_JOBID' in os.environ:
