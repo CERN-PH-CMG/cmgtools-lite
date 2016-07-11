@@ -32,6 +32,7 @@ ISRnobtag: Jet1_btagCSV<0.46 ; Disable=True
 MT: mt_2(LepGood1_pt, LepGood1_phi, met_pt, met_phi)<70. && mt_2(LepGood2_pt, LepGood2_phi, met_pt, met_phi)<70. ; Disable=True
 InvMT: mt_2(LepGood1_pt, LepGood1_phi, met_pt, met_phi)>90. || mt_2(LepGood2_pt, LepGood2_phi, met_pt, met_phi)>90. ; Disable=True
 SF: LepGood1_pdgId*LepGood2_pdgId==-169 || LepGood1_pdgId*LepGood2_pdgId==-121 ; Disable=True
+same-sign: LepGood1_pdgId*LepGood2_pdgId>0 ; Disable=True
 ee: abs(LepGood1_pdgId)==11 && abs(LepGood2_pdgId)==11; Disable=True
 em: abs(LepGood1_pdgId) != abs(LepGood2_pdgId);         Disable=True
 mm: abs(LepGood1_pdgId)==13 && abs(LepGood2_pdgId)==13; Disable=True

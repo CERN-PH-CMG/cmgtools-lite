@@ -937,7 +937,7 @@ class PlotMaker:
                                 dump.write(" ".join(bins) + "\n")
                             if 'data' in pmap: 
                                 dump.write(("-"*(maxlen+45))+"\n");
-                                dump.write("%%ds " % (maxlen+1) % ('DATA'))
+                                dump.write("%%%ds " % (maxlen+1) % ('DATA'))
                                 plot = pmap['data']
                                 bins = []
                                 for b in range(1,plot.GetNbinsX()+1):
