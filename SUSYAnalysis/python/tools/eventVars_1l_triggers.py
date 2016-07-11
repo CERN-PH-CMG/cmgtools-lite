@@ -36,13 +36,28 @@ class EventVars1L_triggers:
         # output dict:
         ret = {}
 
+        ## loop over all HLT names and set them in tree
+        for var in self.branches:
+            #print var, getattr(event,var)
+            if 'HLT_' in var and hasattr(event,var):
+                ret[var] = getattr(event,var)
+            else:
+                ret[var] = 0
+
         # Trigger efficiencies:
         if hasattr(self,'sample'):
-            if 'Ele' in self.sample: ret['TrigEff'] = 0.94 # ele efficieny
-            elif 'Mu' in self.sample: ret['TrigEff'] = 0.94 # mu efficieny
+#            print self.sample
+            if 'Ele' in self.sample or 'Mu' in self.sample:
+                ret['TrigEff'] = 1.0
+            elif base['nEl']>=1: ret['TrigEff'] = 0.963 # ele efficieny (for 2016 4/fb)
+            elif base['nMu']>=1: ret['TrigEff'] = 0.926 # mu efficieny (for 2016 4/fb)
             else: ret['TrigEff'] = 1.0
+#old logic
+#            if 'Ele' in self.sample: ret['TrigEff'] = 0.963 # ele efficieny (for 2016 4/fb)
+#            elif 'Mu' in self.sample: ret['TrigEff'] = 0.926 # mu efficieny (for 2016 4/fb)
+#            else: ret['TrigEff'] = 1.0
         else:
-            ret['TrigEff'] = 0.94
+            ret['TrigEff'] = 1.00 # to make clear that this is not the accurate value
 
         ## print out all HLT names
         #for line in vars(event)['_tree'].GetListOfBranches():
@@ -58,14 +73,6 @@ class EventVars1L_triggers:
         if hasattr(event,'HLT_Ele105'):
             ret['HLT_LepOR'] = event.HLT_Mu50 or event.HLT_MuHTMET or event.HLT_Ele105 or event.HLT_EleHTMET
         '''
-
-        ## loop over all HLT names and set them in tree
-        for var in self.branches:
-            #print var, getattr(event,var)
-            if 'HLT_' in var and hasattr(event,var):
-                ret[var] = getattr(event,var)
-            else:
-                ret[var] = 0
 
         # return branches
         return ret
