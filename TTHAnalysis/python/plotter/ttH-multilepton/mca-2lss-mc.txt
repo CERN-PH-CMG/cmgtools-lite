@@ -50,21 +50,3 @@ Flips : WWTo2L2Nu : xsec : (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && !(
 
 
 
-#TT_1lep	: TTJets_SingleLeptonFromT : 0.2*xsec ; FillColor=ROOT.kGray+2, Label="TT 1l", SkipMe=True
-#TT_1lep	: TTJets_SingleLeptonFromTbar : 0.2*xsec ; FillColor=ROOT.kGray+2, Label="TT 1l", SkipMe=True
-#TT_1lep	: TTJets_SingleLeptonFromT_ext : 0.8*xsec ; FillColor=ROOT.kGray+2, Label="TT 1l", SkipMe=True
-#TT_1lep	: TTJets_SingleLeptonFromTbar_ext : 0.8*xsec ; FillColor=ROOT.kGray+2, Label="TT 1l", SkipMe=True
-#
-## the same but split in light and heavy flavour
-#TT_bj   : TTJets_SingleLeptonFromT    : xsec : LepGood1_mcMatchAny == 5 || LepGood2_mcMatchAny == 5; FillColor=ROOT.kGray, SkipMe=True
-#TT_bj   : TTJets_SingleLeptonFromTbar : xsec : LepGood1_mcMatchAny == 5 || LepGood2_mcMatchAny == 5 ; FillColor=ROOT.kGray, SkipMe=True
-#TT_lj   : TTJets_SingleLeptonFromT    : xsec : (LepGood1_mcMatchId == 0 && LepGood1_mcMatchAny != 5 || LepGood2_mcMatchId == 0 && LepGood2_mcMatchAny != 5); FillColor=ROOT.kGray, SkipMe=True
-#TT_lj   : TTJets_SingleLeptonFromTbar : xsec : (LepGood1_mcMatchId == 0 && LepGood1_mcMatchAny != 5 || LepGood2_mcMatchId == 0 && LepGood2_mcMatchAny != 5); FillColor=ROOT.kGray, SkipMe=True
-#
-#TT_fr1 : TTJets_SingleLeptonFromT    : xsec ; FillColor=ROOT.kGray, FakeRate="ttH-multilepton/fakeRate-2lss-appl.txt", SkipMe=True
-#TT_fr1 : TTJets_SingleLeptonFromTbar : xsec ; FillColor=ROOT.kGray, FakeRate="ttH-multilepton/fakeRate-2lss-appl.txt", SkipMe=True
-#TT_frmc_tt : TTJets_SingleLeptonFromT    : xsec ; FillColor=ROOT.kBlue, FakeRate="ttH-multilepton/fakeRate-2lss-frmc-tt.txt", Label="TT 1l FR(tt)", SkipMe=True
-#TT_frmc_tt : TTJets_SingleLeptonFromTbar : xsec ; FillColor=ROOT.kBlue, FakeRate="ttH-multilepton/fakeRate-2lss-frmc-tt.txt", Label="TT 1l FR(tt)", SkipMe=True
-#TT_frmc_qcd : TTJets_SingleLeptonFromT    : xsec ; FillColor=ROOT.kPink, FakeRate="ttH-multilepton/fakeRate-2lss-frmc-qcd.txt", Label="TT 1l FR(QCD)", SkipMe=True
-#TT_frmc_qcd : TTJets_SingleLeptonFromTbar : xsec ; FillColor=ROOT.kPink, FakeRate="ttH-multilepton/fakeRate-2lss-frmc-qcd.txt", Label="TT 1l FR(QCD)", SkipMe=True
-

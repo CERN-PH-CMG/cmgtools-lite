@@ -30,13 +30,9 @@ TT_SS_red:   TTJets_SingleLeptonFromTbar      : xsec: LepGood_mcMatchId  == 0 ; 
 TT_SSbl_red: TTJets_SingleLeptonFromT         : xsec: LepGood_mcMatchId  == 0 && nBJetMedium25 <= 1; FillColor=ROOT.kAzure+1, Label="(tt ss bl)", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT-sameSign.txt"
 TT_SSbl_red: TTJets_SingleLeptonFromTbar      : xsec: LepGood_mcMatchId  == 0 && nBJetMedium25 <= 1; FillColor=ROOT.kAzure+1, Label="(tt ss bl)", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT-sameSign.txt"
 TT_SSbt_red: TTJets_SingleLeptonFromT         : xsec: LepGood_mcMatchId  == 0 && nBJetMedium25 >= 2; FillColor=ROOT.kRed-3, Label="(tt ss bt)", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT-sameSign.txt"
-#TT_SSbt_red: TTJets_SingleLeptonFromT_ext     : xsec: LepGood_mcMatchId  == 0 && nBJetMedium25 >= 2; FillColor=ROOT.kRed-3, Label="(tt ss bt)", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT-sameSign.txt"
 TT_SSbt_red: TTJets_SingleLeptonFromTbar      : xsec: LepGood_mcMatchId  == 0 && nBJetMedium25 >= 2; FillColor=ROOT.kRed-3, Label="(tt ss bt)", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT-sameSign.txt"
-#TT_SSbt_red: TTJets_SingleLeptonFromTbar_ext  : xsec: LepGood_mcMatchId  == 0 && nBJetMedium25 >= 2; FillColor=ROOT.kRed-3, Label="(tt ss bt)", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT-sameSign.txt"
 TT_SSbt_black: TTJets_SingleLeptonFromT       : xsec: LepGood_mcMatchId  == 0 && nBJetMedium25 >= 2; FillColor=ROOT.kBlack, Label="tt b-tight", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT-sameSign.txt"
-#TT_SSbt_black: TTJets_SingleLeptonFromT_ext   : xsec: LepGood_mcMatchId  == 0 && nBJetMedium25 >= 2; FillColor=ROOT.kBlack, Label="tt b-tight", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT-sameSign.txt"
 TT_SSbt_black: TTJets_SingleLeptonFromTbar    : xsec: LepGood_mcMatchId  == 0 && nBJetMedium25 >= 2; FillColor=ROOT.kBlack, Label="tt b-tight", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT-sameSign.txt"
-#TT_SSbt_black: TTJets_SingleLeptonFromTbar_ext: xsec: LepGood_mcMatchId  == 0 && nBJetMedium25 >= 2; FillColor=ROOT.kBlack, Label="tt b-tight", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT-sameSign.txt"
 
 TT_pt8_red:  TTJets_SingleLeptonFromT   : xsec: LepGood_mcMatchId  == 0 && LepGood_pt >  8;  FillColor=ROOT.kBlue+2,  Label="tt p_{T} >  8", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT.txt"
 TT_pt8_red:  TTJets_SingleLeptonFromTbar: xsec: LepGood_mcMatchId  == 0 && LepGood_pt >  8;  FillColor=ROOT.kBlue+2,  Label="tt p_{T} >  8", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT.txt"
