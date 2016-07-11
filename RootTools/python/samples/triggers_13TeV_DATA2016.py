@@ -55,6 +55,9 @@ triggers_FR_muNoIso = [ "HLT_Mu%d_v*" % pt for pt in (20,27,) ] + [ "HLT_Mu%d_et
 
 ### GP: did not look at anything below this
 
+triggers_SOS_doublemulowMET = ["HLT_DoubleMu3_PFMET50_v*"]
+triggers_SOS_highMET = ["HLT_PFMET90_PFMHT90_IDTight_v*","HLT_PFMETNoMu90_PFMHTNoMu90_IDTight_v*","HLT_PFMET100_PFMHT100_IDTight_v*","HLT_PFMETNoMu100_PFMHTNoMu100_IDTight_v*", "HLT_PFMET110_PFMHT110_IDTight_v*", "HLT_PFMETNoMu110_PFMHTNoMu110_IDTight_v*", "HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v*", "HLT_PFMET120_PFMHT120_IDTight_v*"]
+
 ### Mike ---> for the VV analysis 
 triggers_dijet_fat=["HLT_PFHT650_WideJetMJJ900DEtaJJ1p5_v*","HLT_PFHT650_WideJetMJJ950DEtaJJ1p5_v*"]
 ### ----> for the MT2 analysis
