@@ -13,6 +13,7 @@
 #include <TChain.h>
 #include <TFile.h>
 #include <TLorentzVector.h>
+#include <TH1I.h>
 
 // Header file for the classes stored in the TTree if any.
 
@@ -78,7 +79,6 @@ public :
    Float_t         LepGood_eta[4];   //[nLepGood]
    Float_t         LepGood_phi[4];   //[nLepGood]
    Float_t         LepGood_mass[4];   //[nLepGood]
-   Float_t         LepGood_idEmu[4];   //[nLepGood]
 
    Float_t         LepGood_hadronicOverEm[4];   //[nLepGood]
    Float_t         LepGood_dEtaScTrkIn[4];   //[nLepGood]
@@ -140,7 +140,6 @@ public :
    TBranch *b_LepGood_eta;
    TBranch *b_LepGood_phi;
    TBranch *b_LepGood_mass;
-   TBranch *b_LepGood_idEmu;
    TBranch *b_LepGood_hadronicOverEm;
    TBranch *b_LepGood_dEtaScTrkIn;
    TBranch *b_LepGood_dPhiScTrkIn;
@@ -183,6 +182,8 @@ public :
    bool fIsData;
    Long64_t fMaxEvents;
    virtual inline void setMaxEvents(int maxevents){fMaxEvents = maxevents;};
+
+   TH1I *fHCutFlow;
 
    TTree *fTnPTree;
 
@@ -241,6 +242,19 @@ lepTnPFriendTreeMaker::lepTnPFriendTreeMaker(TTree *tree) : fChain(0){
    Init(tree);
    fTnPTree = 0;
    fMaxEvents = -1;
+   fHCutFlow = new TH1I("CutFlow", "CutFlow", 12, 0, 12);
+   fHCutFlow->GetXaxis()->SetBinLabel(1, "All events");
+   fHCutFlow->GetXaxis()->SetBinLabel(2, "Two loose leptons");
+   fHCutFlow->GetXaxis()->SetBinLabel(3, "ee, e#mu, #mu#mu channels");
+   fHCutFlow->GetXaxis()->SetBinLabel(4, "Pass triggers");
+   fHCutFlow->GetXaxis()->SetBinLabel(5, "Found a tag electron");
+   fHCutFlow->GetXaxis()->SetBinLabel(6, "Found a probe electron");
+   fHCutFlow->GetXaxis()->SetBinLabel(7, "Probe electron passes loose");
+   fHCutFlow->GetXaxis()->SetBinLabel(8, "Probe electron passes tight");
+   fHCutFlow->GetXaxis()->SetBinLabel(9, "Found a tag muon");
+   fHCutFlow->GetXaxis()->SetBinLabel(10, "Found a probe muon");
+   fHCutFlow->GetXaxis()->SetBinLabel(11, "Probe muon passes loose");
+   fHCutFlow->GetXaxis()->SetBinLabel(12, "Probe muon passes tight");
 }
 
 lepTnPFriendTreeMaker::~lepTnPFriendTreeMaker(){
@@ -325,7 +339,6 @@ void lepTnPFriendTreeMaker::Init(TTree *tree){
    fChain->SetBranchStatus("LepGood_eta"            , 1);
    fChain->SetBranchStatus("LepGood_phi"            , 1);
    fChain->SetBranchStatus("LepGood_mass"           , 1);
-   fChain->SetBranchStatus("LepGood_idEmu"          , 1);
    fChain->SetBranchStatus("LepGood_hadronicOverEm" , 1);
    fChain->SetBranchStatus("LepGood_dEtaScTrkIn"    , 1);
    fChain->SetBranchStatus("LepGood_dPhiScTrkIn"    , 1);
@@ -384,7 +397,6 @@ void lepTnPFriendTreeMaker::Init(TTree *tree){
    fChain->SetBranchAddress("LepGood_eta"            , LepGood_eta            , &b_LepGood_eta);
    fChain->SetBranchAddress("LepGood_phi"            , LepGood_phi            , &b_LepGood_phi);
    fChain->SetBranchAddress("LepGood_mass"           , LepGood_mass           , &b_LepGood_mass);
-   fChain->SetBranchAddress("LepGood_idEmu"          , LepGood_idEmu          , &b_LepGood_idEmu);
    fChain->SetBranchAddress("LepGood_hadronicOverEm" , LepGood_hadronicOverEm , &b_LepGood_hadronicOverEm);
    fChain->SetBranchAddress("LepGood_dEtaScTrkIn"    , LepGood_dEtaScTrkIn    , &b_LepGood_dEtaScTrkIn);
    fChain->SetBranchAddress("LepGood_dPhiScTrkIn"    , LepGood_dPhiScTrkIn    , &b_LepGood_dPhiScTrkIn);
@@ -467,6 +479,7 @@ void lepTnPFriendTreeMaker::Begin(TFile *file){
 void lepTnPFriendTreeMaker::End(TFile *file){
    file->cd();
    fTnPTree->Write(fTnPTree->GetName());
+   fHCutFlow->Write(fHCutFlow->GetName());
    file->Write();
    file->Close();
 }
@@ -534,6 +547,7 @@ bool lepTnPFriendTreeMaker::PassDoubleTriggers(){
 
 bool lepTnPFriendTreeMaker::SelectEvent(){
    if( nLepGood < 2 ) return false;
+   fHCutFlow->Fill(1);
 
    // Force e or mu (no taus)
    if( abs(LepGood_pdgId[0]) != 13 && abs(LepGood_pdgId[0]) != 11)
@@ -541,8 +555,10 @@ bool lepTnPFriendTreeMaker::SelectEvent(){
    if( abs(LepGood_pdgId[1]) != 13 && abs(LepGood_pdgId[1]) != 11)
       return false;
 
-   // Trigger selection
-   if( !PassDoubleTriggers() && !PassSingleTriggers() ) return false;
+   fHCutFlow->Fill(2);
+
+   // Trigger selection (for data only)
+   if( !PassDoubleTriggers() && !PassSingleTriggers() && fIsData ) return false;
 
    return true;
 }
@@ -622,7 +638,7 @@ bool lepTnPFriendTreeMaker::PassTightCharge(int i){
 bool lepTnPFriendTreeMaker::PassTightLepton(int i){
    if( !PassLooseLepton(i) ) return false;
    if( LepGood_mvaTTH[i] < 0.75 ) return false;
-   if( LepGood_jetBTagCSV[i] > 0.89 ) return false; // Is this still the right threshold?
+   if( LepGood_jetBTagCSV[i] > 0.80 ) return false; // Is this still the right threshold?
    if( LepGood_jetPtRatiov2[i] < 0.3 ) return false;
 
    // Tight electrons
@@ -690,7 +706,10 @@ void lepTnPFriendTreeMaker::Loop(){
          std::cout << std::flush;
       }
 
+      fHCutFlow->Fill(0);
+
       if(!SelectEvent()) continue;
+      fHCutFlow->Fill(3);
       ResetTnPTree();
 
       fT_passSingle    = PassSingleTriggers();
@@ -706,6 +725,9 @@ void lepTnPFriendTreeMaker::Loop(){
       for (int lep1 = 0; lep1 < nLepGood; ++lep1){
          if (  (abs(LepGood_pdgId[lep1])==11 && SelectTagElectron(lep1))
             || (abs(LepGood_pdgId[lep1])==13 && SelectTagMuon(lep1)) ) {
+
+            if( abs(LepGood_pdgId[lep1])==11 ) fHCutFlow->Fill(4);
+            if( abs(LepGood_pdgId[lep1])==13 ) fHCutFlow->Fill(8);
 
             // Find a probe lepton
             for (int lep2 = lep1+1; lep2 < nLepGood; ++lep2){
@@ -723,6 +745,8 @@ void lepTnPFriendTreeMaker::Loop(){
                if( pairsel == 0 ) continue;
 
                // Found a pair!
+               if( abs(LepGood_pdgId[lep1])==11 ) fHCutFlow->Fill(5);
+               if( abs(LepGood_pdgId[lep1])==13 ) fHCutFlow->Fill(9);
                fT_evSel = pairsel;
                fT_pair_probeMultiplicity++;
                fT_mass          = mass;
@@ -733,8 +757,13 @@ void lepTnPFriendTreeMaker::Loop(){
                fT_abseta        = fabs(LepGood_eta[lep2]);
                fT_pdgId         = LepGood_pdgId[lep2];
                fT_passLoose     = PassLooseLepton(lep2);
+               if( abs(LepGood_pdgId[lep1])==11 && PassLooseLepton(lep2)) fHCutFlow->Fill(6);
+               if( abs(LepGood_pdgId[lep1])==13 && PassLooseLepton(lep2)) fHCutFlow->Fill(10);
+
                fT_passConvRej   = PassConvRejection(lep2);
                fT_passTight     = PassTightLepton(lep2);
+               if( abs(LepGood_pdgId[lep1])==11 && PassTightLepton(lep2)) fHCutFlow->Fill(7);
+               if( abs(LepGood_pdgId[lep1])==13 && PassTightLepton(lep2)) fHCutFlow->Fill(11);
                fT_passTCharge   = PassTightCharge(lep2);
                fT_conePt        = ConePt(lep2);
                fT_dxy           = LepGood_dxy[lep2];

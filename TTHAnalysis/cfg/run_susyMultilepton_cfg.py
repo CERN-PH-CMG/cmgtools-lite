@@ -66,7 +66,6 @@ if not removeJecUncertainty:
     susyCoreSequence.insert(susyCoreSequence.index(metAna)+1, metAnaScaleUp)
 
 
-
 if analysis in ['SOS']:
 ## -- SOS preselection settings ---
 
@@ -323,7 +322,7 @@ triggerFlagsAna.triggerBits = {
     'DoubleElMu' : triggers_2e1mu,
     'SingleMu' : triggers_1mu_iso,
     'SingleEl'     : triggers_1e,
-    'MET' : triggers_metNoMu90_mhtNoMu90,
+    'SOSHighMET' : triggers_SOS_highMET,
     'SOSDoubleMuLowMET' : triggers_SOS_doublemulowMET,
     #'MonoJet80MET90' : triggers_Jet80MET90,
     #'MonoJet80MET120' : triggers_Jet80MET120,
@@ -339,6 +338,7 @@ if runSMS:
     susyCoreSequence.remove(eventFlagsAna)
     ttHLepSkim.requireSameSignPair = True
 
+#from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv1 import *
 from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv2 import *
 from CMGTools.RootTools.samples.samples_13TeV_signals import *
 from CMGTools.RootTools.samples.samples_13TeV_76X_susySignalsPriv import *
@@ -350,10 +350,10 @@ selectedComponents = [TTLep_pow_ext]
 
 if analysis=='SOS':
     selectedComponents = selectedComponents
-    #bkg
-#    selectedComponents = [WWTo2L2Nu, WWToLNuQQ, WZTo3LNu, WZTo2L2Q, ZZTo2L2Q, ZZTo2L2Nu, ZZTo4L, WWW, WZZ, WWZ, ZZZ, TBar_tWch, T_tWch, TToLeptons_tch_amcatnlo, TToLeptons_sch_amcatnlo, TTJets_SingleLeptonFromTbar, TTJets_SingleLeptonFromT, TTJets_DiLepton] + DYJetsM50HT + DYJetsM5to50HT + WJetsToLNuHT + [WJetsToLNu_LO, DYJetsToLL_M5to50_LO, DYJetsToLL_M50]
-    #signal (only 76X)
-#    selectedComponents = [T2ttDeg_mStop350_mChi315_4bodydec_lepOnly, T2ttDeg_mStop350_mChi300_4bodydec_lepOnly, T2ttDeg_mStop350_mChi330_4bodydec_lepOnly, TChiNeuWZ_mCh100_mChi80, TChiNeuWZ_mCh100_mChi90, TChiNeuWZ_mCh150_mChi120_OS, TChiNeuWZ_mCh100_mChi95]
+    #selectedComponents = [ZZTo2L2NuM4to40_notau, ZZTo2L2NuM4to40_tauonly, WWTo2L2Nu, WWToLNuQQ, WZTo3LNu, WZTo2L2Q, WZTo1L3Nu, WZTo1L1Nu2Q, ZZTo2L2Q, ZZTo2L2Nu, ZZTo4L, WWW, WZZ, WWZ, ZZZ, TBar_tWch, T_tWch, TToLeptons_sch_amcatnlo, TTJets_SingleLeptonFromTbar, TTJets_SingleLeptonFromT, TTJets_DiLepton] + DYJetsM50HT + DYJetsM5to50HT + WJetsToLNuHT + [DYJetsToLL_M5to50_LO, DYJetsToLL_M50]
+    #selectedComponents = [WJetsToLNu_LO] #missing in 80Xv2 had to take 80Xv1 
+    #selectedComponents = [TToLeptons_tch_amcatnlo, DYJetsToLL_M5to50_HT400to600] #missing in 80X had to take 76X 
+    #selectedComponents = [T2ttDeg_mStop350_mChi315_4bodydec_lepOnly, T2ttDeg_mStop350_mChi300_4bodydec_lepOnly, T2ttDeg_mStop350_mChi330_4bodydec_lepOnly, TChiNeuWZ_mCh100_mChi80, TChiNeuWZ_mCh100_mChi90, TChiNeuWZ_mCh150_mChi120_OS, TChiNeuWZ_mCh100_mChi95] #only 76X
  
 if analysis=='susy' or analysis=="ttH":
     selectedComponents = selectedComponents
@@ -396,9 +396,9 @@ if runData and not isTest: # For running on data
     exclusiveDatasets = True; # this will veto triggers from previous PDs in each PD, so that there are no duplicate events
  
     if analysis in ['SOS']:
-        DatasetsAndTriggers.append( ("MET", triggers_metNoMu90_mhtNoMu90 + triggers_SOS_doublemulowMET) )
+        DatasetsAndTriggers.append( ("MET", triggers_SOS_highMET + triggers_SOS_doublemulowMET) )
         #DatasetsAndTriggers.append( ("MET", triggers_Jet80MET90 + triggers_Jet80MET120 + triggers_MET120Mu5 ) )
-        #DatasetsAndTriggers.append( ("SingleMuon", triggers_1mu_iso + triggers_1mu_iso_50ns + triggers_1mu_noniso) )
+        DatasetsAndTriggers.append( ("SingleMuon", triggers_1mu_iso + triggers_1mu_iso_50ns + triggers_1mu_noniso) )
         #DatasetsAndTriggers.append( ("SingleElectron", triggers_1e + triggers_1e_50ns) )
     else:
         DatasetsAndTriggers.append( ("DoubleMuon", triggers_mumu_iso + triggers_mumu_ss + triggers_mumu_ht + triggers_3mu + triggers_3mu_alt) )

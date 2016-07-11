@@ -1,4 +1,4 @@
-ttH+    : TTHnobb_pow : 0.5071*0.418 : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge; FillColor=ROOT.kOrange+10
+ttH+    : TTHnobb_mWCutfix_ext1 : 0.5071*0.418 : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge; FillColor=ROOT.kOrange+10
 
 TTW     : TTWToLNu : 0.196 : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ;  FillColor=ROOT.kGreen-5
 TTZ     : TTZToLLNuNu : 0.2526 : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ;  FillColor=ROOT.kSpring+2
@@ -8,6 +8,7 @@ TTZ   	: TTJets_SingleLeptonFromT : xsec : LepGood1_isMatchRightCharge && LepGoo
 TTZ     : TTJets_SingleLeptonFromTbar : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kSpring+2
 
 WZ 	: WZTo3LNu : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ;  FillColor=ROOT.kViolet-4
+WZ 	: WJetsToLNu_LO : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ;  FillColor=ROOT.kViolet-4
 Rares      : ZZTo4L : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ;  FillColor=ROOT.kAzure-9
 
 Gstar   : DYJetsToLL_M10to50: xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kCyan+1
@@ -33,7 +34,8 @@ Fakes : TTJets_SingleLeptonFromTbar : xsec : ((LepGood1_mcMatchId==0 && 0==0) ||
 Fakes : DYJetsToLL_M10to50 : xsec : ((LepGood1_mcMatchId==0 && 0==0) || (LepGood2_mcMatchId==0 && 0==0)) ; FakeRate="ttH-multilepton/fakeRate-2lss-frmc-tt.txt", Label="Fakes", FillStyle=3005
 Fakes : DYJetsToLL_M50 : xsec : ((LepGood1_mcMatchId==0 && 0==0) || (LepGood2_mcMatchId==0 && 0==0)) ; FakeRate="ttH-multilepton/fakeRate-2lss-frmc-tt.txt", Label="Fakes", FillStyle=3005
 Fakes : WJetsToLNu : xsec : ((LepGood1_mcMatchId==0 && 0==0) || (LepGood2_mcMatchId==0 && 0==0)) ; FakeRate="ttH-multilepton/fakeRate-2lss-frmc-tt.txt", Label="Fakes", FillStyle=3005
-Fakes : TToLeptons_tch_amcatnlo : xsec : ((LepGood1_mcMatchId==0 && 0==0) || (LepGood2_mcMatchId==0 && 0==0)) ; FakeRate="ttH-multilepton/fakeRate-2lss-frmc-tt.txt", Label="Fakes", FillStyle=3005
+Fakes : TToLeptons_tch_powheg : xsec : ((LepGood1_mcMatchId==0 && 0==0) || (LepGood2_mcMatchId==0 && 0==0)) ; FakeRate="ttH-multilepton/fakeRate-2lss-frmc-tt.txt", Label="Fakes", FillStyle=3005
+Fakes : TBarToLeptons_tch_powheg : xsec : ((LepGood1_mcMatchId==0 && 0==0) || (LepGood2_mcMatchId==0 && 0==0)) ; FakeRate="ttH-multilepton/fakeRate-2lss-frmc-tt.txt", Label="Fakes", FillStyle=3005
 Fakes : TToLeptons_sch : xsec : ((LepGood1_mcMatchId==0 && 0==0) || (LepGood2_mcMatchId==0 && 0==0)) ; FakeRate="ttH-multilepton/fakeRate-2lss-frmc-tt.txt", Label="Fakes", FillStyle=3005
 Fakes : T_tWch : xsec : ((LepGood1_mcMatchId==0 && 0==0) || (LepGood2_mcMatchId==0 && 0==0)) ; FakeRate="ttH-multilepton/fakeRate-2lss-frmc-tt.txt", Label="Fakes", FillStyle=3005
 Fakes : TBar_tWch : xsec : ((LepGood1_mcMatchId==0 && 0==0) || (LepGood2_mcMatchId==0 && 0==0)) ; FakeRate="ttH-multilepton/fakeRate-2lss-frmc-tt.txt", Label="Fakes", FillStyle=3005
