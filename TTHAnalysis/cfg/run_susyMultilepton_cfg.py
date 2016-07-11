@@ -204,6 +204,11 @@ if analysis=="susy":
             "selectedPhotons"    : NTupleCollection("PhoGood", photonTypeSusy, 10, help="Selected photons"),
             }) 
 
+# Spring16 electron MVA - follow instructions on pull request for correct area setup
+leptonTypeSusy.addVariables([
+        NTupleVariable("mvaIdSpring16",   lambda lepton : lepton.mvaRun2("Spring16") if abs(lepton.pdgId()) == 11 else 1, help="EGamma POG MVA ID, Spring16; 1 for muons"),
+        ])
+
 if lepAna.doIsolationScan:
     leptonTypeSusyExtraLight.addVariables([
             NTupleVariable("scanAbsIsoCharged005", lambda x : x.ScanAbsIsoCharged005 if hasattr(x,'ScanAbsIsoCharged005') else -999, help="PF abs charged isolation dR=0.05, no pile-up correction"),
