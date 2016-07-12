@@ -1,0 +1,358 @@
+### ./makeBinYields.py --mca ../systs/ScaleMatchVar/mca-MC_syst_ScaleMatchVar_2016_V1.txt -P ../systs/ScaleMatchVar/links_2016 -F sf/t ../systs/ScaleMatchVar/links_2016/Friends_6July/evVarFriend_{cname}.root -l 3.99 --grid -v 2 --od lumi4fb/ScaleMatchVar --syst -b
+#Following recipe from
+#https://indico.cern.ch/event/459797/contribution/2/attachments/1181555/1710844/mcaod-Nov4-2015.pdf
+#i.e.:
+#Compute the envelope of 1,2,3,4,6,8 (index 0 corresponds
+to nominal scale, indices 5 and 7 correspond to “unphysical”
+anti-correlated variations)
+### CENTRAL
+# TTJets
+#TTJets	: TTJets_LO 		: xsec*1*TopPtWeight :  Sum$(abs(genTau_grandmotherId)==6&&abs(genTau_motherId)==24)+Sum$(abs(genLep_grandmotherId)==6&&abs(genLep_motherId)==24) == 0 && lheHTIncoming <= 600 && HT < 1250;
+TTJets	: TTJets_DiLept		: xsec*1*TopPtWeight : lheHTIncoming <= 600;
+TTJets	: TTJets_SingleLeptFromT		: xsec*1*TopPtWeight : lheHTIncoming <= 600;
+TTJets	: TTJets_SingleLeptFromTbar		: xsec*1*TopPtWeight : lheHTIncoming <= 600;
+TTJets	: TTJets_HT-600to800		: xsec*1*TopPtWeight ;
+TTJets	: TTJets_HT-800to1200 	: xsec*1*TopPtWeight ;
+TTJets	: TTJets_HT-1200to2500 	: xsec*1*TopPtWeight ;
+TTJets	: TTJets_HT-2500toInf 	: xsec*1*TopPtWeight ;
+# WJets
+#WJets	: WJetsToLNu_HT-100To200		: xsec*1*TopPtWeight ;
+WJets	: WJetsToLNu_HT-200To400 	: xsec*1*TopPtWeight ;
+WJets	: WJetsToLNu_HT-400To600 	: xsec*1*TopPtWeight ;
+WJets	: WJetsToLNu_HT-600To800 	: xsec*1*TopPtWeight ;
+WJets	: WJetsToLNu_HT-800To1200 	: xsec*1*TopPtWeight ;
+WJets	: WJetsToLNu_HT-1200To2500 	: xsec*1*TopPtWeight ;
+WJets	: WJetsToLNu_HT-2500ToInf 	: xsec*1*TopPtWeight ;
+# Single Top
+SingleTop	: ST_t-channel_antitop_4f_leptonDecays_13TeV-powheg-pythia8	: xsec*1*TopPtWeight ;
+SingleTop	: ST_t-channel_antitop_4f_leptonDecays_13TeV-powheg-pythia8	: xsec*1*TopPtWeight ;
+SingleTop	: ST_s-channel_4f_leptonDecays_13TeV-amcatnlo-pythia8	 	: xsec*1*TopPtWeight ;
+SingleTop	: ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8	 		: xsec*1*TopPtWeight ;
+SingleTop	: ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8	 		: xsec*1*TopPtWeight ;
+# DY
+DY	: DYJetsToLL_M-50_HT-100to200	: xsec*1*TopPtWeight ;
+DY	: DYJetsToLL_M-50_HT-200to400 	: xsec*1*TopPtWeight ;
+DY	: DYJetsToLL_M-50_HT-400to600 	: xsec*1*TopPtWeight ;
+DY	: DYJetsToLL_M-50_HT-600toInf 	: xsec*1*TopPtWeight ;
+# TTV
+TTV	: TTWJetsToLNu			: xsec*1*TopPtWeight ;
+TTV	: TTWJetsToQQ 			: xsec*1*TopPtWeight ;
+TTV	: TTZToLLNuNu 			: xsec*1*TopPtWeight ;
+#TTV	: TTZToQQ 			: xsec*1*TopPtWeight ;
+
+
+### Var0
+# TTJets
+#TTJets_ScaleMatchVar-Env0	: TTJets_LO 			: xsec*1*TopPtWeight*LHEweight_wgt[0]/LHEweight_wgt[0] :  Sum$(abs(genTau_grandmotherId)==6&&abs(genTau_motherId)==24)+Sum$(abs(genLep_grandmotherId)==6&&abs(genLep_motherId)==24) == 0 && lheHTIncoming <= 600 && HT < 0250;
+TTJets_ScaleMatchVar-Env0	: TTJets_DiLept		: xsec*1*TopPtWeight*LHEweight_wgt[0]/LHEweight_wgt[0] : lheHTIncoming <= 600;
+TTJets_ScaleMatchVar-Env0	: TTJets_SingleLeptFromT 		: xsec*1*TopPtWeight*LHEweight_wgt[0]/LHEweight_wgt[0] : lheHTIncoming <= 600;
+TTJets_ScaleMatchVar-Env0	: TTJets_SingleLeptFromTbar 		: xsec*1*TopPtWeight*LHEweight_wgt[0]/LHEweight_wgt[0] : lheHTIncoming <= 600;
+TTJets_ScaleMatchVar-Env0	: TTJets_HT-600to800		: xsec*1*TopPtWeight*LHEweight_wgt[0]/LHEweight_wgt[0] ;
+TTJets_ScaleMatchVar-Env0	: TTJets_HT-800to1200 	: xsec*1*TopPtWeight*LHEweight_wgt[0]/LHEweight_wgt[0] ;
+TTJets_ScaleMatchVar-Env0	: TTJets_HT-1200to2500 	: xsec*1*TopPtWeight*LHEweight_wgt[0]/LHEweight_wgt[0] ;
+TTJets_ScaleMatchVar-Env0	: TTJets_HT-2500toInf 	: xsec*1*TopPtWeight*LHEweight_wgt[0]/LHEweight_wgt[0] ;
+# WJets
+#WJets_ScaleMatchVar-Env0	: WJetsToLNu_HT-100To200		: xsec*1*TopPtWeight*LHEweight_wgt[0]/LHEweight_wgt[0] ;
+WJets_ScaleMatchVar-Env0	: WJetsToLNu_HT-200To400 	: xsec*1*TopPtWeight*LHEweight_wgt[0]/LHEweight_wgt[0] ;
+WJets_ScaleMatchVar-Env0	: WJetsToLNu_HT-400To600 	: xsec*1*TopPtWeight*LHEweight_wgt[0]/LHEweight_wgt[0] ;
+WJets_ScaleMatchVar-Env0	: WJetsToLNu_HT-600To800 	: xsec*1*TopPtWeight*LHEweight_wgt[0]/LHEweight_wgt[0] ;
+WJets_ScaleMatchVar-Env0	: WJetsToLNu_HT-800To1200 	: xsec*1*TopPtWeight*LHEweight_wgt[0]/LHEweight_wgt[0] ;
+WJets_ScaleMatchVar-Env0	: WJetsToLNu_HT-1200To2500 	: xsec*1*TopPtWeight*LHEweight_wgt[0]/LHEweight_wgt[0] ;
+WJets_ScaleMatchVar-Env0	: WJetsToLNu_HT-2500ToInf 	: xsec*1*TopPtWeight*LHEweight_wgt[0]/LHEweight_wgt[0] ;
+# Single Top
+SingleTop_ScaleMatchVar-Env0	: ST_t-channel_antitop_4f_leptonDecays_13TeV-powheg-pythia8	: xsec*1*TopPtWeight*LHEweight_wgt[0]/LHEweight_wgt[0] ;
+SingleTop_ScaleMatchVar-Env0	: ST_t-channel_antitop_4f_leptonDecays_13TeV-powheg-pythia8	: xsec*1*TopPtWeight*LHEweight_wgt[0]/LHEweight_wgt[0] ;
+SingleTop_ScaleMatchVar-Env0	: ST_s-channel_4f_leptonDecays_13TeV-amcatnlo-pythia8	 	: xsec*1*TopPtWeight*LHEweight_wgt[0]/LHEweight_wgt[0] ;
+SingleTop_ScaleMatchVar-Env0	: ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8	 		: xsec*1*TopPtWeight*LHEweight_wgt[0]/LHEweight_wgt[0] ;
+SingleTop_ScaleMatchVar-Env0	: ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8	 		: xsec*1*TopPtWeight*LHEweight_wgt[0]/LHEweight_wgt[0] ;
+# DY
+DY_ScaleMatchVar-Env0	: DYJetsToLL_M-50_HT-100to200	: xsec*1*TopPtWeight*LHEweight_wgt[0]/LHEweight_wgt[0] ;
+DY_ScaleMatchVar-Env0	: DYJetsToLL_M-50_HT-200to400 	: xsec*1*TopPtWeight*LHEweight_wgt[0]/LHEweight_wgt[0] ;
+DY_ScaleMatchVar-Env0	: DYJetsToLL_M-50_HT-400to600 	: xsec*1*TopPtWeight*LHEweight_wgt[0]/LHEweight_wgt[0] ;
+DY_ScaleMatchVar-Env0	: DYJetsToLL_M-50_HT-600toInf 	: xsec*1*TopPtWeight*LHEweight_wgt[0]/LHEweight_wgt[0] ;
+# TTV
+TTV_ScaleMatchVar-Env0	: TTWJetsToLNu			: xsec*1*TopPtWeight*LHEweight_wgt[0]/LHEweight_wgt[0] ;
+TTV_ScaleMatchVar-Env0	: TTWJetsToQQ 			: xsec*1*TopPtWeight*LHEweight_wgt[0]/LHEweight_wgt[0] ;
+TTV_ScaleMatchVar-Env0	: TTZToLLNuNu 			: xsec*1*TopPtWeight*LHEweight_wgt[0]/LHEweight_wgt[0] ;
+#TTV_ScaleMatchVar-Env0	: TTZToQQ 			: xsec*1*TopPtWeight*LHEweight_wgt[0]/LHEweight_wgt[0] ;
+
+### Var1
+# TTJets
+#TTJets_ScaleMatchVar-Env1	: TTJets_LO 			: xsec*1*TopPtWeight*LHEweight_wgt[1]/LHEweight_wgt[0] :  Sum$(abs(genTau_grandmotherId)==6&&abs(genTau_motherId)==24)+Sum$(abs(genLep_grandmotherId)==6&&abs(genLep_motherId)==24) == 0 && lheHTIncoming <= 600 && HT < 1250;
+TTJets_ScaleMatchVar-Env1	: TTJets_DiLept		: xsec*1*TopPtWeight*LHEweight_wgt[1]/LHEweight_wgt[0] : lheHTIncoming <= 600;
+TTJets_ScaleMatchVar-Env1	: TTJets_SingleLeptFromT 		: xsec*1*TopPtWeight*LHEweight_wgt[1]/LHEweight_wgt[0] : lheHTIncoming <= 600;
+TTJets_ScaleMatchVar-Env1	: TTJets_SingleLeptFromTbar 		: xsec*1*TopPtWeight*LHEweight_wgt[1]/LHEweight_wgt[0] : lheHTIncoming <= 600;
+TTJets_ScaleMatchVar-Env1	: TTJets_HT-600to800		: xsec*1*TopPtWeight*LHEweight_wgt[1]/LHEweight_wgt[0] ;
+TTJets_ScaleMatchVar-Env1	: TTJets_HT-800to1200 	: xsec*1*TopPtWeight*LHEweight_wgt[1]/LHEweight_wgt[0] ;
+TTJets_ScaleMatchVar-Env1	: TTJets_HT-1200to2500 	: xsec*1*TopPtWeight*LHEweight_wgt[1]/LHEweight_wgt[0] ;
+TTJets_ScaleMatchVar-Env1	: TTJets_HT-2500toInf 	: xsec*1*TopPtWeight*LHEweight_wgt[1]/LHEweight_wgt[0] ;
+# WJets
+#WJets_ScaleMatchVar-Env1	: WJetsToLNu_HT-100To200		: xsec*1*TopPtWeight*LHEweight_wgt[1]/LHEweight_wgt[0] ;
+WJets_ScaleMatchVar-Env1	: WJetsToLNu_HT-200To400 	: xsec*1*TopPtWeight*LHEweight_wgt[1]/LHEweight_wgt[0] ;
+WJets_ScaleMatchVar-Env1	: WJetsToLNu_HT-400To600 	: xsec*1*TopPtWeight*LHEweight_wgt[1]/LHEweight_wgt[0] ;
+WJets_ScaleMatchVar-Env1	: WJetsToLNu_HT-600To800 	: xsec*1*TopPtWeight*LHEweight_wgt[1]/LHEweight_wgt[0] ;
+WJets_ScaleMatchVar-Env1	: WJetsToLNu_HT-800To1200 	: xsec*1*TopPtWeight*LHEweight_wgt[1]/LHEweight_wgt[0] ;
+WJets_ScaleMatchVar-Env1	: WJetsToLNu_HT-1200To2500 	: xsec*1*TopPtWeight*LHEweight_wgt[1]/LHEweight_wgt[0] ;
+WJets_ScaleMatchVar-Env1	: WJetsToLNu_HT-2500ToInf 	: xsec*1*TopPtWeight*LHEweight_wgt[1]/LHEweight_wgt[0] ;
+# Single Top
+SingleTop_ScaleMatchVar-Env1	: ST_t-channel_antitop_4f_leptonDecays_13TeV-powheg-pythia8	: xsec*1*TopPtWeight*LHEweight_wgt[1]/LHEweight_wgt[0] ;
+SingleTop_ScaleMatchVar-Env1	: ST_t-channel_antitop_4f_leptonDecays_13TeV-powheg-pythia8	: xsec*1*TopPtWeight*LHEweight_wgt[1]/LHEweight_wgt[0] ;
+SingleTop_ScaleMatchVar-Env1	: ST_s-channel_4f_leptonDecays_13TeV-amcatnlo-pythia8	 	: xsec*1*TopPtWeight*LHEweight_wgt[1]/LHEweight_wgt[0] ;
+SingleTop_ScaleMatchVar-Env1	: ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8	 		: xsec*1*TopPtWeight*LHEweight_wgt[1]/LHEweight_wgt[0] ;
+SingleTop_ScaleMatchVar-Env1	: ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8	 		: xsec*1*TopPtWeight*LHEweight_wgt[1]/LHEweight_wgt[0] ;
+# DY
+DY_ScaleMatchVar-Env1	: DYJetsToLL_M-50_HT-100to200	: xsec*1*TopPtWeight*LHEweight_wgt[1]/LHEweight_wgt[0] ;
+DY_ScaleMatchVar-Env1	: DYJetsToLL_M-50_HT-200to400 	: xsec*1*TopPtWeight*LHEweight_wgt[1]/LHEweight_wgt[0] ;
+DY_ScaleMatchVar-Env1	: DYJetsToLL_M-50_HT-400to600 	: xsec*1*TopPtWeight*LHEweight_wgt[1]/LHEweight_wgt[0] ;
+DY_ScaleMatchVar-Env1	: DYJetsToLL_M-50_HT-600toInf 	: xsec*1*TopPtWeight*LHEweight_wgt[1]/LHEweight_wgt[0] ;
+# TTV
+TTV_ScaleMatchVar-Env1	: TTWJetsToLNu			: xsec*1*TopPtWeight*LHEweight_wgt[1]/LHEweight_wgt[0] ;
+TTV_ScaleMatchVar-Env1	: TTWJetsToQQ 			: xsec*1*TopPtWeight*LHEweight_wgt[1]/LHEweight_wgt[0] ;
+TTV_ScaleMatchVar-Env1	: TTZToLLNuNu 			: xsec*1*TopPtWeight*LHEweight_wgt[1]/LHEweight_wgt[0] ;
+#TTV_ScaleMatchVar-Env1	: TTZToQQ 			: xsec*1*TopPtWeight*LHEweight_wgt[1]/LHEweight_wgt[0] ;
+
+### Var2
+# TTJets
+#TTJets_ScaleMatchVar-Env2	: TTJets_LO 			: xsec*1*TopPtWeight*LHEweight_wgt[2]/LHEweight_wgt[0] :  Sum$(abs(genTau_grandmotherId)==6&&abs(genTau_motherId)==24)+Sum$(abs(genLep_grandmotherId)==6&&abs(genLep_motherId)==24) == 0 && lheHTIncoming <= 600 && HT < 1250;
+TTJets_ScaleMatchVar-Env2	: TTJets_DiLept		: xsec*1*TopPtWeight*LHEweight_wgt[2]/LHEweight_wgt[0] : lheHTIncoming <= 600;
+TTJets_ScaleMatchVar-Env2	: TTJets_SingleLeptFromT 		: xsec*1*TopPtWeight*LHEweight_wgt[2]/LHEweight_wgt[0] : lheHTIncoming <= 600;
+TTJets_ScaleMatchVar-Env2	: TTJets_SingleLeptFromTbar 		: xsec*1*TopPtWeight*LHEweight_wgt[2]/LHEweight_wgt[0] : lheHTIncoming <= 600;
+TTJets_ScaleMatchVar-Env2	: TTJets_HT-600to800		: xsec*1*TopPtWeight*LHEweight_wgt[2]/LHEweight_wgt[0] ;
+TTJets_ScaleMatchVar-Env2	: TTJets_HT-800to1200 	: xsec*1*TopPtWeight*LHEweight_wgt[2]/LHEweight_wgt[0] ;
+TTJets_ScaleMatchVar-Env2	: TTJets_HT-1200to2500 	: xsec*1*TopPtWeight*LHEweight_wgt[2]/LHEweight_wgt[0] ;
+TTJets_ScaleMatchVar-Env2	: TTJets_HT-2500toInf 	: xsec*1*TopPtWeight*LHEweight_wgt[2]/LHEweight_wgt[0] ;
+# WJets
+#WJets_ScaleMatchVar-Env2	: WJetsToLNu_HT-100To200		: xsec*1*TopPtWeight*LHEweight_wgt[2]/LHEweight_wgt[0] ;
+WJets_ScaleMatchVar-Env2	: WJetsToLNu_HT-200To400 	: xsec*1*TopPtWeight*LHEweight_wgt[2]/LHEweight_wgt[0] ;
+WJets_ScaleMatchVar-Env2	: WJetsToLNu_HT-400To600 	: xsec*1*TopPtWeight*LHEweight_wgt[2]/LHEweight_wgt[0] ;
+WJets_ScaleMatchVar-Env2	: WJetsToLNu_HT-600To800 	: xsec*1*TopPtWeight*LHEweight_wgt[2]/LHEweight_wgt[0] ;
+WJets_ScaleMatchVar-Env2	: WJetsToLNu_HT-800To1200 	: xsec*1*TopPtWeight*LHEweight_wgt[2]/LHEweight_wgt[0] ;
+WJets_ScaleMatchVar-Env2	: WJetsToLNu_HT-1200To2500 	: xsec*1*TopPtWeight*LHEweight_wgt[2]/LHEweight_wgt[0] ;
+WJets_ScaleMatchVar-Env2	: WJetsToLNu_HT-2500ToInf 	: xsec*1*TopPtWeight*LHEweight_wgt[2]/LHEweight_wgt[0] ;
+# Single Top
+SingleTop_ScaleMatchVar-Env2	: ST_t-channel_antitop_4f_leptonDecays_13TeV-powheg-pythia8	: xsec*1*TopPtWeight*LHEweight_wgt[2]/LHEweight_wgt[0] ;
+SingleTop_ScaleMatchVar-Env2	: ST_t-channel_antitop_4f_leptonDecays_13TeV-powheg-pythia8	: xsec*1*TopPtWeight*LHEweight_wgt[2]/LHEweight_wgt[0] ;
+SingleTop_ScaleMatchVar-Env2	: ST_s-channel_4f_leptonDecays_13TeV-amcatnlo-pythia8	 	: xsec*1*TopPtWeight*LHEweight_wgt[2]/LHEweight_wgt[0] ;
+SingleTop_ScaleMatchVar-Env2	: ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8	 		: xsec*1*TopPtWeight*LHEweight_wgt[2]/LHEweight_wgt[0] ;
+SingleTop_ScaleMatchVar-Env2	: ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8	 		: xsec*1*TopPtWeight*LHEweight_wgt[2]/LHEweight_wgt[0] ;
+# DY
+DY_ScaleMatchVar-Env2	: DYJetsToLL_M-50_HT-100to200	: xsec*1*TopPtWeight*LHEweight_wgt[2]/LHEweight_wgt[0] ;
+DY_ScaleMatchVar-Env2	: DYJetsToLL_M-50_HT-200to400 	: xsec*1*TopPtWeight*LHEweight_wgt[2]/LHEweight_wgt[0] ;
+DY_ScaleMatchVar-Env2	: DYJetsToLL_M-50_HT-400to600 	: xsec*1*TopPtWeight*LHEweight_wgt[2]/LHEweight_wgt[0] ;
+DY_ScaleMatchVar-Env2	: DYJetsToLL_M-50_HT-600toInf 	: xsec*1*TopPtWeight*LHEweight_wgt[2]/LHEweight_wgt[0] ;
+# TTV
+TTV_ScaleMatchVar-Env2	: TTWJetsToLNu			: xsec*1*TopPtWeight*LHEweight_wgt[2]/LHEweight_wgt[0] ;
+TTV_ScaleMatchVar-Env2	: TTWJetsToQQ 			: xsec*1*TopPtWeight*LHEweight_wgt[2]/LHEweight_wgt[0] ;
+TTV_ScaleMatchVar-Env2	: TTZToLLNuNu 			: xsec*1*TopPtWeight*LHEweight_wgt[2]/LHEweight_wgt[0] ;
+#TTV_ScaleMatchVar-Env2	: TTZToQQ 			: xsec*1*TopPtWeight*LHEweight_wgt[2]/LHEweight_wgt[0] ;
+
+### Var3
+# TTJets
+#TTJets_ScaleMatchVar-Env3	: TTJets_LO 			: xsec*1*TopPtWeight*LHEweight_wgt[3]/LHEweight_wgt[0] :  Sum$(abs(genTau_grandmotherId)==6&&abs(genTau_motherId)==24)+Sum$(abs(genLep_grandmotherId)==6&&abs(genLep_motherId)==24) == 0 && lheHTIncoming <= 600 && HT < 1250;
+TTJets_ScaleMatchVar-Env3	: TTJets_DiLept		: xsec*1*TopPtWeight*LHEweight_wgt[3]/LHEweight_wgt[0] : lheHTIncoming <= 600;
+TTJets_ScaleMatchVar-Env3	: TTJets_SingleLeptFromT 		: xsec*1*TopPtWeight*LHEweight_wgt[3]/LHEweight_wgt[0] : lheHTIncoming <= 600;
+TTJets_ScaleMatchVar-Env3	: TTJets_SingleLeptFromTbar 		: xsec*1*TopPtWeight*LHEweight_wgt[3]/LHEweight_wgt[0] : lheHTIncoming <= 600;
+TTJets_ScaleMatchVar-Env3	: TTJets_HT-600to800		: xsec*1*TopPtWeight*LHEweight_wgt[3]/LHEweight_wgt[0] ;
+TTJets_ScaleMatchVar-Env3	: TTJets_HT-800to1200 	: xsec*1*TopPtWeight*LHEweight_wgt[3]/LHEweight_wgt[0] ;
+TTJets_ScaleMatchVar-Env3	: TTJets_HT-1200to2500 	: xsec*1*TopPtWeight*LHEweight_wgt[3]/LHEweight_wgt[0] ;
+TTJets_ScaleMatchVar-Env3	: TTJets_HT-2500toInf 	: xsec*1*TopPtWeight*LHEweight_wgt[3]/LHEweight_wgt[0] ;
+# WJets
+#WJets_ScaleMatchVar-Env3	: WJetsToLNu_HT-100To200		: xsec*1*TopPtWeight*LHEweight_wgt[3]/LHEweight_wgt[0] ;
+WJets_ScaleMatchVar-Env3	: WJetsToLNu_HT-200To400 	: xsec*1*TopPtWeight*LHEweight_wgt[3]/LHEweight_wgt[0] ;
+WJets_ScaleMatchVar-Env3	: WJetsToLNu_HT-400To600 	: xsec*1*TopPtWeight*LHEweight_wgt[3]/LHEweight_wgt[0] ;
+WJets_ScaleMatchVar-Env3	: WJetsToLNu_HT-600To800 	: xsec*1*TopPtWeight*LHEweight_wgt[3]/LHEweight_wgt[0] ;
+WJets_ScaleMatchVar-Env3	: WJetsToLNu_HT-800To1200 	: xsec*1*TopPtWeight*LHEweight_wgt[3]/LHEweight_wgt[0] ;
+WJets_ScaleMatchVar-Env3	: WJetsToLNu_HT-1200To2500 	: xsec*1*TopPtWeight*LHEweight_wgt[3]/LHEweight_wgt[0] ;
+WJets_ScaleMatchVar-Env3	: WJetsToLNu_HT-2500ToInf 	: xsec*1*TopPtWeight*LHEweight_wgt[3]/LHEweight_wgt[0] ;
+# Single Top
+SingleTop_ScaleMatchVar-Env3	: ST_t-channel_antitop_4f_leptonDecays_13TeV-powheg-pythia8	: xsec*1*TopPtWeight*LHEweight_wgt[3]/LHEweight_wgt[0] ;
+SingleTop_ScaleMatchVar-Env3	: ST_t-channel_antitop_4f_leptonDecays_13TeV-powheg-pythia8	: xsec*1*TopPtWeight*LHEweight_wgt[3]/LHEweight_wgt[0] ;
+SingleTop_ScaleMatchVar-Env3	: ST_s-channel_4f_leptonDecays_13TeV-amcatnlo-pythia8	 	: xsec*1*TopPtWeight*LHEweight_wgt[3]/LHEweight_wgt[0] ;
+SingleTop_ScaleMatchVar-Env3	: ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8	 		: xsec*1*TopPtWeight*LHEweight_wgt[3]/LHEweight_wgt[0] ;
+SingleTop_ScaleMatchVar-Env3	: ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8	 		: xsec*1*TopPtWeight*LHEweight_wgt[3]/LHEweight_wgt[0] ;
+# DY
+DY_ScaleMatchVar-Env3	: DYJetsToLL_M-50_HT-100to200	: xsec*1*TopPtWeight*LHEweight_wgt[3]/LHEweight_wgt[0] ;
+DY_ScaleMatchVar-Env3	: DYJetsToLL_M-50_HT-200to400 	: xsec*1*TopPtWeight*LHEweight_wgt[3]/LHEweight_wgt[0] ;
+DY_ScaleMatchVar-Env3	: DYJetsToLL_M-50_HT-400to600 	: xsec*1*TopPtWeight*LHEweight_wgt[3]/LHEweight_wgt[0] ;
+DY_ScaleMatchVar-Env3	: DYJetsToLL_M-50_HT-600toInf 	: xsec*1*TopPtWeight*LHEweight_wgt[3]/LHEweight_wgt[0] ;
+# TTV
+TTV_ScaleMatchVar-Env3	: TTWJetsToLNu			: xsec*1*TopPtWeight*LHEweight_wgt[3]/LHEweight_wgt[0] ;
+TTV_ScaleMatchVar-Env3	: TTWJetsToQQ 			: xsec*1*TopPtWeight*LHEweight_wgt[3]/LHEweight_wgt[0] ;
+TTV_ScaleMatchVar-Env3	: TTZToLLNuNu 			: xsec*1*TopPtWeight*LHEweight_wgt[3]/LHEweight_wgt[0] ;
+#TTV_ScaleMatchVar-Env3	: TTZToQQ 			: xsec*1*TopPtWeight*LHEweight_wgt[3]/LHEweight_wgt[0] ;
+
+### Var4
+# TTJets
+#TTJets_ScaleMatchVar-Env4	: TTJets_LO 			: xsec*1*TopPtWeight*LHEweight_wgt[4]/LHEweight_wgt[0] :  Sum$(abs(genTau_grandmotherId)==6&&abs(genTau_motherId)==24)+Sum$(abs(genLep_grandmotherId)==6&&abs(genLep_motherId)==24) == 0 && lheHTIncoming <= 600 && HT < 1250;
+TTJets_ScaleMatchVar-Env4	: TTJets_DiLept		: xsec*1*TopPtWeight*LHEweight_wgt[4]/LHEweight_wgt[0] : lheHTIncoming <= 600;
+TTJets_ScaleMatchVar-Env4	: TTJets_SingleLeptFromT 		: xsec*1*TopPtWeight*LHEweight_wgt[4]/LHEweight_wgt[0] : lheHTIncoming <= 600;
+TTJets_ScaleMatchVar-Env4	: TTJets_SingleLeptFromTbar 		: xsec*1*TopPtWeight*LHEweight_wgt[4]/LHEweight_wgt[0] : lheHTIncoming <= 600;
+TTJets_ScaleMatchVar-Env4	: TTJets_HT-600to800		: xsec*1*TopPtWeight*LHEweight_wgt[4]/LHEweight_wgt[0] ;
+TTJets_ScaleMatchVar-Env4	: TTJets_HT-800to1200 	: xsec*1*TopPtWeight*LHEweight_wgt[4]/LHEweight_wgt[0] ;
+TTJets_ScaleMatchVar-Env4	: TTJets_HT-1200to2500 	: xsec*1*TopPtWeight*LHEweight_wgt[4]/LHEweight_wgt[0] ;
+TTJets_ScaleMatchVar-Env4	: TTJets_HT-2500toInf 	: xsec*1*TopPtWeight*LHEweight_wgt[4]/LHEweight_wgt[0] ;
+# WJets
+#WJets_ScaleMatchVar-Env4	: WJetsToLNu_HT-100To200		: xsec*1*TopPtWeight*LHEweight_wgt[4]/LHEweight_wgt[0] ;
+WJets_ScaleMatchVar-Env4	: WJetsToLNu_HT-200To400 	: xsec*1*TopPtWeight*LHEweight_wgt[4]/LHEweight_wgt[0] ;
+WJets_ScaleMatchVar-Env4	: WJetsToLNu_HT-400To600 	: xsec*1*TopPtWeight*LHEweight_wgt[4]/LHEweight_wgt[0] ;
+WJets_ScaleMatchVar-Env4	: WJetsToLNu_HT-600To800 	: xsec*1*TopPtWeight*LHEweight_wgt[4]/LHEweight_wgt[0] ;
+WJets_ScaleMatchVar-Env4	: WJetsToLNu_HT-800To1200 	: xsec*1*TopPtWeight*LHEweight_wgt[4]/LHEweight_wgt[0] ;
+WJets_ScaleMatchVar-Env4	: WJetsToLNu_HT-1200To2500 	: xsec*1*TopPtWeight*LHEweight_wgt[4]/LHEweight_wgt[0] ;
+WJets_ScaleMatchVar-Env4	: WJetsToLNu_HT-2500ToInf 	: xsec*1*TopPtWeight*LHEweight_wgt[4]/LHEweight_wgt[0] ;
+# Single Top
+SingleTop_ScaleMatchVar-Env4	: ST_t-channel_antitop_4f_leptonDecays_13TeV-powheg-pythia8	: xsec*1*TopPtWeight*LHEweight_wgt[4]/LHEweight_wgt[0] ;
+SingleTop_ScaleMatchVar-Env4	: ST_t-channel_antitop_4f_leptonDecays_13TeV-powheg-pythia8	: xsec*1*TopPtWeight*LHEweight_wgt[4]/LHEweight_wgt[0] ;
+SingleTop_ScaleMatchVar-Env4	: ST_s-channel_4f_leptonDecays_13TeV-amcatnlo-pythia8	 	: xsec*1*TopPtWeight*LHEweight_wgt[4]/LHEweight_wgt[0] ;
+SingleTop_ScaleMatchVar-Env4	: ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8	 		: xsec*1*TopPtWeight*LHEweight_wgt[4]/LHEweight_wgt[0] ;
+SingleTop_ScaleMatchVar-Env4	: ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8	 		: xsec*1*TopPtWeight*LHEweight_wgt[4]/LHEweight_wgt[0] ;
+# DY
+DY_ScaleMatchVar-Env4	: DYJetsToLL_M-50_HT-100to200	: xsec*1*TopPtWeight*LHEweight_wgt[4]/LHEweight_wgt[0] ;
+DY_ScaleMatchVar-Env4	: DYJetsToLL_M-50_HT-200to400 	: xsec*1*TopPtWeight*LHEweight_wgt[4]/LHEweight_wgt[0] ;
+DY_ScaleMatchVar-Env4	: DYJetsToLL_M-50_HT-400to600 	: xsec*1*TopPtWeight*LHEweight_wgt[4]/LHEweight_wgt[0] ;
+DY_ScaleMatchVar-Env4	: DYJetsToLL_M-50_HT-600toInf 	: xsec*1*TopPtWeight*LHEweight_wgt[4]/LHEweight_wgt[0] ;
+# TTV
+TTV_ScaleMatchVar-Env4	: TTWJetsToLNu			: xsec*1*TopPtWeight*LHEweight_wgt[4]/LHEweight_wgt[0] ;
+TTV_ScaleMatchVar-Env4	: TTWJetsToQQ 			: xsec*1*TopPtWeight*LHEweight_wgt[4]/LHEweight_wgt[0] ;
+TTV_ScaleMatchVar-Env4	: TTZToLLNuNu 			: xsec*1*TopPtWeight*LHEweight_wgt[4]/LHEweight_wgt[0] ;
+#TTV_ScaleMatchVar-Env4	: TTZToQQ 			: xsec*1*TopPtWeight*LHEweight_wgt[4]/LHEweight_wgt[0] ;
+
+#### Var5
+## TTJets
+##TTJets_ScaleMatchVar-Env5	: TTJets_LO 			: xsec*1*TopPtWeight*LHEweight_wgt[5]/LHEweight_wgt[0] :  Sum$(abs(genTau_grandmotherId)==6&&abs(genTau_motherId)==24)+Sum$(abs(genLep_grandmotherId)==6&&abs(genLep_motherId)==24) == 0 && lheHTIncoming <= 600 && HT < 1250;
+#TTJets_ScaleMatchVar-Env5	: TTJets_DiLept		: xsec*1*TopPtWeight*LHEweight_wgt[5]/LHEweight_wgt[0] : lheHTIncoming <= 600;
+#TTJets_ScaleMatchVar-Env5	: TTJets_SingleLeptFromT 		: xsec*1*TopPtWeight*LHEweight_wgt[5]/LHEweight_wgt[0] : lheHTIncoming <= 600;
+#TTJets_ScaleMatchVar-Env5	: TTJets_SingleLeptFromTbar 		: xsec*1*TopPtWeight*LHEweight_wgt[5]/LHEweight_wgt[0] : lheHTIncoming <= 600;
+#TTJets_ScaleMatchVar-Env5	: TTJets_HT-600to800		: xsec*1*TopPtWeight*LHEweight_wgt[5]/LHEweight_wgt[0] ;
+#TTJets_ScaleMatchVar-Env5	: TTJets_HT-800to1200 	: xsec*1*TopPtWeight*LHEweight_wgt[5]/LHEweight_wgt[0] ;
+#TTJets_ScaleMatchVar-Env5	: TTJets_HT-1200to2500 	: xsec*1*TopPtWeight*LHEweight_wgt[5]/LHEweight_wgt[0] ;
+#TTJets_ScaleMatchVar-Env5	: TTJets_HT-2500toInf 	: xsec*1*TopPtWeight*LHEweight_wgt[5]/LHEweight_wgt[0] ;
+## WJets
+##WJets_ScaleMatchVar-Env5	: WJetsToLNu_HT-100To200		: xsec*1*TopPtWeight*LHEweight_wgt[5]/LHEweight_wgt[0] ;
+#WJets_ScaleMatchVar-Env5	: WJetsToLNu_HT-200To400 	: xsec*1*TopPtWeight*LHEweight_wgt[5]/LHEweight_wgt[0] ;
+#WJets_ScaleMatchVar-Env5	: WJetsToLNu_HT-400To600 	: xsec*1*TopPtWeight*LHEweight_wgt[5]/LHEweight_wgt[0] ;
+#WJets_ScaleMatchVar-Env5	: WJetsToLNu_HT-600To800 	: xsec*1*TopPtWeight*LHEweight_wgt[5]/LHEweight_wgt[0] ;
+#WJets_ScaleMatchVar-Env5	: WJetsToLNu_HT-800To1200 	: xsec*1*TopPtWeight*LHEweight_wgt[5]/LHEweight_wgt[0] ;
+#WJets_ScaleMatchVar-Env5	: WJetsToLNu_HT-1200To2500 	: xsec*1*TopPtWeight*LHEweight_wgt[5]/LHEweight_wgt[0] ;
+#WJets_ScaleMatchVar-Env5	: WJetsToLNu_HT-2500ToInf 	: xsec*1*TopPtWeight*LHEweight_wgt[5]/LHEweight_wgt[0] ;
+## Single Top
+#SingleTop_ScaleMatchVar-Env5	: ST_t-channel_antitop_4f_leptonDecays_13TeV-powheg-pythia8	: xsec*1*TopPtWeight*LHEweight_wgt[5]/LHEweight_wgt[0] ;
+#SingleTop_ScaleMatchVar-Env5	: ST_t-channel_antitop_4f_leptonDecays_13TeV-powheg-pythia8	: xsec*1*TopPtWeight*LHEweight_wgt[5]/LHEweight_wgt[0] ;
+#SingleTop_ScaleMatchVar-Env5	: ST_s-channel_4f_leptonDecays_13TeV-amcatnlo-pythia8	 	: xsec*1*TopPtWeight*LHEweight_wgt[5]/LHEweight_wgt[0] ;
+#SingleTop_ScaleMatchVar-Env5	: ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8	 		: xsec*1*TopPtWeight*LHEweight_wgt[5]/LHEweight_wgt[0] ;
+#SingleTop_ScaleMatchVar-Env5	: ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8	 		: xsec*1*TopPtWeight*LHEweight_wgt[5]/LHEweight_wgt[0] ;
+## DY
+#DY_ScaleMatchVar-Env5	: DYJetsToLL_M-50_HT-100to200	: xsec*1*TopPtWeight*LHEweight_wgt[5]/LHEweight_wgt[0] ;
+#DY_ScaleMatchVar-Env5	: DYJetsToLL_M-50_HT-200to400 	: xsec*1*TopPtWeight*LHEweight_wgt[5]/LHEweight_wgt[0] ;
+#DY_ScaleMatchVar-Env5	: DYJetsToLL_M-50_HT-400to600 	: xsec*1*TopPtWeight*LHEweight_wgt[5]/LHEweight_wgt[0] ;
+#DY_ScaleMatchVar-Env5	: DYJetsToLL_M-50_HT-600toInf 	: xsec*1*TopPtWeight*LHEweight_wgt[5]/LHEweight_wgt[0] ;
+## TTV
+#TTV_ScaleMatchVar-Env5	: TTWJetsToLNu			: xsec*1*TopPtWeight*LHEweight_wgt[5]/LHEweight_wgt[0] ;
+#TTV_ScaleMatchVar-Env5	: TTWJetsToQQ 			: xsec*1*TopPtWeight*LHEweight_wgt[5]/LHEweight_wgt[0] ;
+#TTV_ScaleMatchVar-Env5	: TTZToLLNuNu 			: xsec*1*TopPtWeight*LHEweight_wgt[5]/LHEweight_wgt[0] ;
+##TTV_ScaleMatchVar-Env5	: TTZToQQ 			: xsec*1*TopPtWeight*LHEweight_wgt[5]/LHEweight_wgt[0] ;
+
+### Var6
+# TTJets
+#TTJets_ScaleMatchVar-Env6	: TTJets_LO 			: xsec*1*TopPtWeight*LHEweight_wgt[6]/LHEweight_wgt[0] :  Sum$(abs(genTau_grandmotherId)==6&&abs(genTau_motherId)==24)+Sum$(abs(genLep_grandmotherId)==6&&abs(genLep_motherId)==24) == 0 && lheHTIncoming <= 600 && HT < 1250;
+TTJets_ScaleMatchVar-Env6	: TTJets_DiLept		: xsec*1*TopPtWeight*LHEweight_wgt[6]/LHEweight_wgt[0] : lheHTIncoming <= 600;
+TTJets_ScaleMatchVar-Env6	: TTJets_SingleLeptFromT 		: xsec*1*TopPtWeight*LHEweight_wgt[6]/LHEweight_wgt[0] : lheHTIncoming <= 600;
+TTJets_ScaleMatchVar-Env6	: TTJets_SingleLeptFromTbar 		: xsec*1*TopPtWeight*LHEweight_wgt[6]/LHEweight_wgt[0] : lheHTIncoming <= 600;
+TTJets_ScaleMatchVar-Env6	: TTJets_HT-600to800		: xsec*1*TopPtWeight*LHEweight_wgt[6]/LHEweight_wgt[0] ;
+TTJets_ScaleMatchVar-Env6	: TTJets_HT-800to1200 	: xsec*1*TopPtWeight*LHEweight_wgt[6]/LHEweight_wgt[0] ;
+TTJets_ScaleMatchVar-Env6	: TTJets_HT-1200to2500 	: xsec*1*TopPtWeight*LHEweight_wgt[6]/LHEweight_wgt[0] ;
+TTJets_ScaleMatchVar-Env6	: TTJets_HT-2500toInf 	: xsec*1*TopPtWeight*LHEweight_wgt[6]/LHEweight_wgt[0] ;
+# WJets
+#WJets_ScaleMatchVar-Env6	: WJetsToLNu_HT-100To200		: xsec*1*TopPtWeight*LHEweight_wgt[6]/LHEweight_wgt[0] ;
+WJets_ScaleMatchVar-Env6	: WJetsToLNu_HT-200To400 	: xsec*1*TopPtWeight*LHEweight_wgt[6]/LHEweight_wgt[0] ;
+WJets_ScaleMatchVar-Env6	: WJetsToLNu_HT-400To600 	: xsec*1*TopPtWeight*LHEweight_wgt[6]/LHEweight_wgt[0] ;
+WJets_ScaleMatchVar-Env6	: WJetsToLNu_HT-600To800 	: xsec*1*TopPtWeight*LHEweight_wgt[6]/LHEweight_wgt[0] ;
+WJets_ScaleMatchVar-Env6	: WJetsToLNu_HT-800To1200 	: xsec*1*TopPtWeight*LHEweight_wgt[6]/LHEweight_wgt[0] ;
+WJets_ScaleMatchVar-Env6	: WJetsToLNu_HT-1200To2500 	: xsec*1*TopPtWeight*LHEweight_wgt[6]/LHEweight_wgt[0] ;
+WJets_ScaleMatchVar-Env6	: WJetsToLNu_HT-2500ToInf 	: xsec*1*TopPtWeight*LHEweight_wgt[6]/LHEweight_wgt[0] ;
+# Single Top
+SingleTop_ScaleMatchVar-Env6	: ST_t-channel_antitop_4f_leptonDecays_13TeV-powheg-pythia8	: xsec*1*TopPtWeight*LHEweight_wgt[6]/LHEweight_wgt[0] ;
+SingleTop_ScaleMatchVar-Env6	: ST_t-channel_antitop_4f_leptonDecays_13TeV-powheg-pythia8	: xsec*1*TopPtWeight*LHEweight_wgt[6]/LHEweight_wgt[0] ;
+SingleTop_ScaleMatchVar-Env6	: ST_s-channel_4f_leptonDecays_13TeV-amcatnlo-pythia8	 	: xsec*1*TopPtWeight*LHEweight_wgt[6]/LHEweight_wgt[0] ;
+SingleTop_ScaleMatchVar-Env6	: ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8	 		: xsec*1*TopPtWeight*LHEweight_wgt[6]/LHEweight_wgt[0] ;
+SingleTop_ScaleMatchVar-Env6	: ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8	 		: xsec*1*TopPtWeight*LHEweight_wgt[6]/LHEweight_wgt[0] ;
+# DY
+DY_ScaleMatchVar-Env6	: DYJetsToLL_M-50_HT-100to200	: xsec*1*TopPtWeight*LHEweight_wgt[6]/LHEweight_wgt[0] ;
+DY_ScaleMatchVar-Env6	: DYJetsToLL_M-50_HT-200to400 	: xsec*1*TopPtWeight*LHEweight_wgt[6]/LHEweight_wgt[0] ;
+DY_ScaleMatchVar-Env6	: DYJetsToLL_M-50_HT-400to600 	: xsec*1*TopPtWeight*LHEweight_wgt[6]/LHEweight_wgt[0] ;
+DY_ScaleMatchVar-Env6	: DYJetsToLL_M-50_HT-600toInf 	: xsec*1*TopPtWeight*LHEweight_wgt[6]/LHEweight_wgt[0] ;
+# TTV
+TTV_ScaleMatchVar-Env6	: TTWJetsToLNu			: xsec*1*TopPtWeight*LHEweight_wgt[6]/LHEweight_wgt[0] ;
+TTV_ScaleMatchVar-Env6	: TTWJetsToQQ 			: xsec*1*TopPtWeight*LHEweight_wgt[6]/LHEweight_wgt[0] ;
+TTV_ScaleMatchVar-Env6	: TTZToLLNuNu 			: xsec*1*TopPtWeight*LHEweight_wgt[6]/LHEweight_wgt[0] ;
+#TTV_ScaleMatchVar-Env6	: TTZToQQ 			: xsec*1*TopPtWeight*LHEweight_wgt[6]/LHEweight_wgt[0] ;
+
+#### Var7
+## TTJets
+##TTJets_ScaleMatchVar-Env7	: TTJets_LO 			: xsec*1*TopPtWeight*LHEweight_wgt[7]/LHEweight_wgt[0] :  Sum$(abs(genTau_grandmotherId)==6&&abs(genTau_motherId)==24)+Sum$(abs(genLep_grandmotherId)==6&&abs(genLep_motherId)==24) == 0 && lheHTIncoming <= 600 && HT < 1250;
+#TTJets_ScaleMatchVar-Env7	: TTJets_DiLept		: xsec*1*TopPtWeight*LHEweight_wgt[7]/LHEweight_wgt[0] : lheHTIncoming <= 600;
+#TTJets_ScaleMatchVar-Env7	: TTJets_SingleLeptFromT 		: xsec*1*TopPtWeight*LHEweight_wgt[7]/LHEweight_wgt[0] : lheHTIncoming <= 600;
+#TTJets_ScaleMatchVar-Env7	: TTJets_SingleLeptFromTbar 		: xsec*1*TopPtWeight*LHEweight_wgt[7]/LHEweight_wgt[0] : lheHTIncoming <= 600;
+#TTJets_ScaleMatchVar-Env7	: TTJets_HT-600to800		: xsec*1*TopPtWeight*LHEweight_wgt[7]/LHEweight_wgt[0] ;
+#TTJets_ScaleMatchVar-Env7	: TTJets_HT-800to1200 	: xsec*1*TopPtWeight*LHEweight_wgt[7]/LHEweight_wgt[0] ;
+#TTJets_ScaleMatchVar-Env7	: TTJets_HT-1200to2500 	: xsec*1*TopPtWeight*LHEweight_wgt[7]/LHEweight_wgt[0] ;
+#TTJets_ScaleMatchVar-Env7	: TTJets_HT-2500toInf 	: xsec*1*TopPtWeight*LHEweight_wgt[7]/LHEweight_wgt[0] ;
+## WJets
+##WJets_ScaleMatchVar-Env7	: WJetsToLNu_HT-100To200		: xsec*1*TopPtWeight*LHEweight_wgt[7]/LHEweight_wgt[0] ;
+#WJets_ScaleMatchVar-Env7	: WJetsToLNu_HT-200To400 	: xsec*1*TopPtWeight*LHEweight_wgt[7]/LHEweight_wgt[0] ;
+#WJets_ScaleMatchVar-Env7	: WJetsToLNu_HT-400To600 	: xsec*1*TopPtWeight*LHEweight_wgt[7]/LHEweight_wgt[0] ;
+#WJets_ScaleMatchVar-Env7	: WJetsToLNu_HT-600To800 	: xsec*1*TopPtWeight*LHEweight_wgt[7]/LHEweight_wgt[0] ;
+#WJets_ScaleMatchVar-Env7	: WJetsToLNu_HT-800To1200 	: xsec*1*TopPtWeight*LHEweight_wgt[7]/LHEweight_wgt[0] ;
+#WJets_ScaleMatchVar-Env7	: WJetsToLNu_HT-1200To2500 	: xsec*1*TopPtWeight*LHEweight_wgt[7]/LHEweight_wgt[0] ;
+#WJets_ScaleMatchVar-Env7	: WJetsToLNu_HT-2500ToInf 	: xsec*1*TopPtWeight*LHEweight_wgt[7]/LHEweight_wgt[0] ;
+## Single Top
+#SingleTop_ScaleMatchVar-Env7	: ST_t-channel_antitop_4f_leptonDecays_13TeV-powheg-pythia8	: xsec*1*TopPtWeight*LHEweight_wgt[7]/LHEweight_wgt[0] ;
+#SingleTop_ScaleMatchVar-Env7	: ST_t-channel_antitop_4f_leptonDecays_13TeV-powheg-pythia8	: xsec*1*TopPtWeight*LHEweight_wgt[7]/LHEweight_wgt[0] ;
+#SingleTop_ScaleMatchVar-Env7	: ST_s-channel_4f_leptonDecays_13TeV-amcatnlo-pythia8	 	: xsec*1*TopPtWeight*LHEweight_wgt[7]/LHEweight_wgt[0] ;
+#SingleTop_ScaleMatchVar-Env7	: ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8	 		: xsec*1*TopPtWeight*LHEweight_wgt[7]/LHEweight_wgt[0] ;
+#SingleTop_ScaleMatchVar-Env7	: ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8	 		: xsec*1*TopPtWeight*LHEweight_wgt[7]/LHEweight_wgt[0] ;
+## DY
+#DY_ScaleMatchVar-Env7	: DYJetsToLL_M-50_HT-100to200	: xsec*1*TopPtWeight*LHEweight_wgt[7]/LHEweight_wgt[0] ;
+#DY_ScaleMatchVar-Env7	: DYJetsToLL_M-50_HT-200to400 	: xsec*1*TopPtWeight*LHEweight_wgt[7]/LHEweight_wgt[0] ;
+#DY_ScaleMatchVar-Env7	: DYJetsToLL_M-50_HT-400to600 	: xsec*1*TopPtWeight*LHEweight_wgt[7]/LHEweight_wgt[0] ;
+#DY_ScaleMatchVar-Env7	: DYJetsToLL_M-50_HT-600toInf 	: xsec*1*TopPtWeight*LHEweight_wgt[7]/LHEweight_wgt[0] ;
+## TTV
+#TTV_ScaleMatchVar-Env7	: TTWJetsToLNu			: xsec*1*TopPtWeight*LHEweight_wgt[7]/LHEweight_wgt[0] ;
+#TTV_ScaleMatchVar-Env7	: TTWJetsToQQ 			: xsec*1*TopPtWeight*LHEweight_wgt[7]/LHEweight_wgt[0] ;
+#TTV_ScaleMatchVar-Env7	: TTZToLLNuNu 			: xsec*1*TopPtWeight*LHEweight_wgt[7]/LHEweight_wgt[0] ;
+##TTV_ScaleMatchVar-Env7	: TTZToQQ 			: xsec*1*TopPtWeight*LHEweight_wgt[7]/LHEweight_wgt[0] ;
+
+### Var8
+# TTJets
+#TTJets_ScaleMatchVar-Env8	: TTJets_LO 			: xsec*1*TopPtWeight*LHEweight_wgt[8]/LHEweight_wgt[0] :  Sum$(abs(genTau_grandmotherId)==6&&abs(genTau_motherId)==24)+Sum$(abs(genLep_grandmotherId)==6&&abs(genLep_motherId)==24) == 0 && lheHTIncoming <= 600 && HT < 1250;
+TTJets_ScaleMatchVar-Env8	: TTJets_DiLept		: xsec*1*TopPtWeight*LHEweight_wgt[8]/LHEweight_wgt[0] : lheHTIncoming <= 600;
+TTJets_ScaleMatchVar-Env8	: TTJets_SingleLeptFromT 		: xsec*1*TopPtWeight*LHEweight_wgt[8]/LHEweight_wgt[0] : lheHTIncoming <= 600;
+TTJets_ScaleMatchVar-Env8	: TTJets_SingleLeptFromTbar 		: xsec*1*TopPtWeight*LHEweight_wgt[8]/LHEweight_wgt[0] : lheHTIncoming <= 600;
+TTJets_ScaleMatchVar-Env8	: TTJets_HT-600to800		: xsec*1*TopPtWeight*LHEweight_wgt[8]/LHEweight_wgt[0] ;
+TTJets_ScaleMatchVar-Env8	: TTJets_HT-800to1200 	: xsec*1*TopPtWeight*LHEweight_wgt[8]/LHEweight_wgt[0] ;
+TTJets_ScaleMatchVar-Env8	: TTJets_HT-1200to2500 	: xsec*1*TopPtWeight*LHEweight_wgt[8]/LHEweight_wgt[0] ;
+TTJets_ScaleMatchVar-Env8	: TTJets_HT-2500toInf 	: xsec*1*TopPtWeight*LHEweight_wgt[8]/LHEweight_wgt[0] ;
+# WJets
+#WJets_ScaleMatchVar-Env8	: WJetsToLNu_HT-100To200		: xsec*1*TopPtWeight*LHEweight_wgt[8]/LHEweight_wgt[0] ;
+WJets_ScaleMatchVar-Env8	: WJetsToLNu_HT-200To400 	: xsec*1*TopPtWeight*LHEweight_wgt[8]/LHEweight_wgt[0] ;
+WJets_ScaleMatchVar-Env8	: WJetsToLNu_HT-400To600 	: xsec*1*TopPtWeight*LHEweight_wgt[8]/LHEweight_wgt[0] ;
+WJets_ScaleMatchVar-Env8	: WJetsToLNu_HT-600To800 	: xsec*1*TopPtWeight*LHEweight_wgt[8]/LHEweight_wgt[0] ;
+WJets_ScaleMatchVar-Env8	: WJetsToLNu_HT-800To1200 	: xsec*1*TopPtWeight*LHEweight_wgt[8]/LHEweight_wgt[0] ;
+WJets_ScaleMatchVar-Env8	: WJetsToLNu_HT-1200To2500 	: xsec*1*TopPtWeight*LHEweight_wgt[8]/LHEweight_wgt[0] ;
+WJets_ScaleMatchVar-Env8	: WJetsToLNu_HT-2500ToInf 	: xsec*1*TopPtWeight*LHEweight_wgt[8]/LHEweight_wgt[0] ;
+# Single Top
+SingleTop_ScaleMatchVar-Env8	: ST_t-channel_antitop_4f_leptonDecays_13TeV-powheg-pythia8	: xsec*1*TopPtWeight*LHEweight_wgt[8]/LHEweight_wgt[0] ;
+SingleTop_ScaleMatchVar-Env8	: ST_t-channel_antitop_4f_leptonDecays_13TeV-powheg-pythia8	: xsec*1*TopPtWeight*LHEweight_wgt[8]/LHEweight_wgt[0] ;
+SingleTop_ScaleMatchVar-Env8	: ST_s-channel_4f_leptonDecays_13TeV-amcatnlo-pythia8	 	: xsec*1*TopPtWeight*LHEweight_wgt[8]/LHEweight_wgt[0] ;
+SingleTop_ScaleMatchVar-Env8	: ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8	 		: xsec*1*TopPtWeight*LHEweight_wgt[8]/LHEweight_wgt[0] ;
+SingleTop_ScaleMatchVar-Env8	: ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8	 		: xsec*1*TopPtWeight*LHEweight_wgt[8]/LHEweight_wgt[0] ;
+# DY
+DY_ScaleMatchVar-Env8	: DYJetsToLL_M-50_HT-100to200	: xsec*1*TopPtWeight*LHEweight_wgt[8]/LHEweight_wgt[0] ;
+DY_ScaleMatchVar-Env8	: DYJetsToLL_M-50_HT-200to400 	: xsec*1*TopPtWeight*LHEweight_wgt[8]/LHEweight_wgt[0] ;
+DY_ScaleMatchVar-Env8	: DYJetsToLL_M-50_HT-400to600 	: xsec*1*TopPtWeight*LHEweight_wgt[8]/LHEweight_wgt[0] ;
+DY_ScaleMatchVar-Env8	: DYJetsToLL_M-50_HT-600toInf 	: xsec*1*TopPtWeight*LHEweight_wgt[8]/LHEweight_wgt[0] ;
+# TTV
+TTV_ScaleMatchVar-Env8	: TTWJetsToLNu			: xsec*1*TopPtWeight*LHEweight_wgt[8]/LHEweight_wgt[0] ;
+TTV_ScaleMatchVar-Env8	: TTWJetsToQQ 			: xsec*1*TopPtWeight*LHEweight_wgt[8]/LHEweight_wgt[0] ;
+TTV_ScaleMatchVar-Env8	: TTZToLLNuNu 			: xsec*1*TopPtWeight*LHEweight_wgt[8]/LHEweight_wgt[0] ;
+#TTV_ScaleMatchVar-Env8	: TTZToQQ 			: xsec*1*TopPtWeight*LHEweight_wgt[8]/LHEweight_wgt[0] ;
+

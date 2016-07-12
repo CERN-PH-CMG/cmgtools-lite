@@ -1,0 +1,180 @@
+### ./makeBinYields.py --mca ../systs/DLConst/mca-Spring16_HT350Skim_MC_syst_DLConst.txt -P ../systs/DLConst/links_2016 -F sf/t ../systs/DLConst/links_2016/Friends_WithUpdatedDLSyst/evVarFriend_{cname}.root -l 3.99 --grid -v 2 --od lumi4fb/DLConst --syst -b
+### CENTRAL
+##############################
+#all ttbar, uncomment only for makeBinYields otherwise ttbar will be double counted
+TTJets 	 : TTJets_DiLept : xsec*1*TopPtWeight : lheHTIncoming <= 600; FillColor=ROOT.kBlue, Label="t\#bar{t}"
+TTJets     : TTJets_SingleLeptFromT     : xsec*1*TopPtWeight : lheHTIncoming <= 600; FillColor=ROOT.kBlue-4, Label="t\#bar{t} semilept"
+TTJets      : TTJets_SingleLeptFromTbar     : xsec*1*TopPtWeight : lheHTIncoming <= 600; FillColor=ROOT.kBlue-4, Label="t\#bar{t} semilept"
+TTJets 	 : TTJets_HT-600to800 : xsec*1*TopPtWeight ; FillColor=ROOT.kBlue, Label="t\#bar{t}"
+TTJets 	 : TTJets_HT-800to1200 : xsec*1*TopPtWeight ; FillColor=ROOT.kBlue, Label="t\#bar{t}"
+TTJets 	 : TTJets_HT-1200to2500 : xsec*1*TopPtWeight ; FillColor=ROOT.kBlue, Label="t\#bar{t}"
+TTJets 	 : TTJets_HT-2500toInf : xsec*1*TopPtWeight ; FillColor=ROOT.kBlue, Label="t\#bar{t}"
+
+##################################
+##W+Jets, lowest HT bin missing, shouldn't matter though
+#WJets    : WJetsToLNu_HT-100To200 :  xsec*1*TopPtWeight  ; Label="W+jets", FillColor=ROOT.kGreen-2
+WJets    : WJetsToLNu_HT-200To400 :  xsec*1*TopPtWeight  ; Label="W+jets", FillColor=ROOT.kGreen-2
+WJets    : WJetsToLNu_HT-400To600 :  xsec*1*TopPtWeight  ; Label="W+jets", FillColor=ROOT.kGreen-2
+WJets    : WJetsToLNu_HT-600To800 :  xsec*1*TopPtWeight  ; Label="W+jets", FillColor=ROOT.kGreen-2
+WJets    : WJetsToLNu_HT-800To1200 :  xsec*1*TopPtWeight  ; Label="W+jets", FillColor=ROOT.kGreen-2
+WJets    : WJetsToLNu_HT-1200To2500 :  xsec*1*TopPtWeight  ; Label="W+jets", FillColor=ROOT.kGreen-2
+WJets    : WJetsToLNu_HT-2500ToInf :  xsec*1*TopPtWeight  ; Label="W+jets", FillColor=ROOT.kGreen-2
+
+
+###############################
+# QCD
+QCD      : QCD_HT300to500         : xsec*1*TopPtWeight ; Label ="QCD", FillColor=ROOT.kCyan-6
+QCD      : QCD_HT500to700         : xsec*1*TopPtWeight ; Label ="QCD", FillColor=ROOT.kCyan-6
+QCD      : QCD_HT700to1000         : xsec*1*TopPtWeight ; Label ="QCD", FillColor=ROOT.kCyan-6
+QCD      : QCD_HT1000to1500         : xsec*1*TopPtWeight ; Label ="QCD", FillColor=ROOT.kCyan-6
+QCD      : QCD_HT1500to2000         : xsec*1*TopPtWeight ; Label ="QCD", FillColor=ROOT.kCyan-6
+QCD      : QCD_HT2000toInf         : xsec*1*TopPtWeight ; Label ="QCD", FillColor=ROOT.kCyan-6
+
+
+#####################
+#Single top, using twice the t-channel_antitop sample for now
+SingleT : ST_s-channel_4f_leptonDecays_13TeV-amcatnlo-pythia8  : xsec*1*TopPtWeight ; FillColor = ROOT.kViolet+5, Label= "t/\#bar{t}"
+###using this sampel twice
+SingleT : ST_t-channel_antitop_4f_leptonDecays_13TeV-powheg-pythia8 : xsec*1*TopPtWeight ; FillColor = ROOT.kViolet+5, Label= "t/\#bar{t}"
+SingleT : ST_t-channel_antitop_4f_leptonDecays_13TeV-powheg-pythia8 : xsec*1*TopPtWeight ; FillColor = ROOT.kViolet+5, Label= "t/\#bar{t}"
+####
+SingleT : ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8 : xsec*1*TopPtWeight ; FillColor = ROOT.kViolet+5, Label= "t/\#bar{t}"
+SingleT : ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8 : xsec*1*TopPtWeight ; FillColor = ROOT.kViolet+5, Label= "t/\#bar{t}"
+
+####################
+#Drell-Yan, all HT bins
+DY       : DYJetsToLL_M-50_HT-100to200 :  xsec*1*TopPtWeight ; Label="DY+jets", FillColor=ROOT.kRed-6, NormSystematic=0.5
+DY       : DYJetsToLL_M-50_HT-200to400 :   xsec*1*TopPtWeight ; Label="DY+jets", FillColor=ROOT.kRed-6, NormSystematic=0.5
+DY       : DYJetsToLL_M-50_HT-400to600 :    xsec*1*TopPtWeight ; Label="DY+jets", FillColor=ROOT.kRed-6, NormSystematic=0.5
+DY       : DYJetsToLL_M-50_HT-600toInf :    xsec*1*TopPtWeight ; Label="DY+jets", FillColor=ROOT.kRed-6, NormSystematic=0.5
+
+
+
+###################
+#TTV samples
+TTV : TTWJetsToLNu : xsec*1*TopPtWeight ; FillColor=ROOT.kOrange-3, Label="ttV(W/Z/H)", NormSystematic=0.2
+TTV : TTWJetsToQQ : xsec*1*TopPtWeight ; FillColor=ROOT.kOrange-3, Label="ttV(W/Z/H)", NormSystematic=0.2
+TTV : TTZToLLNuNu : xsec*1*TopPtWeight ; FillColor=ROOT.kOrange-3, Label="ttV(W/Z/H)", NormSystematic=0.2
+#TTV : TTZToQQ : xsec*1*TopPtWeight  ; FillColor=ROOT.kOrange-3, Label="ttV(W/Z/H)", NormSystematic=0.2
+
+
+
+### DLConst UP
+##############################
+#all ttbar, uncomment only for makeBinYields otherwise ttbar will be double counted
+TTJets_DLConst-Up 	 : TTJets_DiLept : xsec*1*TopPtWeight*DilepNJetWeightConstUp : lheHTIncoming <= 600; FillColor=ROOT.kBlue, Label="t\#bar{t}"
+TTJets_DLConst-Up     : TTJets_SingleLeptFromT     : xsec*1*TopPtWeight*DilepNJetWeightConstUp : lheHTIncoming <= 600; FillColor=ROOT.kBlue-4, Label="t\#bar{t} semilept"
+TTJets_DLConst-Up      : TTJets_SingleLeptFromTbar     : xsec*1*TopPtWeight*DilepNJetWeightConstUp : lheHTIncoming <= 600; FillColor=ROOT.kBlue-4, Label="t\#bar{t} semilept"
+TTJets_DLConst-Up 	 : TTJets_HT-600to800 : xsec*1*TopPtWeight*DilepNJetWeightConstUp ; FillColor=ROOT.kBlue, Label="t\#bar{t}"
+TTJets_DLConst-Up 	 : TTJets_HT-800to1200 : xsec*1*TopPtWeight*DilepNJetWeightConstUp ; FillColor=ROOT.kBlue, Label="t\#bar{t}"
+TTJets_DLConst-Up 	 : TTJets_HT-1200to2500 : xsec*1*TopPtWeight*DilepNJetWeightConstUp ; FillColor=ROOT.kBlue, Label="t\#bar{t}"
+TTJets_DLConst-Up 	 : TTJets_HT-2500toInf : xsec*1*TopPtWeight*DilepNJetWeightConstUp ; FillColor=ROOT.kBlue, Label="t\#bar{t}"
+
+##################################
+##W+Jets, lowest HT bin missing, shouldn't matter though
+#WJets    : WJetsToLNu_HT-100To200 :  xsec*1*TopPtWeight*DilepNJetWeightConstUp  ; Label="W+jets", FillColor=ROOT.kGreen-2
+WJets_DLConst-Up    : WJetsToLNu_HT-200To400 :  xsec*1*TopPtWeight*DilepNJetWeightConstUp  ; Label="W+jets", FillColor=ROOT.kGreen-2
+WJets_DLConst-Up    : WJetsToLNu_HT-400To600 :  xsec*1*TopPtWeight*DilepNJetWeightConstUp  ; Label="W+jets", FillColor=ROOT.kGreen-2
+WJets_DLConst-Up    : WJetsToLNu_HT-600To800 :  xsec*1*TopPtWeight*DilepNJetWeightConstUp  ; Label="W+jets", FillColor=ROOT.kGreen-2
+WJets_DLConst-Up    : WJetsToLNu_HT-800To1200 :  xsec*1*TopPtWeight*DilepNJetWeightConstUp  ; Label="W+jets", FillColor=ROOT.kGreen-2
+WJets_DLConst-Up    : WJetsToLNu_HT-1200To2500 :  xsec*1*TopPtWeight*DilepNJetWeightConstUp  ; Label="W+jets", FillColor=ROOT.kGreen-2
+WJets_DLConst-Up    : WJetsToLNu_HT-2500ToInf :  xsec*1*TopPtWeight*DilepNJetWeightConstUp  ; Label="W+jets", FillColor=ROOT.kGreen-2
+
+
+###############################
+# QCD
+QCD_DLConst-Up      : QCD_HT300to500         : xsec*1*TopPtWeight*DilepNJetWeightConstUp ; Label ="QCD", FillColor=ROOT.kCyan-6
+QCD_DLConst-Up      : QCD_HT500to700         : xsec*1*TopPtWeight*DilepNJetWeightConstUp ; Label ="QCD", FillColor=ROOT.kCyan-6
+QCD_DLConst-Up      : QCD_HT700to1000         : xsec*1*TopPtWeight*DilepNJetWeightConstUp ; Label ="QCD", FillColor=ROOT.kCyan-6
+QCD_DLConst-Up      : QCD_HT1000to1500         : xsec*1*TopPtWeight*DilepNJetWeightConstUp ; Label ="QCD", FillColor=ROOT.kCyan-6
+QCD_DLConst-Up      : QCD_HT1500to2000         : xsec*1*TopPtWeight*DilepNJetWeightConstUp ; Label ="QCD", FillColor=ROOT.kCyan-6
+QCD_DLConst-Up      : QCD_HT2000toInf         : xsec*1*TopPtWeight*DilepNJetWeightConstUp ; Label ="QCD", FillColor=ROOT.kCyan-6
+
+
+#####################
+#Single top, using twice the t-channel_antitop sample for now
+SingleT_DLConst-Up : ST_s-channel_4f_leptonDecays_13TeV-amcatnlo-pythia8  : xsec*1*TopPtWeight*DilepNJetWeightConstUp ; FillColor = ROOT.kViolet+5, Label= "t/\#bar{t}"
+###using this sampel twice
+SingleT_DLConst-Up : ST_t-channel_antitop_4f_leptonDecays_13TeV-powheg-pythia8 : xsec*1*TopPtWeight*DilepNJetWeightConstUp ; FillColor = ROOT.kViolet+5, Label= "t/\#bar{t}"
+SingleT_DLConst-Up : ST_t-channel_antitop_4f_leptonDecays_13TeV-powheg-pythia8 : xsec*1*TopPtWeight*DilepNJetWeightConstUp ; FillColor = ROOT.kViolet+5, Label= "t/\#bar{t}"
+####
+SingleT_DLConst-Up : ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8 : xsec*1*TopPtWeight*DilepNJetWeightConstUp ; FillColor = ROOT.kViolet+5, Label= "t/\#bar{t}"
+SingleT_DLConst-Up : ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8 : xsec*1*TopPtWeight*DilepNJetWeightConstUp ; FillColor = ROOT.kViolet+5, Label= "t/\#bar{t}"
+
+####################
+#Drell-Yan, all HT bins
+DY_DLConst-Up       : DYJetsToLL_M-50_HT-100to200 :  xsec*1*TopPtWeight*DilepNJetWeightConstUp ; Label="DY+jets", FillColor=ROOT.kRed-6, NormSystematic=0.5
+DY_DLConst-Up       : DYJetsToLL_M-50_HT-200to400 :   xsec*1*TopPtWeight*DilepNJetWeightConstUp ; Label="DY+jets", FillColor=ROOT.kRed-6, NormSystematic=0.5
+DY_DLConst-Up       : DYJetsToLL_M-50_HT-400to600 :    xsec*1*TopPtWeight*DilepNJetWeightConstUp ; Label="DY+jets", FillColor=ROOT.kRed-6, NormSystematic=0.5
+DY_DLConst-Up       : DYJetsToLL_M-50_HT-600toInf :    xsec*1*TopPtWeight*DilepNJetWeightConstUp ; Label="DY+jets", FillColor=ROOT.kRed-6, NormSystematic=0.5
+
+
+
+###################
+#TTV samples
+TTV_DLConst-Up : TTWJetsToLNu : xsec*1*TopPtWeight*DilepNJetWeightConstUp ; FillColor=ROOT.kOrange-3, Label="ttV(W/Z/H)", NormSystematic=0.2
+TTV_DLConst-Up : TTWJetsToQQ : xsec*1*TopPtWeight*DilepNJetWeightConstUp ; FillColor=ROOT.kOrange-3, Label="ttV(W/Z/H)", NormSystematic=0.2
+TTV_DLConst-Up : TTZToLLNuNu : xsec*1*TopPtWeight*DilepNJetWeightConstUp ; FillColor=ROOT.kOrange-3, Label="ttV(W/Z/H)", NormSystematic=0.2
+#TTV : TTZToQQ : xsec*1*TopPtWeight*DilepNJetWeightConstUp  ; FillColor=ROOT.kOrange-3, Label="ttV(W/Z/H)", NormSystematic=0.2
+
+
+
+### DLConst Down
+##############################
+#all ttbar, uncomment only for makeBinYields otherwise ttbar will be double counted
+TTJets_DLConst-Down 	 : TTJets_DiLept : xsec*1*TopPtWeight*DilepNJetWeightConstDn : lheHTIncoming <= 600; FillColor=ROOT.kBlue, Label="t\#bar{t}"
+TTJets_DLConst-Down     : TTJets_SingleLeptFromT     : xsec*1*TopPtWeight*DilepNJetWeightConstDn : lheHTIncoming <= 600; FillColor=ROOT.kBlue-4, Label="t\#bar{t} semilept"
+TTJets_DLConst-Down      : TTJets_SingleLeptFromTbar     : xsec*1*TopPtWeight*DilepNJetWeightConstDn : lheHTIncoming <= 600; FillColor=ROOT.kBlue-4, Label="t\#bar{t} semilept"
+TTJets_DLConst-Down 	 : TTJets_HT-600to800 : xsec*1*TopPtWeight*DilepNJetWeightConstDn ; FillColor=ROOT.kBlue, Label="t\#bar{t}"
+TTJets_DLConst-Down 	 : TTJets_HT-800to1200 : xsec*1*TopPtWeight*DilepNJetWeightConstDn ; FillColor=ROOT.kBlue, Label="t\#bar{t}"
+TTJets_DLConst-Down 	 : TTJets_HT-1200to2500 : xsec*1*TopPtWeight*DilepNJetWeightConstDn ; FillColor=ROOT.kBlue, Label="t\#bar{t}"
+TTJets_DLConst-Down 	 : TTJets_HT-2500toInf : xsec*1*TopPtWeight*DilepNJetWeightConstDn ; FillColor=ROOT.kBlue, Label="t\#bar{t}"
+
+##################################
+##W+Jets, lowest HT bin missing, shouldn't matter though
+#WJets    : WJetsToLNu_HT-100To200 :  xsec*1*TopPtWeight*DilepNJetWeightConstDn  ; Label="W+jets", FillColor=ROOT.kGreen-2
+WJets_DLConst-Down    : WJetsToLNu_HT-200To400 :  xsec*1*TopPtWeight*DilepNJetWeightConstDn  ; Label="W+jets", FillColor=ROOT.kGreen-2
+WJets_DLConst-Down    : WJetsToLNu_HT-400To600 :  xsec*1*TopPtWeight*DilepNJetWeightConstDn  ; Label="W+jets", FillColor=ROOT.kGreen-2
+WJets_DLConst-Down    : WJetsToLNu_HT-600To800 :  xsec*1*TopPtWeight*DilepNJetWeightConstDn  ; Label="W+jets", FillColor=ROOT.kGreen-2
+WJets_DLConst-Down    : WJetsToLNu_HT-800To1200 :  xsec*1*TopPtWeight*DilepNJetWeightConstDn  ; Label="W+jets", FillColor=ROOT.kGreen-2
+WJets_DLConst-Down    : WJetsToLNu_HT-1200To2500 :  xsec*1*TopPtWeight*DilepNJetWeightConstDn  ; Label="W+jets", FillColor=ROOT.kGreen-2
+WJets_DLConst-Down    : WJetsToLNu_HT-2500ToInf :  xsec*1*TopPtWeight*DilepNJetWeightConstDn  ; Label="W+jets", FillColor=ROOT.kGreen-2
+
+
+###############################
+# QCD
+QCD_DLConst-Down      : QCD_HT300to500         : xsec*1*TopPtWeight*DilepNJetWeightConstDn ; Label ="QCD", FillColor=ROOT.kCyan-6
+QCD_DLConst-Down      : QCD_HT500to700         : xsec*1*TopPtWeight*DilepNJetWeightConstDn ; Label ="QCD", FillColor=ROOT.kCyan-6
+QCD_DLConst-Down      : QCD_HT700to1000         : xsec*1*TopPtWeight*DilepNJetWeightConstDn ; Label ="QCD", FillColor=ROOT.kCyan-6
+QCD_DLConst-Down      : QCD_HT1000to1500         : xsec*1*TopPtWeight*DilepNJetWeightConstDn ; Label ="QCD", FillColor=ROOT.kCyan-6
+QCD_DLConst-Down      : QCD_HT1500to2000         : xsec*1*TopPtWeight*DilepNJetWeightConstDn ; Label ="QCD", FillColor=ROOT.kCyan-6
+QCD_DLConst-Down      : QCD_HT2000toInf         : xsec*1*TopPtWeight*DilepNJetWeightConstDn ; Label ="QCD", FillColor=ROOT.kCyan-6
+
+
+#####################
+#Single top, using twice the t-channel_antitop sample for now
+SingleT_DLConst-Down : ST_s-channel_4f_leptonDecays_13TeV-amcatnlo-pythia8  : xsec*1*TopPtWeight*DilepNJetWeightConstDn ; FillColor = ROOT.kViolet+5, Label= "t/\#bar{t}"
+###using this sampel twice
+SingleT_DLConst-Down : ST_t-channel_antitop_4f_leptonDecays_13TeV-powheg-pythia8 : xsec*1*TopPtWeight*DilepNJetWeightConstDn ; FillColor = ROOT.kViolet+5, Label= "t/\#bar{t}"
+SingleT_DLConst-Down : ST_t-channel_antitop_4f_leptonDecays_13TeV-powheg-pythia8 : xsec*1*TopPtWeight*DilepNJetWeightConstDn ; FillColor = ROOT.kViolet+5, Label= "t/\#bar{t}"
+####
+SingleT_DLConst-Down : ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8 : xsec*1*TopPtWeight*DilepNJetWeightConstDn ; FillColor = ROOT.kViolet+5, Label= "t/\#bar{t}"
+SingleT_DLConst-Down : ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8 : xsec*1*TopPtWeight*DilepNJetWeightConstDn ; FillColor = ROOT.kViolet+5, Label= "t/\#bar{t}"
+
+####################
+#Drell-Yan, all HT bins
+DY_DLConst-Down       : DYJetsToLL_M-50_HT-100to200 :  xsec*1*TopPtWeight*DilepNJetWeightConstDn ; Label="DY+jets", FillColor=ROOT.kRed-6, NormSystematic=0.5
+DY_DLConst-Down       : DYJetsToLL_M-50_HT-200to400 :   xsec*1*TopPtWeight*DilepNJetWeightConstDn ; Label="DY+jets", FillColor=ROOT.kRed-6, NormSystematic=0.5
+DY_DLConst-Down       : DYJetsToLL_M-50_HT-400to600 :    xsec*1*TopPtWeight*DilepNJetWeightConstDn ; Label="DY+jets", FillColor=ROOT.kRed-6, NormSystematic=0.5
+DY_DLConst-Down       : DYJetsToLL_M-50_HT-600toInf :    xsec*1*TopPtWeight*DilepNJetWeightConstDn ; Label="DY+jets", FillColor=ROOT.kRed-6, NormSystematic=0.5
+
+
+
+###################
+#TTV samples
+TTV_DLConst-Down : TTWJetsToLNu : xsec*1*TopPtWeight*DilepNJetWeightConstDn ; FillColor=ROOT.kOrange-3, Label="ttV(W/Z/H)", NormSystematic=0.2
+TTV_DLConst-Down : TTWJetsToQQ : xsec*1*TopPtWeight*DilepNJetWeightConstDn ; FillColor=ROOT.kOrange-3, Label="ttV(W/Z/H)", NormSystematic=0.2
+TTV_DLConst-Down : TTZToLLNuNu : xsec*1*TopPtWeight*DilepNJetWeightConstDn ; FillColor=ROOT.kOrange-3, Label="ttV(W/Z/H)", NormSystematic=0.2
+#TTV : TTZToQQ : xsec*1*TopPtWeight*DilepNJetWeightConstDn  ; FillColor=ROOT.kOrange-3, Label="ttV(W/Z/H)", NormSystematic=0.2
+
+
