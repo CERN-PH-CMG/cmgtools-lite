@@ -23,7 +23,8 @@ eleEta = 2.4
 ###########
 
 corrJEC = "central" # can be "central","up","down"
-#corrJEC = "down" # can be "central","up","down"
+JECAllowedValues = ["central","up","down"]
+assert any(val==corrJEC for val in JECAllowedValues)
 
 smearJER = "None"# can be "None","central","up","down"
 JERAllowedValues = ["None","central","up","down"]
@@ -118,6 +119,13 @@ def returnJERSmearedPt(jetpt,aeta,genpt,smearJER):
 btag_LooseWP = 0.605 #old
 btag_MediumWP = 0.80 #updated to Spring16
 btag_TightWP = 0.990 #old
+
+###########
+# MUONS
+###########
+
+muID = 'ICHEPmediumMuonId' # 'medium'(2015) or 'ICHEPmediumMuonId' (2016)
+
 
 
 ###########
@@ -347,7 +355,9 @@ class EventVars1L_base:
                 ## Lower ID is POG_LOOSE (see cfg)
 
                 # ID, IP and Iso check:
-                passID = lep.mediumMuonId == 1
+                passID = 0
+                if muID=='ICHEPmediumMuonId': passID = lep.ICHEPmediumMuonId
+                else: passID = lep.mediumMuonId
                 passIso = lep.miniRelIso < muo_miniIsoCut
                 passIP = lep.sip3d < goodMu_sip3d
 
