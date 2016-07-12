@@ -26,6 +26,7 @@ met_globalVariables = [
 #    NTupleVariable("Flag_HBHENoiseFilter", lambda ev: ev.hbheFilterNew, help="HBEHE temporary filter decision"),
 #    NTupleVariable("Flag_HBHEIsoNoiseFilter", lambda ev: ev.hbheFilterIso, help="HBEHE isolation temporary filter decision"),
     NTupleVariable("Flag_badChargedHadronFilter", lambda ev: ev.badChargedHadron, help="bad charged hadron filter decision"),
+    NTupleVariable("Flag_badMuonFilter", lambda ev: ev.badMuon, help="bad muon filter decision"),
 
    # ----------------------- Leading jet info  --------------------------------------------------------------------- #
 
@@ -43,11 +44,15 @@ met_globalVariables = [
     NTupleVariable("met_jecUp_uPara_zll", lambda ev : ev.met_jecUp.upara_zll if  hasattr(ev,'zll_p4') else -999 , help="recoil MET jecUp"),
     NTupleVariable("met_jecUp_uPerp_zll", lambda ev : ev.met_jecUp.uperp_zll if  hasattr(ev,'zll_p4') else -999 , help="recoil MET jecUp"),
 
+    NTupleVariable("met_sig", lambda ev : ev.met_sig, help="met significance, filled when running preprocessor"),
+
 #    NTupleVariable("metNoHF_uPara_zll", lambda ev : ev.metNoHF.upara_zll if hasattr(ev,'metNoHF') and hasattr(ev,'zll_p4') else -999 , help="recoil MET"),
 #    NTupleVariable("metNoHF_uPerp_zll", lambda ev : ev.metNoHF.uperp_zll if hasattr(ev,'metNoHF') and hasattr(ev,'zll_p4') else -999 , help="recoil MET"),
 
     NTupleVariable("metPuppi_uPara_zll", lambda ev : ev.metPuppi.upara_zll if hasattr(ev,'metPuppi') and hasattr(ev,'zll_p4') else -999 , help="recoil MET puppi"),
     NTupleVariable("metPuppi_uPerp_zll", lambda ev : ev.metPuppi.uperp_zll if hasattr(ev,'metPuppi') and hasattr(ev,'zll_p4') else -999 , help="recoil MET puppi"),
+
+    NTupleVariable("metPuppi_sig", lambda ev : ev.met_sigPuppi, help="met significance, filled when running preprocessor"),
 
     NTupleVariable("met_raw_uPara_zll", lambda ev : ev.met_raw.upara_zll if  hasattr(ev,'zll_p4') else -999 , help="recoil MET raw"),
     NTupleVariable("met_raw_uPerp_zll", lambda ev : ev.met_raw.uperp_zll if  hasattr(ev,'zll_p4') else -999 , help="recoil MET raw"),

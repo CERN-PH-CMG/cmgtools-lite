@@ -4,6 +4,7 @@
 #include "Math/GenVector/PxPyPzM4D.h"
 #include "Math/GenVector/Boost.h"
 #include "TLorentzVector.h"
+#include "PhysicsTools/Heppy/interface/Davismt2.h"
 
 //// UTILITY FUNCTIONS NOT IN TFORMULA ALREADY
 
@@ -46,6 +47,24 @@ float mass_2(float pt1, float eta1, float phi1, float m1, float pt2, float eta2,
     PtEtaPhiMVector p41(pt1,eta1,phi1,m1);
     PtEtaPhiMVector p42(pt2,eta2,phi2,m2);
     return (p41+p42).M();
+}
+
+float mt2davis(float pt1, float eta1, float phi1, float pt2, float eta2, float phi2, float met, float metphi){
+    // NOTE THAT THIS FUNCTION ASSUMES MASSLESS OBJECTS. NOT ADVISED TO USE WITH HEMISPHERES ETC.
+    typedef ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<double> > PtEtaPhiMVector;
+    PtEtaPhiMVector p1(pt1,eta1,phi1,0.);
+    PtEtaPhiMVector p2(pt2,eta2,phi2,0.);
+    PtEtaPhiMVector mv(met,0.,metphi,0.);
+    double a[] = {p1.M(), p1.Px(), p1.Py()};
+    double b[] = {p2.M(), p2.Px(), p2.Py()};
+    double c[] = {mv.M(), mv.Px(), mv.Py()};
+
+    heppy::Davismt2 mt2obj;
+    mt2obj.set_momenta( a, b, c );
+    mt2obj.set_mn( 0. );
+
+    float result = (float) mt2obj.get_mt2();
+    return result;
 }
 
 float phi_2(float pt1, float phi1, float pt2, float phi2) {

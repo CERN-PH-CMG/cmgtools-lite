@@ -72,21 +72,43 @@ if __name__ == '__main__':
     ### MC Distributions with Signal shapes normalized to Bkg, n-minus1 option
     if '2los_SR_vars' in torun:
         x = base('2los')
-        if '_met200' in torun: 
-            x = add(x,'-E ^highMET -X ^triggerAll -E ^triggerMET')
+        if 'ewk_met200' in torun: 
+            x = add(x,"-E ^highMET -X ^triggerAll -E ^triggerMET -E ^SF -E ^pt5sublep -E ^MT") 
             if '_unblind' in torun:
-                x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt') 
+                x = add(x,"--showRatio --maxRatioRange -2 5") #--showMCError
+                x = x.replace('-l 4.0','-l 4.0')
+                x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt') #remove signal
                 x = x.replace('mcc-sf1.txt','mcc-sf-highmet.txt')
-        if '_met125' in torun: 
-            x = add(x,'-E ^upperMET -E ^mm -E ^runRange -X ^triggerAll -E ^triggerDoubleMuMET')
+        if 'ewk_met125' in torun: 
+            x = add(x,"-E ^upperMET -E ^mm -E ^runRange -X ^triggerAll -E ^triggerDoubleMuMET -E ^pt5sublep -E ^MT")
             if '_unblind' in torun:
-                x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt') 
+                x = add(x,"--showRatio --maxRatioRange -2 5") #--showMCError
+                x = x.replace('-l 4.0','-l 1.4')
+                x = x.replace('puw2016_vtx_4fb(nVert)', 'puw2016_vtx_postTS_1p4fb(nVert)' )
+                x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt') #remove signal
+                x = x.replace('mcc-sf1.txt','mcc-sf-lowmet.txt')
+        if 'stop_met200' in torun: 
+            x = add(x,"-E ^highMET -X ^triggerAll -E ^triggerMET ") 
+            if '_unblind' in torun:
+                x = add(x,"--showRatio --maxRatioRange -2 5") #--showMCError
+                x = x.replace('-l 4.0','-l 4.0')
+                x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt') #remove signal
+                x = x.replace('mcc-sf1.txt','mcc-sf-highmet.txt')
+        if 'stop_met125' in torun: 
+            x = add(x,"-E ^upperMET -E ^mm -E ^runRange -X ^triggerAll -E ^triggerDoubleMuMET -E ^pt5sublep ")
+            if '_unblind' in torun:
+                x = add(x,"--showRatio --maxRatioRange -2 5") #--showMCError
+                x = x.replace('-l 4.0','-l 1.4')
+                x = x.replace('puw2016_vtx_4fb(nVert)', 'puw2016_vtx_postTS_1p4fb(nVert)' )
+                x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt') #remove signal
                 x = x.replace('mcc-sf1.txt','mcc-sf-lowmet.txt')
         if '_nminus1' in torun: 
             x = add(x,"--n-minus-one")
             x = x.replace('-f','')
             x = add(x,"--noStackSig --showIndivSigShapes --xp TChiNeuWZ_95,T2ttDeg_300,T2ttDeg_315")
         runIt(x,'%s/all'%torun,[],['SR_bins_EWKino','SR_bins_stop'])
+
+
 
     ### SR plots: Pure MC Sig+Bkg, Data-Driven Bkgs, Variations for TT and DY syst, Application region Bins, DATA!
     if '2los_SR_bins' in torun:
@@ -109,6 +131,7 @@ if __name__ == '__main__':
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt')
                 x = add(x,"-I ^TT ")
             if '_unblind' in torun:
+                x = add(x,"--showRatio --maxRatioRange -2 5") #--showMCError
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt')
                 x = x.replace('mcc-sf1.txt','mcc-sf-lowmet.txt')
             # rc -------------------
@@ -132,6 +155,7 @@ if __name__ == '__main__':
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt')
                 x = add(x,"-I ^TT ")
             if '_unblind' in torun:
+                x = add(x,"--showRatio --maxRatioRange -2 5") #--showMCError
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt') 
                 x = x.replace('mcc-sf1.txt','mcc-sf-highmet.txt')
             # rc -------------------
@@ -158,6 +182,7 @@ if __name__ == '__main__':
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt')
                 x = add(x,"-I ^TT ")  
             if '_unblind' in torun:
+                x = add(x,"--showRatio --maxRatioRange -2 5") #--showMCError
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt') 
                 x = x.replace('mcc-sf1.txt','mcc-sf-lowmet.txt')
             # rc -------------------
@@ -181,6 +206,7 @@ if __name__ == '__main__':
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt') 
                 x = add(x,"-I ^TT ")
             if '_unblind' in torun:
+                x = add(x,"--showRatio --maxRatioRange -2 5") #--showMCError
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt') 
                 x = x.replace('mcc-sf1.txt','mcc-sf-highmet.txt')
             # rc -------------------
@@ -207,6 +233,7 @@ if __name__ == '__main__':
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt')
                 x = add(x,"-I ^TT ")
             if '_unblind' in torun:
+                x = add(x,"--showRatio --maxRatioRange -2 5") #--showMCError
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt')  
                 x = x.replace('mcc-sf1.txt','mcc-sf-lowmet.txt')
             # rc -------------------
@@ -230,6 +257,7 @@ if __name__ == '__main__':
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt')
                 x = add(x,"-I ^TT ")   
             if '_unblind' in torun:
+                x = add(x,"--showRatio --maxRatioRange -2 5") #--showMCError
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt')  
                 x = x.replace('mcc-sf1.txt','mcc-sf-highmet.txt')
             # rc -------------------
@@ -256,6 +284,7 @@ if __name__ == '__main__':
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt')
                 x = add(x,"-I ^TT ")
             if '_unblind' in torun:
+                x = add(x,"--showRatio --maxRatioRange -2 5") #--showMCError
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt')
                 x = x.replace('mcc-sf1.txt','mcc-sf-lowmet.txt')
             # rc -------------------
@@ -279,6 +308,7 @@ if __name__ == '__main__':
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt')
                 x = add(x,"-I ^TT ")
             if '_unblind' in torun:
+                x = add(x,"--showRatio --maxRatioRange -2 5") #--showMCError
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt') 
                 x = x.replace('mcc-sf1.txt','mcc-sf-highmet.txt')
             # rc -------------------
@@ -300,13 +330,13 @@ if __name__ == '__main__':
         x = add(x,"--noStackSig --showIndivSigs --xp TChiNeuWZ_95")
         if '_data' in torun: 
             x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt')
-            x = add(x,"--showRatio --maxRatioRange 0 3 ") #--showMCError 
+            x = add(x,"--showRatio --maxRatioRange -2 5 ") #--showMCError 
         if '_met200' in torun:             
-            x = add(x,"-E ^highMET -X ^triggerAll -E ^triggerMET -I ^TT ") #-E ^MT
+            x = add(x,"-E ^highMET -X ^triggerAll -E ^triggerMET -I ^TT -E ^SF -E ^pt5sublep -E ^MT") 
             x = x.replace('-l 4.0','-l 4.0')
         if '_met125' in torun: 
             x = x.replace('puw2016_vtx_4fb(nVert)', 'puw2016_vtx_postTS_1p4fb(nVert)' )
-            x = add(x,"-E ^mm -E ^upperMET -E ^runRange -X ^triggerAll -E ^triggerDoubleMuMET -I ^TT ") #-E ^MT
+            x = add(x,"-E ^mm -E ^upperMET -E ^runRange -X ^triggerAll -E ^triggerDoubleMuMET -I ^TT -E ^pt5sublep -E ^MT") 
             x = x.replace('-l 4.0','-l 1.4')  
         runIt(x,'%s/all'%torun,[],['SR_bins_EWKino','SR_bins_stop'])
 
@@ -320,6 +350,8 @@ if __name__ == '__main__':
         x = add(x,"-X lowMET -X HT -X METovHT --showRatio --maxRatioRange 0.5 1.5 --ratioDen QCDFR_WJets --ratioNums WJets") 
         runIt(x,'%s/all'%torun)
 
+
+
     
     ### DY Control Region Data-MC and syst variations, LowMET and HighMET     
     if '2los_CR_DY_vars' in torun:
@@ -327,7 +359,7 @@ if __name__ == '__main__':
         x = add(x,"--noStackSig --showIndivSigs --xp TChiNeuWZ_95")
         if '_data' in torun: 
             x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt')
-            x = add(x,"--showRatio --maxRatioRange 0 3") #--showMCError
+            x = add(x,"--showRatio --maxRatioRange -2 5") #--showMCError
         if '_met200' in torun:             
             x = add(x,"-E ^highMET -E ^MT -R ^TT CRDYTT 'LepGood1_isTightCRDY && LepGood2_isTightCRDY' -R ^ledlepPt NoUpledlepPt '20 < LepGood1_pt || fabs(LepGood1_dxy)>0.01 || fabs(LepGood1_dz)>0.01 || fabs(LepGood2_dxy)>0.01 || fabs(LepGood2_dz)>0.01' -R mtautau Invmtautau '0.<mass_tautau(met_pt,met_phi,LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood2_pt,LepGood2_eta,LepGood2_phi)&&mass_tautau(met_pt,met_phi,LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood2_pt,LepGood2_eta,LepGood2_phi)<160.' -X ^triggerAll -E ^triggerMET")
             x = x.replace('-l 4.0','-l 4.0')
@@ -337,7 +369,7 @@ if __name__ == '__main__':
                 x = add(x,"--sP yields")
         if '_met125' in torun:
             x = x.replace('puw2016_vtx_4fb(nVert)', 'puw2016_vtx_postTS_1p4fb(nVert)' )
-            x = add(x,"-E ^mm -E ^upperMET -E ^MT -R ^TT CRDYTT 'LepGood1_isTightCRDY && LepGood2_isTightCRDY' -R ^ledlepPt NoUpledlepPt '20 < LepGood1_pt || fabs(LepGood1_dxy)>0.01 || fabs(LepGood1_dz)>0.01 || fabs(LepGood2_dxy)>0.01 || fabs(LepGood2_dz)>0.01' -R mtautau Invmtautau '0.<mass_tautau(met_pt,met_phi,LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood2_pt,LepGood2_eta,LepGood2_phi)&&mass_tautau(met_pt,met_phi,LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood2_pt,LepGood2_eta,LepGood2_phi)<160.' -E ^runRange -X ^triggerAll -E ^triggerDoubleMuMET")
+            x = add(x,"-E ^mm -E ^upperMET -E ^MT -R ^TT CRDYTT 'LepGood1_isTightCRDY && LepGood2_isTightCRDY' -R ^ledlepPt NoUpledlepPt '20 < LepGood1_pt || fabs(LepGood1_dxy)>0.01 || fabs(LepGood1_dz)>0.01 || fabs(LepGood2_dxy)>0.01 || fabs(LepGood2_dz)>0.01' -R mtautau Invmtautau '0.<mass_tautau(met_pt,met_phi,LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood2_pt,LepGood2_eta,LepGood2_phi)&&mass_tautau(met_pt,met_phi,LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood2_pt,LepGood2_eta,LepGood2_phi)<160.' -E ^runRange -X ^triggerAll -E ^triggerDoubleMuMET -E ^pt5sublep")
             x = x.replace('-l 4.0','-l 1.4') 
             if '_syst' in torun: 
                 x = x.replace('mca-2los-mc.txt','mca-2los-mc-syst-dy.txt')
@@ -350,7 +382,7 @@ if __name__ == '__main__':
     if '2los_CR_TT_vars' in torun:
         x = base('2los')
         x = add(x,"--noStackSig --showIndivSigs --xp TChiNeuWZ_95 --xp TChiNeuWZ_90")
-        if '_data' in torun: x = add(x,"--showRatio --maxRatioRange 0 3") #--showMCError
+        if '_data' in torun: x = add(x,"--showRatio --maxRatioRange -2 5") #--showMCError
         if '_met200' in torun:             
             x = add(x,"-E ^highMET -R ^TT CRTTTT 'LepGood1_isTightCRTT && LepGood2_isTightCRTT' -X ^bveto -E ^btag")
             #x = add(x,"-E ^highMET -R ^TT CRTTTT 'LepGood1_isTightCRTT && LepGood2_isTightCRTT' -X ^bveto -E ^ISRnobtag -E ^btag")
@@ -372,7 +404,7 @@ if __name__ == '__main__':
                 x = add(x,"-R ^ledlepPt NoUpledlepPt '5 < LepGood1_pt' -X ^triggerAll -E ^triggerMET")
                 x = add(x,"--sP yields")
         if '_met125' in torun:             
-            x = add(x,"-E ^mm -E ^upperMET -R ^TT CRTTTT 'LepGood1_isTightCRTT && LepGood2_isTightCRTT' -X ^bveto -E ^btag")
+            x = add(x,"-E ^mm -E ^upperMET -R ^TT CRTTTT 'LepGood1_isTightCRTT && LepGood2_isTightCRTT' -X ^bveto -E ^btag -E ^pt5sublep ")
             #x = add(x,"-E ^mm -E ^upperMET -R ^TT CRTTTT 'LepGood1_isTightCRTT && LepGood2_isTightCRTT' -X ^bveto -E ^ISRnobtag -E ^btag")
             #x = add(x,"-E ^mm -E ^upperMET -R ^TT CRTTTT 'LepGood1_isTightCRTT && LepGood2_isTightCRTT' -X ^bveto -E ^ISRnobtag -E ^btag -X METovHT")
             if '_datasingleMu' in torun: 
@@ -387,10 +419,11 @@ if __name__ == '__main__':
                 x = add(x," -R ^ledlepPt NoUpledlepPt '5 < LepGood1_pt' -E ^runRange -X ^triggerAll -E ^triggerDoubleMuMET")
                 x = add(x,"--xP SR_bins_EWKino,SR_bins_stop")
             if '_syst' in torun: 
+                x = x.replace('puw2016_vtx_4fb(nVert)', 'puw2016_vtx_postTS_1p4fb(nVert)' )
                 x = x.replace('mca-2los-mc.txt','mca-2los-mc-syst-tt.txt')
                 x = x.replace('-l 4.0','-l 1.4')    
                 x = add(x,"--plotmode nostack -F sf/t /data1/botta/trees_SOS_80X_170616/SOS13TeV_Friends/evVarFriend_{cname}.root")   
-                x = add(x,"-R ^ledlepPt NoUpledlepPt '5 < LepGood1_pt' -E ^runRange -X ^triggerAll -E ^triggerDoubleMuMET")
+                x = add(x," -R ^ledlepPt NoUpledlepPt '5 < LepGood1_pt' -E ^runRange -X ^triggerAll -E ^triggerDoubleMuMET")
                 x = add(x,"--sP yields")    
         runIt(x,'%s/all'%torun)
 
@@ -402,13 +435,13 @@ if __name__ == '__main__':
         x = add(x,"--noStackSig --showIndivSigs --xp TChiNeuWZ_95,T2ttDeg_300")
         if '_data' in torun: 
             x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt')
-            x = add(x,"--showRatio --maxRatioRange 0 3") #--showMCError
+            x = add(x,"--showRatio --maxRatioRange -2 5") #--showMCError
         if '_met200' in torun:             
             x = add(x,"-E ^highMET -R ^TT CRTTTT 'LepGood1_isTightCRTT && LepGood2_isTightCRTT' -R ^ledlepPt NoUpledlepPt '20 < LepGood1_pt' -E ^ZVeto -X ^MT -E ^InvMT -X ^triggerAll -E ^triggerMET")
             x = x.replace('-l 4.0','-l 4.0')
         if '_met125' in torun:    
             x = x.replace('puw2016_vtx_4fb(nVert)', 'puw2016_vtx_postTS_1p4fb(nVert)' )
-            x = add(x,"-E ^mm -E ^upperMET -R ^TT CRTTTT 'LepGood1_isTightCRTT && LepGood2_isTightCRTT' -R ^ledlepPt NoUpledlepPt '20 < LepGood1_pt' -E ^ZVeto -X ^MT -E ^InvMT -E ^runRange -X ^triggerAll -E ^triggerDoubleMuMET")
+            x = add(x,"-E ^mm -E ^upperMET -R ^TT CRTTTT 'LepGood1_isTightCRTT && LepGood2_isTightCRTT' -R ^ledlepPt NoUpledlepPt '20 < LepGood1_pt' -E ^ZVeto -X ^MT -E ^InvMT -E ^runRange -X ^triggerAll -E ^triggerDoubleMuMET -E ^pt5sublep")
             x = x.replace('-l 4.0','-l 1.4')          
         runIt(x,'%s/all'%torun,[],['SR_bins_EWKino','SR_bins_stop'])
         
@@ -422,10 +455,9 @@ if __name__ == '__main__':
     # if '2los_CR_WZ_vars' in torun:
     #     x = base('2los')
     #     x = add(x,"--noStackSig --showIndivSigs --xp TChiNeuWZ_95")
-    #     if '_notrigger' in torun: x = add(x,'-X ^triggerAll ')
     #     if '_data' in torun: 
     #         x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt')
-    #         x = add(x,"--showRatio --maxRatioRange 0 3") #--showMCError
+    #         x = add(x,"--showRatio --maxRatioRange -2 5") #--showMCError
     #     if '_met200' in torun:             
     #         x = add(x,"-E ^highMET -E ^MT -R ^TT CRTTTT 'LepGood1_isTightCRTT && LepGood2_isTightCRTT' -R ^ledlepPt NoUpledlepPt '20 < LepGood1_pt' -X ^dilep -X ^opposite-sign -X ^Mll -E ^minMll -E ^triLep -E ^Zpeak -X ^triggerAll -E ^triggerMET -X ^HT -X ^Upsilon_veto -R METovHT relaxMETovHT '(met_pt/(htJet25-LepGood1_pt-LepGood2_pt))>(2/3)' ")
     #         x = x.replace('-l 4.0','-l 4.0')

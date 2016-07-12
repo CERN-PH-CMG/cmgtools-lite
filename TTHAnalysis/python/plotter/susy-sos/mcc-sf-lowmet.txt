@@ -1,6 +1,3 @@
-### without SF
-#ScaleFactorDY: 0.81; AlsoData
-#ScaleFactorTT: 0.54; AlsoData
 ### with SF
-ScaleFactorDY: 0.99; AlsoData
-ScaleFactorTT: 0.72; AlsoData
+ScaleFactorDY: 1.15; AlsoData
+ScaleFactorTT: 0.78; AlsoData

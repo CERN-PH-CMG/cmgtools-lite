@@ -235,7 +235,14 @@ def train_2d(fOutName, training, options):
         "mindr_lep2_jet := mindr_lep2_jet",
         "MT_met_lep1 := MT_met_lep1",
     ]
-    dsets = [('TTHnobb_pow', 'Signal', 1)]
+    
+    dsets = []
+    if '3l' in training and 'ttv' in training:
+        if "mem" in training:
+            if not 'skim_BDT_3l_Training_Prescaled' in options.treepath: raise RuntimeError
+            dsets += [('TTHnobb_pow', 'Signal', 3.)]
+    else:
+        dsets += [('TTHnobb_pow', 'Signal', 1)]
 
     if '2lss' in training and 'ttw' in training:
         variables += ["LepGood_conePt[iF_Recl[1]] := LepGood_conePt[iF_Recl[1]]"]
@@ -271,10 +278,17 @@ def train_2d(fOutName, training, options):
             "LepGood_conePt[iF_Recl[2]] := LepGood_conePt[iF_Recl[2]]",
             "LepGood_conePt[iF_Recl[0]] := LepGood_conePt[iF_Recl[0]]"
         ]
-        dsets += [
-            ('TTW_LO', 'Background', 1),
-            ('TTZ_LO', 'Background', 1),
-        ]
+        if "mem" in training:
+            if not 'skim_BDT_3l_Training_Prescaled' in options.treepath: raise RuntimeError
+            dsets += [
+                ('TTW_LO', 'Background', 3.),
+                ('TTZ_LO', 'Background', 8.),
+                ]
+        else:
+            dsets += [
+                ('TTW_LO', 'Background', 1),
+                ('TTZ_LO', 'Background', 1),
+                ]
     if '3l' in training and 'ttbar' in training:
         variables += [
             "mhtJet25 := mhtJet25_Recl",
@@ -316,7 +330,7 @@ def train_2d(fOutName, training, options):
             "BDTv8_eventReco_W_fromHiggs_mass := BDTv8_eventReco_W_fromHiggs_mass",
             "BDTv8_eventReco_LepTop_HadTop_dR := BDTv8_eventReco_LepTop_HadTop_dR",
             ]
-    if 'bdtv8_simple' in training:
+    if 'hadtopsimple' in training:
         variables += [
             "HadTopSimple_bJet_fromHadTop_CSV := max(-1.1,bJet_fromHadTop_CSV)",
             "HadTopSimple_lJet_fromHadTop_CSV2 := max(-1.1,lJet_fromHadTop_CSV2)",
@@ -324,6 +338,11 @@ def train_2d(fOutName, training, options):
             "HadTopSimple_HadTop_Pt := HadTop_Pt",
             "HadTopSimple_W_fromHadTop_Mass := W_fromHadTop_Mass",
             "HadTopSimple_bJet_notFromHadTop_CSV := max(-1.1,bJet_notFromHadTop_CSV)"
+            ]
+    if 'mem' in training:
+        variables += [
+            "MEM_TTHvsTTW := max(-10.,min(50.,log(MEM_TTH)-log(MEM_TTW)))",
+            "MEM_TTHvsTTZ := max(-10.,min(50.,log(MEM_TTH)-log(MEM_TTLL)))",
             ]
 
     outname = fOutName+'_'+training

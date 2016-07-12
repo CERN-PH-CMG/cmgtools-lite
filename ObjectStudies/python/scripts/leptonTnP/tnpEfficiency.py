@@ -22,6 +22,12 @@ def fineSplitVals(vals,split):
     
     
 
+def modelsNeedsMC(options):
+    for model in [ options.sigModel, options.bkgModel ] + options.altSigModel + options.altBkgModel:
+        if model in ("MCT","MCTG","MCTCB","MCTDCB"):
+            return True
+    return False
+   
 def makeSignalModel(w, model, refhpass, refhfail, options):
     if model == None: model = getattr(options, "sigModel", "voigt")
     if model == "voigt":
@@ -31,7 +37,18 @@ def makeSignalModel(w, model, refhpass, refhfail, options):
         w.factory("Voigtian::signal1(mass, mean1[90,80,100], width[2.495], sigma1[2,0.5,3])")
         w.factory("Voigtian::signal2(mass, mean2[90,80,100], width,        sigma2[4,1.5,10])")
         w.factory("SUM::signal(vFrac[0.8,0,1]*signal1, signal2)")
+        #w.factory("Voigtian::signal1(mass, mean1[90,87,94], width[2.495], sigma1[2,0.5,3])")
+        #w.factory("Voigtian::signal2(mass, mean2[90,85,97], width,        prod::sigma2(sigma1, sratio[4,1.5,10]))")
+        #w.factory("SUM::signal(vFrac[0.8,0.6,1]*signal1, signal2)")
         return ("signal","signal")
+    elif model == "dvoigt2":
+        w.factory("Voigtian::signal1(mass, mean1[90,80,100], width[2.495], sigma1[2,0.5,3])")
+        w.factory("Voigtian::signal2(mass, mean2[90,80,100], width,        prod::sigma2(sigma1, sratio[4,1.5,10]))")
+        w.factory("SUM::signalPass(vFrac[0.8,0.5,1]*signal1, signal2)")
+        w.factory("Voigtian::signal1f(mass, sum::mean1f(mean1, dm1[0,-3,3]), width, prod::sigma1f(sigma1, s1ratio[1,0.7,1.5]))")
+        w.factory("Voigtian::signal2f(mass, sum::mean2f(mean2, dm2[0,-3,3]), width, prod::sigma2f(sigma2, s2ratio[1,0.5,2.5]))")
+        w.factory("SUM::signalFail(prod::vFracf(vFrac,fracRatio[1,0.7,1.5])*signal1f, signal2f)")
+        return ("signalPass","signalFail")
     elif model == "BWCB":
         w.factory("BreitWigner::zBW(mass,MZ[91.1876], GammaZ[2.495])")
         w.factory("CBShape::resol(mass,dm[0,-4,4], sigma[3,1,10], alpha[3., 0.5, 8], n[1,0.1,25])")
@@ -193,6 +210,9 @@ def minimize(pdf, data, options, strategy=None):
     print "MIGRAD RETURN: ",retval
     return (nll, minim, retval)
 
+class MinosException(Exception):
+    pass
+
 def manualMinos(pdf,data,var,options):
     var.setConstant(True)
     nll = pdf.createNLL(data, ROOT.RooFit.Extended(True))
@@ -200,7 +220,7 @@ def manualMinos(pdf,data,var,options):
     minim.setPrintLevel(-1)
     minim.setStrategy(1);
     minim.setEps(1);
-    minim.setOffsetting(0);
+    minim.setOffsetting(1);
     minim.optimizeConst(1);
     minim.setPrintEvalErrors(0);
     minim.setVerbose(False)
@@ -228,21 +248,23 @@ def manualMinos(pdf,data,var,options):
                     it2 += 1
                 if overstep:
                     x2 = x1 + 2*(x2-x1)
+                    var.setVal(x2) 
                 for s in (1,0,2,1):
                     minim.setStrategy(s);
                     if minim.minimize("Minuit2","migrad") != -1:
                         break
-                var.setVal(x2) 
                 y2 = nll.getVal()-nll0
                 log.append( "%2d firstLoop: x2 %+.5f --> y2 prof %+7.5f " % (it, x2, y2) )
                 print     ( "%2d firstLoop: x2 %+.5f --> y2 prof %+7.5f " % (it, x2, y2) )
+                if y2 < -0.01: raise MinosException
                 if y2 < 0.5:
                     if not overstep:
                         log.append( " ==> error bar touches the boundary at x2" )
                         firstLoop = True
                         errs.append(x2-x0)
                         break
-                    cautious *= 5
+                    cautious *= 5;
+                    x2 = bound
                 else: 
                     firstLoop = False
             # ok, now y1 < 0.5, y2 > 0.5 but reasonable
@@ -256,6 +278,7 @@ def manualMinos(pdf,data,var,options):
             log.append( "%2d pre : x1 %+.5f x2 %+.5f  dx1 %+.5f  dx2 %+.5f   y1 %+7.5f y2 %+7.5f " % (it, x1,x2,x1-x0,x2-x0,y1,y2) )
             print     ( "%2d pre : x1 %+.5f x2 %+.5f  dx1 %+.5f  dx2 %+.5f   y1 %+7.5f y2 %+7.5f " % (it, x1,x2,x1-x0,x2-x0,y1,y2) )
             yc = nll.getVal() - nll0
+            if yc < -0.01: raise MinosException
             if yc < 0.5:
                 x1,y1 = xc,yc
             else:  
@@ -342,25 +365,41 @@ def fitOneEfficiency(name, hpass, hfail, sigModel, bkgModel, refpass, reffail, o
         w.var("effbkg").setConstant(True)
     #result = w.pdf("pdf").fitTo(data, ROOT.RooFit.Save(True), ROOT.RooFit.Minos(ROOT.RooArgSet(w.var("efficiency"))))
     nll, minim, retval = minimize(w.pdf("pdf"), data, options, strategy=0)
+    if options.doScan: minim.minimize("Minuit2","scan");
+    #minim.minimize("Minuit2","migrad")
     minim.hesse()
     nll, minim, retval = minimize(w.pdf("pdf"), data, options, strategy=None)
     if hfail.Integral() > 0 and w.var("efficiency").getVal() > 0.9:
         w.var("efficiency").setMin(0.85)
         retval = minim.minimize("Minuit2","migrad");
-    result = minim.save()
-    effval = w.var("efficiency").getVal()
-    if hfail.Integral() == 0:
-        cpcalc = ROOT.TEfficiency.ClopperPearson
-        nsig = int(floor(w.var("Nsig").getVal() - w.var("Nsig").getError()))
-        emin = cpcalc(nsig,nsig,0.6827,False)
-        efferr = [ emin-1, 0 ]
-        minoslog = [ "No passing probes: using clopper pearson for the fitted number of signal events minus -1 sigma from the fit."]
-        minoslog += [ "Nsig fit: %.1f +- %.1f " % (w.var("Nsig").getVal(), w.var("Nsig").getError()) ]
-        minoslog += [ "CP lower bound for %d events, all passing: %.4f" % (nsig,emin) ]
-    else:
-        efferr, minoslog = manualMinos(w.pdf("pdf"), data, w.var("efficiency"), options)
+    go = True; niter = 0; minoslog = []
+    while go:
+        niter += 1
+        if niter >= 10:
+            minoslog += [ "STOP AFTER %d ITERATIONS" % niter ]
+            go = False
+        minim.hesse()
+        nll, minim, retval = minimize(w.pdf("pdf"), data, options, strategy=None)
+        result = minim.save()
+        effval = w.var("efficiency").getVal()
+        if hfail.Integral() == 0:
+            cpcalc = ROOT.TEfficiency.ClopperPearson
+            nsig = int(floor(w.var("Nsig").getVal() - w.var("Nsig").getError()))
+            emin = cpcalc(nsig,nsig,0.6827,False)
+            efferr = [ emin-1, 0 ]
+            minoslog += [ "No passing probes: using clopper pearson for the fitted number of signal events minus -1 sigma from the fit."]
+            minoslog += [ "Nsig fit: %.1f +- %.1f " % (w.var("Nsig").getVal(), w.var("Nsig").getError()) ]
+            minoslog += [ "CP lower bound for %d events, all passing: %.4f" % (nsig,emin) ]
+        else:
+            try:
+                efferr, minoslog2 = manualMinos(w.pdf("pdf"), data, w.var("efficiency"), options)
+                go = False; minoslog += minoslog2
+            except MinosException:
+                print         "Negative value in Minos, restarting"
+                minoslog += [ "Negative value in Minos, restarting everything", '------' ]
+                w.var("efficiency").setConstant(False)
+                
     #print "MANUAL MINOS: ",efferr,"\n\t","\n\t".join(minoslog)
-
     # plot
     c1 = ROOT.TCanvas("c1","c1"); c1.SetCanvasSize(900,500);
     c1.Divide(2,1)
@@ -420,7 +459,7 @@ def fitOneEfficiency(name, hpass, hfail, sigModel, bkgModel, refpass, reffail, o
     else:
         return None
 
-def makeHistos2D(tree,numcut,dencut,x,mass,options,post="",reftree=None):
+def makeHistos2D(tree,numcut,dencut,x,mass,options,post="",reftree=None,cacheRef=True,_cache={}):
     if options.request and not options.request.startswith(options.name): return None
     if options.request and post != "" and not options.request.endswith(post): return None
     xvar, xbins = x
@@ -439,13 +478,22 @@ def makeHistos2D(tree,numcut,dencut,x,mass,options,post="",reftree=None):
     tree.Draw("(%s):(%s)>>hden" % (massvar,xvar), "(%s) * (%s)" % (dencut,weight), "goff", options.maxEntries)
     print "Reading numerator"
     tree.Draw("(%s):(%s)>>hnum" % (massvar,xvar), "((%s) && (%s)) * (%s)" % (numcut,dencut,weight), "goff", options.maxEntries)
-    if reftree:
+    makeRefs = reftree and (modelsNeedsMC(options) or (tree == reftree)); # the latter is needed for the closure
+    if makeRefs and cacheRef and "rden2d" in _cache:
+        rden2d = _cache["rden2d"]
+        rnum2d = _cache["rnum2d"]
+        if options.mcMass != massvar:
+            rtden2d = _cache["rtden2d"]
+            rtnum2d = _cache["rtnum2d"]
+    elif makeRefs:
         rden2d = ROOT.TH2D("rhden","rhden",xbins,array('f',xvals),fmassbins,array('f',fmassvals))
         rnum2d = ROOT.TH2D("rhnum","rhnum",xbins,array('f',xvals),fmassbins,array('f',fmassvals))
         print "Reading mc denominator"
         reftree.Draw("(%s):(%s)>>rhden" % (massvar,xvar), "(!(%s) && (%s) && (%s)) * (%s)" % (numcut,dencut,options.mcCut,options.mcWeight), "goff", options.maxEntries)
         print "Reading mc numerator"
         reftree.Draw("(%s):(%s)>>rhnum" % (massvar,xvar), "( (%s) && (%s) && (%s)) * (%s)" % (numcut,dencut,options.mcCut,options.mcWeight), "goff", options.maxEntries)
+        _cache["rden2d"] = rden2d
+        _cache["rnum2d"] = rnum2d
         if options.mcMass != massvar:
             rtden2d = ROOT.TH2D("rthden","rthden",xbins,array('f',xvals),massbins,array('f',massvals))
             rtnum2d = ROOT.TH2D("rthnum","rthnum",xbins,array('f',xvals),massbins,array('f',massvals))
@@ -453,6 +501,8 @@ def makeHistos2D(tree,numcut,dencut,x,mass,options,post="",reftree=None):
             reftree.Draw("(%s):(%s)>>rthden" % (options.mcMass,xvar), "(!(%s) && (%s) && (%s)) * (%s)" % (numcut,dencut,options.mcCut,options.mcWeight), "goff", options.maxEntries)
             print "Reading mc truth numerator"
             reftree.Draw("(%s):(%s)>>rthnum" % (options.mcMass,xvar), "( (%s) && (%s) && (%s)) * (%s)" % (numcut,dencut,options.mcCut,options.mcWeight), "goff", options.maxEntries)
+            _cache["rtden2d"] = rtden2d
+            _cache["rtnum2d"] = rtnum2d
     print "Ready for fits"
     effs = [ ]; seffs = []; ceffs = []; teffs = []; alls = {}
     tofit = []
@@ -462,7 +512,7 @@ def makeHistos2D(tree,numcut,dencut,x,mass,options,post="",reftree=None):
         den1d = ROOT.TH1D("den","den",massbins,array('f',massvals)); den1d.SetDirectory(None)
         rnum1d = None; rden1d = None
         rtnum1d = None; rtden1d = None
-        if reftree:
+        if makeRefs:
             rnum1d = ROOT.TH1D("rnum","rnum",fmassbins,array('f',fmassvals)); rnum1d.SetDirectory(None)
             rden1d = ROOT.TH1D("rden","rden",fmassbins,array('f',fmassvals)); rden1d.SetDirectory(None)
             if options.mcMass != massvar:
@@ -753,8 +803,8 @@ def addTnPEfficiencyOptions(parser):
     parser.add_option("--mcc", "--mc-cut",  dest="mcCut", type="string", default="TnP_l1_mcMatchId != 0 && TnP_l2_mcMatchId != 0", help="mc Mass")
     parser.add_option("-W", "--mcw", "--mc-weight",  dest="mcWeight", type="string", default="1", help="mc Mass")
     parser.add_option("--fine-binning",  dest="fineBinning", default=1, type="int")
-    parser.add_option("--minimizer-strategy",  dest="minimizerStrategy", default=2, type="int")
-    parser.add_option("--minimizer-tolerance", dest="minimizerTolerance", default=0.1, type="float")
+    parser.add_option("--minimizer-strategy",  dest="minimizerStrategy", default=1, type="int")
+    parser.add_option("--minimizer-tolerance", dest="minimizerTolerance", default=0.01, type="float")
     parser.add_option("--xtitle",   dest="xtitle", type="string", default=None, help="X title")
     parser.add_option("--ytitle",   dest="ytitle", type="string", default="Efficiency", help="Y title")
     parser.add_option("--mtitle",   dest="mtitle", type="string", default="Mass (GeV)", help="M title")
@@ -762,6 +812,8 @@ def addTnPEfficiencyOptions(parser):
     parser.add_option("--yrange", dest="yrange", type="float", nargs=2, default=(0,1.025));
     parser.add_option("--rrange", dest="rrange", type="float", nargs=2, default=None);
     parser.add_option("--doRatio", dest="doRatio", action="store_true", default=False, help="Add a ratio plot at the bottom")
+    parser.add_option("--doScan", dest="doScan", action="store_true",  default=True, help="Scan the parameter space before fitting")
+    parser.add_option("--noScan", dest="doScan", action="store_false", default=True, help="")
     parser.add_option("--request", "--refit", dest="request", type="string", default=None, help="make a single fit");
     parser.add_option("--reqname", dest="requestName", type="string", default=None, help="don't do anything unlesshe name (from -N) matches this");
     parser.add_option("-j", "--jobs",    dest="jobs",      type="int",    default=0, help="Use N threads");
