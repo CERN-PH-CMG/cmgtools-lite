@@ -5,7 +5,11 @@ import ROOT, copy, os
 import array
 
 if "mt2_bisect_cc.so" not in ROOT.gSystem.GetLibraries():
-    ROOT.gROOT.LoadMacro("/afs/cern.ch/work/c/cheidegg/eco/2016-06-24_cmg76X-friender_mT2code/mt2_bisect.cc")
+    if os.path.isdir('/pool/ciencias/' ):
+        ROOT.gROOT.LoadMacro("/pool/ciencias/HeppyTrees/RA7/additionalReferenceCode/mt2_bisect.cpp")
+        print "Loaded from Oviedo"
+    else:
+        ROOT.gROOT.LoadMacro("/afs/cern.ch/work/c/cheidegg/eco/2016-06-24_cmg76X-friender_mT2code/mt2_bisect.cc")
 from ROOT import mt2_bisect
 
 # FIXME: additional variables were once written to the LepSel but now commented in order

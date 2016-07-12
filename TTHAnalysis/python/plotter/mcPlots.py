@@ -917,6 +917,7 @@ class PlotMaker:
                         if not os.path.exists(fdir): 
                             os.makedirs(fdir); 
                             if os.path.exists("/afs/cern.ch"): os.system("cp /afs/cern.ch/user/g/gpetrucc/php/index.php "+fdir)
+                            elif os.path.exists("/pool/ciencias/"): os.system("cp /pool/ciencias/HeppyTrees/RA7/additionalReferenceCode/index.php "+fdir)
                         if ext == "txt" and self._options.perBin:
                             dump = open("%s/%s_perBin.%s" % (fdir, outputName, ext), "w")
                             maxlen = max([len(mca.getProcessOption(p,'Label',p)) for p in mca.listSignals(allProcs=True) + mca.listBackgrounds(allProcs=True)]+[7])
@@ -1078,6 +1079,7 @@ if __name__ == "__main__":
     if os.path.dirname(outname) and not os.path.exists(os.path.dirname(outname)):
         os.system("mkdir -p "+os.path.dirname(outname))
         if os.path.exists("/afs/cern.ch"): os.system("cp /afs/cern.ch/user/g/gpetrucc/php/index.php "+os.path.dirname(outname))
+        elif os.path.exists("/pool/ciencias/"): os.system("cp /pool/ciencias/HeppyTrees/RA7/additionalReferenceCode/index.php "+fdir)
     print "Will save plots to ",outname
     fcmd = open(re.sub("\.root$","",outname)+"_command.txt","w")
     fcmd.write("%s\n\n" % " ".join(sys.argv))

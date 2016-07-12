@@ -3,7 +3,8 @@
 ANALYZER=../../mcAnalysis.py
 PLOTTER=../../mcPlots.py
 
-TREESPATH=/afs/cern.ch/user/i/igsuarez/work/public/trees80X_809June9/
+#TREESPATH=/afs/cern.ch/user/i/igsuarez/work/public/trees80X_809June9/
+TREESPATH=/pool/ciencias/HeppyTrees/RA7/pietro/friendTrees/trees80X_809June9/
 TREE=treeProducerSusyMultilepton
 
 FT_LJCLEANER=leptonJetReCleanerSusyRA7mva

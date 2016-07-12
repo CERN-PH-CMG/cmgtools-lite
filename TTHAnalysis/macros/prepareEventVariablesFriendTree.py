@@ -442,6 +442,10 @@ if options.queue:
         super  = "qsub -q {queue} -N friender".format(queue = options.queue)
         runner = "psibatch_runner.sh"
 
+    if options.queue == "batch" and os.path.isdir('/pool/ciencias/' ):
+        super  = "qsub -q {queue} -N happyTreeFriend".format(queue = options.queue)
+        runner = "oviedobatch_runner.sh"
+
     basecmd = "{dir}/{runner} {dir} {cmssw} python {self} -N {chunkSize} -T {tdir} -t {tree} {data} {output}".format(
                 dir = os.getcwd(), runner=runner, cmssw = os.environ['CMSSW_BASE'],
                 self=sys.argv[0], chunkSize=options.chunkSize, tdir=options.treeDir,
@@ -460,10 +464,15 @@ if options.queue:
         if chunk != -1:
             if options.logdir: writelog = "-o {logdir}/{data}_{chunk}.out -e {logdir}/{data}_{chunk}.err".format(logdir=logdir, data=name, chunk=chunk)
             cmd = "{super} {writelog} {base} -d {data} -c {chunk} {post}".format(super=super, writelog=writelog, base=basecmd, data=name, chunk=chunk, post=friendPost)
+
+            if options.queue == "batch":
+                cmd = "echo \"{base} -d {data} -c {chunk} {post}\" | {super} {writelog}".format(super=super, writelog=writelog, base=basecmd, data=name, chunk=chunk, post=friendPost)
         else:
             if options.logdir: writelog = "-o {logdir}/{data}.out -e {logdir}/{data}.err".format(logdir=logdir, data=name)
             cmd = "{super} {writelog} {base} -d {data} {post}".format(super=super, writelog=writelog, base=basecmd, data=name, chunk=chunk, post=friendPost)
 
+            if options.queue == "batch":
+                cmd = "echo \"{base} -d {data} {post}\" | {super} {writelog}".format(super=super, writelog=writelog, base=basecmd, data=name, chunk=chunk, post=friendPost)
         print cmd
         if not options.pretend: 
             os.system(cmd)
