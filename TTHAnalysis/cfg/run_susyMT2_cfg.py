@@ -342,7 +342,7 @@ from PhysicsTools.HeppyCore.framework.heppy_loop import getHeppyOption
 # choose 3 for data production
 # choose 4 for signal production
 #test = int(getHeppyOption('test',1))
-test = 1000
+test = 1
 isData = False # will be changed accordingly if chosen to run on data
 doSpecialSettingsForMECCA = 1 # set to 1 for comparisons with americans
 runPreprocessor = False
@@ -537,15 +537,6 @@ elif test==4:
         comp.files = comp.files[:]
         # triggers on MC
         #comp.triggers = triggers_HT900 + triggers_HTMET + triggers_photon155 + triggers_1mu_isolow + triggers_MT2_mumu + triggers_MT2_ee + triggers_MT2_mue # to apply trigger skimming
-
-elif test==1000:
-    from CMGTools.H2TauTau.proto.samples.fall15.sms import SMS
-    #from CMGTools.H2TauTau.proto.samples.fall15.htt_common import sm_signals
-    comp                 = SMS # sm_signals[0] 
-    selectedComponents   = [comp]
-    comp.splitFactor     = 1
-    comp.fineSplitFactor = 1
-    comp.files           = comp.files[:1]
 
 # ------------------------------------------------------------------------------------------- #
 
