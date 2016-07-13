@@ -30,7 +30,7 @@ doPhotonCorr = getHeppyOption("doPhotonCorr",False)
 signalSkim = False
 diLepSkim = False
 singleLepSkim = False
-singlePhotonSkim = False
+singlePhotonSkim = True
 
 # --- MONOJET SKIMMING ---
 if signalSkim == True:
@@ -216,8 +216,8 @@ if scaleProdToLumi>0: # select only a subset of a sample, corresponding to a giv
         c.splitFactor = len(c.files)
         c.fineSplitFactor = 1
 
-#json = "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions15/13TeV/Reprocessing/Cert_13TeV_16Dec2015ReReco_Collisions15_25ns_JSON.txt"
-json = "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-274443_13TeV_PromptReco_Collisions16_JSON.txt"
+# json = "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-275783_13TeV_PromptReco_Collisions16_JSON_NoL1T.txt"
+json = "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-276097_13TeV_PromptReco_Collisions16_JSON_NoL1T_v2.txt"
 if False:
     is50ns = False
     selectedComponents = PrivateSamplesData
@@ -226,22 +226,24 @@ if False:
         comp.fineSplitFactor = 1
 
 if runData and not isTest: # For running on data
-    run_ranges = [ (272021,274443) ]; useAAA=False; is50ns=False
+    run_ranges = [ (272021,276097) ]; useAAA=False; is50ns=False
 
     compSelection = ""
     DatasetsAndTriggers = []
     selectedComponents = []; vetos = []
     ProcessingsAndRunRanges = []; Shorts = []
 
+    # --- 2015 DATA ---
     # ProcessingsAndRunRanges.append( ("Run2015C_25ns-05Oct2015-v1", [254227,255031] ) ); Shorts.append("Run2015C_05Oct")
     # ProcessingsAndRunRanges.append( ("Run2015D-05Oct2015-v1", [256630,258158] ) ); Shorts.append("Run2015D_05Oct")
     # ProcessingsAndRunRanges.append( ("Run2015D-PromptReco-v4", [258159,999999] ) ); Shorts.append("Run2015D_v4")
-
     # ProcessingsAndRunRanges.append( ("Run2015C_25ns-16Dec2015-v1", [254227,254914] ) ); Shorts.append("Run2015C_16Dec")
     # ProcessingsAndRunRanges.append( ("Run2015D-16Dec2015-v1", [256630,260627] ) ); Shorts.append("Run2015D_16Dec")
     
-    ProcessingsAndRunRanges.append( ("Run2016B-PromptReco-v1", [272021,273149] ) ); Shorts.append("PromptReco_v1")
-    ProcessingsAndRunRanges.append( ("Run2016B-PromptReco-v2", [273150,274443] ) ); Shorts.append("PromptReco_v2")
+    # --- 2016 DATA ---
+    ProcessingsAndRunRanges.append( ("Run2016B-PromptReco-v1", [272023,273146] ) ); Shorts.append("Run2016B_PromptReco_v1")
+    ProcessingsAndRunRanges.append( ("Run2016B-PromptReco-v2", [273150,275376] ) ); Shorts.append("Run2016B_PromptReco_v2")
+    ProcessingsAndRunRanges.append( ("Run2016C-PromptReco-v2", [275420,276097] ) ); Shorts.append("Run2016C_PromptReco_v2")    
 
     if diLepSkim == True:
         DatasetsAndTriggers.append( ("DoubleMuon", triggers_mumu_iso + triggers_mumu_ss + triggers_mumu_ht + triggers_3mu + triggers_3mu_alt + triggers_AllMonojet) )
