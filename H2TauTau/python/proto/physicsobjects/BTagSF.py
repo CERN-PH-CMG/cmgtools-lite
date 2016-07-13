@@ -2,7 +2,7 @@ import os
 import ROOT
 
 from ROOT import TRandom3, TFile
-ROOT.gSystem.Load('libCondFormatsBTagObjects')
+ROOT.gSystem.Load('libCondToolsBTau')
 
 class BTagSF(object):
     '''Translate heppy run 1 BTagSF class to python, and update to 2012.
@@ -18,7 +18,7 @@ class BTagSF(object):
         self.btag_eff_oth = self.mc_eff_file.Get('btag_eff_oth')
 
         # b-tag SFs from POG
-        calib = ROOT.BTagCalibration("csvv2", os.path.expandvars("$CMSSW_BASE/src/CMGTools/H2TauTau/data/CSVv2.csv"))
+        calib = ROOT.BTagCalibration("csvv2", os.path.expandvars("$CMSSW_BASE/src/CMGTools/H2TauTau/data/CSVv2_4invfb.csv"))
         
         op_dict = {
             'loose':0,
