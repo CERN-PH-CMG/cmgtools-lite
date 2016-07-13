@@ -14,7 +14,7 @@ from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv2 import *
 
 # --- 25 ns background samples ---
 ZJetsToNuNu_MJ = ZJetsToNuNuHT
-VJets_MJ       = WJetsToLNuHT
+VJets_MJ       = WJetsToLNuHT + DYJetsM50HT
 #Top_MJ          = [ TTJets, TToLeptons_tch_amcatnlo, TToLeptons_tch_amcatnlo_ext, TBar_tWch, T_tWch ]
 Top_MJ         = [ TTJets, TToLeptons_sch_amcatnlo, TBar_tWch, T_tWch ]
 DiBosons_MJ    = [ WW, WZ, ZZ ]
