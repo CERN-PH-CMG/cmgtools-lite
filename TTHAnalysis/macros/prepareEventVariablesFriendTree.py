@@ -446,10 +446,12 @@ if options.queue:
         super  = "qsub -q {queue} -N happyTreeFriend".format(queue = options.queue)
         runner = "oviedobatch_runner.sh"
 
+    theoutput= args[1].replace('/pool/ciencias/','/pool/cienciasrw/')
+
     basecmd = "{dir}/{runner} {dir} {cmssw} python {self} -N {chunkSize} -T {tdir} -t {tree} {data} {output}".format(
                 dir = os.getcwd(), runner=runner, cmssw = os.environ['CMSSW_BASE'],
                 self=sys.argv[0], chunkSize=options.chunkSize, tdir=options.treeDir,
-                tree=options.tree, data=args[0], output=args[1])
+                tree=options.tree, data=args[0], output=theoutput)
 
     writelog = ""
     logdir   = ""
