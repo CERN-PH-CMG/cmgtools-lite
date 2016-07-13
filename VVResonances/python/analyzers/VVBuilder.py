@@ -83,6 +83,8 @@ class VVBuilder(Analyzer):
         jet.subJetTags=[-1.0,-1.0]
         jet.subJetCTagL=[-1.0,-1.0]
         jet.subJetCTagB=[-1.0,-1.0]
+        jet.subJet_hadronFlavour=[0,0]
+        jet.subJet_partonFlavour=[0,0]
 
         for i,s in enumerate(jet.substructure.prunedSubjets):
             for o in jet.subjets("SoftDrop"):
@@ -92,6 +94,8 @@ class VVBuilder(Analyzer):
                     jet.subJetTags[i] = o.bDiscriminator(self.cfg_ana.bDiscriminator)
                     jet.subJetCTagL[i] = o.bDiscriminator(self.cfg_ana.cDiscriminatorL)
                     jet.subJetCTagB[i] = o.bDiscriminator(self.cfg_ana.cDiscriminatorB)
+                    jet.subJet_partonFlavour[i] = o.partonFlavour()
+                    jet.subJet_hadronFlavour[i] = o.hadronFlavour()
                     break;
 
 
@@ -146,6 +150,15 @@ class VVBuilder(Analyzer):
         VV.nMediumBTags = len(filter(lambda x: x.bDiscriminator(self.cfg_ana.bDiscriminator)>0.800,jetsCentral))
         VV.nTightBTags = len(filter(lambda x: x.bDiscriminator(self.cfg_ana.bDiscriminator)>0.935,jetsCentral))
         VV.nOtherLeptons = len(leptons)
+
+        maxbtag=-100.0
+        for  j in jetsCentral:
+            btag=j.bDiscriminator(self.cfg_ana.bDiscriminator)
+            if btag>maxbtag:
+                maxbtag=btag
+        VV.highestEventBTag = maxbtag
+
+
 
     def selectJets(self,jets,func,otherObjects,DR,otherObjects2=None,DR2=0.0):
         output=[]
