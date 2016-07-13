@@ -281,6 +281,7 @@ if not runSMS:
 else:
     susyScanAna.doLHE=True
     susyCounter.bypass_trackMass_check = False
+    susyCounter.SMS_varying_masses=['genSusyMGluino','genSusyMNeutralino','genSusyMChargino','genSusyMNeutralino2']
     susyCoreSequence.insert(susyCoreSequence.index(susyScanAna)+1,susyCounter)
 
 # HBHE new filter
