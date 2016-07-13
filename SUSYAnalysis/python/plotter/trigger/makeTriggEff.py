@@ -860,16 +860,16 @@ if __name__ == "__main__":
         #cuts = basecuts + 'nEl == 1 && Lep_pt > 5 && HT > 500 && MET > 50 && nJet > 2 && nBJet > 0'
         #makeEffPlots(tree, lumi, maxEntries, doFit, varList, refTrig, testTrig, cuts)
 
-        testTrig = ['Ele105','EleHT350||EleHT400','EleHT400']
-        testTrig = ['Ele105','EleHT350','EleHT400']
+        testTrig = ['Ele105','EleHT350||EleHT400']#,'EleHT400']
+#        testTrig = ['Ele105','EleHT350','EleHT400']
         #testTrig = ['Ele105','EleHT350','IsoEle23']
         #testTrig = ['EleHT350MET50||Ele105']
 
         cuts = basecuts + 'nEl == 1 && Lep_pt > 5 && HT > 500'
         makeEffPlots(tree, lumi, maxEntries, doFit, varList, refTrig, testTrig, cuts)
 
-        testTrig = ['Mu50','MuHT350||MuHT400','MuHT400']
-        testTrig = ['Mu50','MuHT350','MuHT400']
+        testTrig = ['Mu50','MuHT350||MuHT400']#,'MuHT400']
+#        testTrig = ['Mu50','MuHT350','MuHT400']
         #testTrig = ['Mu50','MuHT350','IsoMu20']
         #testTrig = ['MuHT350']
         cuts = basecuts + 'nMu == 1 && Lep_pt > 5 && HT > 500'
@@ -878,13 +878,13 @@ if __name__ == "__main__":
         ### LEPTON ETA
         varList = ['Lep_eta']
 
-        testTrig = ['EleHT350||EleHT400','EleHT400']
-        testTrig = ['EleHT350','EleHT400']
+        testTrig = ['EleHT350||EleHT400']#,'EleHT400']
+#        testTrig = ['EleHT350','EleHT400']
         cuts = basecuts + 'nEl == 1 && Lep_pt > 20 && HT > 500'
         makeEffPlots(tree, lumi, maxEntries, doFit, varList, refTrig, testTrig, cuts)
 
-        testTrig = ['MuHT350||MuHT400','MuHT400']
-        testTrig = ['MuHT350','MuHT400']
+        testTrig = ['MuHT350||MuHT400']#,'MuHT400']
+#        testTrig = ['MuHT350','MuHT400']
         cuts = basecuts + 'nMu == 1 && Lep_pt > 20 && HT > 500'
         makeEffPlots(tree, lumi, maxEntries, doFit, varList, refTrig, testTrig, cuts)
 

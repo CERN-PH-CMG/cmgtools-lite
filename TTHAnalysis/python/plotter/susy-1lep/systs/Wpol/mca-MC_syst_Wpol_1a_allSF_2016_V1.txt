@@ -1,0 +1,104 @@
+### CENTRAL
+# TTJets
+#TTJets	: TTJets_LO 			: xsec*1*TopPtWeight :  Sum$(abs(genTau_grandmotherId)==6&&abs(genTau_motherId)==24)+Sum$(abs(genLep_grandmotherId)==6&&abs(genLep_motherId)==24) == 0 && lheHTIncoming <= 600 && HT < 1250;
+TTJets	: TTJets_DiLept		: xsec*1*TopPtWeight : lheHTIncoming <= 600;
+TTJets	: TTJets_SingleLeptFromT		: xsec*1*TopPtWeight : lheHTIncoming <= 600;
+TTJets	: TTJets_SingleLeptFromTbar		: xsec*1*TopPtWeight : lheHTIncoming <= 600;
+TTJets	: TTJets_HT-600to800		: xsec*1*TopPtWeight ;
+TTJets	: TTJets_HT-800to1200 	: xsec*1*TopPtWeight ;
+TTJets	: TTJets_HT-1200to2500 	: xsec*1*TopPtWeight ;
+TTJets	: TTJets_HT-2500toInf 	: xsec*1*TopPtWeight ;
+# WJets
+#WJets	: WJetsToLNu_HT-100To200		: xsec*1*TopPtWeight ;
+WJets	: WJetsToLNu_HT-200To400 	: xsec*1*TopPtWeight ;
+WJets	: WJetsToLNu_HT-400To600 	: xsec*1*TopPtWeight ;
+WJets	: WJetsToLNu_HT-600To800 	: xsec*1*TopPtWeight ;
+WJets	: WJetsToLNu_HT-800To1200 	: xsec*1*TopPtWeight ;
+WJets	: WJetsToLNu_HT-1200To2500 	: xsec*1*TopPtWeight ;
+WJets	: WJetsToLNu_HT-2500ToInf 	: xsec*1*TopPtWeight ;
+# Single Top
+SingleTop	: ST_t-channel_antitop_4f_leptonDecays_13TeV-powheg-pythia8	: xsec*1*TopPtWeight ;
+SingleTop	: ST_t-channel_antitop_4f_leptonDecays_13TeV-powheg-pythia8	: xsec*1*TopPtWeight ;
+SingleTop	: ST_s-channel_4f_leptonDecays_13TeV-amcatnlo-pythia8	 	: xsec*1*TopPtWeight ;
+SingleTop	: ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8	 		: xsec*1*TopPtWeight ;
+SingleTop	: ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8	 		: xsec*1*TopPtWeight ;
+# DY
+DY	: DYJetsToLL_M-50_HT-100to200	: xsec*1*TopPtWeight ;
+DY	: DYJetsToLL_M-50_HT-200to400 	: xsec*1*TopPtWeight ;
+DY	: DYJetsToLL_M-50_HT-400to600 	: xsec*1*TopPtWeight ;
+DY	: DYJetsToLL_M-50_HT-600toInf 	: xsec*1*TopPtWeight ;
+# TTV
+TTV	: TTWJetsToLNu			: xsec*1*TopPtWeight ;
+TTV	: TTWJetsToQQ 			: xsec*1*TopPtWeight ;
+TTV	: TTZToLLNuNu 			: xsec*1*TopPtWeight ;
+#TTV	: TTZToQQ 			: xsec*1*TopPtWeight ;
+
+### UP
+# TTJets
+#TTJets_Wpol-Up	: TTJets_LO 			: xsec*1*TopPtWeight*WpolWup :  Sum$(abs(genTau_grandmotherId)==6&&abs(genTau_motherId)==24)+Sum$(abs(genLep_grandmotherId)==6&&abs(genLep_motherId)==24) == 0 && lheHTIncoming <= 600 && HT < 1250;
+TTJets_Wpol-Up	: TTJets_DiLept		: xsec*1*TopPtWeight*WpolWup : lheHTIncoming <= 600;
+TTJets_Wpol-Up	: TTJets_SingleLeptFromT 		: xsec*1*TopPtWeight*WpolWup : lheHTIncoming <= 600;
+TTJets_Wpol-Up	: TTJets_SingleLeptFromTbar 		: xsec*1*TopPtWeight*WpolWup : lheHTIncoming <= 600;
+TTJets_Wpol-Up	: TTJets_HT-600to800		: xsec*1*TopPtWeight*WpolWup ;
+TTJets_Wpol-Up	: TTJets_HT-800to1200 	: xsec*1*TopPtWeight*WpolWup ;
+TTJets_Wpol-Up	: TTJets_HT-1200to2500 	: xsec*1*TopPtWeight*WpolWup ;
+TTJets_Wpol-Up	: TTJets_HT-2500toInf 	: xsec*1*TopPtWeight*WpolWup ;
+# WJets
+#WJets_Wpol-Up	: WJetsToLNu_HT-100To200		: xsec*1*TopPtWeight*WpolWup ;
+WJets_Wpol-Up	: WJetsToLNu_HT-200To400 	: xsec*1*TopPtWeight*WpolWup ;
+WJets_Wpol-Up	: WJetsToLNu_HT-400To600 	: xsec*1*TopPtWeight*WpolWup ;
+WJets_Wpol-Up	: WJetsToLNu_HT-600To800 	: xsec*1*TopPtWeight*WpolWup ;
+WJets_Wpol-Up	: WJetsToLNu_HT-800To1200 	: xsec*1*TopPtWeight*WpolWup ;
+WJets_Wpol-Up	: WJetsToLNu_HT-1200To2500 	: xsec*1*TopPtWeight*WpolWup ;
+WJets_Wpol-Up	: WJetsToLNu_HT-2500ToInf 	: xsec*1*TopPtWeight*WpolWup ;
+# Single Top
+SingleTop_Wpol-Up	: ST_t-channel_antitop_4f_leptonDecays_13TeV-powheg-pythia8	: xsec*1*TopPtWeight*WpolWup ;
+SingleTop_Wpol-Up	: ST_t-channel_antitop_4f_leptonDecays_13TeV-powheg-pythia8	: xsec*1*TopPtWeight*WpolWup ;
+SingleTop_Wpol-Up	: ST_s-channel_4f_leptonDecays_13TeV-amcatnlo-pythia8	 	: xsec*1*TopPtWeight*WpolWup ;
+SingleTop_Wpol-Up	: ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8	 		: xsec*1*TopPtWeight*WpolWup ;
+SingleTop_Wpol-Up	: ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8	 		: xsec*1*TopPtWeight*WpolWup ;
+# DY
+DY_Wpol-Up	: DYJetsToLL_M-50_HT-100to200	: xsec*1*TopPtWeight*WpolWup ;
+DY_Wpol-Up	: DYJetsToLL_M-50_HT-200to400 	: xsec*1*TopPtWeight*WpolWup ;
+DY_Wpol-Up	: DYJetsToLL_M-50_HT-400to600 	: xsec*1*TopPtWeight*WpolWup ;
+DY_Wpol-Up	: DYJetsToLL_M-50_HT-600toInf 	: xsec*1*TopPtWeight*WpolWup ;
+# TTV
+TTV_Wpol-Up	: TTWJetsToLNu			: xsec*1*TopPtWeight*WpolWup ;
+TTV_Wpol-Up	: TTWJetsToQQ 			: xsec*1*TopPtWeight*WpolWup ;
+TTV_Wpol-Up	: TTZToLLNuNu 			: xsec*1*TopPtWeight*WpolWup ;
+#TTV_Wpol-Up	: TTZToQQ 			: xsec*1*TopPtWeight*WpolWup ;
+
+### DOWN
+# TTJets
+#TTJets_Wpol-Down	: TTJets_LO 			: xsec*1*TopPtWeight*WpolWdown :  Sum$(abs(genTau_grandmotherId)==6&&abs(genTau_motherId)==24)+Sum$(abs(genLep_grandmotherId)==6&&abs(genLep_motherId)==24) == 0 && lheHTIncoming <= 600 && HT < 1250;
+TTJets_Wpol-Down	: TTJets_DiLept		: xsec*1*TopPtWeight*WpolWdown : lheHTIncoming <= 600;
+TTJets_Wpol-Down	: TTJets_SingleLeptFromT   	: xsec*1*TopPtWeight*WpolWdown : lheHTIncoming <= 600;
+TTJets_Wpol-Down	: TTJets_SingleLeptFromTbar   	: xsec*1*TopPtWeight*WpolWdown : lheHTIncoming <= 600;
+TTJets_Wpol-Down	: TTJets_HT-600to800		: xsec*1*TopPtWeight*WpolWdown ;
+TTJets_Wpol-Down	: TTJets_HT-800to1200 	: xsec*1*TopPtWeight*WpolWdown ;
+TTJets_Wpol-Down	: TTJets_HT-1200to2500 	: xsec*1*TopPtWeight*WpolWdown ;
+TTJets_Wpol-Down	: TTJets_HT-2500toInf 	: xsec*1*TopPtWeight*WpolWdown ;
+# WJets
+#WJets_Wpol-Down	: WJetsToLNu_HT-100To200		: xsec*1*TopPtWeight*WpolWdown ;
+WJets_Wpol-Down	: WJetsToLNu_HT-200To400 	: xsec*1*TopPtWeight*WpolWdown ;
+WJets_Wpol-Down	: WJetsToLNu_HT-400To600 	: xsec*1*TopPtWeight*WpolWdown ;
+WJets_Wpol-Down	: WJetsToLNu_HT-600To800 	: xsec*1*TopPtWeight*WpolWdown ;
+WJets_Wpol-Down	: WJetsToLNu_HT-800To1200 	: xsec*1*TopPtWeight*WpolWdown ;
+WJets_Wpol-Down	: WJetsToLNu_HT-1200To2500 	: xsec*1*TopPtWeight*WpolWdown ;
+WJets_Wpol-Down	: WJetsToLNu_HT-2500ToInf 	: xsec*1*TopPtWeight*WpolWdown ;
+# Single Top
+SingleTop_Wpol-Down	: ST_t-channel_antitop_4f_leptonDecays_13TeV-powheg-pythia8	: xsec*1*TopPtWeight*WpolWdown ;
+SingleTop_Wpol-Down	: ST_t-channel_antitop_4f_leptonDecays_13TeV-powheg-pythia8	: xsec*1*TopPtWeight*WpolWdown ;
+SingleTop_Wpol-Down	: ST_s-channel_4f_leptonDecays_13TeV-amcatnlo-pythia8	 	: xsec*1*TopPtWeight*WpolWdown ;
+SingleTop_Wpol-Down	: ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8	 		: xsec*1*TopPtWeight*WpolWdown ;
+SingleTop_Wpol-Down	: ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8	 		: xsec*1*TopPtWeight*WpolWdown ;
+# DY
+DY_Wpol-Down	: DYJetsToLL_M-50_HT-100to200	: xsec*1*TopPtWeight*WpolWdown ;
+DY_Wpol-Down	: DYJetsToLL_M-50_HT-200to400 	: xsec*1*TopPtWeight*WpolWdown ;
+DY_Wpol-Down	: DYJetsToLL_M-50_HT-400to600 	: xsec*1*TopPtWeight*WpolWdown ;
+DY_Wpol-Down	: DYJetsToLL_M-50_HT-600toInf 	: xsec*1*TopPtWeight*WpolWdown ;
+# TTV
+TTV_Wpol-Down	: TTWJetsToLNu			: xsec*1*TopPtWeight*WpolWdown ;
+TTV_Wpol-Down	: TTWJetsToQQ 			: xsec*1*TopPtWeight*WpolWdown ;
+TTV_Wpol-Down	: TTZToLLNuNu 			: xsec*1*TopPtWeight*WpolWdown ;
+#TTV_Wpol-Down	: TTZToQQ 			: xsec*1*TopPtWeight*WpolWdown ;
