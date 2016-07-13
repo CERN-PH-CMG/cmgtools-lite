@@ -57,10 +57,14 @@ class BaseDumper(Module):
         jets = Collection(ev,"Jet")
         ev.Jet1_pt_zs = jets[0].pt if len(jets) > 0 else -1.0
         ev.Jet2_pt_zs = jets[1].pt if len(jets) > 1 else -1.0
+        if zzkind == "zzfast": 
+            ev.category = -1
+            ev.nJet30ZZ = ev.nJet30 
+            return
         allleps = Collection(ev,"Lep","nLep") 
         zzs = Collection(ev,zzkind,"n"+zzkind)
         if len(zzs) == 0:
-            ev.catetory = -1
+            ev.category = -1
             return
         zz = zzs[0]
         if self.options.jetCleaning == "candidate":
@@ -118,7 +122,7 @@ class BaseDumper(Module):
         if self.options.events and ( (ev.run, ev.lumi, ev.evt) not in self.options.events ):
             return False
         try:
-            self.makeVars(ev,zzkind=options.type)
+            if options.type != "asis": self.makeVars(ev,zzkind=options.type)
         except:
             raise
             pass
@@ -129,11 +133,14 @@ class BaseDumper(Module):
         jets = Collection(ev,"Jet")
         print "run %6d lumi %4d event %11d (id: %d:%d:%d) " % (ev.run, ev.lumi, ev.evt, ev.run, ev.lumi, ev.evt)
         for i,l in enumerate(leps):
-            print "    lepton %d: id %+2d pt %5.1f eta %+4.2f phi %+4.2f   tightId %d/%d/%d relIso %5.3f sip3d %5.2f dxy %+4.3f dz %+4.3f bdt %+5.3f lostHits %1d fsr %1d/%1d" % (
-                    i+1, l.pdgId,l.pt,l.eta,l.phi, l.tightId, l.muIdLoose, l.muIdTrkHighPt, l.relIsoAfterFSR, l.sip3d, l.dxy, l.dz, l.mvaIdSpring15, l.lostHits, l.hasFSR, l.hasOwnFSR),
+            print "    lepton %d: id %+2d pt %5.1f eta %+4.2f phi %+4.2f   tightId %d relIso %5.3f sip3d %5.2f dxy %+4.3f dz %+4.3f bdt %+6.4f lostHits %1d fsr %1d/%1d" % (
+                    i+1, l.pdgId,l.pt,l.eta,l.phi, l.tightId, l.relIsoAfterFSR, l.sip3d, l.dxy, l.dz, l.mvaIdSpring16, l.lostHits, l.hasFSR, l.hasOwnFSR),
             if self.options.ismc:
                 print "   mcMatch id %+4d, any %+2d" % (l.mcMatchId, l.mcMatchAny),
-            print "   stations %d, layers %d, pixels %d, glb %d" % (l.nStations, l.trackerLayers, l.pixelLayers, l.globalTrackChi2>0),
+            if abs(l.pdgId) == 13:
+                print "   pog loose %d trkHighPt %d stations %d, layers %d, pixels %d, glb %d" % (l.muIdLoose, l.muIdTrkHighPt, l.nStations, l.trackerLayers, l.pixelLayers, l.globalTrackChi2>0),
+            if abs(l.pdgId) == 11:
+                print "   etaSc %+6.4f spring15 bdt %+6.4f" % (l.etaSc, l.mvaIdSpring15),
             print ""
             if self.options.ismore:
                 print "\t\t iso 04 ch %5.2f nh %5.2f ph %5.2f pu %5.2f rho %5.2f ea %4.3f preFSR %5.3f" % ( l.chargedHadIso04, l.neutralHadIso04, l.photonIso04, l.puChargedHadIso04, l.rho, l.EffectiveArea04, l.relIso04 )
@@ -141,10 +148,10 @@ class BaseDumper(Module):
                 if self.options.ismc:
                     print "\t\t promptLep %d promptTau %d promptPho %d anyPho %d" % (l.mcPrompt, l.mcPromptTau, l.mcPromptGamma, l.mcGamma)
         for i,j in enumerate(jets):
+            print "    jet %d:  pt %5.1f uncorrected pt %5.1f eta %+4.2f phi %+4.2f  btag %4.3f qgl %.3f " % (i+1, j.pt, j.rawPt, j.eta, j.phi, min(1.,max(0.,j.btagCSV)), j.qgl),
             if self.options.ismc:
-                print "    jet %d:  pt %5.1f uncorrected pt %5.1f eta %+4.2f phi %+4.2f  btag %4.3f mcMatch %2d mcFlavour %2d mcPt %5.1f" % (i+1, j.pt, j.rawPt, j.eta, j.phi, min(1.,max(0.,j.btagCSV)), j.mcMatchId, j.mcFlavour, j.mcPt)
-            else:
-                print "    jet %d:  pt %5.1f uncorrected pt %5.1f eta %+4.2f phi %+4.2f  btag %4.3f" % (i+1, j.pt, j.rawPt, j.eta, j.phi, min(1.,max(0.,j.btagCSV)))
+                print "  mcMatch %2d mcFlavour %2d mcPt %5.1f" % (j.mcMatchId, j.hadronFlavour, j.mcPt),
+            print ""
         fsr = Collection(ev, "FSR")
         for i,g in enumerate(fsr):
             print "    photon %d: pt %5.1f eta %+4.2f phi %+4.2f reliso% 7.3f (ch %5.1f nh %5.1f ph %5.1f pu %5.1f), closest lepton id %+2d pt %5.1f eta %+4.2f phi %+4.2f dr %.4f dr/et2 %.4f" % (i+1, 
@@ -170,7 +177,7 @@ class BaseDumper(Module):
                 print "                   m12 %6.3f  m13 %6.3f  m14 %6.3f  m23 %6.3f  m24 %6.3f  m34 %6.3f" % (
                          zz.mll_12, zz.mll_13, zz.mll_14, zz.mll_23, zz.mll_24, zz.mll_34)
                 print "                   D_bkg^kin %.3f D_bkg %.3f D_gg %.3f D_0- %.3f D_HJJ^VBF %.3f " % (
-                          zz.D_bkg_kin, zz.D_bkg, zz.D_gg, zz.D_0m, zz.D_HJJ_VBF)
+                          zz.D_bkg_kin, zz.D_bkg, zz.D_gg, zz.D_0m, zz.Dkin_HJJ_VBF)
                 print "                   pt4l %6.1f mjj %6.1f Djet %.3f nLepSel %d nJet30 %d nB %d nJet40c %d, mjj40c %6.1f: category %d" % (
                           zz.pt, ev.mjj, ev.Djet, ev.nLepSel, ev.nJet30ZZ, ev.nB, ev.nJet40c, ev.mjj40c, ev.category)
         print "    met %6.2f (phi %+4.2f)" % (ev.met_pt, ev.met_phi)
