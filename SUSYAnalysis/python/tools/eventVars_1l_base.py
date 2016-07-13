@@ -379,14 +379,7 @@ class EventVars1L_base:
 
                 if eleID == 'CB':
                     # ELE CutBased ID
-                    if hasattr(lep,"eleCutIdSpring15_25ns_v1"):
-                        eidCB = lep.eleCutIdSpring15_25ns_v1
-                    elif hasattr(lep,"eleCBID_SPRING15_25ns_ConvVetoDxyDz"):
-                        eidCB = lep.eleCBID_SPRING15_25ns_ConvVetoDxyDz
-                    elif hasattr(lep,"SPRING15_25ns_v1"):
-                        eidCB = lep.SPRING15_25ns_v1
-                    else:
-                        eidCB = -1
+                    eidCB = lep.eleCBID_SPRING15_25ns_ConvVetoDxyDz
 
                     passTightID = (eidCB == 4)
                     passMediumID = (eidCB >= 3)
@@ -493,12 +486,7 @@ class EventVars1L_base:
                 ## Set Ele IDs
                 if eleID == 'CB':
                     # ELE CutBased ID
-                    if hasattr(lep,"eleCutIdSpring15_25ns_v1"):
-                        eidCB = lep.eleCutIdSpring15_25ns_v1
-                    elif hasattr(lep,"eleCBID_SPRING15_25ns"):
-                        eidCB = lep.eleCBID_SPRING15_25ns
-                    else:
-                        eidCB = -1
+                    eidCB = lep.eleCBID_SPRING15_25ns_ConvVetoDxyDz
 
                     passMediumID = (eidCB >= 3)
                     passVetoID = (eidCB >= 1)
