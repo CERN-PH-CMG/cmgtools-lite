@@ -208,6 +208,16 @@ monoJetCtrlLepSkim = cfg.Analyzer(
     ptCuts = [10],                # can give a set of pt cuts on the leptons
     )
 
+## number of FatJets (ak08) Skim
+from CMGTools.MonoXAnalysis.analyzers.monoJetCtrlFatJetSkimmer import monoJetCtrlFatJetSkimmer
+monoJetCtrlFatJetSkim = cfg.Analyzer(
+    monoJetCtrlFatJetSkimmer, name='monoJetCtrlFatJetSkimmer',
+    minFatJets = 0,
+    maxFatJets = 999,
+    idCut= '',
+    ptCuts     = [160],
+    )
+
 ## gamma+jets Skim
 from CMGTools.MonoXAnalysis.analyzers.gammaJetCtrlSkimmer import gammaJetCtrlSkimmer
 gammaJetCtrlSkim = cfg.Analyzer(
@@ -362,7 +372,7 @@ monoXFatJetAna = cfg.Analyzer(
     applyL2L3Residual = True, # Switch to 'Data' when they will become available for Data
     recalibrationType = "AK8PFchs",
     mcGT     = "Spring16_25nsV3_MC",
-    dataGT   = "Spring16_25nsV3_DATA", 
+    dataGT   = "Spring16_25nsV3_DATA", # update with the new one when available in 8.0.X
     jecPath = "%s/src/CMGTools/RootTools/data/jec/" % os.environ['CMSSW_BASE'],
     shiftJEC = 0, # set to +1 or -1 to get +/-1 sigma shifts
     addJECShifts = False, # if true, add  "corr", "corrJECUp", and "corrJECDown" for each jet (requires uncertainties to be available!)
@@ -483,6 +493,7 @@ dmCoreSequence = [
     isoTrackAna,
     ttHCoreEventAna,
     monoXFatJetAna,
+    monoJetCtrlFatJetSkim,
     gammaJetCtrlSkim,
     triggerFlagsAna,
     eventFlagsAna,
