@@ -1,0 +1,8 @@
+20/20    : LepGood1_pt > 20 && LepGood2_pt > 20 
+60/50    : LepGood1_pt < 60 && LepGood2_pt < 50 
+SameSign : LepGood1_charge * LepGood2_charge > 0
+0/1 jets : (nJet30 <2)
+bVeto    : nBJetLoose25 == 0
+2l       : nLepGood < 3 && nLepOther == 0
+lepMVA   : min(LepGood1_mvaTTH,LepGood2_mvaTTH) > 0.92
+muons    : abs(LepGood1_pdgId*LepGood2_pdgId) == 169
