@@ -345,10 +345,10 @@ if is50ns:
     pfChargedCHSjetAna.mcGT     = "Summer15_50nsV5_MC"
     pfChargedCHSjetAna.dataGT   = "Summer15_50nsV5_DATA"
 else: 
-    jetAna.mcGT   = "Spring16_25nsV3_MC"
-    jetAna.dataGT = "Spring16_25nsV3_DATA"#"Spring16_25nsV3_DATA"
-    monoXFatJetAna.mcGT = "Spring16_25nsV3_MC"
-    monoXFatJetAna.dataGT = "Spring16_25nsV3_DATA"
+    jetAna.mcGT   = "Spring16_25nsV6_MC"
+    jetAna.dataGT = "Spring16_25nsV6_DATA"
+    monoXFatJetAna.mcGT = "Spring16_25nsV6_MC"
+    monoXFatJetAna.dataGT = "Spring16_25nsV6_DATA"
 
 if removeJetReCalibration:
     ## NOTE: jets will still be recalibrated, since calculateSeparateCorrections is True,

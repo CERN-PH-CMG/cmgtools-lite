@@ -474,7 +474,7 @@ dmCoreSequence = [
     lheWeightAna,
     skimAnalyzer,
    #eventSelector,
-    ###jsonAna,
+    jsonAna,
     triggerAna,
     pileUpAna,
     genAna,
