@@ -155,7 +155,9 @@ photonTypeSusy = NTupleObjectType("gammaSusy", baseObjectTypes = [ photonType ],
 
 jetTypeSusy = NTupleObjectType("jetSusy",  baseObjectTypes = [ jetTypeExtra ], variables = [
     NTupleVariable("mcMatchFlav",  lambda x : getattr(x,'mcMatchFlav',-99), int, mcOnly=True, help="Flavour of associated parton from hard scatter (if any)"),
-    NTupleVariable("charge", lambda x : x.jetCharge(), float, help="Jet charge") 
+    NTupleVariable("charge", lambda x : x.jetCharge(), float, help="Jet charge"), 
+    NTupleVariable("ctagCsvL", lambda x : x.btag('pfCombinedCvsLJetTags'), float, help="CsvL discriminator"),
+    NTupleVariable("ctagCsvB", lambda x : x.btag('pfCombinedCvsBJetTags'), float, help="CsvB discriminator"),
 ])
 
 jetTypeSusyExtraLight = NTupleObjectType("jetSusyExtraLight",  baseObjectTypes = [ jetTypeSusy ], variables = [

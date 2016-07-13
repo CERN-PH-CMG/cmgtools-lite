@@ -1,6 +1,6 @@
 import PhysicsTools.HeppyCore.framework.config as cfg
 
-from CMGTools.RootTools.samples.autoAAAconfig import *
+##from CMGTools.RootTools.samples.autoAAAconfig import *
 
 #-------- SAMPLES AND TRIGGERS -----------
 from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv2 import * #<--miniAOD v2 2016 MC for ICHEP
@@ -166,7 +166,7 @@ elif test==16:
     selectedComponents = [ SinglePhoton_Run2016B_PromptReco_v2 ]
     for comp in selectedComponents:
         comp.triggers = triggers_photon30 + triggers_photon50 + triggers_photon75 + triggers_photon90 + triggers_photon120
-        comp.splitFactor = 100
+        comp.splitFactor = 1000
         comp.files = comp.files[:]
         comp.json = "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-275125_13TeV_PromptReco_Collisions16_JSON.txt"
         comp.intLumi= 0.04003
@@ -176,10 +176,10 @@ elif test==16:
 #QCD
 elif test==17:
 #    selectedComponents = [QCD_HT100to200, QCD_HT200to300, QCD_HT300to500, QCD_HT_500to700, QCD_HT700to1000,QCD_HT1000to1500,QCD_HT1500to2000,QCD_HT2000toInf]
-    selectedComponents = QCD_HT
+    selectedComponents = QCDHT + WJetsToLNuHT
     is1PH=True
     for comp in selectedComponents:
-        comp.splitFactor = 100
+        comp.splitFactor = 1000
         comp.files = comp.files[:]
 
 # GJets
@@ -187,15 +187,15 @@ elif test==18:
     selectedComponents = [GJets_HT40to100,GJets_HT100to200, GJets_HT200to400, GJets_HT400to600, GJets_HT600toInf]
     is1PH=True
     for comp in selectedComponents:
-        comp.splitFactor = 100
+        comp.splitFactor = 500
         comp.files = comp.files[:]   
 
 # WG/ZG/TTG
 elif test==19:
-    selectedComponents = [ZGJets, ZGTo2LG, WGJets, TTGJets, TGJets_ext]
+    selectedComponents = [ZGJets, ZNuNuGJets_40130, ZGTo2LG, WGToLNuG, WGJets, TTGJets, TGJets, TGJets_ext]
     is1PH=True
     for comp in selectedComponents:
-        comp.splitFactor = 100
+        comp.splitFactor = 1000
         comp.files = comp.files[:]   
                                                                                                                                                                                 
 elif test==23:
@@ -211,7 +211,7 @@ elif test==23:
 #            comp.triggers = triggers_mumu
 #        comp.splitFactor = 1
 #        comp.files = comp.files[:1]
-        comp.splitFactor = 200
+        comp.splitFactor = 1000
         comp.files = comp.files[:]
 
 elif test==25:
@@ -219,7 +219,7 @@ elif test==25:
     is25ns=True
     selectedComponents = [ TTJets ] + WJetsToLNuHT + ZJetsToNuNuHT + QCDHT
     for comp in selectedComponents:
-        comp.splitFactor = 200
+        comp.splitFactor = 1000
         comp.files = comp.files[:]
 
     # ------------------------------------------------------------------------------------------- #
@@ -302,10 +302,15 @@ if isZSkim or is1PH:
             "metPuppi_shifted_UnclusteredEnUp" : NTupleObject("metPuppi_shifted_UnclusteredEnUp", metType, help="PF E_{T}^{miss}, after type 1 corrections with met unclustered Up"),
             "metPuppi_shifted_UnclusteredEnDown" : NTupleObject("metPuppi_shifted_UnclusteredEnDown", metType, help="PF E_{T}^{miss}, after type 1 corrections with met unclustered Down"),
             })
+
 if is1PH:
     met_collections.update({
-            "generatorSummary" : NTupleCollection("GenPart", genParticleWithLinksType, 100 , help="Hard scattering particles, with ancestry and links"),     
             "selectedPhotons"    : NTupleCollection("gamma", photonType, 50, help="photons with pt>20 and loose cut based ID"),
+            })
+
+if is1PH and not test==17:
+    met_collections.update({
+            "generatorSummary" : NTupleCollection("GenPart", genParticleWithLinksType, 100 , help="Hard scattering particles, with ancestry and links"),
             })
 
 #if isDiJet:
@@ -323,26 +328,32 @@ if comp.isData and comp.json is None:
 
 # --------------------
 
-triggerFlagsAna.triggerBits = {
-            'SingleMu' : triggers_1mu_iso_50ns, # [ 'HLT_IsoMu17_eta2p1_v*', 'HLT_IsoTkMu17_eta2p1_v*'  ] + [ 'HLT_IsoMu20_v*', 'HLT_IsoTkMu20_v*'  ]
-            'DoubleMu' : triggers_mumu, # [ "HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v*", "HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v*" ]
-            'DoubleEG' : triggers_ee, # [ "HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v*" ]
-            'Photon30' : triggers_photon30, #["HLT_Photon30_R9Id90_HE10_IsoM_v*"]
-            'Photon50' : triggers_photon50, #["HLT_Photon50_R9Id90_HE10_IsoM_v*"]
-            'Photon75' : triggers_photon75, #["HLT_Photon75_R9Id90_HE10_IsoM_v*"]
-            'Photon90' : triggers_photon90, #["HLT_Photon90_R9Id90_HE10_IsoM_v*"]
-            'Photon120': triggers_photon120, #["HLT_Photon120_R9Id90_HE10_IsoM_v*"]
-            ######
-            'SingleJet': triggers_jet,
-            'DiJet'    : triggers_dijet, #["HLT_DiPFJetAve40_v*", "HLT_DiPFJetAve60_v*"]
-            'PFHT350_Prescale' : triggers_HT350, #["HLT_PFHT350_v*"] # prescaled
-            'PFHT475_Prescale' : triggers_HT475, #["HLT_PFHT475_v*"] # prescaled
-            'PFHT600_Prescale' : triggers_HT600, #["HLT_PFHT600_v*"] # prescaled
-            'PFHT900' : triggers_HT900, #["HLT_PFHT900_v*"]
-            'PFHT800' : triggers_HT800, #["HLT_PFHT800_v*"]
-            'MonoJet' : triggers_Jet80MET90, #["["HLT_MonoCentralPFJet80_PFMETNoMu90_NoiseCleaned_PFMHTNoMu90_IDTight_v*","HLT_MonoCentralPFJet80_PFMETNoMu90_JetIdCleaned_PFMHTNoMu90_IDTight_v*","HLT_MonoCentralPFJet80_PFMETNoMu90_PFMHTNoMu90_IDTight_v*"]
 
-}
+if isZSkim or is1PH:
+
+    triggerFlagsAna.triggerBits = {
+        'SingleMu' : triggers_1mu_iso_50ns, # [ 'HLT_IsoMu17_eta2p1_v*', 'HLT_IsoTkMu17_eta2p1_v*'  ] + [ 'HLT_IsoMu20_v*', 'HLT_IsoTkMu20_v*'  ]
+        'DoubleMu' : triggers_mumu, # [ "HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v*", "HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v*" ]
+        'DoubleEG' : triggers_ee, # [ "HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v*" ]
+        'Photon30' : triggers_photon30, #["HLT_Photon30_R9Id90_HE10_IsoM_v*"]
+        'Photon50' : triggers_photon50, #["HLT_Photon50_R9Id90_HE10_IsoM_v*"]
+        'Photon75' : triggers_photon75, #["HLT_Photon75_R9Id90_HE10_IsoM_v*"]
+        'Photon90' : triggers_photon90, #["HLT_Photon90_R9Id90_HE10_IsoM_v*"]
+        'Photon120': triggers_photon120, #["HLT_Photon120_R9Id90_HE10_IsoM_v*"]
+        }
+
+
+if isDiJet:
+    triggerFlagsAna.triggerBits = {
+        'SingleJet': triggers_jet,
+        'DiJet'    : triggers_dijet, #["HLT_DiPFJetAve40_v*", "HLT_DiPFJetAve60_v*"]
+        'PFHT350_Prescale' : triggers_HT350, #["HLT_PFHT350_v*"] # prescaled
+        'PFHT475_Prescale' : triggers_HT475, #["HLT_PFHT475_v*"] # prescaled
+        'PFHT600_Prescale' : triggers_HT600, #["HLT_PFHT600_v*"] # prescaled
+        'PFHT900' : triggers_HT900, #["HLT_PFHT900_v*"]
+        'PFHT800' : triggers_HT800, #["HLT_PFHT800_v*"]
+        'MonoJet' : triggers_Jet80MET90, #["["HLT_MonoCentralPFJet80_PFMETNoMu90_NoiseCleaned_PFMHTNoMu90_IDTight_v*","HLT_MonoCentralPFJet80_PFMETNoMu90_JetIdCleaned_PFMHTNoMu90_IDTight_v*","HLT_MonoCentralPFJet80_PFMETNoMu90_PFMHTNoMu90_IDTight_v*"]
+        }
 
 if comp.isData:
 ## to save prescale uncomment these
@@ -384,19 +395,19 @@ import subprocess
 if comp.isData:
     ## DATA 25ns
     removeResiduals = False
-    uncFile = os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/jec/Spring16_25nsV3_DATA_Uncertainty_AK4PFchs.txt'
-    jecDBFile = os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/jec/Spring16_25nsV3_DATA.db'
-    jecEra    = 'Spring16_25nsV3_DATA'
-    jerDBFile = os.environ['CMSSW_BASE']+'/src/PhysicsTools/PatUtils/data/JER/Fall15_25nsV2_MC.db'
-    jerEra    = 'Fall15_25nsV2'
+    uncFile = os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/jec/Spring16_25nsV6_DATA_Uncertainty_AK4PFchs.txt'
+    jecDBFile = os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/jec/Spring16_25nsV6_DATA.db'
+    jecEra    = 'Spring16_25nsV6_DATA'
+    jerDBFile = os.environ['CMSSW_BASE']+'/src/PhysicsTools/PatUtils/data/JER/Spring16_25nsV6_MC.db'
+    jerEra    = 'Spring16_25nsV6'
 else:
     ## MC 25ns
     removeResiduals = False
-    uncFile = os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/jec/Spring16_25nsV3_MC_Uncertainty_AK4PFchs.txt'
-    jecDBFile = os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/jec/Spring16_25nsV3_MC.db'
-    jecEra    = 'Spring16_25nsV3_MC'
-    jerDBFile = os.environ['CMSSW_BASE']+'/src/PhysicsTools/PatUtils/data/JER/Fall15_25nsV2_MC.db'
-    jerEra    = 'Fall15_25nsV2'
+    uncFile = os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/jec/Spring16_25nsV6_MC_Uncertainty_AK4PFchs.txt'
+    jecDBFile = os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/jec/Spring16_25nsV6_MC.db'
+    jecEra    = 'Spring16_25nsV6_MC'
+    jerDBFile = os.environ['CMSSW_BASE']+'/src/PhysicsTools/PatUtils/data/JER/Spring16_25nsV6_MC.db'
+    jerEra    = 'Spring16_25nsV6'
 
 preprocessorFile = "$CMSSW_BASE/tmp/MetType1_jec_%s.py"%(jecEra)
 extraArgs=[]
@@ -423,7 +434,7 @@ subprocess.call(args)
 from PhysicsTools.Heppy.utils.cmsswPreprocessor import CmsswPreprocessor
 preprocessor = CmsswPreprocessor(preprocessorFile)
 
-autoAAA(selectedComponents)
+###autoAAA(selectedComponents)
 
 #printComps(config.components, True)               
 config = cfg.Config( components = selectedComponents,
