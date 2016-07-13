@@ -145,7 +145,9 @@ photonTypeSusy = NTupleObjectType("gammaSusy", baseObjectTypes = [ photonType ],
 
 jetTypeSusy = NTupleObjectType("jetSusy",  baseObjectTypes = [ jetTypeExtra ], variables = [
     NTupleVariable("mcMatchFlav",  lambda x : getattr(x,'mcMatchFlav',-99), int, mcOnly=True, help="Flavour of associated parton from hard scatter (if any)"),
-    NTupleVariable("charge", lambda x : x.jetCharge(), float, help="Jet charge") 
+    NTupleVariable("charge", lambda x : x.jetCharge(), float, help="Jet charge"), 
+    NTupleVariable("ctagCsvL", lambda x : x.btag('pfCombinedCvsLJetTags'), float, help="CsvL discriminator"),
+    NTupleVariable("ctagCsvB", lambda x : x.btag('pfCombinedCvsBJetTags'), float, help="CsvB discriminator"),
 ])
 
 jetTypeSusyExtraLight = NTupleObjectType("jetSusyExtraLight",  baseObjectTypes = [ jetTypeSusy ], variables = [
@@ -222,6 +224,8 @@ svType = NTupleObjectType("sv", baseObjectTypes = [ fourVectorType ], variables 
     NTupleVariable("cosTheta", lambda x : x.cosTheta, help="Cosine of the angle between the 3D displacement and the momentum"),
     NTupleVariable("mva", lambda x : x.mva, help="MVA discriminator"),
     NTupleVariable("jetPt",  lambda x : x.jet.pt() if x.jet != None else 0, help="pT of associated jet"),
+    NTupleVariable("jetEta",  lambda x : x.jet.eta() if x.jet != None else 0, help="eta of associated jet"),
+    NTupleVariable("jetDR",  lambda x : deltaR(x.jet.eta(),x.jet.phi(),x.eta(),x.phi()) if x.jet != None else 0, help="deltaR to associated jet"),
     NTupleVariable("jetBTagCSV",   lambda x : x.jet.btag('pfCombinedInclusiveSecondaryVertexV2BJetTags') if x.jet != None else -99, help="CSV b-tag of associated jet"),
     NTupleVariable("jetBTagCMVA",  lambda x : x.jet.btag('pfCombinedMVABJetTags') if x.jet != None else -99, help="CMVA b-tag of associated jet"),
     NTupleVariable("mcMatchNTracks", lambda x : getattr(x, 'mcMatchNTracks', -1), int, mcOnly=True, help="Number of mc-matched tracks in SV"),

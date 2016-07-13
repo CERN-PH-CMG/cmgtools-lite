@@ -1,7 +1,8 @@
-from PhysicsTools.Heppy.analyzers.core.AutoFillTreeProducer  import * 
 import PhysicsTools.HeppyCore.framework.config as cfg
+from PhysicsTools.Heppy.analyzers.core.AutoFillTreeProducer  import * 
+from CMGTools.ObjectStudies.analyzers.leptonTriggerMatching_cff import WithLeptonTriggerMatchType
 
-leptonTypeTnP = NTupleObjectType("leptonTnP", baseObjectTypes = [ leptonType ], variables = [
+leptonTypeTnP = NTupleObjectType("leptonTnP", baseObjectTypes = [ leptonType, WithLeptonTriggerMatchType ], variables = [
     NTupleVariable("looseId",     lambda x : x.looseIdSusy, int, help="Loose ID (as per lepton analyzer)"),
     # ----------------------
     NTupleVariable("eleMVASpring15_VLooseIdEmu", lambda x : x.electronID("POG_MVA_ID_Spring15_NonTrig_VLooseIdEmu") if abs(x.pdgId())==11 else 1, int, help="VLoose MVA Ele ID (as per susy)"),

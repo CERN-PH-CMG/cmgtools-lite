@@ -1,0 +1,27 @@
+etaratio      :     max(LepGood1_eta,LepGood2_eta)/min(LepGood1_eta,LepGood2_eta)  : 10,-10.,10. ; XTitle="#eta_{max}/#eta_{min}"
+maxeta        : max(abs(LepGood1_eta),abs(LepGood2_eta)) : 10,0,2.5 ; XTitle="max #eta"
+maxeta        : max(abs(LepGood1_eta),abs(LepGood2_eta)) : 10,0,2.5 ; XTitle="max #eta"
+etadiff       : (abs(LepGood1_eta)-abs(LepGood2_eta))/(abs(LepGood1_eta)+abs(LepGood2_eta)) : 10,-1.5,1.5 ; XTitle="diff #eta"
+mt2ll         : mt2davis(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood2_pt,LepGood2_eta,LepGood2_phi,met_pt,met_phi) : 20,0,120 ; XTitle="M_{T2} (GeV)"
+detaLep       : LepGood1_eta-LepGood2_eta  : 10,-5.00,5.00; XTitle="#Delta#eta_{ll}"
+dphiLep       : abs(deltaPhi(LepGood1_phi,LepGood2_phi)) : 15,0,3.15; XTitle="#Delta#phi_{ll}"
+drleps        : deltaR(LepGood1_eta,LepGood1_phi,LepGood2_eta,LepGood2_phi) : 20,0,6.00; XTitle="#DeltaR_{ll}"
+nJet25        : nJet25          : [-0.5,0.5,1.5,2.5] ; XTitle='N(jet\, p_{T} > 25 GeV)', XNDdiv=505
+nJet40        : nJet40          : [-0.5,0.5,1.5,2.5] ; XTitle='N(jet\, p_{T} > 40 GeV)', XNDdiv=505
+nBJetLoose25  : nBJetLoose25    : [-0.5,0.5,1.5,2.5] ; XTitle='N(b-jet\, p_{T} > 25 GeV\, CSVL)', XNDdiv=505
+nBJetMedium25 : nBJetMedium25   : [-0.5,0.5,1.5,2.5] ; XTitle='N(b-jet\, p_{T} > 25 GeV\, CSVM)', XNDdiv=505
+met           : met_pt          : 20,0,200 ; XTitle="E_{T}^{miss} (GeV)"
+trkmet        : met_trkPt       : 20,0,200 ; XTitle="track E_{T}^{miss} (GeV)"
+ptll          : pt2l            : 20,0,200; XTitle="di-lepton p_{T} (GeV)"
+mll           : m2l             : 20,0,200; XTitle="m_{ll} (GeV)"
+pt1           : LepGood1_pt     : 20,0,100; XTitle="p_{T} lead. (GeV)"
+pt2           : LepGood2_pt     : 20,0,100; XTitle="p_{T} trail. (GeV)"
+eta1          : LepGood1_eta    : 10,-2.5,2.5; XTitle="#eta lead."
+eta2          : LepGood2_eta    : 10,-2.5,2.5; XTitle="#eta trail."
+charge        : LepGood2_charge : [-0.5,0.5,1.5,2.5]; XTitle="charge"
+etaprod       : LepGood1_eta*LepGood2_eta : 20,-6.25,6.25; XTitle="#eta_{1}*#eta_{2}"
+mt1           : mt_2(LepGood1_pt,LepGood1_phi,met_pt,met_phi) : 20,0,200; XTitle="m_{T} lepton 1"
+mt2           : mt_2(LepGood2_pt,LepGood2_phi,met_pt,met_phi) : 20,0,200; XTitle="m_{T} lepton 2"
+mtll          : mt_2(LepGood1_pt,LepGood1_phi,LepGood2_pt,LepGood2_phi) : 20,0,200; XTitle="m_{T} ll"
+dphil1met     : deltaPhi(LepGood1_phi,met_phi) : 20,-3.15,3.15; XTitle="#Delta#phi_{l1 MET}"
+dphil2met     : deltaPhi(LepGood2_phi,met_phi) : 20,-3.15,3.15; XTitle="#Delta#phi_{l2 MET}"
