@@ -1,6 +1,8 @@
 import PhysicsTools.HeppyCore.framework.config as cfg
 from PhysicsTools.HeppyCore.framework.config import printComps
+from PhysicsTools.HeppyCore.framework.heppy_loop import getHeppyOption
 from PhysicsTools.Heppy.utils.cmsswPreprocessor import CmsswPreprocessor
+
 
 # Tau-tau analyzers
 from CMGTools.H2TauTau.proto.analyzers.MuEleAnalyzer import MuEleAnalyzer
@@ -11,20 +13,33 @@ from CMGTools.H2TauTau.proto.analyzers.LeptonIsolationCalculator import LeptonIs
 from CMGTools.H2TauTau.proto.analyzers.FileCleaner import FileCleaner
 
 # common configuration and sequence
-from CMGTools.H2TauTau.htt_ntuple_base_cff import commonSequence, dyJetsFakeAna, puFileData, puFileMC, eventSelector
+from CMGTools.H2TauTau.htt_ntuple_base_cff import commonSequence, dyJetsFakeAna, puFileData, puFileMC, eventSelector, jetAna
 
 from CMGTools.RootTools.utils.splitFactor import splitFactor
 from CMGTools.H2TauTau.proto.samples.spring16.triggers_muEle import mc_triggers, mc_triggerfilters, data_triggers, data_triggerfilters
 
 from CMGTools.H2TauTau.proto.samples.spring16.htt_common import backgrounds_mu, sm_signals, mssm_signals, data_muon_electron, sync_list
 
-
 # local switches
-syncntuple = True
-computeSVfit = False
-production = False  # production = True run on batch, production = False run locally
-cmssw = True
-data = False
+production = getHeppyOption('production', False)
+pick_events = getHeppyOption('pick_events', False)
+syncntuple = getHeppyOption('syncntuple', True)
+cmssw = getHeppyOption('cmssw', True)
+computeSVfit = getHeppyOption('computeSVfit', False)
+data = getHeppyOption('data', False)
+reapplyJEC = getHeppyOption('reapplyJEC', True)
+
+# Just to be sure
+if production:
+    syncntuple = False
+    pick_events = False
+
+if reapplyJEC:
+    if cmssw:
+        jetAna.jetCol = 'patJetsReapplyJEC'
+        dyJetsFakeAna.jetCol = 'patJetsReapplyJEC'
+    else:
+        jetAna.recalibrateJets = True
 
 muonIsoCalc = cfg.Analyzer(
     LeptonIsolationCalculator,

@@ -51,10 +51,10 @@ class JetAnalyzer(Analyzer):
     def __init__(self, cfg_ana, cfg_comp, looperName):
         super(JetAnalyzer, self).__init__(cfg_ana, cfg_comp, looperName)
         self.btagSF = BTagSF(0, wp='medium')
-        self.recalibrateJets = self.cfg_ana.recalibrateJets if hasattr(cfg_ana, 'recalibrateJets') else False
+        self.recalibrateJets = getattr(cfg_ana, 'recalibrateJets', False)
 
-        mcGT = cfg_ana.mcGT if hasattr(cfg_ana, 'mcGT') else "76X_mcRun2_asymptotic_RunIIFall15DR76_v1"
-        dataGT = cfg_ana.dataGT if hasattr(cfg_ana, 'dataGT') else "76X_dataRun2_16Dec2015_v0"
+        mcGT = getattr(cfg_ana, 'mcGT', 'Spring16_25nsV6_MC')
+        dataGT = getattr(cfg_ana, 'dataGT', 'Spring16_25nsV6_DATA')
 
         if self.recalibrateJets:
             doResidual = getattr(cfg_ana, 'applyL2L3Residual', 'Data')

@@ -1,5 +1,6 @@
 import PhysicsTools.HeppyCore.framework.config as cfg
 from PhysicsTools.HeppyCore.framework.config import printComps
+from PhysicsTools.HeppyCore.framework.heppy_loop import getHeppyOption
 
 # Tau-tau analyzers
 from CMGTools.H2TauTau.proto.analyzers.MuMuAnalyzer import MuMuAnalyzer
@@ -19,16 +20,17 @@ from CMGTools.H2TauTau.proto.samples.spring16.triggers_muMu import data_triggers
 from CMGTools.RootTools.samples.autoAAAconfig import autoAAA
 
 # common configuration and sequence
-from CMGTools.H2TauTau.htt_ntuple_base_cff import commonSequence,  dyJetsFakeAna, puFileData, puFileMC, eventSelector
+from CMGTools.H2TauTau.htt_ntuple_base_cff import commonSequence, jetAna, dyJetsFakeAna, puFileData, puFileMC, eventSelector
 
 # mu-mu specific configuration settings
+production = getHeppyOption('production', False)
+pick_events = getHeppyOption('pick_events', False)
+syncntuple = getHeppyOption('syncntuple', True)
+cmssw = getHeppyOption('cmssw', True)
+computeSVfit = getHeppyOption('computeSVfit', False)
+data = getHeppyOption('data', False)
+reapplyJEC = getHeppyOption('reapplyJEC', True)
 
-syncntuple = False
-pick_events = False
-computeSVfit = False
-production = False
-cmssw = True
-data = True
 
 # When ready, include weights from CMGTools.H2TauTau.proto.weights.weighttable
 mc_tauEffWeight_mc = None
@@ -39,6 +41,13 @@ mc_muEffWeight = None
 dyJetsFakeAna.channel = 'mm'
 
 # Define mu-tau specific modules
+
+if reapplyJEC:
+    if cmssw:
+        jetAna.jetCol = 'patJetsReapplyJEC'
+        dyJetsFakeAna.jetCol = 'patJetsReapplyJEC'
+    else:
+        jetAna.recalibrateJets = True
 
 MuMuAna = cfg.Analyzer(
     MuMuAnalyzer,
@@ -63,22 +72,24 @@ if cmssw:
 muonWeighter1 = cfg.Analyzer(
     LeptonWeighter,
     name='LeptonWeighter_mu_1',
+    dataEffFiles={
+        'trigger':'$CMSSW_BASE/src/CMGTools/H2TauTau/data/Muon_IsoMu22_eff_Spring16.root',
+    },
     scaleFactorFiles={
-        'trigger':'$CMSSW_BASE/src/CMGTools/H2TauTau/data/Muon_SingleMu_eff.root',
-        'idiso':'$CMSSW_BASE/src/CMGTools/H2TauTau/data/Muon_IdIso0p10_eff.root',
+        'idiso':'$CMSSW_BASE/src/CMGTools/H2TauTau/data/Muon_IdIso0p1_spring16.root',
     },
     lepton='leg1',
-    disable=True # WARNING
+    disable=False
 )
 
 muonWeighter2 = cfg.Analyzer(
     LeptonWeighter,
     name='LeptonWeighter_mu_2',
     scaleFactorFiles={
-        'idiso':'$CMSSW_BASE/src/CMGTools/H2TauTau/data/Muon_IdIso0p10_eff.root',
+        'idiso':'$CMSSW_BASE/src/CMGTools/H2TauTau/data/Muon_IdIso0p1_spring16.root',
     },
     lepton='leg2',
-    disable=True # WARNING
+    disable=False
 )
 
 treeProducer = cfg.Analyzer(
@@ -153,11 +164,11 @@ if not cmssw:
     sequence.remove(module)
 
 if not production:
-    comp = [b for b in backgrounds_mu if b.name == 'DYJetsToLL_M50_LO'][0]
+    # comp = [b for b in backgrounds_mu if b.name == 'DYJetsToLL_M50_LO'][0]
     comp = data_list[0] if data else sync_list[0]
     selectedComponents = [comp]
     comp.splitFactor = 1
-    comp.files = comp.files[14:16]
+    # comp.files = comp.files[14:16]
 
 # autoAAA(selectedComponents)
 

@@ -14,8 +14,9 @@ from CMGTools.H2TauTau.proto.samples.spring16.higgs_susy import mc_higgs_susy_gg
 from CMGTools.H2TauTau.proto.samples.spring16.higgs_susy import HiggsSUSYGG160 as ggh160
 
 json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-275125_13TeV_PromptReco_Collisions16_JSON.txt'
-lumi = 3990
+# lumi = 3990
 # 3.99/fb, https://hypernews.cern.ch/HyperNews/CMS/get/physics-validation/2669.html
+lumi = 4336.09955 # brilcalc 12 July
 
 
 # Set cross sections to HTT values

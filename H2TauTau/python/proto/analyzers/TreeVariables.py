@@ -103,6 +103,7 @@ lepton_vars = [
     Variable('dz_error', lambda lep : lep.edz() if hasattr(lep, 'edz') else -1.),
     Variable('weight'),
     Variable('weight_trigger', lambda lep : getattr(lep, 'weight_trigger', 1.)),
+    Variable('weight_eff_data_trigger', lambda lep : getattr(lep, 'weight_eff_data_trigger', 1.)),
     Variable('eff_trigger_data', lambda lep : getattr(lep, 'eff_data_trigger', -999.)),
     Variable('eff_trigger_mc', lambda lep : getattr(lep, 'eff_mc_trigger', -999.)),
     Variable('weight_idiso', lambda lep : getattr(lep, 'weight_idiso', 1.)),

@@ -58,31 +58,31 @@ def createProcess(runOnMC=True, channel='tau-mu', runSVFit=False,
     process.load('Configuration.StandardSequences.GeometryRecoDB_cff')
     process.load('Configuration.StandardSequences.MagneticField_38T_cff')
 
-    if runOnMC:
-        runMVAMET(process)
+    # if runOnMC:
+    #     runMVAMET(process)
+    # 
+    # else:
+    runMVAMET(process, jetCollectionPF="patJetsReapplyJEC")
 
-    else:
-        runMVAMET(process, jetCollectionPF="patJetsReapplyJEC")
+    # loadLocalSqlite(process, 'Spring16_25nsV3_DATA.db') #os.environ['CMSSW_BASE'] + '/src/CMGTools/RootTools/data/jec/'
 
-        # loadLocalSqlite(process, 'Spring16_25nsV3_DATA.db') #os.environ['CMSSW_BASE'] + '/src/CMGTools/RootTools/data/jec/'
+    from PhysicsTools.PatAlgos.producersLayer1.jetUpdater_cff import updatedPatJetCorrFactors
+    process.patJetCorrFactorsReapplyJEC = updatedPatJetCorrFactors.clone(
+        src=cms.InputTag("slimmedJets"),
+        levels=['L1FastJet',
+                'L2Relative',
+                'L3Absolute'],
+        payload='AK4PFchs'
+    )  # Make sure to choose the appropriate levels and payload here!
 
-        from PhysicsTools.PatAlgos.producersLayer1.jetUpdater_cff import updatedPatJetCorrFactors
-        process.patJetCorrFactorsReapplyJEC = updatedPatJetCorrFactors.clone(
-            src=cms.InputTag("slimmedJets"),
-            levels=['L1FastJet',
-                    'L2Relative',
-                    'L3Absolute'],
-            payload='AK4PFchs'
-        )  # Make sure to choose the appropriate levels and payload here!
+    if not runOnMC:
+        process.patJetCorrFactorsReapplyJEC.levels += ['L2L3Residual']
 
-        if not runOnMC:
-            process.patJetCorrFactorsReapplyJEC.levels += ['L2L3Residual']
-
-        from PhysicsTools.PatAlgos.producersLayer1.jetUpdater_cff import updatedPatJets
-        process.patJetsReapplyJEC = updatedPatJets.clone(
-            jetSource=cms.InputTag("slimmedJets"),
-            jetCorrFactorsSource=cms.VInputTag(cms.InputTag("patJetCorrFactorsReapplyJEC"))
-        )
+    from PhysicsTools.PatAlgos.producersLayer1.jetUpdater_cff import updatedPatJets
+    process.patJetsReapplyJEC = updatedPatJets.clone(
+        jetSource=cms.InputTag("slimmedJets"),
+        jetCorrFactorsSource=cms.VInputTag(cms.InputTag("patJetCorrFactorsReapplyJEC"))
+    )
 
     process.maxEvents = cms.untracked.PSet(input=cms.untracked.int32(-1))
 

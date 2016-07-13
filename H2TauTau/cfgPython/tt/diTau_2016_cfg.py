@@ -13,23 +13,35 @@ from CMGTools.H2TauTau.proto.analyzers.LeptonWeighter import LeptonWeighter
 from CMGTools.H2TauTau.proto.analyzers.TauP4Scaler import TauP4Scaler
 from CMGTools.H2TauTau.proto.analyzers.SVfitProducer import SVfitProducer
 from CMGTools.H2TauTau.proto.analyzers.L1TriggerAnalyzer import L1TriggerAnalyzer
+from CMGTools.H2TauTau.proto.analyzers.MT2Analyzer import MT2Analyzer
 
 # common configuration and sequence
-from CMGTools.H2TauTau.htt_ntuple_base_cff import commonSequence, genAna, dyJetsFakeAna, puFileData, puFileMC, eventSelector, susyCounter, susyScanAna
+from CMGTools.H2TauTau.htt_ntuple_base_cff import commonSequence, genAna, dyJetsFakeAna, puFileData, puFileMC, eventSelector, susyCounter, susyScanAna, jetAna
 
 # Get all heppy options; set via '-o production' or '-o production=True'
 
 # production = True run on batch, production = False (or unset) run locally
-production = getHeppyOption('production')
-production = False
+production = getHeppyOption('production', False)
+pick_events = getHeppyOption('pick_events', False)
+syncntuple = getHeppyOption('syncntuple', True)
+cmssw = getHeppyOption('cmssw', True)
+computeSVfit = getHeppyOption('computeSVfit', False)
+data = getHeppyOption('data', False)
+tes_string = getHeppyOption('tes_string', '') # '_tesup' '_tesdown'
+reapplyJEC = getHeppyOption('reapplyJEC', True)
+calibrateTaus = getHeppyOption('calibrateTaus', False)
 
-# local switches
-syncntuple = False
-computeSVfit = False
-pick_events = False
-cmssw = False
-calibrateTaus = False
-data = False
+# Just to be sure
+if production:
+    syncntuple = False
+    pick_events = False
+
+if reapplyJEC:
+    if cmssw:
+        jetAna.jetCol = 'patJetsReapplyJEC'
+        dyJetsFakeAna.jetCol = 'patJetsReapplyJEC'
+    else:
+        jetAna.recalibrateJets = True
 
 dyJetsFakeAna.channel = 'tt'
 
@@ -67,7 +79,6 @@ tauTauAna = cfg.Analyzer(
 if not cmssw:
     tauTauAna.from_single_objects = True
 
-from CMGTools.H2TauTau.proto.analyzers.MT2Analyzer import MT2Analyzer
 tauTauMT2Ana = cfg.Analyzer(
     MT2Analyzer, name='MT2Analyzer',
     metCollection="slimmedMETs",
@@ -120,7 +131,7 @@ tau1Weighter = cfg.Analyzer(
     LeptonWeighter,
     name='LeptonWeighter_tau1',
     scaleFactorFiles={
-        #'trigger': '$CMSSW_BASE/src/CMGTools/H2TauTau/data/Tau_diTau35_spring16.py',  # include in the event's overall weight
+        'trigger': '$CMSSW_BASE/src/CMGTools/H2TauTau/data/Tau_diTau35_spring16.py',  # include in the event's overall weight
     },
 
     otherScaleFactorFiles={
@@ -136,7 +147,7 @@ tau2Weighter = cfg.Analyzer(
     LeptonWeighter,
     name='LeptonWeighter_tau2',
     scaleFactorFiles={
-        #'trigger': '$CMSSW_BASE/src/CMGTools/H2TauTau/data/Tau_diTau35_spring16.py',  # include in the event's overall weight
+        'trigger': '$CMSSW_BASE/src/CMGTools/H2TauTau/data/Tau_diTau35_spring16.py',  # include in the event's overall weight
     },
 
     otherScaleFactorFiles={
@@ -157,6 +168,7 @@ syncTreeProducer = cfg.Analyzer(
     H2TauTauTreeProducerTauTau,
     name='H2TauTauSyncTreeProducerTauTau',
     varStyle='sync',
+    treename='sync_tree'
     # skimFunction = 'event.isSignal' #don't cut out any events from the sync tuple
 )
 
@@ -270,9 +282,8 @@ outputService.append(output_service)
 ###            SET BATCH OR LOCAL               ###
 ###################################################
 if not production:
-    comp = SMS
-    comp = SignalSUSY[0]
-    # comp = data_list[0]
+    comp = data_list[0] if data else sync_list[0]
+    # comp = SMS
     selectedComponents = [comp]
     comp.splitFactor = 1
     comp.fineSplitFactor = 1

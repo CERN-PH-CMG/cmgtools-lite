@@ -73,22 +73,23 @@ class H2TauTauTreeProducerTauTau(H2TauTauTreeProducer):
 
         if hasattr(tau1, 'weight_trigger'):
             self.fill(self.tree, 'l1_trigger_weight', tau1.weight_trigger)
-            self.fill(self.tree, 'l1_trigger_weight_up', tau1.weight_trigger_up)
-            self.fill(self.tree, 'l1_trigger_weight_down', tau1.weight_trigger_down)
+            self.fill(self.tree, 'l1_trigger_weight_up', getattr(tau1, 'weight_trigger_up', 1.))
+            self.fill(self.tree, 'l1_trigger_weight_down', getattr(tau1, 'weight_trigger_down', 1.))
 
             self.fill(self.tree, 'l2_trigger_weight', tau2.weight_trigger)
-            self.fill(self.tree, 'l2_trigger_weight_up', tau2.weight_trigger_up)
-            self.fill(self.tree, 'l2_trigger_weight_down', tau2.weight_trigger_down)
+            self.fill(self.tree, 'l2_trigger_weight_up', getattr(tau2, 'weight_trigger_up', 1.))
+            self.fill(self.tree, 'l2_trigger_weight_down', getattr(tau2, 'weight_trigger_down', 1.))
 
         self.fill(self.tree, 'mt2',  event.mt2_lep)
 
-        self.fill(self.tree, 'GenSusyMScan1',  event.genSusyMScan1)
-        self.fill(self.tree, 'GenSusyMScan2',  event.genSusyMScan2)
-        self.fill(self.tree, 'GenSusyMScan3',  event.genSusyMScan3)
-        self.fill(self.tree, 'GenSusyMScan4',  event.genSusyMScan4)
-        self.fill(self.tree, 'GenSusyMNeutralino',  event.genSusyMNeutralino)
-        self.fill(self.tree, 'GenSusyMChargino',  event.genSusyMChargino)
-        self.fill(self.tree, 'GenSusyMStau',  event.genSusyMStau)
-        self.fill(self.tree, 'GenSusyMStau2',  event.genSusyMStau2)
+        if self.cfg_comp.isMC:
+            self.fill(self.tree, 'GenSusyMScan1',  event.genSusyMScan1)
+            self.fill(self.tree, 'GenSusyMScan2',  event.genSusyMScan2)
+            self.fill(self.tree, 'GenSusyMScan3',  event.genSusyMScan3)
+            self.fill(self.tree, 'GenSusyMScan4',  event.genSusyMScan4)
+            self.fill(self.tree, 'GenSusyMNeutralino',  event.genSusyMNeutralino)
+            self.fill(self.tree, 'GenSusyMChargino',  event.genSusyMChargino)
+            self.fill(self.tree, 'GenSusyMStau',  event.genSusyMStau)
+            self.fill(self.tree, 'GenSusyMStau2',  event.genSusyMStau2)
 
         self.fillTree(event)

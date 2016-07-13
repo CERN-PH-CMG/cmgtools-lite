@@ -24,7 +24,6 @@ from CMGTools.H2TauTau.proto.analyzers.RecoilCorrector import RecoilCorrector
 puFileMC = '$CMSSW_BASE/src/CMGTools/H2TauTau/data/MC_Spring16_PU25_Startup.root'
 puFileData = '$CMSSW_BASE/src/CMGTools/H2TauTau/data/data_pu_22-06-2016_713mb_80.root'
 
-reapplyJEC = True
 applyRecoil = False
 
 from CMGTools.TTHAnalysis.analyzers.ttHhistoCounterAnalyzer import ttHhistoCounterAnalyzer
@@ -98,7 +97,7 @@ susyScanAna = cfg.Analyzer(
 dyJetsFakeAna = cfg.Analyzer(
     DYJetsFakeAnalyzer,
     name='DYJetsFakeAnalyzer',
-    jetCol='patJetsReapplyJEC' if reapplyJEC else 'slimmedJets',
+    jetCol='slimmedJets',
     channel='',
     genPtCut=8.
 )
@@ -106,7 +105,7 @@ dyJetsFakeAna = cfg.Analyzer(
 jetAna = cfg.Analyzer(
     JetAnalyzer,
     name='JetAnalyzer',
-    jetCol='patJetsReapplyJEC' if reapplyJEC else 'slimmedJets',
+    jetCol='slimmedJets',
     jetPt=20.,
     jetEta=4.7,
     relaxJetId=False,
