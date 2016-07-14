@@ -45,9 +45,12 @@ def makeSignalModel(w, model, refhpass, refhfail, options):
         w.factory("Voigtian::signal1(mass, mean1[90,80,100], width[2.495], sigma1[2,0.5,3])")
         w.factory("Voigtian::signal2(mass, mean2[90,80,100], width,        prod::sigma2(sigma1, sratio[4,1.5,10]))")
         w.factory("SUM::signalPass(vFrac[0.8,0.5,1]*signal1, signal2)")
-        w.factory("Voigtian::signal1f(mass, sum::mean1f(mean1, dm1[0,-3,3]), width, prod::sigma1f(sigma1, s1ratio[1,0.7,1.5]))")
-        w.factory("Voigtian::signal2f(mass, sum::mean2f(mean2, dm2[0,-3,3]), width, prod::sigma2f(sigma2, s2ratio[1,0.5,2.5]))")
-        w.factory("SUM::signalFail(prod::vFracf(vFrac,fracRatio[1,0.7,1.5])*signal1f, signal2f)")
+        w.factory("Voigtian::signal1f(mass, mean1f[90,80,100], width, sigma1f[2,0.5,3])")
+        w.factory("Voigtian::signal2f(mass, mean2f[90,80,100], width, prod::sigma2f(sigma1f, sratiof[4,1.5,10]))")
+        w.factory("SUM::signalFail(vFracf[0.8,0.5,1]*signal1f, signal2f)")
+        #w.factory("Voigtian::signal1f(mass, sum::mean1f(mean1, dm1[0,-3,3]), width, prod::sigma1f(sigma1, s1ratio[1,0.7,2.0]))")
+        #w.factory("Voigtian::signal2f(mass, sum::mean2f(mean2, dm2[0,-3,3]), width, prod::sigma2f(sigma2, s2ratio[1,0.5,2.5]))")
+        #w.factory("SUM::signalFail(prod::vFracf(vFrac,fracRatio[1,0.7,2.0])*signal1f, signal2f)")
         return ("signalPass","signalFail")
     elif model == "BWCB":
         w.factory("BreitWigner::zBW(mass,MZ[91.1876], GammaZ[2.495])")
@@ -372,9 +375,13 @@ def fitOneEfficiency(name, hpass, hfail, sigModel, bkgModel, refpass, reffail, o
     if hfail.Integral() > 0 and w.var("efficiency").getVal() > 0.9:
         w.var("efficiency").setMin(0.85)
         retval = minim.minimize("Minuit2","migrad");
-    go = True; niter = 0; minoslog = []
+    go = True; niter = 0; minoslog = []; efferr = None
     while go:
         niter += 1
+        if niter == 5: 
+            minim.minimize("Minuit2","scan");
+        if niter == 7: 
+            minim.minimize("Minuit","minimize");
         if niter >= 10:
             minoslog += [ "STOP AFTER %d ITERATIONS" % niter ]
             go = False
@@ -445,6 +452,9 @@ def fitOneEfficiency(name, hpass, hfail, sigModel, bkgModel, refpass, reffail, o
     log.write("\nChi2: pass %.2f, fail %.2f, total %.2f, ndof: %d - %d = %d \n" % (
         chi2pass, chi2fail, chi2pass + chi2fail, 
         hpass.GetNbinsX()*2, fpf.getSize(),  hpass.GetNbinsX()*2 - fpf.getSize()+1))
+
+    log.write("\n"+options.textBlob+"\n")
+
     log.close()
 
 
@@ -731,7 +741,7 @@ def plotRatios(effs,ratios,options):
     ratio.Draw("PZ SAME")
        
 
-def plotEffs(name,effs,options):
+def plotEffs(name,effs,options,printDir):
     c1 = ROOT.TCanvas("c1", "c1", 600, (750 if options.doRatio else 600))
     c1.Draw()
     p1, p2 = c1, None # high and low panes
@@ -760,10 +770,10 @@ def plotEffs(name,effs,options):
         p2.cd()
         plotRatios(effs,ratios,options)
     for ext in "pdf","png":
-        c1.Print("%s/%s.%s" % (options.printDir, name, ext))
-    handle = open("%s/%s.%s"  % (options.printDir, name, "txt"), "w")
+        c1.Print("%s/%s.%s" % (printDir, name, ext))
+    handle = open("%s/%s.%s"  % (printDir, name, "txt"), "w")
     for line in text: handle.write(line+"\n")
-    fout = ROOT.TFile.Open("%s/%s.%s"  % (options.printDir, name, "root"), "RECREATE")
+    fout = ROOT.TFile.Open("%s/%s.%s"  % (printDir, name, "root"), "RECREATE")
     fout.WriteTObject(effs[0], name)
     if getattr(effs[0],'syst',None): fout.WriteTObject(effs[0].syst, name+"_syst")
     if getattr(effs[0],'counting',None): fout.WriteTObject(effs[0].counting, name+"_counting")
@@ -795,12 +805,12 @@ def addTnPEfficiencyOptions(parser):
     parser.add_option("-N", "--name",    dest="name", type="string", help="name", default="eff")
     parser.add_option("-n", "--num",     dest="num", type="string", default="1", help="numerator")
     parser.add_option("-d", "--den",     dest="den", type="string", default="1", help="denominator")
-    parser.add_option("-x", "--x-var",     dest="xvar", type="string", default=("TnP_l2_pt","[5,10,15,20,25,30,35,40,50,60,80]"), nargs=2, help="X var and bin")
+    parser.add_option("-x", "--x-var",     dest="xvar", type="string", default=("TnP_probe_pt","[5,10,15,20,25,30,35,40,50,60,80]"), nargs=2, help="X var and bin")
     parser.add_option("-m", "--mass-var",  dest="mvar", type="string", default=("TnP_mass","80,72,115"), nargs=2, help="Mass var and binning")
     parser.add_option("-M", "--max-entries",    dest="maxEntries", default=99999999, type="long")
     parser.add_option("-r", "--refmc",   dest="refmc", default=[], action="append", help="refmc");
-    parser.add_option("--mcm", "--mc-mass",  dest="mcMass", type="string", default="TnP_mass*sqrt(TnP_l1_mcPt*TnP_l2_mcPt/TnP_l1_pt/TnP_l2_pt)", help="mc Mass")
-    parser.add_option("--mcc", "--mc-cut",  dest="mcCut", type="string", default="TnP_l1_mcMatchId != 0 && TnP_l2_mcMatchId != 0", help="mc Mass")
+    parser.add_option("--mcm", "--mc-mass",  dest="mcMass", type="string", default="TnP_mass*sqrt(TnP_tag_mcPt*TnP_probe_mcPt/TnP_tag_pt/TnP_probe_pt)", help="mc Mass")
+    parser.add_option("--mcc", "--mc-cut",  dest="mcCut", type="string", default="TnP_tag_mcMatchId != 0 && TnP_probe_mcMatchId != 0", help="mc Mass")
     parser.add_option("-W", "--mcw", "--mc-weight",  dest="mcWeight", type="string", default="1", help="mc Mass")
     parser.add_option("--fine-binning",  dest="fineBinning", default=1, type="int")
     parser.add_option("--minimizer-strategy",  dest="minimizerStrategy", default=1, type="int")
@@ -817,6 +827,7 @@ def addTnPEfficiencyOptions(parser):
     parser.add_option("--request", "--refit", dest="request", type="string", default=None, help="make a single fit");
     parser.add_option("--reqname", dest="requestName", type="string", default=None, help="don't do anything unlesshe name (from -N) matches this");
     parser.add_option("-j", "--jobs",    dest="jobs",      type="int",    default=0, help="Use N threads");
+    parser.add_option("--pretend", dest="pretend", action="store_true",  default=False, help="Don't run")
 
 if __name__ == "__main__":
     from optparse import OptionParser
@@ -826,12 +837,6 @@ if __name__ == "__main__":
     if options.requestName and not re.match(options.requestName+"$", options.name): exit()
     if len(args) == 0:
         print "You must specify at least one tree to fit"
-    ROOT.gROOT.SetBatch(True)
-    ROOT.gROOT.ProcessLine(".x ~/cpp/tdrstyle.cc")
-    ROOT.gSystem.Load("libHiggsAnalysisCombinedLimit")
-    if "/functions_cc.so" not in ROOT.gSystem.GetLibraries(): 
-        ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/TTHAnalysis/python/plotter/functions.cc+" % os.environ['CMSSW_BASE']);
-    ROOT.RooMsgService.instance().setGlobalKillBelow(ROOT.RooFit.ERROR)
     if not os.path.exists(options.printDir):
         os.system("mkdir -p %s" % options.printDir)
         os.system("cp /afs/cern.ch/user/g/gpetrucc/php/index.php  %s/" % options.printDir)
@@ -839,6 +844,23 @@ if __name__ == "__main__":
     if not os.path.exists(options.printDirBins):
         os.system("mkdir -p %s" % options.printDirBins)
         os.system("cp /afs/cern.ch/user/g/gpetrucc/php/index.php  %s/" % options.printDirBins)
+    textBlob = "\n".join([
+        "Numerator: "+options.num,
+        "Denominator: "+options.den,
+        "Binning variable: "+str(options.xvar),
+        "Signal model: "+options.sigModel,
+        "Background model: "+options.bkgModel,
+    ])
+    options.textBlob = textBlob
+    dump = open("%s/%s.info" % (options.printDir, options.name), "w"); dump.write(textBlob+"\n"); dump.close()
+    if options.pretend: 
+        print textBlob; exit()
+    ROOT.gROOT.SetBatch(True)
+    ROOT.gROOT.ProcessLine(".x ~/cpp/tdrstyle.cc")
+    ROOT.gSystem.Load("libHiggsAnalysisCombinedLimit")
+    if "/functions_cc.so" not in ROOT.gSystem.GetLibraries(): 
+        ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/TTHAnalysis/python/plotter/functions.cc+" % os.environ['CMSSW_BASE']);
+    ROOT.RooMsgService.instance().setGlobalKillBelow(ROOT.RooFit.ERROR)
     tree = ROOT.TChain(options.tree)
     for fname in args: tree.Add(fname)
     trees = [ (tree, "") ]
@@ -852,9 +874,9 @@ if __name__ == "__main__":
 
     effs =  [ makeHistos2D(t,options.num,options.den,options.xvar,options.mvar,options,post=l,reftree=reftree) for (t,l) in trees ]
     if options.request and "bin" in options.request: exit()
-    plotEffs(options.name,effs,options)
+    plotEffs(options.name,effs,options,options.printDir)
     if getattr(effs[0],'counting',None):
-        plotEffs(options.name+"_counting",[e.counting for e in effs],options)
+        plotEffs(options.name+"_counting",[e.counting for e in effs],options,options.printDirBins)
     if reftree:
-        plotEffs(options.name+"_mcclosure",[effs[1], effs[1].truth],options)
+        plotEffs(options.name+"_mcclosure",[effs[1], effs[1].truth],options,options.printDirBins)
 
