@@ -52,3 +52,4 @@ b2lss_mm_0tau_bt_neg: nTauTight==0 && abs(LepGood1_pdgId)==13 && abs(LepGood2_pd
 b2lss_mm_0tau_bt_pos: nTauTight==0 && abs(LepGood1_pdgId)==13 && abs(LepGood2_pdgId)==13 && LepGood1_charge>0 && nBJetMedium25 >= 2 ; Disable=True
 b2lss_0tau_bl: nTauTight==0 && nBJetMedium25 < 2 ; Disable=True
 b2lss_0tau_bt: nTauTight==0 && nBJetMedium25 >= 2 ; Disable=True
+2lep_promptrightcharge: (!isData) && LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge; Disable=True

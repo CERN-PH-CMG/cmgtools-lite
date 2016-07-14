@@ -330,12 +330,18 @@ class TreeToYield:
             if self._weight and nev < 1000: print nfmtS % toPrint,
             else                          : print nfmtL % toPrint,
             print ""
-    def _getYield(self,tree,cut,fsplit=None):
-        if self._weight:
+    def _getCut(self,cut,noweight=False):
+        if self._weight and not noweight:
             if self._isdata: cut = "(%s)     *(%s)*(%s)" % (self._weightString,                    self._scaleFactor, self.adaptExpr(cut,cut=True))
             else:            cut = "(%s)*(%s)*(%s)*(%s)" % (self._weightString,self._options.lumi, self._scaleFactor, self.adaptExpr(cut,cut=True))
-            if self._options.doS2V:
-                cut  = scalarToVector(cut)
+        else: 
+            cut = self.adaptExpr(cut,cut=True)
+        if self._options.doS2V:
+            cut  = scalarToVector(cut)
+        return cut
+    def _getYield(self,tree,cut,fsplit=None,cutNeedsPreprocessing=True):
+        cut = self._getCut(cut) if cutNeedsPreprocessing else cut
+        if self._weight:
 #            print cut
             ROOT.gROOT.cd()
             if ROOT.gROOT.FindObject("dummy") != None: ROOT.gROOT.FindObject("dummy").Delete()
@@ -345,9 +351,6 @@ class TreeToYield:
             self.negativeCheck(histo)
             return [ histo.GetBinContent(1), histo.GetBinError(1), nev ]
         else: 
-            cut = self.adaptExpr(cut,cut=True)
-            if self._options.doS2V:
-                cut  = scalarToVector(cut)
             (firstEntry, maxEntries) = self._rangeToProcess(fsplit)
             npass = tree.Draw("1",self.adaptExpr(cut,cut=True),"goff", maxEntries, firstEntry);
             return [ npass, sqrt(npass), npass ]
@@ -399,7 +402,7 @@ class TreeToYield:
         if self._options.doS2V:
             cut  = scalarToVector(cut)
             expr = scalarToVector(expr)
-#        print cut
+#        print cut 
 #        print expr
         (firstEntry, maxEntries) = self._rangeToProcess(fsplit)
         if ROOT.gROOT.FindObject("dummy") != None: ROOT.gROOT.FindObject("dummy").Delete()

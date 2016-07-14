@@ -1,10 +1,12 @@
 #!/bin/bash
 
 if [[ "$HOSTNAME" == "cmsco01.cern.ch" ]]; then
-    T="/data1/peruzzi/809_June9_ttH_skimOnlyMC"
+    T2L=" -P /data1/peruzzi/809_June9_ttH_skimOnlyMC_2lsstight_relax_prescale "
+    T3L=" -P /data1/peruzzi/809_June9_ttH_skimOnlyMC_3ltight_relax_prescale "
     J=8;
 else
-    T="/afs/cern.ch/work/p/peruzzi/tthtrees/TREES_76X_200216_jecV1M2";
+    T2L=" -P /afs/cern.ch/work/p/peruzzi/ra5trees/809_June9_ttH_skimOnlyMC_2lsstight_relax_prescale "
+    T3L=" -P /afs/cern.ch/work/p/peruzzi/ra5trees/809_June9_ttH_skimOnlyMC_3ltight_relax_prescale "
     J=4;
 fi
 
@@ -13,7 +15,7 @@ OUTNAME=$1; shift;
 if [[ "X$1" == "X" ]]; then echo "Provide luminosity!"; exit; fi
 LUMI="$1"; shift
 echo "Normalizing to ${LUMI}/fb";
-OPTIONS=" -P $T --tree treeProducerSusyMultilepton --s2v -j $J -l ${LUMI} -f --xp data --asimov"
+OPTIONS=" --tree treeProducerSusyMultilepton --s2v -j $J -l ${LUMI} -f --xp data --asimov "
 test -d cards/$OUTNAME || mkdir -p cards/$OUTNAME
 OPTIONS="${OPTIONS} --od cards/$OUTNAME ";
 
@@ -23,32 +25,19 @@ BTight=" -E ^BTight "
 ZeroTau=" -E ^0tau "
 OneTau=" -E ^1tau "
 
-SPLITDECAYS=""
+SPLITDECAYS="-prescale"
 #SPLITDECAYS="-splitdecays"
 
-OPTIONS="${OPTIONS} --Fs {P}/2_recleaner_v4_b1E2 --Fs {P}/3_kinMVA_v4 --Fs {P}/4_kinMVAmulticlassV2_v4 --mcc ttH-multilepton/mcc-bTagSFOne.txt" # WARNING B-TAG SF OFF
+OPTIONS="${OPTIONS} --Fs {P}/2_recleaner_v4_b1E2 --Fs {P}/4_kinMVA_with_BDTv8_and_MEM_v4 --mcc ttH-multilepton/mcc-bTagSFOne.txt" # WARNING B-TAG SF OFF
 OPTIONS="${OPTIONS} --mcc ttH-multilepton/lepchoice-ttH-FO.txt --mcc ttH-multilepton/ttH_2lss3l_triggerdefs.txt --neg" # neg necessary for subsequent rebin
 CATPOSTFIX=""
 
-#FUNCTION_2L="kinMVA_2lss_ttV:kinMVA_2lss_ttbar 20,-1,1,20,-1,1"
-#FUNCTION_3L="kinMVA_3l_ttV:kinMVA_3l_ttbar 20,-1,1,20,-1,1"
-#BINFUNCTION_2L="6:ttH_MVAto1D_6_2lss_Marco"
-#BINFUNCTION_3L="3:ttH_MVAto1D_3_3l_Marco"
-
-#FUNCTION_2L="kinMVA_2lss_MultiClass_ttH:kinMVA_2lss_MultiClass_ttV 20,-1,1,20,-1,1"
-#FUNCTION_3L="kinMVA_3l_MultiClass_ttH:kinMVA_3l_MultiClass_ttV 20,-1,1,20,-1,1"
-#BINFUNCTION_2L="4:ttH_MultiClass_1D_4"
-#BINFUNCTION_3L="4:ttH_MultiClass_1D_4"
-
-#FUNCTION_2L="kinMVA_2lss_MultiClass_ttH:kinMVA_2lss_MultiClass_ttV 20,-1,1,20,-1,1"
-#FUNCTION_3L="kinMVA_3l_MultiClass_ttH:kinMVA_3l_MultiClass_ttV 20,-1,1,20,-1,1"
-#BINFUNCTION_2L="3:ttH_MultiClass_1D_3"
-#BINFUNCTION_3L="3:ttH_MultiClass_1D_3"
-
-FUNCTION_2L="kinMVA_2lss_MultiClass_ttH:kinMVA_2lss_MultiClass_ttV 20,-1,1,20,-1,1"
-FUNCTION_3L="kinMVA_3l_MultiClass_ttH:kinMVA_3l_MultiClass_ttV 20,-1,1,20,-1,1"
-BINFUNCTION_2L="6:ttH_MultiClass_1D_6"
-BINFUNCTION_3L="6:ttH_MultiClass_1D_6"
+FUNCTION_2L="kinMVA_2lss_ttV:kinMVA_2lss_ttbar 20,-1,1,20,-1,1"
+#FUNCTION_2L="kinMVA_2lss_ttV:kinMVA_2lss_ttbar_withBDTv8 20,-1,1,20,-1,1"
+FUNCTION_3L="kinMVA_3l_ttV:kinMVA_3l_ttbar 20,-1,1,20,-1,1"
+#FUNCTION_3L="kinMVA_3l_ttV_withMEM:kinMVA_3l_ttbar 20,-1,1,20,-1,1"
+BINFUNCTION_2L="6:ttH_MVAto1D_6_2lss_Marco"
+BINFUNCTION_3L="3:ttH_MVAto1D_3_3l_Marco"
 
 if [[ "$2" == "save" ]]; then
 DOFILE="--savefile activate"
@@ -58,7 +47,7 @@ DOFILE="--infile activate"
 fi
 
 if [[ "$1" == "all" || "$1" == "2lss" || "$1" == "2lss_3j" ]]; then  # WARNING B-TAG SF OFF ABOVE (MCC) + LEP LOOSE SF OFF
-    OPT_2L="${OPTIONS} -W puw2016_vtx_4fb(nVert)*leptonSF_ttH(LepGood_pdgId[iF_Recl[0]],LepGood_pt[iF_Recl[0]],LepGood_eta[iF_Recl[0]],2)*leptonSF_ttH(LepGood_pdgId[iF_Recl[1]],LepGood_pt[iF_Recl[1]],LepGood_eta[iF_Recl[1]],2)*triggerSF_ttH(LepGood_pdgId[iF_Recl[0]],LepGood_pt[iF_Recl[0]],LepGood_pdgId[iF_Recl[1]],LepGood_pt[iF_Recl[1]],2)*eventBTagSF"
+    OPT_2L="${T2L} ${OPTIONS} -W puw2016_vtx_4fb(nVert)*leptonSF_ttH(LepGood_pdgId[iF_Recl[0]],LepGood_pt[iF_Recl[0]],LepGood_eta[iF_Recl[0]],2)*leptonSF_ttH(LepGood_pdgId[iF_Recl[1]],LepGood_pt[iF_Recl[1]],LepGood_eta[iF_Recl[1]],2)*triggerSF_ttH(LepGood_pdgId[iF_Recl[0]],LepGood_pt[iF_Recl[0]],LepGood_pdgId[iF_Recl[1]],LepGood_pt[iF_Recl[1]],2)*eventBTagSF"
     POS=" -A alwaystrue positive LepGood1_charge>0 "
     NEG=" -A alwaystrue negative LepGood1_charge<0 "
 
@@ -88,7 +77,7 @@ if [[ "$1" == "all" || "$1" == "2lss" || "$1" == "2lss_3j" ]]; then  # WARNING B
 fi
 
 if [[ "$1" == "all" || "$1" == "3l" || "$1" == "3l_zpeak" ]]; then  # WARNING B-TAG SF OFF ABOVE (MCC) + LEP LOOSE SF OFF
-    OPT_3L="${OPTIONS} -W puw2016_vtx_4fb(nVert)*leptonSF_ttH(LepGood_pdgId[iF_Recl[0]],LepGood_pt[iF_Recl[0]],LepGood_eta[iF_Recl[0]],3)*leptonSF_ttH(LepGood_pdgId[iF_Recl[1]],LepGood_pt[iF_Recl[1]],LepGood_eta[iF_Recl[1]],3)*leptonSF_ttH(LepGood_pdgId[iF_Recl[2]],LepGood_pt[iF_Recl[2]],LepGood_eta[iF_Recl[2]],3)*triggerSF_ttH(LepGood_pdgId[iF_Recl[0]],LepGood_pt[iF_Recl[0]],LepGood_pdgId[iF_Recl[1]],LepGood_pt[iF_Recl[1]],3)*eventBTagSF"
+    OPT_3L="${T3L} ${OPTIONS} -W puw2016_vtx_4fb(nVert)*leptonSF_ttH(LepGood_pdgId[iF_Recl[0]],LepGood_pt[iF_Recl[0]],LepGood_eta[iF_Recl[0]],3)*leptonSF_ttH(LepGood_pdgId[iF_Recl[1]],LepGood_pt[iF_Recl[1]],LepGood_eta[iF_Recl[1]],3)*leptonSF_ttH(LepGood_pdgId[iF_Recl[2]],LepGood_pt[iF_Recl[2]],LepGood_eta[iF_Recl[2]],3)*triggerSF_ttH(LepGood_pdgId[iF_Recl[0]],LepGood_pt[iF_Recl[0]],LepGood_pdgId[iF_Recl[1]],LepGood_pt[iF_Recl[1]],3)*eventBTagSF"
     POS=" -A alwaystrue positive (LepGood1_charge+LepGood2_charge+LepGood3_charge)>0 "
     NEG=" -A alwaystrue negative (LepGood1_charge+LepGood2_charge+LepGood3_charge)<0 "
 

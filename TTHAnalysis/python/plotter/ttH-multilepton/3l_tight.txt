@@ -29,3 +29,4 @@ b3l_bl_neg: (LepGood1_charge+LepGood2_charge+LepGood3_charge)<0 && nBJetMedium25
 b3l_bl_pos: (LepGood1_charge+LepGood2_charge+LepGood3_charge)>0 && nBJetMedium25 < 2 ; Disable=True
 b3l_bt_neg: (LepGood1_charge+LepGood2_charge+LepGood3_charge)<0 && nBJetMedium25 >= 2 ; Disable=True
 b3l_bt_pos: (LepGood1_charge+LepGood2_charge+LepGood3_charge)>0 && nBJetMedium25 >= 2 ; Disable=True
+3lep_prompt: (!isData) && LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0; Disable=True
