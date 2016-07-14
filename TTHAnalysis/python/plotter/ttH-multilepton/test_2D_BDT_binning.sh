@@ -14,5 +14,6 @@ cd ~peruzzi/work/cmgtools/combine/CMSSW_7_1_15/src/; eval `scramv1 runtime -sh`;
 rm ${category}.txt; combineCards.py *card.txt > ${category}.txt
 res=`combine -M Asymptotic --run blind --rAbsAcc 0.0005 --rRelAcc 0.0005 ${category}.txt | grep "Expected 50"`
 cd ../..
+eval `scramv1 runtime -sh`
 
 echo "${1} ${2} ${3} ${4} ${5} ${6} ${7} ${res}" >> results_optMVAWP_${directory}.txt

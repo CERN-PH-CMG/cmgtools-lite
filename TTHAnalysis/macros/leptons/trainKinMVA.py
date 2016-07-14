@@ -350,6 +350,12 @@ def train_2d(fOutName, training, options):
             "MEM_TTW := max(-100.,min(10.,log(MEM_TTW)))",
             "MEM_TTZ := max(-100.,min(10.,log(MEM_TTLL)))",
             ]
+    if 'memfixvars' in training:
+        variables += [
+            "MEM_TTH := min(0,log(max(3.72e-44,MEM_TTH)))",
+            "MEM_TTW := min(0,log(max(3.72e-44,MEM_TTW)))",
+            "MEM_TTZ := min(0,log(max(3.72e-44,MEM_TTLL)))",
+            ]
 
     outname = fOutName+'_'+training
     train_single(allcuts, variables, dsets, outname, options)

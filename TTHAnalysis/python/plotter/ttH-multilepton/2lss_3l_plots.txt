@@ -101,7 +101,10 @@ kinMVA_input_BDTv8_eventReco_mvaValue : BDTv8_eventReco_mvaValue : 80,-0.4,1; XT
 kinMVA_input_BDTv8_eventReco_bJet_fromHadTop_CSV : BDTv8_eventReco_bJet_fromHadTop_CSV : 80,-0.4,1; XTitle="BDTv8 bJet_fromHadTop_CSV", Legend="TL"
 kinMVA_input_BDTv8_eventReco_HadTop_pT : BDTv8_eventReco_HadTop_pT : 80,0,200; XTitle="BDTv8 top p_{T} [GeV]", Legend="TR"
 kinMVA_input_BDTv8_eventReco_HadTop_mass : BDTv8_eventReco_HadTop_mass: 80,0,400; XTitle="BDTv8 top mass [GeV]", Legend="TR"
-kinMVA_input_MEM_TTHvsTTW : max(-10.,min(50.,log(MEM_TTH)-log(MEM_TTW))) : 60,-10,50; XTitle="MEM_TTHvsTTW"
+kinMVA_input_MEM_TTH : min(0,log(max(3.72e-44,MEM_TTH))) : 60,-100,0; XTitle="MEM_TTH", Legend="TL"
+kinMVA_input_MEM_TTW : min(0,log(max(3.72e-44,MEM_TTW))) : 60,-100,0; XTitle="MEM_TTW", Legend="TL"
+kinMVA_input_MEM_TTZ : min(0,log(max(3.72e-44,MEM_TTLL))) : 60,-100,0; XTitle="MEM_TTZ", Legend="TR"
+
 kinMVA_input_MEM_TTHvsTTZ : max(-10.,min(50.,log(MEM_TTH)-log(MEM_TTLL))) : 60,-10,50; XTitle="MEM_TTHvsTTZ"
 
 nLepLoose:   nLepLoose : [-0.5,0.5,1.5,2.5,3.5,4.5,5.5] ; XTitle="Number of loose leptons", XNDdiv=505
