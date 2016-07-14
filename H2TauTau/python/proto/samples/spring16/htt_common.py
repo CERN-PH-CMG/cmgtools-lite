@@ -2,6 +2,8 @@ from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv2 import DYJe
 # WJetsToLNu_HT100to200, WJetsToLNu_HT200to400, WJetsToLNu_HT400to600, WJetsToLNu_HT600toInf, TToLeptons_tch_powheg, QCD_Mu15, WJetsToLNu_LO, DYJetsToTauTau_M150_LO, 
 from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv2 import TT_pow_ext3 as TT_pow_ext
 from CMGTools.RootTools.samples.samples_13TeV_DATA2016 import SingleMuon_Run2016B_PromptReco_v2, SingleElectron_Run2016B_PromptReco_v2, MuonEG_Run2016B_PromptReco_v2, Tau_Run2016B_PromptReco_v2
+from CMGTools.RootTools.samples.samples_13TeV_DATA2016 import SingleMuon_Run2016C_PromptReco_v2, SingleElectron_Run2016C_PromptReco_v2, MuonEG_Run2016C_PromptReco_v2, Tau_Run2016C_PromptReco_v2
+from CMGTools.RootTools.samples.samples_13TeV_DATA2016 import SingleMuon_Run2016D_PromptReco_v2, SingleElectron_Run2016D_PromptReco_v2, MuonEG_Run2016D_PromptReco_v2, Tau_Run2016D_PromptReco_v2
 from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv2 import ZZTo4L, WZTo1L3Nu, WWTo1L1Nu2Q, WZTo1L1Nu2Q, ZZTo2L2Q, WZTo2L2Q, VVTo2L2Nu
 # WZTo3LNu_amcatnlo, 
 
@@ -18,6 +20,10 @@ json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/C
 # 3.99/fb, https://hypernews.cern.ch/HyperNews/CMS/get/physics-validation/2669.html
 lumi = 4336.09955 # brilcalc 12 July
 
+# 14 July
+json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-276097_13TeV_PromptReco_Collisions16_JSON_NoL1T_v2.txt'
+# lumi in HN: 7650
+lumi = 7647.63752
 
 # Set cross sections to HTT values
 
@@ -105,10 +111,10 @@ backgrounds_ele += QCDPtEMEnriched
 backgrounds_ele += QCDPtbcToE
 
 # Data
-data_single_muon = [SingleMuon_Run2016B_PromptReco_v2]
-data_single_electron = [SingleElectron_Run2016B_PromptReco_v2]
-data_muon_electron = [MuonEG_Run2016B_PromptReco_v2]
-data_tau = [Tau_Run2016B_PromptReco_v2]
+data_single_muon = [SingleMuon_Run2016B_PromptReco_v2, SingleMuon_Run2016C_PromptReco_v2, SingleMuon_Run2016D_PromptReco_v2]
+data_single_electron = [SingleElectron_Run2016B_PromptReco_v2, SingleElectron_Run2016C_PromptReco_v2, SingleElectron_Run2016D_PromptReco_v2]
+data_muon_electron = [MuonEG_Run2016B_PromptReco_v2, MuonEG_Run2016C_PromptReco_v2, MuonEG_Run2016D_PromptReco_v2]
+data_tau = [Tau_Run2016B_PromptReco_v2, Tau_Run2016C_PromptReco_v2, Tau_Run2016D_PromptReco_v2]
 
 for sample in data_single_muon + data_single_electron + data_muon_electron + data_tau:
     sample.json = json
