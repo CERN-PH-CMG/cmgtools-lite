@@ -339,10 +339,16 @@ def train_2d(fOutName, training, options):
             "HadTopSimple_W_fromHadTop_Mass := W_fromHadTop_Mass",
             "HadTopSimple_bJet_notFromHadTop_CSV := max(-1.1,bJet_notFromHadTop_CSV)"
             ]
-    if 'mem' in training:
+    if 'memlogs' in training:
         variables += [
             "MEM_TTHvsTTW := max(-10.,min(50.,log(MEM_TTH)-log(MEM_TTW)))",
             "MEM_TTHvsTTZ := max(-10.,min(50.,log(MEM_TTH)-log(MEM_TTLL)))",
+            ]
+    if 'memvars' in training:
+        variables += [
+            "MEM_TTH := max(-100.,min(10.,log(MEM_TTH)))",
+            "MEM_TTW := max(-100.,min(10.,log(MEM_TTW)))",
+            "MEM_TTZ := max(-100.,min(10.,log(MEM_TTLL)))",
             ]
 
     outname = fOutName+'_'+training
