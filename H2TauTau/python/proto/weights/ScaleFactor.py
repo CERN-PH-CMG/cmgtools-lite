@@ -29,7 +29,9 @@ class ScaleFactor(object):
         explicitPath = '/'.join(explicitPathItems)
         efficiencies = imp.load_source(explicitPathItems[-1].replace('.py', ''), explicitPath)
         self.eff_data = efficiencies.effData
-        self.eff_mc   = efficiencies.effMC
+        self.eff_data_fakes = efficiencies.effDataFakeTau
+        self.eff_mc = efficiencies.effMC
+        self.eff_mc_fakes = efficiencies.effMCFakeTau
 
     def _initFromRoot(self, inputRootFile, histBaseName='ZMass'):
         self.fileIn = ROOT.TFile(inputRootFile, 'read')
@@ -85,14 +87,14 @@ class ScaleFactor(object):
 
         return True
 
-    def getScaleFactor(self, pt, eta):
-        return self.getEfficiencyData(pt, eta)/max(self.getEfficiencyMC(pt, eta), 1.e-6)
+    def getScaleFactor(self, pt, eta, isFake=False):
+        return self.getEfficiencyData(pt, eta, isFake)/max(self.getEfficiencyMC(pt, eta, isFake), 1.e-6)
 
-    def getEfficiencyData(self, pt, eta):
-        return self.getEfficiency(pt, eta, self.eff_data)
+    def getEfficiencyData(self, pt, eta, isFake=False):
+        return self.getEfficiency(pt, eta, self.eff_data_fakes if isFake and hasattr(self, 'eff_data_fakes') else self.eff_data)
 
-    def getEfficiencyMC(self, pt, eta):
-        return self.getEfficiency(pt, eta, self.eff_mc)
+    def getEfficiencyMC(self, pt, eta, isFake=False):
+        return self.getEfficiency(pt, eta, self.eff_mc_fakes if isFake and hasattr(self, 'eff_mc_fakes') else self.eff_mc)
 
 
     def findEtaLabel(self, eta, eff_dict):

@@ -9,7 +9,10 @@ class Variable():
         if function is None:
             # Note: works for attributes, not member functions
             self.function = lambda x : getattr(x, self.name, -999.) 
-        self.type = float
+        self.type = type
+
+def default():
+    return -999.
 
 # event variables
 event_vars = [
@@ -19,7 +22,7 @@ event_vars = [
     Variable('bx', lambda ev : (ev.input.eventAuxiliary().bunchCrossing() * ev.input.eventAuxiliary().isRealData()), type=int),
     Variable('orbit_number', lambda ev : (ev.input.eventAuxiliary().orbitNumber() * ev.input.eventAuxiliary().isRealData()), type=int),
     Variable('is_data', lambda ev: ev.input.eventAuxiliary().isRealData(), type=int),
-    Variable('nPU', lambda ev : ev.nPU if hasattr(ev, 'nPU') else -1, type=int),
+    Variable('nPU', lambda ev : -99 if getattr(ev, 'nPU', -1) is None else getattr(ev, 'nPU', -1), type=int),
     Variable('pass_leptons', lambda ev : ev.isSignal, type=int),
     Variable('veto_dilepton', lambda ev : not ev.leptonAccept, type=int),
     Variable('veto_thirdlepton', lambda ev : not ev.thirdLeptonVeto, type=int),
@@ -34,11 +37,11 @@ event_vars = [
     Variable('rho', lambda ev : ev.rho),
     Variable('weight', lambda ev : ev.eventWeight),
     Variable('weight_vertex', lambda ev : ev.puWeight),
-    Variable('weight_embed', lambda ev : ev.embedWeight if hasattr(ev, 'embedWeight') else 1.),
+    Variable('weight_embed', lambda ev : getattr(ev, 'embedWeight', 1.)),
     Variable('weight_njet', lambda ev : ev.NJetWeight),
-    Variable('weight_hqt', lambda ev : ev.higgsPtWeight if hasattr(ev, 'higgsPtWeight') else 1.),
-    Variable('weight_hqt_up', lambda ev : ev.higgsPtWeightUp if hasattr(ev, 'higgsPtWeightUp') else 1.),
-    Variable('weight_hqt_down', lambda ev : ev.higgsPtWeightDown if hasattr(ev, 'higgsPtWeightDown') else 1.),
+    Variable('weight_hqt', lambda ev : getattr(ev, 'higgsPtWeight', 1.)),
+    Variable('weight_hqt_up', lambda ev : getattr(ev, 'higgsPtWeightUp', 1.)),
+    Variable('weight_hqt_down', lambda ev : getattr(ev, 'higgsPtWeightDown', 1.)),
 ]
 
 # di-tau object variables
@@ -75,10 +78,10 @@ svfit_vars = [
     Variable('svfit_pt_error', lambda dil : dil.svfitPtError()),
     Variable('svfit_eta', lambda dil : dil.svfitEta()),
     Variable('svfit_phi', lambda dil : dil.svfitPhi()),
-    Variable('svfit_met_pt', lambda dil : dil.svfitMET().Rho() if hasattr(dil, 'svfitMET') else -999.),
-    Variable('svfit_met_e', lambda dil : dil.svfitMET().mag2() if hasattr(dil, 'svfitMET') else -999.),
-    Variable('svfit_met_phi', lambda dil : dil.svfitMET().phi() if hasattr(dil, 'svfitMET') else -999.),
-    Variable('svfit_met_eta', lambda dil : dil.svfitMET().eta() if hasattr(dil, 'svfitMET') else -999.),
+    Variable('svfit_met_pt', lambda dil : dil.svfitMET().Rho() if hasattr(dil, 'svfitMET') else default()),
+    Variable('svfit_met_e', lambda dil : dil.svfitMET().mag2() if hasattr(dil, 'svfitMET') else default()),
+    Variable('svfit_met_phi', lambda dil : dil.svfitMET().phi() if hasattr(dil, 'svfitMET') else default()),
+    Variable('svfit_met_eta', lambda dil : dil.svfitMET().eta() if hasattr(dil, 'svfitMET') else default()),
 ]
 
 # generic particle
@@ -99,10 +102,11 @@ lepton_vars = [
     Variable('dz', lambda lep : lep.leadChargedHadrCand().dz() if hasattr(lep, 'leadChargedHadrCand') else lep.dz()),
     Variable('dz_error', lambda lep : lep.edz() if hasattr(lep, 'edz') else -1.),
     Variable('weight'),
-    Variable('weight_trigger', lambda lep : getattr(lep, 'weight_trigger', -999.)),
+    Variable('weight_trigger', lambda lep : getattr(lep, 'weight_trigger', 1.)),
+    Variable('weight_eff_data_trigger', lambda lep : getattr(lep, 'weight_eff_data_trigger', 1.)),
     Variable('eff_trigger_data', lambda lep : getattr(lep, 'eff_data_trigger', -999.)),
     Variable('eff_trigger_mc', lambda lep : getattr(lep, 'eff_mc_trigger', -999.)),
-    Variable('weight_idiso', lambda lep : getattr(lep, 'weight_idiso', -999.)),
+    Variable('weight_idiso', lambda lep : getattr(lep, 'weight_idiso', 1.)),
     Variable('eff_idiso_data', lambda lep : getattr(lep, 'eff_data_idiso', -999.)),
     Variable('eff_idiso_mc', lambda lep : getattr(lep, 'eff_mc_idiso', -999.)),
     Variable('gen_match')
@@ -124,7 +128,7 @@ electron_vars = [
 # muon
 muon_vars = [
     Variable('muonid_loose', lambda muon : muon.muonID('POG_ID_Loose')),
-    Variable('muonid_medium', lambda muon : muon.muonID('POG_ID_Medium')),
+    Variable('muonid_medium', lambda muon : muon.muonID('POG_ID_Medium_ICHEP')),
     Variable('muonid_tight', lambda muon : muon.muonID('POG_ID_Tight')),
     Variable('muonid_tightnovtx', lambda muon : muon.muonID('POG_ID_TightNoVtx')),
     Variable('muonid_highpt', lambda muon : muon.muonID('POG_ID_HighPt')),
@@ -137,7 +141,7 @@ tau_vars = [
     Variable('decayMode', lambda tau : tau.decayMode()),
     Variable('zImpact', lambda tau : tau.zImpact()),
     Variable('dz_selfvertex', lambda tau : tau.vertex().z() - tau.associatedVertex.position().z()),
-    Variable('ptScale', lambda tau : tau.ptScale if hasattr(tau, 'ptScale') else -999.),
+    Variable('ptScale', lambda tau : getattr(tau, 'ptScale', -999.)),
 ]
 for tau_id in tauIDs:
     if type(tau_id) is str:
@@ -157,7 +161,7 @@ jet_vars = [
     # (for which Jet.py would have to be touched again)
     Variable('mva_pu', lambda jet : jet.puMva('pileupJetId:fullDiscriminant')),
     Variable('id_loose', lambda jet : jet.looseJetId()),
-    Variable('id_pu', lambda jet : jet.puJetId()),
+    Variable('id_pu', lambda jet : jet.puJetId() + jet.puJetId('medium') + jet.puJetId('tight')),
     Variable('mva_btag', lambda jet : jet.btagMVA),
     Variable('area', lambda jet : jet.jetArea()),
     Variable('flavour_parton', lambda jet : jet.partonFlavour()),
@@ -168,41 +172,25 @@ jet_vars = [
 
 # extended jet vars
 jet_vars_extra = [
-    Variable('nConstituents', lambda jet : jet.nConstituents() if hasattr(jet, 'nConstituents') else -999.),
-    Variable('rawFactor', lambda jet : jet.rawFactor() if hasattr(jet, 'rawFactor') else -999.),
-    Variable('chargedHadronEnergy', lambda jet : jet.chargedHadronEnergy() if hasattr(jet, 'chargedHadronEnergy') else -999.),
-    Variable('neutralHadronEnergy', lambda jet : jet.neutralHadronEnergy() if hasattr(jet, 'neutralHadronEnergy') else -999.),
-    Variable('neutralEmEnergy', lambda jet : jet.neutralEmEnergy() if hasattr(jet, 'neutralEmEnergy') else -999.),
-    Variable('muonEnergy', lambda jet : jet.muonEnergy() if hasattr(jet, 'muonEnergy') else -999.),
-    Variable('chargedEmEnergy', lambda jet : jet.chargedEmEnergy() if hasattr(jet, 'chargedEmEnergy') else -999.),
-    Variable('chargedHadronMultiplicity', lambda jet : jet.chargedHadronMultiplicity() if hasattr(jet, 'chargedHadronMultiplicity') else -999.),
-    Variable('chargedMultiplicity', lambda jet : jet.chargedMultiplicity() if hasattr(jet, 'chargedMultiplicity') else -999.),
-    Variable('neutralMultiplicity', lambda jet : jet.neutralMultiplicity() if hasattr(jet, 'neutralMultiplicity') else -999.),
+    Variable('nConstituents', lambda jet : getattr(jet, 'nConstituents', default)()),
+    Variable('rawFactor', lambda jet : getattr(jet, 'rawFactor', default)()),
+    Variable('chargedHadronEnergy', lambda jet : getattr(jet, 'chargedHadronEnergy', default)()),
+    Variable('neutralHadronEnergy', lambda jet : getattr(jet, 'neutralHadronEnergy', default)()),
+    Variable('neutralEmEnergy', lambda jet : getattr(jet, 'neutralEmEnergy', default)()),
+    Variable('muonEnergy', lambda jet : getattr(jet, 'muonEnergy', default)()),
+    Variable('chargedEmEnergy', lambda jet : getattr(jet, 'chargedEmEnergy', default)()),
+    Variable('chargedHadronMultiplicity', lambda jet : getattr(jet, 'chargedHadronMultiplicity', default)()),
+    Variable('chargedMultiplicity', lambda jet : getattr(jet, 'chargedMultiplicity', default)()),
+    Variable('neutralMultiplicity', lambda jet : getattr(jet, 'neutralMultiplicity', default)()),
 ]
 
 
 # gen info
 geninfo_vars = [
-    Variable('geninfo_mcweight', lambda ev : ev.mcweight if hasattr(ev, 'mcweight') else 1., type=int),
-    Variable('geninfo_nup', lambda ev : ev.NUP if hasattr(ev, 'NUP') else -1, type=int),
-    Variable('geninfo_htgen', lambda ev : ev.genPartonHT if hasattr(ev, 'genPartonHT') else -1,),
-    Variable('geninfo_invmass', lambda ev : ev.geninvmass if hasattr(ev, 'geninvmass') else -1),
-    # The following variables were used in run 1 to define channels on gen level,
-    # but are not necessary anymore
-    # Variable('geninfo_tt', type=int),
-    # Variable('geninfo_mt', type=int),
-    # Variable('geninfo_et', type=int),
-    # Variable('geninfo_ee', type=int),
-    # Variable('geninfo_mm', type=int),
-    # Variable('geninfo_em', type=int),
-    # Variable('geninfo_EE', type=int),
-    # Variable('geninfo_MM', type=int),
-    # Variable('geninfo_TT', type=int),
-    # Variable('geninfo_LL', type=int),
-    # Variable('geninfo_fakeid', type=int),
-    Variable('geninfo_has_w', type=int),
-    Variable('geninfo_has_z', type=int),
-    Variable('geninfo_mass'),
+    Variable('geninfo_mcweight', lambda ev : getattr(ev, 'mcweight', 1.)),
+    Variable('geninfo_nup', lambda ev : getattr(ev, 'NUP', -1), type=int),
+    Variable('geninfo_htgen', lambda ev : getattr(ev, 'genPartonHT', -1)),
+    Variable('geninfo_invmass', lambda ev : getattr(ev, 'geninvmass', -1)),
     Variable('weight_gen'),
     Variable('genmet_pt'),
     # Variable('genmet_eta'),

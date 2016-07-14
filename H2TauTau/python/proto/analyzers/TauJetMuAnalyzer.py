@@ -152,7 +152,7 @@ class TauJetMuAnalyzer(DiLeptonAnalyzer):
 
     def testLeg1ID(self, muon):
         '''Tight muon selection, no isolation requirement'''
-        return muon.muonID('POG_ID_Medium') and self.testVertex(muon)
+        return muon.muonID('POG_ID_Medium_ICHEP') and self.testVertex(muon)
 
     def testLeg1Iso(self, muon, isocut):
         '''Tight muon selection, with isolation requirement'''
@@ -164,7 +164,7 @@ class TauJetMuAnalyzer(DiLeptonAnalyzer):
     def thirdLeptonVeto(self, leptons, otherLeptons, isoCut=0.3):
         # count tight muons
         vLeptons = [muon for muon in leptons if
-                    muon.muonID('POG_ID_Medium') and
+                    muon.muonID('POG_ID_Medium_ICHEP') and
                     self.testVertex(muon) and
                     self.testLegKine(muon, ptcut=10, etacut=2.4) and
                     muon.relIsoR(R=0.3, dBetaFactor=0.5, allCharged=False) < 0.3]

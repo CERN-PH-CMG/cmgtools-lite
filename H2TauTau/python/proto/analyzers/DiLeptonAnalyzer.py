@@ -87,7 +87,7 @@ class DiLeptonAnalyzer(Analyzer):
         to be overloaded if needed.'''
         return map(self.__class__.LeptonClass, cmgLeptons)
 
-    def process(self, event):
+    def process(self, event, fillCounter=False):
         self.readCollections(event.input)
 
         if hasattr(self.cfg_ana, 'from_single_objects') and self.cfg_ana.from_single_objects:
@@ -99,7 +99,7 @@ class DiLeptonAnalyzer(Analyzer):
             self.handles['leptons'].product(), event)
         event.otherLeptons = self.buildOtherLeptons(
             self.handles['otherLeptons'].product(), event)
-        return self.selectionSequence(event, fillCounter=False,
+        return self.selectionSequence(event, fillCounter=fillCounter,
                                       leg1IsoCut=self.cfg_ana.iso1,
                                       leg2IsoCut=self.cfg_ana.iso2)
 
@@ -320,7 +320,10 @@ class DiLeptonAnalyzer(Analyzer):
                 if self.trigObjMatched(to, [leg]):
                     setattr(leg, filter, to)
                     
-        
+        if not self.cfg_comp.triggerobjects:
+            if self.cfg_ana.verbose:
+                print 'No trigger objects configured; auto-passing trigger matching'
+            return True
 
         for info in event.trigger_infos:
             

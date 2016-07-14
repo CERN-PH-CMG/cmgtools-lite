@@ -151,7 +151,7 @@ class MuEleAnalyzer(DiLeptonAnalyzer):
 
     def testLeg2ID(self, muon):
         '''Tight muon selection, no isolation requirement'''
-        return muon.muonID('POG_ID_Medium') and self.testVertex(muon)
+        return muon.muonID('POG_ID_Medium_ICHEP') and self.testVertex(muon)
 
     def testLeg2Iso(self, muon, isocut):
         '''Muon isolation to be implemented'''
@@ -198,10 +198,10 @@ class MuEleAnalyzer(DiLeptonAnalyzer):
         '''Second muon veto'''
         # count tight muons
         vLeptons = [muon for muon in otherLeptons if
-                    muon.muonID('POG_ID_Medium') and
+                    muon.muonID('POG_ID_Medium_ICHEP') and
                     self.testVertex(muon) and
                     self.testLegKine(muon, ptcut=10, etacut=2.4) and
-                    muon.relIsoR(R=0.3, dBetaFactor=0.5, allCharged=False) < 0.3]
+                    muon.relIsoR(R=0.4, dBetaFactor=0.5, allCharged=False) < 0.3]
 
         if len(vLeptons) > 1:
             return False
@@ -222,9 +222,9 @@ class MuEleAnalyzer(DiLeptonAnalyzer):
         if len(diLeptons) == 1:
             return diLeptons[0]
 
-        minRelIso = min(d.leg2().relIsoR(R=0.3, dBetaFactor=0.5, allCharged=0) for d in diLeptons)
+        minRelIso = min(d.leg2().relIsoR(R=0.4, dBetaFactor=0.5, allCharged=0) for d in diLeptons)
 
-        diLeps = [dil for dil in diLeptons if dil.leg2().relIsoR(R=0.3, dBetaFactor=0.5, allCharged=0) == minRelIso]
+        diLeps = [dil for dil in diLeptons if dil.leg2().relIsoR(R=0.4, dBetaFactor=0.5, allCharged=0) == minRelIso]
 
         if len(diLeps) == 1:
             return diLeps[0]

@@ -11,11 +11,9 @@ data_triggerfilters = [
 ]
 
 mc_triggers = [
-    'HLT_Ele23_WPLoose_Gsf_v3'
     ]
 
 mc_triggerfilters = [
-    'hltEle23WPLooseGsfTrackIsoFilter'
 ]
 
 embed_triggers = [

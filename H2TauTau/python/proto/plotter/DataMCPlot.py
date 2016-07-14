@@ -56,7 +56,7 @@ class DataMCPlot(object):
     def __getitem__(self, name):
         return self.histosDict[name]
 
-    def readTree(self, file_name, tree_name='tree', verbose=False):
+    def readTree(self, file_name, tree_name='tree', verbose=False, friend_func=None):
         '''Cache files/trees'''
         if file_name in self.__class__._t_keeper:
             ttree = self.__class__._t_keeper[file_name]
@@ -67,6 +67,11 @@ class DataMCPlot(object):
             ttree = self.__class__._t_keeper[file_name] = tfile.Get(tree_name)
             if verbose:
                 print 'read tree', ttree, 'from file', file_name
+
+        if friend_func:
+            file_name = friend_func(file_name)
+            friend_tree = self.readTree(file_name, tree_name, verbose)
+            ttree.AddFriend(friend_tree)
 
         gROOT.cd()
 
@@ -90,7 +95,8 @@ class DataMCPlot(object):
         self.histosDict[name] = tmp
         return tmp
 
-    def Group(self, groupName, namesToGroup, layer=None, style=None):
+    def Group(self, groupName, namesToGroup, layer=None, style=None, 
+              silent=False):
         '''Group all histos with names in namesToGroup into a single
         histo with name groupName. All histogram properties are taken
         from the first histogram in namesToGroup.
@@ -102,7 +108,8 @@ class DataMCPlot(object):
         for name in namesToGroup:
             hist = self.histosDict.get(name, None)
             if hist is None:
-                print 'warning, no histo with name', name
+                if not silent:
+                    print 'warning, no histo with name', name
                 continue
             if groupHist is None:
                 groupHist = hist.Clone(groupName)
@@ -453,22 +460,26 @@ class DataMCPlot(object):
             hist.NormalizeToBinWidth()
 
     def WriteDataCard(self, filename=None, verbose=True, 
-                      mode='RECREATE', dir=None):
+                      mode='RECREATE', dir=None, postfix=''):
         '''Export current plot to datacard'''
         if not filename:
             filename = self.name+'.root'
 
         outf = TFile(filename, mode)
         if dir and outf.Get(dir):
-            print 'Directory', dir, 'already present in output file, recreate'
-            outf = TFile(filename, 'RECREATE')
+            print 'Directory', dir, 'already present in output file'
+            if any(outf.Get(dir+'/'+hist.name+postfix) for hist in self._SortedHistograms()):
+                print 'Recreating file because histograms already present'
+                outf = TFile(filename, 'RECREATE')
         if dir:
-            outf_dir = outf.mkdir(dir)
+            outf_dir = outf.Get(dir)
+            if not outf_dir:
+                outf_dir = outf.mkdir(dir)
             outf_dir.cd()
 
         for hist in self._SortedHistograms():
             'Writing', hist, 'as', hist.name
-            hist.weighted.Write(hist.name)
+            hist.weighted.Write(hist.name + postfix)
         outf.Write()
 
     def _BuildStack(self, hists, ytitle=None):
