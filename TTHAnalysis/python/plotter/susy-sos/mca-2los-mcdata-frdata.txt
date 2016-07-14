@@ -85,7 +85,7 @@ TW       : TBar_tWch :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0;Lab
 
 
 # ---- Non prompt:
-fakes_data: MET_Run2016B_PromptReco_v2_runs_273150_275125; FakeRate="susy-sos/fakeRate-2los-frdata-qcd-prdata.txt", Label="Fakes", FillColor=ROOT.kBlack, FillStyle=3005, NormSystematic=0.3
+fakes_data: MET_Run2016B_PromptReco_v2_runs_273150_275125; FakeRate="susy-sos/fakeRate-2los-frdata-qcd-prmc.txt", Label="Fakes", FillColor=ROOT.kBlack, FillStyle=3005, NormSystematic=0.3
 
 
 

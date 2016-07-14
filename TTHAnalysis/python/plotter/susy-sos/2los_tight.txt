@@ -16,7 +16,7 @@ HT: (htJet25-LepGood1_pt-LepGood2_pt) > 100
 bveto : Sum$(Jet_btagCSV>0.46)==0
 mtautau : 0.>mass_tautau(met_pt,met_phi,LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood2_pt,LepGood2_eta,LepGood2_phi)||mass_tautau(met_pt,met_phi,LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood2_pt,LepGood2_eta,LepGood2_phi)>160.
 event-filters: Flag_HBHENoiseFilter>=1 && Flag_HBHENoiseIsoFilter>=1 && Flag_goodVertices>=1 && Flag_eeBadScFilter>=1&&Flag_EcalDeadCellTriggerPrimitiveFilter>=1
-
+#Flag_globalTightHalo2016Filter >=1 && Flag_badChargedHadronFilter>=1 && Flag_badMuonFilter>=1 
 
 # some cuts that are off by default but can be turned on with -E
 triLep: nLepGood ==3 ; Disable=True
