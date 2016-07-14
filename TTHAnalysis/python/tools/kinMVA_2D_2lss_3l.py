@@ -159,8 +159,8 @@ class KinMVA_2D_2lss_3l:
             self._MVAs["kinMVA_2lss_ttV"+self.systsJEC[var]] = MVATool("2lss_ttV"+self.systsJEC[var], weights%"2lss_ttV", getattr(self,"_vars_ttV_2lss"+self.systsJEC[var]), specs = self._specs)
 
             self._MVAs["kinMVA_3l_ttbar"+self.systsJEC[var]] = MVATool("3l_ttbar"+self.systsJEC[var], weights%"3l_ttbar", getattr(self,"_vars_ttbar_3l"+self.systsJEC[var]), specs = self._specs)
-            self._MVAs["kinMVA_3l_ttV"+self.systsJEC[var]] = MVATool("3l_ttV"+self.systsJEC[var], weights%"3l_ttV", getattr(self,"_vars_ttV_3l"+self.systsJEC[var]), specs = self._specs) if not self._skip_MEM else self.put_minus_99
-            self._MVAs["kinMVA_3l_ttV_withMEM"+self.systsJEC[var]] = MVATool("3l_ttV_withMEM"+self.systsJEC[var], weights%"3l_ttV_withMEM", getattr(self,"_vars_ttV_3l_withMEM"+self.systsJEC[var]), specs = self._specs)
+            self._MVAs["kinMVA_3l_ttV"+self.systsJEC[var]] = MVATool("3l_ttV"+self.systsJEC[var], weights%"3l_ttV", getattr(self,"_vars_ttV_3l"+self.systsJEC[var]), specs = self._specs)
+            self._MVAs["kinMVA_3l_ttV_withMEM"+self.systsJEC[var]] = MVATool("3l_ttV_withMEM"+self.systsJEC[var], weights%"3l_ttV_withMEM", getattr(self,"_vars_ttV_3l_withMEM"+self.systsJEC[var]), specs = self._specs) if not self._skip_MEM else self.put_minus_99
 
         if self._skip_BDTv8: print 'WARNING: will set kinMVA_2lss_ttbar_withBDTv8 to dummy value (-99) as requested'
         if self._skip_MEM: print 'WARNING: will set kinMVA_3l_ttV_withMEM to dummy value (-99) as requested'

@@ -25,7 +25,7 @@ BTight=" -E ^BTight "
 ZeroTau=" -E ^0tau "
 OneTau=" -E ^1tau "
 
-SPLITDECAYS=""
+SPLITDECAYS="-prescale"
 #SPLITDECAYS="-splitdecays"
 
 OPTIONS="${OPTIONS} --Fs {P}/2_recleaner_v4_b1E2 --Fs {P}/4_kinMVA_with_BDTv8_and_MEM_v4 --mcc ttH-multilepton/mcc-bTagSFOne.txt" # WARNING B-TAG SF OFF
