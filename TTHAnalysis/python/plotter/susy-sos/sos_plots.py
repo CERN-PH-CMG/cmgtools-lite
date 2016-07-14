@@ -4,21 +4,14 @@ import re
 
 ODIR=sys.argv[1]
 
-#dowhat = "plots" 
+dowhat = "plots" 
 #dowhat = "dumps" 
 #dowhat = "yields" 
 
-## ---- rc - LIMITS ----
-dowhat = "limits"
+#dowhat = "limits"
 if dowhat == "limits":
-    SYST="susy-sos/syst/susy_sos_dummy.txt"
-    ##if '_ddbkg' in (sys.argv[2]):
-    #PLOTandCUTS="susy-sos/mca-2los-mc-frdata.txt susy-sos/2los_tight.txt"
-    ##if '_unblind' in (sys.argv[2]):
-    PLOTandCUTS="susy-sos/mca-2los-mcdata-frdata.txt susy-sos/2los_tight.txt"
-    ##else:
-    ##PLOTandCUTS="susy-sos/mca-2los-mc.txt susy-sos/2los_tight.txt"
-## --------
+    SYST="susy-sos/syst/susy_sos_dummy.txt" ## change file for systematics here
+    PLOTandCUTS=""
 
 
 def base(selection):
@@ -29,10 +22,8 @@ def base(selection):
     if dowhat == "plots": CORE+=" --lspam CMSPreliminary --legendWidth 0.14 --legendFontSize 0.04"
     GO = ""
     if selection=='2los':
-        ## rc -----
-        if (dowhat != "limits") : GO="%s susy-sos/mca-2los-mc.txt susy-sos/2los_tight.txt "
+        if (dowhat != "limits") : GO="susy-sos/mca-2los-mc.txt susy-sos/2los_tight.txt "
         GO="%s %s"%(CORE,GO) 
-        ##------
         GO="%s -L susy-sos/lepton_trigger_SF.cc -W 'leptonSF_SOS(LepGood1_pdgId,LepGood1_pt,LepGood1_eta,1)*leptonSF_SOS(LepGood2_pdgId,LepGood2_pt,LepGood2_eta,1)*triggerSF_SOS(met_pt,metmm_pt(LepGood1_pdgId, LepGood1_pt, LepGood2_phi, LepGood2_pdgId, LepGood2_pt, LepGood2_phi, met_pt, met_phi),1)*puw2016_vtx_4fb(nVert)'"%GO
         #GO="%s -W 'puw(nTrueInt)'"%GO
         #GO="%s -W 'puw2016_vtx_4fb(nVert)'"%GO 
@@ -51,10 +42,14 @@ def runIt(GO,name,plots=[],noplots=[]):
     if   dowhat == "plots":  print 'python mcPlots.py',"--pdir %s/%s"%(ODIR,name),GO,' '.join(['--sP %s'%p for p in plots]),' '.join(['--xP %s'%p for p in noplots]),' '.join(sys.argv[3:])
     elif dowhat == "yields": print 'echo %s; python mcAnalysis.py'%name,GO,' '.join(sys.argv[3:])
     elif dowhat == "dumps":  print 'echo %s; python mcDump.py'%name,GO,' '.join(sys.argv[3:])
- ## rc -------------
-    elif dowhat == "limits" : print 'echo %s; python makeShapeCardsSusy.py'%name,PLOTandCUTS,' '.join(['%s'%p for p in plots]),' '.join(['%s'%p for p in noplots]),SYST,' -o %s'%name,' ',GO," --od %s"%(ODIR),' '.join(sys.argv[3:])
-#,' --asimov' r.c
-    ## ------------------
+    elif (dowhat == "limits" and ('_unblind' in name)): 
+        # comment: for the moment recycling plots and noplots as a container for histo name and binning when running 'limits' mode (to be improved) 
+        print 'echo %s; python makeShapeCardsSusy.py'%name,PLOTandCUTS,' '.join(['%s'%p for p in plots]),' '.join(['%s'%p for p in noplots]),SYST,' -o %s'%name,' ',GO," --od %s"%(ODIR),' '.join(sys.argv[3:])
+    elif (dowhat == "limits" and ('_unblind' in name)==0 ):
+        # comment: for the moment recycling plots and noplots as a container for histo name and binning when running in 'limits' mode (to be improved) 
+        print 'echo %s; python makeShapeCardsSusy.py'%name,PLOTandCUTS,' '.join(['%s'%p for p in plots]),' '.join(['%s'%p for p in noplots]),SYST,' -o %s'%name,' ',GO," --od %s"%(ODIR),' --asimov',' '.join(sys.argv[3:])
+    else:
+        raise RuntimeError, 'Unknown selection'
 def add(GO,opt):
     return '%s %s'%(GO,opt)
 def setwide(x):
@@ -68,6 +63,13 @@ if __name__ == '__main__':
 
     torun = sys.argv[2]
 
+    if '_ddbkg' in torun:
+        PLOTandCUTS="susy-sos/mca-2los-mc-frdata.txt susy-sos/2los_tight.txt"
+    elif '_unblind' in torun:
+        PLOTandCUTS="susy-sos/mca-2los-mcdata-frdata.txt susy-sos/2los_tight.txt"
+    else:
+        PLOTandCUTS="susy-sos/mca-2los-mc.txt susy-sos/2los_tight.txt"
+        
 
     ### MC Distributions with Signal shapes normalized to Bkg, n-minus1 option
     if '2los_SR_vars' in torun:
@@ -131,14 +133,12 @@ if __name__ == '__main__':
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt')
                 x = add(x,"-I ^TT ")
             if '_unblind' in torun:
-                x = add(x,"--showRatio --maxRatioRange -2 5") #--showMCError
+                if(dowhat != "limits"):x = add(x,"--showRatio --maxRatioRange -2 5") #--showMCError
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt')
                 x = x.replace('mcc-sf1.txt','mcc-sf-lowmet.txt')
-            # rc -------------------
             if dowhat == "limits":
                 runIt(x,torun,["m2l"],["'[4,10,20,30,50]'"])
             else:
-            #-------------------    
                 runIt(x,'%s/all'%torun,['SR_bins_EWKino'])             
         if '_ewk10_met200' in torun: 
             x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_315,T2ttDeg_330 -E ^pt5sublep -E ^MT -E ^SF -E ^highMET -X ^triggerAll -E ^triggerMET ")
@@ -155,14 +155,12 @@ if __name__ == '__main__':
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt')
                 x = add(x,"-I ^TT ")
             if '_unblind' in torun:
-                x = add(x,"--showRatio --maxRatioRange -2 5") #--showMCError
+                if(dowhat != "limits"):x = add(x,"--showRatio --maxRatioRange -2 5") #--showMCError
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt') 
                 x = x.replace('mcc-sf1.txt','mcc-sf-highmet.txt')
-            # rc -------------------
             if dowhat == "limits":
                 runIt(x,torun,["m2l"],["'[4,10,20,30,50]'"])
             else:
-            #-------------------  
                 runIt(x,'%s/all'%torun,['SR_bins_EWKino'])
         ###############################    
         if '_ewk20_met125_mm' in torun: 
@@ -182,14 +180,12 @@ if __name__ == '__main__':
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt')
                 x = add(x,"-I ^TT ")  
             if '_unblind' in torun:
-                x = add(x,"--showRatio --maxRatioRange -2 5") #--showMCError
+                if(dowhat != "limits"):x = add(x,"--showRatio --maxRatioRange -2 5") #--showMCError
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt') 
                 x = x.replace('mcc-sf1.txt','mcc-sf-lowmet.txt')
-            # rc -------------------
             if dowhat == "limits":
                 runIt(x,torun,["m2l"],["'[4,10,20,30,50]'"])
             else:
-            #-------------------  
                 runIt(x,'%s/all'%torun,['SR_bins_EWKino'])
         if '_ewk20_met200' in torun: 
             x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_90,T2ttDeg_300,T2ttDeg_315,T2ttDeg_330 -E ^pt5sublep -E ^MT -E ^SF -E ^highMET -X ^triggerAll -E ^triggerMET ")
@@ -206,14 +202,12 @@ if __name__ == '__main__':
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt') 
                 x = add(x,"-I ^TT ")
             if '_unblind' in torun:
-                x = add(x,"--showRatio --maxRatioRange -2 5") #--showMCError
+                if(dowhat != "limits"):x = add(x,"--showRatio --maxRatioRange -2 5") #--showMCError
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt') 
                 x = x.replace('mcc-sf1.txt','mcc-sf-highmet.txt')
-            # rc -------------------
             if dowhat == "limits":
                 runIt(x,torun,["m2l"],["'[4,10,20,30,50]'"])
             else:
-            #-------------------  
                 runIt(x,'%s/all'%torun,['SR_bins_EWKino'])
         ###############################    
         if '_stop20_met125_mm' in torun: 
@@ -233,14 +227,12 @@ if __name__ == '__main__':
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt')
                 x = add(x,"-I ^TT ")
             if '_unblind' in torun:
-                x = add(x,"--showRatio --maxRatioRange -2 5") #--showMCError
+                if(dowhat != "limits"):x = add(x,"--showRatio --maxRatioRange -2 5") #--showMCError
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt')  
                 x = x.replace('mcc-sf1.txt','mcc-sf-lowmet.txt')
-            # rc -------------------
             if dowhat == "limits":
                 runIt(x,torun,["LepGood1_pt"],["'[5,12,20,30]'"])
             else:
-            #-------------------  
                 runIt(x,'%s/all'%torun,['SR_bins_stop'])
         if '_stop20_met200' in torun: 
             x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_90,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_315 -E ^highMET -X ^triggerAll -E ^triggerMET ")
@@ -257,14 +249,12 @@ if __name__ == '__main__':
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt')
                 x = add(x,"-I ^TT ")   
             if '_unblind' in torun:
-                x = add(x,"--showRatio --maxRatioRange -2 5") #--showMCError
+                if(dowhat != "limits"):x = add(x,"--showRatio --maxRatioRange -2 5") #--showMCError
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt')  
                 x = x.replace('mcc-sf1.txt','mcc-sf-highmet.txt')
-            # rc -------------------
             if dowhat == "limits":
                 runIt(x,torun,["LepGood1_pt"],["'[5,12,20,30]'"])
             else:
-            #-------------------  
                 runIt(x,'%s/all'%torun,['SR_bins_stop'])    
         ###############################        
         if '_stop35_met125_mm' in torun: 
@@ -284,14 +274,12 @@ if __name__ == '__main__':
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt')
                 x = add(x,"-I ^TT ")
             if '_unblind' in torun:
-                x = add(x,"--showRatio --maxRatioRange -2 5") #--showMCError
+                if(dowhat != "limits"):x = add(x,"--showRatio --maxRatioRange -2 5") #--showMCError
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt')
                 x = x.replace('mcc-sf1.txt','mcc-sf-lowmet.txt')
-            # rc -------------------
             if dowhat == "limits":
                 runIt(x,torun,["LepGood1_pt"],["'[5,12,20,30]'"])
             else:
-            #-------------------  
                 runIt(x,'%s/all'%torun,['SR_bins_stop'])
         if '_stop35_met200' in torun: 
             x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_90,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_330 -E ^highMET -X ^triggerAll -E ^triggerMET ")
@@ -308,21 +296,15 @@ if __name__ == '__main__':
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt')
                 x = add(x,"-I ^TT ")
             if '_unblind' in torun:
-                x = add(x,"--showRatio --maxRatioRange -2 5") #--showMCError
+                if(dowhat != "limits"):x = add(x,"--showRatio --maxRatioRange -2 5") #--showMCError
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt') 
                 x = x.replace('mcc-sf1.txt','mcc-sf-highmet.txt')
-            # rc -------------------
             if dowhat == "limits":
                 runIt(x,torun,["LepGood1_pt"],["'[5,12,20,30]'"])
             else:
-            #-------------------  
                 runIt(x,'%s/all'%torun,['SR_bins_stop'])
             
-  
 
-
-          
-   
 
     ### FR Application region, Data-MC, LowMET and HighMET 
     if '2los_CR_FF_vars' in torun:
