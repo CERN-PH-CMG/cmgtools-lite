@@ -19,7 +19,7 @@ import PhysicsTools.Heppy.physicsutils.BTagSF
 # Cuts for jets
 minJpt = 30
 maxJeta = 2.4
-btagWP = 0.890
+btagWP = 0.800
 
 # pt, eta bins
 ptBorders = [30, 40, 50, 60, 70, 80, 100, 120, 160, 210, 260, 320, 400, 500, 670]
@@ -43,7 +43,7 @@ sfFname = sfdir+"btagSF_CSVv2.csv"
 calib = ROOT.BTagCalibration("csvv2", sfFname)
 
 # SF readers (from CMSSW)
-sfReaders = { "Comb" : {}, "Mu" : {} }
+sfReaders = { "Comb" : {}, "Mu" : {}, "incl" : {} }
 
 sfReaders["Comb"]["Up"]      = ROOT.BTagCalibrationReader(calib, 1, "comb", "up")
 sfReaders["Comb"]["Central"] = ROOT.BTagCalibrationReader(calib, 1, "comb", "central")
@@ -51,6 +51,9 @@ sfReaders["Comb"]["Down"]    = ROOT.BTagCalibrationReader(calib, 1, "comb", "dow
 sfReaders["Mu"]["Up"]        = ROOT.BTagCalibrationReader(calib, 1, "mujets", "up")
 sfReaders["Mu"]["Central"]   = ROOT.BTagCalibrationReader(calib, 1, "mujets", "central")
 sfReaders["Mu"]["Down"]      = ROOT.BTagCalibrationReader(calib, 1, "mujets", "down")
+sfReaders["incl"]["Up"]      = ROOT.BTagCalibrationReader(calib, 1, "incl", "up")
+sfReaders["incl"]["Central"] = ROOT.BTagCalibrationReader(calib, 1, "incl", "central")
+sfReaders["incl"]["Down"]    = ROOT.BTagCalibrationReader(calib, 1, "incl", "down")
 
 
 def getSF2015(parton, pt, eta):
@@ -64,7 +67,7 @@ def getSF2015(parton, pt, eta):
     elif abs(parton)==4: #SF for c
         flav = 1; ptlim = 669.9; sftype = "Mu"
     else: # SF for light flavours
-        flav = 2; ptlim = 999.9; sftype = "Comb"
+        flav = 2; ptlim = 999.9; sftype = "incl"
 
     # read SFs
     sf   = sfReaders[sftype]["Central"].eval(flav, eta, min(pt,ptlim))
