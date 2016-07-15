@@ -79,3 +79,6 @@ TTV : TTZToLLNuNu : xsec*1*TopPtWeight ; FillColor=ROOT.kOrange-3, Label="ttV(W/
 
 data: SingleMuon_Run2016B_PromptReco_v2
 data: SingleElectron_Run2016B_PromptReco_v2
+
+data: SingleMuon_Run2016C_PromptReco_v2
+data: SingleElectron_Run2016C_PromptReco_v2

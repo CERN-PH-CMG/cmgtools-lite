@@ -12,7 +12,7 @@ HT_wide:	HT	: [500, 525, 550, 575, 600, 625, 650, 675, 700, 800, 900, 1000, 1100
 #LT_wide:	LT	: 50,250,1250;  XTitle="L_{T} [GeV]", Logy, IncludeOverflows=True, YMin=0.2, XNDiv=505
 
 # JETs
-nJet_log:	nJet	: 20,0,20   ;  XTitle="jet multiplicity", Logy, IncludeOverflows=True, YMin=0.2, XNDiv=505
+nJet_log:	nJets30Clean	: 20,0,20   ;  XTitle="jet multiplicity", Logy, IncludeOverflows=True, YMin=0.2, XNDiv=505
 nBJet:		nBJet	: 10,0,10   ;  XTitle="b-jet multiplicity (CSVM)", Logy, IncludeOverflows=True, YMin=0.2, XNDiv=505
 
 # dPhi,Lp
