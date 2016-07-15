@@ -627,6 +627,7 @@ if is50ns:
     jetAnaScaleDown.dataGT   = "76X_dataRun2_v15_Run2015B_50ns"
 
 if runSMS:
+    jetAna.mcGT = "Spring16_FastSimV1_MC"
     jetAna.applyL2L3Residual = False
     jetAnaScaleUp.applyL2L3Residual = False
     jetAnaScaleDown.applyL2L3Residual = False
