@@ -32,12 +32,14 @@ OPTIONS="${OPTIONS} --Fs {P}/2_recleaner_v4_b1E2 --Fs {P}/4_kinMVA_with_BDTv8_an
 OPTIONS="${OPTIONS} --mcc ttH-multilepton/lepchoice-ttH-FO.txt --mcc ttH-multilepton/ttH_2lss3l_triggerdefs.txt --neg" # neg necessary for subsequent rebin
 CATPOSTFIX=""
 
-FUNCTION_2L="kinMVA_2lss_ttV:kinMVA_2lss_ttbar 20,-1,1,20,-1,1"
-#FUNCTION_2L="kinMVA_2lss_ttV:kinMVA_2lss_ttbar_withBDTv8 20,-1,1,20,-1,1"
-FUNCTION_3L="kinMVA_3l_ttV:kinMVA_3l_ttbar 20,-1,1,20,-1,1"
-#FUNCTION_3L="kinMVA_3l_ttV_withMEM:kinMVA_3l_ttbar 20,-1,1,20,-1,1"
-BINFUNCTION_2L="6:ttH_MVAto1D_6_2lss_Marco"
-BINFUNCTION_3L="3:ttH_MVAto1D_3_3l_Marco"
+FUNCTION_2L="kinMVA_2lss_ttV:kinMVA_2lss_ttbar 40,-1,1,40,-1,1"
+#FUNCTION_2L="kinMVA_2lss_ttV:kinMVA_2lss_ttbar_withBDTv8 40,-1,1,40,-1,1"
+#FUNCTION_3L="kinMVA_3l_ttV:kinMVA_3l_ttbar 40,-1,1,40,-1,1"
+FUNCTION_3L="kinMVA_3l_ttV_withMEM:kinMVA_3l_ttbar 40,-1,1,40,-1,1"
+#BINFUNCTION_2L="6:ttH_MVAto1D_6_2lss_Marco"
+BINFUNCTION_2L="8:ttH_MVAto1D_8_2lss_Marco"
+#BINFUNCTION_3L="3:ttH_MVAto1D_3_3l_Marco"
+BINFUNCTION_3L="5:ttH_MVAto1D_5_3l_Marco"
 
 if [[ "$2" == "save" ]]; then
 DOFILE="--savefile activate"
