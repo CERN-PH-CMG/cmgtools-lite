@@ -11,23 +11,19 @@ dowhat = "plots"
 
 def base(selection):
 
-    CORE="-P /data1/peruzzi/809_June9_ttH_skimOnlyMC --Fs {P}/2_recleaner_v4_b1E2 "#--Fs {P}/3_kinMVA_v4 "
+    CORE="--Fs {P}/2_recleaner_v4_b1E2 --Fs {P}/3_evtVars_kinMVAwithMEM_v4 "
 
-    CORE+=" -f -j 8 -l 3.99 --s2v --tree treeProducerSusyMultilepton --mcc ttH-multilepton/lepchoice-ttH-FO.txt --mcc ttH-multilepton/ttH_2lss3l_triggerdefs.txt"# --neg"
+    CORE+=" -f -j 8 -l 10.0 --scaleplot fakes_data*=2.5 --scaleplot flips_data*=2.5 --s2v --tree treeProducerSusyMultilepton --mcc ttH-multilepton/lepchoice-ttH-FO.txt --mcc ttH-multilepton/ttH_2lss3l_triggerdefs.txt"# --neg"
     if dowhat == "plots": CORE+=" --lspam '#bf{CMS} #it{Internal}' --legendWidth 0.20 --legendFontSize 0.035 --showRatio --maxRatioRange 0 3  --showMCError --rebin 4 --xP 'nT_.*' --xP 'debug_.*' --mcc ttH-multilepton/mcc-bTagSFOne.txt"
 
     if selection=='2lss':
-        GO="%s ttH-multilepton/mca-2lss-mc.txt ttH-multilepton/2lss_tight.txt "%CORE
+        GO="%s -P /data1/peruzzi/809_June9_ttH_skimOnlyMC_2lsstight_relax ttH-multilepton/mca-2lss-mc.txt ttH-multilepton/2lss_tight.txt "%CORE
         GO="%s -W 'puw2016_vtx_4fb(nVert)*leptonSF_ttH(LepGood_pdgId[iF_Recl[0]],LepGood_pt[iF_Recl[0]],LepGood_eta[iF_Recl[0]],2)*leptonSF_ttH(LepGood_pdgId[iF_Recl[1]],LepGood_pt[iF_Recl[1]],LepGood_eta[iF_Recl[1]],2)*triggerSF_ttH(LepGood_pdgId[iF_Recl[0]],LepGood_pt[iF_Recl[0]],LepGood_pdgId[iF_Recl[1]],LepGood_pt[iF_Recl[1]],2)*eventBTagSF'"%GO  # no loose ID and btag applied for the moment!!!
-        if dowhat == "plots": GO+=" ttH-multilepton/2lss_3l_plots.txt --xP '^lep(3|4)_.*' --xP '^(3|4)lep_.*' --xP 'kinMVA_3l_.*' --xP '.*BDTv8.*' --xP '.*MEM.*'  "
+        if dowhat == "plots": GO+=" ttH-multilepton/2lss_3l_plots.txt --xP '^lep(3|4)_.*' --xP '^(3|4)lep_.*' --xP 'kinMVA_3l_.*' "
     elif selection=='3l':
-        GO="%s ttH-multilepton/mca-3l-mc.txt ttH-multilepton/3l_tight.txt "%CORE
+        GO="%s -P /data1/peruzzi/809_June9_ttH_skimOnlyMC_3ltight_relax_prescale --Fs {P}/7_MEM_v4 ttH-multilepton/mca-3l-mc.txt ttH-multilepton/3l_tight.txt "%CORE
         GO="%s -W 'puw2016_vtx_4fb(nVert)*leptonSF_ttH(LepGood_pdgId[iF_Recl[0]],LepGood_pt[iF_Recl[0]],LepGood_eta[iF_Recl[0]],3)*leptonSF_ttH(LepGood_pdgId[iF_Recl[1]],LepGood_pt[iF_Recl[1]],LepGood_eta[iF_Recl[1]],3)*leptonSF_ttH(LepGood_pdgId[iF_Recl[2]],LepGood_pt[iF_Recl[2]],LepGood_eta[iF_Recl[2]],3)*triggerSF_ttH(LepGood_pdgId[iF_Recl[0]],LepGood_pt[iF_Recl[0]],LepGood_pdgId[iF_Recl[1]],LepGood_pt[iF_Recl[1]],3)*eventBTagSF'"%GO # no loose ID and btag applied for the moment!!!
-        if dowhat == "plots": GO+=" ttH-multilepton/2lss_3l_plots.txt --xP '^(2|4)lep_.*' --xP '^lep4_.*' --xP 'kinMVA_2lss_.*' --xP '.*BDTv8.*' --xP '.*MEM.*'  "
-###    elif selection=='4l':
-###        GO="%s ttH-multilepton/mca-4l-mc.txt ttH-multilepton/4l_tight.txt "%CORE
-###        GO="%s -W 'puw2016_vtx_4fb(nVert)*leptonSF_ttH(LepGood_pdgId[iF_Recl[0]],LepGood_pt[iF_Recl[0]],LepGood_eta[iF_Recl[0]],3)*leptonSF_ttH(LepGood_pdgId[iF_Recl[1]],LepGood_pt[iF_Recl[1]],LepGood_eta[iF_Recl[1]],3)*leptonSF_ttH(LepGood_pdgId[iF_Recl[2]],LepGood_pt[iF_Recl[2]],LepGood_eta[iF_Recl[2]],3)*leptonSF_ttH(LepGood_pdgId[iF_Recl[3]],LepGood_pt[iF_Recl[3]],LepGood_eta[iF_Recl[3]],3)*triggerSF_ttH(LepGood_pdgId[iF_Recl[0]],LepGood_pt[iF_Recl[0]],LepGood_pdgId[iF_Recl[1]],LepGood_pt[iF_Recl[1]],3)*eventBTagSF'"%GO  # no loose ID and btag applied for the moment!!!
-        if dowhat == "plots": GO+=" ttH-multilepton/2lss_3l_plots.txt --xP '(2|3)lep_.*' --xP 'kinMVA_.*' --xP '.*BDTv8.*' --xP '.*MEM.*'  "
+        if dowhat == "plots": GO+=" ttH-multilepton/2lss_3l_plots.txt --xP '^(2|4)lep_.*' --xP '^lep4_.*' --xP 'kinMVA_2lss_.*' "
     else:
         raise RuntimeError, 'Unknown selection'
 
@@ -49,11 +45,8 @@ def setwide(x):
     x2 = x2.replace('--legendWidth 0.35','--legendWidth 0.20')
     return x2
 def fulltrees(x):
+    raise RuntimeError
     return x.replace('809_June9_ttH_skimOnlyMC','809_June9_ttH')
-def enable_BDTv8_plots(x):
-    return x.replace("--xP '.*BDTv8.*'","--Fs {P}/6_BDTv8_eventReco_v4 --Fs {P}/4_kinMVAwithBDTv8_v4 --Fs {P}/4_kinMVAwithoutBDTv8_v4").replace("809_June9_ttH_skimOnlyMC","809_June9_ttH_skimOnlyMC_2lsstight_relax_prescale")
-def enable_MEM_plots(x):
-    return x.replace("--xP '.*MEM.*'","--Fs {P}/7_MEM_v4 --Fs {P}/4_kinMVAwithoutMEM_v4 --Fs {P}/4_kinMVAwithMEM_v4").replace("809_June9_ttH_skimOnlyMC","809_June9_ttH_skimOnlyMC_3ltight_relax_prescale")
 
 allow_unblinding = False
 
@@ -80,15 +73,8 @@ if __name__ == '__main__':
                 x = add(x,'--xp data')
             elif not '_data' in torun: raise RuntimeError
             x = x.replace('mca-2lss-mcdata.txt','mca-2lss-mcdata-frdata.txt')
-            if '_prescale' in torun:
-                x = x.replace('mca-2lss-mcdata-frdata.txt','mca-2lss-mcdata-frdata-prescale.txt')
-                x = enable_BDTv8_plots(x)
             if '_table' in torun:
                 x = x.replace('mca-2lss-mcdata-frdata.txt','mca-2lss-mcdata-frdata-table.txt')
-        else:
-            if 'data' in torun and '_prescale' in torun:
-                x = x.replace('mca-2lss-mcdata.txt','mca-2lss-mcdata-prescale.txt')
-                x = enable_BDTv8_plots(x)
 
         if '_mll200' in torun:
             x = add(x,"-E ^mll200 ")
@@ -122,6 +108,12 @@ if __name__ == '__main__':
         runIt(x,'%s'%torun)
         if '_flav' in torun:
             for flav in ['mm','ee','em']: runIt(add(x,'-E ^%s'%flav),'%s/%s'%(torun,flav))
+        if '_cats' in torun:
+            for cat in ['b2lss_1tau','b2lss_ee_0tau_neg','b2lss_ee_0tau_pos',\
+                            'b2lss_em_0tau_bl_neg','b2lss_em_0tau_bl_pos','b2lss_em_0tau_bt_neg','b2lss_em_0tau_bt_pos',\
+                            'b2lss_mm_0tau_bl_neg','b2lss_mm_0tau_bl_pos','b2lss_mm_0tau_bt_neg','b2lss_mm_0tau_bt_pos']:
+                runIt(add(x,'-E ^%s'%cat),'%s/%s'%(torun,cat))
+
 
     if '3l_' in torun:
         x = base('3l')
@@ -139,13 +131,11 @@ if __name__ == '__main__':
             x = x.replace('mca-3l-mcdata.txt','mca-3l-mcdata-frdata.txt')
             if '_prescale' in torun:
                 x = x.replace('mca-3l-mcdata-frdata.txt','mca-3l-mcdata-frdata-prescale.txt')
-                x = enable_MEM_plots(x)
             if '_table' in torun:
                 x = x.replace('mca-3l-mcdata-frdata.txt','mca-3l-mcdata-frdata-table.txt')
         else:
             if 'data' in torun and '_prescale' in torun:
                 x = x.replace('mca-3l-mcdata.txt','mca-3l-mcdata-prescale.txt')
-                x = enable_MEM_plots(x)
 
         if '_table' in torun:
             x = x.replace('mca-3l-mc.txt','mca-3l-mc-table.txt')
@@ -162,7 +152,7 @@ if __name__ == '__main__':
             torun += "_"+sys.argv[-1]
             x = x.replace('mca-3l-mc.txt','mca-3l-data-frdata-%s.txt'%sys.argv[-1])
             x = x.replace("--maxRatioRange 0 3","--maxRatioRange 0 2")
-            x = add(x,"--plotmode nostack --sP kinMVA_3l_ttbar --sP kinMVA_3l_ttV")
+            x = add(x,"--plotmode nostack --sP kinMVA_3l_ttbar --sP kinMVA_3l_ttV_withMEM")
             x = add(x,"--ratioDen fakes_data --ratioNums fakes_data_%s --errors"%sys.argv[-1])
             if '_varsFR_norm' in torun:
                 x = x.replace("--plotmode nostack","--plotmode norm")
@@ -170,6 +160,9 @@ if __name__ == '__main__':
         if '_x2j' in torun:
             x = add(x,"-E ^x2j ")
         runIt(x,'%s'%torun)
+        if '_cats' in torun:
+            for cat in ['b3l_bl_neg','b3l_bl_pos','b3l_bt_neg','b3l_bt_pos']:
+                runIt(add(x,'-E ^%s'%cat),'%s/%s'%(torun,cat))
 
     if '4l_' in torun:
         x = base('4l')
@@ -191,7 +184,7 @@ if __name__ == '__main__':
             if not '_data' in torun: raise RuntimeError
             x = x.replace('mca-2lss-mcdata.txt','mca-2lss-mcdata-frdata.txt')
         x = add(x,"-R ^4j 3j 'nJet25==3'")
-        plots = ['2lep_.*','nJet25','nBJetLoose25','nBJetMedium25','met','metLD','htJet25j','mhtJet25','mtWmin','htllv','kinMVA_2lss_ttbar','kinMVA_2lss_ttV','kinMVA_2lss_bins']
+        plots = ['2lep_.*','nJet25','nBJetLoose25','nBJetMedium25','met','metLD','htJet25j','mhtJet25','mtWmin','htllv','kinMVA_2lss_ttbar','kinMVA_2lss_ttV','kinMVA_2lss_bins8']
         runIt(x,'%s'%torun,plots)
         if '_flav' in torun:
             for flav in ['mm','ee','em']:

@@ -4,6 +4,7 @@ import copy
 from CMGTools.H2TauTau.eventContent.common_cff import common, commonDebug
 
 tauMuSpecific = [
+    'keep *_TauSpinner*_*_*'
     ]
 
 tauMuSpecificDebug = copy.deepcopy(tauMuSpecific)

@@ -281,6 +281,7 @@ if not runSMS:
                             susyCounter)
 else:
     susyCounter.bypass_trackMass_check = False
+    susyCounter.SMS_varying_masses=['genSusyMGluino','genSusyMNeutralino','genSusyMChargino','genSusyMNeutralino2']
     susyCoreSequence.insert(susyCoreSequence.index(susyScanAna)+1,susyCounter)
 
 # HBHE new filter
@@ -629,6 +630,7 @@ if is50ns:
     jetAnaScaleDown.dataGT   = "76X_dataRun2_v15_Run2015B_50ns"
 
 if runSMS:
+    jetAna.mcGT = "Spring16_FastSimV1_MC"
     jetAna.applyL2L3Residual = False
     jetAnaScaleUp.applyL2L3Residual = False
     jetAnaScaleDown.applyL2L3Residual = False

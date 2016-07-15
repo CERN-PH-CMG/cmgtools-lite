@@ -145,8 +145,9 @@ class KinMVA_2D_2lss_3l:
             ]
 
         memvars = [
-            MVAVar("MEM_TTHvsTTW := max(-10.,min(50.,log(MEM_TTH)-log(MEM_TTW)))",func = lambda ev : max(-10.,min(50.,log(ev.MEM_TTH if ev.MEM_TTH>0 else 1)-log(ev.MEM_TTW if ev.MEM_TTW>0 else 1)))),
-            MVAVar("MEM_TTHvsTTZ := max(-10.,min(50.,log(MEM_TTH)-log(MEM_TTLL)))", func = lambda ev : max(-10.,min(50.,log(ev.MEM_TTH if ev.MEM_TTH>0 else 1)-log(ev.MEM_TTLL if ev.MEM_TTLL>0 else 1)))),
+            MVAVar("MEM_TTH := min(0,log(max(3.72e-44,MEM_TTH)))", func = lambda ev : min(0,log(max(3.72e-44,ev.MEM_TTH)))),
+            MVAVar("MEM_TTW := min(0,log(max(3.72e-44,MEM_TTW)))", func = lambda ev : min(0,log(max(3.72e-44,ev.MEM_TTW)))),
+            MVAVar("MEM_TTZ := min(0,log(max(3.72e-44,MEM_TTLL)))", func = lambda ev : min(0,log(max(3.72e-44,ev.MEM_TTLL)))),
             ]
         self._vars_ttV_3l_withMEM = self._vars_ttV_3l + memvars
         self._vars_ttV_3l_withMEM_jecUp = self._vars_ttV_3l_jecUp + memvars

@@ -116,8 +116,7 @@ class TauMuAnalyzer(DiLeptonAnalyzer):
         return otherLeptons
 
     def process(self, event):
-        # FIXME - JAN - for current 2015 sync, but shall we really discard
-        # the vertex cuts?
+        # Take the pre-sorted vertices from miniAOD
         event.goodVertices = event.vertices
 
         result = super(TauMuAnalyzer, self).process(event)
@@ -176,22 +175,23 @@ class TauMuAnalyzer(DiLeptonAnalyzer):
 
     def testLeg1ID(self, muon):
         '''Tight muon selection, no isolation requirement'''
-        return muon.muonID('POG_ID_Medium') and self.testVertex(muon)
+        return muon.muonID('POG_ID_Medium_ICHEP') and self.testVertex(muon)
 
     def testLeg1Iso(self, muon, isocut):
         '''Tight muon selection, with isolation requirement'''
         if isocut is None:
             isocut = self.cfg_ana.iso2
 
-        return muon.relIsoR(R=0.3, dBetaFactor=0.5, allCharged=False) < isocut
+        return muon.relIsoR(R=0.4, dBetaFactor=0.5, allCharged=False) < isocut
 
     def thirdLeptonVeto(self, leptons, otherLeptons, isoCut=0.3):
         # count tight muons
         vLeptons = [muon for muon in leptons if
-                    muon.muonID('POG_ID_Medium') and
+                    muon.muonID('POG_ID_Medium_ICHEP') and
                     self.testVertex(muon) and
                     self.testLegKine(muon, ptcut=10, etacut=2.4) and
-                    muon.relIsoR(R=0.3, dBetaFactor=0.5, allCharged=False) < 0.3]
+                    self.testLeg1Iso(muon, 0.3)
+                    ]
 
         if len(vLeptons) > 1:
             return False
@@ -254,7 +254,7 @@ class TauMuAnalyzer(DiLeptonAnalyzer):
         if len(diLeptons) == 1:
             return diLeptons[0]
 
-        least_iso_highest_pt = lambda dl: (dl.leg1().relIsoR(R=0.3, dBetaFactor=0.5, allCharged=0), -dl.leg1().pt(), -dl.leg2().tauID("byIsolationMVArun2v1DBoldDMwLTraw"), -dl.leg2().pt())
+        least_iso_highest_pt = lambda dl: (dl.leg1().relIsoR(R=0.4, dBetaFactor=0.5, allCharged=0), -dl.leg1().pt(), -dl.leg2().tauID("byIsolationMVArun2v1DBoldDMwLTraw"), -dl.leg2().pt())
 
         return sorted(diLeptons, key=lambda dil : least_iso_highest_pt(dil))[0]
 
