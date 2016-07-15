@@ -1,3 +1,4 @@
+float cuts_2lss_ttbar0 = -0.3;
 float cuts_2lss_ttbar1 = 0;
 float cuts_2lss_ttbar2 = 0.5;
 float cuts_2lss_ttV1 = 0.2;
