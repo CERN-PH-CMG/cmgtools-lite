@@ -630,6 +630,9 @@ if __name__ == "__main__":
     if 'Run274880' in fileName:
         print "will run only for Run >= 274880"
         basecuts += 'Run >= 274880 &&'
+    if 'Run275656' in fileName:
+        print "will run only for Run >= 275656"
+        basecuts += 'Run >= 275656 &&'
 
     doFit = True
 
@@ -793,6 +796,8 @@ if __name__ == "__main__":
             lumi = 2.57
         elif '4fb' in fileName:
             lumi = 3.99
+        elif '7fb' in fileName:
+            lumi = 7.62
         else:
             lumi = 147.0
             

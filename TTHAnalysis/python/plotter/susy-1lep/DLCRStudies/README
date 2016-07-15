@@ -1,0 +1,7 @@
+#Just execute on python/plotter:
+python mcPlots.py susy-1lep/mca-Spring16_HT350Skim.txt susy-1lep/DLCRStudies/1L_ForDL_cuts.txt susy-1lep/DLCRStudies/1L_ForDL_plots.txt -P SampLinks/ --FMCs SampLinks/Friends/MC/ --FDs SampLinks/Friends/Data/ -j 12 -l 7.6 -f --tree treeProducerSusySingleLepton -G -f --pdir www_plots/test/ --showRatio --maxRatioRange 0 1.95 --fixRatioRange --noErrorBandOnRatio --print-dir susy-1lep/DLCRStudies/plots_1L
+python mcPlots.py susy-1lep/mca-Spring16_HT350Skim.txt susy-1lep/DLCRStudies/2L_ForDL_cuts.txt susy-1lep/DLCRStudies/2L_ForDL_plots.txt -P SampLinks/ --FMCs SampLinks/Friends/MC/ --FDs SampLinks/Friends/Data/ -j 12 -l 7.6 -f --tree treeProducerSusySingleLepton -G -f --pdir www_plots/test/ --showRatio --maxRatioRange 0 1.95 --fixRatioRange --noErrorBandOnRatio --print-dir susy-1lep/DLCRStudies/plots_2L
+#and then in susy-1lep/DLCRStudies
+cd susy-1lep/DLCRStudies
+python -i plotDoubleRatios.py 2L_ForDL_plots.txt 1L_ForDL_plots.txt plots_2L/2L_ForDL_plots.root plots_1L/1L_ForDL_plots.root
+#done

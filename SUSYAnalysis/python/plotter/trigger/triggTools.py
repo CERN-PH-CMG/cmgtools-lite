@@ -35,9 +35,9 @@ for ieta in range(-20,21):
 eta_bins_2d = [-2.4,-2,-1.5,-1.,-0.5,0,0.5,1.,1.5,2.,2.4]
 
 #pt_bins = range(0,30,2) + range(30,70,5) + range(70,150,10) + range (150,250,25) + range(250,350,50)
-pt_bins = range(0,30,2) + range(30,70,5) + range(70,150,10) + range (150,350,50)
+pt_bins = range(0,30,2) + range(30,70,5) + range(70,150,10) + range (150,350,50) + range (350,850,100)
 #pt_bins = range(0,30,2) + range(30,70,5) + range(70,100,10)
-pt_bins_2d = range(0,80,10) + range(80,150,20) + range (150,350,50)
+pt_bins_2d = range(0,80,10) + range(80,150,20) + range (150,350,50) + range (350,850,100)
 
 #lt_bins = range(0,100,10) + range(100,200,25) + range(200,400,50) + range(400,700,100) # high stat
 lt_bins = range(0,200,25) + range(200,300,50) + range(300,700,150) # low stat
