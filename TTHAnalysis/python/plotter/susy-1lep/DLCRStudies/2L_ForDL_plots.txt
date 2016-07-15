@@ -1,0 +1,14 @@
+#python mcPlots.py susy-1lep/mca-Spring16_HT350Skim.txt susy-1lep/DLCRStudies/2L_ForDL_cuts.txt susy-1lep/DLCRStudies/2L_ForDL_plots.txt -P SampLinks/ --FMCs SampLinks/Friends/MC/ --FDs SampLinks/Friends/Data/ -j 12 -l 7.6 -f --tree treeProducerSusySingleLepton -G -f --pdir www_plots/test/ --showRatio --maxRatioRange 0 1.95 --fixRatioRange --noErrorBandOnRatio --print-dir susy-1lep/DLCRStudies/plots_2L
+
+nJ_DLLTInc: if3(               DLMS_ST>250&&DLMS_HT>500, DLMS_nJets30Clean, -99) : 7,3,10; XTitle="jet multiplicity (incl. lost lepton)", IncludeOverflows=False, RMin=0.5, RMax=1.5
+#nJ_DLLT1:   if3(250<DLMS_ST&& DLMS_ST<350&&DLMS_HT>500, DLMS_nJets30Clean, -99) : 7,3,10; XTitle="jet multiplicity (incl. lost lepton)", IncludeOverflows=False, Logy, RMin=0.5, RMax=1.5, extralabel="250<LT<350 GeV"
+#nJ_DLLT2:   if3(350<DLMS_ST&& DLMS_ST<450&&DLMS_HT>500, DLMS_nJets30Clean, -99) : 7,3,10; XTitle="jet multiplicity (incl. lost lepton)", IncludeOverflows=False, Logy, RMin=0.5, RMax=1.5
+#J_DLLT2Inc:if3(350<DLMS_ST               &&DLMS_HT>500, DLMS_nJets30Clean, -99) : 7,3,10; XTitle="jet multiplicity (incl. lost lepton)", IncludeOverflows=False, Logy, RMin=0.5, RMax=1.5, extralabel="LT>350 GeV"
+#nJ_DLLT3:   if3(450<DLMS_ST&& DLMS_ST<600&&DLMS_HT>500, DLMS_nJets30Clean, -99) : 7,3,10; XTitle="jet multiplicity (incl. lost lepton)", IncludeOverflows=False, Logy, RMin=0.5, RMax=1.5
+#nJ_DLLT3Inc:if3(450<DLMS_ST               &&DLMS_HT>500, DLMS_nJets30Clean, -99) : 7,3,10; XTitle="jet multiplicity (incl. lost lepton)", IncludeOverflows=False, Logy, RMin=0.5, RMax=1.5
+#nJ_DLLT4Inc:if3(600<DLMS_ST               &&DLMS_HT>500, DLMS_nJets30Clean, -99) : 7,3,10; XTitle="jet multiplicity (incl. lost lepton)", IncludeOverflows=False, Logy, RMin=0.5, RMax=1.5
+
+#nJ_DLHT0:     if3( 500<DLMS_HT  && DLMS_HT<750  && DLMS_ST>250, DLMS_nJets30Clean, -99) : 7,3,10; XTitle="jet multiplicity (incl. lost lepton)", IncludeOverflows=False, RMin=0.5, RMax=1.5, extralabel="500<HT<750 GeV"
+#nJ_DLHT1:     if3( 750<DLMS_HT  && DLMS_HT<1250 && DLMS_ST>250, DLMS_nJets30Clean, -99) : 7,3,10; XTitle="jet multiplicity (incl. lost lepton)", IncludeOverflows=False, RMin=0.5, RMax=1.5, extralabel="750<HT<1250 GeV"
+#nJ_DLHT1i:     if3( 750<DLMS_HT &&                  DLMS_ST>250, DLMS_nJets30Clean, -99) : 7,3,10; XTitle="jet multiplicity (incl. lost lepton)", IncludeOverflows=False, RMin=0.5, RMax=1.5, extralabel="HT>750 GeV"
+#nJ_DLHT2i:     if3( 1250<DLMS_HT &&                  DLMS_ST>250, DLMS_nJets30Clean, -99) : 7,3,10; XTitle="jet multiplicity (incl. lost lepton)", IncludeOverflows=False, RMin=0.5, RMax=1.5, extralabel="HT>1250 GeV"
