@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import os
+import math
 from ROOT import *
 
 #import tdrstyle
@@ -27,29 +28,49 @@ gStyle.SetTitleFont(62)
 _colorList = [2,4,8,9,7,3,6] + range(10,50)
 
 eta_bins = []#-2.5,-2.25,-2.,-1.75,]
-#for ieta in range(-10,11):
-#    eta_bins += [ieta*2.4/10]
-for ieta in range(-20,21):
-    eta_bins += [ieta*2.4/20]
+for ieta in range(-10,11):
+    eta_bins += [ieta*2.4/10]
 
 eta_bins_2d = [-2.4,-2,-1.5,-1.,-0.5,0,0.5,1.,1.5,2.,2.4]
 
 #pt_bins = range(0,30,2) + range(30,70,5) + range(70,150,10) + range (150,250,25) + range(250,350,50)
-pt_bins = range(0,30,2) + range(30,70,5) + range(70,150,10) + range (150,350,50) + range (350,850,100)
+pt_bins = range(0,30,2) + range(30,70,5) + range(70,150,10) + range (150,350,50)
 #pt_bins = range(0,30,2) + range(30,70,5) + range(70,100,10)
-pt_bins_2d = range(0,80,10) + range(80,150,20) + range (150,350,50) + range (350,850,100)
+pt_bins_2d = range(0,80,10) + range(80,150,20) + range (150,350,50)
 
 #lt_bins = range(0,100,10) + range(100,200,25) + range(200,400,50) + range(400,700,100) # high stat
 lt_bins = range(0,200,25) + range(200,300,50) + range(300,700,150) # low stat
 
 met_bins = range(0,200,20) + range(200,400,50) + range(400,700,100) # high stat
 #met_bins = range(0,200,40) + range(200,400,100) + range(400,700,300) # low stat
-met_bins_2d = range(0,200,25) + range(200,400,100) + range(400,700,200) # high stat
+#met_bins_2d = range(0,200,25) + range(200,400,100) + range(400,700,200) # high stat
+met_bins_2d = range(0,200,25) + range(200,400,100)
 
 #ht_bins = range(0,200,10) + range(200,400,50) + range(400,1000,100) + range(1000,1750,250) # high stat
 ht_bins = range(200,400,50) + range(400,1000,100) + range(1000,1750,250) # high stat
 #ht_bins = range(0,200,40) + range(200,400,100) + range(400,1000,300) + range(1000,1750,250) # low stat
 ht_bins_2d = range(0,200,10) + range(200,400,50) + range(400,1000,100) + range(1000,1750,250) # high stat
+
+def getLogBins(nbinsx,xmin,xmax):
+    logxmin = math.log10(xmin)
+    logxmax = math.log10(xmax)
+    binwidth = (logxmax-logxmin)/nbinsx
+    xbins = [ xmin + math.pow(10,logxmin+x*binwidth) for x in range(1,nbinsx+1)]
+    xbins.sort(key=int)
+    #binc = array('d', xbins)
+
+    return xbins
+
+#pt_bins = getLogBins(30,0.9,1000)
+pt_bins = getLogBins(33,0.9,1500)
+#lt_bins = getLogBins(20,9,1000)
+lt_bins = getLogBins(22,9,3000)
+ht_bins = getLogBins(30,30,2000)
+
+#pt_bins_2d = getLogBins(30,0.9,1000)
+#met_bins_2d = getLogBins(20,9,1000)
+
+print ht_bins
 
 def cleanName(line):
 
@@ -140,7 +161,7 @@ def cutsToString(cutList):
 def saveCanvases(canvList, pdir = '', extraName = '', _batchMode = True):
 
     ## save canvases to file
-    extList = ['.png','.pdf']
+    extList = ['.png','.pdf','.root','.C']
 
     prefix = ''
     if extraName != '':
