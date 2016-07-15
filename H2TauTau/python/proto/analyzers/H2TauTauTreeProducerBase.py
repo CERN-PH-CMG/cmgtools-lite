@@ -4,6 +4,8 @@ from CMGTools.H2TauTau.proto.analyzers.varsDictionary import vars as var_dict
 from CMGTools.H2TauTau.proto.analyzers.TreeVariables import event_vars, ditau_vars, particle_vars, lepton_vars, electron_vars, muon_vars, tau_vars, jet_vars, jet_vars_extra, geninfo_vars, vbf_vars, svfit_vars
 
 from CMGTools.H2TauTau.proto.physicsobjects.DiObject import DiTau
+import math
+
 
 class H2TauTauTreeProducerBase(TreeAnalyzerNumpy):
 
@@ -53,8 +55,12 @@ class H2TauTauTreeProducerBase(TreeAnalyzerNumpy):
     def fillGeneric(self, tree, var_list, obj, obj_name=None):
         for var in var_list:
             names = [obj_name, var.name] if obj_name else [var.name]
-            self.fill(tree, '_'.join(names), var.function(obj))
-
+            try:
+                self.fill(tree, '_'.join(names), var.function(obj))
+            except TypeError:
+                print 'Problem in filling value into tree'
+                print var.name, var.function(obj), obj
+                raise
 
     def declareVariables(self, setup):
         ''' Declare all variables here in derived calss
@@ -161,7 +167,7 @@ class H2TauTauTreeProducerBase(TreeAnalyzerNumpy):
         self.bookGeneric(tree, jet_vars, p_name)
         if fill_extra:
             self.bookGeneric(tree, jet_vars_extra, p_name)
-        
+
     def fillJet(self, tree, p_name, jet, fill_extra=False):
         self.fillParticle(tree, p_name, jet)
         self.fillGeneric(tree, jet_vars, jet, p_name)
@@ -181,7 +187,6 @@ class H2TauTauTreeProducerBase(TreeAnalyzerNumpy):
 
     def fillGenInfo(self, tree, event):
         self.fillGeneric(tree, geninfo_vars, event)
-
 
     # additional METs
     def bookExtraMetInfo(self, tree):
@@ -206,18 +211,56 @@ class H2TauTauTreeProducerBase(TreeAnalyzerNumpy):
         self.fill(tree, 'pfmet_mt1', DiTau.calcMT(event.pfmet, event.leg1))
         self.fill(tree, 'pfmet_mt2', DiTau.calcMT(event.pfmet, event.leg2))
 
+    # TauSpinner information
+    def bookTauSpinner(self, tree):
+        self.var(tree, 'TauSpinnerWTisValid')
+        self.var(tree, 'TauSpinnerWT')
+        self.var(tree, 'TauSpinnerWThminus')
+        self.var(tree, 'TauSpinnerWThplus')
+        self.var(tree, 'TauSpinnerTauPolFromZ')
+        self.var(tree, 'TauSpinnerWRight')
+        self.var(tree, 'TauSpinnerWLeft')
+        self.var(tree, 'TauSpinnerIsRightLeft')
 
-    # quark and gluons
-    def bookQG(self, tree, maxNGenJets=2):
-        for i in range(0, maxNGenJets):
-            self.bookGenParticle(self.tree, 'genqg_{i}'.format(i=i))
+    def fillTauSpinner(self, tree, event):
+        self.fill(tree, 'TauSpinnerWTisValid', event.TauSpinnerWTisValid)
+        self.fill(tree, 'TauSpinnerWT', float(event.TauSpinnerWT))
+        self.fill(tree, 'TauSpinnerWThminus', float(event.TauSpinnerWThminus))
+        self.fill(tree, 'TauSpinnerWThplus', float(event.TauSpinnerWThplus))
+        self.fill(tree, 'TauSpinnerTauPolFromZ', float(event.TauSpinnerTauPolFromZ))
+        self.fill(tree, 'TauSpinnerWRight', float(event.TauSpinnerWRight))
+        self.fill(tree, 'TauSpinnerWLeft', float(event.TauSpinnerWLeft))
+        self.fill(tree, 'TauSpinnerIsRightLeft', float(event.TauSpinnerIsRightLeft))
 
-    def fillQG(self, tree, event, maxNGenJets=2):
-        # Fill hard quarks/gluons
-        quarksGluons = [p for p in event.genParticles if abs(p.pdgId()) in (1, 2, 3, 4, 5, 21) and
-                        p.status() == 3 and
-                        (p.numberOfDaughters() == 0 or p.daughter(0).status() != 3)]
-        quarksGluons.sort(key=lambda x: -x.pt())
-        for i in range(0, min(maxNGenJets, len(quarksGluons))):
-            self.fillGenParticle(
-                tree, 'genqg_{i}'.format(i=i), quarksGluons[i])
+    def bookTopPtReweighting(self, tree):
+        self.var(tree, 'gen_top_1_pt')
+        self.var(tree, 'gen_top_2_pt')
+        self.var(tree, 'gen_top_weight')
+
+    def fillTopPtReweighting(self, tree, event):
+        if not self.cfg_comp.isMC:
+            self.fill(tree, 'gen_top_weight', 1.)
+            return
+
+        ttbar = [p for p in event.genParticles if abs(p.pdgId()) == 6 and p.statusFlags().isLastCopy() and p.statusFlags().fromHardProcess()]
+
+        if self.cfg_comp.name.find('TT') != -1 and self.cfg_comp.name.find('TTH') == -1 and len(ttbar) == 2:
+
+            top_1_pt = ttbar[0].pt()
+            top_2_pt = ttbar[1].pt()
+
+            self.fill(tree, 'gen_top_1_pt', top_1_pt)
+            self.fill(tree, 'gen_top_2_pt', top_2_pt)
+
+            if top_1_pt > 400:
+                top_1_pt = 400.
+            if top_2_pt > 400:
+                top_2_pt = 400.
+
+            topweight = math.sqrt(math.exp(0.156-0.00137*top_1_pt)*math.exp(0.156-0.00137*top_2_pt))
+
+            event.eventWeight *= topweight
+
+            self.fill(tree, 'gen_top_weight', topweight)
+        else:
+            self.fill(tree, 'gen_top_weight', 1.)

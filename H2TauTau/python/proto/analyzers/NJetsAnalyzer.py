@@ -8,7 +8,9 @@ from CMGTools.RootTools.statistics.TreeNumpy import TreeNumpy
 
 from ROOT import TFile, TH1F, TLorentzVector
 
+
 class NJetsAnalyzer(Analyzer):
+
     '''Saves the number of partons and gen HT from the LHEEventProduct 
     information, and reweights the events if according information present
     in the sample configuration.
@@ -95,26 +97,26 @@ class NJetsAnalyzer(Analyzer):
 
         sumpt = 0.
         outgoing = []
-        mass = []
-
+        leptons = []
 
         # print [(a, b) for a, b in zip(hep.ISTUP, hep.IDUP)]
 
         for status, pdg, moth, mom in zip(hep.ISTUP, hep.IDUP, hep.MOTHUP, hep.PUP):
-            
-            if status==1 and abs(pdg) in [21, 1, 2, 3, 4, 5]:
+
+            if status == 1 and abs(pdg) in [21, 1, 2, 3, 4, 5]:
                 sumpt += math.sqrt(mom.x[0]**2 + mom.x[1]**2)
                 outgoing.append(pdg)
 
-            if status==1 and abs(pdg) in [11, 12, 13, 14, 15, 16]:
+            if status == 1 and abs(pdg) in [11, 12, 13, 14, 15, 16]:
                 l = TLorentzVector(mom.x[0], mom.x[1], mom.x[2], mom.x[3])
-                mass.append(l)
+                leptons.append(l)
 
         njets = len(outgoing)
         event.NUP = njets
-        
-        if len(mass)==2:
-            event.geninvmass = (mass[0] + mass[1]).M()
+
+        if len(leptons) == 2:
+            event.geninvmass = (leptons[0] + leptons[1]).M()
+            event.genbosonpt = (leptons[0] + leptons[1]).Pt()
 
         event.genPartonHT = sumpt
 
@@ -123,7 +125,6 @@ class NJetsAnalyzer(Analyzer):
             event.eventWeight *= event.NJetWeight
 
             self.averages['NJetWeight'].add(event.NJetWeight)
-              
 
             if self.cfg_ana.verbose:
                 print 'NUP, njets, weight', event.NUP, njets, event.NJetWeight
@@ -140,10 +141,10 @@ class NJetsAnalyzer(Analyzer):
 
         self.averages['NUP'].add(event.NUP)
         self.averages['NJets'].add(njets)
-            
+
         self.nup.Fill(event.NUP)
         self.njets.Fill(njets)
-            
+
         return True
 
     def declareHandles(self):

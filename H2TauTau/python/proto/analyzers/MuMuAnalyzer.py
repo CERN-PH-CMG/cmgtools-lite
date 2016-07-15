@@ -125,15 +125,15 @@ class MuMuAnalyzer(DiLeptonAnalyzer):
     def process(self, event):
         event.goodVertices = event.vertices
 
-        result = super(MuMuAnalyzer, self).process(event)
+        result = super(MuMuAnalyzer, self).process(event, fillCounter=True)
 
         if result is False:
             # trying to get a dilepton from the control region.
             # it must have well id'ed and trig matched legs,
             # di-lepton and tri-lepton veto must pass
-            result = self.selectionSequence(event, fillCounter=True,
-                                            leg1IsoCut=-9999,
-                                            leg2IsoCut=9999)
+            # result = self.selectionSequence(event, fillCounter=False,
+            #                                 leg1IsoCut=9999,
+            #                                 leg2IsoCut=9999)
             if result is False:
                 # really no way to find a suitable di-lepton,
                 # even in the control region
@@ -173,7 +173,7 @@ class MuMuAnalyzer(DiLeptonAnalyzer):
 
     def testLeg2ID(self, muon):
         '''Tight muon selection, no isolation requirement'''
-        return muon.muonID('POG_ID_Medium') and self.testVertex(muon)
+        return muon.muonID('POG_ID_Medium_ICHEP') and self.testVertex(muon)
                
 
     def testLeg2Iso(self, muon, isocut):
@@ -181,7 +181,7 @@ class MuMuAnalyzer(DiLeptonAnalyzer):
         if isocut is None:
             isocut = self.cfg_ana.iso2
 
-        return muon.relIsoR(R=0.3, dBetaFactor=0.5, allCharged=0) < isocut    
+        return muon.relIsoR(R=0.4, dBetaFactor=0.5, allCharged=0) < isocut    
 
     def testElectronID(self, electron):
         return electron.mvaIDRun2('NonTrigSpring15MiniAOD', 'POG90')
@@ -207,7 +207,7 @@ class MuMuAnalyzer(DiLeptonAnalyzer):
                          self.testElectronID(electron) and
                          electron.passConversionVeto() and
                          electron.physObj.gsfTrack().hitPattern().numberOfHits(ROOT.reco.HitPattern.MISSING_INNER_HITS) <= 1 and
-                         electron.relIsoR(R=0.3, dBetaFactor=0.5, allCharged=0) < 0.3]
+                         electron.relIsoR(R=0.4, dBetaFactor=0.5, allCharged=0) < 0.3]
 
         if len(vOtherLeptons) > 0:
             return False
@@ -218,8 +218,8 @@ class MuMuAnalyzer(DiLeptonAnalyzer):
         
         matched = super(MuMuAnalyzer, self).trigMatched(event, diL, requireAllMatched=requireAllMatched, ptMin=18., etaMax=2.1, onlyLeg1=True)
 
-        if matched and len(diL.matchedPaths) == 1 and diL.leg1().pt() < 25. and 'IsoMu24' in list(diL.matchedPaths)[0]:
-            matched = False
+        # if matched and len(diL.matchedPaths) == 1 and diL.leg1().pt() < 25. and 'IsoMu24' in list(diL.matchedPaths)[0]:
+            # matched = False
 
         return matched
 
@@ -234,7 +234,7 @@ class MuMuAnalyzer(DiLeptonAnalyzer):
         if len(diLeptons) == 1:
             return diLeptons[0]
 
-        least_iso_highest_pt = lambda dl: (dl.leg1().relIsoR(R=0.3, dBetaFactor=0.5, allCharged=0), -dl.leg1().pt(), dl.leg2().relIsoR(R=0.3, dBetaFactor=0.5, allCharged=0), -dl.leg2().pt())
+        least_iso_highest_pt = lambda dl: (dl.leg1().relIsoR(R=0.4, dBetaFactor=0.5, allCharged=0), -dl.leg1().pt(), dl.leg2().relIsoR(R=0.4, dBetaFactor=0.5, allCharged=0), -dl.leg2().pt())
 
         return sorted(diLeptons, key=lambda dil : least_iso_highest_pt(dil))[0]
 
