@@ -31,13 +31,6 @@ computeSVfit = getHeppyOption('computeSVfit', False)
 data = getHeppyOption('data', False)
 reapplyJEC = getHeppyOption('reapplyJEC', True)
 
-
-# When ready, include weights from CMGTools.H2TauTau.proto.weights.weighttable
-mc_tauEffWeight_mc = None
-mc_muEffWeight_mc = None
-mc_tauEffWeight = None
-mc_muEffWeight = None
-
 dyJetsFakeAna.channel = 'mm'
 
 # Define mu-tau specific modules
