@@ -110,5 +110,7 @@ histPref['ZL*'] = {'style':sHTT_ZL, 'layer':3.2, 'legend':'Z#rightarrow ll'}
 histPref['ZLL'] = {'style':sHTT_ZL, 'layer':3.2, 'legend':'Z#rightarrow ll'}
 histPref['Ztt_TL'] = {'style':sViolet, 'layer':4.1, 'legend':'Z#rightarrow#tau#tau/Z#rightarrow ll, j#rightarrow#tau'}
 histPref['Higgs*'] = {'style':sHTT_Higgs, 'layer':1001, 'legend':None}
+histPref['ggH*'] = {'style':sHTT_Higgs, 'layer':1001, 'legend':None}
+histPref['bbH*'] = {'style':sHTT_Higgs, 'layer':1001, 'legend':None}
 
 
