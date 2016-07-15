@@ -15,10 +15,10 @@ from CMGTools.H2TauTau.proto.samples.spring16.higgs_susy import mc_higgs_susy_gg
 
 from CMGTools.H2TauTau.proto.samples.spring16.higgs_susy import HiggsSUSYGG160 as ggh160
 
-json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-275125_13TeV_PromptReco_Collisions16_JSON.txt'
+json_tt = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-275125_13TeV_PromptReco_Collisions16_JSON.txt'
 # lumi = 3990
 # 3.99/fb, https://hypernews.cern.ch/HyperNews/CMS/get/physics-validation/2669.html
-lumi = 4336.09955 # brilcalc 12 July
+lumi_tt = 4336.09955 # brilcalc 12 July
 
 # 14 July
 json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-276097_13TeV_PromptReco_Collisions16_JSON_NoL1T_v2.txt'
@@ -111,13 +111,13 @@ backgrounds_ele += QCDPtEMEnriched
 backgrounds_ele += QCDPtbcToE
 
 # Data
-data_single_muon = [SingleMuon_Run2016B_PromptReco_v2, SingleMuon_Run2016C_PromptReco_v2, SingleMuon_Run2016D_PromptReco_v2]
-data_single_electron = [SingleElectron_Run2016B_PromptReco_v2, SingleElectron_Run2016C_PromptReco_v2, SingleElectron_Run2016D_PromptReco_v2]
-data_muon_electron = [MuonEG_Run2016B_PromptReco_v2, MuonEG_Run2016C_PromptReco_v2, MuonEG_Run2016D_PromptReco_v2]
-data_tau = [Tau_Run2016B_PromptReco_v2, Tau_Run2016C_PromptReco_v2, Tau_Run2016D_PromptReco_v2]
+data_single_muon = [SingleMuon_Run2016B_PromptReco_v2, SingleMuon_Run2016C_PromptReco_v2] #, SingleMuon_Run2016D_PromptReco_v2]
+data_single_electron = [SingleElectron_Run2016B_PromptReco_v2, SingleElectron_Run2016C_PromptReco_v2] #, SingleElectron_Run2016D_PromptReco_v2]
+data_muon_electron = [MuonEG_Run2016B_PromptReco_v2, MuonEG_Run2016C_PromptReco_v2] #, MuonEG_Run2016D_PromptReco_v2]
+data_tau = [Tau_Run2016B_PromptReco_v2, Tau_Run2016C_PromptReco_v2] #, Tau_Run2016D_PromptReco_v2]
 
 for sample in data_single_muon + data_single_electron + data_muon_electron + data_tau:
-    sample.json = json
+    sample.json = json if sample != data_tau else json_tt
     sample.lumi = lumi
 
 # Signals

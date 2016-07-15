@@ -37,8 +37,7 @@ cuts['OS_PU'] = inc_cut + '&& l1_charge != l2_charge && abs(l1_eta) < 2.1 && mvi
 qcd_from_same_sign = False
 
 # -> Command line
-analysis_dir = '/data1/steggema/mm/300616/'
-tree_prod_name = 'H2TauTauTreeProducerMuMu'
+analysis_dir = '/data1/steggema/mm/150716/MuMuMC'
 
 samples_mc, samples_data, samples, all_samples, sampleDict = createSampleLists(analysis_dir, channel='mm', ztt_cut='(l1_gen_match == 4 && l2_gen_match == 4)', zl_cut='(l1_gen_match == 2 && l2_gen_match == 2)', zj_cut='(l1_gen_match != l2_gen_match || (l1_gen_match != 4 && l1_gen_match != 2))')
 
