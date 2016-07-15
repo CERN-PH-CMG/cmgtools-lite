@@ -69,7 +69,7 @@ DY       : DYJetsToLL_M-50_HT-600toInf :    xsec*1*TopPtWeight ; Label="DY+jets"
 TTV : TTWJetsToLNu : xsec*1*TopPtWeight ; FillColor=ROOT.kOrange-3, Label="ttV(W/Z/H)", NormSystematic=0.2
 TTV : TTWJetsToQQ : xsec*1*TopPtWeight ; FillColor=ROOT.kOrange-3, Label="ttV(W/Z/H)", NormSystematic=0.2
 TTV : TTZToLLNuNu : xsec*1*TopPtWeight ; FillColor=ROOT.kOrange-3, Label="ttV(W/Z/H)", NormSystematic=0.2
-#TTV : TTZToQQ : xsec*1*TopPtWeight  ; FillColor=ROOT.kOrange-3, Label="ttV(W/Z/H)", NormSystematic=0.2
+TTV : TTZToQQ : xsec*1*TopPtWeight  ; FillColor=ROOT.kOrange-3, Label="ttV(W/Z/H)", NormSystematic=0.2
 
 
 ## Data
@@ -79,3 +79,6 @@ TTV : TTZToLLNuNu : xsec*1*TopPtWeight ; FillColor=ROOT.kOrange-3, Label="ttV(W/
 
 data: SingleMuon_Run2016B_PromptReco_v2
 data: SingleElectron_Run2016B_PromptReco_v2
+
+data: SingleMuon_Run2016C_PromptReco_v2
+data: SingleElectron_Run2016C_PromptReco_v2
