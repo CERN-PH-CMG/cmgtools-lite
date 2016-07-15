@@ -37,11 +37,13 @@ event_vars = [
     Variable('rho', lambda ev : ev.rho),
     Variable('weight', lambda ev : ev.eventWeight),
     Variable('weight_vertex', lambda ev : ev.puWeight),
-    Variable('weight_embed', lambda ev : getattr(ev, 'embedWeight', 1.)),
+    # # Add back for embedded samples once needed
+    # Variable('weight_embed', lambda ev : getattr(ev, 'embedWeight', 1.)),
     Variable('weight_njet', lambda ev : ev.NJetWeight),
-    Variable('weight_hqt', lambda ev : getattr(ev, 'higgsPtWeight', 1.)),
-    Variable('weight_hqt_up', lambda ev : getattr(ev, 'higgsPtWeightUp', 1.)),
-    Variable('weight_hqt_down', lambda ev : getattr(ev, 'higgsPtWeightDown', 1.)),
+    # # Add back the following only for ggH samples once needed
+    # Variable('weight_hqt', lambda ev : getattr(ev, 'higgsPtWeight', 1.)),
+    # Variable('weight_hqt_up', lambda ev : getattr(ev, 'higgsPtWeightUp', 1.)),
+    # Variable('weight_hqt_down', lambda ev : getattr(ev, 'higgsPtWeightDown', 1.)),
 ]
 
 # di-tau object variables
@@ -53,9 +55,9 @@ ditau_vars = [
     Variable('pzeta_disc', lambda dil : dil.pZetaDisc()),
     Variable('mt', lambda dil : dil.mTLeg1()),
     Variable('mt_leg2', lambda dil : dil.mTLeg2()),
-    # Variable('mt_leg1', lambda dil : dil.mTLeg1()),
+    # Variable('mt_leg1', lambda dil : dil.mTLeg1()), # redundant
     Variable('met_cov00', lambda dil : dil.mvaMetSig(0, 0) if dil.mvaMetSig else 0.),
-    Variable('met_cov01', lambda dil : dil.mvaMetSig(0, 1) if dil.mvaMetSig else 0.),
+    # Variable('met_cov01', lambda dil : dil.mvaMetSig(0, 1) if dil.mvaMetSig else 0.), # redundant
     Variable('met_cov10', lambda dil : dil.mvaMetSig(1, 0) if dil.mvaMetSig else 0.),
     Variable('met_cov11', lambda dil : dil.mvaMetSig(1, 1) if dil.mvaMetSig else 0.),
     Variable('met_phi', lambda dil : dil.met().phi()),
@@ -75,13 +77,13 @@ svfit_vars = [
     Variable('svfit_transverse_mass', lambda dil : dil.svfitTransverseMass()),
     Variable('svfit_mass_error', lambda dil : dil.svfitMassError()),
     Variable('svfit_pt', lambda dil : dil.svfitPt()),
-    Variable('svfit_pt_error', lambda dil : dil.svfitPtError()),
-    Variable('svfit_eta', lambda dil : dil.svfitEta()),
-    Variable('svfit_phi', lambda dil : dil.svfitPhi()),
-    Variable('svfit_met_pt', lambda dil : dil.svfitMET().Rho() if hasattr(dil, 'svfitMET') else default()),
-    Variable('svfit_met_e', lambda dil : dil.svfitMET().mag2() if hasattr(dil, 'svfitMET') else default()),
-    Variable('svfit_met_phi', lambda dil : dil.svfitMET().phi() if hasattr(dil, 'svfitMET') else default()),
-    Variable('svfit_met_eta', lambda dil : dil.svfitMET().eta() if hasattr(dil, 'svfitMET') else default()),
+    # Variable('svfit_pt_error', lambda dil : dil.svfitPtError()),
+    # Variable('svfit_eta', lambda dil : dil.svfitEta()),
+    # Variable('svfit_phi', lambda dil : dil.svfitPhi()),
+    # Variable('svfit_met_pt', lambda dil : dil.svfitMET().Rho() if hasattr(dil, 'svfitMET') else default()),
+    # Variable('svfit_met_e', lambda dil : dil.svfitMET().mag2() if hasattr(dil, 'svfitMET') else default()),
+    # Variable('svfit_met_phi', lambda dil : dil.svfitMET().phi() if hasattr(dil, 'svfitMET') else default()),
+    # Variable('svfit_met_eta', lambda dil : dil.svfitMET().eta() if hasattr(dil, 'svfitMET') else default()),
 ]
 
 # generic particle
@@ -95,8 +97,6 @@ particle_vars = [
 
 # generic lepton
 lepton_vars = [
-    Variable('reliso05', lambda lep : lep.relIsoR(R=0.3, dBetaFactor=0.5, allCharged=0)),
-    Variable('reliso05_04', lambda lep : lep.relIsoR(R=0.4, dBetaFactor=0.5, allCharged=0)),
     Variable('dxy', lambda lep : lep.dxy()),
     Variable('dxy_error', lambda lep : lep.edxy() if hasattr(lep, 'edxy') else lep.dxy_error()),
     Variable('dz', lambda lep : lep.leadChargedHadrCand().dz() if hasattr(lep, 'leadChargedHadrCand') else lep.dz()),
@@ -123,10 +123,14 @@ electron_vars = [
     Variable('eid_tight', lambda ele : ele.cutBasedId('POG_SPRING15_25ns_v1_Tight')),
     Variable('nhits_missing', lambda ele : ele.physObj.gsfTrack().hitPattern().numberOfHits(1), int),
     Variable('pass_conv_veto', lambda ele : ele.passConversionVeto()),
+    Variable('reliso05', lambda lep : lep.relIsoR(R=0.3, dBetaFactor=0.5, allCharged=0)),
+    Variable('reliso05_04', lambda lep : lep.relIsoR(R=0.4, dBetaFactor=0.5, allCharged=0)),
 ]
 
 # muon
 muon_vars = [
+    Variable('reliso05', lambda lep : lep.relIsoR(R=0.3, dBetaFactor=0.5, allCharged=0)),
+    Variable('reliso05_04', lambda lep : lep.relIsoR(R=0.4, dBetaFactor=0.5, allCharged=0)),
     Variable('muonid_loose', lambda muon : muon.muonID('POG_ID_Loose')),
     Variable('muonid_medium', lambda muon : muon.muonID('POG_ID_Medium_ICHEP')),
     Variable('muonid_tight', lambda muon : muon.muonID('POG_ID_Tight')),
@@ -160,13 +164,12 @@ jet_vars = [
     # run in our skimming step
     # (for which Jet.py would have to be touched again)
     Variable('mva_pu', lambda jet : jet.puMva('pileupJetId:fullDiscriminant')),
-    Variable('id_loose', lambda jet : jet.looseJetId()),
+    # Variable('id_loose', lambda jet : jet.looseJetId()),
     Variable('id_pu', lambda jet : jet.puJetId() + jet.puJetId('medium') + jet.puJetId('tight')),
-    Variable('mva_btag', lambda jet : jet.btagMVA),
-    Variable('area', lambda jet : jet.jetArea()),
+    # Variable('mva_btag', lambda jet : jet.btagMVA),
+    # Variable('area', lambda jet : jet.jetArea()),
     Variable('flavour_parton', lambda jet : jet.partonFlavour()),
     Variable('csv', lambda jet : jet.btagMVA),
-    Variable('rawfactor', lambda jet : jet.rawFactor()),
     Variable('genjet_pt', lambda jet : jet.matchedGenJet.pt() if hasattr(jet, 'matchedGenJet') and jet.matchedGenJet else -999.),
 ]
 
