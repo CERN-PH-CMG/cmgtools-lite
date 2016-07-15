@@ -77,7 +77,7 @@ kinMVA_2lss_ttbar: kinMVA_2lss_ttbar : 40,-1,1 ; XTitle="MVA (ttH\,tt)", MoreY=2
 #kinMVA_2lss_ttbar_withBDTv8: kinMVA_2lss_ttbar_withBDTv8 : 40,-1,1 ; XTitle="MVA with BDTv8 (ttH\,tt)", MoreY=2.0, Legend='TL'
 kinMVA_2lss_ttV: kinMVA_2lss_ttV : 40,-1,1 ; XTitle="MVA (ttH\,ttV)", MoreY=2.0, Legend='TR'
 #kinMVA_2lss_bins6: ttH_MVAto1D_6_2lss_Marco(kinMVA_2lss_ttbar,kinMVA_2lss_ttV) : [0.5,1.5,2.5,3.5,4.5,5.5,6.5]; XTitle="MVA (ttH\,tt/ttV) bin", MoreY=2.0, Legend='TL'
-kinMVA_2lss_bins8: ttH_MVAto1D_8_2lss_Marco(kinMVA_2lss_ttbar,kinMVA_2lss_ttV) : [0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5]; XTitle="MVA (ttH\,tt/ttV) bin", MoreY=2.0, Legend='TR'
+kinMVA_2lss_bins7: ttH_MVAto1D_7_2lss_Marco(kinMVA_2lss_ttbar,kinMVA_2lss_ttV) : [0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5]; XTitle="MVA (ttH\,tt/ttV) bin", MoreY=2.0, Legend='TR'
 #kinMVA_2lss_bins6_withBDTv8: ttH_MVAto1D_6_2lss_Marco(kinMVA_2lss_ttbar_withBDTv8,kinMVA_2lss_ttV) : [0.5,1.5,2.5,3.5,4.5,5.5,6.5]; XTitle="MVA with BDTv8 (ttH\,tt/ttV) bin", MoreY=2.0, Legend='TL'
 
 kinMVA_3l_ttbar: kinMVA_3l_ttbar : 40,-1,1 ; XTitle="MVA (ttH\,tt)", MoreY=2.0, Legend='TR'
