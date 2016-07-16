@@ -14,62 +14,53 @@ TGraphAsymmErrors *_histo_recoToLoose_leptonSF_mu_sos_barrel = NULL;
 TFile *_file_recoToLoose_leptonSF_mu_sos_endcap = NULL;
 TGraphAsymmErrors *_histo_recoToLoose_leptonSF_mu_sos_endcap = NULL;
 
-TFile *_file_recoToLoose_leptonSF_mu_sos_barrel_highpt = NULL;
-TGraphAsymmErrors *_histo_recoToLoose_leptonSF_mu_sos_barrel_highpt = NULL;
+TFile *_file_recoToLoose_leptonSF_mu_sos_all_highpt = NULL;
+//TGraphAsymmErrors *_histo_recoToLoose_leptonSF_mu_sos_barrel_highpt = NULL;
+TH1F *_histo_recoToLoose_leptonSF_mu_sos_all_highpt = NULL;
+
 TFile *_file_recoToLoose_leptonSF_mu_sos_endcap_highpt = NULL;
-TGraphAsymmErrors *_histo_recoToLoose_leptonSF_mu_sos_endcap_highpt = NULL;
+//TGraphAsymmErrors *_histo_recoToLoose_leptonSF_mu_sos_endcap_highpt = NULL;
 
 
 float _get_recoToLoose_leptonSF_SOS(int pdgid, float _pt, float eta, float var){
 
-  float pt = std::min(float(119.9),_pt);
+  float pt = std::min(float(199.9),_pt);
 
   if (var!=0) assert(0); // NOT IMPLEMENTED
 
   if (abs(pdgid)!=13) return 1.0;
 
   if (!_histo_recoToLoose_leptonSF_mu_sos_barrel) {
-    _file_recoToLoose_leptonSF_mu_sos_barrel = new TFile("../../data/sos_lepton_SF/mu_Loose_barrel.root","read");
-    _histo_recoToLoose_leptonSF_mu_sos_barrel = ( TGraphAsymmErrors*)(_file_recoToLoose_leptonSF_mu_sos_barrel->Get("ratio"));
+    _file_recoToLoose_leptonSF_mu_sos_barrel = new TFile("../../data/sos_lepton_SF/mu_JDGauss_bern3_Loose_barrel_7invfb.root","read");//RECOtoLOOSE -low pT
+    _histo_recoToLoose_leptonSF_mu_sos_barrel = ( TGraphAsymmErrors*)(_file_recoToLoose_leptonSF_mu_sos_barrel->Get("mu_JDGauss_bern3_Loose_barrel_ratio"));
   }
   
   if (!_histo_recoToLoose_leptonSF_mu_sos_endcap) {
-    _file_recoToLoose_leptonSF_mu_sos_endcap = new TFile("../../data/sos_lepton_SF/mu_Loose_endcap.root","read");
-    _histo_recoToLoose_leptonSF_mu_sos_endcap = ( TGraphAsymmErrors*)(_file_recoToLoose_leptonSF_mu_sos_endcap->Get("ratio"));
+    _file_recoToLoose_leptonSF_mu_sos_endcap = new TFile("../../data/sos_lepton_SF/mu_JDGauss_bern3_Loose_endcap_7invfb.root","read");//RECOtoLOOSE -low pT
+    _histo_recoToLoose_leptonSF_mu_sos_endcap = ( TGraphAsymmErrors*)(_file_recoToLoose_leptonSF_mu_sos_endcap->Get("mu_JDGauss_bern3_Loose_endcap_ratio"));
   }
 
-  if (!_histo_recoToLoose_leptonSF_mu_sos_barrel_highpt) {
-    _file_recoToLoose_leptonSF_mu_sos_barrel_highpt = new TFile("../../data/sos_lepton_SF/mu_LooseIdOnly_barrel.root","read");
-    _histo_recoToLoose_leptonSF_mu_sos_barrel_highpt = ( TGraphAsymmErrors*)(_file_recoToLoose_leptonSF_mu_sos_barrel_highpt->Get("ratio"));
+  if (!_histo_recoToLoose_leptonSF_mu_sos_all_highpt) {
+    _file_recoToLoose_leptonSF_mu_sos_all_highpt = new TFile("../../data/sos_lepton_SF/MuonID_Z_2016runB_2p6fb.root","read");
+    _histo_recoToLoose_leptonSF_mu_sos_all_highpt = ( TH1F*)(_file_recoToLoose_leptonSF_mu_sos_all_highpt->Get("MC_NUM_LooseID_DEN_genTracks_PAR_pt_alleta_bin1/pt_ratio"));
   }
-  
-  if (!_histo_recoToLoose_leptonSF_mu_sos_endcap_highpt) {
-    _file_recoToLoose_leptonSF_mu_sos_endcap_highpt = new TFile("../../data/sos_lepton_SF/mu_LooseIdOnly_endcap.root","read");
-    _histo_recoToLoose_leptonSF_mu_sos_endcap_highpt = ( TGraphAsymmErrors*)(_file_recoToLoose_leptonSF_mu_sos_endcap_highpt->Get("ratio"));
-  }
-
-
+ 
   TGraphAsymmErrors *hist_barrel = _histo_recoToLoose_leptonSF_mu_sos_barrel;
   TGraphAsymmErrors *hist_endcap = _histo_recoToLoose_leptonSF_mu_sos_endcap;
-  TGraphAsymmErrors *hist_barrel_highpt = _histo_recoToLoose_leptonSF_mu_sos_barrel_highpt;
-  TGraphAsymmErrors *hist_endcap_highpt = _histo_recoToLoose_leptonSF_mu_sos_endcap_highpt;
+  TH1F *hist_all_highpt = _histo_recoToLoose_leptonSF_mu_sos_all_highpt;
 
   if (pt<25){
     if(abs(eta)<1.2){
       return  hist_barrel->Eval(pt);
     }
-    else {     
-      return hist_endcap->Eval(pt);
+    else {
+     return hist_endcap->Eval(pt);
     }
   }
   else{
-    if(abs(eta)<1.2){
-      return  hist_barrel_highpt->Eval(pt);
-    }
-    else {     
-      return hist_endcap_highpt->Eval(pt);
-    }  
-  } 
+    Int_t binx = (hist_all_highpt->GetXaxis())->FindBin(pt);
+    return  hist_all_highpt->GetBinContent(binx);
+  }
 
   assert(0);
   return -999;
@@ -86,6 +77,8 @@ TGraphAsymmErrors *_histo_looseToTight_leptonSF_el_sos_barrel = NULL;
 TFile *_file_looseToTight_leptonSF_el_sos_endcap = NULL;
 TGraphAsymmErrors *_histo_looseToTight_leptonSF_el_sos_endcap = NULL;
 
+
+
 float _get_looseToTight_leptonSF_SOS(int pdgid, float _pt, float eta, float var){
 
   float pt = std::min(float(79.9),_pt);
@@ -93,20 +86,20 @@ float _get_looseToTight_leptonSF_SOS(int pdgid, float _pt, float eta, float var)
   if (var!=0) assert(0); // NOT IMPLEMENTED
   
   if (!_histo_looseToTight_leptonSF_mu_sos_barrel) {
-    _file_looseToTight_leptonSF_mu_sos_barrel = new TFile("../../data/sos_lepton_SF/mu_SOS_barrel.root","read");
+    _file_looseToTight_leptonSF_mu_sos_barrel = new TFile("../../data/sos_lepton_SF/mu_SOS_barrel_7invfb.root","read");
     _histo_looseToTight_leptonSF_mu_sos_barrel = (TGraphAsymmErrors*)(_file_looseToTight_leptonSF_mu_sos_barrel->Get("ratio"));
   }
   if (!_histo_looseToTight_leptonSF_mu_sos_endcap) {
-    _file_looseToTight_leptonSF_mu_sos_endcap = new TFile("../../data/sos_lepton_SF/mu_SOS_endcap.root","read");
+    _file_looseToTight_leptonSF_mu_sos_endcap = new TFile("../../data/sos_lepton_SF/mu_SOS_endcap_7invfb.root","read");
     _histo_looseToTight_leptonSF_mu_sos_endcap = (TGraphAsymmErrors*)(_file_looseToTight_leptonSF_mu_sos_endcap->Get("ratio"));
   }
   
   if (!_histo_looseToTight_leptonSF_el_sos_barrel) {
-    _file_looseToTight_leptonSF_el_sos_barrel = new TFile("../../data/sos_lepton_SF/el_SOS_barrel.root","read");
+    _file_looseToTight_leptonSF_el_sos_barrel = new TFile("../../data/sos_lepton_SF/el_SOS_barrel_6invfb.root","read");
     _histo_looseToTight_leptonSF_el_sos_barrel = (TGraphAsymmErrors*)(_file_looseToTight_leptonSF_el_sos_barrel->Get("ratio"));
   }
   if (!_histo_looseToTight_leptonSF_el_sos_endcap) {
-    _file_looseToTight_leptonSF_el_sos_endcap = new TFile("../../data/sos_lepton_SF/el_SOS_endcap.root","read");
+    _file_looseToTight_leptonSF_el_sos_endcap = new TFile("../../data/sos_lepton_SF/el_SOS_endcap_6invfb.root","read");
     _histo_looseToTight_leptonSF_el_sos_endcap = (TGraphAsymmErrors*)(_file_looseToTight_leptonSF_el_sos_endcap->Get("ratio"));
   }
 
@@ -136,6 +129,94 @@ float _get_looseToTight_leptonSF_SOS(int pdgid, float _pt, float eta, float var)
   
   assert(0);
   return -999;
+}
+
+// ---- Tracking (hard-coded so far)  ---------------------------
+
+float _get_tracking_SF(int pdgid, float pt, float eta, float var){
+
+ if (var!=0) assert(0); // NOT IMPLEMENTED
+
+ if (abs(pdgid)!=13) return 1.0;
+
+ if(pt>10){ 
+   //---pT>10 GeV-------
+   
+   if(eta>-2.4 && eta<=-2.1 ){
+     return 0.988;
+   } 
+   else if(eta>-2.1 && eta<=-1.60 ){
+     return 0.994;
+   } 
+   else if(eta>-1.60 && eta<=-1.10 ){
+     return 0.997;
+   } 
+   else if(eta>-1.10 && eta<=-0.6 ){
+     return 0.995;
+   } 
+   else if(eta>-0.6 && eta<=0.0 ){
+     return 0.994;
+   } 
+   else if(eta>0.0 && eta<=0.60 ){
+     return 0.996;
+   } 
+   else if(eta>0.60 && eta<=1.10 ){
+     return 0.998;
+   } 
+   else if(eta>1.10 && eta<=1.60 ){
+     return 0.996;
+   } 
+   else if(eta>1.60 && eta<=2.10 ){
+     return 0.993;
+   } 
+   else if(eta>2.10 && eta<=2.4 ){
+     return 0.982;
+   } 
+   else{
+     return 1.0;
+   }
+ }
+
+ // --- pT<10 GeV ---
+ 
+ else{
+
+   //-----------------
+   if(eta>-2.4 && eta<=-2.1 ){
+     return 0.964;
+   } 
+   else if(eta>-2.1 && eta<=-1.60 ){
+     return 0.978;
+   } 
+   else if(eta>-1.60 && eta<=-1.10 ){
+     return 0.976;
+   } 
+   else if(eta>-1.10 && eta<=-0.6 ){
+     return 0.970;
+   } 
+   else if(eta>-0.6 && eta<=0.0 ){
+     return 0.967;
+   } 
+   else if(eta>0.0 && eta<=0.60 ){
+     return 0.976;
+   } 
+   else if(eta>0.60 && eta<=1.10 ){
+     return 0.981;
+   } 
+   else if(eta>1.10 && eta<=1.60 ){
+     return 0.980;
+   } 
+   else if(eta>1.60 && eta<=2.10 ){
+     return 0.978;
+   } 
+   else if(eta>2.10 && eta<=2.4 ){
+     return 0.953;
+   } 
+   else{
+     return 1.0; 
+   }
+ }
+ 
 }
 
 // ----  With loose IP, for DY CR only --------------------------
@@ -207,46 +288,48 @@ float _get_looseToTight_leptonSF_looseIP_SOS(int pdgid, float _pt, float eta, fl
 
 float leptonSF_SOS(int pdgid, float _pt, float eta, float var=0){
 
+  float tracking = _get_tracking_SF(pdgid,_pt,eta,var);
   float recoToLoose = _get_recoToLoose_leptonSF_SOS(pdgid,_pt,eta,var);
   float looseToTight = _get_looseToTight_leptonSF_SOS(pdgid,_pt,eta,var);
-  float res = recoToLoose*looseToTight;
+  float res = tracking*recoToLoose*looseToTight; 
   assert (res>0);
   return res;
 }
 
 // --- For DY only -----------------------------
 
-float leptonSF_DY_SOS(int pdgid, float _pt, float eta, float var=0){
+//float leptonSF_DY_SOS(int pdgid, float _pt, float eta, float var=0){
+//
+//  float recoToLoose = _get_recoToLoose_leptonSF_SOS(pdgid,_pt,eta,var);
+//  float looseToTight = _get_looseToTight_leptonSF_looseIP_SOS(pdgid,_pt,eta,var);
+//  float res = recoToLoose*looseToTight;
+//  assert (res>0);
+//  return res;
+//}
 
-  float recoToLoose = _get_recoToLoose_leptonSF_SOS(pdgid,_pt,eta,var);
-  float looseToTight = _get_looseToTight_leptonSF_looseIP_SOS(pdgid,_pt,eta,var);
-  float res = recoToLoose*looseToTight;
-  assert (res>0);
-  return res;
-}
+// Trigger efficiency ---------------------------
 
-// Trigger: hard coded (so far) ---------------------------
+TFile *_file_triggerSF = NULL;
+TH2F  *_histo_triggerSF = NULL;
 
-float triggerSF_SOS(float met, float met_corr, float var_ee=0){
+float triggerSF_SOS(float _met, float _met_corr, float var_ee=0){
  
   if (var_ee!=0) assert(0); // NOT IMPLEMENTED
+
+  if (!_file_triggerSF) {
+    _file_triggerSF  = new TFile("../../data/sos_lepton_SF/trigger_eff_7invfb.root","read");
+    _histo_triggerSF = (TH2F*)(_file_triggerSF->Get("HLT_DoubleMu3_PFMET50_turnon2d"));
+  }
  
-  if(met>200 && met_corr>200){ 
-    return 1.0;
-  }
-  else if(met>=125 && met<=150 && met_corr>=125 && met_corr<=150 ){
-    return 0.94*0.94*0.93*0.90;
-  }
-  //-----------------
-  else if(met>=125 && met<=150 && met_corr>150 && met_corr<=200 ){
-    return 0.94*0.94*0.93*0.93;
-  }
-  // ----------------
-  else if(met>150 && met<=200 && met_corr>=125 && met_corr<=150 ){
-    return 0.94*0.94*0.93*0.96;
-  }
-  else { return 1.0;}
-  
+  float muon_leg_eff=0.95*0.95*0.93; // Mu3 leg * Mu3 leg * DZ
+  float met = std::min(float(200.0),_met);
+  float met_corr = std::min(float(200.),_met_corr);
+
+  Int_t binx = (_histo_triggerSF->GetXaxis())->FindBin(met);
+  Int_t biny = (_histo_triggerSF->GetYaxis())->FindBin(met_corr);  
+
+  return muon_leg_eff*(_histo_triggerSF->GetBinContent(binx,biny));
+ 
 }
 
 void lepton_trigger_SF() {}
