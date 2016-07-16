@@ -5,7 +5,7 @@ from CMGTools.H2TauTau.proto.plotter.PlotConfigs import HistogramCfg
 print "importing cat_Inc"
 from CMGTools.VVResonances.plotting.categories_VV import cat_Inc
 print "importing createHistograms"
-from CMGTools.H2TauTau.proto.plotter.HistCreator import createHistograms
+from CMGTools.VVResonances.plotting.HistCreator import createHistograms
 print "importing HistDrawer"
 from CMGTools.H2TauTau.proto.plotter.HistDrawer import HistDrawer
 print "importing Variables"
