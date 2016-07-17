@@ -8,8 +8,7 @@ from CMGTools.VVResonances.plotting.HistCreator import setSumWeights
 
 from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv2 import TTJets, WJetsToLNuHT, QCDHT, DYJetsM50HT, GJetsHT
 # from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv2 import TT_pow_ext3 as TT_pow_ext
-from CMGTools.RootTools.samples.samples_13TeV_DATA2016 import JetHT_Run2016B_PromptReco_v2, SingleElectron_Run2016B_PromptReco_v2, SingleMuon_Run2016B_PromptReco_v2
-from CMGTools.RootTools.samples.samples_13TeV_DATA2015 import JetHT_Run2015C_25ns_16Dec, JetHT_Run2015D_16Dec, SingleElectron_Run2015C_25ns_16Dec, SingleElectron_Run2015D_16Dec, SingleMuon_Run2015C_25ns_16Dec, SingleMuon_Run2015D_16Dec
+from CMGTools.RootTools.samples.samples_13TeV_DATA2016 import JetHT_Run2016B_PromptReco_v2 #, JetHT_Run2016C_PromptReco_v2, JetHT_Run2016D_PromptReco_v2, SingleElectron_Run2016B_PromptReco_v2, SingleElectron_Run2016C_PromptReco_v2, SingleElectron_Run2016D_PromptReco_v2, SingleMuon_Run2016B_PromptReco_v2, SingleMuon_Run2016C_PromptReco_v2, SingleMuon_Run2016D_PromptReco_v2
 # from CMGTools.VVAnalysis.samples.signal_13TeV_80X import signalSamples
 
 def createSampleLists(analysis_dir='/data/clange/ntuples/2015_76X_Pruning/',
@@ -29,8 +28,9 @@ def createSampleLists(analysis_dir='/data/clange/ntuples/2015_76X_Pruning/',
     samples_data = []
     # if channel in ['VV']:
     samples_data = [
-        # SampleCfg(name='data_obs', dir_name='JetHT_Run2015C_25ns_16Dec', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
-        SampleCfg(name='data_obs', dir_name='JetHT_Run2015D_16Dec', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
+        SampleCfg(name='data_obs', dir_name='JetHT_Run2016B_PromptReco_v2', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
+        SampleCfg(name='data_obs', dir_name='JetHT_Run2016C_PromptReco_v2', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
+        SampleCfg(name='data_obs', dir_name='JetHT_Run2016D_PromptReco_v2', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
     ]
 
     # samples_WH = []

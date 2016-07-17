@@ -17,13 +17,13 @@ from CMGTools.H2TauTau.proto.plotter.helper_methods import plotDataOverMCEff
 
 print "Done importing"
 
-total_weight = '1'
+total_weight = '1.'
 
 print 'Total weight', total_weight
 
 weight_MC = "genWeight * puWeight"
 
-int_lumi = 2630
+int_lumi = 7650
 
 cuts = {}
 
@@ -32,26 +32,10 @@ inc_cut = '&&'.join([cat_Inc])
 cuts['NoSubstructure'] = inc_cut #+ '&& l1_charge != l2_charge && abs(l1_eta) < 2.1 && mvis>50'
 
 # -> Command line
-analysis_dir = '/data/clange/ntuples/2015_76X_Pruning/'
+analysis_dir = '/data/bachtis/VV/data/2016_80X_Pruning/'
 tree_prod_name = ''
 
 samples_mc, samples_data, samples, all_samples, sampleDict = createSampleLists(analysis_dir, channel='VV', weight=weight_MC)
-
-# if qcd_from_same_sign:
-#     samples_qcdfromss = [s for s in samples if s.name != 'QCD']
-#     samples_ss = copy.deepcopy(samples_qcdfromss)
-#
-#     scale = 1.06
-#
-#     for sample in samples_ss:
-#         sample.scale = scale
-#         if sample.name != 'Data':
-#             # Subtract background from data
-#             sample.scale = -scale
-#
-#     qcd = HistogramCfg(name='QCD', var=None, cfgs=samples_ss, cut=inc_cut, lumi=int_lumi)
-#
-#     samples_qcdfromss.append(qcd)
 
 # Taken from Variables.py, can get subset with e.g. getVars(['mt', 'mvis'])
 variables = VV_vars
@@ -73,6 +57,7 @@ for cut_name in cuts:
     for variable in variables:
         plot = plots[variable.name]
         plot.Group('QCD', ['QCD_HT2000toInf', 'QCD_HT1500to2000', 'QCD_HT1000to1500', 'QCD_HT700to1000', 'QCD_HT300to500'])
+        plot.Group('TT', ['TTJets'])
         # plot.Group('Single t', ['T_tWch', 'TBar_tWch', 'TToLeptons_sch', 'TToLeptons_tch'])
         # plot.Group('ZLL', ['ZL', 'ZJ'], style=plot.Hist('ZL').style)
         # plot.Group('Electroweak', ['W', 'VV'])
