@@ -29,7 +29,7 @@ def _runIt(args):
         (tty,mysource,myoutpath,cut,mycut,options,selectors) = args
         mytree = tty.getTree()
         ntot  = mytree.GetEntries() 
-        print "  Start  %-40s: %8d" % (tty.cname(), ntot)
+        if not options.justcount: print "  Start  %-40s: %8d" % (tty.cname(), ntot)
         timer = ROOT.TStopwatch(); timer.Start()
         # now we do
         os.system("mkdir -p "+myoutpath)
@@ -63,6 +63,10 @@ def _runIt(args):
             mytree.SetBranchStatus("*",1)
             elist.Subtract(elistveto)
             print '%d events survived vetoes'%(elist.GetN(),)
+        if options.justcount:
+            print "  As if it were Done   %-40s: %8d/%8d" % (tty.cname(), elist.GetN(), ntot)
+            return
+
         # drop and keep branches
         for drop in options.drop: mytree.SetBranchStatus(drop,0)
         for keep in options.keep: mytree.SetBranchStatus(keep,1)
@@ -92,6 +96,7 @@ if __name__ == "__main__":
     parser.add_option("--oldstyle",    dest="oldstyle", default=False, action="store_true",  help="Oldstyle naming (e.g. file named as <analyzer>_tree.root)") 
     parser.add_option("--vetoevents",  dest="vetoevents", type="string", default=[], action="append",  help="File containing list of events to filter out")
     parser.add_option("--pretend",    dest="pretend", default=False, action="store_true",  help="Pretend to skim, don't actually do it") 
+    parser.add_option("--justcount",  dest="justcount", default=False, action="store_true",  help="Pretend to skim, up to the point of counting passing events") 
     addMCAnalysisOptions(parser)
     (options, args) = parser.parse_args()
     options.weight = False

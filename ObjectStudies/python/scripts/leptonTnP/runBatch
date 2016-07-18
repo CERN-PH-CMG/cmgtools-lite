@@ -1,0 +1,13 @@
+#!/bin/bash
+export HOMEDIR=$1; shift
+export SCRAM_ARCH=$1; shift
+LOG="$HOMEDIR/runBatch.log.${LSB_JOBID}"
+cd $HOMEDIR;
+eval $(scramv1 runtime -sh)
+ulimit -s unlimited
+ulimit -c 0
+echo "## Home dir is $HOMEDIR"  >  $LOG
+echo "## Executing $*"  >> $LOG
+echo "## Starting at $(date)"  >> $LOG
+$* 2>&1 | tee -a $LOG > /dev/null
+echo "## Done at $(date)" >> $LOG

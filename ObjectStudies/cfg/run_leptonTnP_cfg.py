@@ -30,11 +30,12 @@ dataSamples_PromptReco = [ d for d in dataSamples_PromptReco if "PromptReco-v2" 
 if   run == "Mu": dataSamples = [ d for d in dataSamples_PromptReco if "SingleM" in d.name ]
 elif run == "El": dataSamples = [ d for d in dataSamples_PromptReco if "SingleE" in d.name ]
 else            : dataSamples = [ d for d in dataSamples_PromptReco if ("SingleM" in d.name or "SingleE" in d.name) ]
-for d in dataSamples:
+for d in dataSamples[:]:
     d.triggers = triggers_1mu_iso if 'Muon' in d.name else triggers_1e
     d.vetoTriggers = []
-    d.json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-275125_13TeV_PromptReco_Collisions16_JSON.txt'
+    d.json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-275783_13TeV_PromptReco_Collisions16_JSON.txt'
     filterComponent(d,1)
+    if not d.files: dataSamples.remove(d)
 configureSplittingFromTime(dataSamples, 10.0, 2)
     
 mcSamples = [ DYJetsToLL_M50_LO ]
