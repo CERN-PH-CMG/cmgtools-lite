@@ -61,16 +61,17 @@ def getLogBins(nbinsx,xmin,xmax):
 
     return xbins
 
+'''
 #pt_bins = getLogBins(30,0.9,1000)
 pt_bins = getLogBins(33,0.9,1500)
 #lt_bins = getLogBins(20,9,1000)
 lt_bins = getLogBins(22,9,3000)
 ht_bins = getLogBins(30,30,2000)
-
+'''
 #pt_bins_2d = getLogBins(30,0.9,1000)
 #met_bins_2d = getLogBins(20,9,1000)
 
-print ht_bins
+#print ht_bins
 
 def cleanName(line):
 
@@ -161,7 +162,8 @@ def cutsToString(cutList):
 def saveCanvases(canvList, pdir = '', extraName = '', _batchMode = True):
 
     ## save canvases to file
-    extList = ['.png','.pdf','.root','.C']
+    #extList = ['.png','.pdf','.root','.C']
+    extList = ['.png','.pdf']
 
     prefix = ''
     if extraName != '':
@@ -190,6 +192,10 @@ def saveCanvases(canvList, pdir = '', extraName = '', _batchMode = True):
     for canv in canvList:
         for ext in extList:
             cname = canv.GetName().replace('Lep_pt','LepPt')
+
+            # ignore var distributions for now
+            if "Eff" not in cname: continue
+
             cname = cdir + cname+ suffix + ext
             # remove special symbols
             cname = cname.replace('||','or')
