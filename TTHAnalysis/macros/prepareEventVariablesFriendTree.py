@@ -9,6 +9,13 @@ MODULES = []
 utility_files_dir = os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/"
 isFastSim = False
 
+def getSampName(name, tname):
+    if "/tree.root" in name:
+        samp = name.replace("/"+tname+"/tree.root","")
+        samp = os.path.basename(samp)
+        return samp
+    else: return name
+
 #btagSF = utility_files_dir+"/btag/CSVv2_25ns.csv"
 #btagEFF = utility_files_dir+"/btag/btageff__ttbar_powheg_pythia8_25ns.root"
 #btagSF_FastSim = utility_files_dir+"/btag/CSV_13TEV_Combined_20_11_2015_FullSim_FastSim.csv"
@@ -303,6 +310,10 @@ MODULES.append( ('LepMVAFriendJetLessIVFNOTAU_SIGDY', lambda: LepMVAFriend((os.e
                                                                     os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/leptonMVA/jetless/SoftJetLessIVFNOTAU_SIGDY_%s_BDTG.weights.xml",),
                                                                    training="SoftJetLessIVF", label="JetLessIVFNOTAU_SIGDY")) )
 
+from CMGTools.TTHAnalysis.tools.eventVars_1l_WeightsForSystematics import EventVars1LWeightsForSystematics
+MODULES.append( ('CR_Model_SysWeights', EventVars1LWeightsForSystematics()) )
+
+
 
 
 class VariableProducer(Module):
@@ -550,6 +561,8 @@ def _runIt(myargs):
     print "==== %s starting (%d entries) ====" % (name, nev)
     booker = Booker(fout)
     modulesToRun = MODULES
+    for m,v in MODULES:
+        v.sample = getSampName(fin,options.tree)
     if options.modules != []:
         toRun = {}
         for m,v in MODULES:
