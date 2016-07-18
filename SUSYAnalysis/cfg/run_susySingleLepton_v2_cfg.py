@@ -206,7 +206,7 @@ isData = True # default, but will be overwritten below
 #sample = 'MC'
 sample = 'data'
 #sample = 'Signal'
-test = 1
+test = 0
 
 if sample == "MC":
 
@@ -337,7 +337,7 @@ elif sample == "data":
   anyLepSkim.minLeptons = 1
   ttHLepSkim.minLeptons = 0
 
-  #For now no JEC  
+  #For now no JEC
   #print jetAna.shiftJEC , jetAna.recalibrateJets , jetAna.addJECShifts , jetAna.calculateSeparateCorrections , jetAna.calculateType1METCorrection
   #jetAna.addJECShifts = False
   #jetAna.doQG = False
@@ -348,12 +348,17 @@ elif sample == "data":
   #print jetAna.shiftJEC , jetAna.recalibrateJets , jetAna.addJECShifts , jetAna.calculateSeparateCorrections , jetAna.calculateType1METCorrection
 
   # central samples
-  from CMGTools.RootTools.samples.samples_13TeV_DATA2016 import *
+  #from CMGTools.RootTools.samples.samples_13TeV_DATA2016 import *
+  from CMGTools.SUSYAnalysis.samples.samples_13TeV_DATA2016 import *
 
   #  selectedComponents = [SingleElectron_Run2016B_PromptReco_v2, SingleMuon_Run2016B_PromptReco_v2, JetHT_Run2016B_PromptReco_v2_HT800Only]
-  selectedComponents = [JetHT_Run2016B_PromptReco_v2_HT800Only, JetHT_Run2016C_PromptReco_v2_HT800Only]#, JetHT_Run2016D_PromptReco_v2_HT800Only]
-#  selectedComponents = [JetHT_Run2016C_PromptReco_v2_HT800Only]#, JetHT_Run2016D_PromptReco_v2_HT800Only]
+  #selectedComponents = [JetHT_Run2016B_PromptReco_v2_HT800Only, JetHT_Run2016C_PromptReco_v2_HT800Only]#, JetHT_Run2016D_PromptReco_v2_HT800Only]
+  #selectedComponents = [JetHT_Run2016C_PromptReco_v2_HT800Only]#, JetHT_Run2016D_PromptReco_v2_HT800Only]
 
+  #selectedComponents = [SingleElectron_Run2016B_PromptReco_v2, SingleMuon_Run2016B_PromptReco_v2]
+
+  selectedComponents = [SingleElectron_Run2016B_PromptReco_v2, SingleElectron_Run2016C_PromptReco_v2]
+  #selectedComponents = [SingleMuon_Run2016B_PromptReco_v2, SingleMuon_Run2016C_PromptReco_v2]
 
   if test!=0 and jsonAna in susyCoreSequence: susyCoreSequence.remove(jsonAna)
   if test==1:
