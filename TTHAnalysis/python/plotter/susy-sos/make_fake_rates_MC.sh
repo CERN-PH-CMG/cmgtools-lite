@@ -5,16 +5,15 @@
 BCORE=" --s2v --tree treeProducerSusyMultilepton susy-sos/lepton-mca-frstudies.txt object-studies/lepton-perlep.txt  "
 if hostname | grep -q cmsco01; then
 #    T="/data1/gpetrucc/TREES_TTH_260116_76X_1L"
-    T="/afs/cern.ch/user/g/gpetrucc/w/TREES_80X_SOS_230616/1L "
+    T="/data1/gpetrucc/TREES_80X_SOS_130716_1L "
 #    T="/data1/peruzzi/2016-06-02_ewktrees76X_1LL"
 else
     echo "No luck, sorry"
     exit 1
 fi
-BCORE="${BCORE} --mcc susy-sos/mcc-eleIdWPs.txt "
 BASE="python mcEfficiencies.py $BCORE --ytitle 'Fake rate'   "
 PLOTTER="python mcPlots.py $BCORE   "
-PBASE="plots/80X/sos/fr-mc/v1.1"
+PBASE="plots/80X/sos/fr-mc/v2.0"
 
 BG=" -j 8 "; if [[ "$1" == "-b" ]]; then BG=" -j 4 & "; shift; fi
 
@@ -25,23 +24,23 @@ for WP in $*; do
         CONVVETO="abs(LepGood_pdgId)==13 || (LepGood_lostHits==0 && LepGood_convVeto)"
         SelDen=" -A pt20 cveto '${CONVVETO}' "
         case $WP in 
-            SOS_Iso) Num=SOS_Iso;
-                SelDen="${SelDen} -A pt20 id '${SOS_ID}' " ;
-                SelDen="${SelDen} -A pt20 dxyz '${SOS_DXYZ}' " ;
-                ;;
-            SOS_IsoDxyz|SOS_noid) Num=SOS_IsoDxyz;
-                SelDen="${SelDen} -A pt20 id '${SOS_ID}' " ; ElFrMax=0.6;
-                ;;
+            #SOS_Iso) Num=SOS_Iso;
+            #    SelDen="${SelDen} -A pt20 id '${SOS_ID}' " ;
+            #    SelDen="${SelDen} -A pt20 dxyz '${SOS_DXYZ}' " ;
+            #    ;;
+            #SOS_IsoDxyz|SOS_noid) Num=SOS_IsoDxyz;
+            #    SelDen="${SelDen} -A pt20 id '${SOS_ID}' " ; ElFrMax=0.6;
+            #    ;;
             SOS_eeid) Num=SOS_IdIsoDxyz;
-                SelDen="${SelDen} -A pt20 id 'abs(LepGood_pdgId)==13 || abs(LepGood_pdgId)==11 && LepGood_eleIdVVL' " ; 
+                SelDen="${SelDen} -A pt20 id 'abs(LepGood_pdgId)==13 || abs(LepGood_pdgId)==11 && eleWPVVL(LepGood_pt,LepGood_etaSc,LepGood_mvaIdSpring15)' " ; 
                 ;;
-            SOS_eeid_sip6) Num=SOS_IdIsoDxyz;
-                SelDen="${SelDen} -A pt20 id 'abs(LepGood_pdgId)==13 || abs(LepGood_pdgId)==11 && LepGood_eleIdVVL' " ;  
-                SelDen="${SelDen} -A pt20 dxyz '(${SOS_DXYZ} || LepGood_sip3d < 4)' " ;
-                ElFrMax=0.6;
-                ;;
-            SOS_IdIsoDxyz|SOS_full) Num=SOS_IdIsoDxyz; ElFrMax=0.6
-                ;;
+            #SOS_eeid_sip6) Num=SOS_IdIsoDxyz;
+            #    SelDen="${SelDen} -A pt20 id 'abs(LepGood_pdgId)==13 || abs(LepGood_pdgId)==11 && eleWPVVL(LepGood_pt,LepGood_etaSc,LepGood_mvaIdSpring15)' " ;  
+            #    SelDen="${SelDen} -A pt20 dxyz '(${SOS_DXYZ} || LepGood_sip3d < 4)' " ;
+            #    ElFrMax=0.6;
+            #    ;;
+            #SOS_IdIsoDxyz|SOS_full) Num=SOS_IdIsoDxyz; ElFrMax=0.6
+            #    ;;
             *)
                 echo "Missing ID $WP";
                 exit 1;;
@@ -77,6 +76,7 @@ for WP in $*; do
         #    echo "( $P2 $MuDen ${BDen} --sP 'pt_fine' --ratioDen QCD_${J} --ratioNums QCD_${J} -p QCD_${J},QCD_${J} --pdir $PBASE/$what/mu_${Me}_eta_12_24/QCD_${J} -R pt20 eta 'abs(LepGood_eta)>1.2' ${BG} )"
         #done
         for PlotPtMin in 5 10 15; do
+            continue
             PlotPtMax=$((PlotPtMin + 5))
             PtBin="pt_${PlotPtMin}_${PlotPtMax}"; PtCut="${PlotPtMin} < LepGood_pt && LepGood_pt <= ${PlotPtMax}"
             Procs="-p QCD_red,WJ_red,TT_red,Z3l_red_80 --ratioDen WJ_red --ratioNums '.*' --maxRatioRange 0 2";
@@ -90,6 +90,7 @@ for WP in $*; do
         echo "( $B0 $MuFakeVsPt -p WJ_red,TT_red,QCD_red --sp WJ_red -o $PBASE/$what/mu_${Me}_eta_12_24.root    -R pt20 eta 'abs(LepGood_eta)>1.2'   ${BG} )"
         echo "( $B0 $ElFakeVsPt -p WJ_red,TT_red,QCD_red --sp WJ_red -o $PBASE/$what/el_${Me}_eta_00_15.root    -R pt20 eta 'abs(LepGood_eta)<1.479' ${BG} )"
         echo "( $B0 $ElFakeVsPt -p WJ_red,TT_red,QCD_red --sp WJ_red -o $PBASE/$what/el_${Me}_eta_15_25.root    -R pt20 eta 'abs(LepGood_eta)>1.479' ${BG} )"
+        continue
 
         echo "( $B0 $MuFakeVsPt -p WJ_red_met100,TT_red_met100,QCD_red --sp WJ_red_met100 -o $PBASE/$what/mu_met_${Me}_eta_00_12.root    -R pt20 eta 'abs(LepGood_eta)<1.2'   ${BG} )"
         echo "( $B0 $MuFakeVsPt -p WJ_red_met100,TT_red_met100,QCD_red --sp WJ_red_met100 -o $PBASE/$what/mu_met_${Me}_eta_12_24.root    -R pt20 eta 'abs(LepGood_eta)>1.2'   ${BG} )"
