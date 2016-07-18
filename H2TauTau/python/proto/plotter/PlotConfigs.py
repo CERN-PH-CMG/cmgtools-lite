@@ -54,11 +54,12 @@ class HistogramCfg(object):
 
     A histogram can in turn have a sub-contribution from another histogram cfg. 
     '''
-    def __init__(self, name='Default', var=None, cfgs=None, cut='', lumi=1.,
+    def __init__(self, name='Default', var=None, vars=None, cfgs=None, cut='', lumi=1.,
                  weight='weight', norm_cfg=None, use_signal_for_stack=False,
                  total_scale=None):
         self.name = name # e.g. 'vbf tight'
-        self.var = VariableCfg() if var is None else var # e.g. 'mvis'
+        self.var = var # Single variable
+        self.vars = [] if vars is None else vars # List of variable cfgs
         self.cfgs = [] if cfgs is None else cfgs # List of sample and/or histogram cfgs
         self.cut = cut
         self.lumi = lumi

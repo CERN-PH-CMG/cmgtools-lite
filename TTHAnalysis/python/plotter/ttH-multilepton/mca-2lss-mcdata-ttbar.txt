@@ -18,8 +18,8 @@ Rares: TTTT : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ; FillColor=
 Rares: tZq_ll : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ; FillColor=ROOT.kMagenta-7
 
 TT      : TTJets_DiLepton : xsec  ; FillColor=ROOT.kGray
-TT      : TTJets_SingleLeptonFromT : xsec  ; FillColor=ROOT.kGray
-TT      : TTJets_SingleLeptonFromTbar : xsec  ; FillColor=ROOT.kGray
+TT      : TTJets_SingleLeptonFromT+TTJets_SingleLeptonFromT_ext : xsec  ; FillColor=ROOT.kGray
+TT      : TTJets_SingleLeptonFromTbar+TTJets_SingleLeptonFromTbar_ext : xsec  ; FillColor=ROOT.kGray
 DY      : DYJetsToLL_M10to50: xsec  ; FillColor=ROOT.kCyan
 DY      : DYJetsToLL_M50: xsec  ; FillColor=ROOT.kCyan
 WJets   : WJetsToLNu_LO  : xsec  ; FillColor=ROOT.kCyan+2

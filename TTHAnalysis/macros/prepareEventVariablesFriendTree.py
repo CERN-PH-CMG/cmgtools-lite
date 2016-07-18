@@ -222,7 +222,7 @@ MODULES.append ( ('puWeightsTrue_down', lambda : VertexWeightFriend(putruefilemc
 from CMGTools.TTHAnalysis.tools.eventVars_2lss import EventVars2LSS 
 MODULES.append( ('ttH2lss', lambda : EventVars2LSS()) )
 from CMGTools.TTHAnalysis.tools.kinMVA_2D_2lss_3l import KinMVA_2D_2lss_3l
-MODULES.append( ('kinMVA_2D_2lss_3l', lambda : KinMVA_2D_2lss_3l(os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/kinMVA/tth/%s_BDTG.weights.xml")) )
+MODULES.append( ('kinMVA_2D_2lss_3l', lambda : KinMVA_2D_2lss_3l(os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/kinMVA/tth/%s_BDTG.weights.xml", skip_BDTv8 = False, skip_MEM = False)) )
 from CMGTools.TTHAnalysis.tools.kinMVA_MultiClass import KinMVA_MultiClass
 MODULES.append( ('kinMVA_MultiClass', lambda : KinMVA_MultiClass(os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/macros/leptons/weights/MultiClassICHEP16_%s_BDTG.weights.xml")) )
 from CMGTools.TTHAnalysis.tools.HadTopSimple import HadTopSimple
@@ -232,9 +232,9 @@ MODULES.append( ('BDT2_HadTop', lambda : BDT2_HadTop(os.environ["CMSSW_BASE"]+"/
 from CMGTools.TTHAnalysis.tools.BDTv8_eventReco_cpp import BDTv8_eventReco
 MODULES.append( ('BDTv8_eventReco', lambda : BDTv8_eventReco(os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/kinMVA/tth/TMVAClassification_BDTG_bdt_v8_80x.weights.xml",
                                                              selection = [
-                lambda leps,jets,event : event.nJet25_Recl >= 2 and event.nLepFO_Recl >= 2 and (event.nLepFO_Recl >= 3 or leps[0].charge*leps[1].charge > 0),
-                lambda leps,jets,event : event.nBJetLoose25_Recl >= 2 or event.nBJetMedium25_Recl >= 1,
-                lambda leps,jets,event : leps[0].conePt > 20 and leps[1].conePt > 10,
+#                lambda leps,jets,event : event.nJet25_Recl >= 2 and event.nLepFO_Recl >= 2 and (event.nLepFO_Recl >= 3 or leps[0].charge*leps[1].charge > 0),
+#                lambda leps,jets,event : event.nBJetLoose25_Recl >= 2 or event.nBJetMedium25_Recl >= 1,
+#                lambda leps,jets,event : leps[0].conePt > 20 and leps[1].conePt > 10,
                                                              ])) )
 
 # retuned soft muon ID for 2016 conditions
