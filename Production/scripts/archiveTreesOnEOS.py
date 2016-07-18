@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import os
+import os, glob
 import CMGTools.Production.eostools as eostools
 from optparse import OptionParser
 
@@ -27,11 +27,12 @@ if __name__ == "__main__":
 	parser.add_option("-f", dest="friendtreestring", type='string', default="evVarFriend", help='String identifying friend trees (must be contained in the root file name)')
 	parser.add_option("-T", dest="treename", type='string', default="tree.root", help='Name of the tree file')
 	parser.add_option("--dset", dest="dset", type='string', default=None, help='Name of the dataset to process')
+	parser.add_option("--al", "--allowSymlinks", dest="allowSymlinks", action='store_true', default=False, help='Allow symlinks')
 	(options, args) = parser.parse_args()
 	if len(args)<2: raise RuntimeError, 'Expecting at least two arguments'
 	
 	locdir = args[0]
-	remdir = args[1]
+	remdir = os.path.join(args[1], os.path.basename(locdir))
 	
 	
 	if not eostools.isEOS(remdir): raise RuntimeError, 'Remote directory should be on EOS.'
@@ -42,30 +43,34 @@ if __name__ == "__main__":
 #	if eostools.fileExists('%s/%s' % (remdir,locdir)):
 #	    raise RuntimeError, 'The remote EOS directory where the trees should be archived already exists.'
 	
-	alldsets = eostools.ls(locdir)
-	dsets = [d for d in alldsets if [ fname for fname in eostools.ls(d) if options.friendtreestring in fname]==[] ]
+	alldsets = [ p for p in glob.glob(locdir+"/*") if os.path.isdir(p) ]
+        if not options.allowSymlinks: 
+            symlinks = [ d for d in alldsets if os.path.islink(d) ]
+            if symlinks: 
+                print "The following directories are symlinks and will not be considered (run with --allowSymlinks to include them): ", ", ".join(map(os.path.basename,symlinks))
+                alldsets = [ d for d in alldsets if not os.path.islink(d) ]
+	dsets = [d for d in alldsets if [ fname for fname in glob.glob(d+"/*") if options.friendtreestring in fname]==[] ]
 	if options.dset: dsets = [d for d in dsets if options.dset in d]
 	friends = [d for d in alldsets if d not in dsets]
 	if options.dset: friends = [d for d in friends if options.dset in d]
 	
 	tocopy = []
 	for d in dsets:
-	    if eostools.isFile(d): raise RuntimeError, 'File found in local directory.'
-	    if '%s/%s'%(d,options.treeproducername) not in eostools.ls(d): raise RuntimeError, 'Tree producer sub-directory not found.'
+	    if os.path.isfile(d): raise RuntimeError, 'File %s found in local directory.' % d
+	    if not os.path.exists('%s/%s'%(d,options.treeproducername)): raise RuntimeError, 'Tree producer sub-directory not found for %s' % d
 	    fname = d+'/'+options.treeproducername+'/'+options.treename
-	    if (fname not in eostools.ls('%s/%s'%(d,options.treeproducername))) or (not eostools.isFile(fname)): raise RuntimeError, 'Tree file not found.'
-	    tocopy.append( (fname,'%s/%s_%s_%s'%(remdir,d,options.treeproducername,options.treename)) )
+	    if not os.path.isfile(fname): raise RuntimeError, 'Tree file %s not found (or it is not a file).' % fname
+	    tocopy.append( (fname,'%s/%s_%s_%s'%(remdir,os.path.basename(d),options.treeproducername,options.treename)) )
 	for d in friends:
-	    allfriends = eostools.ls(d)
+	    allfriends = glob.glob(d+"/*")
 	    for f in allfriends:
-	        if (options.friendtreestring not in f) or (not eostools.isFile(f)):
+	        if (options.friendtreestring not in f) or (not os.path.isfile(f)):
 	            raise RuntimeError, 'Unknown file in friend directory.'
 	        tocopy.append( (f,'%s/%s_%s'%(remdir,d,f.split('/')[-1])) )
 	for task in tocopy:
-	    if eostools.fileExists(task[0]+".url"): raise RuntimeError, '.url file already exists.'
+	    if os.path.exists(task[0]+".url"): raise RuntimeError, '.url file already exists for %s.' % task[0]
 	
-	newdir='%s/%s'%(remdir,locdir)
-	print 'Will create EOS directory %s and copy the following files:\n'%newdir
+	print 'Will create EOS directory %s and copy the following files:\n'%remdir
 	for task in tocopy: print '%s -> %s' % task
 	
 	print '\nDo you agree? [y/N]\n'
@@ -73,14 +78,14 @@ if __name__ == "__main__":
 	    print 'Aborting'
 	    exit()
 	
-	eostools.mkdir(newdir)
-	if not eostools.fileExists(newdir): raise RuntimeError, 'Impossible to create remote directory.'
+	eostools.mkdir(remdir)
+	if not eostools.fileExists(remdir): raise RuntimeError, 'Impossible to create remote directory.'
 	for task in tocopy:
 	    eostools.xrdcp(task[0],task[1])
 	    fcmd = open(task[0]+".url","w")
 	    fcmd.write("root://eoscms.cern.ch/%s\n" % task[1])
 	    fcmd.close()
-	print 'Copied %.2f GB to EOS\n' % eostools.eosDirSize(newdir)
+	print 'Copied %.2f GB to EOS\n' % eostools.eosDirSize(remdir)
 
 	print 'Verifying checksums:\n'
 	problem = False

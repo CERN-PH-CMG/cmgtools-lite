@@ -13,9 +13,12 @@ EWK    : WJetsToLNu_LO      : xsec : 1 ; Label="V+jets", FillColor=ROOT.kAzure+1
 EWK    : DYJetsToLL_M5to50_LO : xsec : 1 ; Label="V+jets", FillColor=ROOT.kAzure+1
 EWK    : DYJetsToLL_M50_LO     : xsec : 1 ; Label="V+jets", FillColor=ROOT.kAzure+1
 
-data : DoubleEG_Run2016B_PromptReco_v2_runs_273150_275125;        FillColor=ROOT.kBlack, Label="Data"
-data : DoubleMuon_Run2016B_PromptReco_v2_runs_273150_275125;      FillColor=ROOT.kBlack, Label="Data"
-data : JetHT_Run2016B_PromptReco_v2_runs_273150_275125;           FillColor=ROOT.kBlack, Label="Data"
+data : DoubleEG_Run2016B_PromptReco_v2_runs_273150_275783;     FillColor=ROOT.kBlack, Label="Data"
+data : DoubleEG_Run2016C_PromptReco_v2_runs_273150_275783;     FillColor=ROOT.kBlack, Label="Data"
+data : DoubleMuon_Run2016B_PromptReco_v2_runs_273150_275783;   FillColor=ROOT.kBlack, Label="Data"
+data : DoubleMuon_Run2016C_PromptReco_v2_runs_273150_275783;   FillColor=ROOT.kBlack, Label="Data"
+data : JetHT_Run2016B_PromptReco_v2_runs_273150_275783;        FillColor=ROOT.kBlack, Label="Data"
+data : JetHT_Run2016C_PromptReco_v2_runs_273150_275783;        FillColor=ROOT.kBlack, Label="Data"
 
 ## Options only
 QCD_red_prefit : - ; FillColor=ROOT.kPink-2, Label="QCD MC"

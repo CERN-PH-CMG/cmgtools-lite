@@ -5,4 +5,5 @@ SRC=$1; shift
 cd $SRC; 
 eval $(scramv1 runtime -sh);
 cd $WORK;
+ulimit -c 0
 exec $*
