@@ -64,7 +64,10 @@ for d in dirList:
     print cmd
     if execute:
         os.popen(cmd)
-    cmd = 'mv ' + d + ' ' + inDir+'/'+newName[0]
+    try:
+        cmd = 'mv ' + d + ' ' + inDir+'/'+newName[0]
+    except IndexError:
+        raise NameError('Unknown folder: {0}'.format(d))
     print cmd
     print
     if execute:
