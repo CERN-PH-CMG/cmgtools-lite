@@ -15,9 +15,10 @@ triggers_ee_nodz = [ "HLT_Ele17_Ele12_CaloIdL_TrackIdL_IsoVL_v*" ]
 
 triggers_mue_run1   = [ "HLT_Mu17_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v*", 
                         "HLT_Mu8_TrkIsoVVL_Ele17_CaloIdL_TrackIdL_IsoVL_v*" ]
-triggers_mue   = [ "HLT_Mu17_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v*", 
+triggers_mue   = [ "HLT_Mu17_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v*", # warning, check prescales depending on run range 
                    "HLT_Mu8_TrkIsoVVL_Ele17_CaloIdL_TrackIdL_IsoVL_v*",
                    "HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v*", 
+                   "HLT_Mu23_TrkIsoVVL_Ele8_CaloIdL_TrackIdL_IsoVL_v*",
                    "HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v*" ]
 
 triggers_mumu_ht =  [ "HLT_DoubleMu8_Mass8_PFHT300_v*" ]
@@ -41,7 +42,8 @@ triggers_1e      = [
         "HLT_Ele25_eta2p1_WPLoose_Gsf_v*", # not in column 0 
         "HLT_Ele25_eta2p1_WPTight_Gsf_v*", 
         "HLT_Ele27_WPTight_Gsf_v*", 
-        "HLT_Ele27_eta2p1_WPLoose_Gsf_v*"  ]
+        "HLT_Ele27_eta2p1_WPLoose_Gsf_v*",
+        "HLT_Ele45_WPLoose_Gsf_v*" ]
 triggers_1e_noniso      = [ "HLT_Ele105_CaloIdVT_GsfTrkIdT_v*","HLT_Ele115_CaloIdVT_GsfTrkIdT_v*"]
 
 # Lepton fake rate triggers (prescaled)

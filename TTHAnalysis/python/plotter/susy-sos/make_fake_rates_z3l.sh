@@ -1,13 +1,11 @@
 ################################
 #  use mcEfficiencies.py to make plots of the fake rate
 ################################
-T="NON_ESISTE"
+T="/afs/cern.ch/user/g/gpetrucc/w/TREES_80X_SOS_130716_3L"
 if hostname | grep -q cmsco01; then
-    T="/afs/cern.ch/user/g/gpetrucc/w/TREES_80X_SOS_230616/3L"
+    T="/data1/gpetrucc/TREES_80X_SOS_130716_3L"
 fi
-
-BCORE=" --s2v --tree treeProducerSusyMultilepton susy-sos/mca-fr-z3l.txt susy-sos/fr-z3l.txt -P $T -l 4.0 --AP  "
-BCORE="$BCORE --mcc susy-sos/mcc-eleIdWPs.txt "
+BCORE=" --s2v --tree treeProducerSusyMultilepton susy-sos/mca-fr-z3l.txt susy-sos/fr-z3l.txt -P $T -l 6.2 --AP  "
 
 BG=" -j 6 "; if [[ "$1" == "-b" ]]; then BG=" & "; shift; fi
 
@@ -18,8 +16,8 @@ el) BCORE="${BCORE} -E ${lepton} "; ;;
 esac;
 
 what=$2; shift; shift;
-#PBASE="plots/80X/sos/fr-meas/z3l/v1.1/$lepton/$what"
-PBASE="~/www/plots_FR/80X/SOS/v1.1_250616/fr-meas/z3l/$lepton/$what"
+PBASE="plots/80X/sos/fr-meas/z3l/v2.0/$lepton/$what"
+
 
 case $lepton in
     el) BARREL="00_15"; ENDCAP="15_25"; ETA="1.479" ;;
@@ -95,6 +93,5 @@ case $what in
             echo "( $STACK -o $PBASE/fr_sub_eta_${E}_comp.root    $PBASE/fr_sub_eta_${E}_globalFit.root:$PATT:DY_prefit,data_sub_syst_prefit  $PBASE/fr_sub_eta_${E}_fQCD.root:$PATT:DY_prefit,data_fqcd   $PBASE/fr_sub_eta_${E}_fitSimND.root:$PATT:data_fit   )";
         done
        ;;
-
 
 esac;

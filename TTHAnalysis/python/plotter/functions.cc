@@ -400,11 +400,21 @@ float ttH_MVAto1D_3_3l_Marco (float kinMVA_3l_ttbar, float kinMVA_3l_ttV){
 }
 
 #include "ttH-multilepton/binning_2d_thresholds.h"
-float ttH_MVAto1D_8_2lss_Marco (float kinMVA_2lss_ttbar, float kinMVA_2lss_ttV){
+float ttH_MVAto1D_7_2lss_Marco (float kinMVA_2lss_ttbar, float kinMVA_2lss_ttV){
+
+//________________
+//|   |   |   | 7 |
+//|   |   | 4 |___|
+//| 1 | 2 |___| 6 |
+//|   |   |   |___|
+//|   |   | 3 | 5 |
+//|___|___|___|___|
+//
 
   if (kinMVA_2lss_ttbar<cuts_2lss_ttbar0) return 1;
   else if (kinMVA_2lss_ttbar<cuts_2lss_ttbar1) return 2;
-  else return 3*(kinMVA_2lss_ttbar>=cuts_2lss_ttbar2)+(kinMVA_2lss_ttV>=cuts_2lss_ttV1)+(kinMVA_2lss_ttV>=cuts_2lss_ttV2)+3;
+  else if (kinMVA_2lss_ttbar<cuts_2lss_ttbar2) return 3+(kinMVA_2lss_ttV>=cuts_2lss_ttV0);
+  else return 5+(kinMVA_2lss_ttV>=cuts_2lss_ttV1)+(kinMVA_2lss_ttV>=cuts_2lss_ttV2);
 
 }
 float ttH_MVAto1D_5_3l_Marco (float kinMVA_3l_ttbar, float kinMVA_3l_ttV){

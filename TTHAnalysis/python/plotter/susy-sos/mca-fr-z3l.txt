@@ -8,8 +8,10 @@ DY      : DYJetsToLL_M50_LO     : xsec : LepGood3_mcMatchId == 0; FillColor=ROOT
 VZ 	: WZTo3LNu           : xsec : LepGood3_mcMatchId != 0 ;  FillColor=ROOT.kViolet-2
 VZ      : ZZTo4L             : xsec : LepGood3_mcMatchId != 0 ;  FillColor=ROOT.kAzure-2
 
-data: DoubleEG_Run2016B_PromptReco_v2_runs_273150_275125
-data: DoubleMuon_Run2016B_PromptReco_v2_runs_273150_275125
+data : DoubleEG_Run2016B_PromptReco_v2_runs_273150_275783
+data : DoubleEG_Run2016C_PromptReco_v2_runs_273150_275783
+data : DoubleMuon_Run2016B_PromptReco_v2_runs_273150_275783
+data : DoubleMuon_Run2016C_PromptReco_v2_runs_273150_275783
 
 ## Options only
 DY_prefit : - ; FillColor=ROOT.kPink-2, Label="DY MC"

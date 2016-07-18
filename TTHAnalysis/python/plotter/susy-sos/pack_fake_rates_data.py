@@ -69,17 +69,30 @@ def makeVariants(h):
         ret.append(hsyst)
     return ret
     
-def styles(hs):
-    colors = { 'Data':ROOT.kBlack, 'MC tt':ROOT.kRed+1, 'QCD':ROOT.kAzure+1 ,
+def styles(hs,ext=False):
+    colors = { 'Data':ROOT.kBlack, 'MC W+jets':ROOT.kRed+1, 'MC DY':ROOT.kAzure+1, 'QCD':ROOT.kAzure+1,
                'nominal':ROOT.kBlack, 'up':ROOT.kGray+1, 'down':ROOT.kGray+1, 
                 'pt1':ROOT.kRed+1, 'pt2':ROOT.kBlue+2,
                 'b1':ROOT.kViolet+1, 'b2':ROOT.kGreen+2,
                 'ec1':ROOT.kViolet+1, 'ec2':ROOT.kGreen+2,}
+    if ext: 
+        del colors['Data']
+        colors['jet + l'] = ROOT.kBlack
+        colors['Z + l'] = ROOT.kGray+2
+        colors['MC DY'] = ROOT.kViolet+1
     for label,h in hs:
         for n,c in colors.iteritems():
             if n in label:
+                print "%s in %s" % (n, label)
                 h.SetLineColor(c)
                 h.SetMarkerColor(c)
+        if ext:
+            if "Z + l" in label or "DY" in label:
+                h.SetMarkerSize(1.5); h.SetMarkerStyle(ROOT.kFullCircle)
+            elif "jet + l" in label or "QCD" in label:
+                h.SetMarkerSize(2.0); h.SetMarkerStyle(ROOT.kOpenSquare)
+            else:
+                h.SetMarkerStyle(ROOT.kDot)
         h.SetLineWidth(3)
         h.GetXaxis().SetTitle("lepton p_{T} (GeV)")
 #        h.GetXaxis().SetTitle("lepton p_{T}^{corr} (GeV)")
@@ -92,7 +105,7 @@ if __name__ == "__main__":
     parser.add_option("--pdir", dest="outdir", default=None, help="Output directory for plots");
     parser.add_option("--xcut", dest="xcut", default=None, nargs=2, type='float', help="X axis cut");
     parser.add_option("--xrange", dest="xrange", default=None, nargs=2, type='float', help="X axis range");
-    parser.add_option("--yrange", dest="yrange", default=(0,0.15), nargs=2, type='float', help="Y axis range");
+    parser.add_option("--yrange", dest="yrange", default=(0,0.6), nargs=2, type='float', help="Y axis range");
     parser.add_option("--logy", dest="logy", default=False, action='store_true', help="Do y axis in log scale");
     parser.add_option("--ytitle", dest="ytitle", default="Fake rate", type='string', help="Y axis title");
     parser.add_option("--fontsize", dest="fontsize", default=0.05, type='float', help="Legend font size");
@@ -101,7 +114,7 @@ if __name__ == "__main__":
     parser.add_option("--legend",  dest="legend",  default="TL",  type="string", help="Legend position (BR, TR)")
     parser.add_option("--compare", dest="compare", default="", help="Samples to compare (by default, all except the totals)")
     parser.add_option("--showRatio", dest="showRatio", action="store_true", default=True, help="Add a data/sim ratio plot at the bottom")
-    parser.add_option("--rr", "--ratioRange", dest="ratioRange", type="float", nargs=2, default=(0,2.9), help="Min and max for the ratio")
+    parser.add_option("--rr", "--ratioRange", dest="ratioRange", type="float", nargs=2, default=(0,2.4), help="Min and max for the ratio")
     parser.add_option("--normEffUncToLumi", dest="normEffUncToLumi", action="store_true", default=False, help="Normalize the dataset to the given lumi for the uncertainties on the calculated efficiency")
     (options, args) = parser.parse_args()
     (outname) = args[0]
@@ -127,17 +140,14 @@ if __name__ == "__main__":
        h2d_mu = [ make2D(outfile, "FR_SOS_QCD_mu_"+X, ptbins_mu, etabins_mu) for X in XsQ ]
        h2d_el_DY = [ make2D(outfile, "FR_SOS_DY_el_"+X, ptbins_el, etabins_el) for X in XsD ]
        h2d_mu_DY = [ make2D(outfile, "FR_SOS_DY_mu_"+X, ptbins_mu, etabins_mu) for X in XsD ]
-       h2d_el_tt = []#[ make2D(outfile,"FR_mva075_el_TT", ptbins_el, etabins_el) ]
-       h2d_mu_tt = []#[ make2D(outfile,"FR_mva075_mu_TT", ptbins_mu, etabins_mu) ]
+       h2d_el_WJ = [ make2D(outfile,"FR_SOS_el_WJets", ptbins_el, etabins_el) ]
+       h2d_mu_WJ = [ make2D(outfile,"FR_SOS_mu_WJets", ptbins_mu, etabins_mu) ]
 
-#       Plots="/afs/cern.ch/user/g/gpetrucc/www/public_html/drop/plots/ttH/80X/sos/fr-meas/"
-#       Z3l="z3l/v1.1/"
-#       QCD="qcd1l/v1.1/"
-       Plots="/afs/cern.ch/user/p/peruzzi/www/plots_FR/80X/SOS/v1.1_250616/fr-meas/"
-       Z3l="z3l/"
-       QCD="/"
+       Plots="plots/80X/sos/fr-meas/"
+       Z3l="z3l/v2.0"
+       QCD="qcd1l/v2.0"
        #### Electrons: 
-       readMany2D(XsQ, h2d_el, "/".join([Plots, QCD, "el/HLT_PFJetAny/fakerates-mtW3R/fr_sub_eta_%s_comp.root"]), "%s", etaslices_el, (5,999) )
+       readMany2D(XsQ, h2d_el,    "/".join([Plots, QCD, "el/HLT_PFJetAny/fakerates-mtW3R/fr_sub_eta_%s_comp.root"]), "%s", etaslices_el, (5,999) )
        readMany2D(XsD, h2d_el_DY, "/".join([Plots, Z3l, "el/fakerates-mtW3R/fr_sub_eta_%s_comp.root"]), "%s", etaslices_el, (5,999) )
 
        #### Muons: 
@@ -149,23 +159,25 @@ if __name__ == "__main__":
        readMany2D(XsD, h2d_mu_DY, "/".join([Plots, Z3l, "mu/fakerates-mtW3R/fr_sub_eta_%s_comp.root"]), "%s", etaslices_mu, (3.5,999) )
 
        #### TT MC-truth
-       MCPlots="plots/76X/lepMVA/v1.5"; ID="wp075ib1f30E2ptc30";
-       XVar="mvaPt_075i_ptJI85_mvaPt075"
-#       readMany2D(["TT_red"], h2d_el_tt, "/".join([MCPlots, "el_ttz3l_"+ID+"_rec30_bAny_eta_%s.root"]),  XVar+"_zcoarse2_%s", etaslices_el, (10,30) )
-#       readMany2D(["TT_red"], h2d_el_tt, "/".join([MCPlots, "el_ttvars_"+ID+"_rec30_bAny_eta_%s.root"]), XVar+"_coarse_%s",   etaslices_el, (30,999) )
-#       readMany2D(["TT_red"], h2d_mu_tt, "/".join([MCPlots, "mu_low_"+ID+"_rec30_bAny_eta_%s.root"]),    XVar+"_low_%s",      etaslices_mu, (10,20) )
-#       readMany2D(["TT_red"], h2d_mu_tt, "/".join([MCPlots, "mu_ttvars_"+ID+"_rec30_bAny_eta_%s.root"]), XVar+"_coarse_%s",   etaslices_mu, (20,999) )
+       MCPlots="plots/80X/sos/fr-mc/v2.0"; ID="wpSOS_eeid";
+       XVar="SOS_IdIsoDxyz_pt_fine"
+       readMany2D(["WJ_red"], h2d_el_WJ, "/".join([MCPlots, "el_"+ID+"_rec30_bAny_eta_%s.root"]), XVar+"_%s", etaslices_el, (5,999) )
+       readMany2D(["WJ_red"], h2d_mu_WJ, "/".join([MCPlots, "mu_"+ID+"_rec30_bAny_eta_%s.root"]), XVar+"_%s", etaslices_mu, (3.5,999) )
 
        # Serialize
        for h in h2d_el + h2d_el_DY + h2d_mu + h2d_mu_DY:    outfile.WriteTObject(h)
-       for h in h2d_el_tt + h2d_mu_tt: outfile.WriteTObject(h)
+       for h in h2d_el_WJ + h2d_mu_WJ: outfile.WriteTObject(h)
 
        # Plot
        if options.outdir:
-           for lep,h2d,h2dtt,xcuts in (("el",h2d_el,h2d_el_tt,[]),("el_DY",h2d_el_DY,h2d_el_tt,[]),("mu",h2d_mu,h2d_mu_tt,[10]),("mu_DY",h2d_mu_DY,h2d_mu_tt,[])):
+           for lep,h2d,h2dtt,nicemc,nicedata,xcuts in (
+                    ("el",h2d_el,h2d_el_WJ,"QCD","jet + l",[]),  ("el_DY",h2d_el_DY,h2d_el_WJ,"DY","Z + l",[]),
+                    ("mu",h2d_mu,h2d_mu_WJ,"QCD","jet + l",[10]),("mu_DY",h2d_mu_DY,h2d_mu_WJ,"DY","Z + l",[])):
+              Xnices[0] = "MC "+nicemc
+              Xnices[1] = "Data, "+nicedata
               for ieta,eta in enumerate(["barrel","endcap"]):
-                  effs = []#[ (n,graphFromXSlice(h,ieta+1)) for (n,h) in zip(["MC ttbar"],h2dtt) ]
-                  effs += [ (n,graphFromXSlice(h,ieta+1)) for (n,h) in zip(Xnices,h2d) ]
+                  effs = [ (n,graphFromXSlice(h,ieta+1)) for (n,h) in zip(Xnices,h2d) ]
+                  effs.insert(1, ("MC W+jets",graphFromXSlice(h2dtt[0],ieta+1)) )
                   styles(effs)
                   options.xlines = xcuts
                   stackEffs(options.outdir+"/fr_%s_%s.root"%(lep,eta), None,effs,options)
@@ -181,4 +193,15 @@ if __name__ == "__main__":
                   styles(effs)
                   options.xlines = xcuts
                   stackEffs(options.outdir+"/variants_fr_%s_%s.root"%(lep,eta), None,effs,options)
+           for lep,h2d,h2ddy,h2dtt,xcuts in (
+                    ("el_all",h2d_el,h2d_el_DY,h2d_el_WJ,[]),
+                    ("mu_all",h2d_mu,h2d_mu_DY,h2d_mu_WJ,[10])):
+              Xnices = [ "MC W+jets", "MC QCD", "MC DY", "Data, jet + l", "Data, Z + l" ]
+              h2ds   = [ h2dtt[0], h2d[0], h2ddy[0], h2d[1], h2ddy[1] ]
+              for ieta,eta in enumerate(["barrel","endcap"]):
+                  effs = [ (n,graphFromXSlice(h,ieta+1)) for (n,h) in zip(Xnices,h2ds) ]
+                  styles(effs, ext=True)
+                  options.xlines = xcuts
+                  stackEffs(options.outdir+"/fr_%s_%s.root"%(lep,eta), None,effs,options)
+
     outfile.ls()

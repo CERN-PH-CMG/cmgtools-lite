@@ -39,7 +39,7 @@ FUNCTION_2L="kinMVA_2lss_ttV:kinMVA_2lss_ttbar 40,-1,1,40,-1,1"
 #FUNCTION_3L="kinMVA_3l_ttV:kinMVA_3l_ttbar 40,-1,1,40,-1,1"
 FUNCTION_3L="kinMVA_3l_ttV_withMEM:kinMVA_3l_ttbar 40,-1,1,40,-1,1"
 #BINFUNCTION_2L="6:ttH_MVAto1D_6_2lss_Marco"
-BINFUNCTION_2L="8:ttH_MVAto1D_8_2lss_Marco"
+BINFUNCTION_2L="7:ttH_MVAto1D_7_2lss_Marco"
 #BINFUNCTION_3L="3:ttH_MVAto1D_3_3l_Marco"
 BINFUNCTION_3L="5:ttH_MVAto1D_5_3l_Marco"
 
