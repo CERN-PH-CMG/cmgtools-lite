@@ -99,3 +99,17 @@ if __name__ == "__main__":
            if not tier2Checker.available(comp.dataset):
                print "\033[1;31mN: Dataset %s (%s) is not available on T2_CH_CERN\033[0m" % (comp.name,comp.dataset)
            else: print "Y: Dataset %s (%s) is available on T2_CH_CERN" % (comp.name,comp.dataset)
+   if "refresh" in sys.argv:
+        from CMGTools.Production.cacheChecker import CacheChecker
+        checker = CacheChecker()
+        dataSamples = samples
+        if len(sys.argv) > 2: 
+            dataSamples = []
+            for x in sys.argv[2:]:
+                for s in samples:
+                    if x in s.name and s not in dataSamples:
+                        dataSamples.append(s)
+            dataSamples.sort(key = lambda d : d.name)
+        for d in dataSamples:
+            print "Checking ",d.name," aka ",d.dataset
+            checker.checkComp(d, verbose=True)
