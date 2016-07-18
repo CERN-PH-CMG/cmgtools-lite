@@ -37,12 +37,12 @@ WJets    : WJetsToLNu_HT-2500ToInf :  xsec*1*btagSF*TopPtWeight  ; Label="W+jets
 
 ###############################
 # QCD
-QCD      : QCD_HT300to500         : xsec*1*btagSF*TopPtWeight ; Label ="QCD", FillColor=ROOT.kCyan-6
-QCD      : QCD_HT500to700         : xsec*1*btagSF*TopPtWeight ; Label ="QCD", FillColor=ROOT.kCyan-6
-QCD      : QCD_HT700to1000         : xsec*1*btagSF*TopPtWeight ; Label ="QCD", FillColor=ROOT.kCyan-6
-QCD      : QCD_HT1000to1500         : xsec*1*btagSF*TopPtWeight ; Label ="QCD", FillColor=ROOT.kCyan-6
-QCD      : QCD_HT1500to2000         : xsec*1*btagSF*TopPtWeight ; Label ="QCD", FillColor=ROOT.kCyan-6
-QCD      : QCD_HT2000toInf         : xsec*1*btagSF*TopPtWeight ; Label ="QCD", FillColor=ROOT.kCyan-6
+QCD+      : QCD_HT300to500         : xsec*1*TopPtWeight ; Label ="QCD", FillColor=ROOT.kCyan-6
+QCD+      : QCD_HT500to700         : xsec*1*TopPtWeight ; Label ="QCD", FillColor=ROOT.kCyan-6
+QCD+      : QCD_HT700to1000         : xsec*1*TopPtWeight ; Label ="QCD", FillColor=ROOT.kCyan-6
+QCD+      : QCD_HT1000to1500         : xsec*1*TopPtWeight ; Label ="QCD", FillColor=ROOT.kCyan-6
+QCD+      : QCD_HT1500to2000         : xsec*1*TopPtWeight ; Label ="QCD", FillColor=ROOT.kCyan-6
+QCD+      : QCD_HT2000toInf         : xsec*1*TopPtWeight ; Label ="QCD", FillColor=ROOT.kCyan-6
 
 
 #####################
@@ -73,12 +73,8 @@ TTV : TTZToQQ : xsec*1*btagSF*TopPtWeight  ; FillColor=ROOT.kOrange-3, Label="tt
 
 
 ## Data
+#data: SingleMuon_Run2016B_PromptReco_v2
+#data: SingleMuon_Run2016C_PromptReco_v2
 
-#SingleMuon_Run2016B_PromptReco_v2: SingleMuon_Run2016B_PromptReco_v2
-#SingleElectron_Run2016B_PromptReco_v2: SingleElectron_Run2016B_PromptReco_v2
-
-data: SingleMuon_Run2016B_PromptReco_v2
 data: SingleElectron_Run2016B_PromptReco_v2
-
-data: SingleMuon_Run2016C_PromptReco_v2
 data: SingleElectron_Run2016C_PromptReco_v2
