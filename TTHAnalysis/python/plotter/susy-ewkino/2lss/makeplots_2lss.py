@@ -22,7 +22,7 @@ def replaceInFile(path, search, replace):
 def base(selection):
     
     CORE="-P /afs/cern.ch/user/f/folguera/workdir/trees/ewkino/8011_June29/ -F sf/t {P}/3_recleaner_wpsViX4mrE2_ptJIMIX3/evVarFriend_{cname}.root "
-    CORE+=" -f -j 8 -l 4 --s2v --tree treeProducerSusyMultilepton --mcc susy-ewkino/2lss/lepchoice-2lss-FO.txt --mcc susy-ewkino/mcc_triggerdefs.txt --neg"
+    CORE+=" -f -j 8 -l 4.36 --s2v --tree treeProducerSusyMultilepton --mcc susy-ewkino/2lss/lepchoice-2lss-FO.txt --mcc susy-ewkino/mcc_triggerdefs.txt --neg"
     if dowhat == "plots": CORE+=" --lspam '#bf{CMS} #it{Preliminary}' --legendWidth 0.20 --legendFontSize 0.035 --showRatio --maxRatioRange 0 3 --showMCError "
     CORE+="-W 'puw2016_vtx_4fb(nVert)' "
     GO="%s susy-ewkino/2lss/mca-2lss-mc.txt susy-ewkino/2lss/cuts_2lss.txt  "%CORE
@@ -91,7 +91,8 @@ if __name__ == '__main__':
         if '_frdata' in torun:
             if not '_data' in torun: raise RuntimeError
             x = x.replace('mca-2lss-mcdata.txt','mca-2lss-mcdata-frdata.txt')
-        
+            x = add(x,'--plotgroup fakes_data+=promptsub')
+
         if '_flav' in torun:
             for flav in ['mm','ee','em']: runIt(add(x,'-E ^%s'%flav),'%sa/%s'%(torun.rstrip('_flav'),flav),queue)
 

@@ -4,9 +4,9 @@ from ROOT import TFile,TH1F
 import ROOT, copy, os
 import array
 
-if "mt2_bisect_cc.so" not in ROOT.gSystem.GetLibraries():
-    ROOT.gROOT.LoadMacro("/afs/cern.ch/work/c/cheidegg/eco/2016-06-24_cmg76X-friender_mT2code/mt2_bisect.cc")
-from ROOT import mt2_bisect
+#if "mt2_bisect_cc.so" not in ROOT.gSystem.GetLibraries():
+#    ROOT.gROOT.LoadMacro("/afs/cern.ch/work/c/cheidegg/eco/2016-06-24_cmg76X-friender_mT2code/mt2_bisect.cc")
+#from ROOT import mt2_bisect
 
 
 ## OSpair
@@ -63,7 +63,7 @@ class LeptonBuilderEWK:
     ## _______________________________________________________________
     def __init__(self, inputlabel):
 
-        self.mt2maker = mt2_bisect.mt2()
+        self.mt2maker = None #mt2_bisect.mt2()
         self.inputlabel = '_' + inputlabel
 
         self.systsJEC = {0: "", 1: "_jecUp"   , -1: "_jecDown"  }
