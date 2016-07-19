@@ -17,7 +17,7 @@ btagsf_payload = os.path.join(utility_files_dir, "btag", "CSVv2_4invfb.csv")
 btagsf_reader = BTagScaleFactors('btagsf', btagsf_payload, algo='csv')
 
 from CMGTools.TTHAnalysis.tools.bTagEventWeights import BTagEventWeightFriend
-bTagEventWeight = lambda : BTagEventWeightFriend(reader=btagsf_reader)
+bTagEventWeight = lambda : BTagEventWeightFriend(reader=btagsf_reader, recllabel='Recl')
 MODULES.append( ('eventBTagWeight', bTagEventWeight ))
 
 
