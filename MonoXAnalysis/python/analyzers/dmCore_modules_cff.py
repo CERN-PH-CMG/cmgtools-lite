@@ -448,7 +448,7 @@ ttHCoreEventAna = cfg.Analyzer(
 def doECalElectronCorrections(sync=False,era="25ns"):
     global lepAna, monoJetCtrlLepSkim
     lepAna.doElectronScaleCorrections = {
-        'data' : 'EgammaAnalysis/ElectronTools/data/ScalesSmearings/80X_Golden22June_approval',
+        'data' : 'EgammaAnalysis/ElectronTools/data/ScalesSmearings/80X_DCS05July_plus_Golden22',
         'GBRForest': ('$CMSSW_BASE/src/CMGTools/RootTools/data/egamma_epComb_GBRForest_76X.root',
                       'gedelectron_p4combination_'+era),
         'isSync': sync
@@ -456,7 +456,7 @@ def doECalElectronCorrections(sync=False,era="25ns"):
 def doECalPhotonCorrections(sync=False):
     global photonAna, gammaJetCtrlSkimmer
     photonAna.doPhotonScaleCorrections = {
-        'data' : 'EgammaAnalysis/ElectronTools/data/ScalesSmearings/80X_Golden22June_approval',
+        'data' : 'EgammaAnalysis/ElectronTools/data/ScalesSmearings/80X_DCS05July_plus_Golden22',
         'isSync': sync
     }
 def doKalmanMuonCorrections(sync=False,smear="basic"):
