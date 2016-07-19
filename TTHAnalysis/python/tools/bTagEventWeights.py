@@ -6,21 +6,23 @@ from math import log, exp
 from CMGTools.TTHAnalysis.treeReAnalyzer import ROOT, EventLoop, Module, Collection
 from BTagScaleFactors import BTagScaleFactors
 
-class BTagSFReweightFriend:
-    def __init__(self, sfreader,
+class BTagEventWeightFriend:
+    def __init__(self, reader,
                  jetlabel="Jet",
                  blabel="btagCSV",
                  label="eventBTagSF",
-                 systs=["central"],
                  mcOnly=True):
-        self.sfreader = sfreader
+        self.reader = reader
 
         self.jetlabel = jetlabel
         self.label = label
         self.blabel = blabel
         self.mcOnly = mcOnly
 
-        self.systs = systs
+        # Automatically add the iterative systs from the reader
+        self.systs = ["central"]
+        self.systs += ["up_%s"  %s for s in self.reader.iterative_systs]
+        self.systs += ["down_%s"%s for s in self.reader.iterative_systs]
 
     def listBranches(self):
         out = []
@@ -35,27 +37,26 @@ class BTagSFReweightFriend:
     def __call__(self, event):
         ret = {}
         jets = Collection(event, self.jetlabel)
+
         for syst in self.systs:
             label = self.label
             if not syst == "central":
                 label = "%s_%s" % (label, syst)
 
-            ret[label] = self.sfreader.get_event_SF(jets, syst=syst)
+            ret[label] = self.reader.get_event_SF(jets, syst=syst)
 
         return ret
 
-# class BTagLeptonReweightFriend(BTagSFReweightFriend):
+# class BTagLeptonEventWeightFriend(BTagEventWeightFriend):
 #     def __init__(self, reweight,
 #                  jetlabel="LepGood",
 #                  blabel="jetBTagCSV",
 #                  label="jetBTagCSVWeight",
 #                  rwtSyst="central"):
-#         BTagSFReweightFriend.__init__(self, sfreader,
+#         BTagEventWeightFriend.__init__(self, reader,
 #                                       jetlabel=jetlabel,
 #                                       blabel=blabel,
 #                                       label=label,
-#                                       rwtKind=rwtKind,
-#                                       rwtSyst=rwtSyst,
 #                                       mcOnly=True)
 
 
@@ -68,60 +69,52 @@ class BTagSFReweightFriend:
 #         jetpt = lep.pt/lep.jetPtRatiov2
 #         jetcsv = lep.jetBTagCSV
 
-#         return self.sfreader.get_SF(jetpt, abs(lep.eta), fl, jetcsv, ## FIXME is if abs(eta) or eta?
+#         return self.reader.get_SF(jetpt, abs(lep.eta), fl, jetcsv, ## FIXME is if abs(eta) or eta?
 #                                     getattr(lep, self.blabel),
 #                                     self.rwtSyst, shapeCorr=True)
 
 if __name__ == '__main__':
     from sys import argv
-    file = ROOT.TFile(argv[1])
+    file = ROOT.TFile.Open(argv[1])
     tree = file.Get("tree")
     tree.vectorTree = True
 
-    bTagSFs = BTagScaleFactors('csv', os.path.join(os.environ['CMSSW_BASE'],
-                                     "src/CMGTools/TTHAnalysis/data/btag/",
-                                     "CSVv2_4invfb.csv"),
-                                algo='csv')
+    print "... processing %s" % argv[1]
+
+    btagsf_payload = os.path.join(os.environ['CMSSW_BASE'], "src/CMGTools/TTHAnalysis/data/btag/", "CSVv2_4invfb.csv")
+    btagsf_reader = BTagScaleFactors('btagsf', btagsf_payload, algo='csv', verbose=3)
 
     class Tester(Module):
         def __init__(self, name):
             Module.__init__(self,name,None)
-            self.sf = BTagSFReweightFriend(bTagSFs)
-            self.sl = BTagLeptonReweightFriend(bTagSFs)
-            self._wps = [ 0.605, 0.89, 0.97 ] ## FIXME?
-            self._pcountA = [0, 0]
-            self._pcount0 = [0 for w in self._wps]
-            self._pcount1 = [0 for w in self._wps]
+            self.sf = BTagEventWeightFriend(btagsf_reader)
 
         def analyze(self,ev):
             print "\nrun %6d lumi %4d event %d: jets %d" % (ev.run, ev.lumi, ev.evt, ev.nJet25)
 
-            ret = self.sf(ev)["Jet_btagCSVWeight"]
-            # lrt = self.sl(ev)["LepGood_jetBTagCSVWeight"]
+            ret = self.sf(ev)
             jets = Collection(ev,"Jet")
-            leps = Collection(ev,"LepGood")
+            # leps = Collection(ev,"LepGood")
 
             for i,j in enumerate(jets):
-                print "\tjet %8.2f %+5.2f %+3d %.3f -> %.3f " % (j.pt, j.eta, j.mcFlavour, min(max(0, j.btagCSV), 1), ret[i])
-                if j.pt > 30 and abs(j.eta) < 2.4 and abs(j.mcFlavour) == 5:
-                    self._pcountA[0] += 1.
-                    self._pcountA[1] += ret[i]
-                    for iw,w in enumerate(self._wps):
-                        if j.btagCSV > w:
-                            self._pcount0[iw] += 1
-                            self._pcount1[iw] += ret[i]
+                print "\tjet %8.2f %+5.2f %1d %.3f" % (j.pt, j.eta, j.hadronFlavour, min(max(0, j.btagCSV), 1))
 
-            # for i,j in enumerate(leps):
-            #     print "\tlep %8.2f %+5.2f %+3d %.3f -> %.3f " % (j.pt, j.eta, j.mcMatchAny, min(max(0, j.jetBTagCSV), 1), lrt[i])
-            # print ""
+            for syst in self.sf.systs[:10]:
+                print "%8s"%syst[-8:],
+            print ""
+
+            for syst in self.sf.systs[:10]:
+                label = self.sf.label
+                if not syst == "central":
+                    label = "%s_%s" % (label, syst)
+                print "%8.3f" % ret[label],
+            print ""
+
 
         def done(self):
-            for iw,w in enumerate(self._wps):
-                print " for WP %.3f, eff(pre) = %.3f, eff(post) = %.3f, SF = %.3f " % (w,
-                                       self._pcount0[iw]/self._pcountA[0],
-                                       self._pcount1[iw]/self._pcountA[1],
-                                       self._pcount1[iw]/self._pcount0[iw]/self._pcountA[1]*self._pcountA[0])
+            pass
+
     T = Tester("tester")
     el = EventLoop([ T ])
-    el.loop([tree], maxEvents = 50)
+    el.loop([tree], maxEvents = 10)
     T.done()
