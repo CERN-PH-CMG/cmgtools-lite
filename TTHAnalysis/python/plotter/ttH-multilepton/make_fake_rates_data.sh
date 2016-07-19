@@ -3,58 +3,37 @@
 ################################
 T="/afs/cern.ch/user/g/gpetrucc/w/TREES_TTH_260116_76X_1L"
 if hostname | grep -q cmsco01; then
-#    T="/data1/gpetrucc/TREES_TTH_260116_76X_1L"
-    T="/data1/peruzzi/TREES_80X_210616_1lep" # warning: QCDEl from 76X
-elif hostname | grep -q vinavx; then
-    T="/home/gpetrucc/TREES_TTH_260116_76X_1L"
+    T="/data1/gpetrucc/TREES_80X_TTH_180716_1L_DATA" # warning: QCDEl from 76X
+else
+    exit 1;
 fi
 ANALYSIS=$1; if [[ "$1" == "" ]]; then exit 1; fi; shift;
 case $ANALYSIS in
-ttH) CUTFILE="ttH-multilepton/qcd1l.txt"; XVAR="ptJI85_mvaPt075_coarselongbin"; NUM="mvaPt_075i";;
+ttH) CUTFILE="ttH-multilepton/qcd1l.txt"; XVAR="ptJI85_mvaPt075_coarse"; NUM="mvaPt_075i";;
 susy_wpM) CUTFILE="susy-ewkino/qcd1l_wpM.txt"; XVAR="ptJIMIX4_mvaSusy_sMi_coarselongbin"; NUM="mvaSusy_sMi";;
 susy_wpV) CUTFILE="susy-ewkino/qcd1l_wpV.txt"; XVAR="ptJIMIX3_mvaSusy_sVi_coarselongbin"; NUM="mvaSusy_sVi";;
 esac;
-BCORE=" --s2v --tree treeProducerSusyMultilepton ttH-multilepton/mca-qcd1l.txt ${CUTFILE} -P $T -l 3.99 --AP  "
+BCORE=" --s2v --tree treeProducerSusyMultilepton ttH-multilepton/mca-qcd1l.txt ${CUTFILE} -P $T -l 9.23 --AP  "
 BCORE="${BCORE} --mcc ttH-multilepton/mcc-eleIdEmu2.txt  "; 
 
 BG=" -j 8 "; if [[ "$1" == "-b" ]]; then BG=" & "; shift; fi
 
 lepton=$1; if [[ "$1" == "" ]]; then exit 1; fi
 case $lepton in
-mu) BCORE="${BCORE} -E ${lepton} --xf 'DoubleEG.*,JetHT.*'  "; QCD=QCDMu; ;;
-el) BCORE="${BCORE} -E ${lepton} --xf 'DoubleMu.*,JetHT.*'  "; QCD=QCDEl; ;;
-mu_jet) lepton="mu"; BCORE="${BCORE} -E ${lepton} --xf 'Double.*' -X idEmuCut -R minimal ptj40 ' LepGood_awayJet_pt > 40'  "; QCD=QCDMu; ;;
-mu_jet6) lepton="mu"; BCORE="${BCORE} -E ${lepton} --xf 'Double.*,JetHT_.*' -X idEmuCut -R minimal ptj40 ' LepGood_awayJet_pt > 60'  "; QCD=QCDMu; ;;
-mu_ht)  lepton="mu"; BCORE="${BCORE} -E ${lepton} --xf 'Double.*' -X idEmuCut -R minimal ptj40 ' LepGood_awayJet_pt > 40'  "; QCD=QCDMu; ;;
-mu_any)  lepton="mu"; BCORE="${BCORE} -E ${lepton} --xf 'DoubleEG.*' -X idEmuCut  "; QCD=QCDMu; ;;
+mu) BCORE="${BCORE} -E ${lepton} --xf 'DoubleEG.*,JetHT.*' --mcc ttH-multilepton/mcc-ichepMediumMuonId.txt  "; QCD=QCDMu; ;;
+el) BCORE="${BCORE} -E ${lepton} --xf 'DoubleMu.*,JetHT.*' --mcc ttH-multilepton/mcc-ichepMediumMuonId-fake.txt "; QCD=QCDEl; ;;
+#mu_jet) lepton="mu"; BCORE="${BCORE} -E ${lepton} --xf 'Double.*' -X idEmuCut -R minimal ptj40 ' LepGood_awayJet_pt > 40'  "; QCD=QCDMu; ;;
+#mu_jet6) lepton="mu"; BCORE="${BCORE} -E ${lepton} --xf 'Double.*,JetHT_.*' -X idEmuCut -R minimal ptj40 ' LepGood_awayJet_pt > 60'  "; QCD=QCDMu; ;;
+#mu_ht)  lepton="mu"; BCORE="${BCORE} -E ${lepton} --xf 'Double.*' -X idEmuCut -R minimal ptj40 ' LepGood_awayJet_pt > 40'  "; QCD=QCDMu; ;;
+#mu_any)  lepton="mu"; BCORE="${BCORE} -E ${lepton} --xf 'DoubleEG.*' -X idEmuCut  "; QCD=QCDMu; ;;
 esac;
 
 trigger=$2; if [[ "$2" == "" ]]; then exit 1; fi
 case $trigger in
-PFJet40)
-    BCORE="${BCORE} -E HLT_FR_PFJet40   "; 
-    PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw$lepton$trigger(nVert)' "
-    ;;
-PFJetAll)
-    BCORE="${BCORE} -E '^HLT_PFJetAll'   "; 
-    PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw$lepton$trigger(nVert)' "
-    ;;
-PFJet6)
-    BCORE="${BCORE} -E HLT_PFJet6   "; 
-    PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw$lepton$trigger(nVert)' "
-    ;;
-PFHT*)
-    BCORE="${BCORE} -E HLT_FR_$trigger   "; 
-    PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw$lepton$trigger(nVert)' "
-    ;;
-JHT)
-    BCORE="${BCORE} -E HLT_JHT   "; 
-    PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw$lepton$trigger(nVert)' "
-    ;;
-AnyM)
-    BCORE="${BCORE} -E HLT_AnyM  ";
-    PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw$trigger(nVert)' "
-    ;;
+#PFJet6)
+#    BCORE="${BCORE} -E HLT_PFJet6   "; 
+#    PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw$lepton$trigger(nVert)' "
+#    ;;
 Mu3_PFJet40)
     BCORE="${BCORE} -A veto trigger 'HLT_FR_${trigger} || (!isData)' -A veto recoptfortrigger 'LepGood_pt>4.0 && LepGood_awayJet_pt > 40'  "; 
     PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw$trigger(nVert)' "
@@ -84,7 +63,7 @@ esac;
 
 what=$3;
 more=$4
-PBASE="~/www/plots_FR/80X/lepMVA_${ANALYSIS}/v1.4_250616/fr-meas/$lepton/HLT_$trigger/$what/$more"
+PBASE="plots/80X/$ANALYSIS/fr-meas/v2.0/$lepton/HLT_$trigger/$what/$more"
 
 EWKONE="-p ${QCD}_red,EWK,data"
 EWKSPLIT="-p ${QCD}_red,WJets,DYJets,data"
@@ -164,20 +143,11 @@ case $what in
                  elif [[ "$trigger" == "Mu3_PFJet40" ]]; then
                      RANGES=${RANGES/--xcut 15 100/--xcut 5 30};
                      RANGES=${RANGES/--xline 20 --xline 45/--xline 10 --xline 20};
-                 elif [[ "$trigger" == "PFJet40" ]]; then
-                     MCEFF="${MCEFF/_coarse/_vcoarse}"
-                     RANGES=${RANGES/--xcut 15 100/--xcut 5 30};
-                     RANGES=${RANGES/--xline 20 --xline 45/--xline 10 --xline 20};
-                 elif [[ "$trigger" == "PFJet" ]]; then
-                     MCEFF="${MCEFF/_coarse/_low}"
-                     RANGES=${RANGES/--xcut 15 100/--xcut 10 30};
-                     RANGES=${RANGES/--xline 20 --xline 45/--xline 10 --xline 20};
-                     RANGES=${RANGES/--yrange 0 0.??/--yrange 0 0.12};
-                 elif [[ "$trigger" == "PFJet6" ]]; then
-                     MCEFF="${MCEFF/_coarse/_low}"
-                     RANGES=${RANGES/--xcut 15 100/--xcut 10 30};
-                     RANGES=${RANGES/--xline 20 --xline 45/--xline 10 --xline 20};
-                     RANGES=${RANGES/--yrange 0 0.??/--yrange 0 0.12};
+                 #elif [[ "$trigger" == "PFJet6" ]]; then
+                 #    MCEFF="${MCEFF/_coarse/_low}"
+                 #    RANGES=${RANGES/--xcut 15 100/--xcut 10 30};
+                 #    RANGES=${RANGES/--xline 20 --xline 45/--xline 10 --xline 20};
+                 #    RANGES=${RANGES/--yrange 0 0.??/--yrange 0 0.12};
                  fi;
             ;;
         esac;
