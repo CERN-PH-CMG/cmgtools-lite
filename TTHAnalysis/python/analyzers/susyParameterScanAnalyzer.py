@@ -19,6 +19,7 @@ class susyParameterScanAnalyzer( Analyzer ):
             (2000000 + 6) : 'Stop2',
             (1000000 + 15) : 'Stau',
             (2000000 + 15) : 'Stau2',
+            (1000000 + 16) : 'SnuTau',
             (1000000 + 22) : 'Neutralino',
             (1000000 + 23) : 'Neutralino2',
             (1000000 + 25) : 'Neutralino3',
@@ -55,11 +56,12 @@ class susyParameterScanAnalyzer( Analyzer ):
     def beginLoop(self, setup):
         super(susyParameterScanAnalyzer,self).beginLoop(setup)
 
-        lumis = Lumis(self.cfg_comp.files)
-        for lumi in lumis:
-            if lumi.getByLabel('generator',self.genLumiHandle):
-                self.LHEInfos.append( self.genLumiHandle.product().configDescription() )
-
+        if self.cfg_ana.useLumiInfo:
+            lumis = Lumis(self.cfg_comp.files)
+            for lumi in lumis:
+                if lumi.getByLabel('generator',self.genLumiHandle):
+                    self.LHEInfos.append( self.genLumiHandle.product().configDescription() )
+                
     def findSusyMasses(self,event):
         masses = {}
         for p in event.genParticles:
@@ -113,9 +115,11 @@ class susyParameterScanAnalyzer( Analyzer ):
         lheprod=self.LHEInfos[self.lumiCounter]
         scanlineT1tttt = re.compile(r"([A-Za-z0-9]+)_((\d+\.?\d*)(_\d+\.?\d*)*)(\s+(\d+\.?\d*))*\s*")
         scanlineTChi = re.compile(r"([A-Za-z0-9]+)_([A-Za-z0-9]+)_((\d+\.?\d*)(_\d+\.?\d*)*)(\s+(\d+\.?\d*))*\s*")
+        scanlineT2tt = re.compile(r"([A-Za-z0-9]+)_([A-Za-z0-9]+)_([A-Za-z0-9]+)_((\d+\.?\d*)(_\d+\.?\d*)*)(\s+(\d+\.?\d*))*\s*")
 
         mT1tttt = re.match(scanlineT1tttt, lheprod) 
         mTChi   = re.match(scanlineTChi, lheprod) 
+        mT2tt   = re.match(scanlineT2tt, lheprod) 
 
         if mT1tttt:
             event.susyModel = mT1tttt.group(1)
@@ -127,6 +131,13 @@ class susyParameterScanAnalyzer( Analyzer ):
         elif mTChi:
             event.susyModel = mTChi.group(1)
             masses = [float(x) for x in mTChi.group(3).split("_")]
+            if len(masses) >= 1: event.genSusyMScan1 = masses[0]
+            if len(masses) >= 2: event.genSusyMScan2 = masses[1]
+            if len(masses) >= 3: event.genSusyMScan3 = masses[2]
+            if len(masses) >= 4: event.genSusyMScan4 = masses[3]
+        elif mT2tt:
+            event.susyModel = mT2tt.group(1)
+            masses = [float(x) for x in mT2tt.group(4).split("_")]
             if len(masses) >= 1: event.genSusyMScan1 = masses[0]
             if len(masses) >= 2: event.genSusyMScan2 = masses[1]
             if len(masses) >= 3: event.genSusyMScan3 = masses[2]

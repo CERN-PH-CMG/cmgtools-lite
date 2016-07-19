@@ -15,6 +15,11 @@ SMS_T2tt_mStop_400to1200 = kreator.makeMCComponent("SMS_T2tt_mStop_400to1200", "
 SMS_T2tt_mStop_425_mLSP_325 = kreator.makeMCComponent("SMS_T2tt_mStop_425_mLSP_325", "/SMS-T2tt_mStop-425_mLSP-325_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring16MiniAODv2-PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/MINIAODSIM", "CMS", ".*root", 1.31169 )
 SMS_T2tt_mStop_500_mLSP_325 = kreator.makeMCComponent("SMS_T2tt_mStop_500_mLSP_325", "/SMS-T2tt_mStop-500_mLSP-325_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring16MiniAODv2-PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v2/MINIAODSIM", "CMS", ".*root", 0.51848 )
 SMS_T2tt_mStop_850_mLSP_100 = kreator.makeMCComponent("SMS_T2tt_mStop_850_mLSP_100", "/SMS-T2tt_mStop-850_mLSP-100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring16MiniAODv2-PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/MINIAODSIM", "CMS", ".*root", 0.0189612 ) 
+SMS_TChiSlepSnux0p5=kreator.makeMCComponent("SMS_TChiSlepSnux0p5","/SMS-TChiSlepSnu_x0p5_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring16MiniAODv2-PUSpring16Fast_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/MINIAODSIM","CMS",".*root",1)
+SMS_TChiSlepSnux0p05=kreator.makeMCComponent("SMS_TChiSlepSnux0p05","/SMS-TChiSlepSnu_x0p05_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring16MiniAODv2-PUSpring16Fast_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v2/MINIAODSIM","CMS",".*root",1)
+SMS_TChiWZ=kreator.makeMCComponent("SMS_TChiWZ","/SMS-TChiWZ_ZToLL_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring16MiniAODv2-PUSpring16Fast_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v2/MINIAODSIM","CMS",".*root",1)
+SMS_T2ttDiLep_mStop_10to80=kreator.makeMCComponent("SMS_T2ttDiLep_mStop_10to80","/SMS-T2tt_dM-10to80_2Lfilter_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring16MiniAODv2-PUSpring16Fast_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/MINIAODSIM","CMS",".*root",1)
+
 
 
 SignalSUSY = [
@@ -27,6 +32,10 @@ SMS_T2tt_mStop_400to1200,
 SMS_T2tt_mStop_425_mLSP_325,
 SMS_T2tt_mStop_500_mLSP_325,
 SMS_T2tt_mStop_850_mLSP_100,
+SMS_TChiSlepSnux0p5,
+SMS_TChiSlepSnux0p05,
+SMS_TChiWZ,
+SMS_T2ttDiLep_mStop_10to80
 ]
 
 ### ----------------------------- summary ----------------------------------------

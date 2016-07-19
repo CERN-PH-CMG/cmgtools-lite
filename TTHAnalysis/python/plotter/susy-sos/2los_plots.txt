@@ -36,7 +36,7 @@ jet1Pt:  Jet1_pt: 12,0,600; XTitle="Leading jet p_{T}  [GeV]",Legend='TR'
 #SR_bins_stop: SR_bins_stop(LepGood1_pt):3,1,4;XTitle="p_{T}-bins",Legend='TL'
 SR_bins_EWKino: m2l:[4,10,20,30,50];XTitle="m(ll) [GeV]",Legend='TR'
 SR_bins_stop: LepGood1_pt:[5,12,20,30];XTitle="Leading lepton p_{T}  [GeV]",Legend='TL'
-
+#weight: fakeRatePromptRateWeight_2l_23(LepGood1_pt,LepGood1_eta,LepGood1_pdgId,LepGood1_isTightString,LepGood2_pt,LepGood2_eta,LepGood2_pdgId,LepGood2_isTightString): 80,-2,2; YTitle='weight';
 
 
 
