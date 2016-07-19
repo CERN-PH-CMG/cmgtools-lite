@@ -3,7 +3,7 @@ from CMGTools.H2TauTau.proto.plotter.cut import Cut
 # pt1 = 200
 # pt2 = 200
 
-cat_VV = '(njj>0)'
+cat_VV = '(njj>0)&&((run < 100)||(HLT2_HT800||HLT2_HT900))&&jj_LV_mass>1000'
 cat_common = 'Flag_goodVertices&&Flag_CSCTightHaloFilter&&Flag_HBHENoiseFilter&&Flag_HBHENoiseIsoFilter&&Flag_eeBadScFilter&&lnujj_nOtherLeptons==0'
 cat_mu = '(HLT_MU||HLT_ELE)&&abs(lnujj_l1_l_pdgId)==13'
 cat_e = '(HLT_MU||HLT_ELE)&&abs(lnujj_l1_l_pdgId)==11'
