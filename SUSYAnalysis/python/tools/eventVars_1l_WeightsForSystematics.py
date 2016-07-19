@@ -251,11 +251,12 @@ class EventVars1LWeightsForSystematics:
         #        Const weight
         # const: 0.85 +-0.06
         #        16%
+
+        '''
         constVariation=0.16
         wmean = 5.82 - 0.5
         # slope: 0.03 +/-0.05
         slopevariation = sqrt(0.03*0.03 +0.05*0.05)
-
 
         #2016 update
         constVariation=0.16
@@ -266,6 +267,12 @@ class EventVars1LWeightsForSystematics:
         constVariation= sqrt(0.06*0.06 +0.03*0.03)
         slopevariation = sqrt(0.06*0.06 +0.02*0.02)
         wmean = 5.62 - 0.5
+        '''
+
+        #2016 update with 7.7/fb
+        constVariation= sqrt(0.04*0.04 +0.02*0.02)
+        slopevariation = sqrt(0.07*0.07 +0.02*0.02)
+        wmean = 5.67 - 0.5
 
         if "nJets30Clean" in base: nJets30Clean = base["nJets30Clean"]
         else: nJets30Clean = event.nJet
