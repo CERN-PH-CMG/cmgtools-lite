@@ -3,11 +3,11 @@ import copy
 print "importing HistogramCfg"
 from CMGTools.H2TauTau.proto.plotter.PlotConfigs import HistogramCfg
 print "importing cat_Inc"
-from CMGTools.VVResonances.plotting.categories_VV import cat_Inc
+from CMGTools.VVResonances.plotting.categories_VV_2015 import cat_Inc
 print "importing createHistograms"
 from CMGTools.VVResonances.plotting.HistCreator import createHistograms
 print "importing HistDrawer"
-from CMGTools.H2TauTau.proto.plotter.HistDrawer import HistDrawer
+from CMGTools.VVResonances.plotting.HistDrawer import HistDrawer
 print "importing Variables"
 from CMGTools.VVResonances.plotting.Variables import getVars, VV_vars
 print "importing createSampleLists"
