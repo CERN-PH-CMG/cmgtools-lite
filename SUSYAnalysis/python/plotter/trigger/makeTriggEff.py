@@ -696,9 +696,9 @@ if __name__ == "__main__":
     ###################
     ###################
 
-    #basecuts = 'passFilters && nLep == 1 &&'
+    basecuts = 'passFilters && nLep == 1 &&'
     #basecuts = 'passFilters && nLep == 1 && Run > 275656 &&'
-    basecuts = 'passFilters && nLep == 1 && LT > 250 &&'
+    #basecuts = 'passFilters && nLep == 1 && LT > 250 &&'
     #basecuts = 'METfilters && nLep == 1 && nVeto == 0 &&'
     basecuts += 'Selected == 1 &&'
 
