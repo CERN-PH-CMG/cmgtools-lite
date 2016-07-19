@@ -203,8 +203,8 @@ genAna.allGenTaus = True
 #-------- HOW TO RUN
 isData = True # default, but will be overwritten below
 
-#sample = 'MC'
-sample = 'data'
+sample = 'MC'
+#sample = 'data'
 #sample = 'Signal'
 test = 0
 
@@ -227,11 +227,12 @@ if sample == "MC":
   # MiniAODv2
   #from CMGTools.SUSYAnalysis.samples.samples_13TeV_RunIISpring15MiniAODv2_desy import *
   #from CMGTools.SUSYAnalysis.samples.samples_13TeV_RunIISpring15MiniAODv2_desy_Compact import *
-  from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv2_dummy import *
+  from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv2 import *
 #  from CMGTools.RootTools.samples.samples_13TeV_MiniAODv2_Signals_desy import *
 #  selectedComponents = TTs + SingleTop #TTJets_SingleLepton
 
-  selectedComponents = QCDHT
+  selectedComponents = [TBarToLeptons_tch_powheg]
+
   if test==1:
     # test a single component, using a single thread.
     comp = QCD_HT300to500
