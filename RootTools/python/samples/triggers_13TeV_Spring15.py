@@ -70,7 +70,7 @@ triggers_MT2_mu = ["HLT_IsoMu17_eta2p1_v*","HLT_IsoMu20_eta2p1_v*", "HLT_IsoMu20
 triggers_MT2_e = ["HLT_Ele23_WPLoose_Gsf_v*", "HLT_Ele22_eta2p1_WPLoose_Gsf_v*","HLT_Ele22_eta2p1_WP75_Gsf_v*", "HLT_Ele23_WP75_Gsf_v*"]
 
 triggers_HT900 = ["HLT_PFHT900_v*"]
-triggers_HT800 = ["HLT_PFHT800_v*"]
+triggers_HT800 = ["HLT_PFHT800_v*","HLT_ECALHT800_v*"]
 triggers_MET170 = ["HLT_PFMET170_NoiseCleaned_v*"]
 #other paths added in data:
 triggers_MET170_NotCleaned = ["HLT_PFMET170_v*"]
