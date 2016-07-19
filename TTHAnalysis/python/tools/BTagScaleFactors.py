@@ -15,7 +15,7 @@ import os
 # Get the current scale factor files from: https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation80X
 #################################################################
 from ROOT import gSystem
-gSystem.Load('BTagCalibrationStandalone.so')
+gSystem.Load(os.path.join(os.path.dirname(__file__), 'BTagCalibrationStandalone.so'))
 from ROOT import BTagCalibration, BTagCalibrationReader
 
 def get_allowed_ranges(csvfile):
@@ -46,7 +46,7 @@ def get_allowed_ranges(csvfile):
     return ranges
 
 def relevant_iterative_systs(flavor, syst):
-    """Depending on flavor, only a sample of systematics matter"""
+    """Returns true if a flavor/syst combination is relevant"""
     if flavor==0:
         return syst in ["central",
                         "up_jes", "down_jes",
@@ -73,8 +73,9 @@ class BTagScaleFactors(object):
         self.name = name
         self.csvfile = csvfile
         self.verbose = verbose
+        self.algo = algo.lower()
 
-        if not algo.lower() in ['csv', 'cmva']:
+        if not self.algo in ['csv', 'cmva']:
             print "ERROR: Unknown algorithm. Choose either 'csv' or 'cmva'"
             return
 
@@ -84,7 +85,7 @@ class BTagScaleFactors(object):
             1 : "comb", # c
             2 : "incl", # light
         }
-        if algo.lower() == 'cmva':
+        if self.algo == 'cmva':
             self.mtypes[0] = 'ttbar'
             self.mtypes[1] = 'ttbar'
 
@@ -108,13 +109,24 @@ class BTagScaleFactors(object):
         """Check if a given pt, eta, and discriminator output are in the allowed range
         Call this inside a try/except KeyError block to check if a given
         wp/mtype/syst/flavor combination exists.
+
+        Eta is changed to abs(eta) for checking the range.
         """
         allowed_range = self.allowed[(csvop, mtype, stype, flavor)]
-        return all([
+
+        eta = abs(eta)
+        allowed = all([
                 eta   >= allowed_range['etaMin'],   eta   <= allowed_range['etaMax'],
                 pt    >= allowed_range['ptMin'],    pt    <= allowed_range['ptMax'],
                 discr >= allowed_range['discrMin'], discr <= allowed_range['discrMax'],
             ])
+
+        if not allowed and self.verbose>2:
+            print 'pt    %6.1f <? %6.1f <? %6.1f' % (allowed_range['ptMin'],    pt,    allowed_range['ptMax'])
+            print 'eta   %4.1f <? %4.1f <? %4.1f' % (allowed_range['etaMin'],   eta,   allowed_range['etaMax'])
+            print 'discr %4.1f <? %4.1f <? %4.1f' % (allowed_range['discrMin'], discr, allowed_range['discrMax'])
+
+        return allowed
 
     def create_readers(self):
         if self.verbose>0:
@@ -166,14 +178,15 @@ class BTagScaleFactors(object):
             return -1.0
         wp = wp_new
 
+        syst = syst.lower()
+
         mtype = self.mtypes[flavor]
         if shape_corr:
             wp = 3
             mtype = 'iterativefit'
 
-        allowed = True
         try:
-            allowed = self.check_range(wp, mtype, syst, flavor, pt, eta, val)
+            self.check_range(wp, mtype, syst, flavor, pt, eta, val)
         except KeyError:
             if shape_corr and relevant_iterative_systs(flavor, syst):
                 self.not_found.add((wp, mtype, syst, flavor))
@@ -189,10 +202,6 @@ class BTagScaleFactors(object):
             return 1.0
 
         if shape_corr:
-            if not allowed:
-                if self.verbose>0:
-                    print "ERROR: discriminator value (%s) out of range" % repr(val)
-                return -1.0
             if relevant_iterative_systs(flavor, syst):
                 return self.readers[("iterative", syst)].eval(flavor, eta, pt, val)
             else:
@@ -221,15 +230,16 @@ class BTagScaleFactors(object):
         else: # light jets
             return self.readers[(wp, syst, flavor)].eval(flavor, eta, pt)
 
-    def get_event_SF(self, jets=[], syst="central"):
-        tag = "pfCombinedInclusiveSecondaryVertexV2BJetTags"
-        if self.algo == 'cmva': tag = "pfCombinedMVAV2BJetTags"
+    def get_event_SF(self, jets=[], syst="central",
+                     flavorAttr='hadronFlavour', btagAttr='btagCSV'):
+        syst = syst.lower()
 
         weight = 1.0
         for jet in jets:
-            weight *= self.get_SF(pt=jet.pt(), eta=jet.eta(),
-                                  flavor=jet.hadronFlavour(),
-                                  val=jet.btag(tag),
+            flavor  = getattr(jet, flavorAttr)
+            btagval = getattr(jet, btagAttr)
+            weight *= self.get_SF(pt=jet.pt, eta=jet.eta,
+                                  flavor=flavor, val=btagval,
                                   syst=syst, shape_corr=True)
         return weight
 
@@ -284,5 +294,5 @@ def testing():
         print "The following wp/mtype/syst/flavor combinations were requested but not found:"
         pprint(sfs.not_found)
 
-debug = True
+debug = False
 if debug: testing()
