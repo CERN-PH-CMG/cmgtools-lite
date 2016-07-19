@@ -14,9 +14,8 @@ if [[ "X$1" == "X" ]]; then echo "Provide output directory name!"; exit; fi
 OUTNAME=$1; shift;
 if [[ "X$1" == "X" ]]; then echo "Provide luminosity!"; exit; fi
 LUMI="$1"; shift
-#echo "Normalizing to ${LUMI}/fb";
-echo "HARDCODED Normalizing to 10/fb";
-LUMI=10
+echo "Normalizing to ${LUMI}/fb";
+#echo "HARDCODED Normalizing to 10/fb"; LUMI=10
 OPTIONS=" --tree treeProducerSusyMultilepton --s2v -j $J -l ${LUMI} -f --xp data --asimov "
 test -d cards/$OUTNAME || mkdir -p cards/$OUTNAME
 OPTIONS="${OPTIONS} --od cards/$OUTNAME ";
@@ -30,7 +29,8 @@ OneTau=" -E ^1tau "
 SPLITDECAYS=""
 #SPLITDECAYS="-splitdecays"
 
-OPTIONS="${OPTIONS} --scaleplot fakes_data*=2.5 --scaleplot flips_data*=2.5 --Fs {P}/2_recleaner_v4_b1E2 --Fs {P}/3_evtVars_kinMVAwithMEM_v4 --mcc ttH-multilepton/mcc-bTagSFOne.txt" # WARNING B-TAG SF OFF
+#OPTIONS="${OPTIONS} --scaleplot fakes_data*=2.5 --scaleplot flips_data*=2.5"
+OPTIONS="${OPTIONS} --Fs {P}/2_recleaner_v4_b1E2 --Fs {P}/3_evtVars_kinMVAwithMEM_v4 --mcc ttH-multilepton/mcc-bTagSFOne.txt" # WARNING B-TAG SF OFF
 OPTIONS="${OPTIONS} --mcc ttH-multilepton/lepchoice-ttH-FO.txt --mcc ttH-multilepton/ttH_2lss3l_triggerdefs.txt --neg" # neg necessary for subsequent rebin
 CATPOSTFIX=""
 

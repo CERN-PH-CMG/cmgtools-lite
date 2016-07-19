@@ -13,7 +13,8 @@ def base(selection):
 
     CORE="--Fs {P}/2_recleaner_v4_b1E2 --Fs {P}/3_evtVars_kinMVAwithMEM_v4 "
 
-    CORE+=" -f -j 8 -l 10.0 --scaleplot fakes_data*=2.5 --scaleplot flips_data*=2.5 --s2v --tree treeProducerSusyMultilepton --mcc ttH-multilepton/lepchoice-ttH-FO.txt --mcc ttH-multilepton/ttH_2lss3l_triggerdefs.txt"# --neg"
+    CORE+=" -f -j 8 -l 4.0 --s2v --tree treeProducerSusyMultilepton --mcc ttH-multilepton/lepchoice-ttH-FO.txt --mcc ttH-multilepton/ttH_2lss3l_triggerdefs.txt"# --neg"
+#    CORE+=" -f -j 8 -l 10.0 --scaleplot fakes_data*=2.5 --scaleplot flips_data*=2.5 --s2v --tree treeProducerSusyMultilepton --mcc ttH-multilepton/lepchoice-ttH-FO.txt --mcc ttH-multilepton/ttH_2lss3l_triggerdefs.txt"# --neg"
     if dowhat == "plots": CORE+=" --lspam '#bf{CMS} #it{Internal}' --legendWidth 0.20 --legendFontSize 0.035 --showRatio --maxRatioRange 0 3  --showMCError --rebin 4 --xP 'nT_.*' --xP 'debug_.*' --mcc ttH-multilepton/mcc-bTagSFOne.txt"
 
     if selection=='2lss':
@@ -136,7 +137,8 @@ if __name__ == '__main__':
         else:
             if 'data' in torun and '_prescale' in torun:
                 x = x.replace('mca-3l-mcdata.txt','mca-3l-mcdata-prescale.txt')
-
+            elif '_prescale' in torun:
+                x = x.replace('mca-3l-mc.txt','mca-3l-mc-prescale.txt')
         if '_table' in torun:
             x = x.replace('mca-3l-mc.txt','mca-3l-mc-table.txt')
         if '_closuretest' in torun:
@@ -184,7 +186,7 @@ if __name__ == '__main__':
             if not '_data' in torun: raise RuntimeError
             x = x.replace('mca-2lss-mcdata.txt','mca-2lss-mcdata-frdata.txt')
         x = add(x,"-R ^4j 3j 'nJet25==3'")
-        plots = ['2lep_.*','nJet25','nBJetLoose25','nBJetMedium25','met','metLD','htJet25j','mhtJet25','mtWmin','htllv','kinMVA_2lss_ttbar','kinMVA_2lss_ttV','kinMVA_2lss_bins8']
+        plots = ['2lep_.*','nJet25','nBJetLoose25','nBJetMedium25','met','metLD','htJet25j','mhtJet25','mtWmin','htllv','kinMVA_2lss_ttbar','kinMVA_2lss_ttV','kinMVA_2lss_bins7']
         runIt(x,'%s'%torun,plots)
         if '_flav' in torun:
             for flav in ['mm','ee','em']:
@@ -237,14 +239,3 @@ if __name__ == '__main__':
         runIt(x,'%s'%torun,plots)
         x = add(x,"-E ^4j ")
         runIt(x,'%s_4j'%torun,plots)
-
-    if 'cr_zz4l' in torun:
-        x = base('4l')
-        if '_data' in torun: x = x.replace('mca-4l-mc.txt','mca-4l-mcdata.txt')
-        if '_frdata' in torun:
-            if not '_data' in torun: raise RuntimeError
-            x = x.replace('mca-4l-mcdata.txt','mca-4l-mcdata-frdata.txt')
-        x = add(x,"-I 'Zveto' -X ^2b1B -E ^Bveto -A alwaystrue noHZZ 'm4l>135' ")
-        plots=['4lep_.*']
-        runIt(x,'%s'%torun,plots)
-
