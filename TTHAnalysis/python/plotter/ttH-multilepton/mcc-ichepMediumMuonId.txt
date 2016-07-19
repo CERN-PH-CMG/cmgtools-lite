@@ -1,0 +1,11 @@
+LepGood(\d*)_ICHEPmediumMuonId: (abs(LepGood\1_pdgId) != 13 || \
+                                 LepGood\1_innerTrackValidHitFraction > 0.49 && \
+                                 LepGood\1_segmentCompatibility > \
+                                        if3( LepGood\1_isGlobalMuon && LepGood\1_globalTrackChi2 < 3 && LepGood\1_chi2LocalPosition < 12 && LepGood\1_trkKink < 20, \
+                                             0.303, 0.451) ); AlsoData
+# vv---- below to check that we reproduce the old to reasonable accurancy
+#LepGood(\d*)_oldMediumMuonId:  (abs(LepGood\1_pdgId) != 13 || \
+#                                LepGood\1_innerTrackValidHitFraction > 0.8 && \
+#                                LepGood\1_segmentCompatibility > \
+#                                        if3( LepGood\1_isGlobalMuon && LepGood\1_globalTrackChi2 < 3 && LepGood\1_chi2LocalPosition < 12 && LepGood\1_trkKink < 20, \
+#                                             0.303, 0.451) ); AlsoData
