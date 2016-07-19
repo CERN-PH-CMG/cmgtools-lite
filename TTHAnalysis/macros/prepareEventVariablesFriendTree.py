@@ -1,12 +1,14 @@
 #!/usr/bin/env python
-from CMGTools.TTHAnalysis.treeReAnalyzer import *
+from CMGTools.TTHAnalysis.treeReAnalyzer import Module, EventLoop, Booker, PyTree
 from CMGTools.TTHAnalysis.tools.leptonJetReCleaner import LeptonJetReCleaner
 from glob import glob
-import os.path, re, types, itertools
+import os.path, re, types, itertools, sys
+from math import ceil
+import ROOT
 
 MODULES = []
 
-utility_files_dir = os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/"
+utility_files_dir = os.path.join(os.environ["CMSSW_BASE"], "src/CMGTools/TTHAnalysis/data/")
 isFastSim = False
 
 # btag event weights in 80X
@@ -41,8 +43,8 @@ from CMGTools.TTHAnalysis.tools.functionsTTH import _ttH_idEmu_cuts_E2
 from CMGTools.TTHAnalysis.tools.functionsEWKino import _ewkino_idEmu_cuts_E2, _ewkino_2lss_lepId_CBloose, _ewkino_2lss_lepId_FO, _ewkino_2lss_lepId_num,_ewkino_3l_lepId_FO, _ewkino_3l_lepId_num, _ewkino_2lss_lepId_IPcuts, _ewkino_leptonMVA_VT, _ewkino_leptonMVA_M
 from CMGTools.TTHAnalysis.tools.conept import conept_RA5, conept_RA7, conept_EWK, conept_TTH, conept_SSDL, conept_SSDL_for3l
 
-MODULES.append( ('leptonJetReCleanerSusyRA5', lambda : LeptonJetReCleaner("Mini", 
-                   lambda lep : lep.miniRelIso < 0.4 and _susy2lss_lepId_CBloose(lep), #and (ht>300 or _susy2lss_idIsoEmu_cuts(lep)), 
+MODULES.append( ('leptonJetReCleanerSusyRA5', lambda : LeptonJetReCleaner("Mini",
+                   lambda lep : lep.miniRelIso < 0.4 and _susy2lss_lepId_CBloose(lep), #and (ht>300 or _susy2lss_idIsoEmu_cuts(lep)),
                    lambda lep : lep.pt>10 and _susy2lss_lepId_loosestFO(lep) and _susy2lss_lepId_IPcuts(lep), # cuts applied on top of loose
                    lambda lep,ht : lep.pt>10 and _susy2lss_lepConePt1015(lep) and _susy2lss_lepId_IPcuts(lep) and (_susy2lss_lepId_loosestFO(lep) if ht>300 else _susy2lss_lepId_tighterFO(lep)), # cuts applied on top of loose
                    lambda lep,ht : lep.pt>10 and _susy2lss_lepConePt1015(lep) and _susy2lss_multiIso(lep) and _susy2lss_lepId_CB(lep) and (ht>300 or _susy2lss_idIsoEmu_cuts(lep)), # cuts applied on top of loose
@@ -55,9 +57,10 @@ MODULES.append( ('leptonJetReCleanerSusyRA5', lambda : LeptonJetReCleaner("Mini"
                    jetPt = 40,
                    bJetPt = 25,
                    coneptdef = lambda lep: conept_RA5(lep),
-                   storeJetVariables = True                                                       
+                   storeJetVariables = True
                  ) ))
 
+<<<<<<< HEAD
 # updated cut-based RA7
 MODULES.append( ('leptonJetReCleanerSusyRA7', lambda : LeptonJetReCleaner("Mini", 
                    lambda lep : lep.miniRelIso < 0.4 and _susy3l_lepId_CBloose(lep), #and (ht>300 or _susy2lss_idIsoEmu_cuts(lep)), 
@@ -119,25 +122,6 @@ MODULES.append( ('leptonJetReCleanerSusyEWK2L', lambda : LeptonJetReCleaner("Rec
                    coneptdef = lambda lep: conept_SSDL(lep)
                  ) ))
 
-MODULES.append( ('leptonJetReCleanerSusy3L', lambda : LeptonJetReCleaner("Recl", 
-                   looseLeptonSel = lambda lep : lep.miniRelIso < 0.4 and _ewkino_2lss_lepId_IPcuts(lep),
-                   cleaningLeptonSel = lambda lep : lep.conept>10 and _ewkino_2lss_lepId_CBloose(lep), # cuts applied on top of loose (pt 5, 7, conveto, lotHist<=1 && emulation)
-                   FOLeptonSel = lambda lep,ht : lep.conept>10 and (_ewkino_3l_lepId_num(lep) or _ewkino_3l_lepId_FO(lep)), # cuts on top of loose (previous + tight charge and lostHits==0)
-                   tightLeptonSel = lambda lep,ht : lep.conept>10 and _ewkino_3l_lepId_num(lep), # on top of loose 
-                   cleanJet = lambda lep,jet,dr : dr<0.4,
-                   selectJet = lambda jet: abs(jet.eta)<2.4,
-                   cleanTau = lambda lep,tau,dr: dr<0.4,
-                   looseTau = lambda tau: tau.pt > 20 and abs(tau.eta)<2.3 and abs(tau.dxy) < 1000 and abs(tau.dz) < 0.2 and tau.idMVAOldDMRun2dR03 >= 1 and tau.idDecayMode, # used in cleaning 
-                   tightTau = lambda tau: True, # cuts applied on top of loose                                                                           
-                   cleanJetsWithTaus = False,
-                   doVetoZ = True,
-                   doVetoLMf = True,
-                   doVetoLMt = True,
-                   jetPt = 30,
-                   bJetPt = 25,
-                   coneptdef = lambda lep: conept_SSDL_for3l(lep)
-                 ) ))
-
 
 MODULES.append( ('leptonJetReCleanerTTH', lambda : LeptonJetReCleaner("Recl", # b1E2 definition of FO, 80X b-tag WP
                    looseLeptonSel = lambda lep : lep.miniRelIso < 0.4 and lep.sip3d < 8,
@@ -174,9 +158,9 @@ from CMGTools.TTHAnalysis.tools.leptonChoiceRA7 import LeptonChoiceRA7
 FRname="hardcodedUCSx"
 FS_lepSF=[utility_files_dir+"/leptonSF/sf_mu_mediumID_multi.root",utility_files_dir+"/leptonSF/sf_el_tight_IDEmu_ISOEMu_ra5.root"]
 
-MODULES.append( ('leptonChoiceRA5_Sync', lambda : LeptonChoiceRA5("Loop","Mini",whichApplication="Fakes",lepChoiceMethod="TTSync",FRFileName=FRname,isFastSim=isFastSim,lepSFFileNameFastSim=FS_lepSF))) 
-MODULES.append( ('leptonChoiceRA5_Fakes', lambda : LeptonChoiceRA5("Loop","Mini",whichApplication="Fakes",lepChoiceMethod="TT_loopTF_2FF",FRFileName=FRname,isFastSim=isFastSim,lepSFFileNameFastSim=FS_lepSF))) 
-#MODULES.append( ('leptonChoiceRA5_FO', lambda : LeptonChoiceRA5("SortFO","Mini",whichApplication="Fakes",lepChoiceMethod="sort_FO",FRFileName=FRname,isFastSim=isFastSim,lepSFFileNameFastSim=FS_lepSF))) 
+MODULES.append( ('leptonChoiceRA5_Sync', lambda : LeptonChoiceRA5("Loop","Mini",whichApplication="Fakes",lepChoiceMethod="TTSync",FRFileName=FRname,isFastSim=isFastSim,lepSFFileNameFastSim=FS_lepSF)))
+MODULES.append( ('leptonChoiceRA5_Fakes', lambda : LeptonChoiceRA5("Loop","Mini",whichApplication="Fakes",lepChoiceMethod="TT_loopTF_2FF",FRFileName=FRname,isFastSim=isFastSim,lepSFFileNameFastSim=FS_lepSF)))
+#MODULES.append( ('leptonChoiceRA5_FO', lambda : LeptonChoiceRA5("SortFO","Mini",whichApplication="Fakes",lepChoiceMethod="sort_FO",FRFileName=FRname,isFastSim=isFastSim,lepSFFileNameFastSim=FS_lepSF)))
 MODULES.append( ('leptonChoiceRA5_Flips', lambda : LeptonChoiceRA5("Flips","Mini",whichApplication="Flips",FRFileName="hardcodedUCSx",isFastSim=isFastSim,lepSFFileNameFastSim=FS_lepSF)))
 
 
@@ -192,7 +176,7 @@ RA7_full_lepSF = [[utility_files_dir+"/leptonSF/ra7_lepsf_fullsim/muons/TnP_Muon
                    utility_files_dir+"/leptonSF/ra7_lepsf_fullsim/muons/TnP_MuonID_NUM_MultiIsoMedium_DENOM_MediumID_VAR_map_pt_eta.root::pt_abseta_PLOT_pair_probeMultiplicity_bin0_&_tag_combRelIsoPF04dBeta_bin0_&_tag_pt_bin0_&_Medium_pass_&_tag_IsoMu20_pass"],
                   [utility_files_dir+"/leptonSF/ra7_lepsf_fullsim/electrons/kinematicBinSFele.root::MVATight_and_IDEmu_and_TightIP2D_and_TightIP3D",
                    utility_files_dir+"/leptonSF/ra7_lepsf_fullsim/electrons/kinematicBinSFele.root::MultiIsoTight_vs_AbsEta"]]
-RA7_fast_lepSF = [[utility_files_dir+"/leptonSF/ra7_lepsf_fastsim/muons/sf_mu_mediumID.root::histo3D", 
+RA7_fast_lepSF = [[utility_files_dir+"/leptonSF/ra7_lepsf_fastsim/muons/sf_mu_mediumID.root::histo3D",
                    utility_files_dir+"/leptonSF/ra7_lepsf_fastsim/muons/sf_mu_tightIP2D.root::histo3D",
                    utility_files_dir+"/leptonSF/ra7_lepsf_fastsim/muons/sf_mu_tightIP3D.root::histo3D",
                    utility_files_dir+"/leptonSF/ra7_lepsf_fastsim/muons/sf_mu_multi.root::histo3D"],
@@ -200,7 +184,8 @@ RA7_fast_lepSF = [[utility_files_dir+"/leptonSF/ra7_lepsf_fastsim/muons/sf_mu_me
                    utility_files_dir+"/leptonSF/ra7_lepsf_fastsim/electrons/sf_el_multi.root::histo3D"]]
 RA7_puweights = utility_files_dir+"/pileup/ra7_puWeights.root::pileup"
 
-MODULES.append( ('leptonChoiceRA7', lambda : LeptonChoiceRA7("Loop","Mini",whichApplication="Fakes",isFastSim=isFastSim,filePathFakeRate=RA7_FRname,filePathLeptonSFfull=RA7_full_lepSF,filePathLeptonSFfast=RA7_fast_lepSF,filePathPileUp=RA7_puweights))) 
+MODULES.append( ('leptonChoiceRA7', lambda : LeptonChoiceRA7("Loop","Mini",whichApplication="Fakes",isFastSim=isFastSim,filePathFakeRate=RA7_FRname,filePathLeptonSFfull=RA7_full_lepSF,filePathLeptonSFfast=RA7_fast_lepSF,filePathPileUp=RA7_puweights)))
+MODULES.append( ('leptonChoiceEWK', lambda : LeptonChoiceEWK("Loop","Mini",whichApplication="Super",isFastSim=isFastSim,filePathFakeRate=RA7_FRname,filePathLeptonSFfull=RA7_full_lepSF,filePathLeptonSFfast=RA7_fast_lepSF,filePathPileUp=RA7_puweights)))
 
 
 #--- Friend trees for fake rate calculation
@@ -230,7 +215,7 @@ MODULES.append ( ('puWeightsTrue_down', lambda : VertexWeightFriend(putruefilemc
 
 #--- TTH event variables
 
-from CMGTools.TTHAnalysis.tools.eventVars_2lss import EventVars2LSS 
+from CMGTools.TTHAnalysis.tools.eventVars_2lss import EventVars2LSS
 MODULES.append( ('ttH2lss', lambda : EventVars2LSS()) )
 from CMGTools.TTHAnalysis.tools.kinMVA_2D_2lss_3l import KinMVA_2D_2lss_3l
 MODULES.append( ('kinMVA_2D_2lss_3l', lambda : KinMVA_2D_2lss_3l(os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/kinMVA/tth/%s_BDTG.weights.xml")) )
@@ -287,8 +272,6 @@ MODULES.append( ('LepMVAFriendJetLessIVFNOTAU_SIGDY', lambda: LepMVAFriend((os.e
                                                                     os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/leptonMVA/jetless/SoftJetLessIVFNOTAU_SIGDY_%s_BDTG.weights.xml",),
                                                                    training="SoftJetLessIVF", label="JetLessIVFNOTAU_SIGDY")) )
 
-
-
 class VariableProducer(Module):
     def __init__(self,name,booker,modules):
         Module.__init__(self,name,booker)
@@ -301,7 +284,7 @@ class VariableProducer(Module):
             print mod.listBranches()
             for B in mod.listBranches():
                 # don't add the same branch twice
-                if B in self.branches: 
+                if B in self.branches:
                     print "Will not add branch %s twice" % (B,)
                     continue
                 self.branches[B] = True
@@ -337,9 +320,9 @@ parser.add_option("-T", "--tree-dir",   dest="treeDir",     type="string", defau
 parser.add_option("-q", "--queue",   dest="queue",     type="string", default=None, help="Run jobs on lxbatch instead of locally");
 parser.add_option("-t", "--tree",    dest="tree",      default='ttHLepTreeProducerTTH', help="Pattern for tree name");
 parser.add_option("-V", "--vector",  dest="vectorTree", action="store_true", default=True, help="Input tree is a vector");
-parser.add_option("-F", "--add-friend",    dest="friendTrees",  action="append", default=[], nargs=2, help="Add a friend tree (treename, filename). Can use {name}, {cname} patterns in the treename") 
-parser.add_option("--FMC", "--add-friend-mc",    dest="friendTreesMC",  action="append", default=[], nargs=2, help="Add a friend tree (treename, filename) to MC only. Can use {name}, {cname} patterns in the treename") 
-parser.add_option("--FD", "--add-friend-data",    dest="friendTreesData",  action="append", default=[], nargs=2, help="Add a friend tree (treename, filename) to data trees only. Can use {name}, {cname} patterns in the treename") 
+parser.add_option("-F", "--add-friend",    dest="friendTrees",  action="append", default=[], nargs=2, help="Add a friend tree (treename, filename). Can use {name}, {cname} patterns in the treename")
+parser.add_option("--FMC", "--add-friend-mc",    dest="friendTreesMC",  action="append", default=[], nargs=2, help="Add a friend tree (treename, filename) to MC only. Can use {name}, {cname} patterns in the treename")
+parser.add_option("--FD", "--add-friend-data",    dest="friendTreesData",  action="append", default=[], nargs=2, help="Add a friend tree (treename, filename) to data trees only. Can use {name}, {cname} patterns in the treename")
 parser.add_option("-L", "--list-modules",  dest="listModules", action="store_true", default=False, help="just list the configured modules");
 parser.add_option("-n", "--new",  dest="newOnly", action="store_true", default=False, help="Make only missing trees");
 parser.add_option("-I", "--import", dest="imports",  type="string", default=[], action="append", help="Modules to import");
@@ -370,9 +353,9 @@ if "{P}" in args[1]: args[1] = args[1].replace("{P}",args[0])
 if len(args) != 2 or not os.path.isdir(args[0]):
     print "Usage: program <TREE_DIR> <OUT>"
     exit()
-if not os.path.isdir(args[1]): 
+if not os.path.isdir(args[1]):
     os.system("mkdir -p "+args[1])
-    if not os.path.isdir(args[1]): 
+    if not os.path.isdir(args[1]):
         print "Could not create output directory"
         exit()
 if len(options.chunks) != 0 and len(options.datasets) != 1:
@@ -415,11 +398,11 @@ for D in glob(args[0]+"/*"):
                 f = ROOT.TFile.Open(fname);
                 t = f.Get(treename)
                 if t.GetEntries() != entries:
-                    print "Component %s has to be remade, mismatching number of entries (%d vs %d)" % (short, entries, t.GetEntries()) 
+                    print "Component %s has to be remade, mismatching number of entries (%d vs %d)" % (short, entries, t.GetEntries())
                     f.Close()
                 else:
-                    print "Component %s exists already and has matching number of entries (%d)" % (short, entries) 
-                    continue 
+                    print "Component %s exists already and has matching number of entries (%d)" % (short, entries)
+                    continue
         chunk = options.chunkSize
         if entries < chunk:
             print "  ",os.path.basename(D),("  DATA" if data else "  MC")," single chunk"
@@ -467,9 +450,9 @@ if options.queue:
             cmd = "{super} {writelog} {base} -d {data} {post}".format(super=super, writelog=writelog, base=basecmd, data=name, chunk=chunk, post=friendPost)
 
         print cmd
-        if not options.pretend: 
+        if not options.pretend:
             os.system(cmd)
-        
+
     exit()
 
 maintimer = ROOT.TStopwatch()
@@ -485,13 +468,13 @@ def _runIt(myargs):
                 print "xrdcp %s %s" % (fin, tmpfile)
                 os.system("xrdcp %s %s" % (fin, tmpfile))
                 if os.path.exists(tmpfile):
-                    fin = tmpfile 
+                    fin = tmpfile
                     fetchedfile = fin
                     print "success :-)"
             except:
                 pass
         fb = ROOT.TFile.Open(fin)
-    elif "root://" in fin:        
+    elif "root://" in fin:
         ROOT.gEnv.SetValue("TFile.AsyncReading", 1);
         fb   = ROOT.TXNetFile(fin+"?readaheadsz=65535&DebugLevel=0")
         os.environ["XRD_DEBUGLEVEL"]="0"
@@ -529,7 +512,7 @@ def _runIt(myargs):
         for m,v in MODULES:
             for pat in options.modules:
                 if re.match(pat,m):
-                    toRun[m] = True 
+                    toRun[m] = True
         modulesToRun = [ (m,v) for (m,v) in MODULES if m in toRun ]
     el = EventLoop([ VariableProducer(options.treeDir,booker,modulesToRun), ])
     el.loop([tb], eventRange=range)
