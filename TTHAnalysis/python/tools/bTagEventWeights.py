@@ -8,8 +8,9 @@ from BTagScaleFactors import BTagScaleFactors
 
 class BTagEventWeightFriend:
     def __init__(self, reader,
-                 blabel="btagCSV",
-                 label="eventBTagSF",
+                 btag_branch='btagCSV',
+                 flavor_branch='hadronFlavour',
+                 label='eventBTagSF',
                  recllabel='Recl',
                  mcOnly=True):
         self.reader = reader
@@ -17,7 +18,8 @@ class BTagEventWeightFriend:
         self.jec_systs = ["", "_jecUp", "_jecDown"]
         self.recllabel = recllabel
         self.label = label
-        self.blabel = blabel
+        self.btag_branch = btag_branch
+        self.flavor_branch = flavor_branch
         self.mcOnly = mcOnly
 
         # Automatically add the iterative systs from the reader
@@ -33,6 +35,8 @@ class BTagEventWeightFriend:
         self.jec_syst_to_use["up_jes"] = "_jecUp"
         self.jec_syst_to_use["down_jes"] = "_jecDown"
 
+        self.branches = self.listBranches()
+
     def listBranches(self):
         out = []
         for syst in self.btag_systs:
@@ -44,14 +48,18 @@ class BTagEventWeightFriend:
 
     def getJetCollection(self, event, jec_syst):
         if not hasattr(event, "nJet"+jec_syst): jec_syst = ""
-        jets_cent = [j for j in Collection(event, "Jet"    +jec_syst, "nJet"+jec_syst)]
+        jets      = [j for j in Collection(event, "Jet"    +jec_syst, "nJet"    +jec_syst)]
         jets_disc = [j for j in Collection(event, "DiscJet"+jec_syst, "nDiscJet"+jec_syst)]
 
-        _ijets_list = getattr(event, "iJSel_%s%s" % (self.recllabel, jec_syst))
-        return [(jets_cent[ij] if ij>=0 else jets_disc[-ij-1]) for ij in _ijets_list]
+        try:
+            _ijets_list = getattr(event, "iJSel_%s%s" % (self.recllabel, jec_syst))
+            return [(jets[ij] if ij>=0 else jets_disc[-ij-1]) for ij in _ijets_list]
+        except AttributeError:
+            return jets
 
     def __call__(self, event):
-        ret = {}
+        ret = {k:1.0 for k in self.branches}
+        if self.mcOnly and event.isData: return ret
 
         for syst in self.btag_systs:
             jets = self.getJetCollection(event, jec_syst=self.jec_syst_to_use[syst])
@@ -59,35 +67,11 @@ class BTagEventWeightFriend:
             label = "%s_%s" % (self.label, syst)
             if syst == 'central': label = self.label
 
-            ret[label] = self.reader.get_event_SF(jets, syst=syst)
+            ret[label] = self.reader.get_event_SF(jets, syst=syst,
+                                                  flavorAttr=self.flavor_branch,
+                                                  btagAttr=self.btag_branch)
 
         return ret
-
-# class BTagLeptonEventWeightFriend(BTagEventWeightFriend):
-#     def __init__(self, reweight,
-#                  jetlabel="LepGood",
-#                  blabel="jetBTagCSV",
-#                  label="jetBTagCSVWeight",
-#                  rwtSyst="central"):
-#         BTagEventWeightFriend.__init__(self, reader,
-#                                       jetlabel=jetlabel,
-#                                       blabel=blabel,
-#                                       label=label,
-#                                       mcOnly=True)
-
-
-
-#     def reweight(self, event, lep):
-#         if self.mcOnly and event.isData:
-#             return -99.0
-#         fl = abs(lep.mcMatchAny)
-#         if fl not in (4,5): fl = 0
-#         jetpt = lep.pt/lep.jetPtRatiov2
-#         jetcsv = lep.jetBTagCSV
-
-#         return self.reader.get_SF(jetpt, abs(lep.eta), fl, jetcsv, ## FIXME is if abs(eta) or eta?
-#                                     getattr(lep, self.blabel),
-#                                     self.rwtSyst, shapeCorr=True)
 
 if __name__ == '__main__':
     from sys import argv
@@ -108,18 +92,17 @@ if __name__ == '__main__':
     class Tester(Module):
         def __init__(self, name):
             Module.__init__(self,name,None)
-            self.sf = BTagEventWeightFriend(btagsf_reader)
+            self.sf = BTagEventWeightFriend(btagsf_reader, recllabel="Recl")
             print "Adding these branches:", self.sf.listBranches()
 
         def analyze(self,ev):
-            print "\nrun %6d lumi %4d event %d: jets %d" % (ev.run, ev.lumi, ev.evt, ev.nJet25)
-
+            print "\nrun %6d lumi %4d event %d: jets %d, isdata=%d" % (ev.run, ev.lumi, ev.evt, ev.nJet25, int(ev.isData))
             ret = self.sf(ev)
             jets = Collection(ev,"Jet")
             # leps = Collection(ev,"LepGood")
 
             for i,j in enumerate(jets):
-                print "\tjet %8.2f %+5.2f %1d %.3f" % (j.pt, j.eta, j.hadronFlavour, min(max(0, j.btagCSV), 1))
+                print "\tjet %8.2f %+5.2f %1d %.3f" % (j.pt, j.eta, getattr(j, "hadronFlavour", -1), min(max(0, j.btagCSV), 1))
 
             for label in self.sf.listBranches()[:10]:
                 print "%8s"%label[-8:],
