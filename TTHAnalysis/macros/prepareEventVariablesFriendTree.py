@@ -60,7 +60,6 @@ MODULES.append( ('leptonJetReCleanerSusyRA5', lambda : LeptonJetReCleaner("Mini"
                    storeJetVariables = True
                  ) ))
 
-<<<<<<< HEAD
 # updated cut-based RA7
 MODULES.append( ('leptonJetReCleanerSusyRA7', lambda : LeptonJetReCleaner("Mini", 
                    lambda lep : lep.miniRelIso < 0.4 and _susy3l_lepId_CBloose(lep), #and (ht>300 or _susy2lss_idIsoEmu_cuts(lep)), 
