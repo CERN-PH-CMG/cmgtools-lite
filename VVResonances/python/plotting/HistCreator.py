@@ -4,12 +4,12 @@ import pickle
 import CMGTools.H2TauTau.proto.plotter.MultiDraw
 
 from CMGTools.H2TauTau.proto.plotter.PlotConfigs import HistogramCfg
-from CMGTools.VVResonances.plotting.DataMCPlot import DataMCPlot
+from CMGTools.H2TauTau.proto.plotter.DataMCPlot import DataMCPlot
 
 
 from CMGTools.RootTools.DataMC.Histogram import Histogram
 
-from ROOT import TH1F
+from ROOT import TH1F, TGraphAsymmErrors, Math, kBlack
 
 
 def initHist(hist, vcfg):
@@ -129,6 +129,8 @@ def createHistograms(hist_cfg, all_stack=False, verbose=False, friend_func=None)
 
                 if not cfg.is_data:
                     plot_hist.SetWeight(hist_cfg.lumi*cfg.xsec/cfg.sumweights)
+                else:
+                    convertToPoisson(hist)
 
     for plot in plots.itervalues():
         plot._ApplyPrefs()
@@ -207,6 +209,8 @@ def createHistogram(hist_cfg, all_stack=False, verbose=False, friend_func=None):
 
             if not cfg.is_data:
                 plot_hist.SetWeight(hist_cfg.lumi*cfg.xsec/cfg.sumweights)
+            else:
+                convertToPoisson(hist)
 
     plot._ApplyPrefs()
     return plot
@@ -224,3 +228,33 @@ def setSumWeights(sample):
     except IOError:
         print 'Warning: could not find sum weights information for sample', sample.name
         pass
+
+
+def convertToPoisson(h):
+    graph = TGraphAsymmErrors()
+    q = (1-0.6827)/2.
+
+    for i in range(1,h.GetNbinsX()+1):
+        x=h.GetXaxis().GetBinCenter(i)
+        xLow =h.GetXaxis().GetBinLowEdge(i)
+        xHigh =h.GetXaxis().GetBinUpEdge(i)
+        y=h.GetBinContent(i)
+        yLow=0
+        yHigh=0
+        if y !=0.0:
+            yLow = y-Math.chisquared_quantile_c(1-q,2*y)/2.
+            yHigh = Math.chisquared_quantile_c(q,2*(y+1))/2.-y
+            graph.SetPoint(i-1,x,y)
+            graph.SetPointEYlow(i-1,yLow)
+            graph.SetPointEYhigh(i-1,yHigh)
+            graph.SetPointEXlow(i-1,0.0)
+            graph.SetPointEXhigh(i-1,0.0)
+
+
+    graph.SetMarkerStyle(20)
+    graph.SetLineWidth(2)
+    graph.SetMarkerSize(1.)
+    graph.SetMarkerColor(kBlack)
+
+
+    return graph
