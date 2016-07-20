@@ -4,7 +4,7 @@ from CMGTools.RootTools.samples.samples_13TeV_DATA2015 import SingleMuon_Run2015
 from CMGTools.RootTools.samples.samples_13TeV_RunIIFall15MiniAODv2 import ZZTo4L, WZTo1L3Nu, WZTo3LNu_amcatnlo, WWTo1L1Nu2Q, WZTo1L1Nu2Q, ZZTo2L2Q, WZTo2L2Q, VVTo2L2Nu
 
 from CMGTools.RootTools.samples.samples_13TeV_RunIIFall15MiniAODv2 import W1JetsToLNu_LO, W4JetsToLNu_LO
-from CMGTools.RootTools.samples.samples_13TeV_RunIIFall15MiniAODv2 import DY1JetsToLL_M50_LO, DY2JetsToLL_M50_LO, DY3JetsToLL_M50_LO, DY4JetsToLL_M50_LO, DYJetsToLL_M10to50_ext1
+from CMGTools.RootTools.samples.samples_13TeV_RunIIFall15MiniAODv2 import DY1JetsToLL_M50_LO, DY2JetsToLL_M50_LO, DY3JetsToLL_M50_LO, DY4JetsToLL_M50_LO, DYJetsToLL_M10to50_ext1, DYJetsToLL_M50_LO_ext1
 
 from CMGTools.H2TauTau.proto.samples.fall15.higgs import HiggsGGH125, HiggsVBF125, HiggsTTH125
 from CMGTools.H2TauTau.proto.samples.fall15.higgs_susy import mc_higgs_susy_gg, mc_higgs_susy_bb
@@ -28,8 +28,10 @@ dy_xsec = 6025.2
 
 DYJetsToLL_M50_LO.xSection = dy_xsec
 DYJetsToLL_M50.xSection = dy_xsec
+DYJetsToLL_M50_LO_ext1.xSection = dy_xsec
 
 DYJetsToLL_M50_LO.nevents = [1000.] # Temporary entry
+DYJetsToLL_M50_LO_ext1.nevents = [1000.]
 WJetsToLNu_LO.nevents = [1000.] # Temporary entry
 
 # From https://twiki.cern.ch/twiki/pub/CMS/HiggsToTauTauWorking2015/DYNjetWeights.xls r3
@@ -51,7 +53,7 @@ def getDYWeight(n_jets, m_gen):
         return dy_weight_dict[(n_jets, 150)]
     return dy_weight_dict[(n_jets, 0)]
 
-for sample in [DYJetsToLL_M50_LO] + DYNJets + [DYJetsToTauTau_M150_LO]:
+for sample in [DYJetsToLL_M50_LO, DYJetsToLL_M50_LO_ext1] + DYNJets + [DYJetsToTauTau_M150_LO]:
     # sample.fractions = [0.7, 0.204374, 0.0671836, 0.0205415, 0.0110539]
 
     sample.weight_func = getDYWeight
@@ -85,7 +87,7 @@ essential = [TT_pow_ext, DYJetsToLL_M50_LO, TBar_tWch, T_tWch, TBarToLeptons_tch
 # Build default background list
 backgrounds = essential
 backgrounds += DYNJets
-backgrounds += [DYJetsToTauTau_M150_LO, DYJetsToLL_M10to50_ext1]
+backgrounds += [DYJetsToTauTau_M150_LO, DYJetsToLL_M10to50_ext1, DYJetsToLL_M50_LO_ext1]
 backgrounds += WNJets
 backgrounds += diboson_nlo
 backgrounds += []
