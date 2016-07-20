@@ -488,17 +488,21 @@ float _get_recoToLoose_leptonSF_ttH(int pdgid, float pt, float eta, int nlep, fl
 
   if (var!=0) assert(0); // NOT IMPLEMENTED
 
-  if (!_histo_recoToLoose_leptonSF_mu) {
-    _file_recoToLoose_leptonSF_mu = new TFile("","read");
-    _histo_recoToLoose_leptonSF_mu = (TH2F*)(_file_recoToLoose_leptonSF_mu->Get("FINAL"));
-  }
+//  if (!_histo_recoToLoose_leptonSF_mu) {
+//    _file_recoToLoose_leptonSF_mu = new TFile("","read");
+//    _histo_recoToLoose_leptonSF_mu = (TH2F*)(_file_recoToLoose_leptonSF_mu->Get("FINAL"));
+//  }
   if (!_histo_recoToLoose_leptonSF_el1) {
-    _file_recoToLoose_leptonSF_el = new TFile("","read");
-    _histo_recoToLoose_leptonSF_el1 = (TH2F*)(_file_recoToLoose_leptonSF_el->Get("MVAVLooseFO_and_IDEmu_and_TightIP2D"));
-    _histo_recoToLoose_leptonSF_el2 = (TH2F*)(_file_recoToLoose_leptonSF_el->Get("MiniIso0p4_vs_AbsEta"));
+    _file_recoToLoose_leptonSF_el = new TFile("../../data/leptonSF/el_scaleFactors_20160720.root","read");
+    _histo_recoToLoose_leptonSF_el1 = (TH2F*)(_file_recoToLoose_leptonSF_el->Get("GsfElectronToFOID2D"));
+    _histo_recoToLoose_leptonSF_el2 = (TH2F*)(_file_recoToLoose_leptonSF_el->Get("MVAVLooseElectronToMini4;1"));
   }
 
   if (abs(pdgid)==13){
+
+    // SET TO 1 FOR THE MOMENT
+    return 1;
+
     TH2F *hist = _histo_recoToLoose_leptonSF_mu;
     int etabin = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(eta)));
     int ptbin  = std::max(1, std::min(hist->GetNbinsY(), hist->GetYaxis()->FindBin(pt)));
@@ -565,7 +569,7 @@ float _get_looseToTight_leptonSF_ttH(int pdgid, float _pt, float eta, int nlep, 
 
 float leptonSF_ttH(int pdgid, float pt, float eta, int nlep, float var=0){
 
-  float recoToLoose = 1; //_get_recoToLoose_leptonSF_ttH(pdgid,pt,eta,nlep,var);
+  float recoToLoose = _get_recoToLoose_leptonSF_ttH(pdgid,pt,eta,nlep,var);
   float looseToTight = _get_looseToTight_leptonSF_ttH(pdgid,pt,eta,nlep,var);
   float res = recoToLoose*looseToTight;
   assert (res>0);
