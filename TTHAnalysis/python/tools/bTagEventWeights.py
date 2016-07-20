@@ -7,13 +7,15 @@ from CMGTools.TTHAnalysis.treeReAnalyzer import ROOT, EventLoop, Module, Collect
 from BTagScaleFactors import BTagScaleFactors
 
 class BTagEventWeightFriend:
-    def __init__(self, reader,
+    def __init__(self, csvfile,
+                 algo='csv',
                  btag_branch='btagCSV',
                  flavor_branch='hadronFlavour',
                  label='eventBTagSF',
                  recllabel='Recl',
                  mcOnly=True):
-        self.reader = reader
+
+        self.reader = BTagScaleFactors('btagsf', csvfile=csvfile, algo=algo, verbose=0)
 
         self.jec_systs = ["", "_jecUp", "_jecDown"]
         self.recllabel = recllabel
