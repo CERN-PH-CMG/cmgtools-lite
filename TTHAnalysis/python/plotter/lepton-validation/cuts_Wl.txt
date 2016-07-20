@@ -1,5 +1,5 @@
 filters : hbheFilterNew25ns==1 && Flag_CSCTightHaloFilter==1 && Flag_eeBadScFilter==1
-trigger : HLT_BIT_HLT_IsoMu20_v || HLT_BIT_HLT_Ele23_WPLoose_Gsf_v || (!isData)
+trigger : $DATA{HLT_BIT_HLT_IsoMu22_v || HLT_BIT_HLT_Ele25_eta2p1_WPTight_Gsf_v || HLT_BIT_HLT_Ele27_WPTight_Gsf_v || HLT_BIT_HLT_Ele27_eta2p1_WPLoose_Gsf_v} $MC{1}
 2L : nLepGood == 2
 SS/OF : LepGood1_charge*LepGood2_charge > 0
 lep2_pt10 : nLepGood10 == 2
@@ -7,6 +7,7 @@ tight charge : LepGood1_tightCharge > (abs(LepGood1_pdgId) == 11) && LepGood2_ti
 relIso : LepGood1_relIso03 < 0.05
 miniIso : LepGood1_miniRelIso < 0.05
 sip : LepGood1_sip3d < 4
+pt30: LepGood1_pt > 30
 nBJetMedium25 : nBJetMedium25 == 0
 mt_2 : mt_2(LepGood1_pt, LepGood1_phi, met_pt, met_phi) > 40
 met : met_pt > 30
