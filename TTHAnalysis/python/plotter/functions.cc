@@ -596,7 +596,15 @@ float triggerSF_ttH(int pdgid1, float pt1, int pdgid2, float pt2, int nlep, floa
   else if (nlep==3) hist = t2poly_triggerSF_ttH_3l;
   int xbin  = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(pt1)));
   int ybin = std::max(1, std::min(hist->GetNbinsY(), hist->GetYaxis()->FindBin(pt2)));
-  return hist->GetBinContent(xbin,ybin) + var * hist->GetBinError(xbin,ybin);
+  float eff = hist->GetBinContent(xbin,ybin) + var * hist->GetBinError(xbin,ybin);
+
+  if (nlep>2) return eff;
+  int cat = (abs(pdgid1)==11) + (abs(pdgid2)==11);
+  if (cat==2) return eff*1.02;
+  else if (cat==1) return eff*1.02;
+  else return eff*1.01;
+
+
 }
 
 float mass_3_cheap(float pt1, float eta1, float pt2, float eta2, float phi2, float pt3, float eta3, float phi3) {
