@@ -17,7 +17,7 @@ class MyVarProxy:
 
 class LeptonJetReCleaner:
 
-    def __init__(self,label,looseLeptonSel,cleaningLeptonSel,FOLeptonSel,tightLeptonSel,cleanJet,selectJet,cleanTau,looseTau,tightTau,cleanJetsWithTaus,doVetoZ,doVetoLMf,doVetoLMt,jetPt,bJetPt,coneptdef,storeJetVariables=False,cleanTausWithLoose=False):
+    def __init__(self,label,looseLeptonSel,cleaningLeptonSel,FOLeptonSel,tightLeptonSel,cleanJet,selectJet,cleanTau,looseTau,tightTau,cleanJetsWithTaus,doVetoZ,doVetoLMf,doVetoLMt,jetPt,bJetPt,coneptdef,storeJetVariables=False):
         self.label = "" if (label in ["",None]) else ("_"+label)
         self.looseLeptonSel = looseLeptonSel
         self.cleaningLeptonSel = cleaningLeptonSel # applied on top of looseLeptonSel
@@ -29,7 +29,6 @@ class LeptonJetReCleaner:
         self.looseTau = looseTau
         self.tightTau = tightTau
         self.cleanJetsWithTaus = cleanJetsWithTaus
-        self.cleanTausWithLoose = cleanTausWithLoose
         self.doVetoZ = doVetoZ
         self.doVetoLMf = doVetoLMf
         self.doVetoLMt = doVetoLMt
@@ -72,6 +71,7 @@ class LeptonJetReCleaner:
                 ])
         for tfloat in "pt eta phi mass reclTauId".split():
             biglist.append( ("TauSel"+label+"_"+tfloat,"F",20,"nTauSel"+label) )
+        biglist.append( ("TauSel"+label+"_pdgId","I",20,"nTauSel"+label) )
 
         for key in self.systsJEC:
             biglist.extend([
@@ -220,7 +220,7 @@ class LeptonJetReCleaner:
         ret["nTightTauSel" + postfix] = sum([1 for g in goodtaus if g.reclTauId == 2])
         # 4. store the tau 4-vectors
         if postfix==self.label:
-            for tfloat in "pt eta phi mass reclTauId".split():
+            for tfloat in "pt eta phi mass reclTauId pdgId".split():
                 tauret[tfloat] = []
                 for g in goodtaus:
                     tauret[tfloat].append( getattr(g, tfloat) )
@@ -261,7 +261,7 @@ class LeptonJetReCleaner:
         ret['minMllSFOS'] = minMllTL(lepsl, lepsl, paircut = lambda l1,l2 : l1.pdgId  == -l2.pdgId) 
 
         loosetaus=[]; rettlabel = {}; tauret = {}; 
-        loosetaus = self.recleanTaus(tausc, tausd, lepsl if self.cleanTausWithLoose else lepsc, self.label, rettlabel, tauret)
+        loosetaus = self.recleanTaus(tausc, tausd, lepsc, self.label, rettlabel, tauret)
 
         cleanjets={}
         for var in self.systsJEC:
