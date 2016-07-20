@@ -12,27 +12,10 @@ utility_files_dir = os.path.join(os.environ["CMSSW_BASE"], "src/CMGTools/TTHAnal
 isFastSim = False
 
 # btag event weights in 80X
-from CMGTools.TTHAnalysis.tools.BTagScaleFactors import BTagScaleFactors
-btagsf_payload = os.path.join(utility_files_dir, "btag", "CSVv2_4invfb.csv")
-btagsf_reader = BTagScaleFactors('btagsf', btagsf_payload, algo='csv')
-
 from CMGTools.TTHAnalysis.tools.bTagEventWeights import BTagEventWeightFriend
-bTagEventWeight = lambda : BTagEventWeightFriend(reader=btagsf_reader, recllabel='Recl')
+btagsf_payload = os.path.join(utility_files_dir, "btag", "CSVv2_4invfb.csv")
+bTagEventWeight = lambda : BTagEventWeightFriend(csvfile=btagsf_payload, algo='csv', recllabel='Recl')
 MODULES.append( ('eventBTagWeight', bTagEventWeight ))
-
-
-# btag reweighting in 76X
-# from CMGTools.TTHAnalysis.tools.btagRWTs_ND import BTagWeightCalculator,BTagReweightFriend,BTagLeptonReweightFriend
-# BTagReweight76X = lambda : BTagWeightCalculator(utility_files_dir_tth+"/csv_rwt_fit_hf_76x_2016_02_08.root",
-#                                                utility_files_dir_tth+"/csv_rwt_fit_lf_76x_2016_02_08.root")
-# for syst in systsBTAG: # should be converted to lambda functions
-#    MODULES.append( ('btagRWJet%s'%syst, BTagReweightFriend(BTagReweight76X, outlabel='btagCSVWeight%s'%syst.replace('nominal',''), rwtSyst=syst.replace('_','')) ))
-#    MODULES.append( ('btagRWJetUp%s'%syst, BTagReweightFriend(BTagReweight76X, jets=["Jet_jecUp","DiscJet_jecUp"], outlabel='btagCSVWeight%s'%syst.replace('nominal',''), rwtSyst=syst.replace('_','')) ))
-#    MODULES.append( ('btagRWJetDown%s'%syst, BTagReweightFriend(BTagReweight76X, jets=["Jet_jecDown","DiscJet_jecDown"], outlabel='btagCSVWeight%s'%syst.replace('nominal',''), rwtSyst=syst.replace('_','')) ))
-#    MODULES.append( ('btagRWLep%s'%syst, BTagLeptonReweightFriend(BTagReweight76X, outlabel='jetBTagCSVWeight%s'%syst.replace('nominal',''), rwtSyst=syst.replace('_','')) ))
-
-# from CMGTools.TTHAnalysis.tools.eventBTagRWT import EventBTagRWT
-# MODULES.append( ('eventBTagRWT', lambda: EventBTagRWT() ))
 
 #--- Recleaner instances
 
