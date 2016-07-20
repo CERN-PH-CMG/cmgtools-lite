@@ -160,7 +160,7 @@ MODULES.append( ('leptonJetReCleanerTTH', lambda : LeptonJetReCleaner("Recl", # 
 from CMGTools.TTHAnalysis.tools.leptonBuilderEWK import LeptonBuilderEWK
 
 MODULES.append( ('leptonBuilderEWK', lambda : LeptonBuilderEWK("Mini")))
-
+MODULES.append( ('leptonBuilderEWK_WZCR', lambda : LeptonBuilderEWK("Recl")))
 
 #--- Lepton choice instances
 
@@ -446,7 +446,8 @@ if options.queue:
         super  = "qsub -q {queue} -N happyTreeFriend".format(queue = options.queue)
         runner = "oviedobatch_runner.sh"
 
-    theoutput= args[1].replace('/pool/ciencias/','/pool/cienciasrw/')
+    theoutput= args[1]
+    #.replace('/pool/ciencias/','/pool/cienciasrw/')
 
     basecmd = "{dir}/{runner} {dir} {cmssw} python {self} -N {chunkSize} -T {tdir} -t {tree} {data} {output}".format(
                 dir = os.getcwd(), runner=runner, cmssw = os.environ['CMSSW_BASE'],
@@ -483,9 +484,13 @@ if options.queue:
 
 maintimer = ROOT.TStopwatch()
 def _runIt(myargs):
-    (name,fin,fout,data,range,chunk) = myargs
+    (name,fin,ofout,data,range,chunk) = myargs
     timer = ROOT.TStopwatch()
     fetchedfile = None
+
+    fout = ofout
+#.replace('/pool/ciencias/', '/pool/cienciasrw/')
+    
     if 'LSB_JOBID' in os.environ or 'LSF_JOBID' in os.environ:
         if fin.startswith("root://"):
             try:
