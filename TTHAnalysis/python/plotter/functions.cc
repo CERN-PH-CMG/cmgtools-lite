@@ -4,6 +4,7 @@
 #include "Math/GenVector/PxPyPzM4D.h"
 #include "Math/GenVector/Boost.h"
 #include "TLorentzVector.h"
+#include "TH2Poly.h"
 #include "PhysicsTools/Heppy/interface/Davismt2.h"
 
 //// UTILITY FUNCTIONS NOT IN TFORMULA ALREADY
@@ -572,13 +573,30 @@ float leptonSF_ttH(int pdgid, float pt, float eta, int nlep, float var=0){
 
 }
 
-float triggerSF_ttH(int pdgid1, float pt1, int pdgid2, float pt2, int nlep, float var_ee=0){
-  if (var_ee!=0) assert(0); // NOT IMPLEMENTED
-  if (nlep>2) return 1;
-  int x = (abs(pdgid1)==11) + (abs(pdgid2)==11);
-  if (x==2) return 1.02;
-  else if (x==1) return 1.02;
-  else return 1.01;
+TFile *file_triggerSF_ttH = NULL;
+TH2Poly* t2poly_triggerSF_ttH_mm = NULL;
+TH2Poly* t2poly_triggerSF_ttH_ee = NULL;
+TH2Poly* t2poly_triggerSF_ttH_em = NULL;
+TH2Poly* t2poly_triggerSF_ttH_3l = NULL;
+
+float triggerSF_ttH(int pdgid1, float pt1, int pdgid2, float pt2, int nlep, float var=0){
+  if (!file_triggerSF_ttH) {
+    file_triggerSF_ttH = new TFile("../../data/triggerSF/trig_eff_map_v4.root");
+    t2poly_triggerSF_ttH_mm = (TH2Poly*)(file_triggerSF_ttH->Get("SSuu2DPt_effic"));
+    t2poly_triggerSF_ttH_ee = (TH2Poly*)(file_triggerSF_ttH->Get("SSee2DPt_effic"));
+    t2poly_triggerSF_ttH_em = (TH2Poly*)(file_triggerSF_ttH->Get("SSeu2DPt_effic"));
+    t2poly_triggerSF_ttH_3l = (TH2Poly*)(file_triggerSF_ttH->Get("__3l2DPt_effic"));
+  }
+  TH2Poly* hist = NULL;
+  if (nlep==2){
+    if (abs(pdgid1)==13 && abs(pdgid2)==13) hist = t2poly_triggerSF_ttH_mm;
+    else if (abs(pdgid1)==11 && abs(pdgid2)==11) hist = t2poly_triggerSF_ttH_ee;
+    else hist = t2poly_triggerSF_ttH_em;
+  }
+  else if (nlep==3) hist = t2poly_triggerSF_ttH_3l;
+  int xbin  = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(pt1)));
+  int ybin = std::max(1, std::min(hist->GetNbinsY(), hist->GetYaxis()->FindBin(pt2)));
+  return hist->GetBinContent(xbin,ybin) + var * hist->GetBinError(xbin,ybin);
 }
 
 float mass_3_cheap(float pt1, float eta1, float pt2, float eta2, float phi2, float pt3, float eta3, float phi3) {
