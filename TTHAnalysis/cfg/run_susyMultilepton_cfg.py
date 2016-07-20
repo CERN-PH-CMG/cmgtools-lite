@@ -402,12 +402,13 @@ if runData and not isTest: # For running on data
 #    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_271036-274443_13TeV_PromptReco_Collisions16_JSON.txt' # 2.6/fb
 #    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_271036-275125_13TeV_PromptReco_Collisions16_JSON.txt' # 4.0/fb
 #    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_271036-275783_13TeV_PromptReco_Collisions16_JSON.txt' # 6.3/fb
-    json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-276384_13TeV_PromptReco_Collisions16_JSON_NoL1T.txt' # 9.2/fb (careful no L1 certif.)
-    processing = "Run2016B-PromptReco-v2"; short = "Run2016B_PromptReco_v2"; run_ranges = []; useAAA=False; # -v2 starts from 273150
-    dataChunks.append((json,processing,short,run_ranges,useAAA))
-    processing = "Run2016C-PromptReco-v2"; short = "Run2016C_PromptReco_v2"; run_ranges = []; useAAA=False; # -v2 starts from 273150
-    dataChunks.append((json,processing,short,run_ranges,useAAA))
-    processing = "Run2016D-PromptReco-v2"; short = "Run2016D_PromptReco_v2"; run_ranges = [(276315,276384)]; useAAA=False; # -v2 starts from 273150
+#    json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-276384_13TeV_PromptReco_Collisions16_JSON_NoL1T.txt' # 9.2/fb (careful no L1 certif.)
+    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/json_DCSONLY.txt'
+#    processing = "Run2016B-PromptReco-v2"; short = "Run2016B_PromptReco_v2"; run_ranges = []; useAAA=False; # -v2 starts from 273150
+#    dataChunks.append((json,processing,short,run_ranges,useAAA))
+#    processing = "Run2016C-PromptReco-v2"; short = "Run2016C_PromptReco_v2"; run_ranges = []; useAAA=False; # -v2 starts from 273150
+#    dataChunks.append((json,processing,short,run_ranges,useAAA))
+    processing = "Run2016D-PromptReco-v2"; short = "Run2016D_PromptReco_v2_DCSonly"; run_ranges = [(276385,276811)]; useAAA=False; # -v2 starts from 273150
     dataChunks.append((json,processing,short,run_ranges,useAAA))
 
     compSelection = ""; compVeto = ""
@@ -528,7 +529,7 @@ if runFRMC:
 
 if runFRMC or runDataQCD:
     ttHLepSkim.minLeptons = 1
-    susyCoreSequence.remove(ttHJetMETSkim)
+    if ttHJetMETSkim in susyCoreSequence: susyCoreSequence.remove(ttHJetMETSkim)
     if getHeppyOption("fast"): raise RuntimeError, 'Already added ttHFastLepSkimmer with 2-lep configuration, this is wrong.'
     if runDataQCD:
         FRTrigs = triggers_FR_1mu_iso + triggers_FR_1mu_noiso + triggers_FR_1e_noiso + triggers_FR_1e_iso + triggers_FR_1e_b2g + triggers_FR_jet + triggers_FR_muNoIso
