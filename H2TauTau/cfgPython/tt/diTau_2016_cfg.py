@@ -1,7 +1,7 @@
 import os
 import PhysicsTools.HeppyCore.framework.config as cfg
 from PhysicsTools.HeppyCore.framework.config import printComps
-from PhysicsTools.HeppyCore.framework.heppy_loop import getHeppyOption
+from PhysicsTools.HeppyCore.framework.heppy_loop import getHeppyOption as _getHeppyOption
 from PhysicsTools.Heppy.utils.cmsswPreprocessor import CmsswPreprocessor
 
 # Tau-tau analyzers
@@ -17,6 +17,13 @@ from CMGTools.H2TauTau.proto.analyzers.MT2Analyzer import MT2Analyzer
 
 # common configuration and sequence
 from CMGTools.H2TauTau.htt_ntuple_base_cff import commonSequence, genAna, dyJetsFakeAna, puFileData, puFileMC, eventSelector, susyCounter, susyScanAna, jetAna
+
+def getHeppyOption(option, default):
+    opt = _getHeppyOption(option, default)
+    if opt in ['False', 'false']:
+        opt = False
+    return opt
+
 
 # Get all heppy options; set via '-o production' or '-o production=True'
 
@@ -161,7 +168,8 @@ tau2Weighter = cfg.Analyzer(
 
 treeProducer = cfg.Analyzer(
     H2TauTauTreeProducerTauTau,
-    name='H2TauTauTreeProducerTauTau'
+    name='H2TauTauTreeProducerTauTau',
+    skimFunction='event.leptonAccept and event.thirdLeptonVeto and event.otherLeptonVeto'
 )
 
 syncTreeProducer = cfg.Analyzer(
