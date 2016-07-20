@@ -11,8 +11,9 @@ if hostname | grep -q cmsco01; then
 #    PBASE="~/www/plots_FR/76X/lepMVA/v1.3_160616"
 #    PBASE="~/www/plots_FR/76X/lepMVA/TEST"
 
-    T="/data1/peruzzi/TREES_80X_210616_1lep"
-    PBASE="plots/80X/ttH/fr-mc/v2.0"
+    #T="/data1/peruzzi/TREES_80X_210616_1lep"
+    T="/data1/gpetrucc/TREES_80X_TTH_180716_1L_MC" # warning: QCDEl from 76X
+    PBASE="plots/80X/ttH/fr-mc/v2.1"
 
 fi
 BASE="python mcEfficiencies.py $BCORE --ytitle 'Fake rate'   "
@@ -134,6 +135,10 @@ for WP in $WPs; do
         echo "( $B0 $MuFakeVsPtLongBin -p TT_red,QCDMu_red     -o $PBASE/$what/mu_lbin_${Me}_eta_12_24.root    -R pt20 eta 'abs(LepGood_eta)>1.2'   ${BG} )"
         echo "( $B0 $ElFakeVsPtLongBin -p TT_red,QCDEl_red     -o $PBASE/$what/el_lbin_${Me}_eta_00_15.root    -R pt20 eta 'abs(LepGood_eta)<1.479' ${BG} )"
         echo "( $B0 $ElFakeVsPtLongBin -p TT_red,QCDEl_red     -o $PBASE/$what/el_lbin_${Me}_eta_15_25.root    -R pt20 eta 'abs(LepGood_eta)>1.479' ${BG} )"
+
+        ElFakeVsPtZBin="$ElDen ${BDen} --sP '${ptJI}_${XVar}_zcoarse2' --sp TT_red " 
+        echo "( $B0 $ElFakeVsPtZBin -p TT_red,QCDEl_red     -o $PBASE/$what/el_zc2bin_${Me}_eta_00_15.root    -R pt20 eta 'abs(LepGood_eta)<1.479' ${BG} )"
+        echo "( $B0 $ElFakeVsPtZBin -p TT_red,QCDEl_red     -o $PBASE/$what/el_zc2bin_${Me}_eta_15_25.root    -R pt20 eta 'abs(LepGood_eta)>1.479' ${BG} )"
 
 
         echo "( $B0 $MuFakeVsPt -p TT_redNC,QCDMu_redNC -o $PBASE/$what/mu_nc_${Me}_eta_00_12.root -R pt20 eta 'abs(LepGood_eta)<1.2'   ${BG} )"
