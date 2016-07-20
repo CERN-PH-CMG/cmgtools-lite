@@ -22,7 +22,7 @@ from CMGTools.H2TauTau.proto.analyzers.VBFAnalyzer import VBFAnalyzer
 from CMGTools.H2TauTau.proto.analyzers.RecoilCorrector import RecoilCorrector
 
 puFileMC = '$CMSSW_BASE/src/CMGTools/H2TauTau/data/MC_Spring16_PU25_Startup.root'
-puFileData = '$CMSSW_BASE/src/CMGTools/H2TauTau/data/data_pu_14-07-2016_713mb_60.root'
+puFileData = '$CMSSW_BASE/src/CMGTools/H2TauTau/data/data_pu_19-07-2016_713mb_60.root'
 
 applyRecoil = False
 

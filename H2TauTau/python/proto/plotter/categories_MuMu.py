@@ -1,7 +1,7 @@
 from CMGTools.H2TauTau.proto.plotter.categories_common import categories_common
 from CMGTools.H2TauTau.proto.plotter.cut import Cut
 
-pt1 = 19
+pt1 = 23
 pt2 = 10
 
 # NEW one - to be implemented as soon as trees are there

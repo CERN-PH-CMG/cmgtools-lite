@@ -15,15 +15,21 @@ total_weight = 'weight'
 
 print 'Total weight', total_weight
 
+# -> Command line
+analysis_dir = '/data1/steggema/mm/150716/MuMuMC'
+qcd_from_same_sign = True
+
 int_lumi = lumi
 
 cuts = {}
 
 inc_cut = '&&'.join([cat_Inc])
 
-cuts['OS_PU'] = inc_cut + '&& l1_charge != l2_charge && abs(l1_eta) < 2.1 && mvis>50'
-# cuts['OS_PU_1bjet'] = inc_cut + '&& l1_charge != l2_charge && abs(l1_eta) < 2.1 && abs(l2_eta) < 2.1 && mvis>50 && n_bjets>=1'
-# cuts['OS_PU_mZ'] = inc_cut + '&& l1_charge != l2_charge && abs(l1_eta) < 2.1 && mvis>70 && mvis<100'
+# cuts['OS_PU_m50'] = inc_cut + '&& l1_charge != l2_charge && abs(l1_eta) < 2.1 && mvis>50'
+# cuts['OS_PU_m20'] = inc_cut + '&& l1_charge != l2_charge && abs(l1_eta) < 2.1 && mvis>20'
+# cuts['OS_PU_1bjet'] = inc_cut + '&& l1_charge != l2_charge && abs(l1_eta) < 2.1 && mvis>50 && n_bjets==1'
+# cuts['OS_PU_2bjet'] = inc_cut + '&& l1_charge != l2_charge && abs(l1_eta) < 2.1 && mvis>50 && n_bjets>=2'
+cuts['OS_PU_mZ'] = inc_cut + '&& l1_charge != l2_charge && abs(l1_eta) < 2.1 && mvis>70 && mvis<100'
 
 # cuts['OS_PU_mZ_relaxl1iso'] = inc_cut.replace('l1_reliso05<0.1', 'l1_reliso05<1.') + '&& l1_charge != l2_charge && abs(l1_eta) < 2.1 && mvis>80 && mvis<100'
 # cuts['OS_PU_mZ_relaxl2iso'] = inc_cut.replace('l2_reliso05<0.1', 'l2_reliso05<1.') + '&& l1_charge != l2_charge && abs(l1_eta) < 2.1 && mvis>80 && mvis<100'
@@ -31,13 +37,9 @@ cuts['OS_PU'] = inc_cut + '&& l1_charge != l2_charge && abs(l1_eta) < 2.1 && mvi
 
 # cuts['OS_PU_0bjet_mZ'] = inc_cut + '&& l1_charge != l2_charge && abs(l1_eta) < 2.1 && mvis>70 && mvis<100 && n_bjets==0'
 # cuts['OS_PU_0bjet_vetoZ'] = inc_cut + '&& l1_charge != l2_charge && abs(l1_eta) < 2.1 && mvis>70 && (mvis>100 || mvis<80) && n_bjets==0'
-# cuts['OS_PU_2bjet'] = inc_cut + '&& l1_charge != l2_charge && abs(l1_eta) < 2.1 && n_bjets==2'
+# # cuts['OS_PU_2bjet'] = inc_cut + '&& l1_charge != l2_charge && abs(l1_eta) < 2.1 && n_bjets==2'
 # cuts['OS_PU_2bjet_vetoZ'] = inc_cut + '&& l1_charge != l2_charge && abs(l1_eta) < 2.1 && n_bjets==2 && (mvis>100 || mvis<80)'
 
-qcd_from_same_sign = False
-
-# -> Command line
-analysis_dir = '/data1/steggema/mm/150716/MuMuMC'
 
 samples_mc, samples_data, samples, all_samples, sampleDict = createSampleLists(analysis_dir, channel='mm', ztt_cut='(l1_gen_match == 4 && l2_gen_match == 4)', zl_cut='(l1_gen_match == 2 && l2_gen_match == 2)', zj_cut='(l1_gen_match != l2_gen_match || (l1_gen_match != 4 && l1_gen_match != 2))')
 
@@ -49,7 +51,7 @@ if qcd_from_same_sign:
 
     for sample in samples_ss:
         sample.scale = scale
-        if sample.name != 'Data':
+        if sample.name != 'data_obs':
             # Subtract background from data
             sample.scale = -scale
 
@@ -83,9 +85,10 @@ for cut_name in cuts:
     plots = createHistograms(cfg_example, verbose=True)
     for variable in variables:    
         plot = plots[variable.name]
-        plot.Group('VV', ['ZZ', 'WZ', 'WW', 'T_tWch', 'TBar_tWch'])
-        plot.Group('Single t', ['T_tWch', 'TBar_tWch', 'TToLeptons_sch', 'TToLeptons_tch'])
+        plot.Group('VV', ['WWTo1L1Nu2Q', 'WZTo1L1Nu2Q', 'WZTo1L3Nu', 'WZTo2L2Q', 'VVTo2L2Nu', 'ZZTo2L2Q', 'ZZTo4L'])
+        plot.Group('Single t', ['T_tWch', 'TBar_tWch', 'TBarToLeptons_tch_powheg'])
         plot.Group('ZLL', ['ZL', 'ZJ'], style=plot.Hist('ZL').style)
+        plot.Group('W', ['W1Jets', 'W2Jets', 'W3Jets', 'W4Jets'])
         plot.Group('Electroweak', ['W', 'VV'])
         HistDrawer.draw(plot, plot_dir='plots/'+cut_name, channel='#mu#mu')
 

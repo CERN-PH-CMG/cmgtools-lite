@@ -1,5 +1,5 @@
-from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv2 import DYJetsToLL_M50, WJetsToLNu,  WWTo2L2Nu, ZZ, WZ,  QCD_Mu5, DYJetsToLL_M50_LO, TBar_tWch, T_tWch, QCDPtEMEnriched, QCDPtbcToE, TBarToLeptons_tch_powheg, DYNJets, WNJets
-# WJetsToLNu_HT100to200, WJetsToLNu_HT200to400, WJetsToLNu_HT400to600, WJetsToLNu_HT600toInf, TToLeptons_tch_powheg, QCD_Mu15, WJetsToLNu_LO, DYJetsToTauTau_M150_LO, 
+from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv2 import DYJetsToLL_M50, WJetsToLNu,  WWTo2L2Nu, ZZ, WZ,  QCD_Mu5, DYJetsToLL_M50_LO, TBar_tWch, T_tWch, QCDPtEMEnriched, QCDPtbcToE, TBarToLeptons_tch_powheg, DYNJets, WNJets, TToLeptons_tch_powheg, WJetsToLNu_LO, DYJetsToLL_M10to50_LO
+# WJetsToLNu_HT100to200, WJetsToLNu_HT200to400, WJetsToLNu_HT400to600, WJetsToLNu_HT600toInf, QCD_Mu15,  DYJetsToTauTau_M150_LO, 
 from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv2 import TT_pow_ext3 as TT_pow_ext
 from CMGTools.RootTools.samples.samples_13TeV_DATA2016 import SingleMuon_Run2016B_PromptReco_v2, SingleElectron_Run2016B_PromptReco_v2, MuonEG_Run2016B_PromptReco_v2, Tau_Run2016B_PromptReco_v2
 from CMGTools.RootTools.samples.samples_13TeV_DATA2016 import SingleMuon_Run2016C_PromptReco_v2, SingleElectron_Run2016C_PromptReco_v2, MuonEG_Run2016C_PromptReco_v2, Tau_Run2016C_PromptReco_v2
@@ -25,6 +25,11 @@ json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/C
 # lumi in HN: 7650
 lumi = 7647.63752
 
+# 19 July
+json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-276384_13TeV_PromptReco_Collisions16_JSON_NoL1T.txt'
+lumi = 9237.96478
+
+
 # Set cross sections to HTT values
 
 VVTo2L2Nu.xSection = 11.95
@@ -43,7 +48,7 @@ DYJetsToLL_M50_LO.xSection = dy_xsec
 DYJetsToLL_M50.xSection = dy_xsec
 
 DYJetsToLL_M50_LO.nevents = [1000.] # Temporary entry
-# WJetsToLNu_LO.nevents = [1000.] # Temporary entry
+WJetsToLNu_LO.nevents = [1000.] # Temporary entry
 
 # From https://twiki.cern.ch/twiki/pub/CMS/HiggsToTauTauWorking2015/DYNjetWeights.xls r3
 dy_weight_dict = {
@@ -82,10 +87,10 @@ w_weight_dict = {
 def getWWeight(n_jets, m_gen_dummy):
     return w_weight_dict[n_jets]
 
-for sample in WNJets: # [WJetsToLNu_LO] + 
+for sample in [WJetsToLNu_LO] + WNJets: # 
 
     sample.weight_func = getWWeight
-    sample.xSection = w_xsec
+    # sample.xSection = w_xsec
 
 WJetsHT = [] # WJetsToLNu_HT100to200, WJetsToLNu_HT200to400, WJetsToLNu_HT400to600, WJetsToLNu_HT600toInf
 
@@ -93,7 +98,7 @@ WJetsHT = [] # WJetsToLNu_HT100to200, WJetsToLNu_HT200to400, WJetsToLNu_HT400to6
 diboson_lo = [ZZ, WZ]
 diboson_nlo = [ZZTo4L, WZTo1L3Nu, WWTo1L1Nu2Q, ZZTo2L2Q,  WZTo2L2Q, WZTo1L1Nu2Q, VVTo2L2Nu] # WZTo3LNu_amcatnlo
 
-essential = [TT_pow_ext, DYJetsToLL_M50_LO, TBar_tWch, T_tWch, TBarToLeptons_tch_powheg]  # WJetsToLNu, TToLeptons_tch_powheg, WJetsToLNu_LO
+essential = [TT_pow_ext, DYJetsToLL_M50_LO, DYJetsToLL_M10to50_LO, TBar_tWch, T_tWch, TBarToLeptons_tch_powheg, TToLeptons_tch_powheg, WJetsToLNu_LO]  # WJetsToLNu, 
 
 # Build default background list
 backgrounds = essential
@@ -114,7 +119,7 @@ backgrounds_ele += QCDPtbcToE
 data_single_muon = [SingleMuon_Run2016B_PromptReco_v2, SingleMuon_Run2016C_PromptReco_v2] #, SingleMuon_Run2016D_PromptReco_v2]
 data_single_electron = [SingleElectron_Run2016B_PromptReco_v2, SingleElectron_Run2016C_PromptReco_v2] #, SingleElectron_Run2016D_PromptReco_v2]
 data_muon_electron = [MuonEG_Run2016B_PromptReco_v2, MuonEG_Run2016C_PromptReco_v2] #, MuonEG_Run2016D_PromptReco_v2]
-data_tau = [Tau_Run2016B_PromptReco_v2, Tau_Run2016C_PromptReco_v2] #, Tau_Run2016D_PromptReco_v2]
+data_tau = [Tau_Run2016B_PromptReco_v2, Tau_Run2016C_PromptReco_v2, Tau_Run2016D_PromptReco_v2] #, ]
 
 for sample in data_single_muon + data_single_electron + data_muon_electron + data_tau:
     sample.json = json if sample != data_tau else json_tt
