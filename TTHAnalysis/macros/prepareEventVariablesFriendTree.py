@@ -136,7 +136,7 @@ MODULES.append( ('leptonJetReCleanerTTH', lambda : LeptonJetReCleaner("Recl", # 
                    looseLeptonSel = lambda lep : lep.miniRelIso < 0.4 and lep.sip3d < 8,
                    cleaningLeptonSel = lambda lep : True, # cuts applied on top of loose
                    FOLeptonSel = lambda lep,ht : lep.conept>10 and lep.jetBTagCSV<0.80 and (abs(lep.pdgId)!=11 or lep.conept<30 or _ttH_idEmu_cuts_E2(lep)) and ((lep.jetPtRatiov2>0.3 and lep.jetBTagCSV<0.46) or lep.mvaTTH>0.75), # cuts applied on top of loose
-                   tightLeptonSel = lambda lep,ht : lep.conept>10 and lep.jetBTagCSV<0.80 and (abs(lep.pdgId)!=11 or lep.conept<30 or _ttH_idEmu_cuts_E2(lep)) and ((lep.jetPtRatiov2>0.3 and lep.jetBTagCSV<0.46) or lep.mvaTTH>0.75) and (abs(lep.pdgId)!=13 or lep.mediumMuonId>0) and lep.mvaTTH > 0.75, # cuts applied on top of loose
+                   tightLeptonSel = lambda lep,ht : lep.conept>10 and lep.jetBTagCSV<0.80 and (abs(lep.pdgId)!=11 or lep.conept<30 or _ttH_idEmu_cuts_E2(lep)) and ((lep.jetPtRatiov2>0.3 and lep.jetBTagCSV<0.46) or lep.mvaTTH>0.75) and (abs(lep.pdgId)!=13 or lep.ICHEPmediumMuonId>0) and lep.mvaTTH > 0.75, # cuts applied on top of loose
                    cleanJet = lambda lep,jet,dr : dr<0.4 and (abs(lep.pdgId)==15 or ( lep.conept>10 and lep.jetBTagCSV<0.80 and (abs(lep.pdgId)!=11 or lep.conept<30 or _ttH_idEmu_cuts_E2(lep)) and ((lep.jetPtRatiov2>0.3 and lep.jetBTagCSV<0.46) or lep.mvaTTH>0.75) )), # called on cleaning leptons and loose taus
                    selectJet = lambda jet: abs(jet.eta)<2.4,
                    cleanTau = lambda lep,tau,dr: dr<0.4, # cleaning taus with cleaningLeptonSel == loose
@@ -222,7 +222,7 @@ MODULES.append ( ('puWeightsTrue_down', lambda : VertexWeightFriend(putruefilemc
 from CMGTools.TTHAnalysis.tools.eventVars_2lss import EventVars2LSS 
 MODULES.append( ('ttH2lss', lambda : EventVars2LSS()) )
 from CMGTools.TTHAnalysis.tools.kinMVA_2D_2lss_3l import KinMVA_2D_2lss_3l
-MODULES.append( ('kinMVA_2D_2lss_3l', lambda : KinMVA_2D_2lss_3l(os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/kinMVA/tth/%s_BDTG.weights.xml", skip_BDTv8 = False, skip_MEM = False)) )
+MODULES.append( ('kinMVA_2D_2lss_3l', lambda : KinMVA_2D_2lss_3l(os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/kinMVA/tth/%s_BDTG.weights.xml", skip_BDTv8 = True, skip_MEM = False)) )
 from CMGTools.TTHAnalysis.tools.kinMVA_MultiClass import KinMVA_MultiClass
 MODULES.append( ('kinMVA_MultiClass', lambda : KinMVA_MultiClass(os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/macros/leptons/weights/MultiClassICHEP16_%s_BDTG.weights.xml")) )
 from CMGTools.TTHAnalysis.tools.HadTopSimple import HadTopSimple
