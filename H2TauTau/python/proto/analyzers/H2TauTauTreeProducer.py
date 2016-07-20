@@ -115,6 +115,6 @@ class H2TauTauTreeProducer(H2TauTauTreeProducerBase):
         if type(self) is H2TauTauTreeProducer:
             self.fillTree(event)
 
-        if hasattr(self.cfg_ana, 'TauSpinner') and self.cfg_ana.TauSpinner :
+        if hasattr(self.cfg_ana, 'TauSpinner') and self.cfg_ana.TauSpinner:
             self.fillTauSpinner(self.tree, event)
 

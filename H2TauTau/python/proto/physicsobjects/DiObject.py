@@ -133,6 +133,12 @@ class DiTau(DiObject):
         mt2 = self.mTLeg1()**2 + self.mTLeg2()**2 + self.calcMT(self.leg1(), self.leg2())**2
         return math.sqrt(mt2)
 
+    def mtSumLeptons(self):
+        return self.mTLeg1() + self.mTLeg2()
+
+    def mtSqSumLeptons(self):
+        return math.sqrt(self.mTLeg1()**2 + self.mTLeg2()**2)
+
     # Calculate the transverse mass with the same algorithm
     # as previously in the C++ DiObject class
     @staticmethod

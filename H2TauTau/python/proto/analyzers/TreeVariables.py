@@ -1,6 +1,6 @@
 from PhysicsTools.HeppyCore.utils.deltar import deltaR, deltaPhi
 
-from CMGTools.H2TauTau.proto.analyzers.tauIDs import tauIDs
+from CMGTools.H2TauTau.proto.analyzers.tauIDs import tauIDs, tauIDs_extra
 
 class Variable():
     def __init__(self, name, function=None, type=float):
@@ -50,6 +50,8 @@ event_vars = [
 ditau_vars = [
     Variable('mvis', lambda dil : dil.mass()),
     Variable('mt_total', lambda dil : dil.mtTotal()),
+    Variable('sum_lepton_mt', lambda dil : dil.mtSumLeptons()),
+    Variable('sqsum_lepton_mt', lambda dil : dil.mtSqSumLeptons()),
     Variable('pzeta_met', lambda dil : dil.pZetaMET()),
     Variable('pzeta_vis', lambda dil : dil.pZetaVis()),
     Variable('pzeta_disc', lambda dil : dil.pZetaDisc()),
@@ -157,6 +159,17 @@ for tau_id in tauIDs:
         tau_vars.append(Variable(tau_id[0].format(wp=''), 
             eval('lambda tau : ' + sum_id_str), int))
 
+tau_vars_extra = []
+for tau_id in tauIDs_extra:
+    if type(tau_id) is str:
+        # Need to use eval since functions are otherwise bound to local
+        # variables
+        tau_vars_extra.append(Variable(tau_id, eval('lambda tau : tau.tauID("{id}")'.format(id=tau_id))))
+    else:
+        sum_id_str = ' + '.join('tau.tauID("{id}")'.format(id=tau_id[0].format(wp=wp)) for wp in tau_id[1])
+        tau_vars_extra.append(Variable(tau_id[0].format(wp=''), 
+            eval('lambda tau : ' + sum_id_str), int))
+
 
 # jet
 jet_vars = [
@@ -165,7 +178,7 @@ jet_vars = [
     # (for which Jet.py would have to be touched again)
     Variable('mva_pu', lambda jet : jet.puMva('pileupJetId:fullDiscriminant')),
     # Variable('id_loose', lambda jet : jet.looseJetId()),
-    Variable('id_pu', lambda jet : jet.puJetId() + jet.puJetId('medium') + jet.puJetId('tight')),
+    Variable('id_pu', lambda jet : jet.puJetId() + jet.puJetId(wp='medium') + jet.puJetId(wp='tight')),
     # Variable('mva_btag', lambda jet : jet.btagMVA),
     # Variable('area', lambda jet : jet.jetArea()),
     Variable('flavour_parton', lambda jet : jet.partonFlavour()),
