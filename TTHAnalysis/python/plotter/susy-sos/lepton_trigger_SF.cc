@@ -241,7 +241,7 @@ float triggerSF_SOS(float _met, float _met_corr, float var_ee=0){
  
   if (var_ee!=0) assert(0); // NOT IMPLEMENTED
 
-  if (_met>200.0 && met_corr>200.0)return 1.0; 
+  if (_met>200.0 && _met_corr>200.0)return 1.0; 
 
   if (!_file_triggerSF) {
     _file_triggerSF  = new TFile("../../data/sos_lepton_SF/trigger_eff_7invfb.root","read");

@@ -11,10 +11,10 @@ BG=" -j 6 "; if [[ "$1" == "-b" ]]; then BG=" & "; shift; fi
 
 lepton=$1; if [[ "$1" == "" ]]; then exit 1; fi
 case $lepton in
-mu) BCORE="${BCORE} -E ${lepton} --xf 'DoubleEG.*,JetHT.*'  "; QCD=QCD; ;;
-el) BCORE="${BCORE} -E ${lepton} --xf 'DoubleMu.*,JetHT.*'  "; QCD=QCD; ;;
-el_jet) lepton="el"; BCORE="${BCORE} -E ${lepton} --xf 'Double.*'  "; QCD=QCD; ;;
-mu_jet) lepton="mu"; BCORE="${BCORE} -E ${lepton} --xf 'Double.*'  "; QCD=QCD; ;;
+mu) BCORE="${BCORE} -E ^${lepton} --xf 'DoubleEG.*,JetHT.*'  "; QCD=QCD; ;;
+el) BCORE="${BCORE} -E ^${lepton} --xf 'DoubleMu.*,JetHT.*'  "; QCD=QCD; ;;
+el_jet) lepton="el"; BCORE="${BCORE} -E ^${lepton} --xf 'Double.*'  "; QCD=QCD; ;;
+mu_jet) lepton="mu"; BCORE="${BCORE} -E ^${lepton} --xf 'Double.*'  "; QCD=QCD; ;;
 esac;
 
 trigger=$2; if [[ "$2" == "" ]]; then exit 1; fi
@@ -69,9 +69,9 @@ case $what in
     num-fit*)
         echo "python mcPlots.py -f -j 6 $BCORE $PUW susy-sos/make_fake_rates_xvars.txt --pdir $PBASE -E $what $FITEWK --preFitData ${what/num-fit/} --showRatio --maxRatioRange 0.0 1.99 -E num --sP ev_.*,nvtx,pt_fine,lep_.*,mtW3.*,awayJet_.*" 
         ;;
-#    qcdflav-norm)
-#        echo "python mcPlots.py -f -j 6 $BCORE $PUW susy-sos/make_fake_rates_xvars.txt --pdir $PBASE -E $what $QCDNORM --showRatio --maxRatioRange 0.0 1.99 " 
-#        ;;
+    qcdflav-norm)
+        echo "python mcPlots.py -f -j 6 $BCORE $PUW susy-sos/make_fake_rates_xvars.txt --pdir $PBASE -E $what $QCDNORM --showRatio --maxRatioRange 0.0 1.99 " 
+        ;;
 #    qcdflav-fit)
 #        echo "python mcPlots.py -f -j 6 $BCORE $PUW susy-sos/make_fake_rates_xvars.txt --pdir $PBASE -E $what $QCDFITEWK --preFitData ${what/flav-fit/} --showRatio --maxRatioRange 0.0 1.99 " 
 #        ;;

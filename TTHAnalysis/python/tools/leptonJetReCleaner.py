@@ -189,7 +189,7 @@ class LeptonJetReCleaner:
         ret["mhtJet"+self.strJetPt+postfix] = mhtJetPtvec.Pt()
         return cleanjets
 
-    def recleanTaus(self, taucollcleaned, taucolldiscarded, lepcoll, postfix, ret, tauret):
+    def recleanTaus(self, taucollcleaned, taucolldiscarded, lepcoll, postfix, ret, tauret, event):
         ### Define taus
         alltaus = taucollcleaned + taucolldiscarded
         # 0. mark each tau as clean
@@ -264,7 +264,7 @@ class LeptonJetReCleaner:
         ret['minMllSFOS'] = minMllTL(lepsl, lepsl, paircut = lambda l1,l2 : l1.pdgId  == -l2.pdgId) 
 
         loosetaus=[]; rettlabel = {}; tauret = {}; 
-        loosetaus = self.recleanTaus(tausc, tausd, lepsc, self.label, rettlabel, tauret)
+        loosetaus = self.recleanTaus(tausc, tausd, lepsc, self.label, rettlabel, tauret, event)
 
         cleanjets={}
         for var in self.systsJEC:
