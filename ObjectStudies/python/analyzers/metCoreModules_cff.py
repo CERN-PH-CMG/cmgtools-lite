@@ -307,14 +307,14 @@ metPuppiAna = cfg.Analyzer(
     collectionPostFix = "Puppi",
     )
 
-metPuppiAnaScaleUp = metAna.clone(name="metAnalyzerPuppiScaleUp",
+metPuppiAnaScaleUp = metPuppiAna.clone(name="metAnalyzerPuppiScaleUp",
     copyMETsByValue = True,
     recalibrate = "type1",
     jetAnalyzerPostFix = "Puppi_jecUp",
     collectionPostFix = "Puppi_jecUp",
     )
 
-metPuppiAnaScaleDown = metAna.clone(name="metAnalyzerPuppiScaleDown",
+metPuppiAnaScaleDown = metPuppiAna.clone(name="metAnalyzerPuppiScaleDown",
     copyMETsByValue = True,
     recalibrate = "type1",
     jetAnalyzerPostFix = "Puppi_jecDown",
