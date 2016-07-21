@@ -1,16 +1,6 @@
 DYJetsToLL_M10to50 : DYJetsToLL_M10to50 : xsec
 DYJetsToLL_M50 : DYJetsToLL_M50 : xsec
-data : DoubleEG_Run2016B_PromptReco_v2_runs_273150_274443
-data : DoubleEG_Run2016B_PromptReco_v2_runs_274444_275125
-data : DoubleMuon_Run2016B_PromptReco_v2_runs_273150_274443
-data : DoubleMuon_Run2016B_PromptReco_v2_runs_274444_275125
 GGHZZ4L : GGHZZ4L : xsec
-data : MuonEG_Run2016B_PromptReco_v2_runs_273150_274443
-data : MuonEG_Run2016B_PromptReco_v2_runs_274444_275125
-data : SingleElectron_Run2016B_PromptReco_v2_runs_273150_274443
-data : SingleElectron_Run2016B_PromptReco_v2_runs_274444_275125
-data : SingleMuon_Run2016B_PromptReco_v2_runs_273150_274443
-data : SingleMuon_Run2016B_PromptReco_v2_runs_274444_275125
 TBarToLeptons_tch_powheg : TBarToLeptons_tch_powheg : xsec
 TBar_tWch : TBar_tWch : xsec
 TGJets : TGJets : xsec
@@ -46,3 +36,23 @@ ZGTo2LG : ZGTo2LG : xsec
 ZZTo4L : ZZTo4L : xsec
 ZZZ : ZZZ : xsec
 tZq_ll : tZq_ll : xsec
+data : DoubleEG_Run2016B_PromptReco_v2
+data : DoubleEG_Run2016C_PromptReco_v2
+data : DoubleEG_Run2016D_PromptReco_v2_runs_276315_276384
+data : DoubleEG_Run2016D_PromptReco_v2_runs_276385_276811
+data : DoubleMuon_Run2016B_PromptReco_v2
+data : DoubleMuon_Run2016C_PromptReco_v2
+data : DoubleMuon_Run2016D_PromptReco_v2_runs_276315_276384
+data : DoubleMuon_Run2016D_PromptReco_v2_runs_276385_276811
+data : MuonEG_Run2016B_PromptReco_v2
+data : MuonEG_Run2016C_PromptReco_v2
+data : MuonEG_Run2016D_PromptReco_v2_runs_276315_276384
+data : MuonEG_Run2016D_PromptReco_v2_runs_276385_276811
+data : SingleElectron_Run2016B_PromptReco_v2
+data : SingleElectron_Run2016C_PromptReco_v2
+data : SingleElectron_Run2016D_PromptReco_v2_runs_276315_276384
+data : SingleElectron_Run2016D_PromptReco_v2_runs_276385_276811
+data : SingleMuon_Run2016B_PromptReco_v2
+data : SingleMuon_Run2016C_PromptReco_v2
+data : SingleMuon_Run2016D_PromptReco_v2_runs_276315_276384
+data : SingleMuon_Run2016D_PromptReco_v2_runs_276385_276811

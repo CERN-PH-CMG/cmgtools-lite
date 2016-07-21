@@ -41,8 +41,8 @@ SingleTop: T_tWch: xsec : ((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==0) 
 SingleTop: TBar_tWch: xsec : ((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==0) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==0) || (LepGood3_mcMatchId==0 && LepGood3_mcPromptGamma==0) || (LepGood4_mcMatchId==0 && LepGood4_mcPromptGamma==0)) ; FillColor=ROOT.kGray+2, Label="Single T"
 WW: WWTo2L2Nu: xsec : ((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==0) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==0) || (LepGood3_mcMatchId==0 && LepGood3_mcPromptGamma==0) || (LepGood4_mcMatchId==0 && LepGood4_mcPromptGamma==0)) ; FillColor=ROOT.kGray+1
 
-data : DoubleEG_Run2016B_PromptReco_v2_runs_273150_274443+DoubleEG_Run2016B_PromptReco_v2_runs_274444_275125
-data : DoubleMuon_Run2016B_PromptReco_v2_runs_273150_274443+DoubleMuon_Run2016B_PromptReco_v2_runs_274444_275125
-data : MuonEG_Run2016B_PromptReco_v2_runs_273150_274443+MuonEG_Run2016B_PromptReco_v2_runs_274444_275125
-data : SingleElectron_Run2016B_PromptReco_v2_runs_273150_274443+SingleElectron_Run2016B_PromptReco_v2_runs_274444_275125
-data : SingleMuon_Run2016B_PromptReco_v2_runs_273150_274443+SingleMuon_Run2016B_PromptReco_v2_runs_274444_275125
+data : DoubleEG_Run2016B_PromptReco_v2+DoubleEG_Run2016C_PromptReco_v2+DoubleEG_Run2016D_PromptReco_v2_runs_276315_276384+DoubleEG_Run2016D_PromptReco_v2_runs_276385_276811
+data : DoubleMuon_Run2016B_PromptReco_v2+DoubleMuon_Run2016C_PromptReco_v2+DoubleMuon_Run2016D_PromptReco_v2_runs_276315_276384+DoubleMuon_Run2016D_PromptReco_v2_runs_276385_276811
+data : MuonEG_Run2016B_PromptReco_v2+MuonEG_Run2016C_PromptReco_v2+MuonEG_Run2016D_PromptReco_v2_runs_276315_276384+MuonEG_Run2016D_PromptReco_v2_runs_276385_276811
+data : SingleElectron_Run2016B_PromptReco_v2+SingleElectron_Run2016C_PromptReco_v2+SingleElectron_Run2016D_PromptReco_v2_runs_276315_276384+SingleElectron_Run2016D_PromptReco_v2_runs_276385_276811
+data : SingleMuon_Run2016B_PromptReco_v2+SingleMuon_Run2016C_PromptReco_v2+SingleMuon_Run2016D_PromptReco_v2_runs_276315_276384+SingleMuon_Run2016D_PromptReco_v2_runs_276385_276811
