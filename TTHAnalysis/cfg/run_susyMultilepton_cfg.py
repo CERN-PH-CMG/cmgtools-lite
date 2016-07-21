@@ -412,13 +412,14 @@ if runData and not isTest: # For running on data
 #    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_271036-274421_13TeV_PromptReco_Collisions16_JSON.txt' # 2.07/fb
 #    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_271036-274443_13TeV_PromptReco_Collisions16_JSON.txt' # 2.6/fb
 #    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_271036-275125_13TeV_PromptReco_Collisions16_JSON.txt' # 4.0/fb
-    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_271036-275783_13TeV_PromptReco_Collisions16_JSON.txt' # 6.3/fb
-    processing = "Run2016B-PromptReco-v2"; short = "Run2016B_PromptReco_v2"; run_ranges = [(273150,275783)]; useAAA=False; # -v2 starts from 273150
+#    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_271036-275783_13TeV_PromptReco_Collisions16_JSON.txt' # 6.3/fb
+    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_271036-276811_13TeV_PromptReco_Collisions16_JSON_NoL1T.txt' # 12.9/fb
+    processing = "Run2016B-PromptReco-v2"; short = "Run2016B_PromptReco_v2"; run_ranges = [(273150,276811)]; useAAA=False; # -v2 starts from 273150
     dataChunks.append((json,processing,short,run_ranges,useAAA))
-    processing = "Run2016C-PromptReco-v2"; short = "Run2016C_PromptReco_v2"; run_ranges = [(273150,275783)]; useAAA=False; # -v2 starts from 273150 
+    processing = "Run2016C-PromptReco-v2"; short = "Run2016C_PromptReco_v2"; run_ranges = [(273150,276811)]; useAAA=False; # -v2 starts from 273150 
     dataChunks.append((json,processing,short,run_ranges,useAAA))
-#    processing = "Run2016D-PromptReco-v2"; short = "Run2016D_PromptReco_v2"; run_ranges = [(273150,275783)]; useAAA=False; # -v2 starts from 273150 
-#    dataChunks.append((json,processing,short,run_ranges,useAAA))
+    processing = "Run2016D-PromptReco-v2"; short = "Run2016D_PromptReco_v2"; run_ranges = [(273150,276811)]; useAAA=False; # -v2 starts from 273150 
+    dataChunks.append((json,processing,short,run_ranges,useAAA))
 
     compSelection = ""; compVeto = ""
     DatasetsAndTriggers = []
