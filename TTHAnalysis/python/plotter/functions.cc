@@ -4,6 +4,7 @@
 #include "Math/GenVector/PxPyPzM4D.h"
 #include "Math/GenVector/Boost.h"
 #include "TLorentzVector.h"
+#include "TH2Poly.h"
 #include "PhysicsTools/Heppy/interface/Davismt2.h"
 
 //// UTILITY FUNCTIONS NOT IN TFORMULA ALREADY
@@ -461,9 +462,20 @@ float puw2016_vtx_4fb(int nVtx) { if (nVtx<60) return _puw2016_vtx_4fb[nVtx]; el
 float _puw2016_vtx_postTS_1p4fb[60] = {1.0, 0.0436628547984852, 0.0842489361361326, 0.17821945962362193, 0.3359458176736438, 0.5602926533570876, 0.7949986470183944, 1.009956832499392, 1.2171719031951709, 1.3352425499300327, 1.440211942752969, 1.461874846281358, 1.442598177264856, 1.3933114880260349, 1.303895089233208, 1.2175329549318987, 1.1119038703640942, 1.0164455216655062, 0.9118520665638973, 0.8059572090329304, 0.7155624000589931, 0.6289173123131537, 0.551810715512236, 0.4833237093643216, 0.4192621566956886, 0.3644494058922173, 0.30458903411821625, 0.2707118142127595, 0.2278811064155144, 0.20083759822187328, 0.17416091877224055, 0.16340944020160908, 0.14995476800202442, 0.12504239103683595, 0.12132829462778992, 0.09634514689836478, 0.1269739863549877, 0.1477893939541658, 0.12321393664515852, 0.03694734848854124, 0.10072796682909534, 0.06010102020802678, 0.11268941289005037, 0.0, 0.20488984161827345, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 1.0, 1.0};
 float puw2016_vtx_postTS_1p4fb(int nVtx) { if (nVtx<60) return _puw2016_vtx_postTS_1p4fb[nVtx]; else return 0; }
 
+
 // for up to 275782
 float _puw2016_nInt_6p3fb[50] = {0.000382638, 0.00904568, 0.0172266, 0.028787, 0.0480456, 0.0395218, 0.0455648, 0.168451, 0.383086, 0.648308, 0.936192, 1.1818, 1.3745, 1.57972, 1.78097, 1.74766, 1.60982, 1.64109, 1.49706, 1.4961, 1.21978, 1.01628, 0.897894, 0.782684, 0.602069, 0.498483, 0.329922, 0.238593, 0.14344, 0.0926828, 0.0574109, 0.035114, 0.0284437, 0.0210839, 0.0219857, 0.027923, 0.0455562, 0.0608525, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 float puw2016_nInt_6p3fb(int nInt) { if(nInt<50) return _puw2016_nInt_6p3fb[nInt]; else return 0; }
+
+
+// for json up to 276384 (9.235/fb)
+float _puw2016_vtx_9fb[60] = {1.0, 0.04935539210063196, 0.10330050968638685, 0.2147911101772578, 0.39265726267153417, 0.6154543185021981, 0.8307112462687154, 1.0234405172528802, 1.1925131512920364, 1.2992751918824221, 1.3675693415474597, 1.383571620896604, 1.370751371914269, 1.3312898916887232, 1.260970719202342, 1.1934158915388204, 1.1079581139187757, 1.0207671452254607, 0.9330680851961782, 0.8459974039502247, 0.7660997972524449, 0.6853105592363634, 0.619098569695837, 0.5548227688124637, 0.498590328109847, 0.43969852956854144, 0.39485106899051653, 0.3546221583391258, 0.32414310290951415, 0.29492937650181855, 0.26816973928662186, 0.26026228952267894, 0.25438200170624503, 0.24305609489401844, 0.2402861143189915, 0.22410752071130485, 0.2329521554125791, 0.27204322650384044, 0.2187522991708468, 0.2697045149716429, 0.26325149847967466, 0.20939084706659114, 0.41327140868406215, 0.45300904413445264, 0.15704313529994357, 1.0, 0.3926078382498588, 1.963039191249294, 0.39260783824985873, 1.1778235147495764, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 1.0, 1.0};
+float puw2016_vtx_9fb(int nVtx) { if (nVtx<60) return _puw2016_vtx_9fb[nVtx]; else return 0; }
+
+
+// for json up to 276811 (12.9/fb)
+float _puw2016_vtx_13fb[60] = {1.0, 0.046904649804193066, 0.09278031810949669, 0.18880389403907694, 0.3514757265099305, 0.557758357976481, 0.7693577917575528, 0.9666548740765918, 1.145319485841941, 1.2648398335691222, 1.3414360633779425, 1.3679594451533137, 1.362759399034107, 1.327376308549365, 1.2613315166803767, 1.196440614259811, 1.1139701579261285, 1.029953473266092, 0.9499371225384508, 0.8650456207995321, 0.7851579627730857, 0.7104602883630896, 0.6454503663312138, 0.5827160708961265, 0.527376483837914, 0.4700331217669938, 0.4271753119677936, 0.3869926520067443, 0.35986269245880403, 0.3280226115374019, 0.2995626735821264, 0.29695297220375283, 0.2904602474734967, 0.27797348557821827, 0.27285575884404983, 0.2696769830193652, 0.2834280746705423, 0.3079991295527812, 0.2958183730167929, 0.3281547943587132, 0.34428579006474574, 0.34709355767303973, 0.5916367460335905, 0.4991935044658422, 0.2689257936516321, 1.0, 0.690242870372522, 2.0707286111175662, 0.2958183730167952, 0.8874551190503855, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 1.0, 1.0};
+float puw2016_vtx_13fb(int nVtx) { if (nVtx<60) return _puw2016_vtx_13fb[nVtx]; else return 0; }
 
 
 //
@@ -484,17 +496,21 @@ float _get_recoToLoose_leptonSF_ttH(int pdgid, float pt, float eta, int nlep, fl
 
   if (var!=0) assert(0); // NOT IMPLEMENTED
 
-  if (!_histo_recoToLoose_leptonSF_mu) {
-    _file_recoToLoose_leptonSF_mu = new TFile("","read");
-    _histo_recoToLoose_leptonSF_mu = (TH2F*)(_file_recoToLoose_leptonSF_mu->Get("FINAL"));
-  }
+//  if (!_histo_recoToLoose_leptonSF_mu) {
+//    _file_recoToLoose_leptonSF_mu = new TFile("","read");
+//    _histo_recoToLoose_leptonSF_mu = (TH2F*)(_file_recoToLoose_leptonSF_mu->Get("FINAL"));
+//  }
   if (!_histo_recoToLoose_leptonSF_el1) {
-    _file_recoToLoose_leptonSF_el = new TFile("","read");
-    _histo_recoToLoose_leptonSF_el1 = (TH2F*)(_file_recoToLoose_leptonSF_el->Get("MVAVLooseFO_and_IDEmu_and_TightIP2D"));
-    _histo_recoToLoose_leptonSF_el2 = (TH2F*)(_file_recoToLoose_leptonSF_el->Get("MiniIso0p4_vs_AbsEta"));
+    _file_recoToLoose_leptonSF_el = new TFile("../../data/leptonSF/el_scaleFactors_20160720.root","read");
+    _histo_recoToLoose_leptonSF_el1 = (TH2F*)(_file_recoToLoose_leptonSF_el->Get("GsfElectronToFOID2D"));
+    _histo_recoToLoose_leptonSF_el2 = (TH2F*)(_file_recoToLoose_leptonSF_el->Get("MVAVLooseElectronToMini4;1"));
   }
 
   if (abs(pdgid)==13){
+
+    // SET TO 1 FOR THE MOMENT
+    return 1;
+
     TH2F *hist = _histo_recoToLoose_leptonSF_mu;
     int etabin = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(eta)));
     int ptbin  = std::max(1, std::min(hist->GetNbinsY(), hist->GetYaxis()->FindBin(pt)));
@@ -561,7 +577,7 @@ float _get_looseToTight_leptonSF_ttH(int pdgid, float _pt, float eta, int nlep, 
 
 float leptonSF_ttH(int pdgid, float pt, float eta, int nlep, float var=0){
 
-  float recoToLoose = 1; //_get_recoToLoose_leptonSF_ttH(pdgid,pt,eta,nlep,var);
+  float recoToLoose = _get_recoToLoose_leptonSF_ttH(pdgid,pt,eta,nlep,var);
   float looseToTight = _get_looseToTight_leptonSF_ttH(pdgid,pt,eta,nlep,var);
   float res = recoToLoose*looseToTight;
   assert (res>0);
@@ -569,13 +585,38 @@ float leptonSF_ttH(int pdgid, float pt, float eta, int nlep, float var=0){
 
 }
 
-float triggerSF_ttH(int pdgid1, float pt1, int pdgid2, float pt2, int nlep, float var_ee=0){
-  if (var_ee!=0) assert(0); // NOT IMPLEMENTED
-  if (nlep>2) return 1;
-  int x = (abs(pdgid1)==11) + (abs(pdgid2)==11);
-  if (x==2) return 1.02;
-  else if (x==1) return 1.02;
-  else return 1.01;
+TFile *file_triggerSF_ttH = NULL;
+TH2Poly* t2poly_triggerSF_ttH_mm = NULL;
+TH2Poly* t2poly_triggerSF_ttH_ee = NULL;
+TH2Poly* t2poly_triggerSF_ttH_em = NULL;
+TH2Poly* t2poly_triggerSF_ttH_3l = NULL;
+
+float triggerSF_ttH(int pdgid1, float pt1, int pdgid2, float pt2, int nlep, float var=0){
+  if (!file_triggerSF_ttH) {
+    file_triggerSF_ttH = new TFile("../../data/triggerSF/trig_eff_map_v4.root");
+    t2poly_triggerSF_ttH_mm = (TH2Poly*)(file_triggerSF_ttH->Get("SSuu2DPt_effic"));
+    t2poly_triggerSF_ttH_ee = (TH2Poly*)(file_triggerSF_ttH->Get("SSee2DPt_effic"));
+    t2poly_triggerSF_ttH_em = (TH2Poly*)(file_triggerSF_ttH->Get("SSeu2DPt_effic"));
+    t2poly_triggerSF_ttH_3l = (TH2Poly*)(file_triggerSF_ttH->Get("__3l2DPt_effic"));
+  }
+  TH2Poly* hist = NULL;
+  if (nlep==2){
+    if (abs(pdgid1)==13 && abs(pdgid2)==13) hist = t2poly_triggerSF_ttH_mm;
+    else if (abs(pdgid1)==11 && abs(pdgid2)==11) hist = t2poly_triggerSF_ttH_ee;
+    else hist = t2poly_triggerSF_ttH_em;
+  }
+  else if (nlep==3) hist = t2poly_triggerSF_ttH_3l;
+  int xbin  = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(pt1)));
+  int ybin = std::max(1, std::min(hist->GetNbinsY(), hist->GetYaxis()->FindBin(pt2)));
+  float eff = hist->GetBinContent(xbin,ybin) + var * hist->GetBinError(xbin,ybin);
+
+  if (nlep>2) return eff;
+  int cat = (abs(pdgid1)==11) + (abs(pdgid2)==11);
+  if (cat==2) return eff*1.02;
+  else if (cat==1) return eff*1.02;
+  else return eff*1.01;
+
+
 }
 
 float mass_3_cheap(float pt1, float eta1, float pt2, float eta2, float phi2, float pt3, float eta3, float phi3) {

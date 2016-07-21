@@ -134,12 +134,12 @@ if __name__ == "__main__":
            h2d_el_tt = [ make2D(outfile,"FR_mva075_el_TT", ptbins_el, etabins_el) ]
            h2d_mu_tt = [ make2D(outfile,"FR_mva075_mu_TT", ptbins_mu, etabins_mu) ]
 
-           Plots="~/www/plots_FR/80X/lepMVA/v1.4_250616/fr-meas/"
-           Z3l="/"
-           QCD="/"
+           Plots="plots/80X/ttH/fr-meas"
+           Z3l="z3l/v2.1"
+           QCD="qcd1l/v2.1"
            #### Electrons: 
            # 10-30 from Z+l
-           readMany2D(XsD, h2d_el, "/".join([Plots, Z3l, "el/z3l/fakerates-mtW3R/fr_sub_eta_%s_comp.root"]), "%s", etaslices_el, (10,30) )
+           readMany2D(XsD, h2d_el, "/".join([Plots, Z3l, "el/fakerates-mtW3R/fr_sub_eta_%s_comp.root"]), "%s", etaslices_el, (10,30) )
            # 30-inf from Ele12 bMedium
            readMany2D(XsQ, h2d_el, "/".join([Plots, QCD, "el/HLT_Ele12_CaloIdM_TrackIdM_PFJet30/fakerates-mtW1R/fr_sub_eta_%s_comp.root"]), "%s", etaslices_el, (30,999) )
 
@@ -154,13 +154,11 @@ if __name__ == "__main__":
            readMany2D(XsQ, h2d_mu, "/".join([Plots, QCD, "mu/HLT_Mu17/fakerates-mtW1R/fr_sub_eta_%s_comp.root"]), "%s", etaslices_mu, (45,999) )
 
            #### TT MC-truth
-           MCPlots="~/www/plots_FR/80X/lepMVA/v1.4_250616/"; ID="wp075ib1f30E2ptc30";
+           MCPlots="plots/80X/ttH/fr-mc/v2.1"; ID="wp075ib1f30E2ptc30";
            XVar="mvaPt_075i_ptJI85_mvaPt075"
-           readMany2D(["TT_red"], h2d_el_tt, "/".join([MCPlots, "el_ttz3l_"+ID+"_rec30_bAny_eta_%s.root"]),  XVar+"_zcoarse2_%s", etaslices_el, (10,30) )
+           readMany2D(["TT_red"], h2d_el_tt, "/".join([MCPlots, "el_zc2bin_"+ID+"_rec30_bAny_eta_%s.root"]),  XVar+"_zcoarse2_%s", etaslices_el, (10,30) )
            readMany2D(["TT_red"], h2d_el_tt, "/".join([MCPlots, "el_lbin_"+ID+"_rec30_bAny_eta_%s.root"]), XVar+"_coarselongbin_%s",   etaslices_el, (30,999) )
-    #       readMany2D(["TT_red"], h2d_mu_tt, "/".join([MCPlots, "mu_low_"+ID+"_rec30_bAny_eta_%s.root"]),    XVar+"_low_%s",      etaslices_mu, (10,20) )
            readMany2D(["TT_red"], h2d_mu_tt, "/".join([MCPlots, "mu_lbin_"+ID+"_rec30_bAny_eta_%s.root"]), XVar+"_coarselongbin_%s",   etaslices_mu, (10,999) )
-
 
        # SUSY M
        elif 'susy' in an:
