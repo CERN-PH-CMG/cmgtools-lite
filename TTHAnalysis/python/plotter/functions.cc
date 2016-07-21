@@ -587,9 +587,14 @@ float triggerSF_ttH(int pdgid1, float pt1, int pdgid2, float pt2, int nlep, floa
   if (!file_triggerSF_ttH) {
     file_triggerSF_ttH = new TFile("../../data/triggerSF/trig_eff_map_v4.root");
     t2poly_triggerSF_ttH_mm = (TH2Poly*)(file_triggerSF_ttH->Get("SSuu2DPt_effic"));
-    t2poly_triggerSF_ttH_ee = (TH2Poly*)(file_triggerSF_ttH->Get("SSee2DPt_effic"));
+    t2poly_triggerSF_ttH_ee = (TH2Poly*)(file_triggerSF_ttH->Get("SSee2DPt__effic"));
     t2poly_triggerSF_ttH_em = (TH2Poly*)(file_triggerSF_ttH->Get("SSeu2DPt_effic"));
     t2poly_triggerSF_ttH_3l = (TH2Poly*)(file_triggerSF_ttH->Get("__3l2DPt_effic"));
+    if (!(t2poly_triggerSF_ttH_mm && t2poly_triggerSF_ttH_ee && t2poly_triggerSF_ttH_em && t2poly_triggerSF_ttH_3l)) {
+	std::cout << "Impossible to load trigger scale factors!" << std::endl;
+	file_triggerSF_ttH->ls();
+	file_triggerSF_ttH = NULL;
+      }
   }
   TH2Poly* hist = NULL;
   if (nlep==2){
@@ -598,9 +603,11 @@ float triggerSF_ttH(int pdgid1, float pt1, int pdgid2, float pt2, int nlep, floa
     else hist = t2poly_triggerSF_ttH_em;
   }
   else if (nlep==3) hist = t2poly_triggerSF_ttH_3l;
-  int xbin  = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(pt1)));
-  int ybin = std::max(1, std::min(hist->GetNbinsY(), hist->GetYaxis()->FindBin(pt2)));
-  float eff = hist->GetBinContent(xbin,ybin) + var * hist->GetBinError(xbin,ybin);
+  else std::cout << "Wrong options to trigger scale factors" << std::endl;
+  pt1 = std::max(float(hist->GetXaxis()->GetXmin()+1e-5), std::min(float(hist->GetXaxis()->GetXmax()-1e-5), pt1));
+  pt2 = std::max(float(hist->GetYaxis()->GetXmin()+1e-5), std::min(float(hist->GetYaxis()->GetXmax()-1e-5), pt2));
+  int bin = hist->FindBin(pt1,pt2);
+  float eff = hist->GetBinContent(bin) + var * hist->GetBinError(bin);
 
   if (nlep>2) return eff;
   int cat = (abs(pdgid1)==11) + (abs(pdgid2)==11);
