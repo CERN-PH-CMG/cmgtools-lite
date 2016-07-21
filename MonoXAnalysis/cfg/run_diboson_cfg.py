@@ -14,7 +14,7 @@ from CMGTools.RootTools.samples.autoAAAconfig import *
 #-------- SET OPTIONS AND REDEFINE CONFIGURATIONS -----------
 
 is50ns = getHeppyOption("is50ns",False)
-runData = getHeppyOption("runData",False)#True)
+runData = getHeppyOption("runData",True)
 scaleProdToLumi = float(getHeppyOption("scaleProdToLumi",-1)) # produce rough equivalent of X /pb for MC datasets
 saveSuperClusterVariables = getHeppyOption("saveSuperClusterVariables",True)
 saveFatJetIDVariables = getHeppyOption("saveFatJetIDVariables",True)
@@ -23,7 +23,7 @@ removeJetReCalibration = getHeppyOption("removeJetReCalibration",False)
 doT1METCorr = getHeppyOption("doT1METCorr",True)
 forcedSplitFactor = getHeppyOption("splitFactor",-1)
 forcedFineSplitFactor = getHeppyOption("fineSplitFactor",-1)
-isTest = getHeppyOption("isTest",True)#False)
+isTest = getHeppyOption("isTest",False)
 doLepCorr = getHeppyOption("doLepCorr",False)
 doPhotonCorr = getHeppyOption("doPhotonCorr",False)
 
@@ -263,7 +263,7 @@ if scaleProdToLumi>0: # select only a subset of a sample, corresponding to a giv
         c.fineSplitFactor = 1
 
 #json = "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions15/13TeV/Reprocessing/Cert_13TeV_16Dec2015ReReco_Collisions15_25ns_JSON.txt"
-json = "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-275125_13TeV_PromptReco_Collisions16_JSON.txt"
+json = "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-276811_13TeV_PromptReco_Collisions16_JSON_NoL1T.txt"
 if False:
     is50ns = False
     selectedComponents = PrivateSamplesData
@@ -272,7 +272,8 @@ if False:
         comp.fineSplitFactor = 1
 
 if runData and not isTest: # For running on data
-    run_ranges = [ (272021,275125) ]; useAAA=False; is50ns=False
+    ##run_ranges = [ (272021,275125) ]; useAAA=False; is50ns=False
+    run_ranges = [ (276384, 276811) ]; useAAA=False; is50ns=False
 
     compSelection = ""
     DatasetsAndTriggers = []
@@ -286,8 +287,13 @@ if runData and not isTest: # For running on data
     # ProcessingsAndRunRanges.append( ("Run2015C_25ns-16Dec2015-v1", [254227,254914] ) ); Shorts.append("Run2015C_16Dec")
     # ProcessingsAndRunRanges.append( ("Run2015D-16Dec2015-v1", [256630,260627] ) ); Shorts.append("Run2015D_16Dec")
     
-    ProcessingsAndRunRanges.append( ("Run2016B-PromptReco-v1", [272021,273149] ) ); Shorts.append("PromptReco_v1")
-    ProcessingsAndRunRanges.append( ("Run2016B-PromptReco-v2", [273150,275125] ) ); Shorts.append("PromptReco_v2")
+#    ProcessingsAndRunRanges.append( ("Run2016B-PromptReco-v1", [272021,273149] ) ); Shorts.append("PromptReco_v1")
+#    ProcessingsAndRunRanges.append( ("Run2016B-PromptReco-v2", [273150,275125] ) ); Shorts.append("PromptReco_v2")
+  ##  ProcessingsAndRunRanges.append( ("Run2016B-PromptReco-v2", [275125,275376] ) ); Shorts.append("PromptReco_v2")
+  ##  ProcessingsAndRunRanges.append( ("Run2016C-PromptReco-v2", [275420,276283] ) ); Shorts.append("PromptReco_v2")
+  ##  ProcessingsAndRunRanges.append( ("Run2016D-PromptReco-v2", [276315,276384] ) ); Shorts.append("PromptReco_v2")
+    ProcessingsAndRunRanges.append( ("Run2016D-PromptReco-v2", [276384,276811] ) ); Shorts.append("PromptReco_v2")
+  ##  ProcessingsAndRunRanges.append( ("Run2016E-PromptReco-v2", [276830,276984] ) ); Shorts.append("PromptReco_v2")
 
     if diLepSkim == True:
         DatasetsAndTriggers.append( ("DoubleMuon", triggers_mumu_iso + triggers_mumu_ss + triggers_mumu_ht + triggers_3mu + triggers_3mu_alt + triggers_AllMonojet) )
