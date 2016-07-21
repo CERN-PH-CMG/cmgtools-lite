@@ -51,7 +51,7 @@ def doprescale3l(x):
     x2 = x2.replace("--Fs {P}/4_kinMVA_without_MEM_v5 --Fs {P}/8_bTagSF_4fb_v45","--Fs {P}/4_kinMVA_with_MEM_v5 --Fs {P}/7_MEM_v5 --Fs {P}/8_bTagSF_4fb_v5")
     return x2
 
-allow_unblinding = False
+allow_unblinding = True
 
 if __name__ == '__main__':
 

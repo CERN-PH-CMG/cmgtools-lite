@@ -16,7 +16,7 @@ if [[ "X$1" == "X" ]]; then echo "Provide luminosity!"; exit; fi
 LUMI="$1"; shift
 echo "Normalizing to ${LUMI}/fb";
 #echo "HARDCODED Normalizing to 10/fb"; LUMI=10
-OPTIONS=" --tree treeProducerSusyMultilepton --s2v -j $J -l ${LUMI} -f --xp data --asimov "
+OPTIONS=" --tree treeProducerSusyMultilepton --s2v -j $J -l ${LUMI} -f "
 test -d cards/$OUTNAME || mkdir -p cards/$OUTNAME
 OPTIONS="${OPTIONS} --od cards/$OUTNAME ";
 
