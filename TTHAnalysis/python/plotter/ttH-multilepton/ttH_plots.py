@@ -17,11 +17,11 @@ def base(selection):
     if dowhat == "plots": CORE+=" --lspam '#bf{CMS} #it{Internal}' --legendWidth 0.20 --legendFontSize 0.035 --showRatio --maxRatioRange 0 2 --fixRatioRange  --showMCError --rebin 4 --xP 'nT_.*' --xP 'debug_.*'"
 
     if selection=='2lss':
-        GO="%s -P /data1/peruzzi/mixture_jecv6prompt_datafull_jul20 ttH-multilepton/mca-2lss-mc.txt ttH-multilepton/2lss_tight.txt "%CORE
+        GO="%s -P /data1/peruzzi/mixture_jecv6prompt_datafull_jul20_skimOnlyMC ttH-multilepton/mca-2lss-mc.txt ttH-multilepton/2lss_tight.txt "%CORE
         GO="%s -W 'puw2016_vtx_13fb(nVert)*leptonSF_ttH(LepGood_pdgId[iF_Recl[0]],LepGood_pt[iF_Recl[0]],LepGood_eta[iF_Recl[0]],2)*leptonSF_ttH(LepGood_pdgId[iF_Recl[1]],LepGood_pt[iF_Recl[1]],LepGood_eta[iF_Recl[1]],2)*triggerSF_ttH(LepGood_pdgId[iF_Recl[0]],LepGood_pt[iF_Recl[0]],LepGood_pdgId[iF_Recl[1]],LepGood_pt[iF_Recl[1]],2)*eventBTagSF'"%GO
         if dowhat == "plots": GO+=" ttH-multilepton/2lss_3l_plots.txt --xP '^lep(3|4)_.*' --xP '^(3|4)lep_.*' --xP 'kinMVA_3l_.*' "
     elif selection=='3l':
-        GO="%s -P /data1/peruzzi/mixture_jecv6prompt_datafull_jul20 ttH-multilepton/mca-3l-mc.txt ttH-multilepton/3l_tight.txt "%CORE
+        GO="%s -P /data1/peruzzi/mixture_jecv6prompt_datafull_jul20_skimOnlyMC ttH-multilepton/mca-3l-mc.txt ttH-multilepton/3l_tight.txt "%CORE
         GO="%s -W 'puw2016_vtx_13fb(nVert)*leptonSF_ttH(LepGood_pdgId[iF_Recl[0]],LepGood_pt[iF_Recl[0]],LepGood_eta[iF_Recl[0]],3)*leptonSF_ttH(LepGood_pdgId[iF_Recl[1]],LepGood_pt[iF_Recl[1]],LepGood_eta[iF_Recl[1]],3)*leptonSF_ttH(LepGood_pdgId[iF_Recl[2]],LepGood_pt[iF_Recl[2]],LepGood_eta[iF_Recl[2]],3)*triggerSF_ttH(LepGood_pdgId[iF_Recl[0]],LepGood_pt[iF_Recl[0]],LepGood_pdgId[iF_Recl[1]],LepGood_pt[iF_Recl[1]],3)*eventBTagSF'"%GO
         if dowhat == "plots": GO+=" ttH-multilepton/2lss_3l_plots.txt --xP '^(2|4)lep_.*' --xP '^lep4_.*' --xP 'kinMVA_2lss_.*' "
     else:
@@ -45,11 +45,9 @@ def setwide(x):
     x2 = x2.replace('--legendWidth 0.35','--legendWidth 0.20')
     return x2
 def fulltrees(x):
-    return x
-    raise RuntimeError
-    return x.replace('809_June9_ttH_skimOnlyMC_2lsstight_relax','809_June9_ttH')
+    return x.replace("mixture_jecv6prompt_datafull_jul20_skimOnlyMC","mixture_jecv6prompt_datafull_jul20")
 def doprescale3l(x):
-    x2 = x.replace("mixture_jecv6prompt_datafull_jul20","TREES_80X_180716_jecv6_skim_3ltight_relax")
+    x2 = x.replace("mixture_jecv6prompt_datafull_jul20_skimOnlyMC","TREES_80X_180716_jecv6_skim_3ltight_relax")
     x2 = x2.replace("--Fs {P}/4_kinMVA_without_MEM_v5 --Fs {P}/8_bTagSF_4fb_v45","--Fs {P}/4_kinMVA_with_MEM_v5 --Fs {P}/7_MEM_v5 --Fs {P}/8_bTagSF_4fb_v5")
     return x2
 
@@ -91,7 +89,7 @@ if __name__ == '__main__':
             x = x.replace('mca-2lss-mc.txt','mca-2lss-mc-closuretest.txt')
             x = x.replace("--maxRatioRange 0 3","--maxRatioRange 0.5 1.5")
             x = add(x,"--AP --plotmode nostack --sP 'kinMVA.*2lss.*'")
-            x = add(x,"-p FR_QCD -p FR_TT -p TT_all --ratioDen FR_QCD --ratioNums FR_TT,TT_all --errors ")
+            x = add(x,"-p FR_QCD -p FR_TT -p TT_all --ratioDen FR_QCD --ratioNums FR_TT --errors ")
             if '_closuretest_norm' in torun:
                 x = x.replace("--plotmode nostack","--plotmode norm")
                 x = add(x,"--fitRatio 1")
@@ -154,7 +152,7 @@ if __name__ == '__main__':
             x = x.replace('mca-3l-mc.txt','mca-3l-mc-closuretest.txt')
             x = x.replace("--maxRatioRange 0 3","--maxRatioRange 0.5 1.5")
             x = add(x,"--AP --plotmode nostack --sP 'kinMVA_.*3l.*'")
-            x = add(x,"-p FR_QCD -p FR_TT -p TT_all --ratioDen FR_QCD --ratioNums FR_TT,TT_all --errors --xf '^TTJets.*_ext'")
+            x = add(x,"-p FR_QCD -p FR_TT -p TT_all --ratioDen FR_QCD --ratioNums FR_TT --errors --xf '^TTJets.*_ext'")
             if '_closuretest_norm' in torun:
                 x = x.replace("--plotmode nostack","--plotmode norm")
                 x = add(x,"--fitRatio 1")

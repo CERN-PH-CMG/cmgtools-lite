@@ -1,12 +1,12 @@
 #!/bin/bash
 
 if [[ "$HOSTNAME" == "cmsco01.cern.ch" ]]; then
-    T2L=" -P /data1/peruzzi/809_June9_ttH_skimOnlyMC_2lsstight_relax "
-    T3L=" -P /data1/peruzzi/809_June9_ttH_skimOnlyMC_3ltight_relax_prescale "
+    T2L=" -P /data1/peruzzi/mixture_jecv6prompt_datafull_jul20_skimOnlyMC --Fs {P}/2_recleaner_v5_b1E2 --Fs {P}/4_kinMVA_without_MEM_v5 --Fs {P}/8_bTagSF_4fb_v45"
+    T3L=" -P /data1/peruzzi/TREES_80X_180716_jecv6_skim_3ltight_relax --Fs {P}/2_recleaner_v5_b1E2 --Fs {P}/4_kinMVA_with_MEM_v5 --Fs {P}/7_MEM_v5 --Fs {P}/8_bTagSF_4fb_v5"
     J=8;
 else
-    T2L=" -P /afs/cern.ch/work/p/peruzzi/ra5trees/809_June9_ttH_skimOnlyMC_2lsstight_relax "
-    T3L=" -P /afs/cern.ch/work/p/peruzzi/ra5trees/809_June9_ttH_skimOnlyMC_3ltight_relax_prescale "
+#    T2L=" -P /afs/cern.ch/work/p/peruzzi/ra5trees/809_June9_ttH_skimOnlyMC_2lsstight_relax "
+#    T3L=" -P /afs/cern.ch/work/p/peruzzi/ra5trees/809_June9_ttH_skimOnlyMC_3ltight_relax_prescale "
     J=4;
 fi
 
@@ -29,18 +29,12 @@ OneTau=" -E ^1tau "
 SPLITDECAYS=""
 #SPLITDECAYS="-splitdecays"
 
-#OPTIONS="${OPTIONS} --scaleplot fakes_data*=2.5 --scaleplot flips_data*=2.5"
-OPTIONS="${OPTIONS} --Fs {P}/2_recleaner_v4_b1E2 --Fs {P}/3_evtVars_kinMVAwithMEM_v4 --mcc ttH-multilepton/mcc-bTagSFOne.txt" # WARNING B-TAG SF OFF
 OPTIONS="${OPTIONS} --mcc ttH-multilepton/lepchoice-ttH-FO.txt --mcc ttH-multilepton/ttH_2lss3l_triggerdefs.txt --neg" # neg necessary for subsequent rebin
 CATPOSTFIX=""
 
 FUNCTION_2L="kinMVA_2lss_ttV:kinMVA_2lss_ttbar 40,-1,1,40,-1,1"
-#FUNCTION_2L="kinMVA_2lss_ttV:kinMVA_2lss_ttbar_withBDTv8 40,-1,1,40,-1,1"
-#FUNCTION_3L="kinMVA_3l_ttV:kinMVA_3l_ttbar 40,-1,1,40,-1,1"
 FUNCTION_3L="kinMVA_3l_ttV_withMEM:kinMVA_3l_ttbar 40,-1,1,40,-1,1"
-#BINFUNCTION_2L="6:ttH_MVAto1D_6_2lss_Marco"
 BINFUNCTION_2L="7:ttH_MVAto1D_7_2lss_Marco"
-#BINFUNCTION_3L="3:ttH_MVAto1D_3_3l_Marco"
 BINFUNCTION_3L="5:ttH_MVAto1D_5_3l_Marco"
 
 if [[ "$2" == "save" ]]; then
@@ -51,7 +45,7 @@ DOFILE="--infile activate"
 fi
 
 if [[ "$1" == "all" || "$1" == "2lss" || "$1" == "2lss_3j" ]]; then  # WARNING B-TAG SF OFF ABOVE (MCC) + LEP LOOSE SF OFF
-    OPT_2L="${T2L} ${OPTIONS} -W puw2016_vtx_4fb(nVert)*leptonSF_ttH(LepGood_pdgId[iF_Recl[0]],LepGood_pt[iF_Recl[0]],LepGood_eta[iF_Recl[0]],2)*leptonSF_ttH(LepGood_pdgId[iF_Recl[1]],LepGood_pt[iF_Recl[1]],LepGood_eta[iF_Recl[1]],2)*triggerSF_ttH(LepGood_pdgId[iF_Recl[0]],LepGood_pt[iF_Recl[0]],LepGood_pdgId[iF_Recl[1]],LepGood_pt[iF_Recl[1]],2)*eventBTagSF"
+    OPT_2L="${T2L} ${OPTIONS} -W puw2016_vtx_13fb(nVert)*leptonSF_ttH(LepGood_pdgId[iF_Recl[0]],LepGood_pt[iF_Recl[0]],LepGood_eta[iF_Recl[0]],2)*leptonSF_ttH(LepGood_pdgId[iF_Recl[1]],LepGood_pt[iF_Recl[1]],LepGood_eta[iF_Recl[1]],2)*triggerSF_ttH(LepGood_pdgId[iF_Recl[0]],LepGood_pt[iF_Recl[0]],LepGood_pdgId[iF_Recl[1]],LepGood_pt[iF_Recl[1]],2)*eventBTagSF"
     POS=" -A alwaystrue positive LepGood1_charge>0 "
     NEG=" -A alwaystrue negative LepGood1_charge<0 "
 
@@ -81,7 +75,7 @@ if [[ "$1" == "all" || "$1" == "2lss" || "$1" == "2lss_3j" ]]; then  # WARNING B
 fi
 
 if [[ "$1" == "all" || "$1" == "3l" || "$1" == "3l_zpeak" ]]; then  # WARNING B-TAG SF OFF ABOVE (MCC) + LEP LOOSE SF OFF
-    OPT_3L="${T3L} ${OPTIONS} -W puw2016_vtx_4fb(nVert)*leptonSF_ttH(LepGood_pdgId[iF_Recl[0]],LepGood_pt[iF_Recl[0]],LepGood_eta[iF_Recl[0]],3)*leptonSF_ttH(LepGood_pdgId[iF_Recl[1]],LepGood_pt[iF_Recl[1]],LepGood_eta[iF_Recl[1]],3)*leptonSF_ttH(LepGood_pdgId[iF_Recl[2]],LepGood_pt[iF_Recl[2]],LepGood_eta[iF_Recl[2]],3)*triggerSF_ttH(LepGood_pdgId[iF_Recl[0]],LepGood_pt[iF_Recl[0]],LepGood_pdgId[iF_Recl[1]],LepGood_pt[iF_Recl[1]],3)*eventBTagSF"
+    OPT_3L="${T3L} ${OPTIONS} -W puw2016_vtx_13fb(nVert)*leptonSF_ttH(LepGood_pdgId[iF_Recl[0]],LepGood_pt[iF_Recl[0]],LepGood_eta[iF_Recl[0]],3)*leptonSF_ttH(LepGood_pdgId[iF_Recl[1]],LepGood_pt[iF_Recl[1]],LepGood_eta[iF_Recl[1]],3)*leptonSF_ttH(LepGood_pdgId[iF_Recl[2]],LepGood_pt[iF_Recl[2]],LepGood_eta[iF_Recl[2]],3)*triggerSF_ttH(LepGood_pdgId[iF_Recl[0]],LepGood_pt[iF_Recl[0]],LepGood_pdgId[iF_Recl[1]],LepGood_pt[iF_Recl[1]],3)*eventBTagSF"
     POS=" -A alwaystrue positive (LepGood1_charge+LepGood2_charge+LepGood3_charge)>0 "
     NEG=" -A alwaystrue negative (LepGood1_charge+LepGood2_charge+LepGood3_charge)<0 "
 
