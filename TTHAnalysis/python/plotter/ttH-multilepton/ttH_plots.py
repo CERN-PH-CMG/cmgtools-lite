@@ -11,19 +11,18 @@ dowhat = "plots"
 
 def base(selection):
 
-    CORE="--Fs {P}/2_recleaner_v4_b1E2 --Fs {P}/3_evtVars_kinMVAwithMEM_v4 "
+    CORE="--Fs {P}/2_recleaner_v5_b1E2 --Fs {P}/4_kinMVA_without_MEM_v5 --Fs {P}/8_bTagSF_4fb_v45"
 
-    CORE+=" -f -j 8 -l 4.0 --s2v --tree treeProducerSusyMultilepton --mcc ttH-multilepton/lepchoice-ttH-FO.txt --mcc ttH-multilepton/ttH_2lss3l_triggerdefs.txt"# --neg"
-#    CORE+=" -f -j 8 -l 10.0 --scaleplot fakes_data*=2.5 --scaleplot flips_data*=2.5 --s2v --tree treeProducerSusyMultilepton --mcc ttH-multilepton/lepchoice-ttH-FO.txt --mcc ttH-multilepton/ttH_2lss3l_triggerdefs.txt"# --neg"
-    if dowhat == "plots": CORE+=" --lspam '#bf{CMS} #it{Internal}' --legendWidth 0.20 --legendFontSize 0.035 --showRatio --maxRatioRange 0 3  --showMCError --rebin 4 --xP 'nT_.*' --xP 'debug_.*' --mcc ttH-multilepton/mcc-bTagSFOne.txt"
+    CORE+=" -f -j 8 -l 12.9 --s2v --tree treeProducerSusyMultilepton --mcc ttH-multilepton/lepchoice-ttH-FO.txt --mcc ttH-multilepton/ttH_2lss3l_triggerdefs.txt"# --neg"
+    if dowhat == "plots": CORE+=" --lspam '#bf{CMS} #it{Internal}' --legendWidth 0.20 --legendFontSize 0.035 --showRatio --maxRatioRange 0 2 --fixRatioRange  --showMCError --rebin 4 --xP 'nT_.*' --xP 'debug_.*'"
 
     if selection=='2lss':
-        GO="%s -P /data1/peruzzi/809_June9_ttH_skimOnlyMC_2lsstight_relax ttH-multilepton/mca-2lss-mc.txt ttH-multilepton/2lss_tight.txt "%CORE
-        GO="%s -W 'puw2016_vtx_4fb(nVert)*leptonSF_ttH(LepGood_pdgId[iF_Recl[0]],LepGood_pt[iF_Recl[0]],LepGood_eta[iF_Recl[0]],2)*leptonSF_ttH(LepGood_pdgId[iF_Recl[1]],LepGood_pt[iF_Recl[1]],LepGood_eta[iF_Recl[1]],2)*triggerSF_ttH(LepGood_pdgId[iF_Recl[0]],LepGood_pt[iF_Recl[0]],LepGood_pdgId[iF_Recl[1]],LepGood_pt[iF_Recl[1]],2)*eventBTagSF'"%GO  # no loose ID and btag applied for the moment!!!
+        GO="%s -P /data1/peruzzi/mixture_jecv6prompt_datafull_jul20 ttH-multilepton/mca-2lss-mc.txt ttH-multilepton/2lss_tight.txt "%CORE
+        GO="%s -W 'puw2016_vtx_13fb(nVert)*leptonSF_ttH(LepGood_pdgId[iF_Recl[0]],LepGood_pt[iF_Recl[0]],LepGood_eta[iF_Recl[0]],2)*leptonSF_ttH(LepGood_pdgId[iF_Recl[1]],LepGood_pt[iF_Recl[1]],LepGood_eta[iF_Recl[1]],2)*triggerSF_ttH(LepGood_pdgId[iF_Recl[0]],LepGood_pt[iF_Recl[0]],LepGood_pdgId[iF_Recl[1]],LepGood_pt[iF_Recl[1]],2)*eventBTagSF'"%GO
         if dowhat == "plots": GO+=" ttH-multilepton/2lss_3l_plots.txt --xP '^lep(3|4)_.*' --xP '^(3|4)lep_.*' --xP 'kinMVA_3l_.*' "
     elif selection=='3l':
-        GO="%s -P /data1/peruzzi/809_June9_ttH_skimOnlyMC_3ltight_relax_prescale --Fs {P}/7_MEM_v4 ttH-multilepton/mca-3l-mc.txt ttH-multilepton/3l_tight.txt "%CORE
-        GO="%s -W 'puw2016_vtx_4fb(nVert)*leptonSF_ttH(LepGood_pdgId[iF_Recl[0]],LepGood_pt[iF_Recl[0]],LepGood_eta[iF_Recl[0]],3)*leptonSF_ttH(LepGood_pdgId[iF_Recl[1]],LepGood_pt[iF_Recl[1]],LepGood_eta[iF_Recl[1]],3)*leptonSF_ttH(LepGood_pdgId[iF_Recl[2]],LepGood_pt[iF_Recl[2]],LepGood_eta[iF_Recl[2]],3)*triggerSF_ttH(LepGood_pdgId[iF_Recl[0]],LepGood_pt[iF_Recl[0]],LepGood_pdgId[iF_Recl[1]],LepGood_pt[iF_Recl[1]],3)*eventBTagSF'"%GO # no loose ID and btag applied for the moment!!!
+        GO="%s -P /data1/peruzzi/mixture_jecv6prompt_datafull_jul20 ttH-multilepton/mca-3l-mc.txt ttH-multilepton/3l_tight.txt "%CORE
+        GO="%s -W 'puw2016_vtx_13fb(nVert)*leptonSF_ttH(LepGood_pdgId[iF_Recl[0]],LepGood_pt[iF_Recl[0]],LepGood_eta[iF_Recl[0]],3)*leptonSF_ttH(LepGood_pdgId[iF_Recl[1]],LepGood_pt[iF_Recl[1]],LepGood_eta[iF_Recl[1]],3)*leptonSF_ttH(LepGood_pdgId[iF_Recl[2]],LepGood_pt[iF_Recl[2]],LepGood_eta[iF_Recl[2]],3)*triggerSF_ttH(LepGood_pdgId[iF_Recl[0]],LepGood_pt[iF_Recl[0]],LepGood_pdgId[iF_Recl[1]],LepGood_pt[iF_Recl[1]],3)*eventBTagSF'"%GO
         if dowhat == "plots": GO+=" ttH-multilepton/2lss_3l_plots.txt --xP '^(2|4)lep_.*' --xP '^lep4_.*' --xP 'kinMVA_2lss_.*' "
     else:
         raise RuntimeError, 'Unknown selection'
@@ -46,8 +45,13 @@ def setwide(x):
     x2 = x2.replace('--legendWidth 0.35','--legendWidth 0.20')
     return x2
 def fulltrees(x):
+    return x
     raise RuntimeError
-    return x.replace('809_June9_ttH_skimOnlyMC','809_June9_ttH')
+    return x.replace('809_June9_ttH_skimOnlyMC_2lsstight_relax','809_June9_ttH')
+def doprescale3l(x):
+    x2 = x.replace("mixture_jecv6prompt_datafull_jul20","TREES_80X_180716_jecv6_skim_3ltight_relax")
+    x2 = x2.replace("--Fs {P}/4_kinMVA_without_MEM_v5 --Fs {P}/8_bTagSF_4fb_v45","--Fs {P}/4_kinMVA_with_MEM_v5 --Fs {P}/7_MEM_v5 --Fs {P}/8_bTagSF_4fb_v5")
+    return x2
 
 allow_unblinding = False
 
@@ -131,13 +135,18 @@ if __name__ == '__main__':
             elif not '_data' in torun: raise RuntimeError
             x = x.replace('mca-3l-mcdata.txt','mca-3l-mcdata-frdata.txt')
             if '_prescale' in torun:
+                x = doprescale3l(x)
                 x = x.replace('mca-3l-mcdata-frdata.txt','mca-3l-mcdata-frdata-prescale.txt')
             if '_table' in torun:
                 x = x.replace('mca-3l-mcdata-frdata.txt','mca-3l-mcdata-frdata-table.txt')
         else:
             if 'data' in torun and '_prescale' in torun:
+                raise RuntimeError # trees not ready
+                x = doprescale3l(x)
                 x = x.replace('mca-3l-mcdata.txt','mca-3l-mcdata-prescale.txt')
             elif '_prescale' in torun:
+                raise RuntimeError # trees not ready
+                x = doprescale3l(x)
                 x = x.replace('mca-3l-mc.txt','mca-3l-mc-prescale.txt')
         if '_table' in torun:
             x = x.replace('mca-3l-mc.txt','mca-3l-mc-table.txt')
@@ -200,10 +209,12 @@ if __name__ == '__main__':
         if '_appl' in torun: x = add(x,'-I ^TT ')
         if '_1fo' in torun: x = add(x,"-A alwaystrue 1FO 'LepGood1_isTight+LepGood2_isTight==1'")
         if '_leadmupt25' in torun: x = add(x,"-A 'entry point' leadmupt25 'abs(LepGood1_pdgId)==13 && LepGood1_pt>25'")
+        if '_norm' in torun:
+            x = add(x,"--sp '.*' --scaleSigToData")
         x = add(x,"-I same-sign -X ^4j -X ^2b1B -E ^2j -E ^em ")
         if '_highMetNoBCut' in torun: x = add(x,"-A 'entry point' highMET 'met_pt>60'")
         else: x = add(x,"-E ^1B ")
-        plots = ['2lep_.*','met','metLD','nVert','nJet25','nBJetMedium25','nBJetLoose25','nBJetLoose40','nBJetMedium40']
+        plots = ['2lep_.*','met','metLD','nVert','nJet25','nBJetMedium25','nBJetLoose25','nBJetLoose40','nBJetMedium40',"'kinMVA_input.*'"]
         runIt(x,'%s'%torun,plots)
 
     if 'cr_zjets' in torun:
