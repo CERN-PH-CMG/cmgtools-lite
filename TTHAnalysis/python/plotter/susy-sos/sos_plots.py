@@ -78,6 +78,7 @@ if __name__ == '__main__':
             x = add(x,"-E ^highMET -X ^triggerAll -E ^triggerMET -E ^SF -E ^pt5sublep -E ^MT") 
             if '_unblind' in torun:
                 x = add(x,"--noStackSig --showIndivSigs --showRatio --maxRatioRange -2 5") #--showMCError
+                #x = add(x,"--plotmode norm")
                 x = x.replace('-l 6.3','-l 6.3')
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt') #remove signal
                 x = x.replace('mcc-sf1.txt','mcc-sf-highmet.txt')
@@ -85,6 +86,7 @@ if __name__ == '__main__':
             x = add(x,"-E ^upperMET -E ^mm -E ^runRange -X ^triggerAll -E ^triggerDoubleMuMET -E ^pt5sublep -E ^MT")
             if '_unblind' in torun:
                 x = add(x,"--noStackSig --showIndivSigs --showRatio --maxRatioRange -2 5") #--showMCError
+                #x = add(x,"--plotmode norm")
                 x = x.replace('-l 6.3','-l 3.5')
                 x = x.replace('puw2016_vtx_4fb(nVert)', 'puw2016_vtx_postTS_1p4fb(nVert)' )
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt') #remove signal
@@ -93,6 +95,7 @@ if __name__ == '__main__':
             x = add(x,"-E ^highMET -X ^triggerAll -E ^triggerMET ") 
             if '_unblind' in torun:
                 x = add(x,"--noStackSig --showIndivSigs --showRatio --maxRatioRange -2 5") #--showMCError
+                #x = add(x,"--plotmode norm")
                 x = x.replace('-l 6.3','-l 6.3')
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt') #remove signal
                 x = x.replace('mcc-sf1.txt','mcc-sf-highmet.txt')
@@ -100,6 +103,7 @@ if __name__ == '__main__':
             x = add(x,"-E ^upperMET -E ^mm -E ^runRange -X ^triggerAll -E ^triggerDoubleMuMET -E ^pt5sublep ")
             if '_unblind' in torun:
                 x = add(x,"--noStackSig --showIndivSigs --showRatio --maxRatioRange -2 5") #--showMCError
+                #x = add(x,"--plotmode norm")
                 x = x.replace('-l 6.3','-l 3.5')
                 x = x.replace('puw2016_vtx_4fb(nVert)', 'puw2016_vtx_postTS_1p4fb(nVert)' )
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt') #remove signal
@@ -108,6 +112,7 @@ if __name__ == '__main__':
             x = add(x,"--n-minus-one")
             x = x.replace('-f','')
             x = add(x,"--noStackSig --showIndivSigShapes --xp TChiNeuWZ_95,T2ttDeg_300,T2ttDeg_315")
+            #x = add(x,"--plotmode norm")
         runIt(x,'%s/all'%torun,[],['SR_bins_EWKino','SR_bins_stop'])
 
 
