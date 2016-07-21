@@ -504,8 +504,10 @@ def getSquaredSum(histList):
 def getHistWithError(hCentral, hSyst, new = True):
     if new:
         histWithError = hCentral.Clone(hCentral.GetName() + "wErr")
-        histWithError.SetFillColor(kBlue)
-        histWithError.SetFillStyle(3002)
+        #histWithError.SetFillColor(kBlue)
+        #histWithError.SetFillStyle(3002)
+        histWithError.SetFillColorAlpha(kBlue,0.2)
+        histWithError.SetFillStyle(1001)
     else:
         histWithError = hCentral
 
