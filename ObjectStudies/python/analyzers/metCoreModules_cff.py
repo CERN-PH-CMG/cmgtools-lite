@@ -152,7 +152,13 @@ lepAna = cfg.Analyzer(
     rhoElectron = 'fixedGridRhoFastjetCentralNeutral',
     # energy scale corrections and ghost muon suppression (off by default)
     doMuonScaleCorrections=False,
-    doElectronScaleCorrections=False, # "embedded" in 5.18 for regression
+#    doElectronScaleCorrections=False,
+    doElectronScaleCorrections = {
+        'data' : 'EgammaAnalysis/ElectronTools/data/ScalesSmearings/80X_Golden22June_approval',
+        'GBRForest': ('$CMSSW_BASE/src/CMGTools/RootTools/data/egamma_epComb_GBRForest_76X.root',
+                      'gedelectron_p4combination_25ns'),
+        'isSync': False
+        },
     doSegmentBasedMuonCleaning=False,
     # inclusive very loose muon selection
     inclusive_muon_id  = "POG_ID_Loose",
@@ -217,11 +223,11 @@ ttHLepSkim = cfg.Analyzer(
 photonAna = cfg.Analyzer(
     PhotonAnalyzer, name='photonAnalyzer',
     photons='slimmedPhotons',
-    doPhotonScaleCorrections=False,
-#    doPhotonScaleCorrections = {
-#        'data' : 'EgammaAnalysis/ElectronTools/data/76X_16DecRereco_2015',
-#        'isSync': False
-#        },
+#    doPhotonScaleCorrections=False,
+    doPhotonScaleCorrections = {
+        'data' : 'EgammaAnalysis/ElectronTools/data/ScalesSmearings/80X_Golden22June_approval',
+        'isSync': False
+        },
     ptMin = 30,
     etaMax = 2.5,
     gammaID = "POG_SPRING15_25ns_Tight",
@@ -437,18 +443,22 @@ jetPuppiAna = cfg.Analyzer(
 
 ## Jets Analyzer (generic)
 jetPuppiAnaScaleUp = jetPuppiAna.clone(name='jetAnalyzerPuppiScaleUp',
+    copyJetsByValue = True,
     jetCol = 'slimmedJetsPuppi',
     shiftJEC = +1, # set to +1 or -1 to apply +/-1 sigma shift to the nominal jet energies
     collectionPostFix = "Puppi_jecUp",
     calculateType1METCorrection  = True,
+    cleanSelectedLeptons = False
    )
 
 ## Jets Analyzer (generic)
 jetPuppiAnaScaleDown = jetPuppiAna.clone(name='jetAnalyzerPuppiScaleDown',
+    copyJetsByValue = True,
     jetCol = 'slimmedJetsPuppi',
     shiftJEC = -1, # set to +1 or -1 to apply +/-1 sigma shift to the nominal jet energies
     collectionPostFix = "Puppi_jecDown",
     calculateType1METCorrection  = True,
+    cleanSelectedLeptons = False
     )
 
 
