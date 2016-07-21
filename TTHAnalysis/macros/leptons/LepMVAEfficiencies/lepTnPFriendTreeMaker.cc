@@ -74,6 +74,12 @@ public :
    Int_t           LepGood_tightCharge[4];   //[nLepGood]
    Int_t           LepGood_mcMatchId[4];   //[nLepGood]
    Int_t           LepGood_mediumMuonId[4];   //[nLepGood]
+   Float_t         LepGood_innerTrackValidHitFraction[4];   //[nLepGood]
+   Float_t         LepGood_segmentCompatibility[4];   //[nLepGood]
+   Float_t         LepGood_globalTrackChi2[4];   //[nLepGood]
+   Float_t         LepGood_chi2LocalPosition[4];   //[nLepGood]
+   Float_t         LepGood_trkKink[4];   //[nLepGood]
+   Int_t           LepGood_isGlobalMuon[4];   //[nLepGood]
    Int_t           LepGood_pdgId[4];   //[nLepGood]
    Float_t         LepGood_pt[4];   //[nLepGood]
    Float_t         LepGood_eta[4];   //[nLepGood]
@@ -135,6 +141,12 @@ public :
    TBranch *b_LepGood_tightCharge;
    TBranch *b_LepGood_mcMatchId;
    TBranch *b_LepGood_mediumMuonId;
+   TBranch *b_LepGood_innerTrackValidHitFraction;
+   TBranch *b_LepGood_segmentCompatibility;
+   TBranch *b_LepGood_globalTrackChi2;
+   TBranch *b_LepGood_chi2LocalPosition;
+   TBranch *b_LepGood_trkKink;
+   TBranch *b_LepGood_isGlobalMuon;
    TBranch *b_LepGood_pdgId;
    TBranch *b_LepGood_pt;
    TBranch *b_LepGood_eta;
@@ -172,6 +184,7 @@ public :
    virtual bool     PassTightLepton(int);
    virtual bool     PassConvRejection(int);
    virtual bool     PassTightCharge(int);
+   virtual bool     PassICHEPMediumMuonID(int);
    virtual float    ConePt(int);
 
    virtual bool     _ttH_idEmu_cuts_E2(int);
@@ -195,6 +208,7 @@ public :
    Int_t   fT_pair_probeMultiplicity;
    Int_t   fT_nVert;
    Int_t   fT_run;
+   Int_t   fT_isdata;
 
    Float_t fT_pt;
    Float_t fT_phi;
@@ -221,6 +235,7 @@ public :
    Int_t   fT_lostHits;
    Int_t   fT_tightCharge;
    Int_t   fT_mediumMuonId;
+   Int_t   fT_ICHEPmediumMuonId;
    Float_t fT_mvaIdPhys14;
    Float_t fT_mvaIdSpring15;
    Int_t   fT_mcMatchId;
@@ -334,6 +349,12 @@ void lepTnPFriendTreeMaker::Init(TTree *tree){
    fChain->SetBranchStatus("LepGood_tightCharge"    , 1);
    fChain->SetBranchStatus("LepGood_mcMatchId"      , 1);
    fChain->SetBranchStatus("LepGood_mediumMuonId"   , 1);
+   fChain->SetBranchStatus("LepGood_innerTrackValidHitFraction" , 1);
+   fChain->SetBranchStatus("LepGood_segmentCompatibility"       , 1);
+   fChain->SetBranchStatus("LepGood_globalTrackChi2"            , 1);
+   fChain->SetBranchStatus("LepGood_chi2LocalPosition"          , 1);
+   fChain->SetBranchStatus("LepGood_trkKink"                    , 1);
+   fChain->SetBranchStatus("LepGood_isGlobalMuon"   , 1);
    fChain->SetBranchStatus("LepGood_pdgId"          , 1);
    fChain->SetBranchStatus("LepGood_pt"             , 1);
    fChain->SetBranchStatus("LepGood_eta"            , 1);
@@ -392,6 +413,12 @@ void lepTnPFriendTreeMaker::Init(TTree *tree){
    fChain->SetBranchAddress("LepGood_tightCharge"    , LepGood_tightCharge    , &b_LepGood_tightCharge);
    fChain->SetBranchAddress("LepGood_mcMatchId"      , LepGood_mcMatchId      , &b_LepGood_mcMatchId);
    fChain->SetBranchAddress("LepGood_mediumMuonId"   , LepGood_mediumMuonId   , &b_LepGood_mediumMuonId);
+   fChain->SetBranchAddress("LepGood_innerTrackValidHitFraction" , LepGood_innerTrackValidHitFraction , &b_LepGood_innerTrackValidHitFraction);
+   fChain->SetBranchAddress("LepGood_segmentCompatibility"       , LepGood_segmentCompatibility       , &b_LepGood_segmentCompatibility);
+   fChain->SetBranchAddress("LepGood_globalTrackChi2"            , LepGood_globalTrackChi2            , &b_LepGood_globalTrackChi2);
+   fChain->SetBranchAddress("LepGood_chi2LocalPosition"          , LepGood_chi2LocalPosition          , &b_LepGood_chi2LocalPosition);
+   fChain->SetBranchAddress("LepGood_trkKink"                    , LepGood_trkKink                    , &b_LepGood_trkKink);
+   fChain->SetBranchAddress("LepGood_isGlobalMuon"               , LepGood_isGlobalMuon               , &b_LepGood_isGlobalMuon);
    fChain->SetBranchAddress("LepGood_pdgId"          , LepGood_pdgId          , &b_LepGood_pdgId);
    fChain->SetBranchAddress("LepGood_pt"             , LepGood_pt             , &b_LepGood_pt);
    fChain->SetBranchAddress("LepGood_eta"            , LepGood_eta            , &b_LepGood_eta);
@@ -432,6 +459,7 @@ void lepTnPFriendTreeMaker::Begin(TFile *file){
    fTnPTree->Branch("pair_probeMultiplicity" ,&fT_pair_probeMultiplicity ,"pair_probeMultiplicity/I");
    fTnPTree->Branch("nVert"                  ,&fT_nVert                  ,"nVert/I");
    fTnPTree->Branch("run"                    ,&fT_run                    ,"run/I");
+   fTnPTree->Branch("isdata"                 ,&fT_isdata                 ,"isdata/I");
 
    fTnPTree->Branch("pt"            ,&fT_pt            ,"pt/F");
    fTnPTree->Branch("abseta"        ,&fT_abseta        ,"abseta/F");
@@ -458,6 +486,7 @@ void lepTnPFriendTreeMaker::Begin(TFile *file){
    fTnPTree->Branch("lostHits"      ,&fT_lostHits      ,"lostHits/I");
    fTnPTree->Branch("tightCharge"   ,&fT_tightCharge   ,"tightCharge/I");
    fTnPTree->Branch("mediumMuonId"  ,&fT_mediumMuonId  ,"mediumMuonId/I");
+   fTnPTree->Branch("ICHEPmediumMuonId"  ,&fT_ICHEPmediumMuonId  ,"ICHEPmediumMuonId/I");
    fTnPTree->Branch("mvaIdPhys14"   ,&fT_mvaIdPhys14   ,"mvaIdPhys14/F");
    fTnPTree->Branch("mvaIdSpring15" ,&fT_mvaIdSpring15 ,"mvaIdSpring15/F");
    fTnPTree->Branch("mcMatchId"     ,&fT_mcMatchId     ,"mcMatchId/I");
@@ -489,6 +518,7 @@ void lepTnPFriendTreeMaker::ResetTnPTree(){
    fT_passSingle             = -1;
    fT_passDouble             = -1;
    fT_run                    = run;
+   fT_isdata                 = fIsData;
    fT_nVert                  = nVert;
    fT_pair_probeMultiplicity = 0;
    fT_mass                   = -999.99;
@@ -518,6 +548,7 @@ void lepTnPFriendTreeMaker::ResetTnPTree(){
    fT_lostHits      = -999;
    fT_tightCharge   = -999;
    fT_mediumMuonId  = -999;
+   fT_ICHEPmediumMuonId  = -999;
    fT_mvaIdPhys14   = -999.99;
    fT_mvaIdSpring15 = -999.99;
    fT_idEmu         = -999.99;
@@ -635,6 +666,19 @@ bool lepTnPFriendTreeMaker::PassTightCharge(int i){
    return false;
 }
 
+bool lepTnPFriendTreeMaker::PassICHEPMediumMuonID(int i){
+   if( abs(LepGood_pdgId[i]) != 13 ) return true;
+   if( LepGood_innerTrackValidHitFraction[i] <= 0.49 ) return false;
+
+   float segcomp_cut = 0.451;
+   if( LepGood_isGlobalMuon[i] && LepGood_globalTrackChi2[i] < 3
+                               && LepGood_chi2LocalPosition[i] < 12
+                               && LepGood_trkKink[i] < 20) segcomp_cut = 0.303;
+
+   if( LepGood_segmentCompatibility[i] > segcomp_cut) return true;
+   return false;
+}
+
 bool lepTnPFriendTreeMaker::PassTightLepton(int i){
    if( !PassLooseLepton(i) ) return false;
    if( LepGood_mvaTTH[i] < 0.75 ) return false;
@@ -648,11 +692,8 @@ bool lepTnPFriendTreeMaker::PassTightLepton(int i){
       return true;
    }
 
-   // Tight muons
-   if (abs(LepGood_pdgId[i]) == 13){
-      if(!(LepGood_mediumMuonId[i]>0)) return false;
-      return true;
-   }
+   // Tight Muons
+   if( !PassICHEPMediumMuonID(i) ) return false;
    return false;
 }
 
@@ -782,6 +823,7 @@ void lepTnPFriendTreeMaker::Loop(){
                fT_lostHits      = LepGood_lostHits[lep2];
                fT_tightCharge   = LepGood_tightCharge[lep2];
                fT_mediumMuonId  = LepGood_mediumMuonId[lep2];
+               fT_ICHEPmediumMuonId = PassICHEPMediumMuonID(lep2);
                fT_mvaIdSpring15 = LepGood_mvaIdSpring15[lep2];
                fT_idEmu         = _ttH_idEmu_cuts_E2(lep2);
                if( !fIsData ) fT_mcMatchId = LepGood_mcMatchId[lep2];
