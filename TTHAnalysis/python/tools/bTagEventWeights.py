@@ -57,6 +57,8 @@ class BTagEventWeightFriend:
             _ijets_list = getattr(event, "iJSel_%s%s" % (self.recllabel, jec_syst))
             return [(jets[ij] if ij>=0 else jets_disc[-ij-1]) for ij in _ijets_list]
         except AttributeError:
+            if not hasattr(self,'_debugprinted'): print 'Recleaned jets not found, falling back to default cleaned collection'
+            self._debugprinted = True
             return jets
 
     def __call__(self, event):
