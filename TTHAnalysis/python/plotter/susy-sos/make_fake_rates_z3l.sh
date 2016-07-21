@@ -11,8 +11,8 @@ BG=" -j 6 "; if [[ "$1" == "-b" ]]; then BG=" & "; shift; fi
 
 lepton=$1; if [[ "$1" == "" ]]; then exit 1; fi
 case $lepton in
-mu) BCORE="${BCORE} -E ${lepton} "; ;;
-el) BCORE="${BCORE} -E ${lepton} "; ;;
+mu) BCORE="${BCORE} -E ^${lepton} "; ;;
+el) BCORE="${BCORE} -E ^${lepton} "; ;;
 esac;
 
 what=$2; shift; shift;

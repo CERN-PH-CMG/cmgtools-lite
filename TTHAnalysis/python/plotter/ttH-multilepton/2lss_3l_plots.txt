@@ -97,7 +97,7 @@ kinMVA_input_LepGood2_conePt: if3(nLepFO>2,LepGood3_conePt,-99) : 40,0,50; XTitl
 kinMVA_input_MT_met_lep1: MT_met_lep1 : 40,0,400; XTitle="M_{T} (E_{T}^{miss}\,lep1) [GeV]"
 kinMVA_input_mhtJet25: mhtJet25_Recl : 40,0,400; XTitle="MHT [GeV]"
 kinMVA_input_met: min(met_pt, 400) : 40,0,400; XTitle="E_{T}^{miss} [GeV]"
-kinMVA_input_avg_dr_jet: avg_dr_jet : 40,0.5,4; XTitle="<#DeltaR(lep\,jet)>"
+kinMVA_input_avg_dr_jet: avg_dr_jet : 40,0.5,4; XTitle="<#DeltaR(jet\,jet)>"
 #kinMVA_input_BDTv8_eventReco_mvaValue : BDTv8_eventReco_mvaValue : 80,-0.4,1; XTitle="BDTv8 mvaValue", Legend="TL"
 #kinMVA_input_BDTv8_eventReco_bJet_fromHadTop_CSV : BDTv8_eventReco_bJet_fromHadTop_CSV : 80,-0.4,1; XTitle="BDTv8 bJet_fromHadTop_CSV", Legend="TL"
 #kinMVA_input_BDTv8_eventReco_HadTop_pT : BDTv8_eventReco_HadTop_pT : 80,0,400; XTitle="BDTv8 top p_{T} [GeV]", Legend="TR"
