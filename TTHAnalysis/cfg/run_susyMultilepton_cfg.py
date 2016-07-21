@@ -349,7 +349,7 @@ if runSMS:
     susyCoreSequence.remove(triggerFlagsAna)
     susyCoreSequence.remove(triggerAna)
     susyCoreSequence.remove(eventFlagsAna)
-    ttHLepSkim.requireSameSignPair = True
+    ttHLepSkim.requireSameSignPair = False
 
 #from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv1 import *
 from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv2 import *

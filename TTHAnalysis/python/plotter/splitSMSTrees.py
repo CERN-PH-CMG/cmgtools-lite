@@ -11,6 +11,7 @@ if __name__ == "__main__":
     parser.add_option("-q", dest="queue", default=None, help="Queue to send jobs (one per dataset/chunk)")
     parser.add_option("-D", "--drop",  dest="drop", type="string", default=[], action="append",  help="Branches to drop, as per TTree::SetBranchStatus") 
     parser.add_option("-K", "--keep",  dest="keep", type="string", default=[], action="append",  help="Branches to keep, as per TTree::SetBranchStatus") 
+    parser.add_option("--mass",  dest="mass", type="int", default=0, help="Mass of the first particle in the scan, only for these mass points the trees will be produced") 
 
     (options, args) = parser.parse_args()
 
@@ -58,6 +59,7 @@ if __name__ == "__main__":
         for nev in xrange(t.GetEntries()):
             if nev%100000==0: print 'Scanning event %d'%nev
             t.GetEntry(nev)
+            if options.mass > 0 and t.GenSusyMScan1 != options.mass: continue
             m = (t.GenSusyMScan1,t.GenSusyMScan2)
             if m not in allmasses:
                 mname = '%s_%s'%(m[0],m[1])
