@@ -115,10 +115,10 @@ def returnJERSmearedPt(jetpt,aeta,genpt,smearJER):
 #btag_MediumWP = 0.814
 #btag_TightWP = 0.941
 
-## CSV v2 (CSV-IVF) (Spring15 50ns)
-btag_LooseWP = 0.605 #old
-btag_MediumWP = 0.80 #updated to Spring16
-btag_TightWP = 0.990 #old
+## CSV v2 (CSV-IVF) (Spring16)
+btag_LooseWP = 0.460
+btag_MediumWP = 0.800
+btag_TightWP = 0.935
 
 ###########
 # MUONS
