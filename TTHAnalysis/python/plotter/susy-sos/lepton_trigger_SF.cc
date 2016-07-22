@@ -69,7 +69,7 @@ float _get_recoToLoose_leptonSF_SOS(int pdgid, float _pt, float eta, float var){
   }
 
   if (!_histo_recoToLoose_leptonSF_mu_sos_all_highpt) {
-    _file_recoToLoose_leptonSF_mu_sos_all_highpt = new TFile("../../data/sos_lepton_SF/MuonID_Z_2016runB_2p6fb.root","read");
+    _file_recoToLoose_leptonSF_mu_sos_all_highpt = new TFile("../../data/sos_lepton_SF/MuonID_Z_RunBCD_prompt80X_7p65.root","read");
     _histo_recoToLoose_leptonSF_mu_sos_all_highpt = ( TH1F*)(_file_recoToLoose_leptonSF_mu_sos_all_highpt->Get("MC_NUM_LooseID_DEN_genTracks_PAR_pt_alleta_bin1/pt_ratio"));
   }
  
@@ -124,20 +124,20 @@ float _get_looseToTight_leptonSF_SOS(int pdgid, float _pt, float eta, float var)
   //if (var!=0) assert(0); // NOT IMPLEMENTED
   
   if (!_histo_looseToTight_leptonSF_mu_sos_barrel) {
-    _file_looseToTight_leptonSF_mu_sos_barrel = new TFile("../../data/sos_lepton_SF/mu_SOS_barrel_7invfb.root","read");
+    _file_looseToTight_leptonSF_mu_sos_barrel = new TFile("../../data/sos_lepton_SF/mu_SOS_barrel_12invfb.root","read");
     _histo_looseToTight_leptonSF_mu_sos_barrel = (TGraphAsymmErrors*)(_file_looseToTight_leptonSF_mu_sos_barrel->Get("ratio"));
   }
   if (!_histo_looseToTight_leptonSF_mu_sos_endcap) {
-    _file_looseToTight_leptonSF_mu_sos_endcap = new TFile("../../data/sos_lepton_SF/mu_SOS_endcap_7invfb.root","read");
+    _file_looseToTight_leptonSF_mu_sos_endcap = new TFile("../../data/sos_lepton_SF/mu_SOS_endcap_12invfb.root","read");
     _histo_looseToTight_leptonSF_mu_sos_endcap = (TGraphAsymmErrors*)(_file_looseToTight_leptonSF_mu_sos_endcap->Get("ratio"));
   }
   
   if (!_histo_looseToTight_leptonSF_el_sos_barrel) {
-    _file_looseToTight_leptonSF_el_sos_barrel = new TFile("../../data/sos_lepton_SF/el_SOS_barrel_6invfb.root","read");
+    _file_looseToTight_leptonSF_el_sos_barrel = new TFile("../../data/sos_lepton_SF/el_SOS_barrel_12invfb.root","read");
     _histo_looseToTight_leptonSF_el_sos_barrel = (TGraphAsymmErrors*)(_file_looseToTight_leptonSF_el_sos_barrel->Get("ratio"));
   }
   if (!_histo_looseToTight_leptonSF_el_sos_endcap) {
-    _file_looseToTight_leptonSF_el_sos_endcap = new TFile("../../data/sos_lepton_SF/el_SOS_endcap_6invfb.root","read");
+    _file_looseToTight_leptonSF_el_sos_endcap = new TFile("../../data/sos_lepton_SF/el_SOS_endcap_12invfb.root","read");
     _histo_looseToTight_leptonSF_el_sos_endcap = (TGraphAsymmErrors*)(_file_looseToTight_leptonSF_el_sos_endcap->Get("ratio"));
   }
 
@@ -189,34 +189,34 @@ float _get_tracking_SF(int pdgid, float pt, float eta, float var){
    //---pT>10 GeV-------
    
    if(eta>-2.4 && eta<=-2.1 ){
-     return 0.988;
+     return 0.9824;
    } 
    else if(eta>-2.1 && eta<=-1.60 ){
-     return 0.994;
+     return 0.9917;
    } 
    else if(eta>-1.60 && eta<=-1.10 ){
-     return 0.997;
+     return 0.9959;
    } 
    else if(eta>-1.10 && eta<=-0.6 ){
-     return 0.995;
+     return 0.9934;
    } 
    else if(eta>-0.6 && eta<=0.0 ){
-     return 0.994;
+     return 0.9915;
    } 
    else if(eta>0.0 && eta<=0.60 ){
-     return 0.996;
+     return 0.9947;
    } 
    else if(eta>0.60 && eta<=1.10 ){
-     return 0.998;
+     return 0.9967;
    } 
    else if(eta>1.10 && eta<=1.60 ){
-     return 0.996;
+     return 0.9949;
    } 
    else if(eta>1.60 && eta<=2.10 ){
-     return 0.993;
+     return 0.9912;
    } 
    else if(eta>2.10 && eta<=2.4 ){
-     return 0.982;
+     return 0.9768;
    } 
    else{
      return 1.0;
@@ -229,34 +229,34 @@ float _get_tracking_SF(int pdgid, float pt, float eta, float var){
 
    //-----------------
    if(eta>-2.4 && eta<=-2.1 ){
-     return 0.964;
+     return 0.9544;
    } 
    else if(eta>-2.1 && eta<=-1.60 ){
-     return 0.978;
+     return 0.9714;
    } 
    else if(eta>-1.60 && eta<=-1.10 ){
-     return 0.976;
+     return 0.9691;
    } 
    else if(eta>-1.10 && eta<=-0.6 ){
-     return 0.970;
+     return 0.9622;
    } 
    else if(eta>-0.6 && eta<=0.0 ){
-     return 0.967;
+     return 0.9586;
    } 
    else if(eta>0.0 && eta<=0.60 ){
-     return 0.976;
+     return 0.9703;
    } 
    else if(eta>0.60 && eta<=1.10 ){
-     return 0.981;
+     return 0.9764;
    } 
    else if(eta>1.10 && eta<=1.60 ){
-     return 0.980;
+     return 0.9729;
    } 
    else if(eta>1.60 && eta<=2.10 ){
-     return 0.978;
+     return 0.9711;
    } 
    else if(eta>2.10 && eta<=2.4 ){
-     return 0.953;
+     return 0.9412;
    } 
    else{
      return 1.0; 
@@ -290,8 +290,8 @@ float triggerSF_SOS(float _met, float _met_corr, float var=0){
   if (_met>200.0 && _met_corr>200.0)return 1.0; 
 
   if (!_file_triggerSF) {
-    _file_triggerSF  = new TFile("../../data/sos_lepton_SF/trigger_eff_7invfb.root","read");
-    _histo_triggerSF = (TH2F*)(_file_triggerSF->Get("HLT_DoubleMu3_PFMET50_turnon2d"));
+    _file_triggerSF  = new TFile("../../data/sos_lepton_SF/trigger_eff_12invfb.root","read");
+    _histo_triggerSF = (TH2F*)(_file_triggerSF->Get("hnummet"));
   }
  
   float muon_leg_eff=0.95*0.95*0.93; // Mu3 leg * Mu3 leg * DZ
