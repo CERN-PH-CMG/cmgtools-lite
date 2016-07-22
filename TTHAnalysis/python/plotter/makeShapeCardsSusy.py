@@ -75,9 +75,7 @@ if options.infile!=None:
         n = p if options.infilepfx==None else options.infilepfx+"_"+p
         h = infile.Get(n)
         if h: report[p] = h
-        elif not p in options.ignore: todo.append(p)
-    print report.keys()
-    print todo
+        else: todo.append(p)
     for p in todo:
         report.update(mca.getPlotsRaw("x", args[2], args[3], cuts.allCuts(), nodata=options.asimov, process=p))
 ## no infile given, process all histos

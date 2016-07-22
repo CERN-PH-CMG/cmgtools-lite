@@ -16,7 +16,8 @@ TH2 * FR3_el = 0;
 TH2 * FR4_el = 0;
 TH2 * FR5_el = 0;
 TH2 * QF_el = 0;
-TH2 * FRi_mu[6], *FRi_el[6];
+TH2 * FRi_mu[6], *FRi_el[6], *FRi_tau[6];
+TH2 * FR_tau = 0;
 
 TH2 * FR_mu_FO1_QCD    = 0;
 TH2 * FR_mu_FO1_insitu = 0;
@@ -46,7 +47,8 @@ TH2 * FRi_fHT_FO_el[2];
 
 bool loadFRHisto(const std::string &histoName, const char *file, const char *name) {
     TH2 **histo = 0, **hptr2 = 0;
-    if      (histoName == "FR_mu")  { histo = & FR_mu;  hptr2 = & FRi_mu[0]; }
+    if      (histoName == "FR_tau") { histo = & FR_tau; hptr2 = & FRi_tau[0]; }
+    else if (histoName == "FR_mu")  { histo = & FR_mu;  hptr2 = & FRi_mu[0]; }
     else if (histoName == "FR_el")  { histo = & FR_el;  hptr2 = & FRi_el[0]; }
     else if (histoName == "FR2_mu") { histo = & FR2_mu; hptr2 = & FRi_mu[2]; }
     else if (histoName == "FR2_el") { histo = & FR2_el; hptr2 = & FRi_el[2]; }
@@ -1012,12 +1014,10 @@ float ttHl_ptFO_ab(int LepGood_pdgId, float LepGood_pt, float LepGood_jetPtRatio
     return std::max(LepGood_pt, a*(LepGood_pt/LepGood_jetPtRatio - b));
 }
 
-
-void fakeRate() {}
-
-
 float EWK3L_fakeRate(float pt, float eta, int pdgId) {
-    TH2 *hist = (abs(pdgId) == 11 ? FR_el : FR_mu);
+    TH2 *hist = FR_el;
+    if(abs(pdgId)==13) hist=FR_mu;
+    if(abs(pdgId)==15) hist=FR_tau;
     int ptbin  = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(pt)));
     int etabin = std::max(1, std::min(hist->GetNbinsY(), hist->GetYaxis()->FindBin(abs(eta))));
     double fr = hist->GetBinContent(ptbin,etabin);
@@ -1048,4 +1048,6 @@ float EWK3L_fakeTransfer(unsigned int nLep, float l1fr    , int l1isFake,
 
     return 0;
 }
+
+void fakeRate() {}
 

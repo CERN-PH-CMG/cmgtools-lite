@@ -323,6 +323,7 @@ triggerFlagsAna.triggerBits = {
     'DoubleElMu' : triggers_2e1mu,
     'SingleMu' : triggers_1mu_iso,
     'SingleEl'     : triggers_1e,
+    'LepTauTau' : triggers_leptautau,
     'MET' : triggers_metNoMu90_mhtNoMu90,
     'SOSDoubleMuLowMET' : triggers_SOS_doublemulowMET,
     #'MonoJet80MET90' : triggers_Jet80MET90,

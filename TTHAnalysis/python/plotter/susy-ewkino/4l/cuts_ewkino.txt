@@ -1,7 +1,10 @@
 alwaystrue: 1
-4l        : is4l
-inSR      : SR > 0
-haspair   : isTight || isFake
-trigger   : Triggers_ee || Triggers_mm || Triggers_em
+blinding  : !isData || run <= 274240
+filters   : !isData || METfilters
+trigger   : !isData || Triggers_2l
+3l        : nLepSel >= 4
+sanity    : is_4l
+SRevent   : allTight(4, LepSel_isTight[0], LepSel_isTight[1], LepSel_isTight[2], LepSel_isTight[3]) 
+event     : BR >= 7
 bJetVeto  : nBJetMedium25 == 0
-met       : met_pt > 50
+met       : met_pt > 0
