@@ -1,0 +1,52 @@
+######
+# here the list of BKG
+QCD : QCDdone/QCD_HT200to300 : xsec ; FakeRate="../../../ObjectStudies/cfg/plotDiJet/filter.txt", Label="QCD", FillColor=ROOT.kAzure
+QCD : QCDdone/QCD_HT300to500 : xsec ; FakeRate="../../../ObjectStudies/cfg/plotDiJet/filter.txt", Label="QCD", FillColor=ROOT.kAzure
+QCD : QCDdone/QCD_HT500to700 : xsec ; FakeRate="../../../ObjectStudies/cfg/plotDiJet/filter.txt", Label="QCD", FillColor=ROOT.kAzure
+QCD : QCDmergedV2/QCD_HT700to1000 : xsec ; FakeRate="../../../ObjectStudies/cfg/plotDiJet/filter16.txt", Label="QCD", FillColor=ROOT.kAzure
+QCD : QCDmergedV2/QCD_HT1000to1500 : xsec ; FakeRate="../../../ObjectStudies/cfg/plotDiJet/filter16.txt", Label="QCD", FillColor=ROOT.kAzure
+QCD : QCDmergedV2/QCD_HT1500to2000 : xsec ; FakeRate="../../../ObjectStudies/cfg/plotDiJet/filter16.txt", Label="QCD", FillColor=ROOT.kAzure
+QCD : QCDmergedV2/QCD_HT2000toInf : xsec ; FakeRate="../../../ObjectStudies/cfg/plotDiJet/filter16.txt", Label="QCD", FillColor=ROOT.kAzure  
+
+Zinv : Zinv/ZJetsToNuNu_HT100to200_ext : xsec ; FakeRate="../../../ObjectStudies/cfg/plotDiJet/filter.txt", Label="Zinv", FillColor=ROOT.kYellow
+Zinv : Zinv/ZJetsToNuNu_HT200to400_ext : xsec ; FakeRate="../../../ObjectStudies/cfg/plotDiJet/filter.txt", Label="Zinv", FillColor=ROOT.kYellow
+### missing Zinv HT400to600
+Zinv : Zinv/ZJetsToNuNu_HT600to800   : xsec ; FakeRate="../../../ObjectStudies/cfg/plotDiJet/filter.txt", Label="Zinv", FillColor=ROOT.kYellow
+Zinv : Zinv/ZJetsToNuNu_HT800t1200   : xsec ; FakeRate="../../../ObjectStudies/cfg/plotDiJet/filter.txt", Label="Zinv", FillColor=ROOT.kYellow
+Zinv : Zinv/ZJetsToNuNu_HT1200to2500 : xsec ; FakeRate="../../../ObjectStudies/cfg/plotDiJet/filter.txt", Label="Zinv", FillColor=ROOT.kYellow
+Zinv : Zinv/ZJetsToNuNu_HT2500toInf  : xsec ; FakeRate="../../../ObjectStudies/cfg/plotDiJet/filter.txt", Label="Zinv", FillColor=ROOT.kYellow
+
+Wjets : Wjets/WJetsToLNu_HT100to200_ext  : xsec ; FakeRate="../../../ObjectStudies/cfg/plotDiJet/filter.txt", Label="Wjets", FillColor=ROOT.kGreen
+Wjets : Wjets/WJetsToLNu_HT200to400      : xsec ; FakeRate="../../../ObjectStudies/cfg/plotDiJet/filter.txt", Label="Wjets", FillColor=ROOT.kGreen
+Wjets : Wjets/WJetsToLNu_HT400to600      : xsec ; FakeRate="../../../ObjectStudies/cfg/plotDiJet/filter.txt", Label="Wjets", FillColor=ROOT.kGreen
+Wjets : Wjets/WJetsToLNu_HT600to800      : xsec ; FakeRate="../../../ObjectStudies/cfg/plotDiJet/filter.txt", Label="Wjets", FillColor=ROOT.kGreen
+Wjets : Wjets/WJetsToLNu_HT800to1200     : xsec ; FakeRate="../../../ObjectStudies/cfg/plotDiJet/filter.txt", Label="Wjets", FillColor=ROOT.kGreen
+Wjets : Wjets/WJetsToLNu_HT1200to2500    : xsec ; FakeRate="../../../ObjectStudies/cfg/plotDiJet/filter.txt", Label="Wjets", FillColor=ROOT.kGreen
+Wjets : Wjets/WJetsToLNu_HT2500toInf     : xsec ; FakeRate="../../../ObjectStudies/cfg/plotDiJet/filter.txt", Label="Wjets", FillColor=ROOT.kGreen
+
+TTjets : TTbar/TTJets : xsec ; FakeRate="../../../ObjectStudies/cfg/plotDiJet/filter.txt", Label="TTbar", FillColor=ROOT.kRed
+
+Other : minorBKG/T_tWch      : xsec ; FakeRate="../../../ObjectStudies/cfg/plotDiJet/filter.txt", Label="Other", FillColor=ROOT.kOrange
+Other : minorBKG/TBar_tWch   : xsec ; FakeRate="../../../ObjectStudies/cfg/plotDiJet/filter.txt", Label="Other", FillColor=ROOT.kOrange
+Other : minorBKG/TTWToQQ     : xsec ; FakeRate="../../../ObjectStudies/cfg/plotDiJet/filter.txt", Label="Other", FillColor=ROOT.kOrange
+Other : minorBKG/TTWToLNu    : xsec ; FakeRate="../../../ObjectStudies/cfg/plotDiJet/filter.txt", Label="Other", FillColor=ROOT.kOrange
+Other : minorBKG/TTZToLLNuNu : xsec ; FakeRate="../../../ObjectStudies/cfg/plotDiJet/filter.txt", Label="Other", FillColor=ROOT.kOrange
+Other : minorBKG/TTZToQQ     : xsec ; FakeRate="../../../ObjectStudies/cfg/plotDiJet/filter.txt", Label="Other", FillColor=ROOT.kOrange
+
+Other : minorBKG/DYJetsToLL_M50_HT100to200_ext : xsec ; FakeRate="../../../ObjectStudies/cfg/plotDiJet/filter.txt", Label="Other", FillColor=ROOT.kOrange
+Other : minorBKG/DYJetsToLL_M50_HT200to400_ext : xsec ; FakeRate="../../../ObjectStudies/cfg/plotDiJet/filter.txt", Label="Other", FillColor=ROOT.kOrange
+Other : minorBKG/DYJetsToLL_M50_HT400to600_ext : xsec ; FakeRate="../../../ObjectStudies/cfg/plotDiJet/filter.txt", Label="Other", FillColor=ROOT.kOrange
+Other : minorBKG/DYJetsToLL_M50_HT600toInf_ext : xsec ; FakeRate="../../../ObjectStudies/cfg/plotDiJet/filter.txt", Label="Other", FillColor=ROOT.kOrange
+
+Other : minorBKG/WWW : xsec ; FakeRate="../../../ObjectStudies/cfg/plotDiJet/filter.txt", Label="Other", FillColor=ROOT.kOrange
+Other : minorBKG/WWZ : xsec ; FakeRate="../../../ObjectStudies/cfg/plotDiJet/filter.txt", Label="Other", FillColor=ROOT.kOrange
+Other : minorBKG/WZZ : xsec ; FakeRate="../../../ObjectStudies/cfg/plotDiJet/filter.txt", Label="Other", FillColor=ROOT.kOrange
+Other : minorBKG/ZZZ : xsec ; FakeRate="../../../ObjectStudies/cfg/plotDiJet/filter.txt", Label="Other", FillColor=ROOT.kOrange
+
+data: JetHT26/JetHT_Run2016B_PromptReco_v2 ; FakeRate="../../../ObjectStudies/cfg/plotDiJet/filter16.txt", Label="data(w/filter)"
+##data: mistagJEHT/JetHT_Run2016B_PromptReco_v2 ; FakeRate="../../../ObjectStudies/cfg/plotDiJet/prescaleFilter.txt", Label="data(w/filter)", FillColor=ROOT.kGreen+1, LineColor=ROOT.kGreen+1
+##data: DATAjune3/JetHT_Run2016B_PromptReco_v2 ; FakeRate="../../../ObjectStudies/cfg/plotDiJet/prescale.txt", Label="data(w/ prescale)" , FillColor=ROOT.kBlue, LineColor=ROOT.kBlue
+##data: DATAjune3/JetHT_Run2016B_PromptReco_v2 ; FakeRate="../../../ObjectStudies/cfg/plotDiJet/const.txt", Label="data(RAW)", FillColor=ROOT.kRed, LineColor=ROOT.kRed
+
+
+

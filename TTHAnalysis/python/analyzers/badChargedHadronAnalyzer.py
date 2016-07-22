@@ -46,7 +46,7 @@ class badChargedHadronAnalyzer( Analyzer ):
                             flagged = True
                             break
                 if flagged: break
-        event.badChargedHadron=flagged
+        event.badChargedHadron=(not flagged) 
         return True
 
 setattr(badChargedHadronAnalyzer,"defaultConfig", cfg.Analyzer(
