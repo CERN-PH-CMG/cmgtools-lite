@@ -1,10 +1,10 @@
 # ---- SUSY private signal:
-# TChiNeuWZ_80+: TChiNeuWZ_mCh100_mChi80 : xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ;FillColor=ROOT.kOrange+8,   Label="CNWZ(20)", FakeRate="susy-sos/mca-2los-noMuonsFilters.txt", NormSystematic=0.2
-# TChiNeuWZ_90+: TChiNeuWZ_mCh100_mChi90 : xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ;FillColor=ROOT.kRed+1,   Label="CNWZ(10)", FakeRate="susy-sos/mca-2los-noMuonsFilters.txt", NormSystematic=0.2
-# TChiNeuWZ_95+: TChiNeuWZ_mCh100_mChi95 : xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ;FillColor=ROOT.kOrange+6,   Label="CNWZ(5)", FakeRate="susy-sos/mca-2los-noMuonsFilters.txt", NormSystematic=0.2
-# T2ttDeg_330+: T2ttDeg_mStop350_mChi330_4bodydec_lepOnly : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ;FillColor=ROOT.kOrange,   Label="T2tt(20)", FakeRate="susy-sos/mca-2los-noMuonsFilters.txt", NormSystematic=0.2 
-# T2ttDeg_315+: T2ttDeg_mStop350_mChi315_4bodydec_lepOnly : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ;FillColor=ROOT.kRed-7,   Label="T2tt(35)", FakeRate="susy-sos/mca-2los-noMuonsFilters.txt", NormSystematic=0.2 
-# T2ttDeg_300+: T2ttDeg_mStop350_mChi300_4bodydec_lepOnly : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ;FillColor=ROOT.kRed-10,   Label="T2tt(50)", FakeRate="susy-sos/mca-2los-noMuonsFilters.txt", NormSystematic=0.2 
+#TChiNeuWZ_80+: TChiNeuWZ_mCh100_mChi80 : xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ;FillColor=ROOT.kOrange+8,   Label="CNWZ(20)", FakeRate="susy-sos/mca-2los-noMuonsFilters.txt", NormSystematic=0.2
+#TChiNeuWZ_90+: TChiNeuWZ_mCh100_mChi90 : xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ;FillColor=ROOT.kRed+1,   Label="CNWZ(10)", FakeRate="susy-sos/mca-2los-noMuonsFilters.txt", NormSystematic=0.2
+#TChiNeuWZ_95+: TChiNeuWZ_mCh100_mChi95 : xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ;FillColor=ROOT.kOrange+6,   Label="CNWZ(5)", FakeRate="susy-sos/mca-2los-noMuonsFilters.txt", NormSystematic=0.2
+#T2ttDeg_330+: T2ttDeg_mStop350_mChi330_4bodydec_lepOnly : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ;FillColor=ROOT.kOrange,   Label="T2tt(20)", FakeRate="susy-sos/mca-2los-noMuonsFilters.txt", NormSystematic=0.2 
+#T2ttDeg_315+: T2ttDeg_mStop350_mChi315_4bodydec_lepOnly : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ;FillColor=ROOT.kRed-7,   Label="T2tt(35)", FakeRate="susy-sos/mca-2los-noMuonsFilters.txt", NormSystematic=0.2 
+#T2ttDeg_300+: T2ttDeg_mStop350_mChi300_4bodydec_lepOnly : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ;FillColor=ROOT.kRed-10,   Label="T2tt(50)", FakeRate="susy-sos/mca-2los-noMuonsFilters.txt", NormSystematic=0.2 
 
 
 # ---- TTbar 
@@ -119,11 +119,12 @@ data: MET_Run2016C_PromptReco_v2_runs_273150_275783
 
 ### Systematics TTCR
 
-
-TT_Spin : TTJets_DiLepton : xsec : ScaleFactorTT*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0)*SpinCorWeight;FillColor=ROOT.kGray, Label="tt-SpinCor", Friends=[('sf/t'\,'{P}/SOS_13TeV_Friends/evVarFriend_{cname}.root')], SkipMe=True
+TT_Spin_Up : TTJets_DiLepton : xsec : ScaleFactorTT*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0)*SpinCorWeight;FillColor=ROOT.kGray, Label="tt-SpinCor", Friends=[('sf/t'\,'{P}/SOS_13TeV_Friends/evVarFriend_{cname}.root')], SkipMe=True
+TT_Spin_Dn : TTJets_DiLepton : xsec : ScaleFactorTT*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0)*(1.0/SpinCorWeight);FillColor=ROOT.kGray, Label="tt-SpinCor", Friends=[('sf/t'\,'{P}/SOS_13TeV_Friends/evVarFriend_{cname}.root')], SkipMe=True
 TT_Wpol_Up : TTJets_DiLepton : xsec : ScaleFactorTT*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0)*WpolWup; FillColor=ROOT.kRed-6, Label="tt-WpolUp", Friends=[('sf/t'\,'{P}/SOS_13TeV_Friends/evVarFriend_{cname}.root')], SkipMe=True
-TT_Wpol_Down : TTJets_DiLepton : xsec : ScaleFactorTT*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0)*WpolWdown; FillColor=ROOT.kOrange+1, Label="tt-WpolDown", Friends=[('sf/t'\,'{P}/SOS_13TeV_Friends/evVarFriend_{cname}.root')], SkipMe=True
-TT_TopPt : TTJets_DiLepton : xsec : ScaleFactorTT*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0)*TopPtWeight; FillColor=ROOT.kTeal+4, Label="tt-TopPt", Friends=[('sf/t'\,'{P}/SOS_13TeV_Friends/evVarFriend_{cname}.root')], SkipMe=True
+TT_Wpol_Dn : TTJets_DiLepton : xsec : ScaleFactorTT*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0)*WpolWdown; FillColor=ROOT.kOrange+1, Label="tt-WpolDown", Friends=[('sf/t'\,'{P}/SOS_13TeV_Friends/evVarFriend_{cname}.root')], SkipMe=True
+TT_TopPt_Up : TTJets_DiLepton : xsec : ScaleFactorTT*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0)*TopPtWeight; FillColor=ROOT.kTeal+4, Label="tt-TopPt", Friends=[('sf/t'\,'{P}/SOS_13TeV_Friends/evVarFriend_{cname}.root')], SkipMe=True
+TT_TopPt_Dn : TTJets_DiLepton : xsec : ScaleFactorTT*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0)*(1.0/TopPtWeight); FillColor=ROOT.kTeal+4, Label="tt-TopPt", Friends=[('sf/t'\,'{P}/SOS_13TeV_Friends/evVarFriend_{cname}.root')], SkipMe=True
 
 ### Systematics DYCR
 
@@ -209,6 +210,9 @@ VV_jec_Dn    : ZZTo4L: xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0  ;  
 TW_jec_Dn       : T_tWch :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0;Label="TW-jecDown", FillColor=ROOT.kBlue, FakeRate="susy-sos/fr-jecDn.txt", SkipMe=True 
 TW_jec_Dn       : TBar_tWch :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0;Label="TW-jecDown", FillColor=ROOT.kBlue, FakeRate="susy-sos/fr-jecDn.txt", SkipMe=True 
 
+## To be added: jec_Up and jec_Dn for the signal as well
+##TChiNeuWZ_80_jec_Up 
+##TChiNeuWZ_80_jec_Dn 
 
 ### Systematics BTagging
 
