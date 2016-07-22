@@ -290,8 +290,8 @@ float triggerSF_SOS(float _met, float _met_corr, float var=0){
   if (_met>200.0 && _met_corr>200.0)return 1.0; 
 
   if (!_file_triggerSF) {
-    _file_triggerSF  = new TFile("../../data/sos_lepton_SF/trigger_eff_7invfb.root","read");
-    _histo_triggerSF = (TH2F*)(_file_triggerSF->Get("HLT_DoubleMu3_PFMET50_turnon2d"));
+    _file_triggerSF  = new TFile("../../data/sos_lepton_SF/trigger_eff_12invfb.root","read");
+    _histo_triggerSF = (TH2F*)(_file_triggerSF->Get("hnummet"));
   }
  
   float muon_leg_eff=0.95*0.95*0.93; // Mu3 leg * Mu3 leg * DZ
