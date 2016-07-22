@@ -1,23 +1,23 @@
 import os
 
 # principal output dir (tags will be added)
-O    = "/afs/cern.ch/user/c/cheidegg/www/heppy/2016-06-22_ewk80X_limits"
+O    = "/afs/cern.ch/user/c/cheidegg/www/heppy/2016-06-26_ewk80X_limits_test"
 
 # tree input dir
 T    = "/mnt/t3nfs01/data01/shome/cheidegg/o/2016-06-09_ewktrees80X_2LL_mix/"
-jlr  = "leptonJetReCleanerSusyEWK"
-lch  = "leptonBuilderEWKgood"
+jlr  = "leptonJetReCleanerSusyEWK3L"
+lch  = "leptonBuilderEWK"
 sys  = "systs_dummy.txt"
 flags = "--asimov"
 
 # lumi in /fb
-lumi = 7
+lumi = 4
 
 # model
 model = [
          "TChiNeu_WZ",
-         "TChiNeu_WH", 
          "TChiNeu_SlepSneu_FD", 
+         #"TChiNeu_WH", 
          #"TChiNeu_SlepSneu_TE", 
          #"TChiNeu_SlepSneu_TD", 
          #"TNeuNeu_ZZ", 
@@ -48,11 +48,12 @@ def getBinning(categs):
 	return str(nb) + ",0.5,"+str(nb)+".5"	
 
 def getCategs(model):
+	return ["B"]
 	if model == "TChiNeu_WZ"         : return ["A"]
 	if model == "TChiNeu_WH"         : return ["A"]
 	if model == "TChiNeu_SlepSneu_FD": return ["A"]
 	if model == "TChiNeu_SlepSneu_TE": return ["C"]
-	if model == "TChiNeu_SlepSneu_TD": return ["C", "D", "E", "F"]
+	if model == "TChiNeu_SlepSneu_TD": return ["B", "D", "E", "F"]
 	if model == "TNeuNeu_ZZ"         : return ["G", "H", "I"]
 	if model == "TNeuNeu_HZ"         : return ["G", "H", "I"]
 	if model == "TNeuNeu_HH"         : return ["G", "H", "I"]
@@ -78,10 +79,10 @@ def getExpr(categ):
 def getNBins(categ):
 	if categ == "A": return 36
 	if categ == "B": return 6
-	if categ == "C": return 13
-	if categ == "D": return 13
-	if categ == "E": return 10
-	if categ == "F": return 7
+	if categ == "C": return 14
+	if categ == "D": return 14
+	if categ == "E": return 11
+	if categ == "F": return 10
 	if categ == "G": return 4
 	if categ == "H": return 4
 	if categ == "I": return 4
@@ -98,7 +99,7 @@ def getOffset(categ):
 def getSigs(model):
 	return ["_sig_" + model + "_.*"]
 
-base = "python makeShapeCardsSusy.py susy-ewkino/3l/mca_ewkino.txt susy-ewkino/3l/cuts_ewkino.txt \"{EXPR}\" \"{BINS}\" susy-ewkino/{SYSTS} -o SR -P {T} --mcc susy-ewkino/mcc_triggerdefs.txt --mcc susy-ewkino/3l/mcc_ewkino.txt --neg --s2v --tree treeProducerSusyMultilepton -F sf/t {JLR} -F sf/t {LCH} -f -j 8 --od {O} -l {L} {BKG} {SIG} {CUTS} {FLAGS}"
+base = "python makeShapeCardsSusy.py susy-ewkino/3l/mca_ewkino.txt susy-ewkino/3l/cuts_ewkino.txt \"{EXPR}\" \"{BINS}\" susy-ewkino/{SYSTS} -o SR -P {T} --mcc susy-ewkino/mcc_triggerdefs.txt --mcc susy-ewkino/3l/mcc_ewkino.txt --neg --s2v --tree treeProducerSusyMultilepton -F sf/t {JLR} -F sf/t {LCH} -f -j 8 --od {O} -l {L} {BKG} {SIG} {CUTS} {FLAGS} --load-macro susy-ewkino/3l/functionsEWK.cc"
 
 for m in model:
 	output = O + "/" + str(lumi) + "fb/" + m

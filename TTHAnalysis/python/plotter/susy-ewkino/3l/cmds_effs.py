@@ -73,7 +73,7 @@ def recursiveCutting(cutstring, it, after, cuts):
 	return recursiveCutting(cutstring, it+1, "recursive" + str(it), cuts[1:])
 
 baseAll = "python mcAnalysis.py susy-ewkino/3l/mca_ewkino.txt susy-ewkino/3l/cuts_effs.txt -P {T} --neg --s2v --tree treeProducerSusyMultilepton -j 8 --mcc susy-ewkino/mcc_triggerdefs.txt --mcc susy-ewkino/3l/mcc_ewkino.txt -l {L} -F sf/t {JLR} -F sf/t {LCH} {CUTS} {PROC} {FLAGS} >> {O}"
-baseBin = "python mcPlots.py susy-ewkino/3l/mca_ewkino.txt susy-ewkino/3l/cuts_effs.txt susy-ewkino/3l/plots_ewkino.txt -P {T} --neg --s2v --tree treeProducerSusyMultilepton -j 8 --mcc susy-ewkino/mcc_triggerdefs.txt --mcc susy-ewkino/3l/mcc_ewkino.txt -l {L} -F sf/t {JLR} -F sf/t {LCH} {CUTS} {PROC} {BINS} {FLAGS} --yieldsPerBin"
+baseBin = "python mcPlots.py susy-ewkino/3l/mca_ewkino.txt susy-ewkino/3l/cuts_effs.txt susy-ewkino/3l/plots_ewkino.txt -P {T} --neg --s2v --tree treeProducerSusyMultilepton -j 8 --mcc susy-ewkino/mcc_triggerdefs.txt --mcc susy-ewkino/3l/mcc_ewkino.txt -l {L} -F sf/t {JLR} -F sf/t {LCH} {CUTS} {PROC} {BINS} {FLAGS} --perBin"
 
 for c,v in effs.iteritems():
 	output = O + "/" + c

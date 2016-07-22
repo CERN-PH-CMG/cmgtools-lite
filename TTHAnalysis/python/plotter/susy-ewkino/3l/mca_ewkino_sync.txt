@@ -1,0 +1,1 @@
+TTW              : TTW_Tau                        : xsec             ; FillColor=ROOT.kGreen+3 , FakeRate="susy-ewkino/3l/fakerate_standard_central.txt\,susy-ewkino/3l/fakerate_load_isprompt.txt\,susy-ewkino/3l/fakerate_filters_mc.txt", Label="ttW (prompt)", NormSystematic=0.2

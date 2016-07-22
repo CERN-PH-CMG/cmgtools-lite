@@ -28,6 +28,8 @@ triggers_mumu_ht =  [ "HLT_DoubleMu8_Mass8_PFHT300_v*" ]
 triggers_ee_ht =  [ "HLT_DoubleEle8_CaloIdM_TrackIdM_Mass8_PFHT300_v*" ]
 triggers_mue_ht = [ "HLT_Mu8_Ele8_CaloIdM_TrackIdM_Mass8_PFHT300_v*" ]
 
+triggers_leptautau = ["HLT_IsoTkMu22_v*", "HLT_IsoMu22_v*", "HLT_IsoMu19_eta2p1_LooseIsoPFTau20_v*", "HLT_Ele27_eta2p1_WPLoose_Gsf_v*", "HLT_Ele22_eta2p1_WPLoose_GSF_LooseIsoPFtau20_SingleL1_v*", "HLT_DoubleMediumIsoPFTau32_Trk1_eta2p1_Reg_v"] 
+
 triggers_3e = [ "HLT_Ele16_Ele12_Ele8_CaloIdL_TrackIdL_v*" ]
 triggers_3mu = [ "HLT_TripleMu_12_10_5_v*", "HLT_TripleMu_5_3_3_v*" ]
 triggers_3mu_alt = [ "HLT_TrkMu15_DoubleTrkMu5NoFiltersNoVtx_v*" ]
