@@ -63,9 +63,9 @@ def getSF2015(parton, pt, eta):
     sftype = "Comb" # meas type of SF
 
     if abs(parton)==5: #SF for b
-        flav = 0; ptlim = 669.9; sftype = "Mu"
+        flav = 0; ptlim = 669.9; sftype = "Comb"
     elif abs(parton)==4: #SF for c
-        flav = 1; ptlim = 669.9; sftype = "Mu"
+        flav = 1; ptlim = 669.9; sftype = "Comb"
     else: # SF for light flavours
         flav = 2; ptlim = 999.9; sftype = "incl"
 
