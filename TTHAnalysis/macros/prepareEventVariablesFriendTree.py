@@ -347,6 +347,7 @@ parser.add_option("--env",   dest="env",     type="string", default="lxbatch", h
 parser.add_option("--bk",   dest="bookkeeping",  action="store_true", default=False, help="If given the command used to run the friend tree will be stored");
 (options, args) = parser.parse_args()
 
+
 if options.imports:
     MODULES = []
     from importlib import import_module
@@ -365,8 +366,11 @@ if options.listModules:
     exit()
 
 if "{P}" in args[1]: args[1] = args[1].replace("{P}",args[0])
-if len(args) != 2 or not os.path.isdir(args[0]):
+if len(args) != 2:
     print "Usage: program <TREE_DIR> <OUT>"
+    exit()
+if not os.path.isdir(args[0]):
+    print "Error. Input directory {input} does not exist".format(input=args[0])
     exit()
 if not os.path.isdir(args[1]): 
     os.system("mkdir -p "+args[1])
