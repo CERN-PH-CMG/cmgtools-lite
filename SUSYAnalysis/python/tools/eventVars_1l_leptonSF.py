@@ -6,10 +6,10 @@ import math
 
 ### SF ROOT files
 ### Full SIM ###
-eleSFname = "../python/tools/SFs/eleSF.root"
-eleHname = "CBTight_MiniIso0p1_ACDV"
-muSFname = "../python/tools/SFs/muonSF.root"
-muHname = "MediumID_MiniIso0p2_IP3D_ACDV"
+eleSFname = "../python/tools/SFs/ICHEP/CBtight_miniIso0p2_ICHEP.root"
+eleHname = "CBtight_miniIso0p2_ICHEP"
+muSFname = "../python/tools/SFs/ICHEP/MediumMuon_miniIso0p2_SIP3D_HIP_ICHEP.root"
+muHname = "MediumMuon_miniIso0p2_SIP3D_HIP_ICHEP"
 
 hEleSF = 0
 hMuSF = 0
