@@ -21,12 +21,13 @@ def replaceInFile(path, search, replace):
 
 def base(selection):
     
-    CORE="-P /afs/cern.ch/user/f/folguera/workdir/trees/ewkino/8011_June29/ -F sf/t {P}/3_recleaner_wpsViX4mrE2_ptJIMIX3/evVarFriend_{cname}.root "
-    CORE+=" -f -j 8 -l 4.36 --s2v --tree treeProducerSusyMultilepton --mcc susy-ewkino/2lss/lepchoice-2lss-FO.txt --mcc susy-ewkino/mcc_triggerdefs.txt --neg"
+    CORE="-P /afs/cern.ch/user/f/folguera/workdir/trees/ewkino/8011_July5_skimmed/ -F sf/t {P}/2_recleaner_wpsViX4mrE2_ptJIMIX3/evVarFriend_{cname}.root "
+    CORE+=" -f -j 8 -l 9.2 --s2v --tree treeProducerSusyMultilepton --mcc susy-ewkino/2lss/lepchoice-2lss-FO.txt --mcc susy-ewkino/mcc_triggerdefs.txt --neg"
     if dowhat == "plots": CORE+=" --lspam '#bf{CMS} #it{Preliminary}' --legendWidth 0.20 --legendFontSize 0.035 --showRatio --maxRatioRange 0 3 --showMCError "
-    CORE+="-W 'puw2016_vtx_4fb(nVert)' "
+    CORE+="-W 'puw2016_nInt_9p2fb(nTrueInt)*triggerSF_2lss_ewk(LepGood1_pt,LepGood2_pt,LepGood2_pdgId)' "
+
     GO="%s susy-ewkino/2lss/mca-2lss-mc.txt susy-ewkino/2lss/cuts_2lss.txt  "%CORE
-    if dowhat == "plots": GO+=" susy-ewkino/2lss/plots_2lss.txt --xP --xP 'nT_.*' "
+    if dowhat == "plots": GO+=" susy-ewkino/2lss/plots_2lss.txt --xP 'nT_.*' "
     return GO
 
 def procs(GO,mylist):

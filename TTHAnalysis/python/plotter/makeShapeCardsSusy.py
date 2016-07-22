@@ -11,7 +11,10 @@ parser.add_option("--od", "--outdir", dest="outdir", type="string", default=None
 parser.add_option("-v", "--verbose",  dest="verbose",  default=0,  type="int",    help="Verbosity level (0 = quiet, 1 = verbose, 2+ = more)")
 parser.add_option("--asimov", dest="asimov", action="store_true", help="Asimov")
 parser.add_option("--postfix-pred",dest="postfixmap", type="string", default=[], action="append", help="Function to apply to prediction, to correct it before running limits")
+parser.add_option("--infile",dest="infile", type="string", default=None, help="File to read histos from")
+parser.add_option("--ip", "--infile-prefix", dest="infilepfx", type="string", default=None, help="Prefix to the process names as the histo name in the infile")
 parser.add_option("--bk",   dest="bookkeeping",  action="store_true", default=False, help="If given the command used to run the datacards will be stored");
+parser.add_option("--ignore",dest="ignore", type="string", default=[], action="append", help="Ignore processes when loading infile")
 
 (options, args) = parser.parse_args()
 options.weight = True
@@ -58,10 +61,29 @@ compilePostFixMap(options.postfixmap,postfixes)
 mca  = MCAnalysis(args[0],options)
 cuts = CutsFile(args[1],options)
 
+filename = "SR" #os.path.basename(args[1]).replace(".txt","")
 binname = os.path.basename(args[1]).replace(".txt","") if options.outname == None else options.outname
 outdir  = options.outdir+"/" if options.outdir else ""
 
-report = mca.getPlotsRaw("x", args[2], args[3], cuts.allCuts(), nodata=options.asimov)
+report={}
+
+## load histos from infile, make only the missing ones on the fly
+if options.infile!=None:
+    infile = ROOT.TFile(options.infile,"read")
+    todo = []
+    for p in mca.listSignals(True)+mca.listBackgrounds(True)+['data']:
+        n = p if options.infilepfx==None else options.infilepfx+"_"+p
+        h = infile.Get(n)
+        if h: report[p] = h
+        elif not p in options.ignore: todo.append(p)
+    print report.keys()
+    print todo
+    for p in todo:
+        report.update(mca.getPlotsRaw("x", args[2], args[3], cuts.allCuts(), nodata=options.asimov, process=p))
+## no infile given, process all histos
+else:
+    report = mca.getPlotsRaw("x", args[2], args[3], cuts.allCuts(), nodata=options.asimov)
+
 
 
 for post in postfixes:
@@ -286,12 +308,13 @@ for signal in mca.listSignals():
     myprocs = ( backgrounds + [ signal ] ) if signal in signals else backgrounds
     if not os.path.exists(myout): os.system("mkdir -p "+myout)
     myyields = dict([(k,v) for (k,v) in allyields.iteritems()]) 
-    datacard = open(myout+binname+".card.txt", "w"); 
+    datacard = open(myout+filename+".card.txt", "w"); 
+    #datacard = open(myout+binname+".card.txt", "w"); 
     datacard.write("## Datacard for cut file %s (signal %s)\n"%(args[1],signal))
     datacard.write("## Event selection: \n")
     for cutline in str(cuts).split("\n"):  datacard.write("##   %s\n" % cutline)
     if signal not in signals: datacard.write("## NOTE: no signal contribution found with this event selection.\n")
-    datacard.write("shapes *        * ../common/%s.input.root x_$PROCESS x_$PROCESS_$SYSTEMATIC\n" % binname)
+    datacard.write("shapes *        * ../common/%s.input.root x_$PROCESS x_$PROCESS_$SYSTEMATIC\n" % filename)
     datacard.write('##----------------------------------\n')
     datacard.write('bin         %s\n' % binname)
     datacard.write('observation %s\n' % myyields['data_obs'])
@@ -324,22 +347,26 @@ for signal in mca.listSignals():
             datacard.write(('%-10s shape' % (name+"1")) + " ".join([kpatt % effmap12[p] for p in myprocs]) +"\n")
             datacard.write(('%-10s shape' % (name+"2")) + " ".join([kpatt % effmap12[p] for p in myprocs]) +"\n")
     if options.verbose > -1:
-        print "Wrote to ",myout+binname+".card.txt"
+        print "Wrote to ",myout+filename+".card.txt"
+        #print "Wrote to ",myout+binname+".card.txt"
     if options.verbose > 0:
         print "="*120
-        os.system("cat %s.card.txt" % (myout+binname));
+        os.system("cat %s.card.txt" % (myout+filename));
+        #os.system("cat %s.card.txt" % (myout+binname));
         print "="*120
 
 myout = outdir+"/common/";
 if not os.path.exists(myout): os.system("mkdir -p "+myout)
-workspace = ROOT.TFile.Open(myout+binname+".input.root", "RECREATE")
+workspace = ROOT.TFile.Open(myout+filename+".input.root", "RECREATE")
+#workspace = ROOT.TFile.Open(myout+binname+".input.root", "RECREATE")
 for n,h in report.iteritems():
     if options.verbose > 0: print "\t%s (%8.3f events)" % (h.GetName(),h.Integral())
     workspace.WriteTObject(h,h.GetName())
 workspace.Close()
 
 if options.verbose > -1:
-    print "Wrote to ",myout+binname+".input.root"
+    print "Wrote to ",myout+filename+".input.root"
+    #print "Wrote to ",myout+binname+".input.root"
 
 if options.bookkeeping:
     fcmd = open(outdir+"/makeShapeCardsSusy_command.txt", "w")
