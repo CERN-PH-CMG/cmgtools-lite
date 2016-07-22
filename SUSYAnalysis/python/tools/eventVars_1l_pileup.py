@@ -56,9 +56,9 @@ puFileName_down = "../python/tools/pileup/pu_ratio_65p55mb.root"
 
 
 #2016 ICHEP
-puFileName_up = "../python/tools/pileup/h_ratio_74_9.root"
-puFileName_norm = "../python/tools/pileup/h_ratio_71_3.root"
-puFileName_down = "../python/tools/pileup/h_ratio_67_7.root"
+puFileName_up = "../python/tools/pileup/h_ratio_66p15.root"
+puFileName_norm = "../python/tools/pileup/h_ratio_63.root"
+puFileName_down = "../python/tools/pileup/h_ratio_59p85.root"
 
 puNorm =  getPUdict(puFileName_norm)
 puUp =  getPUdict(puFileName_up)
