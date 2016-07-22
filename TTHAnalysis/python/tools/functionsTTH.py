@@ -18,3 +18,26 @@ def _ttH_idEmu_cuts_E2_obj(lep):
     if (eInvMinusPInv>=(0.01-0.005*(abs(etasc)>1.479))): return False
     if (lep.full5x5_sigmaIetaIeta()>=(0.011+0.019*(abs(etasc)>1.479))): return False
     return True
+
+def _soft_MuonId_2016ICHEP(lep):
+    if (abs(lep.pdgId())!=13): return False
+    if not lep.muonID("TMOneStationTight"): return False #TMOneStationTightMuonId
+    if not lep.track().hitPattern().trackerLayersWithMeasurement() > 5: return False
+    if not lep.track().hitPattern().pixelLayersWithMeasurement() > 0: return False
+    if not (abs(lep.dxy())<0.3 and abs(lep.dz())<20): return False
+    return True
+
+def _medium_MuonId_2016ICHEP(lep):
+    if (abs(lep.pdgId())!=13): return False
+    if not (lep.physObj.isGlobalMuon() or lep.physObj.isTrackerMuon()): return False
+    if not (lep.innerTrack().validFraction()>0.49): return False
+    if lep.segmentCompatibility()>0.451: return True
+    else:
+        if not lep.globalTrack().isNonnull(): return False
+        if not lep.isGlobalMuon: return False
+        if not lep.globalTrack().normalizedChi2()<3: return False
+        if not lep.combinedQuality().chi2LocalPosition<12: return False
+        if not lep.combinedQuality().trkKink<20: return False 
+        if not lep.segmentCompatibility()>0.303: return False
+
+    return True

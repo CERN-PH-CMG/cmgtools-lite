@@ -648,4 +648,3 @@ if __name__ == '__main__':
     el = EventLoop([ Tester("tester") ])
     el.loop([tree], maxEvents = 50)
 
-        
