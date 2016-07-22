@@ -36,25 +36,40 @@ def partonName (parton):
     if parton==4:  return 'c'
     return 'other'
 
-### SF ROOT file
-sfFname = sfdir+"btagSF_CSVv2.csv"
+### b tag SF
+# SF ROOT file
+sfFnameBTagSF = sfdir+"btagSF_CSVv2.csv"
 
 # load SFs from csv file
-calib = ROOT.BTagCalibration("csvv2", sfFname)
+calib = ROOT.BTagCalibration("csvv2", sfFnameBTagSF)
 
 # SF readers (from CMSSW)
-sfReaders = { "Comb" : {}, "Mu" : {}, "incl" : {} }
+sfReadersBTagSF = { "Comb" : {}, "Mu" : {}, "incl" : {} }
 
-sfReaders["Comb"]["Up"]      = ROOT.BTagCalibrationReader(calib, 1, "comb", "up")
-sfReaders["Comb"]["Central"] = ROOT.BTagCalibrationReader(calib, 1, "comb", "central")
-sfReaders["Comb"]["Down"]    = ROOT.BTagCalibrationReader(calib, 1, "comb", "down")
-sfReaders["Mu"]["Up"]        = ROOT.BTagCalibrationReader(calib, 1, "mujets", "up")
-sfReaders["Mu"]["Central"]   = ROOT.BTagCalibrationReader(calib, 1, "mujets", "central")
-sfReaders["Mu"]["Down"]      = ROOT.BTagCalibrationReader(calib, 1, "mujets", "down")
-sfReaders["incl"]["Up"]      = ROOT.BTagCalibrationReader(calib, 1, "incl", "up")
-sfReaders["incl"]["Central"] = ROOT.BTagCalibrationReader(calib, 1, "incl", "central")
-sfReaders["incl"]["Down"]    = ROOT.BTagCalibrationReader(calib, 1, "incl", "down")
+sfReadersBTagSF["Comb"]["Up"]      = ROOT.BTagCalibrationReader(calib, 1, "comb", "up")
+sfReadersBTagSF["Comb"]["Central"] = ROOT.BTagCalibrationReader(calib, 1, "comb", "central")
+sfReadersBTagSF["Comb"]["Down"]    = ROOT.BTagCalibrationReader(calib, 1, "comb", "down")
+sfReadersBTagSF["Mu"]["Up"]        = ROOT.BTagCalibrationReader(calib, 1, "mujets", "up")
+sfReadersBTagSF["Mu"]["Central"]   = ROOT.BTagCalibrationReader(calib, 1, "mujets", "central")
+sfReadersBTagSF["Mu"]["Down"]      = ROOT.BTagCalibrationReader(calib, 1, "mujets", "down")
+sfReadersBTagSF["incl"]["Up"]      = ROOT.BTagCalibrationReader(calib, 1, "incl", "up")
+sfReadersBTagSF["incl"]["Central"] = ROOT.BTagCalibrationReader(calib, 1, "incl", "central")
+sfReadersBTagSF["incl"]["Down"]    = ROOT.BTagCalibrationReader(calib, 1, "incl", "down")
 
+
+### Fast-Sim correction factors
+# SF ROOT file
+sfFnameFastSim = sfdir+"CSV_13TEV_Combined_14_7_2016.csv"
+
+# load SFs from csv file
+calibFastSim = ROOT.BTagCalibration("csvv2", sfFnameFastSim)
+
+# SF readers (from CMSSW)
+sfReadersFastSim = { "fastsim" : {} }
+
+sfReadersFastSim["fastsim"]["Up"]      = ROOT.BTagCalibrationReader(calibFastSim, 1, "fastsim", "up")
+sfReadersFastSim["fastsim"]["Central"] = ROOT.BTagCalibrationReader(calibFastSim, 1, "fastsim", "central")
+sfReadersFastSim["fastsim"]["Down"]    = ROOT.BTagCalibrationReader(calibFastSim, 1, "fastsim", "down")
 
 def getSF2015(parton, pt, eta):
 
@@ -63,16 +78,16 @@ def getSF2015(parton, pt, eta):
     sftype = "Comb" # meas type of SF
 
     if abs(parton)==5: #SF for b
-        flav = 0; ptlim = 669.9; sftype = "Mu"
+        flav = 0; ptlim = 669.9; sftype = "Comb"
     elif abs(parton)==4: #SF for c
-        flav = 1; ptlim = 669.9; sftype = "Mu"
+        flav = 1; ptlim = 669.9; sftype = "Comb"
     else: # SF for light flavours
         flav = 2; ptlim = 999.9; sftype = "incl"
 
     # read SFs
-    sf   = sfReaders[sftype]["Central"].eval(flav, eta, min(pt,ptlim))
-    sf_d = sfReaders[sftype]["Down"].eval(flav, eta, min(pt,ptlim))
-    sf_u = sfReaders[sftype]["Up"].eval(flav, eta, min(pt,ptlim))
+    sf   = sfReadersBTagSF[sftype]["Central"].eval(flav, eta, min(pt,ptlim))
+    sf_d = sfReadersBTagSF[sftype]["Down"].eval(flav, eta, min(pt,ptlim))
+    sf_u = sfReadersBTagSF[sftype]["Up"].eval(flav, eta, min(pt,ptlim))
 
     # double uncertainty for out-of-range pt
     if pt > ptlim:
@@ -105,6 +120,34 @@ def getMCEff(parton, pt, eta, mcEff, year = 2015):
                     if abs(parton)>5 or abs(parton)<4:  res["mcEff"] = mcEff[tuple(ptBin)][tuple(etaBin)]["other"]
                     return res
     return {} #empty if not found
+
+# Function that returns fast sim correction factors
+def getFastSimCF(isFastSim, jParton, jPt, jEta):
+
+    # No correction for full sim
+    if not isFastSim:
+        return 1., 1., 1.
+
+    if abs(jParton)==5: #SF for b
+        flav = 0
+    elif abs(jParton)==4: #SF for c
+        flav = 1
+    else: # SF for light flavours
+        flav = 2
+    ptlim = 799.9
+
+    # Get fast-sim correction factor from dictionary
+    fsim_SF = sfReadersFastSim["fastsim"]["Central"].eval(flav, jEta, min(jPt, ptlim))
+    fsim_SF_up = sfReadersFastSim["fastsim"]["Up"].eval(flav, jEta, min(jPt, ptlim))
+    fsim_SF_down = sfReadersFastSim["fastsim"]["Down"].eval(flav, jEta, min(jPt, ptlim))
+
+    # If pT above threshold, double uncertainty
+    if jPt > ptlim:
+        # derived from c + 2*(d-c) = 2*d - c = d + (d-c)
+        fsim_SF_down += fsim_SF_down - fsim_SF
+        fsim_SF_up += fsim_SF_up - fsim_SF
+
+    return fsim_SF, fsim_SF_up, fsim_SF_down
 
 ############ METHOD 1b ##################
 ## https://twiki.cern.ch/twiki/bin/view/CMS/BTagSFMethods#1b_Event_reweighting_using_scale
@@ -163,14 +206,9 @@ def getMCEfficiencyForBTagSF(event, mcEff, onlyLightJetSystem = False, isFastSim
     mceffs_SF_light_Down = tuple()
 
     for jParton, jPt, jEta, r in jets:
-        if isFastSim:
-            fsim_SF = ROOT.getFastSimCorr(partonName(abs(jParton)),jPt,"mean",jEta)
-            fsim_SF_up = ROOT.getFastSimCorr(partonName(abs(jParton)),jPt,"up",jEta)
-            fsim_SF_down = ROOT.getFastSimCorr(partonName(abs(jParton)),jPt,"down",jEta)
-        else:
-            fsim_SF = 1.
-            fsim_SF_up = 1.
-            fsim_SF_down = 1.
+
+        fsim_SF, fsim_SF_up, fsim_SF_down = getFastSimCF(isFastSim, jParton, jPt, jEta)
+
         mceffs += (r["mcEff"],)
         mceffs_SF += (r["mcEff"]*r["SF"]*fsim_SF,)
         if abs(jParton)==5 or abs(jParton)==4:
@@ -244,14 +282,9 @@ def getBTagWeight(event, mcEff, isFastSim = False):
 
     for jParton, jPt, jEta, isBtagged in jets:
         r = getMCEff(jParton, jPt, jEta, mcEff, 2015)#getEfficiencyAndMistagRate(jPt, jEta, jParton )
-        if isFastSim:
-            fsim_SF = ROOT.getFastSimCorr(partonName(abs(jParton)),jPt,"mean",jEta)
-            fsim_SF_up = ROOT.getFastSimCorr(partonName(abs(jParton)),jPt,"up",jEta)
-            fsim_SF_down = ROOT.getFastSimCorr(partonName(abs(jParton)),jPt,"down",jEta)
-        else:
-            fsim_SF = 1.
-            fsim_SF_up = 1.
-            fsim_SF_down = 1.
+
+        fsim_SF, fsim_SF_up, fsim_SF_down = getFastSimCF(isFastSim, jParton, jPt, jEta)
+
         if isBtagged:
             PMC *= r['mcEff']
             PData *= r['mcEff']*r['SF']
