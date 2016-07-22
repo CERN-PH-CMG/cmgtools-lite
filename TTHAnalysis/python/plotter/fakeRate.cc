@@ -206,6 +206,20 @@ float fakeRateWeight_2lss_2(float l1pt, float l1eta, int l1pdgId, float l1pass,
                             l2pt, l2eta, l2pdgId, -l2pass, -0.5, 2);
 }
 
+float fakeRateWeight_2lss_up(float l1pt, float l1eta, int l1pdgId, float l1pass,
+                            float l2pt, float l2eta, int l2pdgId, float l2pass) 
+{
+    return fakeRateWeight_2lssCB_i(l1pt, l1eta, l1pdgId, -l1pass,
+                            l2pt, l2eta, l2pdgId, -l2pass, -0.5, 3);
+}
+
+float fakeRateWeight_2lss_down(float l1pt, float l1eta, int l1pdgId, float l1pass,
+			       float l2pt, float l2eta, int l2pdgId, float l2pass) 
+{
+    return fakeRateWeight_2lssCB_i(l1pt, l1eta, l1pdgId, -l1pass,
+                            l2pt, l2eta, l2pdgId, -l2pass, -0.5, 4);
+}
+
 
 float fakeRateWeight_2lssSyst(float l1pt, float l1eta, int l1pdgId, float l1mva,
                          float l2pt, float l2eta, int l2pdgId, float l2mva, float WP, 
