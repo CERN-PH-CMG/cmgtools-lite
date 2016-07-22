@@ -16,10 +16,10 @@ CMS_ttHl_lepEff_tight  	: ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .*3l.* : 1.09
 CMS_ttHl_tauID		: ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .*2lss_1tau.* : 1.06
 
 # trigger efficiencies
-CMS_ttHl_trigger16_ee	: ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .*2lss_ee.* : 1.03
-CMS_ttHl_trigger16_em	: ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .*2lss_em.* : 1.02
-CMS_ttHl_trigger16_mm	: ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .*2lss_mm.* : 1.01
-CMS_ttHl_trigger16_3l	: ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .*3l.* : 1.09
+CMS_ttHl16_trigger_ee	: ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .*2lss_ee.* : 1.03
+CMS_ttHl16_trigger_em	: ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .*2lss_em.*|.*2lss_1tau.* : 1.02
+CMS_ttHl16_trigger_mm	: ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .*2lss_mm.* : 1.01
+CMS_ttHl16_trigger_3l	: ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .*3l.* : 1.09
 
 # JES
 CMS_ttHl_JES		: ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .* : jec : templates
@@ -27,10 +27,10 @@ CMS_ttHl_JES		: ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .* : jec : templates
 # btag
 CMS_ttHl_btag_LF	: ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .* : bTag_LF		: templates
 CMS_ttHl_btag_HF	: ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .* : bTag_HF 		: templates
-CMS_ttHl_btag_HFStats1	: ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .* : bTag_HFStats1 	: templates
-CMS_ttHl_btag_HFStats2	: ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .* : bTag_HFStats2 	: templates	
-CMS_ttHl_btag_LFStats1	: ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .* : bTag_LFStats1 	: templates
-CMS_ttHl_btag_LFStats2	: ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .* : bTag_LFStats2 	: templates
+CMS_ttHl16_btag_HFStats1	: ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .* : bTag_HFStats1 	: templates
+CMS_ttHl16_btag_HFStats2	: ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .* : bTag_HFStats2 	: templates	
+CMS_ttHl16_btag_LFStats1	: ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .* : bTag_LFStats1 	: templates
+CMS_ttHl16_btag_LFStats2	: ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .* : bTag_LFStats2 	: templates
 CMS_ttHl_btag_cErr1	: ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .* : bTag_cErr1 	: templates
 CMS_ttHl_btag_cErr2	: ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .* : bTag_cErr2 	: templates
 
@@ -38,7 +38,7 @@ CMS_ttHl_btag_cErr2	: ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .* : bTag_cErr2 	: t
 CMS_ttHl16_templstat 	: ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs|fakes_data|flips_data : .* : 1.0 : stat_foreach_shape_bins : .*
 
 # Diboson background
-CMS_ttHl_WZ_stat : WZ : .*3l.* : 1.1
+CMS_ttHl16_WZ_stat : WZ : .*3l.* : 1.1
 CMS_ttHl_WZ_bkgs : WZ : .*3l.* : 1.2
 CMS_ttHl_WZ_btag : WZ : .*3l_bl.* : 1.1
 CMS_ttHl_WZ_btag : WZ : .*3l_bt.* : 1.4
@@ -76,7 +76,7 @@ CMS_ttHl_thu_shape_ttZ_y  : TTZ : .* : 1.0 : shapeOnly2D_1X_1.02Y
 
 
 # Fake rate uncertainties
-# 1) Measurement of the fake rate: normalization TODO
+# 1) Measurement of the fake rate: normalization
 CMS_ttHl_FRe_norm : fakes_data  : .*2lss_ee.* : 1.35
 CMS_ttHl_FRe_norm : fakes_data  : .*2lss_em.*|.*2lss_1tau.* : 1.17
 CMS_ttHl_FRe_norm : fakes_data  : .*3l.*      : 1.4
@@ -97,7 +97,7 @@ CMS_ttHl_FRm_shape_3l : fakes_data  : .*3l.*      : 1.0 : shapeOnly2D_1.20X_0.83
 # 3) Closure: QCD vs. TT fake rate, normalization
 CMS_ttHl_Clos_e_norm : fakes_data  : .*2lss_ee.* : 0.9
 CMS_ttHl_Clos_e_norm : fakes_data  : .*2lss_em.*|.*2lss_1tau.* : 0.95
-CMS_ttHl_Clos_e_norm : fakes_data  : .*3l.*      : 1.05
+CMS_ttHl_Clos_e_norm : fakes_data  : .*3l.*      : 0.95
 CMS_ttHl_Clos_m_norm : fakes_data  : .*2lss_mm.* : 1.1
 CMS_ttHl_Clos_m_norm : fakes_data  : .*2lss_em.*|.*2lss_1tau.* : 1.05
 CMS_ttHl_Clos_m_norm : fakes_data  : .*3l.*      : 1.05
