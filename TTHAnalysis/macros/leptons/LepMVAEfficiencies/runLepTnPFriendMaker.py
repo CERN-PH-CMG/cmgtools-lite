@@ -107,9 +107,10 @@ if __name__ == '__main__':
                       help=("Output directory for tnp trees "
                             "[default: %default/]"))
     parser.add_option("-f", "--filter",
-                      default='Run2016,DYJetsToLL_M50,TTJets',
+                      default='Run2016,-DCSonly,-MuonEG,-Single,DYJetsToLL_M50,-DYJetsToLL_M50_LO',
                       type="string", dest="filter",
-                      help=("Comma separated list of filters to apply "
+                      help=("Comma separated list of filters to apply. "
+                            "Use '-' at beginning to veto files. "
                             "[default: %default/]"))
     (options, args) = parser.parse_args()
 
@@ -131,11 +132,14 @@ if __name__ == '__main__':
     if len(inputfiles) > 1 and len(options.filter.split(','))>0:
         filters = options.filter.split(',')
         print "Will filter for", filters
-        inputfiles = [i for i in inputfiles if
-                                    any([(f in i) for f in filters])]
+        posfilters = [f     for f in filters if not f.startswith('-')]
+        negfilters = [f[1:] for f in filters if     f.startswith('-')]
 
-        ## Hardcoded removal of DYJetsToLL_M50_LO:
-        inputfiles = [i for i in inputfiles if not 'DYJetsToLL_M50_LO' in i]
+        inputfiles = [i for i in inputfiles if
+                                    any([(f in i) for f in posfilters])]
+
+        inputfiles = [i for i in inputfiles if not
+                                    any([(f in i) for f in negfilters])]
 
     print "Will process the following files:"
     for ifile in inputfiles: print ifile
