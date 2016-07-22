@@ -446,8 +446,7 @@ if options.queue:
         super  = "qsub -q {queue} -N happyTreeFriend".format(queue = options.queue)
         runner = "oviedobatch_runner.sh"
 
-    theoutput= args[1]
-    #.replace('/pool/ciencias/','/pool/cienciasrw/')
+    theoutput= args[1].replace('/pool/ciencias/','/pool/cienciasrw/')
 
     basecmd = "{dir}/{runner} {dir} {cmssw} python {self} -N {chunkSize} -T {tdir} -t {tree} {data} {output}".format(
                 dir = os.getcwd(), runner=runner, cmssw = os.environ['CMSSW_BASE'],
@@ -489,7 +488,7 @@ def _runIt(myargs):
     fetchedfile = None
 
     fout = ofout
-#.replace('/pool/ciencias/', '/pool/cienciasrw/')
+    #.replace('/pool/ciencias/', '/pool/cienciasrw/')
     
     if 'LSB_JOBID' in os.environ or 'LSF_JOBID' in os.environ:
         if fin.startswith("root://"):
