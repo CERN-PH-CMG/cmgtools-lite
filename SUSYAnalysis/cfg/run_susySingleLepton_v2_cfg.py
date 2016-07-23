@@ -203,8 +203,8 @@ genAna.allGenTaus = True
 #-------- HOW TO RUN
 isData = True # default, but will be overwritten below
 
-#sample = 'MC'
-sample = 'data'
+sample = 'MC'
+#sample = 'data'
 #sample = 'Signal'
 test = 1
 
@@ -227,7 +227,7 @@ if sample == "MC":
   # MiniAODv2
   #from CMGTools.SUSYAnalysis.samples.samples_13TeV_RunIISpring15MiniAODv2_desy import *
   #from CMGTools.SUSYAnalysis.samples.samples_13TeV_RunIISpring15MiniAODv2_desy_Compact import *
-  from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv2_dummy import *
+  from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv2 import *
 #  from CMGTools.RootTools.samples.samples_13TeV_MiniAODv2_Signals_desy import *
 #  selectedComponents = TTs + SingleTop #TTJets_SingleLepton
 
@@ -289,17 +289,17 @@ elif sample == "Signal":
   # MiniAODv2
   #from CMGTools.SUSYAnalysis.samples.samples_13TeV_RunIISpring15MiniAODv2_desy import *
 #  from CMGTools.SUSYAnalysis.samples.samples_13TeV_MiniAODv2_Signals_AAA import *
-  from CMGTools.RootTools.samples.samples_13TeV_MiniAODv2_Signals_desy import *
+  from CMGTools.RootTools.samples.samples_80x_signal import *
   # Benchmarks
   #selectedComponents = [ T1tttt_mGo_1475to1500_mLSP_1to1250, T1tttt_mGo_1500to1525_mLSP_50to1125, T1tttt_mGo_1200_mLSP_1to825, T1tttt_mGo_1900to1950_mLSP_0to1450 ]
   # Rest
   #selectedComponents = mcSamplesT1tttt
   #selectedComponents = [T1tttt_mGo_1000to1050_mLSP_1to800, T1tttt_mGo_1225to1250_mLSP_1to1025, T1tttt_mGo_1325to1350_mLSP_1to1125, T1tttt_mGo_600to625_mLSP_250to375]
-  selectedComponents = [T1tttt_TuneCUETP8M1]#[T1tttt_mGo_1475to1500_mLSP_1to1250, T1tttt_mGo_1200_mLSP_1to825 ]
+  selectedComponents = [SMS_T1tttt_TuneCUETP8M1]#[T1tttt_mGo_1475to1500_mLSP_1to1250, T1tttt_mGo_1200_mLSP_1to825 ]
 
   if test==1:
     # test a single component, using a single thread.
-    comp  = T1tttt_TuneCUETP8M1
+    comp  = SMS_T1tttt_TuneCUETP8M1
     comp.files = comp.files[:1]
     selectedComponents = [comp]
     comp.splitFactor = 1
@@ -415,12 +415,13 @@ if isSignal:
   #susyCoreSequence.insert(susyCoreSequence.index(skimAnalyzer),
   susyCoreSequence.insert(susyCoreSequence.index(susyScanAna)+1,
         susyCounter)
-  #susyCoreSequence.append(susyCounter)
+#  susyCoreSequence.append(susyCounter)
 
 
   # change scn mass parameters
-  #susyCounter.SMS_mass_1 = "genSusyMGluino"
-  #susyCounter.SMS_mass_2 = "genSusyMNeutralino"
+  susyCounter.SUSYmodel = 'T1tttt'
+  susyCounter.SMS_mass_1 = "genSusyMGluino"
+  susyCounter.SMS_mass_2 = "genSusyMNeutralino"
   susyCounter.SMS_varying_masses = ['genSusyMGluino','genSusyMNeutralino']
 
 #-------- SEQUENCE
@@ -443,7 +444,7 @@ if isSignal:
 # sequence.remove(ttHHTSkimmer)
 # sequence.remove(ttHSTSkimmer)
   sequence.remove(eventFlagsAna)
-  sequence.remove(hbheFilterAna)
+#  sequence.remove(hbheFilterAna)
 
 ## output histogram
 outputService=[]
