@@ -55,7 +55,7 @@ nT_3lep_miniIso: if3((nLepFO>2)*(LepGood1_isTight+LepGood2_isTight+LepGood3_isTi
 4lep_worseMVA:	min(LepGood1_mvaTTH,min(LepGood2_mvaTTH,min(LepGood3_mvaTTH,LepGood4_mvaTTH)))					: 32,0.6,1; XTitle="Worse lepMVA in 4l", Legend='TL'
 4lep_max_Lep_eta: max(LepGood1_eta,max(abs(LepGood2_eta),max(abs(LepGood3_eta),abs(LepGood4_eta)))) : 40,0,2.5 ; XTitle="max lepton |#eta|"
 4lep_pt4l_noRecl: pt4l										    : 60,0,120 ; XTitle="pt4l (no Recl)"
-4lep_m4l_noRecl	: m4l										    : 160,0,480 ; XTitle="m4l (no Recl)"
+4lep_m4l_noRecl	: m4l										    : 160,0,200 ; XTitle="m4l (no Recl)"
 
 nBJetLoose40:	nBJetLoose40				: [-0.5,0.5,1.5,2.5,3.5,4.5,5.5] ; XTitle='N(jet\, p_{T} > 40 GeV\, CSVL)', XNDdiv=505
 nBJetMedium40:	nBJetMedium40				: [-0.5,0.5,1.5,2.5,3.5,4.5,5.5] ; XTitle='N(jet\, p_{T} > 40 GeV\, CSVM)', XNDdiv=505

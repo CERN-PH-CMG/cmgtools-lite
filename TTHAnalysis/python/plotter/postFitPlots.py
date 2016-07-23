@@ -25,8 +25,9 @@ if __name__ == "__main__":
     parser = OptionParser(usage="%prog [options] mcaplot.txt mcafit.txt plotfile varname mlfile channel")
     addPlotMakerOptions(parser)
     (options, args) = parser.parse_args()
-    options.path = "/data1/peruzzi/TREES_76X_200216_jecV1M2_skimOnlyMC_reclv8"
-    options.lumi = 2.26
+    options.path = "/data1/peruzzi/mixture_jecv6prompt_datafull_jul20_skimOnlyMC"
+#    options.path = "/data1/peruzzi/TREES_80X_180716_jecv6_skim_3ltight_relax"
+    options.lumi = 12.9
     mcap = MCAnalysis(args[0],options)
     mca  = MCAnalysis(args[1],options)
     basedir = dirname(args[2]);
