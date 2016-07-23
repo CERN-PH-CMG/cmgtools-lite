@@ -56,7 +56,7 @@ susySingleLepton_collections.update({
             "selectedTaus"    : NTupleCollection("TauGood", tauTypeSusy, 3, help="Taus after the preselection"),
             "selectedIsoTrack"    : NTupleCollection("isoTrack", isoTrackType, 50, help="isoTrack, sorted by pt"),
             ##------------------------------------------------
-            "cleanJetsAll"       : NTupleCollection("Jet",     jetTypeSusy, 25, help="Cental jets after full selection and cleaning, sorted by pt"),
+            "cleanJetsAll"       : NTupleCollection("Jet",     jetTypeSusyExtra, 25, help="Cental jets after full selection and cleaning, sorted by pt"),
             "allJetsUsedForMET"       : NTupleCollection("JetForMET",     jetType, 40, help="All Jets used for MET"),
             "fatJets"         : NTupleCollection("FatJet",  fatJetType,  15, help="AK8 jets, sorted by pt"),
             #"reclusteredFatJets" : NTupleCollection("RCFatJet",     fourVectorType,20, help="FatJets1.2 reclusterd from ak4 cleanJetsAll pT > 30, eta <5 "),
