@@ -492,6 +492,11 @@ def doRatioHists(pspec,pmap,total,totalSyst,maxRange,fixRange=False,fitRatio=Non
     total.GetXaxis().SetLabelOffset(999) ## send them away
     total.GetXaxis().SetTitleOffset(999) ## in outer space
     total.GetYaxis().SetLabelSize(0.05)
+    binlabels = pspec.getOption("xBinLabels","")
+    if binlabels != "" and len(binlabels.split(",")) == unity.GetNbinsX():
+        blist = binlabels.split(",")
+        for i in range(1,unity.GetNbinsX()+1): 
+            unity.GetXaxis().SetBinLabel(i,blist[i-1]) 
     #ratio.SetMarkerSize(0.7*ratio.GetMarkerSize()) # no it is confusing
     #$ROOT.gStyle.SetErrorX(0.0);
     line = ROOT.TLine(unity.GetXaxis().GetXmin(),1,unity.GetXaxis().GetXmax(),1)
