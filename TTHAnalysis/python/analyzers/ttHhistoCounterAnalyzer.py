@@ -79,9 +79,7 @@ class ttHhistoCounterAnalyzer( Analyzer ):
 
 #        isSMS = self.cfg_comp.isMC and getattr(event,'susyModel',False)
         isSMS = self.cfg_comp.isMC and self.SUSYmodel 
-        print self.SUSYmodel
-        print "!!!!!!!!!!!!!!!!!!!!!!!!",isSMS
-        
+
         if isSMS:
             event.susyModel = self.SUSYmodel
             if not self.isInitSMS: self.initSMS(event)
