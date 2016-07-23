@@ -88,13 +88,12 @@ if __name__ == '__main__':
     print "... adding friend tree from %s" % argv[2]
 
 
-    btagsf_payload = os.path.join(os.environ['CMSSW_BASE'], "src/CMGTools/TTHAnalysis/data/btag/", "CSVv2_4invfb.csv")
-    btagsf_reader = BTagScaleFactors('btagsf', btagsf_payload, algo='csv', verbose=3)
+    btagsf_payload = os.path.join(os.environ['CMSSW_BASE'], "src/CMGTools/TTHAnalysis/data/btag/", "CSVv2_ichep.csv")
 
     class Tester(Module):
         def __init__(self, name):
             Module.__init__(self,name,None)
-            self.sf = BTagEventWeightFriend(btagsf_reader, recllabel="Recl")
+            self.sf = BTagEventWeightFriend(btagsf_payload, recllabel="Recl", algo='csv')
             print "Adding these branches:", self.sf.listBranches()
 
         def analyze(self,ev):

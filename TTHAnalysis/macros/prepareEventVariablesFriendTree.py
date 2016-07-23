@@ -13,7 +13,7 @@ isFastSim = False
 
 # btag event weights in 80X
 from CMGTools.TTHAnalysis.tools.bTagEventWeights import BTagEventWeightFriend
-btagsf_payload = os.path.join(utility_files_dir, "btag", "CSVv2_4invfb.csv")
+btagsf_payload = os.path.join(utility_files_dir, "btag", "CSVv2_ichep.csv")
 bTagEventWeight = lambda : BTagEventWeightFriend(csvfile=btagsf_payload, algo='csv', recllabel='Recl')
 MODULES.append( ('eventBTagWeight', bTagEventWeight ))
 
