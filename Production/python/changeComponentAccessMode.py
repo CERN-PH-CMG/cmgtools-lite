@@ -40,6 +40,8 @@ if __name__ == '__main__':
                       help="Use eos.cern.ch to access the files")
     parser.add_option("-A", "--AAA", dest="pattern", action="store_const", const = "root://cms-xrd-global.cern.ch/%s",
                       help="Use AAA to access the files, with the global redirector")
+    parser.add_option("--fnal", dest="pattern", action="store_const", const = "root://cmsxrootd.fnal.gov/%s",
+                      help="Use AAA to access the files, with the global redirector")
     (options, args) = parser.parse_args()
     for a in args:
         convertPickled(a,options.pattern,options.verbose)

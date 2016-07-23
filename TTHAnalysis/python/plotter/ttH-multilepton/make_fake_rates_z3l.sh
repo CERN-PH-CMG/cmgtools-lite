@@ -3,23 +3,32 @@
 ################################
 T="NON_ESISTE"
 if hostname | grep -q cmsco01; then
-    T="/data1/peruzzi/TREES_76X_200216_jecV1M2/"
+    T="/data1/peruzzi/mixture_jecv6prompt_datafull_jul20"
 fi
-
-BCORE=" --s2v --tree treeProducerSusyMultilepton ttH-multilepton/mca-fr-z3l.txt ttH-multilepton/fr-z3l.txt -P $T -l 2.32 --AP  "
-BCORE="$BCORE --mcc ttH-multilepton/ttH_2lss3l_triggerdefs.txt "
 
 BG=" -j 6 "; if [[ "$1" == "-b" ]]; then BG=" & "; shift; fi
 
+ANALYSIS=$1; if [[ "$1" == "" ]]; then exit 1; fi; shift;
+case $ANALYSIS in
+ttH) CUTFILE="ttH-multilepton/fr-z3l.txt"; XVAR="l3CPt"; NUM="mva075";;
+susy_wpM) CUTFILE="susy-ewkino/fr-z3l-wpM.txt"; XVAR="ptJIMIX4"; NUM="mvaSusy_sMi";;
+susy_wpV) CUTFILE="susy-ewkino/fr-z3l-wpV.txt"; XVAR="ptJIMIX3"; NUM="mvaSusy_sVi";;
+*) echo "unknown analysis $ANALYSIS"; exit 1; ;;
+esac;
+
+BCORE=" --s2v --tree treeProducerSusyMultilepton ttH-multilepton/mca-fr-z3l.txt ${CUTFILE} -P $T -l 12.9 --AP --mcc ttH-multilepton/mcc-eleIdEmu2.txt "
+BCORE="$BCORE --mcc ttH-multilepton/ttH_2lss3l_triggerdefs.txt -X ^Trig -A Z1 ptcuts 'LepGood_pt[0]>25 && LepGood_pt[1]>15' " # no trigger selection
+
 lepton=$1; if [[ "$1" == "" ]]; then exit 1; fi
 case $lepton in
-mu) BCORE="${BCORE} -E ${lepton} -E tightZ1 "; ;;
-el) BCORE="${BCORE} -E ${lepton} "; ;;
+mu) BCORE="${BCORE} -E ^${lepton} -E tightZ1 --mcc ttH-multilepton/mcc-ichepMediumMuonId.txt "; ;;
+el) BCORE="${BCORE} -E ^${lepton} --mcc ttH-multilepton/mcc-ichepMediumMuonId-fake.txt"; ;;
+*) echo "unknown lepton $lepton"; exit 1; ;;
 esac;
 
 what=$2; shift; shift;
-PBASE="plots/76X/ttH/fr-meas/z3l/v1.2/$lepton/$what"
-
+#PBASE="~/www/plots_FR/80X/lepMVA_${ANALYSIS}/v1.4_250616/fr-meas/$lepton/z3l/$what"
+PBASE="plots/80X/$ANALYSIS/fr-meas/z3l/v2.1/$lepton/$what"
 
 case $lepton in
     el) BARREL="00_15"; ENDCAP="15_25"; ETA="1.479"; SC_EWK=1.58;  SC_DY=0.86;;
@@ -58,7 +67,7 @@ case $what in
         ;;
     fakerates-old)
         MCEFF="  python mcEfficiencies.py -f  $BCORE $PUW $SCALEWK --groupBy cut ttH-multilepton/fr-z3l_pass.txt  ttH-multilepton/fr-z3l_plots.txt  "
-        MCEFF="$MCEFF  --sp DY --sP mva075 "
+        MCEFF="$MCEFF  --sp DY --sP ${NUM} "
         case $lepton in
         el) MCEFF="$MCEFF --sP l3CPt_[c1]  " ;;
         mu) MCEFF="$MCEFF --sP l3CPt_1     " ;;
@@ -73,11 +82,11 @@ case $what in
     fakerates-*)
         fitVar=${what/fakerates-/}
         MCEFF="  python ttH-multilepton/dataFakeRate.py -f  $BCORE $PUW -p DY,VZ,data --groupBy cut ttH-multilepton/fr-z3l_pass.txt  ttH-multilepton/fr-z3l_plots.txt  "
-        MCEFF="$MCEFF --sp DY --sP mva075  "
+        MCEFF="$MCEFF --sp DY --sP ${NUM}  "
         MCEFF="$MCEFF --sP $fitVar $fitVar  --ytitle 'Fake rate' "
         case $lepton in
-        el) XVAR="l3CPt_2"; MCEFF="$MCEFF --sP $XVAR " ;;
-        mu) XVAR="l3CPt_1"; MCEFF="$MCEFF --sP $XVAR " ;;
+        el) XVAR="${XVAR}_2"; MCEFF="$MCEFF --sP $XVAR " ;;
+        mu) XVAR="${XVAR}_1"; MCEFF="$MCEFF --sP $XVAR " ;;
         esac;
         MCEFF="$MCEFF  " # ratio for fake rates
         MCEFF="$MCEFF --fixRatioRange --maxRatioRange 0.5 1.79 " # ratio for other plots
@@ -89,8 +98,8 @@ case $what in
            mu) RANGES="$RANGES  --yrange 0 0.10 --xline 20 "; MCEFF="$MCEFF --fqcd-ranges 0 40 40 140" ;;
         esac;
         MCEFF="$MCEFF $LEGEND $RANGES"
-        echo " ( $MCEFF -o $PBASE/fr_sub_eta_${BARREL}.root --bare -A cleanup eta 'abs(LepGood_eta)<$ETA' $BG )"
-        echo " ( $MCEFF -o $PBASE/fr_sub_eta_${ENDCAP}.root --bare -A cleanup eta 'abs(LepGood_eta)>$ETA' $BG )"
+        echo " ( $MCEFF -o $PBASE/fr_sub_eta_${BARREL}.root --bare -A cleanup eta 'abs(LepGood_eta[2])<$ETA' $BG )"
+        echo " ( $MCEFF -o $PBASE/fr_sub_eta_${ENDCAP}.root --bare -A cleanup eta 'abs(LepGood_eta[2])>$ETA' $BG )"
         MCGO="$MCEFF --compare DY_prefit,data_sub_syst_prefit,data_sub_prefit --algo=globalFit "
         echo " ( $MCGO -i $PBASE/fr_sub_eta_${BARREL}.root -o $PBASE/fr_sub_eta_${BARREL}_globalFit.root --algo=globalFit --rebin 2 --fcut 0 40 --subSyst 0.1 $BG )"
         echo " ( $MCGO -i $PBASE/fr_sub_eta_${ENDCAP}.root -o $PBASE/fr_sub_eta_${ENDCAP}_globalFit.root --algo=globalFit --rebin 2 --fcut 0 40 --subSyst 0.1 $BG )"
@@ -105,7 +114,7 @@ case $what in
         echo " ( $MCGO -i $PBASE/fr_sub_eta_${BARREL}.root -o $PBASE/fr_sub_eta_${BARREL}_fQCD.root --algo=fQCD  $BG )"
         echo " ( $MCGO -i $PBASE/fr_sub_eta_${ENDCAP}.root -o $PBASE/fr_sub_eta_${ENDCAP}_fQCD.root --algo=fQCD  $BG )"
         STACK="python ttH-multilepton/stack_fake_rates_data.py $RANGES $LEGEND "
-        PATT="mva075_vs_${XVAR}_${fitVar}_%s"
+        PATT="${NUM}_vs_${XVAR}_${fitVar}_%s"
         for E in ${BARREL} ${ENDCAP}; do
             echo "( $STACK -o $PBASE/fr_sub_eta_${E}_comp.root    $PBASE/fr_sub_eta_${E}_globalFit.root:$PATT:DY_prefit,data_sub_syst_prefit  $PBASE/fr_sub_eta_${E}_fQCD.root:$PATT:DY_prefit,data_fqcd   $PBASE/fr_sub_eta_${E}_fitSimND.root:$PATT:data_fit   )";
         done

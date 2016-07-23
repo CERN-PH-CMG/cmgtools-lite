@@ -4,6 +4,7 @@
 #include "Math/GenVector/PxPyPzM4D.h"
 #include "Math/GenVector/Boost.h"
 #include "TLorentzVector.h"
+#include "TH2Poly.h"
 #include "PhysicsTools/Heppy/interface/Davismt2.h"
 
 //// UTILITY FUNCTIONS NOT IN TFORMULA ALREADY
@@ -81,6 +82,7 @@ float pt_3(float pt1, float phi1, float pt2, float phi2, float pt3, float phi3) 
     return hypot(pt1 + pt2 * std::cos(phi2) + pt3 * std::cos(phi3), pt2*std::sin(phi2) + pt3*std::sin(phi3));
 }
 
+
 float mass_3(float pt1, float eta1, float phi1, float m1, float pt2, float eta2, float phi2, float m2, float pt3, float eta3, float phi3, float m3) {
     typedef ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<double> > PtEtaPhiMVector;
     PtEtaPhiMVector p41(pt1,eta1,phi1,m1);
@@ -88,6 +90,7 @@ float mass_3(float pt1, float eta1, float phi1, float m1, float pt2, float eta2,
     PtEtaPhiMVector p43(pt3,eta3,phi3,m3);
     return (p41+p42+p43).M();
 }
+
 
 float pt_4(float pt1, float phi1, float pt2, float phi2, float pt3, float phi3, float pt4, float phi4) {
     phi2 -= phi1;
@@ -174,10 +177,9 @@ float DPhi_CMLep_Zboost(float l_pt, float l_eta, float l_phi, float l_M, float l
   return deltaPhi(l1.Phi(),Z.Phi());
 }
 
+// May 2016: This is func which takes the 4vectors of MET, L1,L2 and reconstructs 2 taus and returns the effective Z(-->tautau) mass.                                                                                       
 
-// May 2016: This is func which takes the 4vectors of MET, L1,L2 and reconstructs 2 taus and returns the effective Z(-->tautau) mass.                                                                                        // To be investigated: do not allow to insert more than 9 parameter; Skipped the lepton types/masses...                                                                                                         
-
-float mass_tautau( float Met_Pt, float Met_Phi, float l1_Pt, float l1_Eta, float l1_Phi, float l2_Pt, float l2_Eta, float l2_Phi ) {
+float mass_tautau( float Met_Pt, float Met_Phi,  float l1_Pt, float l1_Eta, float l1_Phi, float l2_Pt, float l2_Eta, float l2_Phi ) {
   typedef ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<double> > PtEtaPhiMVector;
   typedef ROOT::Math::LorentzVector<ROOT::Math::PxPyPzM4D<double>   > PxPyPzMVector;
   PtEtaPhiMVector Met( Met_Pt, 0.     , Met_Phi , 0.   );
@@ -194,6 +196,49 @@ float mass_tautau( float Met_Pt, float Met_Phi, float l1_Pt, float l1_Eta, float
   if(X0>0.&&X1>0.)return  (T1+T2).M();
   else            return -(T1+T2).M();
 }
+
+// SOS stuff
+
+int SR_bins_EWKino(float Mll){
+  if     (4.<Mll && Mll<9.5) return 1;
+  else if(10.5<Mll && Mll<=20.) return 2;
+  else if(20.<Mll && Mll<=30.) return 3;
+  else if(30.<Mll) return 4;
+  else return -99;
+}
+
+int SR_bins_stop(float ptlep1){
+  if     (ptlep1 <=12.) return 1;
+  else if(ptlep1 >12. && ptlep1 <=20.) return 2;
+  else if(ptlep1 >20.) return 3; 
+  else return -99;
+}
+
+
+float metmm_pt(int pdg1, float pt1, float phi1, int pdg2, float pt2, float phi2, float metpt, float metphi) {
+  if (abs(pdg1)==13 && abs(pdg2)==13) return pt_3(pt1,phi1,pt2,phi2,metpt,metphi);
+  else if (abs(pdg1)==13 && !(abs(pdg2)==13)) return pt_2(pt1,phi1,metpt,metphi);
+  else if (!(abs(pdg1)==13) && abs(pdg2)==13) return pt_2(pt2,phi2,metpt,metphi);
+  else if (!(abs(pdg1)==13) && !(abs(pdg2)==13)) return metpt;
+  else return -99;
+}
+
+
+
+float eleWPVVL(float pt, float etaSc, float mva){
+  if (pt<=10 && ((abs(etaSc)<0.8 && mva>-0.265) || (abs(etaSc)>=0.8 && abs(etaSc)<1.479 && mva > -0.556) || (abs(etaSc)>=1.479 && mva>-0.6))) return 1;
+  else if (pt>10 && ((abs(etaSc)<0.8 && mva > 0.87) || (abs(etaSc)>=0.8 && abs(etaSc)<1.479 && mva > 0.30) || (abs(etaSc)>=1.479 && mva >-0.30))) return 1;
+  else return 0;
+}
+
+
+float eleWPT(float pt, float etaSc, float mva){
+  if (pt<=10 && ((abs(etaSc)<0.8 && mva>-0.265) || (abs(etaSc)>=0.8 && abs(etaSc)<1.479 && mva > -0.556) || (abs(etaSc)>=1.479 && mva>-0.551))) return 1;
+  else if (pt>10 && ((abs(etaSc)<0.8 && mva > 0.87) || (abs(etaSc)>=0.8 && abs(etaSc)<1.479 && mva > 0.60) || (abs(etaSc)>=1.479 && mva >0.17))) return 1;
+  else return 0;
+}
+
+
 
 
 float relax_cut_in_eta_bins(float val, float eta, float eta1, float eta2, float eta3, float val1, float val2, float val3, float val1t, float val2t, float val3t){
@@ -303,118 +348,50 @@ int SR_ewk_ss2l(int nj, float ptl1, float phil1, float ptl2, float phil2, float 
   float mtw2 = mt_2(ptl2,phil2, met, metphi);
   float mtw  = std::min(mtw1,mtw2);
   float ptdil = pt_2(ptl1,phil1,ptl2,phil2);
-  
-  if (nj==0 && met<100)        return -1;  //validation region 0-jet
-  else if (nj==1 && met<100)   return -2;  //validation region 1-jet
-  else if (nj==0 && mtw<40 && met>100 && met<200)             return 1;
-  else if (nj==0 && mtw<40 && met>200)                        return 2;
-  else if (nj==0 && mtw>40 && mtw<120 && met>100 && met<200)  return 3;
-  else if (nj==0 && mtw>40 && mtw<120 && met>200)             return 4;
-  else if (nj==0 && mtw>120 && mtw<120 && met>100 && met<200) return 5;
-  else if (nj==0 && mtw>120 && mtw<120 &&  met>200)           return 6;
-  else if (nj==1 && mtw<40 && met>100 && met<200)             return 11;
-  else if (nj==1 && mtw<40 && met>200)                        return 12;
-  else if (nj==1 && mtw>40 && mtw<120 && met>100 && met<200)  return 13;
-  else if (nj==1 && mtw>40 && mtw<120 && met>200)             return 14;
-  else if (nj==1 && mtw>120 && mtw<120 && met>100 && met<200) return 15;
-  else if (nj==1 && mtw>120 && mtw<120 &&  met>200)           return 16;
-  
-  return -99;
+
+  // V0 --- LPC version
+//V0-LPC  if      (nj==0 && mtw<40 && met>100 && met<200)             return 1;
+//V0-LPC  else if (nj==0 && mtw<40 && met>200)                        return 2;
+//V0-LPC  else if (nj==0 && mtw>40 && mtw<120 && met>100 && met<200)  return 3;
+//V0-LPC  else if (nj==0 && mtw>40 && mtw<120 && met>200)             return 4;
+//V0-LPC  else if (nj==0 && mtw>120 && met>100 && met<200)            return 5;
+//V0-LPC  else if (nj==0 && mtw>120 && met>200)                       return 6;
+//V0-LPC  else if (nj==1 && mtw<40 && met>100 && met<200)             return 7;
+//V0-LPC  else if (nj==1 && mtw<40 && met>200)                        return 8;
+//V0-LPC  else if (nj==1 && mtw>40 && mtw<120 && met>100 && met<200)  return 9;
+//V0-LPC  else if (nj==1 && mtw>40 && mtw<120 && met>200)             return 10;
+//V0-LPC  else if (nj==1 && mtw>120 && met>100 && met<200)            return 11;
+//V0-LPC  else if (nj==1 && mtw>120 && met>200)                       return 12;
+
+  if      (nj==0 && ptdil<50 && mtw<100 && met<100)            return 1;  //VR
+  else if (nj==0 && ptdil<50 && mtw<100 && met>100 && met<150) return 2;
+  else if (nj==0 && ptdil<50 && mtw<100 && met>150)            return 3;
+  else if (nj==0 && ptdil>50 && mtw<100 && met<100)            return 4; //VR
+  else if (nj==0 && ptdil>50 && mtw<100 && met>100 && met<150) return 5;
+  else if (nj==0 && ptdil>50 && mtw<100 && met>150)            return 6;
+  else if (nj==0 && mtw>100 && met<100)                        return 7;  //VR
+  else if (nj==0 && mtw>100 && met>100 && met<150)             return 8;
+  else if (nj==0 && mtw>100 && met>150)                        return 9;
+  else if (nj==1 && ptdil<50 && mtw<100 && met<100)            return 10;  //VR
+  else if (nj==1 && ptdil<50 && mtw<100 && met>100 && met<150) return 11;
+  else if (nj==1 && ptdil<50 && mtw<100 && met>150)            return 12;
+  else if (nj==1 && ptdil>50 && mtw<100 && met<100)            return 13; //VR
+  else if (nj==1 && ptdil>50 && mtw<100 && met>100 && met<150) return 14;
+  else if (nj==1 && ptdil>50 && mtw<100 && met>150)            return 15;
+  else if (nj==1 && mtw>100 && met<100)                        return 16;  //VR
+  else if (nj==1 && mtw>100 && met>100 && met<150)             return 17;
+  else if (nj==1 && mtw>100 && met>150)                        return 18;
+
+  return -99;  
   
 }
-//float MVAto1D_6_sorted_ee(float kinMVA_2lss_ttbar, float kinMVA_2lss_ttV) {
-//    
-//    float MVA_binned_6 = 0; 		
-//
-//    if ((kinMVA_2lss_ttbar > 0.2 && kinMVA_2lss_ttbar <=  1.0) && (kinMVA_2lss_ttV > -1.0 && kinMVA_2lss_ttV <= 0.1)) MVA_binned_6 += 1;
-//
-//    if ((kinMVA_2lss_ttbar > 0.2 && kinMVA_2lss_ttbar <=  1.0) && (kinMVA_2lss_ttV > 0.1 && kinMVA_2lss_ttV <=  0.3)) MVA_binned_6 += 2;
-//
-//    if ((kinMVA_2lss_ttbar > 0.2 && kinMVA_2lss_ttbar <=  1.0) && (kinMVA_2lss_ttV > 0.3 && kinMVA_2lss_ttV <=  1.0)) MVA_binned_6 += 3;
-//
-//    if ((kinMVA_2lss_ttbar > -1.0 && kinMVA_2lss_ttbar <= 0.2) && (kinMVA_2lss_ttV > -1.0 && kinMVA_2lss_ttV <=  0.3)) MVA_binned_6 += 5;
-//
-//    if ((kinMVA_2lss_ttbar > 0.1 && kinMVA_2lss_ttbar <= 0.2) && (kinMVA_2lss_ttV > 0.3 && kinMVA_2lss_ttV <=  1.0)) MVA_binned_6 += 4;
-//
-//    if ((kinMVA_2lss_ttbar > -1.0 && kinMVA_2lss_ttbar <= 0.1) && (kinMVA_2lss_ttV > 0.3 && kinMVA_2lss_ttV <=  1.0)) MVA_binned_6 += 4;
-//
-////    if ((kinMVA_2lss_ttbar > -1.0 && kinMVA_2lss_ttbar <= 0.2) && (kinMVA_2lss_ttV > -1.0 && kinMVA_2lss_ttV <=  0.3)) MVA_binned_6 += 6;
-////
-////    if ((kinMVA_2lss_ttbar > 0.1 && kinMVA_2lss_ttbar <= 0.2) && (kinMVA_2lss_ttV > 0.3 && kinMVA_2lss_ttV <=  1.0)) MVA_binned_6 += 5;
-////
-////    if ((kinMVA_2lss_ttbar > -1.0 && kinMVA_2lss_ttbar <= 0.1) && (kinMVA_2lss_ttV > 0.3 && kinMVA_2lss_ttV <=  1.0)) MVA_binned_6 += 4;
-//
-//	
-//    return MVA_binned_6;
-//
-//}
-//
-//float MVAto1D_6_sorted_em(float kinMVA_2lss_ttbar, float kinMVA_2lss_ttV) {
-//    
-//    float MVA_binned_6 = 0; 		
-//
-//    if ((kinMVA_2lss_ttbar > 0.4 && kinMVA_2lss_ttbar <=  1.0) && (kinMVA_2lss_ttV > -1.0 && kinMVA_2lss_ttV <= 0.1)) MVA_binned_6 += 1;
-//
-//    if ((kinMVA_2lss_ttbar > 0.4 && kinMVA_2lss_ttbar <=  1.0) && (kinMVA_2lss_ttV > 0.1 && kinMVA_2lss_ttV <=  0.3)) MVA_binned_6 += 2;
-//
-//    if ((kinMVA_2lss_ttbar > 0.4 && kinMVA_2lss_ttbar <=  1.0) && (kinMVA_2lss_ttV > 0.3 && kinMVA_2lss_ttV <=  1.0)) MVA_binned_6 += 3;
-//
-//    if ((kinMVA_2lss_ttbar > -1.0 && kinMVA_2lss_ttbar <= 0.4) && (kinMVA_2lss_ttV > -1.0 && kinMVA_2lss_ttV <=  0.2)) MVA_binned_6 += 6;
-//
-//    if ((kinMVA_2lss_ttbar > 0.3 && kinMVA_2lss_ttbar <= 0.4) && (kinMVA_2lss_ttV > 0.2 && kinMVA_2lss_ttV <=  1.0)) MVA_binned_6 += 5;
-//
-//    if ((kinMVA_2lss_ttbar > -1.0 && kinMVA_2lss_ttbar <= 0.3) && (kinMVA_2lss_ttV > 0.2 && kinMVA_2lss_ttV <=  1.0)) MVA_binned_6 += 4;
-//        
-//    return MVA_binned_6;
-//
-//}
-//
-//float MVAto1D_6_sorted_mumu(float kinMVA_2lss_ttbar, float kinMVA_2lss_ttV) {
-//    
-//    float MVA_binned_6 = 0; 		
-//
-//    if ((kinMVA_2lss_ttbar > 0.35 && kinMVA_2lss_ttbar <=  1.0) && (kinMVA_2lss_ttV > -1.0 && kinMVA_2lss_ttV <= 0.1)) MVA_binned_6 += 1;
-//
-//    if ((kinMVA_2lss_ttbar > 0.35 && kinMVA_2lss_ttbar <=  1.0) && (kinMVA_2lss_ttV > 0.1 && kinMVA_2lss_ttV <=  0.25)) MVA_binned_6 += 2;
-//
-//    if ((kinMVA_2lss_ttbar > 0.35 && kinMVA_2lss_ttbar <=  1.0) && (kinMVA_2lss_ttV > 0.25 && kinMVA_2lss_ttV <=  1.0)) MVA_binned_6 += 3;
-//
-//    if ((kinMVA_2lss_ttbar > -1.0 && kinMVA_2lss_ttbar <= 0.35) && (kinMVA_2lss_ttV > -1.0 && kinMVA_2lss_ttV <=  0.15)) MVA_binned_6 += 6;
-//
-//    if ((kinMVA_2lss_ttbar > 0.1 && kinMVA_2lss_ttbar <= 0.35) && (kinMVA_2lss_ttV > 0.15 && kinMVA_2lss_ttV <=  1.0)) MVA_binned_6 += 5;
-//
-//    if ((kinMVA_2lss_ttbar > -1.0 && kinMVA_2lss_ttbar <= 0.1) && (kinMVA_2lss_ttV > 0.15 && kinMVA_2lss_ttV <=  1.0)) MVA_binned_6 += 4;
-//	
-//    return MVA_binned_6;
-//
-//}
-//
-//float MVAto1D_6_sorted_3l(float kinMVA_3l_ttbar, float kinMVA_3l_ttV) {
-//    
-//    float MVA_binned_6_3l = 0; 		
-//
-//    if ((kinMVA_3l_ttbar > 0.2 && kinMVA_3l_ttbar <=  1.0) && (kinMVA_3l_ttV > -1.0 && kinMVA_3l_ttV <= 0.0)) MVA_binned_6_3l += 1;
-//
-//    if ((kinMVA_3l_ttbar > 0.2 && kinMVA_3l_ttbar <=  1.0) && (kinMVA_3l_ttV > 0.0 && kinMVA_3l_ttV <=  0.25)) MVA_binned_6_3l += 2;
-//
-//    if ((kinMVA_3l_ttbar > 0.2 && kinMVA_3l_ttbar <=  1.0) && (kinMVA_3l_ttV > 0.25 && kinMVA_3l_ttV <=  1.0)) MVA_binned_6_3l += 3;
-//
-//    if ((kinMVA_3l_ttbar > -1.0 && kinMVA_3l_ttbar <= 0.2) && (kinMVA_3l_ttV > -1.0 && kinMVA_3l_ttV <=  0.25)) MVA_binned_6_3l += 6;
-//
-//    if ((kinMVA_3l_ttbar > 0.1 && kinMVA_3l_ttbar <= 0.2) && (kinMVA_3l_ttV > 0.25 && kinMVA_3l_ttV <=  1.0)) MVA_binned_6_3l += 5;
-//
-//    if ((kinMVA_3l_ttbar > -1.0 && kinMVA_3l_ttbar <= 0.1) && (kinMVA_3l_ttV > 0.25 && kinMVA_3l_ttV <=  1.0)) MVA_binned_6_3l += 4;
-//	
-//    return MVA_binned_6_3l;
-//
-//}
+
 
 float ttH_MVAto1D_6_2lss_Marco (float kinMVA_2lss_ttbar, float kinMVA_2lss_ttV){
 
   return 2*((kinMVA_2lss_ttbar>=-0.2)+(kinMVA_2lss_ttbar>=0.3))+(kinMVA_2lss_ttV>=-0.1)+1;
 
 }
-
 float ttH_MVAto1D_3_3l_Marco (float kinMVA_3l_ttbar, float kinMVA_3l_ttV){
 
   if (kinMVA_3l_ttbar<0.3 && kinMVA_3l_ttV<-0.1) return 1;
@@ -423,23 +400,41 @@ float ttH_MVAto1D_3_3l_Marco (float kinMVA_3l_ttbar, float kinMVA_3l_ttV){
 
 }
 
+#include "ttH-multilepton/binning_2d_thresholds.h"
+float ttH_MVAto1D_7_2lss_Marco (float kinMVA_2lss_ttbar, float kinMVA_2lss_ttV){
+
+//________________
+//|   |   |   | 7 |
+//|   |   | 4 |___|
+//| 1 | 2 |___| 6 |
+//|   |   |   |___|
+//|   |   | 3 | 5 |
+//|___|___|___|___|
+//
+
+  if (kinMVA_2lss_ttbar<cuts_2lss_ttbar0) return 1;
+  else if (kinMVA_2lss_ttbar<cuts_2lss_ttbar1) return 2;
+  else if (kinMVA_2lss_ttbar<cuts_2lss_ttbar2) return 3+(kinMVA_2lss_ttV>=cuts_2lss_ttV0);
+  else return 5+(kinMVA_2lss_ttV>=cuts_2lss_ttV1)+(kinMVA_2lss_ttV>=cuts_2lss_ttV2);
+
+}
+float ttH_MVAto1D_5_3l_Marco (float kinMVA_3l_ttbar, float kinMVA_3l_ttV){
+
+  int reg = 2*((kinMVA_3l_ttbar>=cuts_3l_ttbar1)+(kinMVA_3l_ttbar>=cuts_3l_ttbar2))+(kinMVA_3l_ttV>=cuts_3l_ttV1)+1;
+  if (reg==2) reg=1;
+  if (reg>2) reg = reg-1;
+  return reg;
+
+}
+
+
+
 float ttH_MVAto1D_6_flex (float kinMVA_2lss_ttbar, float kinMVA_2lss_ttV, int pdg1, int pdg2, float ttVcut, float ttcut1, float ttcut2){
 
   return 2*((kinMVA_2lss_ttbar>=ttcut1)+(kinMVA_2lss_ttbar>=ttcut2)) + (kinMVA_2lss_ttV>=ttVcut)+1;
 
 }
 
-//float ttH_MVAto1D_6_2lss_Milos (float kinMVA_2lss_ttbar, float kinMVA_2lss_ttV, int pdg1, int pdg2){
-//
-//  if (abs(pdg1)==11 && abs(pdg2)==11) return MVAto1D_6_sorted_ee(kinMVA_2lss_ttbar,kinMVA_2lss_ttV);
-//  else if (abs(pdg1)==13 && abs(pdg2)==13) return MVAto1D_6_sorted_mumu(kinMVA_2lss_ttbar,kinMVA_2lss_ttV);
-//  else return MVAto1D_6_sorted_em(kinMVA_2lss_ttbar,kinMVA_2lss_ttV);
-//}
-//
-//float ttH_MVAto1D_6_3l_Milos (float kinMVA_3l_ttbar, float kinMVA_3l_ttV){
-//
-//  return MVAto1D_6_sorted_3l(kinMVA_3l_ttbar,kinMVA_3l_ttV);
-//}
 
 // for 74X
 //float _puw_true[50] = {3.652322599922302, 3.652322599922302, 3.652322599922302, 3.652322599922302, 3.652322599922302, 3.652322599922302, 2.1737862420968868, 2.7116925849897364, 3.352556070095877, 3.083015137131128, 2.8824218072960823, 2.6791975503716743, 2.212434153800565, 1.5297063638539434, 0.8762698648562287, 0.41326633649647065, 0.17496252648670657, 0.07484562496757297, 0.038507396968229766, 0.021849761893692053, 0.01140425609526747, 0.005063578526248854, 0.001881351382104846, 0.0006306639125313864, 0.00021708627575927402, 9.42187694469501e-05, 5.146591433045169e-05, 3.326854405002371e-05, 2.426063215708668e-05, 1.8575279862433386e-05, 1.281054551977887e-05, 8.01819566777096e-06, 3.6521122159066883e-06, 1.574921039309069e-06, 5.770182058345157e-07, 2.0862027190449754e-07, 6.946502045299735e-08, 2.032077576113469e-08, 6.417943581326451e-09, 1.5934414668326278e-09, 4.311337237072122e-10, 1.1138367777447038e-10, 2.6925919137965106e-11, 8.08827951069873e-12, 1.3708268591386723e-12, 4.065021195897016e-13, 1.770006195676463e-13, 5.689967214903059e-14, 6.224880123134382e-14, 0.0};
@@ -453,9 +448,35 @@ float _puw_true[50] = {0.5269234785559587, 0.6926695654592266, 1.080004829553802
 
 float puw(int nTrueInt) { if (nTrueInt<50) return _puw_true[nTrueInt]; else return 0; }
 
-// for 80X miniAOD v1, data up to run 273730
-float _puw2016_vtx[40] = {0.19692137176564317, 0.5512893955944992, 0.9770490049006523, 1.5347221311033268, 1.9692615705153973, 2.1491195749572007, 2.1780114323780513, 2.1476769294879037, 2.034380632552017, 1.87588545290878, 1.706600023753648, 1.5343743090394626, 1.3432450969258811, 1.1510269674496358, 0.9801083154979298, 0.8092391449359286, 0.6641103531512786, 0.5447223215449378, 0.4295029198143936, 0.3338937564649758, 0.2631617941891352, 0.20079880107279335, 0.15986742978997262, 0.11445737335104854, 0.08137048173588282, 0.06446688279958453, 0.051602567961013174, 0.03886047839947285, 0.02639331456382827, 0.019479110921421926, 0.016802825802323017, 0.008207196793826336, 0.005048555458954462, 0.009915180991460402, 0.0032609928594136157, 0.009591155468863447, 0.0, 0.0, 0.0, 0.0};
-float puw2016_vtx(int nVtx) { if (nVtx<40) return _puw2016_vtx[nVtx]; else return 0; }
+
+// CAREFUL to the bin alignment: check which bin is nVert==0
+// for 80X miniAOD v2, golden up to run 274443 (2.6/fb, Jun16 JSON)
+float _puw2016_vtx[60] = {1.0, 0.05279044032209489, 0.11898234374437847, 0.24839403240247732, 0.4414409758143405, 0.6800191525008986, 0.911238430838953, 1.1249250544346439, 1.3083391445128427, 1.4527031750771802, 1.5156438062395463, 1.5389169972670533, 1.5035916926401598, 1.4373269045147126, 1.333092377737066, 1.2248748489799457, 1.0918319339782905, 0.9636778613250641, 0.8410627330851944, 0.7261267863768212, 0.6235739762642099, 0.5315059034719868, 0.44970258176095207, 0.3828912199699739, 0.32480952469934127, 0.27387410135800994, 0.23077463619648667, 0.1962917069010862, 0.16875803152705662, 0.14725031730832552, 0.13147828517394833, 0.11963481956991436, 0.1055294146473766, 0.09910459281290813, 0.08749009279742694, 0.07566616130096912, 0.07414888388958515, 0.07427197742439709, 0.07831177286837666, 0.07210793417378795, 0.14541998285529517, 0.05653406075048574, 0.053526929859502484, 0.2147604868753209, 0.1006306281358646, 0.2515765703396614, 0.0, 1.2578828516983072, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 1.0, 1.0};
+float puw2016_vtx(int nVtx) { if (nVtx<60) return _puw2016_vtx[nVtx]; else return 0; }
+
+// for up to 275125
+float _puw2016_vtx_4fb[60] = {1.0, 0.05100939489406209, 0.10753683801507614, 0.22479210497504293, 0.4061194548857097, 0.6424861757674111, 0.8699208198466813, 1.0886008554762319, 1.276892560891215, 1.4184863274330797, 1.4865216108423305, 1.5122068499515893, 1.4790079191970888, 1.4196901839857483, 1.3216638995044172, 1.2217703342251016, 1.0976458888260794, 0.9796814642869479, 0.8639064021650553, 0.7535695441176858, 0.6555461235682296, 0.5641253790572658, 0.4834647260351342, 0.4164426860491679, 0.35606001606142423, 0.30497669791734305, 0.2592054182625056, 0.22335323942907434, 0.19192071849647147, 0.1672517813653499, 0.14683806760557278, 0.13614259650259863, 0.11857021273678048, 0.11205636298564389, 0.10212521715621654, 0.08684353771752344, 0.08864604848027625, 0.09804676288437263, 0.09235565349796869, 0.07943403772193891, 0.14417507424675546, 0.08136302667712911, 0.05135680407279777, 0.1569931571656257, 0.12873438887581296, 0.3218359721895326, 0.1609179860947663, 0.8045899304738313, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 1.0, 1.0 };
+float puw2016_vtx_4fb(int nVtx) { if (nVtx<60) return _puw2016_vtx_4fb[nVtx]; else return 0; }
+
+// for runs 274954-275125
+float _puw2016_vtx_postTS_1p4fb[60] = {1.0, 0.0436628547984852, 0.0842489361361326, 0.17821945962362193, 0.3359458176736438, 0.5602926533570876, 0.7949986470183944, 1.009956832499392, 1.2171719031951709, 1.3352425499300327, 1.440211942752969, 1.461874846281358, 1.442598177264856, 1.3933114880260349, 1.303895089233208, 1.2175329549318987, 1.1119038703640942, 1.0164455216655062, 0.9118520665638973, 0.8059572090329304, 0.7155624000589931, 0.6289173123131537, 0.551810715512236, 0.4833237093643216, 0.4192621566956886, 0.3644494058922173, 0.30458903411821625, 0.2707118142127595, 0.2278811064155144, 0.20083759822187328, 0.17416091877224055, 0.16340944020160908, 0.14995476800202442, 0.12504239103683595, 0.12132829462778992, 0.09634514689836478, 0.1269739863549877, 0.1477893939541658, 0.12321393664515852, 0.03694734848854124, 0.10072796682909534, 0.06010102020802678, 0.11268941289005037, 0.0, 0.20488984161827345, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 1.0, 1.0};
+float puw2016_vtx_postTS_1p4fb(int nVtx) { if (nVtx<60) return _puw2016_vtx_postTS_1p4fb[nVtx]; else return 0; }
+
+
+// for up to 275782
+float _puw2016_nInt_6p3fb[50] = {0.000382638, 0.00904568, 0.0172266, 0.028787, 0.0480456, 0.0395218, 0.0455648, 0.168451, 0.383086, 0.648308, 0.936192, 1.1818, 1.3745, 1.57972, 1.78097, 1.74766, 1.60982, 1.64109, 1.49706, 1.4961, 1.21978, 1.01628, 0.897894, 0.782684, 0.602069, 0.498483, 0.329922, 0.238593, 0.14344, 0.0926828, 0.0574109, 0.035114, 0.0284437, 0.0210839, 0.0219857, 0.027923, 0.0455562, 0.0608525, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+float puw2016_nInt_6p3fb(int nInt) { if(nInt<50) return _puw2016_nInt_6p3fb[nInt]; else return 0; }
+
+
+// for json up to 276384 (9.235/fb)
+float _puw2016_vtx_9fb[60] = {1.0, 0.04935539210063196, 0.10330050968638685, 0.2147911101772578, 0.39265726267153417, 0.6154543185021981, 0.8307112462687154, 1.0234405172528802, 1.1925131512920364, 1.2992751918824221, 1.3675693415474597, 1.383571620896604, 1.370751371914269, 1.3312898916887232, 1.260970719202342, 1.1934158915388204, 1.1079581139187757, 1.0207671452254607, 0.9330680851961782, 0.8459974039502247, 0.7660997972524449, 0.6853105592363634, 0.619098569695837, 0.5548227688124637, 0.498590328109847, 0.43969852956854144, 0.39485106899051653, 0.3546221583391258, 0.32414310290951415, 0.29492937650181855, 0.26816973928662186, 0.26026228952267894, 0.25438200170624503, 0.24305609489401844, 0.2402861143189915, 0.22410752071130485, 0.2329521554125791, 0.27204322650384044, 0.2187522991708468, 0.2697045149716429, 0.26325149847967466, 0.20939084706659114, 0.41327140868406215, 0.45300904413445264, 0.15704313529994357, 1.0, 0.3926078382498588, 1.963039191249294, 0.39260783824985873, 1.1778235147495764, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 1.0, 1.0};
+float puw2016_vtx_9fb(int nVtx) { if (nVtx<60) return _puw2016_vtx_9fb[nVtx]; else return 0; }
+
+
+// for json up to 276811 (12.9/fb)
+float _puw2016_vtx_13fb[60] = {1.0, 0.046904649804193066, 0.09278031810949669, 0.18880389403907694, 0.3514757265099305, 0.557758357976481, 0.7693577917575528, 0.9666548740765918, 1.145319485841941, 1.2648398335691222, 1.3414360633779425, 1.3679594451533137, 1.362759399034107, 1.327376308549365, 1.2613315166803767, 1.196440614259811, 1.1139701579261285, 1.029953473266092, 0.9499371225384508, 0.8650456207995321, 0.7851579627730857, 0.7104602883630896, 0.6454503663312138, 0.5827160708961265, 0.527376483837914, 0.4700331217669938, 0.4271753119677936, 0.3869926520067443, 0.35986269245880403, 0.3280226115374019, 0.2995626735821264, 0.29695297220375283, 0.2904602474734967, 0.27797348557821827, 0.27285575884404983, 0.2696769830193652, 0.2834280746705423, 0.3079991295527812, 0.2958183730167929, 0.3281547943587132, 0.34428579006474574, 0.34709355767303973, 0.5916367460335905, 0.4991935044658422, 0.2689257936516321, 1.0, 0.690242870372522, 2.0707286111175662, 0.2958183730167952, 0.8874551190503855, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 1.0, 1.0};
+float puw2016_vtx_13fb(int nVtx) { if (nVtx<60) return _puw2016_vtx_13fb[nVtx]; else return 0; }
+
 
 //
 //float puwMu8(int nVert) { return _puw_Mu8[nVert] * 0.001; }
@@ -475,17 +496,21 @@ float _get_recoToLoose_leptonSF_ttH(int pdgid, float pt, float eta, int nlep, fl
 
   if (var!=0) assert(0); // NOT IMPLEMENTED
 
-  if (!_histo_recoToLoose_leptonSF_mu) {
-    _file_recoToLoose_leptonSF_mu = new TFile("/afs/cern.ch/user/p/peruzzi/work/tthtrees/cms_utility_files/mu_eff_recoToLoose_ttH.root","read");
-    _histo_recoToLoose_leptonSF_mu = (TH2F*)(_file_recoToLoose_leptonSF_mu->Get("FINAL"));
-  }
+//  if (!_histo_recoToLoose_leptonSF_mu) {
+//    _file_recoToLoose_leptonSF_mu = new TFile("","read");
+//    _histo_recoToLoose_leptonSF_mu = (TH2F*)(_file_recoToLoose_leptonSF_mu->Get("FINAL"));
+//  }
   if (!_histo_recoToLoose_leptonSF_el1) {
-    _file_recoToLoose_leptonSF_el = new TFile("/afs/cern.ch/user/p/peruzzi/work/tthtrees/cms_utility_files/kinematicBinSFele.root","read");
-    _histo_recoToLoose_leptonSF_el1 = (TH2F*)(_file_recoToLoose_leptonSF_el->Get("MVAVLooseFO_and_IDEmu_and_TightIP2D"));
-    _histo_recoToLoose_leptonSF_el2 = (TH2F*)(_file_recoToLoose_leptonSF_el->Get("MiniIso0p4_vs_AbsEta"));
+    _file_recoToLoose_leptonSF_el = new TFile("../../data/leptonSF/el_scaleFactors_20160720.root","read");
+    _histo_recoToLoose_leptonSF_el1 = (TH2F*)(_file_recoToLoose_leptonSF_el->Get("GsfElectronToFOID2D"));
+    _histo_recoToLoose_leptonSF_el2 = (TH2F*)(_file_recoToLoose_leptonSF_el->Get("MVAVLooseElectronToMini4;1"));
   }
 
   if (abs(pdgid)==13){
+
+    // SET TO 1 FOR THE MOMENT
+    return 1;
+
     TH2F *hist = _histo_recoToLoose_leptonSF_mu;
     int etabin = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(eta)));
     int ptbin  = std::max(1, std::min(hist->GetNbinsY(), hist->GetYaxis()->FindBin(pt)));
@@ -524,19 +549,19 @@ float _get_looseToTight_leptonSF_ttH(int pdgid, float _pt, float eta, int nlep, 
   if (var!=0) assert(0); // NOT IMPLEMENTED
 
   if (!_histo_looseToTight_leptonSF_mu_2lss) {
-    _file_looseToTight_leptonSF_mu_2lss = new TFile("/afs/cern.ch/user/p/peruzzi/work/tthtrees/cms_utility_files/lepMVAEffSF_m_2lss.root","read");
+    _file_looseToTight_leptonSF_mu_2lss = new TFile("../../data/lepMVAEffSF_m_2lss.root","read");
     _histo_looseToTight_leptonSF_mu_2lss = (TH2F*)(_file_looseToTight_leptonSF_mu_2lss->Get("sf"));
   }
   if (!_histo_looseToTight_leptonSF_el_2lss) {
-    _file_looseToTight_leptonSF_el_2lss = new TFile("/afs/cern.ch/user/p/peruzzi/work/tthtrees/cms_utility_files/lepMVAEffSF_e_2lss.root","read");
+    _file_looseToTight_leptonSF_el_2lss = new TFile("../../data/lepMVAEffSF_e_2lss.root","read");
     _histo_looseToTight_leptonSF_el_2lss = (TH2F*)(_file_looseToTight_leptonSF_el_2lss->Get("sf"));
   }
   if (!_histo_looseToTight_leptonSF_mu_3l) {
-    _file_looseToTight_leptonSF_mu_3l = new TFile("/afs/cern.ch/user/p/peruzzi/work/tthtrees/cms_utility_files/lepMVAEffSF_m_3l.root","read");
+    _file_looseToTight_leptonSF_mu_3l = new TFile("../../data/lepMVAEffSF_m_3l.root","read");
     _histo_looseToTight_leptonSF_mu_3l = (TH2F*)(_file_looseToTight_leptonSF_mu_3l->Get("sf"));
   }
   if (!_histo_looseToTight_leptonSF_el_3l) {
-    _file_looseToTight_leptonSF_el_3l = new TFile("/afs/cern.ch/user/p/peruzzi/work/tthtrees/cms_utility_files/lepMVAEffSF_e_3l.root","read");
+    _file_looseToTight_leptonSF_el_3l = new TFile("../../data/lepMVAEffSF_e_3l.root","read");
     _histo_looseToTight_leptonSF_el_3l = (TH2F*)(_file_looseToTight_leptonSF_el_3l->Get("sf"));
   }
 
@@ -560,17 +585,38 @@ float leptonSF_ttH(int pdgid, float pt, float eta, int nlep, float var=0){
 
 }
 
-float triggerSF_ttH(int pdgid1, float pt1, int pdgid2, float pt2, int nlep, float var_ee=0){
-  if (var_ee!=0) assert(0); // NOT IMPLEMENTED
-  if (nlep>2) return 1;
-  if (abs(pdgid1)==11 && abs(pdgid2)==11){
-    if (std::max(pt1,pt2)<40) return 0.95;
-    else return 0.99;
+TFile *file_triggerSF_ttH = NULL;
+TH2Poly* t2poly_triggerSF_ttH_mm = NULL;
+TH2Poly* t2poly_triggerSF_ttH_ee = NULL;
+TH2Poly* t2poly_triggerSF_ttH_em = NULL;
+TH2Poly* t2poly_triggerSF_ttH_3l = NULL;
+
+float triggerSF_ttH(int pdgid1, float pt1, int pdgid2, float pt2, int nlep, float var=0){
+  if (!file_triggerSF_ttH) {
+    file_triggerSF_ttH = new TFile("../../data/triggerSF/trig_eff_map_v4.root");
+    t2poly_triggerSF_ttH_mm = (TH2Poly*)(file_triggerSF_ttH->Get("SSuu2DPt_effic"));
+    t2poly_triggerSF_ttH_ee = (TH2Poly*)(file_triggerSF_ttH->Get("SSee2DPt_effic"));
+    t2poly_triggerSF_ttH_em = (TH2Poly*)(file_triggerSF_ttH->Get("SSeu2DPt_effic"));
+    t2poly_triggerSF_ttH_3l = (TH2Poly*)(file_triggerSF_ttH->Get("__3l2DPt_effic"));
   }
-  else if (abs(pdgid1)==13 && abs(pdgid2)==13) {
-    return 1.;
+  TH2Poly* hist = NULL;
+  if (nlep==2){
+    if (abs(pdgid1)==13 && abs(pdgid2)==13) hist = t2poly_triggerSF_ttH_mm;
+    else if (abs(pdgid1)==11 && abs(pdgid2)==11) hist = t2poly_triggerSF_ttH_ee;
+    else hist = t2poly_triggerSF_ttH_em;
   }
-  else return 0.98;
+  else if (nlep==3) hist = t2poly_triggerSF_ttH_3l;
+  int xbin  = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(pt1)));
+  int ybin = std::max(1, std::min(hist->GetNbinsY(), hist->GetYaxis()->FindBin(pt2)));
+  float eff = hist->GetBinContent(xbin,ybin) + var * hist->GetBinError(xbin,ybin);
+
+  if (nlep>2) return eff;
+  int cat = (abs(pdgid1)==11) + (abs(pdgid2)==11);
+  if (cat==2) return eff*1.02;
+  else if (cat==1) return eff*1.02;
+  else return eff*1.01;
+
+
 }
 
 float mass_3_cheap(float pt1, float eta1, float pt2, float eta2, float phi2, float pt3, float eta3, float phi3) {
