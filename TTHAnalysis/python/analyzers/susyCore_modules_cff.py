@@ -157,6 +157,7 @@ from CMGTools.TTHAnalysis.analyzers.susyParameterScanAnalyzer import susyParamet
 susyScanAna = cfg.Analyzer(
     susyParameterScanAnalyzer, name="susyParameterScanAnalyzer",
     doLHE=True,
+    SUSYmodel='None',
     )
 
 # Lepton Analyzer (generic)
@@ -527,15 +528,17 @@ susyCoreSequence = [
     genHiggsAna,
     genHFAna,
     pdfwAna,
-    susyScanAna,
+
     vertexAna,
     lepAna,
-    ttHLepSkim,
+
     #ttHLepMCAna,
     photonAna,
     tauAna,
     isoTrackAna,
     jetAna,
+    susyScanAna,
+    ttHLepSkim,
     #ttHFatJetAna,  # out of core sequence for now
     #ttHSVAna, # out of core sequence for now
     metAna,
