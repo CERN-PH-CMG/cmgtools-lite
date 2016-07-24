@@ -203,10 +203,10 @@ genAna.allGenTaus = True
 #-------- HOW TO RUN
 isData = True # default, but will be overwritten below
 
-sample = 'MC'
+#sample = 'MC'
 #sample = 'data'
-#sample = 'Signal'
-test = 1
+sample = 'Signal'
+test = 0
 
 if sample == "MC":
 
@@ -441,9 +441,9 @@ sequence = cfg.Sequence(susyCoreSequence+[
 # sequence.remove(ttHSTSkimmer)
 
 if isSignal:
-# sequence.remove(ttHHTSkimmer)
+ sequence.remove(ttHHTSkimmer)
 # sequence.remove(ttHSTSkimmer)
-  sequence.remove(eventFlagsAna)
+ sequence.remove(eventFlagsAna)
 #  sequence.remove(hbheFilterAna)
 
 ## output histogram
