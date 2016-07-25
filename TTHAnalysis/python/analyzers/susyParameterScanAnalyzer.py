@@ -122,7 +122,7 @@ class susyParameterScanAnalyzer( Analyzer ):
         self.readCollections( event.input )
         self.counters.addCounter('events')
         
-        print len(event.cleanJets)
+        #print len(event.cleanJets)
         # create parameters
         event.susyModel = None
         for id,X in self.susyParticles.iteritems():
