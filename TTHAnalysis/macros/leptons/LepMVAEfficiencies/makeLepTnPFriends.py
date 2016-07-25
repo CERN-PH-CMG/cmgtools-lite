@@ -6,12 +6,17 @@ from array import array
 from ROOT import TEfficiency
 import os.path as osp
 
-LUMI = 2.07 ## /store/user/mmarionn/heppyTrees/809_June9/
+LUMI = 12.0 ## /store/user/mmarionn/heppyTrees/809_June9/
 WEIGHT = "puWeight"
 PAIRSEL = ("((pdgId*tag_pdgId==-11*11||pdgId*tag_pdgId==-13*13)"
            "&&abs(mass-91.)<30.&&abs(mcMatchId)>0)")
 SELECTIONS = {
-    'inclusive':      PAIRSEL,
+    'inclusive':               PAIRSEL,
+    # mcMatchId is never ==1 for MC but always for data
+    'runs (<= 275125)':        PAIRSEL+"&&(mcMatchId==1&&run<=275125)",
+    'runs (>275125 <=275783)': PAIRSEL+"&&(mcMatchId==1&&run>275125&&run<=275783)",
+    'runs (>275783 <=276384)': PAIRSEL+"&&(mcMatchId==1&&run>275783&&run<=276384)",
+    'runs (>276384 <=276811)': PAIRSEL+"&&(mcMatchId==1&&run>276384&&run<=276811)",
     # 'singleTriggers': PAIRSEL+"&&passSingle",
     # 'doubleTriggers': PAIRSEL+"&&passDouble",
     # 'ttbar': "( (pdgId*tag_pdgId==-11*13)||"
@@ -66,16 +71,13 @@ BINNINGS = [
 
 DENOMINATOR = "passLoose"
 NUMERATORS  = [
-    ('2lss',"passTight&&passTCharge", 'same-sign 2 lepton definition'),
-    ('3l',  "passTight", '3 lepton definition'),
+    ('2lss',"passTight&&passTCharge&&ICHEPmediumMuonId", 'same-sign 2 lepton definition'),
+    ('3l',  "passTight&&ICHEPmediumMuonId", '3 lepton definition'),
 ]
 
 INPUTS = {
     'data':[
         "Run2016",
-        # "DoubleEG_Run2016B_PromptReco_v2_runs_271036_274421",
-        # "DoubleMuon_Run2016B_PromptReco_v2_runs_271036_274421",
-        # "MuonEG_Run2016B_PromptReco_v2_runs_271036_274421",
         ],
     'DY':["DYJetsToLL_M50"],
     # 'ttbar':[
@@ -88,17 +90,20 @@ INPUTS = {
     # 'ttH':["TTHnobb"],
 }
 
-def getEfficiencyRatio(eff1, eff2):
+def getEfficiencyRatio(eff1, eff2, attributes_from_first=False):
     # This calculates eff1/eff2
     ratio = eff1.GetPassedHistogram().Clone("ratio")
     ratio.Sumw2()
     ratio.Divide(eff1.GetTotalHistogram())
     ratio.Multiply(eff2.GetTotalHistogram())
     ratio.Divide(eff2.GetPassedHistogram())
-    # Pass on the attributes of the second argument
+    # Pass on the attributes of the chosen argument
     for att in ['LineWidth','LineColor','MarkerStyle',
                 'MarkerSize','MarkerColor']:
-        getattr(ratio,'Set%s'%att)(getattr(eff2,'Get%s'%att)())
+        if not attributes_from_first:
+            getattr(ratio,'Set%s'%att)(getattr(eff2,'Get%s'%att)())
+        else:
+            getattr(ratio,'Set%s'%att)(getattr(eff1,'Get%s'%att)())
     return ratio
 
 class EfficiencyPlot(object):
@@ -120,6 +125,7 @@ class EfficiencyPlot(object):
                        ROOT.kOrange+8, ROOT.kSpring-5]
 
         self.reference = None # reference for ratios
+        self.invertratio = False
         self.ratiorange = (0.75, 1.15)
 
     def add(self,eff,tag,includeInRatio=True):
@@ -298,7 +304,10 @@ class EfficiencyPlot(object):
         # Calculate ratios
         self.ratios = []
         for eff,ref in zip(self.effsforratio, self.reference):
-            self.ratios.append(getEfficiencyRatio(ref, eff))
+            if self.invertratio:
+                self.ratios.append(getEfficiencyRatio(ref, eff))
+            else:
+                self.ratios.append(getEfficiencyRatio(eff, ref, attributes_from_first=True))
 
         if not self.xtitle:
             ratioframe.GetXaxis().SetTitle(
@@ -607,6 +616,7 @@ def makePassedFailed(proc,fnames,indir,
         for lep,lepsel,_ in LEPSEL:
             for sname,sel in SELECTIONS.iteritems():
                 if sname == 'ttH' and proc != 'ttH': continue
+                if sname.startswith('runs') and proc != 'data': continue
                 finalsel = '(%s)&&(%s)' % (lepsel, sel)
                 for nname,num,_ in NUMERATORS:
                     for var,bins,_ in BINNINGS:
@@ -626,10 +636,10 @@ def makePassedFailed(proc,fnames,indir,
                         task = (key, result_dict, tag, floc, fsel, num,
                                 DENOMINATOR, var, bins, options)
 
-                        if sname=='inclusive' and proc in ['data', 'DY']:
-                            tasks.append(task)
-                        elif proc != 'DY':
+                        if proc not in ['DY', 'data']:
                             tasks_cc.append(task)
+                        else:
+                            tasks.append(task)
 
 
         print 'Have %d tasks to process' % (len(tasks)+len(tasks_cc))
@@ -695,19 +705,41 @@ def makePlots(efficiencies, options):
                 plot.xtitle = xtitle
                 plot.tag = '%s'%(lname)
                 plot.subtag = '%s'%(ntitle)
-                plot.colors = [ROOT.kBlack,  ROOT.kAzure+1,
-                               ROOT.kGray+1, ROOT.kSpring-8,
-                               ROOT.kPink+9]
+                plot.colors = [ROOT.kBlack,
+                               ROOT.kAzure+1,
+                               ROOT.kGreen+3,
+                               ROOT.kGreen-2,
+                               ROOT.kGreen-6,
+                               ROOT.kGreen-9
+                               ]
+                # plot.colors = [ROOT.kBlack,  ROOT.kAzure+1,
+                #                ROOT.kGray+1, ROOT.kSpring-8,
+                #                ROOT.kPink+9]
+
+                plot.tagpos = (0.92,0.35+0.1)
+                plot.subtagpos = (0.92,0.29+0.1)
+                if lep == 'ee':
+                    plot.tagpos = (0.92,0.85)
+                    plot.subtagpos = (0.92,0.79)
+
 
                 if 'Jet' in var:
                     plot.subtag = '%s, p_{T} > 30 GeV' % ntitle
 
+                plot.reference = [efficiencies['DY'][(lep,'inclusive',nname,var)]]
+
                 plot.add(efficiencies['data'][(lep,'inclusive',nname,var)],
                          'Data (%.2f fb^{-1}), Z mass fit' % LUMI,
-                         includeInRatio=False)
+                         includeInRatio=True)
                 plot.add(efficiencies['DY'][(lep,'inclusive',nname,var)],
                          'DY MC, Z mass fit',
-                         includeInRatio=True)
+                         includeInRatio=False)
+
+                for selname in SELECTIONS.keys():
+                    if selname == 'inclusive': continue
+                    plot.add(efficiencies['data'][(lep, selname, nname, var)],
+                         'Data %s'%selname, includeInRatio=True)
+
                 # plot.add(efficiencies['data'][(lep,'ttbar',nname,var)],
                 #          'Data, t#bar{t} dilepton, cut & count',
                 #          includeInRatio=False)
