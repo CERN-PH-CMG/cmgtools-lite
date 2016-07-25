@@ -7,7 +7,10 @@ from CMGTools.TTHAnalysis.treeReAnalyzer import ROOT, EventLoop, Module, Collect
 from BTagScaleFactors import BTagScaleFactors
 
 class BTagEventWeightFriend:
-    def __init__(self, csvfile,
+    def __init__(self,
+                 csvfile,
+                 csvfastsim=None,
+                 eff_rootfile=None,
                  algo='csv',
                  btag_branch='btagCSV',
                  flavor_branch='hadronFlavour',
@@ -15,7 +18,12 @@ class BTagEventWeightFriend:
                  recllabel='Recl',
                  mcOnly=True):
 
-        self.reader = BTagScaleFactors('btagsf', csvfile=csvfile, algo=algo, verbose=0)
+        self.reader = BTagScaleFactors('btagsf',
+                                       csvfile=csvfile,
+                                       csvfastsim=csvfastsim,
+                                       eff_rootfile=eff_rootfile,
+                                       algo=algo,
+                                       verbose=0)
 
         self.jec_systs = ["", "_jecUp", "_jecDown"]
         self.recllabel = recllabel
@@ -24,10 +32,17 @@ class BTagEventWeightFriend:
         self.flavor_branch = flavor_branch
         self.mcOnly = mcOnly
 
+        self.is_fastsim = (csvfastsim != None)
+
         # Automatically add the iterative systs from the reader
         self.btag_systs = ["central"]
         self.btag_systs += ["up_%s"  %s for s in self.reader.iterative_systs]
         self.btag_systs += ["down_%s"%s for s in self.reader.iterative_systs]
+
+        # Take only central, up_correlated, and down_correlated for fastsim
+        if self.is_fastsim:
+            self.btag_systs = ["central", "up_correlated", "down_correlated"]
+
 
         # JEC to use for each syst:
         # Central one for all btag variations except up_jes and down_jes
@@ -69,10 +84,15 @@ class BTagEventWeightFriend:
             label = "%s_%s" % (self.label, syst)
             if syst == 'central': label = self.label
 
-            ret[label] = self.reader.get_event_SF(jets, syst=syst,
+            if not self.is_fastsim:
+                ret[label] = self.reader.get_event_SF(jets, syst=syst,
                                                   flavorAttr=self.flavor_branch,
                                                   btagAttr=self.btag_branch)
-
+            else:
+                ret[label] = self.reader.get_event_SF_fastsim(jets, syst=syst,
+                                                  flavorAttr=self.flavor_branch,
+                                                  btagAttr=self.btag_branch,
+                                                  wp='L')
         return ret
 
 if __name__ == '__main__':
@@ -82,10 +102,13 @@ if __name__ == '__main__':
     tree.vectorTree = True
     print "... processing %s" % argv[1]
 
-    friendfile = ROOT.TFile.Open(argv[2])
-    friendtree = friendfile.Get("sf/t")
-    tree.AddFriend(friendtree)
-    print "... adding friend tree from %s" % argv[2]
+    try:
+        friendfile = ROOT.TFile.Open(argv[2])
+        friendtree = friendfile.Get("sf/t")
+        tree.AddFriend(friendtree)
+        print "... adding friend tree from %s" % argv[2]
+    except IndexError:
+        pass
 
 
     btagsf_payload = os.path.join(os.environ['CMSSW_BASE'], "src/CMGTools/TTHAnalysis/data/btag/", "CSVv2_ichep.csv")
@@ -117,7 +140,40 @@ if __name__ == '__main__':
         def done(self):
             pass
 
-    T = Tester("tester")
+    btagsf_payload_fastsim = os.path.join(os.environ['CMSSW_BASE'], "src/CMGTools/TTHAnalysis/data/btag/", "CSV_13TEV_TTJets_11_7_2016.csv")
+    btag_efficiency_file   = os.path.join(os.environ['CMSSW_BASE'], "src/CMGTools/TTHAnalysis/data/btag/", "bTagEffs.root")
+
+    class TesterFastSim(Module):
+        def __init__(self, name):
+            Module.__init__(self,name,None)
+            self.sf = BTagEventWeightFriend(csvfile=btagsf_payload,
+                                            csvfastsim=btagsf_payload_fastsim,
+                                            eff_rootfile=btag_efficiency_file,
+                                            recllabel="Recl", algo='csv')
+            print "Adding these branches:", self.sf.listBranches()
+
+        def analyze(self,ev):
+            print "\nrun %6d lumi %4d event %d: jets %d, isdata=%d" % (ev.run, ev.lumi, ev.evt, ev.nJet25, int(ev.isData))
+            ret = self.sf(ev)
+            jets = Collection(ev,"Jet")
+            # leps = Collection(ev,"LepGood")
+
+            for i,j in enumerate(jets):
+                print "\tjet %8.2f %+5.2f %1d %.3f" % (j.pt, j.eta, getattr(j, "hadronFlavour", -1), min(max(0, j.btagCSV), 1))
+
+            for label in self.sf.listBranches()[:10]:
+                print "%8s"%label[-8:],
+            print ""
+
+            for label in self.sf.listBranches()[:10]:
+                print "%8.3f" % ret[label],
+            print ""
+
+
+        def done(self):
+            pass
+
+    T = TesterFastSim("tester")
     el = EventLoop([ T ])
     el.loop([tree], maxEvents = 10)
     T.done()
