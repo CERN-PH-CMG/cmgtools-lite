@@ -1,8 +1,8 @@
 #!/bin/bash
 
 if [[ "$HOSTNAME" == "cmsco01.cern.ch" ]]; then
-    T2L=" -P /data1/peruzzi/mixture_jecv6prompt_datafull_jul20_skimOnlyMC --Fs {P}/2_recleaner_v5_b1E2 --Fs {P}/4_kinMVA_without_MEM_v5 --Fs {P}/8_bTagSF_4fb_v45"
-    T3L=" -P /data1/peruzzi/TREES_80X_180716_jecv6_skim_3ltight_relax --Fs {P}/2_recleaner_v5_b1E2 --Fs {P}/4_kinMVA_with_MEM_v5 --Fs {P}/7_MEM_v5 --Fs {P}/8_bTagSF_4fb_v5"
+    T2L=" -P /data1/peruzzi/mixture_jecv6prompt_datafull_jul20_skimOnlyMC --Fs {P}/2_recleaner_v5_b1E2 --Fs {P}/4_kinMVA_without_MEM_v5 --Fs {P}/8_bTagSF_12fb_v45"
+    T3L=" -P /data1/peruzzi/TREES_80X_180716_jecv6_skim_3ltight_relax --Fs {P}/2_recleaner_v5_b1E2 --Fs {P}/4_kinMVA_with_MEM_v5 --Fs {P}/7_MEM_v5 --Fs {P}/8_bTagSF_12fb_v5"
     J=8;
 else
 #    T2L=" -P /afs/cern.ch/work/p/peruzzi/ra5trees/809_June9_ttH_skimOnlyMC_2lsstight_relax "
