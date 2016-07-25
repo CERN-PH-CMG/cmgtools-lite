@@ -107,8 +107,11 @@ class MCAnalysis:
             cnames = [ x.strip() for x in field[1].split("+") ]
             total_w = 0.; to_norm = False; ttys = [];
             is_w = -1
+            pname0 = pname
             for cname in cnames:
+                if options.useCnames: pname = pname0+"."+cname
                 treename = extra["TreeName"] if "TreeName" in extra else options.tree 
+                objname  = extra["ObjName"]  if "ObjName"  in extra else options.obj
                 rootfile = "%s/%s/%s/%s_tree.root" % (options.path, cname, treename, treename)
                 if options.remotePath:
                     rootfile = "root:%s/%s/%s_tree.root" % (options.remotePath, cname, treename)
@@ -117,14 +120,12 @@ class MCAnalysis:
                 elif (not os.path.exists(rootfile)) and os.path.exists("%s/%s/%s/tree.root" % (options.path, cname, treename)):
                     # Heppy calls the tree just 'tree.root'
                     rootfile = "%s/%s/%s/tree.root" % (options.path, cname, treename)
-                    treename = "tree"
                 elif (not os.path.exists(rootfile)) and os.path.exists("%s/%s/%s/tree.root.url" % (options.path, cname, treename)):
                     # Heppy calls the tree just 'tree.root'
                     rootfile = "%s/%s/%s/tree.root" % (options.path, cname, treename)
                     rootfile = open(rootfile+".url","r").readline().strip()
-                    treename = "tree"
                 pckfile = options.path+"/%s/skimAnalyzerCount/SkimReport.pck" % cname
-                tty = TreeToYield(rootfile, options, settings=extra, name=pname, cname=cname, treename=treename); ttys.append(tty)
+                tty = TreeToYield(rootfile, options, settings=extra, name=pname, cname=cname, objname=objname); ttys.append(tty)
                 if signal: 
                     self._signals.append(tty)
                     self._isSignal[pname] = True
@@ -177,8 +178,8 @@ class MCAnalysis:
         #if len(self._signals) == 0: raise RuntimeError, "No signals!"
         #if len(self._backgrounds) == 0: raise RuntimeError, "No backgrounds!"
     def listProcesses(self):
-        ret = self._allData.keys()[:]
-        ret.sort(key = lambda n : self._rank[n])
+        ret = self.listSignals() + self.listBackgrounds() 
+        if 'data' in self._allData.keys(): ret.append('data')
         return ret
     def listOptionsOnlyProcesses(self):
         return self._optionsOnlyProcesses.keys()
@@ -545,9 +546,11 @@ def addMCAnalysisOptions(parser,addTreeToYieldOnesToo=True):
     parser.add_option("--peg-process", dest="processesToPeg", type="string", default=[], nargs=2, action="append", help="--peg-process X Y make X scale as Y (equivalent to set PegNormToProcess=Y in the mca.txt)");
     parser.add_option("--scale-process", dest="processesToScale", type="string", default=[], nargs=2, action="append", help="--scale-process X Y make X scale by Y (equivalent to add it in the mca.txt)");
     parser.add_option("--AP", "--all-processes", dest="allProcesses", action="store_true", help="Include also processes that are marked with SkipMe=True in the MCA.txt")
+    parser.add_option("--use-cnames",  dest="useCnames", action="store_true", help="Use component names instead of process names (for debugging)")
     parser.add_option("--project", dest="project", type="string", help="Project to a scenario (e.g 14TeV_300fb_scenario2)")
     parser.add_option("--plotgroup", dest="plotmergemap", type="string", default=[], action="append", help="Group plots into one. Syntax is '<newname> := (comma-separated list of regexp)', can specify multiple times. Note it is applied after plotting.")
     parser.add_option("--scaleplot", dest="plotscalemap", type="string", default=[], action="append", help="Scale plots by this factor (before grouping). Syntax is '<newname> := (comma-separated list of regexp)', can specify multiple times.")
+    parser.add_option("-t", "--tree",          dest="tree", default='ttHLepTreeProducerTTH', help="Pattern for tree name");
 
 if __name__ == "__main__":
     from optparse import OptionParser

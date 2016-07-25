@@ -29,6 +29,10 @@ class ttHGenLevelOnlyStudy( Analyzer ):
     """
     def __init__(self, cfg_ana, cfg_comp, looperName ):
         super(ttHGenLevelOnlyStudy,self).__init__(cfg_ana,cfg_comp,looperName)
+        self.includeTauDecays = getattr(cfg_ana, 'includeTauDecays', True)
+        self.muon_pt_min = cfg_ana.muon_pt_min
+        self.electron_pt_min = cfg_ana.electron_pt_min
+        
 
     #---------------------------------------------
     # DECLARATION OF HANDLES OF GEN LEVEL OBJECTS 
@@ -52,11 +56,14 @@ class ttHGenLevelOnlyStudy( Analyzer ):
             if (abs(l.pdgId()) not in [11,13]) or l.status() != 1: continue
             if not isNotFromHadronicShower(l):
                 continue
+            if not self.includeTauDecays:
+                isFromTau = any(im for im in xrange(l.numberOfMothers()) if abs(l.mother(im).pdgId()) == 15)
+                if isFromTau: continue
             event.genLeptons.append(LeptonFromGen(l))
             if abs(l.pdgId()) == 13:
-                if l.pt() <= 5 or abs(l.eta()) > 2.4: continue
+                if l.pt() <= self.muon_pt_min or abs(l.eta()) > 2.4: continue
             if abs(l.pdgId()) == 11:
-                if l.pt() <= 7 or abs(l.eta()) > 2.5: continue
+                if l.pt() <= self.electron_pt_min or abs(l.eta()) > 2.5: continue
             #print "selected lepton pdgId %d, status %d, pt %.1f, eta %.2f" % (l.pdgId(),l.status(),l.pt(),l.eta())
             event.selectedLeptons.append(LeptonFromGen(l))
         event.selectedLeptons.sort(key = lambda l : -l.pt())
@@ -246,6 +253,8 @@ class ttHGenLevelOnlyStudy( Analyzer ):
             return True
 
         event.genParticles = [ gp for gp in self.mchandles['genParticles'].product() ]
+
+        for gp in event.genParticles: gp.promptHardFlag = False
 
         event.eventWeigth = 1.0
         event.run = event.input.eventAuxiliary().id().run()

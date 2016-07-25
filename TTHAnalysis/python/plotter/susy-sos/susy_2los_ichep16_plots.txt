@@ -1,7 +1,0 @@
-lep1Pt:  LepGood1_pt: 25,0,50; XTitle="Leading lepton p_{T}  [GeV]",Legend='TR'
-lep2Pt:  LepGood2_pt: 12,0,25; XTitle="Second lepton p_{T}  [GeV]",Legend='TR'
-lepEta:  LepGood_eta: 50,-5,5; XTitle="Lepton #eta",Legend='TR'
-lepPhi:  LepGood_phi: 80,-4,4; XTitle="Lepton #phi",Legend='TR'
-mll  : mass_2(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_mass,LepGood2_pt,LepGood2_eta,LepGood2_phi,LepGood2_mass): 15,0,300; XTitle="m(ll) [GeV]"
-ptll : pt_2(LepGood1_pt,LepGood1_phi, LepGood2_pt,LepGood2_phi): 18,0,240; XTitle="p_{T}(ll) [GeV]"
-met:   met_pt: 18,0,800    ; XTitle="E_{T}^{miss}  [GeV]"

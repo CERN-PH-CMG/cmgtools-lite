@@ -1,0 +1,11 @@
+#!/bin/bash
+QUEUE=8nh
+if [[ "$1" == "-q" ]]; then QUEUE=$2; shift; shift; fi;
+CMD=$1;
+case $CMD in 
+python|bash) shift;;
+*.sh) CMD="bash";;
+*.py) CMD="python";;
+*) echo "What do you want to use to run $* ?"; exit 1;;
+esac;
+bsub -q $QUEUE  $PWD/runBatch $PWD $SCRAM_ARCH $CMD $* 

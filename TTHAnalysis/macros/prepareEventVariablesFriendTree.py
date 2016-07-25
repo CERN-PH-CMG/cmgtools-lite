@@ -9,6 +9,13 @@ MODULES = []
 utility_files_dir = os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/"
 isFastSim = False
 
+def getSampName(name, tname):
+    if "/tree.root" in name:
+        samp = name.replace("/"+tname+"/tree.root","")
+        samp = os.path.basename(samp)
+        return samp
+    else: return name
+
 #btagSF = utility_files_dir+"/btag/CSVv2_25ns.csv"
 #btagEFF = utility_files_dir+"/btag/btageff__ttbar_powheg_pythia8_25ns.root"
 #btagSF_FastSim = utility_files_dir+"/btag/CSV_13TEV_Combined_20_11_2015_FullSim_FastSim.csv"
@@ -32,9 +39,11 @@ isFastSim = False
 
 #--- Recleaner instances
 
-from CMGTools.TTHAnalysis.tools.leptonChoiceRA5 import _susy2lss_lepId_CBloose,_susy2lss_lepId_loosestFO,_susy2lss_lepId_IPcuts,_susy2lss_lepConePt1015,_susy2lss_lepId_tighterFO,_susy2lss_multiIso,_susy2lss_lepId_CB,_susy2lss_idIsoEmu_cuts, _susy2lss_leptonMVA
+from CMGTools.TTHAnalysis.tools.leptonChoiceRA5 import _susy2lss_lepId_CBloose,_susy2lss_lepId_loosestFO,_susy2lss_lepId_IPcuts,_susy2lss_lepConePt1015,_susy2lss_lepId_tighterFO,_susy2lss_multiIso,_susy2lss_lepId_CB,_susy2lss_idIsoEmu_cuts
 from CMGTools.TTHAnalysis.tools.leptonChoiceRA7 import _susy3l_lepId_loosestFO,_susy3l_lepId_loosestFO,_susy3l_multiIso,_susy3l_lepId_CB
+from CMGTools.TTHAnalysis.tools.leptonChoiceEWK import _susy3l_lepId_IPcutsMVA,_susy3l_lepId_CBlooseMVA,_susy3l_lepId_CBloose
 from CMGTools.TTHAnalysis.tools.functionsTTH import _ttH_idEmu_cuts_E2
+from CMGTools.TTHAnalysis.tools.functionsEWKino import _ewkino_idEmu_cuts_E2, _ewkino_2lss_lepId_CBloose,_ewkino_2lss_lepId_loosestFO, _ewkino_2lss_lepId_tighterFO, _ewkino_2lss_lepId_IPcuts, _ewkino_2lss_lepConePt1015, _ewkino_2lss_leptonMVA_T, _ewkino_2lss_leptonMVA_VT
 from CMGTools.TTHAnalysis.tools.conept import conept_RA5, conept_RA7, conept_TTH, conept_SSDL
 
 MODULES.append( ('leptonJetReCleanerSusyRA5', lambda : LeptonJetReCleaner("Mini", 
@@ -44,7 +53,7 @@ MODULES.append( ('leptonJetReCleanerSusyRA5', lambda : LeptonJetReCleaner("Mini"
                    lambda lep,ht : lep.pt>10 and _susy2lss_lepConePt1015(lep) and _susy2lss_multiIso(lep) and _susy2lss_lepId_CB(lep) and (ht>300 or _susy2lss_idIsoEmu_cuts(lep)), # cuts applied on top of loose
                    cleanJet = lambda lep,jet,dr : dr<0.4,
                    selectJet = lambda jet: abs(jet.eta)<2.4,
-                   cleanWithTaus = False,
+                   cleanJetsWithTaus = False,
                    doVetoZ = True,
                    doVetoLMf = True,
                    doVetoLMt = True,
@@ -54,14 +63,54 @@ MODULES.append( ('leptonJetReCleanerSusyRA5', lambda : LeptonJetReCleaner("Mini"
                    storeJetVariables = True                                                       
                  ) ))
 
-MODULES.append( ('leptonJetReCleanerSusyRA7', lambda : LeptonJetReCleaner("Mini", 
-                   lambda lep : lep.miniRelIso < 0.4 and _susy2lss_lepId_CBloose(lep), #and (ht>300 or _susy2lss_idIsoEmu_cuts(lep)), 
-                   lambda lep : lep.pt>10 and _susy3l_lepId_loosestFO(lep) and _susy2lss_lepId_IPcuts(lep), # cuts applied on top of loose
-                   lambda lep,ht : lep.pt>10 and _susy2lss_lepId_IPcuts(lep) and _susy3l_lepId_loosestFO(lep), # cuts applied on top of loose
-                   lambda lep,ht : lep.pt>10 and _susy3l_multiIso(lep) and _susy3l_lepId_CB(lep), # cuts applied on top of loose
+## OLD RA7, in sync with JAN
+#MODULES.append( ('leptonJetReCleanerSusyRA7', lambda : LeptonJetReCleaner("Mini", 
+#                   lambda lep : lep.miniRelIso < 0.4 and _susy2lss_lepId_CBloose(lep), #and (ht>300 or _susy2lss_idIsoEmu_cuts(lep)), 
+#                   lambda lep : lep.pt>10 and _susy3l_lepId_loosestFO(lep) and _susy2lss_lepId_IPcuts(lep), # cuts applied on top of loose
+#                   lambda lep,ht : lep.pt>10 and _susy2lss_lepId_IPcuts(lep) and _susy3l_lepId_loosestFO(lep), # cuts applied on top of loose
+#                   lambda lep,ht : lep.pt>10 and _susy3l_multiIso(lep) and _susy3l_lepId_CB(lep), # cuts applied on top of loose
+#                   cleanJet = lambda lep,jet,dr : dr<0.4,
+#                   selectJet = lambda jet: abs(jet.eta)<2.4,
+#                   cleanJetsWithTaus = False,
+#                   doVetoZ = False,
+#                   doVetoLMf = False,
+#                   doVetoLMt = True,
+#                   jetPt = 30,
+#                   bJetPt = 25,
+#                   coneptdef = lambda lep: conept_RA7(lep)
+#                 ) ))
+
+## updated cut-based RA7
+#MODULES.append( ('leptonJetReCleanerSusyRA7', lambda : LeptonJetReCleaner("Mini", 
+#                   lambda lep : lep.miniRelIso < 0.4 and _susy3l_lepId_CBloose(lep), #and (ht>300 or _susy2lss_idIsoEmu_cuts(lep)), 
+#                   lambda lep : lep.pt>10 and _susy3l_lepId_loosestFO(lep) and _susy2lss_lepId_IPcuts(lep), # cuts applied on top of loose
+#                   lambda lep,ht : lep.pt>10 and _susy2lss_lepId_IPcuts(lep) and _susy3l_lepId_loosestFO(lep), # cuts applied on top of loose
+#                   lambda lep,ht : lep.pt>10 and _susy3l_multiIso(lep) and _susy3l_lepId_CB(lep), # cuts applied on top of loose
+#                   cleanJet = lambda lep,jet,dr : dr<0.4,
+#                   selectJet = lambda jet: abs(jet.eta)<2.4,
+#                   cleanJetsWithTaus = False,
+#                   doVetoZ = False,
+#                   doVetoLMf = False,
+#                   doVetoLMt = True,
+#                   jetPt = 30,
+#                   bJetPt = 25,
+#                   coneptdef = lambda lep: conept_RA7(lep)
+#                 ) ))
+
+# MVA
+MODULES.append( ('leptonJetReCleanerSusyRA7mva', lambda : LeptonJetReCleaner("Mini", 
+                   lambda lep : lep.miniRelIso < 0.4 and _susy3l_lepId_CBlooseMVA(lep) and _susy3l_lepId_IPcutsMVA(lep), 
+                   lambda lep : True, # cuts applied on top of loose
+                   lambda lep,ht : lep.pt>10 and _susy3l_lepId_loosestFO(lep), # cuts applied on top of loose
+                   #lambda lep,ht : (abs(lep.pdgId) == 13 and lep.mvaTTZMoriond16>-0.60 and lep.mediumMuonId>0) or (abs(lep.pdgId)==11 and lep.mvaTTZMoriond16>0.25), # loose WP 
+                   lambda lep,ht : (abs(lep.pdgId) == 13 and lep.mvaTTZMoriond16>-0.20 and lep.mediumMuonId>0) or (abs(lep.pdgId)==11 and lep.mvaTTZMoriond16>0.5), # medium WP
                    cleanJet = lambda lep,jet,dr : dr<0.4,
                    selectJet = lambda jet: abs(jet.eta)<2.4,
-                   cleanWithTaus = False,
+                   cleanTau = lambda lep,tau,dr: dr<0.4,
+                   looseTau = lambda tau: tau.pt > 20 and abs(tau.eta)<2.3 and abs(tau.dxy) < 1000 and abs(tau.dz) < 0.2 and tau.idMVAOldDMRun2dR03 >= 1 and tau.idDecayMode, # used in cleaning 
+                   tightTau = lambda tau: True, # cuts applied on top of loose
+                   #tightTau = lambda tau: tau.idMVAOldDMRun2dR03 >= 2, # cuts applied on top of loose
+                   cleanJetsWithTaus = True,
                    doVetoZ = False,
                    doVetoLMf = False,
                    doVetoLMt = True,
@@ -71,13 +120,16 @@ MODULES.append( ('leptonJetReCleanerSusyRA7', lambda : LeptonJetReCleaner("Mini"
                  ) ))
 
 MODULES.append( ('leptonJetReCleanerSusySSDL', lambda : LeptonJetReCleaner("Recl", 
-                   looseLeptonSel = lambda lep : lep.miniRelIso < 0.4 and _susy2lss_lepId_CBloose(lep), 
-                   cleaningLeptonSel = lambda lep : lep.pt>10 and _susy2lss_lepId_loosestFO(lep) and _susy2lss_lepId_IPcuts(lep), # cuts applied on top of loose
-                   FOLeptonSel = lambda lep,ht : lep.pt>10 and _susy2lss_lepConePt1015(lep) and _susy2lss_lepId_IPcuts(lep) and _susy2lss_lepId_tighterFO(lep) and _susy2lss_idIsoEmu_cuts(lep), # cuts applied on top of loose
-                   tightLeptonSel = lambda lep,ht : lep.pt>10 and _susy2lss_lepConePt1015(lep) and _susy2lss_leptonMVA(lep) and _susy2lss_lepId_tighterFO(lep) and _susy2lss_idIsoEmu_cuts(lep), # cuts applied on top of loose
+                   looseLeptonSel = lambda lep : lep.miniRelIso < 0.4 and _ewkino_2lss_lepId_IPcuts(lep),
+                   cleaningLeptonSel = lambda lep : lep.conept>10 and _ewkino_2lss_lepId_CBloose(lep), # cuts applied on top of loose (pt 5, 7, conveto, lotHist<=1 && emulation)
+                   FOLeptonSel = lambda lep,ht : lep.conept>10 and _ewkino_2lss_lepId_loosestFO(lep), # cuts on top of loose (previous + tight charge and lostHits==0)
+                   tightLeptonSel = lambda lep,ht : lep.conept>10 and _ewkino_2lss_lepConePt1015(lep) and _ewkino_2lss_leptonMVA_VT(lep) and _ewkino_2lss_lepId_tighterFO(lep), # on top of loose 
                    cleanJet = lambda lep,jet,dr : dr<0.4,
                    selectJet = lambda jet: abs(jet.eta)<2.4,
-                   cleanWithTaus = False,
+                   cleanTau = lambda lep,tau,dr: dr<0.4,
+                   looseTau = lambda tau: tau.pt > 20 and abs(tau.eta)<2.3 and abs(tau.dxy) < 1000 and abs(tau.dz) < 0.2 and tau.idMVAOldDMRun2dR03 >= 1 and tau.idDecayMode, # used in cleaning 
+                   tightTau = lambda tau: True, # cuts applied on top of loose                                                                           
+                   cleanJetsWithTaus = False,
                    doVetoZ = True,
                    doVetoLMf = True,
                    doVetoLMt = True,
@@ -86,14 +138,18 @@ MODULES.append( ('leptonJetReCleanerSusySSDL', lambda : LeptonJetReCleaner("Recl
                    coneptdef = lambda lep: conept_SSDL(lep)
                  ) ))
 
-MODULES.append( ('leptonJetReCleanerTTH', lambda : LeptonJetReCleaner("Recl", # b1E2 definition of FO
+
+MODULES.append( ('leptonJetReCleanerTTH', lambda : LeptonJetReCleaner("Recl", # b1E2 definition of FO, 80X b-tag WP
                    looseLeptonSel = lambda lep : lep.miniRelIso < 0.4 and lep.sip3d < 8,
-                   cleaningLeptonSel = lambda lep : lep.conept>10 and lep.jetBTagCSV<0.89 and (abs(lep.pdgId)!=11 or lep.conept<30 or _ttH_idEmu_cuts_E2(lep)) and ((lep.jetPtRatiov2>0.3 and lep.jetBTagCSV<0.605) or lep.mvaTTH>0.75), # cuts applied on top of loose
-                   FOLeptonSel = lambda lep,ht : lep.conept>10 and lep.jetBTagCSV<0.89 and (abs(lep.pdgId)!=11 or lep.conept<30 or _ttH_idEmu_cuts_E2(lep)) and ((lep.jetPtRatiov2>0.3 and lep.jetBTagCSV<0.605) or lep.mvaTTH>0.75), # cuts applied on top of loose
-                   tightLeptonSel = lambda lep,ht : lep.conept>10 and lep.jetBTagCSV<0.89 and (abs(lep.pdgId)!=11 or lep.conept<30 or _ttH_idEmu_cuts_E2(lep)) and ((lep.jetPtRatiov2>0.3 and lep.jetBTagCSV<0.605) or lep.mvaTTH>0.75) and (abs(lep.pdgId)!=13 or lep.mediumMuonId>0) and lep.mvaTTH > 0.75, # cuts applied on top of loose
-                   cleanJet = lambda lep,jet,dr : dr<0.4,
+                   cleaningLeptonSel = lambda lep : True, # cuts applied on top of loose
+                   FOLeptonSel = lambda lep,ht : lep.conept>10 and lep.jetBTagCSV<0.80 and (abs(lep.pdgId)!=11 or lep.conept<30 or _ttH_idEmu_cuts_E2(lep)) and ((lep.jetPtRatiov2>0.3 and lep.jetBTagCSV<0.46) or lep.mvaTTH>0.75), # cuts applied on top of loose
+                   tightLeptonSel = lambda lep,ht : lep.conept>10 and lep.jetBTagCSV<0.80 and (abs(lep.pdgId)!=11 or lep.conept<30 or _ttH_idEmu_cuts_E2(lep)) and ((lep.jetPtRatiov2>0.3 and lep.jetBTagCSV<0.46) or lep.mvaTTH>0.75) and (abs(lep.pdgId)!=13 or lep.mediumMuonId>0) and lep.mvaTTH > 0.75, # cuts applied on top of loose
+                   cleanJet = lambda lep,jet,dr : dr<0.4 and (abs(lep.pdgId)==15 or ( lep.conept>10 and lep.jetBTagCSV<0.80 and (abs(lep.pdgId)!=11 or lep.conept<30 or _ttH_idEmu_cuts_E2(lep)) and ((lep.jetPtRatiov2>0.3 and lep.jetBTagCSV<0.46) or lep.mvaTTH>0.75) )), # called on cleaning leptons and loose taus
                    selectJet = lambda jet: abs(jet.eta)<2.4,
-                   cleanWithTaus = True,
+                   cleanTau = lambda lep,tau,dr: dr<0.4, # cleaning taus with cleaningLeptonSel == loose
+                   looseTau = lambda tau: tau.pt > 20 and abs(tau.eta)<2.3 and abs(tau.dxy) < 1000 and abs(tau.dz) < 0.2 and tau.idMVAOldDMRun2dR03 >= 1 and tau.idDecayMode, # used in cleaning
+                   tightTau = lambda tau: tau.idMVAOldDMRun2dR03 >= 2, # cuts applied on top of loose
+                   cleanJetsWithTaus = True,
                    doVetoZ = True,
                    doVetoLMf = True,
                    doVetoLMt = True,
@@ -140,7 +196,7 @@ RA7_fast_lepSF = [[utility_files_dir+"/leptonSF/ra7_lepsf_fastsim/muons/sf_mu_me
 RA7_puweights = utility_files_dir+"/pileup/ra7_puWeights.root::pileup"
 
 MODULES.append( ('leptonChoiceRA7', lambda : LeptonChoiceRA7("Loop","Mini",whichApplication="Fakes",isFastSim=isFastSim,filePathFakeRate=RA7_FRname,filePathLeptonSFfull=RA7_full_lepSF,filePathLeptonSFfast=RA7_fast_lepSF,filePathPileUp=RA7_puweights))) 
-MODULES.append( ('leptonChoiceEWK', lambda : LeptonChoiceEWK("Loop","Mini",whichApplication="Fakes",isFastSim=isFastSim,filePathFakeRate=RA7_FRname,filePathLeptonSFfull=RA7_full_lepSF,filePathLeptonSFfast=RA7_fast_lepSF,filePathPileUp=RA7_puweights))) 
+MODULES.append( ('leptonChoiceEWK', lambda : LeptonChoiceEWK("Loop","Mini",whichApplication="Super",isFastSim=isFastSim,filePathFakeRate=RA7_FRname,filePathLeptonSFfull=RA7_full_lepSF,filePathLeptonSFfast=RA7_fast_lepSF,filePathPileUp=RA7_puweights))) 
 
 
 #--- Friend trees for fake rate calculation
@@ -173,9 +229,36 @@ MODULES.append ( ('puWeightsTrue_down', lambda : VertexWeightFriend(putruefilemc
 from CMGTools.TTHAnalysis.tools.eventVars_2lss import EventVars2LSS 
 MODULES.append( ('ttH2lss', lambda : EventVars2LSS()) )
 from CMGTools.TTHAnalysis.tools.kinMVA_2D_2lss_3l import KinMVA_2D_2lss_3l
-MODULES.append( ('kinMVA_2D_2lss_3l', lambda : KinMVA_2D_2lss_3l(os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/kinMVA/tth/%s_BDTG.weights.xml")) )
+MODULES.append( ('kinMVA_2D_2lss_3l', lambda : KinMVA_2D_2lss_3l(os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/kinMVA/tth/%s_BDTG.weights.xml", skip_BDTv8 = False, skip_MEM = False)) )
+from CMGTools.TTHAnalysis.tools.kinMVA_MultiClass import KinMVA_MultiClass
+MODULES.append( ('kinMVA_MultiClass', lambda : KinMVA_MultiClass(os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/macros/leptons/weights/MultiClassICHEP16_%s_BDTG.weights.xml")) )
+from CMGTools.TTHAnalysis.tools.HadTopSimple import HadTopSimple
+MODULES.append( ('HadTopSimple', lambda : HadTopSimple()) )
 from CMGTools.TTHAnalysis.tools.BDT2_HadTop import BDT2_HadTop
 MODULES.append( ('BDT2_HadTop', lambda : BDT2_HadTop(os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/kinMVA/tth/TMVAClassification_BDTG.weights_BDT2.xml")) )
+from CMGTools.TTHAnalysis.tools.BDTv8_eventReco_cpp import BDTv8_eventReco
+MODULES.append( ('BDTv8_eventReco', lambda : BDTv8_eventReco(os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/kinMVA/tth/TMVAClassification_BDTG_bdt_v8_80x.weights.xml",
+                                                             selection = [
+#                lambda leps,jets,event : event.nJet25_Recl >= 2 and event.nLepFO_Recl >= 2 and (event.nLepFO_Recl >= 3 or leps[0].charge*leps[1].charge > 0),
+#                lambda leps,jets,event : event.nBJetLoose25_Recl >= 2 or event.nBJetMedium25_Recl >= 1,
+#                lambda leps,jets,event : leps[0].conePt > 20 and leps[1].conePt > 10,
+                                                             ])) )
+
+# retuned soft muon ID for 2016 conditions
+from CMGTools.TTHAnalysis.tools.objTagger import ObjTagger
+MODULES.append( ('SoftMuonID2016', lambda : ObjTagger(label='SoftMuonID2016', coll='LepGood',
+                                                      sel = [lambda x : abs(x.pdgId)==13,
+                                                             lambda x : x.TMOneStationTightMuonId,
+                                                             lambda x : x.trackerLayers > 5,
+                                                             lambda x : x.pixelLayers > 0,
+                                                             lambda x : abs(x.dxy)<0.3 and abs(x.dz)<20.,
+                                                             ])) )
+MODULES.append( ('MediumMuonID2016', lambda : ObjTagger(label='MediumMuonID2016', coll='LepGood',
+                                                      sel = [lambda x : abs(x.pdgId)==13,
+                                                             lambda x : x.isGlobalMuon or x.isTrackerMuon,
+                                                             lambda x : x.innerTrackValidHitFraction>0.49,
+                                                             lambda x : x.segmentCompatibility>0.451 or (x.isGlobalMuon and x.globalTrackChi2<3 and x.chi2LocalPosition<12 and x.trkKink<20 and x.segmentCompatibility>0.303)
+                                                             ])) )
 
 #--- Lepton MVA in friend tree
 
@@ -186,7 +269,52 @@ MODULES.append( ('LepMVAFriendTTH', lambda: LepMVAFriend((os.environ["CMSSW_BASE
                                                          training="forMoriond16", label="TTHMoriond16")) )
 MODULES.append( ('LepMVAFriendSUSY', lambda: LepMVAFriend((os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/leptonMVA/susy/%s_BDTG.weights.xml",
                                                            os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/leptonMVA/susy/%s_BDTG.weights.xml",),
-                                                          training="forMoriond16", label="TTZMoriond16")) )
+                                                          training="forMoriond16", label="SUSY")) )
+MODULES.append( ('LepMVAFriendJetLessIVF', lambda: LepMVAFriend((os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/leptonMVA/jetless/SoftJetLessIVF_%s_BDTG.weights.xml",
+                                                                 os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/leptonMVA/jetless/SoftJetLessIVF_%s_BDTG.weights.xml",),
+                                                                training="SoftJetLessIVF", label="JetLessIVF")) )
+MODULES.append( ('LepMVAFriendNoPtRewJetLess', lambda: LepMVAFriend((os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/leptonMVA/jetless/%s_noPtRew_BDTG.weights.xml",
+                                                                     os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/leptonMVA/jetless/%s_noPtRew_BDTG.weights.xml",),
+                                                                    training="SoftJetLessIVF", label="JetLessNoPtRew")) )
+MODULES.append( ('LepMVAFriendJetLessCSV', lambda: LepMVAFriend((os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/leptonMVA/jetless/SoftJetLess_%s_BDTG.weights.xml",
+                                                                 os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/leptonMVA/jetless/SoftJetLess_%s_BDTG.weights.xml",),
+                                                                training="SoftJetLess", label="JetLessCSV")) )
+MODULES.append( ('LepMVAFriendJetLessSVSafe', lambda: LepMVAFriend((os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/leptonMVA/jetless/SoftJetLessSVSafe_%s_BDTG.weights.xml",
+                                                                    os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/leptonMVA/jetless/SoftJetLessSVSafe_%s_BDTG.weights.xml",),
+                                                                   training="SoftJetLessIVFSVSafe", label="JetLessSVSafe")) )
+MODULES.append( ('LepMVAFriendJetLessNOBTAG', lambda: LepMVAFriend((os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/leptonMVA/jetless/SoftJetLessNOBTAG_%s_BDTG.weights.xml",
+                                                                    os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/leptonMVA/jetless/SoftJetLessNOBTAG_%s_BDTG.weights.xml",),
+                                                                   training="SoftJetLessNOBTAG", label="JetLessNOBTAG")) )
+MODULES.append( ('LepMVAFriendJetLessNO04ISO', lambda: LepMVAFriend((os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/leptonMVA/jetless/SoftJetLessNO04ISO_%s_BDTG.weights.xml",
+                                                                    os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/leptonMVA/jetless/SoftJetLessNO04ISO_%s_BDTG.weights.xml",),
+                                                                   training="SoftJetLessNO04ISO", label="JetLessNO04ISO")) )
+
+MODULES.append( ('LepMVAFriendJetLessNOBTAGNOTAU_SIGT2tt', lambda: LepMVAFriend((os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/leptonMVA/jetless/SoftJetLessNOBTAGNOTAU_SIGT2tt_%s_BDTG.weights.xml",
+                                                                    os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/leptonMVA/jetless/SoftJetLessNOBTAGNOTAU_SIGT2tt_%s_BDTG.weights.xml",),
+                                                                   training="SoftJetLessNOBTAG", label="JetLessNOBTAGNOTAU_SIGT2tt")) )
+MODULES.append( ('LepMVAFriendJetLessNOBTAGNOTAU_SIGTChiNeu8090', lambda: LepMVAFriend((os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/leptonMVA/jetless/SoftJetLessNOBTAGNOTAU_SIGTChiNeu8090_%s_BDTG.weights.xml",
+                                                                    os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/leptonMVA/jetless/SoftJetLessNOBTAGNOTAU_SIGTChiNeu8090_%s_BDTG.weights.xml",),
+                                                                   training="SoftJetLessNOBTAG", label="JetLessNOBTAGNOTAU_SIGTChiNeu8090")) )
+
+MODULES.append( ('LepMVAFriendJetLessNOBTAGNOTAU_SIGDY', lambda: LepMVAFriend((os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/leptonMVA/jetless/SoftJetLessNOBTAGNOTAU_SIGDY_%s_BDTG.weights.xml",
+                                                                    os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/leptonMVA/jetless/SoftJetLessNOBTAGNOTAU_SIGDY_%s_BDTG.weights.xml",),
+                                                                   training="SoftJetLessNOBTAG", label="JetLessNOBTAGNOTAU_SIGDY")) )
+MODULES.append( ('LepMVAFriendJetLessIVFNOTAU_SIGT2tt', lambda: LepMVAFriend((os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/leptonMVA/jetless/SoftJetLessIVFNOTAU_SIGT2tt_%s_BDTG.weights.xml",
+                                                                    os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/leptonMVA/jetless/SoftJetLessIVFNOTAU_SIGT2tt_%s_BDTG.weights.xml",),
+                                                                   training="SoftJetLessIVF", label="JetLessIVFNOTAU_SIGT2tt")) )
+MODULES.append( ('LepMVAFriendJetLessIVFNOTAU_SIGTChiNeu8090', lambda: LepMVAFriend((os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/leptonMVA/jetless/SoftJetLessIVFNOTAU_SIGTChiNeu8090_%s_BDTG.weights.xml",
+                                                                    os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/leptonMVA/jetless/SoftJetLessIVFNOTAU_SIGTChiNeu8090_%s_BDTG.weights.xml",),
+                                                                   training="SoftJetLessIVF", label="JetLessIVFNOTAU_SIGTChiNeu8090")) )
+
+MODULES.append( ('LepMVAFriendJetLessIVFNOTAU_SIGDY', lambda: LepMVAFriend((os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/leptonMVA/jetless/SoftJetLessIVFNOTAU_SIGDY_%s_BDTG.weights.xml",
+                                                                    os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/leptonMVA/jetless/SoftJetLessIVFNOTAU_SIGDY_%s_BDTG.weights.xml",),
+                                                                   training="SoftJetLessIVF", label="JetLessIVFNOTAU_SIGDY")) )
+
+from CMGTools.TTHAnalysis.tools.eventVars_1l_WeightsForSystematics import EventVars1LWeightsForSystematics
+MODULES.append( ('CR_Model_SysWeights', EventVars1LWeightsForSystematics()) )
+
+
+
 
 class VariableProducer(Module):
     def __init__(self,name,booker,modules):
@@ -229,6 +357,8 @@ parser.add_option("-m", "--modules", dest="modules",  type="string", default=[],
 parser.add_option("-d", "--dataset", dest="datasets",  type="string", default=[], action="append", help="Process only this dataset (or dataset if specified multiple times)");
 parser.add_option("-D", "--dm", "--dataset-match", dest="datasetMatches",  type="string", default=[], action="append", help="Process only this dataset (or dataset if specified multiple times): REGEXP");
 parser.add_option("-c", "--chunk",   dest="chunks",    type="int",    default=[], action="append", help="Process only these chunks (works only if a single dataset is selected with -d)");
+parser.add_option("--subChunk", dest="subChunk",    type="int",    default=None, nargs=1, help="Process sub-chunk iof this chunk");
+parser.add_option("--fineSplit", dest="fineSplit",    type="int",    default=None, nargs=1, help="Split each chunk in N subchunks");
 parser.add_option("-N", "--events",  dest="chunkSize", type="int",    default=500000, help="Default chunk size when splitting trees");
 parser.add_option("-j", "--jobs",    dest="jobs",      type="int",    default=1, help="Use N threads");
 parser.add_option("-p", "--pretend", dest="pretend",   action="store_true", default=False, help="Don't run anything");
@@ -243,6 +373,8 @@ parser.add_option("-L", "--list-modules",  dest="listModules", action="store_tru
 parser.add_option("-n", "--new",  dest="newOnly", action="store_true", default=False, help="Make only missing trees");
 parser.add_option("-I", "--import", dest="imports",  type="string", default=[], action="append", help="Modules to import");
 parser.add_option("--fastsim",  dest="isFastSim", action="store_true", default=False, help="Run with configuration for FastSim samples");
+parser.add_option("--log", "--log-dir", dest="logdir", type="string", default=None, help="Directory of stdout and stderr");
+parser.add_option("--env",   dest="env",     type="string", default="lxbatch", help="Give the environment on which you want to use the batch system (lxbatch, psi)");
 (options, args) = parser.parse_args()
 
 if options.imports:
@@ -319,40 +451,67 @@ for D in glob(args[0]+"/*"):
         chunk = options.chunkSize
         if entries < chunk:
             print "  ",os.path.basename(D),("  DATA" if data else "  MC")," single chunk"
-            jobs.append((short,fname,"%s/evVarFriend_%s.root" % (args[1],short),data,xrange(entries),-1))
+            jobs.append((short,fname,"%s/evVarFriend_%s.root" % (args[1],short),data,xrange(entries),-1,None))
         else:
             nchunk = int(ceil(entries/float(chunk)))
             print "  ",os.path.basename(D),("  DATA" if data else "  MC")," %d chunks" % nchunk
             for i in xrange(nchunk):
                 if options.chunks != []:
                     if i not in options.chunks: continue
-                r = xrange(int(i*chunk),min(int((i+1)*chunk),entries))
-                jobs.append((short,fname,"%s/evVarFriend_%s.chunk%d.root" % (args[1],short,i),data,r,i))
+                if not options.fineSplit:
+                    r = xrange(int(i*chunk),min(int((i+1)*chunk),entries))
+                    jobs.append((short,fname,"%s/evVarFriend_%s.chunk%d.root" % (args[1],short,i),data,r,i,None))
+                else:
+                    ev_per_fs = int(ceil(chunk/float(options.fineSplit)))
+                    for ifs in xrange(options.fineSplit):
+                        if options.subChunk and ifs != options.subChunk: continue
+                        r = xrange(i*chunk + ifs*ev_per_fs, min(i*chunk + min((ifs+1)*ev_per_fs, chunk),entries))
+                        jobs.append((short,fname,"%s/evVarFriend_%s.chunk%d.sub%d.root" % (args[1],short,i,ifs),data,r,i,(ifs,options.fineSplit)))
 print "\n"
 print "I have %d task(s) to process" % len(jobs)
 
 if options.queue:
     import os, sys
-    basecmd = "bsub -q {queue} {dir}/lxbatch_runner.sh {dir} {cmssw} python {self} -N {chunkSize} -T '{tdir}' -t {tree} {data} {output}".format(
-                queue = options.queue, dir = os.getcwd(), cmssw = os.environ['CMSSW_BASE'], 
-                self=sys.argv[0], chunkSize=options.chunkSize, tdir=options.treeDir, tree=options.tree, data=args[0], output=args[1]
-            )
+
+    runner = "lxbatch_runner.sh"
+    super  = "bsub -q {queue}".format(queue = options.queue)
+    if options.queue in ["all.q", "short.q", "long.q"] and options.env == "psi":
+        super  = "qsub -q {queue} -N friender".format(queue = options.queue)
+        runner = "psibatch_runner.sh"
+
+    basecmd = "{dir}/{runner} {dir} {cmssw} python {self} -N {chunkSize} -T {tdir} -t {tree} {data} {output}".format(
+                dir = os.getcwd(), runner=runner, cmssw = os.environ['CMSSW_BASE'],
+                self=sys.argv[0], chunkSize=options.chunkSize, tdir=options.treeDir,
+                tree=options.tree, data=args[0], output=args[1])
+
+    writelog = ""
+    logdir   = ""
+    if options.logdir: logdir = options.logdir.rstrip("/")
+
     if options.vectorTree: basecmd += " --vector "
     friendPost =  "".join(["  -F  %s %s " % (fn,ft) for fn,ft in options.friendTrees])
     friendPost += "".join([" --FM %s %s " % (fn,ft) for fn,ft in options.friendTreesMC])
     friendPost += "".join([" --FD %s %s " % (fn,ft) for fn,ft in options.friendTreesData])
     friendPost += "".join(["  -m  '%s'  " % m for m in options.modules])
-    for (name,fin,fout,data,range,chunk) in jobs:
+    friendPost += "".join(["  -I  '%s'  " % m for m in options.imports])
+    for (name,fin,fout,data,range,chunk,fs) in jobs:
         if chunk != -1:
-            print "{base} -d {data} -c {chunk} {post}".format(base=basecmd, data=name, chunk=chunk, post=friendPost)
+            if options.logdir: writelog = "-o {logdir}/{data}_{chunk}.out -e {logdir}/{data}_{chunk}.err".format(logdir=logdir, data=name, chunk=chunk)
+            cmd = "{super} {writelog} {base} -d {data} -c {chunk} {post}".format(super=super, writelog=writelog, base=basecmd, data=name, chunk=chunk, post=friendPost)
+            if fs:
+                cmd += " --fineSplit %d --subChunk %d" % (fs[1], fs[0])
         else:
-            print "{base} -d {data} {post}".format(base=basecmd, data=name, chunk=chunk, post=friendPost)
+            if options.logdir: writelog = "-o {logdir}/{data}.out -e {logdir}/{data}.err".format(logdir=logdir, data=name)
+            cmd = "{super} {writelog} {base} -d {data} {post}".format(super=super, writelog=writelog, base=basecmd, data=name, chunk=chunk, post=friendPost)
+        print cmd
+        if not options.pretend: 
+            os.system(cmd)
         
     exit()
 
 maintimer = ROOT.TStopwatch()
 def _runIt(myargs):
-    (name,fin,fout,data,range,chunk) = myargs
+    (name,fin,fout,data,range,chunk,fineSplit) = myargs
     timer = ROOT.TStopwatch()
     fetchedfile = None
     if 'LSB_JOBID' in os.environ or 'LSF_JOBID' in os.environ:
@@ -371,8 +530,6 @@ def _runIt(myargs):
         fb = ROOT.TFile.Open(fin)
     elif "root://" in fin:        
         ROOT.gEnv.SetValue("TFile.AsyncReading", 1);
-        ROOT.gEnv.SetValue("XNet.Debug", 0); # suppress output about opening connections
-        ROOT.gEnv.SetValue("XrdClientDebug.kUSERDEBUG", 0); # suppress output about opening connections
         fb   = ROOT.TXNetFile(fin+"?readaheadsz=65535&DebugLevel=0")
         os.environ["XRD_DEBUGLEVEL"]="0"
         os.environ["XRD_DebugLevel"]="0"
@@ -404,6 +561,8 @@ def _runIt(myargs):
     print "==== %s starting (%d entries) ====" % (name, nev)
     booker = Booker(fout)
     modulesToRun = MODULES
+    for m,v in MODULES:
+        v.sample = getSampName(fin,options.tree)
     if options.modules != []:
         toRun = {}
         for m,v in MODULES:
