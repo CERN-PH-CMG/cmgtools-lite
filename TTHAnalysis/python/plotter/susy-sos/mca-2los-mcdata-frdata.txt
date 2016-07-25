@@ -795,16 +795,18 @@ TW_lepSF_Dn       : TBar_tWch :  xsec: ((leptonSF_SOS(LepGood1_pdgId,LepGood1_pt
 
 
 
+#######################################
+
 # # ---- FastSIM point example:
 #sig_TChiNeu_WZ_125_95+ : TChiWZ_125_95 : 10034.8*0.10/1000. ; Label="125/95", LineStyle=1, FillColor=ROOT.kRed, FakeRate="susy-sos/mca-2los-noFilters.txt"
-#sig_TChiNeu_WZ_125_95_jec_Up+ : TChiWZ_125_95 : 10034.8*0.10/1000. ; Label="125/95", LineStyle=1, FillColor=ROOT.kRed, FakeRate="susy-sos/mca-2los-noMuonsFilters.txt\,susy-sos/fr-jecUpFS.txt", SkipMe=True
-#sig_TChiNeu_WZ_125_95_jec_Dn+ : TChiWZ_125_95 : 10034.8*0.10/1000. ; Label="125/95", LineStyle=1, FillColor=ROOT.kRed, FakeRate="susy-sos/mca-2los-noMuonsFilters.txt\,susy-sos/fr-jecDnFS.txt", SkipMe=True
+#sig_TChiNeu_WZ_125_95_jec_Up+ : TChiWZ_125_95 : 10034.8*0.10/1000. ; Label="125/95", LineStyle=1, FillColor=ROOT.kRed, FakeRate="susy-sos/mca-2los-noFilters.txt\,susy-sos/fr-jecUpFS.txt", SkipMe=True
+#sig_TChiNeu_WZ_125_95_jec_Dn+ : TChiWZ_125_95 : 10034.8*0.10/1000. ; Label="125/95", LineStyle=1, FillColor=ROOT.kRed, FakeRate="susy-sos/mca-2los-noFilters.txt\,susy-sos/fr-jecDnFS.txt", SkipMe=True
 
 
 #### Missing pieces
 # BTag SF for FastSIM
 # Veto strange FastSIM events
-# Lepton SF for FastSIM
+# Lepton SF for FastSIM (with flat uncertainty)
 # ISR systematics for Signal Monte Carlo 
 # PDF and Q^2 and MC stat systematics on acceptance 
 
