@@ -8,8 +8,16 @@ import math
 ### Full SIM ###
 eleSFname = "../python/tools/SFs/ICHEP/CBtight_miniIso0p2_ICHEP.root"
 eleHname = "CBtight_miniIso0p2_ICHEP"
-muSFname = "../python/tools/SFs/ICHEP/MediumMuon_miniIso0p2_SIP3D_HIP_ICHEP.root"
-muHname = "MediumMuon_miniIso0p2_SIP3D_HIP_ICHEP"
+
+muSFname = "../python/tools/SFs/ICHEP/MediumMuon_miniIso0p2_SIP3D_ICHEP.root"
+muHname = "MediumMuon_miniIso0p2_SIP3D_ICHEP"
+
+####HIP Root files
+eleHIPname = "../python/tools/SFs/ICHEP/ElectronHIP_1D.root"
+eleHIPHname = "h2_scaleFactorsEGamma_px"
+
+muHIPname = "../python/tools/SFs/ICHEP/general_tracks_and_early_general_tracks_corr_ratio.root"
+muHIPHname = "mutrksfptl10"
 
 hEleSF = 0
 hMuSF = 0
@@ -31,7 +39,24 @@ if not hMuSF:
     print "Could not load mu SF"
     exit(0)
 
-### Full SIM ###
+tf = ROOT.TFile(muHIPname,"READ")
+hMuHIP = tf.Get(muHIPHname).Clone()
+hMuHIP.SetDirectory(0)
+tf.Close()
+if not hMuHIP:
+    print "Could not load mu HIP correction"
+    exit(0)
+
+tf = ROOT.TFile(eleHIPname,"READ")
+hEleHIP = tf.Get(eleHIPHname).Clone()
+hEleHIP.SetDirectory(0)
+tf.Close()
+if not hEleHIP:
+    print "Could not load mu HIP correction"
+    exit(0)
+
+
+### Fast? SIM ###
 eleSFname = "../python/tools/SFs/sf_el_tightCB_mini01.root"
 eleHname = "histo3D"
 muSFname = "../python/tools/SFs/sf_mu_mediumID_mini02.root"
@@ -63,8 +88,8 @@ def getLepSF(lep, nPU = 1, sample = "FullSim"):
     lepPt = lep.pt#lep.p4().Et()
     lepEta = abs(lep.eta)
 
-    if(abs(lep.pdgId) == 13): hSF = hMuSF; hSFfs = hMuSF_FS
-    elif(abs(lep.pdgId) == 11): hSF = hEleSF; hSFfs = hEleSF_FS
+    if(abs(lep.pdgId) == 13): hSF = hMuSF; hSFfs = hMuSF_FS; hHIP = hMuHIP
+    elif(abs(lep.pdgId) == 11): hSF = hEleSF; hSFfs = hEleSF_FS; hHIP = hEleHIP
     else: return 1,0
 
     # fit pt to hist
@@ -75,7 +100,17 @@ def getLepSF(lep, nPU = 1, sample = "FullSim"):
     bin = hSF.FindBin(lepPt,lepEta)
     lepSF = hSF.GetBinContent(bin)
     lepSFerr = hSF.GetBinError(bin)
+#    print lepSF, lepSFerr
 
+    #HIP stuff
+    HIPbin = hHIP.FindBin(lep.eta)
+    HIP =  hHIP.GetBinContent(HIPbin)
+    HIPerr = hHIP.GetBinError(HIPbin)
+#    print lep.pdgId, lep.eta, HIP,
+    lepSF = lepSF * HIP
+    lepSFerr = lepSF * sqrt(lepSFerr*lepSFerr + HIPerr*HIPerr)
+
+#    print lepSF, HIP, lepSFerr
     if sample == "FastSim":
         maxPtfs = hSFfs.GetXaxis().GetXmax()
         if lepPt > maxPtfs: lepPt = maxPtfs-0.1
