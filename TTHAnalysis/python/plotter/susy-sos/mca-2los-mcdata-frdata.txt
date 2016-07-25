@@ -8,30 +8,30 @@
 
 
 # ---- TTbar 
-TT		: TTJets_DiLepton: xsec:(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); FillColor=ROOT.kBlue-7, Label="tt(2l)", NormSystematic=0.1
+TT		: TTJets_DiLepton: xsec:ScaleFactorTT*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); FillColor=ROOT.kBlue-7, Label="tt(2l)", NormSystematic=0.1
 
 # ---- DY Inclusive LO - Including internal conversions (ZG* mll<4 GeV)
-DYJets    : DYJetsToLL_M5to50_LO: xsec : (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && lheHT<=100)  ; Label="DY+jets", FillColor=ROOT.kCyan, NormSystematic=0.3
-DYJets    : DYJetsToLL_M50_LO   : xsec : (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && lheHT<=100)   ; Label="DY+jets", FillColor=ROOT.kCyan, NormSystematic=0.3
+DYJets    : DYJetsToLL_M5to50_LO: xsec : ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && lheHT<=100)  ; Label="DY+jets", FillColor=ROOT.kCyan, NormSystematic=0.3
+DYJets    : DYJetsToLL_M50_LO   : xsec : ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && lheHT<=100)   ; Label="DY+jets", FillColor=ROOT.kCyan, NormSystematic=0.3
 
 
 # ---- DY HT bins - Including internal conversions (ZG* mll<4 GeV)
-#DYJets     : DYJetsToLL_M50_HT100to200 :  xsec: (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); Label="DY", FillColor=ROOT.kCyan, NormSystematic=0.3
-DYJets     : DYJetsToLL_M50_HT100to200_ext :  xsec: (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); Label="DY", FillColor=ROOT.kCyan, NormSystematic=0.3
-#DYJets     : DYJetsToLL_M50_HT200to400 :  xsec: (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); Label="DY", FillColor=ROOT.kCyan, NormSystematic=0.3
-DYJets     : DYJetsToLL_M50_HT200to400_ext :  xsec: (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); Label="DY", FillColor=ROOT.kCyan, NormSystematic=0.3
-#DYJets     : DYJetsToLL_M50_HT400to600 :  xsec: (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); Label="DY", FillColor=ROOT.kCyan, NormSystematic=0.3
-DYJets     : DYJetsToLL_M50_HT400to600_ext :  xsec: (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); Label="DY", FillColor=ROOT.kCyan, NormSystematic=0.3
-DYJets     : DYJetsToLL_M50_HT600toInf :  xsec: (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); Label="DY", FillColor=ROOT.kCyan, NormSystematic=0.3
-#DYJets     : DYJetsToLL_M50_HT600toInf_ext :  xsec: (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); Label="DY", FillColor=ROOT.kCyan, NormSystematic=0.3
+#DYJets     : DYJetsToLL_M50_HT100to200 :  xsec: ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); Label="DY", FillColor=ROOT.kCyan, NormSystematic=0.3
+DYJets     : DYJetsToLL_M50_HT100to200_ext :  xsec: ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); Label="DY", FillColor=ROOT.kCyan, NormSystematic=0.3
+#DYJets     : DYJetsToLL_M50_HT200to400 :  xsec: ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); Label="DY", FillColor=ROOT.kCyan, NormSystematic=0.3
+DYJets     : DYJetsToLL_M50_HT200to400_ext :  xsec: ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); Label="DY", FillColor=ROOT.kCyan, NormSystematic=0.3
+#DYJets     : DYJetsToLL_M50_HT400to600 :  xsec: ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); Label="DY", FillColor=ROOT.kCyan, NormSystematic=0.3
+DYJets     : DYJetsToLL_M50_HT400to600_ext :  xsec: ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); Label="DY", FillColor=ROOT.kCyan, NormSystematic=0.3
+DYJets     : DYJetsToLL_M50_HT600toInf :  xsec: ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); Label="DY", FillColor=ROOT.kCyan, NormSystematic=0.3
+#DYJets     : DYJetsToLL_M50_HT600toInf_ext :  xsec: ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); Label="DY", FillColor=ROOT.kCyan, NormSystematic=0.3
 
-DYJets     : DYJetsToLL_M5to50_HT100to200 :  xsec: (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); Label="DY", FillColor=ROOT.kCyan, NormSystematic=0.3
-#DYJets     : DYJetsToLL_M5to50_HT100to200_ext :  xsec: (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); Label="DY", FillColor=ROOT.kCyan, NormSystematic=0.3
-#DYJets     : DYJetsToLL_M5to50_HT200to400 :  xsec: (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); Label="DY", FillColor=ROOT.kCyan, NormSystematic=0.3
-DYJets     : DYJetsToLL_M5to50_HT200to400_ext :  xsec: (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); Label="DY", FillColor=ROOT.kCyan, NormSystematic=0.3
+DYJets     : DYJetsToLL_M5to50_HT100to200 :  xsec: ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); Label="DY", FillColor=ROOT.kCyan, NormSystematic=0.3
+#DYJets     : DYJetsToLL_M5to50_HT100to200_ext :  xsec: ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); Label="DY", FillColor=ROOT.kCyan, NormSystematic=0.3
+#DYJets     : DYJetsToLL_M5to50_HT200to400 :  xsec: ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); Label="DY", FillColor=ROOT.kCyan, NormSystematic=0.3
+DYJets     : DYJetsToLL_M5to50_HT200to400_ext :  xsec: ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); Label="DY", FillColor=ROOT.kCyan, NormSystematic=0.3
 DYJets     : DYJetsToLL_M5to50_HT400to600 :  xsec: (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); Label="DY", FillColor=ROOT.kCyan, NormSystematic=0.3
-#DYJets     : DYJetsToLL_M5to50_HT400to600_ext :  xsec: (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); Label="DY", FillColor=ROOT.kCyan, NormSystematic=0.3
-DYJets     : DYJetsToLL_M5to50_HT600toInf :  xsec: (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); Label="DY", FillColor=ROOT.kCyan, NormSystematic=0.3
+#DYJets     : DYJetsToLL_M5to50_HT400to600_ext :  xsec: ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); Label="DY", FillColor=ROOT.kCyan, NormSystematic=0.3
+DYJets     : DYJetsToLL_M5to50_HT600toInf :  xsec: ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); Label="DY", FillColor=ROOT.kCyan, NormSystematic=0.3
 
 
 # ---- Diboson - Including internal conversions (VV* mll<4 GeV)
