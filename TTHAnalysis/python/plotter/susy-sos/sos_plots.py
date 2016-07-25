@@ -16,16 +16,16 @@ if dowhat == "limits":
 
 def base(selection):
 
-    #CORE="-P /data1/botta/trees_SOS_newpresel_030616/"
-    CORE="-P /data1/botta/trees_SOS_80X_130716/"
+    
+    CORE="-P /data1/botta/trees_SOS_80X_130716_Scans/ --FMCs {P}/eventBTagWeight"
     CORE+=" -f -j 8 -l 12.9 --s2v --tree treeProducerSusyMultilepton --mcc susy-sos/mcc-lepWP.txt --mcc susy-sos/mcc-sf1.txt "#--mcc susy-sos/2los_triggerdefs.txt # --neg"
     if dowhat == "plots": CORE+=" --lspam CMSPreliminary --legendWidth 0.14 --legendFontSize 0.04"
     GO = ""
     if selection=='2los':
         if (dowhat != "limits") : GO="susy-sos/mca-2los-mc.txt susy-sos/2los_tight.txt "
         GO="%s %s"%(CORE,GO) 
-        GO="%s -L susy-sos/lepton_trigger_SF.cc -W 'leptonSF_SOS(LepGood1_pdgId,LepGood1_pt,LepGood1_eta,0)*leptonSF_SOS(LepGood2_pdgId,LepGood2_pt,LepGood2_eta,0)*triggerSF_SOS(met_pt,metmm_pt(LepGood1_pdgId, LepGood1_pt, LepGood2_phi, LepGood2_pdgId, LepGood2_pt, LepGood2_phi, met_pt, met_phi),0)*puw2016_vtx_13fb(nVert)'"%GO
-        #GO="%s -L susy-sos/lepton_trigger_SF.cc -W 'leptonSF_SOS(LepGood1_pdgId,LepGood1_pt,LepGood1_eta,0)*leptonSF_SOS(LepGood2_pdgId,LepGood2_pt,LepGood2_eta,0)*puw2016_vtx_13fb(nVert)'"%GO
+        GO="%s -L susy-sos/lepton_trigger_SF.cc -W 'leptonSF_SOS(LepGood1_pdgId,LepGood1_pt,LepGood1_eta,0)*leptonSF_SOS(LepGood2_pdgId,LepGood2_pt,LepGood2_eta,0)*triggerSF_SOS(met_pt,metmm_pt(LepGood1_pdgId, LepGood1_pt, LepGood2_phi, LepGood2_pdgId, LepGood2_pt, LepGood2_phi, met_pt, met_phi),0)*puw2016_vtx_13fb(nVert)*eventBTagSF'"%GO
+        #GO="%s -L susy-sos/lepton_trigger_SF.cc -W 'leptonSF_SOS(LepGood1_pdgId,LepGood1_pt,LepGood1_eta,0)*leptonSF_SOS(LepGood2_pdgId,LepGood2_pt,LepGood2_eta,0)*puw2016_vtx_13fb(nVert)*eventBTagSF'"%GO
         #GO="%s -W 'puw(nTrueInt)'"%GO
         #GO="%s -W 'puw2016_vtx_4fb(nVert)'"%GO 
         if dowhat == "plots": GO+=" susy-sos/2los_plots.txt"
@@ -78,7 +78,7 @@ if __name__ == '__main__':
         if 'ewk_met200' in torun: 
             x = add(x,"-E ^highMET -X ^triggerAll -E ^triggerMET -E ^SF -E ^pt5sublep -E ^MT") 
             if '_unblind' in torun:
-                x = add(x,"--noStackSig --showIndivSigs --showRatio --maxRatioRange -2 5") #--showMCError
+                x = add(x,"--noStackSig --showIndivSigs --showRatio --maxRatioRange -2 5 --showMCError") 
                 #x = add(x,"--plotmode norm")
                 x = x.replace('-l 12.9','-l 12.9')
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt') #remove signal
@@ -86,7 +86,7 @@ if __name__ == '__main__':
         if 'ewk_met125' in torun: 
             x = add(x,"-E ^upperMET -E ^mm -E ^runRange -X ^triggerAll -E ^triggerDoubleMuMET -E ^pt5sublep -E ^MT")
             if '_unblind' in torun:
-                x = add(x,"--noStackSig --showIndivSigs --showRatio --maxRatioRange -2 5") #--showMCError
+                x = add(x,"--noStackSig --showIndivSigs --showRatio --maxRatioRange -2 5 --showMCError") 
                 #x = add(x,"--plotmode norm")
                 x = x.replace('-l 12.9','-l 10.1')
                 x = x.replace('puw2016_vtx_4fb(nVert)', 'puw2016_vtx_postTS_1p4fb(nVert)' )
@@ -95,7 +95,7 @@ if __name__ == '__main__':
         if 'stop_met200' in torun: 
             x = add(x,"-E ^highMET -X ^triggerAll -E ^triggerMET ") 
             if '_unblind' in torun:
-                x = add(x,"--noStackSig --showIndivSigs --showRatio --maxRatioRange -2 5") #--showMCError
+                x = add(x,"--noStackSig --showIndivSigs --showRatio --maxRatioRange -2 5 --showMCError") 
                 #x = add(x,"--plotmode norm")
                 x = x.replace('-l 12.9','-l 12.9')
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt') #remove signal
@@ -103,7 +103,7 @@ if __name__ == '__main__':
         if 'stop_met125' in torun: 
             x = add(x,"-E ^upperMET -E ^mm -E ^runRange -X ^triggerAll -E ^triggerDoubleMuMET -E ^pt5sublep ")
             if '_unblind' in torun:
-                x = add(x,"--noStackSig --showIndivSigs --showRatio --maxRatioRange -2 5") #--showMCError
+                x = add(x,"--noStackSig --showIndivSigs --showRatio --maxRatioRange -2 5 --showMCError") 
                 #x = add(x,"--plotmode norm")
                 x = x.replace('-l 12.9','-l 10.1')
                 x = x.replace('puw2016_vtx_4fb(nVert)', 'puw2016_vtx_postTS_1p4fb(nVert)' )
@@ -139,7 +139,7 @@ if __name__ == '__main__':
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt')
                 x = add(x,"-I ^TT ")
             if '_unblind' in torun:
-                if(dowhat != "limits"):x = add(x,"--noStackSig --showIndivSigs --showRatio --maxRatioRange -2 5") #--showMCError
+                if(dowhat != "limits"):x = add(x,"--noStackSig --showIndivSigs --showRatio --maxRatioRange -2 5 --showMCError") 
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt')
                 x = x.replace('mcc-sf1.txt','mcc-sf-lowmet.txt')                
             if dowhat == "limits":
@@ -161,7 +161,7 @@ if __name__ == '__main__':
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt')
                 x = add(x,"-I ^TT ")
             if '_unblind' in torun:
-                if(dowhat != "limits"):x = add(x,"--noStackSig --showIndivSigs --showRatio --maxRatioRange -2 5") #--showMCError
+                if(dowhat != "limits"):x = add(x,"--noStackSig --showIndivSigs --showRatio --maxRatioRange -2 5 --showMCError") 
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt') 
                 x = x.replace('mcc-sf1.txt','mcc-sf-highmet.txt')
             if dowhat == "limits":
@@ -186,7 +186,7 @@ if __name__ == '__main__':
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt')
                 x = add(x,"-I ^TT ")  
             if '_unblind' in torun:
-                if(dowhat != "limits"):x = add(x,"--noStackSig --showIndivSigs --showRatio --maxRatioRange -2 5") #--showMCError
+                if(dowhat != "limits"):x = add(x,"--noStackSig --showIndivSigs --showRatio --maxRatioRange -2 5 --showMCError") 
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt') 
                 x = x.replace('mcc-sf1.txt','mcc-sf-lowmet.txt')
             if dowhat == "limits":
@@ -208,7 +208,7 @@ if __name__ == '__main__':
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt') 
                 x = add(x,"-I ^TT ")
             if '_unblind' in torun:
-                if(dowhat != "limits"):x = add(x,"--noStackSig --showIndivSigs --showRatio --maxRatioRange -2 5") #--showMCError
+                if(dowhat != "limits"):x = add(x,"--noStackSig --showIndivSigs --showRatio --maxRatioRange -2 5 --showMCError") 
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt') 
                 x = x.replace('mcc-sf1.txt','mcc-sf-highmet.txt')
             if dowhat == "limits":
@@ -233,7 +233,7 @@ if __name__ == '__main__':
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt')
                 x = add(x,"-I ^TT ")
             if '_unblind' in torun:
-                if(dowhat != "limits"):x = add(x,"--noStackSig --showIndivSigs --showRatio --maxRatioRange -2 5") #--showMCError
+                if(dowhat != "limits"):x = add(x,"--noStackSig --showIndivSigs --showRatio --maxRatioRange -2 5 --showMCError") 
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt')  
                 x = x.replace('mcc-sf1.txt','mcc-sf-lowmet.txt')
             if dowhat == "limits":
@@ -255,7 +255,7 @@ if __name__ == '__main__':
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt')
                 x = add(x,"-I ^TT ")   
             if '_unblind' in torun:
-                if(dowhat != "limits"):x = add(x,"--noStackSig --showIndivSigs --maxRatioRange -2 5") #--showMCError
+                if(dowhat != "limits"):x = add(x,"--noStackSig --showIndivSigs --maxRatioRange -2 5 --showMCError") 
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt')  
                 x = x.replace('mcc-sf1.txt','mcc-sf-highmet.txt')
             if dowhat == "limits":
@@ -280,7 +280,7 @@ if __name__ == '__main__':
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt')
                 x = add(x,"-I ^TT ")
             if '_unblind' in torun:
-                if(dowhat != "limits"):x = add(x,"--noStackSig --showIndivSigs --showRatio --maxRatioRange -2 5") #--showMCError
+                if(dowhat != "limits"):x = add(x,"--noStackSig --showIndivSigs --showRatio --maxRatioRange -2 5 --showMCError") 
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt')
                 x = x.replace('mcc-sf1.txt','mcc-sf-lowmet.txt')
             if dowhat == "limits":
@@ -302,7 +302,7 @@ if __name__ == '__main__':
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt')
                 x = add(x,"-I ^TT ")
             if '_unblind' in torun:
-                if(dowhat != "limits"):x = add(x,"--noStackSig --showIndivSigs --showRatio --maxRatioRange -2 5") #--showMCError
+                if(dowhat != "limits"):x = add(x,"--noStackSig --showIndivSigs --showRatio --maxRatioRange -2 5 --showMCError") 
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt') 
                 x = x.replace('mcc-sf1.txt','mcc-sf-highmet.txt')
             if dowhat == "limits":
