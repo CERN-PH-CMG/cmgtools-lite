@@ -346,10 +346,12 @@ triggerFlagsAna.saveIsUnprescaled = True
 triggerFlagsAna.checkL1Prescale = True
 
 if runSMS:
+    susyCoreSequence.remove(ttHLepSkim)
+    susyCoreSequence.remove(ttHJetMETSkim)
     susyCoreSequence.remove(triggerFlagsAna)
     susyCoreSequence.remove(triggerAna)
     susyCoreSequence.remove(eventFlagsAna)
-    ttHLepSkim.requireSameSignPair = False
+    #ttHLepSkim.requireSameSignPair = False
 
 #from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv1 import *
 from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv2 import *
@@ -374,6 +376,7 @@ if analysis=='SOS':
     #selectedComponents = [WJetsToLNu_LO] #missing in 80Xv2 had to take 80Xv1 
     #selectedComponents = [T2ttDeg_mStop350_mChi315_4bodydec_lepOnly, T2ttDeg_mStop350_mChi300_4bodydec_lepOnly, T2ttDeg_mStop350_mChi330_4bodydec_lepOnly, TChiNeuWZ_mCh100_mChi80, TChiNeuWZ_mCh100_mChi90, TChiNeuWZ_mCh150_mChi120_OS, TChiNeuWZ_mCh100_mChi95] #only 76X
     #selectedComponents = [SMS_TChiSlepSnux0p5, SMS_TChiSlepSnux0p05, SMS_TChiWZ, SMS_T2ttDiLep_mStop_10to80]
+    #selectedComponents = [SMS_TChiWZ, SMS_T2ttDiLep_mStop_10to80]
     
 
 
