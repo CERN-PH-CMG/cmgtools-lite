@@ -29,7 +29,7 @@ WWDouble : WWDouble : xsec
 WWTo2L2Nu : WWTo2L2Nu : xsec
 WWW : WWW : xsec
 WWZ : WWZ : xsec
-WZTo3LNu : WZTo3LNu : xsec
+WZTo3LNu : WZTo3LNu : 1.1*xsec
 WZZ : WZZ : xsec
 WpWpJJ : WpWpJJ : xsec
 ZGTo2LG : ZGTo2LG : xsec

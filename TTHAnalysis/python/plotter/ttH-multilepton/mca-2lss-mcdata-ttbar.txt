@@ -4,7 +4,7 @@ TTW     : TTWToLNu : 0.196 : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ;  F
 TTZ     : TTZToLLNuNu : 0.2526 : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ;  FillColor=ROOT.kSpring+2
 TTZ     : TTLLJets_m1to10 : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ;  FillColor=ROOT.kSpring+2
 
-WZ 	: WZTo3LNu : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ;  FillColor=ROOT.kViolet-4
+WZ 	: WZTo3LNu : 1.1*xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ;  FillColor=ROOT.kViolet-4
 WZ 	: WJetsToLNu_LO : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ;  FillColor=ROOT.kViolet-4
 Rares      : ZZTo4L : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ;  FillColor=ROOT.kAzure-9
 
