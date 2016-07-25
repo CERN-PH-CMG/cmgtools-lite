@@ -5,6 +5,7 @@ TBarToLeptons_tch_powheg : TBarToLeptons_tch_powheg : xsec
 TBar_tWch : TBar_tWch : xsec
 TGJets : TGJets : xsec
 TTGJets : TTGJets : xsec
+TTHnobb_mWCutfix_ch0 : TTHnobb_mWCutfix_ch0 : xsec
 TTHnobb_mWCutfix_ext1 : TTHnobb_mWCutfix_ext1 : xsec
 TTHnobb_pow : TTHnobb_pow : xsec
 TTJets_DiLepton : TTJets_DiLepton : xsec

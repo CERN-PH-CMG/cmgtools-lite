@@ -45,9 +45,9 @@ fakes_data: SingleMuon_Run2016B_PromptReco_v2+SingleMuon_Run2016C_PromptReco_v2+
 
 
 
-ttH_hww_jec_Up+    : TTHnobb_mWCutfix_ext1 : 0.5071*0.418 : eventBTagSF_up_jes/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 24); FillColor=ROOT.kOrange+10, FakeRate="ttH-multilepton/fr-jecUp.txt", SkipMe=True
-ttH_hzz_jec_Up+    : TTHnobb_mWCutfix_ext1 : 0.5071*0.418 : eventBTagSF_up_jes/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 23); FillColor=ROOT.kOrange+10, FakeRate="ttH-multilepton/fr-jecUp.txt", SkipMe=True
-ttH_htt_jec_Up+    : TTHnobb_mWCutfix_ext1 : 0.5071*0.418 : eventBTagSF_up_jes/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 15); FillColor=ROOT.kOrange+10, FakeRate="ttH-multilepton/fr-jecUp.txt", SkipMe=True
+ttH_hww_jec_Up+    : TTHnobb_mWCutfix_ch0 : 0.5071*0.418 : eventBTagSF_up_jes/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 24); FillColor=ROOT.kOrange+10, FakeRate="ttH-multilepton/fr-jecUp.txt", SkipMe=True
+ttH_hzz_jec_Up+    : TTHnobb_mWCutfix_ch0 : 0.5071*0.418 : eventBTagSF_up_jes/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 23); FillColor=ROOT.kOrange+10, FakeRate="ttH-multilepton/fr-jecUp.txt", SkipMe=True
+ttH_htt_jec_Up+    : TTHnobb_mWCutfix_ch0 : 0.5071*0.418 : eventBTagSF_up_jes/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 15); FillColor=ROOT.kOrange+10, FakeRate="ttH-multilepton/fr-jecUp.txt", SkipMe=True
 TTW_jec_Up     : TTWToLNu : 0.196 : eventBTagSF_up_jes/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  FillColor=ROOT.kGreen-5, FakeRate="ttH-multilepton/fr-jecUp.txt", SkipMe=True
 TTZ_jec_Up     : TTZToLLNuNu : 0.2526 : eventBTagSF_up_jes/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  FillColor=ROOT.kSpring+2, FakeRate="ttH-multilepton/fr-jecUp.txt", SkipMe=True
 TTZ_jec_Up     : TTLLJets_m1to10 : xsec : eventBTagSF_up_jes/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  FillColor=ROOT.kSpring+2, FakeRate="ttH-multilepton/fr-jecUp.txt", SkipMe=True
@@ -71,9 +71,9 @@ Rares_jec_Up   : tZq_ll : xsec : eventBTagSF_up_jes/eventBTagSF*(LepGood1_mcMatc
 #Convs_jec_Up   : ZGTo2LG : xsec : eventBTagSF_up_jes/eventBTagSF*((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==1) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==1) || (LepGood3_mcMatchId==0 && LepGood3_mcPromptGamma==1)) ; FillColor=ROOT.kOrange, FakeRate="ttH-multilepton/fr-jecUp.txt", SkipMe=True
 #Convs_jec_Up   : TGJets : xsec : eventBTagSF_up_jes/eventBTagSF*((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==1) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==1) || (LepGood3_mcMatchId==0 && LepGood3_mcPromptGamma==1)) ; FillColor=ROOT.kOrange, FakeRate="ttH-multilepton/fr-jecUp.txt", SkipMe=True
 
-ttH_hww_jec_Dn+    : TTHnobb_mWCutfix_ext1 : 0.5071*0.418 : eventBTagSF_down_jes/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 24); FillColor=ROOT.kOrange+10, FakeRate="ttH-multilepton/fr-jecDn.txt", SkipMe=True
-ttH_hzz_jec_Dn+    : TTHnobb_mWCutfix_ext1 : 0.5071*0.418 : eventBTagSF_down_jes/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 23); FillColor=ROOT.kOrange+10, FakeRate="ttH-multilepton/fr-jecDn.txt", SkipMe=True
-ttH_htt_jec_Dn+    : TTHnobb_mWCutfix_ext1 : 0.5071*0.418 : eventBTagSF_down_jes/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 15); FillColor=ROOT.kOrange+10, FakeRate="ttH-multilepton/fr-jecDn.txt", SkipMe=True
+ttH_hww_jec_Dn+    : TTHnobb_mWCutfix_ch0 : 0.5071*0.418 : eventBTagSF_down_jes/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 24); FillColor=ROOT.kOrange+10, FakeRate="ttH-multilepton/fr-jecDn.txt", SkipMe=True
+ttH_hzz_jec_Dn+    : TTHnobb_mWCutfix_ch0 : 0.5071*0.418 : eventBTagSF_down_jes/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 23); FillColor=ROOT.kOrange+10, FakeRate="ttH-multilepton/fr-jecDn.txt", SkipMe=True
+ttH_htt_jec_Dn+    : TTHnobb_mWCutfix_ch0 : 0.5071*0.418 : eventBTagSF_down_jes/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 15); FillColor=ROOT.kOrange+10, FakeRate="ttH-multilepton/fr-jecDn.txt", SkipMe=True
 TTW_jec_Dn     : TTWToLNu : 0.196 : eventBTagSF_down_jes/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  FillColor=ROOT.kGreen-5, FakeRate="ttH-multilepton/fr-jecDn.txt", SkipMe=True
 TTZ_jec_Dn     : TTZToLLNuNu : 0.2526 : eventBTagSF_down_jes/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  FillColor=ROOT.kSpring+2, FakeRate="ttH-multilepton/fr-jecDn.txt", SkipMe=True
 TTZ_jec_Dn     : TTLLJets_m1to10 : xsec : eventBTagSF_down_jes/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  FillColor=ROOT.kSpring+2, FakeRate="ttH-multilepton/fr-jecDn.txt", SkipMe=True
@@ -98,9 +98,9 @@ Rares_jec_Dn   : tZq_ll : xsec : eventBTagSF_down_jes/eventBTagSF*(LepGood1_mcMa
 #Convs_jec_Dn   : TGJets : xsec : eventBTagSF_down_jes/eventBTagSF*((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==1) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==1) || (LepGood3_mcMatchId==0 && LepGood3_mcPromptGamma==1)) ; FillColor=ROOT.kOrange, FakeRate="ttH-multilepton/fr-jecDn.txt", SkipMe=True
 
 
-ttH_hww_bTag_LF_Up+    : TTHnobb_mWCutfix_ext1 : 0.5071*0.418 : eventBTagSF_up_lf/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 24); SkipMe=True
-ttH_hzz_bTag_LF_Up+    : TTHnobb_mWCutfix_ext1 : 0.5071*0.418 : eventBTagSF_up_lf/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 23); SkipMe=True
-ttH_htt_bTag_LF_Up+    : TTHnobb_mWCutfix_ext1 : 0.5071*0.418 : eventBTagSF_up_lf/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 15); SkipMe=True
+ttH_hww_bTag_LF_Up+    : TTHnobb_mWCutfix_ch0 : 0.5071*0.418 : eventBTagSF_up_lf/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 24); SkipMe=True
+ttH_hzz_bTag_LF_Up+    : TTHnobb_mWCutfix_ch0 : 0.5071*0.418 : eventBTagSF_up_lf/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 23); SkipMe=True
+ttH_htt_bTag_LF_Up+    : TTHnobb_mWCutfix_ch0 : 0.5071*0.418 : eventBTagSF_up_lf/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 15); SkipMe=True
 TTW_bTag_LF_Up     : TTWToLNu : 0.196 : eventBTagSF_up_lf/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
 TTZ_bTag_LF_Up     : TTZToLLNuNu : 0.2526 : eventBTagSF_up_lf/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
 TTZ_bTag_LF_Up     : TTLLJets_m1to10 : xsec : eventBTagSF_up_lf/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
@@ -124,9 +124,9 @@ Rares_bTag_LF_Up   : tZq_ll : xsec : eventBTagSF_up_lf/eventBTagSF*(LepGood1_mcM
 #Convs_bTag_LF_Up   : ZGTo2LG : xsec : eventBTagSF_up_lf/eventBTagSF*((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==1) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==1) || (LepGood3_mcMatchId==0 && LepGood3_mcPromptGamma==1)) ; SkipMe=True
 #Convs_bTag_LF_Up   : TGJets : xsec : eventBTagSF_up_lf/eventBTagSF*((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==1) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==1) || (LepGood3_mcMatchId==0 && LepGood3_mcPromptGamma==1)) ; SkipMe=True
 
-ttH_hww_bTag_LF_Dn+    : TTHnobb_mWCutfix_ext1 : 0.5071*0.418 : eventBTagSF_down_lf/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 24); SkipMe=True
-ttH_hzz_bTag_LF_Dn+    : TTHnobb_mWCutfix_ext1 : 0.5071*0.418 : eventBTagSF_down_lf/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 23); SkipMe=True
-ttH_htt_bTag_LF_Dn+    : TTHnobb_mWCutfix_ext1 : 0.5071*0.418 : eventBTagSF_down_lf/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 15); SkipMe=True
+ttH_hww_bTag_LF_Dn+    : TTHnobb_mWCutfix_ch0 : 0.5071*0.418 : eventBTagSF_down_lf/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 24); SkipMe=True
+ttH_hzz_bTag_LF_Dn+    : TTHnobb_mWCutfix_ch0 : 0.5071*0.418 : eventBTagSF_down_lf/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 23); SkipMe=True
+ttH_htt_bTag_LF_Dn+    : TTHnobb_mWCutfix_ch0 : 0.5071*0.418 : eventBTagSF_down_lf/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 15); SkipMe=True
 TTW_bTag_LF_Dn     : TTWToLNu : 0.196 : eventBTagSF_down_lf/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
 TTZ_bTag_LF_Dn     : TTZToLLNuNu : 0.2526 : eventBTagSF_down_lf/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
 TTZ_bTag_LF_Dn     : TTLLJets_m1to10 : xsec : eventBTagSF_down_lf/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
@@ -150,9 +150,9 @@ Rares_bTag_LF_Dn   : tZq_ll : xsec : eventBTagSF_down_lf/eventBTagSF*(LepGood1_m
 #Convs_bTag_LF_Dn   : ZGTo2LG : xsec : eventBTagSF_down_lf/eventBTagSF*((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==1) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==1) || (LepGood3_mcMatchId==0 && LepGood3_mcPromptGamma==1)) ; SkipMe=True
 #Convs_bTag_LF_Dn   : TGJets : xsec : eventBTagSF_down_lf/eventBTagSF*((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==1) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==1) || (LepGood3_mcMatchId==0 && LepGood3_mcPromptGamma==1)) ; SkipMe=True
 
-ttH_hww_bTag_HF_Up+    : TTHnobb_mWCutfix_ext1 : 0.5071*0.418 : eventBTagSF_up_hf/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 24); SkipMe=True
-ttH_hzz_bTag_HF_Up+    : TTHnobb_mWCutfix_ext1 : 0.5071*0.418 : eventBTagSF_up_hf/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 23); SkipMe=True
-ttH_htt_bTag_HF_Up+    : TTHnobb_mWCutfix_ext1 : 0.5071*0.418 : eventBTagSF_up_hf/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 15); SkipMe=True
+ttH_hww_bTag_HF_Up+    : TTHnobb_mWCutfix_ch0 : 0.5071*0.418 : eventBTagSF_up_hf/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 24); SkipMe=True
+ttH_hzz_bTag_HF_Up+    : TTHnobb_mWCutfix_ch0 : 0.5071*0.418 : eventBTagSF_up_hf/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 23); SkipMe=True
+ttH_htt_bTag_HF_Up+    : TTHnobb_mWCutfix_ch0 : 0.5071*0.418 : eventBTagSF_up_hf/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 15); SkipMe=True
 TTW_bTag_HF_Up     : TTWToLNu : 0.196 : eventBTagSF_up_hf/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
 TTZ_bTag_HF_Up     : TTZToLLNuNu : 0.2526 : eventBTagSF_up_hf/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
 TTZ_bTag_HF_Up     : TTLLJets_m1to10 : xsec : eventBTagSF_up_hf/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
@@ -176,9 +176,9 @@ Rares_bTag_HF_Up   : tZq_ll : xsec : eventBTagSF_up_hf/eventBTagSF*(LepGood1_mcM
 #Convs_bTag_HF_Up   : ZGTo2LG : xsec : eventBTagSF_up_hf/eventBTagSF*((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==1) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==1) || (LepGood3_mcMatchId==0 && LepGood3_mcPromptGamma==1)) ; SkipMe=True
 #Convs_bTag_HF_Up   : TGJets : xsec : eventBTagSF_up_hf/eventBTagSF*((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==1) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==1) || (LepGood3_mcMatchId==0 && LepGood3_mcPromptGamma==1)) ; SkipMe=True
 
-ttH_hww_bTag_HF_Dn+    : TTHnobb_mWCutfix_ext1 : 0.5071*0.418 : eventBTagSF_down_hf/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 24); SkipMe=True
-ttH_hzz_bTag_HF_Dn+    : TTHnobb_mWCutfix_ext1 : 0.5071*0.418 : eventBTagSF_down_hf/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 23); SkipMe=True
-ttH_htt_bTag_HF_Dn+    : TTHnobb_mWCutfix_ext1 : 0.5071*0.418 : eventBTagSF_down_hf/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 15); SkipMe=True
+ttH_hww_bTag_HF_Dn+    : TTHnobb_mWCutfix_ch0 : 0.5071*0.418 : eventBTagSF_down_hf/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 24); SkipMe=True
+ttH_hzz_bTag_HF_Dn+    : TTHnobb_mWCutfix_ch0 : 0.5071*0.418 : eventBTagSF_down_hf/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 23); SkipMe=True
+ttH_htt_bTag_HF_Dn+    : TTHnobb_mWCutfix_ch0 : 0.5071*0.418 : eventBTagSF_down_hf/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 15); SkipMe=True
 TTW_bTag_HF_Dn     : TTWToLNu : 0.196 : eventBTagSF_down_hf/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
 TTZ_bTag_HF_Dn     : TTZToLLNuNu : 0.2526 : eventBTagSF_down_hf/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
 TTZ_bTag_HF_Dn     : TTLLJets_m1to10 : xsec : eventBTagSF_down_hf/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
@@ -202,9 +202,9 @@ Rares_bTag_HF_Dn   : tZq_ll : xsec : eventBTagSF_down_hf/eventBTagSF*(LepGood1_m
 #Convs_bTag_HF_Dn   : ZGTo2LG : xsec : eventBTagSF_down_hf/eventBTagSF*((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==1) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==1) || (LepGood3_mcMatchId==0 && LepGood3_mcPromptGamma==1)) ; SkipMe=True
 #Convs_bTag_HF_Dn   : TGJets : xsec : eventBTagSF_down_hf/eventBTagSF*((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==1) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==1) || (LepGood3_mcMatchId==0 && LepGood3_mcPromptGamma==1)) ; SkipMe=True
 
-ttH_hww_bTag_HFStats1_Up+    : TTHnobb_mWCutfix_ext1 : 0.5071*0.418 : eventBTagSF_up_hfstats1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 24); SkipMe=True
-ttH_hzz_bTag_HFStats1_Up+    : TTHnobb_mWCutfix_ext1 : 0.5071*0.418 : eventBTagSF_up_hfstats1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 23); SkipMe=True
-ttH_htt_bTag_HFStats1_Up+    : TTHnobb_mWCutfix_ext1 : 0.5071*0.418 : eventBTagSF_up_hfstats1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 15); SkipMe=True
+ttH_hww_bTag_HFStats1_Up+    : TTHnobb_mWCutfix_ch0 : 0.5071*0.418 : eventBTagSF_up_hfstats1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 24); SkipMe=True
+ttH_hzz_bTag_HFStats1_Up+    : TTHnobb_mWCutfix_ch0 : 0.5071*0.418 : eventBTagSF_up_hfstats1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 23); SkipMe=True
+ttH_htt_bTag_HFStats1_Up+    : TTHnobb_mWCutfix_ch0 : 0.5071*0.418 : eventBTagSF_up_hfstats1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 15); SkipMe=True
 TTW_bTag_HFStats1_Up     : TTWToLNu : 0.196 : eventBTagSF_up_hfstats1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
 TTZ_bTag_HFStats1_Up     : TTZToLLNuNu : 0.2526 : eventBTagSF_up_hfstats1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
 TTZ_bTag_HFStats1_Up     : TTLLJets_m1to10 : xsec : eventBTagSF_up_hfstats1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
@@ -228,9 +228,9 @@ Rares_bTag_HFStats1_Up   : tZq_ll : xsec : eventBTagSF_up_hfstats1/eventBTagSF*(
 #Convs_bTag_HFStats1_Up   : ZGTo2LG : xsec : eventBTagSF_up_hfstats1/eventBTagSF*((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==1) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==1) || (LepGood3_mcMatchId==0 && LepGood3_mcPromptGamma==1)) ; SkipMe=True
 #Convs_bTag_HFStats1_Up   : TGJets : xsec : eventBTagSF_up_hfstats1/eventBTagSF*((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==1) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==1) || (LepGood3_mcMatchId==0 && LepGood3_mcPromptGamma==1)) ; SkipMe=True
 
-ttH_hww_bTag_HFStats1_Dn+    : TTHnobb_mWCutfix_ext1 : 0.5071*0.418 : eventBTagSF_down_hfstats1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 24); SkipMe=True
-ttH_hzz_bTag_HFStats1_Dn+    : TTHnobb_mWCutfix_ext1 : 0.5071*0.418 : eventBTagSF_down_hfstats1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 23); SkipMe=True
-ttH_htt_bTag_HFStats1_Dn+    : TTHnobb_mWCutfix_ext1 : 0.5071*0.418 : eventBTagSF_down_hfstats1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 15); SkipMe=True
+ttH_hww_bTag_HFStats1_Dn+    : TTHnobb_mWCutfix_ch0 : 0.5071*0.418 : eventBTagSF_down_hfstats1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 24); SkipMe=True
+ttH_hzz_bTag_HFStats1_Dn+    : TTHnobb_mWCutfix_ch0 : 0.5071*0.418 : eventBTagSF_down_hfstats1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 23); SkipMe=True
+ttH_htt_bTag_HFStats1_Dn+    : TTHnobb_mWCutfix_ch0 : 0.5071*0.418 : eventBTagSF_down_hfstats1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 15); SkipMe=True
 TTW_bTag_HFStats1_Dn     : TTWToLNu : 0.196 : eventBTagSF_down_hfstats1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
 TTZ_bTag_HFStats1_Dn     : TTZToLLNuNu : 0.2526 : eventBTagSF_down_hfstats1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
 TTZ_bTag_HFStats1_Dn     : TTLLJets_m1to10 : xsec : eventBTagSF_down_hfstats1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
@@ -254,9 +254,9 @@ Rares_bTag_HFStats1_Dn   : tZq_ll : xsec : eventBTagSF_down_hfstats1/eventBTagSF
 #Convs_bTag_HFStats1_Dn   : ZGTo2LG : xsec : eventBTagSF_down_hfstats1/eventBTagSF*((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==1) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==1) || (LepGood3_mcMatchId==0 && LepGood3_mcPromptGamma==1)) ; SkipMe=True
 #Convs_bTag_HFStats1_Dn   : TGJets : xsec : eventBTagSF_down_hfstats1/eventBTagSF*((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==1) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==1) || (LepGood3_mcMatchId==0 && LepGood3_mcPromptGamma==1)) ; SkipMe=True
 
-ttH_hww_bTag_HFStats2_Up+    : TTHnobb_mWCutfix_ext1 : 0.5071*0.418 : eventBTagSF_up_hfstats2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 24); SkipMe=True
-ttH_hzz_bTag_HFStats2_Up+    : TTHnobb_mWCutfix_ext1 : 0.5071*0.418 : eventBTagSF_up_hfstats2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 23); SkipMe=True
-ttH_htt_bTag_HFStats2_Up+    : TTHnobb_mWCutfix_ext1 : 0.5071*0.418 : eventBTagSF_up_hfstats2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 15); SkipMe=True
+ttH_hww_bTag_HFStats2_Up+    : TTHnobb_mWCutfix_ch0 : 0.5071*0.418 : eventBTagSF_up_hfstats2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 24); SkipMe=True
+ttH_hzz_bTag_HFStats2_Up+    : TTHnobb_mWCutfix_ch0 : 0.5071*0.418 : eventBTagSF_up_hfstats2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 23); SkipMe=True
+ttH_htt_bTag_HFStats2_Up+    : TTHnobb_mWCutfix_ch0 : 0.5071*0.418 : eventBTagSF_up_hfstats2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 15); SkipMe=True
 TTW_bTag_HFStats2_Up     : TTWToLNu : 0.196 : eventBTagSF_up_hfstats2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
 TTZ_bTag_HFStats2_Up     : TTZToLLNuNu : 0.2526 : eventBTagSF_up_hfstats2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
 TTZ_bTag_HFStats2_Up     : TTLLJets_m1to10 : xsec : eventBTagSF_up_hfstats2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
@@ -280,9 +280,9 @@ Rares_bTag_HFStats2_Up   : tZq_ll : xsec : eventBTagSF_up_hfstats2/eventBTagSF*(
 #Convs_bTag_HFStats2_Up   : ZGTo2LG : xsec : eventBTagSF_up_hfstats2/eventBTagSF*((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==1) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==1) || (LepGood3_mcMatchId==0 && LepGood3_mcPromptGamma==1)) ; SkipMe=True
 #Convs_bTag_HFStats2_Up   : TGJets : xsec : eventBTagSF_up_hfstats2/eventBTagSF*((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==1) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==1) || (LepGood3_mcMatchId==0 && LepGood3_mcPromptGamma==1)) ; SkipMe=True
 
-ttH_hww_bTag_HFStats2_Dn+    : TTHnobb_mWCutfix_ext1 : 0.5071*0.418 : eventBTagSF_down_hfstats2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 24); SkipMe=True
-ttH_hzz_bTag_HFStats2_Dn+    : TTHnobb_mWCutfix_ext1 : 0.5071*0.418 : eventBTagSF_down_hfstats2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 23); SkipMe=True
-ttH_htt_bTag_HFStats2_Dn+    : TTHnobb_mWCutfix_ext1 : 0.5071*0.418 : eventBTagSF_down_hfstats2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 15); SkipMe=True
+ttH_hww_bTag_HFStats2_Dn+    : TTHnobb_mWCutfix_ch0 : 0.5071*0.418 : eventBTagSF_down_hfstats2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 24); SkipMe=True
+ttH_hzz_bTag_HFStats2_Dn+    : TTHnobb_mWCutfix_ch0 : 0.5071*0.418 : eventBTagSF_down_hfstats2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 23); SkipMe=True
+ttH_htt_bTag_HFStats2_Dn+    : TTHnobb_mWCutfix_ch0 : 0.5071*0.418 : eventBTagSF_down_hfstats2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 15); SkipMe=True
 TTW_bTag_HFStats2_Dn     : TTWToLNu : 0.196 : eventBTagSF_down_hfstats2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
 TTZ_bTag_HFStats2_Dn     : TTZToLLNuNu : 0.2526 : eventBTagSF_down_hfstats2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
 TTZ_bTag_HFStats2_Dn     : TTLLJets_m1to10 : xsec : eventBTagSF_down_hfstats2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
@@ -306,9 +306,9 @@ Rares_bTag_HFStats2_Dn   : tZq_ll : xsec : eventBTagSF_down_hfstats2/eventBTagSF
 #Convs_bTag_HFStats2_Dn   : ZGTo2LG : xsec : eventBTagSF_down_hfstats2/eventBTagSF*((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==1) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==1) || (LepGood3_mcMatchId==0 && LepGood3_mcPromptGamma==1)) ; SkipMe=True
 #Convs_bTag_HFStats2_Dn   : TGJets : xsec : eventBTagSF_down_hfstats2/eventBTagSF*((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==1) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==1) || (LepGood3_mcMatchId==0 && LepGood3_mcPromptGamma==1)) ; SkipMe=True
 
-ttH_hww_bTag_LFStats1_Up+    : TTHnobb_mWCutfix_ext1 : 0.5071*0.418 : eventBTagSF_up_lfstats1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 24); SkipMe=True
-ttH_hzz_bTag_LFStats1_Up+    : TTHnobb_mWCutfix_ext1 : 0.5071*0.418 : eventBTagSF_up_lfstats1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 23); SkipMe=True
-ttH_htt_bTag_LFStats1_Up+    : TTHnobb_mWCutfix_ext1 : 0.5071*0.418 : eventBTagSF_up_lfstats1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 15); SkipMe=True
+ttH_hww_bTag_LFStats1_Up+    : TTHnobb_mWCutfix_ch0 : 0.5071*0.418 : eventBTagSF_up_lfstats1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 24); SkipMe=True
+ttH_hzz_bTag_LFStats1_Up+    : TTHnobb_mWCutfix_ch0 : 0.5071*0.418 : eventBTagSF_up_lfstats1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 23); SkipMe=True
+ttH_htt_bTag_LFStats1_Up+    : TTHnobb_mWCutfix_ch0 : 0.5071*0.418 : eventBTagSF_up_lfstats1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 15); SkipMe=True
 TTW_bTag_LFStats1_Up     : TTWToLNu : 0.196 : eventBTagSF_up_lfstats1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
 TTZ_bTag_LFStats1_Up     : TTZToLLNuNu : 0.2526 : eventBTagSF_up_lfstats1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
 TTZ_bTag_LFStats1_Up     : TTLLJets_m1to10 : xsec : eventBTagSF_up_lfstats1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
@@ -332,9 +332,9 @@ Rares_bTag_LFStats1_Up   : tZq_ll : xsec : eventBTagSF_up_lfstats1/eventBTagSF*(
 #Convs_bTag_LFStats1_Up   : ZGTo2LG : xsec : eventBTagSF_up_lfstats1/eventBTagSF*((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==1) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==1) || (LepGood3_mcMatchId==0 && LepGood3_mcPromptGamma==1)) ; SkipMe=True
 #Convs_bTag_LFStats1_Up   : TGJets : xsec : eventBTagSF_up_lfstats1/eventBTagSF*((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==1) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==1) || (LepGood3_mcMatchId==0 && LepGood3_mcPromptGamma==1)) ; SkipMe=True
 
-ttH_hww_bTag_LFStats1_Dn+    : TTHnobb_mWCutfix_ext1 : 0.5071*0.418 : eventBTagSF_down_lfstats1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 24); SkipMe=True
-ttH_hzz_bTag_LFStats1_Dn+    : TTHnobb_mWCutfix_ext1 : 0.5071*0.418 : eventBTagSF_down_lfstats1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 23); SkipMe=True
-ttH_htt_bTag_LFStats1_Dn+    : TTHnobb_mWCutfix_ext1 : 0.5071*0.418 : eventBTagSF_down_lfstats1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 15); SkipMe=True
+ttH_hww_bTag_LFStats1_Dn+    : TTHnobb_mWCutfix_ch0 : 0.5071*0.418 : eventBTagSF_down_lfstats1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 24); SkipMe=True
+ttH_hzz_bTag_LFStats1_Dn+    : TTHnobb_mWCutfix_ch0 : 0.5071*0.418 : eventBTagSF_down_lfstats1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 23); SkipMe=True
+ttH_htt_bTag_LFStats1_Dn+    : TTHnobb_mWCutfix_ch0 : 0.5071*0.418 : eventBTagSF_down_lfstats1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 15); SkipMe=True
 TTW_bTag_LFStats1_Dn     : TTWToLNu : 0.196 : eventBTagSF_down_lfstats1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
 TTZ_bTag_LFStats1_Dn     : TTZToLLNuNu : 0.2526 : eventBTagSF_down_lfstats1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
 TTZ_bTag_LFStats1_Dn     : TTLLJets_m1to10 : xsec : eventBTagSF_down_lfstats1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
@@ -358,9 +358,9 @@ Rares_bTag_LFStats1_Dn   : tZq_ll : xsec : eventBTagSF_down_lfstats1/eventBTagSF
 #Convs_bTag_LFStats1_Dn   : ZGTo2LG : xsec : eventBTagSF_down_lfstats1/eventBTagSF*((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==1) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==1) || (LepGood3_mcMatchId==0 && LepGood3_mcPromptGamma==1)) ; SkipMe=True
 #Convs_bTag_LFStats1_Dn   : TGJets : xsec : eventBTagSF_down_lfstats1/eventBTagSF*((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==1) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==1) || (LepGood3_mcMatchId==0 && LepGood3_mcPromptGamma==1)) ; SkipMe=True
 
-ttH_hww_bTag_LFStats2_Up+    : TTHnobb_mWCutfix_ext1 : 0.5071*0.418 : eventBTagSF_up_lfstats2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 24); SkipMe=True
-ttH_hzz_bTag_LFStats2_Up+    : TTHnobb_mWCutfix_ext1 : 0.5071*0.418 : eventBTagSF_up_lfstats2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 23); SkipMe=True
-ttH_htt_bTag_LFStats2_Up+    : TTHnobb_mWCutfix_ext1 : 0.5071*0.418 : eventBTagSF_up_lfstats2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 15); SkipMe=True
+ttH_hww_bTag_LFStats2_Up+    : TTHnobb_mWCutfix_ch0 : 0.5071*0.418 : eventBTagSF_up_lfstats2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 24); SkipMe=True
+ttH_hzz_bTag_LFStats2_Up+    : TTHnobb_mWCutfix_ch0 : 0.5071*0.418 : eventBTagSF_up_lfstats2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 23); SkipMe=True
+ttH_htt_bTag_LFStats2_Up+    : TTHnobb_mWCutfix_ch0 : 0.5071*0.418 : eventBTagSF_up_lfstats2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 15); SkipMe=True
 TTW_bTag_LFStats2_Up     : TTWToLNu : 0.196 : eventBTagSF_up_lfstats2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
 TTZ_bTag_LFStats2_Up     : TTZToLLNuNu : 0.2526 : eventBTagSF_up_lfstats2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
 TTZ_bTag_LFStats2_Up     : TTLLJets_m1to10 : xsec : eventBTagSF_up_lfstats2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
@@ -384,9 +384,9 @@ Rares_bTag_LFStats2_Up   : tZq_ll : xsec : eventBTagSF_up_lfstats2/eventBTagSF*(
 #Convs_bTag_LFStats2_Up   : ZGTo2LG : xsec : eventBTagSF_up_lfstats2/eventBTagSF*((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==1) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==1) || (LepGood3_mcMatchId==0 && LepGood3_mcPromptGamma==1)) ; SkipMe=True
 #Convs_bTag_LFStats2_Up   : TGJets : xsec : eventBTagSF_up_lfstats2/eventBTagSF*((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==1) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==1) || (LepGood3_mcMatchId==0 && LepGood3_mcPromptGamma==1)) ; SkipMe=True
 
-ttH_hww_bTag_LFStats2_Dn+    : TTHnobb_mWCutfix_ext1 : 0.5071*0.418 : eventBTagSF_down_lfstats2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 24); SkipMe=True
-ttH_hzz_bTag_LFStats2_Dn+    : TTHnobb_mWCutfix_ext1 : 0.5071*0.418 : eventBTagSF_down_lfstats2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 23); SkipMe=True
-ttH_htt_bTag_LFStats2_Dn+    : TTHnobb_mWCutfix_ext1 : 0.5071*0.418 : eventBTagSF_down_lfstats2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 15); SkipMe=True
+ttH_hww_bTag_LFStats2_Dn+    : TTHnobb_mWCutfix_ch0 : 0.5071*0.418 : eventBTagSF_down_lfstats2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 24); SkipMe=True
+ttH_hzz_bTag_LFStats2_Dn+    : TTHnobb_mWCutfix_ch0 : 0.5071*0.418 : eventBTagSF_down_lfstats2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 23); SkipMe=True
+ttH_htt_bTag_LFStats2_Dn+    : TTHnobb_mWCutfix_ch0 : 0.5071*0.418 : eventBTagSF_down_lfstats2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 15); SkipMe=True
 TTW_bTag_LFStats2_Dn     : TTWToLNu : 0.196 : eventBTagSF_down_lfstats2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
 TTZ_bTag_LFStats2_Dn     : TTZToLLNuNu : 0.2526 : eventBTagSF_down_lfstats2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
 TTZ_bTag_LFStats2_Dn     : TTLLJets_m1to10 : xsec : eventBTagSF_down_lfstats2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
@@ -410,9 +410,9 @@ Rares_bTag_LFStats2_Dn   : tZq_ll : xsec : eventBTagSF_down_lfstats2/eventBTagSF
 #Convs_bTag_LFStats2_Dn   : ZGTo2LG : xsec : eventBTagSF_down_lfstats2/eventBTagSF*((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==1) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==1) || (LepGood3_mcMatchId==0 && LepGood3_mcPromptGamma==1)) ; SkipMe=True
 #Convs_bTag_LFStats2_Dn   : TGJets : xsec : eventBTagSF_down_lfstats2/eventBTagSF*((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==1) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==1) || (LepGood3_mcMatchId==0 && LepGood3_mcPromptGamma==1)) ; SkipMe=True
 
-ttH_hww_bTag_cErr1_Up+    : TTHnobb_mWCutfix_ext1 : 0.5071*0.418 : eventBTagSF_up_cferr1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 24); SkipMe=True
-ttH_hzz_bTag_cErr1_Up+    : TTHnobb_mWCutfix_ext1 : 0.5071*0.418 : eventBTagSF_up_cferr1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 23); SkipMe=True
-ttH_htt_bTag_cErr1_Up+    : TTHnobb_mWCutfix_ext1 : 0.5071*0.418 : eventBTagSF_up_cferr1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 15); SkipMe=True
+ttH_hww_bTag_cErr1_Up+    : TTHnobb_mWCutfix_ch0 : 0.5071*0.418 : eventBTagSF_up_cferr1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 24); SkipMe=True
+ttH_hzz_bTag_cErr1_Up+    : TTHnobb_mWCutfix_ch0 : 0.5071*0.418 : eventBTagSF_up_cferr1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 23); SkipMe=True
+ttH_htt_bTag_cErr1_Up+    : TTHnobb_mWCutfix_ch0 : 0.5071*0.418 : eventBTagSF_up_cferr1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 15); SkipMe=True
 TTW_bTag_cErr1_Up     : TTWToLNu : 0.196 : eventBTagSF_up_cferr1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
 TTZ_bTag_cErr1_Up     : TTZToLLNuNu : 0.2526 : eventBTagSF_up_cferr1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
 TTZ_bTag_cErr1_Up     : TTLLJets_m1to10 : xsec : eventBTagSF_up_cferr1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
@@ -436,9 +436,9 @@ Rares_bTag_cErr1_Up   : tZq_ll : xsec : eventBTagSF_up_cferr1/eventBTagSF*(LepGo
 #Convs_bTag_cErr1_Up   : ZGTo2LG : xsec : eventBTagSF_up_cferr1/eventBTagSF*((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==1) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==1) || (LepGood3_mcMatchId==0 && LepGood3_mcPromptGamma==1)) ; SkipMe=True
 #Convs_bTag_cErr1_Up   : TGJets : xsec : eventBTagSF_up_cferr1/eventBTagSF*((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==1) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==1) || (LepGood3_mcMatchId==0 && LepGood3_mcPromptGamma==1)) ; SkipMe=True
 
-ttH_hww_bTag_cErr1_Dn+    : TTHnobb_mWCutfix_ext1 : 0.5071*0.418 : eventBTagSF_down_cferr1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 24); SkipMe=True
-ttH_hzz_bTag_cErr1_Dn+    : TTHnobb_mWCutfix_ext1 : 0.5071*0.418 : eventBTagSF_down_cferr1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 23); SkipMe=True
-ttH_htt_bTag_cErr1_Dn+    : TTHnobb_mWCutfix_ext1 : 0.5071*0.418 : eventBTagSF_down_cferr1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 15); SkipMe=True
+ttH_hww_bTag_cErr1_Dn+    : TTHnobb_mWCutfix_ch0 : 0.5071*0.418 : eventBTagSF_down_cferr1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 24); SkipMe=True
+ttH_hzz_bTag_cErr1_Dn+    : TTHnobb_mWCutfix_ch0 : 0.5071*0.418 : eventBTagSF_down_cferr1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 23); SkipMe=True
+ttH_htt_bTag_cErr1_Dn+    : TTHnobb_mWCutfix_ch0 : 0.5071*0.418 : eventBTagSF_down_cferr1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 15); SkipMe=True
 TTW_bTag_cErr1_Dn     : TTWToLNu : 0.196 : eventBTagSF_down_cferr1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
 TTZ_bTag_cErr1_Dn     : TTZToLLNuNu : 0.2526 : eventBTagSF_down_cferr1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
 TTZ_bTag_cErr1_Dn     : TTLLJets_m1to10 : xsec : eventBTagSF_down_cferr1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
@@ -462,9 +462,9 @@ Rares_bTag_cErr1_Dn   : tZq_ll : xsec : eventBTagSF_down_cferr1/eventBTagSF*(Lep
 #Convs_bTag_cErr1_Dn   : ZGTo2LG : xsec : eventBTagSF_down_cferr1/eventBTagSF*((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==1) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==1) || (LepGood3_mcMatchId==0 && LepGood3_mcPromptGamma==1)) ; SkipMe=True
 #Convs_bTag_cErr1_Dn   : TGJets : xsec : eventBTagSF_down_cferr1/eventBTagSF*((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==1) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==1) || (LepGood3_mcMatchId==0 && LepGood3_mcPromptGamma==1)) ; SkipMe=True
 
-ttH_hww_bTag_cErr2_Up+    : TTHnobb_mWCutfix_ext1 : 0.5071*0.418 : eventBTagSF_up_cferr2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 24); SkipMe=True
-ttH_hzz_bTag_cErr2_Up+    : TTHnobb_mWCutfix_ext1 : 0.5071*0.418 : eventBTagSF_up_cferr2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 23); SkipMe=True
-ttH_htt_bTag_cErr2_Up+    : TTHnobb_mWCutfix_ext1 : 0.5071*0.418 : eventBTagSF_up_cferr2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 15); SkipMe=True
+ttH_hww_bTag_cErr2_Up+    : TTHnobb_mWCutfix_ch0 : 0.5071*0.418 : eventBTagSF_up_cferr2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 24); SkipMe=True
+ttH_hzz_bTag_cErr2_Up+    : TTHnobb_mWCutfix_ch0 : 0.5071*0.418 : eventBTagSF_up_cferr2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 23); SkipMe=True
+ttH_htt_bTag_cErr2_Up+    : TTHnobb_mWCutfix_ch0 : 0.5071*0.418 : eventBTagSF_up_cferr2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 15); SkipMe=True
 TTW_bTag_cErr2_Up     : TTWToLNu : 0.196 : eventBTagSF_up_cferr2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
 TTZ_bTag_cErr2_Up     : TTZToLLNuNu : 0.2526 : eventBTagSF_up_cferr2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
 TTZ_bTag_cErr2_Up     : TTLLJets_m1to10 : xsec : eventBTagSF_up_cferr2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
@@ -488,9 +488,9 @@ Rares_bTag_cErr2_Up   : tZq_ll : xsec : eventBTagSF_up_cferr2/eventBTagSF*(LepGo
 #Convs_bTag_cErr2_Up   : ZGTo2LG : xsec : eventBTagSF_up_cferr2/eventBTagSF*((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==1) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==1) || (LepGood3_mcMatchId==0 && LepGood3_mcPromptGamma==1)) ; SkipMe=True
 #Convs_bTag_cErr2_Up   : TGJets : xsec : eventBTagSF_up_cferr2/eventBTagSF*((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==1) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==1) || (LepGood3_mcMatchId==0 && LepGood3_mcPromptGamma==1)) ; SkipMe=True
 
-ttH_hww_bTag_cErr2_Dn+    : TTHnobb_mWCutfix_ext1 : 0.5071*0.418 : eventBTagSF_down_cferr2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 24); SkipMe=True
-ttH_hzz_bTag_cErr2_Dn+    : TTHnobb_mWCutfix_ext1 : 0.5071*0.418 : eventBTagSF_down_cferr2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 23); SkipMe=True
-ttH_htt_bTag_cErr2_Dn+    : TTHnobb_mWCutfix_ext1 : 0.5071*0.418 : eventBTagSF_down_cferr2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 15); SkipMe=True
+ttH_hww_bTag_cErr2_Dn+    : TTHnobb_mWCutfix_ch0 : 0.5071*0.418 : eventBTagSF_down_cferr2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 24); SkipMe=True
+ttH_hzz_bTag_cErr2_Dn+    : TTHnobb_mWCutfix_ch0 : 0.5071*0.418 : eventBTagSF_down_cferr2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 23); SkipMe=True
+ttH_htt_bTag_cErr2_Dn+    : TTHnobb_mWCutfix_ch0 : 0.5071*0.418 : eventBTagSF_down_cferr2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && GenHiggsDecayMode == 15); SkipMe=True
 TTW_bTag_cErr2_Dn     : TTWToLNu : 0.196 : eventBTagSF_down_cferr2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
 TTZ_bTag_cErr2_Dn     : TTZToLLNuNu : 0.2526 : eventBTagSF_down_cferr2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
 TTZ_bTag_cErr2_Dn     : TTLLJets_m1to10 : xsec : eventBTagSF_down_cferr2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
