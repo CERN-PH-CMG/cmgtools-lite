@@ -804,9 +804,9 @@ TW_lepSF_Dn       : TBar_tWch :  xsec: ((leptonSF_SOS(LepGood1_pdgId,LepGood1_pt
 
 
 #### Missing pieces
-# BTag SF for FastSIM
-# Veto strange FastSIM events
-# Lepton SF for FastSIM (with flat uncertainty)
-# ISR systematics for Signal Monte Carlo 
-# PDF and Q^2 and MC stat systematics on acceptance 
-
+# BTag SF for FastSIM--> need to produce friend trees for FastSIM
+# Veto strange FastSIM events--> need to be apply with an additionalFakeRateFile 
+# Lepton SF for FastSIM --> for the moment 3% uncertainty per lepton
+# ISR systematics for Signal Monte Carlo --> Markus & George will produce friend trees
+# PDF and Q^2 and MC stat systematics on acceptance --> Markus & George will produce friend trees for the scans 
+# Special treatment of MET uncertainty in fastsim --> we should receive an update from Constantin

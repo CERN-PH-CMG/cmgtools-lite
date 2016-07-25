@@ -346,8 +346,8 @@ triggerFlagsAna.saveIsUnprescaled = True
 triggerFlagsAna.checkL1Prescale = True
 
 if runSMS:
-    susyCoreSequence.remove(ttHLepSkim)
-    susyCoreSequence.remove(ttHJetMETSkim)
+    if ttHLepSkim in susyCoreSequence: susyCoreSequence.remove(ttHLepSkim)
+    if ttHJetMETSkim in susyCoreSequence: susyCoreSequence.remove(ttHJetMETSkim)
     susyCoreSequence.remove(triggerFlagsAna)
     susyCoreSequence.remove(triggerAna)
     susyCoreSequence.remove(eventFlagsAna)
