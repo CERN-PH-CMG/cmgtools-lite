@@ -6,10 +6,11 @@ cmsphys10*) P=/data1/g/gpetrucc/MuTnP80X/80X_v3/ ;;
 esac;
 
 PDIR="plots/80X/TnP/"
-JOB="mupog_sos_v2.0"
-XBINS="[3.5,7.5,10,15,20,30,45,70,120]"
+JOB="mupog_ttH_v2.0"
+XBINS="[10,15,20,30,40,60,80,120]"
 EBINS="[-2.4,-2.1,-1.6,-1.2,-0.9,-0.6,-0.3,-0.2,0.2,0.3,0.6,0.9,1.2,1.6,2.1,2.4]"
 VBINS="[0.5,5.5,8.5,11.5,14.5,17.5,20.5,23.5,26.5,30.5,34.5]"
+JBINS="[-0.5,0.5,1.5,2.5,3.5,4.5,5.5]"
 DATA=""
 DATA="$DATA $P/data/TnPTree_80X_Run2016B_v2_GoldenJSON_Run271036to275125_incomplete_slim2_withEAMiniIso.root"
 DATA="$DATA $P/data/TnPTree_80X_Run2016B_v2_GoldenJSON_Run275126to275783_slim2_withEAMiniIso.root"
@@ -35,10 +36,10 @@ fi;
 
 if [[ "$1" == "all" ]]; then
   shift;
-  for ID in SOS SOS_PR; do #SOS_NM1_{Id,Iso,Ip} SOS_003 SOS_NoIP SOS_presel; do 
+  for ID in ttH_presel ; do #SOS_NM1_{Id,Iso,Ip} SOS_003 SOS_NoIP SOS_presel; do 
      for SMOD in MCTG dvoigt2; do # dvoigt2 BWDCB2 BWDCB; do  
-        for BMOD in bern4 bern3; do # expo ; do
-            for W in be eta vtx; do 
+        for BMOD in bern4 ; do # expo ; do
+            for W in barrel endcap eta vtx jet_pt20; do 
                echo $LAUNCHER $0 $ID $SMOD $BMOD $W          
             done
         done
@@ -55,31 +56,14 @@ if [[ "$1" != "" ]]; then OPTS="$OPTS $* "; fi
 
 MASS="  -m mass 80,70,115 "
 CDEN0="tag_IsoMu22 && tag_pt > 20 && tag_SIP < 4"
-SOS_OLD_ID="PF && TMOST && Track_HP && tkTrackerLay > 5 && tkValidPixelHits  > 0"
-SOS_ID="PF && TMOST && tkTrackerLay > 5 && tkValidPixelHits  > 0"
-SOS_PRESEL_ID="PF"
-SOS_IP="abs(dzPV) < .01 && abs(dB) < 0.01 && SIP < 8"
-SOS_IP3="abs(dzPV) < .03 && abs(dB) < 0.03 && SIP < 8"
-SOS_PRESEL_IP="abs(dzPV) < 1.0 && abs(dB) < 0.50 && SIP < 8"
-SOS_ISO="combRelIsoPF04dBeta*pt < 10 && combRelIsoPF03dBeta < 0.5 && (combRelIsoPF03dBeta*pt < 5 || combRelIsoPF03dBeta < 0.1)"
-SOS_PRESEL_ISO="combRelIsoPF04dBeta*pt < 10"
+TTH_PRESEL_ISO="pfCombRelMiniIsoEACorr < 0.4"
+TTH_PRESEL_IP="abs(dzPV) < 0.1 && abs(dB) < 0.05 && SIP < 8"
 RECO="(Glb||TM)"
 ARB_PT="pair_probeMultiplicity_Pt10_M60140 == 1"
 ARB_ID="pair_probeMultiplicity_TMGM == 1"
 
 case $ID in
-  SOS) NUM="$SOS_ID && $SOS_IP && $SOS_ISO" ; CDEN="$CDEN0 && $ARB_ID && PF";;
-  SOS_003) NUM="$SOS_ID && $SOS_IP3 && $SOS_ISO" ; CDEN="$CDEN0 && $ARB_ID && PF";;
-  SOS_NoIP) NUM="$SOS_ID && $SOS_ISO" ; CDEN="$CDEN0 && $ARB_ID && PF";;
-  SOS_presel) NUM="$SOS_PRESEL_ID && $SOS_PRESEL_ISO && $SOS_PRESEL_IP" ; CDEN="$CDEN0 && $ARB_ID && PF";;
-  SOS_PR) NUM="$SOS_ID && $SOS_ISO && $SOS_IP" ; CDEN="$CDEN0 && $ARB_ID && PF && $SOS_PRESEL_ID && $SOS_PRESEL_ISO && $SOS_PRESEL_IP";;
-  SOS_Id) NUM="$SOS_ID" ; CDEN="$CDEN0 && $ARB_ID && PF";;
-  SOS_NM1_Id) NUM="$SOS_ID" ; CDEN="$CDEN0 && $ARB_ID && PF && $SOS_ISO && $SOS_IP";;
-  SOS_NM1_Iso) NUM="$SOS_ISO" ; CDEN="$CDEN0 && $ARB_ID && PF && $SOS_ID && $SOS_IP";;
-  SOS_NM1_Ip) NUM="$SOS_IP" ; CDEN="$CDEN0 && $ARB_ID && PF && $SOS_ISO && $SOS_ID";;
-  Loose)        NUM="PF" ; CDEN="$CDEN0 && $ARB_PT"     ;                       XBINS=[10,25,40] ;;
-  LooseFromIso) NUM="PF" ; CDEN="$CDEN0 && $ARB_PT && isoTrk03Rel < 0.2 ";      XBINS=[10,25,40] ;;
-  LooseIdOnly)  NUM="PF" ; CDEN="$CDEN0 && $ARB_ID && $ARB_PT && (Glb || TM) "; XBINS=[10,25,40] ;;
+  ttH_presel) NUM="$TTH_PRESEL_IP && $TTH_PRESEL_ISO" ; CDEN="$CDEN0 && $ARB_ID && $ARB_PT && PF";;
   *) echo "Uknown ID $ID"; exit 2;;
 esac;
 
@@ -101,13 +85,15 @@ eta_*) getcut ${bin/eta_};
     python tnpEfficiency.py $PDS -d "$CUT && $DEN" -n "$NUM" $OPTS --x-var eta $EBINS -N mu_${SMOD}_${BMOD}${POST}_${ID}_$bin   -b $BMOD -s $SMOD $MASS  --xtitle "#eta";;
 vtx_*) getcut ${bin/vtx_};
     python tnpEfficiency.py $PDS -d "$CUT && $DEN" -n "$NUM" $OPTS --x-var tag_nVertices $VBINS -N mu_${SMOD}_${BMOD}${POST}_${ID}_$bin   -b $BMOD -s $SMOD $MASS --xtitle "N(vertices)";;
+jet_*) getcut ${bin/jet_};
+    python tnpEfficiency.py $PDS -d "$CUT && $DEN" -n "$NUM" $OPTS --x-var pair_nJets30 $JBINS -N mu_${SMOD}_${BMOD}${POST}_${ID}_$bin   -b $BMOD -s $SMOD $MASS --xtitle "N(jets)";;
 # ---------------------------------
 all)
-    for B in barrel endcap eta_pt520 vtx_pt520 eta_pt20 vtx_pt20; do bash $0 $ID $SMOD $BMOD $B $*; done;;
+    for B in barrel endcap eta_pt20 vtx_pt20; do bash $0 $ID $SMOD $BMOD $B $*; done;;
 eta)
-    for B in eta_pt520 eta_pt20; do bash $0 $ID $SMOD $BMOD $B $*; done;;
+    for B in eta_pt20; do bash $0 $ID $SMOD $BMOD $B $*; done;;
 vtx)
-    for B in vtx_pt520 vtx_pt20; do bash $0 $ID $SMOD $BMOD $B $*; done;;
+    for B in vtx_pt20; do bash $0 $ID $SMOD $BMOD $B $*; done;;
 be)
     for B in barrel endcap; do bash $0 $ID $SMOD $BMOD $B $*; done;;
 # ---------------------------------
