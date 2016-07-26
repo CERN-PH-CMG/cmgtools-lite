@@ -138,6 +138,7 @@ class EventVars1L_signal:
             ## to nominal scale, indices 5 and 7 correspond to "unphysical"
             ## anti-correlated variations)
 
+            '''
             global lheDict
 
             if len(lheDict) == 0: loadLHE()
@@ -176,6 +177,7 @@ class EventVars1L_signal:
                 #print scaleWgts
             else: print "No mean scale weights found for", sampkey
             ret['ScaleWgt'] = scaleWgts
+            '''
 
         return ret
 
