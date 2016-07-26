@@ -30,6 +30,7 @@ def get_allowed_ranges(csvfile):
             headers = [k.strip() for k in firstline.split(' ')]
         opfield = 'CSVv2;OperatingPoint'
         if not opfield in headers: opfield = 'cMVAv2;OperatingPoint'
+        if not opfield in headers: opfield = 'CSV;OperatingPoint'
 
         reader = DictReader(infile, fieldnames=headers)
         for row in reader:
@@ -69,15 +70,35 @@ class BTagScaleFactors(object):
     """Calculate btagging scale factors
         algo has to be either 'csv' or 'cmva'
     """
-    def __init__(self, name, csvfile, algo='csv', verbose=0):
+    def __init__(self, name,
+                 csvfile,
+                 csvfastsim=None,
+                 eff_rootfile=None,
+                 algo='csv',
+                 verbose=0):
         self.name = name
         self.csvfile = csvfile
+        self.csvfastsim = csvfastsim
+        self.eff_rootfile = eff_rootfile
         self.verbose = verbose
         self.algo = algo.lower()
 
         if not self.algo in ['csv', 'cmva']:
             print "ERROR: Unknown algorithm. Choose either 'csv' or 'cmva'"
             return
+
+        self.working_points = {
+            "L" : 0.460,
+            "M" : 0.800,
+            "T" : 0.935,
+        }
+
+        if self.algo == 'cmva':
+            self.working_points = {
+                "L" : -0.715,
+                "M" :  0.185,
+                "T" :  0.875,
+            }
 
         self.mtypes = {
             # Measurement type for each flavor
@@ -105,12 +126,46 @@ class BTagScaleFactors(object):
         self.allowed = get_allowed_ranges(self.csvfile)
         self.calibrator = BTagCalibration(self.name, self.csvfile)
 
+        if self.csvfastsim:
+            if self.verbose>0:
+                print "Initializing fastsim btag calibrator from %s" % self.csvfastsim
+            self.calibrator_fastsim = BTagCalibration("%s_fastsim"%self.name,
+                                                      self.csvfastsim)
+            self.allowed.update(get_allowed_ranges(self.csvfastsim))
+
+        if self.eff_rootfile:
+            if self.verbose>0:
+                print "Reading tagging efficiencies from %s" % self.eff_rootfile
+            self.load_tagging_efficiencies(self.eff_rootfile)
+
+    def load_tagging_efficiencies(self, filename):
+        from ROOT import TFile
+        ifile = TFile.Open(filename, "READ")
+        self.efficiency_hists = {}
+        for wp in ["L", "M", "T"]:
+            for flavor in ["b", "c", "udsg"]:
+                key = "eff_TT_%s_%s" % (wp, flavor)
+                hist = ifile.Get(key)
+                try: hist.GetEntries()
+                except AttributeError:
+                    print "histogram %s not found in %s" % (key, filename)
+                self.efficiency_hists[(wp, flavor)] = hist.Clone()
+                self.efficiency_hists[(wp, flavor)].SetDirectory(0)
+
+    def get_tagging_efficiency(self, jet, wp="L"):
+        flavor = {5:"b", 4:"c"}.get(jet.hadronFlavour, "udsg")
+        binno = self.efficiency_hists[(wp, flavor)].FindBin(jet.pt, abs(jet.eta))
+        return self.efficiency_hists[(wp, flavor)].GetBinContent(binno)
+
+
     def check_range(self, csvop, mtype, stype, flavor, pt, eta, discr):
         """Check if a given pt, eta, and discriminator output are in the allowed range
         Call this inside a try/except KeyError block to check if a given
         wp/mtype/syst/flavor combination exists.
 
         Eta is changed to abs(eta) for checking the range.
+
+        Note: for fastsim use mtype 'fastsim'
         """
         allowed_range = self.allowed[(csvop, mtype, stype, flavor)]
 
@@ -133,12 +188,20 @@ class BTagScaleFactors(object):
             print "Setting up btag calibration readers"
         self.readers = {}
         for wp in [0, 1, 2]:
-            for syst in ["central", "up", "down"]:
+            for syst in ["central", "up", "down", "up_correlated", "down_correlated"]:
                 for flavor in [0, 1, 2]:
-                    self.readers[(wp,syst,flavor)] = BTagCalibrationReader(
+                    self.readers[(self.mtypes[flavor], wp, syst, flavor)] = BTagCalibrationReader(
                                                         self.calibrator, wp,
                                                         self.mtypes[flavor], syst
                                                         )
+
+
+                    if self.csvfastsim and 'correlated' not in syst:
+                        self.readers[('fastsim', wp, syst, flavor)] = BTagCalibrationReader(
+                                                        self.calibrator_fastsim, wp,
+                                                        'fastsim', syst
+                                                        )
+
 
         allsysts =  ["up_%s"%s for s in self.iterative_systs]
         allsysts += ["down_%s"%s for s in self.iterative_systs]
@@ -149,7 +212,7 @@ class BTagScaleFactors(object):
                                                     )
 
     def get_SF(self, pt=30., eta=0.0, flavor=5, val=0.0,
-               syst="central", wp="M",
+               syst="central", wp="M", mtype='auto',
                shape_corr=False):
         """Evaluate the scalefactors.
             Note the flavor convention: hadronFlavor is b=5, c=4, f=0
@@ -159,6 +222,8 @@ class BTagScaleFactors(object):
             Convert to 0, 1, 2
 
             Automatically checks if values are in allowed range
+
+            Use mtype='fastsim' for fastsim SFs
 
             If unknown wp/syst/mtype/flavor, returns -1.0
         """
@@ -180,7 +245,8 @@ class BTagScaleFactors(object):
 
         syst = syst.lower()
 
-        mtype = self.mtypes[flavor]
+        if mtype == 'auto':
+            mtype = self.mtypes[flavor]
         if shape_corr:
             wp = 3
             mtype = 'iterativefit'
@@ -220,29 +286,18 @@ class BTagScaleFactors(object):
         # pt_min = 30.+1e-02
 
         if flavor < 2: # b or c jets
-            sf = self.readers[(wp, syst, flavor)].eval(flavor, eta, pt)
+            sf = self.readers[(self.mtypes[flavor], wp, syst, flavor)].eval(flavor, eta, pt)
 
             # double the error for pt out-of-range
             if out_of_range and syst in ["up","down"]:
-                sf = max(2*sf - self.readers[(wp, "central", flavor)].eval(flavor, eta, pt), 0.)
-            return sf
+                sf = max(2*sf - self.readers[(self.mtypes[flavor], wp, "central", flavor)].eval(flavor, eta, pt), 0.)
+
+            # Fastsim SFs are 0.0 for pt between 20 and 30
+            return sf if sf != 0.0 else 1.0
 
         else: # light jets
-            return self.readers[(wp, syst, flavor)].eval(flavor, eta, pt)
-
-    def get_event_SF(self, jets=[], syst="central",
-                     flavorAttr='hadronFlavour', btagAttr='btagCSV'):
-        syst = syst.lower()
-
-        weight = 1.0
-        for jet in jets:
-            flavor  = getattr(jet, flavorAttr)
-            btagval = getattr(jet, btagAttr)
-            weight *= self.get_SF(pt=jet.pt, eta=jet.eta,
-                                  flavor=flavor, val=btagval,
-                                  syst=syst, shape_corr=True)
-        return weight
-
+            sf = self.readers[(self.mtypes[flavor], wp, syst, flavor)].eval(flavor, eta, pt)
+            return sf if sf != 0.0 else 1.0
 
 #################################################################
 def testing():
