@@ -9,7 +9,7 @@ import operator
 import math
 
 # mc to data pu weight
-def getPUdict(fname, puHistName = "puRatio"):
+def getPUdict(fname, puHistName = "h_ratio"):
     puDict = {}
 
     puFile = ROOT.TFile(fname,"READ")
@@ -50,10 +50,15 @@ puFileName_down = "../python/tools/pileup/pu_ratio_65p55mb.root"
 '''
 
 #2016 4/fb
-puFileName_up   = "$CMSSW_BASE/src/CMGTools/TTHAnalysis/python/plotter/susy-1lep/pileup/pufiles/pu_ratio_4fb_Run2016B_74.9mb.root"
-puFileName_norm = "$CMSSW_BASE/src/CMGTools/TTHAnalysis/python/plotter/susy-1lep/pileup/pufiles/pu_ratio_4fb_Run2016B_71.3mb.root"
-puFileName_down = "$CMSSW_BASE/src/CMGTools/TTHAnalysis/python/plotter/susy-1lep/pileup/pufiles/pu_ratio_4fb_Run2016B_67.7mb.root"
+#puFileName_up   = "$CMSSW_BASE/src/CMGTools/TTHAnalysis/python/plotter/susy-1lep/pileup/pufiles/pu_ratio_4fb_Run2016B_74.9mb.root"
+#puFileName_norm = "$CMSSW_BASE/src/CMGTools/TTHAnalysis/python/plotter/susy-1lep/pileup/pufiles/pu_ratio_4fb_Run2016B_71.3mb.root"
+#puFileName_down = "$CMSSW_BASE/src/CMGTools/TTHAnalysis/python/plotter/susy-1lep/pileup/pufiles/pu_ratio_4fb_Run2016B_67.7mb.root"
 
+
+#2016 ICHEP
+puFileName_up = "../python/tools/pileup/h_ratio_66p15.root"
+puFileName_norm = "../python/tools/pileup/h_ratio_63.root"
+puFileName_down = "../python/tools/pileup/h_ratio_59p85.root"
 
 puNorm =  getPUdict(puFileName_norm)
 puUp =  getPUdict(puFileName_up)

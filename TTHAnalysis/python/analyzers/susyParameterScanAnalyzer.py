@@ -1,5 +1,6 @@
 from PhysicsTools.Heppy.analyzers.core.Analyzer import Analyzer
 from PhysicsTools.Heppy.analyzers.core.AutoHandle import AutoHandle
+from PhysicsTools.HeppyCore.utils.deltar import deltaR, deltaPhi
 from math import floor
 import re
         
@@ -40,7 +41,7 @@ class susyParameterScanAnalyzer( Analyzer ):
         
     def beginLoop(self, setup):
         super(susyParameterScanAnalyzer,self).beginLoop(setup)
-
+        self.counters.addCounter('events')
 
     def findSusyMasses(self,event):
         masses = {}
@@ -59,6 +60,35 @@ class susyParameterScanAnalyzer( Analyzer ):
             avgmass = floor(sum(ms)/len(ms)+0.5)
             setattr(event, "genSusyM"+p, avgmass)
 
+
+    def countISRjets(self, event):
+        cleanJets30 = [ j for j in event.cleanJets if j.pt() > 30 and abs(j.eta()) < 2.5 ]
+        nIsr = 0
+        for j in cleanJets30:
+            matched = False
+            
+            for p in event.genParticles:
+                if matched: break
+                if (p.status()!=23 or abs(p.pdgId())>5):
+                    continue
+                momid = abs(p.mother().pdgId())
+                #print "mom", momid
+                if(not(momid==6 or momid==23 or momid==24 or momid==25 or momid>1000000)):
+                    continue
+                
+                for idau in  range(0,p.numberOfDaughters()):
+                    dR = deltaR(j.eta(), j.phi(), p.daughter(idau).p4().eta(), p.daughter(idau).p4().phi())
+
+                    if dR<0.3:
+#                        print "Jet: (", j.pt() , ", " , j.eta(),", ",j.phi()
+#                        print "daughter: (",p.daughter(idau).p4().pt(),", ",p.daughter(idau).p4().eta(),", ",p.daughter(idau).p4().phi()
+                        matched = True
+                        break
+            if not matched:
+                nIsr = nIsr + 1
+
+        event.nIsr = nIsr
+            
     def readLHE(self,event):
         if not self.mchandles['lhe'].isValid():
             if not hasattr(self,"warned_already"):
@@ -85,13 +115,16 @@ class susyParameterScanAnalyzer( Analyzer ):
                     print "ERROR: I can't understand the model: ",comment
                     self.warned_already = True
 
+
     def process(self, event):
         # if not MC, nothing to do
         if not self.cfg_comp.isMC: 
             return True
 
         self.readCollections( event.input )
-
+        self.counters.addCounter('events')
+        
+        #print len(event.cleanJets)
         # create parameters
         event.susyModel = None
         for id,X in self.susyParticles.iteritems():
@@ -105,4 +138,7 @@ class susyParameterScanAnalyzer( Analyzer ):
         if self.cfg_ana.doLHE:
             self.readLHE(event)
         self.findSusyMasses(event)
+
+        self.countISRjets(event)
+    
         return True
