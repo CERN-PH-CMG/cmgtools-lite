@@ -32,7 +32,7 @@ public :
    Float_t         rho;
    Float_t         rhoCN;
    Int_t           nVert;
-   Int_t           nTrueInt;
+   Float_t         nTrueInt;
    Float_t         met_pt;
    Float_t         puWeight;
 
@@ -707,7 +707,8 @@ float lepTnPFriendTreeMaker::PuWeight(){
    if( fIsData ) return 1.0;
 
    // For json up to 276811 (12.9/fb)
-   if( nTrueInt < 60 ) return fPUw2016_vtx_13fb[nTrueInt];
+   int nTrueInt_int = int(nTrueInt);
+   if( nTrueInt_int < 60 ) return fPUw2016_vtx_13fb[nTrueInt_int];
    else return 0;
 }
 
@@ -834,8 +835,6 @@ void lepTnPFriendTreeMaker::Loop(){
       fT_nBJetLoose25  = nBJetLoose25;
       fT_nBJetMedium25 = nBJetMedium25;
       fT_met_pt        = met_pt;
-      if( fIsData ) fT_puWeight = 1.0;
-      else          fT_puWeight = puWeight;
 
       // Find a tag lepton
       for (int lep1 = 0; lep1 < nLepGood; ++lep1){
