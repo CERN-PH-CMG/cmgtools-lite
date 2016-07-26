@@ -752,12 +752,13 @@ TFile *_file_reco_leptonSF_mu = NULL;
 TFile *_file_recoToMedium_leptonSF_mu = NULL;
 TFile *_file_MediumToMVA_leptonSF_mu = NULL;
 TFile *_file_recoToMVA_leptonSF_el = NULL;
+TFile *_file_reco_leptonSF_el = NULL;
 
 TGraphAsymmErrors *_histo_reco_leptonSF_mu = NULL;
 TH2F *_histo_recoToMedium_leptonSF_mu = NULL;
 TH2F *_histo_MediumToMVA_leptonSF_mu = NULL;
 TH2F *_histo_recoToMVA_leptonSF_el = NULL;
-
+TH2F *_histo_reco_leptonSF_el = NULL;
 float _get_leptonSF_2lss_ewk(int pdgid, float pt, float eta){
  
    if (!_histo_reco_leptonSF_mu) {
@@ -771,6 +772,10 @@ float _get_leptonSF_2lss_ewk(int pdgid, float pt, float eta){
    if (!_histo_recoToMVA_leptonSF_el) {
      _file_recoToMVA_leptonSF_el = new TFile("/afs/cern.ch/work/f/folguera/SUS/EWKino/CMSSW_8_0_11/src/CMGTools/TTHAnalysis/data/leptonSF/sf_el_susy_ICHEP.root","read");
      _histo_recoToMVA_leptonSF_el = (TH2F*)(_file_recoToMVA_leptonSF_el->Get("GsfElectronToLeptonMvaVTIDEmuTightIP2DSIP3D8miniIso04"));
+     
+     _file_reco_leptonSF_el = new TFile("/afs/cern.ch/work/f/folguera/SUS/EWKino/CMSSW_8_0_11/src/CMGTools/TTHAnalysis/data/leptonSF/sf_el_trk_susy_ICHEP.root","read");
+     _histo_reco_leptonSF_el = (TH2F*) (_file_reco_leptonSF_el->Get("EGamma_SF2D"));
+     
    }
  
    if (abs(pdgid)==13){
@@ -789,7 +794,12 @@ float _get_leptonSF_2lss_ewk(int pdgid, float pt, float eta){
      TH2F *hist = _histo_recoToMVA_leptonSF_el;
      int ptbin  = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(pt)));
      int etabin = std::max(1, std::min(hist->GetNbinsY(), hist->GetYaxis()->FindBin(fabs(eta))));
-     return hist->GetBinContent(ptbin,etabin);
+     out = hist->GetBinContent(ptbin,etabin);
+     hist = _histo_reco_leptonSF_el;
+     ptbin  = std::max(1, std::min(hist->GetNbinsY(), hist->GetYaxis()->FindBin(pt)));
+     etabin = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(eta)));
+     out *= hist->GetBinContent(etabin,ptbin);
+     return out;
    }
    cout << "[ERROR]!!!! SF UnKNOWN!!! PLEASE CHECK" << endl;
    return 1.;
