@@ -92,10 +92,15 @@ class BTagEventWeightFriend:
                                   syst=syst, shape_corr=True)
         return weight
 
-    def fastsim_event_weight(self, jets, syst="central",
+    def fastsim_event_weight(self, jets,
+                             syst="central",
                              flavorAttr=None,
                              btagAttr=None,
                              wp='L'):
+        """
+        This would correspond to the event weight when for a selection
+        of events with jets of the given WP.
+        """
         syst = syst.lower()
         if not flavorAttr: flavorAttr=self.flavor_branch
         if not btagAttr:   btagAttr=self.btag_branch
@@ -106,7 +111,21 @@ class BTagEventWeightFriend:
             flavor  = getattr(jet, flavorAttr)
             btagval = getattr(jet, btagAttr)
             tagged = (btagval >= self.reader.working_points[wp])
+
+            fastsim_syst = syst
+            if 'correlated' in syst:
+                fastsim_syst = syst.split('_', 1)[0] # take 'down' or 'up' for fastsim
+            sf_fastsim = self.reader.get_SF(pt=jet.pt, eta=jet.eta,
+                                            flavor=flavor, val=btagval,
+                                            syst=fastsim_syst, mtype='fastsim')
+
             efficiency = self.reader.get_tagging_efficiency(jet, wp)
+
+            # Convert to fullsim efficiency using scale factors
+            # Inverted, because fastsim SF are defined as eff_full / eff_fast
+            #    and we are using fullsim efficiencies
+            efficiency /= sf_fastsim
+
             if not tagged:
                 efficiency = 1.0 - efficiency
 
@@ -114,17 +133,8 @@ class BTagEventWeightFriend:
                                             flavor=flavor, val=btagval,
                                             syst=syst, mtype='auto')
 
-            fastsim_syst = syst
-            if 'correlated' in syst:
-                fastsim_syst = syst.split('_', 1)[0] # take 'down' or 'up' for fastsim
-            sf_fastsim = self.reader.get_SF(pt=jet.pt, eta=jet.eta,
-                                     flavor=flavor, val=btagval,
-                                     syst=fastsim_syst, mtype='fastsim')
-
-            sf_fastsim = 1.0/sf_fastsim # invert since we use fullsim effs
-
             pmc *= efficiency
-            pdata *= sf_fullsim*sf_fastsim*efficiency
+            pdata *= sf_fullsim*efficiency
 
         try:
             return pmc/pdata
@@ -208,17 +218,17 @@ if __name__ == '__main__':
             print "Adding these branches:", self.sf.listBranches()
 
         def analyze(self,ev):
-            print "\nrun %6d lumi %4d event %d: jets %d, isdata=%d" % (ev.run, ev.lumi, ev.evt, ev.nJet25, int(ev.isData))
+            # print "\nrun %6d lumi %4d event %d: jets %d, isdata=%d" % (ev.run, ev.lumi, ev.evt, ev.nJet25, int(ev.isData))
             ret = self.sf(ev)
-            jets = Collection(ev,"Jet")
+            # jets = Collection(ev,"Jet")
             # leps = Collection(ev,"LepGood")
 
-            for i,j in enumerate(jets):
-                print "\tjet %8.2f %+5.2f %1d %.3f" % (j.pt, j.eta, getattr(j, "hadronFlavour", -1), min(max(0, j.btagCSV), 1))
+            # for i,j in enumerate(jets):
+            #     print "\tjet %8.2f %+5.2f %1d %.3f" % (j.pt, j.eta, getattr(j, "hadronFlavour", -1), min(max(0, j.btagCSV), 1))
 
-            for label in self.sf.listBranches()[:10]:
-                print "%8s"%label[-8:],
-            print ""
+            # for label in self.sf.listBranches()[:10]:
+            #     print "%8s"%label[-8:],
+            # print ""
 
             for label in self.sf.listBranches()[:10]:
                 print "%8.3f" % ret[label],
@@ -230,5 +240,5 @@ if __name__ == '__main__':
 
     T = TesterFastSim("tester")
     el = EventLoop([ T ])
-    el.loop([tree], maxEvents = 10)
+    el.loop([tree], maxEvents = 100)
     T.done()
