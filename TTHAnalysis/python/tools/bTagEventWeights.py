@@ -74,6 +74,66 @@ class BTagEventWeightFriend:
         except AttributeError:
             return jets
 
+
+    def event_weight_from_discr_shape(self, jets,
+                                      syst="central",
+                                      flavorAttr=None,
+                                      btagAttr=None):
+        syst = syst.lower()
+        if not flavorAttr: flavorAttr=self.flavor_branch
+        if not btagAttr:   btagAttr=self.btag_branch
+
+        weight = 1.0
+        for jet in jets:
+            flavor  = getattr(jet, flavorAttr)
+            btagval = getattr(jet, btagAttr)
+            weight *= self.reader.get_SF(pt=jet.pt, eta=jet.eta,
+                                  flavor=flavor, val=btagval,
+                                  syst=syst, shape_corr=True)
+        return weight
+
+    def fastsim_event_weight(self, jets, syst="central",
+                             flavorAttr=None,
+                             btagAttr=None,
+                             wp='L'):
+        syst = syst.lower()
+        if not flavorAttr: flavorAttr=self.flavor_branch
+        if not btagAttr:   btagAttr=self.btag_branch
+
+        pmc = 1.0
+        pdata = 1.0
+        for jet in jets:
+            flavor  = getattr(jet, flavorAttr)
+            btagval = getattr(jet, btagAttr)
+            tagged = (btagval >= self.reader.working_points[wp])
+            efficiency = self.reader.get_tagging_efficiency(jet, wp)
+            if not tagged:
+                efficiency = 1.0 - efficiency
+
+            sf_fullsim = self.reader.get_SF(pt=jet.pt, eta=jet.eta,
+                                            flavor=flavor, val=btagval,
+                                            syst=syst, mtype='auto')
+
+            fastsim_syst = syst
+            if 'correlated' in syst:
+                fastsim_syst = syst.split('_', 1)[0] # take 'down' or 'up' for fastsim
+            sf_fastsim = self.reader.get_SF(pt=jet.pt, eta=jet.eta,
+                                     flavor=flavor, val=btagval,
+                                     syst=fastsim_syst, mtype='fastsim')
+
+            sf_fastsim = 1.0/sf_fastsim # invert since we use fullsim effs
+
+            pmc *= efficiency
+            pdata *= sf_fullsim*sf_fastsim*efficiency
+
+        try:
+            return pmc/pdata
+        except ZeroDivisionError:
+            print "WARNING: scale factor of 0 found"
+            return 1.0
+
+
+
     def __call__(self, event):
         ret = {k:1.0 for k in self.branches}
         if self.mcOnly and event.isData: return ret
@@ -85,14 +145,9 @@ class BTagEventWeightFriend:
             if syst == 'central': label = self.label
 
             if not self.is_fastsim:
-                ret[label] = self.reader.get_event_SF(jets, syst=syst,
-                                                  flavorAttr=self.flavor_branch,
-                                                  btagAttr=self.btag_branch)
+                ret[label] = self.event_weight_from_discr_shape(jets, syst=syst)
             else:
-                ret[label] = self.reader.get_event_SF_fastsim(jets, syst=syst,
-                                                  flavorAttr=self.flavor_branch,
-                                                  btagAttr=self.btag_branch,
-                                                  wp='L')
+                ret[label] = self.fastsim_event_weight(jets, syst=syst, wp='L')
         return ret
 
 if __name__ == '__main__':
