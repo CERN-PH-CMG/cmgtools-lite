@@ -29,7 +29,7 @@ DYJets     : DYJetsToLL_M5to50_HT100to200 :  xsec: ScaleFactorDY*(LepGood1_mcMat
 #DYJets     : DYJetsToLL_M5to50_HT100to200_ext :  xsec: ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); Label="DY", FillColor=ROOT.kCyan, NormSystematic=0.3
 #DYJets     : DYJetsToLL_M5to50_HT200to400 :  xsec: ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); Label="DY", FillColor=ROOT.kCyan, NormSystematic=0.3
 DYJets     : DYJetsToLL_M5to50_HT200to400_ext :  xsec: ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); Label="DY", FillColor=ROOT.kCyan, NormSystematic=0.3
-DYJets     : DYJetsToLL_M5to50_HT400to600 :  xsec: (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); Label="DY", FillColor=ROOT.kCyan, NormSystematic=0.3
+DYJets     : DYJetsToLL_M5to50_HT400to600 :  xsec: ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); Label="DY", FillColor=ROOT.kCyan, NormSystematic=0.3
 #DYJets     : DYJetsToLL_M5to50_HT400to600_ext :  xsec: ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); Label="DY", FillColor=ROOT.kCyan, NormSystematic=0.3
 DYJets     : DYJetsToLL_M5to50_HT600toInf :  xsec: ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); Label="DY", FillColor=ROOT.kCyan, NormSystematic=0.3
 
