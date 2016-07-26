@@ -757,7 +757,7 @@ bool lepTnPFriendTreeMaker::PassICHEPMediumMuonID(int i){
 bool lepTnPFriendTreeMaker::PassTightLepton(int i){
    if( !PassLooseLepton(i) ) return false;
    if( LepGood_mvaTTH[i] < 0.75 ) return false;
-   if( LepGood_jetBTagCSV[i] > 0.80 ) return false; // Is this still the right threshold?
+   if( LepGood_jetBTagCSV[i] > 0.80 ) return false;
    if( LepGood_jetPtRatiov2[i] < 0.3 ) return false;
 
    // Tight electrons
@@ -768,7 +768,7 @@ bool lepTnPFriendTreeMaker::PassTightLepton(int i){
    }
 
    // Tight Muons
-   if( !PassICHEPMediumMuonID(i) ) return false;
+   if( PassICHEPMediumMuonID(i) ) return true;
    return false;
 }
 
