@@ -127,11 +127,15 @@ class BTagScaleFactors(object):
         self.calibrator = BTagCalibration(self.name, self.csvfile)
 
         if self.csvfastsim:
+            if self.verbose>0:
+                print "Initializing fastsim btag calibrator from %s" % self.csvfastsim
             self.calibrator_fastsim = BTagCalibration("%s_fastsim"%self.name,
                                                       self.csvfastsim)
             self.allowed.update(get_allowed_ranges(self.csvfastsim))
 
         if self.eff_rootfile:
+            if self.verbose>0:
+                print "Reading tagging efficiencies from %s" % self.eff_rootfile
             self.load_tagging_efficiencies(self.eff_rootfile)
 
     def load_tagging_efficiencies(self, filename):
@@ -294,59 +298,6 @@ class BTagScaleFactors(object):
         else: # light jets
             sf = self.readers[(self.mtypes[flavor], wp, syst, flavor)].eval(flavor, eta, pt)
             return sf if sf != 0.0 else 1.0
-
-
-    def get_event_SF(self, jets=[], syst="central",
-                     flavorAttr='hadronFlavour', btagAttr='btagCSV'):
-        syst = syst.lower()
-
-        weight = 1.0
-        for jet in jets:
-            flavor  = getattr(jet, flavorAttr)
-            btagval = getattr(jet, btagAttr)
-            weight *= self.get_SF(pt=jet.pt, eta=jet.eta,
-                                  flavor=flavor, val=btagval,
-                                  syst=syst, shape_corr=True)
-        return weight
-
-    def get_event_SF_fastsim(self, jets=[], syst="central",
-                     flavorAttr='hadronFlavour', btagAttr='btagCSV',
-                     wp='L'):
-        syst = syst.lower()
-
-        pmc = 1.0
-        pdata = 1.0
-        for jet in jets:
-            flavor  = getattr(jet, flavorAttr)
-            btagval = getattr(jet, btagAttr)
-            tagged = (btagval >= self.working_points[wp])
-            efficiency = self.get_tagging_efficiency(jet, wp)
-            if not tagged:
-                efficiency = 1.0 - efficiency
-
-            sf_fullsim = self.get_SF(pt=jet.pt, eta=jet.eta,
-                                     flavor=flavor, val=btagval,
-                                     syst=syst, mtype='auto')
-
-            fastsim_syst = syst
-            if 'correlated' in syst:
-                fastsim_syst = syst.split('_', 1)[0] # take 'down' or 'up' for fastsim
-            sf_fastsim = self.get_SF(pt=jet.pt, eta=jet.eta,
-                                     flavor=flavor, val=btagval,
-                                     syst=fastsim_syst, mtype='fastsim')
-
-            ## FIXME: Is it sf_fastsim or 1.0/sf_fastsim?
-
-            pmc *= efficiency
-            pdata *= sf_fullsim*sf_fastsim*efficiency
-
-        try:
-            return pmc/pdata
-        except ZeroDivisionError:
-            print "WARNING: scale factor of 0 found"
-            return 1.0
-
-
 
 #################################################################
 def testing():
