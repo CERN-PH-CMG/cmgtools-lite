@@ -3,15 +3,19 @@ WZ 	: WZTo3LNu           : xsec : LepGood3_mcMatchId != 0 ;  FillColor=ROOT.kVio
 ZZ      : ZZTo4L             : xsec : LepGood3_mcMatchId != 0 ;  FillColor=ROOT.kAzure-9
 #TT      : TTJets_DiLepton    : xsec : LepGood3_mcMatchId == 0; FillColor=ROOT.kGray
 #DY     : DYJetsToLL_M10to50 : xsec : LepGood3_mcMatchId == 0; FillColor=ROOT.kCyan
-DY      : DYJetsToLL_M50_LO     : xsec : LepGood3_mcMatchId == 0; FillColor=ROOT.kPink-2, KeysPdf=True
+DY      : DYJetsToLL_M50_LO_2  : xsec : LepGood3_mcMatchId == 0; FillColor=ROOT.kPink-2, KeysPdf=True
 
 VZ 	: WZTo3LNu           : xsec : LepGood3_mcMatchId != 0 ;  FillColor=ROOT.kViolet-2
 VZ      : ZZTo4L             : xsec : LepGood3_mcMatchId != 0 ;  FillColor=ROOT.kAzure-2
 
 data : DoubleEG_Run2016B_PromptReco_v2_runs_273150_275783
 data : DoubleEG_Run2016C_PromptReco_v2_runs_273150_275783
+data : DoubleEG_Run2016C_PromptReco_v2_runs_275784_276811
+data : DoubleEG_Run2016D_PromptReco_v2_runs_275784_276811
 data : DoubleMuon_Run2016B_PromptReco_v2_runs_273150_275783
 data : DoubleMuon_Run2016C_PromptReco_v2_runs_273150_275783
+data : DoubleMuon_Run2016C_PromptReco_v2_runs_275784_276811
+data : DoubleMuon_Run2016D_PromptReco_v2_runs_275784_276811
 
 ## Options only
 DY_prefit : - ; FillColor=ROOT.kPink-2, Label="DY MC"
