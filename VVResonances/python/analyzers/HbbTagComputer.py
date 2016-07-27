@@ -6,6 +6,8 @@ from PhysicsTools.Heppy.analyzers.core.AutoHandle import AutoHandle
 import PhysicsTools.HeppyCore.framework.config as cfg
 import FWCore.ParameterSet.Config as cms
 
+# ROOT.gSystem.Load("libCMGToolsVVResonances")
+
 class HbbTagComputer( Analyzer ):
     def __init__(self, cfg_ana, cfg_comp, looperName):
         super(HbbTagComputer,self).__init__(cfg_ana, cfg_comp, looperName)
@@ -26,7 +28,7 @@ class HbbTagComputer( Analyzer ):
         )
         # deltaRMax = 0.8
         candidateBDSVAK8ComputerPSet.trackSelection.jetDeltaRMax = cms.double(0.8)
-        hbbComputer = ROOT.cmg.CandidateBoostedDoubleSecondaryVertexComputerLight(
+        self.hbbComputer = ROOT.cmg.CandidateBoostedDoubleSecondaryVertexComputerLight(
             candidateBDSVAK8ComputerPSet.beta.value(), candidateBDSVAK8ComputerPSet.R0.value(), candidateBDSVAK8ComputerPSet.maxSVDeltaRToJet.value(), candidateBDSVAK8ComputerPSet.gbrForestLabel.value(),
             candidateBDSVAK8ComputerPSet.weightFile.value(), candidateBDSVAK8ComputerPSet.useGBRForest.value(), candidateBDSVAK8ComputerPSet.useAdaBoost.value(), candidateBDSVAK8ComputerPSet.trackPairV0Filter.k0sMassWindow.value(),
             candidateBDSVAK8ComputerPSet.trackSelection.totalHitsMin.value(), candidateBDSVAK8ComputerPSet.trackSelection.jetDeltaRMax.value(), candidateBDSVAK8ComputerPSet.trackSelection.qualityClass.value(), candidateBDSVAK8ComputerPSet.trackSelection.pixelHitsMin.value(),
@@ -34,16 +36,16 @@ class HbbTagComputer( Analyzer ):
             candidateBDSVAK8ComputerPSet.trackSelection.sip2dValMax.value(), candidateBDSVAK8ComputerPSet.trackSelection.ptMin.value(), candidateBDSVAK8ComputerPSet.trackSelection.sip2dSigMax.value(), candidateBDSVAK8ComputerPSet.trackSelection.sip2dSigMin.value(),
             candidateBDSVAK8ComputerPSet.trackSelection.sip3dValMax.value(), candidateBDSVAK8ComputerPSet.trackSelection.sip3dValMin.value(), candidateBDSVAK8ComputerPSet.trackSelection.sip2dValMin.value(), candidateBDSVAK8ComputerPSet.trackSelection.normChi2Max.value()
         )
-        hbbComputer.initialize()
+        self.hbbComputer.initialize()
 
     def beginLoop(self, setup):
         super(HbbTagComputer,self).beginLoop(setup)
 
 
     def Hbbtag(self,jet):
-        return hbbComputer.discriminator(jet.sourcePtr())
+        return self.hbbComputer.discriminator(jet.physObj)
 
     def process(self, event):
         self.readCollections( event.input )
-        for jet in event.selectedJets:
+        for jet in event.jetsAK8:
             jet.Hbbtag = self.Hbbtag(jet)

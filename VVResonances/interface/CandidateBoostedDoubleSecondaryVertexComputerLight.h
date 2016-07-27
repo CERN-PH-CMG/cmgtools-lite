@@ -23,7 +23,7 @@ namespace cmg{
         CandidateBoostedDoubleSecondaryVertexComputerLight(
             double beta, double R0, double maxSVDeltaRToJet, std::string gbrForestLabel,
             std::string weightFile, bool useGBRForest, bool useAdaBoost, double k0sMassWindow,
-            int totalHitsMin, double jetDeltaRMax, std::string qualityClass, int pixelHitsMin,
+            unsigned int totalHitsMin, double jetDeltaRMax, std::string qualityClass, unsigned int pixelHitsMin,
             double maxDistToAxis, double maxDecayLen, double sip3dSigMin, double sip3dSigMax,
             double sip2dValMax, double ptMin, double sip2dSigMax, double sip2dSigMin,
             double sip3dValMax, double sip3dValMin, double sip2dValMin, double normChi2Max

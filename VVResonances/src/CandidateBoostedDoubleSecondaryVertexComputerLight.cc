@@ -19,7 +19,7 @@ namespace cmg {
 CandidateBoostedDoubleSecondaryVertexComputerLight::CandidateBoostedDoubleSecondaryVertexComputerLight(
         double beta, double R0, double maxSVDeltaRToJet, std::string gbrForestLabel,
         std::string weightFile, bool useGBRForest, bool useAdaBoost, double k0sMassWindow,
-        int totalHitsMin, double jetDeltaRMax, std::string qualityClass, int pixelHitsMin,
+        unsigned int totalHitsMin, double jetDeltaRMax, std::string qualityClass, unsigned int pixelHitsMin,
         double maxDistToAxis, double maxDecayLen, double sip3dSigMin, double sip3dSigMax,
         double sip2dValMax, double ptMin, double sip2dSigMax, double sip2dSigMin,
         double sip3dValMax, double sip3dValMin, double sip2dValMin, double normChi2Max
@@ -40,10 +40,10 @@ CandidateBoostedDoubleSecondaryVertexComputerLight::CandidateBoostedDoubleSecond
         trackPairV0Filter = new reco::V0Filter(trackPairV0FilterPSet);
 
         edm::ParameterSet trackSelectionPSet;
-        trackSelectionPSet.addParameter<int>("totalHitsMin", totalHitsMin);
+        trackSelectionPSet.addParameter<unsigned int>("totalHitsMin", totalHitsMin);
         trackSelectionPSet.addParameter<double>("jetDeltaRMax", jetDeltaRMax);
         trackSelectionPSet.addParameter<std::string>("qualityClass", qualityClass);
-        trackSelectionPSet.addParameter<int>("pixelHitsMin", pixelHitsMin);
+        trackSelectionPSet.addParameter<unsigned int>("pixelHitsMin", pixelHitsMin);
         trackSelectionPSet.addParameter<double>("maxDistToAxis", maxDistToAxis);
         trackSelectionPSet.addParameter<double>("maxDecayLen", maxDecayLen);
         trackSelectionPSet.addParameter<double>("sip3dSigMin", sip3dSigMin);
@@ -95,6 +95,7 @@ reco::TransientTrack CandidateBoostedDoubleSecondaryVertexComputerLight::getTran
 float CandidateBoostedDoubleSecondaryVertexComputerLight::discriminator(const pat::Jet& jet) const
 {
         // get TagInfos
+        std::cout << "get TagInfos" << std::endl;
         const reco::CandIPTagInfo              *ipTagInfo = jet.tagInfoCandIP("pfImpactParameter");
         const reco::CandSecondaryVertexTagInfo *svTagInfo = jet.tagInfoCandSecondaryVertex("pfInclusiveSecondaryVertexFinder");
         // const reco::CandIPTagInfo              & ipTagInfo = tagInfo.get<reco::CandIPTagInfo>(0);
@@ -115,11 +116,13 @@ float CandidateBoostedDoubleSecondaryVertexComputerLight::discriminator(const pa
         float jetNTracks = 0, nSV = 0, tau1_nSecondaryVertices = 0, tau2_nSecondaryVertices = 0;
 
         // get the jet reference
-        const reco::JetBaseRef jetBaseRef = svTagInfo->jet();
+        std::cout << "get JetBaseRef" << std::endl;
+        // const reco::JetBaseRef jetBaseRef = svTagInfo->jet();
 
         std::vector<fastjet::PseudoJet> currentAxes;
         float tau2, tau1;
         // calculate N-subjettiness
+        std::cout << "N-subjettiness" << std::endl;
         calcNsubjettiness(jetBaseRef, tau1, tau2, currentAxes);
 
         const reco::VertexRef & vertexRef = ipTagInfo->primaryVertex();
