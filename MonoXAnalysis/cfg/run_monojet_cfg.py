@@ -14,7 +14,7 @@ from CMGTools.RootTools.samples.autoAAAconfig import *
 #-------- SET OPTIONS AND REDEFINE CONFIGURATIONS -----------
 
 is50ns = getHeppyOption("is50ns",False)
-runData = getHeppyOption("runData",True)
+runData = getHeppyOption("runData",False)
 scaleProdToLumi = float(getHeppyOption("scaleProdToLumi",-1)) # produce rough equivalent of X /pb for MC datasets
 saveSuperClusterVariables = getHeppyOption("saveSuperClusterVariables",True)
 saveFatJetIDVariables = getHeppyOption("saveFatJetIDVariables",True)
@@ -23,14 +23,14 @@ doT1METCorr = getHeppyOption("doT1METCorr",True)
 forcedSplitFactor = getHeppyOption("splitFactor",-1)
 forcedFineSplitFactor = getHeppyOption("fineSplitFactor",-1)
 isTest = getHeppyOption("isTest",False)
-doLepCorr = getHeppyOption("doLepCorr",False)
-doPhotonCorr = getHeppyOption("doPhotonCorr",False)
+doLepCorr = getHeppyOption("doLepCorr",True)
+doPhotonCorr = getHeppyOption("doPhotonCorr",True)
 
 # Define skims
-signalSkim = False
+signalSkim = True
 diLepSkim = False
 singleLepSkim = False
-singlePhotonSkim = True
+singlePhotonSkim = False
 
 # --- MONOJET SKIMMING ---
 if signalSkim == True:
@@ -190,6 +190,8 @@ triggers_SinglePhoton = triggers_photon155 + triggers_photon165_HE10 + triggers_
 triggerFlagsAna.triggerBits = {
     'DoubleMu' : triggers_mumu_iso,
     'DoubleEl' : triggers_ee,
+    'DoubleMuHT' : triggers_mumu_ht,
+    'DoubleElHT' : triggers_ee_ht,
     'SingleMu' : triggers_1mu_iso,
     'SingleEl' : triggers_1e,
     'MonoJetMetNoMuMHT90' : triggers_metNoMu90_mhtNoMu90,
@@ -197,6 +199,7 @@ triggerFlagsAna.triggerBits = {
     'Met170'   : triggers_AllMET170,
     'Met300'   : triggers_AllMET300,
     'SinglePho' : triggers_SinglePhoton,
+    'HT800'    : triggers_HT800,
 }
 triggerFlagsAna.unrollbits = True
 triggerFlagsAna.saveIsUnprescaled = False
@@ -220,8 +223,7 @@ if scaleProdToLumi>0: # select only a subset of a sample, corresponding to a giv
         c.splitFactor = len(c.files)
         c.fineSplitFactor = 1
 
-# json = "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-275783_13TeV_PromptReco_Collisions16_JSON_NoL1T.txt"
-json = "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-276097_13TeV_PromptReco_Collisions16_JSON_NoL1T_v2.txt"
+json = "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-276811_13TeV_PromptReco_Collisions16_JSON.txt"
 if False:
     is50ns = False
     selectedComponents = PrivateSamplesData
@@ -230,7 +232,7 @@ if False:
         comp.fineSplitFactor = 1
 
 if runData and not isTest: # For running on data
-    run_ranges = [ (272021,276097) ]; useAAA=False; is50ns=False
+    useAAA=False; is50ns=False
 
     compSelection = ""
     DatasetsAndTriggers = []
@@ -247,10 +249,11 @@ if runData and not isTest: # For running on data
     # --- 2016 DATA ---
     ProcessingsAndRunRanges.append( ("Run2016B-PromptReco-v1", [272023,273146] ) ); Shorts.append("Run2016B_PromptReco_v1")
     ProcessingsAndRunRanges.append( ("Run2016B-PromptReco-v2", [273150,275376] ) ); Shorts.append("Run2016B_PromptReco_v2")
-    ProcessingsAndRunRanges.append( ("Run2016C-PromptReco-v2", [275420,276097] ) ); Shorts.append("Run2016C_PromptReco_v2")    
+    ProcessingsAndRunRanges.append( ("Run2016C-PromptReco-v2", [275420,276283] ) ); Shorts.append("Run2016C_PromptReco_v2")    
+    ProcessingsAndRunRanges.append( ("Run2016D-PromptReco-v2", [276315,276811] ) ); Shorts.append("Run2016D_PromptReco_v2")    
 
     if diLepSkim == True:
-        DatasetsAndTriggers.append( ("DoubleMuon", triggers_mumu_iso + triggers_mumu_ss + triggers_mumu_ht + triggers_3mu + triggers_3mu_alt + triggers_AllMonojet) )
+        #DatasetsAndTriggers.append( ("DoubleMuon", triggers_mumu_iso + triggers_mumu_ss + triggers_mumu_ht + triggers_3mu + triggers_3mu_alt + triggers_AllMonojet) )
         DatasetsAndTriggers.append( ("DoubleEG",   triggers_ee + triggers_ee_ht + triggers_3e) )
     elif singleLepSkim == True:
         DatasetsAndTriggers.append( ("SingleElectron", triggers_ee + triggers_ee_ht + triggers_3e + triggers_1e + triggers_1e_50ns) )
@@ -264,31 +267,27 @@ if runData and not isTest: # For running on data
 
     for pd,triggers in DatasetsAndTriggers:
         iproc=0 
-        for processing,run_dslimits in ProcessingsAndRunRanges:
+        for processing,run_range in ProcessingsAndRunRanges:
             # if ("DoubleEG" in pd): processing.replace("v1","v2",1) 
-            for run_range in run_ranges:
-                run_min = max(run_range[0],run_dslimits[0])
-                run_max = min(run_range[1],run_dslimits[1])
-                this_run_range = (run_min,run_max)
-                label = "runs_%d_%d" % this_run_range if this_run_range[0] != this_run_range[1] else "run_%d" % (this_run_range[0],)
-                compname = pd+"_"+Shorts[iproc]+"_"+label
-                if ((compSelection and not re.search(compSelection, compname))):
-                    print "Will skip %s" % (compname)
+            label = "runs_%d_%d" % (run_range[0],run_range[1]) if run_range[0] != run_range[1] else "run_%d" % run_range[0]
+            compname = pd+"_"+Shorts[iproc]+"_"+label
+            if ((compSelection and not re.search(compSelection, compname))):
+                print "Will skip %s" % (compname)
 
-                    continue
-                print "Building component ",compname," with run range ",label, "\n"
-                comp = kreator.makeDataComponent(compname, 
-                                                 "/"+pd+"/"+processing+"/MINIAOD", 
-                                                 "CMS", ".*root", 
-                                                 json=json, 
-                                                 run_range=this_run_range, 
-                                                 #triggers=triggers[:], vetoTriggers = vetos[:],
-                                                 useAAA=useAAA)
-                print "Will process %s (%d files)" % (comp.name, len(comp.files))
-                print "\ttrigger sel %s, veto %s" % (triggers, vetos)
-                comp.splitFactor = len(comp.files)/4
-                comp.fineSplitFactor = 1
-                selectedComponents.append( comp )
+                continue
+            print "Building component ",compname," with run range ",label, "\n"
+            comp = kreator.makeDataComponent(compname, 
+                                             "/"+pd+"/"+processing+"/MINIAOD", 
+                                             "CMS", ".*root", 
+                                             json=json, 
+                                             run_range=run_range, 
+                                             #triggers=triggers[:], vetoTriggers = vetos[:],
+                                             useAAA=useAAA)
+            print "Will process %s (%d files)" % (comp.name, len(comp.files))
+            print "\ttrigger sel %s, veto %s" % (triggers, vetos)
+            comp.splitFactor = len(comp.files)/4
+            comp.fineSplitFactor = 1
+            selectedComponents.append( comp )
             iproc += 1
         if singleLepSkim and "SinglePhoton" in pd: 
             vetos += triggers
@@ -320,7 +319,8 @@ if forcedSplitFactor>0 or forcedFineSplitFactor>0:
 if runData==False and not isTest: # MC all
     ### 25 ns 74X MC samples
     is50ns = False
-    mcSamples = mcSamples_diboson#monojet_Asymptotic25ns
+    # mcSamples = monojet_Asymptotic25ns
+    mcSamples = [DYJetsToLL_M50]
     #if signalSkim:
         # full signal scan (many datasets!)
         # mcSamples += mcSamples_monojet_Asymptotic25ns_signals
