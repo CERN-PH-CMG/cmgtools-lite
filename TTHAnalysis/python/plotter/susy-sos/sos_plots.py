@@ -87,7 +87,7 @@ if __name__ == '__main__':
                 #x = add(x,"--plotmode norm")
                 x = x.replace('-l 12.9','-l 12.9')
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt') #remove signal
-                x = x.replace('mcc-sf1.txt','mcc-sf-highmet.txt') 
+                #x = x.replace('mcc-sf1.txt','mcc-sf-highmet.txt') #to be commented out if SF DY and TT in prefit plots
         if 'ewk_met125' in torun: 
             x = add(x,"-E ^upperMET -E ^mm -E ^runRange -X ^triggerAll -E ^triggerDoubleMuMET -E ^pt5sublep -E ^MT")
             if '_unblind' in torun:
@@ -96,7 +96,7 @@ if __name__ == '__main__':
                 x = x.replace('-l 12.9','-l 10.1')
                 x = x.replace('puw2016_vtx_4fb(nVert)', 'puw2016_vtx_postTS_1p4fb(nVert)' )
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt') #remove signal
-                x = x.replace('mcc-sf1.txt','mcc-sf-lowmet.txt')
+                #x = x.replace('mcc-sf1.txt','mcc-sf-lowmet.txt')#to be commented out if SF DY and TT in prefit plots
         if 'stop_met200' in torun: 
             x = add(x,"-E ^highMET -X ^triggerAll -E ^triggerMET ") 
             if '_unblind' in torun:
@@ -104,7 +104,7 @@ if __name__ == '__main__':
                 #x = add(x,"--plotmode norm")
                 x = x.replace('-l 12.9','-l 12.9')
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt') #remove signal
-                x = x.replace('mcc-sf1.txt','mcc-sf-highmet.txt')
+                #x = x.replace('mcc-sf1.txt','mcc-sf-highmet.txt')#to be commented out if SF DY and TT in prefit plots
         if 'stop_met125' in torun: 
             x = add(x,"-E ^upperMET -E ^mm -E ^runRange -X ^triggerAll -E ^triggerDoubleMuMET -E ^pt5sublep ")
             if '_unblind' in torun:
@@ -113,7 +113,7 @@ if __name__ == '__main__':
                 x = x.replace('-l 12.9','-l 10.1')
                 x = x.replace('puw2016_vtx_4fb(nVert)', 'puw2016_vtx_postTS_1p4fb(nVert)' )
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt') #remove signal
-                x = x.replace('mcc-sf1.txt','mcc-sf-lowmet.txt')
+                #x = x.replace('mcc-sf1.txt','mcc-sf-lowmet.txt')#to be commented out if SF DY and TT in prefit plots
         if '_nminus1' in torun: 
             x = add(x,"--n-minus-one")
             x = x.replace('-f','')
@@ -139,14 +139,14 @@ if __name__ == '__main__':
                     x = x.replace('mca-2los-mc.txt','mca-2los-mc-syst-dy.txt')
             if '_ddbkg' in torun: 
                 x = x.replace('mca-2los-mc.txt','mca-2los-mc-frdata.txt')
-                x = x.replace('mcc-sf1.txt','mcc-sf-lowmet.txt')
+                #x = x.replace('mcc-sf1.txt','mcc-sf-lowmet.txt') #to be commented out if SF DY and TT in prefit plots
             if '_appl' in torun:
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt')
                 x = add(x,"-I ^TT ")
             if '_unblind' in torun:
                 if(dowhat != "limits"):x = add(x,"--noStackSig --showIndivSigs --showRatio --maxRatioRange -2 5 --showMCError") 
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt')
-                x = x.replace('mcc-sf1.txt','mcc-sf-lowmet.txt')                
+                #x = x.replace('mcc-sf1.txt','mcc-sf-lowmet.txt') #to be commented out if SF DY and TT in prefit plots               
             if dowhat == "limits":
                 runIt(x,torun,["m2l"],["'[4,10,20,30,50]'"])
             else:
@@ -161,14 +161,14 @@ if __name__ == '__main__':
                     x = x.replace('mca-2los-mc.txt','mca-2los-mc-syst-dy.txt')
             if '_ddbkg' in torun: 
                 x = x.replace('mca-2los-mc.txt','mca-2los-mc-frdata.txt')
-                x = x.replace('mcc-sf1.txt','mcc-sf-highmet.txt')
+                #x = x.replace('mcc-sf1.txt','mcc-sf-highmet.txt') #to be commented out if SF DY and TT in prefit plots
             if '_appl' in torun:
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt')
                 x = add(x,"-I ^TT ")
             if '_unblind' in torun:
                 if(dowhat != "limits"):x = add(x,"--noStackSig --showIndivSigs --showRatio --maxRatioRange -2 5 --showMCError") 
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt') 
-                x = x.replace('mcc-sf1.txt','mcc-sf-highmet.txt')
+                #x = x.replace('mcc-sf1.txt','mcc-sf-highmet.txt') #to be commented out if SF DY and TT in prefit plots
             if dowhat == "limits":
                 runIt(x,torun,["m2l"],["'[4,10,20,30,50]'"])
             else:
@@ -186,14 +186,14 @@ if __name__ == '__main__':
                     x = x.replace('mca-2los-mc.txt','mca-2los-mc-syst-dy.txt')
             if '_ddbkg' in torun: 
                 x = x.replace('mca-2los-mc.txt','mca-2los-mc-frdata.txt')
-                x = x.replace('mcc-sf1.txt','mcc-sf-lowmet.txt')
+                #x = x.replace('mcc-sf1.txt','mcc-sf-lowmet.txt') #to be commented out if SF DY and TT in prefit plots
             if '_appl' in torun:
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt')
                 x = add(x,"-I ^TT ")  
             if '_unblind' in torun:
                 if(dowhat != "limits"):x = add(x,"--noStackSig --showIndivSigs --showRatio --maxRatioRange -2 5 --showMCError") 
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt') 
-                x = x.replace('mcc-sf1.txt','mcc-sf-lowmet.txt')
+                #x = x.replace('mcc-sf1.txt','mcc-sf-lowmet.txt') #to be commented out if SF DY and TT in prefit plots
             if dowhat == "limits":
                 runIt(x,torun,["m2l"],["'[4,10,20,30,50]'"])
             else:
@@ -208,14 +208,14 @@ if __name__ == '__main__':
                     x = x.replace('mca-2los-mc.txt','mca-2los-mc-syst-dy.txt')
             if '_ddbkg' in torun: 
                 x = x.replace('mca-2los-mc.txt','mca-2los-mc-frdata.txt')
-                x = x.replace('mcc-sf1.txt','mcc-sf-highmet.txt')
+                #x = x.replace('mcc-sf1.txt','mcc-sf-highmet.txt') #to be commented out if SF DY and TT in prefit plots
             if '_appl' in torun:
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt') 
                 x = add(x,"-I ^TT ")
             if '_unblind' in torun:
                 if(dowhat != "limits"):x = add(x,"--noStackSig --showIndivSigs --showRatio --maxRatioRange -2 5 --showMCError") 
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt') 
-                x = x.replace('mcc-sf1.txt','mcc-sf-highmet.txt')
+                #x = x.replace('mcc-sf1.txt','mcc-sf-highmet.txt') #to be commented out if SF DY and TT in prefit plots
             if dowhat == "limits":
                 runIt(x,torun,["m2l"],["'[4,10,20,30,50]'"])
             else:
@@ -233,14 +233,14 @@ if __name__ == '__main__':
                     x = x.replace('mca-2los-mc.txt','mca-2los-mc-syst-dy.txt')
             if '_ddbkg' in torun: 
                 x = x.replace('mca-2los-mc.txt','mca-2los-mc-frdata.txt')
-                x = x.replace('mcc-sf1.txt','mcc-sf-lowmet.txt')
+                #x = x.replace('mcc-sf1.txt','mcc-sf-lowmet.txt') #to be commented out if SF DY and TT in prefit plots
             if '_appl' in torun:
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt')
                 x = add(x,"-I ^TT ")
             if '_unblind' in torun:
                 if(dowhat != "limits"):x = add(x,"--noStackSig --showIndivSigs --showRatio --maxRatioRange -2 5 --showMCError") 
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt')  
-                x = x.replace('mcc-sf1.txt','mcc-sf-lowmet.txt')
+                #x = x.replace('mcc-sf1.txt','mcc-sf-lowmet.txt') #to be commented out if SF DY and TT in prefit plots
             if dowhat == "limits":
                 runIt(x,torun,["LepGood1_pt"],["'[5,12,20,30]'"])
             else:
@@ -255,14 +255,14 @@ if __name__ == '__main__':
                     x = x.replace('mca-2los-mc.txt','mca-2los-mc-syst-dy.txt')
             if '_ddbkg' in torun: 
                 x = x.replace('mca-2los-mc.txt','mca-2los-mc-frdata.txt')
-                x = x.replace('mcc-sf1.txt','mcc-sf-highmet.txt')
+                #x = x.replace('mcc-sf1.txt','mcc-sf-highmet.txt') #to be commented out if SF DY and TT in prefit plots
             if '_appl' in torun:
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt')
                 x = add(x,"-I ^TT ")   
             if '_unblind' in torun:
                 if(dowhat != "limits"):x = add(x,"--noStackSig --showIndivSigs --maxRatioRange -2 5 --showMCError") 
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt')  
-                x = x.replace('mcc-sf1.txt','mcc-sf-highmet.txt')
+                #x = x.replace('mcc-sf1.txt','mcc-sf-highmet.txt') #to be commented out if SF DY and TT in prefit plots
             if dowhat == "limits":
                 runIt(x,torun,["LepGood1_pt"],["'[5,12,20,30]'"])
             else:
@@ -280,14 +280,14 @@ if __name__ == '__main__':
                     x = x.replace('mca-2los-mc.txt','mca-2los-mc-syst-dy.txt')
             if '_ddbkg' in torun: 
                 x = x.replace('mca-2los-mc.txt','mca-2los-mc-frdata.txt')
-                x = x.replace('mcc-sf1.txt','mcc-sf-lowmet.txt')
+                #x = x.replace('mcc-sf1.txt','mcc-sf-lowmet.txt') #to be commented out if SF DY and TT in prefit plots
             if '_appl' in torun:
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt')
                 x = add(x,"-I ^TT ")
             if '_unblind' in torun:
                 if(dowhat != "limits"):x = add(x,"--noStackSig --showIndivSigs --showRatio --maxRatioRange -2 5 --showMCError") 
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt')
-                x = x.replace('mcc-sf1.txt','mcc-sf-lowmet.txt')
+                #x = x.replace('mcc-sf1.txt','mcc-sf-lowmet.txt') #to be commented out if SF DY and TT in prefit plots
             if dowhat == "limits":
                 runIt(x,torun,["LepGood1_pt"],["'[5,12,20,30]'"])
             else:
