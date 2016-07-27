@@ -4,14 +4,16 @@ import re
 
 ODIR=sys.argv[1]
 
-dowhat = "plots" 
+#dowhat = "plots" 
 #dowhat = "dumps" 
 #dowhat = "yields" 
+dowhat = "limits"
 
-#dowhat = "limits"
 if dowhat == "limits":
-    SYST="susy-sos/syst/susy_sos_dummy.txt" ## change file for systematics here
-    PLOTandCUTS=""
+    # SYST="susy-sos/syst/susy_sos_dummy.txt" ## change file for systematics here
+    SYST="susy-sos/syst/susy_sos_syst.txt"
+    #SYST="susy-sos/syst/susy_sos_syst_CR.txt"
+    PLOTandCUTS="" ## check later where is initialized. You need to specify there the mca, since they will not be replaced as for "plots" (due to different input order of combineCards)
 
 
 def base(selection):
@@ -45,10 +47,10 @@ def runIt(GO,name,plots=[],noplots=[]):
     elif dowhat == "dumps":  print 'echo %s; python mcDump.py'%name,GO,' '.join(sys.argv[3:])
     elif (dowhat == "limits" and ('_unblind' in name)): 
         # comment: for the moment recycling plots and noplots as a container for histo name and binning when running 'limits' mode (to be improved) 
-        print 'echo %s; python makeShapeCardsSusy.py'%name,PLOTandCUTS,' '.join(['%s'%p for p in plots]),' '.join(['%s'%p for p in noplots]),SYST,' -o %s'%name,' ',GO," --od %s"%(ODIR),' '.join(sys.argv[3:])
+        print 'echo %s; python makeShapeCardsSusy_with_lnU_with_statfix_marco.py'%name,PLOTandCUTS,' '.join(['%s'%p for p in plots]),' '.join(['%s'%p for p in noplots]),SYST,' -o %s'%name,' ',GO," --od %s"%(ODIR),' '.join(sys.argv[3:])
     elif (dowhat == "limits" and ('_unblind' in name)==0 ):
         # comment: for the moment recycling plots and noplots as a container for histo name and binning when running in 'limits' mode (to be improved) 
-        print 'echo %s; python makeShapeCardsSusy.py'%name,PLOTandCUTS,' '.join(['%s'%p for p in plots]),' '.join(['%s'%p for p in noplots]),SYST,' -o %s'%name,' ',GO," --od %s"%(ODIR),' --asimov',' '.join(sys.argv[3:])
+        print 'echo %s; python makeShapeCardsSusy_with_lnU_with_statfix_marco.py'%name,PLOTandCUTS,' '.join(['%s'%p for p in plots]),' '.join(['%s'%p for p in noplots]),SYST,' -o %s'%name,' ',GO," --od %s"%(ODIR),' --asimov',' '.join(sys.argv[3:])
     else:
         raise RuntimeError, 'Unknown selection'
 def add(GO,opt):
@@ -67,9 +69,12 @@ if __name__ == '__main__':
     if '_ddbkg' in torun:
         PLOTandCUTS="susy-sos/mca-2los-mc-frdata.txt susy-sos/2los_tight.txt"
     elif '_unblind' in torun:
-        PLOTandCUTS="susy-sos/mca-2los-mcdata-frdata.txt susy-sos/2los_tight.txt"
+        if(('CR_TT_' in torun) or ('CR_DY_' in torun)): 
+            PLOTandCUTS="susy-sos/mca-2los-mcdata-mcfakes.txt susy-sos/2los_tight.txt" ## workaround for taking fakes from MC for CR
+        else:
+            PLOTandCUTS="susy-sos/mca-2los-mcdata-frdata.txt susy-sos/2los_tight.txt"
     else:
-        PLOTandCUTS="susy-sos/mca-2los-mc.txt susy-sos/2los_tight.txt"
+        PLOTandCUTS="susy-sos/mca-2los-mc.txt susy-sos/2los_tight.txt" 
         
 
     ### MC Distributions with Signal shapes normalized to Bkg, n-minus1 option
@@ -382,10 +387,16 @@ if __name__ == '__main__':
     ### DY Control Region Data-MC and syst variations, LowMET and HighMET     
     if '2los_CR_DY_vars' in torun:
         x = base('2los')
-        x = add(x,"--noStackSig --showIndivSigs --xp TChiNeuWZ_95")
+        if(dowhat != "limits"): x = add(x,"--noStackSig --showIndivSigs --xp TChiNeuWZ_95")
+        elif '_ewk20'in torun : x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_90,T2ttDeg_300,T2ttDeg_315,T2ttDeg_330")
+        elif '_ewk10'in torun : x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_315,T2ttDeg_330")
+        elif '_stop20'in torun : x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_90,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_315")
+        elif '_stop35'in torun : x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_90,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_330")
+        else: print "NO SIGNAL specified!"
         if '_data' in torun: 
-            x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt')
-            x = add(x,"--showRatio --maxRatioRange -2 5") #--showMCError
+            if(dowhat != "limits"):x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt') 
+            #if(dowhat != "limits"):x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt') ## RC ( FR from data ) 
+            if(dowhat != "limits"): x = add(x,"--showRatio --maxRatioRange -2 5") #--showMCError
         if '_met200' in torun:             
             x = add(x,"-E ^highMET -E ^MT -R ^TT CRDYTT 'LepGood1_isTightCRDY && LepGood2_isTightCRDY' -R ^ledlepPt NoUpledlepPt '20 < LepGood1_pt || fabs(LepGood1_dxy)>0.01 || fabs(LepGood1_dz)>0.01 || fabs(LepGood2_dxy)>0.01 || fabs(LepGood2_dz)>0.01' -R mtautau Invmtautau '0.<mass_tautau(met_pt,met_phi,LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood2_pt,LepGood2_eta,LepGood2_phi)&&mass_tautau(met_pt,met_phi,LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood2_pt,LepGood2_eta,LepGood2_phi)<160.' -X ^triggerAll -E ^triggerMET")
             x = x.replace('-l 12.9','-l 12.9')
@@ -401,14 +412,22 @@ if __name__ == '__main__':
                 x = x.replace('mca-2los-mc.txt','mca-2los-mc-syst-dy.txt')
                 x = add(x,"--plotmode nostack -F sf/t /data1/botta/trees_SOS_80X_170616/SOS13TeV_Friends/evVarFriend_{cname}.root")  
                 x = add(x,"--sP yields")
-        runIt(x,'%s/all'%torun,[],['SR_bins_EWKino','SR_bins_stop'])
+        if dowhat == "limits":
+            runIt(x,torun,["nLepGood"],["1,-0.5,0.5"])
+        else:
+            runIt(x,'%s/all'%torun,[],['SR_bins_EWKino','SR_bins_stop'])
 
 
     ### TT Control Region Data-MC and syst variations, LowMET and HighMET         
     if '2los_CR_TT_vars' in torun:
         x = base('2los')
-        x = add(x,"--noStackSig --showIndivSigs --xp TChiNeuWZ_95 --xp TChiNeuWZ_90")
-        if '_data' in torun: x = add(x,"--showRatio --maxRatioRange -2 5") #--showMCError
+        if(dowhat != "limits"): x = add(x,"--noStackSig --showIndivSigs --xp TChiNeuWZ_95 --xp TChiNeuWZ_90")
+        elif '_ewk20'in torun : x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_90,T2ttDeg_300,T2ttDeg_315,T2ttDeg_330")
+        elif '_ewk10'in torun : x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_315,T2ttDeg_330")
+        elif '_stop20'in torun : x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_90,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_315")
+        elif '_stop35'in torun : x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_90,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_330")
+        else: print "NO SIGNAL specified!"
+        if ('_data' in torun and dowhat != "limits") : x = add(x,"--showRatio --maxRatioRange -2 5") #--showMCError
         if '_met200' in torun:             
             x = add(x,"-E ^highMET -R ^TT CRTTTT 'LepGood1_isTightCRTT && LepGood2_isTightCRTT' -X ^bveto -E ^btag")
             #x = add(x,"-E ^highMET -R ^TT CRTTTT 'LepGood1_isTightCRTT && LepGood2_isTightCRTT' -X ^bveto -E ^ISRnobtag -E ^btag")
@@ -419,10 +438,11 @@ if __name__ == '__main__':
                 x = add(x,"-E ^mm -R ^ledlepPt NoUpledlepPt '25 < LepGood1_pt' -E ^resEta -X ^triggerAll -E ^triggerMu ")   
                 x = add(x,"--xP SR_bins_EWKino,SR_bins_stop")
             if '_dataMET' in torun: 
-                x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt')
+                if(dowhat != "limits"):x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt')  
+                #if(dowhat != "limits"):x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt') ## RC (FR from data)
                 x = x.replace('-l 12.9','-l 12.9')
                 x = add(x,"-R ^ledlepPt NoUpledlepPt '5 < LepGood1_pt' -X ^triggerAll -E ^triggerMET")
-                x = add(x,"--xP SR_bins_EWKino,SR_bins_stop")
+                if(dowhat != "limits"):x = add(x,"--xP SR_bins_EWKino,SR_bins_stop") 
             if '_syst' in torun: 
                 x = x.replace('mca-2los-mc.txt','mca-2los-mc-syst-tt.txt')
                 x = x.replace('-l 12.9','-l 12.9')
@@ -440,10 +460,11 @@ if __name__ == '__main__':
                 x = add(x,"--xP SR_bins_EWKino,SR_bins_stop")
             if '_dataMET' in torun: 
                 x = x.replace('puw2016_vtx_4fb(nVert)', 'puw2016_vtx_postTS_1p4fb(nVert)' )
-                x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt')
+                if(dowhat != "limits"):x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt')
+                #if(dowhat != "limits"):x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt') ##RC (FR from data)
                 x = x.replace('-l 12.9','-l 10.1')    
                 x = add(x," -R ^ledlepPt NoUpledlepPt '5 < LepGood1_pt' -E ^runRange -X ^triggerAll -E ^triggerDoubleMuMET")
-                x = add(x,"--xP SR_bins_EWKino,SR_bins_stop")
+                if(dowhat != "limits"):x = add(x,"--xP SR_bins_EWKino,SR_bins_stop")
             if '_syst' in torun: 
                 x = x.replace('puw2016_vtx_4fb(nVert)', 'puw2016_vtx_postTS_1p4fb(nVert)' )
                 x = x.replace('mca-2los-mc.txt','mca-2los-mc-syst-tt.txt')
@@ -451,8 +472,10 @@ if __name__ == '__main__':
                 x = add(x,"--plotmode nostack -F sf/t /data1/botta/trees_SOS_80X_170616/SOS13TeV_Friends/evVarFriend_{cname}.root")   
                 x = add(x," -R ^ledlepPt NoUpledlepPt '5 < LepGood1_pt' -E ^runRange -X ^triggerAll -E ^triggerDoubleMuMET")
                 x = add(x,"--sP yields")    
-        runIt(x,'%s/all'%torun)
-
+        if dowhat == "limits":
+            runIt(x,torun,["nLepGood"],["1,-0.5,0.5"])
+        else:
+            runIt(x,'%s/all'%torun)
 
 
     ### WW Control Region, Data-MC, HighMET             
