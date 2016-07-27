@@ -51,13 +51,13 @@ if __name__ == "__main__":
     selection = args[1]
     plotfile = args[2]
 
-    T='/data1/emanuele/monox/TREES_2LEP_80X/'
+    T='/data1/emanuele/monox/TREES_2LEP_80X_V2/'
 
-    lumi = '7.56' # fb-1
+    lumi = '12.9' # fb-1
     weight = " -W 'vtxWeight' " #"-W 'vtxWeight*SF_trigmetnomu*SF_BTag*SF_NLO_QCD*SF_NLO_EWK' "
     coreopt = '-P '+T+' --s2v -j 6 -l ' + lumi + weight
     corey = 'mcAnalysis.py ' + coreopt + ' -G '
-    corep = 'mcPlots.py ' + coreopt + ' -f --poisson --showRatio --maxRatioRange 0.8 1.2 --scaleSigToData '
+    corep = 'mcPlots.py ' + coreopt + ' -f --poisson --showRatio --maxRatioRange 0.7 1.3 --fixRatioRange --scaleSigToData '
     fev = ' -F mjvars/t \"'+T+'/friends/evVarFriend_{cname}.root\" '
     sf = '' #sf = ' --FM sf/t \"'+T+'/friends/sfFriend_{cname}.root\" '
 

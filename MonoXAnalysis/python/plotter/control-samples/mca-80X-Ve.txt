@@ -8,5 +8,6 @@ DYJets: DYJetsToLL_M50 : xsec; FillColor=ROOT.kAzure+5,  Label="ZJets"
 # 2016 data
 data: DoubleEG_Run2016B_PromptReco_v1_runs_272023_273146 ;  Label="Data"
 data: DoubleEG_Run2016B_PromptReco_v2_runs_273150_275376 ;  Label="Data"
-data: DoubleEG_Run2016C_PromptReco_v2_runs_275420_276384 ;  Label="Data"
+data: DoubleEG_Run2016C_PromptReco_v2_runs_275420_276283 ;  Label="Data"
+data: DoubleEG_Run2016D_PromptReco_v2_runs_276315_276811 ;  Label="Data"
 
