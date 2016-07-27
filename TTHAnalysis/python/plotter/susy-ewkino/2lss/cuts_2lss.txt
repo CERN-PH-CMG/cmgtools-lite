@@ -6,7 +6,8 @@ dilep: nLepFO>=2
 pt2010: LepGood1_conePt>20 && (abs(LepGood1_pdgId)!=11 || LepGood1_conePt>25) && LepGood2_conePt>10 && (abs(LepGood2_pdgId)!=11 || LepGood2_conePt>15)
 pt25:  if3(abs(LepGood1_pdgId)!=13 && abs(LepGood2_pdgId)!=11,LepGood1_conePt>25,1)
 TT: LepGood1_isTight && LepGood2_isTight
-exclusive: nLepTight<=2 && if3(nLepFO>2,LepGood3_mvaSUSY<-0.20+(0.20+0.50)*(abs(LepGood3_pdgId)==11),1) && nTightTauSel==0
+#exclusive: nLepTight<=2 && if3(nLepFO>2,LepGood3_mvaSUSY<-0.20+(0.20+0.50)*(abs(LepGood3_pdgId)==11),1) && nTightTauSel==0
+exclusive: nLepTight_Mini<3 && nTightTauSel==0
 same-sign: (LepGood1_charge*LepGood2_charge > 0)
 met: met_pt > 60
 0bjetM: nBJetMedium25 == 0
@@ -22,6 +23,7 @@ tightMVAT : (LepGood1_mvaSUSY>0.15+(-0.15+0.65)*(abs(LepGood1_pdgId)==11)) && (L
 tightMVAVT: (LepGood1_mvaSUSY>0.45+(-0.45+0.75)*(abs(LepGood1_pdgId)==11)) && (LepGood2_mvaSUSY>0.45+(-0.45+0.75)*(abs(LepGood2_pdgId)==11)); Disable=True
 tightMVAET: (LepGood1_mvaSUSY>0.65+(-0.65-0.85)*(abs(LepGood1_pdgId)==11)) && (LepGood2_mvaSUSY>0.65+(-0.65+0.85)*(abs(LepGood2_pdgId)==11)); Disable=True
 1j: nJet40==1 ; Disable=True
+1jmet150: nJet40==1 && met_pt > 150; Disable=True
 0j: nJet40==0 ; Disable=True
 0tau: nTauSel==0 ; Disable=True
 1tau: nTauSel>=1 ; Disable=True

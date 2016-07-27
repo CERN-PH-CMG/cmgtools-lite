@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 #from mcAnalysis import *
 from CMGTools.TTHAnalysis.plotter.mcAnalysis import *
+import CMGTools.TTHAnalysis.plotter.CMS_lumi as CMS_lumi
 import itertools, math
 
-_global_workspaces=[] # avoid crash in 80X, to be investigated
+CMS_lumi.writeExtraText = 1
 
+_global_workspaces=[] # avoid crash in 80X, to be investigated
 if "/bin2Dto1Dlib_cc.so" not in ROOT.gSystem.GetLibraries():
     ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/TTHAnalysis/python/plotter/bin2Dto1Dlib.cc+" % os.environ['CMSSW_BASE']);
 if "/fakeRate_cc.so" not in ROOT.gSystem.GetLibraries(): 
@@ -541,7 +543,7 @@ def doStatTests(total,data,test,legendCorner):
 
 
 legend_ = None;
-def doLegend(pmap,mca,corner="TR",textSize=0.035,cutoff=1e-2,cutoffSignals=True,mcStyle="F",legWidth=0.18,legBorder=True,signalPlotScale=None,header=""):
+def doLegend(pmap,mca,corner="TR",textSize=0.035,cutoff=1e-4,cutoffSignals=True,mcStyle="F",legWidth=0.18,legBorder=True,signalPlotScale=None,header="",doWide=False):
         if (corner == None): return
         total = sum([x.Integral() for x in pmap.itervalues()])
         sigEntries = []; bgEntries = []
@@ -560,9 +562,9 @@ def doLegend(pmap,mca,corner="TR",textSize=0.035,cutoff=1e-2,cutoffSignals=True,
                 bgEntries.append( (pmap[p],lbl,mcStyle) )
         nentries = len(sigEntries) + len(bgEntries) + ('data' in pmap)
 
-        (x1,y1,x2,y2) = (.85-legWidth, .75 - textSize*max(nentries-3,0), .90, .93)
+        (x1,y1,x2,y2) = (0.9-legWidth if doWide else .85-legWidth, .75 - textSize*max(nentries-3,0), .90, .93)
         if corner == "TR":
-            (x1,y1,x2,y2) = (.85-legWidth, .75 - textSize*max(nentries-3,0), .90, .93)
+            (x1,y1,x2,y2) = (0.9-legWidth if doWide else .85-legWidth, .75 - textSize*max(nentries-3,0), .90, .93)
         elif corner == "TC":
             (x1,y1,x2,y2) = (.5, .75 - textSize*max(nentries-3,0), .5+legWidth, .93)
         elif corner == "TL":
@@ -788,7 +790,8 @@ class PlotMaker:
                 ROOT.gStyle.SetPadLeftMargin(600.*0.18/plotformat[0])
 
                 stack.Draw("GOFF")
-                stack.GetYaxis().SetTitle(pspec.getOption('YTitle',"Events"))
+                ytitle = "Events" if getEvenBinning(stack.GetHistogram()) == -1 else "Events / %.1f GeV" %(getEvenBinning(stack.GetHistogram()))
+                stack.GetYaxis().SetTitle(pspec.getOption('YTitle',ytitle))
                 stack.GetXaxis().SetTitle(pspec.getOption('XTitle',outputName))
                 stack.GetXaxis().SetNdivisions(pspec.getOption('XNDiv',510))
                 if outputDir: outputDir.WriteTObject(stack)
@@ -799,8 +802,10 @@ class PlotMaker:
                 if doRatio: ROOT.gStyle.SetPaperSize(20.,sf*(plotformat[1]+150))
                 else:       ROOT.gStyle.SetPaperSize(20.,sf*plotformat[1])
                 # create canvas
-                c1 = ROOT.TCanvas(outputName+"_canvas", outputName, plotformat[0], (plotformat[1]+150 if doRatio else plotformat[1]))
+                height = plotformat[1]+150 if doRatio else plotformat[1]
+                c1 = ROOT.TCanvas(outputName+"_canvas", outputName, plotformat[0], height)
                 c1.SetTopMargin(c1.GetTopMargin()*options.topSpamSize);
+                if self._options.doOfficialCMS: c1.SetTopMargin(0.08*600./height);
                 c1.Draw()
                 p1, p2 = c1, None # high and low panes
                 # set borders, if necessary create subpads
@@ -861,7 +866,7 @@ class PlotMaker:
                     total.GetYaxis().SetRangeUser(pspec.getOption('YMin',1.0), pspec.getOption('YMax',1.0))
                 if options.yrange: 
                     total.GetYaxis().SetRangeUser(options.yrange[0], options.yrange[1])
-                legendCutoff = pspec.getOption('LegendCutoff', 1e-5 if c1.GetLogy() else 2e-2)
+                legendCutoff = pspec.getOption('LegendCutoff', 1e-5 if c1.GetLogy() else 1e-4)
                 if plotmode == "norm": legendCutoff = 0 
                 doLegend(pmap,mca,corner=pspec.getOption('Legend','TR'),
                                   cutoff=legendCutoff, mcStyle=("F" if plotmode == "stack" else "L"),
@@ -869,7 +874,13 @@ class PlotMaker:
                                   textSize=( (0.045 if doRatio else 0.035) if options.legendFontSize <= 0 else options.legendFontSize ),
                                   legWidth=options.legendWidth, legBorder=options.legendBorder, signalPlotScale=options.signalPlotScale,
                                   header=self._options.legendHeader if self._options.legendHeader else pspec.getOption("LegendHeader", ""))
-                doTinyCmsPrelim(hasExpo = total.GetMaximum() > 9e4 and not c1.GetLogy(),textSize=(0.045 if doRatio else 0.033)*options.topSpamSize, options=options,doWide=doWide)
+                if self._options.doOfficialCMS:
+                    CMS_lumi.lumi_13TeV = "%.1f fb^{-1}" % self._options.lumi
+                    CMS_lumi.extraText  = self._options.cmsprel
+                    CMS_lumi.lumi_sqrtS = self._options.cmssqrtS
+                    CMS_lumi.CMS_lumi(ROOT.gPad, 4, 0, 0.0 if doWide else 0.04)
+                else: 
+                    doTinyCmsPrelim(hasExpo = total.GetMaximum() > 9e4 and not c1.GetLogy(),textSize=(0.045 if doRatio else 0.033)*options.topSpamSize, options=options,doWide=doWide)
                 if options.addspam:
                     if pspec.getOption('Legend','TR')=="TL":
                         doSpam(options.addspam, .68, .855, .9, .895, align=32, textSize=(0.045 if doRatio else 0.033)*options.topSpamSize)
@@ -1010,6 +1021,12 @@ class PlotMaker:
                                 c1.Print("%s/%s.%s" % (fdir, outputName, ext))
                 c1.Close()
 
+def getEvenBinning(histo):
+    if list(histo.GetXaxis().GetXbins()) == []:
+        return (histo.GetXaxis().GetXmax()-histo.GetXaxis().GetXmin())/histo.GetXaxis().GetNbins()
+    return -1
+     
+
 def addPlotMakerOptions(parser, addAlsoMCAnalysis=True):
     if addAlsoMCAnalysis: addMCAnalysisOptions(parser)
     parser.add_option("--ss",  "--scale-signal", dest="signalPlotScale", default=1.0, type="float", help="scale the signal in the plots by this amount");
@@ -1062,6 +1079,9 @@ def addPlotMakerOptions(parser, addAlsoMCAnalysis=True):
     parser.add_option("--perBin", dest="perBin", action="store_true", default=False, help="Print the contents of every bin in another txt file");
     parser.add_option("--legendHeader", dest="legendHeader", type="string", default=None, help="Put a header to the legend")
     parser.add_option("--ratioOffset", dest="ratioOffset", type="float", default=0.0, help="Put an offset between ratio and main pad")
+    parser.add_option("--cms", dest="doOfficialCMS", action="store_true", default=False, help="Use official tool to write CMS spam")
+    parser.add_option("--cmsprel", dest="cmsprel", type="string", default="Preliminary", help="Additional text (Simulation, Preliminary, Internal)")
+    parser.add_option("--cmssqrtS", dest="cmssqrtS", type="string", default="13 TeV", help="Sqrt of s to be written in the official CMS text.")
 
 if __name__ == "__main__":
     from optparse import OptionParser

@@ -39,22 +39,22 @@ prompt_WZ    : WZTo3LNu : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatch
 
 ## OTHER PROMPT BACKGROUNDS
 ## -----------------------------------------------------------
-prompt_ZZH  : ZZTo4L		          : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kViolet-3, Label="Rares",   NormSystematic=0.25
-rares_ttW   : TTWToLNu                    : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kViolet-3, Label="Rares",   NormSystematic=0.20
-rares_ttZ   : TTHnobb_mWCutfix_ch1        : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kViolet-3, Label="Rares",   NormSystematic=0.20
-rares_ttZ   : TTZToLLNuNu                 : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kViolet-3, Label="Rares",   NormSystematic=0.20
-rares_ttX   : TTLLJets_m1to10             : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kViolet-3, Label="Rares",   NormSystematic=0.20
-rares_ttX   : TTJets_DiLepton             : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kViolet-3, Label="Rares",   NormSystematic=0.20
-rares_ttX   : TTJets_SingleLeptonFromT    : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kViolet-3, Label="Rares",   NormSystematic=0.20
-rares_ttX   : TTJets_SingleLeptonFromTbar : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kViolet-3, Label="Rares",   NormSystematic=0.20
-rares_ttX   : TTTT     			  : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kViolet-3, Label="Rares",   NormSystematic=0.20
-rares_ttX   : tZq_ll   			  : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kViolet-3, Label="Rares",   NormSystematic=0.20
-rares_WWss  : WpWpJJ 			  : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kViolet-3, Label="Rares",   NormSystematic=0.30
-rares_VVV   : WWDouble 			  : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kViolet-3, Label="Rares",   NormSystematic=0.50
-rares_VVV   : WWW      			  : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kViolet-3, Label="Rares",   NormSystematic=0.50
-rares_VVV   : WWZ      			  : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kViolet-3, Label="Rares",   NormSystematic=0.50
-rares_VVV   : WZZ      			  : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kViolet-3, Label="Rares",   NormSystematic=0.50
-rares_VVV   : ZZZ      			  : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kViolet-3, Label="Rares",   NormSystematic=0.50
+prompt_ZZH  : ZZTo4L		          : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kGreen+1,  Label="ZZH",   NormSystematic=0.25
+rares_ttX   : TTWToLNu                    : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kViolet-3, Label="ttX",   NormSystematic=0.20
+rares_ttX   : TTHnobb_mWCutfix_ch1        : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kViolet-3, Label="ttX",   NormSystematic=0.20
+rares_ttX   : TTZToLLNuNu                 : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kViolet-3, Label="ttX",   NormSystematic=0.20
+rares_ttX   : TTLLJets_m1to10             : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kViolet-3, Label="ttX",   NormSystematic=0.20
+rares_ttX   : TTJets_DiLepton             : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kViolet-3, Label="ttX",   NormSystematic=0.20
+rares_ttX   : TTJets_SingleLeptonFromT    : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kViolet-3, Label="ttX",   NormSystematic=0.20
+rares_ttX   : TTJets_SingleLeptonFromTbar : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kViolet-3, Label="ttX",   NormSystematic=0.20
+rares_ttX   : TTTT     			  : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kViolet-3, Label="ttX",   NormSystematic=0.20
+rares_ttX   : tZq_ll   			  : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kViolet-3, Label="ttX",   NormSystematic=0.20
+rares_VVV   : WpWpJJ 			  : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kRed+1, Label="VVV/WWss",   NormSystematic=0.50
+rares_VVV   : WWDouble 			  : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kRed+1, Label="VVVWWss",   NormSystematic=0.50
+rares_VVV   : WWW      			  : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kRed+1, Label="VVVWWss",   NormSystematic=0.50
+rares_VVV   : WWZ      			  : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kRed+1, Label="VVVWWss",   NormSystematic=0.50
+rares_VVV   : WZZ      			  : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kRed+1, Label="VVVWWss",   NormSystematic=0.50
+rares_VVV   : ZZZ      			  : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kRed+1, Label="VVVWWss",   NormSystematic=0.50
 
 convs  : TTGJets  : xsec : ((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==1) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==1)) ; FillColor=ROOT.kOrange-3, NormSystematic=0.50
 convs  : WGToLNuG : xsec : ((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==1) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==1)) ; FillColor=ROOT.kOrange-3, NormSystematic=0.50
@@ -114,7 +114,7 @@ fakes_data : SingleMuon_Run2016D_PromptReco_v2_runs_276284_276811      ; FakeRat
 promptsub : WZTo3LNu			  : -1*xsec	: LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FakeRate="susy-ewkino/2lss/fakeRate-2lss-frdata.txt"
 promptsub : ZZTo4L		          : -1*xsec 	: LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FakeRate="susy-ewkino/2lss/fakeRate-2lss-frdata.txt"
 promptsub : TTWToLNu                      : -1*xsec 	: LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FakeRate="susy-ewkino/2lss/fakeRate-2lss-frdata.txt"
-promptsub : TTHnobb_pow                   : -1*xsec 	: LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FakeRate="susy-ewkino/2lss/fakeRate-2lss-frdata.txt"
+promptsub : TTHnobb_mWCutfix_ch1          : -1*xsec 	: LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FakeRate="susy-ewkino/2lss/fakeRate-2lss-frdata.txt"
 promptsub : TTZToLLNuNu                   : -1*xsec 	: LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FakeRate="susy-ewkino/2lss/fakeRate-2lss-frdata.txt"
 promptsub : TTLLJets_m1to10               : -1*xsec 	: LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FakeRate="susy-ewkino/2lss/fakeRate-2lss-frdata.txt"
 promptsub : TTJets_DiLepton               : -1*xsec 	: LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FakeRate="susy-ewkino/2lss/fakeRate-2lss-frdata.txt"
@@ -177,7 +177,7 @@ fakes_data_ewk_Up : SingleMuon_Run2016D_PromptReco_v2_runs_276284_276811      ; 
 promptsub_ewk_Up : WZTo3LNu			  : -1*xsec	: LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FakeRate="susy-ewkino/2lss/fakeRate-2lss-frdata_ewk_Up.txt", SkipMe=True   
 promptsub_ewk_Up : ZZTo4L		          : -1*xsec 	: LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FakeRate="susy-ewkino/2lss/fakeRate-2lss-frdata_ewk_Up.txt", SkipMe=True
 promptsub_ewk_Up : TTWToLNu                      : -1*xsec 	: LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FakeRate="susy-ewkino/2lss/fakeRate-2lss-frdata_ewk_Up.txt", SkipMe=True
-promptsub_ewk_Up : TTHnobb_pow                   : -1*xsec 	: LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FakeRate="susy-ewkino/2lss/fakeRate-2lss-frdata_ewk_Up.txt", SkipMe=True
+promptsub_ewk_Up : TTHnobb_mWCutfix_ch1          : -1*xsec 	: LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FakeRate="susy-ewkino/2lss/fakeRate-2lss-frdata_ewk_Up.txt", SkipMe=True
 promptsub_ewk_Up : TTZToLLNuNu                   : -1*xsec 	: LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FakeRate="susy-ewkino/2lss/fakeRate-2lss-frdata_ewk_Up.txt", SkipMe=True
 promptsub_ewk_Up : TTLLJets_m1to10               : -1*xsec 	: LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FakeRate="susy-ewkino/2lss/fakeRate-2lss-frdata_ewk_Up.txt", SkipMe=True
 promptsub_ewk_Up : TTJets_DiLepton               : -1*xsec 	: LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FakeRate="susy-ewkino/2lss/fakeRate-2lss-frdata_ewk_Up.txt", SkipMe=True
@@ -235,7 +235,7 @@ fakes_data_ewk_Dn : SingleMuon_Run2016D_PromptReco_v2_runs_276284_276811      ; 
 promptsub_ewk_Dn : WZTo3LNu			  : -1*xsec	: LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FakeRate="susy-ewkino/2lss/fakeRate-2lss-frdata_ewk_Dn.txt", SkipMe=True   
 promptsub_ewk_Dn : ZZTo4L		          : -1*xsec 	: LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FakeRate="susy-ewkino/2lss/fakeRate-2lss-frdata_ewk_Dn.txt", SkipMe=True
 promptsub_ewk_Dn : TTWToLNu                      : -1*xsec 	: LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FakeRate="susy-ewkino/2lss/fakeRate-2lss-frdata_ewk_Dn.txt", SkipMe=True
-promptsub_ewk_Dn : TTHnobb_pow                   : -1*xsec 	: LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FakeRate="susy-ewkino/2lss/fakeRate-2lss-frdata_ewk_Dn.txt", SkipMe=True
+promptsub_ewk_Dn : TTHnobb_mWCutfix_ch1          : -1*xsec 	: LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FakeRate="susy-ewkino/2lss/fakeRate-2lss-frdata_ewk_Dn.txt", SkipMe=True
 promptsub_ewk_Dn : TTZToLLNuNu                   : -1*xsec 	: LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FakeRate="susy-ewkino/2lss/fakeRate-2lss-frdata_ewk_Dn.txt", SkipMe=True
 promptsub_ewk_Dn : TTLLJets_m1to10               : -1*xsec 	: LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FakeRate="susy-ewkino/2lss/fakeRate-2lss-frdata_ewk_Dn.txt", SkipMe=True
 promptsub_ewk_Dn : TTJets_DiLepton               : -1*xsec 	: LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FakeRate="susy-ewkino/2lss/fakeRate-2lss-frdata_ewk_Dn.txt", SkipMe=True
