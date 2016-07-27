@@ -82,23 +82,23 @@ fakes_data: MET_Run2016D_PromptReco_v2_runs_273150_276811 ; FakeRate="susy-sos/f
 
 ##### Additional: negligible contribution
 # ---- External Conversions:
-#Convs  : TTGJets : xsec : ((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==1) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==1)) ; FillColor=ROOT.kOrange
-#Convs  : WGToLNuG : xsec : ((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==1) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==1)) ; FillColor=ROOT.kOrange
-#Convs  : ZGTo2LG : xsec : ((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==1) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==1)) ; FillColor=ROOT.kOrange
-#Convs  : TGJets : xsec : ((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==1) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==1)) ; FillColor=ROOT.kOrange
+#Convs  : TTGJets : xsec : ((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==1) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==1)) ; Label="Rares",FillColor=ROOT.kOrange, NormSystematic=0.5
+#Convs  : WGToLNuG : xsec : ((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==1) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==1)) ; Label="Rares",FillColor=ROOT.kOrange, NormSystematic=0.5
+#Convs  : ZGTo2LG : xsec : ((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==1) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==1)) ; Label="Rares",FillColor=ROOT.kOrange, NormSystematic=0.5
+#Convs  : TGJets : xsec : ((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==1) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==1)) ; Label="Rares",FillColor=ROOT.kOrange, NormSystematic=0.5
 # ---- Rare:
-#TTV : TTWToLNu_LO :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0; Label="Rares", FillColor=ROOT.kBlue+2
-#TTV : TTZToLLNuNu_LO :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0; Label="Rares", FillColor=ROOT.kBlue+2
-#TTV : TTLLJets_m1to10 : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 ;  FillColor=ROOT.kSpring+2
-#TTV : TTJets_DiLepton : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 ; FillColor=ROOT.kSpring+2
-#TTV : TTJets_SingleLeptonFromT : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 ; FillColor=ROOT.kSpring+2
-#TTV : TTJets_SingleLeptonFromTbar : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 ; FillColor=ROOT.kSpring+2
-#TTV : TTHnobb :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0; Label="Rares", FillColor=ROOT.kBlue+2
-#Triboson : WZZ :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0; Label="Rares", FillColor=ROOT.kMagenta+2
-#Triboson : WWZ :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0; Label="Rares", FillColor=ROOT.kMagenta+2
-#Triboson : ZZZ :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0;Label="Rares", FillColor=ROOT.kMagenta+2 
-#Rares : WpWpJJ : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 ; FillColor=ROOT.kOrange-3
-#Rares : WWDouble : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 ; FillColor=ROOT.kOrange-3
+#TTV : TTWToLNu_LO :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0; Label="Rares", FillColor=ROOT.kBlue+2, NormSystematic=0.5
+#TTV : TTZToLLNuNu_LO :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0; Label="Rares", Label="Rares",FillColor=ROOT.kBlue+2, NormSystematic=0.5
+#TTV : TTLLJets_m1to10 : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 ;  Label="Rares",FillColor=ROOT.kSpring+2, NormSystematic=0.5
+#TTV : TTJets_DiLepton : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 ; Label="Rares",FillColor=ROOT.kSpring+2, NormSystematic=0.5
+#TTV : TTJets_SingleLeptonFromT : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 ; Label="Rares",FillColor=ROOT.kSpring+2, NormSystematic=0.5
+#TTV : TTJets_SingleLeptonFromTbar : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 ; Label="Rares",FillColor=ROOT.kSpring+2, NormSystematic=0.5
+#TTV : TTHnobb :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0; Label="Rares", Label="Rares",FillColor=ROOT.kBlue+2, NormSystematic=0.5
+#Triboson : WZZ :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0; Label="Rares", Label="Rares",FillColor=ROOT.kMagenta+2, NormSystematic=0.5
+#Triboson : WWZ :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0; Label="Rares", Label="Rares",FillColor=ROOT.kMagenta+2, NormSystematic=0.5
+#Triboson : ZZZ :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0;Label="Rares", Label="Rares",FillColor=ROOT.kMagenta+2, NormSystematic=0.5
+#Rares : WpWpJJ : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 ; Label="Rares",FillColor=ROOT.kOrange-3, NormSystematic=0.5
+#Rares : WWDouble : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 ; Label="Rares",FillColor=ROOT.kOrange-3, NormSystematic=0.5
 
 
 
@@ -797,10 +797,11 @@ TW_lepSF_Dn       : TBar_tWch :  xsec: ((leptonSF_SOS(LepGood1_pdgId,LepGood1_pt
 
 #######################################
 
-# # ---- FastSIM point example:
-#sig_TChiNeu_WZ_125_95+ : TChiWZ_125_95 : 10034.8*0.10/1000. ; Label="125/95", LineStyle=1, FillColor=ROOT.kRed, FakeRate="susy-sos/mca-2los-noFilters.txt"
-#sig_TChiNeu_WZ_125_95_jec_Up+ : TChiWZ_125_95 : 10034.8*0.10/1000. ; Label="125/95", LineStyle=1, FillColor=ROOT.kRed, FakeRate="susy-sos/mca-2los-noFilters.txt\,susy-sos/fr-jecUpFS.txt", SkipMe=True
-#sig_TChiNeu_WZ_125_95_jec_Dn+ : TChiWZ_125_95 : 10034.8*0.10/1000. ; Label="125/95", LineStyle=1, FillColor=ROOT.kRed, FakeRate="susy-sos/mca-2los-noFilters.txt\,susy-sos/fr-jecDnFS.txt", SkipMe=True
+# ---- FastSIM point example:
+# ---- FastSIM point example:
+#sig_TChiNeu_WZ_125_95+ : TChiWZ_125_95 : 10034.8*0.10/1000. : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && Sum$(abs(Jet_eta)<2.5 && Jet_chHEF<0.1  && Jet_mcPt<8); Label="125/95", LineStyle=1, FillColor=ROOT.kRed, FakeRate="susy-sos/mca-2los-noFilters.txt\,susy-sos/mca-2los-SFFilters.txt"
+#sig_TChiNeu_WZ_125_95_jec_Up+ : TChiWZ_125_95 : 10034.8*0.10/1000. : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && Sum$(abs(Jet_eta)<2.5 && Jet_chHEF<0.1  && Jet_mcPt<8)==0 ; Label="125/95", LineStyle=1, FillColor=ROOT.kRed, FakeRate="susy-sos/mca-2los-noFilters.txt\,susy-sos/fr-jecUpFS.txt", SkipMe=True
+#sig_TChiNeu_WZ_125_95_jec_Dn+ : TChiWZ_125_95 : 10034.8*0.10/1000. : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && Sum$(abs(Jet_eta)<2.5 && Jet_chHEF<0.1  && Jet_mcPt<8)==0; Label="125/95", LineStyle=1, FillColor=ROOT.kRed, FakeRate="susy-sos/mca-2los-noFilters.txt\,susy-sos/fr-jecDnFS.txt", SkipMe=True
 
 
 #### Missing pieces
