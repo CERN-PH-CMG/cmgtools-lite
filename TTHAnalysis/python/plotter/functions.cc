@@ -820,16 +820,20 @@ float get_leptonSF_2lss_ewk(int pdgid, float pt, float eta, int var=0){
      out *=hist->GetBinContent(ptbin,etabin);
      return out + out*getLeptonSF_mu_Unc(pt,var);
    }
+   float err = 0.;
    if (abs(pdgid)==11){
      TH2F *hist = _histo_recoToMVA_leptonSF_el;
      int ptbin  = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(pt)));
      int etabin = std::max(1, std::min(hist->GetNbinsY(), hist->GetYaxis()->FindBin(fabs(eta))));
      out = hist->GetBinContent(ptbin,etabin);
+     err = hist->GetBinError(ptbin,etabin)*hist->GetBinError(ptbin,etabin);
      hist = _histo_reco_leptonSF_el;
      ptbin  = std::max(1, std::min(hist->GetNbinsY(), hist->GetYaxis()->FindBin(pt)));
      etabin = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(eta)));
      out *= hist->GetBinContent(etabin,ptbin);
-     return out;
+     err += hist->GetBinError(etabin,ptbin)*hist->GetBinError(etabin,ptbin);
+     err = TMath::Sqrt(err);
+     return out + out*err*var;
    }
    cout << "[ERROR]!!!! SF UnKNOWN!!! PLEASE CHECK" << endl;
    return 1.;
