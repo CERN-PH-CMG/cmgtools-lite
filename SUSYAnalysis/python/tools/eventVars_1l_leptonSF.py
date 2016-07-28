@@ -6,7 +6,7 @@ import math
 
 ### SF ROOT files
 ### Full SIM ###
-eleSFname = "../python/tools/SFs/ICHEP/CBtight_miniIso0p2_ICHEP.root"
+eleSFname = "../python/tools/SFs/ICHEP/CBtight_miniIso0p1_ICHEP.root"
 eleHname = "CBtight_miniIso0p2_ICHEP"
 
 muSFname = "../python/tools/SFs/ICHEP/MediumMuon_miniIso0p2_SIP3D_ICHEP.root"
@@ -57,10 +57,10 @@ if not hEleHIP:
 
 
 ### Fast? SIM ###
-eleSFname = "../python/tools/SFs/sf_el_tightCB_mini01.root"
-eleHname = "histo3D"
-muSFname = "../python/tools/SFs/sf_mu_mediumID_mini02.root"
-muHname = "histo3D"
+eleSFname = "../python/tools/SFs/ICHEP/CBtight_miniIso0p1_FastSim_ICHEP.root"
+eleHname = "CBtight_miniIso0p1_FastSim_ICHEP"
+muSFname = "../python/tools/SFs/ICHEP/MediumMuon_miniIso0p2_SIP3D_FastSim_ICHEP.root"
+muHname = "MediumMuon_miniIso0p2_SIP3D_FastSim_ICHEP"
 
 hEleSF_FS = 0
 hMuSF_FS = 0
