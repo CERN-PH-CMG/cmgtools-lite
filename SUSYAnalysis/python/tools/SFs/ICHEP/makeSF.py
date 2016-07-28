@@ -19,9 +19,9 @@ h3_ele = f3_ele.Get('EGamma_SF2D')
 
 h12_ele = h1_ele.Clone()
 h12_ele.Multiply(h2_ele)
-h12_ele.SetName('CBtight_miniIso0p2_ICHEP')
-h12_ele.SetTitle('CBtight_miniIso0p2_ICHEP')
-h12_ele.SaveAs('CBtight_miniIso0p2_ICHEP.root')
+h12_ele.SetName('CBtight_miniIso0p1_ICHEP')
+h12_ele.SetTitle('CBtight_miniIso0p1_ICHEP')
+h12_ele.SaveAs('CBtight_miniIso0p1_ICHEP.root')
 
 
 h123_ele = h12_ele.Clone()
