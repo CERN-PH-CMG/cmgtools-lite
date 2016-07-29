@@ -548,7 +548,7 @@ TH2F *_histo_recoToLoose_leptonSF_gsf = NULL;
 
 float _get_recoToLoose_leptonSF_ttH(int pdgid, float pt, float eta, int nlep, float var){
 
-  if (var!=0) assert(0); // NOT IMPLEMENTED
+  if (var!=0 && abs(pdgid)!=11) assert(0); // NOT IMPLEMENTED
 
   if (!_histo_recoToLoose_leptonSF_mu1_b) {
     _file_recoToLoose_leptonSF_mu1_b = new TFile("../../data/leptonSF/mu_ttH_presel_barrel.root","read");
@@ -593,15 +593,15 @@ float _get_recoToLoose_leptonSF_ttH(int pdgid, float pt, float eta, int nlep, fl
     TH2F *hist = _histo_recoToLoose_leptonSF_el1;
     int ptbin  = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(pt)));
     int etabin = std::max(1, std::min(hist->GetNbinsY(), hist->GetYaxis()->FindBin(fabs(eta))));
-    float out = hist->GetBinContent(ptbin,etabin);
+    float out = hist->GetBinContent(ptbin,etabin)+var*hist->GetBinError(ptbin,etabin);
     hist = _histo_recoToLoose_leptonSF_el2;
     ptbin  = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(pt)));
     etabin = std::max(1, std::min(hist->GetNbinsY(), hist->GetYaxis()->FindBin(fabs(eta))));
-    out *= hist->GetBinContent(ptbin,etabin);
+    out *= hist->GetBinContent(ptbin,etabin)+var*hist->GetBinError(ptbin,etabin);
     hist = _histo_recoToLoose_leptonSF_el3;
     ptbin  = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(pt)));
     etabin = std::max(1, std::min(hist->GetNbinsY(), hist->GetYaxis()->FindBin(fabs(eta))));
-    out *= hist->GetBinContent(ptbin,etabin);
+    out *= hist->GetBinContent(ptbin,etabin)+var*hist->GetBinError(ptbin,etabin);
 
     hist = _histo_recoToLoose_leptonSF_gsf;
     etabin = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(eta))); // careful, different convention
