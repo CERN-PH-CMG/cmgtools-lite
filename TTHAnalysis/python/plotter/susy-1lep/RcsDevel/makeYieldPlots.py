@@ -431,12 +431,23 @@ def getRatio(histA,histB, keepStyle = False):
 
 def getPull(histA,histB):
 
+    for ibin in range(1,histA.GetNbinsX()+1):
+        if histB.GetBinContent(ibin) == 0:
+            histB.SetBinError(ibin,1.8)
+
+        if histA.GetBinContent(ibin) == 0:
+            histA.SetBinError(ibin,1.8)
+
     pull = histA.Clone("pull_"+histA.GetName()+"_"+histB.GetName())
+
     pull.Add(histB,-1)
     #pull.Divide(histB)
 
     for ibin in range(1,pull.GetNbinsX()+1):
-        err = histB.GetBinError(ibin)
+        #err = histB.GetBinError(ibin)
+
+        err = math.sqrt(histB.GetBinError(ibin)*histB.GetBinError(ibin)+ histA.GetBinError(ibin)*histA.GetBinError(ibin))
+
         if err > 0:
             pull.SetBinContent(ibin,pull.GetBinContent(ibin)/err)
             pull.SetBinError(ibin,pull.GetBinError(ibin)/err)
@@ -447,7 +458,8 @@ def getPull(histA,histB):
     #pull.GetYaxis().SetTitle("Pull")
     #title = "#frac{%s - %s}{%s}" %(histA.GetTitle(),histB.GetTitle(),histB.GetTitle())
     #title = "#frac{%s - %s}{#sigma(%s)}" %(histA.GetTitle(),histB.GetTitle(),histA.GetTitle())
-    title = "#frac{%s - %s}{#sigma(%s)}" %(histA.GetTitle(),histB.GetTitle(),histB.GetTitle())
+    #title = "#frac{%s - %s}{#sigma(%s)}" %(histA.GetTitle(),histB.GetTitle(),histB.GetTitle())
+    title = "#frac{%s - %s}{#sigma(%s + %s)}" %(histA.GetTitle(),histB.GetTitle(),histA.GetTitle(),histB.GetTitle())
 
     pull.GetYaxis().SetTitle(title)
     pull.GetYaxis().CenterTitle()

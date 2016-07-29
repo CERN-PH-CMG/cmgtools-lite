@@ -100,22 +100,25 @@ if __name__ == "__main__":
 #    systs = ["Wpol","Wxsec","PU","JEC","btagHF","btagLF","topPt","DLConst","DLSlope","JER","JERYesNo"]
     systs = ["TTVxsec","Wpol","Wxsec","PU","JEC","btagHF","btagLF","topPt","DLConst","DLSlope"]
 #    systs = ["lepSF"]
+
     systNames = {
         "btagLF" : "b-mistag (light)",
         "btagHF" : "b-tag (b/c)",
-        "JEC" : "JEC",
+        "JEC" : "JES",
         "topPt" : "Top p_{T}",
-        "PU" : "PU",
+        "PU" : "Pileup",
         #"Wxsec" : "#sigma_{W}",
         "Wxsec" : "W x-sec",
-        "TTVxsec" : "TTV x-sec",
+        "TTVxsec" : "t#bar{t}V x-sec",
         "Wpol" : "W polar.",
         "JER" : "JER",
         "JERYesNo" : "JER Yes/No",
-        "DLSlope" : "DiLep (N_{j} Slope)",
-        "DLConst" : "DiLep (N_{j} Const)",
-
+        #"DLSlope" : "DiLep (N_{j} Slope)",
+        "DLSlope" : "N_{j} Slope",
+        #"DLConst" : "DiLep (N_{j} Const)",
+        "DLConst" : "N_{j} Offset",
         }
+
 
     #sysCols = [2,4,7,8,3,9,6] + range(40,50)#[1,2,3] + range(4,10)
     #sysCols = [50] + range(49,0,-2)#range(30,50,2)
@@ -173,7 +176,7 @@ if __name__ == "__main__":
 
     hCentral.GetYaxis().SetTitle("#kappa_{EWK}")
     hCentral.GetYaxis().SetTitleSize(0.15)
-    hCentral.GetYaxis().SetTitleOffset(0.15)
+    hCentral.GetYaxis().SetTitleOffset(0.17)
 
     hCentralUncert = yp.getHistWithError(hCentral, sqHist, True)
 
@@ -185,7 +188,7 @@ if __name__ == "__main__":
     '''
 
     #canv = yp.plotHists(var+"_"+samp+"_Syst",[stack,sqHist],[hCentral,hCentralUncert],"TM", 1200, 600, nCols = 5)
-    canv = yp.plotHists(var+"_"+samp+"_Syst",[stack,sqHist],[hCentral,hCentralUncert],"TRC", 1200, 600)
+    canv = yp.plotHists(var+"_"+samp+"_Syst",[stack,sqHist],[hCentral,hCentralUncert],"TLC", 1000, 600, nCols = 2)
 #    canv = yp.plotHists(var+"_"+samp+"_Syst",[sqHist]+hists,[hCentral,hCentralUncert],"TM", 1200, 600)
 #    canv = yp.plotHists(var+"_"+samp+"_Stat",[stack,sqHist],hCentral,"TM", 1200, 600)
 
@@ -198,7 +201,7 @@ if __name__ == "__main__":
 
     #odir = "BinPlots/Syst/Combine/test/allSF_noPU_Wpol/Method1A/"
     #odir = "BinPlots/Syst/Combine/allSF_noPU_LTfix/Method1A/"
-    odir = "BinPlots/Syst/Combine/forApproval/allSF_noPU/"
+    odir = "BinPlots/Syst/Combine/"
     if not os.path.isdir(odir): os.makedirs(odir)
 
     ## Save hists

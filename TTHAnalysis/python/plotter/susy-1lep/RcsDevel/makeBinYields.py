@@ -10,11 +10,11 @@ from math import hypot
 
 Tdir = "SampLinks/"
 # MC
-mcFTdir = "SampLinks/Friends/MC/"
+mcFTdir = "SampLinks/Friends/"
 sigFTdir = "SampLinks/Friends/"
 
 # new data
-dataFTdir = "SampLinks/Friends/Data/"
+dataFTdir = "SampLinks/Friends/"
 
 
 #Dilepton stuff
@@ -438,21 +438,21 @@ if __name__ == "__main__":
 
     doDLCR = False
 
-    doNjet6 = True
+    doNjet6 = False
     if doNjet6:
         cDict.update(cutDictCR)
         cDict.update(cutDictSR)
         if doDLCR: cDict.update(cutDictDLCR)
 
 
-    doNjet9 = True
+    doNjet9 = False
     if doNjet9:
         cDict.update(cutDictSRf9)
         cDict.update(cutDictCRf9)
         if doDLCR: cDict.update(cutDictDLCRf9)
 
 
-    doNjet5 = False
+    doNjet5 = True
     if doNjet5:
         cDict.update(cutDictSRf5)
         cDict.update(cutDictCRf5)
