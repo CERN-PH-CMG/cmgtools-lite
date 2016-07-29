@@ -222,7 +222,7 @@ elif test==19:
 elif test==23:
     isZSkim=True
     is25ns=True
-    selectedComponents = [ DYJetsToLL_M50, TTJets_DiLepton, TTJets_DiLepton_ext, ZZTo4L, ZZTo2L2Q, ZZTo2L2Nu, WWTo2L2Nu, WZTo2L2Q, WZTo3LNu ] + TriBosons + [ TBar_tWch, T_tWch, TToLeptons_tch_powheg, TBarToLeptons_tch_powheg, TToLeptons_sch_amcatnlo ]
+    selectedComponents = [ DYJetsToLL_M50, TTJets_DiLepton, TTJets_DiLepton_ext, ZZTo4L, ZZTo2L2Q, ZZTo2L2Nu, WWTo2L2Nu, WZTo2L2Q, WZTo3LNu ] + TriBosons + [ TBar_tWch, T_tWch, TToLeptons_tch_powheg, TBarToLeptons_tch_powheg, TToLeptons_sch_amcatnlo + TTJets_SingleLeptonFromTbar, TTJets_SingleLeptonFromT]
     for comp in selectedComponents:
 # no trigger on MC for now
 #        if isEle:
