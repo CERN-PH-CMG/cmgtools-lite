@@ -7,6 +7,7 @@ import itertools, math
 CMS_lumi.writeExtraText = 1
 
 _global_workspaces=[] # avoid crash in 80X, to be investigated
+
 if "/bin2Dto1Dlib_cc.so" not in ROOT.gSystem.GetLibraries():
     ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/TTHAnalysis/python/plotter/bin2Dto1Dlib.cc+" % os.environ['CMSSW_BASE']);
 if "/fakeRate_cc.so" not in ROOT.gSystem.GetLibraries(): 
@@ -391,7 +392,7 @@ def doNormFit(pspec,pmap,mca,saveScales=False):
     pspec.setLog("Fitting", fitlog)
     
 
-def doRatioHists(pspec,pmap,total,totalSyst,maxRange,fixRange=False,fitRatio=None,errorsOnRef=True,ratioNums="signal",ratioDen="background",ylabel="Data/Pred."):
+def doRatioHists(pspec,pmap,total,totalSyst,maxRange,fixRange=False,fitRatio=None,errorsOnRef=True,ratioNums="signal",ratioDen="background",ylabel="Data/Pred.",doWide=False):
     numkeys = [ "data" ]
     if "data" not in pmap: 
         if len(pmap) >= 4 and ratioDen in pmap:
@@ -489,7 +490,8 @@ def doRatioHists(pspec,pmap,total,totalSyst,maxRange,fixRange=False,fitRatio=Non
     unity.GetYaxis().SetNdivisions(505)
     unity.GetYaxis().SetDecimals(True) 
     unity.GetYaxis().SetTitle(ylabel)
-    unity.GetYaxis().SetTitleOffset(0.52);
+    offset = 0.32 if doWide else 0.52
+    unity.GetYaxis().SetTitleOffset(offset);
     total.GetXaxis().SetLabelOffset(999) ## send them away
     total.GetXaxis().SetTitleOffset(999) ## in outer space
     total.GetYaxis().SetLabelSize(0.05)
@@ -543,7 +545,7 @@ def doStatTests(total,data,test,legendCorner):
 
 
 legend_ = None;
-def doLegend(pmap,mca,corner="TR",textSize=0.035,cutoff=1e-4,cutoffSignals=True,mcStyle="F",legWidth=0.18,legBorder=True,signalPlotScale=None,header="",doWide=False):
+def doLegend(pmap,mca,corner="TR",textSize=0.035,cutoff=1e-2,cutoffSignals=True,mcStyle="F",legWidth=0.18,legBorder=True,signalPlotScale=None,header="",doWide=False):
         if (corner == None): return
         total = sum([x.Integral() for x in pmap.itervalues()])
         sigEntries = []; bgEntries = []
@@ -562,9 +564,9 @@ def doLegend(pmap,mca,corner="TR",textSize=0.035,cutoff=1e-4,cutoffSignals=True,
                 bgEntries.append( (pmap[p],lbl,mcStyle) )
         nentries = len(sigEntries) + len(bgEntries) + ('data' in pmap)
 
-        (x1,y1,x2,y2) = (0.9-legWidth if doWide else .85-legWidth, .75 - textSize*max(nentries-3,0), .90, .93)
+        (x1,y1,x2,y2) = (0.97-legWidth if doWide else .85-legWidth, .75 - textSize*max(nentries-3,0), .90, .93)
         if corner == "TR":
-            (x1,y1,x2,y2) = (0.9-legWidth if doWide else .85-legWidth, .75 - textSize*max(nentries-3,0), .90, .93)
+            (x1,y1,x2,y2) = (0.97-legWidth if doWide else .85-legWidth, .75 - textSize*max(nentries-3,0), .90, .93)
         elif corner == "TC":
             (x1,y1,x2,y2) = (.5, .75 - textSize*max(nentries-3,0), .5+legWidth, .93)
         elif corner == "TL":
@@ -577,7 +579,7 @@ def doLegend(pmap,mca,corner="TR",textSize=0.035,cutoff=1e-4,cutoffSignals=True,
             (x1,y1,x2,y2) = (.2, .33 + textSize*max(nentries-3,0), .2+legWidth, .15)
        
         leg = ROOT.TLegend(x1,y1,x2,y2)
-        if header: leg.SetHeader(header)
+        if header: leg.SetHeader(header.replace("\#", "#"))
         leg.SetFillColor(0)
         leg.SetShadowColor(0)
         if not legBorder:
@@ -790,7 +792,11 @@ class PlotMaker:
                 ROOT.gStyle.SetPadLeftMargin(600.*0.18/plotformat[0])
 
                 stack.Draw("GOFF")
-                ytitle = "Events" if getEvenBinning(stack.GetHistogram()) == -1 else "Events / %.1f GeV" %(getEvenBinning(stack.GetHistogram()))
+                ytitle = "Events" if getEvenBinning(stack.GetHistogram()) == -1 or doWide else "Events / %.1f GeV" %(getEvenBinning(stack.GetHistogram()))
+                ytitle="Event"
+                print "doing it"
+                print pspec.getOption('YTitle',ytitle)
+                stack.GetYaxis().SetTitleOffset(0.02)
                 stack.GetYaxis().SetTitle(pspec.getOption('YTitle',ytitle))
                 stack.GetXaxis().SetTitle(pspec.getOption('XTitle',outputName))
                 stack.GetXaxis().SetNdivisions(pspec.getOption('XNDiv',510))
@@ -866,14 +872,15 @@ class PlotMaker:
                     total.GetYaxis().SetRangeUser(pspec.getOption('YMin',1.0), pspec.getOption('YMax',1.0))
                 if options.yrange: 
                     total.GetYaxis().SetRangeUser(options.yrange[0], options.yrange[1])
-                legendCutoff = pspec.getOption('LegendCutoff', 1e-5 if c1.GetLogy() else 1e-4)
+                legendCutoff = pspec.getOption('LegendCutoff', 1e-5 if c1.GetLogy() else 1e-2)
                 if plotmode == "norm": legendCutoff = 0 
                 doLegend(pmap,mca,corner=pspec.getOption('Legend','TR'),
                                   cutoff=legendCutoff, mcStyle=("F" if plotmode == "stack" else "L"),
                                   cutoffSignals=not(options.showSigShape or options.showIndivSigShapes or options.showSFitShape), 
                                   textSize=( (0.045 if doRatio else 0.035) if options.legendFontSize <= 0 else options.legendFontSize ),
                                   legWidth=options.legendWidth, legBorder=options.legendBorder, signalPlotScale=options.signalPlotScale,
-                                  header=self._options.legendHeader if self._options.legendHeader else pspec.getOption("LegendHeader", ""))
+                                  header=self._options.legendHeader if self._options.legendHeader else pspec.getOption("LegendHeader", ""),
+                                  doWide=doWide)
                 if self._options.doOfficialCMS:
                     CMS_lumi.lumi_13TeV = "%.1f fb^{-1}" % self._options.lumi
                     CMS_lumi.extraText  = self._options.cmsprel
@@ -921,7 +928,7 @@ class PlotMaker:
                     p2.cd(); 
                     rdata,rnorm,rnorm2,rline = doRatioHists(pspec,pmap,total,totalSyst, maxRange=options.maxRatioRange, fixRange=options.fixRatioRange,
                                                             fitRatio=options.fitRatio, errorsOnRef=options.errorBandOnRatio, 
-                                                            ratioNums=options.ratioNums, ratioDen=options.ratioDen, ylabel=options.ratioYLabel)
+                                                            ratioNums=options.ratioNums, ratioDen=options.ratioDen, ylabel=options.ratioYLabel, doWide=doWide)
                 if self._options.printPlots:
                     for ext in self._options.printPlots.split(","):
                         fdir = printDir;

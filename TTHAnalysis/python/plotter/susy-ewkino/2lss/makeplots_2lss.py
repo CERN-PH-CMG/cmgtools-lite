@@ -25,7 +25,7 @@ def base(selection):
     CORE+=" -F sf/t {P}/3_leptonJetReCleanerSusyEWK3L/evVarFriend_{cname}.root -F sf/t {P}/4_evtbtag_12fb_2lss/evVarFriend_{cname}.root"
     CORE+=" -f -j 8 -l 12.9 --s2v --tree treeProducerSusyMultilepton --mcc susy-ewkino/2lss/lepchoice-2lss-FO.txt --mcc susy-ewkino/mcc_triggerdefs.txt --neg"
     if dowhat == "plots":  CORE+=" --cms --legendWidth 0.20 --legendFontSize 0.035 --showRatio --maxRatioRange 0 3 --showMCError --legendHeader '2lss' "
-    CORE+="-W 'puw2016_nInt_ICHEP(nTrueInt)*triggerSF_2lss_ewk(LepGood1_pt,LepGood2_pt,LepGood2_pdgId)*eventBTagSF' "
+    CORE+="-W 'puw2016_nInt_ICHEP(nTrueInt)*triggerSF_2lss_ewk(LepGood1_pt,LepGood2_pt,LepGood2_pdgId)*leptonSF_2lss_ewk(LepGood1_pdgId,LepGood1_pt,LepGood1_eta)*leptonSF_2lss_ewk(LepGood2_pdgId,LepGood2_pt,LepGood2_eta)*eventBTagSF' "
 
     GO="%s susy-ewkino/2lss/mca-2lss-mc.txt susy-ewkino/2lss/cuts_2lss.txt  "%CORE
     if dowhat == "plots": GO+=" susy-ewkino/2lss/plots_2lss.txt --xP 'nT_.*' "

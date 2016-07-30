@@ -1,6 +1,6 @@
 
 #include <cmath>
-#include "TH1F.h"
+#include "TH2F.h"
 #include "TFile.h"
 
 TFile *_file_fastsim_el = NULL;
@@ -33,7 +33,6 @@ float leptonSF_2lss_ewk_FS(int pdgid, float pt, float eta, int var=0){
      out = hist->GetBinContent(ptbin,etabin);
      return out + out*0.02*var;
    }
-   cout << "[ERROR]!!!! SF UnKNOWN!!! PLEASE CHECK" << endl;
    return 1.;
  }
 
@@ -62,6 +61,5 @@ float leptonSF_3l_ewk_FS(int pdgid, float pt, float eta, int var=0){
      out = hist->GetBinContent(ptbin,etabin);
      return out + out*0.02*var;
    }
-   cout << "[ERROR]!!!! SF UnKNOWN!!! PLEASE CHECK" << endl;
-   return 1.;
- }
+   return 1;
+}

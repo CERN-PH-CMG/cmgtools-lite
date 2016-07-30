@@ -790,7 +790,7 @@ float getLeptonSF_mu_Unc(float pt, int var) {
   else 
     return var*TMath::Sqrt(0.02*0.02+0.01*0.01);  
 }
-float get_leptonSF_2lss_ewk(int pdgid, float pt, float eta, int var=0){
+float leptonSF_2lss_ewk(int pdgid, float pt, float eta, int var=0){
   
   if (!_histo_reco_leptonSF_mu) {
      _file_reco_leptonSF_mu = new TFile("/afs/cern.ch/work/f/folguera/SUS/EWKino/CMSSW_8_0_11/src/CMGTools/TTHAnalysis/data/leptonSF/sf_mu_trk_susy_ICHEP.root","read");
