@@ -1,10 +1,10 @@
 # # ---- SUSY private signal:
-TChiNeuWZ_80+: TChiNeuWZ_mCh100_mChi80 : xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ;FillColor=ROOT.kOrange+8,   Label="CNWZ(20)", FakeRate="susy-sos/mca-2los-noMuonsFilters.txt", NormSystematic=0.2
-TChiNeuWZ_90+: TChiNeuWZ_mCh100_mChi90 : xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ;FillColor=ROOT.kRed+1,   Label="CNWZ(10)", FakeRate="susy-sos/mca-2los-noMuonsFilters.txt", NormSystematic=0.2
-TChiNeuWZ_95+: TChiNeuWZ_mCh100_mChi95 : xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ;FillColor=ROOT.kOrange+6,   Label="CNWZ(5)", FakeRate="susy-sos/mca-2los-noMuonsFilters.txt" , NormSystematic=0.2
-T2ttDeg_330+: T2ttDeg_mStop350_mChi330_4bodydec_lepOnly : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ;FillColor=ROOT.kOrange,   Label="T2tt(20)", FakeRate="susy-sos/mca-2los-noMuonsFilters.txt", NormSystematic=0.2 
-T2ttDeg_315+: T2ttDeg_mStop350_mChi315_4bodydec_lepOnly : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ;FillColor=ROOT.kRed-7,   Label="T2tt(35)", FakeRate="susy-sos/mca-2los-noMuonsFilters.txt" , NormSystematic=0.2
-T2ttDeg_300+: T2ttDeg_mStop350_mChi300_4bodydec_lepOnly : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ;FillColor=ROOT.kRed-10,   Label="T2tt(50)", FakeRate="susy-sos/mca-2los-noMuonsFilters.txt" , NormSystematic=0.2
+#TChiNeuWZ_80+: TChiNeuWZ_mCh100_mChi80 : xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ;FillColor=ROOT.kOrange+8,   Label="CNWZ(20)", FakeRate="susy-sos/mca-2los-noMuonsFilters.txt", NormSystematic=0.2
+# TChiNeuWZ_90+: TChiNeuWZ_mCh100_mChi90 : xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ;FillColor=ROOT.kRed+1,   Label="CNWZ(10)", FakeRate="susy-sos/mca-2los-noMuonsFilters.txt", NormSystematic=0.2
+# TChiNeuWZ_95+: TChiNeuWZ_mCh100_mChi95 : xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ;FillColor=ROOT.kOrange+6,   Label="CNWZ(5)", FakeRate="susy-sos/mca-2los-noMuonsFilters.txt" , NormSystematic=0.2
+# T2ttDeg_330+: T2ttDeg_mStop350_mChi330_4bodydec_lepOnly : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ;FillColor=ROOT.kOrange,   Label="T2tt(20)", FakeRate="susy-sos/mca-2los-noMuonsFilters.txt", NormSystematic=0.2 
+# T2ttDeg_315+: T2ttDeg_mStop350_mChi315_4bodydec_lepOnly : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ;FillColor=ROOT.kRed-7,   Label="T2tt(35)", FakeRate="susy-sos/mca-2los-noMuonsFilters.txt" , NormSystematic=0.2
+# T2ttDeg_300+: T2ttDeg_mStop350_mChi300_4bodydec_lepOnly : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ;FillColor=ROOT.kRed-10,   Label="T2tt(50)", FakeRate="susy-sos/mca-2los-noMuonsFilters.txt" , NormSystematic=0.2
 
 
 # ---- TTbar 
@@ -74,10 +74,12 @@ TW       : T_tWch :  xsec: (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0);Labe
 TW       : TBar_tWch :  xsec: (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0);Label="TW", FillColor=ROOT.kBlue, NormSystematic=1
 
 
-# ---- Non prompt:
+#---- Non prompt:
+
 fakes_data: MET_Run2016B_PromptReco_v2_runs_273150_276811 ; FakeRate="susy-sos/fakeRate-2los-frdata-qcd-prdata.txt", Label="Fakes", FillColor=ROOT.kBlack, FillStyle=3005, NormSystematic=0.3
 fakes_data: MET_Run2016C_PromptReco_v2_runs_273150_276811 ; FakeRate="susy-sos/fakeRate-2los-frdata-qcd-prdata.txt", Label="Fakes", FillColor=ROOT.kBlack, FillStyle=3005, NormSystematic=0.3
 fakes_data: MET_Run2016D_PromptReco_v2_runs_273150_276811 ; FakeRate="susy-sos/fakeRate-2los-frdata-qcd-prdata.txt", Label="Fakes", FillColor=ROOT.kBlack, FillStyle=3005, NormSystematic=0.3
+
 
 
 ##### Additional: negligible contribution
@@ -793,16 +795,5 @@ TW_lepSF_Dn       : T_tWch :  xsec: ((leptonSF_SOS(LepGood1_pdgId,LepGood1_pt,Le
 TW_lepSF_Dn       : TBar_tWch :  xsec: ((leptonSF_SOS(LepGood1_pdgId,LepGood1_pt,LepGood1_eta,-1)*leptonSF_SOS(LepGood2_pdgId,LepGood2_pt,LepGood2_eta,-1))/(leptonSF_SOS(LepGood1_pdgId,LepGood1_pt,LepGood1_eta,0)*leptonSF_SOS(LepGood2_pdgId,LepGood2_pt,LepGood2_eta,0)))*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0);Label="TW-lepSFDown", FillColor=ROOT.kBlue, SkipMe=True 
 
 
-#######################################
 
 
-# ---- FastSIM point example:
-#sig_TChiNeu_WZ_125_95+ : TChiWZ_125_95 : 10034.8*0.10/1000. : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && Sum$(abs(Jet_eta)<2.5 && Jet_chHEF<0.1  && Jet_mcPt<8); Label="125/95", LineStyle=1, FillColor=ROOT.kRed, FakeRate="susy-sos/mca-2los-noFilters.txt\,susy-sos/mca-2los-SFFilters.txt"
-#sig_TChiNeu_WZ_125_95_jec_Up+ : TChiWZ_125_95 : 10034.8*0.10/1000. : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && Sum$(abs(Jet_eta)<2.5 && Jet_chHEF<0.1  && Jet_mcPt<8)==0 ; Label="125/95", LineStyle=1, FillColor=ROOT.kRed, FakeRate="susy-sos/mca-2los-noFilters.txt\,susy-sos/fr-jecUpFS.txt", SkipMe=True
-#sig_TChiNeu_WZ_125_95_jec_Dn+ : TChiWZ_125_95 : 10034.8*0.10/1000. : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && Sum$(abs(Jet_eta)<2.5 && Jet_chHEF<0.1  && Jet_mcPt<8)==0; Label="125/95", LineStyle=1, FillColor=ROOT.kRed, FakeRate="susy-sos/mca-2los-noFilters.txt\,susy-sos/fr-jecDnFS.txt", SkipMe=True
-
-
-#### Missing pieces
-# Lepton SF for FastSIM --> for the moment 3% uncertainty per lepton
-# ISR systematics for Signal Monte Carlo --> Markus & George will produce friend trees
-# PDF and Q^2 and MC stat systematics on acceptance --> Markus & George will produce friend trees for the scans
