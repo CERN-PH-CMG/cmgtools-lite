@@ -4,10 +4,10 @@ import re
 
 ODIR=sys.argv[1]
 
-#dowhat = "plots" 
+dowhat = "plots" 
 #dowhat = "dumps" 
 #dowhat = "yields" 
-dowhat = "limits"
+#dowhat = "limits"
 
 if dowhat == "limits":
     # SYST="susy-sos/syst/susy_sos_dummy.txt" ## change file for systematics here
@@ -18,10 +18,10 @@ if dowhat == "limits":
 
 def base(selection):
 
-    CORE="-P /data1/botta/trees_SOS_80X_130716_Scans/ --FMCs {P}/eventBTagWeight" 
-    #CORE="-P /data1/botta/trees_SOS_80X_130716_Scans/ "
-    CORE+=" -f -j 8 -l 12.9 --s2v --tree treeProducerSusyMultilepton --mcc susy-sos/mcc-lepWP.txt --mcc susy-sos/mcc-sf1.txt --neg"#--mcc susy-sos/2los_triggerdefs.txt # --neg"
-    if dowhat == "plots": CORE+=" --lspam CMSPreliminary --legendWidth 0.14 --legendFontSize 0.04"
+    
+    CORE="-P /data1/botta/trees_SOS_80X_130716_Scans/ --FMCs {P}/eventBTagWeight"
+    CORE+=" -f -j 8 -l 12.9 --s2v --tree treeProducerSusyMultilepton --mcc susy-sos/mcc-lepWP.txt --mcc susy-sos/mcc-sf1.txt --neg" #--mcc susy-sos/2los_triggerdefs.txt # "
+    if dowhat == "plots": CORE+=" --lspam 'CMS Preliminary' --legendWidth 0.14 --legendFontSize 0.04"
     GO = ""
     if selection=='2los':
         if (dowhat != "limits") : GO="susy-sos/mca-2los-mc.txt susy-sos/2los_tight.txt "
@@ -87,7 +87,7 @@ if __name__ == '__main__':
                 #x = add(x,"--plotmode norm")
                 x = x.replace('-l 12.9','-l 12.9')
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt') #remove signal
-                x = x.replace('mcc-sf1.txt','mcc-sf-highmet.txt')
+                x = x.replace('mcc-sf1.txt','mcc-sf-highmet.txt') 
         if 'ewk_met125' in torun: 
             x = add(x,"-E ^upperMET -E ^mm -E ^runRange -X ^triggerAll -E ^triggerDoubleMuMET -E ^pt5sublep -E ^MT")
             if '_unblind' in torun:
@@ -139,14 +139,14 @@ if __name__ == '__main__':
                     x = x.replace('mca-2los-mc.txt','mca-2los-mc-syst-dy.txt')
             if '_ddbkg' in torun: 
                 x = x.replace('mca-2los-mc.txt','mca-2los-mc-frdata.txt')
-                if(dowhat != "limits"):x = x.replace('mcc-sf1.txt','mcc-sf-lowmet.txt')
+                if(dowhat != "limits"):x = x.replace('mcc-sf1.txt','mcc-sf-lowmet.txt') 
             if '_appl' in torun:
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt')
                 x = add(x,"-I ^TT ")
             if '_unblind' in torun:
                 if(dowhat != "limits"):x = add(x,"--noStackSig --showIndivSigs --showRatio --maxRatioRange -2 5 --showMCError") 
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt')
-                if(dowhat != "limits"):x = x.replace('mcc-sf1.txt','mcc-sf-lowmet.txt')                
+                if(dowhat != "limits"):x = x.replace('mcc-sf1.txt','mcc-sf-lowmet.txt') 
             if dowhat == "limits":
                 runIt(x,torun,["m2l"],["'[4,10,20,30,50]'"])
             else:
@@ -161,14 +161,14 @@ if __name__ == '__main__':
                     x = x.replace('mca-2los-mc.txt','mca-2los-mc-syst-dy.txt')
             if '_ddbkg' in torun: 
                 x = x.replace('mca-2los-mc.txt','mca-2los-mc-frdata.txt')
-                if(dowhat != "limits"):x = x.replace('mcc-sf1.txt','mcc-sf-highmet.txt')
+                if(dowhat != "limits"):x = x.replace('mcc-sf1.txt','mcc-sf-highmet.txt') 
             if '_appl' in torun:
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt')
                 x = add(x,"-I ^TT ")
             if '_unblind' in torun:
                 if(dowhat != "limits"):x = add(x,"--noStackSig --showIndivSigs --showRatio --maxRatioRange -2 5 --showMCError") 
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt') 
-                if(dowhat != "limits"):x = x.replace('mcc-sf1.txt','mcc-sf-highmet.txt')
+                if(dowhat != "limits"):x = x.replace('mcc-sf1.txt','mcc-sf-highmet.txt') 
             if dowhat == "limits":
                 runIt(x,torun,["m2l"],["'[4,10,20,30,50]'"])
             else:
@@ -186,14 +186,14 @@ if __name__ == '__main__':
                     x = x.replace('mca-2los-mc.txt','mca-2los-mc-syst-dy.txt')
             if '_ddbkg' in torun: 
                 x = x.replace('mca-2los-mc.txt','mca-2los-mc-frdata.txt')
-                if(dowhat != "limits"):x = x.replace('mcc-sf1.txt','mcc-sf-lowmet.txt')
+                if(dowhat != "limits"):x = x.replace('mcc-sf1.txt','mcc-sf-lowmet.txt') 
             if '_appl' in torun:
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt')
                 x = add(x,"-I ^TT ")  
             if '_unblind' in torun:
                 if(dowhat != "limits"):x = add(x,"--noStackSig --showIndivSigs --showRatio --maxRatioRange -2 5 --showMCError") 
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt') 
-                if(dowhat != "limits"):x = x.replace('mcc-sf1.txt','mcc-sf-lowmet.txt')
+                if(dowhat != "limits"):x = x.replace('mcc-sf1.txt','mcc-sf-lowmet.txt') 
             if dowhat == "limits":
                 runIt(x,torun,["m2l"],["'[4,10,20,30,50]'"])
             else:
@@ -208,7 +208,7 @@ if __name__ == '__main__':
                     x = x.replace('mca-2los-mc.txt','mca-2los-mc-syst-dy.txt')
             if '_ddbkg' in torun: 
                 x = x.replace('mca-2los-mc.txt','mca-2los-mc-frdata.txt')
-                if(dowhat != "limits"):x = x.replace('mcc-sf1.txt','mcc-sf-highmet.txt')
+                if(dowhat != "limits"):x = x.replace('mcc-sf1.txt','mcc-sf-highmet.txt') 
             if '_appl' in torun:
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt') 
                 x = add(x,"-I ^TT ")
@@ -233,14 +233,14 @@ if __name__ == '__main__':
                     x = x.replace('mca-2los-mc.txt','mca-2los-mc-syst-dy.txt')
             if '_ddbkg' in torun: 
                 x = x.replace('mca-2los-mc.txt','mca-2los-mc-frdata.txt')
-                if(dowhat != "limits"):x = x.replace('mcc-sf1.txt','mcc-sf-lowmet.txt')
+                if(dowhat != "limits"):x = x.replace('mcc-sf1.txt','mcc-sf-lowmet.txt') 
             if '_appl' in torun:
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt')
                 x = add(x,"-I ^TT ")
             if '_unblind' in torun:
                 if(dowhat != "limits"):x = add(x,"--noStackSig --showIndivSigs --showRatio --maxRatioRange -2 5 --showMCError") 
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt')  
-                if(dowhat != "limits"):x = x.replace('mcc-sf1.txt','mcc-sf-lowmet.txt')
+                if(dowhat != "limits"):x = x.replace('mcc-sf1.txt','mcc-sf-lowmet.txt') 
             if dowhat == "limits":
                 runIt(x,torun,["LepGood1_pt"],["'[5,12,20,30]'"])
             else:
@@ -260,9 +260,9 @@ if __name__ == '__main__':
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt')
                 x = add(x,"-I ^TT ")   
             if '_unblind' in torun:
-                if(dowhat != "limits"):x = add(x,"--noStackSig --showIndivSigs --maxRatioRange -2 5 --showMCError") 
+                if(dowhat != "limits"):x = add(x,"--noStackSig --showIndivSigs --showRatio --maxRatioRange -2 5 --showMCError") 
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt')  
-                if(dowhat != "limits"):x = x.replace('mcc-sf1.txt','mcc-sf-highmet.txt')
+                if(dowhat != "limits"):x = x.replace('mcc-sf1.txt','mcc-sf-highmet.txt') 
             if dowhat == "limits":
                 runIt(x,torun,["LepGood1_pt"],["'[5,12,20,30]'"])
             else:
@@ -280,7 +280,7 @@ if __name__ == '__main__':
                     x = x.replace('mca-2los-mc.txt','mca-2los-mc-syst-dy.txt')
             if '_ddbkg' in torun: 
                 x = x.replace('mca-2los-mc.txt','mca-2los-mc-frdata.txt')
-                if(dowhat != "limits"):x = x.replace('mcc-sf1.txt','mcc-sf-lowmet.txt')
+                if(dowhat != "limits"):x = x.replace('mcc-sf1.txt','mcc-sf-lowmet.txt') 
             if '_appl' in torun:
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt')
                 x = add(x,"-I ^TT ")
@@ -324,14 +324,52 @@ if __name__ == '__main__':
         if '_data' in torun: 
             x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt')
             x = add(x,"--showRatio --maxRatioRange -2 5 ") #--showMCError 
-        if '_met200' in torun:             
-            x = add(x,"-E ^highMET -X ^triggerAll -E ^triggerMET -I ^TT -E ^SF -E ^pt5sublep -E ^MT") 
+        if '_met200_ewk_all' in torun:             
+            x = add(x,"-E ^highMET -X ^triggerAll -E ^triggerMET -I ^TT -E ^pt5sublep -E ^SF -E ^MT") 
             x = x.replace('-l 12.9','-l 12.9')
-        if '_met125' in torun: 
+        if '_met125_ewk_all' in torun: 
             x = x.replace('puw2016_vtx_4fb(nVert)', 'puw2016_vtx_postTS_1p4fb(nVert)' )
             x = add(x,"-E ^mm -E ^upperMET -E ^runRange -X ^triggerAll -E ^triggerDoubleMuMET -I ^TT -E ^pt5sublep -E ^MT") 
             x = x.replace('-l 12.9','-l 10.1')  
+        if '_met200_stop_all' in torun:             
+            x = add(x,"-E ^highMET -X ^triggerAll -E ^triggerMET -I ^TT") 
+            x = x.replace('-l 12.9','-l 12.9')
+        if '_met125_stop_all' in torun: 
+            x = x.replace('puw2016_vtx_4fb(nVert)', 'puw2016_vtx_postTS_1p4fb(nVert)' )
+            x = add(x,"-E ^mm -E ^upperMET -E ^runRange -X ^triggerAll -E ^triggerDoubleMuMET -I ^TT -E ^pt5sublep") 
+            x = x.replace('-l 12.9','-l 10.1')  
+        if '_met200_ewk_1T1F' in torun:             
+            x = add(x,"-E ^highMET -X ^triggerAll -E ^triggerMET -E ^pt5sublep -E ^SF -E ^MT -X ^TT -E ^TnotT") 
+            x = x.replace('-l 12.9','-l 12.9')
+        if '_met125_ewk_1T1F' in torun: 
+            x = x.replace('puw2016_vtx_4fb(nVert)', 'puw2016_vtx_postTS_1p4fb(nVert)' )
+            x = add(x,"-E ^mm -E ^upperMET -E ^runRange -X ^triggerAll -E ^triggerDoubleMuMET -E ^pt5sublep -E ^MT -X ^TT -E ^TnotT") 
+            x = x.replace('-l 12.9','-l 10.1')  
+        if '_met200_stop_1T1F' in torun:             
+            x = add(x,"-E ^highMET -X ^triggerAll -E ^triggerMET -X ^TT -E ^TnotT")  
+            x = x.replace('-l 12.9','-l 12.9')
+        if '_met125_stop_1T1F' in torun: 
+            x = x.replace('puw2016_vtx_4fb(nVert)', 'puw2016_vtx_postTS_1p4fb(nVert)' )
+            x = add(x,"-E ^mm -E ^upperMET -E ^runRange -X ^triggerAll -E ^triggerDoubleMuMET -E ^pt5sublep -X ^TT -E ^TnotT") 
+            x = x.replace('-l 12.9','-l 10.1')
+        if '_met200_ewk_1F1F' in torun:             
+            x = add(x,"-E ^highMET -X ^triggerAll -E ^triggerMET -E ^pt5sublep -E ^SF -E ^MT -X ^TT -E ^notTnotT") 
+            x = x.replace('-l 12.9','-l 12.9')
+        if '_met125_ewk_1F1F' in torun: 
+            x = x.replace('puw2016_vtx_4fb(nVert)', 'puw2016_vtx_postTS_1p4fb(nVert)' )
+            x = add(x,"-E ^mm -E ^upperMET -E ^runRange -X ^triggerAll -E ^triggerDoubleMuMET -E ^pt5sublep -E ^MT -X ^TT -E ^notTnotT") 
+            x = x.replace('-l 12.9','-l 10.1')  
+        if '_met200_stop_1F1F' in torun:             
+            x = add(x,"-E ^highMET -X ^triggerAll -E ^triggerMET -X ^TT -E ^notTnotT")  
+            x = x.replace('-l 12.9','-l 12.9')
+        if '_met125_stop_1F1F' in torun: 
+            x = x.replace('puw2016_vtx_4fb(nVert)', 'puw2016_vtx_postTS_1p4fb(nVert)' )
+            x = add(x,"-E ^mm -E ^upperMET -E ^runRange -X ^triggerAll -E ^triggerDoubleMuMET -E ^pt5sublep -X ^TT -E ^notTnotT") 
+            x = x.replace('-l 12.9','-l 10.1')         
         runIt(x,'%s/all'%torun,[],['SR_bins_EWKino','SR_bins_stop'])
+
+
+
 
 
         
