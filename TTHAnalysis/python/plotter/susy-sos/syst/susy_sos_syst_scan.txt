@@ -11,14 +11,14 @@ CMS_sos_triggerEff    : DYJets|TT|VV|TW|sig_.*: .* : 1.05
 # JES (add signal)
 CMS_sos_JES	      : DYJets|TT|VV|TW|sig_.* : .* : jec : templates 
 
-CMS_btag_SF_LF                : DYJets|TT|VV|TW|sig_.* : .* : bTag_LF : templates
-CMS_btag_SF_LFStats1          : DYJets|TT|VV|TW|sig_.* : .* : bTag_LFStats1 : templates
-CMS_btag_SF_LFStats2          : DYJets|TT|VV|TW|sig_.* : .* : bTag_LFStats2 : templates
-CMS_btag_SF_HF                : DYJets|TT|VV|TW|sig_.* : .* : bTag_HF : templates
-CMS_btag_SF_HFStats1          : DYJets|TT|VV|TW|sig_.* : .* : bTag_HFStats1 : templates
-CMS_btag_SF_HFStats2          : DYJets|TT|VV|TW|sig_.* : .* : bTag_HFStats2 : templates
-CMS_btag_SF_cErr1             : DYJets|TT|VV|TW|sig_.* : .* : bTag_cErr1 : templates
-CMS_btag_SF_cErr2             : DYJets|TT|VV|TW|sig_.* : .* : bTag_cErr2 : templates
+CMS_btag_SF_LF                : DYJets|TT|VV|TW : .* : bTag_LF : templates
+CMS_btag_SF_LFStats1          : DYJets|TT|VV|TW : .* : bTag_LFStats1 : templates
+CMS_btag_SF_LFStats2          : DYJets|TT|VV|TW : .* : bTag_LFStats2 : templates
+CMS_btag_SF_HF                : DYJets|TT|VV|TW : .* : bTag_HF : templates
+CMS_btag_SF_HFStats1          : DYJets|TT|VV|TW : .* : bTag_HFStats1 : templates
+CMS_btag_SF_HFStats2          : DYJets|TT|VV|TW : .* : bTag_HFStats2 : templates
+CMS_btag_SF_cErr1             : DYJets|TT|VV|TW : .* : bTag_cErr1 : templates
+CMS_btag_SF_cErr2             : DYJets|TT|VV|TW : .* : bTag_cErr2 : templates
 
 CMS_lepton_SF	      : DYJets|TT|VV|TW|sig_.* : .* : lepSF : templates
 
@@ -50,6 +50,7 @@ CMS_sos_templstat5      : TW  : .* : 1.0 : stat_foreach_shape_bins : .*
 # FastSim only uncertainties
 
 LepSF_FastSim           : sig_.* : .* : 1.04
+CMS_btag_SF_FastSim     : sig_.* : .* : bTag_SF_FastSim : templates
 CMS_sos_met_FastSim     : sig_.* : .* : met : templates
 
 # Other signal uncertainties
