@@ -380,17 +380,17 @@ if __name__ == '__main__':
 
 
 
-   ### SS Stop-like Control Regio (HighMET)
+   ### SS Stop-like Control Regio (high MET)
 
     if '2los_CR_SS' in torun: 
         x = base('2los')
+        x = add(x,"-E ^highMET -X ^triggerAll -E ^triggerMET -X ^opposite-sign -E ^same-sign")
         if(dowhat != "limits"): x = add(x,"--noStackSig --showIndivSigs --xp TChiNeuWZ_95")
         elif '_ewk20'in torun : x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_90,T2ttDeg_300,T2ttDeg_315,T2ttDeg_330")
         elif '_ewk10'in torun : x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_315,T2ttDeg_330")
         elif '_stop20'in torun : x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_90,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_315")
         elif '_stop35'in torun : x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_90,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_330")
         else: print "NO SIGNAL specified!"
-
         if '_syst' in torun: 
             x = add(x,"--plotmode nostack -F sf/t /data1/botta/trees_SOS_80X_170616/SOS13TeV_Friends/evVarFriend_{cname}.root")
             if '_TT' in torun:
@@ -405,8 +405,8 @@ if __name__ == '__main__':
             x = add(x,"-I ^TT ")   
         if '_unblind' in torun:
             if(dowhat != "limits"):x = add(x,"--noStackSig --showIndivSigs --showRatio --maxRatioRange -2 5 --showMCError") 
-            x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt')  
             if(dowhat != "limits"):x = x.replace('mcc-sf1.txt','mcc-sf-highmet.txt') 
+            x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt')  
         if dowhat == "limits":
             runIt(x,torun,["LepGood1_pt"],["'[5,12,20,30]'"])
         else:
