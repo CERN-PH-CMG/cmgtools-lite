@@ -7,16 +7,6 @@ T2ttDeg_315+: T2ttDeg_mStop350_mChi315_4bodydec_lepOnly : xsec : LepGood1_mcMatc
 T2ttDeg_300+: T2ttDeg_mStop350_mChi300_4bodydec_lepOnly : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ;FillColor=ROOT.kRed-10,   Label="T2tt(50)", FakeRate="susy-sos/mca-2los-noMuonsFilters.txt" , NormSystematic=0.2
 
 
-
-# # ---- SUSY private signal:
-#TChiNeuWZ_80+: TChiNeuWZ_mCh100_mChi80 : xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ;FillColor=ROOT.kOrange+8,   Label="CNWZ(20)", FakeRate="susy-sos/mca-2los-noMuonsFilters.txt\,susy-sos/fr-noBtagSF.txt", NormSystematic=0.2
-#TChiNeuWZ_90+: TChiNeuWZ_mCh100_mChi90 : xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ;FillColor=ROOT.kRed+1,   Label="CNWZ(10)", FakeRate="susy-sos/mca-2los-noMuonsFilters.txt\,susy-sos/fr-noBtagSF.txt", NormSystematic=0.2
-#TChiNeuWZ_95+: TChiNeuWZ_mCh100_mChi95 : xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ;FillColor=ROOT.kOrange+6,   Label="CNWZ(5)", FakeRate="susy-sos/mca-2los-noMuonsFilters.txt\,susy-sos/fr-noBtagSF.txt" , NormSystematic=0.2
-#T2ttDeg_330+: T2ttDeg_mStop350_mChi330_4bodydec_lepOnly : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ;FillColor=ROOT.kOrange,   Label="T2tt(20)", FakeRate="susy-sos/mca-2los-noMuonsFilters.txt\,susy-sos/fr-noBtagSF.txt", #NormSystematic=0.2 
-#T2ttDeg_315+: T2ttDeg_mStop350_mChi315_4bodydec_lepOnly : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ;FillColor=ROOT.kRed-7,   Label="T2tt(35)", FakeRate="susy-sos/mca-2los-noMuonsFilters.txt\,susy-sos/fr-noBtagSF.txt" , NormSystematic=0.2
-#T2ttDeg_300+: T2ttDeg_mStop350_mChi300_4bodydec_lepOnly : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ;FillColor=ROOT.kRed-10,   Label="T2tt(50)", FakeRate="susy-sos/mca-2los-noMuonsFilters.txt\,susy-sos/fr-noBtagSF.txt" , NormSystematic=0.2
-
-
 # ---- TTbar 
 TT		: TTJets_DiLepton: xsec:ScaleFactorTT*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); FillColor=ROOT.kBlue-7, Label="tt(2l)", NormSystematic=0.1
 
@@ -39,7 +29,7 @@ DYJets     : DYJetsToLL_M5to50_HT100to200 :  xsec: ScaleFactorDY*(LepGood1_mcMat
 #DYJets     : DYJetsToLL_M5to50_HT100to200_ext :  xsec: ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); Label="DY", FillColor=ROOT.kCyan, NormSystematic=0.3
 #DYJets     : DYJetsToLL_M5to50_HT200to400 :  xsec: ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); Label="DY", FillColor=ROOT.kCyan, NormSystematic=0.3
 DYJets     : DYJetsToLL_M5to50_HT200to400_ext :  xsec: ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); Label="DY", FillColor=ROOT.kCyan, NormSystematic=0.3
-DYJets     : DYJetsToLL_M5to50_HT400to600 :  xsec: (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); Label="DY", FillColor=ROOT.kCyan, NormSystematic=0.3
+DYJets     : DYJetsToLL_M5to50_HT400to600 :  xsec: ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); Label="DY", FillColor=ROOT.kCyan, NormSystematic=0.3
 #DYJets     : DYJetsToLL_M5to50_HT400to600_ext :  xsec: ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); Label="DY", FillColor=ROOT.kCyan, NormSystematic=0.3
 DYJets     : DYJetsToLL_M5to50_HT600toInf :  xsec: ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); Label="DY", FillColor=ROOT.kCyan, NormSystematic=0.3
 
@@ -88,7 +78,6 @@ TW       : TBar_tWch :  xsec: (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0);L
 #fakes_data: MET_Run2016B_PromptReco_v2_runs_273150_276811 ; FakeRate="susy-sos/fakeRate-2los-frdata-qcd-prdata.txt", Label="Fakes", FillColor=ROOT.kBlack, FillStyle=3005, NormSystematic=0.3
 #fakes_data: MET_Run2016C_PromptReco_v2_runs_273150_276811 ; FakeRate="susy-sos/fakeRate-2los-frdata-qcd-prdata.txt", Label="Fakes", FillColor=ROOT.kBlack, FillStyle=3005, NormSystematic=0.3
 #fakes_data: MET_Run2016D_PromptReco_v2_runs_273150_276811 ; FakeRate="susy-sos/fakeRate-2los-frdata-qcd-prdata.txt", Label="Fakes", FillColor=ROOT.kBlack, FillStyle=3005, NormSystematic=0.3
-# ---------------
 fakes_mc    : WJetsToLNu_LO :  xsec: (LepGood1_mcMatchId==0 ||LepGood2_mcMatchId==0) && lheHT<=100; Label="W(fakes)", FillColor=ROOT.kCyan+2, FakeRate="susy-sos/mca-2los-noMuonsFilters.txt"
 fakes_mc    : WJetsToLNu_HT100to200+WJetsToLNu_HT100to200_ext : xsec: (LepGood1_mcMatchId==0 ||LepGood2_mcMatchId==0); Label="W(fakes)"
 fakes_mc    : WJetsToLNu_HT200to400+WJetsToLNu_HT200to400_ext :  xsec: (LepGood1_mcMatchId==0 ||LepGood2_mcMatchId==0); Label="W(fakes)"
@@ -108,7 +97,6 @@ fakes_mc     : WZTo1L3Nu: xsec: (LepGood1_mcMatchId==0 ||LepGood2_mcMatchId==0);
 fakes_mc     : WZTo1L1Nu2Q: xsec: (LepGood1_mcMatchId==0 ||LepGood2_mcMatchId==0);  Label="VV(fakes)", FillColor=ROOT.kAzure-8
 fakes_mc     : WWTo2L2Nu: xsec: (LepGood1_mcMatchId==0 ||LepGood2_mcMatchId==0);  Label="VV(fakes)", FillColor=ROOT.kAzure-8	
 fakes_mc     : WWToLNuQQ: xsec: (LepGood1_mcMatchId==0 ||LepGood2_mcMatchId==0);  Label="VV(fakes)", FillColor=ROOT.kAzure-8	
-
 
 
 ##### Additional: negligible contribution
@@ -138,7 +126,9 @@ data: MET_Run2016C_PromptReco_v2_runs_273150_276811
 data: MET_Run2016D_PromptReco_v2_runs_273150_276811
 
 
+
 ####################### Variations for systematics ##################################
+
 
 
 ### Systematics TTCR
@@ -272,7 +262,7 @@ TW_bTag_LF_Up       : TBar_tWch :  xsec: (eventBTagSF_up_lf/eventBTagSF)*(LepGoo
 
 
 TT_bTag_LF_Dn	  : TTJets_DiLepton: xsec: (eventBTagSF_down_lf/eventBTagSF)*ScaleFactorTT*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); SkipMe=True
-DYJets_bTag_LF_Dn    : DYJetsToLL_M5to50_LO: xsec : (eventBTagSF_down_lf/eventBTagSF)*ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && lheHT<=100); SkipMe=True 
+DDYJets_bTag_LF_Dn    : DYJetsToLL_M5to50_LO: xsec : (eventBTagSF_down_lf/eventBTagSF)*ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && lheHT<=100); SkipMe=True 
 DYJets_bTag_LF_Dn    : DYJetsToLL_M50_LO   : xsec : (eventBTagSF_down_lf/eventBTagSF)*ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && lheHT<=100); SkipMe=True 
 #DYJets_bTag_LF_Dn    : DYJetsToLL_M50_HT100to200 :  xsec: (eventBTagSF_down_lf/eventBTagSF)*ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); SkipMe=True 
 DYJets_bTag_LF_Dn    : DYJetsToLL_M50_HT100to200_ext :  xsec: (eventBTagSF_down_lf/eventBTagSF)*ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); SkipMe=True 
@@ -303,7 +293,7 @@ TW_bTag_LF_Dn       : TBar_tWch :  xsec: (eventBTagSF_down_lf/eventBTagSF)*(LepG
 
 
 TT_bTag_HF_Up	  : TTJets_DiLepton: xsec: (eventBTagSF_up_hf/eventBTagSF)*ScaleFactorTT*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); SkipMe=True
-DYJets_bTag_HF_Up    : DYJetsToLL_M5to50_LO: xsec : (eventBTagSF_up_hf/eventBTagSF)*ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && lheHT<=100); SkipMe=True 
+DDYJets_bTag_HF_Up    : DYJetsToLL_M5to50_LO: xsec : (eventBTagSF_up_hf/eventBTagSF)*ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && lheHT<=100); SkipMe=True 
 DYJets_bTag_HF_Up    : DYJetsToLL_M50_LO   : xsec : (eventBTagSF_up_hf/eventBTagSF)*ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && lheHT<=100); SkipMe=True 
 #DYJets_bTag_HF_Up    : DYJetsToLL_M50_HT100to200 :  xsec: (eventBTagSF_up_hf/eventBTagSF)*ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); SkipMe=True 
 DYJets_bTag_HF_Up    : DYJetsToLL_M50_HT100to200_ext :  xsec: (eventBTagSF_up_hf/eventBTagSF)*ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); SkipMe=True 
@@ -335,7 +325,7 @@ TW_bTag_HF_Up       : TBar_tWch :  xsec: (eventBTagSF_up_hf/eventBTagSF)*(LepGoo
 
 
 TT_bTag_HF_Dn	  : TTJets_DiLepton: xsec: (eventBTagSF_down_hf/eventBTagSF)*ScaleFactorTT*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); SkipMe=True
-DYJets_bTag_HF_Dn    : DYJetsToLL_M5to50_LO: xsec : (eventBTagSF_down_hf/eventBTagSF)*ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && lheHT<=100); SkipMe=True 
+DDYJets_bTag_HF_Dn    : DYJetsToLL_M5to50_LO: xsec : (eventBTagSF_down_hf/eventBTagSF)*ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && lheHT<=100); SkipMe=True 
 DYJets_bTag_HF_Dn    : DYJetsToLL_M50_LO   : xsec : (eventBTagSF_down_hf/eventBTagSF)*ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && lheHT<=100); SkipMe=True 
 #DYJets_bTag_HF_Dn    : DYJetsToLL_M50_HT100to200 :  xsec: (eventBTagSF_down_hf/eventBTagSF)*ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); SkipMe=True 
 DYJets_bTag_HF_Dn    : DYJetsToLL_M50_HT100to200_ext :  xsec: (eventBTagSF_down_hf/eventBTagSF)*ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); SkipMe=True 
@@ -369,7 +359,7 @@ TW_bTag_HF_Dn       : TBar_tWch :  xsec: (eventBTagSF_down_hf/eventBTagSF)*(LepG
 
 
 TT_bTag_HFStats1_Up	  : TTJets_DiLepton: xsec: (eventBTagSF_up_hfstats1/eventBTagSF)*ScaleFactorTT*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); SkipMe=True
-DYJets_bTag_HFStats1_Up    : DYJetsToLL_M5to50_LO: xsec : (eventBTagSF_up_hfstats1/eventBTagSF)*ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && lheHT<=100); SkipMe=True 
+DDYJets_bTag_HFStats1_Up    : DYJetsToLL_M5to50_LO: xsec : (eventBTagSF_up_hfstats1/eventBTagSF)*ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && lheHT<=100); SkipMe=True 
 DYJets_bTag_HFStats1_Up    : DYJetsToLL_M50_LO   : xsec : (eventBTagSF_up_hfstats1/eventBTagSF)*ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && lheHT<=100); SkipMe=True 
 #DYJets_bTag_HFStats1_Up    : DYJetsToLL_M50_HT100to200 :  xsec: (eventBTagSF_up_hfstats1/eventBTagSF)*ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); SkipMe=True 
 DYJets_bTag_HFStats1_Up    : DYJetsToLL_M50_HT100to200_ext :  xsec: (eventBTagSF_up_hfstats1/eventBTagSF)*ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); SkipMe=True 
@@ -401,7 +391,7 @@ TW_bTag_HFStats1_Up       : TBar_tWch :  xsec: (eventBTagSF_up_hfstats1/eventBTa
 
 
 TT_bTag_HFStats1_Dn	  : TTJets_DiLepton: xsec: (eventBTagSF_down_hfstats1/eventBTagSF)*ScaleFactorTT*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); SkipMe=True
-DYJets_bTag_HFStats1_Dn    : DYJetsToLL_M5to50_LO: xsec : (eventBTagSF_down_hfstats1/eventBTagSF)*ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && lheHT<=100); SkipMe=True 
+DDYJets_bTag_HFStats1_Dn    : DYJetsToLL_M5to50_LO: xsec : (eventBTagSF_down_hfstats1/eventBTagSF)*ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && lheHT<=100); SkipMe=True 
 DYJets_bTag_HFStats1_Dn    : DYJetsToLL_M50_LO   : xsec : (eventBTagSF_down_hfstats1/eventBTagSF)*ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && lheHT<=100); SkipMe=True 
 #DYJets_bTag_HFStats1_Dn    : DYJetsToLL_M50_HT100to200 :  xsec: (eventBTagSF_down_hfstats1/eventBTagSF)*ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); SkipMe=True 
 DYJets_bTag_HFStats1_Dn    : DYJetsToLL_M50_HT100to200_ext :  xsec: (eventBTagSF_down_hfstats1/eventBTagSF)*ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); SkipMe=True 
@@ -434,7 +424,7 @@ TW_bTag_HFStats1_Dn       : TBar_tWch :  xsec: (eventBTagSF_down_hfstats1/eventB
 
 
 TT_bTag_HFStats2_Up	  : TTJets_DiLepton: xsec: (eventBTagSF_up_hfstats2/eventBTagSF)*ScaleFactorTT*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); SkipMe=True
-DYJets_bTag_HFStats2_Up    : DYJetsToLL_M5to50_LO: xsec : (eventBTagSF_up_hfstats2/eventBTagSF)*ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && lheHT<=100); SkipMe=True 
+DDYJets_bTag_HFStats2_Up    : DYJetsToLL_M5to50_LO: xsec : (eventBTagSF_up_hfstats2/eventBTagSF)*ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && lheHT<=100); SkipMe=True 
 DYJets_bTag_HFStats2_Up    : DYJetsToLL_M50_LO   : xsec : (eventBTagSF_up_hfstats2/eventBTagSF)*ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && lheHT<=100); SkipMe=True 
 #DYJets_bTag_HFStats2_Up    : DYJetsToLL_M50_HT100to200 :  xsec: (eventBTagSF_up_hfstats2/eventBTagSF)*ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); SkipMe=True 
 DYJets_bTag_HFStats2_Up    : DYJetsToLL_M50_HT100to200_ext :  xsec: (eventBTagSF_up_hfstats2/eventBTagSF)*ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); SkipMe=True 
@@ -466,7 +456,7 @@ TW_bTag_HFStats2_Up       : TBar_tWch :  xsec: (eventBTagSF_up_hfstats2/eventBTa
 
 
 TT_bTag_HFStats2_Dn	  : TTJets_DiLepton: xsec: (eventBTagSF_down_hfstats2/eventBTagSF)*ScaleFactorTT*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); SkipMe=True
-DYJets_bTag_HFStats2_Dn    : DYJetsToLL_M5to50_LO: xsec : (eventBTagSF_down_hfstats2/eventBTagSF)*ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && lheHT<=100); SkipMe=True 
+DDYJets_bTag_HFStats2_Dn    : DYJetsToLL_M5to50_LO: xsec : (eventBTagSF_down_hfstats2/eventBTagSF)*ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && lheHT<=100); SkipMe=True 
 DYJets_bTag_HFStats2_Dn    : DYJetsToLL_M50_LO   : xsec : (eventBTagSF_down_hfstats2/eventBTagSF)*ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && lheHT<=100); SkipMe=True 
 #DYJets_bTag_HFStats2_Dn    : DYJetsToLL_M50_HT100to200 :  xsec: (eventBTagSF_down_hfstats2/eventBTagSF)*ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); SkipMe=True 
 DYJets_bTag_HFStats2_Dn    : DYJetsToLL_M50_HT100to200_ext :  xsec: (eventBTagSF_down_hfstats2/eventBTagSF)*ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); SkipMe=True 
@@ -499,7 +489,7 @@ TW_bTag_HFStats2_Dn       : TBar_tWch :  xsec: (eventBTagSF_down_hfstats2/eventB
 
 
 TT_bTag_LFStats1_Up	  : TTJets_DiLepton: xsec: (eventBTagSF_up_lfstats1/eventBTagSF)*ScaleFactorTT*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); SkipMe=True
-DYJets_bTag_LFStats1_Up    : DYJetsToLL_M5to50_LO: xsec : (eventBTagSF_up_lfstats1/eventBTagSF)*ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && lheHT<=100); SkipMe=True 
+DDYJets_bTag_LFStats1_Up    : DYJetsToLL_M5to50_LO: xsec : (eventBTagSF_up_lfstats1/eventBTagSF)*ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && lheHT<=100); SkipMe=True 
 DYJets_bTag_LFStats1_Up    : DYJetsToLL_M50_LO   : xsec : (eventBTagSF_up_lfstats1/eventBTagSF)*ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && lheHT<=100); SkipMe=True 
 #DYJets_bTag_LFStats1_Up    : DYJetsToLL_M50_HT100to200 :  xsec: (eventBTagSF_up_lfstats1/eventBTagSF)*ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); SkipMe=True 
 DYJets_bTag_LFStats1_Up    : DYJetsToLL_M50_HT100to200_ext :  xsec: (eventBTagSF_up_lfstats1/eventBTagSF)*ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); SkipMe=True 
@@ -531,7 +521,7 @@ TW_bTag_LFStats1_Up       : TBar_tWch :  xsec: (eventBTagSF_up_lfstats1/eventBTa
 
 
 TT_bTag_LFStats1_Dn	  : TTJets_DiLepton: xsec: (eventBTagSF_down_lfstats1/eventBTagSF)*ScaleFactorTT*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); SkipMe=True
-DYJets_bTag_LFStats1_Dn    : DYJetsToLL_M5to50_LO: xsec : (eventBTagSF_down_lfstats1/eventBTagSF)*ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && lheHT<=100); SkipMe=True 
+DDYJets_bTag_LFStats1_Dn    : DYJetsToLL_M5to50_LO: xsec : (eventBTagSF_down_lfstats1/eventBTagSF)*ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && lheHT<=100); SkipMe=True 
 DYJets_bTag_LFStats1_Dn    : DYJetsToLL_M50_LO   : xsec : (eventBTagSF_down_lfstats1/eventBTagSF)*ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && lheHT<=100); SkipMe=True 
 #DYJets_bTag_LFStats1_Dn    : DYJetsToLL_M50_HT100to200 :  xsec: (eventBTagSF_down_lfstats1/eventBTagSF)*ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); SkipMe=True 
 DYJets_bTag_LFStats1_Dn    : DYJetsToLL_M50_HT100to200_ext :  xsec: (eventBTagSF_down_lfstats1/eventBTagSF)*ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); SkipMe=True 
@@ -564,7 +554,7 @@ TW_bTag_LFStats1_Dn       : TBar_tWch :  xsec: (eventBTagSF_down_lfstats1/eventB
 
 
 TT_bTag_LFStats2_Up	  : TTJets_DiLepton: xsec: (eventBTagSF_up_lfstats2/eventBTagSF)*ScaleFactorTT*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); SkipMe=True
-DYJets_bTag_LFStats2_Up    : DYJetsToLL_M5to50_LO: xsec : (eventBTagSF_up_lfstats2/eventBTagSF)*ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && lheHT<=100); SkipMe=True 
+DDYJets_bTag_LFStats2_Up    : DYJetsToLL_M5to50_LO: xsec : (eventBTagSF_up_lfstats2/eventBTagSF)*ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && lheHT<=100); SkipMe=True 
 DYJets_bTag_LFStats2_Up    : DYJetsToLL_M50_LO   : xsec : (eventBTagSF_up_lfstats2/eventBTagSF)*ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && lheHT<=100); SkipMe=True 
 #DYJets_bTag_LFStats2_Up    : DYJetsToLL_M50_HT100to200 :  xsec: (eventBTagSF_up_lfstats2/eventBTagSF)*ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); SkipMe=True 
 DYJets_bTag_LFStats2_Up    : DYJetsToLL_M50_HT100to200_ext :  xsec: (eventBTagSF_up_lfstats2/eventBTagSF)*ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); SkipMe=True 
@@ -596,7 +586,7 @@ TW_bTag_LFStats2_Up       : TBar_tWch :  xsec: (eventBTagSF_up_lfstats2/eventBTa
 
 
 TT_bTag_LFStats2_Dn	  : TTJets_DiLepton: xsec: (eventBTagSF_down_lfstats2/eventBTagSF)*ScaleFactorTT*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); SkipMe=True
-DYJets_bTag_LFStats2_Dn    : DYJetsToLL_M5to50_LO: xsec : (eventBTagSF_down_lfstats2/eventBTagSF)*ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && lheHT<=100); SkipMe=True 
+DDYJets_bTag_LFStats2_Dn    : DYJetsToLL_M5to50_LO: xsec : (eventBTagSF_down_lfstats2/eventBTagSF)*ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && lheHT<=100); SkipMe=True 
 DYJets_bTag_LFStats2_Dn    : DYJetsToLL_M50_LO   : xsec : (eventBTagSF_down_lfstats2/eventBTagSF)*ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && lheHT<=100); SkipMe=True 
 #DYJets_bTag_LFStats2_Dn    : DYJetsToLL_M50_HT100to200 :  xsec: (eventBTagSF_down_lfstats2/eventBTagSF)*ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); SkipMe=True 
 DYJets_bTag_LFStats2_Dn    : DYJetsToLL_M50_HT100to200_ext :  xsec: (eventBTagSF_down_lfstats2/eventBTagSF)*ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); SkipMe=True 
@@ -630,7 +620,7 @@ TW_bTag_LFStats2_Dn       : TBar_tWch :  xsec: (eventBTagSF_down_lfstats2/eventB
 
 
 TT_bTag_cErr1_Up	  : TTJets_DiLepton: xsec: (eventBTagSF_up_cferr1/eventBTagSF)*ScaleFactorTT*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); SkipMe=True
-DYJets_bTag_cErr1_Up    : DYJetsToLL_M5to50_LO: xsec : (eventBTagSF_up_cferr1/eventBTagSF)*ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && lheHT<=100); SkipMe=True 
+DDYJets_bTag_cErr1_Up    : DYJetsToLL_M5to50_LO: xsec : (eventBTagSF_up_cferr1/eventBTagSF)*ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && lheHT<=100); SkipMe=True 
 DYJets_bTag_cErr1_Up    : DYJetsToLL_M50_LO   : xsec : (eventBTagSF_up_cferr1/eventBTagSF)*ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && lheHT<=100); SkipMe=True 
 #DYJets_bTag_cErr1_Up    : DYJetsToLL_M50_HT100to200 :  xsec: (eventBTagSF_up_cferr1/eventBTagSF)*ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); SkipMe=True 
 DYJets_bTag_cErr1_Up    : DYJetsToLL_M50_HT100to200_ext :  xsec: (eventBTagSF_up_cferr1/eventBTagSF)*ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); SkipMe=True 
@@ -662,7 +652,7 @@ TW_bTag_cErr1_Up       : TBar_tWch :  xsec: (eventBTagSF_up_cferr1/eventBTagSF)*
 
 
 TT_bTag_cErr1_Dn	  : TTJets_DiLepton: xsec: (eventBTagSF_down_cferr1/eventBTagSF)*ScaleFactorTT*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); SkipMe=True
-DYJets_bTag_cErr1_Dn    : DYJetsToLL_M5to50_LO: xsec : (eventBTagSF_down_cferr1/eventBTagSF)*ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && lheHT<=100); SkipMe=True 
+DDYJets_bTag_cErr1_Dn    : DYJetsToLL_M5to50_LO: xsec : (eventBTagSF_down_cferr1/eventBTagSF)*ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && lheHT<=100); SkipMe=True 
 DYJets_bTag_cErr1_Dn    : DYJetsToLL_M50_LO   : xsec : (eventBTagSF_down_cferr1/eventBTagSF)*ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && lheHT<=100); SkipMe=True 
 #DYJets_bTag_cErr1_Dn    : DYJetsToLL_M50_HT100to200 :  xsec: (eventBTagSF_down_cferr1/eventBTagSF)*ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); SkipMe=True 
 DYJets_bTag_cErr1_Dn    : DYJetsToLL_M50_HT100to200_ext :  xsec: (eventBTagSF_down_cferr1/eventBTagSF)*ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); SkipMe=True 
@@ -695,7 +685,7 @@ TW_bTag_cErr1_Dn       : TBar_tWch :  xsec: (eventBTagSF_down_cferr1/eventBTagSF
 
 
 TT_bTag_cErr2_Up	  : TTJets_DiLepton: xsec: (eventBTagSF_up_cferr2/eventBTagSF)*ScaleFactorTT*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); SkipMe=True
-DYJets_bTag_cErr2_Up    : DYJetsToLL_M5to50_LO: xsec : (eventBTagSF_up_cferr2/eventBTagSF)*ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && lheHT<=100); SkipMe=True 
+DDYJets_bTag_cErr2_Up    : DYJetsToLL_M5to50_LO: xsec : (eventBTagSF_up_cferr2/eventBTagSF)*ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && lheHT<=100); SkipMe=True 
 DYJets_bTag_cErr2_Up    : DYJetsToLL_M50_LO   : xsec : (eventBTagSF_up_cferr2/eventBTagSF)*ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && lheHT<=100); SkipMe=True 
 #DYJets_bTag_cErr2_Up    : DYJetsToLL_M50_HT100to200 :  xsec: (eventBTagSF_up_cferr2/eventBTagSF)*ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); SkipMe=True 
 DYJets_bTag_cErr2_Up    : DYJetsToLL_M50_HT100to200_ext :  xsec: (eventBTagSF_up_cferr2/eventBTagSF)*ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); SkipMe=True 
@@ -727,7 +717,7 @@ TW_bTag_cErr2_Up       : TBar_tWch :  xsec: (eventBTagSF_up_cferr2/eventBTagSF)*
 
 
 TT_bTag_cErr2_Dn	  : TTJets_DiLepton: xsec: (eventBTagSF_down_cferr2/eventBTagSF)*ScaleFactorTT*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); SkipMe=True
-DYJets_bTag_cErr2_Dn    : DYJetsToLL_M5to50_LO: xsec : (eventBTagSF_down_cferr2/eventBTagSF)*ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && lheHT<=100); SkipMe=True 
+DDYJets_bTag_cErr2_Dn    : DYJetsToLL_M5to50_LO: xsec : (eventBTagSF_down_cferr2/eventBTagSF)*ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && lheHT<=100); SkipMe=True 
 DYJets_bTag_cErr2_Dn    : DYJetsToLL_M50_LO   : xsec : (eventBTagSF_down_cferr2/eventBTagSF)*ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && lheHT<=100); SkipMe=True 
 #DYJets_bTag_cErr2_Dn    : DYJetsToLL_M50_HT100to200 :  xsec: (eventBTagSF_down_cferr2/eventBTagSF)*ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); SkipMe=True 
 DYJets_bTag_cErr2_Dn    : DYJetsToLL_M50_HT100to200_ext :  xsec: (eventBTagSF_down_cferr2/eventBTagSF)*ScaleFactorDY*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0); SkipMe=True 
@@ -820,7 +810,6 @@ VV_lepSF_Dn    : ZZTo2L2Q: xsec: ((leptonSF_SOS(LepGood1_pdgId,LepGood1_pt,LepGo
 VV_lepSF_Dn    : ZZTo4L: xsec: ((leptonSF_SOS(LepGood1_pdgId,LepGood1_pt,LepGood1_eta,-1)*leptonSF_SOS(LepGood2_pdgId,LepGood2_pt,LepGood2_eta,-1))/(leptonSF_SOS(LepGood1_pdgId,LepGood1_pt,LepGood1_eta,0)*leptonSF_SOS(LepGood2_pdgId,LepGood2_pt,LepGood2_eta,0)))*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0)  ;  Label="VV-lepSFDown", FillColor=ROOT.kViolet-4, SkipMe=True 
 TW_lepSF_Dn       : T_tWch :  xsec: ((leptonSF_SOS(LepGood1_pdgId,LepGood1_pt,LepGood1_eta,-1)*leptonSF_SOS(LepGood2_pdgId,LepGood2_pt,LepGood2_eta,-1))/(leptonSF_SOS(LepGood1_pdgId,LepGood1_pt,LepGood1_eta,0)*leptonSF_SOS(LepGood2_pdgId,LepGood2_pt,LepGood2_eta,0)))*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0);Label="TW-lepSFDown", FillColor=ROOT.kBlue, SkipMe=True 
 TW_lepSF_Dn       : TBar_tWch :  xsec: ((leptonSF_SOS(LepGood1_pdgId,LepGood1_pt,LepGood1_eta,-1)*leptonSF_SOS(LepGood2_pdgId,LepGood2_pt,LepGood2_eta,-1))/(leptonSF_SOS(LepGood1_pdgId,LepGood1_pt,LepGood1_eta,0)*leptonSF_SOS(LepGood2_pdgId,LepGood2_pt,LepGood2_eta,0)))*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0);Label="TW-lepSFDown", FillColor=ROOT.kBlue, SkipMe=True 
-
 
 
 #######################################
