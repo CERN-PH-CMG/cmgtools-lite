@@ -6,7 +6,7 @@ from array import array
 from ROOT import TEfficiency
 import os.path as osp
 
-LUMI = 12.0 ## /store/user/mmarionn/heppyTrees/809_June9/
+LUMI = 12.9
 WEIGHT = "puWeight"
 PAIRSEL = ("((pdgId*tag_pdgId==-11*11||pdgId*tag_pdgId==-13*13)"
            "&&abs(mass-91.)<30.&&abs(mcMatchId)>0)")
