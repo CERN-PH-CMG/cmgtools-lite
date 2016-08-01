@@ -8,7 +8,8 @@ lep1Eta: abs(LepGood1_eta): 10,0,2.5; XTitle="Lepton 1 #eta",Legend='TR', MoreY=
 lep2Eta: abs(LepGood2_eta): 10,0,2.5; XTitle="Lepton 2 #eta",Legend='TR', MoreY=1.5
 lepflav: if3(abs(LepGood1_pdgId)!=abs(LepGood2_pdgId),1,abs(LepGood1_pdgId)-11) : [-0.5,0.5,1.5,2.5]; XTitle="ee/e#mu/#mu#mu", XNDdiv=505, MoreY=2.0
 dRll: deltaR(LepGood1_eta, LepGood1_phi, LepGood2_eta, LepGood2_phi): 18,0,6; XTitle="dR(ll)"
-mll  : m2l: 20,0,100; XTitle="m(ll) [GeV]"
+mll  : m2l: 20,0,100; XTitle="M(ll) [GeV]"
+mll_50  : m2l: 10,0,50; XTitle="M(ll) [GeV]"
 ptll : pt_2(LepGood1_pt,LepGood1_phi, LepGood2_pt,LepGood2_phi): 10,0,50; XTitle="p_{T}(ll) [GeV]"
 met: met_pt: 14,100,450;  XTitle="E_{T}^{miss}  [GeV]"
 metbins : met_pt : 2,125.,275.; XTitle="E_{T}^{miss}  [GeV]", Legend='TR'
@@ -34,7 +35,7 @@ nBJet25L : Sum$(Jet_btagCSV>0.46)  : [-0.5,0.5,1.5,2.5,3.5,4.5] ; XTitle='N(b-je
 jet1Pt:  Jet1_pt: 12,0,600; XTitle="Leading jet p_{T}  [GeV]",Legend='TR'
 #SR_bins_EWKino: SR_bins_EWKino(m2l):4,1,5;XTitle="M(ll)-bins",Legend='TR'
 #SR_bins_stop: SR_bins_stop(LepGood1_pt):3,1,4;XTitle="p_{T}-bins",Legend='TL'
-SR_bins_EWKino: m2l:[4,10,20,30,50];XTitle="m(ll) [GeV]",Legend='TR'
+SR_bins_EWKino: m2l:[4,10,20,30,50];XTitle="M(ll) [GeV]",Legend='TR'
 SR_bins_stop: LepGood1_pt:[5,12,20,30];XTitle="Leading lepton p_{T}  [GeV]",Legend='TL'
 #weight: fakeRatePromptRateWeight_2l_23(LepGood1_pt,LepGood1_eta,LepGood1_pdgId,LepGood1_isTightString,LepGood2_pt,LepGood2_eta,LepGood2_pdgId,LepGood2_isTightString): 80,-2,2; YTitle='weight';
 
