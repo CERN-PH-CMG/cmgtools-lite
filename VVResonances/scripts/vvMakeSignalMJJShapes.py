@@ -21,17 +21,12 @@ parser.add_option("-s","--sample",dest="sample",default='',help="Type of sample"
 parser.add_option("-c","--cut",dest="cut",help="Cut to apply for shape",default='')
 parser.add_option("-o","--output",dest="output",help="Output JSON",default='')
 parser.add_option("-V","--MVV",dest="mvv",help="mVV variable",default='')
-parser.add_option("-m","--minMVV",dest="min",type=float,help="mVV variable",default=1)
-parser.add_option("-M","--maxMVV",dest="max",type=float, help="mVV variable",default=1)
-parser.add_option("-f","--function",dest="function",help="interpolating function",default='')
-parser.add_option("-b","--BR",dest="BR",type=float, help="branching ratio",default=1)
-parser.add_option("-x","--minMass",dest="minMass",type=float, help="minimumMass",default=0.0)
 
 (options,args) = parser.parse_args()
 #define output dictionary
-samples={}
 
-yieldgraph=ROOT.TGraphErrors()
+samples={}
+graphs={'mean':ROOT.TGraphErrors(),'sigma':ROOT.TGraphErrors(),'alpha':ROOT.TGraphErrors(),'n':ROOT.TGraphErrors(),'f':ROOT.TGraphErrors(),'slope':ROOT.TGraphErrors()}
 
 for filename in os.listdir(args[0]):
     if not (filename.find(options.sample)!=-1):
@@ -47,9 +42,7 @@ for filename in os.listdir(args[0]):
 
     mass = float(fname.split('_')[-1])
 
-    if mass<options.minMass:
-        continue
-
+        
 
     samples[mass] = fname
 
@@ -62,38 +55,32 @@ for mass in sorted(samples.keys()):
 
     print 'fitting',str(mass) 
     plotter=TreePlotter(args[0]+'/'+samples[mass]+'.root','tree')
-    plotter.setupFromFile(args[0]+'/'+samples[mass]+'.pck')
+#    plotter.setupFromFile(args[0]+'/'+samples[mass]+'.pck')
     plotter.addCorrectionFactor('genWeight','tree')
-    plotter.addCorrectionFactor('xsec','tree')
+#    plotter.addCorrectionFactor('xsec','tree')
     plotter.addCorrectionFactor('puWeight','tree')
-    histo = plotter.drawTH1(options.mvv,options.cut,"1",500,options.min,options.max)
-    err=ROOT.Double(0)
-    integral=histo.IntegralAndError(1,histo.GetNbinsX(),err) 
+       
+        
+    fitter=Fitter(['x'])
+    fitter.jetResonance('model','x')
+#    fitter.w.var("MH").setVal(mass)
+    histo = plotter.drawTH1(options.mvv,options.cut,"1",40,40,160)
 
-    yieldgraph.SetPoint(N,mass,integral*options.BR)
-    yieldgraph.SetPointError(N,0.0,err*options.BR)
+    fitter.importBinnedData(histo,['x'],'data')
+    fitter.fit('model','data',[ROOT.RooFit.SumW2Error(0)])
+    fitter.fit('model','data',[ROOT.RooFit.SumW2Error(0),ROOT.RooFit.Minos(1)])
+    fitter.projection("model","data","x","debugJJ_"+str(mass)+".png")
+
+    for var,graph in graphs.iteritems():
+        value,error=fitter.fetch(var)
+        graph.SetPoint(N,mass,value)
+        graph.SetPointError(N,0.0,error)
+                
     N=N+1
-
-
-
-
-
-func = ROOT.TF1("func",options.function,0,13000)
-yieldgraph.Fit(func)
-
-
-parameterization={'yield':returnString(func)}
-f=open(options.output+".json","w")
-json.dump(parameterization,f)
-f.close()
-
-c=ROOT.TCanvas("c")
-c.cd()
-yieldgraph.Draw("AP")
-c.SaveAs("debug_"+options.output+".png")
-
-#F=ROOT.TFile(options.output+".root",'RECREATE')
-#F.cd()
-#yieldgraph.Write("yield")
-#F.Close()
-
+        
+F=ROOT.TFile(options.output,"RECREATE")
+F.cd()
+for name,graph in graphs.iteritems():
+    graph.Write(name)
+F.Close()
+            

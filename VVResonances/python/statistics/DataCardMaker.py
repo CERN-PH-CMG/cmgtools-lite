@@ -310,7 +310,7 @@ class DataCardMaker:
 
 
 
-    def addHistoShapeFromFile(self,name,observables,filename,histoname,systematics,conditional = True,order=0,newTag=""):       
+    def addHistoShapeFromFile(self,name,observables,filename,histoname,systematics=[],conditional = False,order=0,newTag=""):       
         varset=ROOT.RooArgSet()
         varlist=ROOT.RooArgList()
         varPointers=[]
@@ -347,17 +347,9 @@ class DataCardMaker:
         coeffList=ROOT.RooArgList()
         pdfList=ROOT.RooArgList(self.w.pdf(pdfName))
 
-        for s in systematics:
-            syst=s['name']
-            expr=s['expr']
-
-            isFunction = expr.find("expr")!=-1
-
-            self.w.factory(expr)
-            if isFunction:
-                coeffList.add(self.w.function(syst))
-            else:
-                coeffList.add(self.w.var(syst))
+        for syst in systematics:
+            self.w.factory(syst+"[-1,1]")
+            coeffList.add(self.w.var(syst))
 
             for variation in ["Up","Down"]:
                 histo=FR.Get(histoname+"_"+syst+variation)
@@ -366,7 +358,7 @@ class DataCardMaker:
                 roohist = ROOT.RooDataHist(histName,histName,varlist,histo)
        
                 pdfName="_".join([name+"_"+syst+variation,self.tag])
-                pdf=ROOT.RooHistPdf(pdfName,pdfName,varset,roohist)
+                pdf=ROOT.RooHistPdf(pdfName,pdfName,varset,roohist,order)
 
                 getattr(self.w,'import')(roohist,ROOT.RooFit.Rename(histName))
                 getattr(self.w,'import')(pdf,ROOT.RooFit.Rename(pdfName))
@@ -375,13 +367,10 @@ class DataCardMaker:
         pdfName="_".join([name,self.tag])
         if len(systematics)>0:
             if len(observables)==1:
-                total=ROOT.FastVerticalInterpHistPdf(pdfName,pdfName, varPointers[0],pdfList, coeffList)
-                getattr(self.w,'import')(total,ROOT.RooFit.Rename(pdfName))
-
-            if len(observables)==2:
-                total=ROOT.FastVerticalInterpHistPdf2D(pdfName,pdfName, varPointers[0],varPointers[1],conditional,pdfList, coeffList)
-                getattr(self.w,'import')(total,ROOT.RooFit.Rename(pdfName))
-
+                total=ROOT.FastVerticalInterpHistPdf(pdfName,pdfName,self.w.var(observables[0]),pdfList, coeffList)
+            elif len(observables)==2:
+                total=ROOT.FastVerticalInterpHistPdf2D(pdfName,pdfName,self.w.var(observables[0]),self.w.var(observables[1]),conditional,pdfList, coeffList)
+            getattr(self.w,'import')(total,ROOT.RooFit.Rename(pdfName))
 
     def addQuarkGluonTerm(self,name,observables,filename,histoname,systematics,jsonFile,fractionSysts,conditional = True,newTag=""):       
           self.addHistoShapeFromFile(name+"quark",observables,filename,histoname+"_quark",systematics,conditional,newTag)       
@@ -443,13 +432,13 @@ class DataCardMaker:
 
 
         p0="_".join(["p0",name,self.tag])
-        self.w.factory("expr::{name}('({param})*(1+{vv_syst})',MLNuJ,{vv_systs})".format(name=p0,param=info['c_0'],vv_syst=p0SystStr,vv_systs=','.join(p0Systs)))
+        self.w.factory("expr::{name}('({param})*(1+{vv_syst})',{vv_systs})".format(name=p0,param=info['c_0'],vv_syst=p0SystStr,vv_systs=','.join(p0Systs)))
 
         p1="_".join(["p1",name,self.tag])
-        self.w.factory("expr::{name}('({param})*(1+{vv_syst})',MLNuJ,{vv_systs})".format(name=p1,param=info['c_1'],vv_syst=p1SystStr,vv_systs=','.join(p1Systs)))
+        self.w.factory("expr::{name}('({param})*(1+{vv_syst})',{vv_systs})".format(name=p1,param=info['c_1'],vv_syst=p1SystStr,vv_systs=','.join(p1Systs)))
 
         p2="_".join(["p2",name,self.tag])
-        self.w.factory("expr::{name}('({param})*(1+{vv_syst})',MLNuJ,{vv_systs})".format(name=p2,param=info['c_2'],vv_syst=p2SystStr,vv_systs=','.join(p2Systs)))
+        self.w.factory("expr::{name}('({param})*(1+{vv_syst})',{vv_systs})".format(name=p2,param=info['c_2'],vv_syst=p2SystStr,vv_systs=','.join(p2Systs)))
 
         pdfName="_".join([name,self.tag])
         erfexp = ROOT.RooErfExpPdf(pdfName,pdfName,self.w.var(MJJ),self.w.function(p0),self.w.function(p1),self.w.function(p2))
@@ -477,7 +466,7 @@ class DataCardMaker:
             p0Systs.append(syst)
 
         p0="_".join(["p0",name,self.tag])
-        self.w.factory("expr::{name}('({param})*(1+{vv_syst})',MLNuJ,{vv_systs})".format(name=p0,param=info['c_0'],vv_syst=p0SystStr,vv_systs=','.join(p0Systs)))
+        self.w.factory("expr::{name}('({param})*(1+{vv_syst})',{vv_systs})".format(name=p0,param=info['c_0'],vv_syst=p0SystStr,vv_systs=','.join(p0Systs)))
 
 
         pdfName="_".join([name,self.tag])
@@ -675,7 +664,7 @@ class DataCardMaker:
 
 
 
-    def addParametricMVVBKGShapeErfPow(self,name,MVV,MJJ,jsonFile,newTag="",systs0={},systs1={},systs2={}):
+    def addParametricMVVBKGShapeErfPow(self,name,MVV,MJJ,jsonFile,newTag="",systs0={},systs1={},systs2={},pdfTag=""):
 
         syst0Str='0'
         syst1Str='0'
@@ -715,18 +704,32 @@ class DataCardMaker:
         f=open(jsonFile)
         info=json.load(f)
 
-
-
         p0="_".join(["p0",name,tag])
-        self.w.factory("expr::{name}('({param})*(1+0*{MJJ}+{syst})',{MJJ},{systs})".format(name=p0,param=str(info['p0']).replace("mjj",MJJ),MJJ=MJJ,syst=syst0Str,systs=','.join(systsV0)))
+        if syst0Str.find(MJJ)!=-1 or str(info['p0']).find('mjj')!=-1:
+            self.w.factory("expr::{name}('({param})*(1+0*{MJJ}+{syst})',{MJJ},{systs})".format(name=p0,param=str(info['p0']).replace("mjj",MJJ),MJJ=MJJ,syst=syst0Str,systs=','.join(systsV0)))
+        else:
+            self.w.factory("expr::{name}('({param})*(1+{syst})',{systs})".format(name=p0,param=str(info['p0']).replace("mjj",MJJ),syst=syst0Str,systs=','.join(systsV0)))
+
 
         p1="_".join(["p1",name,tag])
-        self.w.factory("expr::{name}('({param})*(1+0*{MJJ}+{syst})',{MJJ},{systs})".format(name=p1,param=str(info['p1']).replace("mjj",MJJ),MJJ=MJJ,syst=syst1Str,systs=','.join(systsV1)))
+        if syst1Str.find(MJJ)!=-1 or str(info['p1']).find('mjj')!=-1:
+            self.w.factory("expr::{name}('({param})*(1+0*{MJJ}+{syst})',{MJJ},{systs})".format(name=p1,param=str(info['p1']).replace("mjj",MJJ),MJJ=MJJ,syst=syst1Str,systs=','.join(systsV1)))
+        else:
+            self.w.factory("expr::{name}('({param})*(1+{syst})',{systs})".format(name=p1,param=str(info['p1']).replace("mjj",MJJ),syst=syst1Str,systs=','.join(systsV1)))
+
+
 
         p2="_".join(["p2",name,tag])
-        self.w.factory("expr::{name}('({param})*(1+0*{MJJ}+{syst})',{MJJ},{systs})".format(name=p2,param=str(info['p2']).replace("mjj",MJJ),MJJ=MJJ,syst=syst2Str,systs=','.join(systsV2)))
+        if syst2Str.find(MJJ)!=-1 or str(info['p2']).find('mjj')!=-1:
+            self.w.factory("expr::{name}('({param})*(1+0*{MJJ}+{syst})',{MJJ},{systs})".format(name=p2,param=str(info['p2']).replace("mjj",MJJ),MJJ=MJJ,syst=syst2Str,systs=','.join(systsV2)))
+        else:
+            self.w.factory("expr::{name}('({param})*(1+{syst})',{systs})".format(name=p2,param=str(info['p2']).replace("mjj",MJJ),syst=syst2Str,systs=','.join(systsV2)))
+        
+        if pdfTag=="":
+            pdfName="_".join([name,self.tag])
+        else:
+            pdfName="_".join([name,pdfTag])
 
-        pdfName="_".join([name,self.tag])
         erfexp = ROOT.RooErfPowPdf(pdfName,pdfName,self.w.var(MVV),self.w.function(p0),self.w.function(p1),self.w.function(p2))
         getattr(self.w,'import')(erfexp,ROOT.RooFit.Rename(name))
 
@@ -775,10 +778,18 @@ class DataCardMaker:
         self.w.factory("SUM::{name}({f}*{name1},{name2})".format(name=pdfName,name1=pdfName1,f=sumVar,name2=pdfName2))
 
 
-    def conditionalProduct(self,name,pdf1,varName,pdf2):
+    def conditionalProduct(self,name,pdf1,varName,pdf2,tag1="",tag2=""):
         pdfName="_".join([name,self.tag])
-        pdfName1="_".join([pdf1,self.tag])
-        pdfName2="_".join([pdf2,self.tag])
+
+        if tag1=="":
+            pdfName1="_".join([pdf1,self.tag])
+        else:
+            pdfName1="_".join([pdf1,tag1])
+        if tag2=="":    
+            pdfName2="_".join([pdf2,self.tag])
+        else:
+            pdfName2="_".join([pdf2,tag2])
+
         self.w.factory("PROD::{name}({name1}|{x},{name2})".format(name=pdfName,name1=pdfName1,x=varName,name2=pdfName2))
 
     def product(self,name,pdf1,pdf2):
@@ -830,6 +841,36 @@ class DataCardMaker:
         self.w.factory("expr::{name}('({param})*{lumi}',MH,{lumi})".format(name=pdfNorm,param=info['yield'],lumi=self.physics+"_"+self.period+"_lumi"))       
         f.close()
         self.contributions.append({'name':name,'pdf':pdfName,'ID':ID,'yield':1.0})
+
+
+    def addParametricYieldWithCrossSection(self,name,ID,jsonFile,jsonFileCS,sigmaStr,BRStr):
+        ROOT.gSystem.Load("libHiggsAnalysisCombinedLimit")
+        from array import array
+        #first load cross section
+        fCS=open(jsonFileCS)
+        info=json.load(fCS)
+        xArr=[]
+        yArr=[]
+
+        for m in sorted(map(float,info.keys())):
+            xArr.append(float(m))
+            #I know this is stupid 
+            yArr.append(float(info[str(int(m))][sigmaStr])*float(info[str(int(m))][BRStr]))
+
+
+        pdfSigma="_".join([name,self.tag,"sigma"])
+        spline=ROOT.RooSpline1D(pdfSigma,pdfSigma,self.w.var("MH"),len(xArr),array('d',xArr),array('d',yArr))    
+        getattr(self.w,'import')(spline,ROOT.RooFit.Rename(pdfSigma))
+        fCS.close()
+
+        f=open(jsonFile)
+        info=json.load(f)      
+        pdfName="_".join([name,self.tag])
+        pdfNorm="_".join([name,self.tag,"norm"])
+        self.w.factory("expr::{name}('({param})*{lumi}*({sigma})',MH,{lumi},{sigma})".format(name=pdfNorm,param=info['yield'],lumi=self.physics+"_"+self.period+"_lumi",sigma=pdfSigma))       
+        f.close()
+        self.contributions.append({'name':name,'pdf':pdfName,'ID':ID,'yield':1.0})
+
 
 
     def addFloatingYield(self,name,ID,events,mini=0,maxi=1e+9,constant=False):

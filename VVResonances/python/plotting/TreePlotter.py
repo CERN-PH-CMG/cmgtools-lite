@@ -15,6 +15,8 @@ class TreePlotter(PlotterBase):
             sys.exit()
         self.weight=weight
         super(TreePlotter,self).__init__()
+        self.random=ROOT.TRandom(101082)
+        self.N=self.tree.GetEntries()
 
     def setupFromFile(self,filename):
         f=open(filename)
@@ -35,7 +37,10 @@ class TreePlotter(PlotterBase):
         h.SetFillStyle(self.fillstyle)
         h.SetFillColor(self.fillcolor)
         h.SetMarkerStyle(self.markerstyle)
-        h.GetXaxis().SetTitle(titlex+ " ["+units+"]")
+        if units=="":
+            h.GetXaxis().SetTitle(titlex)
+        else:
+            h.GetXaxis().SetTitle(titlex+ " ["+units+"]")
 
         #Apply correction factors
         corrString='1'
@@ -44,6 +49,11 @@ class TreePlotter(PlotterBase):
         self.tree.Draw(var+">>tmpTH1","("+cuts+")*"+lumi+"*"+self.weight+"*("+corrString+")","goff")
 
         return h
+
+
+    def randomEvent(self):
+        i=int(self.random.Rndm()*self.N)
+        self.tree.GetEntry(i)       
 
 
     def drawTH2(self,var,cuts,lumi,binsx,minx,maxx,binsy,miny,maxy,titlex = "",unitsx = "",titley="",unitsy="", drawStyle = "COLZ"):
@@ -203,11 +213,9 @@ class TreePlotter(PlotterBase):
         return self.drawEff1D(hD,hN,var,denom,num,titlex,units)
 
 
-    def makeDataSet(self,var,cut):
+    def makeDataSet(self,var,cut,maxN=-1):
         variables=var.split(',')
-
-
-        ff=ROOT.TFile("cache.root","RECREATE")
+        self.cache=ROOT.TFile("cache.root","RECREATE")
         w=ROOT.RooWorkspace("w","w")
         argset=ROOT.RooArgSet()
         argset2=ROOT.RooArgSet()
@@ -220,6 +228,7 @@ class TreePlotter(PlotterBase):
         
         data=ROOT.RooDataSet("data","data",argset,"weight")
         reduced = self.tree.CopyTree(cut)
+        N=0
         for event in reduced:
             weight = 1.0
             for c in self.corrFactors:
@@ -230,6 +239,9 @@ class TreePlotter(PlotterBase):
             for v in variables:
                 argset2.find(v).setVal(getattr(event,v)[0])
             data.add(argset2,weight)
+            N=N+1
+            if maxN >0 and N>maxN:
+                return data
         return data    
 
 
