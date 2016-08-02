@@ -49,7 +49,7 @@ def fulltrees(x):
 def doprescale3l(x):
     x2 = x.replace("mixture_jecv6prompt_datafull_jul20_skimOnlyMC","TREES_80X_180716_jecv6_skim_3ltight_relax")
     x2 = x2.replace("--Fs {P}/4_kinMVA_without_MEM_v5 --Fs {P}/8_bTagSF_12fb_v45","--Fs {P}/4_kinMVA_with_MEM_v5 --Fs {P}/7_MEM_v5 --Fs {P}/8_bTagSF_12fb_v5")
-    x2 = add(x2,"--sP kinMVA.*")
+#    x2 = add(x2,"--sP kinMVA.*")
     return x2
 
 allow_unblinding = True
