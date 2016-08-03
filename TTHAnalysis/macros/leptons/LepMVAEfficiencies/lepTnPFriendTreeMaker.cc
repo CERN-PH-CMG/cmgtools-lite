@@ -32,6 +32,7 @@ public :
    Float_t         rho;
    Float_t         rhoCN;
    Int_t           nVert;
+   Float_t         nTrueInt;
    Float_t         met_pt;
    Float_t         puWeight;
 
@@ -101,6 +102,7 @@ public :
    TBranch *b_rho;
    TBranch *b_rhoCN;
    TBranch *b_nVert;
+   TBranch *b_nTrueInt;
    TBranch *b_met_pt;
    TBranch *b_puWeight;
 
@@ -186,6 +188,7 @@ public :
    virtual bool     PassTightCharge(int);
    virtual bool     PassICHEPMediumMuonID(int);
    virtual float    ConePt(int);
+   virtual float    PuWeight();
 
    virtual bool     _ttH_idEmu_cuts_E2(int);
 
@@ -195,6 +198,67 @@ public :
    bool fIsData;
    Long64_t fMaxEvents;
    virtual inline void setMaxEvents(int maxevents){fMaxEvents = maxevents;};
+
+   Float_t fPUw2016_vtx_13fb[60] = { 1.0,
+                                   0.046904649804193066,
+                                   0.09278031810949669,
+                                   0.18880389403907694,
+                                   0.3514757265099305,
+                                   0.557758357976481,
+                                   0.7693577917575528,
+                                   0.9666548740765918,
+                                   1.145319485841941,
+                                   1.2648398335691222,
+                                   1.3414360633779425,
+                                   1.3679594451533137,
+                                   1.362759399034107,
+                                   1.327376308549365,
+                                   1.2613315166803767,
+                                   1.196440614259811,
+                                   1.1139701579261285,
+                                   1.029953473266092,
+                                   0.9499371225384508,
+                                   0.8650456207995321,
+                                   0.7851579627730857,
+                                   0.7104602883630896,
+                                   0.6454503663312138,
+                                   0.5827160708961265,
+                                   0.527376483837914,
+                                   0.4700331217669938,
+                                   0.4271753119677936,
+                                   0.3869926520067443,
+                                   0.35986269245880403,
+                                   0.3280226115374019,
+                                   0.2995626735821264,
+                                   0.29695297220375283,
+                                   0.2904602474734967,
+                                   0.27797348557821827,
+                                   0.27285575884404983,
+                                   0.2696769830193652,
+                                   0.2834280746705423,
+                                   0.3079991295527812,
+                                   0.2958183730167929,
+                                   0.3281547943587132,
+                                   0.34428579006474574,
+                                   0.34709355767303973,
+                                   0.5916367460335905,
+                                   0.4991935044658422,
+                                   0.2689257936516321,
+                                   1.0,
+                                   0.690242870372522,
+                                   2.0707286111175662,
+                                   0.2958183730167952,
+                                   0.8874551190503855,
+                                   1.0,
+                                   1.0,
+                                   1.0,
+                                   1.0,
+                                   1.0,
+                                   1.0,
+                                   1.0,
+                                   0.0,
+                                   1.0,
+                                   1.0};
 
    TH1I *fHCutFlow;
 
@@ -310,6 +374,7 @@ void lepTnPFriendTreeMaker::Init(TTree *tree){
    fChain->SetBranchStatus("rho"                    , 1);
    fChain->SetBranchStatus("rhoCN"                  , 1);
    fChain->SetBranchStatus("nVert"                  , 1);
+   fChain->SetBranchStatus("nTrueInt"               , 1);
    fChain->SetBranchStatus("met_pt"                 , 1);
    fChain->SetBranchStatus("puWeight"               , 1);
    fChain->SetBranchStatus("nJet25"                 , 1);
@@ -374,6 +439,7 @@ void lepTnPFriendTreeMaker::Init(TTree *tree){
    fChain->SetBranchAddress("rho"                    , &rho                   , &b_rho);
    fChain->SetBranchAddress("rhoCN"                  , &rhoCN                 , &b_rhoCN);
    fChain->SetBranchAddress("nVert"                  , &nVert                 , &b_nVert);
+   fChain->SetBranchAddress("nTrueInt"               , &nTrueInt              , &b_nTrueInt);
    fChain->SetBranchAddress("met_pt"                 , &met_pt                , &b_met_pt);
    fChain->SetBranchAddress("puWeight"               , &puWeight              , &b_puWeight);
    fChain->SetBranchAddress("nJet25"                 , &nJet25                , &b_nJet25);
@@ -523,6 +589,8 @@ void lepTnPFriendTreeMaker::ResetTnPTree(){
    fT_pair_probeMultiplicity = 0;
    fT_mass                   = -999.99;
 
+   fT_puWeight      = PuWeight();
+
    fT_pt            = -999.99;
    fT_phi           = -999.99;
    fT_pdgId         = -999;
@@ -556,7 +624,6 @@ void lepTnPFriendTreeMaker::ResetTnPTree(){
    fT_nBJetLoose25  = -999;
    fT_nBJetMedium25 = -999;
    fT_met_pt        = -999.99;
-   fT_puWeight      = -999.99;
    fT_mcMatchId     = -999;
    fT_tag_pt        = -999.99;
    fT_tag_eta       = -999.99;
@@ -636,6 +703,15 @@ float lepTnPFriendTreeMaker::ConePt(int i){
    return LepGood_pt[i];
 }
 
+float lepTnPFriendTreeMaker::PuWeight(){
+   if( fIsData ) return 1.0;
+
+   // For json up to 276811 (12.9/fb)
+   int nTrueInt_int = int(nTrueInt);
+   if( nTrueInt_int < 60 ) return fPUw2016_vtx_13fb[nTrueInt_int];
+   else return 0;
+}
+
 bool lepTnPFriendTreeMaker::_ttH_idEmu_cuts_E2(int i){
     if (abs(LepGood_pdgId[i]) != 11) return true;
     if (LepGood_hadronicOverEm[i]    >= (0.10-0.03  *(fabs(LepGood_etaSc[i])>1.479))) return false;
@@ -682,7 +758,7 @@ bool lepTnPFriendTreeMaker::PassICHEPMediumMuonID(int i){
 bool lepTnPFriendTreeMaker::PassTightLepton(int i){
    if( !PassLooseLepton(i) ) return false;
    if( LepGood_mvaTTH[i] < 0.75 ) return false;
-   if( LepGood_jetBTagCSV[i] > 0.80 ) return false; // Is this still the right threshold?
+   if( LepGood_jetBTagCSV[i] > 0.80 ) return false;
    if( LepGood_jetPtRatiov2[i] < 0.3 ) return false;
 
    // Tight electrons
@@ -693,7 +769,7 @@ bool lepTnPFriendTreeMaker::PassTightLepton(int i){
    }
 
    // Tight Muons
-   if( !PassICHEPMediumMuonID(i) ) return false;
+   if( PassICHEPMediumMuonID(i) ) return true;
    return false;
 }
 
@@ -759,8 +835,6 @@ void lepTnPFriendTreeMaker::Loop(){
       fT_nBJetLoose25  = nBJetLoose25;
       fT_nBJetMedium25 = nBJetMedium25;
       fT_met_pt        = met_pt;
-      if( fIsData ) fT_puWeight = 1.0;
-      else          fT_puWeight = puWeight;
 
       // Find a tag lepton
       for (int lep1 = 0; lep1 < nLepGood; ++lep1){

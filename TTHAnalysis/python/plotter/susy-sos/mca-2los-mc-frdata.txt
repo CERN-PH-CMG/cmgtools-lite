@@ -70,14 +70,14 @@ VV    : ZZTo4L: xsec: (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0)  ;  Label
 
 
 # ---- Rares
-TW       : T_tWch :  xsec: (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0);Label="TW", FillColor=ROOT.kBlue
-TW       : TBar_tWch :  xsec: (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0);Label="TW", FillColor=ROOT.kBlue
+TW       : T_tWch :  xsec: (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0);Label="tW", FillColor=ROOT.kBlue
+TW       : TBar_tWch :  xsec: (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0);Label="tW", FillColor=ROOT.kBlue
 
 
 # ---- Non prompt:
-fakes_data: MET_Run2016B_PromptReco_v2_runs_273150_276811 ; FakeRate="susy-sos/fakeRate-2los-frdata-qcd-prdata.txt", Label="Fakes", FillColor=ROOT.kBlack, FillStyle=3005
-fakes_data: MET_Run2016C_PromptReco_v2_runs_273150_276811 ; FakeRate="susy-sos/fakeRate-2los-frdata-qcd-prdata.txt", Label="Fakes", FillColor=ROOT.kBlack, FillStyle=3005
-fakes_data: MET_Run2016D_PromptReco_v2_runs_273150_276811 ; FakeRate="susy-sos/fakeRate-2los-frdata-qcd-prdata.txt", Label="Fakes", FillColor=ROOT.kBlack, FillStyle=3005
+fakes_data: MET_Run2016B_PromptReco_v2_runs_273150_276811 ; FakeRate="susy-sos/fakeRate-2los-frdata-qcd-prdata.txt", Label="Fakes", FillColor=ROOT.kGray
+fakes_data: MET_Run2016C_PromptReco_v2_runs_273150_276811 ; FakeRate="susy-sos/fakeRate-2los-frdata-qcd-prdata.txt", Label="Fakes", FillColor=ROOT.kGray
+fakes_data: MET_Run2016D_PromptReco_v2_runs_273150_276811 ; FakeRate="susy-sos/fakeRate-2los-frdata-qcd-prdata.txt", Label="Fakes", FillColor=ROOT.kGray
 
 
 ##### Additional: negligible contribution

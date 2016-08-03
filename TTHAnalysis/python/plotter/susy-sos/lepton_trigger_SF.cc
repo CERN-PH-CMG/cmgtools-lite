@@ -23,29 +23,39 @@ TFile *_file_recoToLoose_leptonSF_mu_sos_endcap_highpt = NULL;
 
 
 int get_bin_recoToLoose(float pt){
-  if(pt> 3.0 && pt<=3.5) return 1;
-  else if(pt>3.5  && pt<=4.0) return 2;
-  else if(pt>4.0  && pt<=4.5) return 3;
-  else if(pt>4.5  && pt<=5.0) return 4;
-  else if(pt>5.0  && pt<=6.0) return 5;
-  else if(pt>6.0  && pt<=7.0) return 6;
-  else if(pt>7.0  && pt<=8.0) return 7;
-  else if(pt> 8.0 && pt<=10.0) return 8;
-  else if(pt> 10.0 && pt<=12.0) return 9;
-  else if(pt> 12.0 && pt<=18.0) return 10;
-  else if(pt>18.) return 11;
+  if(pt> 3.0 && pt<=3.5) return 0;
+  else if(pt>3.5  && pt<=4.0) return 1;
+  else if(pt>4.0  && pt<=4.5) return 2;
+  else if(pt>4.5  && pt<=5.0) return 3;
+  else if(pt>5.0  && pt<=6.0) return 4;
+  else if(pt>6.0  && pt<=7.0) return 5;
+  else if(pt>7.0  && pt<=8.0) return 6;
+  else if(pt> 8.0 && pt<=10.0) return 7;
+  else if(pt> 10.0 && pt<=12.0) return 8;
+  else if(pt> 12.0 && pt<=18.0) return 9;
+  else if(pt>18.) return 10;
   else assert(0);
 }
 
-int get_bin_looseToTight(float pt){
-  if(pt> 3.5 && pt<=7.5) return 1;
-  else if(pt>7.5  && pt<=10.0) return 2;
-  else if(pt>10.0  && pt<=15.0) return 3;
-  else if(pt>15.0  && pt<=20.0) return 4;
-  else if(pt>20.0  && pt<=30.0) return 5;
-  else if(pt>30.0  && pt<=45.0) return 6;
-  else if(pt>45.0  && pt<=70.0) return 7;
-  else if(pt> 70.0 ) return 8;
+int get_bin_looseToTight_mu(float pt){
+  if(pt> 3.5 && pt<=7.5) return 0;
+  else if(pt>7.5  && pt<=10.0) return 1;
+  else if(pt>10.0  && pt<=15.0) return 2;
+  else if(pt>15.0  && pt<=20.0) return 3;
+  else if(pt>20.0  && pt<=30.0) return 4;
+  else if(pt>30.0  && pt<=45.0) return 5;
+  else if(pt>45.0  && pt<=70.0) return 6;
+  else if(pt> 70.0 ) return 7;
+  else assert(0);
+}
+
+int get_bin_looseToTight_el(float pt){
+  if(pt> 5.0 && pt<=12.5) return 0;
+  else if(pt>12.5  && pt<=20.0) return 1;
+  else if(pt>20.0  && pt<=25.0) return 2;
+  else if(pt>25.0  && pt<=40.0) return 3;
+  else if(pt>40.0  && pt<=70.0) return 4;
+  else if(pt> 70.0 ) return 5;
   else assert(0);
 }
 
@@ -82,8 +92,6 @@ float _get_recoToLoose_leptonSF_SOS(int pdgid, float _pt, float eta, float var){
       if(var>0) return (hist_barrel->Eval(pt)+hist_barrel->GetErrorYhigh(get_bin_recoToLoose(pt)));
       if(var<0) return (hist_barrel->Eval(pt)-hist_barrel->GetErrorYlow(get_bin_recoToLoose(pt)));
       //cout << pt << "===" << get_bin_recoToLoose(pt) << endl; 
-      //cout << hist_barrel->GetErrorYhigh(get_bin_recoToLoose(pt)) << endl;
-      //cout << hist_barrel->GetErrorYlow(get_bin_recoToLoose(pt)) << endl;
       return  hist_barrel->Eval(pt);
      
     }
@@ -119,7 +127,7 @@ TGraphAsymmErrors *_histo_looseToTight_leptonSF_el_sos_endcap = NULL;
 
 float _get_looseToTight_leptonSF_SOS(int pdgid, float _pt, float eta, float var){
 
-  float pt = std::min(float(79.9),_pt);
+  float pt = std::min(float(119.9),_pt);
 
   //if (var!=0) assert(0); // NOT IMPLEMENTED
   
@@ -146,13 +154,13 @@ float _get_looseToTight_leptonSF_SOS(int pdgid, float _pt, float eta, float var)
     TGraphAsymmErrors *hist_mu_endcap = _histo_looseToTight_leptonSF_mu_sos_endcap;
     
     if(abs(eta)<1.2){
-      if(var>0) return (hist_mu_barrel->Eval(pt)+hist_mu_barrel->GetErrorYhigh(get_bin_looseToTight(pt))) ;
-      if(var<0) return (hist_mu_barrel->Eval(pt)-hist_mu_barrel->GetErrorYlow(get_bin_looseToTight(pt))) ;
+      if(var>0) return (hist_mu_barrel->Eval(pt) + hist_mu_barrel->GetErrorYhigh(get_bin_looseToTight_mu(pt))) ;
+      if(var<0) return (hist_mu_barrel->Eval(pt) - hist_mu_barrel->GetErrorYlow(get_bin_looseToTight_mu(pt))) ;
       return  hist_mu_barrel->Eval(pt);
     }
     if(abs(eta)>1.2){
-      if(var>0) return (hist_mu_endcap->Eval(pt)+hist_mu_endcap->GetErrorYhigh(get_bin_looseToTight(pt))) ;
-      if(var<0) return (hist_mu_endcap->Eval(pt)-hist_mu_endcap->GetErrorYlow(get_bin_looseToTight(pt))) ;
+      if(var>0) return (hist_mu_endcap->Eval(pt) + hist_mu_endcap->GetErrorYhigh(get_bin_looseToTight_mu(pt))) ;
+      if(var<0) return (hist_mu_endcap->Eval(pt) - hist_mu_endcap->GetErrorYlow(get_bin_looseToTight_mu(pt))) ;
       return hist_mu_endcap->Eval(pt);
     }
   }
@@ -162,13 +170,13 @@ float _get_looseToTight_leptonSF_SOS(int pdgid, float _pt, float eta, float var)
     TGraphAsymmErrors *hist_el_endcap = _histo_looseToTight_leptonSF_el_sos_endcap;
     
     if(abs(eta)<1.479){
-      if(var>0) return (hist_el_barrel->Eval(pt)+hist_el_barrel->GetErrorYhigh(get_bin_looseToTight(pt))) ;
-      if(var<0) return (hist_el_barrel->Eval(pt)-hist_el_barrel->GetErrorYlow(get_bin_looseToTight(pt))) ;
+      if(var>0) return (hist_el_barrel->Eval(pt) + hist_el_barrel->GetErrorYhigh(get_bin_looseToTight_el(pt))) ;
+      if(var<0) return (hist_el_barrel->Eval(pt) - hist_el_barrel->GetErrorYlow(get_bin_looseToTight_el(pt))) ;
       return  hist_el_barrel->Eval(pt);
     }
     if(abs(eta)>1.479){
-      if(var>0) return (hist_el_endcap->Eval(pt)+hist_el_endcap->GetErrorYhigh(get_bin_looseToTight(pt))) ;
-      if(var<0) return (hist_el_endcap->Eval(pt)-hist_el_endcap->GetErrorYlow(get_bin_looseToTight(pt))) ;
+      if(var>0) return (hist_el_endcap->Eval(pt) + hist_el_endcap->GetErrorYhigh(get_bin_looseToTight_el(pt))) ;
+      if(var<0) return (hist_el_endcap->Eval(pt) - hist_el_endcap->GetErrorYlow(get_bin_looseToTight_el(pt))) ;
       return hist_el_endcap->Eval(pt);
     }
   }
@@ -287,16 +295,16 @@ float triggerSF_SOS(float _met, float _met_corr, float var=0){
  
   //  if (var_ee!=0) assert(0); // NOT IMPLEMENTED
 
-  if (_met>200.0 && _met_corr>200.0)return 1.0; 
-
+  if (_met>=200.0 && _met_corr>=200.0)return 1.0;
+  
   if (!_file_triggerSF) {
     _file_triggerSF  = new TFile("../../data/sos_lepton_SF/trigger_eff_12invfb.root","read");
     _histo_triggerSF = (TH2F*)(_file_triggerSF->Get("hnummet"));
   }
  
   float muon_leg_eff=0.95*0.95*0.93; // Mu3 leg * Mu3 leg * DZ
-  float met = std::min(float(200.0),_met);
-  float met_corr = std::min(float(200.),_met_corr);
+  float met = std::min(float(199.9),_met);
+  float met_corr = std::min(float(199.9),_met_corr);
 
   Int_t binx = (_histo_triggerSF->GetXaxis())->FindBin(met);
   Int_t biny = (_histo_triggerSF->GetYaxis())->FindBin(met_corr);  
@@ -304,7 +312,7 @@ float triggerSF_SOS(float _met, float _met_corr, float var=0){
   if(var>0) return (muon_leg_eff*(_histo_triggerSF->GetBinContent(binx,biny)))+0.05 ;// +/-5%
   if(var<0) return (muon_leg_eff*(_histo_triggerSF->GetBinContent(binx,biny)))-0.05 ;
   return muon_leg_eff*(_histo_triggerSF->GetBinContent(binx,biny));  
-  
+
 }
 
 void lepton_trigger_SF() {}

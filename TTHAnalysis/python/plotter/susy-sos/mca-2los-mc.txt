@@ -1,4 +1,4 @@
----- SUSY private signal:
+#---- SUSY private signal:
 TChiNeuWZ_80+: TChiNeuWZ_mCh100_mChi80 : xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ;FillColor=ROOT.kOrange+8,   Label="CNWZ(20)", FakeRate="susy-sos/mca-2los-noMuonsFilters.txt" 
 TChiNeuWZ_90+: TChiNeuWZ_mCh100_mChi90 : xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ;FillColor=ROOT.kRed+1,   Label="CNWZ(10)", FakeRate="susy-sos/mca-2los-noMuonsFilters.txt"
 TChiNeuWZ_95+: TChiNeuWZ_mCh100_mChi95 : xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ;FillColor=ROOT.kOrange+6,   Label="CNWZ(5)", FakeRate="susy-sos/mca-2los-noMuonsFilters.txt" 
@@ -80,8 +80,8 @@ VV    : ZZTo4L: xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0  ;  Label="
 
 
 # ---- Rares
-TW       : T_tWch :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0;Label="TW", FillColor=ROOT.kBlue
-TW       : TBar_tWch :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0;Label="TW", FillColor=ROOT.kBlue
+TW       : T_tWch :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0;Label="tW", FillColor=ROOT.kBlue
+TW       : TBar_tWch :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0;Label="tW", FillColor=ROOT.kBlue
 
 
 # # ---- Non prompt:

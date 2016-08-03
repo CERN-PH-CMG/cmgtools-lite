@@ -70,8 +70,8 @@ VV    : ZZTo4L: xsec: (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0)  ;  Label
 
 
 # ---- Rares
-TW       : T_tWch :  xsec: (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0);Label="TW", FillColor=ROOT.kBlue
-TW       : TBar_tWch :  xsec: (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0);Label="TW", FillColor=ROOT.kBlue
+TW       : T_tWch :  xsec: (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0);Label="tW", FillColor=ROOT.kBlue
+TW       : TBar_tWch :  xsec: (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0);Label="tW", FillColor=ROOT.kBlue
 
 
 
