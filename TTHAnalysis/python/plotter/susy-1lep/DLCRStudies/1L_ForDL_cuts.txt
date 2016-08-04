@@ -9,7 +9,8 @@ nJets30Clean >= 3 : nJets30Clean >= 3
 2.JetPt > 80 : Jet2_pt > 80
 HT > 500 : HT > 500
 LT > 250 : LT > 250
-Nb >= 1 : nBJet >= 1
+#Nb >= 1 : nBJet >= 1
+Nb = 0 : nBJet == 0
 DPhi<0.5 : dPhi<0.5
 #Filters : !isData || (isData && passFilters)
 

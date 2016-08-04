@@ -109,6 +109,8 @@ class TauTauAnalyzer(DiLeptonAnalyzer):
         # choses the best di-tau pair, with the bestDiLepton method
         # as implemented here
 
+        event.goodVertices = event.vertices
+
         result = super(TauTauAnalyzer, self).process(event)
 
         event.isSignal = False
@@ -130,24 +132,8 @@ class TauTauAnalyzer(DiLeptonAnalyzer):
         if not (hasattr(event, 'leg1') and hasattr(event, 'leg2')):
             return False
 
-#     # RIC: agreed to sort by isolation 19/8/2015
-#     # make sure that the legs are sorted by pt
-#     if event.leg1.pt() < event.leg2.pt() :
-#       event.leg1 = event.diLepton.leg2()
-#       event.leg2 = event.diLepton.leg1()
-#       event.selectedLeptons = [event.leg2, event.leg1]
-
         if hasattr(self.cfg_ana, 'scaleTaus') and self.cfg_ana.scaleTaus:
             self.scaleDiLep(event.diLepton)
-
-        # RIC: agreed with Adinda to sort taus by isolation
-        # JAN: This code however doesn't fix the order in the dilepton object -
-        #      added it there
-        # iso = self.cfg_ana.isolation
-        # if event.leg1.tauID(iso) < event.leg2.tauID(iso):
-        #     event.leg1 = event.diLepton.leg2()
-        #     event.leg2 = event.diLepton.leg1()
-        #     event.selectedLeptons = [event.leg2, event.leg1]
 
         if hasattr(event, 'calibratedPfMet'):
             event.pfmet = event.calibratedPfMet
@@ -205,7 +191,7 @@ class TauTauAnalyzer(DiLeptonAnalyzer):
         for index, lep in enumerate(cmgLeptons):
             pyl = Muon(lep)
             pyl.associatedVertex = event.goodVertices[0]
-            if not pyl.muonID('POG_ID_Medium'):
+            if not pyl.muonID('POG_ID_Medium_ICHEP'):
                 continue
             if not pyl.relIsoR(R=0.3, dBetaFactor=0.5, allCharged=0) < 0.3:
                 continue
@@ -277,8 +263,10 @@ class TauTauAnalyzer(DiLeptonAnalyzer):
     def trigMatched(self, event, diL, requireAllMatched=False):
         matched = super(TauTauAnalyzer, self).trigMatched(event, diL, requireAllMatched=requireAllMatched, checkBothLegs=True)
 
-        if not self.l1Matched(event, diL):
-            matched = False
+        # Not needed in 2016, for the moment
+        
+        # if not self.l1Matched(event, diL):
+        #     matched = False
 
         return matched
 

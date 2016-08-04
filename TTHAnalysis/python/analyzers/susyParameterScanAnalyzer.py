@@ -16,6 +16,8 @@ class susyParameterScanAnalyzer( Analyzer ):
             (2000000 + 5) : 'Sbottom2',
             (1000000 + 6) : 'Stop',
             (2000000 + 6) : 'Stop2',
+            (1000000 + 15) : 'Stau',
+            (2000000 + 15) : 'Stau2',
             (1000000 + 22) : 'Neutralino',
             (1000000 + 23) : 'Neutralino2',
             (1000000 + 25) : 'Neutralino3',

@@ -8,7 +8,7 @@ yp._alpha = 0.8
 
 if __name__ == "__main__":
 
-    yp.CMS_lumi.lumi_13TeV = str(2.3) + " fb^{-1}"
+    yp.CMS_lumi.lumi_13TeV = str(12.9) + " fb^{-1}"
     #yp.CMS_lumi.lumi_13TeV = "MC"
     yp.CMS_lumi.extraText = "Simulation"
 
@@ -93,8 +93,10 @@ if __name__ == "__main__":
         "Wpol" : "W polar.",
         "JER" : "JER",
         "JERYesNo" : "JER Yes/No",
-        "DLSlope" : "DiLep (N_{j} Slope)",
-        "DLConst" : "DiLep (N_{j} Const)",
+        #"DLSlope" : "DiLep (N_{j} Slope)",
+        "DLSlope" : "N_{j} Slope",
+        #"DLConst" : "DiLep (N_{j} Const)",
+        "DLConst" : "N_{j} Offset",
         "lumi" : "Lumi.",
         "trig" : "Trigger",
         "lepSF": "Lepton SF",
@@ -223,10 +225,14 @@ if __name__ == "__main__":
 
         hCentralUncert = yp.getHistWithError(hCentral, sqHist)
 
+        hCentral.GetYaxis().SetRangeUser(0,5.9)
+        hCentral.GetYaxis().SetTitleSize(0.15)
+        hCentral.GetYaxis().SetTitleOffset(0.17)
+
         # save hists
         allhists += hists + [hCentral,hCentralUncert,stack, sqHist]
 
-        canv = yp.plotHists(var+"_"+signame,[stack,sqHist],[hCentral,hCentralUncert],"TRC", 1200, 600)
+        canv = yp.plotHists(var+"_"+signame,[stack,sqHist],[hCentral,hCentralUncert],"TLC", 1200, 600, nCols = 2)
         canv.SetName(canv.GetName()+"_Syst")
     #    canv = yp.plotHists(var+"_"+signame+"_Syst",[sqHist]+hists,[hCentral,hCentralUncert],"TM", 1200, 600)
     #    canv = yp.plotHists(var+"_"+signame+"_Stat",[stack,sqHist],hCentral,"TM", 1200, 600)
@@ -240,7 +246,7 @@ if __name__ == "__main__":
 
     #odir = "BinPlots/Syst/Combine/test/allSF_noPU_Wpol/Method1A/"
     #odir = "BinPlots/Syst/Combine/allSF_noPU_Wpol/Method1A/"
-    odir = "BinPlots/Syst/Signal/allSF_noPU_fixLepSF/lumi2p3fb/"
+    odir = "BinPlots/Syst/Signal/"
     #odir = "BinPlots/Syst/Signal/allSF_noPU/Method1A/"
     odir += "/"
     if not os.path.isdir(odir): os.makedirs(odir)

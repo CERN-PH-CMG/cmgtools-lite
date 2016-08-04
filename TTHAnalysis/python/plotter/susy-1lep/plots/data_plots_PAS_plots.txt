@@ -1,0 +1,31 @@
+# Leptons
+LepPt_log:	Lep_pt	: 40,25,625;  XTitle="Lep p_{T} [GeV]", Logy, IncludeOverflows=True, YMin=0.2, XNDiv=505
+EtaLep:		Lep_eta	: 40,-2.4,2.4 ;  XTitle="Lep #eta", Logy, MoreY=100, , YMin=0.2, XNDiv=505
+
+#
+MET_log:	MET	: 50,0,1000;  XTitle="ME_{T} [GeV]", Logy, IncludeOverflows=True, YMin=0.2, XNDiv=505
+HT_log:		HT	: 50,500,3000;  XTitle="H_{T} [GeV]", Logy, IncludeOverflows=True, YMin=0.2, XNDiv=505, MoreY=10
+LT_log:		LT	: 40,250,1250;  XTitle="L_{T} [GeV]", Logy, IncludeOverflows=True, YMin=0.2, XNDiv=505
+
+# (range(500,700,25) + range(700,900,100) + range(900,1500,100) + range(1500,2500,250))
+HT_wide:	HT	: [500, 525, 550, 575, 600, 625, 650, 675, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1750, 2000, 2250];  XTitle="H_{T} [GeV]", Logy, IncludeOverflows=True, YMin=0.2, XNDiv=505
+#LT_wide:	LT	: 50,250,1250;  XTitle="L_{T} [GeV]", Logy, IncludeOverflows=True, YMin=0.2, XNDiv=505
+
+# JETs
+nJet_log:	nJets30Clean	: 20,0,20   ;  XTitle="jet multiplicity", Logy, IncludeOverflows=True, YMin=0.2, XNDiv=505
+nBJet:		nBJet	: 10,0,10   ;  XTitle="b-jet multiplicity (CSVM)", Logy, IncludeOverflows=True, YMin=0.2, XNDiv=505
+
+# dPhi,Lp
+dPhi_log:	dPhi	: 30,0,3.141   ; XTitle="#Delta#Phi(W\,l)", IncludeOverflows=True, Logy, YMin=0.2, XNDiv=505
+dPhi_wide2:	dPhi	: [0.0, 0.2, 0.4, 0.7, 1.0, 2.0, 3.141]   ; XTitle="#Delta#Phi(W\,l)", IncludeOverflows=True, Logy, YMin=0.2, XNDiv=505, MoreY=100
+dPhi_wide:	dPhi	: [0,0.1,0.2,0.3,0.4,0.5,0.75,1.0,1.5,2,3.15] ; XTitle="#Delta#Phi(W\,l)", IncludeOverflows=True, Logy, YMin=0.2, XNDiv=505, MoreY=100
+
+# nVert
+nVert_log:	nVert	: 50,0,50; XTitle="Nvert", Logy, YMin=0.2, XNDiv=505
+
+# TEST
+JetPt1:		Jet_pt[0] : 40,0,600;  XTitle="Jet p_{T} [GeV]", Logy, IncludeOverflows=True, YMin=0.2, XNDiv=505
+JetPt2:		Jet_pt[1] : 40,0,600;  XTitle="Jet p_{T} [GeV]", Logy, IncludeOverflows=True, YMin=0.2, XNDiv=505
+
+# lsl
+LSL80:	LSLjetptGT80	: 2,0,1; XTitle="Lead&Sub jPT > 80", Logy, MoreY = 100

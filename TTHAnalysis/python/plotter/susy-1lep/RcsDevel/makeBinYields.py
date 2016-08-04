@@ -8,13 +8,13 @@ from math import hypot
 
 ## Trees -- skimmed with trig_base
 
-Tdir = "samples_HT350/"
+Tdir = "SampLinks/"
 # MC
-mcFTdir = "samples_HT350/Friends/"
-sigFTdir = "samples_HT350/Friends/"
+mcFTdir = "SampLinks/Friends/"
+sigFTdir = "SampLinks/Friends/"
 
 # new data
-dataFTdir = "samples_HT350/Friends/"
+dataFTdir = "SampLinks/Friends/"
 
 
 #Dilepton stuff
@@ -438,14 +438,14 @@ if __name__ == "__main__":
 
     doDLCR = False
 
-    doNjet6 = True
+    doNjet6 = False
     if doNjet6:
         cDict.update(cutDictCR)
         cDict.update(cutDictSR)
         if doDLCR: cDict.update(cutDictDLCR)
 
 
-    doNjet9 = True
+    doNjet9 = False
     if doNjet9:
         cDict.update(cutDictSRf9)
         cDict.update(cutDictCRf9)
@@ -457,7 +457,7 @@ if __name__ == "__main__":
         cDict.update(cutDictSRf5)
         cDict.update(cutDictCRf5)
 
-    doFew = True
+    doFew = False
     if doFew:
         cDict.update(cutDictSRf68Few)
         cDict.update(cutDictCRf68Few)

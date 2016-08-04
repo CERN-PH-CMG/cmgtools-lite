@@ -10,19 +10,20 @@ class ReplaceLogic:
         self.oW=specificReplaceWeight[0]
         self.nW=specificReplaceWeight[1]
         self.co=commentOut
-        
-    
+
+
 collectGlobalReplacements = []
 #add here and then just execute all of them in the replacement part
 #globalReplacements
 
-replaceScaleFactorGlobal=["xsec*lepSF*0.94*btagSF","xsec*1"]
+replaceScaleFactorGlobal=["0.94","TriggEff"]
+#replaceScaleFactorGlobal=["xsec*lepSF*0.94*btagSF","xsec*1"]
 #replaceScaleFactorGlobal=["xsec*lepSF*TopPtWeight*0.94*btagSF","xsec*1*TopPtWeight"]
 #replaceScaleFactorGlobal=["lepSF*0.94*btagSF*TopPtWeight","1*TopPtWeight"]
 assert len(replaceScaleFactorGlobal)==2
 replacenGenLepStuff=["ngenTau+ngenLep"," Sum$(abs(genTau_grandmotherId)==6&&abs(genTau_motherId)==24)+Sum$(abs(genLep_grandmotherId)==6&&abs(genLep_motherId)==24)"]
 assert len(replacenGenLepStuff)==2
-        
+
 componentDict={}
 # "#" means no change
 componentDict["TTJets_LO"]=ReplaceLogic(commentOut=True)
@@ -134,8 +135,8 @@ if __name__ == "__main__":
     print args[1]
     outputMCA = args[1]
     outf = open(outputMCA, 'w')
-   
-    
+
+
     summary=ProcessSummary()
 #    for line in fullFile: print line,
     for process in tty.listProcesses():
@@ -143,12 +144,12 @@ if __name__ == "__main__":
         for c in tty._allData[process]: summary.add(c)
 
 #    for p in summary.allProcesses: print p
-    #        for c in tty._allData[process]: print c._cname,
-    #        print
-    
+#        for c in tty._allData[process]: print c._cname,
+#        print
+
     #    for i, line in enumerate(open(samples,'r')):
     #        print line,
 
-    
+
     for line in fullFile:
         outf.write(summary.returnLines(line))
