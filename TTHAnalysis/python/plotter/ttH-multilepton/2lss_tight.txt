@@ -1,9 +1,8 @@
 alwaystrue: 1
-trigger: Triggers_ee || Triggers_mm || Triggers_em
+trigger: $DATA{Triggers_ee || Triggers_mm || Triggers_em} $MC{1}
 cleanup: minMllAFAS > 12
 dilep: nLepFO>=2
-#pt2010: LepGood1_conePt>20 && LepGood2_conePt>10 && (abs(LepGood2_pdgId)!=11 || LepGood2_conePt>15)
-pt2010: LepGood1_conePt>20 && (abs(LepGood1_pdgId)!=11 || LepGood1_conePt>25) && LepGood2_conePt>10 && (abs(LepGood2_pdgId)!=11 || LepGood2_conePt>15)
+pt2010: LepGood1_conePt>25 && LepGood2_conePt>10 && (abs(LepGood2_pdgId)!=11 || LepGood2_conePt>15)
 #htllv100 : LepGood1_conept+LepGood2_conept+met_pt > 100
 TT: LepGood1_isTight && LepGood2_isTight
 exclusive: nLepTight<=2

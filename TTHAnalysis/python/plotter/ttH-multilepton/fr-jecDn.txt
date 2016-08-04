@@ -15,6 +15,7 @@ change: kinMVA_2lss_ttbar\b : kinMVA_2lss_ttbar_jecDown
 change: kinMVA_2lss_ttV\b : kinMVA_2lss_ttV_jecDown
 change: kinMVA_3l_ttbar\b : kinMVA_3l_ttbar_jecDown
 change: kinMVA_3l_ttV\b : kinMVA_3l_ttV_jecDown
+change: kinMVA_3l_ttV_withMEM\b : kinMVA_3l_ttV_withMEM_jecDown
 change: kinMVA_2lss_MultiClass_ttH\b : kinMVA_2lss_MultiClass_jecDown_ttH
 change: kinMVA_2lss_MultiClass_ttV\b : kinMVA_2lss_MultiClass_jecDown_ttV
 change: kinMVA_2lss_MultiClass_ttbar\b : kinMVA_2lss_MultiClass_jecDown_ttbar

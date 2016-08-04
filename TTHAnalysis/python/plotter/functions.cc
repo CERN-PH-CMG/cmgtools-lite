@@ -4,6 +4,8 @@
 #include "Math/GenVector/PxPyPzM4D.h"
 #include "Math/GenVector/Boost.h"
 #include "TLorentzVector.h"
+#include "TH2Poly.h"
+#include "TGraphAsymmErrors.h"
 #include "PhysicsTools/Heppy/interface/Davismt2.h"
 
 //// UTILITY FUNCTIONS NOT IN TFORMULA ALREADY
@@ -435,6 +437,54 @@ float ttH_MVAto1D_6_flex (float kinMVA_2lss_ttbar, float kinMVA_2lss_ttV, int pd
 }
 
 
+int ttH_catIndex_2lss(int nTauTight, int LepGood1_pdgId, int LepGood2_pdgId, int LepGood1_charge, int nBJetMedium25){
+
+//2lss_1tau
+//2lss_ee_0tau_neg
+//2lss_ee_0tau_pos
+//2lss_em_0tau_bl_neg
+//2lss_em_0tau_bl_pos
+//2lss_em_0tau_bt_neg
+//2lss_em_0tau_bt_pos
+//2lss_mm_0tau_bl_neg
+//2lss_mm_0tau_bl_pos
+//2lss_mm_0tau_bt_neg
+//2lss_mm_0tau_bt_pos
+   
+  if (nTauTight>=1) return 1;
+  if (nTauTight==0 && abs(LepGood1_pdgId)==11 && abs(LepGood2_pdgId)==11 && LepGood1_charge<0) return 2;
+  if (nTauTight==0 && abs(LepGood1_pdgId)==11 && abs(LepGood2_pdgId)==11 && LepGood1_charge>0) return 3;
+  if (nTauTight==0 && (abs(LepGood1_pdgId) != abs(LepGood2_pdgId)) && LepGood1_charge<0 && nBJetMedium25 < 2) return 4;
+  if (nTauTight==0 && (abs(LepGood1_pdgId) != abs(LepGood2_pdgId)) && LepGood1_charge>0 && nBJetMedium25 < 2) return 5;
+  if (nTauTight==0 && (abs(LepGood1_pdgId) != abs(LepGood2_pdgId)) && LepGood1_charge<0 && nBJetMedium25 >= 2) return 6;
+  if (nTauTight==0 && (abs(LepGood1_pdgId) != abs(LepGood2_pdgId)) && LepGood1_charge>0 && nBJetMedium25 >= 2) return 7;
+  if (nTauTight==0 && abs(LepGood1_pdgId)==13 && abs(LepGood2_pdgId)==13 && LepGood1_charge<0 && nBJetMedium25 < 2) return 8;
+  if (nTauTight==0 && abs(LepGood1_pdgId)==13 && abs(LepGood2_pdgId)==13 && LepGood1_charge>0 && nBJetMedium25 < 2) return 9;
+  if (nTauTight==0 && abs(LepGood1_pdgId)==13 && abs(LepGood2_pdgId)==13 && LepGood1_charge<0 && nBJetMedium25 >= 2) return 10;
+  if (nTauTight==0 && abs(LepGood1_pdgId)==13 && abs(LepGood2_pdgId)==13 && LepGood1_charge>0 && nBJetMedium25 >= 2) return 11;
+
+ return -1;
+
+}
+
+int ttH_catIndex_3l(int LepGood1_charge, int LepGood2_charge, int LepGood3_charge, int nBJetMedium25){
+
+//3l_bl_neg
+//3l_bl_pos
+//3l_bt_neg
+//3l_bt_pos
+
+  if ((LepGood1_charge+LepGood2_charge+LepGood3_charge)<0 && nBJetMedium25 < 2) return 12;
+  if ((LepGood1_charge+LepGood2_charge+LepGood3_charge)>0 && nBJetMedium25 < 2) return 13;
+  if ((LepGood1_charge+LepGood2_charge+LepGood3_charge)<0 && nBJetMedium25 >= 2) return 14;
+  if ((LepGood1_charge+LepGood2_charge+LepGood3_charge)>0 && nBJetMedium25 >= 2) return 15;
+
+ return -1;
+
+}
+
+
+
 // for 74X
 //float _puw_true[50] = {3.652322599922302, 3.652322599922302, 3.652322599922302, 3.652322599922302, 3.652322599922302, 3.652322599922302, 2.1737862420968868, 2.7116925849897364, 3.352556070095877, 3.083015137131128, 2.8824218072960823, 2.6791975503716743, 2.212434153800565, 1.5297063638539434, 0.8762698648562287, 0.41326633649647065, 0.17496252648670657, 0.07484562496757297, 0.038507396968229766, 0.021849761893692053, 0.01140425609526747, 0.005063578526248854, 0.001881351382104846, 0.0006306639125313864, 0.00021708627575927402, 9.42187694469501e-05, 5.146591433045169e-05, 3.326854405002371e-05, 2.426063215708668e-05, 1.8575279862433386e-05, 1.281054551977887e-05, 8.01819566777096e-06, 3.6521122159066883e-06, 1.574921039309069e-06, 5.770182058345157e-07, 2.0862027190449754e-07, 6.946502045299735e-08, 2.032077576113469e-08, 6.417943581326451e-09, 1.5934414668326278e-09, 4.311337237072122e-10, 1.1138367777447038e-10, 2.6925919137965106e-11, 8.08827951069873e-12, 1.3708268591386723e-12, 4.065021195897016e-13, 1.770006195676463e-13, 5.689967214903059e-14, 6.224880123134382e-14, 0.0};
 //
@@ -461,6 +511,18 @@ float puw2016_vtx_4fb(int nVtx) { if (nVtx<60) return _puw2016_vtx_4fb[nVtx]; el
 float _puw2016_vtx_postTS_1p4fb[60] = {1.0, 0.0436628547984852, 0.0842489361361326, 0.17821945962362193, 0.3359458176736438, 0.5602926533570876, 0.7949986470183944, 1.009956832499392, 1.2171719031951709, 1.3352425499300327, 1.440211942752969, 1.461874846281358, 1.442598177264856, 1.3933114880260349, 1.303895089233208, 1.2175329549318987, 1.1119038703640942, 1.0164455216655062, 0.9118520665638973, 0.8059572090329304, 0.7155624000589931, 0.6289173123131537, 0.551810715512236, 0.4833237093643216, 0.4192621566956886, 0.3644494058922173, 0.30458903411821625, 0.2707118142127595, 0.2278811064155144, 0.20083759822187328, 0.17416091877224055, 0.16340944020160908, 0.14995476800202442, 0.12504239103683595, 0.12132829462778992, 0.09634514689836478, 0.1269739863549877, 0.1477893939541658, 0.12321393664515852, 0.03694734848854124, 0.10072796682909534, 0.06010102020802678, 0.11268941289005037, 0.0, 0.20488984161827345, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 1.0, 1.0};
 float puw2016_vtx_postTS_1p4fb(int nVtx) { if (nVtx<60) return _puw2016_vtx_postTS_1p4fb[nVtx]; else return 0; }
 
+// for json up to 276384 (9.235/fb)
+float _puw2016_vtx_9fb[60] = {1.0, 0.04935539210063196, 0.10330050968638685, 0.2147911101772578, 0.39265726267153417, 0.6154543185021981, 0.8307112462687154, 1.0234405172528802, 1.1925131512920364, 1.2992751918824221, 1.3675693415474597, 1.383571620896604, 1.370751371914269, 1.3312898916887232, 1.260970719202342, 1.1934158915388204, 1.1079581139187757, 1.0207671452254607, 0.9330680851961782, 0.8459974039502247, 0.7660997972524449, 0.6853105592363634, 0.619098569695837, 0.5548227688124637, 0.498590328109847, 0.43969852956854144, 0.39485106899051653, 0.3546221583391258, 0.32414310290951415, 0.29492937650181855, 0.26816973928662186, 0.26026228952267894, 0.25438200170624503, 0.24305609489401844, 0.2402861143189915, 0.22410752071130485, 0.2329521554125791, 0.27204322650384044, 0.2187522991708468, 0.2697045149716429, 0.26325149847967466, 0.20939084706659114, 0.41327140868406215, 0.45300904413445264, 0.15704313529994357, 1.0, 0.3926078382498588, 1.963039191249294, 0.39260783824985873, 1.1778235147495764, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 1.0, 1.0};
+float puw2016_vtx_9fb(int nVtx) { if (nVtx<60) return _puw2016_vtx_9fb[nVtx]; else return 0; }
+
+// for json up to 276811 (12.9/fb)
+float _puw2016_vtx_13fb[60] = {1.0, 0.046904649804193066, 0.09278031810949669, 0.18880389403907694, 0.3514757265099305, 0.557758357976481, 0.7693577917575528, 0.9666548740765918, 1.145319485841941, 1.2648398335691222, 1.3414360633779425, 1.3679594451533137, 1.362759399034107, 1.327376308549365, 1.2613315166803767, 1.196440614259811, 1.1139701579261285, 1.029953473266092, 0.9499371225384508, 0.8650456207995321, 0.7851579627730857, 0.7104602883630896, 0.6454503663312138, 0.5827160708961265, 0.527376483837914, 0.4700331217669938, 0.4271753119677936, 0.3869926520067443, 0.35986269245880403, 0.3280226115374019, 0.2995626735821264, 0.29695297220375283, 0.2904602474734967, 0.27797348557821827, 0.27285575884404983, 0.2696769830193652, 0.2834280746705423, 0.3079991295527812, 0.2958183730167929, 0.3281547943587132, 0.34428579006474574, 0.34709355767303973, 0.5916367460335905, 0.4991935044658422, 0.2689257936516321, 1.0, 0.690242870372522, 2.0707286111175662, 0.2958183730167952, 0.8874551190503855, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 1.0, 1.0};
+float puw2016_vtx_13fb(int nVtx) { if (nVtx<60) return _puw2016_vtx_13fb[nVtx]; else return 0; }
+
+// for json up to 276811 (12.9/fb), pu true reweighting
+float _puw2016_nTrueInt_13fb[60] = {0.0004627598152210959, 0.014334910915287028, 0.01754727657726197, 0.03181477917631854, 0.046128282569231016, 0.03929080994013006, 0.057066019809589925, 0.19570744862221007, 0.3720256062526554, 0.6440076202772811, 0.9218024454406528, 1.246743510634073, 1.5292543296414058, 1.6670061646418215, 1.7390553377117133, 1.6114721876895595, 1.4177294439817985, 1.420132866045718, 1.3157656415540477, 1.3365188060918483, 1.1191478126677334, 0.9731079434848392, 0.9219564145009487, 0.8811793391804676, 0.7627315352977334, 0.7265186492688713, 0.558602385324645, 0.4805954159733825, 0.34125298049234554, 0.2584848657646724, 0.1819638766151892, 0.12529545619337035, 0.11065705912071645, 0.08587356267495487, 0.09146322371620583, 0.11885517671051576, 0.1952483711863489, 0.23589115679998116, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
+float puw2016_nTrueInt_13fb(int nTrueInt) { if (nTrueInt<60) return _puw2016_nTrueInt_13fb[nTrueInt]; else return 0; }
+
 //
 //float puwMu8(int nVert) { return _puw_Mu8[nVert] * 0.001; }
 //float puwMu17(int nVert) { return _puw_Mu17[nVert] * (2305428/29339.)*0.002/2.26; }
@@ -469,41 +531,83 @@ float puw2016_vtx_postTS_1p4fb(int nVtx) { if (nVtx<60) return _puw2016_vtx_post
 #include "TH2F.h"
 #include "TFile.h"
 
-TFile *_file_recoToLoose_leptonSF_mu = NULL;
-TH2F *_histo_recoToLoose_leptonSF_mu = NULL;
+TFile *_file_recoToLoose_leptonSF_mu1_b = NULL;
+TFile *_file_recoToLoose_leptonSF_mu1_e = NULL;
+TFile *_file_recoToLoose_leptonSF_mu2 = NULL;
+TFile *_file_recoToLoose_leptonSF_mu3 = NULL;
+TGraphAsymmErrors *_histo_recoToLoose_leptonSF_mu1_b = NULL;
+TGraphAsymmErrors *_histo_recoToLoose_leptonSF_mu1_e = NULL;
+TH2F *_histo_recoToLoose_leptonSF_mu2 = NULL;
+TGraphAsymmErrors *_histo_recoToLoose_leptonSF_mu3 = NULL;
 TFile *_file_recoToLoose_leptonSF_el = NULL;
 TH2F *_histo_recoToLoose_leptonSF_el1 = NULL;
 TH2F *_histo_recoToLoose_leptonSF_el2 = NULL;
+TH2F *_histo_recoToLoose_leptonSF_el3 = NULL;
+TFile *_file_recoToLoose_leptonSF_gsf = NULL;
+TH2F *_histo_recoToLoose_leptonSF_gsf = NULL;
 
 float _get_recoToLoose_leptonSF_ttH(int pdgid, float pt, float eta, int nlep, float var){
 
-  if (var!=0) assert(0); // NOT IMPLEMENTED
+  if (var!=0 && abs(pdgid)!=11) assert(0); // NOT IMPLEMENTED
 
-  if (!_histo_recoToLoose_leptonSF_mu) {
-    _file_recoToLoose_leptonSF_mu = new TFile("","read");
-    _histo_recoToLoose_leptonSF_mu = (TH2F*)(_file_recoToLoose_leptonSF_mu->Get("FINAL"));
+  if (!_histo_recoToLoose_leptonSF_mu1_b) {
+    _file_recoToLoose_leptonSF_mu1_b = new TFile("../../data/leptonSF/mu_ttH_presel_barrel.root","read");
+    _file_recoToLoose_leptonSF_mu1_e = new TFile("../../data/leptonSF/mu_ttH_presel_endcap.root","read");
+    _file_recoToLoose_leptonSF_mu2 = new TFile("../../data/leptonSF/MuonID_Z_RunBCD_prompt80X_7p65_looseID.root","read");
+    _file_recoToLoose_leptonSF_mu3 = new TFile("../../data/leptonSF/ratios_HIP_trkEff.root","read");
+    _histo_recoToLoose_leptonSF_mu1_b = (TGraphAsymmErrors*)(_file_recoToLoose_leptonSF_mu1_b->Get("ratio"));
+    _histo_recoToLoose_leptonSF_mu1_e = (TGraphAsymmErrors*)(_file_recoToLoose_leptonSF_mu1_e->Get("ratio"));
+    _histo_recoToLoose_leptonSF_mu2 = (TH2F*)(_file_recoToLoose_leptonSF_mu2->Get("pt_abseta_ratio_MC_NUM_LooseID_DEN_genTracks_PAR_pt_spliteta_bin1"));
+    _histo_recoToLoose_leptonSF_mu3 = (TGraphAsymmErrors*)(_file_recoToLoose_leptonSF_mu3->Get("ratio_eta"));
   }
   if (!_histo_recoToLoose_leptonSF_el1) {
-    _file_recoToLoose_leptonSF_el = new TFile("","read");
-    _histo_recoToLoose_leptonSF_el1 = (TH2F*)(_file_recoToLoose_leptonSF_el->Get("MVAVLooseFO_and_IDEmu_and_TightIP2D"));
-    _histo_recoToLoose_leptonSF_el2 = (TH2F*)(_file_recoToLoose_leptonSF_el->Get("MiniIso0p4_vs_AbsEta"));
+    _file_recoToLoose_leptonSF_el = new TFile("../../data/leptonSF/el_scaleFactors_20160724.root","read");
+    _histo_recoToLoose_leptonSF_el1 = (TH2F*)(_file_recoToLoose_leptonSF_el->Get("GsfElectronToFOID2D"));
+    _histo_recoToLoose_leptonSF_el2 = (TH2F*)(_file_recoToLoose_leptonSF_el->Get("MVAVLooseElectronToMini4"));
+    _histo_recoToLoose_leptonSF_el3 = (TH2F*)(_file_recoToLoose_leptonSF_el->Get("MVAVLooseElectronToConvIHit1"));
+  }
+  if (!_histo_recoToLoose_leptonSF_gsf) {
+    _file_recoToLoose_leptonSF_gsf = new TFile("../../data/leptonSF/el_scaleFactors_gsf.root","read");
+    _histo_recoToLoose_leptonSF_gsf = (TH2F*)(_file_recoToLoose_leptonSF_gsf->Get("EGamma_SF2D"));
   }
 
   if (abs(pdgid)==13){
-    TH2F *hist = _histo_recoToLoose_leptonSF_mu;
-    int etabin = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(eta)));
-    int ptbin  = std::max(1, std::min(hist->GetNbinsY(), hist->GetYaxis()->FindBin(pt)));
-    return hist->GetBinContent(etabin,ptbin);
+
+    TGraphAsymmErrors *hist1 = (fabs(eta)<1.2) ? _histo_recoToLoose_leptonSF_mu1_b : _histo_recoToLoose_leptonSF_mu1_e;
+    float pt1 = std::max(float(hist1->GetXaxis()->GetXmin()+1e-5), std::min(float(hist1->GetXaxis()->GetXmax()-1e-5), pt));
+    float out = hist1->Eval(pt1);
+
+    TH2F *hist = _histo_recoToLoose_leptonSF_mu2;
+    int ptbin  = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(pt)));
+    int etabin = std::max(1, std::min(hist->GetNbinsY(), hist->GetYaxis()->FindBin(fabs(eta))));
+    out *= hist->GetBinContent(ptbin,etabin);
+
+    hist1 = _histo_recoToLoose_leptonSF_mu3;
+    float eta1 = std::max(float(hist1->GetXaxis()->GetXmin()+1e-5), std::min(float(hist1->GetXaxis()->GetXmax()-1e-5), eta));
+    out *= hist1->Eval(eta1);
+
+    return out;
+
   }
   if (abs(pdgid)==11){
     TH2F *hist = _histo_recoToLoose_leptonSF_el1;
     int ptbin  = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(pt)));
     int etabin = std::max(1, std::min(hist->GetNbinsY(), hist->GetYaxis()->FindBin(fabs(eta))));
-    float out = hist->GetBinContent(ptbin,etabin);
+    float out = hist->GetBinContent(ptbin,etabin)+var*hist->GetBinError(ptbin,etabin);
     hist = _histo_recoToLoose_leptonSF_el2;
     ptbin  = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(pt)));
     etabin = std::max(1, std::min(hist->GetNbinsY(), hist->GetYaxis()->FindBin(fabs(eta))));
-    out *= hist->GetBinContent(ptbin,etabin);
+    out *= hist->GetBinContent(ptbin,etabin)+var*hist->GetBinError(ptbin,etabin);
+    hist = _histo_recoToLoose_leptonSF_el3;
+    ptbin  = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(pt)));
+    etabin = std::max(1, std::min(hist->GetNbinsY(), hist->GetYaxis()->FindBin(fabs(eta))));
+    out *= hist->GetBinContent(ptbin,etabin)+var*hist->GetBinError(ptbin,etabin);
+
+    hist = _histo_recoToLoose_leptonSF_gsf;
+    etabin = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(eta))); // careful, different convention
+    ptbin  = std::max(1, std::min(hist->GetNbinsY(), hist->GetYaxis()->FindBin(pt)));
+    out *= hist->GetBinContent(etabin,ptbin);
+
     return out;
   }
 
@@ -521,9 +625,7 @@ TH2F *_histo_looseToTight_leptonSF_mu_3l = NULL;
 TFile *_file_looseToTight_leptonSF_el_3l = NULL;
 TH2F *_histo_looseToTight_leptonSF_el_3l = NULL;
 
-float _get_looseToTight_leptonSF_ttH(int pdgid, float _pt, float eta, int nlep, float var){
-
-  float pt = std::min(float(79.9),_pt);
+float _get_looseToTight_leptonSF_ttH(int pdgid, float pt, float eta, int nlep, float var){
 
   if (var!=0) assert(0); // NOT IMPLEMENTED
 
@@ -556,7 +658,7 @@ float _get_looseToTight_leptonSF_ttH(int pdgid, float _pt, float eta, int nlep, 
 
 float leptonSF_ttH(int pdgid, float pt, float eta, int nlep, float var=0){
 
-  float recoToLoose = 1; //_get_recoToLoose_leptonSF_ttH(pdgid,pt,eta,nlep,var);
+  float recoToLoose = _get_recoToLoose_leptonSF_ttH(pdgid,pt,eta,nlep,var);
   float looseToTight = _get_looseToTight_leptonSF_ttH(pdgid,pt,eta,nlep,var);
   float res = recoToLoose*looseToTight;
   assert (res>0);
@@ -564,13 +666,45 @@ float leptonSF_ttH(int pdgid, float pt, float eta, int nlep, float var=0){
 
 }
 
-float triggerSF_ttH(int pdgid1, float pt1, int pdgid2, float pt2, int nlep, float var_ee=0){
-  if (var_ee!=0) assert(0); // NOT IMPLEMENTED
-  if (nlep>2) return 1;
-  int x = (abs(pdgid1)==11) + (abs(pdgid2)==11);
-  if (x==2) return 1.02;
-  else if (x==1) return 1.02;
-  else return 1.01;
+TFile *file_triggerSF_ttH = NULL;
+TH2Poly* t2poly_triggerSF_ttH_mm = NULL;
+TH2Poly* t2poly_triggerSF_ttH_ee = NULL;
+TH2Poly* t2poly_triggerSF_ttH_em = NULL;
+TH2Poly* t2poly_triggerSF_ttH_3l = NULL;
+
+float triggerSF_ttH(int pdgid1, float pt1, int pdgid2, float pt2, int nlep, float var=0){
+  if (!file_triggerSF_ttH) {
+    file_triggerSF_ttH = new TFile("../../data/triggerSF/trig_eff_map_v4.root");
+    t2poly_triggerSF_ttH_mm = (TH2Poly*)(file_triggerSF_ttH->Get("SSuu2DPt_effic"));
+    t2poly_triggerSF_ttH_ee = (TH2Poly*)(file_triggerSF_ttH->Get("SSee2DPt__effic"));
+    t2poly_triggerSF_ttH_em = (TH2Poly*)(file_triggerSF_ttH->Get("SSeu2DPt_effic"));
+    t2poly_triggerSF_ttH_3l = (TH2Poly*)(file_triggerSF_ttH->Get("__3l2DPt_effic"));
+    if (!(t2poly_triggerSF_ttH_mm && t2poly_triggerSF_ttH_ee && t2poly_triggerSF_ttH_em && t2poly_triggerSF_ttH_3l)) {
+	std::cout << "Impossible to load trigger scale factors!" << std::endl;
+	file_triggerSF_ttH->ls();
+	file_triggerSF_ttH = NULL;
+      }
+  }
+  TH2Poly* hist = NULL;
+  if (nlep==2){
+    if (abs(pdgid1)==13 && abs(pdgid2)==13) hist = t2poly_triggerSF_ttH_mm;
+    else if (abs(pdgid1)==11 && abs(pdgid2)==11) hist = t2poly_triggerSF_ttH_ee;
+    else hist = t2poly_triggerSF_ttH_em;
+  }
+  else if (nlep==3) hist = t2poly_triggerSF_ttH_3l;
+  else std::cout << "Wrong options to trigger scale factors" << std::endl;
+  pt1 = std::max(float(hist->GetXaxis()->GetXmin()+1e-5), std::min(float(hist->GetXaxis()->GetXmax()-1e-5), pt1));
+  pt2 = std::max(float(hist->GetYaxis()->GetXmin()+1e-5), std::min(float(hist->GetYaxis()->GetXmax()-1e-5), pt2));
+  int bin = hist->FindBin(pt1,pt2);
+  float eff = hist->GetBinContent(bin) + var * hist->GetBinError(bin);
+
+  if (nlep>2) return eff;
+  int cat = (abs(pdgid1)==11) + (abs(pdgid2)==11);
+  if (cat==2) return eff*1.02;
+  else if (cat==1) return eff*1.02;
+  else return eff*1.01;
+
+
 }
 
 float mass_3_cheap(float pt1, float eta1, float pt2, float eta2, float phi2, float pt3, float eta3, float phi3) {
