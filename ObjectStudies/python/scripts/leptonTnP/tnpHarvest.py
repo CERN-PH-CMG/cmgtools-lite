@@ -137,7 +137,7 @@ def plotRatio(effs,ratio,options):
     line.DrawLine(ratio.GetXaxis().GetXmin(),1,ratio.GetXaxis().GetXmax(),1)
     ratio.Draw("PZ SAME")
 
-def plotEffs(name,effs,ratio,options):
+def plotEffs(name,effs,ratio,options,withSyst=True):
     c1 = ROOT.TCanvas("c1", "c1", 600, (750 if options.doRatio else 600))
     c1.Draw()
     p1, p2 = c1, None # high and low panes
@@ -166,7 +166,7 @@ def plotEffs(name,effs,ratio,options):
         plotRatio(effs,ratio,options)
     for ext in "pdf","png":
         c1.Print("%s/%s.%s" % (options.printDir, name, ext))
-    if len(effs) == 2:
+    if len(effs) == 2 and withSyst:
         dump = open("%s/%s.%s" % (options.printDir, name, "txt"), "w")
         dump.write(" xmin   xmax     data[%] uncertainty  ref[%] uncertainty   scalef    (+/- stat)       (+/- syst)     scalef    (+/- tot)   \n")
         data, fref, fratio = effs[0], TGraphByX(effs[1]), TGraphByX(ratio.syst)
@@ -281,7 +281,7 @@ def capErrors(graph):
         yhi = graph.GetErrorYhigh(i)
         ylo = graph.GetErrorYlow(i)
         if y+yhi > 1.0: graph.SetPointEYhigh(i, max(1.0-y,0))
-        if y-ylo < 0.0: graph.SetPointEYlo(i, max(y,0))
+        if y-ylo < 0.0: graph.SetPointEYlow(i, max(y,0))
 
 def diffAsGraphBand(graph,diff,relative=False):
     x = graph.GetX()
