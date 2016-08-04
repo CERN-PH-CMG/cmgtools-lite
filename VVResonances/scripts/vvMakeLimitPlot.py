@@ -2,10 +2,8 @@
 
 import ROOT
 import optparse
-
-
-
-
+from CMGTools.VVResonances.plotting.CMS_lumi import *
+from CMGTools.VVResonances.plotting.tdrstyle import *
 parser = optparse.OptionParser()
 parser.add_option("-o","--output",dest="output",default='limitPlot.root',help="Limit plot")
 
@@ -19,7 +17,8 @@ parser.add_option("-l","--log",dest="log",type=int,help="Log plot",default=1)
 parser.add_option("-t","--titleX",dest="titleX",default='M_{X} [GeV]',help="title of x axis")
 parser.add_option("-T","--titleY",dest="titleY",default='#sigma x BR(X #rightarrow WW) [pb]  ',help="title of y axis")
 
-parser.add_option("-p","--paveText",dest="label",default='CMS Preliminary , L = 1.3 fb^{-1}',help="label")
+parser.add_option("-p","--period",dest="period",default='2015',help="period")
+parser.add_option("-f","--final",dest="final",type=int, default=1,help="Preliminary or not")
 
 
 
@@ -35,16 +34,22 @@ parser.add_option("-p","--paveText",dest="label",default='CMS Preliminary , L = 
 #define output dictionary
 
 
+
+setTDRStyle()
+
+
 f=ROOT.TFile(args[0])
 limit=f.Get("limit")
 data={}
 
 
 for event in limit:
+    if float(event.mh)<options.minX or float(event.mh)>options.maxX:
+        continue
+    
     if not (event.mh in data.keys()):
         data[event.mh]={}
 
-    print 'processing',event.mh,event.quantileExpected,event.limit     
 
     if event.quantileExpected<0:            
         data[event.mh]['obs']=event.limit
@@ -58,11 +63,6 @@ for event in limit:
         data[event.mh]['+1sigma']=event.limit
     if event.quantileExpected>0.974 and event.quantileExpected<0.976:            
         data[event.mh]['+2sigma']=event.limit
-
-
-
-
-    print data[event.mh]
 
 
 band68=ROOT.TGraphAsymmErrors()
@@ -117,37 +117,43 @@ line_minus2.Sort()
 c=ROOT.TCanvas("c","c")
 frame=c.DrawFrame(options.minX,options.minY,options.maxX,options.maxY)
 frame.GetXaxis().SetTitle(options.titleX)
+frame.GetXaxis().SetTitleOffset(0.9)
+frame.GetXaxis().SetTitleSize(0.05)
+
 frame.GetYaxis().SetTitle(options.titleY)
+frame.GetYaxis().SetTitleSize(0.05)
+frame.GetYaxis().SetTitleOffset(1.15)
 
 band68.SetFillColor(ROOT.kGreen)
-band68.SetLineWidth(2)
-band68.SetLineColor(ROOT.kBlack)
-band68.SetLineStyle(1)
-band68.SetMarkerStyle(20)
+band68.SetLineWidth(3)
+band68.SetLineColor(ROOT.kBlue)
+band68.SetLineStyle(7)
+band68.SetMarkerStyle(0)
 
 band95.SetFillColor(ROOT.kYellow)
 
 bandObs.SetLineWidth(3)
-bandObs.SetLineColor(ROOT.kRed)
+bandObs.SetLineColor(ROOT.kBlack)
+bandObs.SetMarkerStyle(20)
 
 line_plus1.SetLineWidth(1)
-line_plus1.SetLineColor(ROOT.kGreen-3)
+line_plus1.SetLineColor(ROOT.kGreen+1)
 
 line_plus2.SetLineWidth(1)
-line_plus2.SetLineColor(ROOT.kYellow-6)
+line_plus2.SetLineColor(ROOT.kOrange-2)
 
 line_minus1.SetLineWidth(1)
-line_minus1.SetLineColor(ROOT.kGreen-3)
+line_minus1.SetLineColor(ROOT.kGreen+1)
 
 line_minus2.SetLineWidth(1)
-line_minus2.SetLineColor(ROOT.kYellow-6)
+line_minus2.SetLineColor(ROOT.kOrange-2)
 
 
 c.cd()
 frame.Draw()
 band95.Draw("3same")
 band68.Draw("3same")
-band68.Draw("XPLsame")
+band68.Draw("XLsame")
 line_plus1.Draw("Lsame")
 line_plus2.Draw("Lsame")
 line_minus1.Draw("Lsame")
@@ -155,25 +161,26 @@ line_minus2.Draw("Lsame")
 c.SetLogy(options.log)
 c.Draw()
 
-pt =ROOT.TPaveText(0.1577181,0.9562937,0.9580537,0.9947552,"brNDC")
-pt.SetBorderSize(0)
-pt.SetTextAlign(12)
-pt.SetFillStyle(0)
-pt.SetTextFont(42)
-pt.SetTextSize(0.03)
-text = pt.AddText(0.01,0.3,options.label)
-pt.Draw()
-c.Draw()
+
+if options.final:
+    cmslabel_final(c,options.period,11)
+else:
+    cmslabel_prelim(c,options.period,11)
+
+c.Update()
 c.RedrawAxis()
 
 if options.blind==0:
-    bandObs.Draw("Lsame")
+    bandObs.Draw("PLsame")
 
 
 
-fout=ROOT.TFile(options.output,"RECREATE")
+
+c.SaveAs(options.output+".png")    
+c.SaveAs(options.output+".pdf")    
+
+fout=ROOT.TFile(options.output+".root","RECREATE")
 fout.cd()
-
 c.Write()
 band68.Write()
 band95.Write()

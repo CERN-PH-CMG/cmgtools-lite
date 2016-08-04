@@ -40,11 +40,11 @@ def returnString(func,options):
 
 
 def runFits(data,options):
-    axis=ROOT.TAxis(5,array('d',[600,700,800,900,1000,1200,1400]))
+    axis=ROOT.TAxis(5,array('d',[600,700,800,900,1000,2000]))
 
    #first pass     
     graphs=[]
-    for i in range(0,6):
+    for i in range(0,12):
         graphs.append(ROOT.TGraphErrors())
 
     for i in range(1,axis.GetNbins()+1):
@@ -59,9 +59,9 @@ def runFits(data,options):
         fitter.w.var("M").setMin(options.minx)
 
 
-        fitter.signalMJJCB('model','M')
+        fitter.signalMJJCBBoth('model','M')
         fitter.importBinnedData(histo,['M'],'data')   
-        fitter.fit('model','data',[ROOT.RooFit.SumW2Error(0),ROOT.RooFit.Minos(1)])
+        fitter.fit('model','data',[ROOT.RooFit.SumW2Error(0)])
         chi=fitter.projection("model","data","M","debugfitMJJTop_"+options.output+"_"+str(i)+".png")
     
         for j,g in enumerate(graphs):
@@ -77,34 +77,57 @@ def runFits(data,options):
     pol2=ROOT.TF1("pol2","pol2",options.minx,options.maxx)
     pol1=ROOT.TF1("pol1","pol1",options.minx,options.maxx)
     pol0=ROOT.TF1("pol0","pol0",options.minx,options.maxx)
-    log=ROOT.TF1("log0","[0]+[1]*log(x)",options.minx,options.maxx)
 
 
-    graphs[0].Fit(log)
-    data['mean']=returnString(log,options)
 
-    graphs[1].Fit(pol0)
-    data['sigma']=returnString(pol0,options)
+    graphs[0].Fit(pol1)
+    data['mean']=returnString(pol1,options)
 
-    graphs[2].Fit(log)
-    data['alpha1']=returnString(log,options)
+    graphs[1].Fit(pol1)
+    data['sigma']=returnString(pol1,options)
+
+    graphs[2].Fit(pol0)
+    data['alpha1']=returnString(pol0,options)
 
     graphs[3].Fit(pol0)
     data['n1']=returnString(pol0,options)
 
-    graphs[4].Fit(pol0)
-    data['alpha2']=returnString(pol0,options)
+    graphs[4].Fit(pol1)
+    data['alpha2']=returnString(pol1,options)
 
     graphs[5].Fit(pol0)
     data['n2']=returnString(pol0,options)
-    
-
 
     #create json
-    f=open(options.output+".json","w")
+    f=open(options.output+"_W.json","w")
+    json.dump(data,f)
+    f.close()
+
+    data={}
+
+    graphs[6].Fit(pol1)
+    data['mean']=returnString(pol1,options)
+
+    graphs[7].Fit(pol1)
+    data['sigma']=returnString(pol1,options)
+
+    graphs[8].Fit(pol0)
+    data['alpha1']=returnString(pol0,options)
+
+    graphs[9].Fit(pol0)
+    data['n1']=returnString(pol0,options)
+
+    graphs[10].Fit(pol1)
+    data['alpha2']=returnString(pol1,options)
+
+    graphs[11].Fit(pol0)
+    data['n2']=returnString(pol0,options)
+    f=open(options.output+"_top.json","w")
     json.dump(data,f)
     f.close()
     return graphs
+
+
 
 #Initialize plotters
 
