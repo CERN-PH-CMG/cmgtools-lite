@@ -6,11 +6,15 @@ from CMGTools.VVResonances.statistics.Fitter import Fitter
 from math import log
 import os, sys, re, optparse,pickle,shutil,json
 import json
+from CMGTools.VVResonances.plotting.tdrstyle import *
+setTDRStyle()
 
 parser = optparse.OptionParser()
 parser.add_option("-o","--output",dest="output",help="Output JSON",default='')
 parser.add_option("-i","--histo",dest="histo",help="name",default="histo")
 parser.add_option("-f","--function",dest="function",help="name",default="bernstein")
+parser.add_option("-t","--title",dest="title",help="name",default="x")
+
 (options,args) = parser.parse_args()
 
 
@@ -53,7 +57,7 @@ if options.function.find('bernstein')!=-1:
 fitter.fit('model','data',[ROOT.RooFit.SumW2Error(1)])
 fitter.fit('model','data',[ROOT.RooFit.SumW2Error(1)])
 
-fitter.projection("model","data","x","debug"+options.output+".png")
+fitter.projection("model","data","x","debug"+options.output+".root",options.title)
 
 
 

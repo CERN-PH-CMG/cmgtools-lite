@@ -6,7 +6,19 @@ import PhysicsTools.HeppyCore.framework.config as cfg
 from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv2 import * #<--miniAOD v2 2016 MC for ICHEP
 from CMGTools.RootTools.samples.samples_13TeV_DATA2016 import *  #<--miniAOD v1 2016 DATA
 
-from CMGTools.RootTools.samples.triggers_13TeV_Spring15 import triggers_1mu_iso_50ns, triggers_mumu, triggers_ee, triggers_photon30, triggers_photon50, triggers_photon75, triggers_photon90, triggers_photon120, triggers_jet, triggers_dijet, triggers_HT350, triggers_HT475, triggers_HT600, triggers_HT800, triggers_HT900, triggers_Jet80MET90
+from CMGTools.RootTools.samples.triggers_13TeV_Spring15 import triggers_1mu_iso_50ns, triggers_mumu, triggers_ee, triggers_photon30, triggers_photon50, triggers_photon75, triggers_photon90, triggers_photon120, triggers_photon165_HE10, triggers_jet, triggers_dijet, triggers_HT350, triggers_HT475, triggers_HT600, triggers_HT800, triggers_HT900, triggers_Jet80MET90
+
+###add some special trigger
+triggers_1mu_iso_Zeynep = [ 'HLT_IsoTkMu22_v*','HLT_IsoMu22_v*','HLT_IsoMu24_v*','HLT_IsoMu27_v*']
+triggers_1ele_iso_Zeynep = [ 'HLT_Ele27_eta2p1_WPLoose_Gsf_v*','HLT_Ele27_WPTight_Gsf_v*','HLT_Ele35_WPLoose_Gsf_v*']
+
+#https://hypernews.cern.ch/HyperNews/CMS/get/susy-interpretations/247.html
+triggers_mumu_noniso_Dominick = ['HLT_Mu30_TkMu11_v3','HLT_Mu50_v4', 'HLT_TkMu50_v3']
+triggers_ee_noniso_Dominick = ['HLT_DoubleEle33_CaloIdL_GsfTrkIdVL_MW_v6','HLT_Ele105_CaloIdVT_GsfTrkIdT_v6']
+
+##goldenJson = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-276384_13TeV_PromptReco_Collisions16_JSON_NoL1T.txt'
+goldenJson = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-276811_13TeV_PromptReco_Collisions16_JSON_NoL1T.txt'
+
 
 #-------- INITIAL FLAG
 isDiJet=False
@@ -43,6 +55,14 @@ elif test==1:
 #        comp.splitFactor = 1
         comp.splitFactor = 100
         comp.files = comp.files[:]
+
+elif test==2:
+#    isZSkim=True
+    is25ns=True
+    selectedComponents = [ DYJetsToLL_M50 ]
+    for comp in selectedComponents:
+        comp.splitFactor = 1
+        comp.files = ['root://eoscms///store/mc/RunIISpring16MiniAODv2/TTbarDMJets_pseudoscalar_Mchi-1_Mphi-100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUSpring16RAWAODSIM_80X_mcRun2_asymptotic_2016_miniAODv2_v0_ext1-v1/40000/C06A61EE-EF25-E611-870A-02163E011A12.root']
 
 #elif test==2:
 #    selectedComponents = [ TTJets_50ns ]
@@ -117,9 +137,9 @@ elif test==7:
 elif test==13:
     isZSkim=True
     if isEle:
-        selectedComponents = [ DoubleEG_Run2016B_PromptReco_v2 ]
+        selectedComponents = [ DoubleEG_Run2016B_PromptReco_v2, DoubleEG_Run2016C_PromptReco_v2, DoubleEG_Run2016D_PromptReco_v2 ]
     else:
-        selectedComponents = [ DoubleMuon_Run2016B_PromptReco_v2 ]
+        selectedComponents = [ DoubleMuon_Run2016B_PromptReco_v2, DoubleMuon_Run2016C_PromptReco_v2, DoubleMuon_Run2016D_PromptReco_v2 ]
     for comp in selectedComponents:
 #        comp.splitFactor = 1
 #        comp.files = comp.files[5:10]
@@ -127,10 +147,10 @@ elif test==13:
         comp.splitFactor = 1000
         comp.files = comp.files[:]
         if isEle:
-            comp.triggers = triggers_ee
+            comp.triggers = triggers_ee + triggers_1ele_iso_Zeynep + triggers_ee_noniso_Dominick
         else:
-            comp.triggers = triggers_mumu
-        comp.json = "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-275125_13TeV_PromptReco_Collisions16_JSON.txt"
+            comp.triggers = triggers_mumu + triggers_1mu_iso_Zeynep + triggers_ee_noniso_Dominick
+        comp.json = goldenJson
         comp.intLumi= 0.04003
         print comp
 
@@ -141,7 +161,7 @@ elif test==14:
     for comp in selectedComponents:
         comp.splitFactor = 1000
         comp.files = comp.files[:]
-        comp.json = "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-275125_13TeV_PromptReco_Collisions16_JSON.txt"
+        comp.json = goldenJson
         comp.intLumi= 0.04003
 
 ### this is for the QCDlike
@@ -151,7 +171,7 @@ elif test==15:
     for comp in selectedComponents:
         comp.splitFactor = 1000
         comp.files = comp.files[:]
-        comp.json = "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-275125_13TeV_PromptReco_Collisions16_JSON.txt"
+        comp.json = goldenJson
         comp.intLumi= 0.04003
 #        if isEarlyRun:
 #            comp.run_range=(251027,251585) # in 17july runInJSON: 251244,251251,251252,251561,251562
@@ -163,31 +183,32 @@ elif test==15:
 ### this is for the PhotonSkim
 elif test==16:
     is1PH=True
-    selectedComponents = [ SinglePhoton_Run2016B_PromptReco_v2 ]
+    selectedComponents = [ SinglePhoton_Run2016B_PromptReco_v2, SinglePhoton_Run2016C_PromptReco_v2, SinglePhoton_Run2016D_PromptReco_v2 ]
     for comp in selectedComponents:
-        comp.triggers = triggers_photon30 + triggers_photon50 + triggers_photon75 + triggers_photon90 + triggers_photon120
+        comp.triggers = triggers_photon30 + triggers_photon50 + triggers_photon75 + triggers_photon90 + triggers_photon120 + triggers_photon165_HE10
         comp.splitFactor = 1000
         comp.files = comp.files[:]
-        comp.json = "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-275125_13TeV_PromptReco_Collisions16_JSON.txt"
+        comp.json = goldenJson
         comp.intLumi= 0.04003
     # ------------------------------------------------------------------------------------------- #
     #        --> 25ns MC here
 
 #QCD
 elif test==17:
-#    selectedComponents = [QCD_HT100to200, QCD_HT200to300, QCD_HT300to500, QCD_HT_500to700, QCD_HT700to1000,QCD_HT1000to1500,QCD_HT1500to2000,QCD_HT2000toInf]
     selectedComponents = QCDHT + WJetsToLNuHT
     is1PH=True
     for comp in selectedComponents:
         comp.splitFactor = 1000
         comp.files = comp.files[:]
+#        comp.splitFactor = 1
+#        comp.files = comp.files[:1]
 
 # GJets
 elif test==18:
     selectedComponents = [GJets_HT40to100,GJets_HT100to200, GJets_HT200to400, GJets_HT400to600, GJets_HT600toInf]
     is1PH=True
     for comp in selectedComponents:
-        comp.splitFactor = 500
+        comp.splitFactor = 1000
         comp.files = comp.files[:]   
 
 # WG/ZG/TTG
@@ -201,8 +222,7 @@ elif test==19:
 elif test==23:
     isZSkim=True
     is25ns=True
-    selectedComponents = [ DYJetsToLL_M50 ]
-#    selectedComponents = [ DYJetsToLL_M50, TTJets_DiLepton, TTJets_DiLepton_ext, ZZTo4L, ZZTo2L2Q, ZZTo2L2Nu, WWTo2L2Nu, WZTo2L2Q, WZTo3LNu ]
+    selectedComponents = [ DYJetsToLL_M50, TTJets_DiLepton, TTJets_DiLepton_ext, ZZTo4L, ZZTo2L2Q, ZZTo2L2Nu, WWTo2L2Nu, WZTo2L2Q, WZTo3LNu ] + TriBosons + [ TBar_tWch, T_tWch, TToLeptons_tch_powheg, TBarToLeptons_tch_powheg, TToLeptons_sch_amcatnlo + TTJets_SingleLeptonFromTbar, TTJets_SingleLeptonFromT]
     for comp in selectedComponents:
 # no trigger on MC for now
 #        if isEle:
@@ -286,6 +306,15 @@ if isMonoJet:
     metSequence.insert(metSequence.index(photonAna)+2,ttHJetMETSkim)
     metSequence.remove(photonAna)
 
+from CMGTools.ObjectStudies.analyzers.GammaSkimmer import GammaSkimmer
+gammaSkim = cfg.Analyzer(
+            GammaSkimmer, name='GammaSkimmer',
+            )
+
+if is1PH and test==17:
+    photonAna.ptMin = 50
+    photonAna.etaMax = 1.4
+    metSequence.insert(metSequence.index(photonAna)+1,gammaSkim)
 
 # --------------------
 # -------------------- FINE TUNE CONTENT
@@ -332,14 +361,18 @@ if comp.isData and comp.json is None:
 if isZSkim or is1PH:
 
     triggerFlagsAna.triggerBits = {
-        'SingleMu' : triggers_1mu_iso_50ns, # [ 'HLT_IsoMu17_eta2p1_v*', 'HLT_IsoTkMu17_eta2p1_v*'  ] + [ 'HLT_IsoMu20_v*', 'HLT_IsoTkMu20_v*'  ]
         'DoubleMu' : triggers_mumu, # [ "HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v*", "HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v*" ]
         'DoubleEG' : triggers_ee, # [ "HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v*" ]
+        'SingleMu' : triggers_1mu_iso_Zeynep, # [ 'HLT_IsoTkMu22_v*','HLT_IsoMu22_v*','HLT_IsoMu24_v*','HLT_IsoMu27_v*']
+        'SingleEle' : triggers_1ele_iso_Zeynep, # [ 'HLT_Ele27_eta2p1_WPLoose_Gsf_v*','HLT_Ele27_WPTight_Gsf_v*','HLT_Ele35_WPLoose_Gsf_v*']
+        'HighPTMuNonIso' : triggers_mumu_noniso_Dominick,
+        'HighPTEleNonIso' : triggers_ee_noniso_Dominick,
         'Photon30' : triggers_photon30, #["HLT_Photon30_R9Id90_HE10_IsoM_v*"]
         'Photon50' : triggers_photon50, #["HLT_Photon50_R9Id90_HE10_IsoM_v*"]
         'Photon75' : triggers_photon75, #["HLT_Photon75_R9Id90_HE10_IsoM_v*"]
         'Photon90' : triggers_photon90, #["HLT_Photon90_R9Id90_HE10_IsoM_v*"]
         'Photon120': triggers_photon120, #["HLT_Photon120_R9Id90_HE10_IsoM_v*"]
+        'Photon165': triggers_photon165_HE10, #["HLT_Photon165_HE10_v*"]
         }
 
 
@@ -413,9 +446,9 @@ preprocessorFile = "$CMSSW_BASE/tmp/MetType1_jec_%s.py"%(jecEra)
 extraArgs=[]
 if comp.isData:
     extraArgs.append('--isData')
-    GT= '80X_dataRun2_Prompt_v8'
+    GT= '80X_dataRun2_Prompt_ICHEP16JEC_v0'
 else:
-    GT= '80X_mcRun2_asymptotic_2016_v3'
+    GT= '80X_mcRun2_asymptotic_2016_miniAODv2_v1'
 
 if removeResiduals:extraArgs.append('--removeResiduals')
 args = ['python',
@@ -440,7 +473,7 @@ preprocessor = CmsswPreprocessor(preprocessorFile)
 config = cfg.Config( components = selectedComponents,
                      sequence = metSequence,
                      services = [output_service],
-#                     preprocessor=preprocessor, # comment if pre-processor non needed
+                     preprocessor=preprocessor, # comment if pre-processor non needed
 #                     events_class = event_class)
                      events_class = Events)
 

@@ -63,7 +63,8 @@ def runFits(data,options):
         fitter.erfpow('model','M')
 
         fitter.importBinnedData(histo,['M'],'data')   
-        fitter.fit('model','data',[ROOT.RooFit.SumW2Error(1)])
+        fitter.fit('model','data',[ROOT.RooFit.SumW2Error(1),ROOT.RooFit.Minos(1)])
+
 #        chi=fitter.projection("model","data","M","debugfitMVV_"+options.output+"_pass1_"+str(i)+".png")
     
         for j,g in enumerate(graphs):
@@ -89,7 +90,8 @@ def runFits(data,options):
         fitter.w.var("c_0").setVal(parameter0.Eval(center))
         fitter.w.var("c_0").setConstant(1)
         fitter.importBinnedData(histo,['M'],'data')   
-        fitter.fit('model','data',[ROOT.RooFit.SumW2Error(1)])
+        fitter.fit('model','data',[ROOT.RooFit.SumW2Error(1),ROOT.RooFit.Minos(1)])
+
 #        chi=fitter.projection("model","data","M","debugfitMVV_"+options.output+"_pass2_"+str(i)+".png")
     
         for j,g in enumerate(graphs):
@@ -100,7 +102,7 @@ def runFits(data,options):
                 g.SetPoint(i-1,center,c)
                 g.SetPointError(i-1,0.0,cerr)
 
-    parameter2=ROOT.TF1("pol2","pol2",options.minx,options.maxx)
+    parameter2=ROOT.TF1("pol3","pol3",options.minx,options.maxx)
 #    log0.SetParameters(1,1)
     graphs[2].Fit(parameter2)
     
@@ -124,7 +126,7 @@ def runFits(data,options):
         fitter.w.var("c_2").setVal(parameter2.Eval(center))
         fitter.w.var("c_2").setConstant(1)
         fitter.importBinnedData(histo,['M'],'data')   
-        fitter.fit('model','data',[ROOT.RooFit.SumW2Error(1)])
+        fitter.fit('model','data',[ROOT.RooFit.SumW2Error(1),ROOT.RooFit.Minos(1)])
 #        chi=fitter.projection("model","data","M","debugfitMVV_"+options.output+"_pass3_"+str(i)+".png")
 
     
@@ -164,7 +166,7 @@ def runFits(data,options):
         fitter.w.var("c_2").setVal(parameter2.Eval(center))
         fitter.w.var("c_2").setConstant(1)
         fitter.importBinnedData(histo,['M'],'data')   
-        fitter.fit('model','data',[ROOT.RooFit.SumW2Error(1)])
+
         chi=fitter.projection("model","data","M","debugfitMVV_"+options.output+"_pass3_"+str(i)+".png")
 
 
