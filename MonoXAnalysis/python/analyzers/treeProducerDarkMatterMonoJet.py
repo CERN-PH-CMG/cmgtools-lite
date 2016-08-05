@@ -1,6 +1,13 @@
 from CMGTools.MonoXAnalysis.analyzers.treeProducerDarkMatterCore import *
 from CMGTools.TTHAnalysis.analyzers.ntupleTypes import *
 
+puppiJetType = NTupleObjectType("puppiJet",  baseObjectTypes = [ jetTypeSusyExtra ], variables = [
+        NTupleVariable("massCorrected",  lambda x : x.puppiMassCorrected,  float, help="puppi corrected mass"),
+        ])
+puppiFatJetType = NTupleObjectType("puppiFatJet",  baseObjectTypes = [ fourVectorType ], variables = [
+        NTupleVariable("massCorrected",  lambda x : x.massCorrected,  float, help="puppi corrected mass for AK08"),
+        ])
+
 dmMonoJet_globalVariables = dmCore_globalVariables + [
     ##--------------------------------------------------
     ## Generator information
@@ -123,6 +130,11 @@ dmMonoJet_collections.update({
             "cleanJets"       : NTupleCollection("Jet",     jetTypeSusyExtra, 20, help="Cental jets after full selection and cleaning, sorted by pt"),
             "cleanJetsFwd"    : NTupleCollection("JetFwd",  jetTypeSusyExtra,  5, help="Forward jets after full selection and cleaning, sorted by pt"),
             "fatJets"         : NTupleCollection("FatJet",  fatJetType,       20, help="AK8 jets, sorted by pt"),
+            "puppiJets"       : NTupleCollection("PuppiJet",  puppiJetType,       20, help="Puppi jets, sorted by pt"),
+            "subJetPuppi"     : NTupleCollection("PuppiSubJet",  fourVectorType,       20, help="Puppi ak08 subJets, sorted by pt"),
+            "subJetSoftDrop"  : NTupleCollection("SoftDropSubJet",  fourVectorType,       20, help="SoftDrop ak08 subJets, sorted by pt"),
+            "customPuppiAK8"  : NTupleCollection("customPuppiAK8",  puppiFatJetType,       20, help="Puppi ak08 Jets, sorted by pt"), 
+            ##"puppiAK08Jets"   : NTupleCollection("PuppiFatJet",  puppiJetType,       20, help="Puppi jets AK08, sorted by pt"),  
             ##------------------------------------------------
             #"discardedJets"    : NTupleCollection("DiscJet", jetTypeSusyExtra, 10, help="Jets discarted in the jet-lepton cleaning"),
             #"discardedLeptons" : NTupleCollection("DiscLep", leptonTypeSusyExtra, 8, help="Leptons discarded in the jet-lepton cleaning"),
@@ -138,6 +150,7 @@ dmMonoJet_collections.update({
 jetTypeSusyExtra.addVariables([
         NTupleVariable("puMva", lambda x: x.puMva(), float, help="Value of the pu MVA discriminator")
 ])
+
 
 # no more present in MINIAOD V2 in 8.0.X
 fatJetType.removeVariable("trimmedMass")

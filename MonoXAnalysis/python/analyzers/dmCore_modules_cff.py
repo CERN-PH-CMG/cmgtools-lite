@@ -354,6 +354,7 @@ jetAna = cfg.Analyzer(
     type1METParams = { 'jetPtThreshold':15., 'skipEMfractionThreshold':0.9, 'skipMuons':True },
     )
 
+
 ## Fat Jets Analyzer (generic)
 from CMGTools.MonoXAnalysis.analyzers.monoXFatJetAnalyzer import monoXFatJetAnalyzer
 monoXFatJetAna = cfg.Analyzer(
@@ -378,6 +379,82 @@ monoXFatJetAna = cfg.Analyzer(
     addJECShifts = False, # if true, add  "corr", "corrJECUp", and "corrJECDown" for each jet (requires uncertainties to be available!)
     rho = ('fixedGridRhoFastjetAll','',''),
     )
+
+## Ak04 Puppi Jets Analyzer (generic)
+from CMGTools.MonoXAnalysis.analyzers.monoXPuppiJetAnalyzer import monoXPuppiJetAnalyzer
+monoXPuppiJetAna = cfg.Analyzer(
+        monoXPuppiJetAnalyzer, name = 'monoXPuppiJetAnalyzer',
+        jetCol = 'slimmedJetsPuppi',
+        jetPt = 100.,
+        jetEta = 2.4,
+        jetLepDR = 0.4,
+        # v--- not implemented for AK8
+        #jetLepDR = 0.4,
+        #minLepPt = 10,
+        relaxJetId = False,
+        # v--- not implemented for AK8
+        #doPuId = False, # Not commissioned in 7.0.X
+        recalibrateJets = True,
+        applyL2L3Residual = True, # Switch to 'Data' when they will become available for Data
+        recalibrationType = "AK4PFPuppi",
+        mcGT     = "Spring16_25nsV3_MC",
+        dataGT   = "Spring16_25nsV3_DATA", # update with the new one when available in 8.0.X
+        jecPath = "%s/src/CMGTools/RootTools/data/jec/" % os.environ['CMSSW_BASE'],
+        shiftJEC = 0, # set to +1 or -1 to get +/-1 sigma shifts
+        addJECShifts = False, # if true, add  "corr", "corrJECUp", and "corrJECDown" for each jet (requires uncertainties to be available!)
+        rho = ('fixedGridRhoFastjetAll','',''),
+        )
+
+## Puppi subJets Analyzer (generic)
+from CMGTools.MonoXAnalysis.analyzers.monoXSubJetsPuppiAnalyzer import monoXSubJetsPuppiAnalyzer
+monoXSubJetPuppiAna = cfg.Analyzer(
+    monoXSubJetsPuppiAnalyzer, name = 'monoXSubJetsPuppiAnalyzer',
+    jetCol = 'slimmedJetsAK8PFPuppiSoftDropPacked',
+    jetPt = 100.,
+    jetEta = 2.4,
+    jetLepDR = 0.4,
+    # v--- not implemented for AK8
+    #jetLepDR = 0.4,
+    #minLepPt = 10,
+    relaxJetId = False,  
+    # v--- not implemented for AK8
+    #doPuId = False, # Not commissioned in 7.0.X
+    recalibrateJets = True,
+    applyL2L3Residual = True, # Switch to 'Data' when they will become available for Data
+    recalibrationType = "AK8PFchs", #unused->no recalibration extracted YET!
+    mcGT     = "Spring16_25nsV3_MC",
+    dataGT   = "Spring16_25nsV3_DATA", # update with the new one when available in 8.0.X
+    jecPath = "%s/src/CMGTools/RootTools/data/jec/" % os.environ['CMSSW_BASE'],
+    shiftJEC = 0, # set to +1 or -1 to get +/-1 sigma shifts
+    addJECShifts = False, # if true, add  "corr", "corrJECUp", and "corrJECDown" for each jet (requires uncertainties to be available!)
+    rho = ('fixedGridRhoFastjetAll','',''),
+    )
+
+## Puppi-SoftDrop subJets Analyzer (generic)
+from CMGTools.MonoXAnalysis.analyzers.monoXSubJetsSoftDropAnalyzer import monoXSubJetsSoftDropAnalyzer
+monoXSubJetSoftDropAna = cfg.Analyzer(
+    monoXSubJetsSoftDropAnalyzer, name = 'monoXSubJetsSoftDropAnalyzer',
+    jetCol = 'slimmedJetsAK8PFCHSSoftDropPacked',
+    jetPt = 100.,
+    jetEta = 2.4,
+    jetLepDR = 0.4,
+    # v--- not implemented for AK8
+    #jetLepDR = 0.4,
+    #minLepPt = 10,
+    relaxJetId = False,  
+    # v--- not implemented for AK8
+    #doPuId = False, # Not commissioned in 7.0.X
+    recalibrateJets = True,
+    applyL2L3Residual = True, # Switch to 'Data' when they will become available for Data
+    recalibrationType = "AK8PFchs", #unused->no recalibration extracted YET!
+    mcGT     = "Spring16_25nsV3_MC",
+    dataGT   = "Spring16_25nsV3_DATA", # update with the new one when available in 8.0.X
+    jecPath = "%s/src/CMGTools/RootTools/data/jec/" % os.environ['CMSSW_BASE'],
+    shiftJEC = 0, # set to +1 or -1 to get +/-1 sigma shifts
+    addJECShifts = False, # if true, add  "corr", "corrJECUp", and "corrJECDown" for each jet (requires uncertainties to be available!)
+    rho = ('fixedGridRhoFastjetAll','',''),
+    )
+
 
 
 # Secondary vertex analyzer
@@ -434,6 +511,45 @@ metNoHFAna = cfg.Analyzer(
     collectionPostFix = "NoHF",
     )
 
+### adding MET Puppi Analyzer
+metPuppiAna = cfg.Analyzer(
+        METAnalyzer, name="metAnalyzerPuppi",
+        metCollection     = "slimmedMETsPuppi",
+        noPUMetCollection = "slimmedMETsPuppi",
+        copyMETsByValue = False,
+        doTkMet = False,
+        includeTkMetCHS = False,
+        includeTkMetPVLoose = False,
+        includeTkMetPVTight = False,
+        doMetNoPU = False,
+        doMetNoMu = False,
+        doMetNoEle = False,
+        doMetNoPhoton = False,
+        recalibrate = False,#"type1", changed as it doesn't work... "type1", # or "type1", or True
+        applyJetSmearing = False, # does nothing unless the jet smearing is turned on in the jet analyzer
+        old74XMiniAODs = False, # set to True to get the correct Raw MET when running on old 74X MiniAODs
+        jetAnalyzerPostFix = "Puppi",# changed as it doesn't work...,
+        candidates='packedPFCandidates',
+        candidatesTypes='std::vector<pat::PackedCandidate>',
+        dzMax = 0.1,
+        collectionPostFix = "Puppi",
+        )
+
+#### metPuppiAnaScaleUp = metPuppiAna.clone(name="metAnalyzerPuppiScaleUp",
+####         copyMETsByValue = True,
+####         recalibrate = "type1",
+####         jetAnalyzerPostFix = "Puppi_jecUp",
+####         collectionPostFix = "Puppi_jecUp",
+####         )
+#### 
+#### metPuppiAnaScaleDown = metPuppiAna.clone(name="metAnalyzerPuppiScaleDown",
+####         copyMETsByValue = True,
+####         recalibrate = "type1",
+####         jetAnalyzerPostFix = "Puppi_jecDown",
+####         collectionPostFix = "Puppi_jecDown",
+####         )
+
+
 # Core Event Analyzer (computes basic quantities like HT, dilepton masses)
 from CMGTools.TTHAnalysis.analyzers.ttHCoreEventAnalyzer import ttHCoreEventAnalyzer
 ttHCoreEventAna = cfg.Analyzer(
@@ -443,6 +559,7 @@ ttHCoreEventAna = cfg.Analyzer(
     jetForBiasedDPhi = "cleanJets",
     jetPt = 40.,
     )
+
 
 # Electron and Photon calibrator (scale and smearings)
 def doECalElectronCorrections(sync=False,era="25ns"):
@@ -484,8 +601,14 @@ dmCoreSequence = [
     vertexAna,
     lepAna,
     jetAna,
+    monoXPuppiJetAna, #added
+    monoXSubJetPuppiAna, #added
+    monoXSubJetSoftDropAna, #added
     monoJetCtrlLepSkim,
     metAna,
+    metPuppiAna,
+###    metPuppiAnaScaleUp,
+###    metPuppiAnaScaleDown,
     monoJetSkim,
     photonAna,
     tauAna,

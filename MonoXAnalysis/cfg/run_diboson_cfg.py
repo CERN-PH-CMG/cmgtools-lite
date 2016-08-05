@@ -14,7 +14,7 @@ from CMGTools.RootTools.samples.autoAAAconfig import *
 #-------- SET OPTIONS AND REDEFINE CONFIGURATIONS -----------
 
 is50ns = getHeppyOption("is50ns",False)
-runData = getHeppyOption("runData",True)
+runData = getHeppyOption("runData",False)#True)
 scaleProdToLumi = float(getHeppyOption("scaleProdToLumi",-1)) # produce rough equivalent of X /pb for MC datasets
 saveSuperClusterVariables = getHeppyOption("saveSuperClusterVariables",True)
 saveFatJetIDVariables = getHeppyOption("saveFatJetIDVariables",True)
@@ -23,7 +23,7 @@ removeJetReCalibration = getHeppyOption("removeJetReCalibration",False)
 doT1METCorr = getHeppyOption("doT1METCorr",True)
 forcedSplitFactor = getHeppyOption("splitFactor",-1)
 forcedFineSplitFactor = getHeppyOption("fineSplitFactor",-1)
-isTest = getHeppyOption("isTest",False)
+isTest = getHeppyOption("isTest",True)#False)
 doLepCorr = getHeppyOption("doLepCorr",False)
 doPhotonCorr = getHeppyOption("doPhotonCorr",False)
 
@@ -152,6 +152,13 @@ if saveFatJetIDVariables:
             NTupleVariable("neEmEF", lambda x : x.neutralEmEnergyFraction(), float, mcOnly = False,help="neutralEmEnergyFraction (relative to uncorrected jet energy)"),
             NTupleVariable("chMult", lambda x : x.chargedMultiplicity(), float, mcOnly = False,help="charged multiplicity (relative to uncorrected jet energy)"),
             NTupleVariable("neMult", lambda x : x.neutralMultiplicity(), float, mcOnly = False,help="neutral multiplicity (relative to uncorrected jet energy)"),
+            NTupleVariable("puppiPt", lambda x : x.userFloat("ak8PFJetsPuppiValueMap:pt"), float, mcOnly=False, help="puppi pt for the AK08"),
+            NTupleVariable("puppiEta", lambda x : x.userFloat("ak8PFJetsPuppiValueMap:eta"), float, mcOnly=False, help="puppi eta for the AK08"),
+            NTupleVariable("puppiPhi", lambda x : x.userFloat("ak8PFJetsPuppiValueMap:phi"), float, mcOnly=False, help="puppi phi for the AK08"),
+            NTupleVariable("puppiMass", lambda x : x.userFloat("ak8PFJetsPuppiValueMap:mass"), float, mcOnly=False, help="puppi mass for the AK08"),
+            NTupleVariable("puppiTau1", lambda x : x.userFloat("ak8PFJetsPuppiValueMap:NjettinessAK8PuppiTau1"), float, mcOnly=False, help="puppi tau1 for the AK08"),
+            NTupleVariable("puppiTau2", lambda x : x.userFloat("ak8PFJetsPuppiValueMap:NjettinessAK8PuppiTau2"), float, mcOnly=False, help="puppi tau2 for the AK08"),
+            NTupleVariable("puppiTau3", lambda x : x.userFloat("ak8PFJetsPuppiValueMap:NjettinessAK8PuppiTau3"), float, mcOnly=False, help="puppi tau3 for the AK08"),
 
 ])
 
@@ -483,7 +490,8 @@ elif test == 'simone':
            #"root://cms-xrd-global.cern.ch//store/data/Run2016B/SingleElectron/MINIAOD/PromptReco-v2/000/273/158/00000/06277EC1-181A-E611-870F-02163E0145E5.root"
            #"root://xrootd.unl.edu//store/mc/RunIISpring16DR80/TT_TuneCUETP8M1_13TeV-powheg-pythia8/MINIAODSIM/PUSpring16_80X_mcRun2_asymptotic_2016_v3_ext3-v1/60000/08078977-2F1F-E611-AF79-001E675053A5.root"
            #"root://cms-xrd-global.cern.ch//store/mc/RunIISpring16MiniAODv2/TT_TuneCUETP8M1_13TeV-powheg-pythia8/MINIAODSIM/PUSpring16RAWAODSIM_80X_mcRun2_asymptotic_2016_miniAODv2_v0_ext3-v1/00000/00A10CC4-4227-E611-BBF1-C4346BBCD528.root"
-           "root://cms-xrd-global.cern.ch//store/mc/RunIISpring16MiniAODv1/TT_TuneCUETP8M1_13TeV-powheg-pythia8-evtgen/MINIAODSIM/PUSpring16_80X_mcRun2_asymptotic_2016_v3-v1/00000/4603CC0B-D012-E611-972B-90B11C06E1A0.root"
+           #"root://cms-xrd-global.cern.ch//store/mc/RunIISpring16MiniAODv1/TT_TuneCUETP8M1_13TeV-powheg-pythia8-evtgen/MINIAODSIM/PUSpring16_80X_mcRun2_asymptotic_2016_v3-v1/00000/4603CC0B-D012-E611-972B-90B11C06E1A0.root"
+           "root://cms-xrd-global.cern.ch//store/mc/RunIISpring16MiniAODv2/TTJets_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/00000/04FB4BAA-3A33-E611-BC64-008CFA197A90.root",
                  ],
            name="ZHLL125", isEmbed=False,
            puFileMC="puMC.root",
