@@ -1,21 +1,21 @@
 # Specific instructions for the tHq analysis
 
-#### Add the remotes for Benjamin's repository:
+### Add the remotes for Benjamin's repository:
 
 ```
 git remote add stiegerb https://github.com/stiegerb/cmgtools-lite.git -f -t tHq_80X_base
 git push -u origin tHq_80X_base
 ```
 
-#### [TODO]:
-
-- Link to current set of minitrees at CERN
-- Find out if we can put everything on the UNL T2 and run from there?
-- Add example mca/cut/plot files
+A current set of minitree outputs is at:
+```
+/afs/cern.ch/work/p/peruzzi/ra5trees/809_June9_ttH
+```
+You might have to ask Marco Peruzzi for access rights to it.
 
 ----------------
 
-#### Producing friend trees
+### Producing friend trees
 
 Friend trees are trees containing additional information to the original trees. Each entry (i.e. event) in the original trees has a corresponding entry in the friend tree. For the tHq analysis we create friend trees with additional event variables related to forward jets, e.g. the eta of the most forward jet in each event.
 
@@ -45,13 +45,14 @@ A first version of the trees is already produced and stored here: `/afs/cern.ch/
 
 ----------------
 
-#### Making basic plots using `mcPlots.py`
+### Making basic plots using `mcPlots.py`
 
 To be filled.
+Example mca/cut/plot files to be added.
 
 ----------------
 
-#### Some tips
+### Some tips
 
 - It's useful to have a symbolic link to the directory containing the minitree outputs in your working directory. E.g. like this:
 
