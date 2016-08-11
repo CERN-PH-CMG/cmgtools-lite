@@ -13,6 +13,7 @@ git push -u origin tHq_80X_base
 - Find out if we can put everything on the UNL T2 and run from there?
 - Add example mca/cut/plot files
 
+----------------
 
 #### Producing friend trees
 
@@ -42,23 +43,23 @@ A first version of the trees is already produced and stored here: `/afs/cern.ch/
 
 *TODO*: add more variables like [these](https://github.com/stiegerb/cmg-cmssw/blob/thq_newjetid_for_518_samples/CMGTools/TTHAnalysis/macros/leptons/prepareTHQFriendTree.py)
 
+----------------
+
 #### Making basic plots using `mcPlots.py`
 
 To be filled.
 
+----------------
+
 #### Some tips
 
--------
-
-It's useful to have a symbolic link to the directory containing the minitree outputs in your working directory. E.g. like this:
+- It's useful to have a symbolic link to the directory containing the minitree outputs in your working directory. E.g. like this:
 
 ```
 ln -s /afs/cern.ch/work/p/peruzzi/ra5trees/809_June9_ttH
 ```
 
--------
-
-Often we store the minitree files on eos, and save only a text file (`tree.root.url` in place of `tree.root`) with the location (something like `root://eoscms.cern.ch//eos/cms/store/...`). You can open them in one go like this:
+- Often we store the minitree files on eos, and save only a text file (`tree.root.url` in place of `tree.root`) with the location (something like `root://eoscms.cern.ch//eos/cms/store/...`). You can open them in one go like this:
 
 ```
 root `cat /afs/cern.ch/user/p/peruzzi/work/ra5trees/809_June9_ttH/TTHnobb_mWCutfix_ext1/treeProducerSusyMultilepton/tree.root.url`
