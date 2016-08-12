@@ -9,9 +9,15 @@ git push -u origin tHq_80X_base
 
 A current set of minitree outputs is at:
 ```
-/afs/cern.ch/work/p/peruzzi/ra5trees/809_June9_ttH
+/afs/cern.ch/work/p/peruzzi/ra5trees/809_June9_ttH_skimOnlyMC_3ltight_relax_prescale
 ```
 You might have to ask Marco Peruzzi for access rights to it.
+
+----------------
+
+### Producing mini trees
+
+To be filled.
 
 ----------------
 
@@ -19,7 +25,7 @@ You might have to ask Marco Peruzzi for access rights to it.
 
 Friend trees are trees containing additional information to the original trees. Each entry (i.e. event) in the original trees has a corresponding entry in the friend tree. For the tHq analysis we create friend trees with additional event variables related to forward jets, e.g. the eta of the most forward jet in each event.
 
-The main python class calculating this information for is in the file `python/tools/tHqEventVariables.py`. The `__call__` method of that class is called once per event and returns a dictionary associating each branch name to the value for that particular event. Currently, the class only calculates and stores the highest eta of any jet with pT greater than 25 GeV.
+The main python class calculating this information for is in the file `python/tools/tHqEventVariables.py`. The `__call__` method of that class is called once per event and returns a dictionary associating each branch name to the value for that particular event. Currently, the class only calculates and stores the highest eta of any jet with pT greater than 25 GeV (stored in a branch named "maxEtaJet25").
 
 The class can be tested on a few events of a minitree by simply running `python tHqEventVariables.py tree.root`.
 
@@ -39,7 +45,7 @@ Once all the jobs have finished successfully, you can check the output files usi
 
 If that went ok, you can remove all the chunk files and are left with only the friend tree files.
 
-A first version of the trees is already produced and stored here: `/afs/cern.ch/user/s/stiegerb/work/TTHTrees/13TeV/tHq_eventvars_Aug11`.
+A first version of the trees is already produced and stored here: `/afs/cern.ch/user/s/stiegerb/work/TTHTrees/13TeV/tHq_eventvars_Aug12`.
 
 *TODO*: add more variables like [these](https://github.com/stiegerb/cmg-cmssw/blob/thq_newjetid_for_518_samples/CMGTools/TTHAnalysis/macros/leptons/prepareTHQFriendTree.py)
 
@@ -47,8 +53,43 @@ A first version of the trees is already produced and stored here: `/afs/cern.ch/
 
 ### Making basic plots using `mcPlots.py`
 
-To be filled.
-Example mca/cut/plot files to be added.
+The main script for making basic plots in the framework is in `python/plotter/mcPlots.py`, which uses the classes in `mcAnalysis.py` (for handling the samples) and `tree2yield.py` (for getting yields/histograms from the trees). It accepts three text files as inputs, one specifying the data and MC samples to be included, one listing the selection to be applied, and one configuring the variables to be plotted. Examples for these there files are in the `python/plotter/tHq-multilepton/` directory (where this README is also), with some explanation on their format in comments inside the files.
+
+A full example for making plots with all corrections is the following:
+
+```
+python mcPlots.py \
+tHq-multilepton/mca-thq-3l-mcdata-frdata.txt \
+tHq-multilepton/cuts-thq-3l.txt \
+tHq-multilepton/plots-thq.txt \
+--s2v \
+--tree treeProducerSusyMultilepton \
+--showRatio --poisson \
+-j 8 \
+-f \
+-P 809_June9_ttH_skimOnlyMC_3ltight_relax_prescale/ \
+-l 12.9 \
+--pdir tHq-multilepton/plots_Aug12/ \
+-F sf/t tHq_eventvars_Aug12/evVarFriend_{cname}.root \
+-F sf/t 809_June9_ttH_skimOnlyMC_3ltight_relax_prescale/2_recleaner_v4_b1E2/evVarFriend_{cname}.root \
+--mcc ttH-multilepton/lepchoice-ttH-FO.txt \
+-W 'puw2016_vtx_4fb(nVert)'
+```
+
+Note that this uses symbolic links to the `809_June9_ttH_skimOnlyMC_3ltight_relax_prescale` and `tHq_eventvars_Aug12` directories.
+
+The important options are:
+
+- `-P`: Input directory containing the minitree outputs
+- `--pdir`: The output directory for the plots
+- `-l`: Integrated luminosity to scale the MC to
+- `-j 8`: Number of processes to run in parallel
+- `-f`: Only apply the full set of cuts at once. Without this, it will produce sequential plots for each line in the cut file.
+- `-F sf/t directory/evVarFriend_{cname}.root`: Add the tree named `sf/t` in these files as a friend
+- `--mcc`: Read this file defining new branches as shortcuts
+- `-W 'weightexpression'`: Apply this event weight
+
+If everything goes according to play, this will produce an output directory with the plots in `.pdf` and `.png` format, a text file with the event yields, as well as a copy of the mca, cut, and plot files, the command string used, and a root file with the raw histograms.
 
 ----------------
 

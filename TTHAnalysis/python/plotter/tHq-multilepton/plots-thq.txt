@@ -1,0 +1,6 @@
+# Format (use '#' to comment lines):
+# name of plot : branch name as in tree : binning ; optional configurations
+
+met         : met_pt        : 18,0,400; XTitle="E_{T}^{miss}  [GeV]"
+nJet25      : nJet25        : [-0.5,0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5] ; XTitle='N(jet\, p_{T} > 25)', Logy
+maxEtaJet25 : maxEtaJet25 : 18,0,5.0; XTitle="max jet |#eta| (p_{T} > 25 GeV)"
