@@ -80,13 +80,13 @@ Note that this uses symbolic links to the `809_June9_ttH_skimOnlyMC_3ltight_rela
 
 The important options are:
 
-- `-P`: Input directory containing the minitree outputs
-- `--pdir`: The output directory for the plots
-- `-l`: Integrated luminosity to scale the MC to
+- `-P treedir/`: Input directory containing the minitree outputs
+- `--pdir plotdir/`: The output directory for the plots
+- `-l 12.9`: Integrated luminosity to scale the MC to (in inverse femtobarn)
 - `-j 8`: Number of processes to run in parallel
 - `-f`: Only apply the full set of cuts at once. Without this, it will produce sequential plots for each line in the cut file.
 - `-F sf/t directory/evVarFriend_{cname}.root`: Add the tree named `sf/t` in these files as a friend
-- `--mcc`: Read this file defining new branches as shortcuts
+- `--mcc textfile.txt`: Read this file defining new branches as shortcuts
 - `-W 'weightexpression'`: Apply this event weight
 
 If everything goes according to play, this will produce an output directory with the plots in `.pdf` and `.png` format, a text file with the event yields, as well as a copy of the mca, cut, and plot files, the command string used, and a root file with the raw histograms.
