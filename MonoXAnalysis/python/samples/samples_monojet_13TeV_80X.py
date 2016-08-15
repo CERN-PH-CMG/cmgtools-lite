@@ -21,7 +21,7 @@ DiBosons_MJ    = [ WW, WZ, ZZ ]
 
 #diboson analysis samples
 TTBar          = [ TT_pow_ext3 ]
-WJetsToLNu     = [ WJetsToLNu_HT100to200, WJetsToLNu_HT200to400, WJetsToLNu_HT400to600, WJetsToLNu_HT600to800, WJetsToLNu_HT800to1200_ext, WJetsToLNu_HT1200to2500, WJetsToLNu_HT2500toInf ]
+WJetsToLNu_HT     = [ WJetsToLNu_HT100to200, WJetsToLNu_HT200to400, WJetsToLNu_HT400to600, WJetsToLNu_HT600to800, WJetsToLNu_HT800to1200_ext, WJetsToLNu_HT1200to2500, WJetsToLNu_HT2500toInf ]
 SingleTop      = [ TToLeptons_sch_amcatnlo, TBar_tWch, T_tWch ]
 
 #V+gamma samples
@@ -35,9 +35,8 @@ VV_VBosonGamma = VV_VGamma
 
 mcSamples_monojet_Asymptotic25ns = ZJetsToNuNu_MJ + VJets_MJ + Top_MJ + DiBosons_MJ + QCDHT + GJetsHT
 #mcSamples_monojet_Asymptotic25ns_signals = DM_Scalars + DM_Pseudoscalars + DM_Vectors + DM_Axials
-mcSamples_diboson_Asymptotic25ns = TTBar + SingleTop + WJetsToLNu + DiBosons_MJ 
-mcSamples_zgamma_Asymptotic25ns  = TTBar_amcatnlo + TTGammaJets + WJetsToLNu_amcatnlo + QCD + GammaJets + VV_VBosonGamma
-
+mcSamples_diboson_Asymptotic25ns = TTBar + SingleTop + WJetsToLNu_HT + DiBosons_MJ 
+mcSamples_zgamma_Asymptotic25ns  = TTBar_amcatnlo + WJetsToLNu_amcatnlo + QCD + GammaJets + VV_VBosonGamma + TTGammaJets
 
 ### ----------------------------- summary ----------------------------------------     
 mcSamples_monojet = mcSamples_monojet_Asymptotic25ns

@@ -14,7 +14,7 @@ from CMGTools.RootTools.samples.autoAAAconfig import *
 #-------- SET OPTIONS AND REDEFINE CONFIGURATIONS -----------
 
 is50ns = getHeppyOption("is50ns",False)
-runData = getHeppyOption("runData",False)#True)
+runData = getHeppyOption("runData",True)
 scaleProdToLumi = float(getHeppyOption("scaleProdToLumi",-1)) # produce rough equivalent of X /pb for MC datasets
 saveSuperClusterVariables = getHeppyOption("saveSuperClusterVariables",True)
 saveFatJetIDVariables = getHeppyOption("saveFatJetIDVariables",True)
@@ -23,7 +23,7 @@ removeJetReCalibration = getHeppyOption("removeJetReCalibration",False)
 doT1METCorr = getHeppyOption("doT1METCorr",True)
 forcedSplitFactor = getHeppyOption("splitFactor",-1)
 forcedFineSplitFactor = getHeppyOption("fineSplitFactor",-1)
-isTest = getHeppyOption("isTest",True)#False)
+isTest = getHeppyOption("isTest",False)
 doLepCorr = getHeppyOption("doLepCorr",False)
 doPhotonCorr = getHeppyOption("doPhotonCorr",False)
 
@@ -33,8 +33,8 @@ diLepSkim = False
 singleLepSkim = False
 singleFatJetSkim = False
 singlePhotonSkim = False
-dibosonSkim = True
-vGammaSkim = False
+dibosonSkim = False
+vGammaSkim = True
 
 # --- MONOJET SKIMMING ---
 if signalSkim == True:
@@ -73,6 +73,7 @@ if dibosonSkim == True:
     lepAna.loose_electron_pt     = 30
 
 if vGammaSkim == True:
+    monoXFatJetAna.jetPt = 120
     monoJetCtrlFatJetSkim.minFatJets = 1
     gammaJetCtrlSkim.minPhotons = 1
     gammaJetCtrlSkim.minJets = 1
@@ -270,7 +271,7 @@ if scaleProdToLumi>0: # select only a subset of a sample, corresponding to a giv
         c.fineSplitFactor = 1
 
 #json = "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions15/13TeV/Reprocessing/Cert_13TeV_16Dec2015ReReco_Collisions15_25ns_JSON.txt"
-json = "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-276811_13TeV_PromptReco_Collisions16_JSON_NoL1T.txt"
+json = "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-277933_13TeV_PromptReco_Collisions16_JSON_NoL1T_v2.txt"
 if False:
     is50ns = False
     selectedComponents = PrivateSamplesData
@@ -280,27 +281,21 @@ if False:
 
 if runData and not isTest: # For running on data
     ##run_ranges = [ (272021,275125) ]; useAAA=False; is50ns=False
-    run_ranges = [ (276384, 276811) ]; useAAA=False; is50ns=False
+    run_ranges = [ (272021, 276811) ]; useAAA=False; is50ns=False
 
     compSelection = ""
     DatasetsAndTriggers = []
     selectedComponents = []; vetos = []
     ProcessingsAndRunRanges = []; Shorts = []
 
-    # ProcessingsAndRunRanges.append( ("Run2015C_25ns-05Oct2015-v1", [254227,255031] ) ); Shorts.append("Run2015C_05Oct")
-    # ProcessingsAndRunRanges.append( ("Run2015D-05Oct2015-v1", [256630,258158] ) ); Shorts.append("Run2015D_05Oct")
-    # ProcessingsAndRunRanges.append( ("Run2015D-PromptReco-v4", [258159,999999] ) ); Shorts.append("Run2015D_v4")
-
-    # ProcessingsAndRunRanges.append( ("Run2015C_25ns-16Dec2015-v1", [254227,254914] ) ); Shorts.append("Run2015C_16Dec")
-    # ProcessingsAndRunRanges.append( ("Run2015D-16Dec2015-v1", [256630,260627] ) ); Shorts.append("Run2015D_16Dec")
     
-#    ProcessingsAndRunRanges.append( ("Run2016B-PromptReco-v1", [272021,273149] ) ); Shorts.append("PromptReco_v1")
-#    ProcessingsAndRunRanges.append( ("Run2016B-PromptReco-v2", [273150,275125] ) ); Shorts.append("PromptReco_v2")
-  ##  ProcessingsAndRunRanges.append( ("Run2016B-PromptReco-v2", [275125,275376] ) ); Shorts.append("PromptReco_v2")
-  ##  ProcessingsAndRunRanges.append( ("Run2016C-PromptReco-v2", [275420,276283] ) ); Shorts.append("PromptReco_v2")
-  ##  ProcessingsAndRunRanges.append( ("Run2016D-PromptReco-v2", [276315,276384] ) ); Shorts.append("PromptReco_v2")
-    ProcessingsAndRunRanges.append( ("Run2016D-PromptReco-v2", [276384,276811] ) ); Shorts.append("PromptReco_v2")
-  ##  ProcessingsAndRunRanges.append( ("Run2016E-PromptReco-v2", [276830,276984] ) ); Shorts.append("PromptReco_v2")
+    ProcessingsAndRunRanges.append( ("Run2016B-PromptReco-v1", [272021,273149] ) ); Shorts.append("PromptReco_v1")
+    ProcessingsAndRunRanges.append( ("Run2016B-PromptReco-v2", [273150,275376] ) ); Shorts.append("PromptReco_v2")
+    ProcessingsAndRunRanges.append( ("Run2016C-PromptReco-v2", [275420,276283] ) ); Shorts.append("PromptReco_v2")
+    ProcessingsAndRunRanges.append( ("Run2016D-PromptReco-v2", [276315,276811] ) ); Shorts.append("PromptReco_v2")
+    ProcessingsAndRunRanges.append( ("Run2016E-PromptReco-v2", [276827,277420] ) ); Shorts.append("PromptReco_v2")
+    ProcessingsAndRunRanges.append( ("Run2016F-PromptReco-v1", [277776,278808] ) ); Shorts.append("PromptReco_v1")
+    ProcessingsAndRunRanges.append( ("Run2016G-PromptReco-v1", [278815,278820] ) ); Shorts.append("PromptReco_v1")
 
     if diLepSkim == True:
         DatasetsAndTriggers.append( ("DoubleMuon", triggers_mumu_iso + triggers_mumu_ss + triggers_mumu_ht + triggers_3mu + triggers_3mu_alt + triggers_AllMonojet) )
@@ -362,6 +357,12 @@ else:
     jetAna.dataGT = "Spring16_25nsV6_DATA"
     monoXFatJetAna.mcGT = "Spring16_25nsV6_MC"
     monoXFatJetAna.dataGT = "Spring16_25nsV6_DATA"
+    monoXPuppiJetAna.mcGT = "Spring16_25nsV6_MC"
+    monoXPuppiJetAna.dataGT = "Spring16_25nsV6_DATA"
+    monoXSubJetPuppiAna.mcGT = "Spring16_25nsV6_MC"
+    monoXSubJetPuppiAna.dataGT = "Spring16_25nsV6_DATA"
+    monoXSubJetSoftDropAna.mcGT = "Spring16_25nsV6_MC"
+    monoXSubJetSoftDropAna.dataGT = "Spring16_25nsV6_DATA"
 
 if removeJetReCalibration:
     ## NOTE: jets will still be recalibrated, since calculateSeparateCorrections is True,
@@ -377,7 +378,7 @@ if forcedSplitFactor>0 or forcedFineSplitFactor>0:
 if runData==False and not isTest: # MC all
     ### 25 ns 74X MC samples
     is50ns = False
-    mcSamples = mcSamples_diboson#monojet_Asymptotic25ns
+    mcSamples = mcSamples_zgamma#monojet_Asymptotic25ns
     #if signalSkim:
         # full signal scan (many datasets!)
         # mcSamples += mcSamples_monojet_Asymptotic25ns_signals
@@ -458,7 +459,7 @@ elif test == 'synch-80X': # sync
         comp.files = [ 'root://eoscms//eos/cms/store/mc/RunIISpring16MiniAODv1/WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/MINIAODSIM/PUSpring16_80X_mcRun2_asymptotic_2016_v3-v1/60000/00DD003D-4201-E611-A6F7-0CC47A745282.root' ]
         selectedComponents = [ comp ]
     else:
-        selectedComponents = mcSamples_diboson#monojet_Asymptotic25ns
+        selectedComponents = mcSamples_zgamma#monojet_Asymptotic25ns
     jetAna.smearJets       = False
     for comp in selectedComponents:
         comp.splitFactor = 1
@@ -491,7 +492,8 @@ elif test == 'simone':
            #"root://xrootd.unl.edu//store/mc/RunIISpring16DR80/TT_TuneCUETP8M1_13TeV-powheg-pythia8/MINIAODSIM/PUSpring16_80X_mcRun2_asymptotic_2016_v3_ext3-v1/60000/08078977-2F1F-E611-AF79-001E675053A5.root"
            #"root://cms-xrd-global.cern.ch//store/mc/RunIISpring16MiniAODv2/TT_TuneCUETP8M1_13TeV-powheg-pythia8/MINIAODSIM/PUSpring16RAWAODSIM_80X_mcRun2_asymptotic_2016_miniAODv2_v0_ext3-v1/00000/00A10CC4-4227-E611-BBF1-C4346BBCD528.root"
            #"root://cms-xrd-global.cern.ch//store/mc/RunIISpring16MiniAODv1/TT_TuneCUETP8M1_13TeV-powheg-pythia8-evtgen/MINIAODSIM/PUSpring16_80X_mcRun2_asymptotic_2016_v3-v1/00000/4603CC0B-D012-E611-972B-90B11C06E1A0.root"
-           "root://cms-xrd-global.cern.ch//store/mc/RunIISpring16MiniAODv2/TTJets_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/00000/04FB4BAA-3A33-E611-BC64-008CFA197A90.root",
+           #"root://cms-xrd-global.cern.ch//store/mc/RunIISpring16MiniAODv2/TTJets_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/00000/04FB4BAA-3A33-E611-BC64-008CFA197A90.root",
+           "root://cms-xrd-global.cern.ch//store/mc/RunIISpring16MiniAODv2/TTGJets_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8/MINIAODSIM/PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/00000/9C6425C8-081C-E611-9F71-001E67E71A56.root",
                  ],
            name="ZHLL125", isEmbed=False,
            puFileMC="puMC.root",
