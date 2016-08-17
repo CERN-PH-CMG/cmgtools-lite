@@ -1,9 +1,10 @@
 # Specific instructions for the tHq analysis
 
-### Add the remotes for Benjamin's repository:
+### Add the remotes for Benjamin's repository and get the `tHq_80X_base` branch:
 
 ```
 git remote add stiegerb https://github.com/stiegerb/cmgtools-lite.git -f -t tHq_80X_base
+git checkout -b tHq_80X_base stiegerb/tHq_80X_base
 git push -u origin tHq_80X_base
 ```
 
