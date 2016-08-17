@@ -5,7 +5,7 @@ dmCore_globalVariables = [
             NTupleVariable("nVert",  lambda ev: len(ev.goodVertices), int, help="Number of good vertices"),
 
             #NTupleVariable("nTrueInteractions", lambda ev: ev.nTrueInteractions(), int, help="Total number of true interactions"),
-            NTupleVariable("nTrueInteractions", lambda ev: ev.nPU, int, help="Total number of true interactions"),
+            NTupleVariable("nTrueInteractions", lambda ev: ev.nPU if ev.nPU!=None else -1, int, help="Total number of true interactions"),
 
             NTupleVariable("nJet25", lambda ev: len(ev.cleanJets), int, help="Number of jets with pt > 25"),
             NTupleVariable("nBJetLoose25", lambda ev: len(ev.bjetsLoose), int, help="Number of jets with pt > 25 passing CSV loose"),
