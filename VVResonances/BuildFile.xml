@@ -22,6 +22,7 @@
 <use name="TrackingTools/IPTools"/>
 <use name="RecoBTag/SecondaryVertex"/>
 <use name="MagneticField/ParametrizedEngine"/>
+<use name="RecoVertex/GhostTrackFitter"/>
 <!-- end - added for Hbbtagger -->
 <export>
   <lib   name="1"/>

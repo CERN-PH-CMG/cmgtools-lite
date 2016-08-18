@@ -12,6 +12,7 @@
 #include "RecoBTag/SecondaryVertex/interface/TrackSelector.h"
 #include "TrackingTools/TransientTrack/interface/TransientTrackBuilder.h"
 #include "MagneticField/ParametrizedEngine/src/OAEParametrizedMagneticField.h"
+#include "DataFormats/BTauReco/interface/CandIPTagInfo.h"
 
 #include "fastjet/PseudoJet.hh"
 
@@ -28,13 +29,15 @@ namespace cmg{
             double sip2dValMax, double ptMin, double sip2dSigMax, double sip2dSigMin,
             double sip3dValMax, double sip3dValMin, double sip2dValMin, double normChi2Max
         );
+        // typedef std::vector<reco::IPTagInfo<std::vector<reco::CandidatePtr>,reco::JetTagInfo> > IPProduct;
 
         void  initialize();
-        float discriminator(const pat::Jet& jet) const;
+        float discriminator(const pat::Jet& jet, const reco::CandIPTagInfo ipTagInfo, const reco::CandSecondaryVertexTagInfo svTagInfo) const;
         reco::TransientTrack getTransientTrack(const reco::CandidatePtr& trackRef) const;
 
       private:
-        void calcNsubjettiness(const reco::JetBaseRef & jet, float & tau1, float & tau2, std::vector<fastjet::PseudoJet> & currentAxes) const;
+        // void calcNsubjettiness(const reco::JetBaseRef & jet, float & tau1, float & tau2, std::vector<fastjet::PseudoJet> & currentAxes) const;
+        void calcNsubjettiness(const pat::Jet& jet, float & tau1, float & tau2, std::vector<fastjet::PseudoJet> & currentAxes) const;
         void setTracksPVBase(const reco::TrackRef & trackRef, const reco::VertexRef & vertexRef, float & PVweight) const;
         void setTracksPV(const reco::CandidatePtr & trackRef, const reco::VertexRef & vertexRef, float & PVweight) const;
         void etaRelToTauAxis(const reco::VertexCompositePtrCandidate & vertex, fastjet::PseudoJet & tauAxis, std::vector<float> & tau_trackEtaRel) const;

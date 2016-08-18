@@ -10,7 +10,6 @@
 #include "RecoBTag/SecondaryVertex/interface/TrackKinematics.h"
 #include "RecoVertex/VertexPrimitives/interface/ConvertToFromReco.h"
 #include "TrackingTools/IPTools/interface/IPTools.h"
-#include "RecoBTau/JetTagComputer/interface/JetTagComputer.h"
 
 #include "fastjet/contrib/Njettiness.hh"
 
@@ -92,12 +91,29 @@ reco::TransientTrack CandidateBoostedDoubleSecondaryVertexComputerLight::getTran
 }
 
 
-float CandidateBoostedDoubleSecondaryVertexComputerLight::discriminator(const pat::Jet& jet) const
+float CandidateBoostedDoubleSecondaryVertexComputerLight::discriminator(const pat::Jet& jet, const reco::CandIPTagInfo ipTagInfo, const reco::CandSecondaryVertexTagInfo svTagInfo) const
 {
         // get TagInfos
-        std::cout << "get TagInfos" << std::endl;
-        const reco::CandIPTagInfo              *ipTagInfo = jet.tagInfoCandIP("pfImpactParameter");
-        const reco::CandSecondaryVertexTagInfo *svTagInfo = jet.tagInfoCandSecondaryVertex("pfInclusiveSecondaryVertexFinder");
+        // std::cout << "get TagInfos" << std::endl;
+        // const reco::CandIPTagInfo              *ipTagInfo = jet.tagInfoCandIP("pfImpactParameter");
+        // std::vector<std::string> tagInfoLabels = jet.tagInfoLabels();
+        // for (unsigned int i = 0; i<tagInfoLabels.size(); ++i)
+        //     std::cout << tagInfoLabels[i] << std::endl;
+        // std::cout << "done" << std::endl;
+        // if (jet.hasTagInfo("pfInclusiveSecondaryVertexFinderAK8TagInfos"))
+        //     std::cout << "hasTagInfo pfInclusiveSecondaryVertexFinderAK8TagInfos" << std::endl;
+        // else
+        //     std::cout << "FALSE hasTagInfo pfInclusiveSecondaryVertexFinderAK8TagInfos" << std::endl;
+        // if (jet.hasTagInfo("pfInclusiveSecondaryVertexFinder"))
+        //     std::cout << "hasTagInfo pfInclusiveSecondaryVertexFinder" << std::endl;
+        // else
+        //     std::cout << "FALSE hasTagInfo pfInclusiveSecondaryVertexFinder" << std::endl;
+        // const reco::VertexRef & vertexRef2 = ipTagInfo.primaryVertex();
+        // std::cout << "IP3Dsig " << ipTagInfo.impactParameterData()[0].ip3d.significance() << std::endl;
+        // std::cout << "pt " << jet.pt() << std::endl;
+        // std::cout << "pfCombinedInclusiveSecondaryVertexV2BJetTags " << jet.bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags") << std::endl;
+        // const reco::CandSecondaryVertexTagInfo *svTagInfo = jet.tagInfoCandSecondaryVertex("pfInclusiveSecondaryVertexFinder");
+        // std::cout << svTagInfo.nSelectedTracks() << std::endl;
         // const reco::CandIPTagInfo              & ipTagInfo = tagInfo.get<reco::CandIPTagInfo>(0);
         // const reco::CandSecondaryVertexTagInfo & svTagInfo = tagInfo.get<reco::CandSecondaryVertexTagInfo>(1);
 
@@ -116,22 +132,25 @@ float CandidateBoostedDoubleSecondaryVertexComputerLight::discriminator(const pa
         float jetNTracks = 0, nSV = 0, tau1_nSecondaryVertices = 0, tau2_nSecondaryVertices = 0;
 
         // get the jet reference
-        std::cout << "get JetBaseRef" << std::endl;
-        // const reco::JetBaseRef jetBaseRef = svTagInfo->jet();
+        // std::cout << "get JetBaseRef" << std::endl;
+        // const reco::JetBaseRef jetBaseRef = svTagInfo.jet();
+        // edm::Ref<std::vector<pat::Jet>> edmRef(&jets, i);
+        // const edm::RefToBase<reco::Jet> jRef(edmRef);
 
         std::vector<fastjet::PseudoJet> currentAxes;
         float tau2, tau1;
         // calculate N-subjettiness
-        std::cout << "N-subjettiness" << std::endl;
-        calcNsubjettiness(jetBaseRef, tau1, tau2, currentAxes);
+        // std::cout << "N-subjettiness" << std::endl;
+        calcNsubjettiness(jet, tau1, tau2, currentAxes);
+        // std::cout << "N-subjettiness done" << std::endl;
 
-        const reco::VertexRef & vertexRef = ipTagInfo->primaryVertex();
+        const reco::VertexRef & vertexRef = ipTagInfo.primaryVertex();
         GlobalPoint pv(0.,0.,0.);
-        if ( ipTagInfo->primaryVertex().isNonnull() )
+        if ( ipTagInfo.primaryVertex().isNonnull() )
                 pv = GlobalPoint(vertexRef->x(),vertexRef->y(),vertexRef->z());
 
-        const std::vector<reco::CandidatePtr> & selectedTracks = ipTagInfo->selectedTracks();
-        const std::vector<reco::btag::TrackIPData> & ipData = ipTagInfo->impactParameterData();
+        const std::vector<reco::CandidatePtr> & selectedTracks = ipTagInfo.selectedTracks();
+        const std::vector<reco::btag::TrackIPData> & ipData = ipTagInfo.impactParameterData();
         size_t trackSize = selectedTracks.size();
 
 
@@ -150,7 +169,8 @@ float CandidateBoostedDoubleSecondaryVertexComputerLight::discriminator(const pa
 
                 const reco::btag::TrackIPData &data = ipData[itt];
                 bool isSelected = false;
-                if ((*trackSelector)(trackRef, data, *jetBaseRef, pv)) isSelected = true;
+                // if ((*trackSelector)(trackRef, data, *jetBaseRef, pv)) isSelected = true;
+                if ((*trackSelector)(trackRef, data, jet, pv)) isSelected = true;
 
                 // check if the track is from V0
                 bool isfromV0 = false, isfromV0Tight = false;
@@ -171,7 +191,8 @@ float CandidateBoostedDoubleSecondaryVertexComputerLight::discriminator(const pa
                         {
                                 isfromV0 = true;
 
-                                if ( (*trackSelector)(pairTrackRef, pairTrackData, *jetBaseRef, pv) )
+                                // if ( (*trackSelector)(pairTrackRef, pairTrackData, *jetBaseRef, pv) )
+                                if ( (*trackSelector)(pairTrackRef, pairTrackData, jet, pv) )
                                         isfromV0Tight = true;
                         }
 
@@ -182,7 +203,8 @@ float CandidateBoostedDoubleSecondaryVertexComputerLight::discriminator(const pa
                 if( isSelected && !isfromV0Tight ) jetNTracks += 1.;
 
                 reco::TransientTrack transientTrack = getTransientTrack(trackRef);
-                GlobalVector direction(jetBaseRef->px(), jetBaseRef->py(), jetBaseRef->pz());
+                // GlobalVector direction(jetBaseRef->px(), jetBaseRef->py(), jetBaseRef->pz());
+                GlobalVector direction(jet.px(), jet.py(), jet.pz());
 
                 int index = 0;
                 if (currentAxes.size() > 1 && reco::deltaR2(trackRef->momentum(),currentAxes[1]) < reco::deltaR2(trackRef->momentum(),currentAxes[0]))
@@ -199,7 +221,7 @@ float CandidateBoostedDoubleSecondaryVertexComputerLight::discriminator(const pa
 
                 distTauAxis = std::abs(IPTools::jetTrackDistance(transientTrack, direction, *vertexRef ).second.value());
 
-                float IP3Dsig = ipTagInfo->impactParameterData()[itt].ip3d.significance();
+                float IP3Dsig = ipTagInfo.impactParameterData()[itt].ip3d.significance();
 
                 if( !isfromV0 && decayLengthTau<maxDecayLen_ && distTauAxis<maxDistToAxis_ )
                 {
@@ -217,7 +239,7 @@ float CandidateBoostedDoubleSecondaryVertexComputerLight::discriminator(const pa
                 }
         }
 
-        std::vector<size_t> indices = ipTagInfo->sortedIndexes(reco::btag::IP2DSig);
+        std::vector<size_t> indices = ipTagInfo.sortedIndexes(reco::btag::IP2DSig);
         bool charmThreshSet = false;
 
         reco::TrackKinematics kin;
@@ -343,27 +365,27 @@ float CandidateBoostedDoubleSecondaryVertexComputerLight::discriminator(const pa
 
         }
 
-        math::XYZVector jetDir = jetBaseRef->momentum().Unit();
+        math::XYZVector jetDir = jet.momentum().Unit();
         reco::TrackKinematics tau1Kinematics;
         reco::TrackKinematics tau2Kinematics;
         std::vector<float> tau1_trackEtaRels, tau2_trackEtaRels;
 
         std::map<double, size_t> VTXmap;
-        for (size_t vtx = 0; vtx < svTagInfo->nVertices(); ++vtx)
+        for (size_t vtx = 0; vtx < svTagInfo.nVertices(); ++vtx)
         {
-                const reco::VertexCompositePtrCandidate vertex = svTagInfo->secondaryVertex(vtx);
+                const reco::VertexCompositePtrCandidate vertex = svTagInfo.secondaryVertex(vtx);
                 // get the vertex kinematics
                 reco::TrackKinematics vertexKinematic(vertex);
 
                 if (currentAxes.size() > 1)
                 {
-                        if (reco::deltaR2(svTagInfo->flightDirection(vtx),currentAxes[1]) < reco::deltaR2(svTagInfo->flightDirection(vtx),currentAxes[0]))
+                        if (reco::deltaR2(svTagInfo.flightDirection(vtx),currentAxes[1]) < reco::deltaR2(svTagInfo.flightDirection(vtx),currentAxes[0]))
                         {
                                 tau2Kinematics = tau2Kinematics + vertexKinematic;
                                 if( tau2_flightDistance2dSig < 0 )
                                 {
-                                        tau2_flightDistance2dSig = svTagInfo->flightDistance(vtx,true).significance();
-                                        tau2_vertexDeltaR = reco::deltaR(svTagInfo->flightDirection(vtx),currentAxes[1]);
+                                        tau2_flightDistance2dSig = svTagInfo.flightDistance(vtx,true).significance();
+                                        tau2_vertexDeltaR = reco::deltaR(svTagInfo.flightDirection(vtx),currentAxes[1]);
                                 }
                                 etaRelToTauAxis(vertex, currentAxes[1], tau2_trackEtaRels);
                                 tau2_nSecondaryVertices += 1.;
@@ -373,8 +395,8 @@ float CandidateBoostedDoubleSecondaryVertexComputerLight::discriminator(const pa
                                 tau1Kinematics = tau1Kinematics + vertexKinematic;
                                 if( tau1_flightDistance2dSig < 0 )
                                 {
-                                        tau1_flightDistance2dSig =svTagInfo->flightDistance(vtx,true).significance();
-                                        tau1_vertexDeltaR = reco::deltaR(svTagInfo->flightDirection(vtx),currentAxes[0]);
+                                        tau1_flightDistance2dSig =svTagInfo.flightDistance(vtx,true).significance();
+                                        tau1_vertexDeltaR = reco::deltaR(svTagInfo.flightDirection(vtx),currentAxes[0]);
                                 }
                                 etaRelToTauAxis(vertex, currentAxes[0], tau1_trackEtaRels);
                                 tau1_nSecondaryVertices += 1.;
@@ -386,16 +408,16 @@ float CandidateBoostedDoubleSecondaryVertexComputerLight::discriminator(const pa
                         tau1Kinematics = tau1Kinematics + vertexKinematic;
                         if( tau1_flightDistance2dSig < 0 )
                         {
-                                tau1_flightDistance2dSig =svTagInfo->flightDistance(vtx,true).significance();
-                                tau1_vertexDeltaR = reco::deltaR(svTagInfo->flightDirection(vtx),currentAxes[0]);
+                                tau1_flightDistance2dSig =svTagInfo.flightDistance(vtx,true).significance();
+                                tau1_vertexDeltaR = reco::deltaR(svTagInfo.flightDirection(vtx),currentAxes[0]);
                         }
                         etaRelToTauAxis(vertex, currentAxes[0], tau1_trackEtaRels);
                         tau1_nSecondaryVertices += 1.;
                 }
 
-                GlobalVector flightDir = svTagInfo->flightDirection(vtx);
+                GlobalVector flightDir = svTagInfo.flightDirection(vtx);
                 if (reco::deltaR2(flightDir, jetDir)<(maxSVDeltaRToJet_*maxSVDeltaRToJet_))
-                        VTXmap[svTagInfo->flightDistance(vtx).error()]=vtx;
+                        VTXmap[svTagInfo.flightDistance(vtx).error()]=vtx;
         }
         nSV = VTXmap.size();
 
@@ -499,10 +521,10 @@ float CandidateBoostedDoubleSecondaryVertexComputerLight::discriminator(const pa
         for ( std::map<double, size_t>::iterator iVtx=VTXmap.begin(); iVtx!=VTXmap.end(); ++iVtx)
         {
                 ++cont;
-                const reco::VertexCompositePtrCandidate &vertex = svTagInfo->secondaryVertex(iVtx->second);
+                const reco::VertexCompositePtrCandidate &vertex = svTagInfo.secondaryVertex(iVtx->second);
                 if (cont==1)
                 {
-                        flightDir_0 = svTagInfo->flightDirection(iVtx->second);
+                        flightDir_0 = svTagInfo.flightDirection(iVtx->second);
                         SV_p4_0 = vertex.p4();
                         vtxMass = SV_p4_0.mass();
 
@@ -511,7 +533,7 @@ float CandidateBoostedDoubleSecondaryVertexComputerLight::discriminator(const pa
                 }
                 if (cont==2)
                 {
-                        flightDir_1 = svTagInfo->flightDirection(iVtx->second);
+                        flightDir_1 = svTagInfo.flightDirection(iVtx->second);
                         SV_p4_1 = vertex.p4();
                         vtxMass = (SV_p4_1+SV_p4_0).mass();
 
@@ -591,12 +613,12 @@ float CandidateBoostedDoubleSecondaryVertexComputerLight::discriminator(const pa
 }
 
 
-void CandidateBoostedDoubleSecondaryVertexComputerLight::calcNsubjettiness(const reco::JetBaseRef & jet, float & tau1, float & tau2, std::vector<fastjet::PseudoJet> & currentAxes) const
+void CandidateBoostedDoubleSecondaryVertexComputerLight::calcNsubjettiness(const pat::Jet& jet, float & tau1, float & tau2, std::vector<fastjet::PseudoJet> & currentAxes) const
 {
         std::vector<fastjet::PseudoJet> fjParticles;
 
         // loop over jet constituents and push them in the vector of FastJet constituents
-        for(const reco::CandidatePtr & daughter : jet->daughterPtrVector())
+        for(const reco::CandidatePtr & daughter : jet.daughterPtrVector())
         {
                 if ( daughter.isNonnull() && daughter.isAvailable() )
                 {

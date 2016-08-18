@@ -358,6 +358,7 @@ coreSequence = [
     vertexAna,
     lepAna,
     lepIDAna,
+    # hbbTagComputer, # for all jetsAK8
     jetAna,
     jetAnaAK8,
     hbbTagComputer,
