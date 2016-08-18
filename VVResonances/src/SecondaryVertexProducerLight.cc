@@ -129,13 +129,13 @@ SecondaryVertexProducerLight::SecondaryVertexProducerLight(
 	double sip2dValMax, double ptMin, double sip2dSigMax, double sip2dSigMin,
 	double sip3dValMax, double sip3dValMin, double sip2dValMin, double normChi2Max,
 	bool usePVError, double minimumTrackWeight, std::string trackSort,
-	double extSVDeltaRToJet,
+	double extSVDeltaRToJet, std::string sortCriterium,
 	double distVal2dMin, double distVal2dMax,
 	double distSig2dMin, double distSig2dMax,
 	double distSig3dMin, double distSig3dMax,
 	double distVal3dMin, double distVal3dMax,
 	double fracPV, bool useTrackWeights, double maxDeltaRToJetAxis,
-	int multiplicityMin, double massMax
+	int multiplicityMin, double massMax, double k0sMassWindow
 /*const edm::ParameterSet &params*/
 /*
 trackSort
@@ -146,14 +146,15 @@ extSVDeltaRToJet
 */
 
 ) :
-	sortCriterium(TrackSorting::getCriterium(trackSort)), // sip3dSig
+	m_sortCriterium(TrackSorting::getCriterium(trackSort)), // sip3dSig
 	// trackSelector(params.getParameter<edm::ParameterSet>("trackSelection")),
 	// constraint(getConstraintType(params.getParameter<std::string>("constraint"))),
-	constraintScaling(1.0),
+	// constraintScaling(1.0),
 	// vtxRecoPSet(params.getParameter<edm::ParameterSet>("vertexReco")),
 	// useGhostTrack(vtxRecoPSet.getParameter<std::string>("finder") == "gtvr"),
-	withPVError(usePVError),
-	minTrackWeight(minimumTrackWeight)
+	m_withPVError(usePVError),
+	m_minTrackWeight(minimumTrackWeight),
+	m_extSVDeltaRToJet(extSVDeltaRToJet)
 	// vertexFilter(params.getParameter<edm::ParameterSet>("vertexCuts")),
 	// vertexSorting(params.getParameter<edm::ParameterSet>("vertexSelection"))
 {
@@ -175,7 +176,7 @@ extSVDeltaRToJet
 	trackSelectionPSet.addParameter<double>("sip2dValMin", sip2dValMin);
 	trackSelectionPSet.addParameter<double>("normChi2Max", normChi2Max);
 	trackSelectionPSet.addParameter<double>("useVariableJTA", false);
-	trackSelector = new reco::TrackSelector(trackSelectionPSet);
+	m_trackSelector = new reco::TrackSelector(trackSelectionPSet);
 
 	edm::ParameterSet vertexFilterPSet;
     vertexFilterPSet.addParameter<double>("distSig3dMax",distSig3dMax);
@@ -183,15 +184,9 @@ extSVDeltaRToJet
     vertexFilterPSet.addParameter<double>("distVal2dMax",distVal2dMax);
     vertexFilterPSet.addParameter<bool>("useTrackWeights",useTrackWeights);
     vertexFilterPSet.addParameter<double>("maxDeltaRToJetAxis",maxDeltaRToJetAxis);
-    // {
-    //   edm::ParameterSetDescription v0Filter;
-    //   v0Filter.add<double>("k0sMassWindow",0.05);
-    //   vertexFilterPSet.addParameter<edm::ParameterSetDescription>("v0Filter",v0Filter);
-    // }
-	  edm::ParameterSet v0Filter;
-      v0Filter.addParameter<double>("k0sMassWindow",0.05);
-      vertexFilterPSet.addParameter<edm::ParameterSet>("v0Filter",v0Filter);
-
+	edm::ParameterSet v0Filter;
+	v0Filter.addParameter<double>("k0sMassWindow",k0sMassWindow);
+	vertexFilterPSet.addParameter<edm::ParameterSet>("v0Filter",v0Filter);
     vertexFilterPSet.addParameter<double>("distSig2dMin",distSig2dMin);
     vertexFilterPSet.addParameter<unsigned int>("multiplicityMin",multiplicityMin);
     vertexFilterPSet.addParameter<double>("distVal2dMin",distVal2dMin);
@@ -201,11 +196,11 @@ extSVDeltaRToJet
     vertexFilterPSet.addParameter<double>("distVal3dMin",distVal3dMin);
     vertexFilterPSet.addParameter<double>("massMax",massMax);
     vertexFilterPSet.addParameter<double>("distSig3dMin",distSig3dMin);
-	vertexFilter = new reco::VertexFilter(vertexFilterPSet);
+	m_vertexFilter = new reco::VertexFilter(vertexFilterPSet);
 
 	edm::ParameterSet vertexSelectionPSet;
-	vertexSelectionPSet.addParameter<std::string>("sortCriterium","dist3dError");
-	vertexSorting = new reco::VertexSorting<SecondaryVertex>(vertexSelectionPSet);
+	vertexSelectionPSet.addParameter<std::string>("sortCriterium",sortCriterium);
+	m_vertexSorting = new reco::VertexSorting<SecondaryVertex>(vertexSelectionPSet);
 
 	// token_trackIPTagInfo =  consumes<std::vector<CandIPTagInfo> >(params.getParameter<edm::InputTag>("trackIPTagInfos"));
 	// if (constraint == CONSTRAINT_PV_ERROR_SCALED ||
@@ -253,7 +248,7 @@ extSVDeltaRToJet
 	//   rParam = params.getParameter<double>("rParam"); // will be used later as a dR cut
 
 	// produces<Product>();
-	paramField = new OAEParametrizedMagneticField("3_8T");
+	m_paramField = new OAEParametrizedMagneticField("3_8T");
 }
 
 
@@ -637,7 +632,7 @@ std::vector<reco::CandSecondaryVertexTagInfo> SecondaryVertexProducerLight::prod
 		                    jetRef->momentum().z());
 
 		std::vector<std::size_t> indices =
-				iterJets->sortedIndexes(sortCriterium);
+				iterJets->sortedIndexes(m_sortCriterium);
 
 		const std::vector<reco::CandidatePtr> trackRefs = iterJets->sortedTracks(indices); // was input_container
 
@@ -663,7 +658,7 @@ std::vector<reco::CandSecondaryVertexTagInfo> SecondaryVertexProducerLight::prod
 
 			// select tracks for SV finder
 
-			if (!((*trackSelector)(*reco::btag::toTrack(trackRef), ipData[indices[i]], *jetRef,
+			if (!((*m_trackSelector)(*reco::btag::toTrack(trackRef), ipData[indices[i]], *jetRef,
 			                   RecoVertex::convertPos(
 			                   		pv.position())))) {
 				trackData.back().second.svStatus =
@@ -802,17 +797,17 @@ std::vector<reco::CandSecondaryVertexTagInfo> SecondaryVertexProducerLight::prod
 		//   else {
 		      for(size_t iExtSv = 0; iExtSv < extSecVertex.size(); iExtSv++){
 			 const reco::VertexCompositePtrCandidate & extVertex = (extSecVertex)[iExtSv];
-			 if( Geom::deltaR2( ( position(extVertex) - pv.position() ), jetDir ) > extSVDeltaRToJet*extSVDeltaRToJet || extVertex.p4().M() < 0.3 )
+			 if( Geom::deltaR2( ( position(extVertex) - pv.position() ), jetDir ) > m_extSVDeltaRToJet*m_extSVDeltaRToJet || extVertex.p4().M() < 0.3 )
 			   continue;
 			 extAssoCollection.push_back( extVertex );
 		      }
 		//   }
 		  // build combined SV information and filter
-		  SVBuilder svBuilder(pv, jetDir, withPVError, minTrackWeight);
+		  SVBuilder svBuilder(pv, jetDir, m_withPVError, m_minTrackWeight);
 		  std::remove_copy_if(boost::make_transform_iterator( extAssoCollection.begin(), svBuilder),
 				    boost::make_transform_iterator(extAssoCollection.end(), svBuilder),
 				    std::back_inserter(SVs),
-				    SVFilter(*vertexFilter, pv, jetDir));
+				    SVFilter(*m_vertexFilter, pv, jetDir));
                 // }
 		// clean up now unneeded collections
 		// gtPred.reset();
@@ -824,7 +819,7 @@ std::vector<reco::CandSecondaryVertexTagInfo> SecondaryVertexProducerLight::prod
 
 		// sort SVs by importance
 
-		std::vector<unsigned int> vtxIndices = ((*vertexSorting)(SVs));
+		std::vector<unsigned int> vtxIndices = ((*m_vertexSorting)(SVs));
 
 		std::vector<TemplatedSecondaryVertexTagInfo<CandIPTagInfo,reco::VertexCompositePtrCandidate>::VertexData> svData;
 
@@ -913,11 +908,11 @@ SecondaryVertexProducerLight::SecondaryVertex
 SecondaryVertexProducerLight::SVBuilder::operator () (const TransientVertex &sv) const
 {
 	if(sv.originalTracks().size()>0 && sv.originalTracks()[0].trackBaseRef().isNonnull())
-		return SecondaryVertex(pv, sv, direction, withPVError);
+		return SecondaryVertex(pv, sv, direction, m_withPVError_);
 	else
 	{
 		edm::LogError("UnexpectedInputs") << "Building from Candidates, should not happen!";
-		return SecondaryVertex(pv, sv, direction, withPVError);
+		return SecondaryVertex(pv, sv, direction, m_withPVError_);
 	}
 }
 
@@ -967,48 +962,48 @@ SecondaryVertexProducerLight::SVBuilder::operator () (const TransientVertex &sv)
 // ------------ method that matches reclustered and original jets based on minimum dR ------------
 // template<class CandIPTagInfo,class reco::VertexCompositePtrCandidate>
 // template<class CONTAINER>
-void SecondaryVertexProducerLight::matchReclusteredJets(const std::vector<pat::Jet>& jets,
-                                                                      const std::vector<fastjet::PseudoJet>& reclusteredJets,
-                                                                      std::vector<int>& matchedIndices,
-                                                                      const std::string& jetType)
-{
-   std::string type = ( jetType!="" ? jetType + " " : jetType );
-
-   std::vector<bool> matchedLocks(reclusteredJets.size(),false);
-
-   for(size_t j=0; j<jets.size(); ++j)
-   {
-     double matchedDR2 = 1e9;
-     int matchedIdx = -1;
-
-     for(size_t rj=0; rj<reclusteredJets.size(); ++rj)
-     {
-       if( matchedLocks.at(rj) ) continue; // skip jets that have already been matched
-
-       double tempDR2 = Geom::deltaR2( toJet(jets.at(j))->rapidity(), toJet(jets.at(j))->phi(), reclusteredJets.at(rj).rapidity(), reclusteredJets.at(rj).phi_std() );
-       if( tempDR2 < matchedDR2 )
-       {
-         matchedDR2 = tempDR2;
-         matchedIdx = rj;
-       }
-     }
-
-     if( matchedIdx>=0 )
-     {
-       if ( matchedDR2 > rParam*rParam )
-       {
-         edm::LogError("JetMatchingFailed") << "Matched reclustered jet " << matchedIdx << " and original " << type << "jet " << j <<" are separated by dR=" << sqrt(matchedDR2) << " which is greater than the jet size R=" << rParam << ".\n"
-                                            << "This is not expected so please check that the jet algorithm and jet size match those used for the original " << type << "jet collection.";
-       }
-       else
-         matchedLocks.at(matchedIdx) = true;
-     }
-     else
-       edm::LogError("JetMatchingFailed") << "Matching reclustered to original " << type << "jets failed. Please check that the jet algorithm and jet size match those used for the original " << type << "jet collection.";
-
-     matchedIndices.push_back(matchedIdx);
-   }
-}
+// void SecondaryVertexProducerLight::matchReclusteredJets(const std::vector<pat::Jet>& jets,
+//                                                                       const std::vector<fastjet::PseudoJet>& reclusteredJets,
+//                                                                       std::vector<int>& matchedIndices,
+//                                                                       const std::string& jetType)
+// {
+//    std::string type = ( jetType!="" ? jetType + " " : jetType );
+//
+//    std::vector<bool> matchedLocks(reclusteredJets.size(),false);
+//
+//    for(size_t j=0; j<jets.size(); ++j)
+//    {
+//      double matchedDR2 = 1e9;
+//      int matchedIdx = -1;
+//
+//      for(size_t rj=0; rj<reclusteredJets.size(); ++rj)
+//      {
+//        if( matchedLocks.at(rj) ) continue; // skip jets that have already been matched
+//
+//        double tempDR2 = Geom::deltaR2( toJet(jets.at(j))->rapidity(), toJet(jets.at(j))->phi(), reclusteredJets.at(rj).rapidity(), reclusteredJets.at(rj).phi_std() );
+//        if( tempDR2 < matchedDR2 )
+//        {
+//          matchedDR2 = tempDR2;
+//          matchedIdx = rj;
+//        }
+//      }
+//
+//      if( matchedIdx>=0 )
+//      {
+//        if ( matchedDR2 > rParam*rParam )
+//        {
+//          edm::LogError("JetMatchingFailed") << "Matched reclustered jet " << matchedIdx << " and original " << type << "jet " << j <<" are separated by dR=" << sqrt(matchedDR2) << " which is greater than the jet size R=" << rParam << ".\n"
+//                                             << "This is not expected so please check that the jet algorithm and jet size match those used for the original " << type << "jet collection.";
+//        }
+//        else
+//          matchedLocks.at(matchedIdx) = true;
+//      }
+//      else
+//        edm::LogError("JetMatchingFailed") << "Matching reclustered to original " << type << "jets failed. Please check that the jet algorithm and jet size match those used for the original " << type << "jet collection.";
+//
+//      matchedIndices.push_back(matchedIdx);
+//    }
+// }
 
 // ------------ method that matches groomed and original jets based on minimum dR ------------
 // template<class CandIPTagInfo,class reco::VertexCompositePtrCandidate>
@@ -1273,7 +1268,7 @@ void SecondaryVertexProducerLight::matchReclusteredJets(const std::vector<pat::J
 reco::TransientTrack SecondaryVertexProducerLight::getTransientTrack(const reco::CandidatePtr& trackRef) const
 {
 
-        reco::TransientTrack transientTrack(trackRef, paramField);
+        reco::TransientTrack transientTrack(trackRef, m_paramField);
         return transientTrack;
 
 }

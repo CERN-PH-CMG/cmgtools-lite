@@ -105,13 +105,13 @@ namespace cmg {
 	        double sip2dValMax, double ptMin, double sip2dSigMax, double sip2dSigMin,
 	        double sip3dValMax, double sip3dValMin, double sip2dValMin, double normChi2Max,
 			bool usePVError, double minimumTrackWeight, std::string trackSort,
-			double extSVDeltaRToJet,
+			double extSVDeltaRToJet, std::string sortCriterium,
 			double distVal2dMin, double distVal2dMax,
 			double distSig2dMin, double distSig2dMax,
 			double distSig3dMin, double distSig3dMax,
 			double distVal3dMin, double distVal3dMax,
 			double fracPV, bool useTrackWeights, double maxDeltaRToJetAxis,
-			int multiplicityMin, double massMax
+			int multiplicityMin, double massMax, double k0sMassWindow
 		/*const edm::ParameterSet &params*/);
     	~SecondaryVertexProducerLight();
     	// static void fillDescriptions(edm::ConfigurationDescriptions & descriptions);
@@ -127,10 +127,10 @@ namespace cmg {
 
         private:
             // template<class CONTAINER>
-    	void matchReclusteredJets(const std::vector<pat::Jet>& jets,
-    				  const std::vector<fastjet::PseudoJet>& matchedJets,
-    				  std::vector<int>& matchedIndices,
-    				  const std::string& jetType="");
+    	// void matchReclusteredJets(const std::vector<pat::Jet>& jets,
+    	// 			  const std::vector<fastjet::PseudoJet>& matchedJets,
+    	// 			  std::vector<int>& matchedIndices,
+    	// 			  const std::string& jetType="");
     	// void matchGroomedJets(const edm::Handle<edm::View<reco::Jet> >& jets,
     	// 		      const edm::Handle<edm::View<reco::Jet> >& matchedJets,
     	// 		      std::vector<int>& matchedIndices);
@@ -145,7 +145,7 @@ namespace cmg {
     	const reco::Jet * toJet(const reco::Jet & j) { return &j; }
     	const reco::Jet * toJet(const reco::CandIPTagInfo & j) { return &(*(j.jet())); }
 
-		OAEParametrizedMagneticField *paramField;
+		OAEParametrizedMagneticField *m_paramField;
 
     	// enum ConstraintType {
     	// 	CONSTRAINT_NONE	= 0,
@@ -159,28 +159,28 @@ namespace cmg {
 
             // edm::EDGetTokenT<reco::BeamSpot> token_BeamSpot;
             // edm::EDGetTokenT<std::vector<CandIPTagInfo> > token_trackIPTagInfo;
-    	reco::btag::SortCriteria	sortCriterium;
-    	reco::TrackSelector			*trackSelector;
+    	reco::btag::SortCriteria	m_sortCriterium;
+    	reco::TrackSelector			*m_trackSelector;
     	// ConstraintType			constraint;
-    	double				constraintScaling;
+    	// double				constraintScaling;
     	// edm::ParameterSet		vtxRecoPSet;
-    	bool				useGhostTrack;
-    	bool				withPVError;
-    	double				minTrackWeight;
-    	reco::VertexFilter			*vertexFilter;
-    	reco::VertexSorting<SecondaryVertex>	*vertexSorting;
-            bool                            useExternalSV;
-            double                          extSVDeltaRToJet;
+    	// bool				useGhostTrack;
+    	bool				m_withPVError;
+    	double				m_minTrackWeight;
+    	reco::VertexFilter			*m_vertexFilter;
+    	reco::VertexSorting<SecondaryVertex>	*m_vertexSorting;
+            // bool                            useExternalSV;
+            double                          m_extSVDeltaRToJet;
             // edm::EDGetTokenT<edm::View<reco::VertexCompositePtrCandidate> > token_extSVCollection;
-    	bool				useSVClustering;
-    	bool				useSVMomentum;
-    	std::string			jetAlgorithm;
-    	double				rParam;
-    	double				jetPtMin;
-    	double				ghostRescaling;
-    	double				relPtTolerance;
-    	bool				useFatJets;
-    	bool				useGroomedFatJets;
+    	// bool				useSVClustering;
+    	// bool				useSVMomentum;
+    	// std::string			jetAlgorithm;
+    	// double				rParam;
+    	// double				jetPtMin;
+    	// double				ghostRescaling;
+    	// double				relPtTolerance;
+    	// bool				useFatJets;
+    	// bool				useGroomedFatJets;
     	// edm::EDGetTokenT<edm::View<reco::Jet> > token_fatJets;
     	// edm::EDGetTokenT<edm::View<reco::Jet> > token_groomedFatJets;
 
@@ -194,21 +194,21 @@ namespace cmg {
 
     		SVBuilder(const reco::Vertex &pv,
     		          const GlobalVector &direction,
-    		          bool withPVError,
+    		          const bool withPVError,
     			  double minTrackWeight) :
     			pv(pv), direction(direction),
-    			withPVError(withPVError),
-    			minTrackWeight(minTrackWeight) {}
+    			m_withPVError_(withPVError),
+    			m_minTrackWeight_(minTrackWeight) {}
     		SecondaryVertex operator () (const TransientVertex &sv) const;
 
-    		SecondaryVertex operator () ( const reco::VertexCompositePtrCandidate &sv) const // was reco::VertexCompositePtrCandidate
-    		{ return SecondaryVertex(pv, sv, direction, withPVError); }
+    		SecondaryVertex operator () ( const reco::VertexCompositePtrCandidate &sv) const
+    		{ return SecondaryVertex(pv, sv, direction, m_withPVError_); }
 
 
     		const reco::Vertex		&pv;
     		const GlobalVector	&direction;
-    		bool			withPVError;
-    		double 			minTrackWeight;
+    		bool			m_withPVError_;
+    		double 			m_minTrackWeight_;
     	};
 
     	struct SVFilter :

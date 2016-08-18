@@ -56,8 +56,10 @@ class HbbTagComputer( Analyzer ):
         # instantiate SecondaryVertexProducerLight
         # https://github.com/cms-sw/cmssw/blob/CMSSW_8_0_X/RecoBTag/SecondaryVertex/python/pfInclusiveSecondaryVertexFinderAK8TagInfos_cfi.py
         from RecoBTag.SecondaryVertex.pfInclusiveSecondaryVertexFinderAK8TagInfos_cfi import pfInclusiveSecondaryVertexFinderAK8TagInfos
+        # print pfInclusiveSecondaryVertexFinderAK8TagInfos.vertexCuts.trackPairV0Filter
         pfInclusiveSecondaryVertexFinderAK8TagInfos.trackSelection.jetDeltaRMax = cms.double(0.8) # plays no role since using IVF vertices
         pfInclusiveSecondaryVertexFinderAK8TagInfos.vertexCuts.maxDeltaRToJetAxis = cms.double(0.8)
+        pfInclusiveSecondaryVertexFinderAK8TagInfos.k0sMassWindow = cms.double(0.05)
         self.secondaryVertexProducerLight = ROOT.cmg.SecondaryVertexProducerLight(pfInclusiveSecondaryVertexFinderAK8TagInfos.trackSelection.totalHitsMin.value() , pfInclusiveSecondaryVertexFinderAK8TagInfos.trackSelection.jetDeltaRMax.value(),
         pfInclusiveSecondaryVertexFinderAK8TagInfos.trackSelection.qualityClass.value(),
         pfInclusiveSecondaryVertexFinderAK8TagInfos.trackSelection.pixelHitsMin.value(), pfInclusiveSecondaryVertexFinderAK8TagInfos.trackSelection.maxDistToAxis.value(), pfInclusiveSecondaryVertexFinderAK8TagInfos.trackSelection.maxDecayLen.value(),
@@ -67,13 +69,13 @@ class HbbTagComputer( Analyzer ):
         pfInclusiveSecondaryVertexFinderAK8TagInfos.trackSelection.sip3dValMin.value(), pfInclusiveSecondaryVertexFinderAK8TagInfos.trackSelection.sip2dValMin.value(),
         pfInclusiveSecondaryVertexFinderAK8TagInfos.trackSelection.normChi2Max.value(), pfInclusiveSecondaryVertexFinderAK8TagInfos.usePVError.value(),
         pfInclusiveSecondaryVertexFinderAK8TagInfos.minimumTrackWeight.value(), pfInclusiveSecondaryVertexFinderAK8TagInfos.trackSort.value(),
-        pfInclusiveSecondaryVertexFinderAK8TagInfos.extSVDeltaRToJet.value(),
+        pfInclusiveSecondaryVertexFinderAK8TagInfos.extSVDeltaRToJet.value(), pfInclusiveSecondaryVertexFinderAK8TagInfos.vertexSelection.sortCriterium.value(),
         pfInclusiveSecondaryVertexFinderAK8TagInfos.vertexCuts.distVal2dMin.value(), pfInclusiveSecondaryVertexFinderAK8TagInfos.vertexCuts.distVal2dMax.value(),
         pfInclusiveSecondaryVertexFinderAK8TagInfos.vertexCuts.distSig2dMin.value(), pfInclusiveSecondaryVertexFinderAK8TagInfos.vertexCuts.distSig2dMax.value(),
         pfInclusiveSecondaryVertexFinderAK8TagInfos.vertexCuts.distSig3dMin.value(), pfInclusiveSecondaryVertexFinderAK8TagInfos.vertexCuts.distSig3dMax.value(),
         pfInclusiveSecondaryVertexFinderAK8TagInfos.vertexCuts.distVal3dMin.value(), pfInclusiveSecondaryVertexFinderAK8TagInfos.vertexCuts.distVal3dMax.value(),
         pfInclusiveSecondaryVertexFinderAK8TagInfos.vertexCuts.fracPV.value(), pfInclusiveSecondaryVertexFinderAK8TagInfos.vertexCuts.useTrackWeights.value(), pfInclusiveSecondaryVertexFinderAK8TagInfos.vertexCuts.maxDeltaRToJetAxis.value(),
-        pfInclusiveSecondaryVertexFinderAK8TagInfos.vertexCuts.multiplicityMin.value(), pfInclusiveSecondaryVertexFinderAK8TagInfos.vertexCuts.massMax.value())
+        pfInclusiveSecondaryVertexFinderAK8TagInfos.vertexCuts.multiplicityMin.value(), pfInclusiveSecondaryVertexFinderAK8TagInfos.vertexCuts.massMax.value(), pfInclusiveSecondaryVertexFinderAK8TagInfos.k0sMassWindow.value())
 
 
 
