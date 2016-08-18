@@ -10,7 +10,7 @@ class HbbTagComputer( Analyzer ):
     def __init__(self, cfg_ana, cfg_comp, looperName):
         super(HbbTagComputer,self).__init__(cfg_ana, cfg_comp, looperName)
         # instantiate CandidateBoostedDoubleSecondaryVertexComputerLight
-        # values taken from https://github.com/cms-sw/cmssw/blob/CMSSW_8_0_X/RecoBTag/SecondaryVertex/python/candidateBDSVAK8ComputerPSet_cfi.py
+        # values taken from https://github.com/cms-sw/cmssw/blob/CMSSW_8_0_X/RecoBTag/SecondaryVertex/python/candidateBoostedDoubleSecondaryVertexAK8Computer_cfi.py
         from RecoBTag.SecondaryVertex.trackSelection_cff import trackSelectionBlock
         candidateBDSVAK8ComputerPSet = cms.PSet(
         trackSelectionBlock,
@@ -59,7 +59,7 @@ class HbbTagComputer( Analyzer ):
         # print pfInclusiveSecondaryVertexFinderAK8TagInfos.vertexCuts.trackPairV0Filter
         pfInclusiveSecondaryVertexFinderAK8TagInfos.trackSelection.jetDeltaRMax = cms.double(0.8) # plays no role since using IVF vertices
         pfInclusiveSecondaryVertexFinderAK8TagInfos.vertexCuts.maxDeltaRToJetAxis = cms.double(0.8)
-        pfInclusiveSecondaryVertexFinderAK8TagInfos.k0sMassWindow = cms.double(0.05)
+        pfInclusiveSecondaryVertexFinderAK8TagInfos.k0sMassWindow = cms.double(0.05) # checked to be correct, see https://github.com/cms-sw/cmssw/blob/CMSSW_8_0_X/RecoBTag/SecondaryVertex/python/combinedSecondaryVertexCommon_cff.py
         self.secondaryVertexProducerLight = ROOT.cmg.SecondaryVertexProducerLight(pfInclusiveSecondaryVertexFinderAK8TagInfos.trackSelection.totalHitsMin.value() , pfInclusiveSecondaryVertexFinderAK8TagInfos.trackSelection.jetDeltaRMax.value(),
         pfInclusiveSecondaryVertexFinderAK8TagInfos.trackSelection.qualityClass.value(),
         pfInclusiveSecondaryVertexFinderAK8TagInfos.trackSelection.pixelHitsMin.value(), pfInclusiveSecondaryVertexFinderAK8TagInfos.trackSelection.maxDistToAxis.value(), pfInclusiveSecondaryVertexFinderAK8TagInfos.trackSelection.maxDecayLen.value(),

@@ -142,8 +142,8 @@ namespace cmg {
     	// 		  const edm::Handle<std::vector<CandIPTagInfo> >& subjets,
     	// 		  std::vector<std::vector<int> >& matchedIndices);
 
-    	const reco::Jet * toJet(const reco::Jet & j) { return &j; }
-    	const reco::Jet * toJet(const reco::CandIPTagInfo & j) { return &(*(j.jet())); }
+    	// const reco::Jet * toJet(const reco::Jet & j) { return &j; }
+    	// const reco::Jet * toJet(const reco::CandIPTagInfo & j) { return &(*(j.jet())); }
 
 		OAEParametrizedMagneticField *m_paramField;
 
@@ -184,8 +184,8 @@ namespace cmg {
     	// edm::EDGetTokenT<edm::View<reco::Jet> > token_fatJets;
     	// edm::EDGetTokenT<edm::View<reco::Jet> > token_groomedFatJets;
 
-    	ClusterSequencePtr		fjClusterSeq;
-    	JetDefPtr			fjJetDefinition;
+    	// ClusterSequencePtr		fjClusterSeq;
+    	// JetDefPtr			fjJetDefinition;
 
     	void markUsedTracks(TrackDataVector & trackData, const std::vector<reco::CandidatePtr> & trackRefs, const reco::VertexCompositePtrCandidate & sv,size_t idx);
 
