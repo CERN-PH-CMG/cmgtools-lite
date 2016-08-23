@@ -1,0 +1,14 @@
+@(#)CERN job starter $Date: 2010/06/23 14:22:16 $
+Working directory is </pool/lsf/gkaratha/840454573> on <b64f3d50eb.cern.ch>
+
+SCRAM fatal: Unable to locate the top of local release. Please run this command from a SCRAM-based area.
+Error in <TGClient::TGClient>: can't open display "lxplus0080.cern.ch:37.0", switching to batch mode...
+ In case you run from a remote ssh session, reconnect with ssh -Y
+
+Job finished at Mon Aug  1 18:34:20 CEST 2016 on node 
+ under linux version Scientific Linux CERN SLC release 6.8 (Carbon)
+
+CERN statistics: This process used approximately : 0:00:01 KSI2K hours (1 KSI2K seconds)
+                 This process corresponds to     : 0:00:06 HS06  hours (6 HS06  seconds)
+
+CERN report: Job Killed. See mail from LSF for messages and native time cpu usage.

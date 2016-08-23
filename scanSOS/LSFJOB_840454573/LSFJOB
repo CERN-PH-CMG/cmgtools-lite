@@ -1,0 +1,35 @@
+#! /bin/sh
+
+$LSB_TRAPSIGS
+$LSB_RCP1
+$LSB_RCP2
+$LSB_RCP3
+# LSBATCH: User input
+( cat <<_USER_\SCRIPT_
+# Lxplus Batch Job Script
+#set CMSSW_PROJECT_SRC="cmssw_projects/13X/cmssw131hlt6/src"
+#set CFG_FILE="cfgs/steps2_3_4_5.cfg"
+set OUTPUT_FILE="T2tt_results.root"
+#set TOP="$PWD"
+
+cd /afs/cern.ch/work/g/gkaratha/private/SUSYCMG/scanSOS
+eval `scramv1 runtime -csh`
+#cd $TOP
+python scanSOS.py
+rfcp T2tt_results.root /afs/cern.ch/work/g/gkaratha/private/SUSYCMG/scanSOS/$OUTPUT_FILE
+
+#torun: bsub -R "pool>30000" -q 1nw -J job1 < barch_scan.sh
+
+_USER_SCRIPT_
+) > $LSB_CHKFILENAME.shell
+chmod u+x $LSB_CHKFILENAME.shell
+/usr/local/lsf/etc/job_starter '$LSB_JOBFILENAME.shell'
+saveExit=$?
+/bin/rm -f $LSB_JOBFILENAME.shell
+(exit $saveExit)
+
+ExitStat=$?
+wait
+# LSBATCH: End user input
+true
+exit `expr $? "|" $ExitStat`
