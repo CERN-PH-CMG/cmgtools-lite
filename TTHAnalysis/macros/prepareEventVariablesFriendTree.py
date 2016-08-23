@@ -17,6 +17,16 @@ btagsf_payload = os.path.join(utility_files_dir, "btag", "CSVv2_ichep.csv")
 bTagEventWeight = lambda : BTagEventWeightFriend(csvfile=btagsf_payload, algo='csv', recllabel='Recl')
 MODULES.append( ('eventBTagWeight', bTagEventWeight ))
 
+# # btag event weights in 80X for FastSIM
+# from CMGTools.TTHAnalysis.tools.bTagEventWeights import BTagEventWeightFriend
+# btagsf_payload = os.path.join(utility_files_dir, "btag", "CSVv2_ichep.csv")
+# btagsf_payload_fastsim = os.path.join(os.environ['CMSSW_BASE'], "src/CMGTools/TTHAnalysis/data/btag/", "CSV_13TEV_Combined_14_7_2016.csv")
+# btag_efficiency_file   = os.path.join(os.environ['CMSSW_BASE'], "src/CMGTools/TTHAnalysis/data/btag/", "bTagEffs.root")
+# bTagEventWeight = lambda : BTagEventWeightFriend(csvfile=btagsf_payload, csvfastsim=btagsf_payload_fastsim, eff_rootfile=btag_efficiency_file, algo='csv', recllabel='Recl')
+# MODULES.append( ('eventBTagWeight', bTagEventWeight ))
+
+
+ 
 #--- Recleaner instances
 
 from CMGTools.TTHAnalysis.tools.leptonChoiceRA5 import _susy2lss_lepId_CBloose,_susy2lss_lepId_loosestFO,_susy2lss_lepId_IPcuts,_susy2lss_lepConePt1015,_susy2lss_lepId_tighterFO,_susy2lss_multiIso,_susy2lss_lepId_CB,_susy2lss_idIsoEmu_cuts
