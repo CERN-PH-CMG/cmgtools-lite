@@ -198,14 +198,14 @@ from CMGTools.RootTools.utils.splitFactor import splitFactor
 from CMGTools.H2TauTau.proto.samples.spring16.htt_common import Tau_Run2016B_PromptReco_v2 as data_tau
 from CMGTools.H2TauTau.proto.samples.spring16.htt_common import backgrounds, sm_signals, mssm_signals, data_tau, sync_list
 from CMGTools.H2TauTau.proto.samples.spring16.higgs_susy import HiggsSUSYGG160 as ggh160
-from CMGTools.H2TauTau.proto.samples.fall15.sms import SMS
+from CMGTools.H2TauTau.proto.samples.spring16.sms import samples_susy
 from CMGTools.RootTools.samples.samples_13TeV_signals import SignalSUSY
 # from CMGTools.H2TauTau.proto.samples.spring16.higgs_susy import HiggsSUSYGG90 as ggh90
 # from CMGTools.H2TauTau.proto.samples.spring16.higgs_susy import HiggsSUSYGG1000 as ggh1000
 from CMGTools.H2TauTau.proto.samples.spring16.triggers_tauTau import mc_triggers, mc_triggerfilters, data_triggers, data_triggerfilters
 
 data_list = data_tau
-samples = backgrounds + sm_signals + mssm_signals + [SMS] + SignalSUSY[:1]
+samples = backgrounds + sm_signals + mssm_signals + samples_susy + SignalSUSY[:1]
 split_factor = 1e5
 
 for sample in data_list:
@@ -229,6 +229,7 @@ for mc in samples:
 ###             SET COMPONENTS BY HAND          ###
 ###################################################
 selectedComponents = samples
+# selectedComponents = samples_susy
 if data:
     selectedComponents = data_list
 
@@ -266,7 +267,7 @@ if pick_events:
     # #     fileName = '/afs/cern.ch/work/m/manzoni/diTau2015/CMSSW_7_4_3/src/CMGTools/H2TauTau/cfgPython/2015-sync/CERN.csv'
     #     f = open(fileName, 'rb')
     #     reader = csv.reader(f)
-    evtsToPick = [158340]
+    evtsToPick = [457708, 425293, 447970, 178882, 3374, 14658, 443850, 21582, 4403, 12924, 11275, 68723, 96792, 120270, 247339, 88508, 104454, 344845, 333579, 384277, 390123, 453005, 477401, 482485, 478466, 273199, 307046, 312583, 317090, 344426, 345958, 463044, 463051, 468768, 276616, 159307, 359291, 386755, 172125, 185981, 318270, 382006, 332328, 301617, 69428, 167235, 155761, 156001, 246652, 246812, 187713, 201555, 199365, 205348, 239434, 354001, 242066, 263854, 57426, 485885, 136766, 222003, 459882, 145312, 139491, 63131, 94633, 92860, 97245, 175535, 190598, 200504, 243541]
 
     # for i, row in enumerate(reader):
     #     evtsToPick += [int(j) for j in row]
@@ -292,8 +293,9 @@ outputService.append(output_service)
 if not production:
     comp = data_list[0] if data else sync_list[0]
     # comp = SMS
+    # comp = samples_susy[1]
     selectedComponents = [comp]
-    comp.splitFactor = 1
+    comp.splitFactor = 4
     comp.fineSplitFactor = 1
     # comp.files = comp.files[13:20]
 

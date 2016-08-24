@@ -93,11 +93,11 @@ muonWeighter = cfg.Analyzer(
     LeptonWeighter,
     name='LeptonWeighter_mu',
     scaleFactorFiles={
-        'trigger':'$CMSSW_BASE/src/CMGTools/H2TauTau/data/Muon_IsoMu18_spring16.root',
+        'trigger':'$CMSSW_BASE/src/CMGTools/H2TauTau/data/Muon_IsoMu22_eff_Spring16.root',
         'idiso':'$CMSSW_BASE/src/CMGTools/H2TauTau/data/Muon_IdIso0p1_spring16.root',
     },
     lepton='leg1',
-    disable=True
+    disable=False
 )
 
 treeProducer = cfg.Analyzer(
@@ -211,7 +211,7 @@ if not production:
     if data:
         selectedComponents = [selectedComponents[0]]
     # comp = selectedComponents[0]
-    comp.splitFactor = 4
+    comp.splitFactor = 1
     comp.fineSplitFactor = 1
     # comp.files = comp.files[]
 
