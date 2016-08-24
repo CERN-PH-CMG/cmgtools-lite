@@ -409,6 +409,10 @@ class DataMCPlot(object):
                 ymin = 0.01
             if ymax is None:
                 ymax = mx*1.3
+                centrality = self.supportHist.weighted.GetRMS()/(self.supportHist.weighted.GetXaxis().GetXmax() - self.supportHist.weighted.GetXaxis().GetXmin())
+                if centrality > 0.15:
+                    ymax = mx*2.0
+
             self.supportHist.GetYaxis().SetRangeUser(ymin, ymax)
             self.axisWasSet = True
         for hist in self.nostack:

@@ -12,12 +12,12 @@ from CMGTools.H2TauTau.proto.plotter.qcdEstimation     import qcd_estimation
 from CMGTools.H2TauTau.proto.plotter.cut               import Cut
 
 int_lumi = lumi
-analysis_dir = '/data1/steggema/tt/140716/DiTauMC'
+analysis_dir = '/data1/steggema/tt/230816/DiTauNewMC'
 verbose = True
 total_weight = 'weight'
-mssm = True
+mssm = False
 
-samples_mc, samples_data, samples, all_samples, sampleDict = createSampleLists(analysis_dir=analysis_dir, channel='tt', ztt_cut='(l2_gen_match == 5 && l1_gen_match == 5)', zl_cut='(l1_gen_match < 6 && l2_gen_match < 6 && !(l1_gen_match == 5 && l2_gen_match == 5))',
+samples_mc, samples_data, samples, all_samples, sampleDict = createSampleLists(analysis_dir=analysis_dir, channel='tt', mode='mssm' if mssm else 'susy', ztt_cut='(l2_gen_match == 5 && l1_gen_match == 5)', zl_cut='(l1_gen_match < 6 && l2_gen_match < 6 && !(l1_gen_match == 5 && l2_gen_match == 5))',
                       zj_cut='(l2_gen_match == 6 || l1_gen_match == 6)')
 
 myCut = namedtuple('myCut', ['name', 'cut'])
@@ -35,20 +35,28 @@ iso_sideband_cut = (~iso_cut) & max_iso_cut
 charge_cut = Cut('l1_charge != l2_charge')
 
 # append categories to plot
-cuts.append(myCut('inclusive', inc_cut))
+
+# cuts.append(myCut('inclusive', inc_cut))
+
 # cuts.append(myCut('inclusive_SS', inc_cut))
-cuts.append(myCut('mZ', inc_cut & Cut('mvis < 110.')))
-cuts.append(myCut('low_deta', inc_cut & Cut('delta_eta_l1_l2 < 1.5')))
-cuts.append(myCut('high_deta', inc_cut & Cut('delta_eta_l1_l2 > 1.5')))
-cuts.append(myCut('mva_met_sig_3', inc_cut & Cut('met_pt/sqrt(met_cov00 + met_cov11) > 3.')))
-cuts.append(myCut('met200', inc_cut & Cut('met_pt > 200.')))
+# cuts.append(myCut('mZ', inc_cut & Cut('mvis < 110.')))
+# cuts.append(myCut('low_deta', inc_cut & Cut('delta_eta_l1_l2 < 1.5')))
+# cuts.append(myCut('high_deta', inc_cut & Cut('delta_eta_l1_l2 > 1.5')))
+# cuts.append(myCut('mva_met_sig_3', inc_cut & Cut('met_pt/sqrt(met_cov00 + met_cov11) > 3.')))
 
-cuts.append(myCut('mZ_0jet', inc_cut & Cut('mvis < 110. && n_jets==0')))
-cuts.append(myCut('mZ_1jet', inc_cut & Cut('mvis < 110. && n_jets>=1')))
+# Next is a failed attempt to get a W+jets-enriched control region
+# cuts.append(myCut('mva_met_sig_1_low_deta', inc_cut & Cut('met_pt/sqrt(met_cov00 + met_cov11) > 1. && delta_eta_l1_l2 < 2.')))
+# cuts.append(myCut('met200', inc_cut & Cut('met_pt > 200.')))
 
+# cuts.append(myCut('mZ_0jet', inc_cut & Cut('mvis < 110. && n_jets==0')))
+# cuts.append(myCut('mZ_1jet', inc_cut & Cut('mvis < 110. && n_jets>=1')))
+
+cuts.append(myCut('susy_jan', inc_cut & Cut('met_pt/sqrt(met_cov00 + met_cov11) > 1. && mvis>100 && mt + mt_leg2 > 150. && n_bjets==0 && pzeta_disc < -40.')))
+# cuts.append(myCut('susy_jan_tight', inc_cut & Cut('met_pt/sqrt(met_cov00 + met_cov11) > 1. && mvis>100 && mt + mt_leg2 > 150. && n_bjets==0 && pzeta_disc < -40. && abs(delta_phi_l1_l2) > 1. && mt_total>300.')))
+# cuts.append(myCut('susy_jan_SS', inc_cut & Cut('met_pt/sqrt(met_cov00 + met_cov11) > 1. && mvis>100 && mt + mt_leg2 > 150. && n_bjets==0 && pzeta_disc < -40.')))
 
 # cuts.append(myCut('1jet'     , jet1_cut))
-# cuts.append(myCut('vbf'      , vbf_cut ))
+cuts.append(myCut('vbf'      , vbf_cut ))
 
 # Taken from Variables.py, can get subset with e.g. getVars(['mt', 'mvis'])
 variables = tautau_vars
@@ -75,8 +83,8 @@ for cut in cuts:
     plots = createHistograms(cfg_total, verbose=True)
     for variable in variables:
         plot = plots[variable.name]
-        plot.Group('Single t', ['T_tWch', 'TBar_tWch', 'TToLeptons_sch', 'TToLeptons_tch_powheg', 'TBarToLeptons_tch_powheg'])
-        plot.Group('VV', ['VVTo2L2Nu', 'ZZTo2L2Q', 'WWTo1L1Nu2Q', 'WZTo1L3Nu', 'ZZTo4L', 'WZTo3L', 'WZTo2L2Q', 'WZTo1L1Nu2Q', 'Single t'])
+        plot.Group('Single t', ['T_tWch', 'TBar_tWch', 'TToLeptons_tch_powheg', 'TBarToLeptons_tch_powheg'])#'TToLeptons_sch', 
+        plot.Group('VV', ['VVTo2L2Nu', 'ZZTo2L2Q', 'WWTo1L1Nu2Q', 'WZTo1L3Nu', 'ZZTo4L',  'WZTo2L2Q', 'WZTo1L1Nu2Q', 'Single t'])#'WZTo3L',
         # plot.Group('ZTT', ['ZTT', 'ZTT1Jets', 'ZTT2Jets', 'ZTT3Jets', 'ZTT4Jets'])
         # plot.Group('ZJ', ['ZJ', 'ZJ1Jets', 'ZJ2Jets', 'ZJ3Jets', 'ZJ4Jets'])
         # plot.Group('ZL', ['ZL', 'ZL1Jets', 'ZL2Jets', 'ZL3Jets', 'ZL4Jets'])

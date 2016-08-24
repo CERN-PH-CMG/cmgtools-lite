@@ -11,12 +11,15 @@ from CMGTools.H2TauTau.proto.plotter.Samples import createSampleLists
 from CMGTools.H2TauTau.proto.plotter.helper_methods import plotDataOverMCEff
 
 
-total_weight = 'weight'
+# total_weight = 'weight/l1_weight_eff_data_trigger * ( (l2_pt>22.) * (1 - (1-l1_weight_eff_data_trigger)**2) + (l2_pt<22.) * l1_weight_eff_data_trigger ) '
+
+total_weight = 'weight/l1_weight_eff_data_trigger * (1. - (1.-l1_weight_eff_data_trigger)*(1.-l1_weight_eff_data_trigger))'
+# total_weight = 'weight/l1_weight_eff_data_trigger'# * (1. - (1.-l1_weight_eff_data_trigger)**2)'
 
 print 'Total weight', total_weight
 
 # -> Command line
-analysis_dir = '/data1/steggema/mm/150716/MuMuMC'
+analysis_dir = '/data1/steggema/mm/220716/MuMuMC'
 qcd_from_same_sign = True
 
 int_lumi = lumi
@@ -25,18 +28,33 @@ cuts = {}
 
 inc_cut = '&&'.join([cat_Inc])
 
-# cuts['OS_PU_m50'] = inc_cut + '&& l1_charge != l2_charge && abs(l1_eta) < 2.1 && mvis>50'
-# cuts['OS_PU_m20'] = inc_cut + '&& l1_charge != l2_charge && abs(l1_eta) < 2.1 && mvis>20'
-# cuts['OS_PU_1bjet'] = inc_cut + '&& l1_charge != l2_charge && abs(l1_eta) < 2.1 && mvis>50 && n_bjets==1'
-# cuts['OS_PU_2bjet'] = inc_cut + '&& l1_charge != l2_charge && abs(l1_eta) < 2.1 && mvis>50 && n_bjets>=2'
-cuts['OS_PU_mZ'] = inc_cut + '&& l1_charge != l2_charge && abs(l1_eta) < 2.1 && mvis>70 && mvis<100'
+# cuts['OS_PU_m50'] = inc_cut + '&& l1_charge != l2_charge && abs(l1_eta) < 2.1 && abs(l2_eta) < 2.1  && mvis>50'
+# # cuts['OS_PU_m20'] = inc_cut + '&& l1_charge != l2_charge && abs(l1_eta) < 2.1 && abs(l2_eta) < 2.1  && mvis>20'
+# cuts['OS_PU_1bjet'] = inc_cut + '&& l1_charge != l2_charge && abs(l1_eta) < 2.1 && abs(l2_eta) < 2.1  && mvis>50 && n_bjets==1'
+# cuts['OS_PU_2bjet'] = inc_cut + '&& l1_charge != l2_charge && abs(l1_eta) < 2.1 && abs(l2_eta) < 2.1  && mvis>50 && n_bjets>=2'
+# cuts['OS_PU_mZ'] = inc_cut + '&& l1_charge != l2_charge && abs(l1_eta) < 2.1 && abs(l2_eta) < 2.1 && mvis>70 && mvis<100'
+# cuts['OS_PU_mZ_0jet'] = inc_cut + '&& l1_charge != l2_charge && abs(l1_eta) < 2.1 && abs(l2_eta) < 2.1 && mvis>70 && mvis<100 && n_jets==0'
+
+# cuts['OS_PU_mZ_gr1jet'] = inc_cut + '&& l1_charge != l2_charge && abs(l1_eta) < 2.1 && abs(l2_eta) < 2.1 && mvis>70 && mvis<100 && n_jets>=1'
+# cuts['OS_PU_mZ_gr2jet'] = inc_cut + '&& l1_charge != l2_charge && abs(l1_eta) < 2.1 && abs(l2_eta) < 2.1 && mvis>70 && mvis<100 && n_jets>=2'
+
+# cuts['OS_PU_mZ_VBF'] = inc_cut + '&& l1_charge != l2_charge && abs(l1_eta) < 2.1 && abs(l2_eta) < 2.1 && mvis>70 && mvis<100 && vbf_mjj>500. && abs(vbf_deta)>3.5 && jet2_pt>30.'
+
+# cuts['OS_PU_mZ_VBF_puid'] = inc_cut + '&& l1_charge != l2_charge && abs(l1_eta) < 2.1 && abs(l2_eta) < 2.1 && mvis>70 && mvis<100 && vbf_mjj>500. && abs(vbf_deta)>3.5 && jet1_id_pu>0.5 && jet2_id_pu>0.5 && jet2_pt>30.'
+
+# cuts['OS_PU_mZ_VBF_puid_tight'] = inc_cut + '&& l1_charge != l2_charge && abs(l1_eta) < 2.1 && abs(l2_eta) < 2.1 && mvis>70 && mvis<100 && vbf_mjj>500. && abs(vbf_deta)>3.5 && jet1_id_pu>2.5 && jet2_id_pu>2.5 && jet2_pt>30.'
+
+# cuts['OS_PU_mZ_1jet_PUenriched'] = inc_cut + '&& l1_charge != l2_charge && abs(l1_eta) < 2.1 && abs(l2_eta) < 2.1 && mvis>70 && mvis<100 && jet1_pt>20 && n_jets<=1 && pthiggs<20 && met_pt<20'
+
+cuts['OS_PU_mZ_VBF_highPU'] = inc_cut + '&& l1_charge != l2_charge && abs(l1_eta) < 2.1 && abs(l2_eta) < 2.1 && mvis>70 && mvis<100 && vbf_mjj>500. && abs(vbf_deta)>3.5 && jet2_pt>30. && n_vertices>25'
+cuts['OS_PU_mZ_VBF_lowPU'] = inc_cut + '&& l1_charge != l2_charge && abs(l1_eta) < 2.1 && abs(l2_eta) < 2.1 && mvis>70 && mvis<100 && vbf_mjj>500. && abs(vbf_deta)>3.5 && jet2_pt>30. && n_vertices<15'
 
 # cuts['OS_PU_mZ_relaxl1iso'] = inc_cut.replace('l1_reliso05<0.1', 'l1_reliso05<1.') + '&& l1_charge != l2_charge && abs(l1_eta) < 2.1 && mvis>80 && mvis<100'
 # cuts['OS_PU_mZ_relaxl2iso'] = inc_cut.replace('l2_reliso05<0.1', 'l2_reliso05<1.') + '&& l1_charge != l2_charge && abs(l1_eta) < 2.1 && mvis>80 && mvis<100'
 
 
-# cuts['OS_PU_0bjet_mZ'] = inc_cut + '&& l1_charge != l2_charge && abs(l1_eta) < 2.1 && mvis>70 && mvis<100 && n_bjets==0'
-# cuts['OS_PU_0bjet_vetoZ'] = inc_cut + '&& l1_charge != l2_charge && abs(l1_eta) < 2.1 && mvis>70 && (mvis>100 || mvis<80) && n_bjets==0'
+# cuts['OS_PU_0bjet_mZ'] = inc_cut + '&& l1_charge != l2_charge && abs(l1_eta) < 2.1 && abs(l2_eta) < 2.1 && mvis>70 && mvis<100 && n_bjets==0'
+# cuts['OS_PU_0bjet_vetoZ'] = inc_cut + '&& l1_charge != l2_charge && abs(l1_eta) < 2.1 && abs(l2_eta) < 2.1 && mvis>70 && (mvis>100 || mvis<80) && n_bjets==0'
 # # cuts['OS_PU_2bjet'] = inc_cut + '&& l1_charge != l2_charge && abs(l1_eta) < 2.1 && n_bjets==2'
 # cuts['OS_PU_2bjet_vetoZ'] = inc_cut + '&& l1_charge != l2_charge && abs(l1_eta) < 2.1 && n_bjets==2 && (mvis>100 || mvis<80)'
 
@@ -87,9 +105,9 @@ for cut_name in cuts:
         plot = plots[variable.name]
         plot.Group('VV', ['WWTo1L1Nu2Q', 'WZTo1L1Nu2Q', 'WZTo1L3Nu', 'WZTo2L2Q', 'VVTo2L2Nu', 'ZZTo2L2Q', 'ZZTo4L'])
         plot.Group('Single t', ['T_tWch', 'TBar_tWch', 'TBarToLeptons_tch_powheg'])
-        plot.Group('ZLL', ['ZL', 'ZJ'], style=plot.Hist('ZL').style)
+        # plot.Group('ZLL', ['ZL', 'ZJ'], style=plot.Hist('ZL').style)
         plot.Group('W', ['W1Jets', 'W2Jets', 'W3Jets', 'W4Jets'])
-        plot.Group('Electroweak', ['W', 'VV'])
+        plot.Group('Electroweak', ['W', 'VV', 'Single t'])
         HistDrawer.draw(plot, plot_dir='plots/'+cut_name, channel='#mu#mu')
 
         # plot.WriteDataCard(filename='datacard_mm.root', dir='mm_' + cut_name)
