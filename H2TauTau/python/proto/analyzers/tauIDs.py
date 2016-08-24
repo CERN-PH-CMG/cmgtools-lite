@@ -15,6 +15,7 @@ tauIDs = [
     'neutralIsoPtSum',
     'puCorrPtSum',
     'photonPtSumOutsideSignalCone',
+    'byTightIsolationMVArun2v1DBoldDMwLT' # For sync check
     
 ]
 tauIDs_extra = [
