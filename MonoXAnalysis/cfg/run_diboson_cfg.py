@@ -14,7 +14,7 @@ from CMGTools.RootTools.samples.autoAAAconfig import *
 #-------- SET OPTIONS AND REDEFINE CONFIGURATIONS -----------
 
 is50ns = getHeppyOption("is50ns",False)
-runData = getHeppyOption("runData",False)
+runData = getHeppyOption("runData",False)#True)
 scaleProdToLumi = float(getHeppyOption("scaleProdToLumi",-1)) # produce rough equivalent of X /pb for MC datasets
 saveSuperClusterVariables = getHeppyOption("saveSuperClusterVariables",True)
 saveFatJetIDVariables = getHeppyOption("saveFatJetIDVariables",True)
@@ -23,7 +23,7 @@ removeJetReCalibration = getHeppyOption("removeJetReCalibration",False)
 doT1METCorr = getHeppyOption("doT1METCorr",True)
 forcedSplitFactor = getHeppyOption("splitFactor",-1)
 forcedFineSplitFactor = getHeppyOption("fineSplitFactor",-1)
-isTest = getHeppyOption("isTest",True)
+isTest = getHeppyOption("isTest",True)#False)
 doLepCorr = getHeppyOption("doLepCorr",False)
 doPhotonCorr = getHeppyOption("doPhotonCorr",False)
 
@@ -72,12 +72,12 @@ if dibosonSkim == True:
     lepAna.inclusive_electron_pt = 30
     lepAna.loose_electron_pt     = 30
 
-if vGammaSkim == True:
-    monoXFatJetAna.jetPt = 120
-    monoJetCtrlFatJetSkim.minFatJets = 1
-    gammaJetCtrlSkim.minPhotons = 1
-    gammaJetCtrlSkim.minJets = 1
-    photonAna.ptMin = 50
+#if vGammaSkim == True:
+   ######################## #monoXFatJetAna.jetPt = 120
+   ######################## #monoJetCtrlFatJetSkim.minFatJets = 1
+   ######################## #gammaJetCtrlSkim.minPhotons = 1
+   ######################## #gammaJetCtrlSkim.minJets = 1
+   ######################## #photonAna.ptMin = 50
     
 # --- Photon OR Electron SKIMMING ---
 #if photonOrEleSkim == True:
@@ -98,7 +98,7 @@ photonAna.do_mc_match = False
 
 
 ##------------------------------------------
-##  TOLOLOGIAL VARIABLES: RAZOR
+##  TOPOLOGICAL VARIABLES: RAZOR
 ##------------------------------------------
 from PhysicsTools.Heppy.analyzers.eventtopology.RazorAnalyzer import RazorAnalyzer
 monoXRazorAna = cfg.Analyzer(
@@ -488,7 +488,6 @@ elif test == '80X-Data':
             comp.files = comp.files[:1]
     dmCoreSequence.remove(jsonAna)
 elif test == 'simone':
-    print "Removing puppi and softdrop subjet analyzers"
     ##dmCoreSequence.remove(monoXSubJetPuppiAna)
     ##dmCoreSequence.remove(monoXSubJetSoftDropAna)
     from PhysicsTools.Heppy.utils.miniAodFiles import miniAodFiles
@@ -505,7 +504,8 @@ elif test == 'simone':
            #"file:A8A803BC-CC17-E611-BA8C-02163E014550.root",
            #"root://cms-xrd-global.cern.ch//store/data/Run2016B/SinglePhoton/RAW/v1/000/272/729/00000/8AB3C2BB-B113-E611-A48B-02163E014243.root",
            #"root://cms-xrd-global.cern.ch//store/data/Run2016B/SinglePhoton/RAW/v2/000/273/158/00000/02AF01DC-7518-E611-9A9F-02163E01373A.root",
-           "root://cms-xrd-global.cern.ch//store/data/Run2016B/SinglePhoton/MINIAOD/PromptReco-v2/000/273/158/00000/00DD3222-261A-E611-9FD2-02163E011E34.root",
+           "root://cms-xrd-global.cern.ch//store/mc/RunIISpring16MiniAODv2/GluGluSpin0ToZGamma_ZToQQ_W_0-p-014_M_1000_TuneCUEP8M1_13TeV_pythia8/MINIAODSIM/PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/10000/3E743410-C82B-E611-8948-0025907FD40C.root",
+           #"root://cms-xrd-global.cern.ch//store/data/Run2016B/SinglePhoton/MINIAOD/PromptReco-v2/000/273/158/00000/00DD3222-261A-E611-9FD2-02163E011E34.root",
                  ],
            name="ZHLL125", isEmbed=False,
            puFileMC="puMC.root",
@@ -513,7 +513,7 @@ elif test == 'simone':
            splitFactor = 5
     )
     
-    sample.isMC=False#True
+    sample.isMC=True#False
     selectedComponents = [sample]
 
 ## output histogram

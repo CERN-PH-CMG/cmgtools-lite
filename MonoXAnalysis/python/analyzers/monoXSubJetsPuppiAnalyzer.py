@@ -38,7 +38,7 @@ class monoXSubJetsPuppiAnalyzer( Analyzer ):
 
     def declareHandles(self):
         super(monoXSubJetsPuppiAnalyzer, self).declareHandles()
-        self.handles['jets'] = AutoHandle( (self.cfg_ana.jetCol, 'SubJets','RECO'), 'std::vector<pat::Jet>' )  #RECO->PAT for MC
+        self.handles['jets'] = AutoHandle( (self.cfg_ana.jetCol, 'SubJets','PAT'), 'std::vector<pat::Jet>' )  #RECO for DATA, PAT for MC
         self.handles['rho'] = AutoHandle( self.cfg_ana.rho, 'double' )
 
     def beginLoop(self, setup):
