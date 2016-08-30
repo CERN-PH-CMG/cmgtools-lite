@@ -9,7 +9,7 @@ from CMGTools.MonoXAnalysis.tools.eventVars_monojet import EventVarsMonojet
 MODULES.append( ('vars_mj', EventVarsMonojet()) )
 
 from CMGTools.TTHAnalysis.tools.vertexWeightFriend import VertexWeightFriend
-pufile="/afs/cern.ch/work/e/emanuele/public/monox/pileup/nvtx_profile_80X_runs_272021_273730.root"
+pufile="/afs/cern.ch/work/e/emanuele/public/monox/pileup/nvtx_profile_80X_runs_272023_276097.root"
 MODULES.append ( ('puWeights', VertexWeightFriend(pufile,pufile,"nvtx_signal","nvtx_data",verbose=True) ) )
 
 pathvetolists="/afs/cern.ch/work/e/emanuele/public/monox/met_vetolists/"
