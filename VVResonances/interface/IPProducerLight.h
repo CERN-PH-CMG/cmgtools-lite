@@ -55,7 +55,7 @@ namespace IPProducerLightHelpers {
 
       class FromJetAndCands{
               public:
-              FromJetAndCands(bool maxDeltaR, bool explicitJTA);
+              FromJetAndCands(double maxDeltaR, bool explicitJTA);
 
               const std::vector<reco::CandidatePtr> & tracks(const reco::JetTagInfo & it);
             //   const std::vector<int>& tracksIndex(const reco::JetTagInfo & it);

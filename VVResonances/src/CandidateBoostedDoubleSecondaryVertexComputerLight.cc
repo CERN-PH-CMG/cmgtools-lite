@@ -59,6 +59,8 @@ CandidateBoostedDoubleSecondaryVertexComputerLight::CandidateBoostedDoubleSecond
         trackSelector = new reco::TrackSelector(trackSelectionPSet);
 
         mvaID.reset(new TMVAEvaluator());
+
+        // std::cout << "CandidateBoostedDoubleSecondaryVertexComputer instantiate" << std::endl;
 }
 
 void CandidateBoostedDoubleSecondaryVertexComputerLight::initialize()
@@ -152,6 +154,7 @@ float CandidateBoostedDoubleSecondaryVertexComputerLight::discriminator(const pa
         const std::vector<reco::CandidatePtr> & selectedTracks = ipTagInfo.selectedTracks();
         const std::vector<reco::btag::TrackIPData> & ipData = ipTagInfo.impactParameterData();
         size_t trackSize = selectedTracks.size();
+        // edm::LogError ("CandidateBoostedDoubleSecondaryVertexComputer") << "trackSize: " << trackSize;
 
 
         reco::TrackKinematics allKinematics;
@@ -246,6 +249,7 @@ float CandidateBoostedDoubleSecondaryVertexComputerLight::discriminator(const pa
         for (size_t i=0; i<indices.size(); ++i)
         {
                 size_t idx = indices[i];
+                // edm::LogError ("CandidateBoostedDoubleSecondaryVertexComputer") << "idx: " << idx;
                 const reco::btag::TrackIPData & data = ipData[idx];
                 const reco::CandidatePtr trackRef = selectedTracks[idx];
 
@@ -605,8 +609,13 @@ float CandidateBoostedDoubleSecondaryVertexComputerLight::discriminator(const pa
         inputs["jetNTracks"] = jetNTracks;
         inputs["nSV"] = nSV;
 
+        // std::cout << "DUMP" << std::endl;
+        // for (auto const &input : inputs)
+        //   std::cout << input.first << ": " << input.second << std::endl;
+
         // evaluate the MVA
         value = mvaID->evaluate(inputs);
+        // std::cout << "value: " << value << std::endl;
 
         // return the final discriminator value
         return value;

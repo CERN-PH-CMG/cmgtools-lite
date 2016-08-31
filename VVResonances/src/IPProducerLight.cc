@@ -56,7 +56,7 @@ using boost::bind;
 
 namespace cmg {
 
-IPProducerLightHelpers::FromJetAndCands::FromJetAndCands(bool maxDeltaR, bool explicitJTA):
+IPProducerLightHelpers::FromJetAndCands::FromJetAndCands(double maxDeltaR, bool explicitJTA):
 m_maxDeltaR(maxDeltaR),
 m_explicitJTA(explicitJTA)
 {
@@ -84,6 +84,11 @@ std::vector<reco::JetTagInfo> IPProducerLightHelpers::FromJetAndCands::makeBaseV
     double maxDeltaR2 = m_maxDeltaR*m_maxDeltaR;
     size_t i = 0;
     for(std::vector<pat::Jet>::const_iterator it = jets.begin(); it != jets.end(); it++, i++) {
+
+        pat::Jet uncorrectedJet( *it );
+        uncorrectedJet.setP4(uncorrectedJet.correctedP4(0));
+
+        // std::cout << "makeBaseVector jet: " << i << " - " << it->pt() << " - " << uncorrectedJet.pt() << std::endl;
         // edm::Ref<pat::Jet> myRef(jets, i);
         // edm::RefToBase<pat::Jet> jRef(myRef);
         // edm::RefToBase<pat::Jet> jRef(edm::Ref<std::vector<pat::Jet>>(jets, i));
@@ -104,7 +109,7 @@ std::vector<reco::JetTagInfo> IPProducerLightHelpers::FromJetAndCands::makeBaseV
         else
         {
             for(size_t j=0;j<cands.size();++j) {
-                if(cands[j].bestTrack()!=0 && cands[j].charge() !=0 && Geom::deltaR2(cands[j],jets[i]) < maxDeltaR2  ){
+                if(cands[j].bestTrack()!=0 && cands[j].charge() !=0 && Geom::deltaR2(cands[j],uncorrectedJet) < maxDeltaR2  ){
                     // edm::Ref<std::vector<pat::PackedCandidate>> edmCandRef(&cands, j);
                     // const edm::RefToBase<reco::CandidatePtr> cRef(edmCandRef);
                     // const reco::CandidatePtr ptr = cands[j].get<reco::CandidatePtr>();
@@ -217,10 +222,13 @@ std::vector<reco::CandIPTagInfo> IPProducerLight::produce(const std::vector<pat:
    }
 
    std::vector<reco::JetTagInfo> baseTagInfos = m_helper.makeBaseVector(jets, cands);
-   for(std::vector<reco::JetTagInfo>::const_iterator it = baseTagInfos.begin();  it != baseTagInfos.end(); it++) {
+   int tagInfoIndex = 0;
+   for(std::vector<reco::JetTagInfo>::const_iterator it = baseTagInfos.begin();  it != baseTagInfos.end(); it++, ++tagInfoIndex) {
      std::vector<reco::CandidatePtr> tracks = m_helper.tracks(*it);
-    //  std::cout << "size of tracks: " << tracks.size() << std::endl;
-     math::XYZVector jetMomentum = it->jet()->momentum();
+     pat::Jet uncorrectedJet( jets[tagInfoIndex] );
+     uncorrectedJet.setP4(uncorrectedJet.correctedP4(0));
+    //  math::XYZVector jetMomentum = it->jet()->momentum();
+     math::XYZVector jetMomentum = uncorrectedJet.momentum();
 
      if (m_directionWithTracks) {
        jetMomentum *= 0.5;
@@ -237,12 +245,20 @@ std::vector<reco::CandIPTagInfo> IPProducerLight::produce(const std::vector<pat:
          itTrack != tracks.end(); ++itTrack) {
        reco::TransientTrack transientTrack = getTransientTrack(*itTrack);
        const reco::Track & track = transientTrack.track(); //**itTrack;
+    //    std::cout << " pt " <<  track.pt() <<
+    //         " d0 " <<  fabs(track.d0()) <<
+    //         " #hit " <<    track.hitPattern().numberOfValidHits()<<
+    //         " ipZ " <<   fabs(track.dz()-pv->z())<<
+    //         " chi2 " <<  track.normalizedChi2()<<
+    //         " #pixel " <<    track.hitPattern().numberOfValidPixelHits()<< std::endl;
+
        if (track.pt() > m_cutMinPt &&
            track.hitPattern().numberOfValidHits() >= m_cutTotalHits &&         // min num tracker hits
            track.hitPattern().numberOfValidPixelHits() >= m_cutPixelHits &&
            track.normalizedChi2() < m_cutMaxChiSquared &&
            std::abs(track.dxy(pv->position())) < m_cutMaxTIP &&
            std::abs(track.dz(pv->position())) < m_cutMaxLIP) {
+            //    std::cout << "selected" << std::endl;
          selectedTracks.push_back(*itTrack);
          transientTracks.push_back(transientTrack);
         //  std::cout << "found a track" << std::endl;

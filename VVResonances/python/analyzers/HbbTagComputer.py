@@ -19,8 +19,8 @@ class HbbTagComputer( Analyzer ):
         maxSVDeltaRToJet = cms.double(0.7),
         useCondDB = cms.bool(False),
         gbrForestLabel = cms.string(""),
-        # weightFile = cms.FileInPath('CMGTools/VVResonances/data/BoostedDoubleSV_AK8_BDT_v3.weights.xml.gz'),
-        weightFile = cms.FileInPath('CMGTools/VVResonances/data/BoostedDoubleSV_AK8_BDT_v2.weights.xml.gz'),
+        weightFile = cms.FileInPath('CMGTools/VVResonances/data/BoostedDoubleSV_AK8_BDT_v3.weights.xml.gz'),
+        # weightFile = cms.FileInPath('CMGTools/VVResonances/data/BoostedDoubleSV_AK8_BDT_v2.weights.xml.gz'),
         useGBRForest = cms.bool(True),
         useAdaBoost = cms.bool(False),
         trackPairV0Filter = cms.PSet(k0sMassWindow = cms.double(0.03))
@@ -47,7 +47,7 @@ class HbbTagComputer( Analyzer ):
         # Therefore explicitJTA = False (https://github.com/cms-sw/cmssw/blob/CMSSW_8_0_X/RecoBTag/ImpactParameter/plugins/IPProducer.h#L503)
         explicitJTA = False
 
-        self.ipProducerLight = ROOT.cmg.IPProducerLight(pfImpactParameterAK8TagInfos.computeProbabilities.value() , pfImpactParameterAK8TagInfos.computeGhostTrack.value(), pfImpactParameterAK8TagInfos.ghostTrackPriorDeltaR.value(),
+        self.ipProducerLight = ROOT.cmg.IPProducerLight(pfImpactParameterAK8TagInfos.computeProbabilities.value(), pfImpactParameterAK8TagInfos.computeGhostTrack.value(), pfImpactParameterAK8TagInfos.ghostTrackPriorDeltaR.value(),
         pfImpactParameterAK8TagInfos.minimumNumberOfPixelHits.value(), pfImpactParameterAK8TagInfos.minimumNumberOfHits.value(), pfImpactParameterAK8TagInfos.maximumTransverseImpactParameter.value(),
         pfImpactParameterAK8TagInfos.minimumTransverseMomentum.value(), pfImpactParameterAK8TagInfos.maximumChiSquared.value(), pfImpactParameterAK8TagInfos.maximumLongitudinalImpactParameter.value(),
         pfImpactParameterAK8TagInfos.jetDirectionUsingTracks.value(), pfImpactParameterAK8TagInfos.jetDirectionUsingGhostTrack.value(),
