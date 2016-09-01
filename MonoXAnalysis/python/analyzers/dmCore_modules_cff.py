@@ -47,7 +47,23 @@ triggerFlagsAna = cfg.Analyzer(
         # "<name>" : [ 'HLT_<Something>_v*', 'HLT_<SomethingElse>_v*' ] 
     }
     )
+
 # Create flags for MET filter bits
+
+from CMGTools.TTHAnalysis.analyzers.badChargedHadronAnalyzer import badChargedHadronAnalyzer
+badChargedHadronAna = cfg.Analyzer(
+    badChargedHadronAnalyzer, name = 'badChargedHadronAna',
+    muons='slimmedMuons',
+    packedCandidates = 'packedPFCandidates',
+)
+
+from CMGTools.TTHAnalysis.analyzers.badMuonAnalyzer import badMuonAnalyzer
+badMuonAna = cfg.Analyzer(
+    badMuonAnalyzer, name = 'badMuonAna',
+    muons='slimmedMuons',
+    packedCandidates = 'packedPFCandidates',
+)
+
 eventFlagsAna = cfg.Analyzer(
     TriggerBitAnalyzer, name="EventFlags",
     processName = 'PAT',
@@ -57,6 +73,8 @@ eventFlagsAna = cfg.Analyzer(
         "HBHENoiseFilter" : [ "Flag_HBHENoiseFilter" ],
         "HBHENoiseIsoFilter" : [ "Flag_HBHENoiseIsoFilter" ],
         "CSCTightHaloFilter" : [ "Flag_CSCTightHaloFilter" ],
+        "CSCTightHalo2015Filter" : [ "Flag_CSCTightHalo2015Filter" ],
+        "globalTightHalo2016Filter" : [ "Flag_globalTightHalo2016Filter" ],
         "hcalLaserEventFilter" : [ "Flag_hcalLaserEventFilter" ],
         "EcalDeadCellTriggerPrimitiveFilter" : [ "Flag_EcalDeadCellTriggerPrimitiveFilter" ],
         "goodVertices" : [ "Flag_goodVertices" ],
@@ -208,6 +226,16 @@ monoJetCtrlLepSkim = cfg.Analyzer(
     ptCuts = [10],                # can give a set of pt cuts on the leptons
     )
 
+## number of FatJets (ak08) Skim
+from CMGTools.MonoXAnalysis.analyzers.monoJetCtrlFatJetSkimmer import monoJetCtrlFatJetSkimmer
+monoJetCtrlFatJetSkim = cfg.Analyzer(
+    monoJetCtrlFatJetSkimmer, name='monoJetCtrlFatJetSkimmer',
+    minFatJets = 0,
+    maxFatJets = 999,
+    idCut= '',
+    ptCuts     = [160],
+    )
+
 ## gamma+jets Skim
 from CMGTools.MonoXAnalysis.analyzers.gammaJetCtrlSkimmer import gammaJetCtrlSkimmer
 gammaJetCtrlSkim = cfg.Analyzer(
@@ -324,8 +352,8 @@ jetAna = cfg.Analyzer(
     recalibrateJets = True, # "MC", # True, False, 'MC', 'Data'
     applyL2L3Residual = True, # Switch to 'Data' when they will become available for Data
     recalibrationType = "AK4PFchs",
-    mcGT     = "76X_mcRun2_asymptotic_v12",
-    dataGT   = "76X_dataRun2_v15_Run2015D_25ns",
+    mcGT     = "Spring16_25nsV3_MC",
+    dataGT   = "Spring16_25nsV3_DATA",
     jecPath = "%s/src/CMGTools/RootTools/data/jec/" % os.environ['CMSSW_BASE'],
     shiftJEC = 0, # set to +1 or -1 to get +/-1 sigma shifts
     addJECShifts = False, # if true, add  "corr", "corrJECUp", and "corrJECDown" for each jet (requires uncertainties to be available!)
@@ -361,8 +389,8 @@ monoXFatJetAna = cfg.Analyzer(
     recalibrateJets = True,
     applyL2L3Residual = True, # Switch to 'Data' when they will become available for Data
     recalibrationType = "AK8PFchs",
-    mcGT     = "Spring16_25nsV1_MC",
-    dataGT   = "Fall15_25nsV2", # update with the new one when available in 8.0.X
+    mcGT     = "Spring16_25nsV3_MC",
+    dataGT   = "Spring16_25nsV3_DATA", # update with the new one when available in 8.0.X
     jecPath = "%s/src/CMGTools/RootTools/data/jec/" % os.environ['CMSSW_BASE'],
     shiftJEC = 0, # set to +1 or -1 to get +/-1 sigma shifts
     addJECShifts = False, # if true, add  "corr", "corrJECUp", and "corrJECDown" for each jet (requires uncertainties to be available!)
@@ -438,7 +466,7 @@ ttHCoreEventAna = cfg.Analyzer(
 def doECalElectronCorrections(sync=False,era="25ns"):
     global lepAna, monoJetCtrlLepSkim
     lepAna.doElectronScaleCorrections = {
-        'data' : 'EgammaAnalysis/ElectronTools/data/76X_16DecRereco_2015',
+        'data' : 'EgammaAnalysis/ElectronTools/data/ScalesSmearings/80X_ichepV1_2016_ele',
         'GBRForest': ('$CMSSW_BASE/src/CMGTools/RootTools/data/egamma_epComb_GBRForest_76X.root',
                       'gedelectron_p4combination_'+era),
         'isSync': sync
@@ -446,14 +474,14 @@ def doECalElectronCorrections(sync=False,era="25ns"):
 def doECalPhotonCorrections(sync=False):
     global photonAna, gammaJetCtrlSkimmer
     photonAna.doPhotonScaleCorrections = {
-        'data' : 'EgammaAnalysis/ElectronTools/data/76X_16DecRereco_2015',
+        'data' : 'EgammaAnalysis/ElectronTools/data/ScalesSmearings/80X_ichepV2_2016_pho',
         'isSync': sync
     }
 def doKalmanMuonCorrections(sync=False,smear="basic"):
     global lepAna
     lepAna.doMuonScaleCorrections = ( 'Kalman', {
-        'MC': 'MC_76X_13TeV',
-        'Data': 'DATA_76X_13TeV',
+        'MC': 'MC_80X_13TeV',
+        'Data': 'DATA_80X_13TeV',
         'isSync': sync,
         'smearMode':smear
     })
@@ -483,7 +511,10 @@ dmCoreSequence = [
     isoTrackAna,
     ttHCoreEventAna,
     monoXFatJetAna,
+    monoJetCtrlFatJetSkim,
     gammaJetCtrlSkim,
     triggerFlagsAna,
+    badChargedHadronAna,
+    badMuonAna,
     eventFlagsAna,
 ]
