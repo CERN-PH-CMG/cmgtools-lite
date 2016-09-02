@@ -3,7 +3,7 @@
 triggHT: HT > 500
 triggLT: LT > 250
 
-Trigger: !isData || (isData && (HLT_EleHT350 || HLT_EleHT400 || HLT_MuHT400 || HLT_MuHT350))
+Trigger: !isData || (isData && (HLT_EleHT350 || HLT_EleHT400  || HLT_Ele105 || HLT_MuHT400 || HLT_MuHT350))
 # use the following line to pick leptons only from the corresponding PD
 XOR: !isData || (isData && ((PD_SingleEle && nEl==1) || (PD_SingleMu && nMu==1)))
 
