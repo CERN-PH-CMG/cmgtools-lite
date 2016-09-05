@@ -1,3 +1,6 @@
 <lcgdict>
   <class name="cmg::FastJetInterface"  transient="true"/>
+  <class name="cmg::CandidateBoostedDoubleSecondaryVertexComputerLight"  transient="true"/>
+  <class name="cmg::IPProducerLight"  transient="true"/>
+  <class name="cmg::SecondaryVertexProducerLight"  transient="true"/>
 </lcgdict>
