@@ -18,7 +18,46 @@ You might have to ask Marco Peruzzi for access rights to it.
 
 ### Producing mini trees
 
-To be filled.
+It's advisable to put the version of the code used for a production on a separate branch on github. The branch used for the ICHEP samples is on the `80X_for2016basis_ttH` branch on [Marco's github](https://github.com/peruzzim/cmgtools-lite/tree/80X_for2016basis_ttH/TTHAnalysis/cfg).
+
+Set it up like so:
+
+```
+cd $CMSSW_BASE/src
+git remote add peruzzim https://github.com/peruzzim/cmg-cmssw.git -t heppy_80X_for2016basis  -f
+git checkout -b heppy_80X_for2016basis peruzzim/heppy_80X_for2016basis
+# Note that there is a hot fix for which you need this also: (c.f. PR [#661](https://github.com/CERN-PH-CMG/cmg-cmssw/pull/661))
+git clone https://github.com/Werbellin/RecoEgamma_8X RecoEgamma
+# Clean and recompile
+scram b clean
+scram b -j 9
+```
+
+The samples are defined in files in `CMGTools/RootTools/python/samples/`, e.g. in `samples_13TeV_RunIISpring16MiniAODv2.py`. So to add or update a sample, define it in the appropriate file there.
+
+The configuration file used to run the production is:
+```
+TTHAnalysis/cfg/run_susyMultilepton_cfg.py
+```
+
+To run on specific samples, edit the code around [these lines](https://github.com/peruzzim/cmgtools-lite/blob/80X_for2016basis_ttH/TTHAnalysis/cfg/run_susyMultilepton_cfg.py#L369).
+
+The command to test running on the first file of the first sample is then:
+```
+heppy myTest run_susyMultilepton_cfg.py -p 0 -o nofetch -j 1 -o test=1 -o analysis=susy
+```
+
+Note that the first time running will take a while, as it submits DAS queries for all the samples and caches the results (in `~/.cmgdatasets/`). Note also that you need a valid grid certificate for the DAS queries to work (`voms-proxy-init -voms cms -rfc` to get a valid token; check [this TWiki](https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookStartingGrid#ObtainingCert) on how to get a certificate).
+
+Check that the output is ok before submitting jobs to the batch to run on the full samples. To submit to batch, you use these commands:
+
+```
+heppy_batch.py -r /store/user/stiegerb/remote_output -o local_directory --option analysis=susy run_susyMultilepton_cfg.py -b 'bsub -q 1nd -u stiegerb -o std_output.txt -J job_name < batchScript.sh'
+```
+
+The relevant options are: `-r remote_dir` to specify an output directory on eos (or don't specify to store locally); `-o dirname` for the local directory name; `--option analysis==susy` to give the HeppyOptions corresponding to the `-o` from before; `-J job_name` to specify the name of the jobs.
+
+Once the jobs are completed, check that they are all there, i.e. that you have an output directory for each chunk. Then you can check if each of the output directories is ok by using `heppy_check.py outputdir/`, and finally merge the chunks by running `heppy_hadd.py outputdir/` -c.
 
 ----------------
 
