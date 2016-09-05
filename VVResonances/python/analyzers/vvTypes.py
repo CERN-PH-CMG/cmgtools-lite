@@ -95,7 +95,7 @@ VVType = NTupleObjectType("VVType", baseObjectTypes=[], variables = [
   NTupleVariable("deltaR",   lambda x : x.deltaR(), float),
   NTupleVariable("mt",   lambda x : x.mt(), float),
   NTupleVariable("vbfDEta", lambda x : x.vbfDEta, float),
-  NTupleVariable("vbfMass",   lambda x : x.mt(), float),
+  NTupleVariable("vbfMass",   lambda x : x.vbfMass, float),
   NTupleVariable("nJets",   lambda x : len(x.satteliteJets), int),
   NTupleVariable("nCentralJets",   lambda x : len(x.satteliteCentralJets), int),
   NTupleVariable("nLooseBTags",   lambda x : x.nLooseBTags, int),
