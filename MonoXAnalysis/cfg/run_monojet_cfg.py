@@ -35,7 +35,7 @@ singlePhotonSkim = False
 # --- MONOJET SKIMMING ---
 if signalSkim == True:
     monoJetSkim.metCut = 200
-    monoJetSkim.jetPtCuts = []
+    monoJetSkim.jetPtCuts = [60]
 
 # --- Z->ll control sample SKIMMING ---
 if diLepSkim == True:
@@ -48,10 +48,10 @@ if singleLepSkim == True:
 (lepton.electronID("POG_Cuts_ID_SPRING15_25ns_v1_ConvVetoDxyDz_Tight_full5x5") and (lepton.relIso03<0.0354 if abs(lepton.superCluster().eta())<1.479 else lepton.relIso03<0.0646))'
     #monoJetCtrlLepSkim.idCut='(lepton.muonID("POG_SPRING15_25ns_v1_Veto")) if abs(lepton.pdgId())==13 else (lepton.electronID("POG_SPRING15_25ns_v1_Veto"))'
     monoJetCtrlLepSkim.ptCuts = [40]
-    monoJetSkim.jetPtCuts = [100]
+    monoJetSkim.jetPtCuts = [60]
 if singlePhotonSkim == True:
     gammaJetCtrlSkim.minPhotons = 1
-    gammaJetCtrlSkim.minJets = 1
+    monoJetSkim.jetPtCuts = [60]
 
 # --- Photon OR Electron SKIMMING ---
 #if photonOrEleSkim == True:
@@ -207,8 +207,7 @@ triggerFlagsAna.checkL1Prescale = False
 
 from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv1 import *
 from CMGTools.MonoXAnalysis.samples.samples_monojet_13TeV_80X import *
-#from CMGTools.MonoXAnalysis.samples.samples_monojet_13TeV_76X import *
-#from CMGTools.RootTools.samples.samples_13TeV_DATA2015 import *
+from CMGTools.MonoXAnalysis.samples.samples_Hinv_13TeV_80X import *
 
 selectedComponents = [];
 
@@ -223,7 +222,7 @@ if scaleProdToLumi>0: # select only a subset of a sample, corresponding to a giv
         c.splitFactor = len(c.files)
         c.fineSplitFactor = 1
 
-json = "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-276811_13TeV_PromptReco_Collisions16_JSON.txt"
+json = "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-279116_13TeV_PromptReco_Collisions16_JSON_NoL1T.txt"
 if False:
     is50ns = False
     selectedComponents = PrivateSamplesData
@@ -249,8 +248,11 @@ if runData and not isTest: # For running on data
     # --- 2016 DATA ---
     ProcessingsAndRunRanges.append( ("Run2016B-PromptReco-v1", [272023,273146] ) ); Shorts.append("Run2016B_PromptReco_v1")
     ProcessingsAndRunRanges.append( ("Run2016B-PromptReco-v2", [273150,275376] ) ); Shorts.append("Run2016B_PromptReco_v2")
-    ProcessingsAndRunRanges.append( ("Run2016C-PromptReco-v2", [275420,276283] ) ); Shorts.append("Run2016C_PromptReco_v2")    
-    ProcessingsAndRunRanges.append( ("Run2016D-PromptReco-v2", [276315,276811] ) ); Shorts.append("Run2016D_PromptReco_v2")    
+    ProcessingsAndRunRanges.append( ("Run2016C-PromptReco-v2", [275420,276283] ) ); Shorts.append("Run2016C_PromptReco_v2")
+    ProcessingsAndRunRanges.append( ("Run2016D-PromptReco-v2", [276315,276811] ) ); Shorts.append("Run2016D_PromptReco_v2")
+    ProcessingsAndRunRanges.append( ("Run2016E-PromptReco-v2", [276830,277420] ) ); Shorts.append("Run2016E_PromptReco_v2")
+    ProcessingsAndRunRanges.append( ("Run2016F-PromptReco-v1", [277820,278808] ) ); Shorts.append("Run2016F_PromptReco_v1")
+    ProcessingsAndRunRanges.append( ("Run2016F-PromptReco-v1", [278817,279116] ) ); Shorts.append("Run2016G_PromptReco_v1")
 
     if diLepSkim == True:
         #DatasetsAndTriggers.append( ("DoubleMuon", triggers_mumu_iso + triggers_mumu_ss + triggers_mumu_ht + triggers_3mu + triggers_3mu_alt + triggers_AllMonojet) )
@@ -300,10 +302,10 @@ if is50ns:
     pfChargedCHSjetAna.mcGT     = "Summer15_50nsV5_MC"
     pfChargedCHSjetAna.dataGT   = "Summer15_50nsV5_DATA"
 else: 
-    jetAna.mcGT   = "Spring16_25nsV3_MC"
-    jetAna.dataGT = "Spring16_25nsV3_DATA"
-    monoXFatJetAna.mcGT = "Spring16_25nsV3_MC"
-    monoXFatJetAna.dataGT = "Spring16_25nsV3_DATA"
+    jetAna.mcGT   = "Spring16_25nsV6_MC"
+    jetAna.dataGT = "Spring16_25nsV6_DATA"
+    monoXFatJetAna.mcGT = "Spring16_25nsV6_MC"
+    monoXFatJetAna.dataGT = "Spring16_25nsV6_DATA"
 
 if removeJetReCalibration:
     ## NOTE: jets will still be recalibrated, since calculateSeparateCorrections is True,
@@ -319,13 +321,10 @@ if forcedSplitFactor>0 or forcedFineSplitFactor>0:
 if runData==False and not isTest: # MC all
     ### 25 ns 74X MC samples
     is50ns = False
-    # mcSamples = monojet_Asymptotic25ns
-    mcSamples = [DYJetsToLL_M50]
-    #if signalSkim:
-        # full signal scan (many datasets!)
-        # mcSamples += mcSamples_monojet_Asymptotic25ns_signals
-        # monojet_signals_cherrypick = [ DMS_Mphi_2000_Mchi_1_gSM_1p0_gDM_1p0, DMPS_Mphi_2000_Mchi_1_gSM_1p0_gDM_1p0, DMAV_Mphi_2000_Mchi_1_gSM_0p25_gDM_1p0]
-        # mcSamples += monojet_signals_cherrypick
+    mcSamples = mcSamples_monojet_Asymptotic25ns
+    if signalSkim:
+        # H -> invisibles mass scan (gg + VBF)
+        mcSamples += [VBF_HToInvisible + GluGlu_HToInvisible]
     selectedComponents = mcSamples 
     for comp in selectedComponents:
         comp.splitFactor = len(comp.files)/4
@@ -383,10 +382,13 @@ elif test == '5':
 elif test == 'synch-80X': # sync
     #eventSelector.toSelect = [ (1,165,84628), ]
     #sequence = cfg.Sequence([eventSelector] + dmCoreSequence + [ ttHFatJetAna, monoJetVarAna, MonoJetEventAna, treeProducer, ])
-    monoJetSkim.metCut = 0  
     what = getHeppyOption("sample")
     if what == "TTbarDM":
         comp = kreator.makeMCComponent("TTbarDM","/TTbarDMJets_pseudoscalar_Mchi-1_Mphi-100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring16MiniAODv2-PUSpring16RAWAODSIM_80X_mcRun2_asymptotic_2016_miniAODv2_v0_ext1-v1/MINIAODSIM", "CMS", ".*root", 1.0)
+        selectedComponents = [ comp ]
+    elif what == "VBFHinv":
+        comp = kreator.makeMCComponent("VBF_HToInvisible_M125","/VBF_HToInvisible_M125_13TeV_powheg_pythia8/RunIISpring16MiniAODv2-PUSpring16RAWAODSIM_reHLT_80X_mcRun2_asymptotic_v14-v1/MINIAODSIM", "CMS", ".*root", 3.782)
+        comp.files = [ 'root://eoscms//eos/cms/store/mc/RunIISpring16MiniAODv2/VBF_HToInvisible_M125_13TeV_powheg_pythia8/MINIAODSIM/PUSpring16RAWAODSIM_reHLT_80X_mcRun2_asymptotic_v14-v1/90000/0E1D90B0-583A-E611-8CC4-008CFA56D894.root' ]
         selectedComponents = [ comp ]
     elif what == "DYJets":
         comp = DYJetsToLL_M50
