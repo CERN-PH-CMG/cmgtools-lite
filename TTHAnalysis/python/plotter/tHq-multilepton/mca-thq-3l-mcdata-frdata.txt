@@ -6,13 +6,13 @@
 # Some of the smaller samples are commented out for now to speed things up
 
 # Signal sample (with flipped yukawa sign!)
-THQ+     : THQ : 0.7927 : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 ;  FillColor=ROOT.kOrange+10
-THW+     : THW : 0.1472 : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 ;  FillColor=ROOT.kOrange+6
+THQ+     : THQ : 0.7927 : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 ;  FillColor=ROOT.kOrange+10, Label='tHq'
+THW+     : THW : 0.1472 : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 ;  FillColor=ROOT.kOrange+6, Label='tHW'
 
 # ttbar + bosons are the main backgrounds
-TTW     : TTWToLNu_Prompt        : 0.196  : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 ;  FillColor=ROOT.kGreen-5
-TTZ     : TTZToLLNuNu_Prompt     : 0.2526 : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 ;  FillColor=ROOT.kSpring+2
-TTH     : TTHnobb_mWCutfix_ext1_Prompt : 0.5071*0.418 : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0; FillColor=ROOT.kSpring+10
+TTV     : TTWToLNu_Prompt        : 0.196  : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 ;  FillColor=ROOT.kGreen-5, Label='t\#bar{t}W/t\#bar{t}Z/t\#bar{t}H'
+TTV     : TTZToLLNuNu_Prompt     : 0.2526 : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 ;  FillColor=ROOT.kSpring+2, Label='t\#bar{t}W/t\#bar{t}Z/t\#bar{t}H'
+TTV     : TTHnobb_mWCutfix_ext1_Prompt : 0.5071*0.418 : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0; FillColor=ROOT.kSpring+10, Label='t\#bar{t}W/t\#bar{t}Z/t\#bar{t}H'
 # TTZ     : TTLLJets_m1to10 : xsec   : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 ;  FillColor=ROOT.kSpring+2
 # TTZ     : TTJets_DiLepton+TTJets_DiLepton_ext_skim3l                  : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 ; FillColor=ROOT.kSpring+2
 # TTZ     : TTJets_SingleLeptonFromT+TTJets_SingleLeptonFromT_ext       : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 ; FillColor=ROOT.kSpring+2
@@ -21,7 +21,7 @@ TTH     : TTHnobb_mWCutfix_ext1_Prompt : 0.5071*0.418 : LepGood1_mcMatchId!=0 &&
 # dibosons
 WZ      : WZTo3LNu_Prompt           : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 ;  FillColor=ROOT.kViolet-4
 WZ      : WJetsToLNu_LO_Prompt      : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 ;  FillColor=ROOT.kViolet-4
-Rares   : ZZTo4L_Prompt             : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 ;  FillColor=ROOT.kAzure-9
+# Rares   : ZZTo4L_Prompt             : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 ;  FillColor=ROOT.kAzure-9
 
 # Gstar   : DYJetsToLL_M10to50_Prompt : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 ; FillColor=ROOT.kCyan+1
 # Gstar   : DYJetsToLL_M50_Prompt     : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 ; FillColor=ROOT.kCyan+1
@@ -44,9 +44,9 @@ Rares   : ZZTo4L_Prompt             : xsec : LepGood1_mcMatchId!=0 && LepGood2_m
 # Fake (non-prompt) leptons are taken from the data with a given event weight
 # The text file specified with FakeRate='file.txt' gives the location of the
 # fake rate histograms and the formula for the weights to be applied.
-# fakes_data : DoubleEG_Run2016B_PromptReco_v2_runs_273150_274443+DoubleEG_Run2016B_PromptReco_v2_runs_274444_275125             ; FakeRate="ttH-multilepton/fakeRate-3l-frdata.txt", Label="Fakes", FillColor=ROOT.kBlack, FillStyle=3005
-# fakes_data : DoubleMuon_Run2016B_PromptReco_v2_runs_273150_274443+DoubleMuon_Run2016B_PromptReco_v2_runs_274444_275125         ; FakeRate="ttH-multilepton/fakeRate-3l-frdata.txt", Label="Fakes", FillColor=ROOT.kBlack, FillStyle=3005
-# fakes_data : MuonEG_Run2016B_PromptReco_v2_runs_273150_274443+MuonEG_Run2016B_PromptReco_v2_runs_274444_275125                 ; FakeRate="ttH-multilepton/fakeRate-3l-frdata.txt", Label="Fakes", FillColor=ROOT.kBlack, FillStyle=3005
-# fakes_data : SingleElectron_Run2016B_PromptReco_v2_runs_273150_274443+SingleElectron_Run2016B_PromptReco_v2_runs_274444_275125 ; FakeRate="ttH-multilepton/fakeRate-3l-frdata.txt", Label="Fakes", FillColor=ROOT.kBlack, FillStyle=3005
-# fakes_data : SingleMuon_Run2016B_PromptReco_v2_runs_273150_274443+SingleMuon_Run2016B_PromptReco_v2_runs_274444_275125         ; FakeRate="ttH-multilepton/fakeRate-3l-frdata.txt", Label="Fakes", FillColor=ROOT.kBlack, FillStyle=3005
+fakes_data : DoubleEG_Run2016B_PromptReco_v2_runs_273150_274443+DoubleEG_Run2016B_PromptReco_v2_runs_274444_275125             ; FakeRate="ttH-multilepton/fakeRate-3l-frdata.txt", Label="Fakes (data)", FillColor=ROOT.kBlack, FillStyle=3005
+fakes_data : DoubleMuon_Run2016B_PromptReco_v2_runs_273150_274443+DoubleMuon_Run2016B_PromptReco_v2_runs_274444_275125         ; FakeRate="ttH-multilepton/fakeRate-3l-frdata.txt", Label="Fakes (data)", FillColor=ROOT.kBlack, FillStyle=3005
+fakes_data : MuonEG_Run2016B_PromptReco_v2_runs_273150_274443+MuonEG_Run2016B_PromptReco_v2_runs_274444_275125                 ; FakeRate="ttH-multilepton/fakeRate-3l-frdata.txt", Label="Fakes (data)", FillColor=ROOT.kBlack, FillStyle=3005
+fakes_data : SingleElectron_Run2016B_PromptReco_v2_runs_273150_274443+SingleElectron_Run2016B_PromptReco_v2_runs_274444_275125 ; FakeRate="ttH-multilepton/fakeRate-3l-frdata.txt", Label="Fakes (data)", FillColor=ROOT.kBlack, FillStyle=3005
+fakes_data : SingleMuon_Run2016B_PromptReco_v2_runs_273150_274443+SingleMuon_Run2016B_PromptReco_v2_runs_274444_275125         ; FakeRate="ttH-multilepton/fakeRate-3l-frdata.txt", Label="Fakes (data)", FillColor=ROOT.kBlack, FillStyle=3005
 
