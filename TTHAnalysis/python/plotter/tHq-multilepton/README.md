@@ -108,19 +108,20 @@ tHq-multilepton/plots-thq.txt \
 -j 8 \
 -f \
 -P 809_June9_ttH_skimOnlyMC_3ltight_relax_prescale/ \
+-P treedir/tHq_production_Sep2/ \
 -l 12.9 \
---pdir tHq-multilepton/plots_Aug12/ \
+--pdir tHq-multilepton/plots_Sep9/ \
 -F sf/t tHq_eventvars_Aug12/evVarFriend_{cname}.root \
--F sf/t 809_June9_ttH_skimOnlyMC_3ltight_relax_prescale/2_recleaner_v4_b1E2/evVarFriend_{cname}.root \
+--Fs {P}/2_recleaner_v4_b1E2 \
 --mcc ttH-multilepton/lepchoice-ttH-FO.txt \
 -W 'puw2016_vtx_4fb(nVert)'
 ```
 
-Note that this uses symbolic links to the `809_June9_ttH_skimOnlyMC_3ltight_relax_prescale` and `tHq_eventvars_Aug12` directories.
+Note that this uses some symbolic links to the corresponding tree directories.
 
 The important options are:
 
-- `-P treedir/`: Input directory containing the minitree outputs
+- `-P treedir/`: Input directory containing the minitree outputs. Can give multiple paths, the code will look through them in order.
 - `--pdir plotdir/`: The output directory for the plots
 - `-l 12.9`: Integrated luminosity to scale the MC to (in inverse femtobarn)
 - `-j 8`: Number of processes to run in parallel
@@ -129,7 +130,7 @@ The important options are:
 - `--mcc textfile.txt`: Read this file defining new branches as shortcuts
 - `-W 'weightexpression'`: Apply this event weight
 
-If everything goes according to play, this will produce an output directory with the plots in `.pdf` and `.png` format, a text file with the event yields, as well as a copy of the mca, cut, and plot files, the command string used, and a root file with the raw histograms.
+If everything goes according to plan, this will produce an output directory with the plots in `.pdf` and `.png` format, a text file with the event yields, as well as a copy of the mca, cut, and plot files, the command string used, and a root file with the raw histograms.
 
 ----------------
 
