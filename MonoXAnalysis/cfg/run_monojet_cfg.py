@@ -324,7 +324,7 @@ if runData==False and not isTest: # MC all
     mcSamples = mcSamples_monojet_Asymptotic25ns
     if signalSkim:
         # H -> invisibles mass scan (gg + VBF)
-        mcSamples += [VBF_HToInvisible + GluGlu_HToInvisible]
+        mcSamples += (VBF_HToInvisible + GluGlu_HToInvisible)
     selectedComponents = mcSamples 
     for comp in selectedComponents:
         comp.splitFactor = len(comp.files)/4
