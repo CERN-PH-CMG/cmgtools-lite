@@ -222,7 +222,7 @@ if scaleProdToLumi>0: # select only a subset of a sample, corresponding to a giv
         c.splitFactor = len(c.files)
         c.fineSplitFactor = 1
 
-json = "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-279116_13TeV_PromptReco_Collisions16_JSON_NoL1T.txt"
+json = "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-279931_13TeV_PromptReco_Collisions16_JSON_NoL1T.txt"
 if False:
     is50ns = False
     selectedComponents = PrivateSamplesData
@@ -252,7 +252,7 @@ if runData and not isTest: # For running on data
     ProcessingsAndRunRanges.append( ("Run2016D-PromptReco-v2", [276315,276811] ) ); Shorts.append("Run2016D_PromptReco_v2")
     ProcessingsAndRunRanges.append( ("Run2016E-PromptReco-v2", [276830,277420] ) ); Shorts.append("Run2016E_PromptReco_v2")
     ProcessingsAndRunRanges.append( ("Run2016F-PromptReco-v1", [277820,278808] ) ); Shorts.append("Run2016F_PromptReco_v1")
-    ProcessingsAndRunRanges.append( ("Run2016F-PromptReco-v1", [278817,279116] ) ); Shorts.append("Run2016G_PromptReco_v1")
+    ProcessingsAndRunRanges.append( ("Run2016F-PromptReco-v1", [278817,279931] ) ); Shorts.append("Run2016G_PromptReco_v1")
 
     if diLepSkim == True:
         #DatasetsAndTriggers.append( ("DoubleMuon", triggers_mumu_iso + triggers_mumu_ss + triggers_mumu_ht + triggers_3mu + triggers_3mu_alt + triggers_AllMonojet) )
