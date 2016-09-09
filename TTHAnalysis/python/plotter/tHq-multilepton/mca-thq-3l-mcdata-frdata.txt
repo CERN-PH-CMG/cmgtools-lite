@@ -5,12 +5,14 @@
 #
 # Some of the smaller samples are commented out for now to speed things up
 
-# Will need to process the tHq signal sample and replace this line. ttH will then be a background.
-ttH+    : TTHnobb_mWCutfix_ext1_Prompt : 0.5071*0.418 : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0; FillColor=ROOT.kOrange+10
+# Signal sample (with flipped yukawa sign!)
+THQ+     : THQ : 0.7927 : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 ;  FillColor=ROOT.kOrange+10
+THW+     : THW : 0.1472 : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 ;  FillColor=ROOT.kOrange+6
 
-# ttbar + vector bosons are the main backgrounds
+# ttbar + bosons are the main backgrounds
 TTW     : TTWToLNu_Prompt        : 0.196  : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 ;  FillColor=ROOT.kGreen-5
 TTZ     : TTZToLLNuNu_Prompt     : 0.2526 : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 ;  FillColor=ROOT.kSpring+2
+TTH     : TTHnobb_mWCutfix_ext1_Prompt : 0.5071*0.418 : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0; FillColor=ROOT.kSpring+10
 # TTZ     : TTLLJets_m1to10 : xsec   : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 ;  FillColor=ROOT.kSpring+2
 # TTZ     : TTJets_DiLepton+TTJets_DiLepton_ext_skim3l                  : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 ; FillColor=ROOT.kSpring+2
 # TTZ     : TTJets_SingleLeptonFromT+TTJets_SingleLeptonFromT_ext       : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 ; FillColor=ROOT.kSpring+2
