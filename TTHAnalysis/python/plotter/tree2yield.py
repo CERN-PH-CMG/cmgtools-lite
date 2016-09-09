@@ -247,7 +247,16 @@ class TreeToYield:
         if 'FriendsSimple' in self._settings: friendOpts += [ ('sf/t', d+"/evVarFriend_{cname}.root") for d in self._settings['FriendsSimple'] ]
         for tf_tree,tf_file in friendOpts:
 #            print 'Adding friend',tf_tree,tf_file
-            tf = self._tree.AddFriend(tf_tree, tf_file.format(name=self._name, cname=self._cname, P=getattr(self._options,'path',''))),
+            basepath = None
+            for treepath in getattr(self._options, 'path', ['./']):
+                if self._cname in os.listdir(treepath):
+                    basepath = treepath
+                    break
+            if not basepath:
+                raise RuntimeError("%s -- ERROR: %s process not found in paths (%s)" % (__name__, cname, repr(options.path)))
+
+            tf_filename = tf_file.format(name=self._name, cname=self._cname, P=basepath)
+            tf = self._tree.AddFriend(tf_tree, tf_filename),
             self._friends.append(tf)
         self._isInit = True
         
