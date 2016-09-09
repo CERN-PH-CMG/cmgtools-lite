@@ -248,7 +248,7 @@ class TreeToYield:
         for tf_tree,tf_file in friendOpts:
 #            print 'Adding friend',tf_tree,tf_file
             basepath = None
-            for treepath in getattr(self._options, 'path', ['./']):
+            for treepath in getattr(self._options, 'path', []):
                 if self._cname in os.listdir(treepath):
                     basepath = treepath
                     break
