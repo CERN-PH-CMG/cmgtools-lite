@@ -754,51 +754,6 @@ float mass_3_cheap(float pt1, float eta1, float pt2, float eta2, float phi2, flo
     return (p41+p42+p43).M();
 }
 
-std::map< std::pair<int,std::pair<int,unsigned long int> > , int > _events;
-std::map< std::pair<int,std::pair<int,unsigned long int> > , int >::iterator _itEvt;
-
-bool checkDoubleCounting(int run, int lumi, unsigned long int evt) {
-
-  bool doubleCount=false;
-  std::pair<int, unsigned long int> tmp(lumi,evt);
-  //std::cout << "checking " << tmp.first << " and " << tmp.second << endl;
-  std::pair<int, std::pair<int, unsigned long int> > tmp2(run, tmp);
-  _itEvt = _events.find( tmp2 );
-
-  if( _itEvt != _events.end() ) {
-    return false;
-  }
-
-  _events[ tmp2 ] = 1;
-  return true;
-
-}
-
-
-//std::vector <std::vector<long>> events;
-//std::vector<long> runs;
-//
-//bool checkDoubleCounting(int run, int lumi, int evt) {
-//
-//   auto evit = std::find(runs.begin(), runs.end(), run);
-//   if (evit != runs.end()) {
-//       int ind = evit-runs.begin();
-//       std::vector<long>::iterator evit2 = std::find(events[ind].begin(), events[ind].end(), evt);
-//       if (evit2 != events[ind].end()){
-//           return false;
-//       }
-//       events[ind].push_back(evt);
-//       return true;
-//   }
-//   else {
-//       std::vector<long> tmp;
-//       tmp.push_back(evt);
-//       events.push_back(tmp);
-//       runs.push_back(run);
-//   }
-//   return true;     
-//                
-//}
 
 
 

@@ -1054,12 +1054,11 @@ float EWK3L_fakeRate(float pt, float eta, int pdgId, int var = 1) {
     return fr/(1-fr);
 }
 
-float EWK3L_fakeTransfer(int evt, float l1fr    , int l1isFake,
+float EWK3L_fakeTransfer(unsigned int nLep, float l1fr    , int l1isFake,
                                             float l2fr    , int l2isFake,
                                             float l3fr    , int l3isFake,
                                             float l4fr = 0, int l4isFake = 0) {
 
-    unsigned int nLep = 4;
     int nfail = l1isFake + l2isFake + l3isFake + l4isFake;
     if(nLep == 3) nfail = l1isFake + l2isFake + l3isFake;
 
@@ -1072,45 +1071,7 @@ float EWK3L_fakeTransfer(int evt, float l1fr    , int l1isFake,
     if(l4isFake && nLep==4) weight *= -1*l4fr;
 
     return -1*weight;
-
-    //if(nfail == 1){
-    //    if      (l1isFake) return l1fr;
-    //    else if (l2isFake) return l2fr;
-    //    else if (l3isFake) return l3fr;
-    //}
-    //else if(nfail == 2){
-    //    if      (!l1isFake) return -1 * l2fr * l3fr;
-    //    else if (!l2isFake) return -1 * l1fr * l3fr;
-    //    else if (!l3isFake) return -1 * l1fr * l2fr;
-    //}
-    //else if(nfail == 3){
-    //    return l1fr * l2fr * l3fr;
-    //}
-
-    return 0;
 }
-
-float getSF(TH2* hist, float pt, float eta) {
-    int ptbin  = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(    pt  )));
-    int etabin = std::max(1, std::min(hist->GetNbinsY(), hist->GetYaxis()->FindBin(abs(eta))));
-    return hist->GetBinContent(ptbin,etabin);
-    
-}
-
-float leptonSF(TH2* hist, float pt, float eta, int pdgId, int isTight) {
-    float sf = 1;
-    if(abs(pdgId) == 11) {
-        if(isTight) sf *= getSF(ELSF1, pt, eta);
-        sf *= getSF(ELSF2, pt, eta);
-        sf *= getSF(ELSF3, pt, eta);
-    }
-    if(abs(pdgId) == 13) {
-        sf *= getSF(MUSF1, pt, eta);
-    }
-    return sf;
-}
-
-
 
 
 void fakeRate() {}
