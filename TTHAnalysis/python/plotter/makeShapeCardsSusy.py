@@ -99,6 +99,7 @@ for i,b in enumerate(mca.listBackgrounds()):
     procs.append(b); iproc[b] = i+1
 
 systs = {}
+systsU = {}
 systsEnv = {}
 for sysfile in args[4:]:
     for line in open(sysfile, 'r'):
@@ -113,6 +114,11 @@ for sysfile in args[4:]:
             if re.match(binmap+"$",binname) == None: continue
             if name not in systs: systs[name] = []
             systs[name].append((re.compile(procmap+"$"),amount))
+        elif field[4] == "lnU":
+            (name, procmap, binmap, amount) = field[:4]
+            if re.match(binmap+"$",binname) == None: continue
+            if name not in systsU: systsU[name] = []
+            systsU[name].append((re.compile(procmap+"$"),amount))
         elif field[4] in ["envelop","shapeOnly","templates","alternateShapeOnly"]:
             (name, procmap, binmap, amount) = field[:4]
             if re.match(binmap+"$",binname) == None: continue
@@ -126,7 +132,8 @@ for sysfile in args[4:]:
         else:
             raise RuntimeError, "Unknown systematic type %s" % field[4]
     if options.verbose > 0:
-        print "Loaded %d systematics" % len(systs)
+        print "Loaded %d lnN systematics" % len(systs)
+        print "Loaded %d lnU systematics" % len(systsU)
         print "Loaded %d envelop systematics" % len(systsEnv)
 
 
@@ -138,6 +145,14 @@ for name in systs.keys():
             if re.match(procmap, p): effect = amount
         effmap[p] = effect
     systs[name] = effmap
+for name in systsU.keys():
+    effmap = {}
+    for p in procs:
+        effect = "-"
+        for (procmap,amount) in systsU[name]:
+            if re.match(procmap, p): effect = amount
+        effmap[p] = effect
+    systsU[name] = effmap
 
 for name in systsEnv.keys():
     effmap0  = {}
@@ -230,8 +245,8 @@ for name in systsEnv.keys():
             for bin in xrange(1,nominal.GetNbinsX()+1):
                 for binmatch in morefields[0]:
                     if re.match(binmatch+"$",'%d'%bin):
-                        p0Up = nominal.Clone("%s_%s_%s_bin%dUp"% (nominal.GetName(),name,p,bin))
-                        p0Dn = nominal.Clone("%s_%s_%s_bin%dDown"% (nominal.GetName(),name,p,bin))
+                        p0Up = nominal.Clone("%s_%s_%s_%s_bin%dUp"% (nominal.GetName(),name,binname,p,bin))
+                        p0Dn = nominal.Clone("%s_%s_%s_%s_bin%dDown"% (nominal.GetName(),name,binname,p,bin))
                         p0Up.SetBinContent(bin,p0Up.GetBinContent(bin)+effect*p0Up.GetBinError(bin))
                         p0Up.SetBinError(bin,p0Up.GetBinError(bin)*(p0Up.GetBinContent(bin)/nominal.GetBinContent(bin) if nominal.GetBinContent(bin)!=0 else 1))
                         p0Dn.SetBinContent(bin,max(1e-5,p0Dn.GetBinContent(bin)-effect*p0Dn.GetBinError(bin)))
@@ -306,6 +321,8 @@ for signal in mca.listSignals():
     datacard.write('##----------------------------------\n')
     for name,effmap in systs.iteritems():
         datacard.write(('%-12s lnN' % name) + " ".join([kpatt % effmap[p]   for p in myprocs]) +"\n")
+    for name,effmap in systsU.iteritems():
+        datacard.write(('%-12s lnU' % name) + " ".join([kpatt % effmap[p]   for p in myprocs]) +"\n")
     for name,(effmap0,effmap12,mode) in systsEnv.iteritems():
         if mode in ["templates","lnN_in_shape_bins"]:
             datacard.write(('%-10s shape' % name) + " ".join([kpatt % effmap0[p] for p in myprocs]) +"\n")
@@ -316,7 +333,7 @@ for signal in mca.listSignals():
                 nbins = report[p].GetNbinsX()
                 if effmap0[p] in ['-','0']: continue
                 for bin in xrange(1,nbins+1):
-                    datacard.write(('%-10s shape' % ("%s_%s_bin%d"%(name,p,bin))) + " ".join([kpatt % effmap0[_p] for _p in myprocs]) +"\n")
+                    datacard.write(('%-10s shape' % ("%s_%s_%s_bin%d"%(name,binname,p,bin))) + " ".join([kpatt % effmap0[_p] for _p in myprocs]) +"\n")
         if mode == "envelop":
             datacard.write(('%-10s shape' % (name+"0")) + " ".join([kpatt % effmap0[p]  for p in myprocs]) +"\n")
         if mode in ["envelop", "shapeOnly"]:
