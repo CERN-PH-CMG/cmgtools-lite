@@ -31,7 +31,7 @@ QCD = QCDHT
 GammaJets = GJets
 VV_VBosonGamma = VV_VGamma
 
-mcSamples_monojet_Asymptotic25ns = ZJetsToNuNu_MJ + VJets_MJ + Top_MJ + DiBosons_MJ + QCDHT + GJetsHT + EWKV2Jets
+mcSamples_monojet_Asymptotic25ns = ZJetsToNuNu_MJ + VJets_MJ + Top_MJ + DiBosons_MJ + GJetsHT + EWKV2Jets
 
 ### ----------------------------- summary ----------------------------------------     
 mcSamples_monojet = mcSamples_monojet_Asymptotic25ns
