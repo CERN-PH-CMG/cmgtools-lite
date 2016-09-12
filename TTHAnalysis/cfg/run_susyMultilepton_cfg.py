@@ -194,8 +194,8 @@ from CMGTools.TTHAnalysis.analyzers.treeProducerSusyMultilepton import *
 if analysis=="susy":
     susyCoreSequence.insert(susyCoreSequence.index(ttHCoreEventAna),
                             susyLeptonMatchAna)
-    #susyCoreSequence.insert(susyCoreSequence.index(ttHCoreEventAna),
-    #                        susyTauMatchAna)
+    susyCoreSequence.insert(susyCoreSequence.index(ttHCoreEventAna),
+                            susyTauMatchAna)
     leptonTypeSusyExtraLight.addVariables([
             NTupleVariable("mcUCSXMatchId", lambda x : x.mcUCSXMatchId if hasattr(x,'mcUCSXMatchId') else -1, mcOnly=True, help="MC truth matching a la UCSX"),
             ])
@@ -280,6 +280,7 @@ if not runSMS:
 else:
     susyScanAna.doLHE=True
     susyCounter.bypass_trackMass_check = False
+    susyCounter.SMS_varying_masses=['genSusyMGluino','genSusyMNeutralino','genSusyMChargino','genSusyMNeutralino2']
     susyCoreSequence.insert(susyCoreSequence.index(susyScanAna)+1,susyCounter)
 
 # HBHE new filter
@@ -353,38 +354,26 @@ from CMGTools.RootTools.samples.samples_13TeV_76X_susySignalsPriv import *
 from CMGTools.RootTools.samples.samples_13TeV_DATA2016 import *
 from CMGTools.HToZZ4L.tools.configTools import printSummary, configureSplittingFromTime, cropToLumi
 
-selectedComponents = []
-#selectedComponents = [TTLep_pow_ext]
+selectedComponents = [TTLep_pow_ext]
 
-#components for SOS
-#selectedComponents = [WZZ, WWZ, ZZZ, TToLeptons_tch_amcatnlo, TToLeptons_sch_amcatnlo, TBar_tWch, T_tWch, TTHnobb, TTW_LO, TTZ_LO, TTLLJets_m1to10, TTGJets, WGToLNuG, ZGTo2LG, TGJets] + DYJetsM50HT + DYJetsM5to50HT + WJetsToLNuHT + [WJetsToLNu_LO, DYJetsToLL_M5to50_LO, DYJetsToLL_M50_LO, TTJets_SingleLeptonFromTbar, TTJets_SingleLeptonFromT, TTJets_DiLepton, WWTo2L2Nu, WZTo3LNu,T2ttDeg_mStop350_mChi330_4bodydec_lepOnly, TChiNeuWZ_mCh100_mChi80, TChiNeuWZ_mCh100_mChi90, WZTo1L3Nu, WZTo1L1Nu2Q, WZTo2L2Q, ZZTo2L2Q, ZZTo2L2Nu, ZZTo4L, WWToLNuQQ, WWDouble,WpWpJJ];
-
-#selectedComponents = SMS_miniAODv2_T1tttt
-#susyCounter.SMS_varying_masses = ['genSusyMGluino','genSusyMNeutralino']
-
-#if analysis=='susy':
-#    #samples = [DYJetsToLL_M10to50, DYJetsToLL_M50, GGHZZ4L, TBarToLeptons_tch_powheg, TBar_tWch, TGJets, TTGJets, TTJets, TTJets_DiLepton, TTJets_SingleLeptonFromT, 
-#    #           TTJets_SingleLeptonFromTbar, TTTT, TT_pow_ext4, TToLeptons_sch_amcatnlo, TToLeptons_tch_amcatnlo, TToLeptons_tch_powheg, T_tWch, VHToNonbb, WGToLNuG, WJetsToLNu, WJetsToLNu_LO, 
-#    #           WWDouble, WWTo2L2Nu, WWW, WWZ, WZTo3LNu, WZTo3LNu_amcatnlo, WZZ, WpWpJJ, ZGTo2LG, ZZTo4L, ZZZ, tZq_ll]
-#    
-#    #samples_LHE = [TTHnobb_mWCutfix_ext1, TTHnobb_pow, TTLLJets_m1to10, TTWToLNu, TTW_LO, TTZToLLNuNu, TTZ_LO,]
-#    
-#    #samples_2l = [TTW_LO,TTZ_LO,WZTo3LNu_amcatnlo,DYJetsToLL_M10to50,DYJetsToLL_M50,WWTo2L2Nu,ZZTo2L2Q,WZTo3LNu,TTWToLNu,TTZToLLNuNu,TTJets_DiLepton,TTHnobb_mWCutfix_ext1,TTHnobb_pow]
-#    #samples_1l = [WJetsToLNu,TTJets_SingleLeptonFromT,TTJets_SingleLeptonFromTbar,TBarToLeptons_tch_powheg,TToLeptons_sch_amcatnlo,TBar_tWch,T_tWch]
-#    
-#    if getHeppyOption("dropLHEweights"):
-#        selectedComponents = samples #samples_2l +samples_1l
-#    else:
-#        selectedComponents = samples_LHE
+if analysis=='susy':
+    samples = [DYJetsToLL_M10to50, DYJetsToLL_M50, DYJetsToLL_M10to50_LO, DYJetsToLL_M50_LO, GGHZZ4L, TBarToLeptons_tch_powheg, TBar_tWch, TGJets, TTGJets, TTJets, TTJets_DiLepton, TTJets_SingleLeptonFromT, 
+               TTJets_SingleLeptonFromTbar, TTTT, TT_pow_ext4, TToLeptons_sch_amcatnlo, TToLeptons_tch_amcatnlo, TToLeptons_tch_powheg, T_tWch, VHToNonbb, WGToLNuG, WJetsToLNu, WJetsToLNu_LO, 
+               WWDouble, WWTo2L2Nu, WWW, WWZ, WZTo3LNu, WZTo3LNu_amcatnlo, WZZ, WpWpJJ, ZGTo2LG, ZZTo4L, ZZZ, tZq_ll]
+   
+    samples_LHE = [TTHnobb_mWCutfix_ext1, TTHnobb_pow, TTLLJets_m1to10, TTWToLNu, TTW_LO, TTZToLLNuNu, TTZ_LO,]
+    
+    #samples_2l = [TTW_LO,TTZ_LO,WZTo3LNu_amcatnlo,DYJetsToLL_M10to50,DYJetsToLL_M50,WWTo2L2Nu,ZZTo2L2Q,WZTo3LNu,TTWToLNu,TTZToLLNuNu,TTJets_DiLepton,TTHnobb_mWCutfix_ext1,TTHnobb_pow]
+    #samples_1l = [WJetsToLNu,TTJets_SingleLeptonFromT,TTJets_SingleLeptonFromTbar,TBarToLeptons_tch_powheg,TToLeptons_sch_amcatnlo,TBar_tWch,T_tWch]
+    
+    if getHeppyOption("dropLHEweights"):
+        selectedComponents = samples #samples_2l +samples_1l
+    else:
+        selectedComponents = samples_LHE
 
 if analysis=='susy':
     for c in selectedComponents:
         c.splitFactor = len(c.files)
-
-    #cropToLumi(selectedComponents,2)
-    #configureSplittingFromTime(samples_1l,50,3)
-    #configureSplittingFromTime(samples_2l,100,3)
-#    printSummary(selectedComponents)
 
 if analysis=='susy' and runSMS:
     selectedComponents=[TChiSlepSnu,T1tttt_2016,T5qqqqVV_2016]
@@ -393,7 +382,7 @@ if analysis=='susy' and runSMS:
     for c in selectedComponents:
         c.splitFactor = len(c.files)
 
-#printSummary(selectedComponents)
+printSummary(selectedComponents)
 
 if scaleProdToLumi>0: # select only a subset of a sample, corresponding to a given luminosity (assuming ~30k events per MiniAOD file, which is ok for central production)
     target_lumi = scaleProdToLumi # in inverse picobarns
@@ -412,8 +401,8 @@ if runData and not isTest: # For running on data
     is50ns = False
     dataChunks = []
 
-    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_271036-275125_13TeV_PromptReco_Collisions16_JSON.txt' # 4/fb
-    processing = "Run2016B-PromptReco-v2"; short = "Run2016B_PromptReco_v2"; run_ranges = [(274443,275125)]; useAAA=False; # -v2 starts from 273150 275125
+    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_271036-275783_13TeV_PromptReco_Collisions16_JSON.txt' # 6.8/fb
+    processing = "Run2016B-PromptReco-v2"; short = "Run2016B_PromptReco_v2"; run_ranges = [(271350,275783)]; useAAA=False; # -v2 starts from 273150 275125
     dataChunks.append((json,processing,short,run_ranges,useAAA))
 
     compSelection = ""; compVeto = ""
@@ -427,11 +416,11 @@ if runData and not isTest: # For running on data
         #DatasetsAndTriggers.append( ("SingleMuon", triggers_1mu_iso + triggers_1mu_iso_50ns + triggers_1mu_noniso) )
     else:
         DatasetsAndTriggers.append( ("DoubleMuon", triggers_mumu_iso + triggers_mumu_ss + triggers_mumu_ht + triggers_3mu + triggers_3mu_alt) )
-        #DatasetsAndTriggers.append( ("DoubleEG",   triggers_ee + triggers_ee_ht + triggers_3e) )
-        #DatasetsAndTriggers.append( ("MuonEG",     triggers_mue + triggers_mue_ht + triggers_2mu1e + triggers_2e1mu) )
-        #DatasetsAndTriggers.append( ("SingleMuon", triggers_1mu_iso + triggers_1mu_iso_50ns + triggers_1mu_noniso) )
-        #DatasetsAndTriggers.append( ("SingleElectron", triggers_1e + triggers_1e_50ns) )
-        #DatasetsAndTriggers.append( ("Tau", triggers_leptau + triggers_1mu_iso + triggers_1e) )
+        DatasetsAndTriggers.append( ("DoubleEG",   triggers_ee + triggers_ee_ht + triggers_3e) )
+        DatasetsAndTriggers.append( ("MuonEG",     triggers_mue + triggers_mue_ht + triggers_2mu1e + triggers_2e1mu) )
+        DatasetsAndTriggers.append( ("SingleMuon", triggers_leptau + triggers_1mu_iso + triggers_1mu_iso_50ns + triggers_1mu_noniso) )
+        DatasetsAndTriggers.append( ("SingleElectron", triggers_leptau + triggers_1e + triggers_1e_50ns) )
+        DatasetsAndTriggers.append( ("Tau", triggers_leptau + triggers_1mu_iso + triggers_1e) )
 
         if runDataQCD: # for fake rate measurements in data
             FRTrigs_mu = triggers_FR_1mu_iso + triggers_FR_1mu_noiso
@@ -451,7 +440,6 @@ if runData and not isTest: # For running on data
                 #("DoubleMuon",  triggers_FR_1mu_noiso ),
             ]
             exclusiveDatasets = True
-
 
         if runDataQCD or True: # for fake rate measurements in data
             #ttHLepSkim.minLeptons = 1

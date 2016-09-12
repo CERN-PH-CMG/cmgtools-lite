@@ -12,12 +12,12 @@ def base(selection):
 
     CORE="-P /afs/cern.ch/user/f/folguera/workdir/trees/ewkino/TREES_76X_160502 -F sf/t {P}/2_lepMVA/evVarFriend_{cname}.root -F sf/t {P}/3_recleaner_mva/evVarFriend_{cname}.root "
 
-    CORE+=" -f -j 12 -l 10 --s2v --tree treeProducerSusyMultilepton --mcc susy-ewkino/2lss/lepchoice-ss2l-FO.txt --mcc susy-ewkino/mcc_triggerdefs.txt --neg"
+    CORE+=" -f -j 12 -l 10 --s2v --tree treeProducerSusyMultilepton --mcc susy-ewkino/lepchoice-ss2l-FO.txt --mcc susy-ewkino/susy_ss2l_triggerdefs.txt --neg"
     if dowhat == "plots": CORE+=" --lspam '#bf{CMS} #it{Preliminary}' --legendWidth 0.20 --legendFontSize 0.035 --showRatio --maxRatioRange 0 3  --showMCError --rebin 4"
 
     if selection=='ss2l':
-        GO="%s susy-ewkino/2lss/mca-ss2l-mc.txt susy-ewkino/2lss/susy_ss2l_cuts.txt  "%CORE
-        if dowhat == "plots": GO+=" susy-ewkino/2lss/ss2l_plots.txt "
+        GO="%s susy-ewkino/mca-ss2l-mc.txt susy-ewkino/susy_ss2l_cuts.txt  "%CORE
+        if dowhat == "plots": GO+=" susy-ewkino/ss2l_plots.txt "
 ##    elif selection=='3l':
 ##        ### NEED TO CHANGE IT TO RUN THE EWKINO MULTILEPTON
 ##        GO="%s ttH-multilepton/mca-3l-mc.txt ttH-multilepton/3l_tight.txt "%CORE

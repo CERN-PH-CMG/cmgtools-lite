@@ -42,8 +42,7 @@ jet1Pt:  Jet1_pt: 18,0,300; XTitle="Leading jet p_{T}  [GeV]", Legend='TR'
 
 #### MET-RELATED VARIABLES
 
-METscan    : met_pt               : 25,0,250     ; XTitle="E_{T}^{miss} [GeV]", LegendCutoff=1e-3
-METscan_log: met_pt               : 25,0,250     ; XTitle="E_{T}^{miss} [GeV]", LegendCutoff=1e-3, Logy
+METscan    : met_pt               : 30,0,300     ; XTitle="E_{T}^{miss} [GeV]", LegendCutoff=1e-3
 MET        : met_pt               : 14,30,100    ; XTitle="E_{T}^{miss} [GeV]", LegendCutoff=1e-3
 MET_log    : met_pt               : 35,0,700     ; XTitle="E_{T}^{miss} [GeV]", Logy
 MET_SR     : met_pt               : [60.,100.,150.,500]; XTitle="E_{T}^{miss} [GeV]"
