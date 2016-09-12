@@ -1,0 +1,22 @@
+BEGIN::3l
+  expr         := SR
+  bins         := 36,0.5,36.5
+  firstCut     := alwaystrue
+  mcafile      := susy-ewkino/3l/mca_ewkino.txt
+  cutfile      := susy-ewkino/3l/cuts_ewkino.txt
+  plotfile     := susy-ewkino/3l/plots_ewkino.txt
+  sysfile      := susy-ewkino/systs_ewkino.txt
+  sfriends    +:= leptonJetReCleanerSusyEWK3L;leptonBuilderEWK;eventBTagWeight
+  friends     +:=
+  macros      +:= susy-ewkino/3l/functionsEWK.cc
+  mccs        +:= susy-ewkino/3l/mcc_ewkino.txt
+  weight       := puw2016_nInt_12p9fb(nTrueInt)*triggerSF(BR, LepSel_pt[0], LepSel_pdgId[0], LepSel_pt[1], LepSel_pdgId[1], LepSel_pt[2], LepSel_pdgId[2])*leptonSF(getLeptonSF(LepSel_pt[0], LepSel_eta[0], LepSel_pdgId[0]), getLeptonSF(LepSel_pt[1], LepSel_eta[1], LepSel_pdgId[1]), getLeptonSF(LepSel_pt[2], LepSel_eta[2], LepSel_pdgId[2]))*eventBTagSF
+  flags       +:=
+  flagsDumps  +:=
+  flagsEffs   +:=
+  flagsLimits +:=
+  flagsPlots  +:= --perBin --ratioOffset 0.03 --print C,png,pdf,txt
+  flagsPlots  +:= --plotgroup rares_ttX+=rares_ttW --plotgroup rares_ttX+=rares_ttZ
+  flagsPlots  +:= --plotgroup fakes_appldata+=promptsub --cms
+  flagsScans  +:= 
+ENDDEF

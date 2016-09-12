@@ -1,0 +1,65 @@
+BEGIN::3l
+  mca            := susy-ewkino/3l/mca_ewkino_forScan.txt
+  cuts           := susy-ewkino/3l/cuts_ewkino.txt
+  syst           := susy-ewkino/systs_ewkino.txt
+  jec            := jec
+  met            := met
+  q2acc          := q2acc
+  weightString   := Sum$(abs(Jet_eta)<2.5 && Jet_chHEF<0.1  && Jet_mcPt<8)==0
+  frFilesSignal  := susy-ewkino/3l/fakerate_standard_central.txt,susy-ewkino/3l/fakerate_load_isprompt.txt,susy-ewkino/3l/fakerate_filters_fastsim.txt
+  frFilesJec     := susy-ewkino/3l/fakerate_standard_central.txt,susy-ewkino/3l/fakerate_standard_jecUp.txt,susy-ewkino/3l/fakerate_standard_jecDn.txt
+  wVarsJec       := 1,1,1
+  frFilesMet     := susy-ewkino/3l/fakerate_standard_central.txt,susy-ewkino/3l/fakerate_genMET_central.txt
+  wVarsMet       := 1,1
+  wVars         #:= {bTagFS   : eventBTagSF_up_correlated/eventBTagSF ; eventBTagSF_down_correlated/eventBTagSF }
+  wVars         #:= {puw      : puw2016_nInt_12p9fb(nTrueInt,1); puw2016_nInt_12p9fb(nTrueInt,-1) }
+  wVars         #:= {lepSF    : leptonSF(getLeptonSF(LepSel_pt[0], LepSel_eta[0], LepSel_pdgId[0],1), getLeptonSF(LepSel_pt[1], LepSel_eta[1], LepSel_pdgId[1],1), getLeptonSF(LepSel_pt[2], LepSel_eta[2], LepSel_pdgId[2],1));leptonSF(getLeptonSF(LepSel_pt[0], LepSel_eta[0], LepSel_pdgId[0],-1), getLeptonSF(LepSel_pt[1], LepSel_eta[1], LepSel_pdgId[1],-1), getLeptonSF(LepSel_pt[2], LepSel_eta[2], LepSel_pdgId[2],-1))}
+  wVars         #:= {lepSFFS  : leptonSFFS(getLeptonSFFS(LepSel_pt[0], LepSel_eta[0], LepSel_pdgId[0],1), getLeptonSFFS(LepSel_pt[1], LepSel_eta[1], LepSel_pdgId[1],1), getLeptonSFFS(LepSel_pt[2], LepSel_eta[2], LepSel_pdgId[2],1)); leptonSFFS(getLeptonSFFS(LepSel_pt[0], LepSel_eta[0], LepSel_pdgId[0],-1), getLeptonSFFS(LepSel_pt[1], LepSel_eta[1], LepSel_pdgId[1],-1), getLeptonSFFS(LepSel_pt[2], LepSel_eta[2], LepSel_pdgId[2],-1))}
+ENDDEF
+
+BEGIN::crwz
+  expr:=1
+  bins:=1,0.5,1.5
+  firstCut:=alwaystrue
+  workdir:=susy-ewkino/crwz
+  mca:=susy-ewkino/crwz/mca_forICHEPscans.txt
+  cuts:=susy-ewkino/crwz/cuts_crwz.txt
+  syst:=susy-ewkino/systs_ewkino.txt
+  jec:=jec
+  met:=met
+  q2acc:=q2acc
+  weightString:=(LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge && LepGood3_isMatchRightCharge && Sum$(abs(Jet_eta)<2.5 && Jet_chHEF<0.1  && Jet_mcPt<8)==0)
+  frFilesSignal:=
+# comma separated! the first one is the central (leave empty if there is none), second is jecup, third is jecdown
+  frFilesJec:=,susy-ewkino/crwz/fakerate_standard_jecUp.txt,susy-ewkino/crwz/fakerate_standard_jecDn.txt
+  wVarsJec:=1,1,1
+# comma separated! the first one is the pfMET jecCentral (leave empty if there is none), second is genMET jecCentral
+  frFilesMet:=,susy-ewkino/crwz/fakerate_genMET_central.txt 
+  wVarsMet:=1,1
+  wVars:={bTagFS   : (eventBTagSF_up_correlated/eventBTagSF) ; (eventBTagSF_down_correlated/eventBTagSF) }
+  wVars:={puw      : puw2016_nInt_12p9fb(nTrueInt,1); puw2016_nInt_12p9fb(nTrueInt,-1) }
+  wVars:={lepSF    : ((leptonSF_2lss_ewk(LepGood1_pdgId,LepGood1_pt,LepGood1_eta,1)*leptonSF_2lss_ewk(LepGood2_pdgId,LepGood2_pt,LepGood2_eta,1))/(leptonSF_2lss_ewk(LepGood1_pdgId,LepGood1_pt,LepGood1_eta)*leptonSF_2lss_ewk(LepGood2_pdgId,LepGood2_pt,LepGood2_eta))) ; ((leptonSF_2lss_ewk(LepGood1_pdgId,LepGood1_pt,LepGood1_eta,-1)*leptonSF_2lss_ewk(LepGood2_pdgId,LepGood2_pt,LepGood2_eta,-1))/(leptonSF_2lss_ewk(LepGood1_pdgId,LepGood1_pt,LepGood1_eta)*leptonSF_2lss_ewk(LepGood2_pdgId,LepGood2_pt,LepGood2_eta))) }
+  wVars:={lepSFFS  : ((leptonSF_2lss_ewk_FS(LepGood1_pdgId,LepGood1_pt,LepGood1_eta,1)*leptonSF_2lss_ewk_FS(LepGood2_pdgId,LepGood2_pt,LepGood2_eta,1))/(leptonSF_2lss_ewk_FS(LepGood1_pdgId,LepGood1_pt,LepGood1_eta,0)*leptonSF_2lss_ewk_FS(LepGood2_pdgId,LepGood2_pt,LepGood2_eta,0))) ; ((leptonSF_2lss_ewk_FS(LepGood1_pdgId,LepGood1_pt,LepGood1_eta,-1)*leptonSF_2lss_ewk_FS(LepGood2_pdgId,LepGood2_pt,LepGood2_eta,-1))/(leptonSF_2lss_ewk_FS(LepGood1_pdgId,LepGood1_pt,LepGood1_eta,0)*leptonSF_2lss_ewk_FS(LepGood2_pdgId,LepGood2_pt,LepGood2_eta,0))) }
+ENDDEF
+
+BEGIN::SOS
+  expr:=m2l
+  bins:=[4,10,20,30,50]
+  firstCut:=alwaystrue
+  workdir:=susy-sos
+  mca:=susy-sos/mca-2los-mcdata-frdata-FS.txt
+  cuts:=susy-sos/2los_tight.txt
+  syst:=susy-sos/syst/susy_sos_syst.txt
+  jec:=jec
+  met:=met
+  weightString:=LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && Sum$(abs(Jet_eta)<2.5 && Jet_chHEF<0.1 && Jet_mcPt<8)==0
+  frFilesSignal:=susy-sos/mca-2los-noFilters.txt
+# comma separated! the first one is the central (leave empty if there is none), second is jecup, third is jecdown
+  frFilesJec:=,susy-sos/fr-jecUpFS.txt,susy-sos/fr-jecDnFS.txt
+  wVarsJec:=1,eventBTagSF_up_jes/eventBTagSF,eventBTagSF_down_jes/eventBTagSF
+# comma separated! the first one is the pfMET jecCentral (leave empty if there is none), second is genMET jecCentral
+  frFilesMet:=,susy-sos/fr-MET.txt
+  wVarsMet:=1,1
+  wVars:={bTagSFLF : eventBTagSF_up_lf/eventBTagSF, eventBTagSF_down_lf/eventBTagSF}
+  wVars:={bTagSFHF : eventBTagSF_up_hf/eventBTagSF, eventBTagSF_down_hf/eventBTagSF}
+ENDDEF

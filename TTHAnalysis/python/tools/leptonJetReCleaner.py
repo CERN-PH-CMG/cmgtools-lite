@@ -248,7 +248,6 @@ class LeptonJetReCleaner:
             jetsd[var] = [j for j in Collection(event,"DiscJet"+self.systsJEC[_var],"nDiscJet"+self.systsJEC[_var])]
         self.debugprinted = True
         ret = {}; retwlabel = {}; jetret = {}; discjetret = {};
-
         lepsl = []; lepslv = [];
         ret, lepsl, lepslv = self.fillCollWithVeto(ret,leps,leps,'L','Loose',self.looseLeptonSel, lepsforveto=None, doVetoZ=self.doVetoZ, doVetoLM=self.doVetoLMf, sortby=None)
         lepsc = []; lepscv = [];
@@ -296,7 +295,7 @@ def bestZ1TL(lepsl,lepst,cut=lambda lep:True):
             if not cut(l2): continue
             if l1.pdgId == -l2.pdgId:
                mz = (l1.p4() + l2.p4()).M()
-               diff = abs(mz-91.2)
+               diff = abs(mz-91)
                pairs.append( (diff,mz) )
       if len(pairs):
           pairs.sort()

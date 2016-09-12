@@ -1,3 +1,5 @@
+
+
 ##########################################################
 ##       CONFIGURATION FOR SUSY MULTILEPTON TREES       ##
 ## skim condition: >= 2 loose leptons, no pt cuts or id ##
@@ -17,7 +19,6 @@ is50ns = getHeppyOption("is50ns",False)
 analysis = getHeppyOption("analysis","ttH")
 runData = getHeppyOption("runData",False)
 runDataQCD = getHeppyOption("runDataQCD",False)
-runQCDBM = False
 runFRMC = getHeppyOption("runFRMC",False)
 runSMS = getHeppyOption("runSMS",False)
 scaleProdToLumi = float(getHeppyOption("scaleProdToLumi",-1)) # produce rough equivalent of X /pb for MC datasets
@@ -36,7 +37,7 @@ if analysis not in ['ttH','susy','SOS']: raise RuntimeError, 'Analysis type unkn
 print 'Using analysis type: %s'%analysis
 
 # Lepton Skimming
-ttHLepSkim.minLeptons = 2
+ttHLepSkim.minLeptons = 1
 ttHLepSkim.maxLeptons = 999
 #ttHLepSkim.idCut  = ""
 #ttHLepSkim.ptCuts = []
@@ -193,7 +194,12 @@ from CMGTools.TTHAnalysis.analyzers.treeProducerSusyMultilepton import *
 if analysis=="susy":
     susyCoreSequence.insert(susyCoreSequence.index(ttHCoreEventAna),
                             susyLeptonMatchAna)
+    #susyCoreSequence.insert(susyCoreSequence.index(ttHCoreEventAna),
+    #                        susyTauMatchAna)
     leptonTypeSusyExtraLight.addVariables([
+            NTupleVariable("mcUCSXMatchId", lambda x : x.mcUCSXMatchId if hasattr(x,'mcUCSXMatchId') else -1, mcOnly=True, help="MC truth matching a la UCSX"),
+            ])
+    tauTypeSusy.addVariables([
             NTupleVariable("mcUCSXMatchId", lambda x : x.mcUCSXMatchId if hasattr(x,'mcUCSXMatchId') else -1, mcOnly=True, help="MC truth matching a la UCSX"),
             ])
     photonAna.do_mc_match = True
@@ -272,6 +278,7 @@ if not runSMS:
     susyCoreSequence.insert(susyCoreSequence.index(skimAnalyzer),
                             susyCounter)
 else:
+    susyScanAna.doLHE=True
     susyCounter.bypass_trackMass_check = False
     susyCoreSequence.insert(susyCoreSequence.index(susyScanAna)+1,susyCounter)
 
@@ -323,13 +330,13 @@ triggerFlagsAna.triggerBits = {
     'DoubleElMu' : triggers_2e1mu,
     'SingleMu' : triggers_1mu_iso,
     'SingleEl'     : triggers_1e,
-    'LepTauTau' : triggers_leptautau,
+    'LepTau' : triggers_leptau,
     'MET' : triggers_metNoMu90_mhtNoMu90,
-    'SOSDoubleMuLowMET' : triggers_SOS_doublemulowMET,
     #'MonoJet80MET90' : triggers_Jet80MET90,
     #'MonoJet80MET120' : triggers_Jet80MET120,
     #'METMu5' : triggers_MET120Mu5,
 }
+
 triggerFlagsAna.unrollbits = True
 triggerFlagsAna.saveIsUnprescaled = True
 triggerFlagsAna.checkL1Prescale = True
@@ -338,7 +345,7 @@ if runSMS:
     susyCoreSequence.remove(triggerFlagsAna)
     susyCoreSequence.remove(triggerAna)
     susyCoreSequence.remove(eventFlagsAna)
-    ttHLepSkim.requireSameSignPair = True
+    #ttHLepSkim.requireSameSignPair = True
 
 from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv2 import *
 from CMGTools.RootTools.samples.samples_13TeV_signals import *
@@ -346,26 +353,47 @@ from CMGTools.RootTools.samples.samples_13TeV_76X_susySignalsPriv import *
 from CMGTools.RootTools.samples.samples_13TeV_DATA2016 import *
 from CMGTools.HToZZ4L.tools.configTools import printSummary, configureSplittingFromTime, cropToLumi
 
-selectedComponents = [TTLep_pow_ext]
+selectedComponents = []
+#selectedComponents = [TTLep_pow_ext]
 
+#components for SOS
+#selectedComponents = [WZZ, WWZ, ZZZ, TToLeptons_tch_amcatnlo, TToLeptons_sch_amcatnlo, TBar_tWch, T_tWch, TTHnobb, TTW_LO, TTZ_LO, TTLLJets_m1to10, TTGJets, WGToLNuG, ZGTo2LG, TGJets] + DYJetsM50HT + DYJetsM5to50HT + WJetsToLNuHT + [WJetsToLNu_LO, DYJetsToLL_M5to50_LO, DYJetsToLL_M50_LO, TTJets_SingleLeptonFromTbar, TTJets_SingleLeptonFromT, TTJets_DiLepton, WWTo2L2Nu, WZTo3LNu,T2ttDeg_mStop350_mChi330_4bodydec_lepOnly, TChiNeuWZ_mCh100_mChi80, TChiNeuWZ_mCh100_mChi90, WZTo1L3Nu, WZTo1L1Nu2Q, WZTo2L2Q, ZZTo2L2Q, ZZTo2L2Nu, ZZTo4L, WWToLNuQQ, WWDouble,WpWpJJ];
 
-if analysis=='SOS':
-    selectedComponents = selectedComponents
-    #bkg
-#    selectedComponents = [WWTo2L2Nu, WWToLNuQQ, WZTo3LNu, WZTo2L2Q, ZZTo2L2Q, ZZTo2L2Nu, ZZTo4L, WWW, WZZ, WWZ, ZZZ, TBar_tWch, T_tWch, TToLeptons_tch_amcatnlo, TToLeptons_sch_amcatnlo, TTJets_SingleLeptonFromTbar, TTJets_SingleLeptonFromT, TTJets_DiLepton] + DYJetsM50HT + DYJetsM5to50HT + WJetsToLNuHT + [WJetsToLNu_LO, DYJetsToLL_M5to50_LO, DYJetsToLL_M50]
-    #signal (only 76X)
-#    selectedComponents = [T2ttDeg_mStop350_mChi315_4bodydec_lepOnly, T2ttDeg_mStop350_mChi300_4bodydec_lepOnly, T2ttDeg_mStop350_mChi330_4bodydec_lepOnly, TChiNeuWZ_mCh100_mChi80, TChiNeuWZ_mCh100_mChi90, TChiNeuWZ_mCh150_mChi120_OS, TChiNeuWZ_mCh100_mChi95]
- 
-if analysis=='susy' or analysis=="ttH":
-    selectedComponents = selectedComponents
-#    samples_2l = [WJetsToLNu_LO, WJetsToLNu, DYJetsToLL_M10to50_LO, DYJetsToLL_M10to50, DYJetsToLL_M50, DYJetsToLL_M50_LO, TTJets, TT_pow, TTJets_SingleLeptonFromTbar, TTJets_SingleLeptonFromT, TTJets_DiLepton, TBar_tWch, T_tWch, TToLeptons_tch_amcatnlo, TToLeptons_sch_amcatnlo, TTGJets, WGToLNuG, ZGTo2LG, TGJets, WWDouble, WpWpJJ, TTTT, VHToNonbb, GGHZZ4L,tZq_ll, WZTo3LNu, ZZTo4L, WWTo2L2Nu, WWW, WWZ, WZZ, ZZZ, TTHnobb_pow, TTW_LO, TTZ_LO, TTWToLNu, TTZToLLNuNu, TTLLJets_m1to10] + TTHnobb_mWCutfix
-#    samples_1l = [QCD_Mu15] + QCD_Mu5 + [WJetsToLNu_LO,DYJetsToLL_M10to50_LO,DYJetsToLL_M50_LO,TT_pow] + QCDPtEMEnriched + QCDPtbcToE
-#    selectedComponents = samples_1l+samples_2l
-#    cropToLumi(selectedComponents,2)
-#    configureSplittingFromTime(samples_1l,50,3)
-#    configureSplittingFromTime(samples_2l,100,3)
+#selectedComponents = SMS_miniAODv2_T1tttt
+#susyCounter.SMS_varying_masses = ['genSusyMGluino','genSusyMNeutralino']
+
+#if analysis=='susy':
+#    #samples = [DYJetsToLL_M10to50, DYJetsToLL_M50, GGHZZ4L, TBarToLeptons_tch_powheg, TBar_tWch, TGJets, TTGJets, TTJets, TTJets_DiLepton, TTJets_SingleLeptonFromT, 
+#    #           TTJets_SingleLeptonFromTbar, TTTT, TT_pow_ext4, TToLeptons_sch_amcatnlo, TToLeptons_tch_amcatnlo, TToLeptons_tch_powheg, T_tWch, VHToNonbb, WGToLNuG, WJetsToLNu, WJetsToLNu_LO, 
+#    #           WWDouble, WWTo2L2Nu, WWW, WWZ, WZTo3LNu, WZTo3LNu_amcatnlo, WZZ, WpWpJJ, ZGTo2LG, ZZTo4L, ZZZ, tZq_ll]
+#    
+#    #samples_LHE = [TTHnobb_mWCutfix_ext1, TTHnobb_pow, TTLLJets_m1to10, TTWToLNu, TTW_LO, TTZToLLNuNu, TTZ_LO,]
+#    
+#    #samples_2l = [TTW_LO,TTZ_LO,WZTo3LNu_amcatnlo,DYJetsToLL_M10to50,DYJetsToLL_M50,WWTo2L2Nu,ZZTo2L2Q,WZTo3LNu,TTWToLNu,TTZToLLNuNu,TTJets_DiLepton,TTHnobb_mWCutfix_ext1,TTHnobb_pow]
+#    #samples_1l = [WJetsToLNu,TTJets_SingleLeptonFromT,TTJets_SingleLeptonFromTbar,TBarToLeptons_tch_powheg,TToLeptons_sch_amcatnlo,TBar_tWch,T_tWch]
+#    
+#    if getHeppyOption("dropLHEweights"):
+#        selectedComponents = samples #samples_2l +samples_1l
+#    else:
+#        selectedComponents = samples_LHE
+
+if analysis=='susy':
+    for c in selectedComponents:
+        c.splitFactor = len(c.files)
+
+    #cropToLumi(selectedComponents,2)
+    #configureSplittingFromTime(samples_1l,50,3)
+    #configureSplittingFromTime(samples_2l,100,3)
 #    printSummary(selectedComponents)
 
+if analysis=='susy' and runSMS:
+    selectedComponents=[TChiSlepSnu,T1tttt_2016,T5qqqqVV_2016]
+    ttHLepSkim.minLeptons = 0
+    ttHLepSkim.requireSameSignPair = False
+    for c in selectedComponents:
+        c.splitFactor = len(c.files)
+
+#printSummary(selectedComponents)
 
 if scaleProdToLumi>0: # select only a subset of a sample, corresponding to a given luminosity (assuming ~30k events per MiniAOD file, which is ok for central production)
     target_lumi = scaleProdToLumi # in inverse picobarns
@@ -384,11 +412,8 @@ if runData and not isTest: # For running on data
     is50ns = False
     dataChunks = []
 
-#    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_271036-274421_13TeV_PromptReco_Collisions16_JSON.txt' # 2.07/fb
-#    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_271036-274443_13TeV_PromptReco_Collisions16_JSON.txt' # 2.6/fb
-    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_271036-275125_13TeV_PromptReco_Collisions16_JSON.txt' # 4.0/fb
-    processing = "Run2016B-PromptReco-v2"; short = "Run2016B_PromptReco_v2"; run_ranges = [(273150,275125)]; useAAA=False; # -v2 starts from 273150
-#    processing = "Run2016B-PromptReco-v2"; short = "Run2016B_PromptReco_v2"; run_ranges = [(274444,275125)]; useAAA=False; # -v2 starts from 273150
+    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_271036-275125_13TeV_PromptReco_Collisions16_JSON.txt' # 4/fb
+    processing = "Run2016B-PromptReco-v2"; short = "Run2016B_PromptReco_v2"; run_ranges = [(274443,275125)]; useAAA=False; # -v2 starts from 273150 275125
     dataChunks.append((json,processing,short,run_ranges,useAAA))
 
     compSelection = ""; compVeto = ""
@@ -397,23 +422,23 @@ if runData and not isTest: # For running on data
     exclusiveDatasets = True; # this will veto triggers from previous PDs in each PD, so that there are no duplicate events
  
     if analysis in ['SOS']:
-        DatasetsAndTriggers.append( ("MET", triggers_metNoMu90_mhtNoMu90 + triggers_SOS_doublemulowMET) )
+        DatasetsAndTriggers.append( ("MET", triggers_metNoMu90_mhtNoMu90) )
         #DatasetsAndTriggers.append( ("MET", triggers_Jet80MET90 + triggers_Jet80MET120 + triggers_MET120Mu5 ) )
         #DatasetsAndTriggers.append( ("SingleMuon", triggers_1mu_iso + triggers_1mu_iso_50ns + triggers_1mu_noniso) )
-        #DatasetsAndTriggers.append( ("SingleElectron", triggers_1e + triggers_1e_50ns) )
     else:
         DatasetsAndTriggers.append( ("DoubleMuon", triggers_mumu_iso + triggers_mumu_ss + triggers_mumu_ht + triggers_3mu + triggers_3mu_alt) )
-        DatasetsAndTriggers.append( ("DoubleEG",   triggers_ee + triggers_ee_ht + triggers_3e) )
-        DatasetsAndTriggers.append( ("MuonEG",     triggers_mue + triggers_mue_ht + triggers_2mu1e + triggers_2e1mu) )
-        DatasetsAndTriggers.append( ("SingleMuon", triggers_1mu_iso + triggers_1mu_iso_50ns + triggers_1mu_noniso) )
-        DatasetsAndTriggers.append( ("SingleElectron", triggers_1e + triggers_1e_50ns) )
+        #DatasetsAndTriggers.append( ("DoubleEG",   triggers_ee + triggers_ee_ht + triggers_3e) )
+        #DatasetsAndTriggers.append( ("MuonEG",     triggers_mue + triggers_mue_ht + triggers_2mu1e + triggers_2e1mu) )
+        #DatasetsAndTriggers.append( ("SingleMuon", triggers_1mu_iso + triggers_1mu_iso_50ns + triggers_1mu_noniso) )
+        #DatasetsAndTriggers.append( ("SingleElectron", triggers_1e + triggers_1e_50ns) )
+        #DatasetsAndTriggers.append( ("Tau", triggers_leptau + triggers_1mu_iso + triggers_1e) )
 
         if runDataQCD: # for fake rate measurements in data
             FRTrigs_mu = triggers_FR_1mu_iso + triggers_FR_1mu_noiso
             FRTrigs_el = triggers_FR_1e_noiso + triggers_FR_1e_iso + triggers_FR_1e_b2g
             DatasetsAndTriggers = [
-                ("DoubleMuon", FRTrigs_mu ),
-                ("DoubleEG",   FRTrigs_el ),
+                #("DoubleMuon", FRTrigs_mu ),
+                #("DoubleEG",   FRTrigs_el ),
                 #("JetHT",   triggers_FR_jetHT )
                 ("JetHT",   triggers_FR_jet2 )
             ]
@@ -426,6 +451,27 @@ if runData and not isTest: # For running on data
                 #("DoubleMuon",  triggers_FR_1mu_noiso ),
             ]
             exclusiveDatasets = True
+
+
+        if runDataQCD or True: # for fake rate measurements in data
+            #ttHLepSkim.minLeptons = 1
+            if getHeppyOption("fast"): raise RuntimeError, 'Already added ttHFastLepSkimmer with 2-lep configuration, this is wrong.'
+            FRTrigs = triggers_FR_1mu_iso + triggers_FR_1mu_noiso + triggers_FR_1e_noiso + triggers_FR_1e_iso + triggers_FR_1e_b2g
+            for t in FRTrigs:
+                tShort = t.replace("HLT_","FR_").replace("_v*","")
+                triggerFlagsAna.triggerBits[tShort] = [ t ]
+                FRTrigs_mu = triggers_FR_1mu_iso + triggers_FR_1mu_noiso
+                FRTrigs_el = triggers_FR_1e_noiso + triggers_FR_1e_iso + triggers_FR_1e_b2g
+                DatasetsAndTriggers = [ (pd,trig) for pd,trig in DatasetsAndTriggers ] # if pd in ['DoubleMuon','DoubleEG'] ]
+                for pd,trig in DatasetsAndTriggers:
+                    print pd
+                    if pd in ['DoubleMuon','SingleMuon']:
+                        trig.extend(FRTrigs_mu)
+                    elif pd in ['DoubleEG','SingleElectron']:
+                        trig.extend(FRTrigs_el)
+                    else:
+                        print 'the strategy for trigger selection on MuonEG for FR studies should yet be implemented'
+                        #assert(False)
 
     for json,processing,short,run_ranges,useAAA in dataChunks:
         if len(run_ranges)==0: run_ranges=[None]
@@ -449,7 +495,7 @@ if runData and not isTest: # For running on data
                                                  triggers=triggers[:], vetoTriggers = vetos[:],
                                                  useAAA=useAAA)
                 print "Will process %s (%d files)" % (comp.name, len(comp.files))
-                comp.splitFactor = len(comp.files)/6
+                comp.splitFactor = len(comp.files)/8
                 comp.fineSplitFactor = 1
                 selectedComponents.append( comp )
             if exclusiveDatasets: vetos += triggers
@@ -460,29 +506,23 @@ if runData and not isTest: # For running on data
 
 if runFRMC: 
     QCD_Mu5 = [ QCD_Pt20to30_Mu5, QCD_Pt30to50_Mu5, QCD_Pt50to80_Mu5, QCD_Pt80to120_Mu5, QCD_Pt120to170_Mu5 ]
-#    QCDPtEMEnriched = [ QCD_Pt20to30_EMEnriched, QCD_Pt30to50_EMEnriched, QCD_Pt50to80_EMEnriched, QCD_Pt80to120_EMEnriched, QCD_Pt120to170_EMEnriched ]
-#    QCDPtbcToE = [ QCD_Pt_20to30_bcToE, QCD_Pt_30to80_bcToE, QCD_Pt_80to170_bcToE ]
-#    QCDHT = [ QCD_HT100to200, QCD_HT200to300, QCD_HT300to500, QCD_HT500to700 ]
-#    selectedComponents = [QCD_Mu15] + QCD_Mu5 + QCDPtEMEnriched + QCDPtbcToE + [WJetsToLNu_LO,DYJetsToLL_M10to50,DYJetsToLL_M50]
-#    selectedComponents = [ QCD_Pt_170to250_bcToE, QCD_Pt120to170_EMEnriched, QCD_Pt170to300_EMEnriched ]
-#    selectedComponents = [QCD_Mu15]
-
-#    selectedComponents = [TTJets_SingleLeptonFromT,TTJets_SingleLeptonFromTbar]
-
-    selectedComponents = [QCD_Mu15] + QCD_Mu5 + [WJetsToLNu,DYJetsToLL_M10to50,DYJetsToLL_M50] 
-
-    time = 5.0
-    configureSplittingFromTime([WJetsToLNu],20,time)
-#    configureSplittingFromTime([WJetsToLNu_LO],20,time)
+    QCDPtEMEnriched = [ QCD_Pt20to30_EMEnriched, QCD_Pt30to50_EMEnriched, QCD_Pt50to80_EMEnriched, QCD_Pt80to120_EMEnriched, QCD_Pt120to170_EMEnriched ]
+    QCDPtbcToE = [ QCD_Pt_20to30_bcToE, QCD_Pt_30to80_bcToE, QCD_Pt_80to170_bcToE ]
+    QCDHT = [ QCD_HT100to200, QCD_HT200to300, QCD_HT300to500, QCD_HT500to700 ]
+    selectedComponents = [QCD_Mu15] + QCD_Mu5 + QCDPtEMEnriched + QCDPtbcToE + [WJetsToLNu_LO,DYJetsToLL_M10to50,DYJetsToLL_M50]
+    selectedComponents = [ QCD_Pt_170to250_bcToE, QCD_Pt120to170_EMEnriched, QCD_Pt170to300_EMEnriched ]
+    selectedComponents = [QCD_Mu15]
+    time = 1.0
+    configureSplittingFromTime([WJetsToLNu,WJetsToLNu_LO],20,time)
     configureSplittingFromTime([DYJetsToLL_M10to50],10,time)
     configureSplittingFromTime([DYJetsToLL_M50],30,time)
     configureSplittingFromTime([QCD_Mu15]+QCD_Mu5,70,time)
-#    configureSplittingFromTime(QCDPtbcToE,50,time)
-#    configureSplittingFromTime(QCDPtEMEnriched,25,time)
-#    configureSplittingFromTime([ QCD_HT100to200, QCD_HT200to300 ],10,time)
-#    configureSplittingFromTime([ QCD_HT300to500, QCD_HT500to700 ],15,time)
-#    configureSplittingFromTime([ QCD_Pt120to170_EMEnriched,QCD_Pt170to300_EMEnriched ], 15, time)
-#    configureSplittingFromTime([ QCD_Pt_170to250_bcToE ], 30, time)
+    configureSplittingFromTime(QCDPtbcToE,50,time)
+    configureSplittingFromTime(QCDPtEMEnriched,25,time)
+    configureSplittingFromTime([ QCD_HT100to200, QCD_HT200to300 ],10,time)
+    configureSplittingFromTime([ QCD_HT300to500, QCD_HT500to700 ],15,time)
+    configureSplittingFromTime([ QCD_Pt120to170_EMEnriched,QCD_Pt170to300_EMEnriched ], 15, time)
+    configureSplittingFromTime([ QCD_Pt_170to250_bcToE ], 30, time)
     if runQCDBM:
         configureSplittingFromTime([QCD_Mu15]+QCD_Mu5,15,time)
     for c in selectedComponents:
@@ -499,7 +539,11 @@ if runFRMC or runDataQCD:
         triggerFlagsAna.triggerBits[tShort] = [ t ]
     treeProducer.collections = {
         "selectedLeptons" : NTupleCollection("LepGood",  leptonTypeSusyExtraLight, 8, help="Leptons after the preselection"),
+        "otherLeptons"    : NTupleCollection("LepOther", leptonTypeSusy, 8, help="Leptons after the preselection"),
         "cleanJets"       : NTupleCollection("Jet",     jetTypeSusyExtraLight, 15, help="Cental jets after full selection and cleaning, sorted by pt"),
+        "discardedJets"    : NTupleCollection("DiscJet", jetTypeSusyExtraLight, 15, help="Jets discarted in the jet-lepton cleaning"),
+        "selectedTaus"    : NTupleCollection("TauGood",  tauTypeSusy, 8, help="Taus after the preselection"),
+        "otherTaus"       : NTupleCollection("TauOther",  tauTypeSusy, 8, help="Taus after the preselection not selected"),
     }
     if True: # 
         from CMGTools.TTHAnalysis.analyzers.ttHLepQCDFakeRateAnalyzer import ttHLepQCDFakeRateAnalyzer
@@ -565,6 +609,7 @@ if is50ns:
     jetAnaScaleDown.dataGT   = "76X_dataRun2_v15_Run2015B_50ns"
 
 if runSMS:
+    jetAna.mcGT = "Spring16_FastSimV1"
     jetAna.applyL2L3Residual = False
     jetAnaScaleUp.applyL2L3Residual = False
     jetAnaScaleDown.applyL2L3Residual = False
@@ -573,9 +618,6 @@ if removeJetReCalibration:
     jetAna.recalibrateJets = False
     jetAnaScaleUp.recalibrateJets = False
     jetAnaScaleDown.recalibrateJets = False
-
-if getHeppyOption("noLepSkim",False):
-    ttHLepSkim.minLeptons=0
 
 if forcedSplitFactor>0 or forcedFineSplitFactor>0:
     if forcedFineSplitFactor>0 and forcedSplitFactor!=1: raise RuntimeError, 'splitFactor must be 1 if setting fineSplitFactor'
@@ -656,6 +698,14 @@ elif test == "ra5-sync-mc":
     comp.fineSplitFactor = 1
     selectedComponents = [ comp ]
     sequence.remove(jsonAna)
+elif test == "tau-sync":
+    comp = cfg.MCComponent( files = [ "root://eoscms.cern.ch//store/mc/RunIISpring16MiniAODv2/TTWJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8/MINIAODSIM/PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/50000/8E84F4BB-B620-E611-BBD8-B083FECFF2BF.root"], name="TTW_Tau" )
+    comp.triggers = []
+    comp.splitFactor = 1
+    comp.fineSplitFactor = 6
+    selectedComponents = [ comp ]
+    sequence.remove(jsonAna)
+    ttHLepSkim.minLeptons = 0
 elif test == '80X-MC':
     what = getHeppyOption("sample","TTLep")
     if what == "TTLep":
@@ -671,18 +721,20 @@ elif test == '80X-MC':
         if not getHeppyOption("single"): comp.fineSplitFactor = 4
     else: raise RuntimeError, "Unknown MC sample: %s" % what
 elif test == '80X-Data':
-    DoubleMuon = kreator.makeDataComponent("DoubleMuon_Run2016B_run274315", "/DoubleMuon/Run2016B-PromptReco-v2/MINIAOD", "CMS", ".*root", run_range = (274315,274315), triggers = triggers_mumu)
-    DoubleEG = kreator.makeDataComponent("DoubleEG_Run2016B_run274315", "/DoubleEG/Run2016B-PromptReco-v2/MINIAOD", "CMS", ".*root", run_range = (274315,274315), triggers = triggers_ee)
-    DoubleMuon.files = [ 'root://eoscms//eos/cms/store/data/Run2016B/DoubleMuon/MINIAOD/PromptReco-v2/000/274/315/00000/A287989F-E129-E611-B5FB-02163E0142C2.root' ]
-    DoubleEG.files = [ 'root://eoscms//eos/cms/store/data/Run2016B/DoubleEG/MINIAOD/PromptReco-v2/000/274/315/00000/FEF59D1D-EE29-E611-8793-02163E0143AE.root' ]
-    selectedComponents = [ DoubleMuon, DoubleEG ]
+    DoubleMuon = kreator.makeDataComponent("DoubleMuon_Run2016B_run274315", "/DoubleMuon/Run2016B-PromptReco-v2/MINIAOD", "CMS", ".*root", run_range = (274315,274315), triggers = triggers_mumu + triggers_mumu_ht + triggers_ee + triggers_ee_ht )
+    #DoubleEG = kreator.makeDataComponent("DoubleEG_Run2016B_run274315", "/DoubleEG/Run2016B-PromptReco-v2/MINIAOD", "CMS", ".*root", run_range = (274315,274315), triggers = triggers_ee)
+    #DoubleMuon.files = [ 'root://eoscms//eos/cms/store/data/Run2016B/DoubleMuon/MINIAOD/PromptReco-v2/000/274/315/00000/A287989F-E129-E611-B5FB-02163E0142C2.root' ]
+    DoubleMuon.files = ["pickevents.root"] #["DoubleMuon.root","DoubleEG.root"]
+    #DoubleEG.files = [ 'root://eoscms//eos/cms/store/data/Run2016B/DoubleEG/MINIAOD/PromptReco-v2/000/274/315/00000/FEF59D1D-EE29-E611-8793-02163E0143AE.root' ]
+    selectedComponents = [ DoubleMuon] #, DoubleEG ]
     for comp in selectedComponents:
-        comp.json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/DCSOnly/json_DCSONLY.txt'
-        tmpfil = os.path.expandvars("/tmp/$USER/%s" % os.path.basename(comp.files[0]))
-        if not os.path.exists(tmpfil): os.system("xrdcp %s %s" % (comp.files[0],tmpfil)) 
-        comp.files = [tmpfil]
+        comp.json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-275125_13TeV_PromptReco_Collisions16_JSON.txt'
+        #tmpfil = os.path.expandvars("/tmp/$USER/%s" % os.path.basename(comp.files[0]))
+        #if not os.path.exists(tmpfil): os.system("xrdcp %s %s" % (comp.files[0],tmpfil)) 
+        #comp.files = [tmpfil]
+        #comp.files = ["DoubleMuon.root","DoubleEG.root"]
         comp.splitFactor = 1
-        comp.fineSplitFactor = 4
+        comp.fineSplitFactor = 1
 elif test == 'ttH-sync':
     ttHLepSkim.minLeptons=0
     selectedComponents = selectedComponents[:1]
@@ -711,14 +763,14 @@ if getHeppyOption("fast"):
         sequence.insert(sequence.index(jsonAna)+1, fastSkim)
     else:
         sequence.insert(sequence.index(skimAnalyzer)+1, fastSkim)
-if getHeppyOption("dropLHEweights",True):
-    if "LHE_weights" in treeProducer.collections: treeProducer.collections.pop("LHE_weights")
+if getHeppyOption("dropLHEweights"):
+    treeProducer.collections.pop("LHE_weights")
     if lheWeightAna in sequence: sequence.remove(lheWeightAna)
     susyCounter.doLHE = False
 
 ## Auto-AAA
 from CMGTools.RootTools.samples.autoAAAconfig import *
-if not (getHeppyOption("isCrab") ):#or runData):
+if not getHeppyOption("isCrab"):
     autoAAA(selectedComponents)
 
 ## output histogram
@@ -734,7 +786,7 @@ output_service = cfg.Service(
 outputService.append(output_service)
 
 # print summary of components to process
-printSummary(selectedComponents)
+#printSummary(selectedComponents)
 
 # the following is declared in case this cfg is used in input to the heppy.py script
 from PhysicsTools.HeppyCore.framework.eventsfwlite import Events
@@ -749,3 +801,4 @@ config = cfg.Config( components = selectedComponents,
                      services = outputService, 
                      preprocessor = preprocessor, 
                      events_class = event_class)
+

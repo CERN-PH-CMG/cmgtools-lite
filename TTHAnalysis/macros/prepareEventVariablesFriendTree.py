@@ -1,34 +1,26 @@
 #!/usr/bin/env python
-from CMGTools.TTHAnalysis.treeReAnalyzer import *
+from CMGTools.TTHAnalysis.treeReAnalyzer import Module, EventLoop, Booker, PyTree
 from CMGTools.TTHAnalysis.tools.leptonJetReCleaner import LeptonJetReCleaner
 from glob import glob
-import os.path, re, types, itertools
+import os.path, re, types, itertools, sys
+from math import ceil
+import ROOT
 
 MODULES = []
 
-utility_files_dir = os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/"
+utility_files_dir = os.path.join(os.environ["CMSSW_BASE"], "src/CMGTools/TTHAnalysis/data/")
 isFastSim = False
 
-#btagSF = utility_files_dir+"/btag/CSVv2_25ns.csv"
-#btagEFF = utility_files_dir+"/btag/btageff__ttbar_powheg_pythia8_25ns.root"
-#btagSF_FastSim = utility_files_dir+"/btag/CSV_13TEV_Combined_20_11_2015_FullSim_FastSim.csv"
+# btag event weights in 80X
+from CMGTools.TTHAnalysis.tools.bTagEventWeights import BTagEventWeightFriend
+btagsf_payload = os.path.join(utility_files_dir, "btag", "CSVv2_ichep.csv")
+btagsf_payload_fastsim = os.path.join(utility_files_dir, "btag", "CSV_13TEV_TTJets_11_7_2016.csv")
+bTagEventWeight = lambda : BTagEventWeightFriend(csvfile=btagsf_payload, algo='csv', recllabel='Mini')
+btag_efficiency_file = os.path.join(utility_files_dir, "btag", "bTagEffs.root")
+bTagEventWeightFastSIM = lambda : BTagEventWeightFriend(csvfile=btagsf_payload, csvfastsim=btagsf_payload_fastsim, eff_rootfile=btag_efficiency_file, algo='csv', recllabel='Mini')
+MODULES.append( ('eventBTagWeight', bTagEventWeight ))
+MODULES.append( ('bTagEventWeightFastSIM', bTagEventWeightFastSIM ))
 
-#from CMGTools.TTHAnalysis.tools.btagRWTs_ND import BTagWeightCalculator,BTagReweightFriend,BTagLeptonReweightFriend
-## btag reweighting in 76X
-#BTagReweight76X = lambda : BTagWeightCalculator(utility_files_dir_tth+"/csv_rwt_fit_hf_76x_2016_02_08.root",
-#                                                utility_files_dir_tth+"/csv_rwt_fit_lf_76x_2016_02_08.root")
-#systsBTAG = ["nominal", "_JESUp", "_JESDown", "_LFUp", "_LFDown", "_HFUp", "_HFDown", \
-#                 "_HFStats1Up", "_HFStats1Down", "_HFStats2Up", "_HFStats2Down", \
-#                 "_LFStats1Up", "_LFStats1Down", "_LFStats2Up", "_LFStats2Down", \
-#                 "_cErr1Up", "_cErr1Down", "_cErr2Up", "_cErr2Down" ]
-#for syst in systsBTAG: # should be converted to lambda functions
-#    MODULES.append( ('btagRWJet%s'%syst, BTagReweightFriend(BTagReweight76X, outlabel='btagCSVWeight%s'%syst.replace('nominal',''), rwtSyst=syst.replace('_','')) ))
-#    MODULES.append( ('btagRWJetUp%s'%syst, BTagReweightFriend(BTagReweight76X, jets=["Jet_jecUp","DiscJet_jecUp"], outlabel='btagCSVWeight%s'%syst.replace('nominal',''), rwtSyst=syst.replace('_','')) ))
-#    MODULES.append( ('btagRWJetDown%s'%syst, BTagReweightFriend(BTagReweight76X, jets=["Jet_jecDown","DiscJet_jecDown"], outlabel='btagCSVWeight%s'%syst.replace('nominal',''), rwtSyst=syst.replace('_','')) ))
-#    MODULES.append( ('btagRWLep%s'%syst, BTagLeptonReweightFriend(BTagReweight76X, outlabel='jetBTagCSVWeight%s'%syst.replace('nominal',''), rwtSyst=syst.replace('_','')) ))
-#
-#from CMGTools.TTHAnalysis.tools.eventBTagRWT import EventBTagRWT
-#MODULES.append( ('eventBTagRWT', lambda: EventBTagRWT() ))
 
 #--- Recleaner instances
 
@@ -98,17 +90,17 @@ MODULES.append( ('leptonJetReCleanerSusyEWK3L', lambda : LeptonJetReCleaner("Min
                    coneptdef = lambda lep: conept_EWK(lep, 2),
                  ) ))
 
-MODULES.append( ('leptonJetReCleanerSusyEWK2L', lambda : LeptonJetReCleaner("Recl", 
-                   looseLeptonSel = lambda lep : lep.miniRelIso < 0.4 and _ewkino_2lss_lepId_IPcuts(lep),
-                   cleaningLeptonSel = lambda lep : lep.conept>10 and _ewkino_2lss_lepId_CBloose(lep), # cuts applied on top of loose (pt 5, 7, conveto, lotHist<=1 && emulation)
-                   FOLeptonSel = lambda lep,ht : lep.pt>10 and lep.conept>10 and (_ewkino_2lss_lepId_num(lep) or _ewkino_2lss_lepId_FO(lep)), # cuts on top of loose (previous + tight charge and lostHits==0)
-                   tightLeptonSel = lambda lep,ht : lep.pt>10 and lep.conept>10 and _ewkino_2lss_lepId_num(lep), # on top of loose 
+MODULES.append( ('leptonJetReCleanerSusyEWK2L', lambda : LeptonJetReCleaner("Recl",
+                   looseLeptonSel = lambda lep : lep.miniRelIso < 0.4 and _ewkino_2lss_lepId_IPcuts(lep) and _ewkino_2lss_lepId_CBloose(lep),
+                   cleaningLeptonSel = lambda lep : lep.pt>10 and lep.conept>10 and (_ewkino_2lss_lepId_num(lep) or _ewkino_2lss_lepId_FO(lep)), # cuts on top of loose             
+                   FOLeptonSel = lambda lep,ht : lep.pt>10 and lep.conept>10 and (_ewkino_2lss_lepId_num(lep) or _ewkino_2lss_lepId_FO(lep)), # cuts on top of loose                
+                   tightLeptonSel = lambda lep,ht : lep.pt>10 and lep.conept>10 and _ewkino_2lss_lepId_num(lep), # on top of loose                                                  
                    cleanJet = lambda lep,jet,dr : dr<0.4,
                    selectJet = lambda jet: abs(jet.eta)<2.4,
                    cleanTau = lambda lep,tau,dr: dr<0.4,
-                   looseTau = lambda tau: tau.pt > 20 and abs(tau.eta)<2.3 and abs(tau.dxy) < 1000 and abs(tau.dz) < 0.2 and tau.idMVAOldDMRun2dR03 >= 1 and tau.idDecayMode, # used in cleaning 
-                   tightTau = lambda tau: True, # cuts applied on top of loose                                                                           
-                   cleanJetsWithTaus = False,
+                   looseTau = lambda tau: _susyEWK_tauId_CBloose(tau), # used in cleaning                                                                                           
+                   tightTau = lambda tau: _susyEWK_tauId_CBtight(tau), # on top of loose                                                                                            
+                   cleanJetsWithTaus = True,
                    doVetoZ = True,
                    doVetoLMf = True,
                    doVetoLMt = True,
