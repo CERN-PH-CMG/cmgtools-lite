@@ -29,11 +29,6 @@ class BTagEventWeightFriend:
         self.btag_systs += ["up_%s"  %s for s in self.reader.iterative_systs]
         self.btag_systs += ["down_%s"%s for s in self.reader.iterative_systs]
 
-        # Take only central, up_correlated, and down_correlated for fastsim
-        if self.is_fastsim:
-            self.btag_systs = ["central", "up_correlated", "down_correlated"]
-
-
         # JEC to use for each syst:
         # Central one for all btag variations except up_jes and down_jes
         self.jec_syst_to_use = {}

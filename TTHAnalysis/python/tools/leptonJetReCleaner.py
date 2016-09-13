@@ -72,6 +72,7 @@ class LeptonJetReCleaner:
                 ])
         for tfloat in "pt eta phi mass reclTauId".split():
             biglist.append( ("TauSel"+label+"_"+tfloat,"F",20,"nTauSel"+label) )
+        biglist.append( ("TauSel"+label+"_pdgId","I",20,"nTauSel"+label) )
 
         for key in self.systsJEC:
             biglist.extend([
@@ -220,7 +221,7 @@ class LeptonJetReCleaner:
         ret["nTightTauSel" + postfix] = sum([1 for g in goodtaus if g.reclTauId == 2])
         # 4. store the tau 4-vectors
         if postfix==self.label:
-            for tfloat in "pt eta phi mass reclTauId".split():
+            for tfloat in "pt eta phi mass reclTauId pdgId".split():
                 tauret[tfloat] = []
                 for g in goodtaus:
                     tauret[tfloat].append( getattr(g, tfloat) )
