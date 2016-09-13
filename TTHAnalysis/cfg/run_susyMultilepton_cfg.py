@@ -339,7 +339,6 @@ triggerFlagsAna.triggerBits = {
     #'MonoJet80MET120' : triggers_Jet80MET120,
     #'METMu5' : triggers_MET120Mu5,
 }
-
 triggerFlagsAna.unrollbits = True
 triggerFlagsAna.saveIsUnprescaled = True
 triggerFlagsAna.checkL1Prescale = True
@@ -496,7 +495,7 @@ if runData and not isTest: # For running on data
 
 
 if runFRMC: 
-     QCD_Mu5 = [ QCD_Pt20to30_Mu5, QCD_Pt30to50_Mu5, QCD_Pt50to80_Mu5, QCD_Pt80to120_Mu5, QCD_Pt120to170_Mu5 ]
+    QCD_Mu5 = [ QCD_Pt20to30_Mu5, QCD_Pt30to50_Mu5, QCD_Pt50to80_Mu5, QCD_Pt80to120_Mu5, QCD_Pt120to170_Mu5 ]
 #    QCDPtEMEnriched = [ QCD_Pt20to30_EMEnriched, QCD_Pt30to50_EMEnriched, QCD_Pt50to80_EMEnriched, QCD_Pt80to120_EMEnriched, QCD_Pt120to170_EMEnriched ]
 #    QCDPtbcToE = [ QCD_Pt_20to30_bcToE, QCD_Pt_30to80_bcToE, QCD_Pt_80to170_bcToE ]
 #    QCDHT = [ QCD_HT100to200, QCD_HT200to300, QCD_HT300to500, QCD_HT500to700 ]
@@ -731,7 +730,6 @@ elif test == '80X-Data':
         tmpfil = os.path.expandvars("/tmp/$USER/%s" % os.path.basename(comp.files[0]))
         if not os.path.exists(tmpfil): os.system("xrdcp %s %s" % (comp.files[0],tmpfil)) 
         comp.files = [tmpfil]
-        comp.files = ["DoubleMuon.root","DoubleEG.root"]
         comp.splitFactor = 1
         comp.fineSplitFactor = 4
 elif test == 'ttH-sync':
@@ -762,7 +760,7 @@ if getHeppyOption("fast"):
         sequence.insert(sequence.index(jsonAna)+1, fastSkim)
     else:
         sequence.insert(sequence.index(skimAnalyzer)+1, fastSkim)
-if getHeppyOption("dropLHEweights"):
+if getHeppyOption("dropLHEweights", True):
     if "LHE_weights" in treeProducer.collections: treeProducer.collections.pop("LHE_weights")
     if lheWeightAna in sequence: sequence.remove(lheWeightAna)
     susyCounter.doLHE = False
