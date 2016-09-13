@@ -429,8 +429,8 @@ if runData and not isTest: # For running on data
             FRTrigs_mu = triggers_FR_1mu_iso + triggers_FR_1mu_noiso
             FRTrigs_el = triggers_FR_1e_noiso + triggers_FR_1e_iso + triggers_FR_1e_b2g
             DatasetsAndTriggers = [
-                #("DoubleMuon", FRTrigs_mu ),
-                #("DoubleEG",   FRTrigs_el ),
+                ("DoubleMuon", FRTrigs_mu ),
+                ("DoubleEG",   FRTrigs_el ),
                 #("JetHT",   triggers_FR_jetHT )
                 ("JetHT",   triggers_FR_jet2 )
             ]
@@ -496,6 +496,7 @@ if runData and not isTest: # For running on data
 
 
 if runFRMC: 
+     QCD_Mu5 = [ QCD_Pt20to30_Mu5, QCD_Pt30to50_Mu5, QCD_Pt50to80_Mu5, QCD_Pt80to120_Mu5, QCD_Pt120to170_Mu5 ]
 #    QCDPtEMEnriched = [ QCD_Pt20to30_EMEnriched, QCD_Pt30to50_EMEnriched, QCD_Pt50to80_EMEnriched, QCD_Pt80to120_EMEnriched, QCD_Pt120to170_EMEnriched ]
 #    QCDPtbcToE = [ QCD_Pt_20to30_bcToE, QCD_Pt_30to80_bcToE, QCD_Pt_80to170_bcToE ]
 #    QCDHT = [ QCD_HT100to200, QCD_HT200to300, QCD_HT300to500, QCD_HT500to700 ]
@@ -615,6 +616,9 @@ if removeJetReCalibration:
     jetAnaScaleUp.recalibrateJets = False
     jetAnaScaleDown.recalibrateJets = False
 
+if getHeppyOption("noLepSkim",False):
+    ttHLepSkim.minLeptons=0
+
 if forcedSplitFactor>0 or forcedFineSplitFactor>0:
     if forcedFineSplitFactor>0 and forcedSplitFactor!=1: raise RuntimeError, 'splitFactor must be 1 if setting fineSplitFactor'
     for c in selectedComponents:
@@ -718,19 +722,18 @@ elif test == '80X-MC':
     else: raise RuntimeError, "Unknown MC sample: %s" % what
 elif test == '80X-Data':
     DoubleMuon = kreator.makeDataComponent("DoubleMuon_Run2016B_run274315", "/DoubleMuon/Run2016B-PromptReco-v2/MINIAOD", "CMS", ".*root", run_range = (274315,274315), triggers = triggers_mumu + triggers_mumu_ht + triggers_ee + triggers_ee_ht )
-    #DoubleEG = kreator.makeDataComponent("DoubleEG_Run2016B_run274315", "/DoubleEG/Run2016B-PromptReco-v2/MINIAOD", "CMS", ".*root", run_range = (274315,274315), triggers = triggers_ee)
-    #DoubleMuon.files = [ 'root://eoscms//eos/cms/store/data/Run2016B/DoubleMuon/MINIAOD/PromptReco-v2/000/274/315/00000/A287989F-E129-E611-B5FB-02163E0142C2.root' ]
-    DoubleMuon.files = ["pickevents.root"] #["DoubleMuon.root","DoubleEG.root"]
-    #DoubleEG.files = [ 'root://eoscms//eos/cms/store/data/Run2016B/DoubleEG/MINIAOD/PromptReco-v2/000/274/315/00000/FEF59D1D-EE29-E611-8793-02163E0143AE.root' ]
-    selectedComponents = [ DoubleMuon] #, DoubleEG ]
+    DoubleEG = kreator.makeDataComponent("DoubleEG_Run2016B_run274315", "/DoubleEG/Run2016B-PromptReco-v2/MINIAOD", "CMS", ".*root", run_range = (274315,274315), triggers = triggers_ee)
+    DoubleMuon.files = [ 'root://eoscms//eos/cms/store/data/Run2016B/DoubleMuon/MINIAOD/PromptReco-v2/000/274/315/00000/A287989F-E129-E611-B5FB-02163E0142C2.root' ]
+    DoubleEG.files = [ 'root://eoscms//eos/cms/store/data/Run2016B/DoubleEG/MINIAOD/PromptReco-v2/000/274/315/00000/FEF59D1D-EE29-E611-8793-02163E0143AE.root' ]
+    selectedComponents = [ DoubleMuon, DoubleEG ]
     for comp in selectedComponents:
         comp.json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-275125_13TeV_PromptReco_Collisions16_JSON.txt'
-        #tmpfil = os.path.expandvars("/tmp/$USER/%s" % os.path.basename(comp.files[0]))
-        #if not os.path.exists(tmpfil): os.system("xrdcp %s %s" % (comp.files[0],tmpfil)) 
-        #comp.files = [tmpfil]
-        #comp.files = ["DoubleMuon.root","DoubleEG.root"]
+        tmpfil = os.path.expandvars("/tmp/$USER/%s" % os.path.basename(comp.files[0]))
+        if not os.path.exists(tmpfil): os.system("xrdcp %s %s" % (comp.files[0],tmpfil)) 
+        comp.files = [tmpfil]
+        comp.files = ["DoubleMuon.root","DoubleEG.root"]
         comp.splitFactor = 1
-        comp.fineSplitFactor = 1
+        comp.fineSplitFactor = 4
 elif test == 'ttH-sync':
     ttHLepSkim.minLeptons=0
     selectedComponents = selectedComponents[:1]
@@ -760,7 +763,7 @@ if getHeppyOption("fast"):
     else:
         sequence.insert(sequence.index(skimAnalyzer)+1, fastSkim)
 if getHeppyOption("dropLHEweights"):
-    treeProducer.collections.pop("LHE_weights")
+    if "LHE_weights" in treeProducer.collections: treeProducer.collections.pop("LHE_weights")
     if lheWeightAna in sequence: sequence.remove(lheWeightAna)
     susyCounter.doLHE = False
 
@@ -782,7 +785,7 @@ output_service = cfg.Service(
 outputService.append(output_service)
 
 # print summary of components to process
-#printSummary(selectedComponents)
+printSummary(selectedComponents)
 
 # the following is declared in case this cfg is used in input to the heppy.py script
 from PhysicsTools.HeppyCore.framework.eventsfwlite import Events
@@ -797,4 +800,3 @@ config = cfg.Config( components = selectedComponents,
                      services = outputService, 
                      preprocessor = preprocessor, 
                      events_class = event_class)
-
