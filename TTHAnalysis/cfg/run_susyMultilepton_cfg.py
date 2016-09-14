@@ -706,7 +706,9 @@ if test == '1':
     comp.fineSplitFactor = 1
     selectedComponents = [ comp ]
 elif test == '2':
+    from CMGTools.Production.promptRecoRunRangeFilter import filterWithCollection
     for comp in selectedComponents:
+        if comp.isData: comp.files = filterWithCollection(comp.files, [274315,275658,276363,276454])
         comp.files = comp.files[:1]
         comp.splitFactor = 1
         comp.fineSplitFactor = 1
