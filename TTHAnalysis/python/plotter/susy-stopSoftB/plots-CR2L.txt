@@ -6,18 +6,25 @@ lep2Pt:  LepGood2_pt       : 20,0,100; XTitle="Trailing lepton p_{T} [GeV]"
 lep2Eta: abs(LepGood2_eta) : 6,0,2.5; XTitle="Trailing lepton |#eta|"
 worstIso: max(LepGood1_miniRelIso,LepGood2_miniRelIso) : 20,0,0.2; XTitle="Worst miniRelIso"
 worstSip: max(LepGood1_sip3d,LepGood2_sip3d) : 20,0,8; XTitle="Worst sip3d"
+worstMVA: min(LepGood1_mvaTTH,LepGood2_mvaTTH) : 20,0,1; XTitle="Worst MVA", Legend="TL"
 
 met:  met: 15,0,300 ; XTitle="E_{T}^{miss}  [GeV]"
 mtW1: mt_2(LepGood1_pt,LepGood1_phi,met,met_phi) : 12,0,180; XTitle="M_{T}(l_{1}\,E_{T}^{miss}) [GeV]"
 mtW2: mt_2(LepGood2_pt,LepGood2_phi,met,met_phi) : 12,0,180; XTitle="M_{T}(l_{2}\,E_{T}^{miss}) [GeV]"
+mtWmin: min(mt_2(LepGood1_pt,LepGood1_phi,met,met_phi),mt_2(LepGood2_pt,LepGood2_phi,met,met_phi)) : 12,0,180; XTitle="min M_{T}(l_{i}\,E_{T}^{miss}) [GeV]"
+mtWmax: max(mt_2(LepGood1_pt,LepGood1_phi,met,met_phi),mt_2(LepGood2_pt,LepGood2_phi,met,met_phi)) : 12,0,180; XTitle="max M_{T}(l_{i}\,E_{T}^{miss}) [GeV]", Legend='TL'
+minProjMet: met_pt*min(if3(cos(met_phi-LepGood1_phi)>0, abs(sin(met_phi-LepGood1_phi)), 1), \
+                       if3(cos(met_phi-LepGood2_phi)>0, abs(sin(met_phi-LepGood2_phi)), 1) ) : 20,0,200; XTitle="Min Proj E_{T}^{miss}  [GeV]"
 dphiLLmet : abs(deltaPhi(phi_2(LepGood1_pt,LepGood1_phi,LepGood2_pt,LepGood2_phi), met_phi)) : 10,0,3.14 ; XTitle="#Delta#phi(ll\,E_{T}^{miss})", Legend='TL'
 
 nLepGood  : nLepGood  : [1.5,2.5,3.5,4.5]  ; XTitle='N(lep\, tight)', XNDiv=505
 nLepOther : nLepOther : [-0.5,0.5,1.5,2.5] ; XTitle='N(lep\, fail)', XNDiv=505
 
-nSoftMu       : Sum$(abs(LepOther_pdgId) == 13 && LepOther_pt > 5 && LepOther_pt < 20 && LepOther_mediumMuonId == 1 && deltaR(LepOther_eta,LepOther_phi,Jet_eta[0],Jet_phi[0]) > 0.4)  : [-0.5,0.5,1.5,2.5] ; XTitle='N(lep\, fail)', XNDiv=505
-nSoftIVF_pt40 : Sum$(abs(SV_dxy)<2 && SV_cosTheta > 0.98 && SV_ntracks >= 3 && SV_sip3d > 4 && SV_jetPt < 40)  : [-0.5,0.5,1.5,2.5] ; XTitle='N(IVF\, p_{T}(j) < 40)', XNDiv=505
-nSoftIVF_pt20 : Sum$(abs(SV_dxy)<2 && SV_cosTheta > 0.98 && SV_ntracks >= 3 && SV_sip3d > 4 && SV_jetPt < 20)  : [-0.5,0.5,1.5,2.5] ; XTitle='N(IVF\, p_{T}(j) < 20)', XNDiv=505
+badEle        : (abs(LepGood1_pdgId) == 11 && !(LepGood1_lostHits == 0 && LepGood1_convVeto)) + (abs(LepGood1_pdgId) == 11 && !(LepGood1_lostHits == 0 && LepGood1_convVeto)) : 3,-0.5,2.5 ; XTitle="Bad electrons"
+nSoftMu       : Sum$(abs(LepOther_pdgId) == 13 && LepOther_pt > 5 && LepOther_pt < 20 && deltaR(LepOther_eta,LepOther_phi,Jet_eta[0],Jet_phi[0]) > 0.4 && abs(LepOther_dz) < 0.1)  : [-0.5,0.5,1.5,2.5] ; XTitle='N(soft mu)', XNDiv=505, Logy
+nSoftMu_noVeto : Sum$(abs(LepOther_pdgId) == 13 && LepOther_pt > 5 && LepOther_pt < 20 && abs(LepOther_dz) < 0.1)  : [-0.5,0.5,1.5,2.5] ; XTitle='N(soft mu)', XNDiv=505, Logy
+nSoftIVF_pt40 : Sum$(abs(SV_dxy)<2 && SV_cosTheta > 0.98 && SV_ntracks >= 3 && SV_sip3d > 4 && SV_jetPt < 40)  : [-0.5,0.5,1.5,2.5] ; XTitle='N(IVF\, p_{T}(j) < 40)', XNDiv=505, Logy
+nSoftIVF_pt20 : Sum$(abs(SV_dxy)<2 && SV_cosTheta > 0.98 && SV_ntracks >= 3 && SV_sip3d > 4 && SV_jetPt < 20)  : [-0.5,0.5,1.5,2.5] ; XTitle='N(IVF\, p_{T}(j) < 20)', XNDiv=505, Logy
 
 
 ### DILEPTONS
@@ -36,8 +43,11 @@ nBJetsMedium20 : nBJetsMedium20 : [-0.5,0.5,1.5,2.5,3.5,4.5] ; XTitle='N(jet\, p
 nBJetsLoose40 : nBJetsLoose40 : [0.5,1.5,2.5,3.5,4.5] ; XTitle='N(jet\, p_{T} > 40\, CSV Loose)', XNDiv=505
 nBJetsMedium40 : nBJetsMedium40 : [-0.5,0.5,1.5,2.5,3.5,4.5] ; XTitle='N(jet\, p_{T} > 40\, CSV Medium)', XNDiv=505
 jetPt1: Jet1_pt: 15,0,300; XTitle="1st jet p_{T} [GeV]", Legend='TR'
+jetBTag1: Jet1_btagCSV: 15,0,1; XTitle="1st jet btag", Legend='TL'
 jetPt2: Jet2_pt: 20,0,100; XTitle="2nd jet p_{T} [GeV]", Legend='TL'
+jetBTag2: Jet2_btagCSV: 15,0,1; XTitle="2nd jet btag", Legend='TR'
 jetPt2_zoom: Alt$(Jet_pt[1],0): [0,20,25,30,35,40,45,50]; XTitle="2nd jet p_{T} [GeV]", Legend='TL'
+jetBTagMax: max(Jet1_btagCSV,Jet2_btagCSV): 15,0,1; XTitle="max btag (j_{1}\,j_{2})", Legend='TR'
 
 SV_pt : SV_pt : 12,0,60; XTitle="SV p_{T}"
 SV_pt_zoom : SV_pt : 20,0,20; XTitle="SV p_{T}", IncludeOverflows=False
