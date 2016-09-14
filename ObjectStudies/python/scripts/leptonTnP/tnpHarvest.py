@@ -74,7 +74,7 @@ def styleAsData(graph,options):
 def styleAsRef(graph,options):
     styleCommon(graph,options)
     graph.SetMarkerStyle(20)
-    graph.SetFillColor(ROOT.kAzure+10)
+    graph.SetFillColor(eval(getattr(options,'refcol','ROOT.kAzure+10')))
     gsyst = getattr(graph, 'syst', None)
     if gsyst:
         styleCommon(gsyst,options)

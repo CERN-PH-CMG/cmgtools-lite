@@ -54,6 +54,7 @@ def addTnPCombineOptions(parser):
     parser.add_option("--ytitle",   dest="ytitle", type="string", default="Efficiency", help="Y title")
     #parser.add_option("--pdir", "--print-dir", dest="printDir", type="string", default="plots", help="print out plots in this directory");
     parser.add_option("--idir", "--in-dir", dest="inDir", type="string", default="plots", help="print out plots in this directory");
+    parser.add_option("--refcol", "--refcol", dest="inDir", type="string", default="ROOT.kAzure+10", help="print out plots in this directory");
     parser.add_option("--xrange", dest="xrange", type="float", nargs=2, default=None);
     parser.add_option("--yrange", dest="yrange", type="float", nargs=2, default=(0.9,1.0));
     parser.add_option("--rrange", dest="rrange", type="float", nargs=2, default=None);

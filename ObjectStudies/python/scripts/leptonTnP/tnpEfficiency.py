@@ -873,7 +873,10 @@ if __name__ == "__main__":
         trees += [ (reftree, "_ref") ]
     else:
         reftree = None
-
+    if options.jobs > 0:
+        proof = ROOT.TProof.Open("workers=%d" % options.jobs)
+        tree.SetProof()
+        if reftree: reftree.SetProof()
     effs =  [ makeHistos2D(t,options.num,options.den,options.xvar,options.mvar,options,post=l,reftree=reftree) for (t,l) in trees ]
     if options.request and "bin" in options.request: exit()
     plotEffs(options.name,effs,options,options.printDir)
