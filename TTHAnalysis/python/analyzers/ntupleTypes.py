@@ -27,6 +27,11 @@ leptonTypeSusy = NTupleObjectType("leptonSusy", baseObjectTypes = [ leptonType ]
     NTupleVariable("jetBTagCMVA", lambda lepton : lepton.jet.btag('pfCombinedMVABJetTags') if hasattr(lepton,'jet') and hasattr(lepton.jet, 'btag') else -99, help="CMA btag of nearest jet"),
     NTupleVariable("jetDR",      lambda lepton : deltaR(lepton.eta(),lepton.phi(),lepton.jet.eta(),lepton.jet.phi()) if hasattr(lepton,'jet') else -1, help="deltaR(lepton, nearest jet)"),
     NTupleVariable("r9",      lambda lepton : lepton.full5x5_r9() if abs(lepton.pdgId()) == 11 else -99, help="SuperCluster 5x5 r9 variable, only for electrons; -99 for muons"),
+    # More
+    NTupleVariable("tightChargeFix",  lambda lepton : ( lepton.isGsfCtfScPixChargeConsistent() + lepton.isGsfScPixChargeConsistent() ) if abs(lepton.pdgId()) == 11 else 2*(lepton.muonBestTrack().ptError()/lepton.muonBestTrack().pt() < 0.2), int, help="Tight charge criteria: for electrons, 2 if isGsfCtfScPixChargeConsistent, 1 if only isGsfScPixChargeConsistent, 0 otherwise; for muons, 2 if ptError/pt < 0.20, 0 otherwise (using the muon best track)"),
+    NTupleVariable("muonTrackType",  lambda lepton : 1 if abs(lepton.pdgId()) == 11 else lepton.muonBestTrackType(), int, help="Muon best track type"),
+    NTupleVariable("chargeConsistency",  lambda lepton : ( lepton.isGsfCtfScPixChargeConsistent() + lepton.isGsfScPixChargeConsistent() ) if abs(lepton.pdgId()) == 11 else abs(lepton.muonBestTrack().charge() + lepton.innerTrack().charge() + lepton.tunePMuonBestTrack().charge() + ( lepton.globalTrack().charge() + lepton.outerTrack().charge() if lepton.isGlobalMuon() else 0) ), int, help="Tight charge criteria: for electrons, 2 if isGsfCtfScPixChargeConsistent, 1 if only isGsfScPixChargeConsistent, 0 otherwise; for muons, absolute value of the sum of all the charges (5 for global-muons, 3 for global muons)"),
+    NTupleVariable("ptErrTk",  lambda lepton : ( lepton.gsfTrack().ptError() ) if abs(lepton.pdgId()) == 11 else (lepton.muonBestTrack().ptError()), help="pt error, for the gsf track or muon best track"),
 ])
 
 
