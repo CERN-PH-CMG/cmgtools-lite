@@ -81,6 +81,9 @@ class EOSEventsWithDownload(object):
     def __getattr__(self, key):
         return getattr(self.events, key)
     def isLocal(self,filename):
+        if self.aggressive == -2: return True
+        if filename.startswith("root://") and not filename.startswith("root://eoscms"):
+            return False # always prefetch AAA
         if self.aggressive == -1: return True
         if self.aggressive >= 2: return False
         if self.aggressive >= 1 and not self.inMeyrin: return False
