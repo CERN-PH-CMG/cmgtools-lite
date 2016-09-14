@@ -89,13 +89,24 @@ class CutsFile:
         for (cn,cv) in self._cuts[1:]:
             ret.append( ( cn, "%s && (%s)" % (ret[-1][1], cv) ) )
         return ret
-    def nMinusOne(self):
-        return CutsFile(self.nMinusOneCuts())
-    def nMinusOneCuts(self):
+    def nMinusOne(self,inverted=False):
+        return CutsFile(self.nMinusOneCuts(inverted=inverted))
+    def nMinusOneCuts(self,inverted=False):
         ret = []
         for cn,cv in self._cuts[1:]:
             nm1 = " && ".join("(%s)" % cv1 for cn1,cv1 in self._cuts if cn1 != cn)
-            ret.append(("all but "+cn, nm1))
+            if inverted:
+                ret.append(("fail only "+cn, "%s && !(%s)" % (nm1,cv)))
+            else:
+                ret.append(("all but "+cn, nm1))
+        return ret
+    def nMinusOneSelectedCuts(self,selection,inverted=False):
+        ret = []
+        cutmatches = [ re.compile(c.strip()) for c in selection.split(",") if c.strip() ]
+        for cn,cv in self._cuts[1:]:
+            if any(m for m in cutmatches if re.match(m,cn)):
+                nm1 = " && ".join("(%s)" % cv1 for cn1,cv1 in self._cuts if cn1 != cn)
+                ret.append(("all but "+cn, nm1))
         return ret
     def allCuts(self,n=-1,doProduct=False):
         jstring = " * " if doProduct else " && "

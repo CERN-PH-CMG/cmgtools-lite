@@ -396,7 +396,9 @@ class MCAnalysis:
                     den = report[i-1][1][0] if i>0 else 0
                     fraction = nev/float(den) if den > 0 else 1
                     if self._options.nMinusOne: 
-                        fraction = report[-1][1][0]/nev if nev > 0 else 1
+                        fraction = report[-1][1][0]/float(nev) if nev > 0 else 1
+                    elif self._options.nMinusOneInverted: 
+                        fraction = float(nev)/report[-1][1][0] if report[-1][1][0] > 0 else 1
                     toPrint = (nev,)
                     if self._options.errors:    toPrint+=(err,)
                     if self._options.fractions: toPrint+=(fraction*100,)

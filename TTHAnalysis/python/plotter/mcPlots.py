@@ -630,7 +630,8 @@ class PlotMaker:
         sets = [ (None, 'all cuts', cuts.allCuts()) ]
         if not self._options.final:
             allcuts = cuts.sequentialCuts()
-            if self._options.nMinusOne: allcuts = cuts.nMinusOneCuts()+[None] # add a dummy entry since we use allcuts[:-1] below
+            if self._options.nMinusOne or self._options.nMinusOneInverted: 
+                allcuts = cuts.nMinusOneCuts(inverted=self._options.nMinusOneInverted)+[None] # add a dummy entry since we use allcuts[:-1] below
             for i,(cn,cv) in enumerate(allcuts[:-1]): # skip the last one which is equal to all cuts
                 cnsafe = "cut_%02d_%s" % (i, re.sub("[^a-zA-Z0-9_.]","",cn.replace(" ","_")))
                 sets.append((cnsafe,cn,cv))
