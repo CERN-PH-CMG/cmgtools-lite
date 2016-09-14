@@ -202,12 +202,14 @@ class MCAnalysis:
     def scaleUpProcess(self,process,scaleFactor):
         for tty in self._allData[process]: 
             tty.setScaleFactor( "((%s) * (%s))" % (tty.getScaleFactor(),scaleFactor) )
-    def getProcessOption(self,process,name,default=None):
+    def getProcessOption(self,process,name,default=None,noThrow=False):
         if process in self._allData:
             return self._allData[process][0].getOption(name,default=default)
         elif process in self._optionsOnlyProcesses:
             options = self._optionsOnlyProcesses[process]
             return options[name] if name in options else default
+        elif noThrow:
+            return default
         else: raise RuntimeError, "Can't get option %s for undefined process %s" % (name,process)
     def setProcessOption(self,process,name,value):
         if process in self._allData:

@@ -604,7 +604,7 @@ def doLegend(pmap,mca,corner="TR",textSize=0.035,cutoff=1e-2,cutoffSignals=True,
         leg.SetTextFont(42)
         leg.SetTextSize(textSize)
         if 'data' in pmap: 
-            leg.AddEntry(pmap['data'], mca.getProcessOption('data','Label','Data'), 'LPE')
+            leg.AddEntry(pmap['data'], mca.getProcessOption('data','Label','Data', noThrow=True), 'LPE')
         total = sum([x.Integral() for x in pmap.itervalues()])
         for (plot,label,style) in sigEntries: leg.AddEntry(plot,label,style)
         for (plot,label,style) in  bgEntries: leg.AddEntry(plot,label,style)
@@ -677,26 +677,27 @@ class PlotMaker:
                 # Pseudo-data?
                 if self._options.pseudoData:
                     if "data" in pmap: raise RuntimeError, "Can't use --pseudoData if there's also real data (maybe you want --xp data?)"
-                    if self._options.pseudoData == "background":
+                    if "background" in self._options.pseudoData:
                         pdata = pmap["background"]
                         pdata = pdata.Clone(str(pdata.GetName()).replace("_background","_data"))
-                    elif self._options.pseudoData == "all":
+                    elif "all" in self._options.pseudoData:
                         pdata = pmap["background"]
                         pdata = pdata.Clone(str(pdata.GetName()).replace("_background","_data"))
                         if "signal" in pmap: pdata.Add(pmap["signal"])
                     else:
                         raise RuntimeError, "Pseudo-data option %s not supported" % self._options.pseudoData
-                    if "TH1" in pdata.ClassName():
-                        for i in xrange(1,pdata.GetNbinsX()+1):
-                            pdata.SetBinContent(i, ROOT.gRandom.Poisson(pdata.GetBinContent(i)))
-                            pdata.SetBinError(i, sqrt(pdata.GetBinContent(i)))
-                    elif "TH2" in pdata.ClassName():
-                        for ix in xrange(1,pdata.GetNbinsX()+1):
-                          for iy in xrange(1,pdata.GetNbinsY()+1):
-                            pdata.SetBinContent(ix, iy, ROOT.gRandom.Poisson(pdata.GetBinContent(ix, iy)))
-                            pdata.SetBinError(ix, iy, sqrt(pdata.GetBinContent(ix, iy)))
-                    else:
-                        raise RuntimeError, "Can't make pseudo-data for %s" % pdata.ClassName()
+                    if "asimov" not in self._options.pseudoData:
+                        if "TH1" in pdata.ClassName():
+                            for i in xrange(1,pdata.GetNbinsX()+1):
+                                pdata.SetBinContent(i, ROOT.gRandom.Poisson(pdata.GetBinContent(i)))
+                                pdata.SetBinError(i, sqrt(pdata.GetBinContent(i)))
+                        elif "TH2" in pdata.ClassName():
+                            for ix in xrange(1,pdata.GetNbinsX()+1):
+                              for iy in xrange(1,pdata.GetNbinsY()+1):
+                                pdata.SetBinContent(ix, iy, ROOT.gRandom.Poisson(pdata.GetBinContent(ix, iy)))
+                                pdata.SetBinError(ix, iy, sqrt(pdata.GetBinContent(ix, iy)))
+                        else:
+                            raise RuntimeError, "Can't make pseudo-data for %s" % pdata.ClassName()
                     pmap["data"] = pdata
                 #
                 if not makeStack: 
