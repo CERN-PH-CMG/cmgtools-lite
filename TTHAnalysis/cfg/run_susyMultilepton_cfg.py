@@ -472,9 +472,12 @@ if runData and not isTest: # For running on data
                                                  "/"+pd+"/"+myprocessing+"/MINIAOD", 
                                                  "CMS", ".*root", 
                                                  json=json, 
-                                                 run_range=run_range, 
+                                                 run_range=(run_range if "PromptReco" not in myprocessing else None), 
                                                  triggers=triggers[:], vetoTriggers = vetos[:],
                                                  useAAA=useAAA)
+                if "PromptReco" in myprocessing:
+                    from CMGTools.Production.promptRecoRunRangeFilter import filterComponent
+                    filterComponent(comp, verbose=1)
                 print "Will process %s (%d files)" % (comp.name, len(comp.files))
                 comp.splitFactor = len(comp.files)/4
                 comp.fineSplitFactor = 1
