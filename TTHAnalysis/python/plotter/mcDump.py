@@ -31,11 +31,18 @@ class MCDumpModule(Module):
         self.mcde = MCDumpEvent()
         self.passing_entries = 0
         self.dumpFile = None
+        self.dumpFileName = None
     def __del__(self):
         if self.dumpFile: self.dumpFile.close()
     def beginComponent(self,tty):
         self.mcde.beginComponent(tty)
+        if self.dumpFileName:
+            self.dumpFile = open(self.dumpFileName.format(cname=tty.cname()),'w')
+            print "Saving to %s" % self.dumpFileName.format(cname=tty.cname())
     def openOutFile(self,dumpFileName):
+        if "{cname}" in dumpFileName: 
+            self.dumpFileName = dumpFileName
+            return
         if self.dumpFile: raise RuntimeError,'Output file already open'
         self.dumpFile = open(dumpFileName,'w')
     def getPassingEntries(self):
