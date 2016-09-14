@@ -28,6 +28,8 @@ if __name__ == "__main__":
 	parser.add_option("-T", dest="treename", type='string', default="tree.root", help='Name of the tree file')
 	parser.add_option("--dset", dest="dset", type='string', default=None, help='Name of the dataset to process')
 	parser.add_option("--al", "--allowSymlinks", dest="allowSymlinks", action='store_true', default=False, help='Allow symlinks')
+        parser.add_option("-P","--permissive", dest="permissive", action="store_true", default=False, help="Skip files or directories that don't contain trees, without raising an error")
+        parser.add_option("-F","--force", dest="force", action="store_true", default=False, help="Skip files or directories that don't contain trees, without raising an error")
 	(options, args) = parser.parse_args()
 	if len(args)<2: raise RuntimeError, 'Expecting at least two arguments'
 	
@@ -56,8 +58,16 @@ if __name__ == "__main__":
 	
 	tocopy = []
 	for d in dsets:
-	    if os.path.isfile(d): raise RuntimeError, 'File %s found in local directory.' % d
-	    if not os.path.exists('%s/%s'%(d,options.treeproducername)): raise RuntimeError, 'Tree producer sub-directory not found for %s' % d
+	    if os.path.isfile(d): 
+                if options.permissive:
+                    print 'WARNING: File %s found in local directory --> will be skipped' % d
+                    continue
+                raise RuntimeError, 'File %s found in local directory (use --permissive to skip it)' % d
+	    if not os.path.exists('%s/%s'%(d,options.treeproducername)): 
+                if options.permissive:
+                    print 'WARNING: Tree producer sub-directory %s/%s not found --> will skip directory %s' % (d,options.treeproducername,d)
+                    continue
+                raise RuntimeError, 'Tree producer sub-directory %s/%s not found (use --permissive to skip it).' % (d,options.treeproducername)
 	    fname = d+'/'+options.treeproducername+'/'+options.treename
 	    if not os.path.isfile(fname): raise RuntimeError, 'Tree file %s not found (or it is not a file).' % fname
 	    tocopy.append( (fname,'%s/%s_%s_%s'%(remdir,os.path.basename(d),options.treeproducername,options.treename)) )
@@ -68,8 +78,11 @@ if __name__ == "__main__":
 	            raise RuntimeError, 'Unknown file in friend directory.'
 	        tocopy.append( (f,'%s/%s_%s'%(remdir,d,f.split('/')[-1])) )
 	for task in tocopy:
-	    if os.path.exists(task[0]+".url"): raise RuntimeError, '.url file already exists for %s.' % task[0]
-	
+	    if os.path.exists(task[0]+".url"): 
+                if options.force:
+         	    print "WARNING: .url file already exists for %s, but forcing a new transfer" % task[0]
+                else:
+                    raise RuntimeError, '.url file already exists for %s (use --force to force a new archival)' % task[0]
 	print 'Will create EOS directory %s and copy the following files:\n'%remdir
 	for task in tocopy: print '%s -> %s' % task
 	
