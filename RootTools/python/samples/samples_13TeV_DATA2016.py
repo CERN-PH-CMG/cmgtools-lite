@@ -174,3 +174,14 @@ if __name__ == "__main__":
         for d in dataSamples:
             print "Checking ",d.name," aka ",d.dataset
             checker.checkComp(d, verbose=True)
+   if "list" in sys.argv:
+        from CMGTools.HToZZ4L.tools.configTools import printSummary
+        dataSamples = samples
+        if len(sys.argv) > 2:
+            dataSamples = []
+            for x in sys.argv[2:]:
+                for s in samples:
+                    if x in s.name and s not in dataSamples:
+                        dataSamples.append(s)
+            dataSamples.sort(key = lambda d : d.name)
+        printSummary(dataSamples)

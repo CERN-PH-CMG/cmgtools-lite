@@ -634,3 +634,31 @@ if __name__ == "__main__":
    if "test" in sys.argv:
        from CMGTools.RootTools.samples.ComponentCreator import testSamples
        testSamples(samples)
+   if "summary" in sys.argv:
+       from CMGTools.HToZZ4L.tools.configTools import printSummary
+       printSummary(mcSamples)
+   if "refresh" in sys.argv:
+        from CMGTools.Production.cacheChecker import CacheChecker
+        checker = CacheChecker()
+        dataSamples = samples
+        if len(sys.argv) > 2: 
+            dataSamples = []
+            for x in sys.argv[2:]:
+                for s in samples:
+                    if x in s.name and s not in dataSamples:
+                        dataSamples.append(s)
+            dataSamples.sort(key = lambda d : d.name)
+        if "--suspicious" in sys.argv:
+            for s in samples:
+                if len(s.files) == 0:
+                    dataSamples.append(s)
+                    continue
+                if "/store/mc/" not in s.files[0]:
+                    continue
+                if getattr(s, 'dataset_entries', -1) < 0:
+                    dataSamples.append(s)
+            dataSamples.sort(key = lambda d : d.name)
+        for d in dataSamples:
+            print "Checking ",d.name," aka ",d.dataset
+            if "--pretend" not in sys.argv:
+                checker.checkComp(d, verbose=True)
