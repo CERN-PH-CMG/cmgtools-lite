@@ -4,6 +4,8 @@ import os
 from CMGTools.RootTools.samples.ComponentCreator import ComponentCreator
 kreator = ComponentCreator()
 
+  
+ZGamma_Signal_1000TeV = kreator.makeMCComponent("ZGamma_Signal_1000TeV","/GluGluSpin0ToZGamma_ZToQQ_W_0-p-014_M_1000_TuneCUEP8M1_13TeV_pythia8/RunIISpring16MiniAODv2-PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/MINIAODSIM", "CMS", ".*root", 1.)
 
 GJets_100_200 = kreator.makeMCComponent("GJets_100_200", "/GJets_DR-0p4_HT-100To200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring16MiniAODv2-PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/MINIAODSIM", "CMS", ".*root", 4863.)
 GJets_200_400 = kreator.makeMCComponent("GJets_200_400", "/GJets_DR-0p4_HT-200To400_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring16MiniAODv2-PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/MINIAODSIM", "CMS",".*root",1074.)
@@ -27,4 +29,8 @@ WJetsToQQ_600_Inf,
 WJetsToQQ_180,
 ZJetsToQQ_600_Inf,
 DYJetsToQQ_180
+]
+
+VGamma_signal=[
+ZGamma_Signal_1000TeV
 ]

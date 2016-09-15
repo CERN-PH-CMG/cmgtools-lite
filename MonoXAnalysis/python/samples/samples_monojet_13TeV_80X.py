@@ -32,16 +32,19 @@ WJetsToLNu_amcatnlo = [ WJetsToLNu ]
 #QCD = QCDHT
 GammaJets = GJets
 VV_VBosonGamma = VV_VGamma
+signals = VGamma_signal
 
 mcSamples_monojet_Asymptotic25ns = ZJetsToNuNu_MJ + VJets_MJ + Top_MJ + DiBosons_MJ + QCDHT + GJetsHT
 #mcSamples_monojet_Asymptotic25ns_signals = DM_Scalars + DM_Pseudoscalars + DM_Vectors + DM_Axials
-mcSamples_diboson_Asymptotic25ns = TTBar + SingleTop + WJetsToLNu_HT + DiBosons_MJ 
+mcSamples_diboson_Asymptotic25ns = TTBar #SingleTop + WJetsToLNu_HT + DiBosons_MJ# + TTBar
 mcSamples_zgamma_Asymptotic25ns  = TTBar_amcatnlo + WJetsToLNu_amcatnlo + QCDHT + GJetsHT + VV_VBosonGamma + TTGammaJets
+mcSamples_zgamma_Signal = signals
+
 
 ### ----------------------------- summary ----------------------------------------     
 mcSamples_monojet = mcSamples_monojet_Asymptotic25ns
 mcSamples_diboson = mcSamples_diboson_Asymptotic25ns
-mcSamples_zgamma  = mcSamples_zgamma_Asymptotic25ns
+mcSamples_zgamma  = mcSamples_zgamma_Signal #mcSamples_zgamma_Asymptotic25ns
 
 ### --------- private DATA re-recoes for ECAL validation ---------
 dcsjson = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/DCSOnly/json_DCSONLY.txt'

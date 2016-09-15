@@ -36,7 +36,13 @@ class monoXSubJetsSoftDropAnalyzer( Analyzer ):
 
     def declareHandles(self):
         super(monoXSubJetsSoftDropAnalyzer, self).declareHandles()
-        self.handles['jets'] = AutoHandle( (self.cfg_ana.jetCol, 'SubJets','PAT'), 'std::vector<pat::Jet>' ) #RECO for data, PAT for MC
+        print "+++++", self.cfg_comp.isMC
+        if self.cfg_comp.isMC==True:
+         print "Taking right MC collection for SoftDrop Subjets"
+         self.handles['jets'] = AutoHandle( (self.cfg_ana.jetCol, 'SubJets','PAT'), 'std::vector<pat::Jet>' )  #RECO for DATA, PAT for MC
+        else:
+         print "Taking right Data collection for SoftDrop Subjets"
+         self.handles['jets'] = AutoHandle( (self.cfg_ana.jetCol, 'SubJets','RECO'), 'std::vector<pat::Jet>' )
         self.handles['rho'] = AutoHandle( self.cfg_ana.rho, 'double' )
 
     def beginLoop(self, setup):

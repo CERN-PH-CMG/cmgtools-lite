@@ -23,7 +23,7 @@ removeJetReCalibration = getHeppyOption("removeJetReCalibration",False)
 doT1METCorr = getHeppyOption("doT1METCorr",True)
 forcedSplitFactor = getHeppyOption("splitFactor",-1)
 forcedFineSplitFactor = getHeppyOption("fineSplitFactor",-1)
-isTest = getHeppyOption("isTest",True)#False)
+isTest = getHeppyOption("isTest",False)
 doLepCorr = getHeppyOption("doLepCorr",False)
 doPhotonCorr = getHeppyOption("doPhotonCorr",False)
 
@@ -33,8 +33,8 @@ diLepSkim = False
 singleLepSkim = False
 singleFatJetSkim = False
 singlePhotonSkim = False
-dibosonSkim = False
-vGammaSkim = True
+dibosonSkim = True #False
+vGammaSkim =False# True
 
 # --- MONOJET SKIMMING ---
 if signalSkim == True:
@@ -282,7 +282,7 @@ if False:
 if runData and not isTest: # For running on data
     ##run_ranges = [ (272021,275125) ]; useAAA=False; is50ns=False
     run_ranges = [ (272021, 278808) ]; useAAA=False; is50ns=False
-    print "Removing the SoftDrop and Puppi subjet collections (not yet in data)"
+    #print "Removing the SoftDrop and Puppi subjet collections (not yet in data)"
     #dmCoreSequence.remove(monoXSubJetPuppiAna)
     #dmCoreSequence.remove(monoXSubJetSoftDropAna)
 
@@ -342,7 +342,7 @@ if runData and not isTest: # For running on data
                                                  useAAA=useAAA)
                 print "Will process %s (%d files)" % (comp.name, len(comp.files))
                 print "\ttrigger sel %s, veto %s" % (triggers, vetos)
-                comp.splitFactor = len(comp.files)/4
+                comp.splitFactor = len(comp.files)/10#4
                 comp.fineSplitFactor = 1
                 selectedComponents.append( comp )
             iproc += 1
@@ -382,7 +382,7 @@ if forcedSplitFactor>0 or forcedFineSplitFactor>0:
 if runData==False and not isTest: # MC all
     ### 25 ns 74X MC samples
     is50ns = False
-    mcSamples = mcSamples_zgamma#monojet_Asymptotic25ns
+    mcSamples = mcSamples_diboson#zgamma#monojet_Asymptotic25ns
     #if signalSkim:
         # full signal scan (many datasets!)
         # mcSamples += mcSamples_monojet_Asymptotic25ns_signals
@@ -390,7 +390,7 @@ if runData==False and not isTest: # MC all
         # mcSamples += monojet_signals_cherrypick
     selectedComponents = mcSamples 
     for comp in selectedComponents:
-        comp.splitFactor = len(comp.files)/4
+        comp.splitFactor = len(comp.files)/10#4
         comp.fineSplitFactor = 1
 
 if runData==False and isTest: # Synch MC sample
@@ -463,7 +463,7 @@ elif test == 'synch-80X': # sync
         comp.files = [ 'root://eoscms//eos/cms/store/mc/RunIISpring16MiniAODv1/WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/MINIAODSIM/PUSpring16_80X_mcRun2_asymptotic_2016_v3-v1/60000/00DD003D-4201-E611-A6F7-0CC47A745282.root' ]
         selectedComponents = [ comp ]
     else:
-        selectedComponents = mcSamples_zgamma#monojet_Asymptotic25ns
+        selectedComponents = mcSamples_diboson#zgamma#monojet_Asymptotic25ns
     jetAna.smearJets       = False
     for comp in selectedComponents:
         comp.splitFactor = 1
@@ -502,8 +502,6 @@ elif test == 'simone':
            #"root://cms-xrd-global.cern.ch//store/mc/RunIISpring16MiniAODv2/TTJets_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/00000/04FB4BAA-3A33-E611-BC64-008CFA197A90.root",
            #"root://cms-xrd-global.cern.ch//store/mc/RunIISpring16MiniAODv2/TTGJets_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8/MINIAODSIM/PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/00000/9C6425C8-081C-E611-9F71-001E67E71A56.root",
            #"file:A8A803BC-CC17-E611-BA8C-02163E014550.root",
-           #"root://cms-xrd-global.cern.ch//store/data/Run2016B/SinglePhoton/RAW/v1/000/272/729/00000/8AB3C2BB-B113-E611-A48B-02163E014243.root",
-           #"root://cms-xrd-global.cern.ch//store/data/Run2016B/SinglePhoton/RAW/v2/000/273/158/00000/02AF01DC-7518-E611-9A9F-02163E01373A.root",
            "root://cms-xrd-global.cern.ch//store/mc/RunIISpring16MiniAODv2/GluGluSpin0ToZGamma_ZToQQ_W_0-p-014_M_1000_TuneCUEP8M1_13TeV_pythia8/MINIAODSIM/PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/10000/3E743410-C82B-E611-8948-0025907FD40C.root",
            #"root://cms-xrd-global.cern.ch//store/data/Run2016B/SinglePhoton/MINIAOD/PromptReco-v2/000/273/158/00000/00DD3222-261A-E611-9FD2-02163E011E34.root",
                  ],
