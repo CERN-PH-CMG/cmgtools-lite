@@ -14,7 +14,7 @@ from CMGTools.RootTools.samples.autoAAAconfig import *
 #-------- SET OPTIONS AND REDEFINE CONFIGURATIONS -----------
 
 is50ns = getHeppyOption("is50ns",False)
-runData = getHeppyOption("runData",True)
+runData = getHeppyOption("runData",False)
 scaleProdToLumi = float(getHeppyOption("scaleProdToLumi",-1)) # produce rough equivalent of X /pb for MC datasets
 saveSuperClusterVariables = getHeppyOption("saveSuperClusterVariables",True)
 saveFatJetIDVariables = getHeppyOption("saveFatJetIDVariables",True)
@@ -321,14 +321,17 @@ if forcedSplitFactor>0 or forcedFineSplitFactor>0:
 if runData==False and not isTest: # MC all
     ### 25 ns 74X MC samples
     is50ns = False
-    mcSamples = mcSamples_monojet_Asymptotic25ns
+    # mcSamples = mcSamples_monojet_Asymptotic25ns
+    #mcSamples = [WJetsToLNu_HT1200to2500, ZJetsToNuNu_HT1200to2500_ext]
     if signalSkim:
         # H -> invisibles mass scan (gg + VBF)
-        mcSamples += (VBF_HToInvisible + GluGlu_HToInvisible)
+        mcSamples = (VBF_HToInvisible + GluGlu_HToInvisible)
     selectedComponents = mcSamples 
     for comp in selectedComponents:
         comp.splitFactor = len(comp.files)/4
         comp.fineSplitFactor = 1
+        if 'HToInvisible' in comp.name: 
+            triggerFlagsAna.processName = 'HLT2'
 
 if runData==False and isTest: # Synch MC sample
     is50ns = False
