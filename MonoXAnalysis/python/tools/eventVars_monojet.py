@@ -181,6 +181,7 @@ class EventVarsMonojet:
         DeltaEtaMax = -1 
         for i in alljets:
             for j in alljets:
+                if i.pt < j.pt: continue   # this way we sort by pt and avoid self or double counting
                 if not i._clean or not j._clean: continue
                 if i.pt < 70 or j.pt < 70: continue
                 if i.eta*j.eta > 0: continue
