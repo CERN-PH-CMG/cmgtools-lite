@@ -299,6 +299,29 @@ GJets_HT400to600,
 GJets_HT600toInf
 ]
 
+GJets_DR04_HT100to200 = kreator.makeMCComponent("GJets_DR04_HT100to200", "/GJets_DR-0p4_HT-100To200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring16MiniAODv2-PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/MINIAODSIM", "CMS", ".*root", 4863.)
+GJets_DR04_HT200to400 = kreator.makeMCComponent("GJets_DR04_HT200to400", "/GJets_DR-0p4_HT-200To400_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring16MiniAODv2-PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/MINIAODSIM", "CMS",".*root",1074.)
+GJets_DR04_HT400to600 = kreator.makeMCComponent("GJets_DR04_HT400to600", "/GJets_DR-0p4_HT-400To600_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring16MiniAODv2-PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/MINIAODSIM", "CMS",".*root",1281.)
+GJets_DR04_HT600toInf = kreator.makeMCComponent("GJets_DR04_HT600toInf", "/GJets_DR-0p4_HT-600ToInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring16MiniAODv2-PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/MINIAODSIM", "CMS",".*root",42.9)
+
+GJetsDR04HT = [
+GJets_DR04_HT100to200,
+GJets_DR04_HT200to400,
+GJets_DR04_HT400to600,
+GJets_DR04_HT600toInf
+]
+
+WJetsToQQ_HT180 = kreator.makeMCComponent("WJetsToQQ_HT180", "/WJetsToQQ_HT180_13TeV-madgraphMLM-pythia8/RunIISpring16MiniAODv2-PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/MINIAODSIM", "CMS",".*root", 3098.)
+WJetsToQQ_HT600toInf = kreator.makeMCComponent("WJetsToQQ_HT600toInf", "/WJetsToQQ_HT-600ToInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring16MiniAODv2-PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/MINIAODSIM", "CMS",".*root", 98.4)
+DYJetsToQQ_HT180 = kreator.makeMCComponent("DYJetsToQQ_HT180", "/DYJetsToQQ_HT180_13TeV-madgraphMLM-pythia8/RunIISpring16MiniAODv2-PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/MINIAODSIM", "CMS",".*root", 1232.)
+ZJetsToQQ_HT600toInf = kreator.makeMCComponent("ZJetsToQQ_HT600toInf", "/ZJetsToQQ_HT600toInf_13TeV-madgraph/RunIISpring16MiniAODv2-PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/MINIAODSIM", "CMS",".*root", 581.9)
+
+VJetsQQHT=[
+WJetsToQQ_HT180,
+WJetsToQQ_HT600toInf,
+DYJetsToQQ_HT180,
+ZJetsToQQ_HT600toInf
+]
 
 ### Zinv
 ZJetsToNuNu_HT100to200 = kreator.makeMCComponent("ZJetsToNuNu_HT100to200", "/ZJetsToNuNu_HT-100To200_13TeV-madgraph/RunIISpring16MiniAODv2-PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/MINIAODSIM", "CMS", ".*root",280.47*1.23)
@@ -599,12 +622,23 @@ Rares = [
 TTTT_ext,
 ]
 
+### EWK V+jets 
+EWKWMinus2Jets = kreator.makeMCComponent("EWKWMinus2Jets", "/EWKWMinus2Jets_WToLNu_M-50_13TeV-madgraph-pythia8/RunIISpring16MiniAODv2-PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v2/MINIAODSIM", "CMS", ".*root", 20.36)
+EWKWPlus2Jets = kreator.makeMCComponent("EWKWPlus2Jets", "/EWKWPlus2Jets_WToLNu_M-50_13TeV-madgraph-pythia8/RunIISpring16MiniAODv2-PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/MINIAODSIM", "CMS", ".*root", 25.82)
+EWKZToLL2Jets = kreator.makeMCComponent("EWKZToLL2Jets", "/EWKZ2Jets_ZToLL_M-50_13TeV-madgraph-pythia8/RunIISpring16MiniAODv1-PUSpring16_80X_mcRun2_asymptotic_2016_v3-v2/MINIAODSIM", "CMS", ".*root", 3.998)
+EWKZToNuNu2Jets = kreator.makeMCComponent("EWKZToNuNu2Jets", "/EWKZ2Jets_ZToNuNu_13TeV-madgraph-pythia8/RunIISpring16MiniAODv2-PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/MINIAODSIM", "CMS", ".*root", 10.14)
 
+EWKV2Jets = [
+EWKWMinus2Jets,
+EWKWPlus2Jets,
+EWKZToLL2Jets,
+EWKZToNuNu2Jets,
+]
 
 ### ----------------------------- summary ----------------------------------------
 
 
-mcSamples = TTs + SingleTop + VJets + DYJetsM50HT + DYJetsM5to50HT + WJetsToLNuHT + GJetsHT + QCDHT + QCDPtbcToE + QCDPt + QCDPtEMEnriched + QCD_Mu5 +  DiBosons + TriBosons + TTV + Higgs + Rares
+mcSamples = TTs + SingleTop + VJets + DYJetsM50HT + DYJetsM5to50HT + WJetsToLNuHT + GJetsHT + QCDHT + QCDPtbcToE + QCDPt + QCDPtEMEnriched + QCD_Mu5 +  DiBosons + TriBosons + TTV + Higgs + Rares + EWKV2Jets
 
 samples = mcSamples
 

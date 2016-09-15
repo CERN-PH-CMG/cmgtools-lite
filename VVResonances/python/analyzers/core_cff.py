@@ -3,6 +3,7 @@ from PhysicsTools.Heppy.analyzers.core.all import *
 from PhysicsTools.Heppy.analyzers.objects.all import *
 from PhysicsTools.Heppy.analyzers.gen.all import *
 from CMGTools.VVResonances.analyzers.LeptonIDOverloader import *
+from CMGTools.VVResonances.analyzers.HbbTagComputer import *
 from CMGTools.VVResonances.analyzers.VVBuilder import *
 from CMGTools.VVResonances.analyzers.VTauBuilder import *
 from CMGTools.VVResonances.analyzers.Skimmer import *
@@ -39,7 +40,7 @@ triggerAna = cfg.Analyzer(
 # Create flags for trigger bits
 triggerFlagsAna = cfg.Analyzer(
     TriggerBitAnalyzer, name="TriggerFlags",
-    
+
     processName = 'HLT2',
     fallbackProcessName = 'HLT',
     triggerBits = {
@@ -199,6 +200,12 @@ lepIDAna = cfg.Analyzer(
     name='lepIDOverloader'
 )
 
+hbbTagComputer = cfg.Analyzer(
+    HbbTagComputer,
+    name='hbbTagComputer'
+)
+
+
 metAna = cfg.Analyzer(
     METAnalyzer, name="metAnalyzer",
     metCollection     = "slimmedMETs",
@@ -325,7 +332,7 @@ vTauAna = cfg.Analyzer(
 
 
 def doPruning():
-    print "Switching to prunning" 
+    print "Switching to pruning"
     jetAna.jetCol = 'slimmedJets'
 #    jetAna.mcGT     = "76X_mcRun2_asymptotic_v12"
 #    jetAna.dataGT   = "76X_dataRun2_v15_Run2015D_25ns"
@@ -351,8 +358,10 @@ coreSequence = [
     vertexAna,
     lepAna,
     lepIDAna,
+    # hbbTagComputer, # for all jetsAK8
     jetAna,
     jetAnaAK8,
+    hbbTagComputer,
     metAna,
 #    tauAna,
 #    packedAna,
