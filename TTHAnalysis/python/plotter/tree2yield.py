@@ -346,7 +346,7 @@ class TreeToYield:
             self.negativeCheck(histo)
             return [ histo.GetBinContent(1), histo.GetBinError(1), nev ]
         else: 
-            cut = self.adaptExpr(cut,cut=True)
+            #cut = self.adaptExpr(cut,cut=True)
             if self._options.doS2V:
                 cut  = scalarToVector(cut)
             (firstEntry, maxEntries) = self._rangeToProcess(fsplit)
