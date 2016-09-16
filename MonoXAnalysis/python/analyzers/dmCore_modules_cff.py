@@ -377,6 +377,7 @@ jetAna = cfg.Analyzer(
     type1METParams = { 'jetPtThreshold':15., 'skipEMfractionThreshold':0.9, 'skipMuons':True },
     )
 
+
 ## Fat Jets Analyzer (generic)
 from CMGTools.MonoXAnalysis.analyzers.monoXFatJetAnalyzer import monoXFatJetAnalyzer
 monoXFatJetAna = cfg.Analyzer(
@@ -401,7 +402,6 @@ monoXFatJetAna = cfg.Analyzer(
     addJECShifts = False, # if true, add  "corr", "corrJECUp", and "corrJECDown" for each jet (requires uncertainties to be available!)
     rho = ('fixedGridRhoFastjetAll','',''),
     )
-
 
 # Secondary vertex analyzer
 from CMGTools.TTHAnalysis.analyzers.ttHSVAnalyzer import ttHSVAnalyzer
@@ -457,6 +457,7 @@ metNoHFAna = cfg.Analyzer(
     collectionPostFix = "NoHF",
     )
 
+
 # Core Event Analyzer (computes basic quantities like HT, dilepton masses)
 from CMGTools.TTHAnalysis.analyzers.ttHCoreEventAnalyzer import ttHCoreEventAnalyzer
 ttHCoreEventAna = cfg.Analyzer(
@@ -466,6 +467,7 @@ ttHCoreEventAna = cfg.Analyzer(
     jetForBiasedDPhi = "cleanJetsAll",
     jetPt = 40.,
     )
+
 
 # Electron and Photon calibrator (scale and smearings)
 def doECalElectronCorrections(sync=False,era="25ns"):
