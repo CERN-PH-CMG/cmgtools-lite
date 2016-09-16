@@ -215,7 +215,7 @@ lepAna = cfg.Analyzer(
 from CMGTools.MonoXAnalysis.analyzers.monoJetSkimmer import monoJetSkimmer
 monoJetSkim = cfg.Analyzer(
     monoJetSkimmer, name='monoJetSkimmer',
-    jets      = "cleanJets", # jet collection to use
+    jets      = "cleanJetsAll", # jet collection to use
     jetPtCuts = [],          # e.g. [60,40,30,20] to require at least four jets with pt > 60,40,30,20 
     metCut = 0               # MET cut      
     )
@@ -463,7 +463,7 @@ ttHCoreEventAna = cfg.Analyzer(
     ttHCoreEventAnalyzer, name='ttHCoreEventAnalyzer',
     maxLeps = 4, ## leptons to consider
     mhtForBiasedDPhi = "mhtJet40jvec",
-    jetForBiasedDPhi = "cleanJets",
+    jetForBiasedDPhi = "cleanJetsAll",
     jetPt = 40.,
     )
 

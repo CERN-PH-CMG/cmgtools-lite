@@ -27,15 +27,15 @@ doLepCorr = getHeppyOption("doLepCorr",True)
 doPhotonCorr = getHeppyOption("doPhotonCorr",True)
 
 # Define skims
-signalSkim = False
+signalSkim = True
 diLepSkim = False
-singleLepSkim = True
+singleLepSkim = False
 singlePhotonSkim = False
 
 # --- MONOJET SKIMMING ---
 if signalSkim == True:
-    monoJetSkim.metCut = 200
-    monoJetSkim.jetPtCuts = [60]
+    monoJetSkim.metCut = 130
+    monoJetSkim.jetPtCuts = [70,50]
 
 # --- Z->ll control sample SKIMMING ---
 if diLepSkim == True:
@@ -48,10 +48,10 @@ if singleLepSkim == True:
 (lepton.electronID("POG_Cuts_ID_SPRING15_25ns_v1_ConvVetoDxyDz_Tight_full5x5") and (lepton.relIso03<0.0354 if abs(lepton.superCluster().eta())<1.479 else lepton.relIso03<0.0646))'
     #monoJetCtrlLepSkim.idCut='(lepton.muonID("POG_SPRING15_25ns_v1_Veto")) if abs(lepton.pdgId())==13 else (lepton.electronID("POG_SPRING15_25ns_v1_Veto"))'
     monoJetCtrlLepSkim.ptCuts = [40]
-    monoJetSkim.jetPtCuts = [70,60]
+    monoJetSkim.jetPtCuts = [70,50]
 if singlePhotonSkim == True:
     gammaJetCtrlSkim.minPhotons = 1
-    monoJetSkim.jetPtCuts = [60]
+    monoJetSkim.jetPtCuts = [70,50]
 
 # --- Photon OR Electron SKIMMING ---
 #if photonOrEleSkim == True:
@@ -392,6 +392,7 @@ elif test == 'synch-80X': # sync
     elif what == "VBFHinv":
         comp = kreator.makeMCComponent("VBF_HToInvisible_M125","/VBF_HToInvisible_M125_13TeV_powheg_pythia8/RunIISpring16MiniAODv2-PUSpring16RAWAODSIM_reHLT_80X_mcRun2_asymptotic_v14-v1/MINIAODSIM", "CMS", ".*root", 3.782)
         comp.files = [ 'root://eoscms//eos/cms/store/mc/RunIISpring16MiniAODv2/VBF_HToInvisible_M125_13TeV_powheg_pythia8/MINIAODSIM/PUSpring16RAWAODSIM_reHLT_80X_mcRun2_asymptotic_v14-v1/90000/0E1D90B0-583A-E611-8CC4-008CFA56D894.root' ]
+        triggerFlagsAna.processName = 'HLT2'
         selectedComponents = [ comp ]
     elif what == "DYJets":
         comp = DYJetsToLL_M50
@@ -406,7 +407,7 @@ elif test == 'synch-80X': # sync
         comp.files = [ 'root://eoscms//eos/cms/store/mc/RunIISpring16MiniAODv1/WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/MINIAODSIM/PUSpring16_80X_mcRun2_asymptotic_2016_v3-v1/60000/00DD003D-4201-E611-A6F7-0CC47A745282.root' ]
         selectedComponents = [ comp ]
     else:
-        selectedComponents = mcSamples_diboson#monojet_Asymptotic25ns
+        selectedComponents = monojet_Asymptotic25ns
     jetAna.smearJets       = False
     for comp in selectedComponents:
         comp.splitFactor = 1
