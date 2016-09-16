@@ -1,13 +1,8 @@
 from PhysicsTools.Heppy.analyzers.core.AutoFillTreeProducer  import * 
 
 dmCore_globalVariables = [
-            NTupleVariable("rhoCN", lambda ev: ev.rhoCN, float, help="fixed grid rho central neutral"),
             NTupleVariable("rho",  lambda ev: ev.rho, float, help="kt6PFJets rho"),
             NTupleVariable("nVert",  lambda ev: len(ev.goodVertices), int, help="Number of good vertices"),
-
-            #NTupleVariable("nTrueInters1", lambda ev: ev.nTrueInt, float, help="Total number of true interactions"),
-            NTupleVariable("nTrueInters", lambda ev: len(ev.vertices), float, help="Total number of true interactions"),#ev.slimmedAddPileupInfo.getTrueNumInteractions, float, help="Total number of true interactions"),
-            NTupleVariable("nTrueInteractions", lambda ev: ev.nPU if ev.nPU!=None else -99, int, help="Total number of true interactions"),
 
             NTupleVariable("nJet25", lambda ev: len(ev.cleanJets), int, help="Number of jets with pt > 25"),
             NTupleVariable("nBJetLoose25", lambda ev: len(ev.bjetsLoose), int, help="Number of jets with pt > 25 passing CSV loose"),
@@ -41,9 +36,6 @@ dmCore_globalObjects = {
             "met" : NTupleObject("met", metType, help="PF E_{T}^{miss}, after type 1 corrections"),
             "metNoMu" : NTupleObject("metNoMu", metType, help="PF E_{T}^{miss}, with muon pt added back"),
             "metNoPU" : NTupleObject("metNoPU", fourVectorType, help="PF noPU E_{T}^{miss}"),
-            "metPuppi" : NTupleObject("metPuppi", metType, help="PF E_{T}^{miss}, after type 1 corrections (Puppi)"),
-            #"metPuppi_jecUp" : NTupleObject("metPuppi_jecUp", metType, help="PF E_{T}^{miss}, after type 1 corrections with JEC up variation (Puppi)"),
-            #"metPuppi_jecDown" : NTupleObject("metPuppi_jecDown", metType, help="PF E_{T}^{miss}, after type 1 corrections with JEC down variation (Puppi)"),
 }
 
 dmCore_collections = {

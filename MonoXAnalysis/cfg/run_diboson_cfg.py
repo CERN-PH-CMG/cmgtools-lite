@@ -23,7 +23,7 @@ removeJetReCalibration = getHeppyOption("removeJetReCalibration",False)
 doT1METCorr = getHeppyOption("doT1METCorr",True)
 forcedSplitFactor = getHeppyOption("splitFactor",-1)
 forcedFineSplitFactor = getHeppyOption("fineSplitFactor",-1)
-isTest = getHeppyOption("isTest",False)
+isTest = getHeppyOption("isTest",True)#False)
 doLepCorr = getHeppyOption("doLepCorr",False)
 doPhotonCorr = getHeppyOption("doPhotonCorr",False)
 
@@ -142,7 +142,7 @@ MonoJetEventAna = cfg.Analyzer(
     )
 
 
-from CMGTools.MonoXAnalysis.analyzers.treeProducerDarkMatterMonoJet import * 
+from CMGTools.MonoXAnalysis.analyzers.treeProducerDarkMatterDiboson import * 
 
 # for applying fatjet ID
 if saveFatJetIDVariables:
@@ -181,16 +181,130 @@ if saveHEEPVariables:
 
 ## Tree Producer
 treeProducer = cfg.Analyzer(
-     AutoFillTreeProducer, name='treeProducerDarkMatterMonoJet',
+     AutoFillTreeProducer, name='treeProducerDarkMatterDiboson',
      vectorTree = True,
      saveTLorentzVectors = False,  # can set to True to get also the TLorentzVectors, but trees will be bigger
      defaultFloatType = 'F', # use Float_t for floating point
      PDFWeights = PDFWeights,
      doPDFVars = True,
-     globalVariables = dmMonoJet_globalVariables,
-     globalObjects = dmMonoJet_globalObjects,
-     collections = dmMonoJet_collections,
+     globalVariables = dmDiboson_globalVariables,
+     globalObjects = dmDiboson_globalObjects,
+     collections = dmDiboson_collections,
 )
+
+##Puppi producers
+# Ak04 Puppi Jets Analyzer (generic)
+from CMGTools.MonoXAnalysis.analyzers.monoXPuppiJetAnalyzer import monoXPuppiJetAnalyzer
+monoXPuppiJetAna = cfg.Analyzer(
+    monoXPuppiJetAnalyzer, name = 'monoXPuppiJetAnalyzer',
+    jetCol = 'slimmedJetsPuppi',
+    jetPt = 100.,
+    jetEta = 2.4,
+    jetLepDR = 0.4,
+    # v--- not implemented for AK8
+    #jetLepDR = 0.4,
+    #minLepPt = 10,
+    relaxJetId = False,
+    # v--- not implemented for AK8
+    #doPuId = False, # Not commissioned in 7.0.X
+    recalibrateJets = True,
+    applyL2L3Residual = True, # Switch to 'Data' when they will become available for Data
+    recalibrationType = "AK4PFPuppi",
+    mcGT     = "Spring16_25nsV3_MC",
+    dataGT   = "Spring16_25nsV3_DATA", # update with the new one when available in 8.0.X
+    jecPath = "%s/src/CMGTools/RootTools/data/jec/" % os.environ['CMSSW_BASE'],
+    shiftJEC = 0, # set to +1 or -1 to get +/-1 sigma shifts
+    addJECShifts = False, # if true, add  "corr", "corrJECUp", and "corrJECDown" for each jet (requires uncertainties to be available!)
+    rho = ('fixedGridRhoFastjetAll','',''),
+    )
+
+## Puppi subJets Analyzer (generic)
+from CMGTools.MonoXAnalysis.analyzers.monoXSubJetsPuppiAnalyzer import monoXSubJetsPuppiAnalyzer
+monoXSubJetPuppiAna = cfg.Analyzer(
+        monoXSubJetsPuppiAnalyzer, name = 'monoXSubJetsPuppiAnalyzer',
+        jetCol = 'slimmedJetsAK8PFPuppiSoftDropPacked',
+        jetPt = 100.,
+        jetEta = 2.4,
+        jetLepDR = 0.4,
+        # v--- not implemented for AK8
+        #jetLepDR = 0.4,
+        #minLepPt = 10,
+        relaxJetId = False,
+        # v--- not implemented for AK8
+        #doPuId = False, # Not commissioned in 7.0.X
+        recalibrateJets = True,
+        applyL2L3Residual = True, # Switch to 'Data' when they will become available for Data
+        recalibrationType = "AK8PFchs", #unused->no recalibration extracted YET!
+        mcGT     = "Spring16_25nsV3_MC",
+        dataGT   = "Spring16_25nsV3_DATA", # update with the new one when available in 8.0.X
+        jecPath = "%s/src/CMGTools/RootTools/data/jec/" % os.environ['CMSSW_BASE'],
+        shiftJEC = 0, # set to +1 or -1 to get +/-1 sigma shifts
+        addJECShifts = False, # if true, add  "corr", "corrJECUp", and "corrJECDown" for each jet (requires uncertainties to be available!)
+        rho = ('fixedGridRhoFastjetAll','',''),
+        )
+
+## Puppi-SoftDrop subJets Analyzer (generic)
+from CMGTools.MonoXAnalysis.analyzers.monoXSubJetsSoftDropAnalyzer import monoXSubJetsSoftDropAnalyzer
+monoXSubJetSoftDropAna = cfg.Analyzer(
+        monoXSubJetsSoftDropAnalyzer, name = 'monoXSubJetsSoftDropAnalyzer',
+        jetCol = 'slimmedJetsAK8PFCHSSoftDropPacked',
+        jetPt = 100.,
+        jetEta = 2.4,
+        jetLepDR = 0.4,
+        # v--- not implemented for AK8
+        #jetLepDR = 0.4,
+        #minLepPt = 10,
+        relaxJetId = False,
+        # v--- not implemented for AK8
+        #doPuId = False, # Not commissioned in 7.0.X
+        recalibrateJets = True,
+        applyL2L3Residual = True, # Switch to 'Data' when they will become available for Data
+        recalibrationType = "AK8PFchs", #unused->no recalibration extracted YET!
+        mcGT     = "Spring16_25nsV3_MC",
+        dataGT   = "Spring16_25nsV3_DATA", # update with the new one when available in 8.0.X
+        jecPath = "%s/src/CMGTools/RootTools/data/jec/" % os.environ['CMSSW_BASE'],
+        shiftJEC = 0, # set to +1 or -1 to get +/-1 sigma shifts
+        addJECShifts = False, # if true, add  "corr", "corrJECUp", and "corrJECDown" for each jet (requires uncertainties to be available!)
+        rho = ('fixedGridRhoFastjetAll','',''),
+        )
+
+### adding MET Puppi Analyzer
+metPuppiAna = cfg.Analyzer(
+        METAnalyzer, name="metAnalyzerPuppi",
+        metCollection     = "slimmedMETsPuppi",
+        noPUMetCollection = "slimmedMETsPuppi",
+        copyMETsByValue = False,
+        doTkMet = False,
+        includeTkMetCHS = False,
+        includeTkMetPVLoose = False,
+        includeTkMetPVTight = False,
+        doMetNoPU = False,
+        doMetNoMu = False,
+        doMetNoEle = False,
+        doMetNoPhoton = False,
+        recalibrate = False,#"type1", changed as it doesn't work... "type1", # or "type1", or True
+        applyJetSmearing = False, # does nothing unless the jet smearing is turned on in the jet analyzer
+        old74XMiniAODs = False, # set to True to get the correct Raw MET when running on old 74X MiniAODs
+        jetAnalyzerPostFix = "Puppi",# changed as it doesn't work...,
+        candidates='packedPFCandidates',
+        candidatesTypes='std::vector<pat::PackedCandidate>',
+        dzMax = 0.1,
+        collectionPostFix = "Puppi",
+        )
+
+#### metPuppiAnaScaleUp = metPuppiAna.clone(name="metAnalyzerPuppiScaleUp",
+####         copyMETsByValue = True,
+####         recalibrate = "type1",
+####         jetAnalyzerPostFix = "Puppi_jecUp",
+####         collectionPostFix = "Puppi_jecUp",
+####         )
+#### 
+#### metPuppiAnaScaleDown = metPuppiAna.clone(name="metAnalyzerPuppiScaleDown",
+####         copyMETsByValue = True,
+####         recalibrate = "type1",
+####         jetAnalyzerPostFix = "Puppi_jecDown",
+####         collectionPostFix = "Puppi_jecDown",
+####         )
 
 ## histo counter
 # dmCoreSequence.insert(dmCoreSequence.index(skimAnalyzer),
@@ -226,6 +340,12 @@ if doPhotonCorr:
 sequence = cfg.Sequence(dmCoreSequence+[
 #   monoXRazorAna,
 #   monoXMT2Ana,
+   monoXPuppiJetAna,
+   monoXSubJetPuppiAna,
+   monoXSubJetSoftDropAna,
+   metPuppiAna,
+###    metPuppiAnaScaleUp
+###    metPuppiAnaScaleDown,
    monoJetVarAna,
    MonoJetEventAna,
    treeProducer,
@@ -393,14 +513,14 @@ if runData==False and not isTest: # MC all
         comp.splitFactor = len(comp.files)/10#4
         comp.fineSplitFactor = 1
 
-if runData==False and isTest: # Synch MC sample
-    is50ns = False
-    comp = kreator.makeMCComponent("TTbarDM","/TTbarDMJets_pseudoscalar_Mchi-1_Mphi-100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring16MiniAODv2-PUSpring16RAWAODSIM_80X_mcRun2_asymptotic_2016_miniAODv2_v0_ext1-v1/MINIAODSIM", "CMS", ".*root", 1.0)
-    selectedComponents = [ comp ]
-    for comp in selectedComponents:
-        comp.splitFactor = len(comp.files)
-        comp.fineSplitFactor = 1
-
+####if runData==False and isTest: # Synch MC sample
+####    is50ns = False
+####    comp = kreator.makeMCComponent("TTbarDM","/TTbarDMJets_pseudoscalar_Mchi-1_Mphi-100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring16MiniAODv2-PUSpring16RAWAODSIM_80X_mcRun2_asymptotic_2016_miniAODv2_v0_ext1-v1/MINIAODSIM", "CMS", ".*root", 1.0)
+####    selectedComponents = [ comp ]
+####    for comp in selectedComponents:
+####        comp.splitFactor = len(comp.files)
+####        comp.fineSplitFactor = 1
+####
 
 from CMGTools.HToZZ4L.tools.configTools import printSummary
 
@@ -513,6 +633,9 @@ elif test == 'simone':
     
     sample.isMC=True#False
     selectedComponents = [sample]
+elif test== 'simoneComponent':
+    comp = kreator.makeMCComponent("ZGamma_Signal_1000TeV","/GluGluSpin0ToZGamma_ZToQQ_W_0-p-014_M_1000_TuneCUEP8M1_13TeV_pythia8/RunIISpring16MiniAODv2-PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/MINIAODSIM", "CMS", ".*root", 1.)
+    selectedComponents = [ comp ]
 
 ## output histogram
 outputService=[]
@@ -521,7 +644,7 @@ output_service = cfg.Service(
     TFileService,
     'outputfile',
     name="outputfile",
-    fname='treeProducerDarkMatterMonoJet/tree.root',
+    fname='treeProducerDarkMatterDiboson/tree.root',
     option='recreate'
     )    
 outputService.append(output_service)

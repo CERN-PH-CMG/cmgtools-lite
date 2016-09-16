@@ -39,10 +39,10 @@ class monoXSubJetsPuppiAnalyzer( Analyzer ):
     def declareHandles(self):
         super(monoXSubJetsPuppiAnalyzer, self).declareHandles()
         if self.cfg_comp.isMC==True:
-          print "Taking right MC collection for Puppi Subjets"
+          #print "Taking right MC collection for Puppi Subjets"
           self.handles['jets'] = AutoHandle( (self.cfg_ana.jetCol, 'SubJets','PAT'), 'std::vector<pat::Jet>' )  #RECO for DATA, PAT for MC
         else:
-          print "Taking right Data collection for Puppi Subjets"
+          #print "Taking right Data collection for Puppi Subjets"
           self.handles['jets'] = AutoHandle( (self.cfg_ana.jetCol, 'SubJets','RECO'), 'std::vector<pat::Jet>' )
         self.handles['rho'] = AutoHandle( self.cfg_ana.rho, 'double' )
 
