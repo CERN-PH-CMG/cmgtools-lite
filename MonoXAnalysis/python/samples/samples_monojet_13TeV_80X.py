@@ -19,7 +19,7 @@ DiBosons_MJ    = [ WW, WZ, ZZ ]
 
 #diboson analysis samples
 TTBar          = [ TT_pow_ext3 ]
-WJetsToLNu     = [ WJetsToLNu_HT100to200, WJetsToLNu_HT200to400, WJetsToLNu_HT400to600, WJetsToLNu_HT600to800, WJetsToLNu_HT800to1200_ext, WJetsToLNu_HT1200to2500, WJetsToLNu_HT2500toInf ]
+WJetsToLNu_HT     = [ WJetsToLNu_HT100to200, WJetsToLNu_HT200to400, WJetsToLNu_HT400to600, WJetsToLNu_HT600to800, WJetsToLNu_HT800to1200_ext, WJetsToLNu_HT1200to2500, WJetsToLNu_HT2500toInf ]
 SingleTop      = [ TToLeptons_sch_amcatnlo, TBar_tWch, T_tWch ]
 
 #V+gamma samples
@@ -27,7 +27,7 @@ from CMGTools.MonoXAnalysis.samples.samples_13TeV_VJETS_RunIISpring16MiniAODv2 i
 TTBar_amcatnlo = [ TTJets ]
 TTGammaJets    = [ TTGJets ]
 WJetsToLNu_amcatnlo = [ WJetsToLNu ]
-QCD = QCDHT
+#QCD = QCDHT
 GammaJets = GJets
 VV_VBosonGamma = VV_VGamma
 

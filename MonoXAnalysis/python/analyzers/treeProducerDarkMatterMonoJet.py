@@ -139,6 +139,7 @@ jetTypeSusyExtra.addVariables([
         NTupleVariable("puMva", lambda x: x.puMva(), float, help="Value of the pu MVA discriminator")
 ])
 
+
 # no more present in MINIAOD V2 in 8.0.X
 fatJetType.removeVariable("trimmedMass")
 fatJetType.removeVariable("filteredMass")
