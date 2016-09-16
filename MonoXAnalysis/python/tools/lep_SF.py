@@ -54,8 +54,8 @@ class Lep_SF_Event:
 
 class AllLepSFs:
     def __init__(self):
-        self.f_el = [ROOT.TFile("/afs/cern.ch/work/e/emanuele/public/monox/leptonsf/eff_eleID_nontrigMVA_WP80_ICHEP16.root"),
-                     ROOT.TFile("/afs/cern.ch/work/e/emanuele/public/monox/leptonsf/eff_eleID_nontrigMVA_WP90_ICHEP16.root") ]
+        self.f_el = [ROOT.TFile("/afs/cern.ch/work/e/emanuele/public/monox/leptonsf/eff_eleID_CutsID_Medium_ICHEP16.root"),
+                     ROOT.TFile("/afs/cern.ch/work/e/emanuele/public/monox/leptonsf/eff_eleID_CutsID_Veto_ICHEP16.root") ]
         self.f_mu = [ROOT.TFile("/afs/cern.ch/work/e/emanuele/public/monox/leptonsf/eff_muID_medium_ICHEP16.root"),
                      ROOT.TFile("/afs/cern.ch/work/e/emanuele/public/monox/leptonsf/eff_muID_loose_ICHEP16.root") ]
         self.evtSel = EventVarsMonojet()
