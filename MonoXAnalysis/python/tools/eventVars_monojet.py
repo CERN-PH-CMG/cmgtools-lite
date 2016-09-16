@@ -12,6 +12,12 @@ class EventVarsMonojet:
         self.branches = [ "nMu10V", "nMu20T", "nEle10V", "nEle40T", "nTau18V", "nGamma15V", "nGamma175T", "nBTag15",
                           "dphijj", "dphijm", "weight", "events_ntot", "phmet_pt", "phmet_phi","SF_BTag"
                           ]
+        vbfHiggsToInvVars = [ "dphijmAllJets", "vbfTaggedJet_deltaEta", "vbfTaggedJet_invMass", 
+                              "vbfTaggedJet_leadJetPt", "vbfTaggedJet_trailJetPt", "vbfTaggedJet_leadJetEta", "vbfTaggedJet_trailJetEta" 
+                              ]  
+        # number of VBF tagged jets, pt > 30, |eta| < 4.7; 
+        # dPhi(jet,MET) using all jets, not just the leading 4
+        self.branches = self.branches + vbfHiggsToInvVars
         btagreweight = BTagReweight74X()
         self._btagreweight = (btagreweight() if type(btagreweight) == types.FunctionType else btagreweight)
         self._btagreweight.btag = "btagCSV"
@@ -132,6 +138,7 @@ class EventVarsMonojet:
             jetret[jfloat] = []
         dphijj = 999
         dphijm = 999
+        dphijmAllJets = 999
         ijc = 0
         nAllJets30 = 0
         for idx in ret["iJ"]:
@@ -146,10 +153,12 @@ class EventVarsMonojet:
                 if ijc==1 and jet._central: dphijj = deltaPhi(alljets[ret["iJ"][0]].phi,jet.phi)
                 ijc += 1
             # use both central and fwd jets to compute deltaphi(jet,met)_min
+            dphijmAllJets = min(dphijmAllJets,abs(deltaPhi(jet.phi,metphi))) 
             if nAllJets30 < 5: dphijm = min(dphijm,abs(deltaPhi(jet.phi,metphi)))
         ret["nJetClean"] = nJetCleanCentral
         ret['dphijj'] = dphijj
         ret['dphijm'] = dphijm
+        ret['dphijmAllJets'] = dphijmAllJets 
         # 5. compute the sums 
         ret["nJetClean30"] = 0
         ret["nBTag15"] = 0
@@ -163,6 +172,34 @@ class EventVarsMonojet:
                 if j.btagCSV > 0.800:
                     ret["nBTag15"] += 1
 
+        ret["vbfTaggedJet_deltaEta"] = -1
+        ret["vbfTaggedJet_invMass"] = -1
+        ret["vbfTaggedJet_leadJetPt"] = -1
+        ret["vbfTaggedJet_trailJetPt"] = -1
+        ret["vbfTaggedJet_leadJetEta"] = 999
+        ret["vbfTaggedJet_trailJetEta"] = 999
+        DeltaEtaMax = -1 
+        for i in alljets:
+            for j in alljets:
+                if i.pt < j.pt: continue   # this way we sort by pt and avoid self or double counting
+                if not i._clean or not j._clean: continue
+                if i.pt < 70 or j.pt < 70: continue
+                if i.eta*j.eta > 0: continue
+                DeltaEta = abs(i.eta - j.eta)
+                if DeltaEta > DeltaEtaMax:
+                    DeltaEtaMax = DeltaEta
+                    jet1 = ROOT.TLorentzVector()
+                    jet1.SetPtEtaPhiM(i.pt,i.eta,i.phi,0)
+                    jet2 = ROOT.TLorentzVector()
+                    jet2.SetPtEtaPhiM(j.pt,j.eta,j.phi,0)
+                    jet1plus2 = jet1 + jet2
+                    ret["vbfTaggedJet_invMass"] = jet1plus2.Mag()
+                    ret["vbfTaggedJet_leadJetPt"] = jet1.Pt()
+                    ret["vbfTaggedJet_trailJetPt"] = jet2.Pt()
+                    ret["vbfTaggedJet_leadJetEta"] = jet1.Eta()
+                    ret["vbfTaggedJet_trailJetEta"] =jet2.Eta()
+                    ret["vbfTaggedJet_deltaEta"] = DeltaEtaMax
+                
         ret["SF_BTag"] = self.BTagEventReweight(lowptjets) if event.run == 1 else 1.0
 
         ### fat-jet cleaning

@@ -50,6 +50,7 @@ if __name__ == "__main__":
 	
 	tocopy = []
 	for d in dsets:
+            print d
 	    if eostools.isFile(d): raise RuntimeError, 'File found in local directory.'
 	    if '%s/%s/%s'%(locdir,d,options.treeproducername) not in eostools.ls(locdir+'/'+d): raise RuntimeError, 'Tree producer sub-directory not found.'
 	    fname = locdir+'/'+d+'/'+options.treeproducername+'/'+options.treename
