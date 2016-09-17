@@ -21,8 +21,8 @@ mm = maker.Maker(base, args, options)
 tmp = "--tmpdir "+options.tmpdir if options.tmpdir else ""
 gen = "--gen" if options.gen else ""
 if options.gen:
-	gen += " --pdgId1 %d"%options.pdgId1 if options.pdgId1
-	gen += " --pdgId2 %d"%options.pdgId2 if options.pdgId2
+	gen += " --pdgId1 %d"%options.pdgId1 if options.pdgId1 else ""
+	gen += " --pdgId2 %d"%options.pdgId2 if options.pdgId2 else ""
 
 ## split tree per mass (parallel splitting)
 if options.minmass and options.maxmass and options.step:
