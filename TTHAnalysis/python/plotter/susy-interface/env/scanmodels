@@ -1,0 +1,48 @@
+
+BEGIN::TChiNeuWH
+	filelist:=susy-scanmaker/list_TChiNeuWH.txt
+	xsec:=susy-scanmaker/xsec_ChiNeu.txt
+    q2acc:=susy-scanmaker/q2acc_TChiNeuWH_3l.root,sig_TChiNeuWH_[m1]_[m2]_Q2Acc_[var]
+	corr:=0.03634/1000.
+ENDDEF
+
+BEGIN::TChiNeuWZ
+	filelist:=susy-scanmaker/list_TChiNeuWZ.txt
+	xsec:=susy-scanmaker/xsec_ChiNeu.txt
+    q2acc:=susy-scanmaker/q2acc_TChiNeuWZ_3l.root,sig_TChiNeuWZ_[m1]_[m2]_Q2Acc_[var]
+	corr:=0.10099/1000.
+ENDDEF
+
+BEGIN::TChiNeuWZ_SOS
+	filelist:=susy-scanmaker/list_TChiNeuWZ_SOS.txt
+	xsec:=susy-scanmaker/xsec_ChiNeu.txt
+    q2acc:=
+	corr:=0.10099/1000.
+ENDDEF
+
+BEGIN::TChiNeuSlepSneu_FD
+	filelist:=susy-scanmaker/list_TChiNeuSlepSneuFD.txt
+	xsec:=susy-scanmaker/xsec_ChiNeu.txt
+    q2acc:=susy-scanmaker/q2acc_TChiNeuSlepSneu_FD_3l.root,sig_TChiNeuSlepSneu_FD_[m1]_[m2]_Q2Acc_[var]
+	corr:=0.5/1000.
+ENDDEF
+
+BEGIN::TChiNeuSlepSneu_05
+	filelist:=susy-scanmaker/list_TChiNeuSlepSneu05.txt
+	xsec:=susy-scanmaker/xsec_ChiNeu.txt
+    q2acc:=susy-scanmaker/q2acc_TChiNeuSlepSneu_05_3l.root,sig_TChiNeuSlepSneu_05_[m1]_[m2]_Q2Acc_[var]
+	corr:=0.5/1000.
+ENDDEF
+
+BEGIN::TChiNeuSlepSneu_TD
+	filelist:=susy-scanmaker/list_TChiNeuSlepSneuTD.txt
+	xsec:=susy-scanmaker/xsec_ChiNeu.txt
+    q2acc:=susy-scanmaker/q2acc_TChiNeuSlepSneu_TD_3l.root,sig_TChiNeuSlepSneu_TD_[m1]_[m2]_Q2Acc_[var]
+	corr:=1.0/1000.
+ENDDEF
+
+BEGIN::T2tt_SOS
+ 	filelist:=susy-scanmaker/list_T2ttDiLep.txt
+ 	xsec:=susy-scanmaker/xsec_T2tt.txt
+ 	corr:=0.105/1000.
+ENDDEF

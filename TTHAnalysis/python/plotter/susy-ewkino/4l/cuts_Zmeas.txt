@@ -1,5 +1,0 @@
-alwaystrue: 1
-noTaus    : countTaus(4, LepSel1_pdgId, LepSel2_pdgId, LepSel3_pdgId, LepSel4_pdgId) == 0
-pt        : LepSel1_pt > 20 && LepSel2_pt > 10 && LepSel3_pt > 5 && LepSel4_pt > 5
-SRevent   : allTight(4, LepSel1_isTight, LepSel2_isTight, LepSel3_isTight, LepSel4_isTight)
-mass      : mll > 60 && mll < 120

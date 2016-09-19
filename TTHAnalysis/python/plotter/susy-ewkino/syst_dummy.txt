@@ -1,5 +1,0 @@
-rares : Rares|ttW|ttH|ttZ|Gstar|WWss : .* : 1.40
-WZ :   WZ : .* : 1.20
-fakes : TT|Convs|DY|SingleTop|WW : .* : 1.30
-flips : Flips : .* : 1.30
-sig :  TChiNeuSlepSneu.* : .* : 1.20

@@ -499,7 +499,7 @@ def _susy2lss_lepConePt1015(lep):
 def _susy2lss_lepId_loosestFO(lep):
     if not _susy2lss_lepId_CBloose(lep): return False
     if abs(lep.pdgId) == 13:
-        return lep.mediumMuonId > 0 and lep.tightCharge > 0
+        return lep.mediumMuonID2016 > 0 and lep.tightCharge > 0
     elif abs(lep.pdgId) == 11:
         return (lep.convVeto and lep.tightCharge > 1 and lep.lostHits == 0)
     return False
@@ -537,7 +537,7 @@ def _susy2lss_lepId_CB(lep):
     if not _susy2lss_lepId_CBloose(lep): return False
     if not _susy2lss_lepId_IPcuts(lep): return False
     if abs(lep.pdgId) == 13:
-        return lep.mediumMuonId > 0 and lep.tightCharge > 0
+        return lep.mediumMuonID2016 > 0 and lep.tightCharge > 0
     elif abs(lep.pdgId) == 11:
         if not (lep.convVeto and lep.tightCharge > 1 and lep.lostHits == 0): 
             return False

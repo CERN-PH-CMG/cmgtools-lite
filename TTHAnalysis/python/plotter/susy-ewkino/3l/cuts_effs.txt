@@ -1,8 +1,10 @@
-denominator       : 1
->=3 loose leptons : nLepGood >= 3
-3 tight leptons   : nTriples == 1 && isTight
-categ             : categ == 1
-# && nT_Loop == 0
-dilepton triggers : Triggers_ee || Triggers_mm || Triggers_em
-bJetVeto          : nBJetMedium25 == 0
-met               : met_pt > 50
+alwaystrue: 1
+3l        : nLepSel >= 3 && allTight(3, LepSel_isTight[0], LepSel_isTight[1], LepSel_isTight[2]) && is_3l
+4thlepton : LepSel4_isTight == 0
+convveto  : (minMllSFOS_Mini > 12 || minMllSFOS_Mini==-1) && ((BR != 1 && BR != 3) || abs(m3L-91) > 15)
+bJetVeto  : nBJetMedium25 == 0
+met       : met_pt > 50
+mll       : mll_3l < 75
+#mT        : mT_3l > 120
+mT2       : mT2L_3l < 100
+event     : BR > 0

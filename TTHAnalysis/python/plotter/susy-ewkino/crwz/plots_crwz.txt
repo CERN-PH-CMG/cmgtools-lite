@@ -68,4 +68,4 @@ SR_old_log : SR_ewk_ss2l(nJet40,LepGood1_pt,LepGood1_phi, LepGood2_pt,LepGood2_p
 SR :   SR_ewk_ss2l(nJet40,LepGood1_pt,LepGood1_phi, LepGood2_pt,LepGood2_phi, met_pt,met_phi):  25,0.5,25.5; XTitle="SR (SSDL)"
 SR_log : SR_ewk_ss2l(nJet40,LepGood1_pt,LepGood1_phi, LepGood2_pt,LepGood2_phi, met_pt,met_phi)  :  25,0.5,25.5; XTitle="SR", Logy
 
-SR_3l_light : SR(nLepSel, countTaus(nLepSel, LepSel1_pdgId, LepSel2_pdgId, LepSel3_pdgId), nOSSF_3l, nOSLF_3l, mT2L_3l, mT2T_3l, mll_3l, mT_3l, met_pt)   : 42,0.5,42.5 ; XTitle="Signal Region"  , Wide=True, Legend="TR", IncludeOverflows=False, LegendCutoff=1e-5 #with --load-macro susy-ewkino/3l/functions3L.cc
+SR_3l_light : SR(nLepSel, countTaus(nLepSel, LepSel1_pdgId, LepSel2_pdgId, LepSel3_pdgId), nOSSF_3l, nOSLF_3l, mT2L_3l, mT2T_3l, mll_3l, mT_3l, met_pt)   : 42,0.5,42.5 ; XTitle="Signal Region"  , Wide=True, Legend="TR", IncludeOverflows=False, LegendCutoff=1e-5 #with --load-macro susy-ewkino/3l/functionsEWK.cc
