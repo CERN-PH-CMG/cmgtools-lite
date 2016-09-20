@@ -95,6 +95,12 @@ def replaceInFile(path, search, replace):
 	f.write(lines)
 	f.close()
 
+def splitList(thelist, separator = ";"):
+	result = []
+	for element in thelist:
+		result.extend(element.split(";"))
+	return result
+
 def timestamp(readable = True):
 	if readable:
 		return datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")

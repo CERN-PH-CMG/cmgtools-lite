@@ -1,4 +1,6 @@
 BEGIN::3lA
+  expr         := SR
+  bins         := 36,0.5,36.5
   mcafile      :=
   cutfile      :=
   plotfile     :=
@@ -6,7 +8,7 @@ BEGIN::3lA
   bkgs        +:= fakes_appldata;promptsub;prompt_.*;rares_.*;convs
   sigs        +:= _sig_TChiNeu_WZ_.*;_sig_TChiNeu_WH_.*;_sig_TChiNeu_SlepSneu_FD_.*
   weight       := 
-  flags       +:= -A alwaystrue BRcut 'BR==1' 
+  flags       +:= -A 3l BRcut 'BR == 1' 
   flagsDumps  +:=
   flagsEffs   +:=
   flagsLimits +:=
@@ -22,6 +24,8 @@ BEGIN::3lA
 ENDDEF
 
 BEGIN::3lB
+  expr         := SR-36
+  bins         := 6,0.5,6.5
   mcafile      :=
   cutfile      :=
   plotfile     :=
@@ -29,7 +33,7 @@ BEGIN::3lB
   bkgs        +:= fakes_appldata;promptsub;prompt_.*;rares_.*;convs
   sigs        +:= _sig_TChiNeu_WH_.*;_sig_TChiNeu_SlepSneu_TE_.*;_sig_TChiNeu_SlepSneu_TD_.*
   weight       := 
-  flags       +:= -A alwaystrue BRcut 'BR==2' 
+  flags       +:= -A 3l BRcut 'BR == 2' 
   flagsDumps  +:=
   flagsEffs   +:=
   flagsLimits +:=
@@ -45,6 +49,8 @@ BEGIN::3lB
 ENDDEF
 
 BEGIN::3lC
+  expr         := SR-42
+  bins         := 14,0.5,14.5
   mcafile      :=
   cutfile      :=
   plotfile     :=
@@ -52,7 +58,7 @@ BEGIN::3lC
   bkgs        +:= fakes_appldata;promptsub;prompt_.*;rares_.*;convs
   sigs        +:= _sig_TChiNeu_WH_.*;_sig_TChiNeu_SlepSneu_TE_.*;_sig_TChiNeu_SlepSneu_TD_.*
   weight       := 
-  flags       +:= -A alwaystrue BRcut 'BR==3' 
+  flags       +:= -A 3l BRcut 'BR == 3' 
   flags       +:= -R trigger trigger2T '!isData || Triggers_2l || Triggers_2t'
   flagsDumps  +:=
   flagsEffs   +:=
@@ -69,6 +75,8 @@ BEGIN::3lC
 ENDDEF
 
 BEGIN::3lD
+  expr         := SR-56
+  bins         := 14,0.5,14.5
   mcafile      :=
   cutfile      :=
   plotfile     :=
@@ -76,7 +84,7 @@ BEGIN::3lD
   bkgs        +:= fakes_appldata;promptsub;prompt_.*;rares_.*;convs
   sigs        +:= _sig_TChiNeu_WH_.*;_sig_TChiNeu_SlepSneu_TE_.*;_sig_TChiNeu_SlepSneu_TD_.*
   weight       := 
-  flags       +:= -A alwaystrue BRcut 'BR==4' 
+  flags       +:= -A 3l BRcut 'BR == 4' 
   flags       +:= -R trigger trigger2T '!isData || Triggers_2l || Triggers_2t'
   flagsDumps  +:=
   flagsEffs   +:=
@@ -93,6 +101,8 @@ BEGIN::3lD
 ENDDEF
 
 BEGIN::3lE
+  expr         := SR-70
+  bins         := 10,0.5,10.5
   mcafile      :=
   cutfile      :=
   plotfile     :=
@@ -100,7 +110,7 @@ BEGIN::3lE
   bkgs        +:= fakes_appldata;promptsub;prompt_.*;rares_.*;convs
   sigs        +:= _sig_TChiNeu_WH_.*;_sig_TChiNeu_SlepSneu_TE_.*;_sig_TChiNeu_SlepSneu_TD_.*
   weight       := 
-  flags       +:= -A alwaystrue BRcut 'BR==5' 
+  flags       +:= -A 3l BRcut 'BR == 5' 
   flags       +:= -R trigger trigger2T '!isData || Triggers_2l || Triggers_2t'
   flagsDumps  +:=
   flagsEffs   +:=
@@ -117,6 +127,8 @@ BEGIN::3lE
 ENDDEF
 
 BEGIN::3lF
+  expr         := SR-80
+  bins         := 8,0.5,8.5
   mcafile      :=
   cutfile      :=
   plotfile     :=
@@ -124,7 +136,7 @@ BEGIN::3lF
   bkgs        +:= fakes_appldata;promptsub;prompt_.*;rares_.*;convs
   sigs        +:= _sig_TChiNeu_SlepSneu_TD_.*
   weight       := 
-  flags       +:= -A alwaystrue BRcut 'BR==6' 
+  flags       +:= -A 3l BRcut 'BR == 6' 
   flags       +:= -R trigger trigger2T '!isData || Triggers_2l || Triggers_2tt'
   flags       +:= -A sanity tigherpteta 'abs(LepSel1_eta)<2.1 && abs(LepSel2_eta)<2.1 && abs(LepSel3_eta)<2.1' 
   flags       +:= -A sanity tighterpt '(abs(LepSel1_pdgId)==11 && LepSel1_pt>30) || (abs(LepSel1_pdgId)==13 && LepSel1_pt>25) || (abs(LepSel2_pdgId)==11 && LepSel2_pt>30) || (abs(LepSel2_pdgId)==13 && LepSel2_pt>25) || (abs(LepSel3_pdgId)==11 && LepSel3_pt>30) || (abs(LepSel3_pdgId)==13 && LepSel3_pt>25)'
@@ -144,6 +156,8 @@ BEGIN::3lF
 ENDDEF
 
 BEGIN::4lG
+  expr         := SR-88
+  bins         := 4,0.5,4.5
   mcafile      := susy-ewkino/4l/mca_ewkino.txt
   cutfile      := susy-ewkino/4l/cuts_ewkino.txt
   plotfile     :=
@@ -151,7 +165,7 @@ BEGIN::4lG
   bkgs        +:= fakes_appldata;promptsub;prompt_.*;rares_.*;convs
   sigs        +:= _sig_TNeuNeu_ZZ_.*;_sig_TNeuNeu_HZ_.*;_sig_TNeuNeu_HH_.*
   weight       := puw2016_nInt_12p9fb(nTrueInt)*triggerSF(BR, LepSel_pt[0], LepSel_pdgId[0], LepSel_pt[1], LepSel_pdgId[1], LepSel_pt[2], LepSel_pdgId[2])*leptonSF(getLeptonSF(LepSel_pt[0], LepSel_eta[0], LepSel_pdgId[0]), getLeptonSF(LepSel_pt[1], LepSel_eta[1], LepSel_pdgId[1]), getLeptonSF(LepSel_pt[2], LepSel_eta[2], LepSel_pdgId[2]), getLeptonSF(LepSel_pt[3], LepSel_eta[3], LepSel_pdgId[3]))*eventBTagSF
-  flags       +:= -A alwaystrue BRcut 'BR==7' 
+  flags       +:= -A 3l BRcut 'BR == 7' 
   flagsDumps  +:=
   flagsEffs   +:=
   flagsLimits +:=
@@ -167,6 +181,8 @@ BEGIN::4lG
 ENDDEF
 
 BEGIN::4lH
+  expr         := SR-92
+  bins         := 4,0.5,4.5
   mcafile      := susy-ewkino/4l/mca_ewkino.txt
   cutfile      := susy-ewkino/4l/cuts_ewkino.txt
   plotfile     :=
@@ -174,7 +190,7 @@ BEGIN::4lH
   bkgs        +:= fakes_appldata;promptsub;prompt_.*;rares_.*;convs
   sigs        +:= _sig_TNeuNeu_ZZ_.*;_sig_TNeuNeu_HZ_.*;_sig_TNeuNeu_HH_.*
   weight       := puw2016_nInt_12p9fb(nTrueInt)*triggerSF(BR, LepSel_pt[0], LepSel_pdgId[0], LepSel_pt[1], LepSel_pdgId[1], LepSel_pt[2], LepSel_pdgId[2])*leptonSF(getLeptonSF(LepSel_pt[0], LepSel_eta[0], LepSel_pdgId[0]), getLeptonSF(LepSel_pt[1], LepSel_eta[1], LepSel_pdgId[1]), getLeptonSF(LepSel_pt[2], LepSel_eta[2], LepSel_pdgId[2]), getLeptonSF(LepSel_pt[3], LepSel_eta[3], LepSel_pdgId[3]))*eventBTagSF
-  flags       +:= -A alwaystrue BRcut 'BR==8' 
+  flags       +:= -A 3l BRcut 'BR == 8' 
   flagsDumps  +:=
   flagsEffs   +:=
   flagsLimits +:=
@@ -190,6 +206,8 @@ BEGIN::4lH
 ENDDEF
 
 BEGIN::4lI
+  expr         := SR-96
+  bins         := 4,0.5,4.5
   mcafile      := susy-ewkino/4l/mca_ewkino.txt
   cutfile      := susy-ewkino/4l/cuts_ewkino.txt
   plotfile     :=
@@ -197,7 +215,7 @@ BEGIN::4lI
   bkgs        +:= fakes_appldata;promptsub;prompt_.*;rares_.*;convs
   sigs        +:= _sig_TNeuNeu_ZZ_.*;_sig_TNeuNeu_HZ_.*;_sig_TNeuNeu_HH_.*
   weight       := puw2016_nInt_12p9fb(nTrueInt)*triggerSF(BR, LepSel_pt[0], LepSel_pdgId[0], LepSel_pt[1], LepSel_pdgId[1], LepSel_pt[2], LepSel_pdgId[2])*leptonSF(getLeptonSF(LepSel_pt[0], LepSel_eta[0], LepSel_pdgId[0]), getLeptonSF(LepSel_pt[1], LepSel_eta[1], LepSel_pdgId[1]), getLeptonSF(LepSel_pt[2], LepSel_eta[2], LepSel_pdgId[2]), getLeptonSF(LepSel_pt[3], LepSel_eta[3], LepSel_pdgId[3]))*eventBTagSF
-  flags       +:= -A alwaystrue BRcut 'BR==8' 
+  flags       +:= -A 3l BRcut 'BR == 8' 
   flagsDumps  +:=
   flagsEffs   +:=
   flagsLimits +:=

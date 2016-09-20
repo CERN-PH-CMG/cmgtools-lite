@@ -28,6 +28,7 @@ class ttHLepSkimmer( Analyzer ):
         self.readCollections( event.input )
         self.counters.counter('events').inc('all events')
 
+        taus = event.selectedTaus
         
         leptons = []
         for lep, ptCut in zip(event.selectedLeptons, self.ptCuts):
@@ -44,6 +45,8 @@ class ttHLepSkimmer( Analyzer ):
             ret = False
         if ret and self.requireSameSignPair:
             ret = any([l1.charge()==l2.charge() for l1,l2 in itertools.combinations(leptons,2)])
+        if self.cfg_ana.allowLepTauComb and len(leptons)==1 and len(taus)>=1:
+            ret = True
 
         if ret: self.counters.counter('events').inc('accepted events')
         return ret

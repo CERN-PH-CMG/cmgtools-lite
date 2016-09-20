@@ -232,7 +232,8 @@ ttHLepSkim = cfg.Analyzer(
     maxLeptons = 999,
     #idCut  = "lepton.relIso03 < 0.2" # can give a cut
     #ptCuts = [20,10],                # can give a set of pt cuts on the leptons
-    requireSameSignPair = False
+    requireSameSignPair = False,
+    allowLepTauComb = False
     )
 
 ## Photon Analyzer (generic)

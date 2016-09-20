@@ -1,4 +1,4 @@
-import os
+import os, copy
 from string import Formatter
 from functions import *
 from custom import *
@@ -8,11 +8,6 @@ def addMakerOptions(parser):
 	parser.add_option("-o"       , "--out"        , dest="outname", type="string", default=None, help="Name of the production, default is name of config.") 
 	parser.add_option("-q"       , "--queue"      , dest="queue"  , type="string", default=None, help="Submit jobs to batch system queue")
 	parser.add_option("--flags"  , dest="flags"   , type="string" , action="append", default=[], help="Give additional strings to be added to the final command")
-	parser.add_option("--flagsDumps" , dest="flagsDumps" , type="string" , action="append", default=[], help="Give additional strings to be added to the final command (only dumpmaker)")
-	parser.add_option("--flagsEffs"  , dest="flagsEffs"  , type="string" , action="append", default=[], help="Give additional strings to be added to the final command (only effmaker)")
-	parser.add_option("--flagsLimits", dest="flagsLimits", type="string" , action="append", default=[], help="Give additional strings to be added to the final command (only limitmaker)")
-	parser.add_option("--flagsPlots" , dest="flagsPlots" , type="string" , action="append", default=[], help="Give additional strings to be added to the final command (only plotmaker)")
-	parser.add_option("--flagsScans" , dest="flagsScans" , type="string" , action="append", default=[], help="Give additional strings to be added to the final command (only scanmaker)")
 	parser.add_option("--mca"    , dest="mcafile" , type="string" , default=None, help="Overwrite the mca file from the config");
 	parser.add_option("--cuts"   , dest="cutfile" , type="string" , default=None, help="Overwrite the cuts file from the config");
 	parser.add_option("--plot"   , dest="plotfile", type="string" , default=None, help="Overwrite the plots file from the config");
@@ -29,6 +24,15 @@ def addMakerOptions(parser):
 	parser.add_option("-p", "--procs" , dest="procs" , type="string" , action="append", default=[], help="Overwrite both bkgs and sigs from the region")
 	parser.add_option("-W", "--weight", dest="weight", type="string" , default=None, help="Overwrite the weight expression")
 	return parser
+
+def splitLists(options):
+	options.flags  = splitList(options.flags )
+	options.mccs   = splitList(options.mccs  )
+	options.macros = splitList(options.macros)
+	options.bkgs   = splitList(options.bkgs  )
+	options.sigs   = splitList(options.sigs  )
+	options.procs  = splitList(options.procs )
+	return options
 
 class Maker():
 	def __init__(self, base, args, options):
@@ -47,16 +51,13 @@ class Maker():
 		self.use = {}
 		self.base = base
 		self.parseBase()
-		configs = Collection(self.dir+"/env/configs")
-		regions = Collection(self.dir+"/env/regions")
-		self.config  = configs.get(args[0])
-		self.region  = regions.get(args[1])
+		configsC = Collection(self.dir+"/env/configs")
+		self.config  = configsC.get(args[0])
+		self.loadRegions(args[1])
 		self.treedir = args[2].rstrip("/")
 		self.outdir  = args[3].rstrip("/")
 		self.options = options
-		self.updateConfig()
-		self.updateRegion()
-	def collectFlags(self, additionals = "", useWeight = True):
+	def collectFlags(self, additionals = "", useWeight = True, isFastSim = False):
 		if not hasattr(self, "flags"): 
 			self.flags = self.config.flags
 			self.flags.extend(self.region.flags)
@@ -64,9 +65,11 @@ class Maker():
 			self.flags.extend(getattr(self.config , additionals, []))
 			self.flags.extend(getattr(self.region , additionals, []))
 			self.flags.extend(getattr(self.options, additionals, []))
-			if useWeight and self.getVariable("weight"): self.flags.append("-W '"+self.getVariable("weight")+"'")
-			self.flags = filter(lambda x: x, self.flags)
-		return " ".join(self.flags)
+		theflags = copy.deepcopy(self.flags)
+		weight   = self.getWeight(isFastSim)
+		if useWeight and weight: theflags.append("-W '"+weight+"'")
+		theflags = filter(lambda x: x, theflags)
+		return " ".join(theflags)
 	def collectFriends(self):
 		return " ".join(self.getFriends())
 	def collectMacros(self):
@@ -77,8 +80,10 @@ class Maker():
 		use = self.config.mccs
 		if len(self.options.mccs)>0: use = self.options.mccs
 		return " ".join(["--mcc "+m for m in use])
+	def collectProcs(self):
+		return " ".join(["-p "+p for p in self.getProcs()])
 	def getAllProcs(self):
-		regprocs  = ["data"] + m.region.bkgs + m.region.sigs
+		regprocs  = ["data"] + self.region.bkgs + self.region.sigs
 		pfull, s  = self.getStuffFromMCA()
 		procs = []
 		for pname in pfull:
@@ -93,8 +98,20 @@ class Maker():
 		for p in puse:
 			samples.extend(s[p])
 		return samples
+	def getBkgs(self):
+		procs = self.region.bkgs
+		if len(self.options.bkgs)>0: procs = self.options.bkgs
+		return procs
 	def getExprCut(self):
 		return getCut(self.config.firstCut, self.getVariable("expr"), self.getVariable("bins"))
+	def getFriendConn(self, module):
+		if module in self.friendConn.keys():
+			return self.friendConn[module]
+		return []
+	def getFriendFile(self, module):
+		if module in self.friendFile.keys():
+			return self.friendFile[module]
+		return ""
 	def getFriends(self):
 		friends = []
 		friends += ["-F sf/t {P}/"+f+"/evVarFriend_{cname}.root" for f in self.config.sfriends]
@@ -111,6 +128,22 @@ class Maker():
 			fm.append(ffm)
 			fs.append(self.treedir +"/"+ ffm)
 		return fs, fm	
+	def getNEvtSample(self, sample):	
+		samples = [l[0] for l in self.nevts]
+		if sample in samples:
+			return self.nevts[samples.index(sample)][1]
+		filtered = filter(lambda x: x[0].find(sample)>-1, self.nevts)
+		if len(filtered)>0:
+			return str(max([int(l[1]) for l in filtered]))
+		return "50000"
+	def getProcs(self):
+		procs = self.getBkgs() + self.getSigs()
+		if len(self.options.procs)>0: procs = self.options.procs
+		return self.options.procs
+	def getSigs(self):
+		procs = self.region.sigs
+		if len(self.options.sigs)>0: procs = self.options.sigs
+		return procs
 	def getStuffFromMCA(self):
 		procs   = []
 		samples = {}
@@ -134,31 +167,77 @@ class Maker():
 			if not pname in procs: procs.append(pname)
 			samples[pname].append(field[1])
 		return procs, samples
-	def getScenario(self):
+	def getScenario(self, perRegion=False):
+		if perRegion and hasattr(self, "region"): return self.getScenario(False)+"/"+self.region.name
 		return self.options.outname if self.options.outname else self.config.name
 	def getVariable(self, var):
 		if var in self.use.keys(): return self.use[var]
 		if hasattr(self.options, var) and getattr(self.options, var): return getattr(self.options, var)
-		if hasattr(self.region , var) and getattr(self.region , var): return getattr(self.region , var)
+		if hasattr(self, "model" ) and hasattr(self.model  , var) and getattr(self.model  , var): return getattr(self.model  , var)
+		if hasattr(self, "region") and hasattr(self.region , var) and getattr(self.region , var): return getattr(self.region , var)
 		if hasattr(self.config , var) and getattr(self.config , var): return getattr(self.config , var)
 		return None
+	def getWeight(self, isFastSim = False):
+		weight = None
+		if               self.getVariable("weight"  ): weight =  self.getVariable("weight")
+		if isFastSim and self.getVariable("weightFS"): 
+			if weight: weight = "("+weight+")*("+self.getVariable("weightFS")+")"
+			else     : weight = self.getVariable("weightFS")
+		return weight
+	def iterateModel(self):
+		if not hasattr(self, "modelIdx"): self.modelIdx = -1
+		self.modelIdx += 1
+		self.model = self.models[self.modelIdx]
+	def resetModel(self):
+		self.modelIdx = -1
+	def iterateRegion(self):
+		if not hasattr(self, "regionIdx"): self.regionIdx = -1
+		self.regionIdx += 1
+		self.region = self.regions[self.regionIdx]
+	def loadFriendConn(self):
+		friendConn = [l.rstrip("\n").strip() for l in open(self.dir+"/env/friendconn" , "r").readlines()]
+		friendConn = filter(lambda x: x, friendConn)
+		self.friendConn = {}
+		self.friendFile = {}
+		for entry in [s.split(":") for s in friendConn]:
+			if len(entry)==3:
+				self.friendConn[entry[0].strip()] = [s.strip() for s in entry[2].split(";")]
+				self.friendFile[entry[0].strip()] = entry[1].strip()
+			else:
+				self.friendConn[entry[0].strip()] = []
+				self.friendFile[entry[0].strip()] = ""
+	def loadNEvtSample(self):
+		nevts      = [l.rstrip("\n").strip() for l in open(self.dir+"/env/nevtsamples", "r").readlines()]		
+		nevts      = filter(lambda x: x, nevts)
+		self.nevts = [l.split() for l in nevts]
+	def loadModels(self):
+		allmodels = Collection(self.dir+"/env/models")
+		if len(self.options.models)==0: self.options.models = allmodels.getAllNames()
+		self.models = [allmodels.get(m) for m in self.options.models]
+	def loadRegions(self, arg):
+		allregions = Collection(self.dir+"/env/regions")
+		self.regions = [allregions.get(a) for a in arg.split(";")]
 	def parseBase(self):
 		self.keys = filter(lambda x: x, [i[1] for i in Formatter().parse(self.base)])
 	def reloadBase(self, newbase):
 		self.base = newbase
 		self.parseBase()
-	def submit(self, args):
+	def makeCmd(self, args):
 		if len(args) != len(self.keys): 
 			print "error, not all arguments given"
-			return
+			return -1
 		dict = {}
 		for i,k in enumerate(self.keys):
 			dict[k] = args[i]
-		cmd = self.base.format(**dict)
+		return self.base.format(**dict)
+	def submit(self, args, setHold = -1, needHold = False):
+		cmd = self.makeCmd(args)
+		self.submitCmd(cmd, setHold, needHold)
+	def submitCmd(self, cmd, setHold = -1, needHold = False):
 		if self.options.pretend: 
 			print cmd
-			return
-		self.submitJob("maker", [cmd], self.options.queue)
+			return -1
+		return self.submitJob("maker", [cmd], self.options.queue, setHold, needHold)
 	def submitJob(self, name, commands, queue, setHold = -1, needHold = False):
 		script = self.srcpath + "/submitJob_" + name + ".sh"
 		runner = "lxbatch_runner.sh"
@@ -189,13 +268,6 @@ class Maker():
 		else:
 			jobId = int(jobLine.split()[1].strip("<").strip(">"))
 		return jobId
-	def updateConfig(self):
-		return self.config
-	def updateRegion(self):
-		if len(self.options.procs)>0: self.region.procs = self.options.procs
-		if len(self.options.bkgs )>0: self.region.bkgs  = self.options.bkgs
-		if len(self.options.sigs )>0: self.region.sigs  = self.options.sigs
-		return self.region
 	def useVar(self, key, value):
 		self.use[key] = value
 	

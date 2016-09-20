@@ -24,29 +24,36 @@ base = "python skimTrees.py {MCA} {CUTS} {O} -P {T} --tree {TREENAME} -j 4 {MCCS
 baseFriends = "python skimFTrees.py {T} {F} {O}" 
 
 (options, args) = parser.parse_args()
-mm = maker.Maker(base, args, options)
+options         = maker.splitLists(options)
+options.samples = func.splitList(options.samples)
+mm              = maker.Maker(base, args, options)
 
 ## skim main tree
 friends = mm.collectFriends()	
 mccs    = mm.collectMCCs   ()
 macros  = mm.collectMacros ()	
-mca     = makeDummyMCA(mm, options.samples, options.allSamples)
 
-output = mm.outdir
-func.mkdir(output)
-json = options.json if options.json else ""
+for r in range(len(mm.regions)):
+	mm.iterateRegion()
+	mm.reloadBase(base)
 
-base = "python skimTrees.py {MCA} {CUTS} {O} -P {T} --tree {TREENAME} -j 4 {MCCS} {MACROS} {FRIENDS} {JSON}"
-mm.submit([mca, mm.getVariable("cutfile"), output, mm.treedir, options.treename, mccs, macros, friends, json])
-
-## skim friend trees
-mm.reloadBase(baseFriends)
-fs, fm = mm.getFriendLocations()
-
-for i,f in enumerate(fs):
-
-	#output = mm.outdir+"/"+fm[i]
+	mca     = makeDummyMCA(mm, options.samples, options.allSamples)
+	
+	output = mm.outdir
 	func.mkdir(output)
-
-	mm.submit([mm.outdir, f, mm.outdir])
+	json = options.json if options.json else ""
+	
+	base = "python skimTrees.py {MCA} {CUTS} {O} -P {T} --tree {TREENAME} -j 4 {MCCS} {MACROS} {FRIENDS} {JSON}"
+	mm.submit([mca, mm.getVariable("cutfile"), output, mm.treedir, options.treename, mccs, macros, friends, json])
+	
+	## skim friend trees
+	mm.reloadBase(baseFriends)
+	fs, fm = mm.getFriendLocations()
+	
+	for i,f in enumerate(fs):
+	
+		#output = mm.outdir+"/"+fm[i]
+		func.mkdir(output)
+	
+		mm.submit([mm.outdir, f, mm.outdir])
 
