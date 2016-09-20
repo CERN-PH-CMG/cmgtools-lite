@@ -3,7 +3,7 @@ from PhysicsTools.Heppy.analyzers.core.Analyzer import Analyzer
 from PhysicsTools.Heppy.analyzers.core.AutoHandle import AutoHandle
 import PhysicsTools.HeppyCore.framework.config as cfg
 import FWCore.ParameterSet.Config as cms
-
+import os
 # ROOT.gSystem.Load("libCMGToolsVVResonances")
 
 class HbbTagComputer( Analyzer ):
@@ -19,7 +19,9 @@ class HbbTagComputer( Analyzer ):
         maxSVDeltaRToJet = cms.double(0.7),
         useCondDB = cms.bool(False),
         gbrForestLabel = cms.string(""),
-        weightFile = cms.FileInPath('CMGTools/VVResonances/data/BoostedDoubleSV_AK8_BDT_v3.weights.xml.gz'),
+        
+        weightFile = cms.FileInPath(self.cfg_ana.path), 
+#        weightFile = cms.FileInPath('CMGTools/VVResonances/data/BoostedDoubleSV_AK8_BDT_v3.weights.xml.gz'),
         # weightFile = cms.FileInPath('CMGTools/VVResonances/data/BoostedDoubleSV_AK8_BDT_v2.weights.xml.gz'),
         useGBRForest = cms.bool(True),
         useAdaBoost = cms.bool(False),

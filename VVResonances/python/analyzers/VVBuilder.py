@@ -466,10 +466,10 @@ class VVBuilder(Analyzer):
         LLJJ =self.makeZV(event)
         JJ=self.makeJJ(event)
         JJNuNu=self.makeMETV(event)
-        TopCR=self.makeTOPCR(event)
+#        TopCR=self.makeTOPCR(event)
 
         setattr(event,'LNuJJ'+self.cfg_ana.suffix,LNuJJ)
         setattr(event,'JJ'+self.cfg_ana.suffix,JJ)
         setattr(event,'LLJJ'+self.cfg_ana.suffix,LLJJ)
         setattr(event,'JJNuNu'+self.cfg_ana.suffix,JJNuNu)
-        setattr(event,'TopCR'+self.cfg_ana.suffix,TopCR)
+#        setattr(event,'TopCR'+self.cfg_ana.suffix,TopCR)

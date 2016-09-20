@@ -8,12 +8,9 @@ from CMGTools.VVResonances.analyzers.VVBuilder import *
 from CMGTools.VVResonances.analyzers.VTauBuilder import *
 from CMGTools.VVResonances.analyzers.Skimmer import *
 from CMGTools.VVResonances.analyzers.TopMergingAnalyzer import *
+from CMGTools.VVResonances.analyzers.ObjectWeightAnalyzer import *
 
 import os
-
-
-
-
 
 # Pick individual events (normally not in the path)
 eventSelector = cfg.Analyzer(
@@ -200,9 +197,34 @@ lepIDAna = cfg.Analyzer(
     name='lepIDOverloader'
 )
 
+
+lepWeightAna = cfg.Analyzer(
+    ObjectWeightAnalyzer, name="leptonWeightAnalyzer",
+    path='${CMSSW_BASE}/src/CMGTools/VVResonances/data',
+    collection = "selectedLeptons",
+    weights = [           
+        #Muons from histograms
+        {'cut':lambda x: abs(x.pdgId())==13,'dimensions':2,'filename':'MuonID_Z_RunBCD_prompt80X_7p65.root','histoname':"MC_NUM_HighPtIDPt20andIPCut_DEN_genTracks_PAR_pt_spliteta_bin1/pair_ne_ratio",'x':lambda x:x.pt(),'y':lambda x: abs(x.eta()),'tag':'sfWV'},
+        {'cut':lambda x: abs(x.pdgId())==13,'dimensions':2,'filename':'MuonIso_Z_RunBCD_prompt80X_7p65.root','histoname':"MC_NUM_TightRelIso_DEN_TightID_PAR_pt_spliteta_bin1/pt_abseta_ratio",'x':lambda x:x.pt(),'y':lambda x: abs(x.eta()),'tag':'sfWV'},
+        {'cut':lambda x: abs(x.pdgId())==13,'dimensions':2,'filename':'SingleMuonTrigger_Z_RunBCD_prompt80X_7p65.root','histoname':"Mu50_OR_TkMu50_PtEtaBins_Run274954_to_276097/efficienciesDATA/pt_abseta_DATA",'x':lambda x:x.pt(),'y':lambda x: abs(x.eta()),'tag':'sfHLT'},
+        #Electrons flat from Sam
+        {'cut':lambda x: abs(x.pdgId())==11 and x.isEB(),'filename':'None','f':lambda x:0.961,'tag':'sfWV'},
+        {'cut':lambda x: abs(x.pdgId())==11 and x.isEE(),'filename':'None','f':lambda x:0.965,'tag':'sfWV'},
+        {'cut':lambda x: abs(x.pdgId())==11,'dimensions':2,'filename':'myTriggerScaleFactors.root','histoname':"EleTrigger",'x':lambda x:x.pt(),'y':lambda x: abs(x.eta()),'tag':'sfHLT'}
+        ]
+)
+
+
+
+
+
+
+
+
 hbbTagComputer = cfg.Analyzer(
     HbbTagComputer,
-    name='hbbTagComputer'
+    name='hbbTagComputer',
+    path='RecoBTag/SecondaryVertex/data/BoostedDoubleSV_AK8_BDT_v3.weights.xml.gz'
 )
 
 
@@ -321,6 +343,21 @@ vvAna = cfg.Analyzer(
 )
 
 
+
+
+metWeightAna = cfg.Analyzer(
+    ObjectWeightAnalyzer, name="metWeightAnalyzer",
+    path='${CMSSW_BASE}/src/CMGTools/VVResonances/data',
+    collection = "LNuJJ",
+    weights = [           
+        #Trigger privately calculated different for electrons and muons
+        {'cut':lambda x: abs(x.leg1.leg1.pdgId())==13,'dimensions':1,'filename':'myTriggerScaleFactors.root','histoname':"METMu",'x':lambda x:x.leg1.leg2.pt(),'tag':'sfHLTMET'},
+        {'cut':lambda x: abs(x.leg1.leg1.pdgId())==11,'dimensions':1,'filename':'myTriggerScaleFactors.root','histoname':"METEle",'x':lambda x:x.leg1.leg2.pt(),'tag':'sfHLTMET'},
+        ]
+)
+
+
+
 vTauAna = cfg.Analyzer(
     VTauBuilder,name='vTauAna',
     suffix = ''
@@ -358,17 +395,16 @@ coreSequence = [
     vertexAna,
     lepAna,
     lepIDAna,
-    # hbbTagComputer, # for all jetsAK8
+    lepWeightAna,
     jetAna,
     jetAnaAK8,
     hbbTagComputer,
     metAna,
-#    tauAna,
-#    packedAna,
-#    multiStateAna,
     eventFlagsAna,
     triggerFlagsAna,
     mergedTruthAna,
     badMuonAna,
     badChargedHadronAna,
+    vvAna,
+    metWeightAna
 ]

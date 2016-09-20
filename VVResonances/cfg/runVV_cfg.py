@@ -76,7 +76,7 @@ from CMGTools.VVResonances.analyzers.tree_cff import *
 
 #-------- SEQUENCE
 
-sequence = cfg.Sequence(coreSequence+[vvAna,vvSkimmer,vvTreeProducer])
+sequence = cfg.Sequence(coreSequence+[vvSkimmer,vvTreeProducer])
 
 
 from CMGTools.RootTools.samples.triggers_13TeV_Spring15 import *
@@ -95,7 +95,7 @@ triggerFlagsAna.triggerBits ={
 
 
 #-------- HOW TO RUN
-test = 0
+test = 3
 if test==1:
     # test a single component, using a single thread.
     selectedComponents = [BulkGravToZZToZlepZhad_narrow_2000]
