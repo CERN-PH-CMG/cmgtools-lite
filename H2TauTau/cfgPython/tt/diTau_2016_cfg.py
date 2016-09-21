@@ -28,10 +28,11 @@ def getHeppyOption(option, default):
 # Get all heppy options; set via '-o production' or '-o production=True'
 
 # production = True run on batch, production = False (or unset) run locally
-production = getHeppyOption('production', True)
+production = getHeppyOption('production', False)
 pick_events = getHeppyOption('pick_events', False)
 syncntuple = getHeppyOption('syncntuple', True)
 cmssw = getHeppyOption('cmssw', True)
+doSUSY = getHeppyOption('susy', False)
 computeSVfit = getHeppyOption('computeSVfit', False)
 data = getHeppyOption('data', False)
 tes_string = getHeppyOption('tes_string', '') # '_tesup' '_tesdown'
@@ -205,7 +206,9 @@ from CMGTools.RootTools.samples.samples_13TeV_signals import SignalSUSY
 from CMGTools.H2TauTau.proto.samples.spring16.triggers_tauTau import mc_triggers, mc_triggerfilters, data_triggers, data_triggerfilters
 
 data_list = data_tau
-samples = backgrounds + sm_signals + mssm_signals + samples_susy + SignalSUSY[:1]
+samples = backgrounds + sm_signals + mssm_signals
+if doSUSY:
+    samples += samples_susy + SignalSUSY[:1]
 split_factor = 1e5
 
 for sample in data_list:
@@ -247,7 +250,8 @@ sequence.append(tauDecayModeWeighter)
 sequence.append(tau1Weighter)
 sequence.append(tau2Weighter)
 sequence.append(tauTauMT2Ana)
-sequence.insert(sequence.index(susyScanAna) + 1, susyCounter)
+if doSUSY:
+    sequence.insert(sequence.index(susyScanAna) + 1, susyCounter)
 if computeSVfit:
     sequence.append(svfitProducer)
 sequence.append(treeProducer)
@@ -275,17 +279,18 @@ if pick_events:
     eventSelector.toSelect = evtsToPick
     sequence.insert(0, eventSelector)
 
-# output histogram
+# # output histogram
 outputService = []
-from PhysicsTools.HeppyCore.framework.services.tfile import TFileService
-output_service = cfg.Service(
-    TFileService,
-    'outputfile',
-    name="outputfile",
-    fname='H2TauTauTreeProducerTauTau/tree.root',
-    option='recreate'
-)
-outputService.append(output_service)
+if doSUSY:
+    from PhysicsTools.HeppyCore.framework.services.tfile import TFileService
+    output_service = cfg.Service(
+        TFileService,
+        'outputfile',
+        name="outputfile",
+        fname='H2TauTauTreeProducerTauTau/tree.root',
+        option='recreate'
+    )
+    outputService.append(output_service)
 
 ###################################################
 ###            SET BATCH OR LOCAL               ###

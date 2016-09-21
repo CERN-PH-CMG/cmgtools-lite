@@ -23,12 +23,12 @@ from CMGTools.RootTools.samples.autoAAAconfig import autoAAA
 from CMGTools.H2TauTau.htt_ntuple_base_cff import commonSequence, jetAna, dyJetsFakeAna, puFileData, puFileMC, eventSelector
 
 # mu-mu specific configuration settings
-production = getHeppyOption('production', False)
+production = getHeppyOption('production', True)
 pick_events = getHeppyOption('pick_events', False)
 syncntuple = getHeppyOption('syncntuple', True)
 cmssw = getHeppyOption('cmssw', True)
 computeSVfit = getHeppyOption('computeSVfit', False)
-data = getHeppyOption('data', True)
+data = getHeppyOption('data', False)
 reapplyJEC = getHeppyOption('reapplyJEC', True)
 
 dyJetsFakeAna.channel = 'mm'
@@ -92,7 +92,8 @@ muonWeighter2 = cfg.Analyzer(
 
 treeProducer = cfg.Analyzer(
     H2TauTauTreeProducerMuMu,
-    name='H2TauTauTreeProducerMuMu'
+    name='H2TauTauTreeProducerMuMu',
+    addMoreJetInfo=True
 )
 
 syncTreeProducer = cfg.Analyzer(
@@ -142,7 +143,6 @@ for mc in samples:
 
 selectedComponents = samples
 selectedComponents = data_list if data else samples
-selectedComponents = [c for c in selectedComponents if '2016G' in c.name]
 
 sequence = commonSequence
 sequence.insert(sequence.index(dyJetsFakeAna), MuMuAna)
