@@ -20,6 +20,11 @@ from CMGTools.H2TauTau.proto.samples.spring16.higgs_susy import HiggsSUSYGG160 a
 json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-276811_13TeV_PromptReco_Collisions16_JSON.txt'
 lumi = 12918.1407
 
+json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-279116_13TeV_PromptReco_Collisions16_JSON_NoL1T.txt'
+
+# lumi_2016G = 1659.026988066 # 2016 G
+lumi_2016G = 1080.463515944 # 2016 G HLT_IsoMu22_v3
+
 json_tt = json
 lumi_tt = lumi
 
@@ -115,8 +120,8 @@ data_muon_electron = [MuonEG_Run2016B_PromptReco_v2, MuonEG_Run2016C_PromptReco_
 data_tau = [Tau_Run2016B_PromptReco_v2, Tau_Run2016C_PromptReco_v2, Tau_Run2016D_PromptReco_v2] #, ]
 
 for sample in data_single_muon + data_single_electron + data_muon_electron + data_tau:
-    sample.json = json if sample != SingleMuon_Run2016G_PromptReco_v1 else '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/DCSOnly/json_DCSONLY.txt'
-    sample.lumi = lumi
+    sample.json = json
+    sample.lumi = lumi if sample != SingleMuon_Run2016G_PromptReco_v1 else lumi_2016G
 
 # Signals
 sm_signals = [HiggsGGH125, HiggsVBF125, HiggsTTH125]

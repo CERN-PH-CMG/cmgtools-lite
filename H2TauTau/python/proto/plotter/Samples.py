@@ -13,7 +13,9 @@ if "/sDYReweighting_cc.so" not in gSystem.GetLibraries():
     gROOT.ProcessLine(".L %s/src/CMGTools/H2TauTau/python/proto/plotter/DYReweighting.cc+" % os.environ['CMSSW_BASE']);
     from ROOT import getDYWeight
 
+splitDY = False
 useDYWeight = False
+# data2016G = True
 
 if useDYWeight:
     dy_exps = []
@@ -38,7 +40,8 @@ def createSampleLists(analysis_dir='/afs/cern.ch/user/s/steggema/work/public/mt/
                       channel='mt',
                       mode='sm',
                       ztt_cut='(l2_gen_match == 5)*getDYWeight(genboson_mass, genboson_pt)', zl_cut='(l2_gen_match < 5)*getDYWeight(genboson_mass, genboson_pt)',
-                      zj_cut='(l2_gen_match == 6)*getDYWeight(genboson_mass, genboson_pt)'):
+                      zj_cut='(l2_gen_match == 6)*getDYWeight(genboson_mass, genboson_pt)',
+                      data2016G=False):
     # -> Possibly from cfg like in the past, but may also make sense to enter directly
     if channel == 'mt':
         tree_prod_name = 'H2TauTauTreeProducerTauMu'
@@ -75,7 +78,7 @@ def createSampleLists(analysis_dir='/afs/cern.ch/user/s/steggema/work/public/mt/
             
         ]
     else:
-        if channel != 'mm':
+        if not splitDY:
             samples_essential += [
                 SampleCfg(name='ZTT', dir_name='DYJetsToLL_M50_LO', ana_dir=analysis_dir, tree_prod_name=tree_prod_name,
                           xsec=DYJetsToLL_M50_LO.xSection, sumweights=DYJetsToLL_M50_LO.nGenEvents, weight_expr=ztt_cut),
@@ -137,7 +140,11 @@ def createSampleLists(analysis_dir='/afs/cern.ch/user/s/steggema/work/public/mt/
             ]
 
     samples_data = []
-    if channel in ['mt', 'mm', 'tau_fr']:
+    if data2016G and channel in ['mt', 'mm', 'tau_fr']:
+         samples_data = [
+            SampleCfg(name='data_obs', dir_name='SingleMuon_Run2016G_PromptReco_v1', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True)
+        ]
+    elif channel in ['mt', 'mm', 'tau_fr']:
         samples_data = [
             SampleCfg(name='data_obs', dir_name='SingleMuon_Run2016B_PromptReco_v2', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
             SampleCfg(name='data_obs', dir_name='SingleMuon_Run2016C_PromptReco_v2', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
@@ -152,6 +159,12 @@ def createSampleLists(analysis_dir='/afs/cern.ch/user/s/steggema/work/public/mt/
             SampleCfg(name='data_obs', dir_name='Tau_Run2016B_PromptReco_v2', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
             SampleCfg(name='data_obs', dir_name='Tau_Run2016C_PromptReco_v2', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
             SampleCfg(name='data_obs', dir_name='Tau_Run2016D_PromptReco_v2', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
+        ]
+    elif channel in ['em']:
+        samples_data = [
+            SampleCfg(name='data_obs', dir_name='MuonEG_Run2016B_PromptReco_v2', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
+            SampleCfg(name='data_obs', dir_name='MuonEG_Run2016C_PromptReco_v2', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
+            SampleCfg(name='data_obs', dir_name='MuonEG_Run2016D_PromptReco_v2', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
         ]
 
     samples_additional = [
