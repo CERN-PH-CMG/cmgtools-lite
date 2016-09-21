@@ -185,7 +185,7 @@ sequence = cfg.Sequence(dmCoreSequence+[
 
 from CMGTools.RootTools.samples.triggers_13TeV_Spring15 import *
 from CMGTools.RootTools.samples.triggers_8TeV import triggers_1mu_8TeV, triggers_mumu_8TeV, triggers_mue_8TeV, triggers_ee_8TeV;
-triggers_AllMonojet = triggers_metNoMu90_mhtNoMu90 + triggers_metNoMu120_mhtNoMu120 + triggers_AllMET170 + triggers_AllMET300
+triggers_AllMonojet = triggers_metNoMu90_mhtNoMu90 + triggers_metNoMu100_mhtNoMu100 + triggers_metNoMu110_mhtNoMu110 + triggers_metNoMu120_mhtNoMu120 + triggers_AllMET170 + triggers_AllMET300
 triggers_SinglePhoton = triggers_photon155 + triggers_photon165_HE10 + triggers_photon175 + triggers_jet  # last ones added to recover L1 issue of tight H/E cut
 triggerFlagsAna.triggerBits = {
     'DoubleMu' : triggers_mumu_iso,
@@ -195,6 +195,8 @@ triggerFlagsAna.triggerBits = {
     'SingleMu' : triggers_1mu_iso,
     'SingleEl' : triggers_1e,
     'MonoJetMetNoMuMHT90' : triggers_metNoMu90_mhtNoMu90,
+    'MonoJetMetNoMuMHT100' : triggers_metNoMu90_mhtNoMu100,
+    'MonoJetMetNoMuMHT110' : triggers_metNoMu90_mhtNoMu110,
     'MonoJetMetNoMuMHT120' : triggers_metNoMu120_mhtNoMu120,
     'Met170'   : triggers_AllMET170,
     'Met300'   : triggers_AllMET300,
@@ -322,7 +324,6 @@ if runData==False and not isTest: # MC all
     ### 25 ns 74X MC samples
     is50ns = False
     mcSamples = mcSamples_monojet_Asymptotic25ns
-    #mcSamples = [WJetsToLNu_HT1200to2500, ZJetsToNuNu_HT1200to2500_ext]
     if signalSkim:
         # H -> invisibles mass scan (gg + VBF)
         mcSamples += (VBF_HToInvisible + GluGlu_HToInvisible)
