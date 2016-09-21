@@ -9,7 +9,7 @@ def autoAAA(selectedComponents):
         if not re.match("/[^/]+/[^/]+/MINIAOD(SIM)?", comp.dataset): continue
         if "/store/" not in comp.files[0]: continue
         if re.search("/store/(group|user|cmst3)/", comp.files[0]): continue
-        if comp.isData and "PromptReco" in comp.dataset: continue
+        #if comp.isData and "PromptReco" in comp.dataset: continue
         if not tier2Checker.available(comp.dataset):
             print "Dataset %s is not available, will use AAA" % comp.dataset
             changeComponentAccessMode.convertComponent(comp, "root://cms-xrd-global.cern.ch/%s")
