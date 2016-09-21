@@ -44,6 +44,11 @@ event_vars = [
     # Variable('weight_hqt', lambda ev : getattr(ev, 'higgsPtWeight', 1.)),
     # Variable('weight_hqt_up', lambda ev : getattr(ev, 'higgsPtWeightUp', 1.)),
     # Variable('weight_hqt_down', lambda ev : getattr(ev, 'higgsPtWeightDown', 1.)),
+    Variable('weight_njet', lambda ev : ev.NJetWeight),
+    Variable('delta_phi_dil_jet1', lambda ev : deltaPhi(ev.diLepton.p4().phi(), ev.cleanJets[0].phi()) if len(ev.cleanJets)>0 else -999.),
+    Variable('delta_phi_dil_jet2', lambda ev : deltaPhi(ev.diLepton.p4().phi(), ev.cleanJets[1].phi()) if len(ev.cleanJets)>1 else -999.),
+    Variable('delta_eta_dil_jet1', lambda ev : abs(ev.diLepton.p4().eta() - ev.cleanJets[0].eta()) if len(ev.cleanJets)>0 else -999.),
+    Variable('delta_eta_dil_jet2', lambda ev : abs(ev.diLepton.p4().eta() - ev.cleanJets[1].eta()) if len(ev.cleanJets)>1 else -999.),
 ]
 
 # di-tau object variables
@@ -131,8 +136,8 @@ electron_vars = [
 
 # muon
 muon_vars = [
-    Variable('reliso05', lambda lep : lep.relIsoR(R=0.3, dBetaFactor=0.5, allCharged=0)),
-    Variable('reliso05_04', lambda lep : lep.relIsoR(R=0.4, dBetaFactor=0.5, allCharged=0)),
+    Variable('reliso05', lambda lep : lep.relIsoR(R=0.4, dBetaFactor=0.5, allCharged=0)),
+    Variable('reliso05_03', lambda lep : lep.relIsoR(R=0.3, dBetaFactor=0.5, allCharged=0)),
     Variable('muonid_loose', lambda muon : muon.muonID('POG_ID_Loose')),
     Variable('muonid_medium', lambda muon : muon.muonID('POG_ID_Medium_ICHEP')),
     Variable('muonid_tight', lambda muon : muon.muonID('POG_ID_Tight')),
