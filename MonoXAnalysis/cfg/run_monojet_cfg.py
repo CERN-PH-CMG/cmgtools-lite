@@ -27,10 +27,10 @@ doLepCorr = getHeppyOption("doLepCorr",True)
 doPhotonCorr = getHeppyOption("doPhotonCorr",True)
 
 # Define skims
-signalSkim = True
+signalSkim = False
 diLepSkim = False
 singleLepSkim = False
-singlePhotonSkim = False
+singlePhotonSkim = True
 
 # --- MONOJET SKIMMING ---
 if signalSkim == True:
@@ -195,8 +195,8 @@ triggerFlagsAna.triggerBits = {
     'SingleMu' : triggers_1mu_iso,
     'SingleEl' : triggers_1e,
     'MonoJetMetNoMuMHT90' : triggers_metNoMu90_mhtNoMu90,
-    'MonoJetMetNoMuMHT100' : triggers_metNoMu90_mhtNoMu100,
-    'MonoJetMetNoMuMHT110' : triggers_metNoMu90_mhtNoMu110,
+    'MonoJetMetNoMuMHT100' : triggers_metNoMu100_mhtNoMu100,
+    'MonoJetMetNoMuMHT110' : triggers_metNoMu110_mhtNoMu110,
     'MonoJetMetNoMuMHT120' : triggers_metNoMu120_mhtNoMu120,
     'Met170'   : triggers_AllMET170,
     'Met300'   : triggers_AllMET300,
