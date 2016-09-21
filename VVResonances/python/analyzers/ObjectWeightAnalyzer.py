@@ -26,7 +26,6 @@ class ObjectWeightAnalyzer( Analyzer ):
         
     def process(self, event):
         self.readCollections( event.input )
-        
         objects  = getattr(event,self.cfg_ana.collection)
         
         for obj in objects:

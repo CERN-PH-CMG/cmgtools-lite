@@ -267,8 +267,8 @@ jetAna = cfg.Analyzer(
     recalibrateJets = True, #'MC', # True, False, 'MC', 'Data'
     applyL2L3Residual = 'Data', # Switch to 'Data' when they will become available for Data
     recalibrationType = "AK4PFPuppi",
-    mcGT     = "Spring16_25nsV3_MC",
-    dataGT   = "Spring16_25nsV3_DATA",
+    mcGT     = "Spring16_25nsV6_MC",
+    dataGT   = "Spring16_25nsV6_DATA",
     jecPath = "${CMSSW_BASE}/src/CMGTools/RootTools/data/jec/",
     shiftJEC = 0, # set to +1 or -1 to apply +/-1 sigma shift to the nominal jet energies
     addJECShifts = True, # if true, add  "corr", "corrJECUp", and "corrJECDown" for each jet (requires uncertainties to be available!)
@@ -305,8 +305,8 @@ jetAnaAK8 = cfg.Analyzer(
     recalibrateJets = True, #'MC', # True, False, 'MC', 'Data'
     applyL2L3Residual = 'Data', # Switch to 'Data' when they will become available for Data
     recalibrationType = "AK8PFPuppi",
-    mcGT     = "Spring16_25nsV3_MC",
-    dataGT   = "Spring16_25nsV3_DATA",
+    mcGT     = "Spring16_25nsV6_MC",
+    dataGT   = "Spring16_25nsV6_DATA",
     jecPath = "${CMSSW_BASE}/src/CMGTools/RootTools/data/jec/",
     shiftJEC = 0, # set to +1 or -1 to apply +/-1 sigma shift to the nominal jet energies
     addJECShifts = True, # if true, add  "corr", "corrJECUp", and "corrJECDown" for each jet (requires uncertainties to be available!)
@@ -339,7 +339,9 @@ vvAna = cfg.Analyzer(
     bDiscriminator = "pfCombinedInclusiveSecondaryVertexV2BJetTags",
 #    boostedBdiscriminator = "pfBoostedDoubleSecondaryVertexAK8BJetTags",
     cDiscriminatorL = "pfCombinedCvsLJetTags",
-    cDiscriminatorB = "pfCombinedCvsBJetTags"
+    cDiscriminatorB = "pfCombinedCvsBJetTags",
+    btagCSVFile = "${CMSSW_BASE}/src/CMGTools/VVResonances/data/btag.csv"
+    
 )
 
 

@@ -3,8 +3,10 @@ from PhysicsTools.Heppy.analyzers.core.AutoHandle import AutoHandle
 from CMGTools.VVResonances.tools.Pair import Pair
 from PhysicsTools.HeppyCore.utils.deltar import *
 from CMGTools.VVResonances.tools.VectorBosonToolBox import VectorBosonToolBox
+from CMGTools.VVResonances.tools.BTagEventWeights import *
 import itertools
 import ROOT
+import os
 
 class Substructure(object):
     def __init__(self):
@@ -20,6 +22,10 @@ class VVBuilder(Analyzer):
             self.doPUPPI=True
         else:
             self.doPUPPI=False
+
+
+        #btag reweighting    
+        self.btagSF = BTagEventWeights('btagsf',os.path.expandvars(self.cfg_ana.btagCSVFile))
 
     def declareHandles(self):
         super(VVBuilder, self).declareHandles()
@@ -144,6 +150,8 @@ class VVBuilder(Analyzer):
 
         # Btags
         jetsCentral = filter(lambda x: abs(x.eta())<2.4,jets)
+
+
         VV.satteliteCentralJets=jetsCentral
         # cuts are taken from https://twiki.cern.ch/twiki/bin/view/CMS/BtagRecommendation80X (20.06.2016)
         VV.nLooseBTags = len(filter(lambda x: x.bDiscriminator(self.cfg_ana.bDiscriminator)>0.460,jetsCentral))
@@ -152,8 +160,16 @@ class VVBuilder(Analyzer):
         VV.nOtherLeptons = len(leptons)
 
         maxbtag=-100.0
+
+        VV.btagWeight=1.0
         for  j in jetsCentral:
             btag=j.bDiscriminator(self.cfg_ana.bDiscriminator)
+            flavor = j.hadronFlavour()
+
+            #btag event weight
+            if self.cfg_comp.isMC:
+                VV.btagWeight*= self.btagSF.getSF(j.pt(),j.eta(),flavor,btag)
+            #and systematics
             if btag>maxbtag:
                 maxbtag=btag
         VV.highestEventBTag = maxbtag
