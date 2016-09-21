@@ -1,8 +1,8 @@
 ### SIGNAL AND CONTROL SAMPLES
 
 # signals for sync 
-vbfH125+: VBF_HToInvisible_M125     : xsec; FillColor=ROOT.kRed-9, Label="VBFH"
 ggH125+:  GluGlu_HToInvisible_M125  : xsec; FillColor=ROOT.kRed-9, Label="ggH"
+vbfH125+: VBF_HToInvisible_M125     : xsec; FillColor=ROOT.kRed-9, Label="VBFH"
 
 # ---- Spring15 25ns samples -------
 
@@ -13,18 +13,18 @@ ZLL: DYJetsToLL_M50_HT400to600 :  5.497; FillColor=ROOT.kAzure+5,  Label="Z LL"
 ZLL: DYJetsToLL_M50_HT600toInf :  2.210; FillColor=ROOT.kAzure+5,  Label="Z LL"
 
 # QCD Z+jets (LL) HT-binned: replace the xsec in the ntuple (NLO) with the LO, in order to apply the ptV-dependent k-factors
-EWKDYJetsLL: EWKZToLL2Jets : xsec; FillColor=ROOT.kAzure+7,  Label="EWK Z LL"
+EWKZLL: EWKZToLL2Jets : xsec; FillColor=ROOT.kAzure+7,  Label="EWK Z LL"
 
 # Z+Jets (NuNu) HT-binned: replace the xsec in the ntuple (NLO) with the LO, in order to apply the ptV-dependent k-factors
-ZNuNu: ZJetsToNuNu_HT100to200 :  280.47; FillColor=ROOT.kRed+5,  Label="Z nunu"
-ZNuNu: ZJetsToNuNu_HT200to400 :  78.36; FillColor=ROOT.kRed+5,  Label="Z nunu"
-ZNuNu: ZJetsToNuNu_HT400to600 :  10.94; FillColor=ROOT.kRed+5,  Label="Z nunu"
-ZNuNu: ZJetsToNuNu_HT600to800 :  3.221; FillColor=ROOT.kRed+5,  Label="Z nunu"
-ZNuNu: ZJetsToNuNu_HT800to1200 :  1.474; FillColor=ROOT.kRed+5,  Label="Z nunu"
-ZNuNu: ZJetsToNuNu_HT1200to2500 :  0.3586; FillColor=ROOT.kRed+5,  Label="Z nunu"
-ZNuNu: ZJetsToNuNu_HT2500toInf :  0.008203; FillColor=ROOT.kRed+5,  Label="Z nunu"
+ZNuNu: ZJetsToNuNu_HT100to200 :  280.47; FillColor=ROOT.kBlue,  Label="Z nunu"
+ZNuNu: ZJetsToNuNu_HT200to400 :  78.36; FillColor=ROOT.kBlue,  Label="Z nunu"
+ZNuNu: ZJetsToNuNu_HT400to600 :  10.94; FillColor=ROOT.kBlue,  Label="Z nunu"
+ZNuNu: ZJetsToNuNu_HT600to800 :  3.221; FillColor=ROOT.kBlue,  Label="Z nunu"
+ZNuNu: ZJetsToNuNu_HT800to1200 :  1.474; FillColor=ROOT.kBlue,  Label="Z nunu"
+ZNuNu: ZJetsToNuNu_HT1200to2500 :  0.3586; FillColor=ROOT.kBlue,  Label="Z nunu"
+ZNuNu: ZJetsToNuNu_HT2500toInf :  0.008203; FillColor=ROOT.kBlue,  Label="Z nunu"
 
-EWKZZNuNu: EWKZToNuNu2Jets : xsec; FillColor=ROOT.kRed+7,  Label="EWK Z nunu" 
+EWKZZNuNu: EWKZToNuNu2Jets : xsec; FillColor=ROOT.kBlue+2,  Label="EWK Z nunu" 
 
 # W+jets HT-binned: replace the xsec in the ntuple (NLO) with the LO, in order to apply the ptV-dependent k-factors
 W: WJetsToLNu_HT100to200   :  1347;    FillColor=ROOT.kCyan-7,  Label="W"
