@@ -84,7 +84,8 @@ class DataMCPlot(object):
             self.stack.Blind(minx, maxx)
         if self.nostack:
             for hist in self.nostack:
-                hist.Blind(minx, maxx)
+                if hist.style.drawAsData:
+                    hist.Blind(minx, maxx)
 
     def AddHistogram(self, name, histo, layer=0, legendLine=None, stack=True):
         '''Add a ROOT histogram, with a given name.
