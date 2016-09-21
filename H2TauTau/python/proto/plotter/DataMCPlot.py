@@ -264,7 +264,7 @@ class DataMCPlot(object):
                 continue
             stackedHists.append(hist)
         self._BuildStack(stackedHists, ytitle='Data/MC')
-        mcHist = self.stack.totalHist
+        mcHist = self.BGHist()
         self.dataOverMCHist = copy.deepcopy(dataHist)
         # self.dataOverMCHist.Add(mcHist, -1)
         self.dataOverMCHist.Divide(mcHist)
@@ -372,6 +372,15 @@ class DataMCPlot(object):
             self._BuildStack(self._SortedHistograms(), ytitle='Events')
         return self.stack
 
+    def BGHist(self):
+        return self.GetStack().totalHist
+
+    def SignalHist(self):
+        for hist in self.nostack:
+            if not hist.style.drawAsData:
+                return hist
+        return None
+
     def DrawStack(self, opt='',
                   xmin=None, xmax=None, ymin=None, ymax=None, print_norm=False,
                   scale_signal=''):
@@ -397,13 +406,13 @@ class DataMCPlot(object):
                         xmin=xmin, xmax=xmax,
                         ymin=ymin, ymax=ymax)
         if self.supportHist is None:
-            self.supportHist = self.stack.totalHist
+            self.supportHist = self.BGHist()
         if not self.axisWasSet:
             mxsup = self.supportHist.weighted.GetBinContent(
                 self.supportHist.weighted.GetMaximumBin()
             )
-            mxstack = self.stack.totalHist.weighted.GetBinContent(
-                self.stack.totalHist.weighted.GetMaximumBin()
+            mxstack = self.BGHist().weighted.GetBinContent(
+                self.BGHist().weighted.GetMaximumBin()
             )
             mx = max(mxsup, mxstack)
             if ymin is None:
