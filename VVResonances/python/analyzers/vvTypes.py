@@ -120,6 +120,7 @@ VJType = NTupleObjectType("VJType", baseObjectTypes=[VVType], variables = [
     NTupleSubObject("l2_softDrop_s2",  lambda x : x.leg2.substructure.softDropSubjets[1] if len(x.leg2.substructure.softDropSubjets)>1 else dummyLV,fourVectorType),
     NTupleSubObject("l2_pruned_s1",  lambda x : x.leg2.substructure.prunedSubjets[0] if len(x.leg2.substructure.prunedSubjets)>0 else dummyLV,fourVectorType),
     NTupleSubObject("l2_pruned_s2",  lambda x : x.leg2.substructure.prunedSubjets[1] if len(x.leg2.substructure.prunedSubjets)>1 else dummyLV,fourVectorType),
+    NTupleVariable("btagWeight",  lambda x : x.btagWeight,float),
 
 ])
 
@@ -132,6 +133,11 @@ LNuJJType = NTupleObjectType("LNuJJType", baseObjectTypes=[VJType], variables = 
     NTupleSubObject("altl1",  lambda x : x.leg1.alternateLV,fourVectorType),
     NTupleSubObject("l1_l",  lambda x : x.leg1.leg1,leptonTypeExtra),
     NTupleSubObject("l1_met",  lambda x : x.leg1.leg2,metType),
+    #Scale factors , For HLT use the OR between the two triggers: 
+    NTupleVariable("sf",  lambda x : x.leg1.leg1.sfWV*(x.leg1.leg1.sfHLT+x.sfHLTMET-x.leg1.leg1.sfHLT*x.sfHLTMET),float)
+
+
+
 ])
 
 
