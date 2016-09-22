@@ -70,8 +70,8 @@ compilePostFixMap(options.postfixmap,postfixes)
 mca  = MCAnalysis(args[0],options)
 cuts = CutsFile(args[1],options)
 
-filename = options.outname # name of the output file
-binname  = os.path.basename(args[1]).replace(".txt","") if options.binname == None else options.binname # name of the bin
+filename = options.outname # name of the card file
+binname  = options.binname if options.binname else os.path.basename(args[1]).replace(".txt","") # name of the bin in the card
 outdir   = options.outdir+"/" if options.outdir else ""
 
 report={}

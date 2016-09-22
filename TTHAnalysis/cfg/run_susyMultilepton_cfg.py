@@ -38,10 +38,11 @@ if analysis not in ['ttH','susy','SOS']: raise RuntimeError, 'Analysis type unkn
 print 'Using analysis type: %s'%analysis
 
 # Lepton Skimming
-ttHLepSkim.minLeptons = 1
+ttHLepSkim.minLeptons = 2
 ttHLepSkim.maxLeptons = 999
 #ttHLepSkim.idCut  = ""
 #ttHLepSkim.ptCuts = []
+ttHLepSkim.allowLepTauComb = True
 
 # Run miniIso
 lepAna.doMiniIsolation = True

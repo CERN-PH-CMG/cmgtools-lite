@@ -1,7 +1,6 @@
 import os, copy, ROOT
 
 ## DO NOT TOUCH: THIS IS GOING TO BE CHANGED BY THE BATCH SUBMISSION
-script   = "THESCRIPT"
 name     = "THENAME"
 sig      = "THESIGNAL"
 mass1    = "THEMASS1"
@@ -21,12 +20,14 @@ wvjec    = THEWVJEC # central, jecUp, jecDn
 frmet    = THEFRMET # pfMET, genMET
 wvmet    = THEWVMET # pfMET, genMET
 wVars    = THEWEIGHTVARS
+bkgdir   = "THEBKGDIR"
 mcadir   = "THEMCADIR"
 outdir   = "THEOUTDIR"
 themca   = "THEMCA"
 thesyst  = "THESYST"
-first    = "THECMDFIRST"
-second   = "THECMDSECOND"
+#first    = "THECMDFIRST"
+#second   = "THECMDSECOND"
+thebase  = "THEBASE"
 
 ## ---------
 
@@ -136,11 +137,11 @@ def makeWeight(wstr, wvar):
 	if wvar == "1": return wstr
 	return "("+wstr+")*"+wvar
 
-cmdbase = "python {sc} {{MCA}} {FIRST} {{SYSTS}} --od {{OUTDIR}} ".format(sc=script, FIRST=first)
+cmdbase = thebase.replace("[[[","{").replace("]]]","}")
+#cmdbase = "python {sc} {{MCA}} {FIRST} {{SYSTS}} --od {{OUTDIR}} ".format(sc=script, FIRST=first)
 mcabase = "sig_{{name}} : {file} : {xs} : {{ws}} ; Label=\"{{name}}\"{{FRfiles}}".format(file=file, xs=xs)
 
 short = mass1 + "_" + mass2
-bkgdir = outdir + "/bkg"
 accdir = outdir + "/acc/" + short
 mpsdir = outdir + "/mps/" + short
 mkdir(mcadir)
@@ -159,7 +160,7 @@ for k,vals in wVars.iteritems():
 	f.write(mcabase.format(name=sig+"_"+k+"_Up", ws=makeWeight(wstr,vals[0]), FRfiles=makeFakeRate(frfiles)) + "\n")
 	f.write(mcabase.format(name=sig+"_"+k+"_Dn", ws=makeWeight(wstr,vals[1]), FRfiles=makeFakeRate(frfiles)) + "\n")
 f.close()
-cmd(cmdbase.format(MCA=mcadir + "/mca_acc_"+name+".txt", SYSTS="", OUTDIR=outdir + "/acc/"+short) + second + " --asimov") 
+cmd(cmdbase.format(MCA=mcadir + "/mca_acc_"+name+".txt", SYS="", O=outdir + "/acc/"+short) + second + " --asimov") 
 
 
 ## get central value of acceptance 
@@ -183,5 +184,5 @@ if q2file:
 f.close()
 
 ## run the proper job, which is actually just making the cards
-cmd(cmdbase.format(MCA=mcadir + "/mca_full_"+name+".txt", SYSTS=thesyst, OUTDIR=outdir+"/mps/"+short) + second + "  --ip x " + plugFiles([bkgdir+"/common/SR.input.root", accdir+"/acc_SR.input.root"]))
+cmd(cmdbase.format(MCA=mcadir + "/mca_full_"+name+".txt", SYS=thesyst, O=outdir+"/mps/"+short) + second + "  --ip x " + plugFiles([bkgdir+"/common/SR.input.root", accdir+"/acc_SR.input.root"]))
 

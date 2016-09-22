@@ -41,9 +41,11 @@ class Collection():
 		thelist = [o.name for o in self.objs]
 		if not tag in thelist: raise RuntimeError, "Object '" + tag + "' does not exist in collection '" + self.path + "'"
 		return self.objs[thelist.index(tag)]
+	def getAllNames(self):
+		return [o.name for o in self.obj]
 
 class Custom():
 	def __init__(self, name):
 		self.name = name
-		self.wVars = {}
+		
 

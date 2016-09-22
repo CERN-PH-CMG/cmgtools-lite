@@ -9,8 +9,14 @@
 
 #python susy-interface/dumpmaker.py 3l 3lA /mnt/t3nfs01/data01/shome/cheidegg/o/2016-07-13_ewkskims80X /mnt/t3nfs01/data01/shome/cheidegg/o/interfaceTest/dumps/new -o SR --flags '-X blinding' --pretend 
 
-#python susy-interface/effmaker.py 3l 3lA /mnt/t3nfs01/data01/shome/cheidegg/o/2016-07-13_ewkskims80X /mnt/t3nfs01/data01/shome/cheidegg/o/interfaceTest/effs/new -l 12.9 -o SR --flags '-X blinding' --pretend
-#python susy-interface/effmaker.py 3l 3lA /mnt/t3nfs01/data01/shome/cheidegg/o/2016-07-13_ewkskims80X /mnt/t3nfs01/data01/shome/cheidegg/o/interfaceTest/effsPB/new -l 12.9 -o SR --flags '-X blinding' --perBin --pretend
+#python susy-interface/accmaker.py 3l 3lA /mnt/t3nfs01/data01/shome/cheidegg/o/2016-07-13_ewkskims80X /mnt/t3nfs01/data01/shome/cheidegg/o/interfaceTest/effs/new -l 12.9 -o SR --flags '-X blinding' --pretend
+#python susy-interface/accmaker.py 3l 3lA /mnt/t3nfs01/data01/shome/cheidegg/o/2016-07-13_ewkskims80X /mnt/t3nfs01/data01/shome/cheidegg/o/interfaceTest/effsPB/new -l 12.9 -o SR --flags '-X blinding' --perBin SR_A --pretend
+
+python susy-interface/scanmaker.py 3l "3lA;3lB" /mnt/t3nfs01/data01/shome/cheidegg/o/2016-07-13_ewkskims80X /mnt/t3nfs01/data01/shome/cheidegg/o/interfaceTest/scan/new -l 12.9 -o SR --flags '-X blinding --neglist promptsub --neglist promptsub_ewk_Up --neglist promptsub_ewk_Dn --noNegVar --hardZero' --models "TChiNeuWZ;TChiNeuWH" --mca susy-ewkino/3l/mca_ewkino_forScan.txt --pretend --sigOnly
+#python susy-interface/scanmaker.py 3l "3lA;3lB" /mnt/t3nfs01/data01/shome/cheidegg/o/2016-07-13_ewkskims80X /mnt/t3nfs01/data01/shome/cheidegg/o/interfaceTest/scanPB/new -l 12.9 -o SR --flags '-X blinding --neglist promptsub --neglist promptsub_ewk_Up --neglist promptsub_ewk_Dn --noNegVar --hardZero' --models "TChiNeuWZ;TChiNeuWH" --mca susy-ewkino/3l/mca_ewkino_forScan.txt --perBin --pretend
+
+#python susy-interface/friendmaker.py 3l 3lA /mnt/t3nfs01/data01/shome/cheidegg/o/2016-07-13_ewkskims80X /mnt/t3nfs01/data01/shome/cheidegg/o/2016-07-13_ewkskims80X --bk --log --modules "leptonJetReCleanerSusyEWK3L;leptonBuilderEWK" --accept TTJets --accept DYJets_M50 -F --pretend
+
 
 
 
