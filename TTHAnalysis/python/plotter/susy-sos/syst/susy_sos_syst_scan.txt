@@ -1,5 +1,6 @@
 # Luminosity
 lumi_13TeV	      : DYJets|TT|VV|TW|sig_.* : .* : 1.062
+#pileUp_13TeV	      : DYJets|TT|VV|TW|sig_.* : .* : 1.02
 
 Float_TT              : TT : .* : 2.0 : lnU
 Float_DY              : DYJets : .* : 2.0 : lnU
@@ -52,6 +53,8 @@ CMS_sos_templstat5      : TW  : .* : 1.0 : stat_foreach_shape_bins : .*
 LepSF_FastSim           : sig_.* : .* : 1.04
 CMS_btag_SF_FastSim     : sig_.* : .* : bTag_SF_FastSim : templates
 CMS_sos_met_FastSim     : sig_.* : .* : met : templates
+CMS_sos_ISR_FastSim     : sig_.* : .* : ISR : templates
+CMS_sos_Q2_FastSim      : sig_.* : .* : 1.03
 
 # Other signal uncertainties
 #pdf_gg         : TTZ   : .* : 0.966

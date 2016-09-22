@@ -11,8 +11,7 @@ dowhat = "plots"
 
 if dowhat == "limits":
     # SYST="susy-sos/syst/susy_sos_dummy.txt" ## change file for systematics here
-    SYST="susy-sos/syst/susy_sos_syst.txt"
-    #SYST="susy-sos/syst/susy_sos_syst_CR.txt"
+    SYST="susy-sos/syst/susy_sos_syst_scan.txt"
     PLOTandCUTS="" ## check later where is initialized. You need to specify there the mca, since they will not be replaced as for "plots" (due to different input order of combineCards)
 
 
@@ -24,12 +23,9 @@ def base(selection):
     if dowhat == "plots": CORE+=" --lspam 'CMS Preliminary' --legendWidth 0.14 --legendFontSize 0.04"
     GO = ""
     if selection=='2los':
-        if (dowhat != "limits") : GO="susy-sos/mca-2los-mc.txt susy-sos/2los_tight.txt "
+        if (dowhat != "limits") : GO="susy-sos/susy-sos/mca-2los-mc.txt susy-sos/2los_tight.txt "
         GO="%s %s"%(CORE,GO) 
         GO="%s -L susy-sos/lepton_trigger_SF.cc -W 'leptonSF_SOS(LepGood1_pdgId,LepGood1_pt,LepGood1_eta,0)*leptonSF_SOS(LepGood2_pdgId,LepGood2_pt,LepGood2_eta,0)*triggerSF_SOS(met_pt,metmm_pt(LepGood1_pdgId,LepGood1_pt,LepGood1_phi,LepGood2_pdgId,LepGood2_pt,LepGood2_phi,met_pt,met_phi),0)*puw2016_vtx_13fb(nVert)*eventBTagSF'"%GO 
-        #GO="%s -L susy-sos/lepton_trigger_SF.cc -W 'leptonSF_SOS(LepGood1_pdgId,LepGood1_pt,LepGood1_eta,0)*leptonSF_SOS(LepGood2_pdgId,LepGood2_pt,LepGood2_eta,0)*puw2016_vtx_13fb(nVert)*eventBTagSF'"%GO ## for MET>200 GeV
-        #GO="%s -W 'puw(nTrueInt)'"%GO
-        #GO="%s -W 'puw2016_vtx_4fb(nVert)'"%GO 
         if dowhat == "plots": GO+=" susy-sos/2los_plots.txt"
     else:
         raise RuntimeError, 'Unknown selection'
@@ -47,10 +43,10 @@ def runIt(GO,name,plots=[],noplots=[]):
     elif dowhat == "dumps":  print 'echo %s; python mcDump.py'%name,GO,' '.join(sys.argv[3:])
     elif (dowhat == "limits" and ('_unblind' in name)): 
         # comment: for the moment recycling plots and noplots as a container for histo name and binning when running 'limits' mode (to be improved) 
-        print 'echo %s; python makeShapeCardsSusy_with_lnU_with_statfix_marco.py'%name,PLOTandCUTS,' '.join(['%s'%p for p in plots]),' '.join(['%s'%p for p in noplots]),SYST,' -o %s'%name,' ',GO," --od %s"%(ODIR),' '.join(sys.argv[3:])
+        print 'echo %s; python makeShapeCardsSusy.py'%name,PLOTandCUTS,' '.join(['%s'%p for p in plots]),' '.join(['%s'%p for p in noplots]),SYST,' -o %s'%name,' ',GO," --od %s"%(ODIR),' '.join(sys.argv[3:])
     elif (dowhat == "limits" and ('_unblind' in name)==0 ):
         # comment: for the moment recycling plots and noplots as a container for histo name and binning when running in 'limits' mode (to be improved) 
-        print 'echo %s; python makeShapeCardsSusy_with_lnU_with_statfix_marco.py'%name,PLOTandCUTS,' '.join(['%s'%p for p in plots]),' '.join(['%s'%p for p in noplots]),SYST,' -o %s'%name,' ',GO," --od %s"%(ODIR),' --asimov',' '.join(sys.argv[3:])
+        print 'echo %s; python makeShapeCardsSusy.py'%name,PLOTandCUTS,' '.join(['%s'%p for p in plots]),' '.join(['%s'%p for p in noplots]),SYST,' -o %s'%name,' ',GO," --od %s"%(ODIR),' --asimov',' '.join(sys.argv[3:])
     else:
         raise RuntimeError, 'Unknown selection'
 def add(GO,opt):
@@ -70,9 +66,11 @@ if __name__ == '__main__':
         PLOTandCUTS="susy-sos/mca-2los-mc-frdata.txt susy-sos/2los_tight.txt"
     elif '_unblind' in torun:
         if(('CR_TT_' in torun) or ('CR_DY_' in torun)): 
-            PLOTandCUTS="susy-sos/mca-2los-mcdata-mcfakes.txt susy-sos/2los_tight.txt" ## workaround for taking fakes from MC for CR
+            #PLOTandCUTS="susy-sos/mca-2los-mcdata-mcfakes.txt susy-sos/2los_tight.txt"
+            PLOTandCUTS="susy-sos/mca-2los-mcdata-mcfakes_FastSimTChi.txt susy-sos/2los_tight.txt" ## for running on scan 
         else:
-            PLOTandCUTS="susy-sos/mca-2los-mcdata-frdata.txt susy-sos/2los_tight.txt"
+            #PLOTandCUTS="susy-sos/mca-2los-mcdata-frdata.txt susy-sos/2los_tight.txt"
+            PLOTandCUTS="susy-sos/mca-2los-mcdata-mcfakes_FastSimTChi.txt susy-sos/2los_tight.txt" ## for running on scan 
     else:
         PLOTandCUTS="susy-sos/mca-2los-mc.txt susy-sos/2los_tight.txt" 
         
@@ -129,6 +127,7 @@ if __name__ == '__main__':
         if(dowhat != "limits"): x = add(x,"--perBin")
         if '_ewk10_met125_mm' in torun: 
             x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_315,T2ttDeg_330 -E ^pt5sublep -E ^MT -E ^mm -E ^upperMET -E ^runRange -X ^triggerAll -E ^triggerDoubleMuMET ")  
+            #x = add(x,"-E ^pt5sublep -E ^MT -E ^mm -E ^upperMET -E ^runRange -X ^triggerAll -E ^triggerDoubleMuMET ")  ## (for scan)
             x = x.replace('-l 12.9','-l 10.1')  
             x = x.replace('puw2016_vtx_4fb(nVert)', 'puw2016_vtx_postTS_1p4fb(nVert)' )
             if '_syst' in torun: 
@@ -153,6 +152,7 @@ if __name__ == '__main__':
                 runIt(x,'%s/all'%torun,['SR_bins_EWKino'])                 
         if '_ewk10_met200' in torun: 
             x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_315,T2ttDeg_330 -E ^pt5sublep -E ^MT -E ^SF -E ^highMET -X ^triggerAll -E ^triggerMET ")
+            #x = add(x,"-E ^pt5sublep -E ^MT -E ^SF -E ^highMET -X ^triggerAll -E ^triggerMET ") ## (for scan)
             if '_syst' in torun: 
                 x = add(x,"--plotmode nostack -F sf/t /data1/botta/trees_SOS_80X_170616/SOS13TeV_Friends/evVarFriend_{cname}.root")
                 if '_TT' in torun:
@@ -223,6 +223,7 @@ if __name__ == '__main__':
         ###############################    
         if '_stop20_met125_mm' in torun: 
             x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_90,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_315 -E ^pt5sublep -E ^mm -E ^upperMET -E ^runRange -X ^triggerAll -E ^triggerDoubleMuMET ")
+            #x = add(x,"-E ^pt5sublep -E ^mm -E ^upperMET -E ^runRange -X ^triggerAll -E ^triggerDoubleMuMET ")
             x = x.replace('-l 12.9','-l 10.1')
             x = x.replace('puw2016_vtx_4fb(nVert)', 'puw2016_vtx_postTS_1p4fb(nVert)' )
             if '_syst' in torun: 
@@ -247,6 +248,7 @@ if __name__ == '__main__':
                 runIt(x,'%s/all'%torun,['SR_bins_stop'])
         if '_stop20_met200' in torun: 
             x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_90,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_315 -E ^highMET -X ^triggerAll -E ^triggerMET ")
+            #x = add(x,"-E ^highMET -X ^triggerAll -E ^triggerMET ")
             if '_syst' in torun: 
                 x = add(x,"--plotmode nostack -F sf/t /data1/botta/trees_SOS_80X_170616/SOS13TeV_Friends/evVarFriend_{cname}.root")
                 if '_TT' in torun:
@@ -386,11 +388,11 @@ if __name__ == '__main__':
         x = base('2los')
         x = add(x,"-E ^highMET -X ^triggerAll -E ^triggerMET -X ^opposite-sign -E ^same-sign")
         if(dowhat != "limits"): x = add(x,"--noStackSig --showIndivSigs --xp TChiNeuWZ_95")
-        elif '_ewk20'in torun : x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_90,T2ttDeg_300,T2ttDeg_315,T2ttDeg_330")
-        elif '_ewk10'in torun : x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_315,T2ttDeg_330")
-        elif '_stop20'in torun : x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_90,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_315")
-        elif '_stop35'in torun : x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_90,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_330")
-        else: print "NO SIGNAL specified!"
+        #elif '_ewk20'in torun : x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_90,T2ttDeg_300,T2ttDeg_315,T2ttDeg_330")
+        #elif '_ewk10'in torun : x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_315,T2ttDeg_330")
+        #elif '_stop20'in torun : x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_90,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_315")
+        #elif '_stop35'in torun : x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_90,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_330")
+        else: 1==1 
         if '_syst' in torun: 
             x = add(x,"--plotmode nostack -F sf/t /data1/botta/trees_SOS_80X_170616/SOS13TeV_Friends/evVarFriend_{cname}.root")
             if '_TT' in torun:
@@ -419,14 +421,14 @@ if __name__ == '__main__':
     if '2los_CR_DY_vars' in torun:
         x = base('2los')
         if(dowhat != "limits"): x = add(x,"--noStackSig --showIndivSigs --xp TChiNeuWZ_95")
-        elif '_ewk20'in torun : x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_90,T2ttDeg_300,T2ttDeg_315,T2ttDeg_330")
-        elif '_ewk10'in torun : x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_315,T2ttDeg_330")
-        elif '_stop20'in torun : x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_90,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_315")
-        elif '_stop35'in torun : x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_90,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_330")
-        else: print "NO SIGNAL specified!"
+        #elif '_ewk20'in torun : x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_90,T2ttDeg_300,T2ttDeg_315,T2ttDeg_330")
+        #elif '_ewk10'in torun : x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_315,T2ttDeg_330")
+        #elif '_stop20'in torun : x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_90,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_315")
+        #elif '_stop35'in torun : x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_90,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_330")
+        else: 1==1 #print "NO SIGNAL specified \n"
         if '_data' in torun: 
             if(dowhat != "limits"):x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt') 
-            #if(dowhat != "limits"):x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt') ## RC ( FR from data ) 
+            #if(dowhat != "limits"):x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt') ## ( FR from data ) 
             if(dowhat != "limits"): x = add(x,"--showRatio --maxRatioRange -2 5") #--showMCError
         if '_met200' in torun:             
             x = add(x,"-E ^highMET -E ^MT -R ^TT CRDYTT 'LepGood1_isTightCRDY && LepGood2_isTightCRDY' -R ^ledlepPt NoUpledlepPt '20 < LepGood1_pt || fabs(LepGood1_dxy)>0.01 || fabs(LepGood1_dz)>0.01 || fabs(LepGood2_dxy)>0.01 || fabs(LepGood2_dz)>0.01' -R mtautau Invmtautau '0.<mass_tautau(met_pt,met_phi,LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood2_pt,LepGood2_eta,LepGood2_phi)&&mass_tautau(met_pt,met_phi,LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood2_pt,LepGood2_eta,LepGood2_phi)<160.' -X ^triggerAll -E ^triggerMET")
@@ -453,11 +455,11 @@ if __name__ == '__main__':
     if '2los_CR_TT_vars' in torun:
         x = base('2los')
         if(dowhat != "limits"): x = add(x,"--noStackSig --showIndivSigs --xp TChiNeuWZ_95 --xp TChiNeuWZ_90")
-        elif '_ewk20'in torun : x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_90,T2ttDeg_300,T2ttDeg_315,T2ttDeg_330")
-        elif '_ewk10'in torun : x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_315,T2ttDeg_330")
-        elif '_stop20'in torun : x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_90,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_315")
-        elif '_stop35'in torun : x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_90,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_330")
-        else: print "NO SIGNAL specified!"
+        #elif '_ewk20'in torun : x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_90,T2ttDeg_300,T2ttDeg_315,T2ttDeg_330")
+        #elif '_ewk10'in torun : x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_315,T2ttDeg_330")
+        #elif '_stop20'in torun : x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_90,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_315")
+        #elif '_stop35'in torun : x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_90,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_330")
+        else: 1==1 #print "NO SIGNAL specified \n"
         if ('_data' in torun and dowhat != "limits") : x = add(x,"--showRatio --maxRatioRange -2 5") #--showMCError
         if '_met200' in torun:             
             x = add(x,"-E ^highMET -R ^TT CRTTTT 'LepGood1_isTightCRTT && LepGood2_isTightCRTT' -X ^bveto -E ^btag")
@@ -470,7 +472,7 @@ if __name__ == '__main__':
                 x = add(x,"--xP SR_bins_EWKino,SR_bins_stop")
             if '_dataMET' in torun: 
                 if(dowhat != "limits"):x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt')  
-                #if(dowhat != "limits"):x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt') ## RC (FR from data)
+                #if(dowhat != "limits"):x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt') ##  (FR from data)
                 x = x.replace('-l 12.9','-l 12.9')
                 x = add(x,"-R ^ledlepPt NoUpledlepPt '5 < LepGood1_pt' -X ^triggerAll -E ^triggerMET")
                 if(dowhat != "limits"):x = add(x,"--xP SR_bins_EWKino,SR_bins_stop") 
@@ -492,7 +494,7 @@ if __name__ == '__main__':
             if '_dataMET' in torun: 
                 x = x.replace('puw2016_vtx_4fb(nVert)', 'puw2016_vtx_postTS_1p4fb(nVert)' )
                 if(dowhat != "limits"):x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt')
-                #if(dowhat != "limits"):x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt') ##RC (FR from data)
+                #if(dowhat != "limits"):x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt') ## (FR from data)
                 x = x.replace('-l 12.9','-l 10.1')    
                 x = add(x," -R ^ledlepPt NoUpledlepPt '5 < LepGood1_pt' -E ^runRange -X ^triggerAll -E ^triggerDoubleMuMET")
                 if(dowhat != "limits"):x = add(x,"--xP SR_bins_EWKino,SR_bins_stop")
