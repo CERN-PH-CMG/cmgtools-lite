@@ -22,11 +22,11 @@ def collectPPlots(region, plotsname):
 	return " ".join("--sP "+v for v in region.plots[plotsname])
 
 def collectProcesses(mm, make):
-	bkgs = mm.getBkgs()
-	sigs = mm.getSigs()
-	if make=="data": return "-p data ".join(bkgs)
-	if make=="mix" : return "--showIndivSigs --noStackSig ".join(sigs)+" ".join(bkgs)
-	if make=="sig" : return "--emptyStack -p dummy --showIndivSigs --noStackSig ".join(sigs)
+	bkgs = " ".join(["-p "+b for b in mm.getBkgs()])
+	sigs = " ".join(["-p "+s for s in mm.getSigs()])
+	if make=="data": return "-p data "+bkgs
+	if make=="mix" : return "--showIndivSigs --noStackSig "+sigs+" "+bkgs
+	if make=="sig" : return "--emptyStack -p dummy --showIndivSigs --noStackSig "+sigs
 	if make=="bkg" : return bkgs
 	return ""
 	
