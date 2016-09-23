@@ -243,6 +243,8 @@ class Maker():
 		runner = "lxbatch_runner.sh"
 		if queue in ["short.q", "all.q", "long.q"]:
 			runner = "psibatch_runner.sh"
+                elif queue is ["batch"] and os.path.isdir('/pool/ciencias/'):
+                        runner = "oviedobatch_runner.sh"
 		cp("susy-interface/scripts/" + runner, script)
 		replaceInFile(script, "WORK=$1; shift", "WORK=\"" + os.getcwd() + "\"")
 		replaceInFile(script, "SRC=$1; shift" , "SRC=\"" + os.getcwd().replace("/CMGTools/TTHAnalysis/python/plotter", "") + "\"")
@@ -258,6 +260,8 @@ class Maker():
 		super = "bsub -q {queue} -J SUSY_{name} "
 		if queue in ["all.q", "long.q", "short.q"]:
 			super = "qsub -q {queue} -N SUSY_{name} "
+                elif queue in ["batch"] and os.path.isdir('/pool/ciencias/'):
+                        super = "qsub -q {queue} -N AWSMUniovi_{name} "
 		super += "-o {dir}/submitJob_{name}.out -e {dir}/submitJob_{name}.err "
 		super = super.format(queue=queue, name=name, dir=self.logpath)
 		if setHold > -1 and queue in ["all.q", "long.q", "short.q"]:
@@ -265,6 +269,9 @@ class Maker():
 		jobLine = bash(super + script) 
 		if queue in ["all.q", "long.q", "short.q"]:
 			jobId = int(jobLine.split()[2])
+                elif queue in ["batch"] and os.path.isdir('/pool/ciencias/'):
+                        print "JobLineSplit: ", jobLine.split('.')[0]
+                        jobId = int(jobLine.split('.')[0])
 		else:
 			jobId = int(jobLine.split()[1].strip("<").strip(">"))
 		return jobId
