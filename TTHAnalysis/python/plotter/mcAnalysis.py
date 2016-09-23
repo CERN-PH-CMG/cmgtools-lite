@@ -112,19 +112,29 @@ class MCAnalysis:
                 if options.useCnames: pname = pname0+"."+cname
                 treename = extra["TreeName"] if "TreeName" in extra else options.tree 
                 objname  = extra["ObjName"]  if "ObjName"  in extra else options.obj
-                rootfile = "%s/%s/%s/%s_tree.root" % (options.path, cname, treename, treename)
+
+                basepath = None
+                for treepath in options.path:
+                    if cname in os.listdir(treepath):
+                        basepath = treepath
+                        break
+                if not basepath:
+                    raise RuntimeError("%s -- ERROR: %s process not found in paths (%s)" % (__name__, cname, repr(options.path)))
+
+                rootfile = "%s/%s/%s/%s_tree.root" % (basepath, cname, treename, treename)
                 if options.remotePath:
                     rootfile = "root:%s/%s/%s_tree.root" % (options.remotePath, cname, treename)
                 elif os.path.exists(rootfile+".url"): #(not os.path.exists(rootfile)) and :
                     rootfile = open(rootfile+".url","r").readline().strip()
-                elif (not os.path.exists(rootfile)) and os.path.exists("%s/%s/%s/tree.root" % (options.path, cname, treename)):
+                elif (not os.path.exists(rootfile)) and os.path.exists("%s/%s/%s/tree.root" % (basepath, cname, treename)):
                     # Heppy calls the tree just 'tree.root'
-                    rootfile = "%s/%s/%s/tree.root" % (options.path, cname, treename)
-                elif (not os.path.exists(rootfile)) and os.path.exists("%s/%s/%s/tree.root.url" % (options.path, cname, treename)):
+                    rootfile = "%s/%s/%s/tree.root" % (basepath, cname, treename)
+                elif (not os.path.exists(rootfile)) and os.path.exists("%s/%s/%s/tree.root.url" % (basepath, cname, treename)):
                     # Heppy calls the tree just 'tree.root'
-                    rootfile = "%s/%s/%s/tree.root" % (options.path, cname, treename)
+                    rootfile = "%s/%s/%s/tree.root" % (basepath, cname, treename)
                     rootfile = open(rootfile+".url","r").readline().strip()
-                pckfile = options.path+"/%s/skimAnalyzerCount/SkimReport.pck" % cname
+                pckfile = basepath+"/%s/skimAnalyzerCount/SkimReport.pck" % cname
+
                 tty = TreeToYield(rootfile, options, settings=extra, name=pname, cname=cname, objname=objname); ttys.append(tty)
                 if signal: 
                     self._signals.append(tty)
@@ -534,7 +544,7 @@ def addMCAnalysisOptions(parser,addTreeToYieldOnesToo=True):
     parser.add_option("--split-static",         dest="splitDynamic", action="store_false", default=True, help="Make the splitting dynamic (reduce the chunks for small samples)");
     #parser.add_option("--split-sort",         dest="splitSort", action="store_true", default=True, help="Make the splitting dynamic (reduce the chunks for small samples)");
     parser.add_option("--split-nosort",         dest="splitSort", action="store_false", default=True, help="Make the splitting dynamic (reduce the chunks for small samples)");
-    parser.add_option("-P", "--path",           dest="path",        type="string", default="./",      help="path to directory with input trees and pickle files (./)") 
+    parser.add_option("-P", "--path", dest="path", action="append", type="string", default=[], help="Path to directory with input trees and pickle files. Can supply multiple paths which will be searched in order. (default: ./") 
     parser.add_option("--RP", "--remote-path",   dest="remotePath",  type="string", default=None,      help="path to remote directory with trees, but not other metadata (default: same as path)") 
     parser.add_option("-p", "--process", dest="processes", type="string", default=[], action="append", help="Processes to print (comma-separated list of regexp, can specify multiple ones)");
     parser.add_option("--pg", "--pgroup", dest="premap", type="string", default=[], action="append", help="Group proceses into one. Syntax is '<newname> := (comma-separated list of regexp)', can specify multiple times. Note tahat it is applied _before_ -p, --sp and --xp");
@@ -557,6 +567,7 @@ if __name__ == "__main__":
     parser = OptionParser(usage="%prog [options] tree.root cuts.txt")
     addMCAnalysisOptions(parser)
     (options, args) = parser.parse_args()
+    if not options.path: options.path = ['./']
     tty = TreeToYield(args[0],options) if ".root" in args[0] else MCAnalysis(args[0],options)
     cf  = CutsFile(args[1],options)
     for cutFile in args[2:]:
