@@ -4,10 +4,12 @@ source $VO_CMS_SW_DIR/cmsset_default.sh
 export SCRAM_ARCH=slc6_amd64_gcc530
 WORK=$1; shift
 SRC=$1; shift
+INST=$1; shift
 cd $SRC; 
 eval $(scramv1 runtime -sh);
 cd $WORK;
-echo $*
+[PLACEHOLDER]
+###echo $*
 
 #RUNCMD=$1; shift
 #OPTS=$*
@@ -17,5 +19,7 @@ echo $*
 #
 #echo "$RUNCMD" "$OPTS"
 #exec "$RUNCMD" $OPTS
-exec $*
+### exec $*
+echo "Job for SUSY-Interface task ${INST} is done."
+echo "Log files can be merrily found at ${WORK}/susy-interface/tmp/${INST}/log"
 
