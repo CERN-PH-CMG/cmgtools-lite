@@ -250,9 +250,15 @@ int SR(int nLep, int nTau, int nOSSF, int nOSLF, float mT2L, float mT2T, float m
 #include "TMath.h"
 #include "TGraphAsymmErrors.h"
 #include "TFile.h"
+#include "TSystem.h"
 
-TFile* trigSF = new TFile("${CMSSW_BASE}/src/CMGTools/TTHAnalysis/data/triggerSF/EWKino_9p2_triggerSF.root", "read");
-TFile* trigSFele27 = new TFile("${CMSSW_BASE}/src/CMGTools/TTHAnalysis/data/triggerSF/EWKino_12p9_triggerSF_ele27.root", "read");
+#ifndef MY_CMSSW_BASE_ENV_VAR
+#define MY_CMSSW_BASE_ENV_VAR
+std::string CMSSW_BASE = gSystem->ExpandPathName("${CMSSW_BASE}");
+#endif
+
+TFile* trigSF = new TFile(TString(CMSSW_BASE)+"/src/CMGTools/TTHAnalysis/data/triggerSF/EWKino_9p2_triggerSF.root", "read");
+TFile* trigSFele27 = new TFile(TString(CMSSW_BASE)+"/src/CMGTools/TTHAnalysis/data/triggerSF/EWKino_12p9_triggerSF_ele27.root", "read");
 TH2F* _trigSF_3l_m = (TH2F*) trigSF->Get("eff_3l_mu" );
 TH2F* _trigSF_3l_e = (TH2F*) trigSF->Get("eff_3l_ele");
 TH2F* _trigSF_2l_m = (TH2F*) trigSF->Get("eff_2l_mu" );
@@ -313,16 +319,16 @@ float triggerSF(int BR, float pt1, int pdg1,
 
 
 // electrons
-TFile* elSFmva = new TFile("${CMSSW_BASE}/src/CMGTools/TTHAnalysis/data/leptonSF/SF2016_electron_lepMVAmedium.root", "read");
-TFile* elSFeff = new TFile("${CMSSW_BASE}/src/CMGTools/TTHAnalysis/data/leptonSF/SF2016_electron_trackingEff.root", "read");
+TFile* elSFmva = new TFile(TString(CMSSW_BASE)+"/src/CMGTools/TTHAnalysis/data/leptonSF/SF2016_electron_lepMVAmedium.root", "read");
+TFile* elSFeff = new TFile(TString(CMSSW_BASE)+"/src/CMGTools/TTHAnalysis/data/leptonSF/SF2016_electron_trackingEff.root", "read");
 TH2F* _lepSF_eMVA = (TH2F*) elSFmva->Get("GsfElectronToLeptonMvaMIDEmuTightIP2DSIP3D8miniIso04");
 TH2F* _lepSF_eID  = (TH2F*) elSFmva->Get("GsfElectronToLoose2D");
 TH2F* _lepSF_eTRK = (TH2F*) elSFeff->Get("EGamma_SF2D");
 
 // muons
-TFile* muSFmva = new TFile("${CMSSW_BASE}/src/CMGTools/TTHAnalysis/data/leptonSF/SF2016_muon_lepMVAmedium.root", "read");
-TFile* muSFid  = new TFile("${CMSSW_BASE}/src/CMGTools/TTHAnalysis/data/leptonSF/SF2016_muon_mediumId.root"   , "read");
-TFile* muSFeff = new TFile("${CMSSW_BASE}/src/CMGTools/TTHAnalysis/data/leptonSF/SF2016_muon_trackingEff.root", "read"); 
+TFile* muSFmva = new TFile(TString(CMSSW_BASE)+"/src/CMGTools/TTHAnalysis/data/leptonSF/SF2016_muon_lepMVAmedium.root", "read");
+TFile* muSFid  = new TFile(TString(CMSSW_BASE)+"/src/CMGTools/TTHAnalysis/data/leptonSF/SF2016_muon_mediumId.root"   , "read");
+TFile* muSFeff = new TFile(TString(CMSSW_BASE)+"/src/CMGTools/TTHAnalysis/data/leptonSF/SF2016_muon_trackingEff.root", "read"); 
 TH2F* _lepSF_mMVA = (TH2F*) muSFmva->Get("pt_abseta_PLOT_pair_probeMultiplicity_bin0_&_tag_combRelIsoPF04dBeta_bin0_&_tag_pt_bin0_&_mvaPreSel_pass" );
 TH2F* _lepSF_mID  = (TH2F*) muSFid->Get("pt_abseta_PLOT_pair_probeMultiplicity_bin0" );
 TGraphAsymmErrors* _lepSF_mTRK = (TGraphAsymmErrors*) muSFeff->Get("ratio_eta");
@@ -374,14 +380,14 @@ float leptonSF(float lepSF1, float lepSF2, float lepSF3, float lepSF4 = 1){
 // FASTSIM TO FULLSIM
 
 // electrons
-TFile* elSFmvaFS = new TFile("${CMSSW_BASE}/src/CMGTools/TTHAnalysis/data/leptonSF/SF2016_electron_lepMVAmedium_FS.root", "read");
-TFile* elSFidFS  = new TFile("${CMSSW_BASE}/src/CMGTools/TTHAnalysis/data/leptonSF/SF2016_electron_mvaID_FS.root", "read");
+TFile* elSFmvaFS = new TFile(TString(CMSSW_BASE)+"/src/CMGTools/TTHAnalysis/data/leptonSF/SF2016_electron_lepMVAmedium_FS.root", "read");
+TFile* elSFidFS  = new TFile(TString(CMSSW_BASE)+"/src/CMGTools/TTHAnalysis/data/leptonSF/SF2016_electron_mvaID_FS.root", "read");
 TH2F* _lepSF_eMVA_FS = (TH2F*) elSFmvaFS->Get("histo2D");
 TH2F* _lepSF_eID_FS  = (TH2F*) elSFidFS ->Get("histo2D");
 
 // muons
-TFile* muSFmvaFS = new TFile("${CMSSW_BASE}/src/CMGTools/TTHAnalysis/data/leptonSF/SF2016_muon_lepMVAmedium_FS.root", "read");
-TFile* muSFidFS  = new TFile("${CMSSW_BASE}/src/CMGTools/TTHAnalysis/data/leptonSF/SF2016_muon_mediumId_FS.root"   , "read");
+TFile* muSFmvaFS = new TFile(TString(CMSSW_BASE)+"/src/CMGTools/TTHAnalysis/data/leptonSF/SF2016_muon_lepMVAmedium_FS.root", "read");
+TFile* muSFidFS  = new TFile(TString(CMSSW_BASE)+"/src/CMGTools/TTHAnalysis/data/leptonSF/SF2016_muon_mediumId_FS.root"   , "read");
 TH2F* _lepSF_mMVA_FS = (TH2F*) muSFmvaFS->Get("histo2D" );
 TH2F* _lepSF_mID_FS  = (TH2F*) muSFidFS->Get("histo2D" );
 
