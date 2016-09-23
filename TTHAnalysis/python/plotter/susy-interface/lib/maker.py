@@ -243,7 +243,7 @@ class Maker():
 		runner = "lxbatch_runner.sh"
 		if queue in ["short.q", "all.q", "long.q"]:
 			runner = "psibatch_runner.sh"
-                elif queue is ["batch"] and os.path.isdir('/pool/ciencias/'):
+                elif queue in ["batch"] and os.path.isdir('/pool/ciencias/'):
                         runner = "oviedobatch_runner.sh"
 		cp("susy-interface/scripts/" + runner, script)
 		replaceInFile(script, "WORK=$1; shift", "WORK=\"" + os.getcwd() + "\"")
