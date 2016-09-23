@@ -585,16 +585,40 @@ float _puw2016_vtx[60] = {1.0, 0.05279044032209489, 0.11898234374437847, 0.24839
 float _puw2016_vtx_4fb[60] = {1.0, 0.05100939489406209, 0.10753683801507614, 0.22479210497504293, 0.4061194548857097, 0.6424861757674111, 0.8699208198466813, 1.0886008554762319, 1.276892560891215, 1.4184863274330797, 1.4865216108423305, 1.5122068499515893, 1.4790079191970888, 1.4196901839857483, 1.3216638995044172, 1.2217703342251016, 1.0976458888260794, 0.9796814642869479, 0.8639064021650553, 0.7535695441176858, 0.6555461235682296, 0.5641253790572658, 0.4834647260351342, 0.4164426860491679, 0.35606001606142423, 0.30497669791734305, 0.2592054182625056, 0.22335323942907434, 0.19192071849647147, 0.1672517813653499, 0.14683806760557278, 0.13614259650259863, 0.11857021273678048, 0.11205636298564389, 0.10212521715621654, 0.08684353771752344, 0.08864604848027625, 0.09804676288437263, 0.09235565349796869, 0.07943403772193891, 0.14417507424675546, 0.08136302667712911, 0.05135680407279777, 0.1569931571656257, 0.12873438887581296, 0.3218359721895326, 0.1609179860947663, 0.8045899304738313, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 1.0, 1.0 };
 float puw2016_vtx_4fb(int nVtx) { if (nVtx<60) return _puw2016_vtx_4fb[nVtx]; else return 0; }
 
-TFile* puw9p2fb = NULL;
-TH1F* _puw2016_nInt_9p2fb = NULL;
-float puw2016_nInt_9p2fb(float nInt) { 
-  if (!_puw2016_nInt_9p2fb){ 
-    puw9p2fb = new TFile("/afs/cern.ch/user/f/folguera/workdir/SUS/EWKino/CMSSW_8_0_11/src/CMGTools/TTHAnalysis/data/pileup/puw_2016_9fb.root", "read");
-    _puw2016_nInt_9p2fb = (TH1F*) puw9p2fb->Get("puw");
-  }
+
+TFile* puw2016_ICHEP = NULL;
+TFile* puw2016_ICHEP_Up = NULL;
+TFile* puw2016_ICHEP_Dn = NULL;
+TH1F* _puw2016_nInt_ICHEP = NULL;
+TH1F* _puw2016_nInt_ICHEP_Up = NULL;
+TH1F* _puw2016_nInt_ICHEP_Dn = NULL;
+float puw2016_nInt_ICHEP(float nInt, int var=0) { 
   
-  return _puw2016_nInt_9p2fb->GetBinContent(_puw2016_nInt_9p2fb->FindBin(nInt));
+  if (var==0) { 
+    if (!_puw2016_nInt_ICHEP){ 
+      puw2016_ICHEP = new TFile("/afs/cern.ch/user/f/folguera/workdir/SUS/EWKino/CMSSW_8_0_11/src/CMGTools/TTHAnalysis/data/pileup/puWeights_12fb_63mb.root", "read");
+      _puw2016_nInt_ICHEP = (TH1F*) (puw2016_ICHEP->Get("puw"));
+    }
+    return _puw2016_nInt_ICHEP->GetBinContent(_puw2016_nInt_ICHEP->FindBin(nInt));
+  }
+  else if (var==1) { 
+    if (!puw2016_ICHEP_Up) {
+      puw2016_ICHEP_Up = new TFile("/afs/cern.ch/user/f/folguera/workdir/SUS/EWKino/CMSSW_8_0_11/src/CMGTools/TTHAnalysis/data/pileup/puWeights_12fb_63mb_Up.root", "read");
+      _puw2016_nInt_ICHEP_Up = (TH1F*) (puw2016_ICHEP_Up->Get("puw"));
+    }
+    return _puw2016_nInt_ICHEP_Up->GetBinContent(_puw2016_nInt_ICHEP_Up->FindBin(nInt));
+  }
+  else if (var==-1) {
+    if (!puw2016_ICHEP_Dn) {
+      puw2016_ICHEP_Dn = new TFile("/afs/cern.ch/user/f/folguera/workdir/SUS/EWKino/CMSSW_8_0_11/src/CMGTools/TTHAnalysis/data/pileup/puWeights_12fb_63mb_Down.root", "read");
+      _puw2016_nInt_ICHEP_Dn = (TH1F*) (puw2016_ICHEP_Dn->Get("puw"));
+    }
+    return _puw2016_nInt_ICHEP_Dn->GetBinContent(_puw2016_nInt_ICHEP_Dn->FindBin(nInt));
+  }
+  cout <<"[WARNING!!!]  don't know what to do with PUweight, please check!! ";
+  return -9999.;
 }
+
 
 float _puw2016_nInt_4fb[50] = {0.000541449, 0.0053609, 0.0129558, 0.0284204, 0.0485405, 0.0381546, 0.0455114, 0.201159, 0.417699, 0.551746, 0.708713, 0.948842, 1.26172, 1.63146, 1.95588, 1.93643, 1.75927, 1.77082, 1.58969, 1.54663, 1.21777, 0.97649, 0.830633, 0.699876, 0.521962, 0.416445, 0.260446, 0.172585, 0.0916121, 0.0502204, 0.0253793, 0.0122719, 0.00776576, 0.00462153, 0.00427825, 0.00593001, 0.0137304, 0.0306841, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 float puw2016_nInt_4fb(int nInt) { if(nInt<50) return _puw2016_nInt_4fb[nInt]; else return 0; }
@@ -759,9 +783,16 @@ TH2F *_histo_recoToMedium_leptonSF_mu = NULL;
 TH2F *_histo_MediumToMVA_leptonSF_mu = NULL;
 TH2F *_histo_recoToMVA_leptonSF_el = NULL;
 TH2F *_histo_reco_leptonSF_el = NULL;
-float _get_leptonSF_2lss_ewk(int pdgid, float pt, float eta){
- 
-   if (!_histo_reco_leptonSF_mu) {
+
+float getLeptonSF_mu_Unc(float pt, int var) {
+  if (pt<20) 
+    return var*TMath::Sqrt(0.03*0.03+0.01*0.01+0.01*0.01);
+  else 
+    return var*TMath::Sqrt(0.02*0.02+0.01*0.01);  
+}
+float leptonSF_2lss_ewk(int pdgid, float pt, float eta, int var=0){
+  
+  if (!_histo_reco_leptonSF_mu) {
      _file_reco_leptonSF_mu = new TFile("/afs/cern.ch/work/f/folguera/SUS/EWKino/CMSSW_8_0_11/src/CMGTools/TTHAnalysis/data/leptonSF/sf_mu_trk_susy_ICHEP.root","read");
      _file_recoToMedium_leptonSF_mu = new TFile("/afs/cern.ch/work/f/folguera/SUS/EWKino/CMSSW_8_0_11/src/CMGTools/TTHAnalysis/data/leptonSF/sf_mu_Medium_susy_ICHEP.root","read");
      _file_MediumToMVA_leptonSF_mu = new TFile("/afs/cern.ch/work/f/folguera/SUS/EWKino/CMSSW_8_0_11/src/CMGTools/TTHAnalysis/data/leptonSF/sf_mu_MVAVT_susy_ICHEP.root","read");
@@ -775,11 +806,10 @@ float _get_leptonSF_2lss_ewk(int pdgid, float pt, float eta){
      
      _file_reco_leptonSF_el = new TFile("/afs/cern.ch/work/f/folguera/SUS/EWKino/CMSSW_8_0_11/src/CMGTools/TTHAnalysis/data/leptonSF/sf_el_trk_susy_ICHEP.root","read");
      _histo_reco_leptonSF_el = (TH2F*) (_file_reco_leptonSF_el->Get("EGamma_SF2D"));
-     
    }
- 
+   float out = 0.;
    if (abs(pdgid)==13){
-     float out = _histo_reco_leptonSF_mu->Eval(eta);
+     out = _histo_reco_leptonSF_mu->Eval(eta);
      TH2F *hist = _histo_recoToMedium_leptonSF_mu;
      int ptbin  = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(pt)));
      int etabin = std::max(1, std::min(hist->GetNbinsY(), hist->GetYaxis()->FindBin(fabs(eta))));
@@ -788,18 +818,22 @@ float _get_leptonSF_2lss_ewk(int pdgid, float pt, float eta){
      ptbin  = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(pt)));
      etabin = std::max(1, std::min(hist->GetNbinsY(), hist->GetYaxis()->FindBin(fabs(eta))));
      out *=hist->GetBinContent(ptbin,etabin);
-     return out;
+     return out + out*getLeptonSF_mu_Unc(pt,var);
    }
+   float err = 0.;
    if (abs(pdgid)==11){
      TH2F *hist = _histo_recoToMVA_leptonSF_el;
      int ptbin  = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(pt)));
      int etabin = std::max(1, std::min(hist->GetNbinsY(), hist->GetYaxis()->FindBin(fabs(eta))));
      out = hist->GetBinContent(ptbin,etabin);
+     err = hist->GetBinError(ptbin,etabin)*hist->GetBinError(ptbin,etabin);
      hist = _histo_reco_leptonSF_el;
      ptbin  = std::max(1, std::min(hist->GetNbinsY(), hist->GetYaxis()->FindBin(pt)));
      etabin = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(eta)));
      out *= hist->GetBinContent(etabin,ptbin);
-     return out;
+     err += hist->GetBinError(etabin,ptbin)*hist->GetBinError(etabin,ptbin);
+     err = TMath::Sqrt(err);
+     return out + out*err*var;
    }
    cout << "[ERROR]!!!! SF UnKNOWN!!! PLEASE CHECK" << endl;
    return 1.;
