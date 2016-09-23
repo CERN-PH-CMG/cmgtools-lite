@@ -59,6 +59,7 @@ else
 fi;
 
 if [ $saveList = "false" ]; then 
+    cat chunksToResub.sh
     rm chunksToResub.sh 
 fi
 
