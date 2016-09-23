@@ -270,7 +270,6 @@ class Maker():
 		if queue in ["all.q", "long.q", "short.q"]:
 			jobId = int(jobLine.split()[2])
                 elif queue in ["batch"] and os.path.isdir('/pool/ciencias/'):
-                        print "JobLineSplit: ", jobLine.split('.')[0]
                         jobId = int(jobLine.split('.')[0])
 		else:
 			jobId = int(jobLine.split()[1].strip("<").strip(">"))
