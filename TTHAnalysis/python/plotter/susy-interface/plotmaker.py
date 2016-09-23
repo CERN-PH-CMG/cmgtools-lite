@@ -24,9 +24,9 @@ def collectPPlots(region, plotsname):
 def collectProcesses(mm, make):
 	bkgs = mm.getBkgs()
 	sigs = mm.getSigs()
-	if make=="data": return "-p data "+bkgs
-	if make=="mix" : return "--showIndivSigs --noStackSig "+sigs+" "+bkgs
-	if make=="sig" : return "--emptyStack -p dummy --showIndivSigs --noStackSig "+sigs
+	if make=="data": return "-p data ".join(bkgs)
+	if make=="mix" : return "--showIndivSigs --noStackSig ".join(sigs)+" ".join(bkgs)
+	if make=="sig" : return "--emptyStack -p dummy --showIndivSigs --noStackSig ".join(sigs)
 	if make=="bkg" : return bkgs
 	return ""
 	
