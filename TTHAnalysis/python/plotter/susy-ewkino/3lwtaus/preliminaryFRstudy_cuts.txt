@@ -1,0 +1,18 @@
+# If one wants a "cut0" as a reference
+#alwaystrue        : 1
+#denominator       : 1
+
+# LepGood_tightId: it looks like "==1" is Tight, ">=1" is loose, somehow (at least given the comments in files such as ../../../plotter/susy-edge/susy_edge_sync.txt)
+
+
+# Baseline selection to check jet->tau fake rate dependence on MET
+# dilepton triggers : Triggers_ee || Triggers_mm || Triggers_em
+# >=2 tight leptons : nLepGood >=2 && LepGood1_tightId && LepGood2_tightId && LepGood1_pt > 20 && LepGood2_pt > 15
+
+# Check the exact difference between TauGood and TauOthers (most likely, Others are the ones not passing the basic decayModeFinding discriminator?)
+# TauGood1_mcMatchId &&  Find how to deal with that in data (as in: how to activate the requirement only for MC)
+# =1 tau noid : nTauGood >=1 && TauGood1_pt > 20 && abs(TauGood2_eta)<=2.3 && TauGood1_idDecayMode
+# =1 tau id   : nTauGood >=1 && TauGood1_pt > 20 && abs(TauGood2_eta)<=2.3 && TauGood1_idDecayMode && TauGood1_idMVA
+
+=1 tau noid : ( Triggers_ee || Triggers_mm || Triggers_em ) && ( nLepGood >=2 && LepGood1_tightId == 1 && LepGood2_tightId == 1 && LepGood1_pt > 20 && LepGood2_pt > 15 ) && nTauOther >=1 && TauGood1_pt > 20 && abs(TauGood1_eta)<=2.3 && TauGood1_idDecayMode != 0
+=1 tau id   : ( Triggers_ee || Triggers_mm || Triggers_em ) && ( nLepGood >=2 && LepGood1_tightId == 1 && LepGood2_tightId == 1 && LepGood1_pt > 20 && LepGood2_pt > 15 ) && nTauOther >=1 && TauGood1_pt > 20 && abs(TauGood1_eta)<=2.3 && TauGood1_idDecayMode !=0 && TauGood1_idMVA != 0

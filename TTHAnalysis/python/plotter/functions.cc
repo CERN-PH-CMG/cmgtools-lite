@@ -1,4 +1,5 @@
 #include <cmath>
+#include <map>
 #include "Math/GenVector/LorentzVector.h"
 #include "Math/GenVector/PtEtaPhiM4D.h"
 #include "Math/GenVector/PxPyPzM4D.h"
@@ -623,13 +624,43 @@ float puw2016_nInt_ICHEP(float nInt, int var=0) {
 float _puw2016_nInt_4fb[50] = {0.000541449, 0.0053609, 0.0129558, 0.0284204, 0.0485405, 0.0381546, 0.0455114, 0.201159, 0.417699, 0.551746, 0.708713, 0.948842, 1.26172, 1.63146, 1.95588, 1.93643, 1.75927, 1.77082, 1.58969, 1.54663, 1.21777, 0.97649, 0.830633, 0.699876, 0.521962, 0.416445, 0.260446, 0.172585, 0.0916121, 0.0502204, 0.0253793, 0.0122719, 0.00776576, 0.00462153, 0.00427825, 0.00593001, 0.0137304, 0.0306841, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 float puw2016_nInt_4fb(int nInt) { if(nInt<50) return _puw2016_nInt_4fb[nInt]; else return 0; }
 
-//
-//float puwMu8(int nVert) { return _puw_Mu8[nVert] * 0.001; }
-//float puwMu17(int nVert) { return _puw_Mu17[nVert] * (2305428/29339.)*0.002/2.26; }
+float _puw2016_nInt_6p3fb[50] = {0.000382638, 0.00904568, 0.0172266, 0.028787, 0.0480456, 0.0395218, 0.0455648, 0.168451, 0.383086, 0.648308, 0.936192, 1.1818, 1.3745, 1.57972, 1.78097, 1.74766, 1.60982, 1.64109, 1.49706, 1.4961, 1.21978, 1.01628, 0.897894, 0.782684, 0.602069, 0.498483, 0.329922, 0.238593, 0.14344, 0.0926828, 0.0574109, 0.035114, 0.0284437, 0.0210839, 0.0219857, 0.027923, 0.0455562, 0.0608525, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+
+float puw2016_nInt_6p3fb(int nInt) { if(nInt<50) return _puw2016_nInt_6p3fb[nInt]; else return 0; }
+
 
 
 #include <assert.h>
 #include "TH2F.h"
+#include "TH1F.h"
+#include "TFile.h"
+
+//float _puw2016_nInt_9p2fb[200] = {2.75256e-07, 0.000513282, 0.00244189, 0.0137388, 0.0107657, 0.0170963, 0.019015, 0.0318117, 0.0414126, 0.0475017, 0.031669, 0.0357413, 0.0311912, 0.0431186, 0.0772747, 0.175901, 0.243574, 0.413217, 0.517095, 0.745812, 0.783944, 0.988148, 1.01437, 1.15628, 1.15795, 1.33804, 1.32247, 1.49758, 1.4432, 1.59987, 1.42034, 1.54635, 1.34517, 1.42764, 1.46384, 1.47524, 1.40116, 1.4, 1.49124, 1.45276, 1.26607, 1.22946, 1.14149, 1.0768, 1.10811, 1.01191, 1.05536, 0.951295, 0.916776, 0.798908, 0.867608, 0.721483, 0.638217, 0.513803, 0.521847, 0.406786, 0.346672, 0.26268, 0.244442, 0.181843, 0.161703, 0.115209, 0.103819, 0.0724423, 0.0865247, 0.0562273, 0.064715, 0.0418875, 0.0663075, 0.0419478, 0.0746418, 0.047408, 0.127639, 0.0720651, 0.169214, 0.0774973, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+
+TFile* puw9p2fb = new TFile("/mnt/t3nfs01/data01/shome/cheidegg/d/CMSSW_8_0_11/src/CMGTools/TTHAnalysis/data/pileup/puw_2016_9fb.root", "read");
+TH1F* _puw2016_nInt_9p2fb = (TH1F*) puw9p2fb->Get("puw");
+
+float puw2016_nInt_9p2fb(float nInt) { return _puw2016_nInt_9p2fb->GetBinContent(_puw2016_nInt_9p2fb->FindBin(nInt)); }
+
+TFile* puw12p9fb   = new TFile("/mnt/t3nfs01/data01/shome/cheidegg/d/CMSSW_8_0_11/src/CMGTools/TTHAnalysis/data/pileup/puWeights_12fb_63mb.root", "read");
+TFile* puw12p9fbUp = new TFile("/mnt/t3nfs01/data01/shome/cheidegg/d/CMSSW_8_0_11/src/CMGTools/TTHAnalysis/data/pileup/puWeights_12fb_63mb_Up.root", "read");
+TFile* puw12p9fbDn = new TFile("/mnt/t3nfs01/data01/shome/cheidegg/d/CMSSW_8_0_11/src/CMGTools/TTHAnalysis/data/pileup/puWeights_12fb_63mb_Down.root", "read");
+TH1F* _puw2016_nInt_12p9fb    = (TH1F*) puw12p9fb  ->Get("puw");
+TH1F* _puw2016_nInt_12p9fb_Up = (TH1F*) puw12p9fbUp->Get("puw");
+TH1F* _puw2016_nInt_12p9fb_Dn = (TH1F*) puw12p9fbDn->Get("puw");
+
+float puw2016_nInt_12p9fb(float nInt, int var = 0) { 
+    TH1F* hist = _puw2016_nInt_12p9fb;
+    if(var ==  1) hist = _puw2016_nInt_12p9fb_Up;
+    if(var == -1) hist = _puw2016_nInt_12p9fb_Dn;
+	if(var != 0 ) return hist -> GetBinContent(hist -> FindBin(nInt)) / _puw2016_nInt_12p9fb -> GetBinContent(_puw2016_nInt_12p9fb -> FindBin(nInt));
+    return hist -> GetBinContent(hist -> FindBin(nInt));
+}
+
+//
+//float puwMu8(int nVert) { return _puw_Mu8[nVert] * 0.001; }
+//float puwMu17(int nVert) { return _puw_Mu17[nVert] * (2305428/29339.)*0.002/2.26; }
+
 
 TFile *_file_recoToLoose_leptonSF_mu = NULL;
 TH2F *_histo_recoToLoose_leptonSF_mu = NULL;
@@ -748,96 +779,168 @@ float mass_3_cheap(float pt1, float eta1, float pt2, float eta2, float phi2, flo
 }
 
 
-TFile* trigSF = NULL; 
-TH2F* _trigSF_2l_m = NULL;
-TH2F* _trigSF_2l_e = NULL;
 
-float triggerSF_2lss_ewk(float pt1, float pt2, int pdg2){
-  // Lesya's mail:
-  // - split for trailing ele or trailing mu
-  // - 3l: subleading vs trailing lepton pt (1l + 2l triggers)
-  // - 2l: leading light lepton vs subleading light lepton ==> good for both 2l+tau and 2lSS cases (1l + 2l triggers)
-  // - l+tautau: use flat 86% everywhere; pt_e > 35 GeV; pt_mu > 25 GeV (1l + l/tau triggers) 
-  if (!_trigSF_2l_m) { 
-    trigSF = new TFile("/afs/cern.ch/user/f/folguera/workdir/SUS/EWKino/CMSSW_8_0_11/src/CMGTools/TTHAnalysis/data/triggerSF/EWKino_9p2_triggerSF.root", "read");
-    _trigSF_2l_m = (TH2F*) trigSF->Get("eff_2l_mu" );
-    _trigSF_2l_e = (TH2F*) trigSF->Get("eff_2l_ele");
-  }
-  // 2l
-  TH2F* hist = (pdg2 == 13)?_trigSF_2l_m:_trigSF_2l_e;
-  int xbin = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(pt1)));
-  int ybin = std::max(1, std::min(hist->GetNbinsY(), hist->GetYaxis()->FindBin(pt2)));
-  //  cout << pt1 << " " << pt2 << " " << xbin << " " << ybin << " " << hist->GetBinContent(xbin,ybin) << endl;
-  return hist->GetBinContent(xbin,ybin);
-}
 
-#include "TGraphAsymmErrors.h"
-TFile *_file_reco_leptonSF_mu = NULL;
-TFile *_file_recoToMedium_leptonSF_mu = NULL;
-TFile *_file_MediumToMVA_leptonSF_mu = NULL;
-TFile *_file_recoToMVA_leptonSF_el = NULL;
-TFile *_file_reco_leptonSF_el = NULL;
-
-TGraphAsymmErrors *_histo_reco_leptonSF_mu = NULL;
-TH2F *_histo_recoToMedium_leptonSF_mu = NULL;
-TH2F *_histo_MediumToMVA_leptonSF_mu = NULL;
-TH2F *_histo_recoToMVA_leptonSF_el = NULL;
-TH2F *_histo_reco_leptonSF_el = NULL;
-
-float getLeptonSF_mu_Unc(float pt, int var) {
-  if (pt<20) 
-    return var*TMath::Sqrt(0.03*0.03+0.01*0.01+0.01*0.01);
-  else 
-    return var*TMath::Sqrt(0.02*0.02+0.01*0.01);  
-}
-float leptonSF_2lss_ewk(int pdgid, float pt, float eta, int var=0){
-  
-  if (!_histo_reco_leptonSF_mu) {
-     _file_reco_leptonSF_mu = new TFile("/afs/cern.ch/work/f/folguera/SUS/EWKino/CMSSW_8_0_11/src/CMGTools/TTHAnalysis/data/leptonSF/sf_mu_trk_susy_ICHEP.root","read");
-     _file_recoToMedium_leptonSF_mu = new TFile("/afs/cern.ch/work/f/folguera/SUS/EWKino/CMSSW_8_0_11/src/CMGTools/TTHAnalysis/data/leptonSF/sf_mu_Medium_susy_ICHEP.root","read");
-     _file_MediumToMVA_leptonSF_mu = new TFile("/afs/cern.ch/work/f/folguera/SUS/EWKino/CMSSW_8_0_11/src/CMGTools/TTHAnalysis/data/leptonSF/sf_mu_MVAVT_susy_ICHEP.root","read");
-     _histo_reco_leptonSF_mu = (TGraphAsymmErrors*)(_file_reco_leptonSF_mu->Get("ratio_eta"));
-     _histo_recoToMedium_leptonSF_mu = (TH2F*)(_file_recoToMedium_leptonSF_mu->Get("pt_abseta_PLOT_pair_probeMultiplicity_bin0"));
-     _histo_MediumToMVA_leptonSF_mu = (TH2F*)(_file_MediumToMVA_leptonSF_mu->Get("pt_abseta_PLOT_pair_probeMultiplicity_bin0_&_tag_combRelIsoPF04dBeta_bin0_&_tag_pt_bin0_&_mvaPreSel_pass"));
-   }
-   if (!_histo_recoToMVA_leptonSF_el) {
-     _file_recoToMVA_leptonSF_el = new TFile("/afs/cern.ch/work/f/folguera/SUS/EWKino/CMSSW_8_0_11/src/CMGTools/TTHAnalysis/data/leptonSF/sf_el_susy_ICHEP.root","read");
-     _histo_recoToMVA_leptonSF_el = (TH2F*)(_file_recoToMVA_leptonSF_el->Get("GsfElectronToLeptonMvaVTIDEmuTightIP2DSIP3D8miniIso04"));
-     
-     _file_reco_leptonSF_el = new TFile("/afs/cern.ch/work/f/folguera/SUS/EWKino/CMSSW_8_0_11/src/CMGTools/TTHAnalysis/data/leptonSF/sf_el_trk_susy_ICHEP.root","read");
-     _histo_reco_leptonSF_el = (TH2F*) (_file_reco_leptonSF_el->Get("EGamma_SF2D"));
-   }
-   float out = 0.;
-   if (abs(pdgid)==13){
-     out = _histo_reco_leptonSF_mu->Eval(eta);
-     TH2F *hist = _histo_recoToMedium_leptonSF_mu;
-     int ptbin  = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(pt)));
-     int etabin = std::max(1, std::min(hist->GetNbinsY(), hist->GetYaxis()->FindBin(fabs(eta))));
-     out *= hist->GetBinContent(ptbin,etabin);
-     hist = _histo_MediumToMVA_leptonSF_mu;
-     ptbin  = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(pt)));
-     etabin = std::max(1, std::min(hist->GetNbinsY(), hist->GetYaxis()->FindBin(fabs(eta))));
-     out *=hist->GetBinContent(ptbin,etabin);
-     return out + out*getLeptonSF_mu_Unc(pt,var);
-   }
-   float err = 0.;
-   if (abs(pdgid)==11){
-     TH2F *hist = _histo_recoToMVA_leptonSF_el;
-     int ptbin  = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(pt)));
-     int etabin = std::max(1, std::min(hist->GetNbinsY(), hist->GetYaxis()->FindBin(fabs(eta))));
-     out = hist->GetBinContent(ptbin,etabin);
-     err = hist->GetBinError(ptbin,etabin)*hist->GetBinError(ptbin,etabin);
-     hist = _histo_reco_leptonSF_el;
-     ptbin  = std::max(1, std::min(hist->GetNbinsY(), hist->GetYaxis()->FindBin(pt)));
-     etabin = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(eta)));
-     out *= hist->GetBinContent(etabin,ptbin);
-     err += hist->GetBinError(etabin,ptbin)*hist->GetBinError(etabin,ptbin);
-     err = TMath::Sqrt(err);
-     return out + out*err*var;
-   }
-   cout << "[ERROR]!!!! SF UnKNOWN!!! PLEASE CHECK" << endl;
-   return 1.;
- }
+//#include "TGraphAsymmErrors.h"
+//TFile *_file_reco_leptonSF_mu = NULL;
+//TFile *_file_recoToMedium_leptonSF_mu = NULL;
+//TFile *_file_MediumToMVA_leptonSF_mu = NULL;
+//TFile *_file_recoToMVA_leptonSF_el = NULL;
+//TFile *_file_reco_leptonSF_el = NULL;
+//
+//TGraphAsymmErrors *_histo_reco_leptonSF_mu = NULL;
+//TH2F *_histo_recoToMedium_leptonSF_mu = NULL;
+//TH2F *_histo_MediumToMVA_leptonSF_mu = NULL;
+//TH2F *_histo_recoToMVA_leptonSF_el = NULL;
+//TH2F *_histo_reco_leptonSF_el = NULL;
+//
+//float getLeptonSF_mu_Unc(float pt, int var) {
+//  if (pt<20) 
+//    return var*TMath::Sqrt(0.03*0.03+0.01*0.01+0.01*0.01);
+//  else 
+//    return var*TMath::Sqrt(0.02*0.02+0.01*0.01);  
+//}
+//float leptonSF_2lss_ewk(int pdgid, float pt, float eta, int var=0){
+//  
+//  if (!_histo_reco_leptonSF_mu) {
+//     _file_reco_leptonSF_mu = new TFile("/mnt/t3nfs01/data01/shome/cheidegg/d/CMSSW_8_0_11/src/CMGTools/TTHAnalysis/data/leptonSF/SF2016_muon_trackingEff.root", "data");
+//     _file_recoToMedium_leptonSF_mu = new TFile("/mnt/t3nfs01/data01/shome/cheidegg/d/CMSSW_8_0_11/src/CMGTools/TTHAnalysis/data/leptonSF/SF2016_muon_mediumId.root", "read");
+//     _file_MediumToMVA_leptonSF_mu = new TFile("/mnt/t3nfs01/data01/shome/cheidegg/d/CMSSW_8_0_11/src/CMGTools/TTHAnalysis/data/leptonSF/SF2016_muon_lepMVAveryTight.root", "read");
+//     _histo_reco_leptonSF_mu = (TGraphAsymmErrors*)(_file_reco_leptonSF_mu->Get("ratio_eta"));
+//     _histo_recoToMedium_leptonSF_mu = (TH2F*)(_file_recoToMedium_leptonSF_mu->Get("pt_abseta_PLOT_pair_probeMultiplicity_bin0"));
+//     _histo_MediumToMVA_leptonSF_mu = (TH2F*)(_file_MediumToMVA_leptonSF_mu->Get("pt_abseta_PLOT_pair_probeMultiplicity_bin0_&_tag_combRelIsoPF04dBeta_bin0_&_tag_pt_bin0_&_mvaPreSel_pass"));
+//   }
+//   if (!_histo_recoToMVA_leptonSF_el) {
+//     _file_recoToMVA_leptonSF_el = new TFile("/mnt/t3nfs01/data01/shome/cheidegg/d/CMSSW_8_0_11/src/CMGTools/TTHAnalysis/data/leptonSF/SF2016_electron_full.root", "read");
+//     _histo_recoToMVA_leptonSF_el = (TH2F*)(_file_recoToMVA_leptonSF_el->Get("GsfElectronToLeptonMvaVTIDEmuTightIP2DSIP3D8miniIso04"));
+//     
+//     _file_reco_leptonSF_el = new TFile("/mnt/t3nfs01/data01/shome/cheidegg/d/CMSSW_8_0_11/src/CMGTools/TTHAnalysis/data/leptonSF/SF2016_electron_trackingEff.root", "read");
+//     _histo_reco_leptonSF_el = (TH2F*) (_file_reco_leptonSF_el->Get("EGamma_SF2D"));
+//   }
+//   float out = 0.;
+//   if (abs(pdgid)==13){
+//     out = _histo_reco_leptonSF_mu->Eval(eta);
+//     TH2F *hist = _histo_recoToMedium_leptonSF_mu;
+//     int ptbin  = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(pt)));
+//     int etabin = std::max(1, std::min(hist->GetNbinsY(), hist->GetYaxis()->FindBin(fabs(eta))));
+//     out *= hist->GetBinContent(ptbin,etabin);
+//     hist = _histo_MediumToMVA_leptonSF_mu;
+//     ptbin  = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(pt)));
+//     etabin = std::max(1, std::min(hist->GetNbinsY(), hist->GetYaxis()->FindBin(fabs(eta))));
+//     out *=hist->GetBinContent(ptbin,etabin);
+//     return out + out*getLeptonSF_mu_Unc(pt,var);
+//   }
+//   float err = 0.;
+//   if (abs(pdgid)==11){
+//     TH2F *hist = _histo_recoToMVA_leptonSF_el;
+//     int ptbin  = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(pt)));
+//     int etabin = std::max(1, std::min(hist->GetNbinsY(), hist->GetYaxis()->FindBin(fabs(eta))));
+//     out = hist->GetBinContent(ptbin,etabin);
+//     err = hist->GetBinError(ptbin,etabin)*hist->GetBinError(ptbin,etabin);
+//     hist = _histo_reco_leptonSF_el;
+//     ptbin  = std::max(1, std::min(hist->GetNbinsY(), hist->GetYaxis()->FindBin(pt)));
+//     etabin = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(eta)));
+//     out *= hist->GetBinContent(etabin,ptbin);
+//     err += hist->GetBinError(etabin,ptbin)*hist->GetBinError(etabin,ptbin);
+//     err = TMath::Sqrt(err);
+//     return out + out*err*var;
+//   }
+//   //cout << "[ERROR]!!!! SF UnKNOWN!!! PLEASE CHECK" << endl;
+//   return 1.;
+// }
+//
+//
+//
+//TFile* trigSF = NULL; 
+//TH2F* _trigSF_2l_m = NULL;
+//TH2F* _trigSF_2l_e = NULL;
+//
+//float triggerSF_2lss_ewk(float pt1, float pt2, int pdg2){
+//  // Lesya's mail:
+//  // - split for trailing ele or trailing mu
+//  // - 3l: subleading vs trailing lepton pt (1l + 2l triggers)
+//  // - 2l: leading light lepton vs subleading light lepton ==> good for both 2l+tau and 2lSS cases (1l + 2l triggers)
+//  // - l+tautau: use flat 86% everywhere; pt_e > 35 GeV; pt_mu > 25 GeV (1l + l/tau triggers) 
+//  if (!_trigSF_2l_m) { 
+//    trigSF = new TFile("/afs/cern.ch/user/f/folguera/workdir/SUS/EWKino/CMSSW_8_0_11/src/CMGTools/TTHAnalysis/data/triggerSF/EWKino_9p2_triggerSF.root", "read");
+//    _trigSF_2l_m = (TH2F*) trigSF->Get("eff_2l_mu" );
+//    _trigSF_2l_e = (TH2F*) trigSF->Get("eff_2l_ele");
+//  }
+//  // 2l
+//  TH2F* hist = (pdg2 == 13)?_trigSF_2l_m:_trigSF_2l_e;
+//  int xbin = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(pt1)));
+//  int ybin = std::max(1, std::min(hist->GetNbinsY(), hist->GetYaxis()->FindBin(pt2)));
+//  //  cout << pt1 << " " << pt2 << " " << xbin << " " << ybin << " " << hist->GetBinContent(xbin,ybin) << endl;
+//  return hist->GetBinContent(xbin,ybin);
+//}
+//
+//#include "TGraphAsymmErrors.h"
+//TFile *_file_reco_leptonSF_mu = NULL;
+//TFile *_file_recoToMedium_leptonSF_mu = NULL;
+//TFile *_file_MediumToMVA_leptonSF_mu = NULL;
+//TFile *_file_recoToMVA_leptonSF_el = NULL;
+//TFile *_file_reco_leptonSF_el = NULL;
+//
+//TGraphAsymmErrors *_histo_reco_leptonSF_mu = NULL;
+//TH2F *_histo_recoToMedium_leptonSF_mu = NULL;
+//TH2F *_histo_MediumToMVA_leptonSF_mu = NULL;
+//TH2F *_histo_recoToMVA_leptonSF_el = NULL;
+//TH2F *_histo_reco_leptonSF_el = NULL;
+//
+//float getLeptonSF_mu_Unc(float pt, int var) {
+//  if (pt<20) 
+//    return var*TMath::Sqrt(0.03*0.03+0.01*0.01+0.01*0.01);
+//  else 
+//    return var*TMath::Sqrt(0.02*0.02+0.01*0.01);  
+//}
+//float leptonSF_2lss_ewk(int pdgid, float pt, float eta, int var=0){
+//  
+//  if (!_histo_reco_leptonSF_mu) {
+//     _file_reco_leptonSF_mu = new TFile("/afs/cern.ch/work/f/folguera/SUS/EWKino/CMSSW_8_0_11/src/CMGTools/TTHAnalysis/data/leptonSF/sf_mu_trk_susy_ICHEP.root","read");
+//     _file_recoToMedium_leptonSF_mu = new TFile("/afs/cern.ch/work/f/folguera/SUS/EWKino/CMSSW_8_0_11/src/CMGTools/TTHAnalysis/data/leptonSF/sf_mu_Medium_susy_ICHEP.root","read");
+//     _file_MediumToMVA_leptonSF_mu = new TFile("/afs/cern.ch/work/f/folguera/SUS/EWKino/CMSSW_8_0_11/src/CMGTools/TTHAnalysis/data/leptonSF/sf_mu_MVAVT_susy_ICHEP.root","read");
+//     _histo_reco_leptonSF_mu = (TGraphAsymmErrors*)(_file_reco_leptonSF_mu->Get("ratio_eta"));
+//     _histo_recoToMedium_leptonSF_mu = (TH2F*)(_file_recoToMedium_leptonSF_mu->Get("pt_abseta_PLOT_pair_probeMultiplicity_bin0"));
+//     _histo_MediumToMVA_leptonSF_mu = (TH2F*)(_file_MediumToMVA_leptonSF_mu->Get("pt_abseta_PLOT_pair_probeMultiplicity_bin0_&_tag_combRelIsoPF04dBeta_bin0_&_tag_pt_bin0_&_mvaPreSel_pass"));
+//   }
+//   if (!_histo_recoToMVA_leptonSF_el) {
+//     _file_recoToMVA_leptonSF_el = new TFile("/afs/cern.ch/work/f/folguera/SUS/EWKino/CMSSW_8_0_11/src/CMGTools/TTHAnalysis/data/leptonSF/sf_el_susy_ICHEP.root","read");
+//     _histo_recoToMVA_leptonSF_el = (TH2F*)(_file_recoToMVA_leptonSF_el->Get("GsfElectronToLeptonMvaVTIDEmuTightIP2DSIP3D8miniIso04"));
+//     
+//     _file_reco_leptonSF_el = new TFile("/afs/cern.ch/work/f/folguera/SUS/EWKino/CMSSW_8_0_11/src/CMGTools/TTHAnalysis/data/leptonSF/sf_el_trk_susy_ICHEP.root","read");
+//     _histo_reco_leptonSF_el = (TH2F*) (_file_reco_leptonSF_el->Get("EGamma_SF2D"));
+//   }
+//   float out = 0.;
+//   if (abs(pdgid)==13){
+//     out = _histo_reco_leptonSF_mu->Eval(eta);
+//     TH2F *hist = _histo_recoToMedium_leptonSF_mu;
+//     int ptbin  = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(pt)));
+//     int etabin = std::max(1, std::min(hist->GetNbinsY(), hist->GetYaxis()->FindBin(fabs(eta))));
+//     out *= hist->GetBinContent(ptbin,etabin);
+//     hist = _histo_MediumToMVA_leptonSF_mu;
+//     ptbin  = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(pt)));
+//     etabin = std::max(1, std::min(hist->GetNbinsY(), hist->GetYaxis()->FindBin(fabs(eta))));
+//     out *=hist->GetBinContent(ptbin,etabin);
+//     return out + out*getLeptonSF_mu_Unc(pt,var);
+//   }
+//   float err = 0.;
+//   if (abs(pdgid)==11){
+//     TH2F *hist = _histo_recoToMVA_leptonSF_el;
+//     int ptbin  = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(pt)));
+//     int etabin = std::max(1, std::min(hist->GetNbinsY(), hist->GetYaxis()->FindBin(fabs(eta))));
+//     out = hist->GetBinContent(ptbin,etabin);
+//     err = hist->GetBinError(ptbin,etabin)*hist->GetBinError(ptbin,etabin);
+//     hist = _histo_reco_leptonSF_el;
+//     ptbin  = std::max(1, std::min(hist->GetNbinsY(), hist->GetYaxis()->FindBin(pt)));
+//     etabin = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(eta)));
+//     out *= hist->GetBinContent(etabin,ptbin);
+//     err += hist->GetBinError(etabin,ptbin)*hist->GetBinError(etabin,ptbin);
+//     err = TMath::Sqrt(err);
+//     return out + out*err*var;
+//   }
+//   cout << "[ERROR]!!!! SF UnKNOWN!!! PLEASE CHECK" << endl;
+//   return 1.;
+// }
 
 
 

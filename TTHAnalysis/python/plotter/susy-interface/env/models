@@ -1,0 +1,55 @@
+BEGIN::TChiNeuWH
+  masspoints  := susy-interface/scan/masspoints/list_TChiNeuWH.txt
+  xsecfile    := susy-interface/scan/xsec/xsec_ChiNeu.txt
+  q2accfile   := susy-interface/scan/q2acc/q2acc_TChiNeuWH_3l.root
+  q2accformat := sig_TChiNeuWH_[m1]_[m2]_Q2Acc_[var]
+  brcorr      := 0.03634/1000.
+ENDDEF
+
+BEGIN::TChiNeuWZ
+  masspoints  := susy-interface/scan/masspoints/list_TChiNeuWZ.txt
+  xsecfile    := susy-interface/scan/xsec/xsec_ChiNeu.txt
+  q2accfile   := susy-interface/scan/q2acc/q2acc_TChiNeuWZ_3l.root
+  q2accformat := sig_TChiNeuWZ_[m1]_[m2]_Q2Acc_[var]
+  brcorr      := 0.10099/1000.
+ENDDEF
+
+BEGIN::TChiNeuWZ_SOS
+  masspoints  := susy-interface/scan/masspoints/list_TChiNeuWZ_SOS.txt
+  xsecfile    := susy-interface/scan/xsec/xsec_ChiNeu.txt
+  q2accfile   := 
+  q2accformat := 
+  brcorr      := 0.10099/1000.
+ENDDEF
+
+BEGIN::TChiNeuSlepSneu_FD
+  masspoints  := susy-interface/scan/masspoints/list_TChiNeuSlepSneuFD.txt
+  xsecfile    := susy-interface/scan/xsec/xsec_ChiNeu.txt
+  q2accfile   := susy-interface/scan/q2acc/q2acc_TChiNeuSlepSneu_FD_3l.root
+  q2accformat := sig_TChiNeuSlepSneu_FD_[m1]_[m2]_Q2Acc_[var]
+  brcorr      := 0.5/1000.
+ENDDEF
+
+BEGIN::TChiNeuSlepSneu_05
+  masspoints  := susy-interface/scan/masspoints/list_TChiNeuSlepSneu05.txt
+  xsecfile    := susy-interface/scan/xsec/xsec_ChiNeu.txt
+  q2accfile   := susy-interface/scan/q2acc/q2acc_TChiNeuSlepSneu_05_3l.root
+  q2accformat := sig_TChiNeuSlepSneu_05_[m1]_[m2]_Q2Acc_[var]
+  brcorr      := 0.5/1000.
+ENDDEF
+
+BEGIN::TChiNeuSlepSneu_TD
+  masspoints  := susy-interface/scan/masspoints/list_TChiNeuSlepSneuTD.txt
+  xsecfile    := susy-interface/scan/xsec/xsec_ChiNeu.txt
+  q2accfile   := susy-interface/scan/q2acc/q2acc_TChiNeuSlepSneu_TD_3l.root
+  q2accformat := sig_TChiNeuSlepSneu_TD_[m1]_[m2]_Q2Acc_[var]
+  brcorr      := 1.0/1000.
+ENDDEF
+
+BEGIN::T2tt_SOS
+  masspoints  := susy-interface/scan/masspoints/list_T2ttDiLep.txt
+  xsecfile    := susy-interface/scan/xsec/xsec_T2tt.txt
+  q2accfile   :=
+  q2accformat := 
+  brcorr      := 0.105/1000.
+ENDDEF

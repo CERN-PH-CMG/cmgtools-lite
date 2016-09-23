@@ -132,7 +132,7 @@ MODULES.append( ('leptonJetReCleanerTTH', lambda : LeptonJetReCleaner("Recl", # 
 from CMGTools.TTHAnalysis.tools.leptonBuilderEWK import LeptonBuilderEWK
 
 MODULES.append( ('leptonBuilderEWK', lambda : LeptonBuilderEWK("Mini")))
-
+MODULES.append( ('leptonBuilderEWK_WZCR', lambda : LeptonBuilderEWK("Recl")))
 
 #--- Lepton choice instances
 
@@ -318,6 +318,7 @@ parser.add_option("--env",   dest="env",     type="string", default="lxbatch", h
 parser.add_option("--bk",   dest="bookkeeping",  action="store_true", default=False, help="If given the command used to run the friend tree will be stored");
 (options, args) = parser.parse_args()
 
+
 if options.imports:
     MODULES = []
     from importlib import import_module
@@ -336,10 +337,13 @@ if options.listModules:
     exit()
 
 if "{P}" in args[1]: args[1] = args[1].replace("{P}",args[0])
-if len(args) != 2 or not os.path.isdir(args[0]):
+if len(args) != 2:
     print "Usage: program <TREE_DIR> <OUT>"
     exit()
-if not os.path.isdir(args[1]):
+if not os.path.isdir(args[0]):
+    print "Error. Input directory {input} does not exist".format(input=args[0])
+    exit()
+if not os.path.isdir(args[1]): 
     os.system("mkdir -p "+args[1])
     if not os.path.isdir(args[1]):
         print "Could not create output directory"
@@ -413,10 +417,16 @@ if options.queue:
         super  = "qsub -q {queue} -N friender".format(queue = options.queue)
         runner = "psibatch_runner.sh"
 
+    if options.queue == "batch" and os.path.isdir('/pool/ciencias/' ):
+        super  = "qsub -q {queue} -N happyTreeFriend".format(queue = options.queue)
+        runner = "oviedobatch_runner.sh"
+
+    theoutput= args[1].replace('/pool/ciencias/','/pool/cienciasrw/')
+
     basecmd = "{dir}/{runner} {dir} {cmssw} python {self} -N {chunkSize} -T {tdir} -t {tree} {data} {output}".format(
                 dir = os.getcwd(), runner=runner, cmssw = os.environ['CMSSW_BASE'],
                 self=sys.argv[0], chunkSize=options.chunkSize, tdir=options.treeDir,
-                tree=options.tree, data=args[0], output=args[1])
+                tree=options.tree, data=args[0], output=theoutput)
 
     writelog = ""
     logdir   = ""
@@ -431,10 +441,15 @@ if options.queue:
         if chunk != -1:
             if options.logdir: writelog = "-o {logdir}/{data}_{chunk}.out -e {logdir}/{data}_{chunk}.err".format(logdir=logdir, data=name, chunk=chunk)
             cmd = "{super} {writelog} {base} -d {data} -c {chunk} {post}".format(super=super, writelog=writelog, base=basecmd, data=name, chunk=chunk, post=friendPost)
+
+            if options.queue == "batch":
+                cmd = "echo \"{base} -d {data} -c {chunk} {post}\" | {super} {writelog}".format(super=super, writelog=writelog, base=basecmd, data=name, chunk=chunk, post=friendPost)
         else:
             if options.logdir: writelog = "-o {logdir}/{data}.out -e {logdir}/{data}.err".format(logdir=logdir, data=name)
             cmd = "{super} {writelog} {base} -d {data} {post}".format(super=super, writelog=writelog, base=basecmd, data=name, chunk=chunk, post=friendPost)
 
+            if options.queue == "batch":
+                cmd = "echo \"{base} -d {data} {post}\" | {super} {writelog}".format(super=super, writelog=writelog, base=basecmd, data=name, chunk=chunk, post=friendPost)
         print cmd
         if not options.pretend:
             os.system(cmd)
@@ -443,9 +458,13 @@ if options.queue:
 
 maintimer = ROOT.TStopwatch()
 def _runIt(myargs):
-    (name,fin,fout,data,range,chunk) = myargs
+    (name,fin,ofout,data,range,chunk) = myargs
     timer = ROOT.TStopwatch()
     fetchedfile = None
+
+    fout = ofout
+    #.replace('/pool/ciencias/', '/pool/cienciasrw/')
+    
     if 'LSB_JOBID' in os.environ or 'LSF_JOBID' in os.environ:
         if fin.startswith("root://"):
             try:

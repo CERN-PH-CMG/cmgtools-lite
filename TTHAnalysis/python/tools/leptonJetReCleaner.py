@@ -72,6 +72,7 @@ class LeptonJetReCleaner:
                 ])
         for tfloat in "pt eta phi mass reclTauId".split():
             biglist.append( ("TauSel"+label+"_"+tfloat,"F",20,"nTauSel"+label) )
+        biglist.append( ("TauSel"+label+"_pdgId","I",20,"nTauSel"+label) )
 
         for key in self.systsJEC:
             biglist.extend([
@@ -220,7 +221,7 @@ class LeptonJetReCleaner:
         ret["nTightTauSel" + postfix] = sum([1 for g in goodtaus if g.reclTauId == 2])
         # 4. store the tau 4-vectors
         if postfix==self.label:
-            for tfloat in "pt eta phi mass reclTauId".split():
+            for tfloat in "pt eta phi mass reclTauId pdgId".split():
                 tauret[tfloat] = []
                 for g in goodtaus:
                     tauret[tfloat].append( getattr(g, tfloat) )
@@ -248,7 +249,6 @@ class LeptonJetReCleaner:
             jetsd[var] = [j for j in Collection(event,"DiscJet"+self.systsJEC[_var],"nDiscJet"+self.systsJEC[_var])]
         self.debugprinted = True
         ret = {}; retwlabel = {}; jetret = {}; discjetret = {};
-
         lepsl = []; lepslv = [];
         ret, lepsl, lepslv = self.fillCollWithVeto(ret,leps,leps,'L','Loose',self.looseLeptonSel, lepsforveto=None, doVetoZ=self.doVetoZ, doVetoLM=self.doVetoLMf, sortby=None)
         lepsc = []; lepscv = [];
@@ -296,7 +296,7 @@ def bestZ1TL(lepsl,lepst,cut=lambda lep:True):
             if not cut(l2): continue
             if l1.pdgId == -l2.pdgId:
                mz = (l1.p4() + l2.p4()).M()
-               diff = abs(mz-91.2)
+               diff = abs(mz-91)
                pairs.append( (diff,mz) )
       if len(pairs):
           pairs.sort()

@@ -346,7 +346,7 @@ class TreeToYield:
             self.negativeCheck(histo)
             return [ histo.GetBinContent(1), histo.GetBinError(1), nev ]
         else: 
-            cut = self.adaptExpr(cut,cut=True)
+            #cut = self.adaptExpr(cut,cut=True)
             if self._options.doS2V:
                 cut  = scalarToVector(cut)
             (firstEntry, maxEntries) = self._rangeToProcess(fsplit)
@@ -368,6 +368,16 @@ class TreeToYield:
                 ret.SetBinContent(n+1,0)
                 ret.SetBinContent(0,0)
                 ret.SetBinContent(n+1,0)
+            if plotspec.getOption('IncludeOverflow',False) and ("TProfile" not in ret.ClassName()):
+                ret.SetBinContent(n,ret.GetBinContent(n+1)+ret.GetBinContent(n))
+                ret.SetBinError(n,hypot(ret.GetBinError(n+1),ret.GetBinError(n)))
+                ret.SetBinContent(n+1,0)
+                ret.SetBinContent(n+1,0)
+            if plotspec.getOption('IncludeUnderflow',False) and ("TProfile" not in ret.ClassName()):
+                ret.SetBinContent(1,ret.GetBinContent(0)+ret.GetBinContent(1))
+                ret.SetBinError(1,hypot(ret.GetBinError(0),ret.GetBinError(1)))
+                ret.SetBinContent(0,0)
+                ret.SetBinContent(0,0)
             rebin = plotspec.getOption('rebinFactor',0)
             if plotspec.bins[0] != "[" and rebin > 1 and n > 5:
                 while n % rebin != 0: rebin -= 1
@@ -430,7 +440,7 @@ class TreeToYield:
         self.negativeCheck(histo)
         return histo.Clone(name)
     def negativeCheck(self,histo):
-        if not self._options.allowNegative: 
+        if not self._options.allowNegative and not self._name in self._options.negAllowed: 
             cropNegativeBins(histo)
     def __str__(self):
         mystr = ""
@@ -523,6 +533,7 @@ def addTreeToYieldOptions(parser):
     parser.add_option("--mcc", "--mc-corrections",    dest="mcCorrs",  action="append", default=[], nargs=1, help="Load the following file of mc to data corrections") 
     parser.add_option("--s2v", "--scalar2vector",     dest="doS2V",    action="store_true", default=False, help="Do scalar to vector conversion") 
     parser.add_option("--neg", "--allow-negative-results",     dest="allowNegative",    action="store_true", default=False, help="If the total yield is negative, keep it so rather than truncating it to zero") 
+    parser.add_option("--neglist", dest="negAllowed", action="append", default=[], help="Give process names where negative values are allowed")
     parser.add_option("--max-entries",     dest="maxEntries", default=1000000000, type="int", help="Max entries to process in each tree") 
     parser.add_option("-L", "--load-macro",  dest="loadMacro",   type="string", action="append", default=[], help="Load the following macro, with .L <file>+");
 

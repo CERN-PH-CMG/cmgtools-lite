@@ -1,1 +1,2 @@
-allprompt: (LepSel_mcMatchId[0]!=0 && LepSel_mcPromptGamma[0]==0) && (LepSel_mcMatchId[1]!=0 && LepSel_mcPromptGamma[1]==0) && (LepSel_mcMatchId[2]!=0 && LepSel_mcPromptGamma[2] == 0) && (LepSel_mcMatchId[3]!=0 && LepSel_mcPromptGamma[3]==0)
+allprompt: 1.0
+#isPrompt(4, LepSel_mcUCSX[0], LepSel_mcUCSX[1], LepSel_mcUCSX[2], LepSel_mcUCSX[3])

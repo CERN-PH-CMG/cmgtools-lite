@@ -38,7 +38,7 @@ def conept_EWK(lep, wp = 2):
     if (abs(lep.pdgId)!=11 and abs(lep.pdgId)!=13):
         return lep.pt
     WP = mvaEWKwp(lep, wp)
-    if lep.mvaSUSY > WP and lep.mediumMuonId > 0: return lep.pt
+    if lep.pt > 10 and lep.mvaSUSY > WP and (abs(lep.pdgId) == 11 or lep.mediumMuonID2016 > 0): return lep.pt
     B = 0.85
     if   wp == 2: B = 0.75 if abs(lep.pdgId) == 13 else 0.85
     elif wp == 4: B = 0.80 if abs(lep.pdgId) == 13 else 0.90

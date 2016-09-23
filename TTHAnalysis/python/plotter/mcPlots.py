@@ -162,7 +162,7 @@ def reMax(hist,hist2,islog,factorLin=1.3,factorLog=2.0,doWide=False):
           max2 = max(max2, (hist2.GetBinContent(b) + hist2.GetBinError(b))*(factorLog if islog else factorLin))
     if max2 > max0:
         max0 = max2;
-        if islog: hist.GetYaxis().SetRangeUser(0.01 if doWide else 0.9, max0)
+        if islog: hist.GetYaxis().SetRangeUser(0.1 if doWide else 0.9, max0)
         else:     hist.GetYaxis().SetRangeUser(0,max0)
 
 def doShadedUncertainty(h):
@@ -407,7 +407,10 @@ def doRatioHists(pspec,pmap,total,totalSyst,maxRange,fixRange=False,fitRatio=Non
             # do this first
             total.GetXaxis().SetLabelOffset(999) ## send them away
             total.GetXaxis().SetTitleOffset(999) ## in outer space
+            total.GetYaxis().SetTitleSize(0.06)
+            total.GetYaxis().SetTitleOffset(0.75 if doWide else 1.48)
             total.GetYaxis().SetLabelSize(0.05)
+            total.GetYaxis().SetLabelOffset(0.007)
             # then we can overwrite total with background
             numkey = 'signal'
             total     = pmap[ratioDen]
@@ -482,19 +485,31 @@ def doRatioHists(pspec,pmap,total,totalSyst,maxRange,fixRange=False,fitRatio=Non
     else:
         if total != totalSyst and errorsOnRef:
             unity0.Draw("E2 SAME");
+    rmin = float(pspec.getOption("RMin",rmin))
+    rmax = float(pspec.getOption("RMax",rmax))
     unity.GetYaxis().SetRangeUser(rmin,rmax);
+    unity.GetXaxis().SetTitleFont(42)
     unity.GetXaxis().SetTitleSize(0.14)
-    unity.GetYaxis().SetTitleSize(0.14)
-    unity.GetXaxis().SetLabelSize(0.11)
-    unity.GetYaxis().SetLabelSize(0.11)
+    unity.GetXaxis().SetTitleOffset(0.9)
+    unity.GetXaxis().SetLabelFont(42)
+    unity.GetXaxis().SetLabelSize(0.15)
+    unity.GetXaxis().SetLabelOffset(0.007)
     unity.GetYaxis().SetNdivisions(505)
+    unity.GetYaxis().SetTitleFont(42)
+    unity.GetYaxis().SetTitleSize(0.14)
+    offset = 0.32 if doWide else 0.62
+    unity.GetYaxis().SetTitleOffset(offset)
+    unity.GetYaxis().SetLabelFont(42)
+    unity.GetYaxis().SetLabelSize(0.11)
+    unity.GetYaxis().SetLabelOffset(0.007)
     unity.GetYaxis().SetDecimals(True) 
     unity.GetYaxis().SetTitle(ylabel)
-    offset = 0.32 if doWide else 0.52
-    unity.GetYaxis().SetTitleOffset(offset);
     total.GetXaxis().SetLabelOffset(999) ## send them away
     total.GetXaxis().SetTitleOffset(999) ## in outer space
+    total.GetYaxis().SetTitleSize(0.06)
+    total.GetYaxis().SetTitleOffset(0.75 if doWide else 1.48)
     total.GetYaxis().SetLabelSize(0.05)
+    total.GetYaxis().SetLabelOffset(0.007)
     #ratio.SetMarkerSize(0.7*ratio.GetMarkerSize()) # no it is confusing
     binlabels = pspec.getOption("xBinLabels","")
     if binlabels != "" and len(binlabels.split(",")) == unity.GetNbinsX():
@@ -508,6 +523,25 @@ def doRatioHists(pspec,pmap,total,totalSyst,maxRange,fixRange=False,fitRatio=Non
     line.Draw("L")
     for ratio in ratios:
         ratio.Draw("E SAME" if ratio.ClassName() != "TGraphAsymmErrors" else "PZ SAME");
+    leg0 = ROOT.TLegend(0.12 if doWide else 0.2, 0.8, 0.25 if doWide else 0.45, 0.9)
+    leg0.SetFillColor(0)
+    leg0.SetShadowColor(0)
+    leg0.SetLineColor(0)
+    leg0.SetTextFont(42)
+    leg0.SetTextSize(0.035*0.7/0.3)
+    leg0.AddEntry(unity0, "stat. bkg. unc.", "F")
+    leg0.Draw()
+    leg1 = ROOT.TLegend(0.25 if doWide else 0.45, 0.8, 0.38 if doWide else 0.7, 0.9)
+    leg1.SetFillColor(0)
+    leg1.SetShadowColor(0)
+    leg1.SetLineColor(0)
+    leg1.SetTextFont(42)
+    leg1.SetTextSize(0.035*0.7/0.3)
+    leg1.AddEntry(unity, "total bkg. unc.", "F")
+    leg1.Draw()
+    global legendratio0_, legendratio1_
+    legendratio0_ = leg0
+    legendratio1_ = leg1
     return (ratios, unity, unity0, line)
 
 def doStatTests(total,data,test,legendCorner):
@@ -545,7 +579,7 @@ def doStatTests(total,data,test,legendCorner):
 
 
 legend_ = None;
-def doLegend(pmap,mca,corner="TR",textSize=0.035,cutoff=1e-2,cutoffSignals=True,mcStyle="F",legWidth=0.18,legBorder=True,signalPlotScale=None,header="",doWide=False):
+def doLegend(pmap,mca,corner="TR",textSize=0.035,cutoff=1e-2,cutoffSignals=True,mcStyle="F",legWidth=0.18,legBorder=True,signalPlotScale=None,totalError=None,header="",doWide=False):
         if (corner == None): return
         total = sum([x.Integral() for x in pmap.itervalues()])
         sigEntries = []; bgEntries = []
@@ -564,13 +598,13 @@ def doLegend(pmap,mca,corner="TR",textSize=0.035,cutoff=1e-2,cutoffSignals=True,
                 bgEntries.append( (pmap[p],lbl,mcStyle) )
         nentries = len(sigEntries) + len(bgEntries) + ('data' in pmap)
 
-        (x1,y1,x2,y2) = (0.97-legWidth if doWide else .85-legWidth, .75 - textSize*max(nentries-3,0), .90, .93)
+        (x1,y1,x2,y2) = (0.97-legWidth if doWide else .85-legWidth, .7 - textSize*max(nentries-3,0), .90, .91)
         if corner == "TR":
-            (x1,y1,x2,y2) = (0.97-legWidth if doWide else .85-legWidth, .75 - textSize*max(nentries-3,0), .90, .93)
+            (x1,y1,x2,y2) = (0.97-legWidth if doWide else .85-legWidth, .7 - textSize*max(nentries-3,0), .90, .91)
         elif corner == "TC":
-            (x1,y1,x2,y2) = (.5, .75 - textSize*max(nentries-3,0), .5+legWidth, .93)
+            (x1,y1,x2,y2) = (.5, .75 - textSize*max(nentries-3,0), .5+legWidth, .91)
         elif corner == "TL":
-            (x1,y1,x2,y2) = (.2, .75 - textSize*max(nentries-3,0), .2+legWidth, .93)
+            (x1,y1,x2,y2) = (.2, .75 - textSize*max(nentries-3,0), .2+legWidth, .91)
         elif corner == "BR":
             (x1,y1,x2,y2) = (.85-legWidth, .33 + textSize*max(nentries-3,0), .90, .15)
         elif corner == "BC":
@@ -591,6 +625,7 @@ def doLegend(pmap,mca,corner="TR",textSize=0.035,cutoff=1e-2,cutoffSignals=True,
         total = sum([x.Integral() for x in pmap.itervalues()])
         for (plot,label,style) in sigEntries: leg.AddEntry(plot,label,style)
         for (plot,label,style) in  bgEntries: leg.AddEntry(plot,label,style)
+        if totalError: leg.AddEntry(totalError,"total bkg. unc.","F") 
         leg.Draw()
         ## assign it to a global variable so it's not deleted
         global legend_
@@ -792,14 +827,22 @@ class PlotMaker:
                 ROOT.gStyle.SetPadLeftMargin(600.*0.18/plotformat[0])
 
                 stack.Draw("GOFF")
-                ytitle = "Events" if getEvenBinning(stack.GetHistogram()) == -1 or doWide else "Events / %.1f GeV" %(getEvenBinning(stack.GetHistogram()))
-                ytitle="Event"
-                print "doing it"
-                print pspec.getOption('YTitle',ytitle)
-                stack.GetYaxis().SetTitleOffset(0.02)
-                stack.GetYaxis().SetTitle(pspec.getOption('YTitle',ytitle))
-                stack.GetXaxis().SetTitle(pspec.getOption('XTitle',outputName))
-                stack.GetXaxis().SetNdivisions(pspec.getOption('XNDiv',510))
+                ytitle = "Events" if getEvenBinning(stack.GetHistogram())==-1 or doWide else "Events / %.1f GeV" %(getEvenBinning(stack.GetHistogram()))
+                total.GetXaxis().SetTitleFont(42)
+                total.GetXaxis().SetTitleSize(0.05)
+                total.GetXaxis().SetTitleOffset(0.9)
+                total.GetXaxis().SetLabelFont(42)
+                total.GetXaxis().SetLabelSize(0.05)
+                total.GetXaxis().SetLabelOffset(0.007)
+                total.GetYaxis().SetTitleFont(42)
+                total.GetYaxis().SetTitleSize(0.05)
+                total.GetYaxis().SetTitleOffset(0.90 if doWide else 1.7)
+                total.GetYaxis().SetLabelFont(42)
+                total.GetYaxis().SetLabelSize(0.05)
+                total.GetYaxis().SetLabelOffset(0.007)
+                total.GetYaxis().SetTitle(pspec.getOption('YTitle',ytitle))
+                total.GetXaxis().SetTitle(pspec.getOption('XTitle',outputName))
+                total.GetXaxis().SetNdivisions(pspec.getOption('XNDiv',510))
                 if outputDir: outputDir.WriteTObject(stack)
                 # 
                 if not makeCanvas and not self._options.printPlots: return
@@ -811,18 +854,18 @@ class PlotMaker:
                 height = plotformat[1]+150 if doRatio else plotformat[1]
                 c1 = ROOT.TCanvas(outputName+"_canvas", outputName, plotformat[0], height)
                 c1.SetTopMargin(c1.GetTopMargin()*options.topSpamSize);
-                if self._options.doOfficialCMS: c1.SetTopMargin(0.08*600./height);
+                if self._options.doOfficialCMS: c1.SetTopMargin(0.12*600./height if doRatio else 0.06*600./height);
                 c1.Draw()
                 p1, p2 = c1, None # high and low panes
                 # set borders, if necessary create subpads
                 if doRatio:
                     c1.SetWindowSize(plotformat[0] + (plotformat[0] - c1.GetWw()), (plotformat[1]+150 + (plotformat[1]+150 - c1.GetWh())));
-                    p1 = ROOT.TPad("pad1","pad1",0,0.31,1,1);
+                    p1 = ROOT.TPad("pad1","pad1",0,0.30,1,1);
                     p1.SetTopMargin(p1.GetTopMargin()*options.topSpamSize);
-                    p1.SetBottomMargin(0);
+                    p1.SetBottomMargin(0.025);
                     p1.Draw();
-                    p2 = ROOT.TPad("pad2","pad2",0,0,1,0.31-self._options.ratioOffset);
-                    p2.SetTopMargin(0);
+                    p2 = ROOT.TPad("pad2","pad2",0,0,1,0.30);
+                    p2.SetTopMargin(0.06);
                     p2.SetBottomMargin(0.3);
                     p2.SetFillStyle(0);
                     p2.Draw();
@@ -849,6 +892,7 @@ class PlotMaker:
                         stack.Draw("SAME HIST NOSTACK")
                 if pspec.getOption('MoreY',1.0) > 1.0:
                     total.SetMaximum(pspec.getOption('MoreY',1.0)*total.GetMaximum())
+                totalError=None
                 if options.showMCError:
                     totalError = doShadedUncertainty(totalSyst)
                 is2D = total.InheritsFrom("TH2")
@@ -877,15 +921,15 @@ class PlotMaker:
                 doLegend(pmap,mca,corner=pspec.getOption('Legend','TR'),
                                   cutoff=legendCutoff, mcStyle=("F" if plotmode == "stack" else "L"),
                                   cutoffSignals=not(options.showSigShape or options.showIndivSigShapes or options.showSFitShape), 
-                                  textSize=( (0.045 if doRatio else 0.035) if options.legendFontSize <= 0 else options.legendFontSize ),
+                                  textSize=( (0.045 if doRatio else 0.022) if options.legendFontSize <= 0 else options.legendFontSize ),
                                   legWidth=options.legendWidth, legBorder=options.legendBorder, signalPlotScale=options.signalPlotScale,
                                   header=self._options.legendHeader if self._options.legendHeader else pspec.getOption("LegendHeader", ""),
-                                  doWide=doWide)
+                                  doWide=doWide, totalError=totalError)
                 if self._options.doOfficialCMS:
                     CMS_lumi.lumi_13TeV = "%.1f fb^{-1}" % self._options.lumi
                     CMS_lumi.extraText  = self._options.cmsprel
                     CMS_lumi.lumi_sqrtS = self._options.cmssqrtS
-                    CMS_lumi.CMS_lumi(ROOT.gPad, 4, 0, 0.0 if doWide else 0.04)
+                    CMS_lumi.CMS_lumi(ROOT.gPad, 4, 0, -0.005 if doWide and doRatio else 0.005 if doWide else 0.05)
                 else: 
                     doTinyCmsPrelim(hasExpo = total.GetMaximum() > 9e4 and not c1.GetLogy(),textSize=(0.045 if doRatio else 0.033)*options.topSpamSize, options=options,doWide=doWide)
                 if options.addspam:
@@ -935,6 +979,7 @@ class PlotMaker:
                         if not os.path.exists(fdir): 
                             os.makedirs(fdir); 
                             if os.path.exists("/afs/cern.ch"): os.system("cp /afs/cern.ch/user/g/gpetrucc/php/index.php "+fdir)
+                            elif os.path.exists("/pool/ciencias/"): os.system("cp /pool/ciencias/HeppyTrees/RA7/additionalReferenceCode/index.php "+fdir)
                         if ext == "txt" and self._options.perBin:
                             dump = open("%s/%s_perBin.%s" % (fdir, outputName, ext), "w")
                             maxlen = max([len(mca.getProcessOption(p,'Label',p)) for p in mca.listSignals(allProcs=True) + mca.listBackgrounds(allProcs=True)]+[7])
@@ -959,7 +1004,8 @@ class PlotMaker:
                                     if p in mca.listBackgrounds(allProcs=True): bkgsyst[b-1] += syst*syst 
                                     if p in mca.listSignals(allProcs=True)    : sigsyst[b-1] += syst*syst
                                     line = fmt % (plot.GetBinContent(b), plot.GetBinError(b))
-                                    if syst: line += " +/- %9.2f (syst)"  % syst
+                                    #if syst: line += " +/- %9.2f (syst)"  % syst
+                                    line += " +/- %9.2f (syst)"  % syst
                                     if p == "signal"     and sigsyst[b-1]: line += " +/- %9.2f (syst)" % math.sqrt(sigsyst[b-1])
                                     if p == "background" and bkgsyst[b-1]: line += " +/- %9.2f (syst)" % math.sqrt(bkgsyst[b-1])
                                     bins.append(line)
@@ -1105,6 +1151,7 @@ if __name__ == "__main__":
     if os.path.dirname(outname) and not os.path.exists(os.path.dirname(outname)):
         os.system("mkdir -p "+os.path.dirname(outname))
         if os.path.exists("/afs/cern.ch"): os.system("cp /afs/cern.ch/user/g/gpetrucc/php/index.php "+os.path.dirname(outname))
+        elif os.path.exists("/pool/ciencias/"): os.system("cp /pool/ciencias/HeppyTrees/RA7/additionalReferenceCode/index.php "+fdir)
     print "Will save plots to ",outname
     fcmd = open(re.sub("\.root$","",outname)+"_command.txt","w")
     fcmd.write("%s\n\n" % " ".join(sys.argv))
