@@ -634,17 +634,24 @@ float puw2016_nInt_6p3fb(int nInt) { if(nInt<50) return _puw2016_nInt_6p3fb[nInt
 #include "TH2F.h"
 #include "TH1F.h"
 #include "TFile.h"
+#include "TSystem.h"
 
 //float _puw2016_nInt_9p2fb[200] = {2.75256e-07, 0.000513282, 0.00244189, 0.0137388, 0.0107657, 0.0170963, 0.019015, 0.0318117, 0.0414126, 0.0475017, 0.031669, 0.0357413, 0.0311912, 0.0431186, 0.0772747, 0.175901, 0.243574, 0.413217, 0.517095, 0.745812, 0.783944, 0.988148, 1.01437, 1.15628, 1.15795, 1.33804, 1.32247, 1.49758, 1.4432, 1.59987, 1.42034, 1.54635, 1.34517, 1.42764, 1.46384, 1.47524, 1.40116, 1.4, 1.49124, 1.45276, 1.26607, 1.22946, 1.14149, 1.0768, 1.10811, 1.01191, 1.05536, 0.951295, 0.916776, 0.798908, 0.867608, 0.721483, 0.638217, 0.513803, 0.521847, 0.406786, 0.346672, 0.26268, 0.244442, 0.181843, 0.161703, 0.115209, 0.103819, 0.0724423, 0.0865247, 0.0562273, 0.064715, 0.0418875, 0.0663075, 0.0419478, 0.0746418, 0.047408, 0.127639, 0.0720651, 0.169214, 0.0774973, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
-TFile* puw9p2fb = new TFile("/mnt/t3nfs01/data01/shome/cheidegg/d/CMSSW_8_0_11/src/CMGTools/TTHAnalysis/data/pileup/puw_2016_9fb.root", "read");
+// WARNING: if using std::string CMSSW_BASE in other functions*.cc files, you need to protect it with the preprocessor directives as well
+#ifndef MY_CMSSW_BASE_ENV_VAR
+#define MY_CMSSW_BASE_ENV_VAR
+std::string CMSSW_BASE = gSystem->ExpandPathName("${CMSSW_BASE}");
+#endif
+
+TFile* puw9p2fb = new TFile(TString(CMSSW_BASE)+"/src/CMGTools/TTHAnalysis/data/pileup/puw_2016_9fb.root", "read");
 TH1F* _puw2016_nInt_9p2fb = (TH1F*) puw9p2fb->Get("puw");
 
 float puw2016_nInt_9p2fb(float nInt) { return _puw2016_nInt_9p2fb->GetBinContent(_puw2016_nInt_9p2fb->FindBin(nInt)); }
 
-TFile* puw12p9fb   = new TFile("/mnt/t3nfs01/data01/shome/cheidegg/d/CMSSW_8_0_11/src/CMGTools/TTHAnalysis/data/pileup/puWeights_12fb_63mb.root", "read");
-TFile* puw12p9fbUp = new TFile("/mnt/t3nfs01/data01/shome/cheidegg/d/CMSSW_8_0_11/src/CMGTools/TTHAnalysis/data/pileup/puWeights_12fb_63mb_Up.root", "read");
-TFile* puw12p9fbDn = new TFile("/mnt/t3nfs01/data01/shome/cheidegg/d/CMSSW_8_0_11/src/CMGTools/TTHAnalysis/data/pileup/puWeights_12fb_63mb_Down.root", "read");
+TFile* puw12p9fb   = new TFile(TString(CMSSW_BASE)+"/src/CMGTools/TTHAnalysis/data/pileup/puWeights_12fb_63mb.root", "read");
+TFile* puw12p9fbUp = new TFile(TString(CMSSW_BASE)+"/src/CMGTools/TTHAnalysis/data/pileup/puWeights_12fb_63mb_Up.root", "read");
+TFile* puw12p9fbDn = new TFile(TString(CMSSW_BASE)+"/src/CMGTools/TTHAnalysis/data/pileup/puWeights_12fb_63mb_Down.root", "read");
 TH1F* _puw2016_nInt_12p9fb    = (TH1F*) puw12p9fb  ->Get("puw");
 TH1F* _puw2016_nInt_12p9fb_Up = (TH1F*) puw12p9fbUp->Get("puw");
 TH1F* _puw2016_nInt_12p9fb_Dn = (TH1F*) puw12p9fbDn->Get("puw");
@@ -803,18 +810,18 @@ float mass_3_cheap(float pt1, float eta1, float pt2, float eta2, float phi2, flo
 //float leptonSF_2lss_ewk(int pdgid, float pt, float eta, int var=0){
 //  
 //  if (!_histo_reco_leptonSF_mu) {
-//     _file_reco_leptonSF_mu = new TFile("/mnt/t3nfs01/data01/shome/cheidegg/d/CMSSW_8_0_11/src/CMGTools/TTHAnalysis/data/leptonSF/SF2016_muon_trackingEff.root", "data");
-//     _file_recoToMedium_leptonSF_mu = new TFile("/mnt/t3nfs01/data01/shome/cheidegg/d/CMSSW_8_0_11/src/CMGTools/TTHAnalysis/data/leptonSF/SF2016_muon_mediumId.root", "read");
-//     _file_MediumToMVA_leptonSF_mu = new TFile("/mnt/t3nfs01/data01/shome/cheidegg/d/CMSSW_8_0_11/src/CMGTools/TTHAnalysis/data/leptonSF/SF2016_muon_lepMVAveryTight.root", "read");
+//     _file_reco_leptonSF_mu = new TFile(TString(CMSSW_BASE)+"/src/CMGTools/TTHAnalysis/data/leptonSF/SF2016_muon_trackingEff.root", "data");
+//     _file_recoToMedium_leptonSF_mu = new TFile(TString(CMSSW_BASE)+"/src/CMGTools/TTHAnalysis/data/leptonSF/SF2016_muon_mediumId.root", "read");
+//     _file_MediumToMVA_leptonSF_mu = new TFile(TString(CMSSW_BASE)+"/src/CMGTools/TTHAnalysis/data/leptonSF/SF2016_muon_lepMVAveryTight.root", "read");
 //     _histo_reco_leptonSF_mu = (TGraphAsymmErrors*)(_file_reco_leptonSF_mu->Get("ratio_eta"));
 //     _histo_recoToMedium_leptonSF_mu = (TH2F*)(_file_recoToMedium_leptonSF_mu->Get("pt_abseta_PLOT_pair_probeMultiplicity_bin0"));
 //     _histo_MediumToMVA_leptonSF_mu = (TH2F*)(_file_MediumToMVA_leptonSF_mu->Get("pt_abseta_PLOT_pair_probeMultiplicity_bin0_&_tag_combRelIsoPF04dBeta_bin0_&_tag_pt_bin0_&_mvaPreSel_pass"));
 //   }
 //   if (!_histo_recoToMVA_leptonSF_el) {
-//     _file_recoToMVA_leptonSF_el = new TFile("/mnt/t3nfs01/data01/shome/cheidegg/d/CMSSW_8_0_11/src/CMGTools/TTHAnalysis/data/leptonSF/SF2016_electron_full.root", "read");
+//     _file_recoToMVA_leptonSF_el = new TFile(TString(CMSSW_BASE)+"/src/CMGTools/TTHAnalysis/data/leptonSF/SF2016_electron_full.root", "read");
 //     _histo_recoToMVA_leptonSF_el = (TH2F*)(_file_recoToMVA_leptonSF_el->Get("GsfElectronToLeptonMvaVTIDEmuTightIP2DSIP3D8miniIso04"));
 //     
-//     _file_reco_leptonSF_el = new TFile("/mnt/t3nfs01/data01/shome/cheidegg/d/CMSSW_8_0_11/src/CMGTools/TTHAnalysis/data/leptonSF/SF2016_electron_trackingEff.root", "read");
+//     _file_reco_leptonSF_el = new TFile(TString(CMSSW_BASE)+"/src/CMGTools/TTHAnalysis/data/leptonSF/SF2016_electron_trackingEff.root", "read");
 //     _histo_reco_leptonSF_el = (TH2F*) (_file_reco_leptonSF_el->Get("EGamma_SF2D"));
 //   }
 //   float out = 0.;
