@@ -641,17 +641,17 @@ float puw2016_nInt_6p3fb(int nInt) { if(nInt<50) return _puw2016_nInt_6p3fb[nInt
 // WARNING: if using std::string CMSSW_BASE in other functions*.cc files, you need to protect it with the preprocessor directives as well
 #ifndef MY_CMSSW_BASE_ENV_VAR
 #define MY_CMSSW_BASE_ENV_VAR
-std::string CMSSW_BASE = gSystem->ExpandPathName("${CMSSW_BASE}");
+TString CMSSW_BASE = gSystem->ExpandPathName("${CMSSW_BASE}");
 #endif
 
-TFile* puw9p2fb = new TFile(TString(CMSSW_BASE)+"/src/CMGTools/TTHAnalysis/data/pileup/puw_2016_9fb.root", "read");
+TFile* puw9p2fb = new TFile(CMSSW_BASE+"/src/CMGTools/TTHAnalysis/data/pileup/puw_2016_9fb.root", "read");
 TH1F* _puw2016_nInt_9p2fb = (TH1F*) puw9p2fb->Get("puw");
 
 float puw2016_nInt_9p2fb(float nInt) { return _puw2016_nInt_9p2fb->GetBinContent(_puw2016_nInt_9p2fb->FindBin(nInt)); }
 
-TFile* puw12p9fb   = new TFile(TString(CMSSW_BASE)+"/src/CMGTools/TTHAnalysis/data/pileup/puWeights_12fb_63mb.root", "read");
-TFile* puw12p9fbUp = new TFile(TString(CMSSW_BASE)+"/src/CMGTools/TTHAnalysis/data/pileup/puWeights_12fb_63mb_Up.root", "read");
-TFile* puw12p9fbDn = new TFile(TString(CMSSW_BASE)+"/src/CMGTools/TTHAnalysis/data/pileup/puWeights_12fb_63mb_Down.root", "read");
+TFile* puw12p9fb   = new TFile(CMSSW_BASE+"/src/CMGTools/TTHAnalysis/data/pileup/puWeights_12fb_63mb.root", "read");
+TFile* puw12p9fbUp = new TFile(CMSSW_BASE+"/src/CMGTools/TTHAnalysis/data/pileup/puWeights_12fb_63mb_Up.root", "read");
+TFile* puw12p9fbDn = new TFile(CMSSW_BASE+"/src/CMGTools/TTHAnalysis/data/pileup/puWeights_12fb_63mb_Down.root", "read");
 TH1F* _puw2016_nInt_12p9fb    = (TH1F*) puw12p9fb  ->Get("puw");
 TH1F* _puw2016_nInt_12p9fb_Up = (TH1F*) puw12p9fbUp->Get("puw");
 TH1F* _puw2016_nInt_12p9fb_Dn = (TH1F*) puw12p9fbDn->Get("puw");
@@ -810,18 +810,18 @@ float mass_3_cheap(float pt1, float eta1, float pt2, float eta2, float phi2, flo
 //float leptonSF_2lss_ewk(int pdgid, float pt, float eta, int var=0){
 //  
 //  if (!_histo_reco_leptonSF_mu) {
-//     _file_reco_leptonSF_mu = new TFile(TString(CMSSW_BASE)+"/src/CMGTools/TTHAnalysis/data/leptonSF/SF2016_muon_trackingEff.root", "data");
-//     _file_recoToMedium_leptonSF_mu = new TFile(TString(CMSSW_BASE)+"/src/CMGTools/TTHAnalysis/data/leptonSF/SF2016_muon_mediumId.root", "read");
-//     _file_MediumToMVA_leptonSF_mu = new TFile(TString(CMSSW_BASE)+"/src/CMGTools/TTHAnalysis/data/leptonSF/SF2016_muon_lepMVAveryTight.root", "read");
+//     _file_reco_leptonSF_mu = new TFile(CMSSW_BASE+"/src/CMGTools/TTHAnalysis/data/leptonSF/SF2016_muon_trackingEff.root", "data");
+//     _file_recoToMedium_leptonSF_mu = new TFile(CMSSW_BASE+"/src/CMGTools/TTHAnalysis/data/leptonSF/SF2016_muon_mediumId.root", "read");
+//     _file_MediumToMVA_leptonSF_mu = new TFile(CMSSW_BASE+"/src/CMGTools/TTHAnalysis/data/leptonSF/SF2016_muon_lepMVAveryTight.root", "read");
 //     _histo_reco_leptonSF_mu = (TGraphAsymmErrors*)(_file_reco_leptonSF_mu->Get("ratio_eta"));
 //     _histo_recoToMedium_leptonSF_mu = (TH2F*)(_file_recoToMedium_leptonSF_mu->Get("pt_abseta_PLOT_pair_probeMultiplicity_bin0"));
 //     _histo_MediumToMVA_leptonSF_mu = (TH2F*)(_file_MediumToMVA_leptonSF_mu->Get("pt_abseta_PLOT_pair_probeMultiplicity_bin0_&_tag_combRelIsoPF04dBeta_bin0_&_tag_pt_bin0_&_mvaPreSel_pass"));
 //   }
 //   if (!_histo_recoToMVA_leptonSF_el) {
-//     _file_recoToMVA_leptonSF_el = new TFile(TString(CMSSW_BASE)+"/src/CMGTools/TTHAnalysis/data/leptonSF/SF2016_electron_full.root", "read");
+//     _file_recoToMVA_leptonSF_el = new TFile(CMSSW_BASE+"/src/CMGTools/TTHAnalysis/data/leptonSF/SF2016_electron_full.root", "read");
 //     _histo_recoToMVA_leptonSF_el = (TH2F*)(_file_recoToMVA_leptonSF_el->Get("GsfElectronToLeptonMvaVTIDEmuTightIP2DSIP3D8miniIso04"));
 //     
-//     _file_reco_leptonSF_el = new TFile(TString(CMSSW_BASE)+"/src/CMGTools/TTHAnalysis/data/leptonSF/SF2016_electron_trackingEff.root", "read");
+//     _file_reco_leptonSF_el = new TFile(CMSSW_BASE+"/src/CMGTools/TTHAnalysis/data/leptonSF/SF2016_electron_trackingEff.root", "read");
 //     _histo_reco_leptonSF_el = (TH2F*) (_file_reco_leptonSF_el->Get("EGamma_SF2D"));
 //   }
 //   float out = 0.;
