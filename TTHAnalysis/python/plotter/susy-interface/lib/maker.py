@@ -227,8 +227,8 @@ class Maker():
 		elif queue in ["batch"] and os.path.isdir('/pool/ciencias/'):
 			runner = "oviedobatch_runner.sh"
 		cp("susy-interface/scripts/" + runner, script)
-		replaceInFile(script, "WORK=$1; shift", "WORK=\"" + os.getcwd() + "\"")
-		replaceInFile(script, "SRC=$1; shift" , "SRC=\"" + self.workdir + "\"")
+		replaceInFile(script, "WORK=$1; shift", "WORK=\"" + self.workdir + "\"")
+		replaceInFile(script, "SRC=$1; shift" , "SRC=\"" + self.cmssw + "/src\"")
 		replaceInFile(script, "INST=$1; shift" , "INST=\"" + self.instance + "\"")
 		replaceInFile(script, "[PLACEHOLDER]" , "\n".join([b for b in commands])+"\n")
 		cant = needHold and not queue in ["short.q", "all.q", "long.q"]
