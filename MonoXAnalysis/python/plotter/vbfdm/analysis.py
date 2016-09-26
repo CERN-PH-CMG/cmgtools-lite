@@ -45,7 +45,7 @@ if __name__ == "__main__":
 
     if options.region not in cuts: raise RuntimeError, "Region "+options.region+" not in the foreseen ones: "+cuts
     weights = ['puw']
-    if options.region in 'signal': weights += ['SF_NLO_QCD','SF_NLO_EWK']
+    if options.region in 'signal': weights += ['SF_NLO_QCD','SF_NLO_EWK','SF_trigmetnomu']
     
     weightsString = " -W '" + "*".join(weights) + "'"
 
