@@ -37,6 +37,7 @@ options.modules = func.splitList(options.modules)
 options.accept  = func.splitList(options.accept )
 options.exclude = func.splitList(options.exclude)
 mm              = maker.Maker(base, args, options)
+mm.workdir      = mm.cmssw +"/src/CMGTools/TTHAnalysis/macros"
 mm.loadNEvtSample()
 
 
