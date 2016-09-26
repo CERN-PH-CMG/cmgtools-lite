@@ -9,6 +9,7 @@ addMCAnalysisOptions(parser)
 parser.add_option("-o",   "--out",    dest="outname", type="string", default=None, help="output name") 
 parser.add_option("--od", "--outdir", dest="outdir", type="string", default=None, help="output name") 
 parser.add_option("-v", "--verbose",  dest="verbose",  default=0,  type="int",    help="Verbosity level (0 = quiet, 1 = verbose, 2+ = more)")
+parser.add_option("--masses", dest="masses", default=None, type="string", help="produce results for all these masses")
 parser.add_option("--asimov", dest="asimov", action="store_true", help="Asimov")
 (options, args) = parser.parse_args()
 options.weight = True
@@ -70,17 +71,22 @@ for name in systs.keys():
         effmap[p] = effect
     systs[name] = effmap
 
-for signal in mca.listSignals():
+masses = [ 125.0 ]
+if options.masses:
+    masses = [ float(x) for x in open(options.masses) ]
+
+for mass in masses:
+    smass = str(mass).replace(".0","")
     myout = outdir
-    myout += "%s/" % signal
-    myprocs = ( backgrounds + [ signal ] ) if signal in signals else backgrounds
+    myout += "%s/" % mass
+    myprocs = ( backgrounds + signals )
     if not os.path.exists(myout): os.system("mkdir -p "+myout)
     datacard = open(myout+binname+".card.txt", "w");
     datacard = open(myout+binname+".card.txt", "w"); 
-    datacard.write("## Datacard for cut file %s (signal %s)\n"%(args[1],signal))
+    datacard.write("## Datacard for cut file %s (mass %f)\n"%(args[1],mass))
     datacard.write("## Event selection: \n")
     for cutline in str(cuts).split("\n"):  datacard.write("##   %s\n" % cutline)
-    if signal not in signals: datacard.write("## NOTE: no signal contribution found with this event selection.\n")
+    if len(signals)==0: datacard.write("## NOTE: no signal contribution found with this event selection.\n")
     datacard.write('##----------------------------------\n')
     datacard.write('bin         %s\n' % binname)
     klen = max([7, len(binname)]+[len(p) for p in procs])
