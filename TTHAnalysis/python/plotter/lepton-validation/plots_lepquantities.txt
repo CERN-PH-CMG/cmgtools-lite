@@ -24,7 +24,7 @@ lep_jetPtRelv2: LepGood_jetPtRelv2[iChosen]: 40,0,30; XTitle="Lepton Jet p_{T} R
 #lep_jetPtRatiov1: LepGood_jetPtRatiov1[iChosen]: 40,0,1.2; XTitle="Lepton Jet p_{T} Ratiov1 ", Legend='TL', LegendCutoff=1e-2
 lep_jetPtRatiov2: LepGood_jetPtRatiov2[iChosen]: 40,0,1.2; XTitle="Lepton Jet p_{T} Ratiov2 ", Legend='TL', LegendCutoff=1e-2
 #lep_mvaTTH: LepGood_mvaTTH[iChosen]: 40,-1,1; XTitle="Lepton mvaTTH", Legend='TR', LegendCutoff=1e-2
-lep_mvaTTH_log: LepGood_mvaTTH[iChosen]: 40,-1,1; Logy, XTitle="Lepton mvaTTH", Legend='TL', LegendCutoff=1e-2
+lep_mvaTTH_log: LepGood_mvaTTH[iChosen]: 40,-1,1; Logy, XTitle="lepton MVA score", Legend='TL', LegendCutoff=1e-2
 lep_mvaSUSY_log: LepGood_mvaSUSY[iChosen]: 40,-1,1; Logy, XTitle="Lepton mvaSUSY", Legend='TL', LegendCutoff=1e-2
 #lep_SegmentCompatibility: LepGood_segmentCompatibility[iChosen]: 24,0,1; XTitle="Lepton Segment-based compatibility", Legend='TR', LegendCutoff=1e-2
 lep_SegmentCompatibility_log: LepGood_segmentCompatibility[iChosen]: 24,0,1; Logy, XTitle="Lepton Segment-based compatibility", Legend='TR', LegendCutoff=1e-2
