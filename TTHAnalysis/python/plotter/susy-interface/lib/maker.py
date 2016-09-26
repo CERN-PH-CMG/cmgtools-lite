@@ -37,8 +37,8 @@ def splitLists(options):
 class Maker():
 	def __init__(self, base, args, options):
 		self.cmssw   = os.environ["CMSSW_BASE"]
-		self.plotter = self.cmssw   +"/src/CMGTools/TTHAnalysis/python/plotter"
-		self.dir     = self.plotter +"/susy-interface"
+		self.workdir = self.cmssw   +"/src/CMGTools/TTHAnalysis/python/plotter"
+		self.dir     = self.workdir +"/susy-interface"
 		self.tmpdir  = self.dir     +"/tmp"
 		self.instance = timestamp(False)
 		self.logpath  = self.tmpdir+"/"+self.instance+"/log"
@@ -224,11 +224,11 @@ class Maker():
 		runner = "lxbatch_runner.sh"
 		if queue in ["short.q", "all.q", "long.q"]:
 			runner = "psibatch_runner.sh"
-                elif queue in ["batch"] and os.path.isdir('/pool/ciencias/'):
-                        runner = "oviedobatch_runner.sh"
+		elif queue in ["batch"] and os.path.isdir('/pool/ciencias/'):
+			runner = "oviedobatch_runner.sh"
 		cp("susy-interface/scripts/" + runner, script)
 		replaceInFile(script, "WORK=$1; shift", "WORK=\"" + os.getcwd() + "\"")
-		replaceInFile(script, "SRC=$1; shift" , "SRC=\"" + os.getcwd().replace("/CMGTools/TTHAnalysis/python/plotter", "") + "\"")
+		replaceInFile(script, "SRC=$1; shift" , "SRC=\"" + self.workdir + "\"")
 		replaceInFile(script, "INST=$1; shift" , "INST=\"" + self.instance + "\"")
 		replaceInFile(script, "[PLACEHOLDER]" , "\n".join([b for b in commands])+"\n")
 		cant = needHold and not queue in ["short.q", "all.q", "long.q"]
