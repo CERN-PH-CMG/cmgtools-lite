@@ -23,7 +23,7 @@ if __name__ == "__main__":
     anaOpts += [coreopt]
 
     fev = ' -F mjvars/t \"'+T+'/friends/evVarFriend_{cname}.root\" '
-    fsf = ' --FM sf/t \"'+T+'/friends/sfFriend_{cname}.root\" '
+    fsf = ' --FMC sf/t \"'+T+'/friends/sfFriend_{cname}.root\" '
     anaOpts += [fev, fsf]
     if options.synch == True: anaOpts += '-u'
     
