@@ -1,0 +1,5 @@
+j1_pt: vbfTaggedJet_leadJetPt : 40,80,550 ; XTitle='p_{T}^{j1} (GeV)', Legend='TR'
+j2_pt: vbfTaggedJet_trailJetPt : 30,70,350 ; XTitle='p_{T}^{j2} (GeV)', Legend='TR'
+mjj: vbfTaggedJet_invMass : 20,1000,4000 ; XTitle='m_{jj} (GeV)', Legend='TR'
+detajj: vbfTaggedJet_deltaEta : 20,3.5,7.5 ; XTitle='#Delta#eta_{jj}', Legend='TR'
+metnomu: metNoMu_pt  : 30,200,600 ; XTitle="Recoil [GeV]", Legend='TR'
