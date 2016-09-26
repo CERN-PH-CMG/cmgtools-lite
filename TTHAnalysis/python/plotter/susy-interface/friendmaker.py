@@ -7,6 +7,19 @@ def collectFriends(modulelist):
 	if len(modulelist)==0: return ""
 	return " ".join(["-F sf/t {P}/"+m+"/evVarFriend_{cname}.root" for m in modulelist])
 
+def getFriendConn(mm, module):
+	friendConn = mm.getVariable("friendConn")
+	if module in friendConn.keys():
+		return friendConn[module]
+	return []
+
+def getFriendFile(mm, module):
+	friendFile = mm.getVariable("friendFile")
+	if module in friendFile.keys(): 
+		return friendFile[module][0]
+	return ""
+
+
 parser = OptionParser(usage="%prog cfg regions treedir outdir [options]")
 parser = maker.addMakerOptions(parser)
 parser.add_option("--modules"     , dest="modules", type="string", action="append", default=[], help="Semicolon-separated list of modules to run")
@@ -24,7 +37,6 @@ options.modules = func.splitList(options.modules)
 options.accept  = func.splitList(options.accept )
 options.exclude = func.splitList(options.exclude)
 mm              = maker.Maker(base, args, options)
-mm.loadFriendConn()
 mm.loadNEvtSample()
 
 
@@ -36,8 +48,8 @@ for module in options.modules:
 	func.mkdir(output +"/log")
 	if options.bk: func.mkdir(output +"/ref")
 
-	file     = mm.getFriendFile(module)
-	requires = mm.getFriendConn(module)
+	file     = getFriendFile(mm, module)
+	requires = getFriendConn(mm, module)
 	requires = filter(lambda x: x, requires)
 
 

@@ -104,14 +104,6 @@ class Maker():
 		return procs
 	def getExprCut(self):
 		return getCut(self.config.firstCut, self.getVariable("expr"), self.getVariable("bins"))
-	def getFriendConn(self, module):
-		if module in self.friendConn.keys():
-			return self.friendConn[module]
-		return []
-	def getFriendFile(self, module):
-		if module in self.friendFile.keys():
-			return self.friendFile[module]
-		return ""
 	def getFriends(self):
 		friends = []
 		friends += ["-F sf/t {P}/"+f+"/evVarFriend_{cname}.root" for f in self.config.sfriends]
@@ -194,18 +186,6 @@ class Maker():
 		if not hasattr(self, "regionIdx"): self.regionIdx = -1
 		self.regionIdx += 1
 		self.region = self.regions[self.regionIdx]
-	def loadFriendConn(self):
-		friendConn = [l.rstrip("\n").strip() for l in open(self.dir+"/env/friendconn" , "r").readlines()]
-		friendConn = filter(lambda x: x, friendConn)
-		self.friendConn = {}
-		self.friendFile = {}
-		for entry in [s.split(":") for s in friendConn]:
-			if len(entry)==3:
-				self.friendConn[entry[0].strip()] = [s.strip() for s in entry[2].split(";")]
-				self.friendFile[entry[0].strip()] = entry[1].strip()
-			else:
-				self.friendConn[entry[0].strip()] = []
-				self.friendFile[entry[0].strip()] = ""
 	def loadNEvtSample(self):
 		nevts      = [l.rstrip("\n").strip() for l in open(self.dir+"/env/nevtsamples", "r").readlines()]		
 		nevts      = filter(lambda x: x, nevts)
@@ -232,6 +212,7 @@ class Maker():
 		return self.base.format(**dict)
 	def submit(self, args, setHold = -1, needHold = False):
 		cmd = self.makeCmd(args)
+		print cmd
 		self.submitCmd(cmd, setHold, needHold)
 	def submitCmd(self, cmd, setHold = -1, needHold = False):
 		if self.options.pretend: 
