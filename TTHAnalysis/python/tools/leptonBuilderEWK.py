@@ -5,8 +5,15 @@ import ROOT, copy, os
 import array, math
 
 if "mt2_bisect_cc.so" not in ROOT.gSystem.GetLibraries():
-    ROOT.gROOT.LoadMacro("/mnt/t3nfs01/data01/shome/cheidegg/s/mT2code/mt2_bisect.cc")
-    ## you can obtain it from here: /afs/cern.ch/work/c/cheidegg/eco/2016-06-24_cmg76X-friender_mT2code/mt2_bisect.cc
+    if os.path.isdir('/pool/ciencias/' ):
+        ROOT.gROOT.LoadMacro("/pool/ciencias/HeppyTrees/RA7/additionalReferenceCode/mt2_bisect.cpp")
+        print "Loaded from Oviedo"
+    elif os.path.isdir('/mnt/t3nfs01/'):
+        ROOT.gROOT.LoadMacro("/mnt/t3nfs01/data01/shome/cheidegg/s/mT2code/mt2_bisect.cc")
+        print "Loaded from PSI"
+    else:
+        ROOT.gROOT.LoadMacro("/afs/cern.ch/user/c/cheidegg/public/mT2code/mt2_bisect.cc")
+
 from ROOT import mt2_bisect
 
 # FIXME: additional variables were once written to the LepSel but now commented in order
@@ -68,7 +75,7 @@ class LeptonBuilderEWK:
     ## _______________________________________________________________
     def __init__(self, inputlabel):
 
-        self.mt2maker = None #mt2_bisect.mt2()
+        self.mt2maker = mt2_bisect.mt2()
         self.inputlabel = '_' + inputlabel
 
         self.systsJEC = {0: "", 1: "_jecUp"   , -1: "_jecDown"  }
@@ -163,6 +170,18 @@ class LeptonBuilderEWK:
         ## useBuffer = True if you want to know the number of OSSF pairs
         ## useBuffer is only for OSSF pairs used
 
+        #self.OS = []
+        #used = []
+        #for i in range(min(max, len(self.lepSelFO))):
+        #    if useBuffer and self.lepSelFO[i] in used: continue
+        #    for j in range(i+1,min(max, len(self.lepSelFO))):
+        #        if useBuffer and self.lepSelFO[j] in used: continue
+        #        if abs(self.lepSelFO[i].pdgId) == 15 and abs(self.lepSelFO[j].pdgId) == 15: continue # no SF tautau pairs
+        #        if self.lepSelFO[i].pdgId * self.lepSelFO[j].pdgId < 0 and (not useBuffer or abs(self.lepSelFO[i].pdgId) == abs(self.lepSelFO[j].pdgId)): 
+        #            self.OS.append(OSpair(self.lepSelFO[i], self.lepSelFO[j]))
+        #            used.append(self.lepSelFO[i]); used.append(self.lepSelFO[j]) 
+        #            if useBuffer: break
+
         self.OS = []
         for i in range(min(max, len(self.lepSelFO))):
             for j in range(i+1,min(max, len(self.lepSelFO))):
@@ -213,7 +232,8 @@ class LeptonBuilderEWK:
 
         all = []
         for os in self.OS:
-            all.append((0 if os.isSF else 1, os.diff, os)) # priority to SF, then difference to target, no priority to flavor
+            all.append((0 if os.isSF else 1, os.diff, os)) # priority to SF, then difference to target
+            #all.append((0 if os.isSF else 1, 1 if os.wTau else 0, os.diff, os)) # priority to SF, then light, then difference to target
 
         if all:
             all.sort()
@@ -259,6 +279,11 @@ class LeptonBuilderEWK:
     ## findTau
     ## _______________________________________________________________
     def findTau(self, event, tau):
+        #if not event.iTauSel_Mini: return None
+        #idx = int(event.iTauSel_Mini)
+        #if   idx > 0: return self.goodtaus[idx     ]
+        #elif idx < 0: return self.disctaus[-1*idx+1]
+        #return None
         idx = self.isIn(tau, self.goodtaus)
         if idx > -1: return self.goodtaus[idx]
         idx = self.isIn(tau, self.disctaus)
@@ -686,4 +711,3 @@ if __name__ == '__main__':
     el = EventLoop([ Tester("tester") ])
     el.loop([tree], maxEvents = 50)
 
-        
