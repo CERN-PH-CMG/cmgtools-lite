@@ -375,11 +375,8 @@ class DataMCPlot(object):
     def BGHist(self):
         return self.GetStack().totalHist
 
-    def SignalHist(self):
-        for hist in self.nostack:
-            if not hist.style.drawAsData:
-                return hist
-        return None
+    def SignalHists(self):
+        return [h for h in self.nostack if not h.style.drawAsData]
 
     def DrawStack(self, opt='',
                   xmin=None, xmax=None, ymin=None, ymax=None, print_norm=False,

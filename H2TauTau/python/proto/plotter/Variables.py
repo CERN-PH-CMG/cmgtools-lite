@@ -229,7 +229,7 @@ emu_vars = generic_vars +electron_l1_vars + muon_l2_vars + mu_mu_special_vars + 
 
 tautau_vars = generic_vars + tau_l1_vars + tau_l2_vars + tau_tau_special_vars
 
-all_vars = generic_vars + muon_l1_vars + muon_l2_vars + tau_l2_vars + additional_tau_vars  # + additional_tau_vars + tau_mu_special_vars
+all_vars = generic_vars + muon_l1_vars + muon_l2_vars + tau_l2_vars + additional_tau_vars + tau_tau_special_vars # + additional_tau_vars + tau_mu_special_vars
 
 
 dict_all_vars = {}

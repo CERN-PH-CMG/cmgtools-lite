@@ -4,6 +4,7 @@ from ROOT import gSystem, gROOT
 
 from CMGTools.H2TauTau.proto.plotter.PlotConfigs import SampleCfg
 from CMGTools.H2TauTau.proto.plotter.HistCreator import setSumWeights
+from CMGTools.H2TauTau.proto.samples.spring16.sms_xsec import get_xsec
 
 from CMGTools.H2TauTau.proto.samples.spring16.htt_common import TT_pow_ext, DYJetsToLL_M50_LO, DYNJets, WJetsToLNu,  WNJets, WWTo2L2Nu, T_tWch, TBar_tWch, VVTo2L2Nu, ZZTo4L, WZTo1L3Nu, WWTo1L1Nu2Q, ZZTo2L2Q, WZTo2L2Q, WZTo1L1Nu2Q, TBarToLeptons_tch_powheg, TToLeptons_tch_powheg, mssm_signals, dy_weight_dict, w_weight_dict
 
@@ -41,7 +42,8 @@ def createSampleLists(analysis_dir='/afs/cern.ch/user/s/steggema/work/public/mt/
                       mode='sm',
                       ztt_cut='(l2_gen_match == 5)*getDYWeight(genboson_mass, genboson_pt)', zl_cut='(l2_gen_match < 5)*getDYWeight(genboson_mass, genboson_pt)',
                       zj_cut='(l2_gen_match == 6)*getDYWeight(genboson_mass, genboson_pt)',
-                      data2016G=False):
+                      data2016G=False,
+                      signal_scale=1.):
     # -> Possibly from cfg like in the past, but may also make sense to enter directly
     if channel == 'mt':
         tree_prod_name = 'H2TauTauTreeProducerTauMu'
@@ -200,12 +202,23 @@ def createSampleLists(analysis_dir='/afs/cern.ch/user/s/steggema/work/public/mt/
     # ]
 
     samples_susy = []
-    sname = 'SMS_TStauStau'
-    samples_susy.append(SampleCfg(name=sname+'MStau150MChi1', dir_name=sname,
-                                      ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=1., sumweights=41371.0, is_signal=True, weight_expr='(GenSusyMStau==150. && GenSusyMNeutralino==1.)'))
+    if mode == 'susy':
+        
+        normfile = ROOT.TFile('/data1/steggema/tt/230816/DiTauNewMC/SMS_TStauStau/ttHhistoCounterAnalyzer/sumhist.root')
+        normhist = normfile.Get('SumGenWeightsSMS')
 
+        def createSusySampleCfg(m_stau=150, m_chi0=1):
+            sname = 'SMS_TStauStau'
+            return SampleCfg(name=sname+'MStau{m_stau}MChi{m_chi0}'.format(m_stau=m_stau, m_chi0=m_chi0), dir_name=sname, ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=get_xsec(m_stau), sumweights=normhist.GetBinContent(m_stau+1, m_chi0+1, 1), is_signal=True, weight_expr='(GenSusyMStau=={m_stau}. && GenSusyMNeutralino=={m_chi0})'.format(m_stau=m_stau, m_chi0=m_chi0))
 
-    
+        samples_susy.append(createSusySampleCfg(100, 1))
+        samples_susy.append(createSusySampleCfg(200, 1))
+        samples_susy.append(createSusySampleCfg(150, 1))
+        samples_susy.append(createSusySampleCfg(150, 10))
+        samples_susy.append(createSusySampleCfg(150, 20))
+        samples_susy.append(createSusySampleCfg(150, 50))
+        samples_susy.append(createSusySampleCfg(150, 100))
+
 
     if mode == 'mssm':
         samples_additional += samples_mssm
@@ -222,7 +235,7 @@ def createSampleLists(analysis_dir='/afs/cern.ch/user/s/steggema/work/public/mt/
 
     # weighted_list = ['W', 'W1Jets', 'W2Jets', 'W3Jets', 'W4Jets']
     weighted_list = []
-    weighted_list += ['SMS_TStauStauMStau150MChi1']
+    weighted_list += [s.name for s in samples_susy]
     if useDYWeight:
         weighted_list += ['ZTT', 'ZTT1Jets', 'ZTT2Jets', 'ZTT3Jets', 'ZTT4Jets',
                           'ZJ', 'ZJ1Jets', 'ZJ2Jets', 'ZJ3Jets', 'ZJ4Jets',
@@ -237,6 +250,10 @@ def createSampleLists(analysis_dir='/afs/cern.ch/user/s/steggema/work/public/mt/
     sampleDict = {}
     for s in all_samples:
         sampleDict[s.name] = s
+
+    for sample in all_samples:
+        if sample.is_signal:
+            sample.scale = sample.scale * signal_scale
 
     return samples_mc, samples_data, samples, all_samples, sampleDict
 

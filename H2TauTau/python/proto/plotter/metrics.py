@@ -6,13 +6,18 @@ import math
 def ams(s, b, b_e=0.):
     if s == 0.:
         return 0.
-    if b == 0.:
+    if b <= 0.:
         print 'No background but signal,', s, ' in AMS calculation; returning 0'
         # return float('nan')
         return 0.
     if b_e > 0.:
         return ams_cowan(s, b, b_e)
-    return math.sqrt(2*((s + b)*math.log(1 + s/b) - s))
+
+    val = 2*((s + b)*math.log(1 + s/b) - s)
+    if val < 0.:
+        print 'Getting negative temp value in ams calculation', val
+        return 0.
+    return math.sqrt(val)
 
 
 def ams_cowan(s, b, b_e=0.0000000001):
