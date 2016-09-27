@@ -1,5 +1,7 @@
 j1_pt: vbfTaggedJet_leadJetPt : 40,80,550 ; XTitle='p_{T}^{j1} (GeV)', Legend='TR'
 j2_pt: vbfTaggedJet_trailJetPt : 32,50,350 ; XTitle='p_{T}^{j2} (GeV)', Legend='TR'
+jcentral_eta: if3(abs(vbfTaggedJet_leadJetEta)<abs(vbfTaggedJet_trailJetEta),vbfTaggedJet_leadJetEta,vbfTaggedJet_trailJetEta) : 20,-5,5 ;  XTitle='Central tag jet #eta', Legend='TR'
+jfwd_eta: if3(abs(vbfTaggedJet_leadJetEta)>abs(vbfTaggedJet_trailJetEta),vbfTaggedJet_leadJetEta,vbfTaggedJet_trailJetEta) : 20,-5,5 ;  XTitle='Forward tag jet #eta', Legend='TR'
 mjj: vbfTaggedJet_invMass : 20,1100,4000 ; XTitle='m_{jj} (GeV)', Legend='TR'
 detajj: vbfTaggedJet_deltaEta : 20,3.5,8.0 ; XTitle='#Delta#eta_{jj}', Legend='TR'
 metnomu: metNoMu_pt  : 25,130,600 ; XTitle="Recoil [GeV]", Legend='TR'
