@@ -93,7 +93,7 @@ def makeSignalModel(w, model, refhpass, refhfail, options):
                     elif nev == 1:
                         hkeys.Fill(hin.GetXaxis().GetBinCenter(b), 1)
                     else:
-                        print "\tfound %d events in bin %d, will spread them evenly" % (nev,b)
+                        #print "\tfound %d events in bin %d, will spread them evenly" % (nev,b)
                         x0 = hin.GetXaxis().GetBinLowEdge(b)
                         dx = (hin.GetXaxis().GetBinUpEdge(b)-x0)/(nev+1)
                         for ifake in xrange(1,int(nev)+1):
@@ -423,6 +423,7 @@ def fitOneEfficiency(name, hpass, hfail, sigModel, bkgModel, refpass, reffail, o
     w.pdf("pdfFail").plotOn(ffail, ROOT.RooFit.LineColor(ROOT.kRed+0))
     ffail.Draw()
     for ext in "pdf","png":
+        if ext == "pdf" and not options.fullOut: continue
         c1.Print("%s/%s.%s" % (options.printDirBins, name, ext))
     log = open("%s/%s.txt" % (options.printDirBins, name), "w")
     fpf = result.floatParsFinal()
@@ -457,11 +458,11 @@ def fitOneEfficiency(name, hpass, hfail, sigModel, bkgModel, refpass, reffail, o
 
     log.close()
 
-
-    tfout = ROOT.TFile.Open("%s/%s.%s" % (options.printDirBins, name, "root"), "RECREATE")
-    w.SetName("w_"+name)
-    tfout.WriteTObject(w, "w_"+name)
-    tfout.Close()
+    if options.fullOut:
+        tfout = ROOT.TFile.Open("%s/%s.%s" % (options.printDirBins, name, "root"), "RECREATE")
+        w.SetName("w_"+name)
+        tfout.WriteTObject(w, "w_"+name)
+        tfout.Close()
 
     # report result
     if efferr: 
@@ -824,6 +825,7 @@ def addTnPEfficiencyOptions(parser):
     parser.add_option("--doRatio", dest="doRatio", action="store_true", default=False, help="Add a ratio plot at the bottom")
     parser.add_option("--doScan", dest="doScan", action="store_true",  default=True, help="Scan the parameter space before fitting")
     parser.add_option("--noScan", dest="doScan", action="store_false", default=True, help="")
+    parser.add_option("--fullOut", dest="fullOut", action="store_false", default=True, help="Save full output")
     parser.add_option("--request", "--refit", dest="request", type="string", default=None, help="make a single fit");
     parser.add_option("--reqname", dest="requestName", type="string", default=None, help="don't do anything unlesshe name (from -N) matches this");
     parser.add_option("-j", "--jobs",    dest="jobs",      type="int",    default=0, help="Use N threads");
@@ -871,7 +873,10 @@ if __name__ == "__main__":
         trees += [ (reftree, "_ref") ]
     else:
         reftree = None
-
+    if options.jobs > 0:
+        proof = ROOT.TProof.Open("workers=%d" % options.jobs)
+        tree.SetProof()
+        if reftree: reftree.SetProof()
     effs =  [ makeHistos2D(t,options.num,options.den,options.xvar,options.mvar,options,post=l,reftree=reftree) for (t,l) in trees ]
     if options.request and "bin" in options.request: exit()
     plotEffs(options.name,effs,options,options.printDir)

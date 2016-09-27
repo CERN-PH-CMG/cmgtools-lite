@@ -5,7 +5,7 @@ class CacheChecker:
         pass
     def checkComp(self,comp,verbose=False):
         dataset = comp.dataset
-        run_range = comp.run_range
+        run_range = getattr(comp, 'run_range', None)
         return self.check(dataset,run_range,verbose=verbose)
     def check(self,dataset,run_range,verbose=False):
         fromCache = createDataset("CMS", dataset, ".*root", readcache=True,  run_range=run_range)

@@ -6,16 +6,18 @@ cmsphys10*) P=/data1/g/gpetrucc/MuTnP80X/80X_v3/ ;;
 esac;
 
 PDIR="plots/80X/TnP/"
-JOB="mupog_sos_v1.2"
+JOB="mupog_sos_v2.0"
 XBINS="[3.5,7.5,10,15,20,30,45,70,120]"
 EBINS="[-2.4,-2.1,-1.6,-1.2,-0.9,-0.6,-0.3,-0.2,0.2,0.3,0.6,0.9,1.2,1.6,2.1,2.4]"
 VBINS="[0.5,5.5,8.5,11.5,14.5,17.5,20.5,23.5,26.5,30.5,34.5]"
 DATA=""
-DATA="$DATA $P/data/TnPTree_80X_Run2016B_v2_GoldenJSON_Run271036to275125_incomplete_slim.root"
-DATA="$DATA $P/data/TnPTree_80X_Run2016B_v2_GoldenJSON_Run275126to275783_slim.root"
-DATA="$DATA $P/data/TnPTree_80X_Run2016C_v2_GoldenJSON_Run275126to275783_slim.root"
-DATA="$DATA $P/data/TnPTree_80X_Run2016C_v2_GoldenJSON_Run275784to276097_slim.root"
-MC=$(for I in $(seq 1 5); do echo -n " --refmc $P/DY_madgraphMLM/TnPTree_80X_DYLL_M50_MadGraphMLM_part${I}_slim.root "; done)
+DATA="$DATA $P/data/TnPTree_80X_Run2016B_v2_GoldenJSON_Run271036to275125_incomplete_slim2_withEAMiniIso.root"
+DATA="$DATA $P/data/TnPTree_80X_Run2016B_v2_GoldenJSON_Run275126to275783_slim2_withEAMiniIso.root"
+DATA="$DATA $P/data/TnPTree_80X_Run2016C_v2_GoldenJSON_Run275126to275783_slim2_withEAMiniIso.root"
+DATA="$DATA $P/data/TnPTree_80X_Run2016C_v2_GoldenJSON_Run275784to276097_slim2_withEAMiniIso.root"
+DATA="$DATA $P/data/TnPTree_80X_Run2016C_v2_GoldenJSON_Run276098to276384_slim2_withEAMiniIso.root"
+DATA="$DATA $P/data/TnPTree_80X_Run2016D_v2_GoldenJSON_Run276098to276384_slim2_withEAMiniIso.root"
+MC=$(for I in $(seq 1 5); do echo -n " --refmc $P/DY_madgraphMLM/TnPTree_80X_DYLL_M50_MadGraphMLM_part${I}_slim2_withEAMiniIso.root "; done)
 PDS="$DATA $MC"
 
 OPTS=" --doRatio  --pdir $PDIR/$JOB  " 
@@ -33,10 +35,12 @@ fi;
 
 if [[ "$1" == "all" ]]; then
   shift;
-  for ID in SOS SOS_PR SOS_NM1_{Id,Iso,Ip} SOS_003 SOS_NoIP SOS_presel; do 
-     for SMOD in MCTG dvoigt dvoigt2 BWDCB2 BWDCB; do  
-        for BMOD in bern4 bern3 expo ; do
-           echo $LAUNCHER $0 $ID $SMOD $BMOD all          
+  for ID in SOS SOS_PR; do #SOS_NM1_{Id,Iso,Ip} SOS_003 SOS_NoIP SOS_presel; do 
+     for SMOD in MCTG dvoigt2; do # dvoigt2 BWDCB2 BWDCB; do  
+        for BMOD in bern4 bern3; do # expo ; do
+            for W in be eta vtx; do 
+               echo $LAUNCHER $0 $ID $SMOD $BMOD $W          
+            done
         done
      done
   done
@@ -100,6 +104,10 @@ vtx_*) getcut ${bin/vtx_};
 # ---------------------------------
 all)
     for B in barrel endcap eta_pt520 vtx_pt520 eta_pt20 vtx_pt20; do bash $0 $ID $SMOD $BMOD $B $*; done;;
+eta)
+    for B in eta_pt520 eta_pt20; do bash $0 $ID $SMOD $BMOD $B $*; done;;
+vtx)
+    for B in vtx_pt520 vtx_pt20; do bash $0 $ID $SMOD $BMOD $B $*; done;;
 be)
     for B in barrel endcap; do bash $0 $ID $SMOD $BMOD $B $*; done;;
 # ---------------------------------

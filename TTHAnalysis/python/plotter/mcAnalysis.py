@@ -2,6 +2,7 @@
 #from tree2yield import *
 from CMGTools.TTHAnalysis.plotter.tree2yield import *
 from CMGTools.TTHAnalysis.plotter.projections import *
+from CMGTools.TTHAnalysis.plotter.figuresOfMerit import FOM_BY_NAME
 import pickle, re, random, time
 
 #_T0 = long(ROOT.gSystem.Now())
@@ -55,8 +56,9 @@ class MCAnalysis:
             if ";" in line:
                 (line,more) = line.split(";")[:2]
                 for setting in [f.replace(';',',').strip() for f in more.replace('\\,',';').split(',')]:
+                    if setting == "": continue
                     if "=" in setting: 
-                        (key,val) = [f.strip() for f in setting.split("=")]
+                        (key,val) = [f.strip() for f in setting.split("=",1)]
                         extra[key] = eval(val)
                     else: extra[setting] = True
             field = [f.strip() for f in line.split(':')]
@@ -212,12 +214,14 @@ class MCAnalysis:
     def scaleUpProcess(self,process,scaleFactor):
         for tty in self._allData[process]: 
             tty.setScaleFactor( "((%s) * (%s))" % (tty.getScaleFactor(),scaleFactor) )
-    def getProcessOption(self,process,name,default=None):
+    def getProcessOption(self,process,name,default=None,noThrow=False):
         if process in self._allData:
             return self._allData[process][0].getOption(name,default=default)
         elif process in self._optionsOnlyProcesses:
             options = self._optionsOnlyProcesses[process]
             return options[name] if name in options else default
+        elif noThrow:
+            return default
         else: raise RuntimeError, "Can't get option %s for undefined process %s" % (name,process)
     def setProcessOption(self,process,name,value):
         if process in self._allData:
@@ -367,6 +371,10 @@ class MCAnalysis:
             if len(allBg)>1:
                 table.append(('ALL BKG',mergeReports([v for n,v in allBg])))
         if "data" in reports: table += [ ('DATA', reports['data']) ]
+        for fomname in self._options.figureOfMerit:
+            fom = FOM_BY_NAME[fomname]
+            nrows = len(table[0][1])
+            table += [ (fomname, [ (None, [fom(self, reports, row), 0, 0]) for row in xrange(nrows) ] ) ]
 
         # maximum length of the cut descriptions
         clen = max([len(cut) for cut,yields in table[0][1]]) + 3
@@ -406,7 +414,9 @@ class MCAnalysis:
                     den = report[i-1][1][0] if i>0 else 0
                     fraction = nev/float(den) if den > 0 else 1
                     if self._options.nMinusOne: 
-                        fraction = report[-1][1][0]/nev if nev > 0 else 1
+                        fraction = report[-1][1][0]/float(nev) if nev > 0 else 1
+                    elif self._options.nMinusOneInverted: 
+                        fraction = float(nev)/report[-1][1][0] if report[-1][1][0] > 0 else 1
                     toPrint = (nev,)
                     if self._options.errors:    toPrint+=(err,)
                     if self._options.fractions: toPrint+=(fraction*100,)
@@ -561,6 +571,7 @@ def addMCAnalysisOptions(parser,addTreeToYieldOnesToo=True):
     parser.add_option("--plotgroup", dest="plotmergemap", type="string", default=[], action="append", help="Group plots into one. Syntax is '<newname> := (comma-separated list of regexp)', can specify multiple times. Note it is applied after plotting.")
     parser.add_option("--scaleplot", dest="plotscalemap", type="string", default=[], action="append", help="Scale plots by this factor (before grouping). Syntax is '<newname> := (comma-separated list of regexp)', can specify multiple times.")
     parser.add_option("-t", "--tree",          dest="tree", default='ttHLepTreeProducerTTH', help="Pattern for tree name");
+    parser.add_option("--fom", "--figure-of-merit", dest="figureOfMerit", type="string", default=[], action="append", help="Add this figure of merit to the output table (S/B, S/sqrB, S/sqrSB)")
 
 if __name__ == "__main__":
     from optparse import OptionParser

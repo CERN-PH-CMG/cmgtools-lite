@@ -439,6 +439,13 @@ class VVBuilder(Analyzer):
         #load packed candidatyes
         cands = self.handles['packed'].product()
 
+#        print "GEN LEPTONS-----"
+#        for l in event.genleps:
+#            print l.pdgId(),l.pt(),l.mother().pdgId()
+#        print "GEN TAUS-"
+#        for l in event.gentaus:
+#            print l.pdgId(),l.pt(),l.mother().pdgId()
+
         #if use PUPPI weigh them or lese just pass through
         if self.doPUPPI:
             for c in cands:

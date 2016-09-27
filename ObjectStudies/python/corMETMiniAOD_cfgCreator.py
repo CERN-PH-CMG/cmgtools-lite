@@ -195,6 +195,38 @@ if options.redoPuppi:
                                postfix="Puppi"
                                )
 
+#### THOSE ARE MANUAL REPLACEMENT - SOME BUG THERE AND NEED TO BE CORRECTED IN THE  PhysicsTools/PatAlgos/python/slimming/miniAOD_tools.py
+
+    process.pfMetT1Puppi.src = cms.InputTag("pfMetPuppi")
+
+######
+
+    process.corrPfMetType1Puppi.jetCorrLabel = cms.InputTag("ak4PFPuppiL1FastL2L3Corrector")
+    process.corrPfMetType1Puppi.jetCorrLabelRes = cms.InputTag("ak4PFPuppiL1FastL2L3ResidualCorrector")
+    process.corrPfMetType1Puppi.offsetCorrLabel = cms.InputTag("ak4PFPuppiL1FastjetCorrector")
+
+    process.basicJetsForMetPuppi.offsetCorrLabel = cms.InputTag("L1FastJet")
+    process.patJetCorrFactorsPuppi.payload = cms.string("AK4PFPuppi")
+
+    process.patPFMetPuppi.srcJetResPhi = cms.string('AK4PFPuppi_phi')
+    process.patPFMetPuppi.srcJetResPt = cms.string('AK4PFPuppi_pt')
+    process.patPFMetPuppi.srcJetSF = cms.string('AK4PFPuppi')
+
+#######
+
+    process.shiftedPatJetEnDownPuppi.jetCorrLabelUpToL3 = cms.InputTag("ak4PFPuppiL1FastL2L3Corrector")
+    process.shiftedPatJetEnDownPuppi.jetCorrLabelUpToL3Res = cms.InputTag("ak4PFPuppiL1FastL2L3ResidualCorrector")
+
+    process.shiftedPatJetEnUpPuppi.jetCorrLabelUpToL3 = cms.InputTag("ak4PFPuppiL1FastL2L3Corrector")
+    process.shiftedPatJetEnUpPuppi.jetCorrLabelUpToL3Res = cms.InputTag("ak4PFPuppiL1FastL2L3ResidualCorrector")
+
+    process.shiftedPatJetResDownPuppi.algo = cms.string('AK4PFPuppi')
+    process.shiftedPatJetResDownPuppi.algopt = cms.string('AK4PFPuppi_pt')
+
+    process.shiftedPatJetResUpPuppi.algo = cms.string('AK4PFPuppi')
+    process.shiftedPatJetResUpPuppi.algopt = cms.string('AK4PFPuppi_pt')
+
+#######
 
 #uncertainty file
 ###jecUncertaintyFile="$CMSSW_BASE/src/CMGTools/RootTools/data/jec/Summer15_50nsV4_DATA_UncertaintySources_AK4PFchs.txt"

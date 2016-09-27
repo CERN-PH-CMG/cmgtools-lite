@@ -38,7 +38,7 @@ class susyParameterScanAnalyzer( Analyzer ):
 
     def declareHandles(self):
         super(susyParameterScanAnalyzer, self).declareHandles()
-        
+        if not self.cfg_comp.isMC: return True
 
         #mc information
         self.mchandles['genParticles'] = AutoHandle( 'prunedGenParticles',
@@ -56,12 +56,13 @@ class susyParameterScanAnalyzer( Analyzer ):
     def beginLoop(self, setup):
         super(susyParameterScanAnalyzer,self).beginLoop(setup)
 
-        if self.cfg_ana.useLumiInfo:
+        if not self.cfg_comp.isMC: return True
+        if self.cfg_ana.doLHE and self.cfg_ana.useLumiInfo:
             lumis = Lumis(self.cfg_comp.files)
             for lumi in lumis:
                 if lumi.getByLabel('generator',self.genLumiHandle):
                     self.LHEInfos.append( self.genLumiHandle.product().configDescription() )
-                
+
     def findSusyMasses(self,event):
         masses = {}
         for p in event.genParticles:

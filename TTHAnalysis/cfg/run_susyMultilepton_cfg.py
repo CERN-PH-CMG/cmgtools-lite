@@ -82,7 +82,6 @@ if analysis in ['SOS']:
     # Lepton Skimming
     ttHLepSkim.minLeptons = 2
     ttHLepSkim.maxLeptons = 999
-    ttHLepSkim.ptCuts = [5,3]
     
 #    # Jet-Met Skimming
 #    ttHJetMETSkim.jetPtCuts = [0,]
@@ -485,13 +484,12 @@ if runData and not isTest: # For running on data
             DatasetsAndTriggers.append( ("SingleElectron", triggers_1e) )
 
         if runDataQCD: # for fake rate measurements in data
-            FRTrigs_mu = triggers_FR_1mu_iso + triggers_FR_1mu_noiso
-            FRTrigs_el = triggers_FR_1e_noiso + triggers_FR_1e_iso + triggers_FR_1e_b2g
+            FRTrigs_mu = triggers_FR_1mu_noiso
+            FRTrigs_el = triggers_FR_1e_noiso 
             DatasetsAndTriggers = [
                 ("DoubleMuon", FRTrigs_mu ),
                 ("DoubleEG",   FRTrigs_el ),
-                #("JetHT",   triggers_FR_jetHT )
-                ("JetHT",   triggers_FR_jet2 )
+                #("JetHT",   triggers_FR_jet )
             ]
             exclusiveDatasets = False
         if runDataQCD and runQCDBM: # for fake rate measurements in data
@@ -541,9 +539,12 @@ if runData and not isTest: # For running on data
                                                  "/"+pd+"/"+myprocessing+"/MINIAOD", 
                                                  "CMS", ".*root", 
                                                  json=json, 
-                                                 run_range=run_range, 
+                                                 run_range=(run_range if "PromptReco" not in myprocessing else None), 
                                                  triggers=triggers[:], vetoTriggers = vetos[:],
                                                  useAAA=useAAA)
+                if "PromptReco" in myprocessing:
+                    from CMGTools.Production.promptRecoRunRangeFilter import filterComponent
+                    filterComponent(comp, verbose=1)
                 print "Will process %s (%d files)" % (comp.name, len(comp.files))
                 comp.splitFactor = len(comp.files)/8
                 comp.fineSplitFactor = 1
@@ -595,6 +596,7 @@ if runFRMC:
     #printSummary(selectedComponents)
 
 if runFRMC or runDataQCD:
+    susyScanAna.useLumiInfo = False
     ttHLepSkim.minLeptons = 1
     if ttHJetMETSkim in susyCoreSequence: susyCoreSequence.remove(ttHJetMETSkim)
     if getHeppyOption("fast"): raise RuntimeError, 'Already added ttHFastLepSkimmer with 2-lep configuration, this is wrong.'
@@ -775,7 +777,9 @@ if test == '1':
     comp.fineSplitFactor = 1
     selectedComponents = [ comp ]
 elif test == '2':
+    from CMGTools.Production.promptRecoRunRangeFilter import filterWithCollection
     for comp in selectedComponents:
+        if comp.isData: comp.files = filterWithCollection(comp.files, [274315,275658,276363,276454])
         comp.files = comp.files[:1]
         comp.splitFactor = 1
         comp.fineSplitFactor = 1

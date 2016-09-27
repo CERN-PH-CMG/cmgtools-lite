@@ -5,7 +5,7 @@ T="/afs/cern.ch/user/g/gpetrucc/w/TREES_80X_SOS_130716_1L"
 if hostname | grep -q cmsco01; then
     T="/data1/gpetrucc/TREES_80X_SOS_130716_1L/"
 fi
-BCORE=" --s2v --tree treeProducerSusyMultilepton susy-sos/mca-qcd1l.txt susy-sos/qcd1l.txt -P $T -l 6.2 --AP  "
+BCORE=" --s2v --tree treeProducerSusyMultilepton susy-sos/mca-qcd1l.txt susy-sos/qcd1l.txt -P $T -l 12.9 --AP  "
 
 BG=" -j 6 "; if [[ "$1" == "-b" ]]; then BG=" & "; shift; fi
 
@@ -32,7 +32,7 @@ esac;
 
 what=$3;
 more=$4
-PBASE="plots/80X/sos/fr-meas/qcd1l/v2.0/$lepton/HLT_$trigger/$what/$more"
+PBASE="plots/80X/sos/fr-meas/qcd1l/v2.1/$lepton/HLT_$trigger/$what/$more"
 
 EWKONE="-p ${QCD}_red,EWK,data"
 EWKSPLIT="-p ${QCD}_red,WJets,DYJets,data"

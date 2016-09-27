@@ -1,6 +1,6 @@
 #!/bin/bash
 P=plots/80X/TnP
-IN="mupog_sos_v1.2"; OUT="$IN/00_harvest"
+IN="mupog_sos_v2.0"; OUT="$IN/00_harvest"
 
 MEAS="SOS SOS_PR SOS_NM1_{Id,Iso,Ip} SOS_003 SOS_NoIP SOS_presel"
 if [[ "$1" != "" ]]; then MEAS="$*"; fi
@@ -9,7 +9,7 @@ for M in $MEAS; do
     RANGES_OTHER="--rrange 0.975 1.025  --yrange 0.9 1.005"
     MAIN="tnpHarvest.py"
     case $M in
-        SOS*) MODS=" -s MCTG -b bern4 --salt dvoigt2  --salt BWDCB2 --balt bern3 "; 
+        SOS*) MODS=" -s MCTG -b bern4 --salt dvoigt2" #   --salt BWDCB2 --balt bern3 "; 
               TIT="$(echo $M | sed 's/_/ /g') efficiency"; 
               RANGES_PT="   --rrange 0.82 1.105  --yrange 0.0 1.005";
               RANGES_OTHER="--rrange 0.82 1.105  --yrange 0.0 1.005"; ;; 

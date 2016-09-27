@@ -49,6 +49,7 @@ triggerAna = cfg.Analyzer(
 triggerFlagsAna = cfg.Analyzer(
     TriggerBitAnalyzer, name="TriggerFlags",
     processName = 'HLT',
+    fallbackProcessName = 'HLT2',
     prescaleProcessName = 'PAT',
     prescaleFallbackProcessName = 'RECO',
     unrollbits = False,

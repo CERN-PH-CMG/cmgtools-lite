@@ -291,8 +291,11 @@ class TreeToYield:
         cutseq = [ ['entry point','1'] ]
         if noEntryLine: cutseq = []
         sequential = False
-        if self._options.nMinusOne: 
-            cutseq = cuts.nMinusOneCuts()
+        if self._options.nMinusOne or self._options.nMinusOneInverted: 
+            if self._options.nMinusOneSelection:
+                cutseq = cuts.nMinusOneSelectedCuts(self._options.nMinusOneSelection,inverted=self._options.nMinusOneInverted)
+            else:
+                cutseq = cuts.nMinusOneCuts(inverted=self._options.nMinusOneInverted)
             cutseq += [ ['all',cuts.allCuts()] ]
             sequential = False
         elif self._options.final:
@@ -332,7 +335,7 @@ class TreeToYield:
             print cfmt % cut,
             den = report[i-1][1][0] if i>0 else 0
             fraction = nev/float(den) if den > 0 else 1
-            if self._options.nMinusOne: 
+            if self._options.nMinusOne or self._options.nMinusOneInverted: 
                 fraction = report[-1][1][0]/nev if nev > 0 else 1
             toPrint = (nev,)
             if self._options.errors:    toPrint+=(err,)
@@ -536,6 +539,8 @@ def addTreeToYieldOptions(parser):
     parser.add_option("-R", "--replace-cut", dest="cutsToReplace", action="append", default=[], nargs=3, help="Cuts to invert (regexp of old cut name, new name, new cut); can specify multiple times.") 
     parser.add_option("-A", "--add-cut",     dest="cutsToAdd",     action="append", default=[], nargs=3, help="Cuts to insert (regexp of cut name after which this cut should go, new name, new cut); can specify multiple times.") 
     parser.add_option("-N", "--n-minus-one", dest="nMinusOne", action="store_true", help="Compute n-minus-one yields and plots")
+    parser.add_option("--select-n-minus-one", dest="nMinusOneSelection", type="string", default=None, help="Select which cuts to do N-1 for (comma separated list of regexps)")
+    parser.add_option("--NI", "--inv-n-minus-one", dest="nMinusOneInverted", action="store_true", help="Compute n-minus-one yields and plots")
     parser.add_option("--obj", "--objname",    dest="obj", default='tree', help="Pattern for the name of the TTree inside the file");
     parser.add_option("-G", "--no-fractions",  dest="fractions",action="store_false", default=True, help="Don't print the fractions");
     parser.add_option("-F", "--add-friend",    dest="friendTrees",  action="append", default=[], nargs=2, help="Add a friend tree (treename, filename). Can use {name}, {cname} patterns in the treename") 
