@@ -98,7 +98,7 @@ class BTagEventWeightFriend:
                              syst="central",
                              flavorAttr=None,
                              btagAttr=None,
-                             wp='L'):
+                             wp='M'):
         """
         This would correspond to the event weight when for a selection
         of events with jets of the given WP.

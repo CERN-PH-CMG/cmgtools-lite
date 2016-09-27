@@ -6,6 +6,8 @@ from CMGTools.TTHAnalysis.plotter.mcAnalysis import *
 from CMGTools.TTHAnalysis.treeReAnalyzer import *
 import string
 
+if "/fakeRate_cc.so" not in ROOT.gSystem.GetLibraries(): 
+    ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/TTHAnalysis/python/plotter/fakeRate.cc+" % os.environ['CMSSW_BASE']);
 
 class MCDumpEvent:
     def __init__(self):

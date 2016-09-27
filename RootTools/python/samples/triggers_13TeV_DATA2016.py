@@ -49,8 +49,8 @@ triggers_1e_noniso      = [ "HLT_Ele105_CaloIdVT_GsfTrkIdT_v*","HLT_Ele115_CaloI
 # Lepton fake rate triggers (prescaled)
 triggers_FR_1mu_iso = [ "HLT_Mu%d_TrkIsoVVL_v*" % pt for pt in (8,17) ] # DoubleMu PD
 triggers_FR_1mu_noiso = [ "HLT_Mu%d_v*" % pt for pt in (8,17) ] + ["HLT_Mu3_PFJet40_v*"] # DoubleMu PD
-triggers_FR_1e_noiso = [ "HLT_Ele%d_CaloIdM_TrackIdM_PFJet30_v*" % pt for pt in (8,12,17,23) ] + [ "HLT_Ele10_CaloIdM_TrackIdM_CentralPFJet30_BTagCSV_p13_v*" ]# DoubleEG
-triggers_FR_1e_iso   = [ "HLT_Ele%d_CaloIdL_TrackIdL_IsoVL_PFJet30_v*" % pt for pt in (8,12,17,23) ] # DoubleEG
+triggers_FR_1e_noiso = [ "HLT_Ele%d_CaloIdM_TrackIdM_PFJet30_v*" % pt for pt in (8,12,17,23,33) ] + [ "HLT_Ele10_CaloIdM_TrackIdM_CentralPFJet30_BTagCSV_p13_v*" ]# DoubleEG
+triggers_FR_1e_iso   = [ "HLT_Ele%d_CaloIdL_TrackIdL_IsoVL_PFJet30_v*" % pt for pt in (8,12,17,23,33) ] # DoubleEG
 triggers_FR_1e_b2g = [ "HLT_Ele17_CaloIdL_TrkIdL_IsoVL_v*", "HLT_Ele12_CaloIdL_TrackIdL_IsoVL_v*" ]
 triggers_FR_jet  =  [ "HLT_PFJet40_v*", "HLT_PFJet60_v*", "HLT_PFJet80_v*" ]
 triggers_FR_muNoIso = [ "HLT_Mu%d_v*" % pt for pt in (20,27,) ] + [ "HLT_Mu%d_eta2p1_v*" % pt for pt in (24,45,) ] + [ "HLT_L2Mu%d_v*" % pt for pt in (10,) ] # SingleMu PD

@@ -3536,8 +3536,3 @@ CSVv2;OperatingPoint, measurementType, sysType, jetFlavor, etaMin, etaMax, ptMin
 3, iterativefit, down_lfstats2, 2, 1.6, 2.4, 60, 10000, 0, 0.04, "1.02689"
 3, iterativefit, down_lfstats2, 2, 1.6, 2.4, 60, 10000, 0.04, 0.9, "1.32756+x*(-11.7627+x*(128.028+x*(-597.768+x*(1326.24+x*(-1374.45+x*533.171)))))"
 3, iterativefit, down_lfstats2, 2, 1.6, 2.4, 60, 10000, 0.9, 1.1, "0.566565"
-
-
-
-
-

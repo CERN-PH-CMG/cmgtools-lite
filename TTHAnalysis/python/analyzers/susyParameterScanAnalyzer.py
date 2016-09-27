@@ -117,9 +117,9 @@ class susyParameterScanAnalyzer( Analyzer ):
         scanlineTChi = re.compile(r"([A-Za-z0-9]+)_([A-Za-z0-9]+)_((\d+\.?\d*)(_\d+\.?\d*)*)(\s+(\d+\.?\d*))*\s*")
         scanlineT2tt = re.compile(r"([A-Za-z0-9]+)_([A-Za-z0-9]+)-([A-Za-z0-9]+)_([A-Za-z0-9]+)_((\d+\.?\d*)(_\d+\.?\d*)*)(\s+(\d+\.?\d*))*\s*")
 
-        mT1tttt = re.match(scanlineT1tttt, lheprod) 
-        mTChi   = re.match(scanlineTChi, lheprod) 
-        mT2tt   = re.match(scanlineT2tt, lheprod) 
+        mT1tttt = re.match(scanlineT1tttt, lheprod)
+        mTChi   = re.match(scanlineTChi, lheprod)
+        mT2tt   = re.match(scanlineT2tt, lheprod)
 
         #print lheprod, mT1tttt, mTChi, mT2tt
 

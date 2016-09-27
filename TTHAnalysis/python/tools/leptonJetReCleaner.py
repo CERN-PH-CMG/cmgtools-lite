@@ -17,7 +17,7 @@ class MyVarProxy:
 
 class LeptonJetReCleaner:
 
-    def __init__(self,label,looseLeptonSel,cleaningLeptonSel,FOLeptonSel,tightLeptonSel,cleanJet,selectJet,cleanTau,looseTau,tightTau,cleanJetsWithTaus,doVetoZ,doVetoLMf,doVetoLMt,jetPt,bJetPt,coneptdef,storeJetVariables=False):
+    def __init__(self,label,looseLeptonSel,cleaningLeptonSel,FOLeptonSel,tightLeptonSel,cleanJet,selectJet,cleanTau,looseTau,tightTau,cleanJetsWithTaus,doVetoZ,doVetoLMf,doVetoLMt,jetPt,bJetPt,coneptdef,storeJetVariables=False,cleanTausWithLoose=False):
         self.label = "" if (label in ["",None]) else ("_"+label)
         self.looseLeptonSel = looseLeptonSel
         self.cleaningLeptonSel = cleaningLeptonSel # applied on top of looseLeptonSel
@@ -29,6 +29,7 @@ class LeptonJetReCleaner:
         self.looseTau = looseTau
         self.tightTau = tightTau
         self.cleanJetsWithTaus = cleanJetsWithTaus
+        self.cleanTausWithLoose = cleanTausWithLoose
         self.doVetoZ = doVetoZ
         self.doVetoLMf = doVetoLMf
         self.doVetoLMt = doVetoLMt
@@ -71,6 +72,7 @@ class LeptonJetReCleaner:
                 ])
         for tfloat in "pt eta phi mass reclTauId mcMatchId".split():
             biglist.append( ("TauSel"+label+"_"+tfloat,"F",20,"nTauSel"+label) )
+        biglist.append( ("TauSel"+label+"_pdgId","I",20,"nTauSel"+label) )
 
         for key in self.systsJEC:
             biglist.extend([
@@ -219,7 +221,7 @@ class LeptonJetReCleaner:
         ret["nTightTauSel" + postfix] = sum([1 for g in goodtaus if g.reclTauId == 2])
         # 4. store the tau 4-vectors
         if postfix==self.label:
-            for tfloat in "pt eta phi mass reclTauId".split():
+            for tfloat in "pt eta phi mass reclTauId pdgId".split():
                 tauret[tfloat] = []
                 for g in goodtaus:
                     tauret[tfloat].append( getattr(g, tfloat) )
@@ -251,7 +253,6 @@ class LeptonJetReCleaner:
             jetsd[var] = [j for j in Collection(event,"DiscJet"+self.systsJEC[_var],"nDiscJet"+self.systsJEC[_var])]
         self.debugprinted = True
         ret = {}; retwlabel = {}; jetret = {}; discjetret = {};
-
         lepsl = []; lepslv = [];
         ret, lepsl, lepslv = self.fillCollWithVeto(ret,leps,leps,'L','Loose',self.looseLeptonSel, lepsforveto=None, doVetoZ=self.doVetoZ, doVetoLM=self.doVetoLMf, sortby=None)
         lepsc = []; lepscv = [];
@@ -264,7 +265,7 @@ class LeptonJetReCleaner:
         ret['minMllSFOS'] = minMllTL(lepsl, lepsl, paircut = lambda l1,l2 : l1.pdgId  == -l2.pdgId) 
 
         loosetaus=[]; rettlabel = {}; tauret = {}; 
-        loosetaus = self.recleanTaus(tausc, tausd, lepsc, self.label, rettlabel, tauret, event)
+        loosetaus = self.recleanTaus(tausc, tausd, lepsl if self.cleanTausWithLoose else lepsc, self.label, rettlabel, tauret)
 
         cleanjets={}
         for var in self.systsJEC:
@@ -299,7 +300,7 @@ def bestZ1TL(lepsl,lepst,cut=lambda lep:True):
             if not cut(l2): continue
             if l1.pdgId == -l2.pdgId:
                mz = (l1.p4() + l2.p4()).M()
-               diff = abs(mz-91.2)
+               diff = abs(mz-91)
                pairs.append( (diff,mz) )
       if len(pairs):
           pairs.sort()

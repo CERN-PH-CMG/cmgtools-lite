@@ -70,6 +70,7 @@ eventFlagsAna = cfg.Analyzer(
         "globalTightHalo2016Filter" : [ "Flag_globalTightHalo2016Filter" ],
         "CSCTightHalo2015Filter" : [ "Flag_CSCTightHalo2015Filter" ],
         "CSCTightHaloFilter" : [ "Flag_CSCTightHaloFilter" ],
+        "CSCTightHalo2016Filter" : [ "Flag_globalTightHalo2016Filter" ],
         "hcalLaserEventFilter" : [ "Flag_hcalLaserEventFilter" ],
         "EcalDeadCellTriggerPrimitiveFilter" : [ "Flag_EcalDeadCellTriggerPrimitiveFilter" ],
         "goodVertices" : [ "Flag_goodVertices" ],
@@ -157,7 +158,7 @@ from CMGTools.TTHAnalysis.analyzers.susyParameterScanAnalyzer import susyParamet
 susyScanAna = cfg.Analyzer(
     susyParameterScanAnalyzer, name="susyParameterScanAnalyzer",
     doLHE=True,
-    useLumiInfo=False
+    useLumiInfo=True
     )
 
 # Lepton Analyzer (generic)
@@ -231,7 +232,8 @@ ttHLepSkim = cfg.Analyzer(
     maxLeptons = 999,
     #idCut  = "lepton.relIso03 < 0.2" # can give a cut
     #ptCuts = [20,10],                # can give a set of pt cuts on the leptons
-    requireSameSignPair = False
+    requireSameSignPair = False,
+    allowLepTauComb = False
     )
 
 ## Photon Analyzer (generic)
@@ -504,6 +506,17 @@ ttHJetMETSkim = cfg.Analyzer(
 from CMGTools.TTHAnalysis.analyzers.susyLeptonMatchAnalyzer import susyLeptonMatchAnalyzer
 susyLeptonMatchAna = cfg.Analyzer(
     susyLeptonMatchAnalyzer, name="susyLeptonMatchAna",
+    collection = "inclusiveLeptons",
+    deltaR     = 0.2,
+    statusOne  = True # put True if trying to match to genParticle with same pdgId and status 1, but False if only require same pdgId
+    )
+
+# same as above for taus
+susyTauMatchAna = cfg.Analyzer(
+    susyLeptonMatchAnalyzer, name="susyTauMatchAna",
+    collection = "inclusiveTaus",
+    deltaR     = 0.2,
+    statusOne  = False # put True if trying to match to genParticle with same pdgId and status 1, but False if only require same pdgId
     )
 
 # Core sequence of all common modules
