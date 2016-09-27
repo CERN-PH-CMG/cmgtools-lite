@@ -7,13 +7,13 @@
 
 void makeNvtx(bool ismc=false, const char* option="recreate") {
 
-  TString treeDir = "/data1/emanuele/monox/TREES_2LEPSKIM_80X/";
+  TString treeDir = "/data1/emanuele/monox/TREES_2LEP_80X/";
   std::vector<TString> dataDirs;
   
-  dataDirs.push_back("DoubleMuon_PromptReco_v1_runs_272021_273148");
-  dataDirs.push_back("DoubleMuon_PromptReco_v2_runs_273158_273730");
+  dataDirs.push_back("DoubleEG_Run2016B_PromptReco_v1_runs_272023_273146");
+  dataDirs.push_back("DoubleEG_Run2016B_PromptReco_v2_runs_273150_275376");
+  dataDirs.push_back("DoubleEG_Run2016C_PromptReco_v2_runs_275420_276097");
   TString mcDir = treeDir+"DYJetsToLL_M50";
-
 
   if(!ismc) {
     TFile *dataHFile = TFile::Open("nvtx_profile.root",option);
