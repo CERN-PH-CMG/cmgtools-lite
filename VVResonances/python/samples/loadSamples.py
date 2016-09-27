@@ -28,7 +28,7 @@ from CMGTools.RootTools.samples.samples_13TeV_DATA2016 import *
 
 
 #Load JSON
-json='/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-276097_13TeV_PromptReco_Collisions16_JSON_NoL1T.txt'
+json='/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-276811_13TeV_PromptReco_Collisions16_JSON.txt'
 
 SingleMuon_Run2016C_PromptReco_v2=kreator.makeDataComponent("SingleMuon_Run2016C_PromptReco_v2","/SingleMuon/Run2016C-PromptReco-v2/MINIAOD","CMS",".*root",json)
 SingleElectron_Run2016C_PromptReco_v2=kreator.makeDataComponent("SingleElectron_Run2016C_PromptReco_v2","/SingleElectron/Run2016C-PromptReco-v2/MINIAOD","CMS",".*root",json)

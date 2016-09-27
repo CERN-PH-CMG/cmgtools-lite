@@ -28,6 +28,7 @@ FatJetType = NTupleObjectType("FatJetType", baseObjectTypes=[jetType], variables
     NTupleVariable("s2BTag",   lambda x : x.subJetTags[1], float),
     # BTV-15-002: AK8 jets (w/ JEC applied, jetID applied, |eta| < 2.4, efficiency are computed by using pT > 300 GeV and pruned m_jet > 50 GeV)
     NTupleVariable("btagBOOSTED",   lambda x : x.btag("pfBoostedDoubleSecondaryVertexAK8BJetTags"), float),
+    NTupleVariable("btagBOOSTED_recalc", lambda x : x.Hbbtag if hasattr(x,'Hbbtag') else -1.0, float),
     NTupleVariable("s1CTagL",   lambda x : x.subJetCTagL[0], float),
     NTupleVariable("s2CTagL",   lambda x : x.subJetCTagL[1], float),
     NTupleVariable("s1CTagB",   lambda x : x.subJetCTagB[0], float),
@@ -94,7 +95,7 @@ VVType = NTupleObjectType("VVType", baseObjectTypes=[], variables = [
   NTupleVariable("deltaR",   lambda x : x.deltaR(), float),
   NTupleVariable("mt",   lambda x : x.mt(), float),
   NTupleVariable("vbfDEta", lambda x : x.vbfDEta, float),
-  NTupleVariable("vbfMass",   lambda x : x.mt(), float),
+  NTupleVariable("vbfMass",   lambda x : x.vbfMass, float),
   NTupleVariable("nJets",   lambda x : len(x.satteliteJets), int),
   NTupleVariable("nCentralJets",   lambda x : len(x.satteliteCentralJets), int),
   NTupleVariable("nLooseBTags",   lambda x : x.nLooseBTags, int),
@@ -119,6 +120,7 @@ VJType = NTupleObjectType("VJType", baseObjectTypes=[VVType], variables = [
     NTupleSubObject("l2_softDrop_s2",  lambda x : x.leg2.substructure.softDropSubjets[1] if len(x.leg2.substructure.softDropSubjets)>1 else dummyLV,fourVectorType),
     NTupleSubObject("l2_pruned_s1",  lambda x : x.leg2.substructure.prunedSubjets[0] if len(x.leg2.substructure.prunedSubjets)>0 else dummyLV,fourVectorType),
     NTupleSubObject("l2_pruned_s2",  lambda x : x.leg2.substructure.prunedSubjets[1] if len(x.leg2.substructure.prunedSubjets)>1 else dummyLV,fourVectorType),
+    NTupleVariable("btagWeight",  lambda x : x.btagWeight,float),
 
 ])
 
@@ -131,6 +133,11 @@ LNuJJType = NTupleObjectType("LNuJJType", baseObjectTypes=[VJType], variables = 
     NTupleSubObject("altl1",  lambda x : x.leg1.alternateLV,fourVectorType),
     NTupleSubObject("l1_l",  lambda x : x.leg1.leg1,leptonTypeExtra),
     NTupleSubObject("l1_met",  lambda x : x.leg1.leg2,metType),
+    #Scale factors , For HLT use the OR between the two triggers: 
+    NTupleVariable("sf",  lambda x : x.leg1.leg1.sfWV*(x.leg1.leg1.sfHLT+x.sfHLTMET-x.leg1.leg1.sfHLT*x.sfHLTMET),float)
+
+
+
 ])
 
 
