@@ -7,6 +7,9 @@ BEGIN::3l
   friendConn  #:= {leptonJetReCleanerSusyEWK3L :                             }
   friendConn  #:= {leptonBuilderEWK            : leptonJetReCleanerSusyEWK3L }
   friendConn  #:= {eventBTagWeight             :                             }
+  friendFile  #:= {leptonJetReCleanerSusyEWK3L : leptonJetReCleaner.py       }
+  friendFile  #:= {leptonBuilderEWK            : leptonBuilderEWK.py         }
+  friendFile  #:= {eventBTagWeight             : eventBTagWeight.py          }
   sfriends    +:= leptonJetReCleanerSusyEWK3L;leptonBuilderEWK;eventBTagWeight
   friends     +:=
   macros      +:= susy-ewkino/3l/functionsEWK.cc

@@ -128,6 +128,10 @@ class Maker():
 			fm.append(ffm)
 			fs.append(self.treedir +"/"+ ffm)
 		return fs, fm	
+	def getFriendModules(self):
+		if len(self.options.modules)>0: return self.options.modules
+		friendConn = self.getVariable("friendConn")
+		return [k for k,v in friendConn.iteritems()]
 	def getNEvtSample(self, sample):	
 		samples = [l[0] for l in self.nevts]
 		if sample in samples:
@@ -188,24 +192,10 @@ class Maker():
 		if not hasattr(self, "modelIdx"): self.modelIdx = -1
 		self.modelIdx += 1
 		self.model = self.models[self.modelIdx]
-	def resetModel(self):
-		self.modelIdx = -1
 	def iterateRegion(self):
 		if not hasattr(self, "regionIdx"): self.regionIdx = -1
 		self.regionIdx += 1
 		self.region = self.regions[self.regionIdx]
-	def loadFriendConn(self):
-		friendConn = [l.rstrip("\n").strip() for l in open(self.dir+"/env/friendconn" , "r").readlines()]
-		friendConn = filter(lambda x: x, friendConn)
-		self.friendConn = {}
-		self.friendFile = {}
-		for entry in [s.split(":") for s in friendConn]:
-			if len(entry)==3:
-				self.friendConn[entry[0].strip()] = [s.strip() for s in entry[2].split(";")]
-				self.friendFile[entry[0].strip()] = entry[1].strip()
-			else:
-				self.friendConn[entry[0].strip()] = []
-				self.friendFile[entry[0].strip()] = ""
 	def loadNEvtSample(self):
 		nevts      = [l.rstrip("\n").strip() for l in open(self.dir+"/env/nevtsamples", "r").readlines()]		
 		nevts      = filter(lambda x: x, nevts)
@@ -230,6 +220,8 @@ class Maker():
 		for i,k in enumerate(self.keys):
 			dict[k] = args[i]
 		return self.base.format(**dict)
+	def resetModel(self):
+		self.modelIdx = -1
 	def submit(self, args, setHold = -1, needHold = False):
 		cmd = self.makeCmd(args)
 		self.submitCmd(cmd, setHold, needHold)

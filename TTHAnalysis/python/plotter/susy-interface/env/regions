@@ -14,7 +14,7 @@ BEGIN::3lA
   flagsLimits +:=
   flagsPlots  +:= --legendHeader 'A: OSSF'
   flagsScans  +:=
-  plots       #:= {lep      : lep.*._pt ; *._eta ; flavor3l ; charge3l                }
+  plots       #:= {lep      : lep.*._pt ; .*_eta ; flavor3l ; charge3l                }
   plots       #:= {evt      : mll3l ; met ; mtW3l ; htJet30j ; nJet30 ; nBJet25 ; m3l }
   plots       #:= {br       : BR ; SR_3l_.*; SR_4l                                    }
   plots       #:= {perCateg : SR_A                                                    }
@@ -39,7 +39,7 @@ BEGIN::3lB
   flagsLimits +:=
   flagsPlots  +:= --legendHeader 'B: noOSSF'
   flagsScans  +:=
-  plots       #:= {lep      : lep.*._pt ; *._eta ; flavor3l ; charge3l                }
+  plots       #:= {lep      : lep.*._pt ; .*_eta ; flavor3l ; charge3l                }
   plots       #:= {evt      : mll3l ; met ; mtW3l ; htJet30j ; nJet30 ; nBJet25 ; m3l }
   plots       #:= {br       : BR ; SR_3l_.*; SR_4l                                    }
   plots       #:= {perCateg : SR_B                                                    }
@@ -65,7 +65,7 @@ BEGIN::3lC
   flagsLimits +:=
   flagsPlots  +:= --legendHeader 'C: OSSF + \#tau'
   flagsScans  +:=
-  plots       #:= {lep      : lep.*._pt ; *._eta ; flavor3l ; charge3l                                  }
+  plots       #:= {lep      : lep.*._pt ; .*_eta ; flavor3l ; charge3l                                  }
   plots       #:= {evt      : mll3l ; met ; mtW3l ; htJet30j ; nJet30 ; nBJet25 ; m3l ; mT2L3l ; mT2T3l }
   plots       #:= {br       : BR ; SR_3l_.*; SR_4l                                                      }
   plots       #:= {perCateg : SR_C                                                                      }
@@ -91,7 +91,7 @@ BEGIN::3lD
   flagsLimits +:=
   flagsPlots  +:= --legendHeader 'D: e^{\#pm}\#mu^{\#mp}\#tau'
   flagsScans  +:=
-  plots       #:= {lep      : lep.*._pt ; *._eta ; flavor3l ; charge3l                                  }
+  plots       #:= {lep      : lep.*._pt ; .*_eta ; flavor3l ; charge3l                                  }
   plots       #:= {evt      : mll3l ; met ; mtW3l ; htJet30j ; nJet30 ; nBJet25 ; m3l ; mT2L3l ; mT2T3l }
   plots       #:= {br       : BR ; SR_3l_.*; SR_4l                                                      }
   plots       #:= {perCateg : SR_D                                                                      }

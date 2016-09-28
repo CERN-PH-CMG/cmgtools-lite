@@ -6,8 +6,9 @@ parser = OptionParser(usage="%prog cfg regions treedir outdir [options]")
 parser = maker.addMakerOptions(parser)
 parser.add_option("--perBin"     , dest="perBin", type="string", default=None, help="Run every value of the bin separately.")
 parser.add_option("-f", "--final", dest="final" , action="store_true", default=False, help="Only total yield")
+parser.add_option("--fom",         dest="fom"   , type="string", default=None, help="Figure of merit (S/B, S/sqrB, S/sqrSB)")
 
-baseAll = "python mcAnalysis.py {MCA} {CUTS} -P {T} --neg --s2v --tree {TREENAME} {FINAL} -j 8 {MCCS} {MACROS} -l {LUMI} {FRIENDS} {PROCS} {FLAGS} >> {O}/{FILENAME}"
+baseAll = "python mcAnalysis.py {MCA} {CUTS} -P {T} --neg --s2v --tree {TREENAME} {FINAL} -j 8 {MCCS} {MACROS} -l {LUMI} {FRIENDS} {PROCS} {FLAGS} {FOM} >> {O}/{FILENAME}"
 baseBin = "python mcPlots.py {MCA} {CUTS} {PLOTFILE} -P {T} --neg --s2v --tree {TREENAME} {FINAL} -j 4 {MCCS} {MACROS} -l {LUMI} --pdir {O} {FRIENDS} {PROCS} {PLOTS} {FLAGS} --perBin --print txt"
 (options, args) = parser.parse_args()
 options = maker.splitLists(options)
@@ -30,11 +31,12 @@ for r in range(len(mm.regions)):
 	
 	procs   = mm.collectProcs()
 	final   = "-f" if options.final else ""
+	fom     = options.fom if options.fom else ""
 	
 	if options.perBin:
 		mm.submit([mm.getVariable("mcafile"), mm.getVariable("cutfile"), mm.getVariable("plotfile"), mm.treedir, options.treename, final, mccs, macros, options.lumi, output, friends, procs, options.perBin, flags])
 	else:
-		mm.submit([mm.getVariable("mcafile"), mm.getVariable("cutfile"), mm.treedir, options.treename, final, mccs, macros, options.lumi, friends, procs, flags, output, "accmap_%s_%s.txt"%(scenario,mm.region.name)])
+		mm.submit([mm.getVariable("mcafile"), mm.getVariable("cutfile"), mm.treedir, options.treename, final, mccs, macros, options.lumi, friends, procs, flags, fom, output, "accmap_%s_%s.txt"%(scenario,mm.region.name)])
 
 
 
