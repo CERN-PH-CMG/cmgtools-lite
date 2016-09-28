@@ -37,8 +37,8 @@ def splitLists(options):
 class Maker():
 	def __init__(self, base, args, options):
 		self.cmssw   = os.environ["CMSSW_BASE"]
-		self.plotter = self.cmssw   +"/src/CMGTools/TTHAnalysis/python/plotter"
-		self.dir     = self.plotter +"/susy-interface"
+		self.workdir = self.cmssw   +"/src/CMGTools/TTHAnalysis/python/plotter"
+		self.dir     = self.workdir +"/susy-interface"
 		self.tmpdir  = self.dir     +"/tmp"
 		self.instance = timestamp(False)
 		self.logpath  = self.tmpdir+"/"+self.instance+"/log"
@@ -104,14 +104,6 @@ class Maker():
 		return procs
 	def getExprCut(self):
 		return getCut(self.config.firstCut, self.getVariable("expr"), self.getVariable("bins"))
-	def getFriendConn(self, module):
-		if module in self.friendConn.keys():
-			return self.friendConn[module]
-		return []
-	def getFriendFile(self, module):
-		if module in self.friendFile.keys():
-			return self.friendFile[module]
-		return ""
 	def getFriends(self):
 		friends = []
 		friends += ["-F sf/t {P}/"+f+"/evVarFriend_{cname}.root" for f in self.config.sfriends]
@@ -194,18 +186,6 @@ class Maker():
 		if not hasattr(self, "regionIdx"): self.regionIdx = -1
 		self.regionIdx += 1
 		self.region = self.regions[self.regionIdx]
-	def loadFriendConn(self):
-		friendConn = [l.rstrip("\n").strip() for l in open(self.dir+"/env/friendconn" , "r").readlines()]
-		friendConn = filter(lambda x: x, friendConn)
-		self.friendConn = {}
-		self.friendFile = {}
-		for entry in [s.split(":") for s in friendConn]:
-			if len(entry)==3:
-				self.friendConn[entry[0].strip()] = [s.strip() for s in entry[2].split(";")]
-				self.friendFile[entry[0].strip()] = entry[1].strip()
-			else:
-				self.friendConn[entry[0].strip()] = []
-				self.friendFile[entry[0].strip()] = ""
 	def loadNEvtSample(self):
 		nevts      = [l.rstrip("\n").strip() for l in open(self.dir+"/env/nevtsamples", "r").readlines()]		
 		nevts      = filter(lambda x: x, nevts)
@@ -232,6 +212,7 @@ class Maker():
 		return self.base.format(**dict)
 	def submit(self, args, setHold = -1, needHold = False):
 		cmd = self.makeCmd(args)
+		print cmd
 		self.submitCmd(cmd, setHold, needHold)
 	def submitCmd(self, cmd, setHold = -1, needHold = False):
 		if self.options.pretend: 
@@ -243,11 +224,11 @@ class Maker():
 		runner = "lxbatch_runner.sh"
 		if queue in ["short.q", "all.q", "long.q"]:
 			runner = "psibatch_runner.sh"
-                elif queue in ["batch"] and os.path.isdir('/pool/ciencias/'):
-                        runner = "oviedobatch_runner.sh"
+		elif queue in ["batch"] and os.path.isdir('/pool/ciencias/'):
+			runner = "oviedobatch_runner.sh"
 		cp("susy-interface/scripts/" + runner, script)
-		replaceInFile(script, "WORK=$1; shift", "WORK=\"" + os.getcwd() + "\"")
-		replaceInFile(script, "SRC=$1; shift" , "SRC=\"" + os.getcwd().replace("/CMGTools/TTHAnalysis/python/plotter", "") + "\"")
+		replaceInFile(script, "WORK=$1; shift", "WORK=\"" + self.workdir + "\"")
+		replaceInFile(script, "SRC=$1; shift" , "SRC=\"" + self.cmssw + "/src\"")
 		replaceInFile(script, "INST=$1; shift" , "INST=\"" + self.instance + "\"")
 		replaceInFile(script, "[PLACEHOLDER]" , "\n".join([b for b in commands])+"\n")
 		cant = needHold and not queue in ["short.q", "all.q", "long.q"]
