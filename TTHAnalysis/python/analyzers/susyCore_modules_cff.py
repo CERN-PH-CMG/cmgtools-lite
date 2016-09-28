@@ -535,10 +535,10 @@ susyCoreSequence = [
     susyScanAna,
     vertexAna,
     lepAna,
+    tauAna,
     ttHLepSkim,
     #ttHLepMCAna,
     photonAna,
-    tauAna,
     isoTrackAna,
     jetAna,
     #ttHFatJetAna,  # out of core sequence for now
