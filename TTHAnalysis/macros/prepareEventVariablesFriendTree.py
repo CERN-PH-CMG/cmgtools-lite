@@ -373,7 +373,8 @@ if not os.path.isdir(args[0]):
     print "Error. Input directory {input} does not exist".format(input=args[0])
     exit()
 if not os.path.isdir(args[1]):
-    os.system("mkdir -p "+args[1])
+    tempOut = args[1].replace('/pool/ciencias/','/pool/cienciasrw/')
+    os.system("mkdir -p "+tempOut)
     if not os.path.isdir(args[1]):
         print "Could not create output directory"
         exit()
@@ -500,8 +501,7 @@ def _runIt(myargs):
     timer = ROOT.TStopwatch()
     fetchedfile = None
 
-    fout = ofout
-    #.replace('/pool/ciencias/', '/pool/cienciasrw/')
+    fout = ofout.replace('/pool/ciencias/', '/pool/cienciasrw/')
     
     if 'LSB_JOBID' in os.environ or 'LSF_JOBID' in os.environ:
         if fin.startswith("root://"):
