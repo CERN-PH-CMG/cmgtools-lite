@@ -122,7 +122,7 @@ class VVBuilder(Analyzer):
         jet.substructure.softDropJetSmear = jet.substructure.softDropJet.mass()*self.smearing.Gaus(1.0,0.1)
         if self.doPUPPI:
             softDropJetUnCorr = self.copyLV(interface.get(False))[0]
-            jet.substructure.softDropJetMassCor = self.getPUPPIweight(softDropJetUnCorr)
+            jet.substructure.softDropJetMassCor = self.getPUPPIMassWeight(softDropJetUnCorr)
             jet.substructure.softDropJetMassBare = softDropJetUnCorr.mass()
 
         interface.makeSubJets(False,0,2)
@@ -130,7 +130,7 @@ class VVBuilder(Analyzer):
 
         #get NTau
         jet.substructure.ntau = interface.nSubJettiness(0,4,0,6,1.0,0.8,999.0,999.0,999)
-        # calculate DDT tau21 (currently without softDropJetMassCor)
+        # calculate DDT tau21 (currently without softDropJetMassCor, but the L2L3 corrections)
         jet.substructure.tau21_DDT = jet.substructure.ntau[1]/jet.substructure.ntau[0] + ( 0.063 * math.log( (jet.substructure.softDropJet.mass()*jet.substructure.softDropJet.mass())/jet.substructure.softDropJet.pt()))
 
         #recluster with CA and do massdrop
@@ -457,16 +457,18 @@ class VVBuilder(Analyzer):
 
 
 
-    def getPUPPIweight(self, puppijet):
+    def getPUPPIMassWeight(self, puppijet):
         # mass correction for PUPPI following https://github.com/thaarres/PuppiSoftdropMassCorr
 
         genCorr = 1.
         recoCorr = 1.
-        genCorr = self.puppisd_corrGEN.Eval(puppijet.pt())
-        if (abs(puppijet.eta()) <= 1.3):
-            recoCorr = self.puppisd_corrRECO_cen.Eval(puppijet.pt())
-        else:
-            recoCorr = self.puppisd_corrRECO_for.Eval(puppijet.pt())
+        # corrections only valid up to |eta| < 2.5, use 1. beyond
+        if (abs(puppijet.eta()) < 2.5):
+            genCorr = self.puppisd_corrGEN.Eval(puppijet.pt())
+            if (abs(puppijet.eta()) <= 1.3):
+                recoCorr = self.puppisd_corrRECO_cen.Eval(puppijet.pt())
+            else:
+                recoCorr = self.puppisd_corrRECO_for.Eval(puppijet.pt())
         totalWeight = genCorr*recoCorr
         return totalWeight
 
