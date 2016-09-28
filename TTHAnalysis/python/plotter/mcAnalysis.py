@@ -41,13 +41,16 @@ class MCAnalysis:
         self._projection  = Projections(options.project, options) if options.project != None else None
         self._premap = []
         self._optionsOnlyProcesses = {}
-        defaults = {}
+        self.init_defaults = {}
         for premap in options.premap:
             to,fro = premap.split("=")
             if to[-1] == ":": to = to[:-1]
             to = to.strip()
             for k in fro.split(","):
                 self._premap.append((re.compile(k.strip()+"$"), to))
+        self.readMca(samples,options)
+
+    def readMca(self,samples,options):
         for line in open(samples,'r'):
             if re.match("\s*#.*", line): continue
             line = re.sub(r"(?<!\\)#.*","",line)  ## regexp black magic: match a # only if not preceded by a \!
@@ -67,10 +70,10 @@ class MCAnalysis:
                 #print "Setting the following defaults for all samples: "
                 for k,v in extra.iteritems():
                     #print "\t%s: %r" % (k,v)
-                    defaults[k] = v
+                    self.init_defaults[k] = v
                 continue
             else:
-                for k,v in defaults.iteritems():
+                for k,v in self.init_defaults.iteritems():
                     if k not in extra: extra[k] = v
             if len(field) <= 1: continue
             if "SkipMe" in extra and extra["SkipMe"] == True and not options.allProcesses: continue
@@ -93,6 +96,11 @@ class MCAnalysis:
             if field[1] == "-": 
                 self._optionsOnlyProcesses[field[0]] = extra
                 self._isSignal[field[0]] = signal
+                continue
+            if field[1] == "+": # include an mca into another one, usage:   otherprocesses : + ; IncludeMca="path/to/other/mca.txt"
+                if 'IncludeMca' not in extra: raise RuntimeError, 'You have declared a component with IncludeMca format, but not included this option'
+                if len(extra)>1: raise RuntimeError, 'You cannot declare extra options together with IncludeMca directive'
+                self.readMca(extra['IncludeMca'],options) # call readMca recursively on included mca files
                 continue
             ## If we have a selection of process names, apply it
             skipMe = (len(options.processes) > 0)
