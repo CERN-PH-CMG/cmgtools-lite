@@ -286,6 +286,7 @@ treeProducer = cfg.Analyzer(
 if not runSMS:
     susyCoreSequence.insert(susyCoreSequence.index(skimAnalyzer),
                             susyCounter)
+    susyScanAna.doLHE=False # until a proper fix is put in the analyzer
 else:
     susyScanAna.useLumiInfo=True
     susyScanAna.doLHE=True
@@ -382,12 +383,19 @@ if analysis=='susy':
     #samples_2l = [TTW_LO,TTZ_LO,WZTo3LNu_amcatnlo,DYJetsToLL_M10to50,DYJetsToLL_M50,WWTo2L2Nu,ZZTo2L2Q,WZTo3LNu,TTWToLNu,TTZToLLNuNu,TTJets_DiLepton,TTHnobb_mWCutfix_ext1,TTHnobb_pow]
     #samples_1l = [WJetsToLNu,TTJets_SingleLeptonFromT,TTJets_SingleLeptonFromTbar,TBarToLeptons_tch_powheg,TToLeptons_sch_amcatnlo,TBar_tWch,T_tWch]
     
-    if getHeppyOption("dropLHEweights"):
+    if not getHeppyOption("keepLHEweights",False):
         selectedComponents = samples #samples_2l +samples_1l
     else:
         selectedComponents = samples_LHE
 
-if analysis=='SOS':
+    if runSMS:
+        selectedComponents=[TChiSlepSnu,T1tttt_2016,T5qqqqVV_2016]
+        ttHLepSkim.minLeptons = 0
+        ttHLepSkim.requireSameSignPair = False
+        for c in selectedComponents:
+            c.splitFactor = len(c.files)
+
+elif analysis=='SOS':
     #TChiSlepSnux0p5=kreator.makeMCComponent("TChiSlepSnux0p5","/SMS-TChiSlepSnu_x0p5_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring16MiniAODv2-PUSpring16Fast_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/MINIAODSIM","CMS",".*root",1)
     #TChiSlepSnux0p05=kreator.makeMCComponent("TChiSlepSnux0p05","/SMS-TChiSlepSnu_x0p05_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring16MiniAODv2-PUSpring16Fast_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v2/MINIAODSIM","CMS",".*root",1)
     #TChiWZ=kreator.makeMCComponent("TChiWZ","/SMS-TChiWZ_ZToLL_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring16MiniAODv2-PUSpring16Fast_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v2/MINIAODSIM","CMS",".*root",1)
@@ -400,28 +408,18 @@ if analysis=='SOS':
     #selectedComponents = [SMS_TChiSlepSnux0p5, SMS_TChiSlepSnux0p05, SMS_TChiWZ, SMS_T2ttDiLep_mStop_10to80]
     #selectedComponents = [SMS_TChiWZ, SMS_T2ttDiLep_mStop_10to80]
  
-if analysis=='susy' or analysis=="ttH":
+elif analysis=="ttH":
     selectedComponents = selectedComponents
-    samples_2l = [ TTWToLNu, TTZToLLNuNu, TTLLJets_m1to10, TTTT_ext, tZq_ll ] + TTHnobb_mWCutfix
+#    samples_2l = [ TTWToLNu, TTZToLLNuNu, TTLLJets_m1to10, TTTT_ext, tZq_ll ] + TTHnobb_mWCutfix
 #    samples_2l = [WJetsToLNu_LO, WJetsToLNu, DYJetsToLL_M10to50_LO, DYJetsToLL_M10to50, DYJetsToLL_M50, DYJetsToLL_M50_LO, TTJets, TT_pow, TTJets_SingleLeptonFromTbar, TTJets_SingleLeptonFromT, TTJets_DiLepton, TBar_tWch, T_tWch, TToLeptons_tch_amcatnlo, TToLeptons_sch_amcatnlo, TTGJets, WGToLNuG, ZGTo2LG, TGJets, WWDouble, WpWpJJ, TTTT, VHToNonbb, GGHZZ4L,tZq_ll, WZTo3LNu, ZZTo4L, WWTo2L2Nu, WWW, WWZ, WZZ, ZZZ, TTHnobb_pow, TTW_LO, TTZ_LO, TTWToLNu, TTZToLLNuNu, TTLLJets_m1to10] + TTHnobb_mWCutfix
 #    samples_1l = [QCD_Mu15] + QCD_Mu5 + [WJetsToLNu_LO,DYJetsToLL_M10to50_LO,DYJetsToLL_M50_LO,TT_pow] + QCDPtEMEnriched + QCDPtbcToE
-    selectedComponents = samples_2l
-    for comp in selectedComponents: comp.splitFactor = 200
-    printSummary(selectedComponents)
-    cropToLumi([TTTT_ext,tZq_ll],200)
-    cropToLumi(TTHnobb_mWCutfix,2000)
+#    selectedComponents = samples_2l
+#    for comp in selectedComponents: comp.splitFactor = 200
+#    printSummary(selectedComponents)
+#    cropToLumi([TTTT_ext,tZq_ll],200)
+#    cropToLumi(TTHnobb_mWCutfix,2000)
 #    configureSplittingFromTime(samples_1l,50,3)
-    configureSplittingFromTime(samples_2l,100,3)
-    printSummary(selectedComponents)
-
-if analysis=='susy' and runSMS:
-    selectedComponents=[TChiSlepSnu,T1tttt_2016,T5qqqqVV_2016]
-    ttHLepSkim.minLeptons = 0
-    ttHLepSkim.requireSameSignPair = False
-    for c in selectedComponents:
-        c.splitFactor = len(c.files)
-
-printSummary(selectedComponents)
+#    configureSplittingFromTime(samples_2l,100,3)
 
 if scaleProdToLumi>0: # select only a subset of a sample, corresponding to a given luminosity (assuming ~30k events per MiniAOD file, which is ok for central production)
     target_lumi = scaleProdToLumi # in inverse picobarns
@@ -554,13 +552,16 @@ if runData and not isTest: # For running on data
         susyCoreSequence.remove(jsonAna)
 
 printSummary(selectedComponents)
+
 if True:
     from CMGTools.Production.promptRecoRunRangeFilter import filterComponent
     for c in selectedComponents:
+        printnewsummary = False
         if "PromptReco" in c.name:
+            printnewsummary = True
             filterComponent(c, 1)
             c.splitFactor = len(c.files)/6
-printSummary(selectedComponents)
+    if printnewsummary: printSummary(selectedComponents)
 
 
 if runFRMC: 
