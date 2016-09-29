@@ -2,9 +2,7 @@
 import sys, os, pickle
 import ROOT
 
-_treepath = None
-
-def cacheLocally(infile, tmpDir='/tmp/'):
+def cache_locally(infile, tmpDir='/tmp/'):
     tmpfile = os.path.join(tmpDir, os.path.basename(infile))
 
     # Copy locally if it's not there already
@@ -28,7 +26,7 @@ def get_file_or_copy_local(url, copy_local=True):
         return url
 
     else:
-        return cacheLocally(url, os.environ.get('TMPDIR', '/tmp'))
+        return cache_locally(url, os.environ.get('TMPDIR', '/tmp'))
 
 _dsets = {}
 def read_dset_config(filename):
@@ -77,16 +75,20 @@ def load_dataset(name, trainclass, addw=1):
 
     return tree, weight
 
-
-def train(allcuts, variables, dsets, fOutName, options):
+def train(allcuts, variables, dsets, options):
     datasets = []
     for name, trainclass, addw in dsets:
         tree, weight = load_dataset(name, trainclass, addw)
         datasets.append((name, trainclass, tree, weight))
 
-    fOut = ROOT.TFile(fOutName,"recreate")
+    fOut = ROOT.TFile(options.output,"recreate")
     fOut.cd()
-    factory = ROOT.TMVA.Factory(options.training, fOut, "!V:!Color:Transformations=I")
+    factory = ROOT.TMVA.Factory(options.training, fOut,
+                                ':'.join([
+                                    "!V",
+                                    "Color",
+                                    "Transformations=I",
+                                    "AnalysisType=Classification"]))
 
     for cut in options.addcuts:
         allcuts += cut
@@ -96,8 +98,8 @@ def train(allcuts, variables, dsets, fOutName, options):
     factory.AddSpectator("iF2 := iF_Recl[2]","F")
 
     ## Add the variables
-    for var in variables:
-        factory.AddVariable(var, 'F')
+    for var, type_ in variables:
+        factory.AddVariable(var, type_)
 
     ## Add the datasets
     for name,trainclass,tree,weight in datasets:
@@ -109,21 +111,35 @@ def train(allcuts, variables, dsets, fOutName, options):
 
     ## Start the training
     factory.PrepareTrainingAndTestTree(allcuts, "!V")
-    factory.BookMethod(ROOT.TMVA.Types.kBDT, 'BDTG',
+    factory.BookMethod(ROOT.TMVA.Types.kBDT, 'BDTA',
                             ':'.join([
                                 '!H',
                                 '!V',
-                                'NTrees=200',
-                                'BoostType=Grad',
-                                'Shrinkage=0.10',
+                                'NTrees=800',
+                                'BoostType=AdaBoost',
+                                'AdaBoostBeta=0.50',
                                 '!UseBaggedGrad',
-                                'nCuts=200',
-                                'nEventsMin=100',
-                                'NNodesMax=5',
-                                'MaxDepth=8',
+                                'nCuts=50',
+                                'MaxDepth=5',
                                 'NegWeightTreatment=PairNegWeightsGlobal',
                                 'CreateMVAPdfs',
+                                # 'VarTransform=G,D',
                                 ]))
+    # factory.BookMethod(ROOT.TMVA.Types.kBDT, 'BDTG',
+    #                         ':'.join([
+    #                             '!H',
+    #                             '!V',
+    #                             'NTrees=200',
+    #                             # 'BoostType=AdaBoost',
+    #                             'BoostType=Grad',
+    #                             'Shrinkage=0.10',
+    #                             '!UseBaggedGrad',
+    #                             'nCuts=200',
+    #                             'MaxDepth=8',
+    #                             'NegWeightTreatment=PairNegWeightsGlobal',
+    #                             'CreateMVAPdfs',
+    #                             # 'VarTransform=G,D',
+    #                             ]))
     factory.TrainAllMethods()
     factory.TestAllMethods()
     factory.EvaluateAllMethods()
@@ -132,11 +148,9 @@ def train(allcuts, variables, dsets, fOutName, options):
 
 
 def main(args, options):
-    global _treepath
-    _treepath = options.treepath
+    read_dset_config(options.treepath)
 
-    read_dset_config(_treepath)
-
+    # Define the selection:
     allcuts = ROOT.TCut('1')
     allcuts += "nLepFO_Recl>=3"
     allcuts += "abs(mZ1_Recl-91.2)>10"
@@ -147,13 +161,15 @@ def main(args, options):
     allcuts += "nBJetLoose25_Recl >= 1"
     allcuts += "maxEtaJet25 >= 0"
 
+    # Define the variables to be used:
     variables = [
-        "max_Lep_eta := max(abs(LepGood_eta[iF_Recl[0]]),abs(LepGood_eta[iF_Recl[1]]))",
-        "numJets_float := nJet25_Recl",
-        "maxEtaJet25 := maxEtaJet25",
-        # "MT_met_lep1 := MT_met_lep1",
+        ("nJet25_Recl", "I"),
+        ("nBJetLoose25_Recl", "I"),
+        ("maxEtaJet25", "F"),
+        ("lepCharge := LepGood_charge[iF_Recl[0]]+LepGood_charge[iF_Recl[1]]+LepGood_charge[iF_Recl[2]]", "I"),
     ]
 
+    # Define the signal and background datasets
     dsets = []
     dsets.append(('THQ',                                 'Signal', 3.))
     if options.training.lower() == 'ttv':
@@ -172,10 +188,7 @@ def main(args, options):
         print "Please choose either 'ttv' or 'tt' for -T option"
         return 1
 
-    train(allcuts=allcuts,
-          variables=variables,
-          dsets=dsets,
-          fOutName='thq_mva.root',
+    train(allcuts=allcuts, variables=variables, dsets=dsets,
           options=options)
 
     return 0
