@@ -257,6 +257,8 @@ int SR(int nLep, int nTau, int nOSSF, int nOSLF, float mT2L, float mT2T, float m
 TString CMSSW_BASE = gSystem->ExpandPathName("${CMSSW_BASE}");
 #endif
 
+CMSSW_BASE = gSystem->ExpandPathName("${CMSSW_BASE}"); // Necessary for the case in which functionsEWK is run but functions.cc is not (case in which the expansion is not performed at runtime)
+
 TFile* trigSF = new TFile(CMSSW_BASE+"/src/CMGTools/TTHAnalysis/data/triggerSF/EWKino_9p2_triggerSF.root", "read");
 TFile* trigSFele27 = new TFile(CMSSW_BASE+"/src/CMGTools/TTHAnalysis/data/triggerSF/EWKino_12p9_triggerSF_ele27.root", "read");
 TH2F* _trigSF_3l_m = (TH2F*) trigSF->Get("eff_3l_mu" );
