@@ -15,7 +15,7 @@ from CMGTools.H2TauTau.proto.analyzers.MCWeighter import MCWeighter
 from CMGTools.H2TauTau.proto.analyzers.TriggerAnalyzer import TriggerAnalyzer
 from CMGTools.H2TauTau.proto.analyzers.JetAnalyzer import JetAnalyzer
 from CMGTools.H2TauTau.proto.analyzers.EmbedWeighter import EmbedWeighter
-from CMGTools.H2TauTau.proto.analyzers.DYJetsFakeAnalyzer import DYJetsFakeAnalyzer
+from CMGTools.H2TauTau.proto.analyzers.HTTGenAnalyzer import HTTGenAnalyzer
 from CMGTools.H2TauTau.proto.analyzers.NJetsAnalyzer import NJetsAnalyzer
 from CMGTools.H2TauTau.proto.analyzers.HiggsPtWeighter import HiggsPtWeighter
 from CMGTools.H2TauTau.proto.analyzers.VBFAnalyzer import VBFAnalyzer
@@ -97,8 +97,8 @@ susyScanAna = cfg.Analyzer(
 )
 
 dyJetsFakeAna = cfg.Analyzer(
-    DYJetsFakeAnalyzer,
-    name='DYJetsFakeAnalyzer',
+    HTTGenAnalyzer,
+    name='HTTGenAnalyzer',
     jetCol='slimmedJets',
     channel='',
     genPtCut=8.
