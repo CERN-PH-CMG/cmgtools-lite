@@ -6,6 +6,9 @@ from array import array
 from math import log, exp
 
 from CMGTools.TTHAnalysis.treeReAnalyzer import Collection
+from itertools import combinations
+from PhysicsTools.HeppyCore.utils.deltar import deltaPhi
+
 
 BTAGWP = 0.8 # 0.8 is for medium tags, might want to try others
 
@@ -13,7 +16,15 @@ class tHqEventVariableFriend:
     def __init__(self):
         self.branches = [] # (branchname, default value)
         self.branches.append(("maxEtaJet25", -99.9))
-        # add more here...
+
+        #####added by jmonroy sep 2016
+
+        self.branches.append(("nJet1", -99.9)) # number of jets with |eta|>1.0
+        self.branches.append(("dEtaFwdJetBJet", -99.9)) # delta eta: max fwd jet and hardest bjet 
+        self.branches.append(("dEtaFwdJetClosestLep",-99.9)) # delta eta: max fwd jet and closest lepton 
+        self.branches.append(("dPhiHighestPtSSPair", -99.9)) # delta phi highest pt same sign lepton pair
+
+    # add more here...
 
     def listBranches(self):
         """Return a list of branch names that are added"""
@@ -42,9 +53,21 @@ class tHqEventVariableFriend:
         fjets   = Collection(event, "JetFwd", "nJetFwd")
 
         # Additional collections (not needed so far):
-        # leptons = Collection(event, "LepGood", "nLepGood")
-        # bjets = [j for j in jets if j.btagCSV > BTAGWP]
-        # bjets.sort(key=lambda x:x.pt, reverse=True)
+        leptons = Collection(event, "LepGood", "nLepGood")
+
+        sspairs = [(l1, l2) for l1, l2 in combinations(leptons, 2) if l1.pdgId*l2.pdgId > 0]
+
+        dphi=-99.9
+        
+        if len(sspairs): 
+            lep1,lep2= sorted(sspairs, key=lambda x:x[1],reverse=True)[0] #highest pt pair
+            dphi=abs(deltaPhi(lep1.phi,lep2.phi)) 
+            #print 'deltaPhi',dphi
+
+        ret['dPhiHighestPtSSPair']=dphi
+
+        bjets = [j for j in jets if j.btagCSV > BTAGWP]
+        bjets.sort(key=lambda x:x.pt, reverse=True)
 
         # All non-btagged jets with pt > 25 GeV
         light_jets =  [j for j in jets  if (j.pt > 25. and j.btagCSV < BTAGWP)]
@@ -55,9 +78,17 @@ class tHqEventVariableFriend:
         if len(light_jets):
             maxjet = sorted(light_jets, key=lambda x:abs(x.eta), reverse=True)[0]
             ret['maxEtaJet25'] = abs(maxjet.eta)
+            if len(bjets):
+                ret['dEtaFwdJetBJet'] = abs(maxjet.eta - bjets[0].eta)
 
+            detas = [abs(lep.eta - maxjet.eta) for lep in leptons]
+            ret['dEtaFwdJetClosestLep'] = sorted(detas)[0]
+
+
+
+        ret['nJet1'] = len([j for j in light_jets if abs(j.eta)>1.0]) 
+    
         return ret
-
 ##################################################
 # Test this friend producer like so:
 # python tHqEventVariables.py tree.root
@@ -91,6 +122,10 @@ if __name__ == '__main__':
             ret = self.thqf(ev)
 
             print 'maxEtaJet25:', ret['maxEtaJet25']
+            print 'nJet1:', ret['nJet1']
+            print 'dEtaFwdJetBJet',ret['dEtaFwdJetBJet']
+            print 'dEtaFwdJetClosestLep',ret['dEtaFwdJetClosestLep']
+            print 'dPhiHighestPtSSPair', ret['dPhiHighestPtSSPair']
             # add additional printout here to make sure everything is consistent
 
         def done(self):
@@ -98,5 +133,5 @@ if __name__ == '__main__':
 
     T = Tester("tester")
     el = EventLoop([ T ])
-    el.loop([tree], maxEvents = 50)
+    el.loop([tree], maxEvents = 10)
     T.done()
