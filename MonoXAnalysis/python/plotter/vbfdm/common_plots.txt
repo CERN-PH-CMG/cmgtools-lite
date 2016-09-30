@@ -1,0 +1,16 @@
+nvtx   : nVert       : 40,0.5,40.5 ; XTitle="N_{vtx}", Legend='TR'
+rho   : rho       : 40,0.5,40.5 ; XTitle="#rho (GeV)", Legend='TR'
+recoil : metNoMu_pt  : [130, 150, 170, 200, 230, 260, 290, 320, 350, 390, 430, 470, 510, 550, 590, 640, 690, 740, 790, 840, 900, 960, 1020, 1090, 1160]  ; XTitle="Recoil [GeV]",Logy, LegendCutoff=1e-3, YMin=1, YMax=1e5
+metnomu: metNoMu_pt  : 25,130,600 ; XTitle="Recoil [GeV]", Legend='TR'
+dphijm: dphijm : 100,0.0,2.9 ; XTitle="#Delta#phi (Recoil\,j)", Legend='TR'
+j1_pt: JetClean1_pt : 80,70,550 ; XTitle='p_{T}^{j1} (GeV)', Legend='TR'
+j2_pt: JetClean2_pt : 50,50,1000 ; XTitle='p_{T}^{j2} (GeV)', Legend='TR'
+j1_eta: JetClean1_eta : 50,-4.7,4.7 ; XTitle='#eta^{j1} (GeV)', Legend='TR'
+j2_eta: JetClean2_eta : 50,-4.7,4.7 ; XTitle='#eta^{j2} (GeV)', Legend='TR'
+jcentral_eta: if3(abs(JetClean1_eta)<abs(JetClean2_eta),JetClean1_eta,JetClean2_eta) : 20,-5,5 ;  XTitle='Central tag jet #eta', Legend='TR'
+jfwd_eta: if3(abs(JetClean1_eta)>abs(JetClean2_eta),JetClean1_eta,JetClean2_eta) : 20,-5,5 ;  XTitle='Forward tag jet #eta', Legend='TR'
+detajj: abs(JetClean1_eta-JetClean2_eta) : 50,0.0,8.0 ; XTitle='#Delta#eta_{jj}', Legend='TR'
+detajj_fullsel: abs(JetClean1_eta-JetClean2_eta) : 20,3.6,8.0 ; XTitle='#Delta#eta_{jj}', Legend='TR'
+mjj: mass_2(JetClean1_pt,JetClean1_eta,JetClean1_phi,0.,JetClean2_pt,JetClean2_eta,JetClean2_phi,0.) : 100,0,4000 ; XTitle='m_{jj} (GeV)', Legend='TR'
+mjj_fullsel: mass_2(JetClean1_pt,JetClean1_eta,JetClean1_phi,0.,JetClean2_pt,JetClean2_eta,JetClean2_phi,0.) : 20,1100,4000 ; XTitle='m_{jj} (GeV)', Legend='TR'
+
