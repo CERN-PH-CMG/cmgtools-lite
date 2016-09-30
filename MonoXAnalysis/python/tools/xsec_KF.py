@@ -47,7 +47,7 @@ class xsec_KF:
         # ptmin = histo.GetXaxis().GetXmin()+1e-3
         # the k-factor for pT < 200 GeV are very large,
         # limited by the stat of the HT binned samples
-        ptmin = 200 
+        ptmin = 150 
         ptmax = histo.GetXaxis().GetXmax()-1e-3
         if pt > ptmin:
             bin = histo.GetXaxis().FindBin(min(pt,ptmax))
@@ -62,7 +62,7 @@ class xsec_KF:
         # ptmin = histo.GetXaxis().GetXmin()+1e-3
         # the k-factor for pT < 200 GeV are very large,
         # limited by the stat of the HT binned samples
-        ptmin = 200 
+        ptmin = 150 
         ptmax = histo.GetXaxis().GetXmax()-1e-3
         if pt > ptmin:
             bin = histo.GetXaxis().FindBin(min(pt,ptmax))
