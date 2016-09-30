@@ -14,7 +14,10 @@ class Analysis:
         anaOpts = []
         
         region = options.region
-        if region in ['signal','zmumu','wmunu']: 
+        if region in ['signal']: 
+            T=TREEDIR+'TREES_MET_80X_V4'
+            self.MCA='vbfdm/mca-80X-sync.txt'
+        elif region in ['zmumu','wmunu']: 
             T=TREEDIR+'TREES_MET_80X_V4'
             self.MCA='vbfdm/mca-80X-muonCR.txt'
         elif region in ['zee','wenu']: 
@@ -26,7 +29,8 @@ class Analysis:
      
         corey = 'mcAnalysis.py ' if len(options.pdir)==0 else 'mcPlots.py '
         coreopt = ' -P '+T+' --s2v -j 6 -l 24.47 -G'
-        plotopt = ' -f --poisson --pdir ' + options.pdir + ' --showRatio --maxRatioRange 0.5 1.5 --fixRatioRange '
+        plotopt = ' -f --poisson --pdir ' + options.pdir
+        if region != 'signal': plotopt += ' --showRatio --maxRatioRange 0.5 1.5 --fixRatioRange '
         anaOpts += [coreopt]
      
         if options.upToCut: anaOpts.append('-U '+options.upToCut)
@@ -100,9 +104,9 @@ if __name__ == "__main__":
                          }
         rebinFactor = {'v_presel':1, 'vbfjets':1, 'full_sel':4}
         
-        #ctrl_regions = ['zmumu']
-        ctrl_regions = ['wmunu']
-        
+        #ctrl_regions = ['zmumu','wmunu']
+        ctrl_regions = ['wenu'] 
+
         pdirbase = options.pdir
         for CR in ctrl_regions:
             options.region = CR
@@ -112,12 +116,14 @@ if __name__ == "__main__":
                 options.upToCut = v
                 options.pdir = pdirbase+"/"+CR+"CR/"+s
                 mcpOpts = ['--xP '+','.join(exclude_plots[s]), '--rebin '+str(rebinFactor[s])]
-                mcpOpts += ['--xp QCD'] # too large uncertainty
+                if CR!='wenu': mcpOpts += ['--xp QCD'] # too large uncertainty
                 analysis = Analysis(options,mcpOpts)
                 analysis.runOne()
 
 
     else: 
-        analysis = Analysis(options)
+        mcpOpts = []
+        if(options.region=='signal'): mcpOpts += ['--showIndivSigShapes','--xp data','--rebin 2']
+        analysis = Analysis(options,mcpOpts)
         analysis.runOne()
         

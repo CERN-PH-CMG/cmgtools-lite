@@ -1,14 +1,2 @@
-nvtx   : nVert       : 40,0.5,40.5 ; XTitle="N_{vtx}", Legend='TR'
 mZ1    : mZ1         : 40,60,120  ; XTitle="m(e^{+}e^{-})  [GeV]", Legend='TL'
-#nJet30 : nJetClean30 : 8,0.5,8.5  ; XTitle='N(jet\, p_{T} > 30 GeV)', Legend='TR'
-recoil : metNoMu_pt  : [130, 150, 170, 200, 230, 260, 290, 320, 350, 390, 430, 470, 510, 550, 590, 640, 690, 740, 790, 840, 900, 960, 1020, 1090, 1160]  ; XTitle="Recoil [GeV]",Logy, LegendCutoff=1e-3, YMin=1, YMax=1e5
-dphijm: dphijm : 14,2.3,3.14159 ; XTitle="#Delta#phi (Recoil\,j)", Legend='TR'
-j1_pt: vbfTaggedJet_leadJetPt : 40,80,550 ; XTitle='p_{T}^{j1} (GeV)', Legend='TR'
-j2_pt: vbfTaggedJet_trailJetPt : 32,50,350 ; XTitle='p_{T}^{j2} (GeV)', Legend='TR'
-jcentral_eta: if3(abs(vbfTaggedJet_leadJetEta)<abs(vbfTaggedJet_trailJetEta),vbfTaggedJet_leadJetEta,vbfTaggedJet_trailJetEta) : 20,-5,5 ;  XTitle='Central tag jet #eta', Legend='TR'
-jfwd_eta: if3(abs(vbfTaggedJet_leadJetEta)>abs(vbfTaggedJet_trailJetEta),vbfTaggedJet_leadJetEta,vbfTaggedJet_trailJetEta) : 20,-5,5 ;  XTitle='Forward tag jet #eta', Legend='TR'
-detajj: vbfTaggedJet_deltaEta : 50,0.0,8.0 ; XTitle='#Delta#eta_{jj}', Legend='TR'
-detajj_fullsel: vbfTaggedJet_deltaEta : 20,3.6,8.0 ; XTitle='#Delta#eta_{jj}', Legend='TR'
-mjj: vbfTaggedJet_invMass : 100,0,4000 ; XTitle='m_{jj} (GeV)', Legend='TR'
-mjj_fullsel: vbfTaggedJet_invMass : 20,1100,4000 ; XTitle='m_{jj} (GeV)', Legend='TR'
-
+recoil: pt_3(met_pt,met_phi,LepGood1_pt,LepGood1_phi,LepGood2_pt,LepGood2_phi) : [130, 150, 170, 200, 230, 260, 290, 320, 350, 390, 430, 470, 510, 550, 590, 640, 690, 740, 790, 840, 900, 960, 1020, 1090, 1160]  ; XTitle="Recoil [GeV]",Logy, LegendCutoff=1e-3, YMin=1, YMax=1e5

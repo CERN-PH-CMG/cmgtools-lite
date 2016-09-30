@@ -1,8 +1,6 @@
 nvtx   : nVert       : 40,0.5,40.5 ; XTitle="N_{vtx}", Legend='TR'
 rho   : rho       : 40,0.5,40.5 ; XTitle="#rho (GeV)", Legend='TR'
-recoil : metNoMu_pt  : [130, 150, 170, 200, 230, 260, 290, 320, 350, 390, 430, 470, 510, 550, 590, 640, 690, 740, 790, 840, 900, 960, 1020, 1090, 1160]  ; XTitle="Recoil [GeV]",Logy, LegendCutoff=1e-3, YMin=1, YMax=1e5
-metnomu: metNoMu_pt  : 25,130,600 ; XTitle="Recoil [GeV]", Legend='TR'
-dphijm: dphijm : 100,0.0,2.9 ; XTitle="#Delta#phi (Recoil\,j)", Legend='TR'
+dphijm: dphijm : 100,0.0,3.1415 ; XTitle="#Delta#phi (Recoil\,j)", Legend='TR'
 j1_pt: JetClean1_pt : 80,70,550 ; XTitle='p_{T}^{j1} (GeV)', Legend='TR'
 j2_pt: JetClean2_pt : 50,50,1000 ; XTitle='p_{T}^{j2} (GeV)', Legend='TR'
 j1_eta: JetClean1_eta : 50,-4.7,4.7 ; XTitle='#eta^{j1} (GeV)', Legend='TR'
