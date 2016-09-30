@@ -26,7 +26,7 @@ class EventVarsMonojet:
     def listBranches(self):
         biglist = [ ("nJetClean", "I"), ("nFatJetClean","I"), ("nTauClean", "I"), ("nLepSel", "I"),
                     ("iL","I",10,"nLepSel"), ("iJ","I",10,"nJetClean"), ("iT","I",3,"nTauClean"),
-                    ("iFJ","I",10,"nFatJetClean"), ("nJetClean30", "I"), ("nTauClean18V", "I") ] 
+                    ("iFJ","I",10,"nFatJetClean"), ("nJetCleanCentral", "I"), ("nTauClean18V", "I") ] 
         for jfloat in "pt eta phi mass btagCSV rawPt leadClean".split():
             biglist.append( ("JetClean"+"_"+jfloat,"F",10,"nJetClean") )
         for fjfloat in "pt eta phi prunedMass tau2 tau1".split():
@@ -127,10 +127,10 @@ class EventVarsMonojet:
             if best is not None: best._clean = False
         # 2. compute the jet list
         nJetCleanCentral=0
+        nJetCleanFwd=0
         for ij,j in enumerate(alljets):
             if not j._clean: continue
             ret["iJ"].append(ij)
-            if j._central: nJetCleanCentral += 1
         # 3. sort the jets by pt
         ret["iJ"].sort(key = lambda idx : alljets[idx].pt, reverse = True)
         # 4. compute the variables
@@ -143,30 +143,31 @@ class EventVarsMonojet:
         nAllJets30 = 0
         for idx in ret["iJ"]:
             jet = alljets[idx]
-            # only save in the jetClean collection the central jets with pt > 30 GeV
+            # only save in the jetClean collection the jets with pt > 30 GeV
             if jet.pt < 30: continue
             nAllJets30 += 1
-            if jet._central:
-                for jfloat in "pt eta phi mass btagCSV rawPt".split():
-                    jetret[jfloat].append( getattr(jet,jfloat) )
-                jetret["leadClean"].append( self.leadJetCleaning(jet) )
-                if ijc==1 and jet._central: dphijj = deltaPhi(alljets[ret["iJ"][0]].phi,jet.phi)
-                ijc += 1
+            if jet._central: nJetCleanCentral += 1
+            else: nJetCleanFwd += 1
+            for jfloat in "pt eta phi mass btagCSV rawPt".split():
+                jetret[jfloat].append( getattr(jet,jfloat) )
+            jetret["leadClean"].append( self.leadJetCleaning(jet) )
+            if ijc==1 and jet._central: dphijj = deltaPhi(alljets[ret["iJ"][0]].phi,jet.phi)
+            ijc += 1
             # use both central and fwd jets to compute deltaphi(jet,met)_min
             dphijmAllJets = min(dphijmAllJets,abs(deltaPhi(jet.phi,metphi))) 
             if nAllJets30 < 5: dphijm = min(dphijm,abs(deltaPhi(jet.phi,metphi)))
-        ret["nJetClean"] = nJetCleanCentral
+        ret["nJetClean"] = nJetCleanCentral+nJetCleanFwd
         ret['dphijj'] = dphijj
         ret['dphijm'] = dphijm
         ret['dphijmAllJets'] = dphijmAllJets 
         # 5. compute the sums 
-        ret["nJetClean30"] = 0
+        ret["nJetCleanCentral"] = 0
         ret["nBTag15"] = 0
         lowptjets = []
         for j in jets: # these are all central
             if not j._clean: continue
             if j.pt > 30:
-                ret["nJetClean30"] += 1
+                ret["nJetCleanCentral"] += 1
             if j.pt > 15:
                 lowptjets.append(j)
                 if j.btagCSV > 0.800:
