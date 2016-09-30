@@ -589,6 +589,9 @@ float puw2016_nInt_6p3fb(int nInt) { if(nInt<50) return _puw2016_nInt_6p3fb[nInt
 TString CMSSW_BASE = gSystem->ExpandPathName("${CMSSW_BASE}");
 #endif
 
+CMSSW_BASE = gSystem->ExpandPathName("${CMSSW_BASE}"); // Failsafe. Necessary for the case in which functionsEWK is run but functions.cc is not (case in which the expansion is not performed at runtime)
+
+
 TFile* puw9p2fb = new TFile(CMSSW_BASE+"/src/CMGTools/TTHAnalysis/data/pileup/puw_2016_9fb.root", "read");
 TH1F* _puw2016_nInt_9p2fb = (TH1F*) puw9p2fb->Get("puw");
 
