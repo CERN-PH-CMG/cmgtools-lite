@@ -252,12 +252,7 @@ int SR(int nLep, int nTau, int nOSSF, int nOSLF, float mT2L, float mT2T, float m
 #include "TFile.h"
 #include "TSystem.h"
 
-#ifndef MY_CMSSW_BASE_ENV_VAR
-#define MY_CMSSW_BASE_ENV_VAR
-TString CMSSW_BASE = gSystem->ExpandPathName("${CMSSW_BASE}");
-#endif
-
-CMSSW_BASE = gSystem->ExpandPathName("${CMSSW_BASE}"); // Necessary for the case in which functionsEWK is run but functions.cc is not (case in which the expansion is not performed at runtime)
+extern TString CMSSW_BASE; //defined in functions.cc
 
 TFile* trigSF = new TFile(CMSSW_BASE+"/src/CMGTools/TTHAnalysis/data/triggerSF/EWKino_9p2_triggerSF.root", "read");
 TFile* trigSFele27 = new TFile(CMSSW_BASE+"/src/CMGTools/TTHAnalysis/data/triggerSF/EWKino_12p9_triggerSF_ele27.root", "read");
