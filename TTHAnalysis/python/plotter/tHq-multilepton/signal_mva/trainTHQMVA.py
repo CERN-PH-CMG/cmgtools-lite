@@ -113,14 +113,14 @@ def train(allcuts, variables, dsets, options):
     factory.PrepareTrainingAndTestTree(allcuts, "!V")
     factory.BookMethod(ROOT.TMVA.Types.kBDT, 'BDTA',
                             ':'.join([
-                                '!H',
-                                '!V',
+                                '!H', # print help
+                                '!V', # verbose
                                 'NTrees=800',
                                 'BoostType=AdaBoost',
                                 'AdaBoostBeta=0.50',
                                 '!UseBaggedGrad',
                                 'nCuts=50',
-                                'MaxDepth=5',
+                                'MaxDepth=3',
                                 'NegWeightTreatment=PairNegWeightsGlobal',
                                 'CreateMVAPdfs',
                                 # 'VarTransform=G,D',
@@ -164,8 +164,12 @@ def main(args, options):
     # Define the variables to be used:
     variables = [
         ("nJet25_Recl", "I"),
+        ("nJet1", "I"),
         ("nBJetLoose25_Recl", "I"),
         ("maxEtaJet25", "F"),
+        ("dEtaFwdJetBJet", "F"),
+        ("dEtaFwdJetClosestLep", "F"),
+        ("dPhiHighestPtSSPair", "F"),
         ("lepCharge := LepGood_charge[iF_Recl[0]]+LepGood_charge[iF_Recl[1]]+LepGood_charge[iF_Recl[2]]", "I"),
     ]
 
