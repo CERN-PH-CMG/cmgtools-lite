@@ -263,7 +263,7 @@ class MCAnalysis:
         return ret
     def getPlotsRaw(self,name,expr,bins,cut,process=None,nodata=False,makeSummary=False):
         return self.getPlots(PlotSpec(name,expr,bins,{}),cut,process,nodata,makeSummary)
-    def getPlots(self,plotspec,cut,process=None,nodata=False,makeSummary=False):
+    def getPlots(self,plotspec,cut,process=None,nodata=False,makeSummary=False,replaceweight=None):
         ret = { }
         allSig = []; allBg = []
         tasks = []
@@ -271,6 +271,8 @@ class MCAnalysis:
             if key == 'data' and nodata: continue
             if process != None and key != process: continue
             for tty in ttys:
+                if replaceweight != None:
+                    tty._weightString = replaceweight
                 tasks.append((key,tty,plotspec,cut,None))
         if self._options.splitFactor > 1 or  self._options.splitFactor == -1:
             tasks = self._splitTasks(tasks)
