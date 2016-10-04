@@ -12,7 +12,7 @@ dataDir = "$CMSSW_BASE/src/CMGTools/TTHAnalysis/data"  # use environmental varia
 #json=dataDir+'/json/Cert_271036-276097_13TeV_PromptReco_Collisions16_JSON_NoL1T_v2.txt'
 
 ## top up from 7.7/fb json to 12.9/fb
-json=dataDir+'/json/Cert_271036-276811_13TeV_PromptReco_Collisions16_JSON_NoL1T_TopUp.txt'
+json=dataDir+'/json/Cert_271036-276811_13TeV_PromptReco_Collisions16_JSON_NoL1T.txt'
 
 #https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/
 #https://hypernews.cern.ch/HyperNews/CMS/get/physics-validation/2657.html
@@ -30,7 +30,7 @@ json=dataDir+'/json/Cert_271036-276811_13TeV_PromptReco_Collisions16_JSON_NoL1T_
 #    )
 
 
-run_range = (271036, 276097)
+run_range = (271036, 276811)
 label = "_runs%s_%s"%(run_range[0], run_range[1])
 
 ### ----------------------------- Run2016 PromptReco v1 ----------------------------------------
