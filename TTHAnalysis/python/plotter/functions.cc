@@ -10,6 +10,15 @@
 #include "TH1F.h"
 #include "TFile.h"
 #include "PhysicsTools/Heppy/interface/Davismt2.h"
+#include "TSystem.h"
+#include "TString.h"
+
+#ifndef MY_CMSSW_BASE_ENV_VAR
+#define MY_CMSSW_BASE_ENV_VAR
+TString CMSSW_BASE = gSystem->ExpandPathName("${CMSSW_BASE}");
+#else
+CMSSW_BASE = gSystem->ExpandPathName("${CMSSW_BASE}"); 
+#endif
 
 //// UTILITY FUNCTIONS NOT IN TFORMULA ALREADY
 
@@ -542,21 +551,21 @@ float puw2016_nInt_ICHEP(float nInt, int var=0) {
   
   if (var==0) { 
     if (!_puw2016_nInt_ICHEP){ 
-      puw2016_ICHEP = new TFile("/afs/cern.ch/user/f/folguera/workdir/SUS/EWKino/CMSSW_8_0_11/src/CMGTools/TTHAnalysis/data/pileup/puWeights_12fb_63mb.root", "read");
+      puw2016_ICHEP = new TFile(CMSSW_BASE + "/src/CMGTools/TTHAnalysis/data/pileup/puWeights_12fb_63mb.root", "read");
       _puw2016_nInt_ICHEP = (TH1F*) (puw2016_ICHEP->Get("puw"));
     }
     return _puw2016_nInt_ICHEP->GetBinContent(_puw2016_nInt_ICHEP->FindBin(nInt));
   }
   else if (var==1) { 
     if (!puw2016_ICHEP_Up) {
-      puw2016_ICHEP_Up = new TFile("/afs/cern.ch/user/f/folguera/workdir/SUS/EWKino/CMSSW_8_0_11/src/CMGTools/TTHAnalysis/data/pileup/puWeights_12fb_63mb_Up.root", "read");
+      puw2016_ICHEP_Up = new TFile(CMSSW_BASE + "/src/CMGTools/TTHAnalysis/data/pileup/puWeights_12fb_63mb_Up.root", "read");
       _puw2016_nInt_ICHEP_Up = (TH1F*) (puw2016_ICHEP_Up->Get("puw"));
     }
     return _puw2016_nInt_ICHEP_Up->GetBinContent(_puw2016_nInt_ICHEP_Up->FindBin(nInt));
   }
   else if (var==-1) {
     if (!puw2016_ICHEP_Dn) {
-      puw2016_ICHEP_Dn = new TFile("/afs/cern.ch/user/f/folguera/workdir/SUS/EWKino/CMSSW_8_0_11/src/CMGTools/TTHAnalysis/data/pileup/puWeights_12fb_63mb_Down.root", "read");
+      puw2016_ICHEP_Dn = new TFile(CMSSW_BASE + "/src/CMGTools/TTHAnalysis/data/pileup/puWeights_12fb_63mb_Down.root", "read");
       _puw2016_nInt_ICHEP_Dn = (TH1F*) (puw2016_ICHEP_Dn->Get("puw"));
     }
     return _puw2016_nInt_ICHEP_Dn->GetBinContent(_puw2016_nInt_ICHEP_Dn->FindBin(nInt));
@@ -584,10 +593,6 @@ float puw2016_nInt_6p3fb(int nInt) { if(nInt<50) return _puw2016_nInt_6p3fb[nInt
 //float _puw2016_nInt_9p2fb[200] = {2.75256e-07, 0.000513282, 0.00244189, 0.0137388, 0.0107657, 0.0170963, 0.019015, 0.0318117, 0.0414126, 0.0475017, 0.031669, 0.0357413, 0.0311912, 0.0431186, 0.0772747, 0.175901, 0.243574, 0.413217, 0.517095, 0.745812, 0.783944, 0.988148, 1.01437, 1.15628, 1.15795, 1.33804, 1.32247, 1.49758, 1.4432, 1.59987, 1.42034, 1.54635, 1.34517, 1.42764, 1.46384, 1.47524, 1.40116, 1.4, 1.49124, 1.45276, 1.26607, 1.22946, 1.14149, 1.0768, 1.10811, 1.01191, 1.05536, 0.951295, 0.916776, 0.798908, 0.867608, 0.721483, 0.638217, 0.513803, 0.521847, 0.406786, 0.346672, 0.26268, 0.244442, 0.181843, 0.161703, 0.115209, 0.103819, 0.0724423, 0.0865247, 0.0562273, 0.064715, 0.0418875, 0.0663075, 0.0419478, 0.0746418, 0.047408, 0.127639, 0.0720651, 0.169214, 0.0774973, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 // WARNING: if using std::string CMSSW_BASE in other functions*.cc files, you need to protect it with the preprocessor directives as well
-#ifndef MY_CMSSW_BASE_ENV_VAR
-#define MY_CMSSW_BASE_ENV_VAR
-TString CMSSW_BASE = gSystem->ExpandPathName("${CMSSW_BASE}");
-#endif
 
 TFile* puw9p2fb = new TFile(CMSSW_BASE+"/src/CMGTools/TTHAnalysis/data/pileup/puw_2016_9fb.root", "read");
 TH1F* _puw2016_nInt_9p2fb = (TH1F*) puw9p2fb->Get("puw");

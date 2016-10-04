@@ -34,9 +34,9 @@ for r in range(len(mm.regions)):
 	fom     = options.fom if options.fom else ""
 	
 	if options.perBin:
-		mm.submit([mm.getVariable("mcafile"), mm.getVariable("cutfile"), mm.getVariable("plotfile"), mm.treedir, options.treename, final, mccs, macros, options.lumi, output, friends, procs, options.perBin, flags])
+		mm.submit([mm.getVariable("mcafile",""), mm.getVariable("cutfile",""), mm.getVariable("plotfile",""), mm.treedir, options.treename, final, mccs, macros, options.lumi, output, friends, procs, options.perBin, flags],mm.region.name)
 	else:
-		mm.submit([mm.getVariable("mcafile"), mm.getVariable("cutfile"), mm.treedir, options.treename, final, mccs, macros, options.lumi, friends, procs, flags, fom, output, "accmap_%s_%s.txt"%(scenario,mm.region.name)])
+		mm.submit([mm.getVariable("mcafile",""), mm.getVariable("cutfile",""), mm.treedir, options.treename, final, mccs, macros, options.lumi, friends, procs, flags, fom, output, "accmap_%s_%s.txt"%(scenario,mm.region.name)],mm.region.name)
 
 
 
