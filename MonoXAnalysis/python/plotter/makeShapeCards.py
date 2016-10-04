@@ -32,8 +32,6 @@ cuts = CutsFile(args[1],options)
 binname = os.path.basename(args[1]).replace(".txt","") if options.outname == None else options.outname
 outdir  = options.outdir+"/" if options.outdir else ""
 
-ROOT.TH1.AddDirectory(False)
-
 class SafeWorkspaceImporter():
     """Class that provides the RooWorkspace::import method, but makes sure we call the proper
        overload of it, since in ROOT 6 sometimes PyROOT calls the wrong one"""
@@ -52,7 +50,7 @@ class SafeWorkspaceImporter():
 def addCorrelatedShape(process,var,region,workspace,hist):
     bins = []
     for b in range(1,hist.GetNbinsX()+1):
-        bin_rrv = ROOT.RooRealVar(process+'_'+region,'_bin'+str(b),"",hist.GetBinContent(b), 0., hist.GetBinContent(b)*10.0)
+        bin_rrv = ROOT.RooRealVar(process+'_'+region+'_bin'+str(b),"",hist.GetBinContent(b), 0., hist.GetBinContent(b)*10.0)
         bins.append(bin_rrv)
 
     # for some ROOT memory handling, adding the RooRealVars to the RooArgList after creation doesn't work
