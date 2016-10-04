@@ -61,7 +61,7 @@ def printDataCard(yds, ydsObs, ydsSysSig):
 
 def readSystFile():
     systDict = {}
-    with open('sysTable.dat',"r") as xfile:
+    with open('sysTable_ICHEP.dat',"r") as xfile:
 #    with open('sysTable_few.dat',"r") as xfile:
         lines = xfile.readlines()
         systs = lines[0].replace(' ','').replace('\n','').split('|') 
@@ -140,47 +140,56 @@ def printABCDCard(yds, ydsObs, ydsKappa, ydsSigSys):
         datacard.write('process'+ ( ' ' * 30)  +(" ".join([kpatt % iproc[p]    for p in sampNames]))+"\n")
 
         datacard.write('rate'+ ( ' ' * 37)  +(" ".join([fpatt % float(yd.val/factor) if type(yd) != int and 'Scan' in yd.name else '   1     '  for yd in yds[bin]]))+"\n")
-        #            datacard.write('##----------------------------------\n')
-#        datacard.write('Lumi lnN' + (' ' * 33) +  " ".join([kpatt % numToBar(1.0+0.05) for yd in yds[bin]]) + '\n')
+
 
         before = '       -  ' * (4)
         after = '       -  ' * (3)
-        #hard code for now some values for signal sists
+
+        #flag to do proper signal uncertainties from pickle file
         doSigSyst = True
-#        Trigger	1	 	 
-#        PU	5	 	 
-#        Lepton efficiency	5	 	 
-#        Lumi	2.7
+
+        #hard code for now some values for uncertainties that are flat on the normalization
+        #Trigger 1 (2015) | 2 (ICHEP)
+        #PU      5 (2015) | per bin (ICHEP)
+        #Lep SF  5 (2015) | 5 (ICHEP)
+        #Lumi    2.7 (2015) | 6.7 (ICHEP)
 
         if doSigSyst:
-            fixedSyst = [('XtrigSyst',1.01), ('XpuSyst', 1.05), ('XlepSFSyst',1.05), ('XlumiSyst',1.027)] 
+            #ICHEP
+            fixedSyst = [('XtrigSyst',1.02), ('XlepSFSyst',1.05), ('XlumiSyst',1.067)]
+            #2015 data
+            
+           #fixedSyst = [('XtrigSyst',1.01), ('XpuSyst', 1.05), ('XlepSFSyst',1.05), ('XlumiSyst',1.027)] 
+            
             for sys in fixedSyst:
-#                datacard.write(sys[0] + ' lnN  ' + (' ' * (28))  + before + " ".join([kpatt % numToBar(sys[1])]) + after + "\n")
                 datacard.write(sys[0] + ' lnN  ' + (' ' * (28))  + before + 4*" ".join([kpatt % numToBar(sys[1])]) + "\n")
-        #statistical uncertainty write out all bins
+        
+            #statistical uncertainty write out all bins
             datacard.write('XXstatSys_SR_MB'+bin+' lnN '+ ( ' ' * 17)  +(" ".join([fpatt % float(1+yd.err/max(yd.val,0.0001)) if type(yd) != int and 'Scan' in yd.name and 'SR_MB' in yd.cat else '   -     '  for yd in yds[bin]]))+"\n")
             datacard.write('XXstatSys_CR_MB'+bin+' lnN '+ ( ' ' * 17)  +(" ".join([fpatt % float(1+yd.err/max(yd.val,0.0001)) if type(yd) != int and 'Scan' in yd.name and 'CR_MB' in yd.cat else '   -     '  for yd in yds[bin]]))+"\n")
             datacard.write('XXstatSys_SR_SB'+bin+' lnN '+ ( ' ' * 17)  +(" ".join([fpatt % float(1+yd.err/max(yd.val,0.0001)) if type(yd) != int and 'Scan' in yd.name and 'SR_SB' in yd.cat else '   -     '  for yd in yds[bin]]))+"\n")
             datacard.write('XXstatSys_CR_SB'+bin+' lnN '+ ( ' ' * 17)  +(" ".join([fpatt % float(1+yd.err/max(yd.val,0.0001)) if type(yd) != int and 'Scan' in yd.name and 'CR_SB' in yd.cat else '   -     '  for yd in yds[bin]]))+"\n")
 
+           
             for yd in ydsSigSys[bin]:
                 datacard.write('X'+yd.name[yd.name.find("Scan_")+5:yd.name.find('mGo')-1] + ' lnN  ' + (' ' * (28))  + before + " ".join([kpatt % numToBar(1 + yd.val)]) + after + "\n")
+
+        #If we don't do you signal systematics just assing 20% flat
         else:
             datacard.write('sigSyst lnN  ' + (' ' * (28))  + before + " 1.2 " + after + "\n")
 
-        ##for bin LT1_HT2i_NB2_NJ9i write out additonal uncertaintuy
+        #for bin LT1_HT2i_NB2_NJ9i write out additonal uncertainty (need to remove this for next iteration)
         if obs0:
             datacard.write('ALT1_HT2i_NB2_NJ9i_100percent lnN '+ ( ' ' * 32) +(" ".join(([kpatt % 1.98 if ('CR_MB','data') == (x.replace('_predict',''),y) else '    -   ' for (x,y) in zip(catNames,sampNames)])))+"\n")
         
-            
+        #Background systematics as lnN on region A
         for syst in systDict[bin]:
-            #datacard.write(syst[1]+'_'+syst[0]+' lnN '+ ( ' ' * 32) +(" ".join(([kpatt % systDict[bin][syst] if ('SR_MB','data') == (x.replace('_predict',''),y) else '    -   ' for (x,y) in zip(catNames,sampNames)])))+"\n")
             datacard.write('A'+syst[1]+' lnN '+ ( ' ' * 32) +(" ".join(([kpatt % systDict[bin][syst] if ('SR_MB','data') == (x.replace('_predict',''),y) else '    -   ' for (x,y) in zip(catNames,sampNames)])))+"\n")
 
 
 
 
-    
+        #Write out paramters for ABCD method based on rate params in the higgs tool
         params = ('kappa','beta','delta')
         addParam = ''
         betaQCDname= ''
@@ -235,7 +244,7 @@ def printABCDCard(yds, ydsObs, ydsKappa, ydsSigSys):
             else:
                 datacard.write(p + '_' + yd.label + ' rateParam ' +yd.cat.replace('_predict','') + ' ' + yd.name.replace('background','data')  + ' ' + str(round(yd.val)) + ' [0,'+str(round(yd.val*3))+'] \n')
 
-        
+
                 
     return 1 
 
@@ -257,19 +266,19 @@ if __name__ == "__main__":
         sys.argv.remove('-b')
         _batchMode = True
 
-    if len(sys.argv) > 2:
-        pattern = sys.argv[1]
-        out = sys.argv[2]
-        print '# pattern is', pattern
+    if len(sys.argv) > 1:
+        out = sys.argv[1]
         print '# out is', out
     else:
-        print "No pattern given!"
+        print "No output folder name given!!"
         exit(0)
 
     ## Create Yield Storage
     ydsSys = YieldStore("lepYields") 
     storeDict = True
-    pckname = "pickles/"+SMS+"_sigSysts.pckz"
+
+    #Define Signal pickle file
+    pckname = "pickles/"+SMS+"_sigSysts_2016_all.pckz"
     if storeDict == True and os.path.exists(pckname):
 
         print "#Loading saved yields from pickle!"
@@ -282,31 +291,22 @@ if __name__ == "__main__":
  
     yds6 = YieldStore("lepYields")
     yds9 = YieldStore("lepYields")
-#    pattern = "YieldsMarch8/unblind/lumi2p3fb/allSF_noPU/*/merged/LT*NJ68.*"
-#    pattern = "YieldsMay2/phd/lumi30fb/*/merged/LT*NJ68.*"
-    pattern = "testHenning2/*/merged/LT*NJ68.*"
+    pattern = "test12p9/*/merged/LT*NJ68.*"
     yds6.addFromFiles(pattern,("lep","sele")) 
-    pattern = "YieldsMay2/phd/lumi30fb/*/merged/LT*NJ9i.*"
-    pattern = "testHenning2/*/merged/LT*NJ9i.*"
-#    pattern = "YieldsMarch8/unblind/lumi2p3fb/allSF_noPU/*/merged/LT*NJ9i.*"
-
+    pattern = "test12p9/*/merged/LT*NJ9i.*"
     yds9.addFromFiles(pattern,("lep","sele"))
 
- 
-#    pattern = "YieldsJan15/signal/systs/btag/T1tttt/allSF_noPU/meth1A/merged/LT*"
-#    ydsSys.addFromFiles(pattern,("lep","sele")) 
 
-     
     
-
 #    yds6.showStats()
 #    yds9.showStats()
-    #pattern = 'arturstuff/grid/merged/LT\*NJ6\*'
-    ####SELECT DATA OR MC###
+
+    ####SELECT DATA OR MC### (turn into options for the commandline at some point)
     useMC = False
     prefix =  'data'
     if useMC:
         prefix = 'background'
+
     readSystFile()
     for mGo in range(600, 2000, 25):
        for mLSP in range(0,1200,25):
@@ -334,26 +334,25 @@ if __name__ == "__main__":
                 catsNoSR = ('CR_MB', 'SR_SB','CR_SB')
                 
                 sampsABCDbkg = [(prefix,cat) for cat in catsNoSR]
-#                sampsABCDbkg = [('background',cat) for cat in catsNoSR]
                 sampsABCDbkg.insert(0,(prefix,'SR_MB'))
-#                sampsABCDbkg.insert(0,('background','SR_MB'))
+
 
                 sampsABCDsig = [(SMS+'_Scan_mGo'+str(mGo)+'_mLSP'+str(mLSP),cat) for cat in cats]
-              #  sampsABCDSigSys = [('T1tttt_Scan_btagHF_syst_mGo'+str(mGo)+'_mLSP'+str(mLSP),cat), ('T1tttt_Scan_btagLF_syst_mGo'+str(mGo)+'_mLSP'+str(mLSP),cat),]
+
                 cat = 'SR_MB'
+                #select all uncertainites we have in the pickle file
                 sampsABCDSigSys = [(SMS+'_Scan_JEC_syst_mGo'+str(mGo)+'_mLSP'+str(mLSP), 'SR_MB'),
                                    (SMS+'_Scan_ISR_syst_mGo'+str(mGo)+'_mLSP'+str(mLSP), 'SR_MB'),
                                    (SMS+'_Scan_btagHF_syst_mGo'+str(mGo)+'_mLSP'+str(mLSP), 'SR_MB'), 
                                    (SMS+'_Scan_btagLF_syst_mGo'+str(mGo)+'_mLSP'+str(mLSP), 'SR_MB'),
                                    (SMS+'_Scan_Scale-Env_syst_mGo'+str(mGo)+'_mLSP'+str(mLSP), 'SR_MB'),
                                   ]
-#                sampsABCDSigSys = [(name, cat) for name in ydsSys.samples if ("syst" in name and "mGo"+str(mGo)+"_mLSP"+str(mLSP) == name[name.find('syst_')+5:-1])]
-                print sampsABCDSigSys
+                #print sampsABCDSigSys
                 sampsABCD = sampsABCDbkg + sampsABCDsig
                 
                 ydsABCD = ydIn.getMixDict(sampsABCD)
                 ydsObsABCD = ydIn.getMixDict(sampsABCDbkg)
-#                ydsKappa = ydIn.getMixDict([('EWK','Kappa'), ('data_QCDpred','CR_MB'), ('data_QCDpred','CR_SB') ])
+
                 ydsKappa = ydIn.getMixDict([('EWK','Kappa'), (prefix+'_QCDpred','CR_MB'), (prefix+'_QCDpred','CR_SB') ])
                 ydsABCDSigSys = ydsSys.getMixDict(sampsABCDSigSys)
                 
