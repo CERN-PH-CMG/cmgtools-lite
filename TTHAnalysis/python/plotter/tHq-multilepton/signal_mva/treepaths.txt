@@ -1,0 +1,12 @@
+THQ                             ; tHq_production_Sep2/THQ/                       ; tHq_production_Sep2/2_recleaner_v4_b1E2/, tHq_eventvars_Sep30/
+THW                             ; tHq_production_Sep2/THW/                       ; tHq_production_Sep2/2_recleaner_v4_b1E2/, tHq_eventvars_Sep30/
+TTW_LO                          ; 809_June9_ttH/TTW_LO/                          ; 809_June9_ttH/2_recleaner_v4_b1E2/, tHq_eventvars_Sep30/
+TTZ_LO                          ; 809_June9_ttH/TTZ_LO/                          ; 809_June9_ttH/2_recleaner_v4_b1E2/, tHq_eventvars_Sep30/
+TTJets_DiLepton                 ; 809_June9_ttH/TTJets_DiLepton/                 ; 809_June9_ttH/2_recleaner_v4_b1E2/, tHq_eventvars_Sep30/
+TTJets_DiLepton_ext_skim3l      ; 809_June9_ttH/TTJets_DiLepton_ext_skim3l/      ; 809_June9_ttH/2_recleaner_v4_b1E2/, tHq_eventvars_Sep30/
+TTJets_SingleLeptonFromT        ; 809_June9_ttH/TTJets_SingleLeptonFromT/        ; 809_June9_ttH/2_recleaner_v4_b1E2/, tHq_eventvars_Sep30/
+TTJets_SingleLeptonFromTbar     ; 809_June9_ttH/TTJets_SingleLeptonFromTbar/     ; 809_June9_ttH/2_recleaner_v4_b1E2/, tHq_eventvars_Sep30/
+TTJets_SingleLeptonFromTbar_ext ; 809_June9_ttH/TTJets_SingleLeptonFromTbar_ext/ ; 809_June9_ttH/2_recleaner_v4_b1E2/, tHq_eventvars_Sep30/
+TTJets_SingleLeptonFromT_ext    ; 809_June9_ttH/TTJets_SingleLeptonFromT_ext/    ; 809_June9_ttH/2_recleaner_v4_b1E2/, tHq_eventvars_Sep30/
+TTWToLNu                        ; 809_June9_ttH/TTWToLNu/                        ; 809_June9_ttH/2_recleaner_v4_b1E2/, tHq_eventvars_Sep30/
+TTZToLLNuNu                     ; 809_June9_ttH/TTZToLLNuNu/                     ; 809_June9_ttH/2_recleaner_v4_b1E2/, tHq_eventvars_Sep30/
