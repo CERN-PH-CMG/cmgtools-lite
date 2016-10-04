@@ -30,11 +30,21 @@ def makeSystHists(fileList1, fileList2):
     for fname1,fname2 in zip(sort(fileList1),sort(fileList2)):
         tfile1 = TFile(fname1,"UPDATE")
         tfile2 = TFile(fname2,"UPDATE")
+
+        if not fname1[fname1.find("merged")+7:-1] == fname2[fname2.find("merged")+7:-1]:
+            print fname1[fname1.find("merged")+7:-1], fname2[fname2.find("merged")+7:-1]
+            print "MISMATCH IN NUMBER OF BINS (make sure you have the same number of bins for gen and reco met)"
+            break
         for bindir in bindirs:
             for hname in hnames:
                 print bindir+'/'+ hname
+                hdummy = tfile1.Get(bindir+'/T1tttt_scan_RecoMET')
+                if hdummy:
+                    print "MET averaging already done -> break"
+                    break
                 hMet = tfile1.Get(bindir+'/'+ hname)
                 hGenMet = tfile2.Get(bindir+'/'+ hname)
+              
                 print tfile1.GetName(),tfile2.GetName()
                 print hMet, hGenMet
                 print hMet.GetName(),hMet.GetTitle()
@@ -42,7 +52,7 @@ def makeSystHists(fileList1, fileList2):
                 hAverage.Add(hGenMet)
                 hAverage.Scale(0.5)
                 hAverage.SetName("T1tttt_Scan")
-                
+                hMet.SetName("T1tttt_scan_RecoMET")
                
                 
                 #print hMet.GetBinContent(119,15),hGenMet.GetBinContent(119,15), hAverage.GetBinContent(119,15)
@@ -60,6 +70,7 @@ def makeSystHists(fileList1, fileList2):
                 hSyst.Write("",TObject.kOverwrite)
                 tfile1.cd(bindir)
                 hAverage.Write("",TObject.kOverwrite)
+                hMet.Write("",TObject.kOverwrite)
 
         tfile1.Close()
         tfile2.Close()
@@ -85,8 +96,8 @@ if __name__ == "__main__":
         exit(0)
 
     # find files matching pattern
-    fileList1 = glob.glob("Test/NormMet/scan*/merged/*.root")
-    fileList2 = glob.glob("Test/NormGenMet/scan*/merged/*.root")
+    fileList1 = glob.glob("testSigMET/RecoMet/scan*/merged/*.root")
+    fileList2 = glob.glob("testSigMET/GenMet/scan*/merged/*.root")
 
     makeSystHists(fileList1, fileList2)
 
