@@ -115,31 +115,22 @@ def train(allcuts, variables, dsets, options):
                             ':'.join([
                                 '!H', # print help
                                 '!V', # verbose
-                                'NTrees=800',
-                                'BoostType=AdaBoost',
+                                'NTrees=800', # default is 200
+                                'BoostType=AdaBoost', # try with 'Grad' also
                                 'AdaBoostBeta=0.50',
+                                # 'Shrinkage=0.10', # for gradient boosting
                                 '!UseBaggedGrad',
-                                'nCuts=50',
-                                'MaxDepth=3',
+                                'nCuts=50', # scanning steps
+                                'MaxDepth=3', # maximum decision tree depth
                                 'NegWeightTreatment=PairNegWeightsGlobal',
                                 'CreateMVAPdfs',
                                 # 'VarTransform=G,D',
                                 ]))
-    # factory.BookMethod(ROOT.TMVA.Types.kBDT, 'BDTG',
-    #                         ':'.join([
-    #                             '!H',
-    #                             '!V',
-    #                             'NTrees=200',
-    #                             # 'BoostType=AdaBoost',
-    #                             'BoostType=Grad',
-    #                             'Shrinkage=0.10',
-    #                             '!UseBaggedGrad',
-    #                             'nCuts=200',
-    #                             'MaxDepth=8',
-    #                             'NegWeightTreatment=PairNegWeightsGlobal',
-    #                             'CreateMVAPdfs',
-    #                             # 'VarTransform=G,D',
-    #                             ]))
+
+    # Try a few different classifiers also:
+    # e.g. Fisher discriminants, k-nearest neighbor, neural networks
+    # Check http://tmva.sourceforge.net/docu/TMVAUsersGuide.pdf
+
     factory.TrainAllMethods()
     factory.TestAllMethods()
     factory.EvaluateAllMethods()
@@ -158,7 +149,8 @@ def main(args, options):
     allcuts += "LepGood_conePt[iF_Recl[1]]>10"
     allcuts += "LepGood_conePt[iF_Recl[2]]>10"
     allcuts += "nJet25_Recl >= 2"
-    allcuts += "nBJetLoose25_Recl >= 1"
+    allcuts += "nBJetMedium25_Recl >= 1"
+    # allcuts += "nBJetLoose25_Recl >= 1"
     allcuts += "maxEtaJet25 >= 0"
 
     # Define the variables to be used:
@@ -171,6 +163,9 @@ def main(args, options):
         ("dEtaFwdJetClosestLep", "F"),
         ("dPhiHighestPtSSPair", "F"),
         ("lepCharge := LepGood_charge[iF_Recl[0]]+LepGood_charge[iF_Recl[1]]+LepGood_charge[iF_Recl[2]]", "I"),
+        ## Add more here?
+        # - lepton pt?
+        # - min DR(l,l)
     ]
 
     # Define the signal and background datasets
