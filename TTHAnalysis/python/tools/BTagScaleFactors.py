@@ -7,10 +7,8 @@ import os
 # Load the BTagCalibrationStandalone.cc macro from
 # https://twiki.cern.ch/twiki/bin/view/CMS/BTagCalibration
 # and compile it:
-# wget https://raw.githubusercontent.com/cms-sw/cmssw/CMSSW_8_0_X/CondTools/BTau/test/BTagCalibrationStandalone.cpp .
-# wget https://raw.githubusercontent.com/cms-sw/cmssw/CMSSW_8_0_X/CondTools/BTau/test/BTagCalibrationStandalone.h .
 # cmsenv
-# g++ -c -o BTagCalibrationStandalone.so -I./ -L${ROOTSYS}/lib BTagCalibrationStandalone.cpp `root-config --cflags` `root-config --libs`
+# g++ -c -o BTagCalibrationStandalone.so -L${ROOTSYS}/lib $CMSSW_RELEASE_BASE/src/CondTools/BTau/test/BTagCalibrationStandalone.cpp `root-config --cflags` `root-config --libs`
 #
 # Get the current scale factor files from: https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation80X
 #################################################################
