@@ -219,7 +219,7 @@ class YieldStore:
     ## Reading functions follow
     ###########################
 
-    def getBinYield(self,samp,cat,bin, verbose=True):
+    def getBinYield(self,samp,cat,bin, verbose=False):
         
         if samp in self.yields:
             if cat in self.yields[samp]:
