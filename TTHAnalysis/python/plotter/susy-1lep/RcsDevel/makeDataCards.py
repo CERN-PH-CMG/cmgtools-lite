@@ -346,6 +346,7 @@ if __name__ == "__main__":
                                    (SMS+'_Scan_btagHF_syst_mGo'+str(mGo)+'_mLSP'+str(mLSP), 'SR_MB'), 
                                    (SMS+'_Scan_btagLF_syst_mGo'+str(mGo)+'_mLSP'+str(mLSP), 'SR_MB'),
                                    (SMS+'_Scan_Scale-Env_syst_mGo'+str(mGo)+'_mLSP'+str(mLSP), 'SR_MB'),
+                                   (SMS+'_Scan_MET_syst_mGo'+str(mGo)+'_mLSP'+str(mLSP), 'SR_MB'), 
                                   ]
                 #print sampsABCDSigSys
                 sampsABCD = sampsABCDbkg + sampsABCDsig
