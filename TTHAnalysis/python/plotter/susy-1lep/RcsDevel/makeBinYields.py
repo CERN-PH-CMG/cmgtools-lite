@@ -17,13 +17,6 @@ sigFTdir = "SampLinks/Friends/"
 dataFTdir = "SampLinks/Friends/"
 
 
-#Dilepton stuff
-#mcFTdir = "/nfs/dust/cms/user/kirschen/newSUSYStuff/CMSSW_7_4_12_patch4/src/CMGTools/SUSYAnalysis/macros/FreshFriends_V2"
-#sigFTdir = "/nfs/dust/cms/user/kirschen/newSUSYStuff/CMSSW_7_4_12_patch4/src/CMGTools/SUSYAnalysis/macros/FreshFriends_V2/Signal"
-#dataFTdir = "/nfs/dust/cms/user/kirschen/newSUSYStuff/CMSSW_7_4_12_patch4/src/CMGTools/SUSYAnalysis/macros/FreshFriends_V2/Data"
-
-
-
 
 def addOptions(options):
 
@@ -438,14 +431,14 @@ if __name__ == "__main__":
 
     doDLCR = False
 
-    doNjet6 = False
+    doNjet6 = True
     if doNjet6:
         cDict.update(cutDictCR)
         cDict.update(cutDictSR)
         if doDLCR: cDict.update(cutDictDLCR)
 
 
-    doNjet9 = False
+    doNjet9 = True
     if doNjet9:
         cDict.update(cutDictSRf9)
         cDict.update(cutDictCRf9)
@@ -457,7 +450,7 @@ if __name__ == "__main__":
         cDict.update(cutDictSRf5)
         cDict.update(cutDictCRf5)
 
-    doFew = False
+    doFew = True
     if doFew:
         cDict.update(cutDictSRf68Few)
         cDict.update(cutDictCRf68Few)
