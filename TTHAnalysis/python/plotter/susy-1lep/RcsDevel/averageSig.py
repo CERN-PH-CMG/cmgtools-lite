@@ -38,7 +38,7 @@ def makeSystHists(fileList1, fileList2):
         for bindir in bindirs:
             for hname in hnames:
                 print bindir+'/'+ hname
-                hdummy = tfile1.Get(bindir+'/T1tttt_scan_RecoMET')
+                hdummy = tfile1.Get(bindir+'/T1tttt_Scan_RecoMET')
                 if hdummy:
                     print "MET averaging already done -> break"
                     break
@@ -52,7 +52,7 @@ def makeSystHists(fileList1, fileList2):
                 hAverage.Add(hGenMet)
                 hAverage.Scale(0.5)
                 hAverage.SetName("T1tttt_Scan")
-                hMet.SetName("T1tttt_scan_RecoMET")
+                hMet.SetName("T1tttt_Scan_RecoMET")
                
                 
                 #print hMet.GetBinContent(119,15),hGenMet.GetBinContent(119,15), hAverage.GetBinContent(119,15)
