@@ -1,10 +1,9 @@
 import sys, os, subprocess, datetime
 
 def bash(cmd):
-	print cmd
+	#print cmd
 	pipe = subprocess.Popen(cmd, shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
 	back = pipe.stdout.read().rstrip("\n").strip()
-	print back
 	return back
 
 def cleandir(path, cpIdx = True):
@@ -14,7 +13,7 @@ def cleandir(path, cpIdx = True):
 	if cpIdx: cp("/afs/cern.ch/user/g/gpetrucc/php/index.php", path)
 
 def cmd(cmd):
-	print cmd
+	#print cmd
 	os.system(cmd)
 
 def cp(location, destination):
@@ -24,6 +23,7 @@ def factorial(array):
 	return [prod(array[0:n]) for n in range(len(array))]
 
 def getAllBins(bins):
+	if not bins: return []
 	separated = []
 	if bins.find("[")>-1:
 		values = [float(a) for a in bins.strip("[").strip("]").split(",")]
@@ -34,15 +34,18 @@ def getAllBins(bins):
 	return ["1,"+str(values[i])+","+str(values[i+1]) for i in range(0,len(values)-1)]
 
 def getBinLength(bins):
+	if not bins: return -1
 	if bins.find("[")>-1:
 		return int(bins.count(","))
 	return int(bins.split(",")[0])
 
 def getCut(firstCut, expr, bins):
+	if not expr or not bins: return ""
 	min, max = getMinMax(bins)
 	return "-A {first} inSR '{EXPR}>={MIN} && {EXPR}<={MAX}'".format(first=firstCut, EXPR=expr, MIN=min, MAX=max)
 
 def getMinMax(bins):
+	if not bins: return -1, -1
 	if bins.find("[")>-1:
 		min,max = bins.split(",")[0].lstrip("["), bins.split(",")[-1].rstrip("]")
 	else:
@@ -50,6 +53,7 @@ def getMinMax(bins):
 	return min, max
 
 def getOffset(expr, bins):
+	if not expr or not bins: return ""
 	offset = 0
 	if expr.find("-")>-1:
 		offset += int(expr.split("-")[1].split(".")[0])

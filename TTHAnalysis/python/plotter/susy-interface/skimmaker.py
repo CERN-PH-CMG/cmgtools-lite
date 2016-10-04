@@ -44,8 +44,9 @@ for r in range(len(mm.regions)):
 	json = options.json if options.json else ""
 	
 	base = "python skimTrees.py {MCA} {CUTS} {O} -P {T} --tree {TREENAME} -j 4 {MCCS} {MACROS} {FRIENDS} {JSON}"
-	mm.submit([mca, mm.getVariable("cutfile"), output, mm.treedir, options.treename, mccs, macros, friends, json])
-	
+	mm.submit([mca, mm.getVariable("cutfile",""), output, mm.treedir, options.treename, mccs, macros, friends, json],"main",False)
+	mm.clearJobs()	
+
 	## skim friend trees
 	mm.reloadBase(baseFriends)
 	fs, fm = mm.getFriendLocations()
@@ -55,5 +56,5 @@ for r in range(len(mm.regions)):
 		#output = mm.outdir+"/"+fm[i]
 		func.mkdir(output)
 	
-		mm.submit([mm.outdir, f, mm.outdir])
+		mm.submit([mm.outdir, f, mm.outdir],"friend_"+f)
 
