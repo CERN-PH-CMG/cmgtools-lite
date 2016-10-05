@@ -96,7 +96,6 @@ def addCorrelatedShapeFromSR(process,var,thisregion,correlatedRegion,workspace,h
         bin_rfv = ROOT.RooFormulaVar(process+'_'+thisregion+'_bin'+str(b),"",formula_toterr, formula_comp)
         bins.append(bin_rfv)
 
-
     # for some ROOT memory handling, adding the RooRealVars to the RooArgList after creation doesn't work
     binlist = ROOT.RooArgList()
     for b in range(1,hist.GetNbinsX()+1):        
@@ -454,13 +453,13 @@ for mass in masses:
                     for p in p0.split(","): 
                         if re.match(p+"$", proc):  myunbinnedyields[proc] = 1
             datacard.write(('shapes %-10s %-7s %-20s' % (proc,binname,binname+".input.root"))+" w:"+ proc + "_" + options.region)
-            if myunbinnedyields[proc]==-1 and not options.correlateProcessCR: datacard.write("     w:"+ proc + "_" + options.region + "$SYSTEMATIC\n")
+            if myunbinnedyields[proc]==-1: datacard.write("%30s" % ("     w:"+ proc + "_" + options.region + "$SYSTEMATIC\n"))
             else:  datacard.write("\n")
         if len(options.correlateProcessCR):
             for p0 in options.correlateProcessCR:
                 corr_proc = p0.split(",")[0]
                 datacard.write(('shapes %-10s %-7s %-20s' % (corr_proc,binname,binname+".input.root"))+" w:"+ corr_proc + "_" + options.region+"\n")
-        datacard.write(('shapes %-10s %-7s %-20s' % ("data",binname,binname+".input.root"))+" w:data_obs_" + options.region+"\n")
+        datacard.write(('shapes %-10s %-7s %-20s' % ("data",binname,binname+".input.root"))+" w:data_" + options.region+"\n")
         datacard.write('##----------------------------------\n')
         datacard.write('bin         %s\n' % binname)
         datacard.write('observation -1\n')
@@ -511,30 +510,31 @@ for mass in masses:
             for b in range(1,nbins): 
                 datacard.write(('%-20s param    %-7d %-7d' % ("_".join([corr_proc,options.region,("bin%d"%b),"Runc"]),0,1 )) + "\n")
 
-myout = outdir+"/common/" if len(masses) > 1 else outdir;
-workspace = ROOT.RooWorkspace("w","workspace")
+for mass in masses:
+    myout = outdir + ("%s/" % mass)
+    workspace = ROOT.RooWorkspace("w","workspace")
 
-if len(options.correlateProcessCR):
-    for p0 in options.correlateProcessCR:
-        pars = p0.split(",")
-        proc = pars[0]; corr_region = pars[1]; alphahist = pars[2]; filealpha = pars[3]
-        addCorrelatedShapeFromSR(proc,"x",options.region,corr_region,workspace,h,alphahist,filealpha)
+    if len(options.correlateProcessCR):
+        for p0 in options.correlateProcessCR:
+            pars = p0.split(",")
+            proc = pars[0]; corr_region = pars[1]; alphahist = pars[2]; filealpha = pars[3]
+            addCorrelatedShapeFromSR(proc,"x",options.region,corr_region,workspace,h,alphahist,filealpha)
+    
+    for n,h in report.iteritems():
+        if options.verbose > 0: print "\t%s (%8.3f events)" % (h.GetName(),h.Integral())
+        proc = (h.GetName()).split("_")[-1]
+        print proc
+        simpleTemplate = True
+        if len(options.processesFromCR):
+            for p0 in options.processesFromCR:
+                for p in p0.split(","):
+                    if re.match(p+"$", proc): 
+                        simpleTemplate = False
+                        addCorrelatedShape(proc,"x",options.region,workspace,h)
+        if simpleTemplate: 
+            addTemplate(proc,"x",options.region,workspace,h)
 
-for n,h in report.iteritems():
-    if options.verbose > 0: print "\t%s (%8.3f events)" % (h.GetName(),h.Integral())
-    proc = (h.GetName()).split("_")[-1]
-    print proc
-    simpleTemplate = True
-    if len(options.processesFromCR):
-        for p0 in options.processesFromCR:
-            for p in p0.split(","):
-                if re.match(p+"$", proc): 
-                    simpleTemplate = False
-                    addCorrelatedShape(proc,"x",options.region,workspace,h)
-    if simpleTemplate: 
-        addTemplate(proc,"x",options.region,workspace,h)
+    workspace.writeToFile(myout+binname+".input.root",ROOT.kTRUE)
 
-workspace.writeToFile(myout+binname+".input.root",ROOT.kTRUE)
-
-if options.verbose > -1:
-    print "Wrote to ",myout+binname+".input.root"
+    if options.verbose > -1:
+        print "Wrote to ",myout+binname+".input.root"
