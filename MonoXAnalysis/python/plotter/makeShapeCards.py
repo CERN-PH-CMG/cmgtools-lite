@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from CMGTools.MonoXAnalysis.plotter.mcAnalysis import *
 import ROOT
-import re, sys, os, os.path
+import re, sys, os, os.path, copy
 
 if "/RooParametricHist_cxx.so" not in ROOT.gSystem.GetLibraries():
      ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/MonoXAnalysis/python/plotter/RooParametricHist.cxx+" % os.environ['CMSSW_BASE']); 
@@ -437,16 +437,6 @@ for mass in masses:
     smass = str(mass).replace(".0","")
     myout = outdir
     myout += "%s/" % mass
-    # if len(masses) > 1:
-    #     if not os.path.exists(myout): os.mkdir(myout)
-    #     myyields = dict([(k,getYieldScale(mass,k)*v) for (k,v) in allyields.iteritems()]) 
-    #     datacard = open(myout+binname+".card.txt", "w"); 
-    #     datacard.write("## Datacard for cut file %s (mass %s)\n"%(args[1],mass))
-    #     datacard.write("shapes *        * ../common/%s.input.root x_$PROCESS x_$PROCESS_$SYSTEMATIC\n" % binname)
-    #     datacard.write("shapes ttH_hww  * ../common/%s.input.root x_$PROCESS$MASS x_$PROCESS$MASS_$SYSTEMATIC\n" % binname)
-    #     datacard.write("shapes ttH_hzz  * ../common/%s.input.root x_$PROCESS$MASS x_$PROCESS$MASS_$SYSTEMATIC\n" % binname)
-    #     datacard.write("shapes ttH_htt  * ../common/%s.input.root x_$PROCESS$MASS x_$PROCESS$MASS_$SYSTEMATIC\n" % binname)
-    # else:
     myyields = dict([(k,v) for (k,v) in allyields.iteritems()]) 
     if not os.path.exists(myout): os.mkdir(myout)
     datacard = open(myout+binname+".card.txt", "w"); 
@@ -464,17 +454,31 @@ for mass in masses:
                     for p in p0.split(","): 
                         if re.match(p+"$", proc):  myunbinnedyields[proc] = 1
             datacard.write(('shapes %-10s %-7s %-20s' % (proc,binname,binname+".input.root"))+" w:"+ proc + "_" + options.region)
-            if myunbinnedyields[proc]==-1: datacard.write("     w:"+ proc + "_" + options.region + "$SYSTEMATIC\n")
+            if myunbinnedyields[proc]==-1 and not options.correlateProcessCR: datacard.write("     w:"+ proc + "_" + options.region + "$SYSTEMATIC\n")
             else:  datacard.write("\n")
+        if len(options.correlateProcessCR):
+            for p0 in options.correlateProcessCR:
+                corr_proc = p0.split(",")[0]
+                datacard.write(('shapes %-10s %-7s %-20s' % (corr_proc,binname,binname+".input.root"))+" w:"+ corr_proc + "_" + options.region+"\n")
+        datacard.write(('shapes %-10s %-7s %-20s' % ("data",binname,binname+".input.root"))+" w:data_obs_" + options.region+"\n")
         datacard.write('##----------------------------------\n')
         datacard.write('bin         %s\n' % binname)
         datacard.write('observation -1\n')
         datacard.write('##----------------------------------\n')
         datacard.write('##----------------------------------\n')
-        datacard.write('bin             '+(" ".join([kpatt % binname  for p in procs]))+"\n")
-        datacard.write('process         '+(" ".join([kpatt % p        for p in procs]))+"\n")
-        datacard.write('process         '+(" ".join([kpatt % iproc[p] for p in procs]))+"\n")
-        datacard.write('rate            '+(" ".join([kpatt % myunbinnedyields[p] for p in procs]))+"\n")
+        if len(options.correlateProcessCR):
+            for p0 in options.correlateProcessCR:
+                pars = p0.split(",")
+                corr_proc = pars[0]
+                datacard.write('bin             '+(" ".join([kpatt % binname  for p in procs + [""]]))+"\n")
+                datacard.write('process         '+(" ".join([kpatt % p        for p in procs]))+(kpatt % corr_proc)+"\n")
+                datacard.write('process         '+(" ".join([kpatt % iproc[p] for p in procs]))+(kpatt % str(len(procs)+1))+"\n")
+                datacard.write('rate            '+(" ".join([kpatt % myunbinnedyields[p] for p in procs]))+(kpatt % "1")+"\n")
+        else:
+            datacard.write('bin             '+(" ".join([kpatt % binname  for p in procs]))+"\n")
+            datacard.write('process         '+(" ".join([kpatt % p        for p in procs]))+"\n")
+            datacard.write('process         '+(" ".join([kpatt % iproc[p] for p in procs]))+"\n")
+            datacard.write('rate            '+(" ".join([kpatt % myunbinnedyields[p] for p in procs]))+"\n")
         datacard.write('##----------------------------------\n')
     else:
         datacard.write("shapes *        * %s.input.root x_$PROCESS x_$PROCESS_$SYSTEMATIC\n" % binname)
@@ -488,54 +492,24 @@ for mass in masses:
         datacard.write('process         '+(" ".join([kpatt % iproc[p] for p in procs]))+"\n")
         datacard.write('rate            '+(" ".join([fpatt % myyields[p] for p in procs]))+"\n")
         datacard.write('##----------------------------------\n')
+    dummy_syst = '' if not len(options.correlateProcessCR) else (kpatt % '-')
     for name,effmap in systs.iteritems():
-        datacard.write(('%-25s lnN' % name) + " ".join([kpatt % effmap[p]   for p in procs]) +"\n")
+        datacard.write(('%-25s lnN' % name) + " ".join([kpatt % effmap[p]   for p in procs]) + dummy_syst +"\n")
     for name,(effmap0,effmap12,mode) in systsEnv.iteritems():
         if mode == "templates":
-            datacard.write(('%-10s shape' % name) + " ".join([kpatt % effmap0[p]  for p in procs]) +"\n")
+            datacard.write(('%-10s shape' % name) + " ".join([kpatt % effmap0[p]  for p in procs]) + dummy_syst + "\n")
         if re.match('envelop.*',mode):
-            datacard.write(('%-10s shape' % (name+"0")) + " ".join([kpatt % effmap0[p]  for p in procs]) +"\n")
+            datacard.write(('%-10s shape' % (name+"0")) + " ".join([kpatt % effmap0[p]  for p in procs]) + dummy_syst + "\n")
         if any([re.match(x+'.*',mode) for x in ["envelop", "shapeOnly"]]):
-            datacard.write(('%-10s shape' % (name+"1")) + " ".join([kpatt % effmap12[p] for p in procs]) +"\n")
+            datacard.write(('%-10s shape' % (name+"1")) + " ".join([kpatt % effmap12[p] for p in procs]) + dummy_syst + "\n")
             if "shapeOnly2D" not in mode:
-                datacard.write(('%-10s shape' % (name+"2")) + " ".join([kpatt % effmap12[p] for p in procs]) +"\n")
-    
-if len(masses) > 1:
-    myout = outdir
-    myyields = dict([(k,-1 if "ttH" in k else v) for (k,v) in allyields.iteritems()]) 
-    if not os.path.exists(myout): os.mkdir(myout)
-    datacard = open(myout+binname+".card.txt", "w"); 
-    datacard.write("## Datacard for cut file %s (all massess, taking signal normalization from templates)\n")
-    datacard.write("shapes *        * common/%s.input.root x_$PROCESS x_$PROCESS_$SYSTEMATIC\n" % binname)
-    datacard.write('##----------------------------------\n')
-    datacard.write('bin         %s\n' % binname)
-    datacard.write('observation %s\n' % myyields['data_obs'])
-    datacard.write('##----------------------------------\n')
-    klen = max([7, len(binname)]+[len(p) for p in procs])
-    kpatt = " %%%ds "  % klen
-    fpatt = " %%%d.%df " % (klen,3)
-    datacard.write('##----------------------------------\n')
-    datacard.write('bin             '+(" ".join([kpatt % binname  for p in procs]))+"\n")
-    datacard.write('process         '+(" ".join([kpatt % p        for p in procs]))+"\n")
-    datacard.write('process         '+(" ".join([kpatt % iproc[p] for p in procs]))+"\n")
-    datacard.write('rate            '+(" ".join([fpatt % myyields[p] for p in procs]))+"\n")
-    datacard.write('##----------------------------------\n')
-    for name,effmap in systs.iteritems():
-        datacard.write(('%-12s lnN' % name) + " ".join([kpatt % effmap[p]   for p in procs]) +"\n")
-    for name,(effmap0,effmap12,mode) in systsEnv.iteritems():
-        if mode == "templates":
-            datacard.write(('%-10s shape' % name) + " ".join([kpatt % effmap0[p]  for p in procs]) +"\n")
-        if re.match('envelop.*',mode):
-            datacard.write(('%-10s shape' % (name+"0")) + " ".join([kpatt % effmap0[p]  for p in procs]) +"\n")
-        if any([re.match(x+'.*',mode) for x in ["envelop", "shapeOnly"]]):
-            datacard.write(('%-10s shape' % (name+"1")) + " ".join([kpatt % effmap12[p] for p in procs]) +"\n")
-            datacard.write(('%-10s shape' % (name+"2")) + " ".join([kpatt % effmap12[p] for p in procs]) +"\n")
-    datacard.close()
-    print "Wrote to ",myout+binname+".card.txt"
-    if options.verbose:
-        print "="*120
-        os.system("cat %s.card.txt" % (myout+binname));
-        print "="*120
+                datacard.write(('%-10s shape' % (name+"2")) + " ".join([kpatt % effmap12[p] for p in procs]) + dummy_syst + "\n")
+    if len(options.correlateProcessCR):
+        for p0 in options.correlateProcessCR:
+            corr_proc = p0.split(",")[0]
+            nbins = next(report.itervalues()).GetNbinsX()
+            for b in range(1,nbins): 
+                datacard.write(('%-20s param    %-7d %-7d' % ("_".join([corr_proc,options.region,("bin%d"%b),"Runc"]),0,1 )) + "\n")
 
 myout = outdir+"/common/" if len(masses) > 1 else outdir;
 workspace = ROOT.RooWorkspace("w","workspace")
