@@ -155,7 +155,7 @@ if __name__ == "__main__":
         mcpOpts = []
         if(options.region=='signal'): mcpOpts += ['--showIndivSigShapes','--xp data','--rebin 2']
         analysis = Analysis(options,mcpOpts)
-        #analysis.runOne()
+        analysis.runOne()
         
 
     if len(options.propSystToVar)>0:
