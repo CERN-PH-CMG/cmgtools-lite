@@ -49,3 +49,11 @@ VV  : WW : xsec; FillColor=ROOT.kViolet+1, Label="VV"
 VV  : WZ : xsec; FillColor=ROOT.kViolet+1, Label="VV"
 VV  : ZZ : xsec; FillColor=ROOT.kViolet+1, Label="VV"
 
+# -- 2016 Data ---
+data: MET_Run2016B_PromptReco_v1_runs_272023_273146 ; Label="Data" 
+data: MET_Run2016B_PromptReco_v2_runs_273150_275376 ; Label="Data"
+data: MET_Run2016C_PromptReco_v2_runs_275420_276283 ; Label="Data"
+data: MET_Run2016D_PromptReco_v2_runs_276315_276811 ; Label="Data"
+data: MET_Run2016E_PromptReco_v2_runs_276830_277420 ; Label="Data"
+data: MET_Run2016F_PromptReco_v1_runs_277820_278808 ; Label="Data"
+data: MET_Run2016G_PromptReco_v1_runs_278817_279931 ; Label="Data"
