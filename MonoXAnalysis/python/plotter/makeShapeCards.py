@@ -469,15 +469,15 @@ for mass in masses:
             for p0 in options.correlateProcessCR:
                 pars = p0.split(",")
                 corr_proc = pars[0]
-                datacard.write('bin             '+(" ".join([kpatt % binname  for p in procs + [""]]))+"\n")
-                datacard.write('process         '+(" ".join([kpatt % p        for p in procs]))+(kpatt % corr_proc)+"\n")
-                datacard.write('process         '+(" ".join([kpatt % iproc[p] for p in procs]))+(kpatt % str(len(procs)+1))+"\n")
-                datacard.write('rate            '+(" ".join([kpatt % myunbinnedyields[p] for p in procs]))+(kpatt % "1")+"\n")
+                datacard.write('bin                          '+(" ".join([kpatt % binname  for p in procs + [""]]))+"\n")
+                datacard.write('process                      '+(" ".join([kpatt % p        for p in procs]))+(kpatt % corr_proc)+"\n")
+                datacard.write('process                      '+(" ".join([kpatt % iproc[p] for p in procs]))+(kpatt % str(len(procs)+1))+"\n")
+                datacard.write('rate                         '+(" ".join([kpatt % myunbinnedyields[p] for p in procs]))+(kpatt % "1")+"\n")
         else:
-            datacard.write('bin             '+(" ".join([kpatt % binname  for p in procs]))+"\n")
-            datacard.write('process         '+(" ".join([kpatt % p        for p in procs]))+"\n")
-            datacard.write('process         '+(" ".join([kpatt % iproc[p] for p in procs]))+"\n")
-            datacard.write('rate            '+(" ".join([kpatt % myunbinnedyields[p] for p in procs]))+"\n")
+            datacard.write('bin                          '+(" ".join([kpatt % binname  for p in procs]))+"\n")
+            datacard.write('process                      '+(" ".join([kpatt % p        for p in procs]))+"\n")
+            datacard.write('process                      '+(" ".join([kpatt % iproc[p] for p in procs]))+"\n")
+            datacard.write('rate                         '+(" ".join([kpatt % myunbinnedyields[p] for p in procs]))+"\n")
         datacard.write('##----------------------------------\n')
     else:
         datacard.write("shapes *        * %s.input.root x_$PROCESS x_$PROCESS_$SYSTEMATIC\n" % binname)
@@ -486,10 +486,10 @@ for mass in masses:
         datacard.write('observation %s\n' % myyields['data_obs'])
         datacard.write('##----------------------------------\n')
         datacard.write('##----------------------------------\n')
-        datacard.write('bin             '+(" ".join([kpatt % binname  for p in procs]))+"\n")
-        datacard.write('process         '+(" ".join([kpatt % p        for p in procs]))+"\n")
-        datacard.write('process         '+(" ".join([kpatt % iproc[p] for p in procs]))+"\n")
-        datacard.write('rate            '+(" ".join([fpatt % myyields[p] for p in procs]))+"\n")
+        datacard.write('bin                          '+(" ".join([kpatt % binname  for p in procs]))+"\n")
+        datacard.write('process                      '+(" ".join([kpatt % p        for p in procs]))+"\n")
+        datacard.write('process                      '+(" ".join([kpatt % iproc[p] for p in procs]))+"\n")
+        datacard.write('rate                         '+(" ".join([fpatt % myyields[p] for p in procs]))+"\n")
         datacard.write('##----------------------------------\n')
     dummy_syst = '' if not len(options.correlateProcessCR) else (kpatt % '-')
     for name,effmap in systs.iteritems():
