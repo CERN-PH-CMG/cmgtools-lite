@@ -1,5 +1,5 @@
 trigger: HLT_MonoJetMetNoMuMHT90==1 || HLT_MonoJetMetNoMuMHT120==1 || run==1
-metfilters: cscfilter==1 && ecalfilter==1 && Flag_eeBadScFilter==1 && hbheFilterNew25ns==1 && hbheFilterIso==1
+metfilters: Flag_globalTightHalo2016Filter && Flag_eeBadScFilter==1 && hbheFilterNew25ns==1 && hbheFilterIso==1
 muveto: nMu10V==0
 elveto: nEle10V==0
 photonveto: nGamma15V==0
