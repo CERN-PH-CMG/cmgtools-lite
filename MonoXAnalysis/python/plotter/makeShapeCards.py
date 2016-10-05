@@ -20,6 +20,7 @@ parser.add_option("--infile",dest="infile", type="string", default=None, help="F
 parser.add_option("--savefile",dest="savefile", type="string", default=None, help="File to save histos to")
 parser.add_option("--region",dest="region", type="string", default="SR", help="Phase space defined by the selection (SR,ZM,ZE,WE,WM,GJ)")
 parser.add_option("--processesFromCR",dest="processesFromCR",action="append", default=[],help="For these processes, include a global normalization from control region for each bin of the shape")
+parser.add_option("--correlateProcessCR",dest="correlateProcessCR",action="append", default=[],help="For each process to correlate to the signal region, add [process,signalregion,alphahist,filewherealphahist]")
 
 (options, args) = parser.parse_args()
 options.weight = True
@@ -46,7 +47,6 @@ class SafeWorkspaceImporter():
         else:
             self.imp(*args)
 
-
 def addCorrelatedShape(process,var,region,workspace,hist):
     bins = []
     for b in range(1,hist.GetNbinsX()+1):
@@ -64,6 +64,42 @@ def addCorrelatedShape(process,var,region,workspace,hist):
     _import = SafeWorkspaceImporter(workspace)
     _import(phist,ROOT.RooFit.RecycleConflictNodes())
     _import(norm,ROOT.RooFit.RecycleConflictNodes())
+
+def addCorrelatedShapeFromSR(process,var,thisregion,correlatedRegion,workspace,hist,alphahist_fullerr,filealpha):
+    tfile = ROOT.TFile.Open(filealpha)
+    h_alphahist_fullerr = tfile.Get(alphahist_fullerr)
+    h_alphahist_fullerr.SetDirectory(None)
+    bins = []
+    for b in range(1,hist.GetNbinsX()+1):
+        formula_comp = ROOT.RooArgList()
+        crbin_rrv = ROOT.RooRealVar(process+'_'+correlatedRegion+'_bin'+str(b),"",hist.GetBinContent(b), 0., hist.GetBinContent(b)*10.0)
+        formula_comp.add(crbin_rrv)
+
+        # central value of the transfer factor
+        rbin_rrv = ROOT.RooRealVar('r_'+process+'_'+thisregion+'_bin'+str(b),"",hist.GetBinContent(b))
+        formula_comp.add(rbin_rrv)
+        # nuisance parameter in the fit limited to +/-5 sigma
+        extreme = min(5.,h_alphahist_fullerr.GetBinContent(b)/h_alphahist_fullerr.GetBinError(i))
+        rerrbin_rrv = ROOT.RooRealVar(process+'_'+thisregion+'_bin'+str(b)+'_Runc',"",0,-extreme,extreme)
+        formula_comp.add(rerrbin_rrv)
+        # make the formula of the transfer from SR including the total error on alpha
+        formula_toterr = "@0/(@1*abs(1+"+str(h_alphahist_fullerr.GetBinError(b)/h_alphahist_fullerr.GetBinContent(b))+"*@2))"
+        
+        bin_rfv = ROOT.RooFormulaVar(process+'_'+thisregion+'_bin'+str(b),"",formula_toterr, formula_comp)
+        bins.append(bin_rfv)
+
+    # for some ROOT memory handling, adding the RooRealVars to the RooArgList after creation doesn't work
+    binlist = ROOT.RooArgList()
+    for b in range(1,hist.GetNbinsX()+1): binlist.add(bins[b-1])
+
+    procnorm = process+'_'+thisregion+'_norm'
+    rrv = ROOT.RooRealVar(var,var,hist.GetXaxis().GetXmin(),hist.GetXaxis().GetXmax())
+    phist = ROOT.RooParametricHist(process,"",rrv,binlist,hist)
+    norm = ROOT.RooAddition(procnorm,"",binlist)
+    _import = SafeWorkspaceImporter(workspace)
+    _import(phist,ROOT.RooFit.RecycleConflictNodes())
+    _import(norm,ROOT.RooFit.RecycleConflictNodes())
+
        
 def addTemplate(process,var,region,workspace,hist):
     rrv = ROOT.RooRealVar(var,var,hist.GetXaxis().GetXmin(),hist.GetXaxis().GetXmax())
@@ -470,6 +506,13 @@ if len(masses) > 1:
 
 myout = outdir+"/common/" if len(masses) > 1 else outdir;
 workspace = ROOT.RooWorkspace("w","workspace")
+
+if len(options.correlateProcessCR):
+    for p0 in options.correlateProcessCR:
+        pars = p0.split(",")
+        proc = pars[0]; corr_region = pars[1]; alphahist = pars[2]; filealpha = pars[3]
+        addCorrelatedShapeFromSR(proc,"x",options.region,corr_region,workspace,h,alphahist,filealpha)
+
 for n,h in report.iteritems():
     if options.verbose > 0: print "\t%s (%8.3f events)" % (h.GetName(),h.Integral())
     proc = (h.GetName()).split("_")[-1]
@@ -484,7 +527,8 @@ for n,h in report.iteritems():
     if simpleTemplate: 
         addTemplate(proc,"x",options.region,workspace,h)
 
-workspace.writeToFile(myout+binname+".input.root")
+
+workspace.writeToFile(myout+binname+".input.root",ROOT.kTRUE)
 
 if options.verbose > -1:
     print "Wrote to ",myout+binname+".input.root"
