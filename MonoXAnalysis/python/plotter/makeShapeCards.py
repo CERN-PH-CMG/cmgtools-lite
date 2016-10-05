@@ -69,28 +69,37 @@ def addCorrelatedShapeFromSR(process,var,thisregion,correlatedRegion,workspace,h
     tfile = ROOT.TFile.Open(filealpha)
     h_alphahist_fullerr = tfile.Get(alphahist_fullerr)
     h_alphahist_fullerr.SetDirectory(None)
-    bins = []
-    for b in range(1,hist.GetNbinsX()+1):
-        formula_comp = ROOT.RooArgList()
-        crbin_rrv = ROOT.RooRealVar(process+'_'+correlatedRegion+'_bin'+str(b),"",hist.GetBinContent(b), 0., hist.GetBinContent(b)*10.0)
-        formula_comp.add(crbin_rrv)
 
+    crbins = []; rbins = []; rerrbins = [];
+    for b in range(1,hist.GetNbinsX()+1):
+        crbin_rrv = ROOT.RooRealVar(process+'_'+correlatedRegion+'_bin'+str(b),"",hist.GetBinContent(b), 0., hist.GetBinContent(b)*10.0)
+        crbins.append(crbin_rrv)
         # central value of the transfer factor
         rbin_rrv = ROOT.RooRealVar('r_'+process+'_'+thisregion+'_bin'+str(b),"",hist.GetBinContent(b))
-        formula_comp.add(rbin_rrv)
+        rbins.append(rbin_rrv)
         # nuisance parameter in the fit limited to +/-5 sigma
         extreme = min(5.,h_alphahist_fullerr.GetBinContent(b)/h_alphahist_fullerr.GetBinError(i))
         rerrbin_rrv = ROOT.RooRealVar(process+'_'+thisregion+'_bin'+str(b)+'_Runc',"",0,-extreme,extreme)
-        formula_comp.add(rerrbin_rrv)
+        rerrbins.append(rerrbin_rrv)
+
+    bins = []
+    formula_comp = ROOT.RooArgList()
+    for b in range(1,hist.GetNbinsX()+1):
+        formula_comp.removeAll()
+        formula_comp.add(crbins[b-1])
+        formula_comp.add(rbins[b-1])
+        formula_comp.add(rerrbins[b-1])
         # make the formula of the transfer from SR including the total error on alpha
         formula_toterr = "@0/(@1*abs(1+"+str(h_alphahist_fullerr.GetBinError(b)/h_alphahist_fullerr.GetBinContent(b))+"*@2))"
-        
+
         bin_rfv = ROOT.RooFormulaVar(process+'_'+thisregion+'_bin'+str(b),"",formula_toterr, formula_comp)
         bins.append(bin_rfv)
 
+
     # for some ROOT memory handling, adding the RooRealVars to the RooArgList after creation doesn't work
     binlist = ROOT.RooArgList()
-    for b in range(1,hist.GetNbinsX()+1): binlist.add(bins[b-1])
+    for b in range(1,hist.GetNbinsX()+1):        
+        binlist.add(bins[b-1])
 
     procnorm = process+'_'+thisregion+'_norm'
     rrv = ROOT.RooRealVar(var,var,hist.GetXaxis().GetXmin(),hist.GetXaxis().GetXmax())
@@ -99,7 +108,6 @@ def addCorrelatedShapeFromSR(process,var,thisregion,correlatedRegion,workspace,h
     _import = SafeWorkspaceImporter(workspace)
     _import(phist,ROOT.RooFit.RecycleConflictNodes())
     _import(norm,ROOT.RooFit.RecycleConflictNodes())
-
        
 def addTemplate(process,var,region,workspace,hist):
     rrv = ROOT.RooRealVar(var,var,hist.GetXaxis().GetXmin(),hist.GetXaxis().GetXmax())
@@ -526,7 +534,6 @@ for n,h in report.iteritems():
                     addCorrelatedShape(proc,"x",options.region,workspace,h)
     if simpleTemplate: 
         addTemplate(proc,"x",options.region,workspace,h)
-
 
 workspace.writeToFile(myout+binname+".input.root",ROOT.kTRUE)
 
