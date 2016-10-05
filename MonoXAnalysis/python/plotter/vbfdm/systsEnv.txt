@@ -6,6 +6,7 @@ ZJets_Norm13TeV         : .*ZLL : .* : 1.200
 VV_Norm13TeV            : VV : .* : 1.200
 Top_Norm13TeV           : Top : .* : 1.100
 Top_Reweight13TeV       : Top : .* : 1.100
+CMS_QCD_SR              : QCD : .* : 2.000
 
 # efficiencies
 CMS_met_trig            : vbfH.*|ggH.*|.*ZLL|Top|VV : .* : 1.010
@@ -20,4 +21,3 @@ pdf_qqbar               : vbfH.* : .* : 1.020
 pdf_gg                  : ggH.* : .* : 1.031
 pdf_qqbar_accept        : vbfH.* : .* : 1.010
 pdf_gg_accept           : ggH.* : .* : 1.010
-
