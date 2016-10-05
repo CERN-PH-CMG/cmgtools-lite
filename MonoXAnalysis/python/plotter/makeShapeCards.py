@@ -15,6 +15,7 @@ parser.add_option("-o",   "--out",    dest="outname", type="string", default=Non
 parser.add_option("--od", "--outdir", dest="outdir", type="string", default=None, help="output name") 
 parser.add_option("-v", "--verbose",  dest="verbose",  default=0,  type="int",    help="Verbosity level (0 = quiet, 1 = verbose, 2+ = more)")
 parser.add_option("--asimov", dest="asimov", action="store_true", help="Asimov")
+parser.add_option("--unbinned", dest="unbinned", action="store_true", help="Unbinned fit")
 parser.add_option("--2d-binning-function",dest="binfunction", type="string", default=None, help="Function used to bin the 2D histogram: nbins:func, where func(x,y) = bin in [1,nbins]")
 parser.add_option("--infile",dest="infile", type="string", default=None, help="File to read histos from")
 parser.add_option("--savefile",dest="savefile", type="string", default=None, help="File to save histos to")
@@ -436,36 +437,59 @@ for mass in masses:
     smass = str(mass).replace(".0","")
     myout = outdir
     myout += "%s/" % mass
-    if len(masses) > 1:
-        if not os.path.exists(myout): os.mkdir(myout)
-        myyields = dict([(k,getYieldScale(mass,k)*v) for (k,v) in allyields.iteritems()]) 
-        datacard = open(myout+binname+".card.txt", "w"); 
-        datacard.write("## Datacard for cut file %s (mass %s)\n"%(args[1],mass))
-        datacard.write("shapes *        * ../common/%s.input.root x_$PROCESS x_$PROCESS_$SYSTEMATIC\n" % binname)
-        datacard.write("shapes ttH_hww  * ../common/%s.input.root x_$PROCESS$MASS x_$PROCESS$MASS_$SYSTEMATIC\n" % binname)
-        datacard.write("shapes ttH_hzz  * ../common/%s.input.root x_$PROCESS$MASS x_$PROCESS$MASS_$SYSTEMATIC\n" % binname)
-        datacard.write("shapes ttH_htt  * ../common/%s.input.root x_$PROCESS$MASS x_$PROCESS$MASS_$SYSTEMATIC\n" % binname)
-    else:
-        myyields = dict([(k,v) for (k,v) in allyields.iteritems()]) 
-        if not os.path.exists(myout): os.mkdir(myout)
-        datacard = open(myout+binname+".card.txt", "w"); 
-        datacard.write("## Datacard for cut file %s\n"%args[1])
-        datacard.write("shapes *        * %s.input.root x_$PROCESS x_$PROCESS_$SYSTEMATIC\n" % binname)
-    datacard.write('##----------------------------------\n')
-    datacard.write('bin         %s\n' % binname)
-    datacard.write('observation %s\n' % myyields['data_obs'])
-    datacard.write('##----------------------------------\n')
+    # if len(masses) > 1:
+    #     if not os.path.exists(myout): os.mkdir(myout)
+    #     myyields = dict([(k,getYieldScale(mass,k)*v) for (k,v) in allyields.iteritems()]) 
+    #     datacard = open(myout+binname+".card.txt", "w"); 
+    #     datacard.write("## Datacard for cut file %s (mass %s)\n"%(args[1],mass))
+    #     datacard.write("shapes *        * ../common/%s.input.root x_$PROCESS x_$PROCESS_$SYSTEMATIC\n" % binname)
+    #     datacard.write("shapes ttH_hww  * ../common/%s.input.root x_$PROCESS$MASS x_$PROCESS$MASS_$SYSTEMATIC\n" % binname)
+    #     datacard.write("shapes ttH_hzz  * ../common/%s.input.root x_$PROCESS$MASS x_$PROCESS$MASS_$SYSTEMATIC\n" % binname)
+    #     datacard.write("shapes ttH_htt  * ../common/%s.input.root x_$PROCESS$MASS x_$PROCESS$MASS_$SYSTEMATIC\n" % binname)
+    # else:
+    myyields = dict([(k,v) for (k,v) in allyields.iteritems()]) 
+    if not os.path.exists(myout): os.mkdir(myout)
+    datacard = open(myout+binname+".card.txt", "w"); 
+    datacard.write("## Datacard for cut file %s\n"%args[1])
     klen = max([7, len(binname)]+[len(p) for p in procs])
     kpatt = " %%%ds "  % klen
     fpatt = " %%%d.%df " % (klen,3)
     datacard.write('##----------------------------------\n')
-    datacard.write('bin             '+(" ".join([kpatt % binname  for p in procs]))+"\n")
-    datacard.write('process         '+(" ".join([kpatt % p        for p in procs]))+"\n")
-    datacard.write('process         '+(" ".join([kpatt % iproc[p] for p in procs]))+"\n")
-    datacard.write('rate            '+(" ".join([fpatt % myyields[p] for p in procs]))+"\n")
-    datacard.write('##----------------------------------\n')
+    if options.unbinned:
+        myunbinnedyields = {}
+        for proc in procs:
+            myunbinnedyields[proc] = -1
+            if len(options.processesFromCR):
+                for p0 in options.processesFromCR:
+                    for p in p0.split(","): 
+                        if re.match(p+"$", proc):  myunbinnedyields[proc] = 1
+            datacard.write(('shapes %-10s %-7s %-20s' % (proc,binname,binname+".input.root"))+" w:"+ proc + "_" + options.region)
+            if myunbinnedyields[proc]==-1: datacard.write("     w:"+ proc + "_" + options.region + "$SYSTEMATIC\n")
+            else:  datacard.write("\n")
+        datacard.write('##----------------------------------\n')
+        datacard.write('bin         %s\n' % binname)
+        datacard.write('observation -1\n')
+        datacard.write('##----------------------------------\n')
+        datacard.write('##----------------------------------\n')
+        datacard.write('bin             '+(" ".join([kpatt % binname  for p in procs]))+"\n")
+        datacard.write('process         '+(" ".join([kpatt % p        for p in procs]))+"\n")
+        datacard.write('process         '+(" ".join([kpatt % iproc[p] for p in procs]))+"\n")
+        datacard.write('rate            '+(" ".join([kpatt % myunbinnedyields[p] for p in procs]))+"\n")
+        datacard.write('##----------------------------------\n')
+    else:
+        datacard.write("shapes *        * %s.input.root x_$PROCESS x_$PROCESS_$SYSTEMATIC\n" % binname)
+        datacard.write('##----------------------------------\n')
+        datacard.write('bin         %s\n' % binname)
+        datacard.write('observation %s\n' % myyields['data_obs'])
+        datacard.write('##----------------------------------\n')
+        datacard.write('##----------------------------------\n')
+        datacard.write('bin             '+(" ".join([kpatt % binname  for p in procs]))+"\n")
+        datacard.write('process         '+(" ".join([kpatt % p        for p in procs]))+"\n")
+        datacard.write('process         '+(" ".join([kpatt % iproc[p] for p in procs]))+"\n")
+        datacard.write('rate            '+(" ".join([fpatt % myyields[p] for p in procs]))+"\n")
+        datacard.write('##----------------------------------\n')
     for name,effmap in systs.iteritems():
-        datacard.write(('%-12s lnN' % name) + " ".join([kpatt % effmap[p]   for p in procs]) +"\n")
+        datacard.write(('%-25s lnN' % name) + " ".join([kpatt % effmap[p]   for p in procs]) +"\n")
     for name,(effmap0,effmap12,mode) in systsEnv.iteritems():
         if mode == "templates":
             datacard.write(('%-10s shape' % name) + " ".join([kpatt % effmap0[p]  for p in procs]) +"\n")
@@ -475,6 +499,7 @@ for mass in masses:
             datacard.write(('%-10s shape' % (name+"1")) + " ".join([kpatt % effmap12[p] for p in procs]) +"\n")
             if "shapeOnly2D" not in mode:
                 datacard.write(('%-10s shape' % (name+"2")) + " ".join([kpatt % effmap12[p] for p in procs]) +"\n")
+    
 if len(masses) > 1:
     myout = outdir
     myyields = dict([(k,-1 if "ttH" in k else v) for (k,v) in allyields.iteritems()]) 
