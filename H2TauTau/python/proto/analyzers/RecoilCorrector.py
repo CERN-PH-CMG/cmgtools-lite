@@ -16,15 +16,16 @@ class RecoilCorrector(Analyzer):
     def __init__(self, cfg_ana, cfg_comp, looperName):
         super(RecoilCorrector, self).__init__(cfg_ana, cfg_comp, looperName)
 
-        self.rcMVAMET = RC('CMGTools/H2TauTau/data/recoilMvaMEt_76X_newTraining_MG5.root')
-        self.rcPFMET = RC('CMGTools/H2TauTau/data/recoilPFMEt_76X_MG5.root')
+        self.rcMVAMET = RC('CMGTools/H2TauTau/data/MvaMET_MG_2016BCD.root')
+        self.rcPFMET = RC('CMGTools/H2TauTau/data/PFMET_MG_2016BCD.root')
 
         wpat = re.compile('W\d?Jet.*')
         match = wpat.match(self.cfg_comp.name)
         self.isWJets = not (match is None)
 
         # Apply to signal, DY, and W+jets samples
-        self.apply = 'Higgs' in self.cfg_comp.name or 'DY' in self.cfg_comp.name or self.isWJets
+        self.apply = getattr(self.cfg_ana, 'apply', False) and ('Higgs' in self.cfg_comp.name or 'DY' in self.cfg_comp.name or self.isWJets)
+
 
 
     def getGenP4(self, event):

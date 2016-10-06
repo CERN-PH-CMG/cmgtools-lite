@@ -34,15 +34,35 @@ MEtSys::MEtSys(TString fileName) {
     JetBins.push_back(jetBinsH->GetXaxis()->GetBinLabel(i+1));
   }
 
+  TString uncType[2] = {"Response",
+      "Resolution"};
+
+  for (int i=0; i<nBkgdTypes; ++i) {
+    TString histName = Bkgd[i]+"_syst";
+    TH2D * hist = (TH2D*)file->Get(histName);
+    if (hist==NULL) {
+      std::cout << "Histogram " << histName << " should be contained in file " << fileName << std::endl;
+      std::cout << "Check content of the file " << fileName << std::endl;
+      exit(-1);
+    }
+    for (int xBin=0; xBin<2; ++xBin) {
+      for (int yBin=0; yBin<3; ++yBin) {
+  sysUnc[i][xBin][yBin] = hist->GetBinContent(xBin+1,yBin+1);
+  std::cout << "Systematics : " << Bkgd[i] << "  " << uncType[xBin] << " " << JetBins[yBin] << " = " << sysUnc[i][xBin][yBin] << std::endl;
+      }
+    }
+
+  }
+
   for (int i=0; i<nBkgdTypes; ++i) {
     for (int j=0; j<nJetBins; ++j) {
       TString histName = Bkgd[i]+"_"+JetBins[j];
       std::cout << histName << std::endl;
       responseHist[i][j] = (TH1D*)file->Get(histName);
       if (responseHist[i][j]==NULL) {
-	std::cout << "Histogram " << histName << " should be contained in file " << fileName << std::endl;
-	std::cout << "Check content of the file " << fileName << std::endl;
-	exit(-1);
+  std::cout << "Histogram " << histName << " should be contained in file " << fileName << std::endl;
+  std::cout << "Check content of the file " << fileName << std::endl;
+  exit(-1);
       }
 
     }
@@ -50,13 +70,13 @@ MEtSys::MEtSys(TString fileName) {
 }
 
 void MEtSys::ComputeHadRecoilFromMet(float metX,
-				     float metY,
-				     float genVPx, 
-				     float genVPy,
-				     float visVPx,
-				     float visVPy,
-				     float & Hparal,
-				     float & Hperp) {
+             float metY,
+             float genVPx, 
+             float genVPy,
+             float visVPx,
+             float visVPy,
+             float & Hparal,
+             float & Hperp) {
 
   float genVPt = TMath::Sqrt(genVPx*genVPx+genVPy*genVPy);
   float unitX = genVPx/genVPt;
@@ -75,13 +95,13 @@ void MEtSys::ComputeHadRecoilFromMet(float metX,
 }
 
 void MEtSys::ComputeMetFromHadRecoil(float Hparal,
-				     float Hperp,
-				     float genVPx, 
-				     float genVPy,
-				     float visVPx,
-				     float visVPy,
-				     float & metX,
-				     float & metY) {
+             float Hperp,
+             float genVPx, 
+             float genVPy,
+             float visVPx,
+             float visVPy,
+             float & metX,
+             float & metY) {
 
   float genVPt = TMath::Sqrt(genVPx*genVPx+genVPy*genVPy);
   float unitX = genVPx/genVPt;
@@ -101,38 +121,43 @@ void MEtSys::ComputeMetFromHadRecoil(float Hparal,
 }
 
 void MEtSys::ShiftResponseMet(float metPx,
-			      float metPy,
-			      float genVPx, 
-			      float genVPy,
-			      float visVPx,
-			      float visVPy,
-			      int njets,
-			      int bkgdType,
-			      float sysShift,
-			      float & metShiftPx,
-			      float & metShiftPy) {
+            float metPy,
+            float genVPx, 
+            float genVPy,
+            float visVPx,
+            float visVPy,
+            int njets,
+            int bkgdType,
+            float sysShift,
+            float & metShiftPx,
+            float & metShiftPy) {
 
   float Hparal = 0;
   float Hperp = 0;
   float genVPt = TMath::Sqrt(genVPx*genVPx+genVPy*genVPy);
+
+  // protection against null
+  if (genVPt<1.0) {
+    metShiftPx = metPx;
+    metShiftPy = metPy;
+    return;
+  }
 
   ComputeHadRecoilFromMet(metPx,metPy,genVPx,genVPy,visVPx,visVPy,Hparal,Hperp);
 
   int jets = njets; 
   if (jets>2) jets = 2; 
   if (jets<0) {
-    std::cout << "Number of jets is negative ! Setting number of jets to 0" << std::endl;
-    jets = 0;
+    std::cout << "MEtSys::ShiftResponseMet() : Number of jets is negative !" << std::endl;
+    exit(-1);
   }
 
-  if (bkgdType<0) { 
-    std::cout << "Background type < 0 ! Setting background type to 0 " << std::endl;
-    bkgdType=0;
-  }
-  
-  if (bkgdType>1) { 
-    std::cout << "Background type > 2 ! Setting background type to 2 " << std::endl;
-    bkgdType=1;
+  if (bkgdType<0||bkgdType>=nBkgdTypes) { 
+    std::cout << "MEtSys::ShiftResponseMet() : Background type " << bkgdType << " does not correspond to any of allowed options : " << std::endl;
+    std::cout << "0 : Z(W)+Jets" << std::endl;
+    std::cout << "1 : EWK+single-top" << std::endl;
+    std::cout << "2 : top pair" << std::endl;   
+    exit(-1);
   }
 
   float mean = -responseHist[bkgdType][jets]->Interpolate(genVPt)*genVPt;
@@ -144,39 +169,44 @@ void MEtSys::ShiftResponseMet(float metPx,
 }
 
 void MEtSys::ShiftResolutionMet(float metPx,
-				float metPy,
-				float genVPx, 
-				float genVPy,
-				float visVPx,
-				float visVPy,
-				int njets,
-				int bkgdType,
-				float sysShift,
-				float & metShiftPx,
-				float & metShiftPy) {
+        float metPy,
+        float genVPx, 
+        float genVPy,
+        float visVPx,
+        float visVPy,
+        int njets,
+        int bkgdType,
+        float sysShift,
+        float & metShiftPx,
+        float & metShiftPy) {
  
 
   float Hparal = 0;
   float Hperp = 0;
   float genVPt = TMath::Sqrt(genVPx*genVPx+genVPy*genVPy);
 
+  // protection against null
+  if (genVPt<1.0) {
+    metShiftPx = metPx;
+    metShiftPy = metPy;
+    return;
+  }
+
   ComputeHadRecoilFromMet(metPx,metPy,genVPx,genVPy,visVPx,visVPy,Hparal,Hperp);
 
   int jets = njets; 
   if (jets>2) jets = 2; 
   if (jets<0) {
-    std::cout << "Number of jets is negative ! Setting number of jets to 0" << std::endl;
-    jets = 0;
+    std::cout << "MEtSys::ShiftResponseMet() : Number of jets is negative !" << std::endl;
+    exit(-1);
   }
 
-  if (bkgdType<0) { 
-    std::cout << "Background type < 0 ! Setting background type to 0 " << std::endl;
-    bkgdType=0;
-  }
-  
-  if (bkgdType>1) { 
-    std::cout << "Background type > 2 ! Setting background type to 2 " << std::endl;
-    bkgdType=1;
+  if (bkgdType<0||bkgdType>=nBkgdTypes) { 
+    std::cout << "MEtSys::ShiftResponseMet() : Background type " << bkgdType << " does not correspond to any of allowed options : " << std::endl;
+    std::cout << "0 : Z(W)+Jets" << std::endl;
+    std::cout << "1 : EWK+single-top" << std::endl;
+    std::cout << "2 : top pair" << std::endl;   
+    exit(-1);
   }
 
   float mean = -responseHist[bkgdType][jets]->Interpolate(genVPt)*genVPt;
@@ -189,45 +219,97 @@ void MEtSys::ShiftResolutionMet(float metPx,
 }
 
 void MEtSys::ShiftMEt(float metPx,
-		      float metPy,
-		      float genVPx, 
-		      float genVPy,
-		      float visVPx,
-		      float visVPy,
-		      int njets,
-		      int bkgdType,
-		      int sysType,
-		      float sysShift,
-		      float & metShiftPx,
-		      float & metShiftPy) {
+          float metPy,
+          float genVPx, 
+          float genVPy,
+          float visVPx,
+          float visVPy,
+          int njets,
+          int bkgdType,
+          int sysType,
+          float sysShift,
+          float & metShiftPx,
+          float & metShiftPy) {
 
   metShiftPx=metPx;
   metShiftPy=metPy;
 
   if (sysType==0)
     ShiftResponseMet(metPx,
-		     metPy,
-		     genVPx, 
-		     genVPy,
-		     visVPx,
-		     visVPy,
-		     njets,
-		     bkgdType,
-		     sysShift,
-		     metShiftPx,
-		     metShiftPy);
-  else if (sysType==1)
+         metPy,
+         genVPx, 
+         genVPy,
+         visVPx,
+         visVPy,
+         njets,
+         bkgdType,
+         sysShift,
+         metShiftPx,
+         metShiftPy);
+  else 
     ShiftResolutionMet(metPx,
-		       metPy,
-		       genVPx, 
-		       genVPy,
-		       visVPx,
-		       visVPy,
-		       njets,
-		       bkgdType,
-		       sysShift,
-		       metShiftPx,
-		       metShiftPy);
+           metPy,
+           genVPx, 
+           genVPy,
+           visVPx,
+           visVPy,
+           njets,
+           bkgdType,
+           sysShift,
+           metShiftPx,
+           metShiftPy);
 
 
+}
+
+void MEtSys::ApplyMEtSys(float metPx,
+       float metPy,
+       float genVPx,
+       float genVPy,
+       float visVPx,
+       float visVPy,
+       int njets,
+       int bkgdType,
+       int sysType,
+       int sysShift,
+       float & metShiftPx,
+       float & metShiftPy) {
+ 
+
+
+
+  if (bkgdType<0||bkgdType>=nBkgdTypes) {
+    std::cout << "MEtSys::ShiftResponseMet() : Background type " << bkgdType << " does not correspond to any of allowed options : " << std::endl;
+    std::cout << "0 : Z(W)+Jets" << std::endl;
+    std::cout << "1 : EWK+single-top" << std::endl;
+    std::cout << "2 : top pair" << std::endl;
+    exit(-1);
+  }
+
+  int jets = njets; 
+  if (jets>2) jets = 2; 
+  if (jets<0) {
+    std::cout << "MEtSys::ApplyMEtSys() : Number of jets is negative !" << std::endl;
+    exit(-1);
+  }
+
+  int type = 0; if (sysType!=0) type = 1;
+
+  float scale = 1 + sysUnc[bkgdType][type][jets];
+  if (sysShift!=0) scale = 1 - sysUnc[bkgdType][type][jets];
+
+  ShiftMEt(metPx,
+     metPy,
+     genVPx,
+     genVPy,
+     visVPx,
+     visVPy,
+     njets,
+     bkgdType,
+     type,
+     scale,
+     metShiftPx,
+     metShiftPy);
+
+      
 }
