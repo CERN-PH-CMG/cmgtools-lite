@@ -3,8 +3,10 @@ from CMGTools.MonoXAnalysis.plotter.mcAnalysis import *
 import ROOT
 import re, sys, os, os.path, copy
 
-if "/RooParametricHist_cxx.so" not in ROOT.gSystem.GetLibraries():
-     ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/MonoXAnalysis/python/plotter/RooParametricHist.cxx+" % os.environ['CMSSW_BASE']); 
+
+
+#if "/RooParametricHist_cxx.so" not in ROOT.gSystem.GetLibraries():
+#     ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/MonoXAnalysis/python/plotter/RooParametricHist.cxx+" % os.environ['CMSSW_BASE']); 
 
 systs = {}
 
@@ -60,7 +62,7 @@ def addCorrelatedShape(process,var,region,workspace,hist):
 
     procnorm = process+'_'+region+'_norm'
     rrv = ROOT.RooRealVar(var,var,hist.GetXaxis().GetXmin(),hist.GetXaxis().GetXmax())
-    phist = ROOT.RooParametricHist(process,"",rrv,binlist,hist)
+    phist = ROOT.RooParametricHist(process+'_'+region,"",rrv,binlist,hist)
     norm = ROOT.RooAddition(procnorm,"",binlist)
     _import = SafeWorkspaceImporter(workspace)
     _import(phist,ROOT.RooFit.RecycleConflictNodes())
@@ -103,7 +105,7 @@ def addCorrelatedShapeFromSR(process,var,thisregion,correlatedRegion,workspace,h
 
     procnorm = process+'_'+thisregion+'_norm'
     rrv = ROOT.RooRealVar(var,var,hist.GetXaxis().GetXmin(),hist.GetXaxis().GetXmax())
-    phist = ROOT.RooParametricHist(process,"",rrv,binlist,hist)
+    phist = ROOT.RooParametricHist(process+'_'+thisregion,"",rrv,binlist,hist)
     norm = ROOT.RooAddition(procnorm,"",binlist)
     _import = SafeWorkspaceImporter(workspace)
     _import(phist,ROOT.RooFit.RecycleConflictNodes())
@@ -459,7 +461,7 @@ for mass in masses:
             for p0 in options.correlateProcessCR:
                 corr_proc = p0.split(",")[0]
                 datacard.write(('shapes %-10s %-7s %-20s' % (corr_proc,binname,binname+".input.root"))+" w:"+ corr_proc + "_" + options.region+"\n")
-        datacard.write(('shapes %-10s %-7s %-20s' % ("data",binname,binname+".input.root"))+" w:data_" + options.region+"\n")
+        datacard.write(('shapes %-10s %-7s %-20s' % ("data_obs",binname,binname+".input.root"))+" w:data_obs_" + options.region+"\n")
         datacard.write('##----------------------------------\n')
         datacard.write('bin         %s\n' % binname)
         datacard.write('observation -1\n')
@@ -532,7 +534,8 @@ for mass in masses:
                         simpleTemplate = False
                         addCorrelatedShape(proc,"x",options.region,workspace,h)
         if simpleTemplate: 
-            addTemplate(proc,"x",options.region,workspace,h)
+            print "adding template for process ",proc
+            addTemplate(proc if proc!="data" else "data_obs","x",options.region,workspace,h)
 
     workspace.writeToFile(myout+binname+".input.root",ROOT.kTRUE)
 
