@@ -21,12 +21,14 @@ from CMGTools.H2TauTau.proto.analyzers.HiggsPtWeighter import HiggsPtWeighter
 from CMGTools.H2TauTau.proto.analyzers.VBFAnalyzer import VBFAnalyzer
 from CMGTools.H2TauTau.proto.analyzers.RecoilCorrector import RecoilCorrector
 
+# TTH analyzers
+from CMGTools.TTHAnalysis.analyzers.ttHhistoCounterAnalyzer import ttHhistoCounterAnalyzer
+from CMGTools.TTHAnalysis.analyzers.susyParameterScanAnalyzer import susyParameterScanAnalyzer
+
 puFileMC = '$CMSSW_BASE/src/CMGTools/H2TauTau/data/MC_Spring16_PU25_Startup.root'
 puFileData = '$CMSSW_BASE/src/CMGTools/H2TauTau/data/data_pu_25-07-2016_69p2mb_60.root'
 
-applyRecoil = False
 
-from CMGTools.TTHAnalysis.analyzers.ttHhistoCounterAnalyzer import ttHhistoCounterAnalyzer
 susyCounter = cfg.Analyzer(
     ttHhistoCounterAnalyzer, name="ttHhistoCounterAnalyzer",
     SMS_max_mass=3000,  # maximum mass allowed in the scan
@@ -90,7 +92,6 @@ genAna = GeneratorAnalyzer.defaultConfig
 genAna.savePreFSRParticleIds = [1, 2, 3, 4, 5, 21]
 
 # Save SUSY masses
-from CMGTools.TTHAnalysis.analyzers.susyParameterScanAnalyzer import susyParameterScanAnalyzer
 susyScanAna = cfg.Analyzer(
     susyParameterScanAnalyzer, name="susyParameterScanAnalyzer",
     doLHE=True,
@@ -110,24 +111,25 @@ jetAna = cfg.Analyzer(
     jetCol='slimmedJets',
     jetPt=20.,
     jetEta=4.7,
-    relaxJetId=False,
-    relaxPuJetId=True,
+    relaxJetId=False, # relax = do not apply jet ID
+    relaxPuJetId=True, # relax = do not apply pileup jet ID
     jerCorr=False,
-    #jesCorr = 1.,
+    #jesCorr = 1., # Shift jet energy scale in terms of uncertainties (1 = +1 sigma)
     puJetIDDisc='pileupJetId:fullDiscriminant',
 )
 
 vbfAna = cfg.Analyzer(
     VBFAnalyzer,
     name='VBFAnalyzer',
-    cjvPtCut=20.,
-    Mjj=500.,
-    deltaEta=3.5
+    cjvPtCut=20., # jet pT cut for central jet veto
+    Mjj=500., # minimum dijet mass, only used for counting
+    deltaEta=3.5  # minimum delta eta, only used for counting
 )
 
 recoilCorr = cfg.Analyzer(
     RecoilCorrector,
-    name='RecoilCorrector'
+    name='RecoilCorrector',
+    apply=False
 )
 
 embedWeighter = cfg.Analyzer(
@@ -165,11 +167,10 @@ commonSequence = cfg.Sequence([
     dyJetsFakeAna,
     jetAna,
     vbfAna,
+    recoilCorr,
     pileUpAna,
     embedWeighter,
     NJetsAna,
     higgsWeighter
 ])
 
-if applyRecoil:
-    commonSequence.insert(commonSequence.index(pileUpAna), recoilCorr)

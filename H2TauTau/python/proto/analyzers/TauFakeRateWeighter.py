@@ -1,7 +1,5 @@
 from PhysicsTools.Heppy.analyzers.core.Analyzer import Analyzer
-from PhysicsTools.Heppy.analyzers.core.AutoHandle import AutoHandle
 from PhysicsTools.HeppyCore.statistics.average import Average
-from PhysicsTools.Heppy.utils.cmsswRelease import cmsswIs44X,cmsswIs52X
 
 class TauFakeRateWeighter( Analyzer ):
     '''Gets tau decay mode efficiency weight and puts it in the event'''

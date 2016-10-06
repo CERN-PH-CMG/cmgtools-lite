@@ -4,8 +4,6 @@ from CMGTools.H2TauTau.proto.analyzers.varsDictionary import vars as var_dict
 from CMGTools.H2TauTau.proto.analyzers.TreeVariables import event_vars, ditau_vars, particle_vars, lepton_vars, electron_vars, muon_vars, tau_vars, tau_vars_extra, jet_vars, jet_vars_extra, geninfo_vars, vbf_vars, svfit_vars
 
 from CMGTools.H2TauTau.proto.physicsobjects.DiObject import DiTau
-import math
-
 
 class H2TauTauTreeProducerBase(TreeAnalyzerNumpy):
 
@@ -242,8 +240,6 @@ class H2TauTauTreeProducerBase(TreeAnalyzerNumpy):
         self.var(tree, 'gen_top_1_pt')
         self.var(tree, 'gen_top_2_pt')
         self.var(tree, 'gen_top_weight')
-
-
 
     def fillTopPtReweighting(self, tree, event):
         '''FIXME: Move this to extra class - only do inline calculations here'''
