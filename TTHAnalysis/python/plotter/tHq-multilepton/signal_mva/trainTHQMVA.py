@@ -90,6 +90,7 @@ def train(allcuts, variables, dsets, options):
                                     "Transformations=I",
                                     "AnalysisType=Classification"]))
 
+
     for cut in options.addcuts:
         allcuts += cut
 
@@ -110,9 +111,9 @@ def train(allcuts, variables, dsets, options):
         factory.SetWeightExpression("genWeight*xsec", trainclass)
 
     ## Start the training
-    factory.PrepareTrainingAndTestTree(allcuts, "!V")
+    factory.PrepareTrainingAndTestTree(allcuts, "!V") # check options
     factory.BookMethod(ROOT.TMVA.Types.kBDT, 'BDTA',
-                            ':'.join([
+                       ':'.join([
                                 '!H', # print help
                                 '!V', # verbose
                                 'NTrees=800', # default is 200
@@ -127,9 +128,111 @@ def train(allcuts, variables, dsets, options):
                                 # 'VarTransform=G,D',
                                 ]))
 
-    # Try a few different classifiers also:
-    # e.g. Fisher discriminants, k-nearest neighbor, neural networks
-    # Check http://tmva.sourceforge.net/docu/TMVAUsersGuide.pdf
+    ###added by jmonroy oct 2016
+
+    # factory.PrepareTrainingAndTestTree(allcuts, "!V") # check options                                                                 
+    # factory.BookMethod(ROOT.TMVA.Types.kBDT, 'BDTA_20_20',
+    #                    ':'.join([
+    #                    '!H', # print help                                                                                     
+    #                    '!V', # verbose                                                                                        
+    #                    'NTrees=20', # default is 200                                                                         
+    #                    'BoostType=AdaBoost', # try with 'Grad' also                                                           
+    #                    'AdaBoostBeta=0.50',
+    #                    # 'Shrinkage=0.10', # for gradient boosting                                                            
+    #                    '!UseBaggedGrad',
+    #                    'nCuts=50', # scanning steps                                                                           
+    #                    'MaxDepth=20', # maximum decision tree depth                                                            
+    #                    'NegWeightTreatment=PairNegWeightsGlobal',
+    #                    'CreateMVAPdfs',
+    #                    # 'VarTransform=G,D',                                                                                  
+    #                    ]))
+
+    # factory.PrepareTrainingAndTestTree(allcuts, "!V") # check options                                                                 
+    # factory.BookMethod(ROOT.TMVA.Types.kBDT, 'BDTA_20depth',
+    #                    ':'.join([
+    #                    '!H', # print help                                                                                             
+    #                    '!V', # verbose                                                                                                
+    #                    'NTrees=800', # default is 200                                                                                 
+    #                    'BoostType=AdaBoost', # try with 'Grad' also                                                                   
+    #                    'AdaBoostBeta=0.50',
+    #                    # 'Shrinkage=0.10', # for gradient boosting                                                                    
+    #                    '!UseBaggedGrad',
+    #                    'nCuts=50', # scanning steps
+    #                    'MaxDepth=20', # maximum decision tree depth                                                                   
+    #                    'NegWeightTreatment=PairNegWeightsGlobal',
+    #                    'CreateMVAPdfs',
+    #                    # 'VarTransform=G,D',                                                                                          
+    #                    ]))
+
+
+    #### gradient boosting
+
+    # factory.PrepareTrainingAndTestTree(allcuts, "!V") # check options                                                               
+    factory.BookMethod(ROOT.TMVA.Types.kBDT, 'BDTA_GRAD',
+                               ':'.join([
+                               '!H', # print help                                                                                     
+                               '!V', # verbose                                                                                        
+                               'NTrees=800', # default is 200                                                                         
+                               'BoostType=Grad',                                                           
+                               #'AdaBoostBeta=0.50',
+                               'Shrinkage=0.10', # for gradient boosting                                                            
+                               '!UseBaggedGrad',
+                               'nCuts=50', # scanning steps                                                                           
+                               'MaxDepth=3', # maximum decision tree depth                                                            
+                               'NegWeightTreatment=PairNegWeightsGlobal',
+                               'CreateMVAPdfs',
+                               # 'VarTransform=G,D',                                                                                  
+                               ]))
+
+    ### Fisher discriminant (also creating Rarity distribution of MVA output) from user manual
+    factory.PrepareTrainingAndTestTree(allcuts, "!V") # check options  
+    factory.BookMethod( ROOT.TMVA.Types.kFisher, 'Fisher',
+                               ':'.join([
+                               'H',
+                               '!V',
+                               'Fisher',
+                               'CreateMVAPdfs',
+                               'PDFInterpolMVAPdf=Spline2',
+                               'NbinsMVAPdf=60',
+                               'NsmoothMVAPdf=10',
+                               ]))
+
+    # Fisher discriminant with Gauss-transformed input variables
+    factory.PrepareTrainingAndTestTree(allcuts, "!V") # check options                                                                 
+    factory.BookMethod( ROOT.TMVA.Types.kFisher, 'FisherG', 'VarTransform=Gauss' );
+
+    #Fisher discriminant with principle-value-transformed input variables
+    factory.PrepareTrainingAndTestTree(allcuts, "!V") # check options                                                                 
+    factory.BookMethod( ROOT.TMVA.Types.kFisher, 'FisherG_PCA', 'VarTransform=PCA' );
+
+    #Boosted Fisher discriminant
+    factory.PrepareTrainingAndTestTree(allcuts, "!V") # check options                                                                 
+    factory.BookMethod( ROOT.TMVA.Types.kFisher, 'BoostedFisher',
+                         ':'.join([
+                         'Boost_Num=20',
+                         'Boost_Transform=log',
+                         'Boost_Type=AdaBoost',
+                         'Boost_AdaBoostBeta=0.2',
+                         ]))
+
+    # k-Nearest Neighbour method (similar to PDE-RS)
+    factory.PrepareTrainingAndTestTree(allcuts, "!V") # check options                                                                 
+    factory.BookMethod( ROOT.TMVA.Types.kKNN, 'KNN',
+                         ':'.join([
+                         'H',
+                         'nkNN=20',
+                         'ScaleFrac=0.8',
+                         'SigmaFact=1.0',
+                         'Kernel=Gaus',
+                         'UseKernel=F',
+                         'UseWeight=T',
+                         '!Trim', 
+                         ]))
+
+
+    #Try a few different classifiers also:
+    #e.g. Fisher discriminants, k-nearest neighbor, neural networks
+    #Check http://tmva.sourceforge.net/docu/TMVAUsersGuide.pdf
 
     factory.TrainAllMethods()
     factory.TestAllMethods()
@@ -149,7 +252,7 @@ def main(args, options):
     allcuts += "LepGood_conePt[iF_Recl[1]]>10"
     allcuts += "LepGood_conePt[iF_Recl[2]]>10"
     allcuts += "nJet25_Recl >= 2"
-    allcuts += "nBJetMedium25_Recl >= 1"
+    allcuts += "nBJetMedium25 >= 1" # FIXME: use nBJetMedium25_Recl instead
     # allcuts += "nBJetLoose25_Recl >= 1"
     allcuts += "maxEtaJet25 >= 0"
 
@@ -163,6 +266,9 @@ def main(args, options):
         ("dEtaFwdJetClosestLep", "F"),
         ("dPhiHighestPtSSPair", "F"),
         ("lepCharge := LepGood_charge[iF_Recl[0]]+LepGood_charge[iF_Recl[1]]+LepGood_charge[iF_Recl[2]]", "I"),
+        
+
+
         ## Add more here?
         # - lepton pt?
         # - min DR(l,l)
