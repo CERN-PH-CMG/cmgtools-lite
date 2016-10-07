@@ -1,4 +1,4 @@
-import os, copy, sys
+import os, copy, sys, time
 from string import Formatter
 from functions import *
 from custom import *
@@ -62,12 +62,12 @@ class Maker():
 		self.options = options
 	def clearJobs(self):
 		if hasattr(self, "job") and len(self.jobs)>0:
-			njobs = [j.isDone() for j in self.jobs].count(False)
+			njobs = [j.isDone() or j.isError() for j in self.jobs].count(False)
 			while njobs > 0:
 				nerr = [j.isError() for j in self.jobs].count(True)
 				self.talk(str(njobs)+"/"+str(len(self.jobs))+" jobs are running. Checking back in 5 seconds...")
 				time.sleep(5)
-				njobs = [j.isDone() for j in self.jobs].count(False)
+				njobs = [j.isDone() or j.isError() for j in self.jobs].count(False)
 			nerr = [j.isError() for j in self.jobs].count(True)
 			if nerr>0:
 				self.error(str(nerr)+"/"+str(len(self.jobs))+" jobs have finished in error state.")
@@ -257,9 +257,8 @@ class Maker():
 		self.jobs.append(Job(self, name, commands, self.options, forceLocal))
 	def runJob(self, name, commands, forceLocal = False):
 		theJob = Job(self, name, commands, self.options, forceLocal)
-		return
 		theJob.run()
-		while not theJob.isDone():
+		while not (theJob.isDone() or theJob.isError()):
 			time.sleep(5)
 		if theJob.isError():
 			self.error("Job '"+name+"' has finished in error state.")
