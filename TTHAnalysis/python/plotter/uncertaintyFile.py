@@ -17,6 +17,7 @@ class Uncertainty:
         self.fakerate = [FakeRate(''),FakeRate('')]
         self.fakerate[0]._weight = '1'
         self.fakerate[1]._weight = '1'
+        self.trivialFunc={'up': None, 'dn': None}
         self.prepFR()
 
     def prepFR(self):
@@ -30,6 +31,7 @@ class Uncertainty:
 
         elif self.unc_type=='templateSymm':
             self.fakerate[1] = None
+            self.trivialFunc['dn'] = 'symmetrize_up'
             idx=0
             if 'FakeRate' in self.extra_args[idx]:
                 self.fakerate[idx] = FakeRate(self.extra_args[idx]['FakeRate'])
@@ -40,6 +42,17 @@ class Uncertainty:
             
     def isTrivial(self,sign):
         return (self.getFR(sign)==None)
+    def getTrivial(self,sign,results):
+        if self.getFR(sign) or (self.trivialFunc[sign]==None): raise RuntimeError
+        return getattr(self,self.trivialFunc[sign])(results)
+
+    def symmetrize_up(self,results):
+        central, up, down = results
+        h = central.Clone('');
+        h.Multiply(h)
+        h.Divide(up)
+        return h
+
     def procmatch(self):
         return self.procmatch
     def binmatch(self):

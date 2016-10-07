@@ -209,15 +209,15 @@ class TreeToYield:
         return self._isVariation
 
     def applyFR(self,FR):
-            ## add additional weight correction.
-            ## note that the weight receives the other mcCorrections, but not itself
-            frweight = self.adaptExpr(FR.weight(), cut=True)
-            ## modify cuts to get to control region. order is important
-            self._mcCorrs = self._mcCorrs[:] + FR.cutMods()  + FR.mods()
-            bla = self._weightString
-            self._weightString = self.adaptExpr(self._weightString, cut=True) + "* (" + frweight + ")"
-            self._weight = True
-            if self._options.forceunweight: self._weight = False
+        if FR==None: return
+        ## add additional weight correction.
+        ## note that the weight receives the other mcCorrections, but not itself
+        frweight = self.adaptExpr(FR.weight(), cut=True)
+        ## modify cuts to get to control region. order is important
+        self._mcCorrs = self._mcCorrs[:] + FR.cutMods()  + FR.mods()
+        self._weightString = self.adaptExpr(self._weightString, cut=True) + "* (" + frweight + ")"
+        self._weight = True
+        if self._options.forceunweight: self._weight = False
     def setScaleFactor(self,scaleFactor):
         if self._mcCorrs and scaleFactor and scaleFactor != 1.0:
             # apply MC corrections to the scale factor

@@ -394,9 +394,22 @@ class MCAnalysis:
             tasks = self._splitTasks(tasks)
         _retlist = dict(self._processTasks(_runPlot, tasks, name="plot "+plotspec.name)) # idkey, result
 
-        for idk,parent_tty_idkey in isvarofmap.iteritems():
-            if idk not in _retlist:
-                ttymap[idk].isVariation()[0].getTrivial(ttymap[parent_tty_idkey])
+        ## calculate the trivial variations
+        varofmap = {}
+        for idk2,idk in isvarofmap.iteritems():
+            var = ttymap[idk2].isVariation()[0].name
+            sign = ttymap[idk2].isVariation()[1]
+            if (idk,var) not in varofmap: varofmap[(idk,var)]=[None,None]
+            if sign=='up': varofmap[(idk,var)][0]=idk2
+            elif sign=='dn': varofmap[(idk,var)][1]=idk2
+            else: raise RuntimeError
+        for (idk,var),(idk2up,idk2dn) in varofmap.iteritems():
+            if idk2up not in _retlist:
+                _retlist[idk2up]=ttymap[idk2up].isVariation()[0].getTrivial(ttymap[idk2up].isVariation()[1],[_retlist[idk],None,None])
+#                print 'Calculating trivially variation %s %s'%(ttymap[idk2up].isVariation()[0].name,ttymap[idk2up].isVariation()[1]),_retlist[idk2up].Integral()
+            if idk2dn not in _retlist:
+                _retlist[idk2dn]=ttymap[idk2dn].isVariation()[0].getTrivial(ttymap[idk2dn].isVariation()[1],[_retlist[idk],_retlist[idk2up],None])
+#                print 'Calculating trivially variation %s %s'%(ttymap[idk2dn].isVariation()[0].name,ttymap[idk2dn].isVariation()[1]),_retlist[idk2dn].Integral()
 
         ## attach variations to each primary tty
         retlist=[]
@@ -439,7 +452,6 @@ class MCAnalysis:
                 ret['background'].summary = True
 
         #print "DONE getPlots at %.2f" % (0.001*(long(ROOT.gSystem.Now()) - _T0))
-        
         return ret
     def prepareForSplit(self):
         ttymap = {}
