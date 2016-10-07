@@ -165,15 +165,17 @@ def reMax(hist,hist2,islog,factorLin=1.3,factorLog=2.0,doWide=False):
         if islog: hist.GetYaxis().SetRangeUser(0.1 if doWide else 0.9, max0)
         else:     hist.GetYaxis().SetRangeUser(0,max0)
 
-def doShadedUncertainty(h):
+def doShadedUncertainty((h,hup,hdn)):
     xaxis = h.GetXaxis()
     points = []; errors = []
     for i in xrange(h.GetNbinsX()):
-        N = h.GetBinContent(i+1); dN = h.GetBinError(i+1);
+        N = h.GetBinContent(i+1);
+        dN = h.GetBinError(i+1)
         if N == 0 and dN == 0: continue
         x = xaxis.GetBinCenter(i+1);
         points.append( (x,N) )
-        EYlow, EYhigh  = dN, min(dN,N);
+        EYlow = hypot(N-min(N,hup.GetBinContent(i+1),hdn.GetBinContent(i+1)),dN)
+        EYhigh = hypot(max(N,hup.GetBinContent(i+1),hdn.GetBinContent(i+1))-N,dN)
         EXhigh, EXlow = (xaxis.GetBinUpEdge(i+1)-x, x-xaxis.GetBinLowEdge(i+1))
         errors.append( (EXlow,EXhigh,EYlow,EYhigh) )
     ret = ROOT.TGraphAsymmErrors(len(points))
@@ -628,10 +630,10 @@ def doLegend(pmap,mca,corner="TR",textSize=0.035,cutoff=1e-2,cutoffSignals=True,
         leg.SetTextFont(42)
         leg.SetTextSize(textSize)
         if 'data' in pmap: 
-            leg.AddEntry(pmap['data'], mca.getProcessOption('data','Label','Data', noThrow=True), 'LPE')
+            leg.AddEntry(pmap['data'].raw(), mca.getProcessOption('data','Label','Data', noThrow=True), 'LPE')
         total = sum([x.Integral() for x in pmap.itervalues()])
-        for (plot,label,style) in sigEntries: leg.AddEntry(plot,label,style)
-        for (plot,label,style) in  bgEntries: leg.AddEntry(plot,label,style)
+        for (plot,label,style) in sigEntries: leg.AddEntry(plot.raw(),label,style)
+        for (plot,label,style) in  bgEntries: leg.AddEntry(plot.raw(),label,style)
         if totalError: leg.AddEntry(totalError,"total bkg. unc.","F") 
         leg.Draw()
         ## assign it to a global variable so it's not deleted
@@ -699,7 +701,7 @@ class PlotMaker:
                     raise RuntimeError, "Unrecongnized value for 'Blinded' option, stopping here"
                 #
                 # Pseudo-data?
-                if self._options.pseudoData:
+                if self._options.pseudoData: # to be fixed with HistoWithNuisances
                     if "data" in pmap: raise RuntimeError, "Can't use --pseudoData if there's also real data (maybe you want --xp data?)"
                     if "background" in self._options.pseudoData:
                         pdata = pmap["background"]
@@ -727,19 +729,9 @@ class PlotMaker:
                 if not makeStack: 
                     for k,v in pmap.iteritems():
                         if v.InheritsFrom("TH1"): v.SetDirectory(dir) 
-                        dir.WriteTObject(v)
+                        dir.WriteTObject(v.raw())
                     continue
                 #
-                stack = ROOT.THStack(pspec.name+"_stack",pspec.name)
-                hists = [v for k,v in pmap.iteritems() if k != 'data']
-                total = hists[0].Clone(pspec.name+"_total"); total.Reset()
-                totalSyst = hists[0].Clone(pspec.name+"_totalSyst"); totalSyst.Reset()
-                if self._options.plotmode == "norm": 
-                    if 'data' in pmap:
-                        total.GetYaxis().SetTitle(total.GetYaxis().GetTitle()+" (normalized)")
-                    else:
-                        total.GetYaxis().SetTitle("density/bin")
-                    total.GetYaxis().SetDecimals(True)
                 if options.scaleSignalToData: self._sf = doScaleSigNormData(pspec,pmap,mca)
                 if options.scaleBackgroundToData != []: self._sf = doScaleBkgNormData(pspec,pmap,mca,options.scaleBackgroundToData)
                 elif options.fitData: doNormFit(pspec,pmap,mca)
@@ -748,7 +740,7 @@ class PlotMaker:
                 #
                 for k,v in pmap.iteritems():
                     if v.InheritsFrom("TH1"): v.SetDirectory(dir) 
-                    dir.WriteTObject(v)
+                    dir.WriteTObject(v.raw())
                 #
                 self.printOnePlot(mca,pspec,pmap,
                                   xblind=xblind,
@@ -767,7 +759,6 @@ class PlotMaker:
                 stack = ROOT.THStack(outputName+"_stack",outputName)
                 hists = [v for k,v in pmap.iteritems() if k != 'data']
                 total = hists[0].Clone(outputName+"_total"); total.Reset()
-                totalSyst = hists[0].Clone(outputName+"_totalSyst"); totalSyst.Reset()
 
                 if plotmode == "norm": 
                     if 'data' in pmap:
@@ -794,10 +785,10 @@ class PlotMaker:
                         if mca.isSignal(p): plot.Scale(options.signalPlotScale)
                         if mca.isSignal(p) and options.noStackSig == True: continue 
                         if plotmode == "stack":
-                            stack.Add(plot)
-                            total.Add(plot)
-                            totalSyst.Add(plot)
+                            stack.Add(plot.raw())
+                            total+=plot
                             if mca.getProcessOption(p,'NormSystematic',0.0) > 0:
+                                raise
                                 syst = mca.getProcessOption(p,'NormSystematic',0.0)
                                 if "TH1" in plot.ClassName():
                                     for b in xrange(1,plot.GetNbinsX()+1):
@@ -809,7 +800,7 @@ class PlotMaker:
                             if plotmode == "norm" and (plot.ClassName()[:2] == "TH"):
                                 ref = pmap['data'].Integral() if 'data' in pmap else 1.0
                                 plot.Scale(ref/plot.Integral())
-                            stack.Add(plot)
+                            stack.Add(plot.raw())
                             total.SetMaximum(max(total.GetMaximum(),1.3*plot.GetMaximum()))
                         if self._options.errors and plotmode != "stack":
                             plot.SetMarkerColor(plot.GetFillColor())
@@ -817,6 +808,7 @@ class PlotMaker:
                             plot.SetMarkerSize(1.5)
                         else:
                             plot.SetMarkerStyle(0)
+                totalSyst = [total.raw()]+total.sumSystUncertainties()
 
                 binlabels = pspec.getOption("xBinLabels","")
                 if binlabels != "" and len(binlabels.split(",")) == total.GetNbinsX():

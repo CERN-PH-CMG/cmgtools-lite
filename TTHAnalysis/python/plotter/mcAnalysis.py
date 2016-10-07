@@ -4,13 +4,14 @@ from CMGTools.TTHAnalysis.plotter.tree2yield import *
 from CMGTools.TTHAnalysis.plotter.projections import *
 from CMGTools.TTHAnalysis.plotter.figuresOfMerit import FOM_BY_NAME
 import pickle, re, random, time
+from copy import copy, deepcopy
 
 #_T0 = long(ROOT.gSystem.Now())
 
 ## These must be defined as standalone functions, to allow runing them in parallel
 def _runYields(args):
     key,tty,cuts,noEntryLine,fsplit = args
-    return (key, tty.getYields(cuts,noEntryLine=noEntryLine,fsplit=fsplit))
+    return (key, tty, tty.getYields(cuts,noEntryLine=noEntryLine,fsplit=fsplit))
 
 def _runPlot(args):
     key,tty,plotspec,cut,fsplit = args
@@ -19,6 +20,91 @@ def _runPlot(args):
     ret = (key,tty.getPlot(plotspec,cut,fsplit=fsplit))
     #print "Done plot %s for %s, %s, fsplit %s in %s s, at %.2f; entries = %d, time/entry = %.3f ms" % (plotspec.name,key,tty._cname,fsplit,timer.RealTime(), 0.001*(long(ROOT.gSystem.Now()) - _T0), ret[1].GetEntries(), (long(ROOT.gSystem.Now()) - _T0)/float(ret[1].GetEntries()))
     return ret
+
+class HistoWithNuisances:
+    def __init__(self,histo_central,reset=False):
+        self.nominal = histo_central.Clone(histo_central.GetName())
+        self.variations = {}
+        if reset:
+            self.nominal.Reset()
+    def __getattr__(self,name):
+        if name in self.__dict__: return self.__dict__[name]
+        return getattr(self.nominal,name)
+    def Clone(self,newname):
+        h = HistoWithNuisances(self.nominal.Clone(newname))
+        for v,p in self.variations.iteritems():
+            h.variations[v]=map(lambda x:x.Clone(), p)
+        return h
+    def Reset(self):
+        self.nominal.Reset()
+        self.variations = {}
+    def printVariations(self):
+        print 'central:',self.GetName(),self.Integral()
+        for (x,(v1,v2)) in self.variations.iteritems():
+            print x,v1.Integral() if v1 else '-',v2.Integral() if v2 else '-'
+    def Scale(self,x):
+        self.nominal.Scale(x)
+        for v,p in self.variations.iteritems(): map(lambda h: h.Scale(x), p)
+    def raw(self):
+        return self.nominal
+    def sumSystUncertainties(self,toadd=None):
+        # in each bin, this does max/min of (central,up,down) of each variation and then sums in quadrature upward and downward shifts
+        if not toadd: toadd = list(self.variations.keys())
+        if "TH" not in self.ClassName(): raise RuntimeError, 'Cannot compute systematic uncertainty for scatter plot'
+        hempty = self.raw().Clone(''); hempty.Reset();
+        hvars={}
+        for var in toadd:
+            hvarup = hempty.Clone('')
+            hvardn = hempty.Clone('')
+            if 'TH1' in self.ClassName():
+                for b in xrange(1,self.GetNbinsX()+1):
+                    hvarup.SetBinContent(b,max(self.GetBinContent(b),self.variations[var][0].GetBinContent(b),self.variations[var][1].GetBinContent(b))-self.GetBinContent(b))
+                    hvardn.SetBinContent(b,self.GetBinContent(b)-min(self.GetBinContent(b),self.variations[var][0].GetBinContent(b),self.variations[var][1].GetBinContent(b)))
+            elif 'TH2' in self.ClassName():
+                for b1 in xrange(1,self.GetNbinsX()+1):
+                    for b2 in xrange(1,self.GetNbinsY()+1):
+                        hvarup.SetBinContent(b1,b2,max(self.GetBinContent(b1,b2),self.variations[var][0].GetBinContent(b1,b2),self.variations[var][1].GetBinContent(b1,b2))-self.GetBinContent(b1,b2))
+                        hvardn.SetBinContent(b1,b2,self.GetBinContent(b1,b2)-min(self.GetBinContent(b1,b2),self.variations[var][0].GetBinContent(b1,b2),self.variations[var][1].GetBinContent(b1,b2)))
+            hvars[var]=[hvarup,hvardn]
+        htotup = hempty.Clone(self.GetName()+'_systUp')
+        htotdn = hempty.Clone(self.GetName()+'_systDn')
+        if 'TH1' in self.ClassName():
+            for b in xrange(1,self.GetNbinsX()+1):
+                htotup.SetBinContent(b,self.GetBinContent(b)+sqrt(sum(map(lambda x: (hvars[x][0].GetBinContent(b))**2, hvars))))
+                htotdn.SetBinContent(b,self.GetBinContent(b)-sqrt(sum(map(lambda x: (hvars[x][1].GetBinContent(b))**2, hvars))))
+        elif 'TH2' in self.ClassName():
+            for b1 in xrange(1,self.GetNbinsX()+1):
+                for b2 in xrange(1,self.GetNbinsY()+1):
+                    htotup.SetBinContent(b1,b2,self.GetBinContent(b1,b2)+sqrt(sum(map(lambda x: (hvars[x][0].GetBinContent(b1,b2))**2, hvars))))
+                    htotdn.SetBinContent(b1,b2,self.GetBinContent(b1,b2)-sqrt(sum(map(lambda x: (hvars[x][1].GetBinContent(b1,b2))**2, hvars))))
+        return [htotup,htotdn]
+    def getVariation(self,alternate):
+        return self.variations[alternate]
+    def addVariation(self,name,sign,histo_varied):
+        idx = 0 if sign=='up' else 1
+        if name not in self.variations: self.variations[name] = [None,None]
+        self.variations[name][idx] = histo_varied.Clone('')
+    def __iadd__(self,x):
+        vars1 = self.variations # writing on self.variations
+        vars2 = copy(x.variations)
+        for var in set(vars1.keys()+vars2.keys()):
+            if var not in vars1: vars1[var] = [self.nominal.Clone(''),self.nominal.Clone('')]
+            if var not in vars2: vars2[var] = [x.nominal,x.nominal]
+        def adder(v1,v2):
+            if "TGraph" in v1.ClassName():
+                other = ROOT.TList()
+                other.Add(v2)
+                v1.Merge(other)
+            else:
+                v1.Add(v2)
+        adder(self.nominal,x.nominal)
+        for var in set(vars1.keys()+vars2.keys()):
+            for idx in xrange(2): adder(vars1[var][idx],vars2[var][idx])
+        return self
+    def __add__(self,x):
+        h = self.Clone(self.GetName())
+        h+=x
+        return h
 
 def _runApplyCut(args):
     key,tty,cut,fsplit = args
@@ -240,70 +326,92 @@ class MCAnalysis:
     def getScales(self,process):
         return [ tty.getScaleFactor() for tty in self._allData[process] ] 
     def getYields(self,cuts,process=None,nodata=False,makeSummary=False,noEntryLine=False):
-        ## first figure out what we want to do
-        tasks = []
-        for key,ttys in self._allData.iteritems():
-            if key == 'data' and nodata: continue
-            if process != None and key != process: continue
-            for tty in ttys:
-                tasks.append((key,tty,cuts,noEntryLine,None))
-        ## then do the work
-        if self._options.splitFactor > 1 or  self._options.splitFactor == -1:
-            tasks = self._splitTasks(tasks)
-        retlist = self._processTasks(_runYields, tasks,name="yields")
-        ## then gather results with the same process
-        mergemap = {}
-        for (k,v) in retlist: 
-            if k not in mergemap: mergemap[k] = []
-            mergemap[k].append(v)
-        ## and finally merge them
-        ret = dict([ (k,mergeReports(v)) for k,v in mergemap.iteritems() ])
-
-        rescales = []
-        self.compilePlotScaleMap(self._options.plotscalemap,rescales)
-        for p,v in ret.items():
-            for regexp in rescales:
-                if re.match(regexp[0],p): ret[p]=[v[0], [x*regexp[1] for x in v[1]]]
-
-        regroups = [] # [(compiled regexp,target)]
-        self.compilePlotMergeMap(self._options.plotmergemap,regroups)
-        for regexp in regroups: ret = self.regroupReports(ret,regexp)
-
-        # if necessary project to different lumi, energy,
-        if self._projection:
-            self._projection.scaleReport(ret)
-        # and comute totals
-        if makeSummary:
-            allSig = []; allBg = []
-            for (key,val) in ret.iteritems():
-                if key != 'data':
-                    if self._isSignal[key]: allSig.append(ret[key])
-                    else: allBg.append(ret[key])
-            if self._signals and not ret.has_key('signal') and len(allSig) > 0:
-                ret['signal'] = mergeReports(allSig)
-            if self._backgrounds and not ret.has_key('background') and len(allBg) > 0:
-                ret['background'] = mergeReports(allBg)
-        return ret
+        raise RuntimeError, 'to be reimplemented with getPlotsRaw'
+#        ## first figure out what we want to do
+#        tasks = []
+#        for key,ttys in self._allData.iteritems():
+#            if key == 'data' and nodata: continue
+#            if process != None and key != process: continue
+#        ## then do the work
+#        if self._options.splitFactor > 1 or  self._options.splitFactor == -1:
+#            tasks = self._splitTasks(tasks)
+#        retlist = self._processTasks(_runYields, tasks,name="yields")
+#        ## then gather results with the same process
+#        mergemap = {}
+#        for (k,v) in retlist: 
+#            if k not in mergemap: mergemap[k] = []
+#            mergemap[k].append(v)
+#        ## and finally merge them
+#        ret = dict([ (k,mergeReports(v)) for k,v in mergemap.iteritems() ])
+#
+#        rescales = []
+#        self.compilePlotScaleMap(self._options.plotscalemap,rescales)
+#        for p,v in ret.items():
+#            for regexp in rescales:
+#                if re.match(regexp[0],p): ret[p]=[v[0], [x*regexp[1] for x in v[1]]]
+#
+#        regroups = [] # [(compiled regexp,target)]
+#        self.compilePlotMergeMap(self._options.plotmergemap,regroups)
+#        for regexp in regroups: ret = self.regroupReports(ret,regexp)
+#
+#        # if necessary project to different lumi, energy,
+#        if self._projection:
+#            self._projection.scaleReport(ret)
+#        # and comute totals
+#        if makeSummary:
+#            allSig = []; allBg = []
+#            for (key,val) in ret.iteritems():
+#                if key != 'data':
+#                    if self._isSignal[key]: allSig.append(ret[key])
+#                    else: allBg.append(ret[key])
+#            if self._signals and not ret.has_key('signal') and len(allSig) > 0:
+#                ret['signal'] = mergeReports(allSig)
+#            if self._backgrounds and not ret.has_key('background') and len(allBg) > 0:
+#                ret['background'] = mergeReports(allBg)
+#        return ret
     def getPlotsRaw(self,name,expr,bins,cut,process=None,nodata=False,makeSummary=False):
         return self.getPlots(PlotSpec(name,expr,bins,{}),cut,process,nodata,makeSummary)
     def getPlots(self,plotspec,cut,process=None,nodata=False,makeSummary=False):
-        ret = { }
         allSig = []; allBg = []
         tasks = []
+        ttymap = {} # idkey -> tty, for both primaries and variations
+        procmap = {} # idkey -> key (name), only primaries
+        isvarofmap = {} # idkey_var -> idkey_parent, for variations
         for key,ttys in self._allData.iteritems():
             if key == 'data' and nodata: continue
             if process != None and key != process: continue
             for tty in ttys:
-                tasks.append((key,tty,plotspec,cut,None))
+                idkey = id(tty)
+                procmap[idkey]=key
+                ttymap[idkey]=tty
+                tasks.append((idkey,tty,plotspec,cut,None))
+                for var,sign,tty2 in tty.getTTYVariations():
+                    idkey2 = id(tty2)
+                    isvarofmap[idkey2]=idkey
+                    ttymap[idkey2]=tty2
+                    if not var.isTrivial(sign): tasks.append((idkey2,tty2,plotspec,cut,None))
         if self._options.splitFactor > 1 or  self._options.splitFactor == -1:
             tasks = self._splitTasks(tasks)
-        retlist = self._processTasks(_runPlot, tasks, name="plot "+plotspec.name)
+        _retlist = dict(self._processTasks(_runPlot, tasks, name="plot "+plotspec.name)) # idkey, result
+
+        for idk,parent_tty_idkey in isvarofmap.iteritems():
+            if idk not in _retlist:
+                ttymap[idk].isVariation()[0].getTrivial(ttymap[parent_tty_idkey])
+
+        ## attach variations to each primary tty
+        retlist=[]
+        for idk,key in procmap.iteritems():
+            h = HistoWithNuisances(_retlist[idk])
+            for idk2,idk1 in isvarofmap.iteritems():
+                if idk==idk1:
+                    h.addVariation(ttymap[idk2].isVariation()[0].name,ttymap[idk2].isVariation()[1],_retlist[idk2])
+            retlist.append((key,h))
+
         ## then gather results with the same process
         mergemap = {}
         for (k,v) in retlist: 
             if k not in mergemap: mergemap[k] = []
             mergemap[k].append(v)
-        ## and finally merge them
         ret = dict([ (k,mergePlots(plotspec.name+"_"+k,v)) for k,v in mergemap.iteritems() ])
 
         rescales = []
@@ -319,6 +427,7 @@ class MCAnalysis:
         # if necessary project to different lumi, energy,
         if self._projection:
             self._projection.scalePlots(ret)
+
         if makeSummary:
             allSig = [v for k,v in ret.iteritems() if k != 'data'and self._isSignal[k] == True  ]
             allBg  = [v for k,v in ret.iteritems() if k != 'data'and self._isSignal[k] == False ]
@@ -330,6 +439,7 @@ class MCAnalysis:
                 ret['background'].summary = True
 
         #print "DONE getPlots at %.2f" % (0.001*(long(ROOT.gSystem.Now()) - _T0))
+        
         return ret
     def prepareForSplit(self):
         ttymap = {}

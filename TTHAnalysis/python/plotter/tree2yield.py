@@ -17,6 +17,7 @@ from copy import *
 from CMGTools.TTHAnalysis.plotter.cutsFile import *
 from CMGTools.TTHAnalysis.plotter.mcCorrections import *
 from CMGTools.TTHAnalysis.plotter.fakeRate import *
+from CMGTools.TTHAnalysis.plotter.uncertaintyFile import *
 
 if "/functions_cc.so" not in ROOT.gSystem.GetLibraries(): 
     ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/TTHAnalysis/python/plotter/functions.cc+" % os.environ['CMSSW_BASE']);
@@ -139,13 +140,16 @@ class TreeToYield:
         self._isInit = False
         self._options = options
         self._objname = objname if objname else options.obj
-        self._weight  = (options.weight and 'data' not in self._name and '2012' not in self._name and '2011' not in self._name )
+        self._weight  = (options.weight and 'data' not in self._name )
         self._isdata = 'data' in self._name
         self._weightString  = options.weightString if not self._isdata else "1"
         self._scaleFactor = scaleFactor
         self._fullYield = 0 # yield of the full sample, as if it passed the full skim and all cuts
         self._fullNevt = 0 # number of events of the full sample, as if it passed the full skim and all cuts
         self._settings = settings
+        self._variationFile = None
+        self._isVariation = None
+        self._variations = []
         loadMCCorrections(options)            ## make sure this is loaded
         self._mcCorrs = globalMCCorrections() ##  get defaults
         if 'SkipDefaultMCCorrections' in settings: ## unless requested to 
@@ -170,16 +174,10 @@ class TreeToYield:
             self._scaleFactor = self.adaptExpr(self._scaleFactor, cut=True)
         if 'FakeRate' in settings:
             self._FR = FakeRate(settings['FakeRate'],self._options.lumi)
-            ## add additional weight correction.
-            ## note that the weight receives the other mcCorrections, but not itself
-            frweight = self.adaptExpr(self._FR.weight(), cut=True)
-            ## modify cuts to get to control region. order is important
-            self._mcCorrs = self._mcCorrs + self._FR.cutMods()  + self._FR.mods()
-            self._weightString = self.adaptExpr(self._weightString, cut=True) + "* (" + frweight + ")"
-            self._weight = True
+            applyFR(self._FR)
         else:
             self._weightString = self.adaptExpr(self._weightString, cut=True)
-        if self._options.forceunweight: self._weight = False
+            if self._options.forceunweight: self._weight = False
         for macro in self._options.loadMacro:
             libname = macro.replace(".cc","_cc.so").replace(".cxx","_cxx.so")
             if libname not in ROOT.gSystem.GetLibraries():
@@ -188,6 +186,38 @@ class TreeToYield:
         self._elist = None
         self._entries = None
         #print "Done creation  %s for task %s in pid %d " % (self._fname, self._name, os.getpid())
+        if 'Variation' in settings: # and self._options.allProcesses:
+            self._variationFile = UncertaintyFile(settings['Variation'])
+            for _var in self._variationFile.uncertainty():
+                self._variations.append(_var)
+
+    def getVariations(self):
+        return self._variations
+    def getTTYVariations(self):
+        ttys = []
+        for var in self.getVariations():
+            for direction in ['up','dn']:
+                tty2 = copy(self)
+                tty2._name = tty2._name + '_%s_%s'%(var.name,direction)
+                tty2._variationFile = None
+                tty2._isVariation = (var,direction)
+                tty2._variations = []
+                tty2.applyFR(var.getFR(direction))
+                ttys.append((var,direction,tty2))
+        return ttys
+    def isVariation(self):
+        return self._isVariation
+
+    def applyFR(self,FR):
+            ## add additional weight correction.
+            ## note that the weight receives the other mcCorrections, but not itself
+            frweight = self.adaptExpr(FR.weight(), cut=True)
+            ## modify cuts to get to control region. order is important
+            self._mcCorrs = self._mcCorrs[:] + FR.cutMods()  + FR.mods()
+            bla = self._weightString
+            self._weightString = self.adaptExpr(self._weightString, cut=True) + "* (" + frweight + ")"
+            self._weight = True
+            if self._options.forceunweight: self._weight = False
     def setScaleFactor(self,scaleFactor):
         if self._mcCorrs and scaleFactor and scaleFactor != 1.0:
             # apply MC corrections to the scale factor
@@ -572,13 +602,7 @@ def mergeReports(reports):
 
 def mergePlots(name,plots):
     one = plots[0].Clone(name)
-    if "TGraph" in one.ClassName():
-        others = ROOT.TList()
-        for two in plots[1:]: 
-            others.Add(two)
-        one.Merge(others)
-    else:         
-        for two in plots[1:]: 
-            one.Add(two)
+    for p in plots[1:]:
+        one+=p
     return one
 
