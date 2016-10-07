@@ -20,13 +20,13 @@ class Job():
 		if self.batchId==-1: return False
 		if self.options.queue in ["all.q", "long.q", "short.q"]:
 			jobLine = bash("qstat -j "+str(self.batchId))
-			return not("Following jobs do not exist" in jobLine)
+			return not(jobLine=="" or "Following jobs do not exist" in jobLine)
 		elif self.options.queue in ["batch"] and os.path.isdir('/pool/ciencias/'):
 			jobLine = bash("qstat "+str(self.batchId))
-			return not("Unknown Job Id Error" in jobLine)
+			return not(jobLine=="" or "Unknown Job Id Error" in jobLine)
 		else:
 			jobLine = bash("bjobs "+str(self.batchId))
-			return not("Job <"+str(self.batchId)+"> is not found" in jobLine)
+			return not(jobLine=="" or "Job <"+str(self.batchId)+"> is not found" in jobLine)
 		return False
 	def isDone(self):
 		return os.path.exists(self.master.jobpath+"/"+self.id)

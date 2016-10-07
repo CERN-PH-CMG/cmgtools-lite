@@ -259,6 +259,7 @@ class Maker():
 		theJob = Job(self, name, commands, self.options, forceLocal)
 		theJob.run()
 		while not (theJob.isDone() or theJob.isError()):
+			self.talk("Job '"+name+"' still running. Checking back in 5 seconds...")
 			time.sleep(5)
 		if theJob.isError():
 			self.error("Job '"+name+"' has finished in error state.")

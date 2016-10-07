@@ -18,4 +18,4 @@ cd [WORK]
 ### exec $*
 echo "Job for SUSY-Interface task [INST] is done."
 echo "Log files can be found at [WORK]/susy-interface/tmp/[INST]/log"
-touch [JOBDIR]/[ID]
+touch [JOBDIR]/[JOBID]
