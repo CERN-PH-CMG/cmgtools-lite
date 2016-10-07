@@ -257,7 +257,6 @@ class Maker():
 		self.jobs.append(Job(self, name, commands, self.options, forceLocal))
 	def runJob(self, name, commands, forceLocal = False):
 		theJob = Job(self, name, commands, self.options, forceLocal)
-		return
 		theJob.run()
 		while not theJob.isDone():
 			time.sleep(5)
