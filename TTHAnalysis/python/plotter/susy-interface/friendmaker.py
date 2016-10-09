@@ -26,6 +26,7 @@ parser.add_option("--modules"     , dest="modules", type="string", action="appen
 parser.add_option("--exclude"     , dest="exclude", type="string", action="append", default=[], help="Semicolon-separated list of samples to exclude (regexp)")
 parser.add_option("--accept"      , dest="accept" , type="string", action="append", default=[], help="Semicolon-separated list of samples to accept (regexp)")
 parser.add_option("--direct"      , dest="direct" , action="store_true", default=False, help="Do direct batch submission (default is doing the batch submission via prepareEventVariablesFriendTree.py) [useful for splitted fastsim masspoints]")
+parser.add_option("--nosplit"     , dest="noSplit", action="store_true", default=False, help="Direct batch submission does a splitting of the jobs per nEvt. Give this flag to suppress it.")
 parser.add_option("--bk"          , dest="bk"     , action="store_true", default=False, help="Bookkeeping option (stores friend tree producer and configuration)")
 parser.add_option("--log"         , dest="log"    , action="store_true", default=False, help="Put log file into subdirectory 'log' in output directory")
 parser.add_option("-F", "--force" , dest="force"  , action="store_true", default=False, help="Run the module even if it already exists")
@@ -41,14 +42,14 @@ mm              = maker.Maker(base, args, options)
 mm.loadNEvtSample()
 
 
-## loop on modules
+## loop on modules, submitting jobs
 for module in mm.getFriendModules():
 
 	mm.workdir = mm.cmssw +"/src/CMGTools/TTHAnalysis/macros"
 	output     = mm.outdir +"/"+ module
-	func.mkdir(output)
-	func.mkdir(output +"/log")
-	if options.bk: func.mkdir(output +"/ref")
+	func.mkdir(output,False)
+	func.mkdir(output +"/log",False)
+	if options.bk: func.mkdir(output +"/ref",False)
 
 	file     = getFriendFile(mm, module)
 	requires = getFriendConn(mm, module)
@@ -91,19 +92,34 @@ for module in mm.getFriendModules():
 			if options.queue in ["all.q", "long.q", "short.q"]: additional += " --env psi"
 			if options.log: additional += " --log "+output+"/log"
 
-		mm.submit([mm.treedir, output, options.treename, d, module, friends, additional],d)
+		attr = [mm.treedir, output, options.treename, d, module, friends, additional]
+		if options.direct and options.queue and not options.noSplit:
+			mm.prepareSplit(d)
+			mm.splittedSubmit(attr, d, False)
+		else:
+			mm.submit(attr, d, False)
 
 	if options.bk and file:
 		func.cp(mm.cmssw+"/src/CMGTools/TTHAnalysis/macros/prepareEventVariablesFriendTree.py", output+"/ref")
 		func.cp(mm.cmssw+"/src/CMGTools/TTHAnalysis/python/tools/"+file                       , output+"/ref")
-	
-	if options.finalize and mm.clearJobs():
+
+mm.runJobs()
+mm.clearJobs()
+
+## finalize the production
+if options.direct and options.finalize and not options.noSplit:
+	## need direct because otherwise job submission within job submission
+
+	for module in mm.getFriendModules():
 		mm.workdir = output
+		func.cmd("755 "+mm.cmssw+"/src/CMGTools/TTHAnalysis/macros/leptons/friendChunkAdd.sh")
 		cmd = mm.cmssw +"/src/CMGTools/TTHAnalysis/macros/leptons/friendChunkAdd.sh evVarFriend ."
 		mm.runCmd(cmd, "merge", True)
 		mm.workdir = mm.cmssw +"/src/CMGTools/TTHAnalysis/macros"
-		cmd = "python verifyFTree.py "+mm.treedir+" "+output
-		mm.runCmd(cmd, "verify", True)
-		mm.workdir = mm.cmssw +"/src/CMGTools/TTHAnalysis/python/plotter"
+
+	mm.talk("Job merging is done. Please verify your friend trees and clean up the directory using the following commands:")
+	mm.addToTalk("cd "+mm.cmssw+"/src/CMGTools/TTHAnalysis/macros")
+	mm.addToTalk("python verifyFTree.py "+mm.treedir+" "+output)
+	mm.addToTalk("rm "+output+"/*.chunk*.root")
 
 

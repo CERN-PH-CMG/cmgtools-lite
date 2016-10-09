@@ -1,4 +1,4 @@
-import os, copy, sys, time
+import ROOT, os, copy, sys, time
 from string import Formatter
 from functions import *
 from custom import *
@@ -61,7 +61,8 @@ class Maker():
 		self.outdir  = args[3].rstrip("/")
 		self.options = options
 	def clearJobs(self):
-		if hasattr(self, "job") and len(self.jobs)>0:
+		self.talk("Checking job status")
+		if hasattr(self, "jobs") and len(self.jobs)>0:
 			njobs = [j.isDone() or j.isError() for j in self.jobs].count(False)
 			while njobs > 0:
 				nerr = [j.isError() for j in self.jobs].count(True)
@@ -190,6 +191,15 @@ class Maker():
 	def getScenario(self, perRegion=False):
 		if perRegion and hasattr(self, "region"): return self.getScenario(False)+"/"+self.region.name
 		return self.options.outname if self.options.outname else self.config.name
+	def getTFilePath(self, samplename):
+		thedir = self.treedir+"/"+samplename
+		if not os.path.isdir(thedir): 
+			return None
+		if os.path.exists(thedir+"/"+self.options.treename+"/tree.root"): 
+			return thedir+"/"+self.options.treename+"/tree.root"
+		if os.path.exists(thedir+"/"+self.options.treename+"/tree.root.url"):
+			return open(thedir+"/"+self.options.treename+"/tree.root.url","r").readlines()[0].rstrip("\n")
+		return None
 	def getVariable(self, var, default = None):
 		if var in self.use.keys(): return self.use[var]
 		if                             hasattr(self.options, var) and getattr(self.options, var): return getattr(self.options, var)
@@ -236,12 +246,18 @@ class Maker():
 		for i,k in enumerate(self.keys):
 			dict[k] = args[i]
 		return self.base.format(**dict)
+	def prepareSplit(self, samplename):
+		nevt = int(self.getNEvtSample(samplename))
+		path = self.getTFilePath(samplename)
+		if not path: return
+		file = ROOT.TFile.Open(path,"read")
+		if not file: return
+		all  = file.Get("tree").GetEntries()
+		file.Close()
+		chunks = int(all)/nevt + 1
+		self.bunches = [nevt for i in range(chunks-1)] + [int(all)%nevt]
 	def resetModel(self):
 		self.modelIdx = -1
-	def submit(self, args, name = "maker", run = True, forceLocal = False):
-		cmd = self.makeCmd(args)
-		if run: self.runCmd     (cmd, name, forceLocal)
-		else  : self.registerCmd(cmd, name, forceLocal)
 	def runCmd(self, cmd, name = "maker", forceLocal = False):
 		if self.options.pretend: 
 			print cmd
@@ -256,6 +272,7 @@ class Maker():
 		if not hasattr(self, "jobs"): self.jobs = []
 		self.jobs.append(Job(self, name, commands, self.options, forceLocal))
 	def runJob(self, name, commands, forceLocal = False):
+		self.talk("Submitting job '"+name+"'")
 		theJob = Job(self, name, commands, self.options, forceLocal)
 		theJob.run()
 		while not (theJob.isDone() or theJob.isError()):
@@ -265,9 +282,25 @@ class Maker():
 			self.error("Job '"+name+"' has finished in error state.")
 		del theJob
 	def runJobs(self):
-		return 
-		for job in self.jobs:
+		self.talk("Submitting "+str(len(getattr(self,"jobs",[])))+" jobs")
+		for job in getattr(self,"jobs",[]):
 			job.run()
+	def submit(self, args, name = "maker", run = True, forceLocal = False):
+		self.talk("Preparing job '"+name+"'")
+		cmd = self.makeCmd(args)
+		if run: self.runCmd     (cmd, name, forceLocal)
+		else  : self.registerCmd(cmd, name, forceLocal)
+	def splittedSubmit(self, args, name = "maker", run = True, forceLocal = False, cFlag="-c", nFlag="-N"):
+		self.talk("Preparing splitted job '"+name+"'")
+		if not hasattr(self, "bunches") or self.bunches == [] or self.bunches == [0]:
+			self.submit(args, name, run, forceLocal)
+			return
+		base = self.makeCmd(args)
+		for b,n in enumerate(self.bunches):
+			theCmd = base
+			if n>0: theCmd +=" {C} {B} {N} {M}".format(C=cFlag, B=b, N=nFlag, M=n)
+			if run: self.runCmd     (theCmd, name+"_"+str(b), forceLocal)
+			else  : self.registerCmd(theCmd, name+"_"+str(b), forceLocal)
 	def talk(self, message, isError=False):
 	    if isError:
 	        print "ERROR: "+message
