@@ -7,7 +7,7 @@ from math import log, exp
 
 from CMGTools.TTHAnalysis.treeReAnalyzer import Collection
 from itertools import combinations
-from PhysicsTools.HeppyCore.utils.deltar import deltaPhi
+from PhysicsTools.HeppyCore.utils.deltar import deltaPhi, deltaR
 
 
 BTAGWP = 0.8 # 0.8 is for medium tags, might want to try others
@@ -15,14 +15,12 @@ BTAGWP = 0.8 # 0.8 is for medium tags, might want to try others
 class tHqEventVariableFriend:
     def __init__(self):
         self.branches = [] # (branchname, default value)
-        self.branches.append(("maxEtaJet25", -99.9))
-
-        #####added by jmonroy sep 2016
-
-        self.branches.append(("nJet1", -99.9)) # number of jets with |eta|>1.0
-        self.branches.append(("dEtaFwdJetBJet", -99.9)) # delta eta: max fwd jet and hardest bjet 
-        self.branches.append(("dEtaFwdJetClosestLep",-99.9)) # delta eta: max fwd jet and closest lepton 
+        self.branches.append(("maxEtaJet25", -99.9)) # max eta of any non-tagged jet
+        self.branches.append(("nJetEta1", -99.9)) # number of jets with |eta|>1.0
+        self.branches.append(("dEtaFwdJetBJet", -99.9)) # delta eta: max fwd jet and hardest bjet
+        self.branches.append(("dEtaFwdJetClosestLep",-99.9)) # delta eta: max fwd jet and closest lepton
         self.branches.append(("dPhiHighestPtSSPair", -99.9)) # delta phi highest pt same sign lepton pair
+        self.branches.append(("minDRll", -99.9)) # minimum deltaR between all leptons
 
     # add more here...
 
@@ -51,23 +49,18 @@ class tHqEventVariableFriend:
         # Get some object collections
         jets    = self.getJetCollection(event, jec_syst="")
         fjets   = Collection(event, "JetFwd", "nJetFwd")
-
-        # Additional collections (not needed so far):
         leptons = Collection(event, "LepGood", "nLepGood")
+        bjets   = [j for j in jets if j.btagCSV > BTAGWP]
+        bjets.sort(key=lambda x:x.pt, reverse=True)
 
         sspairs = [(l1, l2) for l1, l2 in combinations(leptons, 2) if l1.pdgId*l2.pdgId > 0]
+        if len(sspairs):
+            lep1,lep2 = sorted(sspairs, key=lambda x:x[1],reverse=True)[0] # highest pt pair
+            ret['dPhiHighestPtSSPair'] = abs(deltaPhi(lep1.phi,lep2.phi))
 
-        dphi=-99.9
-        
-        if len(sspairs): 
-            lep1,lep2= sorted(sspairs, key=lambda x:x[1],reverse=True)[0] #highest pt pair
-            dphi=abs(deltaPhi(lep1.phi,lep2.phi)) 
-            #print 'deltaPhi',dphi
-
-        ret['dPhiHighestPtSSPair']=dphi
-
-        bjets = [j for j in jets if j.btagCSV > BTAGWP]
-        bjets.sort(key=lambda x:x.pt, reverse=True)
+        lepdrs = [deltaR(l1.eta, l1.phi, l2.eta, l2.phi) for l1, l2 in combinations(leptons, 2)]
+        if len(lepdrs):
+            ret['minDRll'] = min(lepdrs)
 
         # All non-btagged jets with pt > 25 GeV
         light_jets =  [j for j in jets  if (j.pt > 25. and j.btagCSV < BTAGWP)]
@@ -84,10 +77,8 @@ class tHqEventVariableFriend:
             detas = [abs(lep.eta - maxjet.eta) for lep in leptons]
             ret['dEtaFwdJetClosestLep'] = sorted(detas)[0]
 
+        ret['nJetEta1'] = len([j for j in light_jets if abs(j.eta) > 1.0])
 
-
-        ret['nJet1'] = len([j for j in light_jets if abs(j.eta)>1.0]) 
-    
         return ret
 ##################################################
 # Test this friend producer like so:
@@ -117,15 +108,16 @@ if __name__ == '__main__':
             print "Adding these branches:", self.thqf.listBranches()
 
         def analyze(self,ev):
-            print ("\nrun %6d lumi %4d event %d: jets %d, fwdJets %d, isdata=%d" %
-                      (ev.run, ev.lumi, ev.evt, ev.nJet25, ev.nJetFwd, int(ev.isData)))
+            print ("\nrun %6d lumi %4d event %d: jets %d, fwdJets %d, leps %d, isdata=%d" %
+                      (ev.run, ev.lumi, ev.evt, ev.nJet25, ev.nJetFwd, ev.nLepGood, int(ev.isData)))
             ret = self.thqf(ev)
 
-            print 'maxEtaJet25:', ret['maxEtaJet25']
-            print 'nJet1:', ret['nJet1']
-            print 'dEtaFwdJetBJet',ret['dEtaFwdJetBJet']
-            print 'dEtaFwdJetClosestLep',ret['dEtaFwdJetClosestLep']
-            print 'dPhiHighestPtSSPair', ret['dPhiHighestPtSSPair']
+            # print 'maxEtaJet25:', ret['maxEtaJet25']
+            # print 'nJet1:', ret['nJetEta1']
+            # print 'dEtaFwdJetBJet',ret['dEtaFwdJetBJet']
+            # print 'dEtaFwdJetClosestLep',ret['dEtaFwdJetClosestLep']
+            # print 'dPhiHighestPtSSPair', ret['dPhiHighestPtSSPair']
+            print 'minDRll', ret['minDRll']
             # add additional printout here to make sure everything is consistent
 
         def done(self):
@@ -133,5 +125,5 @@ if __name__ == '__main__':
 
     T = Tester("tester")
     el = EventLoop([ T ])
-    el.loop([tree], maxEvents = 10)
+    el.loop([tree], maxEvents = 30)
     T.done()
