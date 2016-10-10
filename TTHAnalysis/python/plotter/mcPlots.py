@@ -674,10 +674,10 @@ class PlotMaker:
                     dir = self._dir.mkdir(subname,title)
             dir.cd()
             pspecs = plots.plots()
-            if options.preFitData:
-                matchspec = [ p for p in pspecs if p.name == options.preFitData ]
-                if not matchspec: raise RuntimeError, "Error: plot %s not found" % options.preFitData
-                pspecs = matchspec + [ p for p in pspecs if p.name != options.preFitData ]
+            if self._options.preFitData:
+                matchspec = [ p for p in pspecs if p.name == self._options.preFitData ]
+                if not matchspec: raise RuntimeError, "Error: plot %s not found" % self._options.preFitData
+                pspecs = matchspec + [ p for p in pspecs if p.name != self._options.preFitData ]
             for pspec in pspecs:
                 print "    plot: ",pspec.name
                 pmap = mca.getPlots(pspec,cut,makeSummary=True)
@@ -743,10 +743,10 @@ class PlotMaker:
                     else:
                         total.GetYaxis().SetTitle("density/bin")
                     total.GetYaxis().SetDecimals(True)
-                if options.scaleSignalToData: self._sf = doScaleSigNormData(pspec,pmap,mca)
-                if options.scaleBackgroundToData != []: self._sf = doScaleBkgNormData(pspec,pmap,mca,options.scaleBackgroundToData)
-                elif options.fitData: doNormFit(pspec,pmap,mca)
-                elif options.preFitData and pspec.name == options.preFitData: 
+                if self._options.scaleSignalToData: self._sf = doScaleSigNormData(pspec,pmap,mca)
+                if self._options.scaleBackgroundToData != []: self._sf = doScaleBkgNormData(pspec,pmap,mca,self._options.scaleBackgroundToData)
+                elif self._options.fitData: doNormFit(pspec,pmap,mca)
+                elif self._options.preFitData and pspec.name == self._options.preFitData:
                     doNormFit(pspec,pmap,mca,saveScales=True)
                 #
                 for k,v in pmap.iteritems():
