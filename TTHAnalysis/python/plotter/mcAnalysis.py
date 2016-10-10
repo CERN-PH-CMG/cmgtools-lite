@@ -197,8 +197,8 @@ class MCAnalysis:
                 for tty in ttys: tty.setScaleFactor("%s*%g" % (scale, 1000.0/total_w))
         #if len(self._signals) == 0: raise RuntimeError, "No signals!"
         #if len(self._backgrounds) == 0: raise RuntimeError, "No backgrounds!"
-    def listProcesses(self):
-        ret = self.listSignals() + self.listBackgrounds() 
+    def listProcesses(self,allProcs=False):
+        ret = self.listSignals(allProcs=allProcs) + self.listBackgrounds(allProcs=allProcs)
         if 'data' in self._allData.keys(): ret.append('data')
         return ret
     def listOptionsOnlyProcesses(self):
