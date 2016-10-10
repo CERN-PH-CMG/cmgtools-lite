@@ -125,6 +125,7 @@ triggerFlagsAna.triggerBits = {
   'HT350MET120' : triggers_HT350MET120,
   'HT350MET100' : triggers_HT350MET100,
   'HTMET' : triggers_HT350MET100 + triggers_HT350MET120,
+  'MET100MHT100' : triggers_MET100MHT100,
   ## muon
   'SingleMu' : triggers_1mu,
   'IsoMu27' : triggers_1mu,
