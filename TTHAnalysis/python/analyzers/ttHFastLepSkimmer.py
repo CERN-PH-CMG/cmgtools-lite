@@ -8,6 +8,7 @@ class ttHFastLepSkimmer( Analyzer ):
         self.muIdCut = self.cfg_ana.muCut
         self.eleIdCut = self.cfg_ana.eleCut
         self.requireSameSignPair = getattr(cfg_ana,"requireSameSignPair",False)
+        self.ptCuts = getattr(cfg_ana,"ptCuts",[])
 
     def declareHandles(self):
         super(ttHFastLepSkimmer, self).declareHandles()
@@ -28,18 +29,26 @@ class ttHFastLepSkimmer( Analyzer ):
         
         leptons = 0
         charges = []
+        pts     = []
 
         for el in self.handles['electrons'].product():
             if self.eleIdCut(el): 
                 charges.append(el.charge())
+                pts.append(el.pt())
                 leptons += 1
 
         for mu in self.handles['muons'].product():
             if self.muIdCut(mu): 
                 charges.append(mu.charge())
+                pts.append(mu.pt())
                 leptons += 1
 
+        pts.sort(reverse = True)
         if leptons >= self.cfg_ana.minLeptons:
+             if len(self.ptCuts):
+                for ptLep,cutValue in zip(pts,self.ptCuts):
+                    if ptLep < cutValue:
+                        return False
              self.count.inc('accepted events')
              if self.requireSameSignPair:
                  return any([(q1 == q2) for q1,q2 in itertools.combinations(charges,2)])
