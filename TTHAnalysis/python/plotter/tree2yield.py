@@ -172,11 +172,12 @@ class TreeToYield:
         if self._mcCorrs and self._scaleFactor and self._scaleFactor != 1.0:
             # apply MC corrections to the scale factor
             self._scaleFactor = self.adaptExpr(self._scaleFactor, cut=True)
+        self._mcCorrsInit = self._mcCorrs[:]
+        self._weightString = self.adaptExpr(self._weightString, cut=True)
         if 'FakeRate' in settings:
             self._FR = FakeRate(settings['FakeRate'],self._options.lumi)
             applyFR(self._FR)
         else:
-            self._weightString = self.adaptExpr(self._weightString, cut=True)
             if self._options.forceunweight: self._weight = False
         for macro in self._options.loadMacro:
             libname = macro.replace(".cc","_cc.so").replace(".cxx","_cxx.so")
@@ -207,15 +208,14 @@ class TreeToYield:
         return ttys
     def isVariation(self):
         return self._isVariation
-
     def applyFR(self,FR):
         if FR==None: return
         ## add additional weight correction.
         ## note that the weight receives the other mcCorrections, but not itself
-        frweight = self.adaptExpr(FR.weight(), cut=True)
+        frweight = self.adaptExpr(FR.weight(), cut=True, mcCorrList=self._mcCorrsInit)
         ## modify cuts to get to control region. order is important
+        self._weightString = self.adaptExpr(self._weightString, cut=True, mcCorrList=(FR.cutMods()+FR.mods())) + "* (" + frweight + ")"
         self._mcCorrs = self._mcCorrs[:] + FR.cutMods()  + FR.mods()
-        self._weightString = self.adaptExpr(self._weightString, cut=True) + "* (" + frweight + ")"
         self._weight = True
         if self._options.forceunweight: self._weight = False
     def setScaleFactor(self,scaleFactor):
@@ -248,9 +248,10 @@ class TreeToYield:
         else:
             ret = re.sub(r'\$DATA\{.*?\}', '', re.sub(r'\$MC\{(.*?)\}', r'\1', expr));
         return ret
-    def adaptExpr(self,expr,cut=False):
+    def adaptExpr(self,expr,cut=False,mcCorrList=None):
+        _mcCorrList = mcCorrList if mcCorrList else self._mcCorrs
         ret = self.adaptDataMCExpr(expr)
-        for mcc in self._mcCorrs:
+        for mcc in _mcCorrList:
             ret = mcc(ret,self._name,self._cname,cut)
         return ret
     def _init(self):
