@@ -48,6 +48,7 @@ triggers_MET170 = ["HLT_PFMET170_NoiseCleaned_v*"]
 triggers_HTMET = ["HLT_PFHT350_PFMET120_*"] # include all noise cleaning options!
 triggers_HT350MET120 = ["HLT_PFHT350_PFMET120_*"] # include all noise cleaning options!
 triggers_HT350MET100 = ["HLT_PFHT350_PFMET100_*"] # include all noise cleaning options!
+triggers_MET100MHT100 = ['HLT_PFMET100_PFMHT100_IDTight_*', 'HLT_PFMETNoMu100_PFMHTNoMu100_IDTight_*']
 
 #### Combined paths
 
