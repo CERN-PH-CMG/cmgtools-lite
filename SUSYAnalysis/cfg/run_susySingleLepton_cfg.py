@@ -203,8 +203,8 @@ genAna.allGenTaus = True
 #-------- HOW TO RUN
 isData = True # default, but will be overwritten below
 
-sample = 'MC'
-#sample = 'data'
+#sample = 'MC'
+sample = 'data'
 #sample = 'Signal'
 test = 1
 
@@ -358,18 +358,20 @@ elif sample == "data":
 
   #selectedComponents = [SingleElectron_Run2016B_PromptReco_v2, SingleMuon_Run2016B_PromptReco_v2]
 
-  selectedComponents = [SingleElectron_Run2016B_PromptReco_v2, SingleElectron_Run2016C_PromptReco_v2]
+  #selectedComponents = [SingleElectron_Run2016B_PromptReco_v2, SingleElectron_Run2016C_PromptReco_v2]
   #selectedComponents = [SingleMuon_Run2016B_PromptReco_v2, SingleMuon_Run2016C_PromptReco_v2]
+  selectedComponents = [SingleElectron_Run2016B_PromptReco_v2, SingleElectron_Run2016C_PromptReco_v2, SingleElectron_Run2016D_PromptReco_v2,
+                        SingleMuon_Run2016B_PromptReco_v2, SingleMuon_Run2016C_PromptReco_v2, SingleMuon_Run2016D_PromptReco_v2]
 
   if test!=0 and jsonAna in susyCoreSequence: susyCoreSequence.remove(jsonAna)
   if test==1:
+    # test one component (2 thread)
     comp = SingleElectron_Run2016B_PromptReco_v2 #JetHT_Run2016B_PromptReco_v2_HT800Only
 #SingleElectron_Run2016B_PromptReco_v2
 #    comp.files = comp.files[:1]
-    comp.files = comp.files[10:11]
+    comp.files = comp.files[10:12]
     #comp.files = comp.files[10:11]
     selectedComponents = [comp]
-    comp.splitFactor = 1
     comp.splitFactor = len(comp.files)
   elif test==2:
     # test all components (1 thread per component).
