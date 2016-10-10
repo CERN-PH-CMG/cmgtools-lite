@@ -259,19 +259,18 @@ def main(args, options):
     # Define the variables to be used:
     variables = [
         ("nJet25_Recl", "I"),
-        ("nJet1", "I"),
+        ("nJetEta1", "I"),
         ("nBJetLoose25_Recl", "I"),
         ("maxEtaJet25", "F"),
         ("dEtaFwdJetBJet", "F"),
         ("dEtaFwdJetClosestLep", "F"),
         ("dPhiHighestPtSSPair", "F"),
+        ("Lep3Pt := LepGood_conePt[iF_Recl[2]]", "F"),
+        ("minDRll", "F"),
         ("lepCharge := LepGood_charge[iF_Recl[0]]+LepGood_charge[iF_Recl[1]]+LepGood_charge[iF_Recl[2]]", "I"),
         
-
-
         ## Add more here?
-        # - lepton pt?
-        # - min DR(l,l)
+       
     ]
 
     # Define the signal and background datasets
