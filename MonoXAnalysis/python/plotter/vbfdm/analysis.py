@@ -82,7 +82,7 @@ class Analysis:
         weightsString = " -W '" + "*".join(weights[region]) + "'"
 
         self.cuts = cuts[region] 
-        self.extraopt = ' -X trigger -X metfilters '
+        self.extraopt = ' -X trigger '
         self.command = 'python ' + runy + cuts[region] + anaOptsString + weightsString + self.extraopt
 
     def runOne(self):
@@ -134,7 +134,6 @@ if __name__ == "__main__":
                      }
     rebinFactor = {'v_presel':1, 'vbfjets':1, 'full_sel':4}
     ctrl_regions = ['zmumu','wmunu','zee','wenu']
-
 
     if options.fullControlRegions:
         pdirbase = options.pdir
