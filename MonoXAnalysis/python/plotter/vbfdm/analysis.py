@@ -151,12 +151,14 @@ if __name__ == "__main__":
 
 
     else: 
-        mcpOpts = []
-        if(options.region=='signal'): mcpOpts += ['--showIndivSigShapes','--xp data,QCD','--rebin 2']
-        analysis = Analysis(options,mcpOpts)
-        analysis.runOne()
+        if len(options.transferFactor)==0:
+            mcpOpts = []
+            if(options.region=='signal'): mcpOpts += ['--showIndivSigShapes','--xp data,QCD','--rebin 2']
+            analysis = Analysis(options,mcpOpts)
+            analysis.runOne()
         
 
+    # eg.:  vbfdm/analysis.py --propSystToVar detajj_fullsel
     if len(options.propSystToVar)>0:
         pdirbase = options.pdir if options.pdir else "templates"
         if not os.path.exists(pdirbase): os.mkdir(pdirbase)
@@ -181,6 +183,7 @@ if __name__ == "__main__":
             analysis.runOneSyst(options.propSystToVar,procs,myout)
 
 
+    # eg:  vbfdm/analysis.py --tF detajj_fullsel -p templates
     if len(options.transferFactor)>0:
 
         # list of transfer factors to do, with files with input templates
@@ -245,7 +248,7 @@ if __name__ == "__main__":
             outname = options.pdir+"/rfactors_"+num_proc+num_sel+"_Over_"+tf[3]+den_sel+".root"
             outfile = rt.TFile(outname,"RECREATE")
          
-            rfm = RFactorMaker('detajj_fullsel',num_file,den_file,num_proc,den_proc,systs)
+            rfm = RFactorMaker(options.transferFactor,num_file,den_file,num_proc,den_proc,systs)
             hists = rfm.computeFullError(outfile)
             rfac_full = rfm.computeRFactors(hists,outfile,"full")
             hists_statonly = {}
