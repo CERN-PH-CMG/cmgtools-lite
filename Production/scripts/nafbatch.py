@@ -27,7 +27,7 @@ def batchScriptNAF( jobDir='/nfs/dust/cms/user/lobanov/SUSY/Run2/CMG/CMSSW_7_0_6
 ## stderr and stdout are merged together to stdout
 #$ -j y
 ##(send mail on job's end and abort)
-#$ -m a
+##$ -m a
 #$ -l site=hh
 ## transfer env var from submission host
 #$ -V
@@ -66,6 +66,8 @@ then
    echo "$Jobdir is not a chunk!"
    exit 0
 fi
+
+export X509_USER_PROXY=$HOME/k5-ca-proxy.pem
 
 echo "Changing to job dir" $JobDir
 cd $JobDir
