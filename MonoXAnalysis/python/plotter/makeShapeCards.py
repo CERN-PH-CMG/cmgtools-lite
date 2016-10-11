@@ -3,11 +3,6 @@ from CMGTools.MonoXAnalysis.plotter.mcAnalysis import *
 import ROOT
 import re, sys, os, os.path, copy
 
-
-
-#if "/RooParametricHist_cxx.so" not in ROOT.gSystem.GetLibraries():
-#     ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/MonoXAnalysis/python/plotter/RooParametricHist.cxx+" % os.environ['CMSSW_BASE']); 
-
 systs = {}
 
 from optparse import OptionParser
