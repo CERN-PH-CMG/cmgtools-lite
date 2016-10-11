@@ -152,7 +152,7 @@ if __name__ == "__main__":
 
     else: 
         mcpOpts = []
-        if(options.region=='signal'): mcpOpts += ['--showIndivSigShapes','--xp data','--rebin 2']
+        if(options.region=='signal'): mcpOpts += ['--showIndivSigShapes','--xp data,QCD','--rebin 2']
         analysis = Analysis(options,mcpOpts)
         analysis.runOne()
         
