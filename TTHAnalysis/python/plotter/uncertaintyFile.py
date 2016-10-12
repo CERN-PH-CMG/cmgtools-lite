@@ -17,7 +17,8 @@ class Uncertainty:
         self.fakerate = [FakeRate(''),FakeRate('')]
         self.fakerate[0]._weight = '1'
         self.fakerate[1]._weight = '1'
-        self.trivialFunc={'up': None, 'dn': None}
+        self.trivialFunc=[None,None]
+        self.normUnc=[None,None]
         self.prepFR()
 
     def prepFR(self):
@@ -31,26 +32,53 @@ class Uncertainty:
 
         elif self.unc_type=='templateSymm':
             self.fakerate[1] = None
-            self.trivialFunc['dn'] = 'symmetrize_up'
+            self.trivialFunc[1] = 'symmetrize_up_to_dn'
             idx=0
             if 'FakeRate' in self.extra_args[idx]:
                 self.fakerate[idx] = FakeRate(self.extra_args[idx]['FakeRate'])
             if 'AddWeight' in self.extra_args[idx]:
                 self.fakerate[idx]._weight = '(%s)*(%s)'%(self.fakerate[idx]._weight,self.extra_args[idx]['AddWeight'])
+
+        elif self.unc_type=='normAsymm':
+            self.fakerate = [None,None]
+            self.trivialFunc = ['apply_norm_up','apply_norm_dn']
+            for idx in xrange(2):
+                if 'NormFactor' in self.extra_args[idx]: self.normUnc[idx] = float(self.extra_args[idx]['NormFactor'])
+                else: self.normUnc[idx] = 1
+
+        elif self.unc_type=='normSymm':
+            self.fakerate = [None,None]
+            self.trivialFunc = ['apply_norm_up','apply_norm_dn']
+            idx=0
+            if 'NormFactor' in self.extra_args[idx]:
+                self.normUnc[idx] = float(self.extra_args[idx]['NormFactor'])
+                self.normUnc[1] = 1.0/self.normUnc[0]
             
         else: raise RuntimeError, 'Uncertainty type not recognised'
             
     def isTrivial(self,sign):
         return (self.getFR(sign)==None)
     def getTrivial(self,sign,results):
+        idx = 0 if sign=='up' else 1
         if self.getFR(sign) or (self.trivialFunc[sign]==None): raise RuntimeError
         return getattr(self,self.trivialFunc[sign])(results)
+    def isNorm(self):
+        return (self.normUnc!=[None,None])
 
-    def symmetrize_up(self,results):
+    def symmetrize_up_to_dn(self,results):
         central, up, down = results
         h = central.Clone('');
         h.Multiply(h)
         h.Divide(up)
+        return h
+    def apply_norm_up(self,results):
+        return apply_norm('up',results)
+    def apply_norm_dn(self,results):
+        return apply_norm('dn',results)
+    def apply_norm(self,sign,results):
+        central, up, down = results
+        h = central.Clone('')
+        h.Scale(self.normUnc[0] if sign=='up' else self.normUnc[1])
         return h
 
     def procmatch(self):
