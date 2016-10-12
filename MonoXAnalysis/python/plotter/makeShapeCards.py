@@ -2,6 +2,7 @@
 from CMGTools.MonoXAnalysis.plotter.mcAnalysis import *
 import ROOT
 import re, sys, os, os.path, copy
+import numpy as np
 
 systs = {}
 
@@ -56,8 +57,7 @@ def addCorrelatedShape(process,var,region,workspace,hist):
     for b in range(1,hist.GetNbinsX()+1): binlist.add(bins[b-1])
 
     procnorm = process+'_'+region+'_norm'
-    rrv = ROOT.RooRealVar(var,var,hist.GetXaxis().GetXmin(),hist.GetXaxis().GetXmax())
-    phist = ROOT.RooParametricHist(process+'_'+region,"",rrv,binlist,hist)
+    phist = ROOT.RooParametricHist(process+'_'+region,"",var,binlist,hist)
     norm = ROOT.RooAddition(procnorm,"",binlist)
     _import = SafeWorkspaceImporter(workspace)
     _import(phist,ROOT.RooFit.RecycleConflictNodes())
@@ -76,7 +76,7 @@ def addCorrelatedShapeFromSR(process,var,thisregion,correlatedRegion,workspace,h
         rbin_rrv = ROOT.RooRealVar('r_'+process+'_'+thisregion+'_bin'+str(b),"",hist.GetBinContent(b))
         rbins.append(rbin_rrv)
         # nuisance parameter in the fit limited to +/-5 sigma
-        extreme = min(5.,h_alphahist_fullerr.GetBinContent(b)/h_alphahist_fullerr.GetBinError(i))
+        extreme = min(5.,h_alphahist_fullerr.GetBinContent(b)/h_alphahist_fullerr.GetBinError(b))
         rerrbin_rrv = ROOT.RooRealVar(process+'_'+thisregion+'_bin'+str(b)+'_Runc',"",0,-extreme,extreme)
         rerrbins.append(rerrbin_rrv)
 
@@ -99,19 +99,23 @@ def addCorrelatedShapeFromSR(process,var,thisregion,correlatedRegion,workspace,h
         binlist.add(bins[b-1])
 
     procnorm = process+'_'+thisregion+'_norm'
-    rrv = ROOT.RooRealVar(var,var,hist.GetXaxis().GetXmin(),hist.GetXaxis().GetXmax())
-    phist = ROOT.RooParametricHist(process+'_'+thisregion,"",rrv,binlist,hist)
+    phist = ROOT.RooParametricHist(process+'_'+thisregion,"",var,binlist,hist)
     norm = ROOT.RooAddition(procnorm,"",binlist)
     _import = SafeWorkspaceImporter(workspace)
     _import(phist,ROOT.RooFit.RecycleConflictNodes())
     _import(norm,ROOT.RooFit.RecycleConflictNodes())
-       
-def addTemplate(process,var,region,workspace,hist):
-    rrv = ROOT.RooRealVar(var,var,hist.GetXaxis().GetXmin(),hist.GetXaxis().GetXmax())
-    varlist = ROOT.RooArgList(rrv)
+
+def addTemplate(process,varlist,region,workspace,hist):
     data_hist = ROOT.RooDataHist(process+'_'+region,"",varlist,hist)
     _import = SafeWorkspaceImporter(workspace)
     _import(data_hist)
+
+def getBinnedVar(varname,hist):
+    binBoundaries = [hist.GetBinLowEdge(b) for b in range(1,hist.GetNbinsX()+2)]
+    binning = ROOT.RooBinning(len(binBoundaries)-1,np.array(binBoundaries),varname+'_binning')
+    rrv = ROOT.RooRealVar(varname,varname,hist.GetXaxis().GetXmin(),hist.GetXaxis().GetXmax())
+    rrv.setBinning(binning)
+    return rrv
 
 masses = [ 125.0 ]
 
@@ -504,33 +508,36 @@ for mass in masses:
         for p0 in options.correlateProcessCR:
             corr_proc = p0.split(",")[0]
             nbins = next(report.itervalues()).GetNbinsX()
-            for b in range(1,nbins): 
+            for b in range(1,nbins+1): 
                 datacard.write(('%-20s param    %-7d %-7d' % ("_".join([corr_proc,options.region,("bin%d"%b),"Runc"]),0,1 )) + "\n")
 
 for mass in masses:
     myout = outdir + ("%s/" % mass)
     workspace = ROOT.RooWorkspace("w","workspace")
 
+    var = getBinnedVar("x",report.itervalues().next())
+    varlist = ROOT.RooArgList(var)
+
     if len(options.correlateProcessCR):
         for p0 in options.correlateProcessCR:
             pars = p0.split(",")
             proc = pars[0]; corr_region = pars[1]; alphahist = pars[2]; filealpha = pars[3]
-            addCorrelatedShapeFromSR(proc,"x",options.region,corr_region,workspace,h,alphahist,filealpha)
+            addCorrelatedShapeFromSR(proc,var,options.region,corr_region,workspace,h,alphahist,filealpha)
     
     for n,h in report.iteritems():
         if options.verbose > 0: print "\t%s (%8.3f events)" % (h.GetName(),h.Integral())
-        proc = (h.GetName()).split("_")[-1]
-        print proc
+        proc = "_".join((h.GetName()).split("_")[1:])
+        if proc == "data": continue
         simpleTemplate = True
         if len(options.processesFromCR):
             for p0 in options.processesFromCR:
                 for p in p0.split(","):
                     if re.match(p+"$", proc): 
                         simpleTemplate = False
-                        addCorrelatedShape(proc,"x",options.region,workspace,h)
+                        addCorrelatedShape(proc,var,options.region,workspace,h)
         if simpleTemplate: 
             print "adding template for process ",proc
-            addTemplate(proc if proc!="data" else "data_obs","x",options.region,workspace,h)
+            addTemplate(proc,varlist,options.region,workspace,h)
 
     workspace.writeToFile(myout+binname+".input.root",ROOT.kTRUE)
 
