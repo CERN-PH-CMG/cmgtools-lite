@@ -1,45 +1,5 @@
-#TT_all: TTJets_DiLepton: xsec : 1;    FillColor=ROOT.kGray,    Label="tt\, prompt"
-TTT2l+: TTJets_DiLepton: xsec : LepGood2_mcMatchId !=0;    FillColor=ROOT.kGray,    Label="tt\, prompt"
-TTTb : TTJets_DiLepton: xsec : LepGood2_mcMatchId ==0 && LepGood2_mcMatchAny == 5;    FillColor=ROOT.kGreen-5, Label="tt\, b \#rightarrow l_{np}"
-TTTj : TTJets_DiLepton: xsec : LepGood2_mcMatchId ==0 && LepGood2_mcMatchAny <= 4;    FillColor=ROOT.kGreen-9, Label="tt\, j \#rightarrow l_{np}"
-
-#TT_all: TTJets_SingleLeptonFromT: xsec : 1;    FillColor=ROOT.kGray,    Label="tt\, prompt"
-TTT2l+: TTJets_SingleLeptonFromT: xsec : LepGood2_mcMatchId !=0;    FillColor=ROOT.kGray,    Label="tt\, prompt"
-TTTb : TTJets_SingleLeptonFromT: xsec : LepGood2_mcMatchId ==0 && LepGood2_mcMatchAny == 5;    FillColor=ROOT.kGreen-5, Label="tt\, b \#rightarrow l_{np}"
-TTTj : TTJets_SingleLeptonFromT: xsec : LepGood2_mcMatchId ==0 && LepGood2_mcMatchAny <= 4;    FillColor=ROOT.kGreen-9, Label="tt\, j \#rightarrow l_{np}"
-
-#TT_all: TTJets_SingleLeptonFromTbar: xsec : 1;    FillColor=ROOT.kGray,    Label="tt\, prompt"
-TTT2l+: TTJets_SingleLeptonFromTbar: xsec : LepGood2_mcMatchId !=0;    FillColor=ROOT.kGray,    Label="tt\, prompt"
-TTTb : TTJets_SingleLeptonFromTbar: xsec : LepGood2_mcMatchId ==0 && LepGood2_mcMatchAny == 5;    FillColor=ROOT.kGreen-5, Label="tt\, b \#rightarrow l_{np}"
-TTTj : TTJets_SingleLeptonFromTbar: xsec : LepGood2_mcMatchId ==0 && LepGood2_mcMatchAny <= 4;    FillColor=ROOT.kGreen-9, Label="tt\, j \#rightarrow l_{np}"
-
-DY : DYJetsToLL_M10to50: xsec ; FillColor=ROOT.kCyan, Label="Z+jets"
-DY : DYJetsToLL_M50: xsec ; FillColor=ROOT.kCyan, Label="Z+jets"
-
-
-TTV: TTWToLNu:     xsec ;  FillColor=ROOT.kOrange
-TTV: TTZToLLNuNu:     xsec ;  FillColor=ROOT.kOrange
-TTH : TTHnobb_mWCutfix_ext1 : xsec ; FillColor=ROOT.kRed
-
-VV : WZTo3LNu: xsec ; FillColor=ROOT.kViolet-4
-#VV : ZZTo2L2Q: xsec ; FillColor=ROOT.kViolet-4
-VV : WWTo2L2Nu: xsec ; FillColor=ROOT.kViolet-4
-
-TW : T_tWch: xsec; FillColor=ROOT.kGray+2, Label="tW"
-TW : TBar_tWch: xsec; FillColor=ROOT.kGray+2, Label="tW"
-
-Single top    : TToLeptons_sch:     xsec ;  FillColor=ROOT.kGray+2
-Single top    : TBarToLeptons_tch_powheg:     xsec ;  FillColor=ROOT.kGray+2
-
-WJets    : WJetsToLNu_LO :  xsec; FillColor=ROOT.kCyan+2
-
-
-
-
-
-
-data : DoubleEG_Run2016B_PromptReco_v2+DoubleEG_Run2016C_PromptReco_v2+DoubleEG_Run2016D_PromptReco_v2_runs_276315_276384+DoubleEG_Run2016D_PromptReco_v2_runs_276385_276811
-data : DoubleMuon_Run2016B_PromptReco_v2+DoubleMuon_Run2016C_PromptReco_v2+DoubleMuon_Run2016D_PromptReco_v2_runs_276315_276384+DoubleMuon_Run2016D_PromptReco_v2_runs_276385_276811
-data : MuonEG_Run2016B_PromptReco_v2+MuonEG_Run2016C_PromptReco_v2+MuonEG_Run2016D_PromptReco_v2_runs_276315_276384+MuonEG_Run2016D_PromptReco_v2_runs_276385_276811
-data : SingleElectron_Run2016B_PromptReco_v2+SingleElectron_Run2016C_PromptReco_v2+SingleElectron_Run2016D_PromptReco_v2_runs_276315_276384+SingleElectron_Run2016D_PromptReco_v2_runs_276385_276811
-data : SingleMuon_Run2016B_PromptReco_v2+SingleMuon_Run2016C_PromptReco_v2+SingleMuon_Run2016D_PromptReco_v2_runs_276315_276384+SingleMuon_Run2016D_PromptReco_v2_runs_276385_276811
+incl_DY : + ; IncludeMca="lepton-validation/mca_includes/mca_dy.txt"
+incl_TT : + ; IncludeMca="lepton-validation/mca_includes/mca_tt_splitted.txt"
+incl_oth : + ; IncludeMca="lepton-validation/mca_includes/mca_singleTop_VV_rares.txt"
+incl_Wjets : + ; IncludeMca="lepton-validation/mca_includes/mca_wjets.txt"
+incl_data : + ; IncludeMca="lepton-validation/mca_includes/mca_data.txt"
