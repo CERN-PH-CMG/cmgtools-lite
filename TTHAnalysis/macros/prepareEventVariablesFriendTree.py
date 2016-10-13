@@ -9,6 +9,7 @@ from CMGTools.TTHAnalysis.tools.leptonJetReCleaner import LeptonJetReCleaner
 from glob import glob
 from math import ceil
 import ROOT
+ROOT.PyConfig.IgnoreCommandLineOptions = True
 
 MODULES = []
 
@@ -573,6 +574,7 @@ def _runIt(myargs):
     booker.done()
     fb.Close()
     time = timer.RealTime()
+    nev = el._doneEvents
     print "=== %s done (%d entries, %.0f s, %.0f e/s) ====" % ( name, nev, time,(nev/time) )
     if fetchedfile and os.path.exists(fetchedfile):
         print 'Cleaning up: removing %s'%fetchedfile
