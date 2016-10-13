@@ -130,6 +130,9 @@ class MCAnalysis:
             if self.variationsFile:
                 for var in self.variationsFile.uncertainty():
                     if var.procmatch().match(pname) and var.binmatch().match(options.binname): variations.append(var)
+            if 'NormSystematic' in extra:
+                variations.append(Uncertainty('norm_%s'%pname,re.compile(pname+'$'),re.compile(options.binname+'$'),'normSymm',[{'NormFactor': 1+float(extra['NormSystematic'])}]))
+                print 'Added normalization uncertainty %s to %s, %s. Please migrate away from using the deprecated NormSystematic option.'%(extra['NormSystematic'],pname,field[1])
 
             cnames = [ x.strip() for x in field[1].split("+") ]
             total_w = 0.; to_norm = False; ttys = [];

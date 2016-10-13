@@ -787,12 +787,6 @@ class PlotMaker:
                         if plotmode == "stack":
                             stack.Add(plot.raw())
                             total+=plot
-                            if mca.getProcessOption(p,'NormSystematic',0.0) > 0:
-                                raise
-                                syst = mca.getProcessOption(p,'NormSystematic',0.0)
-                                if "TH1" in plot.ClassName():
-                                    for b in xrange(1,plot.GetNbinsX()+1):
-                                        totalSyst.SetBinError(b, hypot(totalSyst.GetBinError(b), syst*plot.GetBinContent(b)))
                         else:
                             plot.SetLineColor(plot.GetFillColor())
                             plot.SetLineWidth(3)

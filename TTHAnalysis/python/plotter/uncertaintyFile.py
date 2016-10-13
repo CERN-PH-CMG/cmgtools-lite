@@ -72,9 +72,9 @@ class Uncertainty:
         h.Divide(up)
         return h
     def apply_norm_up(self,results):
-        return apply_norm('up',results)
+        return self.apply_norm('up',results)
     def apply_norm_dn(self,results):
-        return apply_norm('dn',results)
+        return self.apply_norm('dn',results)
     def apply_norm(self,sign,results):
         central, up, down = results
         h = central.Clone('')
