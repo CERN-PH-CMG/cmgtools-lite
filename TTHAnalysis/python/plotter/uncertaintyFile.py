@@ -10,8 +10,8 @@ from CMGTools.TTHAnalysis.plotter.fakeRate import *
 class Uncertainty:
     def __init__(self,name,procmatch,binmatch,unc_type,extra_args={}):
         self.name = name
-        self.procmatch = procmatch
-        self.binmatch = binmatch
+        self._procmatch = procmatch
+        self._binmatch = binmatch
         self.unc_type = unc_type
         self.extra_args = extra_args
         self.fakerate = [FakeRate(''),FakeRate('')]
@@ -60,8 +60,8 @@ class Uncertainty:
         return (self.getFR(sign)==None)
     def getTrivial(self,sign,results):
         idx = 0 if sign=='up' else 1
-        if self.getFR(sign) or (self.trivialFunc[sign]==None): raise RuntimeError
-        return getattr(self,self.trivialFunc[sign])(results)
+        if self.getFR(sign) or (self.trivialFunc[idx]==None): raise RuntimeError
+        return getattr(self,self.trivialFunc[idx])(results)
     def isNorm(self):
         return (self.normUnc!=[None,None])
 
@@ -82,9 +82,9 @@ class Uncertainty:
         return h
 
     def procmatch(self):
-        return self.procmatch
+        return self._procmatch
     def binmatch(self):
-        return self.binmatch
+        return self._binmatch
     def unc_type(self):
         return self.unc_type
     def getFR(self,sign):
@@ -92,7 +92,7 @@ class Uncertainty:
         elif sign=='dn': return self.fakerate[1]
         else: raise RuntimeError
     def __str__(self):
-        return ' : '.join([self.name,self.procmatch.pattern,self.binmatch.pattern,self.unc_type])+'\n'
+        return ' : '.join([self.name,self._procmatch.pattern,self._binmatch.pattern,self.unc_type])+'\n'
 
 class UncertaintyFile:
     def __init__(self,txtfileOrUncertainty):

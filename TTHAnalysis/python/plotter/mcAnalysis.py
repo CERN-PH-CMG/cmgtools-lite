@@ -50,6 +50,7 @@ class MCAnalysis:
             to = to.strip()
             for k in fro.split(","):
                 self._premap.append((re.compile(k.strip()+"$"), to))
+        self.variationsFile = UncertaintyFile(options.variationsFile) if options.variationsFile else None
         self.readMca(samples,options)
 
     def readMca(self,samples,options):
@@ -123,6 +124,13 @@ class MCAnalysis:
                 for p in p0.split(","):
                     if re.match(p+"$", field[1]): skipMe = True
             if skipMe: continue
+
+            # Load variations if matching this process name
+            variations=[]
+            if self.variationsFile:
+                for var in self.variationsFile.uncertainty():
+                    if var.procmatch().match(pname) and var.binmatch().match(options.binname): variations.append(var)
+
             cnames = [ x.strip() for x in field[1].split("+") ]
             total_w = 0.; to_norm = False; ttys = [];
             is_w = -1
@@ -154,7 +162,7 @@ class MCAnalysis:
                     rootfile = open(rootfile+".url","r").readline().strip()
                 pckfile = basepath+"/%s/skimAnalyzerCount/SkimReport.pck" % cname
 
-                tty = TreeToYield(rootfile, options, settings=extra, name=pname, cname=cname, objname=objname); ttys.append(tty)
+                tty = TreeToYield(rootfile, options, settings=extra, name=pname, cname=cname, objname=objname, variation_inputs=variations); ttys.append(tty)
                 if signal: 
                     self._signals.append(tty)
                     self._isSignal[pname] = True
@@ -625,6 +633,8 @@ def addMCAnalysisOptions(parser,addTreeToYieldOnesToo=True):
     parser.add_option("--scaleplot", dest="plotscalemap", type="string", default=[], action="append", help="Scale plots by this factor (before grouping). Syntax is '<newname> := (comma-separated list of regexp)', can specify multiple times.")
     parser.add_option("-t", "--tree",          dest="tree", default='ttHLepTreeProducerTTH', help="Pattern for tree name");
     parser.add_option("--fom", "--figure-of-merit", dest="figureOfMerit", type="string", default=[], action="append", help="Add this figure of merit to the output table (S/B, S/sqrB, S/sqrSB)")
+    parser.add_option("--binname", dest="binname", type="string", default='default', help="Bin name for uncertainties matching and datacard preparation [default]")
+    parser.add_option("--unc", dest="variationsFile", type="string", default=None, help="Uncertainty file to be loaded")
 
 if __name__ == "__main__":
     from optparse import OptionParser

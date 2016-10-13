@@ -133,7 +133,7 @@ def cropNegativeBins(histo):
 
 
 class TreeToYield:
-    def __init__(self,root,options,scaleFactor=1.0,name=None,cname=None,settings={},objname=None):
+    def __init__(self,root,options,scaleFactor=1.0,name=None,cname=None,settings={},objname=None,variation_inputs=[]):
         self._name  = name  if name != None else root
         self._cname = cname if cname != None else self._name
         self._fname = root
@@ -147,7 +147,6 @@ class TreeToYield:
         self._fullYield = 0 # yield of the full sample, as if it passed the full skim and all cuts
         self._fullNevt = 0 # number of events of the full sample, as if it passed the full skim and all cuts
         self._settings = settings
-        self._variationFile = None
         self._isVariation = None
         self._variations = []
         loadMCCorrections(options)            ## make sure this is loaded
@@ -187,10 +186,8 @@ class TreeToYield:
         self._elist = None
         self._entries = None
         #print "Done creation  %s for task %s in pid %d " % (self._fname, self._name, os.getpid())
-        if 'Variation' in settings: # and self._options.allProcesses:
-            self._variationFile = UncertaintyFile(settings['Variation'])
-            for _var in self._variationFile.uncertainty():
-                self._variations.append(_var)
+        for _var in variation_inputs:
+            self._variations.append(_var)
 
     def getVariations(self):
         return self._variations
@@ -200,7 +197,6 @@ class TreeToYield:
             for direction in ['up','dn']:
                 tty2 = copy(self)
                 tty2._name = tty2._name + '_%s_%s'%(var.name,direction)
-                tty2._variationFile = None
                 tty2._isVariation = (var,direction)
                 tty2._variations = []
                 tty2.applyFR(var.getFR(direction))
