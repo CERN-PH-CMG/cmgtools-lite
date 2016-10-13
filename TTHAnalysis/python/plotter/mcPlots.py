@@ -165,24 +165,8 @@ def reMax(hist,hist2,islog,factorLin=1.3,factorLog=2.0,doWide=False):
         if islog: hist.GetYaxis().SetRangeUser(0.1 if doWide else 0.9, max0)
         else:     hist.GetYaxis().SetRangeUser(0,max0)
 
-def doShadedUncertainty((h,hup,hdn)):
-    xaxis = h.GetXaxis()
-    points = []; errors = []
-    for i in xrange(h.GetNbinsX()):
-        N = h.GetBinContent(i+1);
-        dN = h.GetBinError(i+1)
-        if N == 0 and dN == 0: continue
-        x = xaxis.GetBinCenter(i+1);
-        points.append( (x,N) )
-        EYlow = hypot(N-min(N,hup.GetBinContent(i+1),hdn.GetBinContent(i+1)),dN)
-        EYhigh = hypot(max(N,hup.GetBinContent(i+1),hdn.GetBinContent(i+1))-N,dN)
-        EXhigh, EXlow = (xaxis.GetBinUpEdge(i+1)-x, x-xaxis.GetBinLowEdge(i+1))
-        errors.append( (EXlow,EXhigh,EYlow,EYhigh) )
-    ret = ROOT.TGraphAsymmErrors(len(points))
-    ret.SetName(h.GetName()+"_errors")
-    for i,((x,y),(EXlow,EXhigh,EYlow,EYhigh)) in enumerate(zip(points,errors)):
-        ret.SetPoint(i, x, y)
-        ret.SetPointError(i, EXlow,EXhigh,EYlow,EYhigh)
+def doShadedUncertainty(h):
+    ret = h.graphAsymmTotalErrors()
     ret.SetFillStyle(3244);
     ret.SetFillColor(ROOT.kGray+2)
     ret.SetMarkerStyle(0)
@@ -240,7 +224,7 @@ def doStackSigScaledNormData(pspec,pmap):
     if "background" in pmap:
         bkg = pmap["background"]
     else:
-        bkg = sig.Clone(); bkg.Reset()
+        bkg = sig.raw().Clone(); bkg.Reset()
     sf = (data.Integral()-bkg.Integral())/sig.Integral()
     sig.Scale(sf)
     sig.Add(bkg)
@@ -260,7 +244,7 @@ def doScaleSigNormData(pspec,pmap,mca):
     if "background" in pmap:
         bkg = pmap["background"]
     else:
-        bkg = sig.Clone(); bkg.Reset()
+        bkg = sig.raw().Clone(); bkg.Reset()
     sf = (data.Integral()-bkg.Integral())/sig.Integral()
     signals = [ "signal" ] + mca.listSignals()
     for p,h in pmap.iteritems():
@@ -394,7 +378,7 @@ def doNormFit(pspec,pmap,mca,saveScales=False):
     pspec.setLog("Fitting", fitlog)
     
 
-def doRatioHists(pspec,pmap,total,totalSyst,maxRange,fixRange=False,fitRatio=None,errorsOnRef=True,ratioNums="signal",ratioDen="background",ylabel="Data/Pred.",doWide=False,showStatTotLegend=False):
+def doRatioHists(pspec,pmap,total,maxRange,fixRange=False,fitRatio=None,errorsOnRef=True,ratioNums="signal",ratioDen="background",ylabel="Data/Pred.",doWide=False,showStatTotLegend=False):
     numkeys = [ "data" ]
     if "data" not in pmap: 
         if len(pmap) >= 4 and ratioDen in pmap:
@@ -416,7 +400,6 @@ def doRatioHists(pspec,pmap,total,totalSyst,maxRange,fixRange=False,fitRatio=Non
             # then we can overwrite total with background
             numkey = 'signal'
             total     = pmap[ratioDen]
-            totalSyst = pmap[ratioDen]
         else:    
             return (None,None,None,None)
     ratios = [] #None
@@ -434,8 +417,8 @@ def doRatioHists(pspec,pmap,total,totalSyst,maxRange,fixRange=False,fitRatio=Non
             ratio = pmap[numkey].Clone("data_div"); 
             ratio.Divide(total)
         ratios.append(ratio)
-    unity  = totalSyst.Clone("sim_div");
-    unity0 = total.Clone("sim_div");
+    unity  = total.graphAsymmTotalErrors(relative=True)
+    unity0  = total.graphAsymmTotalErrors(toadd=[],relative=True)
     rmin, rmax =  1,1
     for b in xrange(1,unity.GetNbinsX()+1):
         e,e0,n = unity.GetBinError(b), unity0.GetBinError(b), unity.GetBinContent(b)
@@ -889,7 +872,7 @@ class PlotMaker:
                     total.SetMaximum(pspec.getOption('MoreY',1.0)*total.GetMaximum())
                 totalError=None
                 if options.showMCError:
-                    totalError = doShadedUncertainty(totalSyst)
+                    totalError = doShadedUncertainty(total)
                 is2D = total.InheritsFrom("TH2")
                 if 'data' in pmap: 
                     if options.poisson and not is2D:
@@ -965,7 +948,7 @@ class PlotMaker:
                 rdata,rnorm,rnorm2,rline = (None,None,None,None)
                 if doRatio:
                     p2.cd(); 
-                    rdata,rnorm,rnorm2,rline = doRatioHists(pspec,pmap,total,totalSyst, maxRange=options.maxRatioRange, fixRange=options.fixRatioRange,
+                    rdata,rnorm,rnorm2,rline = doRatioHists(pspec,pmap,total, maxRange=options.maxRatioRange, fixRange=options.fixRatioRange,
                                                             fitRatio=options.fitRatio, errorsOnRef=options.errorBandOnRatio, 
                                                             ratioNums=options.ratioNums, ratioDen=options.ratioDen, ylabel=options.ratioYLabel, doWide=doWide, showStatTotLegend=True)
                 if self._options.printPlots:

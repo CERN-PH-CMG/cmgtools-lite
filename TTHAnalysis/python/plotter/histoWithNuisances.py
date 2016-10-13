@@ -1,7 +1,7 @@
 #!/usr/bin/env python
-from math import sqrt
+from math import sqrt,hypot
 from copy import copy
-
+import ROOT
 
 class HistoWithNuisances:
     def __init__(self,histo_central,reset=False):
@@ -60,6 +60,32 @@ class HistoWithNuisances:
                     htotup.SetBinContent(b1,b2,self.GetBinContent(b1,b2)+sqrt(sum(map(lambda x: (hvars[x][0].GetBinContent(b1,b2))**2, hvars))))
                     htotdn.SetBinContent(b1,b2,self.GetBinContent(b1,b2)-sqrt(sum(map(lambda x: (hvars[x][1].GetBinContent(b1,b2))**2, hvars))))
         return [htotup,htotdn]
+    def graphAsymmTotalErrors(self,toadd=None,relative=False):
+        h = self.raw()
+        hup, hdn = self.sumSystUncertainties(toadd)
+        xaxis = h.GetXaxis()
+        points = []; errors = []
+        for i in xrange(h.GetNbinsX()):
+            N = h.GetBinContent(i+1);
+            dN = h.GetBinError(i+1)
+            if N == 0 and dN == 0: continue
+            x = xaxis.GetBinCenter(i+1);
+            EYlow = hypot(N-min(N,hup.GetBinContent(i+1),hdn.GetBinContent(i+1)),dN)
+            EYhigh = hypot(max(N,hup.GetBinContent(i+1),hdn.GetBinContent(i+1))-N,dN)
+            EXhigh, EXlow = (xaxis.GetBinUpEdge(i+1)-x, x-xaxis.GetBinLowEdge(i+1))
+            if relative:
+                errors.append( (EXlow,EXhigh,EYlow/N,EYhigh/N) )
+                points.append( (x,1) )
+            else:
+                errors.append( (EXlow,EXhigh,EYlow,EYhigh) )
+                points.append( (x,N) )
+        ret = ROOT.TGraphAsymmErrors(len(points))
+        ret.SetName(h.GetName()+"_errors")
+        for i,((x,y),(EXlow,EXhigh,EYlow,EYhigh)) in enumerate(zip(points,errors)):
+            ret.SetPoint(i, x, y)
+            ret.SetPointError(i, EXlow,EXhigh,EYlow,EYhigh)
+        return ret
+
     def getVariation(self,alternate):
         return self.variations[alternate]
     def addVariation(self,name,sign,histo_varied):
