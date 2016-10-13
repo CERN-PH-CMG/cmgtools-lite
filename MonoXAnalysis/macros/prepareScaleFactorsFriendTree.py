@@ -8,13 +8,13 @@ MODULES = []
 from CMGTools.MonoXAnalysis.tools.lep_SF import AllLepSFs
 MODULES.append( ('lep',AllLepSFs()) )
 
-from CMGTools.MonoXAnalysis.tools.trigger_SF import LepTriggerSF_Event, MetNoMuTriggerSF
+from CMGTools.MonoXAnalysis.tools.trigger_SF import LepTriggerSF_Event, MetNoMuTriggerSF_Spline
 MODULES.append( ('trig1lep',LepTriggerSF_Event()) )
 
-MODULES.append( ('trigmetnomu',MetNoMuTriggerSF()) )
+MODULES.append( ('trigmetnomu',MetNoMuTriggerSF_Spline()) )
 
 from CMGTools.MonoXAnalysis.tools.xsec_KF import xsec_KF
-MODULES.append( ('nlokf', xsec_KF("/afs/cern.ch/work/e/emanuele/public/monox/leptonsf/xsec_kfactors.root")) )
+MODULES.append(('nlokf', xsec_KF("/afs/cern.ch/work/e/emanuele/public/monox/leptonsf/uncertainties_EWK_24bins.root") ))
 
 class ScaleFactorProducer(Module):
     def __init__(self,name,booker,modules):
