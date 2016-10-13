@@ -1,18 +1,18 @@
-yield: 0.5 : 2,0,1; XTitle="All or Nothing", MoreY=2
+yield: 0.5 : 1,0,1; XTitle="Events", MoreY=2
 ### LEPTONS
-lep1Pt:  LepGood1_pt       : 9,20,200; XTitle="Leading lepton p_{T} [GeV]"
+lep1Pt:  LepGood1_pt       : 30,0,150; XTitle="Leading lepton p_{T} [GeV]"
 lep1Eta: abs(LepGood1_eta) : 6,0,2.5; XTitle="Leading lepton |#eta|"
-lep2Pt:  LepGood2_pt       : 20,0,100; XTitle="Trailing lepton p_{T} [GeV]"
+lep2Pt:  LepGood2_pt       : 28,0,70; XTitle="Trailing lepton p_{T} [GeV]"
 lep2Eta: abs(LepGood2_eta) : 6,0,2.5; XTitle="Trailing lepton |#eta|"
 worstIso: max(LepGood1_miniRelIso,LepGood2_miniRelIso) : 20,0,0.2; XTitle="Worst miniRelIso"
 worstSip: max(LepGood1_sip3d,LepGood2_sip3d) : 20,0,8; XTitle="Worst sip3d"
 worstMVA: min(LepGood1_mvaTTH,LepGood2_mvaTTH) : 20,0,1; XTitle="Worst MVA", Legend="TL"
 
 met:  met: 15,0,300 ; XTitle="E_{T}^{miss}  [GeV]"
-mtW1: mt_2(LepGood1_pt,LepGood1_phi,met,met_phi) : 12,0,180; XTitle="M_{T}(l_{1}\,E_{T}^{miss}) [GeV]"
-mtW2: mt_2(LepGood2_pt,LepGood2_phi,met,met_phi) : 12,0,180; XTitle="M_{T}(l_{2}\,E_{T}^{miss}) [GeV]"
-mtWmin: min(mt_2(LepGood1_pt,LepGood1_phi,met,met_phi),mt_2(LepGood2_pt,LepGood2_phi,met,met_phi)) : 12,0,180; XTitle="min M_{T}(l_{i}\,E_{T}^{miss}) [GeV]"
-mtWmax: max(mt_2(LepGood1_pt,LepGood1_phi,met,met_phi),mt_2(LepGood2_pt,LepGood2_phi,met,met_phi)) : 12,0,180; XTitle="max M_{T}(l_{i}\,E_{T}^{miss}) [GeV]", Legend='TL'
+mtW1: mt_2(LepGood1_pt,LepGood1_phi,met,met_phi) : 18,0,240; XTitle="M_{T}(l_{1}\,E_{T}^{miss}) [GeV]", Legend='TL'
+mtW2: mt_2(LepGood2_pt,LepGood2_phi,met,met_phi) : 18,0,240; XTitle="M_{T}(l_{2}\,E_{T}^{miss}) [GeV]"
+mtWmin: min(mt_2(LepGood1_pt,LepGood1_phi,met,met_phi),mt_2(LepGood2_pt,LepGood2_phi,met,met_phi)) : 18,0,240; XTitle="min M_{T}(l_{i}\,E_{T}^{miss}) [GeV]", Legend='TR'
+mtWmax: max(mt_2(LepGood1_pt,LepGood1_phi,met,met_phi),mt_2(LepGood2_pt,LepGood2_phi,met,met_phi)) : 18,0,240; XTitle="max M_{T}(l_{i}\,E_{T}^{miss}) [GeV]", Legend='TL'
 minProjMet: met_pt*min(if3(cos(met_phi-LepGood1_phi)>0, abs(sin(met_phi-LepGood1_phi)), 1), \
                        if3(cos(met_phi-LepGood2_phi)>0, abs(sin(met_phi-LepGood2_phi)), 1) ) : 20,0,200; XTitle="Min Proj E_{T}^{miss}  [GeV]"
 dphiLLmet : abs(deltaPhi(phi_2(LepGood1_pt,LepGood1_phi,LepGood2_pt,LepGood2_phi), met_phi)) : 10,0,3.14 ; XTitle="#Delta#phi(ll\,E_{T}^{miss})", Legend='TL'
@@ -20,11 +20,12 @@ dphiLLmet : abs(deltaPhi(phi_2(LepGood1_pt,LepGood1_phi,LepGood2_pt,LepGood2_phi
 nLepGood  : nLepGood  : [1.5,2.5,3.5,4.5]  ; XTitle='N(lep\, tight)', XNDiv=505
 nLepOther : nLepOther : [-0.5,0.5,1.5,2.5] ; XTitle='N(lep\, fail)', XNDiv=505
 
-badEle        : (abs(LepGood1_pdgId) == 11 && !(LepGood1_lostHits == 0 && LepGood1_convVeto)) + (abs(LepGood1_pdgId) == 11 && !(LepGood1_lostHits == 0 && LepGood1_convVeto)) : 3,-0.5,2.5 ; XTitle="Bad electrons"
-nSoftMu       : Sum$(abs(LepOther_pdgId) == 13 && LepOther_pt > 5 && LepOther_pt < 20 && deltaR(LepOther_eta,LepOther_phi,Jet_eta[0],Jet_phi[0]) > 0.4 && abs(LepOther_dz) < 0.1)  : [-0.5,0.5,1.5,2.5] ; XTitle='N(soft mu)', XNDiv=505, Logy
-nSoftMu_noVeto : Sum$(abs(LepOther_pdgId) == 13 && LepOther_pt > 5 && LepOther_pt < 20 && abs(LepOther_dz) < 0.1)  : [-0.5,0.5,1.5,2.5] ; XTitle='N(soft mu)', XNDiv=505, Logy
+nSoftMu       : Sum$(LepOtherGood_pt < 25 && LepOtherGood_mediumMuonId > 0)  : [-0.5,0.5,1.5,2.5] ; XTitle='N(soft mu)', XNDiv=505, Logy
+nSoftMuSip6   : Sum$(LepOtherGood_sip3d > 6 && LepOtherGood_pt < 25 && LepOtherGood_mediumMuonId > 0)  : [-0.5,0.5,1.5,2.5] ; XTitle='N(soft mu)', XNDiv=505, Logy
+nSoftMuSip6AI : Sum$(LepOtherGood_sip3d > 6 && LepOtherGood_miniRelIso > 0.4 && LepOtherGood_pt < 25 && LepOtherGood_mediumMuonId > 0)  : [-0.5,0.5,1.5,2.5] ; XTitle='N(soft mu)', XNDiv=505, Logy
 nSoftIVF_pt40 : Sum$(abs(SV_dxy)<2 && SV_cosTheta > 0.98 && SV_ntracks >= 3 && SV_sip3d > 4 && SV_jetPt < 40)  : [-0.5,0.5,1.5,2.5] ; XTitle='N(IVF\, p_{T}(j) < 40)', XNDiv=505, Logy
 nSoftIVF_pt20 : Sum$(abs(SV_dxy)<2 && SV_cosTheta > 0.98 && SV_ntracks >= 3 && SV_sip3d > 4 && SV_jetPt < 20)  : [-0.5,0.5,1.5,2.5] ; XTitle='N(IVF\, p_{T}(j) < 20)', XNDiv=505, Logy
+nSoftIVF_pt40b20 : Sum$(abs(SV_dxy)<2 && SV_cosTheta > 0.98 && SV_ntracks >= 3 && SV_sip3d > 4 && (SV_jetPt < 20 || SV_jetPt < 40 && SV_jetBTagCSV < 0.46) )  : [-0.5,0.5,1.5,2.5] ; XTitle='N(IVF\, p_{T}(j) < 40/20)', XNDiv=505, Logy
 
 
 ### DILEPTONS
@@ -35,35 +36,75 @@ drll : deltaR(LepGood1_eta,LepGood1_phi, LepGood2_eta,LepGood2_phi): 8,0,4; XTit
 dphill : abs(deltaPhi(LepGood1_phi, LepGood2_phi)): 6,0,3.1416; XTitle="#Delta#phi(ll)", MoreY=1.5, Legend='TR'
 
 ### JETS
-nJet20 : nJet               : [0.5,1.5,2.5,3.5,4.5,5.5] ; XTitle='N(jet\, p_{T} > 20)'
-nJet40 : Sum$(Jet_pt > 40)  : [0.5,1.5,2.5,3.5,4.5,5.5] ; XTitle='N(jet\, p_{T} > 40)'
-nJet30Fwd : Sum$(JetFwd_pt > 30)  : [-0.5,0.5,1.5,2.5,3.5,4.5,5.5] ; XTitle='N(jet\, p_{T} > 30\, |#eta| > 2.4)'
-nBJetsLoose20 : nBJetsLoose20 : [0.5,1.5,2.5,3.5,4.5] ; XTitle='N(jet\, p_{T} > 20\, CSV Loose)', XNDiv=505
-nBJetsMedium20 : nBJetsMedium20 : [-0.5,0.5,1.5,2.5,3.5,4.5] ; XTitle='N(jet\, p_{T} > 20\, CSV Medium)', XNDiv=505
-nBJetsLoose40 : nBJetsLoose40 : [0.5,1.5,2.5,3.5,4.5] ; XTitle='N(jet\, p_{T} > 40\, CSV Loose)', XNDiv=505
-nBJetsMedium40 : nBJetsMedium40 : [-0.5,0.5,1.5,2.5,3.5,4.5] ; XTitle='N(jet\, p_{T} > 40\, CSV Medium)', XNDiv=505
-jetPt1: Jet1_pt: 15,0,300; XTitle="1st jet p_{T} [GeV]", Legend='TR'
-jetBTag1: Jet1_btagCSV: 15,0,1; XTitle="1st jet btag", Legend='TL'
-jetPt2: Jet2_pt: 20,0,100; XTitle="2nd jet p_{T} [GeV]", Legend='TL'
-jetBTag2: Jet2_btagCSV: 15,0,1; XTitle="2nd jet btag", Legend='TR'
-jetPt2_zoom: Alt$(Jet_pt[1],0): [0,20,25,30,35,40,45,50]; XTitle="2nd jet p_{T} [GeV]", Legend='TL'
-jetBTagMax: max(Jet1_btagCSV,Jet2_btagCSV): 15,0,1; XTitle="max btag (j_{1}\,j_{2})", Legend='TR'
+nJet20 : Sum$(JetGood_pt > 20)  : [-0.5,0.5,1.5,2.5,3.5,4.5,5.5] ; XTitle='N(jet\, p_{T} > 20)'
+nJet30 : Sum$(JetGood_pt > 30)  : [-0.5,0.5,1.5,2.5,3.5,4.5,5.5] ; XTitle='N(jet\, p_{T} > 30)'
+nJet40 : Sum$(JetGood_pt > 40)  : [-0.5,0.5,1.5,2.5,3.5,4.5,5.5] ; XTitle='N(jet\, p_{T} > 40)'
 
-SV_pt : SV_pt : 12,0,60; XTitle="SV p_{T}"
-SV_pt_zoom : SV_pt : 20,0,20; XTitle="SV p_{T}", IncludeOverflows=False
-SV_mass : SV_mass : 12,0,6; XTitle="SV mass [GeV]"
-SV_eta : abs(SV_eta) : 12,0,2.4; XTitle="SV |eta|"
-SV_ntracks : SV_ntracks : [0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5,10.5]; XTitle="N(trk)"
-SV_c2n: SV_chi2/SV_ndof : 12,0,5; XTitle="SV normalized #chi^{2}"
-SV_sip2d: abs(SV_dxy/SV_edxy) : 12,0,40; XTitle="S_{IP2D}"
-#SV_sip2d_zoom: abs(SV_dxy/SV_edxy) : 20,0,10; XTitle="S_{IP2D}", Legend="TL", IncludeOverflows=False
-SV_sip3d: SV_sip3d : 12,0,40; XTitle="S_{IP3D}"
-#SV_sip3d_zoom: SV_sip3d : 20,0,10; XTitle="S_{IP3D}", Legend="TL", IncludeOverflows=False
-SV_ip2d: abs(SV_dxy) : 12,0,1.2; XTitle="IP_{2D} [cm]"
-SV_ip2d_log: abs(SV_dxy) : 12,0,2.4; XTitle="IP_{2D} [cm]", Logy
-SV_ip3d: SV_ip3d : 12,0,1.2; XTitle="IP_{3D} [cm]"
-SV_ip3d_log: SV_ip3d : 12,0,2.4; XTitle="IP_{3D} [cm]", Logy
-SV_theta: acos(SV_cosTheta): 12,0,0.24; XTitle="p-r angle [rad]", XNDiv=505
-#SV_cosTheta: SV_cosTheta: 12,0.95,1.0; XTitle="cos(p-r) angle", XNDiv=505
-SV_mva: SV_mva: 20, 0.8, 1; XTitle="SV mva", Legend="TL", XNDiv=505
-SV_jetPt: SV_jetPt : [0,20,30,40]; XTitle="SV p_{T}(jet)", MoreY=1.5, Legend="TL"
+nJet20CSVL : Sum$(JetGood_pt > 20 && JetGood_btagCSV > 0.46)  : [-0.5,0.5,1.5,2.5,3.5,4.5,5.5] ; XTitle='N(jet\, p_{T} > 20\, CSVL)'
+nJet30CSVL : Sum$(JetGood_pt > 30 && JetGood_btagCSV > 0.46)  : [-0.5,0.5,1.5,2.5,3.5,4.5,5.5] ; XTitle='N(jet\, p_{T} > 30\, CSVL)'
+nJet40CSVL : Sum$(JetGood_pt > 40 && JetGood_btagCSV > 0.46)  : [-0.5,0.5,1.5,2.5,3.5,4.5,5.5] ; XTitle='N(jet\, p_{T} > 40\, CSVL)'
+
+nJet20CSVM : Sum$(JetGood_pt > 20 && JetGood_btagCSV > 0.80)  : [-0.5,0.5,1.5,2.5,3.5,4.5,5.5] ; XTitle='N(jet\, p_{T} > 20\, CSVM)'
+nJet30CSVM : Sum$(JetGood_pt > 30 && JetGood_btagCSV > 0.80)  : [-0.5,0.5,1.5,2.5,3.5,4.5,5.5] ; XTitle='N(jet\, p_{T} > 30\, CSVM)'
+nJet40CSVM : Sum$(JetGood_pt > 40 && JetGood_btagCSV > 0.80)  : [-0.5,0.5,1.5,2.5,3.5,4.5,5.5] ; XTitle='N(jet\, p_{T} > 40\, CSVM)'
+
+#nJet20CSVL_fit: Sum$(JetGood_pt > 20 && JetGood_btagCSV > 0.46)  : [-0.5,0.5,1.5,2.5] ; XTitle='N(jet\, p_{T} > 20\, CSVL)'
+#nJet30CSVL_fit: Sum$(JetGood_pt > 30 && JetGood_btagCSV > 0.46)  : [-0.5,0.5,1.5,2.5] ; XTitle='N(jet\, p_{T} > 30\, CSVL)'
+#nJet40CSVL_fit: Sum$(JetGood_pt > 40 && JetGood_btagCSV > 0.46)  : [-0.5,0.5,1.5,2.5] ; XTitle='N(jet\, p_{T} > 40\, CSVL)'
+#nJet20CSVM_fit: Sum$(JetGood_pt > 20 && JetGood_btagCSV > 0.80)  : [-0.5,0.5,1.5,2.5] ; XTitle='N(jet\, p_{T} > 20\, CSVM)'
+#nJet30CSVM_fit: Sum$(JetGood_pt > 30 && JetGood_btagCSV > 0.80)  : [-0.5,0.5,1.5,2.5] ; XTitle='N(jet\, p_{T} > 30\, CSVM)'
+#nJet40CSVM_fit: Sum$(JetGood_pt > 40 && JetGood_btagCSV > 0.80)  : [-0.5,0.5,1.5,2.5] ; XTitle='N(jet\, p_{T} > 40\, CSVM)'
+# nJet20 : nJet               : [0.5,1.5,2.5,3.5,4.5,5.5] ; XTitle='N(jet\, p_{T} > 20)'
+# nJet40 : Sum$(JetGood_pt > 40)  : [0.5,1.5,2.5,3.5,4.5,5.5] ; XTitle='N(jet\, p_{T} > 40)'
+# nJet30Fwd : Sum$(JetFwd_pt > 30)  : [-0.5,0.5,1.5,2.5,3.5,4.5,5.5] ; XTitle='N(jet\, p_{T} > 30\, |#eta| > 2.4)'
+# nBJetsLoose20 : nBJetsLoose20 : [0.5,1.5,2.5,3.5,4.5] ; XTitle='N(jet\, p_{T} > 20\, CSV Loose)', XNDiv=505
+# nBJetsMedium20 : nBJetsMedium20 : [-0.5,0.5,1.5,2.5,3.5,4.5] ; XTitle='N(jet\, p_{T} > 20\, CSV Medium)', XNDiv=505
+# nBJetsLoose40 : nBJetsLoose40 : [0.5,1.5,2.5,3.5,4.5] ; XTitle='N(jet\, p_{T} > 40\, CSV Loose)', XNDiv=505
+# nBJetsMedium40 : nBJetsMedium40 : [-0.5,0.5,1.5,2.5,3.5,4.5] ; XTitle='N(jet\, p_{T} > 40\, CSV Medium)', XNDiv=505
+tagJetPt: JetGood_pt: 25,0,250; XTitle="tag jet p_{T} [GeV]", Legend='TR'
+tagJetBTag: JetGood_btagCSV: 15,0,1; XTitle="tag jet btag", Legend='TL'
+# #jetPt2: Jet2_pt: 20,0,100; XTitle="2nd jet p_{T} [GeV]", Legend='TL'
+# jetBTag2: Jet2_btagCSV: 15,0,1; XTitle="2nd jet btag", Legend='TR'
+# jetPt2_zoom: Alt$(JetGood_pt[1],0): [0,20,25,30,35,40]; XTitle="2nd jet p_{T} [GeV]", Legend='TL'
+# jetBTagMax: max(Jet1_btagCSV,Jet2_btagCSV): 15,0,1; XTitle="max btag (j_{1}\,j_{2})", Legend='TR'
+
+leadJetPt: JetGood_pt[0]: 25,0,250; XTitle="lead jet p_{T} [GeV]", Legend='TR'
+leadJetBTag: JetGood_btagCSV[0]: 10,0.8,1.0; XTitle="lead b-tag CSV", Legend='TL', XNDiv=505
+trailJetPt: Alt$(JetGood_pt[1],0): 25,0,125; XTitle="trail jet p_{T} [GeV]", Legend='TR'
+trailJetPt_zoom: Alt$(JetGood_pt[1],0): 8,20,40; XTitle="trail jet p_{T} [GeV]", Legend='TR', IncludeOverflows=False
+
+#SV_pt : SV_pt : 12,0,60; XTitle="SV p_{T}"
+SV_pt_zoom : SV_pt : 20,0,20; XTitle="SV p_{T}", IncludeOverflows=False, YTitle="Entries"
+SV_mass : SV_mass : 15,0,5; XTitle="SV mass [GeV]", YTitle="Entries"
+SV_eta : abs(SV_eta) : 8,0,2.4; XTitle="SV |eta|", YTitle="Entries"
+SV_ntracks : SV_ntracks : [0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5,10.5]; XTitle="N(trk)", YTitle="Entries"
+SV_c2n: SV_chi2/SV_ndof : 12,0,5; XTitle="SV normalized #chi^{2}", YTitle="Entries"
+SV_sip2d: abs(SV_dxy/SV_edxy) : 12,0,40; XTitle="S_{IP2D}", YTitle="Entries"
+#SV_sip2d_zoom: abs(SV_dxy/SV_edxy) : 20,0,10; XTitle="S_{IP2D}", Legend="TL", IncludeOverflows=False, YTitle="Entries"
+SV_sip3d: SV_sip3d : 20,0,40; XTitle="S_{IP3D}", YTitle="Entries"
+#SV_sip3d_zoom: SV_sip3d : 20,0,10; XTitle="S_{IP3D}", Legend="TL", IncludeOverflows=False, YTitle="Entries"
+SV_ip2d: abs(SV_dxy) : 12,0,1.2; XTitle="IP_{2D} [cm]", YTitle="Entries"
+SV_ip2d_log: abs(SV_dxy) : 12,0,2.4; XTitle="IP_{2D} [cm]", Logy, YTitle="Entries"
+SV_ip3d: SV_ip3d : 12,0,1.2; XTitle="IP_{3D} [cm]", YTitle="Entries"
+SV_ip3d_log: SV_ip3d : 12,0,2.4; XTitle="IP_{3D} [cm]", Logy, YTitle="Entries"
+SV_theta: acos(SV_cosTheta): 12,0,0.24; XTitle="p-r angle [rad]", XNDiv=505, YTitle="Entries"
+SV_omcosTheta: 1-SV_cosTheta: 12,0,0.02; XTitle="1-cos(p-r) angle", XNDiv=505, YTitle="Entries"
+SV_mva: SV_mva: 10, 0.8, 1; XTitle="SV mva", Legend="TL", XNDiv=505, YTitle="Entries"
+SV_jetPt: SV_jetPt : [0,20,30,40]; XTitle="SV p_{T}(jet)", MoreY=1.5, Legend="TL", Density=True, YTitle="Entries / GeV"
+
+#LepOtherGood_pt      : LepOtherGood_pt[0] : 15,0,30; XTitle="Soft muon p_{T}", IncludeOverflows=True
+LepOtherGood_pt    : LepOtherGood_pt[0] : [0,3,4,5,6,7,8,10,12,14,17,20]; XTitle="Soft muon p_{T}", Density=True, YTitle="Events / GeV", LegendCutoff=0.001, IncludeOverflows=True
+LepOtherGood_pt_zoom : LepOtherGood_pt[0] : 12,0,18; XTitle="Soft muon p_{T}", LegendCutoff=0.001, IncludeOverflows=True
+LepOtherGood_eta : abs(LepOtherGood_eta[0]) : 8,0,2.4; XTitle="Soft muon |eta|"
+LepOtherGood_dxy : abs(LepOtherGood_dxy[0]) : 10,0,0.15; XTitle="Soft muon |dxy|"
+LepOtherGood_dz : abs(LepOtherGood_dz[0]) : 10,0,0.2; XTitle="Soft muon |dz|"
+LepOtherGood_sip3d : LepOtherGood_sip3d[0] : 18,0,24; XTitle="Soft muon sip3d", LegendCutoff=0.001
+LepOtherGood_drLep : min(deltaR(LepOtherGood_eta[0],LepOtherGood_phi[0],LepGood1_eta,LepGood1_phi),deltaR(LepOtherGood_eta[0],LepOtherGood_phi[0],LepGood2_eta,LepGood2_phi)) : 10,0,4; XTitle="Soft muon #DeltaR(l)", MoreY=1.5
+LepOtherGood_drJet : min(deltaR(LepOtherGood_eta[0],LepOtherGood_phi[0],JetGood_eta,JetGood_phi),Alt$(deltaR(LepOtherGood_eta[0],LepOtherGood_phi[0],JetGood_eta[1],JetGood_phi[1]),999)) : 20,0,4; XTitle="Soft muon #DeltaR(j_{i})", MoreY=1.5
+LepOtherGood_miniRelIso : LepOtherGood_miniRelIso[0] : [0,0.2,0.3,0.5,0.7,1.0,1.5,2.0,3.0]; XTitle="Soft muon miniRelIso", Density=True, YTitle="Events / bin width", LegendCutoff=0.001
+LepOtherGood_mediumMuonId : LepOtherGood_mediumMuonId[0] : [-0.5,0.5,1.5]; XTitle="LepOtherGood mediumMuonId", Legend="TL", LegendCutoff=0.001
+#LepOtherGood_drJet1 : deltaR(LepOtherGood_eta[0],LepOtherGood_phi[0],JetGood_eta[0],JetGood_phi[0]) : 10,0,4; XTitle="Soft muon #DeltaR(j_{1})", MoreY=1.5
+#LepOtherGood_drJet2 : Alt$(deltaR(LepOtherGood_eta[0],LepOtherGood_phi[0],JetGood_eta[1],JetGood_phi[1]),999) : 10,0,4; XTitle="Soft muon #DeltaR(j_{1})", MoreY=1.5, IncludeOverflows=False
+#LepOtherGood_relIso03 : LepOtherGood_relIso03[0] : [0,0.1,0.2,0.3,0.4,0.6,0.8,1.0,1.5,2.0,2.5,3.0,4.0]; XTitle="Soft muon relIso03", Density=True, YTitle="Events / bin width", LegendCutoff=0.001
+#LepOtherGood_trackHighPurityMuon : LepOtherGood_trackHighPurityMuon[0] : [-0.5,0.5,1.5]; XTitle="Soft muon trackHighPurityMuon", Legend="TL"
+#LepOtherGood_nStations : LepOtherGood_nStations : [-0.5,0.5,1.5,2.5,3.5,4.5,5.5]; XTitle="LepOtherGood nStations"
