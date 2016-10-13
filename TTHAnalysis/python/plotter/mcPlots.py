@@ -494,7 +494,7 @@ def doRatioHists(pspec,pmap,total,totalSyst,maxRange,fixRange=False,fitRatio=Non
     unity.GetXaxis().SetTitleSize(0.14)
     unity.GetXaxis().SetTitleOffset(0.9)
     unity.GetXaxis().SetLabelFont(42)
-    unity.GetXaxis().SetLabelSize(0.15)
+    unity.GetXaxis().SetLabelSize(0.1)
     unity.GetXaxis().SetLabelOffset(0.007)
     unity.GetYaxis().SetNdivisions(505)
     unity.GetYaxis().SetTitleFont(42)

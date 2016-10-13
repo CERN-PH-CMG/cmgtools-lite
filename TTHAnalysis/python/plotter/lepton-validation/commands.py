@@ -6,17 +6,17 @@ MYTREEDIR="/data1/peruzzi/TREES_80X_280916_dataEFG -P /data1/peruzzi/mixture_jec
 
 EXE="python mcPlots.py"
 WDIR="lepton-validation"
-COMMOPT0='--s2v --tree treeProducerSusyMultilepton --rspam "%(lumi) (13 TeV)  " --lspam "#bf{CMS} #it{Preliminary}" --legendBorder=0 --legendFontSize 0.055 --legendWidth=0.30  -j 8 -f --sp ".*" --showMCError -A filters sip8 "LepGood_sip3d[iChosen]<8" --mcc ttH-multilepton/mcc-ichepMediumMuonId.txt --sP lep_mvaTTH_log '+(' '.join(sys.argv[1:]))
+COMMOPT0='--s2v --tree treeProducerSusyMultilepton --cms --legendBorder=0 --legendFontSize 0.055 --legendWidth=0.30  -j 8 -f --sp ".*" --showMCError -A filters sip8 "LepGood_sip3d[iChosen]<8" --mcc ttH-multilepton/mcc-ichepMediumMuonId.txt --showRatio --fixRatioRange --maxRatioRange 0 2 '+(' '.join(sys.argv[1:]))
 
 COMMOPT1='-W "puw2016_nTrueInt_13fb(nTrueInt)" -l 12.9 --xf ".*Run2016E.*,.*Run2016F.*,.*Run2016G.*"'
-COMMOPT2='-W "puw2016_nTrueInt_EF(nTrueInt)" -l 7.3 --xf ".*Run2016B.*,.*Run2016C.*,.*Run2016D.*,.*Run2016G."'
+COMMOPT2='-W "puw2016_nTrueInt_EF(nTrueInt)" -l 7.3 --xf ".*Run2016B.*,.*Run2016C.*,.*Run2016D.*,.*Run2016G.*"'
 COMMOPT3='-W "puw2016_nTrueInt_G_upto279931(nTrueInt)" -l 4.3 --xf ".*Run2016B.*,.*Run2016C.*,.*Run2016D.*,.*Run2016E.*,.*Run2016F.*"'
-commopts=[(y,COMMOPT0+' '+x) for x,y in [(COMMOPT1,'BCD'),(COMMOPT2,'EF'),(COMMOPT3,'G')]]
+commopts=[(y,COMMOPT0+' '+x) for x,y in [(COMMOPT1,'BCD'),(COMMOPT2,'EF'),(COMMOPT3,'G')]][2:3]
 
 #SELECTIONS=["ZtoEE","ZtoMuMu","ttbar","Wl","Zl","ttbar_semiLeptonic"]
 #SELECTIONS=["ttbar","ttbar_semiLeptonic"][:1]
 #SELECTIONS=["ZtoEE","ttbar","Wl"]
-SELECTIONS=["ZtoMuMu"]
+SELECTIONS=["ZtoMuMu","ZtoEE","ttbar","ttbar_semiLeptonic","Zl"]
 
 for period,COMMOPT in commopts:
     for SEL in SELECTIONS:
