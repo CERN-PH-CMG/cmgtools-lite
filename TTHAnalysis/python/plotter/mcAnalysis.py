@@ -53,6 +53,7 @@ class MCAnalysis:
         self.readMca(samples,options)
 
     def readMca(self,samples,options):
+        field_previous = None
         for line in open(samples,'r'):
             if re.match("\s*#.*", line): continue
             line = re.sub(r"(?<!\\)#.*","",line)  ## regexp black magic: match a # only if not preceded by a \!
@@ -80,6 +81,12 @@ class MCAnalysis:
             if len(field) <= 1: continue
             if "SkipMe" in extra and extra["SkipMe"] == True and not options.allProcesses: continue
             signal = False
+
+            # copy fields from previous component if field is "prev" (careful: does not copy extra)
+            if "prev" in field and not field_previous: raise RuntimeError, "You used a prev directive to clone fields from the previous component, but no previous component exists"
+            field = [field_previous[i] if field[i]=="prev" else field[i] for i in xrange(len(field))]
+            field_previous = field[:]
+
             pname = field[0]
             if pname[-1] == "+": 
                 signal = True
