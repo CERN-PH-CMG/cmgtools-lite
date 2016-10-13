@@ -55,6 +55,7 @@ class MCAnalysis:
 
     def readMca(self,samples,options):
         field_previous = None
+        extra_previous = {}
         for line in open(samples,'r'):
             if re.match("\s*#.*", line): continue
             line = re.sub(r"(?<!\\)#.*","",line)  ## regexp black magic: match a # only if not preceded by a \!
@@ -81,13 +82,19 @@ class MCAnalysis:
                     if k not in extra: extra[k] = v
             if len(field) <= 1: continue
             if "SkipMe" in extra and extra["SkipMe"] == True and not options.allProcesses: continue
-            signal = False
 
             # copy fields from previous component if field is "prev" (careful: does not copy extra)
-            if "prev" in field and not field_previous: raise RuntimeError, "You used a prev directive to clone fields from the previous component, but no previous component exists"
-            field = [field_previous[i] if field[i]=="prev" else field[i] for i in xrange(len(field))]
+            if "$prev" in field and not field_previous: raise RuntimeError, "You used a prev directive to clone fields from the previous component, but no previous component exists"
+            field = [field_previous[i] if field[i]=="$prev" else field[i] for i in xrange(len(field))]
             field_previous = field[:]
+            if "$prev" in extra:
+                del extra['$prev']
+                new_extra = copy(extra_previous)
+                new_extra.update(extra)
+                extra = new_extra
+            extra_previous = copy(extra)
 
+            signal = False
             pname = field[0]
             if pname[-1] == "+": 
                 signal = True
