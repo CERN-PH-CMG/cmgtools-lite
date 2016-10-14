@@ -48,10 +48,8 @@ QCD      : QCD_HT2000toInf         : xsec*1*TopPtWeight ; Label ="QCD", FillColo
 #####################
 #Single top, using twice the t-channel_antitop sample for now
 SingleT : ST_s-channel_4f_leptonDecays_13TeV-amcatnlo-pythia8  : xsec*1*TopPtWeight ; FillColor = ROOT.kViolet+5, Label= "t/\#bar{t}"
-###using this sampel twice
 SingleT : ST_t-channel_antitop_4f_leptonDecays_13TeV-powheg-pythia8 : xsec*1*TopPtWeight ; FillColor = ROOT.kViolet+5, Label= "t/\#bar{t}"
-SingleT : ST_t-channel_antitop_4f_leptonDecays_13TeV-powheg-pythia8 : xsec*1*TopPtWeight ; FillColor = ROOT.kViolet+5, Label= "t/\#bar{t}"
-####
+SingleT : ST_t-channel_top_4f_leptonDecays_13TeV-powheg-pythia8 : xsec*1*TopPtWeight ; FillColor = ROOT.kViolet+5, Label= "t/\#bar{t}"
 SingleT : ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8 : xsec*1*TopPtWeight ; FillColor = ROOT.kViolet+5, Label= "t/\#bar{t}"
 SingleT : ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8 : xsec*1*TopPtWeight ; FillColor = ROOT.kViolet+5, Label= "t/\#bar{t}"
 
