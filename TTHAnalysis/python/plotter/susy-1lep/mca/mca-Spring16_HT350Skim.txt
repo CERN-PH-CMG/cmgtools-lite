@@ -48,10 +48,8 @@ WJets    : WJetsToLNu_HT-2500ToInf :  xsec*1*btagSF*TopPtWeight*lepSF  ; Label="
 ######################
 ##Single top, using twice the t-channel_antitop sample for now
 SingleT : ST_s-channel_4f_leptonDecays_13TeV-amcatnlo-pythia8  : xsec*1*btagSF*TopPtWeight*lepSF ; FillColor = ROOT.kAzure+5, Label= "t/\#bar{t}"
-####using this sampel twice
-SingleT : ST_t-channel_antitop_4f_leptonDecays_13TeV-powheg-pythia8 : xsec*1*btagSF*TopPtWeight*lepSF ; FillColor = ROOT.kAzure+5, Label= "t/\#bar{t}"
-SingleT : ST_t-channel_antitop_4f_leptonDecays_13TeV-powheg-pythia8 : xsec*1*btagSF*TopPtWeight*lepSF ; FillColor = ROOT.kAzure+5, Label= "t/\#bar{t}"
-#####
+SingleT : ST_t-channel_top_4f_leptonDecays_13TeV-powheg-pythia8 : xsec*1*btagSF*TopPtWeight*lepSF ; FillColor = ROOT.kAzure+5, Label= "t/\#bar{t}"
+SingleT : ST_t-channel_antitop_4f_leptonDecays_13TeV-powheg-pythia8 : 26.38/44.07*xsec*1*btagSF*TopPtWeight*lepSF ; FillColor = ROOT.kAzure+5, Label= "t/\#bar{t}"
 SingleT : ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8 : xsec*1*btagSF*TopPtWeight*lepSF ; FillColor = ROOT.kAzure+5, Label= "t/\#bar{t}"
 SingleT : ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8 : xsec*1*btagSF*TopPtWeight*lepSF ; FillColor = ROOT.kAzure+5, Label= "t/\#bar{t}"
 #
