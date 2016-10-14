@@ -446,7 +446,7 @@ class TreeToYield:
                 self._tree.SetEntryList(self._elist)
                 #self._tree.SetEventList(self._elist)
         #print "for %s, %s, does my tree have an elist? %s " % ( self._name, self._cname, "yes" if self._tree.GetEntryList() else "no" )
-        thisPlotCut = '(%s)*(%s)'%(self.adaptExpr(cut,cut=True),perPlotCut) if perPlotCut else self.adaptExpr(cut,cut=True)
+        thisPlotCut = '(%s)*(%s)'%(self.adaptExpr(cut,cut=True),self.adaptExpr(perPlotCut,cut=True)) if perPlotCut else self.adaptExpr(cut,cut=True)
         if self._weight:
             if self._isdata: cut = "(%s)     *(%s)*(%s)" % (self._weightString,                    self._scaleFactor, thisPlotCut)
             else:            cut = "(%s)*(%s)*(%s)*(%s)" % (self._weightString,self._options.lumi, self._scaleFactor, thisPlotCut)
