@@ -49,11 +49,11 @@ class H2TauTauTreeProducer(H2TauTauTreeProducerBase):
         self.bookGenInfo(self.tree)
         self.bookVBF(self.tree, 'vbf')
 
-        self.bookJet(self.tree, 'jet1', fill_extra=hasattr(self.cfg_ana, 'addMoreJetInfo') and self.cfg_ana.addMoreJetInfo)
-        self.bookJet(self.tree, 'jet2', fill_extra=hasattr(self.cfg_ana, 'addMoreJetInfo') and self.cfg_ana.addMoreJetInfo)
+        self.bookJet(self.tree, 'jet1', fill_extra=getattr(self.cfg_ana, 'addMoreJetInfo', False))
+        self.bookJet(self.tree, 'jet2', fill_extra=getattr(self.cfg_ana, 'addMoreJetInfo', False))
 
-        self.bookJet(self.tree, 'bjet1', fill_extra=hasattr(self.cfg_ana, 'addMoreJetInfo') and self.cfg_ana.addMoreJetInfo)
-        self.bookJet(self.tree, 'bjet2', fill_extra=hasattr(self.cfg_ana, 'addMoreJetInfo') and self.cfg_ana.addMoreJetInfo)
+        self.bookJet(self.tree, 'bjet1', fill_extra=getattr(self.cfg_ana, 'addMoreJetInfo', False))
+        self.bookJet(self.tree, 'bjet2', fill_extra=getattr(self.cfg_ana, 'addMoreJetInfo', False))
 
         self.var(self.tree, 'HT_allJets')
         self.var(self.tree, 'HT_jets')
@@ -115,6 +115,6 @@ class H2TauTauTreeProducer(H2TauTauTreeProducerBase):
         if type(self) is H2TauTauTreeProducer:
             self.fillTree(event)
 
-        if hasattr(self.cfg_ana, 'TauSpinner') and self.cfg_ana.TauSpinner :
+        if hasattr(self.cfg_ana, 'TauSpinner') and self.cfg_ana.TauSpinner:
             self.fillTauSpinner(self.tree, event)
 

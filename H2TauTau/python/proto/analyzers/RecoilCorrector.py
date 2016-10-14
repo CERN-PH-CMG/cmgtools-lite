@@ -40,7 +40,7 @@ class RecoilCorrector(Analyzer):
                 print 'ERROR: No 2 prompt leptons found'
                 # import pdb; pdb.set_trace()
 
-        vis = leptons_prompt + taus_prompt_vis
+        vis = leptons_prompt_vis + taus_prompt_vis
         all = leptons_prompt + taus_prompt
 
         if len(vis) == 0 or len(all) == 0:
@@ -75,7 +75,14 @@ class RecoilCorrector(Analyzer):
 
 
     def process(self, event):
-        if not self.cfg_comp.isMC or not self.apply:
+        if not self.cfg_comp.isMC:
+            return
+
+        # Calculate generator four-momenta even if not applying corrections
+        # to save them in final trees
+        gen_z_px, gen_z_py, gen_vis_z_px, gen_vis_z_py = self.getGenP4(event)
+
+        if not self.apply:
             return
 
         dil = event.diLepton
@@ -85,7 +92,6 @@ class RecoilCorrector(Analyzer):
         if self.isWJets:
             n_jets_30 += 1
 
-        gen_z_px, gen_z_py, gen_vis_z_px, gen_vis_z_py = self.getGenP4(event)
 
         # Correct MVA MET
         px_old = dil.met().px()
