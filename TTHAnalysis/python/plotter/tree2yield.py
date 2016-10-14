@@ -435,6 +435,7 @@ class TreeToYield:
         return ret
     def getPlotRaw(self,name,expr,bins,cut,plotspec,fsplit=None):
         unbinnedData2D = plotspec.getOption('UnbinnedData2D',False) if plotspec != None else False
+        perPlotCut = plotspec.getOption('CutString',None) if plotspec != None else None
         if not self._isInit: self._init()
         if self._appliedCut != None:
             if cut != self._appliedCut: 
@@ -445,11 +446,12 @@ class TreeToYield:
                 self._tree.SetEntryList(self._elist)
                 #self._tree.SetEventList(self._elist)
         #print "for %s, %s, does my tree have an elist? %s " % ( self._name, self._cname, "yes" if self._tree.GetEntryList() else "no" )
+        thisPlotCut = '(%s)*(%s)'%(self.adaptExpr(cut,cut=True),perPlotCut) if perPlotCut else self.adaptExpr(cut,cut=True)
         if self._weight:
-            if self._isdata: cut = "(%s)     *(%s)*(%s)" % (self._weightString,                    self._scaleFactor, self.adaptExpr(cut,cut=True))
-            else:            cut = "(%s)*(%s)*(%s)*(%s)" % (self._weightString,self._options.lumi, self._scaleFactor, self.adaptExpr(cut,cut=True))
+            if self._isdata: cut = "(%s)     *(%s)*(%s)" % (self._weightString,                    self._scaleFactor, thisPlotCut)
+            else:            cut = "(%s)*(%s)*(%s)*(%s)" % (self._weightString,self._options.lumi, self._scaleFactor, thisPlotCut)
         else:
-            cut = self.adaptExpr(cut,cut=True)
+            cut = thisPlotCut
         expr = self.adaptExpr(expr)
         if self._options.doS2V:
             cut  = scalarToVector(cut)
