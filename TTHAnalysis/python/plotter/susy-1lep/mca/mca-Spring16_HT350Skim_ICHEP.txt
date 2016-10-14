@@ -82,3 +82,6 @@ data: SingleElectron_Run2016B_PromptReco_v2
 
 data: SingleMuon_Run2016C_PromptReco_v2
 data: SingleElectron_Run2016C_PromptReco_v2
+
+data: SingleMuon_Run2016D_PromptReco_v2
+data: SingleElectron_Run2016D_PromptReco_v2
