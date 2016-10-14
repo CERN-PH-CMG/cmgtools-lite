@@ -15,7 +15,7 @@ ZNuNu: ZJetsToNuNu_HT800to1200 :  1.474; FillColor=ROOT.kAzure+4,  Label="Zinv"
 ZNuNu: ZJetsToNuNu_HT1200to2500+ZJetsToNuNu_HT1200to2500_ext :  0.3586; FillColor=ROOT.kAzure+4,  Label="Zinv"
 ZNuNu: ZJetsToNuNu_HT2500toInf :  0.008203; FillColor=ROOT.kAzure+4,  Label="Zinv"
 
-EWKZZNuNu: EWKZToNuNu2Jets : xsec; FillColor=ROOT.kAzure+5,  Label="EWK Zinv" 
+EWKZNuNu: EWKZToNuNu2Jets : xsec; FillColor=ROOT.kAzure+5,  Label="EWK Zinv" 
 
 # W+jets HT-binned: replace the xsec in the ntuple (NLO) with the LO, in order to apply the ptV-dependent k-factors
 W: WJetsToLNu_HT100to200+WJetsToLNu_HT100to200_ext   :  1347;    FillColor=ROOT.kTeal+4,  Label="W"
