@@ -20,6 +20,7 @@ parser.add_option("--savefile",dest="savefile", type="string", default=None, hel
 parser.add_option("--region",dest="region", type="string", default="SR", help="Phase space defined by the selection (SR,ZM,ZE,WE,WM,GJ)")
 parser.add_option("--processesFromCR",dest="processesFromCR",action="append", default=[],help="For these processes, include a global normalization from control region for each bin of the shape")
 parser.add_option("--correlateProcessCR",dest="correlateProcessCR",action="append", default=[],help="For each process to correlate to the signal region, add [process,signalregion,alphahist,filewherealphahist]")
+parser.add_option("--appendWorkspace",dest="appendWorkspace", type="string", default=None,help="Do not create a new workspace, but import new objects into an existing one in this file")
 
 (options, args) = parser.parse_args()
 options.weight = True
@@ -73,7 +74,7 @@ def addCorrelatedShapeFromSR(process,var,thisregion,correlatedRegion,workspace,h
         crbin_rrv = ROOT.RooRealVar(process+'_'+correlatedRegion+'_bin'+str(b),"",hist.GetBinContent(b), 0., hist.GetBinContent(b)*10.0)
         crbins.append(crbin_rrv)
         # central value of the transfer factor
-        rbin_rrv = ROOT.RooRealVar('r_'+process+'_'+thisregion+'_bin'+str(b),"",hist.GetBinContent(b))
+        rbin_rrv = ROOT.RooRealVar('r_'+process+'_'+thisregion+'_bin'+str(b),"",h_alphahist_fullerr.GetBinContent(b))
         rbins.append(rbin_rrv)
         # nuisance parameter in the fit limited to +/-5 sigma
         extreme = min(5.,h_alphahist_fullerr.GetBinContent(b)/h_alphahist_fullerr.GetBinError(b))
@@ -446,6 +447,7 @@ for mass in masses:
     fpatt = " %%%d.%df " % (klen,3)
     datacard.write('##----------------------------------\n')
     if options.unbinned:
+        wsfile = binname+".input.root" if options.appendWorkspace == None else options.appendWorkspace
         myunbinnedyields = {}
         for proc in procs:
             myunbinnedyields[proc] = -1
@@ -453,14 +455,14 @@ for mass in masses:
                 for p0 in options.processesFromCR:
                     for p in p0.split(","): 
                         if re.match(p+"$", proc):  myunbinnedyields[proc] = 1
-            datacard.write(('shapes %-10s %-7s %-20s' % (proc,binname,binname+".input.root"))+" w:"+ proc + "_" + options.region)
+            datacard.write(('shapes %-10s %-7s %-20s' % (proc,binname,wsfile))+" w:"+ proc + "_" + options.region)
             if myunbinnedyields[proc]==-1: datacard.write("%30s" % ("     w:"+ proc + "_" + options.region + "$SYSTEMATIC\n"))
             else:  datacard.write("\n")
         if len(options.correlateProcessCR):
             for p0 in options.correlateProcessCR:
                 corr_proc = p0.split(",")[0]
-                datacard.write(('shapes %-10s %-7s %-20s' % (corr_proc,binname,binname+".input.root"))+" w:"+ corr_proc + "_" + options.region+"\n")
-        datacard.write(('shapes %-10s %-7s %-20s' % ("data_obs",binname,binname+".input.root"))+" w:data_obs_" + options.region+"\n")
+                datacard.write(('shapes %-10s %-7s %-20s' % (corr_proc,binname,wsfile))+" w:"+ corr_proc + "_" + options.region+"\n")
+        datacard.write(('shapes %-10s %-7s %-20s' % ("data_obs",binname,wsfile))+" w:data_obs_" + options.region+"\n")
         datacard.write('##----------------------------------\n')
         datacard.write('bin         %s\n' % binname)
         datacard.write('observation -1\n')
@@ -513,7 +515,14 @@ for mass in masses:
 
 for mass in masses:
     myout = outdir + ("%s/" % mass)
-    workspace = ROOT.RooWorkspace("w","workspace")
+    if options.appendWorkspace == None:
+        fout = myout+binname+".input.root"
+        input_file = ROOT.TFile.Open(fout,"recreate")
+        workspace = ROOT.RooWorkspace("w","workspace")
+    else:
+        fout = myout+"/"+options.appendWorkspace
+        input_file = ROOT.TFile.Open(fout,"update")
+        workspace = input_file.Get("w")
 
     var = getBinnedVar("x",report.itervalues().next())
     varlist = ROOT.RooArgList(var)
@@ -539,7 +548,7 @@ for mass in masses:
             print "adding template for process ",proc
             addTemplate(proc,varlist,options.region,workspace,h)
 
-    workspace.writeToFile(myout+binname+".input.root",ROOT.kTRUE)
+    workspace.writeToFile(fout,ROOT.kTRUE)
 
     if options.verbose > -1:
-        print "Wrote to ",myout+binname+".input.root"
+        print "Wrote to ",fout
