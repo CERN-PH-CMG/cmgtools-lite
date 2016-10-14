@@ -99,11 +99,11 @@ class Analysis:
         anaOptsString = ' '.join(anaOpts)
 
         systs = {
-            'signal' : 'vbfdm/syst_2l.txt', # to be replaced
-            'zmumu' : 'vbfdm/syst_2l.txt',
-            'zee' : 'vbfdm/syst_2l.txt',
-            'wmunu' : 'vbfdm/syst_1l.txt',
-            'wenu' : 'vbfdm/syst_1l.txt'
+            'signal' : 'vbfdm/syst_SR.txt', # to be replaced
+            'zmumu' : 'vbfdm/syst_ZM.txt',
+            'zee' : 'vbfdm/syst_ZE.txt',
+            'wmunu' : 'vbfdm/syst_WM.txt',
+            'wenu' : 'vbfdm/syst_WE.txt'
             }
 
         anaOptsString = ' '.join(anaOpts)
@@ -129,7 +129,7 @@ if __name__ == "__main__":
 
     sel_steps = {'v_presel':'btagveto', 'vbfjets':'vbfjets', 'full_sel':'deta2j'}
     exclude_plots = {'v_presel': ['jcentral_eta','jfwd_eta','detajj','detajj_fullsel','mjj','mjj_fullsel'],
-                     'vbfjets': ['detajj_fullsel','mjj_fullsel','nvtx','rho'],
+                     'vbfjets': ['mjj_fullsel','nvtx','rho'],
                      'full_sel': ['detajj','mjj','nvtx','rho']
                      }
     rebinFactor = {'v_presel':1, 'vbfjets':1, 'full_sel':4}
@@ -147,19 +147,10 @@ if __name__ == "__main__":
                 mcpOpts = ['--xP '+','.join(exclude_plots[s]), '--rebin '+str(rebinFactor[s])]
                 if CR!='wenu': mcpOpts += ['--xp QCD'] # too large uncertainty
                 analysis = Analysis(options,mcpOpts)
-                analysis.runOne()
-
-
-    else: 
-        if len(options.transferFactor)==0:
-            mcpOpts = []
-            if(options.region=='signal'): mcpOpts += ['--showIndivSigShapes','--xp data,QCD','--rebin 2']
-            analysis = Analysis(options,mcpOpts)
-            analysis.runOne()
-        
+                analysis.runOne()        
 
     # eg.:  vbfdm/analysis.py --propSystToVar detajj_fullsel
-    if len(options.propSystToVar)>0:
+    elif len(options.propSystToVar)>0:
         pdirbase = options.pdir if options.pdir else "templates"
         if not os.path.exists(pdirbase): os.mkdir(pdirbase)
         processesToProp = {
@@ -184,7 +175,7 @@ if __name__ == "__main__":
 
 
     # eg:  vbfdm/analysis.py --tF detajj_fullsel -p templates
-    if len(options.transferFactor)>0:
+    elif len(options.transferFactor)>0:
 
         # list of transfer factors to do, with files with input templates
         TFs = {
@@ -261,3 +252,8 @@ if __name__ == "__main__":
          
             outfile.Close()
 
+    else: 
+        mcpOpts = []
+        if(options.region=='signal'): mcpOpts += ['--showIndivSigShapes','--xp data,QCD','--rebin 2']
+        analysis = Analysis(options,mcpOpts)
+        analysis.runOne()
