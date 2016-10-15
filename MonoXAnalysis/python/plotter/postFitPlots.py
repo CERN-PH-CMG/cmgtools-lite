@@ -49,40 +49,73 @@ if __name__ == "__main__":
       if not mldir: raise RuntimeError, mlfile
       outfile = ROOT.TFile(basedir + "/"+O+"_" + basename(args[2]), "RECREATE")
       processes = [p for p in reversed(mca.listBackgrounds())] + mca.listSignals()
+
       hdata = infile.Get(var+"_data")
       stack = ROOT.THStack(var+"_stack","")
       plots = {'data':hdata}
       if options.poisson:
             pdata = getDataPoissonErrors(hdata, False, True)
             hdata.poissonGraph = pdata ## attach it so it doesn't get deleted
+      argset =  mlfile.Get("norm_"+MLD)
       for p in processes:
+        pout = (swapMap[region])[p] if p in swapMap[region] else p
+        rvar = argset.find("%s/%s" % (region,pout))
+        if not rvar: continue
         h = infile.Get(var+"_"+p)
-        print "adding process: ",p
         if not h: 
             print "Missing %s_%s for %s" % (var,p, p)
             continue
         h = h.Clone(var+"_"+p)
         h.SetDirectory(0)
-        pout = (swapMap[region])[p] if p in swapMap[region] else p
         hpf = mldir.Get("%s/%s" % (region,pout))
+        hpf_scale = rvar.getVal()/hpf.Integral()
         if not hpf: 
             if h.Integral() > 0 and p not in swapMap[region]: raise RuntimeError, "Could not find post-fit shape for %s" % p
             continue
+        
         for b in xrange(1, h.GetNbinsX()+1):
-            h.SetBinContent(b, hpf.GetBinContent(b))
-            h.SetBinError(b, hpf.GetBinError(b))
+            h.SetBinContent(b, hpf.GetBinContent(b)*hpf_scale)
+            h.SetBinError(b, hpf.GetBinError(b)*hpf_scale)
         plots[p] = h
         h.SetName(var+"_"+p)
         stack.Add(h)
+
+      dump = open("%s/%s_%s.txt" % (basedir,O,var), "w")
+      pyields = { "background":[0,0], "data":[plots["data"].Integral(), plots["data"].Integral()]}
+      #argset.Print("V")
+      for p in processes:
+        pout = (swapMap[region])[p] if p in swapMap[region] else p
+        #h = infile.Get(var+"_"+pout)
+        #if not h: continue
+        if pout not in pyields: pyields[pout] = [0,0]
+        rvar = argset.find("%s/%s" % (region,pout))
+        if not rvar: continue
+        pyields[pout][0] += rvar.getVal()       
+        pyields[pout][1] += rvar.getError() if pout == "ttH" else rvar.getError()**2
+        if not mcap.isSignal(p): 
+            pyields["background"][0] += rvar.getVal()       
+            pyields["background"][1] += rvar.getError()**2
+      for p in pyields.iterkeys():
+        if p != "ttH": pyields[p][1] = sqrt(pyields[p][1])
+      maxlen = max([len(mcap.getProcessOption(p,'Label',p)) for p in mcap.listSignals(allProcs=True) + mcap.listBackgrounds(allProcs=True)]+[7])
+      fmt    = "%%-%ds %%9.2f +/- %%9.2f\n" % (maxlen+1)
+      for p in mcap.listSignals(allProcs=True) + mcap.listBackgrounds(allProcs=True) + ["background","data"]:
+        if p not in pyields: continue
+        if p in ["background","data"]: dump.write(("-"*(maxlen+45))+"\n");
+        dump.write(fmt % (mcap.getProcessOption(p,'Label',p) if p not in ["background","data"] else p.upper(), pyields[p][0], pyields[p][1]))
+      dump.close() 
+
       htot = hdata.Clone(var+"_total")
       htotpf = mldir.Get(region+"/total")
+      scale_htotpf = (pyields["background"][0] + sum([pyields[p][0] for p in mcap.listSignals(allProcs=True)]))/htotpf.Integral()
       hbkg = hdata.Clone(var+"_total_background")
       hbkgpf = mldir.Get(region+"/total_background")
+      scale_hbkgpf = pyields["background"][0]/hbkgpf.Integral()
       for b in xrange(1, h.GetNbinsX()+1):
-          htot.SetBinContent(b, htotpf.GetBinContent(b))
-          htot.SetBinError(b, htotpf.GetBinError(b))
-          hbkg.SetBinContent(b, hbkgpf.GetBinContent(b))
-          hbkg.SetBinError(b, hbkgpf.GetBinError(b))
+          htot.SetBinContent(b, htotpf.GetBinContent(b)*scale_htotpf)
+          htot.SetBinError(b, htotpf.GetBinError(b)*scale_htotpf)
+          hbkg.SetBinContent(b, hbkgpf.GetBinContent(b)*scale_hbkgpf)
+          hbkg.SetBinError(b, hbkgpf.GetBinError(b)*scale_hbkgpf)
       for h in plots.values() + [htot]:
          outfile.WriteTObject(h)
       doRatio = True
@@ -119,7 +152,7 @@ if __name__ == "__main__":
 #      hSigOutline.SetFillStyle(1)
 #      hSigOutline.Scale(5)
 #      hSigOutline.Draw("HIST SAME")
-      leg = doLegend(plots,mcap,corner='TL',textSize=0.045,cutoff=0.0001)
+      leg = doLegend(plots,mcap,corner='TR',textSize=0.045,cutoff=0.0001)
       leg.SetHeader({'prefit': "Pre-fit", "postfit_b": "Post-fit, #mu = 1", "postfit_s": "Post-fit, #hat{#mu}"}[O]+"\n")
       leg.SetLineColor(0)
 #      leg.AddEntry(hSigOutline, "ttH x 5", "L")
@@ -144,28 +177,3 @@ if __name__ == "__main__":
       c1.Print("%s/%s_%s.pdf" % (basedir,O,var))
       del c1
       outfile.Close()
-      dump = open("%s/%s_%s.txt" % (basedir,O,var), "w")
-      pyields = { "background":[0,0], "data":[plots["data"].Integral(), plots["data"].Integral()]}
-      argset =  mlfile.Get("norm_"+MLD)
-      #argset.Print("V")
-      for p in processes:
-        pout = (swapMap[region])[p] if p in swapMap[region] else p
-        #h = infile.Get(var+"_"+pout)
-        #if not h: continue
-        if pout not in pyields: pyields[pout] = [0,0]
-        rvar = argset.find("%s/%s" % (region,p))
-        if not rvar: continue
-        pyields[pout][0] += rvar.getVal()       
-        pyields[pout][1] += rvar.getError() if pout == "ttH" else rvar.getError()**2
-        if not mcap.isSignal(pout): 
-            pyields["background"][0] += rvar.getVal()       
-            pyields["background"][1] += rvar.getError()**2
-      for p in pyields.iterkeys():
-        if p != "ttH": pyields[p][1] = sqrt(pyields[p][1])
-      maxlen = max([len(mcap.getProcessOption(p,'Label',p)) for p in mcap.listSignals(allProcs=True) + mcap.listBackgrounds(allProcs=True)]+[7])
-      fmt    = "%%-%ds %%9.2f +/- %%9.2f\n" % (maxlen+1)
-      for p in mcap.listSignals(allProcs=True) + mcap.listBackgrounds(allProcs=True) + ["background","data"]:
-        if p not in pyields: continue
-        if p in ["background","data"]: dump.write(("-"*(maxlen+45))+"\n");
-        dump.write(fmt % (mcap.getProcessOption(p,'Label',p) if p not in ["background","data"] else p.upper(), pyields[p][0], pyields[p][1]))
-      dump.close() 
