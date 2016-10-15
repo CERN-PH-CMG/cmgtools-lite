@@ -8,23 +8,23 @@ cmd='combineCards.py '
 for lepton in ['e','mu']:
     for purity in ['HP','LP']:
         for category in ['nob','b']:
-            card=DataCardMaker(lepton,purity,'13TeV',7650,category)
+            card=DataCardMaker(lepton,purity,'13TeV',12900,category)
             cat='_'.join([category,lepton,purity,'13TeV'])
             cmd=cmd+" "+cat+'=datacard_'+cat+'.txt '
          
             #WW signal-MVV
-#            card.addMVVSignalParametricShape("XWW_MVV","MLNuJ","LNuJJ_XWW_MVV_"+lepton+".json",{'CMS_scale_j':1,'CMS_scale_MET':1.0},{'CMS_res_j':1.0,'CMS_res_MET':1.0})
-#            card.addMJJSignalParametricShape("Wqq","MJ","LNuJJ_XWW_MJJ_"+purity+".json",{'CMS_scale_prunedj_0':1,'CMS_scale_prunedj_1':'MH'},{'CMS_res_prunedj_0':1.0,'CMS_res_prunedj_1':'MH'})
-#            card.product("XWW","Wqq","XWW_MVV")
-#            card.addParametricYield("XWW",0,"LNuJJ_XWW_"+lepton+"_"+purity+"_"+category+"_yield.json")
+            card.addMVVSignalParametricShape("XWW_MVV","MLNuJ","LNuJJ_XWW_MVV_"+lepton+".json",{'CMS_scale_j':1,'CMS_scale_MET':1.0},{'CMS_res_j':1.0,'CMS_res_MET':1.0})
+            card.addMJJSignalParametricShape("Wqq","MJ","LNuJJ_XWW_MJJ_"+purity+".json",{'CMS_scale_prunedj_0':1,'CMS_scale_prunedj_1':'MH'},{'CMS_res_prunedj_0':1.0,'CMS_res_prunedj_1':'MH'})
+            card.product("XWW","Wqq","XWW_MVV")
+            card.addParametricYield("XWW",0,"LNuJJ_XWW_"+lepton+"_"+purity+"_"+category+"_yield.json")
 #            card.addParametricYieldWithCrossSection("XWW",0,"LNuJJ_XWW_"+lepton+"_"+purity+"_"+category+"_yield.json",'sigma_hvt.json','sigma0','BRWW')
 
             #WZ signal-MVV
 
-            card.addMVVSignalParametricShape("XWZ_MVV","MLNuJ","LNuJJ_XWZ_MVV_"+lepton+".json",{'CMS_scale_j':1,'CMS_scale_MET':1.0},{'CMS_res_j':1.0,'CMS_res_MET':1.0})
-            card.addMJJSignalParametricShape("Zqq","MJ","LNuJJ_XWZ_MJJ_"+purity+".json",{'CMS_scale_prunedj_0':1,'CMS_scale_prunedj_1':'MH'},{'CMS_res_prunedj_0':1.0,'CMS_res_prunedj_1':'MH'})
-            card.product("XWZ","Zqq","XWZ_MVV")
-            card.addParametricYield("XWZ",0,"LNuJJ_XWZ_"+lepton+"_"+purity+"_"+category+"_yield.json")
+#            card.addMVVSignalParametricShape("XWZ_MVV","MLNuJ","LNuJJ_XWZ_MVV_"+lepton+".json",{'CMS_scale_j':1,'CMS_scale_MET':1.0},{'CMS_res_j':1.0,'CMS_res_MET':1.0})
+#            card.addMJJSignalParametricShape("Zqq","MJ","LNuJJ_XWZ_MJJ_"+purity+".json",{'CMS_scale_prunedj_0':1,'CMS_scale_prunedj_1':'MH'},{'CMS_res_prunedj_0':1.0,'CMS_res_prunedj_1':'MH'})
+#            card.product("XWZ","Zqq","XWZ_MVV")
+#            card.addParametricYield("XWZ",0,"LNuJJ_XWZ_"+lepton+"_"+purity+"_"+category+"_yield.json")
 
 
 
@@ -80,10 +80,7 @@ for lepton in ['e','mu']:
             card.addSystematic("CMS_lumi","lnN",{'XWW':1.04,'XWZ':1.04,'WW':1.04,'WZ':1.04,'Wjets':1.04,'topRes':1.04,'topNonRes':1.04})
 
             #lepton efficiency
-            if lepton=='mu':
-                card.addSystematic("CMS_eff_"+lepton,"lnN",{'XWW':1.02,'XWZ':1.02,'WW':1.02,'WZ':1.02,'Wjets':1.02,'topRes':1.02,'topNonRes':1.02})
-            else:
-                card.addSystematic("CMS_eff_"+lepton,"lnN",{'XWW':1.07,'XWZ':1.07,'WW':1.07,'WZ':1.07,'Wjets':1.07,'topRes':1.07,'topNonRes':1.07})
+            card.addSystematic("CMS_eff_"+lepton,"lnN",{'XWW':1.02,'XWZ':1.02,'WW':1.02,'WZ':1.02,'Wjets':1.02,'topRes':1.02,'topNonRes':1.02})
 
 
             #W+jets cross section in acceptance-dominated by pruned mass
@@ -96,10 +93,11 @@ for lepton in ['e','mu']:
 
             #Tau21_fake    
             if purity=='HP':
-                card.addSystematic("CMS_tau21_fake","lnN",{'Wjets':1+0.56})
+                card.addSystematic("CMS_tau21_fake","lnN",{'Wjets':1+0.37})
             if purity=='LP':
-                card.addSystematic("CMS_tau21_fake","lnN",{'Wjets':1-0.18})
+                card.addSystematic("CMS_tau21_fake","lnN",{'Wjets':1-0.42})
                 
+
             #Top cross section    
             card.addSystematic("CMS_top_sigma","lnN",{'topRes':1.3,'topNonRes':1.3})
             #Top activity in the event     
@@ -116,10 +114,10 @@ for lepton in ['e','mu']:
 
 
             if category=='b':
-                card.addSystematic("CMS_btag_eff","lnN",{'topRes':1.36,'topNonRes':1.36})
-                card.addSystematic("CMS_btag_fake","lnN",{'Wjets':1.5,'XWW':1.5,'XWZ':1.5 ,'WW':1.5,'WZ':1.5})
+                card.addSystematic("CMS_btag_eff","lnN",{'topRes':1.18,'topNonRes':1.18})
+                card.addSystematic("CMS_btag_fake","lnN",{'Wjets':1.3,'XWW':1.3,'XWZ':1.3 ,'WW':1.3,'WZ':1.3})
             else:
-                card.addSystematic("CMS_btag_eff","lnN",{'topRes':0.6,'topNonRes':0.6})
+                card.addSystematic("CMS_btag_eff","lnN",{'topRes':0.70,'topNonRes':0.70})
                 card.addSystematic("CMS_btag_fake","lnN",{'Wjets':0.98,'XWW':0.98,'XWZ':0.98,'WW':0.98,'WZ':0.98})
                
             #pruned mass scale    
