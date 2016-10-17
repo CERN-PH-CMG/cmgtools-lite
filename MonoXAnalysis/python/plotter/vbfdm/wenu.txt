@@ -1,5 +1,5 @@
 trigger: HLT_SingleEl==1 || run==1
-metfilters: Flag_globalTightHalo2016Filter && Flag_eeBadScFilter==1 && hbheFilterNew25ns==1 && hbheFilterIso==1
+metfilters: Flag_HBHENoiseFilter==1 && Flag_HBHENoiseIsoFilter==1 && Flag_EcalDeadCellTriggerPrimitiveFilter==1 && Flag_goodVertices==1 && Flag_eeBadScFilter==1 && Flag_globalTightHalo2016Filter==1
 skim: recoil_pt > 130 && nJetClean >= 2 && JetClean1_pt > 80 && JetClean1_pt > 50
 1 loose ele: nEle10V == 1
 eletag: nEle40T == 1 && LepGood1_pt > 40 && abs(LepGood1_pdgId)==11 
