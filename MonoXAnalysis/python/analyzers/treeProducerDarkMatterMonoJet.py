@@ -116,7 +116,7 @@ dmMonoJet_collections.update({
             # put more here
             #"genleps"         : NTupleCollection("genLep",     genParticleWithLinksType, 10, help="Generated leptons (e/mu) from W/Z decays"), 
             ##------------------------------------------------                       
-            "monoxSelectedTaus" : NTupleCollection("TauGood",  tauTypeSusy, 3, help="Taus after the preselection"),
+            "monoxSelectedTaus" : NTupleCollection("TauGood",  tauType, 3, help="Taus after the preselection"),
             "selectedLeptons"   : NTupleCollection("LepGood",  leptonTypeMonoJet, 10, help="Leptons after the preselection"),
             "selectedPhotons"   : NTupleCollection("GammaGood", photonTypeSusy, 20, help="photons with pt>20 and loose cut based ID"),
             ##------------------------------------------------
@@ -149,4 +149,3 @@ fatJetType.addVariables([
         NTupleVariable("puMva", lambda x: x.puMva(), float, help="Value of the pu MVA discriminator"),
         NTupleVariable("prunedMass", lambda x: x.userFloat("ak8PFJetsCHSPrunedMass") * (x.corr if hasattr(x,'corr') else 1.0), float, help="pruned mass"),
 ])
-
