@@ -624,7 +624,7 @@ TTTT_ext,
 ### EWK V+jets 
 EWKWMinus2Jets = kreator.makeMCComponent("EWKWMinus2Jets", "/EWKWMinus2Jets_WToLNu_M-50_13TeV-madgraph-pythia8/RunIISpring16MiniAODv2-PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v2/MINIAODSIM", "CMS", ".*root", 20.36)
 EWKWPlus2Jets = kreator.makeMCComponent("EWKWPlus2Jets", "/EWKWPlus2Jets_WToLNu_M-50_13TeV-madgraph-pythia8/RunIISpring16MiniAODv2-PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/MINIAODSIM", "CMS", ".*root", 25.82)
-EWKZToLL2Jets = kreator.makeMCComponent("EWKZToLL2Jets", "/EWKZ2Jets_ZToLL_M-50_13TeV-madgraph-pythia8/RunIISpring16MiniAODv1-PUSpring16_80X_mcRun2_asymptotic_2016_v3-v2/MINIAODSIM", "CMS", ".*root", 3.998)
+EWKZToLL2Jets = kreator.makeMCComponent("EWKZToLL2Jets", "/EWKZ2Jets_ZToLL_M-50_13TeV-madgraph-pythia8/RunIISpring16MiniAODv2-PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/MINIAODSIM", "CMS", ".*root", 3.998)
 EWKZToNuNu2Jets = kreator.makeMCComponent("EWKZToNuNu2Jets", "/EWKZ2Jets_ZToNuNu_13TeV-madgraph-pythia8/RunIISpring16MiniAODv2-PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/MINIAODSIM", "CMS", ".*root", 10.14)
 
 EWKV2Jets = [
