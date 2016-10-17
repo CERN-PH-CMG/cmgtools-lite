@@ -17,13 +17,13 @@ class Analysis:
         
         region = options.region
         self.region = region
-        if region in ['signal']: 
+        if region in ['SR']: 
             T=TREEDIR+'TREES_MET_80X_V4'
             self.MCA='vbfdm/mca-80X-sync.txt'
-        elif region in ['zmumu','wmunu']: 
+        elif region in ['ZM','WM']: 
             T=TREEDIR+'TREES_MET_80X_V4'
             self.MCA='vbfdm/mca-80X-muonCR.txt'
-        elif region in ['zee','wenu']: 
+        elif region in ['ZE','WE']: 
             T=TREEDIR+'TREES_1LEP_80X_V4'
             self.MCA='vbfdm/mca-80X-electronCR.txt'
         elif region in ['gjets']: 
@@ -33,7 +33,7 @@ class Analysis:
         corey = 'mcAnalysis.py ' if len(options.pdir)==0 else 'mcPlots.py '
         coreopt = ' -P '+T+' --s2v -j 6 -l 24.47 -G'
         plotopt = ' -f --poisson --pdir ' + options.pdir
-        if region != 'signal': plotopt += ' --showRatio --maxRatioRange 0.5 1.5 --fixRatioRange '
+        if region != 'SR': plotopt += ' --showRatio --maxRatioRange 0.5 1.5 --fixRatioRange '
         anaOpts += [coreopt]
      
         if options.upToCut: anaOpts.append('-U '+options.upToCut)
@@ -41,15 +41,15 @@ class Analysis:
         fev = ' -F mjvars/t \"'+T+'/friends/evVarFriend_{cname}.root\" '
         fsf = ' --FMC sf/t \"'+T+'/friends/sfFriend_{cname}.root\" '
         anaOpts += [fev, fsf]
-        if options.synch == True: anaOpts += '-u'
+        if options.synch == True: anaOpts += ['-u']
         
         runy = ' '.join([corey,self.MCA,' '])
         cuts = {
-            'signal': 'vbfdm/vbfdm.txt',
-            'zmumu': 'vbfdm/zmumu.txt',
-            'wmunu': 'vbfdm/wmunu.txt',
-            'zee': 'vbfdm/zee.txt',
-            'wenu': 'vbfdm/wenu.txt',
+            'SR': 'vbfdm/vbfdm.txt',
+            'ZM': 'vbfdm/zmumu.txt',
+            'WM': 'vbfdm/wmunu.txt',
+            'ZE': 'vbfdm/zee.txt',
+            'WE': 'vbfdm/wenu.txt',
             'gjets': 'vbfdm/gjets.txt',
             }
         
@@ -71,11 +71,11 @@ class Analysis:
      
         if region not in cuts: raise RuntimeError, "Region "+region+" not in the foreseen ones: "+cuts
         weights = {
-            'signal': ['puw','SF_trigmetnomu','SF_BTag','SF_NLO_QCD','SF_NLO_EWK'],
-            'zmumu' : ['puw','SF_trigmetnomu','SF_LepTightLoose','SF_BTag','SF_NLO_QCD','SF_NLO_EWK'],
-            'zee'   : ['puw','SF_LepTightLoose','SF_BTag','SF_NLO_QCD','SF_NLO_EWK'],
-            'wmunu' : ['puw','SF_trigmetnomu','SF_LepTight','SF_BTag','SF_NLO_QCD','SF_NLO_EWK'],
-            'wenu'  : ['puw','SF_LepTight','SF_BTag','SF_NLO_QCD','SF_NLO_EWK'],
+            'SR': ['puw','SF_trigmetnomu','SF_BTag','SF_NLO_QCD','SF_NLO_EWK'],
+            'ZM' : ['puw','SF_trigmetnomu','SF_LepTightLoose','SF_BTag','SF_NLO_QCD','SF_NLO_EWK'],
+            'ZE'   : ['puw','SF_LepTightLoose','SF_BTag','SF_NLO_QCD','SF_NLO_EWK'],
+            'WM' : ['puw','SF_trigmetnomu','SF_LepTight','SF_BTag','SF_NLO_QCD','SF_NLO_EWK'],
+            'WE'  : ['puw','SF_LepTight','SF_BTag','SF_NLO_QCD','SF_NLO_EWK'],
             'gjets' : ['puw','SF_BTag','SF_NLO_QCD','SF_NLO_EWK']
             }
 
@@ -99,11 +99,11 @@ class Analysis:
         anaOptsString = ' '.join(anaOpts)
 
         systs = {
-            'signal' : 'vbfdm/syst_SR.txt', # to be replaced
-            'zmumu' : 'vbfdm/syst_ZM.txt',
-            'zee' : 'vbfdm/syst_ZE.txt',
-            'wmunu' : 'vbfdm/syst_WM.txt',
-            'wenu' : 'vbfdm/syst_WE.txt'
+            'SR' : 'vbfdm/syst_SR.txt', # to be replaced
+            'ZM' : 'vbfdm/syst_ZM.txt',
+            'ZE' : 'vbfdm/syst_ZE.txt',
+            'WM' : 'vbfdm/syst_WM.txt',
+            'WE' : 'vbfdm/syst_WE.txt'
             }
 
         anaOptsString = ' '.join(anaOpts)
@@ -117,7 +117,7 @@ if __name__ == "__main__":
     usage="%prog [options]"
 
     parser = OptionParser(usage=usage)
-    parser.add_option("-r", "--region", dest="region", default='signal', help='Find the yields for this phase space')
+    parser.add_option("-r", "--region", dest="region", default='SR', help='Find the yields for this phase space')
     parser.add_option("-d", "--dry-run", dest="dryrun", action="store_true", default=False, help='Do not run the commands, just print them')
     parser.add_option("-s", "--synch", dest="synch", action="store_true", default=False, help='Do not apply any scale factor, bare yields')
     parser.add_option("-p", "--pdir", dest="pdir", type="string", default="", help='If given, make the plots and put them in the specified directory')
@@ -133,7 +133,7 @@ if __name__ == "__main__":
                      'full_sel': ['detajj','mjj','nvtx','rho']
                      }
     rebinFactor = {'v_presel':1, 'vbfjets':1, 'full_sel':4}
-    ctrl_regions = ['zmumu','wmunu','zee','wenu']
+    ctrl_regions = ['ZM','WM','ZE','WE']
 
     if options.fullControlRegions:
         pdirbase = options.pdir
@@ -145,7 +145,7 @@ if __name__ == "__main__":
                 options.upToCut = v
                 options.pdir = pdirbase+"/"+CR+"CR/"+s
                 mcpOpts = ['--xP '+','.join(exclude_plots[s]), '--rebin '+str(rebinFactor[s])]
-                if CR!='wenu': mcpOpts += ['--xp QCD'] # too large uncertainty
+                if CR!='WE': mcpOpts += ['--xp QCD'] # too large uncertainty
                 analysis = Analysis(options,mcpOpts)
                 analysis.runOne()        
 
@@ -154,14 +154,14 @@ if __name__ == "__main__":
         pdirbase = options.pdir if options.pdir else "templates"
         if not os.path.exists(pdirbase): os.mkdir(pdirbase)
         processesToProp = {
-            'signal': ['ZNuNu','W'],
-            'zmumu' : ['ZLL','EWKZLL'],
-            'zee' : ['ZLL','EWKZLL'],
-            'wmunu' : ['W','EWKW'],
-            'wenu' : ['W','EWKW']
+            'SR': ['ZNuNu','W'],
+            'ZM' : ['ZLL','EWKZLL'],
+            'ZE' : ['ZLL','EWKZLL'],
+            'WM' : ['W','EWKW'],
+            'WE' : ['W','EWKW']
             }
         sel_step = sel_steps['vbfjets']
-        all_regions = ['signal'] + ctrl_regions
+        all_regions = ['SR'] + ctrl_regions
         for reg in all_regions:
             options.region = reg
             options.upToCut = sel_step
@@ -180,11 +180,11 @@ if __name__ == "__main__":
         # list of transfer factors to do, with files with input templates
         TFs = {
             #    key                num    den    numfile  denfile
-            'Znunu_from_Zmumu' : ['ZNuNu','ZLL','signal','zmumu'],
-            'Znunu_from_Zee'   : ['ZNuNu','ZLL','signal','zee'],
-            'W_from_Wmumu' : ['W','W','signal','wmunu'],
-            'W_from_Wenu' : ['W','W','signal','wenu'],
-            'Z_from_Wlnu' : ['ZNuNu','W','signal','signal']
+            'Znunu_from_Zmumu' : ['ZNuNu','ZLL','SR','ZM'],
+            'Znunu_from_Zee'   : ['ZNuNu','ZLL','SR','ZE'],
+            'W_from_Wmumu' : ['W','W','SR','WM'],
+            'W_from_Wenu' : ['W','W','SR','WE'],
+            'Z_from_Wlnu' : ['ZNuNu','W','SR','SR']
             }
 
         for k,tf in TFs.iteritems():
@@ -254,6 +254,6 @@ if __name__ == "__main__":
 
     else: 
         mcpOpts = []
-        if(options.region=='signal'): mcpOpts += ['--showIndivSigShapes','--xp data,QCD','--rebin 2']
+        if(options.region=='SR'): mcpOpts += ['--showIndivSigShapes','--xp data,QCD','--rebin 2']
         analysis = Analysis(options,mcpOpts)
         analysis.runOne()
