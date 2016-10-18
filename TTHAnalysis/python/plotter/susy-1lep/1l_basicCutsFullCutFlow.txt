@@ -10,7 +10,7 @@ Filters: !isData || METfilters == 1
 
 HT > 350: HT > 350
 
-LT > 250: LT > 250
+MET > 250: MET > 250
 
 #nbjets == 0: nBJet == 0
 #nbjets >= 1: nBJet >= 1
