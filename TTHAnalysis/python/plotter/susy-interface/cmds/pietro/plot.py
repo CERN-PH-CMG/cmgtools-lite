@@ -59,15 +59,17 @@ blind = '--flags "-X blinding"'
 
 
 if(action=='generalplots'):
-    
-    cmd = 'python susy-interface/plotmaker.py 3l 3lA {inputDir} {outputDir} -l 12.9 --make data --plots br -o SR {blind} --pretend'.format(inputDir=inputDir,outputDir=outputDir,blind=blind)
-    command(cmd, pretend)
+        cmd = 'python susy-interface/plotmaker.py 3l 3lA {inputDir} {outputDir} -l 12.9 --make data --plots br -o SR {blind} --pretend'.format(inputDir=inputDir,outputDir=outputDir,blind=blind)
+        command(cmd, pretend)
 
 elif(action=='tauopt'):
-    
-    for region in regions:
-        cmd = 'python susy-interface/plotmaker.py 3l {region} {inputDir} {outputDir} -l 12.9 --make data --plots br -o {sr} {blind} --pretend'.format(region=regions[region][0],inputDir=inputDir,outputDir=outputDir,blind=blind,sr=regions[region][1])
-        command(cmd,pretend)
+        
+        mca='susy-ewkino/3l/taus/mca_taus.txt'
+        
+
+        for region in regions:
+                cmd = 'python susy-interface/plotmaker.py 3l {region} {inputDir} {outputDir} --mca {mca} -l 12.9 --make data --plots br -o {sr} {blind} --pretend'.format(region=regions[region][0],inputDir=inputDir,outputDir=outputDir,mca=mca,blind=blind,sr=regions[region][1])
+                command(cmd,pretend)
         
 
 print 'Everything is done now'
