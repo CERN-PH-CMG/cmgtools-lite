@@ -35,3 +35,5 @@ minMllAFAS\b: minMllAFAS_Recl; AlsoData
 minMllAFOS\b: minMllAFOS_Recl; AlsoData
 minMllAFSS\b: minMllAFSS_Recl; AlsoData
 minMllSFOS\b: minMllSFOS_Recl; AlsoData
+mTW\b: mT_3l; AlsoData
+nOSSF\b: nOSSF_3l; AlsoData
