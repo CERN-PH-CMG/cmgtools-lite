@@ -22,7 +22,7 @@ BEGIN::3l
   flagsLimits +:=
   flagsPlots  +:= --perBin --ratioOffset 0.03 --print C,png,pdf,txt
   flagsPlots  +:= --plotgroup rares_ttX+=rares_ttW --plotgroup rares_ttX+=rares_ttZ
-  flagsPlots  +:= --plotgroup fakes_appldata+=promptsub --cms
+  flagsPlots  +:= --plotgroup fakes_appldata+=promptsub
   flagsScans  +:= 
   jec          := jec
   met          := met
