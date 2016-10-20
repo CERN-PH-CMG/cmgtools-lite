@@ -10,7 +10,7 @@ BTagReweight74X = lambda : BTagWeightCalculator("/afs/cern.ch/work/e/emanuele/pu
 class EventVarsMonojet:
     def __init__(self):
         self.branches = [ "nMu10V", "nMu20T", "nEle10V", "nEle40T", "nTau18V", "nGamma15V", "nGamma175T", "nBTag15",
-                          "dphijj", "dphijm", "weight", "events_ntot", "phmet_pt", "phmet_phi","SF_BTag"
+                          "dphijj", "dphijm", "weight", "events_ntot", "recoil_pt", "recoil_phi","SF_BTag"
                           ]
         vbfHiggsToInvVars = [ "dphijmAllJets", "vbfTaggedJet_deltaEta", "vbfTaggedJet_invMass", 
                               "vbfTaggedJet_leadJetPt", "vbfTaggedJet_trailJetPt", "vbfTaggedJet_leadJetEta", "vbfTaggedJet_trailJetEta" 
@@ -21,7 +21,8 @@ class EventVarsMonojet:
         btagreweight = BTagReweight74X()
         self._btagreweight = (btagreweight() if type(btagreweight) == types.FunctionType else btagreweight)
         self._btagreweight.btag = "btagCSV"
-    def initSampleNormalization(self,sample_nevt):
+    def initSample(self,region,sample_nevt):
+        self.region = region
         self.sample_nevt = sample_nevt        
     def listBranches(self):
         biglist = [ ("nJetClean", "I"), ("nFatJetClean","I"), ("nTauClean", "I"), ("nLepSel", "I"),
@@ -70,6 +71,8 @@ class EventVarsMonojet:
         # for j in jets:
         #     print "    single wgt for jpt=%.3f jeta=%.3f, mcFlav=%d, btag=%.3f, SF=%.3f" % (j.pt, j.eta, j.mcFlavour, j.btagCSV, self._btagreweight.calcJetWeight(j,rwtKind,rwtSyst) )
         return self._btagreweight.calcEventWeight(jets, rwtKind, rwtSyst)
+    def PtEtaPhi3V(self,pt,eta,phi):
+        return ROOT.TVector3(pt*cos(phi),pt*sin(phi),pt*sinh(eta))
     def __call__(self,event):
         # prepare output
         ret = {}; jetret = {}; fatjetret = {}; tauret = {}
@@ -93,12 +96,24 @@ class EventVarsMonojet:
         fatjets = [f for f in Collection(event,"FatJet","nFatJet")]
         photonsT = [p for p in photons if self.gammaIdTight(p)]
         #print "check photonsT size is ", len(photonsT), " and nGamma175T = ",ret['nGamma175T']
-        (met, metphi)  = event.metNoMu_pt, event.metNoMu_phi
-        metp4 = ROOT.TLorentzVector()
-        metp4.SetPtEtaPhiM(met,0,metphi,0)
-        phmet = self.metNoPh(metp4,photonsT)
-        ret['phmet_pt'] = phmet.Pt()
-        ret['phmet_phi'] = phmet.Phi()
+        electrons3V=[self.PtEtaPhi3V(l.pt,l.eta,l.phi) for l in leps if (abs(l.pdgId)==11 and self.lepIdVeto(l)) ] 
+        pfmet = self.PtEtaPhi3V(event.met_pt,0.,event.met_phi)
+        if self.region == 'VE' and len(electrons3V)>1: # if there are >1 loose electrons, the event is vetoed for W->enu, can only belong to Z->ee
+            recoil = electrons3V[0] + electrons3V[1] + pfmet
+            (met,metphi) = (recoil.Pt(),recoil.Phi())
+        elif self.region == 'VE' and len(electrons3V)>0:
+            recoil = electrons3V[0] + pfmet
+            (met,metphi) = (recoil.Pt(),recoil.Phi())
+        elif self.region == 'GJ' and len(photonsT)>0:
+            photon1 = self.PtEtaPhi3V(photonsT[0].pt,photonsT[0].eta,photonsT[0].phi)
+            recoil = photon1 + pfmet
+            (met,metphi) = (recoil.Pt(),recoil.Phi())
+        else:
+            recoil = self.PtEtaPhi3V(event.metNoMu_pt,0.,event.metNoMu_phi)
+
+        (met,metphi) = (recoil.Pt(), recoil.Phi())
+        ret['recoil_pt'] = met
+        ret['recoil_phi'] = metphi
 
         ### lepton-jet cleaning
         # Define the loose leptons to be cleaned
