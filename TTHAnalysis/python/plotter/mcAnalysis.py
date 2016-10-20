@@ -3,17 +3,13 @@
 from CMGTools.TTHAnalysis.plotter.tree2yield import *
 from CMGTools.TTHAnalysis.plotter.projections import *
 from CMGTools.TTHAnalysis.plotter.figuresOfMerit import FOM_BY_NAME
-from CMGTools.TTHAnalysis.plotter.histoWithNuisances import HistoWithNuisances
+from CMGTools.TTHAnalysis.plotter.histoWithNuisances import HistoWithNuisances,mergePlots
 import pickle, re, random, time
 from copy import copy, deepcopy
 
 #_T0 = long(ROOT.gSystem.Now())
 
 ## These must be defined as standalone functions, to allow runing them in parallel
-def _runYields(args):
-    key,tty,cuts,noEntryLine,fsplit = args
-    return (key, tty, tty.getYields(cuts,noEntryLine=noEntryLine,fsplit=fsplit))
-
 def _runPlot(args):
     key,tty,plotspec,cut,fsplit = args
     timer = ROOT.TStopwatch()
@@ -266,50 +262,44 @@ class MCAnalysis:
         else: raise RuntimeError, "Can't set option %s for undefined process %s" % (name,process)
     def getScales(self,process):
         return [ tty.getScaleFactor() for tty in self._allData[process] ] 
-    def getYields(self,cuts,process=None,nodata=False,makeSummary=False,noEntryLine=False):
-        raise RuntimeError, 'to be reimplemented with getPlotsRaw'
-#        ## first figure out what we want to do
-#        tasks = []
-#        for key,ttys in self._allData.iteritems():
-#            if key == 'data' and nodata: continue
-#            if process != None and key != process: continue
-#        ## then do the work
-#        if self._options.splitFactor > 1 or  self._options.splitFactor == -1:
-#            tasks = self._splitTasks(tasks)
-#        retlist = self._processTasks(_runYields, tasks,name="yields")
-#        ## then gather results with the same process
-#        mergemap = {}
-#        for (k,v) in retlist: 
-#            if k not in mergemap: mergemap[k] = []
-#            mergemap[k].append(v)
-#        ## and finally merge them
-#        ret = dict([ (k,mergeReports(v)) for k,v in mergemap.iteritems() ])
-#
-#        rescales = []
-#        self.compilePlotScaleMap(self._options.plotscalemap,rescales)
-#        for p,v in ret.items():
-#            for regexp in rescales:
-#                if re.match(regexp[0],p): ret[p]=[v[0], [x*regexp[1] for x in v[1]]]
-#
-#        regroups = [] # [(compiled regexp,target)]
-#        self.compilePlotMergeMap(self._options.plotmergemap,regroups)
-#        for regexp in regroups: ret = self.regroupReports(ret,regexp)
-#
-#        # if necessary project to different lumi, energy,
-#        if self._projection:
-#            self._projection.scaleReport(ret)
-#        # and comute totals
-#        if makeSummary:
-#            allSig = []; allBg = []
-#            for (key,val) in ret.iteritems():
-#                if key != 'data':
-#                    if self._isSignal[key]: allSig.append(ret[key])
-#                    else: allBg.append(ret[key])
-#            if self._signals and not ret.has_key('signal') and len(allSig) > 0:
-#                ret['signal'] = mergeReports(allSig)
-#            if self._backgrounds and not ret.has_key('background') and len(allBg) > 0:
-#                ret['background'] = mergeReports(allBg)
-#        return ret
+    def getYields(self,cuts,process=None,nodata=False,makeSummary=False,noEntryLine=False,addUncertainties=True):
+        report = []; cut = ""
+        cutseq = [ ['entry point','1'] ]
+        if noEntryLine: cutseq = []
+        sequential = False
+        if self._options.nMinusOne or self._options.nMinusOneInverted: 
+            if self._options.nMinusOneSelection:
+                cutseq = cuts.nMinusOneSelectedCuts(self._options.nMinusOneSelection,inverted=self._options.nMinusOneInverted)
+            else:
+                cutseq = cuts.nMinusOneCuts(inverted=self._options.nMinusOneInverted)
+            cutseq += [ ['all',cuts.allCuts()] ]
+            sequential = False
+        elif self._options.final:
+            cutseq = [ ['all', cuts.allCuts()] ]
+        else:
+            cutseq += cuts.cuts();
+            sequential = True
+        for cn,cv in cutseq:
+            if sequential:
+                if cut: cut += " && "
+                cut += "(%s)" % cv
+            else:
+                cut = cv
+            report.append((cn,self.getPlotsRaw('yield','1','1,0.5,1.5',cut,process,nodata,makeSummary)))
+        formatted_report = []
+        for cn,ret in report:
+            thisret = {}
+            for k,h in ret.iteritems():
+                thisret[k]=[h.GetBinContent(1),h.GetBinError(1),h.GetEntries()]
+                if addUncertainties:
+                    unc = {}
+                    for var in h.getVariationList():
+                        up,dn = h.getVariation(var)
+                        unc[var] = (up.Integral(),dn.Integral())
+                    thisret[k].append(copy(unc))
+            formatted_report.append((cn,copy(thisret)))
+        print formatted_report
+        return formatted_report
     def getPlotsRaw(self,name,expr,bins,cut,process=None,nodata=False,makeSummary=False):
         return self.getPlots(PlotSpec(name,expr,bins,{}),cut,process,nodata,makeSummary)
     def getPlots(self,plotspec,cut,process=None,nodata=False,makeSummary=False):
@@ -512,8 +502,6 @@ class MCAnalysis:
                     print "%s%s%s" % (k,sep,sep.join(ytxt.split()))
                 print ""
 
-    def _getYields(self,ttylist,cuts):
-        return mergeReports([tty.getYields(cuts) for tty in ttylist])
     def __str__(self):
         mystr = ""
         for a in self._allData:

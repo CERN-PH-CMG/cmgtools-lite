@@ -88,6 +88,8 @@ class HistoWithNuisances:
 
     def getVariation(self,alternate):
         return self.variations[alternate]
+    def getVariationList(self):
+        return self.variations.keys()
     def addVariation(self,name,sign,histo_varied):
         idx = 0 if sign=='up' else 1
         if name not in self.variations: self.variations[name] = [None,None]
@@ -113,3 +115,9 @@ class HistoWithNuisances:
         h = self.Clone(self.GetName())
         h+=x
         return h
+
+def mergePlots(name,plots):
+    one = plots[0].Clone(name)
+    for p in plots[1:]:
+        one+=p
+    return one

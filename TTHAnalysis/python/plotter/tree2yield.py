@@ -312,32 +312,6 @@ class TreeToYield:
         return (self._entries != None)
     def setEntries(self,entries):
         self._entries = entries
-    def getYields(self,cuts,noEntryLine=False,fsplit=None):
-        if not self._isInit: self._init()
-        report = []; cut = ""
-        cutseq = [ ['entry point','1'] ]
-        if noEntryLine: cutseq = []
-        sequential = False
-        if self._options.nMinusOne or self._options.nMinusOneInverted: 
-            if self._options.nMinusOneSelection:
-                cutseq = cuts.nMinusOneSelectedCuts(self._options.nMinusOneSelection,inverted=self._options.nMinusOneInverted)
-            else:
-                cutseq = cuts.nMinusOneCuts(inverted=self._options.nMinusOneInverted)
-            cutseq += [ ['all',cuts.allCuts()] ]
-            sequential = False
-        elif self._options.final:
-            cutseq = [ ['all', cuts.allCuts()] ]
-        else:
-            cutseq += cuts.cuts();
-            sequential = True
-        for cn,cv in cutseq:
-            if sequential:
-                if cut: cut += " && "
-                cut += "(%s)" % cv
-            else:
-                cut = cv
-            report.append((cn,self._getYield(self._tree,cut,fsplit=fsplit)))
-        return report
     def prettyPrint(self,report):
         # maximum length of the cut descriptions
         clen = max([len(cut) for cut,yields in report]) + 3
@@ -584,24 +558,3 @@ def addTreeToYieldOptions(parser):
     parser.add_option("--neglist", dest="negAllowed", action="append", default=[], help="Give process names where negative values are allowed")
     parser.add_option("--max-entries",     dest="maxEntries", default=1000000000, type="int", help="Max entries to process in each tree") 
     parser.add_option("-L", "--load-macro",  dest="loadMacro",   type="string", action="append", default=[], help="Load the following macro, with .L <file>+");
-
-def mergeReports(reports):
-    import copy
-    one = copy.deepcopy(reports[0])
-    for i,(c,x) in enumerate(one):
-        one[i][1][1] = pow(one[i][1][1], 2)
-    for two in reports[1:]:
-        for i,(c,x) in enumerate(two):
-            one[i][1][0] += x[0]
-            one[i][1][1] += pow(x[1],2)
-            one[i][1][2] += x[2]
-    for i,(c,x) in enumerate(one):
-        one[i][1][1] = sqrt(one[i][1][1])
-    return one
-
-def mergePlots(name,plots):
-    one = plots[0].Clone(name)
-    for p in plots[1:]:
-        one+=p
-    return one
-
