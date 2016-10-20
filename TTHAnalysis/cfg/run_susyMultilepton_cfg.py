@@ -392,6 +392,8 @@ if analysis=='susy':
         selectedComponents=[TChiSlepSnu,T1tttt_2016,T5qqqqVV_2016]
         ttHLepSkim.minLeptons = 0
         ttHLepSkim.requireSameSignPair = False
+        lheWeightAna.useLumiInfo=True
+        susyScanAna.useLumiInfo=True
         for c in selectedComponents:
             c.splitFactor = len(c.files)
 
@@ -483,7 +485,7 @@ if runData and not isTest: # For running on data
 
         if runDataQCD: # for fake rate measurements in data
             FRTrigs_mu = triggers_FR_1mu_noiso
-            FRTrigs_el = triggers_FR_1e_noiso 
+            FRTrigs_el = triggers_FR_1e_noiso
             DatasetsAndTriggers = [
                 ("DoubleMuon", FRTrigs_mu ),
                 ("DoubleEG",   FRTrigs_el ),

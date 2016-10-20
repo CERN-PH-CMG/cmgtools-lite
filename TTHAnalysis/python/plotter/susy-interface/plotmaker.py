@@ -19,6 +19,7 @@ def collectPlots(region, plotsname):
 	return [plotsname]
 
 def collectPPlots(region, plotsname):
+	if not plotsname in region.plots.keys(): return ""
 	return " ".join("--sP "+v for v in region.plots[plotsname])
 
 def collectProcesses(mm, make):
@@ -63,7 +64,7 @@ for r in range(len(mm.regions)):
 			procs   = collectProcesses(mm       , m)
 			pplots  = collectPPlots   (mm.region, p)
 	
-			mm.submit([mm.getVariable("mcafile"), mm.getVariable("cutfile"), mm.getVariable("plotfile"), mm.treedir, options.treename, options.lspam, mccs, macros, ratio, options.lumi, output, friends, procs, pplots, flags])
+			mm.submit([mm.getVariable("mcafile",""), mm.getVariable("cutfile",""), mm.getVariable("plotfile",""), mm.treedir, options.treename, options.lspam, mccs, macros, ratio, options.lumi, output, friends, procs, pplots, flags],mm.region.name+"_"+p+"_"+m)
 
 
 
