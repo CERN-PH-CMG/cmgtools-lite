@@ -55,11 +55,11 @@ if reapplyJEC:
 tauMuAna = cfg.Analyzer(
     TauMuAnalyzer,
     name='TauMuAnalyzer',
-    pt1=21,
+    pt1=23,
     eta1=2.1,
     iso1=0.15,
     looseiso1=9999.,
-    pt2=20,
+    pt2=30,
     eta2=2.3,
     iso2=1.5,
     looseiso2=9999.,
@@ -93,11 +93,14 @@ muonWeighter = cfg.Analyzer(
     LeptonWeighter,
     name='LeptonWeighter_mu',
     scaleFactorFiles={
-        'trigger':'$CMSSW_BASE/src/CMGTools/H2TauTau/data/Muon_IsoMu18_spring16.root',
-        'idiso':'$CMSSW_BASE/src/CMGTools/H2TauTau/data/Muon_IdIso0p1_spring16.root',
+        # 'trigger':('$CMSSW_BASE/src/CMGTools/H2TauTau/data/htt_scalefactors_v3.root', 'trgIsoMu22_desy'),
+        'idiso':('$CMSSW_BASE/src/CMGTools/H2TauTau/data/htt_scalefactors_v3.root', 'm_idiso0p15_desy'),
+    },
+    dataEffFiles={
+        'trigger':('$CMSSW_BASE/src/CMGTools/H2TauTau/data/htt_scalefactors_v3.root', 'm_trgIsoMu22_desy'),
     },
     lepton='leg1',
-    disable=True
+    disable=False
 )
 
 treeProducer = cfg.Analyzer(
@@ -211,7 +214,7 @@ if not production:
     if data:
         selectedComponents = [selectedComponents[0]]
     # comp = selectedComponents[0]
-    comp.splitFactor = 4
+    comp.splitFactor = 5
     comp.fineSplitFactor = 1
     # comp.files = comp.files[]
 

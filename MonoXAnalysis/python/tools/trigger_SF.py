@@ -30,6 +30,15 @@ class MetNoMuTriggerSF:
     def __call__(self,event):
         return self.h.GetBinContent(self.h.FindBin(event.metNoMu_pt))
 
+class MetNoMuTriggerSF_Spline:
+    def __init__(self,file="/afs/cern.ch/work/e/emanuele/public/monox/leptonsf/met_trig_spline.root"):
+        tfile = ROOT.TFile(file)
+        self.s = tfile.Get("met_trig_spline3").Clone("MetTriggerSF")
+        tfile.Close()
+    def __call__(self,event):
+        if(event.metNoMu_pt > 500): return 1.0
+        return self.s.Eval(event.metNoMu_pt)
+
 if __name__ == '__main__':
     from sys import argv
     file = ROOT.TFile(argv[1])

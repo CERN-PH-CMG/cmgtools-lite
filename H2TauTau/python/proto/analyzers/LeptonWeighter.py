@@ -15,15 +15,25 @@ class LeptonWeighter(Analyzer):
         
         self.scaleFactors = {}
         for sf_name, sf_file in self.cfg_ana.scaleFactorFiles.items():
-            self.scaleFactors[sf_name] = ScaleFactor(sf_file)
+            if isinstance(sf_file, tuple):
+                self.scaleFactors[sf_name] = ScaleFactor(sf_file[0], sf_file[1])
+            else:
+                self.scaleFactors[sf_name] = ScaleFactor(sf_file)
         if hasattr(self.cfg_ana, 'otherScaleFactorFiles'):
             for sf_name, sf_file in self.cfg_ana.otherScaleFactorFiles.items():
-                self.scaleFactors[sf_name] = ScaleFactor(sf_file)
+                if isinstance(sf_file, tuple):
+                    self.scaleFactors[sf_name] = ScaleFactor(sf_file[0], sf_file[1])
+                else:
+                    self.scaleFactors[sf_name] = ScaleFactor(sf_file)
 
         self.dataEffs = {}
         self.cfg_ana.dataEffFiles = getattr(self.cfg_ana, 'dataEffFiles', {})
         for sf_name, sf_file in self.cfg_ana.dataEffFiles.items():
-            self.dataEffs[sf_name] = ScaleFactor(sf_file)
+            if isinstance(sf_file, tuple):
+                self.dataEffs[sf_name] = ScaleFactor(sf_file[0], sf_file[1])
+            else:
+                self.dataEffs[sf_name] = ScaleFactor(sf_file)
+
 
     def beginLoop(self, setup):
         print self, self.__class__

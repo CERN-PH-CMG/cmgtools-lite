@@ -107,10 +107,13 @@ histPref['EWK'] = {'style':sHTT_WJets, 'layer':3, 'legend':'EWK'}
 histPref['ElectroWeak'] = {'style':sHTT_WJets, 'layer':3, 'legend':'ElectroWeak'}  
 histPref['ZJ*'] = {'style':sHTT_DYJets, 'layer':3.1, 'legend':'Z#rightarrow#tau#tau/Z#rightarrow ll, j#rightarrow#tau'}
 histPref['ZL*'] = {'style':sHTT_ZL, 'layer':3.2, 'legend':'Z#rightarrow ll'}
+histPref['Zl0jet*'] = {'style':sHTT_ZL, 'layer':3.2, 'legend':'Z#rightarrow ll + 0 jets'}
+histPref['Zl1jet*'] = {'style':sHTT_DYJets, 'layer':3.2, 'legend':'Z#rightarrow ll + 1 jet'}
+histPref['Zl2jet*'] = {'style':sHTT_Higgs, 'layer':3.2, 'legend':'Z#rightarrow ll + #geq 2 jets'}
 histPref['ZLL'] = {'style':sHTT_ZL, 'layer':3.2, 'legend':'Z#rightarrow ll'}
 histPref['Ztt_TL'] = {'style':sViolet, 'layer':4.1, 'legend':'Z#rightarrow#tau#tau/Z#rightarrow ll, j#rightarrow#tau'}
 histPref['Higgs*'] = {'style':sHTT_Higgs, 'layer':1001, 'legend':None}
 histPref['ggH*'] = {'style':sHTT_Higgs, 'layer':1001, 'legend':None}
 histPref['bbH*'] = {'style':sHTT_Higgs, 'layer':1001, 'legend':None}
-
+histPref['SMS*'] = {'style':sHTT_Higgs, 'layer':1001, 'legend':None}
 

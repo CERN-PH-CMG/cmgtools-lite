@@ -1,5 +1,3 @@
-from PhysicsTools.Heppy.utils.cmsswRelease import isNewerThan
-
 cat_VBF = 'n_jets>=2 && vbf_n_central==0 && vbf_mjj > 500 && abs(vbf_deta) > 3.5'
 cat_VBF_Rel_30 = 'n_jets>=2 && n_bjets==0 && vbf_n_central==0 && vbf_mjj>200 && abs(vbf_deta) > 2.'
 cat_VBF_Rel_20 = 'n_jets_20>=2 && n_bjets==0 && vbf_n_central==0 && vbf_mjj>200 && abs(vbf_deta) > 2.'
