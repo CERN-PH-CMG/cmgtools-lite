@@ -1,0 +1,70 @@
+#ttW   : TTWToLNu        : xsec      ; FillColor=ROOT.kGreen+3  , FakeRate="susy-multilepton/ewk_upperlimits/fakerate_standard_sel.txt\,susy-multilepton/ewk_upperlimits/fakerate_load_is_prompt.txt", Label="ttW", SkipMe=True
+ttW_LO: TTWToLNu_LO     : xsec      ; FillColor=ROOT.kGreen+3  , FakeRate="susy-multilepton/ewk_upperlimits/fakerate_standard_sel.txt\,susy-multilepton/ewk_upperlimits/fakerate_load_is_prompt.txt", Label="ttW (LO)"
+#ttZ   : TTZToLLNuNu     : xsec      ; FillColor=ROOT.kGreen-6  , FakeRate="susy-multilepton/ewk_upperlimits/fakerate_standard_sel.txt\,susy-multilepton/ewk_upperlimits/fakerate_load_is_prompt.txt", Label="ttZ", SkipMe=True
+ttZ_LO: TTZToLLNuNu_LO  : xsec      ; FillColor=ROOT.kGreen-6  , FakeRate="susy-multilepton/ewk_upperlimits/fakerate_standard_sel.txt\,susy-multilepton/ewk_upperlimits/fakerate_load_is_prompt.txt", Label="ttZ (LO)"
+
+#TTW_sync   : TTW_EWK_sync        : xsec      ; FillColor=ROOT.kGreen+3  , FakeRate="susy-multilepton/ewk_upperlimits/fakerate_standard_sel.txt\,susy-multilepton/ewk_upperlimits/fakerate_load_is_prompt.txt", Label="ttW"
+
+
+# See SR definition in slide 6: https://indico.cern.ch/event/514422/contributions/1193479/attachments/1264699/1871422/2016-04-27_slides_final.pdf
+# 0 = out of signal regions, 1 = same-sign region (recently added, old files don't have this SS SR)
+
+#ttZ_SR201a  : TTZToLLNuNu_LO  : xsec    :   SRlight_Loop==2 ; FillColor=ROOT.kGreen-6  , FakeRate="susy-multilepton/ewk_upperlimits/fakerate_standard_sel.txt\,susy-multilepton/ewk_upperlimits/fakerate_load_is_prompt.txt", Label="ttZ", SkipMe=True
+#ttZ_SR202a  : TTZToLLNuNu_LO  : xsec    :   SRlight_Loop==3 ; FillColor=ROOT.kGreen-6  , FakeRate="susy-multilepton/ewk_upperlimits/fakerate_standard_sel.txt\,susy-multilepton/ewk_upperlimits/fakerate_load_is_prompt.txt", Label="ttZ", SkipMe=True
+#ttZ_SR203a  : TTZToLLNuNu_LO  : xsec    :   SRlight_Loop==4 ; FillColor=ROOT.kGreen-6  , FakeRate="susy-multilepton/ewk_upperlimits/fakerate_standard_sel.txt\,susy-multilepton/ewk_upperlimits/fakerate_load_is_prompt.txt", Label="ttZ", SkipMe=True
+#ttZ_SR204a  : TTZToLLNuNu_LO  : xsec    :   SRlight_Loop==5 ; FillColor=ROOT.kGreen-6  , FakeRate="susy-multilepton/ewk_upperlimits/fakerate_standard_sel.txt\,susy-multilepton/ewk_upperlimits/fakerate_load_is_prompt.txt", Label="ttZ", SkipMe=True
+
+#ttZ_SR201b  : TTZToLLNuNu_LO  : xsec    :   SRlight_Loop==14 ; FillColor=ROOT.kGreen-6  , FakeRate="susy-multilepton/ewk_upperlimits/fakerate_standard_sel.txt\,susy-multilepton/ewk_upperlimits/fakerate_load_is_prompt.txt", Label="ttZ", SkipMe=True
+#ttZ_SR201c  : TTZToLLNuNu_LO  : xsec    :   SRlight_Loop==26 ; FillColor=ROOT.kGreen-6  , FakeRate="susy-multilepton/ewk_upperlimits/fakerate_standard_sel.txt\,susy-multilepton/ewk_upperlimits/fakerate_load_is_prompt.txt", Label="ttZ", SkipMe=True
+
+
+#ttZ_SR101a  : TTZToLLNuNu_LO  : xsec    :   SRlight_Loop==38 ; FillColor=ROOT.kGreen-6  , FakeRate="susy-multilepton/ewk_upperlimits/fakerate_standard_sel.txt\,susy-multilepton/ewk_upperlimits/fakerate_load_is_prompt.txt", Label="ttZ", SkipMe=True
+#ttZ_SR101b  : TTZToLLNuNu_LO  : xsec    :   SRlight_Loop==50 ; FillColor=ROOT.kGreen-6  , FakeRate="susy-multilepton/ewk_upperlimits/fakerate_standard_sel.txt\,susy-multilepton/ewk_upperlimits/fakerate_load_is_prompt.txt", Label="ttZ", SkipMe=True
+
+
+
+#ttW_SR201-204a   : TTWToLNu        : xsec      : SRlight_Loop>=2 && SRlight_Loop<=5 ; FillColor=ROOT.kGreen+3  , FakeRate="susy-multilepton/ewk_upperlimits/fakerate_standard_sel.txt\,susy-multilepton/ewk_upperlimits/fakerate_load_is_prompt.txt", Label="ttW"
+#ttW_LO_SR201-204a: TTWToLNu_LO     : xsec      : SRlight_Loop>=2 && SRlight_Loop<=5; FillColor=ROOT.kGreen+3  , FakeRate="susy-multilepton/ewk_upperlimits/fakerate_standard_sel.txt\,susy-multilepton/ewk_upperlimits/fakerate_load_is_prompt.txt", Label="ttW (LO)"
+#ttZ_SR201-204a   : TTZToLLNuNu     : xsec      : SRlight_Loop>=2 && SRlight_Loop<=5; FillColor=ROOT.kGreen-6  , FakeRate="susy-multilepton/ewk_upperlimits/fakerate_standard_sel.txt\,susy-multilepton/ewk_upperlimits/fakerate_load_is_prompt.txt", Label="ttZ"
+#ttZ_LO_SR201-204a: TTZToLLNuNu_LO  : xsec      : SRlight_Loop>=2 && SRlight_Loop<=5; FillColor=ROOT.kGreen-6  , FakeRate="susy-multilepton/ewk_upperlimits/fakerate_standard_sel.txt\,susy-multilepton/ewk_upperlimits/fakerate_load_is_prompt.txt", Label="ttZ (LO)"
+
+#ttW_SR205-208a   : TTWToLNu        : xsec      : SRlight_Loop>=6 && SRlight_Loop<=9 ; FillColor=ROOT.kGreen+3  , FakeRate="susy-multilepton/ewk_upperlimits/fakerate_standard_sel.txt\,susy-multilepton/ewk_upperlimits/fakerate_load_is_prompt.txt", Label="ttW"
+#ttW_LO_SR205-208a: TTWToLNu_LO     : xsec      : SRlight_Loop>=6 && SRlight_Loop<=9; FillColor=ROOT.kGreen+3  , FakeRate="susy-multilepton/ewk_upperlimits/fakerate_standard_sel.txt\,susy-multilepton/ewk_upperlimits/fakerate_load_is_prompt.txt", Label="ttW (LO)"
+#ttZ_SR205-208a   : TTZToLLNuNu     : xsec      : SRlight_Loop>=6 && SRlight_Loop<=9; FillColor=ROOT.kGreen-6  , FakeRate="susy-multilepton/ewk_upperlimits/fakerate_standard_sel.txt\,susy-multilepton/ewk_upperlimits/fakerate_load_is_prompt.txt", Label="ttZ"
+#ttZ_LO_SR205-208a: TTZToLLNuNu_LO  : xsec      : SRlight_Loop>=6 && SRlight_Loop<=9; FillColor=ROOT.kGreen-6  , FakeRate="susy-multilepton/ewk_upperlimits/fakerate_standard_sel.txt\,susy-multilepton/ewk_upperlimits/fakerate_load_is_prompt.txt", Label="ttZ (LO)"
+
+#ttW_SR209-212a   : TTWToLNu        : xsec      : SRlight_Loop>=10 && SRlight_Loop<=13 ; FillColor=ROOT.kGreen+3  , FakeRate="susy-multilepton/ewk_upperlimits/fakerate_standard_sel.txt\,susy-multilepton/ewk_upperlimits/fakerate_load_is_prompt.txt", Label="ttW"
+#ttW_LO_SR209-212a: TTWToLNu_LO     : xsec      : SRlight_Loop>=10 && SRlight_Loop<=13; FillColor=ROOT.kGreen+3  , FakeRate="susy-multilepton/ewk_upperlimits/fakerate_standard_sel.txt\,susy-multilepton/ewk_upperlimits/fakerate_load_is_prompt.txt", Label="ttW (LO)"
+#ttZ_SR209-212a   : TTZToLLNuNu     : xsec      : SRlight_Loop>=10 && SRlight_Loop<=13; FillColor=ROOT.kGreen-6  , FakeRate="susy-multilepton/ewk_upperlimits/fakerate_standard_sel.txt\,susy-multilepton/ewk_upperlimits/fakerate_load_is_prompt.txt", Label="ttZ"
+#ttZ_LO_SR209-212a: TTZToLLNuNu_LO  : xsec      : SRlight_Loop>=10 && SRlight_Loop<=13; FillColor=ROOT.kGreen-6  , FakeRate="susy-multilepton/ewk_upperlimits/fakerate_standard_sel.txt\,susy-multilepton/ewk_upperlimits/fakerate_load_is_prompt.txt", Label="ttZ (LO)"
+
+#ttW_SR201-204b   : TTWToLNu        : xsec      : SRlight_Loop>=14 && SRlight_Loop<=17 ; FillColor=ROOT.kGreen+3  , FakeRate="susy-multilepton/ewk_upperlimits/fakerate_standard_sel.txt\,susy-multilepton/ewk_upperlimits/fakerate_load_is_prompt.txt", Label="ttW"
+#ttW_LO_SR201-204b: TTWToLNu_LO     : xsec      : SRlight_Loop>=14 && SRlight_Loop<=17; FillColor=ROOT.kGreen+3  , FakeRate="susy-multilepton/ewk_upperlimits/fakerate_standard_sel.txt\,susy-multilepton/ewk_upperlimits/fakerate_load_is_prompt.txt", Label="ttW (LO)"
+#ttZ_SR201-204b   : TTZToLLNuNu     : xsec      : SRlight_Loop>=14 && SRlight_Loop<=17; FillColor=ROOT.kGreen-6  , FakeRate="susy-multilepton/ewk_upperlimits/fakerate_standard_sel.txt\,susy-multilepton/ewk_upperlimits/fakerate_load_is_prompt.txt", Label="ttZ"
+#ttZ_LO_SR201-204b: TTZToLLNuNu_LO  : xsec      : SRlight_Loop>=14 && SRlight_Loop<=17; FillColor=ROOT.kGreen-6  , FakeRate="susy-multilepton/ewk_upperlimits/fakerate_standard_sel.txt\,susy-multilepton/ewk_upperlimits/fakerate_load_is_prompt.txt", Label="ttZ (LO)"
+
+#ttW_SR205-208b   : TTWToLNu        : xsec      : SRlight_Loop>=18 && SRlight_Loop<=21 ; FillColor=ROOT.kGreen+3  , FakeRate="susy-multilepton/ewk_upperlimits/fakerate_standard_sel.txt\,susy-multilepton/ewk_upperlimits/fakerate_load_is_prompt.txt", Label="ttW"
+#ttW_LO_SR205-208b: TTWToLNu_LO     : xsec      : SRlight_Loop>=18 && SRlight_Loop<=21; FillColor=ROOT.kGreen+3  , FakeRate="susy-multilepton/ewk_upperlimits/fakerate_standard_sel.txt\,susy-multilepton/ewk_upperlimits/fakerate_load_is_prompt.txt", Label="ttW (LO)"
+#ttZ_SR205-208b   : TTZToLLNuNu     : xsec      : SRlight_Loop>=18 && SRlight_Loop<=21; FillColor=ROOT.kGreen-6  , FakeRate="susy-multilepton/ewk_upperlimits/fakerate_standard_sel.txt\,susy-multilepton/ewk_upperlimits/fakerate_load_is_prompt.txt", Label="ttZ"
+#ttZ_LO_SR205-208b: TTZToLLNuNu_LO  : xsec      : SRlight_Loop>=18 && SRlight_Loop<=21; FillColor=ROOT.kGreen-6  , FakeRate="susy-multilepton/ewk_upperlimits/fakerate_standard_sel.txt\,susy-multilepton/ewk_upperlimits/fakerate_load_is_prompt.txt", Label="ttZ (LO)"
+
+#ttW_SR209-212b   : TTWToLNu        : xsec      : SRlight_Loop>=22 && SRlight_Loop<=25 ; FillColor=ROOT.kGreen+3  , FakeRate="susy-multilepton/ewk_upperlimits/fakerate_standard_sel.txt\,susy-multilepton/ewk_upperlimits/fakerate_load_is_prompt.txt", Label="ttW"
+#ttW_LO_SR209-212b: TTWToLNu_LO     : xsec      : SRlight_Loop>=22 && SRlight_Loop<=25; FillColor=ROOT.kGreen+3  , FakeRate="susy-multilepton/ewk_upperlimits/fakerate_standard_sel.txt\,susy-multilepton/ewk_upperlimits/fakerate_load_is_prompt.txt", Label="ttW (LO)"
+#ttZ_SR209-212b  : TTZToLLNuNu     : xsec      : SRlight_Loop>=22 && SRlight_Loop<=25; FillColor=ROOT.kGreen-6  , FakeRate="susy-multilepton/ewk_upperlimits/fakerate_standard_sel.txt\,susy-multilepton/ewk_upperlimits/fakerate_load_is_prompt.txt", Label="ttZ"
+#ttZ_LO_SR209-212b: TTZToLLNuNu_LO  : xsec      : SRlight_Loop>=22 && SRlight_Loop<=25; FillColor=ROOT.kGreen-6  , FakeRate="susy-multilepton/ewk_upperlimits/fakerate_standard_sel.txt\,susy-multilepton/ewk_upperlimits/fakerate_load_is_prompt.txt", Label="ttZ (LO)"
+
+#ttW_SR201-204c   : TTWToLNu        : xsec      : SRlight_Loop>=26 && SRlight_Loop<=29 ; FillColor=ROOT.kGreen+3  , FakeRate="susy-multilepton/ewk_upperlimits/fakerate_standard_sel.txt\,susy-multilepton/ewk_upperlimits/fakerate_load_is_prompt.txt", Label="ttW"
+#ttW_LO_SR201-204c: TTWToLNu_LO     : xsec      : SRlight_Loop>=26 && SRlight_Loop<=29; FillColor=ROOT.kGreen+3  , FakeRate="susy-multilepton/ewk_upperlimits/fakerate_standard_sel.txt\,susy-multilepton/ewk_upperlimits/fakerate_load_is_prompt.txt", Label="ttW (LO)"
+#ttZ_SR201-204c   : TTZToLLNuNu     : xsec      : SRlight_Loop>=26 && SRlight_Loop<=29; FillColor=ROOT.kGreen-6  , FakeRate="susy-multilepton/ewk_upperlimits/fakerate_standard_sel.txt\,susy-multilepton/ewk_upperlimits/fakerate_load_is_prompt.txt", Label="ttZ"
+#ttZ_LO_SR201-204c: TTZToLLNuNu_LO  : xsec      : SRlight_Loop>=26 && SRlight_Loop<=29; FillColor=ROOT.kGreen-6  , FakeRate="susy-multilepton/ewk_upperlimits/fakerate_standard_sel.txt\,susy-multilepton/ewk_upperlimits/fakerate_load_is_prompt.txt", Label="ttZ (LO)"
+
+#ttW_SR205-208c   : TTWToLNu        : xsec      : SRlight_Loop>=30 && SRlight_Loop<=33 ; FillColor=ROOT.kGreen+3  , FakeRate="susy-multilepton/ewk_upperlimits/fakerate_standard_sel.txt\,susy-multilepton/ewk_upperlimits/fakerate_load_is_prompt.txt", Label="ttW"
+#ttW_LO_SR205-208c: TTWToLNu_LO     : xsec      : SRlight_Loop>=30 && SRlight_Loop<=33; FillColor=ROOT.kGreen+3  , FakeRate="susy-multilepton/ewk_upperlimits/fakerate_standard_sel.txt\,susy-multilepton/ewk_upperlimits/fakerate_load_is_prompt.txt", Label="ttW (LO)"
+#ttZ_SR205-208c   : TTZToLLNuNu     : xsec      : SRlight_Loop>=30 && SRlight_Loop<=33; FillColor=ROOT.kGreen-6  , FakeRate="susy-multilepton/ewk_upperlimits/fakerate_standard_sel.txt\,susy-multilepton/ewk_upperlimits/fakerate_load_is_prompt.txt", Label="ttZ"
+#ttZ_LO_SR205-208c: TTZToLLNuNu_LO  : xsec      : SRlight_Loop>=30 && SRlight_Loop<=33; FillColor=ROOT.kGreen-6  , FakeRate="susy-multilepton/ewk_upperlimits/fakerate_standard_sel.txt\,susy-multilepton/ewk_upperlimits/fakerate_load_is_prompt.txt", Label="ttZ (LO)"
+
+#ttW_SR209-212c   : TTWToLNu        : xsec      : SRlight_Loop>=34 && SRlight_Loop<=37; FillColor=ROOT.kGreen+3  , FakeRate="susy-multilepton/ewk_upperlimits/fakerate_standard_sel.txt\,susy-multilepton/ewk_upperlimits/fakerate_load_is_prompt.txt", Label="ttW"
+#ttW_LO_SR209-212c: TTWToLNu_LO     : xsec      : SRlight_Loop>=34 && SRlight_Loop<=37; FillColor=ROOT.kGreen+3  , FakeRate="susy-multilepton/ewk_upperlimits/fakerate_standard_sel.txt\,susy-multilepton/ewk_upperlimits/fakerate_load_is_prompt.txt", Label="ttW (LO)"
+#ttZ_SR209-212c   : TTZToLLNuNu     : xsec      : SRlight_Loop>=34 && SRlight_Loop<=37; FillColor=ROOT.kGreen-6  , FakeRate="susy-multilepton/ewk_upperlimits/fakerate_standard_sel.txt\,susy-multilepton/ewk_upperlimits/fakerate_load_is_prompt.txt", Label="ttZ"
+#ttZ_LO_SR209-212c: TTZToLLNuNu_LO  : xsec      : SRlight_Loop>=34 && SRlight_Loop<=37; FillColor=ROOT.kGreen-6  , FakeRate="susy-multilepton/ewk_upperlimits/fakerate_standard_sel.txt\,susy-multilepton/ewk_upperlimits/fakerate_load_is_prompt.txt", Label="ttZ (LO)"
+
