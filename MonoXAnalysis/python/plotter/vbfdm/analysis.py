@@ -121,19 +121,22 @@ if __name__ == "__main__":
     parser.add_option("-d", "--dry-run", dest="dryrun", action="store_true", default=False, help='Do not run the commands, just print them')
     parser.add_option("-s", "--synch", dest="synch", action="store_true", default=False, help='Do not apply any scale factor, bare yields')
     parser.add_option("-p", "--pdir", dest="pdir", type="string", default="", help='If given, make the plots and put them in the specified directory')
+    parser.add_option("--select-plot", "--sP", dest="plotselect", action="append", default=[], help="Select only these plots out of the full file")
     parser.add_option("-U", "--up-to-cut",      dest="upToCut",   type="string", help="Run selection only up to the cut matched by this regexp, included.") 
     parser.add_option("--fullControlRegions", dest="fullControlRegions", action="store_true", default=False, help='Do not run only one mcAnalysis/mCPlots, do all the control regions')
     parser.add_option("--propSystToVar", dest="propSystToVar", type="string", default="", help='Make the templates for a given variable, nominal and systematic alternatives')
     parser.add_option("--tF","--transferFactor", dest="transferFactor",  type="string", default="", help='Make the transfer factors from control regions to signal region. Take the templates for the specified variable.')
     (options, args) = parser.parse_args()
 
-    sel_steps = {'v_presel':'btagveto', 'vbfjets':'vbfjets', 'full_sel':'deta2j'}
+    #sel_steps = {'v_presel':'btagveto', 'vbfjets':'vbfjets', 'full_sel':'dphihmT'}
+    #sel_steps = {'vbfjets':'vbfjets', 'full_sel':'dphihmT'}
+    sel_steps = {'vbfjets':'vbfjets'}
     exclude_plots = {'v_presel': ['jcentral_eta','jfwd_eta','detajj','detajj_fullsel','mjj','mjj_fullsel'],
-                     'vbfjets': ['mjj_fullsel','nvtx','rho'],
+                     'vbfjets': ['jcentral_eta','jfwd_eta'],
                      'full_sel': ['detajj','mjj','nvtx','rho']
                      }
-    rebinFactor = {'v_presel':1, 'vbfjets':1, 'full_sel':4}
-    ctrl_regions = ['ZM','WM','ZE','WE']
+    rebinFactor = {'v_presel':1, 'vbfjets':1, 'full_sel':1}
+    ctrl_regions = ['ZM','WM','ZE','WE','SR']
 
     if options.fullControlRegions:
         pdirbase = options.pdir
@@ -143,16 +146,17 @@ if __name__ == "__main__":
             for s,v in sel_steps.iteritems():
                 print "===> Making selection / plots for control region ",options.region," at selection step: ",s, "(cut =",v,")"
                 options.upToCut = v
-                options.pdir = pdirbase+"/"+CR+"CR/"+s
+                options.pdir = pdirbase+"/"+CR+("/" if CR=='SR' else "CR/")+s
                 mcpOpts = ['--xP '+','.join(exclude_plots[s]), '--rebin '+str(rebinFactor[s])]
+                if len(options.plotselect)>0: mcpOpts += ['--sP '+','.join(options.plotselect)]
                 if CR!='WE': mcpOpts += ['--xp QCD'] # too large uncertainty
+                if CR=='SR': mcpOpts += ['--showIndivSigShapes','--xp data,QCD','--rebin 2'] # blind data
                 analysis = Analysis(options,mcpOpts)
                 analysis.runOne()        
 
     # eg.:  vbfdm/analysis.py --propSystToVar detajj_fullsel
     elif len(options.propSystToVar)>0:
         pdirbase = options.pdir if options.pdir else "templates"
-        if not os.path.exists(pdirbase): os.mkdir(pdirbase)
         processesToProp = {
             'SR': ['ZNuNu','W'],
             'ZM' : ['ZLL','EWKZLL'],
@@ -160,21 +164,22 @@ if __name__ == "__main__":
             'WM' : ['W','EWKW'],
             'WE' : ['W','EWKW']
             }
-        sel_step = sel_steps['vbfjets']
         all_regions = ['SR'] + ctrl_regions
         for reg in all_regions:
             options.region = reg
-            options.upToCut = sel_step
-            options.pdir = pdirbase
-            mcpOpts = ['--rebin '+str(rebinFactor[sel_step])]
-            procs = ','.join(processesToProp[reg])
-            print "# propagating systematics to processes ",procs, " in the region ",reg
-            analysis = Analysis(options,mcpOpts)
-            myout = pdirbase+"/templates_"+options.propSystToVar+'_'+reg+'.root'
-            analysis.runOneSyst(options.propSystToVar,procs,myout)
+            for s,v in sel_steps.iteritems():
+                print "===> Propagating systematics for control region ",options.region," at selection step: ",s, "(cut =",v,")"
+                options.upToCut = s
+                options.pdir = pdirbase + "/" + s
+                mcpOpts = ['--rebin '+str(rebinFactor[s])]
+                procs = ','.join(processesToProp[reg])
+                print "# propagating systematics to processes ",procs, " in the region ",reg
+                analysis = Analysis(options,mcpOpts)
+                myout = pdirbase+"/"+s+"/templates_"+options.propSystToVar+'_'+reg+'.root'
+                analysis.runOneSyst(options.propSystToVar,procs,myout)
 
 
-    # eg:  vbfdm/analysis.py --tF detajj_fullsel -p templates
+    # eg:  vbfdm/analysis.py --tF detajj_fullsel
     elif len(options.transferFactor)>0:
 
         # list of transfer factors to do, with files with input templates
@@ -186,71 +191,73 @@ if __name__ == "__main__":
             'W_from_Wenu' : ['W','W','SR','WE'],
             'Z_from_Wlnu' : ['ZNuNu','W','SR','SR']
             }
-
-        for k,tf in TFs.iteritems():
-            num_proc=tf[0]; den_proc=tf[1]
-            file_prefix = options.pdir if options.pdir else 'templates'
-            file_prefix += ('/templates_'+options.transferFactor+'_')
-            num_file=file_prefix+tf[2]+'.root'; den_file=file_prefix+tf[3]+'.root'
-            num_sel='SR'; den_sel='CR' if k!='Z_from_Wlnu' else 'SR'
-
-            print "# computing transfer factor: ",k, " reading ", num_sel, " histos from ",num_file," and ",den_sel, " histos from ",den_file
-    
-            systsUpL   = ['lepID_up']
-            systsDownL = ['lepID_down']
-         
-            systsUpG   = ['QCD_renScaleUp', 'QCD_facScaleUp', 'QCD_pdfUp', 'EWK_up']
-            systsDownG = ['QCD_renScaleDown', 'QCD_facScaleDown', 'QCD_pdfDown', 'EWK_down']
-         
-            titles = {'ZLL':'R_{Z(#mu#mu)}',
-                      'W':'R_{W(#mu#mu)}'}
-         
-            systs={}
-         
-            if den_proc=='ZLL' or den_proc=='W':
-                systs[(den_proc,'CR','up')]=systsUpL
-                systs[(den_proc,'CR','down')]=systsDownL
-            elif den_proc=='GJetsHT':
-                systs[(den_proc,'CR','up')]=systsUpG
-                systs[(den_proc,'CR','down')]=systsDownG
-            else:
-                print "ERROR! Numerator processes can be only ZLL or W or GJetsHT"
-                exit()
-         
-            if num_proc=='ZNuNu':
-                systs[(num_proc,'SR','up')]=[]
-                systs[(num_proc,'SR','down')]=[]
-                if den_proc=='ZLL': title = 'R_{Z}'
-                elif den_proc=='W': title = 'R_{Z/W}'
-                elif den_proc=='GJetsHT': title = 'R_{#gamma}'
-                else: exit()
-            elif num_proc=='W':
-                systs[(num_proc,'SR','up')]=[]
-                systs[(num_proc,'SR','down')]=[]
-                if den_proc=='W': title = 'R_{W}'
+        
+        for s,v in sel_steps.iteritems():
+            print "===> Calculating transfer factors for variable ",options.transferFactor," at selection step: ",s, "(cut =",v,")"
+            for k,tf in TFs.iteritems():
+                num_proc=tf[0]; den_proc=tf[1]
+                outdir = options.pdir if options.pdir else 'templates'
+                file_prefix = outdir+('/'+s+'/templates_'+options.transferFactor+'_')
+                num_file=file_prefix+tf[2]+'.root'; den_file=file_prefix+tf[3]+'.root'
+                num_sel='SR'; den_sel='CR' if k!='Z_from_Wlnu' else 'SR'
+     
+                print "# computing transfer factor: ",k, " reading ", num_sel, " histos from ",num_file," and ",den_sel, " histos from ",den_file
+        
+                systsUpL   = ['lepID_up']
+                systsDownL = ['lepID_down']
+             
+                systsUpG   = ['QCD_renScaleUp', 'QCD_facScaleUp', 'QCD_pdfUp', 'EWK_up']
+                systsDownG = ['QCD_renScaleDown', 'QCD_facScaleDown', 'QCD_pdfDown', 'EWK_down']
+             
+                titles = {'ZLL':'R_{Z(#mu#mu)}',
+                          'W':'R_{W(#mu#mu)}'}
+             
+                systs={}
+             
+                if den_proc=='ZLL' or den_proc=='W':
+                    systs[(den_proc,'CR','up')]=systsUpL
+                    systs[(den_proc,'CR','down')]=systsDownL
+                elif den_proc=='GJetsHT':
+                    systs[(den_proc,'CR','up')]=systsUpG
+                    systs[(den_proc,'CR','down')]=systsDownG
                 else:
-                    print "Num is ",num_proc," so only W is allowed as denominator"
+                    print "ERROR! Numerator processes can be only ZLL or W or GJetsHT"
                     exit()
-            else:
-                print "ERROR! Numerator processes can be only ZNuNu or W"
-                exit()
-         
-         
-            outname = options.pdir+"/rfactors_"+num_proc+num_sel+"_Over_"+tf[3]+den_sel+".root"
-            outfile = rt.TFile(outname,"RECREATE")
-         
-            rfm = RFactorMaker(options.transferFactor,num_file,den_file,num_proc,den_proc,systs)
-            hists = rfm.computeFullError(outfile)
-            rfac_full = rfm.computeRFactors(hists,outfile,"full")
-            hists_statonly = {}
-            hists_statonly[(num_proc,'SR')] = rfm.hists_nominal[(num_proc,'SR','nominal')]
-            hists_statonly[(den_proc,'CR')] = rfm.hists_nominal[(den_proc,'CR','nominal')]
-            rfac_statonly = rfm.computeRFactors(hists_statonly,outfile,"stat")
-            name = outname.replace(".root","")
-            lumi = 24.47
-            rfm.makePlot(rfac_statonly,rfac_full,name,lumi,title,[])
-         
-            outfile.Close()
+             
+                if num_proc=='ZNuNu':
+                    systs[(num_proc,'SR','up')]=[]
+                    systs[(num_proc,'SR','down')]=[]
+                    if den_proc=='ZLL': title = 'R_{Z}'
+                    elif den_proc=='W': title = 'R_{Z/W}'
+                    elif den_proc=='GJetsHT': title = 'R_{#gamma}'
+                    else: exit()
+                elif num_proc=='W':
+                    systs[(num_proc,'SR','up')]=[]
+                    systs[(num_proc,'SR','down')]=[]
+                    if den_proc=='W': title = 'R_{W}'
+                    else:
+                        print "Num is ",num_proc," so only W is allowed as denominator"
+                        exit()
+                else:
+                    print "ERROR! Numerator processes can be only ZNuNu or W"
+                    exit()
+             
+             
+                outname = outdir+"/"+s+"/rfactors_"+options.transferFactor+"_"+num_proc+num_sel+"_Over_"+tf[3]+den_sel+".root"
+                outfile = rt.TFile(outname,"RECREATE")
+             
+                rfm = RFactorMaker(options.transferFactor,num_file,den_file,num_proc,den_proc,systs)
+                hists = rfm.computeFullError(outfile)
+                rfac_full = rfm.computeRFactors(hists,outfile,"full")
+                hists_statonly = {}
+                hists_statonly[(num_proc,'SR')] = rfm.hists_nominal[(num_proc,'SR','nominal')]
+                hists_statonly[(den_proc,'CR')] = rfm.hists_nominal[(den_proc,'CR','nominal')]
+                rfac_statonly = rfm.computeRFactors(hists_statonly,outfile,"stat")
+                name = outname.replace(".root","")
+                lumi = 24.47
+                rfm.makePlot(rfac_statonly,rfac_full,name,lumi,title,[])
+             
+                outfile.Close()
 
     else: 
         mcpOpts = []
