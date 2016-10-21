@@ -90,6 +90,7 @@ def train(allcuts, variables, dsets, options):
                                     "Transformations=I",
                                     "AnalysisType=Classification"]))
 
+
     for cut in options.addcuts:
         allcuts += cut
 
@@ -110,9 +111,9 @@ def train(allcuts, variables, dsets, options):
         factory.SetWeightExpression("genWeight*xsec", trainclass)
 
     ## Start the training
-    factory.PrepareTrainingAndTestTree(allcuts, "!V")
+    factory.PrepareTrainingAndTestTree(allcuts, "!V") # check options
     factory.BookMethod(ROOT.TMVA.Types.kBDT, 'BDTA',
-                            ':'.join([
+                       ':'.join([
                                 '!H', # print help
                                 '!V', # verbose
                                 'NTrees=800', # default is 200
@@ -127,9 +128,31 @@ def train(allcuts, variables, dsets, options):
                                 # 'VarTransform=G,D',
                                 ]))
 
-    # Try a few different classifiers also:
-    # e.g. Fisher discriminants, k-nearest neighbor, neural networks
-    # Check http://tmva.sourceforge.net/docu/TMVAUsersGuide.pdf
+    ###added by jmonroy oct 2016
+
+    #### gradient boosting
+
+    # factory.PrepareTrainingAndTestTree(allcuts, "!V") # check options                                                               
+    factory.BookMethod(ROOT.TMVA.Types.kBDT, 'BDTA_GRAD',
+                               ':'.join([
+                               '!H', # print help                                                                                     
+                               '!V', # verbose                                                                                        
+                               'NTrees=800', # default is 200                                                                         
+                               'BoostType=Grad',                                                           
+                               #'AdaBoostBeta=0.50',
+                               'Shrinkage=0.10', # for gradient boosting                                                            
+                               '!UseBaggedGrad',
+                               'nCuts=50', # scanning steps                                                                           
+                               'MaxDepth=3', # maximum decision tree depth                                                            
+                               'NegWeightTreatment=PairNegWeightsGlobal',
+                               'CreateMVAPdfs',
+                               # 'VarTransform=G,D',                                                                                  
+                               ]))
+
+
+    #Try a few different classifiers also:
+    #e.g. Fisher discriminants, k-nearest neighbor, neural networks 
+    #Check http://tmva.sourceforge.net/docu/TMVAUsersGuide.pdf
 
     factory.TrainAllMethods()
     factory.TestAllMethods()
@@ -149,23 +172,25 @@ def main(args, options):
     allcuts += "LepGood_conePt[iF_Recl[1]]>10"
     allcuts += "LepGood_conePt[iF_Recl[2]]>10"
     allcuts += "nJet25_Recl >= 2"
-    allcuts += "nBJetMedium25_Recl >= 1"
+    allcuts += "nBJetMedium25 >= 1" # FIXME: use nBJetMedium25_Recl instead
     # allcuts += "nBJetLoose25_Recl >= 1"
     allcuts += "maxEtaJet25 >= 0"
 
     # Define the variables to be used:
     variables = [
         ("nJet25_Recl", "I"),
-        ("nJet1", "I"),
+        ("nJetEta1", "I"),
         ("nBJetLoose25_Recl", "I"),
         ("maxEtaJet25", "F"),
         ("dEtaFwdJetBJet", "F"),
         ("dEtaFwdJetClosestLep", "F"),
         ("dPhiHighestPtSSPair", "F"),
+        ("Lep3Pt := LepGood_conePt[iF_Recl[2]]", "F"),
+        ("minDRll", "F"),
         ("lepCharge := LepGood_charge[iF_Recl[0]]+LepGood_charge[iF_Recl[1]]+LepGood_charge[iF_Recl[2]]", "I"),
+        
         ## Add more here?
-        # - lepton pt?
-        # - min DR(l,l)
+       
     ]
 
     # Define the signal and background datasets
