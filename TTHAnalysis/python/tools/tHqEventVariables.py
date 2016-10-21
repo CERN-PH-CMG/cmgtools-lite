@@ -12,6 +12,21 @@ from PhysicsTools.HeppyCore.utils.deltar import deltaPhi, deltaR
 
 BTAGWP = 0.8 # 0.8 is for medium tags, might want to try others
 
+class MVAVar:
+    def __init__(self,name,form=None, default=-99.9):
+        self.name = name
+        self.var  = array('f', [0.])
+        self.form = form
+        self.default = default
+
+    def set(self, event, ret):
+        if self.name in ret:
+            self.var[0] = ret[self.name]
+        elif self.form:
+            self.var[0] = event.eval(self.form)
+        else:
+            self.var[0] = event.eval(self.name)
+
 class tHqEventVariableFriend:
     def __init__(self):
         self.branches = [] # (branchname, default value)
@@ -22,7 +37,40 @@ class tHqEventVariableFriend:
         self.branches.append(("dPhiHighestPtSSPair", -99.9)) # delta phi highest pt same sign lepton pair
         self.branches.append(("minDRll", -99.9)) # minimum deltaR between all leptons
 
-    # add more here...
+
+        self.mvavars = [
+            MVAVar(name="nJet25_Recl"),
+            MVAVar(name="nJetEta1"),
+            MVAVar(name="nBJetLoose25_Recl"),
+            MVAVar(name="maxEtaJet25"),
+            MVAVar(name="dEtaFwdJetBJet"),
+            MVAVar(name="dEtaFwdJetClosestLep"),
+            MVAVar(name="dPhiHighestPtSSPair"),
+            MVAVar(name="LepGood_conePt[iF_Recl[2]]"),
+            MVAVar(name="minDRll"),
+            MVAVar(name="LepGood_charge[iF_Recl[0]]+LepGood_charge[iF_Recl[1]]+LepGood_charge[iF_Recl[2]]")
+        ]
+
+        self.mvaspectators = [
+            MVAVar(name="iF_Recl[0]"),
+            MVAVar(name="iF_Recl[1]"),
+            MVAVar(name="iF_Recl[2]"),
+        ]
+
+        # Signal MVA
+        self.tmvaReader = ROOT.TMVA.Reader("Silent")
+        self.tmvaReader.SetVerbose(True)
+        for mvavar in self.mvavars:
+            self.tmvaReader.AddVariable(mvavar.name, mvavar.var)
+        for mvaspec in self.mvaspectators:
+            self.tmvaReader.AddSpectator(mvaspec.name, mvaspec.var)
+
+        for backgr in ['tt', 'ttv']:
+            wfile = os.path.join(os.environ['CMSSW_BASE'],
+                                 "src/CMGTools/TTHAnalysis/data/kinMVA/thq/",
+                                 "thq_vs_%s_BDTG.weights.xml"%backgr)
+            self.tmvaReader.BookMVA("BDTG_"+backgr, wfile)
+            self.branches.append(("thqMVA_"+backgr, -99.9))
 
     def listBranches(self):
         """Return a list of branch names that are added"""
@@ -79,7 +127,15 @@ class tHqEventVariableFriend:
 
         ret['nJetEta1'] = len([j for j in light_jets if abs(j.eta) > 1.0])
 
+        # Signal MVA
+        for mvavar in self.mvavars:
+            mvavar.set(event, ret)
+
+        for backgr in ['tt', 'ttv']:
+            ret["thqMVA_"+backgr] = self.tmvaReader.EvaluateMVA("BDTG_"+backgr)
+
         return ret
+
 ##################################################
 # Test this friend producer like so:
 # python tHqEventVariables.py tree.root
@@ -117,7 +173,9 @@ if __name__ == '__main__':
             # print 'dEtaFwdJetBJet',ret['dEtaFwdJetBJet']
             # print 'dEtaFwdJetClosestLep',ret['dEtaFwdJetClosestLep']
             # print 'dPhiHighestPtSSPair', ret['dPhiHighestPtSSPair']
-            print 'minDRll', ret['minDRll']
+            # print 'minDRll', ret['minDRll']
+            print 'thqMVA_ttv', ret['thqMVA_ttv']
+            print 'thqMVA_tt', ret['thqMVA_tt']
             # add additional printout here to make sure everything is consistent
 
         def done(self):
@@ -125,5 +183,5 @@ if __name__ == '__main__':
 
     T = Tester("tester")
     el = EventLoop([ T ])
-    el.loop([tree], maxEvents = 30)
+    el.loop([tree], maxEvents = 10)
     T.done()
