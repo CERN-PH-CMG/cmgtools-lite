@@ -1,7 +1,7 @@
 #Comment in to plot some signals as well
-T1tttt_1900_100+: T1tttt_TuneCUETP8M1_skim_mGo1900mLSP100 :10*susyXsec*31039067/susyNgen*btagSF*TopPtWeight*puRatio*TrigEff*lepSF*nISRweight ; FillColor=ROOT.kBlack, Label="x10 T1t^{4} 1.9/0.1"
-T1tttt_1700_1100+: T1tttt_TuneCUETP8M1_skim_mGo1700mLSP1100 :10*susyXsec*31039067/susyNgen*btagSF*TopPtWeight*puRatio*TrigEff*lepSF*nISRweight ; FillColor=ROOT.kRed, Label="x10 T1t^{4} 1.7/1.1"
-T1tttt_1200_900+: T1tttt_TuneCUETP8M1_skim_mGo1200mLSP900 :10*susyXsec*31039067/susyNgen*btagSF*TopPtWeight*puRatio*TrigEff*lepSF*nISRweight ; FillColor=ROOT.kGreen-3, Label="x10 T1t^{4} 1.2/0.9"
+#T1tttt_1900_100+: T1tttt_TuneCUETP8M1_skim_mGo1900mLSP100 :10*susyXsec*31039067/susyNgen*btagSF*TopPtWeight*puRatio*TrigEff*lepSF*nISRweight ; FillColor=ROOT.kBlack, Label="x10 T1t^{4} 1.9/0.1"
+#T1tttt_1700_1100+: T1tttt_TuneCUETP8M1_skim_mGo1700mLSP1100 :10*susyXsec*31039067/susyNgen*btagSF*TopPtWeight*puRatio*TrigEff*lepSF*nISRweight ; FillColor=ROOT.kRed, Label="x10 T1t^{4} 1.7/1.1"
+#T1tttt_1200_900+: T1tttt_TuneCUETP8M1_skim_mGo1200mLSP900 :10*susyXsec*31039067/susyNgen*btagSF*TopPtWeight*puRatio*TrigEff*lepSF*nISRweight ; FillColor=ROOT.kGreen-3, Label="x10 T1t^{4} 1.2/0.9"
 
 #other signals
 #T1tttt_1300_1000+: T1tttt_TuneCUETP8M1_skim_mGo1300mLSP1000 :10*susyXsec*31039067/susyNgen*btagSF*TopPtWeight*puRatio*TrigEff*lepSF*nISRweight ; FillColor=ROOT.kRed, Label="x10 T1t^{4} 1.3/1.0"
@@ -18,13 +18,13 @@ T1tttt_1200_900+: T1tttt_TuneCUETP8M1_skim_mGo1200mLSP900 :10*susyXsec*31039067/
 
 ##############################
 #all ttbar, uncomment only for makeBinYields otherwise ttbar will be double counted
-TT 	 : TTJets_DiLept : xsec*1*btagSF*TopPtWeight*puRatio*TrigEff*lepSF : lheHTIncoming <= 600; FillColor=ROOT.kBlue, Label="t\#bar{t}"
-TT     : TTJets_SingleLeptFromT     : xsec*1*btagSF*TopPtWeight*puRatio*TrigEff*lepSF : lheHTIncoming <= 600; FillColor=ROOT.kBlue-4, Label="t\#bar{t} semilept"
-TT      : TTJets_SingleLeptFromTbar     : xsec*1*btagSF*TopPtWeight*puRatio*TrigEff*lepSF : lheHTIncoming <= 600; FillColor=ROOT.kBlue-4, Label="t\#bar{t} semilept"
-TT 	 : TTJets_HT-600to800 : xsec*1*btagSF*TopPtWeight*puRatio*TrigEff*lepSF ; FillColor=ROOT.kBlue, Label="t\#bar{t}"
-TT 	 : TTJets_HT-800to1200 : xsec*1*btagSF*TopPtWeight*puRatio*TrigEff*lepSF ; FillColor=ROOT.kBlue, Label="t\#bar{t}"
-TT 	 : TTJets_HT-1200to2500 : xsec*1*btagSF*TopPtWeight*puRatio*TrigEff*lepSF ; FillColor=ROOT.kBlue, Label="t\#bar{t}"
-TT 	 : TTJets_HT-2500toInf : xsec*1*btagSF*TopPtWeight*puRatio*TrigEff*lepSF ; FillColor=ROOT.kBlue, Label="t\#bar{t}"
+#TT 	 : TTJets_DiLept : xsec*1*btagSF*TopPtWeight*puRatio*TrigEff*lepSF : lheHTIncoming <= 600; FillColor=ROOT.kBlue, Label="t\#bar{t}"
+#TT     : TTJets_SingleLeptFromT     : xsec*1*btagSF*TopPtWeight*puRatio*TrigEff*lepSF : lheHTIncoming <= 600; FillColor=ROOT.kBlue-4, Label="t\#bar{t} semilept"
+#TT      : TTJets_SingleLeptFromTbar     : xsec*1*btagSF*TopPtWeight*puRatio*TrigEff*lepSF : lheHTIncoming <= 600; FillColor=ROOT.kBlue-4, Label="t\#bar{t} semilept"
+#TT 	 : TTJets_HT-600to800 : xsec*1*btagSF*TopPtWeight*puRatio*TrigEff*lepSF ; FillColor=ROOT.kBlue, Label="t\#bar{t}"
+#TT 	 : TTJets_HT-800to1200 : xsec*1*btagSF*TopPtWeight*puRatio*TrigEff*lepSF ; FillColor=ROOT.kBlue, Label="t\#bar{t}"
+#TT 	 : TTJets_HT-1200to2500 : xsec*1*btagSF*TopPtWeight*puRatio*TrigEff*lepSF ; FillColor=ROOT.kBlue, Label="t\#bar{t}"
+#TT 	 : TTJets_HT-2500toInf : xsec*1*btagSF*TopPtWeight*puRatio*TrigEff*lepSF ; FillColor=ROOT.kBlue, Label="t\#bar{t}"
 
 ##############################
 #dileptoic 
