@@ -13,13 +13,12 @@ from PhysicsTools.HeppyCore.utils.deltar import deltaPhi, deltaR
 BTAGWP = 0.8 # 0.8 is for medium tags, might want to try others
 
 class MVAVar:
-    def __init__(self,name,form=None, default=-99.9):
+    def __init__(self,name, form=None):
         self.name = name
         self.var  = array('f', [0.])
         self.form = form
-        self.default = default
 
-    def set(self, event, ret):
+    def set(self, event, ret={}):
         if self.name in ret:
             self.var[0] = ret[self.name]
         elif self.form:
@@ -37,7 +36,7 @@ class tHqEventVariableFriend:
         self.branches.append(("dPhiHighestPtSSPair", -99.9)) # delta phi highest pt same sign lepton pair
         self.branches.append(("minDRll", -99.9)) # minimum deltaR between all leptons
 
-
+        # Signal MVA
         self.mvavars = [
             MVAVar(name="nJet25_Recl"),
             MVAVar(name="nJetEta1"),
@@ -57,7 +56,6 @@ class tHqEventVariableFriend:
             MVAVar(name="iF_Recl[2]"),
         ]
 
-        # Signal MVA
         self.tmvaReader = ROOT.TMVA.Reader("Silent")
         self.tmvaReader.SetVerbose(True)
         for mvavar in self.mvavars:
@@ -138,7 +136,9 @@ class tHqEventVariableFriend:
 
 ##################################################
 # Test this friend producer like so:
-# python tHqEventVariables.py tree.root
+# >> python tHqEventVariables.py tree.root
+# or so:
+# >> python tHqEventVariables.py tree.root friend_tree.root
 
 if __name__ == '__main__':
     from sys import argv
@@ -168,12 +168,12 @@ if __name__ == '__main__':
                       (ev.run, ev.lumi, ev.evt, ev.nJet25, ev.nJetFwd, ev.nLepGood, int(ev.isData)))
             ret = self.thqf(ev)
 
-            # print 'maxEtaJet25:', ret['maxEtaJet25']
-            # print 'nJet1:', ret['nJetEta1']
-            # print 'dEtaFwdJetBJet',ret['dEtaFwdJetBJet']
-            # print 'dEtaFwdJetClosestLep',ret['dEtaFwdJetClosestLep']
-            # print 'dPhiHighestPtSSPair', ret['dPhiHighestPtSSPair']
-            # print 'minDRll', ret['minDRll']
+            print 'maxEtaJet25:', ret['maxEtaJet25']
+            print 'nJet1:', ret['nJetEta1']
+            print 'dEtaFwdJetBJet',ret['dEtaFwdJetBJet']
+            print 'dEtaFwdJetClosestLep',ret['dEtaFwdJetClosestLep']
+            print 'dPhiHighestPtSSPair', ret['dPhiHighestPtSSPair']
+            print 'minDRll', ret['minDRll']
             print 'thqMVA_ttv', ret['thqMVA_ttv']
             print 'thqMVA_tt', ret['thqMVA_tt']
             # add additional printout here to make sure everything is consistent
