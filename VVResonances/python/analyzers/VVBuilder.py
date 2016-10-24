@@ -131,7 +131,9 @@ class VVBuilder(Analyzer):
         #get NTau
         jet.substructure.ntau = interface.nSubJettiness(0,4,0,6,1.0,0.8,999.0,999.0,999)
         # calculate DDT tau21 (currently without softDropJetMassCor, but the L2L3 corrections)
-        jet.substructure.tau21_DDT = jet.substructure.ntau[1]/jet.substructure.ntau[0] + ( 0.063 * math.log( (jet.substructure.softDropJet.mass()*jet.substructure.softDropJet.mass())/jet.substructure.softDropJet.pt()))
+        jet.substructure.tau21_DDT = 0
+        if (jet.substructure.softDropJet.mass() > 0):
+            jet.substructure.tau21_DDT = jet.substructure.ntau[1]/jet.substructure.ntau[0] + ( 0.063 * math.log( (jet.substructure.softDropJet.mass()*jet.substructure.softDropJet.mass())/jet.substructure.softDropJet.pt()))
 
         #recluster with CA and do massdrop
 
