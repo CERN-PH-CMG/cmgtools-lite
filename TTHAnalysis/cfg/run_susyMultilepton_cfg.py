@@ -346,6 +346,7 @@ triggerFlagsAna.triggerBits = {
     'SingleEl'     : triggers_1e,
     'SOSHighMET' : triggers_SOS_highMET,
     'SOSDoubleMuLowMET' : triggers_SOS_doublemulowMET,
+    'SOSTripleMu' : triggers_SOS_tripleMu,
     'LepTau' : triggers_leptau,
     'MET' : triggers_metNoMu90_mhtNoMu90,
     #'MonoJet80MET90' : triggers_Jet80MET90,
@@ -444,13 +445,22 @@ if runData and not isTest: # For running on data
 #    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_271036-274443_13TeV_PromptReco_Collisions16_JSON.txt' # 2.6/fb
 #    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_271036-275125_13TeV_PromptReco_Collisions16_JSON.txt' # 4.0/fb
 #    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_271036-275783_13TeV_PromptReco_Collisions16_JSON.txt' # 6.3/fb
-    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_271036-276811_13TeV_PromptReco_Collisions16_JSON_NoL1T.txt' # 12.9/fb
-    processing = "Run2016B-PromptReco-v2"; short = "Run2016B_PromptReco_v2"; run_ranges = [(273150,276811)]; useAAA=True; # -v2 starts from 273150
+#    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_271036-276811_13TeV_PromptReco_Collisions16_JSON_NoL1T.txt' # 12.9/fb #276811 ICHEP LastRun
+#    json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-279931_13TeV_PromptReco_Collisions16_JSON_NoL1T.txt' #24.5/fb
+    json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-280385_13TeV_PromptReco_Collisions16_JSON_NoL1T_v2.txt' #27.22/fb
+    processing = "Run2016B-PromptReco-v2"; short = "Run2016B_PromptReco_v2"; run_ranges = [(273150,280385)]; useAAA=False; # -v2 starts from 273150
     dataChunks.append((json,processing,short,run_ranges,useAAA))
-    processing = "Run2016C-PromptReco-v2"; short = "Run2016C_PromptReco_v2"; run_ranges = [(273150,276811)]; useAAA=True; # -v2 starts from 273150 
+    processing = "Run2016C-PromptReco-v2"; short = "Run2016C_PromptReco_v2"; run_ranges = [(273150,280385)]; useAAA=False; # -v2 starts from 273150 
     dataChunks.append((json,processing,short,run_ranges,useAAA))
-    processing = "Run2016D-PromptReco-v2"; short = "Run2016D_PromptReco_v2"; run_ranges = [(273150,276811)]; useAAA=True; # -v2 starts from 273150 
+    processing = "Run2016D-PromptReco-v2"; short = "Run2016D_PromptReco_v2"; run_ranges = [(273150,280385)]; useAAA=False; # -v2 starts from 273150 
     dataChunks.append((json,processing,short,run_ranges,useAAA))
+    processing = "Run2016E-PromptReco-v2"; short = "Run2016E_PromptReco_v2"; run_ranges = [(273150,280385)]; useAAA=False;
+    dataChunks.append((json,processing,short,run_ranges,useAAA))
+    processing = "Run2016F-PromptReco-v1"; short = "Run2016F_PromptReco_v1"; run_ranges = [(273150,280385)]; useAAA=False;
+    dataChunks.append((json,processing,short,run_ranges,useAAA))
+    processing = "Run2016G-PromptReco-v1"; short = "Run2016G_PromptReco_v1"; run_ranges = [(273150,280385)]; useAAA=False;
+    dataChunks.append((json,processing,short,run_ranges,useAAA))
+    
 
     compSelection = ""; compVeto = ""
     DatasetsAndTriggers = []
