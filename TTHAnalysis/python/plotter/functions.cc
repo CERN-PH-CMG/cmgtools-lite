@@ -184,70 +184,6 @@ float DPhi_CMLep_Zboost(float l_pt, float l_eta, float l_phi, float l_M, float l
   return deltaPhi(l1.Phi(),Z.Phi());
 }
 
-// May 2016: This is func which takes the 4vectors of MET, L1,L2 and reconstructs 2 taus and returns the effective Z(-->tautau) mass.                                                                                       
-
-float mass_tautau( float Met_Pt, float Met_Phi,  float l1_Pt, float l1_Eta, float l1_Phi, float l2_Pt, float l2_Eta, float l2_Phi ) {
-  typedef ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<double> > PtEtaPhiMVector;
-  typedef ROOT::Math::LorentzVector<ROOT::Math::PxPyPzM4D<double>   > PxPyPzMVector;
-  PtEtaPhiMVector Met( Met_Pt, 0.     , Met_Phi , 0.   );
-  PtEtaPhiMVector L1(  l1_Pt , l1_Eta , l1_Phi  , 0.106 );
-  PtEtaPhiMVector L2(  l2_Pt , l2_Eta , l2_Phi  , 0.106 );   // 0.106 mu mass                                                                                                                                                 
-  float A00,A01,A10,A11,  C0,C1,  X0,X1,  inv_det;     // Define A:2x2 matrix, C,X 2x1 vectors & det[A]^-1                                                                                                                    
-  inv_det = 1./( L1.Px()*L2.Py() - L2.Px()*L1.Py() );
-  A00 = inv_det*L2.Py();     A01 =-inv_det*L2.Px();
-  A10 =-inv_det*L1.Py();     A11 = inv_det*L1.Px();
-  C0  = (Met+L1+L2).Px();    C1  = (Met+L1+L2).Py();
-  X0  = A00*C0 + A01*C1;     X1  = A10*C0 + A11*C1;
-  PxPyPzMVector T1( L1.Px()*X0 , L1.Py()*X0 , L1.Pz()*X0 , 1.777 );    // 1.777 tau mass                                                                                                                                      
-  PxPyPzMVector T2( L2.Px()*X1 , L2.Py()*X1 , L2.Pz()*X1 , 1.777 );
-  if(X0>0.&&X1>0.)return  (T1+T2).M();
-  else            return -(T1+T2).M();
-}
-
-// SOS stuff
-
-int SR_bins_EWKino(float Mll){
-  if     (4.<Mll && Mll<9.5) return 1;
-  else if(10.5<Mll && Mll<=20.) return 2;
-  else if(20.<Mll && Mll<=30.) return 3;
-  else if(30.<Mll) return 4;
-  else return -99;
-}
-
-int SR_bins_stop(float ptlep1){
-  if     (ptlep1 <=12.) return 1;
-  else if(ptlep1 >12. && ptlep1 <=20.) return 2;
-  else if(ptlep1 >20.) return 3; 
-  else return -99;
-}
-
-
-float metmm_pt(int pdg1, float pt1, float phi1, int pdg2, float pt2, float phi2, float metpt, float metphi) {
-  if (abs(pdg1)==13 && abs(pdg2)==13) return pt_3(pt1,phi1,pt2,phi2,metpt,metphi);
-  else if (abs(pdg1)==13 && !(abs(pdg2)==13)) return pt_2(pt1,phi1,metpt,metphi);
-  else if (!(abs(pdg1)==13) && abs(pdg2)==13) return pt_2(pt2,phi2,metpt,metphi);
-  else if (!(abs(pdg1)==13) && !(abs(pdg2)==13)) return metpt;
-  else return -99;
-}
-
-
-
-float eleWPVVL(float pt, float etaSc, float mva){
-  if (pt<=10 && ((abs(etaSc)<0.8 && mva>-0.265) || (abs(etaSc)>=0.8 && abs(etaSc)<1.479 && mva > -0.556) || (abs(etaSc)>=1.479 && mva>-0.6))) return 1;
-  else if (pt>10 && ((abs(etaSc)<0.8 && mva > 0.87) || (abs(etaSc)>=0.8 && abs(etaSc)<1.479 && mva > 0.30) || (abs(etaSc)>=1.479 && mva >-0.30))) return 1;
-  else return 0;
-}
-
-
-float eleWPT(float pt, float etaSc, float mva){
-  if (pt<=10 && ((abs(etaSc)<0.8 && mva>-0.265) || (abs(etaSc)>=0.8 && abs(etaSc)<1.479 && mva > -0.556) || (abs(etaSc)>=1.479 && mva>-0.551))) return 1;
-  else if (pt>10 && ((abs(etaSc)<0.8 && mva > 0.87) || (abs(etaSc)>=0.8 && abs(etaSc)<1.479 && mva > 0.60) || (abs(etaSc)>=1.479 && mva >0.17))) return 1;
-  else return 0;
-}
-
-
-
-
 float relax_cut_in_eta_bins(float val, float eta, float eta1, float eta2, float eta3, float val1, float val2, float val3, float val1t, float val2t, float val3t){
 
 // Return a new value of val (variable on which a cut is applied), in such a way that the thresholds (val1,val2,val3)
@@ -267,229 +203,9 @@ float relax_cut_in_eta_bins(float val, float eta, float eta1, float eta2, float 
 
 }
 
-int regroupSignalRegions_RA5(int SR){
-
-  int rgr[66+1];
-  rgr[0]=0; //unused
-  if (SR<1 || SR>66) return 0;
-
-  // HH
-  rgr[1]=1;
-  rgr[2]=2;
-  rgr[3]=3;
-  rgr[4]=4;
-  rgr[5]=5;
-  rgr[6]=5;
-  rgr[7]=5;
-  rgr[8]=5;
-  rgr[9]=6;
-  rgr[10]=7;
-  rgr[11]=8;
-  rgr[12]=9;
-  rgr[13]=10;
-  rgr[14]=10;
-  rgr[15]=10;
-  rgr[16]=10;
-  rgr[17]=11;
-  rgr[18]=12;
-  rgr[19]=13;
-  rgr[20]=14;
-  rgr[21]=15;
-  rgr[22]=15;
-  rgr[23]=15;
-  rgr[24]=15;
-  rgr[25]=16;
-  rgr[26]=16;
-  rgr[27]=16;
-  rgr[28]=16;
-  rgr[29]=16;
-  rgr[30]=16;
-  rgr[31]=17;
-  rgr[32]=18;
-
-  // HL
-  rgr[32+1]=18+1;
-  rgr[32+2]=18+2;
-  rgr[32+3]=18+3;
-  rgr[32+4]=18+4;
-  rgr[32+5]=18+4;
-  rgr[32+6]=18+4;
-  rgr[32+7]=18+5;
-  rgr[32+8]=18+6;
-  rgr[32+9]=18+7;
-  rgr[32+10]=18+8;
-  rgr[32+11]=18+8;
-  rgr[32+12]=18+8;
-  rgr[32+13]=18+9;
-  rgr[32+14]=18+10;
-  rgr[32+15]=18+11;
-  rgr[32+16]=18+12;
-  rgr[32+17]=18+12;
-  rgr[32+18]=18+12;
-  rgr[32+19]=18+13;
-  rgr[32+20]=18+13;
-  rgr[32+21]=18+13;
-  rgr[32+22]=18+13;
-  rgr[32+23]=18+14;
-  rgr[32+24]=18+14;
-  rgr[32+25]=18+14;
-  rgr[32+26]=18+15;
-
-  // LL (UCSx proposal)
-  rgr[58+1]=18+15+1;
-  rgr[58+2]=18+15+2;
-  rgr[58+3]=18+15+1;
-  rgr[58+4]=18+15+2;
-  rgr[58+5]=18+15+3;
-  rgr[58+6]=18+15+3;
-  rgr[58+7]=18+15+3;
-  rgr[58+8]=18+15+3;
-
-  return rgr[SR]; // between 1 and 36
-
-}
-
-int SR_ewk_ss2l(int nj, float ptl1, float phil1, float ptl2, float phil2, float met, float metphi){
-  
-  float mtw1 = mt_2(ptl1,phil1, met, metphi);
-  float mtw2 = mt_2(ptl2,phil2, met, metphi);
-  float mtw  = std::min(mtw1,mtw2);
-  float ptdil = pt_2(ptl1,phil1,ptl2,phil2);
-
-  // V0 --- LPC version
-//V0-LPC  if      (nj==0 && mtw<40 && met>100 && met<200)             return 1;
-//V0-LPC  else if (nj==0 && mtw<40 && met>200)                        return 2;
-//V0-LPC  else if (nj==0 && mtw>40 && mtw<120 && met>100 && met<200)  return 3;
-//V0-LPC  else if (nj==0 && mtw>40 && mtw<120 && met>200)             return 4;
-//V0-LPC  else if (nj==0 && mtw>120 && met>100 && met<200)            return 5;
-//V0-LPC  else if (nj==0 && mtw>120 && met>200)                       return 6;
-//V0-LPC  else if (nj==1 && mtw<40 && met>100 && met<200)             return 7;
-//V0-LPC  else if (nj==1 && mtw<40 && met>200)                        return 8;
-//V0-LPC  else if (nj==1 && mtw>40 && mtw<120 && met>100 && met<200)  return 9;
-//V0-LPC  else if (nj==1 && mtw>40 && mtw<120 && met>200)             return 10;
-//V0-LPC  else if (nj==1 && mtw>120 && met>100 && met<200)            return 11;
-//V0-LPC  else if (nj==1 && mtw>120 && met>200)                       return 12;
-
-  if      (nj==0 && ptdil<50 && mtw<100 && met<100)            return 1;  //VR
-  else if (nj==0 && ptdil<50 && mtw<100 && met>100 && met<150) return 2;
-  else if (nj==0 && ptdil<50 && mtw<100 && met>150)            return 3;
-  else if (nj==0 && ptdil>50 && mtw<100 && met<100)            return 4; //VR
-  else if (nj==0 && ptdil>50 && mtw<100 && met>100 && met<150) return 5;
-  else if (nj==0 && ptdil>50 && mtw<100 && met>150)            return 6;
-  else if (nj==0 && mtw>100 && met<100)                        return 7;  //VR
-  else if (nj==0 && mtw>100 && met>100 && met<150)             return 8;
-  else if (nj==0 && mtw>100 && met>150)                        return 9;
-  else if (nj==1 && ptdil<50 && mtw<100 && met<100)            return 10;  //VR
-  else if (nj==1 && ptdil<50 && mtw<100 && met>100 && met<150) return 11;
-  else if (nj==1 && ptdil<50 && mtw<100 && met>150)            return 12;
-  else if (nj==1 && ptdil>50 && mtw<100 && met<100)            return 13; //VR
-  else if (nj==1 && ptdil>50 && mtw<100 && met>100 && met<150) return 14;
-  else if (nj==1 && ptdil>50 && mtw<100 && met>150)            return 15;
-  else if (nj==1 && mtw>100 && met<100)                        return 16;  //VR
-  else if (nj==1 && mtw>100 && met>100 && met<150)             return 17;
-  else if (nj==1 && mtw>100 && met>150)                        return 18;
-
-  return -99;  
-  
-}
 
 
-float ttH_MVAto1D_6_2lss_Marco (float kinMVA_2lss_ttbar, float kinMVA_2lss_ttV){
-
-  return 2*((kinMVA_2lss_ttbar>=-0.2)+(kinMVA_2lss_ttbar>=0.3))+(kinMVA_2lss_ttV>=-0.1)+1;
-
-}
-float ttH_MVAto1D_3_3l_Marco (float kinMVA_3l_ttbar, float kinMVA_3l_ttV){
-
-  if (kinMVA_3l_ttbar<0.3 && kinMVA_3l_ttV<-0.1) return 1;
-  else if (kinMVA_3l_ttbar>=0.3 && kinMVA_3l_ttV>=-0.1) return 3;
-  else return 2;
-
-}
-
-#include "ttH-multilepton/binning_2d_thresholds.h"
-float ttH_MVAto1D_7_2lss_Marco (float kinMVA_2lss_ttbar, float kinMVA_2lss_ttV){
-
-//________________
-//|   |   |   | 7 |
-//|   |   | 4 |___|
-//| 1 | 2 |___| 6 |
-//|   |   |   |___|
-//|   |   | 3 | 5 |
-//|___|___|___|___|
-//
-
-  if (kinMVA_2lss_ttbar<cuts_2lss_ttbar0) return 1;
-  else if (kinMVA_2lss_ttbar<cuts_2lss_ttbar1) return 2;
-  else if (kinMVA_2lss_ttbar<cuts_2lss_ttbar2) return 3+(kinMVA_2lss_ttV>=cuts_2lss_ttV0);
-  else return 5+(kinMVA_2lss_ttV>=cuts_2lss_ttV1)+(kinMVA_2lss_ttV>=cuts_2lss_ttV2);
-
-}
-float ttH_MVAto1D_5_3l_Marco (float kinMVA_3l_ttbar, float kinMVA_3l_ttV){
-
-  int reg = 2*((kinMVA_3l_ttbar>=cuts_3l_ttbar1)+(kinMVA_3l_ttbar>=cuts_3l_ttbar2))+(kinMVA_3l_ttV>=cuts_3l_ttV1)+1;
-  if (reg==2) reg=1;
-  if (reg>2) reg = reg-1;
-  return reg;
-
-}
-
-
-
-float ttH_MVAto1D_6_flex (float kinMVA_2lss_ttbar, float kinMVA_2lss_ttV, int pdg1, int pdg2, float ttVcut, float ttcut1, float ttcut2){
-
-  return 2*((kinMVA_2lss_ttbar>=ttcut1)+(kinMVA_2lss_ttbar>=ttcut2)) + (kinMVA_2lss_ttV>=ttVcut)+1;
-
-}
-
-
-int ttH_catIndex_2lss(int nTauTight, int LepGood1_pdgId, int LepGood2_pdgId, int LepGood1_charge, int nBJetMedium25){
-
-//2lss_1tau
-//2lss_ee_0tau_neg
-//2lss_ee_0tau_pos
-//2lss_em_0tau_bl_neg
-//2lss_em_0tau_bl_pos
-//2lss_em_0tau_bt_neg
-//2lss_em_0tau_bt_pos
-//2lss_mm_0tau_bl_neg
-//2lss_mm_0tau_bl_pos
-//2lss_mm_0tau_bt_neg
-//2lss_mm_0tau_bt_pos
-   
-  if (nTauTight>=1) return 1;
-  if (nTauTight==0 && abs(LepGood1_pdgId)==11 && abs(LepGood2_pdgId)==11 && LepGood1_charge<0) return 2;
-  if (nTauTight==0 && abs(LepGood1_pdgId)==11 && abs(LepGood2_pdgId)==11 && LepGood1_charge>0) return 3;
-  if (nTauTight==0 && (abs(LepGood1_pdgId) != abs(LepGood2_pdgId)) && LepGood1_charge<0 && nBJetMedium25 < 2) return 4;
-  if (nTauTight==0 && (abs(LepGood1_pdgId) != abs(LepGood2_pdgId)) && LepGood1_charge>0 && nBJetMedium25 < 2) return 5;
-  if (nTauTight==0 && (abs(LepGood1_pdgId) != abs(LepGood2_pdgId)) && LepGood1_charge<0 && nBJetMedium25 >= 2) return 6;
-  if (nTauTight==0 && (abs(LepGood1_pdgId) != abs(LepGood2_pdgId)) && LepGood1_charge>0 && nBJetMedium25 >= 2) return 7;
-  if (nTauTight==0 && abs(LepGood1_pdgId)==13 && abs(LepGood2_pdgId)==13 && LepGood1_charge<0 && nBJetMedium25 < 2) return 8;
-  if (nTauTight==0 && abs(LepGood1_pdgId)==13 && abs(LepGood2_pdgId)==13 && LepGood1_charge>0 && nBJetMedium25 < 2) return 9;
-  if (nTauTight==0 && abs(LepGood1_pdgId)==13 && abs(LepGood2_pdgId)==13 && LepGood1_charge<0 && nBJetMedium25 >= 2) return 10;
-  if (nTauTight==0 && abs(LepGood1_pdgId)==13 && abs(LepGood2_pdgId)==13 && LepGood1_charge>0 && nBJetMedium25 >= 2) return 11;
-
- return -1;
-
-}
-
-int ttH_catIndex_3l(int LepGood1_charge, int LepGood2_charge, int LepGood3_charge, int nBJetMedium25){
-
-//3l_bl_neg
-//3l_bl_pos
-//3l_bt_neg
-//3l_bt_pos
-
-  if ((LepGood1_charge+LepGood2_charge+LepGood3_charge)<0 && nBJetMedium25 < 2) return 12;
-  if ((LepGood1_charge+LepGood2_charge+LepGood3_charge)>0 && nBJetMedium25 < 2) return 13;
-  if ((LepGood1_charge+LepGood2_charge+LepGood3_charge)<0 && nBJetMedium25 >= 2) return 14;
-  if ((LepGood1_charge+LepGood2_charge+LepGood3_charge)>0 && nBJetMedium25 >= 2) return 15;
-
- return -1;
-
-}
-
-
+//PU weights
 
 // for 74X
 //float _puw_true[50] = {3.652322599922302, 3.652322599922302, 3.652322599922302, 3.652322599922302, 3.652322599922302, 3.652322599922302, 2.1737862420968868, 2.7116925849897364, 3.352556070095877, 3.083015137131128, 2.8824218072960823, 2.6791975503716743, 2.212434153800565, 1.5297063638539434, 0.8762698648562287, 0.41326633649647065, 0.17496252648670657, 0.07484562496757297, 0.038507396968229766, 0.021849761893692053, 0.01140425609526747, 0.005063578526248854, 0.001881351382104846, 0.0006306639125313864, 0.00021708627575927402, 9.42187694469501e-05, 5.146591433045169e-05, 3.326854405002371e-05, 2.426063215708668e-05, 1.8575279862433386e-05, 1.281054551977887e-05, 8.01819566777096e-06, 3.6521122159066883e-06, 1.574921039309069e-06, 5.770182058345157e-07, 2.0862027190449754e-07, 6.946502045299735e-08, 2.032077576113469e-08, 6.417943581326451e-09, 1.5934414668326278e-09, 4.311337237072122e-10, 1.1138367777447038e-10, 2.6925919137965106e-11, 8.08827951069873e-12, 1.3708268591386723e-12, 4.065021195897016e-13, 1.770006195676463e-13, 5.689967214903059e-14, 6.224880123134382e-14, 0.0};
@@ -617,6 +333,107 @@ float puw2016_nInt_12p9fb(float nInt, int var = 0) {
 //
 //float puwMu8(int nVert) { return _puw_Mu8[nVert] * 0.001; }
 //float puwMu17(int nVert) { return _puw_Mu17[nVert] * (2305428/29339.)*0.002/2.26; }
+
+
+
+
+//ttH stuff
+
+float ttH_MVAto1D_6_2lss_Marco (float kinMVA_2lss_ttbar, float kinMVA_2lss_ttV){
+
+  return 2*((kinMVA_2lss_ttbar>=-0.2)+(kinMVA_2lss_ttbar>=0.3))+(kinMVA_2lss_ttV>=-0.1)+1;
+
+}
+float ttH_MVAto1D_3_3l_Marco (float kinMVA_3l_ttbar, float kinMVA_3l_ttV){
+
+  if (kinMVA_3l_ttbar<0.3 && kinMVA_3l_ttV<-0.1) return 1;
+  else if (kinMVA_3l_ttbar>=0.3 && kinMVA_3l_ttV>=-0.1) return 3;
+  else return 2;
+
+}
+
+#include "ttH-multilepton/binning_2d_thresholds.h"
+float ttH_MVAto1D_7_2lss_Marco (float kinMVA_2lss_ttbar, float kinMVA_2lss_ttV){
+
+//________________
+//|   |   |   | 7 |
+//|   |   | 4 |___|
+//| 1 | 2 |___| 6 |
+//|   |   |   |___|
+//|   |   | 3 | 5 |
+//|___|___|___|___|
+//
+
+  if (kinMVA_2lss_ttbar<cuts_2lss_ttbar0) return 1;
+  else if (kinMVA_2lss_ttbar<cuts_2lss_ttbar1) return 2;
+  else if (kinMVA_2lss_ttbar<cuts_2lss_ttbar2) return 3+(kinMVA_2lss_ttV>=cuts_2lss_ttV0);
+  else return 5+(kinMVA_2lss_ttV>=cuts_2lss_ttV1)+(kinMVA_2lss_ttV>=cuts_2lss_ttV2);
+
+}
+float ttH_MVAto1D_5_3l_Marco (float kinMVA_3l_ttbar, float kinMVA_3l_ttV){
+
+  int reg = 2*((kinMVA_3l_ttbar>=cuts_3l_ttbar1)+(kinMVA_3l_ttbar>=cuts_3l_ttbar2))+(kinMVA_3l_ttV>=cuts_3l_ttV1)+1;
+  if (reg==2) reg=1;
+  if (reg>2) reg = reg-1;
+  return reg;
+
+}
+
+
+
+float ttH_MVAto1D_6_flex (float kinMVA_2lss_ttbar, float kinMVA_2lss_ttV, int pdg1, int pdg2, float ttVcut, float ttcut1, float ttcut2){
+
+  return 2*((kinMVA_2lss_ttbar>=ttcut1)+(kinMVA_2lss_ttbar>=ttcut2)) + (kinMVA_2lss_ttV>=ttVcut)+1;
+
+}
+
+
+int ttH_catIndex_2lss(int nTauTight, int LepGood1_pdgId, int LepGood2_pdgId, int LepGood1_charge, int nBJetMedium25){
+
+//2lss_1tau
+//2lss_ee_0tau_neg
+//2lss_ee_0tau_pos
+//2lss_em_0tau_bl_neg
+//2lss_em_0tau_bl_pos
+//2lss_em_0tau_bt_neg
+//2lss_em_0tau_bt_pos
+//2lss_mm_0tau_bl_neg
+//2lss_mm_0tau_bl_pos
+//2lss_mm_0tau_bt_neg
+//2lss_mm_0tau_bt_pos
+   
+  if (nTauTight>=1) return 1;
+  if (nTauTight==0 && abs(LepGood1_pdgId)==11 && abs(LepGood2_pdgId)==11 && LepGood1_charge<0) return 2;
+  if (nTauTight==0 && abs(LepGood1_pdgId)==11 && abs(LepGood2_pdgId)==11 && LepGood1_charge>0) return 3;
+  if (nTauTight==0 && (abs(LepGood1_pdgId) != abs(LepGood2_pdgId)) && LepGood1_charge<0 && nBJetMedium25 < 2) return 4;
+  if (nTauTight==0 && (abs(LepGood1_pdgId) != abs(LepGood2_pdgId)) && LepGood1_charge>0 && nBJetMedium25 < 2) return 5;
+  if (nTauTight==0 && (abs(LepGood1_pdgId) != abs(LepGood2_pdgId)) && LepGood1_charge<0 && nBJetMedium25 >= 2) return 6;
+  if (nTauTight==0 && (abs(LepGood1_pdgId) != abs(LepGood2_pdgId)) && LepGood1_charge>0 && nBJetMedium25 >= 2) return 7;
+  if (nTauTight==0 && abs(LepGood1_pdgId)==13 && abs(LepGood2_pdgId)==13 && LepGood1_charge<0 && nBJetMedium25 < 2) return 8;
+  if (nTauTight==0 && abs(LepGood1_pdgId)==13 && abs(LepGood2_pdgId)==13 && LepGood1_charge>0 && nBJetMedium25 < 2) return 9;
+  if (nTauTight==0 && abs(LepGood1_pdgId)==13 && abs(LepGood2_pdgId)==13 && LepGood1_charge<0 && nBJetMedium25 >= 2) return 10;
+  if (nTauTight==0 && abs(LepGood1_pdgId)==13 && abs(LepGood2_pdgId)==13 && LepGood1_charge>0 && nBJetMedium25 >= 2) return 11;
+
+ return -1;
+
+}
+
+int ttH_catIndex_3l(int LepGood1_charge, int LepGood2_charge, int LepGood3_charge, int nBJetMedium25){
+
+//3l_bl_neg
+//3l_bl_pos
+//3l_bt_neg
+//3l_bt_pos
+
+  if ((LepGood1_charge+LepGood2_charge+LepGood3_charge)<0 && nBJetMedium25 < 2) return 12;
+  if ((LepGood1_charge+LepGood2_charge+LepGood3_charge)>0 && nBJetMedium25 < 2) return 13;
+  if ((LepGood1_charge+LepGood2_charge+LepGood3_charge)<0 && nBJetMedium25 >= 2) return 14;
+  if ((LepGood1_charge+LepGood2_charge+LepGood3_charge)>0 && nBJetMedium25 >= 2) return 15;
+
+ return -1;
+
+}
+
 
 
 TFile *_file_recoToLoose_leptonSF_mu1_b = NULL;
