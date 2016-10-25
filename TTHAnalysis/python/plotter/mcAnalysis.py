@@ -127,7 +127,7 @@ class MCAnalysis:
 
                 basepath = None
                 for treepath in options.path:
-                    if cname in os.listdir(treepath):
+                    if os.path.exists(treepath+"/"+cname):
                         basepath = treepath
                         break
                 if not basepath:
