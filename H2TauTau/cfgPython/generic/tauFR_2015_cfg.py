@@ -13,7 +13,7 @@ from CMGTools.H2TauTau.proto.samples.fall15.htt_common import backgrounds_mu, sm
 from CMGTools.H2TauTau.proto.samples.fall15.triggers_tauMu import mc_triggers, mc_triggerfilters
 from CMGTools.H2TauTau.proto.samples.fall15.triggers_tauMu import data_triggers, data_triggerfilters
 
-from CMGTools.H2TauTau.htt_ntuple_base_cff import genAna, vertexAna, puFileData, puFileMC, eventSelector, jsonAna, triggerAna, pileUpAna, dyJetsFakeAna, NJetsAna
+from CMGTools.H2TauTau.htt_ntuple_base_cff import genAna, vertexAna, puFileData, puFileMC, eventSelector, jsonAna, triggerAna, pileUpAna, httGenAna, NJetsAna
 
 
 # Get all heppy options; set via "-o production" or "-o production=True"
@@ -120,7 +120,7 @@ sequence = cfg.Sequence([
     vertexAna,
     triggerAna,
     tauJetMuAna,
-    dyJetsFakeAna,
+    httGenAna,
     jetAna,
     muonWeighter,
     pileUpAna,

@@ -7,7 +7,7 @@ from PhysicsTools.Heppy.analyzers.core.SkimAnalyzerCount import SkimAnalyzerCoun
 from PhysicsTools.Heppy.analyzers.core.EventSelector import EventSelector
 from PhysicsTools.Heppy.analyzers.objects.VertexAnalyzer import VertexAnalyzer
 from PhysicsTools.Heppy.analyzers.core.PileUpAnalyzer import PileUpAnalyzer
-from PhysicsTools.Heppy.analyzers.gen.GeneratorAnalyzer import GeneratorAnalyzer
+# from PhysicsTools.Heppy.analyzers.gen.GeneratorAnalyzer import GeneratorAnalyzer
 from PhysicsTools.Heppy.analyzers.gen.LHEWeightAnalyzer import LHEWeightAnalyzer
 
 # Tau-tau analyzers
@@ -78,6 +78,7 @@ vertexAna = cfg.Analyzer(
     VertexAnalyzer,
     name='VertexAnalyzer',
     fixedWeight=1,
+    keepFailingEvents=True,
     verbose=False
 )
 
@@ -87,9 +88,9 @@ pileUpAna = cfg.Analyzer(
     true=True
 )
 
-genAna = GeneratorAnalyzer.defaultConfig
+# genAna = GeneratorAnalyzer.defaultConfig
 
-genAna.savePreFSRParticleIds = [1, 2, 3, 4, 5, 21]
+# genAna.savePreFSRParticleIds = [1, 2, 3, 4, 5, 21]
 
 # Save SUSY masses
 susyScanAna = cfg.Analyzer(
@@ -97,7 +98,7 @@ susyScanAna = cfg.Analyzer(
     doLHE=True,
 )
 
-dyJetsFakeAna = cfg.Analyzer(
+httGenAna = cfg.Analyzer(
     HTTGenAnalyzer,
     name='HTTGenAnalyzer',
     jetCol='slimmedJets',
@@ -160,11 +161,11 @@ commonSequence = cfg.Sequence([
     jsonAna,
     skimAna,
     mcWeighter,
-    genAna,
-    susyScanAna,
+    # genAna,
+    # susyScanAna,
     triggerAna, # First analyser that applies selections
     vertexAna,
-    dyJetsFakeAna,
+    httGenAna,
     jetAna,
     vbfAna,
     recoilCorr,
