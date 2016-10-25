@@ -154,10 +154,10 @@ nJet30    : nJet30         : 10,-0.5,9.5 ; XTitle="N(jet\, p_{T} > 30)"         
 nBJet25   : nBJetMedium25  : 5,-0.5,4.5  ; XTitle="N(b-jet\, p_{T} > 25\, CSVM)", LegendCutoff=1e-4
 
 m3l       : m3L            : 40,0,200    ; XTitle="m_{3L} [GeV]", Legend="TL", LegendCutoff=1e-4 
-mll3l     : mll_3l         : 40,0,200    ; XTitle="M(ll) [GeV]"                 , LegendCutoff=1e-4
-mtW3l     : mT_3l          : 10,0,200    ; XTitle="M_{T}^{W} [GeV]"             , LegendCutoff=1e-4
+mll3l     : mll_3l         : 40,0,200    ; XTitle="M(ll) [GeV]"                 , LegendCutoff=1e-4, Logy
+mtW3l     : mT_3l          : 10,0,200    ; XTitle="M_{T}^{W} [GeV]"             , LegendCutoff=1e-4, Logy, YMax=10000, Legend="TL"
 mT2L3l    : mT2L_3l        : 15,0,300    ; XTitle="M_{T2}(l\,l) [GeV]"          , LegendCutoff=1e-4
-mT2T3l    : mT2T_3l        : 15,0,300    ; XTitle="M_{T2}(l\,#tau) [GeV]"       , LegendCutoff=1e-4
+mT2T3l    : mT2T_3l        : 15,0,300    ; XTitle="M_{T2}(l\,#tau) [GeV]"       , LegendCutoff=1e-4, Logy
 
 mll4l     : mll_4l         : 40,0,200    ; XTitle="M(ll) [GeV]"                 , LegendCutoff=1e-4
 mtW4l     : mT_4l          : 10,0,200    ; XTitle="M_{T}^{W} [GeV]"             , LegendCutoff=1e-4
@@ -173,6 +173,8 @@ flavor4l   : (abs(LepSel1_pdgId)+abs(LepSel2_pdgId)+abs(LepSel3_pdgId)+abs(LepSe
 charge4l   : if3(LepSel1_pdgId>0,-1,1)+if3(LepSel2_pdgId>0,-1,1)+if3(LepSel3_pdgId>0,-1,1)+if3(LepSel4_pdgId>0,-1,1) :9,-4.5,4.5 ; XTitle="charge", Legend="TL", LegendCutoff=1e-4, MoreY=2.0
 
 mllsplit4l : if3(abs(mll[0]-91.2)<15 && abs(mll[1]-91.2)<15,1,if3(abs(mll[0]-91.2)>15 && abs(mll[1]-91.2)>15,3,2)) : 3,0.5,3.5 ; XTitle="composition", xBinLabels="onZ-onZ\,onZ-offZ\,offZ-offZ", Legend="TL", LegendCutoff=1e-4, MoreY=2.0
+
+mTmll      : mT_3l\:mll_3l : [0,75,105,200]*[0,40,80,120,160,200] ; XTitle="M(ll) [GeV]", YTitle="M_{T}^{W} [GeV]", UnbinnedData2D=True, PlotMode='SCAT'
 
 
 

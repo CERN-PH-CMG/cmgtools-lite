@@ -2,6 +2,9 @@
 #include <cmath>
 #include "TH2F.h"
 #include "TFile.h"
+#include "TSystem.h"
+
+TString CMSSW_BASE_FS = gSystem->ExpandPathName("${CMSSW_BASE}");
 
 TFile *_file_fastsim_el = NULL;
 TFile *_file_fastsim_mu = NULL;
@@ -11,8 +14,8 @@ TH2F *_histo_fastsim_leptonSF_el = NULL;
 float leptonSF_2lss_ewk_FS(int pdgid, float pt, float eta, int var=0){
   
   if (!_histo_fastsim_leptonSF_mu) {
-    _file_fastsim_mu = new TFile("/afs/cern.ch/work/f/folguera/SUS/EWKino/CMSSW_8_0_11/src/CMGTools/TTHAnalysis/data/leptonSF/sf_mu_LepMVAVT_FS_ICHEP.root","read");
-    _file_fastsim_el = new TFile("/afs/cern.ch/work/f/folguera/SUS/EWKino/CMSSW_8_0_11/src/CMGTools/TTHAnalysis/data/leptonSF/sf_el_LepMVAVT_FS_ICHEP.root","read");
+    _file_fastsim_mu = new TFile(CMSSW_BASE_FS+"/src/CMGTools/TTHAnalysis/data/leptonSF/SF2016_muon_lepMVAveryTight_FS.root ","read");
+    _file_fastsim_el = new TFile(CMSSW_BASE_FS+"/src/CMGTools/TTHAnalysis/data/leptonSF/SF2016_electron_lepMVAveryTight_FS.root ","read");
     _histo_fastsim_leptonSF_mu = (TH2F*)(_file_fastsim_mu->Get("histo2D"));
     _histo_fastsim_leptonSF_el = (TH2F*)(_file_fastsim_el->Get("histo2D"));
    }

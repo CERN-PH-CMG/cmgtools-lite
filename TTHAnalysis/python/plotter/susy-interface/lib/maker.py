@@ -5,6 +5,7 @@ from custom import *
 from job import *
 
 def addMakerOptions(parser):
+	parser.add_option("-j"       , "--jobs"       , dest="jobs"   , type="int"   , default=0     , help="Number of jobs in multi-processing")
 	parser.add_option("-l"       , "--lumi"       , dest="lumi"   , type="string", default="12.9", help="Luminosity in /fb")
 	parser.add_option("-o"       , "--out"        , dest="outname", type="string", default=None, help="Name of the production, default is name of config.") 
 	parser.add_option("-q"       , "--queue"      , dest="queue"  , type="string", default=None, help="Submit jobs to batch system queue")
@@ -60,6 +61,8 @@ class Maker():
 		self.treedir = args[2].rstrip("/")
 		self.outdir  = args[3].rstrip("/")
 		self.options = options
+	def addToTalk(self, message):
+		print message # placeholder for now
 	def clearJobs(self):
 		self.talk("Checking job status")
 		if hasattr(self, "jobs") and len(self.jobs)>0:
@@ -75,19 +78,31 @@ class Maker():
 		self.jobs = []
 		cleandir(self.jobpath, False)
 		return True
-	def collectFlags(self, additionals = "", useWeight = True, isFastSim = False):
-		if not hasattr(self, "flags"): 
-			self.flags =      getattr(self.config , "flags", [])
-			self.flags.extend(getattr(self.region , "flags", []))
-			self.flags.extend(getattr(self.options, "flags", []))
-			self.flags.extend(getattr(self.config , additionals, []))
-			self.flags.extend(getattr(self.region , additionals, []))
-			self.flags.extend(getattr(self.options, additionals, []))
-		theflags = copy.deepcopy(self.flags)
+	def collectFlags(self, additionals = "", useWeight = True, isFastSim = False, forceRedo = False):
+		theflags = copy.deepcopy(getattr(self.config , "flags", []))
+		theflags.extend(getattr(self.region , "flags", []))
+		theflags.extend(getattr(self.options, "flags", []))
+		theflags.extend(getattr(self.config , additionals, []))
+		theflags.extend(getattr(self.region , additionals, []))
+		theflags.extend(getattr(self.options, additionals, []))
 		weight   = self.getWeight(isFastSim)
 		if useWeight and weight: theflags.append("-W '"+weight+"'")
 		theflags = filter(lambda x: x, theflags)
 		return " ".join(theflags)
+		#self.flags = theFlags
+		#if not hasattr(self, "flags") or forceRedo: 
+		#	theFlags = copy.deepcopy(getattr(self.config , "flags", []))
+		#	theFlags.extend(getattr(self.region , "flags", []))
+		#	theFlags.extend(getattr(self.options, "flags", []))
+		#	theFlags.extend(getattr(self.config , additionals, []))
+		#	theFlags.extend(getattr(self.region , additionals, []))
+		#	theFlags.extend(getattr(self.options, additionals, []))
+		#	self.flags = theFlags
+		#theflags = copy.deepcopy(self.flags)
+		#weight   = self.getWeight(isFastSim)
+		#if useWeight and weight: theflags.append("-W '"+weight+"'")
+		#theflags = filter(lambda x: x, theflags)
+		#return " ".join(theflags)
 	def collectFriends(self):
 		return " ".join(self.getFriends())
 	def collectMacros(self):
@@ -233,11 +248,6 @@ class Maker():
 	def loadRegions(self, arg):
 		allregions = Collection(self.dir+"/env/regions")
 		self.regions = [allregions.get(a) for a in arg.split(";")]
-	def parseBase(self):
-		self.keys = filter(lambda x: x, [i[1] for i in Formatter().parse(self.base)])
-	def reloadBase(self, newbase):
-		self.base = newbase
-		self.parseBase()
 	def makeCmd(self, args):
 		if len(args) != len(self.keys): 
 			print "error, not all arguments given"
@@ -245,7 +255,10 @@ class Maker():
 		dict = {}
 		for i,k in enumerate(self.keys):
 			dict[k] = args[i]
-		return self.base.format(**dict)
+		multi = " -j %d"%(self.options.jobs) if self.options.jobs>0 else ""
+		return self.base.format(**dict) + multi
+	def parseBase(self):
+		self.keys = filter(lambda x: x, [i[1] for i in Formatter().parse(self.base)])
 	def prepareSplit(self, samplename):
 		nevt = int(self.getNEvtSample(samplename))
 		path = self.getTFilePath(samplename)
@@ -256,21 +269,31 @@ class Maker():
 		file.Close()
 		chunks = int(all)/nevt + 1
 		self.bunches = [nevt for i in range(chunks-1)] + [int(all)%nevt]
+	def registerCmd(self, cmd, name = "maker", forceLocal = False, collect = 0):
+		if self.options.pretend:
+			print cmd
+			return
+		self.registerJob(name, [cmd], forceLocal, collect)
+	def registerJob(self, name, commands, forceLocal = False, collect = 0):
+		if not hasattr(self, "jobs"    ): self.jobs = []
+		if not hasattr(self, "jobcount"): self.jobcount = -1
+		self.jobcount += 1
+		if collect>0 and self.jobcount%collect != 0:
+			self.jobs[-1].addCommands(commands)
+			return
+		self.jobs.append(Job(self, name, commands, self.options, forceLocal))
+	def reloadBase(self, newbase):
+		self.base = newbase
+		self.parseBase()
 	def resetModel(self):
 		self.modelIdx = -1
+	def resetRegion(self):
+		self.regionIdx = -1
 	def runCmd(self, cmd, name = "maker", forceLocal = False):
 		if self.options.pretend: 
 			print cmd
 			return -1
 		return self.runJob(name, [cmd], forceLocal)
-	def registerCmd(self, cmd, name = "maker", forceLocal = False):
-		if self.options.pretend:
-			print cmd
-			return -1
-		return self.registerJob(name, [cmd], forceLocal)
-	def registerJob(self, name, commands, forceLocal = False):
-		if not hasattr(self, "jobs"): self.jobs = []
-		self.jobs.append(Job(self, name, commands, self.options, forceLocal))
 	def runJob(self, name, commands, forceLocal = False):
 		self.talk("Submitting job '"+name+"'")
 		theJob = Job(self, name, commands, self.options, forceLocal)
@@ -299,7 +322,7 @@ class Maker():
 		for b,n in enumerate(self.bunches):
 			theCmd = base
 			if n>0: theCmd +=" {C} {B} {N} {M}".format(C=cFlag, B=b, N=nFlag, M=n)
-			if run: self.runCmd     (theCmd, name+"_"+str(b), forceLocal)
+			if run: self.runCmd     (theCmd, name+"_"+str(b), forceLocal, )
 			else  : self.registerCmd(theCmd, name+"_"+str(b), forceLocal)
 	def talk(self, message, isError=False):
 	    if isError:

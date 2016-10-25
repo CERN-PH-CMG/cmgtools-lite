@@ -137,7 +137,8 @@ def makeWeight(wstr, wvar):
 	if wvar == "1": return wstr
 	return "("+wstr+")*"+wvar
 
-cmdbase = thebase.replace("[[[","{").replace("]]]","}")
+cmdbase = thebase.replace("{","[[").replace("}","]]")
+cmdbase = cmdbase.replace("[[[","{").replace("]]]","}")
 #cmdbase = "python {sc} {{MCA}} {FIRST} {{SYSTS}} --od {{OUTDIR}} ".format(sc=script, FIRST=first)
 mcabase = "sig_{{name}} : {file} : {xs} : {{ws}} ; Label=\"{{name}}\"{{FRfiles}}".format(file=file, xs=xs)
 
@@ -160,7 +161,8 @@ for k,vals in wVars.iteritems():
 	f.write(mcabase.format(name=sig+"_"+k+"_Up", ws=makeWeight(wstr,vals[0]), FRfiles=makeFakeRate(frfiles)) + "\n")
 	f.write(mcabase.format(name=sig+"_"+k+"_Dn", ws=makeWeight(wstr,vals[1]), FRfiles=makeFakeRate(frfiles)) + "\n")
 f.close()
-cmd(cmdbase.format(MCA=mcadir + "/mca_acc_"+name+".txt", SYS="", O=outdir + "/acc/"+short) + second + " --asimov") 
+mybase = cmdbase.format(MCA=mcadir + "/mca_acc_"+name+".txt", SYS="", O=outdir + "/acc/"+short)
+cmd(mybase.replace("[[","{").replace("]]","}") + " --asimov")
 
 
 ## get central value of acceptance 
@@ -184,5 +186,6 @@ if q2file:
 f.close()
 
 ## run the proper job, which is actually just making the cards
-cmd(cmdbase.format(MCA=mcadir + "/mca_full_"+name+".txt", SYS=thesyst, O=outdir+"/mps/"+short) + second + "  --ip x " + plugFiles([bkgdir+"/common/SR.input.root", accdir+"/acc_SR.input.root"]))
+mybase = cmdbase.format(MCA=mcadir + "/mca_full_"+name+".txt", SYS=thesyst, O=outdir+"/mps/"+short)
+cmd(mybase.replace("[[","{").replace("]]","}") + " --ip x " + plugFiles([bkgdir+"/common/SR.input.root", accdir+"/acc_SR.input.root"]))
 

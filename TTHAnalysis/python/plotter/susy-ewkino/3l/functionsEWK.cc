@@ -366,6 +366,7 @@ float getMuonUnc(float pt, int var = 0) {
 float getLeptonSF(float pt, float eta, int pdgId, int var = 0){
     if(abs(pdgId) == 13) return (var==0)?getMuonSF(pt, eta):(1+getMuonUnc(pt, var));
     if(abs(pdgId) == 11) return (var==0)?getElectronSF(pt, eta):(1+getElectronUnc(pt,eta,var));
+    if(abs(pdgId) == 15) return 0.83;
     return 1.0;
 }
 

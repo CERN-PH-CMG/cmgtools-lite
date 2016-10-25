@@ -6,7 +6,7 @@ parser = OptionParser(usage="%prog cfg regions treedir outdir [options]")
 parser = maker.addMakerOptions(parser)
 parser.add_option("--perBin",  dest="perBin", action="store_true", default=False, help="Run every value of the bin separately.")
 
-base = "python makeShapeCardsSusy.py {MCA} {CUTS} \"{EXPR}\" \"{BINS}\" {SYS} -o SR -P {T} --tree {TREENAME} {MCCS} {MACROS} --neg --s2v -f -j 4 -l {LUMI} --od {O} {FRIENDS} {PROCS} {FLAGS}"
+base = "python makeShapeCardsSusy.py {MCA} {CUTS} \"{EXPR}\" \"{BINS}\" {SYS} -o SR -P {T} --tree {TREENAME} {MCCS} {MACROS} --neg --s2v -f -l {LUMI} --od {O} {FRIENDS} {PROCS} {FLAGS}"
 (options, args) = parser.parse_args()
 options = maker.splitLists(options)
 mm      = maker.Maker(base, args, options)
@@ -36,11 +36,7 @@ for r in range(len(mm.regions)):
 	
 		flags += " "+mm.getExprCut()
 		
-		mm.submit([mm.getVariable("mcafile",""), mm.getVariable("cutfile",""), mm.getVariable("expr",""), mm.getVariable("bins",""), mm.getVariable("sysfile",""), mm.treedir, options.treename, mccs, macros, options.lumi, output, friends, procs, flags], mm.region.name)
+		mm.submit([mm.getVariable("mcafile",""), mm.getVariable("cutfile",""), mm.getVariable("expr",""), mm.getVariable("bins",""), mm.getVariable("sysfile",""), mm.treedir, options.treename, mccs, macros, options.lumi, output, friends, procs, flags], mm.region.name, False)
 
-
-
-
-
-
-
+mm.runJobs()
+mm.clearJobs()

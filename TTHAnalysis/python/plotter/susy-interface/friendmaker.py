@@ -112,7 +112,7 @@ if options.direct and options.finalize and not options.noSplit:
 
 	for module in mm.getFriendModules():
 		mm.workdir = output
-		func.cmd("755 "+mm.cmssw+"/src/CMGTools/TTHAnalysis/macros/leptons/friendChunkAdd.sh")
+		func.cmd("chmod 755 "+mm.cmssw+"/src/CMGTools/TTHAnalysis/macros/leptons/friendChunkAdd.sh")
 		cmd = mm.cmssw +"/src/CMGTools/TTHAnalysis/macros/leptons/friendChunkAdd.sh evVarFriend ."
 		mm.runCmd(cmd, "merge", True)
 		mm.workdir = mm.cmssw +"/src/CMGTools/TTHAnalysis/macros"

@@ -20,7 +20,7 @@ parser.add_option("--json"   , dest="json"   , type="string", default=None, help
 parser.add_option("--samples", dest="samples", type="string", action="append", default=[], help="Only use these samples in the skimming and ignore procs, bkgs and sigs")
 parser.add_option("--allSamples", dest="allSamples", action="store_true", default=False, help="Skim all samples in the MCA")
 
-base = "python skimTrees.py {MCA} {CUTS} {O} -P {T} --tree {TREENAME} -j 4 {MCCS} {MACROS} {FRIENDS} {JSON}"
+base = "python skimTrees.py {MCA} {CUTS} {O} -P {T} --tree {TREENAME} {MCCS} {MACROS} {FRIENDS} {JSON}"
 baseFriends = "python skimFTrees.py {T} {F} {O}" 
 
 (options, args) = parser.parse_args()
@@ -44,8 +44,7 @@ for r in range(len(mm.regions)):
 	json = options.json if options.json else ""
 	
 	base = "python skimTrees.py {MCA} {CUTS} {O} -P {T} --tree {TREENAME} -j 4 {MCCS} {MACROS} {FRIENDS} {JSON}"
-	mm.submit([mca, mm.getVariable("cutfile",""), output, mm.treedir, options.treename, mccs, macros, friends, json],"main",False)
-	mm.clearJobs()	
+	mm.submit([mca, mm.getVariable("cutfile",""), output, mm.treedir, options.treename, mccs, macros, friends, json],"main",True)
 
 	## skim friend trees
 	mm.reloadBase(baseFriends)
@@ -56,5 +55,8 @@ for r in range(len(mm.regions)):
 		#output = mm.outdir+"/"+fm[i]
 		func.mkdir(output)
 	
-		mm.submit([mm.outdir, f, mm.outdir],"friend_"+f)
+		mm.submit([mm.outdir, f, mm.outdir],"friend_"+f,False)
+	mm.runJobs()
+	mm.clearJobs()
+
 

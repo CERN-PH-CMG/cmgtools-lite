@@ -29,6 +29,7 @@ for r in range(len(mm.regions)):
 		
 		tag = p.replace(".*.","").replace(".*", "").replace("*.","").rstrip("_")
 		
-		mm.submit([mm.getVariable("mcafile",""), mm.getVariable("cutfile",""), fmt, mm.treedir, options.treename, mccs, macros, friends, "-p "+p, flags, output, tag],mm.region.name)
+		mm.submit([mm.getVariable("mcafile",""), mm.getVariable("cutfile",""), fmt, mm.treedir, options.treename, mccs, macros, friends, "-p "+p, flags, output, tag],mm.region.name,False)
 
-
+mm.runJobs()
+mm.clearJobs()

@@ -75,10 +75,10 @@ binname  = options.binname if options.binname else os.path.basename(args[1]).rep
 outdir   = options.outdir+"/" if options.outdir else ""
 
 report={}
+todo = []
 
 ## load histos from infile, make only the missing ones on the fly
 if len(options.infile)>0:
-    todo = []
     for inf in options.infile:
         thefile = ROOT.TFile(inf,"read")
         for p in mca.listSignals(True)+mca.listBackgrounds(True)+['data']:
@@ -95,6 +95,7 @@ if len(options.infile)>0:
 ## no infile given, process all histos
 else:
     report = mca.getPlotsRaw("x", args[2], args[3], cuts.allCuts(), nodata=options.asimov)
+
 
 
 if options.hardZero:
@@ -186,15 +187,6 @@ for name in systs.keys():
             if re.match(procmap, p): effect = amount
         effmap[p] = effect
     systs[name] = effmap
-for name in systsU.keys():
-    effmap = {}
-    for p in procs:
-        effect = "-"
-        for (procmap,amount) in systsU[name]:
-            if re.match(procmap, p): effect = amount
-        effmap[p] = effect
-    systsU[name] = effmap
-
 for name in systsU.keys():
     effmap = {}
     for p in procs:

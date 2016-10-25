@@ -162,6 +162,7 @@ def reMax(hist,hist2,islog,factorLin=1.3,factorLog=2.0,doWide=False):
           max2 = max(max2, (hist2.GetBinContent(b) + hist2.GetBinError(b))*(factorLog if islog else factorLin))
     if max2 > max0:
         max0 = max2;
+        max0 = 50000
         if islog: hist.GetYaxis().SetRangeUser(0.1 if doWide else 0.9, max0)
         else:     hist.GetYaxis().SetRangeUser(0,max0)
 
@@ -392,7 +393,7 @@ def doNormFit(pspec,pmap,mca,saveScales=False):
     pspec.setLog("Fitting", fitlog)
     
 
-def doRatioHists(pspec,pmap,total,totalSyst,maxRange,fixRange=False,fitRatio=None,errorsOnRef=True,ratioNums="signal",ratioDen="background",ylabel="Data/Pred.",doWide=False,showStatTotLegend=False):
+def doRatioHists(pspec,pmap,total,totalSyst,maxRange,fixRange=False,fitRatio=None,errorsOnRef=True,ratioNums="signal",ratioDen="background",ylabel="Data/pred.",doWide=False,showStatTotLegend=False):
     numkeys = [ "data" ]
     if "data" not in pmap: 
         if len(pmap) >= 4 and ratioDen in pmap:
@@ -836,7 +837,7 @@ class PlotMaker:
                 ROOT.gStyle.SetPadLeftMargin(600.*0.18/plotformat[0])
 
                 stack.Draw("GOFF")
-                ytitle = "Events" if getEvenBinning(stack.GetHistogram())==-1 or doWide else "Events / %.1f GeV" %(getEvenBinning(stack.GetHistogram()))
+                ytitle = "Events" if not self._options.printBinning else "Events / %s" %(self._options.printBinning)
                 total.GetXaxis().SetTitleFont(42)
                 total.GetXaxis().SetTitleSize(0.05)
                 total.GetXaxis().SetTitleOffset(0.9)
@@ -863,7 +864,8 @@ class PlotMaker:
                 height = plotformat[1]+150 if doRatio else plotformat[1]
                 c1 = ROOT.TCanvas(outputName+"_canvas", outputName, plotformat[0], height)
                 c1.SetTopMargin(c1.GetTopMargin()*options.topSpamSize);
-                if self._options.doOfficialCMS: c1.SetTopMargin(0.12*600./height if doRatio else 0.06*600./height);
+                topsize = 0.12*600./height if doRatio else 0.06*600./height
+                if self._options.doOfficialCMS: c1.SetTopMargin(topsize*1.2 if doWide else topsize)
                 c1.Draw()
                 p1, p2 = c1, None # high and low panes
                 # set borders, if necessary create subpads
@@ -1014,9 +1016,9 @@ class PlotMaker:
                                     if p in mca.listSignals(allProcs=True)    : sigsyst[b-1] += syst*syst
                                     line = fmt % (plot.GetBinContent(b), plot.GetBinError(b))
                                     #if syst: line += " +/- %9.2f (syst)"  % syst
-                                    line += " +/- %9.2f (syst)"  % syst
-                                    if p == "signal"     and sigsyst[b-1]: line += " +/- %9.2f (syst)" % math.sqrt(sigsyst[b-1])
-                                    if p == "background" and bkgsyst[b-1]: line += " +/- %9.2f (syst)" % math.sqrt(bkgsyst[b-1])
+                                    if   p == "signal"     and sigsyst[b-1]: line += " +/- %9.2f (syst)" % math.sqrt(sigsyst[b-1])
+                                    elif p == "background" and bkgsyst[b-1]: line += " +/- %9.2f (syst)" % math.sqrt(bkgsyst[b-1])
+                                    else: line += " +/- %9.2f (syst)"  % syst
                                     bins.append(line)
                                 dump.write(" ".join(bins) + "\n")
                             if 'data' in pmap: 
@@ -1066,15 +1068,25 @@ class PlotMaker:
                                     c1.SetRightMargin(0.20)
                                     plot.SetContour(100)
                                     ROOT.gStyle.SetPaintTextFormat(pspec.getOption("PaintTextFormat","g"))
-                                    plot.SetMarkerSize(pspec.getOption("MarkerSize",1))
+                                    if   p in ["background"]: style = 21; color = ROOT.kBlack
+                                    elif p in ["signal"    ]: style = 22; color = ROOT.kRed
+                                    elif p in ["data"      ]: style = 20; color = ROOT.kBlack
+                                    elif p in ["total"     ]: style = 20; color = ROOT.kBlack
+                                    else: 
+                                        style = mca.getProcessOption(p,'MarkerStyle',1          )
+                                        color = mca.getProcessOption(p,'MarkerColor',ROOT.kBlack)
+                                    plot.SetMarkerStyle(style)
+                                    plot.SetMarkerColor(color)
                                     plot.Draw(pspec.getOption("PlotMode","COLZ TEXT45"))
                                     c1.Print("%s/%s_%s.%s" % (fdir, outputName, p, ext))
                                 if "data" in pmap and "TGraph" in pmap["data"].ClassName():
+                                    pmap["data"].SetMarkerStyle(mca.getProcessOption('data','MarkerStyle',1))
                                     pmap["data"].SetMarkerSize(pspec.getOption("MarkerSize",1.6))
                                     for p in ["signal", "background", "total"]:
                                         if p not in pmap: continue
                                         plot = pmap[p]
                                         c1.SetRightMargin(0.20)
+                                        plot.SetMarkerStyle(1)
                                         plot.SetContour(100)
                                         plot.Draw(pspec.getOption("PlotMode","COLZ TEXT45"))
                                         pmap["data"].Draw("P SAME")
@@ -1083,10 +1095,11 @@ class PlotMaker:
                                 c1.Print("%s/%s.%s" % (fdir, outputName, ext))
                 c1.Close()
 
-def getEvenBinning(histo):
-    if list(histo.GetXaxis().GetXbins()) == []:
-        return (histo.GetXaxis().GetXmax()-histo.GetXaxis().GetXmin())/histo.GetXaxis().GetNbins()
-    return -1
+## not needed anymore, leave for future development
+##def getEvenBinning(histo):
+##    if list(histo.GetXaxis().GetXbins()) == []:
+##        return (histo.GetXaxis().GetXmax()-histo.GetXaxis().GetXmin())/histo.GetXaxis().GetNbins()
+##    return -1
      
 
 def addPlotMakerOptions(parser, addAlsoMCAnalysis=True):
@@ -1109,7 +1122,7 @@ def addPlotMakerOptions(parser, addAlsoMCAnalysis=True):
     parser.add_option("--showRatio", dest="showRatio", action="store_true", default=False, help="Add a data/sim ratio plot at the bottom")
     parser.add_option("--ratioDen", dest="ratioDen", type="string", default="background", help="Denominator of the ratio, when comparing MCs")
     parser.add_option("--ratioNums", dest="ratioNums", type="string", default="signal", help="Numerator(s) of the ratio, when comparing MCs (comma separated list of regexps)")
-    parser.add_option("--ratioYLabel", dest="ratioYLabel", type="string", default="Data/Pred.", help="Y axis label of the ratio histogram.")
+    parser.add_option("--ratioYLabel", dest="ratioYLabel", type="string", default="Data/pred.", help="Y axis label of the ratio histogram.")
     parser.add_option("--noErrorBandOnRatio", dest="errorBandOnRatio", action="store_false", default=True, help="Do not show the error band on the reference in the ratio plots")
     parser.add_option("--fitRatio", dest="fitRatio", type="int", default=None, help="Fit the ratio with a polynomial of the specified order")
     parser.add_option("--scaleSigToData", dest="scaleSignalToData", action="store_true", default=False, help="Scale all signal processes so that the overall event yield matches the observed one")
@@ -1144,6 +1157,7 @@ def addPlotMakerOptions(parser, addAlsoMCAnalysis=True):
     parser.add_option("--noCms", dest="doOfficialCMS", action="store_false", default=True, help="Use official tool to write CMS spam")
     parser.add_option("--cmsprel", dest="cmsprel", type="string", default="Preliminary", help="Additional text (Simulation, Preliminary, Internal)")
     parser.add_option("--cmssqrtS", dest="cmssqrtS", type="string", default="13 TeV", help="Sqrt of s to be written in the official CMS text.")
+    parser.add_option("--printBin", dest="printBinning", type="string", default=None, help="Write 'Events/xx' instead of 'Events' on the y axis")
 
 if __name__ == "__main__":
     from optparse import OptionParser
