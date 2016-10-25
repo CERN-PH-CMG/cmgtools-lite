@@ -496,7 +496,42 @@ int ttH_catIndex_3l(int LepGood1_charge, int LepGood2_charge, int LepGood3_charg
 #include "TH1F.h"
 #include "TFile.h"
 
+// for json up to 276811 (12.9/fb), pu true reweighting
+float _puw2016_nTrueInt_13fb[60] = {0.0004627598152210959, 0.014334910915287028, 0.01754727657726197, 0.03181477917631854, 0.046128282569231016, 0.03929080994013006, 0.057066019809589925, 0.19570744862221007, 0.3720256062526554, 0.6440076202772811, 0.9218024454406528, 1.246743510634073, 1.5292543296414058, 1.6670061646418215, 1.7390553377117133, 1.6114721876895595, 1.4177294439817985, 1.420132866045718, 1.3157656415540477, 1.3365188060918483, 1.1191478126677334, 0.9731079434848392, 0.9219564145009487, 0.8811793391804676, 0.7627315352977334, 0.7265186492688713, 0.558602385324645, 0.4805954159733825, 0.34125298049234554, 0.2584848657646724, 0.1819638766151892, 0.12529545619337035, 0.11065705912071645, 0.08587356267495487, 0.09146322371620583, 0.11885517671051576, 0.1952483711863489, 0.23589115679998116, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
+float puw2016_nTrueInt_13fb(int nTrueInt) { if (nTrueInt<60) return _puw2016_nTrueInt_13fb[nTrueInt]; else return 0; }
 
+TFile* puw2016_ICHEP = NULL;
+TFile* puw2016_ICHEP_Up = NULL;
+TFile* puw2016_ICHEP_Dn = NULL;
+TH1F* _puw2016_nInt_ICHEP = NULL;
+TH1F* _puw2016_nInt_ICHEP_Up = NULL;
+TH1F* _puw2016_nInt_ICHEP_Dn = NULL;
+float puw2016_nInt_ICHEP(float nInt, int var=0) { 
+  
+  if (var==0) { 
+    if (!_puw2016_nInt_ICHEP){ 
+      puw2016_ICHEP = new TFile(CMSSW_BASE+"/src/CMGTools/TTHAnalysis/data/pileup/puWeights_12fb_63mb.root", "read");
+      _puw2016_nInt_ICHEP = (TH1F*) (puw2016_ICHEP->Get("puw"));
+    }
+    return _puw2016_nInt_ICHEP->GetBinContent(_puw2016_nInt_ICHEP->FindBin(nInt));
+  }
+  else if (var==1) { 
+    if (!puw2016_ICHEP_Up) {
+      puw2016_ICHEP_Up = new TFile(CMSSW_BASE+"/src/CMGTools/TTHAnalysis/data/pileup/puWeights_12fb_63mb_Up.root", "read");
+      _puw2016_nInt_ICHEP_Up = (TH1F*) (puw2016_ICHEP_Up->Get("puw"));
+    }
+    return _puw2016_nInt_ICHEP_Up->GetBinContent(_puw2016_nInt_ICHEP_Up->FindBin(nInt));
+  }
+  else if (var==-1) {
+    if (!puw2016_ICHEP_Dn) {
+      puw2016_ICHEP_Dn = new TFile(CMSSW_BASE+"/src/CMGTools/TTHAnalysis/data/pileup/puWeights_12fb_63mb_Down.root", "read");
+      _puw2016_nInt_ICHEP_Dn = (TH1F*) (puw2016_ICHEP_Dn->Get("puw"));
+    }
+    return _puw2016_nInt_ICHEP_Dn->GetBinContent(_puw2016_nInt_ICHEP_Dn->FindBin(nInt));
+  }
+  cout <<"[WARNING!!!]  don't know what to do with PUweight, please check!! ";
+  return -9999.;
+}
 
 TFile *_file_recoToLoose_leptonSF_mu1_b = NULL;
 TFile *_file_recoToLoose_leptonSF_mu1_e = NULL;
