@@ -2,6 +2,9 @@
 import imp, os, json
 from optparse import OptionParser,OptionGroup
 
+### auto-monitoring tool
+os.system("python crabMonitoring.py 1")
+
 parser = OptionParser()
 
 g1 = OptionGroup(parser,"Heppy options")
