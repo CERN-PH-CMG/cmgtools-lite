@@ -79,7 +79,7 @@ def drawRatioLines(hist, frac=0., y0=1.):
         line.DrawLine(xmin, y0-frac, xmax, y0-frac)
 
 
-def plotDataOverMCEff(hist_mc_tight, hist_mc_loose, hist_data_tight, hist_data_loose, plot_name='fakerate.pdf'):
+def plotDataOverMCEff(hist_mc_tight, hist_mc_loose, hist_data_tight, hist_data_loose, plot_name='fakerate.pdf', mc_leg='MC', obs_leg='Observed', ratio_leg='Obs/MC'):
 
     g = TGraphAsymmErrors(hist_mc_tight)
     g.Divide(hist_mc_tight, hist_mc_loose)
@@ -158,14 +158,14 @@ def plotDataOverMCEff(hist_mc_tight, hist_mc_loose, hist_data_tight, hist_data_l
     legend.SetLineColor(0)
     legend.SetLineWidth(0)
 
-    legend.AddEntry(g.GetName(), 'MC', 'lep')
-    legend.AddEntry(g_data.GetName(), 'Observed', 'lep')
+    legend.AddEntry(g.GetName(), mc_leg, 'lep')
+    legend.AddEntry(g_data.GetName(), obs_leg, 'lep')
 
     legend.Draw()
 
     padr.cd()
     g_ratio.GetYaxis().SetRangeUser(0.01, 1.99)
-    g_ratio.GetYaxis().SetTitle('Obs/MC')
+    g_ratio.GetYaxis().SetTitle(ratio_leg)
     g_ratio.Draw('AP')
 
     drawRatioLines(g_ratio)
@@ -182,3 +182,127 @@ def plotDataOverMCEff(hist_mc_tight, hist_mc_loose, hist_data_tight, hist_data_l
     f.Close()
     
 
+def plotMCEffs(input_list, plot_name='fakerate.pdf'):
+    '''input_list expects tuples with structure:
+       (hist tight, hist loose, legend line, colour)
+    '''
+
+    graphs = []
+
+    for (hist_tight, hist_loose, legend, colour, style) in input_list:
+        g = TGraphAsymmErrors(hist_tight)
+        g.Divide(hist_tight, hist_loose)
+        g.GetYaxis().SetTitle('Fake rate')
+        g.GetXaxis().SetTitle(hist_tight.GetXaxis().GetTitle())
+        g.GetYaxis().SetTitleOffset(1.2)
+        g.GetYaxis().SetTitleOffset(1.3)
+
+        g.SetLineColor(colour)
+        g.SetLineStyle(style)
+        g.SetMarkerColor(colour)
+        g.SetMarkerStyle(19+style)
+
+        g.legend = legend
+
+        graphs.append(g)
+
+
+    ratio_graphs = []
+
+    base_graph = graphs[0]
+    for graph in graphs[1:]:
+
+        g_vals = base_graph.GetY()
+        g_data_vals = graph.GetY()
+
+        g_ratio = graph.Clone('ratio')
+
+        for i in xrange(graph.GetN()):
+            ratio = g_data_vals[i]/g_vals[i] if g_vals[i] else 0.
+            g_ratio.SetPoint(i, base_graph.GetX()[i], ratio)
+
+            rel_y_low = math.sqrt((graph.GetErrorYlow(i)/g_data_vals[i])**2 + (base_graph.GetErrorYlow(i)/g_vals[i])**2) if g_data_vals[i] > 0.0000001 and g_vals[i] > 0.0000001 else 0.
+
+            g_ratio.SetPointEYlow(i, rel_y_low * ratio)
+
+            rel_y_high = math.sqrt((graph.GetErrorYhigh(i)/g_data_vals[i])**2 + (base_graph.GetErrorYhigh(i)/g_vals[i])**2) if g_data_vals[i] > 0.0000001 and g_vals[i] > 0.0000001 else 0.
+
+            g_ratio.SetPointEYhigh(i, rel_y_high * ratio)
+
+        ratio_graphs.append(g_ratio)
+
+    # Gymnastics to get same label sizes etc in ratio and main plot
+    ytp_ratio = 2.
+    xtp_ratio = 2.
+
+    # hr.GetYaxis().SetNdivisions(4)
+    for g_ratio in ratio_graphs:
+        g_ratio.GetYaxis().SetTitleSize(g.GetYaxis().GetTitleSize() * xtp_ratio)
+        g_ratio.GetXaxis().SetTitleSize(g.GetXaxis().GetTitleSize() * ytp_ratio)
+
+        g_ratio.GetYaxis().SetTitleOffset(g.GetYaxis().GetTitleOffset() / xtp_ratio)
+        g_ratio.GetXaxis().SetTitleOffset(g.GetXaxis().GetTitleOffset())  # / ytp_ratio)
+
+        g_ratio.GetYaxis().SetLabelSize(g.GetYaxis().GetLabelSize() * xtp_ratio)
+        g_ratio.GetXaxis().SetLabelSize(g.GetXaxis().GetLabelSize() * ytp_ratio)
+
+        g_ratio.GetXaxis().SetTitle(base_graph.GetXaxis().GetTitle())
+
+
+    for graph in graphs:
+        graph.GetXaxis().SetLabelColor(0)
+        graph.GetXaxis().SetLabelSize(0)
+
+
+    maxy = 1.3 * max([gr.GetMaximum() for gr in graphs] + [1./1.25])
+    for g in graphs:
+        g.GetYaxis().SetRangeUser(0.0011, maxy)
+
+    cv, pad, padr = HistDrawer.buildCanvas()
+
+    pad.cd()
+
+    base_graph.Draw('AP')
+    for graph in graphs[1:]:
+        graph.Draw('P')
+
+    legend = TLegend(0.63, 0.63, 0.93, 0.91)
+    legend.SetFillColor(0)
+    legend.SetFillStyle(0)
+    legend.SetLineColor(0)
+    legend.SetLineWidth(0)
+
+    legend2 = TLegend(0.78, 0.63, 0.93, 0.91)
+    legend2.SetFillColor(0)
+    legend2.SetFillStyle(0)
+    legend2.SetLineColor(0)
+    legend2.SetLineWidth(0)
+
+    for graph in graphs:
+        if 'opp' in graph.legend:
+            legend2.AddEntry(graph.GetName(), graph.legend, 'lep')
+        else:
+            legend.AddEntry(graph.GetName(), graph.legend, 'lep')
+
+    legend.Draw()
+    legend2.Draw()
+
+    padr.cd()
+
+    for g_ratio in ratio_graphs:
+        g_ratio.GetYaxis().SetRangeUser(0.01, 1.99)
+        g_ratio.GetYaxis().SetTitle('Ratio to '+base_graph.legend)
+        g_ratio.Draw('AP' if g_ratio == ratio_graphs[0] else 'P')
+
+    drawRatioLines(g_ratio)
+
+    cv.Print(plot_name)
+
+    g.GetYaxis().SetRangeUser(0.0001, 1)
+    pad.SetLogy(True)
+    cv.Print(plot_name.replace('.', '_log.'))
+    # f = ROOT.TFile(plot_name.replace('.', '_log.').replace('.pdf', '.root'), 'RECREATE')
+    # g.Write()
+    # g_data.Write()
+    # cv.Write()
+    # f.Close()

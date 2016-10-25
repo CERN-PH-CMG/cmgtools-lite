@@ -44,16 +44,20 @@ event_vars = [
     # Variable('weight_hqt', lambda ev : getattr(ev, 'higgsPtWeight', 1.)),
     # Variable('weight_hqt_up', lambda ev : getattr(ev, 'higgsPtWeightUp', 1.)),
     # Variable('weight_hqt_down', lambda ev : getattr(ev, 'higgsPtWeightDown', 1.)),
-    Variable('weight_njet', lambda ev : ev.NJetWeight),
-    Variable('delta_phi_dil_jet1', lambda ev : deltaPhi(ev.diLepton.p4().phi(), ev.cleanJets[0].phi()) if len(ev.cleanJets)>0 else -999.),
-    Variable('delta_phi_dil_jet2', lambda ev : deltaPhi(ev.diLepton.p4().phi(), ev.cleanJets[1].phi()) if len(ev.cleanJets)>1 else -999.),
-    Variable('delta_eta_dil_jet1', lambda ev : abs(ev.diLepton.p4().eta() - ev.cleanJets[0].eta()) if len(ev.cleanJets)>0 else -999.),
-    Variable('delta_eta_dil_jet2', lambda ev : abs(ev.diLepton.p4().eta() - ev.cleanJets[1].eta()) if len(ev.cleanJets)>1 else -999.),
+    # Variable('weight_njet', lambda ev : ev.NJetWeight),
+    # Variable('delta_phi_dil_jet1', lambda ev : deltaPhi(ev.diLepton.p4().phi(), ev.cleanJets[0].phi()) if len(ev.cleanJets)>0 else -999.),
+    # Variable('delta_phi_dil_met', lambda ev : deltaPhi(ev.diLepton.p4().phi(), ev.diLepton.met().phi())),
+    # Variable('delta_phi_dil_jet2', lambda ev : deltaPhi(ev.diLepton.p4().phi(), ev.cleanJets[1].phi()) if len(ev.cleanJets)>1 else -999.),
+    # Variable('delta_eta_dil_jet1', lambda ev : abs(ev.diLepton.p4().eta() - ev.cleanJets[0].eta()) if len(ev.cleanJets)>0 else -999.),
+    # Variable('delta_eta_dil_jet2', lambda ev : abs(ev.diLepton.p4().eta() - ev.cleanJets[1].eta()) if len(ev.cleanJets)>1 else -999.),
 ]
 
 # di-tau object variables
 ditau_vars = [
     Variable('mvis', lambda dil : dil.mass()),
+    Variable('dil_pt', lambda dil : dil.p4().pt()),
+    Variable('dil_eta', lambda dil : dil.p4().eta()),
+    Variable('dil_phi', lambda dil : dil.p4().phi()),
     Variable('mt_total', lambda dil : dil.mtTotal()),
     Variable('sum_lepton_mt', lambda dil : dil.mtSumLeptons()),
     Variable('sqsum_lepton_mt', lambda dil : dil.mtSqSumLeptons()),
@@ -72,11 +76,11 @@ ditau_vars = [
     Variable('met_py', lambda dil : dil.met().py()),
     Variable('met_pt', lambda dil : dil.met().pt()),
     Variable('pthiggs', lambda dil : (dil.leg1().p4() + dil.leg2().p4() + dil.met().p4()).pt()),
-    Variable('delta_phi_l1_l2', lambda dil : deltaPhi(dil.leg1().phi(), dil.leg2().phi())),
-    Variable('delta_eta_l1_l2', lambda dil : abs(dil.leg1().eta() - dil.leg2().eta())),
+    # Variable('delta_phi_l1_l2', lambda dil : deltaPhi(dil.leg1().phi(), dil.leg2().phi())),
+    # Variable('delta_eta_l1_l2', lambda dil : abs(dil.leg1().eta() - dil.leg2().eta())),
     Variable('delta_r_l1_l2', lambda dil : deltaR(dil.leg1().eta(), dil.leg1().phi(), dil.leg2().eta(), dil.leg2().phi())),
-    Variable('delta_phi_l1_met', lambda dil : deltaPhi(dil.leg1().phi(), dil.met().phi())),
-    Variable('delta_phi_l2_met', lambda dil : deltaPhi(dil.leg2().phi(), dil.met().phi())),
+    # Variable('delta_phi_l1_met', lambda dil : deltaPhi(dil.leg1().phi(), dil.met().phi())),
+    # Variable('delta_phi_l2_met', lambda dil : deltaPhi(dil.leg2().phi(), dil.met().phi())),
 ]
 
 svfit_vars = [
@@ -110,12 +114,11 @@ lepton_vars = [
     Variable('dz_error', lambda lep : lep.edz() if hasattr(lep, 'edz') else -1.),
     Variable('weight'),
     Variable('weight_trigger', lambda lep : getattr(lep, 'weight_trigger', 1.)),
-    Variable('weight_eff_data_trigger', lambda lep : getattr(lep, 'weight_eff_data_trigger', 1.)),
-    Variable('eff_trigger_data', lambda lep : getattr(lep, 'eff_data_trigger', -999.)),
-    Variable('eff_trigger_mc', lambda lep : getattr(lep, 'eff_mc_trigger', -999.)),
+    # Variable('eff_trigger_data', lambda lep : getattr(lep, 'eff_data_trigger', -999.)),
+    # Variable('eff_trigger_mc', lambda lep : getattr(lep, 'eff_mc_trigger', -999.)),
     Variable('weight_idiso', lambda lep : getattr(lep, 'weight_idiso', 1.)),
-    Variable('eff_idiso_data', lambda lep : getattr(lep, 'eff_data_idiso', -999.)),
-    Variable('eff_idiso_mc', lambda lep : getattr(lep, 'eff_mc_idiso', -999.)),
+    # Variable('eff_idiso_data', lambda lep : getattr(lep, 'eff_data_idiso', -999.)),
+    # Variable('eff_idiso_mc', lambda lep : getattr(lep, 'eff_mc_idiso', -999.)),
     Variable('gen_match')
 ]
 
@@ -132,6 +135,8 @@ electron_vars = [
     Variable('pass_conv_veto', lambda ele : ele.passConversionVeto()),
     Variable('reliso05', lambda lep : lep.relIsoR(R=0.3, dBetaFactor=0.5, allCharged=0)),
     Variable('reliso05_04', lambda lep : lep.relIsoR(R=0.4, dBetaFactor=0.5, allCharged=0)),
+    Variable('reliso05_04', lambda lep : lep.relIsoR(R=0.4, dBetaFactor=0.5, allCharged=0)),
+    Variable('weight_tracking', lambda lep : getattr(lep, 'weight_tracking', 1.)),
 ]
 
 # muon
@@ -145,6 +150,7 @@ muon_vars = [
     Variable('muonid_highpt', lambda muon : muon.muonID('POG_ID_HighPt')),
     Variable('dxy_innertrack', lambda muon : muon.innerTrack().dxy(muon.associatedVertex.position())),
     Variable('dz_innertrack', lambda muon : muon.innerTrack().dz(muon.associatedVertex.position())),
+    Variable('weight_tracking', lambda muon : getattr(muon, 'weight_tracking', 1.)),
 ]
 
 # tau
@@ -178,13 +184,9 @@ for tau_id in tauIDs_extra:
 
 # jet
 jet_vars = [
-    # JAN - only one PU mva working point, but we may want to add more
-    # run in our skimming step
-    # (for which Jet.py would have to be touched again)
     Variable('mva_pu', lambda jet : jet.puMva('pileupJetId:fullDiscriminant')),
     # Variable('id_loose', lambda jet : jet.looseJetId()),
     Variable('id_pu', lambda jet : jet.puJetId() + jet.puJetId(wp='medium') + jet.puJetId(wp='tight')),
-    # Variable('mva_btag', lambda jet : jet.btagMVA),
     # Variable('area', lambda jet : jet.jetArea()),
     Variable('flavour_parton', lambda jet : jet.partonFlavour()),
     Variable('csv', lambda jet : jet.btagMVA),

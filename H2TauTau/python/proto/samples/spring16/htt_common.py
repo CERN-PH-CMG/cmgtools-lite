@@ -40,7 +40,7 @@ WZTo1L3Nu.xSection = 3.05
 WZTo1L1Nu2Q.xSection = 10.71
 
 w_xsec = 61526.7
-dy_xsec = 6025.2
+dy_xsec = 5765.4
 
 DYJetsToLL_M50_LO.xSection = dy_xsec
 DYJetsToLL_M50.xSection = dy_xsec
@@ -127,4 +127,4 @@ for sample in data_single_muon + data_single_electron + data_muon_electron + dat
 sm_signals = [HiggsGGH125, HiggsVBF125, HiggsTTH125]
 mssm_signals = mc_higgs_susy_bb + mc_higgs_susy_gg
 
-sync_list = [ggh160]
+sync_list = [ggh160, HiggsVBF125]

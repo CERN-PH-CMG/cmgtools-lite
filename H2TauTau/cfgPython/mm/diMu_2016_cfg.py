@@ -20,7 +20,7 @@ from CMGTools.H2TauTau.proto.samples.spring16.triggers_muMu import data_triggers
 from CMGTools.RootTools.samples.autoAAAconfig import autoAAA
 
 # common configuration and sequence
-from CMGTools.H2TauTau.htt_ntuple_base_cff import commonSequence, jetAna, dyJetsFakeAna, puFileData, puFileMC, eventSelector
+from CMGTools.H2TauTau.htt_ntuple_base_cff import commonSequence, jetAna, httGenAna, puFileData, puFileMC, eventSelector
 
 # mu-mu specific configuration settings
 production = getHeppyOption('production', True)
@@ -31,7 +31,7 @@ computeSVfit = getHeppyOption('computeSVfit', False)
 data = getHeppyOption('data', False)
 reapplyJEC = getHeppyOption('reapplyJEC', True)
 
-dyJetsFakeAna.channel = 'mm'
+httGenAna.channel = 'mm'
 
 # Just to be sure
 if production:
@@ -41,7 +41,7 @@ if production:
 if reapplyJEC:
     if cmssw:
         jetAna.jetCol = 'patJetsReapplyJEC'
-        dyJetsFakeAna.jetCol = 'patJetsReapplyJEC'
+        httGenAna.jetCol = 'patJetsReapplyJEC'
     else:
         jetAna.recalibrateJets = True
 
@@ -145,7 +145,7 @@ selectedComponents = samples
 selectedComponents = data_list if data else samples
 
 sequence = commonSequence
-sequence.insert(sequence.index(dyJetsFakeAna), MuMuAna)
+sequence.insert(sequence.index(httGenAna), MuMuAna)
 sequence.append(muonWeighter1)
 sequence.append(muonWeighter2)
 if computeSVfit:

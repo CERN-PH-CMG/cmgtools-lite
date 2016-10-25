@@ -118,7 +118,7 @@ class ScaleFactor(object):
 
     def getFactorWS(self, pt, eta, tag, isFake=False, iso=None):
         ''' See https://github.com/CMS-HTT/CorrectionsWorkspace
-        FIXME:  add proper isFake implementation (but may need to change inputs
+        FIXME:  add proper isFake implementation (but may need to change inputs)
         '''
         self.ws.var('_'.join([self.obj_tag, 'pt'])).setVal(pt)
         self.ws.var('_'.join([self.obj_tag, 'eta'])).setVal(eta)

@@ -14,9 +14,10 @@ from CMGTools.H2TauTau.proto.analyzers.TauP4Scaler import TauP4Scaler
 from CMGTools.H2TauTau.proto.analyzers.SVfitProducer import SVfitProducer
 from CMGTools.H2TauTau.proto.analyzers.L1TriggerAnalyzer import L1TriggerAnalyzer
 from CMGTools.H2TauTau.proto.analyzers.MT2Analyzer import MT2Analyzer
+from CMGTools.H2TauTau.proto.analyzers.METFilter import METFilter
 
 # common configuration and sequence
-from CMGTools.H2TauTau.htt_ntuple_base_cff import commonSequence, genAna, dyJetsFakeAna, puFileData, puFileMC, eventSelector, susyCounter, susyScanAna, jetAna
+from CMGTools.H2TauTau.htt_ntuple_base_cff import commonSequence, httGenAna, puFileData, puFileMC, eventSelector, susyCounter, susyScanAna, jetAna, recoilCorr
 
 def getHeppyOption(option, default):
     opt = _getHeppyOption(option, default)
@@ -31,13 +32,14 @@ def getHeppyOption(option, default):
 production = getHeppyOption('production', False)
 pick_events = getHeppyOption('pick_events', False)
 syncntuple = getHeppyOption('syncntuple', True)
-cmssw = getHeppyOption('cmssw', True)
+cmssw = getHeppyOption('cmssw', False)
 doSUSY = getHeppyOption('susy', False)
 computeSVfit = getHeppyOption('computeSVfit', False)
 data = getHeppyOption('data', False)
 tes_string = getHeppyOption('tes_string', '') # '_tesup' '_tesdown'
 reapplyJEC = getHeppyOption('reapplyJEC', True)
 calibrateTaus = getHeppyOption('calibrateTaus', False)
+correct_recoil = getHeppyOption('correct_recoil', True)
 
 # Just to be sure
 if production:
@@ -47,11 +49,14 @@ if production:
 if reapplyJEC:
     if cmssw:
         jetAna.jetCol = 'patJetsReapplyJEC'
-        dyJetsFakeAna.jetCol = 'patJetsReapplyJEC'
+        httGenAna.jetCol = 'patJetsReapplyJEC'
     else:
         jetAna.recalibrateJets = True
 
-dyJetsFakeAna.channel = 'tt'
+if correct_recoil:
+    recoilCorr.apply = True
+
+httGenAna.channel = 'tt'
 
 # Define tau-tau specific modules
 
@@ -192,6 +197,20 @@ svfitProducer = cfg.Analyzer(
     l2type='tau'
 )
 
+metFilter = cfg.Analyzer(
+    METFilter,
+    name='METFilter',
+    processName='RECO',
+    triggers=[
+        'Flag_HBHENoiseFilter', 
+        'Flag_HBHENoiseIsoFilter', 
+        'Flag_EcalDeadCellTriggerPrimitiveFilter',
+        'Flag_goodVertices',
+        'Flag_eeBadScFilter',
+        'Flag_globalTightHalo2016Filter'
+    ]
+)
+
 ###################################################
 ### CONNECT SAMPLES TO THEIR ALIASES AND FILES  ###
 ###################################################
@@ -241,8 +260,8 @@ if data:
 ###################################################
 sequence = commonSequence
 if calibrateTaus:
-    sequence.insert(sequence.index(dyJetsFakeAna), tauP4Scaler)
-sequence.insert(sequence.index(dyJetsFakeAna), tauTauAna)
+    sequence.insert(sequence.index(httGenAna), tauP4Scaler)
+sequence.insert(sequence.index(httGenAna), tauTauAna)
 # sequence.insert(sequence.index(genAna), l1Ana)
 # sequence.append(tau1Calibration)
 # sequence.append(tau2Calibration)
@@ -250,6 +269,7 @@ sequence.append(tauDecayModeWeighter)
 sequence.append(tau1Weighter)
 sequence.append(tau2Weighter)
 sequence.append(tauTauMT2Ana)
+sequence.append(metFilter)
 if doSUSY:
     sequence.insert(sequence.index(susyScanAna) + 1, susyCounter)
 if computeSVfit:
@@ -296,12 +316,13 @@ if doSUSY:
 ###            SET BATCH OR LOCAL               ###
 ###################################################
 if not production:
-    comp = data_list[0] if data else sync_list[0]
+    # comp = data_list[0] if data else sync_list[0]
     # comp = SMS
     # comp = samples_susy[1]
-    selectedComponents = [comp]
-    comp.splitFactor = 4
-    comp.fineSplitFactor = 1
+    selectedComponents = samples_susy if doSUSY else sync_list
+    for comp in selectedComponents:
+        comp.splitFactor = 100
+        comp.fineSplitFactor = 1
     # comp.files = comp.files[13:20]
 
 preprocessor = None
