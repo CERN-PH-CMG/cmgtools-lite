@@ -16,12 +16,13 @@ def ensure_dir(f):
     if not os.path.exists(f):
         os.mkdir(f)
 
-analysis_dir = '/data1/steggema/mt/070416/TauMuSVFitMC/'
-analysis_dir = '/data1/steggema/mt/070416/TauMuSVFitTESUp/'
-analysis_dir = '/data1/steggema/mt/070416/TauMuSVFitTESDown/'
+analysis_dir = '/data1/steggema/mt/051016/MuTauMC/'
+# analysis_dir = '/data1/steggema/mt/070416/TauMuSVFitTESUp/'
+# analysis_dir = '/data1/steggema/mt/070416/TauMuSVFitTESDown/'
 
 train_vars = [
     'mt',
+    'mt_leg2',
     'n_jets',
     'met_pt',
     'pthiggs',
@@ -30,11 +31,16 @@ train_vars = [
     'vbf_n_central',
     'l2_pt',
     'l1_pt',
-    'svfit_transverse_mass',
-    'delta_phi_l1_l2',
-    'delta_eta_l1_l2',
-    'svfit_mass'
-]
+    # 'svfit_transverse_mass',
+    # 'delta_phi_l1_l2',
+    # 'delta_eta_l1_l2',
+    'dil_pt',
+    'dil_eta',
+    'jet1_pt',
+    'mt_total',
+    'delta_r_l1_l2',
+    'mvis'
+    ]
 
 # clf0 = joblib.load('/afs/cern.ch/work/s/steggema/GradientBoostingClassifier_clf_0.pkl')
 # clf1 = joblib.load('/afs/cern.ch/work/s/steggema/GradientBoostingClassifier_clf_1.pkl')

@@ -9,20 +9,21 @@ from CMGTools.H2TauTau.proto.plotter.HistCreator import createHistograms, create
 from CMGTools.H2TauTau.proto.plotter.HistDrawer import HistDrawer
 from CMGTools.H2TauTau.proto.plotter.Variables import taumu_vars, getVars
 # from CMGTools.H2TauTau.proto.plotter.helper_methods import getPUWeight
+from CMGTools.H2TauTau.proto.samples.spring16.htt_common import lumi
 
 from CMGTools.H2TauTau.proto.plotter.Samples import createSampleLists
 
 # mode = 'mssm_signal' 
 mode = 'mssm_control'
 
-int_lumi = 2301. # from Alexei's email
+int_lumi = lumi
 qcd_from_same_sign = False
 w_qcd_mssm_method = False
 r_qcd_os_ss = 1.17
 
-analysis_dir = '/data1/steggema/mt/070416/TauMuSVFitMC/'
+analysis_dir = '/data1/steggema/mt/051016/MuTauMC/'
 
-total_weight = 'weight'#*weight_njet'
+total_weight = 'weight * (1. - 0.17*(l2_gen_match == 5))'
 
 print total_weight
 
@@ -31,7 +32,6 @@ Cut = namedtuple('Cut', ['name', 'cut'])
 cuts = []
 
 inc_cut = '&&'.join([cat_Inc])
-# inc_cut += '&& l2_decayModeFinding'
 
 cuts.append(Cut('inclusive', inc_cut + '&& l1_charge != l2_charge && n_bjets==0'))
 # cuts.append(Cut('inclusive_tauisosideband', inc_cut.replace('l2_byIsolationMVArun2v1DBoldDMwLT>3.5', 'l2_byIsolationMVArun2v1DBoldDMwLT<3.5&&l2_byIsolationMVArun2v1DBoldDMwLT>0.5') + '&& l1_charge != l2_charge'))
@@ -182,9 +182,12 @@ if w_qcd_mssm_method:
 #         wjets_ss.total_scale = -w_sf
 
 
-keep_vars = ['n_jets', 'weight', 'met_pt', 'mt', 'pthiggs', 'delta_phi_l1_l2', 'delta_eta_l1_l2', 'vbf_deta', 'vbf_mjj', 'vbf_dphidijethiggs', 'vbf_jdphi', 'vbf_n_central', 'svfit_transverse_mass', 'svfit_mass', 'l1_pt', 'l2_pt']
-
-all_vars = ['run', 'lumi', 'event', 'bx', 'orbit_number', 'is_data', 'nPU', 'pass_leptons', 'veto_dilepton', 'veto_thirdlepton', 'veto_otherlepton', 'n_jets', 'n_jets_puid', 'n_jets_20', 'n_jets_20_puid', 'n_bjets', 'n_jets_csvl', 'n_vertices', 'rho', 'weight', 'weight_vertex', 'weight_embed', 'weight_njet', 'weight_hqt', 'weight_hqt_up', 'weight_hqt_down', 'mvis', 'mt_total', 'pzeta_met', 'pzeta_vis', 'pzeta_disc', 'mt', 'mt_leg2', 'met_cov00', 'met_cov01', 'met_cov10', 'met_cov11', 'met_phi', 'met_px', 'met_py', 'met_pt', 'pthiggs', 'delta_phi_l1_l2', 'delta_eta_l1_l2', 'delta_r_l1_l2', 'delta_phi_l1_met', 'delta_phi_l2_met', 'svfit_mass', 'svfit_transverse_mass', 'svfit_mass_error', 'svfit_pt', 'svfit_pt_error', 'svfit_eta', 'svfit_phi', 'svfit_met_pt', 'svfit_met_e', 'svfit_met_phi', 'svfit_met_eta', 'svfit_l1_pt', 'svfit_l1_eta', 'svfit_l1_phi', 'svfit_l1_charge', 'svfit_l1_mass', 'svfit_l2_pt', 'svfit_l2_eta', 'svfit_l2_phi', 'svfit_l2_charge', 'svfit_l2_mass', 'geninfo_mcweight', 'geninfo_nup', 'geninfo_htgen', 'geninfo_invmass', 'geninfo_has_w', 'geninfo_has_z', 'geninfo_mass', 'weight_gen', 'genmet_pt', 'genmet_px', 'genmet_py', 'genmet_phi', 'vbf_mjj', 'vbf_deta', 'vbf_n_central20', 'vbf_n_central', 'vbf_jdphi', 'vbf_dijetpt', 'vbf_dijetphi', 'vbf_dphidijethiggs', 'vbf_mindetajetvis', 'jet1_pt', 'jet1_eta', 'jet1_phi', 'jet1_charge', 'jet1_mass', 'jet1_mva_pu', 'jet1_id_loose', 'jet1_id_pu', 'jet1_mva_btag', 'jet1_area', 'jet1_flavour_parton', 'jet1_csv', 'jet1_rawfactor', 'jet1_genjet_pt', 'jet2_pt', 'jet2_eta', 'jet2_phi', 'jet2_charge', 'jet2_mass', 'jet2_mva_pu', 'jet2_id_loose', 'jet2_id_pu', 'jet2_mva_btag', 'jet2_area', 'jet2_flavour_parton', 'jet2_csv', 'jet2_rawfactor', 'jet2_genjet_pt', 'bjet1_pt', 'bjet1_eta', 'bjet1_phi', 'bjet1_charge', 'bjet1_mass', 'bjet1_mva_pu', 'bjet1_id_loose', 'bjet1_id_pu', 'bjet1_mva_btag', 'bjet1_area', 'bjet1_flavour_parton', 'bjet1_csv', 'bjet1_rawfactor', 'bjet1_genjet_pt', 'bjet2_pt', 'bjet2_eta', 'bjet2_phi', 'bjet2_charge', 'bjet2_mass', 'bjet2_mva_pu', 'bjet2_id_loose', 'bjet2_id_pu', 'bjet2_mva_btag', 'bjet2_area', 'bjet2_flavour_parton', 'bjet2_csv', 'bjet2_rawfactor', 'bjet2_genjet_pt', 'HT_allJets', 'HT_jets', 'HT_bJets', 'HT_cleanJets', 'HT_jets30', 'HT_cleanJets30', 'genboson_pt', 'genboson_eta', 'genboson_phi', 'genboson_charge', 'genboson_mass', 'genboson_pdgId', 'puppimet_pt', 'puppimet_phi', 'puppimet_mt1', 'puppimet_mt2', 'pfmet_pt', 'pfmet_phi', 'pfmet_mt1', 'pfmet_mt2', 'l2_pt', 'l2_eta', 'l2_phi', 'l2_charge', 'l2_mass', 'l2_jet_pt', 'l2_jet_eta', 'l2_jet_phi', 'l2_jet_charge', 'l2_jet_mass', 'l2_reliso05', 'l2_reliso05_04', 'l2_dxy', 'l2_dxy_error', 'l2_dz', 'l2_dz_error', 'l2_weight', 'l2_weight_trigger', 'l2_eff_trigger_data', 'l2_eff_trigger_mc', 'l2_weight_idiso', 'l2_eff_idiso_data', 'l2_eff_idiso_mc', 'l2_gen_match', 'l2_decayMode', 'l2_zImpact', 'l2_dz_selfvertex', 'l2_ptScale', 'l2_againstElectronMVA6', 'l2_againstElectronMVA6category', 'l2_againstElectronMVA6raw', 'l2_againstMuon3', 'l2_byCombinedIsolationDeltaBetaCorrRaw3Hits', 'l2_byIsolationMVA3newDMwLTraw', 'l2_byIsolationMVA3oldDMwLTraw', 'l2_byIsolationMVArun2v1DBoldDMwLTraw', 'l2_byIsolationMVArun2v1DBnewDMwLTraw', 'l2_byIsolationMVArun2v1DBdR03oldDMwLTraw', 'l2_byCombinedIsolationDeltaBetaCorr3Hits', 'l2_byIsolationMVA3newDMwLT', 'l2_byIsolationMVA3oldDMwLT', 'l2_byIsolationMVArun2v1DBoldDMwLT', 'l2_byIsolationMVArun2v1DBnewDMwLT', 'l2_byIsolationMVArun2v1DBdR03oldDMwLT', 'l2_chargedIsoPtSum', 'l2_chargedIsoPtSumdR03', 'l2_decayModeFinding', 'l2_decayModeFindingNewDMs', 'l2_neutralIsoPtSum', 'l2_neutralIsoPtSumdR03', 'l2_puCorrPtSum', 'l2_puCorrPtSumdR03', 'l2_byPileupWeightedIsolation3Hits', 'l2_byPileupWeightedIsolationRaw3Hits', 'l2_neutralIsoPtSumWeight', 'l2_footprintCorrection', 'l2_footprintCorrectiondR03', 'l2_photonPtSumOutsideSignalCone', 'l2_photonPtSumOutsideSignalConedR03', 'l1_pt', 'l1_eta', 'l1_phi', 'l1_charge', 'l1_mass', 'l1_jet_pt', 'l1_jet_eta', 'l1_jet_phi', 'l1_jet_charge', 'l1_jet_mass', 'l1_reliso05', 'l1_reliso05_04', 'l1_dxy', 'l1_dxy_error', 'l1_dz', 'l1_dz_error', 'l1_weight', 'l1_weight_trigger', 'l1_eff_trigger_data', 'l1_eff_trigger_mc', 'l1_weight_idiso', 'l1_eff_idiso_data', 'l1_eff_idiso_mc', 'l1_gen_match', 'l1_muonid_loose', 'l1_muonid_medium', 'l1_muonid_tight', 'l1_muonid_tightnovtx', 'l1_muonid_highpt', 'l1_dxy_innertrack', 'l1_dz_innertrack', 'l2_gen_pt', 'l2_gen_eta', 'l2_gen_phi', 'l2_gen_charge', 'l2_gen_mass', 'l2_gen_pdgId', 'l2_gen_lepfromtau', 'l1_gen_pt', 'l1_gen_eta', 'l1_gen_phi', 'l1_gen_charge', 'l1_gen_mass', 'l1_gen_pdgId', 'l1_gen_lepfromtau', 'l2_gen_vis_pt', 'l2_gen_vis_eta', 'l2_gen_vis_phi', 'l2_gen_vis_charge', 'l2_gen_vis_mass', 'l2_gen_decaymode', 'l2_gen_nc_ratio', 'l2_nc_ratio', 'l2_weight_fakerate', 'l2_weight_fakerate_up', 'l2_weight_fakerate_down']
+keep_vars = ['n_jets', 'weight', 'met_pt', 'mt', 'pthiggs', 'vbf_deta', 'vbf_mjj', 'vbf_dphidijethiggs', 'vbf_jdphi', 'vbf_n_central', 'mt_total', 'l1_pt', 'l2_pt', 'dil_pt', 'mvis', 'delta_r_l1_l2', 'dil_eta', 'mt_leg2', 'met_phi', 'l1_phi', 'l2_phi', 'dil_phi', 'l1_eta', 'l2_eta', 'dil_eta', 'jet1_pt', 'jet1_phi', 'jet2_pt'
+]
+# auto* iter =  tree->GetListOfBranches()->MakeIterator()
+# TObject* obj = iter->Next();
+# while (obj) {std::cout << obj->GetName() << std::endl; obj=iter->Next();}
+all_vars = ['run', 'lumi', 'event', 'bx', 'orbit_number', 'is_data', 'nPU', 'pass_leptons', 'veto_dilepton', 'veto_thirdlepton', 'veto_otherlepton', 'n_jets', 'n_jets_puid', 'n_jets_20', 'n_jets_20_puid', 'n_bjets', 'n_jets_csvl', 'n_vertices', 'rho', 'weight', 'weight_vertex', 'weight_njet', 'weight_njet', 'mvis', 'dil_pt', 'dil_eta', 'dil_phi', 'mt_total', 'sum_lepton_mt', 'sqsum_lepton_mt', 'pzeta_met', 'pzeta_vis', 'pzeta_disc', 'mt', 'mt_leg2', 'met_cov00', 'met_cov10', 'met_cov11', 'met_phi', 'met_px', 'met_py', 'met_pt', 'pthiggs', 'delta_r_l1_l2', 'svfit_mass', 'svfit_transverse_mass', 'svfit_mass_error', 'svfit_pt', 'geninfo_mcweight', 'geninfo_nup', 'geninfo_htgen', 'geninfo_invmass', 'weight_gen', 'genmet_pt', 'genmet_px', 'genmet_py', 'genmet_phi', 'vbf_mjj', 'vbf_deta', 'vbf_n_central20', 'vbf_n_central', 'vbf_jdphi', 'vbf_dijetpt', 'vbf_dijetphi', 'vbf_dphidijethiggs', 'vbf_mindetajetvis', 'jet1_pt', 'jet1_eta', 'jet1_phi', 'jet1_charge', 'jet1_mass', 'jet1_mva_pu', 'jet1_id_pu', 'jet1_flavour_parton', 'jet1_csv', 'jet1_genjet_pt', 'jet2_pt', 'jet2_eta', 'jet2_phi', 'jet2_charge', 'jet2_mass', 'jet2_mva_pu', 'jet2_id_pu', 'jet2_flavour_parton', 'jet2_csv', 'jet2_genjet_pt', 'bjet1_pt', 'bjet1_eta', 'bjet1_phi', 'bjet1_charge', 'bjet1_mass', 'bjet1_mva_pu', 'bjet1_id_pu', 'bjet1_flavour_parton', 'bjet1_csv', 'bjet1_genjet_pt', 'bjet2_pt', 'bjet2_eta', 'bjet2_phi', 'bjet2_charge', 'bjet2_mass', 'bjet2_mva_pu', 'bjet2_id_pu', 'bjet2_flavour_parton', 'bjet2_csv', 'bjet2_genjet_pt', 'HT_allJets', 'HT_jets', 'HT_bJets', 'HT_cleanJets', 'HT_jets30', 'HT_cleanJets30', 'genboson_pt', 'genboson_eta', 'genboson_phi', 'genboson_charge', 'genboson_mass', 'genboson_pdgId', 'gen_top_1_pt', 'gen_top_2_pt', 'gen_top_weight', 'puppimet_pt', 'puppimet_phi', 'puppimet_mt1', 'puppimet_mt2', 'pfmet_pt', 'pfmet_phi', 'pfmet_mt1', 'pfmet_mt2', 'l2_pt', 'l2_eta', 'l2_phi', 'l2_charge', 'l2_mass', 'l2_jet_pt', 'l2_jet_eta', 'l2_jet_phi', 'l2_jet_charge', 'l2_jet_mass', 'l2_dxy', 'l2_dxy_error', 'l2_dz', 'l2_dz_error', 'l2_weight', 'l2_weight_trigger', 'l2_weight_eff_data_trigger', 'l2_eff_trigger_data', 'l2_eff_trigger_mc', 'l2_weight_idiso', 'l2_eff_idiso_data', 'l2_eff_idiso_mc', 'l2_gen_match', 'l2_decayMode', 'l2_zImpact', 'l2_dz_selfvertex', 'l2_ptScale', 'l2_againstElectronMVA6', 'l2_againstMuon3', 'l2_byCombinedIsolationDeltaBetaCorrRaw3Hits', 'l2_byIsolationMVArun2v1DBoldDMwLTraw', 'l2_byIsolationMVArun2v1DBnewDMwLTraw', 'l2_byIsolationMVArun2v1DBdR03oldDMwLTraw', 'l2_byCombinedIsolationDeltaBetaCorr3Hits', 'l2_byIsolationMVArun2v1DBoldDMwLT', 'l2_byIsolationMVArun2v1DBnewDMwLT', 'l2_byIsolationMVArun2v1DBdR03oldDMwLT', 'l2_chargedIsoPtSum', 'l2_decayModeFinding', 'l2_footprintCorrection', 'l2_neutralIsoPtSum', 'l2_puCorrPtSum', 'l2_photonPtSumOutsideSignalCone', 'l2_byTightIsolationMVArun2v1DBoldDMwLT', 'l1_pt', 'l1_eta', 'l1_phi', 'l1_charge', 'l1_mass', 'l1_jet_pt', 'l1_jet_eta', 'l1_jet_phi', 'l1_jet_charge', 'l1_jet_mass', 'l1_dxy', 'l1_dxy_error', 'l1_dz', 'l1_dz_error', 'l1_weight', 'l1_weight_trigger', 'l1_weight_eff_data_trigger', 'l1_eff_trigger_data', 'l1_eff_trigger_mc', 'l1_weight_idiso', 'l1_eff_idiso_data', 'l1_eff_idiso_mc', 'l1_gen_match', 'l1_reliso05', 'l1_reliso05_03', 'l1_muonid_loose', 'l1_muonid_medium', 'l1_muonid_tight', 'l1_muonid_tightnovtx', 'l1_muonid_highpt', 'l1_dxy_innertrack', 'l1_dz_innertrack', 'l2_gen_pt', 'l2_gen_eta', 'l2_gen_phi', 'l2_gen_charge', 'l2_gen_mass', 'l2_gen_pdgId', 'l2_gen_lepfromtau', 'l1_gen_pt', 'l1_gen_eta', 'l1_gen_phi', 'l1_gen_charge', 'l1_gen_mass', 'l1_gen_pdgId', 'l1_gen_lepfromtau', 'l2_gen_vis_pt', 'l2_gen_vis_eta', 'l2_gen_vis_phi', 'l2_gen_vis_charge', 'l2_gen_vis_mass', 'l2_gen_decaymode', 'l2_gen_nc_ratio', 'l2_nc_ratio', 'l2_weight_fakerate', 'l2_weight_fakerate_up', 'l2_weight_fakerate_down', 'trigger_isomu22', 'trigger_isotkmu22', 'trigger_isomu19tau20', 'trigger_matched_isomu22', 'trigger_matched_isotkmu22', 'trigger_matched_isomu19tau20']
 
 out_dict = {}
 for cut in cuts:
@@ -210,7 +213,7 @@ for cut in cuts:
             # branch_to_del = tree_out.GetBranch("name of branch to delete")
             # tree_out.GetListOfBranches().Remove(branch_to_del)
 
-        file_out_name = '/data1/steggema/ML2016/{sel}_{n}.root'.format(sel=cut.name, n=name)
+        file_out_name = '/data1/steggema/MLSpring2016/{sel}_{n}.root'.format(sel=cut.name, n=name)
         file_out = TFile(file_out_name, 'RECREATE')
 
         tree_out = tree_in.CopyTree(cut_str)
@@ -250,4 +253,4 @@ for cut in cuts:
 
 
     import pickle
-    pickle.dump(out_dict, open("/data1/steggema/ML2016/sample_dict_{sel}.pkl".format(sel=cut.name), "wb" ))
+    pickle.dump(out_dict, open("/data1/steggema/MLSpring2016/sample_dict_{sel}.pkl".format(sel=cut.name), "wb" ))

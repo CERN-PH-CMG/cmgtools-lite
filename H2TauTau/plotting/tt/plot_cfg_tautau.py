@@ -57,10 +57,26 @@ charge_cut = Cut('l1_charge != l2_charge')
 
 # cuts.append(myCut('susy_loose_met', inc_cut & Cut('mvis>100 && n_bjets==0 && met_pt>100.')))
 # cuts.append(myCut('susy_loose', inc_cut & Cut('mvis>100 && n_bjets==0 && pzeta_disc < -40.')))
-# cuts.append(myCut('susy_taupt', inc_cut & Cut('mvis>100 && n_bjets==0 && l1_pt>60 && met_pt>20. && mt>50.')))
-cuts.append(myCut('susy_taupt_pzetamet', inc_cut & Cut('mvis>100 && n_bjets==0 && l1_pt>60 && met_pt>20. && mt>50. && pzeta_met<-50. && delta_eta_l1_l2<3. && (min(abs(TVector2::Phi_mpi_pi(met_phi - jet2_phi)) + 20*(jet2_phi<-50), abs(TVector2::Phi_mpi_pi(met_phi - jet1_phi))+ 20*(jet1_phi<-50)) > 0.8 || jet1_pt<30.)')))
 
-# cuts.append(myCut('susy_jan_opt', inc_cut & Cut('met_pt/sqrt(met_cov00 + met_cov11) > 2. && mvis>100 && mt + mt_leg2 > 200. && n_bjets==0 && pzeta_disc < -40.')))
+cuts.append(myCut('susy_onlytaupt', inc_cut & Cut('mvis>100 && n_bjets==0 && l1_pt>60 && met_pt>20.')))
+cuts.append(myCut('susy_taupt', inc_cut & Cut('mvis>100 && n_bjets==0 && l1_pt>60 && met_pt>20. && mt>50.')))
+cuts.append(myCut('susy_taupt_pzetamet', inc_cut & Cut('mvis>100 && n_bjets==0 && l1_pt>60 && met_pt>20. && mt>50. && pzeta_met<-50. && delta_eta_l1_l2<3. && (min(abs(TVector2::Phi_mpi_pi(met_phi - jet2_phi)) + 20*(jet2_phi<-50), abs(TVector2::Phi_mpi_pi(met_phi - jet1_phi))+ 20*(jet1_phi<-50)) > 0.8 || jet1_pt<30.)')))
+cuts.append(myCut('susy_jan_opt', inc_cut & Cut('met_pt/sqrt(met_cov00 + met_cov11) > 2. && mvis>100 && mt + mt_leg2 > 200. && n_bjets==0 && pzeta_disc < -40.')))
+cuts.append(myCut('susy_jan_tight', inc_cut & Cut('met_pt/sqrt(met_cov00 + met_cov11) > 1. && mvis>100 && mt + mt_leg2 > 150. && n_bjets==0 && pzeta_disc < -40. && abs(delta_phi_l1_l2) > 1. && mt_total>300.')))
+
+
+cuts.append(myCut('susy_onlytaupt_0jet', inc_cut & Cut('mvis>100 && n_bjets==0 && l1_pt>60 && met_pt>20. && n_jets==0')))
+cuts.append(myCut('susy_taupt_0jet', inc_cut & Cut('mvis>100 && n_bjets==0 && l1_pt>60 && met_pt>20. && mt>50. && n_jets==0')))
+cuts.append(myCut('susy_taupt_pzetamet_0jet', inc_cut & Cut('mvis>100 && n_bjets==0 && l1_pt>60 && met_pt>20. && mt>50. && pzeta_met<-50. && delta_eta_l1_l2<3. && (min(abs(TVector2::Phi_mpi_pi(met_phi - jet2_phi)) + 20*(jet2_phi<-50), abs(TVector2::Phi_mpi_pi(met_phi - jet1_phi))+ 20*(jet1_phi<-50)) > 0.8 || jet1_pt<30.) && n_jets==0')))
+cuts.append(myCut('susy_jan_opt_0jet', inc_cut & Cut('met_pt/sqrt(met_cov00 + met_cov11) > 2. && mvis>100 && mt + mt_leg2 > 200. && n_bjets==0 && pzeta_disc < -40. && n_jets==0')))
+cuts.append(myCut('susy_jan_tight_0jet', inc_cut & Cut('met_pt/sqrt(met_cov00 + met_cov11) > 1. && mvis>100 && mt + mt_leg2 > 150. && n_bjets==0 && pzeta_disc < -40. && abs(delta_phi_l1_l2) > 1. && mt_total>300. && n_jets==0')))
+
+
+cuts.append(myCut('susy_onlytaupt_gr1jet', inc_cut & Cut('mvis>100 && n_bjets==0 && l1_pt>60 && met_pt>20. && n_jets>0')))
+cuts.append(myCut('susy_taupt_gr1jet', inc_cut & Cut('mvis>100 && n_bjets==0 && l1_pt>60 && met_pt>20. && mt>50. && n_jets>0')))
+cuts.append(myCut('susy_taupt_pzetamet_gr1jet', inc_cut & Cut('mvis>100 && n_bjets==0 && l1_pt>60 && met_pt>20. && mt>50. && pzeta_met<-50. && delta_eta_l1_l2<3. && (min(abs(TVector2::Phi_mpi_pi(met_phi - jet2_phi)) + 20*(jet2_phi<-50), abs(TVector2::Phi_mpi_pi(met_phi - jet1_phi))+ 20*(jet1_phi<-50)) > 0.8 || jet1_pt<30.) && n_jets>0')))
+cuts.append(myCut('susy_jan_opt_gr1jet', inc_cut & Cut('met_pt/sqrt(met_cov00 + met_cov11) > 2. && mvis>100 && mt + mt_leg2 > 200. && n_bjets==0 && pzeta_disc < -40. && n_jets>0')))
+cuts.append(myCut('susy_jan_tight_gr1jet', inc_cut & Cut('met_pt/sqrt(met_cov00 + met_cov11) > 1. && mvis>100 && mt + mt_leg2 > 150. && n_bjets==0 && pzeta_disc < -40. && abs(delta_phi_l1_l2) > 1. && mt_total>300. && n_jets>0')))
 
 # cuts.append(myCut('susy_jan_nomet', inc_cut & Cut('mvis>100 && n_bjets==0 && mt + mt_leg2 > 150.')))
 
@@ -81,7 +97,7 @@ cuts.append(myCut('susy_taupt_pzetamet', inc_cut & Cut('mvis>100 && n_bjets==0 &
 #                 cuts.append(myCut(cut_name, inc_cut & cut))
 
 
-# cuts.append(myCut('susy_jan_tight', inc_cut & Cut('met_pt/sqrt(met_cov00 + met_cov11) > 1. && mvis>100 && mt + mt_leg2 > 150. && n_bjets==0 && pzeta_disc < -40. && abs(delta_phi_l1_l2) > 1. && mt_total>300.')))
+
 # cuts.append(myCut('susy_jan_SS', inc_cut & Cut('met_pt/sqrt(met_cov00 + met_cov11) > 1. && mvis>100 && mt + mt_leg2 > 150. && n_bjets==0 && pzeta_disc < -40.')))
 
 # cuts.append(myCut('1jet'     , jet1_cut))
@@ -136,7 +152,7 @@ for cut in cuts:
             continue
 
 
-        HistDrawer.draw(plot, channel='#tau_{h}#tau_{h}', plot_dir='plot_%s' %cut.name) #, blindxmin=30., blindxmax=50.1)
+        HistDrawer.draw(plot, channel='#tau_{h}#tau_{h}', plot_dir='plot_%s' %cut.name, blindxmin=variable.binning['xmin'] if optimisation and 'xmin' in variable.binning else None, blindxmax=variable.binning['xmax'] if optimisation and 'xmax' in variable.binning else None)
         # HistDrawer.drawRatio(plot, channel='#tau_{h}#tau_{h}')
 
         # if variable.name == 'mvis':
