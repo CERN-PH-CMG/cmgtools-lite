@@ -5,9 +5,9 @@
 
 TH2D* getHist() {
     TH2D* h_zptmass;
-    TFile* f_in = gROOT->GetFile("/afs/cern.ch/user/r/rlane/public/HIG16006/Zweights/zpt_weights.root");
+    TFile* f_in = gROOT->GetFile("/afs/cern.ch/user/r/rlane/public/HIG16037/zpt_weights/zpt_weights_2016.root");
     if (!f_in) {
-        f_in = new TFile("/afs/cern.ch/user/r/rlane/public/HIG16006/Zweights/zpt_weights.root");
+        f_in = new TFile("/afs/cern.ch/user/r/rlane/public/HIG16037/zpt_weights/zpt_weights_2016.root");
         h_zptmass = dynamic_cast<TH2D*>(f_in->Get("zptmass_histo"));
     }
     h_zptmass = dynamic_cast<TH2D*>(f_in->Get("zptmass_histo"));

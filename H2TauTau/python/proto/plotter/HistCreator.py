@@ -1,4 +1,5 @@
 import pickle
+import hashlib
 
 # Adds MultiDraw method to ROOT.TTree
 import CMGTools.H2TauTau.proto.plotter.MultiDraw
@@ -87,7 +88,7 @@ def createHistograms(hist_cfg, all_stack=False, verbose=False, friend_func=None)
             for vcfg in vcfgs:
                 # plot = plots[vcfg.name]
 
-                hname = '_'.join([hist_cfg.name, cfg.name, vcfg.name, cfg.dir_name])
+                hname = '_'.join([hist_cfg.name, hashlib.md5(hist_cfg.cut).hexdigest(), cfg.name, vcfg.name, cfg.dir_name])
                 if 'xmin' in vcfg.binning:
                     hist = TH1F(hname, '', vcfg.binning['nbinsx'],
                                 vcfg.binning['xmin'], vcfg.binning['xmax'])
@@ -122,7 +123,7 @@ def createHistograms(hist_cfg, all_stack=False, verbose=False, friend_func=None)
                 hist.Scale(cfg.scale)
 
                 if cfg.name in plot:
-                    print 'Histogram', cfg.name, 'already exists; adding...'
+                    # print 'Histogram', cfg.name, 'already exists; adding...'
                     plot[cfg.name].Add(Histogram(cfg.name, hist))
                 else:
                     plot_hist = plot.AddHistogram(cfg.name, hist, stack=stack)
@@ -159,7 +160,7 @@ def createHistogram(hist_cfg, all_stack=False, verbose=False, friend_func=None):
                 total_hist.Scale(cfg.total_scale)
         else:
             # It's a sample cfg
-            hname = '_'.join([hist_cfg.name, cfg.name, vcfg.name, cfg.dir_name])
+            hname = '_'.join([hist_cfg.name, hashlib.md5(hist_cfg.cut).hexdigest(), cfg.name, vcfg.name, cfg.dir_name])
             if 'xmin' in vcfg.binning:
                 hist = TH1F(hname, '', vcfg.binning['nbinsx'],
                             vcfg.binning['xmin'], vcfg.binning['xmax'])
