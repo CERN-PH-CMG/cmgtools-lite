@@ -19,6 +19,7 @@ class HTTGenAnalyzer(Analyzer):
 
         self.mchandles['genInfo'] = AutoHandle(('generator','',''), 'GenEventInfoProduct' )
         self.mchandles['genJets'] = AutoHandle('slimmedGenJets', 'std::vector<reco::GenJet>')
+        self.mchandles['genParticles'] = AutoHandle('prunedGenParticles', 'std::vector<reco::GenParticle')
 
         self.handles['jets'] = AutoHandle(self.cfg_ana.jetCol, 'std::vector<pat::Jet>')
 
@@ -37,7 +38,11 @@ class HTTGenAnalyzer(Analyzer):
         self.readCollections(event.input)
         event.genJets = self.mchandles['genJets'].product()
         event.jets = self.handles['jets'].product()
+        event.genParticles = self.mchandles['genParticles'].product()
 
+        event.genleps = [p for p in event.genParticles if abs(p.pdgId()) in [11, 13] and p.statusFlags().isPrompt()]
+        event.gentauleps = [p for p in event.genParticles if abs(p.pdgId()) in [11, 13] and p.statusFlags().isDirectPromptTauDecayProduct()]
+        event.gentaus = [p for p in event.genParticles if abs(p.pdgId()) == 15 and p.statusFlags().isPrompt() and not any(abs(self.getFinalTau(p).daughter(i_d).pdgId()) in [11, 13] for i_d in xrange(self.getFinalTau(p).numberOfDaughters()))]
         self.getGenTauJets(event)
 
         event.weight_gen = self.mchandles['genInfo'].product().weight()
@@ -64,9 +69,12 @@ class HTTGenAnalyzer(Analyzer):
         if hasattr(self.cfg_ana, 'genPtCut'):
             ptcut = self.cfg_ana.genPtCut
 
+
+
         self.ptSelGentauleps = [lep for lep in event.gentauleps if lep.pt() > ptcut]
         self.ptSelGenleps = [lep for lep in event.genleps if lep.pt() > ptcut]
-        self.ptSelGenSummary = [p for p in event.generatorSummary if p.pt() > ptcut and abs(p.pdgId()) not in [6, 11, 13, 15, 23, 24, 25, 35, 36, 37]]
+        self.ptSelGenSummary = []
+        # self.ptSelGenSummary = [p for p in event.generatorSummary if p.pt() > ptcut and abs(p.pdgId()) not in [6, 11, 13, 15, 23, 24, 25, 35, 36, 37]]
         # self.ptSelGentaus    = [ lep for lep in event.gentaus    if lep.pt()
         # > ptcut ] # not needed
 
