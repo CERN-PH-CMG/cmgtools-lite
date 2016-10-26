@@ -140,6 +140,7 @@ TGJets = kreator.makeMCComponent("TGJets", "/TGJets_TuneCUETP8M1_13TeV_amcatnlo_
 TGJets_ext = kreator.makeMCComponent("TGJets_ext", "/TGJets_TuneCUETP8M1_13TeV_amcatnlo_madspin_pythia8/RunIISpring16MiniAODv2-PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0_ext1-v1/MINIAODSIM", "CMS", ".*root", 2.967)
 tZq_ll = kreator.makeMCComponent("tZq_ll", "/tZq_ll_4f_13TeV-amcatnlo-pythia8_TuneCUETP8M1/RunIISpring16MiniAODv2-PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/MINIAODSIM", "CMS", ".*root", 0.0758 )
 #tZq_nunu = kreator.makeMCComponent("tZq_nunu", "/tZq_nunu_4f_13TeV-amcatnlo-pythia8_TuneCUETP8M1/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM", "CMS", ".*root", 0.1379 )
+tZW_ll = kreator.makeMCComponent("tZW_ll", "/ST_tWll_5f_LO_13TeV-MadGraph-pythia8/RunIISpring16MiniAODv2-premix_withHLT_80X_mcRun2_asymptotic_v14-v1/MINIAODSIM", "CMS", ".*root", 0.01123 )
 
 SingleTop = [
 TToLeptons_tch_amcatnlo,
@@ -155,7 +156,8 @@ T_tWch,
 TGJets,
 TGJets_ext,
 tZq_ll,
-#tZq_nunu,
+#tZq_nunu, 
+tZW_ll
 ]
 
 ### V+jets inclusive (from https://twiki.cern.ch/twiki/bin/viewauth/CMS/StandardModelCrossSectionsat13TeV)
