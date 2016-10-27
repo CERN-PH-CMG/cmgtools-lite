@@ -110,23 +110,23 @@ def train(allcuts, variables, dsets, options):
     for trainclass in set([x[1] for x in dsets]):
         factory.SetWeightExpression("genWeight*xsec", trainclass)
 
-    ## Start the training
-    factory.PrepareTrainingAndTestTree(allcuts, "!V") # check options
-    factory.BookMethod(ROOT.TMVA.Types.kBDT, 'BDTA',
-                       ':'.join([
-                                '!H', # print help
-                                '!V', # verbose
-                                'NTrees=800', # default is 200
-                                'BoostType=AdaBoost', # try with 'Grad' also
-                                'AdaBoostBeta=0.50',
-                                # 'Shrinkage=0.10', # for gradient boosting
-                                '!UseBaggedGrad',
-                                'nCuts=50', # scanning steps
-                                'MaxDepth=3', # maximum decision tree depth
-                                'NegWeightTreatment=PairNegWeightsGlobal',
-                                'CreateMVAPdfs',
-                                # 'VarTransform=G,D',
-                                ]))
+    # ## Start the training
+    # factory.PrepareTrainingAndTestTree(allcuts, "!V") # check options
+    # factory.BookMethod(ROOT.TMVA.Types.kBDT, 'BDTA',
+    #                    ':'.join([
+    #                             '!H', # print help
+    #                             '!V', # verbose
+    #                             'NTrees=800', # default is 200
+    #                             'BoostType=AdaBoost', # try with 'Grad' also
+    #                             'AdaBoostBeta=0.50',
+    #                             # 'Shrinkage=0.10', # for gradient boosting
+    #                             '!UseBaggedGrad',
+    #                             'nCuts=50', # scanning steps
+    #                             'MaxDepth=3', # maximum decision tree depth
+    #                             'NegWeightTreatment=PairNegWeightsGlobal',
+    #                             'CreateMVAPdfs',
+    #                             # 'VarTransform=G,D',
+    #                             ]))
 
     ###added by jmonroy oct 2016
 
@@ -143,12 +143,11 @@ def train(allcuts, variables, dsets, options):
                                'Shrinkage=0.10', # for gradient boosting                                                            
                                '!UseBaggedGrad',
                                'nCuts=50', # scanning steps                                                                           
-                               'MaxDepth=3', # maximum decision tree depth                                                            
+                               'MaxDepth=5', # maximum decision tree depth                                                            
                                'NegWeightTreatment=PairNegWeightsGlobal',
                                'CreateMVAPdfs',
                                # 'VarTransform=G,D',                                                                                  
                                ]))
-
 
     #Try a few different classifiers also:
     #e.g. Fisher discriminants, k-nearest neighbor, neural networks 
