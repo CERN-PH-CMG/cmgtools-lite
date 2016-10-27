@@ -74,6 +74,11 @@ To produce the friend trees for many samples and events, a separate handler scri
 python prepareTHQEventVariableFriends.py -m tHqEventVariables -t treeProducerSusyMultilepton -N 10000 ra5trees/809_June9_ttH/ tHq_eventvars_Aug5 -d TTHnobb_mWCutfix_ext1 -c 1
 ```
 
+Or, with a friend tree included:
+```
+python prepareTHQEventVariableFriends.py -m tHqEventVariables -t treeProducerSusyMultilepton -N 10000 ra5trees/809_June9_ttH/ tHq_eventvars_Oct21 -d TTHnobb_mWCutfix_ext1 -c 1 -F sf/t ra5trees/809_June9_ttH/2_recleaner_v4_b1E2/evVarFriend_{cname}.root
+```
+
 You should use this to figure out how fast your producer is running, and adjust the chunk size (`-N` option) to have jobs of reasonable run times. Once this works, you can submit all the jobs for all samples to lxbatch, by running something like this:
 ```
 python prepareTHQEventVariableFriends.py -m tHqEventVariables -t treeProducerSusyMultilepton -N 500000 ra5trees/809_June9_ttH/ tHq_eventvars_Aug11 -q 8nh
