@@ -448,17 +448,22 @@ print "I have %d task(s) to process" % len(jobs)
 if options.queue:
     import os, sys
 
-    runner = "lxbatch_runner.sh"
-    super  = "bsub -q {queue}".format(queue = options.queue)
-    if options.queue in ["all.q", "short.q", "long.q"] and options.env == "psi":
+    runner = ""
+    super = ""
+    if options.env == "cern":
+        runner = "lxbatch_runner.sh"
+        super  = "bsub -q {queue}".format(queue = options.queue)
+    elif options.env == "psi":
         super  = "qsub -q {queue} -N friender".format(queue = options.queue)
         runner = "psibatch_runner.sh"
-
-    if options.queue == "batch" and options.env == "oviedo" ):
+    elif options.env == "oviedo" ):
+        if options.queue != "":
+            options.queue = "batch" 
         super  = "qsub -q {queue} -N happyTreeFriend".format(queue = options.queue)
         runner = "oviedobatch_runner.sh"
-
-    theoutput= args[1].replace('/pool/ciencias/','/pool/cienciasrw/')
+        theoutput= args[1].replace('/pool/ciencias/','/pool/cienciasrw/')
+    else:
+        raise RuntimeError, "I do not know what to do. Where am I? Please set the [env] option"
 
     basecmd = "{dir}/{runner} {dir} {cmssw} python {self} -N {chunkSize} -T {tdir} -t {tree} {data} {output}".format(
                 dir = os.getcwd(), runner=runner, cmssw = os.environ['CMSSW_BASE'],
