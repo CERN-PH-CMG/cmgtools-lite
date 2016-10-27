@@ -454,7 +454,7 @@ if options.queue:
         super  = "qsub -q {queue} -N friender".format(queue = options.queue)
         runner = "psibatch_runner.sh"
 
-    if options.queue == "batch" and os.path.isdir('/pool/ciencias/' ):
+    if options.queue == "batch" and options.env == "oviedo" ):
         super  = "qsub -q {queue} -N happyTreeFriend".format(queue = options.queue)
         runner = "oviedobatch_runner.sh"
 
