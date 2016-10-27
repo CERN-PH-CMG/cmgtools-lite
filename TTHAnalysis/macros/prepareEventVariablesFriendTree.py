@@ -460,7 +460,7 @@ if options.queue:
         if options.queue != "":
             options.queue = "batch" 
         super  = "qsub -q {queue} -N happyTreeFriend".format(queue = options.queue)
-        runner = "oviedobatch_runner.sh"
+        runner = "lxbatch_runner.sh"
         theoutput= args[1].replace('/pool/ciencias/','/pool/cienciasrw/')
     else:
         raise RuntimeError, "I do not know what to do. Where am I? Please set the [env] option"
