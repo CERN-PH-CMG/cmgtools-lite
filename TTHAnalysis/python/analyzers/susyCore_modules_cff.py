@@ -230,12 +230,22 @@ lepAna = cfg.Analyzer(
 from CMGTools.TTHAnalysis.analyzers.ttHLepSkimmer import ttHLepSkimmer
 ttHLepSkim = cfg.Analyzer(
     ttHLepSkimmer, name='ttHLepSkimmer',
-    minLeptons = 0,
-    maxLeptons = 999,
+    #minLeptons = 0,
+    #maxLeptons = 999,
     #idCut  = "lepton.relIso03 < 0.2" # can give a cut
     #ptCuts = [20,10],                # can give a set of pt cuts on the leptons
-    requireSameSignPair = False,
-    allowLepTauComb = False
+    #requireSameSignPair = False,
+    #allowLepTauComb = False
+    collections={ "lep":"selectedLeptons",
+                  "mu":"selectedLeptons",
+                  "jet":"cleanJets"
+                  },
+    
+    selections=["1lep70",
+                "2lep20ss",
+                "2lep20osM50-120_1mu40(abs(mu.pdgId())==13)",
+                "2lep20ssM50<(lep.relIso03<0.2)","2lep20!pt_2jet100"
+                ]
     )
 
 ## Photon Analyzer (generic)
