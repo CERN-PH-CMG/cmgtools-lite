@@ -34,10 +34,29 @@ jj_l2_vars = [
     VCfg(name='jj_l2_s2BTag', binning={'nbinsx':40, 'xmin':-1., 'xmax':1.}, unit=None, xtitle='jet2 subjet2 CSV'),
 ]
 
+lnujj_l1_vars = [
+    VCfg(name='lnujj_l1_pt', binning={'nbinsx':100, 'xmin':0., 'xmax':1000.}, unit='GeV', xtitle='jet1 p_{T}'),
+    VCfg(name='lnujj_l1_eta', binning={'nbinsx':20, 'xmin':-2.5, 'xmax':2.5}, unit=None, xtitle='jet1 #eta'),
+    VCfg(name='lnujj_l1_phi', binning={'nbinsx':40, 'xmin':-3.141593, 'xmax':3.141593}, unit=None, xtitle='jet1 #phi'),
+]
 
-VV_vars = generic_vars + jj_l1_vars + jj_l2_vars
+lnujj_l2_vars = [
+    VCfg(name='lnujj_l2_pt', binning={'nbinsx':100, 'xmin':0., 'xmax':1000.}, unit='GeV', xtitle='jet2 p_{T}'),
+    VCfg(name='lnujj_l2_eta', binning={'nbinsx':20, 'xmin':-2.5, 'xmax':2.5}, unit=None, xtitle='jet2 #eta'),
+    VCfg(name='lnujj_l2_phi', binning={'nbinsx':40, 'xmin':-3.141593, 'xmax':3.141593}, unit=None, xtitle='jet2 #phi'),
+    VCfg(name='lnujj_l2_tau1', binning={'nbinsx':40, 'xmin':0., 'xmax':1.}, unit=None, xtitle='jet2 #tau_{1}'),
+    VCfg(name='lnujj_l2_tau2', binning={'nbinsx':40, 'xmin':0., 'xmax':1.}, unit=None, xtitle='jet2 #tau_{2}'),
+    VCfg(name='lnujj_l2_tau21', drawname='lnujj_l2_tau2/lnujj_l2_tau1', binning={'nbinsx':40, 'xmin':0., 'xmax':1.}, unit='', xtitle='jet2 #tau_{21}'),
+    VCfg(name='lnujj_l2_btagBOOSTED_recalc', binning={'nbinsx':40, 'xmin':-1., 'xmax':1.}, unit='', xtitle='boosted b-tag'),
+    VCfg(name='lnujj_l2_pruned_mass', binning={'nbinsx':100, 'xmin':0., 'xmax':250.}, unit='GeV', xtitle='jet2 pruned mass'),
+    VCfg(name='lnujj_l2_s1BTag', binning={'nbinsx':40, 'xmin':-1., 'xmax':1.}, unit=None, xtitle='jet2 subjet2 CSV'),
+    VCfg(name='lnujj_l2_s2BTag', binning={'nbinsx':40, 'xmin':-1., 'xmax':1.}, unit=None, xtitle='jet2 subjet2 CSV'),
+]
 
-all_vars = generic_vars + jj_l1_vars + jj_l2_vars
+jj_vars = jj_l1_vars + jj_l2_vars
+lnujj_vars = lnujj_l1_vars + lnujj_l2_vars
+
+all_vars = generic_vars + jj_l1_vars + jj_l2_vars + lnujj_l1_vars + lnujj_l2_vars
 
 dict_all_vars = {}
 for v in all_vars:

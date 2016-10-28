@@ -8,7 +8,7 @@ from CMGTools.VVResonances.plotting.HistCreator import setSumWeights
 
 from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv2 import TTJets, SingleTop, WJetsToLNuHT, QCDHT, DYJetsM50HT, DiBosons, GJetsHT
 # from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv2 import TT_pow_ext3 as TT_pow_ext
-from CMGTools.RootTools.samples.samples_13TeV_DATA2016 import JetHT_Run2016B_PromptReco_v2, SingleElectron_Run2016B_PromptReco_v2, SingleMuon_Run2016B_PromptReco_v2
+from CMGTools.RootTools.samples.samples_13TeV_DATA2016 import *
 # from CMGTools.VVAnalysis.samples.signal_13TeV_80X import signalSamples
 
 def createSampleLists(analysis_dir='samples/',
@@ -18,7 +18,7 @@ def createSampleLists(analysis_dir='samples/',
     tree_prod_name = ''
 
     samples_essential = []
-    # add QCD samples, but not those with _ext, since they are not produced
+    # add QCD samples, but not those with _ext, since they are merged with the others
     for sample in QCDHT:
         if not (sample.name.find("_ext") >= 0):
             samples_essential.append(
@@ -29,14 +29,14 @@ def createSampleLists(analysis_dir='samples/',
     samples_essential.append(SampleCfg(name=TTJets.name, dir_name=TTJets.name, ana_dir=analysis_dir, tree_prod_name=tree_prod_name,
           xsec=TTJets.xSection, sumweights=TTJets.nGenEvents, weight_expr=weight))
 
-    # DY+jets samples, but not those with _ext, since they are not produced
+    # DY+jets samples, but not those with _ext, since they are merged with the others
     for dySample in DYJetsM50HT:
         if not (sample.name.find("_ext") >= 0):
             samples_essential.append(
             SampleCfg(name=dySample.name, dir_name=dySample.name, ana_dir=analysis_dir, tree_prod_name=tree_prod_name,
                   xsec=dySample.xSection, sumweights=dySample.nGenEvents, weight_expr=weight))
 
-    # W+jets samples, but not those with _ext, since they are not produced
+    # W+jets samples, but not those with _ext, since they are merged with the others
     for sample in WJetsToLNuHT:
         if not (sample.name.find("_ext") >= 0):
             samples_essential.append(
@@ -45,7 +45,7 @@ def createSampleLists(analysis_dir='samples/',
 
     # DiBosons samples
     for sample in DiBosons:
-        if not (sample.name.find("NuNu") >= 0):
+        if not ((sample.name.find("NuNu") >= 0) or (sample.name.find('WpWpJJ') >= 0)):
             samples_essential.append(
             SampleCfg(name=sample.name, dir_name=sample.name, ana_dir=analysis_dir, tree_prod_name=tree_prod_name,
                   xsec=sample.xSection, sumweights=sample.nGenEvents, weight_expr=weight))
@@ -71,6 +71,9 @@ def createSampleLists(analysis_dir='samples/',
         SampleCfg(name='data_obs', dir_name='SingleElectron_Run2016B_PromptReco_v2', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
         SampleCfg(name='data_obs', dir_name='SingleElectron_Run2016C_PromptReco_v2', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
         SampleCfg(name='data_obs', dir_name='SingleElectron_Run2016D_PromptReco_v2', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
+        SampleCfg(name='data_obs', dir_name='MET_Run2016B_PromptReco_v2', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
+        SampleCfg(name='data_obs', dir_name='MET_Run2016C_PromptReco_v2', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
+        SampleCfg(name='data_obs', dir_name='MET_Run2016D_PromptReco_v2', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
     ]
 
     # samples_WH = []
