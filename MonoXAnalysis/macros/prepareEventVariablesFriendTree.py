@@ -9,31 +9,29 @@ from CMGTools.MonoXAnalysis.tools.eventVars_monojet import EventVarsMonojet
 MODULES.append( ('vars_mj', EventVarsMonojet()) )
 
 from CMGTools.TTHAnalysis.tools.vertexWeightFriend import VertexWeightFriend
-pufile="/afs/cern.ch/work/e/emanuele/public/monox/pileup/nvtx_profile_80X_runs_272023_276097.root"
-MODULES.append ( ('puWeights', VertexWeightFriend(pufile,pufile,"nvtx_signal","nvtx_data",verbose=True) ) )
+pufile_mc="/afs/cern.ch/work/e/emanuele/public/monox/pileup/pileup_profile_Spring16.root"
+pufile_data="/afs/cern.ch/work/e/emanuele/public/monox/pileup/pileup_profile_runs_271036_279931.root"
+MODULES.append ( ('puWeights', VertexWeightFriend(pufile_mc,pufile_data,"pu_mc","pileup",name="puw",verbose=True,vtx_coll_to_reweight="nTrueInt") ) )
 
 pathvetolists="/afs/cern.ch/work/e/emanuele/public/monox/met_vetolists/"
 vetoLists= ["cscfilter", "ecalfilter"]
 
-from CMGTools.MonoXAnalysis.tools.eventVetoListChecker import EventVetoListChecker
-MODULES.append( ('eventVetoChecker', EventVetoListChecker(pathvetolists,vetoLists)) )
-
-# no more needed, since the leptons in the trees have already calibrations included
-#from CMGTools.MonoXAnalysis.tools.lepVars import residualCalibratedEcalEnergyFriend
-#MODULES.append ( ('lepvars', residualCalibratedEcalEnergyFriend()) )
+#from CMGTools.MonoXAnalysis.tools.eventVetoListChecker import EventVetoListChecker
+#MODULES.append( ('eventVetoChecker', EventVetoListChecker(pathvetolists,vetoLists)) )
 
 class VariableProducer(Module):
-    def __init__(self,name,booker,sample_nevt,dataset,modules):
+    def __init__(self,name,booker,region,sample_nevt,dataset,modules):
         Module.__init__(self,name,booker)
         self._modules = modules
         self._sample_nevt = sample_nevt
         self.dataset = dataset
+        self.region = region
     def beginJob(self):
         self.t = PyTree(self.book("TTree","t","t"))
         self.branches = {}
         for name,mod in self._modules:
             if name == "eventVetoChecker": mod.initDataset(self.dataset)
-            if name == "vars_mj": mod.initSampleNormalization(self._sample_nevt)
+            if name == "vars_mj": mod.initSample(self.region,self._sample_nevt)
             for B in mod.listBranches():
                 # don't add the same branch twice
                 if B in self.branches: 
@@ -75,6 +73,7 @@ parser.add_option("--FMC", "--add-friend-mc",    dest="friendTreesMC",  action="
 parser.add_option("--FD", "--add-friend-data",    dest="friendTreesData",  action="append", default=[], nargs=2, help="Add a friend tree (treename, filename) to data trees only. Can use {name}, {cname} patterns in the treename") 
 parser.add_option("-L", "--list-modules",  dest="listModules", action="store_true", default=False, help="just list the configured modules");
 parser.add_option("-n", "--new",  dest="newOnly", action="store_true", default=False, help="Make only missing trees");
+parser.add_option("-R", "--region", dest="region",  type="string", default="SR", help="Region phase space ('SR' for signal, ZM, WM), 'VE' for ZE and WE");
 (options, args) = parser.parse_args()
 
 if options.listModules:
@@ -152,9 +151,9 @@ print "I have %d taks to process" % len(jobs)
 
 if options.queue:
     import os, sys
-    basecmd = "bsub -q {queue} {dir}/lxbatch_runner.sh {dir} {cmssw} python {self} -N {chunkSize} -T '{tdir}' -t {tree} {data} {output}".format(
+    basecmd = "bsub -q {queue} {dir}/lxbatch_runner.sh {dir} {cmssw} python {self} -N {chunkSize} -T '{tdir}' -t {tree} -R '{region}' {data} {output}".format(
                 queue = options.queue, dir = os.getcwd(), cmssw = os.environ['CMSSW_BASE'], 
-                self=sys.argv[0], chunkSize=options.chunkSize, tdir=options.treeDir, tree=options.tree, data=args[0], output=args[1]
+                self=sys.argv[0], chunkSize=options.chunkSize, tdir=options.treeDir, tree=options.tree, region=options.region, data=args[0], output=args[1]
             )
     if options.vectorTree: basecmd += " --vector "
     friendPost =  "".join(["  -F  %s %s " % (fn,ft) for fn,ft in options.friendTrees])
@@ -230,7 +229,7 @@ def _runIt(myargs):
                 if re.match(pat,m):
                     toRun[m] = True 
         modulesToRun = [ (m,v) for (m,v) in MODULES if m in toRun ]
-    el = EventLoop([ VariableProducer(options.treeDir,booker,sample_nevt,short,modulesToRun), ])
+    el = EventLoop([ VariableProducer(options.treeDir,booker,options.region,sample_nevt,short,modulesToRun), ])
     el.loop([tb], eventRange=range)
     booker.done()
     fb.Close()

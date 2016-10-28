@@ -58,6 +58,7 @@ fitter.fit('model','data',[ROOT.RooFit.SumW2Error(1)])
 fitter.fit('model','data',[ROOT.RooFit.SumW2Error(1)])
 
 fitter.projection("model","data","x","debug"+options.output+".root",options.title)
+fitter.projection("model","data","x","debug"+options.output+".png",options.title)
 
 
 

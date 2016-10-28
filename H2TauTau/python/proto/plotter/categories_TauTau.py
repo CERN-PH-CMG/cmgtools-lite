@@ -9,21 +9,21 @@ inc_event = Cut(
 )
 
 inc_sig_tau1_iso = Cut(
-#     'l1_byIsolationMVArun2v1DBoldDMwLT>3.5'  # Tight WP
+    # 'l1_byIsolationMVArun2v1DBoldDMwLT>3.5'  # Tight WP
     'l1_byIsolationMVArun2v1DBoldDMwLT>4.5' # VTight WP
 )
 
 inc_sig_tau2_iso = Cut(
-#     'l2_byIsolationMVArun2v1DBoldDMwLT>3.5'  # Tight WP
+    # 'l2_byIsolationMVArun2v1DBoldDMwLT>3.5'  # Tight WP
     'l2_byIsolationMVArun2v1DBoldDMwLT>4.5'  # VTight WP
 )
 
 inc_sig_tau1_other = Cut(
-    'l1_againstMuon3>1.5 && l1_againstElectronMVA6>0.5 && l1_pt>{pt1}'.format(pt1=pt1)
+    'l1_againstMuon3>0.5 && l1_againstElectronMVA6>0.5 && l1_pt>{pt1}'.format(pt1=pt1)
 )
 
 inc_sig_tau2_other = Cut(
-    'l2_againstMuon3>1.5 && l2_againstElectronMVA6>0.5 && l2_pt>{pt2}'.format(pt2=pt2)
+    'l2_againstMuon3>0.5 && l2_againstElectronMVA6>0.5 && l2_pt>{pt2}'.format(pt2=pt2)
 )
 
 inc_sig = inc_event & inc_sig_tau1_iso & inc_sig_tau1_other & inc_sig_tau2_iso & inc_sig_tau2_other

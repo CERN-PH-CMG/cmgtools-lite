@@ -13,9 +13,19 @@ class ScaleFactor(object):
         analytically compute the SF from functiond defined in python
         '''
         if inputFile.endswith('.root'):
-            self._initFromRoot(inputFile, histBaseName)
+            if 'scalefactors' in inputFile: # Andrew's workspace
+                self._initFromRooFit(inputFile, histBaseName)
+            else: # DESY workspace
+                self._initFromRoot(inputFile, histBaseName)
         elif inputFile.endswith('.py'):
             self._initFromPython(inputFile)
+
+    def _initFromRooFit(self, inputRootFile, histBaseName):
+        fileIn = ROOT.TFile(inputRootFile)
+        self.ws = fileIn.Get('w')
+        fileIn.Close()
+        self.sf_name = histBaseName
+        self.obj_tag = histBaseName.split('_')[0]
 
     def _initFromPython(self, inputPythonFile):
         path = inputPythonFile.split('/')
@@ -51,11 +61,15 @@ class ScaleFactor(object):
             for label, eff_dict in [('_Data', self.eff_data), ('_MC', self.eff_mc)]:
                 graphName = histBaseName + etaLabel + label                
                 graph = self.fileIn.Get(graphName) # RM: this can be either a TGraph or a TF1
+                if not graph: 
+                    continue
                 eff_dict[etaLabel] = graph
                 if isinstance(graph, ROOT.TF1):
                     continue
                 self.setAxisBins(eff_dict[etaLabel])
 
+            if etaLabel not in self.eff_mc:
+                continue
             if isinstance(self.eff_mc[etaLabel], ROOT.TF1) and isinstance(self.eff_data[etaLabel], ROOT.TF1):
                 continue
             elif not self.checkSameBinning(self.eff_mc[etaLabel], self.eff_data[etaLabel]):
@@ -87,15 +101,31 @@ class ScaleFactor(object):
 
         return True
 
-    def getScaleFactor(self, pt, eta, isFake=False):
+    def getScaleFactor(self, pt, eta, isFake=False, iso=None):
+        if hasattr(self, 'ws'):
+            return self.getFactorWS(pt, eta, 'ratio', isFake=isFake, iso=iso)
         return self.getEfficiencyData(pt, eta, isFake)/max(self.getEfficiencyMC(pt, eta, isFake), 1.e-6)
 
-    def getEfficiencyData(self, pt, eta, isFake=False):
+    def getEfficiencyData(self, pt, eta, isFake=False, iso=None):
+        if hasattr(self, 'ws'):
+            return self.getFactorWS(pt, eta, 'data', isFake=isFake, iso=iso)
         return self.getEfficiency(pt, eta, self.eff_data_fakes if isFake and hasattr(self, 'eff_data_fakes') else self.eff_data)
 
-    def getEfficiencyMC(self, pt, eta, isFake=False):
+    def getEfficiencyMC(self, pt, eta, isFake=False, iso=None):
+        if hasattr(self, 'ws'):
+            return self.getFactorWS(pt, eta, 'mc', isFake=isFake, iso=iso)
         return self.getEfficiency(pt, eta, self.eff_mc_fakes if isFake and hasattr(self, 'eff_mc_fakes') else self.eff_mc)
 
+    def getFactorWS(self, pt, eta, tag, isFake=False, iso=None):
+        ''' See https://github.com/CMS-HTT/CorrectionsWorkspace
+        FIXME:  add proper isFake implementation (but may need to change inputs
+        '''
+        self.ws.var('_'.join([self.obj_tag, 'pt'])).setVal(pt)
+        self.ws.var('_'.join([self.obj_tag, 'eta'])).setVal(eta)
+        if iso:
+            self.ws.var('_'.join([self.obj_tag, 'iso'])).setVal(iso)
+
+        return self.ws.function('_'.join([self.sf_name, tag])).getVal()
 
     def findEtaLabel(self, eta, eff_dict):
         eta = abs(eta)

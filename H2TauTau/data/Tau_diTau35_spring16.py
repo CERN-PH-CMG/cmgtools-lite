@@ -1,4 +1,5 @@
 from CMGTools.H2TauTau.proto.weights.auxFunctions import crystalballEfficiency
+from CMGTools.H2TauTau.proto.weights.tauh_trigger_effs import trigger_eff_real_tauh, trigger_eff_highmt, trigger_eff_samesign
 
 # global parameters
 
@@ -23,11 +24,32 @@ parameters['tt_Spring16_80X_data_fakes_vtight'] = (
     1.00000e+00,  # norm
 )
 
+# 12.9 fb-1 https://github.com/rmanzoni/triggerSF/blob/diTauICHEP2016/di-tau/real_taus_binned.json
+
+isos = ['NoIso', 'VLooseIso', 'LooseIso', 'MediumIso', 'TightIso', 'VTightIso', 'VVTightIso']
+
+for iso in isos:
+    parameters['tt_ICHEP_80X_data_'+iso] = (
+        trigger_eff_real_tauh[iso]['m_{0}'],
+        trigger_eff_real_tauh[iso]['sigma'],
+        trigger_eff_real_tauh[iso]['alpha'],
+        trigger_eff_real_tauh[iso]['n'],
+        trigger_eff_real_tauh[iso]['norm']
+    )
+    parameters['tt_ICHEP_80X_data_fakes_'+iso] = (
+        trigger_eff_highmt[iso]['m_{0}'],
+        trigger_eff_highmt[iso]['sigma'],
+        trigger_eff_highmt[iso]['alpha'],
+        trigger_eff_highmt[iso]['n'],
+        trigger_eff_highmt[iso]['norm']
+    )
+
+
 def effData(pt, eta):
-    return crystalballEfficiency(pt, parameters['tt_Spring16_80X_data_vtight'])
+    return crystalballEfficiency(pt, parameters['tt_ICHEP_80X_data_TightIso'])
 
 def effDataFakeTau(pt, eta):
-    return crystalballEfficiency(pt, parameters['tt_Spring16_80X_data_fakes_vtight'])
+    return crystalballEfficiency(pt, parameters['tt_ICHEP_80X_data_fakes_TightIso'])
 
 def effMC(pt, eta):
     return 1.

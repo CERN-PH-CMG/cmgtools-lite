@@ -133,6 +133,12 @@ class DiTau(DiObject):
         mt2 = self.mTLeg1()**2 + self.mTLeg2()**2 + self.calcMT(self.leg1(), self.leg2())**2
         return math.sqrt(mt2)
 
+    def mtSumLeptons(self):
+        return self.mTLeg1() + self.mTLeg2()
+
+    def mtSqSumLeptons(self):
+        return math.sqrt(self.mTLeg1()**2 + self.mTLeg2()**2)
+
     # Calculate the transverse mass with the same algorithm
     # as previously in the C++ DiObject class
     @staticmethod
@@ -302,11 +308,21 @@ class MuonElectron(DiTau):
         return self.ele
 
 
+class DirectTauTau(DirectDiTau):
+
+    def __init__(self, leg1, leg2, met):
+        self.leg1_ = leg1 if leg1.pt() > leg2.pt() else leg2
+        self.leg2_ = leg2 if leg1.pt() > leg2.pt() else leg1
+        self.met_ = met
+        self.p4_ = (leg1.p4() + leg2.p4())
+
+
 class TauTau(DiTau):
 
     def __init__(self, diobject, iso='byIsolationMVArun2v1DBoldDMwLTraw'):
         super(TauTau, self).__init__(diobject)
-        if super(TauTau, self).leg1().tauID(iso) > super(TauTau, self).leg2().tauID(iso):
+        # if super(TauTau, self).leg1().tauID(iso) > super(TauTau, self).leg2().tauID(iso):
+        if super(TauTau, self).leg1().pt() > super(TauTau, self).leg2().pt():
             self.tau = Tau(super(TauTau, self).leg1())
             self.tau2 = Tau(super(TauTau, self).leg2())
         else:
