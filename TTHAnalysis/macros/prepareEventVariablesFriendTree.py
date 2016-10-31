@@ -90,7 +90,7 @@ MODULES.append( ('leptonJetReCleanerSusyEWK3L', lambda : LeptonJetReCleaner("Min
                  ) ))
 
 # All jets, needed for tau fakes study
-MODULES.append( ('leptonJetReCleanerSusyEWK3LnoTauCleaning', lambda : LeptonJetReCleaner("Mini", 
+MODULES.append( ('leptonJetReCleanerNoCleanTausSusyEWK3L', lambda : LeptonJetReCleaner("Mini", 
                    lambda lep : lep.miniRelIso < 0.4 and _susyEWK_lepId_CBloose(lep) and _susyEWK_lepId_IPcuts(lep), 
                    lambda lep : lep.pt>10 and lep.conept>10 and (_susyEWK_lepId_MVAmedium(lep) or _susyEWK_lepId_MVAFO(lep)),
                    lambda lep,ht : lep.pt>10 and lep.conept>10 and (_susyEWK_lepId_MVAmedium(lep) or _susyEWK_lepId_MVAFO(lep)), # cuts applied on top of loose
