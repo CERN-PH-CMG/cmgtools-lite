@@ -197,40 +197,6 @@ float _puw2016_nTrueInt_13fb[60] = {0.0004627598152210959, 0.014334910915287028,
 float puw2016_nTrueInt_13fb(int nTrueInt) { if (nTrueInt<60) return _puw2016_nTrueInt_13fb[nTrueInt]; else return 0; }
 
 
-TFile* puw2016_ICHEP = NULL;
-TFile* puw2016_ICHEP_Up = NULL;
-TFile* puw2016_ICHEP_Dn = NULL;
-TH1F* _puw2016_nInt_ICHEP = NULL;
-TH1F* _puw2016_nInt_ICHEP_Up = NULL;
-TH1F* _puw2016_nInt_ICHEP_Dn = NULL;
-float puw2016_nInt_ICHEP(float nInt, int var=0) { 
-  
-  if (var==0) { 
-    if (!_puw2016_nInt_ICHEP){ 
-      puw2016_ICHEP = new TFile(CMSSW_BASE+"/src/CMGTools/TTHAnalysis/data/pileup/puWeights_12fb_63mb.root", "read");
-      _puw2016_nInt_ICHEP = (TH1F*) (puw2016_ICHEP->Get("puw"));
-    }
-    return _puw2016_nInt_ICHEP->GetBinContent(_puw2016_nInt_ICHEP->FindBin(nInt));
-  }
-  else if (var==1) { 
-    if (!puw2016_ICHEP_Up) {
-      puw2016_ICHEP_Up = new TFile(CMSSW_BASE+"/src/CMGTools/TTHAnalysis/data/pileup/puWeights_12fb_63mb_Up.root", "read");
-      _puw2016_nInt_ICHEP_Up = (TH1F*) (puw2016_ICHEP_Up->Get("puw"));
-    }
-    return _puw2016_nInt_ICHEP_Up->GetBinContent(_puw2016_nInt_ICHEP_Up->FindBin(nInt));
-  }
-  else if (var==-1) {
-    if (!puw2016_ICHEP_Dn) {
-      puw2016_ICHEP_Dn = new TFile(CMSSW_BASE+"/src/CMGTools/TTHAnalysis/data/pileup/puWeights_12fb_63mb_Down.root", "read");
-      _puw2016_nInt_ICHEP_Dn = (TH1F*) (puw2016_ICHEP_Dn->Get("puw"));
-    }
-    return _puw2016_nInt_ICHEP_Dn->GetBinContent(_puw2016_nInt_ICHEP_Dn->FindBin(nInt));
-  }
-  cout <<"[WARNING!!!]  don't know what to do with PUweight, please check!! ";
-  return -9999.;
-}
-
-
 float mass_3_cheap(float pt1, float eta1, float pt2, float eta2, float phi2, float pt3, float eta3, float phi3) {
     typedef ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<double> > PtEtaPhiMVector;
     PtEtaPhiMVector p41(pt1,eta1,0,   0.0);
