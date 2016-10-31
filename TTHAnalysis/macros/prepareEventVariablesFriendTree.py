@@ -280,7 +280,7 @@ def _runIt(myargs):
     friends += (options.friendTreesData if data else options.friendTreesMC)
     friends_ = [] # to make sure pyroot does not delete them
     for tf_tree,tf_file in friends:
-        tf = tb.AddFriend(tf_tree, tf_file.format(name=name, cname=name)),
+        tf = tb.AddFriend(tf_tree, tf_file.format(name=name, cname=name, P=args[0])),
         friends_.append(tf) # to make sure pyroot does not delete them
     nev = tb.GetEntries()
     if options.pretend:
