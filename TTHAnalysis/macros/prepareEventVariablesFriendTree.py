@@ -483,7 +483,7 @@ if options.queue:
     elif options.env == "psi":
         super  = "qsub -q {queue} -N friender".format(queue = options.queue)
         runner = "psibatch_runner.sh"
-    elif options.env == "oviedo" ):
+    elif options.env == "oviedo":
         if options.queue != "":
             options.queue = "batch" 
         super  = "qsub -q {queue} -N happyTreeFriend".format(queue = options.queue)
