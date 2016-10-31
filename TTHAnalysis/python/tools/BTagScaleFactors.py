@@ -256,6 +256,9 @@ class BTagScaleFactors(object):
 
             If unknown wp/syst/mtype/flavor, returns -1.0
         """
+
+        raise RuntimeError, 'BTagScaleFactors.py: some weights were observed to be set to zero. This should be fixed before the module can be used.'
+
         flavor_new = {5:0, 4:1, 0:2}.get(flavor, None)
         if flavor_new == None:
             if self.verbose>0:
