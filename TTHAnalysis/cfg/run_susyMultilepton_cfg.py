@@ -210,6 +210,14 @@ if analysis=="susy":
     susyMultilepton_collections.update({ # for conversion studies
             "selectedPhotons"    : NTupleCollection("PhoGood", photonTypeSusy, 10, help="Selected photons"),
             }) 
+elif analysis=='SOS':
+    # Soft lepton MVA
+    ttHCoreEventAna.doLeptonMVASoft = True
+    leptonTypeSusyExtraLight.addVariables([
+            NTupleVariable("mvaSoftT2tt",    lambda lepton : lepton.mvaValueSoftT2tt, help="Lepton MVA (Soft T2tt version)"),
+            NTupleVariable("mvaSoftEWK",    lambda lepton : lepton.mvaValueSoftEWK, help="Lepton MVA (Soft EWK version)"),
+            ])
+
 
 # Spring16 electron MVA - follow instructions on pull request for correct area setup
 leptonTypeSusy.addVariables([
