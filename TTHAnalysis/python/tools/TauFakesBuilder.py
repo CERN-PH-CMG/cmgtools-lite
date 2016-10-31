@@ -1,20 +1,8 @@
 from CMGTools.TTHAnalysis.treeReAnalyzer import *
-from CMGTools.TTHAnalysis.tools.leptonJetReCleaner import passMllTLVeto, passTripleMllVeto
 from ROOT import TFile,TH1F
 import ROOT, copy, os
 import array, math
 
-if "mt2_bisect_cc.so" not in ROOT.gSystem.GetLibraries():
-    if os.path.isdir('/pool/ciencias/' ):
-        ROOT.gROOT.LoadMacro("/pool/ciencias/HeppyTrees/RA7/additionalReferenceCode/mt2_bisect.cpp")
-        print "Loaded from Oviedo"
-    elif os.path.isdir('/mnt/t3nfs01/'):
-        ROOT.gROOT.LoadMacro("/mnt/t3nfs01/data01/shome/cheidegg/s/mT2code/mt2_bisect.cc")
-        print "Loaded from PSI"
-    else:
-        ROOT.gROOT.LoadMacro("/afs/cern.ch/user/c/cheidegg/public/mT2code/mt2_bisect.cc")
-
-from ROOT import mt2_bisect
 
 # FIXME: additional variables were once written to the LepSel but now commented in order
 # to keep the leptonBuilder from becoming too fat
