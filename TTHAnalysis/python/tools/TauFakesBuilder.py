@@ -97,7 +97,7 @@ class TauFakesBuilder:
         # not sure I really need to define tausFO
 
         ## Non-tau-cleaned jets
-        self.uncleanJets = [t            for t  in Collection(event, "leptonJetReCleanerSusyEWK3LnoTauCleaning", "nJet")]
+        self.uncleanJets = [t            for t  in Collection(event, "leptonJetReCleanerNoCleanTausSusyEWK3L", "nJet")]
         # jetsc[var] = [j for j in Collection(event,"Jet"+self.systsJEC[_var],"nJet"+self.systsJEC[_var])]
         # jetsd[var] = [j for j in Collection(event,"DiscJet"+self.systsJEC[_var],"nDiscJet"+self.systsJEC[_var])]
 
