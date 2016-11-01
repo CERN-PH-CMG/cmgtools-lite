@@ -8,7 +8,7 @@ from CMGTools.H2TauTau.tools.setupJSON import setupJSON
 # from CMGTools.H2TauTau.objects.jetreco_cff import addAK4Jets
 from CMGTools.H2TauTau.tools.setupOutput import addTauMuOutput, addTauEleOutput, addDiTauOutput, addMuEleOutput, addDiMuOutput
 from RecoMET.METPUSubtraction.MVAMETConfiguration_cff import runMVAMET
-
+from PhysicsTools.PatUtils.tools.runMETCorrectionsAndUncertainties import runMetCorAndUncFromMiniAOD
 
 # def loadLocalSqlite(process, sqliteFilename, tag='JetCorrectorParametersCollection_Spring16_25nsV3_DATA_AK4PFchs'):
 #     process.load("CondCore.CondDB.CondDB_cfi")
@@ -58,13 +58,6 @@ def createProcess(runOnMC=True, channel='tau-mu', runSVFit=False,
     process.load('Configuration.StandardSequences.GeometryRecoDB_cff')
     process.load('Configuration.StandardSequences.MagneticField_38T_cff')
 
-    # if runOnMC:
-    #     runMVAMET(process)
-    # 
-    # else:
-    runMVAMET(process, jetCollectionPF="patJetsReapplyJEC")
-
-    # loadLocalSqlite(process, 'Spring16_25nsV3_DATA.db') #os.environ['CMSSW_BASE'] + '/src/CMGTools/RootTools/data/jec/'
 
     from PhysicsTools.PatAlgos.producersLayer1.jetUpdater_cff import updatedPatJetCorrFactors
     process.patJetCorrFactorsReapplyJEC = updatedPatJetCorrFactors.clone(
@@ -83,6 +76,17 @@ def createProcess(runOnMC=True, channel='tau-mu', runSVFit=False,
         jetSource=cms.InputTag("slimmedJets"),
         jetCorrFactorsSource=cms.VInputTag(cms.InputTag("patJetCorrFactorsReapplyJEC"))
     )
+
+    # if runOnMC:
+    #     runMVAMET(process)
+    #
+    # else:
+    runMVAMET(process, jetCollectionPF="patJetsReapplyJEC")
+    runMetCorAndUncFromMiniAOD(process, isData=not runOnMC)
+
+    process.selectedVerticesForPFMEtCorrType0.src = cms.InputTag("offlineSlimmedPrimaryVertices")
+
+    # loadLocalSqlite(process, 'Spring16_25nsV3_DATA.db') #os.environ['CMSSW_BASE'] + '/src/CMGTools/RootTools/data/jec/'
 
     process.maxEvents = cms.untracked.PSet(input=cms.untracked.int32(-1))
 
@@ -183,6 +187,14 @@ def createProcess(runOnMC=True, channel='tau-mu', runSVFit=False,
     # load the channel paths -------------------------------------------
 
     process.MVAMET.requireOS = cms.bool(False)
+    process.MVAMET.srcMETs = cms.VInputTag(cms.InputTag("slimmedMETs", "", "PAT" if runOnMC else "RECO"),
+                                           cms.InputTag("patpfMET"),
+                                           cms.InputTag("patpfMETT1"),
+                                           cms.InputTag("patpfTrackMET"),
+                                           cms.InputTag("patpfNoPUMET"),
+                                           cms.InputTag("patpfPUCorrectedMET"),
+                                           cms.InputTag("patpfPUMET"),
+                                           cms.InputTag("slimmedMETsPuppi", "", "PAT" if runOnMC else "RECO"))
 
     if channel == 'tau-mu':
         process.load('CMGTools.H2TauTau.objects.tauMuObjectsMVAMET_cff')
@@ -331,7 +343,6 @@ def createProcess(runOnMC=True, channel='tau-mu', runSVFit=False,
 
     # from FWCore.ParameterSet.Utilities import convertToUnscheduled
     # convertToUnscheduled(process)
-
     return process
 
 # if __name__ == '__main__':
