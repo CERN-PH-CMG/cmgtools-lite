@@ -132,8 +132,8 @@ def train(allcuts, variables, dsets, options):
 
     #### gradient boosting
 
-    # factory.PrepareTrainingAndTestTree(allcuts, "!V") # check options                                                               
-    factory.BookMethod(ROOT.TMVA.Types.kBDT, 'BDTA_GRAD',
+    factory.PrepareTrainingAndTestTree(allcuts, "!V") # check options                                                               
+    factory.BookMethod(ROOT.TMVA.Types.kBDT, 'BDTG',
                                ':'.join([
                                '!H', # print help                                                                                     
                                '!V', # verbose                                                                                        
