@@ -11,10 +11,12 @@ kreator = ComponentCreator()
 dataDir = "$CMSSW_BASE/src/CMGTools/TTHAnalysis/data"  # use environmental variable, useful for instance to run on CRAB
 json=dataDir+'/json/Cert_271036-276097_13TeV_PromptReco_Collisions16_JSON_NoL1T_v2.txt'
 
+json_F=dataDir+'/json/json_DCSONLY_2016_08_10_F.txt' #only RunF
 #https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/
 #https://hypernews.cern.ch/HyperNews/CMS/get/physics-validation/2657.html
 #with recorded luminosity: 804.2/pb
 
+json_G=dataDir+'/json/Cert_278820-280385_13TeV_PromptReco_Collisions16_JSON_NoL1T_v2.txt' #only G
 
 #jetHT_0T = cfg.DataComponent(
 #    name = 'jetHT_0T',
@@ -88,9 +90,20 @@ dataSamples_Run2016C_v2 = [JetHT_Run2016C_PromptReco_v2, HTMHT_Run2016C_PromptRe
 #MuonEG_Run2016D_PromptReco_v2        = kreator.makeDataComponent("MuonEG_Run2016D_PromptReco_v2"        , "/MuonEG/Run2016D-PromptReco-v2/MINIAOD"        , "CMS", ".*root", json, run_range)
 #DoubleMuon_Run2016D_PromptReco_v2     = kreator.makeDataComponent("DoubleMuon_Run2016D_PromptReco_v2"    , "/DoubleMuon/Run2016D-PromptReco-v2/MINIAOD"    , "CMS", ".*root", json, run_range)
 #
-#JetHT_Run2016D_PromptReco_v2_HT800Only     = kreator.makeDataComponent("JetHT_Run2016D_PromptReco_v2_HT800Only"         , "/JetHT/Run2016D-PromptReco-v2/MINIAOD"         , "CMS", ".*root", json, run_range, triggers=['HLT_PFHT800_v*','HLT_PFHT400_v*'])
+JetHT_Run2016D_PromptReco_v2_HT800Only     = kreator.makeDataComponent("JetHT_Run2016D_PromptReco_v2_HT800Only"         , "/JetHT/Run2016D-PromptReco-v2/MINIAOD"         , "CMS", ".*root", json, run_range, triggers=['HLT_PFHT800_v*','HLT_PFHT400_v*'])
 #
 #dataSamples_Run2016D_v2 = [JetHT_Run2016D_PromptReco_v2, HTMHT_Run2016D_PromptReco_v2, MET_Run2016D_PromptReco_v2, SingleElectron_Run2016D_PromptReco_v2, SingleMuon_Run2016D_PromptReco_v2, SinglePhoton_Run2016D_PromptReco_v2, DoubleEG_Run2016D_PromptReco_v2, MuonEG_Run2016D_PromptReco_v2, DoubleMuon_Run2016D_PromptReco_v2, JetHT_Run2016D_PromptReco_v2_HT800Only]
+
+
+#JetHT_Run2016E_PromptReco_v2_HT800Only     = kreator.makeDataComponent("JetHT_Run2016E_PromptReco_v2_HT800Only"         , "/JetHT/Run2016E-PromptReco-v2/MINIAOD"         , "CMS", ".*root", json, run_range, triggers=['HLT_PFHT800_v*','HLT_PFHT400_v*'])
+JetHT_Run2016F_PromptReco_v1_HT800Only     = kreator.makeDataComponent("JetHT_Run2016F_PromptReco_v1_HT800Only"         , "/JetHT/Run2016F-PromptReco-v1/MINIAOD"         , "CMS", ".*root", json_F, (278308,999999), useAAA=True, triggers=['HLT_PFHT800_v*','HLT_PFHT400_v*'])
+
+SingleMuon_Run2016F_PromptReco_v1_IsoMu27Only     = kreator.makeDataComponent("SingleMuon_Run2016F_PromptReco_v1_IsoMu27Only"         , "/SingleMuon/Run2016F-PromptReco-v1/MINIAOD"         , "CMS", ".*root", json_F, (278308,999999), useAAA=True, triggers=['HLT_IsoMu27_v*'])
+
+JetHT_Run2016G_PromptReco_v1_HT800Only     = kreator.makeDataComponent("JetHT_Run2016G_PromptReco_v1_HT800Only"         , "/JetHT/Run2016G-PromptReco-v1/MINIAOD"         , "CMS", ".*root", json_G, (278308,999999), useAAA=True, triggers=['HLT_PFHT800_v*','HLT_PFHT400_v*'])
+
+SingleMuon_Run2016G_PromptReco_v1_IsoMu27Only     = kreator.makeDataComponent("SingleMuon_Run2016G_PromptReco_v1_IsoMu27Only"         , "/SingleMuon/Run2016G-PromptReco-v1/MINIAOD"         , "CMS", ".*root", json_G, (278308,999999), useAAA=True, triggers=['HLT_IsoMu27_v*'])
+
 
 ### ----------------------------- summary ----------------------------------------
 
