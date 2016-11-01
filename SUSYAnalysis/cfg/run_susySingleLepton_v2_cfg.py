@@ -121,14 +121,24 @@ triggerFlagsAna.triggerBits = {
   'HT350' : triggers_HT350,
   'HT600' : triggers_HT600,
   'HT800' : triggers_HT800,
+  'HT900' : triggers_HT900,
   'MET170' : triggers_MET170,
   'HT350MET120' : triggers_HT350MET120,
   'HT350MET100' : triggers_HT350MET100,
   'HTMET' : triggers_HT350MET100 + triggers_HT350MET120,
+  'PFJet450' : triggers_pfjet450,
+
+  ##MET test
+  'MET170_HBHE' : triggers_MET170_HBHECleaned,
+  'MET170_BH' : triggers_MET170_BeamHaloCleaned,
+  'MET170_HBHE_BH' : triggers_MET170_HBHE_BeamHaloCleaned,
+  'MET190_TypeOne_HBHE_BH' : triggers_METTypeOne190_HBHE_BeamHaloCleaned,
+  
   ## muon
   'SingleMu' : triggers_1mu,
   'IsoMu27' : triggers_1mu,
   'IsoMu20' : triggers_1mu20,
+  'IsoMu24' : triggers_1mu24,
   'Mu45eta2p1' : trigger_1mu_noiso_r,
   'Mu50' : trigger_1mu_noiso_w,
   'MuHT600' : triggers_mu_ht600,
@@ -146,6 +156,7 @@ triggerFlagsAna.triggerBits = {
   'IsoEle23' : triggers_1el23,
   'IsoEle22' : triggers_1el22,
   'Ele105' : trigger_1el_noiso,
+  'Ele115' : trigger_1el_noiso_115,
   'EleHT600' : triggers_el_ht600,
   'EleHT400MET70' : triggers_el_ht400_met70,
   'EleHT350MET70' : triggers_el_ht350_met70,
@@ -204,8 +215,8 @@ genAna.allGenTaus = True
 isData = True # default, but will be overwritten below
 
 #sample = 'MC'
-#sample = 'data'
-sample = 'Signal'
+sample = 'data'
+#sample = 'Signal'
 test = 0
 
 if sample == "MC":
@@ -351,9 +362,12 @@ elif sample == "data":
   from CMGTools.RootTools.samples.samples_13TeV_DATA2016 import *
 
   #  selectedComponents = [SingleElectron_Run2016B_PromptReco_v2, SingleMuon_Run2016B_PromptReco_v2, JetHT_Run2016B_PromptReco_v2_HT800Only]
-  selectedComponents = [JetHT_Run2016B_PromptReco_v2_HT800Only, JetHT_Run2016C_PromptReco_v2_HT800Only]#, JetHT_Run2016D_PromptReco_v2_HT800Only]
+#  selectedComponents = [JetHT_Run2016B_PromptReco_v2_HT800Only, JetHT_Run2016C_PromptReco_v2_HT800Only]#, JetHT_Run2016D_PromptReco_v2_HT800Only]
 #  selectedComponents = [JetHT_Run2016C_PromptReco_v2_HT800Only]#, JetHT_Run2016D_PromptReco_v2_HT800Only]
+  selectedComponents = [JetHT_Run2016F_PromptReco_v1_HT800Only]
+#  selectedComponents = [SingleMuon_Run2016F_PromptReco_v1_IsoMu27Only]
 
+  selectedComponents = [JetHT_Run2016G_PromptReco_v1_HT800Only]
 
   if test!=0 and jsonAna in susyCoreSequence: susyCoreSequence.remove(jsonAna)
   if test==1:
