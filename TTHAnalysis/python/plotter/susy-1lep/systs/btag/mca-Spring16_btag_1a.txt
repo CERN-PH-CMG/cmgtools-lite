@@ -1,0 +1,171 @@
+### CENTRAL
+# TTJets
+TTJets	: TTJets_DiLept		: xsec*TopPtWeight*TrigEff*btagSF : lheHTIncoming <= 600;
+TTJets	: TTJets_SingleLeptFromT		: xsec*TopPtWeight*TrigEff*btagSF : lheHTIncoming <= 600;
+TTJets	: TTJets_SingleLeptFromTbar		: xsec*TopPtWeight*TrigEff*btagSF : lheHTIncoming <= 600;
+TTJets	: TTJets_HT-600to800		: xsec*TopPtWeight*TrigEff*btagSF ;
+TTJets	: TTJets_HT-800to1200 	: xsec*TopPtWeight*TrigEff*btagSF ;
+TTJets	: TTJets_HT-1200to2500 	: xsec*TopPtWeight*TrigEff*btagSF ;
+TTJets	: TTJets_HT-2500toInf 	: xsec*TopPtWeight*TrigEff*btagSF ;
+# WJets
+#WJets	: WJetsToLNu_HT-100To200		: xsec*TopPtWeight*TrigEff*btagSF ;
+WJets	: WJetsToLNu_HT-200To400 	: xsec*TopPtWeight*TrigEff*btagSF ;
+WJets	: WJetsToLNu_HT-400To600 	: xsec*TopPtWeight*TrigEff*btagSF ;
+WJets	: WJetsToLNu_HT-600To800 	: xsec*TopPtWeight*TrigEff*btagSF ;
+WJets	: WJetsToLNu_HT-800To1200 	: xsec*TopPtWeight*TrigEff*btagSF ;
+WJets	: WJetsToLNu_HT-1200To2500 	: xsec*TopPtWeight*TrigEff*btagSF ;
+WJets	: WJetsToLNu_HT-2500ToInf 	: xsec*TopPtWeight*TrigEff*btagSF ;
+# Single Top
+SingleTop	: ST_t-channel_antitop_4f_leptonDecays_13TeV-powheg-pythia8	: xsec*TopPtWeight*TrigEff*btagSF ;
+SingleTop	: ST_t-channel_antitop_4f_leptonDecays_13TeV-powheg-pythia8	: xsec*TopPtWeight*TrigEff*btagSF ;
+SingleTop	: ST_s-channel_4f_leptonDecays_13TeV-amcatnlo-pythia8	 	: xsec*TopPtWeight*TrigEff*btagSF ;
+SingleTop	: ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8	 		: xsec*TopPtWeight*TrigEff*btagSF ;
+SingleTop	: ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8	 		: xsec*TopPtWeight*TrigEff*btagSF ;
+# DY
+DY	: DYJetsToLL_M-50_HT-100to200	: xsec*TopPtWeight*TrigEff*btagSF ;
+DY	: DYJetsToLL_M-50_HT-200to400 	: xsec*TopPtWeight*TrigEff*btagSF ;
+DY	: DYJetsToLL_M-50_HT-400to600 	: xsec*TopPtWeight*TrigEff*btagSF ;
+DY	: DYJetsToLL_M-50_HT-600toInf 	: xsec*TopPtWeight*TrigEff*btagSF ;
+# TTV
+TTV	: TTWJetsToLNu			: xsec*TopPtWeight*TrigEff*btagSF ;
+TTV	: TTWJetsToQQ 			: xsec*TopPtWeight*TrigEff*btagSF ;
+TTV	: TTZToLLNuNu 			: xsec*TopPtWeight*TrigEff*btagSF ;
+#TTV	: TTZToQQ 			: xsec*TopPtWeight*TrigEff*btagSF ;
+
+#### HEAVY FLAVOUR VARIATION
+### UP
+# TTJets
+TTJets_btagHF-Up	: TTJets_DiLept		: xsec*TopPtWeight*TrigEff*btagSF_b_up : lheHTIncoming <= 600;
+TTJets_btagHF-Up	: TTJets_SingleLeptFromT 		: xsec*TopPtWeight*TrigEff*btagSF_b_up : lheHTIncoming <= 600;
+TTJets_btagHF-Up	: TTJets_SingleLeptFromTbar 		: xsec*TopPtWeight*TrigEff*btagSF_b_up : lheHTIncoming <= 600;
+TTJets_btagHF-Up	: TTJets_HT-600to800		: xsec*TopPtWeight*TrigEff*btagSF_b_up ;
+TTJets_btagHF-Up	: TTJets_HT-800to1200 	: xsec*TopPtWeight*TrigEff*btagSF_b_up ;
+TTJets_btagHF-Up	: TTJets_HT-1200to2500 	: xsec*TopPtWeight*TrigEff*btagSF_b_up ;
+TTJets_btagHF-Up	: TTJets_HT-2500toInf 	: xsec*TopPtWeight*TrigEff*btagSF_b_up ;
+# WJets
+#WJets_btagHF-Up	: WJetsToLNu_HT-100To200		: xsec*TopPtWeight*TrigEff*btagSF_b_up ;
+WJets_btagHF-Up	: WJetsToLNu_HT-200To400 	: xsec*TopPtWeight*TrigEff*btagSF_b_up ;
+WJets_btagHF-Up	: WJetsToLNu_HT-400To600 	: xsec*TopPtWeight*TrigEff*btagSF_b_up ;
+WJets_btagHF-Up	: WJetsToLNu_HT-600To800 	: xsec*TopPtWeight*TrigEff*btagSF_b_up ;
+WJets_btagHF-Up	: WJetsToLNu_HT-800To1200 	: xsec*TopPtWeight*TrigEff*btagSF_b_up ;
+WJets_btagHF-Up	: WJetsToLNu_HT-1200To2500 	: xsec*TopPtWeight*TrigEff*btagSF_b_up ;
+WJets_btagHF-Up	: WJetsToLNu_HT-2500ToInf 	: xsec*TopPtWeight*TrigEff*btagSF_b_up ;
+# Single Top
+SingleTop_btagHF-Up	: ST_t-channel_antitop_4f_leptonDecays_13TeV-powheg-pythia8	: xsec*TopPtWeight*TrigEff*btagSF_b_up ;
+SingleTop_btagHF-Up	: ST_t-channel_antitop_4f_leptonDecays_13TeV-powheg-pythia8	: xsec*TopPtWeight*TrigEff*btagSF_b_up ;
+SingleTop_btagHF-Up	: ST_s-channel_4f_leptonDecays_13TeV-amcatnlo-pythia8	 	: xsec*TopPtWeight*TrigEff*btagSF_b_up ;
+SingleTop_btagHF-Up	: ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8	 		: xsec*TopPtWeight*TrigEff*btagSF_b_up ;
+SingleTop_btagHF-Up	: ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8	 		: xsec*TopPtWeight*TrigEff*btagSF_b_up ;
+# DY
+DY_btagHF-Up	: DYJetsToLL_M-50_HT-100to200	: xsec*TopPtWeight*TrigEff*btagSF_b_up ;
+DY_btagHF-Up	: DYJetsToLL_M-50_HT-200to400 	: xsec*TopPtWeight*TrigEff*btagSF_b_up ;
+DY_btagHF-Up	: DYJetsToLL_M-50_HT-400to600 	: xsec*TopPtWeight*TrigEff*btagSF_b_up ;
+DY_btagHF-Up	: DYJetsToLL_M-50_HT-600toInf 	: xsec*TopPtWeight*TrigEff*btagSF_b_up ;
+# TTV
+TTV_btagHF-Up	: TTWJetsToLNu			: xsec*TopPtWeight*TrigEff*btagSF_b_up ;
+TTV_btagHF-Up	: TTWJetsToQQ 			: xsec*TopPtWeight*TrigEff*btagSF_b_up ;
+TTV_btagHF-Up	: TTZToLLNuNu 			: xsec*TopPtWeight*TrigEff*btagSF_b_up ;
+#TTV_btagHF-Up	: TTZToQQ 			: xsec*TopPtWeight*TrigEff*btagSF_b_up ;
+
+### DOWN
+# TTJets
+TTJets_btagHF-Down	: TTJets_DiLept		: xsec*TopPtWeight*TrigEff*btagSF_b_down : lheHTIncoming <= 600;
+TTJets_btagHF-Down	: TTJets_SingleLeptFromT   	: xsec*TopPtWeight*TrigEff*btagSF_b_down : lheHTIncoming <= 600;
+TTJets_btagHF-Down	: TTJets_SingleLeptFromTbar   	: xsec*TopPtWeight*TrigEff*btagSF_b_down : lheHTIncoming <= 600;
+TTJets_btagHF-Down	: TTJets_HT-600to800		: xsec*TopPtWeight*TrigEff*btagSF_b_down ;
+TTJets_btagHF-Down	: TTJets_HT-800to1200 	: xsec*TopPtWeight*TrigEff*btagSF_b_down ;
+TTJets_btagHF-Down	: TTJets_HT-1200to2500 	: xsec*TopPtWeight*TrigEff*btagSF_b_down ;
+TTJets_btagHF-Down	: TTJets_HT-2500toInf 	: xsec*TopPtWeight*TrigEff*btagSF_b_down ;
+# WJets
+#WJets_btagHF-Down	: WJetsToLNu_HT-100To200		: xsec*TopPtWeight*TrigEff*btagSF_b_down ;
+WJets_btagHF-Down	: WJetsToLNu_HT-200To400 	: xsec*TopPtWeight*TrigEff*btagSF_b_down ;
+WJets_btagHF-Down	: WJetsToLNu_HT-400To600 	: xsec*TopPtWeight*TrigEff*btagSF_b_down ;
+WJets_btagHF-Down	: WJetsToLNu_HT-600To800 	: xsec*TopPtWeight*TrigEff*btagSF_b_down ;
+WJets_btagHF-Down	: WJetsToLNu_HT-800To1200 	: xsec*TopPtWeight*TrigEff*btagSF_b_down ;
+WJets_btagHF-Down	: WJetsToLNu_HT-1200To2500 	: xsec*TopPtWeight*TrigEff*btagSF_b_down ;
+WJets_btagHF-Down	: WJetsToLNu_HT-2500ToInf 	: xsec*TopPtWeight*TrigEff*btagSF_b_down ;
+# Single Top
+SingleTop_btagHF-Down	: ST_t-channel_antitop_4f_leptonDecays_13TeV-powheg-pythia8	: xsec*TopPtWeight*TrigEff*btagSF_b_down ;
+SingleTop_btagHF-Down	: ST_t-channel_antitop_4f_leptonDecays_13TeV-powheg-pythia8	: xsec*TopPtWeight*TrigEff*btagSF_b_down ;
+SingleTop_btagHF-Down	: ST_s-channel_4f_leptonDecays_13TeV-amcatnlo-pythia8	 	: xsec*TopPtWeight*TrigEff*btagSF_b_down ;
+SingleTop_btagHF-Down	: ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8	 		: xsec*TopPtWeight*TrigEff*btagSF_b_down ;
+SingleTop_btagHF-Down	: ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8	 		: xsec*TopPtWeight*TrigEff*btagSF_b_down ;
+# DY
+DY_btagHF-Down	: DYJetsToLL_M-50_HT-100to200	: xsec*TopPtWeight*TrigEff*btagSF_b_down ;
+DY_btagHF-Down	: DYJetsToLL_M-50_HT-200to400 	: xsec*TopPtWeight*TrigEff*btagSF_b_down ;
+DY_btagHF-Down	: DYJetsToLL_M-50_HT-400to600 	: xsec*TopPtWeight*TrigEff*btagSF_b_down ;
+DY_btagHF-Down	: DYJetsToLL_M-50_HT-600toInf 	: xsec*TopPtWeight*TrigEff*btagSF_b_down ;
+# TTV
+TTV_btagHF-Down	: TTWJetsToLNu			: xsec*TopPtWeight*TrigEff*btagSF_b_down ;
+TTV_btagHF-Down	: TTWJetsToQQ 			: xsec*TopPtWeight*TrigEff*btagSF_b_down ;
+TTV_btagHF-Down	: TTZToLLNuNu 			: xsec*TopPtWeight*TrigEff*btagSF_b_down ;
+#TTV_btagHF-Down	: TTZToQQ 			: xsec*TopPtWeight*TrigEff*btagSF_b_down ;
+
+#### LIGHT FLAVOUR VARIATION
+### UP
+# TTJets
+TTJets_btagLF-Up	: TTJets_DiLept		: xsec*TopPtWeight*TrigEff*btagSF_l_up : lheHTIncoming <= 600;
+TTJets_btagLF-Up	: TTJets_SingleLeptFromT   	: xsec*TopPtWeight*TrigEff*btagSF_l_up : lheHTIncoming <= 600;
+TTJets_btagLF-Up	: TTJets_SingleLeptFromTbar   	: xsec*TopPtWeight*TrigEff*btagSF_l_up : lheHTIncoming <= 600;
+TTJets_btagLF-Up	: TTJets_HT-600to800		: xsec*TopPtWeight*TrigEff*btagSF_l_up ;
+TTJets_btagLF-Up	: TTJets_HT-800to1200 	: xsec*TopPtWeight*TrigEff*btagSF_l_up ;
+TTJets_btagLF-Up	: TTJets_HT-1200to2500 	: xsec*TopPtWeight*TrigEff*btagSF_l_up ;
+TTJets_btagLF-Up	: TTJets_HT-2500toInf 	: xsec*TopPtWeight*TrigEff*btagSF_l_up ;
+# WJets
+#WJets_btagLF-Up	: WJetsToLNu_HT-100To200		: xsec*TopPtWeight*TrigEff*btagSF_l_up ;
+WJets_btagLF-Up	: WJetsToLNu_HT-200To400 	: xsec*TopPtWeight*TrigEff*btagSF_l_up ;
+WJets_btagLF-Up	: WJetsToLNu_HT-400To600 	: xsec*TopPtWeight*TrigEff*btagSF_l_up ;
+WJets_btagLF-Up	: WJetsToLNu_HT-600To800 	: xsec*TopPtWeight*TrigEff*btagSF_l_up ;
+WJets_btagLF-Up	: WJetsToLNu_HT-800To1200 	: xsec*TopPtWeight*TrigEff*btagSF_l_up ;
+WJets_btagLF-Up	: WJetsToLNu_HT-1200To2500 	: xsec*TopPtWeight*TrigEff*btagSF_l_up ;
+WJets_btagLF-Up	: WJetsToLNu_HT-2500ToInf 	: xsec*TopPtWeight*TrigEff*btagSF_l_up ;
+# Single Top
+SingleTop_btagLF-Up	: ST_t-channel_antitop_4f_leptonDecays_13TeV-powheg-pythia8	: xsec*TopPtWeight*TrigEff*btagSF_l_up ;
+SingleTop_btagLF-Up	: ST_t-channel_antitop_4f_leptonDecays_13TeV-powheg-pythia8	: xsec*TopPtWeight*TrigEff*btagSF_l_up ;
+SingleTop_btagLF-Up	: ST_s-channel_4f_leptonDecays_13TeV-amcatnlo-pythia8	 	: xsec*TopPtWeight*TrigEff*btagSF_l_up ;
+SingleTop_btagLF-Up	: ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8	 		: xsec*TopPtWeight*TrigEff*btagSF_l_up ;
+SingleTop_btagLF-Up	: ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8	 		: xsec*TopPtWeight*TrigEff*btagSF_l_up ;
+# DY
+DY_btagLF-Up	: DYJetsToLL_M-50_HT-100to200	: xsec*TopPtWeight*TrigEff*btagSF_l_up ;
+DY_btagLF-Up	: DYJetsToLL_M-50_HT-200to400 	: xsec*TopPtWeight*TrigEff*btagSF_l_up ;
+DY_btagLF-Up	: DYJetsToLL_M-50_HT-400to600 	: xsec*TopPtWeight*TrigEff*btagSF_l_up ;
+DY_btagLF-Up	: DYJetsToLL_M-50_HT-600toInf 	: xsec*TopPtWeight*TrigEff*btagSF_l_up ;
+# TTV
+TTV_btagLF-Up	: TTWJetsToLNu			: xsec*TopPtWeight*TrigEff*btagSF_l_up ;
+TTV_btagLF-Up	: TTWJetsToQQ 			: xsec*TopPtWeight*TrigEff*btagSF_l_up ;
+TTV_btagLF-Up	: TTZToLLNuNu 			: xsec*TopPtWeight*TrigEff*btagSF_l_up ;
+#TTV_btagLF-Up	: TTZToQQ 			: xsec*TopPtWeight*TrigEff*btagSF_l_up ;
+
+### DOWN
+# TTJets
+TTJets_btagLF-Down	: TTJets_DiLept		: xsec*TopPtWeight*TrigEff*btagSF_l_down : lheHTIncoming <= 600;
+TTJets_btagLF-Down	: TTJets_SingleLeptFromT		: xsec*TopPtWeight*TrigEff*btagSF_l_down : lheHTIncoming <= 600;
+TTJets_btagLF-Down	: TTJets_SingleLeptFromTbar		: xsec*TopPtWeight*TrigEff*btagSF_l_down : lheHTIncoming <= 600;
+TTJets_btagLF-Down	: TTJets_HT-600to800		: xsec*TopPtWeight*TrigEff*btagSF_l_down ;
+TTJets_btagLF-Down	: TTJets_HT-800to1200 	: xsec*TopPtWeight*TrigEff*btagSF_l_down ;
+TTJets_btagLF-Down	: TTJets_HT-1200to2500 	: xsec*TopPtWeight*TrigEff*btagSF_l_down ;
+TTJets_btagLF-Down	: TTJets_HT-2500toInf 	: xsec*TopPtWeight*TrigEff*btagSF_l_down ;
+# WJets
+#WJets_btagLF-Down	: WJetsToLNu_HT-100To200		: xsec*TopPtWeight*TrigEff*btagSF_l_down ;
+WJets_btagLF-Down	: WJetsToLNu_HT-200To400 	: xsec*TopPtWeight*TrigEff*btagSF_l_down ;
+WJets_btagLF-Down	: WJetsToLNu_HT-400To600 	: xsec*TopPtWeight*TrigEff*btagSF_l_down ;
+WJets_btagLF-Down	: WJetsToLNu_HT-600To800 	: xsec*TopPtWeight*TrigEff*btagSF_l_down ;
+WJets_btagLF-Down	: WJetsToLNu_HT-800To1200 	: xsec*TopPtWeight*TrigEff*btagSF_l_down ;
+WJets_btagLF-Down	: WJetsToLNu_HT-1200To2500 	: xsec*TopPtWeight*TrigEff*btagSF_l_down ;
+WJets_btagLF-Down	: WJetsToLNu_HT-2500ToInf 	: xsec*TopPtWeight*TrigEff*btagSF_l_down ;
+# Single Top
+SingleTop_btagLF-Down	: ST_t-channel_antitop_4f_leptonDecays_13TeV-powheg-pythia8	: xsec*TopPtWeight*TrigEff*btagSF_l_down ;
+SingleTop_btagLF-Down	: ST_t-channel_antitop_4f_leptonDecays_13TeV-powheg-pythia8	: xsec*TopPtWeight*TrigEff*btagSF_l_down ;
+SingleTop_btagLF-Down	: ST_s-channel_4f_leptonDecays_13TeV-amcatnlo-pythia8	 	: xsec*TopPtWeight*TrigEff*btagSF_l_down ;
+SingleTop_btagLF-Down	: ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8	 		: xsec*TopPtWeight*TrigEff*btagSF_l_down ;
+SingleTop_btagLF-Down	: ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8	 		: xsec*TopPtWeight*TrigEff*btagSF_l_down ;
+# DY
+DY_btagLF-Down	: DYJetsToLL_M-50_HT-100to200	: xsec*TopPtWeight*TrigEff*btagSF_l_down ;
+DY_btagLF-Down	: DYJetsToLL_M-50_HT-200to400 	: xsec*TopPtWeight*TrigEff*btagSF_l_down ;
+DY_btagLF-Down	: DYJetsToLL_M-50_HT-400to600 	: xsec*TopPtWeight*TrigEff*btagSF_l_down ;
+DY_btagLF-Down	: DYJetsToLL_M-50_HT-600toInf 	: xsec*TopPtWeight*TrigEff*btagSF_l_down ;
+# TTV
+TTV_btagLF-Down	: TTWJetsToLNu			: xsec*TopPtWeight*TrigEff*btagSF_l_down ;
+TTV_btagLF-Down	: TTWJetsToQQ 			: xsec*TopPtWeight*TrigEff*btagSF_l_down ;
+TTV_btagLF-Down	: TTZToLLNuNu 			: xsec*TopPtWeight*TrigEff*btagSF_l_down ;
+#TTV_btagLF-Down	: TTZToQQ 			: xsec*TopPtWeight*TrigEff*btagSF_l_down ;

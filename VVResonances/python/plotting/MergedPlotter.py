@@ -115,9 +115,9 @@ class MergedPlotter(PlotterBase):
         h.GetXaxis().SetTitle(titlex+ " ["+unitsx+"]")
         return h
 
-    def makeDataSet(self,var,cut):
-        data=self.plotters[0].makeDataSet(var,cut)
+    def makeDataSet(self,var,cut,maxN):
+        data=self.plotters[0].makeDataSet(var,cut,maxN)
         for i in range(1,len(self.plotters)):
-            data.append(self.plotters[i].makeDataSet(var,cut))
+            data.append(self.plotters[i].makeDataSet(var,cut,maxN))
         return data
     

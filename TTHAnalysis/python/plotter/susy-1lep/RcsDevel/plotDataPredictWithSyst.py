@@ -26,7 +26,7 @@ def scaleToHist(hists, hRef):
 
 if __name__ == "__main__":
 
-    yp.CMS_lumi.lumi_13TeV = str(2.2) + " fb^{-1}"
+    yp.CMS_lumi.lumi_13TeV = str(12.9) + " fb^{-1}"
     yp.CMS_lumi.extraText = "Preliminary"
 
     #yp.CMS_lumi.lumi_13TeV = "MC"
@@ -130,7 +130,7 @@ if __name__ == "__main__":
     yds.addFromFiles(pattern,("lep","sele"))
     yds.showStats()
 
-    mcSamps = ['DY','TTV','SingleT','WJets','TT']
+    mcSamps = ['DY','TTV','SingleT','WJets','TTsemiLep','TTdiLep']
     #mcSamps = ['EWK']
 
     # update colors
@@ -183,9 +183,12 @@ if __name__ == "__main__":
     # Ratio
     #ratio = yp.getRatio(hTotal,hDataPred)
     ratio = yp.getRatio(hData,hDataPred)
-    ratioPois = yp.getRatio(hDataPois,hDataPred)
-
+    #ratioPois = yp.getRatio(hDataPois,hDataPred)
     hPredUnc = yp.getRatio(hDataPred,hDataPred)
+
+    # Pull
+    pull = yp.getPull(hData,hDataPred)
+
     col = yp.kGray
     hPredUnc.SetName("PredictionUncertainty")
     hPredUnc.SetLineColor(1)
@@ -196,6 +199,7 @@ if __name__ == "__main__":
     hPredUnc.SetMarkerStyle(0)
     hPredUnc.GetYaxis().SetTitle(ratio.GetYaxis().GetTitle())
     hPredUnc.GetYaxis().SetRangeUser(0,3.9)
+    #hPredUnc.GetYaxis().SetRangeUser(-2.9,2.9)
 
     # set error
     for i in xrange(1,hPredUnc.GetNbinsX()+1):
@@ -204,12 +208,13 @@ if __name__ == "__main__":
     #### Drawing
     logY = True
     #logY = False
-    cname = "Data_2p24fb_"+mask
+    cname = "DataPredict_wPull_"+mask
     hists = [mcStack,hUncert,hDataPois]
-    ratios = [hPredUnc,ratioPois]
+    #ratios = [hPredUnc,ratioPois]
+    ratios = pull
 
     #canv = yp.plotHists("SR_MB_Prediction",[mcStack,hTotal,hDataPred,hDataPois],[hPredUnc,ratioPois],'TM', 1200, 600, logY = logY)
-    canv = yp.plotHists("SR_MB_Prediction",hists,ratios,'TM', 1200, 600, logY = logY)
+    canv = yp.plotHists("SR_MB_Prediction",hists,ratios,'TRC', 1000, 600, logY = logY, nCols = 2)
 
     canv.SetName(cname + canv.GetName())
 
@@ -223,7 +228,7 @@ if __name__ == "__main__":
     exts = [".pdf",".png",".root"]
     #exts = [".pdf"]
 
-    odir = "BinPlots/Data/JECv7/fixSR_poisErr/allSF_noPU/Method1A/"
+    odir = "BinPlots/DataPred/lumi12p9fb/"
     #odir = "BinPlots/Syst/btag/hadronFlavour/allSF_noPU/Method1B/"
     if not os.path.isdir(odir): os.makedirs(odir)
 

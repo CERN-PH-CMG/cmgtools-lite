@@ -9,7 +9,7 @@ XOR: !isData || (isData && ((PD_SingleEle && nEl==1) || (PD_SingleMu && nMu==1))
 #use this flag for 2016 (from friend trees)
 Filters: !isData || METfilters == 1
 
-nJetBase: nJets30Clean >= 5
+#nJetBase: nJets30Clean >= 5
 2.JetPt > 80: Jet2_pt > 80
 triggHT: HT > 500
 triggLT: LT > 250
@@ -17,4 +17,5 @@ triggLT: LT > 250
 
 nbjets >= 1: nBJet >= 1
 njets >=6: nJets30Clean >= 6
+#njets <6: nJets30Clean < 6
 

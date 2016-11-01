@@ -92,14 +92,14 @@ def get2DHistsFromTree(tree, tvar = ('MET','HT'), refTrig = '', cuts = '', testT
     elif lumi > 0:
         # make lumi label for data
         doLumi = False
-        CMS_lumi.lumi_13TeV = str(lumi) + " pb^{-1}"
+        CMS_lumi.lumi_13TeV = str(lumi) + " fb^{-1}"
         CMS_lumi.extraText = "Preliminary"
         hRef.GetYaxis().SetTitle('Events')
     elif lumi < 0:
         # do lumi scaling for MC
         doLumi = True
         lumi = abs(lumi)
-        CMS_lumi.lumi_13TeV = str(lumi) + " pb^{-1}"
+        CMS_lumi.lumi_13TeV = str(lumi) + " fb^{-1}"
         CMS_lumi.extraText = "Simulation"
         hRef.GetYaxis().SetTitle('Events')
 
@@ -284,10 +284,10 @@ def make2DEffPlots(tree, lumi = -1, maxEntries = -1, varList = [], refTrig = '',
         lumiDir = 'MC/LumiMC/'
     elif lumi < 0:
         # scaled MC
-        lumiDir = 'MC/Lumi'+str(-lumi).replace('.','p')+'pb/'
+        lumiDir = 'MC/Lumi'+str(-lumi).replace('.','p')+'fb/'
     elif lumi > 0:
         # data
-        lumiDir = 'Data/Lumi'+str(lumi).replace('.','p')+'pb/'
+        lumiDir = 'Data/Lumi'+str(lumi).replace('.','p')+'fb/'
 
     # make suffix from testTrigNames
     #suffix = 'test'
@@ -505,30 +505,32 @@ if __name__ == "__main__":
     ###################
 
     # define base cuts like filters
-    basecut = ''
+    #basecut = ''
+    basecuts = 'passFilters && nLep == 1 &&'
+    basecuts += 'Selected == 1 &&'
 
     if 'JetHT' in fileName:
 
         #lumi = 42.0
         if '147pb' in fileName:
             lumi = 147.0
-        elif '804pb' in fileName:
-            lumi = 804
-        elif '1260pb' in fileName:
-            lumi = 1260
+        elif '2p3' in fileName:
+            lumi = 2.3
 
         ## LepPt vs MET
         var = ('MET','Lep_pt')
         varList = [var]
-        refTrig = ''#HT800'
+        #refTrig = ''#HT800'
+        #refTrig = 'HLT_HT800'
+        refTrig = 'HT800'
 
         ## Muons
-        cuts = 'Selected == 1 && nMu >= 1 && Lep_pt > 25 && HT > 500'
+        cuts = basecuts + 'nMu >= 1 && Lep_pt > 25 && HT > 500'
         testTrig = ['Mu50||MuHT350MET50','MuHT350']#,'Mu50','MuHT350MET70']
         make2DEffPlots(tree, lumi, maxEntries, varList, refTrig, testTrig, cuts)
 
         ## Electrons
-        cuts = 'Selected == 1 && nEl >= 1 && Lep_pt > 25 && HT > 500'
+        cuts = basecuts + 'nEl >= 1 && Lep_pt > 25 && HT > 500'
         testTrig = ['Ele105||EleHT350MET50','EleHT350']#,'Ele105','EleHT350MET70']
         make2DEffPlots(tree, lumi, maxEntries, varList, refTrig, testTrig, cuts)
 
@@ -538,7 +540,7 @@ if __name__ == "__main__":
         refTrig = 'HT350MET100'#HT800'
 
         ## Electrons
-        cuts = 'Selected == 1 && nEl >= 1 && Lep_pt > 25'# && HT > 400'
+        cuts = basecuts + 'nEl >= 1 && Lep_pt > 25'# && HT > 400'
         #testTrig = ['Ele105']
         testTrig = ['EleHT350']
         #make2DEffPlots(tree, lumi, maxEntries, varList, refTrig, testTrig, cuts)

@@ -2,6 +2,8 @@ import ROOT
 import math
 from TreePlotter import TreePlotter
 
+
+
 def convertToPoisson(h):
     graph = ROOT.TGraphAsymmErrors()
     q = (1-0.6827)/2.
@@ -48,24 +50,24 @@ class StackPlotter(object):
         self.labels.append(label)
         self.names.append(name)
 
-    def drawStack(self,var,cut,lumi,bins,mini,maxi,titlex = "", units = ""):
+    def drawStack(self,var,cut,lumi,bins,mini,maxi,titlex = "", units = "",expandY=0.0):
         canvas = ROOT.TCanvas("canvas","")
-        ROOT.gStyle.SetOptStat(0)
-        ROOT.gStyle.SetOptTitle(0)
-        canvas.Range(-68.75,-7.5,856.25,42.5)
-        canvas.SetFillColor(0)
-        canvas.SetBorderMode(0)
-        canvas.SetBorderSize(2)
-        canvas.SetTickx(1)
-        canvas.SetTicky(1)
-        canvas.SetLeftMargin(0.15)
+#        ROOT.gStyle.SetOptStat(0)
+#        ROOT.gStyle.SetOptTitle(0)
+#        canvas.Range(-68.75,-7.5,856.25,42.5)
+#        canvas.SetFillColor(0)
+#        canvas.SetBorderMode(0)
+#        canvas.SetBorderSize(2)
+#        canvas.SetTickx(1)
+#        canvas.SetTicky(1)
+#        canvas.SetLeftMargin(0.15)
         canvas.SetRightMargin(0.05)
-        canvas.SetTopMargin(0.05)
-        canvas.SetBottomMargin(0.15)
-        canvas.SetFrameFillStyle(0)
-        canvas.SetFrameBorderMode(0)
-        canvas.SetFrameFillStyle(0)
-        canvas.SetFrameBorderMode(0)
+#        canvas.SetTopMargin(0.05)
+#        canvas.SetBottomMargin(0.15)
+#        canvas.SetFrameFillStyle(0)
+#        canvas.SetFrameBorderMode(0)
+#        canvas.SetFrameFillStyle(0)
+#        canvas.SetFrameBorderMode(0)
 
 
         canvas.cd()
@@ -115,27 +117,27 @@ class StackPlotter(object):
             datamax = stack.GetMaximum()
 
         if not self.log:
-            frame = canvas.DrawFrame(mini,0.0,maxi,max(stack.GetMaximum(),datamax)*1.20)
+            frame = canvas.DrawFrame(mini,0.0,maxi,max(stack.GetMaximum(),datamax)*(1.20+expandY*0.3))
         else:    
             frame = canvas.DrawFrame(mini,0.1,maxi,max(stack.GetMaximum(),datamax)*100)
 
-        frame.GetXaxis().SetLabelFont(42)
-        frame.GetXaxis().SetLabelOffset(0.007)
-        frame.GetXaxis().SetLabelSize(0.045)
+#        frame.GetXaxis().SetLabelFont(42)
+#        frame.GetXaxis().SetLabelOffset(0.007)
+#        frame.GetXaxis().SetLabelSize(0.045)
         frame.GetXaxis().SetTitleSize(0.05)
-        frame.GetXaxis().SetTitleOffset(1.15)
-        frame.GetXaxis().SetTitleFont(42)
-        frame.GetYaxis().SetLabelFont(42)
-        frame.GetYaxis().SetLabelOffset(0.007)
-        frame.GetYaxis().SetLabelSize(0.045)
+#        frame.GetXaxis().SetTitleOffset(1.15)
+#        frame.GetXaxis().SetTitleFont(42)
+#        frame.GetYaxis().SetLabelFont(42)
+#        frame.GetYaxis().SetLabelOffset(0.007)
+#        frame.GetYaxis().SetLabelSize(0.045)
         frame.GetYaxis().SetTitleSize(0.05)
-        frame.GetYaxis().SetTitleOffset(1.4)
-        frame.GetYaxis().SetTitleFont(42)
-        frame.GetZaxis().SetLabelFont(42)
-        frame.GetZaxis().SetLabelOffset(0.007)
-        frame.GetZaxis().SetLabelSize(0.045)
-        frame.GetZaxis().SetTitleSize(0.05)
-        frame.GetZaxis().SetTitleFont(42)
+#        frame.GetYaxis().SetTitleOffset(1.4)
+#        frame.GetYaxis().SetTitleFont(42)
+#        frame.GetZaxis().SetLabelFont(42)
+#        frame.GetZaxis().SetLabelOffset(0.007)
+#        frame.GetZaxis().SetLabelSize(0.045)
+#        frame.GetZaxis().SetTitleSize(0.05)
+#        frame.GetZaxis().SetTitleFont(42)
 
 
         if len(units)>0:
@@ -176,7 +178,7 @@ class StackPlotter(object):
         legend.Draw()
         if self.log:
             canvas.SetLogy()
-        canvas.SetLeftMargin(canvas.GetLeftMargin()*1.15)
+#       canvas.SetLeftMargin(canvas.GetLeftMargin()*1.15)
         canvas.Update()
 
 
@@ -191,27 +193,8 @@ class StackPlotter(object):
             if background>0.0:
                 print "Data/Bkg= {ratio} +- {err}".format(ratio=integral/background,err=math.sqrt(error*error/(background*background)+integral*integral*backgroundErr/(background*background*background*background)))
 
-	pt =ROOT.TPaveText(0.1577181,0.9562937,0.9580537,0.9947552,"brNDC")
-	pt.SetBorderSize(0)
-	pt.SetTextAlign(12)
-	pt.SetFillStyle(0)
-	pt.SetTextFont(42)
-	pt.SetTextSize(0.03)
-	text = pt.AddText(0.01,0.3,"CMS Preliminary")
-#	text = pt.AddText(0.25,0.3,"#sqrt{s} = 7 TeV, L = 5.1 fb^{-1}  #sqrt{s} = 8 TeV, L = 19.7 fb^{-1}")
-	text = pt.AddText(0.25,0.3,"#sqrt{s} = 13 TeV")
-	pt.Draw()   
-        
 
-#        latex1 = ROOT.TLatex(frame.GetXaxis().GetXmin()*1.01,frame.GetYaxis().GetXmax()*1.01,'CMS Preliminary 2011-2012, #sqrt{s} = 7+8 TeV')
-#        latex1.SetTextSize(0.037)
-#        latex1.Draw()
-
-        plot={'canvas':canvas,'stack':stack,'legend':legend,'data':data,'dataG':dataG,'latex1':pt}
-
-
-        
-
+        plot={'canvas':canvas,'stack':stack,'legend':legend,'data':data,'dataG':dataG}
         canvas.RedrawAxis()
         canvas.Update()
 

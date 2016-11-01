@@ -167,7 +167,10 @@ def writeBins(ofname, srcdir, binnames):
 
         srcfname = srcdir+binnames[idx]+'.yields.root'
         if not os.path.exists(srcfname):
-            print 'Could not find src file', os.path.basename(srcfname)
+            if 'DL' in dname:
+                print 'DL', os.path.basename(srcfname)
+            else:
+                print 'Could not find src file', os.path.basename(srcfname)
             continue
 
         tfile = TFile(srcfname,"READ")

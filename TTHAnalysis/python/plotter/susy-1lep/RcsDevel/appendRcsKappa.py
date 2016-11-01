@@ -138,8 +138,8 @@ def getQCDsubtrHistos(tfile, sample = "background", band = "CR_MB/", isMC = True
 
     fRatios = {}
 
-    if isMC: fRatios = readQCDratios("fRatios_MC_lumi2p1.txt")
-    else: fRatios = readQCDratios("fRatios_Data_lumi3p99.txt")
+    if isMC: fRatios = readQCDratios("fratios_7p7_mc.txt")
+    else: fRatios = readQCDratios("fRatios_Data_lumi12p88.txt")
 
     # read bin name
     binString = tfile.Get(band+"BinName")

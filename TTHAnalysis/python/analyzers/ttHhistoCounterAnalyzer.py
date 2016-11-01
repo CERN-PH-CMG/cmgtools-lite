@@ -32,7 +32,9 @@ class ttHhistoCounterAnalyzer( Analyzer ):
         self.counters.addCounter('pairs')
         count = self.counters.counter('pairs')
         count.register('all events')
+        self.outputDir = None
         if "outputfile" in setup.services :
+            self.outputDir = setup.services["outputfile"].file
             setup.services["outputfile"].file.cd()
             self.inputCounter = ROOT.TH1D("Count","Count",1,0,2)
             if self.cfg_comp.isMC:
@@ -47,6 +49,8 @@ class ttHhistoCounterAnalyzer( Analyzer ):
         self.inputCounterSMS = ROOT.TH3D("CountSMS","CountSMS",int(self.maxSMSmass+1),-0.5,self.maxSMSmass+0.5,int(self.maxSMSmass+1),-0.5,self.maxSMSmass+0.5,1,0,2)
 #        if self.doLHE: self.inputLHESMS = ROOT.TH3D("CountLHESMS","CountLHESMS",int(self.maxSMSmass+1),-0.5,self.maxSMSmass+0.5,int(self.maxSMSmass+1),-0.5,self.maxSMSmass+0.5,10001,-0.5,10000.5) ### too big!
         self.inputGenWeightsSMS = ROOT.TH3D("SumGenWeightsSMS","SumGenWeightsSMS",int(self.maxSMSmass+1),-0.5,self.maxSMSmass+0.5,int(self.maxSMSmass+1),-0.5,self.maxSMSmass+0.5,1,0,2)        
+        self.inputGenWeightsSMS.SetDirectory(self.outputDir)
+        self.inputCounterSMS.SetDirectory(self.outputDir)
         self.massfill1 = getattr(self.cfg_ana, 'SMS_mass_1', 'genSusyMScan1')
         self.massfill2 = getattr(self.cfg_ana, 'SMS_mass_2', 'genSusyMScan2')
         self.masses_to_track = [self.massfill1,self.massfill2]

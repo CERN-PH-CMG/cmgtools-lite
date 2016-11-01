@@ -12,16 +12,22 @@ class RooPlotter(object):
         self.w.var(var).setVal(val)
         self.w.var(var).setConstant(1)
 
-    def prefit(self,model="s",weighted=False):
-        self.fitResult = self.w.pdf("model_"+model).fitTo(self.w.data("data_obs"),ROOT.RooFit.NumCPU(8),ROOT.RooFit.SumW2Error(weighted))
-    
+    def prefit(self,model="s",minos=0,weighted=False,verbose=0):
+        self.fitResult = self.w.pdf("model_"+model).fitTo(self.w.data("data_obs"),ROOT.RooFit.NumCPU(8),ROOT.RooFit.SumW2Error(weighted),ROOT.RooFit.Minos(minos),ROOT.RooFit.Verbose(verbose),ROOT.RooFit.Save(1))
+
+    def fitToy(self,model,toyFile,toy):
+        self.fT=ROOT.TFile(toyFile)
+        self.toydata = self.fT.Get("toy_"+str(toy))
+        self.fitResult = self.w.pdf("model_"+model).fitTo(self.toydata,ROOT.RooFit.NumCPU(8))
 
         
-    def addContribution(self,contrib,signal,description,linewidth,lineStyle,lineColor,fillStyle,fillColor):
-        self.contributions.append({'name':contrib,'signal':signal,'description':description,'linewidth':linewidth,'linestyle':lineStyle,'linecolor':lineColor,'fillstyle':fillStyle,'fillcolor':fillColor}) 
+    def addContribution(self,contrib,signal,description,linewidth,lineStyle,lineColor,fillStyle,fillColor,suffix=""):
+        self.contributions.append({'name':contrib,'signal':signal,'description':description,'linewidth':linewidth,'linestyle':lineStyle,'linecolor':lineColor,'fillstyle':fillStyle,'fillcolor':fillColor,'suffix':suffix}) 
 
 
-    def drawStack(self,var,varDesc,cat,suffix,cut="",visualizeError = False):
+    def drawStack(self,var,varDesc,cat,cut="",blinded=False,log=False):
+        self.canvas=ROOT.TCanvas("c")
+        self.canvas.cd()
         #make frame
         self.frame=self.w.var(var).frame()
         #plot data 
@@ -30,43 +36,30 @@ class RooPlotter(object):
         else:
             dataset=self.w.data("data_obs").reduce("CMS_channel==CMS_channel::"+cat)
 
-        dataset.plotOn(self.frame,ROOT.RooFit.Cut("CMS_channel==CMS_channel::"+cat))
+        dataset.plotOn(self.frame,ROOT.RooFit.Cut("CMS_channel==CMS_channel::"+cat),ROOT.RooFit.Name("datapoints"),ROOT.RooFit.Invisible())
+
         #OK now stack for each curve add all the others
-        
+       
         errorVisualized=False
 
         for i in range(0,len(self.contributions)):
             data = self.contributions[i]
+            print 'Plotting ',data['name']
             names=[]
             for j in range(i,len(self.contributions)):
                 if self.contributions[j]['signal']:
-                    names.append('shapeSig_'+self.contributions[j]['name']+"_"+cat)
+                    names.append('shapeSig_'+self.contributions[j]['name']+"_"+cat+self.contributions[j]['suffix'])
                 else:
-                    names.append('shapeBkg_'+self.contributions[j]['name']+"_"+cat)
+                    names.append('shapeBkg_'+self.contributions[j]['name']+"_"+cat+self.contributions[j]['suffix'])
 
-#            self.w.pdf("model_s").plotOn(self.frame,ROOT.RooFit.Slice(self.w.cat("CMS_channel"),cat),ROOT.RooFit.Components(",".join(names)),ROOT.RooFit.ProjWData(dataset),ROOT.RooFit.Name(data['name']+"1"),ROOT.RooFit.LineStyle(data['linestyle']),\
-#                                             ROOT.RooFit.LineColor(data['linecolor']),ROOT.RooFit.FillStyle(data['fillstyle']),ROOT.RooFit.FillColor(data['fillcolor']),ROOT.RooFit.DrawOption("F"))
+            self.w.pdf("model_s").plotOn(self.frame,ROOT.RooFit.Slice(self.w.cat("CMS_channel"),cat),ROOT.RooFit.Components(",".join(names)),ROOT.RooFit.ProjWData(ROOT.RooArgSet(self.w.var("MLNuJ")),dataset),ROOT.RooFit.Name(data['name']),ROOT.RooFit.Invisible())
+            curve=self.frame.getCurve(data['name'])
+            curve.SetLineColor(data['linecolor'])
+            curve.SetLineWidth(data['linewidth'])
+            curve.SetLineStyle(data['linestyle'])
+            curve.SetFillColor(data['fillcolor'])
+            curve.SetFillStyle(data['fillstyle'])
 
-            self.w.pdf("model_s").plotOn(self.frame,ROOT.RooFit.Slice(self.w.cat("CMS_channel"),cat),ROOT.RooFit.Components(",".join(names)),ROOT.RooFit.ProjWData(ROOT.RooArgSet(self.w.var("MLNuJ")),dataset),ROOT.RooFit.Name(data['name']+"1"),ROOT.RooFit.LineStyle(data['linestyle']),\
-                                             ROOT.RooFit.LineColor(data['linecolor']),ROOT.RooFit.FillStyle(data['fillstyle']),ROOT.RooFit.FillColor(data['fillcolor']),ROOT.RooFit.LineWidth(data['linewidth']),ROOT.RooFit.DrawOption("F"))
-
-           
-
-
-#            self.w.pdf("model_s").plotOn(self.frame,ROOT.RooFit.Slice(self.w.cat("CMS_channel"),cat),ROOT.RooFit.Components(",".join(names)),ROOT.RooFit.ProjWData(dataset),ROOT.RooFit.Name(data['name']+"2"),ROOT.RooFit.LineStyle(data['linestyle']),\
-#                                             ROOT.RooFit.LineColor(data['linecolor']),ROOT.RooFit.FillStyle(data['fillstyle']),ROOT.RooFit.FillColor(data['fillcolor']),ROOT.RooFit.DrawOption("L"))
-
-            self.w.pdf("model_s").plotOn(self.frame,ROOT.RooFit.Slice(self.w.cat("CMS_channel"),cat),ROOT.RooFit.Components(",".join(names)),ROOT.RooFit.ProjWData(ROOT.RooArgSet(self.w.var("MLNuJ")),dataset),ROOT.RooFit.Name(data['name']+"2"),ROOT.RooFit.LineStyle(data['linestyle']),\
-                                             ROOT.RooFit.LineColor(data['linecolor']),ROOT.RooFit.FillStyle(data['fillstyle']),ROOT.RooFit.LineWidth(data['linewidth']),ROOT.RooFit.DrawOption("L"))
-
-
-
-            if (not data['signal']) and (not errorVisualized) and visualizeError:
-                self.w.pdf("model_s").plotOn(self.frame,ROOT.RooFit.Slice(self.w.cat("CMS_channel"),cat),ROOT.RooFit.Components(",".join(names)),ROOT.RooFit.ProjWData(dataset),ROOT.RooFit.Name(data['name']+"3"),ROOT.RooFit.LineStyle(data['linestyle']),\
-                                                 ROOT.RooFit.LineColor(data['linecolor']),ROOT.RooFit.FillStyle(1),ROOT.RooFit.FillColor(ROOT.kOrange),ROOT.RooFit.VisualizeError(self.fitResult,1))
-                errorVisualized=True
-
-        dataset.plotOn(self.frame,ROOT.RooFit.Cut("CMS_channel==CMS_channel::"+cat))
         
         self.frame.SetXTitle(varDesc)
         self.frame.SetYTitle("Events")
@@ -84,38 +77,40 @@ class RooPlotter(object):
         for c in self.contributions:
             name=c['name']
             desc=c['description']
-#            isWhite=c['fillcolor']==ROOT.kWhite
-
-            curve=self.frame.getCurve(name+"1")
+            curve=self.frame.getCurve(name)
             self.legend.AddEntry(curve,desc,"f")
-            
-            
+           
 
 
-        self.frame.SetTitle("CMS Preliminary, #sqrt{s} = 13 TeV, L = 2.6 fb^{-1}")    
-        self.frame.SetLabelSize(0.05,"X")    
-        self.frame.SetLabelSize(0.05,"Y")    
+        self.frame.SetTitle("")    
+        self.frame.SetLabelSize(0.04,"X")    
+        self.frame.SetLabelSize(0.04,"Y")    
         self.frame.SetTitleSize(0.05,"X")    
         self.frame.SetTitleSize(0.05,"Y")    
         self.frame.SetTitleOffset(0.90,"X")    
         self.frame.SetTitleOffset(0.93,"Y")    
 
-        self.frame.Draw()
+        if log:
+            self.frame.GetYaxis().SetRangeUser(1e-1,1e+4)
+        self.frame.Draw()       
+        for c in self.contributions:
+            name=c['name']
+            curve=self.frame.getCurve(name)
+            curve.Draw("Fsame")
+            curve.Draw("Lsame")
 
+
+        if not blinded:
+            hist=self.frame.getHist("datapoints")
+            hist.Draw("Psame")
 
         self.legend.Draw()    
+        if log:
+            self.canvas.SetLogy(1)
+        self.canvas.RedrawAxis()
+        self.canvas.Update()
 
-	pt =ROOT.TPaveText(0.1577181,0.9562937,0.9580537,0.9947552,"brNDC")
-	pt.SetBorderSize(0)
-	pt.SetTextAlign(12)
-	pt.SetFillStyle(0)
-	pt.SetTextFont(42)
-	pt.SetTextSize(0.03)
-	text = pt.AddText(0.01,0.3,"CMS Preliminary")
-	text = pt.AddText(0.25,0.3,"")
-	pt.Draw()   
-
-
+        
 
     
     

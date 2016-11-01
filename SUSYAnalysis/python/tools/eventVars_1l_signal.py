@@ -187,6 +187,7 @@ class EventVars1L_signal:
             noLHEstuff = True
             if noLHEstuff:
                 return ret
+
             global lheDict
 
             if len(lheDict) == 0: loadLHE()
@@ -225,6 +226,7 @@ class EventVars1L_signal:
                 print scaleWgts
             else: print "No mean scale weights found for", sampkey
             ret['ScaleWgt'] = scaleWgts
+
         return ret
 
 if __name__ == '__main__':

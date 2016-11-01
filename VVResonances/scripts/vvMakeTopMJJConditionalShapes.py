@@ -21,9 +21,6 @@ parser.add_option("-b","--binsx",dest="binsx",type=int,help="bins in x",default=
 parser.add_option("-x","--minx",dest="minx",type=float,help="minimum x",default=600)
 parser.add_option("-X","--maxx",dest="maxx",type=float, help="maximum x",default=5000)
 parser.add_option("-V","--vary",dest="vary",help="variablex",default='lnujj_l2_pruned_mass')
-parser.add_option("-B","--binsy",dest="binsy",type=int,help="bins in x",default=20)
-parser.add_option("-y","--miny",dest="miny",type=float,help="minimum y",default=0)
-parser.add_option("-Y","--maxy",dest="maxy",type=float, help="maximum y",default=160)
 parser.add_option("-l","--lumi",dest="lumi",type=float, help="lumi",default=7700)
 
 (options,args) = parser.parse_args()
@@ -43,7 +40,7 @@ def returnString(func,options):
 
 
 def runFits(data,options):
-    axis=ROOT.TAxis(options.binsy,options.miny,options.maxy)
+    axis=ROOT.TAxis(5,array('d',[600,700,800,900,1000,1200,1400]))
 
    #first pass     
     graphs=[]
@@ -64,7 +61,7 @@ def runFits(data,options):
 
         fitter.signalMJJCB('model','M')
         fitter.importBinnedData(histo,['M'],'data')   
-        fitter.fit('model','data',[ROOT.RooFit.SumW2Error(0)])
+        fitter.fit('model','data',[ROOT.RooFit.SumW2Error(0),ROOT.RooFit.Minos(1)])
         chi=fitter.projection("model","data","M","debugfitMJJTop_"+options.output+"_"+str(i)+".png")
     
         for j,g in enumerate(graphs):
@@ -80,22 +77,23 @@ def runFits(data,options):
     pol2=ROOT.TF1("pol2","pol2",options.minx,options.maxx)
     pol1=ROOT.TF1("pol1","pol1",options.minx,options.maxx)
     pol0=ROOT.TF1("pol0","pol0",options.minx,options.maxx)
+    log=ROOT.TF1("log0","[0]+[1]*log(x)",options.minx,options.maxx)
 
 
-    graphs[0].Fit(pol2)
-    data['mean']=returnString(pol2,options)
+    graphs[0].Fit(log)
+    data['mean']=returnString(log,options)
 
-    graphs[1].Fit(pol2)
-    data['sigma']=returnString(pol2,options)
+    graphs[1].Fit(pol0)
+    data['sigma']=returnString(pol0,options)
 
-    graphs[2].Fit(pol0)
-    data['alpha1']=returnString(pol0,options)
+    graphs[2].Fit(log)
+    data['alpha1']=returnString(log,options)
 
     graphs[3].Fit(pol0)
     data['n1']=returnString(pol0,options)
 
-    graphs[4].Fit(pol1)
-    data['alpha2']=returnString(pol1,options)
+    graphs[4].Fit(pol0)
+    data['alpha2']=returnString(pol0,options)
 
     graphs[5].Fit(pol0)
     data['n2']=returnString(pol0,options)

@@ -2,7 +2,8 @@ import sys,os
 
 import makeYieldPlots as yp
 
-yp.gStyle.SetPadTopMargin(0.1)
+#yp.gStyle.SetPadTopMargin(0.1)
+yp.gStyle.SetPadLeftMargin(0.075)
 
 yp._batchMode = False
 yp._alpha = 0.8
@@ -28,7 +29,7 @@ def scaleToHist(hists, hRef):
 
 if __name__ == "__main__":
 
-    yp.CMS_lumi.lumi_13TeV = str(2.3) + " fb^{-1}"
+    yp.CMS_lumi.lumi_13TeV = str(12.9) + " fb^{-1}"
     yp.CMS_lumi.extraText = "Preliminary"
 
     #yp.CMS_lumi.lumi_13TeV = "MC"
@@ -62,7 +63,7 @@ if __name__ == "__main__":
     ## Store dict in pickle file
     storeDict = True
     pckname = "pickles/bkgSysts"+mask+".pck"
-    pcksig = "pickles/sigCentral"+mask+".pckz"
+    pcksig = "pickles/sigSysts_fix_"+mask+".pckz"
 
     if storeDict == True and os.path.exists(pckname):
 
@@ -116,7 +117,9 @@ if __name__ == "__main__":
 
         ydsSig = yp.YieldStore("Signal")
         #pathSig = "Yields/signal/fixSR/lumi2p25fb/allSF_noPU/mainNJ/merged/"
-        pathSig = "Yields/signal/fixSR/lumi2p3fb/jPt3TeV/merged/"
+        #pathSig = "Yields/signal/fixSR/lumi2p3fb/jPt3TeV/merged/"
+        #pathSig = "claudias/YieldsJul23/lumi12p88/scan/merged/"
+        pathSig = "claudias/YieldsJul29/lumi12p88/scan/merged/"
         ydsSig.addFromFiles(pathSig+basename,("lep","sele"))
 
         print "#Saving yields to pickle:", pcksig
@@ -153,7 +156,8 @@ if __name__ == "__main__":
     yds.addFromFiles(pattern,("lep","sele"))
     #yds.showStats()
 
-    mcSamps = ['DY','TTV','SingleT','WJets','TT']
+    mcSamps = ['DY','TTV','SingleT','WJets','TTsemiLep','TTdiLep']
+    #mcSamps = ['DY','TTV','SingleT','WJets','TT']
     #mcSamps = ['EWK']
 
     # update colors
@@ -173,7 +177,7 @@ if __name__ == "__main__":
     #hMCpred = yp.makeSampHisto(yds,mcsamp,cat,"MC_prediction"); hMCpred.SetTitle("MC (Pred)")
 
     # DATA
-    hDataPred = yp.makeSampHisto(yds,"data_QCDsubtr",cat,"Data_prediction"); hDataPred.SetTitle("Prediction")
+    hDataPred = yp.makeSampHisto(yds,"data_QCDsubtr",cat,"Data_prediction"); hDataPred.SetTitle("Pred.")
     #hDataPred = yp.makeSampHisto(yds,"data",cat,"Data_prediction"); hDataPred.SetTitle("Prediction")
     hData = yp.makeSampHisto(yds,"data","SR_MB","Data"); hData.SetTitle("Data")
 
@@ -215,8 +219,8 @@ if __name__ == "__main__":
     hPredUnc.SetLineColor(1)
     hPredUnc.SetFillColorAlpha(col,yp._alpha)
     #hPredUnc.SetFillColorAlpha(col,0.5)
-    hPredUnc.SetFillStyle(3244)
-    #hPredUnc.SetFillStyle(1001)
+    #hPredUnc.SetFillStyle(3244)
+    hPredUnc.SetFillStyle(1001)
     hPredUnc.SetMarkerColor(col)
     hPredUnc.SetMarkerStyle(0)
     #hPredUnc.GetYaxis().SetTitle(ratio.GetYaxis().GetTitle())
@@ -228,6 +232,9 @@ if __name__ == "__main__":
     # set error
     for i in xrange(1,hPredUnc.GetNbinsX()+1):
         hPredUnc.SetBinError(i,hDataPred.GetBinError(i)/hDataPred.GetBinContent(i))
+
+    # Pull
+    pull = yp.getPull(hData,hDataPred)
 
     ### Signal
     sighists = []
@@ -258,19 +265,22 @@ if __name__ == "__main__":
         hSig.SetLineStyle(lsty)
 
         # put signal on top of prediction
-        hSig.Add(hDataPred)
+        print hSig, hSig.GetNbinsX()
+        print hDataPred, hDataPred.GetNbinsX()
+        #hSig.Add(hDataPred)
 
         sighists.append(hSig)
 
     #### Drawing
     logY = True
     #logY = False
-    cname = "Data_2p3fb_"+mask
+    cname = "DataVsSig_Pull_"+mask
     hists = [mcStack,hUncert] + sighists + [hDataPois]
-    ratios = [hPredUnc,ratioPois]
+    #ratios = [hPredUnc,ratioPois]
+    ratios = pull
 
     #canv = yp.plotHists("SR_MB_Prediction",[mcStack,hTotal,hDataPred,hDataPois],[hPredUnc,ratioPois],'TM', 1200, 600, logY = logY)
-    canv = yp.plotHists("SR_MB_Prediction",hists,ratios,'TRC', 1200, 600, logY = logY)
+    canv = yp.plotHists("SR_MB_Prediction",hists,ratios,'TRC', 1000, 600, logY = logY, nCols = 2)
 
     canv.SetName(cname + canv.GetName())
 
@@ -284,8 +294,7 @@ if __name__ == "__main__":
     exts = [".pdf",".png",".root"]
     #exts = [".pdf"]
 
-    odir = "BinPlots/Data/lumi2p3fb/JECv7/vsSig/allSF_noPU/"
-    #odir = "BinPlots/Syst/btag/hadronFlavour/allSF_noPU/Method1B/"
+    odir = "BinPlots/DataPred/VsSig/lumi12p9fb/w1500_100/"
     if not os.path.isdir(odir): os.makedirs(odir)
 
     for canv in canvs:

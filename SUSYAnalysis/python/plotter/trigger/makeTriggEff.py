@@ -102,6 +102,14 @@ def getHistsFromTree(tree, var = 'MET', refTrig = '', cuts = '', testTrig = '', 
 
     varBinSize = False
 
+    if options.logX:
+        global pt_bins, lt_bins, ht_bins
+        #pt_bins = getLogBins(30,0.9,1000)
+        pt_bins = getLogBins(33,0.9,1500)
+        #lt_bins = getLogBins(20,9,1000)
+        lt_bins = getLogBins(22,9,3000)
+        ht_bins = getLogBins(30,30,2000)
+
     if 'MET' in var:
         hRef = TH1F(rname,htitle,nbins,0,1000)
         varBinSize = True
@@ -113,10 +121,10 @@ def getHistsFromTree(tree, var = 'MET', refTrig = '', cuts = '', testTrig = '', 
     elif 'LT' in var:
         hRef = TH1F(rname,htitle,nbins,0,1000)
         varBinSize = True
-        hRef = TH1F(rname,htitle,len(lt_bins)-1,array('f',lt_bins))
+        hRef = TH1F(rname,htitle,len(lt_bins)-1,array('d',lt_bins))
     elif 'pt' in var:
         varBinSize = True
-        hRef = TH1F(rname,htitle,len(pt_bins)-1,array('f',pt_bins))
+        hRef = TH1F(rname,htitle,len(pt_bins)-1,array('d',pt_bins))
         #hRef = TH1F(rname,htitle,nbins,0,200)
     elif 'eta' in var:
         #print eta_bins; exit(0)
@@ -192,8 +200,14 @@ def getHistsFromTree(tree, var = 'MET', refTrig = '', cuts = '', testTrig = '', 
         label += ' [GeV]'
 
     hRef.GetXaxis().SetTitle(label)
+    hRef.GetXaxis().SetTitleOffset(1.2)
+    hRef.GetXaxis().SetNoExponent(1)
+    hRef.GetXaxis().SetMoreLogLabels(1)
+
     hRef.GetYaxis().SetTitleOffset(1.2)
     canv.SetLogy()
+    if options.logX:
+        canv.SetLogx()
 
     gPad.Update()
 
@@ -294,6 +308,7 @@ def getHistsFromTree(tree, var = 'MET', refTrig = '', cuts = '', testTrig = '', 
     CMS_lumi.CMS_lumi(canv, 4, iPos)
 
     gPad.Update()
+    gPad.RedrawAxis()
     _canvStore.append(canv)
 
     return histList
@@ -307,6 +322,7 @@ def plotEff(histList, var = 'HT', doFit = False):
     histPrefix = 'h' + var + '_'
 
     # reference hist should be first
+    #hRef = histList[0].Clone(histList[0].GetName()+"Ref")
     hRef = histList[0]
     hRefEff = hRef.Clone(hRef.GetName()+'Eff')
     # set reference eff to 1
@@ -377,7 +393,7 @@ def plotEff(histList, var = 'HT', doFit = False):
         print 'Drawing', hname, 'from', hRef.GetName()
 
         ## Divide
-        hEff = hist.Clone(hname)
+        hEff = hist.Clone(hname+"Eff")
         hEff.Divide(hRef)
 
         ## TEfficiency
@@ -408,14 +424,17 @@ def plotEff(histList, var = 'HT', doFit = False):
             # add normalized hist shape
             hist.SetFillColorAlpha(hCol,hAlpha)
             hist.SetLineColorAlpha(hCol,hAlpha)
-            hist.DrawNormalized("samehist")
-            hist.Scale()
+
+            sf = 0.5/hist.GetMaximum()
+            hist.Scale(sf)
+            #hist.DrawNormalized("samehist")
+            hist.Draw("samehist")
 
             leg.AddEntry(hist,varToLabel(var)+' distribution','f')
 
             # extra axis
             #scale = 1.5*hist.GetEntries()#/hist.GetMaximum()#*1.1/1.5
-            scale = hist.GetEntries()#/hist.GetMaximum()#*1.1/1.5
+            scale = 1/sf#hist.GetEntries()#/hist.GetMaximum()#*1.1/1.5
             #scale = 1.5
 
             raxis = TGaxis(gPad.GetUxmax(),gPad.GetUymin(),gPad.GetUxmax(), gPad.GetUymax()/1.5,0.01,scale,505,"+L")
@@ -423,7 +442,7 @@ def plotEff(histList, var = 'HT', doFit = False):
             raxis.SetLabelColor(hCol)
             raxis.SetTitleColor(hCol)
             raxis.SetTitle("Events")
-            raxis.SetMaxDigits(4)
+            raxis.SetMaxDigits(3)
             raxis.Draw()
             SetOwnership(raxis, 0)
 
@@ -502,6 +521,7 @@ def plotEff(histList, var = 'HT', doFit = False):
 
             _fitrStore.append((hname,halfpoint, width, plateau))
 
+        #_hEffStore[hEff.GetName()] = hEff
         _hEffStore[hname] = tEff
 
     # remove refEff
@@ -519,6 +539,9 @@ def plotEff(histList, var = 'HT', doFit = False):
     CMS_lumi.CMS_lumi(canv, 4, iPos)
 
     gPad.Update()
+
+    if options.logX:
+        canv.SetLogx()
 
     _hEffStore[hRefEff.GetName] = hRefEff
     _canvStore.append(canv)
@@ -546,8 +569,13 @@ def makeEffPlots(tree, lumi = -1, maxEntries = -1, doFit = False, varList = [], 
     for trig in testTrig:
         suffix +=  '_' + trig.replace('||','OR')
 
+    if options.logX: suffix += "_logX"
+
     # final output dir:
-    lumiDir = 'plots/1d/' + lumiDir
+    #lumiDir = 'plots/1d/anti/' + lumiDir
+    #lumiDir = 'plots/1d/' + lumiDir
+    plotdir = options.pdir
+    lumiDir = plotdir + '/' + lumiDir
 
     print 80*'#'
     print '## Going to save plots to', lumiDir
@@ -568,6 +596,59 @@ def makeEffPlots(tree, lumi = -1, maxEntries = -1, doFit = False, varList = [], 
 
 if __name__ == "__main__":
 
+    ## Option parser
+    from optparse import OptionParser
+    parser = OptionParser()
+
+    parser.usage = '%prog [options]'
+    parser.description="""
+    Make trigger plots from friend trees
+    """
+
+    parser.add_option("-b","--batch", dest="batch",default=False, action="store_true", help="batch mode")
+    parser.add_option("-l","--lumi", dest="lumi",type="float",default=0,help="Luminosity: 0 takes MC counts, >0 is data, <0 is for MC scaling")
+    parser.add_option("-i","--input", dest="files",default=[], action="append", help="input file names")
+    parser.add_option("-p","--plotdir", dest="pdir",default="plots/", help="plot output dir")
+    parser.add_option("--noFit", dest="doFit",default=True, action="store_false", help="do not fit")
+    parser.add_option("--max-entries", dest="maxEntries",type="int",default=-1,help="Maximum number of entries to process")
+    parser.add_option("--logx", dest="logX",default=False, action="store_true", help="Use logX")
+
+    '''
+    ## SETTINGS
+    # max entries to process
+    maxEntries = -1#100000
+    # do efficiency fit
+    doFit = True
+    # luminosity: 0 takes MC counts, >0 is data, <0 is for MC scaling
+    #lumi = 0
+    '''
+
+    # Read options and args
+    (options,args) = parser.parse_args()
+
+    print 80*"#"
+    print 80*"#"
+    print 10*"#", "Going to scale to lumi:", options.lumi
+    print 80*"#"
+    print 80*"#"
+
+    #print options.batch, options.lumi
+    #print options.files
+
+    # set options
+    lumi = options.lumi
+    _batchMode = options.batch
+    doFit = options.doFit
+    maxEntries = options.maxEntries
+
+    fileNames = options.files
+    print '#fileName is', fileNames
+
+    if len(fileNames) == 0:
+        print "# No filenames given!"
+        exit(0)
+
+    '''
     ## remove '-b' option
     _batchMode = False
 
@@ -581,6 +662,7 @@ if __name__ == "__main__":
     else:
         print '#No file names given'
         exit(0)
+    '''
 
     if len(fileNames) == 1:
         fileName = fileNames[0]
@@ -600,21 +682,13 @@ if __name__ == "__main__":
     elif len(fileNames) > 1:
 
         tree = TChain("sf/t")
-        fileName = fileNames[0] + "2p1"
+        fileName = fileNames[0] #+ "2p1"
         #tree = TChain("tree")
         for fname in fileNames:
             tree.Add(fname)
 
     nentries = tree.GetEntries()
     print 'Entries in tree:', nentries
-
-    ## SETTINGS
-    # max entries to process
-    maxEntries = -1#100000
-    # do efficiency fit
-    doFit = True
-    # luminosity: 0 takes MC counts, >0 is data, <0 is for MC scaling
-    lumi = 0
 
     ###################
     ###################
@@ -623,16 +697,10 @@ if __name__ == "__main__":
     ###################
 
     basecuts = 'passFilters && nLep == 1 &&'
+    #basecuts = 'passFilters && nLep == 1 && Run > 275656 &&'
+    #basecuts = 'passFilters && nLep == 1 && LT > 250 &&'
     #basecuts = 'METfilters && nLep == 1 && nVeto == 0 &&'
     basecuts += 'Selected == 1 &&'
-#    basecuts += 'Selected == -1 &&'
-    if '218pbMuonFix' in fileName: basecuts += 'Run >= 274094 &&'
-    if 'Run274880' in fileName:
-        print "will run only for Run >= 274880"
-        basecuts += 'Run >= 274880 &&'
-    if 'Run275656' in fileName:
-        print "will run only for Run >= 275656"
-        basecuts += 'Run >= 275656 &&'
 
     doFit = True
 
@@ -659,18 +727,27 @@ if __name__ == "__main__":
 
         refTrig = 'HLT_IsoEle23'
         testTrig = ['EleHT350']#,'EleHT350MET50']
+        testTrig = ['EleHT350||EleHT400']
 
         varList = ['HT']
         cuts = basecuts + 'nEl == 1 && Lep_pt > 25'# && MET  > 50'
         makeEffPlots(tree, lumi, maxEntries, doFit, varList, refTrig, testTrig, cuts)
 
+        '''
+        testTrig = ['EleHT350MET50']
+        varList = ['MET']
+        cuts = basecuts + 'nEl == 1 && Lep_pt > 25 && HT  > 500'
+        makeEffPlots(tree, lumi, maxEntries, doFit, varList, refTrig, testTrig, cuts)
+        '''
+
+        '''
         refTrig = 'HLT_EleHT350'
         testTrig = ['HT800']
 
         varList = ['HT']
         cuts = basecuts + 'nEl == 1 && Lep_pt > 25'# && MET  > 50'
         makeEffPlots(tree, lumi, maxEntries, doFit, varList, refTrig, testTrig, cuts)
-
+        '''
         #varList = ['MET']
         #cuts = basecuts + 'nEl == 1 && Lep_pt > 25 && HT  > 500'
         #makeEffPlots(tree, lumi, maxEntries, doFit, varList, refTrig, testTrig, cuts)
@@ -687,7 +764,6 @@ if __name__ == "__main__":
         cuts = basecuts + 'nEl == 1 && Lep_pt > 130 && HT > 500'
         #cuts = basecuts + 'nEl == 1 && Lep_pt > 5'
         #makeEffPlots(tree, lumi, maxEntries, doFit, varList, refTrig, testTrig, cuts)
-        '''
 
         refTrig = 'HLT_IsoEle23'
         testTrig = ['HT800']
@@ -697,42 +773,50 @@ if __name__ == "__main__":
 
         refTrig = 'HLT_EleHT350'
         makeEffPlots(tree, lumi, maxEntries, doFit, varList, refTrig, testTrig, cuts)
-
+        '''
 
     elif 'SingleMu' in fileName:
         ## Muons
-        #lumi = 40.0 # SingleMu RunB
-        #lumi = 42 # SingleMu RunB
-        #lumi = 149 # SingleMu RunD
 
-        if 'golden209pb' in fileName:
-            lumi = 209
-        elif '133pb' in fileName:
-            lumi = 133
-        elif '1260pb' in fileName:
-            lumi = 1260
-        elif '2p1' in fileName:
-            lumi = 2.1
-        elif '2p6fb' in fileName:
-            lumi = 2.57
-        elif 'test' in fileName:
-            lumi = 666
+        if lumi == 0:
+            if 'golden209pb' in fileName:
+                lumi = 209
+            elif '133pb' in fileName:
+                lumi = 133
+            elif '1260pb' in fileName:
+                lumi = 1260
+            elif '2p1' in fileName:
+                lumi = 2.1
+            elif '2p3' in fileName:
+                lumi = 2.3
+            elif 'test' in fileName:
+                lumi = 666
 
         ## measure HT
         varList = ['HT']
 
-        refTrig = 'HLT_IsoMu20'
+        refTrig = 'HLT_IsoMu27' #Mu20
         cuts = basecuts + 'nMu == 1 && Lep_pt > 25'
 
-        testTrig = ['MuHT350']
+        #testTrig = ['MuHT350']
+        testTrig = ['MuHT350||MuHT400']
         makeEffPlots(tree, lumi, maxEntries, doFit, varList, refTrig, testTrig, cuts)
+
+        '''
+        testTrig = ['MuHT350MET50']
+        varList = ['MET']
+        cuts = basecuts + 'nMu == 1 && Lep_pt > 25 && HT  > 500'
+        makeEffPlots(tree, lumi, maxEntries, doFit, varList, refTrig, testTrig, cuts)
+        '''
+
+        '''
         testTrig = ['HT800']
         makeEffPlots(tree, lumi, maxEntries, doFit, varList, refTrig, testTrig, cuts)
 
         refTrig = 'HLT_MuHT350'
         testTrig = ['HT800']
         makeEffPlots(tree, lumi, maxEntries, doFit, varList, refTrig, testTrig, cuts)
-
+        '''
         '''
         varList = ['MET']
         cuts = basecuts + 'nMu == 1 && Lep_pt > 25 && HT  > 500'
@@ -758,26 +842,6 @@ if __name__ == "__main__":
         cuts = basecuts + 'nMu == 1 && Lep_pt > 25'
         makeEffPlots(tree, lumi, maxEntries, doFit, varList, refTrig, testTrig, cuts)
         '''
-
-        '''
-        '''
-
-    elif 'SingleLep' in fileName:
-        ## Ele + Mu
-        lumi = 42.0 # SingleEl/Mu RunB
-
-        basecuts += ' (PD_SingleMu + PD_SingleEle == 1) &&' # doesn't work
-
-        refTrig = 'HLT_IsoMu27||HLT_IsoEle32'
-        testTrig = ['MuHT350MET50||EleHT350MET50']
-
-        varList = ['HT']
-        cuts = basecuts + 'nLep == 1  && Lep_pt > 25 && MET  > 200 && HT > 180'
-        makeEffPlots(tree, lumi, maxEntries, doFit, varList, refTrig, testTrig, cuts)
-
-        varList = ['MET']
-        cuts = basecuts + 'nLep == 1 && Lep_pt > 25 && HT  > 500'
-        makeEffPlots(tree, lumi, maxEntries, doFit, varList, refTrig, testTrig, cuts)
 
     elif 'JetHT' in fileName:
 
@@ -811,12 +875,12 @@ if __name__ == "__main__":
 
         ### Reference trigger
         refTrig = 'HLT_HT800'
-#        refTrig = 'HLT_HT400'
         #refTrig = 'HLT_HT350MET100'
         #refTrig = 'JetHT'#-eleCBID'
         #refTrig = 'HLT_MET170'
 
         ## LT
+
         varList = ['LT'] #LTNoHF
         cuts = basecuts + 'nMu == 1 && Lep_pt > 25 && HT > 500'
         testTrig = ['MuHT350||MuHT400','MuHT400']#,'Mu50||MuHT350MET50']
@@ -861,12 +925,11 @@ if __name__ == "__main__":
 
         ## more triggers
 
-
         ### LEPTON PT
         varList = ['Lep_pt']
 
-        testTrig = ['EleHT350']
-        cuts = basecuts + 'nEl == 1 && Lep_pt > 5 && HT > 500'
+        #testTrig = ['EleHT350']
+        #cuts = basecuts + 'nEl == 1 && Lep_pt > 5 && HT > 500'
         #cuts = basecuts + 'nEl == 1 && Lep_pt > 5 && HT > 500 && MET > 50 && nJet > 2 && nBJet > 0'
         #makeEffPlots(tree, lumi, maxEntries, doFit, varList, refTrig, testTrig, cuts)
 
@@ -876,7 +939,7 @@ if __name__ == "__main__":
         #testTrig = ['Ele105','EleHT350','IsoEle23']
         #testTrig = ['EleHT350MET50||Ele105']
 
-        cuts = basecuts + 'nEl == 1 && Lep_pt > 5 && HT > 500'
+        cuts = basecuts + 'nEl == 1 && Lep_pt > 5 && HT > 0'
         makeEffPlots(tree, lumi, maxEntries, doFit, varList, refTrig, testTrig, cuts)
 
         #testTrig = ['Mu50','MuHT350||MuHT400']#,'MuHT400']
@@ -901,7 +964,6 @@ if __name__ == "__main__":
         cuts = basecuts + 'nMu == 1 && Lep_pt > 20 && HT > 500'
         makeEffPlots(tree, lumi, maxEntries, doFit, varList, refTrig, testTrig, cuts)
 
-        
         '''
         ## more triggers
         varList = ['Lep_eta']
@@ -1070,5 +1132,9 @@ if __name__ == "__main__":
     else:
         print 'Nothing to draw for this file!'
 
-    tfile.Close()
+    if len(fileNames) == 1:
+        tfile.Close()
+    #else:
+    #    tree.Close()
+
     #outfile.Close()

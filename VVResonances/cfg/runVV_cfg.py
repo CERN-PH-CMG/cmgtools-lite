@@ -95,10 +95,10 @@ triggerFlagsAna.triggerBits ={
 
 
 #-------- HOW TO RUN
-test = 3
+test = 0
 if test==1:
     # test a single component, using a single thread.
-    selectedComponents = [BulkGravToWWToWlepWhad_narrow_4500]
+    selectedComponents = [BulkGravToZZToZlepZhad_narrow_2000]
     for c in selectedComponents:
         c.files = c.files[:1]
         c.splitFactor = 1

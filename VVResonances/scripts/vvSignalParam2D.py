@@ -71,10 +71,9 @@ for mass in sorted(samples.keys()):
 
     fitter.importBinnedData(histo,['MVV','MJJ'],'data')
     fitter.fit('model','data',[ROOT.RooFit.SumW2Error(0)])
-    fitter.fit('model','data',[ROOT.RooFit.SumW2Error(0)])
-
-    fitter.projection("model","data","MVV","debugVV_"+str(mass)+".root")
-    fitter.projection("model","data","MJJ","debugJJ_"+str(mass)+".root")
+    fitter.fit('model','data',[ROOT.RooFit.SumW2Error(0),ROOT.RooFit.Minos(1)])
+    fitter.projection("model","data","MVV","debugMVV_"+str(mass)+"_"+options.output+".png")
+    fitter.projection("model","data","MJJ","debugMJJ_"+str(mass)+"_"+options.output+".png")
 
     for var,graph in graphs.iteritems():
         value,error=fitter.fetch(var)

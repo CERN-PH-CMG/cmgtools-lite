@@ -8,20 +8,13 @@ from math import hypot
 
 ## Trees -- skimmed with trig_base
 
-Tdir = "samples_HT350/"
+Tdir = "SampLinks/"
 # MC
-mcFTdir = "samples_HT350/Friends/"
-sigFTdir = "samples_HT350/Friends/"
+mcFTdir = "SampLinks/Friends/"
+sigFTdir = "SampLinks/Friends/"
 
 # new data
-dataFTdir = "samples_HT350/Friends/"
-
-
-#Dilepton stuff
-#mcFTdir = "/nfs/dust/cms/user/kirschen/newSUSYStuff/CMSSW_7_4_12_patch4/src/CMGTools/SUSYAnalysis/macros/FreshFriends_V2"
-#sigFTdir = "/nfs/dust/cms/user/kirschen/newSUSYStuff/CMSSW_7_4_12_patch4/src/CMGTools/SUSYAnalysis/macros/FreshFriends_V2/Signal"
-#dataFTdir = "/nfs/dust/cms/user/kirschen/newSUSYStuff/CMSSW_7_4_12_patch4/src/CMGTools/SUSYAnalysis/macros/FreshFriends_V2/Data"
-
+dataFTdir = "SampLinks/Friends/"
 
 
 

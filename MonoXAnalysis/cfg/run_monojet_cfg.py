@@ -22,12 +22,12 @@ removeJetReCalibration = getHeppyOption("removeJetReCalibration",False)
 doT1METCorr = getHeppyOption("doT1METCorr",True)
 forcedSplitFactor = getHeppyOption("splitFactor",-1)
 forcedFineSplitFactor = getHeppyOption("fineSplitFactor",-1)
-isTest = getHeppyOption("isTest",True)
-doLepCorr = getHeppyOption("doLepCorr",False)
-doPhotonCorr = getHeppyOption("doPhotonCorr",False)
+isTest = getHeppyOption("isTest",False)
+doLepCorr = getHeppyOption("doLepCorr",True)
+doPhotonCorr = getHeppyOption("doPhotonCorr",True)
 
 # Define skims
-signalSkim = False
+signalSkim = True
 diLepSkim = False
 singleLepSkim = False
 singlePhotonSkim = False
@@ -40,12 +40,15 @@ if signalSkim == True:
 # --- Z->ll control sample SKIMMING ---
 if diLepSkim == True:
     monoJetCtrlLepSkim.minLeptons = 2
+# --- 1 Lep tight + 1 Jet pT>100 GeV
 if singleLepSkim == True:
     monoJetCtrlLepSkim.minLeptons = 1
     # this skim is only used for the SingleElectron CR, so Tight cuts on PT and ID
     monoJetCtrlLepSkim.idCut = '(lepton.muonID("POG_ID_Tight") and lepton.relIso04 < 0.15) if abs(lepton.pdgId())==13 else \
 (lepton.electronID("POG_Cuts_ID_SPRING15_25ns_v1_ConvVetoDxyDz_Tight_full5x5") and (lepton.relIso03<0.0354 if abs(lepton.superCluster().eta())<1.479 else lepton.relIso03<0.0646))'
+    #monoJetCtrlLepSkim.idCut='(lepton.muonID("POG_SPRING15_25ns_v1_Veto")) if abs(lepton.pdgId())==13 else (lepton.electronID("POG_SPRING15_25ns_v1_Veto"))'
     monoJetCtrlLepSkim.ptCuts = [40]
+    monoJetSkim.jetPtCuts = [100]
 if singlePhotonSkim == True:
     gammaJetCtrlSkim.minPhotons = 1
     gammaJetCtrlSkim.minJets = 1
@@ -122,6 +125,9 @@ if saveFatJetIDVariables:
             NTupleVariable("neHEF", lambda x : x.neutralHadronEnergyFraction(), float, mcOnly = False,help="neutralHadronEnergyFraction (relative to uncorrected jet energy)"),
             NTupleVariable("chEmEF", lambda x : x.chargedEmEnergyFraction(), float, mcOnly = False,help="chargedEmEnergyFraction (relative to uncorrected jet energy)"),
             NTupleVariable("neEmEF", lambda x : x.neutralEmEnergyFraction(), float, mcOnly = False,help="neutralEmEnergyFraction (relative to uncorrected jet energy)"),
+            NTupleVariable("chMult", lambda x : x.chargedMultiplicity(), float, mcOnly = False,help="charged multiplicity (relative to uncorrected jet energy)"),
+            NTupleVariable("neMult", lambda x : x.neutralMultiplicity(), float, mcOnly = False,help="neutral multiplicity (relative to uncorrected jet energy)"),
+
 ])
 
 
@@ -180,10 +186,12 @@ sequence = cfg.Sequence(dmCoreSequence+[
 from CMGTools.RootTools.samples.triggers_13TeV_Spring15 import *
 from CMGTools.RootTools.samples.triggers_8TeV import triggers_1mu_8TeV, triggers_mumu_8TeV, triggers_mue_8TeV, triggers_ee_8TeV;
 triggers_AllMonojet = triggers_metNoMu90_mhtNoMu90 + triggers_metNoMu120_mhtNoMu120 + triggers_AllMET170 + triggers_AllMET300
-triggers_SinglePhoton = triggers_photon155 + triggers_photon165_HE10 + triggers_photon175
+triggers_SinglePhoton = triggers_photon155 + triggers_photon165_HE10 + triggers_photon175 + triggers_jet  # last ones added to recover L1 issue of tight H/E cut
 triggerFlagsAna.triggerBits = {
     'DoubleMu' : triggers_mumu_iso,
     'DoubleEl' : triggers_ee,
+    'DoubleMuHT' : triggers_mumu_ht,
+    'DoubleElHT' : triggers_ee_ht,
     'SingleMu' : triggers_1mu_iso,
     'SingleEl' : triggers_1e,
     'MonoJetMetNoMuMHT90' : triggers_metNoMu90_mhtNoMu90,
@@ -191,6 +199,7 @@ triggerFlagsAna.triggerBits = {
     'Met170'   : triggers_AllMET170,
     'Met300'   : triggers_AllMET300,
     'SinglePho' : triggers_SinglePhoton,
+    'HT800'    : triggers_HT800,
 }
 triggerFlagsAna.unrollbits = True
 triggerFlagsAna.saveIsUnprescaled = False
@@ -214,8 +223,7 @@ if scaleProdToLumi>0: # select only a subset of a sample, corresponding to a giv
         c.splitFactor = len(c.files)
         c.fineSplitFactor = 1
 
-#json = "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions15/13TeV/Reprocessing/Cert_13TeV_16Dec2015ReReco_Collisions15_25ns_JSON.txt"
-json = "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/DCSOnly/json_DCSONLY.txt"
+json = "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-276811_13TeV_PromptReco_Collisions16_JSON.txt"
 if False:
     is50ns = False
     selectedComponents = PrivateSamplesData
@@ -224,63 +232,62 @@ if False:
         comp.fineSplitFactor = 1
 
 if runData and not isTest: # For running on data
-    run_ranges = [ (272021,273730) ]; useAAA=False; is50ns=False
+    useAAA=False; is50ns=False
 
     compSelection = ""
     DatasetsAndTriggers = []
     selectedComponents = []; vetos = []
     ProcessingsAndRunRanges = []; Shorts = []
 
+    # --- 2015 DATA ---
     # ProcessingsAndRunRanges.append( ("Run2015C_25ns-05Oct2015-v1", [254227,255031] ) ); Shorts.append("Run2015C_05Oct")
     # ProcessingsAndRunRanges.append( ("Run2015D-05Oct2015-v1", [256630,258158] ) ); Shorts.append("Run2015D_05Oct")
     # ProcessingsAndRunRanges.append( ("Run2015D-PromptReco-v4", [258159,999999] ) ); Shorts.append("Run2015D_v4")
-
     # ProcessingsAndRunRanges.append( ("Run2015C_25ns-16Dec2015-v1", [254227,254914] ) ); Shorts.append("Run2015C_16Dec")
     # ProcessingsAndRunRanges.append( ("Run2015D-16Dec2015-v1", [256630,260627] ) ); Shorts.append("Run2015D_16Dec")
     
-    ProcessingsAndRunRanges.append( ("Run2016B-PromptReco-v1", [272021,273148] ) ); Shorts.append("PromptReco_v1")
-    ProcessingsAndRunRanges.append( ("Run2016B-PromptReco-v2", [273158,273730] ) ); Shorts.append("PromptReco_v2")
+    # --- 2016 DATA ---
+    ProcessingsAndRunRanges.append( ("Run2016B-PromptReco-v1", [272023,273146] ) ); Shorts.append("Run2016B_PromptReco_v1")
+    ProcessingsAndRunRanges.append( ("Run2016B-PromptReco-v2", [273150,275376] ) ); Shorts.append("Run2016B_PromptReco_v2")
+    ProcessingsAndRunRanges.append( ("Run2016C-PromptReco-v2", [275420,276283] ) ); Shorts.append("Run2016C_PromptReco_v2")    
+    ProcessingsAndRunRanges.append( ("Run2016D-PromptReco-v2", [276315,276811] ) ); Shorts.append("Run2016D_PromptReco_v2")    
 
     if diLepSkim == True:
-        DatasetsAndTriggers.append( ("DoubleMuon", triggers_mumu_iso + triggers_mumu_ss + triggers_mumu_ht + triggers_3mu + triggers_3mu_alt + triggers_AllMonojet) )
+        #DatasetsAndTriggers.append( ("DoubleMuon", triggers_mumu_iso + triggers_mumu_ss + triggers_mumu_ht + triggers_3mu + triggers_3mu_alt + triggers_AllMonojet) )
         DatasetsAndTriggers.append( ("DoubleEG",   triggers_ee + triggers_ee_ht + triggers_3e) )
-    if singleLepSkim == True:
+    elif singleLepSkim == True:
         DatasetsAndTriggers.append( ("SingleElectron", triggers_ee + triggers_ee_ht + triggers_3e + triggers_1e + triggers_1e_50ns) )
-        DatasetsAndTriggers.append( ("SinglePhoton",   triggers_SinglePhoton) )
-    if singlePhotonSkim == True:
+        #DatasetsAndTriggers.append( ("SinglePhoton",   triggers_SinglePhoton) )
+    elif singlePhotonSkim == True:
         DatasetsAndTriggers.append( ("SinglePhoton", triggers_SinglePhoton) )
-    if signalSkim == True:
+    elif signalSkim == True:
         DatasetsAndTriggers.append( ("MET", triggers_AllMonojet ) )
-    else:
-        DatasetsAndTriggers.append( ("DoubleEG",   triggers_ee + triggers_ee_ht + triggers_3e) )
+   # else:
+   #     DatasetsAndTriggers.append( ("DoubleEG",   triggers_ee + triggers_ee_ht + triggers_3e) )
 
     for pd,triggers in DatasetsAndTriggers:
         iproc=0 
-        for processing,run_dslimits in ProcessingsAndRunRanges:
+        for processing,run_range in ProcessingsAndRunRanges:
             # if ("DoubleEG" in pd): processing.replace("v1","v2",1) 
-            for run_range in run_ranges:
-                run_min = max(run_range[0],run_dslimits[0])
-                run_max = min(run_range[1],run_dslimits[1])
-                this_run_range = (run_min,run_max)
-                label = "runs_%d_%d" % this_run_range if this_run_range[0] != this_run_range[1] else "run_%d" % (this_run_range[0],)
-                compname = pd+"_"+Shorts[iproc]+"_"+label
-                if ((compSelection and not re.search(compSelection, compname))):
-                    print "Will skip %s" % (compname)
+            label = "runs_%d_%d" % (run_range[0],run_range[1]) if run_range[0] != run_range[1] else "run_%d" % run_range[0]
+            compname = pd+"_"+Shorts[iproc]+"_"+label
+            if ((compSelection and not re.search(compSelection, compname))):
+                print "Will skip %s" % (compname)
 
-                    continue
-                print "Building component ",compname," with run range ",label, "\n"
-                comp = kreator.makeDataComponent(compname, 
-                                                 "/"+pd+"/"+processing+"/MINIAOD", 
-                                                 "CMS", ".*root", 
-                                                 json=json, 
-                                                 run_range=this_run_range, 
-                                                 triggers=triggers[:], vetoTriggers = vetos[:],
-                                                 useAAA=useAAA)
-                print "Will process %s (%d files)" % (comp.name, len(comp.files))
-                print "\ttrigger sel %s, veto %s" % (triggers, vetos)
-                comp.splitFactor = len(comp.files)/4
-                comp.fineSplitFactor = 1
-                selectedComponents.append( comp )
+                continue
+            print "Building component ",compname," with run range ",label, "\n"
+            comp = kreator.makeDataComponent(compname, 
+                                             "/"+pd+"/"+processing+"/MINIAOD", 
+                                             "CMS", ".*root", 
+                                             json=json, 
+                                             run_range=run_range, 
+                                             #triggers=triggers[:], vetoTriggers = vetos[:],
+                                             useAAA=useAAA)
+            print "Will process %s (%d files)" % (comp.name, len(comp.files))
+            print "\ttrigger sel %s, veto %s" % (triggers, vetos)
+            comp.splitFactor = len(comp.files)/4
+            comp.fineSplitFactor = 1
+            selectedComponents.append( comp )
             iproc += 1
         if singleLepSkim and "SinglePhoton" in pd: 
             vetos += triggers
@@ -293,7 +300,10 @@ if is50ns:
     pfChargedCHSjetAna.mcGT     = "Summer15_50nsV5_MC"
     pfChargedCHSjetAna.dataGT   = "Summer15_50nsV5_DATA"
 else: 
-    jetAna.mcGT = "Spring16_25nsV1_MC"
+    jetAna.mcGT   = "Spring16_25nsV3_MC"
+    jetAna.dataGT = "Spring16_25nsV3_DATA"
+    monoXFatJetAna.mcGT = "Spring16_25nsV3_MC"
+    monoXFatJetAna.dataGT = "Spring16_25nsV3_DATA"
 
 if removeJetReCalibration:
     ## NOTE: jets will still be recalibrated, since calculateSeparateCorrections is True,
@@ -309,7 +319,8 @@ if forcedSplitFactor>0 or forcedFineSplitFactor>0:
 if runData==False and not isTest: # MC all
     ### 25 ns 74X MC samples
     is50ns = False
-    mcSamples = mcSamples_monojet_Asymptotic25ns
+    # mcSamples = monojet_Asymptotic25ns
+    mcSamples = [DYJetsToLL_M50]
     #if signalSkim:
         # full signal scan (many datasets!)
         # mcSamples += mcSamples_monojet_Asymptotic25ns_signals
@@ -375,7 +386,7 @@ elif test == 'synch-80X': # sync
     monoJetSkim.metCut = 0  
     what = getHeppyOption("sample")
     if what == "TTbarDM":
-        comp = kreator.makeMCComponent("TTbarDM","/TTbarDMJets_pseudoscalar_Mchi-1_Mphi-100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring16MiniAODv1-PUSpring16RAWAODSIM_80X_mcRun2_asymptotic_2016_v3_ext1-v1/MINIAODSIM", "CMS", ".*root", 1.0)
+        comp = kreator.makeMCComponent("TTbarDM","/TTbarDMJets_pseudoscalar_Mchi-1_Mphi-100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring16MiniAODv2-PUSpring16RAWAODSIM_80X_mcRun2_asymptotic_2016_miniAODv2_v0_ext1-v1/MINIAODSIM", "CMS", ".*root", 1.0)
         selectedComponents = [ comp ]
     elif what == "DYJets":
         comp = DYJetsToLL_M50
@@ -390,7 +401,7 @@ elif test == 'synch-80X': # sync
         comp.files = [ 'root://eoscms//eos/cms/store/mc/RunIISpring16MiniAODv1/WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/MINIAODSIM/PUSpring16_80X_mcRun2_asymptotic_2016_v3-v1/60000/00DD003D-4201-E611-A6F7-0CC47A745282.root' ]
         selectedComponents = [ comp ]
     else:
-        selectedComponents = mcSamples_monojet_Asymptotic25ns
+        selectedComponents = mcSamples_diboson#monojet_Asymptotic25ns
     jetAna.smearJets       = False
     for comp in selectedComponents:
         comp.splitFactor = 1
@@ -414,7 +425,6 @@ elif test == '80X-Data':
         if not getHeppyOption("all"):
             comp.files = comp.files[:1]
     dmCoreSequence.remove(jsonAna)
-
 
 ## output histogram
 outputService=[]

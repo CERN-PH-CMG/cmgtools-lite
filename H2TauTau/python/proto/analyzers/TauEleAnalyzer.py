@@ -226,7 +226,7 @@ class TauEleAnalyzer(DiLeptonAnalyzer):
 
     def testTightOtherLepton(self, muon):
         '''Tight muon selection, no isolation requirement'''
-        return muon.muonID('POG_ID_Medium') and \
+        return muon.muonID('POG_ID_Medium_ICHEP') and \
             self.testVertex(muon) and \
             abs(muon.eta()) < 2.4 and \
             muon.pt() > 10. and \
@@ -235,7 +235,7 @@ class TauEleAnalyzer(DiLeptonAnalyzer):
     def otherLeptonVeto(self, leptons, otherLeptons, isoCut=0.3):
         # count veto muons
         vOtherLeptons = [muon for muon in otherLeptons if
-                         muon.muonID('POG_ID_Medium') and
+                         muon.muonID('POG_ID_Medium_ICHEP') and
                          self.testVertex(muon) and
                          self.testLegKine(muon, ptcut=10, etacut=2.4) and
                          muon.relIsoR(R=0.3, dBetaFactor=0.5, allCharged=0) < 0.3]

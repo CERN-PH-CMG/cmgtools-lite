@@ -8,8 +8,8 @@ from ROOT import *
 gStyle.SetOptTitle(0)
 gStyle.SetOptStat(0)
 gStyle.SetPadTopMargin(0.075)
-gStyle.SetPadLeftMargin(0.05)
-gStyle.SetPadRightMargin(0.025)
+gStyle.SetPadLeftMargin(0.06)
+gStyle.SetPadRightMargin(0.01)
 gStyle.SetPadBottomMargin(0.25)
 gStyle.SetLegendBorderSize(0)
 
@@ -87,16 +87,23 @@ def doLegend(pos = "TM",nEntr = None):
     elif pos == "TRC":
         #leg = TLegend(0.65,0.55,0.925,0.9)
         #leg = TLegend(1-gStyle.GetPadRightMargin()-0.25,0.55,1-gStyle.GetPadRightMargin(),1-gStyle.GetPadTopMargin())
-        leg = TLegend(1-gStyle.GetPadRightMargin()-0.35,0.55,1-gStyle.GetPadRightMargin(),1-gStyle.GetPadTopMargin())
+        #leg = TLegend(1-gStyle.GetPadRightMargin()-0.35,0.55,1-gStyle.GetPadRightMargin(),1-gStyle.GetPadTopMargin())
         #leg = TLegend(1-gStyle.GetPadRightMargin()-0.35,0.65,1-gStyle.GetPadRightMargin(),1-gStyle.GetPadTopMargin())
         #leg = TLegend(1-gStyle.GetPadRightMargin()-0.4,0.65,1-gStyle.GetPadRightMargin(),1-gStyle.GetPadTopMargin())
+        leg = TLegend(1-gStyle.GetPadRightMargin()-0.35,0.6,1-gStyle.GetPadRightMargin(),1-gStyle.GetPadTopMargin())
+    elif pos == "TLC":
+        #leg = TLegend(gStyle.GetPadLeftMargin(),0.55,gStyle.GetPadLeftMargin()+0.35,1-gStyle.GetPadTopMargin())
+        #leg = TLegend(gStyle.GetPadLeftMargin(),0.55,gStyle.GetPadLeftMargin()+0.35,1-gStyle.GetPadTopMargin())
+        leg = TLegend(gStyle.GetPadLeftMargin(),0.5,gStyle.GetPadLeftMargin()+0.35,1-gStyle.GetPadTopMargin())
+    else:
+        leg = TLegend(1-gStyle.GetPadRightMargin()-0.35,0.55,1-gStyle.GetPadRightMargin(),1-gStyle.GetPadTopMargin())
 
     leg.SetBorderSize(1)
     leg.SetTextFont(62)
     #leg.SetTextSize(0.03321678)
     leg.SetTextSize(0.05)
 
-    if pos != "TRC":
+    if pos != "TRC" and pos!= "TLC":
         leg.SetLineColor(0)
         leg.SetLineStyle(0)
         leg.SetLineWidth(0)
@@ -193,16 +200,16 @@ def getCleanLabel(binLabel):
     # NB
     #binLabel = binLabel.replace("NB0","")
     #binLabel = binLabel.replace("NB2i","")
-    '''
+
     binLabel = binLabel.replace("_NB1_","_1b_")
     binLabel = binLabel.replace("_NB1i_","_#geq1b_")
     binLabel = binLabel.replace("_NB2_","_2b_")
     binLabel = binLabel.replace("_NB2i_","_#geq2b_")
     binLabel = binLabel.replace("_NB3i_","_#geq3b_")
-    '''
 
     # NJ
     #binLabel = binLabel.replace("_NJ68","")
+    binLabel = binLabel.replace("_NJ5","_5j")
     binLabel = binLabel.replace("_NJ68","_6-8j")
     binLabel = binLabel.replace("_NJ9i","_#geq9j")
     #binLabel = binLabel.replace("_",",")
@@ -424,12 +431,23 @@ def getRatio(histA,histB, keepStyle = False):
 
 def getPull(histA,histB):
 
+    for ibin in range(1,histA.GetNbinsX()+1):
+        if histB.GetBinContent(ibin) == 0:
+            histB.SetBinError(ibin,1.8)
+
+        if histA.GetBinContent(ibin) == 0:
+            histA.SetBinError(ibin,1.8)
+
     pull = histA.Clone("pull_"+histA.GetName()+"_"+histB.GetName())
+
     pull.Add(histB,-1)
     #pull.Divide(histB)
 
     for ibin in range(1,pull.GetNbinsX()+1):
-        err = histB.GetBinError(ibin)
+        #err = histB.GetBinError(ibin)
+
+        err = math.sqrt(histB.GetBinError(ibin)*histB.GetBinError(ibin)+ histA.GetBinError(ibin)*histA.GetBinError(ibin))
+
         if err > 0:
             pull.SetBinContent(ibin,pull.GetBinContent(ibin)/err)
             pull.SetBinError(ibin,pull.GetBinError(ibin)/err)
@@ -440,7 +458,8 @@ def getPull(histA,histB):
     #pull.GetYaxis().SetTitle("Pull")
     #title = "#frac{%s - %s}{%s}" %(histA.GetTitle(),histB.GetTitle(),histB.GetTitle())
     #title = "#frac{%s - %s}{#sigma(%s)}" %(histA.GetTitle(),histB.GetTitle(),histA.GetTitle())
-    title = "#frac{%s - %s}{#sigma(%s)}" %(histA.GetTitle(),histB.GetTitle(),histB.GetTitle())
+    #title = "#frac{%s - %s}{#sigma(%s)}" %(histA.GetTitle(),histB.GetTitle(),histB.GetTitle())
+    title = "#frac{%s - %s}{#sigma(%s + %s)}" %(histA.GetTitle(),histB.GetTitle(),histA.GetTitle(),histB.GetTitle())
 
     pull.GetYaxis().SetTitle(title)
     pull.GetYaxis().CenterTitle()
@@ -504,8 +523,10 @@ def getSquaredSum(histList):
 def getHistWithError(hCentral, hSyst, new = True):
     if new:
         histWithError = hCentral.Clone(hCentral.GetName() + "wErr")
-        histWithError.SetFillColor(kBlue)
-        histWithError.SetFillStyle(3002)
+        #histWithError.SetFillColor(kBlue)
+        #histWithError.SetFillStyle(3002)
+        histWithError.SetFillColorAlpha(kBlue,0.2)
+        histWithError.SetFillStyle(1001)
     else:
         histWithError = hCentral
 
@@ -630,7 +651,7 @@ def plotHists(cname, histList, ratio = None, legPos = "TM", width = 800, height 
         if "Uncert" in ratio.GetName():
             plotOpt = "e2"
         elif "appa" in ratio.GetName():
-            plotOpt = "e1"
+            plotOpt = "e2"
         else:
             plotOpt = "pe1"
 
@@ -799,10 +820,6 @@ def plotHists(cname, histList, ratio = None, legPos = "TM", width = 800, height 
 
         if "same" not in plotOpt: plotOpt += "same"
 
-    #canv.BuildLegend()
-    leg.Draw()
-    SetOwnership(leg,0)
-
     '''
     # Add right axis
     raxis = TGaxis(gPad.GetUxmax(),gPad.GetUymin(),gPad.GetUxmax(), gPad.GetUymax(),0,ymax,510,"+L")
@@ -838,7 +855,11 @@ def plotHists(cname, histList, ratio = None, legPos = "TM", width = 800, height 
         if logY: canv.SetLogy()
 
 
-    #gPad.RedrawAxis()
+    gPad.RedrawAxis()
+
+    #canv.BuildLegend()
+    leg.Draw()
+    SetOwnership(leg,0)
 
     return canv
 

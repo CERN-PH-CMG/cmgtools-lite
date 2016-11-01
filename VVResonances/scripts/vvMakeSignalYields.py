@@ -67,7 +67,11 @@ for mass in sorted(samples.keys()):
     plotter.addCorrectionFactor('xsec','tree')
     plotter.addCorrectionFactor('puWeight','tree')
     histo = plotter.drawTH1(options.mvv,options.cut,"1",500,options.min,options.max)
-    yieldgraph.SetPoint(N,mass,histo.Integral()*options.BR)
+    err=ROOT.Double(0)
+    integral=histo.IntegralAndError(1,histo.GetNbinsX(),err) 
+
+    yieldgraph.SetPoint(N,mass,integral*options.BR)
+    yieldgraph.SetPointError(N,0.0,err*options.BR)
     N=N+1
 
 
@@ -83,8 +87,13 @@ f=open(options.output+".json","w")
 json.dump(parameterization,f)
 f.close()
 
-F=ROOT.TFile(options.output+".root",'RECREATE')
-F.cd()
-yieldgraph.Write("yield")
-F.Close()
+c=ROOT.TCanvas("c")
+c.cd()
+yieldgraph.Draw("AP")
+c.SaveAs("debug_"+options.output+".png")
+
+#F=ROOT.TFile(options.output+".root",'RECREATE')
+#F.cd()
+#yieldgraph.Write("yield")
+#F.Close()
 

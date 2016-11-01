@@ -37,13 +37,15 @@ class PlotterBase(object):
     def drawTH1(self,var,cuts,lumi,bins,min,max,titlex = "",units = "",drawStyle = "HIST"):
         return None
 
-    def makeDataSet(self,var,cut):
+    def makeDataSet(self,var,cut,maxN):
         return None
 
 
 
     def drawTH2Keys(self,var,cuts,binsx,minx,maxx,binsy,miny,maxy):
-        data=self.makeDataSet(var,cuts)
+        print 'making  Keys dataset'
+        data=self.makeDataSet(var,cuts,-1)
+        print 'dataset created with entries=',data.numEntries()
 
         varx=var.split(',')[0]
         vary=var.split(',')[1]
@@ -57,9 +59,22 @@ class PlotterBase(object):
         argset=ROOT.RooArgList()
         argset.add(data.get().find(varx))
         argset.add(data.get().find(vary))
-
         keys=ROOT.RooNDKeysPdf("keys","keys",argset,data)
-        return keys.createHistogram(var,binsx,binsy)
+
+        histo=self.drawTH2(vary+":"+varx,cuts,"1",binsx,minx,maxx,binsy,miny,maxy)
+        for i in range(1,histo.GetNbinsX()+1):
+            for j in range(1,histo.GetNbinsY()+1):
+                bin=histo.GetBin(i,j)
+                x=histo.GetXaxis().GetBinCenter(i)
+                y=histo.GetYaxis().GetBinCenter(j)
+                argset.find(varx).setVal(x)
+                argset.find(vary).setVal(y)
+                histo.SetBinContent(bin,keys.getVal())
+
+        #histo=keys.createHistogram(var,binsx,binsy)
+#        import pdb;pdb.set_trace()
+
+        return histo
 
     def drawTH2KeysFast(self,var,cuts,binsx,minx,maxx,binsy,miny,maxy,BINSCALE =5):
         histo=self.drawTH2(var,cuts,"1",binsx*BINSCALE,minx,maxx,binsy*BINSCALE,miny,maxy)
