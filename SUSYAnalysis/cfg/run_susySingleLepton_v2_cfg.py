@@ -155,6 +155,7 @@ triggerFlagsAna.triggerBits = {
   'IsoEle32' : triggers_1el,
   'IsoEle23' : triggers_1el23,
   'IsoEle22' : triggers_1el22,
+  'IsoEle27T' : triggers_1el27WPTight,
   'Ele105' : trigger_1el_noiso,
   'Ele115' : trigger_1el_noiso_115,
   'EleHT600' : triggers_el_ht600,
