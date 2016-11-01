@@ -51,6 +51,9 @@ triggers_HTMET = ["HLT_PFHT350_PFMET120_*"] # include all noise cleaning options
 triggers_HT350MET120 = ["HLT_PFHT350_PFMET120_*"] # include all noise cleaning options!
 triggers_HT350MET100 = ["HLT_PFHT350_PFMET100_*"] # include all noise cleaning options!
 
+triggers_pfjet450 = ["HLT_PFJet450_v*"]
+
+
 #pure MET tests
 triggers_MET170_HBHECleaned = ["HLT_PFMET170_HBHECleaned_v*"]
 triggers_MET170_BeamHaloCleaned = ["HLT_PFMET170_BeamHaloCleaned_v*"] 
