@@ -39,8 +39,8 @@ pt_bins = range(0,30,2) + range(30,70,5) + range(70,150,10) + range (150,350,50)
 #pt_bins = range(0,30,2) + range(30,70,5) + range(70,100,10)
 pt_bins_2d = range(0,80,10) + range(80,150,20) + range (150,350,50) + range (350,850,100)
 
-#lt_bins = range(0,100,10) + range(100,200,25) + range(200,400,50) + range(400,700,100) # high stat
-lt_bins = range(0,200,25) + range(200,300,50) + range(300,700,150) # low stat
+lt_bins = range(0,100,10) + range(100,200,25) + range(200,400,50) + range(400,900,100) # high stat
+#lt_bins = range(0,200,25) + range(200,300,50) + range(300,700,150) # low stat
 
 met_bins = range(0,200,20) + range(200,400,50) + range(400,700,100) # high stat
 #met_bins = range(0,200,40) + range(200,400,100) + range(400,700,300) # low stat
