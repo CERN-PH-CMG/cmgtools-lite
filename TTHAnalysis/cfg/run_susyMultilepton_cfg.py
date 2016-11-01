@@ -46,7 +46,6 @@ ttHLepSkim.minLeptons = 2
 ttHLepSkim.maxLeptons = 999
 #ttHLepSkim.idCut  = ""
 #ttHLepSkim.ptCuts = []
-ttHLepSkim.allowLepTauComb = True
 
 # Run miniIso
 lepAna.doMiniIsolation = True
@@ -196,6 +195,7 @@ susyCoreSequence.insert(susyCoreSequence.index(ttHFatJetAna)+1, ttHDecluster)
 from CMGTools.TTHAnalysis.analyzers.treeProducerSusyMultilepton import * 
 
 if analysis=="susy":
+    ttHLepSkim.allowLepTauComb = True
     susyCoreSequence.insert(susyCoreSequence.index(ttHCoreEventAna),
                             susyLeptonMatchAna)
     susyCoreSequence.insert(susyCoreSequence.index(ttHCoreEventAna),
