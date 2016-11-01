@@ -11,6 +11,7 @@ triggers_1mu24 = ["HLT_IsoMu24_v*"]
 triggers_1el = ["HLT_Ele32_eta2p1_WP75_Gsf_v*",'HLT_Ele32_eta2p1_WPLoose_Gsf_v*','HLT_Ele32_eta2p1_WPTight_Gsf_v*']
 triggers_1el23 = ["HLT_Ele23_WPLoose_Gsf_v*"]
 triggers_1el22 = ["HLT_Ele22_eta2p1_WPLoose_Gsf_v*","HLT_Ele22_eta2p1_WPTight_Gsf_v*"]
+triggers_1el27WPTight = ["HLT_Ele27_WPTight_Gsf_v*"]
 
 
 ### non-iso single lepton
