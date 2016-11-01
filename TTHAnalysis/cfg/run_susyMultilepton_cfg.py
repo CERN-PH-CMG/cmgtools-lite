@@ -132,10 +132,10 @@ tauAna.loose_ptMin = 20
 tauAna.loose_etaMax = 2.3
 tauAna.loose_decayModeID = "decayModeFindingNewDMs"
 tauAna.loose_tauID = "decayModeFindingNewDMs"
-if analysis in ["ttH"]: #if cleaning jet-loose tau cleaning
-    jetAna.cleanJetsFromTaus = True
-    jetAnaScaleUp.cleanJetsFromTaus = True
-    jetAnaScaleDown.cleanJetsFromTaus = True
+#if analysis in ["ttH"]: #if cleaning jet-loose tau cleaning
+#    jetAna.cleanJetsFromTaus = True
+#    jetAnaScaleUp.cleanJetsFromTaus = True
+#    jetAnaScaleDown.cleanJetsFromTaus = True
 
 
 #-------- ADDITIONAL ANALYZERS -----------
