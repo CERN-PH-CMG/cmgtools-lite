@@ -215,14 +215,14 @@ def createHistogram(hist_cfg, all_stack=False, verbose=False, friend_func=None):
     return plot
 
 
-def fillIntoTree(out_tree, branches, cfg, hist_cfg, plot, verbose, friend_func):
+def fillIntoTree(out_tree, branches, cfg, hist_cfg, vcfgs, total_scale, plot, verbose, friend_func):
+
     if isinstance(cfg, HistogramCfg):
         # Loop over sub-cfgs and fill them
+        total_scale *= cfg.total_scale if cfg.total_scale else 1.
         for sub_cfg in cfg.cfgs:
-            fillIntoTree(out_tree, branches, sub_cfg, cfg, plot, verbose, friend_func)
+            fillIntoTree(out_tree, branches, sub_cfg, cfg, vcfgs, total_scale, plot, verbose, friend_func)
         return
-
-    vcfgs = hist_cfg.vars
 
     file_name = '/'.join([cfg.ana_dir, cfg.dir_name, cfg.tree_prod_name, 'tree.root'])
 
@@ -238,6 +238,8 @@ def fillIntoTree(out_tree, branches, cfg, hist_cfg, plot, verbose, friend_func):
     if cfg.shape_cut:
         shape_cut = cfg.shape_cut
 
+    full_weight = branches[-1]
+
     weight = hist_cfg.weight
     if cfg.weight_expr:
         weight = '*'.join([weight, cfg.weight_expr])
@@ -247,13 +249,11 @@ def fillIntoTree(out_tree, branches, cfg, hist_cfg, plot, verbose, friend_func):
         shape_cut = '({c}) * {we}'.format(c=shape_cut, we=weight)
 
     # and this one too
-    sample_weight = 1.
+    sample_weight = cfg.scale * total_scale
     if not cfg.is_data:
-        sample_weight = hist_cfg.lumi*cfg.xsec/cfg.sumweights*cfg.scale
+        sample_weight *= hist_cfg.lumi*cfg.xsec/cfg.sumweights
 
-    full_weight = array('f', [0.])
-    out_tree.Branch('full_weight', full_weight, 'full_weight/F')
-    formula = TTreeFormula('weight_formula', weight, ttree)
+    formula = TTreeFormula('weight_formula', norm_cut, ttree)
     formula.GetNdata()
 
     # Add weight as tree variable
@@ -263,7 +263,7 @@ def fillIntoTree(out_tree, branches, cfg, hist_cfg, plot, verbose, friend_func):
 
     # Create TTreeFormulas for all vars
     for var in vcfgs:
-        if var.drawname != var.name and not hasattr(var, 'formula'):
+        if var.drawname != var.name:
             var.formula = TTreeFormula('formula'+var.name, var.drawname, ttree)
             var.formula.GetNdata()
 
@@ -273,6 +273,12 @@ def fillIntoTree(out_tree, branches, cfg, hist_cfg, plot, verbose, friend_func):
         if w == 0.:
             continue
         full_weight[0] = w * sample_weight
+        if abs(full_weight[0]) > 1000.:
+            print "WARNING, unusually large weight", w, sample_weight
+            import pdb; pdb.set_trace()
+            print '\nWeight:', full_weight[0]
+            print cfg.name
+            print norm_cut
         for branch, var in zip(branches, vcfgs):
             branch[0] = var.formula.EvalInstance() if hasattr(var, 'formula') else getattr(ttree, var.name)
         out_tree.Fill()
@@ -292,7 +298,6 @@ def createTrees(hist_cfg, out_dir, verbose=False, friend_func=None):
     for cfg in hist_cfg.cfgs:
         
         out_file = TFile('/'.join([out_dir, hist_cfg.name + '_' + cfg.name + '.root']), 'RECREATE')
-
         out_tree = TTree('tree', '')
 
         # Create branches for all variables
@@ -300,9 +305,16 @@ def createTrees(hist_cfg, out_dir, verbose=False, friend_func=None):
         for branch_name, branch in zip([v.name for v in vcfgs], branches):
             out_tree.Branch(branch_name, branch, branch_name+'/F')
 
-        fillIntoTree(out_tree, branches, cfg, hist_cfg, plot, verbose, friend_func)
+        # Create branch with full weight including lumi x cross section
+        full_weight = array('f', [0.])
+        out_tree.Branch('full_weight', full_weight, 'full_weight/F')
+        branches.append(full_weight)
+
+        total_scale = hist_cfg.total_scale if hist_cfg.total_scale else 1.
+        fillIntoTree(out_tree, branches, cfg, hist_cfg, vcfgs, total_scale, plot, verbose, friend_func)
 
         out_file.cd()
+        out_tree.Write()
         out_file.Write()
         out_file.Close()
     return plot
