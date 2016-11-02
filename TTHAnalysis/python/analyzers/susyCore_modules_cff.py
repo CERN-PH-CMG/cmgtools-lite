@@ -239,7 +239,7 @@ ttHLepSkim = cfg.Analyzer(
 )
 
 ## global event Skimmer
-from CMGTools.TTHAnalysis.analyzers.ttHLepSkimmer import ttHLepSkimmer
+from CMGTools.TTHAnalysis.analyzers.globalEventSkimmer import globalEventSkimmer
 globalSkim = cfg.Analyzer(
     globalEventSkimmer, name='globalEventSkimmer',
     collections={"lep":"selectedLeptons",
