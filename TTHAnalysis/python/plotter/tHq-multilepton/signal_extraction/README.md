@@ -39,7 +39,7 @@ Note that you'll need to set your environment to a release area with `combine` a
 
 ```
 cd ~stiegerb/combine/; eval `scramv1 runtime -sh`; cd -;
-```.
+```
 
 Run on a single datacard:
 
