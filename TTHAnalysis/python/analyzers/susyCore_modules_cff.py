@@ -554,7 +554,6 @@ susyCoreSequence = [
     #ttHFatJetAna,  # out of core sequence for now
     #ttHSVAna, # out of core sequence for now
     metAna,
-    globalSkim,
     ttHCoreEventAna,
     # ttHJetMETSkim,
     # susyLeptonMatchAna,
