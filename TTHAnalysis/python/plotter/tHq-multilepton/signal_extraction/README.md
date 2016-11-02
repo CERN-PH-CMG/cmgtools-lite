@@ -8,7 +8,7 @@ python makeShapeCards.py \
 tHq-multilepton/mca-thq-3l-mcdata-frdata.txt \
 tHq-multilepton/cuts-thq-3l.txt \
 thqMVA_ttv:thqMVA_tt 40,-1,1,40,-1,1 \
-tHq-multilepton/signal_extraction/systsEnv_dummy.txt \
+tHq-multilepton/signal_extraction/systsEnv.txt \
 -P 809_June9_ttH_skimOnlyMC_3ltight_relax_prescale/ \
 -P treedir/tHq_production_Sep2/ \
 --tree treeProducerSusyMultilepton \
@@ -28,7 +28,7 @@ tHq-multilepton/signal_extraction/systsEnv_dummy.txt \
 - Change from `--savefile activate` to `--infile activate` to rerun quickly with a different binning.
 - Still need to use an optimized binning function. Something like: '--2d-binning-function "5:ttH_MVAto1D_5_3l_Marco"', where ttH_MVAto1D_5_3l_Marco is a function defined in `functions.cc`. This converts the 2D histogram into a 1D histogram to be fed to combine.
 - (Might need to run twice to create all output.)
-- Still need to write a non-dummy systematics file
+- Systematics are copied from ttH so far. Several are missing.
 - Will want to script this in case of several categories/tests, or to combine with same-sign channel.
 
 This produces three files: `..input.root`, `..card.txt`, `..bare.root`
