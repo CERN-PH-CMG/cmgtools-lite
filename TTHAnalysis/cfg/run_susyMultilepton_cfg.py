@@ -44,7 +44,7 @@ print 'Using analysis type: %s'%analysis
 # Lepton Skimming
 ttHLepSkim.minLeptons = 2
 ttHLepSkim.maxLeptons = 999
--ttHLepSkim.allowLepTauComb = True
+ttHLepSkim.allowLepTauComb = True
 
 if analysis=='susy':
     susyCoreSequence.remove(ttHLepSkim)
@@ -85,7 +85,8 @@ if analysis in ['SOS']:
     lepAna.doFixedConeIsoWithMiniIsoVeto = True
 
     # Lepton Skimming
-    ttHLepSkim.minleptons=2
+    ttHLepSkim.minleptons = 2
+    ttHLepSkim.maxLeptons = 999
     
 #    # Jet-Met Skimming
 #    ttHJetMETSkim.jetPtCuts = [0,]
@@ -684,7 +685,7 @@ if runFRMC or runDataQCD:
             minLeptons = 1,
         )
         fastSkim.minLeptons = 2
-        ttHLepSkim.selection =1
+        ttHLepSkim.maxLeptons = 1
         susyCoreSequence.insert(susyCoreSequence.index(skimAnalyzer)+1, fastSkimBM)
         from PhysicsTools.Heppy.analyzers.core.TriggerMatchAnalyzer import TriggerMatchAnalyzer
         trigMatcher1Mu2J = cfg.Analyzer(
@@ -703,7 +704,7 @@ if runFRMC or runDataQCD:
         susyCoreSequence.insert(susyCoreSequence.index(jetAna)+1, trigMatcher1Mu2J)
         ttHLepQCDFakeRateAna.jetSel = lambda jet : jet.pt() > 25 and abs(jet.eta()) < 2.4 and jet.matchedTrgObj1Mu
 if sample == "z3l":
-    ttHLepSkim.minleptons=3
+    ttHLepSkim.minleptons = 3
     if getHeppyOption("fast"): raise RuntimeError, 'Already added ttHFastLepSkimmer with 2-lep configuration, this is wrong.'
     treeProducer.collections = {
         "selectedLeptons" : NTupleCollection("LepGood", leptonTypeSusyExtraLight, 8, help="Leptons after the preselection"),
@@ -813,7 +814,7 @@ if test == '1':
     comp = selectedComponents[0]
     comp.files = comp.files[:1]
     comp.splitFactor = 1
-    comp.fineSplitFactor = 4
+    comp.fineSplitFactor = 1
     selectedComponents = [ comp ]
 elif test == '2':
     from CMGTools.Production.promptRecoRunRangeFilter import filterWithCollection
@@ -853,7 +854,7 @@ elif test == "tau-sync":
     comp.fineSplitFactor = 6
     selectedComponents = [ comp ]
     sequence.remove(jsonAna)
-    ttHLepSkim.minLeptons=0 
+    ttHLepSkim.minLeptons = 0 
 elif test == '80X-MC':
     what = getHeppyOption("sample","TTLep")
     if what == "TTLep":
@@ -882,7 +883,7 @@ elif test == '80X-Data':
         comp.splitFactor = 1
         comp.fineSplitFactor = 4
 elif test == 'ttH-sync':
-    ttHLepSkim.minLeptons=0 
+    ttHLepSkim.minLeptons = 0 
     selectedComponents = selectedComponents[:1]
     comp = selectedComponents[0]
     comp.files = ['/store/mc/RunIIFall15MiniAODv2/ttHToNonbb_M125_13TeV_powheg_pythia8/MINIAODSIM/PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/00000/021B993B-4DBB-E511-BBA6-008CFA1111B4.root']
