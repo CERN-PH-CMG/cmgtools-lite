@@ -53,7 +53,7 @@ class Analysis:
             'gjets': 'vbfdm/gjets.txt',
             }
         
-        common_plotfile = "vbfdm/common_plots.txt"
+        common_plotfile = "vbfdm/common_plots_2D.txt" if options.twodim else "vbfdm/common_plots.txt"
         plotfile = re.split(".txt",cuts[region])[0]+"_plots.txt"
         with open('vbfdm/plots.txt','w') as fout:
             fin = fileinput.input([common_plotfile,plotfile])
@@ -122,7 +122,8 @@ if __name__ == "__main__":
     parser.add_option("-s", "--synch", dest="synch", action="store_true", default=False, help='Do not apply any scale factor, bare yields')
     parser.add_option("-p", "--pdir", dest="pdir", type="string", default="", help='If given, make the plots and put them in the specified directory')
     parser.add_option("--select-plot", "--sP", dest="plotselect", action="append", default=[], help="Select only these plots out of the full file")
-    parser.add_option("-U", "--up-to-cut",      dest="upToCut",   type="string", help="Run selection only up to the cut matched by this regexp, included.") 
+    parser.add_option("-U", "--up-to-cut",      dest="upToCut",   type="string", help="Run selection only up to the cut matched by this regexp, included.")
+    parser.add_option("--twodim", dest="twodim", action="store_true", help="run the two-dimensional analysis")
     parser.add_option("--fullControlRegions", dest="fullControlRegions", action="store_true", default=False, help='Do not run only one mcAnalysis/mCPlots, do all the control regions')
     parser.add_option("--propSystToVar", dest="propSystToVar", type="string", default="", help='Make the templates for a given variable, nominal and systematic alternatives')
     parser.add_option("--tF","--transferFactor", dest="transferFactor",  type="string", default="", help='Make the transfer factors from control regions to signal region. Take the templates for the specified variable.')

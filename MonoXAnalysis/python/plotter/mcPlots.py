@@ -939,7 +939,8 @@ class PlotMaker:
                                     plot.SetContour(100)
                                     ROOT.gStyle.SetPaintTextFormat(pspec.getOption("PaintTextFormat","g"))
                                     plot.SetMarkerSize(pspec.getOption("MarkerSize",1))
-                                    plot.Draw(pspec.getOption("PlotMode","COLZ TEXT45"))
+                                    #plot.Draw(pspec.getOption("PlotMode","COLZ TEXT45"))
+                                    plot.Draw(pspec.getOption("PlotMode","COLZ"))
                                     c1.Print("%s/%s_%s.%s" % (fdir, outputName, p, ext))
                                 if "data" in pmap and "TGraph" in pmap["data"].ClassName():
                                     pmap["data"].SetMarkerSize(pspec.getOption("MarkerSize",1.6))
@@ -948,7 +949,8 @@ class PlotMaker:
                                         plot = pmap[p]
                                         c1.SetRightMargin(0.20)
                                         plot.SetContour(100)
-                                        plot.Draw(pspec.getOption("PlotMode","COLZ TEXT45"))
+                                        #plot.Draw(pspec.getOption("PlotMode","COLZ TEXT45"))
+                                        plot.Draw(pspec.getOption("PlotMode","COLZ"))
                                         pmap["data"].Draw("P SAME")
                                         c1.Print("%s/%s_data_%s.%s" % (fdir, outputName, p, ext))
                             else:
