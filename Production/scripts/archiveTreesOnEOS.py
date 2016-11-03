@@ -76,7 +76,7 @@ if __name__ == "__main__":
 	    for f in allfriends:
 	        if (options.friendtreestring not in f) or (not os.path.isfile(f)):
 	            raise RuntimeError, 'Unknown file in friend directory.'
-	        tocopy.append( (f,'%s/%s_%s'%(remdir,d,f.split('/')[-1])) )
+	        tocopy.append( (f,'%s/%s_%s'%(remdir,os.path.basename(d),f.split('/')[-1])) )
 	for task in tocopy:
 	    if os.path.exists(task[0]+".url"): 
                 if options.force:

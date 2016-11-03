@@ -18,33 +18,31 @@ def prepareJob(mm, mp, baseSig, binning, bkgpath, outpath, xslist, options):
 
 	tmpfile = open(mm.srcpath +"/submitJob_"+ name +".py", "w")
 	for line in source:
-		line = line.replace("THENAME"      , name                                                                                 )
-		line = line.replace("THESIGNAL"    , sig                                                                                  )
-		line = line.replace("THEMASS1"     , mp[0]                                                                                )
-		line = line.replace("THEMASS2"     , mp[1]                                                                                )
-		line = line.replace("THEOFFSET"    , func.getOffset(mm.getVariable("expr"), binning)                                      )
-		line = line.replace("THEFILE"      , mp[2]                                                                                )
-		line = line.replace("THEXS"        , xs                                                                                   ) 
-		line = line.replace("THEQ2FILE"    , mm.getVariable("q2accfile")                                                          )
-		line = line.replace("THEQ2SYNTAX"  , mm.getVariable("q2accformat")                                                        )
-		line = line.replace("THEWEIGHTSTR" , mm.getVariable("mcaWeightFS")                                                        )
-		line = line.replace("THEFRFILES"   , "["+",".join(["\""+f+"\"" for f in mm.getVariable("frFilesFS").split(";")])+"]"      )
-		line = line.replace("THEJEC"       , mm.getVariable("jec")                                                                )
-		line = line.replace("THEMET"       , mm.getVariable("met")                                                                )
-		line = line.replace("THEQ2ACC"     , mm.getVariable("q2acc")                                                              )
-		line = line.replace("THEFRJEC"     , "["+",".join(["\""+f+"\"" for f in mm.getVariable("frFilesFSJec"   ).split(";")])+"]")
-		line = line.replace("THEWVJEC"     , "["+",".join(["\""+f+"\"" for f in mm.getVariable("wVarsFSJec"     ).split(";")])+"]")
-		line = line.replace("THEFRMET"     , "["+",".join(["\""+f+"\"" for f in mm.getVariable("frFilesFSMet"   ).split(";")])+"]")
-		line = line.replace("THEWVMET"     , "["+",".join(["\""+f+"\"" for f in mm.getVariable("wVarsFSMet"     ).split(";")])+"]")
-		line = line.replace("THEWEIGHTVARS", "{"+",".join(["\""+k+"\":[" + ",".join("\""+v+"\"" for v in vals) + "]" for k,vals in mm.getVariable("wVarsFS").iteritems()])+"}")
-		line = line.replace("THEMCADIR"    , mm.tmppath                                                                           )
-		line = line.replace("THEBKGDIR"    , bkgpath                                                                              )
-		line = line.replace("THEOUTDIR"    , outpath                                                                              )
-		line = line.replace("THEMCA"       , mm.getVariable("mcafile")                                                            )
-		line = line.replace("THESYST"      , mm.getVariable("sysfile")                                                            )
-		line = line.replace("THEBASE"      , baseSig                                                                              )
-		#line = line.replace("THECMDFIRST"  , "{CUTS} \\\"{EXPR}\\\" \\\"{BINS}\\\"".format(CUTS=config.cuts, EXPR=config.expr, BINS=b))
-		#line = line.replace("THECMDSECOND" , thecmd.split("[SYSTS]")[1])
+		line = line.replace("THENAME"      , name                                              )
+		line = line.replace("THESIGNAL"    , sig                                               )
+		line = line.replace("THEMASS1"     , mp[0]                                             )
+		line = line.replace("THEMASS2"     , mp[1]                                             )
+		line = line.replace("THEOFFSET"    , func.getOffset(mm.getVariable("expr",""), binning))
+		line = line.replace("THEFILE"      , mp[2]                                             )
+		line = line.replace("THEXS"        , xs                                                ) 
+		line = line.replace("THEQ2FILE"    , mm.getVariable("q2accfile","")                    )
+		line = line.replace("THEQ2SYNTAX"  , mm.getVariable("q2accformat","")                  )
+		line = line.replace("THEWEIGHTSTR" , mm.getVariable("mcaWeightFS","")                  )
+		line = line.replace("THEFRFILES"   , "["+",".join(["\""+f+"\"" for f in mm.getVariable("frFilesFS","").split(";")])+"]")
+		line = line.replace("THEJEC"       , mm.getVariable("jec","")                          )
+		line = line.replace("THEMET"       , mm.getVariable("met","")                          )
+		line = line.replace("THEQ2ACC"     , mm.getVariable("q2acc","")                        )
+		line = line.replace("THEFRJEC"     , "["+",".join(["\""+f+"\"" for f in mm.getVariable("frFilesFSJec","").split(";")])+"]")
+		line = line.replace("THEWVJEC"     , "["+",".join(["\""+f+"\"" for f in mm.getVariable("wVarsFSJec"  ,"").split(";")])+"]")
+		line = line.replace("THEFRMET"     , "["+",".join(["\""+f+"\"" for f in mm.getVariable("frFilesFSMet","").split(";")])+"]")
+		line = line.replace("THEWVMET"     , "["+",".join(["\""+f+"\"" for f in mm.getVariable("wVarsFSMet"  ,"").split(";")])+"]")
+		line = line.replace("THEWEIGHTVARS", "{"+",".join(["\""+k+"\":[" + ",".join("\""+v+"\"" for v in vals) + "]" for k,vals in mm.getVariable("wVarsFS","").iteritems()])+"}")
+		line = line.replace("THEMCADIR"    , mm.tmppath                                        )
+		line = line.replace("THEBKGDIR"    , bkgpath                                           )
+		line = line.replace("THEOUTDIR"    , outpath                                           )
+		line = line.replace("THEMCA"       , mm.getVariable("mcafile","")                      )
+		line = line.replace("THESYST"      , mm.getVariable("sysfile","")                      )
+		line = line.replace("THEBASE"      , baseSig                                           )
 		tmpfile.write(line)
 	tmpfile.close()
 	return "python "+ mm.srcpath +"/submitJob_"+ name +".py"
@@ -81,7 +79,7 @@ for r in range(len(mm.regions)):
 	sc      = mm.getScenario(True)
 
 	## looping over binnings
-	binnings = [mm.getVariable("bins")] if not options.perBin else getAllBins(mm.getVariable("bins"))
+	binnings = [mm.getVariable("bins","")] if not options.perBin else getAllBins(mm.getVariable("bins",""))
 	for ib,b in enumerate(binnings):
 		
 		## change scenario if looping over all bins
@@ -98,7 +96,8 @@ for r in range(len(mm.regions)):
 	
 		bkgId  = -1
 		if not options.sigOnly:
-			bkgId = mm.submit([mm.getVariable("mcafile"), mm.getVariable("cutfile"), mm.getVariable("expr"), mm.getVariable("bins"), sc.replace("/","_"), mm.treedir, options.treename, mccs, macros, options.lumi, bkgDir, friends, flags, func.getCut(mm.getVariable("firstCut"), mm.getVariable("expr"), mm.getVariable("bins"))], -1, True)
+			bkgId = mm.submit([mm.getVariable("mcafile",""), mm.getVariable("cutfile",""), mm.getVariable("expr",""), mm.getVariable("bins",""), sc.replace("/","_"), mm.treedir, options.treename, mccs, macros, options.lumi, bkgDir, friends, flags, func.getCut(mm.getVariable("firstCut","alwaystrue"), mm.getVariable("expr",""), mm.getVariable("bins",""))],sc+"_"+mm.region.name+"_bkg",False)
+			mm.clearJobs()
 	
 		if options.bkgOnly: continue
 	
@@ -122,12 +121,13 @@ for r in range(len(mm.regions)):
 	
 			## looping over masspoints
 			for mp in mps:
-
 				flags   = mm.collectFlags("flagsScans", True, True)
-				thebase = mm.makeCmd([mm.getVariable("cutfile"), mm.getVariable("expr"), b, sc.replace("/","_"), mm.treedir, options.treename, mccs, macros, options.lumi, friends, flags, func.getCut(mm.getVariable("firstCut"), mm.getVariable("expr"), mm.getVariable("bins"))])
+				thebase = mm.makeCmd([mm.getVariable("cutfile",""), mm.getVariable("expr",""), b, sc.replace("/","_"), mm.treedir, options.treename, mccs, macros, options.lumi, friends, flags, func.getCut(mm.getVariable("firstCut","alwaystrue"), mm.getVariable("expr",""), mm.getVariable("bins",""))])
 				thecmd = prepareJob(mm, mp, thebase, b, bkgDir, myDir, xslist, options)
-				mm.submitCmd(thecmd, bkgId)
+				mm.registerCmd(thecmd,sc+"_"+mm.region.name+"_"+mp)
 				break	
+		mm.runJobs()
+		mm.clearJobs()
 
 
 	

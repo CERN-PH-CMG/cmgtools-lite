@@ -9,7 +9,7 @@
 First compile the `chargeMisIdProb.cc`:
 
 ```
-g++ -o chMidProb chargeMisIdProb.cc `root-config --glibs --cflags` -lMinuit -lMinuit2 -lRooFit -lRooFitCore
+LIBRARY_PATH=$LD_LIBRARY_PATH g++ -o chMidProb chargeMisIdProb.cc `root-config --glibs --cflags` -lMinuit -lMinuit2 -lRooFit -lRooFitCore -I$CMSSW_RELEASE_BASE/src/ -lPhysicsToolsTagAndProbe
 ```
 
 Run the combined fits:

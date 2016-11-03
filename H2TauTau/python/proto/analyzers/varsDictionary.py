@@ -79,6 +79,7 @@ vars['l1_decayModeFindingNewDMs'] = {'std': 'l1_decayModeFindingNewDMs', 'sync':
 vars['l1_neutralIsoPtSum'] = {'std': 'l1_neutralIsoPtSum', 'sync': 'neutralIsoPtSum_1'}
 vars['l1_puCorrPtSum'] = {'std': 'l1_puCorrPtSum', 'sync': 'puCorrPtSum_1'}
 vars['l1_gen_match'] = {'std': 'l1_gen_match', 'sync': 'gen_match_1'}
+vars['l1_byTightIsolationMVArun2v1DBoldDMwLT'] = {'std': 'l1_byTightIsolationMVArun2v1DBoldDMwLT', 'sync': 'mva_olddm_tight_1'}# For sync check
 
 # Leg 2 (tau, mu, ele)
 vars['l2_pt'] = {'std': 'l2_pt', 'sync': 'pt_2'}
@@ -121,6 +122,7 @@ vars['l2_decayModeFindingNewDMs'] = {'std': 'l2_decayModeFindingNewDMs', 'sync':
 vars['l2_neutralIsoPtSum'] = {'std': 'l2_neutralIsoPtSum', 'sync': 'neutralIsoPtSum_2'}
 vars['l2_puCorrPtSum'] = {'std': 'l2_puCorrPtSum', 'sync': 'puCorrPtSum_2'}
 vars['l2_gen_match'] = {'std': 'l2_gen_match', 'sync': 'gen_match_2'}
+vars['l2_byTightIsolationMVArun2v1DBoldDMwLT'] = {'std': 'l2_byTightIsolationMVArun2v1DBoldDMwLT', 'sync': 'mva_olddm_tight_2'}# For sync check
 
 # di-tau pair
 vars['pthiggs'] = {'std': 'pthiggs', 'sync': 'pt_tt'}

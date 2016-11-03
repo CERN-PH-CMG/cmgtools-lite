@@ -18,8 +18,6 @@ leptonTypeSusy = NTupleObjectType("leptonSusy", baseObjectTypes = [ leptonType ]
     # Lepton MVA-id related variables
     NTupleVariable("mvaTTH",    lambda lepton : getattr(lepton, 'mvaValueTTH', -1), help="Lepton MVA (TTH version)"),
     NTupleVariable("mvaSUSY",    lambda lepton : getattr(lepton, 'mvaValueSUSY', -1), help="Lepton MVA (SUSY version)"),
-    NTupleVariable("mvaSoftT2tt",    lambda lepton : getattr(lepton, 'mvaValueSoftT2tt', -1), help="Lepton MVA (Soft T2tt version)"),
-    NTupleVariable("mvaSoftEWK",    lambda lepton : getattr(lepton, 'mvaValueSoftEWK', -1), help="Lepton MVA (Soft EWK version)"),
     NTupleVariable("jetPtRatiov1", lambda lepton : lepton.pt()/lepton.jet.pt() if hasattr(lepton,'jet') else -1, help="pt(lepton)/pt(nearest jet)"),
     NTupleVariable("jetPtRelv1", lambda lepton : ptRelv1(lepton.p4(),lepton.jet.p4()) if hasattr(lepton,'jet') else -1, help="pt of the lepton transverse to the jet axis (subtracting the lepton)"),
     NTupleVariable("jetPtRatiov2", lambda lepton: lepton.pt()/jetLepAwareJEC(lepton).Pt() if hasattr(lepton,'jet') else -1, help="pt(lepton)/[rawpt(jet-PU-lep)*L2L3Res+pt(lepton)]"),
@@ -75,6 +73,11 @@ leptonTypeSusyExtraLight = NTupleObjectType("leptonSusyExtraLight", baseObjectTy
     NTupleVariable("svMass", lambda x : x.ivf.mass() if getattr(x,'ivf',None) != None else -99, help="mass of associated SV"),
     NTupleVariable("svNTracks", lambda x : x.ivf.numberOfDaughters() if getattr(x,'ivf',None) != None else -99, help="Number of tracks of associated SV"),
 
+    # Extra electron kinematic variables used for charge flip studies
+    ##NTupleVariable("etaSc", lambda x : x.superCluster().eta(), help="Photon supercluster pseudorapidity"), # already in leptonExtra
+    NTupleVariable("energySc", lambda x : x.superCluster().energy() if abs(x.pdgId())==11 else -100, help="Electron supercluster pseudorapidity"),
+
+
 ])
 leptonTypeSusyExtraLight.addSubObjects([
         NTupleSubObject("jetLepAwareJEC",lambda x: jetLepAwareJEC(x), tlorentzFourVectorType)
@@ -127,8 +130,7 @@ leptonTypeSusyExtra = NTupleObjectType("leptonSusyExtra", baseObjectTypes = [ le
 ##------------------------------------------  
 
 tauTypeSusy = NTupleObjectType("tauSusy",  baseObjectTypes = [ tauType ], variables = [
-        NTupleVariable("idMVAOldDMRun2", lambda x : x.idMVAOldDMRun2, int, help="1,2,3,4,5 if the tau passes the very loose to very tight WP of the IsolationMVArun2v1DBoldDMwLT discriminator"),
-        NTupleVariable("idMVAOldDMRun2dR03", lambda x : x.idMVAOldDMRun2dR03, int, help="1,2,3,4 if the tau passes the loose to very tight WP of the IsolationMVArun2v1DBdR03oldDMwLT discriminator"),
+        NTupleVariable("idMVAdR03", lambda x : x.idMVAdR03, int, help="1,2,3,4,5,6 if the tau passes the very loose to very very tight WP of the IsolationMVArun2v1DBdR03oldDMwLT discriminator"),
 ])
 
 ##------------------------------------------  

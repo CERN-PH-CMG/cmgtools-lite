@@ -23,7 +23,7 @@ for r in range(len(mm.regions)):
 	mm.iterateRegion()
 
 	procs   = mm.getProcs()	
-	binnings = [mm.getVariable("bins")] if not options.perBin else func.getAllBins(mm.getVariable("bins"))
+	binnings = [mm.getVariable("bins","")] if not options.perBin else func.getAllBins(mm.getVariable("bins",""))
 	
 	for ib,b in enumerate(binnings):
 	
@@ -36,7 +36,7 @@ for r in range(len(mm.regions)):
 	
 		flags += " "+mm.getExprCut()
 		
-		mm.submit([mm.getVariable("mcafile"), mm.getVariable("cutfile"), mm.getVariable("expr"), mm.getVariable("bins"), mm.getVariable("sysfile"), mm.treedir, options.treename, mccs, macros, options.lumi, output, friends, procs, flags])
+		mm.submit([mm.getVariable("mcafile",""), mm.getVariable("cutfile",""), mm.getVariable("expr",""), mm.getVariable("bins",""), mm.getVariable("sysfile",""), mm.treedir, options.treename, mccs, macros, options.lumi, output, friends, procs, flags], mm.region.name)
 
 
 

@@ -147,6 +147,7 @@ genHFAna = cfg.Analyzer(
 
 lheWeightAna = cfg.Analyzer(
     LHEWeightAnalyzer, name="LHEWeightAnalyzer",
+    useLumiInfo=False
 )
 
 pdfwAna = cfg.Analyzer(
@@ -487,6 +488,7 @@ ttHCoreEventAna = cfg.Analyzer(
     mhtForBiasedDPhi = "mhtJet40jvec",
     jetForBiasedDPhi = "cleanJets",
     jetPt = 40.,
+    doLeptonMVASoft = False,
     )
 
 # Jet-MET based Skim (generic, but requirements depend on the final state)
