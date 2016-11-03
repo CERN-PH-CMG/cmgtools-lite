@@ -5,7 +5,7 @@
 ```
 python makeShapeCards.py \
 --savefile activate \
-tHq-multilepton/mca-thq-3l-mcdata-frdata.txt \
+tHq-multilepton/mca-thq-3l-mcdata-frdata_limits.txt \
 tHq-multilepton/cuts-thq-3l.txt \
 thqMVA_ttv:thqMVA_tt 40,-1,1,40,-1,1 \
 tHq-multilepton/signal_extraction/systsEnv.txt \
@@ -20,7 +20,7 @@ tHq-multilepton/signal_extraction/systsEnv.txt \
 --mcc ttH-multilepton/lepchoice-ttH-FO.txt \
 --neg \
 -o 3l \
---od tHq-multilepton/signal_extraction/cards_Nov2 \
+--od tHq-multilepton/signal_extraction/cards \
 --2d-binning-function "5:ttH_MVAto1D_5_3l_Marco"
 ```
 
