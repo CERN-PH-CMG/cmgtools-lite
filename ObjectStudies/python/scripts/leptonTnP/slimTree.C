@@ -1,4 +1,4 @@
-void slimTree(TString out="slimTree.root", TString cut="tag_IsoMu22 && tag_chargedHadIso04/tag_pt < 0.2 && tag_SIP < 2.5 && (pt > 20 || TM || Glb) && (65 <= mass && mass <= 125)", TString dir="tpTree") {
+void slimTree(TString out="slimTree.root", TString cut="tag_IsoMu22 && tag_combRelIsoPF03dBeta/tag_pt < 0.2 && tag_SIP < 2.5 && (pt > 20 || TM || Glb) && (65 <= mass && mass <= 125)", TString dir="tpTree") {
     TTree *in  = (TTree *)gFile->Get(dir+"/fitter_tree");
     TFile *fout = new TFile(out, "RECREATE");
     TDirectory *dout = fout->mkdir(dir); dout->cd();
@@ -38,7 +38,7 @@ void slimTree(TString out="slimTree.root", TString cut="tag_IsoMu22 && tag_charg
 
     in->SetBranchStatus("tag_nVertices",1);
     in->SetBranchStatus("tag_IsoMu22",1); 
-    in->SetBranchStatus("tag_combRelIsoPF04dBeta",1); 
+    in->SetBranchStatus("tag_combRelIsoPF03dBeta",1); 
     in->SetBranchStatus("tag_pt",1);
     in->SetBranchStatus("tag_SIP",1);
     in->SetBranchStatus("tag_met",1);
@@ -50,11 +50,21 @@ void slimTree(TString out="slimTree.root", TString cut="tag_IsoMu22 && tag_charg
     in->SetBranchStatus("pair_probeMultiplicity_Pt10_M60140",1);
     in->SetBranchStatus("pair_BestZ",1);
 
+    in->SetBranchStatus("miniIsoCharged",1);
+    in->SetBranchStatus("miniIsoNeutrals",1);
+    in->SetBranchStatus("miniIsoPhotons",1);
+    //in->SetBranchStatus("activity_miniIsoCharged",1);
+    //in->SetBranchStatus("activity_miniIsoPUCharged",1);
+    //in->SetBranchStatus("activity_miniIsoNeutrals",1);
+    //in->SetBranchStatus("activity_miniIsoPhotons",1);
+    in->SetBranchStatus("fixedGridRhoFastjetCentralNeutral",1);
+
+
     std::cout << "Selecting entries" << std::endl;
     in->Draw(">>elist",cut);
 
     std::cout << "Applying selection" << std::endl;
-    in->SetEventList(gDirectory->Get("elist"));
+    in->SetEventList((TEventList*)gDirectory->Get("elist"));
 
     std::cout << "Copying trees" << std::endl;
     TTree *tout = in->CopyTree("1");

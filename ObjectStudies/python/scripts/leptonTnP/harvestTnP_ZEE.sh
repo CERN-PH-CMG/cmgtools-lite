@@ -1,6 +1,6 @@
 #!/bin/bash
 P=plots/80X/TnP
-IN="zee_v1.2"; OUT="$IN/00_harvest"
+IN="zee_v2.0"; OUT="$IN/00_harvest"
 
 MEAS="SOS SOS_PR SOS_NM1_Id SOS_NM1_Iso SOS_NM1_Ip SOS_003 SOS_NoIP SOS_presel SOS_FO"
 if [[ "$1" != "" ]]; then MEAS="$*"; fi
@@ -14,7 +14,7 @@ for M in $MEAS; do
                 MODS=" SOS_comb  SOS_NM1_Id SOS_NM1_Iso SOS_NM1_Ip  "; TIT='SOS comb. efficiency'; 
                 RANGES_PT="   --rrange 0.60 1.175  --yrange 0.0 1.005";
                 RANGES_OTHER="--rrange 0.60 1.175  --yrange 0.0 1.005"; ;; 
-        SOS*) MODS=" -s MCTG -b bern4 --salt BWDCB --salt BWDCB2 --balt bern3 "; TIT="$(echo $M | sed 's/_/ /g') efficiency"; 
+        SOS*) MODS=" -s MCTG -b bern4 --salt BWDCB2 --balt bern3 "; TIT="$(echo $M | sed 's/_/ /g') efficiency"; 
                 RANGES_PT="   --rrange 0.60 1.175  --yrange 0.0 1.005";
                 RANGES_OTHER="--rrange 0.60 1.175  --yrange 0.0 1.005"; ;; 
     esac;

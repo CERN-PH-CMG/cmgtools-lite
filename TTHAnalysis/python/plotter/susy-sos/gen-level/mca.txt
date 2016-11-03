@@ -1,0 +1,13 @@
+CMS_Pow : CMS_Powheg : 0.564         : 1 ; Label="CMS H", FillColor=ROOT.kBlack
+aMC     : LLNN_aMC   : 0.209*3       : 1 ; Label="MC@NLO F", FillColor=ROOT.kBlue
+aMC     : TTNN_aMC   : 0.209*3/2     : 1 ; Label="MC@NLO F", FillColor=ROOT.kBlue
+MG      : LLZ_MG     : 1.18*0.617    : 1 ; Label="MG 0/1j F", FillColor=ROOT.kRed
+aMC440  : LLNN_440_aMC   : 0.077*3       : 1 ; Label="MC@NLO L", FillColor=ROOT.kBlue+2
+aMC440  : TTNN_440_aMC   : 0.077*3/2     : 1 ; Label="MC@NLO L", FillColor=ROOT.kBlue+2
+MG440   : LLZ_440_MG     : 0.404*0.672   : 1 ; Label="MG 0/1j L", FillColor=ROOT.kRed+2
+Phw440  : ZZ440_Powheg   : 0.077*3*(3/2) : 1 ; Label="Powheg L", FillColor=ROOT.kGreen+2
+Phw4inf : ZZ_Powheg      : 0.209*3*(3/2) : 1 ; Label="Powheg F", FillColor=ROOT.kGreen+1
+Phw     : ZZ440_Powheg+ZZ_Powheg   : 0.209*3*(3/2) : 1 ; Label="Powheg F", FillColor=ROOT.kGreen+2
+CMS_p_aMC : CMS_Powheg   : 0.564                                 : 1 ; Label="CMS+aMC", FillColor=ROOT.kAzure+1
+CMS_p_aMC : LLNN_440_aMC : 0.077*3*(0.564/((0.209-0.077)*3*3/2)) : 1 ; Label="CMS+aMC", FillColor=ROOT.kAzure+1
+CMS_p_aMC : TTNN_440_aMC : 0.077*3*(0.564/((0.209-0.077)*3*3/2))/2 : 1 ; Label="CMS+aMC", FillColor=ROOT.kAzure+1

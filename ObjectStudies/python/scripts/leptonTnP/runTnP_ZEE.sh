@@ -6,12 +6,14 @@ cmsco01*) P=/data1/gpetrucc/TREES_80X_SOS_130716_TnP ;;
 esac;
 
 PDIR="plots/80X/TnP/"
-JOB="zee_v1.2"
+JOB="zee_v2.0"
 XBINS="[5,12.5,20,25,40,70,120]"
 EBINS="[-2.5,-2.0,-1.52,-1.44,-1,0,1,1.44,1.52,2.0,2.5]"
 VBINS="[0.5,5.5,6.5,7.5,8.5,9.5,10.5,11.5,12.5,13.5,14.5,15.5,16.5,17.5,18.5,19.5,20.5,21.5,22.5,24.5,26.5,28.5,30.5,34.5]"
 DATA="$P/SingleElectron_Run2016B_PromptReco_v2/treeProducerTnP/tree.root"
 DATA="$DATA $P/SingleElectron_Run2016C_PromptReco_v2/treeProducerTnP/tree.root"
+DATA="$DATA $P/SingleElectron_Run2016C_PromptReco_v2_275784_276811/treeProducerTnP/tree.root"
+DATA="$DATA $P/SingleElectron_Run2016D_PromptReco_v2_275784_276811/treeProducerTnP/tree.root"
 MC="--refmc  $P/DYJetsToLL_M50_LO/treeProducerTnP/tree.root"
 PDS="$DATA $MC"
 
@@ -30,10 +32,12 @@ fi;
 
 if [[ "$1" == "all" ]]; then
   shift;
-  for ID in SOS SOS_PR SOS_NM1_{Id,Iso,Ip} SOS_003 SOS_NoIP SOS_presel SOS_FO; do 
-     for SMOD in MCTG BWDCB2 BWDCB; do  
-        for BMOD in bern4 bern3 expo ; do
-           echo $LAUNCHER $0 $ID $SMOD $BMOD all
+  for ID in SOS_NM1_{Id,Iso,Ip};do # SOS_NM1_{Id,Iso,Ip} # SOS_003 SOS_NoIP SOS_presel SOS_FO SOS SOS_PR
+     for SMOD in MCTG BWDCB2; do  
+        for BMOD in bern4 bern3; do
+            for X in barrel endcap eta vtx; do
+               echo $LAUNCHER $0 $ID $SMOD $BMOD $X
+            done
         done
      done
   done
@@ -98,6 +102,10 @@ vtx_*) getcut ${bin/vtx_};
 # ---------------------------------
 all)
     for B in barrel endcap eta_pt520 vtx_pt520 eta_pt20 vtx_pt20; do bash $0 $ID $SMOD $BMOD $B $*; done;;
+vtx)
+    for B in vtx_pt520 vtx_pt20; do bash $0 $ID $SMOD $BMOD $B $*; done;;
+eta)
+    for B in eta_pt520 eta_pt20; do bash $0 $ID $SMOD $BMOD $B $*; done;;
 be)
     for B in barrel endcap; do bash $0 $ID $SMOD $BMOD $B $*; done;;
 # ---------------------------------

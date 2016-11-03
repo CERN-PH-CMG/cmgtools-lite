@@ -22,11 +22,12 @@ mergeMap = {
 options = None
 if __name__ == "__main__":
     from optparse import OptionParser
-    parser = OptionParser(usage="%prog [options] mcaplot.txt mcafit.txt plotfile varname mlfile channel")
+    parser = OptionParser(usage="%prog [options] mcaplot.txt mcafit.txt plotfile varname mlfile channel [onlyNorm]")
     addPlotMakerOptions(parser)
     (options, args) = parser.parse_args()
-    options.path = "/data1/peruzzi/TREES_76X_200216_jecV1M2_skimOnlyMC_reclv8"
-    options.lumi = 2.26
+    options.path = "/data1/peruzzi/mixture_jecv6prompt_datafull_jul20_skimOnlyMC"
+#    options.path = "/data1/peruzzi/TREES_80X_180716_jecv6_skim_3ltight_relax"
+    options.lumi = 12.9
     mcap = MCAnalysis(args[0],options)
     mca  = MCAnalysis(args[1],options)
     basedir = dirname(args[2]);
@@ -34,17 +35,21 @@ if __name__ == "__main__":
     var    = args[3];
     mlfile = ROOT.TFile(args[4]);
     channel = args[5];
+    onlynorm = (len(args)>6 and args[6]=='onlyNorm')
     ROOT.gROOT.ProcessLine(".x /afs/cern.ch/user/g/gpetrucc/cpp/tdrstyle.cc(0)")
     ROOT.gROOT.ForceStyle(False)
     ROOT.gStyle.SetErrorX(0.5)
     ROOT.gStyle.SetOptStat(0)
     ROOT.gStyle.SetPaperSize(20.,25.)
     for O,MLD in ("prefit","prefit"), ("postfit_b","fit_b"), ("postfit_s","fit_s"):
+      normset = mlfile.Get("norm_"+MLD)
       mldir  = mlfile.GetDirectory("shapes_"+MLD);
       if not mldir: raise RuntimeError, mlfile
       outfile = ROOT.TFile(basedir + "/"+O+"_" + basename(args[2]), "RECREATE")
       processes = [p for p in reversed(mca.listBackgrounds())] + mca.listSignals()
       hdata = infile.Get(var+"_data")
+      htot = hdata.Clone(var+"_total")
+      htot.Reset()
       stack = ROOT.THStack(var+"_stack","")
       plots = {'data':hdata}
       if options.poisson:
@@ -59,31 +64,51 @@ if __name__ == "__main__":
         h = h.Clone(var+"_"+p)
         h.SetDirectory(0)
         hpf = mldir.Get("%s/%s" % (channel,p))
+        hpn = normset.find("%s/%s" % (channel,p))
         if not hpf: 
             if h.Integral() > 0 and p not in mergeMap: raise RuntimeError, "Could not find post-fit shape for %s" % p
             continue
-        for b in xrange(1, h.GetNbinsX()+1):
-            h.SetBinContent(b, hpf.GetBinContent(b))
-            h.SetBinError(b, hpf.GetBinError(b))
+        if not hpn:
+            if h.Integral() > 0 and p not in mergeMap: raise RuntimeError, "Could not find post-fit normalization for %s" % p
+        if onlynorm:
+            prev_integral = h.Integral()
+            scale_content = hpn.getVal()/prev_integral
+            for b in xrange(1, h.GetNbinsX()+1):
+                h.SetBinContent(b, h.GetBinContent(b)*scale_content)
+                h.SetBinError(b, h.GetBinError(b)*scale_content)
+        else:
+            for b in xrange(1, h.GetNbinsX()+1):
+                h.SetBinContent(b, hpf.GetBinContent(b))
+                h.SetBinError(b, hpf.GetBinError(b))
+        print 'adding',p,'with norm',h.Integral()
         #pout = "ttH" if "ttH_" in p else p;
         #if pout in plots:
         #    plots[pout].Add(h)
         #else:
         if pout in plots:
             plots[pout].Add(h)
+            htot.Add(h)
         else: 
             plots[pout] = h
+            htot.Add(h)
             h.SetName(var+"_"+pout)
             stack.Add(h)
-      htot = hdata.Clone(var+"_total")
       htotpf = mldir.Get(channel+"/total")
-      hbkg = hdata.Clone(var+"_total_background")
-      hbkgpf = mldir.Get(channel+"/total_background")
-      for b in xrange(1, h.GetNbinsX()+1):
-          htot.SetBinContent(b, htotpf.GetBinContent(b))
-          htot.SetBinError(b, htotpf.GetBinError(b))
-          hbkg.SetBinContent(b, hbkgpf.GetBinContent(b))
-          hbkg.SetBinError(b, hbkgpf.GetBinError(b))
+#      hbkg = hdata.Clone(var+"_total_background")
+#      hbkgpf = mldir.Get(channel+"/total_background")
+      print 'tot norm is ',htot.Integral()
+      if onlynorm:
+          hpn = normset.find("%s/total" % channel)
+          rel_error = hpn.getError()/hpn.getVal()
+          print rel_error
+          for b in xrange(1, htot.GetNbinsX()+1):
+              htot.SetBinError(b, hypot(htot.GetBinError(b),htot.GetBinContent(b)*rel_error))
+      else:
+          for b in xrange(1, h.GetNbinsX()+1):
+              htot.SetBinContent(b, htotpf.GetBinContent(b))
+              htot.SetBinError(b, htotpf.GetBinError(b))
+#          hbkg.SetBinContent(b, hbkgpf.GetBinContent(b))
+#          hbkg.SetBinError(b, hbkgpf.GetBinError(b))
       for h in plots.values() + [htot]:
          outfile.WriteTObject(h)
       doRatio = True
@@ -120,8 +145,8 @@ if __name__ == "__main__":
 #      hSigOutline.SetFillStyle(1)
 #      hSigOutline.Scale(5)
 #      hSigOutline.Draw("HIST SAME")
-      leg = doLegend(plots,mcap,corner='TL',textSize=0.045,cutoff=0.0001)
-      leg.SetHeader({'prefit': "Pre-fit", "postfit_b": "Post-fit, #mu = 1", "postfit_s": "Post-fit, #hat{#mu}"}[O]+"\n")
+      leg = doLegend(plots,mcap,corner='TR',textSize=0.045,cutoff=0.01)
+      leg.SetHeader({'prefit': "Pre-fit, #mu = 1", "postfit_b": "Post-fit, #mu = 1", "postfit_s": "Post-fit, #hat{#mu}"}[O]+"\n")
       leg.SetLineColor(0)
 #      leg.AddEntry(hSigOutline, "ttH x 5", "L")
 #      lspam = "CMS Preliminary" #, options.lspam
@@ -139,7 +164,9 @@ if __name__ == "__main__":
                       textLeft = options.lspam, textRight = options.rspam, lumi = options.lumi)
       ## Draw relaive prediction in the bottom frame
       p2.cd() 
-      rdata,rnorm,rnorm2,rline = doRatioHists(PlotSpec(var,var,"",{}),plots,htot, htot, maxRange=options.maxRatioRange, fitRatio=options.fitRatio)
+      rdata,rnorm,rnorm2,rline,leg0,leg1 = doRatioHists(PlotSpec(var,var,"",{}), plots, htot, htot, maxRange=options.maxRatioRange, fixRange=options.fixRatioRange,
+                                                                      fitRatio=options.fitRatio, errorsOnRef=options.errorBandOnRatio,
+                                                                      ratioNums=options.ratioNums, ratioDen=options.ratioDen, doWide=options.wideplot, showStatTotLegend=False)
       c1.cd()
       c1.Print("%s/%s_%s.png" % (basedir,O,var))
       c1.Print("%s/%s_%s.pdf" % (basedir,O,var))

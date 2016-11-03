@@ -5,7 +5,7 @@ T="/afs/cern.ch/user/g/gpetrucc/w/TREES_80X_SOS_130716_3L"
 if hostname | grep -q cmsco01; then
     T="/data1/gpetrucc/TREES_80X_SOS_130716_3L"
 fi
-BCORE=" --s2v --tree treeProducerSusyMultilepton susy-sos/mca-fr-z3l.txt susy-sos/fr-z3l.txt -P $T -l 6.2 --AP  "
+BCORE=" --s2v --tree treeProducerSusyMultilepton susy-sos/mca-fr-z3l.txt susy-sos/fr-z3l.txt -P $T -l 12.9 --AP  "
 
 BG=" -j 6 "; if [[ "$1" == "-b" ]]; then BG=" & "; shift; fi
 
@@ -16,7 +16,7 @@ el) BCORE="${BCORE} -E ^${lepton} "; ;;
 esac;
 
 what=$2; shift; shift;
-PBASE="plots/80X/sos/fr-meas/z3l/v2.0/$lepton/$what"
+PBASE="plots/80X/sos/fr-meas/z3l/v2.1.1/$lepton/$what"
 
 
 case $lepton in

@@ -58,7 +58,7 @@ from PhysicsTools.HeppyCore.framework.heppy_loop import getHeppyOption
 from CMGTools.VVResonances.analyzers.core_cff import * 
 
 #PUPPI by default #uncomment for prunning
-doPruning()
+#doPruning()
 
 
 
@@ -76,7 +76,7 @@ from CMGTools.VVResonances.analyzers.tree_cff import *
 
 #-------- SEQUENCE
 
-sequence = cfg.Sequence(coreSequence+[vvAna,vvSkimmer,vvTreeProducer])
+sequence = cfg.Sequence(coreSequence+[vvSkimmer,vvTreeProducer])
 
 
 from CMGTools.RootTools.samples.triggers_13TeV_Spring15 import *
@@ -98,7 +98,7 @@ triggerFlagsAna.triggerBits ={
 test = 3
 if test==1:
     # test a single component, using a single thread.
-    selectedComponents = [BulkGravToWWToWlepWhad_narrow_4500]
+    selectedComponents = [BulkGravToZZToZlepZhad_narrow_2000]
     for c in selectedComponents:
         c.files = c.files[:1]
         c.splitFactor = 1

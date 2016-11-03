@@ -3,8 +3,11 @@ from PhysicsTools.Heppy.analyzers.core.AutoHandle import AutoHandle
 from CMGTools.VVResonances.tools.Pair import Pair
 from PhysicsTools.HeppyCore.utils.deltar import *
 from CMGTools.VVResonances.tools.VectorBosonToolBox import VectorBosonToolBox
+from CMGTools.VVResonances.tools.BTagEventWeights import *
 import itertools
 import ROOT
+import os
+import math
 
 class Substructure(object):
     def __init__(self):
@@ -18,8 +21,18 @@ class VVBuilder(Analyzer):
         self.smearing=ROOT.TRandom(10101982)
         if hasattr(self.cfg_ana,"doPUPPI") and self.cfg_ana.doPUPPI:
             self.doPUPPI=True
+            puppiJecCorrWeightFile = os.path.expandvars(self.cfg_ana.puppiJecCorrFile)
+            self.puppiJecCorr = ROOT.TFile.Open(puppiJecCorrWeightFile)
+            self.puppisd_corrGEN = self.puppiJecCorr.Get("puppiJECcorr_gen")
+            self.puppisd_corrRECO_cen = self.puppiJecCorr.Get("puppiJECcorr_reco_0eta1v3")
+            self.puppisd_corrRECO_for = self.puppiJecCorr.Get("puppiJECcorr_reco_1v3eta2v5")
+
         else:
             self.doPUPPI=False
+
+
+        #btag reweighting
+        self.btagSF = BTagEventWeights('btagsf',os.path.expandvars(self.cfg_ana.btagCSVFile))
 
     def declareHandles(self):
         super(VVBuilder, self).declareHandles()
@@ -107,13 +120,18 @@ class VVBuilder(Analyzer):
         jet.substructure.softDropJetUp = 1.05*jet.substructure.softDropJet.mass()
         jet.substructure.softDropJetDown = 0.95*jet.substructure.softDropJet.mass()
         jet.substructure.softDropJetSmear = jet.substructure.softDropJet.mass()*self.smearing.Gaus(1.0,0.1)
+        if self.doPUPPI:
+            softDropJetUnCorr = self.copyLV(interface.get(False))[0]
+            jet.substructure.softDropJetMassCor = self.getPUPPIMassWeight(softDropJetUnCorr)
+            jet.substructure.softDropJetMassBare = softDropJetUnCorr.mass()
 
         interface.makeSubJets(False,0,2)
         jet.substructure.softDropSubjets = self.copyLV(interface.get(False))
 
         #get NTau
         jet.substructure.ntau = interface.nSubJettiness(0,4,0,6,1.0,0.8,999.0,999.0,999)
-
+        # calculate DDT tau21 (currently without softDropJetMassCor, but the L2L3 corrections)
+        jet.substructure.tau21_DDT = jet.substructure.ntau[1]/jet.substructure.ntau[0] + ( 0.063 * math.log( (jet.substructure.softDropJet.mass()*jet.substructure.softDropJet.mass())/jet.substructure.softDropJet.pt()))
 
         #recluster with CA and do massdrop
 
@@ -144,6 +162,8 @@ class VVBuilder(Analyzer):
 
         # Btags
         jetsCentral = filter(lambda x: abs(x.eta())<2.4,jets)
+
+
         VV.satteliteCentralJets=jetsCentral
         # cuts are taken from https://twiki.cern.ch/twiki/bin/view/CMS/BtagRecommendation80X (20.06.2016)
         VV.nLooseBTags = len(filter(lambda x: x.bDiscriminator(self.cfg_ana.bDiscriminator)>0.460,jetsCentral))
@@ -152,8 +172,16 @@ class VVBuilder(Analyzer):
         VV.nOtherLeptons = len(leptons)
 
         maxbtag=-100.0
+
+        VV.btagWeight=1.0
         for  j in jetsCentral:
             btag=j.bDiscriminator(self.cfg_ana.bDiscriminator)
+            flavor = j.hadronFlavour()
+
+            #btag event weight
+            if self.cfg_comp.isMC:
+                VV.btagWeight*= self.btagSF.getSF(j.pt(),j.eta(),flavor,btag)
+            #and systematics
             if btag>maxbtag:
                 maxbtag=btag
         VV.highestEventBTag = maxbtag
@@ -429,6 +457,20 @@ class VVBuilder(Analyzer):
 
 
 
+    def getPUPPIMassWeight(self, puppijet):
+        # mass correction for PUPPI following https://github.com/thaarres/PuppiSoftdropMassCorr
+
+        genCorr = 1.
+        recoCorr = 1.
+        # corrections only valid up to |eta| < 2.5, use 1. beyond
+        if (abs(puppijet.eta()) < 2.5):
+            genCorr = self.puppisd_corrGEN.Eval(puppijet.pt())
+            if (abs(puppijet.eta()) <= 1.3):
+                recoCorr = self.puppisd_corrRECO_cen.Eval(puppijet.pt())
+            else:
+                recoCorr = self.puppisd_corrRECO_for.Eval(puppijet.pt())
+        totalWeight = genCorr*recoCorr
+        return totalWeight
 
 
 
@@ -438,6 +480,13 @@ class VVBuilder(Analyzer):
         event.LVs = ROOT.std.vector("math::XYZTLorentzVector")()
         #load packed candidatyes
         cands = self.handles['packed'].product()
+
+#        print "GEN LEPTONS-----"
+#        for l in event.genleps:
+#            print l.pdgId(),l.pt(),l.mother().pdgId()
+#        print "GEN TAUS-"
+#        for l in event.gentaus:
+#            print l.pdgId(),l.pt(),l.mother().pdgId()
 
         #if use PUPPI weigh them or lese just pass through
         if self.doPUPPI:
@@ -459,10 +508,10 @@ class VVBuilder(Analyzer):
         LLJJ =self.makeZV(event)
         JJ=self.makeJJ(event)
         JJNuNu=self.makeMETV(event)
-        TopCR=self.makeTOPCR(event)
+#        TopCR=self.makeTOPCR(event)
 
         setattr(event,'LNuJJ'+self.cfg_ana.suffix,LNuJJ)
         setattr(event,'JJ'+self.cfg_ana.suffix,JJ)
         setattr(event,'LLJJ'+self.cfg_ana.suffix,LLJJ)
         setattr(event,'JJNuNu'+self.cfg_ana.suffix,JJNuNu)
-        setattr(event,'TopCR'+self.cfg_ana.suffix,TopCR)
+#        setattr(event,'TopCR'+self.cfg_ana.suffix,TopCR)

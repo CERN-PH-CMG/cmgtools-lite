@@ -38,7 +38,7 @@ class susyParameterScanAnalyzer( Analyzer ):
 
     def declareHandles(self):
         super(susyParameterScanAnalyzer, self).declareHandles()
-        
+        if not self.cfg_comp.isMC: return True
 
         #mc information
         self.mchandles['genParticles'] = AutoHandle( 'prunedGenParticles',
@@ -56,12 +56,13 @@ class susyParameterScanAnalyzer( Analyzer ):
     def beginLoop(self, setup):
         super(susyParameterScanAnalyzer,self).beginLoop(setup)
 
-        if self.cfg_ana.useLumiInfo:
+        if not self.cfg_comp.isMC: return True
+        if self.cfg_ana.doLHE and self.cfg_ana.useLumiInfo:
             lumis = Lumis(self.cfg_comp.files)
             for lumi in lumis:
                 if lumi.getByLabel('generator',self.genLumiHandle):
                     self.LHEInfos.append( self.genLumiHandle.product().configDescription() )
-                
+
     def findSusyMasses(self,event):
         masses = {}
         for p in event.genParticles:
@@ -117,9 +118,9 @@ class susyParameterScanAnalyzer( Analyzer ):
         scanlineTChi = re.compile(r"([A-Za-z0-9]+)_([A-Za-z0-9]+)_((\d+\.?\d*)(_\d+\.?\d*)*)(\s+(\d+\.?\d*))*\s*")
         scanlineT2tt = re.compile(r"([A-Za-z0-9]+)_([A-Za-z0-9]+)-([A-Za-z0-9]+)_([A-Za-z0-9]+)_((\d+\.?\d*)(_\d+\.?\d*)*)(\s+(\d+\.?\d*))*\s*")
 
-        mT1tttt = re.match(scanlineT1tttt, lheprod) 
-        mTChi   = re.match(scanlineTChi, lheprod) 
-        mT2tt   = re.match(scanlineT2tt, lheprod) 
+        mT1tttt = re.match(scanlineT1tttt, lheprod)
+        mTChi   = re.match(scanlineTChi, lheprod)
+        mT2tt   = re.match(scanlineT2tt, lheprod)
 
         #print lheprod, mT1tttt, mTChi, mT2tt
 
@@ -154,6 +155,8 @@ class susyParameterScanAnalyzer( Analyzer ):
 
         # create parameters
         event.susyModel = None
+        if not event.susyModel and self.susyParticles:
+            event.susyModel = 'Unknown'
         for id,X in self.susyParticles.iteritems():
             setattr(event, "genSusyM"+X, -99.0)
         event.genSusyMScan1 = 0.0

@@ -144,8 +144,8 @@ if __name__ == "__main__":
        h2d_mu_WJ = [ make2D(outfile,"FR_SOS_mu_WJets", ptbins_mu, etabins_mu) ]
 
        Plots="plots/80X/sos/fr-meas/"
-       Z3l="z3l/v2.0"
-       QCD="qcd1l/v2.0"
+       Z3l="z3l/v2.1.1"
+       QCD="qcd1l/v2.1"
        #### Electrons: 
        readMany2D(XsQ, h2d_el,    "/".join([Plots, QCD, "el/HLT_PFJetAny/fakerates-mtW3R/fr_sub_eta_%s_comp.root"]), "%s", etaslices_el, (5,999) )
        readMany2D(XsD, h2d_el_DY, "/".join([Plots, Z3l, "el/fakerates-mtW3R/fr_sub_eta_%s_comp.root"]), "%s", etaslices_el, (5,999) )

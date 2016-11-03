@@ -9,18 +9,15 @@ from CMGTools.MonoXAnalysis.tools.eventVars_monojet import EventVarsMonojet
 MODULES.append( ('vars_mj', EventVarsMonojet()) )
 
 from CMGTools.TTHAnalysis.tools.vertexWeightFriend import VertexWeightFriend
-pufile="/afs/cern.ch/work/e/emanuele/public/monox/pileup/nvtx_profile_80X_runs_272021_273730.root"
-MODULES.append ( ('puWeights', VertexWeightFriend(pufile,pufile,"nvtx_signal","nvtx_data",verbose=True) ) )
+pufile_mc="/afs/cern.ch/work/e/emanuele/public/monox/pileup/pileup_profile_Spring16.root"
+pufile_data="/afs/cern.ch/work/e/emanuele/public/monox/pileup/pileup_profile_runs_271036_279931.root"
+MODULES.append ( ('puWeights', VertexWeightFriend(pufile_mc,pufile_data,"pu_mc","pileup",name="puw",verbose=True,vtx_coll_to_reweight="nTrueInt") ) )
 
 pathvetolists="/afs/cern.ch/work/e/emanuele/public/monox/met_vetolists/"
 vetoLists= ["cscfilter", "ecalfilter"]
 
-from CMGTools.MonoXAnalysis.tools.eventVetoListChecker import EventVetoListChecker
-MODULES.append( ('eventVetoChecker', EventVetoListChecker(pathvetolists,vetoLists)) )
-
-# no more needed, since the leptons in the trees have already calibrations included
-#from CMGTools.MonoXAnalysis.tools.lepVars import residualCalibratedEcalEnergyFriend
-#MODULES.append ( ('lepvars', residualCalibratedEcalEnergyFriend()) )
+#from CMGTools.MonoXAnalysis.tools.eventVetoListChecker import EventVetoListChecker
+#MODULES.append( ('eventVetoChecker', EventVetoListChecker(pathvetolists,vetoLists)) )
 
 class VariableProducer(Module):
     def __init__(self,name,booker,sample_nevt,dataset,modules):
