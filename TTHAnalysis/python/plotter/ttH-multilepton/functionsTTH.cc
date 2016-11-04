@@ -1,3 +1,9 @@
+#include <iostream>
+#include "TH2F.h"
+#include "TH2Poly.h"
+#include "TGraphAsymmErrors.h"
+#include "TFile.h"
+
 float ttH_MVAto1D_6_2lss_Marco (float kinMVA_2lss_ttbar, float kinMVA_2lss_ttV){
 
   return 2*((kinMVA_2lss_ttbar>=-0.2)+(kinMVA_2lss_ttbar>=0.3))+(kinMVA_2lss_ttV>=-0.1)+1;
