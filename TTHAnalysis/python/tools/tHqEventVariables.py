@@ -10,7 +10,7 @@ from itertools import combinations
 from PhysicsTools.HeppyCore.utils.deltar import deltaPhi, deltaR
 
 
-BTAGWP = 0.8 # 0.8 is for medium tags, might want to try others
+BTAGWP = 0.460 # 0.8 is for medium tags, might want to try others
 
 class MVAVar:
     def __init__(self,name, form=None):
@@ -35,6 +35,11 @@ class tHqEventVariableFriend:
         self.branches.append(("dEtaFwdJetClosestLep",-99.9)) # delta eta: max fwd jet and closest lepton
         self.branches.append(("dPhiHighestPtSSPair", -99.9)) # delta phi highest pt same sign lepton pair
         self.branches.append(("minDRll", -99.9)) # minimum deltaR between all leptons
+     
+        self.branches.append(("maxEtaBJet", -99.9)) # max eta of the hardest Bjet
+        self.branches.append(("maxEta2BJet", -99.9)) # max Eta of the second hardest Bjet
+        self.branches.append(("dEtaFwdJet2BJet", -99.9)) # delta eta: max fwd jet and second hardest bjet
+        self.branches.append(("dEtaBJet2BJet", -99.9)) # delta eta: hardest bjet and second hardest bjet
 
         # Signal MVA
         self.mvavars = [
@@ -47,7 +52,13 @@ class tHqEventVariableFriend:
             MVAVar(name="dPhiHighestPtSSPair"),
             MVAVar(name="LepGood_conePt[iF_Recl[2]]"),
             MVAVar(name="minDRll"),
-            MVAVar(name="LepGood_charge[iF_Recl[0]]+LepGood_charge[iF_Recl[1]]+LepGood_charge[iF_Recl[2]]")
+            MVAVar(name="LepGood_charge[iF_Recl[0]]+LepGood_charge[iF_Recl[1]]+LepGood_charge[iF_Recl[2]]"),
+            
+            # MVAVar(name="maxEtaBJet"),
+            # MVAVar(name="maxEta2BJet"),
+            # MVAVar(name="dEtaFwdJet2BJet"),
+            # MVAVar(name="dEtaBJet2BJet")
+
         ]
 
         self.mvaspectators = [
@@ -120,10 +131,33 @@ class tHqEventVariableFriend:
             if len(bjets):
                 ret['dEtaFwdJetBJet'] = abs(maxjet.eta - bjets[0].eta)
 
+            if len(bjets)>1:
+                ret['dEtaFwdJet2BJet'] = abs(maxjet.eta - bjets[1].eta)
+                
+            else: 
+                ret['dEtaFwdJet2BJet'] = -1.0
+
             detas = [abs(lep.eta - maxjet.eta) for lep in leptons]
             ret['dEtaFwdJetClosestLep'] = sorted(detas)[0]
 
         ret['nJetEta1'] = len([j for j in light_jets if abs(j.eta) > 1.0])
+
+
+
+        ################
+        if(bjets):
+            ret['maxEtaBJet'] = abs(bjets[0].eta)
+                        
+            if len(bjets)>1:
+                ret['maxEta2BJet'] = abs(bjets[1].eta)
+                ret['dEtaBJet2BJet'] = abs(bjets[0].eta - bjets[1].eta)
+
+            else:
+
+                ret['maxEta2BJet'] = -1.0
+                ret['dEtaBJet2BJet'] = -1.0
+ 
+        #################        
 
         # Signal MVA
         for mvavar in self.mvavars:
@@ -176,6 +210,14 @@ if __name__ == '__main__':
             print 'minDRll', ret['minDRll']
             print 'thqMVA_ttv', ret['thqMVA_ttv']
             print 'thqMVA_tt', ret['thqMVA_tt']
+
+
+            print 'maxEtaBJet:', ret['maxEtaBJet']
+            print 'maxEta2BJet:', ret['maxEta2BJet']
+            print 'dEtaFwdJet2BJet',ret['dEtaFwdJet2BJet']
+            print 'dEtaBJet2BJet',ret['dEtaBJet2BJet']
+
+
             # add additional printout here to make sure everything is consistent
 
         def done(self):
