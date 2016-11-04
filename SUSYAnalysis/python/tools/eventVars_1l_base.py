@@ -253,6 +253,8 @@ class EventVars1L_base:
             #("tightLeps_DescFlag","I",10,"nTightLeps"),
             'Lep_pdgId','Lep_pt','Lep_eta','Lep_phi','Lep_Idx','Lep_relIso','Lep_miniIso','Lep_hOverE',
             'Selected', # selected (tight) or anti-selected lepton
+            # second leading lepton
+            'Lep2_pt', 'Selected2',
             ## MET
             'MET','LT','ST',
             'MT',
@@ -538,6 +540,12 @@ class EventVars1L_base:
 
             ret['Selected'] = 1
 
+            # Is second leading lepton selected, too?
+            if len(selectedTightLeps) > 1:
+                ret['Selected2'] = 1
+            else:
+                ret['Selected2'] = 0
+
         elif len(antiTightLeps) > 0:
             tightLeps = antiTightLeps
             tightLepsIdx = antiTightLepsIdx
@@ -603,6 +611,10 @@ class EventVars1L_base:
             ret['Lep_miniIso'] = leps[0].miniRelIso
             if hasattr(leps[0],"hOverE"):
                 ret['Lep_hOverE'] = leps[0].hOverE
+
+        # save second leading lepton vars
+        if len(tightLeps) > 1:
+            ret['Lep2_pt'] = tightLeps[1].pt
 
         ########
         ### Jets
