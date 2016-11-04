@@ -184,7 +184,7 @@ lepAna = cfg.Analyzer(
     inclusive_electron_dz  = 1.0,
     inclusive_electron_lostHits = 5.0,
     # veto electron selection
-    loose_electron_id     = "POG_Cuts_ID_SPRING16_25ns_v1_ConvVetoDxyDz_Veto_full5x5",
+    loose_electron_id     = "POG_Cuts_ID_SPRING16_25ns_v1_ConvVetoDxyDz_Veto",
     loose_electron_pt     = 10,
     loose_electron_eta    = 2.5,
     loose_electron_dxy    = 0.5,
@@ -227,7 +227,7 @@ monoJetCtrlLepSkim = cfg.Analyzer(
     minLeptons = 0,
     maxLeptons = 999,
     #idCut  = "lepton.relIso03 < 0.2" # can give a cut
-    idCut = 'lepton.muonID("POG_ID_Loose") if abs(lepton.pdgId())==13 else lepton.electronID("POG_Cuts_ID_SPRING15_25ns_v1_ConvVetoDxyDz_Veto_full5x5")',
+    idCut = 'lepton.muonID("POG_ID_Loose") if abs(lepton.pdgId())==13 else lepton.electronID("POG_Cuts_ID_SPRING16_25ns_v1_ConvVetoDxyDz_Veto")',
     ptCuts = [10],                # can give a set of pt cuts on the leptons
     )
 
