@@ -7,7 +7,7 @@ from optparse import OptionParser
 parser = OptionParser(usage="%prog [options] mc.txt cuts.txt var bins systs.txt ")
 addMCAnalysisOptions(parser)
 parser.add_option("-o",   "--out",    dest="outname", type="string", default=None, help="output name") 
-parser.add_option("--od", "--outdir", dest="outdir", type="string", default=None, help="output name") 
+parser.add_option("--od", "--outdir", dest="outdir", type="string", default="shapecards/", help="output name") 
 parser.add_option("-v", "--verbose",  dest="verbose",  default=0,  type="int",    help="Verbosity level (0 = quiet, 1 = verbose, 2+ = more)")
 parser.add_option("--masses", dest="masses", default=None, type="string", help="produce results for all these masses")
 parser.add_option("--mass-int-algo", dest="massIntAlgo", type="string", default="sigmaBR", help="Interpolation algorithm for nearby masses") 
@@ -21,6 +21,9 @@ options.weight = True
 options.final  = True
 options.allProcesses  = True
 
+if not os.path.isdir(options.outdir):
+    os.mkdir(options.outdir)
+
 if "/functions_cc.so" not in ROOT.gSystem.GetLibraries(): 
     ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/TTHAnalysis/python/plotter/functions.cc+" % os.environ['CMSSW_BASE']);
 
@@ -30,7 +33,6 @@ cuts = CutsFile(args[1],options)
 truebinname = os.path.basename(args[1]).replace(".txt","") if options.outname == None else options.outname
 binname = truebinname if truebinname[0] not in "234" else "ttH_"+truebinname
 print binname
-outdir  = options.outdir+"/" if options.outdir else ""
 
 masses = [ 125.0 ]
 if options.masses:
@@ -49,11 +51,11 @@ def file2map(x):
             fields = [ float(i) for i in cols ]
             ret[fields[0]] = dict(zip(headers,fields[1:]))
     return ret
-#YRpath = os.environ['CMSSW_RELEASE_BASE']+"/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/";
-YRpath = '/afs/cern.ch/user/p/peruzzi/work/cmgtools/combine/CMSSW_7_4_14/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/'
-#XStth = file2map(YRpath+"xs/8TeV/8TeV-ttH.txt")
-BRhvv = file2map(YRpath+"br/BR2bosons.txt")
-BRhff = file2map(YRpath+"br/BR2fermions.txt")
+# YRpath = os.environ['CMSSW_RELEASE_BASE']+"/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/";
+# YRpath = '/afs/cern.ch/user/p/peruzzi/work/cmgtools/combine/CMSSW_7_4_14/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/'
+# XStth = file2map(YRpath+"xs/8TeV/8TeV-ttH.txt")
+# BRhvv = file2map(YRpath+"br/BR2bosons.txt")
+# BRhff = file2map(YRpath+"br/BR2fermions.txt")
 def mkspline(table,column,sf=1.0):
     pairs = [ (x,c[column]/sf) for (x,c) in table.iteritems() ]
     pairs.sort()
@@ -124,11 +126,11 @@ def rebin2Dto1D(h,funcstring):
     newh.SetLineColor(h.GetLineColor())
     return newh
 
-myout = outdir+"/common/" if len(masses) > 1 else outdir;
+myout = os.path.join(options.outdir,"common") if len(masses) > 1 else options.outdir;
 
 report={}
 if options.infile!=None:
-    infile = ROOT.TFile(myout+binname+".bare.root","read")
+    infile = ROOT.TFile(os.path.join(myout,binname+".bare.root"),"read")
     for p in mca.listSignals(True)+mca.listBackgrounds(True)+['data']:
         h = infile.Get(p)
         if h: report[p] = h
@@ -136,7 +138,7 @@ else:
     report = mca.getPlotsRaw("x", args[2], args[3], cuts.allCuts(), nodata=options.asimov)
 
 if options.savefile!=None:
-    savefile = ROOT.TFile(myout+binname+".bare.root","recreate")
+    savefile = ROOT.TFile(os.path.join(myout,binname+".bare.root"),"recreate")
     for n,h in report.iteritems(): savefile.WriteTObject(h,n)
     savefile.Close()
 
@@ -505,15 +507,16 @@ if len(masses) > 1:
                 report["%s%s%s" % (p,smass,post)] = template
                 #print "created x_%s%s%s" % (p,mass,post)
 if len(masses) > 1: 
-    if not os.path.exists(outdir+"/common"): os.mkdir(outdir+"/common")
+    if not os.path.exists(os.path.join(options.outdir,"common")):
+        os.mkdir(os.path.join(options.outdir,"common"))
 for mass in masses:
     smass = str(mass).replace(".0","")
-    myout = outdir
+    myout = options.outdir
     if len(masses) > 1:
         myout += "%s/" % smass 
         if not os.path.exists(myout): os.mkdir(myout)
         myyields = dict([(k,getYieldScale(mass,k)*v) for (k,v) in allyields.iteritems()]) 
-        datacard = open(myout+binname+".card.txt", "w"); 
+        datacard = open(os.path.join(myout,binname+".card.txt"), "w"); 
         datacard.write("## Datacard for cut file %s (mass %s)\n"%(args[1],mass))
         datacard.write("shapes *        * ../common/%s.input.root x_$PROCESS x_$PROCESS_$SYSTEMATIC\n" % binname)
         datacard.write("shapes ttH_hww  * ../common/%s.input.root x_$PROCESS$MASS x_$PROCESS$MASS_$SYSTEMATIC\n" % binname)
@@ -522,7 +525,7 @@ for mass in masses:
     else:
         myyields = dict([(k,v) for (k,v) in allyields.iteritems()]) 
         if not os.path.exists(myout): os.mkdir(myout)
-        datacard = open(myout+binname+".card.txt", "w"); 
+        datacard = open(os.path.join(myout,binname+".card.txt"), "w"); 
         datacard.write("## Datacard for cut file %s\n"%args[1])
         datacard.write("shapes *        * %s.input.root x_$PROCESS x_$PROCESS_$SYSTEMATIC\n" % binname)
     datacard.write('##----------------------------------\n')
@@ -550,10 +553,10 @@ for mass in masses:
             if "shapeOnly2D" not in mode:
                 datacard.write(('%-10s shape' % (name+"2")) + " ".join([kpatt % effmap12[p] for p in procs]) +"\n")
 if len(masses) > 1:
-    myout = outdir
+    myout = options.outdir
     myyields = dict([(k,-1 if "ttH" in k else v) for (k,v) in allyields.iteritems()]) 
     if not os.path.exists(myout): os.mkdir(myout)
-    datacard = open(myout+binname+".card.txt", "w"); 
+    datacard = open(os.path.join(myout,binname+".card.txt"), "w"); 
     datacard.write("## Datacard for cut file %s (all massess, taking signal normalization from templates)\n")
     datacard.write("shapes *        * common/%s.input.root x_$PROCESS x_$PROCESS_$SYSTEMATIC\n" % binname)
     datacard.write("shapes ttH_hww  * common/%s.input.root x_$PROCESS$MASS x_$PROCESS$MASS_$SYSTEMATIC\n" % binname)
@@ -583,18 +586,18 @@ if len(masses) > 1:
             datacard.write(('%-10s shape' % (name+"1")) + " ".join([kpatt % effmap12[p] for p in procs]) +"\n")
             datacard.write(('%-10s shape' % (name+"2")) + " ".join([kpatt % effmap12[p] for p in procs]) +"\n")
     datacard.close()
-    print "Wrote to ",myout+binname+".card.txt"
+    print "Wrote to ", os.path.join(myout,binname+".card.txt")
     if options.verbose:
         print "="*120
-        os.system("cat %s.card.txt" % (myout+binname));
+        os.system("cat %s.card.txt" % (os.path.join(myout,binname)));
         print "="*120
 
-myout = outdir+"/common/" if len(masses) > 1 else outdir;
-workspace = ROOT.TFile.Open(myout+binname+".input.root", "RECREATE")
+myout = os.path.join(options.outdir, "common") if len(masses) > 1 else options.outdir;
+workspace = ROOT.TFile.Open(os.path.join(myout,binname+".input.root"), "RECREATE")
 for n,h in report.iteritems():
     if options.verbose: print "\t%s (%8.3f events)" % (h.GetName(),h.Integral())
     workspace.WriteTObject(h,h.GetName())
 workspace.Close()
 
-print "Wrote to ",myout+binname+".input.root"
+print "Wrote to ", os.path.join(myout,binname+".input.root")
 
