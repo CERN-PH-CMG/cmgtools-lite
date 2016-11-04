@@ -14,22 +14,22 @@ tHq-multilepton/signal_extraction/systsEnv.txt \
 --tree treeProducerSusyMultilepton \
 --s2v -j 8 -l 12.9 -f \
 --xp data --asimov \
--W 'puw2016_vtx_4fb(nVert)' \
 -F sf/t tHq_eventvars_Oct24_skim/evVarFriend_{cname}.root \
 --Fs {P}/2_recleaner_v4_b1E2 \
 --mcc ttH-multilepton/lepchoice-ttH-FO.txt \
 --neg \
 -o 3l \
 --od tHq-multilepton/signal_extraction/cards \
---2d-binning-function "5:ttH_MVAto1D_5_3l_Marco"
+-L tHq-multilepton/functionsTHQ.cc \
+--2d-binning-function "12:tHq_MVAto1D_3l_12"
 ```
 
-- Needs a hack of makeShapeCards.py for the hardcoded path to a combine area. I.e. change the YRpath around line 53 to `/afs/cern.ch/user/s/stiegerb/combine/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/` or another one that's readable.
 - Change from `--savefile activate` to `--infile activate` to rerun quickly with a different binning.
-- Still need to use an optimized binning function. Something like: '--2d-binning-function "5:ttH_MVAto1D_5_3l_Marco"', where ttH_MVAto1D_5_3l_Marco is a function defined in `functions.cc`. This converts the 2D histogram into a 1D histogram to be fed to combine.
-- (Might need to run twice to create all output.)
-- Systematics are copied from ttH so far. Several are missing.
+- Binning function in `tHq-multilepton/functionsTHQ.cc`. This turns the 2d histogram of mva1 vs mva2 into a 1d histogram for shape fitting in combine.
+- Keep track of reporting of empty bins and adjust binning function accordingly.
+- Systematics are mostly copied from ttH so far. Needs to be checked.
 - Will want to script this in case of several categories/tests, or to combine with same-sign channel.
+- Need to fix pileup weight.
 
 This produces three files: `..input.root`, `..card.txt`, `..bare.root`
 
@@ -46,6 +46,8 @@ Run on a single datacard:
 ```
 combine -M Asymptotic --run blind --rAbsAcc 0.0005 --rRelAcc 0.0005 ttH_3l.card.txt
 ```
+
+or use `make_limit.sh cards/ttH_3l.card.txt` to do everything in one go.
 
 In case of several datacards, combine them first with `combineCards.py *card.txt > combined.txt`.
 
