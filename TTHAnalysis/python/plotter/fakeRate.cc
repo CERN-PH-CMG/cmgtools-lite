@@ -16,7 +16,10 @@ TH2 * FR3_el = 0;
 TH2 * FR4_el = 0;
 TH2 * FR5_el = 0;
 TH2 * QF_el = 0;
-TH2 * FRi_mu[6], *FRi_el[6];
+TH2 * FRi_mu[6], *FRi_el[6], *FRi_tau[6];
+TH2 * FR_tau = 0;
+TH2 * FR2_tau = 0;
+TH2 * FR3_tau = 0;
 
 TH2 * FR_mu_FO1_QCD    = 0;
 TH2 * FR_mu_FO1_insitu = 0;
@@ -44,14 +47,25 @@ TH2 * FR_el_QCD_noniso = 0;
 TH2 * FRi_fHT_FO_mu[2];
 TH2 * FRi_fHT_FO_el[2];
 
+TH2 * BTAG  = 0;
+TH2 * ELSF1 = 0;
+TH2 * ELSF2 = 0;
+TH2 * ELSF3 = 0;
+TH2 * MUSF1 = 0;
+TH2 * MUSF2 = 0;
+TH2 * MUSF3 = 0;
+
 bool loadFRHisto(const std::string &histoName, const char *file, const char *name) {
     TH2 **histo = 0, **hptr2 = 0;
-    if      (histoName == "FR_mu")  { histo = & FR_mu;  hptr2 = & FRi_mu[0]; }
+    if      (histoName == "FR_tau") { histo = & FR_tau; hptr2 = & FRi_tau[0]; }
+    else if (histoName == "FR_mu")  { histo = & FR_mu;  hptr2 = & FRi_mu[0]; }
     else if (histoName == "FR_el")  { histo = & FR_el;  hptr2 = & FRi_el[0]; }
     else if (histoName == "FR2_mu") { histo = & FR2_mu; hptr2 = & FRi_mu[2]; }
     else if (histoName == "FR2_el") { histo = & FR2_el; hptr2 = & FRi_el[2]; }
+    else if (histoName == "FR2_tau"){ histo = & FR2_tau; hptr2 = & FRi_tau[2]; }
     else if (histoName == "FR3_mu") { histo = & FR3_mu; hptr2 = & FRi_mu[3]; }
     else if (histoName == "FR3_el") { histo = & FR3_el; hptr2 = & FRi_el[3]; }
+    else if (histoName == "FR3_tau"){ histo = & FR3_tau; hptr2 = & FRi_tau[3]; }
     else if (histoName == "FR4_mu") { histo = & FR4_mu; hptr2 = & FRi_mu[4]; }
     else if (histoName == "FR4_el") { histo = & FR4_el; hptr2 = & FRi_el[4]; }
     else if (histoName == "FR5_mu") { histo = & FR5_mu; hptr2 = & FRi_mu[5]; }
@@ -77,6 +91,13 @@ bool loadFRHisto(const std::string &histoName, const char *file, const char *nam
     else if (histoName == "FR_mu_QCD_noniso")  { histo = &FR_mu_QCD_noniso ;  hptr2 = & FRi_fHT_FO_mu[1]; }
     else if (histoName == "FR_el_QCD_iso")  { histo = &FR_el_QCD_iso ;  hptr2 = & FRi_fHT_FO_el[0]; }
     else if (histoName == "FR_el_QCD_noniso")  { histo = &FR_el_QCD_noniso ;  hptr2 = & FRi_fHT_FO_el[1]; }
+    else if (histoName == "BTAG"            )  { histo = &BTAG;  }
+    else if (histoName == "ELSF1"           )  { histo = &ELSF1; }
+    else if (histoName == "ELSF2"           )  { histo = &ELSF2; }
+    else if (histoName == "ELSF3"           )  { histo = &ELSF3; }
+    else if (histoName == "MUSF1"           )  { histo = &MUSF1; }
+    else if (histoName == "MUSF2"           )  { histo = &MUSF2; }
+    else if (histoName == "MUSF3"           )  { histo = &MUSF3; }
     if (histo == 0)  {
         std::cerr << "ERROR: histogram " << histoName << " is not defined in fakeRate.cc." << std::endl;
         return 0;
@@ -202,6 +223,20 @@ float fakeRateWeight_2lss_2(float l1pt, float l1eta, int l1pdgId, float l1pass,
 {
     return fakeRateWeight_2lssCB_i(l1pt, l1eta, l1pdgId, -l1pass,
                             l2pt, l2eta, l2pdgId, -l2pass, -0.5, 2);
+}
+
+float fakeRateWeight_2lss_up(float l1pt, float l1eta, int l1pdgId, float l1pass,
+                            float l2pt, float l2eta, int l2pdgId, float l2pass) 
+{
+    return fakeRateWeight_2lssCB_i(l1pt, l1eta, l1pdgId, -l1pass,
+                            l2pt, l2eta, l2pdgId, -l2pass, -0.5, 3);
+}
+
+float fakeRateWeight_2lss_down(float l1pt, float l1eta, int l1pdgId, float l1pass,
+			       float l2pt, float l2eta, int l2pdgId, float l2pass) 
+{
+    return fakeRateWeight_2lssCB_i(l1pt, l1eta, l1pdgId, -l1pass,
+                            l2pt, l2eta, l2pdgId, -l2pass, -0.5, 4);
 }
 
 
@@ -885,6 +920,10 @@ float multiIso_multiWP(int LepGood_pdgId, float LepGood_pt, float LepGood_eta, f
            return abs(LepGood_pdgId)==13 ? 
                     multiIso_singleWP(LepGood_miniRelIso,LepGood_jetPtRatiov2,LepGood_jetPtRelv2, WP::M) :
                     multiIso_singleWP(LepGood_miniRelIso,LepGood_jetPtRatiov2,LepGood_jetPtRelv2, WP::T) ;
+        case WP::L:
+           return abs(LepGood_pdgId)==13 ? 
+                    multiIso_singleWP(LepGood_miniRelIso,LepGood_jetPtRatiov2,LepGood_jetPtRelv2, WP::L) :
+                    multiIso_singleWP(LepGood_miniRelIso,LepGood_jetPtRatiov2,LepGood_jetPtRelv2, WP::M) ;
         case WP::VVL: return LepGood_miniRelIso < 0.4;
         default:
             std::cerr << "Working point " << wp << " not implemented for multiIso_multiWP" << std::endl;
@@ -893,6 +932,29 @@ float multiIso_multiWP(int LepGood_pdgId, float LepGood_pt, float LepGood_eta, f
 }
 float multiIso_multiWP(int LepGood_pdgId, float LepGood_pt, float LepGood_eta, float LepGood_miniRelIso, float LepGood_jetPtRatiov2, float LepGood_jetPtRelv2, int wp) {
     return multiIso_multiWP(LepGood_pdgId,LepGood_pt,LepGood_eta,LepGood_miniRelIso,LepGood_jetPtRatiov2,LepGood_jetPtRelv2,WP::WPId(wp));
+}
+
+
+float conept_RA5(int LepGood_pdgId, float LepGood_pt, float LepGood_eta, float LepGood_miniRelIso, float LepGood_jetPtRatiov2, float LepGood_jetPtRelv2) {
+
+  float A = (abs(LepGood_pdgId)==11) ? 0.12 : 0.16;
+  float B = (abs(LepGood_pdgId)==11) ? 0.80 : 0.76;
+  float C = (abs(LepGood_pdgId)==11) ? 7.2 : 7.2;
+  
+  if (LepGood_jetPtRelv2>C) return LepGood_pt*(1+std::max(float(LepGood_miniRelIso-A),float(0.)));
+  else return std::max(float(LepGood_pt),float(LepGood_pt/LepGood_jetPtRatiov2*B));
+
+}
+
+float conept_RA7(int LepGood_pdgId, float LepGood_pt, float LepGood_eta, float LepGood_miniRelIso, float LepGood_jetPtRatiov2, float LepGood_jetPtRelv2) {
+
+  float A = (abs(LepGood_pdgId)==11) ? 0.16 : 0.20;
+  float B = (abs(LepGood_pdgId)==11) ? 0.76 : 0.69;
+  float C = (abs(LepGood_pdgId)==11) ? 7.2 : 6.0;
+
+  if (LepGood_jetPtRelv2>C) return LepGood_pt*(1+std::max(float(LepGood_miniRelIso-A),float(0.)));
+  else return std::max(float(LepGood_pt),float(LepGood_pt/LepGood_jetPtRatiov2*B));
+
 }
 
 float multiIso_singleWP_relaxFO3(int LepGood_pdgId, float LepGood_pt, float LepGood_CorrConePt, float LepGood_eta, float LepGood_miniRelIso, float LepGood_jetPtRatiov2, float LepGood_jetPtRelv2, WP::WPId wp) {
@@ -971,5 +1033,109 @@ float ttHl_ptFO_ab(int LepGood_pdgId, float LepGood_pt, float LepGood_jetPtRatio
     return std::max(LepGood_pt, a*(LepGood_pt/LepGood_jetPtRatio - b));
 }
 
+float EWK3L_fakeRate(float pt, float eta, int pdgId, int var = 1) {
+    TH2 *hist = FR_el;
+    if(abs(pdgId)==13) hist=FR_mu;
+    if(abs(pdgId)==15) hist=FR_tau;
+    if(var == 2){
+        hist = FR2_el;
+        if(abs(pdgId)==13) hist=FR2_mu;
+        if(abs(pdgId)==15) hist=FR2_tau;
+    }
+    if(var == 3){
+        hist = FR3_el;
+        if(abs(pdgId)==13) hist=FR3_mu;
+        if(abs(pdgId)==15) hist=FR3_tau;
+    }
+    int ptbin  = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(pt)));
+    int etabin = std::max(1, std::min(hist->GetNbinsY(), hist->GetYaxis()->FindBin(abs(eta))));
+    double fr = hist->GetBinContent(ptbin,etabin);
+    if (fr <= 0)  { std::cerr << "WARNING, FR is " << fr << " for " << hist->GetName() << ", pt " << pt << " eta " << eta << std::endl; if (fr<0) std::abort(); }
+    return fr/(1-fr);
+}
+
+float EWK3L_fakeTransfer(unsigned int nLep, float l1fr    , int l1isFake,
+                                            float l2fr    , int l2isFake,
+                                            float l3fr    , int l3isFake,
+                                            float l4fr = 0, int l4isFake = 0) {
+
+    int nfail = l1isFake + l2isFake + l3isFake + l4isFake;
+    if(nLep == 3) nfail = l1isFake + l2isFake + l3isFake;
+
+    if(nfail == 0) return 0;
+
+    float weight = 1;
+    if(l1isFake           ) weight *= -1*l1fr;
+    if(l2isFake           ) weight *= -1*l2fr;
+    if(l3isFake           ) weight *= -1*l3fr;
+    if(l4isFake && nLep==4) weight *= -1*l4fr;
+
+    return -1*weight;
+}
+
 
 void fakeRate() {}
+
+
+
+float fakeRatePromptRateWeight_2l_ij(float l1pt, float l1eta, int l1pdgId, bool l1pass,
+                            float l2pt, float l2eta, int l2pdgId, bool l2pass, int iFR, int iPR, int selhyp=-1, int selfs=11)
+{
+    // selhyp: -1 = all with at least one fake; 00 = double-fakes; 01 = l1 is fake, 10 = l2 is fake
+    // selfs : 11 = pass-pass, 00 = fail-fail, 10 = pass-fail, 01 = fail-pass
+    // The math is:
+    // 1) 1/(p - f)   for each lepton
+    // 2) to predict the yield before selection in a given configuration of prompt and fake, get a factor
+    //         pass -> prompt :  ( 1 - f )
+    //         pass -> fake   : -( 1 - p )
+    //         fail -> prompt : -    f
+    //         fail -> fake   :      p
+    //  3) then add the various p, (1-p), f, (1-f) depending on what you want to predict
+    float pt[2] = { l1pt, l2pt };
+    float eta[2] = { std::abs(l1eta), std::abs(l2eta) };
+    int id[2]  = { std::abs(l1pdgId), std::abs(l2pdgId) };
+    bool pass[2] = { l1pass, l2pass };
+    float p[2], f[2];
+    for (int i = 0; i < 2; ++i) {
+        TH2 *hist = (id[i] == 11 ? FRi_el[iFR] : FRi_mu[iFR]);
+        int ptbin  = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(pt[i])));
+        int etabin = std::max(1, std::min(hist->GetNbinsY(), hist->GetYaxis()->FindBin(eta[i])));
+        double fr = hist->GetBinContent(ptbin,etabin);
+        if (fr <= 0)  { std::cerr << "WARNING, FR is " << fr << " for " << hist->GetName() << ", pt " << pt[i] << " eta " << eta[i] << " id " << id[i] << std::endl; if (fr<0) std::abort(); }
+        f[i] = fr;
+        hist = (id[i] == 11 ? FRi_el[iPR] : FRi_mu[iPR]);
+        ptbin  = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(pt[i])));
+        etabin = std::max(1, std::min(hist->GetNbinsY(), hist->GetYaxis()->FindBin(eta[i])));
+        fr = hist->GetBinContent(ptbin,etabin);
+        if (fr <= 0)  { std::cerr << "WARNING, PR is " << fr << " for " << hist->GetName() << ", pt " << pt[i] << " eta " << eta[i] << " id " << id[i] << std::endl; if (fr<0) std::abort(); }
+        p[i] = fr;
+    }
+    int hypots[4] = { 0, 1, 10, 11 };
+    double weight = 0;
+    for (int h : hypots) {
+        if (!(selhyp == h || (selhyp == -1 && h != 11))) continue;
+        double myw = 1.0;
+        for (int i = 0; i < 2; ++i) {
+            int target = (i == 1 ? h % 10 : h / 10); // 1 if prompt, 0 if fake
+            // (1)
+            myw *= 1.0/(p[i]-f[i]);
+            // (2)
+            if (pass[i]) myw *= (target ? (1-f[i]) : -(1-p[i]) );
+            else         myw *= (target ?   -f[i]  :   p[i]    );
+            // (3)
+            int shouldpass = (i == 1 ? selfs % 10 : selfs / 10); // 1 if I'm predicting a passing, 0 if I'm predicting a failing
+            if (shouldpass) myw *= (target ?    p[i]    :     f[i]   );
+            else            myw *= (target ? (1 - p[i]) : (1 - f[i]) );
+        }
+        weight += myw;
+    }
+    return weight;
+}
+
+
+float fakeRatePromptRateWeight_2l_23(float l1pt, float l1eta, int l1pdgId, float l1pass,
+                            float l2pt, float l2eta, int l2pdgId, float l2pass)
+{
+    return fakeRatePromptRateWeight_2l_ij(l1pt, l1eta, l1pdgId, l1pass,
+                            l2pt, l2eta, l2pdgId, l2pass, 2, 3);
+}

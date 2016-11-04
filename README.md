@@ -9,8 +9,8 @@ For the general recipe to set up CMG Framework in CMSSW_8_0_X, [follow these ins
 #### Set up CMSSW and the base git
 
 ```
-cmsrel CMSSW_8_0_11
-cd CMSSW_8_0_11/src
+cmsrel CMSSW_8_0_19
+cd CMSSW_8_0_19/src
 cmsenv
 git cms-init
 ```
@@ -56,3 +56,7 @@ cd $CMSSW_BASE/src
 scram b -j 8
 ```
 
+#### Throubleshooting
+
+If you encounter problems at runtime related
+to the Spring16 electron ID MVA, please see [this](https://github.com/CERN-PH-CMG/cmg-cmssw/pull/661).

@@ -4,6 +4,8 @@ from CMGTools.ObjectStudies.analyzers.leptonTriggerMatching_cff import WithLepto
 
 leptonTypeTnP = NTupleObjectType("leptonTnP", baseObjectTypes = [ leptonType, WithLeptonTriggerMatchType ], variables = [
     NTupleVariable("looseId",     lambda x : x.looseIdSusy, int, help="Loose ID (as per lepton analyzer)"),
+    NTupleVariable("mvaIdSpring15",   lambda lepton : lepton.mvaRun2("NonTrigSpring15MiniAOD") if abs(lepton.pdgId()) == 11 else 1, help="EGamma POG MVA ID for non-triggering electrons, Spring15 re-training; 1 for muons"),
+    NTupleVariable("mvaIdSpring16",   lambda lepton : lepton.mvaRun2("Spring16") if abs(lepton.pdgId()) == 11 else 1, help="EGamma POG MVA ID, Spring16; 1 for muons"),
     # ----------------------
     NTupleVariable("eleMVASpring15_VLooseIdEmu", lambda x : x.electronID("POG_MVA_ID_Spring15_NonTrig_VLooseIdEmu") if abs(x.pdgId())==11 else 1, int, help="VLoose MVA Ele ID (as per susy)"),
     NTupleVariable("eleMVASpring15_HZZ",         lambda x : x.electronID("MVA_ID_NonTrig_Spring15_HZZ")             if abs(x.pdgId())==11 else 1, int, help="MVA Ele ID (as per hzz)"),
@@ -27,9 +29,13 @@ treeProducerTnP = cfg.Analyzer(
      saveTLorentzVectors = False,  # can set to True to get also the TLorentzVectors, but trees will be bigger
      globalVariables = [
         NTupleVariable("nVert",  lambda ev: len(ev.goodVertices), int, help="Number of good vertices"),
+        NTupleVariable("nJet20", lambda ev: sum([j.pt() > 20 for j in ev.cleanJets]), int, help="Number of jets with pt > 20"),
+        NTupleVariable("nJet25", lambda ev: sum([j.pt() > 25 for j in ev.cleanJets]), int, help="Number of jets with pt > 25"),
+        NTupleVariable("nJet30", lambda ev: sum([j.pt() > 30 for j in ev.cleanJets]), int, help="Number of jets with pt > 30"),
+        NTupleVariable("nJet40", lambda ev: sum([j.pt() > 40 for j in ev.cleanJets]), int, help="Number of jets with pt > 40"),
      ], 
      globalObjects = {
-        #"met" : NTupleObject("met", metType, help="PF E_{T}^{miss}, after type 1 corrections"),
+        "met" : NTupleObject("met", metType, help="PF E_{T}^{miss}, after type 1 corrections"),
      },
      collections = {
         "TnP" : NTupleCollection("TnP", tnpType, 20, help="Dilepton Candidates"),    

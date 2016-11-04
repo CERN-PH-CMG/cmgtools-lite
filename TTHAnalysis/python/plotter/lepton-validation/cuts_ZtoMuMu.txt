@@ -1,5 +1,5 @@
 filters : hbheFilterNew25ns==1 && Flag_CSCTightHaloFilter==1 && Flag_eeBadScFilter==1
-trigger: HLT_DoubleMu || HLT_BIT_HLT_IsoMu20_v || (!isData)
+trigger: $DATA{HLT_DoubleMu || HLT_BIT_HLT_IsoMu22_v} $MC{1}
 2L SF/OS : nLepGood >= 2 && LepGood1_pdgId == -LepGood2_pdgId
 muon: abs(LepGood_pdgId[iChosen])==13
 best mll[60,120] : (60 < mZ1 && mZ1 < 120)

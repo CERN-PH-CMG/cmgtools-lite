@@ -1,4 +1,4 @@
 minimal: LepGood_awayJet_pt > 25 
 fix: abs(LepGood_awayJet_eta) < 2.4
 veto: nLepGood == 1
-presel: LepGood_sip3d < 8 && LepGood_jetBTagCSV < 0.89
+presel: LepGood_sip3d < 8 && LepGood_jetBTagCSV < 0.80

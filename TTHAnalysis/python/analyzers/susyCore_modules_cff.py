@@ -49,6 +49,7 @@ triggerAna = cfg.Analyzer(
 triggerFlagsAna = cfg.Analyzer(
     TriggerBitAnalyzer, name="TriggerFlags",
     processName = 'HLT',
+    fallbackProcessName = 'HLT2',
     prescaleProcessName = 'PAT',
     prescaleFallbackProcessName = 'RECO',
     unrollbits = False,
@@ -70,6 +71,7 @@ eventFlagsAna = cfg.Analyzer(
         "globalTightHalo2016Filter" : [ "Flag_globalTightHalo2016Filter" ],
         "CSCTightHalo2015Filter" : [ "Flag_CSCTightHalo2015Filter" ],
         "CSCTightHaloFilter" : [ "Flag_CSCTightHaloFilter" ],
+        "CSCTightHalo2016Filter" : [ "Flag_globalTightHalo2016Filter" ],
         "hcalLaserEventFilter" : [ "Flag_hcalLaserEventFilter" ],
         "EcalDeadCellTriggerPrimitiveFilter" : [ "Flag_EcalDeadCellTriggerPrimitiveFilter" ],
         "goodVertices" : [ "Flag_goodVertices" ],
@@ -145,6 +147,7 @@ genHFAna = cfg.Analyzer(
 
 lheWeightAna = cfg.Analyzer(
     LHEWeightAnalyzer, name="LHEWeightAnalyzer",
+    useLumiInfo=False
 )
 
 pdfwAna = cfg.Analyzer(
@@ -157,6 +160,7 @@ from CMGTools.TTHAnalysis.analyzers.susyParameterScanAnalyzer import susyParamet
 susyScanAna = cfg.Analyzer(
     susyParameterScanAnalyzer, name="susyParameterScanAnalyzer",
     doLHE=True,
+    useLumiInfo=True
     )
 
 # Lepton Analyzer (generic)
@@ -230,7 +234,8 @@ ttHLepSkim = cfg.Analyzer(
     maxLeptons = 999,
     #idCut  = "lepton.relIso03 < 0.2" # can give a cut
     #ptCuts = [20,10],                # can give a set of pt cuts on the leptons
-    requireSameSignPair = False
+    requireSameSignPair = False,
+    allowLepTauComb = False
     )
 
 ## Photon Analyzer (generic)
@@ -328,8 +333,8 @@ jetAna = cfg.Analyzer(
     recalibrateJets = True, #'MC', # True, False, 'MC', 'Data'
     applyL2L3Residual = True, # Switch to 'Data' when they will become available for Data
     recalibrationType = "AK4PFchs",
-    mcGT     = "Spring16_25nsV1_MC",
-    dataGT   = "Spring16_25nsV1_MC",
+    mcGT     = "Spring16_25nsV6_MC",
+    dataGT   = "Spring16_25nsV6_DATA",
     jecPath = "${CMSSW_BASE}/src/CMGTools/RootTools/data/jec/",
     shiftJEC = 0, # set to +1 or -1 to apply +/-1 sigma shift to the nominal jet energies
     addJECShifts = False, # if true, add  "corr", "corrJECUp", and "corrJECDown" for each jet (requires uncertainties to be available!)
@@ -483,6 +488,7 @@ ttHCoreEventAna = cfg.Analyzer(
     mhtForBiasedDPhi = "mhtJet40jvec",
     jetForBiasedDPhi = "cleanJets",
     jetPt = 40.,
+    doLeptonMVASoft = False,
     )
 
 # Jet-MET based Skim (generic, but requirements depend on the final state)
@@ -503,6 +509,17 @@ ttHJetMETSkim = cfg.Analyzer(
 from CMGTools.TTHAnalysis.analyzers.susyLeptonMatchAnalyzer import susyLeptonMatchAnalyzer
 susyLeptonMatchAna = cfg.Analyzer(
     susyLeptonMatchAnalyzer, name="susyLeptonMatchAna",
+    collection = "inclusiveLeptons",
+    deltaR     = 0.2,
+    statusOne  = True # put True if trying to match to genParticle with same pdgId and status 1, but False if only require same pdgId
+    )
+
+# same as above for taus
+susyTauMatchAna = cfg.Analyzer(
+    susyLeptonMatchAnalyzer, name="susyTauMatchAna",
+    collection = "inclusiveTaus",
+    deltaR     = 0.2,
+    statusOne  = False # put True if trying to match to genParticle with same pdgId and status 1, but False if only require same pdgId
     )
 
 # Core sequence of all common modules
@@ -520,10 +537,10 @@ susyCoreSequence = [
     susyScanAna,
     vertexAna,
     lepAna,
+    tauAna,
     ttHLepSkim,
     #ttHLepMCAna,
     photonAna,
-    tauAna,
     isoTrackAna,
     jetAna,
     #ttHFatJetAna,  # out of core sequence for now

@@ -1,6 +1,7 @@
 filters : hbheFilterNew25ns==1 && Flag_CSCTightHaloFilter==1 && Flag_eeBadScFilter==1
-trigger : HLT_DoubleMu || HLT_DoubleEl || HLT_MuEG || (!isData)
+trigger : $DATA{HLT_DoubleMu || HLT_BIT_HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v || HLT_BIT_HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v || HLT_BIT_HLT_Mu23_TrkIsoVVL_Ele8_CaloIdL_TrackIdL_IsoVL_v} $MC{1}
 3L : nLepGood == 3
+pt2515: LepGood1_pt > 25 && LepGood2_pt > 15
 SF/OS : LepGood1_pdgId == -LepGood2_pdgId
 lep3_pt30 : LepGood3_pt < 50
 lep3_pt10 : nLepGood10 == 3
