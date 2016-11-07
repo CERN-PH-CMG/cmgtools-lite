@@ -57,7 +57,7 @@ def div(num, den):
 	if den==0: return 1
 	return float(num)/den
 
-def doBlackMagicMetShit(infile, outfile, sig, jec, met, wVars):
+def doMetVariation(infile, outfile, sig, jec, met, wVars):
 	global mass1, mass2, q2file, q2syntax, q2acc
 	## Q2ACC
 	if q2file:
@@ -168,7 +168,7 @@ if len(frmet)==2:
 	
 	
 	## get central value of acceptance 
-	doBlackMagicMetShit(accdir + "/common/SR.input.root", accdir + "/acc_SR.input.root", sig, thejec, themet, wVars)
+	doMetVariation(accdir + "/common/SR.input.root", accdir + "/acc_SR.input.root", sig, thejec, themet, wVars)
 
 
 ## prepare the proper job
