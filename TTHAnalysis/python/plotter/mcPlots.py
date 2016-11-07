@@ -162,7 +162,7 @@ def reMax(hist,hist2,islog,factorLin=1.3,factorLog=2.0,doWide=False):
           max2 = max(max2, (hist2.GetBinContent(b) + hist2.GetBinError(b))*(factorLog if islog else factorLin))
     if max2 > max0:
         max0 = max2;
-        max0 = 50000
+        print "i am here with "+str(islog)
         if islog: hist.GetYaxis().SetRangeUser(0.1 if doWide else 0.9, max0)
         else:     hist.GetYaxis().SetRangeUser(0,max0)
 
@@ -884,6 +884,7 @@ class PlotMaker:
                 else:
                     c1.SetWindowSize(plotformat[0] + (plotformat[0] - c1.GetWw()), plotformat[1] + (plotformat[1] - c1.GetWh()));
                 p1.SetLogy(islog)
+                p1.SetLogz(True if pspec.hasOption('Logz') else False)
                 if pspec.hasOption('Logx'):
                     p1.SetLogx(True)
                     if p2: p2.SetLogx(True)
@@ -925,6 +926,8 @@ class PlotMaker:
                         doStatTests(totalSyst, pmap['data'], options.doStatTests, legendCorner=pspec.getOption('Legend','TR'))
                 if pspec.hasOption('YMin') and pspec.hasOption('YMax'):
                     total.GetYaxis().SetRangeUser(pspec.getOption('YMin',1.0), pspec.getOption('YMax',1.0))
+                if pspec.hasOption('ZMin') and pspec.hasOption('ZMax'):
+                    total.GetZaxis().SetRangeUser(pspec.getOption('ZMin',1.0), pspec.getOption('ZMax',1.0))
                 #if options.yrange: 
                 #    total.GetYaxis().SetRangeUser(options.yrange[0], options.yrange[1])
                 legendCutoff = pspec.getOption('LegendCutoff', 1e-5 if c1.GetLogy() else 1e-2)
@@ -940,7 +943,7 @@ class PlotMaker:
                     CMS_lumi.lumi_13TeV = "%.1f fb^{-1}" % self._options.lumi
                     CMS_lumi.extraText  = self._options.cmsprel
                     CMS_lumi.lumi_sqrtS = self._options.cmssqrtS
-                    CMS_lumi.CMS_lumi(ROOT.gPad, 4, 0, -0.005 if doWide and doRatio else 0.005 if doWide else 0.05)
+                    CMS_lumi.CMS_lumi(ROOT.gPad, 4, 0, -0.005 if doWide and doRatio else 0.01 if doWide else 0.05)
                 else: 
                     doTinyCmsPrelim(hasExpo = total.GetMaximum() > 9e4 and not c1.GetLogy(),textSize=(0.045 if doRatio else 0.033)*options.topSpamSize, options=options,doWide=doWide)
                 if options.addspam:
@@ -1075,6 +1078,8 @@ class PlotMaker:
                                     else: 
                                         style = mca.getProcessOption(p,'MarkerStyle',1          )
                                         color = mca.getProcessOption(p,'MarkerColor',ROOT.kBlack)
+                                    if pspec.hasOption('ZMin') and pspec.hasOption('ZMax'):
+                                        plot.GetZaxis().SetRangeUser(pspec.getOption('ZMin',1.0), pspec.getOption('ZMax',1.0))
                                     plot.SetMarkerStyle(style)
                                     plot.SetMarkerColor(color)
                                     plot.Draw(pspec.getOption("PlotMode","COLZ TEXT45"))

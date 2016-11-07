@@ -152,31 +152,35 @@ mkdir(mpsdir)
 
 
 ## first loop on pfMET and genMET, and the JEC
-f = open(mcadir + "/mca_acc_"+name+".txt", "w")
-f.write(mcabase.format(name=sig+"_pfMET"           , ws=wstr                      , FRfiles=makeFakeRate(frfiles,frmet, 0)) + "\n")
-f.write(mcabase.format(name=sig+"_genMET"          , ws=makeWeight(wstr, wvmet[1]), FRfiles=makeFakeRate(frfiles,frmet, 1)) + "\n")
-f.write(mcabase.format(name=sig+"_"+thejec+"_Up"   , ws=makeWeight(wstr, wvjec[1]), FRfiles=makeFakeRate(frfiles,frjec, 1)) + "\n")
-f.write(mcabase.format(name=sig+"_"+thejec+"_Dn"   , ws=makeWeight(wstr, wvjec[2]), FRfiles=makeFakeRate(frfiles,frjec, 2)) + "\n")
-for k,vals in wVars.iteritems():
-	f.write(mcabase.format(name=sig+"_"+k+"_Up", ws=makeWeight(wstr,vals[0]), FRfiles=makeFakeRate(frfiles)) + "\n")
-	f.write(mcabase.format(name=sig+"_"+k+"_Dn", ws=makeWeight(wstr,vals[1]), FRfiles=makeFakeRate(frfiles)) + "\n")
-f.close()
-mybase = cmdbase.format(MCA=mcadir + "/mca_acc_"+name+".txt", SYS="", O=outdir + "/acc/"+short)
-cmd(mybase.replace("[[","{").replace("]]","}") + " --asimov")
-
-
-## get central value of acceptance 
-doBlackMagicMetShit(accdir + "/common/SR.input.root", accdir + "/acc_SR.input.root", sig, thejec, themet, wVars)
+if len(frmet)==2:
+	f = open(mcadir + "/mca_acc_"+name+".txt", "w")
+	f.write(mcabase.format(name=sig+"_pfMET"           , ws=wstr                      , FRfiles=makeFakeRate(frfiles,frmet, 0)) + "\n")
+	f.write(mcabase.format(name=sig+"_genMET"          , ws=makeWeight(wstr, wvmet[1]), FRfiles=makeFakeRate(frfiles,frmet, 1)) + "\n")
+	if len(frjec)==3:
+		f.write(mcabase.format(name=sig+"_"+thejec+"_Up"   , ws=makeWeight(wstr, wvjec[1]), FRfiles=makeFakeRate(frfiles,frjec, 1)) + "\n")
+		f.write(mcabase.format(name=sig+"_"+thejec+"_Dn"   , ws=makeWeight(wstr, wvjec[2]), FRfiles=makeFakeRate(frfiles,frjec, 2)) + "\n")
+	for k,vals in wVars.iteritems():
+		f.write(mcabase.format(name=sig+"_"+k+"_Up", ws=makeWeight(wstr,vals[0]), FRfiles=makeFakeRate(frfiles)) + "\n")
+		f.write(mcabase.format(name=sig+"_"+k+"_Dn", ws=makeWeight(wstr,vals[1]), FRfiles=makeFakeRate(frfiles)) + "\n")
+	f.close()
+	mybase = cmdbase.format(MCA=mcadir + "/mca_acc_"+name+".txt", SYS="", O=outdir + "/acc/"+short)
+	cmd(mybase.replace("[[","{").replace("]]","}") + " --asimov")
+	
+	
+	## get central value of acceptance 
+	doBlackMagicMetShit(accdir + "/common/SR.input.root", accdir + "/acc_SR.input.root", sig, thejec, themet, wVars)
 
 
 ## prepare the proper job
 cp(themca, mcadir + "/mca_full_"+name+".txt")
 f = open(mcadir + "/mca_full_"+name+".txt", "a")
 f.write(mcabase.format(name=sig+"+"              , ws=wstr, FRfiles=makeFakeRate(frfiles, frjec, 0)) + "\n")
-f.write(mcabase.format(name=sig+"_"+thejec+"_Up+", ws=wstr, FRfiles=makeFakeRate(frfiles, frjec, 1)) + ",SkipMe=True\n")
-f.write(mcabase.format(name=sig+"_"+thejec+"_Dn+", ws=wstr, FRfiles=makeFakeRate(frfiles, frjec, 2)) + ",SkipMe=True\n")
-f.write(mcabase.format(name=sig+"_"+themet+"_Up+", ws=wstr, FRfiles=makeFakeRate(frfiles, frmet, 0)) + ",SkipMe=True\n")
-f.write(mcabase.format(name=sig+"_"+themet+"_Dn+", ws=wstr, FRfiles=makeFakeRate(frfiles, frmet, 0)) + ",SkipMe=True\n")
+if len(frjec)==3:
+	f.write(mcabase.format(name=sig+"_"+thejec+"_Up+", ws=wstr, FRfiles=makeFakeRate(frfiles, frjec, 1)) + ",SkipMe=True\n")
+	f.write(mcabase.format(name=sig+"_"+thejec+"_Dn+", ws=wstr, FRfiles=makeFakeRate(frfiles, frjec, 2)) + ",SkipMe=True\n")
+if len(frmet)==2:
+	f.write(mcabase.format(name=sig+"_"+themet+"_Up+", ws=wstr, FRfiles=makeFakeRate(frfiles, frmet, 0)) + ",SkipMe=True\n")
+	f.write(mcabase.format(name=sig+"_"+themet+"_Dn+", ws=wstr, FRfiles=makeFakeRate(frfiles, frmet, 0)) + ",SkipMe=True\n")
 for k,vals in wVars.iteritems():
 	f.write(mcabase.format(name=sig+"_"+k+"_Up+", ws=makeWeight(wstr,vals[0]), FRfiles=makeFakeRate(frfiles)) + ",SkipMe=True\n")
 	f.write(mcabase.format(name=sig+"_"+k+"_Dn+", ws=makeWeight(wstr,vals[1]), FRfiles=makeFakeRate(frfiles)) + ",SkipMe=True\n")

@@ -72,9 +72,10 @@ class Maker():
 				self.talk(str(njobs)+"/"+str(len(self.jobs))+" jobs are running. Checking back in 5 seconds...")
 				time.sleep(5)
 				njobs = [j.isDone() or j.isError() for j in self.jobs].count(False)
-			nerr = [j.isError() for j in self.jobs].count(True)
-			if nerr>0:
-				self.error(str(nerr)+"/"+str(len(self.jobs))+" jobs have finished in error state.")
+			jerr = [j for j in self.jobs if j.isError()]
+			if len(jerr)>0:
+				errorJobs = [j.name+": "+j.script for j in jerr]
+				self.error(str(len(jerr))+"/"+str(len(self.jobs))+" jobs have finished in error state.\n"+"\n".join(errorJobs))
 		self.jobs = []
 		cleandir(self.jobpath, False)
 		return True
@@ -134,9 +135,9 @@ class Maker():
 			samples.extend(s[p])
 		return samples
 	def getBkgs(self):
-		procs = getattr(self.region, "bkgs", [])
-		if len(self.options.bkgs)>0: procs = self.options.bkgs
-		return procs
+		toReturn = splitList(getattr(self.region, "bkgs", []))
+		if len(self.options.bkgs)>0: toReturn = self.options.bkgs
+		return toReturn
 	def getExprCut(self):
 		return getCut(getattr(self.config, "firstCut", "alwaystrue"), self.getVariable("expr"), self.getVariable("bins"))
 	def getFriends(self):
@@ -173,12 +174,12 @@ class Maker():
 		return "50000"
 	def getProcs(self):
 		procs = self.getBkgs() + self.getSigs()
-		if len(self.options.procs)>0: procs = self.options.procs
-		return self.options.procs
-	def getSigs(self):
-		procs = getattr(self.region, "sigs", [])
-		if len(self.options.sigs)>0: procs = self.options.sigs
+		if len(self.options.procs)>0: procs = splitList(self.options.procs)
 		return procs
+	def getSigs(self):
+		toReturn = splitList(getattr(self.region, "sigs", []))
+		if len(self.options.sigs)>0: toReturn = self.options.sigs
+		return toReturn
 	def getStuffFromMCA(self):
 		procs   = []
 		samples = {}
@@ -224,7 +225,7 @@ class Maker():
 		return default
 	def getWeight(self, isFastSim = False):
 		weight = None
-		if               self.getVariable("weight"  ): weight =  self.getVariable("weight")
+		if               self.getVariable("weight"  ): weight = self.getVariable("weight")
 		if isFastSim and self.getVariable("weightFS"): 
 			if weight: weight = "("+weight+")*("+self.getVariable("weightFS")+")"
 			else     : weight = self.getVariable("weightFS")
@@ -302,7 +303,7 @@ class Maker():
 			self.talk("Job '"+name+"' still running. Checking back in 5 seconds...")
 			time.sleep(5)
 		if theJob.isError():
-			self.error("Job '"+name+"' has finished in error state.")
+			self.error("Job '"+name+"' ("+theJob.script+") has finished in error state.")
 		del theJob
 	def runJobs(self):
 		self.talk("Submitting "+str(len(getattr(self,"jobs",[])))+" jobs")

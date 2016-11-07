@@ -27,8 +27,8 @@ def collectProcesses(mm, make):
 	sigs = " ".join(["-p "+s for s in mm.getSigs()])
 	if make=="data": return "-p data "+bkgs
 	if make=="mix" : return "--showIndivSigs --noStackSig "+sigs+" "+bkgs
-	if make=="sig" : return "--emptyStack -p dummy --showIndivSigs --noStackSig "+sigs
-	if make=="bkg" : return bkgs
+	if make=="sigs": return "--emptyStack -p dummy --showIndivSigs --noStackSig "+sigs
+	if make=="bkgs": return bkgs
 	return ""
 	
 parser = OptionParser(usage="%prog cfg regions treedir outdir [options]")

@@ -28,10 +28,10 @@ if options.gen:
 ## split tree per mass (parallel splitting)
 if options.minmass and options.maxmass and options.step:
 
-	masses = [options.minmass + i.options.step for i in range((options.maxmass - options.minmass)/options.step+1)]
+	masses = [options.minmass + i*options.step for i in range((options.maxmass - options.minmass)/options.step+1)]
 	for mass in masses:
-		lsp = "--lsp "+str(mass-options.dm) if options.dm else ""
-		mm.submit([mm.outdir, mm.treedir, gen, tmp, options.treename, "--mass "+str(mass), lsp],mass,False)
+		lsp = "--lsp "+str(mass-options.deltam) if options.deltam else ""
+		mm.submit([mm.outdir, mm.treedir, gen, tmp, options.treename, "--mass "+str(mass), lsp],str(mass),False)
 	mm.runJobs()
 	mm.clearJobs()
 
