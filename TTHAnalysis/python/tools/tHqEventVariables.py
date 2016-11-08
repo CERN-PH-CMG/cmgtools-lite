@@ -28,18 +28,19 @@ class MVAVar:
 
 class tHqEventVariableFriend:
     def __init__(self):
+        self.jecsysts = [""] #, "_jecUp", "_jecDown"] # Not sure we actually need these (only eta dependence)
         self.branches = [] # (branchname, default value)
-        self.branches.append(("maxEtaJet25", -99.9)) # max eta of any non-tagged jet
-        self.branches.append(("nJetEta1", -99.9)) # number of jets with |eta|>1.0
-        self.branches.append(("dEtaFwdJetBJet", -99.9)) # delta eta: max fwd jet and hardest bjet
-        self.branches.append(("dEtaFwdJetClosestLep",-99.9)) # delta eta: max fwd jet and closest lepton
         self.branches.append(("dPhiHighestPtSSPair", -99.9)) # delta phi highest pt same sign lepton pair
         self.branches.append(("minDRll", -99.9)) # minimum deltaR between all leptons
-     
-        self.branches.append(("maxEtaBJet", -99.9)) # max eta of the hardest Bjet
-        self.branches.append(("maxEta2BJet", -99.9)) # max Eta of the second hardest Bjet
-        self.branches.append(("dEtaFwdJet2BJet", -99.9)) # delta eta: max fwd jet and second hardest bjet
-        self.branches.append(("dEtaBJet2BJet", -99.9)) # delta eta: hardest bjet and second hardest bjet
+        for jecsyst in self.jecsysts:
+            self.branches.append(("maxEtaJet25"+jecsyst, -99.9)) # max eta of any non-tagged jet
+            self.branches.append(("nJetEta1"+jecsyst, -99.9)) # number of jets with |eta|>1.0
+            self.branches.append(("dEtaFwdJetBJet"+jecsyst, -99.9)) # delta eta: max fwd jet and hardest bjet
+            self.branches.append(("dEtaFwdJetClosestLep",-99.9)) # delta eta: max fwd jet and closest lepton
+            self.branches.append(("maxEtaBJet"+jecsyst, -99.9)) # max eta of the hardest Bjet
+            self.branches.append(("maxEta2BJet"+jecsyst, -99.9)) # max Eta of the second hardest Bjet
+            self.branches.append(("dEtaFwdJet2BJet"+jecsyst, -99.9)) # delta eta: max fwd jet and second hardest bjet
+            self.branches.append(("dEtaBJet2BJet"+jecsyst, -99.9)) # delta eta: hardest bjet and second hardest bjet
 
         # Signal MVA
         self.mvavars = [
@@ -53,12 +54,6 @@ class tHqEventVariableFriend:
             MVAVar(name="LepGood_conePt[iF_Recl[2]]"),
             MVAVar(name="minDRll"),
             MVAVar(name="LepGood_charge[iF_Recl[0]]+LepGood_charge[iF_Recl[1]]+LepGood_charge[iF_Recl[2]]"),
-            
-            # MVAVar(name="maxEtaBJet"),
-            # MVAVar(name="maxEta2BJet"),
-            # MVAVar(name="dEtaFwdJet2BJet"),
-            # MVAVar(name="dEtaBJet2BJet")
-
         ]
 
         self.mvaspectators = [
@@ -91,24 +86,33 @@ class tHqEventVariableFriend:
         jets      = [j for j in Collection(event, "Jet"    +jec_syst, "nJet"    +jec_syst)]
         jets_disc = [j for j in Collection(event, "DiscJet"+jec_syst, "nDiscJet"+jec_syst)]
 
-        # Will have to use recleaned jets at some point:
         try:
-            _ijets_list = getattr(event, "iJSel_%s%s" % (self.recllabel, jec_syst))
+            _ijets_list = getattr(event, "iJSel_%s%s" % ("Recl", jec_syst))
             return [(jets[ij] if ij>=0 else jets_disc[-ij-1]) for ij in _ijets_list]
-        # For now just take the default
+
         except AttributeError:
+            raise
             return jets
+
+    def getLeptonCollection(self, event, label='LepGood', lenlabel='nLepFO_Recl'):
+        """Get a lepton collection, either default or recleaned"""
+        leptons = [l for l in Collection(event, label, 'n'+label)]
+
+        try:
+            _ileps_list = list(getattr(event, "iF_Recl"))
+            maxlen = int(getattr(event, lenlabel))
+            _ileps_list = _ileps_list[:maxlen]
+            return [leptons[il] for il in _ileps_list]
+
+        except AttributeError:
+            return leptons
 
     def __call__(self, event):
         # Set up dictionary with default values
         ret = {k:v for k,v in self.branches}
 
-        # Get some object collections
-        jets    = self.getJetCollection(event, jec_syst="")
-        fjets   = Collection(event, "JetFwd", "nJetFwd")
-        leptons = Collection(event, "LepGood", "nLepGood")
-        bjets   = [j for j in jets if j.btagCSV > BTAGWP]
-        bjets.sort(key=lambda x:x.pt, reverse=True)
+        # Get leptons
+        leptons = self.getLeptonCollection(event, label="LepGood")
 
         sspairs = [(l1, l2) for l1, l2 in combinations(leptons, 2) if l1.pdgId*l2.pdgId > 0]
         if len(sspairs):
@@ -119,46 +123,49 @@ class tHqEventVariableFriend:
         if len(lepdrs):
             ret['minDRll'] = min(lepdrs)
 
-        # All non-btagged jets with pt > 25 GeV
-        light_jets =  [j for j in jets  if (j.pt > 25. and j.btagCSV < BTAGWP)]
-        light_jets += [j for j in fjets if (j.pt > 25. and j.btagCSV < BTAGWP)]
-        light_jets.sort(key=lambda x:x.pt, reverse=True)
+        for jecsyst in self.jecsysts:
+            # Get jet collections
+            jets = self.getJetCollection(event, jec_syst=jecsyst)
+            fjets = Collection(event, "JetFwd", "nJetFwd")
+            bjets = [j for j in jets if j.btagCSV > BTAGWP]
+            bjets.sort(key=lambda x:x.pt, reverse=True)
 
-        # Get the most forward of these save its value
-        if len(light_jets):
-            maxjet = sorted(light_jets, key=lambda x:abs(x.eta), reverse=True)[0]
-            ret['maxEtaJet25'] = abs(maxjet.eta)
-            if len(bjets):
-                ret['dEtaFwdJetBJet'] = abs(maxjet.eta - bjets[0].eta)
+            # All non-btagged jets with pt > 25 GeV
+            light_jets =  [j for j in jets  if (j.pt > 25. and j.btagCSV < BTAGWP)]
+            light_jets += [j for j in fjets if (j.pt > 25. and j.btagCSV < BTAGWP)]
+            light_jets.sort(key=lambda x:x.pt, reverse=True)
 
-            if len(bjets)>1:
-                ret['dEtaFwdJet2BJet'] = abs(maxjet.eta - bjets[1].eta)
-                
-            else: 
-                ret['dEtaFwdJet2BJet'] = -1.0
+            # Get the most forward of these save its value
+            if len(light_jets):
+                maxjet = sorted(light_jets, key=lambda x:abs(x.eta), reverse=True)[0]
+                ret['maxEtaJet25'] = abs(maxjet.eta)
+                if len(bjets):
+                    ret['dEtaFwdJetBJet'] = abs(maxjet.eta - bjets[0].eta)
 
-            detas = [abs(lep.eta - maxjet.eta) for lep in leptons]
-            ret['dEtaFwdJetClosestLep'] = sorted(detas)[0]
+                if len(bjets)>1:
+                    ret['dEtaFwdJet2BJet'] = abs(maxjet.eta - bjets[1].eta)
+                    
+                else: 
+                    ret['dEtaFwdJet2BJet'] = -1.0
 
-        ret['nJetEta1'] = len([j for j in light_jets if abs(j.eta) > 1.0])
+                if len(leptons):
+                    detas = [abs(lep.eta - maxjet.eta) for lep in leptons]
+                    ret['dEtaFwdJetClosestLep'] = sorted(detas)[0]
 
+            ret['nJetEta1'] = len([j for j in light_jets if abs(j.eta) > 1.0])
 
+            if(bjets):
+                ret['maxEtaBJet'] = abs(bjets[0].eta)
+                            
+                if len(bjets)>1:
+                    ret['maxEta2BJet'] = abs(bjets[1].eta)
+                    ret['dEtaBJet2BJet'] = abs(bjets[0].eta - bjets[1].eta)
 
-        ################
-        if(bjets):
-            ret['maxEtaBJet'] = abs(bjets[0].eta)
-                        
-            if len(bjets)>1:
-                ret['maxEta2BJet'] = abs(bjets[1].eta)
-                ret['dEtaBJet2BJet'] = abs(bjets[0].eta - bjets[1].eta)
+                else:
 
-            else:
-
-                ret['maxEta2BJet'] = -1.0
-                ret['dEtaBJet2BJet'] = -1.0
- 
-        #################        
-
+                    ret['maxEta2BJet'] = -1.0
+                    ret['dEtaBJet2BJet'] = -1.0
+     
         # Signal MVA
         for mvavar in self.mvavars:
             mvavar.set(event, ret)
@@ -225,5 +232,5 @@ if __name__ == '__main__':
 
     T = Tester("tester")
     el = EventLoop([ T ])
-    el.loop([tree], maxEvents = 10)
+    el.loop([tree], maxEvents = 20)
     T.done()
