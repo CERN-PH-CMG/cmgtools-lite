@@ -7,7 +7,7 @@
 ## single lepton
 triggers_1mu = ["HLT_IsoMu27_v*"]
 triggers_1mu20 = ["HLT_IsoMu20_v*"]
-triggers_1mu24 = ["HLT_IsoMu24_v*"]
+triggers_1mu24 = ["HLT_IsoMu24_v*","HLT_IsoTkMu24_v*"]
 triggers_1el = ["HLT_Ele32_eta2p1_WP75_Gsf_v*",'HLT_Ele32_eta2p1_WPLoose_Gsf_v*','HLT_Ele32_eta2p1_WPTight_Gsf_v*']
 triggers_1el23 = ["HLT_Ele23_WPLoose_Gsf_v*"]
 triggers_1el22 = ["HLT_Ele22_eta2p1_WPLoose_Gsf_v*","HLT_Ele22_eta2p1_WPTight_Gsf_v*"]
@@ -53,7 +53,10 @@ triggers_HT350MET120 = ["HLT_PFHT350_PFMET120_*"] # include all noise cleaning o
 triggers_HT350MET100 = ["HLT_PFHT350_PFMET100_*"] # include all noise cleaning options!
 triggers_MET100MHT100 = ['HLT_PFMET100_PFMHT100_IDTight_*', 'HLT_PFMETNoMu100_PFMHTNoMu100_IDTight_*']
 
-triggers_pfjet450 = ["HLT_PFJet450_v*"]
+triggers_pfjet450 = ["HLT_PFJet450_v*","HLT_AK8PFJet450_v*"]
+triggers_ak4pfjet450 = ["HLT_PFJet450_v*"]
+triggers_ak8pfjet450 = ["HLT_AK8PFJet450_v*"]
+triggers_calojet500 = ["HLT_CaloJet500_NoJetID_v*"]
 
 
 #pure MET tests

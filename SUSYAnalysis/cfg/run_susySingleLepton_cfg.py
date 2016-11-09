@@ -127,6 +127,9 @@ triggerFlagsAna.triggerBits = {
   'HT350MET100' : triggers_HT350MET100,
   'HTMET' : triggers_HT350MET100 + triggers_HT350MET120,
   'PFJet450' : triggers_pfjet450,
+  'AK4PFJet450' : triggers_ak4pfjet450,
+  'AK8PFJet450' : triggers_ak8pfjet450,
+  'CaloJet500' : triggers_calojet500,
 
   ##MET test
   'MET170_HBHE' : triggers_MET170_HBHECleaned,
@@ -219,7 +222,7 @@ isData = True # default, but will be overwritten below
 #sample = 'MC'
 sample = 'data'
 #sample = 'Signal'
-test = 1
+test = 0
 
 if sample == "MC":
 
@@ -362,16 +365,16 @@ elif sample == "data":
   #print jetAna.shiftJEC , jetAna.recalibrateJets , jetAna.addJECShifts , jetAna.calculateSeparateCorrections , jetAna.calculateType1METCorrection
 
   # central samples
-  #from CMGTools.RootTools.samples.samples_13TeV_DATA2016 import *
-  from CMGTools.SUSYAnalysis.samples.samples_13TeV_DATA2016 import *
+  from CMGTools.RootTools.samples.samples_13TeV_DATA2016 import *
+  #from CMGTools.SUSYAnalysis.samples.samples_13TeV_DATA2016 import *
 
   #  selectedComponents = [SingleElectron_Run2016B_PromptReco_v2, SingleMuon_Run2016B_PromptReco_v2, JetHT_Run2016B_PromptReco_v2_HT800Only]
 #  selectedComponents = [JetHT_Run2016B_PromptReco_v2_HT800Only, JetHT_Run2016C_PromptReco_v2_HT800Only]#, JetHT_Run2016D_PromptReco_v2_HT800Only]
 #  selectedComponents = [JetHT_Run2016C_PromptReco_v2_HT800Only]#, JetHT_Run2016D_PromptReco_v2_HT800Only]
-  selectedComponents = [JetHT_Run2016F_PromptReco_v1_HT800Only]
+#  selectedComponents = [JetHT_Run2016F_PromptReco_v1_HT800Only]
 #  selectedComponents = [SingleMuon_Run2016F_PromptReco_v1_IsoMu27Only]
 
-  selectedComponents = [JetHT_Run2016G_PromptReco_v1_HT800Only]
+  selectedComponents = [JetHT_Run2016H_PromptReco_v2_HT800Only, SingleMuon_Run2016H_PromptReco_v2_IsoMu27Only, SingleElectron_Run2016H_PromptReco_v2_Ele27Only, JetHT_Run2016G_PromptReco_v1_HT800Only, SingleMuon_Run2016G_PromptReco_v1_IsoMu27Only, SingleElectron_Run2016G_PromptReco_v1_Ele27Only]
 
   if test!=0 and jsonAna in susyCoreSequence: susyCoreSequence.remove(jsonAna)
   if test==1:
