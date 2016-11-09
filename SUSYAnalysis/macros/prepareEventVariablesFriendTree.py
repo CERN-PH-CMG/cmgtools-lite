@@ -125,7 +125,12 @@ for D in glob(args[0]+"/*"):
     if (not os.path.exists(fname)) and os.path.exists("%s/%s/tree.root" % (D,options.tree)):
         treename = "tree"
         fname    = "%s/%s/tree.root" % (D,options.tree)
-    if os.path.exists(fname):
+    if (not os.path.exists(fname)) and (os.path.exists("%s/%s/tree.root.url" % (D,options.tree)) ):
+        treename = "tree"
+        fname    = "%s/%s/tree.root" % (D,options.tree)
+        fname    = open(fname+".url","r").readline().strip()
+
+    if os.path.exists(fname) or (os.path.exists("%s/%s/tree.root.url" % (D,options.tree))):                                                                                                                
         short = os.path.basename(D)
         if options.datasets != []:
             if short not in options.datasets: continue
@@ -135,6 +140,7 @@ for D in glob(args[0]+"/*"):
                 if re.match(dm,short): found = True
             if not found: continue
         data = ("DoubleMu" in short or "MuEG" in short or "DoubleElectron" in short or "SingleMu" in short or "SingleEl" in short or "JetHT" in short)
+        print "opening", fname
         f = ROOT.TFile.Open(fname);
         t = f.Get(treename)
         entries = t.GetEntries()
@@ -256,7 +262,7 @@ maintimer = ROOT.TStopwatch()
 def _runIt(myargs):
     (name,fin,fout,data,range,chunk) = myargs
     timer = ROOT.TStopwatch()
-    fb = ROOT.TFile(fin)
+    fb = ROOT.TFile.Open(fin)
     tb = fb.Get(options.tree)
     if not tb: tb = fb.Get("tree") # new trees
     if options.vectorTree:
