@@ -39,7 +39,7 @@ if __name__ == "__main__":
     
     inDIR = args[0]
     print inDIR
-    pattern = '*.root.url'
+    pattern = 'tree.root.url'
     fileList = []
  
     # Walk through directory
