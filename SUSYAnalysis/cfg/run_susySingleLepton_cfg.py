@@ -222,7 +222,7 @@ isData = True # default, but will be overwritten below
 #sample = 'MC'
 sample = 'data'
 #sample = 'Signal'
-test = 0
+test = 1
 
 if sample == "MC":
 
