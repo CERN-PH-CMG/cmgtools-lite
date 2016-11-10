@@ -13,6 +13,10 @@ class Analysis:
         self.options = options
  
         TREEDIR='/data1/emanuele/monox/'
+        if "HOSTNAME" in os.environ:  
+            if os.environ["HOSTNAME"] == "pccmsrm29.cern.ch":
+                TREEDIR='/u2/emanuele/'
+
         anaOpts = []
         
         region = options.region
