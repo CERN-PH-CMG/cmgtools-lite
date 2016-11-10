@@ -1,13 +1,13 @@
 alwaystrue: 1
-trigger: Triggers_ee || Triggers_mm || Triggers_em
+trigger: $DATA{Triggers_ee || Triggers_mm || Triggers_em} $MC{1}
 cleanup: minMllAFAS > 12
 dilep: nLepFO>=2
-pt2010: LepGood1_conePt>20 && LepGood2_conePt>10 && (abs(LepGood2_pdgId)!=11 || LepGood2_conePt>15)
+pt2010: LepGood1_conePt>25 && LepGood2_conePt>10 && (abs(LepGood2_pdgId)!=11 || LepGood2_conePt>15)
 #htllv100 : LepGood1_conept+LepGood2_conept+met_pt > 100
 TT: LepGood1_isTight && LepGood2_isTight
 exclusive: nLepTight<=2
 same-sign: LepGood1_charge*LepGood2_charge > 0
-Zee_veto: abs(LepGood1_pdgId)!=11 || abs(LepGood2_pdgId) != 11 || abs(m2l-91.2) > 10
+Zee_veto: abs(LepGood1_pdgId)!=11 || abs(LepGood2_pdgId) != 11 || abs(mass_2(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_mass,LepGood2_pt,LepGood2_eta,LepGood2_phi,LepGood2_mass)-91.2) > 10
 metLDee: abs(LepGood1_pdgId)!=11 || abs(LepGood2_pdgId) != 11 || met_pt*0.00397 + mhtJet25*0.00265 > 0.2
 
 eleID: (abs(LepGood1_pdgId)!=11 || (LepGood1_convVeto && LepGood1_lostHits==0 && LepGood1_tightCharge>=2)) && (abs(LepGood2_pdgId)!=11 || (LepGood2_convVeto && LepGood2_lostHits==0 && LepGood2_tightCharge>=2))
@@ -29,25 +29,26 @@ BLoose: nBJetMedium25 < 2 ; Disable=True
 BTight: nBJetMedium25 >= 2 ; Disable=True
 2j: nJet25>=2 ; Disable=True
 x3j: nJet25==3 ; Disable=True
-0tau: nTauGood==0 ; Disable=True
-1tau: nTauGood>=1 ; Disable=True
+0tau: nTauTight==0 ; Disable=True
+1tau: nTauTight>=1 ; Disable=True
 ee: abs(LepGood1_pdgId)==11 && abs(LepGood2_pdgId)==11; Disable=True
 em: abs(LepGood1_pdgId) != abs(LepGood2_pdgId);         Disable=True
 mm: abs(LepGood1_pdgId)==13 && abs(LepGood2_pdgId)==13; Disable=True
 mll200: mass_2(LepGood1_conePt,LepGood1_eta,LepGood1_phi,LepGood1_mass,LepGood2_conePt,LepGood2_eta,LepGood2_phi,LepGood2_mass)>200; Disable=True
-b2lss_1tau: nTauGood>=1 ; Disable=True
-b2lss_ee_0tau: nTauGood==0 && abs(LepGood1_pdgId)==11 && abs(LepGood2_pdgId)==11 ; Disable=True
-b2lss_ee_0tau_neg: nTauGood==0 && abs(LepGood1_pdgId)==11 && abs(LepGood2_pdgId)==11 && LepGood1_charge<0 ; Disable=True
-b2lss_ee_0tau_pos: nTauGood==0 && abs(LepGood1_pdgId)==11 && abs(LepGood2_pdgId)==11 && LepGood1_charge>0 ; Disable=True
-b2lss_em_0tau: nTauGood==0 && (abs(LepGood1_pdgId) != abs(LepGood2_pdgId)) ; Disable=True
-b2lss_em_0tau_bl_neg: nTauGood==0 && (abs(LepGood1_pdgId) != abs(LepGood2_pdgId)) && LepGood1_charge<0 && nBJetMedium25 < 2 ; Disable=True
-b2lss_em_0tau_bl_pos: nTauGood==0 && (abs(LepGood1_pdgId) != abs(LepGood2_pdgId)) && LepGood1_charge>0 && nBJetMedium25 < 2 ; Disable=True
-b2lss_em_0tau_bt_neg: nTauGood==0 && (abs(LepGood1_pdgId) != abs(LepGood2_pdgId)) && LepGood1_charge<0 && nBJetMedium25 >= 2 ; Disable=True
-b2lss_em_0tau_bt_pos: nTauGood==0 && (abs(LepGood1_pdgId) != abs(LepGood2_pdgId)) && LepGood1_charge>0 && nBJetMedium25 >= 2 ; Disable=True
-b2lss_mm_0tau: nTauGood==0 && abs(LepGood1_pdgId)==13 && abs(LepGood2_pdgId)==13 ; Disable=True
-b2lss_mm_0tau_bl_neg: nTauGood==0 && abs(LepGood1_pdgId)==13 && abs(LepGood2_pdgId)==13 && LepGood1_charge<0 && nBJetMedium25 < 2 ; Disable=True
-b2lss_mm_0tau_bl_pos: nTauGood==0 && abs(LepGood1_pdgId)==13 && abs(LepGood2_pdgId)==13 && LepGood1_charge>0 && nBJetMedium25 < 2 ; Disable=True
-b2lss_mm_0tau_bt_neg: nTauGood==0 && abs(LepGood1_pdgId)==13 && abs(LepGood2_pdgId)==13 && LepGood1_charge<0 && nBJetMedium25 >= 2 ; Disable=True
-b2lss_mm_0tau_bt_pos: nTauGood==0 && abs(LepGood1_pdgId)==13 && abs(LepGood2_pdgId)==13 && LepGood1_charge>0 && nBJetMedium25 >= 2 ; Disable=True
-b2lss_0tau_bl: nTauGood==0 && nBJetMedium25 < 2 ; Disable=True
-b2lss_0tau_bt: nTauGood==0 && nBJetMedium25 >= 2 ; Disable=True
+b2lss_1tau: nTauTight>=1 ; Disable=True
+b2lss_ee_0tau: nTauTight==0 && abs(LepGood1_pdgId)==11 && abs(LepGood2_pdgId)==11 ; Disable=True
+b2lss_ee_0tau_neg: nTauTight==0 && abs(LepGood1_pdgId)==11 && abs(LepGood2_pdgId)==11 && LepGood1_charge<0 ; Disable=True
+b2lss_ee_0tau_pos: nTauTight==0 && abs(LepGood1_pdgId)==11 && abs(LepGood2_pdgId)==11 && LepGood1_charge>0 ; Disable=True
+b2lss_em_0tau: nTauTight==0 && (abs(LepGood1_pdgId) != abs(LepGood2_pdgId)) ; Disable=True
+b2lss_em_0tau_bl_neg: nTauTight==0 && (abs(LepGood1_pdgId) != abs(LepGood2_pdgId)) && LepGood1_charge<0 && nBJetMedium25 < 2 ; Disable=True
+b2lss_em_0tau_bl_pos: nTauTight==0 && (abs(LepGood1_pdgId) != abs(LepGood2_pdgId)) && LepGood1_charge>0 && nBJetMedium25 < 2 ; Disable=True
+b2lss_em_0tau_bt_neg: nTauTight==0 && (abs(LepGood1_pdgId) != abs(LepGood2_pdgId)) && LepGood1_charge<0 && nBJetMedium25 >= 2 ; Disable=True
+b2lss_em_0tau_bt_pos: nTauTight==0 && (abs(LepGood1_pdgId) != abs(LepGood2_pdgId)) && LepGood1_charge>0 && nBJetMedium25 >= 2 ; Disable=True
+b2lss_mm_0tau: nTauTight==0 && abs(LepGood1_pdgId)==13 && abs(LepGood2_pdgId)==13 ; Disable=True
+b2lss_mm_0tau_bl_neg: nTauTight==0 && abs(LepGood1_pdgId)==13 && abs(LepGood2_pdgId)==13 && LepGood1_charge<0 && nBJetMedium25 < 2 ; Disable=True
+b2lss_mm_0tau_bl_pos: nTauTight==0 && abs(LepGood1_pdgId)==13 && abs(LepGood2_pdgId)==13 && LepGood1_charge>0 && nBJetMedium25 < 2 ; Disable=True
+b2lss_mm_0tau_bt_neg: nTauTight==0 && abs(LepGood1_pdgId)==13 && abs(LepGood2_pdgId)==13 && LepGood1_charge<0 && nBJetMedium25 >= 2 ; Disable=True
+b2lss_mm_0tau_bt_pos: nTauTight==0 && abs(LepGood1_pdgId)==13 && abs(LepGood2_pdgId)==13 && LepGood1_charge>0 && nBJetMedium25 >= 2 ; Disable=True
+b2lss_0tau_bl: nTauTight==0 && nBJetMedium25 < 2 ; Disable=True
+b2lss_0tau_bt: nTauTight==0 && nBJetMedium25 >= 2 ; Disable=True
+2lep_promptrightcharge: (!isData) && LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge; Disable=True

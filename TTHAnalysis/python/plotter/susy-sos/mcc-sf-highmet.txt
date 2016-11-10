@@ -1,0 +1,3 @@
+### with SF
+ScaleFactorDY: 1.22; AlsoData
+ScaleFactorTT: 0.84; AlsoData

@@ -1,44 +1,59 @@
-data : DoubleEG_Run2015C_25ns_16Dec2015
-data : DoubleEG_Run2015D_16Dec2015
-data : DoubleMuon_Run2015C_25ns_16Dec2015
-data : DoubleMuon_Run2015D_16Dec2015
-data : MuonEG_Run2015C_25ns_16Dec2015
-data : MuonEG_Run2015D_16Dec2015
-data : SingleElectron_Run2015C_25ns_16Dec2015
-data : SingleElectron_Run2015D_16Dec2015
-data : SingleMuon_Run2015C_25ns_16Dec2015
-data : SingleMuon_Run2015D_16Dec2015
-
 DYJetsToLL_M10to50 : DYJetsToLL_M10to50 : xsec
 DYJetsToLL_M50 : DYJetsToLL_M50 : xsec
+GGHZZ4L : GGHZZ4L : xsec
+TBarToLeptons_tch_powheg : TBarToLeptons_tch_powheg : xsec
 TBar_tWch : TBar_tWch : xsec
 TGJets : TGJets : xsec
 TTGJets : TTGJets : xsec
-TTHnobb : TTHnobb : xsec
+TTHnobb_mWCutfix_ch0 : TTHnobb_mWCutfix_ch0 : xsec
+TTHnobb_mWCutfix_ext1 : TTHnobb_mWCutfix_ext1 : xsec
 TTHnobb_pow : TTHnobb_pow : xsec
-TTJets : TTJets : xsec
 TTJets_DiLepton : TTJets_DiLepton : xsec
+TTJets_DiLepton_ext_skim3l : TTJets_DiLepton_ext_skim3l : xsec
 TTJets_SingleLeptonFromT : TTJets_SingleLeptonFromT : xsec
 TTJets_SingleLeptonFromT_ext : TTJets_SingleLeptonFromT_ext : xsec
 TTJets_SingleLeptonFromTbar : TTJets_SingleLeptonFromTbar : xsec
 TTJets_SingleLeptonFromTbar_ext : TTJets_SingleLeptonFromTbar_ext : xsec
 TTLLJets_m1to10 : TTLLJets_m1to10 : xsec
 TTTT : TTTT : xsec
-TTWToLNu : TTWToLNu : 0.196
-TTWToLNu_LO : TTWToLNu_LO : 0.6008
-TTZToLLNuNu_LO : TTZToLLNuNu_LO : xsec
-TTZToLLNuNu_LO_withLHE : TTZToLLNuNu_LO_withLHE : xsec
-TT_pow_ext : TT_pow_ext : xsec
+TTWToLNu : TTWToLNu : xsec
+TTW_LO : TTW_LO : xsec
+TTZToLLNuNu : TTZToLLNuNu : xsec
+TTZ_LO : TTZ_LO : xsec
 TToLeptons_sch : TToLeptons_sch : xsec
-TToLeptons_tch_amcatnlo : TToLeptons_tch_amcatnlo : xsec
+TToLeptons_tch_powheg : TToLeptons_tch_powheg : xsec
 T_tWch : T_tWch : xsec
+VHToNonbb : VHToNonbb : xsec
 WGToLNuG : WGToLNuG : xsec
-WJetsToLNu : WJetsToLNu : xsec
+WJetsToLNu_LO : WJetsToLNu_LO : xsec
 WWDouble : WWDouble : xsec
 WWTo2L2Nu : WWTo2L2Nu : xsec
-WZTo3LNu : WZTo3LNu : xsec
+WWW : WWW : xsec
+WWZ : WWZ : xsec
+WZTo3LNu : WZTo3LNu : 1.1*xsec
 WZZ : WZZ : xsec
 WpWpJJ : WpWpJJ : xsec
 ZGTo2LG : ZGTo2LG : xsec
 ZZTo4L : ZZTo4L : xsec
+ZZZ : ZZZ : xsec
 tZq_ll : tZq_ll : xsec
+data : DoubleEG_Run2016B_PromptReco_v2
+data : DoubleEG_Run2016C_PromptReco_v2
+data : DoubleEG_Run2016D_PromptReco_v2_runs_276315_276384
+data : DoubleEG_Run2016D_PromptReco_v2_runs_276385_276811
+data : DoubleMuon_Run2016B_PromptReco_v2
+data : DoubleMuon_Run2016C_PromptReco_v2
+data : DoubleMuon_Run2016D_PromptReco_v2_runs_276315_276384
+data : DoubleMuon_Run2016D_PromptReco_v2_runs_276385_276811
+data : MuonEG_Run2016B_PromptReco_v2
+data : MuonEG_Run2016C_PromptReco_v2
+data : MuonEG_Run2016D_PromptReco_v2_runs_276315_276384
+data : MuonEG_Run2016D_PromptReco_v2_runs_276385_276811
+data : SingleElectron_Run2016B_PromptReco_v2
+data : SingleElectron_Run2016C_PromptReco_v2
+data : SingleElectron_Run2016D_PromptReco_v2_runs_276315_276384
+data : SingleElectron_Run2016D_PromptReco_v2_runs_276385_276811
+data : SingleMuon_Run2016B_PromptReco_v2
+data : SingleMuon_Run2016C_PromptReco_v2
+data : SingleMuon_Run2016D_PromptReco_v2_runs_276315_276384
+data : SingleMuon_Run2016D_PromptReco_v2_runs_276385_276811

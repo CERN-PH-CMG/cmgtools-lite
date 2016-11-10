@@ -1,7 +1,8 @@
 filters : hbheFilterNew25ns==1 && Flag_CSCTightHaloFilter==1 && Flag_eeBadScFilter==1
-trigger : HLT_DoubleEl || HLT_BIT_HLT_Ele23_WPLoose_Gsf_v || (!isData)
+trigger : $DATA{HLT_BIT_HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v || HLT_BIT_HLT_Ele25_eta2p1_WPTight_Gsf_v || HLT_BIT_HLT_Ele27_WPTight_Gsf_v || HLT_BIT_HLT_Ele27_eta2p1_WPLoose_Gsf_v} $MC{1}
 2L SF/OS : nLepGood >= 2 && LepGood1_pdgId == -LepGood2_pdgId
+pt2515: LepGood1_pt > 25 && LepGood2_pt > 15
 electron: abs(LepGood_pdgId[iChosen])==11 
 best mll[60,120] : (60 < mZ1 && mZ1 < 120)
 lepton: LepGood_pt[!(iChosen)]>30 && LepGood_relIso03[!(iChosen)]<0.2 && abs(LepGood_eta[!(iChosen)])<=2.1
-lep10: LepGood_pt[iChosen]>10
+lep15: LepGood_pt[iChosen]>15

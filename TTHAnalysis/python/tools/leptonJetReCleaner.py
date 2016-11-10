@@ -17,7 +17,7 @@ class MyVarProxy:
 
 class LeptonJetReCleaner:
 
-    def __init__(self,label,looseLeptonSel,cleaningLeptonSel,FOLeptonSel,tightLeptonSel,cleanJet,selectJet,cleanWithTaus,doVetoZ,doVetoLMf,doVetoLMt,jetPt,bJetPt,coneptdef, storeJetVariables=False):
+    def __init__(self,label,looseLeptonSel,cleaningLeptonSel,FOLeptonSel,tightLeptonSel,cleanJet,selectJet,cleanTau,looseTau,tightTau,cleanJetsWithTaus,doVetoZ,doVetoLMf,doVetoLMt,jetPt,bJetPt,coneptdef,storeJetVariables=False,cleanTausWithLoose=False):
         self.label = "" if (label in ["",None]) else ("_"+label)
         self.looseLeptonSel = looseLeptonSel
         self.cleaningLeptonSel = cleaningLeptonSel # applied on top of looseLeptonSel
@@ -25,7 +25,11 @@ class LeptonJetReCleaner:
         self.tightLeptonSel = tightLeptonSel # applied on top of looseLeptonSel
         self.cleanJet = cleanJet
         self.selectJet = selectJet
-        self.cleanWithTaus = cleanWithTaus
+        self.cleanTau = cleanTau
+        self.looseTau = looseTau
+        self.tightTau = tightTau
+        self.cleanJetsWithTaus = cleanJetsWithTaus
+        self.cleanTausWithLoose = cleanTausWithLoose
         self.doVetoZ = doVetoZ
         self.doVetoLMf = doVetoLMf
         self.doVetoLMt = doVetoLMt
@@ -61,14 +65,23 @@ class LeptonJetReCleaner:
                 ("mZ1"+label,"F"), ("minMllAFAS"+label,"F"), ("minMllAFOS"+label,"F"), ("minMllAFSS"+label,"F"), ("minMllSFOS"+label,"F")
                 ])
 
+        biglist.extend([
+                ("nTauSel"     +label, "I"), 
+                ("nTightTauSel"+label, "I"), 
+                ("iTauSel"+label,"I",20,"nTauSel"+label)
+                ])
+        for tfloat in "pt eta phi mass reclTauId mcMatchId".split():
+            biglist.append( ("TauSel"+label+"_"+tfloat,"F",20,"nTauSel"+label) )
+        biglist.append( ("TauSel"+label+"_pdgId","I",20,"nTauSel"+label) )
+
         for key in self.systsJEC:
             biglist.extend([
                     ("nJetSel"+label+self.systsJEC[key], "I"), ("iJSel"+label+self.systsJEC[key],"I",20,"nJetSel"+label+self.systsJEC[key]), # index >= 0 if in Jet; -1-index (<0) if in DiscJet
                     ("nDiscJetSel"+label+self.systsJEC[key], "I"), ("iDiscJSel"+label+self.systsJEC[key],"I",20,"nDiscJetSel"+label+self.systsJEC[key]), # index >= 0 if in Jet; -1-index (<0) if in DiscJet
                     ("nJet"+self.strJetPt+label+self.systsJEC[key], "I"), "htJet"+self.strJetPt + "j"+label+self.systsJEC[key],
-                    "mhtJet"+self.strJetPt + "j"+label+self.systsJEC[key], ("nBJetLoose"+self.strJetPt+label+self.systsJEC[key], "I"), ("nBJetMedium"+self.strJetPt+label+self.systsJEC[key], "I"),
+                    "mhtJet"+self.strJetPt + label+self.systsJEC[key], ("nBJetLoose"+self.strJetPt+label+self.systsJEC[key], "I"), ("nBJetMedium"+self.strJetPt+label+self.systsJEC[key], "I"),
                     ("nJet"+self.strBJetPt+label+self.systsJEC[key], "I"), "htJet"+self.strBJetPt+"j"+label+self.systsJEC[key],
-                    "mhtJet"+self.strBJetPt + "j"+label+self.systsJEC[key], ("nBJetLoose"+self.strBJetPt+label+self.systsJEC[key], "I"), ("nBJetMedium"+self.strBJetPt+label+self.systsJEC[key], "I"),
+                    "mhtJet"+self.strBJetPt + label+self.systsJEC[key], ("nBJetLoose"+self.strBJetPt+label+self.systsJEC[key], "I"), ("nBJetMedium"+self.strBJetPt+label+self.systsJEC[key], "I"),
                     ])
 
 
@@ -76,7 +89,6 @@ class LeptonJetReCleaner:
             for jfloat in "pt eta phi mass btagCSV rawPt".split():
                 for key in self.systsJEC:
                     biglist.append( ("JetSel"+label+self.systsJEC[key]+"_"+jfloat,"F",20,"nJetSel"+label) )
-                    biglist.append( ("DiscJetSel"+label+self.systsJEC[key]+"_"+jfloat,"F",20,"nDiscJetSel"+label) )
 
         return biglist
 
@@ -155,8 +167,8 @@ class LeptonJetReCleaner:
                     for jfloat in "pt eta phi mass btagCSV rawPt".split():
                         discjetret[jfloat].append( getattr(jet,jfloat) )
          # 5. compute the sums
-        ret["nJet"+self.strBJetPt+postfix] = 0; ret["htJet"+self.strBJetPt+"j"+postfix] = 0; ret["mhtJet"+self.strBJetPt+"j"+postfix] = 0; ret["nBJetLoose"+self.strBJetPt+postfix] = 0; ret["nBJetMedium"+self.strBJetPt+postfix] = 0
-        ret["nJet"+self.strJetPt+postfix] = 0; ret["htJet"+self.strJetPt+"j"+postfix] = 0; ret["mhtJet"+self.strJetPt+"j"+postfix] = 0; ret["nBJetLoose"+self.strJetPt+postfix] = 0; ret["nBJetMedium"+self.strJetPt+postfix] = 0
+        ret["nJet"+self.strBJetPt+postfix] = 0; ret["htJet"+self.strBJetPt+"j"+postfix] = 0; ret["mhtJet"+self.strBJetPt+postfix] = 0; ret["nBJetLoose"+self.strBJetPt+postfix] = 0; ret["nBJetMedium"+self.strBJetPt+postfix] = 0
+        ret["nJet"+self.strJetPt+postfix] = 0; ret["htJet"+self.strJetPt+"j"+postfix] = 0; ret["mhtJet"+self.strJetPt+postfix] = 0; ret["nBJetLoose"+self.strJetPt+postfix] = 0; ret["nBJetMedium"+self.strJetPt+postfix] = 0
         cleanjets = [];
         mhtBJetPtvec = ROOT.TLorentzVector(0,0,0,0)
         mhtJetPtvec = ROOT.TLorentzVector(0,0,0,0)
@@ -175,9 +187,49 @@ class LeptonJetReCleaner:
                 if j.btagCSV>0.460: ret["nBJetLoose"+self.strJetPt+postfix] += 1
                 if j.btagCSV>0.800: ret["nBJetMedium"+self.strJetPt+postfix] += 1
                 mhtJetPtvec = mhtJetPtvec - j.p4()
-        ret["mhtJet"+self.strBJetPt+"j"+postfix] = mhtBJetPtvec.Pt()
-        ret["mhtJet"+self.strJetPt+"j"+postfix] = mhtJetPtvec.Pt()
+        ret["mhtJet"+self.strBJetPt+postfix] = mhtBJetPtvec.Pt()
+        ret["mhtJet"+self.strJetPt+postfix] = mhtJetPtvec.Pt()
         return cleanjets
+
+    def recleanTaus(self, taucollcleaned, taucolldiscarded, lepcoll, postfix, ret, tauret, event):
+        ### Define taus
+        alltaus = taucollcleaned + taucolldiscarded
+        # 0. mark each tau as clean
+        for t in alltaus: t._clean = True
+        # 1. check for every tau if it is too close to a loose lepton
+        for t in alltaus:
+            for lep in lepcoll:
+                dr = deltaR(lep, t)
+                if self.cleanTau(lep, t, dr):
+                    t._clean = False
+        # 2. compute the tau list
+        ret["iTauSel"+postfix]=[]
+        for itc, t in enumerate(taucollcleaned):
+            if not t._clean        : continue
+            if not self.looseTau(t): continue
+            setattr(t, "reclTauId", 1 + self.tightTau(t))
+            ret["iTauSel"+postfix].append(itc)
+        for itd, t in enumerate(taucolldiscarded):
+            if not t._clean        : continue
+            if not self.looseTau(t): continue
+            setattr(t, "reclTauId", 1 + self.tightTau(t))
+            ret["iTauSel"+postfix].append(-1-itd)
+        # 3. sort the taus by pt
+        ret["iTauSel"+postfix].sort(key = lambda idx : taucollcleaned[idx].pt if idx >= 0 else taucolldiscarded[-1-idx].pt, reverse = True)
+        goodtaus = [(taucollcleaned[idx] if idx >= 0 else taucolldiscarded[-1-idx]) for idx in ret["iTauSel"+postfix]]
+        ret["nTauSel"      + postfix] = len(goodtaus)
+        ret["nTightTauSel" + postfix] = sum([1 for g in goodtaus if g.reclTauId == 2])
+        # 4. store the tau 4-vectors
+        if postfix==self.label:
+            for tfloat in "pt eta phi mass reclTauId pdgId".split():
+                tauret[tfloat] = []
+                for g in goodtaus:
+                    tauret[tfloat].append( getattr(g, tfloat) )
+            for tfloat in "mcMatchId".split():
+                tauret[tfloat] = []
+                for g in goodtaus:
+                    tauret[tfloat].append( getattr(g, tfloat) if hasattr(event,"TauGood_"+tfloat) else -99 )
+        return goodtaus
 
     def __call__(self,event):
         self.ev = event
@@ -185,7 +237,8 @@ class LeptonJetReCleaner:
         leps = [l for l in Collection(event,"LepGood","nLepGood")]
         if not self.coneptdef: raise RuntimeError, 'Choose the definition to be used for cone pt'
         for lep in leps: lep.conept = self.coneptdef(lep)
-        taus_forclean = [t for t in Collection(event,"TauGood","nTauGood")] if self.cleanWithTaus else []
+        tausc = [t for t in Collection(event,"TauGood","nTauGood")]
+        tausd = [t for t in Collection(event,"TauOther","nTauOther")] 
         jetsc={}
         jetsd={}
         for var in self.systsJEC:
@@ -200,7 +253,6 @@ class LeptonJetReCleaner:
             jetsd[var] = [j for j in Collection(event,"DiscJet"+self.systsJEC[_var],"nDiscJet"+self.systsJEC[_var])]
         self.debugprinted = True
         ret = {}; retwlabel = {}; jetret = {}; discjetret = {};
-
         lepsl = []; lepslv = [];
         ret, lepsl, lepslv = self.fillCollWithVeto(ret,leps,leps,'L','Loose',self.looseLeptonSel, lepsforveto=None, doVetoZ=self.doVetoZ, doVetoLM=self.doVetoLMf, sortby=None)
         lepsc = []; lepscv = [];
@@ -212,9 +264,12 @@ class LeptonJetReCleaner:
         ret['minMllAFSS'] = minMllTL(lepsl, lepsl, paircut = lambda l1,l2 : l1.charge ==  l2.charge) 
         ret['minMllSFOS'] = minMllTL(lepsl, lepsl, paircut = lambda l1,l2 : l1.pdgId  == -l2.pdgId) 
 
+        loosetaus=[]; rettlabel = {}; tauret = {}; 
+        loosetaus = self.recleanTaus(tausc, tausd, lepsl if self.cleanTausWithLoose else lepsc, self.label, rettlabel, tauret, event)
+
         cleanjets={}
         for var in self.systsJEC:
-            cleanjets[var] = self.recleanJets(jetsc[var],jetsd[var],lepsc+taus_forclean,self.label+self.systsJEC[var],retwlabel,jetret,discjetret)
+            cleanjets[var] = self.recleanJets(jetsc[var],jetsd[var],lepsc+loosetaus if self.cleanJetsWithTaus else lepsc,self.label+self.systsJEC[var],retwlabel,jetret,discjetret)
 
         # calculate FOs and tight leptons using the cleaned HT, sorted by conept
         lepsf = []; lepsfv = [];
@@ -222,16 +277,18 @@ class LeptonJetReCleaner:
         lepst = []; lepstv = [];
         ret, lepst, lepstv = self.fillCollWithVeto(ret,leps,lepsl,'T','Tight',self.tightLeptonSel,lepsforveto=lepsl,ht=retwlabel["htJet"+self.strJetPt+"j"+self.label],sortby = lambda x: x.conept, doVetoZ=self.doVetoZ, doVetoLM=self.doVetoLMt)
 
+
         ### attach labels and return
         fullret["nLepGood"]=len(leps)
         fullret["LepGood_conePt"] = [lep.conept for lep in leps]
         for k,v in ret.iteritems(): 
             fullret[k+self.label] = v
         fullret.update(retwlabel)
+        fullret.update(rettlabel)
+        for k,v in tauret.iteritems(): 
+            fullret["TauSel%s_%s" % (self.label,k)] = v
         for k,v in jetret.iteritems(): 
             fullret["JetSel%s_%s" % (self.label,k)] = v
-        for k,v in discjetret.iteritems(): 
-            fullret["DiscJetSel%s_%s" % (self.label,k)] = v
         return fullret
 
 
@@ -243,7 +300,7 @@ def bestZ1TL(lepsl,lepst,cut=lambda lep:True):
             if not cut(l2): continue
             if l1.pdgId == -l2.pdgId:
                mz = (l1.p4() + l2.p4()).M()
-               diff = abs(mz-91.2)
+               diff = abs(mz-91)
                pairs.append( (diff,mz) )
       if len(pairs):
           pairs.sort()

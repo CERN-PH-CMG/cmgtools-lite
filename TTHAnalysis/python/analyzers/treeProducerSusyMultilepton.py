@@ -137,6 +137,9 @@ susyMultilepton_globalVariables = susyCore_globalVariables + [
             NTupleVariable("nRecSplitJet25", lambda ev : sum(j.pt()>25 for j in ev.recoveredSplitJets), int, help="number of recovered jets, pt 40"),
             NTupleVariable("nRecSplitBJetMedium40", lambda ev : sum(j.pt()>40 for j in ev.recoveredSplitJets if j.btagWP("CSVv2IVFM")), int, help="number of recovered jets, pt 40"),
             NTupleVariable("nRecSplitBJetMedium25", lambda ev : sum(j.pt()>25 for j in ev.recoveredSplitJets if j.btagWP("CSVv2IVFM")), int, help="number of recovered jets, pt 40"),
+
+            NTupleVariable("Flag_badChargedHadronFilter", lambda ev: ev.badChargedHadron, help="bad charged hadron filter decision"),
+            NTupleVariable("Flag_badMuonFilter", lambda ev: ev.badMuon, help="bad muon filter decision"),
 ]
 
 susyMultilepton_globalObjects = susyCore_globalObjects.copy()
