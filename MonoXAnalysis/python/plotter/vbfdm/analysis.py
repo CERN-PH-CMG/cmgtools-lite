@@ -149,7 +149,7 @@ if __name__ == "__main__":
             options.region = CR
             options.upToCut = ''
             for s,v in sel_steps.iteritems():
-                print "===> Making selection / plots for control region ",options.region," at selection step: ",s, "(cut =",v,")"
+                print "#===> Making selection / plots for control region ",options.region," at selection step: ",s, "(cut =",v,")"
                 options.upToCut = v
                 options.pdir = pdirbase+"/"+CR+("/" if CR=='SR' else "CR/")+s
                 mcpOpts = ['--xP '+','.join(exclude_plots[s]), '--rebin '+str(rebinFactor[s])]
