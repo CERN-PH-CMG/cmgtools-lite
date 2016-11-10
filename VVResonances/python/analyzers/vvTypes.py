@@ -97,6 +97,8 @@ VVType = NTupleObjectType("VVType", baseObjectTypes=[], variables = [
   NTupleVariable("mt",   lambda x : x.mt(), float),
   NTupleVariable("vbfDEta", lambda x : x.vbfDEta, float),
   NTupleVariable("vbfMass",   lambda x : x.vbfMass, float),
+  NTupleSubObject("vbf_j1", lambda x : x.satteliteJets[0].p4() if len(x.satteliteJets)>0 else dummyLV, fourVectorType),
+  NTupleSubObject("vbf_j2", lambda x : x.satteliteJets[1].p4() if len(x.satteliteJets)>1 else dummyLV, fourVectorType),
   NTupleVariable("nJets",   lambda x : len(x.satteliteJets), int),
   NTupleVariable("nCentralJets",   lambda x : len(x.satteliteCentralJets), int),
   NTupleVariable("nLooseBTags",   lambda x : x.nLooseBTags, int),
@@ -136,9 +138,10 @@ LNuJJType = NTupleObjectType("LNuJJType", baseObjectTypes=[VJType], variables = 
     NTupleSubObject("l1_l",  lambda x : x.leg1.leg1,leptonTypeExtra),
     NTupleSubObject("l1_met",  lambda x : x.leg1.leg2,metType),
     #Scale factors , For HLT use the OR between the two triggers:
-    NTupleVariable("sf",  lambda x : x.leg1.leg1.sfWV*(x.leg1.leg1.sfHLT+x.sfHLTMET-x.leg1.leg1.sfHLT*x.sfHLTMET),float)
-
-
+    NTupleVariable("sf",  lambda x : x.leg1.leg1.sfWV*(x.leg1.leg1.sfHLT+x.sfHLTMET-x.leg1.leg1.sfHLT*x.sfHLTMET),float),
+    NTupleVariable("sfWV",  lambda x : x.leg1.leg1.sfWV, float),
+    NTupleVariable("sfHLT",  lambda x : x.leg1.leg1.sfHLT, float),
+    NTupleVariable("sfHLTMET",  lambda x : x.sfHLTMET, float)
 
 ])
 
