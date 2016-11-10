@@ -171,15 +171,14 @@ def main(args, options):
     allcuts += "LepGood_conePt[iF_Recl[1]]>10"
     allcuts += "LepGood_conePt[iF_Recl[2]]>10"
     allcuts += "nJet25_Recl >= 2"
-    allcuts += "nBJetMedium25 >= 1" # FIXME: use nBJetMedium25_Recl instead
-    # allcuts += "nBJetLoose25_Recl >= 1"
+    allcuts += "nBJetLoose25_Recl >= 1"
     allcuts += "maxEtaJet25 >= 0"
 
     # Define the variables to be used:
     variables = [
         ("nJet25_Recl", "I"),
         ("nJetEta1", "I"),
-        ("nBJetLoose25_Recl", "I"),
+        # ("nBJetLoose25_Recl", "I"),
         ("maxEtaJet25", "F"),
         ("dEtaFwdJetBJet", "F"),
         ("dEtaFwdJetClosestLep", "F"),
@@ -187,9 +186,7 @@ def main(args, options):
         ("Lep3Pt := LepGood_conePt[iF_Recl[2]]", "F"),
         ("minDRll", "F"),
         ("lepCharge := LepGood_charge[iF_Recl[0]]+LepGood_charge[iF_Recl[1]]+LepGood_charge[iF_Recl[2]]", "I"),
-        
-        ## Add more here?
-       
+        ("dEtaFwdJet2BJet","F"),
     ]
 
     # Define the signal and background datasets
@@ -203,10 +200,10 @@ def main(args, options):
     elif options.training.lower() == 'tt':
         dsets.append(('TTJets_DiLepton',                 'Background', 0.1))
         dsets.append(('TTJets_DiLepton_ext_skim3l',      'Background', 0.9))
-        dsets.append(('TTJets_SingleLeptonFromT',        'Background', 0.1))
-        dsets.append(('TTJets_SingleLeptonFromTbar',     'Background', 0.1))
-        dsets.append(('TTJets_SingleLeptonFromT_ext',    'Background', 0.9))
-        dsets.append(('TTJets_SingleLeptonFromTbar_ext', 'Background', 0.9))
+        #dsets.append(('TTJets_SingleLeptonFromT',        'Background', 0.1))
+        #dsets.append(('TTJets_SingleLeptonFromTbar',     'Background', 0.1))
+        #dsets.append(('TTJets_SingleLeptonFromT_ext',    'Background', 0.9))
+        #dsets.append(('TTJets_SingleLeptonFromTbar_ext', 'Background', 0.9))
     else:
         print "Please choose either 'ttv' or 'tt' for -T option"
         return 1

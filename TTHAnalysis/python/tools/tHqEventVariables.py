@@ -46,7 +46,7 @@ class tHqEventVariableFriend:
         self.mvavars = [
             MVAVar(name="nJet25_Recl"),
             MVAVar(name="nJetEta1"),
-            MVAVar(name="nBJetLoose25_Recl"),
+            # MVAVar(name="nBJetLoose25_Recl"),
             MVAVar(name="maxEtaJet25"),
             MVAVar(name="dEtaFwdJetBJet"),
             MVAVar(name="dEtaFwdJetClosestLep"),
@@ -54,6 +54,7 @@ class tHqEventVariableFriend:
             MVAVar(name="LepGood_conePt[iF_Recl[2]]"),
             MVAVar(name="minDRll"),
             MVAVar(name="LepGood_charge[iF_Recl[0]]+LepGood_charge[iF_Recl[1]]+LepGood_charge[iF_Recl[2]]"),
+            MVAVar(name="dEtaFwdJet2BJet"),
         ]
 
         self.mvaspectators = [
