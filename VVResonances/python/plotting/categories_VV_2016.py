@@ -3,9 +3,9 @@ from CMGTools.H2TauTau.proto.plotter.cut import Cut
 # pt1 = 200
 # pt2 = 200
 
-cat_lnujj_trigOrSF = "(((HLT2_MU||HLT2_ELE||HLT2_ISOMU||HLT2_ISOELE||HLT2_MET120)&&run>2000)+(run<2000)*lnujj_sf)"
+cat_lnujj_trigOrSF = "(((HLT2_MU||HLT2_ELE||HLT2_ISOMU||HLT2_ISOELE||HLT2_MET120) && (run>2000)) || (run<2000))"
 cat_metFilters = "(Flag_goodVertices&&Flag_CSCTightHaloFilter&&Flag_HBHENoiseFilter&&Flag_HBHENoiseIsoFilter&&Flag_eeBadScFilter&&Flag_badChargedHadronFilter&&Flag_badMuonFilter)"
-cat_lnujj_basic = "(lnujj_nOtherLeptons==0&&lnujj_l2_pruned_mass>0&&lnujj_LV_mass>600&&(abs(lnujj_l1_l_pdgId)==11||(abs(lnujj_l1_l_pdgId)==13&&lnujj_l1_l_relIso04<0.1)))"
+cat_lnujj_basic = "(lnujj_nOtherLeptons==0&&lnujj_l2_pruned_mass>50&&lnujj_LV_mass>600&&(abs(lnujj_l1_l_pdgId)==11||(abs(lnujj_l1_l_pdgId)==13&&lnujj_l1_l_relIso04<0.1)))"
 cat_jj_basic = '(njj>0)&&lnujj_nOtherLeptons==0&&((HLT2_HT800||HLT2_HT900)&&run>2000)+(run<2000)*jj_sf&&jj_LV_mass>1000'
 
 cat_lnujj_mu = 'abs(lnujj_l1_l_pdgId)==13'
