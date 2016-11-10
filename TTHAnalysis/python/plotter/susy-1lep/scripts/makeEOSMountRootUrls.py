@@ -16,7 +16,7 @@ def _runIt(args):
     eosSnippet = file.split('/eos/cms')
     if len(eosSnippet)==2:
         print "Split seems to have worked; will stitch together root://eoscms.cern.ch/eos/cms/%s"%eosSnippet[1]
-    fcmd.write("root://eoscms.cern.ch/eos/cms/%s\n" % eosSnippet[1])
+    fcmd.write("root://eoscms.cern.ch//eos/cms%s\n" % eosSnippet[1])
     fcmd.close()                                                                                                                                                                                    
 
 
