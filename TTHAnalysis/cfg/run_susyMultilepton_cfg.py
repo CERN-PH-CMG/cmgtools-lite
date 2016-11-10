@@ -455,20 +455,44 @@ if runData and not isTest: # For running on data
 #    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_271036-275783_13TeV_PromptReco_Collisions16_JSON.txt' # 6.3/fb
 #    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_271036-276811_13TeV_PromptReco_Collisions16_JSON_NoL1T.txt' # 12.9/fb #276811 ICHEP LastRun
 #    json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-279931_13TeV_PromptReco_Collisions16_JSON_NoL1T.txt' #24.5/fb
-    json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-280385_13TeV_PromptReco_Collisions16_JSON_NoL1T_v2.txt' #27.22/fb
-    processing = "Run2016B-PromptReco-v2"; short = "Run2016B_PromptReco_v2"; run_ranges = [(273150,280385)]; useAAA=False; # -v2 starts from 273150
+#    json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-280385_13TeV_PromptReco_Collisions16_JSON_NoL1T_v2.txt' #27.22/fb
+    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_271036-284044_13TeV_PromptReco_Collisions16_JSON_NoL1T.txt' # 36.15/fb
+
+    #run BCDEFG prompt reco  ==============================================================================================
+#    processing = "Run2016B-PromptReco-v2"; short = "Run2016B_PromptReco_v2"; run_ranges = [(273150,280385)]; useAAA=False; # -v2 starts from 273150
+#    dataChunks.append((json,processing,short,run_ranges,useAAA))
+#    processing = "Run2016C-PromptReco-v2"; short = "Run2016C_PromptReco_v2"; run_ranges = [(273150,280385)]; useAAA=False; # -v2 starts from 273150 
+#    dataChunks.append((json,processing,short,run_ranges,useAAA))
+#    processing = "Run2016D-PromptReco-v2"; short = "Run2016D_PromptReco_v2"; run_ranges = [(273150,280385)]; useAAA=False; # -v2 starts from 273150 
+#    dataChunks.append((json,processing,short,run_ranges,useAAA))
+#    processing = "Run2016E-PromptReco-v2"; short = "Run2016E_PromptReco_v2"; run_ranges = [(273150,280385)]; useAAA=False;
+#    dataChunks.append((json,processing,short,run_ranges,useAAA))
+#    processing = "Run2016F-PromptReco-v1"; short = "Run2016F_PromptReco_v1"; run_ranges = [(273150,280385)]; useAAA=False;
+#    dataChunks.append((json,processing,short,run_ranges,useAAA))
+#    processing = "Run2016G-PromptReco-v1"; short = "Run2016G_PromptReco_v1"; run_ranges = [(273150,280385)]; useAAA=False;
+#    dataChunks.append((json,processing,short,run_ranges,useAAA))
+
+    #run BCDEFG re-reco  ==============================================================================================
+    processing = "Run2016B-23Sep2016-v3"; short = "Run2016B_23Sep2016_v3"; run_ranges = [(273150,284044)]; useAAA=True; # -v3 starts from 273150 to 275376
     dataChunks.append((json,processing,short,run_ranges,useAAA))
-    processing = "Run2016C-PromptReco-v2"; short = "Run2016C_PromptReco_v2"; run_ranges = [(273150,280385)]; useAAA=False; # -v2 starts from 273150 
+    processing = "Run2016C-23Sep2016-v1"; short = "Run2016C_23Sep2016_v1"; run_ranges = [(271036,284044)]; useAAA=True;
     dataChunks.append((json,processing,short,run_ranges,useAAA))
-    processing = "Run2016D-PromptReco-v2"; short = "Run2016D_PromptReco_v2"; run_ranges = [(273150,280385)]; useAAA=False; # -v2 starts from 273150 
+    processing = "Run2016D-23Sep2016-v1"; short = "Run2016D_23Sep2016_v1"; run_ranges = [(271036,284044)]; useAAA=True;
     dataChunks.append((json,processing,short,run_ranges,useAAA))
-    processing = "Run2016E-PromptReco-v2"; short = "Run2016E_PromptReco_v2"; run_ranges = [(273150,280385)]; useAAA=False;
+    processing = "Run2016E-23Sep2016-v1"; short = "Run2016E_23Sep2016_v1"; run_ranges = [(271036,284044)]; useAAA=True;
     dataChunks.append((json,processing,short,run_ranges,useAAA))
-    processing = "Run2016F-PromptReco-v1"; short = "Run2016F_PromptReco_v1"; run_ranges = [(273150,280385)]; useAAA=False;
+    processing = "Run2016F-23Sep2016-v1"; short = "Run2016F_23Sep2016_v1"; run_ranges = [(271036,284044)]; useAAA=True;
     dataChunks.append((json,processing,short,run_ranges,useAAA))
-    processing = "Run2016G-PromptReco-v1"; short = "Run2016G_PromptReco_v1"; run_ranges = [(273150,280385)]; useAAA=False;
+    processing = "Run2016G-23Sep2016-v1"; short = "Run2016G_23Sep2016_v1"; run_ranges = [(271036,284044)]; useAAA=True;
     dataChunks.append((json,processing,short,run_ranges,useAAA))
-    
+    #run H prompt reco ==================================================================================================
+    processing = "Run2016H-PromptReco-v1"; short = "Run2016H-PromptReco-v1"; run_ranges = [(273150,284044)]; useAAA=True;
+    dataChunks.append((json,processing,short,run_ranges,useAAA))
+    processing = "Run2016H-PromptReco-v2"; short = "Run2016H-PromptReco-v2"; run_ranges = [(273150,284044)]; useAAA=True;
+    dataChunks.append((json,processing,short,run_ranges,useAAA))
+    processing = "Run2016H-PromptReco-v3"; short = "Run2016H-PromptReco-v3"; run_ranges = [(273150,284044)]; useAAA=True;
+    dataChunks.append((json,processing,short,run_ranges,useAAA))
+
 
     compSelection = ""; compVeto = ""
     DatasetsAndTriggers = []
@@ -477,6 +501,7 @@ if runData and not isTest: # For running on data
  
     if analysis in ['SOS']:
         DatasetsAndTriggers.append( ("MET", triggers_SOS_highMET + triggers_SOS_doublemulowMET) )
+        DatasetsAndTriggers.append( ("DoubleMuon", triggers_SOS_tripleMu) )
         #DatasetsAndTriggers.append( ("MET", triggers_Jet80MET90 + triggers_Jet80MET120 + triggers_MET120Mu5 ) )
         #DatasetsAndTriggers.append( ("SingleMuon", triggers_1mu_iso + triggers_1mu_noniso) )
         #DatasetsAndTriggers.append( ("SingleElectron", triggers_1e ) )
