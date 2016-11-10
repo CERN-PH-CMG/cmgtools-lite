@@ -541,8 +541,6 @@ ZZTo2L2Nu = kreator.makeMCComponent("ZZTo2L2Nu", "/ZZTo2L2Nu_13TeV_powheg_pythia
 ZZTo2L2Q = kreator.makeMCComponent("ZZTo2L2Q", "/ZZTo2L2Q_13TeV_amcatnloFXFX_madspin_pythia8/RunIISpring16MiniAODv2-PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/MINIAODSIM", "CMS", ".*root",  3.28)
 ZZTo2Q2Nu = kreator.makeMCComponent("ZZTo2Q2Nu", "/ZZTo2Q2Nu_13TeV_amcatnloFXFX_madspin_pythia8/RunIISpring16MiniAODv2-PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/MINIAODSIM", "CMS", ".*root",  4.04)
 ZZTo2L2Nu = kreator.makeMCComponent("ZZTo2L2Nu", "/ZZTo2L2Nu_13TeV_powheg_pythia8/RunIISpring16MiniAODv2-PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/MINIAODSIM", "CMS", ".*root", 0.564)
-ZZTo2L2NuM4to40_notau= kreator.makeMCComponentFromEOS('ZZTo2L2NuM4to40_notau', 'ZZllvv_aMCatNLO_mll4_40gev_miniAODSIMv2/', '/store/user/castello/susy/%s',".*notau.*root", 0.219)
-ZZTo2L2NuM4to40_tauonly = kreator.makeMCComponentFromEOS('ZZTo2L2NuM4to40_tauonly', 'ZZllvv_aMCatNLO_mll4_40gev_miniAODSIMv2/', '/store/user/castello/susy/%s',".*tauonly.*root", 0.1095)
 ZZTo4L = kreator.makeMCComponent("ZZTo4L", "/ZZTo4L_13TeV_powheg_pythia8/RunIISpring16MiniAODv2-PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/MINIAODSIM", "CMS", ".*root", 1.256)
 
 #ZZTo4L_amcatnlo = kreator.makeMCComponent("ZZTo4L_amcatnlo", "/ZZTo4L_13TeV-amcatnloFXFX-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM", "CMS", ".*root", 1.212)
@@ -579,8 +577,6 @@ ZZTo2L2Nu,
 ZZTo2L2Q,
 ZZTo2Q2Nu,
 ZZTo2L2Nu,
-ZZTo2L2NuM4to40_notau,
-ZZTo2L2NuM4to40_tauonly,
 ZZTo4L,
 #ZZTo4L_amcatnlo,
 WZTo1L3Nu,
