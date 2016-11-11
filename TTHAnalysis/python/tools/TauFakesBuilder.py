@@ -74,9 +74,13 @@ class TauFakesBuilder:
     ## _______________________________________________________________
     def __call__(self, event):
 
+        print("Now reset memory")
         self.resetMemory()
+        print("Now collect objects")
         self.collectObjects(event)
+        print("Now write tau sel")
         self.writeTauSel()
+        print("Now return")
         return self.ret
 
 
@@ -87,26 +91,48 @@ class TauFakesBuilder:
 
         ## light leptons
         self.leps       = [l             for l  in Collection(event, "LepGood", "nLepGood")  ]
-        self.lepsFO     = [self.leps[il] for il in list(getattr   (event, "iF" + self.inputlabel))[0:int(getattr(event,"nLepFO"+self.inputlabel))]]
-        self.lepsT      = [self.leps[il] for il in list(getattr   (event, "iT" + self.inputlabel))[0:int(getattr(event,"nLepTight"+self.inputlabel))]]
 
         ## taus
         self.inclusivetaus       = [t          for t  in Collection(event, "TauGood" , "nTauGood"  )]
-        self.inclusivetaus.append( [t          for t  in Collection(event, "TauOther", "nTauOther" )] )
-        self.tausFO = self.inclusiveTaus
+        self.inclusivetaus.extend( [t          for t  in Collection(event, "TauOther", "nTauOther" )] )
+        self.tausFO = self.inclusivetaus
         # not sure I really need to define tausFO
 
         ## Non-tau-cleaned jets
-        self.uncleanJets = [t            for t  in Collection(event, "leptonJetReCleanerNoCleanTausSusyEWK3L", "nJet")]
+        self.uncleanJets = [t            for t  in Collection(event, "Jet", "nJet")]
         # jetsc[var] = [j for j in Collection(event,"Jet"+self.systsJEC[_var],"nJet"+self.systsJEC[_var])]
         # jetsd[var] = [j for j in Collection(event,"DiscJet"+self.systsJEC[_var],"nDiscJet"+self.systsJEC[_var])]
 
+        print("Now match jets with taus")
+
+        self.matchJetWithTau()
+
+        print("Now set attributes")
+        
+        print("Remember to do the puto loop")
 
         ## FO, both flavors
         self.setAttributes(event, self.tausFO, event.isData)
-        self.tausFO.sort(key = lambda x: x.conePt, reverse=True)
+        print("Now sort by conept")
+        #self.tausFO.sort(key = lambda x: x.conePt, reverse=True)
+        self.tausFO.sort(key = lambda x: x.pt, reverse=True)
 
 
+    def deltaR(self, a, b):
+        # Let's see if that works
+        return a.deltaR(b)
+
+    def matchJetWithTau(self):
+        
+        for ijet in range(len(self.uncleanJets)):
+            jet = self.uncleanJets[ijet]
+            for itau in range(len(self.tausFO)):
+                tau = self.tausFO[itau]
+                if deltaR(jet, tau) < 0.3:
+                    self.matchedJets.append(jet)
+                else:
+                    self.unmatchedJets.append(jet)
+        return None
 
     ## findTau
     ## _______________________________________________________________
@@ -125,8 +151,10 @@ class TauFakesBuilder:
     ## _______________________________________________________________
     def isIn(self, object, collection):
         delta = math.pow(10,-6)
+        print "Collection size", len(collection)
         for i in range(len(collection)):
             it = collection[i]
+            print it
             if abs(it.pt-object.pt) < delta and abs(it.eta-object.eta)<delta and abs(it.phi-object.phi)<delta and abs(it.mass-object.mass)<delta: return i
         return -1
 
@@ -152,6 +180,9 @@ class TauFakesBuilder:
     ## resetMemory
     ## _______________________________________________________________
     def resetMemory(self):
+
+        self.matchedJets   = []
+        self.unmatchedJets = []
 
         self.ret = {};
 
@@ -211,14 +242,16 @@ class TauFakesBuilder:
 
         for i, l in enumerate(lepSel): 
             if l in self.tausFO:
+                print("Now finding tau")
                 tau = self.findTau(event, l)
+                print("Tau has been found")
                 setattr(l, "pdgId"        , -1*15*tau.charge                      )
-                setattr(l, "isTight"      , (l.reclTauId == 2)                    )
+                setattr(l, "isTight"      , (_reclTauId(tau) == 2)                )
                 setattr(l, "mcMatchId"    , 1                                     )
                 setattr(l, "mcMatchAny"   , 0                                     )
                 setattr(l, "mcPromptGamma", 0                                     )
                 setattr(l, "mcUCSX"       , tau.mcUCSXMatchId if not isData else 0)
-                setattr(l, "trIdx"        , self.taus.index(l)                    )
+                setattr(l, "trIdx"        , self.tausFO.index(l)                    )
                 setattr(l, "dxy"          , tau.dxy if not tau is None else 0   )
                 setattr(l, "dz"           , tau.dz  if not tau is None else 0   )
                 setattr(l, "sip3d"        , 0                                   )
@@ -237,7 +270,6 @@ class TauFakesBuilder:
 
 
             else:
-                setattr(l, "isTight"      , (l in self.lepsT  )                 )
                 setattr(l, "mcMatchId"    , l.mcMatchId     if not isData else 1)
                 setattr(l, "mcMatchAny"   , l.mcMatchAny    if not isData else 0)
                 setattr(l, "mcPromptGamma", l.mcPromptGamma if not isData else 0)
@@ -256,6 +288,8 @@ class TauFakesBuilder:
     ## writeTauSel
     ## _______________________________________________________________
     def writeTauSel(self):
+
+        ### HERE MUST SAVE JETS
 
         self.ret["nTauSel"] = len(self.tauSelFO)
         for i, l in enumerate(self.tauSelFO):
@@ -292,8 +326,8 @@ def _susyEWK_tauId_CBtight(tau):
     if not _susyEWK_tauId_CBloose(tau): return False
     return (tau.idMVAOldDMRun2 >= 4)
 
-
-
+def _reclTauId(tau):
+    return (1+_susyEWK_tauId_CBtight(tau))
 
 if __name__ == '__main__':
     from sys import argv
