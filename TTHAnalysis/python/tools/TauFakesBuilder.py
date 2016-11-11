@@ -8,51 +8,6 @@ import array, math
 # to keep the leptonBuilder from becoming too fat
 
 
-## OSpair
-## ___________________________________________________________________
-class OSpair:
-
-    ## __init__
-    ## _______________________________________________________________
-    def __init__(self, l1, l2):
-        self.l1   = l1
-        self.l2   = l2
-        self.load()
-
-    ## debug
-    ## _______________________________________________________________
-    def debug(self):
-        add = "SF" if self.isSF else "OF"
-        return "OSpair (%s, %3.1f) made up of (%3.1f, %d) and (%3.1f, %d)" % (add, self.mll, self.l1.pt, self.l1.pdgId, self.l2.pt, self.l2.pdgId)
-
-
-    ## load
-    ## _______________________________________________________________
-    def load(self):
-
-        self.isSF = False
-        self.wTau = False
-
-        if     self.l1.pdgId  ==          -self.l2.pdgId       : self.isSF = True
-        if abs(self.l1.pdgId) == 15 or abs(self.l2.pdgId) == 15: self.wTau = True
-
-        if   self.isSF                                           : self.target = 91
-        elif abs(self.l1.pdgId) == 15 or abs(self.l2.pdgId) == 15: self.target = 60
-        else                                                     : self.target = 50
-  
-        self.mll  = (self.l1.p4(self.l1.conePt) + self.l2.p4(self.l2.conePt)).M()
-        self.mllR = (self.l1.p4()               + self.l2.p4()              ).M()
-        self.diff = abs(self.target - self.mll)
-
-
-    ## test
-    ## _______________________________________________________________
-    def test(self, leps):
-        if len(leps) > 3: return False
-        ll = [self.l1, self.l2, self.l3]
-        return all([l in ll for l in leps])
-            
-
 
 ## TauFakesBuilder
 ## ___________________________________________________________________
@@ -69,18 +24,20 @@ class TauFakesBuilder:
         # Why do I need specifically JEC? I need all syst, in principle. Why is the treatment different?
         self.systsJEC = {0: "", 1: "_jecUp"   , -1: "_jecDown"  }
 
+        self.debug=0
+
 
     ## __call__
     ## _______________________________________________________________
     def __call__(self, event):
 
-        print("Now reset memory")
+        if self.debug==1: print("Now reset memory")
         self.resetMemory()
-        print("Now collect objects")
+        if self.debug==1: print("Now collect objects")
         self.collectObjects(event)
-        print("Now write tau sel")
-        self.writeTauSel()
-        print("Now return")
+        if self.debug==1: print("Now write tau sel")
+        self.writeFakeTaus()
+        if self.debug==1: print("Now return")
         return self.ret
 
 
@@ -94,7 +51,7 @@ class TauFakesBuilder:
 
         ## taus
         self.inclusivetaus       = [t          for t  in Collection(event, "TauGood" , "nTauGood"  )]
-        self.inclusivetaus.extend( [t          for t  in Collection(event, "TauOther", "nTauOther" )] )
+        ############  self.inclusivetaus.extend( [t          for t  in Collection(event, "TauOther", "nTauOther" )] )
         self.tausFO = self.inclusivetaus
         # not sure I really need to define tausFO
 
@@ -103,19 +60,12 @@ class TauFakesBuilder:
         # jetsc[var] = [j for j in Collection(event,"Jet"+self.systsJEC[_var],"nJet"+self.systsJEC[_var])]
         # jetsd[var] = [j for j in Collection(event,"DiscJet"+self.systsJEC[_var],"nDiscJet"+self.systsJEC[_var])]
 
-        print("Now match jets with taus")
+        if self.debug==2: print("Now match jets with taus")
 
         self.matchJetWithTau()
 
-        print("Now set attributes")
-        
-        print("Remember to do the puto loop")
+        # Eventually have multiple selections.
 
-        ## FO, both flavors
-        self.setAttributes(event, self.tausFO, event.isData)
-        print("Now sort by conept")
-        #self.tausFO.sort(key = lambda x: x.conePt, reverse=True)
-        self.tausFO.sort(key = lambda x: x.pt, reverse=True)
 
 
     def deltaR(self, a, b):
@@ -123,15 +73,35 @@ class TauFakesBuilder:
         return a.deltaR(b)
 
     def matchJetWithTau(self):
+
+        if self.debug==1: print "Full jets collection has length: ", len(self.uncleanJets)
+        if self.debug==1: print "Full taus collection has length: ", len(self.tausFO)
         
         for ijet in range(len(self.uncleanJets)):
             jet = self.uncleanJets[ijet]
+            jetIsMatched=False
             for itau in range(len(self.tausFO)):
                 tau = self.tausFO[itau]
                 if deltaR(jet, tau) < 0.3:
-                    self.matchedJets.append(jet)
-                else:
-                    self.unmatchedJets.append(jet)
+                    jetIsMatched=True
+            if jetIsMatched:
+                self.matchedJets.append(ijet)
+            else:
+                if self.debug==1: print "Appending jet with index ", ijet, " to the unmatchedJets array"
+                self.unmatchedJets.append(ijet)
+
+        if self.debug==1: print "Matched jets: ", len(self.matchedJets)
+        if self.debug==1: print "Unmatched jets: ", len(self.unmatchedJets)
+
+        if self.debug==4:
+            if len(self.tausFO) != len(self.matchedJets):
+                print "---------------------------------------------------------"
+                print "Full jets collection has length: ", len(self.uncleanJets)
+                print "Full taus collection has length: ", len(self.tausFO)
+                print "Matched jets: ", len(self.matchedJets)
+                print "Unmatched jets: ", len(self.unmatchedJets)
+
+
         return None
 
     ## findTau
@@ -151,10 +121,10 @@ class TauFakesBuilder:
     ## _______________________________________________________________
     def isIn(self, object, collection):
         delta = math.pow(10,-6)
-        print "Collection size", len(collection)
+        if self.debug==2: print "Collection size", len(collection)
         for i in range(len(collection)):
             it = collection[i]
-            print it
+            if self.debug: print it
             if abs(it.pt-object.pt) < delta and abs(it.eta-object.eta)<delta and abs(it.phi-object.phi)<delta and abs(it.mass-object.mass)<delta: return i
         return -1
 
@@ -163,17 +133,16 @@ class TauFakesBuilder:
     ## _______________________________________________________________
     def listBranches(self):
 
+        if self.debug==1: print "Creating branches"
         biglist = [
-            ("nTauSel"     , "I")]
 
-        for var in ["pt", "eta", "phi", "mass", "conePt", "dxy", "dz", "sip3d", "miniRelIso", "relIso", "ptratio", "ptrel", "mva"]:
-            biglist.append(("TauSel_" + var, "F", 4))
-        for var in ["pdgId", "isTight", "mcMatchId", "mcMatchAny", "mcPromptGamma", "mcUCSX", "trIdx"]:
-            biglist.append(("TauSel_" + var, "I", 4))
-  
-        #for var in self.systsJEC:
-        #    biglist.append(("mT_3l"       + self.systsJEC[var], "F"))
+            ("nJetMatchedToTau_y", "I"),
+            ("nJetMatchedToTau_n", "I"),
+            ("JetMatchedToTau_y" , "F",  20, "nJetMatchedToTau_y"),
+            ("JetMatchedToTau_n" , "F",  20, "nJetMatchedToTau_n")
 
+            ]
+        if self.debug==1: print " branch created"
         return biglist
 
 
@@ -186,131 +155,39 @@ class TauFakesBuilder:
 
         self.ret = {};
 
-        self.ret["is_3l"                ] = 0
-        self.ret["nOSSF_3l"             ] = 0
-        self.ret["nOSLF_3l"             ] = 0
-        self.ret["nOSTF_3l"             ] = 0
-        self.ret["mll_3l"               ] = 0
-        self.ret["m3L"                  ] = 0
-        self.ret["is_4l"                ] = 0
-        self.ret["nOSSF_4l"             ] = 0
-        self.ret["nOSLF_4l"             ] = 0
-        self.ret["nOSTF_4l"             ] = 0
-        self.ret["mll_4l"               ] = 0
-        self.ret["m4L"                  ] = 0
+        self.ret["nJetMatchedToTau_y"   ] = 0
+        self.ret["nJetMatchedToTau_n"   ] = 0
+        self.ret["JetMatchedToTau_y"    ] = [0.]*20
+        self.ret["JetMatchedToTau_n"    ] = [0.]*20
 
 
-        self.ret["idMVA"              ] = 0 
-        self.ret["idMVANewDM"         ] = 0
-        self.ret["idCI3hit"           ] = 0
-        self.ret["idMVAOldDMRun2"     ] = 0
-        self.ret["idMVAOldDMRun2dR03" ] = 0
-        self.ret["idAntiMu"           ] = 0
-        self.ret["idAntiE"            ] = 0
 
 
-        self.ret["nOS"   ] = 0
-        self.ret["mll"   ] = [0]*20
-        self.ret["mll_i1"] = [-1]*20
-        self.ret["mll_i2"] = [-1]*20
-
-        self.ret["nLepSel"] = 0
-        # MVA is duplicate for var in ["pt", "eta", "phi", "mass", "conePt", "dxy", "dz", "sip3d", "miniRelIso", "relIso", "ptratio", "ptrel", "mva"]:
-        for var in ["pt", "eta", "phi", "mass", "conePt", "dxy", "dz", "sip3d", "miniRelIso", "relIso", "ptratio", "ptrel"]:
-            self.ret["LepSel_" + var] = [0.]*20
-        for var in ["pdgId", "isTight", "mcMatchId", "mcMatchAny", "mcPromptGamma", "mcUCSX", "trIdx"]:
-            self.ret["LepSel_" + var] = [0 ]*20
-
-        for var in self.systsJEC:
-            self.ret["mT_3l"       + self.systsJEC[var]] = 0.
-            self.ret["mT2L_3l"     + self.systsJEC[var]] = 0.  
-            self.ret["mT2T_3l"     + self.systsJEC[var]] = 0. 
-            self.ret["mT_4l"       + self.systsJEC[var]] = 0.
-            self.ret["mT2L_4l"     + self.systsJEC[var]] = 0.  
-            self.ret["mT2T_4l"     + self.systsJEC[var]] = 0. 
-            self.ret["mT_3l_gen"   + self.systsJEC[var]] = 0.
-            self.ret["mT2L_3l_gen" + self.systsJEC[var]] = 0.  
-            self.ret["mT2T_3l_gen" + self.systsJEC[var]] = 0. 
-            self.ret["mT_4l_gen"   + self.systsJEC[var]] = 0.
-            self.ret["mT2L_4l_gen" + self.systsJEC[var]] = 0.  
-            self.ret["mT2T_4l_gen" + self.systsJEC[var]] = 0. 
-
-
-    ## setAttributes 
+    ## writeFakeTaus
     ## _______________________________________________________________
-    def setAttributes(self, event, lepSel, isData = False):
-
-        for i, l in enumerate(lepSel): 
-            if l in self.tausFO:
-                print("Now finding tau")
-                tau = self.findTau(event, l)
-                print("Tau has been found")
-                setattr(l, "pdgId"        , -1*15*tau.charge                      )
-                setattr(l, "isTight"      , (_reclTauId(tau) == 2)                )
-                setattr(l, "mcMatchId"    , 1                                     )
-                setattr(l, "mcMatchAny"   , 0                                     )
-                setattr(l, "mcPromptGamma", 0                                     )
-                setattr(l, "mcUCSX"       , tau.mcUCSXMatchId if not isData else 0)
-                setattr(l, "trIdx"        , self.tausFO.index(l)                    )
-                setattr(l, "dxy"          , tau.dxy if not tau is None else 0   )
-                setattr(l, "dz"           , tau.dz  if not tau is None else 0   )
-                setattr(l, "sip3d"        , 0                                   )
-                setattr(l, "miniRelIso"   , 0                                   )
-                setattr(l, "relIso"       , 0                                   )
-                setattr(l, "ptratio"      , 0                                   )
-                setattr(l, "ptrel"        , 0                                   )
-                # Duplicate setattr(l, "mva"          , tau.idMVAOldDMRun2 if not tau is None else 0 )
-                setattr(l, "idMVA"             , tau.idMVA              if not tau is None else 0 ) 
-                setattr(l, "idMVANewDM"        , tau.idMVANewDM         if not tau is None else 0 )
-                setattr(l, "idCI3hit"          , tau.idCI3hit           if not tau is None else 0 )
-                setattr(l, "idMVAOldDMRun2"    , tau.idMVAOldDMRun2     if not tau is None else 0 )
-                setattr(l, "idMVAOldDMRun2dR03", tau.idMVAOldDMRun2dR03 if not tau is None else 0 )
-                setattr(l, "idAntiMu"          , tau.idAntiMu           if not tau is None else 0 )
-                setattr(l, "idAntiE"           , tau.idAntiE            if not tau is None else 0 )
-
-
-            else:
-                setattr(l, "mcMatchId"    , l.mcMatchId     if not isData else 1)
-                setattr(l, "mcMatchAny"   , l.mcMatchAny    if not isData else 0)
-                setattr(l, "mcPromptGamma", l.mcPromptGamma if not isData else 0)
-                setattr(l, "mcUCSX"       , l.mcUCSXMatchId if not isData else 0)
-                setattr(l, "trIdx"        , self.leps.index(l)                  )
-                setattr(l, "dxy"          , l.dxy                               )
-                setattr(l, "dz"           , l.dz                                )
-                setattr(l, "sip3d"        , l.sip3d                             )
-                setattr(l, "miniRelIso"   , l.miniRelIso                        )
-                setattr(l, "relIso"       , l.relIso03                          )
-                setattr(l, "ptratio"      , l.jetPtRatiov2                      )
-                setattr(l, "ptrel"        , l.jetPtRelv2                        )
-                setattr(l, "mva"          , l.mvaSUSY                           )
-
-
-    ## writeTauSel
-    ## _______________________________________________________________
-    def writeTauSel(self):
+    def writeFakeTaus(self):
 
         ### HERE MUST SAVE JETS
 
-        self.ret["nTauSel"] = len(self.tauSelFO)
-        for i, l in enumerate(self.tauSelFO):
-            if i == 8: break # only keep the first 8 entries
-            # MVA is duplicatefor var in ["pt", "eta", "phi", "mass", "conePt", "dxy", "dz", "sip3d", "miniRelIso", "relIso", "ptratio", "ptrel", "mva"]:
-            for var in ["pt", "eta", "phi", "mass", "conePt", "dxy", "dz", "sip3d", "miniRelIso", "relIso", "ptratio", "ptrel", "idMVA", "idMVANewDM", "idCI3hit", "idMVAOldDMRun2", "idMVAOldDMRun2dR03", "idAntiMu", "idAntiE"]:
-                self.ret["TauSel_" + var][i] = getattr(l, var, 0)
-            for var in ["pdgId", "isTight", "mcMatchId", "mcMatchAny", "mcPromptGamma", "mcUCSX", "trIdx"]:
-                self.ret["TauSel_" + var][i] = int(getattr(l, var, 0))
+        if self.debug==2: print "len unmatchedJets: ", len(self.unmatchedJets)
+        
+        self.ret["nJetMatchedToTau_n"   ] = len(self.unmatchedJets)
+        for iJet, iInd in enumerate(self.unmatchedJets):
+            if self.debug==3: print "IJET: ", iJet, " IIND: ", iInd
+            if self.debug==3: print "umatchedJets[", iJet, "] = ", self.unmatchedJets[iJet]
+            if self.debug==3: print "control"
+            self.ret[ "JetMatchedToTau_n" ][iJet] = self.unmatchedJets[iJet]
+
+        if self.debug==2: print "len matchedJets: ", len(self.matchedJets)
+        
+        self.ret["nJetMatchedToTau_y"   ] = len(self.matchedJets)
+        for iJet, iInd in enumerate(self.matchedJets):
+            if self.debug==3: print "IJET: ", iJet, " IIND: ", iInd
+            if self.debug==3: print "matchedJets[", iJet, "] = ", self.matchedJets[iJet]
+            if self.debug==3: print "control"
+            self.ret[ "JetMatchedToTau_y" ][iJet] = self.matchedJets[iJet]
 
 
-        #all = []
-        #for os in self.OS:
-        #    all.append((0 if os.isSF else 1, 1 if os.wTau else 0, os.diff, os)) # priority to SF, then light, then difference to target
-        #if all:
-        #    all.sort()
-        #    self.ret["nOS"] = len(all)
-        #    for i,os in enumerate(all):
-        #        self.ret["mll"][i] = os[3].mll
-        #        self.ret["mll_i1"][i] = self.lepSelFO.index(os[3].l1)
-        #        self.ret["mll_i2"][i] = self.lepSelFO.index(os[3].l2)
 
 
 
