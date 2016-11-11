@@ -83,3 +83,43 @@ New bins are:
     return 0;
 }
 
+float tHq_MVAto1D_3l_10(float mva_tt, float mva_ttv){
+/*
+Same as above but with merged bins:
+   3 + 4
+   6 + 5
+New bins are:
+ 1 ---------------------
+   |    |    |  7 | 10 |
+   |    |  6 |----|----|
+   |  2 |    |  9 |  8 |
+ 0 |    |----|----|----|
+   |    |  5 |    4    | 
+   |----|----|----|----|
+   |  1 |      3       |
+-1 |----|----|----|----|
+  -1         0         1
+*/
+    if( mva_tt  > x_3  && mva_ttv  >  y_3 ) return 10;
+    if( mva_tt  > x_2  && mva_ttv  >  y_3 ) return 7;
+    if( mva_tt  > x_1  && mva_ttv  >  y_3 ) return 6;
+    if( mva_tt >= -1.0 && mva_ttv  >  y_3 ) return 2;
+
+    if( mva_tt  > x_3  && mva_ttv  >  y_2 ) return 8;
+    if( mva_tt  > x_2  && mva_ttv  >  y_2 ) return 9;
+    if( mva_tt  > x_1  && mva_ttv  >  y_2 ) return 6;
+    if( mva_tt >= -1.0 && mva_ttv  >  y_2 ) return 2;
+
+    if( mva_tt  > x_3  && mva_ttv  >  y_1 ) return 4;
+    if( mva_tt  > x_2  && mva_ttv  >  y_1 ) return 4;
+    if( mva_tt  > x_1  && mva_ttv  >  y_1 ) return 5;
+    if( mva_tt >= -1.0 && mva_ttv  >  y_1 ) return 2;
+
+    if( mva_tt  > x_3  && mva_ttv >= -1.0 ) return 3;
+    if( mva_tt  > x_2  && mva_ttv >= -1.0 ) return 3;
+    if( mva_tt  > x_1  && mva_ttv >= -1.0 ) return 3;
+    if( mva_tt >= -1.0 && mva_ttv >= -1.0 ) return 1;
+
+    return 0;
+}
+

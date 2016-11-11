@@ -5,7 +5,7 @@
 ```
 python makeShapeCards.py \
 --savefile activate \
-tHq-multilepton/mca-thq-3l-mcdata-frdata_limits.txt \
+tHq-multilepton/signal_extraction/mca-thq-3l-mcdata-frdata_limits.txt \
 tHq-multilepton/cuts-thq-3l.txt \
 thqMVA_ttv:thqMVA_tt 40,-1,1,40,-1,1 \
 tHq-multilepton/signal_extraction/systsEnv.txt \
@@ -14,14 +14,14 @@ tHq-multilepton/signal_extraction/systsEnv.txt \
 --tree treeProducerSusyMultilepton \
 --s2v -j 8 -l 12.9 -f \
 --xp data --asimov \
--F sf/t tHq_eventvars_Oct24_skim/evVarFriend_{cname}.root \
+-F sf/t tHq_eventvars_Nov10_skim/evVarFriend_{cname}.root \
 --Fs {P}/2_recleaner_v4_b1E2 \
 --mcc ttH-multilepton/lepchoice-ttH-FO.txt \
 --neg \
 -o 3l \
 --od tHq-multilepton/signal_extraction/cards \
 -L tHq-multilepton/functionsTHQ.cc \
---2d-binning-function "12:tHq_MVAto1D_3l_12"
+--2d-binning-function "10:tHq_MVAto1D_3l_10"
 ```
 
 - Change from `--savefile activate` to `--infile activate` to rerun quickly with a different binning.
