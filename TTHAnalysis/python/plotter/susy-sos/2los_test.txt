@@ -21,7 +21,7 @@ Ip3D  : abs(LepGood1_ip3d) < if3(abs(LepGood1_pdgId)==13,0.006,0.008) && abs(Lep
 SIP3D  : max(LepGood1_sip3d,LepGood2_sip3d) < 1.8; Disable=True
 RIsoT : max(LepGood1_relIso03,LepGood2_relIso03) < 0.5
 AIsoT : max(LepGood1_relIso03*LepGood1_pt,LepGood2_relIso03*LepGood2_pt) < 5 
-bCSVL : max(LepGood1_jetBTagCSV,LepGood2_jetBTagCSV) < 0.46
+bCSVL : max(LepGood1_jetBTagCSV,LepGood2_jetBTagCSV) < 0.46; Disable=True
 barrel : max(abs(LepGood1_eta),abs(LepGood2_eta)) < 1.5; Disable=True
 ISRjet: Jet1_id == 5 
 lowMET: met_pt>125 && metmm_pt(LepGood1_pdgId, LepGood1_pt, LepGood1_phi, LepGood2_pdgId, LepGood2_pt, LepGood2_phi, met_pt, met_phi) > 125
