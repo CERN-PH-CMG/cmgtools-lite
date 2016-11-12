@@ -32,14 +32,15 @@ class H2TauTauTreeProducerTauTau(H2TauTauTreeProducer):
 
         self.var(self.tree, 'mt2')
 
-        self.var(self.tree, 'GenSusyMScan1')
-        self.var(self.tree, 'GenSusyMScan2')
-        self.var(self.tree, 'GenSusyMScan3')
-        self.var(self.tree, 'GenSusyMScan4')
-        self.var(self.tree, 'GenSusyMNeutralino')
-        self.var(self.tree, 'GenSusyMChargino')
-        self.var(self.tree, 'GenSusyMStau')
-        self.var(self.tree, 'GenSusyMStau2')
+        if self.cfg_comp.isMC:
+            self.var(self.tree, 'GenSusyMScan1')
+            self.var(self.tree, 'GenSusyMScan2')
+            self.var(self.tree, 'GenSusyMScan3')
+            self.var(self.tree, 'GenSusyMScan4')
+            self.var(self.tree, 'GenSusyMNeutralino')
+            self.var(self.tree, 'GenSusyMChargino')
+            self.var(self.tree, 'GenSusyMStau')
+            self.var(self.tree, 'GenSusyMStau2')
 
     def process(self, event):
 

@@ -14,6 +14,9 @@ class H2TauTauTreeProducerMuEle(H2TauTauTreeProducer):
         self.bookGenParticle(self.tree, 'l2_gen')
         self.var(self.tree, 'l2_gen_lepfromtau', int)
 
+        self.bookTau(self.tree, 'tau1')
+        self.bookGenParticle(self.tree, 'tau1_gen')
+
         if hasattr(self.cfg_ana, 'addIsoInfo') and self.cfg_ana.addIsoInfo:
             self.var(self.tree, 'l1_puppi_iso_pt')
             self.var(self.tree, 'l1_puppi_iso04_pt')
@@ -48,16 +51,16 @@ class H2TauTauTreeProducerMuEle(H2TauTauTreeProducer):
         self.fillEle(self.tree, 'l1', ele)
         self.fillMuon(self.tree, 'l2', muon)
 
-        if hasattr(muon, 'genp') and muon.genp:
+        if getattr(muon, 'genp', False):
             self.fillGenParticle(self.tree, 'l2_gen', muon.genp)
             self.fill(self.tree, 'l2_gen_lepfromtau', muon.isTauLep)
 
-        if hasattr(ele, 'genp') and ele.genp:
+        if getattr(ele, 'genp', False):
             self.fillGenParticle(self.tree, 'l1_gen', ele.genp)
             self.fill(self.tree, 'l1_gen_lepfromtau', ele.isTauLep)
 
 
-        if hasattr(self.cfg_ana, 'addIsoInfo') and self.cfg_ana.addIsoInfo:
+        if getattr(self.cfg_ana, 'addIsoInfo', False):
             self.fill(self.tree, 'l1_puppi_iso_pt', ele.puppi_iso_pt)
             self.fill(self.tree, 'l1_puppi_iso04_pt', ele.puppi_iso04_pt)
             self.fill(self.tree, 'l1_puppi_iso03_pt', ele.puppi_iso03_pt)
@@ -75,5 +78,12 @@ class H2TauTauTreeProducerMuEle(H2TauTauTreeProducer):
             self.fill(self.tree, 'l2_puppi_no_lepton_iso03_pt', muon.puppi_no_lepton_iso03_pt)
             self.fill(self.tree, 'l2_mini_iso', muon.miniAbsIso)
             self.fill(self.tree, 'l2_mini_reliso', muon.miniRelIso)
+
+
+        if event.selectedTaus:
+            tau1 = event.selectedTaus[0]
+            self.fillTau(self.tree, 'tau1', tau1)
+            if hasattr(tau1, 'genp') and tau1.genp:
+                self.fillGenParticle(self.tree, 'tau1_gen', tau1.genp)
 
         self.fillTree(event)

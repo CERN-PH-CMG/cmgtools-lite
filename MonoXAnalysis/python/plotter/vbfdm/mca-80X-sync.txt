@@ -1,0 +1,69 @@
+### SIGNAL AND CONTROL SAMPLES
+
+# signals for sync 
+ggH125+:  GluGlu_HToInvisible_M125  : xsec; FillColor=ROOT.kRed+1, Label="ggH"
+vbfH125+: VBF_HToInvisible_M125     : xsec; FillColor=ROOT.kRed+2, Label="VBFH"
+
+# ---- Spring15 25ns samples -------
+
+# Z+Jets (NuNu) HT-binned: replace the xsec in the ntuple (NLO) with the LO, in order to apply the ptV-dependent k-factors
+ZNuNu: ZJetsToNuNu_HT100to200+ZJetsToNuNu_HT100to200_ext :  280.47; FillColor=ROOT.kAzure+4,  Label="Zinv"
+ZNuNu: ZJetsToNuNu_HT200to400+ZJetsToNuNu_HT200to400_ext :  78.36; FillColor=ROOT.kAzure+4,  Label="Zinv"
+ZNuNu: ZJetsToNuNu_HT400to600 :  10.94; FillColor=ROOT.kAzure+4,  Label="Zinv"
+ZNuNu: ZJetsToNuNu_HT600to800 :  3.221; FillColor=ROOT.kAzure+4,  Label="Zinv"
+ZNuNu: ZJetsToNuNu_HT800to1200 :  1.474; FillColor=ROOT.kAzure+4,  Label="Zinv"
+ZNuNu: ZJetsToNuNu_HT1200to2500+ZJetsToNuNu_HT1200to2500_ext :  0.3586; FillColor=ROOT.kAzure+4,  Label="Zinv"
+ZNuNu: ZJetsToNuNu_HT2500toInf :  0.008203; FillColor=ROOT.kAzure+4,  Label="Zinv"
+
+EWKZNuNu: EWKZToNuNu2Jets : xsec; FillColor=ROOT.kAzure+5,  Label="EWK Zinv" 
+
+# W+jets HT-binned: replace the xsec in the ntuple (NLO) with the LO, in order to apply the ptV-dependent k-factors
+W: WJetsToLNu_HT100to200+WJetsToLNu_HT100to200_ext   :  1347;    FillColor=ROOT.kTeal+4,  Label="W"
+W: WJetsToLNu_HT200to400+WJetsToLNu_HT200to400_ext   :  360;     FillColor=ROOT.kTeal+4,  Label="W"
+W: WJetsToLNu_HT400to600+WJetsToLNu_HT400to600_ext   :  48.9;    FillColor=ROOT.kTeal+4,  Label="W"
+W: WJetsToLNu_HT600to800  :  12.8;    FillColor=ROOT.kTeal+4,  Label="W"
+W: WJetsToLNu_HT800to1200+WJetsToLNu_HT800to1200_ext  :  5.26;    FillColor=ROOT.kTeal+4,  Label="W"
+W: WJetsToLNu_HT1200to2500_ext :  1.33;    FillColor=ROOT.kTeal+4,  Label="W"
+W: WJetsToLNu_HT2500toInf+WJetsToLNu_HT2500toInf_ext  :  0.03089; FillColor=ROOT.kTeal+4,  Label="W"
+
+EWKW: EWKWPlus2Jets : xsec; FillColor=ROOT.kTeal+5,  Label="EWK W"
+EWKW: EWKWMinus2Jets : xsec; FillColor=ROOT.kTeal+5,  Label="EWK W"
+
+# QCD Z+jets (LL) HT-binned: replace the xsec in the ntuple (NLO) with the LO, in order to apply the ptV-dependent k-factors
+ZLL: DYJetsToLL_M50_HT100to200+DYJetsToLL_M50_HT100to200_ext :  139.4; FillColor=ROOT.kOrange+4,  Label="Z2l"
+ZLL: DYJetsToLL_M50_HT200to400+DYJetsToLL_M50_HT200to400_ext :  42.75; FillColor=ROOT.kOrange+4,  Label="Z2l"
+ZLL: DYJetsToLL_M50_HT400to600+DYJetsToLL_M50_HT400to600_ext :  5.497; FillColor=ROOT.kOrange+4,  Label="Z2l"
+ZLL: DYJetsToLL_M50_HT600toInf+DYJetsToLL_M50_HT600toInf_ext :  2.210; FillColor=ROOT.kOrange+4,  Label="Z2l"
+
+# QCD Z+jets (LL) HT-binned: replace the xsec in the ntuple (NLO) with the LO, in order to apply the ptV-dependent k-factors
+EWKZLL: EWKZToLL2Jets : xsec; FillColor=ROOT.kOrange+5,  Label="EWK Z LL"
+
+# -- Top --
+Top      : TTJets    : xsec; FillColor=ROOT.kViolet+2, Label="top", NormSystematic=0.5
+Top      : T_tWch    : xsec; FillColor=ROOT.kViolet+2, Label="top", NormSystematic=0.5
+Top      : TBar_tWch : xsec; FillColor=ROOT.kViolet+2, Label="top", NormSystematic=0.5
+Top      : TToLeptons_sch : xsec; FillColor=ROOT.kViolet+2, Label="top", NormSystematic=0.5
+
+# -- DiBosons --
+VV  : WW : xsec; FillColor=ROOT.kViolet+1, Label="VV"
+VV  : WZ : xsec; FillColor=ROOT.kViolet+1, Label="VV"
+VV  : ZZ : xsec; FillColor=ROOT.kViolet+1, Label="VV"
+
+# -- QCD --
+
+QCD: QCD_HT200to300_ext :   xsec; FillColor=ROOT.kGray, Label="multijet"
+QCD: QCD_HT300to500 + QCD_HT300to500_ext :   xsec; FillColor=ROOT.kGray, Label="multijet"
+QCD: QCD_HT500to700 + QCD_HT500to700_ext :   xsec; FillColor=ROOT.kGray, Label="multijet"
+QCD: QCD_HT700to1000 + QCD_HT700to1000_ext :   xsec; FillColor=ROOT.kGray, Label="multijet"
+QCD: QCD_HT1000to1500 + QCD_HT1000to1500_ext :   xsec; FillColor=ROOT.kGray, Label="multijet"
+QCD: QCD_HT1500to2000 + QCD_HT1500to2000_ext :   xsec; FillColor=ROOT.kGray, Label="multijet"
+QCD: QCD_HT2000toInf + QCD_HT2000toInf_ext :   xsec; FillColor=ROOT.kGray, Label="multijet"
+
+# -- 2016 Data ---
+data: MET_Run2016B_PromptReco_v1_runs_272023_273146 ; Label="Data" 
+data: MET_Run2016B_PromptReco_v2_runs_273150_275376 ; Label="Data"
+data: MET_Run2016C_PromptReco_v2_runs_275420_276283 ; Label="Data"
+data: MET_Run2016D_PromptReco_v2_runs_276315_276811 ; Label="Data"
+data: MET_Run2016E_PromptReco_v2_runs_276830_277420 ; Label="Data"
+data: MET_Run2016F_PromptReco_v1_runs_277820_278808 ; Label="Data"
+data: MET_Run2016G_PromptReco_v1_runs_278817_279931 ; Label="Data"

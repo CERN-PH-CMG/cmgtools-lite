@@ -201,7 +201,7 @@ class Histogram( object ):
         whist = self.weighted
         uwhist = self.weighted
         minbin = whist.FindBin(minx)
-        maxbin = min( whist.FindBin(maxx), whist.GetNbinsX())
+        maxbin = min(whist.FindBin(maxx), whist.GetNbinsX() + 1)
         for bin in range(minbin, maxbin):
             whist.SetBinContent(bin,0)
             whist.SetBinError(bin,0)

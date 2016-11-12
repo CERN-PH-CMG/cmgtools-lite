@@ -1,0 +1,54 @@
+
+lep_mcMatchId : abs(LepGood_mcMatchId) : 101,-0.5,100.5; XTitle="abs(LepGood_mcMatchId)", Legend='TR', LegendCutoff=1e-2
+lep_mcMatchAny : abs(LepGood_mcMatchAny) : 11,-0.5,10.5; XTitle="abs(LepGood_mcMatchAny)", Legend='TR', LegendCutoff=1e-2
+
+lep_pt: LepGood_pt: 12,0,150; XTitle="Lepton p_{T} [GeV]", Legend='TR', LegendCutoff=1e-2
+lep_eta: LepGood_eta: 12,-2.5,2.5; XTitle="Lepton #eta", Legend='TR', LegendCutoff=1e-2
+lep_miniRelIso: LepGood_miniRelIso: 12,0,.4; XTitle="Lepton Isolation", LegendCutoff=1e-2
+#lep_miniRelIso_log: LepGood_miniRelIso: 12,0,.4; Logy, XTitle="Lepton Isolation", LegendCutoff=1e-2, MoreY=2.0
+###lep_miniRelIsoCharged: LepGood_miniRelIsoCharged: 20,0,.4; XTitle="Lepton Charged Isolation", LegendCutoff=1e-2
+##lep_miniRelIsoCharged_log: LepGood_miniRelIsoCharged: 20,0,.4; Logy, XTitle="Lepton Charged Isolation", LegendCutoff=1e-2
+###lep_miniRelIsoNeutral: LepGood_miniRelIsoNeutral: 20,0,.4; XTitle="Lepton Neutral Isolation", LegendCutoff=1e-2
+#lep_miniRelIsoNeutral_log: LepGood_miniRelIsoNeutral: 20,0,.4; Logy, XTitle="Lepton Neutral Isolation", LegendCutoff=1e-2
+#lep_sip3d: LepGood_sip3d: 20,0,15 ; XTitle="Lepton SIP_{3D}", Legend='TR', LegendCutoff=1e-2
+lep_sip3d_log: LepGood_sip3d: 20,0,15 ; Logy, XTitle="Lepton SIP_{3D}", Legend='TR', LegendCutoff=1e-2
+###lep_dxy: abs(LepGood_dxy)*10000: 20,0.0,100. ; XTitle="Lepton d_{xy} [#mum]", Legend='TR', LegendCutoff=1e-2
+lep_dxy_log: abs(LepGood_dxy)*10000: 20,0.0,100. ; XTitle="Lepton d_{xy} [#mum]",Logy , Legend='TR', LegendCutoff=1e-2
+###lep_dz: abs(LepGood_dz)*10000: 20,0.0,500. ; XTitle="Lepton d_{z} [#mum]", Legend='TR', LegendCutoff=1e-2
+lep_dz_log: abs(LepGood_dz)*10000: 20,0.0,500. ; XTitle="Lepton d_{z} [#mum]",Logy ,Legend='TR', LegendCutoff=1e-2
+###el_mvaIdSpring15: LepGood_mvaIdSpring15: 20,-1,1; XTitle="Electron mvaIdSpring15", Legend='TR', LegendCutoff=1e-2
+el_mvaIdSpring15_log: LepGood_mvaIdSpring15: 20,-1,1; Logy, XTitle="Electron mvaIdSpring15", Legend='TL', LegendCutoff=1e-2
+###lep_jetPtRelv1: LepGood_jetPtRelv1: 20,0,20; XTitle="Lepton Jet p_{T} Relv1 [GeV]", Legend='TR', LegendCutoff=1e-2
+lep_jetPtRelv2: LepGood_jetPtRelv2: 20,0,20; XTitle="Lepton Jet p_{T} Relv2 [GeV]", Legend='TR', LegendCutoff=1e-2
+###lep_jetPtRatiov1: LepGood_jetPtRatiov1: 20,0,1.2; XTitle="Lepton Jet p_{T} Ratiov1 ", Legend='TL', LegendCutoff=1e-2
+lep_jetPtRatiov2: LepGood_jetPtRatiov2: 20,0,1.2; XTitle="Lepton Jet p_{T} Ratiov2 ", Legend='TL', LegendCutoff=1e-2
+###lep_mvaTTH: LepGood_mvaTTH: 20,-1,1; XTitle="Lepton mvaTTH", Legend='TR', LegendCutoff=1e-2
+lep_mvaTTH_log: LepGood_mvaTTH: 20,-1,1; Logy, XTitle="Lepton mvaTTH", Legend='TR', LegendCutoff=1e-2, MoreY=2.0
+lep_mvaSUSY_log: LepGood_mvaSUSY: 20,-1,1; Logy, XTitle="Lepton mvaSUSY", Legend='TR', LegendCutoff=1e-2, MoreY=2.0
+##lep_SegmentCompatibility: LepGood_segmentCompatibility: 12,0,1; XTitle="Lepton Segment-based compatibility", Legend='TR', LegendCutoff=1e-2
+lep_SegmentCompatibility_log: LepGood_segmentCompatibility: 25,0.5,1; Logy, XTitle="Lepton Segment-based compatibility", Legend='TR', LegendCutoff=1e-2
+###lep_pixelLayers: LepGood_pixelLayers: 10,0,10; XTitle="Pixel Layers", Legend='TR', LegendCutoff=1e-2
+###lep_trackerLayers: LepGood_trackerLayers: 20,0,20; XTitle="Tracker Layers", Legend='TL', LegendCutoff=1e-2
+lep_lostHits: LepGood_lostHits: 3,-0.5,2.5; XTitle="Lost hits on inner track", Legend='TR', LegendCutoff=1e-2
+lep_jetBTagCSV: LepGood_jetBTagCSV: 20,0,1; XTitle="CSV btag of nearest jet ", Legend='TR', LegendCutoff=1e-2
+
+ptJI85_mvaSusy_sMi_coarse:  LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,-0.2,0.5)&&LepGood_ICHEPmediumMuonId>0, 1.0, 0.85/LepGood_jetPtRatiov2): [ 0,5,10,15,20,30,45,65,100 ]; XTitle="lepton p_{T}^{corr} (GeV)"
+ptJI75_mvaSusy_sMi_coarse:  LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,-0.2,0.5)&&LepGood_ICHEPmediumMuonId>0, 1.0, 0.75/LepGood_jetPtRatiov2): [ 0,5,10,15,20,30,45,65,100 ]; XTitle="lepton p_{T}^{corr} (GeV)"
+ptJI90_mvaSusy_sMi_coarse:  LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,-0.2,0.5)&&LepGood_ICHEPmediumMuonId>0, 1.0, 0.90/LepGood_jetPtRatiov2): [ 0,5,10,15,20,30,45,65,100 ]; XTitle="lepton p_{T}^{corr} (GeV)"
+
+ptJI85_mvaSusy_sVi_coarse:  LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,0.45,0.75)&&LepGood_ICHEPmediumMuonId>0, 1.0, 0.85/LepGood_jetPtRatiov2): [ 0,5,10,15,20,30,45,65,100 ]; XTitle="lepton p_{T}^{corr} (GeV)"
+ptJI75_mvaSusy_sVi_coarse:  LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,0.45,0.75)&&LepGood_ICHEPmediumMuonId>0, 1.0, 0.75/LepGood_jetPtRatiov2): [ 0,5,10,15,20,30,45,65,100 ]; XTitle="lepton p_{T}^{corr} (GeV)"
+ptJI90_mvaSusy_sVi_coarse:  LepGood_pt*if3(LepGood_mvaSUSY>if3(abs(LepGood_pdgId)==13,0.45,0.75)&&LepGood_ICHEPmediumMuonId>0, 1.0, 0.90/LepGood_jetPtRatiov2): [ 0,5,10,15,20,30,45,65,100 ]; XTitle="lepton p_{T}^{corr} (GeV)"
+
+ra5_tight: multiIso_singleWP(LepGood_miniRelIso,LepGood_jetPtRatiov2,LepGood_jetPtRelv2,if3(abs(LepGood_pdgId)==11,3,2)) > 0 && LepGood_mvaIdSpring15 >=0.87+(0.60-0.87)*(abs(LepGood_eta)>0.8)+(+0.17-0.60)*(abs(LepGood_eta)>1.479):  2,-0.5,1.5;   Title="RA5t"
+ra7_tight: multiIso_singleWP(LepGood_miniRelIso,LepGood_jetPtRatiov2,LepGood_jetPtRelv2,if3(abs(LepGood_pdgId)==11,2,1)) > 0 && LepGood_mvaIdSpring15 >=0.87+(0.60-0.87)*(abs(LepGood_eta)>0.8)+(+0.17-0.60)*(abs(LepGood_eta)>1.479):  2,-0.5,1.5;   Title="RA7t"
+mvaSusy_sMi: LepGood_mvaSUSY > if3(abs(LepGood_pdgId)==13,-0.2,0.5) && LepGood_ICHEPmediumMuonId > 0:  2,-0.5,1.5;   Title="sMi", 
+mvaSusy_sVi: LepGood_mvaSUSY > if3(abs(LepGood_pdgId)==13,0.45,0.75) && LepGood_ICHEPmediumMuonId > 0:  2,-0.5,1.5;   Title="sVi"
+
+FR_ra5_tight_vs_lostHits: (multiIso_singleWP(LepGood_miniRelIso,LepGood_jetPtRatiov2,LepGood_jetPtRelv2,if3(abs(LepGood_pdgId)==11,3,2)) > 0 && LepGood_mvaIdSpring15 >=0.87+(0.60-0.87)*(abs(LepGood_eta)>0.8)+(+0.17-0.60)*(abs(LepGood_eta)>1.479))\:LepGood_lostHits:  3,-0.5,2.5;   Title="RA5t", Profile1D=True
+FR_ra7_tight_vs_lostHits: (multiIso_singleWP(LepGood_miniRelIso,LepGood_jetPtRatiov2,LepGood_jetPtRelv2,if3(abs(LepGood_pdgId)==11,2,1)) > 0 && LepGood_mvaIdSpring15 >=0.87+(0.60-0.87)*(abs(LepGood_eta)>0.8)+(+0.17-0.60)*(abs(LepGood_eta)>1.479))\:LepGood_lostHits:  3,-0.5,2.5;   Title="RA7t", Profile1D=True
+FR_mvaSusy_sMi_vs_lostHits: (LepGood_mvaSUSY > if3(abs(LepGood_pdgId)==13,-0.2,0.5) && LepGood_ICHEPmediumMuonId > 0)\:LepGood_lostHits:  3,-0.5,2.5;   Title="sMi", Profile1D=True
+FR_mvaSusy_sVi_vs_lostHits: (LepGood_mvaSUSY > if3(abs(LepGood_pdgId)==13,0.45,0.75) && LepGood_ICHEPmediumMuonId > 0)\:LepGood_lostHits:  3,-0.5,2.5;   Title="sVi", Profile1D=True
+
+lep_mcPromptGamma_vs_lostHits: LepGood_mcPromptGamma\:LepGood_lostHits: 3,-0.5,2.5; XTitle="is conversion", Legend='TR', LegendCutoff=1e-2, Profile1D=True
+lep_mcPromptGamma: LepGood_mcPromptGamma: 2,-0.5,1.5; XTitle="is conversion", Legend='TR', LegendCutoff=1e-2

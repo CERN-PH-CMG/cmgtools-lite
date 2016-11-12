@@ -145,7 +145,7 @@ class HistDrawer:
             if not blindxmin:
                 blindxmin = 0
             if not blindxmax:
-                blindxmax = plot.GetXaxis().GetXmax()
+                blindxmax = plot.stack.totalHist.GetXaxis().GetXmax()
             if do_ratio:
                 ratio.Blind(blindxmin, blindxmax, True)
             plot.Blind(blindxmin, blindxmax, False)
@@ -191,6 +191,7 @@ class HistDrawer:
         plotname += plot_name if plot_name else plot.name
         can.SaveAs(plotname + '.png')
         can.SaveAs(plotname + '.pdf')
+        can.SaveAs(plotname + '.root')
 
         # Also save with log y
         h.GetYaxis().SetRangeUser(pad.GetUymax() * 5./10000., pad.GetUymax() * 5.)

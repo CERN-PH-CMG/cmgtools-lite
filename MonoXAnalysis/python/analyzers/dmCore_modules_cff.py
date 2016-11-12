@@ -43,6 +43,11 @@ triggerAna = cfg.Analyzer(
 triggerFlagsAna = cfg.Analyzer(
     TriggerBitAnalyzer, name="TriggerFlags",
     processName = 'HLT',
+    prescaleProcessName = 'PAT',
+    prescaleFallbackProcessName = 'RECO',
+    unrollbits = False,
+    saveIsUnprescaled = False,
+    checkL1prescale = False,
     triggerBits = {
         # "<name>" : [ 'HLT_<Something>_v*', 'HLT_<SomethingElse>_v*' ] 
     }
@@ -210,7 +215,7 @@ lepAna = cfg.Analyzer(
 from CMGTools.MonoXAnalysis.analyzers.monoJetSkimmer import monoJetSkimmer
 monoJetSkim = cfg.Analyzer(
     monoJetSkimmer, name='monoJetSkimmer',
-    jets      = "cleanJets", # jet collection to use
+    jets      = "cleanJetsAll", # jet collection to use
     jetPtCuts = [],          # e.g. [60,40,30,20] to require at least four jets with pt > 60,40,30,20 
     metCut = 0               # MET cut      
     )
@@ -244,7 +249,7 @@ gammaJetCtrlSkim = cfg.Analyzer(
     minJets = 0,
     photonIdCut = 'photon.photonID("PhotonCutBasedIDLoose")',
     photonPtCut = 150,
-    jetPtCut = 100,
+    jetPtCut = 0,
     )
 
 ## Photon Analyzer (generic)
@@ -352,8 +357,8 @@ jetAna = cfg.Analyzer(
     recalibrateJets = True, # "MC", # True, False, 'MC', 'Data'
     applyL2L3Residual = True, # Switch to 'Data' when they will become available for Data
     recalibrationType = "AK4PFchs",
-    mcGT     = "Spring16_25nsV3_MC",
-    dataGT   = "Spring16_25nsV3_DATA",
+    mcGT     = "Spring16_25nsV6_MC",
+    dataGT   = "Spring16_25nsV6_DATA",
     jecPath = "%s/src/CMGTools/RootTools/data/jec/" % os.environ['CMSSW_BASE'],
     shiftJEC = 0, # set to +1 or -1 to get +/-1 sigma shifts
     addJECShifts = False, # if true, add  "corr", "corrJECUp", and "corrJECDown" for each jet (requires uncertainties to be available!)
@@ -372,6 +377,7 @@ jetAna = cfg.Analyzer(
     type1METParams = { 'jetPtThreshold':15., 'skipEMfractionThreshold':0.9, 'skipMuons':True },
     )
 
+
 ## Fat Jets Analyzer (generic)
 from CMGTools.MonoXAnalysis.analyzers.monoXFatJetAnalyzer import monoXFatJetAnalyzer
 monoXFatJetAna = cfg.Analyzer(
@@ -389,14 +395,13 @@ monoXFatJetAna = cfg.Analyzer(
     recalibrateJets = True,
     applyL2L3Residual = True, # Switch to 'Data' when they will become available for Data
     recalibrationType = "AK8PFchs",
-    mcGT     = "Spring16_25nsV3_MC",
-    dataGT   = "Spring16_25nsV3_DATA", # update with the new one when available in 8.0.X
+    mcGT     = "Spring16_25nsV6_MC",
+    dataGT   = "Spring16_25nsV6_DATA", # update with the new one when available in 8.0.X
     jecPath = "%s/src/CMGTools/RootTools/data/jec/" % os.environ['CMSSW_BASE'],
     shiftJEC = 0, # set to +1 or -1 to get +/-1 sigma shifts
     addJECShifts = False, # if true, add  "corr", "corrJECUp", and "corrJECDown" for each jet (requires uncertainties to be available!)
     rho = ('fixedGridRhoFastjetAll','',''),
     )
-
 
 # Secondary vertex analyzer
 from CMGTools.TTHAnalysis.analyzers.ttHSVAnalyzer import ttHSVAnalyzer
@@ -452,15 +457,17 @@ metNoHFAna = cfg.Analyzer(
     collectionPostFix = "NoHF",
     )
 
+
 # Core Event Analyzer (computes basic quantities like HT, dilepton masses)
 from CMGTools.TTHAnalysis.analyzers.ttHCoreEventAnalyzer import ttHCoreEventAnalyzer
 ttHCoreEventAna = cfg.Analyzer(
     ttHCoreEventAnalyzer, name='ttHCoreEventAnalyzer',
     maxLeps = 4, ## leptons to consider
     mhtForBiasedDPhi = "mhtJet40jvec",
-    jetForBiasedDPhi = "cleanJets",
+    jetForBiasedDPhi = "cleanJetsAll",
     jetPt = 40.,
     )
+
 
 # Electron and Photon calibrator (scale and smearings)
 def doECalElectronCorrections(sync=False,era="25ns"):

@@ -1,7 +1,7 @@
 from PhysicsTools.Heppy.analyzers.core.TreeAnalyzerNumpy import TreeAnalyzerNumpy
 
 from CMGTools.H2TauTau.proto.analyzers.varsDictionary import vars as var_dict
-from CMGTools.H2TauTau.proto.analyzers.TreeVariables import event_vars, ditau_vars, particle_vars, lepton_vars, electron_vars, muon_vars, tau_vars, jet_vars, jet_vars_extra, geninfo_vars, vbf_vars, svfit_vars
+from CMGTools.H2TauTau.proto.analyzers.TreeVariables import event_vars, ditau_vars, particle_vars, lepton_vars, electron_vars, muon_vars, tau_vars, tau_vars_extra, jet_vars, jet_vars_extra, geninfo_vars, vbf_vars, svfit_vars
 
 from CMGTools.H2TauTau.proto.physicsobjects.DiObject import DiTau
 import math
@@ -153,13 +153,17 @@ class H2TauTauTreeProducerBase(TreeAnalyzerNumpy):
         self.fillGeneric(tree, electron_vars, ele, p_name)
 
     # tau
-    def bookTau(self, tree, p_name):
+    def bookTau(self, tree, p_name, fill_extra=False):
         self.bookLepton(tree, p_name)
         self.bookGeneric(tree, tau_vars, p_name)
+        if fill_extra:
+            self.bookGeneric(tree, tau_vars_extra, p_name)
 
-    def fillTau(self, tree, p_name, tau):
+    def fillTau(self, tree, p_name, tau, fill_extra=False):
         self.fillLepton(tree, p_name, tau)
         self.fillGeneric(tree, tau_vars, tau, p_name)
+        if fill_extra:
+            self.fillGeneric(tree, tau_vars_extra, tau, p_name)
 
     # jet
     def bookJet(self, tree, p_name, fill_extra=False):
@@ -238,6 +242,7 @@ class H2TauTauTreeProducerBase(TreeAnalyzerNumpy):
         self.var(tree, 'gen_top_weight')
 
     def fillTopPtReweighting(self, tree, event):
+        '''FIXME: Move this to extra class - only do inline calculations here'''
         if not self.cfg_comp.isMC:
             self.fill(tree, 'gen_top_weight', 1.)
             return

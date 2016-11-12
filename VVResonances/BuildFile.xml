@@ -10,6 +10,20 @@
 <use name="roottmva"/>
 <use name="rootminuit2"/>
 <use name="lhapdf"/>
+<!-- added for Hbbtagger -->
+<use name="FWCore/ParameterSet"/>
+<use name="FWCore/Utilities"/>
+<use name="CommonTools/Utils"/>
+<use name="DataFormats/Math"/>
+<use name="DataFormats/TrackReco"/>
+<use name="DataFormats/VertexReco"/>
+<use name="DataFormats/BTauReco"/>
+<use name="DataFormats/PatCandidates"/>
+<use name="TrackingTools/IPTools"/>
+<use name="RecoBTag/SecondaryVertex"/>
+<use name="MagneticField/ParametrizedEngine"/>
+<use name="RecoVertex/GhostTrackFitter"/>
+<!-- end - added for Hbbtagger -->
 <export>
   <lib   name="1"/>
 </export>

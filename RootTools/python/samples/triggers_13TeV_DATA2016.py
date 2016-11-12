@@ -15,17 +15,20 @@ triggers_ee_nodz = [ "HLT_Ele17_Ele12_CaloIdL_TrackIdL_IsoVL_v*" ]
 
 triggers_mue_run1   = [ "HLT_Mu17_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v*", 
                         "HLT_Mu8_TrkIsoVVL_Ele17_CaloIdL_TrackIdL_IsoVL_v*" ]
-triggers_mue   = [ "HLT_Mu17_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v*", 
+triggers_mue   = [ "HLT_Mu17_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v*", # warning, check prescales depending on run range 
                    "HLT_Mu8_TrkIsoVVL_Ele17_CaloIdL_TrackIdL_IsoVL_v*",
                    "HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v*", 
+                   "HLT_Mu23_TrkIsoVVL_Ele8_CaloIdL_TrackIdL_IsoVL_v*",
                    "HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v*" ]
 
 triggers_mumu_ht =  [ "HLT_DoubleMu8_Mass8_PFHT300_v*" ]
 triggers_ee_ht =  [ "HLT_DoubleEle8_CaloIdM_TrackIdM_Mass8_PFHT300_v*" ]
 triggers_mue_ht = [ "HLT_Mu8_Ele8_CaloIdM_TrackIdM_Mass8_PFHT300_v*" ]
 
+triggers_leptau = ["HLT_IsoMu19_eta2p1_LooseIsoPFTau20_v*", "HLT_Ele22_eta2p1_WPLoose_GSF_LooseIsoPFtau20_SingleL1_v*", "HLT_DoubleMediumIsoPFTau32_Trk1_eta2p1_Reg_v"]
+
 triggers_3e = [ "HLT_Ele16_Ele12_Ele8_CaloIdL_TrackIdL_v*" ]
-triggers_3mu = [ "HLT_TripleMu_12_10_5_v*", "HLT_TripleMu_5_5_3_v*" ] # 553 only in part of the dataset
+triggers_3mu = [ "HLT_TripleMu_12_10_5_v*", "HLT_TripleMu_5_3_3_v*" ] # 533 only in part of the dataset
 triggers_3mu_alt = [ "HLT_TrkMu15_DoubleTrkMu5NoFiltersNoVtx_v*" ]
 triggers_2mu1e = [ "HLT_DiMu9_Ele9_CaloIdL_TrackIdL_v*" ]
 triggers_2e1mu = [ "HLT_Mu8_DiEle12_CaloIdL_TrackIdL_v*" ]
@@ -41,17 +44,25 @@ triggers_1e      = [
         "HLT_Ele25_eta2p1_WPLoose_Gsf_v*", # not in column 0 
         "HLT_Ele25_eta2p1_WPTight_Gsf_v*", 
         "HLT_Ele27_WPTight_Gsf_v*", 
-        "HLT_Ele27_eta2p1_WPLoose_Gsf_v*"  ]
+        "HLT_Ele27_eta2p1_WPLoose_Gsf_v*",
+        "HLT_Ele45_WPLoose_Gsf_v*" ]
 triggers_1e_noniso      = [ "HLT_Ele105_CaloIdVT_GsfTrkIdT_v*","HLT_Ele115_CaloIdVT_GsfTrkIdT_v*"]
 
 # Lepton fake rate triggers (prescaled)
-triggers_FR_1mu_iso = [ "HLT_Mu%d_TrkIsoVVL_v*" % pt for pt in (8,17) ]
-triggers_FR_1mu_noiso = [ "HLT_Mu%d_v*" % pt for pt in (8,17) ]
-triggers_FR_1e_noiso = [ "HLT_Ele%d_CaloIdM_TrackIdM_PFJet30_v*" % pt for pt in (8,12,23,33) ]
-triggers_FR_1e_iso   = [ "HLT_Ele%d_CaloIdL_TrackIdL_IsoVL_PFJet30_v*" % pt for pt in (12,23,33) ]
+triggers_FR_1mu_iso = [ "HLT_Mu%d_TrkIsoVVL_v*" % pt for pt in (8,17) ] # DoubleMu PD
+triggers_FR_1mu_noiso = [ "HLT_Mu%d_v*" % pt for pt in (8,17) ] + ["HLT_Mu3_PFJet40_v*"] # DoubleMu PD
+triggers_FR_1e_noiso = [ "HLT_Ele%d_CaloIdM_TrackIdM_PFJet30_v*" % pt for pt in (8,12,17,23,33) ] + [ "HLT_Ele10_CaloIdM_TrackIdM_CentralPFJet30_BTagCSV_p13_v*" ]# DoubleEG
+triggers_FR_1e_iso   = [ "HLT_Ele%d_CaloIdL_TrackIdL_IsoVL_PFJet30_v*" % pt for pt in (8,12,17,23,33) ] # DoubleEG
 triggers_FR_1e_b2g = [ "HLT_Ele17_CaloIdL_TrkIdL_IsoVL_v*", "HLT_Ele12_CaloIdL_TrackIdL_IsoVL_v*" ]
+triggers_FR_jet  =  [ "HLT_PFJet40_v*", "HLT_PFJet60_v*", "HLT_PFJet80_v*" ]
+triggers_FR_muNoIso = [ "HLT_Mu%d_v*" % pt for pt in (20,27,) ] + [ "HLT_Mu%d_eta2p1_v*" % pt for pt in (24,45,) ] + [ "HLT_L2Mu%d_v*" % pt for pt in (10,) ] # SingleMu PD
 
 ### GP: did not look at anything below this
+
+triggers_SOS_doublemulowMET = ["HLT_DoubleMu3_PFMET50_v*"]
+triggers_SOS_highMET = ["HLT_PFMET90_PFMHT90_IDTight_v*","HLT_PFMETNoMu90_PFMHTNoMu90_IDTight_v*","HLT_PFMET100_PFMHT100_IDTight_v*","HLT_PFMETNoMu100_PFMHTNoMu100_IDTight_v*", "HLT_PFMET110_PFMHT110_IDTight_v*", "HLT_PFMETNoMu110_PFMHTNoMu110_IDTight_v*", "HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v*", "HLT_PFMET120_PFMHT120_IDTight_v*"]
+triggers_SOS_tripleMu = ["HLT_TripleMu_5_3_3","HLT_TripleMu_5_3_3_DZ_Mass3p8_v1"]
+
 
 ### Mike ---> for the VV analysis 
 triggers_dijet_fat=["HLT_PFHT650_WideJetMJJ900DEtaJJ1p5_v*","HLT_PFHT650_WideJetMJJ950DEtaJJ1p5_v*"]

@@ -60,9 +60,9 @@ for cut_name in cuts:
 
 
     cfg_tight.cut = cuts[cut_name]
-    cfg_loose.cut = cuts[cut_name].replace('l2_byCombinedIsolationDeltaBetaCorrRaw3Hits<1.5', '1.')
+    cfg_loose.cut = cuts[cut_name].replace('tau1_decayModeFinding>0.', '1.')
     cfg_data_tight.cut = cuts[cut_name]
-    cfg_data_loose.cut = cuts[cut_name].replace('l2_byCombinedIsolationDeltaBetaCorrRaw3Hits<1.5', '1.')
+    cfg_data_loose.cut = cuts[cut_name].replace('tau1_decayModeFinding>0.', '1.')
 
     for variable in variables:
         cfg_tight.var = variable

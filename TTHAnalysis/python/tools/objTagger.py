@@ -7,7 +7,7 @@ class ObjTagger:
         self.sel = sel
         self.sizelimit = sizelimit
     def listBranches(self):
-        biglist = [ ("n"+self.coll,"I"), ("n"+self.coll+"_"+self.label, "I"), (self.coll+"_is"+self.label,"I",100,"n"+self.coll) ]
+        biglist = [ ("n"+self.coll,"I"), ("n"+self.coll+"_"+self.label, "I"), (self.coll+"_"+self.label,"I",100,"n"+self.coll) ]
         return biglist
     def __call__(self,event):
         try :
@@ -18,7 +18,7 @@ class ObjTagger:
         objs = [l for l in Collection(event,self.coll,"n"+self.coll)]
         ret = {"n"+self.coll : getattr(event,"n"+self.coll) }
         ret["n"+self.coll+"_"+self.label]=0
-        ret[self.coll+"_is"+self.label]=[0] * getattr(event,"n"+self.coll)
+        ret[self.coll+"_"+self.label]=[0] * getattr(event,"n"+self.coll)
         for i,ob in enumerate(objs):
             ispassing = True
             for selector in self.sel:
@@ -27,7 +27,7 @@ class ObjTagger:
                     break
             if ispassing:
                 ret["n"+self.coll+"_"+self.label] += 1
-                ret[self.coll+"_is"+self.label][i] = 1
+                ret[self.coll+"_"+self.label][i] = 1
         return ret
 
 if __name__ == '__main__':

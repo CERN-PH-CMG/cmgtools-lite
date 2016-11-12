@@ -32,7 +32,7 @@ common = [
     'keep *_genEvtWeightsCounter_*_H2TAUTAU',
     'keep *_offlineBeamSpot_*_*',
     'keep *_reducedEgamma_reducedConversions_*',
-    'keep LHEEventProduct_externalLHEProducer_*_*',
+    'keep LHEEventProduct_*_*_*',
     'keep *_l1extraParticles_*_*',
     # 'keep *_mvaMETTauMu_*_H2TAUTAU'
     ]
