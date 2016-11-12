@@ -1,6 +1,10 @@
 ##########################################################
 ##       CONFIGURATION FOR SUSY SingleLep TREES       ##
+## In general all modules that are in CMGTools.TTHAnalysis.analyzers.susyCore_modules_cff
+## are loaded and executed by default. Settings not overwritten here, will be taken from there.
 ##########################################################
+
+
 import PhysicsTools.HeppyCore.framework.config as cfg
 
 #Load all analyzers
@@ -15,6 +19,23 @@ eleID = "CBID"
 
 # Isolation
 isolation = "miniIso"
+
+#-------- HOW TO RUN
+#sample = 'MC'
+sample = 'data'
+#sample = 'Signal'
+
+isData = False # default, but will be overwritten below
+isSignal = False # default, but will be overwritten below
+if sample == 'data':
+  isData = True
+elif sample == "Signal":
+  isSignal = True
+
+#Set this depending on the running mode 
+test = 1 #0: PRODUCTION (for batch), 1: single component with single thread, 2: test all components (1 thread per comp) 3: run all components (split jobs)
+
+###########################
 
 ####### Leptons  #####
 # lep collection
@@ -181,7 +202,6 @@ jetAna.minLepPt = 10
 
 ## JEC
 jetAna.mcGT = "Spring16_25nsV6_MC"
-#jetAna.dataGT = "Summer15_25nsV6_DATA"
 jetAna.dataGT = "Spring16_25nsV6_DATA"
 # add also JEC up/down shifts corrections
 jetAna.addJECShifts = True
@@ -191,7 +211,6 @@ jetAna.smearJets = False #should be false in susycore, already
 jetAna.recalibrateJets = False # false for miniAOD v2!
 jetAna.applyL2L3Residual = True
 
-#jetAna.calculateType1METCorrection = True
 ## MET (can be used for MiniAODv2)
 metAna.recalibrate = True
 
@@ -201,37 +220,17 @@ isoTrackAna.setOff=False
 # store all taus by default
 genAna.allGenTaus = True
 
-#-------- HOW TO RUN
-isData = True # default, but will be overwritten below
-
-#sample = 'MC'
-sample = 'data'
-#sample = 'Signal'
-test = 1
 
 if sample == "MC":
 
   print 'Going to process MC'
 
-  isData = False
-  isSignal = False
-
-  # modify skim
+  # apply a loose lepton skim to MC
   anyLepSkim.minLeptons = 1
-  ttHLepSkim.minLeptons = 0
 
-  # -- new 74X samples
-  #from CMGTools.RootTools.samples.samples_13TeV_74X import *
-  # -- samples at DESY
-  # MiniAODv1
-  #from CMGTools.SUSYAnalysis.samples.samples_13TeV_74X_desy import *
-  # MiniAODv2
-  #from CMGTools.SUSYAnalysis.samples.samples_13TeV_RunIISpring15MiniAODv2_desy import *
-  #from CMGTools.SUSYAnalysis.samples.samples_13TeV_RunIISpring15MiniAODv2_desy_Compact import *
   from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv2 import *
-#  from CMGTools.RootTools.samples.samples_13TeV_MiniAODv2_Signals_desy import *
-#  selectedComponents = TTs + SingleTop #TTJets_SingleLepton
-
+  
+  #pick the file you want to run on
   selectedComponents = [TBarToLeptons_tch_powheg]
 
   if test==1:
@@ -253,11 +252,9 @@ if sample == "MC":
       comp.splitFactor = len(comp.files)
   elif test==0:
     # PRODUCTION
-    # run on everything
+    # run on everything that is defined in selectedComponents
 
-    #selectedComponents =  [TTJets_LO , TTJets_LO_HT600to800, TTJets_LO_HT800to1200, TTJets_LO_HT1200to2500, TTJets_LO_HT2500toInf] + QCDHT + WJetsToLNuHT + SingleTop + DYJetsM50HT + TTV
-    #selectedComponents =  #SingleTop + DYJetsM50HT + TTV
-    #selectedComponents = [TTJets_SingleLeptonFromTbar, TTJets_SingleLeptonFromTbar_ext, TTJets_SingleLeptonFromT, TTJets_SingleLeptonFromT_ext, TTJets_DiLepton, TTJets_DiLepton_ext]
+    selectedComponents =  [TTJets_LO , TTJets_LO_HT600to800, TTJets_LO_HT800to1200, TTJets_LO_HT1200to2500, TTJets_LO_HT2500toInf] + QCDHT + WJetsToLNuHT + SingleTop + DYJetsM50HT + TTV
 
     for comp in selectedComponents:
       comp.fineSplitFactor = 1
@@ -265,39 +262,19 @@ if sample == "MC":
 
 elif sample == "Signal":
 
-  print 'Going to process Signal'
-
-  isData = False
-  isSignal = True
+  print 'Going to process Signal, assuming it is FastSim'
 
   # Set FastSim JEC
-  #jetAna.mcGT = "FastSim_MCRUN2_74_V9"
-  #jetAna.mcGT = "MCRUN2_74_V9"
-#  jetAna.mcGT = "FastSim_Summer15_25nsV6_MC"
+  jetAna.mcGT = "Spring16_25nsFastsimV1_MC"
 
   #### REMOVE JET ID FOR FASTSIM
   jetAna.relaxJetId = True
 
-  # modify skim
+  # modify skim (noe leptons skim)
   anyLepSkim.minLeptons = 0
-  ttHLepSkim.minLeptons = 0
 
-  # -- new 74X samples
-  #from CMGTools.RootTools.samples.samples_13TeV_74X import *
-  # -- samples at DESY
-  # MiniAODv1
-  #from CMGTools.SUSYAnalysis.samples.samples_13TeV_74X_desy import *
-  #from CMGTools.SUSYAnalysis.samples.samples_13TeV_74X_Signals_desy import *
-  # MiniAODv2
-  #from CMGTools.SUSYAnalysis.samples.samples_13TeV_RunIISpring15MiniAODv2_desy import *
-#  from CMGTools.SUSYAnalysis.samples.samples_13TeV_MiniAODv2_Signals_AAA import *
   from CMGTools.RootTools.samples.samples_80x_signal import *
-  # Benchmarks
-  #selectedComponents = [ T1tttt_mGo_1475to1500_mLSP_1to1250, T1tttt_mGo_1500to1525_mLSP_50to1125, T1tttt_mGo_1200_mLSP_1to825, T1tttt_mGo_1900to1950_mLSP_0to1450 ]
-  # Rest
-  #selectedComponents = mcSamplesT1tttt
-  #selectedComponents = [T1tttt_mGo_1000to1050_mLSP_1to800, T1tttt_mGo_1225to1250_mLSP_1to1025, T1tttt_mGo_1325to1350_mLSP_1to1125, T1tttt_mGo_600to625_mLSP_250to375]
-  selectedComponents = [SMS_T1tttt_TuneCUETP8M1]#[T1tttt_mGo_1475to1500_mLSP_1to1250, T1tttt_mGo_1200_mLSP_1to825 ]
+  selectedComponents = [SMS_T1tttt_TuneCUETP8M1]
 
   if test==1:
     # test a single component, using a single thread.
@@ -319,9 +296,6 @@ elif sample == "Signal":
   elif test==0:
     # PRODUCTION
     # run on everything
-
-    #selectedComponents = [ T1tttt_mGo_1200_mLSP_1to825, T1tttt_mGo_1900to1950_mLSP_0to1450 ]
-
     for comp in selectedComponents:
       comp.fineSplitFactor = 1
       comp.splitFactor = len(comp.files)
@@ -332,12 +306,8 @@ elif sample == "data":
 
   print 'Going to process DATA'
 
-  isData = True
-  isSignal = False
-
   # modify skim
   anyLepSkim.minLeptons = 1
-  ttHLepSkim.minLeptons = 0
 
   #For now no JEC
   #print jetAna.shiftJEC , jetAna.recalibrateJets , jetAna.addJECShifts , jetAna.calculateSeparateCorrections , jetAna.calculateType1METCorrection
@@ -351,14 +321,6 @@ elif sample == "data":
 
   # central samples
   from CMGTools.RootTools.samples.samples_13TeV_DATA2016 import *
-  #from CMGTools.SUSYAnalysis.samples.samples_13TeV_DATA2016 import *
-
-  #  selectedComponents = [SingleElectron_Run2016B_PromptReco_v2, SingleMuon_Run2016B_PromptReco_v2, JetHT_Run2016B_PromptReco_v2_HT800Only]
-#  selectedComponents = [JetHT_Run2016B_PromptReco_v2_HT800Only, JetHT_Run2016C_PromptReco_v2_HT800Only]#, JetHT_Run2016D_PromptReco_v2_HT800Only]
-#  selectedComponents = [JetHT_Run2016C_PromptReco_v2_HT800Only]#, JetHT_Run2016D_PromptReco_v2_HT800Only]
-#  selectedComponents = [JetHT_Run2016F_PromptReco_v1_HT800Only]
-#  selectedComponents = [SingleMuon_Run2016F_PromptReco_v1_IsoMu27Only]
-
   selectedComponents = [JetHT_Run2016H_PromptReco_v2_HT800Only, SingleMuon_Run2016H_PromptReco_v2_IsoMu27Only, SingleElectron_Run2016H_PromptReco_v2_Ele27Only, JetHT_Run2016G_PromptReco_v1_HT800Only, SingleMuon_Run2016G_PromptReco_v1_IsoMu27Only, SingleElectron_Run2016G_PromptReco_v1_Ele27Only]
 
   if test!=0 and jsonAna in susyCoreSequence: susyCoreSequence.remove(jsonAna)
