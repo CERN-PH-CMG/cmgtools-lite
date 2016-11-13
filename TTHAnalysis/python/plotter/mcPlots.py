@@ -755,7 +755,7 @@ class PlotMaker:
                     else:
                         total.GetYaxis().SetTitle("density/bin")
                     total.GetYaxis().SetDecimals(True)
-<<<<<<< HEAD
+
                 if options.scaleSignalToData: self._sf = doScaleSigNormData(pspec,pmap,mca)
                 if options.scaleBackgroundToData != []: self._sf = doScaleBkgNormData(pspec,pmap,mca,options.scaleBackgroundToData)
                 elif options.fitData: doNormFit(pspec,pmap,mca)
