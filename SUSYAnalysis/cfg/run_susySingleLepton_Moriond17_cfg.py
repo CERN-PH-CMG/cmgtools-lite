@@ -13,7 +13,8 @@ from CMGTools.TTHAnalysis.analyzers.susyCore_modules_cff import *
 #JSON
 jsonAna.useLumiBlocks = True
 
-#####Move all the definitions used through the config up here, and don't overwrite them late##########
+#####Move all the definitions used through the config up here, and don't overwrite them later##########
+######################################################################################################
 #eleID type (cut based  = CBID)
 eleID = "CBID"
 
@@ -33,8 +34,12 @@ elif sample == "Signal":
   isSignal = True
 
 #Set this depending on the running mode 
-test = 1 #0: PRODUCTION (for batch), 1: single component with single thread, 2: test all components (1 thread per comp) 3: run all components (split jobs)
-
+test = 1 
+#0: PRODUCTION (for batch)
+#1: Usually for TESTING (single component with single thread)
+#2: test all components (1 thread per comp) 
+#3: run all components (split jobs)
+################################################################
 ###########################
 
 ####### Leptons  #####
@@ -102,7 +107,6 @@ anyLepSkim = cfg.Analyzer(
     minLeptons = 0,
     maxLeptons = 999,
 )
-susyCoreSequence.insert(susyCoreSequence.index(lepAna)+1, anyLepSkim)
 
 ## Single lepton + ST skim
 from CMGTools.TTHAnalysis.analyzers.ttHSTSkimmer import ttHSTSkimmer
@@ -203,16 +207,16 @@ jetAna.minLepPt = 10
 ## JEC
 jetAna.mcGT = "Spring16_25nsV6_MC"
 jetAna.dataGT = "Spring16_25nsV6_DATA"
-# add also JEC up/down shifts corrections
-jetAna.addJECShifts = True
-
 jetAna.doQG = True
-jetAna.smearJets = False #should be false in susycore, already
-jetAna.recalibrateJets = False # false for miniAOD v2!
-jetAna.applyL2L3Residual = True
-
-## MET (can be used for MiniAODv2)
-metAna.recalibrate = True
+# add also JEC up/down shifts corrections
+##Lets turn everything off for now, and wait for feedback
+########################################### 
+jetAna.addJECShifts = False
+jetAna.smearJets = False 
+jetAna.recalibrateJets = False 
+jetAna.applyL2L3Residual = False
+metAna.recalibrate = False
+##########################################
 
 ## Iso Track
 isoTrackAna.setOff=False
@@ -231,14 +235,14 @@ if sample == "MC":
   from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv2 import *
   
   #pick the file you want to run on
-  selectedComponents = [TBarToLeptons_tch_powheg]
+  selectedComponents = [TTJets_DiLepton]
 
   if test==1:
     # test a single component, using a single thread.
-    comp = QCD_HT300to500
+    comp = TTJets_DiLepton
     comp.files = comp.files[:1]
     selectedComponents = [comp]
-    comp.splitFactor = 2
+    comp.splitFactor = 1
   elif test==2:
     # test all components (1 thread per component).
     for comp in selectedComponents:
@@ -308,17 +312,7 @@ elif sample == "data":
 
   # modify skim
   anyLepSkim.minLeptons = 1
-
-  #For now no JEC
-  #print jetAna.shiftJEC , jetAna.recalibrateJets , jetAna.addJECShifts , jetAna.calculateSeparateCorrections , jetAna.calculateType1METCorrection
-  #jetAna.addJECShifts = False
-  #jetAna.doQG = False
-  #jetAna.smearJets = False #should be false in susycore, already
-  jetAna.recalibrateJets = True # false for miniAOD v2!
-  #jetAna.calculateSeparateCorrections = False
-  #jetAna.applyL2L3Residual = False
-  #print jetAna.shiftJEC , jetAna.recalibrateJets , jetAna.addJECShifts , jetAna.calculateSeparateCorrections , jetAna.calculateType1METCorrection
-
+  
   # central samples
   from CMGTools.RootTools.samples.samples_13TeV_DATA2016 import *
   selectedComponents = [JetHT_Run2016H_PromptReco_v2_HT800Only, SingleMuon_Run2016H_PromptReco_v2_IsoMu27Only, SingleElectron_Run2016H_PromptReco_v2_Ele27Only, JetHT_Run2016G_PromptReco_v1_HT800Only, SingleMuon_Run2016G_PromptReco_v1_IsoMu27Only, SingleElectron_Run2016G_PromptReco_v1_Ele27Only]
@@ -326,11 +320,9 @@ elif sample == "data":
   if test!=0 and jsonAna in susyCoreSequence: susyCoreSequence.remove(jsonAna)
   if test==1:
     # test one component (2 thread)
-    comp = SingleElectron_Run2016B_PromptReco_v2 #JetHT_Run2016B_PromptReco_v2_HT800Only
-#SingleElectron_Run2016B_PromptReco_v2
+    comp = SingleElectron_Run2016B_PromptReco_v2
 #    comp.files = comp.files[:1]
-    comp.files = comp.files[10:12]
-    #comp.files = comp.files[10:11]
+    comp.files = comp.files[10:11]
     selectedComponents = [comp]
     comp.splitFactor = len(comp.files)
   elif test==2:
@@ -338,7 +330,6 @@ elif sample == "data":
     for comp in selectedComponents:
       comp.splitFactor = 1
       comp.fineSplitFactor = 1
-#      comp.files = comp.files[:1]
       comp.files = comp.files[10:11]
   elif test==3:
     # run all components (10 files per component).
@@ -378,41 +369,33 @@ treeProducer = cfg.Analyzer(
 
 
 if isSignal:
-  ## SUSY Counter
-  ## histo counter
-  #susyCoreSequence.insert(susyCoreSequence.index(skimAnalyzer),
   susyCoreSequence.insert(susyCoreSequence.index(susyScanAna)+1,
         susyCounter)
-#  susyCoreSequence.append(susyCounter)
-
-
-  # change scn mass parameters
+  # change scan mass parameters
   susyCounter.SUSYmodel = 'T1tttt'
   susyCounter.SMS_mass_1 = "genSusyMGluino"
   susyCounter.SMS_mass_2 = "genSusyMNeutralino"
   susyCounter.SMS_varying_masses = ['genSusyMGluino','genSusyMNeutralino']
 
 #-------- SEQUENCE
-
+#add anyLepSkim directly after lepAna
+susyCoreSequence.insert(susyCoreSequence.index(lepAna)+1, anyLepSkim)
 sequence = cfg.Sequence(susyCoreSequence+[
     LHEAna,
     ttHEventAna,
-#    ttHSTSkimmer,
     ttHHTSkimmer,
     treeProducer,
-#   susyCounter
     ])
 
-# remove skimming for Data or Signal
-#if isData:# or isSignal :
-# sequence.remove(ttHHTSkimmer)
-# sequence.remove(ttHSTSkimmer)
+if isData:
+  sequence.remove(anyLepSkim)
+if not isSignal:
+  sequence.remove(susyScanAna)
 
+#remove all skims for signal
 if isSignal:
  sequence.remove(ttHHTSkimmer)
-# sequence.remove(ttHSTSkimmer)
  sequence.remove(eventFlagsAna)
-#  sequence.remove(hbheFilterAna)
 
 ## output histogram
 outputService=[]
