@@ -11,7 +11,7 @@ class RFactorMaker:
         ret = {}
         directions = ['up','down']
         for v in systematics:
-            hist1D = tfile.Get("metnomu_%s_%s" % (pname,v)).Clone()
+            hist1D = tfile.Get("%s_%s_%s" % (self.var,pname,v)).Clone()
             hist1D.SetDirectory(None)
             remove = '|'.join(directions)
             regex = re.compile(r'('+remove+')', flags=re.IGNORECASE)
@@ -20,7 +20,8 @@ class RFactorMaker:
             ret[(pname,sel,basesyst)] = hist1D
         return ret
 
-    def __init__(self, srfile, crfile, num, den, systematics):
+    def __init__(self, var, srfile, crfile, num, den, systematics):
+        self.var = var
         self.selections = ['SR','CR']
         procs = [num,den]
         files = [srfile,crfile]
@@ -51,7 +52,7 @@ class RFactorMaker:
             p=seldic[sel]
             print "List of systematics for proc ",p," and sel ",sel," = ",self.systs[(p,sel)]
             histNom = self.hists_nominal[(p,sel,'nominal')]
-            histFullErr = histNom.Clone("metnomu_%s_fullErr" % p)
+            histFullErr = histNom.Clone("%s_%s_fullErr" % (self.var,p) )
             for b in range(1,histFullErr.GetNbinsX()+1):
                 statErr = histNom.GetBinError(b)
                 totSyst = 0
@@ -76,8 +77,10 @@ class RFactorMaker:
         num = hists[(self.numproc,'SR')]
         denom = hists[(self.denproc,'CR')]
         for b in range(1,rfac.GetNbinsX()+1): 
-            r = num.GetBinContent(b)/denom.GetBinContent(b)
-            sigmar = r * math.sqrt(math.pow(num.GetBinError(b)/num.GetBinContent(b),2) + math.pow(denom.GetBinError(b)/denom.GetBinContent(b),2))
+            if denom.GetBinContent(b) > 0:
+                r = num.GetBinContent(b)/denom.GetBinContent(b)
+                sigmar = r * math.sqrt(math.pow(num.GetBinError(b)/num.GetBinContent(b),2) + math.pow(denom.GetBinError(b)/denom.GetBinContent(b),2))
+            else: (r,sigmar) = (0,0)
             rfac.SetBinContent(b,r)
             rfac.SetBinError(b,sigmar)
         rfac.SetDirectory(outfile)
@@ -171,44 +174,44 @@ if __name__ == "__main__":
     systsUpG   = ['QCD_renScaleUp', 'QCD_facScaleUp', 'QCD_pdfUp', 'EWK_up']
     systsDownG = ['QCD_renScaleDown', 'QCD_facScaleDown', 'QCD_pdfDown', 'EWK_down']
 
-    titles = {'DYJetsHT':'R_{Z(#mu#mu)}',
-              'WJetsHT':'R_{W(#mu#mu)}'}
+    titles = {'ZLL':'R_{Z(#mu#mu)}',
+              'W':'R_{W(#mu#mu)}'}
 
     systs={}
 
-    if den_proc=='DYJetsHT' or den_proc=='WJetsHT':
+    if den_proc=='ZLL' or den_proc=='W':
         systs[(den_proc,'CR','up')]=systsUpL
         systs[(den_proc,'CR','down')]=systsDownL
     elif den_proc=='GJetsHT':
         systs[(den_proc,'CR','up')]=systsUpG
         systs[(den_proc,'CR','down')]=systsDownG
     else:
-        print "ERROR! Numerator processes can be only DYJetsHT or WJetsHT or GJetsHT"
+        print "ERROR! Numerator processes can be only ZLL or W or GJetsHT"
         exit()
 
-    if num_proc=='ZNuNuHT':
+    if num_proc=='ZNuNu':
         systs[(num_proc,'SR','up')]=[]
         systs[(num_proc,'SR','down')]=[]
-        if den_proc=='DYJetsHT': title = 'R_{Z}'
-        elif den_proc=='WJetsHT': title = 'R_{Z/W}'
+        if den_proc=='ZLL': title = 'R_{Z}'
+        elif den_proc=='W': title = 'R_{Z/W}'
         elif den_proc=='GJetsHT': title = 'R_{#gamma}'
         else: exit()
-    elif num_proc=='WJetsHT':
+    elif num_proc=='W':
         systs[(num_proc,'SR','up')]=[]
         systs[(num_proc,'SR','down')]=[]
-        if den_proc=='WJetsHT': title = 'R_{W}'
+        if den_proc=='W': title = 'R_{W}'
         else:
-            print "Num is ",num_proc," so only WJetsHT is allowed as denominator"
+            print "Num is ",num_proc," so only W is allowed as denominator"
             exit()
     else:
-        print "ERROR! Numerator processes can be only ZNuNuHT or WJetsHT"
+        print "ERROR! Numerator processes can be only ZNuNu or W"
         exit()
 
 
     outname = options.out if options.out else options.printDir+"/rfactors_"+num_proc+num_sel+"_Over_"+den_proc+den_sel+".root"
     outfile = ROOT.TFile(outname,"RECREATE")
 
-    rfm = RFactorMaker(num_file,den_file,num_proc,den_proc,systs)
+    rfm = RFactorMaker('detajj',num_file,den_file,num_proc,den_proc,systs)
     hists = rfm.computeFullError(outfile)
     rfac_full = rfm.computeRFactors(hists,outfile,"full")
     hists_statonly = {}

@@ -1,21 +1,34 @@
 #!/usr/bin/env python
 from CMGTools.TTHAnalysis.plotter.mcAnalysis import *
-import re, sys, os, os.path
+import re, sys, os, os.path, copy
 systs = {}
 
 from optparse import OptionParser
 parser = OptionParser(usage="%prog [options] mc.txt cuts.txt var bins systs.txt ")
 addMCAnalysisOptions(parser)
-parser.add_option("-o",   "--out",    dest="outname", type="string", default=None, help="output name") 
-parser.add_option("--od", "--outdir", dest="outdir", type="string", default=None, help="output name") 
+parser.add_option("-b",   "--bin",    dest="binname", type="string", default=None, help="Name of the bin in the card") 
+parser.add_option("-o",   "--out",    dest="outname", type="string", default="SR", help="Name of the output file") 
+parser.add_option("--od", "--outdir", dest="outdir", type="string", default=None, help="Output directory") 
 parser.add_option("-v", "--verbose",  dest="verbose",  default=0,  type="int",    help="Verbosity level (0 = quiet, 1 = verbose, 2+ = more)")
 parser.add_option("--asimov", dest="asimov", action="store_true", help="Asimov")
 parser.add_option("--postfix-pred",dest="postfixmap", type="string", default=[], action="append", help="Function to apply to prediction, to correct it before running limits")
+parser.add_option("--infile",dest="infile", type="string", default=[], action="append", help="File to read histos from")
+parser.add_option("--ip", "--infile-prefix", dest="infilepfx", type="string", default=None, help="Prefix to the process names as the histo name in the infile")
+parser.add_option("--bk",   dest="bookkeeping",  action="store_true", default=False, help="If given the command used to run the datacards will be stored");
+parser.add_option("--ignore",dest="ignore", type="string", default=[], action="append", help="Ignore processes when loading infile")
+parser.add_option("--noNegVar",dest="noNegVar", action="store_true", default=False, help="Replace negative variations per bin by 0.1% of central value")
+parser.add_option("--hardZero",dest="hardZero", action="store_true", default=False, help="Hard cut-off of processes")
 
 (options, args) = parser.parse_args()
 options.weight = True
 options.final  = True
 options.allProcesses  = True
+
+def fixNegVariations(down, central):
+	for bin in range(1,down.GetNbinsX()+1):
+		if down.GetBinContent(bin) <= 0:
+			down.SetBinContent(bin, central.GetBinContent(bin) * 0.001)
+	return down
 
 def cutCentralValueAtZero(mca,cut,pname,oldplots):
     if pname=='data': return
@@ -57,10 +70,38 @@ compilePostFixMap(options.postfixmap,postfixes)
 mca  = MCAnalysis(args[0],options)
 cuts = CutsFile(args[1],options)
 
-binname = os.path.basename(args[1]).replace(".txt","") if options.outname == None else options.outname
-outdir  = options.outdir+"/" if options.outdir else ""
+filename = options.outname # name of the card file
+binname  = options.binname if options.binname else os.path.basename(args[1]).replace(".txt","") # name of the bin in the card
+outdir   = options.outdir+"/" if options.outdir else ""
 
-report = mca.getPlotsRaw("x", args[2], args[3], cuts.allCuts(), nodata=options.asimov)
+report={}
+
+## load histos from infile, make only the missing ones on the fly
+if len(options.infile)>0:
+    todo = []
+    for inf in options.infile:
+        thefile = ROOT.TFile(inf,"read")
+        for p in mca.listSignals(True)+mca.listBackgrounds(True)+['data']:
+            n = p if options.infilepfx==None else options.infilepfx+"_"+p
+            h = copy.deepcopy(thefile.Get(n))
+            if h: report[p] = h
+        thefile.Close()
+    for p in mca.listSignals(True)+mca.listBackgrounds(True)+['data']:
+        if not p in report.keys() and not p in options.ignore: todo.append(p)
+    print report.keys()
+    print todo
+    for p in todo:
+        report.update(mca.getPlotsRaw("x", args[2], args[3], cuts.allCuts(), nodata=options.asimov, process=p))
+## no infile given, process all histos
+else:
+    report = mca.getPlotsRaw("x", args[2], args[3], cuts.allCuts(), nodata=options.asimov)
+
+
+if options.hardZero:
+    for key,hist in report.iteritems():
+        for bin in range(1,hist.GetNbinsX()+1):
+            if hist.GetBinContent(bin) <= 0:
+                hist.SetBinContent(bin, 0.0001)
 
 
 for post in postfixes:
@@ -99,6 +140,7 @@ for i,b in enumerate(mca.listBackgrounds()):
     procs.append(b); iproc[b] = i+1
 
 systs = {}
+systsU = {}
 systsEnv = {}
 for sysfile in args[4:]:
     for line in open(sysfile, 'r'):
@@ -113,6 +155,11 @@ for sysfile in args[4:]:
             if re.match(binmap+"$",binname) == None: continue
             if name not in systs: systs[name] = []
             systs[name].append((re.compile(procmap+"$"),amount))
+        elif field[4] == "lnU":
+            (name, procmap, binmap, amount) = field[:4]
+            if re.match(binmap+"$",binname) == None: continue
+            if name not in systsU: systsU[name] = []
+            systsU[name].append((re.compile(procmap+"$"),amount))
         elif field[4] in ["envelop","shapeOnly","templates","alternateShapeOnly"]:
             (name, procmap, binmap, amount) = field[:4]
             if re.match(binmap+"$",binname) == None: continue
@@ -126,7 +173,8 @@ for sysfile in args[4:]:
         else:
             raise RuntimeError, "Unknown systematic type %s" % field[4]
     if options.verbose > 0:
-        print "Loaded %d systematics" % len(systs)
+        print "Loaded %d lnN systematics" % len(systs)
+        print "Loaded %d lnU systematics" % len(systsU)
         print "Loaded %d envelop systematics" % len(systsEnv)
 
 
@@ -138,6 +186,23 @@ for name in systs.keys():
             if re.match(procmap, p): effect = amount
         effmap[p] = effect
     systs[name] = effmap
+for name in systsU.keys():
+    effmap = {}
+    for p in procs:
+        effect = "-"
+        for (procmap,amount) in systsU[name]:
+            if re.match(procmap, p): effect = amount
+        effmap[p] = effect
+    systsU[name] = effmap
+
+for name in systsU.keys():
+    effmap = {}
+    for p in procs:
+        effect = "-"
+        for (procmap,amount) in systsU[name]:
+            if re.match(procmap, p): effect = amount
+        effmap[p] = effect
+    systsU[name] = effmap
 
 for name in systsEnv.keys():
     effmap0  = {}
@@ -195,6 +260,9 @@ for name in systsEnv.keys():
             p0Dn = report["%s_%s_Dn" % (p, effect)]
             if not p0Up or not p0Dn: 
                 raise RuntimeError, "Missing templates %s_%s_(Up,Dn) for %s" % (p,effect,name)
+            if options.noNegVar:
+                p0Up = fixNegVariations(p0Up, report[p])
+                p0Dn = fixNegVariations(p0Dn, report[p])
             p0Up.SetName("%s_%sUp"   % (nominal.GetName(),name))
             p0Dn.SetName("%s_%sDown" % (nominal.GetName(),name))
             report[str(p0Up.GetName())[2:]] = p0Up
@@ -216,6 +284,9 @@ for name in systsEnv.keys():
                         p0Dn.SetBinContent(bin,p0Dn.GetBinContent(bin)/effect)
                         p0Dn.SetBinError(bin,p0Dn.GetBinError(bin)/effect)
                         break # otherwise you apply more than once to the same bin if more regexps match
+            if options.noNegVar:
+                p0Up = fixNegVariations(p0Up, report[p])
+                p0Dn = fixNegVariations(p0Dn, report[p])
             p0Up.SetName("%s_%sUp"   % (nominal.GetName(),name))
             p0Dn.SetName("%s_%sDown" % (nominal.GetName(),name))
             report[str(p0Up.GetName())[2:]] = p0Up
@@ -230,12 +301,15 @@ for name in systsEnv.keys():
             for bin in xrange(1,nominal.GetNbinsX()+1):
                 for binmatch in morefields[0]:
                     if re.match(binmatch+"$",'%d'%bin):
-                        p0Up = nominal.Clone("%s_%s_%s_bin%dUp"% (nominal.GetName(),name,p,bin))
-                        p0Dn = nominal.Clone("%s_%s_%s_bin%dDown"% (nominal.GetName(),name,p,bin))
+                        p0Up = nominal.Clone("%s_%s_%s_%s_bin%dUp"% (nominal.GetName(),name,binname,p,bin))
+                        p0Dn = nominal.Clone("%s_%s_%s_%s_bin%dDown"% (nominal.GetName(),name,binname,p,bin))
                         p0Up.SetBinContent(bin,p0Up.GetBinContent(bin)+effect*p0Up.GetBinError(bin))
                         p0Up.SetBinError(bin,p0Up.GetBinError(bin)*(p0Up.GetBinContent(bin)/nominal.GetBinContent(bin) if nominal.GetBinContent(bin)!=0 else 1))
                         p0Dn.SetBinContent(bin,max(1e-5,p0Dn.GetBinContent(bin)-effect*p0Dn.GetBinError(bin)))
                         p0Dn.SetBinError(bin,p0Dn.GetBinError(bin)*(p0Dn.GetBinContent(bin)/nominal.GetBinContent(bin) if nominal.GetBinContent(bin)!=0 else 1))
+                        if options.noNegVar:
+                            p0Up = fixNegVariations(p0Up, report[p])
+                            p0Dn = fixNegVariations(p0Dn, report[p])
                         report[str(p0Up.GetName())[2:]] = p0Up
                         report[str(p0Dn.GetName())[2:]] = p0Dn
                         break # otherwise you apply more than once to the same bin if more regexps match
@@ -285,12 +359,12 @@ for signal in mca.listSignals():
     myprocs = ( backgrounds + [ signal ] ) if signal in signals else backgrounds
     if not os.path.exists(myout): os.system("mkdir -p "+myout)
     myyields = dict([(k,v) for (k,v) in allyields.iteritems()]) 
-    datacard = open(myout+binname+".card.txt", "w"); 
+    datacard = open(myout+filename+".card.txt", "w"); 
     datacard.write("## Datacard for cut file %s (signal %s)\n"%(args[1],signal))
     datacard.write("## Event selection: \n")
     for cutline in str(cuts).split("\n"):  datacard.write("##   %s\n" % cutline)
     if signal not in signals: datacard.write("## NOTE: no signal contribution found with this event selection.\n")
-    datacard.write("shapes *        * ../common/%s.input.root x_$PROCESS x_$PROCESS_$SYSTEMATIC\n" % binname)
+    datacard.write("shapes *        * ../common/%s.input.root x_$PROCESS x_$PROCESS_$SYSTEMATIC\n" % filename)
     datacard.write('##----------------------------------\n')
     datacard.write('bin         %s\n' % binname)
     datacard.write('observation %s\n' % myyields['data_obs'])
@@ -306,6 +380,8 @@ for signal in mca.listSignals():
     datacard.write('##----------------------------------\n')
     for name,effmap in systs.iteritems():
         datacard.write(('%-12s lnN' % name) + " ".join([kpatt % effmap[p]   for p in myprocs]) +"\n")
+    for name,effmap in systsU.iteritems():
+        datacard.write(('%-12s lnU' % name) + " ".join([kpatt % effmap[p]   for p in myprocs]) +"\n")
     for name,(effmap0,effmap12,mode) in systsEnv.iteritems():
         if mode in ["templates","lnN_in_shape_bins"]:
             datacard.write(('%-10s shape' % name) + " ".join([kpatt % effmap0[p] for p in myprocs]) +"\n")
@@ -316,26 +392,33 @@ for signal in mca.listSignals():
                 nbins = report[p].GetNbinsX()
                 if effmap0[p] in ['-','0']: continue
                 for bin in xrange(1,nbins+1):
-                    datacard.write(('%-10s shape' % ("%s_%s_bin%d"%(name,p,bin))) + " ".join([kpatt % effmap0[_p] for _p in myprocs]) +"\n")
+                    datacard.write(('%-10s shape' % ("%s_%s_%s_bin%d"%(name,binname,p,bin))) + " ".join([kpatt % effmap0[_p] for _p in myprocs]) +"\n")
         if mode == "envelop":
             datacard.write(('%-10s shape' % (name+"0")) + " ".join([kpatt % effmap0[p]  for p in myprocs]) +"\n")
         if mode in ["envelop", "shapeOnly"]:
             datacard.write(('%-10s shape' % (name+"1")) + " ".join([kpatt % effmap12[p] for p in myprocs]) +"\n")
             datacard.write(('%-10s shape' % (name+"2")) + " ".join([kpatt % effmap12[p] for p in myprocs]) +"\n")
     if options.verbose > -1:
-        print "Wrote to ",myout+binname+".card.txt"
+        print "Wrote to ",myout+filename+".card.txt"
     if options.verbose > 0:
         print "="*120
-        os.system("cat %s.card.txt" % (myout+binname));
+        os.system("cat %s.card.txt" % (myout+filename));
         print "="*120
 
 myout = outdir+"/common/";
 if not os.path.exists(myout): os.system("mkdir -p "+myout)
-workspace = ROOT.TFile.Open(myout+binname+".input.root", "RECREATE")
+workspace = ROOT.TFile.Open(myout+filename+".input.root", "RECREATE")
 for n,h in report.iteritems():
     if options.verbose > 0: print "\t%s (%8.3f events)" % (h.GetName(),h.Integral())
     workspace.WriteTObject(h,h.GetName())
 workspace.Close()
 
 if options.verbose > -1:
-    print "Wrote to ",myout+binname+".input.root"
+    print "Wrote to ",myout+filename+".input.root"
+
+if options.bookkeeping:
+    fcmd = open(outdir+"/makeShapeCardsSusy_command.txt", "w")
+    fcmd.write("%s\n\n" % " ".join(sys.argv))
+    fcmd.write("%s\n%s\n" % (args,options))
+    fcmd.close()
+

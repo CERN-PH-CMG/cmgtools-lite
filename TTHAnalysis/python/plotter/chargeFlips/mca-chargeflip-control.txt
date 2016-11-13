@@ -2,14 +2,9 @@ DY : DYJetsToLL_M10to50: xsec ; FillColor=ROOT.kCyan, Label="DY"
 DY : DYJetsToLL_M50:     xsec ; FillColor=ROOT.kCyan, Label="DY"
 
 
-# 2.26 /fb
-data: DoubleEG_Run2015C_25ns_16Dec2015
-data: DoubleEG_Run2015D_16Dec2015
-data: DoubleMuon_Run2015C_25ns_16Dec2015
-data: DoubleMuon_Run2015D_16Dec2015
-data: MuonEG_Run2015C_25ns_16Dec2015
-data: MuonEG_Run2015D_16Dec2015
-data: SingleElectron_Run2015C_25ns_16Dec2015
-data: SingleElectron_Run2015D_16Dec2015
-data: SingleMuon_Run2015C_25ns_16Dec2015
-data: SingleMuon_Run2015D_16Dec2015
+# 3.99 /fb
+data : DoubleEG_Run2016B_PromptReco_v2_runs_273150_274443+DoubleEG_Run2016B_PromptReco_v2_runs_274444_275125
+data : DoubleMuon_Run2016B_PromptReco_v2_runs_273150_274443+DoubleMuon_Run2016B_PromptReco_v2_runs_274444_275125
+data : MuonEG_Run2016B_PromptReco_v2_runs_273150_274443+MuonEG_Run2016B_PromptReco_v2_runs_274444_275125
+data : SingleElectron_Run2016B_PromptReco_v2_runs_273150_274443+SingleElectron_Run2016B_PromptReco_v2_runs_274444_275125
+data : SingleMuon_Run2016B_PromptReco_v2_runs_273150_274443+SingleMuon_Run2016B_PromptReco_v2_runs_274444_275125

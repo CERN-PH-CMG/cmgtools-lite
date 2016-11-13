@@ -7,6 +7,7 @@ class VertexWeightFriend:
         self.myvals = self.load(myfile,myhist)
         self.targetvals = self.load(targetfile,targethist)
         self.vtxCollectionInEvent = vtx_coll_to_reweight
+        self.warned = False
         def w2(t,m):
             if t == 0: return (0 if m else 1)
             return (t/m if m else 1)
@@ -55,9 +56,15 @@ class VertexWeightFriend:
     def listBranches(self):
         return [ (self.name,'F') ]
     def __call__(self,event):
-        nvtx = int(getattr(event,self.vtxCollectionInEvent))
-        weight = self.weights[nvtx] if nvtx < len(self.weights) else 1
-        return { self.name: weight }
+        if hasattr(event,self.vtxCollectionInEvent):
+            nvtx = int(getattr(event,self.vtxCollectionInEvent))
+            weight = self.weights[nvtx] if nvtx < len(self.weights) else 1
+            return { self.name: weight }
+        else:
+            if not self.warned:
+                print "WARNING! Variable ",self.vtxCollectionInEvent," is missing in the tree. Setting the weight to 1."
+                self.warned = True
+            return { self.name: 1 }
 
 if __name__ == '__main__':
     from sys import argv

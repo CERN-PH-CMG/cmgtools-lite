@@ -1,0 +1,5 @@
+cut-change: LepGood_charge\[iF_Recl\[1\]\]: (-LepGood_charge[iF_Recl[1]])
+weight: chargeFlipWeight_2lss(LepGood1_pt,LepGood1_eta,LepGood1_pdgId,LepGood2_pt,LepGood2_eta,LepGood2_pdgId)
+### 80X
+load-histo: QF_el : /afs/cern.ch/work/f/folguera/trees/ewkino/chargeMId_80X_2016_ewkino.root : elChMId
+

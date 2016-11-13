@@ -22,12 +22,12 @@ lepAna.inclusive_electron_pt  = 10
 eleID = "CBID"
 
 if eleID == "CBID":
-  lepAna.loose_electron_id  = "POG_Cuts_ID_SPRING15_25ns_v1_ConvVetoDxyDz_Veto_full5x5"
+  lepAna.loose_electron_id  = "POG_Cuts_ID_SPRING15_25ns_v1_ConvVetoDxyDz_Veto"
   lepAna.loose_electron_lostHits = 999. # no cut since embedded in ID
   lepAna.loose_electron_dxy    = 999. # no cut since embedded in ID
   lepAna.loose_electron_dz     = 999. # no cut since embedded in ID
 
-  lepAna.inclusive_electron_id  = "POG_Cuts_ID_SPRING15_25ns_v1_Veto_full5x5"
+  lepAna.inclusive_electron_id  = "POG_Cuts_ID_SPRING15_25ns_v1_Veto"
   lepAna.inclusive_electron_lostHits = 999. # no cut since embedded in ID
   lepAna.inclusive_electron_dxy    = 999. # no cut since embedded in ID
   lepAna.inclusive_electron_dz     = 999. # no cut since embedded in ID

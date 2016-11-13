@@ -1,0 +1,5 @@
+Triggers_MET\b: (!isData) || HLT_BIT_HLT_PFMETNoMu90_NoiseCleaned_PFMHTNoMu90_IDTight_v || HLT_BIT_HLT_PFMETNoMu90_JetIdCleaned_PFMHTNoMu90_IDTight_v || HLT_BIT_HLT_PFMETNoMu90_PFMHTNoMu90_IDTight_v ; AlsoData
+#Triggers_mmMET\b: HLT_BIT_HLT_DoubleMu3_PFMET50_v || (!isData); AlsoData
+#Triggers_singleMu\b: (!isData) || HLT_SingleMu
+
+

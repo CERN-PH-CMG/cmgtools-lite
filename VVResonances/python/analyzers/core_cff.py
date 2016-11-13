@@ -3,16 +3,14 @@ from PhysicsTools.Heppy.analyzers.core.all import *
 from PhysicsTools.Heppy.analyzers.objects.all import *
 from PhysicsTools.Heppy.analyzers.gen.all import *
 from CMGTools.VVResonances.analyzers.LeptonIDOverloader import *
+from CMGTools.VVResonances.analyzers.HbbTagComputer import *
 from CMGTools.VVResonances.analyzers.VVBuilder import *
 from CMGTools.VVResonances.analyzers.VTauBuilder import *
 from CMGTools.VVResonances.analyzers.Skimmer import *
 from CMGTools.VVResonances.analyzers.TopMergingAnalyzer import *
+from CMGTools.VVResonances.analyzers.ObjectWeightAnalyzer import *
 
 import os
-
-
-
-
 
 # Pick individual events (normally not in the path)
 eventSelector = cfg.Analyzer(
@@ -39,7 +37,7 @@ triggerAna = cfg.Analyzer(
 # Create flags for trigger bits
 triggerFlagsAna = cfg.Analyzer(
     TriggerBitAnalyzer, name="TriggerFlags",
-    
+
     processName = 'HLT2',
     fallbackProcessName = 'HLT',
     triggerBits = {
@@ -199,6 +197,37 @@ lepIDAna = cfg.Analyzer(
     name='lepIDOverloader'
 )
 
+
+lepWeightAna = cfg.Analyzer(
+    ObjectWeightAnalyzer, name="leptonWeightAnalyzer",
+    path='${CMSSW_BASE}/src/CMGTools/VVResonances/data',
+    collection = "selectedLeptons",
+    weights = [
+        #Muons from histograms
+        {'cut':lambda x: abs(x.pdgId())==13,'dimensions':2,'filename':'MuonID_Z_RunBCD_prompt80X_7p65.root','histoname':"MC_NUM_HighPtIDPt20andIPCut_DEN_genTracks_PAR_pt_spliteta_bin1/pair_ne_ratio",'x':lambda x:x.pt(),'y':lambda x: abs(x.eta()),'tag':'sfWV'},
+        {'cut':lambda x: abs(x.pdgId())==13,'dimensions':2,'filename':'MuonIso_Z_RunBCD_prompt80X_7p65.root','histoname':"MC_NUM_TightRelIso_DEN_TightID_PAR_pt_spliteta_bin1/pt_abseta_ratio",'x':lambda x:x.pt(),'y':lambda x: abs(x.eta()),'tag':'sfWV'},
+        {'cut':lambda x: abs(x.pdgId())==13,'dimensions':2,'filename':'SingleMuonTrigger_Z_RunBCD_prompt80X_7p65.root','histoname':"Mu50_OR_TkMu50_PtEtaBins_Run274954_to_276097/efficienciesDATA/pt_abseta_DATA",'x':lambda x:x.pt(),'y':lambda x: abs(x.eta()),'tag':'sfHLT'},
+        #Electrons flat from Sam
+        {'cut':lambda x: abs(x.pdgId())==11 and x.isEB(),'filename':'None','f':lambda x:0.961,'tag':'sfWV'},
+        {'cut':lambda x: abs(x.pdgId())==11 and x.isEE(),'filename':'None','f':lambda x:0.965,'tag':'sfWV'},
+        {'cut':lambda x: abs(x.pdgId())==11,'dimensions':2,'filename':'myTriggerScaleFactors.root','histoname':"EleTrigger",'x':lambda x:x.pt(),'y':lambda x: abs(x.eta()),'tag':'sfHLT'}
+        ]
+)
+
+
+
+
+
+
+
+
+hbbTagComputer = cfg.Analyzer(
+    HbbTagComputer,
+    name='hbbTagComputer',
+    path='RecoBTag/SecondaryVertex/data/BoostedDoubleSV_AK8_BDT_v3.weights.xml.gz'
+)
+
+
 metAna = cfg.Analyzer(
     METAnalyzer, name="metAnalyzer",
     metCollection     = "slimmedMETs",
@@ -238,8 +267,8 @@ jetAna = cfg.Analyzer(
     recalibrateJets = True, #'MC', # True, False, 'MC', 'Data'
     applyL2L3Residual = 'Data', # Switch to 'Data' when they will become available for Data
     recalibrationType = "AK4PFPuppi",
-    mcGT     = "Spring16_25nsV3_MC",
-    dataGT   = "Spring16_25nsV3_DATA",
+    mcGT     = "Spring16_25nsV6_MC",
+    dataGT   = "Spring16_25nsV6_DATA",
     jecPath = "${CMSSW_BASE}/src/CMGTools/RootTools/data/jec/",
     shiftJEC = 0, # set to +1 or -1 to apply +/-1 sigma shift to the nominal jet energies
     addJECShifts = True, # if true, add  "corr", "corrJECUp", and "corrJECDown" for each jet (requires uncertainties to be available!)
@@ -276,8 +305,8 @@ jetAnaAK8 = cfg.Analyzer(
     recalibrateJets = True, #'MC', # True, False, 'MC', 'Data'
     applyL2L3Residual = 'Data', # Switch to 'Data' when they will become available for Data
     recalibrationType = "AK8PFPuppi",
-    mcGT     = "Spring16_25nsV3_MC",
-    dataGT   = "Spring16_25nsV3_DATA",
+    mcGT     = "Spring16_25nsV6_MC",
+    dataGT   = "Spring16_25nsV6_DATA",
     jecPath = "${CMSSW_BASE}/src/CMGTools/RootTools/data/jec/",
     shiftJEC = 0, # set to +1 or -1 to apply +/-1 sigma shift to the nominal jet energies
     addJECShifts = True, # if true, add  "corr", "corrJECUp", and "corrJECDown" for each jet (requires uncertainties to be available!)
@@ -310,8 +339,26 @@ vvAna = cfg.Analyzer(
     bDiscriminator = "pfCombinedInclusiveSecondaryVertexV2BJetTags",
 #    boostedBdiscriminator = "pfBoostedDoubleSecondaryVertexAK8BJetTags",
     cDiscriminatorL = "pfCombinedCvsLJetTags",
-    cDiscriminatorB = "pfCombinedCvsBJetTags"
+    cDiscriminatorB = "pfCombinedCvsBJetTags",
+    btagCSVFile = "${CMSSW_BASE}/src/CMGTools/VVResonances/data/btag.csv",
+    puppiJecCorrFile = "${CMSSW_BASE}/src/CMGTools/VVResonances/data/puppiCorr.root"
+
 )
+
+
+
+
+metWeightAna = cfg.Analyzer(
+    ObjectWeightAnalyzer, name="metWeightAnalyzer",
+    path='${CMSSW_BASE}/src/CMGTools/VVResonances/data',
+    collection = "LNuJJ",
+    weights = [
+        #Trigger privately calculated different for electrons and muons
+        {'cut':lambda x: abs(x.leg1.leg1.pdgId())==13,'dimensions':1,'filename':'myTriggerScaleFactors.root','histoname':"METMu",'x':lambda x:x.leg1.leg2.pt(),'tag':'sfHLTMET'},
+        {'cut':lambda x: abs(x.leg1.leg1.pdgId())==11,'dimensions':1,'filename':'myTriggerScaleFactors.root','histoname':"METEle",'x':lambda x:x.leg1.leg2.pt(),'tag':'sfHLTMET'},
+        ]
+)
+
 
 
 vTauAna = cfg.Analyzer(
@@ -325,7 +372,7 @@ vTauAna = cfg.Analyzer(
 
 
 def doPruning():
-    print "Switching to prunning" 
+    print "Switching to pruning"
     jetAna.jetCol = 'slimmedJets'
 #    jetAna.mcGT     = "76X_mcRun2_asymptotic_v12"
 #    jetAna.dataGT   = "76X_dataRun2_v15_Run2015D_25ns"
@@ -351,15 +398,16 @@ coreSequence = [
     vertexAna,
     lepAna,
     lepIDAna,
+    lepWeightAna,
     jetAna,
     jetAnaAK8,
+    hbbTagComputer,
     metAna,
-#    tauAna,
-#    packedAna,
-#    multiStateAna,
     eventFlagsAna,
     triggerFlagsAna,
     mergedTruthAna,
     badMuonAna,
     badChargedHadronAna,
+    vvAna,
+    metWeightAna
 ]

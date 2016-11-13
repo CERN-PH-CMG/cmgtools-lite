@@ -5,9 +5,10 @@ import PhysicsTools.HeppyCore.framework.config as cfg
 
 
 #-------- SAMPLES AND TRIGGERS -----------
-from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv2 import DYJetsToLL_M50_LO
+from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv2 import DYJetsToLL_M50_LO, DYJetsToLL_M50_LO_2
 from CMGTools.RootTools.samples.samples_13TeV_DATA2016 import *
 from CMGTools.RootTools.samples.autoAAAconfig import *
+from CMGTools.Production.promptRecoRunRangeFilter import filterComponent
 
 
 #Load all analyzers
@@ -18,35 +19,37 @@ from CMGTools.HToZZ4L.tools.configTools import *
 
 #-------- SEQUENCE
 sequence = tnpSequence
-run = "Both"
+#run = "Both"
 #run = "Mu" 
-#run = "El"
+run = "El"
 
 from CMGTools.RootTools.samples.triggers_13TeV_DATA2016 import *
 
 #-------- SAMPLES AND TRIGGERS -----------
-for d in dataSamples_PromptReco:
-    d.triggers = triggers_1mu_iso if 'Muon' in d.name else triggers_1e
-    d.vetoTriggers = []
-    d.json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-274421_13TeV_PromptReco_Collisions16_JSON.txt'
+dataSamples_PromptReco = [ d for d in dataSamples_PromptReco if "PromptReco-v2" in d.dataset ]
 if   run == "Mu": dataSamples = [ d for d in dataSamples_PromptReco if "SingleM" in d.name ]
 elif run == "El": dataSamples = [ d for d in dataSamples_PromptReco if "SingleE" in d.name ]
 else            : dataSamples = [ d for d in dataSamples_PromptReco if ("SingleM" in d.name or "SingleE" in d.name) ]
-configureSplittingFromTime(dataSamples, 2.0, 2)
+for d in dataSamples[:]:
+    d.triggers = triggers_1mu_iso if 'Muon' in d.name else triggers_1e
+    d.vetoTriggers = []
+    d.json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_275784-276811_13TeV_PromptReco_Collisions16_JSON_NoL1T.txt' 
+    filterComponent(d,1)
+    if not d.files: dataSamples.remove(d)
+configureSplittingFromTime(dataSamples, 10.0, 2)
     
-mcSamples = [ DYJetsToLL_M50_LO ]
+mcSamples = [ DYJetsToLL_M50_LO_2 ]
 for d in mcSamples:
     d.triggers = [] # triggers_1mu + triggers_1e
     d.vetoTriggers = []
-configureSplittingFromTime(mcSamples, 5.0, 2)
+configureSplittingFromTime(mcSamples, 10.0, 2)
 
-if True:
-    prescaleComponents(mcSamples, 10)
-    dataSamples = [ d for d in dataSamples if 'PromptReco_v2' in d.name ]
+if False:
+    prescaleComponents(mcSamples, 4)
     #redefineRunRange(dataSamples,[274315,274315])
     for d in dataSamples: d.splitFactor = 3
 
-selectedComponents = dataSamples + mcSamples
+selectedComponents = mcSamples # dataSamples# + mcSamples
 if run == "Mu":
     fastSkim1LTag.eleCut = lambda ele : False
     fastSkim2L.eleCut = lambda ele : False
@@ -72,4 +75,4 @@ if test in ("1","1M","1E"):
 elif test in ('2','3'):
     doTestN(test,selectedComponents)
 
-config = autoConfig(selectedComponents, sequence)
+config = autoConfig(selectedComponents, sequence)#, xrd_aggressive=-1)
