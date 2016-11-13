@@ -145,9 +145,6 @@ tZq_ll = kreator.makeMCComponent("tZq_ll", "/tZq_ll_4f_13TeV-amcatnlo-pythia8_Tu
 #tZq_nunu = kreator.makeMCComponent("tZq_nunu", "/tZq_nunu_4f_13TeV-amcatnlo-pythia8_TuneCUETP8M1/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM", "CMS", ".*root", 0.1379 )
 
 SingleTop = [
-TToLeptons_tch_amcatnlo,
-#TBarToLeptons_tch_amcatnlo,
-#TToLeptons_tch_amcatnlo_ext,
 TToLeptons_tch_powheg,
 TBarToLeptons_tch_powheg,
 TToLeptons_sch_amcatnlo,
