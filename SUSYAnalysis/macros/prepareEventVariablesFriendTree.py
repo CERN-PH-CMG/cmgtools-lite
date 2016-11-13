@@ -34,6 +34,10 @@ MODULES.append( ('1l_SysWeights', EventVars1LWeightsForSystematics()) )
 from CMGTools.SUSYAnalysis.tools.eventVars_1l_bkgDilep import EventVars1L_bkgDilep
 MODULES.append( ('1l_bkgDilep', EventVars1L_bkgDilep()) )
 
+# iso track MT2 and MT2W
+from CMGTools.SUSYAnalysis.tools.eventVars_1l_isoMT2 import EventVars1L_isoMT2
+MODULES.append( ('1l_isoMT2', EventVars1L_isoMT2()) )
+
 '''
 from CMGTools.SUSYAnalysis.tools.eventVars_1l_top import EventVars1L_Top
 MODULES.append( ('1l_TopVars', EventVars1L_Top()) )
