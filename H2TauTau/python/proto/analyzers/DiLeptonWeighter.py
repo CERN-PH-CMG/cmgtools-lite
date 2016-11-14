@@ -71,13 +71,14 @@ class DiLeptonWeighter(Analyzer):
             eff_data_e_high = self.scaleFactors['trigger_e_high'].getEfficiencyData(e_pt, e_eta) 
             eff_data_e_low = self.scaleFactors['trigger_e_low'].getEfficiencyData(e_pt, e_eta) 
 
-            eff_mc_mu_high = self.scaleFactors['trigger_mu_high'].getEfficiencyMC(mu_pt, mu_eta) 
-            eff_mc_mu_low = self.scaleFactors['trigger_mu_low'].getEfficiencyMC(mu_pt, mu_eta) 
-            eff_mc_e_high = self.scaleFactors['trigger_e_high'].getEfficiencyMC(e_pt, e_eta) 
-            eff_mc_e_low = self.scaleFactors['trigger_e_low'].getEfficiencyMC(e_pt, e_eta) 
+            # eff_mc_mu_high = self.scaleFactors['trigger_mu_high'].getEfficiencyMC(mu_pt, mu_eta) 
+            # eff_mc_mu_low = self.scaleFactors['trigger_mu_low'].getEfficiencyMC(mu_pt, mu_eta) 
+            # eff_mc_e_high = self.scaleFactors['trigger_e_high'].getEfficiencyMC(e_pt, e_eta) 
+            # eff_mc_e_low = self.scaleFactors['trigger_e_low'].getEfficiencyMC(e_pt, e_eta) 
             
             eff_data = eff_data_mu_high*eff_data_e_low + eff_data_mu_low*eff_data_e_high - eff_data_mu_high*eff_data_e_high
-            eff_mc = eff_mc_mu_high*eff_mc_e_low + eff_mc_mu_low*eff_mc_e_high - eff_mc_mu_high*eff_mc_e_high
+            # eff_mc = eff_mc_mu_high*eff_mc_e_low + eff_mc_mu_low*eff_mc_e_high - eff_mc_mu_high*eff_mc_e_high
+            eff_mc = 1.
 
 
             setattr(electron, 'weight_trigger', eff_data/eff_mc)

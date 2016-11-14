@@ -1,0 +1,21 @@
+trigger    : $DATA{HLT2_MET90MHT90NoMu} $MC{1}
+MET filters: Flag_HBHENoiseFilter>=1 && Flag_HBHENoiseIsoFilter>=1 && Flag_goodVertices>=1 && Flag_eeBadScFilter>=1 && Flag_EcalDeadCellTriggerPrimitiveFilter>=1 && Flag_globalTightHalo2016Filter >=1 && Flag_badChargedHadronFilter>=1 && Flag_badMuonFilter>=1 
+met200     : met_pt > 200
+ISR_pt     : ISRJet_pt > 250
+ISR_id     : ISRJet_id == 5 
+lepVeto    : nLepGood == 0
+tauVeto    : nTauGood == 0
+
+dPhi_J123_MET: abs(dphiJet1Met) > 0.5 && abs(dphiJet2Met) > 0.15 && abs(dphiJet3Met) > 0.15
+dPhi_ISR_MET : abs(deltaPhi(ISRJet_phi,met_phi)) > 2
+
+MET_sqrtHT : met_pt/sqrt(htJet20j) > 10
+MET_HT     : met_pt/htJet20j> 0.6667
+
+oneSoftB   : nBJetsMedium20 >= 1
+#MTB        : min(mtB1,mtB2)  < 100
+#twoIVF_pt20 : Sum$(abs(SV_dxy) < 3 && SV_cosTheta > 0.98 && SV_jetPt < 20 && SV_ntracks >=3 && SV_sip3d > 4 ) >= 2
+oneIVF_pt20 : Sum$(abs(SV_dxy) < 3 && SV_cosTheta > 0.98 && SV_jetPt < 20 && SV_ntracks >=3 && SV_sip3d > 4 ) >= 1
+#oneIVF     : Sum$(abs(SV_dxy) < 3 && SV_cosTheta > 0.98 && SV_jetPt < 20 && SV_ntracks >=3 && SV_sip3d > 4 ) >= 1
+#boost : ISRJet_pt > 500 && met_pt > 400
+

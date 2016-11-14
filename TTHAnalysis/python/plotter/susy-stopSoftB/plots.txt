@@ -1,0 +1,70 @@
+
+yield: 0.5 : 1,0,1; XTitle="All or Nothing", MoreY=2
+
+met:  met: 26,200,1500 ; XTitle="E_{T}^{miss}  [GeV]", Logy
+htJet20j:  htJet20j: 24,300,1500 ; XTitle="H_{T}(jet p_{T} > 20)  [GeV]", Logy
+mhtJet20:  mhtJet20: 26,200,1500 ; XTitle="H_{T}^{miss}(jet p_{T} > 20)  [GeV]", Logy
+htJet40j:  htJet40j: 26,200,1500 ; XTitle="H_{T}(jet p_{T} > 40)  [GeV]", Logy
+mhtJet40:  mhtJet40: 26,200,1500 ; XTitle="H_{T}^{miss}(jet p_{T} > 40)  [GeV]", Logy
+
+nTauGood  : nTauGood  : [-0.5,0.5,1.5,2.5]  ; XTitle='N(#tau\, tight)', XNDiv=505, Logy
+nLepGood  : nLepGood  : [-0.5,0.5,1.5,2.5]  ; XTitle='N(l\, tight)', XNDiv=505, Logy
+nLepOther : nLepOther : [-0.5,0.5,1.5,2.5] ; XTitle='N(l\, fail)', XNDiv=505, Logy
+
+nSoftMu       : Sum$(abs(LepOther_pdgId) == 13 && LepOther_pt > 5 && LepOther_pt < 20 && LepOther_mediumMuonId == 1 && deltaR(LepOther_eta,LepOther_phi,Jet_eta[0],Jet_phi[0]) > 0.4)  : [-0.5,0.5,1.5,2.5] ; XTitle='N(lep\, fail)', XNDiv=505, Logy
+nSoftIVF_pt40 : Sum$(abs(SV_dxy)<2 && SV_cosTheta > 0.98 && SV_ntracks >= 3 && SV_sip3d > 4 && SV_jetPt < 40)  : [-0.5,0.5,1.5,2.5] ; XTitle='N(IVF\, p_{T}(j) < 40)', XNDiv=505, Logy
+nSoftIVF_pt20 : Sum$(abs(SV_dxy)<2 && SV_cosTheta > 0.98 && SV_ntracks >= 3 && SV_sip3d > 4 && SV_jetPt < 20)  : [-0.5,0.5,1.5,2.5] ; XTitle='N(IVF\, p_{T}(j) < 20)', XNDiv=505, Logy
+
+### JETS
+nJet20 : nJet               : [0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5] ; XTitle='N(jet\, p_{T} > 20)', Logy
+nJet40 : Sum$(Jet_pt > 40)  : [0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5] ; XTitle='N(jet\, p_{T} > 40)', Logy
+
+nBJetsLoose20 : nBJetsLoose20 : [-0.5,0.5,1.5,2.5,3.5,4.5] ; XTitle='N(jet\, p_{T} > 20\, CSV Loose)', XNDiv=505, Logy
+nBJetsMedium20 : nBJetsMedium20 : [-0.5,0.5,1.5,2.5,3.5,4.5] ; XTitle='N(jet\, p_{T} > 20\, CSV Medium)', XNDiv=505, Logy
+nBJetsLoose20to40 : nBJetsLoose20-nBJetsLoose40 : [-0.5,0.5,1.5,2.5,3.5,4.5] ; XTitle='N(jet\, 20 < p_{T} < 40\, CSV Loose)', XNDiv=505, Logy
+nBJetsMedium20to40 : nBJetsMedium20-nBJetsMedium40 : [-0.5,0.5,1.5,2.5,3.5,4.5] ; XTitle='N(jet\, 20 < p_{T} < 40\, CSV Medium)', XNDiv=505, Logy
+nBJetsLoose40 : nBJetsLoose40 : [-0.5,0.5,1.5,2.5,3.5,4.5] ; XTitle='N(jet\, p_{T} > 40\, CSV Loose)', XNDiv=505, Logy
+nBJetsMedium40 : nBJetsMedium40 : [-0.5,0.5,1.5,2.5,3.5,4.5] ; XTitle='N(jet\, p_{T} > 40\, CSV Medium)', XNDiv=505, Logy
+
+ISRJetPt1: ISRJet_pt: 26,200,1500; XTitle="ISR jet p_{T} [GeV]", Legend='TR', Logy
+ISRMetDPhi: abs(deltaPhi(ISRJet_phi,met_phi)): 11,2,3.14; XTitle="#Delta#phi(ISR\,E_{T}^{miss})", Legend='TL'
+
+metOverSqrHT : met_pt/sqrt(htJet20j) : 15,10,40 ; XTitle="E_{T}^{miss}/#sqrt{H_{T}}", Logy
+metOverHT : met_pt/htJet20j : 40,0,2; XTitle="E_{T}^{miss}/H_{T}", Logy
+
+dphiJet1Met : dphiJet1Met : 10,0,3.15; XTitle="#Delta#phi(j1\,E_{T}^{miss})", Legend='TL', MoreY=1.5, IncludeOverflows=False
+dphiJet2Met : dphiJet2Met : 10,0,3.15; XTitle="#Delta#phi(j1\,E_{T}^{miss})", Legend='TL', MoreY=1.5, IncludeOverflows=False
+dphiJet3Met : dphiJet3Met : 10,0,3.15; XTitle="#Delta#phi(j1\,E_{T}^{miss})", Legend='TL', MoreY=1.5, IncludeOverflows=False
+dphiJet4Met : dphiJet4Met : 10,0,3.15; XTitle="#Delta#phi(j1\,E_{T}^{miss})", Legend='TL', MoreY=1.5, IncludeOverflows=False
+
+mtB1 : mtB1 : 20,0,500 ; XTitle="M_{T}(b_{1}\,E_{T}^{miss})", Legend='TL', MoreY=1.5
+mtB2 : mtB2 : 20,0,500 ; XTitle="M_{T}(b_{2}\,E_{T}^{miss})", Legend='TL', MoreY=1.5
+
+
+# Flag_HBHENoiseFilter : Flag_HBHENoiseFilter >=1 : 2,-0.5,1.5 ; Legend="TL"
+# Flag_HBHENoiseIsoFilter : Flag_HBHENoiseIsoFilter >=1 : 2,-0.5,1.5 ; Legend="TL" 
+# Flag_goodVertices : Flag_goodVertices >=1 : 2,-0.5,1.5 ; Legend="TL"
+# Flag_eeBadScFilter : Flag_eeBadScFilter >=1 : 2,-0.5,1.5 ; Legend="TL"
+# Flag_EcalDeadCellTriggerPrimitiveFilter : Flag_EcalDeadCellTriggerPrimitiveFilter >=1 : 2,-0.5,1.5 ; Legend="TL"
+# Flag_globalTightHalo2016Filter : Flag_globalTightHalo2016Filter  >=1 : 2,-0.5,1.5 ; Legend="TL"
+# Flag_badChargedHadronFilter : Flag_badChargedHadronFilter >=1 : 2,-0.5,1.5 ; Legend="TL"
+# Flag_badMuonFilter : Flag_badMuonFilter >=1  : 2,-0.5,1.5 ; Legend="TL"
+
+# SV_pt : SV_pt : 12,0,60; XTitle="SV p_{T}"
+# SV_pt_zoom : SV_pt : 20,0,20; XTitle="SV p_{T}", IncludeOverflows=False
+# SV_mass : SV_mass : 12,0,6; XTitle="SV mass [GeV]"
+# SV_eta : abs(SV_eta) : 12,0,2.4; XTitle="SV |eta|"
+# SV_ntracks : SV_ntracks : [0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5,10.5]; XTitle="N(trk)"
+# SV_c2n: SV_chi2/SV_ndof : 12,0,5; XTitle="SV normalized #chi^{2}"
+# SV_sip2d: abs(SV_dxy/SV_edxy) : 12,0,40; XTitle="S_{IP2D}"
+# #SV_sip2d_zoom: abs(SV_dxy/SV_edxy) : 20,0,10; XTitle="S_{IP2D}", Legend="TL", IncludeOverflows=False
+# SV_sip3d: SV_sip3d : 12,0,40; XTitle="S_{IP3D}"
+# #SV_sip3d_zoom: SV_sip3d : 20,0,10; XTitle="S_{IP3D}", Legend="TL", IncludeOverflows=False
+# SV_ip2d: abs(SV_dxy) : 12,0,1.2; XTitle="IP_{2D} [cm]"
+# SV_ip2d_log: abs(SV_dxy) : 12,0,2.4; XTitle="IP_{2D} [cm]", Logy
+# SV_ip3d: SV_ip3d : 12,0,1.2; XTitle="IP_{3D} [cm]"
+# SV_ip3d_log: SV_ip3d : 12,0,2.4; XTitle="IP_{3D} [cm]", Logy
+# SV_theta: acos(SV_cosTheta): 12,0,0.24; XTitle="p-r angle [rad]", XNDiv=505
+# #SV_cosTheta: SV_cosTheta: 12,0.95,1.0; XTitle="cos(p-r) angle", XNDiv=505
+# SV_mva: SV_mva: 20, 0.8, 1; XTitle="SV mva", Legend="TL", XNDiv=505
+# SV_jetPt: SV_jetPt : [0,20,30,40]; XTitle="SV p_{T}(jet)", MoreY=1.5, Legend="TL"

@@ -1,0 +1,11 @@
+nominal: puw*SF_trigmetnomu*SF_LepTightLoose*SF_BTag*SF_NLO_QCD*SF_NLO_EWK
+QCD_renScaleUp: puw*SF_trigmetnomu*SF_LepTightLoose*SF_BTag*SF_NLO_QCD_renScaleUp*SF_NLO_EWK
+QCD_renScaleDown: puw*SF_trigmetnomu*SF_LepTightLoose*SF_BTag*SF_NLO_QCD_renScaleDown*SF_NLO_EWK
+QCD_facScaleUp: puw*SF_trigmetnomu*SF_LepTightLoose*SF_BTag*SF_NLO_QCD_facScaleUp*SF_NLO_EWK
+QCD_facScaleDown: puw*SF_trigmetnomu*SF_LepTightLoose*SF_BTag*SF_NLO_QCD_facScaleDown*SF_NLO_EWK
+QCD_pdfUp: puw*SF_trigmetnomu*SF_LepTightLoose*SF_BTag*SF_NLO_QCD_pdfUp*SF_NLO_EWK
+QCD_pdfDown: puw*SF_trigmetnomu*SF_LepTightLoose*SF_BTag*SF_NLO_QCD_pdfDown*SF_NLO_EWK
+EWK_up: puw*SF_trigmetnomu*SF_LepTightLoose*SF_BTag*SF_NLO_EWK_up*SF_NLO_QCD
+EWK_down: puw*SF_trigmetnomu*SF_LepTightLoose*SF_BTag*SF_NLO_EWK_down*SF_NLO_QCD
+lepID_up: puw*SF_trigmetnomu*SF_LepTightLooseUp*SF_BTag*SF_NLO_QCD*SF_NLO_EWK
+lepID_down: puw*SF_trigmetnomu*SF_LepTightLooseDown*SF_BTag*SF_NLO_QCD*SF_NLO_EWK

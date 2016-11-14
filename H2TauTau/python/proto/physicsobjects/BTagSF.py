@@ -18,7 +18,7 @@ class BTagSF(object):
         self.btag_eff_oth = self.mc_eff_file.Get('btag_eff_oth')
 
         # b-tag SFs from POG
-        calib = ROOT.BTagCalibration("csvv2", os.path.expandvars("$CMSSW_BASE/src/CMGTools/H2TauTau/data/CSVv2_4invfb.csv"))
+        calib = ROOT.BTagCalibration("csvv2", os.path.expandvars("$CMSSW_BASE/src/CMGTools/H2TauTau/data/CSVv2_ichep.csv"))
         
         op_dict = {
             'loose':0,
@@ -74,14 +74,6 @@ class BTagSF(object):
             else:
                 return False
 
-        if jetflavor in [4, 5]:
-            if pt > 670.:
-                pt = 670.
-            if pt < 30.:
-                pt = 30.
-
-        if jetflavor not in [4, 5] and pt > 1000.:
-            pt = 1000.
 
         SFb = self.getPOGSFB(pt, abs(eta), jetflavor)
         eff_b = self.getMCBTagEff(pt, abs(eta), jetflavor)
@@ -121,4 +113,5 @@ if __name__ == '__main__':
 
     btag = BTagSF(12345)
     print 'created BTagSF instance'
+    print btag.isBTagged(25., 2.3, 0.9, 5, False)
 

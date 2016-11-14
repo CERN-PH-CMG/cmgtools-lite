@@ -172,19 +172,22 @@ elif what == "CR2L":
         muons = 'slimmedMuons', muCut = lambda mu : mu.pt() > 5 and mu.isLooseMuon(),
         electrons = 'slimmedElectrons', eleCut = lambda ele : ele.pt() > 5,
         minLeptons = 2,
+        ptCuts = [20,10],
     )
     susyCoreSequence.insert(susyCoreSequence.index(skimAnalyzer)+1, fastSkim)
     #mcSamples = [ TTJets, TBar_tWch, T_tWch, TBarToLeptons_tch_powheg, TToLeptons_tch_powheg,
     #              WJetsToLNu, DYJetsToLL_M10to50, DYJetsToLL_M50, WWTo2L2Nu, WZTo3LNu ]
-    mcSamples = [ TT_pow_ext3, DYJetsToLL_M10to50, DYJetsToLL_M10to50_LO, DY1JetsToLL_M10to50, DY2JetsToLL_M10to50 ]
+    mcSamples = [ TTJets_LO, TTLep_powUEP8M2, TTSemi_powUEP8M2 ] #, DYJetsToLL_M10to50, DYJetsToLL_M10to50_LO, DY1JetsToLL_M10to50, DY2JetsToLL_M10to50 ]
+    #jetAna.mcGT = "Spring16_FastSimV1_MC"
+    #jetAna.applyL2L3Residual = False
     autoAAA(mcSamples)
-    cropToLumi(mcSamples,100) 
+    cropToLumi(mcSamples,50) 
     #mcSamples = WNJets
     configureSplittingFromTime(mcSamples, 12, 2)
     #configureSplittingFromTime(WNJets, 5, 1)
     dataSamples = [ ]; vetoTrig = []
     for name, trig in ("MuonEG",triggers_mue),: # ("DoubleMu",triggers_mumu), ("DoubleEG",triggers_ee):#, ("SingleMu", triggers_1mu_iso), ("SingleEl", triggers_1e):
-        for d in MuonEG_29Jul2016: #dataSamples_Run2016C_v2 + dataSamples_Run2016D_v2 :
+        for d in [ MuonEG_Run2016G_PromptReco_v1 ]: #MuonEG_more: #29Jul2016: #dataSamples_Run2016C_v2 + dataSamples_Run2016D_v2 :
             if name in d.name: 
                 d.triggers = trig[:]; d.vetoTriggers = vetoTrig[:]
                 dataSamples.append(d)
@@ -193,10 +196,10 @@ elif what == "CR2L":
     #configureSplittingFromTime([d for d in dataSamples if "Single" in d.name], 8, 2)
 
 for d in dataSamples:
-    d.json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-276811_13TeV_PromptReco_Collisions16_JSON.txt' 
+    d.json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-280385_13TeV_PromptReco_Collisions16_JSON_NoL1T.txt'
     if "PromptReco" in d.dataset: filterPromptRecoComponent(d,verbose=0)
 
-selectedComponents = dataSamples # [mcSamplesMap["ZJetsToNuNu_HT800t1200"]]#sigSamples # dataSamples # mcSamples #
+selectedComponents = mcSamples # [mcSamplesMap["ZJetsToNuNu_HT800t1200"]]#sigSamples # dataSamples # mcSamples #
 
 
 #-------- SEQUENCE -----------
@@ -225,9 +228,9 @@ elif test == "sync":
         selectedComponents[0].splitFactor = 1
         insertEventSelector(sequence)
 elif test in ('2','3','5s'):
-    from CMGTools.Production.promptRecoRunRangeFilter import filterWithCollection
-    for comp in selectedComponents:
-        if comp.isData and "PromptReco" in comp.name: comp.files = filterWithCollection(comp.files, [274315,275658,275832,276363,276454])
+    #from CMGTools.Production.promptRecoRunRangeFilter import filterWithCollection
+    #for comp in selectedComponents:
+    #    if comp.isData and "PromptReco" in comp.name: comp.files = filterWithCollection(comp.files, [274315,275658,275832,276363,276454])
     doTestN(test,selectedComponents)
 elif test in ('2M',):
     selectedComponents = doTestN('2',mcSamples)
