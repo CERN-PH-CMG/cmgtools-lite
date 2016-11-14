@@ -1074,9 +1074,9 @@ class PlotMaker:
                                     c1.SetRightMargin(0.20)
                                     plot.SetContour(100)
                                     ROOT.gStyle.SetPaintTextFormat(pspec.getOption("PaintTextFormat","g"))
+                                    plot.SetMarkerSize(pspec.getOption("MarkerSize",1))
                                     if pspec.hasOption('ZMin') and pspec.hasOption('ZMax'):
                                         plot.GetZaxis().SetRangeUser(pspec.getOption('ZMin',1.0), pspec.getOption('ZMax',1.0))
-                                    plot.SetMarkerSize(pspec.getOption("MarkerSize",1.6))
                                     plot.SetMarkerStyle(mca.getProcessOption(p,'MarkerStyle',1))
                                     plot.SetMarkerColor(mca.getProcessOption(p,'FillColor',ROOT.kBlack))
                                     plot.Draw(pspec.getOption("PlotMode","COLZ TEXT45"))

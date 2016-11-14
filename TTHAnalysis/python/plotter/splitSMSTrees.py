@@ -119,7 +119,6 @@ if __name__ == "__main__":
 
         for m,elist in allmasses.iteritems():
             splitdir = '%s/SMS_%d_%d_%s_Chunk%d'%(outdir,m[0],m[1],dset,random.randint(1e5,1e10))
-            print splitdir
             os.system("mkdir -p "+splitdir)
             os.system("mkdir -p %s/%s"%(splitdir,treename))
             if os.path.exists('%s/%s/%s/tree.root'%(remdir,splitdir.split('/')[-1],treename)): raise RuntimeError, 'Output file already exists'
