@@ -451,14 +451,14 @@ class TreeToYield:
             self._tree.Draw("%s>>%s" % (expr,"dummyk"), cut, "goff", maxEntries, firstEntry)
             self.negativeCheck(histo)
             histo.SetDirectory(0)
-            self._tfile.Close()
+            if(closeTreeAfter) self._tfile.Close()
             return histo.GetHisto().Clone(name)
         #elif not self._isdata and self.getOption("KeysPdf",False):
         #else:
         #    print "Histogram for %s/%s has %d entries, so won't use KeysPdf (%s, %s) " % (self._cname, self._name, histo.GetEntries(), canKeys, self.getOption("KeysPdf",False))
         self.negativeCheck(histo)
         histo.SetDirectory(0)
-        self._tfile.Close()
+        if(closeTreeAfter) self._tfile.Close()
         return histo.Clone(name)
     def negativeCheck(self,histo):
         if not self._options.allowNegative and not self._name in self._options.negAllowed: 

@@ -1074,17 +1074,11 @@ class PlotMaker:
                                     c1.SetRightMargin(0.20)
                                     plot.SetContour(100)
                                     ROOT.gStyle.SetPaintTextFormat(pspec.getOption("PaintTextFormat","g"))
-                                    if   p in ["background"]: style = 21; color = ROOT.kBlack
-                                    elif p in ["signal"    ]: style = 22; color = ROOT.kRed
-                                    elif p in ["data"      ]: style = 20; color = ROOT.kBlack
-                                    elif p in ["total"     ]: style = 20; color = ROOT.kBlack
-                                    else: 
-                                        style = mca.getProcessOption(p,'MarkerStyle',1          )
-                                        color = mca.getProcessOption(p,'MarkerColor',ROOT.kBlack)
                                     if pspec.hasOption('ZMin') and pspec.hasOption('ZMax'):
                                         plot.GetZaxis().SetRangeUser(pspec.getOption('ZMin',1.0), pspec.getOption('ZMax',1.0))
-                                    plot.SetMarkerStyle(style)
-                                    plot.SetMarkerColor(color)
+                                    plot.SetMarkerSize(pspec.getOption("MarkerSize",1.6))
+                                    plot.SetMarkerStyle(mca.getProcessOption(p,'MarkerStyle',1))
+                                    plot.SetMarkerColor(mca.getProcessOption(p,'FillColor',ROOT.kBlack))
                                     plot.Draw(pspec.getOption("PlotMode","COLZ TEXT45"))
                                     c1.Print("%s/%s_%s.%s" % (fdir, outputName, p, ext))
                                 if "data" in pmap and "TGraph" in pmap["data"].ClassName():
@@ -1094,7 +1088,6 @@ class PlotMaker:
                                         if p not in pmap: continue
                                         plot = pmap[p]
                                         c1.SetRightMargin(0.20)
-                                        plot.SetMarkerStyle(1)
                                         plot.SetContour(100)
                                         plot.Draw(pspec.getOption("PlotMode","COLZ TEXT45"))
                                         pmap["data"].Draw("P SAME")
