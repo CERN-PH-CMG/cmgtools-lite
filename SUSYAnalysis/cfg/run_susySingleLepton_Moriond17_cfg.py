@@ -21,6 +21,17 @@ eleID = "CBID"
 # Isolation
 isolation = "miniIso"
 
+#JEC
+jetAna.mcGT = "Spring16_25nsV6_MC"
+jetAna.dataGT = "Spring16_25nsV6_DATA"
+##Lets turn everything on for now, at least we know what is applied
+jetAna.addJECShifts = True
+jetAna.smearJets = True
+jetAna.recalibrateJets = True 
+jetAna.applyL2L3Residual = True
+metAna.recalibrate = True
+
+
 #-------- HOW TO RUN
 #sample = 'MC'
 sample = 'data'
@@ -204,19 +215,8 @@ jetAna.jetEta = 2.4
 #jetAna.cleanSelectedLeptons = True
 jetAna.minLepPt = 10
 
-## JEC
-jetAna.mcGT = "Spring16_25nsV6_MC"
-jetAna.dataGT = "Spring16_25nsV6_DATA"
+## JetAna
 jetAna.doQG = True
-# add also JEC up/down shifts corrections
-##Lets turn everything off for now, and wait for feedback
-########################################### 
-jetAna.addJECShifts = False
-jetAna.smearJets = False 
-jetAna.recalibrateJets = False 
-jetAna.applyL2L3Residual = False
-metAna.recalibrate = False
-##########################################
 
 ## Iso Track
 isoTrackAna.setOff=False
