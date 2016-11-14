@@ -162,7 +162,6 @@ def reMax(hist,hist2,islog,factorLin=1.3,factorLog=2.0,doWide=False):
           max2 = max(max2, (hist2.GetBinContent(b) + hist2.GetBinError(b))*(factorLog if islog else factorLin))
     if max2 > max0:
         max0 = max2;
-        print "i am here with "+str(islog)
         if islog: hist.GetYaxis().SetRangeUser(0.1 if doWide else 0.9, max0)
         else:     hist.GetYaxis().SetRangeUser(0,max0)
 

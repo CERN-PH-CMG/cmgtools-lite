@@ -12,10 +12,10 @@ BEGIN::3l
   friendFile  #:= {eventBTagWeight             : eventBTagWeight.py          }
   sfriends    +:= leptonJetReCleanerSusyEWK3L;leptonBuilderEWK;eventBTagWeight
   friends     +:=
-  macros      +:= susy-ewkino/3l/functionsEWK.cc
+  macros      +:= susy-ewkino/3l/functionsEWK.cc;susy-ewkino/functionsSF.cc;susy-ewkino/functionsPUW.cc
   mccs        +:= susy-ewkino/3l/mcc_ewkino.txt
-  weight       := puw2016_nInt_12p9fb(nTrueInt)*triggerSF(BR, LepSel_pt[0], LepSel_pdgId[0], LepSel_pt[1], LepSel_pdgId[1], LepSel_pt[2], LepSel_pdgId[2])*leptonSF(getLeptonSF(LepSel_pt[0], LepSel_eta[0], LepSel_pdgId[0]), getLeptonSF(LepSel_pt[1], LepSel_eta[1], LepSel_pdgId[1]), getLeptonSF(LepSel_pt[2], LepSel_eta[2], LepSel_pdgId[2]))*eventBTagSF
-  weightFS     := leptonSFFS(getLeptonSFFS(LepSel_pt[0], LepSel_eta[0], LepSel_pdgId[0]), getLeptonSFFS(LepSel_pt[1], LepSel_eta[1], LepSel_pdgId[1]), getLeptonSFFS(LepSel_pt[2], LepSel_eta[2], LepSel_pdgId[2]))
+  weight       := puw_nInt_ICHEP(nTrueInt) * triggerSF(BR, LepSel_pt[0], LepSel_pdgId[0], LepSel_pt[1], LepSel_pdgId[1], LepSel_pt[2], LepSel_pdgId[2]) * leptonSF(getLepSF(LepSel_pt[0], LepSel_eta[0], LepSel_pdgId[0]), getLepSF(LepSel_pt[1], LepSel_eta[1], LepSel_pdgId[1]), getLepSF(LepSel_pt[2], LepSel_eta[2], LepSel_pdgId[2])) * eventBTagSF
+  weightFS     := leptonSFFS(getLepSFFS(LepSel_pt[0], LepSel_eta[0], LepSel_pdgId[0]), getLepSFFS(LepSel_pt[1], LepSel_eta[1], LepSel_pdgId[1]), getLepSFFS(LepSel_pt[2], LepSel_eta[2], LepSel_pdgId[2]))
   flags       +:=
   flagsDumps  +:=
   flagsEffs   +:=
@@ -37,9 +37,9 @@ BEGIN::3l
   wVarsFSJec   := 1;1;1
   wVarsFSMet   := 1;1
   wVarsFS     #:= {bTagFS   : eventBTagSF_up_correlated/eventBTagSF ; eventBTagSF_down_correlated/eventBTagSF }
-  wVarsFS     #:= {puw      : puw2016_nInt_12p9fb(nTrueInt,1); puw2016_nInt_12p9fb(nTrueInt,-1) }
-  wVarsFS     #:= {lepSF    : leptonSF(getLeptonSF(LepSel_pt[0], LepSel_eta[0], LepSel_pdgId[0],1), getLeptonSF(LepSel_pt[1], LepSel_eta[1], LepSel_pdgId[1],1), getLeptonSF(LepSel_pt[2], LepSel_eta[2], LepSel_pdgId[2],1));leptonSF(getLeptonSF(LepSel_pt[0], LepSel_eta[0], LepSel_pdgId[0],-1), getLeptonSF(LepSel_pt[1], LepSel_eta[1], LepSel_pdgId[1],-1), getLeptonSF(LepSel_pt[2], LepSel_eta[2], LepSel_pdgId[2],-1))}
-  wVarsFS     #:= {lepSFFS  : leptonSFFS(getLeptonSFFS(LepSel_pt[0], LepSel_eta[0], LepSel_pdgId[0],1), getLeptonSFFS(LepSel_pt[1], LepSel_eta[1], LepSel_pdgId[1],1), getLeptonSFFS(LepSel_pt[2], LepSel_eta[2], LepSel_pdgId[2],1)); leptonSFFS(getLeptonSFFS(LepSel_pt[0], LepSel_eta[0], LepSel_pdgId[0],-1), getLeptonSFFS(LepSel_pt[1], LepSel_eta[1], LepSel_pdgId[1],-1), getLeptonSFFS(LepSel_pt[2], LepSel_eta[2], LepSel_pdgId[2],-1))}
+  wVarsFS     #:= {puw      : puw_nInt_ICHEP(nTrueInt,1) ; puw_nInt_ICHEP(nTrueInt,-1) } 
+  wVarsFS     #:= {lepSF    : leptonSF(getLepSF(LepSel_pt[0], LepSel_eta[0], LepSel_pdgId[0], 0, 1), getLepSF(LepSel_pt[1], LepSel_eta[1], LepSel_pdgId[1], 0, 1), getLepSF(LepSel_pt[2], LepSel_eta[2], LepSel_pdgId[2], 0, 1)) ; leptonSF(getLepSF(LepSel_pt[0], LepSel_eta[0], LepSel_pdgId[0], 0, -1), getLepSF(LepSel_pt[1], LepSel_eta[1], LepSel_pdgId[1], 0, -1), getLepSF(LepSel_pt[2], LepSel_eta[2], LepSel_pdgId[2], 0, -1)) }
+  wVarsFS     #:= {lepSFFS  : leptonSFFS(getLepSFFS(LepSel_pt[0], LepSel_eta[0], LepSel_pdgId[0], 0, 1), getLepSFFS(LepSel_pt[1], LepSel_eta[1], LepSel_pdgId[1], 0, 1), getLepSFFS(LepSel_pt[2], LepSel_eta[2], LepSel_pdgId[2], 0, 1)) ; leptonSF(getLepSFFS(LepSel_pt[0], LepSel_eta[0], LepSel_pdgId[0], 0, -1), getLepSFFS(LepSel_pt[1], LepSel_eta[1], LepSel_pdgId[1], 0, -1), getLepSFFS(LepSel_pt[2], LepSel_eta[2], LepSel_pdgId[2], 0, -1)) }
 ENDDEF
 
 BEGIN::crwz
@@ -56,10 +56,10 @@ BEGIN::crwz
   friendFile  #:= {eventBTagWeight             : eventBTagWeight.py          }
   sfriends    +:= leptonJetReCleanerSusyEWK2L;leptonBuilderEWK;eventBTagWeight
   friends     +:=
-  macros      +:= susy-ewkino/3l/functionsEWK.cc;FastSimleptonSF.cc
+  macros      +:= susy-ewkino/3l/functionsEWK.cc;susy-ewkino/functionsSF.cc;susy-ewkino/functionsPUW.cc
   mccs        +:= susy-ewkino/crwz/lepchoice-crwz-FO.txt;susy-ewkino/mcc_triggerdefs.txt
-  weight       := puw2016_nInt_12p9fb(nTrueInt)*triggerSF(3,LepGood_pt[0], LepGood_pdgId[0], LepGood_pt[1], LepGood_pdgId[1], LepGood_pt[2], LepGood_pdgId[2])*leptonSF_2lss_ewk(LepGood1_pdgId,LepGood1_conePt,LepGood1_eta)*leptonSF_2lss_ewk(LepGood2_pdgId,LepGood2_conePt,LepGood2_eta)*leptonSF_2lss_ewk(LepGood3_pdgId,LepGood3_conePt,LepGood3_eta)*eventBTagSF
-  weightFS     := leptonSF_2lss_ewk_FS(LepGood1_pdgId,LepGood1_pt,LepGood1_eta,0)*leptonSF_2lss_ewk_FS(LepGood2_pdgId,LepGood2_pt,LepGood2_eta,0)
+  weight       := puw_nInt_ICHEP(nTrueInt) * triggerSF(1, LepGood_pt[0], LepGood_pdgId[0], LepGood_pt[1], LepGood_pdgId[1], LepGood_pt[2], LepGood_pdgId[2]) * leptonSF(getLepSF(LepGood_pt[0], LepGood_eta[0], LepGood_pdgId[0], 1), getLepSF(LepGood_pt[1], LepGood_eta[1], LepGood_pdgId[1], 1), getLepSF(LepGood_pt[2], LepGood_eta[2], LepGood_pdgId[2], 1)) * eventBTagSF
+  weightFS     := leptonSFFS(getLepSFFS(LepGood_pt[0], LepGood_eta[0], LepGood_pdgId[0], 1), getLepSFFS(LepGood_pt[1], LepGood_eta[1], LepGood_pdgId[1], 1), getLepSFFS(LepGood_pt[2], LepGood_eta[2], LepGood_pdgId[2], 1))
   flags       +:=
   flagsDumps  +:=
   flagsEffs   +:=
@@ -80,9 +80,9 @@ BEGIN::crwz
   wVarsFSJec   := 1;1;1
   wVarsFSMet   := 1;1
   wVarsFS     #:= {bTagFS   : (eventBTagSF_up_correlated/eventBTagSF) ; (eventBTagSF_down_correlated/eventBTagSF) }
-  wVarsFS     #:= {puw      : puw2016_nInt_12p9fb(nTrueInt,1); puw2016_nInt_12p9fb(nTrueInt,-1) }
-  wVarsFS     #:= {lepSF    : ((leptonSF_2lss_ewk(LepGood1_pdgId,LepGood1_pt,LepGood1_eta,1)*leptonSF_2lss_ewk(LepGood2_pdgId,LepGood2_pt,LepGood2_eta,1))/(leptonSF_2lss_ewk(LepGood1_pdgId,LepGood1_pt,LepGood1_eta)*leptonSF_2lss_ewk(LepGood2_pdgId,LepGood2_pt,LepGood2_eta))) ; ((leptonSF_2lss_ewk(LepGood1_pdgId,LepGood1_pt,LepGood1_eta,-1)*leptonSF_2lss_ewk(LepGood2_pdgId,LepGood2_pt,LepGood2_eta,-1))/(leptonSF_2lss_ewk(LepGood1_pdgId,LepGood1_pt,LepGood1_eta)*leptonSF_2lss_ewk(LepGood2_pdgId,LepGood2_pt,LepGood2_eta))) }
-  wVarsFS     #:= {lepSFFS  : ((leptonSF_2lss_ewk_FS(LepGood1_pdgId,LepGood1_pt,LepGood1_eta,1)*leptonSF_2lss_ewk_FS(LepGood2_pdgId,LepGood2_pt,LepGood2_eta,1))/(leptonSF_2lss_ewk_FS(LepGood1_pdgId,LepGood1_pt,LepGood1_eta,0)*leptonSF_2lss_ewk_FS(LepGood2_pdgId,LepGood2_pt,LepGood2_eta,0))) ; ((leptonSF_2lss_ewk_FS(LepGood1_pdgId,LepGood1_pt,LepGood1_eta,-1)*leptonSF_2lss_ewk_FS(LepGood2_pdgId,LepGood2_pt,LepGood2_eta,-1))/(leptonSF_2lss_ewk_FS(LepGood1_pdgId,LepGood1_pt,LepGood1_eta,0)*leptonSF_2lss_ewk_FS(LepGood2_pdgId,LepGood2_pt,LepGood2_eta,0))) }
+  wVarsFS     #:= {puw      : puw_nInt_ICHEP(nTrueInt,1) ; puw_nInt_ICHEP(nTrueInt,-1) } 
+  wVarsFS     #:= {lepSF    : leptonSF(getLepSF(LepSel_pt[0], LepSel_eta[0], LepSel_pdgId[0], 1, 1), getLepSF(LepSel_pt[1], LepSel_eta[1], LepSel_pdgId[1], 1, 1), getLepSF(LepSel_pt[2], LepSel_eta[2], LepSel_pdgId[2], 1, 1)) ; leptonSF(getLepSF(LepSel_pt[0], LepSel_eta[0], LepSel_pdgId[0], 1, -1), getLepSF(LepSel_pt[1], LepSel_eta[1], LepSel_pdgId[1], 1, -1), getLepSF(LepSel_pt[2], LepSel_eta[2], LepSel_pdgId[2], 1, -1)) }
+  wVarsFS     #:= {lepSFFS  : leptonSFFS(getLepSFFS(LepSel_pt[0], LepSel_eta[0], LepSel_pdgId[0], 1, 1), getLepSFFS(LepSel_pt[1], LepSel_eta[1], LepSel_pdgId[1], 1, 1), getLepSFFS(LepSel_pt[2], LepSel_eta[2], LepSel_pdgId[2], 1, 1)) ; leptonSF(getLepSFFS(LepSel_pt[0], LepSel_eta[0], LepSel_pdgId[0], 1, -1), getLepSFFS(LepSel_pt[1], LepSel_eta[1], LepSel_pdgId[1], 1, -1), getLepSFFS(LepSel_pt[2], LepSel_eta[2], LepSel_pdgId[2], 1, -1)) }
 ENDDEF
 
 
