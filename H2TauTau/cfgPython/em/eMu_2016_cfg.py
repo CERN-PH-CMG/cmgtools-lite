@@ -21,13 +21,15 @@ from CMGTools.H2TauTau.proto.samples.spring16.triggers_muEle import mc_triggers,
 from CMGTools.H2TauTau.proto.samples.spring16.htt_common import backgrounds_mu, sm_signals, mssm_signals, data_muon_electron, sync_list
 
 # local switches
-production = getHeppyOption('production', False)
+production = getHeppyOption('production', True)
 pick_events = getHeppyOption('pick_events', False)
 syncntuple = getHeppyOption('syncntuple', True)
 cmssw = getHeppyOption('cmssw', True)
 computeSVfit = getHeppyOption('computeSVfit', False)
 data = getHeppyOption('data', False)
 reapplyJEC = getHeppyOption('reapplyJEC', True)
+
+addIsoInfo = False
 
 # Just to be sure
 if production:
@@ -64,12 +66,14 @@ muEleAna = cfg.Analyzer(
     MuEleAnalyzer,
     'MuEleAnalyzer',
     pt1=13.,
+    pt1_leading=18.,
     eta1=2.5,
     iso1=0.15,
     looseiso1=9999.,
     pt2=10.,
+    pt2_leading=18.,
     eta2=2.4,
-    iso2=0.15,
+    iso2=0.2,
     looseiso2=9999.,
     m_min=0.,
     m_max=99999,
@@ -82,11 +86,11 @@ leptonWeighter = cfg.Analyzer(
     DiLeptonWeighter,
     name='DiLeptonWeighter',
     scaleFactorFiles={
-        'trigger_mu_low': '$CMSSW_BASE/src/CMGTools/H2TauTau/data/Muon_Mu8_eff.root',
-        'trigger_mu_high': '$CMSSW_BASE/src/CMGTools/H2TauTau/data/Muon_Mu17_eff.root',
-        'trigger_e_low': '$CMSSW_BASE/src/CMGTools/H2TauTau/data/Electron_Ele12_eff.root',
-        'trigger_e_high': '$CMSSW_BASE/src/CMGTools/H2TauTau/data/Electron_Ele17_eff.root',
-        'idiso_mu': '$CMSSW_BASE/src/CMGTools/H2TauTau/data/Muon_IdIso0p15_eff.root',
+        'trigger_mu_low': '$CMSSW_BASE/src/CMGTools/H2TauTau/data/Muon_Mu8leg_eff.root',
+        'trigger_mu_high': '$CMSSW_BASE/src/CMGTools/H2TauTau/data/Muon_Mu23leg_eff.root',
+        'trigger_e_low': '$CMSSW_BASE/src/CMGTools/H2TauTau/data/Electron_Ele12leg_eff.root',
+        'trigger_e_high': '$CMSSW_BASE/src/CMGTools/H2TauTau/data/Electron_Ele23leg_eff.root',
+        'idiso_mu': '$CMSSW_BASE/src/CMGTools/H2TauTau/data/Muon_IdIso0p20_eff.root',
         'idiso_e': '$CMSSW_BASE/src/CMGTools/H2TauTau/data/Electron_IdIso0p15_eff.root',
     },
     lepton_e='leg1',
@@ -104,7 +108,6 @@ syncTreeProducer = cfg.Analyzer(
     H2TauTauTreeProducerMuEle,
     name='H2TauTauSyncTreeProducerMuEle',
     varStyle='sync',
-    #  skimFunction = 'event.isSignal'
 )
 
 svfitProducer = cfg.Analyzer(
@@ -156,7 +159,7 @@ for mc in samples:
 ###             SET COMPONENTS BY HAND          ###
 ###################################################
 #selectedComponents = samples
-selectedComponents = samples + data_list
+selectedComponents = data_list if data else samples
 #selectedComponents = data_list
 #selectedComponents = samples
 
@@ -173,14 +176,13 @@ sequence.append(treeProducer)
 if syncntuple:
     sequence.append(syncTreeProducer)
 
-sequence.insert(sequence.index(treeProducer), muonIsoCalc)
-sequence.insert(sequence.index(treeProducer), electronIsoCalc)
-treeProducer.addIsoInfo = True
+
+if addIsoInfo:
+    treeProducer.addIsoInfo = False
+    sequence.insert(sequence.index(treeProducer), muonIsoCalc)
+    sequence.insert(sequence.index(treeProducer), electronIsoCalc)
 
 
-if not syncntuple:
-    module = [s for s in sequence if s.name == 'H2TauTauSyncTreeProducerTauMu'][0]
-    sequence.remove(module)
 
 if not cmssw:
     module = [s for s in sequence if s.name == 'MCWeighter'][0]
@@ -190,17 +192,19 @@ if not cmssw:
 ###################################################
 ###             CHERRY PICK EVENTS              ###
 ###################################################
-#eventSelector.toSelect = [370324]
-#sequence.insert(0, eventSelector)
+
+if pick_events:
+    eventSelector.toSelect = [329583, 28471, 348428, 319508]
+    sequence.insert(0, eventSelector)
 
 ###################################################
 ###            SET BATCH OR LOCAL               ###
 ###################################################
 if not production:
     cache = True
-    comp = sync_list[0]
+    comp = data_list[-1] if data else sync_list[0]
     selectedComponents = [comp]
-    comp.splitFactor = 6
+    comp.splitFactor = 1 if pick_events else 4
     comp.fineSplitFactor = 1
 #  comp.files           = comp.files[:1]
 

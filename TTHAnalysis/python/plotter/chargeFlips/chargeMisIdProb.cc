@@ -40,7 +40,7 @@
 #include <RooCBShape.h>
 #include <RooExponential.h>
 
-#include "RooCMSShape.h"
+#include "PhysicsTools/TagAndProbe/interface/RooCMSShape.h"
 
 #include <Math/Functor.h>
 #include <Fit/Fitter.h>

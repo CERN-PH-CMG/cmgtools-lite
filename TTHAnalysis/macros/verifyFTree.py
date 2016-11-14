@@ -17,8 +17,10 @@ def openRootOrUrl(myfile):
     elif os.path.exists(myfile+'.url'):
         with open(myfile+'.url','r') as urlf:
             myfile = urlf.readline().replace('\n','')
-            if myfile.find("dcap://")>-1: _f_t = ROOT.TFile.Open(myfile)
-            else: _f_t = ROOT.TXNetFile(myfile)
+            if myfile.startswith("root://"):
+                _f_t = ROOT.TXNetFile(myfile)
+            else:
+                _f_t = ROOT.TFile.Open(myfile)
     return _f_t
 
 for dset in dsets:

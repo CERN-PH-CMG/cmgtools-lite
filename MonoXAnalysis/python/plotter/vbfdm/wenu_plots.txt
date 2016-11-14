@@ -1,0 +1,2 @@
+recoil: recoil_pt : [130, 150, 170, 200, 230, 260, 290, 320, 350, 390, 430, 470, 510, 550, 590, 640, 690, 740, 790, 840, 900, 960, 1020, 1090, 1160]  ; XTitle="Recoil [GeV]",Logy, LegendCutoff=1e-3, YMin=1, YMax=1e5
+mt     : mt_2(LepGood1_pt,LepGood1_phi,met_pt,met_phi): 65,30,160    ; XTitle="M_{T}  [GeV]", Legend='TR'

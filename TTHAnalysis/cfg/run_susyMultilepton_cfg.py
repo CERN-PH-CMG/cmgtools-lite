@@ -46,7 +46,6 @@ ttHLepSkim.minLeptons = 2
 ttHLepSkim.maxLeptons = 999
 #ttHLepSkim.idCut  = ""
 #ttHLepSkim.ptCuts = []
-ttHLepSkim.allowLepTauComb = True
 
 # Run miniIso
 lepAna.doMiniIsolation = True
@@ -133,10 +132,10 @@ tauAna.loose_ptMin = 20
 tauAna.loose_etaMax = 2.3
 tauAna.loose_decayModeID = "decayModeFindingNewDMs"
 tauAna.loose_tauID = "decayModeFindingNewDMs"
-if analysis in ["ttH"]: #if cleaning jet-loose tau cleaning
-    jetAna.cleanJetsFromTaus = True
-    jetAnaScaleUp.cleanJetsFromTaus = True
-    jetAnaScaleDown.cleanJetsFromTaus = True
+#if analysis in ["ttH"]: #if cleaning jet-loose tau cleaning
+#    jetAna.cleanJetsFromTaus = True
+#    jetAnaScaleUp.cleanJetsFromTaus = True
+#    jetAnaScaleDown.cleanJetsFromTaus = True
 
 
 #-------- ADDITIONAL ANALYZERS -----------
@@ -196,6 +195,7 @@ susyCoreSequence.insert(susyCoreSequence.index(ttHFatJetAna)+1, ttHDecluster)
 from CMGTools.TTHAnalysis.analyzers.treeProducerSusyMultilepton import * 
 
 if analysis=="susy":
+    ttHLepSkim.allowLepTauComb = True
     susyCoreSequence.insert(susyCoreSequence.index(ttHCoreEventAna),
                             susyLeptonMatchAna)
     susyCoreSequence.insert(susyCoreSequence.index(ttHCoreEventAna),
@@ -210,6 +210,14 @@ if analysis=="susy":
     susyMultilepton_collections.update({ # for conversion studies
             "selectedPhotons"    : NTupleCollection("PhoGood", photonTypeSusy, 10, help="Selected photons"),
             }) 
+elif analysis=='SOS':
+    # Soft lepton MVA
+    ttHCoreEventAna.doLeptonMVASoft = True
+    leptonTypeSusyExtraLight.addVariables([
+            NTupleVariable("mvaSoftT2tt",    lambda lepton : lepton.mvaValueSoftT2tt, help="Lepton MVA (Soft T2tt version)"),
+            NTupleVariable("mvaSoftEWK",    lambda lepton : lepton.mvaValueSoftEWK, help="Lepton MVA (Soft EWK version)"),
+            ])
+
 
 # Spring16 electron MVA - follow instructions on pull request for correct area setup
 leptonTypeSusy.addVariables([
@@ -346,6 +354,7 @@ triggerFlagsAna.triggerBits = {
     'SingleEl'     : triggers_1e,
     'SOSHighMET' : triggers_SOS_highMET,
     'SOSDoubleMuLowMET' : triggers_SOS_doublemulowMET,
+    'SOSTripleMu' : triggers_SOS_tripleMu,
     'LepTau' : triggers_leptau,
     'MET' : triggers_metNoMu90_mhtNoMu90,
     #'MonoJet80MET90' : triggers_Jet80MET90,
@@ -444,13 +453,22 @@ if runData and not isTest: # For running on data
 #    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_271036-274443_13TeV_PromptReco_Collisions16_JSON.txt' # 2.6/fb
 #    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_271036-275125_13TeV_PromptReco_Collisions16_JSON.txt' # 4.0/fb
 #    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_271036-275783_13TeV_PromptReco_Collisions16_JSON.txt' # 6.3/fb
-    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_271036-276811_13TeV_PromptReco_Collisions16_JSON_NoL1T.txt' # 12.9/fb
-    processing = "Run2016B-PromptReco-v2"; short = "Run2016B_PromptReco_v2"; run_ranges = [(273150,276811)]; useAAA=True; # -v2 starts from 273150
+#    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_271036-276811_13TeV_PromptReco_Collisions16_JSON_NoL1T.txt' # 12.9/fb #276811 ICHEP LastRun
+#    json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-279931_13TeV_PromptReco_Collisions16_JSON_NoL1T.txt' #24.5/fb
+    json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-280385_13TeV_PromptReco_Collisions16_JSON_NoL1T_v2.txt' #27.22/fb
+    processing = "Run2016B-PromptReco-v2"; short = "Run2016B_PromptReco_v2"; run_ranges = [(273150,280385)]; useAAA=False; # -v2 starts from 273150
     dataChunks.append((json,processing,short,run_ranges,useAAA))
-    processing = "Run2016C-PromptReco-v2"; short = "Run2016C_PromptReco_v2"; run_ranges = [(273150,276811)]; useAAA=True; # -v2 starts from 273150 
+    processing = "Run2016C-PromptReco-v2"; short = "Run2016C_PromptReco_v2"; run_ranges = [(273150,280385)]; useAAA=False; # -v2 starts from 273150 
     dataChunks.append((json,processing,short,run_ranges,useAAA))
-    processing = "Run2016D-PromptReco-v2"; short = "Run2016D_PromptReco_v2"; run_ranges = [(273150,276811)]; useAAA=True; # -v2 starts from 273150 
+    processing = "Run2016D-PromptReco-v2"; short = "Run2016D_PromptReco_v2"; run_ranges = [(273150,280385)]; useAAA=False; # -v2 starts from 273150 
     dataChunks.append((json,processing,short,run_ranges,useAAA))
+    processing = "Run2016E-PromptReco-v2"; short = "Run2016E_PromptReco_v2"; run_ranges = [(273150,280385)]; useAAA=False;
+    dataChunks.append((json,processing,short,run_ranges,useAAA))
+    processing = "Run2016F-PromptReco-v1"; short = "Run2016F_PromptReco_v1"; run_ranges = [(273150,280385)]; useAAA=False;
+    dataChunks.append((json,processing,short,run_ranges,useAAA))
+    processing = "Run2016G-PromptReco-v1"; short = "Run2016G_PromptReco_v1"; run_ranges = [(273150,280385)]; useAAA=False;
+    dataChunks.append((json,processing,short,run_ranges,useAAA))
+    
 
     compSelection = ""; compVeto = ""
     DatasetsAndTriggers = []
@@ -833,7 +851,7 @@ elif test == '80X-MC':
         if not getHeppyOption("single"): comp.fineSplitFactor = 4
     else: raise RuntimeError, "Unknown MC sample: %s" % what
 elif test == '80X-Data':
-    DoubleMuon = kreator.makeDataComponent("DoubleMuon_Run2016B_run274315", "/DoubleMuon/Run2016B-PromptReco-v2/MINIAOD", "CMS", ".*root", run_range = (274315,274315), triggers = triggers_mumu + triggers_mumu_ht + triggers_ee + triggers_ee_ht )
+    DoubleMuon = kreator.makeDataComponent("DoubleMuon_Run2016B_run274315", "/DoubleMuon/Run2016B-PromptReco-v2/MINIAOD", "CMS", ".*root", run_range = (274315,274315), triggers = triggers_mumu)
     DoubleEG = kreator.makeDataComponent("DoubleEG_Run2016B_run274315", "/DoubleEG/Run2016B-PromptReco-v2/MINIAOD", "CMS", ".*root", run_range = (274315,274315), triggers = triggers_ee)
     DoubleMuon.files = [ 'root://eoscms//eos/cms/store/data/Run2016B/DoubleMuon/MINIAOD/PromptReco-v2/000/274/315/00000/A287989F-E129-E611-B5FB-02163E0142C2.root' ]
     DoubleEG.files = [ 'root://eoscms//eos/cms/store/data/Run2016B/DoubleEG/MINIAOD/PromptReco-v2/000/274/315/00000/FEF59D1D-EE29-E611-8793-02163E0143AE.root' ]
