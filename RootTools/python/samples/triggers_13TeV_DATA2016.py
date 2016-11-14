@@ -33,7 +33,7 @@ triggers_3mu_alt = [ "HLT_TrkMu15_DoubleTrkMu5NoFiltersNoVtx_v*" ]
 triggers_2mu1e = [ "HLT_DiMu9_Ele9_CaloIdL_TrackIdL_v*" ]
 triggers_2e1mu = [ "HLT_Mu8_DiEle12_CaloIdL_TrackIdL_v*" ]
 
-triggers_1mu_iso = [ 'HLT_IsoMu20_v*', 'HLT_IsoTkMu20_v*', 'HLT_IsoMu22_v*', 'HLT_IsoTkMu22_v*'  ]  # Mu20's prescaled in column 0
+triggers_1mu_iso = [ 'HLT_IsoMu20_v*', 'HLT_IsoTkMu20_v*', 'HLT_IsoMu22_v*', 'HLT_IsoTkMu22_v*', 'HLT_IsoMu24_v*', 'HLT_IsoTkMu24_v*'  ]  # Mu20's prescaled in column 0, Mu22 prescaled in high lumi post-ichep data
 triggers_1mu_noniso = [ 'HLT_Mu45_eta2p1_v*', 'HLT_Mu50_v*', 'HLT_TkMu50_v*' ]
 
 # note: here the WP75 is th name in MC, WPLoose and WPTight should be in data
