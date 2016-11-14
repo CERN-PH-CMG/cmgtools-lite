@@ -1,38 +1,57 @@
 # vim: syntax=sh
 * ; TreeName="treeProducerStopSoftB"
 
-TT+: TTJets   : xsec : 1 ; FillColor=ROOT.kGray+1, Label="tt"
-#TT_softMuB  : TTJets   : xsec : LepOther_mcMatchAny >= 4 ; FillColor=ROOT.kGray+1, Label="tt\, b/c \#rightarrow \#mu"
-#TT_softMuNotB: TTJets   : xsec : LepOther_mcMatchAny <  4 ; FillColor=ROOT.kGray+1, Label="tt\, other"
-#TT_goodIVF+: TTJets   : xsec : SV_mcMatchFraction > 0.66 ; FillColor=ROOT.kGreen-9, Label="tt\, b/c SV"
-#TT_fakeIVF: TTJets   : xsec : SV_mcMatchFraction < 0.66 ; FillColor=ROOT.kGray+1, Label="tt\, other"
-TW : T_tWch   : xsec : 1 ; FillColor=ROOT.kGray+2, Label="tW"
-TW : TBar_tWch: xsec : 1 ; FillColor=ROOT.kGray+2, Label="tW"
+TT+: TTJets   : xsec : 1 ; FillColor=ROOT.kGreen+1, Label="tt"
+TW : T_tWch   : xsec : 1 ; FillColor=ROOT.kAzure+10, Label="tW"
+TW : TBar_tWch: xsec : 1 ; FillColor=ROOT.kAzure+10, Label="tW"
 
-VV : WWTo2L2Nu: xsec : 1 ; FillColor=ROOT.kAzure-9, Label="VV", NormSystematic=0.3
-VV : WZTo3LNu:  xsec : 1 ; FillColor=ROOT.kAzure-9, Label="VV", NormSystematic=0.3
+TT_softMuB    : TTJets   : xsec : LepOtherGood_mcMatchAny[0] >= 5; SkipMe=True, FillColor=ROOT.kGreen+1, Label="tt\, b\#rightarrow\#mu"
+TT_softMuC    : TTJets   : xsec : LepOtherGood_mcMatchAny[0] == 4; SkipMe=True, FillColor=ROOT.kGreen+2, Label="tt\, c\#rightarrow\#mu"
+TT_softMuNotH : TTJets   : xsec : LepOtherGood_mcMatchAny[0] <  4; SkipMe=True, FillColor=ROOT.kGreen+3, Label="tt\, other"
+TW_softMuC    : T_tWch   : xsec : LepOtherGood_mcMatchAny[0] == 4; SkipMe=True, FillColor=ROOT.kAzure+1, Label="tW\, c\#rightarrow\#mu"
+TW_softMuB    : T_tWch   : xsec : LepOtherGood_mcMatchAny[0] >= 5; SkipMe=True, FillColor=ROOT.kAzure+10, Label="tW\, b\#rightarrow\#mu"
+TW_softMuNotH : T_tWch   : xsec : LepOtherGood_mcMatchAny[0] <  4; SkipMe=True, FillColor=ROOT.kAzure+2, Label="tW\, other"
+TW_softMuB    : TBar_tWch: xsec : LepOtherGood_mcMatchAny[0] >= 5; SkipMe=True, FillColor=ROOT.kAzure+10, Label="tW\, b\#rightarrow\#mu"
+TW_softMuC    : TBar_tWch: xsec : LepOtherGood_mcMatchAny[0] == 4; SkipMe=True, FillColor=ROOT.kAzure+1, Label="tW\, c\#rightarrow\#mu"
+TW_softMuNotH : TBar_tWch: xsec : LepOtherGood_mcMatchAny[0] <  4; SkipMe=True, FillColor=ROOT.kAzure+2, Label="tW\, other"
+TT_ivfB    : TTJets   : xsec : SV_mcMatchFraction > 0.66 && SV_mcFlavHeaviest >= 5; SkipMe=True, FillColor=ROOT.kGreen+1, Label="tt\, b SV"
+TT_ivfC    : TTJets   : xsec : SV_mcMatchFraction > 0.66 && SV_mcFlavHeaviest == 4; SkipMe=True, FillColor=ROOT.kGreen+2, Label="tt\, c SV"
+TT_ivfNotH : TTJets   : xsec : SV_mcMatchFraction < 0.66 || SV_mcFlavHeaviest < 4; SkipMe=True, FillColor=ROOT.kGreen+3, Label="tt\, other"
+TW_ivfB    : T_tWch   : xsec : SV_mcMatchFraction > 0.66 && SV_mcFlavHeaviest >= 5; SkipMe=True, FillColor=ROOT.kAzure+10, Label="tW\, b SV"
+TW_ivfC    : T_tWch   : xsec : SV_mcMatchFraction > 0.66 && SV_mcFlavHeaviest == 4; SkipMe=True, FillColor=ROOT.kAzure+1, Label="tW\, c SV"
+TW_ivfNotH : T_tWch   : xsec : SV_mcMatchFraction < 0.66 || SV_mcFlavHeaviest < 4; SkipMe=True, FillColor=ROOT.kAzure+2, Label="tW\, other"
+TW_ivfB    : TBar_tWch: xsec : SV_mcMatchFraction > 0.66 && SV_mcFlavHeaviest >= 5; SkipMe=True, FillColor=ROOT.kAzure+10, Label="tW\, b SV"
+TW_ivfC    : TBar_tWch: xsec : SV_mcMatchFraction > 0.66 && SV_mcFlavHeaviest == 4; SkipMe=True, FillColor=ROOT.kAzure+1, Label="tW\, c SV"
+TW_ivfNotH : TBar_tWch: xsec : SV_mcMatchFraction < 0.66 || SV_mcFlavHeaviest < 4; SkipMe=True, FillColor=ROOT.kAzure+2, Label="tW\, other"
 
-T  : TBarToLeptons_tch_powheg: xsec : 1 ; FillColor=ROOT.kGray+3, Label="t"
-T  : TToLeptons_tch_powheg: xsec    : 1 ; FillColor=ROOT.kGray+3, Label="t" 
+T  : TBarToLeptons_tch_powheg: xsec : 1 ; FillColor=ROOT.kOrange-7, Label="t"
+T  : TToLeptons_tch_powheg: xsec    : 1 ; FillColor=ROOT.kOrange-7, Label="t" 
 
-DY : DYJetsToLL_M10to50    : xsec*0.5 : 1 ; FillColor=ROOT.kCyan, Label="Z+jets", NormSystematic=0.5
-DY : DYJetsToLL_M10to50_LO : xsec*0.5 : 1 ; FillColor=ROOT.kCyan, Label="Z+jets", NormSystematic=0.5
-DY : DYJetsToLL_M50_LO_2     : xsec : 1   ; FillColor=ROOT.kCyan, Label="Z+jets", NormSystematic=0.5
-WJets : W1JetsToLNu_LO: xsec : 1 ; FillColor=ROOT.kCyan+2, Label="W+jets", NormSystematic=0.5
-WJets : W2JetsToLNu_LO: xsec : 1 ; FillColor=ROOT.kCyan+2, Label="W+jets", NormSystematic=0.5
-WJets : W3JetsToLNu_LO: xsec : 1 ; FillColor=ROOT.kCyan+2, Label="W+jets", NormSystematic=0.5
-WJets : W4JetsToLNu_LO: xsec : 1 ; FillColor=ROOT.kCyan+2, Label="W+jets", NormSystematic=0.5
+VV : WWTo2L2Nu: xsec : 1 ; FillColor=ROOT.kViolet+1, Label="VV" #, NormSystematic=0.3
+VV : WZTo3LNu:  xsec : 1 ; FillColor=ROOT.kViolet+1, Label="VV" #, NormSystematic=0.3
 
-data : DoubleEG_Run2016B_PromptReco_v2
-data : DoubleEG_Run2016C_PromptReco_v2
-data : DoubleEG_Run2016D_PromptReco_v2
-data : MuonEG_Run2016B_PromptReco_v2
-data : MuonEG_Run2016C_PromptReco_v2
-data : MuonEG_Run2016D_PromptReco_v2
-data : DoubleMuon_Run2016B_PromptReco_v2
-data : DoubleMuon_Run2016C_PromptReco_v2
-data : DoubleMuon_Run2016D_PromptReco_v2
+DY : DYJetsToLL_M10to50    : xsec*0.5 : 1 ; FillColor=ROOT.kGray+0, Label="Z+jets" #, NormSystematic=0.5
+DY : DYJetsToLL_M10to50_LO : xsec*0.5 : 1 ; FillColor=ROOT.kGray+0, Label="Z+jets" #, NormSystematic=0.5
+DY : DYJetsToLL_M50_LO_2   : xsec     : 1 ; FillColor=ROOT.kGray+0, Label="Z+jets" #, NormSystematic=0.5
+WJets : W1JetsToLNu_LO: xsec : 1 ; FillColor=ROOT.kGray+2, Label="W+jets" #, NormSystematic=0.5
+WJets : W2JetsToLNu_LO: xsec : 1 ; FillColor=ROOT.kGray+2, Label="W+jets" #, NormSystematic=0.5
+WJets : W3JetsToLNu_LO: xsec : 1 ; FillColor=ROOT.kGray+2, Label="W+jets" #, NormSystematic=0.5
+WJets : W4JetsToLNu_LO: xsec : 1 ; FillColor=ROOT.kGray+2, Label="W+jets" #, NormSystematic=0.5
 
-data : MuonEG_Run2016B_29Jul2016
-data : MuonEG_Run2016C_29Jul2016
-data : MuonEG_Run2016D_29Jul2016
+# data : DoubleEG_Run2016B_PromptReco_v2
+# data : DoubleEG_Run2016C_PromptReco_v2
+# data : DoubleEG_Run2016D_PromptReco_v2
+# data : MuonEG_Run2016B_PromptReco_v2
+# data : MuonEG_Run2016C_PromptReco_v2
+# data : MuonEG_Run2016D_PromptReco_v2
+# data : DoubleMuon_Run2016B_PromptReco_v2
+# data : DoubleMuon_Run2016C_PromptReco_v2
+# data : DoubleMuon_Run2016D_PromptReco_v2
+
+# 12.9
+# data : MuonEG_Run2016B_29Jul2016
+# data : MuonEG_Run2016C_29Jul2016
+# data : MuonEG_Run2016D_29Jul2016
+
+# 6.3
+data : MuonEG_Run2016G_PromptReco_v1

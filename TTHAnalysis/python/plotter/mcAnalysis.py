@@ -120,12 +120,14 @@ class MCAnalysis:
             pname0 = pname
             for cname in cnames:
                 if options.useCnames: pname = pname0+"."+cname
+                for (ffrom, fto) in options.filesToSwap:
+                    if cname == ffrom: cname = fto
                 treename = extra["TreeName"] if "TreeName" in extra else options.tree 
                 objname  = extra["ObjName"]  if "ObjName"  in extra else options.obj
 
                 basepath = None
                 for treepath in options.path:
-                    if cname in os.listdir(treepath):
+                    if os.path.exists(treepath+"/"+cname):
                         basepath = treepath
                         break
                 if not basepath:
@@ -197,8 +199,8 @@ class MCAnalysis:
                 for tty in ttys: tty.setScaleFactor("%s*%g" % (scale, 1000.0/total_w))
         #if len(self._signals) == 0: raise RuntimeError, "No signals!"
         #if len(self._backgrounds) == 0: raise RuntimeError, "No backgrounds!"
-    def listProcesses(self):
-        ret = self.listSignals() + self.listBackgrounds() 
+    def listProcesses(self,allProcs=False):
+        ret = self.listSignals(allProcs=allProcs) + self.listBackgrounds(allProcs=allProcs)
         if 'data' in self._allData.keys(): ret.append('data')
         return ret
     def listOptionsOnlyProcesses(self):
@@ -568,6 +570,7 @@ def addMCAnalysisOptions(parser,addTreeToYieldOnesToo=True):
     parser.add_option("--pg", "--pgroup", dest="premap", type="string", default=[], action="append", help="Group proceses into one. Syntax is '<newname> := (comma-separated list of regexp)', can specify multiple times. Note tahat it is applied _before_ -p, --sp and --xp");
     parser.add_option("--xf", "--exclude-files", dest="filesToExclude", type="string", default=[], action="append", help="Files to exclude (comma-separated list of regexp, can specify multiple ones)");
     parser.add_option("--xp", "--exclude-process", dest="processesToExclude", type="string", default=[], action="append", help="Processes to exclude (comma-separated list of regexp, can specify multiple ones)");
+    parser.add_option("--sf", "--swap-files", dest="filesToSwap", type="string", default=[], nargs=2, action="append", help="--swap-files X Y uses file Y instead of X in the MCA");
     parser.add_option("--sp", "--signal-process", dest="processesAsSignal", type="string", default=[], action="append", help="Processes to set as signal (overriding the '+' in the text file)");
     parser.add_option("--float-process", "--flp", dest="processesToFloat", type="string", default=[], action="append", help="Processes to set as freely floating (overriding the 'FreeFloat' in the text file; affects e.g. mcPlots with --fitData)");
     parser.add_option("--fix-process", "--fxp", dest="processesToFix", type="string", default=[], action="append", help="Processes to set as not freely floating (overriding the 'FreeFloat' in the text file; affects e.g. mcPlots with --fitData)");

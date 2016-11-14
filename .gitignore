@@ -5,9 +5,8 @@ __init__.py
 #*#
 *~
 *DS_Store
-.*.so
-.*.d
-.*.pcm
-*.so
+*cc.so
+*cc.d
 *.pcm
-*.d
+LSFJOB*/
+

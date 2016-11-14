@@ -155,6 +155,8 @@ class susyParameterScanAnalyzer( Analyzer ):
 
         # create parameters
         event.susyModel = None
+        if not event.susyModel and self.susyParticles:
+            event.susyModel = 'Unknown'
         for id,X in self.susyParticles.iteritems():
             setattr(event, "genSusyM"+X, -99.0)
         event.genSusyMScan1 = 0.0

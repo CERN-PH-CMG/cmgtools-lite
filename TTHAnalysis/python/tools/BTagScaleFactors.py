@@ -1,5 +1,6 @@
 import os
 
+import ROOT
 #################################################################
 # This is mostly copy pasted from Lorenzo Bianchini:
 # https://github.com/bianchini/cmssw/blob/LB_newbtagSF/VHbbAnalysis/Heppy/python/btagSF.py
@@ -7,14 +8,13 @@ import os
 # Load the BTagCalibrationStandalone.cc macro from
 # https://twiki.cern.ch/twiki/bin/view/CMS/BTagCalibration
 # and compile it:
-# wget https://raw.githubusercontent.com/cms-sw/cmssw/CMSSW_8_0_X/CondTools/BTau/test/BTagCalibrationStandalone.cpp .
-# wget https://raw.githubusercontent.com/cms-sw/cmssw/CMSSW_8_0_X/CondTools/BTau/test/BTagCalibrationStandalone.h .
 # cmsenv
-# g++ -c -o BTagCalibrationStandalone.so -I./ -L${ROOTSYS}/lib BTagCalibrationStandalone.cpp `root-config --cflags` `root-config --libs`
+# g++ -c -o BTagCalibrationStandalone.so -L${ROOTSYS}/lib $CMSSW_RELEASE_BASE/src/CondTools/BTau/test/BTagCalibrationStandalone.cpp `root-config --cflags` `root-config --libs`
 #
 # Get the current scale factor files from: https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation80X
 #################################################################
 from ROOT import gSystem
+
 gSystem.Load(os.path.join(os.path.dirname(__file__), 'BTagCalibrationStandalone.so'))
 from ROOT import BTagCalibration, BTagCalibrationReader
 
@@ -187,19 +187,37 @@ class BTagScaleFactors(object):
         if self.verbose>0:
             print "Setting up btag calibration readers"
         self.readers = {}
+
+        # Create empty vector for systematics.
+        # It would be better to create a single reader, as pointed out here https://hypernews.cern.ch/HyperNews/CMS/get/btag/1341.html , but this would mean reworking this whole module. 
+        # For now, adopted the quicker solution. Will implement the full one in a longer timescale. P.
+        v_sys = getattr(ROOT, 'vector<string>')()
+
         for wp in [0, 1, 2]:
-            for syst in ["central", "up", "down", "up_correlated", "down_correlated"]:
+            for syst in ['central', 'up', 'down', 'up_correlated', 'down_correlated']:
                 for flavor in [0, 1, 2]:
                     self.readers[(self.mtypes[flavor], wp, syst, flavor)] = BTagCalibrationReader(
-                                                        self.calibrator, wp,
-                                                        self.mtypes[flavor], syst
+                                                        wp,
+                                                        syst,
+                                                        v_sys
+                                                        )
+                    self.readers[(self.mtypes[flavor], wp, syst, flavor)].load(
+                                                        self.calibrator,
+                                                        flavor,
+                                                        self.mtypes[flavor]
                                                         )
 
-
                     if self.csvfastsim and 'correlated' not in syst:
+
                         self.readers[('fastsim', wp, syst, flavor)] = BTagCalibrationReader(
-                                                        self.calibrator_fastsim, wp,
-                                                        'fastsim', syst
+                                                        wp,
+                                                        syst,
+                                                        v_sys
+                                                        )
+                        self.readers[('fastsim', wp, syst, flavor)].load(
+                                                        self.calibrator_fastsim,
+                                                        flavor,
+                                                        'fastsim'
                                                         )
 
 
@@ -207,9 +225,20 @@ class BTagScaleFactors(object):
         allsysts += ["down_%s"%s for s in self.iterative_systs]
         allsysts += ["central"]
         for syst in allsysts:
+            v_iterativefit_sys = getattr(ROOT, 'vector<string>')()
+            #v_iterativefit_sys.push_back(syst)
             self.readers[('iterative', syst)] = BTagCalibrationReader(
-                                                    self.calibrator, 3, "iterativefit", syst
+                                                    3,
+                                                    syst,
+                                                    v_iterativefit_sys
                                                     )
+            self.readers[('iterative', syst)].load(
+                                                 self.calibrator,
+                                                 0 ,#..., #flavour
+                                                 'iterativefit'
+                                                 )
+
+
 
     def get_SF(self, pt=30., eta=0.0, flavor=5, val=0.0,
                syst="central", wp="M", mtype='auto',
@@ -227,6 +256,9 @@ class BTagScaleFactors(object):
 
             If unknown wp/syst/mtype/flavor, returns -1.0
         """
+
+        raise RuntimeError, 'BTagScaleFactors.py: some weights were observed to be set to zero. This should be fixed before the module can be used.'
+
         flavor_new = {5:0, 4:1, 0:2}.get(flavor, None)
         if flavor_new == None:
             if self.verbose>0:
@@ -269,9 +301,9 @@ class BTagScaleFactors(object):
 
         if shape_corr:
             if relevant_iterative_systs(flavor, syst):
-                return self.readers[("iterative", syst)].eval(flavor, eta, pt, val)
+                return self.readers[("iterative", syst)].eval_auto_bounds(syst, flavor, eta, pt, val)
             else:
-                return self.readers[("iterative", "central")].eval(flavor, eta, pt, val)
+                return self.readers[("iterative", "central")].eval_auto_bounds('central', flavor, eta, pt, val)
 
         # pt ranges for bc SF: needed to avoid out_of_range exceptions
         pt_max = self.allowed[(wp, mtype, syst, flavor)]['ptMax']
@@ -286,23 +318,25 @@ class BTagScaleFactors(object):
         # pt_min = 30.+1e-02
 
         if flavor < 2: # b or c jets
-            sf = self.readers[(self.mtypes[flavor], wp, syst, flavor)].eval(flavor, eta, pt)
+            sf = self.readers[(self.mtypes[flavor], wp, syst, flavor)].eval_auto_bounds(syst, flavor, eta, pt)
 
             # double the error for pt out-of-range
             if out_of_range and syst in ["up","down"]:
-                sf = max(2*sf - self.readers[(self.mtypes[flavor], wp, "central", flavor)].eval(flavor, eta, pt), 0.)
+                sf = max(2*sf - self.readers[(self.mtypes[flavor], wp, "central", flavor)].eval_auto_bounds('central', flavor, eta, pt), 0.)
 
             # Fastsim SFs are 0.0 for pt between 20 and 30
             return sf if sf != 0.0 else 1.0
 
         else: # light jets
-            sf = self.readers[(self.mtypes[flavor], wp, syst, flavor)].eval(flavor, eta, pt)
+            sf = self.readers[(self.mtypes[flavor], wp, syst, flavor)].eval_auto_bounds(syst, flavor, eta, pt)
             return sf if sf != 0.0 else 1.0
 
 #################################################################
 def testing():
     csvpath = os.path.join(os.environ['CMSSW_BASE'],"src/CMGTools/TTHAnalysis/data/btag/")
     test_for = [
+
+        #BTagScaleFactors("CSV", os.path.join(csvpath, "CSVv2_ichep.csv"),  algo='csv', verbose=1),
         BTagScaleFactors("CSV", os.path.join(csvpath, "CSVv2_4invfb.csv"),  algo='csv'),
         # BTagScaleFactors("MVA", os.path.join(csvpath, "cMVAv2_4invfb.csv"), algo='cmva')
     ]
