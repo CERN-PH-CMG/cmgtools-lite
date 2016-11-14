@@ -177,7 +177,9 @@ class CMSDataset( BaseDataset ):
             self.summaries = self.findPrimaryDatasetSummaries(self.name.rstrip('/'),
                                                   runs[0],runs[1])
         num_files = self.summaries['files']
-
+        if num_files == -1:
+            raise RuntimeError, "Error querying DAS for dataset %r" % self.name.rstrip('/')
+        
         limit = 10000
         if num_files > limit:
             if self.json is not None:
@@ -190,6 +192,8 @@ class CMSDataset( BaseDataset ):
                                                   i*limit,
                                                   ((i+1)*limit)-1)
                 self.files.extend(DBSFiles)
+            if len(self.files) != num_files:
+                raise RuntimeError, "ERROR: mismatching number of files between dataset summary (%d) and dataset query for files(%d)\n" % (num_files, len(self.files))
             return
 
         if self.json is not None:
@@ -221,6 +225,8 @@ class CMSDataset( BaseDataset ):
             return
 
         self.files = self.buildListOfFilesDBS(pattern)
+        if len(self.files) != num_files:
+            raise RuntimeError, "ERROR: mismatching number of files between dataset summary (%d) and dataset query for files(%d)\n" % (num_files, len(self.files))
             
     @staticmethod
     def findPrimaryDatasetSummaries(dataset, runmin, runmax):
