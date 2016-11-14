@@ -265,7 +265,7 @@ class LeptonJetReCleaner:
         ret['minMllSFOS'] = minMllTL(lepsl, lepsl, paircut = lambda l1,l2 : l1.pdgId  == -l2.pdgId) 
 
         loosetaus=[]; rettlabel = {}; tauret = {}; 
-        loosetaus = self.recleanTaus(tausc, tausd, lepsl if self.cleanTausWithLoose else lepsc, self.label, rettlabel, tauret)
+        loosetaus = self.recleanTaus(tausc, tausd, lepsl if self.cleanTausWithLoose else lepsc, self.label, rettlabel, tauret, event)
 
         cleanjets={}
         for var in self.systsJEC:

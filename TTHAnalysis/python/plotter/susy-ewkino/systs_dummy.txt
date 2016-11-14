@@ -5,8 +5,8 @@ fakes   : fakes_.*                                     : .* : 1.3
 convs   : convs                                        : .* : 1.25
 WZ      : prompt_WZ                                    : .* : 1.25
 normZZH : prompt_ZZH                                   : .* : 1.25
-normVVV : prompt_VVV|prompt_ttX|prompt_ttW|prompt_ttZ  : .* : 1.5
-sig     : sig_.*                                       : .* : 1.25
+normVVV : rares_VVV|rares_ttX|rares_ttW|rares_ttZ      : .* : 1.5
+sig     : sig_.*|TChi.*                                : .* : 1.25
 
 
 

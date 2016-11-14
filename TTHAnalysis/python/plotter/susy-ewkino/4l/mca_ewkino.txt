@@ -1,10 +1,30 @@
 ## STANDARD SELECTION (CENTRAL VALUE)
 ## ===========================================================
 
+## SIGNALS
+## -----------------------------------------------------------
+sig_TChiNeuZZ4L_400_1+ : TChiNeuZZ4L_400_1 : 0.10099*0.10099*88.7325/1000 ; Label="ZZ (400/1)", LineStyle=7, FillColor=ROOT.kGreen, FakeRate="susy-ewkino/3l/fakerate_standard_central.txt\,susy-ewkino/3l/fakerate_filters_fastsim.txt\,susy-ewkino/3l/fakerate_load_isprompt.txt", NormSystematic=0.2
+sig_TChiNeuZZ4L_450_1+ : TChiNeuZZ4L_450_1 : 0.10099*0.10099*53.7702/1000 ; Label="ZZ (450/1)", LineStyle=1, FillColor=ROOT.kGreen+2, FakeRate="susy-ewkino/3l/fakerate_standard_central.txt\,susy-ewkino/3l/fakerate_filters_fastsim.txt\,susy-ewkino/3l/fakerate_load_isprompt.txt", NormSystematic=0.2
+
+sig_TChiNeuZZ2L_400_1+ : TChiNeuZZ2L_400_1 : 0.10099*        88.7325/1000 ; Label="ZZ2L (400/1)", LineStyle=7, FillColor=ROOT.kGreen, FakeRate="susy-ewkino/3l/fakerate_standard_central.txt\,susy-ewkino/3l/fakerate_filters_fastsim.txt\,susy-ewkino/3l/fakerate_load_isprompt.txt", NormSystematic=0.2
+sig_TChiNeuZZ2L_450_1+ : TChiNeuZZ2L_450_1 : 0.10099*        53.7702/1000 ; Label="ZZ2L (450/1)", LineStyle=1, FillColor=ROOT.kGreen+2, FakeRate="susy-ewkino/3l/fakerate_standard_central.txt\,susy-ewkino/3l/fakerate_filters_fastsim.txt\,susy-ewkino/3l/fakerate_load_isprompt.txt", NormSystematic=0.2
+
+sig_TChiNeuHZ_300_1+   : TChiNeuHZ_300_1   : 0.10099*0.3040* 284.855/1000 ; Label="HZ (300/1)", LineStyle=1, FillColor=ROOT.kRed-9, FakeRate="susy-ewkino/3l/fakerate_standard_central.txt\,susy-ewkino/3l/fakerate_filters_fastsim.txt\,susy-ewkino/3l/fakerate_load_isprompt.txt", NormSystematic=0.2
+sig_TChiNeuHZ_350_1+   : TChiNeuHZ_350_1   : 0.10099*0.3040* 153.841/1000 ; Label="HZ (350/1)", LineStyle=7, FillColor=ROOT.kRed-6, FakeRate="susy-ewkino/3l/fakerate_standard_central.txt\,susy-ewkino/3l/fakerate_filters_fastsim.txt\,susy-ewkino/3l/fakerate_load_isprompt.txt", NormSystematic=0.2
+sig_TChiNeuHZ_400_1+   : TChiNeuHZ_400_1   : 0.10099*0.3040* 88.7325/1000 ; Label="HZ (400/1)", LineStyle=7, FillColor=ROOT.kRed-2, FakeRate="susy-ewkino/3l/fakerate_standard_central.txt\,susy-ewkino/3l/fakerate_filters_fastsim.txt\,susy-ewkino/3l/fakerate_load_isprompt.txt", NormSystematic=0.2
+sig_TChiNeuHZ_450_1+   : TChiNeuHZ_450_1   : 0.10099*0.3040* 53.7702/1000 ; Label="HZ (450/1)", LineStyle=1, FillColor=ROOT.kRed+3, FakeRate="susy-ewkino/3l/fakerate_standard_central.txt\,susy-ewkino/3l/fakerate_filters_fastsim.txt\,susy-ewkino/3l/fakerate_load_isprompt.txt", NormSystematic=0.2
+
+sig_TChiNeuHH_300_1+   : TChiNeuHH_300_1   : 0.3040 *0.3040* 284.855/1000 ; Label="HH (300/1)", LineStyle=1, FillColor=ROOT.kBlue-9, FakeRate="susy-ewkino/3l/fakerate_standard_central.txt\,susy-ewkino/3l/fakerate_filters_fastsim.txt\,susy-ewkino/3l/fakerate_load_isprompt.txt", NormSystematic=0.2
+sig_TChiNeuHH_350_1+   : TChiNeuHH_350_1   : 0.3040 *0.3040* 153.841/1000 ; Label="HH (350/1)", LineStyle=7, FillColor=ROOT.kBlue-6, FakeRate="susy-ewkino/3l/fakerate_standard_central.txt\,susy-ewkino/3l/fakerate_filters_fastsim.txt\,susy-ewkino/3l/fakerate_load_isprompt.txt", NormSystematic=0.2
+sig_TChiNeuHH_400_1+   : TChiNeuHH_400_1   : 0.3040 *0.3040* 88.7325/1000 ; Label="HH (400/1)", LineStyle=7, FillColor=ROOT.kBlue-2, FakeRate="susy-ewkino/3l/fakerate_standard_central.txt\,susy-ewkino/3l/fakerate_filters_fastsim.txt\,susy-ewkino/3l/fakerate_load_isprompt.txt", NormSystematic=0.2
+sig_TChiNeuHH_450_1+   : TChiNeuHH_450_1   : 0.3040 *0.3040* 53.7702/1000 ; Label="HH (450/1)", LineStyle=1, FillColor=ROOT.kBlue+3, FakeRate="susy-ewkino/3l/fakerate_standard_central.txt\,susy-ewkino/3l/fakerate_filters_fastsim.txt\,susy-ewkino/3l/fakerate_load_isprompt.txt", NormSystematic=0.2
+
+# Dummy (to plot signals unstacked)
+dummy : TTWToLNu : 0 ; FakeRate="susy-ewkino/3l/fakerate_standard_central.txt\,susy-ewkino/3l/fakerate_filters_mc.txt", Label=""
+
 
 ## DATA
 ## -----------------------------------------------------------
-
 data : DoubleEG_Run2016B_PromptReco_v2_runs_273150_275125       ; Label="data", FakeRate="susy-ewkino/3l/fakerate_standard_central.txt\,susy-ewkino/3l/fakerate_filters_data.txt" 
 data : DoubleEG_Run2016B_PromptReco_v2_runs_275126_275783       ; Label="data", FakeRate="susy-ewkino/3l/fakerate_standard_central.txt\,susy-ewkino/3l/fakerate_filters_data.txt" 
 data : DoubleEG_Run2016C_PromptReco_v2_runs_271350_275783       ; Label="data", FakeRate="susy-ewkino/3l/fakerate_standard_central.txt\,susy-ewkino/3l/fakerate_filters_data.txt" 
@@ -116,8 +136,10 @@ promptsub       : ZZZ                             : -1*xsec             ; FillCo
 
 ## FAKES FROM MC
 ## -----------------------------------------------------------
-fakes_matched_DY   : DYJetsToLL_M10to50              : xsec             ; FillColor=ROOT.kAzure+1, FakeRate="susy-ewkino/3l/fakerate_standard_central.txt\,susy-ewkino/4l/fakerate_load_isfake.txt\,susy-ewkino/3l/fakerate_filters_mc.txt", Label="DY (fakes)"
-fakes_matched_DY   : DYJetsToLL_M50                  : xsec             ; FillColor=ROOT.kAzure+1, FakeRate="susy-ewkino/3l/fakerate_standard_central.txt\,susy-ewkino/4l/fakerate_load_isfake.txt\,susy-ewkino/3l/fakerate_filters_mc.txt", Label="DY (fakes)"
+#fakes_matched_DY   : DYJetsToLL_M10to50              : xsec             ; FillColor=ROOT.kAzure+1, FakeRate="susy-ewkino/3l/fakerate_standard_central.txt\,susy-ewkino/4l/fakerate_load_isfake.txt\,susy-ewkino/3l/fakerate_filters_mc.txt", Label="DY (fakes)"
+#fakes_matched_DY   : DYJetsToLL_M50                  : xsec             ; FillColor=ROOT.kAzure+1, FakeRate="susy-ewkino/3l/fakerate_standard_central.txt\,susy-ewkino/4l/fakerate_load_isfake.txt\,susy-ewkino/3l/fakerate_filters_mc.txt", Label="DY (fakes)"
+fakes_matched_DY   : DYJetsToLL_M10to50              : xsec             ; FillColor=ROOT.kAzure+1, FakeRate="susy-ewkino/3l/fakerate_standard_central.txt\,susy-ewkino/4l/fakerate_load_isfake.txt\,susy-ewkino/3l/fakerate_filters_mc.txt", Label="nonprompt"
+fakes_matched_DY   : DYJetsToLL_M50                  : xsec             ; FillColor=ROOT.kAzure+1, FakeRate="susy-ewkino/3l/fakerate_standard_central.txt\,susy-ewkino/4l/fakerate_load_isfake.txt\,susy-ewkino/3l/fakerate_filters_mc.txt", Label="nonprompt"
 fakes_matched_WW   : WWTo2L2Nu                       : xsec             ; FillColor=ROOT.kBlue-7, FakeRate="susy-ewkino/3l/fakerate_standard_central.txt\,susy-ewkino/4l/fakerate_load_isfake.txt\,susy-ewkino/3l/fakerate_filters_mc.txt", Label="WW (fakes)"
 fakes_matched_WJ   : WJetsToLNu                      : xsec             ; FillColor=ROOT.kCyan  , FakeRate="susy-ewkino/3l/fakerate_standard_central.txt\,susy-ewkino/4l/fakerate_load_isfake.txt\,susy-ewkino/3l/fakerate_filters_mc.txt", Label="WJ (fakes)"
 fakes_matched_WJ   : WGToLNuG                        : xsec             ; FillColor=ROOT.kCyan  , FakeRate="susy-ewkino/3l/fakerate_standard_central.txt\,susy-ewkino/4l/fakerate_load_isfake.txt\,susy-ewkino/3l/fakerate_filters_mc.txt", Label="WJ (fakes)"

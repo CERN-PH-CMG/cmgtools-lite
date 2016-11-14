@@ -23,7 +23,8 @@ BEGIN::3l
   flagsPlots  +:= --perBin --ratioOffset 0.03 --print C,png,pdf,txt
   flagsPlots  +:= --plotgroup rares_ttX+=rares_ttW --plotgroup rares_ttX+=rares_ttZ
   flagsPlots  +:= --plotgroup fakes_appldata+=promptsub
-  flagsScans  +:= --noNegVar --hardZero --plotgroup fakes_appldata+=promptsub
+  flagsScans  +:= --noNegVar --hardZero
+  flagsScans  +:=  --plotgroup fakes_appldata+=promptsub
   flagsScans  +:= --ignore promptsub --ignore promptsub_ewk_Up --ignore promptsub_ewk_Dn 
   flagsScans  +:= --neglist promptsub --neglist promptsub_ewk_Up --neglist promptsub_ewk_Dn 
   jec          := jec
