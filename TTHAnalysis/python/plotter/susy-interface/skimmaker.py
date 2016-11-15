@@ -12,8 +12,6 @@ def makeDummyMCA(m, samples, allSamples):
 	f.close()
 	return path
 
-
-
 parser = OptionParser(usage="%prog cfg regions treedir outdir [options]")
 parser = maker.addMakerOptions(parser)
 parser.add_option("--json"   , dest="json"   , type="string", default=None, help="Regexp of the JSON file you want to use to skim your tree")
