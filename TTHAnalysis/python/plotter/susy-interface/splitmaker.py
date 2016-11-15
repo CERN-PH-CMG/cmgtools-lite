@@ -17,7 +17,7 @@ parser.add_option("--dm"     , dest="deltam" , type="int", default=None, help="M
 base = "python splitSMSTrees.py {O} {T} {GEN} {TMP} --tree {TREENAME} {MASS} {LSP}"
 (options, args) = parser.parse_args()
 options = maker.splitLists(options)
-mm      = maker.Maker(base, args, options)
+mm      = maker.Maker("splitmaker", base, args, options)
 
 tmp = "--tmpdir "+options.tmpdir if options.tmpdir else ""
 gen = "--gen" if options.gen else ""

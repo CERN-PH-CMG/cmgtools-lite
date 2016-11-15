@@ -65,7 +65,7 @@ baseSig = "python makeShapeCardsSusy.py [[[MCA]]] {CUTS} \\\"{EXPR}\\\" \\\"{BIN
 (options, args) = parser.parse_args()
 options         = maker.splitLists(options)
 options.models  = func.splitList(options.models)
-mm              = maker.Maker(baseBkg, args, options)
+mm              = maker.Maker("scanmaker", baseBkg, args, options)
 mm.loadModels()
 
 friends = mm.collectFriends()	

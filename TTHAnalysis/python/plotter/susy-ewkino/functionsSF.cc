@@ -5,7 +5,7 @@
 #include "TSystem.h"
 
 TString CMSSW_BASE_SF = gSystem->ExpandPathName("${CMSSW_BASE}");
-TString DATA_SF_SF = CMSSW_BASE_SF+"/src/CMGTools/TTHAnalysis/data";
+TString DATA_SF = CMSSW_BASE_SF+"/src/CMGTools/TTHAnalysis/data";
 
 float getSF(TH2F* hist, float pt, float eta){
     int xbin = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(pt)));
@@ -63,7 +63,7 @@ float triggerSF(int BR, float pt1, int pdg1,
 
     // 3l: 3light
     if(BR <= 2) {
-        TH2F* hist = (abs(pdg3) == 13)?h_trigSF_3l_m:h_trigSF_3l_e;
+        TH2F* hist = (abs(pdg3) == 13)?h_trigSF_3l_mu:h_trigSF_3l_el;
         int xbin = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(pt2)));
         int ybin = std::max(1, std::min(hist->GetNbinsY(), hist->GetYaxis()->FindBin(pt3)));
         return hist->GetBinContent(xbin,ybin);
@@ -75,7 +75,7 @@ float triggerSF(int BR, float pt1, int pdg1,
         if(abs(pdg1)!=15) { pdgs.push_back(abs(pdg1)); pts.push_back(pt1); }
         if(abs(pdg2)!=15) { pdgs.push_back(abs(pdg2)); pts.push_back(pt2); }
         if(abs(pdg3)!=15) { pdgs.push_back(abs(pdg3)); pts.push_back(pt3); }
-        TH2F* hist = (pdgs[1] == 13)?h_trigSF_2l_m:h_trigSF_2l_e;
+        TH2F* hist = (pdgs[1] == 13)?h_trigSF_2l_mu:h_trigSF_2l_el;
         int xbin = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(pts[0])));
         int ybin = std::max(1, std::min(hist->GetNbinsY(), hist->GetYaxis()->FindBin(pts[1])));
         return hist->GetBinContent(xbin,ybin);
@@ -157,12 +157,12 @@ float leptonSF(float lepSF1, float lepSF2, float lepSF3 = 1, float lepSF4 = 1){
 // -------------------------------------------------------------
 
 // electrons
-TFile* f_elSF_FS_mvaM = new TFile(DATA_SF+"/leptonSF/electronSF_mvaVT_EWKino_fastsim_ICHEP2016_12p9fb.root", "read");
-TFile* f_elSF_FS_mvaM = new TFile(DATA_SF+"/leptonSF/electronSF_mvaM_EWKino_fastsim_ICHEP2016_12p9fb.root" , "read");
-TFile* f_elSF_FS_id   = new TFile(DATA_SF+"/leptonSF/electronSF_id_EWKino_fastsim_ICHEP2016_12p9fb.root"   , "read");
-TH2F* h_elSF_FS_mvaVT = (TH2F*) f_elSF_FS_mvaVT->Get("histo2D");
-TH2F* h_elSF_FS_mvaM  = (TH2F*) f_elSF_FS_mvaM ->Get("histo2D");
-TH2F* h_elSF_FS_id    = (TH2F*) f_elSF_FS_id   ->Get("histo2D");
+TFile* f_elSF_FS_mvaVT = new TFile(DATA_SF+"/leptonSF/electronSF_mvaVT_EWKino_fastsim_ICHEP2016_12p9fb.root", "read");
+TFile* f_elSF_FS_mvaM  = new TFile(DATA_SF+"/leptonSF/electronSF_mvaM_EWKino_fastsim_ICHEP2016_12p9fb.root" , "read");
+TFile* f_elSF_FS_id    = new TFile(DATA_SF+"/leptonSF/electronSF_id_EWKino_fastsim_ICHEP2016_12p9fb.root"   , "read");
+TH2F* h_elSF_FS_mvaVT  = (TH2F*) f_elSF_FS_mvaVT->Get("histo2D");
+TH2F* h_elSF_FS_mvaM   = (TH2F*) f_elSF_FS_mvaM ->Get("histo2D");
+TH2F* h_elSF_FS_id     = (TH2F*) f_elSF_FS_id   ->Get("histo2D");
 
 // muons
 TFile* f_muSF_FS_mvaVT = new TFile(DATA_SF+"/leptonSF/muonSF_mvaVT_EWKino_fastsim_ICHEP2016_12p9fb.root", "read");
@@ -195,19 +195,19 @@ float getMuonUncFS(float pt, int var = 0) {
 }
 
 float getTauSFFS(float pt, float eta){
-    return getSF(_lepSF_tau_FS, pt, abs(eta));
+    return getSF(h_tauSF_FS_id, pt, abs(eta));
 }
 
 float getTauUncFS(float pt, float eta, int var = 0) {
 	int fact = 1;
 	if(var == 2) fact = -1;
-	return fact * getUnc(_lepSF_tau_FS, pt, abs(eta));
+	return fact * getUnc(h_tauSF_FS_id, pt, abs(eta));
 }
 
 float getLepSFFS(float pt, float eta, int pdgId, int wp, int var = 0){
     if(abs(pdgId) == 13) return (var==0)?getMuonSFFS    (pt, eta, wp):(1+getMuonUncFS(var));
     if(abs(pdgId) == 11) return (var==0)?getElectronSFFS(pt, eta, wp):(1+getElectronUncFS(var));
-    if(abs(pdgId) == 15) return (var==0)?getTauSFFS     (pt, eta, wp):(1+getTauUncFS(pt, eta, var));
+    if(abs(pdgId) == 15) return (var==0)?getTauSFFS     (pt, eta    ):(1+getTauUncFS(pt, eta, var));
     return 1.0;
 }
 

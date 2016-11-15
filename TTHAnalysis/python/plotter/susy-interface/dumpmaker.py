@@ -8,7 +8,7 @@ parser = maker.addMakerOptions(parser)
 base = "python mcDump.py --dumpFile .fdump.txt {MCA} {CUTS} {FMT} -P {T} --s2v --tree {TREENAME} -j 4 {MCCS} {MACROS} {FRIENDS} {PROCS} {FLAGS} &&  sort -n -k1 -k2 -k3 .fdump.txt > {O}/dump_{TAG}.txt && rm .fdump.txt"
 (options, args) = parser.parse_args()
 options = maker.splitLists(options)
-mm      = maker.Maker(base, args, options)
+mm      = maker.Maker("dumpmaker", base, args, options)
 
 scenario = mm.getScenario   ()
 friends  = mm.collectFriends()	

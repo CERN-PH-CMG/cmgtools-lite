@@ -11,7 +11,7 @@ parser.add_option("--finalize",  dest="finalize", action="store_true", default=F
 base = "python makeShapeCardsSusy.py {MCA} {CUTS} \"{EXPR}\" \"{BINS}\" {SYS} -o SR -P {T} --tree {TREENAME} {MCCS} {MACROS} --neg --s2v -f -l {LUMI} --od {O} {FRIENDS} {PROCS} {FLAGS}"
 (options, args) = parser.parse_args()
 options = maker.splitLists(options)
-mm      = maker.Maker(base, args, options)
+mm      = maker.Maker("limitmaker", base, args, options)
 
 scenario = mm.getScenario()
 sl = str(options.lumi)

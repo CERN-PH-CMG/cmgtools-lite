@@ -3,6 +3,7 @@ from string import Formatter
 from functions import *
 from custom import *
 from job import *
+from init import *
 
 def addMakerOptions(parser):
 	parser.add_option("-j"       , "--jobs"       , dest="jobs"   , type="int"   , default=0     , help="Number of jobs in multi-processing")
@@ -37,30 +38,34 @@ def splitLists(options):
 	return options
 
 class Maker():
-	def __init__(self, base, args, options):
-		self.cmssw   = os.environ["CMSSW_BASE"]
-		self.workdir = self.cmssw   +"/src/CMGTools/TTHAnalysis/python/plotter"
-		self.dir     = self.workdir +"/susy-interface"
-		self.tmpdir  = self.dir     +"/tmp"
-		self.instance = timestamp(False)
+	def __init__(self, module, base, args, options):
+		self.module   = module
+		self.base     = base
+		self.args     = args
+		self.options  = options
+		self.cmssw    = os.environ["CMSSW_BASE"]
+		self.workdir  = self.cmssw   +"/src/CMGTools/TTHAnalysis/python/plotter"
+		self.dir      = self.workdir +"/susy-interface"
+		self.tmpdir   = self.dir     +"/tmp"
+		mkdir(self.tmpdir, False)
+		self.instance = self.findInstance()
+		mkcleandir(self.tmpdir+"/"+self.instance, False)
+		self.init.write()
 		self.jobpath  = self.tmpdir+"/"+self.instance+"/job"
 		self.logpath  = self.tmpdir+"/"+self.instance+"/log"
 		self.srcpath  = self.tmpdir+"/"+self.instance+"/src"
 		self.tmppath  = self.tmpdir+"/"+self.instance+"/tmp"
-		mkdir(self.tmpdir , False)
 		mkdir(self.jobpath, False)
 		mkdir(self.logpath, False)
 		mkdir(self.srcpath, False)
 		mkdir(self.tmppath, False)
 		self.use = {}
-		self.base = base
 		self.parseBase()
 		configsC = Collection(self.dir+"/env/configs")
-		self.config  = configsC.get(args[0])
-		self.loadRegions(args[1])
-		self.treedir = args[2].rstrip("/")
-		self.outdir  = args[3].rstrip("/")
-		self.options = options
+		self.config  = configsC.get(self.args[0])
+		self.loadRegions()
+		self.treedir = self.args[2].rstrip("/")
+		self.outdir  = self.args[3].rstrip("/")
 	def addToTalk(self, message):
 		print message # placeholder for now
 	def clearJobs(self):
@@ -82,10 +87,10 @@ class Maker():
 	def collectFlags(self, additionals = "", useWeight = True, isFastSim = False, forceRedo = False):
 		theflags = copy.deepcopy(getattr(self.config , "flags", []))
 		theflags.extend(getattr(self.region , "flags", []))
-		theflags.extend(getattr(self.options, "flags", []))
+		theflags.extend(self.getOption("flags", []))
 		theflags.extend(getattr(self.config , additionals, []))
 		theflags.extend(getattr(self.region , additionals, []))
-		theflags.extend(getattr(self.options, additionals, []))
+		theflags.extend(self.getOption(additionals, []))
 		weight   = self.getWeight(isFastSim)
 		if useWeight and weight: theflags.append("-W '"+weight+"'")
 		theflags = filter(lambda x: x, theflags)
@@ -108,18 +113,32 @@ class Maker():
 		return " ".join(self.getFriends())
 	def collectMacros(self):
 		use = getattr(self.config, "macros", [])
-		if len(self.options.macros)>0: use = self.options.macros
+		if len(self.getOption("macros",[]))>0: use = self.getOption("macros",[])
 		return " ".join(["--load-macro "+m for m in use])
 	def collectMCCs(self):
 		use = getattr(self.config, "mccs", [])
-		if len(self.options.mccs)>0: use = self.options.mccs
+		if len(self.getOption("mccs", []))>0: use = self.getOption("mccs", [])
 		return " ".join(["--mcc "+m for m in use])
 	def collectProcs(self):
 		return " ".join(["-p "+p for p in self.getProcs()])
 	def error(self, message):
 		self.talk(message, True)	
+	def findInstance(self):
+		init = None
+		for inst in os.listdir(self.tmpdir):
+			del init
+			init = Init(self.tmpdir+"/"+inst+"/init")
+			if init.identify(self.module, self.args, self.options):
+				self.init = init
+				return inst
+		del init
+		number = timestamp(False)
+		self.init = Init(self.tmpdir+"/"+number+"/init")
+		self.init.set(self.module, self.args, self.options)
+		return number
 	def getAllProcs(self):
-		regprocs  = ["data"] + getattr(self.region, "bkgs", []) + getattr(self.region, "sigs", [])
+		#regprocs  = ["data"] + getattr(self.region, "bkgs", []) + getattr(self.region, "sigs", [])
+		regprocs  = ["data"] + self.getBkgs() + self.getSigs()
 		pfull, s  = self.getStuffFromMCA()
 		procs = []
 		for pname in pfull:
@@ -136,7 +155,7 @@ class Maker():
 		return samples
 	def getBkgs(self):
 		toReturn = splitList(getattr(self.region, "bkgs", []))
-		if len(self.options.bkgs)>0: toReturn = self.options.bkgs
+		if len(self.getOption("bkgs", []))>0: toReturn = splitList(self.getOption("bkgs", []))
 		return toReturn
 	def getExprCut(self):
 		return getCut(getattr(self.config, "firstCut", "alwaystrue"), self.getVariable("expr"), self.getVariable("bins"))
@@ -172,13 +191,17 @@ class Maker():
 		if len(filtered)>0:
 			return str(max([int(l[1]) for l in filtered]))
 		return "50000"
+	def getOption(self, key, default = None):
+		raw = getattr(self.options, key, default)
+		if not raw or raw=="''" or raw=='""': raw = default
+		return raw
 	def getProcs(self):
 		procs = self.getBkgs() + self.getSigs()
-		if len(self.options.procs)>0: procs = splitList(self.options.procs)
+		if len(self.getOption("procs", []))>0: procs = splitList(self.getOption("procs", []))
 		return procs
 	def getSigs(self):
 		toReturn = splitList(getattr(self.region, "sigs", []))
-		if len(self.options.sigs)>0: toReturn = self.options.sigs
+		if len(self.getOption("sigs", []))>0: toReturn = splitList(self.getOption("sigs", []))
 		return toReturn
 	def getStuffFromMCA(self):
 		procs   = []
@@ -218,7 +241,7 @@ class Maker():
 		return None
 	def getVariable(self, var, default = None):
 		if var in self.use.keys(): return self.use[var]
-		if                             hasattr(self.options, var) and getattr(self.options, var): return getattr(self.options, var)
+		if                             hasattr(self.options, var) and self.getOption(var, default): return self.getOption(var, default)
 		if hasattr(self, "model" ) and hasattr(self.model  , var) and getattr(self.model  , var): return getattr(self.model  , var)
 		if hasattr(self, "region") and hasattr(self.region , var) and getattr(self.region , var): return getattr(self.region , var)
 		if                             hasattr(self.config , var) and getattr(self.config , var): return getattr(self.config , var)
@@ -246,9 +269,9 @@ class Maker():
 		allmodels = Collection(self.dir+"/env/models")
 		if len(self.options.models)==0: self.options.models = allmodels.getAllNames()
 		self.models = [allmodels.get(m) for m in self.options.models]
-	def loadRegions(self, arg):
+	def loadRegions(self):
 		allregions = Collection(self.dir+"/env/regions")
-		self.regions = [allregions.get(a) for a in arg.split(";")]
+		self.regions = [allregions.get(a) for a in self.args[1].split(";")]
 	def makeCmd(self, args):
 		if len(args) != len(self.keys): 
 			print "error, not all arguments given"
@@ -333,41 +356,3 @@ class Maker():
 	    print timestamp()+": "+message
 	def useVar(self, key, value):
 		self.use[key] = value
-
-	##	script = self.srcpath + "/submitJob_" + name + ".sh"
-	##	runner = "lxbatch_runner.sh"
-	##	if queue in ["short.q", "all.q", "long.q"]:
-	##		runner = "psibatch_runner.sh"
-	##	elif queue in ["batch"] and os.path.isdir('/pool/ciencias/'):
-	##		runner = "oviedobatch_runner.sh"
-	##	cp("susy-interface/scripts/" + runner, script)
-	##	replaceInFile(script, "WORK=$1; shift", "WORK=\"" + self.workdir + "\"")
-	##	replaceInFile(script, "SRC=$1; shift" , "SRC=\"" + self.cmssw + "/src\"")
-	##	replaceInFile(script, "INST=$1; shift" , "INST=\"" + self.instance + "\"")
-	##	replaceInFile(script, "[PLACEHOLDER]" , "\n".join([b for b in commands])+"\n")
-	##	cant = needHold and not queue in ["short.q", "all.q", "long.q"]
-	##	if queue and not cant:
-	##		return self.submitOnBatch(name, script, queue, setHold)
-	##	else:
-	##		cmd("source " + script)
-	##		return -1
-	##def submitOnBatch(self, name, script, queue, setHold = -1):
-	##	super = "bsub -q {queue} -J SUSY_{name} "
-	##	if queue in ["all.q", "long.q", "short.q"]:
-	##		super = "qsub -q {queue} -N SUSY_{name} "
-	##	elif queue in ["batch"] and os.path.isdir('/pool/ciencias/'):
-	##		super = "qsub -q {queue} -N AWSMUniovi_{name} "
-	##	super += "-o {dir}/submitJob_{name}.out -e {dir}/submitJob_{name}.err "
-	##	super = super.format(queue=queue, name=name, dir=self.logpath)
-	##	if setHold > -1 and queue in ["all.q", "long.q", "short.q"]:
-	##		super += " -hold_jid " + str(setHold) + " " 
-	##	jobLine = bash(super + script) 
-	##	if queue in ["all.q", "long.q", "short.q"]:
-	##		jobId = int(jobLine.split()[2])
-	##	elif queue in ["batch"] and os.path.isdir('/pool/ciencias/'):
-	##		jobId = int(jobLine.split('.')[0])
-	##	else:
-	##		jobId = int(jobLine.split()[1].strip("<").strip(">"))
-	##	return jobId
-	
-

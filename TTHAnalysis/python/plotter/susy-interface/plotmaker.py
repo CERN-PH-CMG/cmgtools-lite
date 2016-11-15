@@ -23,6 +23,12 @@ def collectPPlots(region, plotsname):
 	return " ".join("--sP "+v for v in region.plots[plotsname])
 
 def collectProcesses(mm, make):
+	if len(mm.options.procs)>0: 
+		procs = " ".join(["-p "+b for b in mm.getProcs()])
+		add = ""
+		if make=="sigs" or make=="mix": add="--showIndivSigs --noStackSig "
+		if make=="sigs": add="--empytStack -p dummy "+add
+		return add + procs
 	bkgs = " ".join(["-p "+b for b in mm.getBkgs()])
 	sigs = " ".join(["-p "+s for s in mm.getSigs()])
 	if make=="data": return "-p data "+bkgs
@@ -41,7 +47,7 @@ parser.add_option("--noRatio", dest="ratio", action="store_false", default=True,
 base = "python mcPlots.py {MCA} {CUTS} {PLOTFILE} -P {T} --neg --s2v --tree {TREENAME} -f --cmsprel '{LSPAM}' --legendWidth 0.20 --legendFontSize 0.035 {MCCS} {MACROS} {RATIO} -l {LUMI} --pdir {O} {FRIENDS} {PROCS} {PLOTS} {FLAGS} --showMCError"
 (options, args) = parser.parse_args()
 options = maker.splitLists(options)
-mm      = maker.Maker(base, args, options)
+mm      = maker.Maker("plotmaker", base, args, options)
 
 for r in range(len(mm.regions)):
 	mm.iterateRegion()

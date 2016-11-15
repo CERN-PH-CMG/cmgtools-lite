@@ -65,7 +65,7 @@ float srMll(int nLep, float mllAllFlavors, float mllOnlyLight, float mllOnlyTaus
 int nLepFlavor(int nTau, int is4l, int is5l){
 
     if(!is4l && !is5l) return 0;
-	if(is5l          ) return 6;
+    if(is5l          ) return 6;
     if(nTau == 0     ) return 1;
     if(nTau == 1     ) return 2;
     if(nTau == 2     ) return 3;

@@ -5,12 +5,12 @@
 #include "TFile.h"
 #include "TSystem.h"
 
-TString CMSSW_BASE = gSystem->ExpandPathName("${CMSSW_BASE}");
-TString DATA = CMSSW_BASE+"/src/CMGTools/TTHAnalysis/data";
+TString CMSSW_BASE_PUW = gSystem->ExpandPathName("${CMSSW_BASE}");
+TString DATA_PUW = CMSSW_BASE_PUW+"/src/CMGTools/TTHAnalysis/data";
 
-TFile* f_puw_nInt_ICHEP    = new TFile(CMSSW_BASE+"/src/CMGTools/TTHAnalysis/data/pileup/puWeights_12fb_63mb.root", "read");;
-TFile* f_puw_nInt_ICHEP_Up = new TFile(CMSSW_BASE+"/src/CMGTools/TTHAnalysis/data/pileup/puWeights_12fb_63mb_Up.root", "read");
-TFile* f_puw_nInt_ICHEP_Dn = new TFile(CMSSW_BASE+"/src/CMGTools/TTHAnalysis/data/pileup/puWeights_12fb_63mb_Down.root", "read");
+TFile* f_puw_nInt_ICHEP    = new TFile(DATA_PUW+"/pileup/puWeights_12fb_63mb.root"     , "read");;
+TFile* f_puw_nInt_ICHEP_Up = new TFile(DATA_PUW+"/pileup/puWeights_12fb_63mb_Up.root"  , "read");
+TFile* f_puw_nInt_ICHEP_Dn = new TFile(DATA_PUW+"/pileup/puWeights_12fb_63mb_Down.root", "read");
 TH1F* h_puw_nInt_ICHEP    = (TH1F*) (f_puw_nInt_ICHEP   ->Get("puw"));
 TH1F* h_puw_nInt_ICHEP_Up = (TH1F*) (f_puw_nInt_ICHEP_Up->Get("puw"));
 TH1F* h_puw_nInt_ICHEP_Dn = (TH1F*) (f_puw_nInt_ICHEP_Dn->Get("puw"));

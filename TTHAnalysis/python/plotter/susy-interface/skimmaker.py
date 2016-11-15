@@ -26,7 +26,7 @@ baseFriends = "python skimFTrees.py {T} {F} {O}"
 (options, args) = parser.parse_args()
 options         = maker.splitLists(options)
 options.samples = func.splitList(options.samples)
-mm              = maker.Maker(base, args, options)
+mm              = maker.Maker("skimmaker", base, args, options)
 
 ## skim main tree
 friends = mm.collectFriends()	

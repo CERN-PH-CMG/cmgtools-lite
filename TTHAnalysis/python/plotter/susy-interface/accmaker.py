@@ -12,7 +12,7 @@ baseAll = "python mcAnalysis.py {MCA} {CUTS} -P {T} --neg --s2v --tree {TREENAME
 baseBin = "python mcPlots.py {MCA} {CUTS} {PLOTFILE} -P {T} --neg --s2v --tree {TREENAME} {FINAL} {MCCS} {MACROS} -l {LUMI} --pdir {O} {FRIENDS} {PROCS} {PLOTS} {FLAGS} --perBin --print txt"
 (options, args) = parser.parse_args()
 options = maker.splitLists(options)
-mm      = maker.Maker(baseAll, args, options)
+mm      = maker.Maker("accmaker", baseAll, args, options)
 if options.perBin: mm.reloadBase(baseBin)
 
 scenario = mm.getScenario()
