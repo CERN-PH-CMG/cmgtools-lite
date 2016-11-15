@@ -1,0 +1,10 @@
+nTightL:  nTightLeps == 1 && nTightEl == 1 && LepGood1_pt > 25
+LepPt: LepGood1_pt > 25
+nVetoL: nVetoLeps==0
+nJets: nCentralJet30>=2
+lsl80: LSLjetptGT80==1
+# add-ons
+dphi: fabs(DeltaPhiLepW) >= 0
+nBtags: nBJetMedium30>=1
+HTcut: HT > 0
+STcut: ST > 0

@@ -1,0 +1,20 @@
+# SELECTED
+Lp_sel_incl:   if3(Selected == 1, Lp, -99)  : 1,-0.5,2.5   ; XTitle="Lp(e)", IncludeOverflows=False
+
+# ANTI-SELECTED
+Lp_anti_incl:   if3(Selected == -1, Lp, -99)  : 1,-0.5,2.5   ; XTitle="Lp(e)", IncludeOverflows=False
+
+# SELECTED
+Lp_sel_HT500toInf:   	if3(Selected == 1 && HT >= 500, Lp, -99) : 1,-0.5,2.5   ; XTitle="Lp(e)", IncludeOverflows=False
+Lp_sel_HT500to1000:	if3(Selected == 1 && HT >= 500 && HT < 1000, Lp, -99) : 1,-0.5,2.5   ; XTitle="Lp(e)", IncludeOverflows=False
+Lp_sel_HT500to750:	if3(Selected == 1 && HT >= 500 && HT < 750, Lp, -99) : 1,-0.5,2.5   ; XTitle="Lp(e)", IncludeOverflows=False
+Lp_sel_HT750to1000:	if3(Selected == 1 && HT >= 750 && HT < 1000, Lp, -99) : 1,-0.5,2.5   ; XTitle="Lp(e)", IncludeOverflows=False
+Lp_sel_HT1000toInf:	if3(Selected == 1 && HT >= 1000, Lp, -99) : 1,-0.5,2.5   ; XTitle="Lp(e)", IncludeOverflows=False
+
+
+# ANTI-SELECTED
+Lp_anti_HT500toInf:   	if3(Selected == -1 && HT >= 500, Lp, -99) : 1,-0.5,2.5   ; XTitle="Lp(e)", IncludeOverflows=False
+Lp_anti_HT500to1000:	if3(Selected == -1 && HT >= 500 && HT < 1000, Lp, -99) : 1,-0.5,2.5   ; XTitle="Lp(e)", IncludeOverflows=False
+Lp_anti_HT500to750:	if3(Selected == -1 && HT >= 500 && HT < 750, Lp, -99) : 1,-0.5,2.5   ; XTitle="Lp(e)", IncludeOverflows=False
+Lp_anti_HT750to1000:	if3(Selected == -1 && HT >= 750 && HT < 1000, Lp, -99) : 1,-0.5,2.5   ; XTitle="Lp(e)", IncludeOverflows=False
+Lp_anti_HT1000toInf:	if3(Selected == -1 && HT >= 1000, Lp, -99) : 1,-0.5,2.5   ; XTitle="Lp(e)", IncludeOverflows=False

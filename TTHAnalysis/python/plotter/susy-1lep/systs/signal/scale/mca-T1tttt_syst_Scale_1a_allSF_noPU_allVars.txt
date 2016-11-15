@@ -1,0 +1,11 @@
+### CENTRAL
+#T1tttt_Scan		: T1tttt_Scan 	: lepSF*0.94*susyXsec*93743963/susyNgen*btagSF ;
+T1tttt_Scan		: T1tttt_Scan	: lepSF*0.94*susyXsec*93743963/susyNgen*btagSF*LHEweight_wgt[0]/LHEweight_original ;
+T1tttt_Scan_Scale-1	: T1tttt_Scan	: lepSF*0.94*susyXsec*93743963/susyNgen*btagSF*LHEweight_wgt[1]/LHEweight_original ;
+T1tttt_Scan_Scale-2	: T1tttt_Scan	: lepSF*0.94*susyXsec*93743963/susyNgen*btagSF*LHEweight_wgt[2]/LHEweight_original ;
+T1tttt_Scan_Scale-3	: T1tttt_Scan	: lepSF*0.94*susyXsec*93743963/susyNgen*btagSF*LHEweight_wgt[3]/LHEweight_original ;
+T1tttt_Scan_Scale-4	: T1tttt_Scan	: lepSF*0.94*susyXsec*93743963/susyNgen*btagSF*LHEweight_wgt[4]/LHEweight_original ;
+#T1tttt_Scan_Scale-5	: T1tttt_Scan	: lepSF*0.94*susyXsec*93743963/susyNgen*btagSF*LHEweight_wgt[5]/LHEweight_original ;
+T1tttt_Scan_Scale-6	: T1tttt_Scan	: lepSF*0.94*susyXsec*93743963/susyNgen*btagSF*LHEweight_wgt[6]/LHEweight_original ;
+#T1tttt_Scan_Scale-7	: T1tttt_Scan	: lepSF*0.94*susyXsec*93743963/susyNgen*btagSF*LHEweight_wgt[7]/LHEweight_original ;
+T1tttt_Scan_Scale-8	: T1tttt_Scan	: lepSF*0.94*susyXsec*93743963/susyNgen*btagSF*LHEweight_wgt[8]/LHEweight_original ;

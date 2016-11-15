@@ -1,0 +1,21 @@
+1 hard lep: nLep == 1 && Lep_pt > 25 && nVeto == 0
+Selected: Selected == 1
+1ele: nEle == 1
+
+Trigger: !isData || (isData && (HLT_EleHT350 || HLT_EleHT400 || HLT_Ele105 || HLT_MuHT400 || HLT_MuHT350))
+
+# use the following line to pick leptons only from the corresponding PD
+XOR: !isData || (isData && ((PD_SingleEle && nEl==1) || (PD_SingleMu && nMu==1)))
+
+#Trigger: !isData || (isData && ((PD_SingleEle && nEl==1 && (HLT_EleHT350 || HLT_EleHT400 || HLT_Ele105)) || (PD_SingleMu && nMu==1 && (HLT_MuHT400 || HLT_MuHT350))))
+
+nJetBase: nJets30Clean >= 2
+2.JetPt > 80: Jet2_pt > 80
+triggHT: HT > 500
+triggLT: LT > 250
+
+#use this flag for 2016 (from friend trees)
+Filters: !isData || METfilters == 1
+
+nbjets >= 1: nBJet >= 1
+#njets >=6: nJets30Clean >= 6

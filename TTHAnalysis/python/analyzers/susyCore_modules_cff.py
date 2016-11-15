@@ -160,6 +160,7 @@ from CMGTools.TTHAnalysis.analyzers.susyParameterScanAnalyzer import susyParamet
 susyScanAna = cfg.Analyzer(
     susyParameterScanAnalyzer, name="susyParameterScanAnalyzer",
     doLHE=True,
+    SUSYmodel='None',
     useLumiInfo=True
     )
 
@@ -173,6 +174,8 @@ lepAna = cfg.Analyzer(
     rhoElectron = 'fixedGridRhoFastjetCentralNeutral',
     # energy scale corrections and ghost muon suppression (off by default)
     doMuonScaleCorrections=False,
+    #doMuScleFitCorrections=False, # "rereco"
+    #doRochesterCorrections=False,
     doElectronScaleCorrections=False, # "embedded" in 5.18 for regression
     doSegmentBasedMuonCleaning=False,
     # inclusive very loose muon selection
@@ -236,6 +239,14 @@ ttHLepSkim = cfg.Analyzer(
     #ptCuts = [20,10],                # can give a set of pt cuts on the leptons
     requireSameSignPair = False,
     allowLepTauComb = False
+    )
+
+## OTHER LEPTON SKIMMER
+from CMGTools.TTHAnalysis.analyzers.anyLepSkimmer import anyLepSkimmer
+anyLepSkim = cfg.Analyzer(
+    anyLepSkimmer, name='anyLepSkimmer',
+    minLeptons = 0,
+    maxLeptons = 999,
     )
 
 ## Photon Analyzer (generic)
@@ -534,15 +545,18 @@ susyCoreSequence = [
     genHiggsAna,
     genHFAna,
     pdfwAna,
-    susyScanAna,
+
     vertexAna,
     lepAna,
+
     tauAna,
-    ttHLepSkim,
+#    ttHLepSkim,
     #ttHLepMCAna,
     photonAna,
     isoTrackAna,
     jetAna,
+    susyScanAna,
+    ttHLepSkim,
     #ttHFatJetAna,  # out of core sequence for now
     #ttHSVAna, # out of core sequence for now
     metAna,

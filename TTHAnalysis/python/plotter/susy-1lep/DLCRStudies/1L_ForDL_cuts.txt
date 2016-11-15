@@ -1,0 +1,16 @@
+Trigger: !isData || (isData && (HLT_EleHT350 || HLT_EleHT400 || HLT_Ele105 || HLT_MuHT400 || HLT_MuHT350))
+XOR : !isData || (isData && ((PD_SingleEle && nEl==1) || (PD_SingleMu && nMu==1)))
+== 1 hard lep : nLep == 1 && Selected == 1 && Lep_pt > 25
+veto : nVeto == 0
+#use this flag for now
+Filters: !isData || METfilters == 1
+
+nJets30Clean >= 3 : nJets30Clean >= 3
+2.JetPt > 80 : Jet2_pt > 80
+HT > 500 : HT > 500
+LT > 250 : LT > 250
+#Nb >= 1 : nBJet >= 1
+Nb = 0 : nBJet == 0
+DPhi<0.5 : dPhi<0.5
+#Filters : !isData || (isData && passFilters)
+

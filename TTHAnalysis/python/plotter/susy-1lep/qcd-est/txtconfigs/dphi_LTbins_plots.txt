@@ -1,0 +1,20 @@
+dPhi_NJ45:   if3(nJets >= 4 && nJets <= 5, fabs(dPhi), -99) : [0,0.25,0.5,0.75,1,1.75,3.2]   ; XTitle="#Delta #varphi (lep\,W)", IncludeOverflows=False, Logy,
+dPhi_NJ68:   if3(nJets >= 6 && nJets <= 8, fabs(dPhi), -99) : [0,0.25,0.5,0.75,1,1.75,3.2]   ; XTitle="#Delta #varphi (lep\,W)", IncludeOverflows=False, Logy,
+
+# SELECTED
+# Nj : 4,5
+#dPhi_LT0_NJ45:   if3(LT < 250 && nJets >= 4 && nJets <= 5, fabs(dPhi), -99) : [0,0.25,0.5,0.75,1,1.75,3.2]   ; XTitle="#Delta #varphi (lep\,W)", IncludeOverflows=False, Logy,
+dPhi_LT1_NJ45:   if3(250 < LT && LT < 350 && nJets >= 4 && nJets <= 5, fabs(dPhi), -99) : [0,0.25,0.5,0.75,1,1.75,3.2]   ; XTitle="#Delta #varphi (lep\,W)", IncludeOverflows=False, Logy,
+dPhi_LT2_NJ45:   if3(350 < LT && LT < 450 && nJets >= 4 && nJets <= 5, fabs(dPhi), -99) : [0,0.25,0.5,0.75,1,1.75,3.2]   ; XTitle="#Delta #varphi (lep\,W)", IncludeOverflows=False, Logy,
+dPhi_LT3_NJ45:   if3(450 < LT && LT < 600 && nJets >= 4 && nJets <= 5, fabs(dPhi), -99) : [0,0.25,0.5,0.75,1,1.75,3.2]   ; XTitle="#Delta #varphi (lep\,W)", IncludeOverflows=False, Logy,
+dPhi_LT4_NJ45:   if3(600 < LT && nJets >= 4 && nJets <= 5, fabs(dPhi), -99) : [0,0.25,0.5,0.75,1,1.75,3.2]   ; XTitle="#Delta #varphi (lep\,W)", IncludeOverflows=False, Logy,
+
+# Nj : 6-8
+#dPhi_LT0_NJ68:   if3(LT < 250 && nJets >= 6 && nJets <= 8, fabs(dPhi), -99) : [0,0.25,0.5,0.75,1,1.75,3.2]   ; XTitle="#Delta #varphi (lep\,W)", IncludeOverflows=False, Logy,
+dPhi_LT1_NJ68:   if3(250 < LT && LT < 350 && nJets >= 6 && nJets <= 8, fabs(dPhi), -99) : [0,0.25,0.5,0.75,1,1.75,3.2]   ; XTitle="#Delta #varphi (lep\,W)", IncludeOverflows=False, Logy,
+dPhi_LT2_NJ68:   if3(350 < LT && LT < 450 && nJets >= 6 && nJets <= 8, fabs(dPhi), -99) : [0,0.25,0.5,0.75,1,1.75,3.2]   ; XTitle="#Delta #varphi (lep\,W)", IncludeOverflows=False, Logy,
+dPhi_LT3_NJ68:   if3(450 < LT && LT < 600 && nJets >= 6 && nJets <= 8, fabs(dPhi), -99) : [0,0.25,0.5,0.75,1,1.75,3.2]   ; XTitle="#Delta #varphi (lep\,W)", IncludeOverflows=False, Logy,
+dPhi_LT4_NJ68:   if3(600 < LT && nJets >= 6 && nJets <= 8, fabs(dPhi), -99) : [0,0.25,0.5,0.75,1,1.75,3.2]   ; XTitle="#Delta #varphi (lep\,W)", IncludeOverflows=False, Logy,
+
+# incl
+dPhiLepW_incl:   fabs(dPhi)  : [0,0.25,0.5,0.75,1,1.75,3.2]   ; XTitle="#Delta #varphi (lep\,W)", IncludeOverflows=False, Logy,

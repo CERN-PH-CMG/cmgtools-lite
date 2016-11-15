@@ -1,0 +1,15 @@
+Trigger: !isData || (isData && (HLT_EleHT350 || HLT_EleHT400 || HLT_Ele105 || HLT_MuHT400 || HLT_MuHT350))
+XOR : !isData || (isData && ((PD_SingleEle && nEl>=1 && nMu==0) || (PD_SingleMu && nMu>=1)))
+#use this flag for now
+Filters: !isData || METfilters == 1
+
+== 2 tight lep: nLep == 2 && Selected == 1 && nVeto == 0
+#DL jet mult>4 :  DLMS_nJets30Clean >=4
+DL jet mult>3 :  DLMS_nJets30Clean >=3
+2.JetPt > 80 : Jet2_pt > 80
+DLMS_HT>500: DLMS_HT>500
+DLMS_ST>250: DLMS_ST>250
+#Nb >= 1 : nBJet >= 1
+Nb = 0 : nBJet == 0
+
+base: 1

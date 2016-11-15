@@ -1,0 +1,5 @@
+# use cmg intern HT variable: htJet30j
+HT350: HT > 350
+#1lep: nLepGood+nLepOther > 0
+1lep: nLep == 1
+LT200: LT > 200

@@ -1,0 +1,39 @@
+# TTJets
+MC	: TTJets_LO 			: xsec*puRatio : ngenTau+ngenLep == 0 && lheHTIncoming <= 600 && HT < 1250;
+MC	: TTJets_DiLepton		: xsec*puRatio : lheHTIncoming <= 600;
+MC	: TTJets_SingleLeptonFromT      : xsec*puRatio : lheHTIncoming <= 600;
+MC	: TTJets_SingleLeptonFromTbar   : xsec*puRatio : lheHTIncoming <= 600;
+MC	: TTJets_LO_HT600to800		: xsec*puRatio ;
+MC	: TTJets_LO_HT800to1200 	: xsec*puRatio ;
+MC	: TTJets_LO_HT1200to2500 	: xsec*puRatio ;
+MC	: TTJets_LO_HT2500toInf 	: xsec*puRatio ;
+# WJets
+MC	: WJetsToLNu_HT100to200		: xsec*puRatio ;
+MC	: WJetsToLNu_HT200to400 	: xsec*puRatio ;
+MC	: WJetsToLNu_HT400to600 	: xsec*puRatio ;
+MC	: WJetsToLNu_HT600to800 	: xsec*puRatio ;
+MC	: WJetsToLNu_HT800to1200 	: xsec*puRatio ;
+MC	: WJetsToLNu_HT1200to2500 	: xsec*puRatio ;
+MC	: WJetsToLNu_HT2500toInf 	: xsec*puRatio ;
+# QCD
+MC	: QCD_HT300to500		: xsec*puRatio ;
+MC	: QCD_HT500to700         	: xsec*puRatio ;
+MC	: QCD_HT700to1000         	: xsec*puRatio ;
+MC	: QCD_HT1000to1500         	: xsec*puRatio ;
+MC	: QCD_HT1500to2000         	: xsec*puRatio ;
+MC	: QCD_HT2000toInf         	: xsec*puRatio ;
+# Single Top
+MC	: TToLeptons_tch_amcatnlo_full	: xsec*puRatio ;
+MC	: TToLeptons_sch	 	: xsec*puRatio ;
+MC	: T_tWch	 		: xsec*puRatio ;
+MC	: TBar_tWch	 		: xsec*puRatio ;
+# DY
+MC	: DYJetsToLL_M50_HT100to200	: xsec*puRatio ;
+MC	: DYJetsToLL_M50_HT200to400 	: xsec*puRatio ;
+MC	: DYJetsToLL_M50_HT400to600 	: xsec*puRatio ;
+MC	: DYJetsToLL_M50_HT600toInf 	: xsec*puRatio ;
+# TTV
+MC	: TTWToLNu			: xsec*puRatio ;
+MC	: TTWToQQ 			: xsec*puRatio ;
+MC	: TTZToLLNuNu 			: xsec*puRatio ;
+MC	: TTZToQQ 			: xsec*puRatio ;

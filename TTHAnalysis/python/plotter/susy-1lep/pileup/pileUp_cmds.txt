@@ -1,0 +1,1 @@
+pileupCalc.py -i $JSON --inputLumiJSON /afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions15/13TeV/PileUp/pileup_latest.txt --calcMode true --minBiasXsec 80000 --maxPileupBin 60 --numPileupBins 60 DataPileupHisto.root

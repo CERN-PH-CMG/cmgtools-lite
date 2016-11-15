@@ -791,6 +791,7 @@ preprocessor = None
 #-------- HOW TO RUN -----------
 
 test = getHeppyOption('test')
+test = '1'
 if test == '1':
     comp = selectedComponents[0]
     comp.files = comp.files[:1]

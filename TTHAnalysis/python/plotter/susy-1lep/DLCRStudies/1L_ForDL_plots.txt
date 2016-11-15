@@ -1,0 +1,15 @@
+#python mcPlots.py susy-1lep/mca-Spring16_HT350Skim.txt susy-1lep/DLCRStudies/1L_ForDL_cuts.txt susy-1lep/DLCRStudies/1L_ForDL_plots.txt -P SampLinks/ --FMCs SampLinks/Friends/MC/ --FDs SampLinks/Friends/Data/ -j 12 -l 7.6 -f --tree treeProducerSusySingleLepton -G -f --pdir www_plots/test/ --showRatio --maxRatioRange 0 1.95 --fixRatioRange --noErrorBandOnRatio --print-dir susy-1lep/DLCRStudies/plots_1L
+
+nJ_LTInc: if3(               LT>250, nJets30Clean, -99) : 7,3,10; XTitle="jet multiplicity", IncludeOverflows=False, RMin=0.25, RMax=1.5
+#nJ_LT1:   if3(250<LT&& LT<350, nJets30Clean, -99) : 7,3,10; XTitle="jet multiplicity", IncludeOverflows=False, Logy, RMin=0.25, RMax=1.5, extralabel="250<LT<350 GeV"
+#nJ_LT2:   if3(350<LT&& LT<450, nJets30Clean, -99) : 7,3,10; XTitle="jet multiplicity", IncludeOverflows=False, Logy, RMin=0.25, RMax=1.5, extralabel="350<LT<450 GeV"
+#J_LT2Inc:   if3(350<LT               , nJets30Clean, -99) : 7,3,10; XTitle="jet multiplicity", IncludeOverflows=False, Logy, RMin=0.25, RMax=1.5, extralabel="LT>350 GeV"
+#nJ_LT3:   if3(450<LT&& LT<600, nJets30Clean, -99) : 7,3,10; XTitle="jet multiplicity", IncludeOverflows=False, Logy, RMin=0.25, RMax=1.5, extralabel="450<LT<600 GeV"
+#nJ_LT3Inc:   if3(450<LT               , nJets30Clean, -99) : 7,3,10; XTitle="jet multiplicity", IncludeOverflows=False, Logy, RMin=0.25, RMax=1.5, extralabel="LT>450 GeV"
+#nJ_LT4Inc:   if3(600<LT               , nJets30Clean, -99) : 7,3,10; XTitle="jet multiplicity", IncludeOverflows=False, Logy, RMin=0.25, RMax=1.5, extralabel="LT>600 GeV"
+
+#nJ_HT0:     if3( 500<HT   && HT<750  && LT>250, nJets30Clean, -99) : 7,3,10; XTitle="jet multiplicity", IncludeOverflows=False, RMin=0.25, RMax=1.5, extralabel="500<HT<750 GeV"
+#nJ_HT1:     if3( 750<HT   && HT<1250 && LT>250, nJets30Clean, -99) : 7,3,10; XTitle="jet multiplicity", IncludeOverflows=False, RMin=0.25, RMax=1.5, extralabel="750<HT<1250 GeV"
+#nJ_HT1i:     if3( 750<HT &&            LT>250, nJets30Clean, -99) : 7,3,10; XTitle="jet multiplicity", IncludeOverflows=False, RMin=0.25, RMax=1.5, extralabel="HT>750 GeV"
+#nJ_HT2i:     if3( 1250<HT &&            LT>250, nJets30Clean, -99) : 7,3,10; XTitle="jet multiplicity", IncludeOverflows=False, RMin=0.25, RMax=1.5, extralabel="HT>1250 GeV"
+

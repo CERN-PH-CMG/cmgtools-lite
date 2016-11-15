@@ -1,0 +1,2 @@
+#T1tttt_Scan		: T1tttt_Scan 	: lepSF*TopPtWeight*0.94*susyXsec*totalNgen/susyNgen*btagSF;
+T1tttt_Scan		: T1tttt_Scan 	: lepSF*0.94*btagSF*susyXsec/susyNgen*93743963;
