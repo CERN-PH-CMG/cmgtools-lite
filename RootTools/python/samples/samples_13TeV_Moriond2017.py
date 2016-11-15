@@ -173,7 +173,7 @@ dataSamples_Run2016H_v3 = [JetHT_Run2016H_23Sep2016_v3, HTMHT_Run2016H_23Sep2016
 dataSamples_Moriond2017 = dataSamples_Run2016B_v2 + dataSamples_Run2016B_v3 + dataSamples_Run2016C_v1 + dataSamples_Run2016D_v1 + dataSamples_Run2016E_v1 + dataSamples_Run2016F_v1 + dataSamples_Run2016G_v1 + dataSamples_Run2016H_v2 + dataSamples_Run2016H_v3
 
 
-samples = dataSamples_23Sep2016
+samples = dataSamples_Moriond2017
 
 
 ### ---------------------------------------------------------------------
