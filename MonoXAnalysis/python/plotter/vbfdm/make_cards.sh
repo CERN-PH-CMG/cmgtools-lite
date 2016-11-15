@@ -48,7 +48,7 @@ VARNAME="detajj_mjj_binned"
 if [[ "$PRESEL" == "full_sel" ]]; then
     VARIABLE="NOTIMPL"
 else
-    VARIABLE="'mass_2(JetClean1_pt,JetClean1_eta,JetClean1_phi,0.,JetClean2_pt,JetClean2_eta,JetClean2_phi,0.):abs(JetClean1_eta-JetClean2_eta)' '30,0,4000,30,0,10'"
+    VARIABLE="'abs(JetClean1_eta-JetClean2_eta):mass_2(JetClean1_pt,JetClean1_eta,JetClean1_phi,0.,JetClean2_pt,JetClean2_eta,JetClean2_phi,0.)' '30,0,4000,30,0,10'"
 fi
 
 test -d $OUTNAME/$PRESEL/$VARNAME || mkdir -p $OUTNAME/$PRESEL/$VARNAME
