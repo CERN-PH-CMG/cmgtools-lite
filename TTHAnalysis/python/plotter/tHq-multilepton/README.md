@@ -69,19 +69,19 @@ The main python class calculating this information for is in the file `python/to
 
 The class can be tested on a few events of a minitree by simply running `python tHqEventVariables.py tree.root`.
 
-To produce the friend trees for many samples and events, a separate handler script is used, saved in `macros/prepareTHQEventVariableFriends.py`. It takes as first argument a directory with minitrees outputs, and as second argument a directory where it will store the output. To run it on a few events of a single sample, you can do this:
+To produce the friend trees for many samples and events, a separate handler script is used, saved in `macros/prepareEventVariablesFriendTree.py`. It takes as first argument a directory with minitrees outputs, and as second argument a directory where it will store the output. To run it on a few events of a single sample, you can do this:
 ```
-python prepareTHQEventVariableFriends.py -m tHqEventVariables -t treeProducerSusyMultilepton -N 10000 ra5trees/809_June9_ttH/ tHq_eventvars_Aug5 -d TTHnobb_mWCutfix_ext1 -c 1
+python prepareEventVariablesFriendTree.py -m tHqEventVariables -I CMGTools.TTHAnalysis.tools.tHqEventVariables -t treeProducerSusyMultilepton -N 10000 ra5trees/809_June9_ttH/ tHq_eventvars_Aug5 -d TTHnobb_mWCutfix_ext1 -c 1
 ```
 
 Or, with a friend tree included:
 ```
-python prepareTHQEventVariableFriends.py -m tHqEventVariables -t treeProducerSusyMultilepton -N 10000 ra5trees/809_June9_ttH/ tHq_eventvars_Oct21 -d TTHnobb_mWCutfix_ext1 -c 1 -F sf/t ra5trees/809_June9_ttH/2_recleaner_v4_b1E2/evVarFriend_{cname}.root
+python prepareEventVariablesFriendTree.py -m tHqEventVariables -I CMGTools.TTHAnalysis.tools.tHqEventVariables -t treeProducerSusyMultilepton -N 10000 ra5trees/809_June9_ttH/ tHq_eventvars_Oct21 -d TTHnobb_mWCutfix_ext1 -c 1 -F sf/t ra5trees/809_June9_ttH/2_recleaner_v5_b1E2/evVarFriend_{cname}.root
 ```
 
-You should use this to figure out how fast your producer is running, and adjust the chunk size (`-N` option) to have jobs of reasonable run times. Once this works, you can submit all the jobs for all samples to lxbatch, by running something like this:
+You should use this to figure out how fast your producer is running, and adjust the chunk size (`-N` option) to have jobs of reasonable run times. (200000 seems a reasonable choice for the current version.) Once this works, you can submit all the jobs for all samples to lxbatch, by running something like this:
 ```
-python prepareTHQEventVariableFriends.py -m tHqEventVariables -t treeProducerSusyMultilepton -N 500000 ra5trees/809_June9_ttH/ tHq_eventvars_Aug11 -q 8nh
+python prepareEventVariablesFriendTree.py -m tHqEventVariables -I CMGTools.TTHAnalysis.tools.tHqEventVariables -t treeProducerSusyMultilepton -N 200000 ra5trees/809_June9_ttH/ tHq_eventvars_Aug11 -q 8nh
 ```
 
 Note that the `-q` option specifies the queue to run on. The most common options would be `8nh` for jobs shorter than 8 hours, or `1nd` for jobs shorter than one day (24 hours). Keep an eye on the status of the jobs with the `bjobs` command, and look at the output of a running job with `bpeek <jobid>`. The STDOUT and STDERR log files of each job are stored in a directory named `LSFJOB_<jobid>`.
@@ -89,10 +89,6 @@ Note that the `-q` option specifies the queue to run on. The most common options
 Once all the jobs have finished successfully, you can check the output files using the `friendChunkCheck.sh` script: cd to the output directory and run `friendChunkCheck.sh evVarFriend`. If there is no output from the script, all the chunks are present. To merge the junks, there is a similar script in `macros/leptons/friendChunkAdd.sh`. Run it with `. ../leptons/friendChunkAdd.sh evVarFriend`, inside the output directory.
 
 If that went ok, you can remove all the chunk files and are left with only the friend tree files.
-
-A first version of the trees is already produced and stored here: `/afs/cern.ch/user/s/stiegerb/work/TTHTrees/13TeV/tHq_eventvars_Aug12`.
-
-*TODO*: add more variables like [these](https://github.com/stiegerb/cmg-cmssw/blob/thq_newjetid_for_518_samples/CMGTools/TTHAnalysis/macros/leptons/prepareTHQFriendTree.py)
 
 ----------------
 
@@ -117,7 +113,7 @@ tHq-multilepton/plots-thq.txt \
 -l 12.9 \
 --pdir tHq-multilepton/plots_Sep9/ \
 -F sf/t tHq_eventvars_Aug12/evVarFriend_{cname}.root \
---Fs {P}/2_recleaner_v4_b1E2 \
+--Fs {P}/2_recleaner_v5_b1E2 \
 --mcc ttH-multilepton/lepchoice-ttH-FO.txt \
 -W 'puw2016_vtx_4fb(nVert)'
 ```

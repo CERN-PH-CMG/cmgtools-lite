@@ -176,6 +176,8 @@ class tHqEventVariableFriend:
 
         return ret
 
+MODULES = [('tHqEventVariables', tHqEventVariableFriend())]
+
 ##################################################
 # Test this friend producer like so:
 # >> python tHqEventVariables.py tree.root
