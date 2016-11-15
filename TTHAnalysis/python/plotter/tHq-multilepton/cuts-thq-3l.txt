@@ -1,0 +1,23 @@
+# Format (use '#' to comment lines):
+# name of cut : formula using branch names as in tree
+
+alwaystrue    : 1
+
+# Leave out the triggers for now
+# trigger       : Triggers_3l
+
+# three good leptons
+trilep        : nLepFO>=3
+cleanup       : minMllAFAS > 12
+pt2010        : LepGood1_conePt>20 && LepGood2_conePt>10 && LepGood3_conePt>10
+TTT           : LepGood1_isTight && LepGood2_isTight && LepGood3_isTight
+Zveto         : abs(mZ1-91.2) > 10
+ele conv cuts : (abs(LepGood1_pdgId)!=11 || (LepGood1_convVeto && LepGood1_lostHits==0)) && (abs(LepGood2_pdgId)!=11 || (LepGood2_convVeto && LepGood2_lostHits==0)) && (abs(LepGood3_pdgId)!=11 || (LepGood3_convVeto && LepGood3_lostHits==0))
+
+
+# tHq with H -> WW has only one hard b-jet while
+# most backgrounds (ttbar, ttW, ttZ, ttH) have two.
+# In addition we expect one forward jet
+2j            : nJet25>=2
+1b            : nBJetLoose25 >= 1
+fwdjet        : maxEtaJet25 >= 0 

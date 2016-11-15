@@ -1,0 +1,15 @@
+# Format (use '#' to comment lines):
+# name of plot : branch name as in tree : binning ; optional configurations
+# Note that you need to escape special characters with a '\'
+
+met           : met_pt        : 18,0,400; XTitle="E_{T}^{miss}  [GeV]"
+nJet25        : nJet25        : [1.5,2.5,3.5,4.5,5.5,6.5,7.5] ; XTitle='N(jet\, p_{T} > 25\, |#eta|<2.4)'
+nBJetLoose25  : nBJetLoose25  : [0.5,1.5,2.5,3.5,4.5] ; XTitle='N(jet\, p_{T} > 25\, CSV loose)'
+maxEtaJet25   : maxEtaJet25   : 18,0,5.0; XTitle="max jet |#eta| (p_{T} > 25 GeV)"
+totCharge     : LepGood_charge[0]+LepGood_charge[1]+LepGood_charge[2] : [-1.5,-0.5,0.5,1.5]; XTitle="Total lepton charge", Legend='TL'
+nJetEta1	      : nJetEta1         : [0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5]; XTitle='N(jet\,|#eta|>1.0) non CSV medium'
+dEtaFwdJetBJet:	dEtaFwdJetBJet: 18,0,6; XTitle="#Delta#eta max fwd jet and hardest bjet"
+dEtaFwdJetClosestLep: dEtaFwdJetClosestLep : 18,0,6 ; XTitle="#Delta#eta max fwd jet and closest lepton"
+dPhiHighestPtSSPair : dPhiHighestPtSSPair : 18,0,3.2; XTitle="#Delta#phi highest pt same sign lepton pair", Legend='TL'
+minDRll		    : minDRll		  : 18,0,4; XTitle="minimum #DeltaR between any two leptons"
+Lep3Pt		    : LepGood_pt[2]	  : 18,0,80; XTitle="Lepton 3 pT [GeV]"
