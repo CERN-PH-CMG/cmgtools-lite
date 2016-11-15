@@ -30,20 +30,22 @@ json =dataDir+'/json/Cert_271036-284044_13TeV_PromptReco_Collisions16_JSON_NoL1T
 #run_range = (271036, 276097)
 #label = "_runs%s_%s"%(run_range[0], run_range[1])
 
-### ----------------------------- Run2016B 23Sep2016 v2 ----------------------------------------
+###Need to be check for run ranges
 
-JetHT_Run2016B_23Sep2016_v2          = kreator.makeDataComponent("JetHT_Run2016B_23Sep2016_v2"         , "/JetHT/Run2016B-23Sep2016-v2/MINIAOD"         , "CMS", ".*root", json)
-HTMHT_Run2016B_23Sep2016_v2          = kreator.makeDataComponent("HTMHT_Run2016B_23Sep2016_v2"         , "/HTMHT/Run2016B-23Sep2016-v2/MINIAOD"         , "CMS", ".*root", json)
-MET_Run2016B_23Sep2016_v2            = kreator.makeDataComponent("MET_Run2016B_23Sep2016_v2"           , "/MET/Run2016B-23Sep2016-v2/MINIAOD"           , "CMS", ".*root", json)
-SingleElectron_Run2016B_23Sep2016_v2 = kreator.makeDataComponent("SingleElectron_Run2016B_23Sep2016_v2", "/SingleElectron/Run2016B-23Sep2016-v2/MINIAOD", "CMS", ".*root", json)
-SingleMuon_Run2016B_23Sep2016_v2     = kreator.makeDataComponent("SingleMuon_Run2016B_23Sep2016_v2"    , "/SingleMuon/Run2016B-23Sep2016-v2/MINIAOD"    , "CMS", ".*root", json)
-SinglePhoton_Run2016B_23Sep2016_v2   = kreator.makeDataComponent("SinglePhoton_Run2016B_23Sep2016_v2"  , "/SinglePhoton/Run2016B-23Sep2016-v2/MINIAOD"  , "CMS", ".*root", json)
-DoubleEG_Run2016B_23Sep2016_v2       = kreator.makeDataComponent("DoubleEG_Run2016B_23Sep2016_v2"      , "/DoubleEG/Run2016B-23Sep2016-v2/MINIAOD"      , "CMS", ".*root", json)
-MuonEG_Run2016B_23Sep2016_v2        = kreator.makeDataComponent("MuonEG_Run2016B_23Sep2016_v2"        , "/MuonEG/Run2016B-23Sep2016-v2/MINIAOD"        , "CMS", ".*root", json)
-DoubleMuon_Run2016B_23Sep2016_v2     = kreator.makeDataComponent("DoubleMuon_Run2016B_23Sep2016_v2"    , "/DoubleMuon/Run2016B-23Sep2016-v2/MINIAOD"    , "CMS", ".*root", json)
-#Tau_Run2016B_23Sep2016_v2     = kreator.makeDataComponent("Tau_Run2016B_23Sep2016_v2"    , "/Tau/Run2016B-23Sep2016-v2/MINIAOD"    , "CMS", ".*root", json)
-
-dataSamples_Run2016B_v2 = [JetHT_Run2016B_23Sep2016_v2, HTMHT_Run2016B_23Sep2016_v2, MET_Run2016B_23Sep2016_v2, SingleElectron_Run2016B_23Sep2016_v2, SingleMuon_Run2016B_23Sep2016_v2, SinglePhoton_Run2016B_23Sep2016_v2, DoubleEG_Run2016B_23Sep2016_v2, MuonEG_Run2016B_23Sep2016_v2, DoubleMuon_Run2016B_23Sep2016_v2] #, Tau_Run2016B_23Sep2016_v2]
+#### ----------------------------- Run2016B 23Sep2016 v2 ----------------------------------------
+#
+#JetHT_Run2016B_23Sep2016_v2          = kreator.makeDataComponent("JetHT_Run2016B_23Sep2016_v2"         , "/JetHT/Run2016B-23Sep2016-v2/MINIAOD"         , "CMS", ".*root", json)
+#HTMHT_Run2016B_23Sep2016_v2          = kreator.makeDataComponent("HTMHT_Run2016B_23Sep2016_v2"         , "/HTMHT/Run2016B-23Sep2016-v2/MINIAOD"         , "CMS", ".*root", json)
+#MET_Run2016B_23Sep2016_v2            = kreator.makeDataComponent("MET_Run2016B_23Sep2016_v2"           , "/MET/Run2016B-23Sep2016-v2/MINIAOD"           , "CMS", ".*root", json)
+#SingleElectron_Run2016B_23Sep2016_v2 = kreator.makeDataComponent("SingleElectron_Run2016B_23Sep2016_v2", "/SingleElectron/Run2016B-23Sep2016-v2/MINIAOD", "CMS", ".*root", json)
+#SingleMuon_Run2016B_23Sep2016_v2     = kreator.makeDataComponent("SingleMuon_Run2016B_23Sep2016_v2"    , "/SingleMuon/Run2016B-23Sep2016-v2/MINIAOD"    , "CMS", ".*root", json)
+#SinglePhoton_Run2016B_23Sep2016_v2   = kreator.makeDataComponent("SinglePhoton_Run2016B_23Sep2016_v2"  , "/SinglePhoton/Run2016B-23Sep2016-v2/MINIAOD"  , "CMS", ".*root", json)
+#DoubleEG_Run2016B_23Sep2016_v2       = kreator.makeDataComponent("DoubleEG_Run2016B_23Sep2016_v2"      , "/DoubleEG/Run2016B-23Sep2016-v2/MINIAOD"      , "CMS", ".*root", json)
+#MuonEG_Run2016B_23Sep2016_v2        = kreator.makeDataComponent("MuonEG_Run2016B_23Sep2016_v2"        , "/MuonEG/Run2016B-23Sep2016-v2/MINIAOD"        , "CMS", ".*root", json)
+#DoubleMuon_Run2016B_23Sep2016_v2     = kreator.makeDataComponent("DoubleMuon_Run2016B_23Sep2016_v2"    , "/DoubleMuon/Run2016B-23Sep2016-v2/MINIAOD"    , "CMS", ".*root", json)
+##Tau_Run2016B_23Sep2016_v2     = kreator.makeDataComponent("Tau_Run2016B_23Sep2016_v2"    , "/Tau/Run2016B-23Sep2016-v2/MINIAOD"    , "CMS", ".*root", json)
+#
+#dataSamples_Run2016B_v2 = [JetHT_Run2016B_23Sep2016_v2, HTMHT_Run2016B_23Sep2016_v2, MET_Run2016B_23Sep2016_v2, SingleElectron_Run2016B_23Sep2016_v2, SingleMuon_Run2016B_23Sep2016_v2, SinglePhoton_Run2016B_23Sep2016_v2, DoubleEG_Run2016B_23Sep2016_v2, MuonEG_Run2016B_23Sep2016_v2, DoubleMuon_Run2016B_23Sep2016_v2] #, Tau_Run2016B_23Sep2016_v2]
 
 ### ----------------------------- Run2016B 23Sep2016 v3 ----------------------------------------
 
