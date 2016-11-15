@@ -18,8 +18,9 @@ def runMain(samples,args=None):
    if "help" in args or "--help" in args or "-h" in args:
        print """
 
-python samplefile.py test [samples] : 
+python samplefile.py test [--AAA] [samples] :
         tries accessing the first file of each sample
+        option -AAA: allow AAA as fallback
 
 python samplefile.py locality [samples] :
         check the locality of the samples
@@ -37,7 +38,7 @@ python samplefile.py summary [samples]:
 """
    if "test" in args:
        from CMGTools.RootTools.samples.ComponentCreator import testSamples
-       testSamples(selsamples)
+       testSamples(selsamples, allowAAA=("--AAA" in args))
    if "locality" in args:
        import re
        from CMGTools.Production.localityChecker import LocalityChecker
