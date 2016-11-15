@@ -206,15 +206,6 @@ float mass_3_cheap(float pt1, float eta1, float pt2, float eta2, float phi2, flo
 }
 
 
-float metmm_pt(int pdg1, float pt1, float phi1, int pdg2, float pt2, float phi2, float metpt, float metphi) {
-  if (abs(pdg1)==13 && abs(pdg2)==13) return pt_3(pt1,phi1,pt2,phi2,metpt,metphi);
-  else if (abs(pdg1)==13 && !(abs(pdg2)==13)) return pt_2(pt1,phi1,metpt,metphi);
-  else if (!(abs(pdg1)==13) && abs(pdg2)==13) return pt_2(pt2,phi2,metpt,metphi);
-  else if (!(abs(pdg1)==13) && !(abs(pdg2)==13)) return metpt;
-  else return -99;
-}
-
-
 void functions() {}
 
 

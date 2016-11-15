@@ -27,6 +27,11 @@ def base(selection):
         GO="%s %s"%(CORE,GO) 
         GO="%s -L susy-sos/functionsSOS.cc -L susy-sos/lepton_trigger_SF.cc -W 'leptonSF_SOS(LepGood1_pdgId,LepGood1_pt,LepGood1_eta,0)*leptonSF_SOS(LepGood2_pdgId,LepGood2_pt,LepGood2_eta,0)*triggerSF_SOS(met_pt,metmm_pt(LepGood1_pdgId,LepGood1_pt,LepGood1_phi,LepGood2_pdgId,LepGood2_pt,LepGood2_phi,met_pt,met_phi),0)*puw2016_vtx_13fb(nVert)*eventBTagSF'"%GO 
         if dowhat == "plots": GO+=" susy-sos/2los_plots.txt"
+    if selection=='3l':
+        if (dowhat != "limits") : GO="susy-sos/mca-3l-mc.txt susy-sos/3l_tight.txt "
+        GO="%s %s"%(CORE,GO) 
+        GO="%s -L susy-sos/functionsSOS.cc -L susy-sos/lepton_trigger_SF.cc"%GO 
+        if dowhat == "plots": GO+=" susy-sos/2los_plots.txt"    
     else:
         raise RuntimeError, 'Unknown selection'
 
@@ -544,3 +549,13 @@ if __name__ == '__main__':
     #         x = add(x,"-E ^highMET -E ^MT -R ^TT CRTTTT 'LepGood1_isTightCRTT && LepGood2_isTightCRTT' -R ^ledlepPt NoUpledlepPt '20 < LepGood1_pt' -X ^dilep -X ^opposite-sign -X ^Mll -E ^minMll -E ^triLep -E ^Zpeak -X ^triggerAll -E ^triggerMET -X ^HT -X ^Upsilon_veto -R METovHT relaxMETovHT '(met_pt/(htJet25-LepGood1_pt-LepGood2_pt))>(2/3)' ")
     #         x = x.replace('-l 12.9','-l 12.9')
     #     runIt(x,'%s/all'%torun,[],['SR_bins_EWKino','SR_bins_stop'])
+
+
+
+
+    ### 3l final state study
+    #if '3l_
+
+
+
+
