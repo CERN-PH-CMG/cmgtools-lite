@@ -126,7 +126,7 @@ dataSamples_Run2016F_v1 = [JetHT_Run2016F_PromptReco_v1, HTMHT_Run2016F_PromptRe
 JetHT_Run2016G_PromptReco_v1          = kreator.makeDataComponent("JetHT_Run2016G_PromptReco_v1"         , "/JetHT/Run2016G-PromptReco-v1/MINIAOD"         , "CMS", ".*root", json)
 HTMHT_Run2016G_PromptReco_v1          = kreator.makeDataComponent("HTMHT_Run2016G_PromptReco_v1"         , "/HTMHT/Run2016G-PromptReco-v1/MINIAOD"         , "CMS", ".*root", json)
 MET_Run2016G_PromptReco_v1            = kreator.makeDataComponent("MET_Run2016G_PromptReco_v1"           , "/MET/Run2016G-PromptReco-v1/MINIAOD"           , "CMS", ".*root", json)
-SingleElectron_Run2016G_PromptReco_v1 = kreator.makeDataComponent("SingleElectron_Run2016G_PromptReco_v1", "/SingleElectron/Run2016G-PromptReco-v2/MINIAOD", "CMS", ".*root", json)
+SingleElectron_Run2016G_PromptReco_v1 = kreator.makeDataComponent("SingleElectron_Run2016G_PromptReco_v1", "/SingleElectron/Run2016G-PromptReco-v1/MINIAOD", "CMS", ".*root", json)
 SingleMuon_Run2016G_PromptReco_v1     = kreator.makeDataComponent("SingleMuon_Run2016G_PromptReco_v1"    , "/SingleMuon/Run2016G-PromptReco-v1/MINIAOD"    , "CMS", ".*root", json)
 SinglePhoton_Run2016G_PromptReco_v1   = kreator.makeDataComponent("SinglePhoton_Run2016G_PromptReco_v1"  , "/SinglePhoton/Run2016G-PromptReco-v1/MINIAOD"  , "CMS", ".*root", json)
 DoubleEG_Run2016G_PromptReco_v1       = kreator.makeDataComponent("DoubleEG_Run2016G_PromptReco_v1"      , "/DoubleEG/Run2016G-PromptReco-v1/MINIAOD"      , "CMS", ".*root", json)
@@ -171,3 +171,28 @@ if __name__ == "__main__":
            if not tier2Checker.available(comp.dataset):
                print "\033[1;31mN: Dataset %s (%s) is not available on T2_CH_CERN\033[0m" % (comp.name,comp.dataset)
            else: print "Y: Dataset %s (%s) is available on T2_CH_CERN" % (comp.name,comp.dataset)
+   if "refresh" in sys.argv:
+        from CMGTools.Production.cacheChecker import CacheChecker
+        checker = CacheChecker()
+        dataSamples = samples
+        if len(sys.argv) > 2: 
+            dataSamples = []
+            for x in sys.argv[2:]:
+                for s in samples:
+                    if x in s.name and s not in dataSamples:
+                        dataSamples.append(s)
+            dataSamples.sort(key = lambda d : d.name)
+        for d in dataSamples:
+            print "Checking ",d.name," aka ",d.dataset
+            checker.checkComp(d, verbose=True)
+   if "list" in sys.argv:
+        from CMGTools.HToZZ4L.tools.configTools import printSummary
+        dataSamples = samples
+        if len(sys.argv) > 2:
+            dataSamples = []
+            for x in sys.argv[2:]:
+                for s in samples:
+                    if x in s.name and s not in dataSamples:
+                        dataSamples.append(s)
+            dataSamples.sort(key = lambda d : d.name)
+        printSummary(dataSamples)

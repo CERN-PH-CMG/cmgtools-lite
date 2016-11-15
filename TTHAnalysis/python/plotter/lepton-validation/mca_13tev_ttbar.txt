@@ -1,48 +1,5 @@
-DY : DYJetsToLL_M10to50: xsec ; FillColor=ROOT.kCyan
-DY : DYJetsToLL_M50: xsec ; FillColor=ROOT.kCyan
-
-TT : TTJets_DiLepton: xsec ;  FillColor=ROOT.kGray  
-TT : TTJets_SingleLeptonFromT: xsec ;  FillColor=ROOT.kGray  
-TT : TTJets_SingleLeptonFromTbar: xsec ;  FillColor=ROOT.kGray  
-
-TTV: TTWToLNu:     xsec ;  FillColor=ROOT.kOrange
-TTV: TTZToLLNuNu:     xsec ;  FillColor=ROOT.kOrange
-TTH : TTHnobb_mWCutfix_ext1 : xsec ; FillColor=ROOT.kRed
-
-VV : WZTo3LNu: xsec ; FillColor=ROOT.kViolet-4
-VV : ZZTo2L2Q: xsec ; FillColor=ROOT.kViolet-4
-VV : WWTo2L2Nu: xsec ; FillColor=ROOT.kViolet-4
-
-TW : T_tWch: xsec; FillColor=ROOT.kGray+2
-TW : TBar_tWch: xsec; FillColor=ROOT.kGray+2
-
-Single top    : TToLeptons_sch:     xsec ;  FillColor=ROOT.kGray+2
-Single top    : TBarToLeptons_tch_powheg:     xsec ;  FillColor=ROOT.kGray+2
-
-WJets    : WJetsToLNu :  xsec; FillColor=ROOT.kCyan+2
-
-data : DoubleEG_Run2016B_PromptReco_v1_runs_273013_273149
-data : DoubleEG_Run2016B_PromptReco_v2_runs_273150_273450
-data : DoubleEG_Run2016B_PromptReco_v2_runs_273492_273504
-data : DoubleEG_Run2016B_PromptReco_v2_runs_273554_273555
-data : DoubleEG_Run2016B_PromptReco_v2_runs_273725_273730
-data : DoubleMuon_Run2016B_PromptReco_v1_runs_273013_273149
-data : DoubleMuon_Run2016B_PromptReco_v2_runs_273150_273450
-data : DoubleMuon_Run2016B_PromptReco_v2_runs_273492_273504
-data : DoubleMuon_Run2016B_PromptReco_v2_runs_273554_273555
-data : DoubleMuon_Run2016B_PromptReco_v2_runs_273725_273730
-data : MuonEG_Run2016B_PromptReco_v1_runs_273013_273149
-data : MuonEG_Run2016B_PromptReco_v2_runs_273150_273450
-data : MuonEG_Run2016B_PromptReco_v2_runs_273492_273504
-data : MuonEG_Run2016B_PromptReco_v2_runs_273554_273555
-data : MuonEG_Run2016B_PromptReco_v2_runs_273725_273730
-data : SingleMuon_Run2016B_PromptReco_v1_runs_273013_273149
-data : SingleMuon_Run2016B_PromptReco_v2_runs_273150_273450
-data : SingleMuon_Run2016B_PromptReco_v2_runs_273492_273504
-data : SingleMuon_Run2016B_PromptReco_v2_runs_273554_273555
-data : SingleMuon_Run2016B_PromptReco_v2_runs_273725_273730
-data : SingleElectron_Run2016B_PromptReco_v1_runs_273013_273149
-data : SingleElectron_Run2016B_PromptReco_v2_runs_273150_273450
-data : SingleElectron_Run2016B_PromptReco_v2_runs_273492_273504
-data : SingleElectron_Run2016B_PromptReco_v2_runs_273554_273555
-data : SingleElectron_Run2016B_PromptReco_v2_runs_273725_273730
+incl_DY : + ; IncludeMca="lepton-validation/mca_includes/mca_dy.txt"
+incl_TT : + ; IncludeMca="lepton-validation/mca_includes/mca_tt_splitted.txt"
+incl_oth : + ; IncludeMca="lepton-validation/mca_includes/mca_singleTop_VV_rares.txt"
+incl_Wjets : + ; IncludeMca="lepton-validation/mca_includes/mca_wjets.txt"
+incl_data : + ; IncludeMca="lepton-validation/mca_includes/mca_data.txt"

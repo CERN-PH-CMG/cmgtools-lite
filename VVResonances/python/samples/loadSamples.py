@@ -14,9 +14,10 @@ background = TTs+SingleTop+DYJetsM50HT+WJetsToLNuHT+QCDHT+DiBosons
 
 #Load signal from here 
 from CMGTools.VVResonances.samples.signal_13TeV_80X_reHLT import *
+from CMGTools.VVResonances.samples.signal_13TeV_80X_ZPTT import *
 
 
-mcSamples = background+signalSamples
+mcSamples = background+signalSamples+zprimeSamples
 #load triggers
 from CMGTools.RootTools.samples.triggers_13TeV_DATA2016 import *
 #Load Data samples

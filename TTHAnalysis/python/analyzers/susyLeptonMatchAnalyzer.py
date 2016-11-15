@@ -10,6 +10,9 @@ class susyLeptonMatchAnalyzer( Analyzer ):
         self.charms=[4,411,421,441,443,431,433 ]
         self.lights=[1,2,3,111,211,130,210,321 ]
         self.promptMothers=[23,24,-24,1000024,-1000024]
+        self.collection = self.cfg_ana.collection
+        self.deltaR     = float(self.cfg_ana.deltaR)
+        self.statusOne  = self.cfg_ana.statusOne
 
     def declareHandles(self):
         super(susyLeptonMatchAnalyzer, self).declareHandles()
@@ -27,7 +30,7 @@ class susyLeptonMatchAnalyzer( Analyzer ):
 
     def SUSYMatchLeptons(self, event):
         
-        leps = event.inclusiveLeptons
+        leps = getattr(event, self.collection, event.inclusiveLeptons)
         genPs=[]
         genPsIdxs={}
         for idx,x in enumerate(event.genParticles):
@@ -36,17 +39,17 @@ class susyLeptonMatchAnalyzer( Analyzer ):
                 genPsIdxs[idx]=len(genPsIdxs)
 
         def lepMatch(rec, gen):
-            if gen.status() !=1: return False
+            if self.statusOne and gen.status() !=1: return False
             if abs(rec.pdgId()) != abs(gen.pdgId()): return False
             return True
         matchLep = matchObjectCollection3(leps,genPs, 
-                                          deltaRMax = 0.2, filter = lepMatch)
+                                          deltaRMax = self.deltaR, filter = lepMatch)
         
         def generalMatch(rec, gen):
             if gen.status() !=1 and gen.status() !=71: return False
             return True
         matchPart = matchObjectCollection3(leps,genPs, 
-                                           deltaRMax = 0.2, filter = generalMatch)
+                                           deltaRMax = self.deltaR, filter = generalMatch)
         
         for il, lep in  enumerate(leps):
             gen = matchLep[lep] if matchLep[lep] else matchPart[lep]
@@ -76,8 +79,7 @@ class susyLeptonMatchAnalyzer( Analyzer ):
             if (abs(gen.pdgId()) in self.charms) or (motherId in self.charms) : code= 3
             if (abs(gen.pdgId()) in self.lights) or (motherId in self.lights) : code= 2
             lep.mcUCSXMatchId = code
-                        
-
+            
     def process(self, event):
         self.readCollections(event.input)
 

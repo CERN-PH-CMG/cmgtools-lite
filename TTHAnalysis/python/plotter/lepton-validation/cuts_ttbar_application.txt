@@ -1,9 +1,10 @@
 filters : hbheFilterNew25ns==1 && Flag_CSCTightHaloFilter==1 && Flag_eeBadScFilter==1
-trigger : HLT_DoubleMu || HLT_DoubleEl || HLT_MuEG
+trigger : $DATA{HLT_DoubleMu || HLT_BIT_HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v || HLT_BIT_HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v || HLT_BIT_HLT_Mu23_TrkIsoVVL_Ele8_CaloIdL_TrackIdL_IsoVL_v} $MC{1}
 lep2_pt10 : nLepGood10 == 2
+pt2515: LepGood1_pt > 25 && LepGood2_pt > 15
 same-sign : LepGood1_charge*LepGood2_charge > 0
 lepMVA_appl: (LepGood1_mvaTTH>0.65) + (LepGood2_mvaTTH>0.65) == 1
-#lep mu id : LepGood1_mediumMuonId > 0 && LepGood2_mediumMuonId > 0
+#lep mu id : LepGood1_ICHEPmediumMuonId > 0 && LepGood2_ICHEPmediumMuonId > 0
 #lep el id : ( LepGood1_mvaIdSpring15 >=0.87+(0.60-0.87)*(abs(LepGood1_eta)>0.8)+(+0.17-0.60)*(abs(LepGood1_eta)>1.479) || abs(LepGood1_pdgId) == 13) &&            ( LepGood2_mvaIdSpring15 >=0.87+(0.60-0.87)*(abs(LepGood2_eta)>0.8)+(+0.17-0.60)*(abs(LepGood2_eta)>1.479) || abs(LepGood2_pdgId) == 13)
 #lep dxy : max(LepGood1_sip3d,LepGood2_sip3d) < 4
 ele cuts : (abs(LepGood1_pdgId) == 13 || (LepGood1_convVeto && LepGood1_lostHits == 0)) &&           (abs(LepGood2_pdgId) == 13 || (LepGood2_convVeto && LepGood2_lostHits == 0))

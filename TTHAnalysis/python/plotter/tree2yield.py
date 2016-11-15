@@ -23,7 +23,7 @@ if "/functions_cc.so" not in ROOT.gSystem.GetLibraries():
 
 def scalarToVector(x):
     x0 = x
-    x = re.sub(r"(LepGood|Lep|JetFwd|Jet|GenTop|SV)(\d)_(\w+)", lambda m : "%s_%s[%d]" % (m.group(1),m.group(3),int(m.group(2))-1), x)
+    x = re.sub(r"(LepGood|Lep|JetFwd|Jet|GenTop|SV|PhoGood|TauGood|Tau)(\d)_(\w+)", lambda m : "%s_%s[%d]" % (m.group(1),m.group(3),int(m.group(2))-1), x)
     x = re.sub(r"\bmet\b", "met_pt", x)
     return x
 
@@ -132,13 +132,13 @@ def cropNegativeBins(histo):
 
 
 class TreeToYield:
-    def __init__(self,root,options,scaleFactor=1.0,name=None,cname=None,settings={},treename=None):
+    def __init__(self,root,options,scaleFactor=1.0,name=None,cname=None,settings={},objname=None):
         self._name  = name  if name != None else root
         self._cname = cname if cname != None else self._name
         self._fname = root
         self._isInit = False
         self._options = options
-        self._treename = treename if treename else options.tree
+        self._objname = objname if objname else options.obj
         self._weight  = (options.weight and 'data' not in self._name and '2012' not in self._name and '2011' not in self._name )
         self._isdata = 'data' in self._name
         self._weightString  = options.weightString if not self._isdata else "1"
@@ -179,6 +179,7 @@ class TreeToYield:
             self._weight = True
         else:
             self._weightString = self.adaptExpr(self._weightString, cut=True)
+        if self._options.forceunweight: self._weight = False
         for macro in self._options.loadMacro:
             libname = macro.replace(".cc","_cc.so").replace(".cxx","_cxx.so")
             if libname not in ROOT.gSystem.GetLibraries():
@@ -225,7 +226,7 @@ class TreeToYield:
     def _init(self):
         if "root://" in self._fname:
             ROOT.gEnv.SetValue("TFile.AsyncReading", 1);
-            ROOT.gEnv.SetValue("XNet.Debug", -1); # suppress output about opening connections
+#            ROOT.gEnv.SetValue("XNet.Debug", -1); # suppress output about opening connections
             #self._tfile = ROOT.TFile.Open(self._fname+"?readaheadsz=200000") # worse than 65k
             #self._tfile = ROOT.TFile.Open(self._fname+"?readaheadsz=32768") # worse than 65k
             self._tfile = ROOT.TFile.Open(self._fname+"?readaheadsz=65535") # good
@@ -233,8 +234,8 @@ class TreeToYield:
         else:
             self._tfile = ROOT.TFile.Open(self._fname)
         if not self._tfile: raise RuntimeError, "Cannot open %s\n" % self._fname
-        t = self._tfile.Get(self._treename)
-        if not t: raise RuntimeError, "Cannot find tree %s in file %s\n" % (self._treename, self._fname)
+        t = self._tfile.Get(self._objname)
+        if not t: raise RuntimeError, "Cannot find tree %s in file %s\n" % (self._objname, self._fname)
         self._tree  = t
         #self._tree.SetCacheSize(10*1000*1000)
         if "root://" in self._fname: self._tree.SetCacheSize()
@@ -247,7 +248,16 @@ class TreeToYield:
         if 'FriendsSimple' in self._settings: friendOpts += [ ('sf/t', d+"/evVarFriend_{cname}.root") for d in self._settings['FriendsSimple'] ]
         for tf_tree,tf_file in friendOpts:
 #            print 'Adding friend',tf_tree,tf_file
-            tf = self._tree.AddFriend(tf_tree, tf_file.format(name=self._name, cname=self._cname, P=getattr(self._options,'path',''))),
+            basepath = None
+            for treepath in getattr(self._options, 'path', []):
+                if self._cname in os.listdir(treepath):
+                    basepath = treepath
+                    break
+            if not basepath:
+                raise RuntimeError("%s -- ERROR: %s process not found in paths (%s)" % (__name__, cname, repr(options.path)))
+
+            tf_filename = tf_file.format(name=self._name, cname=self._cname, P=basepath)
+            tf = self._tree.AddFriend(tf_tree, tf_filename),
             self._friends.append(tf)
         self._isInit = True
         
@@ -263,8 +273,8 @@ class TreeToYield:
                 if "root://" in self._fname: ROOT.gEnv.SetValue("XNet.Debug", -1); # suppress output about opening connections
                 tfile = ROOT.TFile.Open(self._fname)
                 if not tfile: raise RuntimeError, "Cannot open %s\n" % self._fname
-                t = tfile.Get(self._treename)
-                if not t: raise RuntimeError, "Cannot find tree %s in file %s\n" % (self._treename, self._fname)
+                t = tfile.Get(self._objname)
+                if not t: raise RuntimeError, "Cannot find tree %s in file %s\n" % (self._objname, self._fname)
                 self._entries = t.GetEntries()
             else:
                 self._entries = self.getTree().GetEntries()
@@ -281,8 +291,11 @@ class TreeToYield:
         cutseq = [ ['entry point','1'] ]
         if noEntryLine: cutseq = []
         sequential = False
-        if self._options.nMinusOne: 
-            cutseq = cuts.nMinusOneCuts()
+        if self._options.nMinusOne or self._options.nMinusOneInverted: 
+            if self._options.nMinusOneSelection:
+                cutseq = cuts.nMinusOneSelectedCuts(self._options.nMinusOneSelection,inverted=self._options.nMinusOneInverted)
+            else:
+                cutseq = cuts.nMinusOneCuts(inverted=self._options.nMinusOneInverted)
             cutseq += [ ['all',cuts.allCuts()] ]
             sequential = False
         elif self._options.final:
@@ -322,7 +335,7 @@ class TreeToYield:
             print cfmt % cut,
             den = report[i-1][1][0] if i>0 else 0
             fraction = nev/float(den) if den > 0 else 1
-            if self._options.nMinusOne: 
+            if self._options.nMinusOne or self._options.nMinusOneInverted: 
                 fraction = report[-1][1][0]/nev if nev > 0 else 1
             toPrint = (nev,)
             if self._options.errors:    toPrint+=(err,)
@@ -330,12 +343,18 @@ class TreeToYield:
             if self._weight and nev < 1000: print nfmtS % toPrint,
             else                          : print nfmtL % toPrint,
             print ""
-    def _getYield(self,tree,cut,fsplit=None):
-        if self._weight:
+    def _getCut(self,cut,noweight=False):
+        if self._weight and not noweight:
             if self._isdata: cut = "(%s)     *(%s)*(%s)" % (self._weightString,                    self._scaleFactor, self.adaptExpr(cut,cut=True))
             else:            cut = "(%s)*(%s)*(%s)*(%s)" % (self._weightString,self._options.lumi, self._scaleFactor, self.adaptExpr(cut,cut=True))
-            if self._options.doS2V:
-                cut  = scalarToVector(cut)
+        else: 
+            cut = self.adaptExpr(cut,cut=True)
+        if self._options.doS2V:
+            cut  = scalarToVector(cut)
+        return cut
+    def _getYield(self,tree,cut,fsplit=None,cutNeedsPreprocessing=True):
+        cut = self._getCut(cut) if cutNeedsPreprocessing else cut
+        if self._weight:
 #            print cut
             ROOT.gROOT.cd()
             if ROOT.gROOT.FindObject("dummy") != None: ROOT.gROOT.FindObject("dummy").Delete()
@@ -345,7 +364,6 @@ class TreeToYield:
             self.negativeCheck(histo)
             return [ histo.GetBinContent(1), histo.GetBinError(1), nev ]
         else: 
-            cut = self.adaptExpr(cut,cut=True)
             if self._options.doS2V:
                 cut  = scalarToVector(cut)
             (firstEntry, maxEntries) = self._rangeToProcess(fsplit)
@@ -367,6 +385,16 @@ class TreeToYield:
                 ret.SetBinContent(n+1,0)
                 ret.SetBinContent(0,0)
                 ret.SetBinContent(n+1,0)
+            if plotspec.getOption('IncludeOverflow',False) and ("TProfile" not in ret.ClassName()):
+                ret.SetBinContent(n,ret.GetBinContent(n+1)+ret.GetBinContent(n))
+                ret.SetBinError(n,hypot(ret.GetBinError(n+1),ret.GetBinError(n)))
+                ret.SetBinContent(n+1,0)
+                ret.SetBinContent(n+1,0)
+            if plotspec.getOption('IncludeUnderflow',False) and ("TProfile" not in ret.ClassName()):
+                ret.SetBinContent(1,ret.GetBinContent(0)+ret.GetBinContent(1))
+                ret.SetBinError(1,hypot(ret.GetBinError(0),ret.GetBinError(1)))
+                ret.SetBinContent(0,0)
+                ret.SetBinContent(0,0)
             rebin = plotspec.getOption('rebinFactor',0)
             if plotspec.bins[0] != "[" and rebin > 1 and n > 5:
                 while n % rebin != 0: rebin -= 1
@@ -399,7 +427,7 @@ class TreeToYield:
         if self._options.doS2V:
             cut  = scalarToVector(cut)
             expr = scalarToVector(expr)
-#        print cut
+#        print cut 
 #        print expr
         (firstEntry, maxEntries) = self._rangeToProcess(fsplit)
         if ROOT.gROOT.FindObject("dummy") != None: ROOT.gROOT.FindObject("dummy").Delete()
@@ -429,7 +457,7 @@ class TreeToYield:
         self.negativeCheck(histo)
         return histo.Clone(name)
     def negativeCheck(self,histo):
-        if not self._options.allowNegative: 
+        if not self._options.allowNegative and not self._name in self._options.negAllowed: 
             cropNegativeBins(histo)
     def __str__(self):
         mystr = ""
@@ -497,7 +525,8 @@ def _copyPlotStyle(self,plotfrom,plotto):
 
 def addTreeToYieldOptions(parser):
     parser.add_option("-l", "--lumi",           dest="lumi",   type="float", default="19.7", help="Luminosity (in 1/fb)");
-    parser.add_option("-u", "--unweight",       dest="weight",       action="store_false", default=True, help="Don't use weights (in MC events)");
+    parser.add_option("-u", "--unweight",       dest="weight",       action="store_false", default=True, help="Don't use weights (in MC events), note weights are still used if a fake rate file is given");
+    parser.add_option("--uf", "--unweight-forced",  dest="forceunweight", action="store_true", default=False, help="Do not use weight even if a fake rate file is given.");
     parser.add_option("-W", "--weightString",   dest="weightString", type="string", default="1", help="Use weight (in MC events)");
     parser.add_option("-f", "--final",  dest="final", action="store_true", help="Just compute final yield after all cuts");
     parser.add_option("-e", "--errors",  dest="errors", action="store_true", help="Include uncertainties in the reports");
@@ -510,7 +539,9 @@ def addTreeToYieldOptions(parser):
     parser.add_option("-R", "--replace-cut", dest="cutsToReplace", action="append", default=[], nargs=3, help="Cuts to invert (regexp of old cut name, new name, new cut); can specify multiple times.") 
     parser.add_option("-A", "--add-cut",     dest="cutsToAdd",     action="append", default=[], nargs=3, help="Cuts to insert (regexp of cut name after which this cut should go, new name, new cut); can specify multiple times.") 
     parser.add_option("-N", "--n-minus-one", dest="nMinusOne", action="store_true", help="Compute n-minus-one yields and plots")
-    parser.add_option("-t", "--tree",          dest="tree", default='ttHLepTreeProducerTTH', help="Pattern for tree name");
+    parser.add_option("--select-n-minus-one", dest="nMinusOneSelection", type="string", default=None, help="Select which cuts to do N-1 for (comma separated list of regexps)")
+    parser.add_option("--NI", "--inv-n-minus-one", dest="nMinusOneInverted", action="store_true", help="Compute n-minus-one yields and plots")
+    parser.add_option("--obj", "--objname",    dest="obj", default='tree', help="Pattern for the name of the TTree inside the file");
     parser.add_option("-G", "--no-fractions",  dest="fractions",action="store_false", default=True, help="Don't print the fractions");
     parser.add_option("-F", "--add-friend",    dest="friendTrees",  action="append", default=[], nargs=2, help="Add a friend tree (treename, filename). Can use {name}, {cname} patterns in the treename") 
     parser.add_option("--Fs", "--add-friend-simple",    dest="friendTreesSimple",  action="append", default=[], nargs=1, help="Add friends in a directory. The rootfile must be called evVarFriend_{cname}.root and tree must be called 't' in a subdir 'sf' inside the rootfile.") 
@@ -521,6 +552,7 @@ def addTreeToYieldOptions(parser):
     parser.add_option("--mcc", "--mc-corrections",    dest="mcCorrs",  action="append", default=[], nargs=1, help="Load the following file of mc to data corrections") 
     parser.add_option("--s2v", "--scalar2vector",     dest="doS2V",    action="store_true", default=False, help="Do scalar to vector conversion") 
     parser.add_option("--neg", "--allow-negative-results",     dest="allowNegative",    action="store_true", default=False, help="If the total yield is negative, keep it so rather than truncating it to zero") 
+    parser.add_option("--neglist", dest="negAllowed", action="append", default=[], help="Give process names where negative values are allowed")
     parser.add_option("--max-entries",     dest="maxEntries", default=1000000000, type="int", help="Max entries to process in each tree") 
     parser.add_option("-L", "--load-macro",  dest="loadMacro",   type="string", action="append", default=[], help="Load the following macro, with .L <file>+");
 

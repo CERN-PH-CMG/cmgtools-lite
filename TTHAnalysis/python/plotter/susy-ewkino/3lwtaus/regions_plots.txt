@@ -1,0 +1,19 @@
+nLep: nLepGood: [1.5,2.5,3.5,4.5,5.5]; XTitle="N(lep)", Logy=True
+
+lep1Pt:  LepGood1_pt: 25,0,250; XTitle="Leading lepton p_{T}  [GeV]", Legend='TR', Logy=True
+lep2Pt:  LepGood2_pt: 20,0,100; XTitle="Second lepton p_{T}  [GeV]", Legend='TR', Logy=True
+
+lep1Eta:  LepGood1_eta: 25,-6,6; XTitle="Leading lepton #eta", Legend='TR', Logy=True
+lep2Eta:  LepGood2_eta: 25,-6,6; XTitle="Second lepton #eta", Legend='TR', Logy=True
+
+tau1Pt:   TauGood1_pt: 25,0,250; XTitle="Leading tau p_{T}  [GeV]", Legend='TR', Logy=True
+tau1Eta:  TauGood1_eta: 25,-6,6; XTitle="Leading tau #eta", Legend='TR', Logy=True
+
+
+met:   met_pt: 50,0,200    ; XTitle="E_{T}^{miss}  [GeV]", Logy=True
+
+mll: mass_2(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_mass, LepGood2_pt,LepGood2_eta,LepGood2_phi,LepGood2_mass): 100,0,1000 ; XTitle="M_{ll} [GeV]", Logy=True
+
+mt2: mt2: 16,0,800 ; XTitle="MT2  [GeV]", Logy=True
+
+
