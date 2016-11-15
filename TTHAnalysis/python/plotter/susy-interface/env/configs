@@ -14,7 +14,7 @@ BEGIN::3l
   friends     +:=
   macros      +:= susy-ewkino/3l/functionsEWK.cc;susy-ewkino/functionsSF.cc;susy-ewkino/functionsPUW.cc
   mccs        +:= susy-ewkino/3l/mcc_ewkino.txt
-  #weight       := puw_nInt_ICHEP(nTrueInt) * triggerSF(BR, LepSel_pt[0], LepSel_pdgId[0], LepSel_pt[1], LepSel_pdgId[1], LepSel_pt[2], LepSel_pdgId[2]) * leptonSF(getLepSF(LepSel_pt[0], LepSel_eta[0], LepSel_pdgId[0]), getLepSF(LepSel_pt[1], LepSel_eta[1], LepSel_pdgId[1]), getLepSF(LepSel_pt[2], LepSel_eta[2], LepSel_pdgId[2])) * eventBTagSF
+  weight       := puw_nInt_ICHEP(nTrueInt) * triggerSF(BR, LepSel_pt[0], LepSel_pdgId[0], LepSel_pt[1], LepSel_pdgId[1], LepSel_pt[2], LepSel_pdgId[2]) * leptonSF(getLepSF(LepSel_pt[0], LepSel_eta[0], LepSel_pdgId[0]), getLepSF(LepSel_pt[1], LepSel_eta[1], LepSel_pdgId[1]), getLepSF(LepSel_pt[2], LepSel_eta[2], LepSel_pdgId[2])) * eventBTagSF
   weightFS     := leptonSFFS(getLepSFFS(LepSel_pt[0], LepSel_eta[0], LepSel_pdgId[0]), getLepSFFS(LepSel_pt[1], LepSel_eta[1], LepSel_pdgId[1]), getLepSFFS(LepSel_pt[2], LepSel_eta[2], LepSel_pdgId[2]))
   flags       +:=
   flagsDumps  +:=
