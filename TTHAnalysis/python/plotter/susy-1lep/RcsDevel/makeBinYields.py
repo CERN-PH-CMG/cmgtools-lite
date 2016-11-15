@@ -376,7 +376,7 @@ def submitJobs(args, nchunks,options):
             basecmd = "bsub -q 8nh -o logs {cmssw}/src/CMGTools/SUSYAnalysis/macros/lxbatch_runner.sh {dir} {cmssw} {jobcmd}".format(
                 dir = os.getcwd(), cmssw = os.environ['CMSSW_BASE'], jobcmd=job
             )
-            print basecmd
+            os.system(basecmd)
 
     jobList.close()
     return 1
