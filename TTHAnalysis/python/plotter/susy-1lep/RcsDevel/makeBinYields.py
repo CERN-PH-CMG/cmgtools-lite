@@ -4,7 +4,7 @@ import sys, os, os.path
 
 from searchBins import *
 from math import hypot
-
+import time
 
 ## Trees -- skimmed with trig_base
 
@@ -377,6 +377,7 @@ def submitJobs(args, nchunks,options):
                 dir = os.getcwd(), cmssw = os.environ['CMSSW_BASE'], jobcmd=job
             )
             os.system(basecmd)
+            time.sleep(0.1)
 
     jobList.close()
     return 1
