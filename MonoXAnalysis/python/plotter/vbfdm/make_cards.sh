@@ -3,6 +3,9 @@
 if [[ "$HOSTNAME" == "cmsphys06" ]]; then
     TBASE="/data1/emanuele/monox/";
     J=6;
+elif [[ "$HOSTNAME" == "pccmsrm29.cern.ch" ]]; then
+    TBASE="/u2/emanuele/";
+    J=4;
 else
     TBASE="/afs/cern.ch/work/e/emanuele/TREES/";
     J=4;
@@ -103,3 +106,4 @@ if [[ "$1" == "all" || "$1" == "WE" ]] ; then
     eval $command
     echo "Done at $(date)"
 fi;
+
