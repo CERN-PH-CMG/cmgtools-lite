@@ -8,7 +8,7 @@ from CMGTools.H2TauTau.tools.setupJSON import setupJSON
 # from CMGTools.H2TauTau.objects.jetreco_cff import addAK4Jets
 from CMGTools.H2TauTau.tools.setupOutput import addTauMuOutput, addTauEleOutput, addDiTauOutput, addMuEleOutput, addDiMuOutput
 from RecoMET.METPUSubtraction.MVAMETConfiguration_cff import runMVAMET
-
+from PhysicsTools.PatUtils.tools.runMETCorrectionsAndUncertainties import runMetCorAndUncFromMiniAOD
 
 # def loadLocalSqlite(process, sqliteFilename, tag='JetCorrectorParametersCollection_Spring16_25nsV3_DATA_AK4PFchs'):
 #     process.load("CondCore.CondDB.CondDB_cfi")
@@ -60,8 +60,9 @@ def createProcess(runOnMC=True, channel='tau-mu', runSVFit=False,
 
     # if runOnMC:
     #     runMVAMET(process)
-    # 
+    #
     # else:
+    runMetCorAndUncFromMiniAOD(process, isData=not runOnMC)
     runMVAMET(process, jetCollectionPF="patJetsReapplyJEC")
 
     # loadLocalSqlite(process, 'Spring16_25nsV3_DATA.db') #os.environ['CMSSW_BASE'] + '/src/CMGTools/RootTools/data/jec/'
@@ -183,6 +184,14 @@ def createProcess(runOnMC=True, channel='tau-mu', runSVFit=False,
     # load the channel paths -------------------------------------------
 
     process.MVAMET.requireOS = cms.bool(False)
+    process.MVAMET.srcMETs = cms.VInputTag(cms.InputTag("slimmedMETs", "", "PAT" if runOnMC else "RECO"),
+                                           cms.InputTag("patpfMET"),
+                                           cms.InputTag("patpfMETT1"),
+                                           cms.InputTag("patpfTrackMET"),
+                                           cms.InputTag("patpfNoPUMET"),
+                                           cms.InputTag("patpfPUCorrectedMET"),
+                                           cms.InputTag("patpfPUMET"),
+                                           cms.InputTag("slimmedMETsPuppi", "", "PAT" if runOnMC else "RECO"))
 
     if channel == 'tau-mu':
         process.load('CMGTools.H2TauTau.objects.tauMuObjectsMVAMET_cff')
