@@ -58,15 +58,6 @@ def createProcess(runOnMC=True, channel='tau-mu', runSVFit=False,
     process.load('Configuration.StandardSequences.GeometryRecoDB_cff')
     process.load('Configuration.StandardSequences.MagneticField_38T_cff')
 
-    # if runOnMC:
-    #     runMVAMET(process)
-    #
-    # else:
-    runMetCorAndUncFromMiniAOD(process, isData=not runOnMC)
-    runMVAMET(process, jetCollectionPF="patJetsReapplyJEC")
-
-    # loadLocalSqlite(process, 'Spring16_25nsV3_DATA.db') #os.environ['CMSSW_BASE'] + '/src/CMGTools/RootTools/data/jec/'
-
     from PhysicsTools.PatAlgos.producersLayer1.jetUpdater_cff import updatedPatJetCorrFactors
     process.patJetCorrFactorsReapplyJEC = updatedPatJetCorrFactors.clone(
         src=cms.InputTag("slimmedJets"),
@@ -84,6 +75,17 @@ def createProcess(runOnMC=True, channel='tau-mu', runSVFit=False,
         jetSource=cms.InputTag("slimmedJets"),
         jetCorrFactorsSource=cms.VInputTag(cms.InputTag("patJetCorrFactorsReapplyJEC"))
     )
+
+    # if runOnMC:
+    #     runMVAMET(process)
+    #
+    # else:
+    runMVAMET(process, jetCollectionPF="patJetsReapplyJEC")
+    runMetCorAndUncFromMiniAOD(process, isData=not runOnMC)
+
+    process.selectedVerticesForPFMEtCorrType0.src = cms.InputTag("offlineSlimmedPrimaryVertices")
+
+    # loadLocalSqlite(process, 'Spring16_25nsV3_DATA.db') #os.environ['CMSSW_BASE'] + '/src/CMGTools/RootTools/data/jec/'
 
     process.maxEvents = cms.untracked.PSet(input=cms.untracked.int32(-1))
 
@@ -340,7 +342,6 @@ def createProcess(runOnMC=True, channel='tau-mu', runSVFit=False,
 
     # from FWCore.ParameterSet.Utilities import convertToUnscheduled
     # convertToUnscheduled(process)
-
     return process
 
 # if __name__ == '__main__':

@@ -4,7 +4,7 @@ from CMGTools.H2TauTau.proto.plotter.Variables import dict_all_vars
 from CMGTools.H2TauTau.proto.plotter.HistCreator import createHistogram
 from CMGTools.H2TauTau.proto.plotter.PlotConfigs import HistogramCfg
 
-def qcd_estimation(B_cut, C_cut, D_cut, all_samples, int_lumi, total_weight, scale=1., verbose=True):
+def qcd_estimation(B_cut, C_cut, D_cut, all_samples, int_lumi, total_weight, scale=1., verbose=True, friend_func=None):
     '''ABCD method.
     
      A | B
@@ -37,8 +37,8 @@ def qcd_estimation(B_cut, C_cut, D_cut, all_samples, int_lumi, total_weight, sca
 
     # cfg_qcd = HistogramCfg(name='QCD_aux', var=None, cfgs=samples_qcd, cut=None, lumi=int_lumi, weight=total_weight)
     
-    plot_qcd_c = createHistogram(qcd_c_region, all_stack=True)
-    plot_qcd_d = createHistogram(qcd_d_region, all_stack=True)
+    plot_qcd_c = createHistogram(qcd_c_region, all_stack=True, friend_func=friend_func)
+    plot_qcd_d = createHistogram(qcd_d_region, all_stack=True, friend_func=friend_func)
 
     if verbose:
         print 'Histogram C region'
@@ -55,6 +55,11 @@ def qcd_estimation(B_cut, C_cut, D_cut, all_samples, int_lumi, total_weight, sca
     else:
         qcd_scale = yield_c / yield_d
 
+    if qcd_scale < 0.:
+        print 'WARNING: negative QCD scaling; set it to zero'
+        qcd_scale = 0.
+        verbose = True
+
     if verbose:
         print 'QCD estimation: '
         print '  Yield C:', yield_c, ' yield D:', yield_d
@@ -63,7 +68,7 @@ def qcd_estimation(B_cut, C_cut, D_cut, all_samples, int_lumi, total_weight, sca
     qcd_b_region_hist = HistogramCfg(name='QCD', var=None, cfgs=samples_qcd_copy, cut=str(QCD_B_region_cut), lumi=int_lumi, weight=total_weight, total_scale=qcd_scale)
     
     all_samples_qcd = copy.deepcopy(all_samples)
-    all_samples_qcd.append(qcd_b_region_hist)
+    all_samples_qcd = [qcd_b_region_hist] + all_samples_qcd
     
     return all_samples_qcd
 

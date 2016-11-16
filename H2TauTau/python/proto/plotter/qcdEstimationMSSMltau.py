@@ -113,8 +113,17 @@ def estimateQCDWMSSM(hist_dict, cut, mt_cut, high_mt_cut='mt>70', friend_func=No
         print 'Warning: no MC events in high MT W+jets'
 
     print 'W+jets scale factor:', w_sf, '\n'
-    if cut.name in ['vbf_highmva0', '0jet_highmva0']:
-        print 'Very tight category, fixing W+jets SF to 1'
+
+    if w_sf <= 0.25:
+        print 'Warning: W+jets scale factor very small or negative', w_sf, 'setting to 1.'
         w_sf = 1.
+
+    if w_sf > 2.5 and yield_w_highmt_os and yield_w_highmt_os < 10.:
+        print 'Warning: W+jets scale factor very large', w_sf, ' but low stats, setting to 1.'
+        w_sf = 1.
+
+    # if cut.name in ['vbf_highmva0', '0jet_highmva0']:
+    #     print 'Very tight category, fixing W+jets SF to 1'
+    #     w_sf = 1.
     hist_dict['wjets'].total_scale = w_sf
     hist_dict['wjets_ss'].total_scale = -w_sf
