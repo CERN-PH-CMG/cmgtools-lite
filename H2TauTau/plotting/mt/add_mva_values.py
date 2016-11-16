@@ -3,11 +3,12 @@ import time
 import numpy as np
 from array import array
 
-from ROOT import TFile, TTree
+from ROOT import TFile, TTree, TTreeFormula
 
 from sklearn.externals import joblib
 
 from CMGTools.H2TauTau.proto.plotter.Samples import createSampleLists
+from CMGTools.H2TauTau.proto.plotter.Variables import getVars
 
 def ensure_dir(f):
     print 'ensure dir', f
@@ -19,32 +20,15 @@ def ensure_dir(f):
 
 analysis_dir = '/data1/steggema/mt/051016/MuTauMC/'
 
-train_vars = [
-    'mt',
-    'mt_leg2',
-    'n_jets',
-    'met_pt',
-    'pthiggs',
-    'vbf_mjj',
-    'vbf_deta',
-    'vbf_n_central',
-    'l2_pt',
-    'l1_pt',
-    # 'svfit_transverse_mass',
-    # 'delta_phi_l1_l2',
-    # 'delta_eta_l1_l2',
-    'dil_pt',
-    'dil_eta',
-    'jet1_pt',
-    'mt_total',
-    'delta_r_l1_l2',
-    'mvis'
-]
+train_vars = getVars([
+    'mt', 'l2_mt', 'n_jets', 'met_pt', 'pthiggs', 'vbf_mjj', 'vbf_deta', 'vbf_n_central', 'l2_pt', 'l1_pt','mvis', 'l1_eta', 'l2_eta', 'delta_phi_l1_l2', 'delta_eta_l1_l2', 'pt_l1l2', 'delta_phi_j1_met', 'pzeta_disc', 'jet1_pt', 'jet1_eta'
+])
+split_var = train_vars[10]
 
 mva_name = 'mva'
 
-clf0 = joblib.load('/afs/cern.ch/work/s/steggema/GradientBoostingClassifier_clf_0_0jet.pkl')
-clf1 = joblib.load('/afs/cern.ch/work/s/steggema/GradientBoostingClassifier_clf_1_0jet.pkl')
+clf0 = joblib.load('GradientBoostingClassifier_clf_0_0jet.pkl')
+clf1 = joblib.load('GradientBoostingClassifier_clf_1_0jet.pkl')
 
 out_dict = {}
 
@@ -95,6 +79,11 @@ for sample in all_samples:
 
     ave_mva = 0.
 
+    for var in train_vars:
+        if var.drawname != var.name:
+            var.formula = TTreeFormula('formula'+var.name, var.drawname, tree_in)
+            var.formula.GetNdata()
+
     t_start = time.time()
 
 
@@ -106,16 +95,18 @@ for sample in all_samples:
             print 'Time', t_current- t_start
             t_start = t_current
 
-        split_var = event.dil_pt
+        split_var_val = split_var.formula.EvalInstance() if hasattr(split_var, 'formula') else getattr(event, split_var.name)
 
-        if int(split_var * 1000) % 2 == 0:
+        if int(split_var_val * 1000) % 2 == 0:
             clf = clf0
         else:
             clf = clf1
 
         inputs = []
         for var in train_vars:
-            inputs.append(getattr(event, var))
+            val = var.formula.EvalInstance() if hasattr(var, 'formula') else getattr(event, var.name)
+            inputs.append(val)
+            
         mva = clf.predict_proba(np.array(inputs).reshape(1, -1))
         mva0_val[0] = mva[0][0]
         mva1_val[0] = mva[0][1]

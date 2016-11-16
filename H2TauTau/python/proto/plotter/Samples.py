@@ -1,9 +1,10 @@
 import os
+import pickle
+
 import ROOT
 from ROOT import gSystem, gROOT
 
-from CMGTools.H2TauTau.proto.plotter.PlotConfigs import SampleCfg
-from CMGTools.H2TauTau.proto.plotter.HistCreator import setSumWeights
+from CMGTools.H2TauTau.proto.plotter.PlotConfigs import SampleCfg, HistogramCfg
 from CMGTools.H2TauTau.proto.samples.spring16.sms_xsec import get_xsec
 
 from CMGTools.H2TauTau.proto.samples.spring16.htt_common import TT_pow_ext, DYJetsToLL_M50_LO, DYNJets, WJetsToLNu,  WNJets, WWTo2L2Nu, T_tWch, TBar_tWch, VVTo2L2Nu, ZZTo4L, WZTo1L3Nu, WWTo1L1Nu2Q, ZZTo2L2Q, WZTo2L2Q, WZTo1L1Nu2Q, TBarToLeptons_tch_powheg, TToLeptons_tch_powheg, HiggsGGH125, HiggsVBF125, mssm_signals, dy_weight_dict, w_weight_dict
@@ -15,7 +16,7 @@ if "/sDYReweighting_cc.so" not in gSystem.GetLibraries():
     from ROOT import getDYWeight
 
 splitDY = False
-useDYWeight = True
+useDYWeight = False
 # data2016G = True
 
 if useDYWeight or splitDY:
@@ -270,4 +271,18 @@ def createSampleLists(analysis_dir='/afs/cern.ch/user/s/steggema/work/public/mt/
 
     return samples_mc, samples_data, samples, all_samples, sampleDict
 
-samples_mc, samples_data, samples, all_samples, sampleDict = createSampleLists()
+
+def setSumWeights(sample, weight_dir='MCWeighter'):
+    if isinstance(sample, HistogramCfg) or sample.is_data:
+        return
+
+    pckfile = '/'.join([sample.ana_dir, sample.dir_name, weight_dir, 'SkimReport.pck'])
+    try:
+        pckobj = pickle.load(open(pckfile, 'r'))
+        counters = dict(pckobj)
+        if 'Sum Weights' in counters:
+            sample.sumweights = counters['Sum Weights']
+    except IOError:
+        # print 'Warning: could not find sum weights information for sample', sample.name
+        pass
+
