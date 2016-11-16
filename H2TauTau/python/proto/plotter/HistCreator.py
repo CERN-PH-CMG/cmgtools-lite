@@ -1,4 +1,3 @@
-import pickle
 import hashlib
 
 from array import array
@@ -24,11 +23,16 @@ def initHist(hist, vcfg):
     hist.SetStats(False)
 
 
-def createHistograms(hist_cfg, all_stack=False, verbose=False, friend_func=None):
+def createHistograms(hist_cfg, all_stack=False, verbose=False, friend_func=None, vcfgs=None):
     '''Method to create actual histogram (DataMCPlot) instances from histogram 
     config; this version handles multiple variables via MultiDraw.
     '''
-    vcfgs = hist_cfg.vars
+    if hist_cfg.vars:
+        vcfgs = hist_cfg.vars
+
+    if not vcfgs:
+        print 'ERROR in createHistograms: No variable configs passed', hist_cfg.name
+
     plots = {}
 
     for vcfg in vcfgs:
@@ -41,7 +45,7 @@ def createHistograms(hist_cfg, all_stack=False, verbose=False, friend_func=None)
     for cfg in hist_cfg.cfgs:
         # First check whether it's a sub-histo or not
         if isinstance(cfg, HistogramCfg):
-            hists = createHistograms(cfg, all_stack=True)
+            hists = createHistograms(cfg, all_stack=True, vcfgs=vcfgs)
             for vcfg in vcfgs:
                 hist = hists[vcfg.name]
                 plot = plots[vcfg.name]
@@ -318,19 +322,4 @@ def createTrees(hist_cfg, out_dir, verbose=False, friend_func=None):
         out_file.Write()
         out_file.Close()
     return plot
-
-
-def setSumWeights(sample, weight_dir='MCWeighter'):
-    if isinstance(sample, HistogramCfg) or sample.is_data:
-        return
-
-    pckfile = '/'.join([sample.ana_dir, sample.dir_name, weight_dir, 'SkimReport.pck'])
-    try:
-        pckobj = pickle.load(open(pckfile, 'r'))
-        counters = dict(pckobj)
-        if 'Sum Weights' in counters:
-            sample.sumweights = counters['Sum Weights']
-    except IOError:
-        # print 'Warning: could not find sum weights information for sample', sample.name
-        pass
 
