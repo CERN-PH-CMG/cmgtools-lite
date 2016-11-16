@@ -57,9 +57,9 @@ python launch.py --unitsPerJob=20 --remoteDir="DataRERECO"  --production_label="
 python launch.py --unitsPerJob=20 --remoteDir="DataRERECO"  --production_label="Data25nsRERECO"  SingleMuon_Run2016G_23Sep2016_v1
 
 
-python launch.py --unitsPerJob=20 --remoteDir="DataRunH"  --production_label="Data25nsRunH"  SingleMuon_Run2016H_23Sep2016_v1
-python launch.py --unitsPerJob=20 --remoteDir="DataRunH"  --production_label="Data25nsRunH"  SingleMuon_Run2016H_23Sep2016_v2
-python launch.py --unitsPerJob=20 --remoteDir="DataRunH"  --production_label="Data25nsRunH"  SingleMuon_Run2016H_23Sep2016_v3
+python launch.py --unitsPerJob=20 --remoteDir="DataRunH"  --production_label="Data25nsRunH"  SingleMuon_Run2016H_PromptReco_v1
+python launch.py --unitsPerJob=20 --remoteDir="DataRunH"  --production_label="Data25nsRunH"  SingleMuon_Run2016H_PromptReco_v2
+python launch.py --unitsPerJob=20 --remoteDir="DataRunH"  --production_label="Data25nsRunH"  SingleMuon_Run2016H_PromptReco_v3
 
 
 python launch.py --unitsPerJob=40 --remoteDir="DataRERECO"  --production_label="Data25nsRERECO"  SingleElectron_Run2016B_23Sep2016_v1
@@ -70,9 +70,9 @@ python launch.py --unitsPerJob=20 --remoteDir="DataRERECO"  --production_label="
 python launch.py --unitsPerJob=20 --remoteDir="DataRERECO"  --production_label="Data25nsRERECO"  SingleElectron_Run2016F_23Sep2016_v1
 python launch.py --unitsPerJob=20 --remoteDir="DataRERECO"  --production_label="Data25nsRERECO"  SingleElectron_Run2016G_23Sep2016_v1
 
-python launch.py --unitsPerJob=20 --remoteDir="DataRunH"  --production_label="Data25nsRunH"  SingleElectron_Run2016H_23Sep2016_v1
-python launch.py --unitsPerJob=20 --remoteDir="DataRunH"  --production_label="Data25nsRunH"  SingleElectron_Run2016H_23Sep2016_v2
-python launch.py --unitsPerJob=20 --remoteDir="DataRunH"  --production_label="Data25nsRunH"  SingleElectron_Run2016H_23Sep2016_v3
+python launch.py --unitsPerJob=20 --remoteDir="DataRunH"  --production_label="Data25nsRunH"  SingleElectron_Run2016H_PromptReco_v1
+python launch.py --unitsPerJob=20 --remoteDir="DataRunH"  --production_label="Data25nsRunH"  SingleElectron_Run2016H_PromptReco_v2
+python launch.py --unitsPerJob=20 --remoteDir="DataRunH"  --production_label="Data25nsRunH"  SingleElectron_Run2016H_PromptReco_v3
 #python launch.py --remoteDir="MC25ns_v1_v3_1l_July" --unitsPerJob=1 --production_label="MC25ns_v1" TTJets
 #python launch.py --remoteDir="MC25ns_v1_v3_1l_July" --unitsPerJob=1 --production_label="MC25ns_v1" TT_pow_ext4
 #python launch.py --remoteDir="MC25ns_v1_v3_1l_July" --unitsPerJob=1 --production_label="MC25ns_v1" TTJets_SingleLeptonFromTbar_ext
