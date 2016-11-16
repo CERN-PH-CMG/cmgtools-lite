@@ -17,8 +17,22 @@ int_lumi = lumi
 analysis_dir = '/data1/steggema/tt/230816/DiTauNewMC'
 verbose = True
 total_weight = 'weight'
-mssm = False
 optimisation = True
+make_plots = True
+mode = 'mva' #'mva_train' #'susy' #'mssm'
+
+# Infer whether this is mssm
+mssm = True
+if mode != 'mssm':
+    mssm = False
+
+# Check whether friend trees need to be added
+friend_func = None
+if mode == 'mva':
+    # friend_func = lambda f: f.replace('MC', 'MCMVAmt200')
+    friend_func = lambda f: f.replace('MC', 'MCMVAmt200_7Vars')
+
+
 
 samples_mc, samples_data, samples, all_samples, sampleDict = createSampleLists(analysis_dir=analysis_dir, channel='tt', mode='mssm' if mssm else 'susy', ztt_cut='(l2_gen_match == 5 && l1_gen_match == 5)', zl_cut='(l1_gen_match < 6 && l2_gen_match < 6 && !(l1_gen_match == 5 && l2_gen_match == 5))',
                                                                                zj_cut='(l2_gen_match == 6 || l1_gen_match == 6)', signal_scale=1. if optimisation else 20.)
@@ -39,7 +53,7 @@ charge_cut = Cut('l1_charge != l2_charge')
 
 # append categories to plot
 
-cuts.append(myCut('inclusive', inc_cut & Cut('n_bjets==0')))
+# cuts.append(myCut('inclusive', inc_cut & Cut('n_bjets==0')))
 
 # cuts.append(myCut('inclusive_SS', inc_cut))
 # cuts.append(myCut('mZ', inc_cut & Cut('mvis < 110.')))
@@ -57,6 +71,18 @@ cuts.append(myCut('inclusive', inc_cut & Cut('n_bjets==0')))
 
 # cuts.append(myCut('susy_loose_met', inc_cut & Cut('mvis>100 && n_bjets==0 && met_pt>100.')))
 # cuts.append(myCut('susy_loose', inc_cut & Cut('mvis>100 && n_bjets==0 && pzeta_disc < -40.')))
+
+cuts.append(myCut('susy_mtsum200', inc_cut & Cut('n_bjets==0 && mt + mt_leg2>200.')))
+cuts.append(myCut('susy_highmva', inc_cut & Cut('n_bjets==0 && mva1>0.75')))
+
+cuts.append(myCut('susy_mva_mtsum200_mt2_20', inc_cut & Cut('n_bjets==0 && mt2>20 && mt + mt_leg2>200. && mva1>0.85')))
+cuts.append(myCut('susy_mva2_mtsum200_mt2_20', inc_cut & Cut('n_bjets==0 && mt2>20 && mt + mt_leg2>200. && mva1>0.90')))
+cuts.append(myCut('susy_mva3_mtsum200_mt2_20', inc_cut & Cut('n_bjets==0 && mt2>20 && mt + mt_leg2>200. && mva1>0.95')))
+cuts.append(myCut('susy_mtsum200_mt2_20', inc_cut & Cut('n_bjets==0 && mt2>20 && mt + mt_leg2>200.')))
+
+cuts.append(myCut('pieter_1', inc_cut & Cut('n_bjets==0 && mt2>70. && delta_phi_l1_l2>1.5')))
+cuts.append(myCut('pieter_2', inc_cut & Cut('n_bjets==0 && mt>200. && mt2>40. && delta_phi_l1_l2>1.5')))
+cuts.append(myCut('pieter_3', inc_cut & Cut('n_bjets==0 && mt>300. && mt2>40. && delta_phi_l1_l2>1.5')))
 
 # cuts.append(myCut('susy_onlytaupt', inc_cut & Cut('mvis>100 && n_bjets==0 && l1_pt>60 && met_pt>20.')))
 # cuts.append(myCut('susy_taupt', inc_cut & Cut('mvis>100 && n_bjets==0 && l1_pt>60 && met_pt>20. && mt>50.')))
@@ -112,10 +138,15 @@ cuts.append(myCut('inclusive', inc_cut & Cut('n_bjets==0')))
 # Taken from Variables.py, can get subset with e.g. getVars(['mt', 'mvis'])
 variables = tautau_vars
 
-variables = getVars(['mvis', 'mt2', 'l1_pt', 'l2_pt', 'delta_phi_l1_l2', 'delta_eta_l1_l2', 'met_pt', 'mt_total', 'mt_sum', 'pzeta_vis', 'pzeta_met', 'l2_mt', 'mt', 'pzeta_vis', 'pzeta_disc', 'pthiggs', 'jet1_pt', 'n_jets', 'pt_l1l2']) #, 'l1_pt',  '_norm_', ])
+variables = getVars(['mvis', 'mt2', 'l1_pt', 'l2_pt', 'delta_phi_l1_l2', 'delta_eta_l1_l2', 'met_pt', 'mt_total', 'mt_sum', 'pzeta_met', 'l2_mt', 'mt', 'pzeta_vis', 'pzeta_disc', 'pthiggs', 'jet1_pt', 'n_jets', 'pt_l1l2']) #, 'l1_pt',  '_norm_', ])
 # variables += [
 #     VariableCfg(name='mt2', binning={'nbinsx':15, 'xmin':0., 'xmax':150.}, unit='GeV', xtitle='m_{T2}')
 # ]
+if mode == 'mva':
+    variables += getVars(['_norm_'])
+    variables += [
+        VariableCfg(name='mva1', binning={'nbinsx':10, 'xmin':0., 'xmax':1.}, unit='', xtitle='Stau MVA')
+    ]
 
 ams_dict = {}
 sample_names = set()
@@ -129,7 +160,8 @@ for cut in cuts:
         all_samples if mssm else samples,
         int_lumi,
         total_weight,
-        verbose=verbose
+        verbose=verbose,
+        friend_func=friend_func
     )
 
     # now include charge and isolation too
@@ -137,37 +169,55 @@ for cut in cuts:
 
     # for variable in variables:
     cfg_total = HistogramCfg(name=cut.name, vars=variables, cfgs=all_samples_qcd, cut=str(cut.cut), lumi=int_lumi, weight=total_weight)
-    all_samples_qcd[-1].vars = variables
-    # plots = createHistograms(cfg_total, verbose=True)
+    # all_samples_qcd[-1].vars = variables
 
-    createTrees(cfg_total, '/data1/steggema/tt/MVATrees', verbose=True)
+    if mode == 'mva_train':
+        createTrees(cfg_total, '/data1/steggema/tt/MVATrees', verbose=True)
+        continue
 
-    # for variable in variables:
-    #     plot = plots[variable.name]
-    #     plot.Group('Single t', ['T_tWch', 'TBar_tWch', 'TToLeptons_tch_powheg', 'TBarToLeptons_tch_powheg'])  # 'TToLeptons_sch',
-    #     plot.Group('VV', ['VVTo2L2Nu', 'ZZTo2L2Q', 'WWTo1L1Nu2Q', 'WZTo1L3Nu', 'ZZTo4L',  'WZTo2L2Q', 'WZTo1L1Nu2Q', 'Single t'])  # 'WZTo3L',
-    #     # plot.Group('ZTT', ['ZTT', 'ZTT1Jets', 'ZTT2Jets', 'ZTT3Jets', 'ZTT4Jets'])
-    #     # plot.Group('ZJ', ['ZJ', 'ZJ1Jets', 'ZJ2Jets', 'ZJ3Jets', 'ZJ4Jets'])
-    #     # plot.Group('ZL', ['ZL', 'ZL1Jets', 'ZL2Jets', 'ZL3Jets', 'ZL4Jets'])
-    #     plot.Group('W', ['WJetsToLNu', 'W1Jets', 'W2Jets', 'W3Jets', 'W4Jets'])
-    #     plot.Group('Electroweak', ['W', 'VV', 'Single t', 'ZJ'])
+    plots = createHistograms(cfg_total, verbose=True, friend_func=friend_func)
 
-    #     if optimisation:
-    #         plot.DrawStack('HIST')
-    #         print plot
-    #         for signal_hist in plot.SignalHists():
-    #             sample_names.add(signal_hist.name)
-    #             ams_dict[variable.name + '__' + cut.name + '__' + signal_hist.name + '_'] = ams_hists(signal_hist.weighted, plot.BGHist().weighted)
-    #         continue
 
-    #     HistDrawer.draw(plot, channel='#tau_{h}#tau_{h}', plot_dir='plot_%s' % cut.name, blindxmin=variable.binning[
-    #                     'xmin'] if optimisation and 'xmin' in variable.binning else None, blindxmax=variable.binning['xmax'] if optimisation and 'xmax' in variable.binning else None)
-    #     # HistDrawer.drawRatio(plot, channel='#tau_{h}#tau_{h}')
+    for variable in variables:
+        plot = plots[variable.name]
+        plot.Group('Single t', ['T_tWch', 'TBar_tWch', 'TToLeptons_tch_powheg', 'TBarToLeptons_tch_powheg'])  # 'TToLeptons_sch',
+        plot.Group('VV', ['VVTo2L2Nu', 'ZZTo2L2Q', 'WWTo1L1Nu2Q', 'WZTo1L3Nu', 'ZZTo4L',  'WZTo2L2Q', 'WZTo1L1Nu2Q', 'Single t'])  # 'WZTo3L',
+        # plot.Group('ZTT', ['ZTT', 'ZTT1Jets', 'ZTT2Jets', 'ZTT3Jets', 'ZTT4Jets'])
+        # plot.Group('ZJ', ['ZJ', 'ZJ1Jets', 'ZJ2Jets', 'ZJ3Jets', 'ZJ4Jets'])
+        # plot.Group('ZL', ['ZL', 'ZL1Jets', 'ZL2Jets', 'ZL3Jets', 'ZL4Jets'])
+        plot.Group('W', ['WJetsToLNu', 'W1Jets', 'W2Jets', 'W3Jets', 'W4Jets'])
+        plot.Group('Electroweak', ['W', 'VV', 'Single t', 'ZJ'])
 
-    #     # if variable.name == 'mvis':
-    #     #     plot.WriteDataCard(filename='plot_%s/htt_tt.inputs-sm-13TeV.root' %cut.name, dir='tt_' + cut.name, mode='UPDATE')
-    #     if variable.name == 'svfit_mass':
-    #         plot.WriteDataCard(filename='plot_%s/htt_tt.inputs-sm-13TeV_svFit.root' % cut.name, dir='tt_' + cut.name, mode='UPDATE')
+        if optimisation:
+            plot.DrawStack('HIST')
+            print plot
+            for signal_hist in plot.SignalHists():
+                sample_names.add(signal_hist.name)
+                ams_dict[variable.name + '__' + cut.name + '__' + signal_hist.name + '_'] = ams_hists(signal_hist.weighted, plot.BGHist().weighted)
+        
+        if not make_plots:
+            continue
+
+        blindxmin = 0.7 if 'mva' in variable.name else None
+        blindxmax = 1.00001 if 'mva' in variable.name else None
+
+        if variable.name == 'mt2':
+            blindxmin = 60.
+            blindxmax = variable.binning['xmax']
+
+        if variable.name == 'mt_sum':
+            blindxmin = 250.
+            blindxmax = variable.binning['xmax']
+
+        HistDrawer.draw(plot, channel='#tau_{h}#tau_{h}', plot_dir='plot_%s' % cut.name, blindxmin=blindxmin, blindxmax=blindxmax)
+            # blindxmin=variable.binning[
+                        # 'xmin'] if optimisation and 'xmin' in variable.binning else None, blindxmax=variable.binning['xmax'] if optimisation and 'xmax' in variable.binning else None)
+        # HistDrawer.drawRatio(plot, channel='#tau_{h}#tau_{h}')
+
+        # if variable.name == 'mvis':
+        #     plot.WriteDataCard(filename='plot_%s/htt_tt.inputs-sm-13TeV.root' %cut.name, dir='tt_' + cut.name, mode='UPDATE')
+        if variable.name == 'svfit_mass':
+            plot.WriteDataCard(filename='plot_%s/htt_tt.inputs-sm-13TeV_svFit.root' % cut.name, dir='tt_' + cut.name, mode='UPDATE')
 
 if optimisation:
     print '\nOptimisation results:'

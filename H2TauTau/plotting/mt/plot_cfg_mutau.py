@@ -6,7 +6,7 @@ from numpy import array
 
 from CMGTools.H2TauTau.proto.plotter.PlotConfigs import HistogramCfg, VariableCfg
 from CMGTools.H2TauTau.proto.plotter.categories_TauMu import cat_Inc
-from CMGTools.H2TauTau.proto.plotter.HistCreator import createHistograms
+from CMGTools.H2TauTau.proto.plotter.HistCreator import createHistograms, createTrees
 from CMGTools.H2TauTau.proto.plotter.HistDrawer import HistDrawer
 from CMGTools.H2TauTau.proto.plotter.Variables import taumu_vars, getVars
 from CMGTools.H2TauTau.proto.plotter.helper_methods import getVertexWeight
@@ -108,15 +108,17 @@ def prepareCuts(mode):
         #     cuts.append(Cut('mva_l{cut}_0jet'.format(cut=mva_cut).replace('.', ''), inc_cut + '&& l1_charge != l2_charge && mt<40 && mva<{cut} && !(vbf_mjj>300 && abs(vbf_deta)>3.5) && n_jets<0.5'.format(cut=mva_cut)))
         # cuts.append(Cut('1jet_novbf', inc_cut + '&& l1_charge != l2_charge && mt<40 && n_jets>0.5 && !{vbf}'.format(vbf=cut_vbf)))
         
-        cut_vbf = '(vbf_mjj>500. && abs(vbf_deta)>3.5 && vbf_n_central==0.)'
+        cut_vbf = '(vbf_mjj>500. && abs(vbf_deta)>3.5 && vbf_n_central==0. && jet1_pt>50 && jet2_pt>30)'
 
-        cuts.append(Cut('0jet_lowmva0', inc_cut + '&& l1_charge != l2_charge && {mt_cut} && n_jets<0.5 && mva0<0.1'.format(mt_cut=mt_cut)))
-        cuts.append(Cut('0jet_highmva0', inc_cut + '&& l1_charge != l2_charge && {mt_cut} && n_jets<0.5 && mva0>0.1'.format(mt_cut=mt_cut)))
-        cuts.append(Cut('vbf_lowmva0', inc_cut + '&& l1_charge != l2_charge && {mt_cut} && {vbf} && mva0<0.2'.format(mt_cut=mt_cut, vbf=cut_vbf)))
-        cuts.append(Cut('vbf_highmva0', inc_cut + '&& l1_charge != l2_charge && {mt_cut} && {vbf} && mva0>0.2'.format(mt_cut=mt_cut, vbf=cut_vbf)))
-        cuts.append(Cut('1jet_novbf_lowmva0', inc_cut + '&& l1_charge != l2_charge && {mt_cut} && n_jets>0.5 && !{vbf} && mva0<0.3'.format(mt_cut=mt_cut, vbf=cut_vbf)))
-        cuts.append(Cut('1jet_novbf_highmva0', inc_cut + '&& l1_charge != l2_charge && {mt_cut} && n_jets>0.5 && !{vbf} && mva0>0.3'.format(mt_cut=mt_cut, vbf=cut_vbf)))
+        # cuts.append(Cut('0jet_lowmva0', inc_cut + '&& l1_charge != l2_charge && {mt_cut} && n_jets<0.5 && mva0<0.1'.format(mt_cut=mt_cut)))
+        # cuts.append(Cut('0jet_highmva0', inc_cut + '&& l1_charge != l2_charge && {mt_cut} && n_jets<0.5 && mva0>0.1'.format(mt_cut=mt_cut)))
+        cuts.append(Cut('vbf_lowmva0_jetpt5030', inc_cut + '&& l1_charge != l2_charge && {mt_cut} && {vbf} && mva0<0.1'.format(mt_cut=mt_cut, vbf=cut_vbf)))
+        cuts.append(Cut('vbf_highmva0_jetpt5030', inc_cut + '&& l1_charge != l2_charge && {mt_cut} && {vbf} && mva0>0.1'.format(mt_cut=mt_cut, vbf=cut_vbf)))
+        # cuts.append(Cut('1jet_novbf_verylowmva0', inc_cut + '&& l1_charge != l2_charge && {mt_cut} && n_jets>0.5 && !{vbf} && mva0<0.1'.format(mt_cut=mt_cut, vbf=cut_vbf)))
+        # cuts.append(Cut('1jet_novbf_lowmva0', inc_cut + '&& l1_charge != l2_charge && {mt_cut} && n_jets>0.5 && !{vbf} && mva0<0.2'.format(mt_cut=mt_cut, vbf=cut_vbf)))
+        # cuts.append(Cut('1jet_novbf_highmva0', inc_cut + '&& l1_charge != l2_charge && {mt_cut} && n_jets>0.5 && !{vbf} && mva0>0.1'.format(mt_cut=mt_cut, vbf=cut_vbf)))
 
+        # cuts.append(Cut('1jet_novbf_lowmva0lowmva1', inc_cut + '&& l1_charge != l2_charge && {mt_cut} && n_jets>0.5 && !{vbf} && mva0<0.2 && mva1<0.2'.format(mt_cut=mt_cut, vbf=cut_vbf)))
 
     if mode == 'cp':
         cuts.append(Cut('inclusivemt40', inc_cut + '&&  l1_charge != l2_charge && mt<40 && mvis>40 && mvis<90 && l2_nc_ratio>-99'))
@@ -184,7 +186,7 @@ def createVariables(mode):
         ]
 
         # MVA training variables, and others
-        variables += getVars(['mt', 'n_jets', 'met_pt', 'pthiggs', 'vbf_mjj', 'vbf_deta', 'vbf_n_central', 'l2_pt', 'l1_pt','mvis', 'n_vertices', 'l1_eta', 'l2_eta', 'delta_phi_l1_l2', 'delta_eta_l1_l2',])#  'svfit_transverse_mass', 
+        variables += getVars(['mt', 'l2_mt', 'n_jets', 'met_pt', 'pthiggs', 'vbf_mjj', 'vbf_deta', 'vbf_n_central', 'l2_pt', 'l1_pt','mvis', 'l1_eta', 'l2_eta', 'delta_phi_l1_l2', 'delta_eta_l1_l2', 'pt_l1l2', 'delta_phi_j1_met', 'pzeta_disc', 'jet1_pt', 'jet1_eta'])#  'svfit_transverse_mass', 
 
         variables = taumu_vars
 
@@ -215,7 +217,7 @@ def createVariables(mode):
 
     return variables
 
-def makePlots(variables, cuts, total_weight, sample_dict, hist_dict, qcd_from_same_sign, w_qcd_mssm_method, mt_cut, friend_func, dc_postfix, make_plots=True):
+def makePlots(variables, cuts, total_weight, sample_dict, hist_dict, qcd_from_same_sign, w_qcd_mssm_method, mt_cut, friend_func, dc_postfix, make_plots=True, create_trees=False):
     ams_dict = {}
     sample_names = set()
     for cut in cuts:
@@ -247,6 +249,10 @@ def makePlots(variables, cuts, total_weight, sample_dict, hist_dict, qcd_from_sa
                     variable.binning = binning_mssm
                 elif cut.name in ['btag']:
                     variable.binning = binning_mssm_btag
+
+        if create_trees:
+            createTrees(cfg_main, '/data1/steggema/mt/MVATrees', verbose=True)
+            continue
 
         plots = createHistograms(cfg_main, verbose=False, friend_func=friend_func)
         for variable in variables:
@@ -285,8 +291,8 @@ def makePlots(variables, cuts, total_weight, sample_dict, hist_dict, qcd_from_sa
 if __name__ == '__main__':
         
     # mode = 'iso'
-    mode = 'sm'
-    # mode = 'mva'
+    # mode = 'sm'
+    mode = 'mva'
     # mode = 'cp'
     # mode = 'mssm_signal' 
     # mode = 'mssm_control'
@@ -333,7 +339,7 @@ if __name__ == '__main__':
 
     if run_central:
         sample_dict, hist_dict = createSamples(mode, analysis_dir, total_weight, qcd_from_same_sign, w_qcd_mssm_method, r_qcd_os_ss)
-        makePlots(variables, cuts, total_weight, sample_dict, hist_dict, qcd_from_same_sign, w_qcd_mssm_method, mt_cut, friend_func, dc_postfix='')
+        makePlots(variables, cuts, total_weight, sample_dict, hist_dict, qcd_from_same_sign, w_qcd_mssm_method, mt_cut, friend_func, dc_postfix='', create_trees=False)
 
     if add_ttbar_sys:
 
