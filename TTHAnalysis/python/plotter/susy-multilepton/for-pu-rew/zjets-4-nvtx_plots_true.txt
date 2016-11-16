@@ -1,1 +1,1 @@
-nTrueInt: nTrueInt: 50,0,50 ; XTitle="nPUtrue", Legend='TR'
+nTrueInt: nTrueInt: 60,0,60 ; XTitle="nPUtrue", Legend='TR'

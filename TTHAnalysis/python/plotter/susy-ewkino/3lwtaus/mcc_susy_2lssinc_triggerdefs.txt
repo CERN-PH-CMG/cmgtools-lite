@@ -1,0 +1,5 @@
+Triggers_ee\b : HLT_BIT_HLT_Ele17_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v                                                                   ; AlsoData
+#Triggers_mm\b : HLT_DoubleMu                                                                                                         ; AlsoData
+Triggers_mm\b : HLT_BIT_HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v || HLT_BIT_HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v                      ; AlsoData
+Triggers_em\b : HLT_BIT_HLT_Mu17_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v || HLT_BIT_HLT_Mu8_TrkIsoVVL_Ele17_CaloIdL_TrackIdL_IsoVL_v ; AlsoData
+

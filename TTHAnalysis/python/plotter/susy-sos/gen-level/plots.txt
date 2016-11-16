@@ -1,0 +1,18 @@
+mll     : m2l:  40,0.,160; XTitle="M(ll) [GeV]"
+mll_log : m2l:  40,0.,160; XTitle="M(ll) [GeV]", Logy
+mll_low : m2l:  40,0.,50;  XTitle="M(ll) [GeV]", IncludeOverflows=False
+pt      : pt2l: 30,0.,300.; XTitle="p_{T}(ll) [GeV]"
+pt_log  : pt2l: 20,0.,400.; XTitle="p_{T}(ll) [GeV]", Logy
+dphill  : abs(deltaPhi(LepGood1_phi,LepGood2_phi)): 20,0.,3.14; XTitle="#Delta#phi(ll) [GeV]"
+met     : met_pt : 30,0,300.; XTitle=" MET [GeV]", Legend='TR'
+met_log : met_pt : 20,0,400.; XTitle=" MET [GeV]", Legend='TR', Logy
+ptllv  : pt_3(LepGood1_pt,LepGood1_phi,LepGood2_pt,LepGood2_phi,met_pt,met_phi): 25,0.,250; XTitle="p_{T}(ll#nu) [GeV]"
+ptllv_log  : pt_3(LepGood1_pt,LepGood1_phi,LepGood2_pt,LepGood2_phi,met_pt,met_phi): 20,0.,400.; XTitle="p_{T}(ll#nu) [GeV]", Logy
+dphillv : abs(deltaPhi(phi_2(LepGood1_pt,LepGood1_phi,LepGood2_pt,LepGood2_phi),met_phi)): 40,0.,3.14; XTitle="#Delta#phi(ll\,#nu) [GeV]"
+pt1 :  LepGood1_pt : 30,0,300 ; XTitle="p_{T}(l1) [GeV]"
+pt2 :  LepGood2_pt : 30,0,150 ; XTitle="p_{T}(l2) [GeV]"
+eta1 :  abs(LepGood1_eta) : 20,0,2.5 ; XTitle="|#eta(l1)| [GeV]"
+eta2 :  abs(LepGood2_eta) : 20,0,2.5 ; XTitle="|#eta(l2)| [GeV]"
+j1pt : Jet1_pt : 40,0,300 ; XTitle="p_{T}(j1) [GeV]"
+j1eta : abs(Jet1_eta) : 20,0,2.5 ; XTitle="|#eta(j1)| [GeV]"
+

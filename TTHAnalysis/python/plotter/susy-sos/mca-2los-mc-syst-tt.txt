@@ -1,0 +1,6 @@
+# ---- Alternative shapes TT
+TT  : TTJets_DiLepton : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0; FillColor=ROOT.kBlue-7, Label="tt", 
+TT_Spin : TTJets_DiLepton : xsec : (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0)*SpinCorWeight;FillColor=ROOT.kGray, Label="tt-SpinCor"
+TT_Wpol_Up : TTJets_DiLepton : xsec : (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0)*WpolWup; FillColor=ROOT.kRed-6, Label="tt-WpolUp"
+TT_Wpol_Down : TTJets_DiLepton : xsec : (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0)*WpolWdown; FillColor=ROOT.kOrange+1, Label="tt-WpolDown"
+TT_TopPt : TTJets_DiLepton : xsec : (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0)*TopPtWeight; FillColor=ROOT.kTeal+4, Label="tt-TopPt"

@@ -25,8 +25,11 @@ class MCCorrections:
     def __init__(self,file):
         self._file = file
         self._corrections = []
-        for line in open(file,'r'):
+        infile = open(file,'r')
+        for line in infile:
             if re.match("\s*#.*", line): continue
+            while line.strip()[-1] == "\\":
+                line = line.strip()[:-1] + infile.next()
             line = re.sub("#.*","",line)
             extra = {}
             if ";" in line:
