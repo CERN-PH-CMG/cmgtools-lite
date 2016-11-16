@@ -126,22 +126,23 @@ int SR3lA(float mT2L, float mT2T, float mll, float mT, float met, int offset = 0
         if (mT >= 160 &&             met >= 100 && met < 150) return offset + 27;
         if (mT >= 160 &&             met >= 150 && met < 200) return offset + 28;
         if (mT >= 160 &&             met >= 200 && met < 250) return offset + 29;
-        if (mT >= 160 &&             met >= 250             ) return offset + 30;
+        if (mT >= 160 &&             met >= 250 && met < 400) return offset + 30;
+        if (mT >= 160 &&             met >= 400             ) return offset + 31;
     }
     if(mll >= 105) {
-        if (mT >=   0 && mT < 100 && met >=  50 && met < 100) return offset + 31;
-        if (mT >=   0 && mT < 100 && met >= 100 && met < 150) return offset + 32;
-        if (mT >=   0 && mT < 100 && met >= 150 && met < 200) return offset + 33;
-        if (mT >=   0 && mT < 100 && met >= 200 && met < 250) return offset + 34;
-        if (mT >=   0 && mT < 100 && met >= 250             ) return offset + 35;
-        if (mT >= 100 && mT < 160 && met >=  50 && met < 100) return offset + 36;
-        if (mT >= 100 && mT < 160 && met >= 100 && met < 150) return offset + 37;
-        if (mT >= 100 && mT < 160 && met >= 150 && met < 200) return offset + 38;
-        if (mT >= 100 && mT < 160 && met >= 200             ) return offset + 39;
-        if (mT >= 160 &&             met >=  50 && met < 100) return offset + 40;
-        if (mT >= 160 &&             met >= 100 && met < 150) return offset + 41;
-        if (mT >= 160 &&             met >= 150 && met < 200) return offset + 42;
-        if (mT >= 160 &&             met >= 200             ) return offset + 43;
+        if (mT >=   0 && mT < 100 && met >=  50 && met < 100) return offset + 32;
+        if (mT >=   0 && mT < 100 && met >= 100 && met < 150) return offset + 33;
+        if (mT >=   0 && mT < 100 && met >= 150 && met < 200) return offset + 34;
+        if (mT >=   0 && mT < 100 && met >= 200 && met < 250) return offset + 35;
+        if (mT >=   0 && mT < 100 && met >= 250             ) return offset + 36;
+        if (mT >= 100 && mT < 160 && met >=  50 && met < 100) return offset + 37;
+        if (mT >= 100 && mT < 160 && met >= 100 && met < 150) return offset + 38;
+        if (mT >= 100 && mT < 160 && met >= 150 && met < 200) return offset + 39;
+        if (mT >= 100 && mT < 160 && met >= 200             ) return offset + 40;
+        if (mT >= 160 &&             met >=  50 && met < 100) return offset + 41;
+        if (mT >= 160 &&             met >= 100 && met < 150) return offset + 42;
+        if (mT >= 160 &&             met >= 150 && met < 200) return offset + 43;
+        if (mT >= 160 &&             met >= 200             ) return offset + 44;
     }
     return 0;
 }
@@ -289,26 +290,26 @@ int SR3l(int nTau, int nOSSF, int nOSLF, float mT2L, float mT2T, float mll, floa
 
     // 3 light
     if(nTau == 0 && nOSSF >= 1              ) return SR3lA(mT2L, mT2T, mll, mT, met,  0);
-    if(nTau == 0 && nOSSF <  1              ) return SR3lB(mT2L, mT2T, mll, mT, met, 43);
+    if(nTau == 0 && nOSSF <  1              ) return SR3lB(mT2L, mT2T, mll, mT, met, 44);
     // 2 light + 1 tau
-    if(nTau == 1 && nOSSF >= 1              ) return SR3lC(mT2L, mT2T, mll, mT, met, 49);
-    if(nTau == 1 && nOSSF <  1 && nOSLF >= 1) return SR3lD(mT2L, mT2T, mll, mT, met, 67);
-    if(nTau == 1 && nOSLF <  1              ) return SR3lE(mT2L, mT2T, mll, mT, met, 83);
+    if(nTau == 1 && nOSSF >= 1              ) return SR3lC(mT2L, mT2T, mll, mT, met, 50);
+    if(nTau == 1 && nOSSF <  1 && nOSLF >= 1) return SR3lD(mT2L, mT2T, mll, mT, met, 68);
+    if(nTau == 1 && nOSLF <  1              ) return SR3lE(mT2L, mT2T, mll, mT, met, 84);
     // 1 light + 2 tau
-    if(nTau == 2                            ) return SR3lF(mT2L, mT2T, mll, mT, met, 95);
+    if(nTau == 2                            ) return SR3lF(mT2L, mT2T, mll, mT, met, 96);
     return 0;
 }
 
 int SR4l(int nTau, int nOSSF, int nOSLF, float mT2L, float mT2T, float mll, float mT, float met){
 
     // 4 light
-    if(nTau == 0 && nOSSF >= 2              ) return SR4lG(mT2L, mT2T, mll, mT, met, 107);
-    if(nTau == 0 && nOSSF <= 1              ) return SR4lH(mT2L, mT2T, mll, mT, met, 112);
+    if(nTau == 0 && nOSSF >= 2              ) return SR4lG(mT2L, mT2T, mll, mT, met, 109);
+    if(nTau == 0 && nOSSF <= 1              ) return SR4lH(mT2L, mT2T, mll, mT, met, 113);
     // 3light + 1tau
-    if(nTau == 1                            ) return SR4lH(mT2L, mT2T, mll, mT, met, 116);
+    if(nTau == 1                            ) return SR4lH(mT2L, mT2T, mll, mT, met, 117);
     // 2light + 2tau
-    if(nTau == 2 && nOSSF >= 2              ) return SR4lH(mT2L, mT2T, mll, mT, met, 120);
-    if(nTau == 2 && nOSSF <= 1              ) return SR4lK(mT2L, mT2T, mll, mT, met, 124);
+    if(nTau == 2 && nOSSF >= 2              ) return SR4lH(mT2L, mT2T, mll, mT, met, 121);
+    if(nTau == 2 && nOSSF <= 1              ) return SR4lK(mT2L, mT2T, mll, mT, met, 125);
     return 0;
 }
 

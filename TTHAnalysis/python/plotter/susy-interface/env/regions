@@ -1,6 +1,6 @@
 BEGIN::3lA
   expr         := SR
-  bins         := 43,0.5,43.5
+  bins         := 44,0.5,44.5
   bkgs        +:= fakes_appldata;promptsub;prompt_.*;rares_.*;convs
   sigs        +:= sig_TChiNeuWZ_.*;sig_TChiNeuSlepSneu_FD_.*
   flags       +:= -A 3l BRcut 'BR == 1' 
@@ -33,7 +33,7 @@ ENDDEF
 
 BEGIN::3lA2
   expr         := SR-15
-  bins         := 28,0.5,28.5
+  bins         := 29,0.5,29.5
   bkgs        +:= fakes_appldata;promptsub;prompt_.*;rares_.*;convs
   sigs        +:= sig_TChiNeuWZ_.*;sig_TChiNeuSlepSneu_FD_.*
   flags       +:= -A 3l BRcut 'BR == 1' 
@@ -48,7 +48,7 @@ BEGIN::3lA2
 ENDDEF
 
 BEGIN::3lB
-  expr         := SR-43
+  expr         := SR-44
   bins         := 6,0.5,6.5
   bkgs        +:= fakes_appldata;promptsub;prompt_.*;rares_.*;convs
   sigs        +:= sig_TChiNeuWH_.*;sig_TChiNeuSlepSneu_TE_.*;sig_TChiNeuSlepSneu_TD_.*
@@ -64,7 +64,7 @@ BEGIN::3lB
 ENDDEF
 
 BEGIN::3lC
-  expr         := SR-49
+  expr         := SR-50
   bins         := 18,0.5,18.5
   bkgs        +:= fakes_appldata;promptsub;prompt_.*;rares_.*;convs
   sigs        +:= sig_TChiNeuWH_.*;sig_TChiNeuSlepSneu_TE_.*;sig_TChiNeuSlepSneu_TD_.*
@@ -81,7 +81,7 @@ BEGIN::3lC
 ENDDEF
 
 BEGIN::3lD
-  expr         := SR-67
+  expr         := SR-68
   bins         := 16,0.5,16.5
   bkgs        +:= fakes_appldata;promptsub;prompt_.*;rares_.*;convs
   sigs        +:= sig_TChiNeuWH_.*;sig_TChiNeuSlepSneu_TE_.*;sig_TChiNeuSlepSneu_TD_.*
@@ -98,7 +98,7 @@ BEGIN::3lD
 ENDDEF
 
 BEGIN::3lE
-  expr         := SR-83
+  expr         := SR-84
   bins         := 12,0.5,12.5
   bkgs        +:= fakes_appldata;promptsub;prompt_.*;rares_.*;convs
   sigs        +:= sig_TChiNeuWH_.*;sig_TChiNeuSlepSneu_TE_.*;sig_TChiNeuSlepSneu_TD_.*
@@ -115,7 +115,7 @@ BEGIN::3lE
 ENDDEF
 
 BEGIN::3lF
-  expr         := SR-95
+  expr         := SR-96
   bins         := 12,0.5,12.5
   bkgs        +:= fakes_appldata;promptsub;prompt_.*;rares_.*;convs
   sigs        +:= sig_TChiNeuWH_.*;sig_TChiNeuSlepSneu_TD_.*
@@ -135,7 +135,7 @@ BEGIN::3lF
 ENDDEF
 
 BEGIN::4lG
-  expr         := SR-107
+  expr         := SR-108
   bins         := 5,0.5,5.5
   mcafile      := susy-ewkino/4l/mca_ewkino.txt
   cutfile      := susy-ewkino/4l/cuts_ewkino.txt
@@ -153,7 +153,7 @@ BEGIN::4lG
 ENDDEF
 
 BEGIN::4lH
-  expr         := SR-112
+  expr         := SR-113
   bins         := 4,0.5,4.5
   mcafile      := susy-ewkino/4l/mca_ewkino.txt
   cutfile      := susy-ewkino/4l/cuts_ewkino.txt
@@ -171,7 +171,7 @@ BEGIN::4lH
 ENDDEF
 
 BEGIN::4lI
-  expr         := SR-116
+  expr         := SR-117
   bins         := 4,0.5,4.5
   mcafile      := susy-ewkino/4l/mca_ewkino.txt
   cutfile      := susy-ewkino/4l/cuts_ewkino.txt
@@ -189,7 +189,7 @@ BEGIN::4lI
 ENDDEF
 
 BEGIN::4lJ
-  expr         := SR-120
+  expr         := SR-121
   bins         := 4,0.5,4.5
   mcafile      := susy-ewkino/4l/mca_ewkino.txt
   cutfile      := susy-ewkino/4l/cuts_ewkino.txt
@@ -207,7 +207,7 @@ BEGIN::4lJ
 ENDDEF
 
 BEGIN::4lK
-  expr         := SR-124
+  expr         := SR-125
   bins         := 3,0.5,3.5
   mcafile      := susy-ewkino/4l/mca_ewkino.txt
   cutfile      := susy-ewkino/4l/cuts_ewkino.txt
