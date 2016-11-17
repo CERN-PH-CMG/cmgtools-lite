@@ -1,4 +1,5 @@
 import math
+import os
 import ROOT
 
 from PhysicsTools.Heppy.analyzers.core.AutoHandle import AutoHandle
@@ -9,6 +10,11 @@ from PhysicsTools.Heppy.physicsobjects.PhysicsObject import PhysicsObject
 from PhysicsTools.Heppy.physicsobjects.GenParticle import GenParticle
 
 from CMGTools.H2TauTau.proto.analyzers.TauGenTreeProducer import TauGenTreeProducer
+
+if "/sDYReweighting_cc.so" not in ROOT.gSystem.GetLibraries(): 
+    ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/H2TauTau/python/proto/plotter/DYReweighting.cc+" % os.environ['CMSSW_BASE']);
+    from ROOT import getDYWeight
+
 
 class HTTGenAnalyzer(Analyzer):
 
@@ -91,8 +97,11 @@ class HTTGenAnalyzer(Analyzer):
             for tau in event.selectedTaus:
                 self.genMatch(event, tau, self.ptSelGentauleps, self.ptSelGenleps, self.ptSelGenSummary)
 
-        if self.cfg_comp.name.find('TT') == -1 or self.cfg_comp.name.find('TTH') != -1:
+        if self.cfg_comp.name.find('TT') != -1 or self.cfg_comp.name.find('TTH') == -1:
             self.getTopPtWeight(event)
+
+        if self.cfg_comp.name.find('DY') != -1:
+            self.getDYMassPtWeight(event)
 
         return True
 
@@ -271,3 +280,30 @@ class HTTGenAnalyzer(Analyzer):
             event.top_2_pt = top_2_pt
             event.topweight = topweight
             event.eventWeight *= topweight
+
+    @staticmethod
+    def p4sum(ps):
+        '''Returns four-vector sum of objects in passed list. Returns None
+        if empty. Note that python sum doesn't work since p4() + 0/None fails,
+        but will be possible in future python'''
+        if not ps:
+            return None
+        p4 = ps[0].p4()
+        for i in xrange(len(ps) - 1):
+            p4 += ps[i + 1].p4()
+        return p4
+
+
+    @staticmethod
+    def getParentBoson(event):
+        leptons_prompt = [p for p in event.genParticles if abs(p.pdgId()) in [11, 12, 13, 14] and p.fromHardProcessFinalState()]
+        taus_prompt = [p for p in event.genParticles if p.statusFlags().isDirectHardProcessTauDecayProduct()]
+        all = leptons_prompt + taus_prompt
+        return HTTGenAnalyzer.p4sum(all)
+
+    @staticmethod 
+    def getDYMassPtWeight(event):
+        if not hasattr(event, 'parentBoson'):
+            event.parentBoson = HTTGenAnalyzer.getParentBoson(event)
+        event.dy_weight = getDYWeight(event.parentBoson.mass(), event.parentBoson.pt())
+

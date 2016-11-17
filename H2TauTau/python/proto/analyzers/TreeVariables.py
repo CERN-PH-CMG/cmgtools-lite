@@ -40,6 +40,7 @@ event_vars = [
     # # Add back for embedded samples once needed
     # Variable('weight_embed', lambda ev : getattr(ev, 'embedWeight', 1.)),
     Variable('weight_njet', lambda ev : ev.NJetWeight),
+    Variable('weight_dy', lambda ev : getattr(ev, 'dy_weight', 1.)),
     # # Add back the following only for ggH samples once needed
     # Variable('weight_hqt', lambda ev : getattr(ev, 'higgsPtWeight', 1.)),
     # Variable('weight_hqt_up', lambda ev : getattr(ev, 'higgsPtWeightUp', 1.)),
@@ -59,8 +60,8 @@ ditau_vars = [
     Variable('dil_eta', lambda dil : dil.p4().eta()),
     Variable('dil_phi', lambda dil : dil.p4().phi()),
     Variable('mt_total', lambda dil : dil.mtTotal()),
-    Variable('sum_lepton_mt', lambda dil : dil.mtSumLeptons()),
-    Variable('sqsum_lepton_mt', lambda dil : dil.mtSqSumLeptons()),
+    # Variable('sum_lepton_mt', lambda dil : dil.mtSumLeptons()),
+    # Variable('sqsum_lepton_mt', lambda dil : dil.mtSqSumLeptons()),
     Variable('pzeta_met', lambda dil : dil.pZetaMET()),
     Variable('pzeta_vis', lambda dil : dil.pZetaVis()),
     Variable('pzeta_disc', lambda dil : dil.pZetaDisc()),
@@ -72,8 +73,8 @@ ditau_vars = [
     Variable('met_cov10', lambda dil : dil.mvaMetSig(1, 0) if dil.mvaMetSig else 0.),
     Variable('met_cov11', lambda dil : dil.mvaMetSig(1, 1) if dil.mvaMetSig else 0.),
     Variable('met_phi', lambda dil : dil.met().phi()),
-    Variable('met_px', lambda dil : dil.met().px()),
-    Variable('met_py', lambda dil : dil.met().py()),
+    # Variable('met_px', lambda dil : dil.met().px()),
+    # Variable('met_py', lambda dil : dil.met().py()),
     Variable('met_pt', lambda dil : dil.met().pt()),
     Variable('pthiggs', lambda dil : (dil.leg1().p4() + dil.leg2().p4() + dil.met().p4()).pt()),
     # Variable('delta_phi_l1_l2', lambda dil : deltaPhi(dil.leg1().phi(), dil.leg2().phi())),
@@ -218,8 +219,8 @@ geninfo_vars = [
     Variable('genmet_pt'),
     # Variable('genmet_eta'),
     # Variable('genmet_e'),
-    Variable('genmet_px'),
-    Variable('genmet_py'),
+    # Variable('genmet_px'),
+    # Variable('genmet_py'),
     Variable('genmet_phi'),
 ]
 

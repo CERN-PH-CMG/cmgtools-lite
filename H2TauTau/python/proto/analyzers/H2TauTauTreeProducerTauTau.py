@@ -31,7 +31,12 @@ class H2TauTauTreeProducerTauTau(H2TauTauTreeProducer):
         self.var(self.tree, 'l2_trigger_weight_down')
 
         self.var(self.tree, 'mt2')
+        self.var(self.tree, 'mt2_lep')
+        self.var(self.tree, 'mt2_mvamet')
+        self.var(self.tree, 'mt2_rawpfmet')
 
+        self.var(self.tree, 'minDphiMETJets')
+        
         if self.cfg_comp.isMC:
             self.var(self.tree, 'GenSusyMScan1')
             self.var(self.tree, 'GenSusyMScan2')
@@ -81,7 +86,12 @@ class H2TauTauTreeProducerTauTau(H2TauTauTreeProducer):
             self.fill(self.tree, 'l2_trigger_weight_up', getattr(tau2, 'weight_trigger_up', 1.))
             self.fill(self.tree, 'l2_trigger_weight_down', getattr(tau2, 'weight_trigger_down', 1.))
 
-        self.fill(self.tree, 'mt2',  event.mt2_lep)
+        self.fill(self.tree, 'mt2',  event.mt2)
+        self.fill(self.tree, 'mt2_lep',  event.mt2_lep)
+        self.fill(self.tree, 'mt2_mvamet',  event.mt2_mvamet)
+        self.fill(self.tree, 'mt2_rawpfmet',  event.mt2_rawpfmet)
+        
+        self.fill(self.tree, 'minDphiMETJets', event.minDphiMETJets)
 
         if self.cfg_comp.isMC:
             self.fill(self.tree, 'GenSusyMScan1',  getattr(event, 'genSusyMScan1', -999.))

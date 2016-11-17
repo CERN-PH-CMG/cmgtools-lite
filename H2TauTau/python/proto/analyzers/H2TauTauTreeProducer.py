@@ -37,10 +37,6 @@ class H2TauTauTreeProducer(H2TauTauTreeProducerBase):
 
     def declareHandles(self):
         super(H2TauTauTreeProducer, self).declareHandles()
-        # self.handles['pfmetraw'] = AutoHandle(
-        #     'slimmedMETs',
-        #     'std::vector<pat::MET>'
-        # )
 
     def declareVariables(self, setup):
 
@@ -61,8 +57,6 @@ class H2TauTauTreeProducer(H2TauTauTreeProducerBase):
         self.var(self.tree, 'HT_cleanJets')
         self.var(self.tree, 'HT_jets30')
         self.var(self.tree, 'HT_cleanJets30')
-
-        # self.bookParticle(self.tree, 'pfmet')
 
         self.bookGenParticle(self.tree, 'genboson')
         self.bookTopPtReweighting(self.tree)
@@ -108,9 +102,6 @@ class H2TauTauTreeProducer(H2TauTauTreeProducerBase):
             self.fillGenParticle(self.tree, 'genboson', event.parentBoson)
 
         self.fillExtraMetInfo(self.tree, event)
-
-        # pfmet = self.handles['pfmetraw'].product()[0]
-        # self.fillParticle(self.tree, 'pfmet', pfmet)
 
         if type(self) is H2TauTauTreeProducer:
             self.fillTree(event)

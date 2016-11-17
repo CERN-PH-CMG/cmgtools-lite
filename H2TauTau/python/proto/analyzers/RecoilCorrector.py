@@ -5,6 +5,9 @@ from ROOT import gSystem
 from ROOT import LorentzVector
 from PhysicsTools.Heppy.analyzers.core.Analyzer import Analyzer
 
+from CMGTools.H2TauTau.proto.analyzers.HTTGenAnalyzer import HTTGenAnalyzer
+p4sum = HTTGenAnalyzer.p4sum
+
 gSystem.Load("libCMGToolsH2TauTau")
 
 from ROOT import HTTRecoilCorrector as RC
@@ -16,8 +19,8 @@ class RecoilCorrector(Analyzer):
     def __init__(self, cfg_ana, cfg_comp, looperName):
         super(RecoilCorrector, self).__init__(cfg_ana, cfg_comp, looperName)
 
-        self.rcMVAMET = RC('CMGTools/H2TauTau/data/MvaMET_MG_2016BCD.root')
-        self.rcPFMET = RC('CMGTools/H2TauTau/data/PFMET_MG_2016BCD.root')
+        self.rcMVAMET = RC('CMGTools/H2TauTau/data/MvaMET_2016BCD.root')
+        self.rcPFMET = RC('CMGTools/H2TauTau/data/TypeIPFMET_2016BCD.root')
 
         wpat = re.compile('W\d?Jet.*')
         match = wpat.match(self.cfg_comp.name)
@@ -46,14 +49,6 @@ class RecoilCorrector(Analyzer):
 
         if len(vis) == 0 or len(all) == 0:
             return 0., 0., 0., 0.
-
-        def p4sum(ps):
-            if not ps:
-                return None
-            p4 = ps[0].p4()
-            for i in xrange(len(ps) - 1):
-                p4 += ps[i + 1].p4()
-            return p4
 
         taus = []
         for t in taus_prompt:

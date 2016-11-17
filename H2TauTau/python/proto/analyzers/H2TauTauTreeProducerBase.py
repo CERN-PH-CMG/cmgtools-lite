@@ -198,11 +198,13 @@ class H2TauTauTreeProducerBase(TreeAnalyzerNumpy):
         self.var(tree, 'puppimet_phi')
         self.var(tree, 'puppimet_mt1')
         self.var(tree, 'puppimet_mt2')
+        self.var(tree, 'puppimet_mttotal')
 
         self.var(tree, 'pfmet_pt')
         self.var(tree, 'pfmet_phi')
         self.var(tree, 'pfmet_mt1')
         self.var(tree, 'pfmet_mt2')
+        self.var(tree, 'pfmet_mttotal')
 
     def fillExtraMetInfo(self, tree, event):
         self.fill(tree, 'puppimet_pt', event.puppimet.pt())
