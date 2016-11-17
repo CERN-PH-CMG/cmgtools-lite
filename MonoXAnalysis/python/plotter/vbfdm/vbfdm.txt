@@ -1,0 +1,14 @@
+trigger: HLT_MonoJetMetNoMuMHT90==1 || HLT_MonoJetMetNoMuMHT120==1 || run==1
+metfilters: Flag_globalTightHalo2016Filter && Flag_eeBadScFilter==1 && hbheFilterNew25ns==1 && hbheFilterIso==1
+muveto: nMu10V==0
+elveto: nEle10V==0
+photonveto: nGamma15V==0
+tauveto: nTauClean18V==0
+btagveto: nBTag15==0
+dphijm: abs(dphijm) > 0.5
+recoil: metNoMu_pt > 200
+vbfjets: JetClean1_eta * JetClean2_eta < 0
+#mass2j: mass_2(JetClean1_pt,JetClean1_eta,JetClean1_phi,0.,JetClean2_pt,JetClean2_eta,JetClean2_phi,0.) > 1100
+#deta2j: abs(JetClean1_eta-JetClean2_eta) > 3.6
+
+

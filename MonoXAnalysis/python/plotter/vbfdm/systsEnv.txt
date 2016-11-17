@@ -1,0 +1,24 @@
+# luminosity
+lumi_13TeV              : vbfH.*|ggH.*|.*ZLL|Top|VV|EWK.* : .* : 1.050
+
+# normalisation of the sub-dominant processes
+ZJets_Norm13TeV         : .*ZLL : .* : 1.200
+VV_Norm13TeV            : VV : .* : 1.200
+Top_Norm13TeV           : Top : .* : 1.100
+Top_Reweight13TeV       : Top : .* : 1.100
+CMS_QCD_SR              : QCD : .* : 2.000
+EWK_V_Norm13TeV         : EWK.* : .* : 1.200
+
+# efficiencies
+CMS_met_trig            : vbfH.*|ggH.*|.*ZLL|Top|VV : .* : 1.010
+CMS_met_13TeV           : vbfH.*|ggH.*|.*ZLL|Top|VV : .* : 1.040
+CMS_btag_13TeV          : vbfH.*|ggH.*|.*ZLL|Top|VV : .* : 1.020 
+
+# theory systematics
+QCDScale_qqbar_accept   : vbfH.* : .* : 1.020
+QCDScale_ggH            : ggH.* : .* : 0.919/1.076
+QCDScale_qqH            : vbfH.* : .* : 0.997/1.004
+pdf_qqbar               : vbfH.* : .* : 1.020
+pdf_gg                  : ggH.* : .* : 1.031
+pdf_qqbar_accept        : vbfH.* : .* : 1.010
+pdf_gg_accept           : ggH.* : .* : 1.010

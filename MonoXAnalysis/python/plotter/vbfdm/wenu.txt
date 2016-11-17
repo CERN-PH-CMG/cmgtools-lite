@@ -1,0 +1,16 @@
+trigger: HLT_SingleEl==1 || run==1
+metfilters: Flag_globalTightHalo2016Filter && Flag_eeBadScFilter==1 && hbheFilterNew25ns==1 && hbheFilterIso==1
+skim: recoil_pt > 130 && nJetClean >= 2 && JetClean1_pt > 80 && JetClean1_pt > 50
+1 loose ele: nEle10V == 1
+eletag: nEle40T == 1 && LepGood1_pt > 40 && abs(LepGood1_pdgId)==11 
+met: met_pt > 50
+mt: mt_2(LepGood1_pt,LepGood1_phi,met_pt,met_phi) > 30
+muveto: nMu10V==0
+photonveto: nGamma15V==0
+tauveto: nTauClean18V==0
+btagveto: nBTag15==0
+dphijm: abs(dphijm) > 0.5
+recoil: recoil_pt > 200
+vbfjets: JetClean1_eta * JetClean2_eta < 0
+#mass2j: mass_2(JetClean1_pt,JetClean1_eta,JetClean1_phi,0.,JetClean2_pt,JetClean2_eta,JetClean2_phi,0.) > 1100
+#deta2j: abs(JetClean1_eta-JetClean2_eta) > 3.6

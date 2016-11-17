@@ -492,7 +492,7 @@ def doRatioHists(pspec,pmap,total,totalSyst,maxRange,fixRange=False,fitRatio=Non
     unity.GetXaxis().SetTitleSize(0.14)
     unity.GetXaxis().SetTitleOffset(0.9)
     unity.GetXaxis().SetLabelFont(42)
-    unity.GetXaxis().SetLabelSize(0.15)
+    unity.GetXaxis().SetLabelSize(0.1)
     unity.GetXaxis().SetLabelOffset(0.007)
     unity.GetYaxis().SetNdivisions(505)
     unity.GetYaxis().SetTitleFont(42)
@@ -655,7 +655,10 @@ class PlotMaker:
         if not self._options.final:
             allcuts = cuts.sequentialCuts()
             if self._options.nMinusOne or self._options.nMinusOneInverted: 
-                allcuts = cuts.nMinusOneCuts(inverted=self._options.nMinusOneInverted)+[None] # add a dummy entry since we use allcuts[:-1] below
+                if not self._options.nMinusOneSelection:
+                    allcuts = cuts.nMinusOneCuts(inverted=self._options.nMinusOneInverted)+[None] # add a dummy entry since we use allcuts[:-1] below
+                else:
+                    allcuts = cuts.nMinusOneSelectedCuts(self._options.nMinusOneSelection,inverted=self._options.nMinusOneInverted)+[None]
             for i,(cn,cv) in enumerate(allcuts[:-1]): # skip the last one which is equal to all cuts
                 cnsafe = "cut_%02d_%s" % (i, re.sub("[^a-zA-Z0-9_.]","",cn.replace(" ","_")))
                 sets.append((cnsafe,cn,cv))
@@ -671,10 +674,10 @@ class PlotMaker:
                     dir = self._dir.mkdir(subname,title)
             dir.cd()
             pspecs = plots.plots()
-            if options.preFitData:
-                matchspec = [ p for p in pspecs if p.name == options.preFitData ]
-                if not matchspec: raise RuntimeError, "Error: plot %s not found" % options.preFitData
-                pspecs = matchspec + [ p for p in pspecs if p.name != options.preFitData ]
+            if self._options.preFitData:
+                matchspec = [ p for p in pspecs if p.name == self._options.preFitData ]
+                if not matchspec: raise RuntimeError, "Error: plot %s not found" % self._options.preFitData
+                pspecs = matchspec + [ p for p in pspecs if p.name != self._options.preFitData ]
             for pspec in pspecs:
                 print "    plot: ",pspec.name
                 pmap = mca.getPlots(pspec,cut,makeSummary=True)
@@ -740,10 +743,10 @@ class PlotMaker:
                     else:
                         total.GetYaxis().SetTitle("density/bin")
                     total.GetYaxis().SetDecimals(True)
-                if options.scaleSignalToData: self._sf = doScaleSigNormData(pspec,pmap,mca)
-                if options.scaleBackgroundToData != []: self._sf = doScaleBkgNormData(pspec,pmap,mca,options.scaleBackgroundToData)
-                elif options.fitData: doNormFit(pspec,pmap,mca)
-                elif options.preFitData and pspec.name == options.preFitData: 
+                if self._options.scaleSignalToData: self._sf = doScaleSigNormData(pspec,pmap,mca)
+                if self._options.scaleBackgroundToData != []: self._sf = doScaleBkgNormData(pspec,pmap,mca,self._options.scaleBackgroundToData)
+                elif self._options.fitData: doNormFit(pspec,pmap,mca)
+                elif self._options.preFitData and pspec.name == self._options.preFitData:
                     doNormFit(pspec,pmap,mca,saveScales=True)
                 #
                 for k,v in pmap.iteritems():
@@ -779,8 +782,8 @@ class PlotMaker:
                 for p in itertools.chain(reversed(mca.listBackgrounds(allProcs=True)), reversed(mca.listSignals(allProcs=True)), extraProcesses):
                     if p in pmap: 
                         plot = pmap[p]
-                        if plot.Integral() == 0:
-                            print 'Warning: plotting histo %s with zero integral, there might be problems in the following'%p
+                        #if plot.Integral() == 0:
+                        #    print 'Warning: plotting histo %s with zero integral, there might be problems in the following'%p
                         if plot.Integral() < 0:
                             print 'Warning: plotting histo %s with negative integral (%f), the stack plot will probably be incorrect.'%(p,plot.Integral())
                         if 'TH1' in plot.ClassName():
@@ -1057,6 +1060,7 @@ class PlotMaker:
                                 dump.write("\n")
                             dump.close()
                         else:
+                            savErrorLevel = ROOT.gErrorIgnoreLevel; ROOT.gErrorIgnoreLevel = ROOT.kWarning;
                             if "TH2" in total.ClassName() or "TProfile2D" in total.ClassName():
                                 pmap["total"] = total
                                 for p in mca.listSignals(allProcs=True) + mca.listBackgrounds(allProcs=True) + ["signal", "background", "data", "total"]:
@@ -1081,6 +1085,7 @@ class PlotMaker:
                                         c1.Print("%s/%s_data_%s.%s" % (fdir, outputName, p, ext))
                             else:
                                 c1.Print("%s/%s.%s" % (fdir, outputName, ext))
+                            ROOT.gErrorIgnoreLevel = savErrorLevel;
                 c1.Close()
 
 def getEvenBinning(histo):

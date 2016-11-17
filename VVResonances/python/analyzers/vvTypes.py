@@ -22,6 +22,7 @@ FatJetType = NTupleObjectType("FatJetType", baseObjectTypes=[jetType], variables
     NTupleVariable("tau2",   lambda x : x.substructure.ntau[1], float),
     NTupleVariable("tau3",   lambda x : x.substructure.ntau[2], float),
     NTupleVariable("tau4",   lambda x : x.substructure.ntau[3], float),
+    NTupleVariable("tau21_DDT",   lambda x : x.substructure.tau21_DDT, float),
     NTupleVariable("massDropMu",   lambda x : x.substructure.massDrop[0], float),
     NTupleVariable("massDropY",   lambda x : x.substructure.massDrop[1], float),
     NTupleVariable("s1BTag",   lambda x : x.subJetTags[0], float),
@@ -114,7 +115,8 @@ VJType = NTupleObjectType("VJType", baseObjectTypes=[VVType], variables = [
     NTupleVariable("l2_softDrop_massUp",  lambda x : x.leg2.substructure.softDropJetUp,float),
     NTupleVariable("l2_softDrop_massDown",  lambda x : x.leg2.substructure.softDropJetDown,float),
     NTupleVariable("l2_softDrop_massSmear",  lambda x : x.leg2.substructure.softDropJetSmear,float),
-
+    NTupleVariable("l2_softDrop_massCorr",  lambda x : x.leg2.substructure.softDropJetMassCor,float),
+    NTupleVariable("l2_softDrop_massBare",  lambda x : x.leg2.substructure.softDropJetMassBare,float),
     NTupleVariable("l2_softDrop_nSubJets",  lambda x : len(x.leg2.substructure.softDropSubjets),int),
     NTupleSubObject("l2_softDrop_s1",  lambda x : x.leg2.substructure.softDropSubjets[0] if len(x.leg2.substructure.softDropSubjets)>0 else dummyLV,fourVectorType),
     NTupleSubObject("l2_softDrop_s2",  lambda x : x.leg2.substructure.softDropSubjets[1] if len(x.leg2.substructure.softDropSubjets)>1 else dummyLV,fourVectorType),
@@ -133,7 +135,7 @@ LNuJJType = NTupleObjectType("LNuJJType", baseObjectTypes=[VJType], variables = 
     NTupleSubObject("altl1",  lambda x : x.leg1.alternateLV,fourVectorType),
     NTupleSubObject("l1_l",  lambda x : x.leg1.leg1,leptonTypeExtra),
     NTupleSubObject("l1_met",  lambda x : x.leg1.leg2,metType),
-    #Scale factors , For HLT use the OR between the two triggers: 
+    #Scale factors , For HLT use the OR between the two triggers:
     NTupleVariable("sf",  lambda x : x.leg1.leg1.sfWV*(x.leg1.leg1.sfHLT+x.sfHLTMET-x.leg1.leg1.sfHLT*x.sfHLTMET),float)
 
 
@@ -158,6 +160,8 @@ JJType = NTupleObjectType("JJType", baseObjectTypes=[VJType], variables = [
     NTupleVariable("l1_softDrop_massUp",  lambda x : x.leg1.substructure.softDropJetUp,float),
     NTupleVariable("l1_softDrop_massDown",  lambda x : x.leg1.substructure.softDropJetDown,float),
     NTupleVariable("l1_softDrop_massSmear",  lambda x : x.leg1.substructure.softDropJetSmear,float),
+    NTupleVariable("l1_softDrop_massCorr",  lambda x : x.leg1.substructure.softDropJetMassCor,float),
+    NTupleVariable("l1_softDrop_massBare",  lambda x : x.leg1.substructure.softDropJetMassBare,float),
     NTupleVariable("l1_softDrop_nSubJets",  lambda x : len(x.leg1.substructure.softDropSubjets),int),
     NTupleSubObject("l1_softDrop_s1",  lambda x : x.leg1.substructure.softDropSubjets[0] if len(x.leg1.substructure.softDropSubjets)>0 else dummyLV,fourVectorType),
     NTupleSubObject("l1_softDrop_s2",  lambda x : x.leg1.substructure.softDropSubjets[1] if len(x.leg1.substructure.softDropSubjets)>1 else dummyLV,fourVectorType),

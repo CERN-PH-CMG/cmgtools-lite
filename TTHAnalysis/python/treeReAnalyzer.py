@@ -11,6 +11,8 @@ import ROOT
 sys.argv = args
 ROOT.gROOT.SetBatch(True)
 
+import time
+
 #### ========= EDM/FRAMEWORK =======================
 class Event:
     def __init__(self,tree,entry):
@@ -46,6 +48,8 @@ class Event:
             import warnings
             warnings.filterwarnings(action='ignore', category=RuntimeWarning, 
                                     message='creating converter for unknown type "const char\*\*"$')
+            warnings.filterwarnings(action='ignore', category=RuntimeWarning, 
+                                    message='creating converter for unknown type "const char\*\[\]"$')
         if expr not in self._tree._exprs:
             formula = ROOT.TTreeFormula(expr,expr,self._tree)
             if formula.IsInteger():
@@ -72,9 +76,9 @@ class Object:
         self._index = index
     def __getattr__(self,name):
         if name in self.__dict__: return self.__dict__[name]
-        if name == "pdgLabel": return self.pdgLabel_()
         if name[:2] == "__" and name[-2:] == "__":
             raise AttributeError
+        if name == "pdgLabel": return self.pdgLabel_()
         try:
             val = getattr(self._event,self._prefix+name)
             if self._index != None:
@@ -110,25 +114,21 @@ class Object:
         return self.__repr__()
 
 class Collection:
-    def __init__(self,event,prefix,len=None,maxlen=None,testVar="pt"):
+    def __init__(self,event,prefix,len=None,maxlen=None):
         self._event = event
         self._prefix = prefix
-        self._testVar = testVar
-        self._vector = hasattr(event._tree, "vectorTree") and event._tree.vectorTree
+        self._vector = getattr(event._tree, "vectorTree", False)
         if len != None:
             self._len = getattr(event,len)
             if maxlen and self._len > maxlen: self._len = maxlen
         elif self._vector:
             self._len = getattr(event,"n"+prefix)
             if maxlen and self._len > maxlen: self._len = maxlen
-        elif testVar != None:
-            self._len = None
         else:
-            raise RuntimeError, "must provide either len or testVar"
+            raise RuntimeError, "must provide len, or run on a vector tree"
         self._cache = {}
     def __getitem__(self,index):
         if type(index) == int and index in self._cache: return self._cache[index]
-        if self._testVar != None and self._len == None: self._countMe()
         if index >= self._len: raise IndexError, "Invalid index %r (len is %r) at %s" % (index,self._len,self._prefix)
         if self._vector:
             ret = Object(self._event,self._prefix,index=index)
@@ -137,18 +137,7 @@ class Collection:
         if type(index) == int: self._cache[index] = ret
         return ret
     def __len__(self):
-        if self._testVar != None and self._len == None: self._countMe()
         return self._len
-    def _countMe(self):
-        n = 0; ok = True
-        while ok:
-            try:
-                val = getattr(self._event,"%s%d_%s" % (self._prefix,n+1,self._testVar))
-                ok = (val > -98) 
-                if ok: n += 1
-            except:
-                ok = False
-        self._len = n
 
 class Module:
     def __init__(self,name,booker=None):
@@ -157,6 +146,8 @@ class Module:
     def beginJob(self):
         pass
     def endJob(self):
+        pass
+    def init(self,tree):
         pass
     def analyze(self,event):
         pass
@@ -172,12 +163,15 @@ class Module:
 class EventLoop:
     def __init__(self,modules):
         self._modules = modules
+        self._doneEvents = 0
     def loop(self,trees,maxEvents=-1,cut=None,eventRange=None):
         modules = self._modules
         for m in modules: m.beginJob()
         if type(trees) != list: trees = [ trees ]
+        t0 = time.clock(); tlast = t0
         for tree in trees:
             tree.entry = -1
+            for m in modules: m.init(tree)
             for i in xrange(tree.GetEntries()) if eventRange == None else eventRange:
                 if maxEvents > 0 and i >= maxEvents-1: break
                 e = Event(tree,i)
@@ -187,14 +181,16 @@ class EventLoop:
                 for m in modules: 
                     ret = m.analyze(e)
                     if ret == False: break
+                self._doneEvents += 1
                 if i > 0 and i % 10000 == 0:
-                    print "Processed %8d/%8d entries of this tree" % (i,tree.GetEntries())
+                    t1 = time.clock()
+                    print "Processed %8d/%8d entries of this tree (elapsed time %7.1fs, curr speed %8.3f kHz, avg speed %8.3f kHz)" % (i,tree.GetEntries(),t1-t0,(10.000)/(t1-tlast),i/1000./(t1-t0))
+                    tlast = t1
         for m in modules: m.endJob()
     def beginComponent(self,component):
         for m in self._modules: m.beginComponent(component)
     def endComponent(self,component):
         for m in self._modules: m.endComponent(component)
-
 #### ========= NTUPLING AND HISTOGRAMMING =======================
 class PyTree:
     def __init__(self,tree):
@@ -299,22 +295,20 @@ if __name__ == '__main__':
             self.maxEta = self.book("TH1F","maxEta","maxEta",20,0.,5.0)
             print "Booked histogram 'maxEta'"
         def analyze(self,event):
-            genB = Collection(event,"LepGood") #,"nGenBQuarks",2) 
-            print "Number of generated b quarks: %d" % len(genB)
-            if not event.eval("nLepGood == 3"): return False
+            genB = Collection(event,"LepGood")  
+            print "Number of leptons: %d" % len(genB)
+            jetB = Collection(event,"Jet")  
+            print "Number of jets: %d" % len(jetB)
+            #if not event.eval("nJet == 5"): return False
             for i in xrange(len(genB)):
-                print "eta of gen b #%d: %+5.3f" % (i+1, genB[i].eta)
+                print "eta of leptons #%d: %+5.3f" % (i+1, genB[i].eta)
             print ""
             maxEta = max([abs(gb.eta) for gb in genB])
             self.maxEta.Fill(maxEta)
     from sys import argv
     f = ROOT.TFile(argv[1])
-    if "ttHLepTreeProducerNew" in argv[1]: 
-        t = f.Get("ttHLepTreeProducerNew")
-        t.vectorTree = True
-    else:
-        t = f.Get("ttHLepTreeProducerBase")
-        t.vectorTree = False
+    t = f.Get("tree")
+    t.vectorTree = True
     booker = Booker("test.root")
     el = EventLoop([DummyModule("dummy",booker)])
     el.loop(t,1000)

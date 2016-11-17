@@ -202,7 +202,7 @@ lepWeightAna = cfg.Analyzer(
     ObjectWeightAnalyzer, name="leptonWeightAnalyzer",
     path='${CMSSW_BASE}/src/CMGTools/VVResonances/data',
     collection = "selectedLeptons",
-    weights = [           
+    weights = [
         #Muons from histograms
         {'cut':lambda x: abs(x.pdgId())==13,'dimensions':2,'filename':'MuonID_Z_RunBCD_prompt80X_7p65.root','histoname':"MC_NUM_HighPtIDPt20andIPCut_DEN_genTracks_PAR_pt_spliteta_bin1/pair_ne_ratio",'x':lambda x:x.pt(),'y':lambda x: abs(x.eta()),'tag':'sfWV'},
         {'cut':lambda x: abs(x.pdgId())==13,'dimensions':2,'filename':'MuonIso_Z_RunBCD_prompt80X_7p65.root','histoname':"MC_NUM_TightRelIso_DEN_TightID_PAR_pt_spliteta_bin1/pt_abseta_ratio",'x':lambda x:x.pt(),'y':lambda x: abs(x.eta()),'tag':'sfWV'},
@@ -340,8 +340,9 @@ vvAna = cfg.Analyzer(
 #    boostedBdiscriminator = "pfBoostedDoubleSecondaryVertexAK8BJetTags",
     cDiscriminatorL = "pfCombinedCvsLJetTags",
     cDiscriminatorB = "pfCombinedCvsBJetTags",
-    btagCSVFile = "${CMSSW_BASE}/src/CMGTools/VVResonances/data/btag.csv"
-    
+    btagCSVFile = "${CMSSW_BASE}/src/CMGTools/VVResonances/data/btag.csv",
+    puppiJecCorrFile = "${CMSSW_BASE}/src/CMGTools/VVResonances/data/puppiCorr.root"
+
 )
 
 
@@ -351,7 +352,7 @@ metWeightAna = cfg.Analyzer(
     ObjectWeightAnalyzer, name="metWeightAnalyzer",
     path='${CMSSW_BASE}/src/CMGTools/VVResonances/data',
     collection = "LNuJJ",
-    weights = [           
+    weights = [
         #Trigger privately calculated different for electrons and muons
         {'cut':lambda x: abs(x.leg1.leg1.pdgId())==13,'dimensions':1,'filename':'myTriggerScaleFactors.root','histoname':"METMu",'x':lambda x:x.leg1.leg2.pt(),'tag':'sfHLTMET'},
         {'cut':lambda x: abs(x.leg1.leg1.pdgId())==11,'dimensions':1,'filename':'myTriggerScaleFactors.root','histoname':"METEle",'x':lambda x:x.leg1.leg2.pt(),'tag':'sfHLTMET'},

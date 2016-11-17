@@ -3,6 +3,7 @@ import ROOT
 
 from PhysicsTools.Heppy.analyzers.core.Analyzer import Analyzer
 from PhysicsTools.Heppy.analyzers.core.AutoHandle import AutoHandle
+from PhysicsTools.HeppyCore.utils.deltar import deltaPhi
 
 import PhysicsTools.HeppyCore.framework.config as cfg
 
@@ -132,22 +133,36 @@ class MT2Analyzer(Analyzer):
                 setattr(event, "pseudoJet1"+collectionPostFix+postFix, ROOT.reco.Particle.LorentzVector(pseudoJet2px, pseudoJet2py, pseudoJet2pz, pseudoJet2energy))
                 setattr(event, "multPseudoJet1"+collectionPostFix+postFix, multPSJ2)
                 setattr(event, "multPseudoJet2"+collectionPostFix+postFix, multPSJ1)
-
-            setattr(event, "mt2"+collectionPostFix+postFix,
-                    self.computeMT2(getattr(event, 'pseudoJet1'+collectionPostFix+postFix), getattr(event, 'pseudoJet2'+collectionPostFix+postFix), met))
-            return self.computeMT2(getattr(event, 'pseudoJet1'+collectionPostFix+postFix), getattr(event, 'pseudoJet2'+collectionPostFix+postFix), met)
+            
+            mt2 = self.computeMT2(getattr(event, 'pseudoJet1'+collectionPostFix+postFix), getattr(event, 'pseudoJet2'+collectionPostFix+postFix), met)
+            setattr(event, "mt2"+collectionPostFix+postFix, mt2)
+            return mt2
 
     def makeMT2(self, event):
         #        print '==> INSIDE THE PRINT MT2'
         #        print 'MET=',event.met.pt()
 
-        self.met = ROOT.pat.MET(self.handles['met'].product()[0])
+        met = ROOT.pat.MET(self.handles['met'].product()[0])
 
         setattr(event, "mt2"+self.cfg_ana.collectionPostFix+"_lep", -999)
 
         event.selectedLeptons = [event.leg1, event.leg2]
-        self.mt2_lep = self.getMT2Hemi(event, event.selectedLeptons, self.met, self.cfg_ana.collectionPostFix, "_lep")
-###
+        self.mt2_lep = self.getMT2Hemi(event, event.selectedLeptons, met, self.cfg_ana.collectionPostFix, "_lep")
+
+        mva_met = event.diLepton.met()
+
+        self.mt2_lep = self.getMT2Hemi(event, event.selectedLeptons, mva_met, self.cfg_ana.collectionPostFix, "_lep_mvamet")
+
+    def calculateSUSYVars(self, event):
+        met = ROOT.pat.MET(self.handles['met'].product()[0])
+        mva_met = event.diLepton.met()
+
+        event.minDphiMETJets = min(deltaPhi(met.phi(), jet.phi()) for jet in event.cleanJets30) if event.cleanJets30 else -999.
+        event.minDphiMVAMETJets = min(deltaPhi(mva_met.phi(), jet.phi()) for jet in event.cleanJets30)if event.cleanJets30 else -999.
+
+        
+
+
 
     def process(self, event):
         self.readCollections(event.input)
@@ -165,6 +180,7 @@ class MT2Analyzer(Analyzer):
         ###
 
         self.makeMT2(event)
+        self.calculateSUSYVars(event)
 
         # print 'variables computed: MT=', event.mtw, 'MT2=', event.mt2, 'MT2W=', event.mt2w
         # print 'pseudoJet1 px=', event.pseudoJet1.px(), ' py=', event.pseudoJet1.py(), ' pz=', event.pseudoJet1.pz()

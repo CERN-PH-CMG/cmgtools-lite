@@ -1,23 +1,35 @@
 dilep OS   : nLepGood >= 2 && LepGood1_charge * LepGood2_charge < 0
 25/20      : LepGood1_pt > 25 && LepGood2_pt > 20
-met40      : met_pt > 40
+met30      : met_pt > 30
 Zveto      : (LepGood1_pdgId != - LepGood2_pdgId) || \
              (abs(mass_2(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_mass,LepGood2_pt,LepGood2_eta,LepGood2_phi,LepGood2_mass)-91.2) > 15)
-leadBJet   : Jet1_pt > 30 && Jet1_btagCSV > 0.80
+#leadBJet   : Jet1_pt > 30 && Jet1_btagCSV > 0.80
 fwdJetVeto : Sum$(JetFwd_pt > 40) == 0
-oneJet40   : Sum$(Jet_pt > 40) <= 1
-oneJet30   : Sum$(Jet_pt > 30) == 1; Disable=True
-oneJet20   : nJet == 1; Disable=True
+
+tagJet_pt   : JetGood_pt[0] > 30
+tagJet_btag : JetGood_btagCSV[0] > 0.80
+jetVeto_40  : Alt$(JetGood_pt[1],20) < 40
+bVeto20 : Sum$(JetGood_btagCSV > 0.46) <= 1
+jetVeto_20  : nJetGood <= 1
+oneLep : nLepOtherGood >= 1; Disable=True
+
 mll12      : mass_2(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_mass,LepGood2_pt,LepGood2_eta,LepGood2_phi,LepGood2_mass) > 12
-ptll30     : pt_2(LepGood1_pt,LepGood1_phi,LepGood2_pt,LepGood2_phi) > 30
-sip8       : max(LepGood1_sip3d,LepGood2_sip3d) < 8
+#ptll30     : pt_2(LepGood1_pt,LepGood1_phi,LepGood2_pt,LepGood2_phi) > 30
+sip6       : max(LepGood1_sip3d,LepGood2_sip3d) < 6
 eMu        : abs(LepGood1_pdgId) != abs(LepGood2_pdgId)
-lepMVA     : min(LepGood1_mvaTTH,LepGood2_mvaTTH) > 0.0
-softMu     : Sum$(abs(LepOther_pdgId) == 13 && LepOther_pt > 5 && LepOther_pt < 20 && deltaR(LepOther_eta,LepOther_phi,Jet_eta[0],Jet_phi[0]) > 0.4 && abs(LepOther_dz) < 0.1) == 1 && \
-                 (abs(LepOther_pdgId) == 13 && LepOther_pt > 5 && LepOther_pt < 20 && deltaR(LepOther_eta,LepOther_phi,Jet_eta[0],Jet_phi[0]) > 0.4 && abs(LepOther_dz) < 0.1) ; Disable=True
-softIVF40  : Sum$(abs(SV_dxy)<2 && SV_cosTheta > 0.98 && SV_ntracks >= 3 && SV_sip3d > 4 && SV_jetPt < 40) == 1 && \
-                 (abs(SV_dxy)<2 && SV_cosTheta > 0.98 && SV_ntracks >= 3 && SV_sip3d > 4 && SV_jetPt < 40)  ; Disable=True
-softIVF30  : Sum$(abs(SV_dxy)<2 && SV_cosTheta > 0.98 && SV_ntracks >= 3 && SV_sip3d > 4 && SV_jetPt < 30) == 1 && \
-                 (abs(SV_dxy)<2 && SV_cosTheta > 0.98 && SV_ntracks >= 3 && SV_sip3d > 4 && SV_jetPt < 30)  ; Disable=True
-softIVF20  : Sum$(abs(SV_dxy)<2 && SV_cosTheta > 0.98 && SV_ntracks >= 3 && SV_sip3d > 4 && SV_jetPt < 20) == 1 && \
-                 (abs(SV_dxy)<2 && SV_cosTheta > 0.98 && SV_ntracks >= 3 && SV_sip3d > 4 && SV_jetPt < 20)  ; Disable=True
+#lepMVA     : min(LepGood1_mvaTTH,LepGood2_mvaTTH) > 0.0
+minProjMet40: met_pt*min(if3(cos(met_phi-LepGood1_phi)>0, abs(sin(met_phi-LepGood1_phi)), 1),  if3(cos(met_phi-LepGood2_phi)>0, abs(sin(met_phi-LepGood2_phi)), 1) ) > 40; Disable=True
+
+soft_mu_pt: LepOtherGood_pt[0] < 20; Disable=True
+#soft_mu_id: LepOtherGood_mediumMuonId[0] > 0; Disable=True # NO, unneeded
+soft_mu_sip: LepOtherGood_sip3d[0] > 3; Disable=True
+soft_mu_ai : LepOtherGood_miniRelIso[0] > 0.2; Disable=True
+
+SV_0: abs(SV_dxy)<2 && SV_cosTheta > 0.98; Disable=True
+SV_nt3 : SV_ntracks >= 3; Disable=True
+SV_sip4 : SV_sip3d > 4; Disable=True
+SV_pt20: SV_jetPt < 20; Disable=True
+SV_pt40: SV_jetPt < 40 && (SV_jetPt < 20 || SV_jetBTagCSV < 0.46); Disable=True
+
+
+mu_other : abs(LepOther_pdgId) == 13 && deltaR(LepOther_eta,LepOther_phi,JetGood_eta,JetGood_phi) > 0.4 && abs(LepOther_dz) < 0.2; Disable=True

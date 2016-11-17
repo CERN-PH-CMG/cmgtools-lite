@@ -30,7 +30,7 @@ class monoJetVarAnalyzer( Analyzer ):
     # Calculate some topological variables
     def getApcJetMetMin(self, event):
 
-        if len(event.cleanJets) == 0:
+        if len(event.cleanJetsAll) == 0:
             event.apcjetmetmin = 0
             return
         
@@ -40,7 +40,7 @@ class monoJetVarAnalyzer( Analyzer ):
         metx = event.metNoMu.px()
         mety = event.metNoMu.py()        
 
-	for jet in event.cleanJets:
+	for jet in event.cleanJetsAll:
             px.push_back(jet.px())
             py.push_back(jet.py())
             et.push_back(jet.et())
