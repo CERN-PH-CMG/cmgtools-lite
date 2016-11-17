@@ -4,7 +4,7 @@ import sys, os, os.path
 
 from searchBins import *
 from math import hypot
-
+import time
 
 ## Trees -- skimmed with trig_base
 
@@ -336,8 +336,9 @@ def getBTagWstring(cuts, options):
 
     return (cuts,mca)
 
-def submitJobs(args, nchunks, outdir = "./"):
+def submitJobs(args, nchunks,options):
 
+    outdir=options.outdir
     if not os.path.exists(outdir): os.makedirs(outdir)
 
     # make unique name for jobslist
@@ -345,10 +346,12 @@ def submitJobs(args, nchunks, outdir = "./"):
     itime = int(time.time())
     jobListName = outdir+"/"+'jobList_%i.txt' %(itime)
     jobList = open(jobListName,'w')
+    lxbatchJobList = []
     print 'Filling %s with job commands' % (jobListName)
 
     # not to run again
     if '-b' in args: args.remove('-b')
+    if '--lxbatch' in args: args.remove('--lxbatch')
 
     # execute only one thread
     args += ['-j','1']
@@ -357,15 +360,24 @@ def submitJobs(args, nchunks, outdir = "./"):
         chargs = args + ['-c',str(chunk)]
         runcmd = " ".join(str(arg) for arg in chargs )
         jobList.write(runcmd + '\n')
+        lxbatchJobList.append(runcmd)
 
     # check log dir
     logdir = 'logs'
     if not os.path.exists(logdir): os.system("mkdir -p "+logdir)
 
-    # submit job array on list
-    subCmd = 'qsub -t 1-%s -o logs nafbatch_runner.sh %s' %(nchunks,jobListName)
-    print 'Going to submit', nchunks, 'jobs with', subCmd
-    os.system(subCmd)
+    if options.batch:
+        # submit job array on list
+        subCmd = 'qsub -t 1-%s -o logs nafbatch_runner.sh %s' %(nchunks,jobListName)
+        print 'Going to submit', nchunks, 'jobs with', subCmd
+        os.system(subCmd)
+    elif options.lxbatch:
+        for job in lxbatchJobList:
+            basecmd = "bsub -q 8nh -o logs {cmssw}/src/CMGTools/SUSYAnalysis/macros/lxbatch_runner.sh {dir} {cmssw} {jobcmd}".format(
+                dir = os.getcwd(), cmssw = os.environ['CMSSW_BASE'], jobcmd=job
+            )
+            os.system(basecmd)
+            time.sleep(0.1)
 
     jobList.close()
     return 1
@@ -394,7 +406,7 @@ if __name__ == "__main__":
 
     # I/O options
     parser.add_option("-o",   "--out",    dest="outname", type="string", default=None, help="output name")
-    parser.add_option("--od", "--outdir", dest="outdir", type="string", default=None, help="output name")
+    parser.add_option("--od", "--outdir", dest="outdir", type="string", default="./", help="output name")
 
     # running options
     parser.add_option("-v","--verbose",  dest="verbose",  default=0,  type="int",    help="Verbosity level (0 = quiet, 1 = verbose, 2+ = more)")
@@ -407,6 +419,7 @@ if __name__ == "__main__":
     # batch options
     parser.add_option("-c","--chunk", dest="chunk",type="int",default=None,help="Number of chunk")
     parser.add_option("-b","--batch", dest="batch",default=False, action="store_true", help="batch command for submission")
+    parser.add_option("--lxbatch", dest="lxbatch",default=False, action="store_true", help="submit to lxbatch instead of NAF")
     parser.add_option("--jobList","--jobList", dest="jobListName",default="jobList.txt",help="job list name")
 
     # more options
@@ -484,10 +497,10 @@ if __name__ == "__main__":
 
 #    doBtagMeth1b = True
 
-    if options.batch:
+    if options.batch or options.lxbatch:
         print "Going to prepare batch jobs..."
         subargs =  sys.argv
-        submitJobs(subargs, len(binList),options.outdir)
+        submitJobs(subargs, len(binList),options)
         exit(0)
 
     print "Beginning processing locally..."
