@@ -56,6 +56,9 @@ def checkStatusTask(task):
             ext=taskName.split("_")[-1]
             taskName=taskName[len(user)+6 : -1*(len(ext)+1) ]
 
+        if "timed out" in line: #error of communication, bypass
+            return taskName, ext, jobInfos
+
         if len(line.split("("))>1 and "/" in line:
             tmp=line.split("(")[1][:-1]
             nJobs=int(tmp.split("/")[0])
@@ -103,40 +106,43 @@ def prepareReport(tasks):
                 break
         
             #("$%2.2f"%CBYields[sig][cat]
-        summary[name]= ("%-17s"%name)+"("+("%-7s"%ext)+") | "
+        summary[name]= ("%-70s"%name)+"("+("%-7s"%ext)+") | "
         for t in types:
             summary[name]+=("%5i"%jobInfos[t])+" | "
         summary[name]=summary[name][:-2]+"\n"
         
         if jobInfos["total"]==0:
             errorState=0
-            messages[name]="ERROR : unable to retrieve the jobs for the task "+name+" ("+ext+"), manual check needed"
+            messages[name]="ERROR : unable to retrieve the jobs for the task "+name+" ("+ext+"), manual check needed\n"
             continue
+
+        if name+"_"+ext not in cnts.keys():
+            cnts[name+"_"+ext] = [0, "run" ]
 
         if (jobInfos["done"]/jobInfos["total"]>0.95 and not isData) or (jobInfos["done"]==jobInfos["total"] and isData):
             errorState=-2
-            messages[name]="DATASET "+name+" : production DONE"
+            messages[name]="DATASET "+name+" : production DONE\n"
             cnts[name+"_"+ext][1]="done"
         else:
             if jobInfos["fail"]>0 and isData :
-                if cnts[name+"_"+ext][0]<3:
+                if cnts[name+"_"+ext][0]<24:
                     errorState=1
                     messages[name]="WARNING : pp data dataset "+name+" ("+ext+") shows failed jobs ("+str(jobInfos["fail"])+"/"+str(jobInfos["total"])+") -> automatic resubmission\n"
                     cnts[name+"_"+ext][0]+=1
                     crabResubmit(task)
                 else:
                     errorState=2
-                    messages[name]="ERROR : pp data dataset "+name+" ("+ext+") shows failed jobs after 3 resubmission!! Manual action needed\n"
+                    messages[name]="ERROR : pp data dataset "+name+" ("+ext+") shows failed jobs ("+str(jobInfos["fail"])+"/"+str(jobInfos["total"])+") after 10 resubmission!! Manual action needed\n"
 
             elif jobInfos["fail"]/jobInfos["total"]>0.05:
-                if cnts[name+"_"+ext][0]<3:
+                if cnts[name+"_"+ext][0]<24:
                     crabResubmit(task)
                     cnts[name+"_"+ext][0]+=1
                     if jobInfos["fail"]/jobInfos["total"]>0.20:
                         messages[name]="WARNING : MC dataset "+name+" ("+ext+") shows large fraction of failed jobs ("+str(jobInfos["fail"])+"/"+str(jobInfos["total"])+") -> automatic resubmission\n"
                 else:
                     errorState=2
-                    messages[name]="ERROR : MC data dataset "+name+" ("+ext+") shows failed jobs after 3 resubmission!! Manual action needed\n" 
+                    messages[name]="ERROR : MC data dataset "+name+" ("+ext+") shows failed jobs ("+str(jobInfos["fail"])+"/"+str(jobInfos["total"])+") after 10 resubmission!! Manual action needed\n" 
             
 
 
@@ -148,9 +154,9 @@ def prepareReport(tasks):
         report+=messages[task]
 
     report+="\n\n\n\t\t Summary Table\n"
-    report+="---------------------------------------------------------------------------\n"
-    report+="dataset              (ext) | nWait | nRun  | nTran | nFail | nDone | nTot  \n"
-    report+="---------------------------------------------------------------------------\n"
+    report+="--------------------------------------------------------------------------------------------------------------------------------\n"
+    report+="dataset                                                               (ext)     | nWait | nRun  | nTran | nFail | nDone | nTot  \n"
+    report+="--------------------------------------------------------------------------------------------------------------------------------\n"
     for task in summary.keys():
         report+=summary[task]
         
@@ -173,7 +179,7 @@ def crabAutoTool(reset=False, regTasks="crab_*/*"):
  
     pipe = subprocess.Popen("ls -d "+regTasks, shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
     tasks = [l.strip("\n") for l in pipe.stdout.readlines()]
-    
+
     #get permanent counters
     if reset:
         os.system("rm "+cmsswBase+"/src/CMGTools/TTHAnalysis/cfg/crab/.counterCrab")
@@ -184,6 +190,7 @@ def crabAutoTool(reset=False, regTasks="crab_*/*"):
             cnts[ line.split()[0] ]=[0, "run"]
             cnts[ line.split()[0] ][0] = int(line.split()[1])
             cnts[ line.split()[0] ][1] = line.split()[2]
+            #print "initialization ==>> ",  line.split()[0]
 
     report = prepareReport(tasks)
     sendMailTo(report)
