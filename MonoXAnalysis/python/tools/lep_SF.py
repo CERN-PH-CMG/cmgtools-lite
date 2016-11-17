@@ -7,31 +7,35 @@ class Lep_SF_one:
     def __init__(self,h2d):
         self.h2d = h2d.Clone("Lep_one_"+h2d.GetName())
         self.h2d.SetDirectory(None)
-        self.ptmin = h2d.GetXaxis().GetXmin()+1e-3
-        self.ptmax = h2d.GetXaxis().GetXmax()-1e-3
-        self.etamin = h2d.GetYaxis().GetXmin()+1e-3
-        self.etamax = h2d.GetYaxis().GetXmax()-1e-3
-    def fetch(self,pt,eta):
-        xbin = self.h2d.GetXaxis().FindBin(min(max(pt,self.ptmin),self.ptmax))
-        ybin = self.h2d.GetYaxis().FindBin(min(max(eta,self.etamin),self.etamax))
+        self.xmin = h2d.GetXaxis().GetXmin()+1e-3
+        self.xmax = h2d.GetXaxis().GetXmax()-1e-3
+        self.ymin = h2d.GetYaxis().GetXmin()+1e-3
+        self.ymax = h2d.GetYaxis().GetXmax()-1e-3
+    def fetch(self,pt,eta,pdgid):
+        if abs(pdgid)==11:
+            xbin = self.h2d.GetXaxis().FindBin(min(max(eta,self.xmin),self.xmax))
+            ybin = self.h2d.GetYaxis().FindBin(min(max(pt,self.ymin),self.ymax))
+        else:
+            xbin = self.h2d.GetXaxis().FindBin(min(max(pt,self.xmin),self.xmax))
+            ybin = self.h2d.GetYaxis().FindBin(min(max(abs(eta),self.ymin),self.ymax))
         return self.h2d.GetBinContent(xbin,ybin)
-    def __call__(self,lepton):
-        return self.fetch(lepton.pt, lepton.eta)
+    def __call__(self,lepton):        
+        return self.fetch(lepton.pt, lepton.eta,lepton.pdgId)
 
 class Lep_SF_both:
-    def __init__(self,hists_el,hists_mu,what):
-            self.sf_el = Lep_SF_one(hists_el.Get(what))
-            self.sf_mu = Lep_SF_one(hists_mu.Get(what))
+    def __init__(self,hists_el,hists_mu):
+            self.sf_el = Lep_SF_one(hists_el.Get("EGamma_SF2D"))
+            self.sf_mu = Lep_SF_one(hists_mu.Get("pt_abseta_PLOT_pair_probeMultiplicity_bin0"))
     def __call__(self,lepton):
         sf = self.sf_mu if abs(lepton.pdgId) == 13 else self.sf_el
         return sf(lepton)
 
 class Lep_SF_Event:
-    def __init__(self,evtSel,hists_el,hists_mu,tight,loose=None):
-        self.sf_tight = Lep_SF_both(hists_el,hists_mu,tight)
+    def __init__(self,evtSel,hists_el,hists_mu,nlep):
+        self.sf_tight = Lep_SF_both(hists_el[0],hists_mu[0])
         self.evtSel = evtSel
-        if loose != None: 
-            self.sf_loose = Lep_SF_both(hists_el,hists_mu,loose)
+        if nlep == 2: 
+            self.sf_loose = Lep_SF_both(hists_el[1],hists_mu[1])
     def __call__(self,event,nlep,flatSyst=0.0):
         leps = Collection(event,"LepGood","nLepGood",2)
         sfev = 1.0
@@ -50,13 +54,15 @@ class Lep_SF_Event:
 
 class AllLepSFs:
     def __init__(self):
-        self.f_el = ROOT.TFile("/afs/cern.ch/work/e/emanuele/public/monox/leptonsf/eff_electron.root")
-        self.f_mu = ROOT.TFile("/afs/cern.ch/work/e/emanuele/public/monox/leptonsf/eff_muon.root")
+        self.f_el = [ROOT.TFile("/afs/cern.ch/work/e/emanuele/public/monox/leptonsf/eff_eleID_CutsID_Medium_ICHEP16.root"),
+                     ROOT.TFile("/afs/cern.ch/work/e/emanuele/public/monox/leptonsf/eff_eleID_CutsID_Veto_ICHEP16.root") ]
+        self.f_mu = [ROOT.TFile("/afs/cern.ch/work/e/emanuele/public/monox/leptonsf/eff_muID_medium_ICHEP16.root"),
+                     ROOT.TFile("/afs/cern.ch/work/e/emanuele/public/monox/leptonsf/eff_muID_loose_ICHEP16.root") ]
         self.evtSel = EventVarsMonojet()
-        self.sf_TightLoose = Lep_SF_Event(self.evtSel,self.f_el,self.f_mu,"LepTightSF1","LepLooseSF1")
-        self.sf_Tight = Lep_SF_Event(self.evtSel,self.f_el,self.f_mu,"LepTightSF1")
-        self.f_el.Close()
-        self.f_mu.Close()
+        self.sf_TightLoose = Lep_SF_Event(self.evtSel,self.f_el,self.f_mu,2)
+        self.sf_Tight = Lep_SF_Event(self.evtSel,self.f_el,self.f_mu,1)
+        files = self.f_el + self.f_mu
+        for f in files: f.Close()
     def listBranches(self):
         return [ 'LepTightLoose', 'LepTight', 'LepTightLooseUp', 'LepTightUp', 'LepTightLooseDown', 'LepTightDown' ]
     def __call__(self,event):

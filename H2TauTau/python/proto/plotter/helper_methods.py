@@ -4,13 +4,45 @@ from ROOT import TGraphAsymmErrors, TLine, TLegend
 
 from CMGTools.H2TauTau.proto.plotter.HistDrawer import HistDrawer
 
+def getVertexWeight(verbose=False):
+    '''Gets a string to reweight according to PU while doing ROOT plotting'''
+    f_data = ROOT.TFile('$CMSSW_BASE/src/CMGTools/H2TauTau/plotting/mm/data.root')
+    h_data = f_data.Get('example_data_obs_n_vertices_SingleMuon_Run2016G_PromptReco_v1;1')
+    f_mc = ROOT.TFile('$CMSSW_BASE/src/CMGTools/H2TauTau/plotting/mm/mc.root')
+    h_mc = f_mc.Get('example_W1Jets_n_vertices_W1JetsToLNu_LO')
+
+
+    # Should ideally be normalised but better make sure
+    h_data.Scale(1./h_data.Integral())
+    h_mc.Scale(1./h_mc.Integral())
+
+    pattern = '((n_vertices >= {npu} && n_vertices < {npu_up}) * {weight})'
+    patterns = []
+    for i in xrange(min(h_mc.GetNbinsX(), h_data.GetNbinsX())):
+        if h_data.GetBinContent(i+1) == 0.:
+            continue
+        elif h_mc.GetBinContent(i+1) == 0.:
+            print 'WARNING - data PU weight filled but MC zero:'
+            print 'nPU =', i, 'w_data =', h_data.GetBinContent(i+1)
+        else:
+            ratio = h_data.GetBinContent(i+1)/h_mc.GetBinContent(i+1)
+            patterns.append(pattern.format(npu=i, npu_up=i+1, weight=ratio))
+
+    weight = '+'.join(patterns)
+    weight = '(({0})*(is_data<0.5) + (is_data>0.5))'.format(weight)
+    if verbose:
+        print 'PU weight:', weight
+    return weight
 
 def getPUWeight(verbose=False):
     '''Gets a string to reweight according to PU while doing ROOT plotting'''
-    f_data = ROOT.TFile('$CMSSW_BASE/src/CMGTools/H2TauTau/data/data_pu_11-11-2015_75mb.root')
+    f_data = ROOT.TFile('$CMSSW_BASE/src/CMGTools/H2TauTau/data/2016G.root')
     h_data = f_data.Get('pileup')
-    f_mc = ROOT.TFile('$CMSSW_BASE/src/CMGTools/H2TauTau/data/mc_true_pu.root')
-    h_mc = f_mc.Get('pu_mc')
+    f_mc = ROOT.TFile('$CMSSW_BASE/src/CMGTools/H2TauTau/data/MC_Spring16_PU25_Startup.root')
+    h_mc = f_mc.Get('pileup')
+
+    h_data.Rebin(10)
+    h_mc.Rebin(10)
 
     # Should ideally be normalised but better make sure
     h_data.Scale(1./h_data.Integral())
@@ -29,7 +61,7 @@ def getPUWeight(verbose=False):
             patterns.append(pattern.format(npu=i, npu_up=i+1, weight=ratio))
 
     weight = '+'.join(patterns)
-    weight = '({0} + (genmet_eta == -99.))'.format(weight)
+    weight = '({0} + (is_data>0.5))'.format(weight)
     if verbose:
         print 'PU weight:', weight
     return weight
@@ -61,6 +93,10 @@ def plotDataOverMCEff(hist_mc_tight, hist_mc_loose, hist_data_tight, hist_data_l
 
     g_data = TGraphAsymmErrors(hist_data_tight)
     g_data.Divide(hist_data_tight, hist_data_loose)
+
+    # if g_data.GetN() != hist_data_tight.GetNbinsX():
+    #     import pdb; pdb.set_trace()
+
     g_data.GetYaxis().SetTitle('Fake rate')
     g_data.GetXaxis().SetTitle(hist_data_tight.GetXaxis().GetTitle())
     g_data.GetYaxis().SetTitleOffset(1.2)

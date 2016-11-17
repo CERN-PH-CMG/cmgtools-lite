@@ -1,33 +1,5 @@
-DY : DYJetsToLL_M10to50: xsec ; FillColor=ROOT.kCyan
-DY : DYJetsToLL_M50: xsec ; FillColor=ROOT.kCyan
-
-TT : TTJets_DiLepton: xsec ;  FillColor=ROOT.kGray  
-TT : TTJets_SingleLeptonFromT: xsec ;  FillColor=ROOT.kGray  
-TT : TTJets_SingleLeptonFromTbar: xsec ;  FillColor=ROOT.kGray  
-
-TTV: TTWToLNu:     xsec ;  FillColor=ROOT.kOrange
-TTV: TTZToLLNuNu:     xsec ;  FillColor=ROOT.kOrange
-TTH : TTHnobb_mWCutfix_ext1 : xsec ; FillColor=ROOT.kRed
-
-VV : WZTo3LNu: xsec ; FillColor=ROOT.kViolet-4
-#VV : ZZTo2L2Q: xsec ; FillColor=ROOT.kViolet-4
-VV : WWTo2L2Nu: xsec ; FillColor=ROOT.kViolet-4
-
-TW : T_tWch: xsec; FillColor=ROOT.kGray+2
-TW : TBar_tWch: xsec; FillColor=ROOT.kGray+2
-
-Single top    : TToLeptons_sch:     xsec ;  FillColor=ROOT.kGray+2
-Single top    : TBarToLeptons_tch_powheg:     xsec ;  FillColor=ROOT.kGray+2
-
-WJets    : WJetsToLNu_LO :  xsec; FillColor=ROOT.kCyan+2
-
-
-
-
-
-
-data : DoubleEG_Run2016B_PromptReco_v2+DoubleEG_Run2016C_PromptReco_v2+DoubleEG_Run2016D_PromptReco_v2_runs_276315_276384+DoubleEG_Run2016D_PromptReco_v2_runs_276385_276811
-data : DoubleMuon_Run2016B_PromptReco_v2+DoubleMuon_Run2016C_PromptReco_v2+DoubleMuon_Run2016D_PromptReco_v2_runs_276315_276384+DoubleMuon_Run2016D_PromptReco_v2_runs_276385_276811
-data : MuonEG_Run2016B_PromptReco_v2+MuonEG_Run2016C_PromptReco_v2+MuonEG_Run2016D_PromptReco_v2_runs_276315_276384+MuonEG_Run2016D_PromptReco_v2_runs_276385_276811
-data : SingleElectron_Run2016B_PromptReco_v2+SingleElectron_Run2016C_PromptReco_v2+SingleElectron_Run2016D_PromptReco_v2_runs_276315_276384+SingleElectron_Run2016D_PromptReco_v2_runs_276385_276811
-data : SingleMuon_Run2016B_PromptReco_v2+SingleMuon_Run2016C_PromptReco_v2+SingleMuon_Run2016D_PromptReco_v2_runs_276315_276384+SingleMuon_Run2016D_PromptReco_v2_runs_276385_276811
+incl_DY : + ; IncludeMca="lepton-validation/mca_includes/mca_dy.txt"
+incl_TT : + ; IncludeMca="lepton-validation/mca_includes/mca_tt.txt"
+incl_oth : + ; IncludeMca="lepton-validation/mca_includes/mca_singleTop_VV_rares.txt"
+incl_Wjets : + ; IncludeMca="lepton-validation/mca_includes/mca_wjets.txt"
+incl_data : + ; IncludeMca="lepton-validation/mca_includes/mca_data.txt"

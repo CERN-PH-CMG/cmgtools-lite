@@ -7,6 +7,7 @@ from CMGTools.VVResonances.tools.BTagEventWeights import *
 import itertools
 import ROOT
 import os
+import math
 
 class Substructure(object):
     def __init__(self):
@@ -20,11 +21,17 @@ class VVBuilder(Analyzer):
         self.smearing=ROOT.TRandom(10101982)
         if hasattr(self.cfg_ana,"doPUPPI") and self.cfg_ana.doPUPPI:
             self.doPUPPI=True
+            puppiJecCorrWeightFile = os.path.expandvars(self.cfg_ana.puppiJecCorrFile)
+            self.puppiJecCorr = ROOT.TFile.Open(puppiJecCorrWeightFile)
+            self.puppisd_corrGEN = self.puppiJecCorr.Get("puppiJECcorr_gen")
+            self.puppisd_corrRECO_cen = self.puppiJecCorr.Get("puppiJECcorr_reco_0eta1v3")
+            self.puppisd_corrRECO_for = self.puppiJecCorr.Get("puppiJECcorr_reco_1v3eta2v5")
+
         else:
             self.doPUPPI=False
 
 
-        #btag reweighting    
+        #btag reweighting
         self.btagSF = BTagEventWeights('btagsf',os.path.expandvars(self.cfg_ana.btagCSVFile))
 
     def declareHandles(self):
@@ -113,13 +120,20 @@ class VVBuilder(Analyzer):
         jet.substructure.softDropJetUp = 1.05*jet.substructure.softDropJet.mass()
         jet.substructure.softDropJetDown = 0.95*jet.substructure.softDropJet.mass()
         jet.substructure.softDropJetSmear = jet.substructure.softDropJet.mass()*self.smearing.Gaus(1.0,0.1)
+        if self.doPUPPI:
+            softDropJetUnCorr = self.copyLV(interface.get(False))[0]
+            jet.substructure.softDropJetMassCor = self.getPUPPIMassWeight(softDropJetUnCorr)
+            jet.substructure.softDropJetMassBare = softDropJetUnCorr.mass()
 
         interface.makeSubJets(False,0,2)
         jet.substructure.softDropSubjets = self.copyLV(interface.get(False))
 
         #get NTau
         jet.substructure.ntau = interface.nSubJettiness(0,4,0,6,1.0,0.8,999.0,999.0,999)
-
+        # calculate DDT tau21 (currently without softDropJetMassCor, but the L2L3 corrections)
+        jet.substructure.tau21_DDT = 0
+        if (jet.substructure.softDropJet.mass() > 0):
+            jet.substructure.tau21_DDT = jet.substructure.ntau[1]/jet.substructure.ntau[0] + ( 0.063 * math.log( (jet.substructure.softDropJet.mass()*jet.substructure.softDropJet.mass())/jet.substructure.softDropJet.pt()))
 
         #recluster with CA and do massdrop
 
@@ -445,6 +459,20 @@ class VVBuilder(Analyzer):
 
 
 
+    def getPUPPIMassWeight(self, puppijet):
+        # mass correction for PUPPI following https://github.com/thaarres/PuppiSoftdropMassCorr
+
+        genCorr = 1.
+        recoCorr = 1.
+        # corrections only valid up to |eta| < 2.5, use 1. beyond
+        if (abs(puppijet.eta()) < 2.5):
+            genCorr = self.puppisd_corrGEN.Eval(puppijet.pt())
+            if (abs(puppijet.eta()) <= 1.3):
+                recoCorr = self.puppisd_corrRECO_cen.Eval(puppijet.pt())
+            else:
+                recoCorr = self.puppisd_corrRECO_for.Eval(puppijet.pt())
+        totalWeight = genCorr*recoCorr
+        return totalWeight
 
 
 
