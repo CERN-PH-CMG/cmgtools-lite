@@ -26,7 +26,8 @@ from CMGTools.TTHAnalysis.analyzers.ttHhistoCounterAnalyzer import ttHhistoCount
 from CMGTools.TTHAnalysis.analyzers.susyParameterScanAnalyzer import susyParameterScanAnalyzer
 
 puFileMC = '$CMSSW_BASE/src/CMGTools/H2TauTau/data/MC_Spring16_PU25_Startup.root'
-puFileData = '$CMSSW_BASE/src/CMGTools/H2TauTau/data/data_pu_25-07-2016_69p2mb_60.root'
+# puFileData = '$CMSSW_BASE/src/CMGTools/H2TauTau/data/data_pu_25-07-2016_69p2mb_60.root'
+puFileData = '/afs/cern.ch/user/a/anehrkor/public/Data_Pileup_2016_July22.root'
 
 
 susyCounter = cfg.Analyzer(
@@ -34,7 +35,7 @@ susyCounter = cfg.Analyzer(
     SMS_max_mass=3000,  # maximum mass allowed in the scan
     # SMS_mass_1='genSusyMScan1',  # first scanned mass
     # SMS_mass_2='genSusyMScan2',  # second scanned mass
-    SMS_mass_1='genSusyMStau',  # first scanned mass
+    SMS_mass_1='genSusyMChargino',  # first scanned mass
     SMS_mass_2='genSusyMNeutralino',  # second scanned mass
     SMS_varying_masses=[],  # other mass variables that are expected to change in the tree (e.g., in T1tttt it should be set to ['genSusyMGluino','genSusyMNeutralino'])
     SMS_regexp_evtGenMass='genSusyM.+',
