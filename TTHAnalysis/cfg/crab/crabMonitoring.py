@@ -33,7 +33,7 @@ def crabMonitoring(initProxy=False):
     host, err = pipe.communicate()
    
     cronTxt=open(totPath+'/crontab.txt','w')
-    cronTxt.write("*	*	00,06,12,18	*	*	"+host.split("\n")[0]+"	/afs/cern.ch/user/m/mmarionn/workspace/private/cmssw/cronJob.sh\n")
+    cronTxt.write("00	00,04,08,12,16,20     *	*	*	"+host.split("\n")[0]+"	"+path+"/cronJob.sh\n")
     cronTxt.close()
 
     os.system("acrontab < crontab.txt")
