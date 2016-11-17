@@ -124,7 +124,7 @@ THW,
 ]
 
 # Single top cross sections: https://twiki.cern.ch/twiki/bin/viewauth/CMS/SingleTopSigma
-TToLeptons_tch_amcatnlo = kreator.makeMCComponent("TToLeptons_tch_amcatnlo", "/ST_t-channel_4f_leptonDecays_13TeV-amcatnlo-pythia8_TuneCUETP8M1/RunIISpring16MiniAODv2-PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/MINIAODSIM", "CMS", ".*root", (136.05+80.97)*0.108*3) 
+TToLeptons_tch_amcatnlo = kreator.makeMCComponent("TToLeptons_tch_amcatnlo", "/ST_t-channel_4f_leptonDecays_13TeV-amcatnlo-pythia8_TuneCUETP8M1/RunIISpring16MiniAODv2-premix_withHLT_80X_mcRun2_asymptotic_v14_ext1-v1/MINIAODSIM", "CMS", ".*root", (136.05+80.97)*0.108*3)
 #TToLeptons_tch_amcatnlo_ext = kreator.makeMCComponent("TToLeptons_tch_amcatnlo_ext", "/ST_t-channel_4f_leptonDecays_13TeV-amcatnlo-pythia8_TuneCUETP8M1/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12_ext1-v1/MINIAODSIM", "CMS", ".*root", (136.05+80.97)*0.108*3) 
 TToLeptons_tch_powheg = kreator.makeMCComponent("TToLeptons_tch_powheg", "/ST_t-channel_top_4f_leptonDecays_13TeV-powheg-pythia8_TuneCUETP8M1/RunIISpring16MiniAODv2-PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/MINIAODSIM", "CMS", ".*root", (136.02)*0.108*3)
 TBarToLeptons_tch_powheg = kreator.makeMCComponent("TBarToLeptons_tch_powheg", "/ST_t-channel_antitop_4f_leptonDecays_13TeV-powheg-pythia8_TuneCUETP8M1/RunIISpring16MiniAODv2-PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/MINIAODSIM", "CMS", ".*root", 80.95*0.108*3)
@@ -681,35 +681,5 @@ for comp in mcSamples:
     comp.efficiency = eff2012
 
 if __name__ == "__main__":
-   import sys
-   if "test" in sys.argv:
-       from CMGTools.RootTools.samples.ComponentCreator import testSamples
-       testSamples(samples)
-   if "summary" in sys.argv:
-       from CMGTools.HToZZ4L.tools.configTools import printSummary
-       printSummary(mcSamples)
-   if "refresh" in sys.argv:
-        from CMGTools.Production.cacheChecker import CacheChecker
-        checker = CacheChecker()
-        dataSamples = samples
-        if len(sys.argv) > 2: 
-            dataSamples = []
-            for x in sys.argv[2:]:
-                for s in samples:
-                    if x in s.name and s not in dataSamples:
-                        dataSamples.append(s)
-            dataSamples.sort(key = lambda d : d.name)
-        if "--suspicious" in sys.argv:
-            for s in samples:
-                if len(s.files) == 0:
-                    dataSamples.append(s)
-                    continue
-                if "/store/mc/" not in s.files[0]:
-                    continue
-                if getattr(s, 'dataset_entries', -1) < 0:
-                    dataSamples.append(s)
-            dataSamples.sort(key = lambda d : d.name)
-        for d in dataSamples:
-            print "Checking ",d.name," aka ",d.dataset
-            if "--pretend" not in sys.argv:
-                checker.checkComp(d, verbose=True)
+    from CMGTools.RootTools.samples.tools import runMain
+    runMain(samples)
