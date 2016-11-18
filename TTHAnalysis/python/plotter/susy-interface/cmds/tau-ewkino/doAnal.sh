@@ -1,4 +1,5 @@
-#!/bin/bash
+import os
+
 
 
 if [ "$1" == "btag" ]; then
