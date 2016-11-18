@@ -37,7 +37,7 @@ susyCounter = cfg.Analyzer(
     # SMS_mass_2='genSusyMScan2',  # second scanned mass
     SMS_mass_1='genSusyMChargino',  # first scanned mass
     SMS_mass_2='genSusyMNeutralino',  # second scanned mass
-    SMS_varying_masses=[],  # other mass variables that are expected to change in the tree (e.g., in T1tttt it should be set to ['genSusyMGluino','genSusyMNeutralino'])
+    SMS_varying_masses=['genSusyMStau'],  # other mass variables that are expected to change in the tree (e.g., in T1tttt it should be set to ['genSusyMGluino','genSusyMNeutralino'])
     SMS_regexp_evtGenMass='genSusyM.+',
     bypass_trackMass_check=True  # bypass check that non-scanned masses are the same in all events
 )
@@ -97,6 +97,7 @@ pileUpAna = cfg.Analyzer(
 susyScanAna = cfg.Analyzer(
     susyParameterScanAnalyzer, name="susyParameterScanAnalyzer",
     doLHE=True,
+    useLumiInfo=True,
 )
 
 httGenAna = cfg.Analyzer(
