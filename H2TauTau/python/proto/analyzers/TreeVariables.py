@@ -51,6 +51,14 @@ event_vars = [
     # Variable('delta_phi_dil_jet2', lambda ev : deltaPhi(ev.diLepton.p4().phi(), ev.cleanJets[1].phi()) if len(ev.cleanJets)>1 else -999.),
     # Variable('delta_eta_dil_jet1', lambda ev : abs(ev.diLepton.p4().eta() - ev.cleanJets[0].eta()) if len(ev.cleanJets)>0 else -999.),
     # Variable('delta_eta_dil_jet2', lambda ev : abs(ev.diLepton.p4().eta() - ev.cleanJets[1].eta()) if len(ev.cleanJets)>1 else -999.),
+    Variable('Flag_HBHENoiseFilter', type=int),
+    Variable('Flag_HBHENoiseIsoFilter', type=int),
+    Variable('Flag_EcalDeadCellTriggerPrimitiveFilter', type=int),
+    Variable('Flag_goodVertices', type=int),
+    Variable('Flag_eeBadScFilter', type=int),
+    Variable('Flag_globalTightHalo2016Filter', type=int),
+    Variable('passBadMuonFilter', type=int),
+    Variable('passBadChargedHadronFilter', type=int)
 ]
 
 # di-tau object variables
