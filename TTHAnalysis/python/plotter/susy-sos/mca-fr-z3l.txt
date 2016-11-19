@@ -1,0 +1,60 @@
+# vim: syntax=sh
+WZ 	: WZTo3LNu           : xsec : LepGood3_mcMatchId != 0 ;  FillColor=ROOT.kViolet-4
+ZZ      : ZZTo4L             : xsec : LepGood3_mcMatchId != 0 ;  FillColor=ROOT.kAzure-9
+#TT      : TTJets_DiLepton    : xsec : LepGood3_mcMatchId == 0; FillColor=ROOT.kGray
+#DY     : DYJetsToLL_M10to50 : xsec : LepGood3_mcMatchId == 0; FillColor=ROOT.kCyan
+DY      : DYJetsToLL_M50_LO_2  : xsec : LepGood3_mcMatchId == 0; FillColor=ROOT.kPink-2, KeysPdf=True
+
+VZ 	: WZTo3LNu           : xsec : LepGood3_mcMatchId != 0 ;  FillColor=ROOT.kViolet-2
+VZ      : ZZTo4L             : xsec : LepGood3_mcMatchId != 0 ;  FillColor=ROOT.kAzure-2
+
+data : DoubleEG_Run2016B_PromptReco_v2_runs_273150_275783
+data : DoubleEG_Run2016C_PromptReco_v2_runs_273150_275783
+data : DoubleEG_Run2016C_PromptReco_v2_runs_275784_276811
+data : DoubleEG_Run2016D_PromptReco_v2_runs_275784_276811
+data : DoubleMuon_Run2016B_PromptReco_v2_runs_273150_275783
+data : DoubleMuon_Run2016C_PromptReco_v2_runs_273150_275783
+data : DoubleMuon_Run2016C_PromptReco_v2_runs_275784_276811
+data : DoubleMuon_Run2016D_PromptReco_v2_runs_275784_276811
+
+## Options only
+DY_prefit : - ; FillColor=ROOT.kPink-2, Label="DY MC"
+DY_prefit : - ; FillColor=ROOT.kPink-2, Label="DY MC"
+data_sub         : - ; FillColor=ROOT.kGray+1, Label="Data - VZ"
+data_sub_prefit  : - ; FillColor=ROOT.kAzure+1, Label="(stat only)"
+data_sub_syst         : - ; FillColor=ROOT.kGray+1, Label="Data - VZ"
+data_sub_syst_prefit  : - ; FillColor=ROOT.kViolet+1, Label="Data - VZ"
+data_prefit      : - ; FillColor=ROOT.kBlack, Label="Data"
+total            : - ; FillColor=ROOT.kBlue+1, Label="DY+VZ fit"
+total_prefit     : - ; FillColor=ROOT.kGreen+2, Label="DY+VZ MC"
+data_fqcd        : - ; FillColor=ROOT.kGray+2, Label="Data unfolded"
+data_fit         : - ; FillColor=ROOT.kGreen+2, Label="DY sim fit"
+data_prefit      : - ; FillColor=ROOT.kBlack, Label="Data"
+
+DY_lUp : - ; FillColor=ROOT.kBlue-7, Label="Lin Up"
+DY_lUp : - ; FillColor=ROOT.kBlue-7, Label="Lin Up"
+DY_lDn : - ; FillColor=ROOT.kBlue+1, Label="Lin Up"
+DY_lDn : - ; FillColor=ROOT.kBlue+1, Label="Lin Up"
+VZ_lUp : - ; FillColor=ROOT.kBlue-7, Label="Lin Down"
+VZ_lDn : - ; FillColor=ROOT.kBlue+1, Label="Lin Down"
+
+DY_qUp : - ; FillColor=ROOT.kRed-7, Label="Quad Up"
+DY_qDn : - ; FillColor=ROOT.kRed+1, Label="Quad Up"
+DY_qUp : - ; FillColor=ROOT.kRed-7, Label="Quad Up"
+DY_qDn : - ; FillColor=ROOT.kRed+1, Label="Quad Up"
+VZ_qUp : - ; FillColor=ROOT.kRed-7, Label="Quad Down"
+VZ_qDn : - ; FillColor=ROOT.kRed+1, Label="Quad Down"
+
+DY_sUp : - ; FillColor=ROOT.kGreen-0, Label="Stretch Up"
+DY_sDn : - ; FillColor=ROOT.kGreen+3, Label="Stretch Up"
+DY_sUp : - ; FillColor=ROOT.kGreen-0, Label="Stretch Up"
+DY_sDn : - ; FillColor=ROOT.kGreen+3, Label="Stretch Up"
+VZ_sUp : - ; FillColor=ROOT.kGreen-0, Label="Stretch Down"
+VZ_sDn : - ; FillColor=ROOT.kGreen+3, Label="Stretch Down"
+
+DY_pass : - ; FillColor=ROOT.kGreen+2, Label="Pass"
+DY_fail : - ; FillColor=ROOT.kRed+0, Label="Fail"
+DY_pass : - ; FillColor=ROOT.kGreen+2, Label="Pass"
+DY_fail : - ; FillColor=ROOT.kRed+0, Label="Fail"
+VZ_pass : - ; FillColor=ROOT.kGreen+2, Label="Pass"
+VZ_fail : - ; FillColor=ROOT.kRed+0, Label="Fail"

@@ -1,0 +1,30 @@
+alwaystrue : 1
+
+mu     : abs(LepGood_pdgId) == 13
+
+ptcut_5_7 : (abs(LepGood_pdgId)==13 && LepGood_pt > 5) || (abs(LepGood_pdgId)==11 && LepGood_pt > 7)
+rap    : (abs(LepGood_pdgId) == 13 && abs(LepGood_eta) < 2.4) || (abs(LepGood_pdgId) == 11 && abs(LepGood_eta) < 2.5)
+
+iso    : LepGood_miniRelIso < 0.4
+ip     : abs(LepGood_dxy) < 0.05 && abs(LepGood_dz) < 0.1
+id     : abs(LepGood_pdgId) != 13 || LepGood_pfMuonId > 0
+sip8   : LepGood_sip3d < 8
+
+convVeto : abs(LepGood_pdgId)!=11 || LepGood_convVeto
+losthits1 : abs(LepGood_pdgId)!=11 || LepGood_lostHits<=1
+losthits0 : abs(LepGood_pdgId)!=11 || LepGood_lostHits==0
+
+eleIDpresel : abs(LepGood_pdgId)!=11 || LepGood_passVLeleIDMVA
+
+hltE2  : abs(LepGood_pdgId)!=11 || LepGood_idEmu2
+
+
+########## enable the following if desired
+
+tightcharge : LepGood_tightCharge>1 ; Disable=True
+
+# disable ptcut_5_7 if you run this
+ptcut_3p5_5 : (abs(LepGood_pdgId)==13 && LepGood_pt > 3.5) || (abs(LepGood_pdgId)==11 && LepGood_pt > 5) ; Disable=True
+
+# disable hltE2 if you run this
+hltRA5 : abs(LepGood_pdgId) != 11 || (LepGood_hadronicOverEm < 0.08 && abs(LepGood_dEtaScTrkIn) < 0.01 && LepGood_eInvMinusPInv < 0.01 && ((abs(LepGood_etaSc) < 1.479 && LepGood_sigmaIEtaIEta < 0.011 && abs(LepGood_dPhiScTrkIn) < 0.04) || (abs(LepGood_etaSc) > 1.479 && LepGood_sigmaIEtaIEta < 0.031 && abs(LepGood_dPhiScTrkIn) < 0.08)) && LepGood_mvaIdSpring15 > -0.70+(-0.83+0.70)*(abs(LepGood_eta)>0.8)+(-0.92+0.83)*(abs(LepGood_eta)>1.479)) ; Disable=True

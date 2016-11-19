@@ -1,6 +1,6 @@
 from array import array
 from math import *
-from CMGTools.TTHAnalysis.analyzers.ntupleTypes import ptRelv2, jetLepAwareJEC
+from CMGTools.TTHAnalysis.analyzers.ntupleTypes import ptRelv2, jetLepAwareJEC, isoRelH
 from PhysicsTools.HeppyCore.utils.deltar import deltaR
 from CMGTools.TTHAnalysis.signedSip import qualityTrk
 
@@ -45,8 +45,12 @@ class CategorizedMVA:
             if c(lep): return m(lep,ncorr)
         return -99.
 
-_CommonSpect = [ 
-]
+_CommonSpect = {
+ 'forMoriond16': [],
+ 'SoftJetLessNOBTAG': [
+    MVAVar("LepGood_mcMatchAny",lambda x: getattr(x,'mcMatchAny',-999)),
+  ],
+}
 _CommonVars = {
  'forMoriond16':[ 
     MVAVar("LepGood_pt",lambda x: x.pt()),
@@ -61,19 +65,37 @@ _CommonVars = {
     MVAVar("LepGood_dxy := log(abs(LepGood_dxy))",lambda x: log(abs(x.dxy()))),
     MVAVar("LepGood_dz  := log(abs(LepGood_dz))", lambda x: log(abs(x.dz()))),
  ],
+ 'SoftJetLessNOBTAG': [
+    MVAVar("LepGood_pt",lambda x: x.pt()),
+    MVAVar("LepGood_eta",lambda x: x.eta()),
+    MVAVar("LepGood_miniRelIsoCharged := min(LepGood_miniRelIsoCharged,4)",lambda x: min(getattr(x,'miniAbsIsoCharged',-99)/x.pt(),4)),
+    MVAVar("LepGood_miniRelIsoNeutral := min(LepGood_miniRelIsoNeutral,4)",lambda x: min(getattr(x,'miniAbsIsoNeutral',-99)/x.pt(),4)),
+    MVAVar("LepGood_isoRelH04",lambda x: isoRelH(x,'04') if hasattr(x,'isoSumRawP4Charged04') else -1),
+    MVAVar("LepGood_RelIsoChargedFix04 := min(LepGood_RelIsoChargedFix04,4)",lambda x: min(getattr(x,'AbsIsoMIVCharged04',-99)/x.pt(),4)),
+    MVAVar("LepGood_RelIsoNeutralFix04 := min(LepGood_RelIsoNeutralFix04,4)",lambda x: min(getattr(x,'AbsIsoMIVNeutral04',-99)/x.pt(),4)),
+    MVAVar("LepGood_sip3d",lambda x: x.sip3D()),
+    MVAVar("LepGood_dxy := log(abs(LepGood_dxy))",lambda x: log(abs(x.dxy()))),
+    MVAVar("LepGood_dz  := log(abs(LepGood_dz))", lambda x: log(abs(x.dz()))),
+ ],
 }
 
 _MuonVars = {
  'forMoriond16': [
     MVAVar("LepGood_segmentCompatibility",lambda x: x.segmentCompatibility()), 
  ],
+ 'SoftJetLessNOBTAG': [
+    MVAVar("LepGood_segmentCompatibility",lambda x: x.segmentCompatibility()), 
+ ],
+
 }
 
 _ElectronVars = {
  'forMoriond16': [
     MVAVar("LepGood_mvaIdSpring15",lambda x: x.mvaRun2("NonTrigSpring15MiniAOD")),
+ ],
+ 'SoftJetLessNOBTAG': [
+    MVAVar("LepGood_mvaIdSpring15",lambda x: x.mvaRun2("NonTrigSpring15MiniAOD")),
  ]
-
 }
 
 
@@ -85,22 +107,22 @@ class LeptonMVA:
         self._kind = kind
         muVars = _CommonVars[kind] + _MuonVars[kind]
         elVars = _CommonVars[kind] + _ElectronVars[kind]
-        if 'forMoriond16' in self._kind:
+        if ('forMoriond16' in self._kind) or ('SoftJetLessNOBTAG' in self._kind):
             self.mu = CategorizedMVA([
-                    ( lambda x: True, MVATool("BDTG",basepath%"mu",_CommonSpect,muVars) ),
+                    ( lambda x: True, MVATool("BDTG",basepath%"mu",_CommonSpect[kind],muVars) ),
                     ])
             self.el = CategorizedMVA([
-                    ( lambda x: True, MVATool("BDTG",basepath%"el",_CommonSpect,elVars) ),
+                    ( lambda x: True, MVATool("BDTG",basepath%"el",_CommonSpect[kind],elVars) ),
                     ])            
         else:
             self.mu = CategorizedMVA([
-                    ( lambda x: abs(x.eta()) <  1.5, MVATool("BDTG",basepath%"mu_eta_b",_CommonSpect,muVars) ),
-                    ( lambda x: abs(x.eta()) >= 1.5, MVATool("BDTG",basepath%"mu_eta_e",_CommonSpect,muVars) ),
+                    ( lambda x: abs(x.eta()) <  1.5, MVATool("BDTG",basepath%"mu_eta_b",_CommonSpect[kind],muVars) ),
+                    ( lambda x: abs(x.eta()) >= 1.5, MVATool("BDTG",basepath%"mu_eta_e",_CommonSpect[kind],muVars) ),
                     ])
             self.el = CategorizedMVA([
-                    ( lambda x: abs(x.eta()) <  0.8                          , MVATool("BDTG",basepath%"el_eta_cb",_CommonSpect,elVars) ),
-                    ( lambda x: abs(x.eta()) >= 0.8 and abs(x.eta()) <  1.479, MVATool("BDTG",basepath%"el_eta_fb",_CommonSpect,elVars) ),
-                    ( lambda x: abs(x.eta()) >= 1.479                        , MVATool("BDTG",basepath%"el_eta_ec",_CommonSpect,elVars) ),
+                    ( lambda x: abs(x.eta()) <  0.8                          , MVATool("BDTG",basepath%"el_eta_cb",_CommonSpect[kind],elVars) ),
+                    ( lambda x: abs(x.eta()) >= 0.8 and abs(x.eta()) <  1.479, MVATool("BDTG",basepath%"el_eta_fb",_CommonSpect[kind],elVars) ),
+                    ( lambda x: abs(x.eta()) >= 1.479                        , MVATool("BDTG",basepath%"el_eta_ec",_CommonSpect[kind],elVars) ),
                     ])
     def __call__(self,lep,ncorr="auto"):
         if ncorr == "auto": ncorr = 0 # (1 if self._isMC else 0)

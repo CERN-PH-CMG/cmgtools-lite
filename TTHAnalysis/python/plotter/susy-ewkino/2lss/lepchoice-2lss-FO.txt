@@ -1,0 +1,41 @@
+LepGood1_isTight\b : LepGood_isTight_Recl[iF_Recl[0]]; AlsoData
+LepGood2_isTight\b : LepGood_isTight_Recl[iF_Recl[1]]; AlsoData
+LepGood3_isTight\b : LepGood_isTight_Recl[iF_Recl[2]]; AlsoData
+LepGood4_isTight\b : LepGood_isTight_Recl[iF_Recl[3]]; AlsoData
+LepGood1_isFO\b : LepGood_isFO_Recl[iF_Recl[0]]; AlsoData
+LepGood2_isFO\b : LepGood_isFO_Recl[iF_Recl[1]]; AlsoData
+LepGood3_isFO\b : LepGood_isFO_Recl[iF_Recl[2]]; AlsoData
+LepGood4_isFO\b : LepGood_isFO_Recl[iF_Recl[3]]; AlsoData
+LepGood1_isMatchRightCharge\b : (LepGood_mcMatchId[iF_Recl[0]]!=0 && LepGood_pdgId[iF_Recl[0]]==LepGood_mcMatchPdgId[iF_Recl[0]]); AlsoData
+LepGood2_isMatchRightCharge\b : (LepGood_mcMatchId[iF_Recl[1]]!=0 && LepGood_pdgId[iF_Recl[1]]==LepGood_mcMatchPdgId[iF_Recl[1]]); AlsoData
+LepGood3_isMatchRightCharge\b : (LepGood_mcMatchId[iF_Recl[2]]!=0 && LepGood_pdgId[iF_Recl[2]]==LepGood_mcMatchPdgId[iF_Recl[2]]); AlsoData
+LepGood4_isMatchRightCharge\b : (LepGood_mcMatchId[iF_Recl[3]]!=0 && LepGood_pdgId[iF_Recl[3]]==LepGood_mcMatchPdgId[iF_Recl[3]]); AlsoData
+LepGood1_(\w+) : LepGood_\1[iF_Recl[0]]; AlsoData
+LepGood2_(\w+) : LepGood_\1[iF_Recl[1]]; AlsoData
+LepGood3_(\w+) : LepGood_\1[iF_Recl[2]]; AlsoData
+LepGood4_(\w+) : LepGood_\1[iF_Recl[3]]; AlsoData
+TauGood1_(\w+) : TauGood_\1[iTauSel_Recl[0]]; AlsoData
+TauGood2_(\w+) : TauGood_\1[iTauSel_Recl[1]]; AlsoData
+nLepLoose\b : nLepLoose_Recl; AlsoData
+nLepCleaning\b : nLepCleaning_Recl; AlsoData
+nLepFO\b : nLepFO_Recl; AlsoData
+nLepTight\b : nLepTight_Recl; AlsoData
+nTauSel\b: nTauSel_Recl; AlsoData
+nTightTauSel\b: nTightTauSel_Recl; AlsoData
+nJet25\b: nJet25_Recl; AlsoData
+htJet25j\b: htJet25j_Recl; AlsoData
+mhtJet25\b: mhtJet25_Recl; AlsoData
+nJet40\b: nJet40_Recl; AlsoData
+htJet40j\b: htJet40j_Recl; AlsoData
+mhtJet40\b: mhtJet40_Recl; AlsoData
+nBJetLoose25\b: nBJetLoose25_Recl; AlsoData
+nBJetMedium25\b: nBJetMedium25_Recl; AlsoData
+nBJetTight25\b: nBJetTight25_Recl; AlsoData
+nBJetLoose40\b: nBJetLoose40_Recl; AlsoData
+nBJetMedium40\b: nBJetMedium40_Recl; AlsoData
+nBJetTight40\b: nBJetTight40_Recl; AlsoData
+mZ1\b: mZ1_Recl; AlsoData
+minMllAFAS\b: minMllAFAS_Recl; AlsoData
+minMllAFOS\b: minMllAFOS_Recl; AlsoData
+minMllAFSS\b: minMllAFSS_Recl; AlsoData
+minMllSFOS\b: minMllSFOS_Recl; AlsoData

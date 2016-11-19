@@ -85,7 +85,7 @@ class ttHhistoCounterAnalyzer( Analyzer ):
         if isSMS:
 
             if not self.isInitSMS: self.initSMS(event)
-
+            
             if event.susyModel!=self.susyModel: raise RuntimeError, 'The SMS model changed in the middle of the run, from %s to %s!'%(self.susyModel,event.susyModel)
             if not self.bypass_trackMass_check:
                 for mass,val in self.allmasses.iteritems():
