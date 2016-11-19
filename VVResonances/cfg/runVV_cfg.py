@@ -65,7 +65,8 @@ from CMGTools.VVResonances.analyzers.core_cff import *
 #-------- SAMPLES AND TRIGGERS -----------
 from CMGTools.VVResonances.samples.loadSamples import *
 
-selectedComponents = mcSamples+dataSamples
+#selectedComponents = mcSamples+dataSamples
+selectedComponents = zprimeSamples
 
 
 
@@ -95,7 +96,7 @@ triggerFlagsAna.triggerBits ={
 
 
 #-------- HOW TO RUN
-test = 0
+test = 3
 if test==1:
     # test a single component, using a single thread.
     selectedComponents = [BulkGravToZZToZlepZhad_narrow_2000]
