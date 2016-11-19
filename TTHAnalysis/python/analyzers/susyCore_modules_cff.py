@@ -236,6 +236,15 @@ ttHLepSkim = cfg.Analyzer(
     #ptCuts = [20,10],                # can give a set of pt cuts on the leptons
     requireSameSignPair = False,
     allowLepTauComb = False
+)
+
+## global event Skimmer
+from CMGTools.TTHAnalysis.analyzers.globalEventSkimmer import globalEventSkimmer
+globalSkim = cfg.Analyzer(
+    globalEventSkimmer, name='globalEventSkimmer',
+    collections={"lep":"selectedLeptons",
+                 "tau":"selectedTaus"},
+    selections=[]
     )
 
 ## Photon Analyzer (generic)
@@ -333,8 +342,8 @@ jetAna = cfg.Analyzer(
     recalibrateJets = True, #'MC', # True, False, 'MC', 'Data'
     applyL2L3Residual = True, # Switch to 'Data' when they will become available for Data
     recalibrationType = "AK4PFchs",
-    mcGT     = "Spring16_25nsV6_MC",
-    dataGT   = "Spring16_25nsV6_DATA",
+    mcGT     = "Spring16_25nsV8_MC",
+    dataGT   = "Spring16_25nsV8_DATA",
     jecPath = "${CMSSW_BASE}/src/CMGTools/RootTools/data/jec/",
     shiftJEC = 0, # set to +1 or -1 to apply +/-1 sigma shift to the nominal jet energies
     addJECShifts = False, # if true, add  "corr", "corrJECUp", and "corrJECDown" for each jet (requires uncertainties to be available!)
@@ -347,6 +356,8 @@ jetAna = cfg.Analyzer(
     cleanJetsFromIsoTracks = False,
     doQG = False,
     do_mc_match = True,
+    storeLowPtJets = False,
+    cleanJetsFromLeptons = True,
     collectionPostFix = "",
     calculateSeparateCorrections = True, # should be True if recalibrateJets is True, otherwise L1s will be inconsistent
     calculateType1METCorrection  = False,
