@@ -159,14 +159,10 @@ class TTBuilder(VVBuilder):
         for fat in fatJets:
             self.substructure(fat,event)
 
-        #find fat jets that are top like
-        topJets=  filter(lambda x: hasattr(x,'substructure') and  x.substructure.softDropJet.mass()>self.cfg_ana.groomedTopWindow[0] and x.substructure.softDropJet.mass()< self.cfg_ana.groomedTopWindow[1],fatJets)   
 
-        wJets=  filter(lambda x: hasattr(x,'substructure') and x.substructure.softDropJet.mass()>self.cfg_ana.groomedWWindow[0] and x.substructure.softDropJet.mass()< self.cfg_ana.groomedWWindow[1],fatJets)   
-
-        TT=self.makeJJ(event,topJets,leptons)
-        WbT=self.makeJWb(event,topJets,wJets,leptons)
-        WbWb=self.makeWbWb(event,wJets,leptons)
+        TT=self.makeJJ(event,fatJets,leptons)
+        WbT=self.makeJWb(event,fatJets,fatJets,leptons)
+        WbWb=self.makeWbWb(event,fatJets,leptons)
 
         setattr(event,'TT'+self.cfg_ana.suffix,TT)
         setattr(event,'WbT'+self.cfg_ana.suffix,WbT)

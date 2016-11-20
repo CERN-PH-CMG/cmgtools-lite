@@ -40,10 +40,11 @@ FatJetType = NTupleObjectType("FatJetType", baseObjectTypes=[jetType], variables
     NTupleVariable("nearestBDRTruth",   lambda x : x.nearestBDR, float,"",-99.0,True),
     
     ######GEN SUBSTRUCTURE INFO
-    NTupleVariable("gen_tau1",   lambda x : x.substructureGEN.ntau[0], float,"",-99,True),
-    NTupleVariable("gen_tau2",   lambda x : x.substructureGEN.ntau[1], float,"",-99,True),
-    NTupleVariable("gen_tau3",   lambda x : x.substructureGEN.ntau[2], float,"",-99,True),
-    NTupleVariable("gen_tau4",   lambda x : x.substructureGEN.ntau[3], float,"",-99,True),
+    NTupleVariable("gen_tau1",   lambda x : x.substructureGEN.ntau[0] if hasattr(x,'substructureGEN') else -99, float,"",-99,True),
+    NTupleVariable("gen_tau2",   lambda x : x.substructureGEN.ntau[1] if hasattr(x,'substructureGEN') else -99, float,"",-99,True),
+    NTupleVariable("gen_tau3",   lambda x : x.substructureGEN.ntau[2] if hasattr(x,'substructureGEN') else -99, float,"",-99,True),
+    NTupleVariable("gen_tau4",   lambda x : x.substructureGEN.ntau[3] if hasattr(x,'substructureGEN') else -99, float,"",-99,True),
+
 
 
 ])
@@ -81,9 +82,9 @@ VJType = NTupleObjectType("VJType", baseObjectTypes=[VVType], variables = [
     NTupleVariable("btagWeight",  lambda x : x.btagWeight,float),
 
     ## GEN LEVEL STUFF
-    NTupleSubObject("l2_gen",  lambda x : x.leg2.substructureGEN.jet,fourVectorType,True),
-    NTupleSubObject("l2_gen_softDrop",  lambda x : x.leg2.substructureGEN.softDropJet,fourVectorType,True),
-    NTupleSubObject("l2_gen_pruned",  lambda x : x.leg2.substructureGEN.prunedJet,fourVectorType,True),
+    NTupleSubObject("l2_gen",  lambda x : x.leg2.substructureGEN.jet if hasattr(x.leg2,'substructureGEN') else dummyLV,fourVectorType,True),
+    NTupleSubObject("l2_gen_softDrop",  lambda x : x.leg2.substructureGEN.softDropJet if hasattr(x.leg2,'substructureGEN') else dummyLV,fourVectorType,True),
+    NTupleSubObject("l2_gen_pruned",  lambda x : x.leg2.substructureGEN.prunedJet if hasattr(x.leg2,'substructureGEN') else dummyLVt,fourVectorType,True),
 ])
 
 
@@ -121,9 +122,9 @@ JJType = NTupleObjectType("JJType", baseObjectTypes=[VJType], variables = [
     NTupleSubObject("l1_softDrop_s2",  lambda x : x.leg1.substructure.softDropSubjets[1] if len(x.leg1.substructure.softDropSubjets)>1 else dummyLV,fourVectorType),
     NTupleSubObject("l1_pruned_s1",  lambda x : x.leg1.substructure.prunedSubjets[0] if len(x.leg1.substructure.prunedSubjets)>0 else dummyLV,fourVectorType),
     NTupleSubObject("l1_pruned_s2",  lambda x : x.leg1.substructure.prunedSubjets[1] if len(x.leg1.substructure.prunedSubjets)>1 else dummyLV,fourVectorType),
-    NTupleSubObject("l1_gen",  lambda x : x.leg1.substructureGEN.jet,fourVectorType,True),
-    NTupleSubObject("l1_gen_softDrop",  lambda x : x.leg1.substructureGEN.softDropJet,fourVectorType,True),
-    NTupleSubObject("l1_gen_pruned",  lambda x : x.leg1.substructureGEN.prunedJet,fourVectorType,True),
+    NTupleSubObject("l1_gen",  lambda x : x.leg1.substructureGEN.jet if hasattr(x.leg1,'substructureGEN') else dummyLV,fourVectorType,True),
+    NTupleSubObject("l1_gen_softDrop",  lambda x : x.leg1.substructureGEN.softDropJet if hasattr(x.leg1,'substructureGEN') else dummyLV,fourVectorType,True),
+    NTupleSubObject("l1_gen_pruned",  lambda x : x.leg1.substructureGEN.prunedJet if hasattr(x.leg1,'substructureGEN') else dummyLV,fourVectorType,True),
 
 ])
 
