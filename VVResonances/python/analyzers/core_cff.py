@@ -357,9 +357,7 @@ ttAna = cfg.Analyzer(
     cDiscriminatorL = "pfCombinedCvsLJetTags",
     cDiscriminatorB = "pfCombinedCvsBJetTags",
     btagCSVFile = "${CMSSW_BASE}/src/CMGTools/VVResonances/data/btag.csv",
-    puppiJecCorrFile = "${CMSSW_BASE}/src/CMGTools/VVResonances/data/puppiCorr.root",
-    groomedTopWindow =[150.,200.],
-    groomedWWindow =[60.,100.],
+    puppiJecCorrFile = "${CMSSW_BASE}/src/CMGTools/VVResonances/data/puppiCorr.root"
 )
 
 
@@ -401,6 +399,7 @@ def doPruning():
 #    jetAnaAK8.dataGT   = "76X_dataRun2_v15_Run2015D_25ns"
     jetAnaAK8.recalibrationType = "AK8PFchs"
     vvAna.doPUPPI=False
+    ttAna.doPUPPI=False
 
 
 

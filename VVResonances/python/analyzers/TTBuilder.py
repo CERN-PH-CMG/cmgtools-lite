@@ -154,11 +154,13 @@ class TTBuilder(VVBuilder):
         #Precategorize here        
 
         leptons= filter(lambda x: (abs(x.pdgId())==11 and x.heepID) or (abs(x.pdgId())==13 and x.highPtIDIso ),event.selectedLeptons)
-        fatJets=self.selectJets(event.jetsAK8,lambda x: x.pt()>200.0 and abs(x.eta())<2.4 and x.jetID('POG_PFID_Loose')  ,leptons,1.0)
+        fatJetsPre=self.selectJets(event.jetsAK8,lambda x: x.pt()>200.0 and abs(x.eta())<2.4 and x.jetID('POG_PFID_Loose')  ,leptons,1.0)
         #precalculate substructure for all fat jets
-        for fat in fatJets:
+        fatJets=[]
+        for fat in fatJetsPre:
             self.substructure(fat,event)
-
+            if hasattr(fat,'substructure'):
+                fatJets.append(fat)
 
         TT=self.makeJJ(event,fatJets,leptons)
         WbT=self.makeJWb(event,fatJets,fatJets,leptons)
