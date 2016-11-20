@@ -3,13 +3,13 @@ from CMGTools.VVResonances.analyzers.vvTypes  import *
 from CMGTools.VVResonances.analyzers.Skimmer  import *
 import PhysicsTools.HeppyCore.framework.config as cfg
 
-vvSkimmer = cfg.Analyzer(
+ttSkimmer = cfg.Analyzer(
     Skimmer,
-    name='vvSkimmer',
-    required = ['LNuJJ','JJ','LLJJ','JJNuNu']
+    name='ttSkimmer',
+    required = ['TT','WbT','WbWb']
 )
 
-vvTreeProducer = cfg.Analyzer(
+ttTreeProducer = cfg.Analyzer(
      AutoFillTreeProducer, name='vvTreeProducer',
      vectorTree = True,
      saveTLorentzVectors = False,  # can set to True to get also the TLorentzVectors, but trees will be bigger
@@ -27,10 +27,9 @@ vvTreeProducer = cfg.Analyzer(
      },
 
      collections = {
-        "LNuJJ" : NTupleCollection("lnujj",LNuJJType ,5, help="VV candidate with a lepton neutrino and a fat jet"),
-        "JJ" : NTupleCollection("jj",JJType ,5, help="VV candidate with two fat jets"),
-        "LLJJ" : NTupleCollection("lljj",LLJJType ,5, help="VV candidate with two leptons and a fat jet"),
-        "JJNuNu" : NTupleCollection("nunujj",NuNuJJType ,5, help="VV candidate with  fat jet and MET")
+        "TT" : NTupleCollection("tt",JJType ,5, help="TT candidate with two fat jets"),
+        "WbT" : NTupleCollection("WbT",WbJJType ,5, help="VV candidate with a top decaying to W jet and separate b jet and a top merged jet"),
+        "WbWb" : NTupleCollection("WbWb",WbWbType ,5, help="VV candidate with  two unmerged tops but ,merged W")
      }
 )
 
