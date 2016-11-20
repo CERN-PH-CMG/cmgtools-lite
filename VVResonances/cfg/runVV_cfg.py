@@ -66,7 +66,7 @@ from CMGTools.VVResonances.analyzers.core_cff import *
 from CMGTools.VVResonances.samples.loadSamples import *
 
 #selectedComponents = mcSamples+dataSamples
-selectedComponents = zprimeSamples
+selectedComponents = mcSamples+signalSamples+zprimeSamples
 
 
 
