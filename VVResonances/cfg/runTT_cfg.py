@@ -66,38 +66,27 @@ from CMGTools.VVResonances.analyzers.core_cff import *
 from CMGTools.VVResonances.samples.loadSamples import *
 
 #selectedComponents = mcSamples+dataSamples
-selectedComponents = zprimeSamples
-
-
+selectedComponents = QCDHT+TTs+zprimeSamples+dataSamples
 
 #import pdb;pdb.set_trace()
 
 #-------- Analyzer
-from CMGTools.VVResonances.analyzers.tree_cff import *
+from CMGTools.VVResonances.analyzers.treeTop_cff import *
 
 #-------- SEQUENCE
 
-sequence = cfg.Sequence(coreSequence+[vvAna,metWeightAna,vvSkimmer,vvTreeProducer])
-from CMGTools.RootTools.samples.triggers_13TeV_Spring15 import *
-
-
+sequence = cfg.Sequence(coreSequence+[ttAna,ttSkimmer,ttTreeProducer])
+from CMGTools.RootTools.samples.triggers_13TeV_DATA2016 import *
 triggerFlagsAna.triggerBits ={
-    "ISOMU":triggers_1mu_iso,
-    "MU":triggers_1mu_noniso,
-    "ISOELE":triggers_1e,
-    "ELE":triggers_1e_noniso,
-    "HT800":triggers_HT800,
-    "HT900":triggers_HT900,
-    "JJ":triggers_dijet_fat,
-    "MET120":triggers_metNoMu120_mhtNoMu120
+    "HT900":triggers_pfht900
 }
 
 
 #-------- HOW TO RUN
-test = 3
+test = 1
 if test==1:
     # test a single component, using a single thread.
-    selectedComponents = [BulkGravToZZToZlepZhad_narrow_2000]
+    selectedComponents = [ZprimeToTT_M_2000_20]
     for c in selectedComponents:
         c.files = c.files[:1]
         c.splitFactor = 1
@@ -105,8 +94,6 @@ if test==1:
 elif test==2:
     # test a single component, using a single thread.
     selectedComponents = [TTJets]
-elif test==3:
-    selectedComponents = [WJetsToLNu_HT2500toInf]
     for c in selectedComponents:
         c.files = c.files[:1]
         c.splitFactor = 1

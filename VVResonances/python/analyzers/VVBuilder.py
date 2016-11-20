@@ -44,9 +44,10 @@ class VVBuilder(Analyzer):
             out.append(ROOT.math.XYZTLorentzVector(i.px(),i.py(),i.pz(),i.energy()))
         return out
 
-    def substructure(self,jet,event):
+    def substructure(self,jet,event,nSubjets =2 ,suffix = ""):
         #if we already filled it exit
-        if hasattr(jet,'substructure'):
+        tag ='substructure'+suffix
+        if hasattr(jet,tag):
             return
 
         constituents=[]
@@ -73,9 +74,9 @@ class VVBuilder(Analyzer):
         if self.doPUPPI:
             jet.setP4(outputJets[0]*jet.corr)
 
-        jet.substructure=Substructure()
+        substructure=Substructure()
         #OK!Now save the area
-        jet.substructure.area=interface.getArea(1,0)
+        substructure.area=interface.getArea(1,0)
 
 
 
@@ -83,17 +84,18 @@ class VVBuilder(Analyzer):
         interface.prune(True,0,0.1,0.5)
 
 
-        jet.substructure.prunedJet = self.copyLV(interface.get(False))[0]*corrNoL1
-        interface.makeSubJets(False,0,2)
-        jet.substructure.prunedSubjets = self.copyLV(interface.get(False))
+        substructure.prunedJet = self.copyLV(interface.get(False))[0]*corrNoL1
+        interface.makeSubJets(False,0,nSubjets)
+        substructure.prunedSubjets = self.copyLV(interface.get(False))
         #getv the btag of the pruned subjets
-        jet.subJetTags=[-1.0,-1.0]
-        jet.subJetCTagL=[-1.0,-1.0]
-        jet.subJetCTagB=[-1.0,-1.0]
-        jet.subJet_hadronFlavour=[0,0]
-        jet.subJet_partonFlavour=[0,0]
 
-        for i,s in enumerate(jet.substructure.prunedSubjets):
+        jet.subJetTags=[-99.0]*nSubjets
+        jet.subJetCTagL=[-99.0]*nSubjets
+        jet.subJetCTagB=[-99.0]*nSubjets
+        jet.subJet_hadronFlavour=[-99.0]*nSubjets
+        jet.subJet_partonFlavour=[-99.0]*nSubjets
+
+        for i,s in enumerate(substructure.prunedSubjets):
             for o in jet.subjets("SoftDrop"):
                 dr=deltaR(s.eta(),s.phi(),o.eta(),o.phi())
                 if dr<0.1:
@@ -106,22 +108,22 @@ class VVBuilder(Analyzer):
                     break;
         #Get soft Drop lorentzVector and subjets
         interface.softDrop(True,0,0.0,0.1,0.8)
-        jet.substructure.softDropJet = self.copyLV(interface.get(False))[0]*corrNoL1
+        substructure.softDropJet = self.copyLV(interface.get(False))[0]*corrNoL1
         if self.doPUPPI:
             softDropJetUnCorr = self.copyLV(interface.get(False))[0]
-            jet.substructure.softDropJetMassCor = self.getPUPPIMassWeight(softDropJetUnCorr)
-            jet.substructure.softDropJetMassBare = softDropJetUnCorr.mass()
+            substructure.softDropJetMassCor = self.getPUPPIMassWeight(softDropJetUnCorr)
+            substructure.softDropJetMassBare = softDropJetUnCorr.mass()
 
         interface.makeSubJets(False,0,2)
-        jet.substructure.softDropSubjets = self.copyLV(interface.get(False))
+        substructure.softDropSubjets = self.copyLV(interface.get(False))
 
         #get NTau
-        jet.substructure.ntau = interface.nSubJettiness(0,4,0,6,1.0,0.8,999.0,999.0,999)
+        substructure.ntau = interface.nSubJettiness(0,4,0,6,1.0,0.8,999.0,999.0,999)
         # calculate DDT tau21 (currently without softDropJetMassCor, but the L2L3 corrections)
-        jet.substructure.tau21_DDT = 0
-        if (jet.substructure.softDropJet.mass() > 0):
-            jet.substructure.tau21_DDT = jet.substructure.ntau[1]/jet.substructure.ntau[0] + ( 0.063 * math.log( (jet.substructure.softDropJet.mass()*jet.substructure.softDropJet.mass())/jet.substructure.softDropJet.pt()))
-
+        substructure.tau21_DDT = 0
+        if (substructure.softDropJet.mass() > 0):
+            substructure.tau21_DDT = substructure.ntau[1]/substructure.ntau[0] + ( 0.063 * math.log( (substructure.softDropJet.mass()*substructure.softDropJet.mass())/substructure.softDropJet.pt()))
+        setattr(jet,tag,substructure)    
 
     def substructureGEN(self,jet,event):
         #if we already filled it exit
@@ -149,7 +151,7 @@ class VVBuilder(Analyzer):
         #OK!Now save the area
         jet.substructureGEN.area=interface.getArea(1,0)
         #Get pruned lorentzVector and subjets
-        jet.substructureGEN.jet = self.copyLV(interface.get(False))[0]
+        jet.substructureGEN.jet = self.copyLV(interface.get(True))[0]
 
         interface.prune(True,0,0.1,0.5)
 

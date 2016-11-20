@@ -132,3 +132,29 @@ JJType = NTupleObjectType("JJType", baseObjectTypes=[VJType], variables = [
 NuNuJJType = NTupleObjectType("NuNuJJType", baseObjectTypes=[VJType], variables = [
     NTupleSubObject("l1",  lambda x : x.leg1,metType)
 ])
+
+
+
+
+
+
+
+
+
+
+#Types for TTbar
+WbJJType = NTupleObjectType("WbJJType", baseObjectTypes=[VJType], variables = [
+    NTupleSubObject("l1",  lambda x : x.leg1,fourVectorType),
+    NTupleSubObject("l1_Wjet",  lambda x : x.leg1.leg1,FatJetType),
+    NTupleSubObject("l1_bjet",  lambda x : x.leg1.leg2,jetType),
+])
+
+WbWbType = NTupleObjectType("WbWbType", baseObjectTypes=[fourVectorType], variables = [
+    NTupleSubObject("l1",  lambda x : x.leg1,fourVectorType),
+    NTupleSubObject("l1_Wjet",  lambda x : x.leg1.leg1,FatJetType),
+    NTupleSubObject("l1_bjet",  lambda x : x.leg1.leg2,jetType),
+    NTupleSubObject("l2",  lambda x : x.leg1,fourVectorType),
+    NTupleSubObject("l2_Wjet",  lambda x : x.leg2.leg1,FatJetType),
+    NTupleSubObject("l2_bjet",  lambda x : x.leg2.leg2,jetType),
+])
+
