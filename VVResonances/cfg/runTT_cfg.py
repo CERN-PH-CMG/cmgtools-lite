@@ -87,9 +87,9 @@ test = 1
 if test==1:
     # test a single component, using a single thread.
     selectedComponents = [ZprimeToTT_M_2000_20]
-    for c in selectedComponents:
-        c.files = c.files[:1]
-        c.splitFactor = 1
+#    for c in selectedComponents:
+#        c.files = c.files[:1]
+#        c.splitFactor = 1
 
 elif test==2:
     # test a single component, using a single thread.

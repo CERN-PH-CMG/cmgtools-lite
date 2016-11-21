@@ -150,7 +150,7 @@ WbJJType = NTupleObjectType("WbJJType", baseObjectTypes=[VJType], variables = [
     NTupleSubObject("l1_bjet",  lambda x : x.leg1.leg2,jetType),
 ])
 
-WbWbType = NTupleObjectType("WbWbType", baseObjectTypes=[fourVectorType], variables = [
+WbWbType = NTupleObjectType("WbWbType", baseObjectTypes=[VVType], variables = [
     NTupleSubObject("l1",  lambda x : x.leg1,fourVectorType),
     NTupleSubObject("l1_Wjet",  lambda x : x.leg1.leg1,FatJetType),
     NTupleSubObject("l1_bjet",  lambda x : x.leg1.leg2,jetType),
