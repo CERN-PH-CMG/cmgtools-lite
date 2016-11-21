@@ -12,7 +12,7 @@ class TTBuilder(VVBuilder):
         if len(fatJets)<2:
             return output
 
-        topJets=sorted(fatJets,key=lambda x: abs(x.substructure.softDropJet.mass()-174.0))
+        topJets=sorted(fatJets,key=lambda x: abs(x.mass()-174.0))
 
 
         TT=Pair(topJets[0],topJets[1])
