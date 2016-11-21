@@ -18,6 +18,7 @@ def createSampleLists(analysis_dir='samples/',
     ttjetsSampleNames = ["TTJets"]
     qcdSampleNames = ["QCD_HT1000to1500", "QCD_HT1500to2000", "QCD_HT2000toInf", "QCD_HT500to700", "QCD_HT700to1000"]
     vvSampleNames = ['WWTo1L1Nu2Q', 'WZTo1L1Nu2Q']
+    singleTopSamplesNames = ['TToLeptons_tch_powheg', 'TBarToLeptons_tch_powheg', 'TToLeptons_sch', 'TBar_tWch', 'T_tWch']
     ttjetsWCut = '(lnujj_l2_mergedVTruth==1&&lnujj_l2_nearestBDRTruth>0.8)'
     ttjetsNonWCut = '(!(lnujj_l2_mergedVTruth==1&&lnujj_l2_nearestBDRTruth>0.8))'
 
@@ -25,75 +26,77 @@ def createSampleLists(analysis_dir='samples/',
 
     samples_essential = []
     # add QCD samples, but not those with _ext, since they are merged with the others
-    # for sample in QCDHT:
-    #     # if not (sample.name.find("_ext") >= 0):
-    #     if sample.name in qcdSampleNames:
-    #         print "Adding", sample.name
-    #         samples_essential.append(
-    #         SampleCfg(name=sample.name, dir_name=sample.name, ana_dir=analysis_dir, tree_prod_name=tree_prod_name,
-    #               xsec=sample.xSection, sumweights=sample.nGenEvents, weight_expr=weight))
+    for sample in QCDHT:
+        continue
+        # if not (sample.name.find("_ext") >= 0):
+        if sample.name in qcdSampleNames:
+            # print "Adding", sample.name, sample.xSection, sample.nGenEvents, weight
+            samples_essential.append(
+            SampleCfg(name=sample.name, dir_name=sample.name, ana_dir=analysis_dir, tree_prod_name=tree_prod_name,
+                  xsec=sample.xSection, sumweights=sample.nGenEvents, weight_expr=weight))
 
     # TTJets sample
     sample = TTJets
     if sample.name in ttjetsSampleNames:
-        print "Adding", sample.name
+        # print "Adding", sample.name, sample.xSection, sample.nGenEvents, weight
         samples_essential.append(
-        SampleCfg(name=sample.name+'_W', dir_name=sample.name, ana_dir=analysis_dir, tree_prod_name=tree_prod_name,
+            SampleCfg(name=sample.name+'_W', dir_name=sample.name, ana_dir=analysis_dir, tree_prod_name=tree_prod_name,
               xsec=sample.xSection, sumweights=sample.nGenEvents, weight_expr=('*'.join([weight, ttjetsWCut]))))
         samples_essential.append(
-        SampleCfg(name=sample.name+'_nonW', dir_name=sample.name, ana_dir=analysis_dir, tree_prod_name=tree_prod_name,
-              xsec=sample.xSection, sumweights=sample.nGenEvents, weight_expr=('*'.join([weight, ttjetsNonWCut]))))
-
+            SampleCfg(name=sample.name+'_nonW', dir_name=sample.name, ana_dir=analysis_dir, tree_prod_name=tree_prod_name,
+                xsec=sample.xSection, sumweights=sample.nGenEvents, weight_expr=('*'.join([weight, ttjetsNonWCut]))))
 
     # DY+jets samples, but not those with _ext, since they are merged with the others
-    # for sample in DYJetsM50HT:
-    #     if not (sample.name.find("_ext") >= 0):
-    #         samples_essential.append(
-    #         SampleCfg(name=sample.name, dir_name=sample.name, ana_dir=analysis_dir, tree_prod_name=tree_prod_name,
-    #               xsec=sample.xSection, sumweights=sample.nGenEvents, weight_expr=weight))
+    for sample in DYJetsM50HT:
+        continue
+        if not (sample.name.find("_ext") >= 0):
+            samples_essential.append(
+            SampleCfg(name=sample.name, dir_name=sample.name, ana_dir=analysis_dir, tree_prod_name=tree_prod_name,
+                  xsec=sample.xSection, sumweights=sample.nGenEvents, weight_expr=weight))
 
     # W+jets samples, but not those with _ext, since they are merged with the others
     for sample in WJetsToLNuHT:
         # if not (sample.name.find("_ext") >= 0):
         if sample.name in wjetsSampleNames:
-            print "Adding", sample.name
+            # print "Adding", sample.name, sample.xSection, sample.nGenEvents, weight
             samples_essential.append(
-            SampleCfg(name=sample.name, dir_name=sample.name, ana_dir=analysis_dir, tree_prod_name=tree_prod_name,
-                  xsec=sample.xSection, sumweights=sample.nGenEvents, weight_expr=weight))
+                SampleCfg(name=sample.name, dir_name=sample.name, ana_dir=analysis_dir, tree_prod_name=tree_prod_name,
+                    xsec=sample.xSection, sumweights=sample.nGenEvents, weight_expr=weight))
 
     # DiBosons samples
     for sample in DiBosons:
         # if not ((sample.name.find("NuNu") >= 0) or (sample.name.find('WWToLNuQQ_ext') >= 0)):
         if sample.name in vvSampleNames:
-            print "Adding", sample.name
+            # print "Adding", sample.name
             samples_essential.append(
-            SampleCfg(name=sample.name, dir_name=sample.name, ana_dir=analysis_dir, tree_prod_name=tree_prod_name,
-                  xsec=sample.xSection, sumweights=sample.nGenEvents, weight_expr=weight))
+                SampleCfg(name=sample.name, dir_name=sample.name, ana_dir=analysis_dir, tree_prod_name=tree_prod_name,
+                    xsec=sample.xSection, sumweights=sample.nGenEvents, weight_expr=weight))
 
     # SingleTop samples
-    # for sample in SingleTop:
-    #     if not (sample.name.find("tZq_ll") >= 0):
-    #         samples_essential.append(
-    #         SampleCfg(name=sample.name, dir_name=sample.name, ana_dir=analysis_dir, tree_prod_name=tree_prod_name,
-    #               xsec=sample.xSection, sumweights=sample.nGenEvents, weight_expr=weight))
+    for sample.name in singleTopSamplesNames:
+        continue
+        # print "Adding", sample.name
+        samples_essential.append(
+        SampleCfg(name=sample.name, dir_name=sample.name, ana_dir=analysis_dir, tree_prod_name=tree_prod_name,
+              xsec=sample.xSection, sumweights=sample.nGenEvents, weight_expr=weight))
 
 
 
     samples_data = []
     # if channel in ['VV']:
     samples_data = [
-        SampleCfg(name='data_obs', dir_name='JetHT_Run2016B_PromptReco_v2', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
-        SampleCfg(name='data_obs', dir_name='JetHT_Run2016C_PromptReco_v2', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
-        SampleCfg(name='data_obs', dir_name='JetHT_Run2016D_PromptReco_v2', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
-        SampleCfg(name='data_obs', dir_name='SingleMuon_Run2016B_PromptReco_v2', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
-        SampleCfg(name='data_obs', dir_name='SingleMuon_Run2016C_PromptReco_v2', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
-        SampleCfg(name='data_obs', dir_name='SingleMuon_Run2016D_PromptReco_v2', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
-        SampleCfg(name='data_obs', dir_name='SingleElectron_Run2016B_PromptReco_v2', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
-        SampleCfg(name='data_obs', dir_name='SingleElectron_Run2016C_PromptReco_v2', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
-        SampleCfg(name='data_obs', dir_name='SingleElectron_Run2016D_PromptReco_v2', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
-        SampleCfg(name='data_obs', dir_name='MET_Run2016B_PromptReco_v2', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
-        SampleCfg(name='data_obs', dir_name='MET_Run2016C_PromptReco_v2', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
-        SampleCfg(name='data_obs', dir_name='MET_Run2016D_PromptReco_v2', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
+        # SampleCfg(name='data_JetHT', dir_name='JetHT_Run2016B_PromptReco_v2', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
+        # SampleCfg(name='data_JetHT', dir_name='JetHT_Run2016C_PromptReco_v2', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
+        # SampleCfg(name='data_JetHT', dir_name='JetHT_Run2016D_PromptReco_v2', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
+        SampleCfg(name='data_SingleMuon', dir_name='SingleMuon_Run2016B_PromptReco_v2', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
+        SampleCfg(name='data_SingleMuon', dir_name='SingleMuon_Run2016C_PromptReco_v2', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
+        SampleCfg(name='data_SingleMuon', dir_name='SingleMuon_Run2016D_PromptReco_v2', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
+        SampleCfg(name='data_SingleElectron', dir_name='SingleElectron_Run2016B_PromptReco_v2', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
+        SampleCfg(name='data_SingleElectron', dir_name='SingleElectron_Run2016C_PromptReco_v2', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
+        SampleCfg(name='data_SingleElectron', dir_name='SingleElectron_Run2016D_PromptReco_v2', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
+        SampleCfg(name='data_MET', dir_name='MET_Run2016B_PromptReco_v2', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
+        SampleCfg(name='data_MET', dir_name='MET_Run2016C_PromptReco_v2', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
+        SampleCfg(name='data_MET', dir_name='MET_Run2016D_PromptReco_v2', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
     ]
 
     # samples_WH = []
@@ -103,8 +106,7 @@ def createSampleLists(analysis_dir='samples/',
     #     samples_WH.append(SampleCfg(name=name.replace('HiggsSUSYBB', 'bbH').replace('HiggsSUSYGG', 'ggH'), dir_name=name,
     #                                   ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=1., sumweights=1., is_signal=True),)
 
-
-    samples_mc = samples_essential # + samples_WH
+    samples_mc = samples_essential  # + samples_WH
     samples = samples_essential + samples_data
     all_samples = samples_mc + samples_data
 
