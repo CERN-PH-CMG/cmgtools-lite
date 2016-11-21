@@ -20,9 +20,9 @@ dataFTdir = "SampLinks/Friends/"
 
 def addOptions(options):
 
-    # LUMI (overwrite default 19/fb)
-    if options.lumi > 19:
-        options.lumi = 2.2
+    # LUMI (overwrite default 19/fb), remove this always give lumi in options
+#    if options.lumi > 19:
+#        options.lumi = 2.2
 
     # set tree options -- set only if not set in cmd line
     if options.path == "./":
