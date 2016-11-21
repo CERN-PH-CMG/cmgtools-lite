@@ -21,12 +21,12 @@ cuts = {}
 # if adding additional cuts, join with * and not &&, e.g.
 # inc_cut = '*'.join([lnujj_inc])
 # cuts['lnujj_Inclusive'] = categories["lnujj_Inclusive"]
-# cuts['lnujj_e'] = categories["lnujj_e"]
+cuts['lnujj_e'] = categories["lnujj_e"]
 cuts['lnujj_mu'] = categories["lnujj_mu"]
-# cuts['lnujj_e_HP'] = categories["lnujj_e_HP"]
-# cuts['lnujj_mu_HP'] = categories["lnujj_mu_HP"]
-# cuts['lnujj_e_LP'] = categories["lnujj_e_LP"]
-# cuts['lnujj_mu_LP'] = categories["lnujj_mu_LP"]
+cuts['lnujj_e_HP'] = categories["lnujj_e_HP"]
+cuts['lnujj_mu_HP'] = categories["lnujj_mu_HP"]
+cuts['lnujj_e_LP'] = categories["lnujj_e_LP"]
+cuts['lnujj_mu_LP'] = categories["lnujj_mu_LP"]
 
 # -> Command line
 analysis_dir = '/data/clange/ntuples/VV_20161108/'
