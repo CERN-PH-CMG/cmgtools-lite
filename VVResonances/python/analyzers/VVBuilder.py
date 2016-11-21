@@ -50,6 +50,7 @@ class VVBuilder(Analyzer):
         if hasattr(jet,tag):
             return
 
+        
         constituents=[]
         LVs = ROOT.std.vector("math::XYZTLorentzVector")()
 
@@ -65,6 +66,10 @@ class VVBuilder(Analyzer):
         outputJets = interface.get(True)
         if len(outputJets)==0:
             return
+
+#        setattr(jet,tag,Substructure())
+#        substructure=getattr(jet,tag)
+        substructure=Substructure()
 
         #For the pruned sub jets +PUPPIcalculate the correction
         #without L1

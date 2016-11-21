@@ -6,11 +6,15 @@ class TTBuilder(VVBuilder):
         super(TTBuilder,self).__init__(cfg_ana, cfg_comp, looperName)
 
 
-    def makeJJ(self,event,topJets,leptons):
+    def makeJJ(self,event,fatJets,leptons):
         output=[]
 
-        if len(topJets)<2:
+        if len(fatJets)<2:
             return output
+
+        topJets=sorted(fatJets,key=lambda x: abs(x.substructure.softDropJet.mass()-174.0))
+
+
         TT=Pair(topJets[0],topJets[1])
         if abs(TT.leg1.eta()-TT.leg2.eta())>1.3:
             return output
@@ -31,15 +35,26 @@ class TTBuilder(VVBuilder):
         return output
 
 
-    def makeJWb(self,event,topJets,wJets,leptons):
+    def makeJWb(self,event,fatJets,leptons):
         output=[]
 
-        if len(topJets)<1:
-            return output
-        if len(wJets)<1:
+        if len(fatJets)<2:
             return output
 
-        otherJets = self.selectJets(event.jets,lambda x: x.pt()>30.0  and x.jetID('POG_PFID_Loose')  ,leptons,0.3,[topJets[0],wJets[0]],0.8)
+        
+        top=min(fatJets,key=lambda x: abs(x.substructure.softDropJet.mass()-174.0))
+        W=None
+        WM=1000.0
+        for j in fatJets:
+            if deltaR(j.eta(),j.phi(),top.eta(),top.phi())>0.8:
+                residual = abs(j.substructure.softDropJet.mass()-80.0)
+                if residual<WM:
+                    WM=residual
+                    W=j
+
+        if W==None:
+            return output
+        otherJets = self.selectJets(event.jets,lambda x: x.pt()>30.0  and x.jetID('POG_PFID_Loose')  ,leptons,0.3,[top,W],0.8)
 
         if len(otherJets)==0:
             return output
@@ -47,21 +62,19 @@ class TTBuilder(VVBuilder):
         #make all combos
         Wbs=[]
         for j in otherJets:
-            Wbs.append(Pair(wJets[0],j))
-
-            
-            
+            Wbs.append(Pair(W,j))
         #The one closest to top mass    
         bestWb = min(Wbs,key=lambda x:abs(x.mass()-174.0))    
-        TT=Pair(bestWb,topJets[0])
+
+        #best fat jet other
+
+        TT=Pair(bestWb,top)
         if abs(TT.leg1.eta()-TT.leg2.eta())>1.3:
             return output
 
         #topology of the event (other stuff on top of tt)
         satteliteJets = self.selectJets(event.jets,lambda x: x.pt()>30.0  and x.jetID('POG_PFID_Loose')  ,leptons+[TT.leg1.leg2],0.3,[TT.leg1.leg1,TT.leg2],0.8)
         self.topology(TT,satteliteJets,leptons)
-
-
 
         if self.cfg_comp.isMC:
             self.substructureGEN(TT.leg2,event)
@@ -155,6 +168,9 @@ class TTBuilder(VVBuilder):
 
         leptons= filter(lambda x: (abs(x.pdgId())==11 and x.heepID) or (abs(x.pdgId())==13 and x.highPtIDIso ),event.selectedLeptons)
         fatJetsPre=self.selectJets(event.jetsAK8,lambda x: x.pt()>200.0 and abs(x.eta())<2.4 and x.jetID('POG_PFID_Loose')  ,leptons,1.0)
+
+
+
         #precalculate substructure for all fat jets
         fatJets=[]
         for fat in fatJetsPre:
@@ -162,8 +178,9 @@ class TTBuilder(VVBuilder):
             if hasattr(fat,'substructure'):
                 fatJets.append(fat)
 
+
         TT=self.makeJJ(event,fatJets,leptons)
-        WbT=self.makeJWb(event,fatJets,fatJets,leptons)
+        WbT=self.makeJWb(event,fatJets,leptons)
         WbWb=self.makeWbWb(event,fatJets,leptons)
 
         setattr(event,'TT'+self.cfg_ana.suffix,TT)
