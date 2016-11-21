@@ -53,8 +53,10 @@ triggers_FR_1e_b2g = [ "HLT_Ele17_CaloIdL_TrkIdL_IsoVL_v*", "HLT_Ele12_CaloIdL_T
 
 ### GP: did not look at anything below this
 
-### Mike ---> for the VV analysis 
+### Mike ---> for the VV analysis
 triggers_dijet_fat=["HLT_PFHT650_WideJetMJJ900DEtaJJ1p5_v*","HLT_PFHT650_WideJetMJJ950DEtaJJ1p5_v*"]
+# triggers to recover HT trigger inefficiency in late 2016
+triggers_jet_recoverHT=["HLT_PFJet450_v*", "HLT_PFJet500_v*", "HLT_AK8PFJet450_v*", "HLT_AK8PFJet500_v*", "HLT_CaloJet500_NoJetID_v*"]
 ### ----> for the MT2 analysis
 
 triggers_MT2_mumu = ["HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v*", "HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v*"]
