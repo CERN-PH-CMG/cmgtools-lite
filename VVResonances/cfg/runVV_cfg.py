@@ -65,7 +65,8 @@ from CMGTools.VVResonances.analyzers.core_cff import *
 #-------- SAMPLES AND TRIGGERS -----------
 from CMGTools.VVResonances.samples.loadSamples import *
 
-selectedComponents = mcSamples+dataSamples
+selectedComponents = mcSamples+signalSamples+zprimeSamples
+selectedComponents = TTs+WJetsToLNuHT
 
 
 
@@ -76,9 +77,7 @@ from CMGTools.VVResonances.analyzers.tree_cff import *
 
 #-------- SEQUENCE
 
-sequence = cfg.Sequence(coreSequence+[vvSkimmer,vvTreeProducer])
-
-
+sequence = cfg.Sequence(coreSequence+[vvAna,metWeightAna,vvSkimmer,vvTreeProducer])
 from CMGTools.RootTools.samples.triggers_13TeV_Spring15 import *
 
 

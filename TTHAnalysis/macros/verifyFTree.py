@@ -17,10 +17,14 @@ def openRootOrUrl(myfile):
     elif os.path.exists(myfile+'.url'):
         with open(myfile+'.url','r') as urlf:
             myfile = urlf.readline().replace('\n','')
-            _f_t = ROOT.TXNetFile(myfile)
+            if myfile.startswith("root://"):
+                _f_t = ROOT.TXNetFile(myfile)
+            else:
+                _f_t = ROOT.TFile.Open(myfile)
     return _f_t
 
 for dset in dsets:
+    print "running " + dset
     f_t = openRootOrUrl(sys.argv[1]+'/'+dset+'/treeProducerSusyMultilepton/tree.root')
     t_t = f_t.Get("tree")
     n_t = t_t.GetEntries()

@@ -1,22 +1,71 @@
 from DataFormats.FWLite import Events as FWLiteEvents
+from CMGTools.Production.changeComponentAccessMode import convertFile as convertFileAccess 
 import os, subprocess, json, timeit
 
 class EOSEventsWithDownload(object):
     def __init__(self, files, tree_name):
-        query = ["edmFileUtil", "--ls", "-j"]+[("file:"+f if f[0]=="/" else f) for f in files]
-        retjson = subprocess.check_output(query)
-        retobj = json.loads(retjson)
+        self.aggressive = getattr(self.__class__, 'aggressive', 0)
+        print "Aggressive prefetching level %d" % self.aggressive
         self._files = []
         self._nevents = 0
-        for entry in retobj:
-            self._files.append( (str(entry['file']), self._nevents, self._nevents+entry['events'] ) ) # str() is needed since the output is a unicode string
-            self._nevents += entry['events']
+        try:
+            query = ["edmFileUtil", "--ls", "-j"]+[("file:"+f if f[0]=="/" else f) for f in files]
+            retjson = subprocess.check_output(query)
+            retobj = json.loads(retjson)
+            for entry in retobj:
+                self._files.append( (str(entry['file']), self._nevents, self._nevents+entry['events'] ) ) # str() is needed since the output is a unicode string
+                self._nevents += entry['events']
+        except subprocess.CalledProcessError:
+            print "Failed the big query: ",query
+            ## OK, now we go for something more fancy
+            for f in files:
+                print "Try file: ",f
+                OK = False
+                # step 1: try the local query
+                if f[0] == "/":
+                    urls = [ 'file:'+f ] 
+                else:
+                    urls = [ f ] # one retry
+                    try:
+                        # then try the two main redirectors, and EOS again
+                        if "/store/data" in f and "PromptReco" in f:
+                            urls.append( convertFileAccess(f,  "root://eoscms.cern.ch//eos/cms/tier0%s") )
+                        urls.append( convertFileAccess(f,  "root://xrootd-cms.infn.it/%s") )
+                        urls.append( convertFileAccess(f,  "root://cmsxrootd.fnal.gov/%s") )
+                        urls.append( convertFileAccess(f,  "root://cms-xrd-global.cern.ch/%s") )
+                        urls.append( convertFileAccess(f,  "root://eoscms.cern.ch//eos/cms%s") )
+                    except:
+                        pass
+                for u in urls:
+                    print "Try url: ",u
+                    try:
+                        query = ["edmFileUtil", "--ls", "-j", u]
+                        retjson = subprocess.check_output(query)
+                        retobj = json.loads(retjson)
+                        for entry in retobj:
+                            self._files.append( (str(entry['file']), self._nevents, self._nevents+entry['events'] ) ) # str() is needed since the output is a unicode string
+                            self._nevents += entry['events']
+                        OK = True
+                        print "Successful URL ",u
+                        break
+                    except:
+                        print "Failed the individual query: ",query
+                        pass
+                if not OK:
+                    if self.aggressive == 3 and "/store/mc" in f:
+                        print "Will skip file ",f
+                        continue
+                    raise RuntimeError, "Failed to file %s in any way. aborting job " % f
+                else:
+                    print self._files
+        if self.aggressive == 3 and self._nevents == 0:
+            raise RuntimeError, "Failed to find all files for this component. aborting job "
         self._fileindex = -1
         self._localCopy = None
         self.events = None
         ## Discover where I am
         self.inMeyrin = True
-        if 'LSB_JOBID' in os.environ and 'HOSTNAME' in os.environ:
+        if 'LSB_JOBID' in os.environ and 'HOSTNAME' in os.environ and self.aggressive == 1:
             hostname = os.environ['HOSTNAME'].replace(".cern.ch","")
             try:
                 wigners = subprocess.check_output(["bmgroup","g_wigner"]).split()
@@ -27,13 +76,15 @@ class EOSEventsWithDownload(object):
                 pass
         ## How aggressive should I be?
         # 0 = default; 1 = always fetch from Wigner; 2 = always fetch from anywhere if it's a xrootd url
-        self.aggressive = getattr(self.__class__, 'aggressive', 0)
-        print "Aggressive prefetching level %d" % self.aggressive
     def __len__(self):
         return self._nevents
     def __getattr__(self, key):
         return getattr(self.events, key)
     def isLocal(self,filename):
+        if self.aggressive == -2: return True
+        if filename.startswith("root://") and not filename.startswith("root://eoscms"):
+            return False # always prefetch AAA
+        if self.aggressive == -1: return True
         if self.aggressive >= 2: return False
         if self.aggressive >= 1 and not self.inMeyrin: return False
         fpath = filename.replace("root://eoscms.cern.ch//","/").replace("root://eoscms//","/")

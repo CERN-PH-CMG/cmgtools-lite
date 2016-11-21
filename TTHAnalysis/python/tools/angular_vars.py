@@ -35,9 +35,9 @@ class angular_vars:
             _ijets_list = getattr(event,"iJ"+self.systsJEC[_var]+self.inputlabel)
             _ijets = [ij for ij in _ijets_list]
             jets = [ (jetsc[ij] if ij>=0 else jetsd[-ij-1]) for ij in _ijets]
-            bloose  = [j for j in jets if j.btagCSV > 0.605]
-            bmedium = [j for j in jets if j.btagCSV > 0.890]
-            btight = [j for j in jets if j.btagCSV > 0.970]
+            bloose  = [j for j in jets if j.btagCSV > 0.46]
+            bmedium = [j for j in jets if j.btagCSV > 0.80]
+            btight = [j for j in jets if j.btagCSV > 0.935]
             met = getattr(event,"met"+self.systsJEC[_var]+"_pt")
             metphi = getattr(event,"met"+self.systsJEC[_var]+"_phi")
             njet = len(jets); nlep = len(leps); nbloose = len(bloose); nbmedium = len(bmedium); nbtight = len(btight);
