@@ -26,7 +26,7 @@ jetAna.mcGT = "Spring16_25nsV6_MC"
 jetAna.dataGT = "Spring16_25nsV6_DATA"
 ##Lets turn everything on for now, at least we know what is applied
 jetAna.addJECShifts = True
-jetAna.smearJets = True
+jetAna.smearJets = False
 jetAna.recalibrateJets = True 
 jetAna.applyL2L3Residual = True
 metAna.recalibrate = True
