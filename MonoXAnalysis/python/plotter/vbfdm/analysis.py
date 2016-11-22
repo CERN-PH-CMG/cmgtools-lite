@@ -42,7 +42,14 @@ class Analysis:
      
         if options.upToCut: anaOpts.append('-U '+options.upToCut)
      
-        fev = ' -F mjvars/t \"'+T+'/friends/evVarFriend_{cname}.root\" '
+        fdir = {
+            'SR': 'friends_SR',
+            'ZM': 'friends_VM',
+            'WM': 'friends_VM',
+            'ZE': 'friends_VE',
+            'WE': 'friends_VE',
+            }
+        fev = ' -F mjvars/t \"'+T+'/'+fdir[region]+'/evVarFriend_{cname}.root\" '
         fsf = ' --FMC sf/t \"'+T+'/friends/sfFriend_{cname}.root\" '
         anaOpts += [fev, fsf]
         if options.synch == True: anaOpts += ['-u']
