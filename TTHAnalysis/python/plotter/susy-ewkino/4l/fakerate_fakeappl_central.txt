@@ -1,4 +1,5 @@
-weight         : EWK3L_fakeTransfer(evt,EWK3L_fakeRate(LepSel_conePt[0],LepSel_eta[0],LepSel_pdgId[0]),isGoodFake(LepSel_pt[0],LepSel_isTight[0]),EWK3L_fakeRate(LepSel_conePt[1],LepSel_eta[1],LepSel_pdgId[1]),isGoodFake(LepSel_pt[1],LepSel_isTight[1]),EWK3L_fakeRate(LepSel_conePt[2],LepSel_eta[2],LepSel_pdgId[2]),isGoodFake(LepSel_pt[2],LepSel_isTight[2]),EWK3L_fakeRate(LepSel_conePt[3],LepSel_eta[3],LepSel_pdgId[3]),isGoodFake(LepSel_pt[3],LepSel_isTight[3]))
+weight         : EWK3L_fakeTransfer(4,EWK3L_fakeRate(LepSel_conePt[0],LepSel_eta[0],LepSel_pdgId[0]),isGoodFake(LepSel_pt[0],LepSel_isTight[0]),EWK3L_fakeRate(LepSel_conePt[1],LepSel_eta[1],LepSel_pdgId[1]),isGoodFake(LepSel_pt[1],LepSel_isTight[1]),EWK3L_fakeRate(LepSel_conePt[2],LepSel_eta[2],LepSel_pdgId[2]),isGoodFake(LepSel_pt[2],LepSel_isTight[2]),EWK3L_fakeRate(LepSel_conePt[3],LepSel_eta[3],LepSel_pdgId[3]),isGoodFake(LepSel_pt[3],LepSel_isTight[3]))*(!allTight(4, LepSel_isTight[0], LepSel_isTight[1], LepSel_isTight[2], LepSel_isTight[3]))
+
 cut-change     : allTight        : !allTight
 
 change: LepSel1_(\w+)  : LepSel_\1[0]

@@ -63,10 +63,14 @@ if __name__ == "__main__":
             fname = open(fname+".url","r").readline().strip()
         f = ROOT.TFile.Open(fname,'read')
         t = f.tree
-        h = f.CountSMS
-        hw = f.SumGenWeightsSMS
+        h = f.Get("CountSMS")
+        hw = f.Get("SumGenWeightsSMS")
+        hasAll = (h and hw)
+        if not hasAll: options.gen = True
+        #h = f.CountSMS
+        #hw = f.SumGenWeightsSMS
 
-        print 'Total events: %d originally, %d after production skim'%(int(h.Integral()),t.GetEntries())
+        if hasAll: print 'Total events: %d originally, %d after production skim'%(int(h.Integral()),t.GetEntries())
 
         t.SetBranchStatus('*',0)
         ## split using GenPart info
@@ -75,7 +79,7 @@ if __name__ == "__main__":
             t.SetBranchStatus('GenPart_pdgId',1)
             t.SetBranchStatus('GenPart_mass' ,1)
             for nev in xrange(t.GetEntries()):
-                if nev%1000==0: print 'Scanning event %d'%nev
+                if nev%1000==0: print 'Gen-Scanning event %d'%nev
                 t.GetEntry(nev)
                 mass1 = 0
                 mass2 = 0
