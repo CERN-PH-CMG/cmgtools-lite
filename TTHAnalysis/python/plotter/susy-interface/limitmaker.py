@@ -13,7 +13,6 @@ base = "python makeShapeCardsSusy.py {MCA} {CUTS} \"{EXPR}\" \"{BINS}\" {SYS} -o
 options = maker.splitLists(options)
 mm      = maker.Maker("limitmaker", base, args, options)
 
-scenario = mm.getScenario()
 sl = str(options.lumi)
 
 friends = mm.collectFriends()	
@@ -24,8 +23,9 @@ outDirs = []
 for r in range(len(mm.regions)):
 	mm.iterateRegion()
 
-	flags   = mm.collectFlags  ("flagsLimits")
-	procs   = " ".join(["-p "+b for b in mm.getProcs()])
+	scenario = mm.getScenario()
+	flags    = mm.collectFlags  ("flagsLimits")
+	procs    = " ".join(["-p "+b for b in mm.getProcs()])
 	binnings = [mm.getVariable("bins","")] if not options.perBin else func.getAllBins(mm.getVariable("bins",""))
 	
 	for ib,b in enumerate(binnings):

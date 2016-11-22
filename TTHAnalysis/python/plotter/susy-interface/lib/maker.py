@@ -292,7 +292,8 @@ class Maker():
 		all  = file.Get("tree").GetEntries()
 		file.Close()
 		chunks = int(all)/nevt + 1
-		self.bunches = [nevt for i in range(chunks-1)] + [int(all)%nevt]
+		#self.bunches = [nevt for i in range(chunks-1)] + [int(all)%nevt]
+		self.bunches = [nevt for i in range(chunks)]
 	def registerCmd(self, cmd, name = "maker", forceLocal = False, collect = 0):
 		if self.options.pretend:
 			print cmd

@@ -109,17 +109,21 @@ class LeptonBuilderEWK:
         self.makeMass(3)
         self.makeMt2(3)
         self.findBestOSpair(3)
-        self.findBestOSpair(3, "mllL", True       )
-        self.findBestOSpair(3, "mllT", False, True)
         self.findMtMin(3)
+        self.findBestOSpair(3, "mllL", True , False)
+        self.findMtMin(3, "L")
+        self.findBestOSpair(3, "mllT", False, True )
+        self.findMtMin(3, "T")
 
         self.collectOSpairs(4, True)
         self.makeMass(4)
         self.makeMt2(4)
         self.findBestOSpair(4)
-        self.findBestOSpair(4, "mllL", True       )
-        self.findBestOSpair(4, "mllT", False, True)
         self.findMtMin(4)
+        self.findBestOSpair(4, "mllL", True , False)
+        self.findMtMin(4, "L")
+        self.findBestOSpair(4, "mllT", False, True )
+        self.findMtMin(4, "T")
 
 
     ## collectObjects
@@ -251,7 +255,7 @@ class LeptonBuilderEWK:
 
     ## findMtMin
     ## _______________________________________________________________
-    def findMtMin(self, max):
+    def findMtMin(self, max, name=""):
 
         self.mTmin = {}
         used = [self.bestOSPair.l1, self.bestOSPair.l2] if self.bestOSPair else []
@@ -270,15 +274,15 @@ class LeptonBuilderEWK:
 
             if len(bufferPF):
                 bufferPF.sort()
-                self.ret["mT_" + str(max) + "l" + self.systsJEC[var]] = bufferPF[0]
+                self.ret["mT"+name+"_" + str(max) + "l" + self.systsJEC[var]] = bufferPF[0]
             else:
-                self.ret["mT_" + str(max) + "l" + self.systsJEC[var]] = -1
+                self.ret["mT"+name+"_" + str(max) + "l" + self.systsJEC[var]] = -1
 
             if len(bufferGEN):
                 bufferGEN.sort()
-                self.ret["mT_" + str(max) + "l_gen" + self.systsJEC[var]] = bufferGEN[0]
+                self.ret["mT"+name+"_" + str(max) + "l_gen" + self.systsJEC[var]] = bufferGEN[0]
             else:
-                self.ret["mT_" + str(max) + "l_gen" + self.systsJEC[var]] = -1
+                self.ret["mT"+name+"_" + str(max) + "l_gen" + self.systsJEC[var]] = -1
 
 
     ## findTau
@@ -348,15 +352,23 @@ class LeptonBuilderEWK:
   
         for var in self.systsJEC:
             biglist.append(("mT_3l"       + self.systsJEC[var], "F"))
+            biglist.append(("mTL_3l"      + self.systsJEC[var], "F"))
+            biglist.append(("mTT_3l"      + self.systsJEC[var], "F"))
             biglist.append(("mT2L_3l"     + self.systsJEC[var], "F"))
             biglist.append(("mT2T_3l"     + self.systsJEC[var], "F"))
             biglist.append(("mT_4l"       + self.systsJEC[var], "F"))
+            biglist.append(("mTL_4l"      + self.systsJEC[var], "F"))
+            biglist.append(("mTT_4l"      + self.systsJEC[var], "F"))
             biglist.append(("mT2L_4l"     + self.systsJEC[var], "F"))
             biglist.append(("mT2T_4l"     + self.systsJEC[var], "F"))
             biglist.append(("mT_3l_gen"   + self.systsJEC[var], "F"))
+            biglist.append(("mTL_3l_gen"  + self.systsJEC[var], "F"))
+            biglist.append(("mTT_3l_gen"  + self.systsJEC[var], "F"))
             biglist.append(("mT2L_3l_gen" + self.systsJEC[var], "F"))
             biglist.append(("mT2T_3l_gen" + self.systsJEC[var], "F"))
             biglist.append(("mT_4l_gen"   + self.systsJEC[var], "F"))
+            biglist.append(("mTL_4l_gen"  + self.systsJEC[var], "F"))
+            biglist.append(("mTT_4l_gen"  + self.systsJEC[var], "F"))
             biglist.append(("mT2L_4l_gen" + self.systsJEC[var], "F"))
             biglist.append(("mT2T_4l_gen" + self.systsJEC[var], "F"))
 
@@ -522,15 +534,23 @@ class LeptonBuilderEWK:
 
         for var in self.systsJEC:
             self.ret["mT_3l"       + self.systsJEC[var]] = 0.
+            self.ret["mTL_3l"      + self.systsJEC[var]] = 0.
+            self.ret["mTT_3l"      + self.systsJEC[var]] = 0.
             self.ret["mT2L_3l"     + self.systsJEC[var]] = 0.  
             self.ret["mT2T_3l"     + self.systsJEC[var]] = 0. 
             self.ret["mT_4l"       + self.systsJEC[var]] = 0.
+            self.ret["mTL_4l"      + self.systsJEC[var]] = 0.
+            self.ret["mTT_4l"      + self.systsJEC[var]] = 0.
             self.ret["mT2L_4l"     + self.systsJEC[var]] = 0.  
             self.ret["mT2T_4l"     + self.systsJEC[var]] = 0. 
             self.ret["mT_3l_gen"   + self.systsJEC[var]] = 0.
+            self.ret["mTL_3l_gen"  + self.systsJEC[var]] = 0.
+            self.ret["mTT_3l_gen"  + self.systsJEC[var]] = 0.
             self.ret["mT2L_3l_gen" + self.systsJEC[var]] = 0.  
             self.ret["mT2T_3l_gen" + self.systsJEC[var]] = 0. 
             self.ret["mT_4l_gen"   + self.systsJEC[var]] = 0.
+            self.ret["mTL_4l_gen"  + self.systsJEC[var]] = 0.
+            self.ret["mTT_4l_gen"  + self.systsJEC[var]] = 0.
             self.ret["mT2L_4l_gen" + self.systsJEC[var]] = 0.  
             self.ret["mT2T_4l_gen" + self.systsJEC[var]] = 0. 
 

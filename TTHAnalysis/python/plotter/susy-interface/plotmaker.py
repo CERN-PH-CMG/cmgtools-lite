@@ -49,12 +49,13 @@ base = "python mcPlots.py {MCA} {CUTS} {PLOTFILE} -P {T} --neg --s2v --tree {TRE
 options = maker.splitLists(options)
 mm      = maker.Maker("plotmaker", base, args, options)
 
+friends = mm.collectFriends()	
+mccs    = mm.collectMCCs   ()
+macros  = mm.collectMacros ()	
+
 for r in range(len(mm.regions)):
 	mm.iterateRegion()
 
-	friends = mm.collectFriends()	
-	mccs    = mm.collectMCCs   ()
-	macros  = mm.collectMacros ()	
 	flags   = mm.collectFlags  ("flagsPlots")
 	ratio   = "--showRatio" if options.ratio else ""
 	

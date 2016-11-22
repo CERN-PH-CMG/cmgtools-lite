@@ -10,16 +10,16 @@ base = "python mcDump.py --dumpFile .fdump.txt {MCA} {CUTS} {FMT} -P {T} --s2v -
 options = maker.splitLists(options)
 mm      = maker.Maker("dumpmaker", base, args, options)
 
-scenario = mm.getScenario   ()
 friends  = mm.collectFriends()	
 mccs     = mm.collectMCCs   ()
 macros   = mm.collectMacros ()	
-flags    = mm.collectFlags  ("flagDumps", False)
 
 for r in range(len(mm.regions)):
 	mm.iterateRegion()
 	
 	fmt = "'{run:1d} {lumi:9d} {evt:12d}\\t"+mm.getVariable("fmt","").replace("\\\\t","\\t")+"'"
+	scenario = mm.getScenario   ()
+	flags    = mm.collectFlags  ("flagDumps", False)
 	procs    = mm.getProcs()
 
 	for p in procs:

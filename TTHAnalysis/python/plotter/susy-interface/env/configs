@@ -24,7 +24,7 @@ BEGIN::3l
   flagsPlots  +:= --plotgroup rares_ttX+=rares_ttW --plotgroup rares_ttX+=rares_ttZ
   flagsPlots  +:= --plotgroup fakes_appldata+=promptsub
   flagsScans  +:= --noNegVar --hardZero
-  flagsScans  +:=  --plotgroup fakes_appldata+=promptsub
+  flagsScans  +:= --plotgroup fakes_appldata+=promptsub --plotgroup fakes_appldata_ewk_Up+=promptsub_ewk_Up --plotgroup fakes_appldata_ewk_Dn+=promptsub_ewk_Dn
   flagsScans  +:= --ignore promptsub --ignore promptsub_ewk_Up --ignore promptsub_ewk_Dn 
   flagsScans  +:= --neglist promptsub --neglist promptsub_ewk_Up --neglist promptsub_ewk_Dn 
   jec          := jec

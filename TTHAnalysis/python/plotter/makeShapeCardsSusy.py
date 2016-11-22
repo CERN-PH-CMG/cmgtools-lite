@@ -91,10 +91,10 @@ if len(options.infile)>0:
     print report.keys()
     print todo
     for p in todo:
-        report.update(mca.getPlotsRaw("x", args[2], args[3], cuts.allCuts(), nodata=options.asimov, process=p))
+        report.update(mca.getPlotsRaw("x", args[2], args[3], cuts.allCuts(), nodata=options.asimov, process=p, closeTreeAfter=True))
 ## no infile given, process all histos
 else:
-    report = mca.getPlotsRaw("x", args[2], args[3], cuts.allCuts(), nodata=options.asimov)
+    report = mca.getPlotsRaw("x", args[2], args[3], cuts.allCuts(), nodata=options.asimov, closeTreeAfter=True)
 
 
 

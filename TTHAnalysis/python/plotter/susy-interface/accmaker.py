@@ -15,7 +15,9 @@ options = maker.splitLists(options)
 mm      = maker.Maker("accmaker", baseAll, args, options)
 if options.perBin: mm.reloadBase(baseBin)
 
-scenario = mm.getScenario()
+friends = mm.collectFriends()	
+mccs    = mm.collectMCCs   ()
+macros  = mm.collectMacros ()	
 sl = str(options.lumi)
 
 for r in range(len(mm.regions)):
@@ -24,10 +26,8 @@ for r in range(len(mm.regions)):
 	output = mm.outdir +"/"+ scenario +"/accs"+ sl.replace(".","p") +"/"+ mm.region.name
 	func.mkdir(output)
 	
-	friends = mm.collectFriends()	
-	mccs    = mm.collectMCCs   ()
-	macros  = mm.collectMacros ()	
-	flags   = mm.collectFlags  ("flagsAccs")
+	scenario = mm.getScenario()
+	flags    = mm.collectFlags  ("flagsAccs")
 	
 	procs   = mm.collectProcs()
 	final   = "-f" if options.final else ""

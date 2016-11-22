@@ -25,19 +25,21 @@ class Job():
 	def addCommands(self, commands):
 		self.commands += commands
 	def batchRuns(self):
+		if hasattr(self, "batchDone"): return self.batchDone
 		if self.batchId==-1 or not self.options.queue: return False
 		if any([t in self.options.queue for t in ["all.q", "long.q", "short.q"]]):
 		#if self.options.queue in ["all.q", "long.q", "short.q", "all.q@t3wn59.psi.ch"]:
 			jobLine = bash("qstat -j "+str(self.batchId))
-			return not(jobLine=="" or "Following jobs do not exist" in jobLine)
+			toReturn = not(jobLine=="" or "Following jobs do not exist" in jobLine)
 		elif any([t in self.options.queue for t in ["batch"]]):
 		#elif self.options.queue in ["batch"]:
 			jobLine = bash("qstat "+str(self.batchId))
-			return not(jobLine=="" or "Unknown Job Id Error" in jobLine)
+			toReturn = not(jobLine=="" or "Unknown Job Id Error" in jobLine)
 		else:
 			jobLine = bash("bjobs "+str(self.batchId))
-			return not(jobLine=="" or "Job <"+str(self.batchId)+"> is not found" in jobLine)
-		return False
+			toReturn = not(jobLine=="" or "Job <"+str(self.batchId)+"> is not found" in jobLine)
+		if toReturn: self.batchDone = True
+		return toReturn
 	def isDone(self):
 		return os.path.exists(self.master.jobpath+"/"+self.id)
 	def isError(self):
