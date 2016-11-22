@@ -13,10 +13,10 @@ def _runYields(args):
     return (key, tty.getYields(cuts,noEntryLine=noEntryLine,fsplit=fsplit))
 
 def _runPlot(args):
-    key,tty,plotspec,cut,fsplit = args
+    key,tty,plotspec,cut,fsplit,closeTree = args
     timer = ROOT.TStopwatch()
     #print "Starting plot %s for %s, %s" % (plotspec.name,key,tty._cname)
-    ret = (key,tty.getPlot(plotspec,cut,fsplit=fsplit))
+    ret = (key,tty.getPlot(plotspec,cut,fsplit=fsplit,closeTreeAfter=closeTree))
     #print "Done plot %s for %s, %s, fsplit %s in %s s, at %.2f; entries = %d, time/entry = %.3f ms" % (plotspec.name,key,tty._cname,fsplit,timer.RealTime(), 0.001*(long(ROOT.gSystem.Now()) - _T0), ret[1].GetEntries(), (long(ROOT.gSystem.Now()) - _T0)/float(ret[1].GetEntries()))
     return ret
 
@@ -286,9 +286,9 @@ class MCAnalysis:
             if self._backgrounds and not ret.has_key('background') and len(allBg) > 0:
                 ret['background'] = mergeReports(allBg)
         return ret
-    def getPlotsRaw(self,name,expr,bins,cut,process=None,nodata=False,makeSummary=False):
-        return self.getPlots(PlotSpec(name,expr,bins,{}),cut,process,nodata,makeSummary)
-    def getPlots(self,plotspec,cut,process=None,nodata=False,makeSummary=False):
+    def getPlotsRaw(self,name,expr,bins,cut,process=None,nodata=False,makeSummary=False,closeTreeAfter=False):
+        return self.getPlots(PlotSpec(name,expr,bins,{}),cut,process,nodata,makeSummary,closeTreeAfter)
+    def getPlots(self,plotspec,cut,process=None,nodata=False,makeSummary=False,closeTreeAfter=False):
         ret = { }
         allSig = []; allBg = []
         tasks = []
@@ -296,7 +296,7 @@ class MCAnalysis:
             if key == 'data' and nodata: continue
             if process != None and key != process: continue
             for tty in ttys:
-                tasks.append((key,tty,plotspec,cut,None))
+                tasks.append((key,tty,plotspec,cut,None,closeTreeAfter))
         if self._options.splitFactor > 1 or  self._options.splitFactor == -1:
             tasks = self._splitTasks(tasks)
         retlist = self._processTasks(_runPlot, tasks, name="plot "+plotspec.name)

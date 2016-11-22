@@ -1,8 +1,8 @@
 void trainLeptonID(TString name, TString sig1file, TString sig2file, TString bkg1file, TString bkg2file, bool doMultiClass = false, TString file_for_sigW_1="", TString file_for_sigW_2="", TString file_for_bkgW_1="", TString file_for_bkgW_2="", double int1s=0, double int2s=0, double int1b=0, double int2b=0) {
-    TFile *_f_s1 = new TFile(sig1file.Data(),"read");
-    TFile *_f_s2 =  (sig2file=="") ? NULL : new TFile(sig2file.Data(),"read");
-    TFile *_f_b1 = new TFile(bkg1file.Data(),"read");
-    TFile *_f_b2 =  (bkg2file=="") ? NULL : new TFile(bkg2file.Data(),"read");
+    TFile *_f_s1 = TFile::Open(sig1file.Data(),"read");
+    TFile *_f_s2 =  (sig2file=="") ? NULL : TFile::Open(sig2file.Data(),"read");
+    TFile *_f_b1 = TFile::Open(bkg1file.Data(),"read");
+    TFile *_f_b2 =  (bkg2file=="") ? NULL : TFile::Open(bkg2file.Data(),"read");
     TTree *dSig1 = (TTree*) _f_s1->Get("tree");
     TTree *dSig2 = (_f_s2) ? ((TTree*) _f_s2->Get("tree")) : NULL;
     if (file_for_sigW_1!="") dSig1->AddFriend("wtree",file_for_sigW_1.Data());

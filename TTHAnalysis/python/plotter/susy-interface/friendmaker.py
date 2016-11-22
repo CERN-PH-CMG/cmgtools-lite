@@ -38,7 +38,7 @@ options         = maker.splitLists(options)
 options.modules = func.splitList(options.modules)
 options.accept  = func.splitList(options.accept )
 options.exclude = func.splitList(options.exclude)
-mm              = maker.Maker(base, args, options)
+mm              = maker.Maker("friendmaker", base, args, options)
 mm.loadNEvtSample()
 
 
@@ -115,7 +115,7 @@ if options.direct and options.finalize and not options.noSplit:
 
 	for module in mm.getFriendModules():
 		mm.workdir = output
-		func.cmd("755 "+mm.cmssw+"/src/CMGTools/TTHAnalysis/macros/leptons/friendChunkAdd.sh")
+		func.cmd("chmod 755 "+mm.cmssw+"/src/CMGTools/TTHAnalysis/macros/leptons/friendChunkAdd.sh")
 		cmd = mm.cmssw +"/src/CMGTools/TTHAnalysis/macros/leptons/friendChunkAdd.sh evVarFriend ."
 		mm.runCmd(cmd, "merge", True)
 		mm.workdir = mm.cmssw +"/src/CMGTools/TTHAnalysis/macros"

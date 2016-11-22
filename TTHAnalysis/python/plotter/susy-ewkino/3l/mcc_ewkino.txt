@@ -1,2 +1,6 @@
-BR\b : BR(3, countTaus(3, LepSel_pdgId[0], LepSel_pdgId[1], LepSel_pdgId[2]), nOSSF_3l, nOSLF_3l, nOSTF_3l) ; AlsoData
-SR\b : SR(3, countTaus(3, LepSel_pdgId[0], LepSel_pdgId[1], LepSel_pdgId[2]), nOSSF_3l, nOSLF_3l, mT2L_3l, mT2T_3l, mll_3l, mT_3l, met_pt) ; AlsoData
+nLepFlavor\b : nLepFlavor(countTaus(3, LepSel_pdgId[0], LepSel_pdgId[1], LepSel_pdgId[2]), is_4l, is_5l) ; AlsoData
+srMll\b      : srMll(3, mll_3l, mllL_3l, mllT_3l)
+srMt\b       : srMt(3, mT_3l, mTL_3l, mTT_3l)
+BR\b         : BR(3, countTaus(3, LepSel_pdgId[0], LepSel_pdgId[1], LepSel_pdgId[2]), nOSSF_3l, nOSLF_3l, nOSTF_3l) ; AlsoData
+SR\b         : SR(3, countTaus(3, LepSel_pdgId[0], LepSel_pdgId[1], LepSel_pdgId[2]), nOSSF_3l, nOSLF_3l, mT2L_3l, mT2T_3l, srMll(3, mll_3l, mllL_3l, mllT_3l), srMt(3, mT_3l, mTL_3l, mTT_3l), met_pt) ; AlsoData
+SuperSig\b   : SuperSig(3, countTaus(3, LepSel_pdgId[0], LepSel_pdgId[1], LepSel_pdgId[2]), nOSSF_3l, nOSLF_3l, mT2L_3l, mT2T_3l, srMll(3, mll_3l, mllL_3l, mllT_3l), srMt(3, mT_3l, mTL_3l, mTT_3l), met_pt) ; AlsoData
