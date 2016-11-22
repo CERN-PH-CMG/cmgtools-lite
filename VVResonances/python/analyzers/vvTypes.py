@@ -38,7 +38,7 @@ FatJetType = NTupleObjectType("FatJetType", baseObjectTypes=[jetType], variables
     NTupleVariable("s2_hadronFlavour",   lambda x : x.subJet_hadronFlavour[1], int,"",-99,True),
     NTupleVariable("mergedVTruth",   lambda x : x.mergedTrue, int,"",-1,True),
     NTupleVariable("nearestBDRTruth",   lambda x : x.nearestBDR, float,"",-99.0,True),
-    
+
     ######GEN SUBSTRUCTURE INFO
     NTupleVariable("gen_tau1",   lambda x : x.substructureGEN.ntau[0] if hasattr(x,'substructureGEN') else -99, float,"",-99,True),
     NTupleVariable("gen_tau2",   lambda x : x.substructureGEN.ntau[1] if hasattr(x,'substructureGEN') else -99, float,"",-99,True),
@@ -57,6 +57,8 @@ VVType = NTupleObjectType("VVType", baseObjectTypes=[], variables = [
   NTupleVariable("mt",   lambda x : x.mt(), float),
   NTupleVariable("vbfDEta", lambda x : x.vbfDEta, float),
   NTupleVariable("vbfMass",   lambda x : x.vbfMass, float),
+  NTupleSubObject("vbf_j1", lambda x : x.satteliteJets[0] if len(x.satteliteJets)>0 else None, jetType, nillable=True),
+  NTupleSubObject("vbf_j2", lambda x : x.satteliteJets[1] if len(x.satteliteJets)>1 else None, jetType, nillable=True),
   NTupleVariable("nJets",   lambda x : len(x.satteliteJets), int),
   NTupleVariable("nCentralJets",   lambda x : len(x.satteliteCentralJets), int),
   NTupleVariable("nLooseBTags",   lambda x : x.nLooseBTags, int),
@@ -97,7 +99,11 @@ LNuJJType = NTupleObjectType("LNuJJType", baseObjectTypes=[VJType], variables = 
     NTupleSubObject("l1_l",  lambda x : x.leg1.leg1,leptonTypeExtra),
     NTupleSubObject("l1_met",  lambda x : x.leg1.leg2,metType),
     #Scale factors , For HLT use the OR between the two triggers:
-    NTupleVariable("sf",  lambda x : x.leg1.leg1.sfWV*(x.leg1.leg1.sfHLT+x.sfHLTMET-x.leg1.leg1.sfHLT*x.sfHLTMET),float)
+    NTupleVariable("sf",  lambda x : x.leg1.leg1.sfWV*(x.leg1.leg1.sfHLT+x.sfHLTMET-x.leg1.leg1.sfHLT*x.sfHLTMET),float),
+    NTupleVariable("sfWV",  lambda x : x.leg1.leg1.sfWV, float),
+    NTupleVariable("sfHLT",  lambda x : x.leg1.leg1.sfHLT, float),
+    NTupleVariable("sfHLTMET",  lambda x : x.sfHLTMET, float)
+
 ])
 
 
@@ -158,4 +164,3 @@ WbWbType = NTupleObjectType("WbWbType", baseObjectTypes=[VVType], variables = [
     NTupleSubObject("l2_Wjet",  lambda x : x.leg2.leg1,FatJetType),
     NTupleSubObject("l2_bjet",  lambda x : x.leg2.leg2,jetType),
 ])
-
