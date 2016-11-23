@@ -159,8 +159,8 @@ class EventVarsMonojet:
         for jfloat in "pt eta phi mass btagCSV rawPt leadClean".split():
             jetret[jfloat] = []
         dphijj = 999
-        dphijm = 0
-        dphijmAllJets = 0
+        dphijm = 999
+        dphijmAllJets = 999
         ijc = 0
         nAllJets30 = 0
         for idx in ret["iJ"]:

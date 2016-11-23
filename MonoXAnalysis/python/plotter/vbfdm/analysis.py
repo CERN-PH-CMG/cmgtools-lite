@@ -13,6 +13,10 @@ class Analysis:
         self.options = options
  
         TREEDIR='/data1/emanuele/monox/'
+        if "HOSTNAME" in os.environ:  
+            if os.environ["HOSTNAME"] == "pccmsrm29.cern.ch":
+                TREEDIR='/u2/emanuele/'
+
         anaOpts = []
         
         region = options.region
@@ -38,7 +42,14 @@ class Analysis:
      
         if options.upToCut: anaOpts.append('-U '+options.upToCut)
      
-        fev = ' -F mjvars/t \"'+T+'/friends/evVarFriend_{cname}.root\" '
+        fdir = {
+            'SR': 'friends_SR',
+            'ZM': 'friends_VM',
+            'WM': 'friends_VM',
+            'ZE': 'friends_VE',
+            'WE': 'friends_VE',
+            }
+        fev = ' -F mjvars/t \"'+T+'/'+fdir[region]+'/evVarFriend_{cname}.root\" '
         fsf = ' --FMC sf/t \"'+T+'/friends/sfFriend_{cname}.root\" '
         anaOpts += [fev, fsf]
         if options.synch == True: anaOpts += ['-u']
@@ -145,7 +156,7 @@ if __name__ == "__main__":
             options.region = CR
             options.upToCut = ''
             for s,v in sel_steps.iteritems():
-                print "===> Making selection / plots for control region ",options.region," at selection step: ",s, "(cut =",v,")"
+                print "#===> Making selection / plots for control region ",options.region," at selection step: ",s, "(cut =",v,")"
                 options.upToCut = v
                 options.pdir = pdirbase+"/"+CR+("/" if CR=='SR' else "CR/")+s
                 mcpOpts = ['--xP '+','.join(exclude_plots[s]), '--rebin '+str(rebinFactor[s])]
@@ -169,7 +180,7 @@ if __name__ == "__main__":
         for reg in all_regions:
             options.region = reg
             for s,v in sel_steps.iteritems():
-                print "===> Propagating systematics for control region ",options.region," at selection step: ",s, "(cut =",v,")"
+                print "#===> Propagating systematics for control region ",options.region," at selection step: ",s, "(cut =",v,")"
                 options.upToCut = s
                 options.pdir = pdirbase + "/" + s
                 mcpOpts = ['--rebin '+str(rebinFactor[s])]
@@ -194,7 +205,7 @@ if __name__ == "__main__":
             }
         
         for s,v in sel_steps.iteritems():
-            print "===> Calculating transfer factors for variable ",options.transferFactor," at selection step: ",s, "(cut =",v,")"
+            print "#===> Calculating transfer factors for variable ",options.transferFactor," at selection step: ",s, "(cut =",v,")"
             for k,tf in TFs.iteritems():
                 num_proc=tf[0]; den_proc=tf[1]
                 outdir = options.pdir if options.pdir else 'templates'

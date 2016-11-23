@@ -3,6 +3,9 @@
 if [[ "$HOSTNAME" == "cmsphys06" ]]; then
     TBASE="/data1/emanuele/monox/";
     J=6;
+elif [[ "$HOSTNAME" == "pccmsrm29.cern.ch" ]]; then
+    TBASE="/u2/emanuele/";
+    J=4;
 else
     TBASE="/afs/cern.ch/work/e/emanuele/TREES/";
     J=4;
@@ -28,20 +31,27 @@ OPTIONS=" --s2v -j $J -l ${LUMI} -f -X trigger -U ${PRESEL} "
 
 SYST="vbfdm/systsEnv.txt"
 
-# VARNAME="detajj_fullsel"
+VARIABLE=""
 
-# VARIABLE=""
+# VARNAME="detajj_fullsel"
 # if [[ "$PRESEL" == "full_sel" ]]; then 
 #     VARIABLE="'abs(JetClean1_eta-JetClean2_eta)' '[1,1.5,2,2.5,3,3.5,4,4.5,5,6,10]'"
 # else
 #     VARIABLE="'abs(JetClean1_eta-JetClean2_eta)' '[0,0.5,1,1.5,2,2.5,3,3.5,4,4.5,5,6,10]'"
 # fi;
 
-VARNAME="mjj_fullsel"
+# VARNAME="mjj_fullsel"
+# if [[ "$PRESEL" == "full_sel" ]]; then
+#     VARIABLE="'mass_2(JetClean1_pt,JetClean1_eta,JetClean1_phi,0.,JetClean2_pt,JetClean2_eta,JetClean2_phi,0.)' '[300,400,500,600,700,800,900,1000,1100,1200,1300,1400,1500,1600,1700,1800,1900,2000,2250,2500,2750,3000,3500,4000]'"
+# else
+#     VARIABLE="'mass_2(JetClean1_pt,JetClean1_eta,JetClean1_phi,0.,JetClean2_pt,JetClean2_eta,JetClean2_phi,0.)' '[0,300,400,500,600,700,800,900,1000,1100,1200,1300,1400,1500,1600,1700,1800,1900,2000,2250,2500,2750,3000,3500,4000]'"
+# fi
+
+VARNAME="detajj_mjj_binned"
 if [[ "$PRESEL" == "full_sel" ]]; then
-    VARIABLE="'mass_2(JetClean1_pt,JetClean1_eta,JetClean1_phi,0.,JetClean2_pt,JetClean2_eta,JetClean2_phi,0.)' '[300,400,500,600,700,800,900,1000,1100,1200,1300,1400,1500,1600,1700,1800,1900,2000,2250,2500,2750,3000,3500,4000]'"
+    VARIABLE="NOTIMPL"
 else
-    VARIABLE="'mass_2(JetClean1_pt,JetClean1_eta,JetClean1_phi,0.,JetClean2_pt,JetClean2_eta,JetClean2_phi,0.)' '[0,300,400,500,600,700,800,900,1000,1100,1200,1300,1400,1500,1600,1700,1800,1900,2000,2250,2500,2750,3000,3500,4000]'"
+    VARIABLE="'abs(JetClean1_eta-JetClean2_eta):mass_2(JetClean1_pt,JetClean1_eta,JetClean1_phi,0.,JetClean2_pt,JetClean2_eta,JetClean2_phi,0.)' '30,0,4000,30,0,10'"
 fi
 
 test -d $OUTNAME/$PRESEL/$VARNAME || mkdir -p $OUTNAME/$PRESEL/$VARNAME
@@ -51,6 +61,9 @@ DOFILE="--savefile activate"
 fi
 if [[ "$2" == "read" ]]; then
 DOFILE="--infile activate"
+fi
+if [[ "$2" == "twodim" ]]; then
+OPTIONS="${OPTIONS} --2d-binning-function 10:vbfdm_2Dto1D"
 fi
 
 if [[ "$1" == "all" || "$1" == "SR" ]] ; then
@@ -93,3 +106,4 @@ if [[ "$1" == "all" || "$1" == "WE" ]] ; then
     eval $command
     echo "Done at $(date)"
 fi;
+

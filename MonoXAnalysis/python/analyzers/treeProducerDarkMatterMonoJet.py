@@ -44,6 +44,14 @@ dmMonoJet_globalVariables = dmCore_globalVariables + [
     # NTupleVariable("r_lept", lambda ev: ev.r_lept, float, help="r(j1,j2,met) with leptons"),
     # NTupleVariable("r_gen", lambda ev: ev.r_gen, float, help="r(j1,j2,met) with jets at genInfo"),
     # NTupleVariable("r", lambda ev: ev.r, float, help="r(j1,j2,met) with jets and leptons"),
+
+    ##--------------------------------------------------
+    # Met definitions
+    ##--------------------------------------------------
+    NTupleVariable("met_caloPt", lambda ev : ev.met.caloMETPt(), help="calo met p_{T}"),
+    NTupleVariable("met_caloPhi", lambda ev : ev.met.caloMETPhi(), help="calo met phi"),
+    NTupleVariable("met_caloSumEt", lambda ev : ev.met.caloMETSumEt(), help="calo met sumEt"),
+
     ##-------------------------------------------------- 
     ## MonoJet specific ones
     ##-------------------------------------------------- 
