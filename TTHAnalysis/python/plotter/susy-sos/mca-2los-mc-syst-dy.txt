@@ -1,0 +1,42 @@
+# ---- Alternative shapes DY
+
+DYJets    : DYJetsToLL_M5to50_LO: xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && lheHT<=100  ; Label="DY", FillColor=ROOT.kCyan
+DYJets    : DYJetsToLL_M50_LO   : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && lheHT<=100   ; Label="DY", FillColor=ROOT.kCyan
+#DYJets     : DYJetsToLL_M50_HT100to200 :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0; Label="DY", FillColor=ROOT.kCyan
+DYJets     : DYJetsToLL_M50_HT100to200_ext :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0; Label="DY", FillColor=ROOT.kCyan
+#DYJets     : DYJetsToLL_M50_HT200to400 :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0; Label="DY", FillColor=ROOT.kCyan
+DYJets     : DYJetsToLL_M50_HT200to400_ext :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0; Label="DY", FillColor=ROOT.kCyan
+#DYJets     : DYJetsToLL_M50_HT400to600 :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0; Label="DY", FillColor=ROOT.kCyan
+DYJets     : DYJetsToLL_M50_HT400to600_ext :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0; Label="DY", FillColor=ROOT.kCyan
+DYJets     : DYJetsToLL_M50_HT600toInf :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0; Label="DY", FillColor=ROOT.kCyan
+#DYJets     : DYJetsToLL_M50_HT600toInf_ext :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0; Label="DY", FillColor=ROOT.kCyan
+DYJets     : DYJetsToLL_M5to50_HT100to200 :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0; Label="DY", FillColor=ROOT.kCyan
+#DYJets     : DYJetsToLL_M5to50_HT100to200_ext :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0; Label="DY", FillColor=ROOT.kCyan
+#DYJets     : DYJetsToLL_M5to50_HT200to400 :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0; Label="DY", FillColor=ROOT.kCyan
+DYJets     : DYJetsToLL_M5to50_HT200to400_ext :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0; Label="DY", FillColor=ROOT.kCyan
+DYJets     : DYJetsToLL_M5to50_HT400to600 :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0; Label="DY", FillColor=ROOT.kCyan
+#DYJets     : DYJetsToLL_M5to50_HT400to600_ext :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0; Label="DY", FillColor=ROOT.kCyan
+DYJets     : DYJetsToLL_M5to50_HT600toInf :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0; Label="DY", FillColor=ROOT.kCyan
+
+
+DYJets_ResZ    : DYJetsToLL_M5to50_LO: xsec : (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && lheHT<=100)*abs(ResZWeight); Label="DY-Res", FillColor=ROOT.kBlue-7
+DYJets_ResZ    : DYJetsToLL_M50_LO   : xsec : (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && lheHT<=100)*abs(ResZWeight); Label="DY-Res", FillColor=ROOT.kBlue-7
+#DYJets_ResZ     : DYJetsToLL_M50_HT100to200 :  xsec: (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0)*abs(ResZWeight); Label="DY-Res", FillColor=ROOT.kBlue-7
+DYJets_ResZ     : DYJetsToLL_M50_HT100to200_ext :  xsec: (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0)*abs(ResZWeight); Label="DY-Res", FillColor=ROOT.kBlue-7
+#DYJets_ResZ     : DYJetsToLL_M50_HT200to400 :  xsec: (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0)*abs(ResZWeight); Label="DY-Res", FillColor=ROOT.kBlue-7
+DYJets_ResZ     : DYJetsToLL_M50_HT200to400_ext :  xsec: (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0)*abs(ResZWeight); Label="DY-Res", FillColor=ROOT.kBlue-7
+#DYJets_ResZ     : DYJetsToLL_M50_HT400to600 :  xsec: (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0)*abs(ResZWeight); Label="DY-Res", FillColor=ROOT.kBlue-7
+DYJets_ResZ     : DYJetsToLL_M50_HT400to600_ext :  xsec: (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0)*abs(ResZWeight); Label="DY-Res", FillColor=ROOT.kBlue-7
+DYJets_ResZ     : DYJetsToLL_M50_HT600toInf :  xsec: (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0)*abs(ResZWeight); Label="DY-Res", FillColor=ROOT.kBlue-7
+#DYJets_ResZ     : DYJetsToLL_M50_HT600toInf_ext :  xsec: (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0)*abs(ResZWeight); Label="DY-Res", FillColor=ROOT.kBlue-7
+DYJets_ResZ     : DYJetsToLL_M5to50_HT100to200 :  xsec: (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0)*abs(ResZWeight); Label="DY-Res", FillColor=ROOT.kBlue-7
+#DYJets_ResZ     : DYJetsToLL_M5to50_HT100to200_ext :  xsec: (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0)*abs(ResZWeight); Label="DY-Res", FillColor=ROOT.kBlue-7
+#DYJets_ResZ     : DYJetsToLL_M5to50_HT200to400 :  xsec: (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0)*abs(ResZWeight); Label="DY-Res", FillColor=ROOT.kBlue-7
+DYJets_ResZ     : DYJetsToLL_M5to50_HT200to400_ext :  xsec: (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0)*abs(ResZWeight); Label="DY-Res", FillColor=ROOT.kBlue-7
+DYJets_ResZ     : DYJetsToLL_M5to50_HT400to600 :  xsec: (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0)*abs(ResZWeight); Label="DY-Res", FillColor=ROOT.kBlue-7
+#DYJets_ResZ     : DYJetsToLL_M5to50_HT400to600_ext :  xsec: (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0)*abs(ResZWeight); Label="DY-Res", FillColor=ROOT.kBlue-7
+DYJets_ResZ     : DYJetsToLL_M5to50_HT600toInf :  xsec: (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0)*abs(ResZWeight); Label="DY-Res", FillColor=ROOT.kBlue-7
+
+
+
+ 

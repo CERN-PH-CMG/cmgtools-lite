@@ -2,7 +2,7 @@ alwaystrue: 1
 trilep: nLepFO>=3
 exclusive: nLepTight <= 3 ;  Disable=True
 cleanup: minMllAFAS > 12
-trigger: Triggers_3l
+trigger: $DATA{Triggers_3l} $MC{1}
 pt2010: LepGood1_conePt>20 && LepGood2_conePt>10 && LepGood3_conePt>10
 TTT: LepGood1_isTight && LepGood2_isTight && LepGood3_isTight
 Zveto: abs(mZ1-91.2) > 10
@@ -14,6 +14,8 @@ ele conv cuts: (abs(LepGood1_pdgId)!=11 || (LepGood1_convVeto && LepGood1_lostHi
 2j: nJet25>=2
 2b1B: nBJetLoose25 >= 2 || nBJetMedium25 >= 1
 
+vetottHZZ: !(mZ2>0 && m4l<140)
+
 x2j: nJet25==2 ; Disable=True
 4j: nJet25>=4 ; Disable=True
 gt2b: nBJetLoose25 >= 2 ; Disable=True
@@ -22,10 +24,11 @@ gt2b: nBJetLoose25 >= 2 ; Disable=True
 BLoose: nBJetMedium25 < 2 ; Disable=True
 BTight: nBJetMedium25 >= 2 ; Disable=True
 Bveto: nBJetMedium25 == 0 ; Disable=True
-0tau: nTauGood==0 ; Disable=True
-1tau: nTauGood>=1 ; Disable=True
+0tau: nTauTight==0 ; Disable=True
+1tau: nTauTight>=1 ; Disable=True
 tightMVA075: LepGood1_mvaTTH>0.75 && LepGood2_mvaTTH>0.75 && LepGood3_mvaTTH>0.75 ; Disable=True
 b3l_bl_neg: (LepGood1_charge+LepGood2_charge+LepGood3_charge)<0 && nBJetMedium25 < 2 ; Disable=True
 b3l_bl_pos: (LepGood1_charge+LepGood2_charge+LepGood3_charge)>0 && nBJetMedium25 < 2 ; Disable=True
 b3l_bt_neg: (LepGood1_charge+LepGood2_charge+LepGood3_charge)<0 && nBJetMedium25 >= 2 ; Disable=True
 b3l_bt_pos: (LepGood1_charge+LepGood2_charge+LepGood3_charge)>0 && nBJetMedium25 >= 2 ; Disable=True
+3lep_prompt: (!isData) && LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0; Disable=True

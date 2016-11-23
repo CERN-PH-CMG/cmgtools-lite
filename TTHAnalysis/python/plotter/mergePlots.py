@@ -13,27 +13,33 @@ if __name__ == "__main__":
     parser = OptionParser(usage="%prog [options] mca.txt dir file")
     parser.add_option("--channels", dest="channels", type="string", default="ee,em,mumu", help="channels to merge")
     parser.add_option("--useTotal", dest="useTotal", action="store_true", default=False, help="Use total from input")
-    parser.add_option("--postFit", dest="postFit", action="store_true", default=False, help="Use total from input")
+    parser.add_option("--postFit_s", dest="postFit_s", action="store_true", default=False, help="Use total from input, s+b fit")
+    parser.add_option("--postFit_b", dest="postFit_b", action="store_true", default=False, help="Use total from input, b-only fit")
+    parser.add_option("--addErrorsLinearlyForTotal", dest="addErrorsLinearlyForTotal", action="store_true", default=False, help="Add errors linearly for the total histogram")
     addPlotMakerOptions(parser)
     (options, args) = parser.parse_args()
-    options.path = "/afs/cern.ch/work/g/gpetrucc/TREES_250513_HADD"
-    if options.postFit: options.useTotal = True
+    options.path = "/data1/peruzzi/mixture_jecv6prompt_datafull_jul20_skimOnlyMC"
+#    options.path = "/data1/peruzzi/TREES_80X_180716_jecv6_skim_3ltight_relax"
+    options.lumi = 12.9
+    if options.postFit_s or options.postFit_b: options.useTotal = True
     mca  = MCAnalysis(args[0],options)
     FS = options.channels.split(",")
     basedir = args[1];
     plots   = PlotFile(args[2],options)
     filename = basename(args[2]).replace(".txt",".root");
-    if options.postFit: filename = "postfit_"+filename
+    if options.postFit_s: filename = "postfit_s_"+filename
+    if options.postFit_b: filename = "postfit_b_"+filename
     files = dict([ (f,ROOT.TFile("%s/%s/%s" % (basedir,f,filename))) for f in FS])
-    ROOT.gSystem.Exec("mkdir -p %s/merged/" % basedir)
-    ROOT.gSystem.Exec("cp /afs/cern.ch/user/g/gpetrucc/php/index.php %s/merged/" % basedir)
+    outdir = 'merged_linearAddErrors' if options.addErrorsLinearlyForTotal else 'merged'
+    ROOT.gSystem.Exec("mkdir -p %s/%s/" % (basedir,outdir))
+    ROOT.gSystem.Exec("cp /afs/cern.ch/user/g/gpetrucc/php/index.php %s/%s/" % (basedir,outdir))
     ROOT.gROOT.ProcessLine(".x /afs/cern.ch/user/g/gpetrucc/cpp/tdrstyle.cc(0)")
     ROOT.gROOT.ForceStyle(False)
     ROOT.gStyle.SetErrorX(0.5)
     ROOT.gStyle.SetOptStat(0)
     ROOT.gStyle.SetPaperSize(20.,25.)
     itemlist = files[FS[0]].GetListOfKeys()
-    processes = ['data'] + mca.listBackgrounds() + mca.listSignals()
+    processes = ['data'] + [p for p in reversed(mca.listBackgrounds())] + mca.listSignals()
     if options.useTotal: processes += [ 'total' ] 
     for pspec in plots.plots():
         P = pspec.name
@@ -43,12 +49,17 @@ if __name__ == "__main__":
                 h = files[f].Get(P+"_"+p)
                 if not h: continue
                 if p in plots:
-                    plots[p].Add(h)
+                    if options.addErrorsLinearlyForTotal and p=='total':
+                        for b in xrange(1, plots[p].GetNbinsX()+1):
+                            plots[p].SetBinContent(b, plots[p].GetBinContent(b)+h.GetBinContent(b))
+                            plots[p].SetBinError(b, plots[p].GetBinError(b)+h.GetBinError(b))
+                    else:
+                        plots[p].Add(h)
                 else:
                     hc = h.Clone()
                     hc.SetDirectory(None)
                     plots[p] = hc
-        print plots.keys()
+#        print plots.keys()
         stack = ROOT.THStack()
         if len(plots) == 0: continue
         tot = plots['data'].Clone(); tot.Reset() 
@@ -58,7 +69,7 @@ if __name__ == "__main__":
             tot     = plots['total']
             totSyst = plots['total']
         doRatio = True
-        for p in mca.listBackgrounds() + mca.listSignals():
+        for p in [_p for _p in reversed(mca.listBackgrounds())] + mca.listSignals():
             if p not in plots: continue
             h = plots[p]
             stack.Add(h)
@@ -70,30 +81,44 @@ if __name__ == "__main__":
                     if "TH1" in h.ClassName():
                         for b in xrange(1,h.GetNbinsX()+1):
                             totSyst.SetBinError(b, hypot(totSyst.GetBinError(b), syst*h.GetBinContent(b)))
-        tot.GetYaxis().SetRangeUser(0, 1.4*pspec.getOption('MoreY',1.0)*max(tot.GetMaximum(), data.GetMaximum()))
+        tot.GetYaxis().SetRangeUser(0, 1.0*pspec.getOption('MoreY',2.0)*max(tot.GetMaximum(), data.GetMaximum()))
         ## Prepare split screen
-        c1 = ROOT.TCanvas("c1", "c1", 600, 750); c1.Draw()
-        c1.SetWindowSize(600 + (600 - c1.GetWw()), (750 + (750 - c1.GetWh())));
-        p1 = ROOT.TPad("pad1","pad1",0,0.31,1,0.99);
-        p1.SetBottomMargin(0);
+#        c1 = ROOT.TCanvas("c1", "c1", 600, 750); c1.Draw()
+#        c1.SetWindowSize(600 + (600 - c1.GetWw()), (750 + (750 - c1.GetWh())));
+        c1 = ROOT.TCanvas("c1", "c1", 1200, 750); c1.Draw()
+        c1.SetWindowSize(1200 + (1200 - c1.GetWw()), (750 + (750 - c1.GetWh())));
+
+        p1 = ROOT.TPad("pad1","pad1",0,0.30,1,1);
+        p1.SetTopMargin(p1.GetTopMargin()*options.topSpamSize);
+        p1.SetBottomMargin(0.025)
         p1.Draw();
-        p2 = ROOT.TPad("pad2","pad2",0,0,1,0.31);
-        p2.SetTopMargin(0);
+        p2 = ROOT.TPad("pad2","pad2",0,0,1,0.30);
+        p2.SetTopMargin(0.06);
         p2.SetBottomMargin(0.3);
         p2.SetFillStyle(0);
         p2.Draw();
         p1.cd();
+
         ## Draw absolute prediction in top frame
         tot.Draw("HIST")
         stack.Draw("HIST F SAME")
+        if options.showMCError:
+            totalError = doShadedUncertainty(totSyst)
         data.Draw("E SAME")
         tot.Draw("AXIS SAME")
-        doLegend(plots,mca,corner=pspec.getOption('Legend','TR'))
-        doTinyCmsPrelim(hasExpo = tot.GetMaximum() > 9e4 and not c1.GetLogy(),textSize=(0.036 if doRatio else 0.033),
-                        textLeft = options.lspam, textRight = options.rspam, lumi = options.lumi)
+        legendCutoff = pspec.getOption('LegendCutoff', 1e-5 if c1.GetLogy() else 1e-2)
+        doLegend(plots,mca,corner=pspec.getOption('Legend','TR'),
+                 cutoff=legendCutoff, mcStyle="F",
+                 cutoffSignals=not(options.showSigShape or options.showIndivSigShapes or options.showSFitShape), 
+                 textSize=( (0.045 if doRatio else 0.035) if options.legendFontSize <= 0 else options.legendFontSize ),
+                 legWidth=options.legendWidth, legBorder=options.legendBorder, signalPlotScale=options.signalPlotScale,
+                 header=options.legendHeader if options.legendHeader else pspec.getOption("LegendHeader", ""))
+#        doLegend(plots,mca,corner=pspec.getOption('Legend','TR'))
+        doTinyCmsPrelim(hasExpo = tot.GetMaximum() > 9e4 and not c1.GetLogy(),textSize=(0.045 if doRatio else 0.033)*options.topSpamSize,
+                        options=options)
         ## Draw relaive prediction in the bottom frame
         p2.cd() 
-        rdata,rnorm,rnorm2,rline = doRatioHists(pspec,plots,tot,totSyst, maxRange=options.maxRatioRange, fitRatio=options.fitRatio)
+        rdata,rnorm,rnorm2,rline,leg0,leg1 = doRatioHists(pspec,plots,tot,totSyst, maxRange=options.maxRatioRange, fitRatio=options.fitRatio)
         #rframe = ROOT.TH1F("rframe","rframe",1,xmin,xmax)
         #rframe.GetXaxis().SetTitle(bandN.GetXaxis().GetTitle())
         #rframe.GetYaxis().SetRangeUser(0,1.95);
@@ -122,8 +147,8 @@ if __name__ == "__main__":
         #leg.Draw()
         #c1.cd()
         #doCMSSpam("CMS Preliminary",textSize=0.035)
-        c1.Print("%s/merged/%s.png" % (basedir,P))
-        c1.Print("%s/merged/%s.pdf" % (basedir,P))
+        c1.Print("%s/%s/%s.png" % (basedir,outdir,P))
+        c1.Print("%s/%s/%s.pdf" % (basedir,outdir,P))
         #del leg
         #del frame
         #del rframe

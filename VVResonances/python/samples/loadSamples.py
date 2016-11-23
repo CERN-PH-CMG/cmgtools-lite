@@ -14,9 +14,10 @@ background = TTs+SingleTop+DYJetsM50HT+WJetsToLNuHT+QCDHT+DiBosons
 
 #Load signal from here 
 from CMGTools.VVResonances.samples.signal_13TeV_80X_reHLT import *
+from CMGTools.VVResonances.samples.signal_13TeV_80X_ZPTT import *
 
 
-mcSamples = background+signalSamples
+mcSamples = background+signalSamples+zprimeSamples
 #load triggers
 from CMGTools.RootTools.samples.triggers_13TeV_DATA2016 import *
 #Load Data samples
@@ -71,7 +72,7 @@ for s in MET:
 
 #Jet HT to be used for jj (silver)
 for s in JetHT:
-    s.triggers = triggers_HT800+triggers_HT900+triggers_dijet_fat
+    s.triggers = triggers_HT800+triggers_HT900+triggers_dijet_fat+triggers_jet_recoverHT
     s.vetoTriggers = triggers_1mu_noniso+triggers_1mu_iso+triggers_1e_noniso+triggers_1e+triggers_metNoMu120_mhtNoMu120
     s.json=json
 

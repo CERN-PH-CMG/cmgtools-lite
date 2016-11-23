@@ -1,0 +1,2 @@
+BR\b : BR(3, countTaus(3, LepSel_pdgId[0], LepSel_pdgId[1], LepSel_pdgId[2]), nOSSF_3l, nOSLF_3l, nOSTF_3l) ; AlsoData
+SR\b : SR(3, countTaus(3, LepSel_pdgId[0], LepSel_pdgId[1], LepSel_pdgId[2]), nOSSF_3l, nOSLF_3l, mT2L_3l, mT2T_3l, mll_3l, mT_3l, met_pt) ; AlsoData

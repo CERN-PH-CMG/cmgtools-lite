@@ -23,7 +23,7 @@ print 'Total weight', total_weight
 
 weight_MC = "genWeight * puWeight"
 
-int_lumi = 7650
+int_lumi = 12900
 
 cuts = {}
 
@@ -32,13 +32,14 @@ inc_cut = '&&'.join([cat_Inc])
 cuts['NoSubstructure'] = inc_cut #+ '&& l1_charge != l2_charge && abs(l1_eta) < 2.1 && mvis>50'
 
 # -> Command line
-analysis_dir = '/data/bachtis/VV/data/2016_80X_Pruning/'
+analysis_dir = '/data/clange/ntuples/VV_20160929/'
 tree_prod_name = ''
 
 samples_mc, samples_data, samples, all_samples, sampleDict = createSampleLists(analysis_dir, channel='VV', weight=weight_MC)
 
 # Taken from Variables.py, can get subset with e.g. getVars(['mt', 'mvis'])
 variables = VV_vars
+variables = [VV_vars[0]]
 # variables = getVars(['l1_reliso05', 'l2_reliso05'])
 # variables = [
 #     VariableCfg(name='mvis', binning={'nbinsx':35, 'xmin':0, 'xmax':350}, unit='GeV', xtitle='m_{vis}')
