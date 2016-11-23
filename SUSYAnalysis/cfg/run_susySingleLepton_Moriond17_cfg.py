@@ -220,6 +220,7 @@ jetAna.doQG = True
 
 ## Iso Track
 isoTrackAna.setOff=False
+isoTrackAna.doRelIsolation = True
 
 # store all taus by default
 genAna.allGenTaus = True
