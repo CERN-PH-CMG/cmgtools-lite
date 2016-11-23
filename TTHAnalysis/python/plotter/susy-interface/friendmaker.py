@@ -84,12 +84,15 @@ for module in mm.getFriendModules():
 		## submit
 		friends    = collectFriends(requires)
 		additional = "--bk" if options.bk else ""
-	
+
 		if not options.direct and options.queue:
 			nevt        = mm.getNEvtSample(d)
 			additional += " -N "+nevt if nevt else ""
 			additional += " -q "+ options.queue
 			if options.queue in ["all.q", "long.q", "short.q"]: additional += " --env psi"
+                        if options.queue in ["batch"]: 
+                                additional += " --env oviedo"
+
 			if options.log: additional += " --log "+output+"/log"
 
 		attr = [mm.treedir, output, options.treename, d, module, friends, additional]
