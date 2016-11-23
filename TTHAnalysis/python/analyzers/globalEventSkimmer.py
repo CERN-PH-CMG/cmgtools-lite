@@ -79,9 +79,9 @@ class objectSelection():
                 if (DS==compName and veto) or (DS!=compName and not veto):
                     self.vetoDS=True
 
-class globalEventSkimmer( Analyzer ):
+class globalSkimmer( Analyzer ):
     def __init__(self, cfg_ana, cfg_comp, looperName ):
-        super(globalEventSkimmer,self).__init__(cfg_ana,cfg_comp,looperName)
+        super(globalSkimmer,self).__init__(cfg_ana,cfg_comp,looperName)
         self.collections=cfg_ana.collections if hasattr(cfg_ana, "collections") else {}
         self.selections= cfg_ana.selections if hasattr(cfg_ana, "selections") else []
         self.objectSels=[]
@@ -98,10 +98,10 @@ class globalEventSkimmer( Analyzer ):
 
 
     def declareHandles(self):
-        super(globalEventSkimmer, self).declareHandles()
+        super(globalSkimmer, self).declareHandles()
 
     def beginLoop(self, setup):
-        super(globalEventSkimmer,self).beginLoop(setup)
+        super(globalSkimmer,self).beginLoop(setup)
         self.counters.addCounter('events')
         count = self.counters.counter('events')
         count.register('all events')
@@ -201,7 +201,7 @@ class globalEventSkimmer( Analyzer ):
             mXtraId = re.match(scanlineXtraId, obj) 
             os=objectSelection()
             pid=""
-            #print selection,"-->",m, mXtra, mId, mXtraId
+            #print m, mXtra, mId, mXtraId
             if m:
                 os.num=int(m.group(1))
                 os.pid=m.group(2)
@@ -228,7 +228,7 @@ class globalEventSkimmer( Analyzer ):
                 os.cut=mXtraId.group(5)
 
 
-            #print " ----->>> ",os.pid, "// ", os.xtra," // ", os.ptThr," // ", os.cut
+ #           print  " ----->>> ", os.xtra," // ", os.ptThr," // ", os.cut
             os.setFlags(compName)
             ret[obj]=os
 
