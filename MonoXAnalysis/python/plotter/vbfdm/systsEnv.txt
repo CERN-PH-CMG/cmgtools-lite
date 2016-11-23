@@ -1,18 +1,39 @@
 # luminosity
-lumi_13TeV              : vbfH.*|ggH.*|.*ZLL|Top|VV|EWK.* : .* : 1.050
+lumi_13TeV              : vbfH.*|ggH.*|Top|VV : .* : 1.062
+lumi_13TeV              : .*ZLL : w.*|vbfdm : 1.062
+lumi_13TeV              : W|EWKW : z.*|vbfdm : 1.062
 
 # normalisation of the sub-dominant processes
-ZJets_Norm13TeV         : .*ZLL : .* : 1.200
+ZJets_Norm13TeV         : ZLL : w.*|vbfdm : 1.200
+WJets_Norm13TeV         : W : z.*|vbfdm : 1.200
+EWK_ZJets_Norm13TeV     : EWKZLL : w.*|vbfdm : 1.200
+EWK_ZJets_Norm13TeV     : EWKW : z.*|vbfdm : 1.200
 VV_Norm13TeV            : VV : .* : 1.200
 Top_Norm13TeV           : Top : .* : 1.100
 Top_Reweight13TeV       : Top : .* : 1.100
 CMS_QCD_SR              : QCD : .* : 2.000
-EWK_V_Norm13TeV         : EWK.* : .* : 1.200
+
 
 # efficiencies
-CMS_met_trig            : vbfH.*|ggH.*|.*ZLL|Top|VV : .* : 1.010
-CMS_met_13TeV           : vbfH.*|ggH.*|.*ZLL|Top|VV : .* : 1.040
-CMS_btag_13TeV          : vbfH.*|ggH.*|.*ZLL|Top|VV : .* : 1.020 
+CMS_eff_m               : vbfH.*|ggH.*|.*ZLL|Top|VV : zmumu : 1.040
+CMS_eff_m               : vbfH.*|ggH.*|.*ZLL|Top|VV : wmunu : 1.020
+CMS_reco_m              : vbfH.*|ggH.*|.*ZLL|Top|VV : zmumu : 1.020
+CMS_reco_m              : vbfH.*|ggH.*|.*ZLL|Top|VV : wmunu : 1.010
+CMS_eff_e               : vbfH.*|ggH.*|.*ZLL|Top|VV : zee : 1.040
+CMS_eff_e               : vbfH.*|ggH.*|.*ZLL|Top|VV : wenu : 1.020
+CMS_reco_e              : vbfH.*|ggH.*|.*ZLL|Top|VV : zee : 1.020
+CMS_reco_e              : vbfH.*|ggH.*|.*ZLL|Top|VV : zee : 1.010
+CMS_trig_e              : vbfH.*|ggH.*|.*ZLL|Top|VV : zee|wenu : 1.010
+CMS_met_trig            : vbfH.*|ggH.*|.*ZLL|Top|VV : vbfdm|zmumu|wmunu : 1.010
+CMS_eff_lepVeto_13TeV   : vbfH.*|ggH.*|Top|VV : vbfdm|w.* : 1.030
+CMS_eff_lepVeto_13TeV   : W|EWKW : vbfdm|w.* : 1.030
+
+CMS_met_13TeV           : vbfH.*|ggH.*|.*ZLL|Top|VV : vbfdm : 1.040
+CMS_met_13TeV           : W|EWKW|Top|VV : z.* : 1.040
+CMS_met_13TeV           : Z.*|Top|VV : w.* : 1.040
+CMS_btag_13TeV          : vbfH.*|ggH.*|.*ZLL|Top|VV : vbfdm : 1.040
+CMS_btag_13TeV          : W|EWKW|Top|VV : z.* : 1.040
+CMS_btag_13TeV          : Z.*|Top|VV : w.* : 1.040
 
 # theory systematics
 QCDScale_qqbar_accept   : vbfH.* : .* : 1.020
@@ -22,3 +43,10 @@ pdf_qqbar               : vbfH.* : .* : 1.020
 pdf_gg                  : ggH.* : .* : 1.031
 pdf_qqbar_accept        : vbfH.* : .* : 1.010
 pdf_gg_accept           : ggH.* : .* : 1.010
+QCDscale_ggH2in         : ggH.* : .* : 1.300
+
+# control regions uncertainty
+ZNuNu_norm_ctrl         : .*ZNuNu : vbfdm : 1.500 : lnU
+ZNuNu_norm_ctrl         : .*ZLL : z.* : 1.500 : lnU
+WJets_norm_ctrl         : W|EWKW : vbfdm : 1.500 : lnU
+WJets_norm_ctrl         : W|EWKW : w.* : 1.500 : lnU
