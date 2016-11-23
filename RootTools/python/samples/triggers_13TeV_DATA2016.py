@@ -1,14 +1,22 @@
 ################## 
 ## Triggers for 2016 DATA 
 
-triggers_mumu_iso    = [  "HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_v*", "HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_v*",
-                          "HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v*", "HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v*" ]
+triggers_mumu_iso    = [ "HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_v*", 
+                         "HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_v*",
+                         "HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v*",
+                         "HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v*" ]
 triggers_mumu_noniso = [ "HLT_Mu30_TkMu11_v*" ]
-triggers_mumu_ss = [ "HLT_Mu17_Mu8_SameSign_v*", "HLT_Mu17_Mu8_SameSign_DZ_v*",  "HLT_Mu20_Mu10_SameSign_v*", "HLT_Mu20_Mu10_SameSign_DZ_v*" ]
+triggers_mumu_ss = [ "HLT_Mu17_Mu8_SameSign_v*",
+                     "HLT_Mu17_Mu8_SameSign_DZ_v*", 
+                     "HLT_Mu20_Mu10_SameSign_v*", 
+                     "HLT_Mu20_Mu10_SameSign_DZ_v*" ]
 triggers_mumu = triggers_mumu_iso
 
-triggers_ee = [ "HLT_Ele17_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v*", "HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v*" ] # 17/12 prescaled in column 0
-triggers_ee_noniso = ["HLT_DoubleEle33_CaloIdL_v*", "HLT_DoubleEle37_Ele27_CaloIdL_GsfTrkIdVL_v*", "HLT_DoubleEle33_CaloIdL_GsfTrkIdVL_v" ]
+triggers_ee = [ "HLT_Ele17_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v*", 
+                "HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v*" ] # 17/12 prescaled in column 0
+triggers_ee_noniso = ["HLT_DoubleEle33_CaloIdL_v*", 
+                      "HLT_DoubleEle37_Ele27_CaloIdL_GsfTrkIdVL_v*", 
+                      "HLT_DoubleEle33_CaloIdL_GsfTrkIdVL_v" ]
 
 # warning: ee trigger without DZ is prescaled
 triggers_ee_nodz = [ "HLT_Ele17_Ele12_CaloIdL_TrackIdL_IsoVL_v*" ]
@@ -18,23 +26,37 @@ triggers_mue_run1   = [ "HLT_Mu17_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v*",
 triggers_mue   = [ "HLT_Mu17_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v*", # warning, check prescales depending on run range 
                    "HLT_Mu8_TrkIsoVVL_Ele17_CaloIdL_TrackIdL_IsoVL_v*",
                    "HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v*", 
+                   "HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v*", 
                    "HLT_Mu23_TrkIsoVVL_Ele8_CaloIdL_TrackIdL_IsoVL_v*",
-                   "HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v*" ]
+                   "HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v*",
+                   "HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v*" ]
 
 triggers_mumu_ht =  [ "HLT_DoubleMu8_Mass8_PFHT300_v*" ]
 triggers_ee_ht =  [ "HLT_DoubleEle8_CaloIdM_TrackIdM_Mass8_PFHT300_v*" ]
 triggers_mue_ht = [ "HLT_Mu8_Ele8_CaloIdM_TrackIdM_Mass8_PFHT300_v*" ]
 
-triggers_leptau = ["HLT_IsoMu19_eta2p1_LooseIsoPFTau20_v*", "HLT_Ele22_eta2p1_WPLoose_GSF_LooseIsoPFtau20_SingleL1_v*", "HLT_DoubleMediumIsoPFTau32_Trk1_eta2p1_Reg_v"]
+triggers_leptau = ["HLT_IsoMu19_eta2p1_LooseIsoPFTau20_v*",
+                   #"HLT_Ele22_eta2p1_WPLoose_GSF_LooseIsoPFtau20_SingleL1_v*",
+                   "HLT_Ele24_eta2p1_WPLoose_Gsf_LooseIsoPFTau30_v*",
+                   "HLT_Ele36_eta2p1_WPLoose_Gsf_LooseIsoPFTau20_SingleL1_v*",
+                   "HLT_DoubleMediumIsoPFTau32_Trk1_eta2p1_Reg_v"]
 
 triggers_3e = [ "HLT_Ele16_Ele12_Ele8_CaloIdL_TrackIdL_v*" ]
-triggers_3mu = [ "HLT_TripleMu_12_10_5_v*", "HLT_TripleMu_5_3_3_v*" ] # 533 only in part of the dataset
+triggers_3mu = [ "HLT_TripleMu_12_10_5_v*", 
+                 "HLT_TripleMu_5_3_3_v*" ] # 533 only in part of the dataset
 triggers_3mu_alt = [ "HLT_TrkMu15_DoubleTrkMu5NoFiltersNoVtx_v*" ]
 triggers_2mu1e = [ "HLT_DiMu9_Ele9_CaloIdL_TrackIdL_v*" ]
 triggers_2e1mu = [ "HLT_Mu8_DiEle12_CaloIdL_TrackIdL_v*" ]
 
-triggers_1mu_iso = [ 'HLT_IsoMu20_v*', 'HLT_IsoTkMu20_v*', 'HLT_IsoMu22_v*', 'HLT_IsoTkMu22_v*', 'HLT_IsoMu24_v*', 'HLT_IsoTkMu24_v*'  ]  # Mu20's prescaled in column 0, Mu22 prescaled in high lumi post-ichep data
-triggers_1mu_noniso = [ 'HLT_Mu45_eta2p1_v*', 'HLT_Mu50_v*', 'HLT_TkMu50_v*' ]
+triggers_1mu_iso = [ 'HLT_IsoMu20_v*', 
+                     'HLT_IsoTkMu20_v*', 
+                     'HLT_IsoMu22_v*', 
+                     'HLT_IsoTkMu22_v*',
+                     'HLT_IsoMu24_v*', 
+                     'HLT_IsoTkMu24_v*']  # Mu20's prescaled in column 0
+triggers_1mu_noniso = [ 'HLT_Mu45_eta2p1_v*', 
+                        'HLT_Mu50_v*', 
+                        'HLT_TkMu50_v*' ]
 
 # note: here the WP75 is th name in MC, WPLoose and WPTight should be in data
 triggers_1e      = [ 
@@ -135,14 +157,26 @@ triggers_MET120Mu5 = ["HLT_PFMET120_Mu5_v*"]
 
 ### ----> for the edgeZ analysis. 
 ### we want them separately for detailed trigger efficiency studies
-triggers_mu17mu8      = ['HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_v*']
-triggers_mu17mu8_dz   = ['HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v*']
-triggers_mu17tkmu8_dz = ['HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v*']
-triggers_mu17el12     = ['HLT_Mu17_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v*']
-triggers_el17el12_dz  = ['HLT_Ele17_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v*']
-triggers_el23el12_dz  = ['HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v*']
-triggers_mu8el17      = ['HLT_Mu8_TrkIsoVVL_Ele17_CaloIdL_TrackIdL_IsoVL_v*']
-triggers_mu8el23      = ['HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v*']
+###---- Muons
+# Isolated triggers:
+triggers_mu17mu8_dz      = ['HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v*']
+triggers_mu17tkmu8       = ['HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_v*']
+triggers_mu17tkmu8_dz    = ['HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v*']
+# Non-Isolated triggers:
+triggers_mu27tkmu8       = ['HLT_Mu27_TkMu8_v*']
+triggers_mu30tkmu11      = ['HLT_Mu30_TkMu11_v*']
+###---- Electrons
+# Isolated triggers:
+triggers_el23el12_dz     = ['HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v*']
+# Non-Isolated triggers:
+triggers_doubleele33     = ['HLT_DoubleEle33_CaloIdL_GsfTrkIdVL_v*']
+triggers_doubleele33_MW  = ['HLT_DoubleEle33_CaloIdL_GsfTrkIdVL_MW_v*']
+###---- Electron-Muon
+triggers_mu23el12        = ['HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v*']
+triggers_mu8el23         = ['HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v*']
+# Non-Isolated triggers:
+triggers_mu30ele30       = ['HLT_Mu30_Ele30_CaloIdL_GsfTrkIdVL_v*']
+###---- HT:
 triggers_pfht200      = ['HLT_PFHT200_v*']
 triggers_pfht250      = ['HLT_PFHT250_v*']
 triggers_pfht300      = ['HLT_PFHT300_v*']
@@ -152,13 +186,7 @@ triggers_pfht475      = ['HLT_PFHT475_v*']
 triggers_pfht600      = ['HLT_PFHT600_v*']
 triggers_pfht650      = ['HLT_PFHT650_v*']
 triggers_pfht800      = ['HLT_PFHT800_v*']
-triggers_pfht900      = ['HLT_PFHT900_v*']
-triggers_at57         = ['HLT_PFHT200_DiPFJet90_PFAlphaT0p57_v*']
-triggers_at55         = ['HLT_PFHT250_DiPFJet90_PFAlphaT0p55_v*']
-triggers_at53         = ['HLT_PFHT300_DiPFJet90_PFAlphaT0p53_v*']
-triggers_at52         = ['HLT_PFHT350_DiPFJet90_PFAlphaT0p52_v*']
-triggers_at51         = ['HLT_PFHT400_DiPFJet90_PFAlphaT0p51_v*']
-triggers_htmet        = ['HLT_PFHT350_PFMET120_NoiseCleaned_v*']
-triggers_htjet        = ['HLT_PFHT550_4Jet_v*', 'HLT_PFHT650_4Jet_v*', 'HLT_PFHT750_4Jet_v*']
-triggers_mu30ele30    = ['HLT_Mu30_Ele30_CaloIdL_GsfTrkIdVL_v*']
-triggers_doubleele33  = ['HLT_DoubleEle33_CaloIdL_GsfTrkIdVL_v*']
+triggers_pfht = triggers_pfht200 + triggers_pfht250 + triggers_pfht300 + triggers_pfht350 + triggers_pfht400 + triggers_pfht475 + triggers_pfht600 + triggers_pfht650 + triggers_pfht800
+###---- MET:
+triggers_htmet = ['HLT_PFHT300_PFMET110_v*']
+

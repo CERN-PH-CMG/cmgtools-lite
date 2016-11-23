@@ -371,8 +371,8 @@ class TreeToYield:
             return [ npass, sqrt(npass), npass ]
     def _stylePlot(self,plot,spec):
         return stylePlot(plot,spec,self.getOption)
-    def getPlot(self,plotspec,cut,fsplit=None):
-        ret = self.getPlotRaw(plotspec.name, plotspec.expr, plotspec.bins, cut, plotspec, fsplit=fsplit)
+    def getPlot(self,plotspec,cut,fsplit=None,closeTreeAfter=False):
+        ret = self.getPlotRaw(plotspec.name, plotspec.expr, plotspec.bins, cut, plotspec, fsplit=fsplit, closeTreeAfter=closeTreeAfter)
         # fold overflow
         if ret.ClassName() in [ "TH1F", "TH1D" ] :
             n = ret.GetNbinsX()
@@ -406,7 +406,7 @@ class TreeToYield:
         self._stylePlot(ret,plotspec)
         ret._cname = self._cname
         return ret
-    def getPlotRaw(self,name,expr,bins,cut,plotspec,fsplit=None):
+    def getPlotRaw(self,name,expr,bins,cut,plotspec,fsplit=None,closeTreeAfter=False):
         unbinnedData2D = plotspec.getOption('UnbinnedData2D',False) if plotspec != None else False
         if not self._isInit: self._init()
         if self._appliedCut != None:
@@ -450,11 +450,15 @@ class TreeToYield:
             histo = ROOT.TH1KeysNew("dummyk","dummyk",int(nb),float(xmin),float(xmax),"a",1.0)
             self._tree.Draw("%s>>%s" % (expr,"dummyk"), cut, "goff", maxEntries, firstEntry)
             self.negativeCheck(histo)
+            histo.SetDirectory(0)
+            if closeTreeAfter: self._tfile.Close()
             return histo.GetHisto().Clone(name)
         #elif not self._isdata and self.getOption("KeysPdf",False):
         #else:
         #    print "Histogram for %s/%s has %d entries, so won't use KeysPdf (%s, %s) " % (self._cname, self._name, histo.GetEntries(), canKeys, self.getOption("KeysPdf",False))
         self.negativeCheck(histo)
+        histo.SetDirectory(0)
+        if closeTreeAfter: self._tfile.Close()
         return histo.Clone(name)
     def negativeCheck(self,histo):
         if not self._options.allowNegative and not self._name in self._options.negAllowed: 
