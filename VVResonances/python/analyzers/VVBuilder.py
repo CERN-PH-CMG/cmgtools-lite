@@ -137,10 +137,10 @@ class VVBuilder(Analyzer):
 
 
         constituents=[]
-        LVs = event.genParticleLVs
+        LVs =ROOT.std.vector("math::XYZTLorentzVector")()
 
         #we take LVs around the jets and recluster
-        for LV in event.LVs:
+        for LV in event.genParticleLVs:
             if deltaR(LV.eta(),LV.phi(),jet.eta(),jet.phi())<1.2:
                 LVs.push_back(LV)
 
@@ -465,7 +465,7 @@ class VVBuilder(Analyzer):
         if self.cfg_comp.isMC:
             event.genParticleLVs =ROOT.std.vector("math::XYZTLorentzVector")()
             for p in event.genParticles:
-                if p.status()==1 and not p.pdgId() in [12,14,16]:
+                if p.status()==1 and not (p.pdgId() in [12,14,16]):
                     event.genParticleLVs.push_back(p.p4())
 
 
