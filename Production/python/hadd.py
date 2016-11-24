@@ -12,7 +12,11 @@ def haddPck(file, odir, idirs):
     for dir in idirs:
         fileName = file.replace( idirs[0], dir )
         pckfile = open(fileName)
-        obj = pickle.load(pckfile)
+        try:
+            obj = pickle.load(pckfile)
+        except:
+            print "Error loading pckfile "+fileName
+            raise
         if sum is None:
             sum = obj
         else:
