@@ -11,9 +11,6 @@ import ROOT
 ROOT.PyConfig.IgnoreCommandLineOptions = True
 
 MODULES = []
-from CMGTools.TTHAnalysis.tools.multilepFriendTreeProducersToCleanup import MODULES as multiModules
-MODULES += multiModules
-
 
 class VariableProducer(Module):
     def __init__(self,name,booker,modules):
