@@ -29,13 +29,13 @@ doPhotonCorr = getHeppyOption("doPhotonCorr",True)
 # Define skims
 signalSkim = False
 diLepSkim = False
-singleLepSkim = False
-singlePhotonSkim = True
+singleLepSkim = True
+singlePhotonSkim = False
 
 # --- MONOJET SKIMMING ---
 if signalSkim == True:
-    monoJetSkim.metCut = 130
-    monoJetSkim.jetPtCuts = [70,50]
+    monoJetSkim.metCut = 150
+#    monoJetSkim.jetPtCuts = [70,50]
 
 # --- Z->ll control sample SKIMMING ---
 if diLepSkim == True:
@@ -45,10 +45,9 @@ if singleLepSkim == True:
     monoJetCtrlLepSkim.minLeptons = 1
     # this skim is only used for the SingleElectron CR, so Tight cuts on PT and ID
     monoJetCtrlLepSkim.idCut = '(lepton.muonID("POG_ID_Tight") and lepton.relIso04 < 0.15) if abs(lepton.pdgId())==13 else \
-(lepton.electronID("POG_Cuts_ID_SPRING15_25ns_v1_ConvVetoDxyDz_Tight_full5x5") and (lepton.relIso03<0.0354 if abs(lepton.superCluster().eta())<1.479 else lepton.relIso03<0.0646))'
-    #monoJetCtrlLepSkim.idCut='(lepton.muonID("POG_SPRING15_25ns_v1_Veto")) if abs(lepton.pdgId())==13 else (lepton.electronID("POG_SPRING15_25ns_v1_Veto"))'
+(lepton.electronID("POG_Cuts_ID_SPRING16_25ns_v1_ConvVetoDxyDz_Tight") and (lepton.relIso03<0.0588 if abs(lepton.superCluster().eta())<1.479 else lepton.relIso03<0.0571))'
     monoJetCtrlLepSkim.ptCuts = [40]
-    monoJetSkim.jetPtCuts = [70,50]
+    #monoJetSkim.jetPtCuts = [70,50]
 if singlePhotonSkim == True:
     gammaJetCtrlSkim.minPhotons = 1
     monoJetSkim.jetPtCuts = [70,50]
@@ -224,7 +223,7 @@ if scaleProdToLumi>0: # select only a subset of a sample, corresponding to a giv
         c.splitFactor = len(c.files)
         c.fineSplitFactor = 1
 
-json = "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-279931_13TeV_PromptReco_Collisions16_JSON_NoL1T.txt"
+json = "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-284044_13TeV_PromptReco_Collisions16_JSON_NoL1T.txt"
 if False:
     is50ns = False
     selectedComponents = PrivateSamplesData
@@ -254,7 +253,10 @@ if runData and not isTest: # For running on data
     ProcessingsAndRunRanges.append( ("Run2016D-PromptReco-v2", [276315,276811] ) ); Shorts.append("Run2016D_PromptReco_v2")
     ProcessingsAndRunRanges.append( ("Run2016E-PromptReco-v2", [276830,277420] ) ); Shorts.append("Run2016E_PromptReco_v2")
     ProcessingsAndRunRanges.append( ("Run2016F-PromptReco-v1", [277820,278808] ) ); Shorts.append("Run2016F_PromptReco_v1")
-    ProcessingsAndRunRanges.append( ("Run2016G-PromptReco-v1", [278817,279931] ) ); Shorts.append("Run2016G_PromptReco_v1")
+    ProcessingsAndRunRanges.append( ("Run2016G-PromptReco-v1", [278816,280385] ) ); Shorts.append("Run2016G_PromptReco_v1")
+    ProcessingsAndRunRanges.append( ("Run2016H-PromptReco-v1", [281010,281202] ) ); Shorts.append("Run2016H_PromptReco_v1")
+    ProcessingsAndRunRanges.append( ("Run2016H-PromptReco-v2", [281207,284035] ) ); Shorts.append("Run2016H_PromptReco_v2")
+    ProcessingsAndRunRanges.append( ("Run2016H-PromptReco-v3", [284036,284068] ) ); Shorts.append("Run2016H_PromptReco_v3")
 
     if diLepSkim == True:
         #DatasetsAndTriggers.append( ("DoubleMuon", triggers_mumu_iso + triggers_mumu_ss + triggers_mumu_ht + triggers_3mu + triggers_3mu_alt + triggers_AllMonojet) )
@@ -324,15 +326,15 @@ if runData==False and not isTest: # MC all
     ### 25 ns 74X MC samples
     is50ns = False
     mcSamples = mcSamples_monojet_Asymptotic25ns
-    if signalSkim:
-        # H -> invisibles mass scan (gg + VBF)
-        mcSamples += (VBF_HToInvisible + GluGlu_HToInvisible)
+    # if signalSkim:
+    #     # H -> invisibles mass scan (gg + VBF)
+    #     mcSamples += (VBF_HToInvisible + GluGlu_HToInvisible)
     selectedComponents = mcSamples 
     for comp in selectedComponents:
         comp.splitFactor = len(comp.files)/4
         comp.fineSplitFactor = 1
-        if 'HToInvisible' in comp.name: 
-            triggerFlagsAna.processName = 'HLT2'
+        # if 'HToInvisible' in comp.name: triggerFlagsAna.processName = 'HLT2'
+        # else: triggerFlagsAna.processName = 'HLT'
 
 if runData==False and isTest: # Synch MC sample
     is50ns = False
