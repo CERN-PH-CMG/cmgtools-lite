@@ -35,7 +35,7 @@ syncntuple = getHeppyOption('syncntuple', True)
 cmssw = getHeppyOption('cmssw', True)
 doSUSY = getHeppyOption('susy', True)
 computeSVfit = getHeppyOption('computeSVfit', False)
-data = getHeppyOption('data', True)
+data = getHeppyOption('data', False)
 tes_string = getHeppyOption('tes_string', '') # '_tesup' '_tesdown'
 reapplyJEC = getHeppyOption('reapplyJEC', True)
 calibrateTaus = getHeppyOption('calibrateTaus', False)
@@ -301,6 +301,8 @@ if doSUSY:
     )
     outputService.append(output_service)
 
+selectedComponents = [s for s in selectedComponents if 'WJetsToLNu_LO' in s.name]
+
 ###################################################
 ###            SET BATCH OR LOCAL               ###
 ###################################################
@@ -309,6 +311,8 @@ if not production:
     # comp = SMS
     # comp = samples_susy[1]
     selectedComponents = samples_susy if doSUSY else sync_list
+    if data:
+        selectedComponents = [data_list[0]]
     for comp in selectedComponents:
         comp.splitFactor = 1
         comp.fineSplitFactor = 1

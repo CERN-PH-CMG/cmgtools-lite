@@ -1,4 +1,7 @@
-from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv2 import DYJetsToLL_M50, WJetsToLNu,  WWTo2L2Nu, ZZ, WZ,  QCD_Mu5, DYJetsToLL_M50_LO, TBar_tWch, T_tWch, QCDPtEMEnriched, QCDPtbcToE, TBarToLeptons_tch_powheg, DYNJets, WNJets, TToLeptons_tch_powheg, WJetsToLNu_LO, DYJetsToLL_M10to50_LO
+from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv2 import DYJetsToLL_M50, WJetsToLNu,  WWTo2L2Nu, ZZ, WZ,  QCD_Mu5, TBar_tWch, T_tWch, QCDPtEMEnriched, QCDPtbcToE, TBarToLeptons_tch_powheg, DYNJets, WNJets, TToLeptons_tch_powheg, DYJetsToLL_M10to50_LO #DYJetsToLL_M50_LO WJetsToLNu_LO
+
+from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv2 import DYJetsToLL_M50_LO_reHLT as DYJetsToLL_M50_LO
+from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv2 import WJetsToLNu_LO_reHLT as WJetsToLNu_LO
 # WJetsToLNu_HT100to200, WJetsToLNu_HT200to400, WJetsToLNu_HT400to600, WJetsToLNu_HT600toInf, QCD_Mu15,  DYJetsToTauTau_M150_LO, 
 from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv2 import TT_pow_ext3 as TT_pow_ext
 from CMGTools.RootTools.samples.samples_13TeV_DATA2016 import SingleMuon_Run2016B_PromptReco_v2, SingleElectron_Run2016B_PromptReco_v2, MuonEG_Run2016B_PromptReco_v2, Tau_Run2016B_PromptReco_v2
@@ -20,7 +23,10 @@ from CMGTools.H2TauTau.proto.samples.spring16.higgs_susy import HiggsSUSYGG160 a
 json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-276811_13TeV_PromptReco_Collisions16_JSON.txt'
 lumi = 12918.1407
 
-json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-279116_13TeV_PromptReco_Collisions16_JSON_NoL1T.txt'
+# 15 November
+json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-284044_13TeV_PromptReco_Collisions16_JSON_NoL1T.txt'
+# lumi = 36220.
+
 
 # lumi_2016G = 1659.026988066 # 2016 G
 lumi_2016G = 1080.463515944 # 2016 G HLT_IsoMu22_v3

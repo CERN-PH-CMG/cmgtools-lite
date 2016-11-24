@@ -97,7 +97,7 @@ pileUpAna = cfg.Analyzer(
 susyScanAna = cfg.Analyzer(
     susyParameterScanAnalyzer, name="susyParameterScanAnalyzer",
     doLHE=True,
-    useLumiInfo=True,
+    useLumiInfo=False,
 )
 
 httGenAna = cfg.Analyzer(

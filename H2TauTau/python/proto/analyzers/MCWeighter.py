@@ -72,6 +72,8 @@ class MCWeighter(Analyzer):
 
     def process(self, event):
         event.mcweight = float(self.mcweight)
+        if not self.cfg_comp.isMC:
+            return
 
         self.readCollections(event.input)
         event.genParticles = self.mchandles['genParticles'].product()

@@ -1,8 +1,5 @@
-import os
-
 import FWCore.ParameterSet.Config as cms
 # from CMGTools.Production.datasetToSource import datasetToSource
-from CMGTools.H2TauTau.tools.setupJSON import setupJSON
 # from CMGTools.H2TauTau.tools.setupRecoilCorrection import setupRecoilCorrection
 # from CMGTools.H2TauTau.tools.setupEmbedding import setupEmbedding
 # from CMGTools.H2TauTau.objects.jetreco_cff import addAK4Jets
@@ -122,10 +119,7 @@ def createProcess(runOnMC=True, channel='tau-mu', runSVFit=False,
             "PoolSource",
             noEventSort=cms.untracked.bool(True),
             duplicateCheckMode=cms.untracked.string("noDuplicateCheck"),
-            fileNames=cms.untracked.vstring(data_single_muon[0].files)  # mu-tau
-            # fileNames =
-            # cms.untracked.vstring('root://eoscms.cern.ch//eos/cms/store/data/Run2015D/Tau/MINIAOD/16Dec2015-v1/00000/F8B6DB5A-69B0-E511-96D4-20CF305B0590.root')
-            # # tau-tau
+            fileNames=cms.untracked.vstring(data_single_muon[1].files)  # mu-tau
         )
 
     if runOnMC:
@@ -139,10 +133,10 @@ def createProcess(runOnMC=True, channel='tau-mu', runSVFit=False,
 
     print 'Run on MC?', runOnMC, process.source.fileNames[0]
 
-    if not runOnMC:
-        from CMGTools.H2TauTau.proto.samples.spring16.htt_common import json
-        # print 'Running on data, setting up JSON file'
-        # json = setupJSON(process)
+    # if not runOnMC:
+    #     from CMGTools.H2TauTau.proto.samples.spring16.htt_common import json
+    #     # print 'Running on data, setting up JSON file'
+    #     # json = setupJSON(process)
 
     # Message logger setup.
     process.load("FWCore.MessageLogger.MessageLogger_cfi")
@@ -331,8 +325,8 @@ def createProcess(runOnMC=True, channel='tau-mu', runSVFit=False,
     print sep_line
     print process.source.fileNames
     print
-    if not runOnMC:
-        print 'json:', json
+    # if not runOnMC:
+    #     print 'json:', json
     print
     print sep_line
     print 'PROCESSING'
@@ -344,7 +338,7 @@ def createProcess(runOnMC=True, channel='tau-mu', runSVFit=False,
     # convertToUnscheduled(process)
     return process
 
-# if __name__ == '__main__':
-#     process = createProcess()
+if __name__ == '__main__':
+    process = createProcess()
 
-process = createProcess()
+# process = createProcess()

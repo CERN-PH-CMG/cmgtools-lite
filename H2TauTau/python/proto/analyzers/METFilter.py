@@ -13,7 +13,7 @@ class METFilter(Analyzer):
 
     def declareHandles(self):
         super(METFilter, self).declareHandles()
-        self.handles['TriggerResults'] = AutoHandle(('TriggerResults', '', self.processName), 'edm::TriggerResults', fallbackLabel='PAT') # fallback for FastSim
+        self.handles['TriggerResults'] = AutoHandle(('TriggerResults', '', self.processName), 'edm::TriggerResults', fallbackLabel=('TriggerResults', '', 'PAT')) # fallback for FastSim
         self.handles['packedCandidates'] = AutoHandle('packedPFCandidates', 'std::vector<pat::PackedCandidate>')
         self.handles['muons'] = AutoHandle('slimmedMuons', 'std::vector<pat::Muon>')
 
