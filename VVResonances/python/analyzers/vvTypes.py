@@ -153,14 +153,31 @@ NuNuJJType = NTupleObjectType("NuNuJJType", baseObjectTypes=[VJType], variables 
 WbJJType = NTupleObjectType("WbJJType", baseObjectTypes=[VJType], variables = [
     NTupleSubObject("l1",  lambda x : x.leg1,fourVectorType),
     NTupleSubObject("l1_Wjet",  lambda x : x.leg1.leg1,FatJetType),
+    NTupleSubObject("l1_Wjet_softDrop",  lambda x : x.leg1.leg1.substructure.softDropJet,fourVectorType),
+    NTupleSubObject("l1_Wjet_softDrop_s1",  lambda x : x.leg1.leg1.substructure.softDropSubjets[0] if len(x.leg1.leg1.substructure.softDropSubjets)>0 else dummyLV,fourVectorType),
+    NTupleSubObject("l1_Wjet_softDrop_s2",  lambda x : x.leg1.leg1.substructure.softDropSubjets[1] if len(x.leg1.leg1.substructure.softDropSubjets)>1 else dummyLV,fourVectorType),
+    NTupleSubObject("l1_Wjet_gen",  lambda x : x.leg1.leg1.substructureGEN.jet if hasattr(x.leg1.leg1,'substructureGEN') else dummyLV,fourVectorType,True),
+    NTupleSubObject("l1_Wjet_gen_softDrop",  lambda x : x.leg1.leg1.substructureGEN.softDropJet if hasattr(x.leg1.leg1,'substructureGEN') else dummyLV,fourVectorType,True),
     NTupleSubObject("l1_bjet",  lambda x : x.leg1.leg2,jetType),
 ])
 
 WbWbType = NTupleObjectType("WbWbType", baseObjectTypes=[VVType], variables = [
     NTupleSubObject("l1",  lambda x : x.leg1,fourVectorType),
     NTupleSubObject("l1_Wjet",  lambda x : x.leg1.leg1,FatJetType),
+    NTupleSubObject("l1_Wjet_softDrop",  lambda x : x.leg1.leg1.substructure.softDropJet,fourVectorType),
+    NTupleSubObject("l1_Wjet_softDrop_s1",  lambda x : x.leg1.leg1.substructure.softDropSubjets[0] if len(x.leg1.leg1.substructure.softDropSubjets)>0 else dummyLV,fourVectorType),
+    NTupleSubObject("l1_Wjet_softDrop_s2",  lambda x : x.leg1.leg1.substructure.softDropSubjets[1] if len(x.leg1.leg1.substructure.softDropSubjets)>1 else dummyLV,fourVectorType),
+    NTupleSubObject("l1_Wjet_gen",  lambda x : x.leg1.leg1.substructureGEN.jet if hasattr(x.leg1.leg1,'substructureGEN') else dummyLV,fourVectorType,True),
+    NTupleSubObject("l1_Wjet_gen_softDrop",  lambda x : x.leg1.leg1.substructureGEN.softDropJet if hasattr(x.leg1.leg1,'substructureGEN') else dummyLV,fourVectorType,True),
     NTupleSubObject("l1_bjet",  lambda x : x.leg1.leg2,jetType),
-    NTupleSubObject("l2",  lambda x : x.leg1,fourVectorType),
+
+    NTupleSubObject("l2",  lambda x : x.leg2,fourVectorType),
     NTupleSubObject("l2_Wjet",  lambda x : x.leg2.leg1,FatJetType),
+    NTupleSubObject("l2_Wjet_softDrop",  lambda x : x.leg2.leg1.substructure.softDropJet,fourVectorType),
+    NTupleSubObject("l2_Wjet_softDrop_s1",  lambda x : x.leg2.leg1.substructure.softDropSubjets[0] if len(x.leg2.leg1.substructure.softDropSubjets)>0 else dummyLV,fourVectorType),
+    NTupleSubObject("l2_Wjet_softDrop_s2",  lambda x : x.leg2.leg1.substructure.softDropSubjets[1] if len(x.leg2.leg1.substructure.softDropSubjets)>1 else dummyLV,fourVectorType),
+    NTupleSubObject("l2_Wjet_gen",  lambda x : x.leg2.leg1.substructureGEN.jet if hasattr(x.leg2.leg1,'substructureGEN') else dummyLV,fourVectorType,True),
+    NTupleSubObject("l2_Wjet_gen_softDrop",  lambda x : x.leg2.leg1.substructureGEN.softDropJet if hasattr(x.leg2.leg1,'substructureGEN') else dummyLV,fourVectorType,True),
     NTupleSubObject("l2_bjet",  lambda x : x.leg2.leg2,jetType),
+
 ])

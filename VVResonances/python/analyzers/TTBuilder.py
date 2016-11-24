@@ -42,7 +42,7 @@ class TTBuilder(VVBuilder):
             return output
 
         
-        top=min(fatJets,key=lambda x: abs(x.substructure.softDropJet.mass()-174.0))
+        top=min(fatJets,key=lambda x: abs(x.mass()-174.0))
         W=None
         WM=1000.0
         for j in fatJets:
@@ -161,7 +161,7 @@ class TTBuilder(VVBuilder):
         if self.cfg_comp.isMC:
             event.genParticleLVs =ROOT.std.vector("math::XYZTLorentzVector")()
             for p in event.genParticles:
-                if p.status()==1 and not p.pdgId() in [12,14,16]:
+                if p.status()==1 and not (p.pdgId() in [12,14,16]):
                     event.genParticleLVs.push_back(p.p4())
 
         #Precategorize here        
