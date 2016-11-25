@@ -44,11 +44,10 @@ print 'Using analysis type: %s'%analysis
 # Lepton Skimming
 ttHLepSkim.minLeptons = 2
 ttHLepSkim.maxLeptons = 999
-ttHLepSkim.allowLepTauComb = True
 
 if analysis=='susy':
-    susyCoreSequence.remove(ttHLepSkim)
     susyCoreSequence.insert(susyCoreSequence.index(ttHLepSkim)+1,globalSkim)
+    susyCoreSequence.remove(ttHLepSkim)
     globalSkim.selections=["2lep5","1lep5_1tau18", "2tau18"]
 #   [ lambda ev: 2<=sum([(lep.miniRelIso<0.4) for lep in ev.selectedLeptons]) ] 
 #   ["2lep5[os:!DS_TTW_RA5_sync]_1lep50"]#, "1lep5_1tau18", "2tau18","2lep5_1met50"]
@@ -356,7 +355,7 @@ if not skipT1METCorr:
 
 from CMGTools.RootTools.samples.triggers_13TeV_DATA2016 import *
 triggerFlagsAna.triggerBits = {
-    'DoubleMu' : triggers_mumu_iso ,
+    'DoubleMu' : triggers_mumu_iso,
     'DoubleMuSS' : triggers_mumu_ss,
     'DoubleMuNoIso' : triggers_mumu_noniso + triggers_mu27tkmu8,
     'DoubleEl' : triggers_ee + triggers_doubleele33 + triggers_doubleele33_MW,
@@ -376,7 +375,7 @@ triggerFlagsAna.triggerBits = {
     'SOSTripleMu' : triggers_SOS_tripleMu,
     'LepTau' : triggers_leptau,
     'MET' : triggers_metNoMu90_mhtNoMu90 + triggers_htmet,
-    'htall' : triggers_pfht
+    'ht' : triggers_pfht
     
     #'MonoJet80MET90' : triggers_Jet80MET90,
     #'MonoJet80MET120' : triggers_Jet80MET120,
