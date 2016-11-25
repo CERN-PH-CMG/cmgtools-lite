@@ -38,7 +38,7 @@ sample = 'MC'
 #sample = 'Signal'
 
 #-------- Preprocessor yes/no
-cmssw = True
+cmssw = False
 
 isData = False # default, but will be overwritten below
 isSignal = False # default, but will be overwritten below
