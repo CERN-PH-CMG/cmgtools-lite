@@ -26,16 +26,19 @@ jetAna.mcGT = "Spring16_25nsV6_MC"
 jetAna.dataGT = "Spring16_25nsV6_DATA"
 ##Lets turn everything on for now, at least we know what is applied
 jetAna.addJECShifts = True
-jetAna.smearJets = True
+jetAna.smearJets = False
 jetAna.recalibrateJets = True 
-jetAna.applyL2L3Residual = True
+jetAna.applyL2L3Residual = "Data"
 metAna.recalibrate = True
 
 
 #-------- HOW TO RUN
-#sample = 'MC'
-sample = 'data'
+sample = 'MC'
+#sample = 'data'
 #sample = 'Signal'
+
+#-------- Preprocessor yes/no
+cmssw = True
 
 isData = False # default, but will be overwritten below
 isSignal = False # default, but will be overwritten below
@@ -410,9 +413,18 @@ output_service = cfg.Service(
     )
 outputService.append(output_service)
 
+from PhysicsTools.Heppy.utils.cmsswPreprocessor import CmsswPreprocessor
+preprocessor = None
+if cmssw:
+    fname = "$CMSSW_BASE/src/CMGTools/SUSYAnalysis/cfg/runBTaggingSlimPreprocessor_cfg.py"
+    jetAna.jetCol = 'selectedUpdatedPatJets'
+#    fname = "$CMSSW_BASE/src/CMGTools/SUSYAnalysis/cfg/MetType1_jec_Spring16_25nsV6_MC.py"
+    preprocessor = CmsswPreprocessor(fname)#, addOrigAsSecondary=False)
+
 print "running"
 from PhysicsTools.HeppyCore.framework.eventsfwlite import Events
 config = cfg.Config( components = selectedComponents,
          sequence = sequence,
          services = outputService,
+         preprocessor=preprocessor,
          events_class = Events)

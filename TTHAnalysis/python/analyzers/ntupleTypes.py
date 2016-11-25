@@ -215,6 +215,11 @@ jetTypeSusyExtra = NTupleObjectType("jetSusyExtra",  baseObjectTypes = [ jetType
     NTupleVariable("muMult", lambda x : x.muonMultiplicity(), int, mcOnly = False,help="muonMultiplicity from PFJet.h"),
     NTupleVariable("HFHMult", lambda x : x.HFHadronMultiplicity(), int, mcOnly = False,help="HFHadronMultiplicity from PFJet.h"),
     NTupleVariable("HFEMMult", lambda x : x.HFEMMultiplicity(), int, mcOnly = False,help="HFEMMultiplicity from PFJet.h"),
+    NTupleVariable("DFudsg", lambda x : x.btag('deepFlavourJetTags:probudsg'), float, help="Deep flavor discriminator: udsg"),
+    NTupleVariable("DFb",    lambda x : x.btag('deepFlavourJetTags:probb'),    float, help="Deep flavor discriminator: b"),
+    NTupleVariable("DFc",    lambda x : x.btag('deepFlavourJetTags:probc'),    float, help="Deep flavor discriminator: c"),
+    NTupleVariable("DFbb",   lambda x : x.btag('deepFlavourJetTags:probbb'),   float, help="Deep flavor discriminator: bb"),
+    NTupleVariable("DFcc",   lambda x : x.btag('deepFlavourJetTags:probcc'),   float, help="Deep flavor discriminator: cc"),
 ])
 
 fatJetType = NTupleObjectType("fatJet",  baseObjectTypes = [ jetType ], variables = [
