@@ -14,9 +14,10 @@ from CMGTools.H2TauTau.proto.analyzers.TauP4Scaler import TauP4Scaler
 from CMGTools.H2TauTau.proto.analyzers.SVfitProducer import SVfitProducer
 from CMGTools.H2TauTau.proto.analyzers.L1TriggerAnalyzer import L1TriggerAnalyzer
 from CMGTools.H2TauTau.proto.analyzers.MT2Analyzer import MT2Analyzer
+from CMGTools.H2TauTau.proto.analyzers.METFilter import METFilter
 
 # common configuration and sequence
-from CMGTools.H2TauTau.htt_ntuple_base_cff import commonSequence, genAna, dyJetsFakeAna, puFileData, puFileMC, eventSelector, susyCounter, susyScanAna, jetAna
+from CMGTools.H2TauTau.htt_ntuple_base_cff import commonSequence, httGenAna, puFileData, puFileMC, eventSelector, susyCounter, susyScanAna, jetAna, recoilCorr, mcWeighter
 
 def getHeppyOption(option, default):
     opt = _getHeppyOption(option, default)
@@ -28,16 +29,17 @@ def getHeppyOption(option, default):
 # Get all heppy options; set via '-o production' or '-o production=True'
 
 # production = True run on batch, production = False (or unset) run locally
-production = getHeppyOption('production', False)
+production = getHeppyOption('production', True)
 pick_events = getHeppyOption('pick_events', False)
 syncntuple = getHeppyOption('syncntuple', True)
 cmssw = getHeppyOption('cmssw', True)
-doSUSY = getHeppyOption('susy', False)
+doSUSY = getHeppyOption('susy', True)
 computeSVfit = getHeppyOption('computeSVfit', False)
 data = getHeppyOption('data', False)
 tes_string = getHeppyOption('tes_string', '') # '_tesup' '_tesdown'
 reapplyJEC = getHeppyOption('reapplyJEC', True)
 calibrateTaus = getHeppyOption('calibrateTaus', False)
+correct_recoil = getHeppyOption('correct_recoil', True)
 
 # Just to be sure
 if production:
@@ -47,11 +49,12 @@ if production:
 if reapplyJEC:
     if cmssw:
         jetAna.jetCol = 'patJetsReapplyJEC'
-        dyJetsFakeAna.jetCol = 'patJetsReapplyJEC'
+        httGenAna.jetCol = 'patJetsReapplyJEC'
     else:
         jetAna.recalibrateJets = True
 
-dyJetsFakeAna.channel = 'tt'
+if correct_recoil:
+    recoilCorr.apply = True
 
 # Define tau-tau specific modules
 
@@ -192,6 +195,20 @@ svfitProducer = cfg.Analyzer(
     l2type='tau'
 )
 
+metFilter = cfg.Analyzer(
+    METFilter,
+    name='METFilter',
+    processName='RECO',
+    triggers=[
+        'Flag_HBHENoiseFilter', 
+        'Flag_HBHENoiseIsoFilter', 
+        'Flag_EcalDeadCellTriggerPrimitiveFilter',
+        'Flag_goodVertices',
+        'Flag_eeBadScFilter',
+        'Flag_globalTightHalo2016Filter'
+    ]
+)
+
 ###################################################
 ### CONNECT SAMPLES TO THEIR ALIASES AND FILES  ###
 ###################################################
@@ -241,8 +258,8 @@ if data:
 ###################################################
 sequence = commonSequence
 if calibrateTaus:
-    sequence.insert(sequence.index(dyJetsFakeAna), tauP4Scaler)
-sequence.insert(sequence.index(dyJetsFakeAna), tauTauAna)
+    sequence.insert(sequence.index(httGenAna), tauP4Scaler)
+sequence.insert(sequence.index(httGenAna), tauTauAna)
 # sequence.insert(sequence.index(genAna), l1Ana)
 # sequence.append(tau1Calibration)
 # sequence.append(tau2Calibration)
@@ -250,7 +267,9 @@ sequence.append(tauDecayModeWeighter)
 sequence.append(tau1Weighter)
 sequence.append(tau2Weighter)
 sequence.append(tauTauMT2Ana)
+sequence.append(metFilter)
 if doSUSY:
+    sequence.insert(sequence.index(mcWeighter) + 1, susyScanAna)
     sequence.insert(sequence.index(susyScanAna) + 1, susyCounter)
 if computeSVfit:
     sequence.append(svfitProducer)
@@ -258,23 +277,13 @@ sequence.append(treeProducer)
 if syncntuple:
     sequence.append(syncTreeProducer)
 if not cmssw:
-    module = [s for s in sequence if s.name == 'MCWeighter'][0]
-    sequence.remove(module)
+    mcWeighter.activate = False
 
 ###################################################
 ###             CHERRY PICK EVENTS              ###
 ###################################################
 if pick_events:
-
-    #     import csv
-    #     fileName = '/afs/cern.ch/work/m/manzoni/diTau2015/CMSSW_7_4_3/src/CMGTools/H2TauTau/cfgPython/2015-sync/Imperial.csv'
-    # #     fileName = '/afs/cern.ch/work/m/manzoni/diTau2015/CMSSW_7_4_3/src/CMGTools/H2TauTau/cfgPython/2015-sync/CERN.csv'
-    #     f = open(fileName, 'rb')
-    #     reader = csv.reader(f)
     evtsToPick = [457708, 425293, 447970, 178882, 3374, 14658, 443850, 21582, 4403, 12924, 11275, 68723, 96792, 120270, 247339, 88508, 104454, 344845, 333579, 384277, 390123, 453005, 477401, 482485, 478466, 273199, 307046, 312583, 317090, 344426, 345958, 463044, 463051, 468768, 276616, 159307, 359291, 386755, 172125, 185981, 318270, 382006, 332328, 301617, 69428, 167235, 155761, 156001, 246652, 246812, 187713, 201555, 199365, 205348, 239434, 354001, 242066, 263854, 57426, 485885, 136766, 222003, 459882, 145312, 139491, 63131, 94633, 92860, 97245, 175535, 190598, 200504, 243541]
-
-    # for i, row in enumerate(reader):
-    #     evtsToPick += [int(j) for j in row]
 
     eventSelector.toSelect = evtsToPick
     sequence.insert(0, eventSelector)
@@ -292,16 +301,21 @@ if doSUSY:
     )
     outputService.append(output_service)
 
+selectedComponents = [s for s in selectedComponents if 'WJetsToLNu_LO' in s.name]
+
 ###################################################
 ###            SET BATCH OR LOCAL               ###
 ###################################################
 if not production:
-    comp = data_list[0] if data else sync_list[0]
+    # comp = data_list[0] if data else sync_list[0]
     # comp = SMS
     # comp = samples_susy[1]
-    selectedComponents = [comp]
-    comp.splitFactor = 4
-    comp.fineSplitFactor = 1
+    selectedComponents = samples_susy if doSUSY else sync_list
+    if data:
+        selectedComponents = [data_list[0]]
+    for comp in selectedComponents:
+        comp.splitFactor = 1
+        comp.fineSplitFactor = 1
     # comp.files = comp.files[13:20]
 
 preprocessor = None

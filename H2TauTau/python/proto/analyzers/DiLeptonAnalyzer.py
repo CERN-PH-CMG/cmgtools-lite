@@ -30,9 +30,10 @@ class DiLeptonAnalyzer(Analyzer):
         iso2=0.1,
         m_min=10, # mass range
         m_max=99999,
-        from_single_objects=True, #O if 
+        from_single_objects=True, #O (default is False)
         dR_min=0.5, #O min delta R between the two legs
         allTriggerObjMatched=False,
+        ignoreTriggerMatch=True, #O (default is False)
         verbose=False #from base Analyzer class
         )
     """
@@ -165,13 +166,17 @@ class DiLeptonAnalyzer(Analyzer):
         if len(self.cfg_comp.triggers) > 0:
             requireAllMatched = hasattr(self.cfg_ana, 'allTriggerObjMatched') \
                 and self.cfg_ana.allTriggerObjMatched
-            selDiLeptons = [diL for diL in selDiLeptons if
+
+            
+            trigMatchDiLeptons = [diL for diL in selDiLeptons if
                             self.trigMatched(event, diL, requireAllMatched)]
 
-            if len(selDiLeptons) == 0:
-                return False
-            elif fillCounter:
-                self.counters.counter('DiLepton').inc('trig matched')
+            if not getattr(self.cfg_ana, 'ignoreTriggerMatch', False):
+                selDiLeptons = trigMatchDiLeptons
+                if len(selDiLeptons) == 0:
+                    return False
+                elif fillCounter:
+                    self.counters.counter('DiLepton').inc('trig matched')
 
 
 

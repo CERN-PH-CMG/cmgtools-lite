@@ -1,4 +1,4 @@
-from ROOT import TColor, kViolet, kBlue
+from ROOT import TColor, kViolet, kBlue, kRed, kAzure
 
 class Style:
 
@@ -50,20 +50,26 @@ sRed = Style(markerColor=2, fillColor=2)
 sYellow = Style(lineColor=1, markerColor=5, fillColor=5)
 sViolet = Style(lineColor=1, markerColor=kViolet, fillColor=kViolet)
 
+# John's colours
 qcdcol = TColor.GetColor(250,202,255)
-sHTT_QCD = Style(lineColor=1, markerColor=qcdcol, fillColor=qcdcol)
 dycol =  TColor.GetColor(248,206,104)
-sHTT_DYJets = Style(lineColor=1, markerColor=dycol, fillColor=dycol)
 wcol = TColor.GetColor(222,90,106)
-sHTT_WJets = Style(lineColor=1, markerColor=wcol, fillColor=wcol)
 ttcol = TColor.GetColor(155,152,204)
-sHTT_TTJets = Style(lineColor=1, markerColor=ttcol, fillColor=ttcol)
-# sHTT_Higgs = Style(lineColor=kBlue, markerColor=2, lineStyle=2, fillColor=0)
-sHTT_Higgs = Style(lineColor=kBlue, markerColor=0, lineStyle=2, fillColor=0, lineWidth=3)
 zlcol = TColor.GetColor(100,182,232)
-sHTT_ZL = Style(lineColor=1, markerColor=zlcol, fillColor=zlcol)
 dibosoncol = TColor.GetColor(222,90,106)
+
+# Backgrounds
+sHTT_QCD = Style(lineColor=1, markerColor=qcdcol, fillColor=qcdcol)
+sHTT_DYJets = Style(lineColor=1, markerColor=dycol, fillColor=dycol)
+sHTT_WJets = Style(lineColor=1, markerColor=wcol, fillColor=wcol)
+sHTT_TTJets = Style(lineColor=1, markerColor=ttcol, fillColor=ttcol)
+sHTT_ZL = Style(lineColor=1, markerColor=zlcol, fillColor=zlcol)
 sHTT_VV = Style(lineColor=1, markerColor=dibosoncol, fillColor=dibosoncol)
+
+# Signals
+sHTT_Higgs = Style(lineColor=kBlue, markerColor=0, lineStyle=2, fillColor=0, lineWidth=3)
+sHTT_Higgs2 = Style(lineColor=kAzure+8, markerColor=0, lineStyle=3, fillColor=0, lineWidth=3)
+
 
 sBlackSquares = Style(markerStyle=21)
 sBlueSquares = Style(lineColor=4, markerStyle=21, markerColor=4)
@@ -112,7 +118,8 @@ histPref['Zl1jet*'] = {'style':sHTT_DYJets, 'layer':3.2, 'legend':'Z#rightarrow 
 histPref['Zl2jet*'] = {'style':sHTT_Higgs, 'layer':3.2, 'legend':'Z#rightarrow ll + #geq 2 jets'}
 histPref['ZLL'] = {'style':sHTT_ZL, 'layer':3.2, 'legend':'Z#rightarrow ll'}
 histPref['Ztt_TL'] = {'style':sViolet, 'layer':4.1, 'legend':'Z#rightarrow#tau#tau/Z#rightarrow ll, j#rightarrow#tau'}
-histPref['Higgs*'] = {'style':sHTT_Higgs, 'layer':1001, 'legend':None}
+histPref['HiggsGGH125'] = {'style':sHTT_Higgs, 'layer':1001, 'legend':'H_{125}#rightarrow#tau#tau (ggH)'}
+histPref['HiggsVBF125'] = {'style':sHTT_Higgs2, 'layer':1001, 'legend':'H_{125}#rightarrow#tau#tau (VBF)'}
 histPref['ggH*'] = {'style':sHTT_Higgs, 'layer':1001, 'legend':None}
 histPref['bbH*'] = {'style':sHTT_Higgs, 'layer':1001, 'legend':None}
 histPref['SMS*'] = {'style':sHTT_Higgs, 'layer':1001, 'legend':None}

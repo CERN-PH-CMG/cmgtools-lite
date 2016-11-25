@@ -1,14 +1,11 @@
-import os
-
 import FWCore.ParameterSet.Config as cms
 # from CMGTools.Production.datasetToSource import datasetToSource
-from CMGTools.H2TauTau.tools.setupJSON import setupJSON
 # from CMGTools.H2TauTau.tools.setupRecoilCorrection import setupRecoilCorrection
 # from CMGTools.H2TauTau.tools.setupEmbedding import setupEmbedding
 # from CMGTools.H2TauTau.objects.jetreco_cff import addAK4Jets
 from CMGTools.H2TauTau.tools.setupOutput import addTauMuOutput, addTauEleOutput, addDiTauOutput, addMuEleOutput, addDiMuOutput
 from RecoMET.METPUSubtraction.MVAMETConfiguration_cff import runMVAMET
-
+from PhysicsTools.PatUtils.tools.runMETCorrectionsAndUncertainties import runMetCorAndUncFromMiniAOD
 
 # def loadLocalSqlite(process, sqliteFilename, tag='JetCorrectorParametersCollection_Spring16_25nsV3_DATA_AK4PFchs'):
 #     process.load("CondCore.CondDB.CondDB_cfi")
@@ -58,14 +55,6 @@ def createProcess(runOnMC=True, channel='tau-mu', runSVFit=False,
     process.load('Configuration.StandardSequences.GeometryRecoDB_cff')
     process.load('Configuration.StandardSequences.MagneticField_38T_cff')
 
-    # if runOnMC:
-    #     runMVAMET(process)
-    # 
-    # else:
-    runMVAMET(process, jetCollectionPF="patJetsReapplyJEC")
-
-    # loadLocalSqlite(process, 'Spring16_25nsV3_DATA.db') #os.environ['CMSSW_BASE'] + '/src/CMGTools/RootTools/data/jec/'
-
     from PhysicsTools.PatAlgos.producersLayer1.jetUpdater_cff import updatedPatJetCorrFactors
     process.patJetCorrFactorsReapplyJEC = updatedPatJetCorrFactors.clone(
         src=cms.InputTag("slimmedJets"),
@@ -83,6 +72,17 @@ def createProcess(runOnMC=True, channel='tau-mu', runSVFit=False,
         jetSource=cms.InputTag("slimmedJets"),
         jetCorrFactorsSource=cms.VInputTag(cms.InputTag("patJetCorrFactorsReapplyJEC"))
     )
+
+    # if runOnMC:
+    #     runMVAMET(process)
+    #
+    # else:
+    runMVAMET(process, jetCollectionPF="patJetsReapplyJEC")
+    runMetCorAndUncFromMiniAOD(process, isData=not runOnMC)
+
+    process.selectedVerticesForPFMEtCorrType0.src = cms.InputTag("offlineSlimmedPrimaryVertices")
+
+    # loadLocalSqlite(process, 'Spring16_25nsV3_DATA.db') #os.environ['CMSSW_BASE'] + '/src/CMGTools/RootTools/data/jec/'
 
     process.maxEvents = cms.untracked.PSet(input=cms.untracked.int32(-1))
 
@@ -119,10 +119,7 @@ def createProcess(runOnMC=True, channel='tau-mu', runSVFit=False,
             "PoolSource",
             noEventSort=cms.untracked.bool(True),
             duplicateCheckMode=cms.untracked.string("noDuplicateCheck"),
-            fileNames=cms.untracked.vstring(data_single_muon[0].files)  # mu-tau
-            # fileNames =
-            # cms.untracked.vstring('root://eoscms.cern.ch//eos/cms/store/data/Run2015D/Tau/MINIAOD/16Dec2015-v1/00000/F8B6DB5A-69B0-E511-96D4-20CF305B0590.root')
-            # # tau-tau
+            fileNames=cms.untracked.vstring(data_single_muon[1].files)  # mu-tau
         )
 
     if runOnMC:
@@ -136,10 +133,10 @@ def createProcess(runOnMC=True, channel='tau-mu', runSVFit=False,
 
     print 'Run on MC?', runOnMC, process.source.fileNames[0]
 
-    if not runOnMC:
-        from CMGTools.H2TauTau.proto.samples.spring16.htt_common import json
-        # print 'Running on data, setting up JSON file'
-        # json = setupJSON(process)
+    # if not runOnMC:
+    #     from CMGTools.H2TauTau.proto.samples.spring16.htt_common import json
+    #     # print 'Running on data, setting up JSON file'
+    #     # json = setupJSON(process)
 
     # Message logger setup.
     process.load("FWCore.MessageLogger.MessageLogger_cfi")
@@ -183,6 +180,14 @@ def createProcess(runOnMC=True, channel='tau-mu', runSVFit=False,
     # load the channel paths -------------------------------------------
 
     process.MVAMET.requireOS = cms.bool(False)
+    process.MVAMET.srcMETs = cms.VInputTag(cms.InputTag("slimmedMETs", "", "PAT" if runOnMC else "RECO"),
+                                           cms.InputTag("patpfMET"),
+                                           cms.InputTag("patpfMETT1"),
+                                           cms.InputTag("patpfTrackMET"),
+                                           cms.InputTag("patpfNoPUMET"),
+                                           cms.InputTag("patpfPUCorrectedMET"),
+                                           cms.InputTag("patpfPUMET"),
+                                           cms.InputTag("slimmedMETsPuppi", "", "PAT" if runOnMC else "RECO"))
 
     if channel == 'tau-mu':
         process.load('CMGTools.H2TauTau.objects.tauMuObjectsMVAMET_cff')
@@ -320,8 +325,8 @@ def createProcess(runOnMC=True, channel='tau-mu', runSVFit=False,
     print sep_line
     print process.source.fileNames
     print
-    if not runOnMC:
-        print 'json:', json
+    # if not runOnMC:
+    #     print 'json:', json
     print
     print sep_line
     print 'PROCESSING'
@@ -331,10 +336,9 @@ def createProcess(runOnMC=True, channel='tau-mu', runSVFit=False,
 
     # from FWCore.ParameterSet.Utilities import convertToUnscheduled
     # convertToUnscheduled(process)
-
     return process
 
-# if __name__ == '__main__':
-#     process = createProcess()
+if __name__ == '__main__':
+    process = createProcess()
 
-process = createProcess()
+# process = createProcess()
