@@ -97,7 +97,11 @@ LNuJJType = NTupleObjectType("LNuJJType", baseObjectTypes=[VJType], variables = 
     NTupleSubObject("l1_l",  lambda x : x.leg1.leg1,leptonTypeExtra),
     NTupleSubObject("l1_met",  lambda x : x.leg1.leg2,metType),
     #Scale factors , For HLT use the OR between the two triggers:
+
+    NTupleVariable("gen_partialMass",   lambda x : x.genPartialMass if hasattr(x.leg2,'substructureGEN') else -99, float,"",-99,True),
     NTupleVariable("sf",  lambda x : x.leg1.leg1.sfWV*(x.leg1.leg1.sfHLT+x.sfHLTMET-x.leg1.leg1.sfHLT*x.sfHLTMET),float)
+
+
 ])
 
 
