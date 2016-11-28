@@ -40,7 +40,7 @@ class CollectionSkimmer {
         void copyInt(const std::string &varname, TTreeReaderArray<Int_t> * src = nullptr) ;
 
         /// to be called once on the tree, after a first call to copyFloat and copyInt
-        void makeBranches(TTree *tree, unsigned int maxEntries) ;
+        void makeBranches(TTree *tree, unsigned int maxEntries, bool saveSelectedIndices = false) ;
 
         //---- to be called on each event for copying ----
         /// clear the output collection
@@ -50,6 +50,7 @@ class CollectionSkimmer {
         void push_back(unsigned int iSrc) {
             for (auto & c : copyFloats_) c.copy(iSrc, nOut_);
             for (auto & c : copyInts_) c.copy(iSrc, nOut_);
+            iOut_[nOut_] = iSrc;
             nOut_++;
         }
         /// push back all entries in iSrcs
@@ -63,6 +64,7 @@ class CollectionSkimmer {
         /// copy from iSrc into iTo (must be iTo < size())
         void copy(unsigned int iSrc, unsigned int iTo) {
             assert(unsigned(nOut_) > iTo);
+            iOut_[iTo] = iSrc;
             for (auto & c : copyFloats_) c.copy(iSrc, iTo);
             for (auto & c : copyInts_) c.copy(iSrc, iTo);
         }
@@ -73,6 +75,7 @@ class CollectionSkimmer {
     private:
         std::string outName_;
         Int_t nOut_;
+        std::unique_ptr<int[]> iOut_;
         std::vector<CopyFloat> copyFloats_;
         std::vector<CopyInt> copyInts_;
         bool hasBranched_;
