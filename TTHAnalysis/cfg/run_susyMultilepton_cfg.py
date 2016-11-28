@@ -375,7 +375,7 @@ triggerFlagsAna.triggerBits = {
     'SOSTripleMu' : triggers_SOS_tripleMu,
     'LepTau' : triggers_leptau,
     'MET' : triggers_metNoMu90_mhtNoMu90 + triggers_htmet,
-    'ht' : triggers_pfht
+    'HT' : triggers_pfht
     
     #'MonoJet80MET90' : triggers_Jet80MET90,
     #'MonoJet80MET120' : triggers_Jet80MET120,
