@@ -13,13 +13,13 @@ class CombinedObjectTaggerForCleaning:
         self.label = "" if (label in ["",None]) else ("_"+label)
 
         self.looseLeptonSel = looseLeptonSel
-        self.cleanLeptonSel = lambda x : self.looseLeptonSel(x) and cleaningLeptonSel(x) # applied on top of looseLeptonSel
-        self.fkbleLeptonSel = lambda x : self.looseLeptonSel(x) and FOLeptonSel(x) # applied on top of looseLeptonSel
-        self.tightLeptonSel = lambda x : self.looseLeptonSel(x) and tightLeptonSel(x) # applied on top of looseLeptonSel
+        self.cleanLeptonSel = cleaningLeptonSel # applied on top of looseLeptonSel
+        self.fkbleLeptonSel = FOLeptonSel # applied on top of looseLeptonSel
+        self.tightLeptonSel = tightLeptonSel # applied on top of looseLeptonSel
 
         self.cleanTauSel = cleaningTauSel
-        self.fkbleTauSel = lambda x : self.cleanTauSel(x) and FOTauSel(x) # applied on top of cleaningTauSel
-        self.tightTauSel = lambda x : self.cleanTauSel(x) and tightTauSel(x) # applied on top of cleaningTauSel
+        self.fkbleTauSel = FOTauSel # applied on top of cleaningTauSel
+        self.tightTauSel = tightTauSel # applied on top of cleaningTauSel
 
         self.selectJet = selectJet
 
@@ -42,17 +42,17 @@ class CombinedObjectTaggerForCleaning:
         tags.conept = [lep.conept for lep in leps]
 
         tags.lepsL= [self.looseLeptonSel(lep) for lep in leps]
-        tags.lepsC= [self.cleanLeptonSel(lep) for lep in leps]
-        tags.lepsF= [self.fkbleLeptonSel(lep) for lep in leps]
-        tags.lepsT= [self.tightLeptonSel(lep) for lep in leps]
+        tags.lepsC= [tags.lepsL[i] and self.cleanLeptonSel(lep) for i,lep in enumerate(leps)]
+        tags.lepsF= [tags.lepsL[i] and self.fkbleLeptonSel(lep) for i,lep in enumerate(leps)]
+        tags.lepsT= [tags.lepsL[i] and self.tightLeptonSel(lep) for i,lep in enumerate(leps)]
         tags.tausC= [self.cleanTauSel(tau) for tau in taus]
-        tags.tausF= [self.fkbleTauSel(tau) for tau in taus]
-        tags.tausT= [self.tightTauSel(tau) for tau in taus]
+        tags.tausF= [tags.tausC[i] and self.fkbleTauSel(tau) for i,tau in enumerate(taus)]e
+        tags.tausT= [tags.tausC[i] and self.tightTauSel(tau) for i,tau in enumerate(taus)]
         tags.jetsS= [self.selectJet(jet) for jet in jets]
 
         setattr(event,'_CombinedTagsForCleaning%s'%self.label,tags)
         if self.debug: print tags
-        return []
+        return {}
 
 if __name__ == '__main__':
     from sys import argv
@@ -74,7 +74,6 @@ if __name__ == '__main__':
                                                        coneptdef = lambda lep: lep.pt,
                                                        debug = True)
         def analyze(self,ev):
-            print "\nrun %6d lumi %4d event %d: leps %d" % (ev.run, ev.lumi, ev.evt, ev.nLepGood)
             self.sf1(ev)
     el = EventLoop([ Tester("tester") ])
     el.loop([tree], maxEvents = 50)
