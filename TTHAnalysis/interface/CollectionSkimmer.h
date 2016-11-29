@@ -8,8 +8,10 @@
 #include <string>
 #include <vector>
 #include <cassert>
+#include <algorithm>
 class TTree;
 #include <Rtypes.h>
+#include <TTreeReaderValue.h>
 #include <TTreeReaderArray.h>
 
 class CollectionSkimmer {
@@ -31,27 +33,40 @@ class CollectionSkimmer {
         typedef CopyVar<float,Float_t> CopyFloat;
         typedef CopyVar<int,Int_t> CopyInt;
 
-        CollectionSkimmer(const std::string &outName) : outName_(outName), hasBranched_(false) {}
+        CollectionSkimmer(const std::string &outName, const std::string &collName, bool saveSelectedIndices = false, bool saveTagForAll = false) : outName_(outName), collName_(collName), hasBranched_(false), srcCount_(NULL), saveSelectedIndices_(saveSelectedIndices), saveTagForAll_(saveTagForAll) {}
         CollectionSkimmer(const CollectionSkimmer &other) = delete;
         CollectionSkimmer &operator=(const CollectionSkimmer &other) = delete;
 
         /// to be called first to register the branches, and possibly re-called if the treeReaderArrays are remade
         void copyFloat(const std::string &varname, TTreeReaderArray<Float_t> * src = nullptr) ; 
         void copyInt(const std::string &varname, TTreeReaderArray<Int_t> * src = nullptr) ;
+	void srcCount(TTreeReaderValue<Int_t> * src);
 
         /// to be called once on the tree, after a first call to copyFloat and copyInt
-        void makeBranches(TTree *tree, unsigned int maxEntries, bool saveSelectedIndices = false) ;
+        void makeBranches(TTree *tree, unsigned int maxEntries) ;
 
         //---- to be called on each event for copying ----
         /// clear the output collection
-        void clear() { nOut_ = 0; }
+        void clear() {
+	  nOut_ = 0;
+	  nIn_ = 0;
+	  if (saveTagForAll_){
+	    assert (srcCount_); // pointer to srcCount TTreeReaderValue must be set
+	    nIn_ = **srcCount_;
+	    assert (uint(nIn_)<=maxEntries);
+	    std::fill_n(iTagOut_.get(),nIn_,0);
+	  }
+	}
 
         /// push back entry iSrc from input collection to output collection
         void push_back(unsigned int iSrc) {
-            for (auto & c : copyFloats_) c.copy(iSrc, nOut_);
-            for (auto & c : copyInts_) c.copy(iSrc, nOut_);
-            iOut_[nOut_] = iSrc;
-            nOut_++;
+	  assert (iSrc<maxEntries);
+	  assert (uint(nOut_)<maxEntries);
+	  for (auto & c : copyFloats_) c.copy(iSrc, nOut_);
+	  for (auto & c : copyInts_) c.copy(iSrc, nOut_);
+	  if (saveSelectedIndices_) iOut_[nOut_] = iSrc;
+	  if (saveTagForAll_) iTagOut_[iSrc] = 1;
+	  nOut_++;
         }
         /// push back all entries in iSrcs
         void push_back(const std::vector<int> &iSrcs) {
@@ -64,7 +79,8 @@ class CollectionSkimmer {
         /// copy from iSrc into iTo (must be iTo < size())
         void copy(unsigned int iSrc, unsigned int iTo) {
             assert(unsigned(nOut_) > iTo);
-            iOut_[iTo] = iSrc;
+            if (saveSelectedIndices_) iOut_[iTo] = iSrc;
+	    assert (!saveTagForAll_); // copy cannot be used if saving tags, output would depend on previous calls
             for (auto & c : copyFloats_) c.copy(iSrc, iTo);
             for (auto & c : copyInts_) c.copy(iSrc, iTo);
         }
@@ -74,11 +90,18 @@ class CollectionSkimmer {
 
     private:
         std::string outName_;
+        std::string collName_;
         Int_t nOut_;
+        bool hasBranched_;
         std::unique_ptr<int[]> iOut_;
+	TTreeReaderValue<Int_t> *srcCount_;
         std::vector<CopyFloat> copyFloats_;
         std::vector<CopyInt> copyInts_;
-        bool hasBranched_;
+	bool saveSelectedIndices_;
+	bool saveTagForAll_;
+	Int_t nIn_;
+        std::unique_ptr<int[]> iTagOut_;
+	uint maxEntries;
 
         template<typename CopyVarVectorT, typename SrcT>
         void _copyVar(const std::string &varname, SrcT * src, CopyVarVectorT &copyVars) ; 

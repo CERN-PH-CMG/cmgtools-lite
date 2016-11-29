@@ -46,7 +46,7 @@ class CombinedObjectTaggerForCleaning:
         tags.lepsF= [tags.lepsL[i] and self.fkbleLeptonSel(lep) for i,lep in enumerate(leps)]
         tags.lepsT= [tags.lepsL[i] and self.tightLeptonSel(lep) for i,lep in enumerate(leps)]
         tags.tausC= [self.cleanTauSel(tau) for tau in taus]
-        tags.tausF= [tags.tausC[i] and self.fkbleTauSel(tau) for i,tau in enumerate(taus)]e
+        tags.tausF= [tags.tausC[i] and self.fkbleTauSel(tau) for i,tau in enumerate(taus)]
         tags.tausT= [tags.tausC[i] and self.tightTauSel(tau) for i,tau in enumerate(taus)]
         tags.jetsS= [self.selectJet(jet) for jet in jets]
 

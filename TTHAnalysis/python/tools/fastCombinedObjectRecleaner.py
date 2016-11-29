@@ -12,10 +12,10 @@ class fastCombinedObjectRecleaner:
         self.branches = [] # output is done in C++
         self.vars = ["pt","eta","phi","mass"]
 
-        self._helper_lepsF = CollectionSkimmer("LepFO"+self.label, "LepGood", floats=[], maxSize=20,saveSelectedIndices=True)
-        self._helper_lepsT = CollectionSkimmer("LepTight"+self.label, "LepGood", floats=[], maxSize=20,saveSelectedIndices=True)
+        self._helper_lepsF = CollectionSkimmer("LepFO"+self.label, "LepGood", floats=[], maxSize=20, saveSelectedIndices=True)
+        self._helper_lepsT = CollectionSkimmer("LepTight"+self.label, "LepGood", floats=[], maxSize=20, saveTagForAll=True)
         self._helper_taus = CollectionSkimmer("TauSel"+self.label, "TauGood", floats=self.vars, maxSize=20)
-        self._helper_jets = CollectionSkimmer("JetSel"+self.label, "Jet", floats=self.vars+['bTagCSV'], maxSize=20)
+        self._helper_jets = CollectionSkimmer("JetSel"+self.label, "Jet", floats=self.vars+['btagCSV'], maxSize=20)
         self._helpers = [self._helper_lepsF,self._helper_lepsT,self._helper_taus,self._helper_jets]
 
         if "/fastCombinedObjectRecleanerHelper_cxx.so" not in ROOT.gSystem.GetLibraries():
@@ -55,8 +55,9 @@ class fastCombinedObjectRecleaner:
 
         tags = getattr(event,'_CombinedTagsForCleaning%s'%self.inlabel)
 
-        for i,x in enumerate(tags.lepsF):
-            if x: self._helper_lepsF.push_back(i)
+        for _cpt,_idx in sorted([(tags.conept[i],i) for i,x in filter(lambda y: y[1], enumerate(tags.lepsF))], reverse=True):
+            self._helper_lepsF.push_back(_idx)
+
         for i,x in enumerate(tags.lepsT):
             if x: self._helper_lepsT.push_back(i)
 
