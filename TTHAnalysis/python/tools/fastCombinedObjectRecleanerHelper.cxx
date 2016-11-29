@@ -3,8 +3,17 @@
 #include <algorithm>
 #include <TTreeReaderValue.h>
 #include <TTreeReaderArray.h>
+#include <TLorentzVector.h>
 #include <DataFormats/Math/interface/deltaR.h>
 #include <CMGTools/TTHAnalysis/interface/CollectionSkimmer.h>
+
+struct JetSumCalculatorOutput {
+  int thr;
+  float htJetj;
+  float mhtJet;
+  int nBJetLoose;
+  int nBJetMedium; 
+};
 
 class fastCombinedObjectRecleanerHelper {
 public:
@@ -14,16 +23,61 @@ public:
   
   fastCombinedObjectRecleanerHelper(CollectionSkimmer &clean_taus, CollectionSkimmer &clean_jets) : clean_taus_(clean_taus), clean_jets_(clean_jets), deltaR2cut(0.16) {}
   
-  void setLeptons(rint *nLep, rfloats *lepEta, rfloats *lepPhi) {
-    nLep_ = nLep; Lep_eta_ = lepEta; Lep_phi_ = lepPhi;
+  void setLeptons(rint *nLep, rfloats* lepPt, rfloats *lepEta, rfloats *lepPhi) {
+    nLep_ = nLep; Lep_pt_ = lepPt; Lep_eta_ = lepEta; Lep_phi_ = lepPhi;
   }
-  void setTaus(rint *nTau, rfloats *tauEta, rfloats *tauPhi) {
-    nTau_ = nTau; Tau_eta_ = tauEta; Tau_phi_ = tauPhi;
+  void setTaus(rint *nTau, rfloats *tauPt, rfloats *tauEta, rfloats *tauPhi) {
+    nTau_ = nTau; Tau_pt_ = tauPt; Tau_eta_ = tauEta; Tau_phi_ = tauPhi;
   }
-  void setJets(rint *nJet, rfloats *jetEta, rfloats *jetPhi) {
-    nJet_ = nJet; Jet_eta_ = jetEta; Jet_phi_ = jetPhi;
+  void setJets(rint *nJet, rfloats *jetPt, rfloats *jetEta, rfloats *jetPhi, rfloats *jetbtagCSV) {
+    nJet_ = nJet; Jet_pt_ = jetPt; Jet_eta_ = jetEta; Jet_phi_ = jetPhi; Jet_btagCSV_ = jetbtagCSV;
   }
 
+  void addJetPt(int pt){
+    _jetptcuts.insert(pt);
+  }
+
+  std::vector<JetSumCalculatorOutput> GetJetSums(){
+    std::vector<JetSumCalculatorOutput> output;
+      TLorentzVector mht(0,0,0,0);
+      for (auto thr : _jetptcuts){
+	JetSumCalculatorOutput sums;
+	sums.thr = float(thr);
+	sums.htJetj = 0;
+	sums.nBJetLoose = 0;
+	sums.nBJetMedium = 0;
+
+	for (int i=0; i<**nLep_; i++) {
+	  if (!sel_leps[i]) continue;
+	  TLorentzVector lep;
+	  lep.SetPtEtaPhiM((*Lep_pt_)[i],0,(*Lep_phi_)[i],0);
+	  mht = mht - lep;
+	}
+	for (auto i : _ct){
+	  TLorentzVector tau;
+	  tau.SetPtEtaPhiM((*Tau_pt_)[i],0,(*Tau_phi_)[i],0);
+	  mht = mht - tau;
+	}
+
+	for (auto j : _cj){
+	  float pt = (*Jet_pt_)[j];
+	  if (pt<=thr) continue;
+	  float phi = (*Jet_phi_)[j];
+	  float csv = (*Jet_btagCSV_)[j];
+	  sums.htJetj += pt;
+	  TLorentzVector jp4;
+	  jp4.SetPtEtaPhiM(pt,0,phi,0);
+	  mht = mht - jp4;
+	  if (csv>0.46) sums.nBJetLoose += 1;
+	  if (csv>0.80) sums.nBJetMedium += 1;
+	}
+
+	sums.mhtJet = mht.Pt();
+	output.push_back(sums);
+      }
+      return output;
+  }
+  
   void clear() {
     sel_leps.reset(new bool[**nLep_]);
     sel_taus.reset(new bool[**nTau_]);
@@ -43,8 +97,8 @@ public:
     clean_taus_.clear();
     clean_jets_.clear();
 
-    std::vector<int> _ct;
-    std::vector<int> _cj;
+    _ct.clear();
+    _cj.clear();
 
     for (int iT = 0, nT = **nTau_; iT < nT; ++iT) {
       bool ok = true;
@@ -91,8 +145,11 @@ private:
   std::unique_ptr<bool[]> sel_leps, sel_taus, sel_jets;
   CollectionSkimmer &clean_taus_, &clean_jets_;
   rint *nLep_, *nTau_, *nJet_;
-  rfloats *Lep_eta_, *Lep_phi_;
-  rfloats *Tau_eta_, *Tau_phi_;
-  rfloats *Jet_phi_, *Jet_eta_;
+  rfloats *Lep_pt_, *Lep_eta_, *Lep_phi_;
+  rfloats *Tau_pt_, *Tau_eta_, *Tau_phi_;
+  rfloats *Jet_pt_, *Jet_phi_, *Jet_eta_, *Jet_btagCSV_;
   float deltaR2cut;
+  std::set<int> _jetptcuts;
+  std::vector<int> _ct;
+  std::vector<int> _cj;
 };
