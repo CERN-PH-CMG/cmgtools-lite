@@ -218,8 +218,8 @@ jetAna.minLepPt = 10
 ## JetAna
 jetAna.doQG = True
 
-## Iso Track
-isoTrackAna.setOff=False
+## Iso Track #use basic relIso for now
+isoTrackAna.setOff = False
 isoTrackAna.doRelIsolation = True
 
 # store all taus by default
@@ -237,6 +237,7 @@ if sample == "MC":
   
   #pick the file you want to run on
   selectedComponents = [TTJets_DiLepton]
+#  [TTJets_SingleLeptonFromTbar,TTJets_SingleLeptonFromTbar_ext,TTJets_SingleLeptonFromT,TTJets_DiLepton,TTJets_DiLepton_ext,
 
   if test==1:
     # test a single component, using a single thread.
@@ -385,6 +386,7 @@ sequence = cfg.Sequence(susyCoreSequence+[
     LHEAna,
     ttHEventAna,
     ttHHTSkimmer,
+    ttHSTSkimmer,
     treeProducer,
     ])
 
