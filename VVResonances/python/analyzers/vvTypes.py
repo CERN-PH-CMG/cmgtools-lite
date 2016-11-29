@@ -141,12 +141,9 @@ NuNuJJType = NTupleObjectType("NuNuJJType", baseObjectTypes=[VJType], variables 
 ])
 
 
-
-
-
-
-
-
+TruthType = NTupleObjectType("TruthType", baseObjectTypes=[], variables = [
+    NTupleSubObject("genBoson", lambda x: x.genBoson if hasattr(x, 'genBoson') else dummyLV, fourVectorType, True),
+])
 
 
 #Types for TTbar

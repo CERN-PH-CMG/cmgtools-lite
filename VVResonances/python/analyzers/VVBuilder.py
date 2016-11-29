@@ -13,6 +13,9 @@ class Substructure(object):
     def __init__(self):
         pass
 
+class Truth(object):
+    def __init__(self):
+        pass
 
 class VVBuilder(Analyzer):
     def __init__(self, cfg_ana, cfg_comp, looperName):
@@ -437,7 +440,35 @@ class VVBuilder(Analyzer):
         totalWeight = genCorr*recoCorr
         return totalWeight
 
+    @staticmethod
+    def p4sum(ps):
+        '''Returns four-vector sum of objects in passed list. Returns None
+        if empty. Note that python sum doesn't work since p4() + 0/None fails,
+        but will be possible in future python'''
+        if not ps:
+            return None
+        p4 = ps[0].p4()
+        for i in xrange(len(ps) - 1):
+            p4 += ps[i + 1].p4()
+        return p4
 
+
+    def getParentBoson(self, event):
+        '''Get generator level boson (last in chain) for correct kinematics.'''
+        # if we already filled it exit
+        if hasattr(event, 'genBoson') or not self.cfg_comp.isMC:
+            return
+        genBoson = ROOT.std.vector("math::XYZTLorentzVector")
+        leptons_prompt = [p for p in event.genParticles if abs(p.pdgId()) in [11, 12, 13, 14] and p.fromHardProcessFinalState()]
+        taus_prompt = [p for p in event.genParticles if p.statusFlags().isDirectHardProcessTauDecayProduct()]
+        all = leptons_prompt + taus_prompt
+        genBoson = VVBuilder.p4sum(all)
+        return genBoson
+
+    def makeTruthType(self, event):
+        truth = Truth()
+        truth.genBoson = self.getParentBoson(event)
+        return [truth]
 
     def process(self, event):
         self.readCollections( event.input )
@@ -473,10 +504,11 @@ class VVBuilder(Analyzer):
         LLJJ =self.makeZV(event)
         JJ=self.makeJJ(event)
         JJNuNu=self.makeMETV(event)
+        TruthType = self.makeTruthType(event)
 
 
         setattr(event,'LNuJJ'+self.cfg_ana.suffix,LNuJJ)
         setattr(event,'JJ'+self.cfg_ana.suffix,JJ)
         setattr(event,'LLJJ'+self.cfg_ana.suffix,LLJJ)
         setattr(event,'JJNuNu'+self.cfg_ana.suffix,JJNuNu)
-
+        setattr(event, 'TruthType' + self.cfg_ana.suffix, TruthType)
