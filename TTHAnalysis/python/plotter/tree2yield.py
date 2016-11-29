@@ -11,6 +11,7 @@ sys.argv = ['-b']
 import ROOT
 sys.argv = args
 ROOT.gROOT.SetBatch(True)
+ROOT.PyConfig.IgnoreCommandLineOptions = True
 
 from copy import *
 
