@@ -4,7 +4,7 @@ import ROOT, os
 
 class fastCombinedObjectRecleaner:
 
-    def __init__(self,label,inlabel,doVetoZ,doVetoLMf,doVetoLMt,jetPts):
+    def __init__(self,label,inlabel,cleanTausWithLooseLeptons,doVetoZ,doVetoLMf,doVetoLMt,jetPts):
 
         self.label = "" if (label in ["",None]) else ("_"+label)
         self.inlabel = inlabel
@@ -13,6 +13,7 @@ class fastCombinedObjectRecleaner:
         self.vars_leptons = ["pdgId"]
         self.vars_jets = ["btagCSV"]
 
+        self.cleanTausWithLooseLeptons = cleanTausWithLooseLeptons
         self.jetPts = jetPts
 
         self.outmasses=['mZ1','minMllAFAS','minMllAFOS','minMllAFSS','minMllSFOS']
@@ -77,6 +78,8 @@ class fastCombinedObjectRecleaner:
 
         self._worker.clear()
         for i in tags.lepsC: self._worker.selectLepton(i)
+        if self.cleanTausWithLooseLeptons: 
+            for i in tags.lepsL: self._worker.selectLeptonExtraForTau(i)
         for i in tags.tausC: self._worker.selectTau(i)
         for i in tags.jetsS: self._worker.selectJet(i)
         self._worker.run()
@@ -103,4 +106,4 @@ class fastCombinedObjectRecleaner:
             for var in self._outjetvars: ret[var%thr+self.label]=getattr(sums,var.replace('%d',''))
         return ret
 
-MODULES=[('clean2',lambda : fastCombinedObjectRecleaner(label="",inlabel="_Test",doVetoZ=True,doVetoLMf=True,doVetoLMt=True,jetPts=[25,40]))]
+MODULES=[('clean2',lambda : fastCombinedObjectRecleaner(label="",inlabel="_Test",cleanTausWithLooseLeptons=True,doVetoZ=True,doVetoLMf=True,doVetoLMt=True,jetPts=[25,40]))]

@@ -80,13 +80,16 @@ public:
   
   void clear() {
     sel_leps.reset(new bool[**nLep_]);
+    sel_leps_extrafortau.reset(new bool[**nLep_]);
     sel_taus.reset(new bool[**nTau_]);
     sel_jets.reset(new bool[**nJet_]);
-    for (int i=0; i<**nLep_; i++) sel_leps.get()[i]=false;
-    for (int i=0; i<**nTau_; i++) sel_taus.get()[i]=false;
-    for (int i=0; i<**nJet_; i++) sel_jets.get()[i]=false;
+    std::fill_n(sel_leps.get(),**nLep_,false);
+    std::fill_n(sel_leps_extrafortau.get(),**nLep_,false);
+    std::fill_n(sel_taus.get(),**nTau_,false);
+    std::fill_n(sel_jets.get(),**nJet_,false);
   }
   void selectLepton(uint i, bool what=true) {sel_leps.get()[i]=what;}
+  void selectLeptonExtraForTau(uint i, bool what=true) {sel_leps_extrafortau.get()[i]=what;}
   void selectTau(uint i, bool what=true) {sel_taus.get()[i]=what;}
   void selectJet(uint i, bool what=true) {sel_jets.get()[i]=what;}
 
@@ -104,6 +107,7 @@ public:
       bool ok = true;
       for (int iL = 0, nL = **nLep_; iL < nL; ++iL) {
 	if (!sel_leps.get()[iL]) continue;
+	if (!sel_leps_extrafortau.get()[iL]) continue;
 	if (deltaR2((*Lep_eta_)[iL], (*Lep_phi_)[iL], (*Tau_eta_)[iT], (*Tau_phi_)[iT]) < deltaR2cut) {
 	  ok = false;
 	  break;
@@ -142,7 +146,7 @@ public:
   }
 
 private:
-  std::unique_ptr<bool[]> sel_leps, sel_taus, sel_jets;
+  std::unique_ptr<bool[]> sel_leps, sel_leps_extrafortau, sel_taus, sel_jets;
   CollectionSkimmer &clean_taus_, &clean_jets_;
   rint *nLep_, *nTau_, *nJet_;
   rfloats *Lep_pt_, *Lep_eta_, *Lep_phi_;
