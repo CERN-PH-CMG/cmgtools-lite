@@ -142,13 +142,18 @@ if __name__ == "__main__":
        h2d_mu_DY = [ make2D(outfile, "FR_SOS_DY_mu_"+X, ptbins_mu, etabins_mu) for X in XsD ]
        h2d_el_WJ = [ make2D(outfile,"FR_SOS_el_WJets", ptbins_el, etabins_el) ]
        h2d_mu_WJ = [ make2D(outfile,"FR_SOS_mu_WJets", ptbins_mu, etabins_mu) ]
+       h2d_el_PB = [ make2D(outfile,"FR_SOS_el_PromptBkg", ptbins_el, etabins_el) ]
+       h2d_mu_PB = [ make2D(outfile,"FR_SOS_mu_PromptBkg", ptbins_mu, etabins_mu) ]
 
        Plots="plots/80X/sos/fr-meas/"
-       Z3l="z3l/v2.1.1"
-       QCD="qcd1l/v2.1"
+       Z3l=None # "z3l/v2.1.1"
+       #QCD="qcd1l/v3.0.1"
+       QCD="qcd1l/v3.1"
+
        #### Electrons: 
        readMany2D(XsQ, h2d_el,    "/".join([Plots, QCD, "el/HLT_PFJetAny/fakerates-mtW3R/fr_sub_eta_%s_comp.root"]), "%s", etaslices_el, (5,999) )
-       readMany2D(XsD, h2d_el_DY, "/".join([Plots, Z3l, "el/fakerates-mtW3R/fr_sub_eta_%s_comp.root"]), "%s", etaslices_el, (5,999) )
+       if Z3l:
+          readMany2D(XsD, h2d_el_DY, "/".join([Plots, Z3l, "el/fakerates-mtW3R/fr_sub_eta_%s_comp.root"]), "%s", etaslices_el, (5,999) )
 
        #### Muons: 
        # up to 10 from Mu3
@@ -156,23 +161,31 @@ if __name__ == "__main__":
        # over 10 from Mu8
        readMany2D(XsQ, h2d_mu, "/".join([Plots, QCD, "mu/HLT_Mu8/fakerates-mtW3R/fr_sub_eta_%s_comp.root"]), "%s", etaslices_mu, (10,999) )
        # DY version
-       readMany2D(XsD, h2d_mu_DY, "/".join([Plots, Z3l, "mu/fakerates-mtW3R/fr_sub_eta_%s_comp.root"]), "%s", etaslices_mu, (3.5,999) )
+       if Z3l:
+          readMany2D(XsD, h2d_mu_DY, "/".join([Plots, Z3l, "mu/fakerates-mtW3R/fr_sub_eta_%s_comp.root"]), "%s", etaslices_mu, (3.5,999) )
 
        #### TT MC-truth
-       MCPlots="plots/80X/sos/fr-mc/v2.0"; ID="wpSOS_eeid";
-       XVar="SOS_IdIsoDxyz_pt_fine"
-       readMany2D(["WJ_red"], h2d_el_WJ, "/".join([MCPlots, "el_"+ID+"_rec30_bAny_eta_%s.root"]), XVar+"_%s", etaslices_el, (5,999) )
-       readMany2D(["WJ_red"], h2d_mu_WJ, "/".join([MCPlots, "mu_"+ID+"_rec30_bAny_eta_%s.root"]), XVar+"_%s", etaslices_mu, (3.5,999) )
+       #MCPlots="plots/80X/sos/fr-mc/v3.0.1"; ID="wpSOS_ip3d_ptd_3.0_20"; Jet="rec50_bAny"
+       MCPlots="plots/80X/sos/fr-mc/v3.1"; ID="wpSOS_ip3d_pti_300_20"; Jet="rec90_bAny"
+       XVar="IP3D_Full_pt_fine"
+       readMany2D(["WJ_red"], h2d_el_WJ, "/".join([MCPlots, "el_"+ID+"_"+Jet+"_eta_%s.root"]), XVar+"_%s", etaslices_el, (5,999) )
+       readMany2D(["WJ_red"], h2d_mu_WJ, "/".join([MCPlots, "mu_"+ID+"_"+Jet+"_eta_%s.root"]), XVar+"_%s", etaslices_mu, (3.5,999) )
+
+       #### Prompt rate for background
+       readMany2D(["PromptBkg"], h2d_el_PB, "/".join([MCPlots, "el_prB_"+ID+"_"+Jet+"_eta_%s.root"]), XVar+"_%s", etaslices_el, (5,999) )
+       readMany2D(["PromptBkg"], h2d_mu_PB, "/".join([MCPlots, "mu_prB_"+ID+"_"+Jet+"_eta_%s.root"]), XVar+"_%s", etaslices_mu, (3.5,999) )
 
        # Serialize
        for h in h2d_el + h2d_el_DY + h2d_mu + h2d_mu_DY:    outfile.WriteTObject(h)
        for h in h2d_el_WJ + h2d_mu_WJ: outfile.WriteTObject(h)
+       for h in h2d_el_PB + h2d_mu_PB: outfile.WriteTObject(h)
 
        # Plot
        if options.outdir:
            for lep,h2d,h2dtt,nicemc,nicedata,xcuts in (
                     ("el",h2d_el,h2d_el_WJ,"QCD","jet + l",[]),  ("el_DY",h2d_el_DY,h2d_el_WJ,"DY","Z + l",[]),
                     ("mu",h2d_mu,h2d_mu_WJ,"QCD","jet + l",[10]),("mu_DY",h2d_mu_DY,h2d_mu_WJ,"DY","Z + l",[])):
+              if ("DY" in lep) and not Z3l: continue
               Xnices[0] = "MC "+nicemc
               Xnices[1] = "Data, "+nicedata
               for ieta,eta in enumerate(["barrel","endcap"]):
@@ -196,6 +209,7 @@ if __name__ == "__main__":
            for lep,h2d,h2ddy,h2dtt,xcuts in (
                     ("el_all",h2d_el,h2d_el_DY,h2d_el_WJ,[]),
                     ("mu_all",h2d_mu,h2d_mu_DY,h2d_mu_WJ,[10])):
+              if not Z3l: continue
               Xnices = [ "MC W+jets", "MC QCD", "MC DY", "Data, jet + l", "Data, Z + l" ]
               h2ds   = [ h2dtt[0], h2d[0], h2ddy[0], h2d[1], h2ddy[1] ]
               for ieta,eta in enumerate(["barrel","endcap"]):
