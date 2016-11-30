@@ -9,7 +9,7 @@ BTagReweight74X = lambda : BTagWeightCalculator("/afs/cern.ch/work/e/emanuele/pu
 
 class EventVarsMonojet:
     def __init__(self):
-        self.branches = [ "nMu10V", "nMu20T", "nEle10V", "nEle40T", "nTau18V", "nGamma15V", "nGamma175T", "nBTag15",
+        self.branches = [ "nMu10V", "nMu20T", "nEle10V", "nEle40T", "nTau18V", "nGamma15V", "nGamma175T", "nBTag20",
                           "dphijj", "dphijm", "weight", "events_ntot", "recoil_pt", "recoil_phi","SF_BTag"
                           ]
         vbfHiggsToInvVars = [ "dphijmAllJets", "vbfTaggedJet_deltaEta", "vbfTaggedJet_invMass", 
@@ -44,13 +44,13 @@ class EventVarsMonojet:
             return lep.relIso04 < 0.25
         elif abs(lep.pdgId) == 11:
             if abs(lep.etaSc) > 2.5: return False
-            return lep.relIso03 < (0.126 if abs(lep.etaSc)<1.479 else 0.144)
+            return lep.relIso03 < (0.175 if abs(lep.etaSc)<1.479 else 0.159)
     def lepIdTight(self,lep):
         if abs(lep.pdgId) == 13:
             if lep.pt <= 20: return False
             return abs(lep.eta) < 2.4 and lep.tightId >=1  and lep.relIso04 < 0.15
         elif abs(lep.pdgId) == 11:
-            if lep.relIso03 > (0.0354 if abs(lep.etaSc)<1.479 else 0.0646): return False
+            if lep.relIso03 > (0.0588 if abs(lep.etaSc)<1.479 else 0.0571): return False
             return lep.pt > 40 and abs(lep.etaSc) < 2.5 and lep.tightId >=3
     def tauIdVeto(self,tau):
         if tau.pt <= 18 or abs(tau.eta) > 2.3: return False
@@ -97,12 +97,19 @@ class EventVarsMonojet:
         photonsT = [p for p in photons if self.gammaIdTight(p)]
         #print "check photonsT size is ", len(photonsT), " and nGamma175T = ",ret['nGamma175T']
         electrons3V=[self.PtEtaPhi3V(l.pt,l.eta,l.phi) for l in leps if (abs(l.pdgId)==11 and self.lepIdVeto(l)) ] 
+        muons3V=[self.PtEtaPhi3V(l.pt,l.eta,l.phi) for l in leps if (abs(l.pdgId)==13 and self.lepIdVeto(l)) ] 
         pfmet = self.PtEtaPhi3V(event.met_pt,0.,event.met_phi)
         if self.region == 'VE' and len(electrons3V)>1: # if there are >1 loose electrons, the event is vetoed for W->enu, can only belong to Z->ee
             recoil = electrons3V[0] + electrons3V[1] + pfmet
             (met,metphi) = (recoil.Pt(),recoil.Phi())
         elif self.region == 'VE' and len(electrons3V)>0:
             recoil = electrons3V[0] + pfmet
+            (met,metphi) = (recoil.Pt(),recoil.Phi())
+        elif self.region == 'VM' and len(muons3V)>1:
+            recoil = muons3V[0] + muons3V[1] + pfmet
+            (met,metphi) = (recoil.Pt(),recoil.Phi())
+        elif self.region == 'VM' and len(muons3V)>0:
+            recoil = muons3V[0] + pfmet
             (met,metphi) = (recoil.Pt(),recoil.Phi())
         elif self.region == 'GJ' and len(photonsT)>0:
             photon1 = self.PtEtaPhi3V(photonsT[0].pt,photonsT[0].eta,photonsT[0].phi)
@@ -177,16 +184,16 @@ class EventVarsMonojet:
         ret['dphijmAllJets'] = dphijmAllJets 
         # 5. compute the sums 
         ret["nJetCleanCentral"] = 0
-        ret["nBTag15"] = 0
+        ret["nBTag20"] = 0
         lowptjets = []
         for j in jets: # these are all central
             if not j._clean: continue
             if j.pt > 30:
                 ret["nJetCleanCentral"] += 1
-            if j.pt > 15:
+            if j.pt > 20 and abs(j.eta)<2.4:
                 lowptjets.append(j)
                 if j.btagCSV > 0.800:
-                    ret["nBTag15"] += 1
+                    ret["nBTag20"] += 1
 
         ret["vbfTaggedJet_deltaEta"] = -1
         ret["vbfTaggedJet_invMass"] = -1

@@ -73,7 +73,7 @@ parser.add_option("--FMC", "--add-friend-mc",    dest="friendTreesMC",  action="
 parser.add_option("--FD", "--add-friend-data",    dest="friendTreesData",  action="append", default=[], nargs=2, help="Add a friend tree (treename, filename) to data trees only. Can use {name}, {cname} patterns in the treename") 
 parser.add_option("-L", "--list-modules",  dest="listModules", action="store_true", default=False, help="just list the configured modules");
 parser.add_option("-n", "--new",  dest="newOnly", action="store_true", default=False, help="Make only missing trees");
-parser.add_option("-R", "--region", dest="region",  type="string", default="SR", help="Region phase space ('SR' for signal, ZM, WM), 'VE' for ZE and WE");
+parser.add_option("-R", "--region", dest="region",  type="string", default="SR", help="Region phase space ('SR' for signal, 'VM' for ZM, WM, 'VE' for ZE, WE)");
 (options, args) = parser.parse_args()
 
 if options.listModules:

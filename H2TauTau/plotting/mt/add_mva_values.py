@@ -1,12 +1,14 @@
 import os
+import time
 import numpy as np
 from array import array
 
-from ROOT import TFile, TTree
+from ROOT import TFile, TTree, TTreeFormula
 
 from sklearn.externals import joblib
 
 from CMGTools.H2TauTau.proto.plotter.Samples import createSampleLists
+from CMGTools.H2TauTau.proto.plotter.Variables import getVars
 
 def ensure_dir(f):
     print 'ensure dir', f
@@ -16,30 +18,17 @@ def ensure_dir(f):
     if not os.path.exists(f):
         os.mkdir(f)
 
-analysis_dir = '/data1/steggema/mt/070416/TauMuSVFitMC/'
-analysis_dir = '/data1/steggema/mt/070416/TauMuSVFitTESUp/'
-analysis_dir = '/data1/steggema/mt/070416/TauMuSVFitTESDown/'
+analysis_dir = '/data1/steggema/mt/051016/MuTauMC/'
 
-train_vars = [
-    'mt',
-    'n_jets',
-    'met_pt',
-    'pthiggs',
-    'vbf_mjj',
-    'vbf_deta',
-    'vbf_n_central',
-    'l2_pt',
-    'l1_pt',
-    'svfit_transverse_mass',
-    'delta_phi_l1_l2',
-    'delta_eta_l1_l2',
-    'svfit_mass'
-]
+train_vars = getVars([
+    'mt', 'l2_mt', 'n_jets', 'met_pt', 'pthiggs', 'vbf_mjj', 'vbf_deta', 'vbf_n_central', 'l2_pt', 'l1_pt','mvis', 'l1_eta', 'l2_eta', 'delta_phi_l1_l2', 'delta_eta_l1_l2', 'pt_l1l2', 'delta_phi_j1_met', 'pzeta_disc', 'jet1_pt', 'jet1_eta'
+])
+split_var = train_vars[10]
 
 mva_name = 'mva'
 
-clf0 = joblib.load('/afs/cern.ch/work/s/steggema/GradientBoostingClassifier_clf_dyh_0.pkl')
-clf1 = joblib.load('/afs/cern.ch/work/s/steggema/GradientBoostingClassifier_clf_dyh_1.pkl')
+clf0 = joblib.load('GradientBoostingClassifier_clf_0_0jet.pkl')
+clf1 = joblib.load('GradientBoostingClassifier_clf_1_0jet.pkl')
 
 out_dict = {}
 
@@ -63,37 +52,65 @@ for sample in all_samples:
     trees_done.append(file_name)
 
 
-    file_out_name = file_name.replace('TauMuSVFitMC', 'TauMuSVFitMVA').replace('TauMuSVFitTESUp', 'TauMuSVFitTESUpMVA').replace('TauMuSVFitTESDown', 'TauMuSVFitTESDownMVA')
+    file_out_name = file_name.replace('MuTauMC', 'MuTauMVA')
+
+    if file_out_name == file_name:
+        print 'Error, identical file names', file_out_name, file_name
+        raise RuntimeError('Exiting...')
 
     ensure_dir(file_out_name.replace('tree.root', ''))
     file_out = TFile(file_out_name, 'RECREATE')
 
 
-    mva_val = array('f', [0.])
+    
+    mva0_val = array('f', [0.])
+    mva1_val = array('f', [0.])
+    mva2_val = array('f', [0.])
 
     tree_out = TTree('tree', 'tree')
 
-    tree_out.Branch(mva_name, mva_val, mva_name+'/F')
+
+    mva0_name = 'mva0'
+    tree_out.Branch(mva0_name, mva0_val, mva0_name+'/F')
+    mva1_name = 'mva1'
+    tree_out.Branch(mva1_name, mva1_val, mva1_name+'/F')
+    mva2_name = 'mva2'
+    tree_out.Branch(mva2_name, mva2_val, mva2_name+'/F')
 
     ave_mva = 0.
+
+    for var in train_vars:
+        if var.drawname != var.name:
+            var.formula = TTreeFormula('formula'+var.name, var.drawname, tree_in)
+            var.formula.GetNdata()
+
+    t_start = time.time()
+
 
     for i_ev, event in enumerate(tree_in):
 
         if i_ev % 10000 == 0:
             print 'Event', i_ev
+            t_current = time.time()
+            print 'Time', t_current- t_start
+            t_start = t_current
 
-        split_var = event.delta_phi_l1_l2
+        split_var_val = split_var.formula.EvalInstance() if hasattr(split_var, 'formula') else getattr(event, split_var.name)
 
-        if int(split_var * 1000) % 2 == 0:
+        if int(split_var_val * 1000) % 2 == 0:
             clf = clf0
         else:
             clf = clf1
 
         inputs = []
         for var in train_vars:
-            inputs.append(getattr(event, var))
+            val = var.formula.EvalInstance() if hasattr(var, 'formula') else getattr(event, var.name)
+            inputs.append(val)
+            
         mva = clf.predict_proba(np.array(inputs).reshape(1, -1))
-        mva_val[0] = mva[0][1]
+        mva0_val[0] = mva[0][0]
+        mva1_val[0] = mva[0][1]
+        mva2_val[0] = mva[0][2]
         tree_out.Fill()
 
         ave_mva += mva[0]

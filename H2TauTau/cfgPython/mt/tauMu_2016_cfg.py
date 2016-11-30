@@ -11,11 +11,14 @@ from CMGTools.H2TauTau.proto.analyzers.TauMuAnalyzer import TauMuAnalyzer
 from CMGTools.H2TauTau.proto.analyzers.H2TauTauTreeProducerTauMu import H2TauTauTreeProducerTauMu
 from CMGTools.H2TauTau.proto.analyzers.TauDecayModeWeighter import TauDecayModeWeighter
 from CMGTools.H2TauTau.proto.analyzers.TauFakeRateWeighter import TauFakeRateWeighter
+from CMGTools.H2TauTau.proto.analyzers.MuTauFakeReweighter import MuTauFakeReweighter
 from CMGTools.H2TauTau.proto.analyzers.LeptonWeighter import LeptonWeighter
 from CMGTools.H2TauTau.proto.analyzers.SVfitProducer import SVfitProducer
 from CMGTools.H2TauTau.proto.analyzers.FileCleaner import FileCleaner
 from CMGTools.H2TauTau.proto.analyzers.TauIsolationCalculator import TauIsolationCalculator
 from CMGTools.H2TauTau.proto.analyzers.MuonIsolationCalculator import MuonIsolationCalculator
+from CMGTools.H2TauTau.proto.analyzers.METFilter import METFilter
+
 
 from CMGTools.RootTools.utils.splitFactor import splitFactor
 from CMGTools.H2TauTau.proto.samples.spring16.htt_common import backgrounds_mu, sm_signals, mssm_signals, data_single_muon, sync_list
@@ -23,7 +26,7 @@ from CMGTools.H2TauTau.proto.samples.spring16.triggers_tauMu import mc_triggers,
 from CMGTools.H2TauTau.proto.samples.spring16.triggers_tauMu import data_triggers, data_triggerfilters
 
 # common configuration and sequence
-from CMGTools.H2TauTau.htt_ntuple_base_cff import commonSequence, genAna, puFileData, puFileMC, eventSelector, dyJetsFakeAna, jetAna
+from CMGTools.H2TauTau.htt_ntuple_base_cff import commonSequence, puFileData, puFileMC, eventSelector, httGenAna, jetAna, triggerAna, recoilCorr
 
 
 # Get all heppy options; set via "-o production" or "-o production=True"
@@ -37,6 +40,11 @@ computeSVfit = getHeppyOption('computeSVfit', False)
 data = getHeppyOption('data', False)
 tes_string = getHeppyOption('tes_string', '') # '_tesup' '_tesdown'
 reapplyJEC = getHeppyOption('reapplyJEC', True)
+correct_recoil = getHeppyOption('correct_recoil', True)
+
+# For specific studies
+add_iso_info = getHeppyOption('add_iso_info', False)
+add_tau_fr_info = getHeppyOption('add_tau_fr_info', False)
 
 # Just to be sure
 if production:
@@ -46,9 +54,15 @@ if production:
 if reapplyJEC:
     if cmssw:
         jetAna.jetCol = 'patJetsReapplyJEC'
-        dyJetsFakeAna.jetCol = 'patJetsReapplyJEC'
+        httGenAna.jetCol = 'patJetsReapplyJEC'
     else:
         jetAna.recalibrateJets = True
+
+if correct_recoil:
+    recoilCorr.apply = True
+
+if not data:
+    triggerAna.requireTrigger = False
 
 # Define mu-tau specific modules
 
@@ -56,10 +70,10 @@ tauMuAna = cfg.Analyzer(
     TauMuAnalyzer,
     name='TauMuAnalyzer',
     pt1=23,
-    eta1=2.1,
+    eta1=2.4,
     iso1=0.15,
     looseiso1=9999.,
-    pt2=30,
+    pt2=20,
     eta2=2.3,
     iso2=1.5,
     looseiso2=9999.,
@@ -67,6 +81,7 @@ tauMuAna = cfg.Analyzer(
     m_max=99999,
     dR_min=0.5,
     from_single_objects=False if cmssw else True,
+    ignoreTriggerMatch=True, # best dilepton doesn't need trigger match
     verbose=False
 )
 
@@ -74,6 +89,12 @@ tauDecayModeWeighter = cfg.Analyzer(
     TauDecayModeWeighter,
     name='TauDecayModeWeighter',
     legs=['leg2']
+)
+
+muTauFakeWeighter = cfg.Analyzer(
+    MuTauFakeReweighter,
+    name='MuTauFakeReweighter',
+    wp='tight'
 )
 
 tauFakeRateWeighter = cfg.Analyzer(
@@ -94,10 +115,11 @@ muonWeighter = cfg.Analyzer(
     name='LeptonWeighter_mu',
     scaleFactorFiles={
         # 'trigger':('$CMSSW_BASE/src/CMGTools/H2TauTau/data/htt_scalefactors_v3.root', 'trgIsoMu22_desy'),
-        'idiso':('$CMSSW_BASE/src/CMGTools/H2TauTau/data/htt_scalefactors_v3.root', 'm_idiso0p15_desy'),
+        'idiso':('$CMSSW_BASE/src/CMGTools/H2TauTau/data/htt_scalefactors_v5.root', 'm_idiso0p15_desy'),
+        'tracking':('$CMSSW_BASE/src/CMGTools/H2TauTau/data/htt_scalefactors_v5.root', 'm_trk'),
     },
     dataEffFiles={
-        'trigger':('$CMSSW_BASE/src/CMGTools/H2TauTau/data/htt_scalefactors_v3.root', 'm_trgIsoMu22_desy'),
+        'trigger':('$CMSSW_BASE/src/CMGTools/H2TauTau/data/htt_scalefactors_v5.root', 'm_trgIsoMu22orTkIsoMu22_desy'),
     },
     lepton='leg1',
     disable=False
@@ -106,9 +128,9 @@ muonWeighter = cfg.Analyzer(
 treeProducer = cfg.Analyzer(
     H2TauTauTreeProducerTauMu,
     name='H2TauTauTreeProducerTauMu',
-    addIsoInfo=True,
-    addTauTrackInfo=True,
-    addMoreJetInfo=True
+    addIsoInfo=add_iso_info,
+    addTauTrackInfo=add_tau_fr_info,
+    addMoreJetInfo=add_tau_fr_info
 )
 
 syncTreeProducer = cfg.Analyzer(
@@ -129,6 +151,20 @@ svfitProducer = cfg.Analyzer(
     visPtResponseFile = os.environ['CMSSW_BASE']+'/src/CMGTools/SVfitStandalone/data/svFitVisMassAndPtResolutionPDF.root', 
     l1type='muon',
     l2type='tau'
+)
+
+metFilter = cfg.Analyzer(
+    METFilter,
+    name='METFilter',
+    processName='RECO',
+    triggers=[
+        'Flag_HBHENoiseFilter', 
+        'Flag_HBHENoiseIsoFilter', 
+        'Flag_EcalDeadCellTriggerPrimitiveFilter',
+        'Flag_goodVertices',
+        'Flag_eeBadScFilter',
+        'Flag_globalTightHalo2016Filter'
+    ]
 )
 
 tauIsoCalc = cfg.Analyzer(
@@ -152,9 +188,11 @@ fileCleaner = cfg.Analyzer(
 # Processing order
 
 sequence = commonSequence
-sequence.insert(sequence.index(dyJetsFakeAna), tauMuAna)
+sequence.insert(sequence.index(httGenAna), tauMuAna)
+sequence.append(metFilter)
 sequence.append(tauDecayModeWeighter)
 sequence.append(tauFakeRateWeighter)
+sequence.append(muTauFakeWeighter)
 sequence.append(tauWeighter)
 sequence.append(muonWeighter)
 sequence.append(treeProducer)
@@ -165,8 +203,9 @@ if syncntuple:
 if computeSVfit:
     sequence.insert(sequence.index(muonWeighter), svfitProducer)
 
-sequence.insert(sequence.index(treeProducer), muonIsoCalc)
-sequence.insert(sequence.index(treeProducer), tauIsoCalc)
+if add_iso_info:
+    sequence.insert(sequence.index(treeProducer), muonIsoCalc)
+    sequence.insert(sequence.index(treeProducer), tauIsoCalc)
 
 
 # Minimal list of samples
@@ -197,7 +236,7 @@ for sample in data_list:
 selectedComponents = data_list if data else backgrounds_mu + sm_signals #+ mssm_signals
 
 if pick_events:
-    eventSelector.toSelect = [486113, 164284, 252066, 399795, 11269]
+    eventSelector.toSelect = [1310750]
     sequence.insert(0, eventSelector)
 
 
@@ -205,17 +244,16 @@ if not cmssw:
     module = [s for s in sequence if s.name == 'MCWeighter'][0]
     sequence.remove(module)
 
+# selectedComponents = [s for s in selectedComponents if s.name=='DYJetsToLL_M50_LO' or ('W' in s.name and 'Jet' in s.name)]
 
 # Batch or local
 if not production:
     cache = True
-    comp = sync_list[0]
-    selectedComponents = [comp]
-    if data:
-        selectedComponents = [selectedComponents[0]]
-    # comp = selectedComponents[0]
-    comp.splitFactor = 5
-    comp.fineSplitFactor = 1
+    selectedComponents = [selectedComponents[-1]] if data else sync_list
+    selectedComponents = [selectedComponents[-1]]
+    for comp in selectedComponents:
+        comp.splitFactor = 100
+        comp.fineSplitFactor = 1
     # comp.files = comp.files[]
 
 preprocessor = None

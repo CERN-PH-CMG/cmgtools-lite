@@ -31,7 +31,12 @@ class H2TauTauTreeProducerTauTau(H2TauTauTreeProducer):
         self.var(self.tree, 'l2_trigger_weight_down')
 
         self.var(self.tree, 'mt2')
+        self.var(self.tree, 'mt2_lep')
+        self.var(self.tree, 'mt2_mvamet')
+        self.var(self.tree, 'mt2_rawpfmet')
 
+        self.var(self.tree, 'minDphiMETJets')
+        
         if self.cfg_comp.isMC:
             self.var(self.tree, 'GenSusyMScan1')
             self.var(self.tree, 'GenSusyMScan2')
@@ -81,16 +86,21 @@ class H2TauTauTreeProducerTauTau(H2TauTauTreeProducer):
             self.fill(self.tree, 'l2_trigger_weight_up', getattr(tau2, 'weight_trigger_up', 1.))
             self.fill(self.tree, 'l2_trigger_weight_down', getattr(tau2, 'weight_trigger_down', 1.))
 
-        self.fill(self.tree, 'mt2',  event.mt2_lep)
+        self.fill(self.tree, 'mt2',  event.mt2)
+        self.fill(self.tree, 'mt2_lep',  event.mt2_lep)
+        self.fill(self.tree, 'mt2_mvamet',  event.mt2_mvamet)
+        self.fill(self.tree, 'mt2_rawpfmet',  event.mt2_rawpfmet)
+        
+        self.fill(self.tree, 'minDphiMETJets', event.minDphiMETJets)
 
         if self.cfg_comp.isMC:
-            self.fill(self.tree, 'GenSusyMScan1',  event.genSusyMScan1)
-            self.fill(self.tree, 'GenSusyMScan2',  event.genSusyMScan2)
-            self.fill(self.tree, 'GenSusyMScan3',  event.genSusyMScan3)
-            self.fill(self.tree, 'GenSusyMScan4',  event.genSusyMScan4)
-            self.fill(self.tree, 'GenSusyMNeutralino',  event.genSusyMNeutralino)
-            self.fill(self.tree, 'GenSusyMChargino',  event.genSusyMChargino)
-            self.fill(self.tree, 'GenSusyMStau',  event.genSusyMStau)
-            self.fill(self.tree, 'GenSusyMStau2',  event.genSusyMStau2)
+            self.fill(self.tree, 'GenSusyMScan1',  getattr(event, 'genSusyMScan1', -999.))
+            self.fill(self.tree, 'GenSusyMScan2',  getattr(event, 'genSusyMScan2', -999.))
+            self.fill(self.tree, 'GenSusyMScan3',  getattr(event, 'genSusyMScan3', -999.))
+            self.fill(self.tree, 'GenSusyMScan4',  getattr(event, 'genSusyMScan4', -999.))
+            self.fill(self.tree, 'GenSusyMNeutralino',  getattr(event, 'genSusyMNeutralino', -999.))
+            self.fill(self.tree, 'GenSusyMChargino',  getattr(event, 'genSusyMChargino', -999.))
+            self.fill(self.tree, 'GenSusyMStau',  getattr(event, 'genSusyMStau', -999.))
+            self.fill(self.tree, 'GenSusyMStau2',  getattr(event, 'genSusyMStau2', -999.))
 
         self.fillTree(event)

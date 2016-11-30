@@ -33,7 +33,7 @@ triggers_3mu_alt = [ "HLT_TrkMu15_DoubleTrkMu5NoFiltersNoVtx_v*" ]
 triggers_2mu1e = [ "HLT_DiMu9_Ele9_CaloIdL_TrackIdL_v*" ]
 triggers_2e1mu = [ "HLT_Mu8_DiEle12_CaloIdL_TrackIdL_v*" ]
 
-triggers_1mu_iso = [ 'HLT_IsoMu20_v*', 'HLT_IsoTkMu20_v*', 'HLT_IsoMu22_v*', 'HLT_IsoTkMu22_v*'  ]  # Mu20's prescaled in column 0
+triggers_1mu_iso = [ 'HLT_IsoMu20_v*', 'HLT_IsoTkMu20_v*', 'HLT_IsoMu22_v*', 'HLT_IsoTkMu22_v*', 'HLT_IsoMu24_v*', 'HLT_IsoTkMu24_v*'  ]  # Mu20's prescaled in column 0, Mu22 prescaled in high lumi post-ichep data
 triggers_1mu_noniso = [ 'HLT_Mu45_eta2p1_v*', 'HLT_Mu50_v*', 'HLT_TkMu50_v*' ]
 
 # note: here the WP75 is th name in MC, WPLoose and WPTight should be in data
@@ -66,6 +66,8 @@ triggers_SOS_tripleMu = ["HLT_TripleMu_5_3_3","HLT_TripleMu_5_3_3_DZ_Mass3p8_v1"
 
 ### Mike ---> for the VV analysis 
 triggers_dijet_fat=["HLT_PFHT650_WideJetMJJ900DEtaJJ1p5_v*","HLT_PFHT650_WideJetMJJ950DEtaJJ1p5_v*"]
+# triggers to recover HT trigger inefficiency in late 2016
+triggers_jet_recoverHT=["HLT_PFJet450_v*", "HLT_PFJet500_v*", "HLT_AK8PFJet450_v*", "HLT_AK8PFJet500_v*", "HLT_CaloJet500_NoJetID_v*"]
 ### ----> for the MT2 analysis
 
 triggers_MT2_mumu = ["HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v*", "HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_v*"]

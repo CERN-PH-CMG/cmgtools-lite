@@ -46,7 +46,7 @@ class LeptonWeighter(Analyzer):
             self.averages.add('eff_MC_'+sf_name, Average('eff_MC_'+sf_name))
 
         for sf_name in self.dataEffs:
-            self.averages.add('weight_eff_data_'+sf_name, Average('weight_'+sf_name))
+            self.averages.add('weight_'+sf_name, Average('weight_'+sf_name))
 
     def process(self, event):
         self.readCollections(event.input)
@@ -59,7 +59,7 @@ class LeptonWeighter(Analyzer):
             setattr(lep, 'eff_MC_'+sf_name, 1.)
 
         for sf_name in self.dataEffs:
-            setattr(lep, 'weight_eff_data_'+sf_name, 1.)
+            setattr(lep, 'weight_'+sf_name, 1.)
 
         if (self.cfg_comp.isMC or self.cfg_comp.isEmbed) and \
            not getattr(self.cfg_ana, 'disable', False) and lep.pt() < 9999.:
@@ -75,8 +75,8 @@ class LeptonWeighter(Analyzer):
                 eta = lep.eta()
 
                 setattr(lep, 'weight_'+sf_name, sf.getScaleFactor(pt, eta, isFake))
-                setattr(lep, 'eff_data_'+sf_name, sf.getEfficiencyData(pt, eta, isFake))
-                setattr(lep, 'eff_mc_'+sf_name, sf.getEfficiencyMC(pt, eta, isFake))
+                # setattr(lep, 'eff_data_'+sf_name, sf.getEfficiencyData(pt, eta, isFake))
+                # setattr(lep, 'eff_mc_'+sf_name, sf.getEfficiencyMC(pt, eta, isFake))
 
                 if sf_name in self.cfg_ana.scaleFactorFiles:
                     lep.weight *= getattr(lep, 'weight_'+sf_name)
@@ -84,10 +84,10 @@ class LeptonWeighter(Analyzer):
             for sf_name, sf in self.dataEffs.items():
                 pt = lep.pt()
                 eta = lep.eta()
-                setattr(lep, 'weight_eff_data_'+sf_name, sf.getEfficiencyData(pt, eta, isFake))
+                setattr(lep, 'weight_'+sf_name, sf.getEfficiencyData(pt, eta, isFake))
 
                 if sf_name in self.cfg_ana.dataEffFiles:
-                    lep.weight *= getattr(lep, 'weight_eff_data_'+sf_name)
+                    lep.weight *= getattr(lep, 'weight_'+sf_name)
 
         event.triggerWeight = getattr(event, 'triggerWeight', 1.)
 
@@ -95,7 +95,7 @@ class LeptonWeighter(Analyzer):
             event.triggerWeight *= lep.weight_trigger
 
         if 'trigger' in self.dataEffs:
-            event.triggerWeight *= lep.weight_eff_data_trigger
+            event.triggerWeight *= lep.weight_trigger
 
         event.eventWeight *= lep.weight
 
@@ -106,5 +106,5 @@ class LeptonWeighter(Analyzer):
             self.averages['eff_MC_'+sf_name].add(getattr(lep, 'eff_MC_'+sf_name))
 
         for sf_name in self.dataEffs:
-            self.averages['weight_eff_data_'+sf_name].add(getattr(lep, 'weight_eff_data_'+sf_name))
+            self.averages['weight_'+sf_name].add(getattr(lep, 'weight_'+sf_name))
 
