@@ -4,6 +4,9 @@ import ROOT
 import re, sys, os, os.path, copy
 import numpy as np
 
+if "/functions_cc.so" not in ROOT.gSystem.GetLibraries(): 
+    ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/MonoXAnalysis/python/plotter/functions.cc+" % os.environ['CMSSW_BASE']);
+
 systs = {}
 
 from optparse import OptionParser
@@ -50,7 +53,7 @@ class SafeWorkspaceImporter():
 def addCorrelatedShape(process,var,region,workspace,hist):
     bins = []
     for b in range(1,hist.GetNbinsX()+1):
-        bin_rrv = ROOT.RooRealVar(process+'_'+region+'_bin'+str(b),"",hist.GetBinContent(b), 0., hist.GetBinContent(b)*10.0)
+        bin_rrv = ROOT.RooRealVar(process+'_'+region+'_bin'+str(b),"",hist.GetBinContent(b), 0., hist.GetBinContent(b)*5.0)
         bins.append(bin_rrv)
 
     # for some ROOT memory handling, adding the RooRealVars to the RooArgList after creation doesn't work
@@ -71,7 +74,7 @@ def addCorrelatedShapeFromSR(process,var,thisregion,correlatedRegion,workspace,h
 
     crbins = []; rbins = []; rerrbins = [];
     for b in range(1,hist.GetNbinsX()+1):
-        crbin_rrv = ROOT.RooRealVar(process+'_'+correlatedRegion+'_bin'+str(b),"",hist.GetBinContent(b), 0., hist.GetBinContent(b)*10.0)
+        crbin_rrv = ROOT.RooRealVar(process+'_'+correlatedRegion+'_bin'+str(b),"",hist.GetBinContent(b), 0., hist.GetBinContent(b)*5.0)
         crbins.append(crbin_rrv)
         # central value of the transfer factor
         rbin_rrv = ROOT.RooRealVar('r_'+process+'_'+thisregion+'_bin'+str(b),"",h_alphahist_fullerr.GetBinContent(b))
@@ -117,6 +120,33 @@ def getBinnedVar(varname,hist):
     rrv = ROOT.RooRealVar(varname,varname,hist.GetXaxis().GetXmin(),hist.GetXaxis().GetXmax())
     rrv.setBinning(binning)
     return rrv
+
+import math
+def rebin2Dto1D(h,funcstring):
+    nbins,fname = funcstring.split(':',1)
+    func = getattr(ROOT,fname)
+    nbins = int(nbins)
+    goodname = h.GetName()
+    h.SetName(goodname+"_oldbinning")
+    newh = ROOT.TH1D(goodname,h.GetTitle(),nbins,0.5,nbins+0.5)
+    x = h.GetXaxis()
+    y = h.GetYaxis()
+    allowed = range(1,nbins+1)
+    if 'TH2' not in h.ClassName(): raise RuntimeError, "Calling rebin2Dto1D on something that is not TH2"
+    for i in xrange(x.GetNbins()):
+        for j in xrange(y.GetNbins()):
+            bin = int(func(x.GetBinCenter(i+1),y.GetBinCenter(j+1)))
+            if bin not in allowed: raise RuntimeError, "Binning function gives not admissible result"
+            newh.SetBinContent(bin,newh.GetBinContent(bin)+h.GetBinContent(i+1,j+1))
+            newh.SetBinError(bin,math.hypot(newh.GetBinError(bin),h.GetBinError(i+1,j+1)))
+    for bin in range(1,nbins+1):
+        if newh.GetBinContent(bin)<0:
+            print 'Warning: cropping to zero bin %d in %s (was %f)'%(bin,newh.GetName(),newh.GetBinContent(bin))
+            newh.SetBinContent(bin,0)
+    newh.SetLineWidth(h.GetLineWidth())
+    newh.SetLineStyle(h.GetLineStyle())
+    newh.SetLineColor(h.GetLineColor())
+    return newh
 
 masses = [ 125.0 ]
 

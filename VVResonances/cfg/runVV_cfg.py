@@ -65,7 +65,8 @@ from CMGTools.VVResonances.analyzers.core_cff import *
 #-------- SAMPLES AND TRIGGERS -----------
 from CMGTools.VVResonances.samples.loadSamples import *
 
-selectedComponents = mcSamples+dataSamples
+selectedComponents = mcSamples+signalSamples+zprimeSamples
+selectedComponents = TTs+WJetsToLNuHT
 
 
 
@@ -76,9 +77,7 @@ from CMGTools.VVResonances.analyzers.tree_cff import *
 
 #-------- SEQUENCE
 
-sequence = cfg.Sequence(coreSequence+[vvSkimmer,vvTreeProducer])
-
-
+sequence = cfg.Sequence(coreSequence+[vvAna,metWeightAna,vvSkimmer,vvTreeProducer])
 from CMGTools.RootTools.samples.triggers_13TeV_Spring15 import *
 
 
@@ -95,7 +94,7 @@ triggerFlagsAna.triggerBits ={
 
 
 #-------- HOW TO RUN
-test = 0
+test = 1
 if test==1:
     # test a single component, using a single thread.
     selectedComponents = [BulkGravToZZToZlepZhad_narrow_2000]
@@ -115,7 +114,7 @@ else:
     # full scale production
     # split samples in a smarter way
     from CMGTools.HToZZ4L.tools.configTools import configureSplittingFromTime, printSummary
-    configureSplittingFromTime(selectedComponents, 40, 3)  # means 40 ms per event, job to last 3h
+    configureSplittingFromTime(selectedComponents, 60, 3)  # means 40 ms per event, job to last 3h
     # print summary of components to process
     printSummary(selectedComponents)
 

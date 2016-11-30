@@ -1,3 +1,5 @@
+import math
+import os
 import ROOT
 
 from PhysicsTools.Heppy.analyzers.core.AutoHandle import AutoHandle
@@ -9,15 +11,21 @@ from PhysicsTools.Heppy.physicsobjects.GenParticle import GenParticle
 
 from CMGTools.H2TauTau.proto.analyzers.TauGenTreeProducer import TauGenTreeProducer
 
-class DYJetsFakeAnalyzer(Analyzer):
+if "/sDYReweighting_cc.so" not in ROOT.gSystem.GetLibraries(): 
+    ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/H2TauTau/python/proto/plotter/DYReweighting.cc+" % os.environ['CMSSW_BASE']);
+    from ROOT import getDYWeight
+
+
+class HTTGenAnalyzer(Analyzer):
 
     '''Add generator information to hard leptons.
     '''
     def declareHandles(self):
-        super(DYJetsFakeAnalyzer, self).declareHandles()
+        super(HTTGenAnalyzer, self).declareHandles()
 
         self.mchandles['genInfo'] = AutoHandle(('generator','',''), 'GenEventInfoProduct' )
         self.mchandles['genJets'] = AutoHandle('slimmedGenJets', 'std::vector<reco::GenJet>')
+        self.mchandles['genParticles'] = AutoHandle('prunedGenParticles', 'std::vector<reco::GenParticle')
 
         self.handles['jets'] = AutoHandle(self.cfg_ana.jetCol, 'std::vector<pat::Jet>')
 
@@ -36,7 +44,11 @@ class DYJetsFakeAnalyzer(Analyzer):
         self.readCollections(event.input)
         event.genJets = self.mchandles['genJets'].product()
         event.jets = self.handles['jets'].product()
+        event.genParticles = self.mchandles['genParticles'].product()
 
+        event.genleps = [p for p in event.genParticles if abs(p.pdgId()) in [11, 13] and p.statusFlags().isPrompt()]
+        event.gentauleps = [p for p in event.genParticles if abs(p.pdgId()) in [11, 13] and p.statusFlags().isDirectPromptTauDecayProduct()]
+        event.gentaus = [p for p in event.genParticles if abs(p.pdgId()) == 15 and p.statusFlags().isPrompt() and not any(abs(self.getFinalTau(p).daughter(i_d).pdgId()) in [11, 13] for i_d in xrange(self.getFinalTau(p).numberOfDaughters()))]
         self.getGenTauJets(event)
 
         event.weight_gen = self.mchandles['genInfo'].product().weight()
@@ -63,9 +75,12 @@ class DYJetsFakeAnalyzer(Analyzer):
         if hasattr(self.cfg_ana, 'genPtCut'):
             ptcut = self.cfg_ana.genPtCut
 
+
+
         self.ptSelGentauleps = [lep for lep in event.gentauleps if lep.pt() > ptcut]
         self.ptSelGenleps = [lep for lep in event.genleps if lep.pt() > ptcut]
-        self.ptSelGenSummary = [p for p in event.generatorSummary if p.pt() > ptcut and abs(p.pdgId()) not in [6, 11, 13, 15, 23, 24, 25, 35, 36, 37]]
+        self.ptSelGenSummary = []
+        # self.ptSelGenSummary = [p for p in event.generatorSummary if p.pt() > ptcut and abs(p.pdgId()) not in [6, 11, 13, 15, 23, 24, 25, 35, 36, 37]]
         # self.ptSelGentaus    = [ lep for lep in event.gentaus    if lep.pt()
         # > ptcut ] # not needed
 
@@ -81,6 +96,12 @@ class DYJetsFakeAnalyzer(Analyzer):
         if hasattr(event, 'selectedTaus'):
             for tau in event.selectedTaus:
                 self.genMatch(event, tau, self.ptSelGentauleps, self.ptSelGenleps, self.ptSelGenSummary)
+
+        if self.cfg_comp.name.find('TT') != -1 or self.cfg_comp.name.find('TTH') == -1:
+            self.getTopPtWeight(event)
+
+        if self.cfg_comp.name.find('DY') != -1:
+            self.getDYMassPtWeight(event)
 
         return True
 
@@ -116,7 +137,7 @@ class DYJetsFakeAnalyzer(Analyzer):
     def getFinalTau(tau):
         for i_d in xrange(tau.numberOfDaughters()):
             if tau.daughter(i_d).pdgId() == tau.pdgId():
-                return DYJetsFakeAnalyzer.getFinalTau(tau.daughter(i_d))
+                return HTTGenAnalyzer.getFinalTau(tau.daughter(i_d))
         return tau        
 
     @staticmethod
@@ -124,7 +145,7 @@ class DYJetsFakeAnalyzer(Analyzer):
         event.genTauJets = []
         event.genTauJetConstituents = []
         for gentau in event.gentaus:
-            gentau = DYJetsFakeAnalyzer.getFinalTau(gentau)
+            gentau = HTTGenAnalyzer.getFinalTau(gentau)
 
             c_genjet = TauGenTreeProducer.finalDaughters(gentau)
             c_genjet = [d for d in c_genjet if abs(d.pdgId()) not in [12, 14, 16]]
@@ -167,7 +188,7 @@ class DYJetsFakeAnalyzer(Analyzer):
         # RM: needed to append genTauJets to the events,
         #     when genMatch is used as a static method
         if not hasattr(event, 'genTauJets'):
-            DYJetsFakeAnalyzer.getGenTauJets(event)
+            HTTGenAnalyzer.getGenTauJets(event)
 
         l1match, dR2best = bestMatch(leg, event.genTauJets)
         if dR2best < best_dr2:
@@ -239,4 +260,50 @@ class DYJetsFakeAnalyzer(Analyzer):
                     leg.genp.detFlavour = jet.partonFlavour()
                 else:
                     print 'no match found', leg.pt(), leg.eta()
+
+    @staticmethod
+    def getTopPtWeight(event):
+        ttbar = [p for p in event.genParticles if abs(p.pdgId()) == 6 and p.statusFlags().isLastCopy() and p.statusFlags().fromHardProcess()]
+
+        if len(ttbar) == 2:
+            top_1_pt = ttbar[0].pt()
+            top_2_pt = ttbar[1].pt()
+
+            if top_1_pt > 400:
+                top_1_pt = 400.
+            if top_2_pt > 400:
+                top_2_pt = 400.
+
+            topweight = math.sqrt(math.exp(0.156-0.00137*top_1_pt)*math.exp(0.156-0.00137*top_2_pt))
+
+            event.top_1_pt = top_1_pt
+            event.top_2_pt = top_2_pt
+            event.topweight = topweight
+            event.eventWeight *= topweight
+
+    @staticmethod
+    def p4sum(ps):
+        '''Returns four-vector sum of objects in passed list. Returns None
+        if empty. Note that python sum doesn't work since p4() + 0/None fails,
+        but will be possible in future python'''
+        if not ps:
+            return None
+        p4 = ps[0].p4()
+        for i in xrange(len(ps) - 1):
+            p4 += ps[i + 1].p4()
+        return p4
+
+
+    @staticmethod
+    def getParentBoson(event):
+        leptons_prompt = [p for p in event.genParticles if abs(p.pdgId()) in [11, 12, 13, 14] and p.fromHardProcessFinalState()]
+        taus_prompt = [p for p in event.genParticles if p.statusFlags().isDirectHardProcessTauDecayProduct()]
+        all = leptons_prompt + taus_prompt
+        return HTTGenAnalyzer.p4sum(all)
+
+    @staticmethod 
+    def getDYMassPtWeight(event):
+        if not hasattr(event, 'parentBoson'):
+            event.parentBoson = HTTGenAnalyzer.getParentBoson(event)
+        event.dy_weight = getDYWeight(event.parentBoson.mass(), event.parentBoson.pt())
 

@@ -11,6 +11,7 @@ parser.add_option("--od", "--outdir", dest="outdir", type="string", default=None
 parser.add_option("-v", "--verbose",  dest="verbose",  default=0,  type="int",    help="Verbosity level (0 = quiet, 1 = verbose, 2+ = more)")
 parser.add_option("--masses", dest="masses", default=None, type="string", help="produce results for all these masses")
 parser.add_option("--asimov", dest="asimov", action="store_true", help="Asimov")
+parser.add_option("--correlateProcessCR",dest="correlateProcessCR",action="append", default=[],help="For each process to correlate to the signal region, add [processSR,processCR,CR,filewherealpha]")
 (options, args) = parser.parse_args()
 options.weight = True
 options.final  = True
@@ -21,6 +22,16 @@ cuts = CutsFile(args[1],options)
 from os.path import basename
 binname = basename(args[1]).replace(".txt","") if options.outname == None else options.outname
 outdir  = options.outdir+"/" if options.outdir else ""
+
+
+def addCorrelatedYieldFromSR(processSR,processCR,CR,filetf):
+    fo = open(filetf,"r")
+    (N_SR,alpha_CR) = (0,999)
+    for line in fo.readlines():
+        fields = line.split(" ")
+        if fields[0] == "N_"+processSR+"_SR": N_SR = float(fields[2])
+        elif fields[0] == "alpha_"+processSR+"_"+processCR+"_"+CR: alpha_CR = float(fields[2])
+    return N_SR/alpha_CR
 
 report = mca.getYields(cuts)
 
@@ -38,8 +49,17 @@ if options.asimov:
     report['data_obs'] = allyields
 else:
     report['data_obs'] = report['data']
+        
+if len(options.correlateProcessCR):
+    for p0 in options.correlateProcessCR:
+        (processSR,processCR,CR,filewherealphacorr) = p0.split(",")
+        fo = open(filewherealphacorr,"r")
+        N_SR = fo.readlines()[0].split()[1]
+        N_CR = addCorrelatedYieldFromSR(processSR,processCR,CR,filewherealphacorr)
+        report[processCR][-1][1][0] = N_CR
 
 systs = {}
+systslnU = {}
 for sysfile in args[2:]:
     for line in open(sysfile, 'r'):
         if re.match("\s*#.*", line): continue
@@ -48,19 +68,21 @@ for sysfile in args[2:]:
         field = [f.strip() for f in line.split(':')]
         if len(field) < 4:
             raise RuntimeError, "Malformed line %s in file %s"%(line.strip(),sysfile)
-        elif len(field) == 4 or field[4] == "lnN":
+        elif len(field) == 4 or field[4] in ["lnN","lnU"]:
             (name, procmap, binmap, amount) = field[:4]
             if re.match(binmap,binname) == None: continue
-            if name not in systs: systs[name] = []
-            systs[name].append((re.compile(procmap),amount))
+            if len(field) == 4 or field[4] == "lnN":
+                if name not in systs: systs[name] = []
+                systs[name].append((re.compile(procmap),amount))
+            elif len(field) == 5 and field[4] == "lnU":
+                if name not in systslnU: systslnU[name] = []
+                systslnU[name].append((re.compile(procmap),amount))                
         elif field[4] in ["envelop","shapeOnly","templates","alternateShapeOnly"]:
             if options.verbose > 0: print "Systematic %s of type %s not considered for counting analysis" %(field[0],field[4])
         else:
             raise RuntimeError, "Unknown systematic type %s" % field[4]
     if options.verbose > 0:
         print "Loaded %d systematics" % len(systs)
-        print "Loaded %d envelop systematics" % len(systsEnv)
-
 
 for name in systs.keys():
     effmap = {}
@@ -70,6 +92,15 @@ for name in systs.keys():
             if re.match(procmap, p): effect = amount
         effmap[p] = effect
     systs[name] = effmap
+
+for name in systslnU.keys():
+    effmaplnU = {}
+    for p in procs:
+        effect = "-"
+        for (procmap,amount) in systslnU[name]:
+            if re.match(procmap, p): effect = amount
+        effmaplnU[p] = effect
+    systslnU[name] = effmaplnU
 
 masses = [ 125.0 ]
 if options.masses:
@@ -95,10 +126,12 @@ for mass in masses:
     datacard.write('observation'+("".join(fpatt % report['data_obs'][-1][1][0]))+"\n")
     datacard.write('##----------------------------------\n')
     datacard.write('##----------------------------------\n')
-    datacard.write('bin             '+(" ".join([kpatt % binname     for p in myprocs]))+"\n")
-    datacard.write('process         '+(" ".join([kpatt % p           for p in myprocs]))+"\n")
-    datacard.write('process         '+(" ".join([kpatt % iproc[p]    for p in myprocs]))+"\n")
-    datacard.write('rate            '+(" ".join([fpatt % report[p][-1][1][0] for p in myprocs]))+"\n")
+    datacard.write('bin                               '+(" ".join([kpatt % binname     for p in myprocs]))+"\n")
+    datacard.write('process                           '+(" ".join([kpatt % p           for p in myprocs]))+"\n")
+    datacard.write('process                           '+(" ".join([kpatt % iproc[p]    for p in myprocs]))+"\n")
+    datacard.write('rate                              '+(" ".join([fpatt % report[p][-1][1][0] for p in myprocs]))+"\n")
     datacard.write('##----------------------------------\n')
     for name,effmap in systs.iteritems():
         datacard.write(('%-30s lnN' % name) + " ".join([kpatt % effmap[p]   for p in myprocs]) +"\n")
+    for name,effmap in systslnU.iteritems():
+        datacard.write(('%-30s lnU' % name) + " ".join([kpatt % effmap[p]   for p in myprocs]) +"\n")

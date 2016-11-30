@@ -29,6 +29,12 @@ if [[ "$1" == "-l" ]]; then
     LOC=1; shift;
 fi;
 
+P=false
+if [[ "$1" == "-p" ]]; then
+    $TERSE || echo "# Will also check for null pck files"
+    P=true; shift;
+fi;
+
 Q=8nh
 if [[ "$1" == "-q" ]]; then
     Q=$2; shift; shift;
@@ -53,8 +59,10 @@ fi
 
 $TERSE || echo "# Will print out the commands to resubmit the chunks that failed "
 for D in *_Chunk[0-9]*; do
-    if test \! -s $D/$F; then
-        if [[ "${LSFL}" == "0"  ]] || find $D -maxdepth 1 -type d -name 'LSFJOB_*' | grep -q LSFJ; then
+    PCKBAD=false
+    ${P} && find $D -name '*.pck' -empty | grep -q pck && PCKBAD=true; 
+    if test \! -s $D/$F || $PCKBAD; then
+        if [[ "${LSFL}" == "0"  ]] || find $D -maxdepth 1 -type d -name 'LSFJOB_*' | grep -q LSFJ || test -f $D/submission_failed ; then
             if [[ "$LOC" == "1" ]]; then
                 echo "cmgRunChunkLocally ${BASE}${D} ";
 	    else

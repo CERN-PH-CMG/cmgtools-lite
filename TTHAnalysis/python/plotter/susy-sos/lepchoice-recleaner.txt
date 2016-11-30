@@ -1,3 +1,4 @@
+LepGood_(\w+) : LepGood_\1[iLepSel]; AlsoData
 LepGood1_(\w+) : LepGood_\1[iLepSel[0]]; AlsoData
 LepGood2_(\w+) : LepGood_\1[iLepSel[1]]; AlsoData
 LepGood3_(\w+) : LepGood_\1[iLepSel[2]]; AlsoData

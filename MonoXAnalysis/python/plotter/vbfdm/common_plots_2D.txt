@@ -1,0 +1,3 @@
+detajj_mjj: abs(JetClean1_eta-JetClean2_eta)\:mass_2(JetClean1_pt,JetClean1_eta,JetClean1_phi,0.,JetClean2_pt,JetClean2_eta,JetClean2_phi,0.) : 30,0,4000,30,0,10 ; XTitle='m_{jj} (GeV)', YTitle='#Delta#eta_{jj}', ZMin=10, Legend='TR'
+#detajj_mjj_binned: abs(JetClean1_eta-JetClean2_eta)\:mass_2(JetClean1_pt,JetClean1_eta,JetClean1_phi,0.,JetClean2_pt,JetClean2_eta,JetClean2_phi,0.) : [0,500,750,1000,1500,2500,4000],[0,3,5,10] ; XTitle='m_{jj} (GeV)', YTitle='#Delta#eta_{jj}', ZMin=10, Legend='TR'
+detajj_mjj_binned: vbfdm_2Dto1D(mass_2(JetClean1_pt,JetClean1_eta,JetClean1_phi,0.,JetClean2_pt,JetClean2_eta,JetClean2_phi,0.),abs(JetClean1_eta-JetClean2_eta)) : 10,0.5,10.5 ; XTitle='unrolled 2D', Legend='TR', Logy, YMax=1e6, YMin=1, LegendCutoff=1e-2

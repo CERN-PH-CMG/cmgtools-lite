@@ -29,6 +29,14 @@ class H2TauTauTreeProducerTauMu(H2TauTauTreeProducer):
         self.var(self.tree, 'l2_weight_fakerate_up')
         self.var(self.tree, 'l2_weight_fakerate_down')
 
+        self.var(self.tree, 'trigger_isomu22')
+        self.var(self.tree, 'trigger_isotkmu22')
+        self.var(self.tree, 'trigger_isomu19tau20')
+
+        self.var(self.tree, 'trigger_matched_isomu22')
+        self.var(self.tree, 'trigger_matched_isotkmu22')
+        self.var(self.tree, 'trigger_matched_isomu19tau20')
+
         if hasattr(self.cfg_ana, 'addIsoInfo') and self.cfg_ana.addIsoInfo:
             self.var(self.tree, 'l1_puppi_iso_pt')
             self.var(self.tree, 'l1_puppi_iso04_pt')
@@ -113,9 +121,7 @@ class H2TauTauTreeProducerTauMu(H2TauTauTreeProducer):
 
         tau = event.diLepton.leg2()
         muon = event.diLepton.leg1()
-
-#         import pdb ; pdb.set_trace()
-        
+       
         self.fillTau(self.tree, 'l2', tau)
         self.fillMuon(self.tree, 'l1', muon)
 
@@ -164,6 +170,17 @@ class H2TauTauTreeProducerTauMu(H2TauTauTreeProducer):
         self.fill(self.tree, 'l2_weight_fakerate', event.tauFakeRateWeightUp)
         self.fill(self.tree, 'l2_weight_fakerate_up', event.tauFakeRateWeightDown)
         self.fill(self.tree, 'l2_weight_fakerate_down', event.tauFakeRateWeight)
+
+        fired_triggers = [info.name for info in getattr(event, 'trigger_infos', []) if info.fired]
+
+        self.fill(self.tree, 'trigger_isomu22', any('IsoMu22_v' in name for name in fired_triggers))
+        self.fill(self.tree, 'trigger_isotkmu22', any('IsoTkMu22_v' in name for name in fired_triggers))
+        self.fill(self.tree, 'trigger_isomu19tau20', any('IsoMu19_eta2p1_LooseIsoPFTau20_v' in name for name in fired_triggers))
+
+        matched_paths = getattr(event.diLepton, 'matchedPaths', [])
+        self.fill(self.tree, 'trigger_matched_isomu22', any('IsoMu22_v' in name for name in matched_paths))
+        self.fill(self.tree, 'trigger_matched_isotkmu22', any('IsoTkMu22_v' in name for name in matched_paths))
+        self.fill(self.tree, 'trigger_matched_isomu19tau20', any('IsoMu19_eta2p1_LooseIsoPFTau20_v' in name for name in matched_paths))
 
         if hasattr(self.cfg_ana, 'addTauTrackInfo') and self.cfg_ana.addTauTrackInfo:
             # Leading CH part

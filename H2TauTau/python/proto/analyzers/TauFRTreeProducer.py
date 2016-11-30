@@ -6,7 +6,7 @@ from PhysicsTools.Heppy.physicsobjects.PhysicsObjects import Jet
 
 from CMGTools.H2TauTau.proto.analyzers.H2TauTauTreeProducerBase import H2TauTauTreeProducerBase
 
-from CMGTools.H2TauTau.proto.analyzers.DYJetsFakeAnalyzer import DYJetsFakeAnalyzer
+from CMGTools.H2TauTau.proto.analyzers.HTTGenAnalyzer import HTTGenAnalyzer
 
 from PhysicsTools.HeppyCore.utils.deltar import deltaR2
 
@@ -145,12 +145,12 @@ class TauFRTreeProducer(H2TauTauTreeProducerBase):
             tau = jet.tau if hasattr(jet, 'tau') else None
             if self.cfg_comp.isMC:
                 if tau:
-                    DYJetsFakeAnalyzer.genMatch(event, tau, ptSelGentauleps,
+                    HTTGenAnalyzer.genMatch(event, tau, ptSelGentauleps,
                                                 ptSelGenleps, ptSelGenSummary)
-                    DYJetsFakeAnalyzer.attachGenStatusFlag(tau)
-                DYJetsFakeAnalyzer.genMatch(event, muon, ptSelGentauleps,
+                    HTTGenAnalyzer.attachGenStatusFlag(tau)
+                HTTGenAnalyzer.genMatch(event, muon, ptSelGentauleps,
                                             ptSelGenleps, ptSelGenSummary)
-                DYJetsFakeAnalyzer.attachGenStatusFlag(muon)
+                HTTGenAnalyzer.attachGenStatusFlag(muon)
 
             self.tree.reset()
             self.fillEvent(self.tree, event)

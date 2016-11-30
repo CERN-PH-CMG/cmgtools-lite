@@ -44,6 +44,14 @@ dmMonoJet_globalVariables = dmCore_globalVariables + [
     # NTupleVariable("r_lept", lambda ev: ev.r_lept, float, help="r(j1,j2,met) with leptons"),
     # NTupleVariable("r_gen", lambda ev: ev.r_gen, float, help="r(j1,j2,met) with jets at genInfo"),
     # NTupleVariable("r", lambda ev: ev.r, float, help="r(j1,j2,met) with jets and leptons"),
+
+    ##--------------------------------------------------
+    # Met definitions
+    ##--------------------------------------------------
+    NTupleVariable("met_caloPt", lambda ev : ev.met.caloMETPt(), help="calo met p_{T}"),
+    NTupleVariable("met_caloPhi", lambda ev : ev.met.caloMETPhi(), help="calo met phi"),
+    NTupleVariable("met_caloSumEt", lambda ev : ev.met.caloMETSumEt(), help="calo met sumEt"),
+
     ##-------------------------------------------------- 
     ## MonoJet specific ones
     ##-------------------------------------------------- 
@@ -116,7 +124,7 @@ dmMonoJet_collections.update({
             # put more here
             #"genleps"         : NTupleCollection("genLep",     genParticleWithLinksType, 10, help="Generated leptons (e/mu) from W/Z decays"), 
             ##------------------------------------------------                       
-            "monoxSelectedTaus" : NTupleCollection("TauGood",  tauTypeSusy, 3, help="Taus after the preselection"),
+            "monoxSelectedTaus" : NTupleCollection("TauGood",  tauType, 3, help="Taus after the preselection"),
             "selectedLeptons"   : NTupleCollection("LepGood",  leptonTypeMonoJet, 10, help="Leptons after the preselection"),
             "selectedPhotons"   : NTupleCollection("GammaGood", photonTypeSusy, 20, help="photons with pt>20 and loose cut based ID"),
             ##------------------------------------------------
@@ -149,4 +157,3 @@ fatJetType.addVariables([
         NTupleVariable("puMva", lambda x: x.puMva(), float, help="Value of the pu MVA discriminator"),
         NTupleVariable("prunedMass", lambda x: x.userFloat("ak8PFJetsCHSPrunedMass") * (x.corr if hasattr(x,'corr') else 1.0), float, help="pruned mass"),
 ])
-

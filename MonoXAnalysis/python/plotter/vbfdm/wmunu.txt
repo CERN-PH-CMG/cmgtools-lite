@@ -1,15 +1,18 @@
-trigger: HLT_MonoJetMetNoMuMHT90==1 || HLT_MonoJetMetNoMuMHT120==1 || run==1
-metfilters: Flag_globalTightHalo2016Filter && Flag_eeBadScFilter==1 && hbheFilterNew25ns==1 && hbheFilterIso==1
-skim: metNoMu_pt > 130 && nJetClean >= 2 && JetClean1_pt > 80 && JetClean1_pt > 50
+#trigger: HLT_MonoJetMetNoMuMHT90==1 || HLT_MonoJetMetNoMuMHT120==1 || run==1
+#metfilters: Flag_HBHENoiseFilter==1 && Flag_HBHENoiseIsoFilter==1 && Flag_EcalDeadCellTriggerPrimitiveFilter==1 && Flag_goodVertices==1 && Flag_eeBadScFilter==1 && Flag_globalTightHalo2016Filter==1
+#skim: metNoMu_pt > 130 && nJetClean >= 2 && JetClean1_pt > 80 && JetClean1_pt > 50
 1 loose mu: nMu10V == 1
 1 tight mu: nMu20T == 1
 mt: mt_2(LepGood1_pt,LepGood1_phi,met_pt,met_phi) > 30 && mt_2(LepGood1_pt,LepGood1_phi,met_pt,met_phi) < 160 
 eleveto: nEle10V==0
 photonveto: nGamma15V==0
 tauveto: nTauClean18V==0
-btagveto: nBTag15==0
-dphijm: abs(dphijm) > 0.5
+btagveto: nBTag20==0
+mt: mt_2(LepGood1_pt,LepGood1_phi,met_pt,met_phi) < 160 
+dphijm: abs(dphijm) > 2.3 && abs(dphijm) < 7.0 
+jets: JetClean1_pt > 60 && JetClean2_pt > 50 && abs(JetClean1_eta) < 4.7 && abs(JetClean2_eta) < 4.7 && monojetIDcentralJet(JetClean1_leadClean, JetClean1_eta)
 recoil: metNoMu_pt > 200
 vbfjets: JetClean1_eta * JetClean2_eta < 0
-#mass2j: mass_2(JetClean1_pt,JetClean1_eta,JetClean1_phi,0.,JetClean2_pt,JetClean2_eta,JetClean2_phi,0.) > 1100
-#deta2j: abs(JetClean1_eta-JetClean2_eta) > 3.6
+mass2j: mass_2(JetClean1_pt,JetClean1_eta,JetClean1_phi,0.,JetClean2_pt,JetClean2_eta,JetClean2_phi,0.) > 1100
+deta2j: abs(JetClean1_eta-JetClean2_eta) > 3.6
+

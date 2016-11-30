@@ -4,8 +4,6 @@ from CMGTools.H2TauTau.proto.analyzers.varsDictionary import vars as var_dict
 from CMGTools.H2TauTau.proto.analyzers.TreeVariables import event_vars, ditau_vars, particle_vars, lepton_vars, electron_vars, muon_vars, tau_vars, tau_vars_extra, jet_vars, jet_vars_extra, geninfo_vars, vbf_vars, svfit_vars
 
 from CMGTools.H2TauTau.proto.physicsobjects.DiObject import DiTau
-import math
-
 
 class H2TauTauTreeProducerBase(TreeAnalyzerNumpy):
 
@@ -105,19 +103,21 @@ class H2TauTauTreeProducerBase(TreeAnalyzerNumpy):
         self.fill(tree, '{p_name}_pdgId'.format(p_name=p_name), particle.pdgId() if not hasattr(particle, 'detFlavour') else particle.detFlavour)
 
     # di-tau
-    def bookDiLepton(self, tree, fill_svfit=True):
+    def bookDiLepton(self, tree, fill_svfit=True, svfit_extra=False):
         # RIC: to add
         # svfit 'fittedDiTauSystem', 'fittedMET', 'fittedTauLeptons'
         self.bookGeneric(tree, ditau_vars)
         if fill_svfit:
             self.bookGeneric(tree, svfit_vars)
+        if svfit_extra:
             self.bookParticle(tree, 'svfit_l1')
             self.bookParticle(tree, 'svfit_l2')
 
-    def fillDiLepton(self, tree, diLepton, fill_svfit=True):
+    def fillDiLepton(self, tree, diLepton, fill_svfit=True, svfit_extra=False):
         self.fillGeneric(tree, ditau_vars, diLepton)
         if fill_svfit:
             self.fillGeneric(tree, svfit_vars, diLepton)
+        if svfit_extra:
             if hasattr(diLepton, 'svfit_Taus'):
                 for i, tau in enumerate(diLepton.svfitTaus()):
                     self.fillParticle(tree, 'svfit_l' + str(i + 1), tau)
@@ -198,11 +198,13 @@ class H2TauTauTreeProducerBase(TreeAnalyzerNumpy):
         self.var(tree, 'puppimet_phi')
         self.var(tree, 'puppimet_mt1')
         self.var(tree, 'puppimet_mt2')
+        self.var(tree, 'puppimet_mttotal')
 
         self.var(tree, 'pfmet_pt')
         self.var(tree, 'pfmet_phi')
         self.var(tree, 'pfmet_mt1')
         self.var(tree, 'pfmet_mt2')
+        self.var(tree, 'pfmet_mttotal')
 
     def fillExtraMetInfo(self, tree, event):
         self.fill(tree, 'puppimet_pt', event.puppimet.pt())
@@ -247,25 +249,6 @@ class H2TauTauTreeProducerBase(TreeAnalyzerNumpy):
             self.fill(tree, 'gen_top_weight', 1.)
             return
 
-        ttbar = [p for p in event.genParticles if abs(p.pdgId()) == 6 and p.statusFlags().isLastCopy() and p.statusFlags().fromHardProcess()]
-
-        if self.cfg_comp.name.find('TT') != -1 and self.cfg_comp.name.find('TTH') == -1 and len(ttbar) == 2:
-
-            top_1_pt = ttbar[0].pt()
-            top_2_pt = ttbar[1].pt()
-
-            self.fill(tree, 'gen_top_1_pt', top_1_pt)
-            self.fill(tree, 'gen_top_2_pt', top_2_pt)
-
-            if top_1_pt > 400:
-                top_1_pt = 400.
-            if top_2_pt > 400:
-                top_2_pt = 400.
-
-            topweight = math.sqrt(math.exp(0.156-0.00137*top_1_pt)*math.exp(0.156-0.00137*top_2_pt))
-
-            event.eventWeight *= topweight
-
-            self.fill(tree, 'gen_top_weight', topweight)
-        else:
-            self.fill(tree, 'gen_top_weight', 1.)
+        self.fill(tree, 'gen_top_1_pt', getattr(event, 'top_1_pt', -999.))
+        self.fill(tree, 'gen_top_2_pt', getattr(event, 'top_2_pt', -999.))
+        self.fill(tree, 'gen_top_weight', getattr(event, 'topweight', 1.))

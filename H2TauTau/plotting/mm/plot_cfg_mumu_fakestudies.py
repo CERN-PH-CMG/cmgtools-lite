@@ -31,6 +31,9 @@ cuts = {}
 
 inc_cut = '&&'.join([cat_Inc])
 inc_cut += '&& tau1_pt>30'
+
+z_cut = '&& l1_charge != l2_charge && abs(l1_eta) < 2.1 && abs(l2_eta) < 2.1 && mvis>70 && mvis<100'
+
 # cuts['OS_PU_mZ'] = inc_cut + '&& l1_charge != l2_charge && abs(l1_eta) < 2.1 && abs(l2_eta) < 2.1 && mvis>70 && mvis<100'
 # cuts['OS_PU_mZ_lowPU'] = inc_cut + '&& l1_charge != l2_charge && abs(l1_eta) < 2.1 && abs(l2_eta) < 2.1 && mvis>70 && mvis<100 && n_vertices<12'
 # cuts['OS_PU_mZ_highPU'] = inc_cut + '&& l1_charge != l2_charge && abs(l1_eta) < 2.1 && abs(l2_eta) < 2.1 && mvis>70 && mvis<100 && n_vertices>20'
@@ -38,30 +41,41 @@ inc_cut += '&& tau1_pt>30'
 # cuts['OS_PU_mZ_eq1jet'] = inc_cut + '&& l1_charge != l2_charge && abs(l1_eta) < 2.1 && abs(l2_eta) < 2.1 && mvis>70 && mvis<100 && n_jets==1'
 
 # cuts['OS_PU_mZ_eq1jet_tau1'] = inc_cut + '&& l1_charge != l2_charge && abs(l1_eta) < 2.1 && abs(l2_eta) < 2.1 && mvis>70 && mvis<100 && n_jets==1 && tau1_pt>0.'
-cuts['OS_PU_mZ_eq1jet_tau1_dm'] = (
-    inc_cut + '&& l1_charge != l2_charge && abs(l1_eta) < 2.1 && abs(l2_eta) < 2.1 && mvis>70 && mvis<100 && n_jets==1 && tau1_decayModeFinding>0.',
-    inc_cut + '&& l1_charge != l2_charge && abs(l1_eta) < 2.1 && abs(l2_eta) < 2.1 && mvis>70 && mvis<100 && n_jets==1')
+# cuts['OS_PU_mZ_eq1jet_tau1_dm'] = (
+#     inc_cut + '&& l1_charge != l2_charge && abs(l1_eta) < 2.1 && abs(l2_eta) < 2.1 && mvis>70 && mvis<100 && n_jets==1 && tau1_decayModeFinding>0.',
+#     inc_cut + '&& l1_charge != l2_charge && abs(l1_eta) < 2.1 && abs(l2_eta) < 2.1 && mvis>70 && mvis<100 && n_jets==1')
 
-cuts['OS_PU_mZ_eq1jet_tau1_dbiso'] = (
-    inc_cut + '&& l1_charge != l2_charge && abs(l1_eta) < 2.1 && abs(l2_eta) < 2.1 && mvis>70 && mvis<100 && n_jets==1 && tau1_decayModeFinding>0. && tau1_byCombinedIsolationDeltaBetaCorr3Hits>1.5',
-    inc_cut + '&& l1_charge != l2_charge && abs(l1_eta) < 2.1 && abs(l2_eta) < 2.1 && mvis>70 && mvis<100 && n_jets==1 && tau1_decayModeFinding>0.')
+# cuts['OS_PU_mZ_eq1jet_tau1_dbiso'] = (
+#     inc_cut + '&& l1_charge != l2_charge && abs(l1_eta) < 2.1 && abs(l2_eta) < 2.1 && mvis>70 && mvis<100 && n_jets==1 && tau1_decayModeFinding>0. && tau1_byCombinedIsolationDeltaBetaCorr3Hits>1.5',
+#     inc_cut + '&& l1_charge != l2_charge && abs(l1_eta) < 2.1 && abs(l2_eta) < 2.1 && mvis>70 && mvis<100 && n_jets==1 && tau1_decayModeFinding>0.')
 
-cuts['OS_PU_mZ_eq1jet_tau1_dmplusdbiso'] = (
-    inc_cut + '&& l1_charge != l2_charge && abs(l1_eta) < 2.1 && abs(l2_eta) < 2.1 && mvis>70 && mvis<100 && n_jets==1 && tau1_decayModeFinding>0. && tau1_byCombinedIsolationDeltaBetaCorr3Hits>1.5',
-    inc_cut + '&& l1_charge != l2_charge && abs(l1_eta) < 2.1 && abs(l2_eta) < 2.1 && mvis>70 && mvis<100 && n_jets==1')
+# cuts['OS_PU_mZ_eq1jet_tau1_dmplusdbiso'] = (
+#     inc_cut + '&& l1_charge != l2_charge && abs(l1_eta) < 2.1 && abs(l2_eta) < 2.1 && mvis>70 && mvis<100 && n_jets==1 && tau1_decayModeFinding>0. && tau1_byCombinedIsolationDeltaBetaCorr3Hits>1.5',
+#     inc_cut + '&& l1_charge != l2_charge && abs(l1_eta) < 2.1 && abs(l2_eta) < 2.1 && mvis>70 && mvis<100 && n_jets==1')
+
+# cuts['OS_PU_mZ_eq1jet_tau1_mvaiso'] = (
+    # inc_cut + '&& l1_charge != l2_charge && abs(l1_eta) < 2.1 && abs(l2_eta) < 2.1 && mvis>70 && mvis<100 && n_jets==1 && tau1_decayModeFinding>0. && tau1_byIsolationMVArun2v1DBoldDMwLT>3.5',
+    # inc_cut + '&& l1_charge != l2_charge && abs(l1_eta) < 2.1 && abs(l2_eta) < 2.1 && mvis>70 && mvis<100 && n_jets==1 && tau1_decayModeFinding>0.')
+
 
 cuts['OS_PU_mZ_eq1jet_tau1_mvaiso'] = (
-    inc_cut + '&& l1_charge != l2_charge && abs(l1_eta) < 2.1 && abs(l2_eta) < 2.1 && mvis>70 && mvis<100 && n_jets==1 && tau1_decayModeFinding>0. && tau1_byIsolationMVArun2v1DBoldDMwLT>3.5',
-    inc_cut + '&& l1_charge != l2_charge && abs(l1_eta) < 2.1 && abs(l2_eta) < 2.1 && mvis>70 && mvis<100 && n_jets==1 && tau1_decayModeFinding>0.')
+    inc_cut + z_cut + '&& n_jets==1 && tau1_decayModeFinding>0. && tau1_byIsolationMVArun2v1DBoldDMwLT>3.5',
+    inc_cut + z_cut + '&& n_jets==1 && tau1_decayModeFinding>0.'
+)
+
+cuts['OS_PU_mZ_gr1jet_tau1_mvaiso'] = (
+    inc_cut + z_cut + '&& n_jets>1 && tau1_decayModeFinding>0. && tau1_byIsolationMVArun2v1DBoldDMwLT>3.5',
+    inc_cut + z_cut + '&& n_jets>1 && tau1_decayModeFinding>0.'
+)
 
 
-cuts['OS_PU_mZ_eq1jet_tau1_ptouter'] = (
-    inc_cut + '&& l1_charge != l2_charge && abs(l1_eta) < 2.1 && abs(l2_eta) < 2.1 && mvis>70 && mvis<100 && n_jets==1 && tau1_decayModeFinding>0. && tau1_byCombinedIsolationDeltaBetaCorrRaw3Hits<1.5 && tau1_photonPtSumOutsideSignalCone/tau1_pt<0.1',
-    inc_cut + '&& l1_charge != l2_charge && abs(l1_eta) < 2.1 && abs(l2_eta) < 2.1 && mvis>70 && mvis<100 && n_jets==1 && tau1_decayModeFinding>0. && tau1_byCombinedIsolationDeltaBetaCorrRaw3Hits<1.5')
+# cuts['OS_PU_mZ_eq1jet_tau1_ptouter'] = (
+#     inc_cut + '&& l1_charge != l2_charge && abs(l1_eta) < 2.1 && abs(l2_eta) < 2.1 && mvis>70 && mvis<100 && n_jets==1 && tau1_decayModeFinding>0. && tau1_byCombinedIsolationDeltaBetaCorrRaw3Hits<1.5 && tau1_photonPtSumOutsideSignalCone/tau1_pt<0.1',
+#     inc_cut + '&& l1_charge != l2_charge && abs(l1_eta) < 2.1 && abs(l2_eta) < 2.1 && mvis>70 && mvis<100 && n_jets==1 && tau1_decayModeFinding>0. && tau1_byCombinedIsolationDeltaBetaCorrRaw3Hits<1.5')
 
-cuts['OS_PU_mZ_eq1jet_tau1_noptouter'] = (
-    inc_cut + '&& l1_charge != l2_charge && abs(l1_eta) < 2.1 && abs(l2_eta) < 2.1 && mvis>70 && mvis<100 && n_jets==1 && tau1_decayModeFinding>0. && tau1_byCombinedIsolationDeltaBetaCorrRaw3Hits<1.5',
-    inc_cut + '&& l1_charge != l2_charge && abs(l1_eta) < 2.1 && abs(l2_eta) < 2.1 && mvis>70 && mvis<100 && n_jets==1 && tau1_decayModeFinding>0.')
+# cuts['OS_PU_mZ_eq1jet_tau1_noptouter'] = (
+#     inc_cut + '&& l1_charge != l2_charge && abs(l1_eta) < 2.1 && abs(l2_eta) < 2.1 && mvis>70 && mvis<100 && n_jets==1 && tau1_decayModeFinding>0. && tau1_byCombinedIsolationDeltaBetaCorrRaw3Hits<1.5',
+#     inc_cut + '&& l1_charge != l2_charge && abs(l1_eta) < 2.1 && abs(l2_eta) < 2.1 && mvis>70 && mvis<100 && n_jets==1 && tau1_decayModeFinding>0.')
 
 samples_mc, samples_data, samples, all_samples, sampleDict = createSampleLists(analysis_dir, channel='mm', ztt_cut='(l1_gen_match == 4 && l2_gen_match == 4)', zl_cut='(l1_gen_match == 2 && l2_gen_match == 2)', zj_cut='(l1_gen_match != l2_gen_match || (l1_gen_match != 4 && l1_gen_match != 2))', data2016G=data2016G)
 
@@ -71,7 +85,7 @@ samples_mc, samples_data, samples, all_samples, sampleDict = createSampleLists(a
 variables = getVars(['tau1_eta']) #'tau1_pt',
 variables += [
     VariableCfg(name='jet1_pt', binning=array([30., 40., 50., 60., 80., 100., 120., 160.,  200., 350.]), unit='GeV', xtitle='jet p_{T}'),
-    VariableCfg(name='tau1_pt', binning=array([30., 40., 50., 60., 80., 100., 150., 200.]), unit='GeV', xtitle='tau p_{T}'),
+    VariableCfg(name='tau1_pt', binning=array([30., 35., 40., 45., 50., 60., 80., 100., 140., 200.]), unit='GeV', xtitle='tau p_{T}'),
     VariableCfg(name='jet1_eta', binning={'nbinsx':25, 'xmin':-2.5, 'xmax':2.5}, unit='', xtitle='jet #eta'),
 ]
 # variables = [

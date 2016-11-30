@@ -28,15 +28,18 @@ nJet25 : nJet25 : [-0.5,0.5,1.5,2.5,3.5,4.5,5.5,6.5] ; XTitle='N(jet\, p_{T} > 2
 nJet40 : nJet40 : [-0.5,0.5,1.5,2.5,3.5,4.5,5.5,6.5] ; XTitle='N(jet\, p_{T} > 40)'
 ht:  htJet25-LepGood1_pt-LepGood2_pt :8,0.,400.; XTitle="Ht", Legend='TR'
 htJet25:   htJet25: 14,0,700  ; XTitle="H_{T}(jet p_{T} > 25)  [GeV]"
-htJet40j:   htJet40j: 14,0,700 ; XTitle="H_{T}(jet p_{T} > 40)  [GeV]"
-mhtJet25:   mhtJet25: 8,0,600  ; XTitle="H_{T}^{miss}(lep + jet p_{T} > 25)  [GeV]"
-mhtJet40:   mhtJet40: 8,0,600  ; XTitle="H_{T}^{miss}(lep + jet p_{T} > 40)  [GeV]"
-nBJet25L : Sum$(Jet_btagCSV>0.46)  : [-0.5,0.5,1.5,2.5,3.5,4.5] ; XTitle='N(b-jet\, p_{T} > 25\, CSVL)'
+#htJet40j:   htJet40j: 14,0,700 ; XTitle="H_{T}(jet p_{T} > 40)  [GeV]"
+#mhtJet25:   mhtJet25: 8,0,600  ; XTitle="H_{T}^{miss}(lep + jet p_{T} > 25)  [GeV]"
+#mhtJet40:   mhtJet40: 8,0,600  ; XTitle="H_{T}^{miss}(lep + jet p_{T} > 40)  [GeV]"
+nBJet25L : nBJetLoose25  : [-0.5,0.5,1.5,2.5,3.5,4.5] ; XTitle='N(b-jet\, p_{T} > 25\, CSVL)'
 jet1Pt:  Jet1_pt: 12,0,600; XTitle="Leading jet p_{T}  [GeV]",Legend='TR'
 #SR_bins_EWKino: SR_bins_EWKino(m2l):4,1,5;XTitle="M(ll)-bins",Legend='TR'
 #SR_bins_stop: SR_bins_stop(LepGood1_pt):3,1,4;XTitle="p_{T}-bins",Legend='TL'
 SR_bins_EWKino: m2l:[4,10,20,30,50];XTitle="M(ll) [GeV]",Legend='TR',LegendCutoff=0
+SR_bins_EWKino_ichep_low: m2l:[4,10,20,30,50];XTitle="M(ll) [GeV]",Legend='TR',LegendCutoff=0,YMin=0.0,YMax=20
+SR_bins_EWKino_ichep_hi: m2l:[4,10,20,30,50];XTitle="M(ll) [GeV]",Legend='TR',LegendCutoff=0,YMin=0.0,YMax=30
 SR_bins_stop: LepGood1_pt:[5,12,20,30];XTitle="Leading lepton p_{T}  [GeV]",Legend='TL',LegendCutoff=0
+SR_bins_stop_ichep: LepGood1_pt:[5,12,20,30];XTitle="Leading lepton p_{T}  [GeV]",Legend='TL',LegendCutoff=0,YMin=0.0,YMax=40
 #weight: fakeRatePromptRateWeight_2l_23(LepGood1_pt,LepGood1_eta,LepGood1_pdgId,LepGood1_isTightString,LepGood2_pt,LepGood2_eta,LepGood2_pdgId,LepGood2_isTightString): 80,-2,2; YTitle='weight';
 
 
