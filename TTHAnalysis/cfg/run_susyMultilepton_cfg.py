@@ -92,13 +92,15 @@ if analysis in ['SOS']:
     lepAna.loose_muon_pt  = 3
     lepAna.inclusive_electron_pt  = 5
     lepAna.loose_electron_pt  = 5
-    isolation = "absIso04"
+    #isolation = "absIso04"
+    isolation = None
     lepAna.loose_electron_id = "POG_MVA_ID_Spring15_NonTrig_VLooseIdEmu"
 
     # Lepton-Jet Cleaning
-    jetAna.minLepPt = 20 
-    jetAnaScaleUp.minLepPt = 20 
-    jetAnaScaleDown.minLepPt = 20 
+    jetAna.cleanSelectedLeptons = False
+    #jetAna.minLepPt = 20 
+    #jetAnaScaleUp.minLepPt = 20 
+    #jetAnaScaleDown.minLepPt = 20 
     # otherwise with only absIso cut at 10 GeV and no relIso we risk cleaning away good jets
 
 if isolation == "miniIso": 
@@ -289,6 +291,7 @@ treeProducer = cfg.Analyzer(
      collections = susyMultilepton_collections,
 )
 
+del treeProducer.collections["discardedLeptons"]
 
 ## histo counter
 if not runSMS:
@@ -456,7 +459,8 @@ if runData and not isTest: # For running on data
 #    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_271036-276811_13TeV_PromptReco_Collisions16_JSON_NoL1T.txt' # 12.9/fb #276811 ICHEP LastRun
 #    json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-279931_13TeV_PromptReco_Collisions16_JSON_NoL1T.txt' #24.5/fb
 #    json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-280385_13TeV_PromptReco_Collisions16_JSON_NoL1T_v2.txt' #27.22/fb
-    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_271036-284044_13TeV_PromptReco_Collisions16_JSON_NoL1T.txt' # 36.22/fb
+#    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_271036-284044_13TeV_PromptReco_Collisions16_JSON_NoL1T.txt' # 36.22/fb
+    json = os.environ['CMSSW_BASE']+ /src/CMGTools/TTHAnalysis/data/json/Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt # 36.46 /fb
     #run BCDEFG prompt reco  ==============================================================================================
 #    processing = "Run2016B-PromptReco-v2"; short = "Run2016B_PromptReco_v2"; run_ranges = [(273150,280385)]; useAAA=False; # -v2 starts from 273150
 #    dataChunks.append((json,processing,short,run_ranges,useAAA))
@@ -470,9 +474,8 @@ if runData and not isTest: # For running on data
 #    dataChunks.append((json,processing,short,run_ranges,useAAA))
 #    processing = "Run2016G-PromptReco-v1"; short = "Run2016G_PromptReco_v1"; run_ranges = [(273150,280385)]; useAAA=False;
 #    dataChunks.append((json,processing,short,run_ranges,useAAA))
-
     #run BCDEFG re-reco  ==============================================================================================
-    processing = "Run2016B-23Sep2016-v3"; short = "Run2016B_23Sep2016_v3"; run_ranges = [(273150,284044)]; useAAA=True; # -v3 starts from 273150 to 275376
+    processing = "Run2016B-23Sep2016-v3"; short = "Run2016B_23Sep2016_v3"; run_ranges = [(273150,284044)]; useAAA=True; 
     dataChunks.append((json,processing,short,run_ranges,useAAA))
     processing = "Run2016C-23Sep2016-v1"; short = "Run2016C_23Sep2016_v1"; run_ranges = [(271036,284044)]; useAAA=True;
     dataChunks.append((json,processing,short,run_ranges,useAAA))
@@ -485,8 +488,6 @@ if runData and not isTest: # For running on data
     processing = "Run2016G-23Sep2016-v1"; short = "Run2016G_23Sep2016_v1"; run_ranges = [(271036,284044)]; useAAA=True;
     dataChunks.append((json,processing,short,run_ranges,useAAA))
     #run H prompt reco ==================================================================================================
-    processing = "Run2016H-PromptReco-v1"; short = "Run2016H-PromptReco-v1"; run_ranges = [(273150,284044)]; useAAA=True;
-    dataChunks.append((json,processing,short,run_ranges,useAAA))
     processing = "Run2016H-PromptReco-v2"; short = "Run2016H-PromptReco-v2"; run_ranges = [(273150,284044)]; useAAA=True;
     dataChunks.append((json,processing,short,run_ranges,useAAA))
     processing = "Run2016H-PromptReco-v3"; short = "Run2016H-PromptReco-v3"; run_ranges = [(273150,284044)]; useAAA=True;
