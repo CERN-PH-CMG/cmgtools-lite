@@ -106,4 +106,4 @@ class fastCombinedObjectRecleaner:
             for var in self._outjetvars: ret[var%thr+self.label]=getattr(sums,var.replace('%d',''))
         return ret
 
-MODULES=[('clean2',lambda : fastCombinedObjectRecleaner(label="",inlabel="_Test",cleanTausWithLooseLeptons=True,doVetoZ=True,doVetoLMf=True,doVetoLMt=True,jetPts=[25,40]))]
+MODULES=[]

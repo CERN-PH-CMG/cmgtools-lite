@@ -57,19 +57,7 @@ class CombinedObjectTaggerForCleaning:
         if self.debug: print tags
         return {}
 
-
-MODULES=[('clean1',lambda : CombinedObjectTaggerForCleaning("Test",
-                                                            looseLeptonSel = lambda lep : lep.miniRelIso < 0.4 and lep.sip3d < 8,
-                                                            cleaningLeptonSel = lambda lep : True, # cuts applied on top of loose
-                                                            FOLeptonSel = lambda lep : lep.conept>10 and lep.jetBTagCSV<0.80, # cuts applied on top of loose
-                                                            tightLeptonSel = lambda lep : lep.conept>10 and lep.jetBTagCSV<0.80 and lep.mvaTTH > 0.75, # cuts applied on top of loose
-                                                            cleaningTauSel = lambda tau: tau.pt > 20 and abs(tau.eta)<2.3 and tau.idMVAOldDMRun2dR03 >= 1,
-                                                            FOTauSel = lambda tau: True, # cuts applied on top of cleaning
-                                                            tightTauSel = lambda tau: tau.idMVAOldDMRun2dR03 >= 2, # cuts applied on top of cleaning
-                                                            selectJet = lambda jet: abs(jet.eta)<2.4,
-                                                            coneptdef = lambda lep: lep.pt,
-                                                            debug = False))
-         ]
+MODULES=[]
 
 if __name__ == '__main__':
     from sys import argv
