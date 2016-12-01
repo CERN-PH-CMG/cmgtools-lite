@@ -386,7 +386,7 @@ sequence = cfg.Sequence(susyCoreSequence+[
     LHEAna,
     ttHEventAna,
     ttHHTSkimmer,
-    ttHSTSkimmer,
+#    ttHSTSkimmer,
     treeProducer,
     ])
 
