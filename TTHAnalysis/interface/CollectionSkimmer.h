@@ -53,15 +53,15 @@ class CollectionSkimmer {
 	  if (saveTagForAll_){
 	    assert (srcCount_); // pointer to srcCount TTreeReaderValue must be set
 	    nIn_ = **srcCount_;
-	    assert (uint(nIn_)<=maxEntries);
+	    assert (uint(nIn_)<=maxEntries_);
 	    std::fill_n(iTagOut_.get(),nIn_,0);
 	  }
 	}
 
         /// push back entry iSrc from input collection to output collection
         void push_back(unsigned int iSrc) {
-	  assert (iSrc<maxEntries);
-	  assert (uint(nOut_)<maxEntries);
+	  assert (iSrc<maxEntries_);
+	  assert (uint(nOut_)<maxEntries_);
 	  for (auto & c : copyFloats_) c.copy(iSrc, nOut_);
 	  for (auto & c : copyInts_) c.copy(iSrc, nOut_);
 	  if (saveSelectedIndices_) iOut_[nOut_] = iSrc;
@@ -80,7 +80,7 @@ class CollectionSkimmer {
         void copy(unsigned int iSrc, unsigned int iTo) {
             assert(unsigned(nOut_) > iTo);
             if (saveSelectedIndices_) iOut_[iTo] = iSrc;
-	    assert (!saveTagForAll_); // copy cannot be used if saving tags, output would depend on previous calls
+	    iTagOut_[iSrc] = true; // careful if using with saveTagForAll_, do not overwrite with copy
             for (auto & c : copyFloats_) c.copy(iSrc, iTo);
             for (auto & c : copyInts_) c.copy(iSrc, iTo);
         }
@@ -101,7 +101,7 @@ class CollectionSkimmer {
 	bool saveTagForAll_;
 	Int_t nIn_;
         std::unique_ptr<int[]> iTagOut_;
-	uint maxEntries;
+	uint maxEntries_;
 
         template<typename CopyVarVectorT, typename SrcT>
         void _copyVar(const std::string &varname, SrcT * src, CopyVarVectorT &copyVars) ; 
