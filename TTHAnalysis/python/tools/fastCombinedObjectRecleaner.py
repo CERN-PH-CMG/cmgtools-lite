@@ -80,7 +80,7 @@ class fastCombinedObjectRecleaner:
         for i in tags.lepsC: self._worker.selectLepton(i)
         if self.cleanTausWithLooseLeptons: 
             for i in tags.lepsL: self._worker.selectLeptonExtraForTau(i)
-        for i in tags.tausC: self._worker.selectTau(i)
+        for i in tags.tausF: self._worker.selectTau(i)
         for i in tags.jetsS: self._worker.selectJet(i)
         self._worker.run()
 

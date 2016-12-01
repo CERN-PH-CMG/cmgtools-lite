@@ -38,9 +38,12 @@ public:
   }
 
   std::vector<JetSumCalculatorOutput> GetJetSums(){
+
     std::vector<JetSumCalculatorOutput> output;
-      TLorentzVector mht(0,0,0,0);
+
       for (auto thr : _jetptcuts){
+
+	TLorentzVector mht(0,0,0,0);
 	JetSumCalculatorOutput sums;
 	sums.thr = float(thr);
 	sums.htJetj = 0;
@@ -104,10 +107,10 @@ public:
     _cj.clear();
 
     for (int iT = 0, nT = **nTau_; iT < nT; ++iT) {
+      if (!sel_taus[iT]) continue;
       bool ok = true;
       for (int iL = 0, nL = **nLep_; iL < nL; ++iL) {
-	if (!sel_leps.get()[iL]) continue;
-	if (!sel_leps_extrafortau.get()[iL]) continue;
+	if (!(sel_leps.get()[iL] || sel_leps_extrafortau.get()[iL])) continue;
 	if (deltaR2((*Lep_eta_)[iL], (*Lep_phi_)[iL], (*Tau_eta_)[iT], (*Tau_phi_)[iT]) < deltaR2cut) {
 	  ok = false;
 	  break;
@@ -121,6 +124,7 @@ public:
       }
     }
     for (int iJ = 0, nJ = **nJet_; iJ < nJ; ++iJ) {
+      if (!sel_jets[iJ]) continue;
       bool ok = true;
       for (int iL = 0, nL = **nLep_; iL < nL; ++iL) {
 	if (!sel_leps.get()[iL]) continue;

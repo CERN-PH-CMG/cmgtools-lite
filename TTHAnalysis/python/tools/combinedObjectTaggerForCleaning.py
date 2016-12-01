@@ -9,7 +9,7 @@ class CombinedObjectTagsForCleaning:
 
 class CombinedObjectTaggerForCleaning:
 
-    def __init__(self,label,looseLeptonSel,cleaningLeptonSel,FOLeptonSel,tightLeptonSel,cleaningTauSel,FOTauSel,tightTauSel,selectJet,coneptdef,debug=False):
+    def __init__(self,label,looseLeptonSel,cleaningLeptonSel,FOLeptonSel,tightLeptonSel,FOTauSel,tightTauSel,selectJet,coneptdef,debug=False):
         self.label = "" if (label in ["",None]) else ("_"+label)
 
         self.looseLeptonSel = looseLeptonSel
@@ -17,9 +17,8 @@ class CombinedObjectTaggerForCleaning:
         self.fkbleLeptonSel = FOLeptonSel # applied on top of looseLeptonSel
         self.tightLeptonSel = tightLeptonSel # applied on top of looseLeptonSel
 
-        self.cleanTauSel = cleaningTauSel
-        self.fkbleTauSel = FOTauSel # applied on top of cleaningTauSel
-        self.tightTauSel = tightTauSel # applied on top of cleaningTauSel
+        self.fkbleTauSel = FOTauSel
+        self.tightTauSel = tightTauSel # applied on top of FOTauSel
 
         self.selectJet = selectJet
 
@@ -45,9 +44,8 @@ class CombinedObjectTaggerForCleaning:
         tags.lepsC= [j for j,obj in filter(lambda (i,lep) : (i in tags.lepsL) and self.cleanLeptonSel(lep), enumerate(leps))]
         tags.lepsF= [j for j,obj in filter(lambda (i,lep) : (i in tags.lepsL) and self.fkbleLeptonSel(lep), enumerate(leps))]
         tags.lepsT= [j for j,obj in filter(lambda (i,lep) : (i in tags.lepsL) and self.tightLeptonSel(lep), enumerate(leps))]
-        tags.tausC= [j for j,obj in filter(lambda (i,tau) : self.cleanTauSel(tau), enumerate(taus))]
-        tags.tausF= [j for j,obj in filter(lambda (i,tau) : (i in tags.tausC) and self.fkbleTauSel(tau), enumerate(taus))]
-        tags.tausT= [j for j,obj in filter(lambda (i,tau) : (i in tags.tausC) and self.tightTauSel(tau), enumerate(taus))]
+        tags.tausF= [j for j,obj in filter(lambda (i,tau) : self.fkbleTauSel(tau), enumerate(taus))]
+        tags.tausT= [j for j,obj in filter(lambda (i,tau) : (i in tags.tausF) and self.tightTauSel(tau), enumerate(taus))]
         tags.jetsS= [j for j,obj in filter(lambda (i,jet) : self.selectJet(jet), enumerate(jets))]
 
         lepsF_sorted = [_idx for _cpt,_idx in sorted([(tags.conept[i],i) for i in tags.lepsF], reverse=True)]
@@ -72,9 +70,8 @@ if __name__ == '__main__':
                                                        cleaningLeptonSel = lambda lep : True, # cuts applied on top of loose
                                                        FOLeptonSel = lambda lep : lep.conept>10 and lep.jetBTagCSV<0.80, # cuts applied on top of loose
                                                        tightLeptonSel = lambda lep : lep.conept>10 and lep.jetBTagCSV<0.80 and lep.mvaTTH > 0.75, # cuts applied on top of loose
-                                                       cleaningTauSel = lambda tau: tau.pt > 20 and abs(tau.eta)<2.3 and tau.idMVAOldDMRun2dR03 >= 1,
-                                                       FOTauSel = lambda tau: True, # cuts applied on top of cleaning
-                                                       tightTauSel = lambda tau: tau.idMVAOldDMRun2dR03 >= 2, # cuts applied on top of cleaning
+                                                       FOTauSel = lambda tau: tau.pt > 20 and abs(tau.eta)<2.3 and tau.idMVAOldDMRun2dR03 >= 1,
+                                                       tightTauSel = lambda tau: tau.idMVAOldDMRun2dR03 >= 2, # cuts applied on top of FO tau
                                                        selectJet = lambda jet: abs(jet.eta)<2.4,
                                                        coneptdef = lambda lep: lep.pt,
                                                        debug = True)
