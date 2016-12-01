@@ -34,10 +34,7 @@ public:
   }
 
   float Mass(int i, int j){
-    TLorentzVector p1, p2;
-    p1.SetPtEtaPhiM((*Lep_pt_)[i],(*Lep_eta_)[i],(*Lep_phi_)[i],(*Lep_mass_)[i]);
-    p2.SetPtEtaPhiM((*Lep_pt_)[j],(*Lep_eta_)[j],(*Lep_phi_)[j],(*Lep_mass_)[j]);
-    return (p1+p2).M();
+    return (leps_p4[i]+leps_p4[j]).M();
   }
 
   MassVetoCalculatorOutput GetPairMasses(){
@@ -60,6 +57,7 @@ public:
   void run() {
 
     int nLep = **nLep_;
+    for (int i=0; i<nLep; i++) if (leps_loose[i]) leps_p4[i].SetPtEtaPhiM((*Lep_pt_)[i],(*Lep_eta_)[i],(*Lep_phi_)[i],(*Lep_mass_)[i]);
     for (int i=0; i<nLep; i++){
       if (!leps_loose[i]) continue;
       for (int j=i+1; j<nLep; j++){
@@ -95,6 +93,7 @@ public:
     std::fill_n(leps_loose.get(),nLep,false);
     leps_fo.clear();
     leps_tight.clear();
+    leps_p4.reset(new TLorentzVector[nLep]);
   }
 
   void setLeptonFlagLoose(int i){
@@ -117,6 +116,7 @@ private:
   Int_t nLep;
   std::unique_ptr<bool[]> leps_loose;
   std::set<int> leps_fo, leps_tight;
+  std::unique_ptr<TLorentzVector[]> leps_p4;
   bool doVetoZ_;
   bool doVetoLMf_;
   bool doVetoLMt_;
