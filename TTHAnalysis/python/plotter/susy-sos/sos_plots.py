@@ -1,3 +1,7 @@
+### Note: modifications needed after ICHEP:
+### puw2016_vtx_13fb(nVert) has been replaced with puw2016_nTrueInt_13fb(nTrueInt)
+
+
 #!/usr/bin/env python
 import sys
 import re
@@ -18,20 +22,18 @@ if dowhat == "limits":
 def base(selection):
 
     
-    CORE="-P /data1/botta/trees_SOS_80X_130716_Scans/ --FMCs {P}/eventBTagWeight"
-    CORE+=" -f -j 8 -l 12.9 --s2v --tree treeProducerSusyMultilepton --mcc susy-sos/mcc-lepWP.txt --mcc susy-sos/mcc-sf1.txt --neg" #--mcc susy-sos/2los_triggerdefs.txt # "
+    #CORE="-P /data1/botta/trees_SOS_80X_130716_Scans/"# --FMCs {P}/eventBTagWeight"
+    CORE="-P /data/gpetrucc/TREES_80X_SOS_111016_NoIso --Fs {P}/0_both3dClean_v2 --mcc susy-sos/lepchoice-recleaner.txt"
+    CORE+=" -f -j 8 -l 12.9 --s2v --tree treeProducerSusyMultilepton --mcc susy-sos/mcc-lepWP.txt --mcc susy-sos/mcc-sf1.txt --neg" #--mcc susy-sos/2los_triggerdefs.txt 
     if dowhat == "plots": CORE+=" --lspam 'CMS Preliminary' --legendWidth 0.14 --legendFontSize 0.04"
     GO = ""
     if selection=='2los':
-        if (dowhat != "limits") : GO="susy-sos/mca-2los-mc.txt susy-sos/2los_tight.txt "
+        if (dowhat != "limits") : GO="susy-sos/mca-2los-test-mc.txt susy-sos/2los_tight.txt " #susy-sos/mca-2los-mc.txt
         GO="%s %s"%(CORE,GO) 
-        GO="%s -L susy-sos/functionsSOS.cc -L susy-sos/lepton_trigger_SF.cc -W 'leptonSF_SOS(LepGood1_pdgId,LepGood1_pt,LepGood1_eta,0)*leptonSF_SOS(LepGood2_pdgId,LepGood2_pt,LepGood2_eta,0)*triggerSF_SOS(met_pt,metmm_pt(LepGood1_pdgId,LepGood1_pt,LepGood1_phi,LepGood2_pdgId,LepGood2_pt,LepGood2_phi,met_pt,met_phi),0)*puw2016_vtx_13fb(nVert)*eventBTagSF'"%GO 
-        if dowhat == "plots": GO+=" susy-sos/2los_plots.txt"
-    if selection=='3l':
-        if (dowhat != "limits") : GO="susy-sos/mca-3l-mc.txt susy-sos/3l_tight.txt "
-        GO="%s %s"%(CORE,GO) 
-        GO="%s -L susy-sos/functionsSOS.cc -L susy-sos/lepton_trigger_SF.cc"%GO 
-        if dowhat == "plots": GO+=" susy-sos/2los_plots.txt"    
+        #GO="%s -L susy-sos/functionsSOS.cc -L susy-sos/lepton_trigger_SF.cc -W 'leptonSF_SOS(LepGood1_pdgId,LepGood1_pt,LepGood1_eta,0)*leptonSF_SOS(LepGood2_pdgId,LepGood2_pt,LepGood2_eta,0)*triggerSF_SOS(met_pt,metmm_pt(LepGood1_pdgId,LepGood1_pt,LepGood1_phi,LepGood2_pdgId,LepGood2_pt,LepGood2_phi,met_pt,met_phi),0)*puw2016_nTrueInt_13fb(nTrueInt)*eventBTagSF'"%GO 
+        GO="%s -L susy-sos/functionsSOS.cc -L susy-sos/lepton_trigger_SF.cc -W 'puw2016_nTrueInt_13fb(nTrueInt)'"%GO 
+        #GO="%s -L susy-sos/functionsSOS.cc -L susy-sos/lepton_trigger_SF.cc"%GO 
+        if dowhat == "plots": GO+=" susy-sos/2los_plots.txt"        
     else:
         raise RuntimeError, 'Unknown selection'
 
@@ -89,6 +91,7 @@ if __name__ == '__main__':
                 x = add(x,"--noStackSig --showIndivSigs --showRatio --maxRatioRange -2 5 --showMCError") 
                 #x = add(x,"--plotmode norm")
                 x = x.replace('-l 12.9','-l 12.9')
+                x = x.replace('-l 36.5','-l 33.7')
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt') #remove signal
                 x = x.replace('mcc-sf1.txt','mcc-sf-highmet.txt') 
         if 'ewk_met125' in torun: 
@@ -97,6 +100,7 @@ if __name__ == '__main__':
                 x = add(x,"--noStackSig --showIndivSigs --showRatio --maxRatioRange -2 5 --showMCError") 
                 #x = add(x,"--plotmode norm")
                 x = x.replace('-l 12.9','-l 10.1')
+                x = x.replace('-l 36.5','-l 33.7')
                 x = x.replace('puw2016_vtx_4fb(nVert)', 'puw2016_vtx_postTS_1p4fb(nVert)' )
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt') #remove signal
                 x = x.replace('mcc-sf1.txt','mcc-sf-lowmet.txt')
@@ -106,6 +110,7 @@ if __name__ == '__main__':
                 x = add(x,"--noStackSig --showIndivSigs --showRatio --maxRatioRange -2 5 --showMCError") 
                 #x = add(x,"--plotmode norm")
                 x = x.replace('-l 12.9','-l 12.9')
+                x = x.replace('-l 36.5','-l 33.7')
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt') #remove signal
                 x = x.replace('mcc-sf1.txt','mcc-sf-highmet.txt')
         if 'stop_met125' in torun: 
@@ -114,6 +119,7 @@ if __name__ == '__main__':
                 x = add(x,"--noStackSig --showIndivSigs --showRatio --maxRatioRange -2 5 --showMCError") 
                 #x = add(x,"--plotmode norm")
                 x = x.replace('-l 12.9','-l 10.1')
+                x = x.replace('-l 36.5','-l 33.7')
                 x = x.replace('puw2016_vtx_4fb(nVert)', 'puw2016_vtx_postTS_1p4fb(nVert)' )
                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt') #remove signal
                 x = x.replace('mcc-sf1.txt','mcc-sf-lowmet.txt')
@@ -134,6 +140,7 @@ if __name__ == '__main__':
             x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_315,T2ttDeg_330 -E ^pt5sublep -E ^MT -E ^mm -E ^upperMET -E ^runRange -X ^triggerAll -E ^triggerDoubleMuMET ")  
             #x = add(x,"-E ^pt5sublep -E ^MT -E ^mm -E ^upperMET -E ^runRange -X ^triggerAll -E ^triggerDoubleMuMET ")  ## (for scan)
             x = x.replace('-l 12.9','-l 10.1')  
+            x = x.replace('-l 36.5','-l 33.7')
             x = x.replace('puw2016_vtx_4fb(nVert)', 'puw2016_vtx_postTS_1p4fb(nVert)' )
             if '_syst' in torun: 
                 x = add(x,"--plotmode nostack -F sf/t /data1/botta/trees_SOS_80X_170616/SOS13TeV_Friends/evVarFriend_{cname}.root")
@@ -182,6 +189,7 @@ if __name__ == '__main__':
         if '_ewk20_met125_mm' in torun: 
             x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_90,T2ttDeg_300,T2ttDeg_315,T2ttDeg_330 -E ^pt5sublep -E ^MT -E ^mm -E ^upperMET -E ^runRange -X ^triggerAll -E ^triggerDoubleMuMET ")
             x = x.replace('-l 12.9','-l 10.1') 
+            x = x.replace('-l 36.5','-l 33.7')
             x = x.replace('puw2016_vtx_4fb(nVert)', 'puw2016_vtx_postTS_1p4fb(nVert)' )
             if '_syst' in torun: 
                 x = add(x,"--plotmode nostack -F sf/t /data1/botta/trees_SOS_80X_170616/SOS13TeV_Friends/evVarFriend_{cname}.root")
@@ -230,6 +238,7 @@ if __name__ == '__main__':
             x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_90,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_315 -E ^pt5sublep -E ^mm -E ^upperMET -E ^runRange -X ^triggerAll -E ^triggerDoubleMuMET ")
             #x = add(x,"-E ^pt5sublep -E ^mm -E ^upperMET -E ^runRange -X ^triggerAll -E ^triggerDoubleMuMET ")
             x = x.replace('-l 12.9','-l 10.1')
+            x = x.replace('-l 36.5','-l 33.7')
             x = x.replace('puw2016_vtx_4fb(nVert)', 'puw2016_vtx_postTS_1p4fb(nVert)' )
             if '_syst' in torun: 
                 x = add(x,"--plotmode nostack -F sf/t /data1/botta/trees_SOS_80X_170616/SOS13TeV_Friends/evVarFriend_{cname}.root")
@@ -278,6 +287,7 @@ if __name__ == '__main__':
         if '_stop35_met125_mm' in torun: 
             x = add(x,"--xp TChiNeuWZ_95,TChiNeuWZ_90,TChiNeuWZ_80,T2ttDeg_300,T2ttDeg_330 -E ^pt5sublep -E ^mm -E ^upperMET -E ^runRange -X ^triggerAll -E ^triggerDoubleMuMET ")
             x = x.replace('-l 12.9','-l 10.1') 
+            x = x.replace('-l 36.5','-l 33.7')
             x = x.replace('puw2016_vtx_4fb(nVert)', 'puw2016_vtx_postTS_1p4fb(nVert)' )
             if '_syst' in torun: 
                 x = add(x,"--plotmode nostack -F sf/t /data1/botta/trees_SOS_80X_170616/SOS13TeV_Friends/evVarFriend_{cname}.root")
@@ -382,7 +392,7 @@ if __name__ == '__main__':
         x = base('2los')
         x = add(x,"--plotmode nostack")
         x = x.replace('mca-2los-mc.txt','mca-2los-mc-closuretest.txt')
-        x = add(x,"-X lowMET -X HT -X METovHT --showRatio --maxRatioRange 0.5 1.5 --ratioDen QCDFR_WJets --ratioNums WJets") 
+        x = add(x," --showRatio --maxRatioRange 0.5 1.5 --ratioDen QCDFR_WJets --ratioNums WJets") #-X lowMET -X HT -X METovHT
         runIt(x,'%s/all'%torun)
 
 
@@ -549,13 +559,5 @@ if __name__ == '__main__':
     #         x = add(x,"-E ^highMET -E ^MT -R ^TT CRTTTT 'LepGood1_isTightCRTT && LepGood2_isTightCRTT' -R ^ledlepPt NoUpledlepPt '20 < LepGood1_pt' -X ^dilep -X ^opposite-sign -X ^Mll -E ^minMll -E ^triLep -E ^Zpeak -X ^triggerAll -E ^triggerMET -X ^HT -X ^Upsilon_veto -R METovHT relaxMETovHT '(met_pt/(htJet25-LepGood1_pt-LepGood2_pt))>(2/3)' ")
     #         x = x.replace('-l 12.9','-l 12.9')
     #     runIt(x,'%s/all'%torun,[],['SR_bins_EWKino','SR_bins_stop'])
-
-
-
-
-    ### 3l final state study
-    #if '3l_
-
-
 
 

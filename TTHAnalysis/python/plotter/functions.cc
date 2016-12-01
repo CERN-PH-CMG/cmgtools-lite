@@ -205,7 +205,6 @@ float mass_3_cheap(float pt1, float eta1, float pt2, float eta2, float phi2, flo
     return (p41+p42+p43).M();
 }
 
-
 void functions() {}
 
 
