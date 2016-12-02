@@ -76,25 +76,21 @@ class fastCombinedObjectRecleaner:
             self.initWorkers()
 
         tags = getattr(event,'_CombinedTagsForCleaning%s'%self.inlabel)
+        ret = {}
 
         self._worker.clear()
         self._worker.loadTags(tags,self.cleanTausWithLooseLeptons)
         self._worker.run()
 
-        jetsums={}
         for x in self._worker.GetJetSums():
-            b = ROOT.JetSumCalculatorOutput(x) # copy constructor otherwise content goes out of scope
-            jetsums[b.thr]=b
+            for var in self._outjetvars: ret[var%x.thr+self.label]=getattr(x,var.replace('%d',''))
 
         self._workerMV.clear()
         self._workerMV.loadTags(tags)
         self._workerMV.run()
 
-        ret = {}
         masses = self._workerMV.GetPairMasses()
         for var in self.outmasses: ret[var+self.label] = getattr(masses,var)
-        for thr,sums in jetsums.iteritems():
-            for var in self._outjetvars: ret[var%thr+self.label]=getattr(sums,var.replace('%d',''))
         return ret
 
 MODULES=[]
