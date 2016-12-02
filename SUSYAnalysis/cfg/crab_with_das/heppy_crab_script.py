@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 import os
 import PhysicsTools.HeppyCore.framework.config as cfg
-cfg.Analyzer.nosubdir=True
+#cfg.Analyzer.nosubdir=True
+cfg.Analyzer.nosubdir=False
 
 import PSet
 import sys
@@ -33,9 +34,11 @@ for i in xrange(0,len(crabFiles)) :
      crabFiles[i]=pfn
      #crabFiles[i]="root://xrootd-cms.infn.it:1194/"+crabFiles[i]
 
+
 import imp
 handle = open("heppy_config.py", 'r')
 cfo = imp.load_source("heppy_config", "heppy_config.py", handle)
+
 #config = cfo.config
 cfg = cfo.cfg
 seq = cfo.sequence
@@ -51,6 +54,38 @@ config.components[0].files=crabFiles
 
 print crabFiles
 
+#
+# transfer lumisToProcess parameter to heppy config, if present
+#
+if hasattr(PSet.process.source,"lumisToProcess"):
+     print "Found CRAB lumi mask: ",PSet.process.source.lumisToProcess.value()
+     from FWCore.PythonUtilities.LumiList import LumiList
+     compList = { }
+     for sub in PSet.process.source.lumisToProcess:
+          for r in sub.split(","):
+               a = r.split("-")
+               assert len(a)==1 or len(a)==2
+               b = [ ]
+               for x in a:
+                    c = x.split(":")
+                    assert len(c)==2
+                    for d in c:
+                         assert d.isdigit()
+                    b.append([int(c[0]),int(c[1])])
+               if len(a)==1:
+                    compList.setdefault(b[0][0],[]).append([b[0][1],b[0][1]])
+               else:
+                    assert b[0][0]==b[1][0]
+                    compList.setdefault(b[0][0],[]).append([b[0][1],b[1][1]])
+     lumiList = LumiList(compactList=compList)
+     lumiList.writeJSON("heppy_json.txt")
+     if hasattr(config.components[0],"json"):
+          print "Old heppy json = ",config.components[0].json
+     config.components[0].json = "heppy_json.txt"
+     print "Setting heppy json"
+     os.system("cat heppy_json.txt")
+
+
 from PhysicsTools.HeppyCore.framework.looper import Looper
 looper = Looper( 'Output', config, nPrint = 1)
 looper.loop()
@@ -58,13 +93,13 @@ looper.write()
 
 print PSet.process.output.fileName
 os.system("ls -lR")
-os.rename("Output/tree.root", "tree.root")
+os.rename("Output/treeProducerSusySingleLepton/tree.root", "tree.root")
 os.system("ls -lR")
 
 # print in crab log file the content of the job log files, so one can see it from 'crab getlog'
 print "-"*25
 print "printing output txt files"
-os.system('for i in Output/*.txt; do echo $i; cat $i; echo "---------"; done')
+os.system('for i in Output/*/*.txt; do echo $i; cat $i; echo "---------"; done')
 # pack job log files to be sent to output site
 os.system("tar czf output.log.tgz Output/")
 

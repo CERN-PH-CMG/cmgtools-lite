@@ -1,0 +1,277 @@
+#---- SUSY private signal:
+#TChiNeuWZ_80+: TChiNeuWZ_mCh100_mChi80 : xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ;FillColor=ROOT.kOrange+8,   Label="CNWZ(20)", FakeRate="susy-sos/mca-2los-noMuonsFilters.txt" 
+#TChiNeuWZ_90+: TChiNeuWZ_mCh100_mChi90 : xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ;FillColor=ROOT.kRed+1,   Label="CNWZ(10)", FakeRate="susy-sos/mca-2los-noMuonsFilters.txt"
+#TChiNeuWZ_95+: TChiNeuWZ_mCh100_mChi95 : xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ;FillColor=ROOT.kOrange+6,   Label="CNWZ(5)", FakeRate="susy-sos/mca-2los-noMuonsFilters.txt" 
+#T2ttDeg_330+: T2ttDeg_mStop350_mChi330_4bodydec_lepOnly : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ;FillColor=ROOT.kOrange,   Label="T2tt(20)", FakeRate="susy-sos/mca-2los-noMuonsFilters.txt" 
+#T2ttDeg_315+: T2ttDeg_mStop350_mChi315_4bodydec_lepOnly : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ;FillColor=ROOT.kRed-7,   Label="T2tt(35)", FakeRate="susy-sos/mca-2los-noMuonsFilters.txt" 
+#T2ttDeg_300+: T2ttDeg_mStop350_mChi300_4bodydec_lepOnly : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ;FillColor=ROOT.kRed-10,   Label="T2tt(50)", FakeRate="susy-sos/mca-2los-noMuonsFilters.txt" 
+#T2tt+ : T2ttDiLep : 1 : LepGood_mcMatchId != 0 && GenSusyMStop-GenSusyMNeutralino < 40
+T2tt_dm30+ : T2ttDiLep : 1 : LepGood_mcMatchId != 0 && GenSusyMStop-GenSusyMNeutralino < 40
+
+
+# ---- TTbar 
+TT		: TTJets_DiLepton: xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0; FillColor=ROOT.kBlue-7, Label="tt(2l)"
+
+# ---- DY Inclusive LO - Including internal conversions (ZG* mll<4 GeV)
+#DYJets    : DYJetsToLL_M5to50_LO: xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && lheHT<=100  ; Label="DY+jets", FillColor=ROOT.kCyan
+#DYJets    : DYJetsToLL_M50_LO   : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && lheHT<=100   ; Label="DY+jets", FillColor=ROOT.kCyan
+## FIXME remake with filled lheHT
+
+
+# ---- DY HT bins - Including internal conversions (ZG* mll<4 GeV)
+DYJets     : DYJetsToLL_M50_HT100to200 :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0; Label="DY", FillColor=ROOT.kCyan
+DYJets     : DYJetsToLL_M50_HT200to400 :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0; Label="DY", FillColor=ROOT.kCyan
+DYJets     : DYJetsToLL_M50_HT400to600 :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0; Label="DY", FillColor=ROOT.kCyan
+#DYJets     : DYJetsToLL_M50_HT600toInf :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0; Label="DY", FillColor=ROOT.kCyan
+
+DYJets     : DYJetsToLL_M5to50_HT100to200 :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0; Label="DY", FillColor=ROOT.kCyan
+DYJets     : DYJetsToLL_M5to50_HT200to400 :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0; Label="DY", FillColor=ROOT.kCyan
+DYJets     : DYJetsToLL_M5to50_HT400to600 :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0; Label="DY", FillColor=ROOT.kCyan
+#DYJets     : DYJetsToLL_M5to50_HT600toInf :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0; Label="DY", FillColor=ROOT.kCyan
+
+
+# ---- Diboson - Including internal conversions (VV* mll<4 GeV)
+
+# WGstar  : WGToLNuG : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ; Label="WGstar", FillColor=ROOT.kGreen-3
+# # WGstar    : WJetsToLNu_LO :  xsec:  LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && lheHT<=100; Label="WGstar", FillColor=ROOT.kGreen-3
+# # WGstar    : WJetsToLNu_HT100to200+WJetsToLNu_HT100to200_ext : xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ; Label="WGstar", FillColor=ROOT.kGreen-3
+# # WGstar    : WJetsToLNu_HT200to400+WJetsToLNu_HT200to400_ext :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ; Label="WGstar", FillColor=ROOT.kGreen-3
+# # WGstar    : WJetsToLNu_HT400to600 :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ; Label="WGstar",#FillColor=ROOT.kGreen-3
+# # #WGstar   : WJetsToLNu_HT600toInf :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ; Label="WGstar", FillColor=ROOT.kGreen-3
+# # WGstar    : WJetsToLNu_HT600to800 :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ; Label="WGstar", FillColor=ROOT.kGreen-3
+# # #WGstar   : WJetsToLNu_HT800to1200 :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ; Label="WGstar", FillColor=ROOT.kGreen-3
+# # WGstar    : WJetsToLNu_HT800to1200_ext :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ; Label="WGstar", FillColor=ROOT.kGreen-3
+# # WGstar    : WJetsToLNu_HT1200to2500 :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ; Label="WGstar", FillColor=ROOT.kGreen-3
+# # WGstar    : WJetsToLNu_HT2500toInf :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ; Label="WGstar", FillColor=ROOT.kGreen-3
+# WW    : WWTo2L2Nu: xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0;  Label="WW", FillColor=ROOT.kViolet-4
+# WZ 	: WZTo3LNu: xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ;  Label="WZ", FillColor=ROOT.kAzure+4
+# WZ 	: WZTo2L2Q: xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ;  Label="WZ", FillColor=ROOT.kAzure+4
+# ZZ    : ZZTo2L2NuM4to40_notau: xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0  ;  Label="ZZ", FillColor=ROOT.kAzure-4
+# ZZ    : ZZTo2L2NuM4to40_tauonly: xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0  ;  Label="ZZ", FillColor=ROOT.kAzure-4
+# ZZ 	: ZZTo2L2Nu: xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0  ;  Label="ZZ", FillColor=ROOT.kAzure-4
+# ZZ 	: ZZTo2L2Q: xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0  ;  Label="ZZ", FillColor=ROOT.kAzure-4
+# ZZ 	: ZZTo4L: xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0  ;  Label="ZZ", FillColor=ROOT.kAzure-4
+
+
+# VV    : WGToLNuG : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ; Label="VV", FillColor=ROOT.kViolet-4
+# VV    : WJetsToLNu_LO :  xsec:  LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && lheHT<=100; Label="VV", FillColor=ROOT.kViolet-4
+# VV    : WJetsToLNu_HT100to200+WJetsToLNu_HT100to200_ext : xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ; Label="VV", FillColor=ROOT.kViolet-4
+# VV    : WJetsToLNu_HT200to400+WJetsToLNu_HT200to400_ext :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ; Label="VV", FillColor=ROOT.kViolet-4
+# VV    : WJetsToLNu_HT400to600 :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ; Label="VV",#FillColor=ROOT.kViolet-4
+# #VV    : WJetsToLNu_HT600toInf :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ; Label="VV", FillColor=ROOT.kViolet-4
+# VV    : WJetsToLNu_HT600to800 :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ; Label="VV", FillColor=ROOT.kViolet-4
+# #VV    : WJetsToLNu_HT800to1200 :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ; Label="VV", FillColor=ROOT.kViolet-4
+# VV    : WJetsToLNu_HT800to1200_ext :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ; Label="VV", FillColor=ROOT.kViolet-4
+# VV    : WJetsToLNu_HT1200to2500 :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ; Label="VV", FillColor=ROOT.kViolet-4
+# VV    : WJetsToLNu_HT2500toInf :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ; Label="VV", FillColor=ROOT.kViolet-4
+VV    : WWTo2L2Nu: xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0;  Label="VV", FillColor=ROOT.kViolet-4
+#VV    : WZTo3LNu: xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ;  Label="VV", FillColor=ROOT.kViolet-4
+#VV    : WZTo2L2Q: xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ;  Label="VV", FillColor=ROOT.kViolet-4
+#VV    : ZZTo2L2NuM4to40_notau: xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0  ;  Label="VV", FillColor=ROOT.kViolet-4
+#VV    : ZZTo2L2NuM4to40_tauonly: xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0  ;  Label="VV", FillColor=ROOT.kViolet-4
+#VV    : ZZTo2L2Nu: xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0  ;  Label="VV", FillColor=ROOT.kViolet-4
+#VV    : ZZTo2L2Q: xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0  ;  Label="VV", FillColor=ROOT.kViolet-4
+#VV    : ZZTo4L: xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0  ;  Label="VV", FillColor=ROOT.kViolet-4
+
+
+
+# ---- Rares
+#TW       : T_tWch :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0;Label="tW", FillColor=ROOT.kBlue
+#TW       : TBar_tWch :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0;Label="tW", FillColor=ROOT.kBlue
+
+
+# # ---- Non prompt:
+#WJets    : WJetsToLNu_LO :  xsec: (LepGood1_mcMatchId==0 ||LepGood2_mcMatchId==0) && lheHT<=100; Label="W(fakes)", FillColor=ROOT.kCyan+2, FakeRate="susy-sos/mca-2los-noMuonsFilters.txt"
+WJets    : WJetsToLNu_HT100to200 : xsec: (LepGood1_mcMatchId==0 ||LepGood2_mcMatchId==0); Label="W(fakes)"
+WJets    : WJetsToLNu_HT200to400+WJetsToLNu_HT200to400_ext :  xsec: (LepGood1_mcMatchId==0 ||LepGood2_mcMatchId==0); Label="W(fakes)"
+WJets    : WJetsToLNu_HT400to600 :  xsec: (LepGood1_mcMatchId==0 ||LepGood2_mcMatchId==0); Label="W(fakes)", FillColor=ROOT.kCyan+2
+#WJets   : WJetsToLNu_HT600toInf :  xsec: (LepGood1_mcMatchId==0 ||LepGood2_mcMatchId==0); Label="W(fakes)", FillColor=ROOT.kCyan+2
+#WJets    : WJetsToLNu_HT600to800 :  xsec: (LepGood1_mcMatchId==0 ||LepGood2_mcMatchId==0); Label="W(fakes)", FillColor=ROOT.kCyan+2
+#WJets   : WJetsToLNu_HT800to1200 :  xsec: (LepGood1_mcMatchId==0 ||LepGood2_mcMatchId==0); Label="W(fakes)", FillColor=ROOT.kCyan+2
+#WJets    : WJetsToLNu_HT800to1200_ext :  xsec: (LepGood1_mcMatchId==0 ||LepGood2_mcMatchId==0); Label="W(fakes)", FillColor=ROOT.kCyan+2
+#WJets    : WJetsToLNu_HT1200to2500 :  xsec: (LepGood1_mcMatchId==0 ||LepGood2_mcMatchId==0); Label="W(fakes)", FillColor=ROOT.kCyan+2
+#WJets    : WJetsToLNu_HT2500toInf :  xsec: (LepGood1_mcMatchId==0 ||LepGood2_mcMatchId==0); Label="W(fakes)", FillColor=ROOT.kCyan+2
+TT1l     : TTJets_SingleLeptonFromTbar : xsec: (LepGood1_mcMatchId==0 ||LepGood2_mcMatchId==0) ; FillColor=ROOT.kGray+2, Label="tt(fakes)"
+TT1l     : TTJets_SingleLeptonFromT : xsec:(LepGood1_mcMatchId==0 ||LepGood2_mcMatchId==0) ; FillColor=ROOT.kGray+2, Label="tt(fakes)"
+T 	 : TToLeptons_tch_powheg :  xsec: (LepGood1_mcMatchId==0 ||LepGood2_mcMatchId==0) ; Label="t(fakes)", FillColor=ROOT.kGray+1
+T 	 : TBarToLeptons_tch_powheg :  xsec: (LepGood1_mcMatchId==0 ||LepGood2_mcMatchId==0) ; Label="t(fakes)", FillColor=ROOT.kGray+1
+#T        : TToLeptons_sch :  xsec: (LepGood1_mcMatchId==0 ||LepGood2_mcMatchId==0) ; Label="t(fakes)", FillColor=ROOT.kGray+1
+#VVnp 	 : WZTo1L3Nu: xsec: (LepGood1_mcMatchId==0 ||LepGood2_mcMatchId==0);  Label="VV(fakes)", FillColor=ROOT.kAzure-8
+#VVnp 	 : WZTo1L1Nu2Q: xsec: (LepGood1_mcMatchId==0 ||LepGood2_mcMatchId==0);  Label="VV(fakes)", FillColor=ROOT.kAzure-8
+#VVnp     : WWTo2L2Nu: xsec: (LepGood1_mcMatchId==0 ||LepGood2_mcMatchId==0);  Label="VV(fakes)", FillColor=ROOT.kAzure-8	
+#VVnp     : WWToLNuQQ: xsec: (LepGood1_mcMatchId==0 ||LepGood2_mcMatchId==0);  Label="VV(fakes)", FillColor=ROOT.kAzure-8	
+
+
+
+
+##### Additional: negligible contribution
+# ---- External Conversions:
+#Convs  : TTGJets : xsec : ((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==1) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==1)) ; FillColor=ROOT.kOrange
+#Convs  : WGToLNuG : xsec : ((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==1) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==1)) ; FillColor=ROOT.kOrange
+#Convs  : ZGTo2LG : xsec : ((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==1) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==1)) ; FillColor=ROOT.kOrange
+#Convs  : TGJets : xsec : ((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==1) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==1)) ; FillColor=ROOT.kOrange
+# ---- Rare:
+#TTV : TTWToLNu_LO :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0; Label="Rares", FillColor=ROOT.kBlue+2
+#TTV : TTZToLLNuNu_LO :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0; Label="Rares", FillColor=ROOT.kBlue+2
+#TTV : TTLLJets_m1to10 : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 ;  FillColor=ROOT.kSpring+2
+#TTV : TTJets_DiLepton : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 ; FillColor=ROOT.kSpring+2
+#TTV : TTJets_SingleLeptonFromT : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 ; FillColor=ROOT.kSpring+2
+#TTV : TTJets_SingleLeptonFromTbar : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 ; FillColor=ROOT.kSpring+2
+#TTV : TTHnobb :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0; Label="Rares", FillColor=ROOT.kBlue+2
+#Triboson : WZZ :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0; Label="Rares", FillColor=ROOT.kMagenta+2
+#Triboson : WWZ :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0; Label="Rares", FillColor=ROOT.kMagenta+2
+#Triboson : ZZZ :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0;Label="Rares", FillColor=ROOT.kMagenta+2 
+#Rares : WpWpJJ : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 ; FillColor=ROOT.kOrange-3
+#Rares : WWDouble : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 ; FillColor=ROOT.kOrange-3
+
+
+
+
+
+
+
+
+
+
+
+
+
+# ###For different prompt sources
+# # ---- TTbar 
+# TT_notau	: TTJets_DiLepton: xsec: (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0) && (LepGood1_mcMatchTau!=1 && LepGood2_mcMatchTau!=1); FillColor=ROOT.kBlue-7, Label="tt(2l)-notau"
+# TT_tau		: TTJets_DiLepton: xsec: (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0) && (LepGood1_mcMatchTau==1 || LepGood2_mcMatchTau==1); FillColor=ROOT.kGreen+3, Label="tt(2l)-tau"
+
+# # ---- DY Inclusive LO - Including internal conversions (ZG* mll<4 GeV)
+# # DYJets_notau    : DYJetsToLL_M5to50_LO: xsec : (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0) && (LepGood1_mcMatchTau!=1 && LepGood2_mcMatchTau!=1) && lheHT<=100  ; Label="DY-notau", FillColor=ROOT.kCyan
+# # DYJets_notau    : DYJetsToLL_M50_LO   : xsec : (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0) && (LepGood1_mcMatchTau!=1 && LepGood2_mcMatchTau!=1) && lheHT<=100   ; Label="DY-notau", FillColor=ROOT.kCyan
+
+# DYJets_tau    : DYJetsToLL_M5to50_LO: xsec : (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0) && (LepGood1_mcMatchTau==1 || LepGood2_mcMatchTau==1) && lheHT<=100  ; Label="DY-tau", FillColor=ROOT.kCyan
+# DYJets_tau    : DYJetsToLL_M50_LO   : xsec : (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0) && (LepGood1_mcMatchTau==1 || LepGood2_mcMatchTau==1) && lheHT<=100   ; Label="DY-tau", FillColor=ROOT.kCyan
+
+
+# # ---- DY HT bins - Including internal conversions (ZG* mll<4 GeV)
+# # #DYJets_notau     : DYJetsToLL_M50_HT100to200 :  xsec:(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0) && (LepGood1_mcMatchTau!=1 && LepGood2_mcMatchTau!=1) ; Label="DY-notau", FillColor=ROOT.kCyan
+# # DYJets_notau     : DYJetsToLL_M50_HT100to200_ext :  xsec:(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0) && (LepGood1_mcMatchTau!=1 && LepGood2_mcMatchTau!=1) ; Label="DY-notau", FillColor=ROOT.kCyan
+# # #DYJets_notau     : DYJetsToLL_M50_HT200to400 :  xsec:(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0) && (LepGood1_mcMatchTau!=1 && LepGood2_mcMatchTau!=1) ; Label="DY-notau", FillColor=ROOT.kCyan
+# # DYJets_notau     : DYJetsToLL_M50_HT200to400_ext :  xsec:(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0) && (LepGood1_mcMatchTau!=1 && LepGood2_mcMatchTau!=1) ; Label="DY-notau", FillColor=ROOT.kCyan
+# # #DYJets_notau     : DYJetsToLL_M50_HT400to600 :  xsec:(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0) && (LepGood1_mcMatchTau!=1 && LepGood2_mcMatchTau!=1) ; Label="DY-notau", FillColor=ROOT.kCyan
+# # DYJets_notau     : DYJetsToLL_M50_HT400to600_ext :  xsec:(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0) && (LepGood1_mcMatchTau!=1 && LepGood2_mcMatchTau!=1) ; Label="DY-notau", FillColor=ROOT.kCyan
+# # DYJets_notau     : DYJetsToLL_M50_HT600toInf :  xsec:(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0) && (LepGood1_mcMatchTau!=1 && LepGood2_mcMatchTau!=1) ; Label="DY-notau", FillColor=ROOT.kCyan
+# # #DYJets_notau     : DYJetsToLL_M50_HT600toInf_ext :  xsec:(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0) && (LepGood1_mcMatchTau!=1 && LepGood2_mcMatchTau!=1) ; Label="DY-notau", FillColor=ROOT.kCyan
+
+# # DYJets_notau     : DYJetsToLL_M5to50_HT100to200 :  xsec:(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0) && (LepGood1_mcMatchTau!=1 && LepGood2_mcMatchTau!=1) ; Label="DY-notau", FillColor=ROOT.kCyan
+# # #DYJets_notau     : DYJetsToLL_M5to50_HT100to200_ext :  xsec:(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0) && (LepGood1_mcMatchTau!=1 && LepGood2_mcMatchTau!=1) ; Label="DY-notau", FillColor=ROOT.kCyan
+# # #DYJets_notau     : DYJetsToLL_M5to50_HT200to400 :  xsec:(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0) && (LepGood1_mcMatchTau!=1 && LepGood2_mcMatchTau!=1) ; Label="DY-notau", FillColor=ROOT.kCyan
+# # DYJets_notau     : DYJetsToLL_M5to50_HT200to400_ext :  xsec:(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0) && (LepGood1_mcMatchTau!=1 && LepGood2_mcMatchTau!=1); Label="DY-notau", FillColor=ROOT.kCyan
+# # DYJets_notau     : DYJetsToLL_M5to50_HT400to600 :  xsec:(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0) && (LepGood1_mcMatchTau!=1 && LepGood2_mcMatchTau!=1) ; Label="DY-notau", FillColor=ROOT.kCyan
+# # #DYJets_notau     : DYJetsToLL_M5to50_HT400to600_ext :  xsec:(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0) && (LepGood1_mcMatchTau!=1 && LepGood2_mcMatchTau!=1) ; Label="DY-notau", FillColor=ROOT.kCyan
+# # DYJets_notau     : DYJetsToLL_M5to50_HT600toInf :  xsec:(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0) && (LepGood1_mcMatchTau!=1 && LepGood2_mcMatchTau!=1); Label="DY-notau", FillColor=ROOT.kCyan
+
+# #DYJets_tau     : DYJetsToLL_M50_HT100to200 :  xsec: (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0) && (LepGood1_mcMatchTau==1 || LepGood2_mcMatchTau==1); Label="DY-tau", FillColor=ROOT.kCyan
+# DYJets_tau     : DYJetsToLL_M50_HT100to200_ext :  xsec: (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0) && (LepGood1_mcMatchTau==1 || LepGood2_mcMatchTau==1); Label="DY-tau", FillColor=ROOT.kCyan
+# #DYJets_tau     : DYJetsToLL_M50_HT200to400 :  xsec: (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0) && (LepGood1_mcMatchTau==1 || LepGood2_mcMatchTau==1); Label="DY-tau", FillColor=ROOT.kCyan
+# DYJets_tau     : DYJetsToLL_M50_HT200to400_ext :  xsec: (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0) && (LepGood1_mcMatchTau==1 || LepGood2_mcMatchTau==1); Label="DY-tau", FillColor=ROOT.kCyan
+# #DYJets_tau     : DYJetsToLL_M50_HT400to600 :  xsec: (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0) && (LepGood1_mcMatchTau==1 || LepGood2_mcMatchTau==1); Label="DY-tau", FillColor=ROOT.kCyan
+# DYJets_tau     : DYJetsToLL_M50_HT400to600_ext :  xsec: (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0) && (LepGood1_mcMatchTau==1 || LepGood2_mcMatchTau==1); Label="DY-tau", FillColor=ROOT.kCyan
+# DYJets_tau     : DYJetsToLL_M50_HT600toInf :  xsec: (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0) && (LepGood1_mcMatchTau==1 || LepGood2_mcMatchTau==1); Label="DY-tau", FillColor=ROOT.kCyan
+# #DYJets_tau     : DYJetsToLL_M50_HT600toInf_ext :  xsec: (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0) && (LepGood1_mcMatchTau==1 || LepGood2_mcMatchTau==1); Label="DY-tau", FillColor=ROOT.kCyan
+
+# DYJets_tau     : DYJetsToLL_M5to50_HT100to200 :  xsec: (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0) && (LepGood1_mcMatchTau==1 || LepGood2_mcMatchTau==1); Label="DY-tau", FillColor=ROOT.kCyan
+# #DYJets_tau     : DYJetsToLL_M5to50_HT100to200_ext :  xsec: (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0) && (LepGood1_mcMatchTau==1 || LepGood2_mcMatchTau==1); Label="DY-tau", FillColor=ROOT.kCyan
+# #DYJets_tau     : DYJetsToLL_M5to50_HT200to400 :  xsec: (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0) && (LepGood1_mcMatchTau==1 || LepGood2_mcMatchTau==1); Label="DY-tau", FillColor=ROOT.kCyan
+# DYJets_tau     : DYJetsToLL_M5to50_HT200to400_ext :  xsec:(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0) && (LepGood1_mcMatchTau==1 || LepGood2_mcMatchTau==1); Label="DY-tau", FillColor=ROOT.kCyan
+# DYJets_tau     : DYJetsToLL_M5to50_HT400to600 :  xsec: ; Label="DY-tau", FillColor=ROOT.kCyan
+# #DYJets_tau     : DYJetsToLL_M5to50_HT400to600_ext :  xsec: (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0) && (LepGood1_mcMatchTau==1 || LepGood2_mcMatchTau==1); Label="DY-tau", FillColor=ROOT.kCyan
+# DYJets_tau     : DYJetsToLL_M5to50_HT600toInf :  xsec:(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0) && (LepGood1_mcMatchTau==1 || LepGood2_mcMatchTau==1); Label="DY-tau", FillColor=ROOT.kCyan
+
+
+# # ---- Diboson - Including internal conversions (VV* mll<4 GeV)
+
+# # VV_notau    : WGToLNuG : xsec : (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0) && (LepGood1_mcMatchTau!=1 && LepGood2_mcMatchTau!=1) ; Label="VV-notau", FillColor=ROOT.kViolet-4
+# VV_notau    : WWTo2L2Nu: xsec: (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0) && (LepGood1_mcMatchTau!=1 && LepGood2_mcMatchTau!=1);  Label="VV-notau", FillColor=ROOT.kViolet-4
+# VV_notau    : WZTo3LNu: xsec: (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0) && (LepGood1_mcMatchTau!=1 && LepGood2_mcMatchTau!=1) ;  Label="VV-notau", FillColor=ROOT.kViolet-4
+# VV_notau    : WZTo2L2Q: xsec:(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0) && (LepGood1_mcMatchTau!=1 && LepGood2_mcMatchTau!=1)  ;  Label="VV-notau", FillColor=ROOT.kViolet-4
+# VV_notau    : ZZTo2L2NuM4to40_notau: xsec: (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0) && (LepGood1_mcMatchTau!=1 && LepGood2_mcMatchTau!=1)  ;  Label="VV-notau", FillColor=ROOT.kViolet-4
+# VV_notau    : ZZTo2L2NuM4to40_tauonly: xsec: (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0) && (LepGood1_mcMatchTau!=1 && LepGood2_mcMatchTau!=1)  ;  Label="VV-notau", FillColor=ROOT.kViolet-4
+# VV_notau    : ZZTo2L2Nu: xsec: (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0) && (LepGood1_mcMatchTau!=1 && LepGood2_mcMatchTau!=1)  ;  Label="VV-notau", FillColor=ROOT.kViolet-4
+# VV_notau    : ZZTo2L2Q: xsec: (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0) && (LepGood1_mcMatchTau!=1 && LepGood2_mcMatchTau!=1)  ;  Label="VV-notau", FillColor=ROOT.kViolet-4
+# VV_notau    : ZZTo4L: xsec: (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0) && (LepGood1_mcMatchTau!=1 && LepGood2_mcMatchTau!=1)  ;  Label="VV-notau", FillColor=ROOT.kViolet-4
+
+
+# # VV_tau    : WGToLNuG : xsec : (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0) && (LepGood1_mcMatchTau==1 || LepGood2_mcMatchTau==1) ; Label="VV-tau", FillColor=ROOT.kViolet+5
+# VV_tau    : WWTo2L2Nu: xsec: (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0) && (LepGood1_mcMatchTau==1 || LepGood2_mcMatchTau==1);  Label="VV-tau", FillColor=ROOT.kViolet+5
+# VV_tau    : WZTo3LNu: xsec: (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0) && (LepGood1_mcMatchTau==1 || LepGood2_mcMatchTau==1) ;  Label="VV-tau", FillColor=ROOT.kViolet+5
+# VV_tau    : WZTo2L2Q: xsec: (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0) && (LepGood1_mcMatchTau==1 || LepGood2_mcMatchTau==1) ;  Label="VV-tau", FillColor=ROOT.kViolet+5
+# VV_tau    : ZZTo2L2NuM4to40_notau: xsec: (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0) && (LepGood1_mcMatchTau==1 || LepGood2_mcMatchTau==1)  ;  Label="VV-tau", FillColor=ROOT.kViolet+5
+# VV_tau    : ZZTo2L2NuM4to40_tauonly: xsec: (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0) && (LepGood1_mcMatchTau==1 || LepGood2_mcMatchTau==1)  ;  Label="VV-tau", FillColor=ROOT.kViolet+5
+# VV_tau    : ZZTo2L2Nu: xsec: (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0) && (LepGood1_mcMatchTau==1 || LepGood2_mcMatchTau==1)  ;  Label="VV-tau", FillColor=ROOT.kViolet+5
+# VV_tau    : ZZTo2L2Q: xsec: (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0) && (LepGood1_mcMatchTau==1 || LepGood2_mcMatchTau==1)  ;  Label="VV-tau", FillColor=ROOT.kViolet+5
+# VV_tau    : ZZTo4L: xsec: (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0) && (LepGood1_mcMatchTau==1 || LepGood2_mcMatchTau==1)  ;  Label="VV-tau", FillColor=ROOT.kViolet+5
+
+
+
+
+
+# ### For different fake sources 
+# # ### TwoFakes
+# # WJets_2f    : WJetsToLNu_LO :  xsec: (LepGood1_mcMatchId==0 &&LepGood2_mcMatchId==0) && lheHT<=100; Label="W(fakes)-2f", FillColor=ROOT.kCyan+4, FakeRate="susy-sos/mca-2los-noMuonsFilters.txt"
+# # WJets_2f    : WJetsToLNu_HT100to200+WJetsToLNu_HT100to200_ext : xsec: (LepGood1_mcMatchId==0 &&LepGood2_mcMatchId==0); Label="W(fakes)-2f", FillColor=ROOT.kCyan+4
+# # WJets_2f    : WJetsToLNu_HT200to400+WJetsToLNu_HT200to400_ext :  xsec: (LepGood1_mcMatchId==0 &&LepGood2_mcMatchId==0); Label="W(fakes)-2f", FillColor=ROOT.kCyan+4
+# # WJets_2f    : WJetsToLNu_HT400to600 :  xsec: (LepGood1_mcMatchId==0 &&LepGood2_mcMatchId==0); Label="W(fakes)-2f", FillColor=ROOT.kCyan+4
+# # #WJets_2f   : WJetsToLNu_HT600toInf :  xsec: (LepGood1_mcMatchId==0 &&LepGood2_mcMatchId==0); Label="W(fakes)-2f", FillColor=ROOT.kCyan+4
+# # WJets_2f    : WJetsToLNu_HT600to800 :  xsec: (LepGood1_mcMatchId==0 &&LepGood2_mcMatchId==0); Label="W(fakes)-2f", FillColor=ROOT.kCyan+4
+# # #WJets_2f   : WJetsToLNu_HT800to1200 :  xsec: (LepGood1_mcMatchId==0 &&LepGood2_mcMatchId==0); Label="W(fakes)-2f", FillColor=ROOT.kCyan+4
+# # WJets_2f    : WJetsToLNu_HT800to1200_ext :  xsec: (LepGood1_mcMatchId==0 &&LepGood2_mcMatchId==0); Label="W(fakes)-2f", FillColor=ROOT.kCyan+4
+# # WJets_2f    : WJetsToLNu_HT1200to2500 :  xsec: (LepGood1_mcMatchId==0 &&LepGood2_mcMatchId==0); Label="W(fakes)-2f", FillColor=ROOT.kCyan+4
+# # WJets_2f    : WJetsToLNu_HT2500toInf :  xsec: (LepGood1_mcMatchId==0 &&LepGood2_mcMatchId==0); Label="W(fakes)-2f", FillColor=ROOT.kCyan+4
+# # TT1l_2f     : TTJets_SingleLeptonFromTbar : xsec: (LepGood1_mcMatchId==0 &&LepGood2_mcMatchId==0) ; FillColor=ROOT.kRed+2, Label="tt(fakes)-2f"
+# # TT1l_2f     : TTJets_SingleLeptonFromT : xsec:(LepGood1_mcMatchId==0 &&LepGood2_mcMatchId==0) ; FillColor=ROOT.kRed+2, Label="tt(fakes)-2f"
+
+
+
+# ### OnePrompt-Oneb
+# WJets_b   : WJetsToLNu_LO :  xsec: (((LepGood1_mcMatchId==0 && LepGood1_mcMatchAny == 5) || (LepGood2_mcMatchId==0 && LepGood2_mcMatchAny == 5)) && !(LepGood1_mcMatchId==0 &&  LepGood2_mcMatchId==0)) && lheHT<=100; Label="W(fakes)-b", FillColor=ROOT.kCyan+2, FakeRate="susy-sos/mca-2los-noMuonsFilters.txt"
+# WJets_b    : WJetsToLNu_HT100to200+WJetsToLNu_HT100to200_ext : xsec: (((LepGood1_mcMatchId==0 && LepGood1_mcMatchAny == 5) || (LepGood2_mcMatchId==0 && LepGood2_mcMatchAny == 5)) && !(LepGood1_mcMatchId==0 &&  LepGood2_mcMatchId==0)) ; Label="W(fakes)-b",FillColor=ROOT.kCyan+2,
+# WJets_b    : WJetsToLNu_HT200to400+WJetsToLNu_HT200to400_ext : xsec: (((LepGood1_mcMatchId==0 && LepGood1_mcMatchAny == 5) || (LepGood2_mcMatchId==0 && LepGood2_mcMatchAny == 5)) && !(LepGood1_mcMatchId==0 &&  LepGood2_mcMatchId==0)); Label="W(fakes)-b",FillColor=ROOT.kCyan+2,
+# WJets_b    : WJetsToLNu_HT400to600 :  xsec: (((LepGood1_mcMatchId==0 && LepGood1_mcMatchAny == 5) || (LepGood2_mcMatchId==0 && LepGood2_mcMatchAny == 5)) && !(LepGood1_mcMatchId==0 &&  LepGood2_mcMatchId==0)); Label="W(fakes)-b", FillColor=ROOT.kCyan+2
+# #WJets_b   : WJetsToLNu_HT600toInf :  xsec: (((LepGood1_mcMatchId==0 && LepGood1_mcMatchAny == 5) || (LepGood2_mcMatchId==0 && LepGood2_mcMatchAny == 5)) && !(LepGood1_mcMatchId==0 &&  LepGood2_mcMatchId==0)); Label="W(fakes)-b", FillColor=ROOT.kCyan+2
+# WJets_b    : WJetsToLNu_HT600to800 :  xsec: (((LepGood1_mcMatchId==0 && LepGood1_mcMatchAny == 5) || (LepGood2_mcMatchId==0 && LepGood2_mcMatchAny == 5)) && !(LepGood1_mcMatchId==0 &&  LepGood2_mcMatchId==0)); Label="W(fakes)-b", FillColor=ROOT.kCyan+2
+# #WJets_b   : WJetsToLNu_HT800to1200 :  xsec: (((LepGood1_mcMatchId==0 && LepGood1_mcMatchAny == 5) || (LepGood2_mcMatchId==0 && LepGood2_mcMatchAny == 5)) && !(LepGood1_mcMatchId==0 &&  LepGood2_mcMatchId==0)); Label="W(fakes)-b", FillColor=ROOT.kCyan+2
+# WJets_b    : WJetsToLNu_HT800to1200_ext :  xsec: (((LepGood1_mcMatchId==0 && LepGood1_mcMatchAny == 5) || (LepGood2_mcMatchId==0 && LepGood2_mcMatchAny == 5)) && !(LepGood1_mcMatchId==0 &&  LepGood2_mcMatchId==0)); Label="W(fakes)-b", FillColor=ROOT.kCyan+2
+# WJets_b    : WJetsToLNu_HT1200to2500 :  xsec: (((LepGood1_mcMatchId==0 && LepGood1_mcMatchAny == 5) || (LepGood2_mcMatchId==0 && LepGood2_mcMatchAny == 5)) && !(LepGood1_mcMatchId==0 &&  LepGood2_mcMatchId==0)); Label="W(fakes)-b", FillColor=ROOT.kCyan+2
+# WJets_b    : WJetsToLNu_HT2500toInf :  xsec: (((LepGood1_mcMatchId==0 && LepGood1_mcMatchAny == 5) || (LepGood2_mcMatchId==0 && LepGood2_mcMatchAny == 5)) && !(LepGood1_mcMatchId==0 &&  LepGood2_mcMatchId==0)); Label="W(fakes)-b", FillColor=ROOT.kCyan+2
+# TT1l_b     : TTJets_SingleLeptonFromTbar : xsec:  (((LepGood1_mcMatchId==0 && LepGood1_mcMatchAny == 5) || (LepGood2_mcMatchId==0 && LepGood2_mcMatchAny == 5)) && !(LepGood1_mcMatchId==0 &&  LepGood2_mcMatchId==0)); FillColor=ROOT.kGray+2, Label="tt(fakes)-b"
+# TT1l_b     : TTJets_SingleLeptonFromT : xsec: (((LepGood1_mcMatchId==0 && LepGood1_mcMatchAny == 5) || (LepGood2_mcMatchId==0 && LepGood2_mcMatchAny == 5)) && !(LepGood1_mcMatchId==0 &&  LepGood2_mcMatchId==0)); FillColor=ROOT.kGray+2, Label="tt(fakes)-b"
+
+# ### OnePrompt-Onec
+# WJets_c    : WJetsToLNu_LO :  xsec: (((LepGood1_mcMatchId==0 && LepGood1_mcMatchAny == 4) || (LepGood2_mcMatchId==0 && LepGood2_mcMatchAny == 4))&& !(LepGood1_mcMatchId==0 && LepGood2_mcMatchId==0)) && lheHT<=100; Label="W(fakes)-c", FillColor=ROOT.kCyan, FakeRate="susy-sos/mca-2los-noMuonsFilters.txt"
+# WJets_c    : WJetsToLNu_HT100to200+WJetsToLNu_HT100to200_ext : xsec:(((LepGood1_mcMatchId==0 && LepGood1_mcMatchAny == 4) || (LepGood2_mcMatchId==0 && LepGood2_mcMatchAny == 4))&& !(LepGood1_mcMatchId==0 && LepGood2_mcMatchId==0)) ; Label="W(fakes)-c", FillColor=ROOT.kCyan
+# WJets_c    : WJetsToLNu_HT200to400+WJetsToLNu_HT200to400_ext :  xsec:(((LepGood1_mcMatchId==0 && LepGood1_mcMatchAny == 4) || (LepGood2_mcMatchId==0 && LepGood2_mcMatchAny == 4))&& !(LepGood1_mcMatchId==0 && LepGood2_mcMatchId==0)) ; Label="W(fakes)-c", FillColor=ROOT.kCyan
+# WJets_c    : WJetsToLNu_HT400to600 :  xsec:(((LepGood1_mcMatchId==0 && LepGood1_mcMatchAny == 4) || (LepGood2_mcMatchId==0 && LepGood2_mcMatchAny == 4))&& !(LepGood1_mcMatchId==0 && LepGood2_mcMatchId==0)) ; Label="W(fakes)-c", FillColor=ROOT.kCyan
+# #WJets_c   : WJetsToLNu_HT600toInf :  xsec:(((LepGood1_mcMatchId==0 && LepGood1_mcMatchAny == 4) || (LepGood2_mcMatchId==0 && LepGood2_mcMatchAny == 4))&& !(LepGood1_mcMatchId==0 && LepGood2_mcMatchId==0)) ; Label="W(fakes)-c", FillColor=ROOT.kCyan
+# WJets_c    : WJetsToLNu_HT600to800 :  xsec:(((LepGood1_mcMatchId==0 && LepGood1_mcMatchAny == 4) || (LepGood2_mcMatchId==0 && LepGood2_mcMatchAny == 4))&& !(LepGood1_mcMatchId==0 && LepGood2_mcMatchId==0)) ; Label="W(fakes)-c", FillColor=ROOT.kCyan
+# #WJets_c   : WJetsToLNu_HT800to1200 :  xsec:(((LepGood1_mcMatchId==0 && LepGood1_mcMatchAny == 4) || (LepGood2_mcMatchId==0 && LepGood2_mcMatchAny == 4))&& !(LepGood1_mcMatchId==0 && LepGood2_mcMatchId==0)) ; Label="W(fakes)-c", FillColor=ROOT.kCyan
+# WJets_c    : WJetsToLNu_HT800to1200_ext :  xsec:(((LepGood1_mcMatchId==0 && LepGood1_mcMatchAny == 4) || (LepGood2_mcMatchId==0 && LepGood2_mcMatchAny == 4))&& !(LepGood1_mcMatchId==0 && LepGood2_mcMatchId==0)) ; Label="W(fakes)-c", FillColor=ROOT.kCyan
+# WJets_c    : WJetsToLNu_HT1200to2500 :  xsec:(((LepGood1_mcMatchId==0 && LepGood1_mcMatchAny == 4) || (LepGood2_mcMatchId==0 && LepGood2_mcMatchAny == 4))&& !(LepGood1_mcMatchId==0 && LepGood2_mcMatchId==0)) ; Label="W(fakes)-c", FillColor=ROOT.kCyan
+# WJets_c    : WJetsToLNu_HT2500toInf :  xsec:(((LepGood1_mcMatchId==0 && LepGood1_mcMatchAny == 4) || (LepGood2_mcMatchId==0 && LepGood2_mcMatchAny == 4))&& !(LepGood1_mcMatchId==0 && LepGood2_mcMatchId==0)) ; Label="W(fakes)-c", FillColor=ROOT.kCyan
+# TT1l_c     : TTJets_SingleLeptonFromTbar : xsec:(((LepGood1_mcMatchId==0 && LepGood1_mcMatchAny == 4) || (LepGood2_mcMatchId==0 && LepGood2_mcMatchAny == 4))&& !(LepGood1_mcMatchId==0 && LepGood2_mcMatchId==0))  ; FillColor=ROOT.kGray, Label="tt(fakes)-c"
+# TT1l_c     : TTJets_SingleLeptonFromT : xsec:(((LepGood1_mcMatchId==0 && LepGood1_mcMatchAny == 4) || (LepGood2_mcMatchId==0 && LepGood2_mcMatchAny == 4))&& !(LepGood1_mcMatchId==0 && LepGood2_mcMatchId==0)) ; FillColor=ROOT.kGray, Label="tt(fakes)-c"
+
+
+# ### OnePrompt-Onel
+# WJets_l    : WJetsToLNu_LO :  xsec: (((LepGood1_mcMatchId==0 && LepGood1_mcMatchAny != 4 && LepGood_mcMatchAny != 5) || (LepGood2_mcMatchId==0 && LepGood2_mcMatchAny != 4 && LepGood_mcMatchAny != 5)) && !(LepGood1_mcMatchId==0 &&  LepGood2_mcMatchId==0))&& lheHT<=100; Label="W(fakes)-l", FillColor=ROOT.kAzure, FakeRate="susy-sos/mca-2los-noMuonsFilters.txt"
+# WJets_l    : WJetsToLNu_HT100to200+WJetsToLNu_HT100to200_ext : xsec: (((LepGood1_mcMatchId==0 && LepGood1_mcMatchAny != 4 && LepGood_mcMatchAny != 5) || (LepGood2_mcMatchId==0 && LepGood2_mcMatchAny != 4 && LepGood_mcMatchAny != 5)) && !(LepGood1_mcMatchId==0 &&  LepGood2_mcMatchId==0)) ; Label="W(fakes)-l", FillColor=ROOT.kAzure
+# WJets_l    : WJetsToLNu_HT200to400+WJetsToLNu_HT200to400_ext :  xsec:(((LepGood1_mcMatchId==0 && LepGood1_mcMatchAny != 4 && LepGood_mcMatchAny != 5) || (LepGood2_mcMatchId==0 && LepGood2_mcMatchAny != 4 && LepGood_mcMatchAny != 5)) && !(LepGood1_mcMatchId==0 &&  LepGood2_mcMatchId==0))  ; Label="W(fakes)-l", FillColor=ROOT.kAzure
+# WJets_l   : WJetsToLNu_HT400to600 :  xsec:(((LepGood1_mcMatchId==0 && LepGood1_mcMatchAny != 4 && LepGood_mcMatchAny != 5) || (LepGood2_mcMatchId==0 && LepGood2_mcMatchAny != 4 && LepGood_mcMatchAny != 5)) && !(LepGood1_mcMatchId==0 &&  LepGood2_mcMatchId==0)) ; Label="W(fakes)-l", FillColor=ROOT.kAzure
+# #WJets_l   : WJetsToLNu_HT600toInf :  xsec:(((LepGood1_mcMatchId==0 && LepGood1_mcMatchAny != 4 && LepGood_mcMatchAny != 5) || (LepGood2_mcMatchId==0 && LepGood2_mcMatchAny != 4 && LepGood_mcMatchAny != 5)) && !(LepGood1_mcMatchId==0 &&  LepGood2_mcMatchId==0)) ; Label="W(fakes)-l", FillColor=ROOT.kAzure
+# WJets_l    : WJetsToLNu_HT600to800 :  xsec:(((LepGood1_mcMatchId==0 && LepGood1_mcMatchAny != 4 && LepGood_mcMatchAny != 5) || (LepGood2_mcMatchId==0 && LepGood2_mcMatchAny != 4 && LepGood_mcMatchAny != 5)) && !(LepGood1_mcMatchId==0 &&  LepGood2_mcMatchId==0)) ; Label="W(fakes)-l", FillColor=ROOT.kAzure
+# #WJets_l   : WJetsToLNu_HT800to1200 :  xsec:(((LepGood1_mcMatchId==0 && LepGood1_mcMatchAny != 4 && LepGood_mcMatchAny != 5) || (LepGood2_mcMatchId==0 && LepGood2_mcMatchAny != 4 && LepGood_mcMatchAny != 5)) && !(LepGood1_mcMatchId==0 &&  LepGood2_mcMatchId==0)) ; Label="W(fakes)-l", FillColor=ROOT.kAzure
+# WJets_l    : WJetsToLNu_HT800to1200_ext :  xsec:(((LepGood1_mcMatchId==0 && LepGood1_mcMatchAny != 4 && LepGood_mcMatchAny != 5) || (LepGood2_mcMatchId==0 && LepGood2_mcMatchAny != 4 && LepGood_mcMatchAny != 5)) && !(LepGood1_mcMatchId==0 &&  LepGood2_mcMatchId==0)) ; Label="W(fakes)-l", FillColor=ROOT.kAzure
+# WJets_l    : WJetsToLNu_HT1200to2500 :  xsec:(((LepGood1_mcMatchId==0 && LepGood1_mcMatchAny != 4 && LepGood_mcMatchAny != 5) || (LepGood2_mcMatchId==0 && LepGood2_mcMatchAny != 4 && LepGood_mcMatchAny != 5)) && !(LepGood1_mcMatchId==0 &&  LepGood2_mcMatchId==0)) ; Label="W(fakes)-l", FillColor=ROOT.kAzure
+# WJets_l    : WJetsToLNu_HT2500toInf :  xsec:(((LepGood1_mcMatchId==0 && LepGood1_mcMatchAny != 4 && LepGood_mcMatchAny != 5) || (LepGood2_mcMatchId==0 && LepGood2_mcMatchAny != 4 && LepGood_mcMatchAny != 5)) && !(LepGood1_mcMatchId==0 &&  LepGood2_mcMatchId==0)) ; Label="W(fakes)-l", FillColor=ROOT.kAzure
+# TT1l_l     : TTJets_SingleLeptonFromTbar : xsec:(((LepGood1_mcMatchId==0 && LepGood1_mcMatchAny != 4 && LepGood_mcMatchAny != 5) || (LepGood2_mcMatchId==0 && LepGood2_mcMatchAny != 4 && LepGood_mcMatchAny != 5)) && !(LepGood1_mcMatchId==0 &&  LepGood2_mcMatchId==0))  ; FillColor=ROOT.kMagenta-2, Label="tt(fakes)-l"
+# TT1l_l     : TTJets_SingleLeptonFromT : xsec:(((LepGood1_mcMatchId==0 && LepGood1_mcMatchAny != 4 && LepGood_mcMatchAny != 5) || (LepGood2_mcMatchId==0 && LepGood2_mcMatchAny != 4 && LepGood_mcMatchAny != 5)) && !(LepGood1_mcMatchId==0 &&  LepGood2_mcMatchId==0)) ; FillColor=ROOT.kMagenta-2, Label="tt(fakes)-l"
+
+
+
+
