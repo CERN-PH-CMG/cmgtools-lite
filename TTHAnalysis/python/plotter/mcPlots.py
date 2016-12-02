@@ -156,10 +156,10 @@ def reMax(hist,hist2,islog,factorLin=1.3,factorLog=2.0,doWide=False):
     max2 = hist2.GetMaximum()*(factorLog if islog else factorLin)
     if hasattr(hist2,'poissonGraph'):
        for i in xrange(hist2.poissonGraph.GetN()):
-          max2 = max(max2, (hist2.poissonGraph.GetY()[i] + hist2.poissonGraph.GetErrorYhigh(i))*(factorLog if islog else factorLin))
+          max2 = max(max2, (hist2.poissonGraph.GetY()[i] + 1.3*hist2.poissonGraph.GetErrorYhigh(i))*(factorLog if islog else factorLin))
     elif "TH1" in hist2.ClassName():
        for b in xrange(1,hist2.GetNbinsX()+1):
-          max2 = max(max2, (hist2.GetBinContent(b) + hist2.GetBinError(b))*(factorLog if islog else factorLin))
+          max2 = max(max2, (hist2.GetBinContent(b) + 1.3*hist2.GetBinError(b))*(factorLog if islog else factorLin))
     if max2 > max0:
         max0 = max2;
         if islog: hist.GetYaxis().SetRangeUser(0.1 if doWide else 0.9, max0)
@@ -595,13 +595,15 @@ def doLegend(pmap,mca,corner="TR",textSize=0.035,cutoff=1e-2,cutoffSignals=True,
                 lbl = mca.getProcessOption(p,'Label',p)
                 if signalPlotScale and signalPlotScale!=1: 
                     lbl=lbl+" x "+("%d"%signalPlotScale if floor(signalPlotScale)==signalPlotScale else "%.2f"%signalPlotScale)
-                sigEntries.append( (pmap[p],lbl,mcStyle) )
+                myStyle = mcStyle if type(mcStyle) == str else mcStyle[0]
+                sigEntries.append( (pmap[p],lbl,myStyle) )
         backgrounds = mca.listBackgrounds(allProcs=True)
         for p in backgrounds:
             if mca.getProcessOption(p,'HideInLegend',False): continue
             if p in pmap and pmap[p].Integral() >= cutoff*total: 
                 lbl = mca.getProcessOption(p,'Label',p)
-                bgEntries.append( (pmap[p],lbl,mcStyle) )
+                myStyle = mcStyle if type(mcStyle) == str else mcStyle[1]
+                bgEntries.append( (pmap[p],lbl,myStyle) )
         nentries = len(sigEntries) + len(bgEntries) + ('data' in pmap)
 
         (x1,y1,x2,y2) = (0.97-legWidth if doWide else .85-legWidth, .7 - textSize*max(nentries-3,0), .90, .91)
@@ -795,7 +797,10 @@ class PlotMaker:
                                     if plot.GetBinContent(b1,b2)<0: print 'Warning: histo %s has bin %d,%d with negative content (%f), the stack plot will probably be incorrect.'%(p,b1,b2,plot.GetBinContent(b1,b2))
 #                        if plot.Integral() <= 0: continue
                         if mca.isSignal(p): plot.Scale(options.signalPlotScale)
-                        if mca.isSignal(p) and options.noStackSig == True: continue 
+                        if mca.isSignal(p) and options.noStackSig == True: 
+                            plot.SetLineWidth(3)
+                            plot.SetLineColor(plot.GetFillColor())
+                            continue 
                         if plotmode == "stack":
                             stack.Add(plot)
                             total.Add(plot)
@@ -930,8 +935,12 @@ class PlotMaker:
                 #    total.GetYaxis().SetRangeUser(options.yrange[0], options.yrange[1])
                 legendCutoff = pspec.getOption('LegendCutoff', 1e-5 if c1.GetLogy() else 1e-2)
                 if plotmode == "norm": legendCutoff = 0 
+                if plotmode == "stack":
+                    if options.noStackSig: mcStyle = ("L","F")
+                    else:                  mcStyle = "F"
+                else: mcStyle = "L"
                 doLegend(pmap,mca,corner=pspec.getOption('Legend','TR'),
-                                  cutoff=legendCutoff, mcStyle=("F" if plotmode == "stack" else "L"),
+                                  cutoff=legendCutoff, mcStyle=mcStyle,
                                   cutoffSignals=not(options.showSigShape or options.showIndivSigShapes or options.showSFitShape), 
                                   textSize=( (0.045 if doRatio else 0.022) if options.legendFontSize <= 0 else options.legendFontSize ),
                                   legWidth=options.legendWidth, legBorder=options.legendBorder, signalPlotScale=options.signalPlotScale,
