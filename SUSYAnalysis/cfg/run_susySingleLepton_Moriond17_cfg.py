@@ -396,6 +396,7 @@ sequence = cfg.Sequence(susyCoreSequence+[
 
 if isData:
   sequence.remove(anyLepSkim)
+  sequence.remove(NIsrAnalyzer)
 if not isSignal:
   sequence.remove(susyScanAna)
 
