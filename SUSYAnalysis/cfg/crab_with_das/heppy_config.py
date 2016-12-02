@@ -45,7 +45,7 @@ elif sample == "Signal":
   isSignal = True
 
 #Set this depending on the running mode 
-test = 1 
+test = 0 
 #0: PRODUCTION (for batch)
 #1: Usually for TESTING (single component with single thread)
 #2: test all components (1 thread per comp) 
@@ -314,36 +314,10 @@ elif sample == "data":
   anyLepSkim.minLeptons = 1
   
   # central samples
-  from CMGTools.RootTools.samples.samples_13TeV_DATA2016 import *
-  selectedComponents = [JetHT_Run2016H_PromptReco_v2_HT800Only, SingleMuon_Run2016H_PromptReco_v2_IsoMu27Only, SingleElectron_Run2016H_PromptReco_v2_Ele27Only, JetHT_Run2016G_PromptReco_v1_HT800Only, SingleMuon_Run2016G_PromptReco_v1_IsoMu27Only, SingleElectron_Run2016G_PromptReco_v1_Ele27Only]
+  #from CMGTools.RootTools.samples.samples_13TeV_DATA2016 import *
+  #selectedComponents = [JetHT_Run2016H_PromptReco_v2_HT800Only, SingleMuon_Run2016H_PromptReco_v2_IsoMu27Only, SingleElectron_Run2016H_PromptReco_v2_Ele27Only, JetHT_Run2016G_PromptReco_v1_HT800Only, SingleMuon_Run2016G_PromptReco_v1_IsoMu27Only, SingleElectron_Run2016G_PromptReco_v1_Ele27Only]
 
   if test!=0 and jsonAna in susyCoreSequence: susyCoreSequence.remove(jsonAna)
-  if test==1:
-    # test one component (2 thread)
-    comp = SingleElectron_Run2016B_PromptReco_v2
-#    comp.files = comp.files[:1]
-    comp.files = comp.files[10:11]
-    selectedComponents = [comp]
-    comp.splitFactor = len(comp.files)
-  elif test==2:
-    # test all components (1 thread per component).
-    for comp in selectedComponents:
-      comp.splitFactor = 1
-      comp.fineSplitFactor = 1
-      comp.files = comp.files[10:11]
-  elif test==3:
-    # run all components (10 files per component).
-    for comp in selectedComponents:
-      comp.files = comp.files[20:30]
-      comp.fineSplitFactor = 1
-      comp.splitFactor = len(comp.files)
-  elif test==0:
-    # PRODUCTION
-    # run on everything
-    for comp in selectedComponents:
-      comp.fineSplitFactor = 1
-      comp.splitFactor = len(comp.files)
-
 
 
 ## PDF weights

@@ -30,7 +30,7 @@ json_G=dataDir+'/json/Cert_278820-280385_13TeV_PromptReco_Collisions16_JSON_NoL1
 
 
 #run_range = (271036, 276097)
-label = "_runs%s_%s"%(run_range[0], run_range[1])
+#label = "_runs%s_%s"%(run_range[0], run_range[1])
 
 ### ----------------------------- Run2016 PromptReco v1 ----------------------------------------
 
