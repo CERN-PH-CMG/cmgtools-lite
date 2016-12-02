@@ -83,16 +83,16 @@ public:
       if ((doVetoZ_ && 76<p.m && p.m<106 && p.isOS && p.isSF) || (doVetoLMf_ && 0<p.m && p.m<12 && p.isOS && p.isSF)) {veto_FO.insert(p.i); veto_FO.insert(p.j);}
       if ((doVetoZ_ && 76<p.m && p.m<106 && p.isOS && p.isSF) || (doVetoLMt_ && 0<p.m && p.m<12 && p.isOS && p.isSF)) {veto_tight.insert(p.i); veto_tight.insert(p.j);}
     }
-    for (auto i: veto_FO) leps_fo.erase(i);
-    for (auto i: veto_tight) leps_tight.erase(i);
+    for (auto i: veto_FO) leps_fo.erase(std::remove(leps_fo.begin(),leps_fo.end(),i),leps_fo.end());
+    for (auto i: veto_tight) leps_tight.erase(std::remove(leps_tight.begin(),leps_tight.end(),i),leps_tight.end());
 
     for (auto i : leps_fo) skim_lepsF_.push_back(i);
     for (auto i : leps_tight) skim_lepsT_.push_back(i);
 
   }
 
-  std::vector<int> getVetoedFO() {std::vector<int> _l; for (auto x: leps_fo) _l.push_back(x); return _l;}
-  std::vector<int> getVetoedTight() {std::vector<int> _l; for (auto x: leps_tight) _l.push_back(x); return _l;}
+  std::vector<int>* getVetoedFO() {return &leps_fo;}
+  std::vector<int>* getVetoedTight() {return &leps_tight;}
 
   void clear(){
     nLep = **nLep_;
@@ -106,8 +106,8 @@ public:
 
   void loadTags(CombinedObjectTags *tags){
     std::copy(tags->lepsL.get(),tags->lepsL.get()+**nLep_,leps_loose.get());
-    for (auto i : tags->getLepsF_byConePt()) leps_fo.insert(i);
-    for (int i=0; i<**nLep_; i++) if (tags->lepsT[i]) leps_tight.insert(i);
+    for (auto i : tags->getLepsF_byConePt()) leps_fo.push_back(i);
+    for (int i=0; i<**nLep_; i++) if (tags->lepsT[i]) leps_tight.push_back(i);
   }
 
   void setLeptonFlagLoose(int i){
@@ -115,11 +115,11 @@ public:
   }
   void setLeptonFlagFO(int i){
     assert(leps_loose[i]);
-    leps_fo.insert(i);
+    leps_fo.push_back(i);
   }
   void setLeptonFlagTight(int i){
     assert(leps_loose[i]);
-    leps_tight.insert(i);
+    leps_tight.push_back(i);
   }
 
 private:
@@ -130,7 +130,7 @@ private:
   std::vector<LeptonPairInfo> pairs;
   Int_t nLep;
   std::unique_ptr<bool[]> leps_loose;
-  std::set<int> leps_fo, leps_tight;
+  std::vector<int> leps_fo, leps_tight;
   std::unique_ptr<crvec[]> leps_p4;
   bool doVetoZ_;
   bool doVetoLMf_;
