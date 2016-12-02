@@ -26,11 +26,34 @@ cuts = {}
 inc_cut = '&&'.join([cat_Inc])
 
 
-cuts['inclusive'] = inc_cut + '&& l1_charge != l2_charge'
-cuts['inclusive_SS'] = inc_cut + '&& l1_charge == l2_charge'
+# cuts['inclusive'] = inc_cut + '&& l1_charge != l2_charge'
+# cuts['inclusive_SS'] = inc_cut + '&& l1_charge == l2_charge'
 
-# # ttbar selections
+# # # ttbar selections
+# # cuts['1bjet'] = inc_cut + '&& l1_charge != l2_charge && n_bjets==1'
+# cuts['1bjet_taudm'] = inc_cut + '&& l1_charge != l2_charge && n_bjets==1 && tau1_decayModeFinding>0.5'
+# cuts['1bjet_taudm_mvaiso'] = inc_cut + '&& l1_charge != l2_charge && n_bjets==1 && tau1_decayModeFinding>0.5 && tau1_byIsolationMVArun2v1DBoldDMwLT>3.5'
+# cuts['1bjet_taudm_dbiso'] = inc_cut + '&& l1_charge != l2_charge && n_bjets==1 && tau1_decayModeFinding>0.5 && tau1_byCombinedIsolationDeltaBetaCorr3Hits>2.5'
+
+cuts['1bjet_ljcentral'] = inc_cut + '&& l1_charge != l2_charge && n_bjets==1 && tau1_decayModeFinding>0.5 && abs(jet1_eta)<2.4'
+cuts['1bjet_leadingmatch_taudm'] = inc_cut + '&& l1_charge != l2_charge && n_bjets==1 && tau1_decayModeFinding>0.5  && abs(jet1_eta)<2.4 && abs(TVector2::Phi_mpi_pi(jet1_phi - tau1_phi))<0.4 && abs(jet1_eta - tau1_eta)<0.4'
+cuts['1bjet_leadingmatch_taudm_mvaiso'] = inc_cut + '&& l1_charge != l2_charge && n_bjets==1 && tau1_decayModeFinding>0.5 && tau1_byIsolationMVArun2v1DBoldDMwLT>3.5 && abs(jet1_eta)<2.4 && abs(TVector2::Phi_mpi_pi(jet1_phi - tau1_phi))<0.4 && abs(jet1_eta - tau1_eta)<0.4'
+cuts['1bjet_leadingmatch_taudm_dbiso'] = inc_cut + '&& l1_charge != l2_charge && n_bjets==1 && tau1_decayModeFinding>0.5 && tau1_byCombinedIsolationDeltaBetaCorr3Hits>2.5 && abs(jet1_eta)<2.4 && abs(TVector2::Phi_mpi_pi(jet1_phi - tau1_phi))<0.4 && abs(jet1_eta - tau1_eta)<0.4'
+
+# cuts['1bjet_notthetau'] = inc_cut + '&& l1_charge != l2_charge && n_bjets==1 && (abs(TVector2::Phi_mpi_pi(bjet1_phi - tau1_phi))>0.4 || abs(bjet1_eta - tau1_eta)>0.4)'
+# cuts['1bjet_notthetau_dm'] = inc_cut + '&& l1_charge != l2_charge && n_bjets==1 && (abs(TVector2::Phi_mpi_pi(bjet1_phi - tau1_phi))>0.4 || abs(bjet1_eta - tau1_eta)>0.4) && tau1_decayModeFinding'
+# cuts['1bjet_notthetau_dm_mvaiso'] = inc_cut + '&& l1_charge != l2_charge && n_bjets==1 && (abs(TVector2::Phi_mpi_pi(bjet1_phi - tau1_phi))>0.4 || abs(bjet1_eta - tau1_eta)>0.4) && tau1_decayModeFinding>0.5 && tau1_byIsolationMVArun2v1DBoldDMwLT>3.5'
+# cuts['1bjet_notthetau_dm_dbiso'] = inc_cut + '&& l1_charge != l2_charge && n_bjets==1 && (abs(TVector2::Phi_mpi_pi(bjet1_phi - tau1_phi))>0.4 || abs(bjet1_eta - tau1_eta)>0.4) && tau1_decayModeFinding>0.5 && tau1_byCombinedIsolationDeltaBetaCorr3Hits>2.5'
+
+cuts['2bjets_notthetau'] = inc_cut + '&& l1_charge != l2_charge && n_bjets==2 && (abs(TVector2::Phi_mpi_pi(bjet1_phi - tau1_phi))>0.4 || abs(bjet1_eta - tau1_eta)>0.4) && (abs(TVector2::Phi_mpi_pi(bjet2_phi - tau1_phi))>0.4 || abs(bjet2_eta - tau1_eta)>0.4)'
+
+
 # cuts['1bjet'] = inc_cut + '&& l1_charge != l2_charge && n_bjets==1'
+cuts['inclusive_ljcentral'] = inc_cut + '&& l1_charge != l2_charge && abs(jet1_eta)<2.4'
+cuts['inclusive_ljmatch_taudm'] = inc_cut + '&& l1_charge != l2_charge && tau1_decayModeFinding>0.5 && abs(jet1_eta)<2.4 && abs(TVector2::Phi_mpi_pi(jet1_phi - tau1_phi))<0.4 && abs(jet1_eta - tau1_eta)<0.4'
+cuts['inclusive_ljmatch_taudm_mvaiso'] = inc_cut + '&& l1_charge != l2_charge && tau1_decayModeFinding>0.5 && tau1_byIsolationMVArun2v1DBoldDMwLT>3.5 && abs(jet1_eta)<2.4 && abs(TVector2::Phi_mpi_pi(jet1_phi - tau1_phi))<0.4 && abs(jet1_eta - tau1_eta)<0.4'
+cuts['inclusive_ljmatch_taudm_dbiso'] = inc_cut + '&& l1_charge != l2_charge && tau1_decayModeFinding>0.5 && tau1_byCombinedIsolationDeltaBetaCorr3Hits>2.5 && abs(jet1_eta)<2.4 && abs(TVector2::Phi_mpi_pi(jet1_phi - tau1_phi))<0.4 && abs(jet1_eta - tau1_eta)<0.4'
+
 # cuts['1bjetmax2jets'] = inc_cut + '&& l1_charge != l2_charge && n_bjets==1 && n_jets<=2'
 # cuts['inclusive_jet1pt70'] = inc_cut + '&& l1_charge != l2_charge && jet1_pt>70'
 # cuts['inclusive_maxMT100'] = inc_cut + '&& l1_charge != l2_charge && max(mt, mt_leg2)>100'
@@ -38,12 +61,12 @@ cuts['inclusive_SS'] = inc_cut + '&& l1_charge == l2_charge'
 # cuts['inclusive_mvis100'] = inc_cut + '&& l1_charge != l2_charge && mvis>100'
 
 # ZTT selections
-cuts['bveto'] = inc_cut + '&& l1_charge != l2_charge && n_bjets==0'
-cuts['bveto_less1jet'] = inc_cut + '&& l1_charge != l2_charge && n_bjets==0 && n_jets<=1'
-cuts['bveto_jet1ptless100'] = inc_cut + '&& l1_charge != l2_charge && n_bjets==0&& jet1_pt<100.'
-cuts['bveto_maxMTless100'] = inc_cut + '&& l1_charge != l2_charge && n_bjets==0 && max(mt, mt_leg2)<100'
+# cuts['bveto'] = inc_cut + '&& l1_charge != l2_charge && n_bjets==0'
+# cuts['bveto_less1jet'] = inc_cut + '&& l1_charge != l2_charge && n_bjets==0 && n_jets<=1'
+# cuts['bveto_jet1ptless100'] = inc_cut + '&& l1_charge != l2_charge && n_bjets==0&& jet1_pt<100.'
+# cuts['bveto_maxMTless100'] = inc_cut + '&& l1_charge != l2_charge && n_bjets==0 && max(mt, mt_leg2)<100'
 
-cuts['bveto_lowdeta'] = inc_cut + '&& l1_charge != l2_charge && n_bjets==0 && delta_eta_l1_l2<2.5'
+# cuts['bveto_lowdeta'] = inc_cut + '&& l1_charge != l2_charge && n_bjets==0 && delta_eta_l1_l2<2.5'
 
 
 #cuts['inclusive'] = inc_cut + '&& l1_charge != l2_charge && mvis <= 40 && n_bjets >= 1'

@@ -10,7 +10,7 @@ class BTagSF(object):
     def __init__ (self, seed, wp='medium', measurement='central') :
         self.randm = TRandom3(seed)
 
-        self.mc_eff_file = TFile('$CMSSW_BASE/src/CMGTools/H2TauTau/data/tagging_efficiencies.root')
+        self.mc_eff_file = TFile('$CMSSW_BASE/src/CMGTools/H2TauTau/data/tagging_efficiencies_ichep2016.root')
 
         # MC b-tag efficiencies as measured in HTT by Adinda
         self.btag_eff_b = self.mc_eff_file.Get('btag_eff_b')
@@ -31,11 +31,10 @@ class BTagSF(object):
         v_sys.push_back('up')
         v_sys.push_back('down')
 
-        # self.reader_bc = ROOT.BTagCalibrationReader(calib, op_dict[wp], "mujets", measurement)
         self.reader_bc = ROOT.BTagCalibrationReader(op_dict[wp], measurement, v_sys)
-        self.reader_bc.load(calib, 0, 'mujets')
+        self.reader_bc.load(calib, 0, 'comb')
+        self.reader_bc.load(calib, 1, 'comb')
         print 'Booking light reader'
-        # self.reader_light = ROOT.BTagCalibrationReader(calib, op_dict[wp], "incl", measurement)
         self.reader_light = ROOT.BTagCalibrationReader(op_dict[wp], measurement, v_sys)
         self.reader_light.load(calib, 2, 'incl')
 

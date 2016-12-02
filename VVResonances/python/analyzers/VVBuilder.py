@@ -1,6 +1,7 @@
 from PhysicsTools.Heppy.analyzers.core.Analyzer import Analyzer
 from PhysicsTools.Heppy.analyzers.core.AutoHandle import AutoHandle
 from CMGTools.VVResonances.tools.Pair import Pair
+from CMGTools.VVResonances.tools.Singlet import Singlet
 from PhysicsTools.HeppyCore.utils.deltar import *
 from CMGTools.VVResonances.tools.VectorBosonToolBox import VectorBosonToolBox
 from CMGTools.VVResonances.tools.BTagEventWeights import *
@@ -40,7 +41,9 @@ class VVBuilder(Analyzer):
     def declareHandles(self):
         super(VVBuilder, self).declareHandles()
         self.handles['packed'] = AutoHandle( 'packedPFCandidates', 'std::vector<pat::PackedCandidate>' )
-
+        if self.cfg_comp.isMC:
+            self.handles['packedGen'] = AutoHandle( 'packedGenParticles', 'std::vector<pat::PackedGenParticle>' )
+            
     def copyLV(self,LV):
         out=[]
         for i in LV:
@@ -143,9 +146,9 @@ class VVBuilder(Analyzer):
         LVs =ROOT.std.vector("math::XYZTLorentzVector")()
 
         #we take LVs around the jets and recluster
-        for LV in event.genParticleLVs:
-            if deltaR(LV.eta(),LV.phi(),jet.eta(),jet.phi())<1.2:
-                LVs.push_back(LV)
+        for p in event.genParticleLVs:
+            if deltaR(p.eta(),p.phi(),jet.eta(),jet.phi())<1.2:
+                LVs.push_back(p)
 
         interface = ROOT.cmg.FastJetInterface(LVs,-1.0,0.8,1,0.01,5.0,4.4)
         #make jets
@@ -154,6 +157,7 @@ class VVBuilder(Analyzer):
         outputJets = interface.get(True)
         if len(outputJets)==0:
             return
+
 
         jet.substructureGEN=Substructure()
         #OK!Now save the area
@@ -277,6 +281,12 @@ class VVBuilder(Analyzer):
         #substructure truth
         if self.cfg_comp.isMC:
             self.substructureGEN(VV.leg2,event)
+            if hasattr(VV.leg2,'substructureGEN'):
+                newMET = event.met.p4()+VV.leg2.p4()-VV.leg2.substructureGEN.jet
+                newMET.SetPz(0.0)
+                newW=Pair(VV.leg1.leg1,Singlet(newMET))
+                self.vbTool.defaultWKinematicFit(newW)
+                VV.genPartialMass=(VV.leg1.p4()+VV.leg2.substructureGEN.jet).M()
 
 
 
@@ -520,13 +530,12 @@ class VVBuilder(Analyzer):
 
 
         #if MC create the stable particles for Gen Jet reco and substructure
+        event.genParticleLVs=ROOT.std.vector("math::XYZTLorentzVector")()        
         if self.cfg_comp.isMC:
-            event.genParticleLVs =ROOT.std.vector("math::XYZTLorentzVector")()
-            for p in event.genParticles:
-                if p.status()==1 and not (p.pdgId() in [12,14,16]):
+            event.genPacked = self.handles['packedGen'].product()
+            for p in event.genPacked:
+                if p.status()==1 and p.pt()>0.05 and not (abs(p.pdgId()) in [12,14,16]):
                     event.genParticleLVs.push_back(p.p4())
-
-
         LNuJJ=self.makeWV(event)
         LLJJ =self.makeZV(event)
         JJ=self.makeJJ(event)

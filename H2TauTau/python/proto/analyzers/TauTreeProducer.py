@@ -5,7 +5,7 @@ from PhysicsTools.Heppy.analyzers.core.AutoHandle import AutoHandle
 
 from CMGTools.H2TauTau.proto.analyzers.H2TauTauTreeProducerBase import H2TauTauTreeProducerBase
 
-from CMGTools.H2TauTau.proto.analyzers.DYJetsFakeAnalyzer import DYJetsFakeAnalyzer
+from CMGTools.H2TauTau.proto.analyzers.HTTGenAnalyzer import HTTGenAnalyzer
 
 class TauTreeProducer(H2TauTauTreeProducerBase):
     ''' Tree producer for tau POG study.
@@ -104,7 +104,7 @@ class TauTreeProducer(H2TauTauTreeProducerBase):
         ptSelGenSummary = [p for p in event.generatorSummary if p.pt() > ptcut and abs(p.pdgId()) not in [6, 23, 24, 25, 35, 36, 37]]
 
         for tau in event.selectedTaus:
-            DYJetsFakeAnalyzer.genMatch(event, tau, ptSelGentauleps,
+            HTTGenAnalyzer.genMatch(event, tau, ptSelGentauleps,
                                         ptSelGenleps, ptSelGenSummary)
 
 
