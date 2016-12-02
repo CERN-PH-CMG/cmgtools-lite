@@ -19,6 +19,7 @@ trigger_1mu_noiso_r = ['HLT_Mu45_eta2p1_v*']
 trigger_1mu_noiso_w = ['HLT_Mu50_v*']
 trigger_1el_noiso = ['HLT_Ele105_CaloIdVT_GsfTrkIdT_v*']
 trigger_1el_noiso_115 = ['HLT_Ele115_CaloIdVT_GsfTrkIdT_v*']
+trigger_1el_noiso_jet165 = ['HLT_Ele50_CaloIdVT_GsfTrkIdT_PFJet165_v*']
 
 ## muons
 triggers_mu_ht600 = ["HLT_Mu15_IsoVVVL_PFHT600_v*"]
