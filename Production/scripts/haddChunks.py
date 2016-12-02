@@ -23,6 +23,9 @@ if __name__ == '__main__':
     parser.add_option("-c","--clean", dest="clean",
                       default=False,action="store_true",
                       help="move chunks to Chunks/ after processing.")
+    parser.add_option("--max-size", dest="maxSize",
+                      default=None,type="float",
+                      help="max size of a chunk (in Gb)")
 
     (options,args) = parser.parse_args()
 
@@ -32,5 +35,5 @@ if __name__ == '__main__':
 
     dir = args[0]
 
-    haddChunks(dir, options.remove, options.clean)
+    haddChunks(dir, options.remove, options.clean, maxSize=options.maxSize)
 

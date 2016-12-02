@@ -27,13 +27,12 @@ class HistDrawer:
         can = cls.can
         pad = cls.pad
         padr = cls.padr
-        if not can:
-            can = cls.can = TCanvas('can', '', 800, 800)
-
+        if not all([can, pad, padr]):
+            can = cls.can = TCanvas('can', '', 800, 800) if not can else can
             can.Divide(1, 2, 0.0, 0.0)
 
-            pad = cls.pad = can.GetPad(1)
-            padr = cls.padr = can.GetPad(2)
+            pad = cls.pad = can.GetPad(1) if not pad else pad
+            padr = cls.padr = can.GetPad(2) if not padr else padr
 
             # Set Pad sizes
             pad.SetPad(0.0, 0.32, 1., 1.0)

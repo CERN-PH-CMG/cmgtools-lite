@@ -13,7 +13,7 @@ from CMGTools.H2TauTau.proto.analyzers.LeptonIsolationCalculator import LeptonIs
 from CMGTools.H2TauTau.proto.analyzers.FileCleaner import FileCleaner
 
 # common configuration and sequence
-from CMGTools.H2TauTau.htt_ntuple_base_cff import commonSequence, dyJetsFakeAna, puFileData, puFileMC, eventSelector, jetAna
+from CMGTools.H2TauTau.htt_ntuple_base_cff import commonSequence, httGenAna, puFileData, puFileMC, eventSelector, jetAna
 
 from CMGTools.RootTools.utils.splitFactor import splitFactor
 from CMGTools.H2TauTau.proto.samples.spring16.triggers_muEle import mc_triggers, mc_triggerfilters, data_triggers, data_triggerfilters
@@ -39,7 +39,7 @@ if production:
 if reapplyJEC:
     if cmssw:
         jetAna.jetCol = 'patJetsReapplyJEC'
-        dyJetsFakeAna.jetCol = 'patJetsReapplyJEC'
+        httGenAna.jetCol = 'patJetsReapplyJEC'
     else:
         jetAna.recalibrateJets = True
 
@@ -58,7 +58,7 @@ electronIsoCalc = cfg.Analyzer(
 )
 
 
-dyJetsFakeAna.channel = 'em'
+httGenAna.channel = 'em'
 
 # Define mu-ele specific modules
 
@@ -168,7 +168,7 @@ selectedComponents = data_list if data else samples
 ###                  SEQUENCE                   ###
 ###################################################
 sequence = commonSequence
-sequence.insert(sequence.index(dyJetsFakeAna), muEleAna)
+sequence.insert(sequence.index(httGenAna), muEleAna)
 sequence.append(leptonWeighter)
 if computeSVfit:
     sequence.append(svfitProducer)
