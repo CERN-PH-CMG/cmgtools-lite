@@ -20,7 +20,6 @@ eleID = "CBID"
 
 # Isolation
 isolation = "miniIso"
-
 #JEC
 jetAna.mcGT = "Spring16_25nsV6_MC"
 jetAna.dataGT = "Spring16_25nsV6_DATA"
@@ -30,6 +29,7 @@ jetAna.smearJets = False
 jetAna.recalibrateJets = True 
 jetAna.applyL2L3Residual = "Data"
 metAna.recalibrate = True
+
 
 
 #-------- HOW TO RUN
@@ -129,6 +129,9 @@ ttHSTSkimmer = cfg.Analyzer(
   minST = 150,
   )
 
+from CMGTools.TTHAnalysis.analyzers.nIsrAnalyzer import NIsrAnalyzer
+NIsrAnalyzer = cfg.Analyzer(
+  NIsrAnalyzer, name='NIsrAnalyzer')
 ## HT skim
 from CMGTools.TTHAnalysis.analyzers.ttHHTSkimmer import ttHHTSkimmer
 ttHHTSkimmer = cfg.Analyzer(
@@ -221,8 +224,9 @@ jetAna.minLepPt = 10
 ## JetAna
 jetAna.doQG = True
 
-## Iso Track
-isoTrackAna.setOff=False
+## Iso Track #use basic relIso for now
+isoTrackAna.setOff = False
+isoTrackAna.doRelIsolation = True
 
 # store all taus by default
 genAna.allGenTaus = True
@@ -239,6 +243,7 @@ if sample == "MC":
   
   #pick the file you want to run on
   selectedComponents = [TTJets_DiLepton]
+#  [TTJets_SingleLeptonFromTbar,TTJets_SingleLeptonFromTbar_ext,TTJets_SingleLeptonFromT,TTJets_DiLepton,TTJets_DiLepton_ext,
 
   if test==1:
     # test a single component, using a single thread.
@@ -385,13 +390,16 @@ if isSignal:
 susyCoreSequence.insert(susyCoreSequence.index(lepAna)+1, anyLepSkim)
 sequence = cfg.Sequence(susyCoreSequence+[
     LHEAna,
+    NIsrAnalyzer,
     ttHEventAna,
     ttHHTSkimmer,
+#    ttHSTSkimmer,
     treeProducer,
     ])
 
 if isData:
   sequence.remove(anyLepSkim)
+  sequence.remove(NIsrAnalyzer)
 if not isSignal:
   sequence.remove(susyScanAna)
 
