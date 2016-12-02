@@ -4,7 +4,7 @@ import ROOT, os
 
 class fastCombinedObjectRecleaner:
 
-    def __init__(self,label,inlabel,cleanTausWithLooseLeptons,doVetoZ,doVetoLMf,doVetoLMt,jetPts,btagL_thr,btagM_thr):
+    def __init__(self,label,inlabel,cleanTausWithLooseLeptons,cleanJetsWithFOTaus,doVetoZ,doVetoLMf,doVetoLMt,jetPts,btagL_thr,btagM_thr):
 
         self.label = "" if (label in ["",None]) else ("_"+label)
         self.inlabel = inlabel
@@ -14,6 +14,7 @@ class fastCombinedObjectRecleaner:
         self.vars_jets = ["btagCSV"]
 
         self.cleanTausWithLooseLeptons = cleanTausWithLooseLeptons
+        self.cleanJetsWithFOTaus = cleanJetsWithFOTaus
         self.jetPts = jetPts
 
         self.outmasses=['mZ1','minMllAFAS','minMllAFOS','minMllAFSS','minMllSFOS']
@@ -32,13 +33,13 @@ class fastCombinedObjectRecleaner:
         if "/fastCombinedObjectRecleanerHelper_cxx.so" not in ROOT.gSystem.GetLibraries():
             print "Load C++ recleaner worker module"
             ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/TTHAnalysis/python/tools/fastCombinedObjectRecleanerHelper.cxx+O" % os.environ['CMSSW_BASE'])
-        self._worker = ROOT.fastCombinedObjectRecleanerHelper(self._helper_taus.cppImpl(),self._helper_jets.cppImpl(),btagL_thr,btagM_thr)
+        self._worker = ROOT.fastCombinedObjectRecleanerHelper(self._helper_taus.cppImpl(),self._helper_jets.cppImpl(),self.cleanJetsWithFOTaus,btagL_thr,btagM_thr)
         for x in self.jetPts: self._worker.addJetPt(x)
 
         if "/fastCombinedObjectRecleanerMassVetoCalculator_cxx.so" not in ROOT.gSystem.GetLibraries():
             print "Load C++ recleaner mass and veto calculator module"
             ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/TTHAnalysis/python/tools/fastCombinedObjectRecleanerMassVetoCalculator.cxx+O" % os.environ['CMSSW_BASE'])
-        self._workerMV = ROOT.fastCombinedObjectRecleanerMassVetoCalculator(doVetoZ,doVetoLMf,doVetoLMt)
+        self._workerMV = ROOT.fastCombinedObjectRecleanerMassVetoCalculator(self._helper_lepsF.cppImpl(),self._helper_lepsT.cppImpl(),doVetoZ,doVetoLMf,doVetoLMt)
 
     def init(self,tree):
         self._ttreereaderversion = tree._ttreereaderversion
@@ -88,10 +89,6 @@ class fastCombinedObjectRecleaner:
         self._workerMV.clear()
         self._workerMV.loadTags(tags)
         self._workerMV.run()
-        vetoedFO = self._workerMV.getVetoedFO()
-        vetoedTight = self._workerMV.getVetoedTight()
-        for i in xrange(vetoedFO.size()): self._helper_lepsF.push_back(vetoedFO.at(i))
-        for i in xrange(vetoedTight.size()): self._helper_lepsT.push_back(vetoedTight.at(i))
 
         ret = {}
         masses = self._workerMV.GetPairMasses()

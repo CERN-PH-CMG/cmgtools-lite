@@ -22,7 +22,10 @@ public:
   typedef TTreeReaderArray<float> rfloats;
   typedef TTreeReaderArray<int> rints;
   
-  fastCombinedObjectRecleanerHelper(CollectionSkimmer &clean_taus, CollectionSkimmer &clean_jets, float bTagL, float bTagM) : clean_taus_(clean_taus), clean_jets_(clean_jets), deltaR2cut(0.16), bTagL_(bTagL), bTagM_(bTagM) {}
+  fastCombinedObjectRecleanerHelper(CollectionSkimmer &clean_taus, CollectionSkimmer &clean_jets, bool cleanJetsWithFOTaus, float bTagL, float bTagM) : clean_taus_(clean_taus), clean_jets_(clean_jets), deltaR2cut(0.16), cleanJetsWithFOTaus_(cleanJetsWithFOTaus), bTagL_(bTagL), bTagM_(bTagM) {
+    _ct.reset(new std::vector<int>);
+    _cj.reset(new std::vector<int>);
+}
   
   void setLeptons(rint *nLep, rfloats* lepPt, rfloats *lepEta, rfloats *lepPhi) {
     nLep_ = nLep; Lep_pt_ = lepPt; Lep_eta_ = lepEta; Lep_phi_ = lepPhi;
@@ -57,13 +60,14 @@ public:
 	  lep.SetPtEtaPhiM((*Lep_pt_)[i],0,(*Lep_phi_)[i],0);
 	  mht = mht - lep;
 	}
-	for (auto i : _ct){
-	  TLorentzVector tau;
-	  tau.SetPtEtaPhiM((*Tau_pt_)[i],0,(*Tau_phi_)[i],0);
-	  mht = mht - tau;
+	if (cleanJetsWithFOTaus_) {
+	  for (auto i : *_ct){
+	    TLorentzVector tau;
+	    tau.SetPtEtaPhiM((*Tau_pt_)[i],0,(*Tau_phi_)[i],0);
+	    mht = mht - tau;
+	  }
 	}
-
-	for (auto j : _cj){
+	for (auto j : *_cj){
 	  float pt = (*Jet_pt_)[j];
 	  if (pt<=thr) continue;
 	  float phi = (*Jet_phi_)[j];
@@ -106,13 +110,13 @@ public:
 
   void setDR(float f) {deltaR2cut = f*f;}
 
-  std::pair<std::vector<int>, std::vector<int> > run() {
+  std::pair<std::vector<int>*, std::vector<int>* > run() {
 
     clean_taus_.clear();
     clean_jets_.clear();
 
-    _ct.clear();
-    _cj.clear();
+    _ct->clear();
+    _cj->clear();
 
     for (int iT = 0, nT = **nTau_; iT < nT; ++iT) {
       if (!sel_taus[iT]) continue;
@@ -126,7 +130,7 @@ public:
       }
       if (ok) {
 	clean_taus_.push_back(iT);
-	_ct.push_back(iT);
+	_ct->push_back(iT);
       } else {
 	sel_taus.get()[iT]=false; // do not use unclean taus for cleaning jets, use lepton instead
       }
@@ -141,20 +145,22 @@ public:
 	  break;
 	}
       }
-      for (int iT = 0, nT = **nTau_; iT < nT; ++iT) {
-	if (!sel_taus.get()[iT]) continue;
-	if (deltaR2((*Tau_eta_)[iT], (*Tau_phi_)[iT], (*Jet_eta_)[iJ], (*Jet_phi_)[iJ]) < deltaR2cut) {
-	  ok = false;
-	  break;
+      if (cleanJetsWithFOTaus_) {
+	for (int iT = 0, nT = **nTau_; iT < nT; ++iT) {
+	  if (!sel_taus.get()[iT]) continue;
+	  if (deltaR2((*Tau_eta_)[iT], (*Tau_phi_)[iT], (*Jet_eta_)[iJ], (*Jet_phi_)[iJ]) < deltaR2cut) {
+	    ok = false;
+	    break;
+	  }
 	}
       }
       if (ok) {
 	clean_jets_.push_back(iJ);
-	_cj.push_back(iJ);
+	_cj->push_back(iJ);
       }
     }
 
-    return std::make_pair(_ct,_cj);
+    return std::make_pair(_ct.get(),_cj.get());
   }
 
 private:
@@ -166,7 +172,8 @@ private:
   rfloats *Jet_pt_, *Jet_phi_, *Jet_eta_, *Jet_btagCSV_;
   float deltaR2cut;
   std::set<int> _jetptcuts;
-  std::vector<int> _ct;
-  std::vector<int> _cj;
+  std::unique_ptr<std::vector<int> > _ct;
+  std::unique_ptr<std::vector<int> > _cj;
+  bool cleanJetsWithFOTaus_;
   float bTagL_,bTagM_;
 };
