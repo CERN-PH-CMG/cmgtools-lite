@@ -135,28 +135,30 @@ public:
 	sel_taus.get()[iT]=false; // do not use unclean taus for cleaning jets, use lepton instead
       }
     }
-    for (int iJ = 0, nJ = **nJet_; iJ < nJ; ++iJ) {
-      if (!sel_jets[iJ]) continue;
-      bool ok = true;
-      for (int iL = 0, nL = **nLep_; iL < nL; ++iL) {
-	if (!sel_leps.get()[iL]) continue;
-	if (deltaR2((*Lep_eta_)[iL], (*Lep_phi_)[iL], (*Jet_eta_)[iJ], (*Jet_phi_)[iJ]) < deltaR2cut) {
-	  ok = false;
-	  break;
+
+    { // jet cleaning (clean closest jet - one at most - for each lepton or tau, then apply jet selection)
+      std::vector<float> vetos_eta;
+      std::vector<float> vetos_phi;
+      for (int iL = 0, nL = **nLep_; iL < nL; ++iL) if (sel_leps[iL]) {vetos_eta.push_back((*Lep_eta_)[iL]); vetos_phi.push_back((*Lep_phi_)[iL]);}
+      for (int iT = 0, nT = **nTau_; iT < nT; ++iT) if (sel_taus[iT]) {vetos_eta.push_back((*Tau_eta_)[iT]); vetos_phi.push_back((*Tau_phi_)[iT]);}
+      std::unique_ptr<bool[]> good;
+      good.reset(new bool[**nJet_]);
+      std::fill_n(good.get(),**nJet_,true);
+      for (uint iV=0; iV<vetos_eta.size(); iV++) {
+	float mindr2 = -1; int best = -1;
+	for (int iJ = 0, nJ = **nJet_; iJ < nJ; ++iJ) {
+	  float dr2 = deltaR2(vetos_eta[iV],vetos_phi[iV],(*Jet_eta_)[iJ], (*Jet_phi_)[iJ]);
+	  if (mindr2<0 || dr2<mindr2) {mindr2=dr2; best=iJ;}
+	}
+	if (best>-1 && mindr2<deltaR2cut) {
+	  good[best] = false;
 	}
       }
-      if (cleanJetsWithFOTaus_) {
-	for (int iT = 0, nT = **nTau_; iT < nT; ++iT) {
-	  if (!sel_taus.get()[iT]) continue;
-	  if (deltaR2((*Tau_eta_)[iT], (*Tau_phi_)[iT], (*Jet_eta_)[iJ], (*Jet_phi_)[iJ]) < deltaR2cut) {
-	    ok = false;
-	    break;
-	  }
+      for (int iJ = 0, nJ = **nJet_; iJ < nJ; ++iJ) {
+	if (good[iJ] && sel_jets[iJ]) {
+	  clean_jets_.push_back(iJ);
+	  _cj->push_back(iJ);
 	}
-      }
-      if (ok) {
-	clean_jets_.push_back(iJ);
-	_cj->push_back(iJ);
       }
     }
 
