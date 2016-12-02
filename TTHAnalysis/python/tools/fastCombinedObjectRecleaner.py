@@ -4,7 +4,7 @@ import ROOT, os
 
 class fastCombinedObjectRecleaner:
 
-    def __init__(self,label,inlabel,cleanTausWithLooseLeptons,doVetoZ,doVetoLMf,doVetoLMt,jetPts):
+    def __init__(self,label,inlabel,cleanTausWithLooseLeptons,doVetoZ,doVetoLMf,doVetoLMt,jetPts,btagL_thr,btagM_thr):
 
         self.label = "" if (label in ["",None]) else ("_"+label)
         self.inlabel = inlabel
@@ -32,7 +32,7 @@ class fastCombinedObjectRecleaner:
         if "/fastCombinedObjectRecleanerHelper_cxx.so" not in ROOT.gSystem.GetLibraries():
             print "Load C++ recleaner worker module"
             ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/TTHAnalysis/python/tools/fastCombinedObjectRecleanerHelper.cxx+O" % os.environ['CMSSW_BASE'])
-        self._worker = ROOT.fastCombinedObjectRecleanerHelper(self._helper_taus.cppImpl(),self._helper_jets.cppImpl())
+        self._worker = ROOT.fastCombinedObjectRecleanerHelper(self._helper_taus.cppImpl(),self._helper_jets.cppImpl(),btagL_thr,btagM_thr)
         for x in self.jetPts: self._worker.addJetPt(x)
 
         if "/fastCombinedObjectRecleanerMassVetoCalculator_cxx.so" not in ROOT.gSystem.GetLibraries():
@@ -77,11 +77,7 @@ class fastCombinedObjectRecleaner:
         tags = getattr(event,'_CombinedTagsForCleaning%s'%self.inlabel)
 
         self._worker.clear()
-        for i in tags.lepsC: self._worker.selectLepton(i)
-        if self.cleanTausWithLooseLeptons: 
-            for i in tags.lepsL: self._worker.selectLeptonExtraForTau(i)
-        for i in tags.tausF: self._worker.selectTau(i)
-        for i in tags.jetsS: self._worker.selectJet(i)
+        self._worker.loadTags(tags,self.cleanTausWithLooseLeptons)
         self._worker.run()
 
         jetsums={}
@@ -90,9 +86,7 @@ class fastCombinedObjectRecleaner:
             jetsums[b.thr]=b
 
         self._workerMV.clear()
-        for i in tags.lepsL: self._workerMV.setLeptonFlagLoose(i);
-        for i in tags.lepsF: self._workerMV.setLeptonFlagFO(i);
-        for i in tags.lepsT: self._workerMV.setLeptonFlagTight(i);
+        self._workerMV.loadTags(tags)
         self._workerMV.run()
         vetoedFO = self._workerMV.getVetoedFO()
         vetoedTight = self._workerMV.getVetoedTight()

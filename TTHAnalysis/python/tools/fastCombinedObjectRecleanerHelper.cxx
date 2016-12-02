@@ -6,6 +6,7 @@
 #include <TLorentzVector.h>
 #include <DataFormats/Math/interface/deltaR.h>
 #include <CMGTools/TTHAnalysis/interface/CollectionSkimmer.h>
+#include "CMGTools/TTHAnalysis/interface/CombinedObjectTags.h"
 
 struct JetSumCalculatorOutput {
   int thr;
@@ -21,7 +22,7 @@ public:
   typedef TTreeReaderArray<float> rfloats;
   typedef TTreeReaderArray<int> rints;
   
-  fastCombinedObjectRecleanerHelper(CollectionSkimmer &clean_taus, CollectionSkimmer &clean_jets) : clean_taus_(clean_taus), clean_jets_(clean_jets), deltaR2cut(0.16) {}
+  fastCombinedObjectRecleanerHelper(CollectionSkimmer &clean_taus, CollectionSkimmer &clean_jets, float bTagL, float bTagM) : clean_taus_(clean_taus), clean_jets_(clean_jets), deltaR2cut(0.16), bTagL_(bTagL), bTagM_(bTagM) {}
   
   void setLeptons(rint *nLep, rfloats* lepPt, rfloats *lepEta, rfloats *lepPhi) {
     nLep_ = nLep; Lep_pt_ = lepPt; Lep_eta_ = lepEta; Lep_phi_ = lepPhi;
@@ -71,8 +72,8 @@ public:
 	  TLorentzVector jp4;
 	  jp4.SetPtEtaPhiM(pt,0,phi,0);
 	  mht = mht - jp4;
-	  if (csv>0.46) sums.nBJetLoose += 1;
-	  if (csv>0.80) sums.nBJetMedium += 1;
+	  if (csv>bTagL_) sums.nBJetLoose += 1;
+	  if (csv>bTagM_) sums.nBJetMedium += 1;
 	}
 
 	sums.mhtJet = mht.Pt();
@@ -95,6 +96,13 @@ public:
   void selectLeptonExtraForTau(uint i, bool what=true) {sel_leps_extrafortau.get()[i]=what;}
   void selectTau(uint i, bool what=true) {sel_taus.get()[i]=what;}
   void selectJet(uint i, bool what=true) {sel_jets.get()[i]=what;}
+
+  void loadTags(CombinedObjectTags *tags, bool cleanTausWithLooseLeptons){
+    std::copy(tags->lepsC.get(),tags->lepsC.get()+**nLep_,sel_leps.get());
+    if (cleanTausWithLooseLeptons) std::copy(tags->lepsL.get(),tags->lepsL.get()+**nLep_,sel_leps_extrafortau.get());
+    std::copy(tags->tausF.get(),tags->tausF.get()+**nTau_,sel_taus.get());
+    std::copy(tags->jetsS.get(),tags->jetsS.get()+**nJet_,sel_jets.get());
+  }
 
   void setDR(float f) {deltaR2cut = f*f;}
 
@@ -160,4 +168,5 @@ private:
   std::set<int> _jetptcuts;
   std::vector<int> _ct;
   std::vector<int> _cj;
+  float bTagL_,bTagM_;
 };

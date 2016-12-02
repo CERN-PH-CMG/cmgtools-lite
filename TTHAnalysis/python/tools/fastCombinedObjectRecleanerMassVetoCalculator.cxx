@@ -4,6 +4,7 @@
 #include <TTreeReaderValue.h>
 #include <TTreeReaderArray.h>
 #include <TLorentzVector.h>
+#include "CMGTools/TTHAnalysis/interface/CombinedObjectTags.h"
 
 struct LeptonPairInfo {
   int i;
@@ -94,6 +95,12 @@ public:
     leps_fo.clear();
     leps_tight.clear();
     leps_p4.reset(new TLorentzVector[nLep]);
+  }
+
+  void loadTags(CombinedObjectTags *tags){
+    std::copy(tags->lepsL.get(),tags->lepsL.get()+**nLep_,leps_loose.get());
+    for (auto i : tags->getLepsF_byConePt()) leps_fo.insert(i);
+    for (int i=0; i<**nLep_; i++) if (tags->lepsT[i]) leps_tight.insert(i);
   }
 
   void setLeptonFlagLoose(int i){
