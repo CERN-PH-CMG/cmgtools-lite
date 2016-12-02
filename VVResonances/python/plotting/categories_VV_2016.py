@@ -19,8 +19,9 @@ cut_tau21LP = 0.75
 cut_mjj = 986
 cut_mlnujj = 600
 cut_HbbLoose = 0.3
-cut_HbbMedium = 0.6
-cut_HbbTight = 0.8
+cut_HbbMedium1 = 0.6
+cut_HbbMedium2 = 0.8
+cut_HbbTight = 0.9
 
 cat_lnujj_trigOrSF = "(((HLT2_MU||HLT2_ELE||HLT2_ISOMU||HLT2_ISOELE||HLT2_MET120)&&run>2000)+((run<2000)*lnujj_sf))"
 cat_metFilters = "(Flag_goodVertices&&Flag_CSCTightHaloFilter&&Flag_HBHENoiseFilter&&Flag_HBHENoiseIsoFilter&&Flag_eeBadScFilter&&Flag_badChargedHadronFilter&&Flag_badMuonFilter)"
@@ -55,16 +56,20 @@ cat_jj_l1_mHighSB = '(jj_l1_softDrop_massBare*jj_l1_softDrop_massCorr>{cut_massH
 # Hbb cuts for VV
 # still need to add Hbbtagger SFs
 cat_jj_l2_HbbLoose = '(jj_l2_btagBOOSTED_recalc>{cut_HbbLoose})'.format(cut_HbbLoose=cut_HbbLoose)
-cat_jj_l2_HbbMedium = '(jj_l2_btagBOOSTED_recalc>{cut_HbbMedium})'.format(cut_HbbMedium=cut_HbbMedium)
+cat_jj_l2_HbbMedium1 = '(jj_l2_btagBOOSTED_recalc>{cut_HbbMedium1})'.format(cut_HbbMedium1=cut_HbbMedium1)
+cat_jj_l2_HbbMedium2 = '(jj_l2_btagBOOSTED_recalc>{cut_HbbMedium2})'.format(cut_HbbMedium2=cut_HbbMedium2)
 cat_jj_l2_HbbTight = '(jj_l2_btagBOOSTED_recalc>{cut_HbbTight})'.format(cut_HbbTight=cut_HbbTight)
 cat_jj_l1_HbbLoose = '(jj_l1_btagBOOSTED_recalc>{cut_HbbLoose})'.format(cut_HbbLoose=cut_HbbLoose)
-cat_jj_l1_HbbMedium = '(jj_l1_btagBOOSTED_recalc>{cut_HbbMedium})'.format(cut_HbbMedium=cut_HbbMedium)
+cat_jj_l1_HbbMedium1 = '(jj_l1_btagBOOSTED_recalc>{cut_HbbMedium1})'.format(cut_HbbMedium1=cut_HbbMedium1)
+cat_jj_l1_HbbMedium2 = '(jj_l1_btagBOOSTED_recalc>{cut_HbbMedium2})'.format(cut_HbbMedium2=cut_HbbMedium2)
 cat_jj_l1_HbbTight = '(jj_l1_btagBOOSTED_recalc>{cut_HbbTight})'.format(cut_HbbTight=cut_HbbTight)
 cat_jj_l1_HbbAntiLoose = '(jj_l1_btagBOOSTED_recalc<{cut_HbbLoose})'.format(cut_HbbLoose=cut_HbbLoose)
-cat_jj_l1_HbbAntiMedium = '(jj_l1_btagBOOSTED_recalc<{cut_HbbMedium})'.format(cut_HbbMedium=cut_HbbMedium)
+cat_jj_l1_HbbAntiMedium1 = '(jj_l1_btagBOOSTED_recalc<{cut_HbbMedium1})'.format(cut_HbbMedium1=cut_HbbMedium1)
+cat_jj_l1_HbbAntiMedium2 = '(jj_l1_btagBOOSTED_recalc<{cut_HbbMedium2})'.format(cut_HbbMedium2=cut_HbbMedium2)
 cat_jj_l1_HbbAntiTight = '(jj_l1_btagBOOSTED_recalc<{cut_HbbTight})'.format(cut_HbbTight=cut_HbbTight)
 cat_jj_l2_HbbAntiLoose = '(jj_l2_btagBOOSTED_recalc<{cut_HbbLoose})'.format(cut_HbbLoose=cut_HbbLoose)
-cat_jj_l2_HbbAntiMedium = '(jj_l2_btagBOOSTED_recalc<{cut_HbbMedium})'.format(cut_HbbMedium=cut_HbbMedium)
+cat_jj_l2_HbbAntiMedium1 = '(jj_l2_btagBOOSTED_recalc<{cut_HbbMedium1})'.format(cut_HbbMedium1=cut_HbbMedium1)
+cat_jj_l2_HbbAntiMedium2 = '(jj_l2_btagBOOSTED_recalc<{cut_HbbMedium2})'.format(cut_HbbMedium2=cut_HbbMedium2)
 cat_jj_l2_HbbAntiTight = '(jj_l2_btagBOOSTED_recalc<{cut_HbbTight})'.format(cut_HbbTight=cut_HbbTight)
 
 
@@ -72,15 +77,25 @@ cat_jj_l2_HbbAntiTight = '(jj_l2_btagBOOSTED_recalc<{cut_HbbTight})'.format(cut_
 cat_lnujj_NP = cat_jj_l2_NP
 cat_lnujj_HP = '(lnujj_l2_tau2/lnujj_l2_tau1<{cut_tau21HP_lnujj})'.format(cut_tau21HP_lnujj=cut_tau21HP_lnujj)
 cat_lnujj_LP = '(lnujj_l2_tau2/lnujj_l2_tau1>{cut_tau21HP_lnujj}&&lnujj_l2_tau2/lnujj_l2_tau1<{cut_tau21LP})'.format(cut_tau21HP_lnujj=cut_tau21HP_lnujj, cut_tau21LP=cut_tau21LP)
-cat_lnujj_mLowSB = cat_jj_l2_mLowSB
-cat_lnujj_mW = cat_jj_l2_mW
-cat_lnujj_mZ = cat_jj_l2_mZ
-cat_lnujj_mV = cat_jj_l2_mV
-cat_lnujj_mH = cat_jj_l2_mH
-cat_lnujj_mHighSB = cat_jj_l2_mHighSB
-cat_lnujj_HbbLoose = cat_jj_l2_HbbLoose
-cat_lnujj_HbbMedium = cat_jj_l2_HbbMedium
-cat_lnujj_HbbTight = cat_jj_l2_HbbTight
+cat_lnujj_mLowSB = cat_jj_l2_mLowSB.replace("jj_", "lnujj_")
+cat_lnujj_mW = cat_jj_l2_mW.replace("jj_", "lnujj_")
+cat_lnujj_mZ = cat_jj_l2_mZ.replace("jj_", "lnujj_")
+cat_lnujj_mV = cat_jj_l2_mV.replace("jj_", "lnujj_")
+cat_lnujj_mH = cat_jj_l2_mH.replace("jj_", "lnujj_")
+cat_lnujj_mHighSB = cat_jj_l2_mHighSB.replace("jj_", "lnujj_")
+cat_lnujj_HbbLoose = cat_jj_l2_HbbLoose.replace("jj_", "lnujj_")
+cat_lnujj_HbbMedium1 = cat_jj_l2_HbbMedium1.replace("jj_", "lnujj_")
+cat_lnujj_HbbMedium2 = cat_jj_l2_HbbMedium2.replace("jj_", "lnujj_")
+cat_lnujj_HbbTight = cat_jj_l2_HbbTight.replace("jj_", "lnujj_")
+
+cat_lnujj_l2_HbbLoose = cat_jj_l2_HbbLoose.replace("jj_", "lnujj_")
+cat_lnujj_l2_HbbMedium1 = cat_jj_l2_HbbMedium1.replace("jj_", "lnujj_")
+cat_lnujj_l2_HbbMedium2 = cat_jj_l2_HbbMedium2.replace("jj_", "lnujj_")
+cat_lnujj_l2_HbbTight = cat_jj_l2_HbbTight.replace("jj_", "lnujj_")
+cat_lnujj_l2_HbbAntiLoose = cat_jj_l2_HbbAntiLoose.replace("jj_", "lnujj_")
+cat_lnujj_l2_HbbAntiMedium1 = cat_jj_l2_HbbAntiMedium1.replace("jj_", "lnujj_")
+cat_lnujj_l2_HbbAntiMedium2 = cat_jj_l2_HbbAntiMedium2.replace("jj_", "lnujj_")
+cat_lnujj_l2_HbbAntiTight = cat_jj_l2_HbbAntiTight.replace("jj_", "lnujj_")
 
 cat_nob = '(lnujj_nMediumBTags==0)*lnujj_btagWeight'
 cat_b = '(lnujj_nMediumBTags>0)*lnujj_btagWeight'
@@ -127,17 +142,21 @@ jj_inc_l2["mJ_HighSB"] = cat_jj_l2_mHighSB
 
 jj_inc_l1["Hbb_all"] = '1'
 jj_inc_l1["Hbb_Loose"] = cat_jj_l1_HbbLoose
-jj_inc_l1["Hbb_Medium"] = cat_jj_l1_HbbMedium
+jj_inc_l1["Hbb_Medium1"] = cat_jj_l1_HbbMedium1
+jj_inc_l1["Hbb_Medium2"] = cat_jj_l1_HbbMedium2
 jj_inc_l1["Hbb_Tight"] = cat_jj_l1_HbbTight
 jj_inc_l1["Hbb_AntiLoose"] = cat_jj_l1_HbbAntiLoose
-jj_inc_l1["Hbb_AntiMedium"] = cat_jj_l1_HbbAntiMedium
+jj_inc_l1["Hbb_AntiMedium1"] = cat_jj_l1_HbbAntiMedium1
+jj_inc_l1["Hbb_AntiMedium2"] = cat_jj_l1_HbbAntiMedium2
 jj_inc_l1["Hbb_AntiTight"] = cat_jj_l1_HbbAntiTight
 jj_inc_l2["Hbb_all"] = '1'
 jj_inc_l2["Hbb_Loose"] = cat_jj_l2_HbbLoose
-jj_inc_l2["Hbb_Medium"] = cat_jj_l2_HbbMedium
+jj_inc_l2["Hbb_Medium1"] = cat_jj_l2_HbbMedium1
+jj_inc_l2["Hbb_Medium2"] = cat_jj_l2_HbbMedium2
 jj_inc_l2["Hbb_Tight"] = cat_jj_l2_HbbTight
 jj_inc_l2["Hbb_AntiLoose"] = cat_jj_l2_HbbAntiLoose
-jj_inc_l2["Hbb_AntiMedium"] = cat_jj_l2_HbbAntiMedium
+jj_inc_l2["Hbb_AntiMedium1"] = cat_jj_l2_HbbAntiMedium1
+jj_inc_l2["Hbb_AntiMedium2"] = cat_jj_l2_HbbAntiMedium2
 jj_inc_l2["Hbb_AntiTight"] = cat_jj_l2_HbbAntiTight
 
 categories_jj_inc_l1 = {}
