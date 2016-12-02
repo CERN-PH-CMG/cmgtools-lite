@@ -23,6 +23,7 @@ class fastCombinedObjectRecleaner:
         for jetPt in self.jetPts: self.outjetvars.extend([(x%jetPt,'I' if 'nBJet' in x else 'F') for x in self._outjetvars])
         self.branches = [var+self.label for var in self.outmasses]
         self.branches.extend([(var+self.label,_type) for var,_type in self.outjetvars])
+        self.branches += [("LepGood_conePt","F",20,"nLepGood")]
 
         self._helper_lepsF = CollectionSkimmer("LepFO"+self.label, "LepGood", floats=[], maxSize=20, saveSelectedIndices=True)
         self._helper_lepsT = CollectionSkimmer("LepTight"+self.label, "LepGood", floats=[], maxSize=20, saveTagForAll=True)
@@ -77,6 +78,7 @@ class fastCombinedObjectRecleaner:
 
         tags = getattr(event,'_CombinedTagsForCleaning%s'%self.inlabel)
         ret = {}
+        ret['LepGood_conePt'] = [tags.leps_conept[i] for i in xrange(self.nLepGood.Get()[0])]
 
         self._worker.clear()
         self._worker.loadTags(tags,self.cleanTausWithLooseLeptons)
