@@ -20,22 +20,25 @@ eleID = "CBID"
 
 # Isolation
 isolation = "miniIso"
-
 #JEC
 jetAna.mcGT = "Spring16_25nsV6_MC"
 jetAna.dataGT = "Spring16_25nsV6_DATA"
 ##Lets turn everything on for now, at least we know what is applied
 jetAna.addJECShifts = True
-jetAna.smearJets = True
+jetAna.smearJets = False
 jetAna.recalibrateJets = True 
-jetAna.applyL2L3Residual = True
+jetAna.applyL2L3Residual = "Data"
 metAna.recalibrate = True
 
 
+
 #-------- HOW TO RUN
-#sample = 'MC'
-sample = 'data'
+sample = 'MC'
+#sample = 'data'
 #sample = 'Signal'
+
+#-------- Preprocessor yes/no
+cmssw = True
 
 isData = False # default, but will be overwritten below
 isSignal = False # default, but will be overwritten below
@@ -126,6 +129,9 @@ ttHSTSkimmer = cfg.Analyzer(
   minST = 150,
   )
 
+from CMGTools.TTHAnalysis.analyzers.nIsrAnalyzer import NIsrAnalyzer
+NIsrAnalyzer = cfg.Analyzer(
+  NIsrAnalyzer, name='NIsrAnalyzer')
 ## HT skim
 from CMGTools.TTHAnalysis.analyzers.ttHHTSkimmer import ttHHTSkimmer
 ttHHTSkimmer = cfg.Analyzer(
@@ -183,6 +189,7 @@ triggerFlagsAna.triggerBits = {
   'IsoEle27T' : triggers_1el27WPTight,
   'Ele105' : trigger_1el_noiso,
   'Ele115' : trigger_1el_noiso_115,
+  'Ele50PFJet165' :   trigger_1el_noiso_jet165,
   'EleHT600' : triggers_el_ht600,
   'EleHT400MET70' : triggers_el_ht400_met70,
   'EleHT350MET70' : triggers_el_ht350_met70,
@@ -218,8 +225,9 @@ jetAna.minLepPt = 10
 ## JetAna
 jetAna.doQG = True
 
-## Iso Track
-isoTrackAna.setOff=False
+## Iso Track #use basic relIso for now
+isoTrackAna.setOff = False
+isoTrackAna.doRelIsolation = True
 
 # store all taus by default
 genAna.allGenTaus = True
@@ -236,6 +244,7 @@ if sample == "MC":
   
   #pick the file you want to run on
   selectedComponents = [TTJets_DiLepton]
+#  [TTJets_SingleLeptonFromTbar,TTJets_SingleLeptonFromTbar_ext,TTJets_SingleLeptonFromT,TTJets_DiLepton,TTJets_DiLepton_ext,
 
   if test==1:
     # test a single component, using a single thread.
@@ -384,13 +393,16 @@ if isSignal:
 susyCoreSequence.insert(susyCoreSequence.index(lepAna)+1, anyLepSkim)
 sequence = cfg.Sequence(susyCoreSequence+[
     LHEAna,
+    NIsrAnalyzer,
     ttHEventAna,
     ttHHTSkimmer,
+#    ttHSTSkimmer,
     treeProducer,
     ])
 
 if isData:
   sequence.remove(anyLepSkim)
+  sequence.remove(NIsrAnalyzer)
 if not isSignal:
   sequence.remove(susyScanAna)
 
@@ -412,9 +424,18 @@ output_service = cfg.Service(
     )
 outputService.append(output_service)
 
+from PhysicsTools.Heppy.utils.cmsswPreprocessor import CmsswPreprocessor
+preprocessor = None
+if cmssw:
+    fname = "$CMSSW_BASE/src/CMGTools/SUSYAnalysis/cfg/runBTaggingSlimPreprocessor_cfg.py"
+    jetAna.jetCol = 'selectedUpdatedPatJets'
+#    fname = "$CMSSW_BASE/src/CMGTools/SUSYAnalysis/cfg/MetType1_jec_Spring16_25nsV6_MC.py"
+    preprocessor = CmsswPreprocessor(fname)#, addOrigAsSecondary=False)
+
 print "running"
 from PhysicsTools.HeppyCore.framework.eventsfwlite import Events
 config = cfg.Config( components = selectedComponents,
          sequence = sequence,
          services = outputService,
+         preprocessor=preprocessor,
          events_class = Events)

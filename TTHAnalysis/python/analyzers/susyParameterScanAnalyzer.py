@@ -205,6 +205,6 @@ class susyParameterScanAnalyzer( Analyzer ):
                 self.readLHELumiInfo(event)
         self.findSusyMasses(event)
 
-        self.countISRjets(event)
+#        self.countISRjets(event)
     
         return True
