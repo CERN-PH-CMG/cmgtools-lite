@@ -47,7 +47,7 @@ public:
     output.minMllAFSS = -1;
     output.minMllSFOS = -1;
     for (auto p : pairs){
-      if ((output.mZ1<0 || fabs(p.m-91.2)<fabs(output.mZ1-91.2)) && p.isOS && p.isSF) output.mZ1 = p.m;
+      if ((output.mZ1<0 || fabs(p.m-91)<fabs(output.mZ1-91)) && p.isOS && p.isSF) output.mZ1 = p.m;
       if (output.minMllAFAS<0 || p.m<output.minMllAFAS) output.minMllAFAS = p.m;
       if ((output.minMllAFOS<0 || p.m<output.minMllAFOS) && p.isOS) output.minMllAFOS = p.m;
       if ((output.minMllAFSS<0 || p.m<output.minMllAFSS) && !(p.isOS)) output.minMllAFSS = p.m;
@@ -77,8 +77,8 @@ public:
     std::set<int> veto_FO;
     std::set<int> veto_tight;
     for (auto p: pairs){
-      if ((doVetoZ_ && 76.2<p.m && p.m<106.2 && p.isOS && p.isSF) || (doVetoLMf_ && 0<p.m && p.m<12 && p.isOS && p.isSF)) {veto_FO.insert(p.i); veto_FO.insert(p.j);}
-      if ((doVetoZ_ && 76.2<p.m && p.m<106.2 && p.isOS && p.isSF) || (doVetoLMt_ && 0<p.m && p.m<12 && p.isOS && p.isSF)) {veto_tight.insert(p.i); veto_tight.insert(p.j);}
+      if ((doVetoZ_ && 76<p.m && p.m<106 && p.isOS && p.isSF) || (doVetoLMf_ && 0<p.m && p.m<12 && p.isOS && p.isSF)) {veto_FO.insert(p.i); veto_FO.insert(p.j);}
+      if ((doVetoZ_ && 76<p.m && p.m<106 && p.isOS && p.isSF) || (doVetoLMt_ && 0<p.m && p.m<12 && p.isOS && p.isSF)) {veto_tight.insert(p.i); veto_tight.insert(p.j);}
     }
     for (auto i: veto_FO) leps_fo.erase(i);
     for (auto i: veto_tight) leps_tight.erase(i);
