@@ -3,10 +3,10 @@
 #include <algorithm>
 #include <TTreeReaderValue.h>
 #include <TTreeReaderArray.h>
-#include <TLorentzVector.h>
 #include <DataFormats/Math/interface/deltaR.h>
 #include <CMGTools/TTHAnalysis/interface/CollectionSkimmer.h>
 #include "CMGTools/TTHAnalysis/interface/CombinedObjectTags.h"
+#include "DataFormats/Math/interface/LorentzVector.h"
 
 struct JetSumCalculatorOutput {
   int thr;
@@ -41,49 +41,52 @@ public:
     _jetptcuts.insert(pt);
   }
 
+  typedef math::PtEtaPhiMLorentzVectorD ptvec;
+  typedef math::XYZTLorentzVectorD crvec;
+
   std::vector<JetSumCalculatorOutput> GetJetSums(){
 
     std::vector<JetSumCalculatorOutput> output;
-
-      for (auto thr : _jetptcuts){
-
-	TLorentzVector mht(0,0,0,0);
-	JetSumCalculatorOutput sums;
-	sums.thr = float(thr);
-	sums.htJetj = 0;
-	sums.nBJetLoose = 0;
-	sums.nBJetMedium = 0;
-
-	for (int i=0; i<**nLep_; i++) {
-	  if (!sel_leps[i]) continue;
-	  TLorentzVector lep;
-	  lep.SetPtEtaPhiM((*Lep_pt_)[i],0,(*Lep_phi_)[i],0);
-	  mht = mht - lep;
-	}
-	if (cleanJetsWithFOTaus_) {
-	  for (auto i : *_ct){
-	    TLorentzVector tau;
-	    tau.SetPtEtaPhiM((*Tau_pt_)[i],0,(*Tau_phi_)[i],0);
-	    mht = mht - tau;
-	  }
-	}
-	for (auto j : *_cj){
-	  float pt = (*Jet_pt_)[j];
-	  if (pt<=thr) continue;
-	  float phi = (*Jet_phi_)[j];
-	  float csv = (*Jet_btagCSV_)[j];
-	  sums.htJetj += pt;
-	  TLorentzVector jp4;
-	  jp4.SetPtEtaPhiM(pt,0,phi,0);
-	  mht = mht - jp4;
-	  if (csv>bTagL_) sums.nBJetLoose += 1;
-	  if (csv>bTagM_) sums.nBJetMedium += 1;
-	}
-
-	sums.mhtJet = mht.Pt();
-	output.push_back(sums);
+    
+    crvec _mht(0,0,0,0);
+    
+    for (int i=0; i<**nLep_; i++) {
+      if (!sel_leps[i]) continue;
+      crvec lep(ptvec((*Lep_pt_)[i],0,(*Lep_phi_)[i],0));
+      _mht = _mht - lep;
+    }
+    if (cleanJetsWithFOTaus_) {
+      for (auto i : *_ct){
+	crvec tau(ptvec((*Tau_pt_)[i],0,(*Tau_phi_)[i],0));
+	_mht = _mht - tau;
       }
-      return output;
+    }
+    
+    for (auto thr : _jetptcuts){
+      auto mht = _mht;      
+      JetSumCalculatorOutput sums;
+      sums.thr = float(thr);
+      sums.htJetj = 0;
+      sums.nBJetLoose = 0;
+      sums.nBJetMedium = 0;
+      
+      for (auto j : *_cj){
+	float pt = (*Jet_pt_)[j];
+	if (pt<=thr) continue;
+	float phi = (*Jet_phi_)[j];
+	float csv = (*Jet_btagCSV_)[j];
+	sums.htJetj += pt;
+	crvec jp4(ptvec(pt,0,phi,0));
+	mht = mht - jp4;
+	if (csv>bTagL_) sums.nBJetLoose += 1;
+	if (csv>bTagM_) sums.nBJetMedium += 1;
+      }
+
+      sums.mhtJet = mht.Pt();
+      output.push_back(sums);
+    }
+
+    return output;
   }
   
   void clear() {

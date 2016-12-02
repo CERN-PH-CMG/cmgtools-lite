@@ -3,9 +3,9 @@
 #include <algorithm>
 #include <TTreeReaderValue.h>
 #include <TTreeReaderArray.h>
-#include <TLorentzVector.h>
 #include "CMGTools/TTHAnalysis/interface/CollectionSkimmer.h"
 #include "CMGTools/TTHAnalysis/interface/CombinedObjectTags.h"
+#include "DataFormats/Math/interface/LorentzVector.h"
 
 struct LeptonPairInfo {
   int i;
@@ -28,6 +28,9 @@ public:
   typedef TTreeReaderValue<int>   rint;
   typedef TTreeReaderArray<float> rfloats;
   typedef TTreeReaderArray<int> rints;
+
+  typedef math::PtEtaPhiMLorentzVectorD ptvec;
+  typedef math::XYZTLorentzVectorD crvec;
   
   fastCombinedObjectRecleanerMassVetoCalculator(CollectionSkimmer &skim_lepsF, CollectionSkimmer &skim_lepsT, bool doVetoZ, bool doVetoLMf, bool doVetoLMt) : skim_lepsF_(skim_lepsF), skim_lepsT_(skim_lepsT), doVetoZ_(doVetoZ), doVetoLMf_(doVetoLMf), doVetoLMt_(doVetoLMt){}
   
@@ -59,7 +62,7 @@ public:
   void run() {
 
     int nLep = **nLep_;
-    for (int i=0; i<nLep; i++) if (leps_loose[i]) leps_p4[i].SetPtEtaPhiM((*Lep_pt_)[i],(*Lep_eta_)[i],(*Lep_phi_)[i],(*Lep_mass_)[i]);
+    for (int i=0; i<nLep; i++) if (leps_loose[i]) leps_p4[i] = ptvec((*Lep_pt_)[i],(*Lep_eta_)[i],(*Lep_phi_)[i],(*Lep_mass_)[i]);
     for (int i=0; i<nLep; i++){
       if (!leps_loose[i]) continue;
       for (int j=i+1; j<nLep; j++){
@@ -98,7 +101,7 @@ public:
     std::fill_n(leps_loose.get(),nLep,false);
     leps_fo.clear();
     leps_tight.clear();
-    leps_p4.reset(new TLorentzVector[nLep]);
+    leps_p4.reset(new crvec[nLep]);
   }
 
   void loadTags(CombinedObjectTags *tags){
@@ -128,7 +131,7 @@ private:
   Int_t nLep;
   std::unique_ptr<bool[]> leps_loose;
   std::set<int> leps_fo, leps_tight;
-  std::unique_ptr<TLorentzVector[]> leps_p4;
+  std::unique_ptr<crvec[]> leps_p4;
   bool doVetoZ_;
   bool doVetoLMf_;
   bool doVetoLMt_;
