@@ -38,20 +38,11 @@ WJets : W2JetsToLNu_LO: xsec : 1 ; FillColor=ROOT.kGray+2, Label="W+jets" #, Nor
 WJets : W3JetsToLNu_LO: xsec : 1 ; FillColor=ROOT.kGray+2, Label="W+jets" #, NormSystematic=0.5
 WJets : W4JetsToLNu_LO: xsec : 1 ; FillColor=ROOT.kGray+2, Label="W+jets" #, NormSystematic=0.5
 
-# data : DoubleEG_Run2016B_PromptReco_v2
-# data : DoubleEG_Run2016C_PromptReco_v2
-# data : DoubleEG_Run2016D_PromptReco_v2
-# data : MuonEG_Run2016B_PromptReco_v2
-# data : MuonEG_Run2016C_PromptReco_v2
-# data : MuonEG_Run2016D_PromptReco_v2
-# data : DoubleMuon_Run2016B_PromptReco_v2
-# data : DoubleMuon_Run2016C_PromptReco_v2
-# data : DoubleMuon_Run2016D_PromptReco_v2
-
-# 12.9
-# data : MuonEG_Run2016B_29Jul2016
-# data : MuonEG_Run2016C_29Jul2016
-# data : MuonEG_Run2016D_29Jul2016
-
-# 6.3
-data : MuonEG_Run2016G_PromptReco_v1
+data : MuonEG_Run2016B_23Sep2016
+data : MuonEG_Run2016C_23Sep2016
+data : MuonEG_Run2016D_23Sep2016
+data : MuonEG_Run2016E_23Sep2016
+data : MuonEG_Run2016F_23Sep2016
+data : MuonEG_Run2016G_23Sep2016
+data : MuonEG_Run2016H_PromptReco_v2
+data : MuonEG_Run2016H_PromptReco_v3
