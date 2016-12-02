@@ -126,6 +126,9 @@ ttHSTSkimmer = cfg.Analyzer(
   minST = 150,
   )
 
+from CMGTools.TTHAnalysis.analyzers.nIsrAnalyzer import NIsrAnalyzer
+NIsrAnalyzer = cfg.Analyzer(
+  NIsrAnalyzer, name='NIsrAnalyzer')
 ## HT skim
 from CMGTools.TTHAnalysis.analyzers.ttHHTSkimmer import ttHHTSkimmer
 ttHHTSkimmer = cfg.Analyzer(
@@ -384,6 +387,7 @@ if isSignal:
 susyCoreSequence.insert(susyCoreSequence.index(lepAna)+1, anyLepSkim)
 sequence = cfg.Sequence(susyCoreSequence+[
     LHEAna,
+    NIsrAnalyzer,
     ttHEventAna,
     ttHHTSkimmer,
 #    ttHSTSkimmer,
