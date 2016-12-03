@@ -47,13 +47,11 @@ if test==0:
         comp.triggers = triggers_8TeV_mumu
 
 elif test==1:
-    selectedComponents = [ RelValZMM_7_4_1,RelValZMM_7_4_0_pre9 ]
-#    selectedComponents = [RelVal_741_Philfixes]
-#    selectedComponents = relValkate
+    selectedComponents = [ DoubleMuon_Run2016H_PromptReco_v3 ]
     for comp in selectedComponents:
-#        comp.splitFactor = 1
-        comp.splitFactor = 100
-        comp.files = comp.files[:]
+        comp.splitFactor = 1
+        comp.files = ['root://eoscms////store/relval/CMSSW_8_0_20/MET/MINIAOD/80X_dataRun2_relval_Candidate_2016_09_02_10_27_40_RelVal_met2016B-v1/00000/2E6B9138-1C7A-E611-AE72-0025905A60DE.root']
+        comp.json = None
 
 elif test==2:
 #    isZSkim=True
@@ -75,13 +73,6 @@ elif test==2:
 
 
    # ----------------------- Summer15 options -------------------------------------------------------------------- #
-elif test==2:
-    selectedComponents = [ DYJetsToLL_M50 ]
-    isZSkim=True
-    for comp in selectedComponents:
-        comp.triggers = triggers_mumu
-        comp.splitFactor = 1
-        comp.files = comp.files[:1]
 
 elif test==3:
     isZSkim=True
@@ -182,7 +173,9 @@ elif test==15:
 ### this is for the PhotonSkim
 elif test==16:
     is1PH=True
-    selectedComponents = [ SinglePhoton_Run2016B_PromptReco_v2, SinglePhoton_Run2016C_PromptReco_v2, SinglePhoton_Run2016D_PromptReco_v2 ]
+    selectedComponents = [ SinglePhoton_Run2016B_PromptReco_v2, SinglePhoton_Run2016C_PromptReco_v2, SinglePhoton_Run2016D_PromptReco_v2,
+                           SinglePhoton_Run2016E_PromptReco_v2, SinglePhoton_Run2016F_PromptReco_v1, SinglePhoton_Run2016G_PromptReco_v1,
+                           SinglePhoton_Run2016H_PromptReco_v2, SinglePhoton_Run2016H_PromptReco_v3 ]
     for comp in selectedComponents:
         comp.triggers = triggers_photon30 + triggers_photon50 + triggers_photon75 + triggers_photon90 + triggers_photon120 + triggers_photon165_HE10
         comp.splitFactor = 1000
@@ -317,7 +310,7 @@ gammaSkim = cfg.Analyzer(
             GammaSkimmer, name='GammaSkimmer',
             )
 
-if is1PH and test==17:
+if is1PH and (test==17 or test==19):
     photonAna.ptMin = 50
     photonAna.etaMax = 1.4
     metSequence.insert(metSequence.index(photonAna)+1,gammaSkim)
@@ -335,8 +328,11 @@ if isZSkim or is1PH or test==2:
             "met_shifted_JetResUp" : NTupleObject("met_shifted_JetResUp", metType, help="PF E_{T}^{miss}, after type 1 corrections with jet resolution Up"),
             "met_shifted_JetResDown" : NTupleObject("met_shifted_JetResDown", metType, help="PF E_{T}^{miss}, after type 1 corrections with jet resolution Down"),
             #####
-            "metPuppi_jecUp" : NTupleObject("metPuppi_jecUp", metType, help="PF E_{T}^{miss}, after type 1 corrections with JEC up variation (Puppi)"),
-            "metPuppi_jecDown" : NTupleObject("metPuppi_jecDown", metType, help="PF E_{T}^{miss}, after type 1 corrections with JEC down variation (Puppi)"),
+            #need to take from the preprocessor
+#            "metPuppi_jecUp" : NTupleObject("metPuppi_jecUp", metType, help="PF E_{T}^{miss}, after type 1 corrections with JEC up variation (Puppi)"),
+#            "metPuppi_jecDown" : NTupleObject("metPuppi_jecDown", metType, help="PF E_{T}^{miss}, after type 1 corrections with JEC down variation (Puppi)"),
+            "metPuppi_shifted_JetEnUp" : NTupleObject("metPuppi_jecUp", metType, help="PF E_{T}^{miss}, after type 1 corrections with JEC up variation (Puppi)"),
+            "metPuppi_shifted_JetEnDown" : NTupleObject("metPuppi_jecDown", metType, help="PF E_{T}^{miss}, after type 1 corrections with JEC down variation (Puppi)"),
             "metPuppi_shifted_UnclusteredEnUp" : NTupleObject("metPuppi_shifted_UnclusteredEnUp", metType, help="PF E_{T}^{miss}, after type 1 corrections with met unclustered Up"),
             "metPuppi_shifted_UnclusteredEnDown" : NTupleObject("metPuppi_shifted_UnclusteredEnDown", metType, help="PF E_{T}^{miss}, after type 1 corrections with met unclustered Down"),
             "metPuppi_shifted_JetResUp" : NTupleObject("metPuppi_shifted_JetResUp", metType, help="PF E_{T}^{miss}, after type 1 corrections with jet resolution Up"),
@@ -439,15 +435,15 @@ import subprocess
 if comp.isData:
     ## DATA 25ns
     removeResiduals = False
-    jecDBFile = os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/jec/Spring16_25nsV8_DATA.db'
-    jecEra    = 'Spring16_25nsV8_DATA'
+    jecDBFile = os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/jec/Spring16_25nsV10_DATA.db'
+    jecEra    = 'Spring16_25nsV10_DATA'
     jerDBFile = os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/jer/Spring16_25nsV6_MC.db'
     jerEra    = 'Spring16_25nsV6'
 else:
     ## MC 25ns
     removeResiduals = False
-    jecDBFile = os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/jec/Spring16_25nsV8_MC.db'
-    jecEra    = 'Spring16_25nsV8_MC'
+    jecDBFile = os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/jec/Spring16_25nsV10_MC.db'
+    jecEra    = 'Spring16_25nsV10_MC'
     jerDBFile = os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/jer/Spring16_25nsV6_MC.db'
     jerEra    = 'Spring16_25nsV6'
 
