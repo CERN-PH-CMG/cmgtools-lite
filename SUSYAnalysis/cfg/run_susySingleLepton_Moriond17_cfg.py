@@ -243,8 +243,8 @@ if sample == "MC":
   from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv2 import *
   
   #pick the file you want to run on
-  selectedComponents = [TTJets_DiLepton]
-#  [TTJets_SingleLeptonFromTbar,TTJets_SingleLeptonFromTbar_ext,TTJets_SingleLeptonFromT,TTJets_DiLepton,TTJets_DiLepton_ext,
+  selectedComponents = [TTJets_DiLepton,TTJets_SingleLeptonFromTbar,TTJets_SingleLeptonFromT,TTJets_DiLepton,
+TTJets_LO_HT600to800, TTJets_LO_HT800to1200, TTJets_LO_HT1200to2500,TTJets_LO_HT1200to2500_ext,TTJets_LO_HT2500toInf]
 
   if test==1:
     # test a single component, using a single thread.
@@ -396,13 +396,14 @@ sequence = cfg.Sequence(susyCoreSequence+[
     NIsrAnalyzer,
     ttHEventAna,
     ttHHTSkimmer,
-#    ttHSTSkimmer,
+    ttHSTSkimmer,
     treeProducer,
     ])
 
 if isData:
   sequence.remove(anyLepSkim)
   sequence.remove(NIsrAnalyzer)
+  sequence.remove(ttHSTSkimmer)
 if not isSignal:
   sequence.remove(susyScanAna)
 
@@ -410,7 +411,7 @@ if not isSignal:
 if isSignal:
  sequence.remove(ttHHTSkimmer)
  sequence.remove(eventFlagsAna)
-
+ sequence.remove(ttHSTSkimmer)
 ## output histogram
 outputService=[]
 from PhysicsTools.HeppyCore.framework.services.tfile import TFileService
