@@ -409,6 +409,7 @@ if not isSignal:
 
 #remove all skims for signal
 if isSignal:
+ sequence.remove(anyLepSkim)
  sequence.remove(ttHHTSkimmer)
  sequence.remove(eventFlagsAna)
  sequence.remove(ttHSTSkimmer)
