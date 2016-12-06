@@ -58,6 +58,9 @@ lepAna.doIsolationScan = False
 lepAna.loose_electron_id = "POG_MVA_ID_Spring15_NonTrig_VLooseIdEmu"
 isolation = "miniIso"
 
+jetAna.lepSelCut = lambda lep : False # no cleaning of jets with leptons
+jetAnaScaleDown.lepSelCut = lambda lep : False # no cleaning of jets with leptons
+jetAnaScaleUp.lepSelCut = lambda lep : False # no cleaning of jets with leptons
 jetAna.copyJetsByValue = True # do not remove this
 metAna.copyMETsByValue = True # do not remove this
 jetAna.doQG = True
