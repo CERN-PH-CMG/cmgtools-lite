@@ -33,7 +33,7 @@ class CollectionSkimmer {
         typedef CopyVar<float,Float_t> CopyFloat;
         typedef CopyVar<int,Int_t> CopyInt;
 
-        CollectionSkimmer(const std::string &outName, const std::string &collName, bool saveSelectedIndices = false, bool saveTagForAll = false) : outName_(outName), collName_(collName), hasBranched_(false), srcCount_(NULL), saveSelectedIndices_(saveSelectedIndices), saveTagForAll_(saveTagForAll) {}
+        CollectionSkimmer(const std::string &outName, const std::string &collName, bool saveSelectedIndices = false, bool saveTagForAll = false) : outName_(outName), collName_(collName), hasBranched_(false), srcCount_(NULL), saveSelectedIndices_(saveSelectedIndices), saveTagForAll_(saveTagForAll), maxEntries_(0) {}
         CollectionSkimmer(const CollectionSkimmer &other) = delete;
         CollectionSkimmer &operator=(const CollectionSkimmer &other) = delete;
 
@@ -50,11 +50,12 @@ class CollectionSkimmer {
         void clear() {
 	  nOut_ = 0;
 	  nIn_ = 0;
+	  if (iOut_.get()) std::fill_n(iOut_.get(),maxEntries_,0);
 	  if (saveTagForAll_){
 	    assert (srcCount_); // pointer to srcCount TTreeReaderValue must be set
 	    nIn_ = **srcCount_;
 	    assert (uint(nIn_)<=maxEntries_);
-	    std::fill_n(iTagOut_.get(),nIn_,0);
+	    if (iTagOut_.get()) std::fill_n(iTagOut_.get(),nIn_,0);
 	  }
 	}
 
