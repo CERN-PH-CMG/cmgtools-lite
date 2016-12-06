@@ -138,7 +138,7 @@ class EventVars1LWeightsForSystematics:
     def __init__(self):
         self.branches = [
             # Top related
-            "GenTopPt", "GenAntiTopPt", "TopPtWeight", "GenTTBarPt", "GenTTBarWeight",
+            "GenTopPt", "GenAntiTopPt", "TopPtWeight","TopPtWeightII", "GenTTBarPt", "GenTTBarWeight",
             # ISR
             "ISRTTBarWeight", "GenGGPt", "ISRSigUp", "ISRSigDown",
             # DiLepton
@@ -200,6 +200,7 @@ class EventVars1LWeightsForSystematics:
         GenAntiTopPt = -999
         GenAntiTopIdx = -999
         TopPtWeight = 1.
+        TopPtWeightII = 1.
         GenTTBarPt = -999
         GenTTBarWeight = 1.
         ISRTTBarWeight = 1.
@@ -232,8 +233,14 @@ class EventVars1LWeightsForSystematics:
         if GenTopPt!=-999 and GenAntiTopPt!=-999 and nGenTops==2:
             SFTop     = exp(0.156    -0.00137*GenTopPt    )
             SFAntiTop = exp(0.156    -0.00137*GenAntiTopPt)
+
+            SFTopII     = exp(0.0615    -0.0005*GenTopPt    )
+            SFAntiTopII = exp(0.0615    -0.0005*GenAntiTopPt)
+            
             TopPtWeight = sqrt(SFTop*SFAntiTop)
+            TopPtWeightII = sqrt(SFTopII*SFAntiTopII)
             if TopPtWeight<0.5: TopPtWeight=0.5
+            if TopPtWeightII<0.5: TopPtWeightII=0.5
 
             if GenAntiTopIdx!=-999 and GenTopIdx!=-999:
                 GenTTBarp4 = genParts[GenTopIdx].p4()+ genParts[GenAntiTopIdx].p4()
@@ -298,6 +305,7 @@ class EventVars1LWeightsForSystematics:
         ret['GenTopPt'] = GenTopPt
         ret['GenAntiTopPt'] = GenAntiTopPt
         ret['TopPtWeight']  = TopPtWeight
+        ret['TopPtWeightII']  = TopPtWeightII
         ret['GenTTBarPt']  = GenTTBarPt
         ret['GenTTBarWeight'] = GenTTBarWeight
         ret['ISRTTBarWeight' ]  = ISRTTBarWeight
