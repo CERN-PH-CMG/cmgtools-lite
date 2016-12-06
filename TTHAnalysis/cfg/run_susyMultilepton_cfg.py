@@ -165,6 +165,7 @@ ttHJetTauAna = cfg.Analyzer(
 #                        ttHFatJetAna)
 susyCoreSequence.insert(susyCoreSequence.index(ttHCoreEventAna), 
                         ttHSVAna)
+ttHSVAna.preselection = lambda ivf : abs(ivf.dxy.value())<2 and ivf.cosTheta>0.98
 #susyCoreSequence.insert(susyCoreSequence.index(ttHCoreEventAna), 
 #                        ttHHeavyFlavourHadronAna)
 
@@ -193,6 +194,7 @@ susyCoreSequence.insert(susyCoreSequence.index(ttHCoreEventAna),
 
 
 from CMGTools.TTHAnalysis.analyzers.treeProducerSusyMultilepton import * 
+del susyMultilepton_collections['generatorSummary']
 
 if analysis=="susy":
     ttHLepSkim.allowLepTauComb = True
