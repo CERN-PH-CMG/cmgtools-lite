@@ -1,4 +1,6 @@
+# vim: syntax=sh
 yield: 0.5 : 1,0,1; XTitle="Events", MoreY=2
+dilep OS   : nLepGood >= 2 && LepGood1_charge * LepGood2_charge < 0
 ### LEPTONS
 lep1Pt:  LepGood1_pt       : 30,0,150; XTitle="Leading lepton p_{T} [GeV]"
 lep1Eta: abs(LepGood1_eta) : 6,0,2.5; XTitle="Leading lepton |#eta|"
@@ -11,7 +13,7 @@ worstMVA: min(LepGood1_mvaTTH,LepGood2_mvaTTH) : 20,0,1; XTitle="Worst MVA", Leg
 met:  met: 15,0,300 ; XTitle="E_{T}^{miss}  [GeV]"
 mtW1: mt_2(LepGood1_pt,LepGood1_phi,met,met_phi) : 18,0,240; XTitle="M_{T}(l_{1}\,E_{T}^{miss}) [GeV]", Legend='TL'
 mtW2: mt_2(LepGood2_pt,LepGood2_phi,met,met_phi) : 18,0,240; XTitle="M_{T}(l_{2}\,E_{T}^{miss}) [GeV]"
-mtWmin: min(mt_2(LepGood1_pt,LepGood1_phi,met,met_phi),mt_2(LepGood2_pt,LepGood2_phi,met,met_phi)) : 18,0,240; XTitle="min M_{T}(l_{i}\,E_{T}^{miss}) [GeV]", Legend='TR'
+mtWmin: min(mt_2(LepGood1_pt,LepGood1_phi,met,met_phi),mt_2(LepGood2_pt,LepGood2_phi,met,met_phi)) : 18,0,180; XTitle="min M_{T}(l_{i}\,E_{T}^{miss}) [GeV]", Legend='TR'
 mtWmax: max(mt_2(LepGood1_pt,LepGood1_phi,met,met_phi),mt_2(LepGood2_pt,LepGood2_phi,met,met_phi)) : 18,0,240; XTitle="max M_{T}(l_{i}\,E_{T}^{miss}) [GeV]", Legend='TL'
 minProjMet: met_pt*min(if3(cos(met_phi-LepGood1_phi)>0, abs(sin(met_phi-LepGood1_phi)), 1), \
                        if3(cos(met_phi-LepGood2_phi)>0, abs(sin(met_phi-LepGood2_phi)), 1) ) : 20,0,200; XTitle="Min Proj E_{T}^{miss}  [GeV]"
@@ -20,9 +22,9 @@ dphiLLmet : abs(deltaPhi(phi_2(LepGood1_pt,LepGood1_phi,LepGood2_pt,LepGood2_phi
 nLepGood  : nLepGood  : [1.5,2.5,3.5,4.5]  ; XTitle='N(lep\, tight)', XNDiv=505
 nLepOther : nLepOther : [-0.5,0.5,1.5,2.5] ; XTitle='N(lep\, fail)', XNDiv=505
 
-nSoftMu       : Sum$(LepOtherGood_pt < 25 && LepOtherGood_mediumMuonId > 0)  : [-0.5,0.5,1.5,2.5] ; XTitle='N(soft mu)', XNDiv=505, Logy
-nSoftMuSip6   : Sum$(LepOtherGood_sip3d > 6 && LepOtherGood_pt < 25 && LepOtherGood_mediumMuonId > 0)  : [-0.5,0.5,1.5,2.5] ; XTitle='N(soft mu)', XNDiv=505, Logy
-nSoftMuSip6AI : Sum$(LepOtherGood_sip3d > 6 && LepOtherGood_miniRelIso > 0.4 && LepOtherGood_pt < 25 && LepOtherGood_mediumMuonId > 0)  : [-0.5,0.5,1.5,2.5] ; XTitle='N(soft mu)', XNDiv=505, Logy
+nSoftMu         : Sum$(LepOtherGood_pt < 20)  : [-0.5,0.5,1.5,2.5] ; XTitle='N(soft mu)', XNDiv=505, Logy
+nSoftMuJV       : Sum$(deltaR(LepOtherGood_eta,LepOtherGood_phi,Jet_eta[iJetGood[0]],Jet_phi[iJetGood[0]]) > 0.4 && LepOtherGood_pt < 20)  : [-0.5,0.5,1.5,2.5] ; XTitle='N(soft mu)', XNDiv=505, Logy
+nSoftMuJVSip3AI : Sum$(deltaR(LepOtherGood_eta,LepOtherGood_phi,Jet_eta[iJetGood[0]],Jet_phi[iJetGood[0]]) > 0.4 && LepOtherGood_sip3d > 3 && LepOtherGood_miniRelIso > 0.2 && LepOtherGood_pt < 20)  : [-0.5,0.5,1.5,2.5] ; XTitle='N(soft mu)', XNDiv=505, Logy
 nSoftIVF_pt40 : Sum$(abs(SV_dxy)<2 && SV_cosTheta > 0.98 && SV_ntracks >= 3 && SV_sip3d > 4 && SV_jetPt < 40)  : [-0.5,0.5,1.5,2.5] ; XTitle='N(IVF\, p_{T}(j) < 40)', XNDiv=505, Logy
 nSoftIVF_pt20 : Sum$(abs(SV_dxy)<2 && SV_cosTheta > 0.98 && SV_ntracks >= 3 && SV_sip3d > 4 && SV_jetPt < 20)  : [-0.5,0.5,1.5,2.5] ; XTitle='N(IVF\, p_{T}(j) < 20)', XNDiv=505, Logy
 nSoftIVF_pt40b20 : Sum$(abs(SV_dxy)<2 && SV_cosTheta > 0.98 && SV_ntracks >= 3 && SV_sip3d > 4 && (SV_jetPt < 20 || SV_jetPt < 40 && SV_jetBTagCSV < 0.46) )  : [-0.5,0.5,1.5,2.5] ; XTitle='N(IVF\, p_{T}(j) < 40/20)', XNDiv=505, Logy
@@ -96,15 +98,15 @@ SV_jetPt: SV_jetPt : [0,20,30,40]; XTitle="SV p_{T}(jet)", MoreY=1.5, Legend="TL
 LepOtherGood_pt    : LepOtherGood_pt[0] : [0,3,4,5,6,7,8,10,12,14,17,20]; XTitle="Soft muon p_{T}", Density=True, YTitle="Events / GeV", LegendCutoff=0.001, IncludeOverflows=True
 LepOtherGood_pt_zoom : LepOtherGood_pt[0] : 12,0,18; XTitle="Soft muon p_{T}", LegendCutoff=0.001, IncludeOverflows=True
 LepOtherGood_eta : abs(LepOtherGood_eta[0]) : 8,0,2.4; XTitle="Soft muon |eta|"
-LepOtherGood_dxy : abs(LepOtherGood_dxy[0]) : 10,0,0.15; XTitle="Soft muon |dxy|"
-LepOtherGood_dz : abs(LepOtherGood_dz[0]) : 10,0,0.2; XTitle="Soft muon |dz|"
+LepOtherGood_dxy : abs(LepOther_dxy[iLepOtherGood[0]]) : 10,0,0.15; XTitle="Soft muon |dxy|"
+LepOtherGood_dz : abs(LepOther_dz[iLepOtherGood[0]]) : 10,0,0.2; XTitle="Soft muon |dz|"
 LepOtherGood_sip3d : LepOtherGood_sip3d[0] : 18,0,24; XTitle="Soft muon sip3d", LegendCutoff=0.001
 LepOtherGood_drLep : min(deltaR(LepOtherGood_eta[0],LepOtherGood_phi[0],LepGood1_eta,LepGood1_phi),deltaR(LepOtherGood_eta[0],LepOtherGood_phi[0],LepGood2_eta,LepGood2_phi)) : 10,0,4; XTitle="Soft muon #DeltaR(l)", MoreY=1.5
-LepOtherGood_drJet : min(deltaR(LepOtherGood_eta[0],LepOtherGood_phi[0],JetGood_eta,JetGood_phi),Alt$(deltaR(LepOtherGood_eta[0],LepOtherGood_phi[0],JetGood_eta[1],JetGood_phi[1]),999)) : 20,0,4; XTitle="Soft muon #DeltaR(j_{i})", MoreY=1.5
+LepOtherGood_drJet : min(deltaR(LepOtherGood_eta[0],LepOtherGood_phi[0],JetGood_eta[0],JetGood_phi[0]),Alt$(deltaR(LepOtherGood_eta[0],LepOtherGood_phi[0],JetGood_eta[1],JetGood_phi[1]),999)) : 20,0,4; XTitle="Soft muon #DeltaR(j_{i})", MoreY=1.5
 LepOtherGood_miniRelIso : LepOtherGood_miniRelIso[0] : [0,0.2,0.3,0.5,0.7,1.0,1.5,2.0,3.0]; XTitle="Soft muon miniRelIso", Density=True, YTitle="Events / bin width", LegendCutoff=0.001
 LepOtherGood_mediumMuonId : LepOtherGood_mediumMuonId[0] : [-0.5,0.5,1.5]; XTitle="LepOtherGood mediumMuonId", Legend="TL", LegendCutoff=0.001
-#LepOtherGood_drJet1 : deltaR(LepOtherGood_eta[0],LepOtherGood_phi[0],JetGood_eta[0],JetGood_phi[0]) : 10,0,4; XTitle="Soft muon #DeltaR(j_{1})", MoreY=1.5
-#LepOtherGood_drJet2 : Alt$(deltaR(LepOtherGood_eta[0],LepOtherGood_phi[0],JetGood_eta[1],JetGood_phi[1]),999) : 10,0,4; XTitle="Soft muon #DeltaR(j_{1})", MoreY=1.5, IncludeOverflows=False
+LepOtherGood_drJet1 : deltaR(LepOtherGood_eta[0],LepOtherGood_phi[0],JetGood_eta[0],JetGood_phi[0]) : 10,0,4; XTitle="Soft muon #DeltaR(j_{1})", MoreY=1.5
+LepOtherGood_drJet2 : Alt$(deltaR(LepOtherGood_eta[0],LepOtherGood_phi[0],JetGood_eta[1],JetGood_phi[1]),999) : 10,0,4; XTitle="Soft muon #DeltaR(j_{1})", MoreY=1.5, IncludeOverflows=False
 #LepOtherGood_relIso03 : LepOtherGood_relIso03[0] : [0,0.1,0.2,0.3,0.4,0.6,0.8,1.0,1.5,2.0,2.5,3.0,4.0]; XTitle="Soft muon relIso03", Density=True, YTitle="Events / bin width", LegendCutoff=0.001
 #LepOtherGood_trackHighPurityMuon : LepOtherGood_trackHighPurityMuon[0] : [-0.5,0.5,1.5]; XTitle="Soft muon trackHighPurityMuon", Legend="TL"
 #LepOtherGood_nStations : LepOtherGood_nStations : [-0.5,0.5,1.5,2.5,3.5,4.5,5.5]; XTitle="LepOtherGood nStations"

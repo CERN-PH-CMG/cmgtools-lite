@@ -120,7 +120,7 @@ def haddChunks(idir, removeDestDir, cleanUp=False, ignoreDirs=None, maxSize=None
             #print odir, cchunks
             running = [ dict(files=[], size=0.) ]
             for ch in cchunks:
-                size = os.path.getsize(ch)
+                size = sum(sum(os.path.getsize(os.path.join(p,f)) for f in fs) for p,d,fs in os.walk(ch))
                 if running[-1]['size'] + size > threshold:
                     running.append(dict(files=[], size=0.))
                 running[-1]['files'].append(ch)
