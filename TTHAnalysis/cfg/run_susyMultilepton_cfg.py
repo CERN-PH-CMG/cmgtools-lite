@@ -58,20 +58,13 @@ lepAna.doIsolationScan = False
 lepAna.loose_electron_id = "POG_MVA_ID_Spring15_NonTrig_VLooseIdEmu"
 isolation = "miniIso"
 
-jetAna.lepSelCut = lambda lep : False # no cleaning of jets with leptons
-jetAnaScaleDown.lepSelCut = lambda lep : False # no cleaning of jets with leptons
-jetAnaScaleUp.lepSelCut = lambda lep : False # no cleaning of jets with leptons
 jetAna.copyJetsByValue = True # do not remove this
 metAna.copyMETsByValue = True # do not remove this
-jetAna.doQG = True
 if not removeJecUncertainty:
     jetAna.addJECShifts = True
-    jetAna.jetPtOrUpOrDnSelection = True
     jetAnaScaleDown.copyJetsByValue = True # do not remove this
-    jetAnaScaleDown.doQG = False
     metAnaScaleDown.copyMETsByValue = True # do not remove this
     jetAnaScaleUp.copyJetsByValue = True # do not remove this
-    jetAnaScaleUp.doQG = False
     metAnaScaleUp.copyMETsByValue = True # do not remove this
     susyCoreSequence.insert(susyCoreSequence.index(jetAna)+1, jetAnaScaleDown)
     susyCoreSequence.insert(susyCoreSequence.index(jetAna)+1, jetAnaScaleUp)
@@ -126,6 +119,11 @@ else:
     # nothing to do, will use normal relIso03
     pass
 
+# Switch on slow QGL
+jetAna.doQG = True
+jetAnaScaleUp.doQG = True
+jetAnaScaleDown.doQG = True
+
 # Switch off slow photon MC matching
 photonAna.do_mc_match = False
 
@@ -134,7 +132,6 @@ tauAna.loose_ptMin = 20
 tauAna.loose_etaMax = 2.3
 tauAna.loose_decayModeID = "decayModeFindingNewDMs"
 tauAna.loose_tauID = "decayModeFindingNewDMs"
-tauAna.loose_vetoLeptons = False # no cleaning with leptons in production
 #if analysis in ["ttH"]: #if cleaning jet-loose tau cleaning
 #    jetAna.cleanJetsFromTaus = True
 #    jetAnaScaleUp.cleanJetsFromTaus = True
@@ -164,40 +161,38 @@ ttHJetTauAna = cfg.Analyzer(
     )
 
 ## Insert the FatJet, SV, HeavyFlavour analyzers in the sequence
-#susyCoreSequence.insert(susyCoreSequence.index(ttHCoreEventAna), 
-#                        ttHFatJetAna)
+susyCoreSequence.insert(susyCoreSequence.index(ttHCoreEventAna), 
+                        ttHFatJetAna)
 susyCoreSequence.insert(susyCoreSequence.index(ttHCoreEventAna), 
                         ttHSVAna)
-ttHSVAna.preselection = lambda ivf : abs(ivf.dxy.value())<2 and ivf.cosTheta>0.98
-#susyCoreSequence.insert(susyCoreSequence.index(ttHCoreEventAna), 
-#                        ttHHeavyFlavourHadronAna)
+susyCoreSequence.insert(susyCoreSequence.index(ttHCoreEventAna), 
+                        ttHHeavyFlavourHadronAna)
 
-### Insert declustering analyzer
-#from CMGTools.TTHAnalysis.analyzers.ttHDeclusterJetsAnalyzer import ttHDeclusterJetsAnalyzer
-#ttHDecluster = cfg.Analyzer(
-#    ttHDeclusterJetsAnalyzer, name='ttHDecluster',
-#    lepCut     = lambda lep,ptrel : lep.pt() > 10,
-#    maxSubjets = 6, # for exclusive reclustering
-#    ptMinSubjets = 5, # for inclusive reclustering
-#    drMin      = 0.2, # minimal deltaR(l,subjet) required for a successful subjet match
-#    ptRatioMax = 1.5, # maximum pt(l)/pt(subjet) required for a successful match
-#    ptRatioDiff = 0.1,  # cut on abs( pt(l)/pt(subjet) - 1 ) sufficient to call a match successful
-#    drMatch     = 0.02, # deltaR(l,subjet) sufficient to call a match successful
-#    ptRelMin    = 5,    # maximum ptRelV1(l,subjet) sufficient to call a match successful
-#    prune       = True, # also do pruning of the jets 
-#    pruneZCut       = 0.1, # pruning parameters (usual value in CMS: 0.1)
-#    pruneRCutFactor = 0.5, # pruning parameters (usual value in CMS: 0.5)
-#    verbose     = 0,   # print out the first N leptons
-#    jetCut = lambda jet : jet.pt() > 20,
-#    mcPartonPtCut = 20,
-#    mcLeptonPtCut =  5,
-#    mcTauPtCut    = 15,
-#    )
-#susyCoreSequence.insert(susyCoreSequence.index(ttHFatJetAna)+1, ttHDecluster)
+## Insert declustering analyzer
+from CMGTools.TTHAnalysis.analyzers.ttHDeclusterJetsAnalyzer import ttHDeclusterJetsAnalyzer
+ttHDecluster = cfg.Analyzer(
+    ttHDeclusterJetsAnalyzer, name='ttHDecluster',
+    lepCut     = lambda lep,ptrel : lep.pt() > 10,
+    maxSubjets = 6, # for exclusive reclustering
+    ptMinSubjets = 5, # for inclusive reclustering
+    drMin      = 0.2, # minimal deltaR(l,subjet) required for a successful subjet match
+    ptRatioMax = 1.5, # maximum pt(l)/pt(subjet) required for a successful match
+    ptRatioDiff = 0.1,  # cut on abs( pt(l)/pt(subjet) - 1 ) sufficient to call a match successful
+    drMatch     = 0.02, # deltaR(l,subjet) sufficient to call a match successful
+    ptRelMin    = 5,    # maximum ptRelV1(l,subjet) sufficient to call a match successful
+    prune       = True, # also do pruning of the jets 
+    pruneZCut       = 0.1, # pruning parameters (usual value in CMS: 0.1)
+    pruneRCutFactor = 0.5, # pruning parameters (usual value in CMS: 0.5)
+    verbose     = 0,   # print out the first N leptons
+    jetCut = lambda jet : jet.pt() > 20,
+    mcPartonPtCut = 20,
+    mcLeptonPtCut =  5,
+    mcTauPtCut    = 15,
+    )
+susyCoreSequence.insert(susyCoreSequence.index(ttHFatJetAna)+1, ttHDecluster)
 
 
 from CMGTools.TTHAnalysis.analyzers.treeProducerSusyMultilepton import * 
-del susyMultilepton_collections['generatorSummary']
 
 if analysis=="susy":
     ttHLepSkim.allowLepTauComb = True
@@ -275,12 +270,12 @@ if not removeJecUncertainty:
             "met_jecUp" : NTupleObject("met_jecUp", metType, help="PF E_{T}^{miss}, after type 1 corrections (JEC plus 1sigma)"),
             "met_jecDown" : NTupleObject("met_jecDown", metType, help="PF E_{T}^{miss}, after type 1 corrections (JEC minus 1sigma)"),
             })
-#    susyMultilepton_collections.update({
-#            "cleanJets_jecUp"       : NTupleCollection("Jet_jecUp",     jetTypeSusyExtraLight, 15, help="Cental jets after full selection and cleaning, sorted by pt (JEC plus 1sigma)"),
-#            "cleanJets_jecDown"     : NTupleCollection("Jet_jecDown",     jetTypeSusyExtraLight, 15, help="Cental jets after full selection and cleaning, sorted by pt (JEC minus 1sigma)"),
-#            "discardedJets_jecUp"   : NTupleCollection("DiscJet_jecUp", jetTypeSusyExtraLight, 15, help="Jets discarted in the jet-lepton cleaning (JEC +1sigma)"),
-#            "discardedJets_jecDown" : NTupleCollection("DiscJet_jecDown", jetTypeSusyExtraLight, 15, help="Jets discarted in the jet-lepton cleaning (JEC -1sigma)"),
-#            })
+    susyMultilepton_collections.update({
+            "cleanJets_jecUp"       : NTupleCollection("Jet_jecUp",     jetTypeSusyExtraLight, 15, help="Cental jets after full selection and cleaning, sorted by pt (JEC plus 1sigma)"),
+            "cleanJets_jecDown"     : NTupleCollection("Jet_jecDown",     jetTypeSusyExtraLight, 15, help="Cental jets after full selection and cleaning, sorted by pt (JEC minus 1sigma)"),
+            "discardedJets_jecUp"   : NTupleCollection("DiscJet_jecUp", jetTypeSusyExtraLight, 15, help="Jets discarted in the jet-lepton cleaning (JEC +1sigma)"),
+            "discardedJets_jecDown" : NTupleCollection("DiscJet_jecDown", jetTypeSusyExtraLight, 15, help="Jets discarted in the jet-lepton cleaning (JEC -1sigma)"),
+            })
 
 ## Tree Producer
 treeProducer = cfg.Analyzer(
@@ -633,11 +628,11 @@ if runFRMC or runDataQCD:
             triggerFlagsAna.triggerBits[tShort] = [ t ]
     treeProducer.collections = {
         "selectedLeptons" : NTupleCollection("LepGood",  leptonTypeSusyExtraLight, 8, help="Leptons after the preselection"),
-#        "otherLeptons"    : NTupleCollection("LepOther", leptonTypeSusy, 8, help="Leptons after the preselection"),
+        "otherLeptons"    : NTupleCollection("LepOther", leptonTypeSusy, 8, help="Leptons after the preselection"),
         "cleanJets"       : NTupleCollection("Jet",     jetTypeSusyExtraLight, 15, help="Cental jets after full selection and cleaning, sorted by pt"),
-#        "discardedJets"    : NTupleCollection("DiscJet", jetTypeSusyExtraLight, 15, help="Jets discarted in the jet-lepton cleaning"),
+        "discardedJets"    : NTupleCollection("DiscJet", jetTypeSusyExtraLight, 15, help="Jets discarted in the jet-lepton cleaning"),
         "selectedTaus"    : NTupleCollection("TauGood",  tauTypeSusy, 8, help="Taus after the preselection"),
-#        "otherTaus"       : NTupleCollection("TauOther",  tauTypeSusy, 8, help="Taus after the preselection not selected"),
+        "otherTaus"       : NTupleCollection("TauOther",  tauTypeSusy, 8, help="Taus after the preselection not selected"),
     }
     if True: # 
         from CMGTools.TTHAnalysis.analyzers.ttHLepQCDFakeRateAnalyzer import ttHLepQCDFakeRateAnalyzer
