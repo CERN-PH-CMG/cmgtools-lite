@@ -65,8 +65,7 @@ from CMGTools.VVResonances.analyzers.core_cff import *
 #-------- SAMPLES AND TRIGGERS -----------
 from CMGTools.VVResonances.samples.loadSamples import *
 
-selectedComponents = mcSamples+signalSamples+zprimeSamples
-selectedComponents = TTs+WJetsToLNuHT
+selectedComponents = mcSamples+signalSamples+zprimeSamples+dataSamples
 
 
 

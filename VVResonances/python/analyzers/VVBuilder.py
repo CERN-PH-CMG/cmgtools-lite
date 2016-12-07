@@ -14,6 +14,9 @@ class Substructure(object):
     def __init__(self):
         pass
 
+class Truth(object):
+    def __init__(self):
+        pass
 
 class VVBuilder(Analyzer):
     def __init__(self, cfg_ana, cfg_comp, looperName):
@@ -447,7 +450,62 @@ class VVBuilder(Analyzer):
         totalWeight = genCorr*recoCorr
         return totalWeight
 
+    def fillTopPtReweighting(self, event, truth):
+        """Top pT reweighting."""
+        if not self.cfg_comp.isMC:
+            truth.genTop_weight = 1.
+            return truth
 
+        ttbar = [p for p in event.genParticles if abs(p.pdgId()) == 6 and p.statusFlags().isLastCopy() and p.statusFlags().fromHardProcess()]
+
+        if self.cfg_comp.name.find('TT') != -1 and self.cfg_comp.name.find('TTH') == -1 and len(ttbar) == 2:
+            # store also individual pTs for later correction
+            truth.genTop_1_pt = ttbar[0].pt()
+            truth.genTop_2_pt = ttbar[1].pt()
+            top_1_pt = truth.genTop_1_pt
+            top_2_pt = truth.genTop_2_pt
+            # only valid up to 400 GeV, assume constant afterwards
+            if top_1_pt > 400:
+                top_1_pt = 400.
+            if top_2_pt > 400:
+                top_2_pt = 400.
+            # see https://twiki.cern.ch/twiki/bin/view/CMS/TopSystematics#pt_top_Reweighting
+            truth.genTop_weight = math.sqrt(math.exp(0.0615-0.0005*top_1_pt)*math.exp(0.0615-0.0005*top_2_pt))
+        else:
+            truth.genTop_weight = 1.
+        return truth
+
+    @staticmethod
+    def p4sum(ps):
+        '''Returns four-vector sum of objects in passed list. Returns None
+        if empty. Note that python sum doesn't work since p4() + 0/None fails,
+        but will be possible in future python'''
+        if not ps:
+            return None
+        p4 = ps[0].p4()
+        for i in xrange(len(ps) - 1):
+            p4 += ps[i + 1].p4()
+        return p4
+
+    def getParentBoson(self, event):
+        """Get generator level boson (last in chain) for correct kinematics."""
+        # if we already filled it exit
+        if hasattr(event, 'genBoson') or not self.cfg_comp.isMC:
+            return
+        leptons_prompt = [p for p in event.genParticles if abs(p.pdgId()) in [11, 12, 13, 14] and p.fromHardProcessFinalState()]
+        taus_prompt = [p for p in event.genParticles if p.statusFlags().isDirectHardProcessTauDecayProduct()]
+        all = leptons_prompt + taus_prompt
+        genBoson = VVBuilder.p4sum(all)
+        return genBoson
+
+    def makeTruthType(self, event):
+        """create truth collection."""
+        truth = Truth()
+        genBoson = self.getParentBoson(event)
+        truth = self.fillTopPtReweighting(event, truth)
+        if genBoson:
+            truth.genBoson = genBoson
+        return [truth]
 
     def process(self, event):
         self.readCollections( event.input )
@@ -482,10 +540,11 @@ class VVBuilder(Analyzer):
         LLJJ =self.makeZV(event)
         JJ=self.makeJJ(event)
         JJNuNu=self.makeMETV(event)
+        TruthType = self.makeTruthType(event)
 
 
         setattr(event,'LNuJJ'+self.cfg_ana.suffix,LNuJJ)
         setattr(event,'JJ'+self.cfg_ana.suffix,JJ)
         setattr(event,'LLJJ'+self.cfg_ana.suffix,LLJJ)
         setattr(event,'JJNuNu'+self.cfg_ana.suffix,JJNuNu)
-
+        setattr(event, 'TruthType' + self.cfg_ana.suffix, TruthType)
