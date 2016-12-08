@@ -9,7 +9,7 @@ kreator = ComponentCreator()
 ### ----------------------------- Zero Tesla run  ----------------------------------------
 
 dataDir = "$CMSSW_BASE/src/CMGTools/TTHAnalysis/data"  # use environmental variable, useful for instance to run on CRAB
-json=dataDir+'/json/Cert_246908-256869_13TeV_PromptReco_Collisions15_25ns_JSON.txt'
+json='/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/ReReco/Final/Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt'
 
 run_range = (273158, 284044)
 label = "_runs%s_%s"%(run_range[0], run_range[1])
