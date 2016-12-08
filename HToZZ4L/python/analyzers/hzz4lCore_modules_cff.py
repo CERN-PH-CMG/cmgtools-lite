@@ -222,6 +222,7 @@ jetAna = cfg.Analyzer(
     jetPt = 30.,
     jetEta = 4.7,
     jetEtaCentral = 4.7,
+    cleanJetsFromLeptons = True,
     jetLepDR = 0.4,
     jetLepArbitration = (lambda jet,lepton : lepton), # you can decide which to keep in case of overlaps; e.g. if the jet is b-tagged you might want to keep the jet
     cleanSelectedLeptons = False, #Whether to clean 'selectedLeptons' after disambiguation. Treat with care (= 'False') if running Jetanalyzer more than once
@@ -253,6 +254,7 @@ jetAna = cfg.Analyzer(
     calculateSeparateCorrections = False,
     calculateType1METCorrection  = False,
     type1METParams = { 'jetPtThreshold':15., 'skipEMfractionThreshold':0.9, 'skipMuons':True },
+    storeLowPtJets = False,
     )
 
 
