@@ -261,6 +261,7 @@ jetAna = cfg.Analyzer(
     jetPt = 25.,
     jetEta = 4.7,
     jetEtaCentral = 2.4,
+    cleanJetsFromLeptons = True,
     jetLepDR = 0.4,
     cleanSelectedLeptons = False, #Whether to clean 'selectedLeptons' after disambiguation. Treat with care (= 'False') if running Jetanalyzer more than once
     minLepPt = 10,
@@ -287,6 +288,7 @@ jetAna = cfg.Analyzer(
     calculateSeparateCorrections = True, # should be True if recalibrateJets is True, otherwise L1s will be inconsistent
     calculateType1METCorrection  = False,
     type1METParams = { 'jetPtThreshold':15., 'skipEMfractionThreshold':0.9, 'skipMuons':True },
+    storeLowPtJets = False,
     )
 
 
@@ -299,6 +301,7 @@ jetAnaAK8 = cfg.Analyzer(
     jetPt = 150.,
     jetEta = 2.4,
     jetEtaCentral = 2.4,
+    cleanJetsFromLeptons = True,
     jetLepDR = 0.4,
     cleanSelectedLeptons = False, #Whether to clean 'selectedLeptons' after disambiguation. Treat with care (= 'False') if running Jetanalyzer more than once
     minLepPt = 10,
@@ -325,6 +328,7 @@ jetAnaAK8 = cfg.Analyzer(
     calculateSeparateCorrections = True, # should be True if recalibrateJets is True, otherwise L1s will be inconsistent
     calculateType1METCorrection  = False,
     type1METParams = { 'jetPtThreshold':15., 'skipEMfractionThreshold':0.9, 'skipMuons':True },
+    storeLowPtJets = False,
     )
 
 
