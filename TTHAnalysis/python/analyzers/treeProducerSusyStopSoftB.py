@@ -54,7 +54,7 @@ susyStopSoftB_collections.update({
     #"recoveredJets"    : NTupleCollection("RecJet", jetTypeSusy, 15, help="Jets recovered declustering in the jet-lepton cleaning"),
     #"recoveredSplitJets" : NTupleCollection("RecSplitJet", jetTypeSusy, 15, help="Jets recovered declustering in the jet-lepton cleaning, split"),
     ##------------------------------------------------
-    "ivf"       : NTupleCollection("SV",     svType, 20, help="SVs from IVF"),
+    "ivf"       : NTupleCollection("SV",     svTypeExtra, 20, help="SVs from IVF"),
     "genBHadrons"  : NTupleCollection("GenBHad", heavyFlavourHadronType, 20, mcOnly=True, help="Gen-level B hadrons"),
     "genDHadrons"  : NTupleCollection("GenDHad", heavyFlavourHadronType, 20, mcOnly=True, help="Gen-level D hadrons"),
     ##------------------------------------------------

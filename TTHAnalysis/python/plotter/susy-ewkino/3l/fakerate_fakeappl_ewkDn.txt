@@ -10,6 +10,6 @@ change: nJet30\b       : nJet30_Mini
 change: htJet30j\b     : htJet30j_Mini
 change: nBJetMedium25\b: nBJetMedium25_Mini
 
-load-histo     : FR3_el        : $DATA/fakerate/FR2016_LightFlavor_13invfb.root : FR_susy_wpM_el_data_comb_down
-load-histo     : FR3_mu        : $DATA/fakerate/FR2016_LightFlavor_13invfb.root : FR_susy_wpM_mu_data_comb_down
-load-histo     : FR3_tau       : $DATA/fakerate/FR2016_Tau_13invfb.root         : taufakesNew_5
+load-histo     : FR3_el        : $DATA/fakerate/fakerate_light_mvaM_EWKino_ICHEP2016_12p9fb.root : FR_susy_wpM_el_data_comb_down
+load-histo     : FR3_mu        : $DATA/fakerate/fakerate_light_mvaM_EWKino_ICHEP2016_12p9fb.root : FR_susy_wpM_mu_data_comb_down
+load-histo     : FR3_tau       : $DATA/fakerate/fakerate_tau_EWKino_ICHEP2016_12p9fb.root        : taufakesNew_5

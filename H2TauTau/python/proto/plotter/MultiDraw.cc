@@ -35,11 +35,11 @@ void MultiDraw( TTree *inTree, TTreeFormula *commonWeightFormula, TObjArray *For
             Int_t seconds = (Int_t)(nTodo / perSecond), minutes = (Int_t)(seconds / 60.);
             seconds -= (Int_t)(minutes*60.);
             
-            cout << "Done " << (double(i) / ( double(NumEvents)) * 100.0f) << "% ";
-            if ( minutes ) cout << minutes << " minutes ";
-            cout << seconds << " seconds remain.                            \r";
+            // cout << "Done " << (double(i) / ( double(NumEvents)) * 100.0f) << "% ";
+            // if ( minutes ) cout << minutes << " minutes ";
+            // cout << seconds << " seconds remain.                            \r";
             
-            cout.flush();
+            // cout.flush();
             s.Start();
         }
         

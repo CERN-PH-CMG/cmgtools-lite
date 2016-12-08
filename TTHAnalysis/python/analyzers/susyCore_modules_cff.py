@@ -236,6 +236,15 @@ ttHLepSkim = cfg.Analyzer(
     #ptCuts = [20,10],                # can give a set of pt cuts on the leptons
     requireSameSignPair = False,
     allowLepTauComb = False
+)
+
+## global event Skimmer
+from CMGTools.TTHAnalysis.analyzers.globalEventSkimmer import globalEventSkimmer
+globalSkim = cfg.Analyzer(
+    globalEventSkimmer, name='globalEventSkimmer',
+    collections={"lep":"selectedLeptons",
+                 "tau":"selectedTaus"},
+    selections=[]
     )
 
 ## Photon Analyzer (generic)

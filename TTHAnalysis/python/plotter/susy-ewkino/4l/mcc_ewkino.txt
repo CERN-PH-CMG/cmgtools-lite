@@ -1,3 +1,6 @@
-BR\b           : BR(4, countTaus(4, LepSel1_pdgId, LepSel2_pdgId, LepSel3_pdgId, LepSel4_pdgId), nOSSF_4l, nOSLF_4l, nOSTF_4l) ; AlsoData
-SR\b           : SR(4, countTaus(4, LepSel1_pdgId, LepSel2_pdgId, LepSel3_pdgId, LepSel4_pdgId), nOSSF_4l, nOSLF_4l, mT2L_4l, mT2T_4l, mll_4l, mT_4l, met_pt) ; AlsoData
-appWeight\b    : EWK3L_fakeTransfer(4,EWK3L_fakeRate(LepSel_conePt[0],LepSel_eta[0],LepSel_pdgId[0]),isFake(LepSel_pt[0],LepSel_isTight[0]),EWK3L_fakeRate(LepSel_conePt[1],LepSel_eta[1],LepSel_pdgId[1]),isFake(LepSel_pt[1],LepSel_isTight[1]),EWK3L_fakeRate(LepSel_conePt[2],LepSel_eta[2],LepSel_pdgId[2]),isFake(LepSel_pt[2],LepSel_isTight[2]),EWK3L_fakeRate(LepSel_conePt[3],LepSel_eta[3],LepSel_pdgId[3]),isFake(LepSel_pt[3],LepSel_isTight[3])) ; AlsoData
+nLepFlavor\b : nLepFlavor(countTaus(4, LepSel_pdgId[0], LepSel_pdgId[1], LepSel_pdgId[2], LepSel_pdgId[3]), is_4l, is_5l) ; AlsoData
+srMll\b      : srMll(4, mll_4l, mllL_4l, mllT_4l)
+srMt\b       : srMt(4, mT_4l, mTL_4l, mTT_4l)
+BR\b         : BR(4, countTaus(4, LepSel_pdgId[0], LepSel_pdgId[1], LepSel_pdgId[2], LepSel_pdgId[3]), nOSSF_4l, nOSLF_4l, nOSTF_4l) ; AlsoData
+SR\b         : SR(4, countTaus(4, LepSel_pdgId[0], LepSel_pdgId[1], LepSel_pdgId[2], LepSel_pdgId[3]), nOSSF_4l, nOSLF_4l, mT2L_4l, mT2T_4l, srMll(4, mll_4l, mllL_4l, mllT_4l), srMt(4, mT_4l, mTL_4l, mTT_4l), met_pt) ; AlsoData
+SuperSig\b   : SuperSig(4, countTaus(4, LepSel_pdgId[0], LepSel_pdgId[1], LepSel_pdgId[2], LepSel_pdgId[3]), nOSSF_4l, nOSLF_4l, mT2L_4l, mT2T_4l, srMll(4, mll_4l, mllL_4l, mllT_4l), srMt(4, mT_4l, mTL_4l, mTT_4l), met_pt) ; AlsoData

@@ -1,6 +1,7 @@
 from PhysicsTools.Heppy.analyzers.core.Analyzer import Analyzer
 from PhysicsTools.Heppy.analyzers.core.AutoHandle import AutoHandle
 from CMGTools.VVResonances.tools.Pair import Pair
+from CMGTools.VVResonances.tools.Singlet import Singlet
 from PhysicsTools.HeppyCore.utils.deltar import *
 from CMGTools.VVResonances.tools.VectorBosonToolBox import VectorBosonToolBox
 from CMGTools.VVResonances.tools.BTagEventWeights import *
@@ -13,6 +14,9 @@ class Substructure(object):
     def __init__(self):
         pass
 
+class Truth(object):
+    def __init__(self):
+        pass
 
 class VVBuilder(Analyzer):
     def __init__(self, cfg_ana, cfg_comp, looperName):
@@ -37,7 +41,9 @@ class VVBuilder(Analyzer):
     def declareHandles(self):
         super(VVBuilder, self).declareHandles()
         self.handles['packed'] = AutoHandle( 'packedPFCandidates', 'std::vector<pat::PackedCandidate>' )
-
+        if self.cfg_comp.isMC:
+            self.handles['packedGen'] = AutoHandle( 'packedGenParticles', 'std::vector<pat::PackedGenParticle>' )
+            
     def copyLV(self,LV):
         out=[]
         for i in LV:
@@ -140,9 +146,9 @@ class VVBuilder(Analyzer):
         LVs =ROOT.std.vector("math::XYZTLorentzVector")()
 
         #we take LVs around the jets and recluster
-        for LV in event.genParticleLVs:
-            if deltaR(LV.eta(),LV.phi(),jet.eta(),jet.phi())<1.2:
-                LVs.push_back(LV)
+        for p in event.genParticleLVs:
+            if deltaR(p.eta(),p.phi(),jet.eta(),jet.phi())<1.2:
+                LVs.push_back(p)
 
         interface = ROOT.cmg.FastJetInterface(LVs,-1.0,0.8,1,0.01,5.0,4.4)
         #make jets
@@ -151,6 +157,7 @@ class VVBuilder(Analyzer):
         outputJets = interface.get(True)
         if len(outputJets)==0:
             return
+
 
         jet.substructureGEN=Substructure()
         #OK!Now save the area
@@ -274,6 +281,12 @@ class VVBuilder(Analyzer):
         #substructure truth
         if self.cfg_comp.isMC:
             self.substructureGEN(VV.leg2,event)
+            if hasattr(VV.leg2,'substructureGEN'):
+                newMET = event.met.p4()+VV.leg2.p4()-VV.leg2.substructureGEN.jet
+                newMET.SetPz(0.0)
+                newW=Pair(VV.leg1.leg1,Singlet(newMET))
+                self.vbTool.defaultWKinematicFit(newW)
+                VV.genPartialMass=(VV.leg1.p4()+VV.leg2.substructureGEN.jet).M()
 
 
 
@@ -437,7 +450,62 @@ class VVBuilder(Analyzer):
         totalWeight = genCorr*recoCorr
         return totalWeight
 
+    def fillTopPtReweighting(self, event, truth):
+        """Top pT reweighting."""
+        if not self.cfg_comp.isMC:
+            truth.genTop_weight = 1.
+            return truth
 
+        ttbar = [p for p in event.genParticles if abs(p.pdgId()) == 6 and p.statusFlags().isLastCopy() and p.statusFlags().fromHardProcess()]
+
+        if self.cfg_comp.name.find('TT') != -1 and self.cfg_comp.name.find('TTH') == -1 and len(ttbar) == 2:
+            # store also individual pTs for later correction
+            truth.genTop_1_pt = ttbar[0].pt()
+            truth.genTop_2_pt = ttbar[1].pt()
+            top_1_pt = truth.genTop_1_pt
+            top_2_pt = truth.genTop_2_pt
+            # only valid up to 400 GeV, assume constant afterwards
+            if top_1_pt > 400:
+                top_1_pt = 400.
+            if top_2_pt > 400:
+                top_2_pt = 400.
+            # see https://twiki.cern.ch/twiki/bin/view/CMS/TopSystematics#pt_top_Reweighting
+            truth.genTop_weight = math.sqrt(math.exp(0.0615-0.0005*top_1_pt)*math.exp(0.0615-0.0005*top_2_pt))
+        else:
+            truth.genTop_weight = 1.
+        return truth
+
+    @staticmethod
+    def p4sum(ps):
+        '''Returns four-vector sum of objects in passed list. Returns None
+        if empty. Note that python sum doesn't work since p4() + 0/None fails,
+        but will be possible in future python'''
+        if not ps:
+            return None
+        p4 = ps[0].p4()
+        for i in xrange(len(ps) - 1):
+            p4 += ps[i + 1].p4()
+        return p4
+
+    def getParentBoson(self, event):
+        """Get generator level boson (last in chain) for correct kinematics."""
+        # if we already filled it exit
+        if hasattr(event, 'genBoson') or not self.cfg_comp.isMC:
+            return
+        leptons_prompt = [p for p in event.genParticles if abs(p.pdgId()) in [11, 12, 13, 14] and p.fromHardProcessFinalState()]
+        taus_prompt = [p for p in event.genParticles if p.statusFlags().isDirectHardProcessTauDecayProduct()]
+        all = leptons_prompt + taus_prompt
+        genBoson = VVBuilder.p4sum(all)
+        return genBoson
+
+    def makeTruthType(self, event):
+        """create truth collection."""
+        truth = Truth()
+        genBoson = self.getParentBoson(event)
+        truth = self.fillTopPtReweighting(event, truth)
+        if genBoson:
+            truth.genBoson = genBoson
+        return [truth]
 
     def process(self, event):
         self.readCollections( event.input )
@@ -462,21 +530,21 @@ class VVBuilder(Analyzer):
 
 
         #if MC create the stable particles for Gen Jet reco and substructure
+        event.genParticleLVs=ROOT.std.vector("math::XYZTLorentzVector")()        
         if self.cfg_comp.isMC:
-            event.genParticleLVs =ROOT.std.vector("math::XYZTLorentzVector")()
-            for p in event.genParticles:
-                if p.status()==1 and not (p.pdgId() in [12,14,16]):
+            event.genPacked = self.handles['packedGen'].product()
+            for p in event.genPacked:
+                if p.status()==1 and p.pt()>0.05 and not (abs(p.pdgId()) in [12,14,16]):
                     event.genParticleLVs.push_back(p.p4())
-
-
         LNuJJ=self.makeWV(event)
         LLJJ =self.makeZV(event)
         JJ=self.makeJJ(event)
         JJNuNu=self.makeMETV(event)
+        TruthType = self.makeTruthType(event)
 
 
         setattr(event,'LNuJJ'+self.cfg_ana.suffix,LNuJJ)
         setattr(event,'JJ'+self.cfg_ana.suffix,JJ)
         setattr(event,'LLJJ'+self.cfg_ana.suffix,LLJJ)
         setattr(event,'JJNuNu'+self.cfg_ana.suffix,JJNuNu)
-
+        setattr(event, 'TruthType' + self.cfg_ana.suffix, TruthType)

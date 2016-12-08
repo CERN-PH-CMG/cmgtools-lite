@@ -259,7 +259,24 @@ svType = NTupleObjectType("sv", baseObjectTypes = [ fourVectorType ], variables 
     NTupleVariable("secDxyTracks", lambda x : x.secDxyTracks, help="second highest |dxy| of vertex tracks"),
     NTupleVariable("maxD3dTracks", lambda x : x.maxD3dTracks, help="highest |ip3D| of vertex tracks"),
     NTupleVariable("secD3dTracks", lambda x : x.secD3dTracks, help="second highest |ip3D| of vertex tracks"),
-
+])
+svTypeExtra = NTupleObjectType("svExtra", baseObjectTypes = [ svType ], variables = [
+    NTupleVariable("tk1_pt",  lambda x : x.daughter(0).pt() if x.numberOfDaughters() > 0 else -999, help="pt of first track"),
+    NTupleVariable("tk1_eta",  lambda x : x.daughter(0).eta() if x.numberOfDaughters() > 0 else -999, help="eta of first track"),
+    NTupleVariable("tk1_phi",  lambda x : x.daughter(0).phi() if x.numberOfDaughters() > 0 else -999, help="phi of first track"),
+    NTupleVariable("tk1_charge",  lambda x : x.daughter(0).charge() if x.numberOfDaughters() > 0 else -999, int, help="charge of first track"),
+    NTupleVariable("tk2_pt",  lambda x : x.daughter(1).pt() if x.numberOfDaughters() > 1 else -999, help="pt of second track"),
+    NTupleVariable("tk2_eta",  lambda x : x.daughter(1).eta() if x.numberOfDaughters() > 1 else -999, help="eta of second track"),
+    NTupleVariable("tk2_phi",  lambda x : x.daughter(1).phi() if x.numberOfDaughters() > 1 else -999, help="phi of second track"),
+    NTupleVariable("tk2_charge",  lambda x : x.daughter(1).charge() if x.numberOfDaughters() > 1 else -999, int, help="charge of second track"),
+    NTupleVariable("tk3_pt",  lambda x : x.daughter(2).pt() if x.numberOfDaughters() > 2 else -999, help="pt of third track"),
+    NTupleVariable("tk3_eta",  lambda x : x.daughter(2).eta() if x.numberOfDaughters() > 2 else -999, help="eta of third track"),
+    NTupleVariable("tk3_phi",  lambda x : x.daughter(2).phi() if x.numberOfDaughters() > 2 else -999, help="phi of third track"),
+    NTupleVariable("tk3_charge",  lambda x : x.daughter(2).charge() if x.numberOfDaughters() > 2 else -999, int, help="charge of third track"),
+    NTupleVariable("tk4_pt",  lambda x : x.daughter(0).pt() if x.numberOfDaughters() > 0 else -999, help="pt of fourth track"),
+    NTupleVariable("tk4_eta",  lambda x : x.daughter(3).eta() if x.numberOfDaughters() > 3 else -999, help="eta of fourth track"),
+    NTupleVariable("tk4_phi",  lambda x : x.daughter(3).phi() if x.numberOfDaughters() > 3 else -999, help="phi of fourth track"),
+    NTupleVariable("tk4_charge",  lambda x : x.daughter(3).charge() if x.numberOfDaughters() > 3 else -999, int, help="charge of fourth track"),
 ])
 
 heavyFlavourHadronType = NTupleObjectType("heavyFlavourHadron", baseObjectTypes = [ genParticleType ], variables = [

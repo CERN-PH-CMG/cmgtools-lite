@@ -29,10 +29,10 @@ cuts['lnujj_e_LP'] = categories["lnujj_e_LP"]
 cuts['lnujj_mu_LP'] = categories["lnujj_mu_LP"]
 
 # -> Command line
-analysis_dir = '/data/clange/ntuples/VV_20161108/'
+analysis_dir = '/data/clange/ntuples/VV_20161117/'
 tree_prod_name = ''
 
-samples_mc, samples_data, samples, all_samples, sampleDict = createSampleLists(analysis_dir, channel='VV', weight=weight_MC)
+samples_mc, samples_data, samples, all_samples, sampleDict = createSampleLists(analysis_dir, channel='WV', weight=weight_MC)
 
 # Taken from Variables.py, can get subset with e.g. getVars(['mt', 'mvis'])
 variables = lnujj_l1_vars + lnujj_l2_vars

@@ -51,13 +51,13 @@ VV  : ZZ : xsec; FillColor=ROOT.kViolet+1, Label="VV"
 
 # -- QCD --
 
-QCD: QCD_HT200to300_ext :   xsec; FillColor=ROOT.kGray, Label="multijet"
-QCD: QCD_HT300to500 + QCD_HT300to500_ext :   xsec; FillColor=ROOT.kGray, Label="multijet"
-QCD: QCD_HT500to700 + QCD_HT500to700_ext :   xsec; FillColor=ROOT.kGray, Label="multijet"
-QCD: QCD_HT700to1000 + QCD_HT700to1000_ext :   xsec; FillColor=ROOT.kGray, Label="multijet"
-QCD: QCD_HT1000to1500 + QCD_HT1000to1500_ext :   xsec; FillColor=ROOT.kGray, Label="multijet"
-QCD: QCD_HT1500to2000 + QCD_HT1500to2000_ext :   xsec; FillColor=ROOT.kGray, Label="multijet"
-QCD: QCD_HT2000toInf + QCD_HT2000toInf_ext :   xsec; FillColor=ROOT.kGray, Label="multijet"
+#QCD: QCD_HT200to300_ext :   xsec; FillColor=ROOT.kGray, Label="multijet"
+#QCD: QCD_HT300to500 + QCD_HT300to500_ext :   xsec; FillColor=ROOT.kGray, Label="multijet"
+#QCD: QCD_HT500to700 + QCD_HT500to700_ext :   xsec; FillColor=ROOT.kGray, Label="multijet"
+#QCD: QCD_HT700to1000 + QCD_HT700to1000_ext :   xsec; FillColor=ROOT.kGray, Label="multijet"
+#QCD: QCD_HT1000to1500 + QCD_HT1000to1500_ext :   xsec; FillColor=ROOT.kGray, Label="multijet"
+#QCD: QCD_HT1500to2000 + QCD_HT1500to2000_ext :   xsec; FillColor=ROOT.kGray, Label="multijet"
+#QCD: QCD_HT2000toInf + QCD_HT2000toInf_ext :   xsec; FillColor=ROOT.kGray, Label="multijet"
 
 # -- 2016 Data ---
 data: MET_Run2016B_PromptReco_v1_runs_272023_273146 ; Label="Data" 

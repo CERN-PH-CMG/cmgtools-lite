@@ -1,12 +1,13 @@
 import os
+import pickle
+
 import ROOT
 from ROOT import gSystem, gROOT
 
-from CMGTools.H2TauTau.proto.plotter.PlotConfigs import SampleCfg
-from CMGTools.H2TauTau.proto.plotter.HistCreator import setSumWeights
+from CMGTools.H2TauTau.proto.plotter.PlotConfigs import SampleCfg, HistogramCfg
 from CMGTools.H2TauTau.proto.samples.spring16.sms_xsec import get_xsec
 
-from CMGTools.H2TauTau.proto.samples.spring16.htt_common import TT_pow_ext, DYJetsToLL_M50_LO, DYNJets, WJetsToLNu,  WNJets, WWTo2L2Nu, T_tWch, TBar_tWch, VVTo2L2Nu, ZZTo4L, WZTo1L3Nu, WWTo1L1Nu2Q, ZZTo2L2Q, WZTo2L2Q, WZTo1L1Nu2Q, TBarToLeptons_tch_powheg, TToLeptons_tch_powheg, mssm_signals, dy_weight_dict, w_weight_dict
+from CMGTools.H2TauTau.proto.samples.spring16.htt_common import TT_pow_ext, DYJetsToLL_M50_LO, DYNJets, WJetsToLNu,  WNJets, WWTo2L2Nu, T_tWch, TBar_tWch, VVTo2L2Nu, ZZTo4L, WZTo1L3Nu, WWTo1L1Nu2Q, ZZTo2L2Q, WZTo2L2Q, WZTo1L1Nu2Q, TBarToLeptons_tch_powheg, TToLeptons_tch_powheg, HiggsGGH125, HiggsVBF125, mssm_signals, dy_weight_dict, w_weight_dict
 
 # WJetsToLNu_LO, TToLeptons_tch_amcatnlo, WZTo3LNu_amcatnlo, , WJetsToLNu_HT100to200, WJetsToLNu_HT200to400, WJetsToLNu_HT400to600, WJetsToLNu_HT600toInf, QCD_Mu15, DYJetsToTauTau_M150_LO, DYJetsToLL_M10to50_ext1
 
@@ -18,16 +19,19 @@ splitDY = False
 useDYWeight = False
 # data2016G = True
 
-if useDYWeight:
+if useDYWeight or splitDY:
     dy_exps = []
-    for njet in xrange(0, 5):
-        weight = dy_weight_dict[(njet, 0)]
-        dy_exps.append('(geninfo_nup == {njet})*{weight}'.format(njet=njet, weight=weight))
-        # dy_exps.append('(geninfo_nup == {njet} && (geninfo_invmass<150. || !(l2_gen_match==5 || l1_gen_lepfromtau)))*{weight}'.format(njet=njet, weight=weight))
-        # weight = dy_weight_dict[(njet, 150)]
-        # dy_exps.append('(geninfo_nup == {njet} && (geninfo_invmass>=150. && (l2_gen_match==5 || l1_gen_lepfromtau)))*{weight}'.format(njet=njet, weight=weight))
-
+    if splitDY:
+        for njet in xrange(0, 5):
+            weight = dy_weight_dict[(njet, 0)]
+            dy_exps.append('(geninfo_nup == {njet})*{weight}'.format(njet=njet, weight=weight))
+            # dy_exps.append('(geninfo_nup == {njet} && (geninfo_invmass<150. || !(l2_gen_match==5 || l1_gen_lepfromtau)))*{weight}'.format(njet=njet, weight=weight))
+            # weight = dy_weight_dict[(njet, 150)]
+            # dy_exps.append('(geninfo_nup == {njet} && (geninfo_invmass>=150. && (l2_gen_match==5 || l1_gen_lepfromtau)))*{weight}'.format(njet=njet, weight=weight))
+    if useDYWeight:
+        dy_exps.append('getDYWeight(genboson_mass, genboson_pt)')
     dy_exp = '*({})'.format(' + '.join(dy_exps))
+    print 'Using DY expression', dy_exp
 
 w_exps = []
 for njet in xrange(0, 5):
@@ -40,10 +44,11 @@ w_exp = '({w})'.format(w=' + '.join(w_exps))
 def createSampleLists(analysis_dir='/afs/cern.ch/user/s/steggema/work/public/mt/NewProd',
                       channel='mt',
                       mode='sm',
-                      ztt_cut='(l2_gen_match == 5)*getDYWeight(genboson_mass, genboson_pt)', zl_cut='(l2_gen_match < 5)*getDYWeight(genboson_mass, genboson_pt)',
-                      zj_cut='(l2_gen_match == 6)*getDYWeight(genboson_mass, genboson_pt)',
+                      ztt_cut='(l2_gen_match == 5)', zl_cut='(l2_gen_match < 5)',
+                      zj_cut='(l2_gen_match == 6)',
                       data2016G=False,
-                      signal_scale=1.):
+                      signal_scale=1.,
+                      no_data=False):
     # -> Possibly from cfg like in the past, but may also make sense to enter directly
     if channel == 'mt':
         tree_prod_name = 'H2TauTauTreeProducerTauMu'
@@ -125,7 +130,7 @@ def createSampleLists(analysis_dir='/afs/cern.ch/user/s/steggema/work/public/mt/
             # SampleCfg(name='WJetsToLNu_HT600toInf', dir_name='WJetsToLNu_HT600toInf', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=WJetsToLNu_HT600toInf.xSection, sumweights=WJetsToLNu_HT600toInf.nGenEvents, weight_expr=k_factor),
         ]
 
-    if useDYWeight and channel not in ['mm', 'tau_fr']:
+    if splitDY and channel not in ['mm', 'tau_fr']:
         for sample in DYNJets:
             n_jet_name = str(sample.name[sample.name.find('Jets')-1])+'Jets'
             print 'WARNING - DY - using n(gen events)', DYJetsToLL_M50_LO.nevents[0], 'for DY', n_jet_name
@@ -169,6 +174,9 @@ def createSampleLists(analysis_dir='/afs/cern.ch/user/s/steggema/work/public/mt/
             SampleCfg(name='data_obs', dir_name='MuonEG_Run2016D_PromptReco_v2', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
         ]
 
+    if no_data:
+        samples_data = []
+
     samples_additional = [
         # SampleCfg(name='TToLeptons_tch', dir_name='TToLeptons_tch_amcatnlo', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=TToLeptons_tch_amcatnlo.xSection, sumweights=TToLeptons_tch_amcatnlo.nGenEvents),
         SampleCfg(name='TToLeptons_tch_powheg', dir_name='TToLeptons_tch_powheg', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=TToLeptons_tch_powheg.xSection, sumweights=TToLeptons_tch_powheg.nGenEvents),
@@ -186,6 +194,11 @@ def createSampleLists(analysis_dir='/afs/cern.ch/user/s/steggema/work/public/mt/
         SampleCfg(name='WZTo1L1Nu2Q', dir_name='WZTo1L1Nu2Q', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=WZTo1L1Nu2Q.xSection, sumweights=WZTo1L1Nu2Q.nGenEvents),
         SampleCfg(name='VVTo2L2Nu', dir_name='VVTo2L2Nu', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=VVTo2L2Nu.xSection, sumweights=VVTo2L2Nu.nGenEvents),
         SampleCfg(name='WWTo1L1Nu2Q', dir_name='WWTo1L1Nu2Q', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=WWTo1L1Nu2Q.xSection, sumweights=WWTo1L1Nu2Q.nGenEvents),
+    ]
+
+    samples_sm = [
+        SampleCfg(name='HiggsGGH125', dir_name='HiggsGGH125', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=HiggsGGH125.xSection, sumweights=HiggsGGH125.nGenEvents, is_signal=True),
+        SampleCfg(name='HiggsVBF125', dir_name='HiggsVBF125', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=HiggsVBF125.xSection, sumweights=HiggsVBF125.nGenEvents, is_signal=True),
     ]
 
     samples_mssm = []
@@ -219,7 +232,8 @@ def createSampleLists(analysis_dir='/afs/cern.ch/user/s/steggema/work/public/mt/
         samples_susy.append(createSusySampleCfg(150, 50))
         samples_susy.append(createSusySampleCfg(150, 100))
 
-
+    if mode in ['sm', 'mva']:
+        samples_additional += samples_sm
     if mode == 'mssm':
         samples_additional += samples_mssm
     if mode == 'susy':
@@ -236,7 +250,7 @@ def createSampleLists(analysis_dir='/afs/cern.ch/user/s/steggema/work/public/mt/
     # weighted_list = ['W', 'W1Jets', 'W2Jets', 'W3Jets', 'W4Jets']
     weighted_list = []
     weighted_list += [s.name for s in samples_susy]
-    if useDYWeight:
+    if splitDY:
         weighted_list += ['ZTT', 'ZTT1Jets', 'ZTT2Jets', 'ZTT3Jets', 'ZTT4Jets',
                           'ZJ', 'ZJ1Jets', 'ZJ2Jets', 'ZJ3Jets', 'ZJ4Jets',
                           'ZL', 'ZL1Jets', 'ZL2Jets', 'ZL3Jets', 'ZL4Jets',
@@ -257,4 +271,18 @@ def createSampleLists(analysis_dir='/afs/cern.ch/user/s/steggema/work/public/mt/
 
     return samples_mc, samples_data, samples, all_samples, sampleDict
 
-samples_mc, samples_data, samples, all_samples, sampleDict = createSampleLists()
+
+def setSumWeights(sample, weight_dir='MCWeighter'):
+    if isinstance(sample, HistogramCfg) or sample.is_data:
+        return
+
+    pckfile = '/'.join([sample.ana_dir, sample.dir_name, weight_dir, 'SkimReport.pck'])
+    try:
+        pckobj = pickle.load(open(pckfile, 'r'))
+        counters = dict(pckobj)
+        if 'Sum Weights' in counters:
+            sample.sumweights = counters['Sum Weights']
+    except IOError:
+        # print 'Warning: could not find sum weights information for sample', sample.name
+        pass
+

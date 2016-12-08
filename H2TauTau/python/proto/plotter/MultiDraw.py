@@ -68,7 +68,7 @@ def MultiDraw(self, Formulae, CommonWeight="1"):
     hists = {}
 
     for i, origFormula in enumerate(Formulae):
-        print "Have an origFormula", origFormula
+        # print "Have an origFormula", origFormula
 
         # Expand out origFormula and weight, otherwise just use weight of 1.
         if type(origFormula) == tuple:
@@ -148,8 +148,8 @@ def MultiDraw(self, Formulae, CommonWeight="1"):
             gROOT.ProcessLine(".L %s/src/CMGTools/H2TauTau/python/proto/plotter/MultiDraw.cc+" % os.environ['CMSSW_BASE']);
         from ROOT import MultiDraw as _MultiDraw
 
-    from time import time
-    start = time()
+    # from time import time
+    # start = time()
 
     # Ensure that formulae are told when tree changes
     fManager = TTreeFormulaManager()
@@ -167,7 +167,7 @@ def MultiDraw(self, Formulae, CommonWeight="1"):
                MakeTObjArray(results),
                len(Formulae))
 
-    print "Took %.2fs" % (time() - start), " "*20
+    # print "Took %.2fs" % (time() - start), " "*20
 
     return results
 

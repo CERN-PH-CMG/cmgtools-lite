@@ -1,10 +1,10 @@
 alwaystrue: 1
 blinding  : !isData || run <= 274240
 filters   : !isData || METfilters
-trigger   : !isData || Triggers_2l
+trigger   : !isData || Triggers_leplep
 3l        : nLepSel >= 3
 lowmass   : minMllSFOS_Mini > 12 || minMllSFOS_Mini == -1
-sanity    : is_3l
+sanity    : passPtMll && is_3l
 SRevent   : allTight(3, LepSel_isTight[0], LepSel_isTight[1], LepSel_isTight[2]) 
 veto      : LepSel4_isTight == 0
 event     : BR > 0
