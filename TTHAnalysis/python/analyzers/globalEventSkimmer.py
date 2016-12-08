@@ -201,7 +201,7 @@ class globalEventSkimmer( Analyzer ):
             mXtraId = re.match(scanlineXtraId, obj) 
             os=objectSelection()
             pid=""
-            #print m, mXtra, mId, mXtraId
+            #print selection,"-->",m, mXtra, mId, mXtraId
             if m:
                 os.num=int(m.group(1))
                 os.pid=m.group(2)
@@ -228,7 +228,7 @@ class globalEventSkimmer( Analyzer ):
                 os.cut=mXtraId.group(5)
 
 
- #           print  " ----->>> ", os.xtra," // ", os.ptThr," // ", os.cut
+            #print " ----->>> ",os.pid, "// ", os.xtra," // ", os.ptThr," // ", os.cut
             os.setFlags(compName)
             ret[obj]=os
 
