@@ -16,6 +16,10 @@ def cmd(cmd):
 	#print cmd
 	os.system(cmd)
 
+def compareLists(list1, list2):
+	if set(list1) == set(list2): return True
+	return False
+
 def cp(location, destination):
 	cmd("cp " + location + " " + destination)
 

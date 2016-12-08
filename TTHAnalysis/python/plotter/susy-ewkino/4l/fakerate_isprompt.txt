@@ -1,2 +1,1 @@
-allprompt: 1.0
-#isPrompt(4, LepSel_mcUCSX[0], LepSel_mcUCSX[1], LepSel_mcUCSX[2], LepSel_mcUCSX[3])
+allprompt: isPrompt(4, LepSel_mcUCSX[0], LepSel_mcUCSX[1], LepSel_mcUCSX[2], LepSel_mcUCSX[3])

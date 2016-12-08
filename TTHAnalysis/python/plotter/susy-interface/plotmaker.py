@@ -23,12 +23,18 @@ def collectPPlots(region, plotsname):
 	return " ".join("--sP "+v for v in region.plots[plotsname])
 
 def collectProcesses(mm, make):
+	if len(mm.options.procs)>0: 
+		procs = " ".join(["-p "+b for b in mm.getProcs()])
+		add = ""
+		if make=="sigs" or make=="mix": add="--showIndivSigs --noStackSig "
+		if make=="sigs": add="--empytStack -p dummy "+add
+		return add + procs
 	bkgs = " ".join(["-p "+b for b in mm.getBkgs()])
 	sigs = " ".join(["-p "+s for s in mm.getSigs()])
 	if make=="data": return "-p data "+bkgs
 	if make=="mix" : return "--showIndivSigs --noStackSig "+sigs+" "+bkgs
-	if make=="sig" : return "--emptyStack -p dummy --showIndivSigs --noStackSig "+sigs
-	if make=="bkg" : return bkgs
+	if make=="sigs": return "--emptyStack -p dummy --showIndivSigs --noStackSig "+sigs
+	if make=="bkgs": return bkgs
 	return ""
 	
 parser = OptionParser(usage="%prog cfg regions treedir outdir [options]")
@@ -38,17 +44,18 @@ parser.add_option("--plots",  dest="plots",   type="string", default="all", help
 parser.add_option("--lspam", dest="lspam", type="string", default="Preliminary", help="Left-spam for CMS_lumi in mcPlots, either Preliminary, Simulation, Internal or nothing")
 parser.add_option("--noRatio", dest="ratio", action="store_false", default=True, help="Do NOT plot the ratio (i.e. give flag --showRatio)")
 
-base = "python mcPlots.py {MCA} {CUTS} {PLOTFILE} -P {T} --neg --s2v --tree {TREENAME} -f -j 4 --cmsprel '{LSPAM}' --legendWidth 0.20 --legendFontSize 0.035 {MCCS} {MACROS} {RATIO} -l {LUMI} --pdir {O} {FRIENDS} {PROCS} {PLOTS} {FLAGS} --showMCError"
+base = "python mcPlots.py {MCA} {CUTS} {PLOTFILE} -P {T} --neg --s2v --tree {TREENAME} -f --cmsprel '{LSPAM}' --legendWidth 0.20 --legendFontSize 0.035 {MCCS} {MACROS} {RATIO} -l {LUMI} --pdir {O} {FRIENDS} {PROCS} {PLOTS} {FLAGS} --showMCError"
 (options, args) = parser.parse_args()
 options = maker.splitLists(options)
-mm      = maker.Maker(base, args, options)
+mm      = maker.Maker("plotmaker", base, args, options)
+
+friends = mm.collectFriends()	
+mccs    = mm.collectMCCs   ()
+macros  = mm.collectMacros ()	
 
 for r in range(len(mm.regions)):
 	mm.iterateRegion()
 
-	friends = mm.collectFriends()	
-	mccs    = mm.collectMCCs   ()
-	macros  = mm.collectMacros ()	
 	flags   = mm.collectFlags  ("flagsPlots")
 	ratio   = "--showRatio" if options.ratio else ""
 	
@@ -64,8 +71,8 @@ for r in range(len(mm.regions)):
 			procs   = collectProcesses(mm       , m)
 			pplots  = collectPPlots   (mm.region, p)
 	
-			mm.submit([mm.getVariable("mcafile",""), mm.getVariable("cutfile",""), mm.getVariable("plotfile",""), mm.treedir, options.treename, options.lspam, mccs, macros, ratio, options.lumi, output, friends, procs, pplots, flags],mm.region.name+"_"+p+"_"+m)
-
-
+			mm.submit([mm.getVariable("mcafile",""), mm.getVariable("cutfile",""), mm.getVariable("plotfile",""), mm.treedir, options.treename, options.lspam, mccs, macros, ratio, options.lumi, output, friends, procs, pplots, flags],mm.region.name+"_"+p+"_"+m,False)
+mm.runJobs()
+mm.clearJobs()
 
 
