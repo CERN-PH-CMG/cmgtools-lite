@@ -29,7 +29,7 @@ cuts['lnujj_e_LP'] = categories["lnujj_e_LP"]
 cuts['lnujj_mu_LP'] = categories["lnujj_mu_LP"]
 
 # -> Command line
-analysis_dir = '/data/clange/ntuples/VV_20161117/'
+analysis_dir = '/data/clange/ntuples/VV_20161203/'
 tree_prod_name = ''
 
 samples_mc, samples_data, samples, all_samples, sampleDict = createSampleLists(analysis_dir, channel='WV', weight=weight_MC)

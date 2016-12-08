@@ -13,6 +13,23 @@ from CMGTools.RootTools.samples.samples_13TeV_DATA2016 import *
 
 def createSampleLists(analysis_dir='samples/',
                       channel='VV', weight=''):
+    reweightVJets = False
+    wJetsKFac = 1.21
+    dyJetsKFac = 1.23
+    wJetsQCDCorrections = {}
+    dyJetsQCDCorrections = {}
+    # taken from http://cms.cern.ch/iCMS/jsp/db_notes/noteInfo.jsp?cmsnoteid=CMS%20AN-2015/186 (Table 4)
+    wJetsQCDCorrections["WJetsToLNu_HT100to200"] = 1.459/wJetsKFac
+    wJetsQCDCorrections["WJetsToLNu_HT200to400"] = 1.434/wJetsKFac
+    wJetsQCDCorrections["WJetsToLNu_HT400to600"] = 1.532/wJetsKFac
+    wJetsQCDCorrections["WJetsToLNu_HT600to800"] = 1.004/wJetsKFac
+    wJetsQCDCorrections["WJetsToLNu_HT800to1200"] = 1.004/wJetsKFac
+    wJetsQCDCorrections["WJetsToLNu_HT1200to2500"] = 1.004/wJetsKFac
+    wJetsQCDCorrections["WJetsToLNu_HT2500toInf"] = 1.004/wJetsKFac
+    dyJetsQCDCorrections["DYJetsToLL_M50_HT100to200"] = 1.588/dyJetsKFac
+    dyJetsQCDCorrections["DYJetsToLL_M50_HT200to400"] = 1.438/dyJetsKFac
+    dyJetsQCDCorrections["DYJetsToLL_M50_HT400to600"] = 1.494/dyJetsKFac
+    dyJetsQCDCorrections["DYJetsToLL_M50_HT600toInf"] = 1.139/dyJetsKFac
     # explicit list of samples:
     wjetsSampleNames = ["WJetsToLNu_HT1200to2500", "WJetsToLNu_HT2500toInf", "WJetsToLNu_HT400to600", "WJetsToLNu_HT600to800", "WJetsToLNu_HT800to1200", 'WJetsToLNu_HT100to200', 'WJetsToLNu_HT200to400']
     ttjetsSampleNames = ["TTJets"]
@@ -33,12 +50,21 @@ def createSampleLists(analysis_dir='samples/',
         channelSampleNames = jj_SampleNames
     samples_essential = []
 
+    if "/sVJetsReweighting_cc.so" not in gSystem.GetLibraries():
+        ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/VVResonances/python/plotting/VJetsReweighting.cc+" % os.environ['CMSSW_BASE'])
+    from ROOT import getDYWeight, getWWeight
+
     # add QCD, DY+jets, W+jets, DiBosons and SingleTop samples, but not those with _ext, since they are merged with the others
     for sample in QCDHT+DYJetsM50HT+WJetsToLNuHT+DiBosons+SingleTop:
+        vJetsWeight = '1.'
         if sample.name in channelSampleNames:
+            if (sample in DYJetsM50HT) and reweightVJets:
+                vJetsWeight = 'getDYWeight(truth_genBoson_pt) * {}'.format(dyJetsQCDCorrections[sample.name])
+            elif (sample in WJetsToLNuHT) and reweightVJets:
+                vJetsWeight = 'getWWeight(truth_genBoson_pt) * {}'.format(wJetsQCDCorrections[sample.name])
             samples_essential.append(
                 SampleCfg(name=sample.name, dir_name=sample.name, ana_dir=analysis_dir, tree_prod_name=tree_prod_name,
-                    xsec=sample.xSection, sumweights=sample.nGenEvents, weight_expr=weight))
+                    xsec=sample.xSection, sumweights=sample.nGenEvents, weight_expr=('*'.join([weight, vJetsWeight]))))
 
     # TTJets sample
     for sample in [TTJets]:
