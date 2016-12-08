@@ -118,6 +118,10 @@ ttHSVAna.preselection = lambda ivf : abs(ivf.dxy.value())<2 and ivf.cosTheta>0.9
 
 from CMGTools.TTHAnalysis.analyzers.treeProducerSusyMultilepton import * 
 del susyMultilepton_collections['generatorSummary']
+del susyMultilepton_collections['otherTaus']
+del susyMultilepton_collections['otherLeptons']
+del susyMultilepton_collections['discardedJets']
+del susyMultilepton_collections['discardedLeptons']
 
 # Spring16 electron MVA - follow instructions on pull request for correct area setup
 leptonTypeSusy.addVariables([
