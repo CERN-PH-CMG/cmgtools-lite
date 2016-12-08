@@ -44,7 +44,6 @@ print 'Using analysis type: %s'%analysis
 # Lepton Skimming
 ttHLepSkim.minLeptons = 2
 ttHLepSkim.maxLeptons = 999
-ttHLepSkim.allowLepTauComb = True
 
 if analysis=='susy':
     susyCoreSequence.insert(susyCoreSequence.index(ttHLepSkim)+1,globalSkim)
