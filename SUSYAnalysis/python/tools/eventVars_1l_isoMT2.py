@@ -12,6 +12,9 @@ mt2obj = ROOT.heppy.Davismt2.Davismt2()
 
 # min dR between good lep and iso track 
 minDR = 0.1
+# MT2 cuts for hadronic and leptonic veto tracks
+hadMT2cut = 60
+lepMT2cut = 80
 
 def getPhysObjectArray(j): # https://github.com/HephySusySW/Workspace/blob/72X-master/RA4Analysis/python/mt2w.py
     px = j.pt*cos(j.phi )
@@ -23,7 +26,7 @@ def getPhysObjectArray(j): # https://github.com/HephySusySW/Workspace/blob/72X-m
 class EventVars1L_isoMT2:
 
     def __init__(self):
-        self.branches = [ "iso_had", "iso_pt","iso_MT2" ]
+        self.branches = [ "iso_had", "iso_pt","iso_MT2","iso_Veto" ]
 
     def listBranches(self):
         return self.branches[:]
@@ -50,36 +53,40 @@ class EventVars1L_isoMT2:
         ####################################
 
         # get selected leptons
-        tightLeps = []
+        tightLeps    = []
         tightLepsIdx = base['tightLepsIdx']
-        tightLeps = [leps[idx] for idx in tightLepsIdx]
-        nTightLeps = len(tightLeps)
+        tightLeps    = [leps[idx] for idx in tightLepsIdx]
+        nTightLeps   = len(tightLeps)
 
         # flag for iso track: 0,1,999 <-> leptonic , hadronic , undefined        
-        ret["iso_had"]=999        
-        ret["iso_pt"]=999        
-        if (nTightLeps>=1) :
-            if len(trks)==0:
-                ret["iso_MT2"]=999        
-            else:
-                for i,t in enumerate(trks):
-                    if tightLeps[0].charge == t.charge: continue
-                    dR = t.p4().DeltaR(tightLeps[0].p4())
-                    if minDR>dR: continue
-                    ret["iso_had"]=1
-                    if abs(t.pdgId)>10 and abs(t.pdgId)<14: # leptonic
-                        ret["iso_had"]=0
-                    p1=tightLeps[0].p4()
-                    p2=t.p4()
-                    a=array.array('d', [ p1.M(), p1.Px(), p1.Py() ])                    
-                    b=array.array('d', [ p2.M(), p2.Px(), p2.Py() ])                    
-                    c=array.array('d', [ metp4.M(), metp4.Px(), metp4.Py() ])                    
-                    mt2obj.set_momenta( a, b, c )
-                    mt2obj.set_mn(0)
-                    ret["iso_MT2"]=mt2obj.get_mt2()
-                    ret["iso_pt"]=p2.Pt()
-                    break
-            if ret["iso_had"]==999: ret["iso_MT2"]=999
+        ret["iso_had"]  = 999        
+        ret["iso_pt"]   = 999
+        ret["iso_MT2"]  = 999
+        ret["iso_Veto"] = False
+        if (nTightLeps>=1) and len(trks)>=1:
+            for i,t in enumerate(trks):
+                # looking for opposite charged tracks
+                if tightLeps[0].charge == t.charge: continue
+                dR = t.p4().DeltaR(tightLeps[0].p4())
+                if minDR>dR: continue
+                p1=tightLeps[0].p4()
+                p2=t.p4()
+                a=array.array('d', [ p1.M(), p1.Px(), p1.Py() ])                    
+                b=array.array('d', [ p2.M(), p2.Px(), p2.Py() ])                    
+                c=array.array('d', [ metp4.M(), metp4.Px(), metp4.Py() ])                    
+                mt2obj.set_momenta( a, b, c )
+                mt2obj.set_mn(0)
+                ret["iso_MT2"] = mt2obj.get_mt2()
+                ret["iso_pt"]  = p2.Pt()
+                # cuts on MT2 as defined above
+                if abs(t.pdgId)>10 and abs(t.pdgId)<14:
+                    ret["iso_had"] = 0  #leptonic
+                    cut=lepMT2cut
+                else: 
+                    ret["iso_had"] = 1  #hadronic track
+                    cut=hadMT2cut
+                if ret["iso_MT2"]<=cut: ret["iso_Veto"]=True
+                break
         # return branches
         return ret
 
