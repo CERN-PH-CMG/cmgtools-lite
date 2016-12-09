@@ -16,8 +16,10 @@ void CollectionSkimmer::CopyVar<T1,T2>::branch(TTree *tree, unsigned int maxLeng
 }
 
 void 
-CollectionSkimmer::makeBranches(TTree *tree, unsigned int maxEntries) {
+CollectionSkimmer::makeBranches(TTree *tree, unsigned int maxEntries, bool padSelectedIndicesCollection, int padSelectedIndicesCollectionWith) {
     maxEntries_ = maxEntries;
+    padSelectedIndicesCollection_ = padSelectedIndicesCollection;
+    padSelectedIndicesCollectionWith_ = padSelectedIndicesCollectionWith;
     if (saveTagForAll_) {
       iTagOut_.reset(new int[maxEntries]);
       tree->Branch(("n"+collName_).c_str(), &nIn_, ("n"+collName_+"/I").c_str());
@@ -26,7 +28,8 @@ CollectionSkimmer::makeBranches(TTree *tree, unsigned int maxEntries) {
     tree->Branch(("n"+outName_).c_str(), &nOut_, ("n"+outName_+"/I").c_str());
     if (saveSelectedIndices_) {
       iOut_.reset(new int[maxEntries]);
-      tree->Branch(("i"+outName_).c_str(), iOut_.get(), ("i"+outName_+"[n" + outName_ + "]/I").c_str());
+      if (padSelectedIndicesCollection_) tree->Branch(("i"+outName_).c_str(), iOut_.get(), ("i"+outName_+"[" + std::to_string(maxEntries) + "]/I").c_str());
+      else tree->Branch(("i"+outName_).c_str(), iOut_.get(), ("i"+outName_+"[n" + outName_ + "]/I").c_str());
     }
     for (auto & c : copyFloats_) c.branch(tree, maxEntries);
     for (auto & c : copyInts_) c.branch(tree, maxEntries);

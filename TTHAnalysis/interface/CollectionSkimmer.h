@@ -33,7 +33,7 @@ class CollectionSkimmer {
         typedef CopyVar<float,Float_t> CopyFloat;
         typedef CopyVar<int,Int_t> CopyInt;
 
-        CollectionSkimmer(const std::string &outName, const std::string &collName, bool saveSelectedIndices = false, bool saveTagForAll = false) : outName_(outName), collName_(collName), hasBranched_(false), srcCount_(NULL), saveSelectedIndices_(saveSelectedIndices), saveTagForAll_(saveTagForAll) {}
+        CollectionSkimmer(const std::string &outName, const std::string &collName, bool saveSelectedIndices = false, bool saveTagForAll = false) : outName_(outName), collName_(collName), hasBranched_(false), srcCount_(NULL), saveSelectedIndices_(saveSelectedIndices), saveTagForAll_(saveTagForAll), maxEntries_(0) {}
         CollectionSkimmer(const CollectionSkimmer &other) = delete;
         CollectionSkimmer &operator=(const CollectionSkimmer &other) = delete;
 
@@ -43,18 +43,19 @@ class CollectionSkimmer {
 	void srcCount(TTreeReaderValue<Int_t> * src);
 
         /// to be called once on the tree, after a first call to copyFloat and copyInt
-        void makeBranches(TTree *tree, unsigned int maxEntries) ;
+        void makeBranches(TTree *tree, unsigned int maxEntries, bool padSelectedIndicesCollection = false, int padSelectedIndicesCollectionWith = -1) ;
 
         //---- to be called on each event for copying ----
         /// clear the output collection
         void clear() {
 	  nOut_ = 0;
 	  nIn_ = 0;
+	  if (iOut_.get()) std::fill_n(iOut_.get(),maxEntries_,padSelectedIndicesCollectionWith_);
 	  if (saveTagForAll_){
 	    assert (srcCount_); // pointer to srcCount TTreeReaderValue must be set
 	    nIn_ = **srcCount_;
 	    assert (uint(nIn_)<=maxEntries_);
-	    std::fill_n(iTagOut_.get(),nIn_,0);
+	    if (iTagOut_.get()) std::fill_n(iTagOut_.get(),nIn_,0);
 	  }
 	}
 
@@ -98,6 +99,8 @@ class CollectionSkimmer {
         std::vector<CopyFloat> copyFloats_;
         std::vector<CopyInt> copyInts_;
 	bool saveSelectedIndices_;
+	bool padSelectedIndicesCollection_;
+	int padSelectedIndicesCollectionWith_;
 	bool saveTagForAll_;
 	Int_t nIn_;
         std::unique_ptr<int[]> iTagOut_;

@@ -3,7 +3,9 @@
 #include <algorithm>
 #include <TTreeReaderValue.h>
 #include <TTreeReaderArray.h>
-#include <TLorentzVector.h>
+#include "CMGTools/TTHAnalysis/interface/CollectionSkimmer.h"
+#include "CMGTools/TTHAnalysis/interface/CombinedObjectTags.h"
+#include "DataFormats/Math/interface/LorentzVector.h"
 
 struct LeptonPairInfo {
   int i;
@@ -26,8 +28,11 @@ public:
   typedef TTreeReaderValue<int>   rint;
   typedef TTreeReaderArray<float> rfloats;
   typedef TTreeReaderArray<int> rints;
+
+  typedef math::PtEtaPhiMLorentzVectorD ptvec;
+  typedef math::XYZTLorentzVectorD crvec;
   
-  fastCombinedObjectRecleanerMassVetoCalculator(bool doVetoZ = true, bool doVetoLMf = true, bool doVetoLMt = true) : doVetoZ_(doVetoZ), doVetoLMf_(doVetoLMf), doVetoLMt_(doVetoLMt){}
+  fastCombinedObjectRecleanerMassVetoCalculator(CollectionSkimmer &skim_lepsF, CollectionSkimmer &skim_lepsT, bool doVetoZ, bool doVetoLMf, bool doVetoLMt) : skim_lepsF_(skim_lepsF), skim_lepsT_(skim_lepsT), doVetoZ_(doVetoZ), doVetoLMf_(doVetoLMf), doVetoLMt_(doVetoLMt){}
   
   void setLeptons(rint *nLep, rfloats *lepPt, rfloats *lepEta, rfloats *lepPhi, rfloats *lepMass, rints *lepPdgId) {
     nLep_ = nLep; Lep_pt_ = lepPt; Lep_eta_ = lepEta; Lep_phi_ = lepPhi; Lep_mass_ = lepMass; Lep_pdgid_ = lepPdgId;
@@ -45,7 +50,7 @@ public:
     output.minMllAFSS = -1;
     output.minMllSFOS = -1;
     for (auto p : pairs){
-      if ((output.mZ1<0 || fabs(p.m-91.2)<fabs(output.mZ1-91.2)) && p.isOS && p.isSF) output.mZ1 = p.m;
+      if ((output.mZ1<0 || fabs(p.m-91)<fabs(output.mZ1-91)) && p.isOS && p.isSF) output.mZ1 = p.m;
       if (output.minMllAFAS<0 || p.m<output.minMllAFAS) output.minMllAFAS = p.m;
       if ((output.minMllAFOS<0 || p.m<output.minMllAFOS) && p.isOS) output.minMllAFOS = p.m;
       if ((output.minMllAFSS<0 || p.m<output.minMllAFSS) && !(p.isOS)) output.minMllAFSS = p.m;
@@ -57,7 +62,7 @@ public:
   void run() {
 
     int nLep = **nLep_;
-    for (int i=0; i<nLep; i++) if (leps_loose[i]) leps_p4[i].SetPtEtaPhiM((*Lep_pt_)[i],(*Lep_eta_)[i],(*Lep_phi_)[i],(*Lep_mass_)[i]);
+    for (int i=0; i<nLep; i++) if (leps_loose[i]) leps_p4[i] = ptvec((*Lep_pt_)[i],(*Lep_eta_)[i],(*Lep_phi_)[i],(*Lep_mass_)[i]);
     for (int i=0; i<nLep; i++){
       if (!leps_loose[i]) continue;
       for (int j=i+1; j<nLep; j++){
@@ -75,16 +80,19 @@ public:
     std::set<int> veto_FO;
     std::set<int> veto_tight;
     for (auto p: pairs){
-      if ((doVetoZ_ && 76.2<p.m && p.m<106.2 && p.isOS && p.isSF) || (doVetoLMf_ && 0<p.m && p.m<12 && p.isOS && p.isSF)) {veto_FO.insert(p.i); veto_FO.insert(p.j);}
-      if ((doVetoZ_ && 76.2<p.m && p.m<106.2 && p.isOS && p.isSF) || (doVetoLMt_ && 0<p.m && p.m<12 && p.isOS && p.isSF)) {veto_tight.insert(p.i); veto_tight.insert(p.j);}
+      if ((doVetoZ_ && 76<p.m && p.m<106 && p.isOS && p.isSF) || (doVetoLMf_ && 0<p.m && p.m<12 && p.isOS && p.isSF)) {veto_FO.insert(p.i); veto_FO.insert(p.j);}
+      if ((doVetoZ_ && 76<p.m && p.m<106 && p.isOS && p.isSF) || (doVetoLMt_ && 0<p.m && p.m<12 && p.isOS && p.isSF)) {veto_tight.insert(p.i); veto_tight.insert(p.j);}
     }
-    for (auto i: veto_FO) leps_fo.erase(i);
-    for (auto i: veto_tight) leps_tight.erase(i);
+    for (auto i: veto_FO) leps_fo.erase(std::remove(leps_fo.begin(),leps_fo.end(),i),leps_fo.end());
+    for (auto i: veto_tight) leps_tight.erase(std::remove(leps_tight.begin(),leps_tight.end(),i),leps_tight.end());
+
+    for (auto i : leps_fo) skim_lepsF_.push_back(i);
+    for (auto i : leps_tight) skim_lepsT_.push_back(i);
 
   }
 
-  std::vector<int> getVetoedFO() {std::vector<int> _l; for (auto x: leps_fo) _l.push_back(x); return _l;}
-  std::vector<int> getVetoedTight() {std::vector<int> _l; for (auto x: leps_tight) _l.push_back(x); return _l;}
+  std::vector<int>* getVetoedFO() {return &leps_fo;}
+  std::vector<int>* getVetoedTight() {return &leps_tight;}
 
   void clear(){
     nLep = **nLep_;
@@ -93,7 +101,13 @@ public:
     std::fill_n(leps_loose.get(),nLep,false);
     leps_fo.clear();
     leps_tight.clear();
-    leps_p4.reset(new TLorentzVector[nLep]);
+    leps_p4.reset(new crvec[nLep]);
+  }
+
+  void loadTags(CombinedObjectTags *tags){
+    std::copy(tags->lepsL.get(),tags->lepsL.get()+**nLep_,leps_loose.get());
+    for (auto i : tags->getLepsF_byConePt()) leps_fo.push_back(i);
+    for (int i=0; i<**nLep_; i++) if (tags->lepsT[i]) leps_tight.push_back(i);
   }
 
   void setLeptonFlagLoose(int i){
@@ -101,22 +115,23 @@ public:
   }
   void setLeptonFlagFO(int i){
     assert(leps_loose[i]);
-    leps_fo.insert(i);
+    leps_fo.push_back(i);
   }
   void setLeptonFlagTight(int i){
     assert(leps_loose[i]);
-    leps_tight.insert(i);
+    leps_tight.push_back(i);
   }
 
 private:
+  CollectionSkimmer &skim_lepsF_, &skim_lepsT_;
   rint *nLep_;
   rfloats *Lep_pt_, *Lep_eta_, *Lep_phi_, *Lep_mass_;
   rints *Lep_pdgid_;
   std::vector<LeptonPairInfo> pairs;
   Int_t nLep;
   std::unique_ptr<bool[]> leps_loose;
-  std::set<int> leps_fo, leps_tight;
-  std::unique_ptr<TLorentzVector[]> leps_p4;
+  std::vector<int> leps_fo, leps_tight;
+  std::unique_ptr<crvec[]> leps_p4;
   bool doVetoZ_;
   bool doVetoLMf_;
   bool doVetoLMt_;

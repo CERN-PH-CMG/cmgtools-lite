@@ -1,7 +1,7 @@
 import ROOT
 
 class CollectionSkimmer:
-    def __init__(self, outName, srcColl, ints=[], floats=[], maxSize=100, saveSelectedIndices=False, saveTagForAll=False):
+    def __init__(self, outName, srcColl, ints=[], floats=[], maxSize=100, saveSelectedIndices=False, padSelectedIndicesWith=None, saveTagForAll=False):
         """Read from a collection called srcColl (eg. 'Jet'), write out to a collection called outName (e.g. 'CleanJet')
            Clone the variables specified in the ints and floats list (e.g. 'mcMatchId', 'pt', ...)
            maxSize fixes the maximum allowed number of entries in the output."""
@@ -9,6 +9,7 @@ class CollectionSkimmer:
         self._ints   = ints
         self._floats = floats
         self._saveSelectedIndices = saveSelectedIndices
+        self._padSelectedIndicesWith = padSelectedIndicesWith
         self._saveTagForAll = saveTagForAll
         self._impl = ROOT.CollectionSkimmer(outName,srcColl,saveSelectedIndices,saveTagForAll)
         self._iprefix = srcColl + "_"
@@ -24,7 +25,7 @@ class CollectionSkimmer:
         self._ttreereaderversion = tree._ttreereaderversion
     def initOutputTree(self,outpytree):
         """To be called once when defining the output PyTree, to declare the branches"""
-        self._impl.makeBranches(outpytree.tree, self._maxSize)
+        self._impl.makeBranches(outpytree.tree, self._maxSize, (self._padSelectedIndicesWith!=None), self._padSelectedIndicesWith if (self._padSelectedIndicesWith!=None) else -1)
     def initEvent(self,event):
         """To be called at the beginning of every event.
            Returns true if the underlying TTreeReader has changed"""

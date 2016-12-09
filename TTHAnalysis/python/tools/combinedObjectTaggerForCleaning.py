@@ -1,15 +1,10 @@
 from CMGTools.TTHAnalysis.treeReAnalyzer import *
-import ROOT
-
-class CombinedObjectTagsForCleaning:
-    def __init__(self,label):
-        self.label = label
-    def __str__(self):
-        return str(self.__dict__)
+import ROOT, os
 
 class CombinedObjectTaggerForCleaning:
 
-    def __init__(self,label,looseLeptonSel,cleaningLeptonSel,FOLeptonSel,tightLeptonSel,cleaningTauSel,FOTauSel,tightTauSel,selectJet,coneptdef,debug=False):
+    def __init__(self,label,looseLeptonSel,cleaningLeptonSel,FOLeptonSel,tightLeptonSel,FOTauSel,tightTauSel,selectJet,coneptdef,debug=False):
+
         self.label = "" if (label in ["",None]) else ("_"+label)
 
         self.looseLeptonSel = looseLeptonSel
@@ -17,9 +12,8 @@ class CombinedObjectTaggerForCleaning:
         self.fkbleLeptonSel = FOLeptonSel # applied on top of looseLeptonSel
         self.tightLeptonSel = tightLeptonSel # applied on top of looseLeptonSel
 
-        self.cleanTauSel = cleaningTauSel
-        self.fkbleTauSel = FOTauSel # applied on top of cleaningTauSel
-        self.tightTauSel = tightTauSel # applied on top of cleaningTauSel
+        self.fkbleTauSel = FOTauSel
+        self.tightTauSel = tightTauSel # applied on top of FOTauSel
 
         self.selectJet = selectJet
 
@@ -35,26 +29,19 @@ class CombinedObjectTaggerForCleaning:
         taus = [t for t in Collection(event,"TauGood","nTauGood")]
         jets = [j for j in Collection(event,"Jet","nJet")]
 
-        tags = CombinedObjectTagsForCleaning(self.label)
+        tags = ROOT.CombinedObjectTags(len(leps),len(taus),len(jets))
 
         if not self.coneptdef: raise RuntimeError, 'Choose the definition to be used for cone pt'
         for lep in leps: lep.conept = self.coneptdef(lep)
-        tags.conept = [lep.conept for lep in leps]
 
-        tags.lepsL= [j for j,obj in filter(lambda (i,lep) : self.looseLeptonSel(lep), enumerate(leps))]
-        tags.lepsC= [j for j,obj in filter(lambda (i,lep) : (i in tags.lepsL) and self.cleanLeptonSel(lep), enumerate(leps))]
-        tags.lepsF= [j for j,obj in filter(lambda (i,lep) : (i in tags.lepsL) and self.fkbleLeptonSel(lep), enumerate(leps))]
-        tags.lepsT= [j for j,obj in filter(lambda (i,lep) : (i in tags.lepsL) and self.tightLeptonSel(lep), enumerate(leps))]
-        tags.tausC= [j for j,obj in filter(lambda (i,tau) : self.cleanTauSel(tau), enumerate(taus))]
-        tags.tausF= [j for j,obj in filter(lambda (i,tau) : (i in tags.tausC) and self.fkbleTauSel(tau), enumerate(taus))]
-        tags.tausT= [j for j,obj in filter(lambda (i,tau) : (i in tags.tausC) and self.tightTauSel(tau), enumerate(taus))]
-        tags.jetsS= [j for j,obj in filter(lambda (i,jet) : self.selectJet(jet), enumerate(jets))]
-
-        lepsF_sorted = [_idx for _cpt,_idx in sorted([(tags.conept[i],i) for i in tags.lepsF], reverse=True)]
-        tags.lepsF = lepsF_sorted
+        for i,lep in enumerate(leps):
+            if self.looseLeptonSel(lep): tags.setLepFlags(i,True,self.cleanLeptonSel(lep),self.fkbleLeptonSel(lep),self.tightLeptonSel(lep),lep.conept)
+        for i,tau in enumerate(taus):
+            if self.fkbleTauSel(tau): tags.setTauFlags(i,True,self.tightTauSel(tau))
+        for i,jet in enumerate(jets):
+            if self.selectJet(jet): tags.setJetFlags(i,True)
 
         setattr(event,'_CombinedTagsForCleaning%s'%self.label,tags)
-        if self.debug: print tags
         return {}
 
 MODULES=[]
@@ -72,9 +59,8 @@ if __name__ == '__main__':
                                                        cleaningLeptonSel = lambda lep : True, # cuts applied on top of loose
                                                        FOLeptonSel = lambda lep : lep.conept>10 and lep.jetBTagCSV<0.80, # cuts applied on top of loose
                                                        tightLeptonSel = lambda lep : lep.conept>10 and lep.jetBTagCSV<0.80 and lep.mvaTTH > 0.75, # cuts applied on top of loose
-                                                       cleaningTauSel = lambda tau: tau.pt > 20 and abs(tau.eta)<2.3 and tau.idMVAOldDMRun2dR03 >= 1,
-                                                       FOTauSel = lambda tau: True, # cuts applied on top of cleaning
-                                                       tightTauSel = lambda tau: tau.idMVAOldDMRun2dR03 >= 2, # cuts applied on top of cleaning
+                                                       FOTauSel = lambda tau: tau.pt > 20 and abs(tau.eta)<2.3 and tau.idMVAOldDMRun2dR03 >= 1,
+                                                       tightTauSel = lambda tau: tau.idMVAOldDMRun2dR03 >= 2, # cuts applied on top of FO tau
                                                        selectJet = lambda jet: abs(jet.eta)<2.4,
                                                        coneptdef = lambda lep: lep.pt,
                                                        debug = True)

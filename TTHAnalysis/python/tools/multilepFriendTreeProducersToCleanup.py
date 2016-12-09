@@ -134,15 +134,16 @@ MODULES.append( ('MediumMuonID2016', lambda : ObjTagger(label='ICHEPmediumMuonId
 
 MODULES.append( ('leptonJetReCleanerTTH', lambda : LeptonJetReCleaner("Recl", # b1E2 definition of FO, 80X b-tag WP
                    looseLeptonSel = lambda lep : lep.miniRelIso < 0.4 and lep.sip3d < 8,
-                   cleaningLeptonSel = lambda lep : True, # cuts applied on top of loose
+                   cleaningLeptonSel = lambda lep : lep.conept>10 and lep.jetBTagCSV<0.80 and (abs(lep.pdgId)!=11 or lep.conept<30 or _ttH_idEmu_cuts_E2(lep)) and ((lep.jetPtRatiov2>0.3 and lep.jetBTagCSV<0.46) or lep.mvaTTH>0.75), # cuts applied on top of loose
                    FOLeptonSel = lambda lep,ht : lep.conept>10 and lep.jetBTagCSV<0.80 and (abs(lep.pdgId)!=11 or lep.conept<30 or _ttH_idEmu_cuts_E2(lep)) and ((lep.jetPtRatiov2>0.3 and lep.jetBTagCSV<0.46) or lep.mvaTTH>0.75), # cuts applied on top of loose
                    tightLeptonSel = lambda lep,ht : lep.conept>10 and lep.jetBTagCSV<0.80 and (abs(lep.pdgId)!=11 or lep.conept<30 or _ttH_idEmu_cuts_E2(lep)) and ((lep.jetPtRatiov2>0.3 and lep.jetBTagCSV<0.46) or lep.mvaTTH>0.75) and (abs(lep.pdgId)!=13 or lep.ICHEPmediumMuonId>0) and lep.mvaTTH > 0.75, # cuts applied on top of loose
-                   cleanJet = lambda lep,jet,dr : dr<0.4 and (abs(lep.pdgId)==15 or ( lep.conept>10 and lep.jetBTagCSV<0.80 and (abs(lep.pdgId)!=11 or lep.conept<30 or _ttH_idEmu_cuts_E2(lep)) and ((lep.jetPtRatiov2>0.3 and lep.jetBTagCSV<0.46) or lep.mvaTTH>0.75) )), # called on cleaning leptons and loose taus
+                   cleanJet = lambda lep,jet,dr : dr<0.4, # called on cleaning leptons and loose taus
                    selectJet = lambda jet: abs(jet.eta)<2.4,
-                   cleanTau = lambda lep,tau,dr: dr<0.4, # cleaning taus with cleaningLeptonSel == loose
+                   cleanTau = lambda lep,tau,dr: dr<0.4,
                    looseTau = lambda tau: tau.pt > 20 and abs(tau.eta)<2.3 and abs(tau.dxy) < 1000 and abs(tau.dz) < 0.2 and tau.idMVAOldDMRun2dR03 >= 1 and tau.idDecayMode, # used in cleaning
                    tightTau = lambda tau: tau.idMVAOldDMRun2dR03 >= 2, # cuts applied on top of loose
                    cleanJetsWithTaus = True,
+                   cleanTausWithLoose = True, # cleaning taus with cleaningLeptonSel == loose
                    doVetoZ = True,
                    doVetoLMf = True,
                    doVetoLMt = True,
