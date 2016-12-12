@@ -184,7 +184,7 @@ else:
 
 if options.queue:
     import os, sys
-    basecmd = "bsub -q {queue} {dir}/lxbatch_runner.sh {dir} {cmssw} python {self} -N {chunkSize} -T '{tdir}' -t {tree} {data} {output}".format(
+    basecmd = "bsub -q {queue} {dir}/lxbatch_runner.sh {dir} {cmssw} python {self} -N {chunkSize} -T '{tdir}' -j 0 -t {tree} {data} {output}".format(
         queue = options.queue, dir = os.getcwd(), cmssw = os.environ['CMSSW_BASE'],
         self=sys.argv[0], chunkSize=options.chunkSize, tdir=options.treeDir, tree=options.tree, data=args[0], output=args[1]
         )
