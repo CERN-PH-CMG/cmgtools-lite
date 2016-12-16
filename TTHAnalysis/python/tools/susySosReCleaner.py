@@ -195,6 +195,7 @@ MODULES = [
     ('ip3dleps', lambda : SOSLepCleanerIP3D(mu_ip3d=0.006,el_ip3d=0.008)),
     ('sip3dleps', lambda : SOSLepCleanerIP3D(mu_sip3d=1.8,el_sip3d=1.8)),
     ('both3dleps', lambda : SOSLepCleanerIP3D(mu_ip3d=0.01,el_ip3d=0.01,mu_sip3d=2.0,el_sip3d=2.0)),
+    ('both3dloose', lambda : SOSLepCleanerIP3D(mu_ip3d=0.0175,el_ip3d=0.0175,mu_sip3d=2.5,el_sip3d=2.5)),
     ('ipjets', lambda : SOSJetCleaner(lepPtCut=0)),
 ]
 

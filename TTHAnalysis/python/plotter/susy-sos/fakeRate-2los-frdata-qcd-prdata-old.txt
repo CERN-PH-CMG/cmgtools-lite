@@ -1,0 +1,6 @@
+cut-change: (0==1) : 1
+weight: fakeRatePromptRateWeight_2l_23(LepGood1_pt,LepGood1_eta,LepGood1_pdgId,LepGood1_isOldTightString,LepGood2_pt,LepGood2_eta,LepGood2_pdgId,LepGood2_isOldTightString)
+load-histo: FR2_mu : $DATA/fakerate/FR_SOS_12p9fbi.root : FR_SOS_QCD_mu_data_comb
+load-histo: FR2_el : $DATA/fakerate/FR_SOS_12p9fbi.root : FR_SOS_QCD_el_data_comb
+load-histo: FR3_mu : $DATA/fakerate/sos_prompt_rate_mc_SFdata_12invfb.root : PR_SOS_DY_mu_mc_SFdata
+load-histo: FR3_el : $DATA/fakerate/sos_prompt_rate_mc_SFdata_12invfb.root : PR_SOS_DY_ele_mc_SFdata

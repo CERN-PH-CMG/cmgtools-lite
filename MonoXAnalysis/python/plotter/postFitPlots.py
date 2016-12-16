@@ -22,23 +22,27 @@ mergeMap = {
 swapMap = {
     "ZM" : { "ZLL" : "ZNuNu" },
     "ZE" : { "ZLL" : "ZNuNu" },
+    "WM" : { },
+    "WE" : { },
 }
 
 options = None
 if __name__ == "__main__":
     from optparse import OptionParser
-    parser = OptionParser(usage="%prog [options] mcaplot.txt mcafit.txt plotfile varname mlfile region")
+    parser = OptionParser(usage="%prog [options] mca.txt plotfile varname mlfile region")
     addPlotMakerOptions(parser)
     (options, args) = parser.parse_args()
-    region = args[5];
+    region = args[4];
     options.path = "/data1/emanuele/monox/TREES_MET_80X_V4/" if region in ['SR','ZM','WM'] else "/data1/emanuele/monox/TREES_1LEP_80X_V4/"
+    if "HOSTNAME" in os.environ:  
+        if os.environ["HOSTNAME"] == "pccmsrm29.cern.ch":
+            options.path = "/u2/emanuele/TREES_MET_80X_V4/" if region in ['SR','ZM','WM'] else "/u2/emanuele/TREES_1LEP_80X_V4/"
     options.lumi = 24.47
     mcap = MCAnalysis(args[0],options)
-    mca  = MCAnalysis(args[1],options)
-    basedir = dirname(args[2]);
-    infile = ROOT.TFile(args[2]);
-    var    = args[3];
-    mlfile = ROOT.TFile(args[4]);
+    basedir = dirname(args[1]);
+    infile = ROOT.TFile(args[1]);
+    var    = args[2];
+    mlfile = ROOT.TFile(args[3]);
     ROOT.gROOT.ProcessLine(".x /afs/cern.ch/user/g/gpetrucc/cpp/tdrstyle.cc(0)")
     ROOT.gROOT.ForceStyle(False)
     ROOT.gStyle.SetErrorX(0.5)
@@ -48,7 +52,7 @@ if __name__ == "__main__":
       mldir  = mlfile.GetDirectory("shapes_"+MLD);
       if not mldir: raise RuntimeError, mlfile
       outfile = ROOT.TFile(basedir + "/"+O+"_" + basename(args[2]), "RECREATE")
-      processes = [p for p in reversed(mca.listBackgrounds())] + mca.listSignals()
+      processes = [p for p in reversed(mcap.listBackgrounds())] + mcap.listSignals()
 
       hdata = infile.Get(var+"_data")
       stack = ROOT.THStack(var+"_stack","")
@@ -74,8 +78,8 @@ if __name__ == "__main__":
             continue
         
         for b in xrange(1, h.GetNbinsX()+1):
-            h.SetBinContent(b, hpf.GetBinContent(b)*hpf_scale)
-            h.SetBinError(b, hpf.GetBinError(b)*hpf_scale)
+            h.SetBinContent(b, hpf.GetBinContent(b)*hpf.GetBinWidth(b))
+            h.SetBinError(b, hpf.GetBinError(b)*hpf.GetBinWidth(b))
         plots[p] = h
         h.SetName(var+"_"+p)
         stack.Add(h)
@@ -112,10 +116,10 @@ if __name__ == "__main__":
       hbkgpf = mldir.Get(region+"/total_background")
       scale_hbkgpf = pyields["background"][0]/hbkgpf.Integral()
       for b in xrange(1, h.GetNbinsX()+1):
-          htot.SetBinContent(b, htotpf.GetBinContent(b)*scale_htotpf)
-          htot.SetBinError(b, htotpf.GetBinError(b)*scale_htotpf)
-          hbkg.SetBinContent(b, hbkgpf.GetBinContent(b)*scale_hbkgpf)
-          hbkg.SetBinError(b, hbkgpf.GetBinError(b)*scale_hbkgpf)
+          htot.SetBinContent(b, htotpf.GetBinContent(b)*htotpf.GetBinWidth(b))
+          htot.SetBinError(b, htotpf.GetBinError(b)*htotpf.GetBinWidth(b))
+          hbkg.SetBinContent(b, hbkgpf.GetBinContent(b)*hbkgpf.GetBinWidth(b))
+          hbkg.SetBinError(b, hbkgpf.GetBinError(b)*hbkgpf.GetBinWidth(b))
       for h in plots.values() + [htot]:
          outfile.WriteTObject(h)
       doRatio = True

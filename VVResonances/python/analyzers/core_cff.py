@@ -5,6 +5,7 @@ from PhysicsTools.Heppy.analyzers.gen.all import *
 from CMGTools.VVResonances.analyzers.LeptonIDOverloader import *
 from CMGTools.VVResonances.analyzers.HbbTagComputer import *
 from CMGTools.VVResonances.analyzers.VVBuilder import *
+from CMGTools.VVResonances.analyzers.TTBuilder import *
 from CMGTools.VVResonances.analyzers.VTauBuilder import *
 from CMGTools.VVResonances.analyzers.Skimmer import *
 from CMGTools.VVResonances.analyzers.TopMergingAnalyzer import *
@@ -40,6 +41,7 @@ triggerFlagsAna = cfg.Analyzer(
 
     processName = 'HLT2',
     fallbackProcessName = 'HLT',
+    unrollbits = True,
     triggerBits = {
     }
     )
@@ -259,6 +261,7 @@ jetAna = cfg.Analyzer(
     jetPt = 25.,
     jetEta = 4.7,
     jetEtaCentral = 2.4,
+    cleanJetsFromLeptons = True,
     jetLepDR = 0.4,
     cleanSelectedLeptons = False, #Whether to clean 'selectedLeptons' after disambiguation. Treat with care (= 'False') if running Jetanalyzer more than once
     minLepPt = 10,
@@ -285,6 +288,7 @@ jetAna = cfg.Analyzer(
     calculateSeparateCorrections = True, # should be True if recalibrateJets is True, otherwise L1s will be inconsistent
     calculateType1METCorrection  = False,
     type1METParams = { 'jetPtThreshold':15., 'skipEMfractionThreshold':0.9, 'skipMuons':True },
+    storeLowPtJets = False,
     )
 
 
@@ -297,6 +301,7 @@ jetAnaAK8 = cfg.Analyzer(
     jetPt = 150.,
     jetEta = 2.4,
     jetEtaCentral = 2.4,
+    cleanJetsFromLeptons = True,
     jetLepDR = 0.4,
     cleanSelectedLeptons = False, #Whether to clean 'selectedLeptons' after disambiguation. Treat with care (= 'False') if running Jetanalyzer more than once
     minLepPt = 10,
@@ -323,6 +328,7 @@ jetAnaAK8 = cfg.Analyzer(
     calculateSeparateCorrections = True, # should be True if recalibrateJets is True, otherwise L1s will be inconsistent
     calculateType1METCorrection  = False,
     type1METParams = { 'jetPtThreshold':15., 'skipEMfractionThreshold':0.9, 'skipMuons':True },
+    storeLowPtJets = False,
     )
 
 
@@ -343,6 +349,20 @@ vvAna = cfg.Analyzer(
     btagCSVFile = "${CMSSW_BASE}/src/CMGTools/VVResonances/data/btag.csv",
     puppiJecCorrFile = "${CMSSW_BASE}/src/CMGTools/VVResonances/data/puppiCorr.root"
 
+)
+
+
+
+ttAna = cfg.Analyzer(
+    TTBuilder,name='ttAna',
+    suffix = '',
+    doPUPPI=True,
+    bDiscriminator = "pfCombinedInclusiveSecondaryVertexV2BJetTags",
+#    boostedBdiscriminator = "pfBoostedDoubleSecondaryVertexAK8BJetTags",
+    cDiscriminatorL = "pfCombinedCvsLJetTags",
+    cDiscriminatorB = "pfCombinedCvsBJetTags",
+    btagCSVFile = "${CMSSW_BASE}/src/CMGTools/VVResonances/data/btag.csv",
+    puppiJecCorrFile = "${CMSSW_BASE}/src/CMGTools/VVResonances/data/puppiCorr.root"
 )
 
 
@@ -384,6 +404,7 @@ def doPruning():
 #    jetAnaAK8.dataGT   = "76X_dataRun2_v15_Run2015D_25ns"
     jetAnaAK8.recalibrationType = "AK8PFchs"
     vvAna.doPUPPI=False
+    ttAna.doPUPPI=False
 
 
 
@@ -408,6 +429,4 @@ coreSequence = [
     mergedTruthAna,
     badMuonAna,
     badChargedHadronAna,
-    vvAna,
-    metWeightAna
 ]

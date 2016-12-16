@@ -1,20 +1,16 @@
 # vim: syntax=sh
-minimal: LepGood_awayJet_pt > 40 
-fix: abs(LepGood_awayJet_eta) < 2.4
+recoil: LepGood_awayJet_pt > 30
 bMedium: LepGood_awayJet_btagCSV > 0.89; Disable=True
 1l: nLepGood == 1
-HLT_FR_PFJet40 : $DATA{HLT_FR_PFJet40} $MC{1}; Disable=True
-HLT_FR_PFJet60 : $DATA{HLT_FR_PFJet60} $MC{1}; Disable=True
-HLT_FR_PFJet80 : $DATA{HLT_FR_PFJet80} $MC{1}; Disable=True
-#HLT_FR_PFJet:  $DATA{HLT_FR_PFJet40 || HLT_FR_PFJet60 || HLT_FR_PFJet80} $MC{1}; Disable=True
 HLT_FR_PFJetAny:  LepGood_awayJet_pt > 60; Disable=True
 HLT_FR_Mu8 : $DATA{HLT_FR_Mu8} $MC{1} && LepGood_pt > 8; Disable=True
 HLT_FR_Mu3_PFJet40 : $DATA{HLT_FR_Mu3_PFJet40} $MC{1}; Disable=True
-#HLT_FR_PFJet80 : $DATA{HLT_FR_PFJet80} $MC{1}; Disable=True
-#HLT_FR_PFJet80 : $DATA{HLT_FR_PFJet80} $MC{1}; Disable=True
 mu : abs(LepGood_pdgId)==13 ; Disable=True
 el : abs(LepGood_pdgId)==11 && LepGood_convVeto && LepGood_lostHits == 0  && eleWPVVL(LepGood_pt,LepGood_etaSc,LepGood_mvaIdSpring15); Disable=True
-num : (abs(LepGood_pdgId)==13 && LepGood_ICHEPsoftMuonId || abs(LepGood_pdgId)==11 && eleWPT(LepGood_pt,LepGood_etaSc,LepGood_mvaIdSpring15)) && (abs(LepGood_dxy)<0.01 && abs(LepGood_dz)<0.01) && (LepGood_relIso03<0.5 && (LepGood_relIso03*LepGood_pt)<5.) ; Disable=True
+num : (abs(LepGood_pdgId)==13 && LepGood_ICHEPsoftMuonId || abs(LepGood_pdgId)==11 && eleWPT(LepGood_pt,LepGood_etaSc,LepGood_mvaIdSpring15)) && abs(LepGood_ip3d)<0.01 && LepGood_sip3d < 2 && (LepGood_relIso03<0.5 && (LepGood_relIso03*LepGood_pt)<5.) ; Disable=True
 pt30: LepGood_pt < 30; Disable=True
-ajpt30: LepGood_awayJet_pt > 30; Disable=True
 barrel : abs(LepGood_eta) <= (1.2 + 0.279 *(abs(LepGood_pdgId)==11)); Disable=True
+ip3dloose : abs(LepGood_ip3d)<0.0175 && LepGood_sip3d < 2.5 && LepGood_jetBTagCSV < 0.46
+muonid : abs(LepGood_pdgId)!=13 || LepGood_ICHEPsoftMuonId; Disable=True
+ptd_3_20 : (LepGood_pt-5)/3 + LepGood_relIso03*LepGood_pt < 20; Disable=True
+pti_300_20 : LepGood_relIso03*LepGood_pt <  300/LepGood_pt + 20; Disable=True

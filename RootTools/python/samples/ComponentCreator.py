@@ -203,12 +203,23 @@ class ComponentCreator(object):
         return fraction 
         
 
-def testSamples(mcSamples):
+def testSamples(mcSamples, allowAAA=False):
    from subprocess import check_output, CalledProcessError
+   from CMGTools.Production.changeComponentAccessMode import convertFile
    for X in mcSamples:
         print X.name, len(X.files)
         try:
             print "\tSample is accessible? ",("events" in check_output(["edmFileUtil","--ls",X.files[0]]))
         except CalledProcessError:
-            print "\tERROR trying to access ",X.files[0]
+            fail = True
+            if allowAAA:
+                try:
+                    newfile = convertFile(X.files[0], "root://cms-xrd-global.cern.ch/%s")
+                    if newfile != X.files[0]:
+                        if "events" in check_output(["edmFileUtil","--ls",newfile]):
+                            print "yes, but only via AAA"
+                            fail = False
+                except:
+                    pass
+            if fail: print "\tERROR trying to access ",X.files[0]
 

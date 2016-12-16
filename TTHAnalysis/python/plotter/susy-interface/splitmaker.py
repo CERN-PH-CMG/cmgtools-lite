@@ -17,7 +17,7 @@ parser.add_option("--dm"     , dest="deltam" , type="int", default=None, help="M
 base = "python splitSMSTrees.py {O} {T} {GEN} {TMP} --tree {TREENAME} {MASS} {LSP}"
 (options, args) = parser.parse_args()
 options = maker.splitLists(options)
-mm      = maker.Maker(base, args, options)
+mm      = maker.Maker("splitmaker", base, args, options)
 
 tmp = "--tmpdir "+options.tmpdir if options.tmpdir else ""
 gen = "--gen" if options.gen else ""
@@ -28,10 +28,12 @@ if options.gen:
 ## split tree per mass (parallel splitting)
 if options.minmass and options.maxmass and options.step:
 
-	masses = [options.minmass + i.options.step for i in range((options.maxmass - options.minmass)/options.step+1)]
+	masses = [options.minmass + i*options.step for i in range((options.maxmass - options.minmass)/options.step+1)]
 	for mass in masses:
-		lsp = "--lsp "+str(mass-options.dm) if options.dm else ""
-		mm.submit([mm.outdir, mm.treedir, gen, tmp, options.treename, "--mass "+str(mass), lsp],mass)
+		lsp = "--lsp "+str(mass-options.deltam) if options.deltam else ""
+		mm.submit([mm.outdir, mm.treedir, gen, tmp, options.treename, "--mass "+str(mass), lsp],str(mass),False)
+	mm.runJobs()
+	mm.clearJobs()
 
 ## only one splitting job
 else:

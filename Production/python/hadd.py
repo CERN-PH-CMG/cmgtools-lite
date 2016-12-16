@@ -12,7 +12,11 @@ def haddPck(file, odir, idirs):
     for dir in idirs:
         fileName = file.replace( idirs[0], dir )
         pckfile = open(fileName)
-        obj = pickle.load(pckfile)
+        try:
+            obj = pickle.load(pckfile)
+        except:
+            print "Error loading pckfile "+fileName
+            raise
         if sum is None:
             sum = obj
         else:
@@ -78,7 +82,7 @@ def haddRec(odir, idirs):
             hadd('/'.join([root, file]), odir, idirs)
 
 
-def haddChunks(idir, removeDestDir, cleanUp=False, ignoreDirs=None):
+def haddChunks(idir, removeDestDir, cleanUp=False, ignoreDirs=None, maxSize=None):
 
     chunks = {}
     compsToSpare = set()
@@ -89,44 +93,54 @@ def haddChunks(idir, removeDestDir, cleanUp=False, ignoreDirs=None):
         # print filepath
         if os.path.isdir(filepath):
             compdir = file
-            skipDir = False
-            if compdir in ignoreDirs:
-              ignoreDirs.remove(compdir) 
-              skipDir = True
             try:
                 prefix,num = compdir.rsplit('_Chunk',1)
             except ValueError:
                 # ok, not a chunk
                 continue
             #print prefix, num
-            if skipDir: 
-              compsToSpare.add(prefix)
-              continue
+            if compdir in ignoreDirs:
+                ignoreDirs.remove(compdir)
+                compsToSpare.add(prefix)
+                continue
             chunks.setdefault( prefix, list() ).append(filepath)
     if len(chunks)==0:
         print 'warning: no chunk found.'
         return
-    for comp, cchunks in chunks.iteritems():
-        odir = '/'.join( [idir, comp] )
-        print odir, cchunks
-        if removeDestDir:
-            if os.path.isdir( odir ):
-                shutil.rmtree(odir)
-        haddRec(odir, cchunks)
     if cleanUp:
         chunkDir = 'Chunks'
         if os.path.isdir('Chunks'):
             shutil.rmtree(chunkDir)
         os.mkdir(chunkDir)
-        print chunks
-        for comp, chunks in chunks.iteritems():
-            cleanIt = True
-            if comp in compsToSpare :
-              cleanIt = False
-              compsToSpare.remove(comp)
-            if cleanIt :
-              for chunk in chunks:
-                  shutil.move(chunk, chunkDir)
+    for comp, cchunks in chunks.iteritems():
+        odir = '/'.join( [idir, comp] )
+        tasks = [ (odir,cchunks) ]
+        if maxSize:
+            threshold = maxSize*(1024.**3)
+            #print odir, cchunks
+            running = [ dict(files=[], size=0.) ]
+            for ch in cchunks:
+                size = sum(sum(os.path.getsize(os.path.join(p,f)) for f in fs) for p,d,fs in os.walk(ch))
+                if running[-1]['size'] + size > threshold:
+                    running.append(dict(files=[], size=0.))
+                running[-1]['files'].append(ch)
+                running[-1]['size'] += size
+            if len(running) > 1:
+                tasks = []
+                for i,task in enumerate(running):
+                    tasks.append( ("%s_part%d" % (odir,i+1), task['files'][:]) )
+                    print "Part %s: %d files, %.3f Gb" % (tasks[-1][0], len(task['files']), task['size']/(1024.**3))
+            else:
+                print "Entire chunk %.3f Gb, below threshold" % (running[-1]['size']/(1024.**3))
+        for odir, cchunks in tasks:
+            #print odir, cchunks
+            if removeDestDir:
+                if os.path.isdir( odir ):
+                    shutil.rmtree(odir)
+            haddRec(odir, cchunks)
+            if cleanUp and (comp not in compsToSpare):
+                for chunk in cchunks:
+                    shutil.move(chunk, chunkDir)
 
 
 

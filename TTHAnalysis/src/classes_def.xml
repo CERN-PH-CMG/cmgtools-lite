@@ -4,4 +4,5 @@
     <class name="PdfWeightProducerTool" transient="true" />
     <class name="SetupIgProfDumpHook" transient="true" />
     <class name="CollectionSkimmer" transient="true" />
+    <class name="CombinedObjectTags" transient="true" />
 </lcgdict>

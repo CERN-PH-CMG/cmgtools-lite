@@ -4,7 +4,7 @@ import pickle
 import CMGTools.H2TauTau.proto.plotter.MultiDraw
 
 from CMGTools.H2TauTau.proto.plotter.PlotConfigs import HistogramCfg
-from CMGTools.H2TauTau.proto.plotter.DataMCPlot import DataMCPlot
+from CMGTools.VVResonances.plotting.DataMCPlot import DataMCPlot
 
 
 from CMGTools.RootTools.DataMC.Histogram import Histogram

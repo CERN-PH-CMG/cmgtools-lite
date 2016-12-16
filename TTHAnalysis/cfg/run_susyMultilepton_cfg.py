@@ -44,8 +44,13 @@ print 'Using analysis type: %s'%analysis
 # Lepton Skimming
 ttHLepSkim.minLeptons = 2
 ttHLepSkim.maxLeptons = 999
-#ttHLepSkim.idCut  = ""
-#ttHLepSkim.ptCuts = []
+
+if analysis=='susy':
+    susyCoreSequence.insert(susyCoreSequence.index(ttHLepSkim)+1,globalSkim)
+    susyCoreSequence.remove(ttHLepSkim)
+    globalSkim.selections=["2lep5","1lep5_1tau18", "2tau18","1lep5[maxObj1]"]
+#   [ lambda ev: 2<=sum([(lep.miniRelIso<0.4) for lep in ev.selectedLeptons]) ] 
+#   ["2lep5[os:!DS_TTW_RA5_sync]_1lep50"]#, "1lep5_1tau18", "2tau18","2lep5_1met50"]
 
 # Run miniIso
 lepAna.doMiniIsolation = True
@@ -60,6 +65,15 @@ isolation = "miniIso"
 
 jetAna.copyJetsByValue = True # do not remove this
 metAna.copyMETsByValue = True # do not remove this
+
+if analysis=='susy':
+    jetAna.cleanJetsFromLeptons=False
+    jetAna.cleanSelectedLeptons=True
+    jetAna.storeLowPtJets=True
+    jetAna.jetEtaCentral = jetAna.jetEta
+    jetAna.mcGT="Spring16_25nsV8_MC"    
+    jetAna.dataGT   = "Spring16_25nsV8BCD_DATA Spring16_25nsV8E_DATA Spring16_25nsV8F_DATA Spring16_25nsV8_DATA"
+    jetAna.runsDataJEC   = [276811, 277420, 278802]
 if not removeJecUncertainty:
     jetAna.addJECShifts = True
     jetAnaScaleDown.copyJetsByValue = True # do not remove this
@@ -70,6 +84,21 @@ if not removeJecUncertainty:
     susyCoreSequence.insert(susyCoreSequence.index(jetAna)+1, jetAnaScaleUp)
     susyCoreSequence.insert(susyCoreSequence.index(metAna)+1, metAnaScaleDown)
     susyCoreSequence.insert(susyCoreSequence.index(metAna)+1, metAnaScaleUp)
+    if analysis=='susy':
+        jetAnaScaleDown.cleanJetsFromLeptons=False
+        jetAnaScaleDown.cleanSelectedLeptons=True
+        jetAnaScaleDown.storeLowPtJets=True
+        jetAnaScaleDown.jetEtaCentral = jetAnaScaleDown.jetEta
+        jetAnaScaleUp.cleanJetsFromLeptons=False
+        jetAnaScaleUp.cleanSelectedLeptons=True
+        jetAnaScaleUp.storeLowPtJets=True
+        jetAnaScaleUp.jetEtaCentral = jetAnaScaleUp.jetEta
+        jetAnaScaleDown.mcGT="Spring16_25nsV8_MC"    
+        jetAnaScaleDown.dataGT   = "Spring16_25nsV8BCD_DATA Spring16_25nsV8E_DATA Spring16_25nsV8F_DATA Spring16_25nsV8_DATA"
+        jetAnaScaleDown.runsDataJEC   = [276811, 277420, 278802]
+        jetAnaScaleUp.mcGT="Spring16_25nsV8_MC"    
+        jetAnaScaleUp.dataGT   = "Spring16_25nsV8BCD_DATA Spring16_25nsV8E_DATA Spring16_25nsV8F_DATA Spring16_25nsV8_DATA"
+        jetAnaScaleUp.runsDataJEC   = [276811, 277420, 278802]
 
 
 if analysis in ['SOS']:
@@ -210,6 +239,20 @@ if analysis=="susy":
     susyMultilepton_collections.update({ # for conversion studies
             "selectedPhotons"    : NTupleCollection("PhoGood", photonTypeSusy, 10, help="Selected photons"),
             }) 
+    del susyMultilepton_collections["discardedJets"]
+    susyMultilepton_collections.update({"discardedJets"   : NTupleCollection("DiscJet", jetTypeSusySuperLight, 15, help="Jets discarted in the jet-lepton cleaning (JEC)")
+                                        })
+    #keepJetVars=["pt","eta","phi","mass",
+    #             #"etaetaMoment","phiphiMoment",
+    #             "mcFlavour","partonFlavour",
+    #             "btagCSV"]
+    #for var in jetTypeSusyExtraLight.allVars(not runData):
+    #    if var.name not in keepJetVars: 
+    #        jetTypeSusyExtraLight.removeVariable(var)
+    #jetTypeSusyExtraLight.addVariables([
+    #        NTupleVariable("etaetaMoment", lambda x : x.etaetaMoment() if hasattr(x,'etaetaMoment') else -1, mcOnly=True, help="eta eta moment"),
+    #        NTupleVariable("phiphiMoment", lambda x : x.phiphiMoment() if hasattr(x,'phiphiMoment') else -1, mcOnly=True, help="phi phi moment"),
+    #        ])
 elif analysis=='SOS':
     # Soft lepton MVA
     ttHCoreEventAna.doLeptonMVASoft = True
@@ -217,7 +260,6 @@ elif analysis=='SOS':
             NTupleVariable("mvaSoftT2tt",    lambda lepton : lepton.mvaValueSoftT2tt, help="Lepton MVA (Soft T2tt version)"),
             NTupleVariable("mvaSoftEWK",    lambda lepton : lepton.mvaValueSoftEWK, help="Lepton MVA (Soft EWK version)"),
             ])
-
 
 # Spring16 electron MVA - follow instructions on pull request for correct area setup
 leptonTypeSusy.addVariables([
@@ -273,8 +315,8 @@ if not removeJecUncertainty:
     susyMultilepton_collections.update({
             "cleanJets_jecUp"       : NTupleCollection("Jet_jecUp",     jetTypeSusyExtraLight, 15, help="Cental jets after full selection and cleaning, sorted by pt (JEC plus 1sigma)"),
             "cleanJets_jecDown"     : NTupleCollection("Jet_jecDown",     jetTypeSusyExtraLight, 15, help="Cental jets after full selection and cleaning, sorted by pt (JEC minus 1sigma)"),
-            "discardedJets_jecUp"   : NTupleCollection("DiscJet_jecUp", jetTypeSusyExtraLight, 15, help="Jets discarted in the jet-lepton cleaning (JEC +1sigma)"),
-            "discardedJets_jecDown" : NTupleCollection("DiscJet_jecDown", jetTypeSusyExtraLight, 15, help="Jets discarted in the jet-lepton cleaning (JEC -1sigma)"),
+            "discardedJets_jecUp"   : NTupleCollection("DiscJet_jecUp", jetTypeSusySuperLight if analysis=='susy' else jetTypeSusyExtraLight, 15, help="Jets discarted in the jet-lepton cleaning (JEC +1sigma)"),
+            "discardedJets_jecDown" : NTupleCollection("DiscJet_jecDown", jetTypeSusySuperLight if analysis=='susy' else jetTypeSusyExtraLight, 15, help="Jets discarted in the jet-lepton cleaning (JEC -1sigma)"),
             })
 
 ## Tree Producer
@@ -339,9 +381,9 @@ from CMGTools.RootTools.samples.triggers_13TeV_DATA2016 import *
 triggerFlagsAna.triggerBits = {
     'DoubleMu' : triggers_mumu_iso,
     'DoubleMuSS' : triggers_mumu_ss,
-    'DoubleMuNoIso' : triggers_mumu_noniso,
-    'DoubleEl' : triggers_ee,
-    'MuEG'     : triggers_mue,
+    'DoubleMuNoIso' : triggers_mumu_noniso + triggers_mu27tkmu8,
+    'DoubleEl' : triggers_ee + triggers_doubleele33 + triggers_doubleele33_MW,
+    'MuEG'     : triggers_mue + triggers_mu30ele30,
     'DoubleMuHT' : triggers_mumu_ht,
     'DoubleElHT' : triggers_ee_ht,
     'MuEGHT' : triggers_mue_ht,
@@ -356,7 +398,9 @@ triggerFlagsAna.triggerBits = {
     'SOSDoubleMuLowMET' : triggers_SOS_doublemulowMET,
     'SOSTripleMu' : triggers_SOS_tripleMu,
     'LepTau' : triggers_leptau,
-    'MET' : triggers_metNoMu90_mhtNoMu90,
+    'MET' : triggers_metNoMu90_mhtNoMu90 + triggers_htmet,
+    'HT' : triggers_pfht
+    
     #'MonoJet80MET90' : triggers_Jet80MET90,
     #'MonoJet80MET120' : triggers_Jet80MET120,
     #'METMu5' : triggers_MET120Mu5,
@@ -366,8 +410,8 @@ triggerFlagsAna.saveIsUnprescaled = True
 triggerFlagsAna.checkL1Prescale = True
 
 if runSMS:
-    if ttHLepSkim in susyCoreSequence: susyCoreSequence.remove(ttHLepSkim)
-    if ttHJetMETSkim in susyCoreSequence: susyCoreSequence.remove(ttHJetMETSkim)
+    #if ttHLepSkim in susyCoreSequence: susyCoreSequence.remove(ttHLepSkim)
+    #if ttHJetMETSkim in susyCoreSequence: susyCoreSequence.remove(ttHJetMETSkim)
     susyCoreSequence.remove(triggerFlagsAna)
     susyCoreSequence.remove(triggerAna)
     susyCoreSequence.remove(eventFlagsAna)
@@ -387,7 +431,7 @@ if analysis=='susy':
                TTJets_SingleLeptonFromTbar, TTTT, TT_pow_ext4, TToLeptons_sch_amcatnlo, TToLeptons_tch_amcatnlo, TToLeptons_tch_powheg, T_tWch, VHToNonbb, WGToLNuG, WJetsToLNu, WJetsToLNu_LO, 
                WWDouble, WWTo2L2Nu, WWW, WWZ, WZTo3LNu, WZTo3LNu_amcatnlo, WZZ, WpWpJJ, ZGTo2LG, ZZTo4L, ZZZ, tZq_ll]
    
-    samples_LHE = [TTHnobb_mWCutfix_ext1, TTHnobb_pow, TTLLJets_m1to10, TTWToLNu, TTW_LO, TTZToLLNuNu, TTZ_LO,]
+    samples_LHE = [TTHnobb_pow, TTLLJets_m1to10, TTWToLNu, TTW_LO, TTZToLLNuNu, TTZ_LO,]
     
     #samples_2l = [TTW_LO,TTZ_LO,WZTo3LNu_amcatnlo,DYJetsToLL_M10to50,DYJetsToLL_M50,WWTo2L2Nu,ZZTo2L2Q,WZTo3LNu,TTWToLNu,TTZToLLNuNu,TTJets_DiLepton,TTHnobb_mWCutfix_ext1,TTHnobb_pow]
     #samples_1l = [WJetsToLNu,TTJets_SingleLeptonFromT,TTJets_SingleLeptonFromTbar,TBarToLeptons_tch_powheg,TToLeptons_sch_amcatnlo,TBar_tWch,T_tWch]
@@ -399,8 +443,8 @@ if analysis=='susy':
 
     if runSMS:
         selectedComponents=[TChiSlepSnu,T1tttt_2016,T5qqqqVV_2016]
-        ttHLepSkim.minLeptons = 0
-        ttHLepSkim.requireSameSignPair = False
+        #ttHLepSkim.minLeptons = 0
+        #ttHLepSkim.requireSameSignPair = False
         lheWeightAna.useLumiInfo=True
         susyScanAna.useLumiInfo=True
         for c in selectedComponents:
@@ -449,26 +493,30 @@ if runData and not isTest: # For running on data
     is50ns = False
     dataChunks = []
 
-#    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_271036-274421_13TeV_PromptReco_Collisions16_JSON.txt' # 2.07/fb
-#    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_271036-274443_13TeV_PromptReco_Collisions16_JSON.txt' # 2.6/fb
-#    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_271036-275125_13TeV_PromptReco_Collisions16_JSON.txt' # 4.0/fb
-#    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_271036-275783_13TeV_PromptReco_Collisions16_JSON.txt' # 6.3/fb
-#    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_271036-276811_13TeV_PromptReco_Collisions16_JSON_NoL1T.txt' # 12.9/fb #276811 ICHEP LastRun
-#    json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-279931_13TeV_PromptReco_Collisions16_JSON_NoL1T.txt' #24.5/fb
-    json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-280385_13TeV_PromptReco_Collisions16_JSON_NoL1T_v2.txt' #27.22/fb
-    processing = "Run2016B-PromptReco-v2"; short = "Run2016B_PromptReco_v2"; run_ranges = [(273150,280385)]; useAAA=False; # -v2 starts from 273150
+    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_271036-284044_13TeV_PromptReco_Collisions16_JSON_NoL1T.txt' # 36.15/fb
+
+    #processing = "Run2016B-23Sep2016-v1"; short = "Run2016B_23Sep2016_v1"; run_ranges = [(272760,273017)]; useAAA=True; # -v2 starts from 272760 to 273017
+    #dataChunks.append((json,processing,short,run_ranges,useAAA))
+    processing = "Run2016B-23Sep2016-v3"; short = "Run2016B_23Sep2016_v3"; run_ranges = [(273150,275376)]; useAAA=True; # -v3 starts from 273150 to 275376
     dataChunks.append((json,processing,short,run_ranges,useAAA))
-    processing = "Run2016C-PromptReco-v2"; short = "Run2016C_PromptReco_v2"; run_ranges = [(273150,280385)]; useAAA=False; # -v2 starts from 273150 
+    processing = "Run2016C-23Sep2016-v1"; short = "Run2016C_23Sep2016_v1"; run_ranges = [(271036,284044)]; useAAA=True;
     dataChunks.append((json,processing,short,run_ranges,useAAA))
-    processing = "Run2016D-PromptReco-v2"; short = "Run2016D_PromptReco_v2"; run_ranges = [(273150,280385)]; useAAA=False; # -v2 starts from 273150 
+    processing = "Run2016D-23Sep2016-v1"; short = "Run2016D_23Sep2016_v1"; run_ranges = [(271036,284044)]; useAAA=True;
     dataChunks.append((json,processing,short,run_ranges,useAAA))
-    processing = "Run2016E-PromptReco-v2"; short = "Run2016E_PromptReco_v2"; run_ranges = [(273150,280385)]; useAAA=False;
+    processing = "Run2016E-23Sep2016-v1"; short = "Run2016E_23Sep2016_v1"; run_ranges = [(271036,284044)]; useAAA=True;
     dataChunks.append((json,processing,short,run_ranges,useAAA))
-    processing = "Run2016F-PromptReco-v1"; short = "Run2016F_PromptReco_v1"; run_ranges = [(273150,280385)]; useAAA=False;
+    processing = "Run2016F-23Sep2016-v1"; short = "Run2016F_23Sep2016_v1"; run_ranges = [(271036,284044)]; useAAA=True;
     dataChunks.append((json,processing,short,run_ranges,useAAA))
-    processing = "Run2016G-PromptReco-v1"; short = "Run2016G_PromptReco_v1"; run_ranges = [(273150,280385)]; useAAA=False;
+    processing = "Run2016G-23Sep2016-v1"; short = "Run2016G_23Sep2016_v1"; run_ranges = [(271036,284044)]; useAAA=True;
     dataChunks.append((json,processing,short,run_ranges,useAAA))
-    
+    #run H ==============================================================================================================
+    processing = "Run2016H-PromptReco-v1"; short = "Run2016H-PromptReco-v1"; run_ranges = [(281085,281201)]; useAAA=True;
+    dataChunks.append((json,processing,short,run_ranges,useAAA))
+    processing = "Run2016H-PromptReco-v2"; short = "Run2016H-PromptReco-v2"; run_ranges = [(281207,284035)]; useAAA=True;
+    dataChunks.append((json,processing,short,run_ranges,useAAA))
+    processing = "Run2016H-PromptReco-v3"; short = "Run2016H-PromptReco-v3"; run_ranges = [(284036,284044)]; useAAA=True;
+    dataChunks.append((json,processing,short,run_ranges,useAAA))
+
 
     compSelection = ""; compVeto = ""
     DatasetsAndTriggers = []
@@ -490,13 +538,16 @@ if runData and not isTest: # For running on data
             DatasetsAndTriggers.append( ("DoubleEG",   ["HLT_Ele%d_CaloIdM_TrackIdM_PFJet30_v*" % pt for pt in (8,12)]) )
             DatasetsAndTriggers.append( ("JetHT",   triggers_FR_jet) )
     else:
-        DatasetsAndTriggers.append( ("DoubleMuon", triggers_mumu_iso + triggers_mumu_ss + triggers_mumu_ht + triggers_3mu + triggers_3mu_alt) )
-        DatasetsAndTriggers.append( ("DoubleEG",   triggers_ee + triggers_ee_ht + triggers_3e) )
-        DatasetsAndTriggers.append( ("MuonEG",     triggers_mue + triggers_mue_ht + triggers_2mu1e + triggers_2e1mu) )
+        DatasetsAndTriggers.append( ("DoubleMuon", triggers_mumu_iso + triggers_mumu_ss + triggers_mu30tkmu11 + triggers_mumu_ht + triggers_3mu + triggers_3mu_alt + triggers_mu27tkmu8) )
+        DatasetsAndTriggers.append( ("DoubleEG",   triggers_ee + triggers_doubleele33 + triggers_doubleele33_MW + triggers_ee_ht + triggers_3e) )
+        DatasetsAndTriggers.append( ("MuonEG",     triggers_mue + triggers_mue_ht + triggers_2mu1e + triggers_2e1mu + triggers_mu30ele30) )
         if analysis=='susy':
-            DatasetsAndTriggers.append( ("SingleMuon", triggers_leptau + triggers_1mu_iso + triggers_1mu_iso_50ns + triggers_1mu_noniso) )
-            DatasetsAndTriggers.append( ("SingleElectron", triggers_leptau + triggers_1e + triggers_1e_50ns) )
+            DatasetsAndTriggers.append( ("SingleMuon", triggers_leptau + triggers_1mu_iso + triggers_1mu_noniso) )
+            DatasetsAndTriggers.append( ("SingleElectron", triggers_leptau + triggers_1e) )
             DatasetsAndTriggers.append( ("Tau", triggers_leptau + triggers_1mu_iso + triggers_1e) )
+            #for edgeZ OS
+            DatasetsAndTriggers.append( ("JetHT", triggers_pfht ) ) #triggerFlagsAna.triggerBits['htall']
+            DatasetsAndTriggers.append( ("MET", triggers_htmet ) ) # triggerFlagsAna.triggerBits['htmet']
         else:
             DatasetsAndTriggers.append( ("SingleMuon", triggers_1mu_iso + triggers_1mu_noniso) )
             DatasetsAndTriggers.append( ("SingleElectron", triggers_1e) )
@@ -520,7 +571,10 @@ if runData and not isTest: # For running on data
             exclusiveDatasets = True
 
         if runDataQCD or True: # for fake rate measurements in data
-            #ttHLepSkim.minLeptons = 1
+            if analysis!='susy':
+                ttHLepSkim.minLeptons=1
+            else:
+                globalSkim.selection = ["1lep5"]
             if getHeppyOption("fast"): raise RuntimeError, 'Already added ttHFastLepSkimmer with 2-lep configuration, this is wrong.'
             FRTrigs = triggers_FR_1mu_iso + triggers_FR_1mu_noiso + triggers_FR_1e_noiso + triggers_FR_1e_iso + triggers_FR_1e_b2g
             for t in FRTrigs:
@@ -573,14 +627,15 @@ if runData and not isTest: # For running on data
 
 printSummary(selectedComponents)
 
-if True:
+if True and runData:
     from CMGTools.Production.promptRecoRunRangeFilter import filterComponent
     for c in selectedComponents:
         printnewsummary = False
+        c.splitFactor = len(c.files)/3
         if "PromptReco" in c.name:
             printnewsummary = True
             filterComponent(c, 1)
-            c.splitFactor = len(c.files)/6
+            c.splitFactor = len(c.files)/3
     if printnewsummary: printSummary(selectedComponents)
 
 
@@ -618,7 +673,10 @@ if runFRMC:
 
 if runFRMC or runDataQCD:
     susyScanAna.useLumiInfo = False
-    ttHLepSkim.minLeptons = 1
+    if analysis!='susy':
+        ttHLepSkim.minLeptons=1
+    else:
+        globalSkim.selection = ["1lep5"]
     if ttHJetMETSkim in susyCoreSequence: susyCoreSequence.remove(ttHJetMETSkim)
     if getHeppyOption("fast"): raise RuntimeError, 'Already added ttHFastLepSkimmer with 2-lep configuration, this is wrong.'
     if runDataQCD:
@@ -630,7 +688,7 @@ if runFRMC or runDataQCD:
         "selectedLeptons" : NTupleCollection("LepGood",  leptonTypeSusyExtraLight, 8, help="Leptons after the preselection"),
         "otherLeptons"    : NTupleCollection("LepOther", leptonTypeSusy, 8, help="Leptons after the preselection"),
         "cleanJets"       : NTupleCollection("Jet",     jetTypeSusyExtraLight, 15, help="Cental jets after full selection and cleaning, sorted by pt"),
-        "discardedJets"    : NTupleCollection("DiscJet", jetTypeSusyExtraLight, 15, help="Jets discarted in the jet-lepton cleaning"),
+        "discardedJets"    : NTupleCollection("DiscJet", jetTypeSusySuperLight if analysis=='susy' else jetTypeSusyExtraLight, 15, help="Jets discarted in the jet-lepton cleaning"),
         "selectedTaus"    : NTupleCollection("TauGood",  tauTypeSusy, 8, help="Taus after the preselection"),
         "otherTaus"       : NTupleCollection("TauOther",  tauTypeSusy, 8, help="Taus after the preselection not selected"),
     }
@@ -745,7 +803,10 @@ if removeJetReCalibration:
     jetAnaScaleDown.recalibrateJets = False
 
 if getHeppyOption("noLepSkim",False):
-    ttHLepSkim.minLeptons=0
+    if globalSkim in sequence:
+        globalSkim.selection = []
+    if ttHLepSkim in sequence:
+        ttHLepSkim.minLeptons=0 
 
 if forcedSplitFactor>0 or forcedFineSplitFactor>0:
     if forcedFineSplitFactor>0 and forcedSplitFactor!=1: raise RuntimeError, 'splitFactor must be 1 if setting fineSplitFactor'
@@ -851,20 +912,24 @@ elif test == '80X-MC':
         if not getHeppyOption("single"): comp.fineSplitFactor = 4
     else: raise RuntimeError, "Unknown MC sample: %s" % what
 elif test == '80X-Data':
-    DoubleMuon = kreator.makeDataComponent("DoubleMuon_Run2016B_run274315", "/DoubleMuon/Run2016B-PromptReco-v2/MINIAOD", "CMS", ".*root", run_range = (274315,274315), triggers = triggers_mumu)
-    DoubleEG = kreator.makeDataComponent("DoubleEG_Run2016B_run274315", "/DoubleEG/Run2016B-PromptReco-v2/MINIAOD", "CMS", ".*root", run_range = (274315,274315), triggers = triggers_ee)
-    DoubleMuon.files = [ 'root://eoscms//eos/cms/store/data/Run2016B/DoubleMuon/MINIAOD/PromptReco-v2/000/274/315/00000/A287989F-E129-E611-B5FB-02163E0142C2.root' ]
-    DoubleEG.files = [ 'root://eoscms//eos/cms/store/data/Run2016B/DoubleEG/MINIAOD/PromptReco-v2/000/274/315/00000/FEF59D1D-EE29-E611-8793-02163E0143AE.root' ]
-    selectedComponents = [ DoubleMuon, DoubleEG ]
+    #DoubleMuon = kreator.makeDataComponent("DoubleMuon_Run2016B_run274315", "/DoubleMuon/Run2016B-PromptReco-v2/MINIAOD", "CMS", ".*root", run_range = (274315,274315), triggers = triggers_mumu + triggers_mumu_ht + triggers_ee + triggers_ee_ht )
+    #DoubleEG = kreator.makeDataComponent("DoubleEG_Run2016B_run274315", "/DoubleEG/Run2016B-PromptReco-v2/MINIAOD", "CMS", ".*root", run_range = (274315,274315), triggers = triggers_ee)
+    SingleMuon = kreator.makeDataComponent("SingleMuon_Run2016H_run281693","/SingleMuon/Run2016H-PromptReco-v2/MINIAOD","CMS",".*root", run_range=(281680, 281700), triggers = triggers_1mu_iso)
+    #DoubleMuon.files = [ 'root://eoscms//eos/cms/store/data/Run2016B/DoubleMuon/MINIAOD/PromptReco-v2/000/274/315/00000/A287989F-E129-E611-B5FB-02163E0142C2.root' ]
+    #DoubleEG.files = [ 'root://eoscms//eos/cms/store/data/Run2016B/DoubleEG/MINIAOD/PromptReco-v2/000/274/315/00000/FEF59D1D-EE29-E611-8793-02163E0143AE.root' ]
+    #SingleMuon.files = [ 'root://eoscms//eos/cms/store/data/Run2016H/SingleMuon/MINIAOD/PromptReco-v2/000/281/693/00000/4E8924DC-3B86-E611-BB28-FA163E72F1B8.root' ]
+    #SingleMuon.files = [ 'root://eoscms//eos/cms/store/data/Run2016H/SingleMuon/MINIAOD/PromptReco-v2/000/281/693/00000/4E8924DC-3B86-E611-BB28-FA163E72F1B8.root' ]
+    SingleMuon.files = [ 'root://eoscms//eos/cms/store/data/Run2016B/DoubleMuon/MINIAOD/23Sep2016-v3/00000/5ADA8008-EE98-E611-A57D-848F69FD852B.root' ]
+    selectedComponents = [ SingleMuon ] #DoubleMuon, DoubleEG ]
     for comp in selectedComponents:
-        comp.json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-275125_13TeV_PromptReco_Collisions16_JSON.txt'
+        comp.json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-283685_13TeV_PromptReco_Collisions16_JSON_NoL1T.txt'
         tmpfil = os.path.expandvars("/tmp/$USER/%s" % os.path.basename(comp.files[0]))
         if not os.path.exists(tmpfil): os.system("xrdcp %s %s" % (comp.files[0],tmpfil)) 
         comp.files = [tmpfil]
         comp.splitFactor = 1
-        comp.fineSplitFactor = 4
+        comp.fineSplitFactor = 1
 elif test == 'ttH-sync':
-    ttHLepSkim.minLeptons=0
+    ttHLepSkim.minLeptons = 0
     selectedComponents = selectedComponents[:1]
     comp = selectedComponents[0]
     comp.files = ['/store/mc/RunIIFall15MiniAODv2/ttHToNonbb_M125_13TeV_powheg_pythia8/MINIAODSIM/PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/00000/021B993B-4DBB-E511-BBA6-008CFA1111B4.root']

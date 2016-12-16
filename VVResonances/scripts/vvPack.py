@@ -16,16 +16,17 @@ if __name__ == '__main__':
 
 
     for directory in os.listdir(args[0]):
-        if directory.find("Chunk")!=-1:
+        # check if directory contains desired rootFile
+        if not os.path.isfile(directory+'/'+rootFile):
             continue
-    
+
         #First unpack tyhe counter and get the events
         if os.path.exists(directory+'/'+options.trigcounter):
             counterFile=open(directory+'/'+options.trigcounter)
             counter=pickle.load(counterFile)
             if len(counter)>1 and counter[1][0]=='Sum Weights':
                 events=counter[1][1]
-            else:    
+            else:
                 events=counter[0][1]
         else:
             print 'problem in file/ cannot count events in ',directory
@@ -42,4 +43,3 @@ if __name__ == '__main__':
 
         #next copy the main tree
         shutil.copyfile(directory+'/'+rootFile,directory+'.root')
-    

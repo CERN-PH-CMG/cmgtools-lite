@@ -1,5 +1,5 @@
 cut-change: METfilters : 1
-cut-change: Triggers_2l\b : 1
-cut-change: Triggers_2t\b : 1
-cut-change: Triggers_2tt\b : 1
+cut-change: Triggers_leplep\b : 1
+cut-change: Triggers_leptau\b : 1
+cut-change: Triggers_tautau\b : 1
 

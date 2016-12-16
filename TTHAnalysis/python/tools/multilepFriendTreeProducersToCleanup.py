@@ -85,6 +85,27 @@ MODULES.append( ('leptonJetReCleanerSusyEWK3L', lambda : LeptonJetReCleaner("Min
                    coneptdef = lambda lep: conept_EWK(lep, 2),
                  ) ))
 
+# All jets, needed for tau fakes study
+MODULES.append( ('leptonJetReCleanerNoCleanTausSusyEWK3L', lambda : LeptonJetReCleaner("Mini", 
+                   lambda lep : lep.miniRelIso < 0.4 and _susyEWK_lepId_CBloose(lep) and _susyEWK_lepId_IPcuts(lep), 
+                   lambda lep : lep.pt>10 and lep.conept>10 and (_susyEWK_lepId_MVAmedium(lep) or _susyEWK_lepId_MVAFO(lep)),
+                   lambda lep,ht : lep.pt>10 and lep.conept>10 and (_susyEWK_lepId_MVAmedium(lep) or _susyEWK_lepId_MVAFO(lep)), # cuts applied on top of loose
+                   lambda lep,ht : lep.pt>10 and lep.conept>10 and _susyEWK_lepId_MVAmedium(lep), # medium WP
+                   cleanJet  = lambda lep,jet,dr : dr<0.4,
+                   selectJet = lambda jet: abs(jet.eta)<2.4,
+                   cleanTau  = lambda lep,tau,dr: dr<0.4,
+                   looseTau  = lambda tau: _susyEWK_tauId_CBloose(tau), # used in cleaning
+                   tightTau  = lambda tau: _susyEWK_tauId_CBtight(tau), # on top of loose
+                   cleanJetsWithTaus = False,
+                   cleanTausWithLoose = True,
+                   doVetoZ = False,
+                   doVetoLMf = False,
+                   doVetoLMt = True,
+                   jetPt = 20,
+                   bJetPt = 25,
+                   coneptdef = lambda lep: conept_EWK(lep, 2),
+                 ) ))
+
 MODULES.append( ('leptonJetReCleanerSusyEWK2L', lambda : LeptonJetReCleaner("Recl", 
                    looseLeptonSel = lambda lep : lep.miniRelIso < 0.4 and _ewkino_2lss_lepId_IPcuts(lep) and _ewkino_2lss_lepId_CBloose(lep),
                    cleaningLeptonSel = lambda lep : lep.pt>10 and lep.conept>10 and (_ewkino_2lss_lepId_num(lep) or _ewkino_2lss_lepId_FO(lep)), # cuts on top of loose
@@ -113,15 +134,16 @@ MODULES.append( ('MediumMuonID2016', lambda : ObjTagger(label='ICHEPmediumMuonId
 
 MODULES.append( ('leptonJetReCleanerTTH', lambda : LeptonJetReCleaner("Recl", # b1E2 definition of FO, 80X b-tag WP
                    looseLeptonSel = lambda lep : lep.miniRelIso < 0.4 and lep.sip3d < 8,
-                   cleaningLeptonSel = lambda lep : True, # cuts applied on top of loose
+                   cleaningLeptonSel = lambda lep : lep.conept>10 and lep.jetBTagCSV<0.80 and (abs(lep.pdgId)!=11 or lep.conept<30 or _ttH_idEmu_cuts_E2(lep)) and ((lep.jetPtRatiov2>0.3 and lep.jetBTagCSV<0.46) or lep.mvaTTH>0.75), # cuts applied on top of loose
                    FOLeptonSel = lambda lep,ht : lep.conept>10 and lep.jetBTagCSV<0.80 and (abs(lep.pdgId)!=11 or lep.conept<30 or _ttH_idEmu_cuts_E2(lep)) and ((lep.jetPtRatiov2>0.3 and lep.jetBTagCSV<0.46) or lep.mvaTTH>0.75), # cuts applied on top of loose
                    tightLeptonSel = lambda lep,ht : lep.conept>10 and lep.jetBTagCSV<0.80 and (abs(lep.pdgId)!=11 or lep.conept<30 or _ttH_idEmu_cuts_E2(lep)) and ((lep.jetPtRatiov2>0.3 and lep.jetBTagCSV<0.46) or lep.mvaTTH>0.75) and (abs(lep.pdgId)!=13 or lep.ICHEPmediumMuonId>0) and lep.mvaTTH > 0.75, # cuts applied on top of loose
-                   cleanJet = lambda lep,jet,dr : dr<0.4 and (abs(lep.pdgId)==15 or ( lep.conept>10 and lep.jetBTagCSV<0.80 and (abs(lep.pdgId)!=11 or lep.conept<30 or _ttH_idEmu_cuts_E2(lep)) and ((lep.jetPtRatiov2>0.3 and lep.jetBTagCSV<0.46) or lep.mvaTTH>0.75) )), # called on cleaning leptons and loose taus
+                   cleanJet = lambda lep,jet,dr : dr<0.4, # called on cleaning leptons and loose taus
                    selectJet = lambda jet: abs(jet.eta)<2.4,
-                   cleanTau = lambda lep,tau,dr: dr<0.4, # cleaning taus with cleaningLeptonSel == loose
+                   cleanTau = lambda lep,tau,dr: dr<0.4,
                    looseTau = lambda tau: tau.pt > 20 and abs(tau.eta)<2.3 and abs(tau.dxy) < 1000 and abs(tau.dz) < 0.2 and tau.idMVAOldDMRun2dR03 >= 1 and tau.idDecayMode, # used in cleaning
                    tightTau = lambda tau: tau.idMVAOldDMRun2dR03 >= 2, # cuts applied on top of loose
                    cleanJetsWithTaus = True,
+                   cleanTausWithLoose = True, # cleaning taus with cleaningLeptonSel == loose
                    doVetoZ = True,
                    doVetoLMf = True,
                    doVetoLMt = True,
@@ -135,6 +157,12 @@ from CMGTools.TTHAnalysis.tools.leptonBuilderEWK import LeptonBuilderEWK
 
 MODULES.append( ('leptonBuilderEWK', lambda : LeptonBuilderEWK("Mini")))
 MODULES.append( ('leptonBuilderWZCR_EWK', lambda : LeptonBuilderEWK("Recl")))
+
+#--- Tau builder instances
+from CMGTools.TTHAnalysis.tools.TauFakesBuilder import TauFakesBuilder
+
+MODULES.append( ('tauFakesBuilderEWKMini', lambda : TauFakesBuilder("Mini")))
+MODULES.append( ('tauFakesBuilderEWKRecl', lambda : TauFakesBuilder("Recl")))
 
 #--- Lepton choice instances
 

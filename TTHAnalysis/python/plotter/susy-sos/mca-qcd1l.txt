@@ -1,33 +1,29 @@
 # vim: syntax=sh
-QCD_red   : QCD_Pt15to30   : xsec : LepGood_mcMatchId == 0; FillColor=ROOT.kRed+1, Label="QCD"
+#QCD_red   : QCD_Pt15to30   : xsec : LepGood_mcMatchId == 0; FillColor=ROOT.kRed+1, Label="QCD"
 QCD_red   : QCD_Pt30to50   : xsec : LepGood_mcMatchId == 0; FillColor=ROOT.kRed+1, Label="QCD"
 QCD_red   : QCD_Pt50to80   : xsec : LepGood_mcMatchId == 0; FillColor=ROOT.kRed+1, Label="QCD"
 QCD_red   : QCD_Pt80to120  : xsec : LepGood_mcMatchId == 0; FillColor=ROOT.kRed+1, Label="QCD"
 QCD_red   : QCD_Pt120to170 : xsec : LepGood_mcMatchId == 0; FillColor=ROOT.kRed+1, Label="QCD"
 QCD_red   : QCD_Pt170to300 : xsec : LepGood_mcMatchId == 0; FillColor=ROOT.kRed+1, Label="QCD"
 
-QCD_bjets   : QCD_Pt15to30   : xsec : LepGood_mcMatchId == 0 && LepGood_mcMatchAny == 5; FillColor=ROOT.kPink+5, Label="QCD\, b\#rightarrowl"
+#QCD_bjets   : QCD_Pt15to30   : xsec : LepGood_mcMatchId == 0 && LepGood_mcMatchAny == 5; FillColor=ROOT.kPink+5, Label="QCD\, b\#rightarrowl"
 QCD_bjets   : QCD_Pt30to50   : xsec : LepGood_mcMatchId == 0 && LepGood_mcMatchAny == 5; FillColor=ROOT.kPink+5, Label="QCD\, b\#rightarrowl"
 QCD_bjets   : QCD_Pt50to80   : xsec : LepGood_mcMatchId == 0 && LepGood_mcMatchAny == 5; FillColor=ROOT.kPink+5, Label="QCD\, b\#rightarrowl"
 QCD_bjets   : QCD_Pt80to120  : xsec : LepGood_mcMatchId == 0 && LepGood_mcMatchAny == 5; FillColor=ROOT.kPink+5, Label="QCD\, b\#rightarrowl"
 QCD_bjets   : QCD_Pt120to170 : xsec : LepGood_mcMatchId == 0 && LepGood_mcMatchAny == 5; FillColor=ROOT.kPink+5, Label="QCD\, b\#rightarrowl"
 QCD_bjets   : QCD_Pt170to300 : xsec : LepGood_mcMatchId == 0 && LepGood_mcMatchAny == 5; FillColor=ROOT.kPink+5, Label="QCD\, b\#rightarrowl"
-QCD_cjets   : QCD_Pt15to30   : xsec : LepGood_mcMatchId == 0 && LepGood_mcMatchAny == 4; FillColor=ROOT.kRed-3, Label="QCD\, c\#rightarrowl"
+#QCD_cjets   : QCD_Pt15to30   : xsec : LepGood_mcMatchId == 0 && LepGood_mcMatchAny == 4; FillColor=ROOT.kRed-3, Label="QCD\, c\#rightarrowl"
 QCD_cjets   : QCD_Pt30to50   : xsec : LepGood_mcMatchId == 0 && LepGood_mcMatchAny == 4; FillColor=ROOT.kRed-3, Label="QCD\, c\#rightarrowl"
 QCD_cjets   : QCD_Pt50to80   : xsec : LepGood_mcMatchId == 0 && LepGood_mcMatchAny == 4; FillColor=ROOT.kRed-3, Label="QCD\, c\#rightarrowl"
 QCD_cjets   : QCD_Pt80to120  : xsec : LepGood_mcMatchId == 0 && LepGood_mcMatchAny == 4; FillColor=ROOT.kRed-3, Label="QCD\, c\#rightarrowl"
 QCD_cjets   : QCD_Pt120to170 : xsec : LepGood_mcMatchId == 0 && LepGood_mcMatchAny == 4; FillColor=ROOT.kRed-3, Label="QCD\, c\#rightarrowl"
 QCD_cjets   : QCD_Pt170to300 : xsec : LepGood_mcMatchId == 0 && LepGood_mcMatchAny == 4; FillColor=ROOT.kRed-3, Label="QCD\, c\#rightarrowl"
-QCD_ljets   : QCD_Pt15to30   : xsec : LepGood_mcMatchId == 0 && LepGood_mcMatchAny != 4 && LepGood_mcMatchAny != 5; FillColor=ROOT.kOrange-3, Label="QCD\, j\#rightarrowl"
+#QCD_ljets   : QCD_Pt15to30   : xsec : LepGood_mcMatchId == 0 && LepGood_mcMatchAny != 4 && LepGood_mcMatchAny != 5; FillColor=ROOT.kOrange-3, Label="QCD\, j\#rightarrowl"
 QCD_ljets   : QCD_Pt30to50   : xsec : LepGood_mcMatchId == 0 && LepGood_mcMatchAny != 4 && LepGood_mcMatchAny != 5; FillColor=ROOT.kOrange-3, Label="QCD\, j\#rightarrowl"
 QCD_ljets   : QCD_Pt50to80   : xsec : LepGood_mcMatchId == 0 && LepGood_mcMatchAny != 4 && LepGood_mcMatchAny != 5; FillColor=ROOT.kOrange-3, Label="QCD\, j\#rightarrowl"
 QCD_ljets   : QCD_Pt80to120  : xsec : LepGood_mcMatchId == 0 && LepGood_mcMatchAny != 4 && LepGood_mcMatchAny != 5; FillColor=ROOT.kOrange-3, Label="QCD\, j\#rightarrowl"
 QCD_ljets   : QCD_Pt120to170 : xsec : LepGood_mcMatchId == 0 && LepGood_mcMatchAny != 4 && LepGood_mcMatchAny != 5; FillColor=ROOT.kOrange-3, Label="QCD\, j\#rightarrowl"
 QCD_ljets   : QCD_Pt170to300 : xsec : LepGood_mcMatchId == 0 && LepGood_mcMatchAny != 4 && LepGood_mcMatchAny != 5; FillColor=ROOT.kOrange-3, Label="QCD\, j\#rightarrowl"
-
-
-
-
 
 WJets  : WJetsToLNu_LO      : xsec : 1 ; Label="W+jets", FillColor=ROOT.kAzure+1
 DYJets : DYJetsToLL_M5to50_LO : xsec : 1 ; Label="Z+jets", FillColor=ROOT.kAzure+3
@@ -36,18 +32,22 @@ EWK    : WJetsToLNu_LO      : xsec : 1 ; Label="V+jets", FillColor=ROOT.kAzure+1
 EWK    : DYJetsToLL_M5to50_LO : xsec : 1 ; Label="V+jets", FillColor=ROOT.kAzure+1
 EWK    : DYJetsToLL_M50_LO     : xsec : 1 ; Label="V+jets", FillColor=ROOT.kAzure+1
 
-data : DoubleEG_Run2016B_PromptReco_v2_runs_273150_275783;     FillColor=ROOT.kBlack, Label="Data"
-data : DoubleEG_Run2016C_PromptReco_v2_runs_273150_275783;     FillColor=ROOT.kBlack, Label="Data"
-data : DoubleEG_Run2016C_PromptReco_v2_runs_275784_276811;     FillColor=ROOT.kBlack, Label="Data"
-data : DoubleEG_Run2016D_PromptReco_v2_runs_275784_276811;     FillColor=ROOT.kBlack, Label="Data"
-data : DoubleMuon_Run2016B_PromptReco_v2_runs_273150_275783;   FillColor=ROOT.kBlack, Label="Data"
-data : DoubleMuon_Run2016C_PromptReco_v2_runs_273150_275783;   FillColor=ROOT.kBlack, Label="Data"
-data : DoubleMuon_Run2016C_PromptReco_v2_runs_275784_276811;   FillColor=ROOT.kBlack, Label="Data"
-data : DoubleMuon_Run2016D_PromptReco_v2_runs_275784_276811;   FillColor=ROOT.kBlack, Label="Data"
-data : JetHT_Run2016B_PromptReco_v2_runs_273150_275783;        FillColor=ROOT.kBlack, Label="Data"
-data : JetHT_Run2016C_PromptReco_v2_runs_273150_275783;        FillColor=ROOT.kBlack, Label="Data"
-data : JetHT_Run2016C_PromptReco_v2_runs_275784_276811;        FillColor=ROOT.kBlack, Label="Data"
-data : JetHT_Run2016D_PromptReco_v2_runs_275784_276811;        FillColor=ROOT.kBlack, Label="Data"
+data : DoubleMuon_Run2016B_23Sep2016;        FillColor=ROOT.kBlack, Label="Data"
+data : DoubleMuon_Run2016C_23Sep2016;        FillColor=ROOT.kBlack, Label="Data"
+data : DoubleMuon_Run2016D_23Sep2016;        FillColor=ROOT.kBlack, Label="Data"
+data : DoubleMuon_Run2016E_23Sep2016;        FillColor=ROOT.kBlack, Label="Data"
+data : DoubleMuon_Run2016F_23Sep2016;        FillColor=ROOT.kBlack, Label="Data"
+data : DoubleMuon_Run2016G_23Sep2016;        FillColor=ROOT.kBlack, Label="Data"
+data : DoubleMuon_Run2016H_PromptReco_v2;    FillColor=ROOT.kBlack, Label="Data"
+data : DoubleMuon_Run2016H_PromptReco_v3;    FillColor=ROOT.kBlack, Label="Data"
+data : JetHT_Run2016B_23Sep2016;        FillColor=ROOT.kBlack, Label="Data"
+data : JetHT_Run2016C_23Sep2016;        FillColor=ROOT.kBlack, Label="Data"
+data : JetHT_Run2016D_23Sep2016;        FillColor=ROOT.kBlack, Label="Data"
+data : JetHT_Run2016E_23Sep2016;        FillColor=ROOT.kBlack, Label="Data"
+data : JetHT_Run2016F_23Sep2016;        FillColor=ROOT.kBlack, Label="Data"
+data : JetHT_Run2016G_23Sep2016;        FillColor=ROOT.kBlack, Label="Data"
+data : JetHT_Run2016H_PromptReco_v2;    FillColor=ROOT.kBlack, Label="Data"
+data : JetHT_Run2016H_PromptReco_v3;    FillColor=ROOT.kBlack, Label="Data"
 
 ## Options only
 QCD_red_prefit : - ; FillColor=ROOT.kPink-2, Label="QCD MC"
