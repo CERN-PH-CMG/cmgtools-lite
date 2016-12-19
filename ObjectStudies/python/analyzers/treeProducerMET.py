@@ -28,10 +28,15 @@ met_globalVariables = [
     NTupleVariable("Flag_badChargedHadronFilter", lambda ev: ev.badChargedHadron, help="bad charged hadron filter decision"),
     NTupleVariable("Flag_badMuonFilter", lambda ev: ev.badMuon, help="bad muon filter decision"),
 
-   # ----------------------- Leading jet info  --------------------------------------------------------------------- #
+   # ----------------------- jet info  --------------------------------------------------------------------- #
 
     NTupleVariable("jet1_pt", lambda ev : ev.cleanJets[0].pt() if len(ev.cleanJets)>0 else -99, help="pt of leading central jet"),
     NTupleVariable("jet2_pt", lambda ev : ev.cleanJets[1].pt() if len(ev.cleanJets)>1 else -99, help="pt of second central jet"),
+    NTupleVariable("nJet40", lambda ev: sum([j.pt() > 40 for j in ev.cleanJets]), int, help="Number of jets with pt > 40, |eta|<2.4"),
+
+    NTupleVariable("jetPuppi1_pt", lambda ev : ev.cleanJetsPuppi[0].pt() if len(ev.cleanJetsPuppi)>0 else -99, help="pt of leading central jet"),
+    NTupleVariable("jetPuppi2_pt", lambda ev : ev.cleanJetsPuppi[1].pt() if len(ev.cleanJetsPuppi)>1 else -99, help="pt of second central jet"),
+    NTupleVariable("nJetPuppi40", lambda ev: sum([j.pt() > 40 for j in ev.cleanJetsPuppi]), int, help="Number of jets with pt > 40, |eta|<2.4"),
 
    # ----------------------- dedicated met info -------------------------------------------------------------------- #
 
