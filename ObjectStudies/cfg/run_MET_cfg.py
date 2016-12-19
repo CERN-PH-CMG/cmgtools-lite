@@ -128,8 +128,10 @@ elif test==13:
     isZSkim=True
     if isEle:
         selectedComponents = [ DoubleEG_Run2016B_PromptReco_v2, DoubleEG_Run2016C_PromptReco_v2, DoubleEG_Run2016D_PromptReco_v2, DoubleEG_Run2016E_PromptReco_v2, DoubleEG_Run2016F_PromptReco_v1,DoubleEG_Run2016G_PromptReco_v1, DoubleEG_Run2016H_PromptReco_v2, DoubleEG_Run2016H_PromptReco_v3 ]
+#        selectedComponents = [ DoubleEG_Run2016B_23Sep2016, DoubleEG_Run2016C_23Sep2016, DoubleEG_Run2016D_23Sep2016, DoubleEG_Run2016E_23Sep2016, DoubleEG_Run2016F_23Sep2016, DoubleEG_Run2016G_23Sep2016 ]
     else:
         selectedComponents = [  DoubleMuon_Run2016B_PromptReco_v2, DoubleMuon_Run2016C_PromptReco_v2, DoubleMuon_Run2016D_PromptReco_v2, DoubleMuon_Run2016E_PromptReco_v2, DoubleMuon_Run2016F_PromptReco_v1, DoubleMuon_Run2016G_PromptReco_v1, DoubleMuon_Run2016H_PromptReco_v2, DoubleMuon_Run2016H_PromptReco_v3 ]
+#        selectedComponents = [ DoubleMuon_Run2016B_23Sep2016, DoubleMuon_Run2016C_23Sep2016, DoubleMuon_Run2016D_23Sep2016, DoubleMuon_Run2016E_23Sep2016, DoubleMuon_Run2016F_23Sep2016, DoubleMuon_Run2016G_23Sep2016 ]
     for comp in selectedComponents:
 #        comp.splitFactor = 1
 #        comp.files = comp.files[5:10]
@@ -319,10 +321,15 @@ if is1PH and (test==17 or test==19):
 # -------------------- FINE TUNE CONTENT
 # --------------------
 
+#if test==13:
+#    metAna.recalibrate = False
+
 if isZSkim or is1PH or test==2:
     met_globalObjects.update({
             "met_jecUp" : NTupleObject("met_jecUp", metType, help="PF E_{T}^{miss}, after type 1 corrections with JEC up variation"),
             "met_jecDown" : NTupleObject("met_jecDown", metType, help="PF E_{T}^{miss}, after type 1 corrections with JEC down variation"),
+#            "met_shifted_JetEnUp" : NTupleObject("met_jecUp", metType, help="PF E_{T}^{miss}, after type 1 corrections with JEC up variation"),
+#            "met_shifted_JetEnDown" : NTupleObject("met_jecDown", metType, help="PF E_{T}^{miss}, after type 1 corrections with JEC down variation"),
             "met_shifted_UnclusteredEnUp" : NTupleObject("met_shifted_UnclusteredEnUp", metType, help="PF E_{T}^{miss}, after type 1 corrections with met unclustered Up"),
             "met_shifted_UnclusteredEnDown" : NTupleObject("met_shifted_UnclusteredEnDown", metType, help="PF E_{T}^{miss}, after type 1 corrections with met unclustered Down"),
             "met_shifted_JetResUp" : NTupleObject("met_shifted_JetResUp", metType, help="PF E_{T}^{miss}, after type 1 corrections with jet resolution Up"),
@@ -435,8 +442,12 @@ import subprocess
 if comp.isData:
     ## DATA 25ns
     removeResiduals = False
+    #Prompt
     jecDBFile = os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/jec/Spring16_25nsV10_DATA.db'
     jecEra    = 'Spring16_25nsV10_DATA'
+    #Re-Reco
+#    jecDBFile = os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/jec/Spring16_23Sep2016AllV1_DATA.db'
+#    jecEra    = 'Spring16_23Sep2016AllV1_DATA'
     jerDBFile = os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/jer/Spring16_25nsV6_MC.db'
     jerEra    = 'Spring16_25nsV6'
 else:
