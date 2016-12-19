@@ -416,7 +416,8 @@ jetAna = cfg.Analyzer(
     calculateSeparateCorrections = True, # should be True if recalibrateJets is True, otherwise L1s will be inconsistent
     calculateType1METCorrection  = True,
     type1METParams = { 'jetPtThreshold':15., 'skipEMfractionThreshold':0.9, 'skipMuons':True },
-    collectionPostFix = ""
+    collectionPostFix = "",
+    storeLowPtJets = False,
     )
 
 ## Jets Analyzer (generic)
@@ -476,7 +477,8 @@ jetPuppiAna = cfg.Analyzer(
     calculateSeparateCorrections = True, # should be True if recalibrateJets is True, otherwise L1s will be inconsistent
     calculateType1METCorrection  = True,
     type1METParams = { 'jetPtThreshold':15., 'skipEMfractionThreshold':0.9, 'skipMuons':True },
-    collectionPostFix = "Puppi"
+    collectionPostFix = "Puppi",
+    storeLowPtJets = False,
     )
 
 ## Jets Analyzer (generic)
