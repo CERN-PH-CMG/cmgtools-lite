@@ -1,5 +1,7 @@
 # Specific instructions for the tHq analysis
 
+(First follow instructions for the general setup of CMGTools/TTHAnalysis, see the readme [here](https://github.com/stiegerb/cmgtools-lite))
+
 ### Add the remotes for Benjamin's repository and get the `tHq_80X_base` branch:
 
 ```
@@ -10,13 +12,13 @@ git push -u origin tHq_80X_base
 
 A current set of minitree outputs is at:
 ```
-/afs/cern.ch/work/p/peruzzi/ra5trees/809_June9_ttH_skimOnlyMC_3ltight_relax_prescale
+/afs/cern.ch/work/s/stiegerb/TTHTrees/13TeV/mixture_jecv6prompt_datafull_jul20
 ```
-You might have to ask Marco Peruzzi for access rights to it.
+You might have to ask Benjamin for access rights to it.
 
 ----------------
 
-### Producing mini trees
+### Producing mini trees yourself
 
 It's advisable to put the version of the code used for a production on a separate branch on github. The branch used for the ICHEP samples is on the `80X_for2016basis_ttH` branch on [Marco's github](https://github.com/peruzzim/cmgtools-lite/tree/80X_for2016basis_ttH/TTHAnalysis/cfg).
 
@@ -140,12 +142,12 @@ If everything goes according to plan, this will produce an output directory with
 - It's useful to have a symbolic link to the directory containing the minitree outputs in your working directory. E.g. like this:
 
 ```
-ln -s /afs/cern.ch/work/p/peruzzi/ra5trees/809_June9_ttH
+ln -s /afs/cern.ch/work/s/stiegerb/TTHTrees/13TeV
 ```
 
 - Often we store the minitree files on eos, and save only a text file (`tree.root.url` in place of `tree.root`) with the location (something like `root://eoscms.cern.ch//eos/cms/store/...`). You can open them in one go like this:
 
 ```
-root `cat /afs/cern.ch/user/p/peruzzi/work/ra5trees/809_June9_ttH/TTHnobb_mWCutfix_ext1/treeProducerSusyMultilepton/tree.root.url`
+root `cat /afs/cern.ch/work/s/stiegerb/TTHTrees/13TeV/mixture_jecv6prompt_datafull_jul20/TTHnobb_mWCutfix_ext1/treeProducerSusyMultilepton/tree.root.url`
 ```
 
