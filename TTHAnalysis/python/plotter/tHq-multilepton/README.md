@@ -46,12 +46,12 @@ To run on specific samples, edit the code around [these lines](https://github.co
 
 The command to test running on the first file of the first sample is then:
 ```
-heppy myTest run_susyMultilepton_cfg.py -p 0 -o nofetch -j 1 -o test=1 -o analysis=susy
+heppy myTest run_susyMultilepton_cfg.py -p 0 -o nofetch -j 1 -o test=1 -o analysis=susy -o keepLHEweights=1
 ```
 
 Note that the first time running will take a while, as it submits DAS queries for all the samples and caches the results (in `~/.cmgdatasets/`). Note also that you need a valid grid certificate for the DAS queries to work (`voms-proxy-init -voms cms -rfc` to get a valid token; check [this TWiki](https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookStartingGrid#ObtainingCert) on how to get a certificate).
 
-Check that the output is ok before submitting jobs to the batch to run on the full samples. To submit to batch, you use these commands:
+Check that the output is ok before submitting jobs to the batch to run on the full samples. For most samples, the `-o keepLHEweights=1` option can be omitted to save space. To submit to batch, you use these commands:
 
 ```
 heppy_batch.py -r /store/user/stiegerb/remote_output -o local_directory --option analysis=susy run_susyMultilepton_cfg.py -b 'bsub -q 1nd -u stiegerb -o std_output.txt -J job_name < batchScript.sh'
