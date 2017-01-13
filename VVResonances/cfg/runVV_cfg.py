@@ -77,7 +77,7 @@ from CMGTools.VVResonances.analyzers.tree_cff import *
 #-------- SEQUENCE
 
 sequence = cfg.Sequence(coreSequence+[vvAna,metWeightAna,vvSkimmer,vvTreeProducer])
-from CMGTools.RootTools.samples.triggers_13TeV_Spring15 import *
+from CMGTools.RootTools.samples.triggers_13TeV_DATA2016 import *
 
 
 triggerFlagsAna.triggerBits ={
@@ -87,7 +87,7 @@ triggerFlagsAna.triggerBits ={
     "ELE":triggers_1e_noniso,
     "HT800":triggers_HT800,
     "HT900":triggers_HT900,
-    "JJ":triggers_dijet_fat,
+    "JJ":triggers_dijet_fat+triggers_jet_recoverHT,
     "MET120":triggers_metNoMu120_mhtNoMu120
 }
 
