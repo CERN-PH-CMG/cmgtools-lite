@@ -390,15 +390,23 @@ class DataMCPlot(object):
                 hist.Draw('SAME' if self.supportHist else '')
             else:
                 if scale_signal == 'mc_int':
+                    print "Scale to unity"
                     hist.Scale(hist.Yield(weighted=True)/self.stack.integral)
                 hist.Draw('SAME HIST' if self.supportHist else 'HIST')
-            if not self.supportHist:
+            # use nostack hist only if data, since signal might peak at different position
+            if not self.supportHist and (hist.name.find("data") >= 0):
                 self.supportHist = hist
         self.stack.Draw(opt+same,
                         xmin=xmin, xmax=xmax,
                         ymin=ymin, ymax=ymax)
         if self.supportHist is None:
             self.supportHist = self.stack.totalHist
+
+        if (self.supportHist.weighted.GetMaximumBin() < self.supportHist.weighted.GetNbinsX()/2) and (0.5*self.supportHist.weighted.GetBinContent(self.supportHist.weighted.GetMaximumBin()) > self.supportHist.weighted.GetBinContent(self.supportHist.weighted.GetMinimumBin())):
+            # for falling spectra, put legend on the right
+            self.legendBorders = 0.62, 0.46, 0.88, 0.89
+            self.legendPos = 'right'
+
         if not self.axisWasSet:
             mxsup = self.supportHist.weighted.GetBinContent(
                 self.supportHist.weighted.GetMaximumBin()
@@ -411,7 +419,12 @@ class DataMCPlot(object):
                 ymin = 0.01
             if ymax is None:
                 ymax = mx*1.3
+                if self.legendPos == 'left':
+                    # mind that this does not depend on the number of legend entries
+                    # print len(self._SortedHistograms())
+                    ymax = mx*2.
             self.supportHist.GetYaxis().SetRangeUser(ymin, ymax)
+            # self.supportHist.GetYaxis().SetTitleOffset(1.3)
             self.axisWasSet = True
         for hist in self.nostack:
             if self.blindminx and hist.style.drawAsData:
@@ -424,10 +437,6 @@ class DataMCPlot(object):
                     hist.Draw('SAME')
             else:
                 hist.Draw('SAME HIST')
-
-        if self.supportHist.weighted.GetMaximumBin() < self.supportHist.weighted.GetNbinsX()/2:
-            self.legendBorders = 0.62, 0.46, 0.88, 0.89
-            self.legendPos = 'right'
 
         self.DrawLegend(print_norm=print_norm)
         if TPad.Pad():

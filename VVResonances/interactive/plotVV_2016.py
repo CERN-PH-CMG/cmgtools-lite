@@ -20,14 +20,14 @@ cuts = {}
 
 # if adding additional cuts, join with * and not &&, e.g.
 # inc_cut = '*'.join([jj_inc])
-cuts['jj_inc_l1_tau21_all_l2_tau21_all'] = categories["jj_inc_l1_tau21_all_l2_tau21_all"]
-cuts['jj_inc_l1_tau21_HP_mJ_W_l2_tau21_HP_mJ_W'] = categories["jj_inc_l1_tau21_HP_mJ_W_l2_tau21_HP_mJ_W"]
-cuts['jj_inc_l1_tau21_HP_l2_tau21_all'] = categories["jj_inc_l1_tau21_HP_l2_tau21_all"]
-cuts['jj_inc_l1_tau21_HP_l2_tau21_HP_mJ_W'] = categories["jj_inc_l1_tau21_HP_l2_tau21_HP_mJ_W"]
+cuts['jj_l1_tau21_all_l2_tau21_all'] = categories["jj_l1_tau21_all_l2_tau21_all"]
+cuts['jj_l1_tau21_HP_mJ_W_l2_tau21_HP_mJ_W'] = categories["jj_l1_tau21_HP_mJ_W_l2_tau21_HP_mJ_W"]
+cuts['jj_l1_tau21_HP_l2_tau21_all'] = categories["jj_l1_tau21_HP_l2_tau21_all"]
+cuts['jj_l1_tau21_HP_l2_tau21_HP_mJ_W'] = categories["jj_l1_tau21_HP_l2_tau21_HP_mJ_W"]
 
 
 # -> Command line
-analysis_dir = '/data/clange/ntuples/VV_20161117/'
+analysis_dir = '/data/clange/ntuples/VV_20161203/'
 tree_prod_name = ''
 
 samples_mc, samples_data, samples, all_samples, sampleDict = createSampleLists(analysis_dir, channel='VV', weight=weight_MC)
@@ -59,6 +59,6 @@ for cut_name in cuts:
         # plot.Group('ZLL', ['DYJetsToLL_M50_HT100to200', 'DYJetsToLL_M50_HT200to400', 'DYJetsToLL_M50_HT400to600', 'DYJetsToLL_M50_HT600toInf'])
         plot.Group('data_obs', ['data_JetHT']) #, 'data_JetHT'
         #['WpWpJJ', 'ZGTo2LG', 'ZGJets', 'WGToLNuG', 'WGJets', 'WW', 'WWDouble', 'WWTo1L1Nu2Q', 'WWToLNuQQ_ext', 'WWToLNuQQ', 'WWTo2L2Nu', 'WZ', 'WZTo3LNu_amcatnlo', 'WZTo3LNu', 'WZTo2L2Q', 'WZTo1L1Nu2Q', 'WZTo1L3Nu', 'ZZ', 'VVTo2L2Nu', 'ZZTo4L', 'ZZTo2Q2Nu', 'ZZTo2L2Q', 'ZZTo2L2Nu'])
-        HistDrawer.draw(plot, plot_dir='plots/'+cut_name, channel='VV #rightarrow jj')
+        HistDrawer.draw(plot, plot_dir='plots_VV/'+cut_name, channel='VV #rightarrow jj')
 
         # plot.WriteDataCard(filename='datacard_mm.root', dir='mm_' + cut_name)

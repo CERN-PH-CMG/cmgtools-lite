@@ -2,7 +2,7 @@ import re
 import os
 import copy
 
-from math import log10, floor
+from math import log10, floor, pow
 
 from ROOT import TCanvas, TPaveText, TBox, gStyle
 from CMGTools.RootTools.DataMC.Stack import Stack
@@ -11,6 +11,7 @@ from CMGTools.H2TauTau.proto.plotter.CMS_lumi import CMS_lumi
 
 from CMGTools.H2TauTau.proto.plotter.officialStyle import officialStyle
 officialStyle(gStyle)
+gStyle.SetLegendBorderSize(0)
 
 def ensureDir(directory):
     if not os.path.exists(directory):
@@ -65,7 +66,7 @@ class HistDrawer:
     @staticmethod
     def datasetInfo(plot):
         year = ''
-        year = '2015'
+        year = '2016'
         lumi = plot.lumi/1000. if hasattr(plot, 'lumi') else 0.
         unit = plot.lumi_unit if hasattr(plot, 'lumi_unit') else 'fb'
         energy = plot.com_energy if hasattr(plot, 'com_energy') else 13
@@ -86,7 +87,7 @@ class HistDrawer:
         posXhigh = 0.25
 
         if legend == 'left':
-            posX = 1. - r - 0.08
+            posX = 1. - r - 0.16
             posXhigh = 1. - r - 0.02
 
         plot.chan = TPaveText(posX, lowY, posXhigh, lowY+0.18, "NDC")
@@ -119,6 +120,9 @@ class HistDrawer:
 
         pad.cd()
         pad.SetLogy(SetLogy)
+        # print "about to DrawStack"
+        # plot.DrawNormalized()
+        # plot.DrawNormalizedRatioStack('HIST', ymin=0.1)
         # , dataAsPoisson=True
         plot.DrawStack('HIST', print_norm=plot.name=='_norm_', ymin=0.1, scale_signal='') # magic word to print integrals in legend
 
@@ -133,7 +137,8 @@ class HistDrawer:
             ytitle += round_to_n(unitsperbin, 3)
 
         h.GetYaxis().SetTitle('Events')
-        h.GetYaxis().SetTitleOffset(1.0)
+        # if axis labels and title overlap, change offset here
+        h.GetYaxis().SetTitleOffset(1.3)
         h.GetXaxis().SetTitleOffset(2.0)
 
         if do_ratio:
@@ -193,7 +198,12 @@ class HistDrawer:
         can.SaveAs(plotname + '.pdf')
 
         # Also save with log y
-        h.GetYaxis().SetRangeUser(0.1001, pad.GetUymax() * 5.)
+        if plot.legendPos == 'right':
+            h.GetYaxis().SetRangeUser(0.1001, pad.GetUymax() * 5.)
+        else:
+            # minimum is set to 2 orders of magnitude lower than maximum
+            minRange = pow(10, floor(log10(pad.GetUymax()/100.)))
+            h.GetYaxis().SetRangeUser(minRange + minRange*1e-4, pad.GetUymax() * 5.e3)
         pad.SetLogy(True)
         can.SaveAs(plotname + '_log.png')
         can.SaveAs(plotname + '_log.pdf')

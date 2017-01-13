@@ -52,7 +52,7 @@ cuts['lnujj_ttbar_mu_HP_b'] = findCut(categories, cat="lnujj", lep="mu", tau21="
 analysis_dir = '/data/clange/ntuples/VV_20161203/'
 tree_prod_name = ''
 
-samples_mc, samples_data, samples, all_samples, sampleDict = createSampleLists(analysis_dir, channel='WV', weight=weight_MC)
+samples_mc, samples_data, samples, all_samples, sampleDict = createSampleLists(analysis_dir, channel='WV', weight=weight_MC, reweightVJets=True)
 
 # Taken from Variables.py, can get subset with e.g. getVars(['mt', 'mvis'])
 variables = generic_vars + lnujj_vars + lnujj_vbf_vars
@@ -93,6 +93,6 @@ for cut_name in cuts:
         # plot.Group('ZLL', ['DYJetsToLL_M50_HT100to200', 'DYJetsToLL_M50_HT200to400', 'DYJetsToLL_M50_HT400to600', 'DYJetsToLL_M50_HT600toInf'])
         plot.Group('data_obs', ['data_SingleMuon', 'data_SingleElectron', 'data_MET']) #, 'data_JetHT'
         #['WpWpJJ', 'ZGTo2LG', 'ZGJets', 'WGToLNuG', 'WGJets', 'WW', 'WWDouble', 'WWTo1L1Nu2Q', 'WWToLNuQQ_ext', 'WWToLNuQQ', 'WWTo2L2Nu', 'WZ', 'WZTo3LNu_amcatnlo', 'WZTo3LNu', 'WZTo2L2Q', 'WZTo1L1Nu2Q', 'WZTo1L3Nu', 'ZZ', 'VVTo2L2Nu', 'ZZTo4L', 'ZZTo2Q2Nu', 'ZZTo2L2Q', 'ZZTo2L2Nu'])
-        HistDrawer.draw(plot, plot_dir='plots_lnujj/'+cut_name, channel=channel)
+        HistDrawer.draw(plot, plot_dir='plots_lnujj_VJetsReweight/'+cut_name, channel=channel)
 
         # plot.WriteDataCard(filename='datacard_mm.root', dir='mm_' + cut_name)
