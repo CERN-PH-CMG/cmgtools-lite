@@ -43,7 +43,7 @@ class VVBuilder(Analyzer):
         self.handles['packed'] = AutoHandle( 'packedPFCandidates', 'std::vector<pat::PackedCandidate>' )
         if self.cfg_comp.isMC:
             self.handles['packedGen'] = AutoHandle( 'packedGenParticles', 'std::vector<pat::PackedGenParticle>' )
-            
+
     def copyLV(self,LV):
         out=[]
         for i in LV:
@@ -56,7 +56,7 @@ class VVBuilder(Analyzer):
         if hasattr(jet,tag):
             return
 
-        
+
         constituents=[]
         LVs = ROOT.std.vector("math::XYZTLorentzVector")()
 
@@ -134,7 +134,7 @@ class VVBuilder(Analyzer):
         substructure.tau21_DDT = 0
         if (substructure.softDropJet.mass() > 0):
             substructure.tau21_DDT = substructure.ntau[1]/substructure.ntau[0] + ( 0.063 * math.log( (substructure.softDropJet.mass()*substructure.softDropJet.mass())/substructure.softDropJet.pt()))
-        setattr(jet,tag,substructure)    
+        setattr(jet,tag,substructure)
 
     def substructureGEN(self,jet,event):
         #if we already filled it exit
@@ -196,9 +196,9 @@ class VVBuilder(Analyzer):
 
         VV.satteliteCentralJets=jetsCentral
         # cuts are taken from https://twiki.cern.ch/twiki/bin/view/CMS/BtagRecommendation80X (20.06.2016)
-        VV.nLooseBTags = len(filter(lambda x: x.bDiscriminator(self.cfg_ana.bDiscriminator)>0.460,jetsCentral))
-        VV.nMediumBTags = len(filter(lambda x: x.bDiscriminator(self.cfg_ana.bDiscriminator)>0.800,jetsCentral))
-        VV.nTightBTags = len(filter(lambda x: x.bDiscriminator(self.cfg_ana.bDiscriminator)>0.935,jetsCentral))
+        VV.nLooseBTags = len(filter(lambda x: x.bDiscriminator(self.cfg_ana.bDiscriminator)>0.5426,jetsCentral))
+        VV.nMediumBTags = len(filter(lambda x: x.bDiscriminator(self.cfg_ana.bDiscriminator)>0.8484,jetsCentral))
+        VV.nTightBTags = len(filter(lambda x: x.bDiscriminator(self.cfg_ana.bDiscriminator)>0.9535,jetsCentral))
         VV.nOtherLeptons = len(leptons)
 
         maxbtag=-100.0
@@ -530,7 +530,7 @@ class VVBuilder(Analyzer):
 
 
         #if MC create the stable particles for Gen Jet reco and substructure
-        event.genParticleLVs=ROOT.std.vector("math::XYZTLorentzVector")()        
+        event.genParticleLVs=ROOT.std.vector("math::XYZTLorentzVector")()
         if self.cfg_comp.isMC:
             event.genPacked = self.handles['packedGen'].product()
             for p in event.genPacked:
