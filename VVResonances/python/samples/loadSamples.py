@@ -12,7 +12,7 @@ from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv2 import *
 TTs = [TTJets]
 background = TTs+SingleTop+DYJetsM50HT+WJetsToLNuHT+QCDHT+DiBosons
 
-#Load signal from here 
+#Load signal from here
 from CMGTools.VVResonances.samples.signal_13TeV_80X_reHLT import *
 from CMGTools.VVResonances.samples.signal_13TeV_80X_ZPTT import *
 
@@ -29,25 +29,13 @@ from CMGTools.RootTools.samples.samples_13TeV_DATA2016 import *
 
 
 #Load JSON
-json='/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-276811_13TeV_PromptReco_Collisions16_JSON.txt'
-
-SingleMuon_Run2016C_PromptReco_v2=kreator.makeDataComponent("SingleMuon_Run2016C_PromptReco_v2","/SingleMuon/Run2016C-PromptReco-v2/MINIAOD","CMS",".*root",json)
-SingleElectron_Run2016C_PromptReco_v2=kreator.makeDataComponent("SingleElectron_Run2016C_PromptReco_v2","/SingleElectron/Run2016C-PromptReco-v2/MINIAOD","CMS",".*root",json)
-JetHT_Run2016C_PromptReco_v2=kreator.makeDataComponent("JetHT_Run2016C_PromptReco_v2","/JetHT/Run2016C-PromptReco-v2/MINIAOD","CMS",".*root",json)
-MET_Run2016C_PromptReco_v2=kreator.makeDataComponent("MET_Run2016C_PromptReco_v2","/MET/Run2016C-PromptReco-v2/MINIAOD","CMS",".*root",json)
+json='/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/ReReco/Final/Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt'
 
 
-SingleMuon_Run2016D_PromptReco_v2=kreator.makeDataComponent("SingleMuon_Run2016D_PromptReco_v2","/SingleMuon/Run2016D-PromptReco-v2/MINIAOD","CMS",".*root",json)
-SingleElectron_Run2016D_PromptReco_v2=kreator.makeDataComponent("SingleElectron_Run2016D_PromptReco_v2","/SingleElectron/Run2016D-PromptReco-v2/MINIAOD","CMS",".*root",json)
-JetHT_Run2016D_PromptReco_v2=kreator.makeDataComponent("JetHT_Run2016D_PromptReco_v2","/JetHT/Run2016D-PromptReco-v2/MINIAOD","CMS",".*root",json)
-MET_Run2016D_PromptReco_v2=kreator.makeDataComponent("MET_Run2016D_PromptReco_v2","/MET/Run2016D-PromptReco-v2/MINIAOD","CMS",".*root",json)
-
-
-
-SingleMuon=[SingleMuon_Run2016B_PromptReco_v2,SingleMuon_Run2016C_PromptReco_v2,SingleMuon_Run2016D_PromptReco_v2]
-SingleElectron=[SingleElectron_Run2016B_PromptReco_v2,SingleElectron_Run2016C_PromptReco_v2,SingleElectron_Run2016D_PromptReco_v2]
-JetHT=[JetHT_Run2016B_PromptReco_v2,JetHT_Run2016C_PromptReco_v2,JetHT_Run2016D_PromptReco_v2]
-MET=[MET_Run2016B_PromptReco_v2,MET_Run2016C_PromptReco_v2,MET_Run2016D_PromptReco_v2]
+SingleMuon=[SingleMuon_Run2016B_23Sep2016, SingleMuon_Run2016C_23Sep2016, SingleMuon_Run2016D_23Sep2016, SingleMuon_Run2016E_23Sep2016, SingleMuon_Run2016F_23Sep2016, SingleMuon_Run2016G_23Sep2016, SingleMuon_Run2016H_PromptReco_v2, SingleMuon_Run2016H_PromptReco_v3]
+SingleElectron=[SingleElectron_Run2016B_23Sep2016, SingleElectron_Run2016C_23Sep2016, SingleElectron_Run2016D_23Sep2016, SingleElectron_Run2016E_23Sep2016, SingleElectron_Run2016F_23Sep2016, SingleElectron_Run2016G_23Sep2016, SingleElectron_Run2016H_PromptReco_v2, SingleElectron_Run2016H_PromptReco_v3]
+JetHT=[JetHT_Run2016B_23Sep2016, JetHT_Run2016C_23Sep2016, JetHT_Run2016D_23Sep2016, JetHT_Run2016E_23Sep2016, JetHT_Run2016F_23Sep2016, JetHT_Run2016G_23Sep2016, JetHT_Run2016H_PromptReco_v2, JetHT_Run2016H_PromptReco_v3]
+MET=[MET_Run2016B_23Sep2016, MET_Run2016C_23Sep2016, MET_Run2016D_23Sep2016, MET_Run2016E_23Sep2016, MET_Run2016F_23Sep2016, MET_Run2016G_23Sep2016, MET_Run2016H_PromptReco_v2, MET_Run2016H_PromptReco_v3]
 
 
 
@@ -89,7 +77,7 @@ dataDir = "$CMSSW_BASE/src/CMGTools/VVResonances/data"
 for comp in mcSamples:
     comp.isMC = True
     comp.isData = False
-    comp.splitFactor = 300   
+    comp.splitFactor = 300
     comp.puFileMC=dataDir+"/pileup_MC.root"
     comp.puFileData=dataDir+"/pileup_DATA.root"
     comp.efficiency = eff2012
