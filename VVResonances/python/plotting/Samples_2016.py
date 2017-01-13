@@ -1,19 +1,23 @@
 import os
 import ROOT
-from ROOT import gSystem, gROOT
+from ROOT import gSystem
 
 from CMGTools.H2TauTau.proto.plotter.PlotConfigs import SampleCfg
 from CMGTools.VVResonances.plotting.HistCreator import setSumWeights
 
 
-from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv2 import TTJets, SingleTop, WJetsToLNuHT, QCDHT, DYJetsM50HT, DiBosons, GJetsHT
-# from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv2 import TT_pow_ext3 as TT_pow_ext
+from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv2 import TTJets, SingleTop, WJetsToLNuHT, QCDHT, DYJetsM50HT, DiBosons
+from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv2 import TT_pow_ext3 as TT_pow
 from CMGTools.RootTools.samples.samples_13TeV_DATA2016 import *
-# from CMGTools.VVAnalysis.samples.signal_13TeV_80X import signalSamples
+from CMGTools.VVResonances.samples.signal_13TeV_80X import signalSamples
 
 def createSampleLists(analysis_dir='samples/',
-                      channel='VV', weight=''):
-    reweightVJets = False
+                      channel='VV', weight='', signalSample='',
+                      vJetsKFac=1., reweightVJets=False,
+                      reweightTop=False):
+
+    # settings and code to reweight V+jets samples (EW and QCD NLO corrections)
+    # the following two k-factors are from samples_13TeV_RunIISpring16MiniAODv2.py
     wJetsKFac = 1.21
     dyJetsKFac = 1.23
     wJetsQCDCorrections = {}
@@ -30,17 +34,23 @@ def createSampleLists(analysis_dir='samples/',
     dyJetsQCDCorrections["DYJetsToLL_M50_HT200to400"] = 1.438/dyJetsKFac
     dyJetsQCDCorrections["DYJetsToLL_M50_HT400to600"] = 1.494/dyJetsKFac
     dyJetsQCDCorrections["DYJetsToLL_M50_HT600toInf"] = 1.139/dyJetsKFac
+
     # explicit list of samples:
     wjetsSampleNames = ["WJetsToLNu_HT1200to2500", "WJetsToLNu_HT2500toInf", "WJetsToLNu_HT400to600", "WJetsToLNu_HT600to800", "WJetsToLNu_HT800to1200", 'WJetsToLNu_HT100to200', 'WJetsToLNu_HT200to400']
-    ttjetsSampleNames = ["TTJets"]
+    dyjetsSampleNames = ['DYJetsToLL_M50_HT100to200', 'DYJetsToLL_M50_HT200to400', 'DYJetsToLL_M50_HT400to600', 'DYJetsToLL_M50_HT600toInf']
+    ttjetsSampleNames = ["TT_pow_ext3"]
     qcdSampleNames = ["QCD_HT1000to1500", "QCD_HT1500to2000", "QCD_HT2000toInf", "QCD_HT500to700", "QCD_HT700to1000"]
     vvSampleNames = ['WWTo1L1Nu2Q', 'WZTo1L1Nu2Q']
     singleTopSampleNames = ['TToLeptons_tch_powheg', 'TBarToLeptons_tch_powheg', 'TToLeptons_sch', 'TBar_tWch', 'T_tWch']
     jj_SampleNames = qcdSampleNames
-    lnujj_SampleNames = ttjetsSampleNames + wjetsSampleNames + vvSampleNames
+    lnujj_SampleNames = ttjetsSampleNames + wjetsSampleNames + vvSampleNames + qcdSampleNames + dyjetsSampleNames + singleTopSampleNames
     # cuts to split ttbar sample according to W decay
     ttjetsWCut = '(lnujj_l2_mergedVTruth==1&&lnujj_l2_nearestBDRTruth>0.8)'
     ttjetsNonWCut = '(!(lnujj_l2_mergedVTruth==1&&lnujj_l2_nearestBDRTruth>0.8))'
+    # add ttbar pT reweighting
+    if reweightTop:
+        ttjetsWCut += '*truth_genTop_weight'
+        ttjetsNonWCut += '*truth_genTop_weight'
 
     tree_prod_name = ''
 
@@ -56,7 +66,7 @@ def createSampleLists(analysis_dir='samples/',
 
     # add QCD, DY+jets, W+jets, DiBosons and SingleTop samples, but not those with _ext, since they are merged with the others
     for sample in QCDHT+DYJetsM50HT+WJetsToLNuHT+DiBosons+SingleTop:
-        vJetsWeight = '1.'
+        vJetsWeight = str(vJetsKFac)
         if sample.name in channelSampleNames:
             if (sample in DYJetsM50HT) and reweightVJets:
                 vJetsWeight = 'getDYWeight(truth_genBoson_pt) * {}'.format(dyJetsQCDCorrections[sample.name])
@@ -67,7 +77,7 @@ def createSampleLists(analysis_dir='samples/',
                     xsec=sample.xSection, sumweights=sample.nGenEvents, weight_expr=('*'.join([weight, vJetsWeight]))))
 
     # TTJets sample
-    for sample in [TTJets]:
+    for sample in [TT_pow]:
         if sample.name in channelSampleNames:
             # print "Adding", sample.name, sample.xSection, sample.nGenEvents, weight
             samples_essential.append(
@@ -77,6 +87,14 @@ def createSampleLists(analysis_dir='samples/',
                 SampleCfg(name=sample.name+'_nonW', dir_name=sample.name, ana_dir=analysis_dir, tree_prod_name=tree_prod_name,
                     xsec=sample.xSection, sumweights=sample.nGenEvents, weight_expr=('*'.join([weight, ttjetsNonWCut]))))
 
+    # signal sample (set signal xsec to 5 pb)
+    samples_signal = []
+    if (signalSample):
+        for sample in signalSamples:
+            if sample.name == signalSample:
+                samples_signal.append(
+                    SampleCfg(name=sample.name, dir_name=sample.name, ana_dir=analysis_dir, tree_prod_name=tree_prod_name,
+                        xsec=5., sumweights=sample.nGenEvents, weight_expr=('*'.join([weight])), is_signal=True))
 
     samples_data = []
     if channel == 'WV':
@@ -105,8 +123,8 @@ def createSampleLists(analysis_dir='samples/',
     #     samples_WH.append(SampleCfg(name=name.replace('HiggsSUSYBB', 'bbH').replace('HiggsSUSYGG', 'ggH'), dir_name=name,
     #                                   ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=1., sumweights=1., is_signal=True),)
 
-    samples_mc = samples_essential  # + samples_WH
-    samples = samples_essential + samples_data
+    samples_mc = samples_essential + samples_signal
+    samples = samples_essential + samples_data + samples_signal
     all_samples = samples_mc + samples_data
 
     # -> Can add cross sections for samples either explicitly, or from file, or from cfg
