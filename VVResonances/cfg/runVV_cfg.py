@@ -77,7 +77,7 @@ from CMGTools.VVResonances.analyzers.tree_cff import *
 #-------- SEQUENCE
 
 sequence = cfg.Sequence(coreSequence+[vvAna,metWeightAna,vvSkimmer,vvTreeProducer])
-from CMGTools.RootTools.samples.triggers_13TeV_Spring15 import *
+from CMGTools.RootTools.samples.triggers_13TeV_DATA2016 import *
 
 
 triggerFlagsAna.triggerBits ={
@@ -87,7 +87,7 @@ triggerFlagsAna.triggerBits ={
     "ELE":triggers_1e_noniso,
     "HT800":triggers_HT800,
     "HT900":triggers_HT900,
-    "JJ":triggers_dijet_fat,
+    "JJ":triggers_dijet_fat+triggers_jet_recoverHT,
     "MET120":triggers_metNoMu120_mhtNoMu120
 }
 
@@ -113,7 +113,7 @@ else:
     # full scale production
     # split samples in a smarter way
     from CMGTools.HToZZ4L.tools.configTools import configureSplittingFromTime, printSummary
-    configureSplittingFromTime(selectedComponents, 60, 3)  # means 40 ms per event, job to last 3h
+    configureSplittingFromTime(selectedComponents, 43, 3)  # means 40 ms per event, job to last 3h
     # print summary of components to process
     printSummary(selectedComponents)
 

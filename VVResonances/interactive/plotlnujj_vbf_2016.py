@@ -46,7 +46,14 @@ cuts['lnujj_mu_HP_veto_mV'] = findCut(categories, cat="lnujj", lep="mu", tau21="
 cuts['lnujj_ttbar_e_HP_b'] = findCut(categories, cat="lnujj", lep="e", tau21="HP", reg="b")
 cuts['lnujj_ttbar_mu_HP_b'] = findCut(categories, cat="lnujj", lep="mu", tau21="HP", reg="b")
 
-
+# in order to be able to use standard categories, replace all cuts with vbf ones
+vbfCuts = {}
+for cutName, cut in cuts.iteritems():
+    vbfCuts[cutName+"_vbf_DEta"] = cut + "*(lnujj_vbfDEta>4.0)"
+    vbfCuts[cutName+"_vbf_Mass"] = cut + "*(lnujj_vbfMass>400)"
+    vbfCuts[cutName+"_vbf_DEta_Mass"] = cut + "*(lnujj_vbfDEta>4.0&&lnujj_vbfMass>400)"
+    vbfCuts[cutName+"_novbf"] = cut + "*(lnujj_vbfDEta<=4.0||lnujj_vbfMass<=400)"
+cuts = vbfCuts
 
 # -> Command line
 analysis_dir = '/data/clange/ntuples/VV_20161203/'
@@ -74,6 +81,10 @@ for cut_name in cuts:
         channel = "#mu#nujj"
     elif cfg_example.cut.find("e_"):
         channel = "e#nujj"
+    if cfg_example.cut.find("novbf"):
+        channel += " noVBF"
+    else:
+        channel += " VBF"
     if cfg_example.cut.find("HP"):
         channel += " HP"
     elif cfg_example.cut.find("LP"):
@@ -93,6 +104,6 @@ for cut_name in cuts:
         # plot.Group('ZLL', ['DYJetsToLL_M50_HT100to200', 'DYJetsToLL_M50_HT200to400', 'DYJetsToLL_M50_HT400to600', 'DYJetsToLL_M50_HT600toInf'])
         plot.Group('data_obs', ['data_SingleMuon', 'data_SingleElectron', 'data_MET']) #, 'data_JetHT'
         #['WpWpJJ', 'ZGTo2LG', 'ZGJets', 'WGToLNuG', 'WGJets', 'WW', 'WWDouble', 'WWTo1L1Nu2Q', 'WWToLNuQQ_ext', 'WWToLNuQQ', 'WWTo2L2Nu', 'WZ', 'WZTo3LNu_amcatnlo', 'WZTo3LNu', 'WZTo2L2Q', 'WZTo1L1Nu2Q', 'WZTo1L3Nu', 'ZZ', 'VVTo2L2Nu', 'ZZTo4L', 'ZZTo2Q2Nu', 'ZZTo2L2Q', 'ZZTo2L2Nu'])
-        HistDrawer.draw(plot, plot_dir='plots_lnujj/'+cut_name, channel=channel)
+        HistDrawer.draw(plot, plot_dir='plots_lnujj_vbf/'+cut_name, channel=channel)
 
         # plot.WriteDataCard(filename='datacard_mm.root', dir='mm_' + cut_name)

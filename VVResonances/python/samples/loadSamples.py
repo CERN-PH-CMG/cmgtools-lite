@@ -9,7 +9,7 @@ from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv2 import *
 
 
 
-TTs = [TTJets]
+TTs = [TTJets, TT_pow_ext3, TT_pow_ext4]
 background = TTs+SingleTop+DYJetsM50HT+WJetsToLNuHT+QCDHT+DiBosons
 
 #Load signal from here
