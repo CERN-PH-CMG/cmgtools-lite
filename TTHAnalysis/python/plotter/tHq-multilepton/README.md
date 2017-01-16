@@ -2,12 +2,12 @@
 
 (First follow instructions for the general setup of CMGTools/TTHAnalysis, see the readme [here](https://github.com/stiegerb/cmgtools-lite))
 
-### Add the remotes for Benjamin's repository and get the `80X_M17_tHq` branch:
+### Add the remotes for Benjamin's repository and get the `80X_tHq` branch:
 
 ```
-git remote add stiegerb https://github.com/stiegerb/cmgtools-lite.git -f -t 80X_M17_tHq
-git checkout -b 80X_M17_tHq stiegerb/80X_M17_tHq
-git push -u origin 80X_M17_tHq
+git remote add stiegerb https://github.com/stiegerb/cmgtools-lite.git -f -t 80X_tHq
+git checkout -b 80X_tHq stiegerb/80X_tHq
+git push -u origin 80X_tHq
 ```
 
 A set of minitree outputs (for the ICHEP 2016 dataset) is at:
