@@ -10,7 +10,7 @@ git checkout -b 80X_M17_tHq stiegerb/80X_M17_tHq
 git push -u origin 80X_M17_tHq
 ```
 
-A current set of minitree outputs is at:
+A set of minitree outputs (for the ICHEP 2016 dataset) is at:
 ```
 /afs/cern.ch/work/s/stiegerb/TTHTrees/13TeV/mixture_jecv6prompt_datafull_jul20
 ```
