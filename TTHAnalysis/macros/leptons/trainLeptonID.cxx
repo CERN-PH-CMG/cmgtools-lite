@@ -37,7 +37,7 @@ void trainLeptonID(TString name, TString sig1file, TString sig2file, TString bkg
 	} else if (name.Contains("_el")) {
 	  if (name.Contains("_eleHZZ")) factory->AddVariable("LepGood_mvaIdSpring16HZZ",'D');
 	  else if (name.Contains("_eleGP")) factory->AddVariable("LepGood_mvaIdSpring16GP",'D');
-	  else if (name.Contains("_ele15")) factory->AddVariable("LepGood_mvaIdSpring15",'D');
+	  else if (name.Contains("_eleOLD")) factory->AddVariable("LepGood_mvaIdSpring15",'D');
 	  else assert(0);
 	}
 	else { std::cerr << "ERROR: must either be electron or muon." << std::endl; return; }
@@ -171,10 +171,10 @@ void trainLeptonID(TString name, TString sig1file, TString sig2file, TString bkg
       }
     }
 
-    if (file_for_sigW_1!="" || file_for_sigW_2!="") factory->SetSignalWeightExpression("addW*xsec");
-    else factory->SetSignalWeightExpression("xsec");
-    if (file_for_bkgW_1!="" || file_for_bkgW_2!="") factory->SetBackgroundWeightExpression("addW*xsec");
-    else factory->SetBackgroundWeightExpression("xsec");
+    if (file_for_sigW_1!="" || file_for_sigW_2!="") factory->SetSignalWeightExpression("addW*xsec*genWeight");
+    else factory->SetSignalWeightExpression("xsec*genWeight");
+    if (file_for_bkgW_1!="" || file_for_bkgW_2!="") factory->SetBackgroundWeightExpression("addW*xsec*genWeight");
+    else factory->SetBackgroundWeightExpression("xsec*genWeight");
 
     if (!doMultiClass) factory->PrepareTrainingAndTestTree( lepton+" LepGood_mcMatchId != 0", lepton+" LepGood_mcMatchId == 0", "" );
     else factory->PrepareTrainingAndTestTree(lepton,"SplitMode=Random:NormMode=NumEvents:!V");
