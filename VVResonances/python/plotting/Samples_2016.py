@@ -14,7 +14,7 @@ from CMGTools.VVResonances.samples.signal_13TeV_80X import signalSamples
 def createSampleLists(analysis_dir='samples/',
                       channel='VV', weight='', signalSample='',
                       vJetsKFac=1., reweightVJets=False,
-                      reweightTop=False):
+                      reweightTop=False, useTopMcatnlo=False):
 
     # settings and code to reweight V+jets samples (EW and QCD NLO corrections)
     # the following two k-factors are from samples_13TeV_RunIISpring16MiniAODv2.py
@@ -51,6 +51,9 @@ def createSampleLists(analysis_dir='samples/',
     if reweightTop:
         ttjetsWCut += '*truth_genTop_weight'
         ttjetsNonWCut += '*truth_genTop_weight'
+    topSamples = [TT_pow]
+    if useTopMcatnlo:
+        topSamples = [TTJets]
 
     tree_prod_name = ''
 
@@ -77,7 +80,7 @@ def createSampleLists(analysis_dir='samples/',
                     xsec=sample.xSection, sumweights=sample.nGenEvents, weight_expr=('*'.join([weight, vJetsWeight]))))
 
     # TTJets sample
-    for sample in [TT_pow]:
+    for sample in topSamples:
         if sample.name in channelSampleNames:
             # print "Adding", sample.name, sample.xSection, sample.nGenEvents, weight
             samples_essential.append(
