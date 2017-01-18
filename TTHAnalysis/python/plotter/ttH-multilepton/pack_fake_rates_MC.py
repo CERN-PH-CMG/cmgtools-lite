@@ -52,7 +52,7 @@ if __name__ == "__main__":
     outfile = ROOT.TFile.Open(outname,"RECREATE")
     if True:
 
-       ptbins_c = [ 10,15,20,30,45,65,100 ]
+       ptbins_c = [ 10,15,20,30,45,100 ]
        etabins_c_el = [0, 1.479, 2.5]
        etabins_c_mu = [0, 1.2,   2.4]
        etaslices_c_el = [ (0.4,"00_15"), (1.8,"15_25") ]
@@ -64,30 +64,11 @@ if __name__ == "__main__":
 #       torun += [("sViX0E2","ptJI85_mvaSusy_sVi","mvaSusy_sVi","30"),("sMiX0E2","ptJI85_mvaSusy_sMi","mvaSusy_sMi","30")]
        torun += [("sViX4mrE2","ptJIMIX3_mvaSusy_sVi","mvaSusy_sVi","30"),("sMiX4mrE2","ptJIMIX4_mvaSusy_sMi","mvaSusy_sMi","30")]
 
-#       for WP,ptj,num,rec in torun:
-#           for src in "QCDMu",: 
-#                assemble2D(outfile,"FR_wp%s_mu_%s_%s" % (WP,src.replace("_red",""),ptj), ptbins_c, etabins_c_mu, path+"/mu_wp"+WP+"_rec"+rec+"_bAny_eta_%s.root", num+"_"+ptj+"_coarse_QCDMu_red", etaslices_c_mu)
-#           for src in "QCDEl",: 
-#                assemble2D(outfile,"FR_wp%s_el_%s_%s" % (WP,src.replace("_red",""),ptj), ptbins_c, etabins_c_el, path+"/el_wp"+WP+"_rec"+rec+"_bAny_eta_%s.root", num+"_"+ptj+"_coarse_QCDEl_red", etaslices_c_el)
-
        for WP,ptj,num,rec in torun:
-           for src in "QCDMu",: 
-                assemble2D(outfile,"FR_wp%s_mu_%s_%s" % (WP,src.replace("_red",""),ptj), ptbins_c, etabins_c_mu, path+"/mu_wp"+WP+"_rec"+rec+"_bAny_eta_%s.root", num+"_"+ptj+"_coarse_TT_red", etaslices_c_mu)
-           for src in "QCDEl",: 
-                assemble2D(outfile,"FR_wp%s_el_%s_%s" % (WP,src.replace("_red",""),ptj), ptbins_c, etabins_c_el, path+"/el_wp"+WP+"_rec"+rec+"_bAny_eta_%s.root", num+"_"+ptj+"_coarse_TT_red", etaslices_c_el)
-
-###       ptbins_c = [ 10,15,25,35,50,70 ]
-###       etabins_c_el = [0, 0.8, 1.479, 2.5]
-###       etabins_c_mu = [0, 1.2, 2.1, 2.4]
-###       etaslices_c_el = [ (0.2,"00_08"), (1.2,"08_15"), (1.8,"15_25") ]
-###       etaslices_c_mu = [ (0.4,"00_12"), (1.8,"12_21"), (2.25,"21_24") ]
-###       for WP in "sMiE2",: #,"060ib":
-###           ptj = "ptJI85"
-###           for src in "QCDMu",: 
-###                assemble2D(outfile,"FR_wp%s_mu_%s_%s" % (WP,src.replace("_red",""),ptj), ptbins_c, etabins_c_mu, path+"/mu_bnb_wpsMiE2_rec30_bAny_eta_%s.root", "mvaSusy_sMi_ptJI85_mvaSusy_sMi_coarse_QCDMu_red", etaslices_c_mu)
-###           for src in "QCDEl",: 
-###                assemble2D(outfile,"FR_wp%s_el_%s_%s" % (WP,src.replace("_red",""),ptj), ptbins_c, etabins_c_el, path+"/el_bnb_wpsMiE2_rec30_bAny_eta_%s.root", "mvaSusy_sMi_ptJI85_mvaSusy_sMi_coarse_QCDEl_red", etaslices_c_el)
-###
+           assemble2D(outfile,"FR_wp%s_mu_%s_%s" % (WP,'QCDMu',ptj), ptbins_c, etabins_c_mu, path+"/mu_lbin_wp"+WP+"_rec"+rec+"_bAny_eta_%s.root", num+"_"+ptj+"_coarselongbin_QCDMu_red", etaslices_c_mu)
+           assemble2D(outfile,"FR_wp%s_el_%s_%s" % (WP,'QCDEl',ptj), ptbins_c, etabins_c_el, path+"/el_lbin_wp"+WP+"_rec"+rec+"_bAny_eta_%s.root", num+"_"+ptj+"_coarselongbin_QCDEl_red", etaslices_c_el)
+           assemble2D(outfile,"FR_wp%s_mu_%s_%s" % (WP,'TT',ptj), ptbins_c, etabins_c_mu, path+"/mu_lbin_wp"+WP+"_rec"+rec+"_bAny_eta_%s.root", num+"_"+ptj+"_coarselongbin_TT_red", etaslices_c_mu)
+           assemble2D(outfile,"FR_wp%s_el_%s_%s" % (WP,'TT',ptj), ptbins_c, etabins_c_el, path+"/el_lbin_wp"+WP+"_rec"+rec+"_bAny_eta_%s.root", num+"_"+ptj+"_coarselongbin_TT_red", etaslices_c_el)
 
     outfile.ls()
 

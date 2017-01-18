@@ -16,8 +16,8 @@ lep_sip3d_log: LepGood_sip3d: 20,0,15 ; Logy, XTitle="Lepton SIP_{3D}", Legend='
 lep_dxy_log: abs(LepGood_dxy)*10000: 20,0.0,100. ; XTitle="Lepton d_{xy} [#mum]",Logy , Legend='TR', LegendCutoff=1e-2
 ###lep_dz: abs(LepGood_dz)*10000: 20,0.0,500. ; XTitle="Lepton d_{z} [#mum]", Legend='TR', LegendCutoff=1e-2
 lep_dz_log: abs(LepGood_dz)*10000: 20,0.0,500. ; XTitle="Lepton d_{z} [#mum]",Logy ,Legend='TR', LegendCutoff=1e-2
-###el_mvaIdSpring15: LepGood_mvaIdSpring15: 20,-1,1; XTitle="Electron mvaIdSpring15", Legend='TR', LegendCutoff=1e-2
-el_mvaIdSpring15_log: LepGood_mvaIdSpring15: 20,-1,1; Logy, XTitle="Electron mvaIdSpring15", Legend='TL', LegendCutoff=1e-2
+###el_mvaIdSpring16GP: LepGood_mvaIdSpring16GP: 20,-1,1; XTitle="Electron mvaIdSpring16GP", Legend='TR', LegendCutoff=1e-2
+el_mvaIdSpring16GP_log: LepGood_mvaIdSpring16GP: 20,-1,1; Logy, XTitle="Electron mvaIdSpring16GP", Legend='TL', LegendCutoff=1e-2
 ###lep_jetPtRelv1: LepGood_jetPtRelv1: 20,0,20; XTitle="Lepton Jet p_{T} Relv1 [GeV]", Legend='TR', LegendCutoff=1e-2
 lep_jetPtRelv2: LepGood_jetPtRelv2: 20,0,20; XTitle="Lepton Jet p_{T} Relv2 [GeV]", Legend='TR', LegendCutoff=1e-2
 ###lep_jetPtRatiov1: LepGood_jetPtRatiov1: 20,0,1.2; XTitle="Lepton Jet p_{T} Ratiov1 ", Legend='TL', LegendCutoff=1e-2
