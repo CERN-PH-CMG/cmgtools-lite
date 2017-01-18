@@ -319,7 +319,7 @@ if __name__ == '__main__':
             self.mvas = {
                 'LepMVAFriendTTH' : LepMVAFriend((os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/leptonMVA/tth/%s_BDTG.weights.xml",
                                                   os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/leptonMVA/tth/%s_BDTG.weights.xml"),
-                                                 training="forMoriond_eleOLD", label="FriendTTH"),
+                                                 training="forMoriond_eleHZZ", label="FriendTTH"),
                 'LepMVAFriendSUSY' : LepMVAFriend((os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/leptonMVA/susy/%s_BDTG.weights.xml",
                                                    os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/leptonMVA/susy/%s_BDTG.weights.xml"),
                                                   training="forMoriond_eleGP", label="FriendSUSY"),
