@@ -182,10 +182,8 @@ if options.queue:
 
     runner = ""
     super = ""
-    if options.env == "cern":
-        runner = "lxbatch_runner.sh"
-        super  = "bsub -q {queue}".format(queue = options.queue)
-    elif options.env == "psi":
+    theoutput = args[1]
+    if options.env == "psi":
         super  = "qsub -q {queue} -N friender".format(queue = options.queue)
         runner = "psibatch_runner.sh"
     elif options.env == "oviedo":
@@ -193,9 +191,10 @@ if options.queue:
             options.queue = "batch" 
         super  = "qsub -q {queue} -N happyTreeFriend".format(queue = options.queue)
         runner = "lxbatch_runner.sh"
-        theoutput= args[1].replace('/pool/ciencias/','/pool/cienciasrw/')
-    else:
-        raise RuntimeError, "I do not know what to do. Where am I? Please set the [env] option"
+        theoutput = theoutput.replace('/pool/ciencias/','/pool/cienciasrw/')
+    else: # Use lxbatch by default
+        runner = "lxbatch_runner.sh"
+        super  = "bsub -q {queue}".format(queue = options.queue)
 
     basecmd = "{dir}/{runner} {dir} {cmssw} python {self} -N {chunkSize} -T {tdir} -t {tree} {data} {output}".format(
                 dir = os.getcwd(), runner=runner, cmssw = os.environ['CMSSW_BASE'],
