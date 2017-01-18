@@ -56,7 +56,13 @@ cd $CMSSW_BASE/src
 scram b -j 8
 ```
 
-#### Throubleshooting
+followed by the import of the Spring16 electron MVA ID weights:
 
-If you encounter problems at runtime related
-to the Spring16 electron ID MVA, please see [this](https://github.com/CERN-PH-CMG/cmg-cmssw/pull/661).
+```
+cd $CMSSW_BASE/external/slc6_amd64_gcc530
+git clone https://github.com/ikrav/RecoEgamma-ElectronIdentification.git data/RecoEgamma/ElectronIdentification/data
+cd data/RecoEgamma/ElectronIdentification/data
+git checkout egm_id_80X_v1
+cd $CMSSW_BASE/src
+scram b -j 8
+```
