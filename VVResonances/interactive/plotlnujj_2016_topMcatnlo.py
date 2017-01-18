@@ -22,8 +22,8 @@ cuts = {}
 # inc_cut = '*'.join([lnujj_inc])
 # cuts['lnujj_Inclusive'] = categories["lnujj_Inclusive"]
 
-cuts['lnujj_mu'] = findCut(categories, cat="lnujj", lep="mu")
-cuts['lnujj_e'] = findCut(categories, cat="lnujj", lep="e")
+# cuts['lnujj_mu'] = findCut(categories, cat="lnujj", lep="mu")
+# cuts['lnujj_e'] = findCut(categories, cat="lnujj", lep="e")
 cuts['lnujj_ttbar_mu_b'] = findCut(categories, cat="lnujj", lep="mu", reg="b")
 cuts['lnujj_ttbar_e_b'] = findCut(categories, cat="lnujj", lep="e", reg="b")
 # cuts['lnujj_mu_nob'] = findCut(categories, cat="lnujj", lep="mu", reg="nob")

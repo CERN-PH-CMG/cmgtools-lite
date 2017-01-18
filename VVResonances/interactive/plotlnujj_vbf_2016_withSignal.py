@@ -27,27 +27,29 @@ cuts['lnujj_ttbar_mu_b'] = findCut(categories, cat="lnujj", lep="mu", reg="b")
 cuts['lnujj_ttbar_e_b'] = findCut(categories, cat="lnujj", lep="e", reg="b")
 # cuts['lnujj_mu_nob'] = findCut(categories, cat="lnujj", lep="mu", reg="nob")
 # cuts['lnujj_e_nob'] = findCut(categories, cat="lnujj", lep="e", reg="nob")
+cuts['lnujj_mu_nob_veto_mV'] = findCut(categories, cat="lnujj", lep="mu", mJ="VetoV", reg="nob")
+cuts['lnujj_e_nob_veto_mV'] = findCut(categories, cat="lnujj", lep="e", mJ="VetoV", reg="nob")
 # cuts['lnujj_ttbar_mu_SP_b'] = findCut(categories, cat="lnujj", lep="mu", tau21="SP", reg="b")
 # cuts['lnujj_ttbar_e_SP_b'] = findCut(categories, cat="lnujj", lep="e", tau21="SP", reg="b")
 # cuts['lnujj_ttbar_mu_mV_b'] = findCut(categories, cat="lnujj", lep="mu", mJ="V", reg="b")
 # cuts['lnujj_ttbar_e_mV_b'] = findCut(categories, cat="lnujj", lep="e", mJ="V", reg="b")
 # cuts['lnujj_mu_SP_veto_mV'] = findCut(categories, cat="lnujj", lep="mu", tau21="SP", mJ="VetoV")
 # cuts['lnujj_e_SP_veto_mV'] = findCut(categories, cat="lnujj", lep="e", tau21="SP", mJ="VetoV")
-cuts['lnujj_e_HP_veto_mV_nob'] = findCut(categories, cat="lnujj", lep="e", tau21="HP", mJ="VetoV", reg="nob")
-cuts['lnujj_mu_HP_veto_mV_nob'] = findCut(categories, cat="lnujj", lep="mu", tau21="HP", mJ="VetoV", reg="nob")
-cuts['lnujj_e_HP_veto_mV'] = findCut(categories, cat="lnujj", lep="e", tau21="HP", mJ="VetoV")
-cuts['lnujj_mu_HP_veto_mV'] = findCut(categories, cat="lnujj", lep="mu", tau21="HP", mJ="VetoV")
-cuts['lnujj_ttbar_e_HP_b'] = findCut(categories, cat="lnujj", lep="e", tau21="HP", reg="b")
-cuts['lnujj_ttbar_mu_HP_b'] = findCut(categories, cat="lnujj", lep="mu", tau21="HP", reg="b")
+# cuts['lnujj_e_HP_veto_mV_nob'] = findCut(categories, cat="lnujj", lep="e", tau21="HP", mJ="VetoV", reg="nob")
+# cuts['lnujj_mu_HP_veto_mV_nob'] = findCut(categories, cat="lnujj", lep="mu", tau21="HP", mJ="VetoV", reg="nob")
+# cuts['lnujj_e_HP_veto_mV'] = findCut(categories, cat="lnujj", lep="e", tau21="HP", mJ="VetoV")
+# cuts['lnujj_mu_HP_veto_mV'] = findCut(categories, cat="lnujj", lep="mu", tau21="HP", mJ="VetoV")
+# cuts['lnujj_ttbar_e_HP_b'] = findCut(categories, cat="lnujj", lep="e", tau21="HP", reg="b")
+# cuts['lnujj_ttbar_mu_HP_b'] = findCut(categories, cat="lnujj", lep="mu", tau21="HP", reg="b")
 
 # in order to be able to use standard categories, replace all cuts with vbf ones
 vbfCuts = {}
 for cutName, cut in cuts.iteritems():
-    vbfCuts[cutName+"_vbf_DEta"] = cut + "*(lnujj_vbfDEta>4.0)"
-    vbfCuts[cutName+"_vbf_Mass"] = cut + "*(lnujj_vbfMass>400)"
+    # vbfCuts[cutName+"_vbf_DEta"] = cut + "*(lnujj_vbfDEta>4.0)"
+    # vbfCuts[cutName+"_vbf_Mass"] = cut + "*(lnujj_vbfMass>400)"
     vbfCuts[cutName+"_vbf_DEta_Mass"] = cut + "*(lnujj_vbfDEta>4.0&&lnujj_vbfMass>400)"
-    vbfCuts[cutName+"_novbf"] = cut + "*(lnujj_vbfDEta<=4.0||lnujj_vbfMass<=400)"
-cuts = vbfCuts
+    # vbfCuts[cutName+"_novbf"] = cut + "*(lnujj_vbfDEta<=4.0||lnujj_vbfMass<=400)"
+cuts.update(vbfCuts)
 
 # -> Command line
 analysis_dir = '/data/clange/ntuples/VV_20161203/'

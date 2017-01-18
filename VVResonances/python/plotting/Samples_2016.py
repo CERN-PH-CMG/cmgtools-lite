@@ -9,7 +9,7 @@ from CMGTools.VVResonances.plotting.HistCreator import setSumWeights
 from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv2 import TTJets, SingleTop, WJetsToLNuHT, QCDHT, DYJetsM50HT, DiBosons
 from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv2 import TT_pow_ext3 as TT_pow
 from CMGTools.RootTools.samples.samples_13TeV_DATA2016 import *
-from CMGTools.VVResonances.samples.signal_13TeV_80X import signalSamples
+from CMGTools.VVResonances.samples.signal_13TeV_80X_reHLT import signalSamples
 
 def createSampleLists(analysis_dir='samples/',
                       channel='VV', weight='', signalSample='',
