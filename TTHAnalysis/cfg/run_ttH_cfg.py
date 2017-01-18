@@ -44,7 +44,7 @@ lepAna.miniIsolationVetoLeptons = None # use 'inclusive' to veto inclusive lepto
 lepAna.doIsolationScan = False
 
 # Lepton Preselection
-lepAna.loose_electron_id = "POG_MVA_ID_Spring15_NonTrig_VLooseIdEmu"
+lepAna.loose_electron_id = "MVA_ID_NonTrig_Spring16_VLooseIdEmu"
 isolation = "miniIso"
 
 jetAna.lepSelCut = lambda lep : False # no cleaning of jets with leptons
@@ -125,7 +125,8 @@ del susyMultilepton_collections['discardedLeptons']
 
 # Spring16 electron MVA - follow instructions on pull request for correct area setup
 leptonTypeSusy.addVariables([
-        NTupleVariable("mvaIdSpring16",   lambda lepton : lepton.mvaRun2("Spring16") if abs(lepton.pdgId()) == 11 else 1, help="EGamma POG MVA ID, Spring16; 1 for muons"),
+        NTupleVariable("mvaIdSpring16HZZ",   lambda lepton : lepton.mvaRun2("Spring16HZZ") if abs(lepton.pdgId()) == 11 else 1, help="EGamma POG MVA ID, Spring16, HZZ; 1 for muons"),
+        NTupleVariable("mvaIdSpring16GP",   lambda lepton : lepton.mvaRun2("Spring16GP") if abs(lepton.pdgId()) == 11 else 1, help="EGamma POG MVA ID, Spring16, GeneralPurpose; 1 for muons"),
         ])
 
 if not removeJecUncertainty:
@@ -152,15 +153,6 @@ susyCoreSequence.insert(susyCoreSequence.index(skimAnalyzer),
                         susyCounter)
 susyScanAna.doLHE=False # until a proper fix is put in the analyzer
 
-# HBHE new filter
-from CMGTools.TTHAnalysis.analyzers.hbheAnalyzer import hbheAnalyzer
-hbheAna = cfg.Analyzer(
-    hbheAnalyzer, name="hbheAnalyzer", IgnoreTS4TS5ifJetInLowBVRegion=False
-    )
-susyCoreSequence.insert(susyCoreSequence.index(ttHCoreEventAna),hbheAna)
-treeProducer.globalVariables.append(NTupleVariable("hbheFilterNew50ns", lambda ev: ev.hbheFilterNew50ns, int, help="new HBHE filter for 50 ns"))
-treeProducer.globalVariables.append(NTupleVariable("hbheFilterNew25ns", lambda ev: ev.hbheFilterNew25ns, int, help="new HBHE filter for 25 ns"))
-treeProducer.globalVariables.append(NTupleVariable("hbheFilterIso", lambda ev: ev.hbheFilterIso, int, help="HBHE iso-based noise filter"))
 treeProducer.globalVariables.append(NTupleVariable("Flag_badChargedHadronFilter", lambda ev: ev.badChargedHadron, help="bad charged hadron filter decision"))
 treeProducer.globalVariables.append(NTupleVariable("Flag_badMuonFilter", lambda ev: ev.badMuon, help="bad muon filter decision"))
 
@@ -214,23 +206,33 @@ triggerFlagsAna.unrollbits = True
 triggerFlagsAna.saveIsUnprescaled = True
 triggerFlagsAna.checkL1Prescale = True
 
-from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv2 import *
+from CMGTools.RootTools.samples.samples_13TeV_RunIISummer16MiniAODv2 import *
+jetAna.mcGT = "Summer16_25nsV5_MC" # for Summer16 MC, as used in production, temporary until not switched by default
 from CMGTools.RootTools.samples.samples_13TeV_DATA2016 import *
 from CMGTools.HToZZ4L.tools.configTools import printSummary, configureSplittingFromTime, cropToLumi, prescaleComponents, insertEventSelector
 
-selectedComponents = [TTLep_pow_ext]
+selectedComponents = [TTLep_pow]
 
-selectedComponents = selectedComponents
-#    samples_2l = [ TTWToLNu, TTZToLLNuNu, TTLLJets_m1to10, TTTT_ext, tZq_ll ] + TTHnobb_mWCutfix
-#    samples_2l = [WJetsToLNu_LO, WJetsToLNu, DYJetsToLL_M10to50_LO, DYJetsToLL_M10to50, DYJetsToLL_M50, DYJetsToLL_M50_LO, TTJets, TT_pow, TTJets_SingleLeptonFromTbar, TTJets_SingleLeptonFromT, TTJets_DiLepton, TBar_tWch, T_tWch, TToLeptons_tch_amcatnlo, TToLeptons_sch_amcatnlo, TTGJets, WGToLNuG, ZGTo2LG, TGJets, WWDouble, WpWpJJ, TTTT, VHToNonbb, GGHZZ4L,tZq_ll, WZTo3LNu, ZZTo4L, WWTo2L2Nu, WWW, WWZ, WZZ, ZZZ, TTHnobb_pow, TTW_LO, TTZ_LO, TTWToLNu, TTZToLLNuNu, TTLLJets_m1to10] + TTHnobb_mWCutfix
-#    samples_1l = [QCD_Mu15] + QCD_Mu5 + [WJetsToLNu_LO,DYJetsToLL_M10to50_LO,DYJetsToLL_M50_LO,TT_pow] + QCDPtEMEnriched + QCDPtbcToE
-#    selectedComponents = samples_2l
-#    for comp in selectedComponents: comp.splitFactor = 200
-#    printSummary(selectedComponents)
-#    cropToLumi([TTTT_ext,tZq_ll],200)
-#    cropToLumi(TTHnobb_mWCutfix,2000)
-#    configureSplittingFromTime(samples_1l,50,3)
-#    configureSplittingFromTime(samples_2l,100,3)
+
+sig_ttv = [TTHnobb_pow,TTWToLNu_ext,TTWToLNu_ext2,TTZToLLNuNu_ext,TTZToLLNuNu_m1to10] # signal + TTV
+ttv_lo = [TTW_LO,TTZ_LO] # TTV LO
+rares = [ZZTo4L,GGHZZ4L,VHToNonbb,tZq_ll_ext,WpWpJJ,WWDouble,TTTT,tWll] # rares
+single_t = [TToLeptons_sch_amcatnlo,T_tch_powheg,TBar_tch_powheg,T_tWch_ext,TBar_tWch_ext] # single top + tW
+convs = [WGToLNuG_amcatnlo_ext,ZGTo2LG_ext,TGJets,TTGJets] # X+G
+v_jets = [WJetsToLNu_LO,DYJetsToLL_M10to50_LO,DYJetsToLL_M50_LO_ext,WWTo2L2Nu] # V+jets
+tt_1l = [TTJets_SingleLeptonFromT,TTJets_SingleLeptonFromT_ext,TTJets_SingleLeptonFromTbar,TTJets_SingleLeptonFromTbar_ext] # TT 1l
+tt_2l = [TTJets_DiLepton]#,TTJets_DiLepton_ext] # TT 2l
+boson = [WZTo3LNu]+TriBosons # multi-boson
+
+samples_slow = sig_ttv + ttv_lo + rares + convs + boson + tt_2l
+samples_fast = single_t + v_jets + tt_1l
+
+cropToLumi(rares,500)
+cropToLumi([T_tch_powheg,TBar_tch_powheg],50)
+configureSplittingFromTime(samples_fast,50,6)
+configureSplittingFromTime(samples_slow,100,6)
+
+#selectedComponents = samples_slow+samples_fast
 
 if scaleProdToLumi>0: # select only a subset of a sample, corresponding to a given luminosity (assuming ~30k events per MiniAOD file, which is ok for central production)
     target_lumi = scaleProdToLumi # in inverse picobarns
@@ -252,7 +254,7 @@ if runData and not isTest: # For running on data
 #    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_271036-276811_13TeV_PromptReco_Collisions16_JSON_NoL1T.txt' # 12.9/fb #276811 ICHEP LastRun
     json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/ReReco/Final/Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt' # 36.5/fb
 
-    for era in 'BCDEFGH': dataChunks.append((json,filter(dataSamples_23Sep2016PlusPrompt,lambda dset: '2016'+era in dset),'2016'+era,[],False))
+    for era in 'BCDEFGH': dataChunks.append((json,filter(lambda dset: 'Run2016'+era in dset.name,dataSamples_23Sep2016PlusPrompt),'2016'+era,[],False))
 
     DatasetsAndTriggers = []
     selectedComponents = [];
@@ -309,8 +311,10 @@ if runData and not isTest: # For running on data
                 label = ""
                 if run_range!=None:
                     label = "_runs_%d_%d" % run_range if run_range[0] != run_range[1] else "run_%d" % (run_range[0],)
-                compname = pd+"_"+short+label
-                for _comp in filter(dsets,lambda dset : re.match('/%s/.*'%pd,dset.name)):
+                _ds = filter(lambda dset : re.match('%s_.*'%pd,dset.name),dsets)
+                for idx,_comp in enumerate(_ds):
+                    compname = pd+"_"+short+label
+                    if (len(_ds)>1): compname += '_ds%d'%(idx+1)
                     comp = kreator.makeDataComponent(compname, 
                                                      _comp.dataset,
                                                      "CMS", ".*root", 
@@ -322,7 +326,7 @@ if runData and not isTest: # For running on data
                         from CMGTools.Production.promptRecoRunRangeFilter import filterComponent
                         filterComponent(comp, verbose=1)
                     print "Will process %s (%d files)" % (comp.name, len(comp.files))
-                    comp.splitFactor = len(comp.files)/8
+                    comp.splitFactor = len(comp.files)/8 if 'Single' not in comp.name else len(comp.files)/16
                     comp.fineSplitFactor = 1
                     selectedComponents.append( comp )
             if exclusiveDatasets: vetos += triggers
@@ -330,16 +334,6 @@ if runData and not isTest: # For running on data
         susyCoreSequence.remove(jsonAna)
 
 printSummary(selectedComponents)
-
-if True:
-    from CMGTools.Production.promptRecoRunRangeFilter import filterComponent
-    for c in selectedComponents:
-        printnewsummary = False
-        if "PromptReco" in c.name:
-            printnewsummary = True
-            filterComponent(c, 1)
-            c.splitFactor = len(c.files)/6
-    if printnewsummary: printSummary(selectedComponents)
 
 
 if runFRMC: 
@@ -576,10 +570,11 @@ elif test == '80X-Data':
         comp.fineSplitFactor = 4
 elif test == 'ttH-sync':
     ttHLepSkim.minLeptons=0
-    selectedComponents = selectedComponents[:1]
+    jetAna.recalibrateJets = False # JEC from MiniAOD for sync
+    selectedComponents = [TTWToLNu_ext]
     comp = selectedComponents[0]
-    comp.files = ['/store/mc/RunIIFall15MiniAODv2/ttHToNonbb_M125_13TeV_powheg_pythia8/MINIAODSIM/PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/00000/021B993B-4DBB-E511-BBA6-008CFA1111B4.root']
-    tmpfil = os.path.expandvars("/tmp/$USER/021B993B-4DBB-E511-BBA6-008CFA1111B4.root")
+    comp.files = ['/store/mc/RunIISummer16MiniAODv2/TTWJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext2-v1/110000/0015BB42-9BAA-E611-8C7F-0CC47A7E0196.root']
+    tmpfil = os.path.expandvars("/tmp/$USER/0015BB42-9BAA-E611-8C7F-0CC47A7E0196.root")
     if not os.path.exists(tmpfil):
         os.system("xrdcp root://eoscms//eos/cms%s %s" % (comp.files[0],tmpfil))
     comp.files = [ tmpfil ]
