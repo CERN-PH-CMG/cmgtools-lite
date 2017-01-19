@@ -42,6 +42,10 @@ def createSampleLists(analysis_dir='samples/',
     qcdSampleNames = ["QCD_HT1000to1500", "QCD_HT1500to2000", "QCD_HT2000toInf", "QCD_HT500to700", "QCD_HT700to1000"]
     vvSampleNames = ['WWTo1L1Nu2Q', 'WZTo1L1Nu2Q']
     singleTopSampleNames = ['TToLeptons_tch_powheg', 'TBarToLeptons_tch_powheg', 'TToLeptons_sch', 'TBar_tWch', 'T_tWch']
+    topSamples = [TT_pow]
+    if useTopMcatnlo:
+        topSamples = [TTJets]
+        ttjetsSampleNames = ["TTJets"]
     jj_SampleNames = qcdSampleNames
     lnujj_SampleNames = ttjetsSampleNames + wjetsSampleNames + vvSampleNames + qcdSampleNames + dyjetsSampleNames + singleTopSampleNames
     # cuts to split ttbar sample according to W decay
@@ -51,9 +55,6 @@ def createSampleLists(analysis_dir='samples/',
     if reweightTop:
         ttjetsWCut += '*truth_genTop_weight'
         ttjetsNonWCut += '*truth_genTop_weight'
-    topSamples = [TT_pow]
-    if useTopMcatnlo:
-        topSamples = [TTJets]
 
     tree_prod_name = ''
 
