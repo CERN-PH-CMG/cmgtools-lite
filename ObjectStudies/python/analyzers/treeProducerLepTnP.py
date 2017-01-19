@@ -5,7 +5,7 @@ from CMGTools.ObjectStudies.analyzers.leptonTriggerMatching_cff import WithLepto
 leptonTypeTnP = NTupleObjectType("leptonTnP", baseObjectTypes = [ leptonType, WithLeptonTriggerMatchType ], variables = [
     NTupleVariable("looseId",     lambda x : x.looseIdSusy, int, help="Loose ID (as per lepton analyzer)"),
     NTupleVariable("mvaIdSpring15",   lambda lepton : lepton.mvaRun2("NonTrigSpring15MiniAOD") if abs(lepton.pdgId()) == 11 else 1, help="EGamma POG MVA ID for non-triggering electrons, Spring15 re-training; 1 for muons"),
-    NTupleVariable("mvaIdSpring16",   lambda lepton : lepton.mvaRun2("Spring16") if abs(lepton.pdgId()) == 11 else 1, help="EGamma POG MVA ID, Spring16; 1 for muons"),
+    NTupleVariable("mvaIdSpring16",   lambda lepton : lepton.mvaRun2("Spring16HZZ") if abs(lepton.pdgId()) == 11 else 1, help="EGamma POG MVA ID, Spring16; 1 for muons"),
     # ----------------------
     NTupleVariable("eleMVASpring15_VLooseIdEmu", lambda x : x.electronID("POG_MVA_ID_Spring15_NonTrig_VLooseIdEmu") if abs(x.pdgId())==11 else 1, int, help="VLoose MVA Ele ID (as per susy)"),
     NTupleVariable("eleMVASpring15_HZZ",         lambda x : x.electronID("MVA_ID_NonTrig_Spring15_HZZ")             if abs(x.pdgId())==11 else 1, int, help="MVA Ele ID (as per hzz)"),

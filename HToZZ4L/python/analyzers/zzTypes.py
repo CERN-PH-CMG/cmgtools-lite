@@ -3,7 +3,7 @@ from PhysicsTools.Heppy.analyzers.core.AutoFillTreeProducer  import *
 leptonTypeHZZ = NTupleObjectType("leptonHZZ", baseObjectTypes = [ leptonTypeExtra ], variables = [
     NTupleVariable("looseId",     lambda x : x.looseIdSusy, int, help="Loose HZZ ID"),
     NTupleVariable("mvaIdSpring15",   lambda lepton : lepton.mvaRun2("NonTrigSpring15MiniAOD") if abs(lepton.pdgId()) == 11 else 1, help="EGamma POG MVA ID for non-triggering electrons, Spring15 re-training; 1 for muons"),
-    NTupleVariable("mvaIdSpring16",   lambda lepton : lepton.mvaRun2("Spring16") if abs(lepton.pdgId()) == 11 else 1, help="EGamma POG MVA ID, Spring16 training; 1 for muons"),
+    NTupleVariable("mvaIdSpring16",   lambda lepton : lepton.mvaRun2("Spring16HZZ") if abs(lepton.pdgId()) == 11 else 1, help="EGamma POG MVA ID, Spring16 training; 1 for muons"),
     # ----------------------
     # Extra isolation variables
     NTupleVariable("relIsoAfterFSR",    lambda x : x.relIsoAfterFSR,   help="RelIso after FSR"),
