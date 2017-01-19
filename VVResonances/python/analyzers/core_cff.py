@@ -226,7 +226,8 @@ lepWeightAna = cfg.Analyzer(
 hbbTagComputer = cfg.Analyzer(
     HbbTagComputer,
     name='hbbTagComputer',
-    path='RecoBTag/SecondaryVertex/data/BoostedDoubleSV_AK8_BDT_v3.weights.xml.gz'
+    # path='RecoBTag/SecondaryVertex/data/BoostedDoubleSV_AK8_BDT_v3.weights.xml.gz'
+    path='CMGTools/VVResonances/data/BoostedDoubleSV_AK8_BDT_v4.weights.xml.gz'
 )
 
 
@@ -270,8 +271,8 @@ jetAna = cfg.Analyzer(
     recalibrateJets = True, #'MC', # True, False, 'MC', 'Data'
     applyL2L3Residual = 'Data', # Switch to 'Data' when they will become available for Data
     recalibrationType = "AK4PFPuppi",
-    mcGT     = "Spring16_25nsV6_MC",
-    dataGT   = "Spring16_25nsV6_DATA",
+    mcGT     = "Spring16_25nsV10_MC",
+    dataGT   = [(1,"Spring16_23Sep2016BCDV2_DATA"),(276831,"Spring16_23Sep2016EFV2_DATA"),(278802,"Spring16_23Sep2016GV2_DATA"),(280919,"Spring16_23Sep2016HV2_DATA")],
     jecPath = "${CMSSW_BASE}/src/CMGTools/RootTools/data/jec/",
     shiftJEC = 0, # set to +1 or -1 to apply +/-1 sigma shift to the nominal jet energies
     addJECShifts = True, # if true, add  "corr", "corrJECUp", and "corrJECDown" for each jet (requires uncertainties to be available!)
@@ -310,8 +311,8 @@ jetAnaAK8 = cfg.Analyzer(
     recalibrateJets = True, #'MC', # True, False, 'MC', 'Data'
     applyL2L3Residual = 'Data', # Switch to 'Data' when they will become available for Data
     recalibrationType = "AK8PFPuppi",
-    mcGT     = "Spring16_25nsV6_MC",
-    dataGT   = "Spring16_25nsV6_DATA",
+    mcGT     = "Spring16_25nsV10_MC",
+    dataGT   = [(1,"Spring16_23Sep2016BCDV2_DATA"),(276831,"Spring16_23Sep2016EFV2_DATA"),(278802,"Spring16_23Sep2016GV2_DATA"),(280919,"Spring16_23Sep2016HV2_DATA")],
     jecPath = "${CMSSW_BASE}/src/CMGTools/RootTools/data/jec/",
     shiftJEC = 0, # set to +1 or -1 to apply +/-1 sigma shift to the nominal jet energies
     addJECShifts = True, # if true, add  "corr", "corrJECUp", and "corrJECDown" for each jet (requires uncertainties to be available!)

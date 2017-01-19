@@ -2,18 +2,19 @@ import PhysicsTools.HeppyCore.framework.config as cfg
 import os
 
 #Load backgrounds from common place
-from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv2 import *
+from CMGTools.RootTools.samples.samples_13TeV_RunIISummer16MiniAODv2 import *
 
 ####
 ####
 
 
 
-TTs = [TTJets, TT_pow_ext3, TT_pow_ext4]
+# TTs = [TTJets, TT_pow_ext3, TT_pow_ext4]
+TTs = [TT_pow]
 background = TTs+SingleTop+DYJetsM50HT+WJetsToLNuHT+QCDHT+DiBosons
 
 #Load signal from here
-from CMGTools.VVResonances.samples.signal_13TeV_80X_reHLT import *
+from CMGTools.VVResonances.samples.signal_13TeV_80X_Summer16 import *
 from CMGTools.VVResonances.samples.signal_13TeV_80X_ZPTT import *
 
 
