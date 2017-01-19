@@ -3,4 +3,6 @@
   <class name="cmg::CandidateBoostedDoubleSecondaryVertexComputerLight"  transient="true"/>
   <class name="cmg::IPProducerLight"  transient="true"/>
   <class name="cmg::SecondaryVertexProducerLight"  transient="true"/>
+  <class name="cmg::HEEPEleIDRecalculator"  transient="true"/>
+
 </lcgdict>

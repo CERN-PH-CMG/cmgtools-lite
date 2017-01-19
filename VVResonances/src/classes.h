@@ -2,6 +2,7 @@
 #include "CMGTools/VVResonances/interface/CandidateBoostedDoubleSecondaryVertexComputerLight.h"
 #include "CMGTools/VVResonances/interface/IPProducerLight.h"
 #include "CMGTools/VVResonances/interface/SecondaryVertexProducerLight.h"
+#include "CMGTools/VVResonances/interface/HEEPEleIDRecalculator.h"
 
 namespace cmg{
 
@@ -10,5 +11,6 @@ namespace cmg{
     cmg::CandidateBoostedDoubleSecondaryVertexComputerLight candidateBoostedDoubleSecondaryVertexComputerLight;
     cmg::IPProducerLight ipProducerLight;
     cmg::IPProducerLight secondaryVertexProducerLight;
+    cmg::HEEPEleIDRecalculator heepRecalc;
   };
 }
