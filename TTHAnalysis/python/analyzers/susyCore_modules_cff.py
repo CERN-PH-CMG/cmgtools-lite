@@ -100,6 +100,17 @@ badMuonAna = cfg.Analyzer(
     packedCandidates = 'packedPFCandidates',
 )
 
+from CMGTools.TTHAnalysis.analyzers.badMuonAnalyzerMoriond2017 import badMuonAnalyzerMoriond2017
+badMuonAnaMoriond2017 = cfg.Analyzer(
+    badMuonAnalyzerMoriond2017, name = 'badMuonAnaMoriond2017',
+    muons = 'slimmedMuons',
+    vertices         = 'offlineSlimmedPrimaryVertices',
+    minMuPt = 20,
+    selectClones = True,
+    postFix = '',
+)
+
+
 # Select a list of good primary vertices (generic)
 vertexAna = cfg.Analyzer(
     VertexAnalyzer, name="VertexAnalyzer",
@@ -565,5 +576,6 @@ susyCoreSequence = [
     triggerFlagsAna,
     eventFlagsAna,
     badMuonAna,
+    badMuonAnaMoriond2017,
     badChargedHadronAna,
 ]
