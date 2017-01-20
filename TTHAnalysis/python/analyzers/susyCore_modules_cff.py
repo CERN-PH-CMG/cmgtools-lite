@@ -109,6 +109,14 @@ badMuonAnaMoriond2017 = cfg.Analyzer(
     selectClones = True,
     postFix = '',
 )
+badMuonAnaMoriond2017 = cfg.Analyzer(
+    badMuonAnalyzerMoriond2017, name = 'badMuonAnaMoriond2017',
+    muons = 'slimmedMuons',
+    vertices         = 'offlineSlimmedPrimaryVertices',
+    minMuPt = 20,
+    selectClones = False,
+    postFix = '_clones',
+)
 
 
 # Select a list of good primary vertices (generic)
@@ -577,5 +585,6 @@ susyCoreSequence = [
     eventFlagsAna,
     badMuonAna,
     badMuonAnaMoriond2017,
+    badCloneMuonAnaMoriond2017,
     badChargedHadronAna,
 ]

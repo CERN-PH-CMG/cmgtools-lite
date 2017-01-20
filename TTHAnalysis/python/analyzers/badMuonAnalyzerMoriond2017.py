@@ -12,7 +12,6 @@ class badMuonAnalyzerMoriond2017( Analyzer ):
         super(badMuonAnalyzerMoriond2017,self).__init__(cfg_ana,cfg_comp,looperName)
         self.minMuPt = cfg_ana.minMuPt
         self.selectClones = cfg_ana.selectClones
-        #self.packedCandidates = cfg_ana.packedCandidates
         self.muons = cfg_ana.muons
         self.vertices = cfg_ana.vertices
         self.flagName = 'badMuonMoriond2017_'+cfg_ana.postFix if cfg_ana.postFix!='' else 'badMuonMoriond2017'
@@ -20,7 +19,6 @@ class badMuonAnalyzerMoriond2017( Analyzer ):
     def declareHandles(self):
         super(badMuonAnalyzerMoriond2017, self).declareHandles()
         self.handles['muons'] = AutoHandle(self.cfg_ana.muons,"std::vector<pat::Muon>")
-        #self.handles['packedCandidates'] = AutoHandle( self.packedCandidates, 'std::vector<pat::PackedCandidate>')
         self.handles['vertices']         = AutoHandle( self.vertices, 'std::vector<reco::Vertex>')
 
     def outInOnly(self,mu):
@@ -45,7 +43,6 @@ class badMuonAnalyzerMoriond2017( Analyzer ):
     def process(self, event):
         self.readCollections( event.input )
 
-        #muons       = filter( lambda p:abs(p.pdgId())==13, self.handles['packedCandidates'].product() )   
         muons       = self.handles['muons'].product() 
         allvertices = self.handles['vertices'].product() 
 
@@ -78,29 +75,26 @@ class badMuonAnalyzerMoriond2017( Analyzer ):
         for i in xrange(n):
             if (muons[i].pt() < self.minMuPt or goodMuon[i] != 0): continue;
             bad_muons.append( muons[i] )
-            #bad = True;
+            bad = True;
             if (self.selectClones):
-                #bad = False; # unless proven otherwise
+                bad = False; # unless proven otherwise
                 n1 = muons[i].numberOfMatches(ROOT.reco.Muon.SegmentArbitration);
                 for j in xrange(n):
                     if (j == i or goodMuon[j] <= 0 or not(self.partnerId(muons[j]))): continue
                     n2 = muons[j].numberOfMatches(ROOT.reco.Muon.SegmentArbitration);
                     if (deltaR(muons[i],muons[j]) < 0.4 or (n1 > 0 and n2 > 0 and ROOT.muon.sharedSegments(muons[i],muons[j]) >= 0.5*min(n1,n2))):
                         clone_muons.append( muons[i] )
-                        # bad = True;
+                        bad = True;
                         break;
-            #if (bad):
-                #out.append(muons[i]);
+            if (bad):
+                out.append(muons[i]);
                 
-        setattr( event, self.flagName+"_passBadMuon",    len(bad_muons)==0 )
-        setattr( event, self.flagName+"_passCloneMuon",  len(clone_muons)==0 )
-        setattr( event, self.flagName+"_badMuons",       bad_muons )
-        setattr( event, self.flagName+"_cloneMuons",     clone_muons )
+        setattr( event, self.flagName,              len(bad_muons)==0 )
+        setattr( event, self.flagName+"_badMuons",  bad_muons )
         return True
 
 setattr(badMuonAnalyzerMoriond2017,"defaultConfig", cfg.Analyzer(
         class_object = badMuonAnalyzerMoriond2017,
-        #packedCandidates = 'packedPFCandidates',
         muons = 'slimmedMuons',
         vertices         = 'offlineSlimmedPrimaryVertices',
         minMuPt = 20,
