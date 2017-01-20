@@ -14,7 +14,7 @@ class badMuonAnalyzerMoriond2017( Analyzer ):
         self.selectClones = cfg_ana.selectClones
         self.muons = cfg_ana.muons
         self.vertices = cfg_ana.vertices
-        self.flagName = 'badMuonMoriond2017_'+cfg_ana.postFix if cfg_ana.postFix!='' else 'badMuonMoriond2017'
+        self.flagName = self.name+'_'+cfg_ana.postFix if cfg_ana.postFix!='' else self.name
 
     def declareHandles(self):
         super(badMuonAnalyzerMoriond2017, self).declareHandles()
@@ -71,6 +71,7 @@ class badMuonAnalyzerMoriond2017( Analyzer ):
             else:
                 goodMuon.append(3); # maybe good, maybe bad, but we don't care
 
+        out = []
         n = len(muons)
         for i in xrange(n):
             if (muons[i].pt() < self.minMuPt or goodMuon[i] != 0): continue;
