@@ -101,7 +101,7 @@ badMuonAna = cfg.Analyzer(
 )
 
 from CMGTools.TTHAnalysis.analyzers.badMuonAnalyzerMoriond2017 import badMuonAnalyzerMoriond2017
-badMuonAnaMoriond2017 = cfg.Analyzer(
+badCloneMuonAnaMoriond2017 = cfg.Analyzer(
     badMuonAnalyzerMoriond2017, name = 'badMuonAnaMoriond2017',
     muons = 'slimmedMuons',
     vertices         = 'offlineSlimmedPrimaryVertices',
