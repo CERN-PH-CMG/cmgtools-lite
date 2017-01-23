@@ -9,12 +9,12 @@ from CMGTools.VVResonances.plotting.HistCreator import setSumWeights
 from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv2 import TTJets, SingleTop, WJetsToLNuHT, QCDHT, DYJetsM50HT, DiBosons
 from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv2 import TT_pow_ext3 as TT_pow
 from CMGTools.RootTools.samples.samples_13TeV_DATA2016 import *
-from CMGTools.VVResonances.samples.signal_13TeV_80X import signalSamples
+from CMGTools.VVResonances.samples.signal_13TeV_80X_reHLT import signalSamples
 
 def createSampleLists(analysis_dir='samples/',
                       channel='VV', weight='', signalSample='',
                       vJetsKFac=1., reweightVJets=False,
-                      reweightTop=False):
+                      reweightTop=False, useTopMcatnlo=False):
 
     # settings and code to reweight V+jets samples (EW and QCD NLO corrections)
     # the following two k-factors are from samples_13TeV_RunIISpring16MiniAODv2.py
@@ -42,6 +42,10 @@ def createSampleLists(analysis_dir='samples/',
     qcdSampleNames = ["QCD_HT1000to1500", "QCD_HT1500to2000", "QCD_HT2000toInf", "QCD_HT500to700", "QCD_HT700to1000"]
     vvSampleNames = ['WWTo1L1Nu2Q', 'WZTo1L1Nu2Q']
     singleTopSampleNames = ['TToLeptons_tch_powheg', 'TBarToLeptons_tch_powheg', 'TToLeptons_sch', 'TBar_tWch', 'T_tWch']
+    topSamples = [TT_pow]
+    if useTopMcatnlo:
+        topSamples = [TTJets]
+        ttjetsSampleNames = ["TTJets"]
     jj_SampleNames = qcdSampleNames
     lnujj_SampleNames = ttjetsSampleNames + wjetsSampleNames + vvSampleNames + qcdSampleNames + dyjetsSampleNames + singleTopSampleNames
     # cuts to split ttbar sample according to W decay
@@ -77,7 +81,7 @@ def createSampleLists(analysis_dir='samples/',
                     xsec=sample.xSection, sumweights=sample.nGenEvents, weight_expr=('*'.join([weight, vJetsWeight]))))
 
     # TTJets sample
-    for sample in [TT_pow]:
+    for sample in topSamples:
         if sample.name in channelSampleNames:
             # print "Adding", sample.name, sample.xSection, sample.nGenEvents, weight
             samples_essential.append(

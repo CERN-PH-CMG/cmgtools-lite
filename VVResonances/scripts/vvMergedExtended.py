@@ -15,16 +15,18 @@ if __name__ == '__main__':
     for directory in os.listdir("."):
         if directory.find("ext")==-1:
             continue
-    
-        dirOrig=directory.split("_ext")[0]
 
+        # also store extension number to allow for several extensions
+        [dirOrig, extOrig] = directory.split("_ext")
+        if not extOrig:
+            # if there is no numbered extension, there will only be one
+            extOrig = 1
 
-
-        os.system("mv {orig} {orig}_Chunk0".format(orig=dirOrig))
-        os.system("mv {orig}_ext {orig}_Chunk1".format(orig=dirOrig))
+        # also need to move the non-extension directory if it exists
+        if os.path.isdir(dirOrig):
+            os.system("mv {orig} {orig}_Chunk0".format(orig=dirOrig))
+        os.system("mv {orig}_ext{ext} {orig}_Chunk{ext}".format(orig=dirOrig, ext=extOrig))
 
 
 
 os.system("haddChunks.py .")
-        
-    
