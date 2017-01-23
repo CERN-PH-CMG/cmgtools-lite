@@ -41,3 +41,27 @@ def _medium_MuonId_2016ICHEP(lep):
         if not lep.segmentCompatibility()>0.303: return False
 
     return True
+
+
+from CMGTools.TTHAnalysis.tools.leptonJetReCleaner import LeptonJetReCleaner
+from CMGTools.TTHAnalysis.tools.conept import conept_TTH
+
+MODULES=[]
+MODULES.append( ('leptonJetReCleanerTTH', lambda : LeptonJetReCleaner("Recl", # b1E2 definition of FO, 80X b-tag WP
+                   looseLeptonSel = lambda lep : lep.miniRelIso < 0.4 and lep.sip3d < 8,
+                   cleaningLeptonSel = lambda lep : lep.conept>10 and lep.jetBTagCSV<0.80 and (abs(lep.pdgId)!=11 or lep.conept<30 or _ttH_idEmu_cuts_E2(lep)) and ((lep.jetPtRatiov2>0.3 and lep.jetBTagCSV<0.46) or lep.mvaTTH>0.75), # cuts applied on top of loose
+                   FOLeptonSel = lambda lep,ht : lep.conept>10 and lep.jetBTagCSV<0.80 and (abs(lep.pdgId)!=11 or lep.conept<30 or _ttH_idEmu_cuts_E2(lep)) and ((lep.jetPtRatiov2>0.3 and lep.jetBTagCSV<0.46) or lep.mvaTTH>0.75), # cuts applied on top of loose
+                   tightLeptonSel = lambda lep,ht : lep.conept>10 and lep.jetBTagCSV<0.80 and (abs(lep.pdgId)!=11 or lep.conept<30 or _ttH_idEmu_cuts_E2(lep)) and ((lep.jetPtRatiov2>0.3 and lep.jetBTagCSV<0.46) or lep.mvaTTH>0.75) and (abs(lep.pdgId)!=13 or lep.mediumMuonId>0) and lep.mvaTTH > 0.75, # cuts applied on top of loose
+                   cleanJet = lambda lep,jet,dr : dr<0.4, # called on cleaning leptons and loose taus
+                   selectJet = lambda jet: abs(jet.eta)<2.4,
+                   cleanTau = lambda lep,tau,dr: dr<0.4,
+                   looseTau = lambda tau: tau.pt > 20 and abs(tau.eta)<2.3 and abs(tau.dxy) < 1000 and abs(tau.dz) < 0.2 and tau.idMVAdR03 >= 2 and tau.idDecayMode, # used in cleaning
+                   tightTau = lambda tau: tau.idMVAdR03 >= 3, # cuts applied on top of loose
+                   cleanJetsWithTaus = True,
+                   cleanTausWithLoose = True, # cleaning taus with cleaningLeptonSel == loose
+                   doVetoZ = True,
+                   doVetoLMf = True,
+                   doVetoLMt = True,
+                   jetPt = 40,
+                   bJetPt = 25,
+                   coneptdef = lambda lep: conept_TTH(lep) ) ))

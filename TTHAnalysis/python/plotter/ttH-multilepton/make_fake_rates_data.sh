@@ -1,9 +1,9 @@
 ################################
 #  use mcEfficiencies.py to make plots of the fake rate
 ################################
-T="/afs/cern.ch/user/g/gpetrucc/w/TREES_TTH_260116_76X_1L"
+T="/data1/peruzzi/TREES_80X_011216_Spring16MVA_1lepFR --FDs /data1/peruzzi/frQCDVars_skimdata"
 if hostname | grep -q cmsco01; then
-    T="/data1/gpetrucc/TREES_80X_TTH_180716_1L_MC" # warning: QCDEl from 76X
+    T="/data1/peruzzi/TREES_80X_011216_Spring16MVA_1lepFR --FDs /data1/peruzzi/frQCDVars_skimdata"
 else
     exit 1;
 fi
@@ -12,8 +12,9 @@ case $ANALYSIS in
 ttH) CUTFILE="ttH-multilepton/qcd1l.txt"; XVAR="ptJI85_mvaPt075_coarselongbin"; NUM="mvaPt_075i";;
 susy_wpM) CUTFILE="susy-ewkino/qcd1l_wpM.txt"; XVAR="ptJIMIX4_mvaSusy_sMi_coarselongbin"; NUM="mvaSusy_sMi";;
 susy_wpV) CUTFILE="susy-ewkino/qcd1l_wpV.txt"; XVAR="ptJIMIX3_mvaSusy_sVi_coarselongbin"; NUM="mvaSusy_sVi";;
+susy_RA7) CUTFILE="susy-ewkino/qcd1l_RA7.txt"; XVAR="conePt_RA7_coarselongbin"; NUM="ra7_tight";;
 esac;
-BCORE=" --s2v --tree treeProducerSusyMultilepton ttH-multilepton/mca-qcd1l.txt ${CUTFILE} -P $T -l 12.9 --AP  "
+BCORE=" --s2v --tree treeProducerSusyMultilepton ttH-multilepton/mca-qcd1l.txt ${CUTFILE} -P $T -l 36.5 --AP  "
 BCORE="${BCORE} --mcc ttH-multilepton/mcc-eleIdEmu2.txt  "; 
 BCORE="${BCORE} --mcc ttH-multilepton/mcc-noHLTinMC.txt  "; 
 
@@ -21,8 +22,8 @@ BG=" -j 8 "; if [[ "$1" == "-b" ]]; then BG=" & "; shift; fi
 
 lepton=$1; if [[ "$1" == "" ]]; then exit 1; fi
 case $lepton in
-mu) BCORE="${BCORE} -E ^${lepton} --xf 'DoubleEG.*,JetHT.*' --mcc ttH-multilepton/mcc-ichepMediumMuonId.txt  "; QCD=QCDMu; ;;
-el) BCORE="${BCORE} -E ^${lepton} --xf 'DoubleMu.*,JetHT.*' --mcc ttH-multilepton/mcc-ichepMediumMuonId-fake.txt "; QCD=QCDEl; ;;
+mu) BCORE="${BCORE} -E ^${lepton} --xf 'DoubleEG.*,JetHT.*'  "; QCD=QCDMu; ;;
+el) BCORE="${BCORE} -E ^${lepton} --xf 'DoubleMu.*,JetHT.*' "; QCD=QCDEl; ;;
 #mu_jet) lepton="mu"; BCORE="${BCORE} -E ${lepton} --xf 'Double.*' -X idEmuCut -R minimal ptj40 ' LepGood_awayJet_pt > 40'  "; QCD=QCDMu; ;;
 #mu_jet6) lepton="mu"; BCORE="${BCORE} -E ${lepton} --xf 'Double.*,JetHT_.*' -X idEmuCut -R minimal ptj40 ' LepGood_awayJet_pt > 60'  "; QCD=QCDMu; ;;
 #mu_ht)  lepton="mu"; BCORE="${BCORE} -E ${lepton} --xf 'Double.*' -X idEmuCut -R minimal ptj40 ' LepGood_awayJet_pt > 40'  "; QCD=QCDMu; ;;
@@ -64,7 +65,7 @@ esac;
 
 what=$3;
 more=$4
-PBASE="plots/80X/$ANALYSIS/fr-meas/qcd1l/v2.1/$lepton/HLT_$trigger/$what/$more"
+PBASE="~/www/plots_FR/80X/lepMVA_$ANALYSIS/v2.0_041216/fr-meas/$lepton/HLT_$trigger/$what/$more"
 
 EWKONE="-p ${QCD}_red,EWK,data"
 EWKSPLIT="-p ${QCD}_red,WJets,DYJets,data"
@@ -135,11 +136,13 @@ case $what in
                  RANGES="$RANGES  --yrange 0 0.25  --xcut 15 100 --xline 20 --xline 45" ;
 		 if [[ "$ANALYSIS" == "susy_wpM" ]]; then RANGES=${RANGES/--xcut 15 100/--xcut 10 100}; fi
 		 if [[ "$ANALYSIS" == "susy_wpV" ]]; then RANGES=${RANGES/--xcut 15 100/--xcut 10 100}; fi
+		 if [[ "$ANALYSIS" == "susy_RA7" ]]; then RANGES=${RANGES/--xcut 15 100/--xcut 10 100}; fi
 
                  if [[ "$trigger" == "Mu17" ]]; then 
                      RANGES=${RANGES/--xcut 15 100/--xcut 30 100}; 
 		     if [[ "$ANALYSIS" == "susy_wpM" ]]; then RANGES=${RANGES/--xcut 10 100/--xcut 30 100}; fi
 		     if [[ "$ANALYSIS" == "susy_wpV" ]]; then RANGES=${RANGES/--xcut 10 100/--xcut 30 100}; fi
+		     if [[ "$ANALYSIS" == "susy_RA7" ]]; then RANGES=${RANGES/--xcut 10 100/--xcut 30 100}; fi
                      RANGES=${RANGES/--xline 20 --xline 45/--xline 45}; 
                  elif [[ "$trigger" == "Mu3_PFJet40" ]]; then
                      RANGES=${RANGES/--xcut 15 100/--xcut 5 30};

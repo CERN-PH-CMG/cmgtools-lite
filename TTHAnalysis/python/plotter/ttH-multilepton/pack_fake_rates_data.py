@@ -120,8 +120,8 @@ if __name__ == "__main__":
        etaslices_el = [ (0.4,"00_15"), (1.8,"15_25") ]
        etaslices_mu = [ (0.4,"00_12"), (1.8,"12_24") ]
        XsQ    = [ "QCD", "data_comb" ]
-       XsD    = [ "DY",  "data_comb" ]
-       Xnices = [ "MC DY/QCD", "Data, comb." ]
+#       XsD    = [ "DY",  "data_comb" ]
+       Xnices = [ "MC QCD", "Data, comb." ]
 
 
        an = args[1]
@@ -170,39 +170,34 @@ if __name__ == "__main__":
            h2d_el_tt = [ make2D(outfile,"FR_%s_el_TT"%an, ptbins_el, etabins_el) ]
            h2d_mu_tt = [ make2D(outfile,"FR_%s_mu_TT"%an, ptbins_mu, etabins_mu) ]
 
-           Plots="~/www/plots_FR/80X/lepMVA_%s/v1.4_250616/fr-meas/"%an
+           Plots="~/www/plots_FR/80X/lepMVA_%s/v2.0_041216/fr-meas/"%an
            Z3l="/"
            QCD="/"
            #### Electrons: 
-#           # 10-30 from Z+l
-#           readMany2D(XsD, h2d_el, "/".join([Plots, Z3l, "el/z3l/fakerates-mtW3R/fr_sub_eta_%s_comp.root"]), "%s", etaslices_el, (10,30) )
            # 10-30 from Ele8
            readMany2D(XsQ, h2d_el, "/".join([Plots, QCD, "el/HLT_Ele8_CaloIdM_TrackIdM_PFJet30/fakerates-mtW1R/fr_sub_eta_%s_comp.root"]), "%s", etaslices_el, (10,30) )
            # 30-inf from Ele12
            readMany2D(XsQ, h2d_el, "/".join([Plots, QCD, "el/HLT_Ele12_CaloIdM_TrackIdM_PFJet30/fakerates-mtW1R/fr_sub_eta_%s_comp.root"]), "%s", etaslices_el, (30,999) )
 
            #### Muons: 
-           # 10-20 from Z+l
-    #       readMany2D(XsD, h2d_mu, "/".join([Plots, Z3l, "fakerates-mtW3R/fr_sub_eta_%s_comp.root"]), "%s", etaslices_mu, (10,20) )
-           # 10-20 from Mu3_PFJet40
-#           readMany2D(XsQ, h2d_mu, "/".join([Plots, QCD, "mu/HLT_Mu3_PFJet40/fakerates-mtW1R/fr_sub_eta_%s_comp.root"]), "%s", etaslices_mu, (10,20) )
            # 10-45 from Mu8
            readMany2D(XsQ, h2d_mu, "/".join([Plots, QCD, "mu/HLT_Mu8/fakerates-mtW1R/fr_sub_eta_%s_comp.root"]), "%s", etaslices_mu, (10,45) )
            # 45-inf from Mu17
            readMany2D(XsQ, h2d_mu, "/".join([Plots, QCD, "mu/HLT_Mu17/fakerates-mtW1R/fr_sub_eta_%s_comp.root"]), "%s", etaslices_mu, (45,999) )
 
            #### TT MC-truth
-           MCPlots="~/www/plots_FR/80X/lepMVA/v1.4_250616/";
+           MCPlots="~/www/plots_FR/80X/lepMVA/v2.0_041216/";
            if an=='susy_wpM':
-               ID="wpsMiX4mrE2";
+               ID="wpsMiX4mrE2_rec30";
                XVar="mvaSusy_sMi_ptJIMIX4_mvaSusy_sMi"
            if an=='susy_wpV':
-               ID="wpsViX4mrE2";
+               ID="wpsViX4mrE2_rec30";
                XVar="mvaSusy_sVi_ptJIMIX3_mvaSusy_sVi"
-#           readMany2D(["TT_red"], h2d_el_tt, "/".join([MCPlots, "el_ttz3l_"+ID+"_rec30_bAny_eta_%s.root"]),  XVar+"_zcoarse2_%s", etaslices_el, (10,30) )
-           readMany2D(["TT_red"], h2d_el_tt, "/".join([MCPlots, "el_lbin_"+ID+"_rec30_bAny_eta_%s.root"]), XVar+"_coarselongbin_%s",   etaslices_el, (10,999) )
-    #       readMany2D(["TT_red"], h2d_mu_tt, "/".join([MCPlots, "mu_low_"+ID+"_rec30_bAny_eta_%s.root"]),    XVar+"_low_%s",      etaslices_mu, (10,20) )
-           readMany2D(["TT_red"], h2d_mu_tt, "/".join([MCPlots, "mu_lbin_"+ID+"_rec30_bAny_eta_%s.root"]), XVar+"_coarselongbin_%s",   etaslices_mu, (10,999) )
+           if an=='susy_RA7':
+               ID="wpRA7E2_rec40";
+               XVar="ra7_tight_conePt_RA7"
+           readMany2D(["TT_red"], h2d_el_tt, "/".join([MCPlots, "el_lbin_"+ID+"_bAny_eta_%s.root"]), XVar+"_coarselongbin_%s",   etaslices_el, (10,999) )
+           readMany2D(["TT_red"], h2d_mu_tt, "/".join([MCPlots, "mu_lbin_"+ID+"_bAny_eta_%s.root"]), XVar+"_coarselongbin_%s",   etaslices_mu, (10,999) )
 
 
 

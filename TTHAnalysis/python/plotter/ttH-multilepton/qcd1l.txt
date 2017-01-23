@@ -11,11 +11,11 @@ el : abs(LepGood_pdgId)==11 && LepGood_convVeto && LepGood_lostHits == 0 ; Disab
 ptfCut: LepGood_mvaTTH > 0.75 || LepGood_jetPtRatiov2 > 0.3
 idEmuCut: LepGood_idEmu2
 cvslDen:  LepGood_mvaTTH > 0.75 || LepGood_jetBTagCSV < 0.46
-num : LepGood_ICHEPmediumMuonId > 0 && LepGood_mvaTTH > 0.75 ; Disable=True
+num : LepGood_mediumMuonId > 0 && LepGood_mvaTTH > 0.75 ; Disable=True
 pt10 : LepGood_pt > 10; Disable=True
-conePt20 : LepGood_pt*if3(LepGood_mvaTTH>0.75&&LepGood_ICHEPmediumMuonId>0, 1.0, 0.85/LepGood_jetPtRatiov2) > 20; Disable=True
-conePt30 : LepGood_pt*if3(LepGood_mvaTTH>0.75&&LepGood_ICHEPmediumMuonId>0, 1.0, 0.85/LepGood_jetPtRatiov2) > 30; Disable=True
-conePt45 : LepGood_pt*if3(LepGood_mvaTTH>0.75&&LepGood_ICHEPmediumMuonId>0, 1.0, 0.85/LepGood_jetPtRatiov2) > 45; Disable=True
+conePt20 : LepGood_pt*if3(LepGood_mvaTTH>0.75&&LepGood_mediumMuonId>0, 1.0, 0.85/LepGood_jetPtRatiov2) > 20; Disable=True
+conePt30 : LepGood_pt*if3(LepGood_mvaTTH>0.75&&LepGood_mediumMuonId>0, 1.0, 0.85/LepGood_jetPtRatiov2) > 30; Disable=True
+conePt45 : LepGood_pt*if3(LepGood_mvaTTH>0.75&&LepGood_mediumMuonId>0, 1.0, 0.85/LepGood_jetPtRatiov2) > 45; Disable=True
 barrel : abs(LepGood_eta) <= (1.2 + 0.279 *(abs(LepGood_pdgId)==11)); Disable=True
 #early_runs : run <= 275125
 #awayJetMatch: abs(LepGood_awayJet_eta - Jet_eta) < 0.001 && abs(LepGood_awayJet_pt - Jet_pt) < 0.001
