@@ -50,6 +50,7 @@ sGreen = Style(markerColor=8, fillColor=8)
 sRed = Style(markerColor=2, fillColor=2)
 sYellow = Style(lineColor=1, markerColor=5, fillColor=5)
 sViolet = Style(lineColor=1, markerColor=kViolet, fillColor=kViolet)
+sSignal = Style(lineColor=kViolet, markerColor=kViolet, fillColor=0)
 
 # qcdcol = TColor.GetColor(250,202,255)
 sVV_QCD = Style(lineColor=1, markerColor=kGray, fillColor=kGray)
@@ -97,9 +98,14 @@ def nextStyle():
 histPref = {}
 histPref['Data'] = {'style': sData, 'layer': 2999, 'legend': 'Observed'}
 histPref['data_*'] = {'style': sData, 'layer': 2999, 'legend': 'Observed'}
+histPref['BulkGrav*'] = {'style': sSignal, 'layer': 0.9, 'legend': 'Bulk G #rightarrow VV'}
+histPref['BulkGravToWW_narrow_2000'] = {'style': sSignal, 'layer': 0.9, 'legend': 'Bulk G #rightarrow WV (m = 2 TeV)'}
+histPref['VBF_Radion*'] = {'style': sSignal, 'layer': 0.9, 'legend': 'VBF Radion #rightarrow VV'}
+histPref['VBF_RadionToWW_narrow_2000'] = {'style': sSignal, 'layer': 0.9, 'legend': 'VBF Radion #rightarrow WW (m = 2 TeV)'}
 histPref['ZTT*'] = {'style': sVV_DYJets,
                     'layer': 4, 'legend': 'Z#rightarrow#tau#tau'}
 histPref['embed_*'] = {'style': sViolet, 'layer': 4.1, 'legend': None}
+histPref['Top'] = {'style': sVV_TTJets, 'layer': 5, 'legend': 'top'}
 histPref['TT'] = {'style': sVV_TTJets, 'layer': 1, 'legend': 't#bar{t}'}
 histPref['TT*_W'] = {'style': sVV_TTJets, 'layer': 3.6, 'legend': 't#bar{t} (W)'}
 histPref['TT*_nonW'] = {'style': sVV_TTJetsNonW,
@@ -119,6 +125,7 @@ histPref['QCD*'] = {'style': sVV_QCD, 'layer': 2, 'legend': 'QCD multijet'}
 histPref['W'] = {'style': sVV_WJets, 'layer': 3, 'legend': 'W+jets'}
 histPref['WJ*'] = {'style': sVV_WJets, 'layer': 3, 'legend': 'W+jets'}
 histPref['W*Jets'] = {'style': sVV_WJets, 'layer': 3, 'legend': 'W+jets'}
+histPref['V*Jets'] = {'style': sVV_WJets, 'layer': 4, 'legend': 'V+jets'}
 histPref['EWK'] = {'style': sVV_WJets, 'layer': 3, 'legend': 'EWK'}
 histPref['ElectroWeak'] = {'style': sVV_WJets,
                            'layer': 3, 'legend': 'ElectroWeak'}
@@ -134,6 +141,7 @@ histPref['Zl1jet*'] = {'style': sVV_DYJets,
 histPref['ZLL'] = {'style': sVV_DYJets, 'layer': 3.2, 'legend': 'Z#rightarrow ll'}
 histPref['Ztt_TL'] = {'style': sViolet, 'layer': 4.1,
                       'legend': 'Z#rightarrow#tau#tau/Z#rightarrow ll, j#rightarrow#tau'}
+histPref['MC'] = {'style': sVV_WJets, 'layer': 3, 'legend': 'simulation'}
 # histPref['Higgs*'] = {'style': sVV_Higgs, 'layer': 1001, 'legend': None}
 # histPref['ggH*'] = {'style': sVV_Higgs, 'layer': 1001, 'legend': None}
 # histPref['bbH*'] = {'style': sVV_Higgs, 'layer': 1001, 'legend': None}

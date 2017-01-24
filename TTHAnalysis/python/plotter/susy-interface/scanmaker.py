@@ -1,3 +1,4 @@
+import os
 from optparse import OptionParser
 from lib import maker
 from lib import functions as func
@@ -7,10 +8,10 @@ def getXS(xs, mass, factor):
 	thexs   = [p[1] for p in xs]
 	return str(thexs[themass.index(float(mass))]) + "*" + str(factor)
 
-def prepareJob(mm, mp, baseSig, binning, bkgpath, outpath, xslist, options):
+def prepareJob(mm, name, mp, baseSig, binning, bkgpath, outpath, xslist, options):
 
 	mp = [m.strip() for m in mp]
-	name = "mp_"+mm.model.name+"_"+mp[0]+"_"+mp[1]
+	#name = "mp_"+mm.model.name+"_"+mp[0]+"_"+mp[1]
 	sig  = mm.model.name +"_"+ mp[0] +"_"+ mp[1]
 	xs = getXS(xslist, float(mp[0]), mm.model.brcorr)
 
@@ -27,7 +28,7 @@ def prepareJob(mm, mp, baseSig, binning, bkgpath, outpath, xslist, options):
 		line = line.replace("THEXS"        , xs                                                ) 
 		line = line.replace("THEQ2FILE"    , mm.getVariable("q2accfile","")                    )
 		line = line.replace("THEQ2SYNTAX"  , mm.getVariable("q2accformat","")                  )
-		line = line.replace("THEWEIGHTSTR" , mm.getVariable("mcaWeightFS","")                  )
+		line = line.replace("THEWEIGHTSTR" , mm.getVariable("mcaWeightFS","1.0")               )
 		line = line.replace("THEFRFILES"   , "["+",".join(["\""+f+"\"" for f in mm.getVariable("frFilesFS","").split(";")])+"]")
 		line = line.replace("THEJEC"       , mm.getVariable("jec","")                          )
 		line = line.replace("THEMET"       , mm.getVariable("met","")                          )
@@ -36,7 +37,7 @@ def prepareJob(mm, mp, baseSig, binning, bkgpath, outpath, xslist, options):
 		line = line.replace("THEWVJEC"     , "["+",".join(["\""+f+"\"" for f in mm.getVariable("wVarsFSJec"  ,"").split(";")])+"]")
 		line = line.replace("THEFRMET"     , "["+",".join(["\""+f+"\"" for f in mm.getVariable("frFilesFSMet","").split(";")])+"]")
 		line = line.replace("THEWVMET"     , "["+",".join(["\""+f+"\"" for f in mm.getVariable("wVarsFSMet"  ,"").split(";")])+"]")
-		line = line.replace("THEWEIGHTVARS", "{"+",".join(["\""+k+"\":[" + ",".join("\""+v+"\"" for v in vals) + "]" for k,vals in mm.getVariable("wVarsFS","").iteritems()])+"}")
+		line = line.replace("THEWEIGHTVARS", "{"+",".join(["\""+k+"\":[" + ",".join("\""+v+"\"" for v in vals) + "]" for k,vals in mm.getVariable("wVarsFS",{}).iteritems()])+"}")
 		line = line.replace("THEMCADIR"    , mm.tmppath                                        )
 		line = line.replace("THEBKGDIR"    , bkgpath                                           )
 		line = line.replace("THEOUTDIR"    , outpath                                           )
@@ -57,77 +58,106 @@ parser.add_option("--bkgOnly"     , dest="bkgOnly"    , action="store_true", def
 parser.add_option("--sigOnly"     , dest="sigOnly"    , action="store_true", default=False, help="Only run the signal (if bkg already is present)");
 parser.add_option("--perBin"      , dest="perBin"     , action="store_true", default=False, help="Make datacards for every bin in 'expr' separately.");
 parser.add_option("-m", "--models", dest="models"     , action="append"    , default=[]   , help="Fastsim signal models to loop upon.");
+parser.add_option("--redoBkg"     , dest="redoBkg"    , action="store_true", default=False, help="Redo bkg if it already exists.");
 
-baseBkg = "python makeShapeCardsSusy.py {MCA} {CUTS} \"{EXPR}\" \"{BINS}\" -o SR --bin {TAG} -P {T} --tree {TREENAME} {MCCS} {MACROS} --s2v -f -j 4 -l {LUMI} --od {O} {FRIENDS} {FLAGS} {OVERFLOWCUTS}"
-baseSig = "python makeShapeCardsSusy.py [[[MCA]]] {CUTS} \\\"{EXPR}\\\" \\\"{BINS}\\\" [[[SYS]]] -o SR --bin {TAG} -P {T} --tree {TREENAME} {MCCS} {MACROS} --s2v -f -j 4 -l {LUMI} --od [[[O]]] {FRIENDS} {FLAGS} {OVERFLOWCUTS}"
+baseBkg = "python makeShapeCardsSusy.py {MCA} {CUTS} \"{EXPR}\" \"{BINS}\" -o SR --bin {TAG} -P {T} --tree {TREENAME} {MCCS} {MACROS} --s2v -f -l {LUMI} --od {O} {FRIENDS} {FLAGS} {OVERFLOWCUTS}"
+baseSig = "python makeShapeCardsSusy.py [[[MCA]]] {CUTS} \\\"{EXPR}\\\" \\\"{BINS}\\\" [[[SYS]]] -o SR --bin {TAG} -P {T} --tree {TREENAME} {MCCS} {MACROS} --s2v -f -l {LUMI} --od [[[O]]] {FRIENDS} {FLAGS} {OVERFLOWCUTS}"
 (options, args) = parser.parse_args()
 options         = maker.splitLists(options)
 options.models  = func.splitList(options.models)
-mm              = maker.Maker(baseBkg, args, options)
+mm              = maker.Maker("scanmaker", baseBkg, args, options)
 mm.loadModels()
 
-sl = str(options.lumi).replace(".","p")
+friends = mm.collectFriends()	
+mccs    = mm.collectMCCs   ()
+macros  = mm.collectMacros ()	
+sl      = str(options.lumi).replace(".","p")
 
 
-## looping over regions
-for r in range(len(mm.regions)):
-	mm.iterateRegion()
-	
-	friends = mm.collectFriends()	
-	mccs    = mm.collectMCCs   ()
-	macros  = mm.collectMacros ()	
-	sc      = mm.getScenario(True)
+## first do bkg
+if not options.sigOnly:
 
-	## looping over binnings
-	binnings = [mm.getVariable("bins","")] if not options.perBin else getAllBins(mm.getVariable("bins",""))
-	for ib,b in enumerate(binnings):
+	mm.reloadBase(baseBkg)
+	mm.resetRegion()
+
+	## looping over regions
+	for r in range(len(mm.regions)):
+		mm.iterateRegion()
 		
-		## change scenario if looping over all bins
-		if options.perBin: 
-			min, max = getMinMax(b)
-			sc += "_" + min.replace(".","p")
+		sc    = mm.getScenario(True)
+		flags = mm.collectFlags("flagsScans", True, False, True)
 	
-		## background first
-		mm.reloadBase(baseBkg)
-		flags  = mm.collectFlags("flagsScans")
-		output = mm.outdir +"/"+ sc +"/"+ sl +"fb" 
-		bkgDir = output +"/bkg"
-		func.mkdir(bkgDir)
-	
-		bkgId  = -1
-		if not options.sigOnly:
-			bkgId = mm.submit([mm.getVariable("mcafile",""), mm.getVariable("cutfile",""), mm.getVariable("expr",""), mm.getVariable("bins",""), sc.replace("/","_"), mm.treedir, options.treename, mccs, macros, options.lumi, bkgDir, friends, flags, func.getCut(mm.getVariable("firstCut","alwaystrue"), mm.getVariable("expr",""), mm.getVariable("bins",""))],sc+"_"+mm.region.name+"_bkg",False)
-			mm.clearJobs()
-	
-		if options.bkgOnly: continue
-	
-	
-		## looping over models
-		mm.reloadBase(baseSig)
-		mm.resetModel()
+		## looping over binnings
+		binnings = [mm.getVariable("bins","")] if not options.perBin else getAllBins(mm.getVariable("bins",""))
+		for ib,b in enumerate(binnings):
+			
+			## change scenario if looping over all bins
+			if options.perBin: 
+				min, max = getMinMax(b)
+				sc += "_" + min.replace(".","p")
+		
+			## background first
+			output = mm.outdir +"/"+ sc +"/"+ sl +"fb" 
+			bkgDir = output +"/bkg"
+			if not options.redoBkg and os.path.exists(bkgDir+"/common/SR.input.root"): continue
+			func.mkdir(bkgDir)
+		
+			mm.submit([mm.getVariable("mcafile",""), mm.getVariable("cutfile",""), mm.getVariable("expr",""), mm.getVariable("bins",""), sc.replace("/","_"), mm.treedir, options.treename, mccs, macros, options.lumi, bkgDir, friends, flags, func.getCut(mm.getVariable("firstCut","alwaystrue"), mm.getVariable("expr",""), mm.getVariable("bins",""))],sc.replace("/", "_")+"_bkg",False)
+	mm.runJobs()
+	mm.clearJobs()
+		
 
-		for m in range(len(mm.models)):
-			mm.iterateModel()
+
+## second do models
+if not options.bkgOnly:
 	
-			myDir = output +"/"+ mm.model.name 
-			func.mkdir(myDir +"/acc")
-			func.mkdir(myDir +"/mps")
+	mm.reloadBase(baseSig)
+	mm.resetRegion()
+
+	## looping over regions
+	for r in range(len(mm.regions)):
+		mm.iterateRegion()
 	
+		sc    = mm.getScenario(True)
+		flags = mm.collectFlags("flagsScans", True, False, True)
 	
-			## prepare jobs for masspoints
-			xslist = [l.rstrip("\n").split(":") for l in open(mm.model.xsecfile  , "r").readlines()]
-			xslist = [[float(m.strip()),float(xs.strip())] for [m,xs] in xslist ]
-			mps    = [l.rstrip("\n").split(":") for l in open(mm.model.masspoints, "r").readlines()]
+		## looping over binnings
+		binnings = [mm.getVariable("bins","")] if not options.perBin else getAllBins(mm.getVariable("bins",""))
+		for ib,b in enumerate(binnings):
+			
+			## change scenario if looping over all bins
+			if options.perBin: 
+				min, max = getMinMax(b)
+				sc += "_" + min.replace(".","p")
+		
+			## background first
+			output = mm.outdir +"/"+ sc +"/"+ sl +"fb" 
 	
-			## looping over masspoints
-			for mp in mps:
-				flags   = mm.collectFlags("flagsScans", True, True)
-				thebase = mm.makeCmd([mm.getVariable("cutfile",""), mm.getVariable("expr",""), b, sc.replace("/","_"), mm.treedir, options.treename, mccs, macros, options.lumi, friends, flags, func.getCut(mm.getVariable("firstCut","alwaystrue"), mm.getVariable("expr",""), mm.getVariable("bins",""))])
-				thecmd = prepareJob(mm, mp, thebase, b, bkgDir, myDir, xslist, options)
-				mm.registerCmd(thecmd,sc+"_"+mm.region.name+"_"+mp)
-				break	
-		mm.runJobs()
-		mm.clearJobs()
+			## looping over models
+			mm.resetModel()
+
+			for m in range(len(mm.models)):
+				mm.iterateModel()
+	
+				myDir  = output +"/"+ mm.model.name 
+				bkgDir = output +"/bkg"
+				func.mkdir(myDir +"/acc")
+				func.mkdir(myDir +"/mps")
+	
+				## prepare jobs for masspoints
+				xslist = [l.rstrip("\n").split(":") for l in open(mm.model.xsecfile  , "r").readlines()]
+				xslist = [[float(m.strip()),float(xs.strip())] for [m,xs,err] in xslist ]
+				mps    = [l.rstrip("\n").split(":") for l in open(mm.model.masspoints, "r").readlines()]
+				mps    = [[m[0].strip(), m[1].strip(), m[2].strip()] for m in mps]
+
+				## looping over masspoints
+				for iiii,mp in enumerate(mps):
+					flags   = mm.collectFlags("flagsScans", True, True)
+					thebase = mm.makeCmd([mm.getVariable("cutfile",""), mm.getVariable("expr",""), b, sc.replace("/","_"), mm.treedir, options.treename, mccs, macros, options.lumi, friends, flags, func.getCut(mm.getVariable("firstCut","alwaystrue"), mm.getVariable("expr",""), mm.getVariable("bins",""))])
+					thecmd = prepareJob(mm, sc.replace("/", "_")+"_mp_"+mp[2], mp, thebase, b, bkgDir, myDir, xslist, options)
+					mm.registerCmd(thecmd, sc.replace("/", "_")+"_mp_"+mp[2],False,10)
+	mm.runJobs()
+	mm.clearJobs()
 
 
 	

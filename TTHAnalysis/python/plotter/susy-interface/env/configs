@@ -12,6 +12,100 @@ BEGIN::3l
   friendFile  #:= {eventBTagWeight             : eventBTagWeight.py          }
   sfriends    +:= leptonJetReCleanerSusyEWK3L;leptonBuilderEWK;eventBTagWeight
   friends     +:=
+  macros      +:= susy-ewkino/3l/functionsEWK.cc;susy-ewkino/functionsSF.cc;susy-ewkino/functionsPUW.cc
+  mccs        +:= susy-ewkino/3l/mcc_ewkino.txt
+  weight       := puw_nInt_ICHEP(nTrueInt) * triggerSF(BR, LepSel_pt[0], LepSel_pdgId[0], LepSel_pt[1], LepSel_pdgId[1], LepSel_pt[2], LepSel_pdgId[2]) * leptonSF(getLepSF(LepSel_pt[0], LepSel_eta[0], LepSel_pdgId[0]), getLepSF(LepSel_pt[1], LepSel_eta[1], LepSel_pdgId[1]), getLepSF(LepSel_pt[2], LepSel_eta[2], LepSel_pdgId[2])) * eventBTagSF
+  weightFS     := leptonSFFS(getLepSFFS(LepSel_pt[0], LepSel_eta[0], LepSel_pdgId[0]), getLepSFFS(LepSel_pt[1], LepSel_eta[1], LepSel_pdgId[1]), getLepSFFS(LepSel_pt[2], LepSel_eta[2], LepSel_pdgId[2]))
+  flags       +:=
+  flagsDumps  +:=
+  flagsEffs   +:=
+  flagsLimits +:=
+  flagsPlots  +:= --perBin --ratioOffset 0.03 --print C,png,pdf,txt
+  flagsPlots  +:= --plotgroup rares_ttX+=rares_ttW --plotgroup rares_ttX+=rares_ttZ
+  flagsPlots  +:= --plotgroup fakes_appldata+=promptsub
+  flagsScans  +:= --noNegVar --hardZero
+  flagsScans  +:= --plotgroup fakes_appldata+=promptsub --plotgroup fakes_appldata_ewk_Up+=promptsub_ewk_Up --plotgroup fakes_appldata_ewk_Dn+=promptsub_ewk_Dn
+  flagsScans  +:= --ignore promptsub --ignore promptsub_ewk_Up --ignore promptsub_ewk_Dn 
+  flagsScans  +:= --neglist promptsub --neglist promptsub_ewk_Up --neglist promptsub_ewk_Dn 
+  jec          := jec
+  met          := met
+  q2acc        := q2acc
+  mcaWeightFS  := Sum$(abs(Jet_eta)<2.5 && Jet_chHEF<0.1  && Jet_mcPt<8)==0
+  frFilesFS    := susy-ewkino/3l/fakerate_standard_central.txt;susy-ewkino/3l/fakerate_load_isprompt.txt;susy-ewkino/3l/fakerate_filters_fastsim.txt
+  frFilesFSJec := susy-ewkino/3l/fakerate_standard_central.txt;susy-ewkino/3l/fakerate_standard_jecUp.txt;susy-ewkino/3l/fakerate_standard_jecDn.txt
+  frFilesFSMet := susy-ewkino/3l/fakerate_standard_central.txt;susy-ewkino/3l/fakerate_genMET_central.txt 
+  wVarsFSJec   := 1;1;1
+  wVarsFSMet   := 1;1
+  wVarsFS     #:= {bTagFS   : eventBTagSF_up_correlated/eventBTagSF ; eventBTagSF_down_correlated/eventBTagSF }
+  wVarsFS     #:= {puw      : puw_nInt_ICHEP(nTrueInt,1) ; puw_nInt_ICHEP(nTrueInt,-1) } 
+  wVarsFS     #:= {lepSF    : leptonSF(getLepSF(LepSel_pt[0], LepSel_eta[0], LepSel_pdgId[0], 0, 1), getLepSF(LepSel_pt[1], LepSel_eta[1], LepSel_pdgId[1], 0, 1), getLepSF(LepSel_pt[2], LepSel_eta[2], LepSel_pdgId[2], 0, 1)) ; leptonSF(getLepSF(LepSel_pt[0], LepSel_eta[0], LepSel_pdgId[0], 0, -1), getLepSF(LepSel_pt[1], LepSel_eta[1], LepSel_pdgId[1], 0, -1), getLepSF(LepSel_pt[2], LepSel_eta[2], LepSel_pdgId[2], 0, -1)) }
+  wVarsFS     #:= {lepSFFS  : leptonSFFS(getLepSFFS(LepSel_pt[0], LepSel_eta[0], LepSel_pdgId[0], 0, 1), getLepSFFS(LepSel_pt[1], LepSel_eta[1], LepSel_pdgId[1], 0, 1), getLepSFFS(LepSel_pt[2], LepSel_eta[2], LepSel_pdgId[2], 0, 1)) ; leptonSF(getLepSFFS(LepSel_pt[0], LepSel_eta[0], LepSel_pdgId[0], 0, -1), getLepSFFS(LepSel_pt[1], LepSel_eta[1], LepSel_pdgId[1], 0, -1), getLepSFFS(LepSel_pt[2], LepSel_eta[2], LepSel_pdgId[2], 0, -1)) }
+ENDDEF
+
+BEGIN::crwz
+  firstCut     := alwaystrue
+  mcafile      := susy-ewkino/crwz/mca_forICHEPscans.txt
+  cutfile      := susy-ewkino/crwz/cuts_crwz.txt
+  plotfile     := susy-ewkino/3l/plots_ewkino.txt
+  sysfile      := susy-ewkino/systs_ewkino.txt
+  friendConn  #:= {leptonJetReCleanerSusyEWK2L :                             }
+  friendConn  #:= {leptonBuilderEWK            : leptonJetReCleanerSusyEWK3L }
+  friendConn  #:= {eventBTagWeight             :                             }
+  friendFile  #:= {leptonJetReCleanerSusyEWK2L : leptonJetReCleaner.py       }
+  friendFile  #:= {leptonBuilderEWK            : leptonBuilderEWK.py         }
+  friendFile  #:= {eventBTagWeight             : eventBTagWeight.py          }
+  sfriends    +:= leptonJetReCleanerSusyEWK2L;leptonBuilderEWK;eventBTagWeight
+  friends     +:=
+  macros      +:= susy-ewkino/3l/functionsEWK.cc;susy-ewkino/functionsSF.cc;susy-ewkino/functionsPUW.cc
+  mccs        +:= susy-ewkino/crwz/lepchoice-crwz-FO.txt;susy-ewkino/mcc_triggerdefs.txt
+  weight       := puw_nInt_ICHEP(nTrueInt) * triggerSF(1, LepGood_pt[0], LepGood_pdgId[0], LepGood_pt[1], LepGood_pdgId[1], LepGood_pt[2], LepGood_pdgId[2]) * leptonSF(getLepSF(LepGood_pt[0], LepGood_eta[0], LepGood_pdgId[0], 1), getLepSF(LepGood_pt[1], LepGood_eta[1], LepGood_pdgId[1], 1), getLepSF(LepGood_pt[2], LepGood_eta[2], LepGood_pdgId[2], 1)) * eventBTagSF
+  weightFS     := leptonSFFS(getLepSFFS(LepGood_pt[0], LepGood_eta[0], LepGood_pdgId[0], 1), getLepSFFS(LepGood_pt[1], LepGood_eta[1], LepGood_pdgId[1], 1), getLepSFFS(LepGood_pt[2], LepGood_eta[2], LepGood_pdgId[2], 1))
+  flags       +:=
+  flagsDumps  +:=
+  flagsEffs   +:=
+  flagsLimits +:=
+  flagsPlots  +:= --perBin --ratioOffset 0.03 --print C,png,pdf,txt
+  flagsPlots  +:= --plotgroup rares_ttX+=rares_ttW --plotgroup rares_ttX+=rares_ttZ
+  flagsPlots  +:= --plotgroup fakes_appldata+=promptsub
+  flagsScans  +:= --noNegVar --hardZero 
+  flagsScans  +:= --ignore promptsub --ignore promptsub_ewk_Up --ignore promptsub_ewk_Dn 
+  flagsScans  +:= --neglist promptsub --neglist promptsub_ewk_Up --neglist promptsub_ewk_Dn 
+  jec          := jec
+  met          := met
+  q2acc        := q2acc
+  mcaWeightFS  := LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge && LepGood3_isMatchRightCharge && Sum$(abs(Jet_eta)<2.5 && Jet_chHEF<0.1  && Jet_mcPt<8)==0
+  frFilesFS    := 
+  frFilesFSJec := ;susy-ewkino/crwz/fakerate_standard_jecUp.txt;susy-ewkino/crwz/fakerate_standard_jecDn.txt
+  frFilesFSMet := ;susy-ewkino/crwz/fakerate_genMET_central.txt
+  wVarsFSJec   := 1;1;1
+  wVarsFSMet   := 1;1
+  wVarsFS     #:= {bTagFS   : (eventBTagSF_up_correlated/eventBTagSF) ; (eventBTagSF_down_correlated/eventBTagSF) }
+  wVarsFS     #:= {puw      : puw_nInt_ICHEP(nTrueInt,1) ; puw_nInt_ICHEP(nTrueInt,-1) } 
+  wVarsFS     #:= {lepSF    : leptonSF(getLepSF(LepSel_pt[0], LepSel_eta[0], LepSel_pdgId[0], 1, 1), getLepSF(LepSel_pt[1], LepSel_eta[1], LepSel_pdgId[1], 1, 1), getLepSF(LepSel_pt[2], LepSel_eta[2], LepSel_pdgId[2], 1, 1)) ; leptonSF(getLepSF(LepSel_pt[0], LepSel_eta[0], LepSel_pdgId[0], 1, -1), getLepSF(LepSel_pt[1], LepSel_eta[1], LepSel_pdgId[1], 1, -1), getLepSF(LepSel_pt[2], LepSel_eta[2], LepSel_pdgId[2], 1, -1)) }
+  wVarsFS     #:= {lepSFFS  : leptonSFFS(getLepSFFS(LepSel_pt[0], LepSel_eta[0], LepSel_pdgId[0], 1, 1), getLepSFFS(LepSel_pt[1], LepSel_eta[1], LepSel_pdgId[1], 1, 1), getLepSFFS(LepSel_pt[2], LepSel_eta[2], LepSel_pdgId[2], 1, 1)) ; leptonSF(getLepSFFS(LepSel_pt[0], LepSel_eta[0], LepSel_pdgId[0], 1, -1), getLepSFFS(LepSel_pt[1], LepSel_eta[1], LepSel_pdgId[1], 1, -1), getLepSFFS(LepSel_pt[2], LepSel_eta[2], LepSel_pdgId[2], 1, -1)) }
+ENDDEF
+
+BEGIN::taustudies
+  firstCut     := 3l
+  mcafile      := susy-ewkino/3l/mca_ewkino.txt
+  cutfile      := susy-ewkino/3l/cuts_ewkino.txt
+  plotfile     := susy-ewkino/3l/plots_ewkino.txt
+  sysfile      := susy-ewkino/systs_ewkino.txt
+  friendConn  #:= {leptonJetReCleanerSusyEWK3L :                             }
+  friendConn  #:= {leptonBuilderEWK            : leptonJetReCleanerSusyEWK3L }
+  friendConn  #:= {tauFakesBuilderEWKMini      : leptonJetReCleanerNoCleanTausSusyEWK3L }
+  friendConn  #:= {tauFakesBuilderEWKRecl      : leptonJetReCleanerNoCleanTausSusyEWK3L }
+  friendConn  #:= {eventBTagWeight             :                             }
+  friendFile  #:= {leptonJetReCleanerSusyEWK3L : leptonJetReCleaner.py       }
+  friendFile  #:= {leptonJetReCleanerNoCleanTausSusyEWK3L : leptonJetReCleaner.py       }
+  friendFile  #:= {leptonBuilderEWK            : leptonBuilderEWK.py         }
+  friendFile  #:= {eventBTagWeight             : eventBTagWeight.py          }
+  friendFile  #:= {tauFakesBuilderEWKMini      : TauFakesBuilder.py                     }
+  friendFile  #:= {tauFakesBuilderEWKRecl      : TauFakesBuilder.py                     }
+  sfriends    +:= leptonJetReCleanerSusyEWK3L;leptonBuilderEWK;eventBTagWeight
+  sfriends    +:= leptonJetReCleanerNoCleanTausSusyEWK3L;tauFakesBuilderEWKMini
+  sfriends    +:= leptonJetReCleanerNoCleanTausSusyEWK3L;tauFakesBuilderEWKRecl
+  friends     +:=
   macros      +:= susy-ewkino/3l/functionsEWK.cc
   mccs        +:= susy-ewkino/3l/mcc_ewkino.txt
   weight       := puw2016_nInt_12p9fb(nTrueInt)*triggerSF(BR, LepSel_pt[0], LepSel_pdgId[0], LepSel_pt[1], LepSel_pdgId[1], LepSel_pt[2], LepSel_pdgId[2])*leptonSF(getLeptonSF(LepSel_pt[0], LepSel_eta[0], LepSel_pdgId[0]), getLeptonSF(LepSel_pt[1], LepSel_eta[1], LepSel_pdgId[1]), getLeptonSF(LepSel_pt[2], LepSel_eta[2], LepSel_pdgId[2]))*eventBTagSF

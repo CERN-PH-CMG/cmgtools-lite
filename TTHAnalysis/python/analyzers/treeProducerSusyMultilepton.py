@@ -81,62 +81,62 @@ susyMultilepton_globalVariables = susyCore_globalVariables + [
             NTupleVariable("GenHiggsDecayMode", lambda ev : ev.genHiggsDecayMode, int, mcOnly=True, help="H decay mode (15 = tau, 23/24 = W/Z)"),
             #NTupleVariable("LepEff_3lep", lambda ev : ev.LepEff_3lep, mcOnly=True, help="Lepton preselection SF (3 lep)"),
             #NTupleVariable("LepEff_4lep", lambda ev : ev.LepEff_4lep, mcOnly=True, help="Lepton preselection SF (4 lep)"),
-            ##--------vertex variables------------------------------------------
-            #A = selectedLeptons[0], B = selectedLeptons[1], C = selectedLeptons[2], D = selectedLeptons[3] 
-            ##Variables related to IP
-            #Of one lepton w.r.t. the PV of the event
-            NTupleVariable("absIP3DAval", lambda ev: ev.absIP3DA[0], help="Absolute IP of A w.r.t. PV of evt"),
-            NTupleVariable("absIP3DAerr", lambda ev: ev.absIP3DA[1], help="Error of absIP3DAval"),
-            NTupleVariable("absIP3DBval", lambda ev: ev.absIP3DB[0], help="Absolute IP of B w.r.t. PV of evt"),
-            NTupleVariable("absIP3DBerr", lambda ev: ev.absIP3DB[1], help="Error of absIP3DBval"),     
-            NTupleVariable("absIP3DCval", lambda ev: ev.absIP3DC[0], help="Absolute IP of C w.r.t. PV of evt"),
-            NTupleVariable("absIP3DCerr", lambda ev: ev.absIP3DC[1], help="Error of absIP3DCval"),
-            NTupleVariable("absIP3DDval", lambda ev: ev.absIP3DD[0], help="Absolute IP of D w.r.t. PV of evt"),
-            NTupleVariable("absIP3DDerr", lambda ev: ev.absIP3DD[1], help="Error of absIP3DDval"),
-            
-            #Of one lepton w.r.t. the PV of the PV of the other leptons only
-            NTupleVariable("absIP3DApvBCval", lambda ev: ev.absIP3DApvBC[0], help="Absolute IP of A w.r.t. PV of BC"),
-            NTupleVariable("absIP3DApvBCerr", lambda ev: ev.absIP3DApvBC[1], help="Error of absIP3DApvBCval"),
-            NTupleVariable("absIP3DBpvACval", lambda ev: ev.absIP3DBpvAC[0], help="Absolute IP of B w.r.t. PV of AC"),
-            NTupleVariable("absIP3DBpvACerr", lambda ev: ev.absIP3DBpvAC[1], help="Error of absIP3DBpvACval"),
-            NTupleVariable("absIP3DCpvABval", lambda ev: ev.absIP3DCpvAB[0], help="Absolute IP of C w.r.t. PV of AB"),
-            NTupleVariable("absIP3DCpvABerr", lambda ev: ev.absIP3DCpvAB[1], help="Error of absIP3DCpvABval"),
-
-            NTupleVariable("absIP3DApvBCDval", lambda ev: ev.absIP3DApvBCD[0], help="Absolute IP of A w.r.t. PV of BCD"),
-            NTupleVariable("absIP3DApvBCDerr", lambda ev: ev.absIP3DApvBCD[1], help="Error of absIP3DApvBCDval"),
-            NTupleVariable("absIP3DBpvACDval", lambda ev: ev.absIP3DBpvACD[0], help="Absolute IP of B w.r.t. PV of ACD"),
-            NTupleVariable("absIP3DBpvACDerr", lambda ev: ev.absIP3DBpvACD[1], help="Error of absIP3DBpvACDval"),
-            NTupleVariable("absIP3DCpvABDval", lambda ev: ev.absIP3DCpvABD[0], help="Absolute IP of C w.r.t. PV of ABD"),
-            NTupleVariable("absIP3DCpvABDerr", lambda ev: ev.absIP3DCpvABD[1], help="Error of absIP3DCpvABDval"),
-            NTupleVariable("absIP3DDpvABCval", lambda ev: ev.absIP3DDpvABC[0], help="Absolute IP of D w.r.t. PV of ABC"),
-            NTupleVariable("absIP3DDpvABCerr", lambda ev: ev.absIP3DDpvABC[1], help="Error of absIP3DDpvABCval"),
-            
-            ##Variables related to chi2
-            #Chi2 of all the good leptons of the event but one lepton 
-            NTupleVariable("chi2pvtrksBCbutAval", lambda ev: ev.chi2pvtrksBCbutA[0], help="chi2 of the fit to the PV of B,C"),
-            NTupleVariable("chi2pvtrksBCbutAdof", lambda ev: ev.chi2pvtrksBCbutA[1], help="DOF from the fit to the PV of B,C"),
-            NTupleVariable("chi2pvtrksACbutBval", lambda ev: ev.chi2pvtrksACbutB[0], help="chi2 of the fit to the PV of A,C"),
-            NTupleVariable("chi2pvtrksACbutBdof", lambda ev: ev.chi2pvtrksACbutB[1], help="DOF from the fit to the PV of A,C"),
-            NTupleVariable("chi2pvtrksABbutCval", lambda ev: ev.chi2pvtrksABbutC[0], help="chi2 of the fit to the PV of A,B"),
-            NTupleVariable("chi2pvtrksABbutCdof", lambda ev: ev.chi2pvtrksABbutC[1], help="DOF from the fit to the PV of A,B"),
-
-            NTupleVariable("chi2pvtrksBCDbutAval", lambda ev: ev.chi2pvtrksBCDbutA[0], help="chi2 of the fit to the PV of B,C,D"),
-            NTupleVariable("chi2pvtrksBCDbutAdof", lambda ev: ev.chi2pvtrksBCDbutA[1], help="DOF from the fit to the PV of B,C,D"),
-            NTupleVariable("chi2pvtrksACDbutBval", lambda ev: ev.chi2pvtrksACDbutB[0], help="chi2 of the fit to the PV of A,C,D"),
-            NTupleVariable("chi2pvtrksACDbutBdof", lambda ev: ev.chi2pvtrksACDbutB[1], help="DOF from the fit to the PV of A,C,D"),
-            NTupleVariable("chi2pvtrksABDbutCval", lambda ev: ev.chi2pvtrksABDbutC[0], help="chi2 of the fit to the PV of A,B,D"),
-            NTupleVariable("chi2pvtrksABDbutCdof", lambda ev: ev.chi2pvtrksABDbutC[1], help="DOF from the fit to the PV of A,B,D"),
-            NTupleVariable("chi2pvtrksABCbutDval", lambda ev: ev.chi2pvtrksABCbutD[0], help="chi2 of the fit to the PV of A,B,C"),
-            NTupleVariable("chi2pvtrksABCbutDdof", lambda ev: ev.chi2pvtrksABCbutD[1], help="DOF from the fit to the PV of A,B,C"),
-            ### ===========
-            NTupleVariable("nRecJet40", lambda ev : sum(j.pt()>40 for j in ev.recoveredJets), int, help="number of recovered jets, pt 40"),
-            NTupleVariable("nRecJet25", lambda ev : sum(j.pt()>25 for j in ev.recoveredJets), int, help="number of recovered jets, pt 40"),
-            NTupleVariable("nRecBJetMedium40", lambda ev : sum(j.pt()>40 for j in ev.recoveredJets if j.btagWP("CSVv2IVFM")), int, help="number of recovered jets, pt 40"),
-            NTupleVariable("nRecBJetMedium25", lambda ev : sum(j.pt()>25 for j in ev.recoveredJets if j.btagWP("CSVv2IVFM")), int, help="number of recovered jets, pt 40"),
-            NTupleVariable("nRecSplitJet40", lambda ev : sum(j.pt()>40 for j in ev.recoveredSplitJets), int, help="number of recovered jets, pt 40"),
-            NTupleVariable("nRecSplitJet25", lambda ev : sum(j.pt()>25 for j in ev.recoveredSplitJets), int, help="number of recovered jets, pt 40"),
-            NTupleVariable("nRecSplitBJetMedium40", lambda ev : sum(j.pt()>40 for j in ev.recoveredSplitJets if j.btagWP("CSVv2IVFM")), int, help="number of recovered jets, pt 40"),
-            NTupleVariable("nRecSplitBJetMedium25", lambda ev : sum(j.pt()>25 for j in ev.recoveredSplitJets if j.btagWP("CSVv2IVFM")), int, help="number of recovered jets, pt 40"),
+#            ##--------vertex variables------------------------------------------
+#            #A = selectedLeptons[0], B = selectedLeptons[1], C = selectedLeptons[2], D = selectedLeptons[3] 
+#            ##Variables related to IP
+#            #Of one lepton w.r.t. the PV of the event
+#            NTupleVariable("absIP3DAval", lambda ev: ev.absIP3DA[0], help="Absolute IP of A w.r.t. PV of evt"),
+#            NTupleVariable("absIP3DAerr", lambda ev: ev.absIP3DA[1], help="Error of absIP3DAval"),
+#            NTupleVariable("absIP3DBval", lambda ev: ev.absIP3DB[0], help="Absolute IP of B w.r.t. PV of evt"),
+#            NTupleVariable("absIP3DBerr", lambda ev: ev.absIP3DB[1], help="Error of absIP3DBval"),     
+#            NTupleVariable("absIP3DCval", lambda ev: ev.absIP3DC[0], help="Absolute IP of C w.r.t. PV of evt"),
+#            NTupleVariable("absIP3DCerr", lambda ev: ev.absIP3DC[1], help="Error of absIP3DCval"),
+#            NTupleVariable("absIP3DDval", lambda ev: ev.absIP3DD[0], help="Absolute IP of D w.r.t. PV of evt"),
+#            NTupleVariable("absIP3DDerr", lambda ev: ev.absIP3DD[1], help="Error of absIP3DDval"),
+#            
+#            #Of one lepton w.r.t. the PV of the PV of the other leptons only
+#            NTupleVariable("absIP3DApvBCval", lambda ev: ev.absIP3DApvBC[0], help="Absolute IP of A w.r.t. PV of BC"),
+#            NTupleVariable("absIP3DApvBCerr", lambda ev: ev.absIP3DApvBC[1], help="Error of absIP3DApvBCval"),
+#            NTupleVariable("absIP3DBpvACval", lambda ev: ev.absIP3DBpvAC[0], help="Absolute IP of B w.r.t. PV of AC"),
+#            NTupleVariable("absIP3DBpvACerr", lambda ev: ev.absIP3DBpvAC[1], help="Error of absIP3DBpvACval"),
+#            NTupleVariable("absIP3DCpvABval", lambda ev: ev.absIP3DCpvAB[0], help="Absolute IP of C w.r.t. PV of AB"),
+#            NTupleVariable("absIP3DCpvABerr", lambda ev: ev.absIP3DCpvAB[1], help="Error of absIP3DCpvABval"),
+#
+#            NTupleVariable("absIP3DApvBCDval", lambda ev: ev.absIP3DApvBCD[0], help="Absolute IP of A w.r.t. PV of BCD"),
+#            NTupleVariable("absIP3DApvBCDerr", lambda ev: ev.absIP3DApvBCD[1], help="Error of absIP3DApvBCDval"),
+#            NTupleVariable("absIP3DBpvACDval", lambda ev: ev.absIP3DBpvACD[0], help="Absolute IP of B w.r.t. PV of ACD"),
+#            NTupleVariable("absIP3DBpvACDerr", lambda ev: ev.absIP3DBpvACD[1], help="Error of absIP3DBpvACDval"),
+#            NTupleVariable("absIP3DCpvABDval", lambda ev: ev.absIP3DCpvABD[0], help="Absolute IP of C w.r.t. PV of ABD"),
+#            NTupleVariable("absIP3DCpvABDerr", lambda ev: ev.absIP3DCpvABD[1], help="Error of absIP3DCpvABDval"),
+#            NTupleVariable("absIP3DDpvABCval", lambda ev: ev.absIP3DDpvABC[0], help="Absolute IP of D w.r.t. PV of ABC"),
+#            NTupleVariable("absIP3DDpvABCerr", lambda ev: ev.absIP3DDpvABC[1], help="Error of absIP3DDpvABCval"),
+#            
+#            ##Variables related to chi2
+#            #Chi2 of all the good leptons of the event but one lepton 
+#            NTupleVariable("chi2pvtrksBCbutAval", lambda ev: ev.chi2pvtrksBCbutA[0], help="chi2 of the fit to the PV of B,C"),
+#            NTupleVariable("chi2pvtrksBCbutAdof", lambda ev: ev.chi2pvtrksBCbutA[1], help="DOF from the fit to the PV of B,C"),
+#            NTupleVariable("chi2pvtrksACbutBval", lambda ev: ev.chi2pvtrksACbutB[0], help="chi2 of the fit to the PV of A,C"),
+#            NTupleVariable("chi2pvtrksACbutBdof", lambda ev: ev.chi2pvtrksACbutB[1], help="DOF from the fit to the PV of A,C"),
+#            NTupleVariable("chi2pvtrksABbutCval", lambda ev: ev.chi2pvtrksABbutC[0], help="chi2 of the fit to the PV of A,B"),
+#            NTupleVariable("chi2pvtrksABbutCdof", lambda ev: ev.chi2pvtrksABbutC[1], help="DOF from the fit to the PV of A,B"),
+#
+#            NTupleVariable("chi2pvtrksBCDbutAval", lambda ev: ev.chi2pvtrksBCDbutA[0], help="chi2 of the fit to the PV of B,C,D"),
+#            NTupleVariable("chi2pvtrksBCDbutAdof", lambda ev: ev.chi2pvtrksBCDbutA[1], help="DOF from the fit to the PV of B,C,D"),
+#            NTupleVariable("chi2pvtrksACDbutBval", lambda ev: ev.chi2pvtrksACDbutB[0], help="chi2 of the fit to the PV of A,C,D"),
+#            NTupleVariable("chi2pvtrksACDbutBdof", lambda ev: ev.chi2pvtrksACDbutB[1], help="DOF from the fit to the PV of A,C,D"),
+#            NTupleVariable("chi2pvtrksABDbutCval", lambda ev: ev.chi2pvtrksABDbutC[0], help="chi2 of the fit to the PV of A,B,D"),
+#            NTupleVariable("chi2pvtrksABDbutCdof", lambda ev: ev.chi2pvtrksABDbutC[1], help="DOF from the fit to the PV of A,B,D"),
+#            NTupleVariable("chi2pvtrksABCbutDval", lambda ev: ev.chi2pvtrksABCbutD[0], help="chi2 of the fit to the PV of A,B,C"),
+#            NTupleVariable("chi2pvtrksABCbutDdof", lambda ev: ev.chi2pvtrksABCbutD[1], help="DOF from the fit to the PV of A,B,C"),
+#            ### ===========
+#            NTupleVariable("nRecJet40", lambda ev : sum(j.pt()>40 for j in ev.recoveredJets), int, help="number of recovered jets, pt 40"),
+#            NTupleVariable("nRecJet25", lambda ev : sum(j.pt()>25 for j in ev.recoveredJets), int, help="number of recovered jets, pt 40"),
+#            NTupleVariable("nRecBJetMedium40", lambda ev : sum(j.pt()>40 for j in ev.recoveredJets if j.btagWP("CSVv2IVFM")), int, help="number of recovered jets, pt 40"),
+#            NTupleVariable("nRecBJetMedium25", lambda ev : sum(j.pt()>25 for j in ev.recoveredJets if j.btagWP("CSVv2IVFM")), int, help="number of recovered jets, pt 40"),
+#            NTupleVariable("nRecSplitJet40", lambda ev : sum(j.pt()>40 for j in ev.recoveredSplitJets), int, help="number of recovered jets, pt 40"),
+#            NTupleVariable("nRecSplitJet25", lambda ev : sum(j.pt()>25 for j in ev.recoveredSplitJets), int, help="number of recovered jets, pt 40"),
+#            NTupleVariable("nRecSplitBJetMedium40", lambda ev : sum(j.pt()>40 for j in ev.recoveredSplitJets if j.btagWP("CSVv2IVFM")), int, help="number of recovered jets, pt 40"),
+#            NTupleVariable("nRecSplitBJetMedium25", lambda ev : sum(j.pt()>25 for j in ev.recoveredSplitJets if j.btagWP("CSVv2IVFM")), int, help="number of recovered jets, pt 40"),
 
             NTupleVariable("Flag_badChargedHadronFilter", lambda ev: ev.badChargedHadron, help="bad charged hadron filter decision"),
             NTupleVariable("Flag_badMuonFilter", lambda ev: ev.badMuon, help="bad muon filter decision"),
@@ -159,7 +159,7 @@ susyMultilepton_collections.update({
             ##------------------------------------------------
             "cleanJets"       : NTupleCollection("Jet",     jetTypeSusyExtraLight, 15, help="Cental jets after full selection and cleaning, sorted by pt"),
             "cleanJetsFwd"    : NTupleCollection("JetFwd",  jetTypeSusy,  6, help="Forward jets after full selection and cleaning, sorted by pt"),            
-            "fatJets"         : NTupleCollection("FatJet",  fatJetType,  15, help="AK8 jets, sorted by pt"),
+            #"fatJets"         : NTupleCollection("FatJet",  fatJetType,  15, help="AK8 jets, sorted by pt"),
             ##------------------------------------------------
             "discardedJets"    : NTupleCollection("DiscJet", jetTypeSusyExtraLight, 15, help="Jets discarted in the jet-lepton cleaning"),
             "discardedLeptons" : NTupleCollection("DiscLep", leptonTypeSusy, 8, help="Leptons discarded in the jet-lepton cleaning"),
@@ -167,10 +167,10 @@ susyMultilepton_collections.update({
             #"recoveredSplitJets" : NTupleCollection("RecSplitJet", jetTypeSusy, 15, help="Jets recovered declustering in the jet-lepton cleaning, split"),
             ##------------------------------------------------
             "ivf"       : NTupleCollection("SV",     svType, 20, help="SVs from IVF"),
-            "genBHadrons"  : NTupleCollection("GenBHad", heavyFlavourHadronType, 20, mcOnly=True, help="Gen-level B hadrons"),
-            "genDHadrons"  : NTupleCollection("GenDHad", heavyFlavourHadronType, 20, mcOnly=True, help="Gen-level D hadrons"),
+            #"genBHadrons"  : NTupleCollection("GenBHad", heavyFlavourHadronType, 20, mcOnly=True, help="Gen-level B hadrons"),
+            #"genDHadrons"  : NTupleCollection("GenDHad", heavyFlavourHadronType, 20, mcOnly=True, help="Gen-level D hadrons"),
             ##------------------------------------------------
-            "jetsNonTauIdx" : NTupleCollection("JetNoTauIdx",objectInt, 10, help="index of jets not associated to taus"),
+            #"jetsNonTauIdx" : NTupleCollection("JetNoTauIdx",objectInt, 10, help="index of jets not associated to taus"),
             ##------------------------------------------------
             "LHE_weights"    : NTupleCollection("LHEweight",  weightsInfoType, 1000, mcOnly=True, help="LHE weight info"),
 

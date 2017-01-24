@@ -1,14 +1,17 @@
 import ROOT
 
 class CollectionSkimmer:
-    def __init__(self, outName, srcColl, ints=[], floats=[], maxSize=100):
+    def __init__(self, outName, srcColl, ints=[], floats=[], maxSize=100, saveSelectedIndices=False, padSelectedIndicesWith=None, saveTagForAll=False):
         """Read from a collection called srcColl (eg. 'Jet'), write out to a collection called outName (e.g. 'CleanJet')
            Clone the variables specified in the ints and floats list (e.g. 'mcMatchId', 'pt', ...)
            maxSize fixes the maximum allowed number of entries in the output."""
         self._maxSize = maxSize
         self._ints   = ints
         self._floats = floats
-        self._impl = ROOT.CollectionSkimmer(outName)
+        self._saveSelectedIndices = saveSelectedIndices
+        self._padSelectedIndicesWith = padSelectedIndicesWith
+        self._saveTagForAll = saveTagForAll
+        self._impl = ROOT.CollectionSkimmer(outName,srcColl,saveSelectedIndices,saveTagForAll)
         self._iprefix = srcColl + "_"
         for i in ints: self._impl.copyInt(i)
         for f in floats: self._impl.copyFloat(f)
@@ -18,18 +21,21 @@ class CollectionSkimmer:
            initEvent also takes care of re-calling it if needed"""
         for i in self._ints:   self._impl.copyInt(i, tree.arrayReader(self._iprefix+i))
         for f in self._floats: self._impl.copyFloat(f, tree.arrayReader(self._iprefix+f))
+        if self._saveTagForAll: self._impl.srcCount(tree.valueReader('n'+self._iprefix[:-1]))
         self._ttreereaderversion = tree._ttreereaderversion
     def initOutputTree(self,outpytree):
         """To be called once when defining the output PyTree, to declare the branches"""
-        self._impl.makeBranches(outpytree.tree, self._maxSize)
+        self._impl.makeBranches(outpytree.tree, self._maxSize, (self._padSelectedIndicesWith!=None), self._padSelectedIndicesWith if (self._padSelectedIndicesWith!=None) else -1)
     def initEvent(self,event):
         """To be called at the beginning of every event.
            Returns true if the underlying TTreeReader has changed"""
-        self._impl.clear()
         if self._ttreereaderversion != event._tree._ttreereaderversion:
             self.initInputTree(event._tree)
+            self._impl.clear()
             return True
-        return False
+        else:
+            self._impl.clear()
+            return False
     def cppImpl(self):
         """Get the C++ CollectionSkimmer instance, to pass to possible C++ worker code"""
         return self._impl

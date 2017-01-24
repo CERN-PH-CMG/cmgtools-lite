@@ -11,7 +11,7 @@ parser = OptionParser()
 parser.add_option("--outputFile", dest="outputFile", default="MetType1_dump.py", type="string", action="store", help="output file")
 parser.add_option("--GT", dest="GT", default='MCRUN2_74_V9A', type="string", action="store", help="Global Tag")
 parser.add_option("--jecDBFile", dest="jecDBFile", default="", type="string", action="store", help="jec DB File")
-parser.add_option("--uncFile", dest="uncFile", default="", type="string", action="store", help="jec Uncer File")
+###parser.add_option("--uncFile", dest="uncFile", default="", type="string", action="store", help="jec Uncer File")
 parser.add_option("--jecEra", dest="jecEra", default='', type="string", action="store", help="jecEra")
 parser.add_option("--jerDBFile", dest="jerDBFile", default="", type="string", action="store", help="jer DB File")
 parser.add_option("--jerEra", dest="jerEra", default='', type="string", action="store", help="jerEra")
@@ -186,50 +186,21 @@ if options.redoPuppi:
     from PhysicsTools.PatAlgos.slimming.puppiForMET_cff import makePuppiesFromMiniAOD
     makePuppiesFromMiniAOD( process );
 
+# recorrect only
+#    runMetCorAndUncFromMiniAOD(process,
+#                               isData=options.isData,
+#                               metType="Puppi",
+#                               postfix="Puppi"
+#                               )
+
     runMetCorAndUncFromMiniAOD(process,
                                isData=options.isData,
+                               metType="Puppi",
                                pfCandColl=cms.InputTag("puppiForMET"),
                                recoMetFromPFCs=True,
-                               reclusterJets=True,
                                jetFlavor="AK4PFPuppi",
                                postfix="Puppi"
                                )
-
-#### THOSE ARE MANUAL REPLACEMENT - SOME BUG THERE AND NEED TO BE CORRECTED IN THE  PhysicsTools/PatAlgos/python/slimming/miniAOD_tools.py
-
-    process.pfMetT1Puppi.src = cms.InputTag("pfMetPuppi")
-
-######
-
-    process.corrPfMetType1Puppi.jetCorrLabel = cms.InputTag("ak4PFPuppiL1FastL2L3Corrector")
-    process.corrPfMetType1Puppi.jetCorrLabelRes = cms.InputTag("ak4PFPuppiL1FastL2L3ResidualCorrector")
-    process.corrPfMetType1Puppi.offsetCorrLabel = cms.InputTag("ak4PFPuppiL1FastjetCorrector")
-
-    process.basicJetsForMetPuppi.offsetCorrLabel = cms.InputTag("L1FastJet")
-    process.patJetCorrFactorsPuppi.payload = cms.string("AK4PFPuppi")
-
-    process.patPFMetPuppi.srcJetResPhi = cms.string('AK4PFPuppi_phi')
-    process.patPFMetPuppi.srcJetResPt = cms.string('AK4PFPuppi_pt')
-    process.patPFMetPuppi.srcJetSF = cms.string('AK4PFPuppi')
-
-#######
-
-    process.shiftedPatJetEnDownPuppi.jetCorrLabelUpToL3 = cms.InputTag("ak4PFPuppiL1FastL2L3Corrector")
-    process.shiftedPatJetEnDownPuppi.jetCorrLabelUpToL3Res = cms.InputTag("ak4PFPuppiL1FastL2L3ResidualCorrector")
-
-    process.shiftedPatJetEnUpPuppi.jetCorrLabelUpToL3 = cms.InputTag("ak4PFPuppiL1FastL2L3Corrector")
-    process.shiftedPatJetEnUpPuppi.jetCorrLabelUpToL3Res = cms.InputTag("ak4PFPuppiL1FastL2L3ResidualCorrector")
-
-    process.shiftedPatJetResDownPuppi.algo = cms.string('AK4PFPuppi')
-    process.shiftedPatJetResDownPuppi.algopt = cms.string('AK4PFPuppi_pt')
-
-    process.shiftedPatJetResUpPuppi.algo = cms.string('AK4PFPuppi')
-    process.shiftedPatJetResUpPuppi.algopt = cms.string('AK4PFPuppi_pt')
-
-#######
-
-#uncertainty file
-###jecUncertaintyFile="$CMSSW_BASE/src/CMGTools/RootTools/data/jec/Summer15_50nsV4_DATA_UncertaintySources_AK4PFchs.txt"
 
 ### -------------------------------------------------------------------
 ### the lines below remove the L2L3 residual corrections when processing data
@@ -262,6 +233,7 @@ process.MINIAODSIMoutput = cms.OutputModule("PoolOutputModule",
                                             "keep *_slimmedMETsNoHF_*_*",
                                             "keep *_slimmedMETsPuppi_*_*",
                                             "keep *_patPFMetT1TxyNoHF_*_*",
+##                                            "keep *_*_*_RERUN",
                                             ),
     fileName = cms.untracked.string('corMETMiniAOD.root'),
     dataset = cms.untracked.PSet(
