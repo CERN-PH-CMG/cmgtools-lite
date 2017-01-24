@@ -24,7 +24,9 @@ METovHT: (met_pt/(htJet25-LepGood1_pt-LepGood2_pt))>(2/3) && (met_pt/(htJet25-Le
 HT: (htJet25-LepGood1_pt-LepGood2_pt) > 100 
 bveto : nBJetLoose25 == 0
 mtautau : 0.>mass_tautau(met_pt,met_phi,LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood2_pt,LepGood2_eta,LepGood2_phi)||mass_tautau(met_pt,met_phi,LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood2_pt,LepGood2_eta,LepGood2_phi)>160.
-event-filters: Flag_HBHENoiseFilter>=1 && Flag_HBHENoiseIsoFilter>=1 && Flag_goodVertices>=1 && Flag_eeBadScFilter>=1 && Flag_EcalDeadCellTriggerPrimitiveFilter>=1 && Flag_globalTightHalo2016Filter >=1 && Flag_badChargedHadronFilter>=1 && Flag_badMuonFilter>=1 
+# Filters are now applied only on Data!!! (to be corrected)
+event-filters: $DATA{Flag_HBHENoiseFilter>=1 && Flag_HBHENoiseIsoFilter>=1 && Flag_goodVertices>=1 && Flag_eeBadScFilter>=1 && Flag_EcalDeadCellTriggerPrimitiveFilter>=1 && Flag_globalTightHalo2016Filter >=1 && Flag_badChargedHadronFilter>=1 && Flag_badMuonFilter>=1} $MC{1}
+blinding: (!isData) || (run <= 276811 || (run>=278820 && run<=279931)) 
 
 
 # some cuts that are off by default but can be turned on with -E
@@ -34,8 +36,10 @@ Zpeak: abs(mZ1-91.2) < 10 ; Disable=True
 Zveto: abs(mZ1-91.2) < 10 ; Disable=True
 pt5sublep: (fabs(LepGood2_pdgId)==13 && LepGood2_pt > 5) || (fabs(LepGood2_pdgId)==11 && LepGood2_pt > 5) ; Disable=True
 upSublepPtUp: LepGood2_pt < 15 ; Disable=True
-highMET: met_pt > 200 && metmm_pt(LepGood1_pdgId, LepGood1_pt, LepGood1_phi, LepGood2_pdgId, LepGood2_pt, LepGood2_phi, met_pt, met_phi) > 200 ; Disable=True
-upperMET: met_pt < 200 ; Disable=True
+upperMediumMET: met_pt < 200 ; Disable=True
+mediumMET: met_pt > 200 && metmm_pt(LepGood1_pdgId, LepGood1_pt, LepGood1_phi, LepGood2_pdgId, LepGood2_pt, LepGood2_phi, met_pt, met_phi) > 200 ; Disable=True
+upperHighMET: met_pt < 300 ; Disable=True
+highMET: met_pt > 300 && metmm_pt(LepGood1_pdgId, LepGood1_pt, LepGood1_phi, LepGood2_pdgId, LepGood2_pt, LepGood2_phi, met_pt, met_phi) > 300 ; Disable=True
 btag : Sum$(Jet_btagCSV>0.46 && Jet_pt>40)>0 ; Disable=True
 ISRnobtag: Jet1_btagCSV<0.46 ; Disable=True
 MT: mt_2(LepGood1_pt, LepGood1_phi, met_pt, met_phi)<70. && mt_2(LepGood2_pt, LepGood2_phi, met_pt, met_phi)<70. ; Disable=True
@@ -53,3 +57,7 @@ triggerDoubleMuMET: $DATA{HLT_SOSDoubleMuLowMET} $MC{1}; Disable=True
 triggerMET: $DATA{HLT_SOSHighMET} $MC{1} ; Disable=True
 TnotT: (!((0==1)||(((fabs(LepGood1_pdgId)==13 && LepGood1_ICHEPsoftMuonId>0) || (fabs(LepGood1_pdgId)==11 && eleWPT(LepGood1_pt,LepGood1_etaSc,LepGood1_mvaIdSpring15))) && LepGood1_relIso03<0.5 && (LepGood1_relIso03*LepGood1_pt)<5. && fabs(LepGood1_dxy)<0.01 && fabs(LepGood1_dz)<0.01)) && ((0==1)||(((fabs(LepGood2_pdgId)==13 && LepGood2_ICHEPsoftMuonId>0) || (fabs(LepGood2_pdgId)==11 && eleWPT(LepGood2_pt,LepGood2_etaSc,LepGood2_mvaIdSpring15))) && LepGood2_relIso03<0.5 && (LepGood2_relIso03*LepGood2_pt)<5. && fabs(LepGood2_dxy)<0.01 && fabs(LepGood2_dz)<0.01))) || (((0==1)||(((fabs(LepGood1_pdgId)==13 && LepGood1_ICHEPsoftMuonId>0) || (fabs(LepGood1_pdgId)==11 && eleWPT(LepGood1_pt,LepGood1_etaSc,LepGood1_mvaIdSpring15))) && LepGood1_relIso03<0.5 && (LepGood1_relIso03*LepGood1_pt)<5. && fabs(LepGood1_dxy)<0.01 && fabs(LepGood1_dz)<0.01)) && !((0==1)||(((fabs(LepGood2_pdgId)==13 && LepGood2_ICHEPsoftMuonId>0) || (fabs(LepGood2_pdgId)==11 && eleWPT(LepGood2_pt,LepGood2_etaSc,LepGood2_mvaIdSpring15))) && LepGood2_relIso03<0.5 && (LepGood2_relIso03*LepGood2_pt)<5. && fabs(LepGood2_dxy)<0.01 && fabs(LepGood2_dz)<0.01))); Disable=True
 notTnotT:!((0==1)||(((fabs(LepGood1_pdgId)==13 && LepGood1_ICHEPsoftMuonId>0) || (fabs(LepGood1_pdgId)==11 && eleWPT(LepGood1_pt,LepGood1_etaSc,LepGood1_mvaIdSpring15))) && LepGood1_relIso03<0.5 && (LepGood1_relIso03*LepGood1_pt)<5. && fabs(LepGood1_dxy)<0.01 && fabs(LepGood1_dz)<0.01)) && !((0==1)||(((fabs(LepGood2_pdgId)==13 && LepGood2_ICHEPsoftMuonId>0) || (fabs(LepGood2_pdgId)==11 && eleWPT(LepGood2_pt,LepGood2_etaSc,LepGood2_mvaIdSpring15))) && LepGood2_relIso03<0.5 && (LepGood2_relIso03*LepGood2_pt)<5. && fabs(LepGood2_dxy)<0.01 && fabs(LepGood2_dz)<0.01)); Disable=True
+CRttTT:(((abs(LepGood1_pdgId)==13 || eleWPT(LepGood1_pt,LepGood1_etaSc,LepGood1_mvaIdSpring15))) && LepGood1_relIso03<0.5 && ((LepGood1_relIso03*LepGood1_pt)<5. || LepGood1_relIso03<0.1) && abs(LepGood1_ip3d)<0.01 && LepGood1_sip3d<2) && (((abs(LepGood2_pdgId)==13 || eleWPT(LepGood2_pt,LepGood2_etaSc,LepGood2_mvaIdSpring15))) && LepGood2_relIso03<0.5 && ((LepGood2_relIso03*LepGood2_pt)<5. || LepGood2_relIso03<0.1) && abs(LepGood2_ip3d)<0.01 && LepGood2_sip3d<2) ; Disable=True
+CRDYTT:(((abs(LepGood1_pdgId)==13 || eleWPT(LepGood1_pt,LepGood1_etaSc,LepGood1_mvaIdSpring15))) && LepGood1_relIso03<0.5 && ((LepGood1_relIso03*LepGood1_pt)<5. || LepGood1_relIso03<0.1)) && (((abs(LepGood2_pdgId)==13 || eleWPT(LepGood2_pt,LepGood2_etaSc,LepGood2_mvaIdSpring15))) && LepGood2_relIso03<0.5 && ((LepGood2_relIso03*LepGood2_pt)<5. || LepGood2_relIso03<0.1)) ; Disable=True
+OldCRttTT:(((abs(LepGood1_pdgId)==13 && LepGood1_ICHEPsoftMuonId>0) || (abs(LepGood1_pdgId)==11 && eleWPT(LepGood1_pt,LepGood1_etaSc,LepGood1_mvaIdSpring15))) && LepGood1_relIso03<0.5 && ((LepGood1_relIso03*LepGood1_pt)<5. || LepGood1_relIso03<0.1) && fabs(LepGood1_dxy)<0.01 && fabs(LepGood1_dz)<0.01) && (((abs(LepGood2_pdgId)==13 && LepGood2_ICHEPsoftMuonId>0) || (abs(LepGood2_pdgId)==11 && eleWPT(LepGood2_pt,LepGood2_etaSc,LepGood2_mvaIdSpring15))) && LepGood2_relIso03<0.5 && ((LepGood2_relIso03*LepGood2_pt)<5. || LepGood2_relIso03<0.1) && fabs(LepGood2_dxy)<0.01 && fabs(LepGood2_dz)<0.01) ; Disable=True
+OldCRDYTT:(((abs(LepGood1_pdgId)==13 && LepGood1_ICHEPsoftMuonId>0) || (abs(LepGood1_pdgId)==11 && eleWPT(LepGood1_pt,LepGood1_etaSc,LepGood1_mvaIdSpring15))) && LepGood1_relIso03<0.5 && ((LepGood1_relIso03*LepGood1_pt)<5. || LepGood1_relIso03<0.1) && fabs(LepGood1_dxy)<0.03 && fabs(LepGood1_dz)<0.03) && (((abs(LepGood2_pdgId)==13 && LepGood2_ICHEPsoftMuonId>0) || (abs(LepGood2_pdgId)==11 && eleWPT(LepGood2_pt,LepGood2_etaSc,LepGood2_mvaIdSpring15))) && LepGood2_relIso03<0.5 && ((LepGood2_relIso03*LepGood2_pt)<5. || LepGood2_relIso03<0.1) && fabs(LepGood2_dxy)<0.03 && fabs(LepGood2_dz)<0.03) ; Disable=True

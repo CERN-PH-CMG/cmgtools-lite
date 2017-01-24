@@ -291,7 +291,8 @@ treeProducer = cfg.Analyzer(
      collections = susyMultilepton_collections,
 )
 
-del treeProducer.collections["discardedLeptons"]
+if analysis in ['SOS']:
+    del treeProducer.collections["discardedLeptons"]
 
 ## histo counter
 if not runSMS:
@@ -379,7 +380,7 @@ if runSMS:
 #from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv1 import *
 from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv2 import *
 from CMGTools.RootTools.samples.samples_13TeV_signals import *
-from CMGTools.RootTools.samples.samples_13TeV_76X_susySignalsPriv import *
+from CMGTools.RootTools.samples.samples_13TeV_80X_susySignalsPriv import *
 from CMGTools.RootTools.samples.samples_13TeV_DATA2016 import *
 from CMGTools.HToZZ4L.tools.configTools import printSummary, configureSplittingFromTime, cropToLumi, prescaleComponents, insertEventSelector
 
@@ -415,6 +416,7 @@ elif analysis=='SOS':
     #TChiWZ=kreator.makeMCComponent("TChiWZ","/SMS-TChiWZ_ZToLL_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring16MiniAODv2-PUSpring16Fast_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v2/MINIAODSIM","CMS",".*root",1)
     #T2ttDiLep=kreator.makeMCComponent("T2ttDiLep","/SMS-T2tt_dM-10to80_2Lfilter_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISpring16MiniAODv2-PUSpring16Fast_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/MINIAODSIM","CMS",".*root",1)
     selectedComponents = selectedComponents
+    #selectedComponents = [WZTo3LNu] + Higgsino
     #selectedComponents = [ZZTo2L2NuM4to40_notau, ZZTo2L2NuM4to40_tauonly, WWTo2L2Nu, WZTo3LNu, ZZTo2L2Nu, TBar_tWch, T_tWch, TTJets_SingleLeptonFromTbar, TTJets_SingleLeptonFromT, TTJets_DiLepton] + DYJetsM50HT + DYJetsM5to50HT + WJetsToLNuHT + [DYJetsToLL_M5to50_LO, DYJetsToLL_M50]
     #selectedComponents = [WWToLNuQQ, WZTo2L2Q, WZTo1L3Nu, WZTo1L1Nu2Q, ZZTo2L2Q, ZZTo4L, WWW, WZZ, WWZ, ZZZ, TToLeptons_tch_powheg, TBarToLeptons_tch_powheg, TToLeptons_sch_amcatnlo] #minor
     #selectedComponents = [WJetsToLNu_LO] #missing in 80Xv2 had to take 80Xv1 
@@ -460,7 +462,7 @@ if runData and not isTest: # For running on data
 #    json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-279931_13TeV_PromptReco_Collisions16_JSON_NoL1T.txt' #24.5/fb
 #    json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-280385_13TeV_PromptReco_Collisions16_JSON_NoL1T_v2.txt' #27.22/fb
 #    json = os.environ['CMSSW_BASE']+'/src/CMGTools/TTHAnalysis/data/json/Cert_271036-284044_13TeV_PromptReco_Collisions16_JSON_NoL1T.txt' # 36.22/fb
-    json = os.environ['CMSSW_BASE']+ /src/CMGTools/TTHAnalysis/data/json/Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt # 36.46 /fb
+    json = os.environ['CMSSW_BASE']+ '/src/CMGTools/TTHAnalysis/data/json/Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt' # 36.46 /fb
     #run BCDEFG prompt reco  ==============================================================================================
 #    processing = "Run2016B-PromptReco-v2"; short = "Run2016B_PromptReco_v2"; run_ranges = [(273150,280385)]; useAAA=False; # -v2 starts from 273150
 #    dataChunks.append((json,processing,short,run_ranges,useAAA))
