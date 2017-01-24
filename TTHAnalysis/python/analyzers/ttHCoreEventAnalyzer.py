@@ -12,11 +12,11 @@ class ttHCoreEventAnalyzer( Analyzer ):
         self.maxLeps = cfg_ana.maxLeps
         self.mhtForBiasedDPhi = cfg_ana.mhtForBiasedDPhi
         self.jetForBiasedDPhi = cfg_ana.jetForBiasedDPhi
-        self.leptonMVAKindTTH = getattr(self.cfg_ana, "leptonMVAKindTTH", "forMoriond16")
+        self.leptonMVAKindTTH = getattr(self.cfg_ana, "leptonMVAKindTTH", "forMoriond_eleHZZ")
         self.leptonMVAPathTTH = getattr(self.cfg_ana, "leptonMVAPathTTH", "CMGTools/TTHAnalysis/data/leptonMVA/tth/%s_BDTG.weights.xml")
         if self.leptonMVAPathTTH[0] != "/": self.leptonMVAPathTTH = "%s/src/%s" % ( os.environ['CMSSW_BASE'], self.leptonMVAPathTTH)
         self.leptonMVATTH = LeptonMVA(self.leptonMVAKindTTH, self.leptonMVAPathTTH, self.cfg_comp.isMC)
-        self.leptonMVAKindSUSY = getattr(self.cfg_ana, "leptonMVAKindSUSY", "forMoriond16")
+        self.leptonMVAKindSUSY = getattr(self.cfg_ana, "leptonMVAKindSUSY", "forMoriond_eleGP")
         self.leptonMVAPathSUSY = getattr(self.cfg_ana, "leptonMVAPathSUSY", "CMGTools/TTHAnalysis/data/leptonMVA/susy/%s_BDTG.weights.xml")
         if self.leptonMVAPathSUSY[0] != "/": self.leptonMVAPathSUSY = "%s/src/%s" % ( os.environ['CMSSW_BASE'], self.leptonMVAPathSUSY)
         self.leptonMVASUSY = LeptonMVA(self.leptonMVAKindSUSY, self.leptonMVAPathSUSY, self.cfg_comp.isMC)
