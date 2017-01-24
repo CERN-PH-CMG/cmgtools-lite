@@ -57,8 +57,10 @@ triggers_1mu_iso = [ 'HLT_IsoMu20_v*',
                      'HLT_IsoTkMu20_v*', 
                      'HLT_IsoMu22_v*', 
                      'HLT_IsoTkMu22_v*',
-                     'HLT_IsoMu24_v*', 
-                     'HLT_IsoTkMu24_v*']  # Mu20's prescaled in column 0
+                     'HLT_IsoMu24_v*', # Mu20's prescaled in column 0
+                     'HLT_IsoTkMu24_v*',
+                     'HLT_IsoMu22_eta2p1_v',
+                     'HLT_IsoTkMu22_eta2p1_v']
 triggers_1mu_noniso = [ 'HLT_Mu45_eta2p1_v*', 
                         'HLT_Mu50_v*', 
                         'HLT_TkMu50_v*' ]
