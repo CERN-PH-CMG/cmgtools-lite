@@ -3,7 +3,7 @@ trilep: nLepFO>=4
 cleanup: minMllAFAS > 12
 trigger: Triggers_3l
 pt2010: LepGood1_conePt>20 && LepGood2_conePt>10 && LepGood3_conePt>10 && LepGood4_conePt>10
-TTTT: LepGood1_isTight && LepGood2_isTight && LepGood3_isTight && LepGood4_isTight
+TTTT: LepGood1_isLepTight && LepGood2_isLepTight && LepGood3_isLepTight && LepGood4_isLepTight
 Zveto: abs(mZ1-91.2) > 10
 
 ele conv cuts: (abs(LepGood1_pdgId)!=11 || (LepGood1_convVeto && LepGood1_lostHits==0)) && (abs(LepGood2_pdgId)!=11 || (LepGood2_convVeto && LepGood2_lostHits==0)) && (abs(LepGood3_pdgId)!=11 || (LepGood3_convVeto && LepGood3_lostHits==0)) && (abs(LepGood4_pdgId)!=11 || (LepGood4_convVeto && LepGood4_lostHits==0))
