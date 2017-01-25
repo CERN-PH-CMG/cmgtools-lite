@@ -1,5 +1,5 @@
 alwaystrue: 1
-trigger: $DATA{Triggers_ee || Triggers_mm || Triggers_em} $MC{1}
+trigger: Triggers_ee || Triggers_mm || Triggers_em
 cleanup: minMllAFAS > 12
 dilep: nLepFO>=2
 pt2010: LepGood1_conePt>25 && LepGood2_conePt>10 && (abs(LepGood2_pdgId)!=11 || LepGood2_conePt>15)
