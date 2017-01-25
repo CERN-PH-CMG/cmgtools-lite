@@ -1,5 +1,6 @@
 tot_weight: 1 : 1,0.5,1.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
 
+debug_era : dTakingEra : [-0.5,0.5,1.5,2.5,3.5,4.5,5.5,6.5]; XTitle = "2016 data taking era", IncludeOverflows=False, MoreY=1.5, xBinLabels="B\,C\,D\,E\,F\,G\,H"
 debug_runNr : if3(isData,run,-1) : 395,273150,275125; XTitle = "Run number (2015D only)", IncludeOverflows=False
 debug_triggerFired_1e : HLT_BIT_HLT_Ele27_eta2p1_WPLoose_Gsf_v : 2,-0.5,1.5; XTitle = "Fired 1e trigger"
 debug_triggerFired_2e : HLT_BIT_HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v : 2,-0.5,1.5; XTitle = "Fired 2e trigger"
