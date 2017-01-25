@@ -50,7 +50,7 @@ class MCAnalysis:
                 self._premap.append((re.compile(k.strip()+"$"), to))
         self.readMca(samples,options)
 
-    def readMca(self,samples,options):
+    def readMca(self,samples,options,addExtras={}):
         for line in open(samples,'r'):
             if re.match("\s*#.*", line): continue
             line = re.sub(r"(?<!\\)#.*","",line)  ## regexp black magic: match a # only if not preceded by a \!
@@ -64,6 +64,9 @@ class MCAnalysis:
                         (key,val) = [f.strip() for f in setting.split("=",1)]
                         extra[key] = eval(val)
                     else: extra[setting] = True
+            for k,v in addExtras.iteritems():
+                if k in extra: raise RuntimeError, 'You are trying to overwrite an extra option already set'
+                extra[k] = v
             field = [f.strip() for f in line.split(':')]
             if len(field) == 1 and field[0] == "*":
                 if len(self._allData): raise RuntimeError, "MCA defaults ('*') can be specified only before all processes"
@@ -77,6 +80,7 @@ class MCAnalysis:
                     if k not in extra: extra[k] = v
             if len(field) <= 1: continue
             if "SkipMe" in extra and extra["SkipMe"] == True and not options.allProcesses: continue
+            if 'PostFix' in extra: field[0]+=extra['PostFix']
             signal = False
             pname = field[0]
             if pname[-1] == "+": 
@@ -99,9 +103,15 @@ class MCAnalysis:
                 continue
             if field[1] == "+": # include an mca into another one, usage:   otherprocesses : + ; IncludeMca="path/to/other/mca.txt"
                 if 'IncludeMca' not in extra: raise RuntimeError, 'You have declared a component with IncludeMca format, but not included this option'
-                if len(extra)>1: raise RuntimeError, 'You cannot declare extra options together with IncludeMca directive'
-                self.readMca(extra['IncludeMca'],options) # call readMca recursively on included mca files
+                extra_to_pass = copy(extra)
+                del extra_to_pass['IncludeMca']
+                self.readMca(extra['IncludeMca'],options,addExtras=extra_to_pass) # call readMca recursively on included mca files
                 continue
+            # Customize with additional weight if requested
+            if 'AddWeight' in extra:
+                if len(field)<2: raise RuntimeError, 'You are trying to set an additional weight, but there is no weight initially defined for this component'
+                elif len(field)==2: field.append(extra['AddWeight'])
+                else: field[2] = '(%s)*(%s)'%(field[2],extra['AddWeight'])
             ## If we have a selection of process names, apply it
             skipMe = (len(options.processes) > 0)
             for p0 in options.processes:
