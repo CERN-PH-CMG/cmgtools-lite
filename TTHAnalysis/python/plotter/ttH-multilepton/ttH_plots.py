@@ -12,21 +12,26 @@ dowhat = "plots"
 def base(selection):
 
 #    CORE="--Fs {P}/2_recleaner_v5_b1E2 --Fs {P}/4_kinMVA_without_MEM_v5 --Fs {P}/8_bTagSF_12fb_v45"
-    CORE="--Fs {P}/friends_230116_v3" # new selection for denominator + tau variables for tight id
+    CORE="--Fs {P}/1_recleaner_250116_v1" # new selection for denominator + tau variables for tight id
 
     CORE+=" -f -j 8 -l 36.5 --s2v -L ttH-multilepton/functionsTTH.cc --tree treeProducerSusyMultilepton --mcc ttH-multilepton/lepchoice-ttH-FO.txt --mcc ttH-multilepton/ttH_2lss3l_triggerdefs.txt"# --neg"
     if dowhat == "plots": CORE+=" --lspam '#bf{CMS} #it{Preliminary}' --legendWidth 0.20 --legendFontSize 0.035 --showRatio --maxRatioRange 0 2 --fixRatioRange  --showMCError --rebin 4 --xP 'nT_.*' --xP 'debug_.*'"
 
     if selection=='2lss':
-        GO="%s -P /data1/peruzzi/TREES_TTH_180117_Summer16_JEC_mc25nsV5_data23SepV2_noClean_lepMVAretr_qgV1 ttH-multilepton/mca-2lss-mc.txt ttH-multilepton/2lss_tight.txt "%CORE
+        GO="%s -P /data1/peruzzi/TREES_TTH_250117_Summer16_JECV3_noClean_qgV2 ttH-multilepton/mca-2lss-mc.txt ttH-multilepton/2lss_tight.txt "%CORE
 #        GO="%s -W 'puw2016_nTrueInt_13fb(nTrueInt)*leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[0]],LepGood_pt[iLepFO_Recl[0]],LepGood_eta[iLepFO_Recl[0]],2)*leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[1]],LepGood_pt[iLepFO_Recl[1]],LepGood_eta[iLepFO_Recl[1]],2)*triggerSF_ttH(LepGood_pdgId[iLepFO_Recl[0]],LepGood_pt[iLepFO_Recl[0]],LepGood_pdgId[iLepFO_Recl[1]],LepGood_pt[iLepFO_Recl[1]],2)*eventBTagSF'"%GO
         GO="%s -W 'puw2016_nTrueInt_36fb(nTrueInt)'"%GO
         if dowhat == "plots": GO+=" ttH-multilepton/2lss_3l_plots.txt --xP '^lep(3|4)_.*' --xP '^(3|4)lep_.*' --xP 'kinMVA_3l_.*' "
     elif selection=='3l':
-        GO="%s -P /data1/peruzzi/TREES_TTH_180117_Summer16_JEC_mc25nsV5_data23SepV2_noClean_lepMVAretr_qgV1 ttH-multilepton/mca-3l-mc.txt ttH-multilepton/3l_tight.txt "%CORE
+        GO="%s -P /data1/peruzzi/TREES_TTH_250117_Summer16_JECV3_noClean_qgV2 ttH-multilepton/mca-3l-mc.txt ttH-multilepton/3l_tight.txt "%CORE
 #        GO="%s -W 'puw2016_nTrueInt_13fb(nTrueInt)*leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[0]],LepGood_pt[iLepFO_Recl[0]],LepGood_eta[iLepFO_Recl[0]],3)*leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[1]],LepGood_pt[iLepFO_Recl[1]],LepGood_eta[iLepFO_Recl[1]],3)*leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[2]],LepGood_pt[iLepFO_Recl[2]],LepGood_eta[iLepFO_Recl[2]],3)*triggerSF_ttH(LepGood_pdgId[iLepFO_Recl[0]],LepGood_pt[iLepFO_Recl[0]],LepGood_pdgId[iLepFO_Recl[1]],LepGood_pt[iLepFO_Recl[1]],3)*eventBTagSF'"%GO
         GO="%s -W 'puw2016_nTrueInt_36fb(nTrueInt)'"%GO
         if dowhat == "plots": GO+=" ttH-multilepton/2lss_3l_plots.txt --xP '^(2|4)lep_.*' --xP '^lep4_.*' --xP 'kinMVA_2lss_.*' "
+    elif selection=='4l':
+        GO="%s -P /data1/peruzzi/TREES_TTH_250117_Summer16_JECV3_noClean_qgV2 ttH-multilepton/mca-4l-mc.txt ttH-multilepton/4l_tight.txt "%CORE
+# ADAPT TO 4L!!!        GO="%s -W 'puw2016_nTrueInt_13fb(nTrueInt)*leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[0]],LepGood_pt[iLepFO_Recl[0]],LepGood_eta[iLepFO_Recl[0]],3)*leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[1]],LepGood_pt[iLepFO_Recl[1]],LepGood_eta[iLepFO_Recl[1]],3)*leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[2]],LepGood_pt[iLepFO_Recl[2]],LepGood_eta[iLepFO_Recl[2]],3)*triggerSF_ttH(LepGood_pdgId[iLepFO_Recl[0]],LepGood_pt[iLepFO_Recl[0]],LepGood_pdgId[iLepFO_Recl[1]],LepGood_pt[iLepFO_Recl[1]],3)*eventBTagSF'"%GO
+        GO="%s -W 'puw2016_nTrueInt_36fb(nTrueInt)'"%GO
+        if dowhat == "plots": GO+=" ttH-multilepton/2lss_3l_plots.txt --xP '^(2|3)lep_.*' --xP 'kinMVA_.*' "
     else:
         raise RuntimeError, 'Unknown selection'
 
