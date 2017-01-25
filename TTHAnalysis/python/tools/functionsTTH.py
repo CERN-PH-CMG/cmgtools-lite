@@ -88,3 +88,9 @@ MODULES.append( ('leptonJetFastReCleanerTTH_step2',lambda : fastCombinedObjectRe
                                                                                         jetPts=[25,40],
                                                                                         btagL_thr=0.5426,
                                                                                         btagM_thr=0.8484) ))
+
+from CMGTools.TTHAnalysis.tools.eventVars_2lss import EventVars2LSS
+MODULES.append( ('eventVars', lambda : EventVars2LSS('','Recl')) )
+
+from CMGTools.TTHAnalysis.tools.kinMVA_2D_2lss_3l import KinMVA_2D_2lss_3l
+MODULES.append( ('kinMVA_2D_2lss_3l', lambda : KinMVA_2D_2lss_3l(os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/kinMVA/tth/%s_BDTG.weights.xml", skip_BDTv8 = True, skip_MEM = True)) )

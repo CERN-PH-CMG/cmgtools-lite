@@ -61,8 +61,8 @@ def train_multiclass(fOutName, options):
 
     if '_3l' in options.training:
         dsets += [
-            ('TTJets_DiLepton',            'tt', 0.1),
-            ('TTJets_DiLepton_ext_skim3l', 'tt', 0.9),
+            ('TTJets_DiLepton',            'tt', 1),
+#            ('TTJets_DiLepton_ext_skim3l', 'tt', 0.9),
         ]
     else:
         dsets += [
@@ -87,10 +87,10 @@ def train_multiclass(fOutName, options):
         allcuts += cut
 
     allcuts += "nLepFO_Recl>=2"
-    allcuts += "LepGood_conePt[iF_Recl[0]]>20"
-    allcuts += "(abs(LepGood_pdgId[iF_Recl[0]])!=11 || LepGood_conePt[iF_Recl[0]]>25)" #!
-    allcuts += "LepGood_conePt[iF_Recl[1]]>10"
-    allcuts += "(abs(LepGood_pdgId[iF_Recl[1]])!=11 || LepGood_conePt[iF_Recl[1]]>15)" #!
+    allcuts += "LepGood_conePt[iLepFO_Recl[0]]>20"
+    allcuts += "(abs(LepGood_pdgId[iLepFO_Recl[0]])!=11 || LepGood_conePt[iLepFO_Recl[0]]>25)" #!
+    allcuts += "LepGood_conePt[iLepFO_Recl[1]]>10"
+    allcuts += "(abs(LepGood_pdgId[iLepFO_Recl[1]])!=11 || LepGood_conePt[iLepFO_Recl[1]]>15)" #!
 
     allcuts += "abs(mZ1_Recl-91.2) > 10"
     allcuts += "(met_pt*0.00397 + mhtJet25_Recl*0.00265 > 0.2)"
@@ -99,29 +99,29 @@ def train_multiclass(fOutName, options):
 
     if '_3l' in options.training:
         allcuts += "nLepFO_Recl>=3"
-        allcuts += "LepGood_conePt[iF_Recl[2]]>10"
-        allcuts += "nJet25_Recl>=2"
-        # allcuts += "LepGood_isTight_Recl[iF_Recl[0]]"
-        # allcuts += "LepGood_isTight_Recl[iF_Recl[1]]"
-        # allcuts += "LepGood_isTight_Recl[iF_Recl[2]]"
+        allcuts += "LepGood_conePt[iLepFO_Recl[2]]>10"
+        allcuts += "nJetSel_Recl>=2"
+        # allcuts += "LepGood_isTight_Recl[iLepFO_Recl[0]]"
+        # allcuts += "LepGood_isTight_Recl[iLepFO_Recl[1]]"
+        # allcuts += "LepGood_isTight_Recl[iLepFO_Recl[2]]"
     else:
         allcuts += "nLepTight_Recl<=2"
-        allcuts += "nJet25_Recl>=4"
-        allcuts += "(LepGood_charge[iF_Recl[0]]*LepGood_charge[iF_Recl[1]] > 0)" #!
-        # allcuts += "LepGood_isTight_Recl[iF_Recl[0]]"
-        # allcuts += "LepGood_isTight_Recl[iF_Recl[1]]"
+        allcuts += "nJetSel_Recl>=4"
+        allcuts += "(LepGood_charge[iLepFO_Recl[0]]*LepGood_charge[iLepFO_Recl[1]] > 0)" #!
+        # allcuts += "LepGood_isTight_Recl[iLepFO_Recl[0]]"
+        # allcuts += "LepGood_isTight_Recl[iLepFO_Recl[1]]"
 
-    factory.AddSpectator("iF0 := iF_Recl[0]","F") # do not remove this!
-    factory.AddSpectator("iF1 := iF_Recl[1]","F") # do not remove this!
-    factory.AddSpectator("iF2 := iF_Recl[2]","F") # do not remove this!
+    factory.AddSpectator("iF0 := iLepFO_Recl[0]","F") # do not remove this!
+    factory.AddSpectator("iF1 := iLepFO_Recl[1]","F") # do not remove this!
+    factory.AddSpectator("iF2 := iLepFO_Recl[2]","F") # do not remove this!
 
-    factory.AddVariable("higher_Lep_eta := max(abs(LepGood_eta[iF_Recl[0]]),abs(LepGood_eta[iF_Recl[1]]))", 'F')
+    factory.AddVariable("higher_Lep_eta := max(abs(LepGood_eta[iLepFO_Recl[0]]),abs(LepGood_eta[iLepFO_Recl[1]]))", 'F')
     factory.AddVariable("MT_met_lep1 := MT_met_lep1", 'F')
-    factory.AddVariable("numJets_float := nJet25_Recl", 'F')
+    factory.AddVariable("numJets_float := nJetSel_Recl", 'F')
     factory.AddVariable("mindr_lep1_jet := mindr_lep1_jet", 'F')
     factory.AddVariable("mindr_lep2_jet := mindr_lep2_jet", 'F')
-    factory.AddVariable("LepGood_conePt[iF_Recl[0]] := LepGood_conePt[iF_Recl[0]]", 'F')
-    factory.AddVariable("LepGood_conePt[iF_Recl[1]] := LepGood_conePt[iF_Recl[1]]", 'F')
+    factory.AddVariable("LepGood_conePt[iLepFO_Recl[0]] := LepGood_conePt[iLepFO_Recl[0]]", 'F')
+    factory.AddVariable("LepGood_conePt[iLepFO_Recl[1]] := LepGood_conePt[iLepFO_Recl[1]]", 'F')
     factory.AddVariable("avg_dr_jet : = avg_dr_jet", 'F')
     factory.AddVariable("met := min(met_pt, 400)", 'F')
 
@@ -171,9 +171,9 @@ def train_single(allcuts, variables, dsets, fOutName, options):
     for cut in options.addcuts:
         allcuts += cut
 
-    factory.AddSpectator("iF0 := iF_Recl[0]","F") # do not remove this!
-    factory.AddSpectator("iF1 := iF_Recl[1]","F") # do not remove this!
-    factory.AddSpectator("iF2 := iF_Recl[2]","F") # do not remove this!
+    factory.AddSpectator("iF0 := iLepFO_Recl[0]","F") # do not remove this!
+    factory.AddSpectator("iF1 := iLepFO_Recl[1]","F") # do not remove this!
+    factory.AddSpectator("iF2 := iLepFO_Recl[2]","F") # do not remove this!
 
     ## Add the variables
     for var in variables:
@@ -214,44 +214,43 @@ def train_2d(fOutName, training, options):
     allcuts = ROOT.TCut('1')
     if '2lss' in training:
         allcuts += "nLepFO_Recl>=2"
-        allcuts += "LepGood_conePt[iF_Recl[0]]>20"
-        allcuts += "LepGood_conePt[iF_Recl[1]]>10"
-        allcuts += "LepGood_charge[iF_Recl[0]] == LepGood_charge[iF_Recl[1]]"
+        allcuts += "LepGood_conePt[iLepFO_Recl[0]]>20"
+        allcuts += "LepGood_conePt[iLepFO_Recl[1]]>10"
+        allcuts += "LepGood_charge[iLepFO_Recl[0]] == LepGood_charge[iLepFO_Recl[1]]"
         allcuts += "(nBJetLoose25_Recl >= 2 || nBJetMedium25_Recl >= 1)"
-        allcuts += "nJet25_Recl >= 4"
+        allcuts += "nJetSel_Recl >= 4"
     elif '3l' in training:
         allcuts += "nLepFO_Recl>=3"
         allcuts += "abs(mZ1_Recl-91.2)>10"
-        allcuts += "LepGood_conePt[iF_Recl[0]]>20"
-        allcuts += "LepGood_conePt[iF_Recl[1]]>10"
-        allcuts += "LepGood_conePt[iF_Recl[2]]>10"
-        allcuts += "(nJet25_Recl >= 4 || (met_pt*0.00397 + mhtJet25_Recl*0.00265 - 0.184 > 0.0 + 0.1*(mZ1_Recl > 0)))"
+        allcuts += "LepGood_conePt[iLepFO_Recl[0]]>20"
+        allcuts += "LepGood_conePt[iLepFO_Recl[1]]>10"
+        allcuts += "LepGood_conePt[iLepFO_Recl[2]]>10"
+        allcuts += "(nJetSel_Recl >= 4 || (met_pt*0.00397 + mhtJet25_Recl*0.00265 - 0.184 > 0.0 + 0.1*(mZ1_Recl > 0)))"
         allcuts += "nBJetLoose25_Recl >= 2"
 
     variables = [ # Common variables
-        "max_Lep_eta := max(abs(LepGood_eta[iF_Recl[0]]),abs(LepGood_eta[iF_Recl[1]]))",
-        "numJets_float := nJet25_Recl",
+        "max_Lep_eta := max(abs(LepGood_eta[iLepFO_Recl[0]]),abs(LepGood_eta[iLepFO_Recl[1]]))",
+        "numJets_float := nJetSel_Recl",
         "mindr_lep1_jet := mindr_lep1_jet",
         "mindr_lep2_jet := mindr_lep2_jet",
         "MT_met_lep1 := MT_met_lep1",
     ]
     
     dsets = []
-    if '3l' in training and 'ttv' in training:
-        if "mem" in training:
-            if not 'skim_BDT_3l_Training_Prescaled' in options.treepath: raise RuntimeError
-            dsets += [('TTHnobb_pow', 'Signal', 3.)]
+    if '3l' in training and 'ttv' in training and 'mem' in training:
+        if not 'skim_BDT_3l_Training_Prescaled' in options.treepath: raise RuntimeError
+        dsets += [('TTHnobb_pow', 'Signal', 3.)]
     else:
         dsets += [('TTHnobb_pow', 'Signal', 1)]
 
     if '2lss' in training and 'ttw' in training:
-        variables += ["LepGood_conePt[iF_Recl[1]] := LepGood_conePt[iF_Recl[1]]"]
+        variables += ["LepGood_conePt[iLepFO_Recl[1]] := LepGood_conePt[iLepFO_Recl[1]]"]
         dsets += [('TTW_LO', 'Background', 1)]
 
     if '2lss' in training and 'ttv' in training:
         variables += [
-            "LepGood_conePt[iF_Recl[1]] := LepGood_conePt[iF_Recl[1]]",
-            "LepGood_conePt[iF_Recl[0]] := LepGood_conePt[iF_Recl[0]]"
+            "LepGood_conePt[iLepFO_Recl[1]] := LepGood_conePt[iLepFO_Recl[1]]",
+            "LepGood_conePt[iLepFO_Recl[0]] := LepGood_conePt[iLepFO_Recl[0]]"
         ]
         dsets += [
             ('TTW_LO', 'Background', 1),
@@ -271,12 +270,12 @@ def train_2d(fOutName, training, options):
 
 
     if '3l' in training and 'ttw' in training:
-        variables += ["LepGood_conePt[iF_Recl[2]] := LepGood_conePt[iF_Recl[2]]"]
+        variables += ["LepGood_conePt[iLepFO_Recl[2]] := LepGood_conePt[iLepFO_Recl[2]]"]
         dsets += [('TTW_LO', 'Background', 1)]
     if '3l' in training and 'ttv' in training:
         variables += [
-            "LepGood_conePt[iF_Recl[2]] := LepGood_conePt[iF_Recl[2]]",
-            "LepGood_conePt[iF_Recl[0]] := LepGood_conePt[iF_Recl[0]]"
+            "LepGood_conePt[iLepFO_Recl[2]] := LepGood_conePt[iLepFO_Recl[2]]",
+            "LepGood_conePt[iLepFO_Recl[0]] := LepGood_conePt[iLepFO_Recl[0]]"
         ]
         if "mem" in training:
             if not 'skim_BDT_3l_Training_Prescaled' in options.treepath: raise RuntimeError
@@ -295,8 +294,8 @@ def train_2d(fOutName, training, options):
             "avg_dr_jet : = avg_dr_jet",
         ]
         dsets += [
-            ('TTJets_DiLepton',            'Background', 0.1),
-            ('TTJets_DiLepton_ext_skim3l', 'Background', 0.9),
+            ('TTJets_DiLepton',            'Background', 1),
+#            ('TTJets_DiLepton_ext_skim3l', 'Background', 0.9),
             ('TTJets_SingleLeptonFromT',        'Background', 0.1),
             ('TTJets_SingleLeptonFromTbar',     'Background', 0.1),
             ('TTJets_SingleLeptonFromT_ext',    'Background', 0.9),
@@ -357,14 +356,14 @@ def train_2d(fOutName, training, options):
             "MEM_TTZ := min(0,log(max(3.72e-44,MEM_TTLL)))",
             ]
 
-    outname = fOutName+'_'+training
+    outname = fOutName+'_'+training+'.root'
     train_single(allcuts, variables, dsets, outname, options)
 
 def main(args, options):
     global _treepath
     _treepath = options.treepath
     if 'MultiClassICHEP16' in options.training:
-        train_multiclass(args[0], options)
+        train_multiclass(args[0]+'.root', options)
         return
 
     if len(options.training):
