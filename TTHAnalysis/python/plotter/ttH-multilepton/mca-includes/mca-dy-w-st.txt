@@ -1,0 +1,9 @@
+DY      : DYJetsToLL_M10to50_LO: xsec  ; FillColor=ROOT.kCyan
+DY      : DYJetsToLL_M50_LO_ext_part1+DYJetsToLL_M50_LO_ext_part2+DYJetsToLL_M50_LO_ext_part3: xsec  ; FillColor=ROOT.kCyan
+WJets   : WJetsToLNu_LO  : xsec  ; FillColor=ROOT.kCyan+2
+SingleTop: T_tch_powheg: xsec  ; FillColor=ROOT.kGray+2, Label="Single T"
+SingleTop: TBar_tch_powheg: xsec  ; FillColor=ROOT.kGray+2, Label="Single T"
+SingleTop: TToLeptons_sch: xsec  ; FillColor=ROOT.kGray+2, Label="Single T"
+SingleTop: T_tWch_ext: xsec  ; FillColor=ROOT.kGray+2, Label="Single T"
+SingleTop: TBar_tWch_ext: xsec  ; FillColor=ROOT.kGray+2, Label="Single T"
+WW: WWTo2L2Nu: xsec  ; FillColor=ROOT.kGray+1
