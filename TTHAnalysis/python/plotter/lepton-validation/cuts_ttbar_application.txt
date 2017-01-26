@@ -1,6 +1,6 @@
-filters : hbheFilterNew25ns==1 && Flag_CSCTightHaloFilter==1 && Flag_eeBadScFilter==1
-trigger : $DATA{HLT_DoubleMu || HLT_BIT_HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v || HLT_BIT_HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v || HLT_BIT_HLT_Mu23_TrkIsoVVL_Ele8_CaloIdL_TrackIdL_IsoVL_v} $MC{1}
-lep2_pt10 : nLepGood10 == 2
+filters : Flag_HBHENoiseFilter && Flag_HBHENoiseIsoFilter && Flag_globalTightHalo2016Filter && Flag_EcalDeadCellTriggerPrimitiveFilter $DATA{&& Flag_eeBadScFilter}
+trigger : Triggers_ee || Triggers_mm || Triggers_em
+lep2_pt10 : nLepFO == 2
 pt2515: LepGood1_pt > 25 && LepGood2_pt > 15
 same-sign : LepGood1_charge*LepGood2_charge > 0
 lepMVA_appl: (LepGood1_mvaTTH>0.65) + (LepGood2_mvaTTH>0.65) == 1
