@@ -5,7 +5,7 @@ import copy
 import math
 
 class BDTv8_eventReco: # has to run on a recleaner with label _Recl
-    def __init__(self, weightfile_bloose, weightfile_btight, recllabel='Recl', selection = []):
+    def __init__(self, weightfile_bloose, weightfile_btight, weightfile_hj, weightfile_hjj, recllabel='Recl', selection = []):
 
         self.inputlabel = '_'+recllabel
         self.systsJEC = {0:""}#, 1:"_jecUp", -1:"_jecDown"}
@@ -14,7 +14,7 @@ class BDTv8_eventReco: # has to run on a recleaner with label _Recl
         if "/BDTv8_eventReco_C.so" not in ROOT.gSystem.GetLibraries():
             ROOT.gSystem.CompileMacro("%s/src/CMGTools/TTHAnalysis/macros/finalMVA/BDTv8_eventReco.C" % os.environ['CMSSW_BASE'],"kO");
 
-        self.run = ROOT.BDTv8_eventReco(weightfile_bloose,weightfile_btight)
+        self.run = ROOT.BDTv8_eventReco(weightfile_bloose,weightfile_btight,weightfile_hj,weightfile_hjj)
 
         self.branches = [
             "mvaValue",
@@ -27,6 +27,8 @@ class BDTv8_eventReco: # has to run on a recleaner with label _Recl
             "dR_lep_fromTop_bJet_fromLepTop",
             "dR_lep_fromTop_bJet_fromHadTop",
             "dR_lep_fromHig_bJet_fromLepTop",
+            "Hj_score",
+            "Hjj_score"
             ]
 
     def listBranches(self):
@@ -75,7 +77,10 @@ if __name__ == '__main__':
         def __init__(self, name):
             Module.__init__(self,name,None)
             self.sf = BDTv8_eventReco('../../data/kinMVA/tth/TMVAClassification_bloose_BDTG.weights.xml',
-                                      '../../data/kinMVA/tth/TMVAClassification_btight_BDTG.weights.xml')
+                                      '../../data/kinMVA/tth/TMVAClassification_btight_BDTG.weights.xml',
+                                      '../../data/kinMVA/tth/Hj_csv_BDTG.weights.xml',
+                                      '../../data/kinMVA/tth/Hjj_csv_BDTG.weights.xml',
+                                      )
         def analyze(self,ev):
             print "\nrun %6d lumi %4d event %d: leps %d" % (ev.run, ev.lumi, ev.evt, ev.nLepGood)
             print self.sf(ev)
