@@ -1,7 +1,7 @@
 #### Produce the mee histograms in lepton categories
 
 ```
-./chargeFlips/makeMEECatHistos.py -P treedir/ chargeFlips/mca-chargeflip-control.txt chargeFlips/cuts-chargeflip-control.txt --mcc ttH-multilepton/ttH_2lss3l_triggerdefs.txt
+./chargeFlips/makeMEECatHistos.py -P treedir/ chargeFlips/mca-chargeflip-control.txt chargeFlips/cuts-chargeflip-control.txt --mcc ttH-multilepton/ttH_2lss3l_triggerdefs.txt --mcc ttH-multilepton/lepchoice-ttH-FO.txt
 ```
 
 #### Run fits from the root file, for MC (D=0), and data (D=1):
