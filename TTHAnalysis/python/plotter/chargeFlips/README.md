@@ -4,32 +4,38 @@
 ./chargeFlips/makeMEECatHistos.py -P treedir/ chargeFlips/mca-chargeflip-control.txt chargeFlips/cuts-chargeflip-control.txt --mcc ttH-multilepton/ttH_2lss3l_triggerdefs.txt --mcc ttH-multilepton/lepchoice-ttH-FO.txt
 ```
 
-#### Run fits from the root file, for MC (D=0), and data (D=1):
+#### Run fits from the root file:
 
-First compile the `chargeMisIdProb.cc`:
+```
+python fitMassHistos.py meecathistos.root
+```
+
+This will fit all the mass peaks and write out two files with sets of equations to solve, one for data, one for MC.
+
+
+Then, compile the `chargeMisIdProb.cc`:
 
 ```
 LIBRARY_PATH=$LD_LIBRARY_PATH g++ -o chMidProb chargeMisIdProb.cc `root-config --glibs --cflags` -lMinuit -lMinuit2 -lRooFit -lRooFitCore -I$CMSSW_RELEASE_BASE/src/ -lPhysicsToolsTagAndProbe
 ```
 
-Run the combined fits:
+Run the combined fit on the equations files:
 
 ```
-./chMidProb -f meecathistos.root -D 0
-./chMidProb -f meecathistos.root -D 1
+./chMidProb -f equations_data.dat && ./chMidProb -f equations_DY.dat
 ```
 
-Then copy the resulting rootfiles to the `data/fakerate/` directory:
+The resulting root files, called `chMidProb_data.root` and `chMidProb_DY.root` contain the histograms with charge misid probability maps. Copy them to the common area.
 
 ```
-cp meecathistos_data.root $CMSSW_BASE/src/CMGTools/TTHAnalysis/data/fakerate/QF_data_el.root
-cp meecathistos_MC.root $CMSSW_BASE/src/CMGTools/TTHAnalysis/data/fakerate/QF_DY_el.root
+cp chMidIdProb_data.root $CMSSW_BASE/src/CMGTools/TTHAnalysis/data/fakerate/QF_data_el.root
+cp chMidIdProb_DY.root $CMSSW_BASE/src/CMGTools/TTHAnalysis/data/fakerate/QF_DY_el.root
 ```
 
 #### Make the 1D plots:
 
 ```
-./make1DPlots.py meecathistos_data.root meecathistos_MC.root
+./make1DPlots.py chMidProb_data.root chMidProb_DY.root
 ```
 
 
