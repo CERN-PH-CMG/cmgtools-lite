@@ -5,27 +5,28 @@ import copy
 import math
 
 class BDTv8_eventReco: # has to run on a recleaner with label _Recl
-    def __init__(self, weightfile, recllabel='Recl', selection = []):
+    def __init__(self, weightfile_bloose, weightfile_btight, recllabel='Recl', selection = []):
 
         self.inputlabel = '_'+recllabel
-        self.systsJEC = {0:"", 1:"_jecUp", -1:"_jecDown"}
+        self.systsJEC = {0:""}#, 1:"_jecUp", -1:"_jecDown"}
         self.selection = selection
 
         if "/BDTv8_eventReco_C.so" not in ROOT.gSystem.GetLibraries():
-            ROOT.gSystem.CompileMacro("%s/src/CMGTools/TTHAnalysis/macros/leptons/BDTv8_eventReco.C" % os.environ['CMSSW_BASE'],"kO");
+            ROOT.gSystem.CompileMacro("%s/src/CMGTools/TTHAnalysis/macros/finalMVA/BDTv8_eventReco.C" % os.environ['CMSSW_BASE'],"kO");
 
-        self.run = ROOT.BDTv8_eventReco(weightfile)
+        self.run = ROOT.BDTv8_eventReco(weightfile_bloose,weightfile_btight)
 
         self.branches = [
             "mvaValue",
             "bJet_fromLepTop_CSV",
             "bJet_fromHadTop_CSV",
-            "qJet1_fromW_fromHadTop_CSV",
             "HadTop_pT",
             "W_fromHadTop_mass",
             "HadTop_mass",
-            "W_fromHiggs_mass",
-            "LepTop_HadTop_dR",
+            "lep_ptRatio_fromTop_fromHig",
+            "dR_lep_fromTop_bJet_fromLepTop",
+            "dR_lep_fromTop_bJet_fromHadTop",
+            "dR_lep_fromHig_bJet_fromLepTop",
             ]
 
     def listBranches(self):
@@ -36,18 +37,13 @@ class BDTv8_eventReco: # has to run on a recleaner with label _Recl
 
         all_leps = [l for l in Collection(event,"LepGood","nLepGood")]
         nFO = getattr(event,"nLepFO"+self.inputlabel)
-        chosen = getattr(event,"iF"+self.inputlabel)
+        chosen = getattr(event,"iLepFO"+self.inputlabel)
         leps = [all_leps[chosen[i]] for i in xrange(nFO)]
 
         for var in self.systsJEC:
             _var = var
-            if not hasattr(event,"nJet"+self.systsJEC[var]): _var = 0
-            jetsc = [j for j in Collection(event,"Jet"+self.systsJEC[_var],"nJet"+self.systsJEC[_var])]
-            jetsd = [j for j in Collection(event,"DiscJet"+self.systsJEC[_var],"nDiscJet"+self.systsJEC[_var])]
-            _ijets_list = getattr(event,"iJSel"+self.inputlabel+self.systsJEC[_var])
-            _ijets = [ij for ij in _ijets_list]
-            jets = [ (jetsc[ij] if ij>=0 else jetsd[-ij-1]) for ij in _ijets]
-
+            if not hasattr(event,"nJetSel"+self.inputlabel+self.systsJEC[var]): _var = 0
+            jets = [j for j in Collection(event,"JetSel"+self.inputlabel+self.systsJEC[_var],"nJetSel"+self.inputlabel+self.systsJEC[_var])]
 
             res = [-100]*len(self.branches)
 
@@ -78,7 +74,8 @@ if __name__ == '__main__':
     class Tester(Module):
         def __init__(self, name):
             Module.__init__(self,name,None)
-            self.sf = BDTv8_eventReco(weightfile = '../../data/kinMVA/tth/TMVAClassification_BDTG_slimmed_v8.weights.xml')
+            self.sf = BDTv8_eventReco('../../data/kinMVA/tth/TMVAClassification_bloose_BDTG.weights.xml',
+                                      '../../data/kinMVA/tth/TMVAClassification_btight_BDTG.weights.xml')
         def analyze(self,ev):
             print "\nrun %6d lumi %4d event %d: leps %d" % (ev.run, ev.lumi, ev.evt, ev.nLepGood)
             print self.sf(ev)
