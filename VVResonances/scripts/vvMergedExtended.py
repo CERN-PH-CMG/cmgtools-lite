@@ -1,19 +1,22 @@
 #!/usr/bin/env python
-import os, sys, re, optparse,pickle,shutil
-
+import os
+import sys
+import re
+import optparse
+import pickle
+import shutil
 
 
 if __name__ == '__main__':
     parser = optparse.OptionParser()
 
-    (options,args) = parser.parse_args()
-    #define output dictionary
-    output=dict()
-    rootFile='vvTreeProducer/tree.root'
-
+    (options, args) = parser.parse_args()
+    # define output dictionary
+    output = dict()
+    rootFile = 'vvTreeProducer/tree.root'
 
     for directory in os.listdir("."):
-        if directory.find("ext")==-1:
+        if directory.find("ext") == -1:
             continue
 
         # also store extension number to allow for several extensions
@@ -25,8 +28,8 @@ if __name__ == '__main__':
         # also need to move the non-extension directory if it exists
         if os.path.isdir(dirOrig):
             os.system("mv {orig} {orig}_Chunk0".format(orig=dirOrig))
-        os.system("mv {orig}_ext{ext} {orig}_Chunk{ext}".format(orig=dirOrig, ext=extOrig))
-
+        os.system("mv {dir} {orig}_Chunk{ext}".format(
+            dir=directory, orig=dirOrig, ext=extOrig))
 
 
 os.system("haddChunks.py .")
