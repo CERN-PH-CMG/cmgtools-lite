@@ -26,11 +26,11 @@ nBJetTight25\b: nBJetTight25_Recl; AlsoData
 nBJetLoose40\b: nBJetLoose40_Recl; AlsoData
 nBJetMedium40\b: nBJetMedium40_Recl; AlsoData
 nBJetTight40\b: nBJetTight40_Recl; AlsoData
-mZ1\b: mZ1_Recl; AlsoData
-minMllAFAS\b: minMllAFAS_Recl; AlsoData
-minMllAFOS\b: minMllAFOS_Recl; AlsoData
-minMllAFSS\b: minMllAFSS_Recl; AlsoData
-minMllSFOS\b: minMllSFOS_Recl; AlsoData
+#mZ1\b: mZ1_Recl; AlsoData
+#minMllAFAS\b: minMllAFAS_Recl; AlsoData
+#minMllAFOS\b: minMllAFOS_Recl; AlsoData
+#minMllAFSS\b: minMllAFSS_Recl; AlsoData
+#minMllSFOS\b: minMllSFOS_Recl; AlsoData
 dTakingEra\b : if3(isData,(run>=275657)+(run>=276315)+(run>=276831)+(run>=277772)+(run>=278820)+(run>=280919),-1); AlsoData # 2016B==0,C,D,E,F,G,H
 elLooseFlatUnc_2lss\b : (1+(abs(LepGood_pdgId[iLepFO_Recl[0]])==11)*(0.01+(LepGood_pt[iLepFO_Recl[0]]>20)*0.02)+(abs(LepGood_pdgId[iLepFO_Recl[1]])==11)*(0.01+(LepGood_pt[iLepFO_Recl[1]]>20)*0.02)); AlsoData
 elLoosePtDepUnc_2lss_up\b : leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[0]],LepGood_pt[iLepFO_Recl[0]],LepGood_eta[iLepFO_Recl[0]],2,1)*leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[1]],LepGood_pt[iLepFO_Recl[1]],LepGood_eta[iLepFO_Recl[1]],2,1)/leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[0]],LepGood_pt[iLepFO_Recl[0]],LepGood_eta[iLepFO_Recl[0]],2)/leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[1]],LepGood_pt[iLepFO_Recl[1]],LepGood_eta[iLepFO_Recl[1]],2); AlsoData
