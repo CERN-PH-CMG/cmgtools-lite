@@ -44,15 +44,34 @@ cp chMidIdProb_DY.root $CMSSW_BASE/src/CMGTools/TTHAnalysis/data/fakerate/QF_DY_
 DY control region:
 
 ```
-python mcPlots.py chargeFlips/mca-chargeflip-closure.txt chargeFlips/cuts-chargeflip-closure-DY.txt chargeFlips/plots-chargeflip.txt --s2v --tree treeProducerSusyMultilepton --legendBorder=0 --legendFontSize 0.055 --legendWidth=0.35 --showRatio --maxRatioRange 0.2 3.2 --poisson -j 8 -f -P treedir/ -l 3.99 --pdir plotDir/ --neg --mcc ttH-multilepton/ttH_2lss3l_triggerdefs.txt
+python mcPlots.py \
+chargeFlips/mca-chargeflip-closure.txt \
+chargeFlips/cuts-chargeflip-closure-DY.txt \
+chargeFlips/plots-chargeflip.txt \
+--s2v --tree treeProducerSusyMultilepton --neg \
+--legendBorder=0 --legendFontSize 0.055 --legendWidth=0.35 \
+--showRatio --maxRatioRange 0.2 3.2 \
+--poisson -j 8 -f -P treedir/ -l 36.8 \
+--pdir plotDir/\
+--mcc ttH-multilepton/ttH_2lss3l_triggerdefs.txt
+--mcc ttH-multilepton/lepchoice-ttH-FO.txt
+ --Fs {P}/1_recleaner_250117_v1
 ```
 
 ttbar control region:
 
 ```
-python mcPlots.py chargeFlips/mca-chargeflip-closure.txt chargeFlips/cuts-chargeflip-closure-tt.txt chargeFlips/plots-chargeflip.txt --s2v --tree treeProducerSusyMultilepton --legendBorder=0 --legendFontSize 0.055 --legendWidth=0.35 --showRatio --maxRatioRange 0.2 3.2 --poisson -j 8 -f -P treedir/ -l 3.99 --pdir plotDir/ --neg --mcc ttH-multilepton/ttH_2lss3l_triggerdefs.txt
+python mcPlots.py \
+chargeFlips/mca-chargeflip-closure.txt \
+chargeFlips/cuts-chargeflip-closure-tt.txt \
+chargeFlips/plots-chargeflip.txt \
+--s2v --tree treeProducerSusyMultilepton --neg \
+--legendBorder=0 --legendFontSize 0.055 --legendWidth=0.35 \
+--showRatio --maxRatioRange 0.2 3.2 \
+--poisson -j 8 -f -P treedir/ -l 36.8 \
+--pdir plotDir/\
+--mcc ttH-multilepton/ttH_2lss3l_triggerdefs.txt
+--mcc ttH-multilepton/lepchoice-ttH-FO.txt
+ --Fs {P}/1_recleaner_250117_v1
 ```
-
-
-
 

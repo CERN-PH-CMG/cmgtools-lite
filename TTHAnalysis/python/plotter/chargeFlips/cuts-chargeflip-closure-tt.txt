@@ -13,5 +13,5 @@ tight-charge : LepGood1_tightCharge > 1 && LepGood2_tightCharge > 1
 conv-veto    : (LepGood1_convVeto && LepGood1_lostHits==0 && LepGood1_tightCharge>=2) && (LepGood2_convVeto && LepGood2_lostHits==0 && LepGood2_tightCharge>=2)
 same-sign    : LepGood_charge[iLepFO_Recl[0]]*LepGood_charge[iLepFO_Recl[1]] > 0
 
-njets        : nJet25_Recl>1 && nJet25_Recl<4
-nbtags       : nBJetLoose25_Recl>1 || nBJetMedium25_Recl >0
+njets        : nJet25>1 && nJet25<4
+nbtags       : nBJetLoose25>1 || nBJetMedium25>0
