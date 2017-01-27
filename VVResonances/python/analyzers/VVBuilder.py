@@ -243,9 +243,9 @@ class VVBuilder(Analyzer):
     def makeWV(self,event):
         output=[]
 
-        #loop on the leptons
-        looseLeptonsForW = filter(lambda x: (abs(x.pdgId())==11 and x.heepID) or (abs(x.pdgId())==13 and x.highPtIDIso ),event.selectedLeptons)
-        tightLeptonsForW = filter(lambda x: (abs(x.pdgId())==11 and x.heepID and x.pt()>120) or (abs(x.pdgId())==13 and x.highPtIDIso and x.pt()>53 and abs(x.eta())<2.1),event.selectedLeptons)
+        # loop on the leptons
+        looseLeptonsForW = filter(lambda x: (abs(x.pdgId()) == 11 and x.heepID) or (abs(x.pdgId()) == 13 and x.highPtIDIso), event.selectedLeptons)
+        tightLeptonsForW = filter(lambda x: (abs(x.pdgId()) == 11 and x.heepID and x.pt() > 55) or (abs(x.pdgId()) == 13 and x.highPtIDIso and x.pt() > 55), event.selectedLeptons)
 
 
 
@@ -292,7 +292,7 @@ class VVBuilder(Analyzer):
 
 
         #topology
-        satteliteJets = self.selectJets(event.jets,lambda x: x.pt()>30.0  and x.jetID('POG_PFID_Loose')  ,tightLeptonsForW,0.3,[bestJet],0.8)
+        satteliteJets = self.selectJets(event.jets,lambda x: x.pt()>30.0  and x.jetID('POG_PFID_Loose')  ,tightLeptonsForW,0.4,[bestJet],0.8)
         otherLeptons = self.cleanOverlap(looseLeptonsForW,[bestW.leg1])
         self.topology(VV,satteliteJets,otherLeptons)
 
@@ -343,7 +343,7 @@ class VVBuilder(Analyzer):
  #           return output
 
         #topology
-        satteliteJets = self.selectJets(event.jets,lambda x: x.pt()>30.0  and x.jetID('POG_PFID_Loose')  ,otherTightLeptons,0.3,[bestJet],0.8)
+        satteliteJets = self.selectJets(event.jets,lambda x: x.pt()>30.0  and x.jetID('POG_PFID_Loose')  ,otherTightLeptons,0.4,[bestJet],0.8)
         self.topology(VV,satteliteJets,otherTightLeptons)
         output.append(VV)
         return output
