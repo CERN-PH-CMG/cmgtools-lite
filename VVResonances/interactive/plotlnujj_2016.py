@@ -14,7 +14,7 @@ print 'Total weight:', total_weight
 
 weight_MC = "genWeight * puWeight"
 
-int_lumi = 12900
+int_lumi = 36814
 
 cuts = {}
 
@@ -44,7 +44,7 @@ cuts['lnujj_e_nob'] = findCut(categories, cat="lnujj", lep="e", reg="nob")
 
 
 # -> Command line
-analysis_dir = '/data/clange/ntuples/VV_20161203/'
+analysis_dir = '/data/clange/ntuples/VV_20170116/'
 tree_prod_name = ''
 
 samples_mc, samples_data, samples, all_samples, sampleDict = createSampleLists(analysis_dir, channel='WV', weight=weight_MC)
@@ -77,11 +77,11 @@ for cut_name in cuts:
     plots = createHistograms(cfg_example, verbose=False)
     for variable in variables:
         plot = plots[variable.name]
-        plot.Group('Diboson', ['WWTo1L1Nu2Q', 'WZTo1L1Nu2Q'])
+        plot.Group('Diboson', ['WWTo1L1Nu2Q'])  # ['WWTo1L1Nu2Q', 'WZTo1L1Nu2Q']
         # plot.Group('TT_W', ['TTJets_W'])
-        plot.Group('Top', ['TT_pow_ext3_W', 'TT_pow_ext3_nonW', 'TToLeptons_tch_powheg', 'TBarToLeptons_tch_powheg', 'TToLeptons_sch', 'TBar_tWch', 'T_tWch'])
+        plot.Group('Top', ['TTbar_W', 'TTbar_nonW', 'TToLeptons_sch'])  # ['TT_pow_ext3_W', 'TT_pow_ext3_nonW', 'TToLeptons_tch_powheg', 'TBarToLeptons_tch_powheg', 'TToLeptons_sch', 'TBar_tWch', 'T_tWch']
         # plot.Group('W', ['WJetsToLNu_HT100to200', 'WJetsToLNu_HT200to400', 'WJetsToLNu_HT400to600', 'WJetsToLNu_HT600to800', 'WJetsToLNu_HT800to1200', 'WJetsToLNu_HT1200to2500', 'WJetsToLNu_HT2500toInf'])
-        plot.Group('VJets', ['WJetsToLNu_HT100to200', 'WJetsToLNu_HT200to400', 'WJetsToLNu_HT400to600', 'WJetsToLNu_HT600to800', 'WJetsToLNu_HT800to1200', 'WJetsToLNu_HT1200to2500', 'WJetsToLNu_HT2500toInf', 'DYJetsToLL_M50_HT100to200', 'DYJetsToLL_M50_HT200to400', 'DYJetsToLL_M50_HT400to600', 'DYJetsToLL_M50_HT600toInf'])
+        plot.Group('VJets', ['WJetsToLNu_HT100to200', 'WJetsToLNu_HT200to400', 'WJetsToLNu_HT400to600', 'WJetsToLNu_HT600to800', 'WJetsToLNu_HT800to1200', 'WJetsToLNu_HT1200to2500', 'WJetsToLNu_HT2500toInf', 'DYJetsToLL_M50_HT100to200', 'DYJetsToLL_M50_HT200to400', 'DYJetsToLL_M50_HT400to600', 'DYJetsToLL_M50_HT600to800', 'DYJetsToLL_M50_HT800to1200', 'DYJetsToLL_M50_HT1200to2500', 'DYJetsToLL_M50_HT2500toInf'])
         plot.Group('QCD', ['QCD_HT2000toInf', 'QCD_HT1500to2000', 'QCD_HT1000to1500', 'QCD_HT700to1000', 'QCD_HT500to700'])  # , 'QCD_HT300to500'
         # plot.Group('TT_nonW', ['TTJets_nonW'])
         # plot.Group('Single t', ['TToLeptons_tch_powheg', 'TBarToLeptons_tch_powheg', 'TToLeptons_sch', 'TBar_tWch', 'T_tWch'])
@@ -89,5 +89,4 @@ for cut_name in cuts:
         plot.Group('data_obs', ['data_SingleMuon', 'data_SingleElectron', 'data_MET']) #, 'data_JetHT'
         #['WpWpJJ', 'ZGTo2LG', 'ZGJets', 'WGToLNuG', 'WGJets', 'WW', 'WWDouble', 'WWTo1L1Nu2Q', 'WWToLNuQQ_ext', 'WWToLNuQQ', 'WWTo2L2Nu', 'WZ', 'WZTo3LNu_amcatnlo', 'WZTo3LNu', 'WZTo2L2Q', 'WZTo1L1Nu2Q', 'WZTo1L3Nu', 'ZZ', 'VVTo2L2Nu', 'ZZTo4L', 'ZZTo2Q2Nu', 'ZZTo2L2Q', 'ZZTo2L2Nu'])
         HistDrawer.draw(plot, plot_dir='plots_lnujj/'+cut_name, channel=channel)
-
         # plot.WriteDataCard(filename='datacard_mm.root', dir='mm_' + cut_name)

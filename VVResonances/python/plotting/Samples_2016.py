@@ -6,8 +6,8 @@ from CMGTools.H2TauTau.proto.plotter.PlotConfigs import SampleCfg
 from CMGTools.VVResonances.plotting.HistCreator import setSumWeights
 
 
-from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv2 import TTJets, SingleTop, WJetsToLNuHT, QCDHT, DYJetsM50HT, DiBosons
-from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv2 import TT_pow_ext3 as TT_pow
+from CMGTools.RootTools.samples.samples_13TeV_RunIISummer16MiniAODv2 import SingleTop, WJetsToLNuHT, QCDHT, DYJetsM50HT, DiBosons
+from CMGTools.RootTools.samples.samples_13TeV_RunIISummer16MiniAODv2 import TT_pow
 from CMGTools.RootTools.samples.samples_13TeV_DATA2016 import *
 from CMGTools.VVResonances.samples.signal_13TeV_80X_reHLT import signalSamples
 
@@ -33,15 +33,18 @@ def createSampleLists(analysis_dir='samples/',
     dyJetsQCDCorrections["DYJetsToLL_M50_HT100to200"] = 1.588/dyJetsKFac
     dyJetsQCDCorrections["DYJetsToLL_M50_HT200to400"] = 1.438/dyJetsKFac
     dyJetsQCDCorrections["DYJetsToLL_M50_HT400to600"] = 1.494/dyJetsKFac
-    dyJetsQCDCorrections["DYJetsToLL_M50_HT600toInf"] = 1.139/dyJetsKFac
+    dyJetsQCDCorrections["DYJetsToLL_M50_HT600to800"] = 1.139/dyJetsKFac
+    dyJetsQCDCorrections["DYJetsToLL_M50_HT800to1200"] = 1.139/dyJetsKFac
+    dyJetsQCDCorrections["DYJetsToLL_M50_HT1200to2500"] = 1.139/dyJetsKFac
+    dyJetsQCDCorrections["DYJetsToLL_M50_HT2500toInf"] = 1.139/dyJetsKFac
 
     # explicit list of samples:
     wjetsSampleNames = ["WJetsToLNu_HT1200to2500", "WJetsToLNu_HT2500toInf", "WJetsToLNu_HT400to600", "WJetsToLNu_HT600to800", "WJetsToLNu_HT800to1200", 'WJetsToLNu_HT100to200', 'WJetsToLNu_HT200to400']
-    dyjetsSampleNames = ['DYJetsToLL_M50_HT100to200', 'DYJetsToLL_M50_HT200to400', 'DYJetsToLL_M50_HT400to600', 'DYJetsToLL_M50_HT600toInf']
-    ttjetsSampleNames = ["TT_pow_ext3"]
+    dyjetsSampleNames = ['DYJetsToLL_M50_HT100to200', 'DYJetsToLL_M50_HT200to400', 'DYJetsToLL_M50_HT400to600', 'DYJetsToLL_M50_HT600to800', 'DYJetsToLL_M50_HT800to1200', 'DYJetsToLL_M50_HT1200to2500', 'DYJetsToLL_M50_HT2500toInf']
+    ttjetsSampleNames = ["TTbar"]
     qcdSampleNames = ["QCD_HT1000to1500", "QCD_HT1500to2000", "QCD_HT2000toInf", "QCD_HT500to700", "QCD_HT700to1000"]
-    vvSampleNames = ['WWTo1L1Nu2Q', 'WZTo1L1Nu2Q']
-    singleTopSampleNames = ['TToLeptons_tch_powheg', 'TBarToLeptons_tch_powheg', 'TToLeptons_sch', 'TBar_tWch', 'T_tWch']
+    vvSampleNames = ['WWTo1L1Nu2Q']  # ['WWTo1L1Nu2Q', 'WZTo1L1Nu2Q']
+    singleTopSampleNames = ['TToLeptons_sch', 'TBar_tWch', 'T_tWch']  # ['TToLeptons_tch_powheg', 'TBarToLeptons_tch_powheg', 'TToLeptons_sch', 'TBar_tWch', 'T_tWch']
     topSamples = [TT_pow]
     if useTopMcatnlo:
         topSamples = [TTJets]
@@ -103,21 +106,41 @@ def createSampleLists(analysis_dir='samples/',
     samples_data = []
     if channel == 'WV':
         samples_data = [
-            SampleCfg(name='data_SingleMuon', dir_name='SingleMuon_Run2016B_PromptReco_v2', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
-            SampleCfg(name='data_SingleMuon', dir_name='SingleMuon_Run2016C_PromptReco_v2', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
-            SampleCfg(name='data_SingleMuon', dir_name='SingleMuon_Run2016D_PromptReco_v2', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
-            SampleCfg(name='data_SingleElectron', dir_name='SingleElectron_Run2016B_PromptReco_v2', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
-            SampleCfg(name='data_SingleElectron', dir_name='SingleElectron_Run2016C_PromptReco_v2', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
-            SampleCfg(name='data_SingleElectron', dir_name='SingleElectron_Run2016D_PromptReco_v2', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
-            SampleCfg(name='data_MET', dir_name='MET_Run2016B_PromptReco_v2', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
-            SampleCfg(name='data_MET', dir_name='MET_Run2016C_PromptReco_v2', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
-            SampleCfg(name='data_MET', dir_name='MET_Run2016D_PromptReco_v2', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
+            SampleCfg(name='data_SingleMuon', dir_name='SingleMuon_Run2016B_23Sep2016', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
+            SampleCfg(name='data_SingleMuon', dir_name='SingleMuon_Run2016C_23Sep2016', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
+            SampleCfg(name='data_SingleMuon', dir_name='SingleMuon_Run2016D_23Sep2016', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
+            SampleCfg(name='data_SingleMuon', dir_name='SingleMuon_Run2016E_23Sep2016', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
+            SampleCfg(name='data_SingleMuon', dir_name='SingleMuon_Run2016F_23Sep2016', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
+            SampleCfg(name='data_SingleMuon', dir_name='SingleMuon_Run2016G_23Sep2016', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
+            SampleCfg(name='data_SingleMuon', dir_name='SingleMuon_Run2016H_PromptReco_v2', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
+            SampleCfg(name='data_SingleMuon', dir_name='SingleMuon_Run2016H_PromptReco_v3', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
+            SampleCfg(name='data_SingleElectron', dir_name='SingleElectron_Run2016B_23Sep2016', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
+            SampleCfg(name='data_SingleElectron', dir_name='SingleElectron_Run2016C_23Sep2016', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
+            SampleCfg(name='data_SingleElectron', dir_name='SingleElectron_Run2016D_23Sep2016', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
+            SampleCfg(name='data_SingleElectron', dir_name='SingleElectron_Run2016E_23Sep2016', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
+            SampleCfg(name='data_SingleElectron', dir_name='SingleElectron_Run2016F_23Sep2016', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
+            SampleCfg(name='data_SingleElectron', dir_name='SingleElectron_Run2016G_23Sep2016', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
+            SampleCfg(name='data_SingleElectron', dir_name='SingleElectron_Run2016H_PromptReco_v2', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
+            SampleCfg(name='data_SingleElectron', dir_name='SingleElectron_Run2016H_PromptReco_v3', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
+            SampleCfg(name='data_MET', dir_name='MET_Run2016B_23Sep2016', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
+            SampleCfg(name='data_MET', dir_name='MET_Run2016C_23Sep2016', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
+            SampleCfg(name='data_MET', dir_name='MET_Run2016D_23Sep2016', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
+            SampleCfg(name='data_MET', dir_name='MET_Run2016E_23Sep2016', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
+            SampleCfg(name='data_MET', dir_name='MET_Run2016F_23Sep2016', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
+            SampleCfg(name='data_MET', dir_name='MET_Run2016G_23Sep2016', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
+            SampleCfg(name='data_MET', dir_name='MET_Run2016H_PromptReco_v2', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
+            SampleCfg(name='data_MET', dir_name='MET_Run2016H_PromptReco_v3', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
         ]
     else:
         samples_data = [
-            SampleCfg(name='data_JetHT', dir_name='JetHT_Run2016B_PromptReco_v2', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
-            SampleCfg(name='data_JetHT', dir_name='JetHT_Run2016C_PromptReco_v2', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
-            SampleCfg(name='data_JetHT', dir_name='JetHT_Run2016D_PromptReco_v2', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
+            SampleCfg(name='data_JetHT', dir_name='JetHT_Run2016B_23Sep2016', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
+            SampleCfg(name='data_JetHT', dir_name='JetHT_Run2016C_23Sep2016', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
+            SampleCfg(name='data_JetHT', dir_name='JetHT_Run2016D_23Sep2016', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
+            SampleCfg(name='data_JetHT', dir_name='JetHT_Run2016E_23Sep2016', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
+            SampleCfg(name='data_JetHT', dir_name='JetHT_Run2016F_23Sep2016', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
+            SampleCfg(name='data_JetHT', dir_name='JetHT_Run2016G_23Sep2016', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
+            SampleCfg(name='data_JetHT', dir_name='JetHT_Run2016H_PromptReco_v2', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
+            SampleCfg(name='data_JetHT', dir_name='JetHT_Run2016H_PromptReco_v3', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, is_data=True),
         ]
 
     # samples_WH = []
