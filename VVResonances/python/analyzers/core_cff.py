@@ -167,7 +167,7 @@ lepAna = cfg.Analyzer(
     # loose electron selection
     loose_electron_id     = "",
     loose_electron_pt     = 35.0,
-    loose_electron_eta    = 2.4,
+    loose_electron_eta    = 2.5,
     loose_electron_dxy    = 0.2,
     loose_electron_dz     = 0.2,
     loose_electron_lostHits = 1.0,
