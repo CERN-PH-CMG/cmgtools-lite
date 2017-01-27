@@ -8,20 +8,24 @@
 #include "TLorentzVector.h"
 #include "TMVA/Reader.h"
 #include <iostream>
+#include "TStopwatch.h"
 
 class BDTv8_eventReco_Jet {
  public:
   BDTv8_eventReco_Jet(){
     p4.SetXYZT(0,0,0,0);
     csv = -0.2;
+    qgl = -0.2;
   };
-  BDTv8_eventReco_Jet(float pt,float eta, float phi, float mass, float _csv){
+  BDTv8_eventReco_Jet(float pt,float eta, float phi, float mass, float _csv, float _qgl){
     p4.SetPtEtaPhiM(pt,eta,phi,mass);
     csv = std::max(float(-0.1),_csv);
+    qgl = std::max(float(-0.1),_qgl);
   };
   ~BDTv8_eventReco_Jet(){};
   TLorentzVector p4;
   float csv;
+  float qgl;
 };
 
 class BDTv8_eventReco_Lep {
@@ -49,8 +53,8 @@ class BDTv8_eventReco {
     delete TMVAReader_Hjj_;
     delete nulljet;
   };
-  void addJet(float pt,float eta, float phi, float mass, float csv){
-    jets.push_back(new BDTv8_eventReco_Jet(pt,eta,phi,mass,csv));
+  void addJet(float pt,float eta, float phi, float mass, float csv, float qgl){
+    jets.push_back(new BDTv8_eventReco_Jet(pt,eta,phi,mass,csv,qgl));
     if (csv>__BMEDIUM__WORKING__POINT__) nBMedium+=1;
   };
   void addLep(float pt,float eta, float phi, float mass){
@@ -93,6 +97,8 @@ class BDTv8_eventReco {
   float iv2_6;
 
   int nBMedium;
+
+  TStopwatch stopWatch;
 
 };
 
@@ -196,6 +202,8 @@ std::vector<float> BDTv8_eventReco::EvalMVA(){
     warn = true;
   }
 
+  if (warn) stopWatch.Start();
+
   std::sort(permlep.begin(),permlep.end());
   std::sort(permjet.begin(),permjet.end());
 
@@ -248,6 +256,9 @@ std::vector<float> BDTv8_eventReco::EvalMVA(){
 	Higgs : lep [0] + wjet [4] + wjet [5]
 
 	// does not test if just 2/3 or 4/5 are swapped
+
+	// top part depends only on lep[01], jet[0123]
+	// higgs part depends on everything
 
        */
 
@@ -319,7 +330,7 @@ std::vector<float> BDTv8_eventReco::EvalMVA(){
 	
 	iv1_1 = std::min(dr_lep0,dr_lep1);
 	iv1_2 = jet_fromHiggs->csv;
-	iv1_3 = 0.2;//jet_fromHiggs->qgl; /// TODO! DEBUG!
+	iv1_3 = jet_fromHiggs->qgl;
 	iv1_4 = std::max(dr_lep0,dr_lep1);
 	iv1_5 = jet_fromHiggs->p4.Pt();
 	
@@ -359,7 +370,7 @@ std::vector<float> BDTv8_eventReco::EvalMVA(){
   
   //  std::cout << "done " << nperm << " permutation from sizes " << permjet.size() << " " << permlep.size() << std::endl;
 
-  if (warn) std::cout << "done." << std::endl;
+  if (warn) std::cout << "done in " << stopWatch.RealTime() << " s" << std::endl;
 
   delete[] _permjet;
 

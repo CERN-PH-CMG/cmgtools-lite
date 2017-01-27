@@ -94,3 +94,14 @@ MODULES.append( ('eventVars', lambda : EventVars2LSS('','Recl')) )
 
 from CMGTools.TTHAnalysis.tools.kinMVA_2D_2lss_3l import KinMVA_2D_2lss_3l
 MODULES.append( ('kinMVA_2D_2lss_3l', lambda : KinMVA_2D_2lss_3l(os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/kinMVA/tth/%s_BDTG.weights.xml", skip_BDTv8 = True, skip_MEM = True)) )
+
+from CMGTools.TTHAnalysis.tools.BDTv8_eventReco_cpp import BDTv8_eventReco
+MODULES.append( ('BDTv8_Hj', lambda : BDTv8_eventReco(os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/TMVAClassification_bloose_BDTG.weights.xml',
+                                                      os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/TMVAClassification_btight_BDTG.weights.xml',
+                                                      os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/Hj_csv_BDTG.weights.xml',
+                                                      os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/Hjj_csv_BDTG.weights.xml',
+                                                      selection = [
+                lambda leps,jets,event : event.nLepFO_Recl>=2 and event.nJetSel_Recl >= 4 and (event.nBJetLoose25_Recl >= 2 or event.nBJetMedium25_Recl >= 1),
+                lambda leps,jets,event : leps[0].conePt>20 and leps[1].conePt>10 and leps[0].charge*leps[1].charge>0,
+                ]
+                                                      )) )

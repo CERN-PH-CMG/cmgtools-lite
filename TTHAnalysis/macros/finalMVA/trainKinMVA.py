@@ -355,6 +355,11 @@ def train_2d(fOutName, training, options):
             "MEM_TTW := min(0,log(max(3.72e-44,MEM_TTW)))",
             "MEM_TTZ := min(0,log(max(3.72e-44,MEM_TTLL)))",
             ]
+    if 'hj_value' in training:
+        variables += [
+            'BDTv8_eventReco_Hj_score := max(-1.1,BDTv8_eventReco_Hj_score)',
+            'BDTv8_eventReco_Hjj_score := max(-1.1,BDTv8_eventReco_Hjj_score)',
+            ]
 
     outname = fOutName+'_'+training+'.root'
     train_single(allcuts, variables, dsets, outname, options)

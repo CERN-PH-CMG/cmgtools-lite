@@ -12,7 +12,7 @@ class fastCombinedObjectRecleaner:
         self.vars = ["pt","eta","phi","mass"]
         self.vars_leptons = ["pdgId"]
         self.vars_taus = ["idMVAdR03"]
-        self.vars_jets = ["btagCSV"]
+        self.vars_jets = ["btagCSV","qgl"]
 
         self.cleanTausWithLooseLeptons = cleanTausWithLooseLeptons
         self.cleanJetsWithFOTaus = cleanJetsWithFOTaus
