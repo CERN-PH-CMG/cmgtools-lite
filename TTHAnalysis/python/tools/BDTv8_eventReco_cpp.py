@@ -12,7 +12,8 @@ class BDTv8_eventReco: # has to run on a recleaner with label _Recl
         self.selection = selection
 
         if "/BDTv8_eventReco_C.so" not in ROOT.gSystem.GetLibraries():
-            ROOT.gSystem.CompileMacro("%s/src/CMGTools/TTHAnalysis/macros/finalMVA/BDTv8_eventReco.C" % os.environ['CMSSW_BASE'],"kO");
+#            ROOT.gSystem.CompileMacro("%s/src/CMGTools/TTHAnalysis/macros/finalMVA/BDTv8_eventReco.C" % os.environ['CMSSW_BASE'],"kO"); ### not exactly equivalent
+            ROOT.gSystem.CompileMacro("%s/src/CMGTools/TTHAnalysis/macros/finalMVA/BDTv8_eventReco_fast.C" % os.environ['CMSSW_BASE'],"kO");
 
         self.run = ROOT.BDTv8_eventReco(weightfile_bloose,weightfile_btight,weightfile_hj,weightfile_hjj)
 
