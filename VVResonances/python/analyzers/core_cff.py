@@ -39,8 +39,8 @@ triggerAna = cfg.Analyzer(
 triggerFlagsAna = cfg.Analyzer(
     TriggerBitAnalyzer, name="TriggerFlags",
 
-    processName = 'HLT2',
-    fallbackProcessName = 'HLT',
+    processName = 'HLT',
+    fallbackProcessName = 'HLT2',
     unrollbits = True,
     triggerBits = {
     }
