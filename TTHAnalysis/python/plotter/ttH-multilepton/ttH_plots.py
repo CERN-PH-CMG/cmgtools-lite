@@ -76,6 +76,9 @@ if __name__ == '__main__':
             x = x.replace("--xP 'nT_.*'","")
         if '_2fo' in torun: x = add(x,"-A alwaystrue 2FO 'LepGood1_isLepTight+LepGood2_isLepTight==0'")
         if '_relax' in torun: x = add(x,'-X ^TT ')
+        if '_extr' in torun:
+            x = x.replace('mca-2lss-mc.txt','mca-2lss-mc-sigextr.txt')
+            x = fulltrees(x)
         if '_data' in torun: x = x.replace('mca-2lss-mc.txt','mca-2lss-mcdata.txt')
         if '_table' in torun:
             x = x.replace('mca-2lss-mc.txt','mca-2lss-mc-table.txt')
@@ -134,6 +137,9 @@ if __name__ == '__main__':
             x = add(x,"-A alwaystrue 1FO 'LepGood1_isLepTight+LepGood2_isLepTight+LepGood3_isLepTight==2'")
             x = x.replace("--xP 'nT_.*'","")
         if '_relax' in torun: x = add(x,'-X ^TTT ')
+        if '_extr' in torun:
+            x = x.replace('mca-3l-mc.txt','mca-3l-mc-sigextr.txt')
+            x = fulltrees(x)
         if '_data' in torun: x = x.replace('mca-3l-mc.txt','mca-3l-mcdata.txt')
         if '_frdata' in torun:
             if '_blinddata' in torun:
