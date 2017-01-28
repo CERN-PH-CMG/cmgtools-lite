@@ -124,6 +124,7 @@ class VVBuilder(Analyzer):
             softDropJetUnCorr = self.copyLV(interface.get(False))[0]
             substructure.softDropJetMassCor = self.getPUPPIMassWeight(softDropJetUnCorr)
             substructure.softDropJetMassBare = softDropJetUnCorr.mass()
+            substructure.softDropJetMassL2L3 = substructure.softDropJet.mass()
 
         interface.makeSubJets(False,0,2)
         substructure.softDropSubjets = self.copyLV(interface.get(False))
