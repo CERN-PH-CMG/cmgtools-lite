@@ -29,7 +29,9 @@ class BDTv8_eventReco: # has to run on a recleaner with label _Recl
             "dR_lep_fromTop_bJet_fromHadTop",
             "dR_lep_fromHig_bJet_fromLepTop",
             "Hj_score",
-            "Hjj_score"
+            "Hjj_score",
+            "H_Wmass",
+            "H_mass",
             ]
 
     def listBranches(self):

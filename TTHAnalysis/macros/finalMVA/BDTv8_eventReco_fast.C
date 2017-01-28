@@ -67,6 +67,8 @@ class BDTv8_eventReco {
   void clear();
   void Init(std::string weight_file_name_bloose, std::string weight_file_name_btight, std::string weight_file_name_Hj, std::string weight_file_name_Hjj);
   std::vector<float> EvalMVA();
+  std::vector<float> CalcHadTopTagger(char* _permlep, char* _x);
+  std::vector<float> CalcHjTagger(char* _permlep, char* _x, std::vector<int> &permjet);
 
   std::vector<BDTv8_eventReco_Jet*> jets;
   std::vector<BDTv8_eventReco_Obj*> leps;
@@ -107,6 +109,14 @@ class BDTv8_eventReco {
   int nBMedium;
 
   TStopwatch stopWatch;
+
+  std::unordered_map<std::string,float> done_perms;
+  std::unordered_map<std::string,std::pair<float,float> > done_perms_Hj;
+  std::unordered_map<std::string,std::pair<float,float> > done_jetcomb;
+
+  const uint warn_n_jets = 10;
+  const uint max_n_jets = 11;
+  const uint nOutputVariables = 14;
 
 };
 
@@ -183,6 +193,10 @@ void BDTv8_eventReco::clear(){
 
   nBMedium = 0;
 
+  done_perms.clear();
+  done_perms_Hj.clear();
+  done_jetcomb.clear();
+
 }
 
 std::pair<float,float> BDTv8_eventReco::CalcJetComb(std::unordered_map<std::string,std::pair<float,float> > *done_jetcomb, int i1, int i2, int i3){
@@ -200,6 +214,7 @@ std::pair<float,float> BDTv8_eventReco::CalcJetComb(std::unordered_map<std::stri
   return res;
 }
 
+
 std::vector<float> BDTv8_eventReco::EvalMVA(){
 
   std::vector<int> permlep;
@@ -210,8 +225,6 @@ std::vector<float> BDTv8_eventReco::EvalMVA(){
   else if (permjet.size()==8) for (int i=0; i<2; i++) permjet.push_back(-1-i);
   else permjet.push_back(-1);
 
-  uint warn_n_jets = 10;
-  uint max_n_jets = 11;
   bool warn = false;
   if (permjet.size()>=warn_n_jets && permlep.size()>=2) {
     std::cout << "Warning: large number of jets: " << permjet.size() << " (" << jets.size() << " non-null) ... " ;
@@ -242,29 +255,16 @@ std::vector<float> BDTv8_eventReco::EvalMVA(){
   uint nlep = _permlep ? permlep.size() : 0;
   uint njet = _permjet ? permjet.size() : 0;
 
-  float max_mva_value = -99;
-  float max_mva_value_Hjj = -99;
-  float max_mva_value_Hj = -99;
-
-  uint nOutputVariables = 12;
-
-  float *best_permutation = new float[nOutputVariables];
-  std::fill_n(best_permutation,nOutputVariables,-99);
+  std::vector<float> best_permutation_hadTop(1,-99);
+  std::vector<float> best_permutation_Hj(1,-99);
+  std::vector<float> best_permutation_Hjj(2,-99);
   
-  std::unordered_map<std::string,float> done_perms;
-  std::unordered_map<std::string,std::pair<float,float> > done_perms_Hj;
-  std::unordered_map<std::string,std::pair<float,float> > done_jetcomb;
-
   do {
-
-    BDTv8_eventReco_Obj *lep_fromTop = leps[((int)(_permlep[0]))-max_n_jets-10];
-    BDTv8_eventReco_Obj *lep_fromHig = leps[((int)(_permlep[1]))-max_n_jets-10];
     
     do {
 
-      char _xc[6];
-      for (int i=0; i<6; i++) _xc[i] = (int(_permjet[i])<0) ? -1 : _permjet[i];
-      std::string _x(_xc,_xc+6);
+      char _x[6];
+      for (int i=0; i<6; i++) _x[i] = (int(_permjet[i])<0) ? -1 : _permjet[i];
 
       /*
 
@@ -278,8 +278,37 @@ std::vector<float> BDTv8_eventReco::EvalMVA(){
 	// higgs part depends on everything
 
        */
+ 
+      std::vector<float> top = CalcHadTopTagger(_permlep,_x);
+      if (top[0] > best_permutation_hadTop[0]){
+	best_permutation_hadTop = top;
+      }
 
-      // calculate hadTop part
+      std::vector<float> Hj = CalcHjTagger(_permlep,_x,permjet);
+      if (Hj[0]>best_permutation_Hj[0]){
+	best_permutation_Hj = Hj;
+      }
+      if (Hj[1]>best_permutation_Hjj[1]){
+	best_permutation_Hjj = Hj;
+      }
+         
+    } while (std::next_permutation(_permjet,_permjet+njet));
+  } while (std::next_permutation(_permlep,_permlep+nlep));
+  
+  if (warn) std::cout << "done in " << stopWatch.RealTime() << " s" << std::endl;
+
+  if (_permlep) delete[] _permlep;
+  if (_permjet) delete[] _permjet;
+
+  std::vector<float> output(best_permutation_hadTop);
+  output.push_back(best_permutation_Hj[0]);
+  output.insert(output.end(),best_permutation_Hjj.begin()+1,best_permutation_Hjj.end());
+  assert(output.size()==nOutputVariables);
+  return output;
+
+};
+
+std::vector<float> BDTv8_eventReco::CalcHadTopTagger(char* _permlep, char* _x){
 
       char _this_hadTop[6]={_permlep[0],_permlep[1],_x[0],_x[1],std::max(_x[2],_x[3]),std::min(_x[2],_x[3])};
       std::string this_hadTop(_this_hadTop,_this_hadTop+6);
@@ -287,28 +316,31 @@ std::vector<float> BDTv8_eventReco::EvalMVA(){
 
       if (done_perms.find(this_hadTop) != done_perms.end()){
 	this_hadTop_value = done_perms[this_hadTop];
+	return std::vector<float>(1,this_hadTop_value);
       }
       else {
 
+	BDTv8_eventReco_Obj *lep_fromTop = leps[((int)(_permlep[0]))-max_n_jets-10];
+	BDTv8_eventReco_Obj *lep_fromHig = leps[((int)(_permlep[1]))-max_n_jets-10];
 	BDTv8_eventReco_Jet *bjet_fromHadTop = ((int)(_x[0])>=0) ? jets[(int)(_x[0])] : nulljet;
 	BDTv8_eventReco_Jet *bjet_fromLepTop = ((int)(_x[1])>=0) ? jets[(int)(_x[1])] : nulljet;
 	//      BDTv8_eventReco_Jet *wjet1_fromHadTop = ((int)(_x[2])>=0) ? jets[(int)(_x[2])] : nulljet;
 	//      BDTv8_eventReco_Jet *wjet2_fromHadTop = ((int)(_x[3])>=0) ? jets[(int)(_x[3])] : nulljet;
       
-	if (bjet_fromHadTop==nulljet && bjet_fromLepTop==nulljet) continue;
-	if (nBMedium>1 && std::min(bjet_fromHadTop->csv,bjet_fromLepTop->csv)<0.8) continue;
-	if (bjet_fromHadTop->csv>0 && bjet_fromHadTop->csv<0.46) continue;
-	if (bjet_fromLepTop->csv>0 && bjet_fromLepTop->csv<0.46) continue;
-	if (std::max(bjet_fromHadTop->csv,bjet_fromLepTop->csv)<0.80 && std::min(bjet_fromHadTop->csv,bjet_fromLepTop->csv)<0.46) continue;
+	if (bjet_fromHadTop==nulljet && bjet_fromLepTop==nulljet) return std::vector<float>(1,this_hadTop_value);
+	if (nBMedium>1 && std::min(bjet_fromHadTop->csv,bjet_fromLepTop->csv)<0.8) return std::vector<float>(1,this_hadTop_value);
+	if (bjet_fromHadTop->csv>0 && bjet_fromHadTop->csv<0.46) return std::vector<float>(1,this_hadTop_value);
+	if (bjet_fromLepTop->csv>0 && bjet_fromLepTop->csv<0.46) return std::vector<float>(1,this_hadTop_value);
+	if (std::max(bjet_fromHadTop->csv,bjet_fromLepTop->csv)<0.80 && std::min(bjet_fromHadTop->csv,bjet_fromLepTop->csv)<0.46) return std::vector<float>(1,this_hadTop_value);
 
 	auto hadTop_W = CalcJetComb(&done_jetcomb,_x[2],_x[3]);
 	auto hadTop = CalcJetComb(&done_jetcomb,_x[2],_x[3],_x[0]);
 
-	if (hadTop_W.second > 120) continue;
-	if (hadTop.second > 220) continue;
+	if (hadTop_W.second > 120) return std::vector<float>(1,this_hadTop_value);
+	if (hadTop.second > 220) return std::vector<float>(1,this_hadTop_value);
 
 	auto lepTop = lep_fromTop->p4 + bjet_fromLepTop->p4;
-	if (lepTop.M() > 180) continue;
+	if (lepTop.M() > 180) return std::vector<float>(1,this_hadTop_value);
 
 	bJet_fromLepTop_CSV_var = bjet_fromLepTop->csv;
 	bJet_fromHadTop_CSV_var = bjet_fromHadTop->csv;
@@ -323,106 +355,101 @@ std::vector<float> BDTv8_eventReco::EvalMVA(){
 	this_hadTop_value = TMVAReader_[(nBMedium>1)]->EvaluateMVA( "BDTG method" );
       	done_perms[this_hadTop] = this_hadTop_value;
 
-      }
-
-      if (this_hadTop_value >= max_mva_value){
-
-	max_mva_value = this_hadTop_value;
-
-	best_permutation[0] = max_mva_value;
-	best_permutation[1] = bJet_fromLepTop_CSV_var;
-	best_permutation[2] = bJet_fromHadTop_CSV_var;
-	best_permutation[3] = HadTop_pT_var;
-	best_permutation[4] = W_fromHadTop_mass_var;
-	best_permutation[5] = HadTop_mass_var;
-	best_permutation[6] = lep_ptRatio_fromTop_fromHig_var;
-	best_permutation[7] = dR_lep_fromTop_bJet_fromLepTop_var;
-	best_permutation[8] = dR_lep_fromTop_bJet_fromHadTop_var;
-	best_permutation[9] = dR_lep_fromHig_bJet_fromLepTop_var;
-	
-
-	char _this_Hj[4]={_permlep[0],_permlep[1],std::max(_x[4],_x[5]),std::min(_x[4],_x[5])};
-	std::string this_Hj(_this_Hj,_this_Hj+4);
-	std::pair<float,float> this_Hj_values =  std::pair<float,float>(-99,-99);
-
-	if (done_perms_Hj.find(this_Hj) != done_perms_Hj.end()){
-	  this_Hj_values = done_perms_Hj[this_Hj];
-	}
-	else {
-
-	  /////////// Higgs tagger
-
-	  BDTv8_eventReco_Jet *wjet1_fromHiggs = ((int)(_x[4])>=0) ? jets[(int)(_x[4])] : nulljet;
-	  BDTv8_eventReco_Jet *wjet2_fromHiggs = ((int)(_x[5])>=0) ? jets[(int)(_x[5])] : nulljet;
-	  auto higgs_W = CalcJetComb(&done_jetcomb,_x[4],_x[5]);
-
-	  float Hj_value[2] = {-99,-99};
-	  float Hjj_value = -99;
-      
-	  for (int i=0; i<2; i++){
-	    auto jet_fromHiggs = (i==0) ? wjet1_fromHiggs : wjet2_fromHiggs;
-	    if (jet_fromHiggs==nulljet) continue;
-	
-	    float dr_lep0 = dR(lep_fromTop,jet_fromHiggs);
-	    float dr_lep1 = dR(lep_fromHig,jet_fromHiggs);
-	
-	    iv1_1 = std::min(dr_lep0,dr_lep1);
-	    iv1_2 = jet_fromHiggs->csv;
-	    iv1_3 = jet_fromHiggs->qgl;
-	    iv1_4 = std::max(dr_lep0,dr_lep1);
-	    iv1_5 = jet_fromHiggs->p4.Pt();
-	
-	    Hj_value[i] = TMVAReader_Hj_->EvaluateMVA("BDTG method");
-	
-	  }
-
-	  if (wjet1_fromHiggs!=nulljet && wjet2_fromHiggs!=nulljet){
-	    auto jj = (wjet1_fromHiggs->p4+wjet2_fromHiggs->p4);
-	    iv2_1 = std::min((jj+lep_fromTop->p4).M(),(jj+lep_fromHig->p4).M());
-	    iv2_2 = Hj_value[0]+Hj_value[1];
-	    iv2_3 = dR(wjet1_fromHiggs,wjet2_fromHiggs);
-	    std::vector<float> drs;
-	    for (auto i : permjet) {
-	      if (i<0) continue;
-	      if (i==(int)(_x[4]) || i==(int)(_x[5])) continue;
-	      drs.push_back(deltaR(jj.eta(),jj.phi(),jets[i]->eta(),jets[i]->phi()));
-	    }
-	    std::sort(drs.begin(),drs.end());
-	    iv2_4 = drs.at(0);
-	    iv2_5 = higgs_W.second;
-	    iv2_6 = drs.at(0)/drs.at(drs.size()-1);
-	
-	    Hjj_value = TMVAReader_Hjj_->EvaluateMVA("BDTG method");
-	  }
-
-	  this_Hj_values =  std::pair<float,float>(std::max(Hj_value[0],Hj_value[1]),Hjj_value);
-	  done_perms_Hj[this_Hj] = this_Hj_values;
-
-	}
-
-	max_mva_value_Hj = std::max(this_Hj_values.first,max_mva_value_Hj);
-	max_mva_value_Hjj = std::max(this_Hj_values.second,max_mva_value_Hjj);
-
-	best_permutation[10] = max_mva_value_Hj;
-	best_permutation[11] = max_mva_value_Hjj;
+	std::vector<float> output;
+	output.push_back(this_hadTop_value);
+	output.push_back(bJet_fromLepTop_CSV_var);
+	output.push_back(bJet_fromHadTop_CSV_var);
+	output.push_back(HadTop_pT_var);
+	output.push_back(W_fromHadTop_mass_var);
+	output.push_back(HadTop_mass_var);
+	output.push_back(lep_ptRatio_fromTop_fromHig_var);
+	output.push_back(dR_lep_fromTop_bJet_fromLepTop_var);
+	output.push_back(dR_lep_fromTop_bJet_fromHadTop_var);
+	output.push_back(dR_lep_fromHig_bJet_fromLepTop_var);
+	return output;
 
       }
-     
-    } while (std::next_permutation(_permjet,_permjet+njet));
-  } while (std::next_permutation(_permlep,_permlep+nlep));
-  
-  if (warn) std::cout << "done in " << stopWatch.RealTime() << " s" << std::endl;
 
-  if (_permlep) delete[] _permlep;
-  if (_permjet) delete[] _permjet;
+}
+
+
+std::vector<float> BDTv8_eventReco::CalcHjTagger(char* _permlep, char* _x, std::vector<int> &permjet){
+
+  BDTv8_eventReco_Obj *lep_fromTop = leps[((int)(_permlep[0]))-max_n_jets-10];
+  BDTv8_eventReco_Obj *lep_fromHig = leps[((int)(_permlep[1]))-max_n_jets-10];
+
+  char _this_Hj[4]={_permlep[0],_permlep[1],std::max(_x[4],_x[5]),std::min(_x[4],_x[5])};
+  std::string this_Hj(_this_Hj,_this_Hj+4);
+  std::pair<float,float> this_Hj_values =  std::pair<float,float>(-99,-99);
 
   std::vector<float> output;
-  output.assign(best_permutation,best_permutation+nOutputVariables);
-  delete[] best_permutation;
+
+  if (done_perms_Hj.find(this_Hj) != done_perms_Hj.end()){
+    this_Hj_values = done_perms_Hj[this_Hj];
+    output.push_back(this_Hj_values.first);
+    output.push_back(this_Hj_values.second);
+  }
+  else {
+
+    /////////// Higgs tagger
+
+    BDTv8_eventReco_Jet *wjet1_fromHiggs = ((int)(_x[4])>=0) ? jets[(int)(_x[4])] : nulljet;
+    BDTv8_eventReco_Jet *wjet2_fromHiggs = ((int)(_x[5])>=0) ? jets[(int)(_x[5])] : nulljet;
+    auto higgs_W = CalcJetComb(&done_jetcomb,_x[4],_x[5]);
+
+    float Hj_value[2] = {-99,-99};
+    float Hjj_value = -99;
+    float H_Wmass = -99;
+    float H_mass = -99;
+      
+    for (int i=0; i<2; i++){
+      auto jet_fromHiggs = (i==0) ? wjet1_fromHiggs : wjet2_fromHiggs;
+      if (jet_fromHiggs==nulljet) continue;
+	
+      float dr_lep0 = dR(lep_fromTop,jet_fromHiggs);
+      float dr_lep1 = dR(lep_fromHig,jet_fromHiggs);
+	
+      iv1_1 = std::min(dr_lep0,dr_lep1);
+      iv1_2 = jet_fromHiggs->csv;
+      iv1_3 = jet_fromHiggs->qgl;
+      iv1_4 = std::max(dr_lep0,dr_lep1);
+      iv1_5 = jet_fromHiggs->p4.Pt();
+	
+      Hj_value[i] = TMVAReader_Hj_->EvaluateMVA("BDTG method");
+	
+    }
+
+    if (wjet1_fromHiggs!=nulljet && wjet2_fromHiggs!=nulljet){
+      auto jj = (wjet1_fromHiggs->p4+wjet2_fromHiggs->p4);
+      H_Wmass = jj.M();
+      H_mass = (jj+lep_fromHig->p4).M();
+      iv2_1 = std::min(float((jj+lep_fromTop->p4).M()),H_mass);
+      iv2_2 = Hj_value[0]+Hj_value[1];
+      iv2_3 = dR(wjet1_fromHiggs,wjet2_fromHiggs);
+      std::vector<float> drs;
+      for (auto i : permjet) {
+	if (i<0) continue;
+	if (i==(int)(_x[4]) || i==(int)(_x[5])) continue;
+	drs.push_back(deltaR(jj.eta(),jj.phi(),jets[i]->eta(),jets[i]->phi()));
+      }
+      std::sort(drs.begin(),drs.end());
+      iv2_4 = drs.at(0);
+      iv2_5 = higgs_W.second;
+      iv2_6 = drs.at(0)/drs.at(drs.size()-1);
+
+      Hjj_value = TMVAReader_Hjj_->EvaluateMVA("BDTG method");
+    }
+
+    this_Hj_values =  std::pair<float,float>(std::max(Hj_value[0],Hj_value[1]),Hjj_value);
+    done_perms_Hj[this_Hj] = this_Hj_values;
+
+    output.push_back(std::max(Hj_value[0],Hj_value[1]));
+    output.push_back(Hjj_value);
+    output.push_back(H_Wmass);
+    output.push_back(H_mass);
+
+  }
+
   return output;
 
-};
-
-
-
-
+}
