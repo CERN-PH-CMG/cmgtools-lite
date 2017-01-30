@@ -80,7 +80,11 @@ class MCAnalysis:
                     if k not in extra: extra[k] = v
             if len(field) <= 1: continue
             if "SkipMe" in extra and extra["SkipMe"] == True and not options.allProcesses: continue
-            if 'PostFix' in extra: field[0]+=extra['PostFix']
+            if 'PostFix' in extra:
+                hasPlus = (field[0][-1]=='+')
+                if hasPlus: field[0] = field[0][:-1]
+                field[0] += extra['PostFix']
+                if hasPlus: field[0]+='+'
             signal = False
             pname = field[0]
             if pname[-1] == "+": 
