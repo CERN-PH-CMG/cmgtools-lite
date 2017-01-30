@@ -18,7 +18,8 @@ addPlotMakerOptions(parser)
 options.tree = 'treeProducerSusyMultilepton'
 # options.lumi = 0.2092
 # options.lumi = 0.83231
-options.lumi = 2.26
+# options.lumi = 2.26
+options.lumi = 36.8
 
 try:
     print "Processing %s" % args[1]
@@ -39,13 +40,14 @@ def makeLeptonCategories():
     # etabins = [(0,0.8), (0.8,1.479), (1.479,2.5)]
     allbins = list(product(ptbins,etabins))
 
-    ptcut  = ("LepGood_pt[{index}]>={ptlo}&&"
-              "LepGood_pt[{index}]<{pthi}")
-    etacut = ("abs(LepGood_eta[{index}])>={etalo}&&"
-              "abs(LepGood_eta[{index}])<{etahi}")
+    ptcut  = ("LepGood_pt[iLepFO_Recl[{index}]]>={ptlo}&&"
+              "LepGood_pt[iLepFO_Recl[{index}]]<{pthi}")
+    etacut = ("abs(LepGood_eta[iLepFO_Recl[{index}]])>={etalo}&&"
+              "abs(LepGood_eta[iLepFO_Recl[{index}]])<{etahi}")
 
     categories = []
     for n,((ptlo1,pthi1),(etalo1,etahi1)) in enumerate(allbins):
+        if ptlo1 < 25: continue
         for (ptlo2,pthi2),(etalo2,etahi2) in allbins[n:]:
             cut = '({}&&{}&&{}&&{})||({}&&{}&&{}&&{})'.format(
                              ptcut.format(index=0,ptlo=ptlo1,pthi=pthi1),
@@ -67,8 +69,8 @@ def makeLeptonCategories():
 
 def makePlotAndCutSpecs():
     lep_categories = makeLeptonCategories()
-    cut_SS = "(LepGood_charge[0]*LepGood_charge[1]>0)"
-    cut_OS = "(LepGood_charge[0]*LepGood_charge[1]<0)"
+    cut_SS = "(LepGood_charge[iLepFO_Recl[0]]*LepGood_charge[iLepFO_Recl[1]]>0)"
+    cut_OS = "(LepGood_charge[iLepFO_Recl[0]]*LepGood_charge[iLepFO_Recl[1]]<0)"
 
     allplots = []
 
