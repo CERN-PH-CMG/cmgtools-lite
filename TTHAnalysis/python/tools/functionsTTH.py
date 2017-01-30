@@ -105,3 +105,34 @@ MODULES.append( ('BDTv8_Hj', lambda : BDTv8_eventReco(os.environ["CMSSW_BASE"]+'
                 lambda leps,jets,event : leps[0].conePt>20 and leps[1].conePt>10 and leps[0].charge*leps[1].charge>0,
                 ]
                                                       )) )
+
+from CMGTools.TTHAnalysis.tools.evtTagger import EvtTagger
+MODULES.append( ('Trigger_2lss', lambda : EvtTagger("Trigger_2l",[
+                lambda ev : \
+                    ev.HLT_BIT_HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v or \
+                    ev.HLT_BIT_HLT_Ele27_WPTight_Gsf_v or \
+                    ev.HLT_BIT_HLT_Ele25_eta2p1_WPTight_Gsf_v or \
+                    ev.HLT_DoubleMu or \
+                    ev.HLT_BIT_HLT_IsoMu24_v or \
+                    ev.HLT_BIT_HLT_IsoTkMu24_v or \
+                    ev.HLT_BIT_HLT_IsoMu22_eta2p1_v or \
+                    ev.HLT_BIT_HLT_IsoTkMu22_eta2p1_v or \
+                    ev.HLT_BIT_HLT_Mu23_TrkIsoVVL_Ele8_CaloIdL_TrackIdL_IsoVL_v or \
+                    ev.HLT_BIT_HLT_Mu23_TrkIsoVVL_Ele8_CaloIdL_TrackIdL_IsoVL_DZ_v or \
+                    ev.HLT_BIT_HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v or \
+                    ev.HLT_BIT_HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v or \
+                    ev.HLT_BIT_HLT_IsoMu24_v or \
+                    ev.HLT_BIT_HLT_IsoTkMu24_v or \
+                    ev.HLT_BIT_HLT_IsoMu22_eta2p1_v or \
+                    ev.HLT_BIT_HLT_IsoTkMu22_eta2p1_v or \
+                    ev.HLT_BIT_HLT_Ele27_WPTight_Gsf_v or \
+                    ev.HLT_BIT_HLT_Ele25_eta2p1_WPTight_Gsf_v \
+                    ] )))
+MODULES.append( ('Trigger_3l', lambda : EvtTagger("Trigger_3l",[
+                lambda ev : \
+                    ev.HLT_TripleMu or \
+                    ev.HLT_TripleEl or \
+                    ev.HLT_DoubleMuEl or \
+                    ev.HLT_DoubleElMu or \
+                    ev.Trigger_2l \
+                    ] )))
