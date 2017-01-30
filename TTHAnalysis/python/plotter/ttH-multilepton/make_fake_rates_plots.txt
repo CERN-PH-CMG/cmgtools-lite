@@ -1,4 +1,4 @@
-
+#vim: syntax=sh
 lep_mcMatchId : abs(LepGood_mcMatchId) : 101,-0.5,100.5; XTitle="abs(LepGood_mcMatchId)", Legend='TR', LegendCutoff=1e-2
 lep_mcMatchAny : abs(LepGood_mcMatchAny) : 11,-0.5,10.5; XTitle="abs(LepGood_mcMatchAny)", Legend='TR', LegendCutoff=1e-2
 
@@ -17,7 +17,9 @@ lep_dxy_log: abs(LepGood_dxy)*10000: 20,0.0,100. ; XTitle="Lepton d_{xy} [#mum]"
 ###lep_dz: abs(LepGood_dz)*10000: 20,0.0,500. ; XTitle="Lepton d_{z} [#mum]", Legend='TR', LegendCutoff=1e-2
 lep_dz_log: abs(LepGood_dz)*10000: 20,0.0,500. ; XTitle="Lepton d_{z} [#mum]",Logy ,Legend='TR', LegendCutoff=1e-2
 ###el_mvaIdSpring16GP: LepGood_mvaIdSpring16GP: 20,-1,1; XTitle="Electron mvaIdSpring16GP", Legend='TR', LegendCutoff=1e-2
-el_mvaIdSpring16GP_log: LepGood_mvaIdSpring16GP: 20,-1,1; Logy, XTitle="Electron mvaIdSpring16GP", Legend='TL', LegendCutoff=1e-2
+lep_mvaIdSpring16GP_log: LepGood_mvaIdSpring16GP: 20,-1,1; Logy, XTitle="Electron mvaIdSpring16GP", Legend='TL', LegendCutoff=1e-2
+lep_mvaIdSpring16HZZ_log: LepGood_mvaIdSpring16HZZ: 20,-1,1; Logy, XTitle="Electron mvaIdSpring16HZZ", Legend='TL', LegendCutoff=1e-2
+lep_mvaIdSpring15_log: LepGood_mvaIdSpring15: 20,-1,1; Logy, XTitle="Electron mvaIdSpring15", Legend='TL', LegendCutoff=1e-2
 ###lep_jetPtRelv1: LepGood_jetPtRelv1: 20,0,20; XTitle="Lepton Jet p_{T} Relv1 [GeV]", Legend='TR', LegendCutoff=1e-2
 lep_jetPtRelv2: LepGood_jetPtRelv2: 20,0,20; XTitle="Lepton Jet p_{T} Relv2 [GeV]", Legend='TR', LegendCutoff=1e-2
 ###lep_jetPtRatiov1: LepGood_jetPtRatiov1: 20,0,1.2; XTitle="Lepton Jet p_{T} Ratiov1 ", Legend='TL', LegendCutoff=1e-2

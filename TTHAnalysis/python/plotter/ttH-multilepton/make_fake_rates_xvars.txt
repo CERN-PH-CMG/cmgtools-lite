@@ -39,6 +39,8 @@ ptJI85_mvaPt080_coarse:  LepGood_pt*if3(LepGood_mvaTTH>0.80&&LepGood_mediumMuonI
 ptJI90_mvaPt080_coarse:  LepGood_pt*if3(LepGood_mvaTTH>0.80&&LepGood_mediumMuonId>0, 1.0, 0.90/LepGood_jetPtRatiov2): [ 0,5,10,15,20,30,45,65,100 ]; XTitle="lepton p_{T}^{corr90} (GeV)", Density=True
 ptJI95_mvaPt080_coarse:  LepGood_pt*if3(LepGood_mvaTTH>0.80&&LepGood_mediumMuonId>0, 1.0, 0.95/LepGood_jetPtRatiov2): [ 0,5,10,15,20,30,45,65,100 ]; XTitle="lepton p_{T}^{corr95} (GeV)", Density=True
 
+ptJI80a_mvaPt075_coarse:  LepGood_pt*if3(LepGood_mvaTTH>0.75&&LepGood_mediumMuonId>0, 1.0, max(0.75,1.00-0.005*LepGood_pt/LepGood_jetPtRatiov2)/LepGood_jetPtRatiov2): [ 0,5,10,15,20,30,45,65,100 ]; XTitle="lepton p_{T}^{corr80} (GeV)", Density=True
+
 mtW1 : mt_2(met_pt,met_phi,LepGood_pt,LepGood_phi) : 40,0,160; XTitle="M_{T}(l\, E_{T}^{miss}) (GeV)"
 mtW1R : mt_2(met_pt,met_phi,35,LepGood_phi) : 20,0,140; XTitle="M_{T}^{fix}(l\, E_{T}^{miss}) (GeV)"
 met : met_pt : 25,0,100; XTitle="E_{T}^{miss} (GeV)"

@@ -4,6 +4,7 @@ nBJetMedium25 : nBJetMedium25 : [-0.5,0.5,1.5,2.5] ; XTitle='N(jet\, p_{T} > 25\
 #met:     met_pt: 40,0,100    ; XTitle="E_{T}^{miss}  [GeV]"
 met_log: met_pt: 40,0,100    ; XTitle="E_{T}^{miss}  [GeV]",Logy
 mZ1:        mZ1: 30,60,120   ; XTitle="best m(l^{+}l^{-})  [GeV]", Legend='TL'
+m3l:        m3l: 60,00,180   ; XTitle="m(3l)  [GeV]", Legend='TL'
 minmll: minMllAFOS: 60,0,120; XTitle="min m(ll)  [GeV]", Legend='TR'
 #l1Pt:  LepGood_pt[0]: 40,0,200; XTitle="Leading lepton p_{T}  [GeV]", Legend='TR'
 #l2Pt:  LepGood_pt[1]: 24,0,120; XTitle="Subleading lepton p_{T}  [GeV]", Legend='TR'

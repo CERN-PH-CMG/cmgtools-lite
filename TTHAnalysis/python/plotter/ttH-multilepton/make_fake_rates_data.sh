@@ -1,18 +1,19 @@
 ################################
 #  use mcEfficiencies.py to make plots of the fake rate
 ################################
-T="/data1/peruzzi/TREES_80X_011216_Spring16MVA_1lepFR --FDs /data1/peruzzi/frQCDVars_skimdata"
+T_SUSY="/data1/peruzzi/TREES_80X_011216_Spring16MVA_1lepFR --FDs /data1/peruzzi/frQCDVars_skimdata"
+T_TTH=/afs/cern.ch/work/g/gpetrucc/TREES_80X_ttH_180117_1L
 if hostname | grep -q cmsco01; then
-    T="/data1/peruzzi/TREES_80X_011216_Spring16MVA_1lepFR --FDs /data1/peruzzi/frQCDVars_skimdata"
-else
-    exit 1;
+    T_TTH=/data1/gpetrucc/TREES_80X_ttH_180117_1L
+elif hostname | grep -q cmsphys10; then
+    T_TTH=/data1/g/gpetrucc/TREES_80X_ttH_180117_1L
 fi
 ANALYSIS=$1; if [[ "$1" == "" ]]; then exit 1; fi; shift;
 case $ANALYSIS in
-ttH) CUTFILE="ttH-multilepton/qcd1l.txt"; XVAR="ptJI85_mvaPt075_coarselongbin"; NUM="mvaPt_075i";;
-susy_wpM) CUTFILE="susy-ewkino/qcd1l_wpM.txt"; XVAR="ptJIMIX4_mvaSusy_sMi_coarselongbin"; NUM="mvaSusy_sMi";;
-susy_wpV) CUTFILE="susy-ewkino/qcd1l_wpV.txt"; XVAR="ptJIMIX3_mvaSusy_sVi_coarselongbin"; NUM="mvaSusy_sVi";;
-susy_RA7) CUTFILE="susy-ewkino/qcd1l_RA7.txt"; XVAR="conePt_RA7_coarselongbin"; NUM="ra7_tight";;
+ttH) T="${T_TTH}"; CUTFILE="ttH-multilepton/qcd1l.txt"; XVAR="ptJI85_mvaPt075_coarselongbin"; NUM="mvaPt_075i";;
+susy_wpM) T="${T_SUSY}"; CUTFILE="susy-ewkino/qcd1l_wpM.txt"; XVAR="ptJIMIX4_mvaSusy_sMi_coarselongbin"; NUM="mvaSusy_sMi";;
+susy_wpV) T="${T_SUSY}"; CUTFILE="susy-ewkino/qcd1l_wpV.txt"; XVAR="ptJIMIX3_mvaSusy_sVi_coarselongbin"; NUM="mvaSusy_sVi";;
+susy_RA7) T="${T_SUSY}"; CUTFILE="susy-ewkino/qcd1l_RA7.txt"; XVAR="conePt_RA7_coarselongbin"; NUM="ra7_tight";;
 esac;
 BCORE=" --s2v --tree treeProducerSusyMultilepton ttH-multilepton/mca-qcd1l.txt ${CUTFILE} -P $T -l 36.5 --AP  "
 BCORE="${BCORE} --mcc ttH-multilepton/mcc-eleIdEmu2.txt  "; 
@@ -37,7 +38,7 @@ case $trigger in
 #    PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw$lepton$trigger(nVert)' "
 #    ;;
 Mu3_PFJet40)
-    BCORE="${BCORE} -A veto trigger 'HLT_FR_${trigger} || (!isData)' -A veto recoptfortrigger 'LepGood_pt>4.0 && LepGood_awayJet_pt > 40'  "; 
+    BCORE="${BCORE} -A veto trigger 'HLT_FR_${trigger} || (!isData)' -A veto recoptfortrigger 'LepGood_pt>4.0 && LepGood_awayJet_pt > 50'  "; 
     PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw$trigger(nVert)' "
     ;;
 Mu8)
@@ -65,7 +66,8 @@ esac;
 
 what=$3;
 more=$4
-PBASE="~/www/plots_FR/80X/lepMVA_$ANALYSIS/v2.0_041216/fr-meas/$lepton/HLT_$trigger/$what/$more"
+#PBASE="~/www/plots_FR/80X/lepMVA_$ANALYSIS/v2.0_041216/fr-meas/$lepton/HLT_$trigger/$what/$more"
+PBASE="plots/80X/${ANALYSIS}_Moriond17/lepMVA/v1.0.1/fr-meas/qcd1l/$lepton/HLT_$trigger/$what/$more"
 
 EWKONE="-p ${QCD}_red,EWK,data"
 EWKSPLIT="-p ${QCD}_red,WJets,DYJets,data"
@@ -96,11 +98,11 @@ case $what in
     nvtx-closure)
         echo "python mcPlots.py -f -j 6 $BCORE $PUW ttH-multilepton/qcd1l_plots.txt --pdir $PBASE --sP nvtx $EWKONE  --showRatio --maxRatioRange 0.9 1.1 " 
         ;;
-    fit*)
-        echo "python mcPlots.py -f -j 6 $BCORE $PUW ttH-multilepton/qcd1l_plots.txt --pdir $PBASE -E $what $FITEWK --preFitData ${what/fit/} --showRatio --maxRatioRange 0.0 1.99 " 
+    fit-*)
+        echo "python mcPlots.py -f -j 6 $BCORE $PUW ttH-multilepton/qcd1l_plots.txt --pdir $PBASE -E $what $FITEWK --preFitData ${what/fit-/} --showRatio --maxRatioRange 0.0 1.99 " 
         ;;
-    num-fit*)
-        echo "python mcPlots.py -f -j 6 $BCORE $PUW ttH-multilepton/qcd1l_plots.txt --pdir $PBASE -E $what $FITEWK --preFitData ${what/num-fit/} --showRatio --maxRatioRange 0.0 1.99 -E num" 
+    num-fit-*)
+        echo "python mcPlots.py -f -j 6 $BCORE $PUW ttH-multilepton/qcd1l_plots.txt --pdir $PBASE -E $what $FITEWK --preFitData ${what/num-fit-/} --showRatio --maxRatioRange 0.0 1.99 -E num" 
         ;;
     qcdflav-norm)
         echo "python mcPlots.py -f -j 6 $BCORE $PUW ttH-multilepton/qcd1l_plots.txt --pdir $PBASE -E $what $QCDNORM --showRatio --maxRatioRange 0.0 1.99 " 
