@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import sys
 import re
+import os
 
 ODIR=sys.argv[1]
 
@@ -12,6 +13,7 @@ dowhat = "plots"
 def base(selection):
 
     CORE="-P /data1/peruzzi/TREES_TTH_250117_Summer16_JECV3_noClean_qgV2_skimOnlyMC_v1 --Fs {P}/1_recleaner_250117_v1 --Fs {P}/2_eventVars_250117_v1 --Fs {P}/3_kinMVA_250117_v2_withBDTv8Hjv2 --Fs {P}/5_triggerDecision_250117_v1 --Fs {P}/4_BDTv8_Hj_250117_v2_bestIfPassHadTop"
+    if 'cmsco01' not in os.environ['HOSTNAME']: CORE = CORE.replace('/data1/peruzzi','/afs/cern.ch/work/p/peruzzi/tthtrees')
 
     CORE+=" -f -j 8 -l 36.5 --s2v -L ttH-multilepton/functionsTTH.cc --tree treeProducerSusyMultilepton --mcc ttH-multilepton/lepchoice-ttH-FO.txt --mcc ttH-multilepton/ttH_2lss3l_triggerdefs.txt"# --neg"
     if dowhat == "plots": CORE+=" --lspam '#bf{CMS} #it{Preliminary}' --legendWidth 0.20 --legendFontSize 0.035 --showRatio --maxRatioRange 0 2 --fixRatioRange  --showMCError --rebin 4 --xP 'nT_.*' --xP 'debug_.*'"
