@@ -46,6 +46,9 @@ class VertexWeightFriend:
         tf = ROOT.TFile.Open(filename)
         hist = tf.Get(hname)
         vals = [ hist.GetBinContent(i) for i in xrange(1,hist.GetNbinsX()+1) ]
+        for i in xrange(1,len(vals)-1):
+            if vals[i] == 0 and vals[i-1] > 0 and vals[i+1] > 0:
+                vals[i] = 0.5*(vals[i-1]+vals[i+1])
         if self.verbose:
             print "Normalization of ",hname,": ",sum(vals)
         tf.Close()
