@@ -4,17 +4,23 @@ import re,os
 
 class xsec_KF:
 
+    def inclusiveKF_NLO(self, pdgId):
+        if abs(pdgId)==23: return 1.23
+        elif abs(pdgId)==24: return 1.21
+        else: return 1.0
+
     def getQCDHistosFromFile(self, systematics):
         ret = {}
-        bosons = {"z":23, "w":24, "a":22}
+        bosons = {"Z":23, "W":24, "G":22}
         for k,v in bosons.iteritems():
             for s in systematics:
-                if k=="a": 
-                    hnlo = self.tfile.Get("%snlo1/%snlo1_%s" % (k,k,s)).Clone("kfac")
-                    hlo = self.tfile.Get("%slo/%slo_nominal" % (k,k)).Clone()
+                if k=="G": 
+                    suffix = "" if s=="PDF" else "_G"
+                    hnlo = self.tfile.Get("%sJets_1j_NLO/%s%s" % (k,s,suffix)).Clone("kfac")
+                    hlo = self.tfile.Get("%sJets_LO/inv_pt_%s" % (k,k)).Clone()
                 else:
-                    hnlo = self.tfile.Get("%snlo012/%snlo012_%s" % (k,k,s)).Clone("kfac")
-                    hlo = self.tfile.Get("%slo/%slo_nominal" % (k,k)).Clone()
+                    hnlo = self.tfile.Get("%sJets_012j_NLO/%s" % (k,s)).Clone("kfac")
+                    hlo = self.tfile.Get("%sJets_LO/inv_pt" % k).Clone()
                 hnlo.Divide(hlo)
                 hnlo.SetDirectory(None)
                 ret[(v,s)] = hnlo
@@ -22,11 +28,14 @@ class xsec_KF:
 
     def getEWKHistosFromFile(self):
         ret = {}
-        bosons = {"z":23, "w":24, "a":22}
+        bosons = {"Z":23, "W":24, "photon":22}
         for k,v in bosons.iteritems():
-            kFac = self.tfile.Get("%s_ewkcorr/%s_ewkcorr" % (k,k)).Clone("kfac")
-            kFac.SetDirectory(None)
-            ret[v] = kFac
+            num = self.tfile.Get("EWKcorr/%s" % k).Clone("kfac")
+            if k=="photon": denom = self.tfile.Get("GJets_1j_NLO/nominal_G").Clone("kfac")
+            else:  denom = self.tfile.Get("%sJets_012j_NLO/nominal" % k).Clone("kfac") 
+            num.Divide(denom)
+            num.SetDirectory(None)
+            ret[v] = num
         return ret
 
     def getEvKF_QCD(self, pdgId, pt, systematic="nominal"):
@@ -38,10 +47,12 @@ class xsec_KF:
         # ptmin = histo.GetXaxis().GetXmin()+1e-3
         # the k-factor for pT < 200 GeV are very large,
         # limited by the stat of the HT binned samples
-        ptmin = 200 
+        ptmin = 150 
         ptmax = histo.GetXaxis().GetXmax()-1e-3
-        bin = histo.GetXaxis().FindBin(min(max(pt,ptmin),ptmax))
-        return histo.GetBinContent(bin)
+        if pt > ptmin:
+            bin = histo.GetXaxis().FindBin(min(pt,ptmax))
+            return histo.GetBinContent(bin)
+        return self.inclusiveKF_NLO(pdgId)
 
     def getEvKF_EWK(self, pdgId, pt, systematic="nominal"):
         histo = self.kfacEWK.get(pdgId)
@@ -51,17 +62,19 @@ class xsec_KF:
         # ptmin = histo.GetXaxis().GetXmin()+1e-3
         # the k-factor for pT < 200 GeV are very large,
         # limited by the stat of the HT binned samples
-        ptmin = 200 
+        ptmin = 150 
         ptmax = histo.GetXaxis().GetXmax()-1e-3
-        bin = histo.GetXaxis().FindBin(min(max(pt,ptmin),ptmax))
-        # systematics for missing higher order are taken 100% of the correction
-        if systematic == "up": return 2*histo.GetBinContent(bin) - 1.0
-        elif systematic == "down": return 1.0
-        return histo.GetBinContent(bin)
+        if pt > ptmin:
+            bin = histo.GetXaxis().FindBin(min(pt,ptmax))
+            # systematics for missing higher order are taken 100% of the correction
+            if systematic == "up": return 2*histo.GetBinContent(bin) - 1.0
+            elif systematic == "down": return 1.0
+            return histo.GetBinContent(bin)
+        return 1.0 # this is to achieve the inclusive QCD * EWK inclusive kFactor for low boson pT
 
     def __init__(self, file) :
         self.qcdsysts = ['NLO_QCD', 'NLO_QCD_renScaleUp', 'NLO_QCD_renScaleDown', 'NLO_QCD_facScaleUp', 'NLO_QCD_facScaleDown', 'NLO_QCD_pdfUp', 'NLO_QCD_pdfDown']
-        self.qcdhists = ['nominal', 'scale2010', 'scale0510', 'scale1020', 'scale1005', 'pdfUp', 'pdfDown']
+        self.qcdhists = ['nominal', 'ren_up', 'ren_down', 'fact_up', 'fact_down', 'PDF']
         self.ewksysts = ["NLO_EWK","NLO_EWK_up","NLO_EWK_down"]
         self.ewkhists = ["nominal","up","down"]
         self.branches = self.qcdsysts + self.ewksysts

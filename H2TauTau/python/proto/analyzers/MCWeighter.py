@@ -1,8 +1,8 @@
-import math
 import numpy
 from DataFormats.FWLite import Handle, Runs
+
+from PhysicsTools.Heppy.analyzers.core.AutoHandle import AutoHandle
 from PhysicsTools.Heppy.analyzers.core.Analyzer import Analyzer
-from PhysicsTools.HeppyCore.statistics.counter import Counter, Counters
 
 class MCWeighter(Analyzer):
 
@@ -15,6 +15,12 @@ class MCWeighter(Analyzer):
             self.countSign = cfg_ana.countSign
         else:
             self.countSign = False
+
+        self.activate = getattr(self.cfg_ana, 'activate', True)
+
+    def declareHandles(self):
+        super(MCWeighter, self).declareHandles()
+        self.mchandles['genParticles'] = AutoHandle('prunedGenParticles', 'std::vector<reco::GenParticle')
 
     def beginLoop(self, setup):
         '''
@@ -30,11 +36,11 @@ class MCWeighter(Analyzer):
         # Make it compatible with SkimAnalyzerCount
         self.counters.addCounter('SkimReport')
         self.count = self.counters.counter('SkimReport')
-        if self.cfg_comp.isMC: 
-            self.count.register('Sum Weights')
-            self.count.register('Sum Unity Weights')
-        else:
+        if not self.cfg_comp.isMC or not self.activate:
             return
+
+        self.count.register('Sum Weights')
+        self.count.register('Sum Unity Weights')
 
         self.runs = Runs(self.cfg_comp.files)
         print 'Files', self.cfg_comp.files
@@ -66,3 +72,8 @@ class MCWeighter(Analyzer):
 
     def process(self, event):
         event.mcweight = float(self.mcweight)
+        if not self.cfg_comp.isMC:
+            return
+
+        self.readCollections(event.input)
+        event.genParticles = self.mchandles['genParticles'].product()

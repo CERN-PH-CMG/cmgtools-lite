@@ -27,13 +27,12 @@ class HistDrawer:
         can = cls.can
         pad = cls.pad
         padr = cls.padr
-        if not can:
-            can = cls.can = TCanvas('can', '', 800, 800)
-
+        if not all([can, pad, padr]):
+            can = cls.can = TCanvas('can', '', 800, 800) if not can else can
             can.Divide(1, 2, 0.0, 0.0)
 
-            pad = cls.pad = can.GetPad(1)
-            padr = cls.padr = can.GetPad(2)
+            pad = cls.pad = can.GetPad(1) if not pad else pad
+            padr = cls.padr = can.GetPad(2) if not padr else padr
 
             # Set Pad sizes
             pad.SetPad(0.0, 0.32, 1., 1.0)
@@ -145,7 +144,7 @@ class HistDrawer:
             if not blindxmin:
                 blindxmin = 0
             if not blindxmax:
-                blindxmax = plot.GetXaxis().GetXmax()
+                blindxmax = plot.stack.totalHist.GetXaxis().GetXmax()
             if do_ratio:
                 ratio.Blind(blindxmin, blindxmax, True)
             plot.Blind(blindxmin, blindxmax, False)
@@ -191,6 +190,7 @@ class HistDrawer:
         plotname += plot_name if plot_name else plot.name
         can.SaveAs(plotname + '.png')
         can.SaveAs(plotname + '.pdf')
+        can.SaveAs(plotname + '.root')
 
         # Also save with log y
         h.GetYaxis().SetRangeUser(pad.GetUymax() * 5./10000., pad.GetUymax() * 5.)

@@ -50,6 +50,8 @@ function do_plot {
       elif echo $PROC | grep -q Run2016; then
         if echo $PROC | grep -q Single; then
              CUTS=susy-multilepton/validation-data-single.txt
+        elif echo $PROC | grep -q MET; then
+             CUTS=susy-multilepton/validation.txt
         else
              CUTS=susy-multilepton/validation-data.txt
         fi;
@@ -64,13 +66,22 @@ function do_plot {
 case $WHAT in
     Data)
         $RUN && do_run $DIR -o test=80X-Data  -N 10000 -o runData;
-        do_plot DoubleMuon_Run2016B_run274315 DoubleMuon_Run2016B_run274315
-        do_plot DoubleEG_Run2016B_run274315 DoubleEG_Run2016B_run274315
+        do_plot DoubleMuon_Run2016H_run283885 DoubleMuon_Run2016H_run283885
+        do_plot DoubleEG_Run2016H_run283885 DoubleEG_Run2016H_run283885
         ;;
     MC)
         $RUN && do_run $DIR -o test=80X-MC -o sample=TTLep -N 2000;
         do_plot TTLep_pow TTLep_pow
         ;;
+    SOSData)
+        $RUN && do_run $DIR -o test=80X-Data  -N 100000 -o runData -o sample=MET  -o analysis=SOS;
+        do_plot MET_Run2016H_run283885 MET_Run2016H_run283885 _SOS
+        ;;
+    SOSMC)
+        $RUN && do_run $DIR -o test=80X-MC -o sample=TTLep -N 2000 -o analysis=SOS;
+        do_plot TTLep_pow TTLep_pow _SOS
+        ;;
+
     -manual)
         O=$3; if [[ "$4" != "" ]]; then O=$4; fi
         do_plot $2 $3 MANUAL $O

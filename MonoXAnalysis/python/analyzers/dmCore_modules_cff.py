@@ -43,6 +43,11 @@ triggerAna = cfg.Analyzer(
 triggerFlagsAna = cfg.Analyzer(
     TriggerBitAnalyzer, name="TriggerFlags",
     processName = 'HLT',
+    prescaleProcessName = 'PAT',
+    prescaleFallbackProcessName = 'RECO',
+    unrollbits = False,
+    saveIsUnprescaled = False,
+    checkL1prescale = False,
     triggerBits = {
         # "<name>" : [ 'HLT_<Something>_v*', 'HLT_<SomethingElse>_v*' ] 
     }
@@ -179,7 +184,7 @@ lepAna = cfg.Analyzer(
     inclusive_electron_dz  = 1.0,
     inclusive_electron_lostHits = 5.0,
     # veto electron selection
-    loose_electron_id     = "POG_Cuts_ID_SPRING15_25ns_v1_ConvVetoDxyDz_Veto_full5x5",
+    loose_electron_id     = "POG_Cuts_ID_SPRING16_25ns_v1_ConvVetoDxyDz_Veto",
     loose_electron_pt     = 10,
     loose_electron_eta    = 2.5,
     loose_electron_dxy    = 0.5,
@@ -191,8 +196,8 @@ lepAna = cfg.Analyzer(
     mu_effectiveAreas = "Spring15_25ns_v1", #(can be 'Data2012' or 'Phys14_25ns_v1' or 'Spring15_25ns_v1')
     # electron isolation correction method (can be "rhoArea" or "deltaBeta")
     ele_isoCorr = "rhoArea" ,
-    ele_effectiveAreas = "Spring15_25ns_v1" , #(can be 'Data2012' or 'Phys14_25ns_v1' or 'Spring15_25ns_v1' or 'Spring15_50ns_v1')
-    ele_tightId = "Cuts_SPRING15_25ns_v1_ConvVetoDxyDz" ,
+    ele_effectiveAreas = "Spring16_25ns_v1" , #(can be 'Data2012' or 'Phys14_25ns_v1' or 'Spring15_25ns_v1' or 'Spring15_50ns_v1')
+    ele_tightId = "Cuts_SPRING16_25ns_v1_ConvVetoDxyDz" ,
     # Mini-isolation, with pT dependent cone: will fill in the miniRelIso, miniRelIsoCharged, miniRelIsoNeutral variables of the leptons (see https://indico.cern.ch/event/368826/ )
     doMiniIsolation = False, # off by default since it requires access to all PFCandidates 
     packedCandidates = 'packedPFCandidates',
@@ -210,7 +215,7 @@ lepAna = cfg.Analyzer(
 from CMGTools.MonoXAnalysis.analyzers.monoJetSkimmer import monoJetSkimmer
 monoJetSkim = cfg.Analyzer(
     monoJetSkimmer, name='monoJetSkimmer',
-    jets      = "cleanJets", # jet collection to use
+    jets      = "cleanJetsAll", # jet collection to use
     jetPtCuts = [],          # e.g. [60,40,30,20] to require at least four jets with pt > 60,40,30,20 
     metCut = 0               # MET cut      
     )
@@ -222,7 +227,7 @@ monoJetCtrlLepSkim = cfg.Analyzer(
     minLeptons = 0,
     maxLeptons = 999,
     #idCut  = "lepton.relIso03 < 0.2" # can give a cut
-    idCut = 'lepton.muonID("POG_ID_Loose") if abs(lepton.pdgId())==13 else lepton.electronID("POG_Cuts_ID_SPRING15_25ns_v1_ConvVetoDxyDz_Veto_full5x5")',
+    idCut = 'lepton.muonID("POG_ID_Loose") if abs(lepton.pdgId())==13 else lepton.electronID("POG_Cuts_ID_SPRING16_25ns_v1_ConvVetoDxyDz_Veto")',
     ptCuts = [10],                # can give a set of pt cuts on the leptons
     )
 
@@ -244,7 +249,7 @@ gammaJetCtrlSkim = cfg.Analyzer(
     minJets = 0,
     photonIdCut = 'photon.photonID("PhotonCutBasedIDLoose")',
     photonPtCut = 150,
-    jetPtCut = 100,
+    jetPtCut = 0,
     )
 
 ## Photon Analyzer (generic)
@@ -343,6 +348,7 @@ jetAna = cfg.Analyzer(
     jetPt = 15.,
     jetEta = 4.7,
     jetEtaCentral = 2.5,
+    cleanJetsFromLeptons = True,
     jetLepDR = 0.4,
     jetLepArbitration = (lambda jet,lepton : (jet,lepton)), # you can decide which to keep in case of overlaps; e.g. if the jet is b-tagged you might want to keep the jet
     cleanSelectedLeptons = False, #Whether to clean 'selectedLeptons' after disambiguation. Treat with care (= 'False') if running Jetanalyzer more than once
@@ -352,8 +358,8 @@ jetAna = cfg.Analyzer(
     recalibrateJets = True, # "MC", # True, False, 'MC', 'Data'
     applyL2L3Residual = True, # Switch to 'Data' when they will become available for Data
     recalibrationType = "AK4PFchs",
-    mcGT     = "Spring16_25nsV3_MC",
-    dataGT   = "Spring16_25nsV3_DATA",
+    mcGT     = "Spring16_25nsV6_MC",
+    dataGT   = "Spring16_25nsV6_DATA",
     jecPath = "%s/src/CMGTools/RootTools/data/jec/" % os.environ['CMSSW_BASE'],
     shiftJEC = 0, # set to +1 or -1 to get +/-1 sigma shifts
     addJECShifts = False, # if true, add  "corr", "corrJECUp", and "corrJECDown" for each jet (requires uncertainties to be available!)
@@ -370,7 +376,9 @@ jetAna = cfg.Analyzer(
     calculateSeparateCorrections = True, # should be True if recalibrateJets is True, otherwise L1s will be inconsistent
     calculateType1METCorrection  = False,
     type1METParams = { 'jetPtThreshold':15., 'skipEMfractionThreshold':0.9, 'skipMuons':True },
+    storeLowPtJets = False,
     )
+
 
 ## Fat Jets Analyzer (generic)
 from CMGTools.MonoXAnalysis.analyzers.monoXFatJetAnalyzer import monoXFatJetAnalyzer
@@ -389,14 +397,13 @@ monoXFatJetAna = cfg.Analyzer(
     recalibrateJets = True,
     applyL2L3Residual = True, # Switch to 'Data' when they will become available for Data
     recalibrationType = "AK8PFchs",
-    mcGT     = "Spring16_25nsV3_MC",
-    dataGT   = "Spring16_25nsV3_DATA", # update with the new one when available in 8.0.X
+    mcGT     = "Spring16_25nsV6_MC",
+    dataGT   = "Spring16_25nsV6_DATA", # update with the new one when available in 8.0.X
     jecPath = "%s/src/CMGTools/RootTools/data/jec/" % os.environ['CMSSW_BASE'],
     shiftJEC = 0, # set to +1 or -1 to get +/-1 sigma shifts
     addJECShifts = False, # if true, add  "corr", "corrJECUp", and "corrJECDown" for each jet (requires uncertainties to be available!)
     rho = ('fixedGridRhoFastjetAll','',''),
     )
-
 
 # Secondary vertex analyzer
 from CMGTools.TTHAnalysis.analyzers.ttHSVAnalyzer import ttHSVAnalyzer
@@ -452,15 +459,17 @@ metNoHFAna = cfg.Analyzer(
     collectionPostFix = "NoHF",
     )
 
+
 # Core Event Analyzer (computes basic quantities like HT, dilepton masses)
 from CMGTools.TTHAnalysis.analyzers.ttHCoreEventAnalyzer import ttHCoreEventAnalyzer
 ttHCoreEventAna = cfg.Analyzer(
     ttHCoreEventAnalyzer, name='ttHCoreEventAnalyzer',
     maxLeps = 4, ## leptons to consider
     mhtForBiasedDPhi = "mhtJet40jvec",
-    jetForBiasedDPhi = "cleanJets",
+    jetForBiasedDPhi = "cleanJetsAll",
     jetPt = 40.,
     )
+
 
 # Electron and Photon calibrator (scale and smearings)
 def doECalElectronCorrections(sync=False,era="25ns"):

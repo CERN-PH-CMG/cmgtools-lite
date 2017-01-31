@@ -1,11 +1,9 @@
 from PhysicsTools.Heppy.analyzers.core.TreeAnalyzerNumpy import TreeAnalyzerNumpy
 
 from CMGTools.H2TauTau.proto.analyzers.varsDictionary import vars as var_dict
-from CMGTools.H2TauTau.proto.analyzers.TreeVariables import event_vars, ditau_vars, particle_vars, lepton_vars, electron_vars, muon_vars, tau_vars, jet_vars, jet_vars_extra, geninfo_vars, vbf_vars, svfit_vars
+from CMGTools.H2TauTau.proto.analyzers.TreeVariables import event_vars, ditau_vars, particle_vars, lepton_vars, electron_vars, muon_vars, tau_vars, tau_vars_extra, jet_vars, jet_vars_extra, geninfo_vars, vbf_vars, svfit_vars
 
 from CMGTools.H2TauTau.proto.physicsobjects.DiObject import DiTau
-import math
-
 
 class H2TauTauTreeProducerBase(TreeAnalyzerNumpy):
 
@@ -31,8 +29,18 @@ class H2TauTauTreeProducerBase(TreeAnalyzerNumpy):
     def var(self, tree, varName, type=float):
         tree.var(self.varName(varName), type)
 
+    def vars(self, tree, varNames, type=float):
+        for varName in varNames:
+            self.var(tree, varName, type)
+
     def fill(self, tree, varName, value):
         tree.fill(self.varName(varName), value)
+
+    def fillVars(self, tree, varNames, obj):
+        '''Fills vars that are attributes of the passed object.
+        Fills -999. if object doesn't have attribute'''
+        for varName in varNames:
+            tree.fill(self.varName(varName), getattr(obj, varName, -999.))
 
     def varName(self, name):
         try:
@@ -105,19 +113,21 @@ class H2TauTauTreeProducerBase(TreeAnalyzerNumpy):
         self.fill(tree, '{p_name}_pdgId'.format(p_name=p_name), particle.pdgId() if not hasattr(particle, 'detFlavour') else particle.detFlavour)
 
     # di-tau
-    def bookDiLepton(self, tree, fill_svfit=True):
+    def bookDiLepton(self, tree, fill_svfit=True, svfit_extra=False):
         # RIC: to add
         # svfit 'fittedDiTauSystem', 'fittedMET', 'fittedTauLeptons'
         self.bookGeneric(tree, ditau_vars)
         if fill_svfit:
             self.bookGeneric(tree, svfit_vars)
+        if svfit_extra:
             self.bookParticle(tree, 'svfit_l1')
             self.bookParticle(tree, 'svfit_l2')
 
-    def fillDiLepton(self, tree, diLepton, fill_svfit=True):
+    def fillDiLepton(self, tree, diLepton, fill_svfit=True, svfit_extra=False):
         self.fillGeneric(tree, ditau_vars, diLepton)
         if fill_svfit:
             self.fillGeneric(tree, svfit_vars, diLepton)
+        if svfit_extra:
             if hasattr(diLepton, 'svfit_Taus'):
                 for i, tau in enumerate(diLepton.svfitTaus()):
                     self.fillParticle(tree, 'svfit_l' + str(i + 1), tau)
@@ -153,13 +163,17 @@ class H2TauTauTreeProducerBase(TreeAnalyzerNumpy):
         self.fillGeneric(tree, electron_vars, ele, p_name)
 
     # tau
-    def bookTau(self, tree, p_name):
+    def bookTau(self, tree, p_name, fill_extra=False):
         self.bookLepton(tree, p_name)
         self.bookGeneric(tree, tau_vars, p_name)
+        if fill_extra:
+            self.bookGeneric(tree, tau_vars_extra, p_name)
 
-    def fillTau(self, tree, p_name, tau):
+    def fillTau(self, tree, p_name, tau, fill_extra=False):
         self.fillLepton(tree, p_name, tau)
         self.fillGeneric(tree, tau_vars, tau, p_name)
+        if fill_extra:
+            self.fillGeneric(tree, tau_vars_extra, tau, p_name)
 
     # jet
     def bookJet(self, tree, p_name, fill_extra=False):
@@ -194,11 +208,13 @@ class H2TauTauTreeProducerBase(TreeAnalyzerNumpy):
         self.var(tree, 'puppimet_phi')
         self.var(tree, 'puppimet_mt1')
         self.var(tree, 'puppimet_mt2')
+        self.var(tree, 'puppimet_mttotal')
 
         self.var(tree, 'pfmet_pt')
         self.var(tree, 'pfmet_phi')
         self.var(tree, 'pfmet_mt1')
         self.var(tree, 'pfmet_mt2')
+        self.var(tree, 'pfmet_mttotal')
 
     def fillExtraMetInfo(self, tree, event):
         self.fill(tree, 'puppimet_pt', event.puppimet.pt())
@@ -213,54 +229,20 @@ class H2TauTauTreeProducerBase(TreeAnalyzerNumpy):
 
     # TauSpinner information
     def bookTauSpinner(self, tree):
-        self.var(tree, 'TauSpinnerWTisValid')
-        self.var(tree, 'TauSpinnerWT')
-        self.var(tree, 'TauSpinnerWThminus')
-        self.var(tree, 'TauSpinnerWThplus')
-        self.var(tree, 'TauSpinnerTauPolFromZ')
-        self.var(tree, 'TauSpinnerWRight')
-        self.var(tree, 'TauSpinnerWLeft')
-        self.var(tree, 'TauSpinnerIsRightLeft')
-
+        self.vars(tree, ['TauSpinnerWTisValid', 'TauSpinnerWT', 'TauSpinnerWThminus', 'TauSpinnerWThplus', 'TauSpinnerTauPolFromZ', 'TauSpinnerWRight', 'TauSpinnerWLeft', 'TauSpinnerIsRightLeft'])
+        
     def fillTauSpinner(self, tree, event):
-        self.fill(tree, 'TauSpinnerWTisValid', event.TauSpinnerWTisValid)
-        self.fill(tree, 'TauSpinnerWT', float(event.TauSpinnerWT))
-        self.fill(tree, 'TauSpinnerWThminus', float(event.TauSpinnerWThminus))
-        self.fill(tree, 'TauSpinnerWThplus', float(event.TauSpinnerWThplus))
-        self.fill(tree, 'TauSpinnerTauPolFromZ', float(event.TauSpinnerTauPolFromZ))
-        self.fill(tree, 'TauSpinnerWRight', float(event.TauSpinnerWRight))
-        self.fill(tree, 'TauSpinnerWLeft', float(event.TauSpinnerWLeft))
-        self.fill(tree, 'TauSpinnerIsRightLeft', float(event.TauSpinnerIsRightLeft))
-
+        self.fillVars(tree, ['TauSpinnerWTisValid', 'TauSpinnerWT', 'TauSpinnerWThminus', 'TauSpinnerWThplus', 'TauSpinnerTauPolFromZ', 'TauSpinnerWRight', 'TauSpinnerWLeft', 'TauSpinnerIsRightLeft'], event)
+        
     def bookTopPtReweighting(self, tree):
-        self.var(tree, 'gen_top_1_pt')
-        self.var(tree, 'gen_top_2_pt')
-        self.var(tree, 'gen_top_weight')
+        self.vars(tree, ['gen_top_1_pt', 'gen_top_2_pt', 'gen_top_weight'])
 
     def fillTopPtReweighting(self, tree, event):
+        '''FIXME: Move this to extra class - only do inline calculations here'''
         if not self.cfg_comp.isMC:
             self.fill(tree, 'gen_top_weight', 1.)
             return
 
-        ttbar = [p for p in event.genParticles if abs(p.pdgId()) == 6 and p.statusFlags().isLastCopy() and p.statusFlags().fromHardProcess()]
-
-        if self.cfg_comp.name.find('TT') != -1 and self.cfg_comp.name.find('TTH') == -1 and len(ttbar) == 2:
-
-            top_1_pt = ttbar[0].pt()
-            top_2_pt = ttbar[1].pt()
-
-            self.fill(tree, 'gen_top_1_pt', top_1_pt)
-            self.fill(tree, 'gen_top_2_pt', top_2_pt)
-
-            if top_1_pt > 400:
-                top_1_pt = 400.
-            if top_2_pt > 400:
-                top_2_pt = 400.
-
-            topweight = math.sqrt(math.exp(0.156-0.00137*top_1_pt)*math.exp(0.156-0.00137*top_2_pt))
-
-            event.eventWeight *= topweight
-
-            self.fill(tree, 'gen_top_weight', topweight)
-        else:
-            self.fill(tree, 'gen_top_weight', 1.)
+        self.fill(tree, 'gen_top_1_pt', getattr(event, 'top_1_pt', -999.))
+        self.fill(tree, 'gen_top_2_pt', getattr(event, 'top_2_pt', -999.))
+        self.fill(tree, 'gen_top_weight', getattr(event, 'topweight', 1.))

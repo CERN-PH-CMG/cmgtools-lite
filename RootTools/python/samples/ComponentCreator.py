@@ -19,15 +19,18 @@ class ComponentCreator(object):
          component.dataset_entries = self.getPrimaryDatasetEntries(dataset,user,pattern,useAAA=useAAA)
          return component
 
-    def makePrivateMCComponent(self,name,dataset,files,xSec=1):
+    def makePrivateMCComponent(self,name,dataset,files,xSec=1, prefix="auto"):
          if len(files) == 0:
             raise RuntimeError, "Trying to make a component %s with no files" % name
-         # prefix filenames with dataset unless they start with "/"
          dprefix = dataset +"/" if files[0][0] != "/" else ""
+         if prefix == "auto":
+            if (dprefix+files[0]).startswith("/store"): prefix = "root://eoscms.cern.ch//eos/cms"
+            else: prefix = ""
+         # prefix filenames with dataset unless they start with "/"
          component = cfg.MCComponent(
              dataset=dataset,
              name = name,
-             files = ['root://eoscms.cern.ch//eos/cms%s%s' % (dprefix,f) for f in files],
+             files = [''.join([prefix,dprefix,f]) for f in files],
              xSection = xSec,
              nGenEvents = 1,
              triggers = [],
@@ -200,12 +203,23 @@ class ComponentCreator(object):
         return fraction 
         
 
-def testSamples(mcSamples):
+def testSamples(mcSamples, allowAAA=False):
    from subprocess import check_output, CalledProcessError
+   from CMGTools.Production.changeComponentAccessMode import convertFile
    for X in mcSamples:
         print X.name, len(X.files)
         try:
             print "\tSample is accessible? ",("events" in check_output(["edmFileUtil","--ls",X.files[0]]))
         except CalledProcessError:
-            print "\tERROR trying to access ",X.files[0]
+            fail = True
+            if allowAAA:
+                try:
+                    newfile = convertFile(X.files[0], "root://cms-xrd-global.cern.ch/%s")
+                    if newfile != X.files[0]:
+                        if "events" in check_output(["edmFileUtil","--ls",newfile]):
+                            print "yes, but only via AAA"
+                            fail = False
+                except:
+                    pass
+            if fail: print "\tERROR trying to access ",X.files[0]
 

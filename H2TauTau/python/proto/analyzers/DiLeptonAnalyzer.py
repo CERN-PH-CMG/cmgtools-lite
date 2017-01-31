@@ -30,9 +30,10 @@ class DiLeptonAnalyzer(Analyzer):
         iso2=0.1,
         m_min=10, # mass range
         m_max=99999,
-        from_single_objects=True, #O if 
+        from_single_objects=True, #O (default is False)
         dR_min=0.5, #O min delta R between the two legs
         allTriggerObjMatched=False,
+        ignoreTriggerMatch=True, #O (default is False)
         verbose=False #from base Analyzer class
         )
     """
@@ -63,6 +64,7 @@ class DiLeptonAnalyzer(Analyzer):
                                                             max=self.cfg_ana.m_max))
         count.register('exactly 1 di-lepton')
         count.register('lepton accept')
+        count.register('cross kinematics')
 
     def buildDiLeptons(self, cmgDiLeptons, event):
         '''Creates python DiLeptons from the di-leptons read from the disk.
@@ -164,13 +166,17 @@ class DiLeptonAnalyzer(Analyzer):
         if len(self.cfg_comp.triggers) > 0:
             requireAllMatched = hasattr(self.cfg_ana, 'allTriggerObjMatched') \
                 and self.cfg_ana.allTriggerObjMatched
-            selDiLeptons = [diL for diL in selDiLeptons if
+
+            
+            trigMatchDiLeptons = [diL for diL in selDiLeptons if
                             self.trigMatched(event, diL, requireAllMatched)]
 
-            if len(selDiLeptons) == 0:
-                return False
-            elif fillCounter:
-                self.counters.counter('DiLepton').inc('trig matched')
+            if not getattr(self.cfg_ana, 'ignoreTriggerMatch', False):
+                selDiLeptons = trigMatchDiLeptons
+                if len(selDiLeptons) == 0:
+                    return False
+                elif fillCounter:
+                    self.counters.counter('DiLepton').inc('trig matched')
 
 
 
@@ -179,19 +185,25 @@ class DiLeptonAnalyzer(Analyzer):
                         self.testMass(diL)]
         if len(selDiLeptons) == 0:
             return False
-        else:
-            if fillCounter:
+        elif fillCounter:
                 self.counters.counter('DiLepton').inc(
                     '{min:3.1f} < m < {max:3.1f}'.format(min=self.cfg_ana.m_min,
                                                          max=self.cfg_ana.m_max)
                 )
 
+        selDiLeptons = [diL for diL in selDiLeptons if 
+                        self.crossKinematicSelection(diL, event)]
+
+        if len(selDiLeptons) == 0:
+            return False
+        elif fillCounter:
+            self.counters.counter('DiLepton').inc('cross kinematics')
+
         # exactly one?
         if len(selDiLeptons) == 0:
             return False
-        elif len(selDiLeptons) == 1:
-            if fillCounter:
-                self.counters.counter('DiLepton').inc('exactly 1 di-lepton')
+        elif len(selDiLeptons) == 1 and fillCounter:
+            self.counters.counter('DiLepton').inc('exactly 1 di-lepton')
 
         event.selDiLeptons = selDiLeptons
 
@@ -233,6 +245,10 @@ class DiLeptonAnalyzer(Analyzer):
 
     def otherLeptonVeto(self, leptons, otherLeptons, isoCut=0.3):
         '''Should implement a default version running on event.leptons.'''
+        return True
+
+    def crossKinematicSelection(self, diL, event):
+        '''Final cross-kinematic selection that can act on whole event'''
         return True
 
     def testLeg1(self, leg, isocut=None):

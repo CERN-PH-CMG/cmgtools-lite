@@ -27,6 +27,8 @@ susyStopSoftB_globalVariables = susyCore_globalVariables + [
     NTupleVariable("hbheFilterNew", lambda ev: ev.hbheFilterNew25ns, int, help="new HBHE filter for 25 ns"),
     NTupleVariable("hbheFilterIso", lambda ev: ev.hbheFilterIso, int, help="HBHE iso-based noise filter"),
     NTupleVariable("firstPVIsGood", lambda ev: (ev.vertices[0].ndof() == ev.goodVertices[0].ndof()) if len(ev.goodVertices) > 0 else 0, int, help="first PV is good"),
+    NTupleVariable("Flag_badChargedHadronFilter", lambda ev: ev.badChargedHadron, help="bad charged hadron filter decision"),
+    NTupleVariable("Flag_badMuonFilter", lambda ev: ev.badMuon, help="bad muon filter decision"),
 ]
 
 susyStopSoftB_globalObjects = susyCore_globalObjects.copy()
@@ -52,7 +54,7 @@ susyStopSoftB_collections.update({
     #"recoveredJets"    : NTupleCollection("RecJet", jetTypeSusy, 15, help="Jets recovered declustering in the jet-lepton cleaning"),
     #"recoveredSplitJets" : NTupleCollection("RecSplitJet", jetTypeSusy, 15, help="Jets recovered declustering in the jet-lepton cleaning, split"),
     ##------------------------------------------------
-    "ivf"       : NTupleCollection("SV",     svType, 20, help="SVs from IVF"),
+    "ivf"       : NTupleCollection("SV",     svTypeExtra, 20, help="SVs from IVF"),
     "genBHadrons"  : NTupleCollection("GenBHad", heavyFlavourHadronType, 20, mcOnly=True, help="Gen-level B hadrons"),
     "genDHadrons"  : NTupleCollection("GenDHad", heavyFlavourHadronType, 20, mcOnly=True, help="Gen-level D hadrons"),
     ##------------------------------------------------

@@ -1,0 +1,12 @@
+weight: 1
+
+change: LepSel1_(\w+)  : LepSel_\1[0]
+change: LepSel2_(\w+)  : LepSel_\1[1]
+change: LepSel3_(\w+)  : LepSel_\1[2]
+change: LepSel4_(\w+)  : LepSel_\1[3]
+change: nJet30\b       : nJet30_Mini
+change: htJet30j\b     : htJet30j_Mini
+change: nBJetMedium25\b: nBJetMedium25_Mini
+
+change: FirstTau_(\w+) : LepSel_\1[tauIdx1(LepSel_pdgId[0], LepSel_pdgId[1], LepSel_pdgId[2])]
+change: SeconTau_(\w+) : LepSel_\1[tauIdx2(LepSel_pdgId[0], LepSel_pdgId[1], LepSel_pdgId[2])]

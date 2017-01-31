@@ -13,7 +13,7 @@ from CMGTools.H2TauTau.proto.analyzers.SVfitProducer import SVfitProducer
 from CMGTools.H2TauTau.proto.analyzers.FileCleaner import FileCleaner
 
 # common configuration and sequence
-from CMGTools.H2TauTau.htt_ntuple_base_cff import commonSequence, genAna, dyJetsFakeAna, puFileData, puFileMC, eventSelector
+from CMGTools.H2TauTau.htt_ntuple_base_cff import commonSequence, httGenAna, puFileData, puFileMC, eventSelector, recoilCorr
 
 # e-tau specific configuration settings
 
@@ -23,16 +23,18 @@ computeSVfit = False
 production = False  # production = True run on batch, production = False run locally
 syncntuple = True
 cmssw = True
+correct_recoil = True
 
-
-dyJetsFakeAna.channel = 'et'
 
 # Define e-tau specific modules
+
+if correct_recoil:
+    recoilCorr.apply = True
 
 tauEleAna = cfg.Analyzer(
     TauEleAnalyzer,
     name='TauEleAnalyzer',
-    pt1=24,
+    pt1=26,
     eta1=2.1,
     iso1=0.1,
     looseiso1=9999.,
@@ -84,8 +86,12 @@ eleWeighter = cfg.Analyzer(
     LeptonWeighter,
     name='LeptonWeighter_ele',
     scaleFactorFiles={
-        'trigger':'$CMSSW_BASE/src/CMGTools/H2TauTau/data/Electron_Ele23_spring16.root',
-        'idiso':'$CMSSW_BASE/src/CMGTools/H2TauTau/data/Electron_IdIso0p1_spring16.root',
+        # 'trigger':('$CMSSW_BASE/src/CMGTools/H2TauTau/data/htt_scalefactors_v3.root', 'trgIsoMu22_desy'),
+        'idiso':('$CMSSW_BASE/src/CMGTools/H2TauTau/data/htt_scalefactors_v5.root', 'e_idiso0p10_desy'),
+        'tracking':('$CMSSW_BASE/src/CMGTools/H2TauTau/data/htt_scalefactors_v5.root', 'e_trk'),
+    },
+    dataEffFiles={
+        'trigger':('$CMSSW_BASE/src/CMGTools/H2TauTau/data/htt_scalefactors_v5.root', 'e_trgEle25eta2p1WPTight_desy'),
     },
     lepton='leg1',
     disable=False
@@ -153,12 +159,12 @@ for mc in samples:
 selectedComponents = samples + data_list
 
 sequence = commonSequence
-sequence.insert(sequence.index(dyJetsFakeAna), tauEleAna)
+sequence.insert(sequence.index(httGenAna), tauEleAna)
 sequence.append(tauDecayModeWeighter)
 sequence.append(tauFakeRateWeighter)
 sequence.append(tauWeighter)
 sequence.append(eleWeighter)
-sequence.insert(sequence.index(dyJetsFakeAna) + 1, dyLLReweighterTauEle)
+sequence.insert(sequence.index(httGenAna) + 1, dyLLReweighterTauEle)
 if computeSVfit:
     sequence.append(svfitProducer)
 sequence.append(treeProducer)
@@ -173,10 +179,12 @@ if not cmssw:
 if not production:
     cache = True
     # comp = my_connect.mc_dict['HiggsGGH125']
-    comp = sync_list[0]
-    selectedComponents = [comp]
-    comp.splitFactor = 5
-    comp.fineSplitFactor = 1
+    # comp = sync_list[0]
+    selectedComponents = sync_list
+    selectedComponents = [selectedComponents[-1]]
+    for comp in selectedComponents:
+        comp.splitFactor = 100
+        comp.fineSplitFactor = 1
 #    comp.files = comp.files[:1]
 
 preprocessor = None

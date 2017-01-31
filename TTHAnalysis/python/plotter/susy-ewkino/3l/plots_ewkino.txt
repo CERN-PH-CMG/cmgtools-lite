@@ -1,0 +1,144 @@
+## super signal regions
+## ----------------------------------------------------------
+SSR         : SuperSig           : 5,0.5,5.5   ; YTitle="Events", XTitle="Super Signal Region", Legend="TR", IncludeOverflows=False, LegendCutoff=1e-5 
+
+## baseline region per final state
+## ----------------------------------------------------------
+BR          : BR            : 11,0.5,11.5   ; YTitle="Events", XTitle="Baseline Region", Wide=True, Legend="TR", LegendCutoff=1e-5, xBinLabels="A\,B\,C\,D\,E\,F\,G\,H\,I\,J\,K", Logy
+
+## signal regions per final state
+## ----------------------------------------------------------
+SR_3l_light : SR            : 49,0.5,49.5 ; YTitle="Events", XTitle="Signal Region"  , Wide=True, Legend="TR", IncludeOverflows=False, LegendCutoff=1e-5, LegendHeader="A\,B: 3l", Logy
+SR_3l_1tau  : SR-49         : 46,0.5,46.5 ; YTitle="Events", XTitle="Signal Region"  , Wide=True, Legend="TR", IncludeOverflows=False, LegendCutoff=1e-5, LegendHeader="C\,D\,E: 2l+\#tau", Logy
+SR_3l_2tau  : SR-95         : 12,0.5,12.5 ; YTitle="Events", XTitle="Signal Region"  , Wide=True, Legend="TR", IncludeOverflows=False, LegendCutoff=1e-5, LegendHeader="F: e/\#mu+\#tau\#tau", Logy
+SR_4l       : SR-107        : 20,0.5,20.5 ; YTitle="Events", XTitle="Signal Region"  , Wide=True, Legend="TR", IncludeOverflows=False, LegendCutoff=1e-5, LegendHeader="G\,H\,I\,J\,K: 4l", Logy
+
+## signal region per mll (Moriond)
+## ----------------------------------------------------------
+SR_A        : SR            : 44,0.5,44.5 ; YTitle="Events", XTitle="Signal Region A (3l\,0#tau)" , Wide=True, Legend="TR", IncludeOverflows=False, LegendCutoff=1e-5, xBinLabels="01\,02\,03\,04\,05\,06\,07\,08\,09\,10\,11\,12\,13\,14\,15\,16\,17\,18\,19\,20\,21\,22\,23\,24\,25\,26\,27\,28\,29\,30\,31\,32\,33\,34\,35\,36\,37\,38\,39\,40\,41\,42\,43", LegendHeader="A: OSSF", RMin=0, RMax=3, YMin=0.1, YMax=50000, Logy 
+SR_B        : SR-44         : 6,0.5,6.5   ; YTitle="Events", XTitle="Signal Region B (3l\,0#tau)" , Wide=True, Legend="TR", IncludeOverflows=False, LegendCutoff=1e-5, xBinLabels="01\,02\,03\,04\,05\,06", LegendHeader="B: noOSSF", RMin=0, RMax=3, YMin=0.7, YMax=1000, Logy
+SR_C        : SR-50         : 18,0.5,18.5 ; YTitle="Events", XTitle="Signal Region C (3l\,1#tau)" , Wide=True, Legend="TR", IncludeOverflows=False, LegendCutoff=1e-5, xBinLabels="01\,02\,03\,04\,05\,06\,07\,08\,09\,10\,11\,12\,13\,14\,15\,16\,17\,18", LegendHeader="C: OSSF + \#tau", RMin=0, RMax=3, YMin=0.1, YMax=10000, Logy
+SR_D        : SR-68         : 16,0.5,16.5 ; YTitle="Events", XTitle="Signal Region D (3l\,1#tau)" , Wide=True, Legend="TR", IncludeOverflows=False, LegendCutoff=1e-5, xBinLabels="01\,02\,03\,04\,05\,06\,07\,08\,09\,10\,11\,12\,13\,14\,15\,16", LegendHeader="D: e^{\#pm}\#mu^{\#mp}\#tau", RMin=0, RMax=3, YMin=0.01, YMax=50000, Logy
+SR_E        : SR-84         : 12,0.5,12.5 ; YTitle="Events", XTitle="Signal Region E (3l\,1#tau)" , Wide=True, Legend="TR", IncludeOverflows=False, LegendCutoff=1e-5, xBinLabels="01\,02\,03\,04\,05\,06\,07\,08\,09\,10\,11\,12", LegendHeader="E: SS + \#tau", RMin=0, RMax=3, YMin=0.1, YMax=700, Logy
+SR_F        : SR-96         : 12,0.5,12.5 ; YTitle="Events", XTitle="Signal Region F (3l\,2#tau)" , Wide=True, Legend="TR", IncludeOverflows=False, LegendCutoff=1e-5, xBinLabels="01\,02\,03\,04\,05\,06\,07\,08\,09\,10\,11\,12"      , LegendHeader="F: e/\#mu + \#tau\#tau", RMin=0, RMax=3, YMin=0.1, YMax=5000, Logy
+SR_GHI      : SR-108        : 13,0.5,13.5 ; YTitle="Events", XTitle="Signal Region (4l)"          , Wide=True, Legend="TC", IncludeOverflows=False, LegendCutoff=1e-5, xBinLabels="G01\,G02\,G03\,G04\,G05\,H01\,H02\,H03\,H04\,I01\,I02\,I03\,I04", LegendHeader="G\,H\,I: 4l", Logy
+SR_JK       : SR-121        : 7,0.5,17.5  ; YTitle="Events", XTitle="Signal Region (4l)"          , Wide=True, Legend="TC", IncludeOverflows=False, LegendCutoff=1e-5, xBinLabels="J01\,J02\,J03\,J04\,K01\,K02\,K03", LegendHeader="J\,K: 4l", Logy
+
+## signal region, 4l 0tau nOSSF >= 2
+## ----------------------------------------------------------
+SR_G        : SR-108        : 5,0.5,5.5   ; YTitle="Events", XTitle="Signal Region G (4l\,0#tau)", Legend="TR", IncludeOverflows=False, LegendCutoff=1e-5, xBinLabels="01\,02\,03\,04\,05", LegendHeader="G: 2 OSSF", RMin=0, RMax=2.5, Logy, YMin=0.1, YMax=1000
+
+## signal region, 4l 0tau nOSSF <= 1
+## ----------------------------------------------------------
+SR_H        : SR-113        : 4,0.5,4.5   ; YTitle="Events", XTitle="Signal Region H (4l\,0#tau)", Legend="TR", IncludeOverflows=False, LegendCutoff=1e-5, xBinLabels="01\,02\,03\,04", LegendHeader="H: <2 OSSF", RMin=0, RMax=3, Logy, YMin=0.01, YMax=1000
+
+## signal region, 4l 1tau
+## ----------------------------------------------------------
+SR_I        : SR-117        : 4,0.5,4.5   ; YTitle="Events", XTitle="Signal Region I (4l\,1#tau)", Legend="TR", IncludeOverflows=False, LegendCutoff=1e-5, xBinLabels="01\,02\,03\,04", LegendHeader="I: 3l+\#tau", RMin=0, RMax=3, Logy, YMin=0.01, YMax=1000
+
+## signal region, 4l 2tau nOSSF >= 2
+## ----------------------------------------------------------
+SR_J        : SR-121        : 4,0.5,4.5   ; YTitle="Events", XTitle="Signal Region J (4l\,2#tau)", Legend="TR", IncludeOverflows=False, LegendCutoff=1e-5, xBinLabels="01\,02\,03\,04", LegendHeader="J: 2 OSSF", RMin=0, RMax=3, Logy, YMin=0.01, YMax=500
+
+## signal region, 4l 1tau
+## ----------------------------------------------------------
+SR_K        : SR-125        : 3,0.5,3.5   ; YTitle="Events", XTitle="Signal Region K (4l\,2#tau)", Legend="TR", IncludeOverflows=False, LegendCutoff=1e-5, xBinLabels="01\,02\,03", LegendHeader="K: <2 OSSF", RMin=0, RMax=3, Logy, YMin=0.01, YMax=100
+
+
+## basic lepton observables
+## ----------------------------------------------------------
+
+el_pt     : if3(abs(LepSel_pdgId)==11,LepSel_conePt,-1) : 20,0,200    ; YTitle="Electrons", XTitle="p_{T\,cone}(e)"   , IncludeOverflows=False, IncludeOverflow=True, LegendCutoff=1e-4
+mu_pt     : if3(abs(LepSel_pdgId)==13,LepSel_conePt,-1) : 20,0,200    ; YTitle="Muons"    , XTitle="p_{T\,cone}(#mu)" , IncludeOverflows=False, IncludeOverflow=True, LegendCutoff=1e-4
+tau_pt    : if3(abs(LepSel_pdgId)==15,LepSel_conePt,-1) : 20,0,200    ; YTitle="Taus"     , XTitle="p_{T\,cone}(#tau)", IncludeOverflows=False, IncludeOverflow=True, LegendCutoff=1e-4
+
+el_eta    : if3(abs(LepSel_pdgId)==11,LepSel_eta,-999)  : 10,-2.5,2.5 ; YTitle="Electrons", XTitle="#eta(e)"   , IncludeOverflows=False, LegendCutoff=1e-4
+mu_eta    : if3(abs(LepSel_pdgId)==13,LepSel_eta,-999)  : 10,-2.5,2.5 ; YTitle="Muons"    , XTitle="#eta(#mu)" , IncludeOverflows=False, LegendCutoff=1e-4
+tau_eta   : if3(abs(LepSel_pdgId)==15,LepSel_eta,-999)  : 10,-2.5,2.5 ; YTitle="Taus"     , XTitle="#eta(#tau)", IncludeOverflows=False, LegendCutoff=1e-4
+
+
+## further lepton observables
+## ----------------------------------------------------------
+
+lep1_pt          : LepSel1_conePt      : 20,0,200   ; YTitle="Leptons", XTitle="p_{T\,cone}(leading lep.)"   , LegendCutoff=1e-4
+lep2_pt          : LepSel2_conePt      : 20,0,200   ; YTitle="Leptons", XTitle="p_{T\,cone}(subleading lep.)", LegendCutoff=1e-4
+lep3_pt          : LepSel3_conePt      : 20,0,200   ; YTitle="Leptons", XTitle="p_{T\,cone}(third lep.)"     , LegendCutoff=1e-4
+lep4_pt          : LepSel4_conePt      : 20,0,200   ; YTitle="Leptons", XTitle="p_{T\,cone}(forth lep.)"     , LegendCutoff=1e-4
+
+lep1_dxy         : abs(LepSel1_dxy)    : 20,0,0.05  ; YTitle="Leptons", XTitle="#||{d_{xy}}(leading lep.)"   , LegendCutoff=1e-4
+lep2_dxy         : abs(LepSel2_dxy)    : 20,0,0.05  ; YTitle="Leptons", XTitle="#||{d_{xy}}(subleading lep.)", LegendCutoff=1e-4
+lep3_dxy         : abs(LepSel3_dxy)    : 20,0,0.05  ; YTitle="Leptons", XTitle="#||{d_{xy}}(third lep.)"     , LegendCutoff=1e-4
+lep4_dxy         : abs(LepSel4_dxy)    : 20,0,0.05  ; YTitle="Leptons", XTitle="#||{d_{xy}}(forth lep.)"     , LegendCutoff=1e-4
+
+lep1_dz          : abs(LepSel1_dz)     : 20,0,0.1   ; YTitle="Leptons", XTitle="#||{d_{z}}(leading lep.)"   , LegendCutoff=1e-4
+lep2_dz          : abs(LepSel2_dz)     : 20,0,0.1   ; YTitle="Leptons", XTitle="#||{d_{z}}(subleading lep.)", LegendCutoff=1e-4
+lep3_dz          : abs(LepSel3_dz)     : 20,0,0.1   ; YTitle="Leptons", XTitle="#||{d_{z}}(third lep.)"     , LegendCutoff=1e-4
+lep4_dz          : abs(LepSel4_dz)     : 20,0,0.1   ; YTitle="Leptons", XTitle="#||{d_{z}}(forth lep.)"     , LegendCutoff=1e-4
+
+lep1_sip3d       : LepSel1_sip3d       : 16,0,8.0   ; YTitle="Leptons", XTitle="SIP_{3D}(leading lep.)"   , LegendCutoff=1e-4
+lep2_sip3d       : LepSel2_sip3d       : 16,0,8.0   ; YTitle="Leptons", XTitle="SIP_{3D}(subleading lep.)", LegendCutoff=1e-4
+lep3_sip3d       : LepSel3_sip3d       : 16,0,8.0   ; YTitle="Leptons", XTitle="SIP_{3D}(third lep.)"     , LegendCutoff=1e-4
+lep4_sip3d       : LepSel4_sip3d       : 16,0,8.0   ; YTitle="Leptons", XTitle="SIP_{3D}(forth lep.)"     , LegendCutoff=1e-4
+
+lep1_relIso      : LepSel1_relIso      : 20,0,0.3   ; YTitle="Leptons", XTitle="relIso_{0.3}(leading lep.)"   , LegendCutoff=1e-4
+lep2_relIso      : LepSel2_relIso      : 20,0,0.3   ; YTitle="Leptons", XTitle="relIso_{0.3}(subleading lep.)", LegendCutoff=1e-4
+lep3_relIso      : LepSel3_relIso      : 20,0,0.3   ; YTitle="Leptons", XTitle="relIso_{0.3}(third lep.)"     , LegendCutoff=1e-4
+lep4_relIso      : LepSel4_relIso      : 20,0,0.3   ; YTitle="Leptons", XTitle="relIso_{0.3}(forth lep.)"     , LegendCutoff=1e-4
+
+lep1_miniRelIso  : LepSel1_miniRelIso  : 20,0,0.3   ; YTitle="Leptons", XTitle="miniRelIso(leading lep.)"   , LegendCutoff=1e-4
+lep2_miniRelIso  : LepSel2_miniRelIso  : 20,0,0.3   ; YTitle="Leptons", XTitle="miniRelIso(subleading lep.)", LegendCutoff=1e-4
+lep3_miniRelIso  : LepSel3_miniRelIso  : 20,0,0.3   ; YTitle="Leptons", XTitle="miniRelIso(third lep.)"     , LegendCutoff=1e-4
+lep4_miniRelIso  : LepSel4_miniRelIso  : 20,0,0.3   ; YTitle="Leptons", XTitle="miniRelIso(forth lep.)"     , LegendCutoff=1e-4
+
+lep1_ptratio     : LepSel1_ptratio     : 20,0,1     ; YTitle="Leptons", XTitle="p_{T}^{l}/p_{T}^{j}(leading lep.)"   , LegendCutoff=1e-4
+lep2_ptratio     : LepSel2_ptratio     : 20,0,1     ; YTitle="Leptons", XTitle="p_{T}^{l}/p_{T}^{j}(subleading lep.)", LegendCutoff=1e-4
+lep3_ptratio     : LepSel3_ptratio     : 20,0,1     ; YTitle="Leptons", XTitle="p_{T}^{l}/p_{T}^{j}(third lep.)"     , LegendCutoff=1e-4
+lep4_ptratio     : LepSel4_ptratio     : 20,0,1     ; YTitle="Leptons", XTitle="p_{T}^{l}/p_{T}^{j}(forth lep.)"     , LegendCutoff=1e-4
+
+lep1_ptrel       : LepSel1_ptrel       : 20,0,40    ; YTitle="Leptons", XTitle="p_{Trel}(leading lep.)"   , LegendCutoff=1e-4
+lep2_ptrel       : LepSel2_ptrel       : 20,0,40    ; YTitle="Leptons", XTitle="p_{Trel}(subleading lep.)", LegendCutoff=1e-4
+lep3_ptrel       : LepSel3_ptrel       : 20,0,40    ; YTitle="Leptons", XTitle="p_{Trel}(third lep.)"     , LegendCutoff=1e-4
+lep4_ptrel       : LepSel4_ptrel       : 20,0,40    ; YTitle="Leptons", XTitle="p_{Trel}(forth lep.)"     , LegendCutoff=1e-4
+
+lep1_mva         : LepSel1_mva         : 20,0,1     ; YTitle="Leptons", XTitle="MVA(leading lep.)"   , LegendCutoff=1e-4
+lep2_mva         : LepSel2_mva         : 20,0,1     ; YTitle="Leptons", XTitle="MVA(subleading lep.)", LegendCutoff=1e-4
+lep3_mva         : LepSel3_mva         : 20,0,1     ; YTitle="Leptons", XTitle="MVA(third lep.)"     , LegendCutoff=1e-4
+lep4_mva         : LepSel4_mva         : 20,0,1     ; YTitle="Leptons", XTitle="MVA(forth lep.)"     , LegendCutoff=1e-4
+
+
+## event observables
+## ----------------------------------------------------------
+
+#met       : met_pt         : 35,0,700    ; XTitle="E_{T}^{miss}  [GeV]"         , LegendCutoff=1e-4
+met       : met_pt         : 15,-75,300  ; XTitle="E_{T}^{miss}  [GeV]"         , LegendCutoff=1e-4, Logy, YMin=0.7, YMax=100000, Legend="TL"
+htJet30j  : htJet30j       : 20,0,200    ; XTitle="H_{T}(jet p_{T} > 30) [GeV]" , LegendCutoff=1e-4
+nJet30    : nJet30         : 10,-0.5,9.5 ; XTitle="N(jet\, p_{T} > 30)"         , LegendCutoff=1e-4
+nBJet25   : nBJetMedium25  : 5,-0.5,4.5  ; XTitle="N(b-jet\, p_{T} > 25\, CSVM)", LegendCutoff=1e-4
+
+m3l       : m3L            : 40,0,200    ; XTitle="m_{3L} [GeV]", Legend="TL", LegendCutoff=1e-4 
+#mll3l     : mll_3l         : 40,0,200    ; XTitle="M(ll) [GeV]"                 , LegendCutoff=1e-4, Logy
+mll3l     : mllL_3l         : 14,0,210    ; XTitle="M(ll) [GeV]"                 , LegendCutoff=1e-4, Logy, YMin=0.7, YMax=100000, Legend="TR"
+#mtW3l     : mT_3l          : 10,0,200    ; XTitle="M_{T}^{W} [GeV]"             , LegendCutoff=1e-4, Logy, YMax=10000, Legend="TL"
+mtW3l     : mT_3l          : 10,0,200    ; XTitle="M_{T}^{W} [GeV]"             , LegendCutoff=1e-4, Logy, YMin=0.7, YMax=100000, Legend="TR"
+mT2L3l    : mT2L_3l        : 15,0,300    ; XTitle="M_{T2}(l\,l) [GeV]"          , LegendCutoff=1e-4
+mT2T3l    : mT2T_3l        : 15,0,300    ; XTitle="M_{T2}(l\,#tau) [GeV]"       , LegendCutoff=1e-4, Logy
+
+mll4l     : mll_4l         : 40,0,200    ; XTitle="M(ll) [GeV]"                 , LegendCutoff=1e-4
+mtW4l     : mT_4l          : 10,0,200    ; XTitle="M_{T}^{W} [GeV]"             , LegendCutoff=1e-4
+mT2L4l    : mT2L_4l        : 15,0,300    ; XTitle="M_{T2}(l\,l) [GeV]"          , LegendCutoff=1e-4
+mT2T4l    : mT2T_4l        : 15,0,300    ; XTitle="M_{T2}(l\,#tau) [GeV]"       , LegendCutoff=1e-4
+
+flavor3l   : (abs(LepSel1_pdgId)+abs(LepSel2_pdgId)+abs(LepSel3_pdgId)-33)/2  : 4,-0.5,3.5 ; XTitle="flavor", xBinLabels="eee\,ee#mu\,e#mu#mu\,#mu#mu#mu", Legend="TL", LegendCutoff=1e-4, MoreY=2.0
+charge3l   : if3(LepSel1_pdgId>0,-1,1)+if3(LepSel2_pdgId>0,-1,1)+if3(LepSel3_pdgId>0,-1,1) : 7,-3.5,3.5 ; XTitle="charge", Legend="TL", LegendCutoff=1e-4, MoreY=2.0
+flavor4l   : (abs(LepSel1_pdgId)+abs(LepSel2_pdgId)+abs(LepSel3_pdgId)+abs(LepSel4_pdgId)-44)/2  : 5,-0.5,4.5 ; XTitle="flavor", xBinLabels="eeee\,eee#mu\,ee#mu#mu\,e#mu#mu#mu\,#mu#mu#mu#mu", Legend="TL", LegendCutoff=1e-4, MoreY=2.0
+charge4l   : if3(LepSel1_pdgId>0,-1,1)+if3(LepSel2_pdgId>0,-1,1)+if3(LepSel3_pdgId>0,-1,1)+if3(LepSel4_pdgId>0,-1,1) :9,-4.5,4.5 ; XTitle="charge", Legend="TL", LegendCutoff=1e-4, MoreY=2.0
+
+mllsplit4l : if3(abs(mll[0]-91.2)<15 && abs(mll[1]-91.2)<15,1,if3(abs(mll[0]-91.2)>15 && abs(mll[1]-91.2)>15,3,2)) : 3,0.5,3.5 ; XTitle="composition", xBinLabels="onZ-onZ\,onZ-offZ\,offZ-offZ", Legend="TL", LegendCutoff=1e-4, MoreY=2.0
+
+#mTmll      : mT_3l\:mll_3l : [0,75,105,200]*[0,40,80,120,160,200] ; XTitle="M(ll) [GeV]", YTitle="M_{T}^{W} [GeV]", UnbinnedData2D=True, PlotMode='SCAT'
+mTmll      : mT_3l\:mllL_3l : [0,75,105,200]*[0,40,80,100,120,140,160,200] ; XTitle="M(ll) [GeV]", YTitle="M_{T}^{W} [GeV]", UnbinnedData2D=True, PlotMode='COLZ'
+mTmet      : mT_3l\:mllL_3l : [50,100,150,200,300]*[0,40,80,100,120,140,160,200] ; XTitle="E_{T}^{miss} [GeV]", YTitle="M_{T}^{W} [GeV]", UnbinnedData2D=True, PlotMode='COLZ'
+mtautau    : mass_2(FirstTau_conePt, FirstTau_eta, FirstTau_phi, 1.776, SeconTau_conePt, SeconTau_eta, SeconTau_phi, 1.776) : 14,0,210    ; XTitle="M(#tau#tau) [GeV]"                 , LegendCutoff=1e-4, Logy, YMin=0.7, YMax=100000, Legend="TR"
+
+
+

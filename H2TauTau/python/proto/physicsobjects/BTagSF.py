@@ -10,7 +10,7 @@ class BTagSF(object):
     def __init__ (self, seed, wp='medium', measurement='central') :
         self.randm = TRandom3(seed)
 
-        self.mc_eff_file = TFile('$CMSSW_BASE/src/CMGTools/H2TauTau/data/tagging_efficiencies.root')
+        self.mc_eff_file = TFile('$CMSSW_BASE/src/CMGTools/H2TauTau/data/tagging_efficiencies_ichep2016.root')
 
         # MC b-tag efficiencies as measured in HTT by Adinda
         self.btag_eff_b = self.mc_eff_file.Get('btag_eff_b')
@@ -18,7 +18,7 @@ class BTagSF(object):
         self.btag_eff_oth = self.mc_eff_file.Get('btag_eff_oth')
 
         # b-tag SFs from POG
-        calib = ROOT.BTagCalibration("csvv2", os.path.expandvars("$CMSSW_BASE/src/CMGTools/H2TauTau/data/CSVv2_4invfb.csv"))
+        calib = ROOT.BTagCalibration("csvv2", os.path.expandvars("$CMSSW_BASE/src/CMGTools/H2TauTau/data/CSVv2_ichep.csv"))
         
         op_dict = {
             'loose':0,
@@ -31,11 +31,10 @@ class BTagSF(object):
         v_sys.push_back('up')
         v_sys.push_back('down')
 
-        # self.reader_bc = ROOT.BTagCalibrationReader(calib, op_dict[wp], "mujets", measurement)
         self.reader_bc = ROOT.BTagCalibrationReader(op_dict[wp], measurement, v_sys)
-        self.reader_bc.load(calib, 0, 'mujets')
+        self.reader_bc.load(calib, 0, 'comb')
+        self.reader_bc.load(calib, 1, 'comb')
         print 'Booking light reader'
-        # self.reader_light = ROOT.BTagCalibrationReader(calib, op_dict[wp], "incl", measurement)
         self.reader_light = ROOT.BTagCalibrationReader(op_dict[wp], measurement, v_sys)
         self.reader_light.load(calib, 2, 'incl')
 
@@ -74,14 +73,6 @@ class BTagSF(object):
             else:
                 return False
 
-        if jetflavor in [4, 5]:
-            if pt > 670.:
-                pt = 670.
-            if pt < 30.:
-                pt = 30.
-
-        if jetflavor not in [4, 5] and pt > 1000.:
-            pt = 1000.
 
         SFb = self.getPOGSFB(pt, abs(eta), jetflavor)
         eff_b = self.getMCBTagEff(pt, abs(eta), jetflavor)
@@ -121,4 +112,5 @@ if __name__ == '__main__':
 
     btag = BTagSF(12345)
     print 'created BTagSF instance'
+    print btag.isBTagged(25., 2.3, 0.9, 5, False)
 

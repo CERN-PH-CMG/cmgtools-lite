@@ -1,8 +1,9 @@
 import math
 
+from itertools import combinations
+
 from PhysicsTools.Heppy.physicsobjects.PhysicsObjects import Muon, Tau
 from PhysicsTools.Heppy.physicsobjects.Electron import Electron
-from PhysicsTools.HeppyCore.utils.deltar import deltaR2
 from ROOT import TVector3
 
 
@@ -133,6 +134,12 @@ class DiTau(DiObject):
         mt2 = self.mTLeg1()**2 + self.mTLeg2()**2 + self.calcMT(self.leg1(), self.leg2())**2
         return math.sqrt(mt2)
 
+    def mtSumLeptons(self):
+        return self.mTLeg1() + self.mTLeg2()
+
+    def mtSqSumLeptons(self):
+        return math.sqrt(self.mTLeg1()**2 + self.mTLeg2()**2)
+
     # Calculate the transverse mass with the same algorithm
     # as previously in the C++ DiObject class
     @staticmethod
@@ -148,39 +155,9 @@ class DiTau(DiObject):
             print cand2.px(), cand2.py(), cand2.pt()
             return 0.
 
-    def match(self, genParticles):
-        # TODO review matching algorithm
-        # TODO move matching stuff even higher?
-        # print self
-        genTaus = []
-        ZorPhotonorHiggs = [22, 23, 25, 35, 36, 37]
-        for gen in genParticles:
-            # print '\t', gen
-            if abs(gen.pdgId()) == 15 and gen.mother().pdgId() in ZorPhotonorHiggs:
-                genTaus.append(gen)
-        # print 'Gen taus: '
-        # print '\n'.join( map( str, genTaus ) )
-        if len(genTaus) != 2:
-            # COLIN what about WW, ZZ?
-            return (-1, -1)
-        else:
-            dR2leg1Min, self.leg1Gen = (float('inf'), None)
-            dR2leg2Min, self.leg2Gen = (float('inf'), None)
-            for genTau in genTaus:
-                dR2leg1 = deltaR2(self.leg1().eta(), self.leg1().phi(),
-                                  genTau.eta(), genTau.phi())
-                dR2leg2 = deltaR2(self.leg2().eta(), self.leg2().phi(),
-                                  genTau.eta(), genTau.phi())
-                if dR2leg1 < dR2leg1Min:
-                    dR2leg1Min, self.leg1Gen = (dR2leg1, genTau)
-                if dR2leg2 < dR2leg2Min:
-                    dR2leg2Min, self.leg2Gen = (dR2leg2, genTau)
-            # print dR2leg1Min, dR2leg2Min
-            # print self.leg1Gen
-            # print self.leg2Gen
-            self.leg1DeltaR = math.sqrt(dR2leg1Min)
-            self.leg2DeltaR = math.sqrt(dR2leg2Min)
-            return (self.leg1DeltaR, self.leg2DeltaR)
+    @staticmethod
+    def calcMtTotal(cands):
+        return math.sqrt(sum(DiObject.calcMT(c1, c2)**2 for c1, c2 in combinations(cands, 2)))
 
 
 class DirectDiTau(DiTau):
@@ -302,11 +279,21 @@ class MuonElectron(DiTau):
         return self.ele
 
 
+class DirectTauTau(DirectDiTau):
+
+    def __init__(self, leg1, leg2, met):
+        self.leg1_ = leg1 if leg1.pt() > leg2.pt() else leg2
+        self.leg2_ = leg2 if leg1.pt() > leg2.pt() else leg1
+        self.met_ = met
+        self.p4_ = (leg1.p4() + leg2.p4())
+
+
 class TauTau(DiTau):
 
     def __init__(self, diobject, iso='byIsolationMVArun2v1DBoldDMwLTraw'):
         super(TauTau, self).__init__(diobject)
-        if super(TauTau, self).leg1().tauID(iso) > super(TauTau, self).leg2().tauID(iso):
+        # if super(TauTau, self).leg1().tauID(iso) > super(TauTau, self).leg2().tauID(iso):
+        if super(TauTau, self).leg1().pt() > super(TauTau, self).leg2().pt():
             self.tau = Tau(super(TauTau, self).leg1())
             self.tau2 = Tau(super(TauTau, self).leg2())
         else:

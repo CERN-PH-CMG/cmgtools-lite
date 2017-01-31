@@ -1,0 +1,52 @@
+
+T2ttDeg_lepOnly_dM20gev+ : T2ttDeg_lepOnly_dM20gev : 1   : LepGood_mcMatchId  != 0 ; FillColor=ROOT.kBlue-3, Label="sTop dM20"
+TChiNeuWZ_mCh150_mChi120+ : TChiNeuWZ_mCh150_mChi120 : 1   : LepGood_mcMatchId  != 0 ; FillColor=ROOT.kBlue+3, Label="WZ 150/120"
+
+WZ_350_100+    : TChiNeuWZ_mCh350_mChi100          : 1   : LepGood_mcMatchId  != 0 ; FillColor=ROOT.kMagenta, Label="WZ 350/100"
+WZ_350_20+     : TChiNeuWZ_mCh350_mChi20           : 1   : LepGood_mcMatchId  != 0 ; FillColor=ROOT.kGreen, Label="WZ 350/20"
+WZ_200_100+    : TChiNeuWZ_mCh200_mChi100          : 1   : LepGood_mcMatchId  != 0 ; FillColor=ROOT.kCyan, Label="WZ 200/100"
+WZ_150_120+    : TChiNeuWZ_mCh150_mChi120          : 1   : LepGood_mcMatchId  != 0 ; FillColor=ROOT.kBlue  , Label="WZ 150/120"
+WZ_350_100_OS+    : TChiNeuWZ_mCh350_mChi100_OS          : 1   : LepGood_mcMatchId  != 0 ; FillColor=ROOT.kMagenta, Label="WZ(2L) 350/100"
+WZ_350_20_OS+     : TChiNeuWZ_mCh350_mChi20_OS           : 1   : LepGood_mcMatchId  != 0 ; FillColor=ROOT.kGreen, Label="WZ(2L) 350/20"
+WZ_200_100_OS+    : TChiNeuWZ_mCh200_mChi100_OS          : 1   : LepGood_mcMatchId  != 0 ; FillColor=ROOT.kCyan, Label="WZ(2L) 200/100"
+WZ_150_120_OS+    : TChiNeuWZ_mCh150_mChi120_OS          : 1   : LepGood_mcMatchId  != 0 ; FillColor=ROOT.kBlue  , Label="WZ(2L) 150/120"
+
+WH_250_20+     : TChiNeuWZ_mCh250_mChi20           : 1   : LepGood_mcMatchId  != 0 ; FillColor=ROOT.kMagenta+2, Label="WH 250/20"
+WH_150_20+     : TChiNeuWZ_mCh150_mChi20           : 1   : LepGood_mcMatchId  != 0 ; FillColor=ROOT.kMagenta  , Label="WH 150/20"
+
+LL_750_100+    : TChiNeuSlepSneu_mCh750_mChi100    : 1   : LepGood_mcMatchId  != 0 ; FillColor=ROOT.kRed+2, Label="LL 750/100"
+LL_450_300+    : TChiNeuSlepSneu_mCh450_mChi300    : 1   : LepGood_mcMatchId  != 0 ; FillColor=ROOT.kRed-3, Label="LL 450/300"
+LL_300_270+    : TChiNeuSlepSneu_mCh300_mChi270    : 1   : LepGood_mcMatchId  != 0 ; FillColor=ROOT.kRed  , Label="LL 300/270"
+
+LL_450_300_SS+ : TChiNeuSlepSneu_mCh450_mChi300_SS : 1   : LepGood_mcMatchId  != 0 ; FillColor=ROOT.kRed-6, Label="LL 450/300 SS"
+LL_300_270_SS+ : TChiNeuSlepSneu_mCh300_mChi270_SS : 1   : LepGood_mcMatchId  != 0 ; FillColor=ROOT.kRed-9, Label="LL 300/270 SS"
+
+TT_true+       : TTJets_SingleLeptonFromT          : 1   : LepGood_mcMatchId  != 0 ; FillColor=ROOT.kGreen+2, Label="tt\, prompt"
+TT_true+       : TTJets_SingleLeptonFromTbar       : 1   : LepGood_mcMatchId  != 0 ; FillColor=ROOT.kGreen+2, Label="tt\, prompt"
+
+DY_true+       : DYJetsToLL_M10to50                : 1   : LepGood_mcMatchId  != 0 ; FillColor=ROOT.kOrange+2, Label="DY\, prompt"
+DY_true+       : DYJetsToLL_M50                    : 1   : LepGood_mcMatchId  != 0 ; FillColor=ROOT.kOrange+2, Label="DY\, prompt"
+
+WZ_true+       : WZTo3LNu                          : 1   : LepGood_mcMatchId  != 0 ; FillColor=ROOT.kOrange+3, Label="WZ\, prompt"
+WWTo2L2Nu_true+: WWTo2L2Nu                         : 1   : LepGood_mcMatchId  != 0 ; FillColor=ROOT.kOrange+3, Label="WW\, prompt"
+
+T1_1500_100+   : T1tttt_mGo1500_mChi100            : 1   : LepGood_mcMatchId  != 0 ; FillColor=ROOT.kBlack, Label="T1 1500/100"
+T1_1200_800+   : T1tttt_mGo1200_mChi800            : 1   : LepGood_mcMatchId  != 0 ; FillColor=ROOT.kGray , Label="T1 1200/800"
+
+WZTo2L2Q+      : WZTo2L2Q			   : 1   : LepGood_mcMatchId  != 0 ; FillColor=ROOT.kGray+2 , Label="WZ llqq"
+TTHnobb_pow+   : TTHnobb_pow			   : 1   : LepGood_mcMatchId  != 0 ; FillColor=ROOT.kRed , Label="ttH"
+TTZ+	       : TTZToLLNuNu_LO_withLHE		   : 1   : LepGood_mcMatchId  != 0 ; FillColor=ROOT.kOrange , Label="ttZ"
+##------------------
+
+TT_red         : TTJets_SingleLeptonFromT          : 1   : LepGood_mcMatchId  == 0 ; FillColor=ROOT.kBlue  , Label="tt\, non-prompt"
+TT_red         : TTJets_SingleLeptonFromTbar       : 1   : LepGood_mcMatchId  == 0 ; FillColor=ROOT.kBlue  , Label="tt\, non-prompt"
+
+DY_red         : DYJetsToLL_M50                    : 1   : LepGood_mcMatchId  == 0 ; FillColor=ROOT.kOrange , Label="DY\, non-prompt"
+
+TT_bjets       : TTJets_SingleLeptonFromT          : xsec: LepGood_mcMatchAny == 5 ; FillColor=ROOT.kBlue-2, Label="tt\, b\#rightarrowl"
+TT_bjets       : TTJets_SingleLeptonFromTbar       : xsec: LepGood_mcMatchAny == 5 ; FillColor=ROOT.kBlue-2, Label="tt\, b\#rightarrowl"
+TT_cjets       : TTJets                            : xsec: LepGood_mcMatchAny == 4 ; FillColor=ROOT.kGray+2, Label="tt\, c\#rightarrowl"
+TT_ljets       : TTJets                            : xsec: LepGood_mcMatchId  == 0 && LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 ; FillColor=ROOT.kTeal+2, Label="tt\, j\#rightarrowl_{true}"
+TT_fake        : TTJets_SingleLeptonFromT          : 1   : LepGood_mcMatchAny == 0 ; FillColor=ROOT.kGray+3, Label="tt\, j\#rightarrowl_{fake}"
+TT_fake        : TTJets_SingleLeptonFromTbar       : 1   : LepGood_mcMatchAny == 0 ; FillColor=ROOT.kGray+3, Label="tt\, j\#rightarrowl_{fake}"
+

@@ -1,0 +1,17 @@
+weight: 1.0
+
+change: mT_3l\b: mT_3l_jecDown
+change: met_pt\b: met_jecDown_pt
+change: met_phi\b: met_jecDown_phi
+change: nJet25_Recl\b: nJet25_Recl_jecDown
+change: htJet25j_Recl\b: htJet25j_Recl_jecDown
+change: mhtJet25_Recl\b: mhtJet25_Recl_jecDown
+change: nJet40_Recl\b: nJet40_Recl_jecDown
+change: htJet40j_Recl\b: htJet40j_Recl_jecDown
+change: mhtJet40_Recl\b: mhtJet40_Recl_jecDown
+change: nBJetLoose25_Recl\b: nBJetLoose25_Recl_jecDown
+change: nBJetMedium25_Recl\b: nBJetMedium25_Recl_jecDown
+change: nBJetTight25_Recl\b: nBJetTight25_Recl_jecDown
+change: nBJetLoose40_Recl\b: nBJetLoose40_Recl_jecDown
+change: nBJetMedium40_Recl\b: nBJetMedium40_Recl_jecDown
+change: nBJetTight40_Recl\b: nBJetTight40_Recl_jecDown

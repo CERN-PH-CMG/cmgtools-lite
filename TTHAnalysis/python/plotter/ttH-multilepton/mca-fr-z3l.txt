@@ -8,16 +8,11 @@ DY      : DYJetsToLL_M50     : xsec : LepGood3_mcMatchId == 0; FillColor=ROOT.kP
 VZ 	: WZTo3LNu           : xsec : LepGood3_mcMatchId != 0 ;  FillColor=ROOT.kViolet-2, KeysPdf=True
 VZ      : ZZTo4L             : xsec : LepGood3_mcMatchId != 0 ;  FillColor=ROOT.kAzure-2, KeysPdf=True
 
-data: DoubleEG_Run2015C_25ns_16Dec2015
-data: DoubleEG_Run2015D_16Dec2015
-data: DoubleMuon_Run2015C_25ns_16Dec2015
-data: DoubleMuon_Run2015D_16Dec2015
-data: MuonEG_Run2015C_25ns_16Dec2015
-data: MuonEG_Run2015D_16Dec2015
-data: SingleElectron_Run2015C_25ns_16Dec2015
-data: SingleElectron_Run2015D_16Dec2015
-data: SingleMuon_Run2015C_25ns_16Dec2015
-data: SingleMuon_Run2015D_16Dec2015
+data: DoubleEG_Run2016B_PromptReco_v2+DoubleEG_Run2016C_PromptReco_v2+DoubleEG_Run2016D_PromptReco_v2_runs_276315_276384+DoubleEG_Run2016D_PromptReco_v2_runs_276385_276811
+data: DoubleMuon_Run2016B_PromptReco_v2+DoubleMuon_Run2016C_PromptReco_v2+DoubleMuon_Run2016D_PromptReco_v2_runs_276315_276384+DoubleMuon_Run2016D_PromptReco_v2_runs_276385_276811
+data: MuonEG_Run2016B_PromptReco_v2+MuonEG_Run2016C_PromptReco_v2+MuonEG_Run2016D_PromptReco_v2_runs_276315_276384+MuonEG_Run2016D_PromptReco_v2_runs_276385_276811
+data: SingleElectron_Run2016B_PromptReco_v2+SingleElectron_Run2016C_PromptReco_v2+SingleElectron_Run2016D_PromptReco_v2_runs_276315_276384+SingleElectron_Run2016D_PromptReco_v2_runs_276385_276811
+data: SingleMuon_Run2016B_PromptReco_v2+SingleMuon_Run2016C_PromptReco_v2+SingleMuon_Run2016D_PromptReco_v2_runs_276315_276384+SingleMuon_Run2016D_PromptReco_v2_runs_276385_276811
 
 ## Options only
 DY_prefit : - ; FillColor=ROOT.kPink-2, Label="DY MC"

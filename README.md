@@ -1,16 +1,14 @@
-# Short recipe for TTHAnalysis setup
+# Short recipe for CMGTools 
 
-For the general recipe to set up CMG Framework in CMSSW_8_0_X, [follow these instructions](https://twiki.cern.ch/twiki/bin/view/CMS/CMGToolsReleasesExperimental#CMGTools_lite_release_for_ICHEP).
+For the general recipe, [follow these instructions](https://twiki.cern.ch/twiki/bin/view/CMS/CMGToolsReleasesExperimental).
 
 --------------
-
-### Basic setup (from the above link) is this:
 
 #### Set up CMSSW and the base git
 
 ```
-cmsrel CMSSW_8_0_11
-cd CMSSW_8_0_11/src
+cmsrel CMSSW_8_0_25
+cd CMSSW_8_0_25/src
 cmsenv
 git cms-init
 ```
@@ -55,4 +53,3 @@ git push -u origin 80X
 cd $CMSSW_BASE/src
 scram b -j 8
 ```
-
