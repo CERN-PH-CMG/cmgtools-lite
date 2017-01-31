@@ -3,7 +3,7 @@
 ################################
 T="NON_ESISTE"
 if hostname | grep -q cmsco01; then
-    T="/data1/peruzzi/mixture_jecv6prompt_datafull_jul20"
+    T="/data1/peruzzi/TREES_TTH_180117_Summer16_JEC_mc25nsV5_data23SepV2_noClean_lepMVAretr_qgV1"
 fi
 
 BG=" -j 6 "; if [[ "$1" == "-b" ]]; then BG=" & "; shift; fi
@@ -16,19 +16,19 @@ susy_wpV) CUTFILE="susy-ewkino/fr-z3l-wpV.txt"; XVAR="ptJIMIX3"; NUM="mvaSusy_sV
 *) echo "unknown analysis $ANALYSIS"; exit 1; ;;
 esac;
 
-BCORE=" --s2v --tree treeProducerSusyMultilepton ttH-multilepton/mca-fr-z3l.txt ${CUTFILE} -P $T -l 12.9 --AP --mcc ttH-multilepton/mcc-eleIdEmu2.txt "
+BCORE=" --s2v --tree treeProducerSusyMultilepton ttH-multilepton/mca-fr-z3l.txt ${CUTFILE} -P $T -l  36.5 --AP --mcc ttH-multilepton/mcc-eleIdEmu2.txt "
 BCORE="$BCORE --mcc ttH-multilepton/ttH_2lss3l_triggerdefs.txt -X ^Trig -A Z1 ptcuts 'LepGood_pt[0]>25 && LepGood_pt[1]>15' " # no trigger selection
 
 lepton=$1; if [[ "$1" == "" ]]; then exit 1; fi
 case $lepton in
-mu) BCORE="${BCORE} -E ^${lepton} -E tightZ1 --mcc ttH-multilepton/mcc-ichepMediumMuonId.txt "; ;;
-el) BCORE="${BCORE} -E ^${lepton} --mcc ttH-multilepton/mcc-ichepMediumMuonId-fake.txt"; ;;
+mu) BCORE="${BCORE} -E ^${lepton} -E tightZ1 ";; #;--mcc ttH-multilepton/mcc-ichepMediumMuonId.txt "; ;;
+el) BCORE="${BCORE} -E ^${lepton} ";; #--mcc ttH-multilepton/mcc-ichepMediumMuonId-fake.txt"; ;;
 *) echo "unknown lepton $lepton"; exit 1; ;;
 esac;
 
 what=$2; shift; shift;
 #PBASE="~/www/plots_FR/80X/lepMVA_${ANALYSIS}/v1.4_250616/fr-meas/$lepton/z3l/$what"
-PBASE="plots/80X/$ANALYSIS/fr-meas/z3l/v2.1/$lepton/$what"
+PBASE="plots/80X/${ANALYSIS}_Moriond17/lepMVA/v1.0.1/fr-meas/z3l/$lepton"
 
 case $lepton in
     el) BARREL="00_15"; ENDCAP="15_25"; ETA="1.479"; SC_EWK=1.58;  SC_DY=0.86;;

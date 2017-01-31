@@ -1,16 +1,17 @@
 minimal: LepGood_awayJet_pt > 30 
 fix: abs(LepGood_awayJet_eta) < 2.4
-bMedium: LepGood_awayJet_btagCSV > 0.80; Disable=True
+bMedium: LepGood_awayJet_btagCSV > 0.8484; Disable=True
 HLT_PFJetAll:  $DATA{HLT_FR_PFJet40 || HLT_FR_PFJet60 || HLT_FR_PFJet80} $MC{1}; Disable=True
 HLT_PFJet6:  $DATA{HLT_FR_PFJet60 || HLT_FR_PFJet80} $MC{1}; Disable=True
 veto: nLepGood == 1
 presel: LepGood_sip3d < 8
-csvM: LepGood_jetBTagCSV < 0.80
+csvM: LepGood_jetBTagCSV < 0.8484
 mu : abs(LepGood_pdgId)==13 ; Disable=True
 el : abs(LepGood_pdgId)==11 && LepGood_convVeto && LepGood_lostHits == 0 ; Disable=True
 ptfCut: LepGood_mvaTTH > 0.75 || LepGood_jetPtRatiov2 > 0.3
 idEmuCut: LepGood_idEmu2
-cvslDen:  LepGood_mvaTTH > 0.75 || LepGood_jetBTagCSV < 0.46
+#cvslDen:  LepGood_mvaTTH > 0.75 || LepGood_jetBTagCSV < 0.46
+cvslDen:  LepGood_mvaTTH > 0.75 || (abs(LepGood_pdgId)==13 && LepGood_jetBTagCSV < 0.5426) || (abs(LepGood_pdgId)==11 && (LepGood_mvaIdSpring16GP > -0.5 || abs(LepGood_eta)<1.479))
 num : LepGood_mediumMuonId > 0 && LepGood_mvaTTH > 0.75 ; Disable=True
 pt10 : LepGood_pt > 10; Disable=True
 conePt20 : LepGood_pt*if3(LepGood_mvaTTH>0.75&&LepGood_mediumMuonId>0, 1.0, 0.85/LepGood_jetPtRatiov2) > 20; Disable=True

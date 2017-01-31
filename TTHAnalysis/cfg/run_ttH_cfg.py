@@ -208,7 +208,8 @@ triggerFlagsAna.checkL1Prescale = True
 
 from CMGTools.RootTools.samples.samples_13TeV_RunIISummer16MiniAODv2 import *
 from CMGTools.RootTools.samples.samples_13TeV_DATA2016 import *
-from CMGTools.HToZZ4L.tools.configTools import printSummary, configureSplittingFromTime, cropToLumi, prescaleComponents, insertEventSelector
+from CMGTools.HToZZ4L.tools.configTools import printSummary, configureSplittingFromTime, cropToLumi, prescaleComponents, insertEventSelector, mergeExtensions
+from CMGTools.RootTools.samples.autoAAAconfig import *
 
 selectedComponents = [TTLep_pow]
 
@@ -282,26 +283,6 @@ if runData and not isTest: # For running on data
             #("DoubleMuon",  triggers_FR_1mu_noiso ),
         ]
         exclusiveDatasets = True
-
-    if runDataQCD: # for fake rate measurements in data
-        ttHLepSkim.minLeptons = 1
-        if getHeppyOption("fast"): raise RuntimeError, 'Already added ttHFastLepSkimmer with 2-lep configuration, this is wrong.'
-        FRTrigs = triggers_FR_1mu_iso + triggers_FR_1mu_noiso + triggers_FR_1e_noiso + triggers_FR_1e_iso + triggers_FR_1e_b2g
-        for t in FRTrigs:
-            tShort = t.replace("HLT_","FR_").replace("_v*","")
-            triggerFlagsAna.triggerBits[tShort] = [ t ]
-            FRTrigs_mu = triggers_FR_1mu_iso + triggers_FR_1mu_noiso
-            FRTrigs_el = triggers_FR_1e_noiso + triggers_FR_1e_iso + triggers_FR_1e_b2g
-            DatasetsAndTriggers = [ (pd,trig) for pd,trig in DatasetsAndTriggers ] # if pd in ['DoubleMuon','DoubleEG'] ]
-            for pd,trig in DatasetsAndTriggers:
-                if pd in ['DoubleMuon']:
-                    trig.extend(FRTrigs_mu)
-                elif pd in ['DoubleEG']:
-                    trig.extend(FRTrigs_el)
-                else:
-                    print 'the strategy for trigger selection on MuonEG for FR studies should yet be implemented'
-                    #assert(False)
-
     for json,dsets,short,run_ranges,useAAA in dataChunks:
         if len(run_ranges)==0: run_ranges=[None]
         vetos = []
@@ -323,45 +304,37 @@ if runData and not isTest: # For running on data
                                                      useAAA=useAAA)
                     if "PromptReco" in comp.dataset:
                         from CMGTools.Production.promptRecoRunRangeFilter import filterComponent
-                        filterComponent(comp, verbose=1)
-                    print "Will process %s (%d files)" % (comp.name, len(comp.files))
+                        filterComponent(comp, verbose=0)
+                    #print "Will process %s (%d files)" % (comp.name, len(comp.files))
                     comp.splitFactor = len(comp.files)/8 if 'Single' not in comp.name else len(comp.files)/16
                     comp.fineSplitFactor = 1
                     selectedComponents.append( comp )
             if exclusiveDatasets: vetos += triggers
     if json is None:
         susyCoreSequence.remove(jsonAna)
+    if runDataQCD: # for fake rate measurements in data
+         configureSplittingFromTime(selectedComponents, 20, 6, maxFiles=10)
 
-printSummary(selectedComponents)
+#printSummary(selectedComponents)
 
 
 if runFRMC: 
-    QCD_Mu5 = [ QCD_Pt20to30_Mu5, QCD_Pt30to50_Mu5, QCD_Pt50to80_Mu5, QCD_Pt80to120_Mu5, QCD_Pt120to170_Mu5 ]
-#    QCDPtEMEnriched = [ QCD_Pt20to30_EMEnriched, QCD_Pt30to50_EMEnriched, QCD_Pt50to80_EMEnriched, QCD_Pt80to120_EMEnriched, QCD_Pt120to170_EMEnriched ]
-#    QCDPtbcToE = [ QCD_Pt_20to30_bcToE, QCD_Pt_30to80_bcToE, QCD_Pt_80to170_bcToE ]
-#    QCDHT = [ QCD_HT100to200, QCD_HT200to300, QCD_HT300to500, QCD_HT500to700 ]
-#    selectedComponents = [QCD_Mu15] + QCD_Mu5 + QCDPtEMEnriched + QCDPtbcToE + [WJetsToLNu_LO,DYJetsToLL_M10to50,DYJetsToLL_M50]
-#    selectedComponents = [ QCD_Pt_170to250_bcToE, QCD_Pt120to170_EMEnriched, QCD_Pt170to300_EMEnriched ]
-#    selectedComponents = [QCD_Mu15]
-
-#    selectedComponents = [TTJets_SingleLeptonFromT,TTJets_SingleLeptonFromTbar]
-
-    selectedComponents = [QCD_Mu15] + QCD_Mu5 + [WJetsToLNu,DYJetsToLL_M10to50,DYJetsToLL_M50] 
-
-    time = 5.0
-    configureSplittingFromTime([WJetsToLNu],20,time)
-#    configureSplittingFromTime([WJetsToLNu_LO],20,time)
-    configureSplittingFromTime([DYJetsToLL_M10to50],10,time)
-    configureSplittingFromTime([DYJetsToLL_M50],30,time)
-    configureSplittingFromTime([QCD_Mu15]+QCD_Mu5,70,time)
-#    configureSplittingFromTime(QCDPtbcToE,50,time)
-#    configureSplittingFromTime(QCDPtEMEnriched,25,time)
-#    configureSplittingFromTime([ QCD_HT100to200, QCD_HT200to300 ],10,time)
-#    configureSplittingFromTime([ QCD_HT300to500, QCD_HT500to700 ],15,time)
-#    configureSplittingFromTime([ QCD_Pt120to170_EMEnriched,QCD_Pt170to300_EMEnriched ], 15, time)
-#    configureSplittingFromTime([ QCD_Pt_170to250_bcToE ], 30, time)
+    QCD_Mu5 = [ QCD_Pt20to30_Mu5, QCD_Pt30to50_Mu5, QCD_Pt50to80_Mu5, QCD_Pt80to120_Mu5, QCD_Pt120to170_Mu5, QCD_Pt170to300_Mu5 ]
+    autoAAA(QCDPtEMEnriched+QCDPtbcToE)
+    QCDEm, _ = mergeExtensions([q for q in QCDPtEMEnriched+QCDPtbcToE if "toInf" not in q.name])
+    selectedComponents = [QCD_Mu15] + QCD_Mu5 + [WJetsToLNu_LO,DYJetsToLL_M10to50_LO,DYJetsToLL_M50_LO_ext] + QCDEm
+    #selectedComponents += [TTJets_SingleLeptonFromT,TTJets_SingleLeptonFromTbar]
+    cropToLumi(selectedComponents, 1.0)
+    time = 5.0; extra = dict(maxFiles=10)
+    configureSplittingFromTime([WJetsToLNu_LO],20,time, **extra)
+    configureSplittingFromTime([DYJetsToLL_M10to50_LO],10,time, **extra)
+    configureSplittingFromTime([DYJetsToLL_M50_LO_ext],40,time, **extra)
+    configureSplittingFromTime([QCD_Mu15]+QCD_Mu5,40,time, **extra)
+    configureSplittingFromTime(QCDEm, 40, time, **extra)
+    #configureSplittingFromTime([ QCD_HT100to200, QCD_HT200to300 ],10,time, **extra)
+    #configureSplittingFromTime([ QCD_HT300to500, QCD_HT500to700 ],15,time, **extra)
     if runQCDBM:
-        configureSplittingFromTime([QCD_Mu15]+QCD_Mu5,15,time)
+        configureSplittingFromTime([QCD_Mu15]+QCD_Mu5,15,time, **extra)
     for c in selectedComponents:
         c.triggers = []
         c.vetoTriggers = [] 
@@ -371,11 +344,10 @@ if runFRMC or runDataQCD:
     ttHLepSkim.minLeptons = 1
     if ttHJetMETSkim in susyCoreSequence: susyCoreSequence.remove(ttHJetMETSkim)
     if getHeppyOption("fast"): raise RuntimeError, 'Already added ttHFastLepSkimmer with 2-lep configuration, this is wrong.'
-    if runDataQCD:
-        FRTrigs = triggers_FR_1mu_iso + triggers_FR_1mu_noiso + triggers_FR_1e_noiso + triggers_FR_1e_iso + triggers_FR_1e_b2g + triggers_FR_jet + triggers_FR_muNoIso
-        for t in FRTrigs:
-            tShort = t.replace("HLT_","FR_").replace("_v*","")
-            triggerFlagsAna.triggerBits[tShort] = [ t ]
+    FRTrigs = triggers_FR_1mu_iso + triggers_FR_1mu_noiso + triggers_FR_1e_noiso + triggers_FR_1e_iso + triggers_FR_1e_b2g + triggers_FR_jet + triggers_FR_muNoIso
+    for t in FRTrigs:
+        tShort = t.replace("HLT_","FR_").replace("_v*","")
+        triggerFlagsAna.triggerBits[tShort] = [ t ]
     treeProducer.collections = {
         "selectedLeptons" : NTupleCollection("LepGood",  leptonTypeSusyExtraLight, 8, help="Leptons after the preselection"),
         "cleanJets"       : NTupleCollection("Jet",     jetTypeSusyExtraLight, 15, help="Cental jets after full selection and cleaning, sorted by pt"),
@@ -516,9 +488,11 @@ if test == '1':
     comp.fineSplitFactor = 1
     selectedComponents = [ comp ]
 elif test == '2':
-    from CMGTools.Production.promptRecoRunRangeFilter import filterWithCollection
-    for comp in selectedComponents:
-        if comp.isData: comp.files = filterWithCollection(comp.files, [274315,275658,276363,276454])
+    sel = getHeppyOption('sel','.*')
+    for comp in selectedComponents[:]:
+        if sel and not any(re.search(p.strip(),comp.name) for p in sel.split(",")):
+            selectedComponents.remove(comp)
+            continue
         comp.files = comp.files[:1]
         comp.splitFactor = 1
         comp.fineSplitFactor = 1
@@ -602,7 +576,6 @@ if not getHeppyOption("keepLHEweights",False):
     susyCounter.doLHE = False
 
 ## Auto-AAA
-from CMGTools.RootTools.samples.autoAAAconfig import *
 if not getHeppyOption("isCrab"):
     autoAAA(selectedComponents)
 
@@ -617,6 +590,13 @@ output_service = cfg.Service(
     option='recreate'
     )    
 outputService.append(output_service)
+
+
+selectComponents = getHeppyOption('selectComponents',None)
+if selectComponents:
+    for comp in selectedComponents[:]:
+        if not any(re.search(p.strip(),comp.name) for p in selectComponents.split(",")):
+            selectedComponents.remove(comp)
 
 # print summary of components to process
 printSummary(selectedComponents)
