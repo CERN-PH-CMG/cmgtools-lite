@@ -383,6 +383,16 @@ if not skipT1METCorr:
     metAnaScaleDown.recalibrate = "type1"
 
 
+#ISR jet collection
+if analysis=='SOS':
+    from CMGTools.TTHAnalysis.analyzers.nIsrAnalyzer import NIsrAnalyzer
+    nIsrAnalyzer = cfg.Analyzer(
+        NIsrAnalyzer, name='nIsrAnalyzer',
+    )
+    susyCoreSequence.insert(susyCoreSequence.index(jetAna)+1,nIsrAnalyzer)
+    treeProducer.globalVariables.append(NTupleVariable("nISR", lambda ev: ev.nIsr, int, help="number of ISR jets according to SUSY recommendations"))
+
+
 #-------- SAMPLES AND TRIGGERS -----------
 
 
@@ -417,6 +427,7 @@ triggerFlagsAna.triggerBits = {
 triggerFlagsAna.unrollbits = True
 triggerFlagsAna.saveIsUnprescaled = True
 triggerFlagsAna.checkL1Prescale = True
+
 
 if runSMS:
     #if ttHLepSkim in susyCoreSequence: susyCoreSequence.remove(ttHLepSkim)
@@ -463,12 +474,16 @@ if analysis=='susy':
 elif analysis=='SOS':
 
     selectedComponents = selectedComponents
-    #   samples_scans = [SMS_TChiWZ, SMS_T2ttDiLep_mStop_10to80] 
-    #   samples_privateSig = Higgsino 
-    #   samples_mainBkg = [VVTo2L2Nu, VVTo2L2Nu_ext,TTJets_DiLepton, TBar_tWch_ext, T_tWch_ext] + DYJetsM5to50HT + DYJetsM50HT
-    #   samples_fakesBkg = [TTJets_SingleLeptonFromTbar, TTJets_SingleLeptonFromT, WJetsToLNuHT] 
-    #   samples_rareBkg = [WZTo3LNu, WWToLNuQQ, WZTo1L3Nu, WZTo1L1Nu2Q, ZZTo2L2Q, ZZTo4L, WWW, WZZ, WWZ, ZZZ, T_tch_powheg, TBar_tch_powheg, TToLeptons_sch_amcatnlo, TTHnobb_pow, WWDouble, WpWpJJ, TTWToLNu_ext, TTZToLLNuNu_ext, TTZToLLNuNu_m1to10, TTGJets, WGToLNuG_amcatnlo_ext, ZGTo2LG_ext, TGJets] #WZTo2L2Q,WGToLNuG, #still missing
-    #   selectedComponents = samples_mainBkg
+    #samples_scans = [SMS_TChiWZ, SMS_T2ttDiLep_mStop_10to80] 
+    #samples_privateSig = Higgsino 
+    #samples_mainBkg = [TTJets_DiLepton, TBar_tWch_ext, T_tWch_ext] + DYJetsM5to50HT + DYJetsM50HT
+    #samples_mainBkgVV = [VVTo2L2Nu, VVTo2L2Nu_ext]
+    #samples_fakesBkg = [TTJets_SingleLeptonFromTbar, TTJets_SingleLeptonFromT, WJetsToLNuHT] 
+    #samples_rareBkg = [WZTo3LNu, WWToLNuQQ, WZTo1L3Nu, WZTo1L1Nu2Q, ZZTo2L2Q, ZZTo4L, WWW, WZZ, WWZ, ZZZ, T_tch_powheg, TBar_tch_powheg, TToLeptons_sch_amcatnlo, TTHnobb_pow, WWDouble, WpWpJJ, TTWToLNu_ext, TTZToLLNuNu_ext, TTZToLLNuNu_m1to10, TTGJets, WGToLNuG_amcatnlo_ext, ZGTo2LG_ext, TGJets] #WZTo2L2Q,WGToLNuG, #still missing
+    #selectedComponents = samples_mainBkg + samples_mainBkgVV
+    #configureSplittingFromTime(samples_mainBkg,150,3)
+
+    
 
 elif analysis=="ttH":
     selectedComponents = selectedComponents
