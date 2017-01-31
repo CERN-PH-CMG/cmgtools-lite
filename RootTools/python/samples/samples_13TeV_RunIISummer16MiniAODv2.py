@@ -317,7 +317,7 @@ WJetsToLNu_HT2500toInf = kreator.makeMCComponent("WJetsToLNu_HT2500toInf", "/WJe
 WJetsToLNu_HT2500toInf_ext = kreator.makeMCComponent("WJetsToLNu_HT2500toInf_ext", "/WJetsToLNu_HT-2500ToInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v1/MINIAODSIM", "CMS", ".*root",0.03216*1.21)
 
 WJetsToLNuHT = [
-WJetsToLNu_HT70to100
+WJetsToLNu_HT70to100,
 # NOTAVAILYET # WJetsToLNu_HT100to200,
 WJetsToLNu_HT100to200_ext,
 # NOTAVAILYET # WJetsToLNu_HT200to400,
