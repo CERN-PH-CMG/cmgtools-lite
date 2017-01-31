@@ -31,7 +31,8 @@ from PhysicsTools.PatUtils.tools.runMETCorrectionsAndUncertainties import runMet
 def createProcess(runOnMC=True, channel='tau-mu', runSVFit=False,
                   # Christians's default. If not touched, it would default to this anyways
                   p4TransferFunctionFile='CMGTools/SVfitStandalone/data/svFitVisMassAndPtResolutionPDF.root',
-                  integrateOverP4=False, scaleTau=0.):
+                  integrateOverP4=False, scaleTau=0., recorrectJets=True,
+                  verbose=False):
     '''Set up CMSSW process to run MVA MET and SVFit.
 
     Args:
@@ -46,38 +47,40 @@ def createProcess(runOnMC=True, channel='tau-mu', runSVFit=False,
 
     process = cms.Process("H2TAUTAU")
 
-    # Adding jet collection
-    process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
-    process.GlobalTag.globaltag = '80X_mcRun2_asymptotic_2016_miniAODv2_v1'
-    if not runOnMC:
-        process.GlobalTag.globaltag = '80X_dataRun2_Prompt_ICHEP16JEC_v0'
+    if recorrectJets:
+        # Adding jet collection
+        process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
+        process.GlobalTag.globaltag = '80X_mcRun2_asymptotic_2016_TrancheIV_v6'
+        if not runOnMC:
+            process.GlobalTag.globaltag = '80X_mcRun2_asymptotic_2016_TrancheIV_v6'
 
-    process.load('Configuration.StandardSequences.GeometryRecoDB_cff')
-    process.load('Configuration.StandardSequences.MagneticField_38T_cff')
+        process.load('Configuration.StandardSequences.GeometryRecoDB_cff')
+        process.load('Configuration.StandardSequences.MagneticField_38T_cff')
 
-    from PhysicsTools.PatAlgos.producersLayer1.jetUpdater_cff import updatedPatJetCorrFactors
-    process.patJetCorrFactorsReapplyJEC = updatedPatJetCorrFactors.clone(
-        src=cms.InputTag("slimmedJets"),
-        levels=['L1FastJet',
-                'L2Relative',
-                'L3Absolute'],
-        payload='AK4PFchs'
-    )  # Make sure to choose the appropriate levels and payload here!
+        from PhysicsTools.PatAlgos.producersLayer1.jetUpdater_cff import updatedPatJetCorrFactors
+        process.patJetCorrFactorsReapplyJEC = updatedPatJetCorrFactors.clone(
+            src=cms.InputTag("slimmedJets"),
+            levels=['L1FastJet',
+                    'L2Relative',
+                    'L3Absolute'],
+            payload='AK4PFchs'
+        )  # Make sure to choose the appropriate levels and payload here!
 
-    if not runOnMC:
-        process.patJetCorrFactorsReapplyJEC.levels += ['L2L3Residual']
+        if not runOnMC:
+            process.patJetCorrFactorsReapplyJEC.levels += ['L2L3Residual']
 
-    from PhysicsTools.PatAlgos.producersLayer1.jetUpdater_cff import updatedPatJets
-    process.patJetsReapplyJEC = updatedPatJets.clone(
-        jetSource=cms.InputTag("slimmedJets"),
-        jetCorrFactorsSource=cms.VInputTag(cms.InputTag("patJetCorrFactorsReapplyJEC"))
-    )
+        from PhysicsTools.PatAlgos.producersLayer1.jetUpdater_cff import updatedPatJets
+        process.patJetsReapplyJEC = updatedPatJets.clone(
+            jetSource=cms.InputTag("slimmedJets"),
+            jetCorrFactorsSource=cms.VInputTag(cms.InputTag("patJetCorrFactorsReapplyJEC"))
+        )
 
-    # if runOnMC:
-    #     runMVAMET(process)
-    #
-    # else:
-    runMVAMET(process, jetCollectionPF="patJetsReapplyJEC")
+    if recorrectJets:
+        runMVAMET(process, jetCollectionPF="patJetsReapplyJEC")
+    else:
+        runMVAMET(process)
+
+    # We always need this
     runMetCorAndUncFromMiniAOD(process, isData=not runOnMC)
 
     process.selectedVerticesForPFMEtCorrType0.src = cms.InputTag("offlineSlimmedPrimaryVertices")
@@ -320,22 +323,22 @@ def createProcess(runOnMC=True, channel='tau-mu', runSVFit=False,
     #     process.cmgDiTauCorSVFitPreSel.p4TransferFunctionFile = p4TransferFunctionFile
     #     process.cmgMuEleCorSVFitPreSel.p4TransferFunctionFile = p4TransferFunctionFile
 
-    print sep_line
-    print 'INPUT:'
-    print sep_line
-    print process.source.fileNames
-    print
-    # if not runOnMC:
-    #     print 'json:', json
-    print
-    print sep_line
-    print 'PROCESSING'
-    print sep_line
-    print 'runOnMC:', runOnMC
-    print
 
-    # from FWCore.ParameterSet.Utilities import convertToUnscheduled
-    # convertToUnscheduled(process)
+    if verbose:
+        print sep_line
+        print 'INPUT:'
+        print sep_line
+        print process.source.fileNames
+        print
+        # if not runOnMC:
+        #     print 'json:', json
+        print
+        print sep_line
+        print 'PROCESSING'
+        print sep_line
+        print 'runOnMC:', runOnMC
+        print
+
     return process
 
 if __name__ == '__main__':
