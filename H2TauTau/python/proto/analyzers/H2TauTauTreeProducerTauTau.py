@@ -37,6 +37,16 @@ class H2TauTauTreeProducerTauTau(H2TauTauTreeProducer):
 
         self.var(self.tree, 'minDphiMETJets')
         
+        self.var(self.tree, 'trigger_ditau35')
+        self.var(self.tree, 'trigger_ditau35_combiso')
+        self.var(self.tree, 'trigger_singletau140')
+        self.var(self.tree, 'trigger_singletau120')
+
+        self.var(self.tree, 'trigger_matched_ditau35')
+        self.var(self.tree, 'trigger_matched_ditau35_combiso')
+        self.var(self.tree, 'trigger_matched_singletau140')
+        self.var(self.tree, 'trigger_matched_singletau120')
+
         if self.cfg_comp.isMC:
             self.var(self.tree, 'GenSusyMScan1')
             self.var(self.tree, 'GenSusyMScan2')
@@ -92,6 +102,20 @@ class H2TauTauTreeProducerTauTau(H2TauTauTreeProducer):
         self.fill(self.tree, 'mt2_rawpfmet',  event.mt2_rawpfmet)
         
         self.fill(self.tree, 'minDphiMETJets', event.minDphiMETJets)
+
+
+        fired_triggers = [info.name for info in getattr(event, 'trigger_infos', []) if info.fired]
+
+        self.fill(self.tree, 'trigger_ditau35', any('HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg_v' in name for name in fired_triggers))
+        self.fill(self.tree, 'trigger_ditau35_combiso', any('HLT_DoubleMediumCombinedIsoPFTau35_Trk1_eta2p1_Reg_' in name for name in fired_triggers))
+        self.fill(self.tree, 'trigger_singletau140', any('HLT_VLooseIsoPFTau140_Trk50_eta2p1_v' in name for name in fired_triggers))
+        self.fill(self.tree, 'trigger_singletau120', any('HLT_VLooseIsoPFTau120_Trk50_eta2p1_v' in name for name in fired_triggers))
+
+        matched_paths = getattr(event.diLepton, 'matchedPaths', [])
+        self.fill(self.tree, 'trigger_matched_ditau35', any('HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg_v' in name for name in matched_paths))
+        self.fill(self.tree, 'trigger_matched_ditau35_combiso', any('HLT_DoubleMediumCombinedIsoPFTau35_Trk1_eta2p1_Reg_' in name for name in matched_paths))
+        self.fill(self.tree, 'trigger_matched_singletau140', any('HLT_VLooseIsoPFTau140_Trk50_eta2p1_v' in name for name in matched_paths))
+        self.fill(self.tree, 'trigger_matched_singletau120', any('HLT_VLooseIsoPFTau120_Trk50_eta2p1_v' in name for name in matched_paths))
 
         if self.cfg_comp.isMC:
             self.fill(self.tree, 'GenSusyMScan1',  getattr(event, 'genSusyMScan1', -999.))

@@ -14,29 +14,17 @@ from CMGTools.RootTools.samples.samples_13TeV_DATA2016 import SingleMuon_Run2016
 from CMGTools.RootTools.samples.samples_13TeV_DATA2016 import SingleMuon_Run2016G_23Sep2016, SingleElectron_Run2016G_23Sep2016, MuonEG_Run2016G_23Sep2016, Tau_Run2016G_23Sep2016
 from CMGTools.RootTools.samples.samples_13TeV_RunIISummer16MiniAODv2 import ZZTo4L, WZTo1L3Nu, WWTo1L1Nu2Q, WZTo1L1Nu2Q, ZZTo2L2Q, WZTo2L2Q, VVTo2L2Nu, WZTo3LNu_amcatnlo
 
-# from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv2 import DYJetsToLL_M10to50_ext1
+# from CMGTools.RootTools.samples.samples_13TeV_RunIISummer16MiniAODv2 import DYJetsToLL_M10to50_ext1
 # DY1JetsToLL_M50_LO, DY2JetsToLL_M50_LO, DY3JetsToLL_M50_LO, DY4JetsToLL_M50_LO,
 
-from CMGTools.H2TauTau.proto.samples.spring16.higgs import HiggsGGH125, HiggsVBF125, HiggsTTH125
-from CMGTools.H2TauTau.proto.samples.spring16.higgs_susy import mc_higgs_susy_gg, mc_higgs_susy_bb
+from CMGTools.H2TauTau.proto.samples.summer16.higgs import HiggsGGH125, HiggsVBF125, HiggsTTH125
+from CMGTools.H2TauTau.proto.samples.summer16.higgs_susy import mc_higgs_susy_gg, mc_higgs_susy_bb
 
-from CMGTools.H2TauTau.proto.samples.spring16.higgs_susy import HiggsSUSYGG160 as ggh160
+from CMGTools.H2TauTau.proto.samples.summer16.higgs_susy import HiggsSUSYGG160 as ggh160
 
-# 21 July
-
-json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-276811_13TeV_PromptReco_Collisions16_JSON.txt'
-lumi = 12918.1407
-
-# 15 November
-json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-284044_13TeV_PromptReco_Collisions16_JSON_NoL1T.txt'
-# lumi = 36220.
-
-
-# lumi_2016G = 1659.026988066 # 2016 G
-lumi_2016G = 1080.463515944 # 2016 G HLT_IsoMu22_v3
-
-json_tt = json
-lumi_tt = lumi
+# Full 2016
+json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/ReReco/Final/Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt'
+lumi = 36814.
 
 # Set cross sections to HTT values
 
@@ -130,7 +118,7 @@ data_tau = [Tau_Run2016B_23Sep2016, Tau_Run2016C_23Sep2016, Tau_Run2016D_23Sep20
 
 for sample in data_single_muon + data_single_electron + data_muon_electron + data_tau:
     sample.json = json
-    sample.lumi = lumi if sample != SingleMuon_Run2016G_23Sep2016 else lumi_2016G
+    sample.lumi = lumi
 
 # Signals
 sm_signals = [HiggsGGH125, HiggsVBF125, HiggsTTH125]

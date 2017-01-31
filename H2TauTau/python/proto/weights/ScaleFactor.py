@@ -37,7 +37,11 @@ class ScaleFactor(object):
             else:            
                 explicitPathItems.append(p)
         explicitPath = '/'.join(explicitPathItems)
-        efficiencies = imp.load_source(explicitPathItems[-1].replace('.py', ''), explicitPath)
+        try:
+            efficiencies = imp.load_source(explicitPathItems[-1].replace('.py', ''), explicitPath)
+        except IOError:
+            print 'Cannot find source', explicitPathItems[-1].replace('.py', ''), explicitPath
+            raise
         self.eff_data = efficiencies.effData
         self.eff_data_fakes = efficiencies.effDataFakeTau
         self.eff_mc = efficiencies.effMC

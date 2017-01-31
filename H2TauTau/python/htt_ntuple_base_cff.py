@@ -25,9 +25,8 @@ from CMGTools.H2TauTau.proto.analyzers.RecoilCorrector import RecoilCorrector
 from CMGTools.TTHAnalysis.analyzers.ttHhistoCounterAnalyzer import ttHhistoCounterAnalyzer
 from CMGTools.TTHAnalysis.analyzers.susyParameterScanAnalyzer import susyParameterScanAnalyzer
 
-puFileMC = '$CMSSW_BASE/src/CMGTools/H2TauTau/data/MC_Spring16_PU25_Startup.root'
-# puFileData = '$CMSSW_BASE/src/CMGTools/H2TauTau/data/data_pu_25-07-2016_69p2mb_60.root'
-puFileData = '/afs/cern.ch/user/a/anehrkor/public/Data_Pileup_2016_July22.root'
+puFileMC = '$CMSSW_BASE/src/CMGTools/H2TauTau/data/MC_Moriond17_PU25ns_V1.root'
+puFileData = '/afs/cern.ch/user/a/anehrkor/public/Data_Pileup_2016_271036-284044_80bins.root'
 
 
 susyCounter = cfg.Analyzer(
