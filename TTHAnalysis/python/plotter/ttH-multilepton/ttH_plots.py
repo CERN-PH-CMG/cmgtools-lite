@@ -100,9 +100,9 @@ if __name__ == '__main__':
             
         if '_closuretest' in torun:
             x = x.replace('mca-2lss-mc.txt','mca-2lss-mc-closuretest.txt')
-            x = x.replace("--maxRatioRange 0 3","--maxRatioRange 0.5 1.5")
+            x = x.replace("--maxRatioRange 0 2","--maxRatioRange 0.5 1.5")
             x = add(x,"--AP --plotmode nostack --sP 'kinMVA.*2lss.*'")
-            x = add(x,"-p FR_QCD -p FR_TT -p TT_all --ratioDen FR_QCD --ratioNums FR_TT --errors ")
+            x = add(x,"-p TT_FR_QCD -p TT_FR_TT -p TT_all --ratioDen TT_FR_QCD --ratioNums TT_FR_TT --errors ")
             if '_closuretest_norm' in torun:
                 x = x.replace("--plotmode nostack","--plotmode norm")
                 x = add(x,"--fitRatio 1")
@@ -113,10 +113,10 @@ if __name__ == '__main__':
 
         if '_varsFR' in torun:
             torun += "_"+sys.argv[-1]
-            x = x.replace('mca-2lss-mc.txt','mca-2lss-data-frdata-%s.txt'%sys.argv[-1])
-            x = x.replace("--maxRatioRange 0 3","--maxRatioRange 0 2")
-            x = add(x,"--plotmode nostack --sP kinMVA_2lss_ttbar --sP kinMVA_2lss_ttV")
-            x = add(x,"--ratioDen fakes_data --ratioNums fakes_data_%s --errors"%sys.argv[-1])
+            x = x.replace('mca-2lss-mc.txt','mca-2lss-data-frdata-vars.txt')
+            x = add(x,"--plotmode nostack --sP 'kinMVA_.*'")
+            x = x.replace('--showRatio','')
+            x = add(x,"--ratioDen data_fakes --ratioNums data_fakes_%s --errors -p data_fakes -p data_fakes_%s"%(sys.argv[-1],sys.argv[-1]))
             if '_varsFR_norm' in torun:
                 x = x.replace("--plotmode nostack","--plotmode norm")
                 x = add(x,"--fitRatio 1")
@@ -125,9 +125,9 @@ if __name__ == '__main__':
         if '_flav' in torun:
             for flav in ['mm','ee','em']: runIt(add(x,'-E ^%s'%flav),'%s/%s'%(torun,flav))
         if '_cats' in torun:
-            for cat in ['b2lss_1tau','b2lss_ee_0tau_neg','b2lss_ee_0tau_pos',\
-                            'b2lss_em_0tau_bl_neg','b2lss_em_0tau_bl_pos','b2lss_em_0tau_bt_neg','b2lss_em_0tau_bt_pos',\
-                            'b2lss_mm_0tau_bl_neg','b2lss_mm_0tau_bl_pos','b2lss_mm_0tau_bt_neg','b2lss_mm_0tau_bt_pos']:
+            for cat in ['b2lss_ee_neg','b2lss_ee_pos',\
+                            'b2lss_em_bl_neg','b2lss_em_bl_pos','b2lss_em_bt_neg','b2lss_em_bt_pos',\
+                            'b2lss_mm_bl_neg','b2lss_mm_bl_pos','b2lss_mm_bt_neg','b2lss_mm_bt_pos']:
                 runIt(add(x,'-E ^%s'%cat),'%s/%s'%(torun,cat))
 
 
@@ -139,8 +139,7 @@ if __name__ == '__main__':
             x = x.replace("--xP 'nT_.*'","")
         if '_relax' in torun: x = add(x,'-X ^TTT ')
         if '_extr' in torun:
-            x = x.replace('mca-3l-mc.txt','mca-3l-mc-sigextr.txt')
-            x = fulltrees(x)
+            x = x.replace('mca-3l-mc.txt','mca-3l-mc-sigextr.txt').replace('--showRatio --maxRatioRange 0 2','--showRatio --maxRatioRange 0 1 --ratioYLabel "S/B"')
         if '_data' in torun: x = x.replace('mca-3l-mc.txt','mca-3l-mcdata.txt')
         if '_frdata' in torun:
             if '_blinddata' in torun:
