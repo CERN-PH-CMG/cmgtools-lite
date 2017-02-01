@@ -250,7 +250,7 @@ class JetAnalyzer(Analyzer):
             abs( jet.eta() ) < self.cfg_ana.jetEta and \
             self.testJetID(jet)
 
-    def testBJet(self, jet, csv_cut=0.8):
+    def testBJet(self, jet, csv_cut=0.8484):
         # medium csv working point
         # https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation74X
         jet.btagMVA = jet.btag('pfCombinedInclusiveSecondaryVertexV2BJetTags')
