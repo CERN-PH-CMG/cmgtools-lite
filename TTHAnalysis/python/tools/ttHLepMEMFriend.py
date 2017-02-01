@@ -10,7 +10,7 @@ def _MEMInit():
 class ttHLepMEMFriend:
     def __init__(self, config, blooseWP, recllabel='Recl'):
         self._procs = [ "TTLL", "TTHfl", "TTHsl", "TTW"]#, "TTWJJ", "TTbarfl", "TTbarsl", "TTH" ]
-        self._posts = [ ""]#, "_nHypAll", "_nNull", "_time", "_err", "_chi2" ]
+        self._posts = [ "", "_kinmaxint"]#, "_nHypAll", "_nNull", "_time", "_err", "_chi2" ]
         self.systsJEC = {0:"", 1:"_jecUp", -1:"_jecDown"} # not really used for the moment
         self.inputlabel = '_'+recllabel
         self.blooseWP = blooseWP
@@ -49,48 +49,55 @@ class ttHLepMEMFriend:
             self.mem.addLepton(lep.p4(), lep.pdgId)
 
         bjets = filter(lambda j : j.btagCSV>self.blooseWP, jets)[:2]
-        if len(bjets)<2: return null_output
         ljets = filter(lambda j : j not in bjets, jets)
         for j in bjets: 
             #print 'chosen b-jet:',j.pt
             self.mem.addBJet(j.p4(), j.btagCSV)
 
-        if len(ljets)>=2:
-            print "CATEGORY: ","3l_2b_2j"
-            ok = self.mem.setCategory("3l_2b_2j")
-            if not ok: raise RuntimeError, "Hypothesis not found"
-            pairs = [(ljets[i1],ljets[i2],(ljets[i1].p4()+ljets[i2].p4()).M()) for i1 in xrange(len(ljets)-1) for i2 in xrange(i1+1,len(ljets)) ]
-            def fillTwoPairs(pairs):
-                print 'choosing among %d pairs'%len(pairs)
-                if len(pairs)==0: return
-                pairs.sort(key = lambda (j1,j2,m) : abs(m-80.419))
-                self.mem.addJet("jetClosestMw", pairs[0][0].p4(), pairs[0][0].btagCSV)
-                self.mem.addJet("jetClosestMw", pairs[0][1].p4(), pairs[0][1].btagCSV)
-                #print 'chosen close mw pair:',pairs[0][0].pt,pairs[0][1].pt
-                pairs.sort(key = lambda (j1,j2,m) : m)
-                self.mem.addJet("jetLowestMjj", pairs[0][0].p4(), pairs[0][0].btagCSV)
-                self.mem.addJet("jetLowestMjj", pairs[0][1].p4(), pairs[0][1].btagCSV)
-                #print 'chosen low mjj pair:',pairs[0][0].pt,pairs[0][1].pt
-                return ([pairs[0][0],pairs[0][1]])
+        if len(bjets) >= 1:
+            nb = "2b" if (len(bjets) >= 2) else "1b"
+            if len(ljets)>=2:
+                print "CATEGORY: ","3l_"+nb+"_2j"
+                ok = self.mem.setCategory("3l_"+nb+"_2j")
+                if not ok: raise RuntimeError, "Hypothesis not found"
+                pairs = [(ljets[i1],ljets[i2],(ljets[i1].p4()+ljets[i2].p4()).M()) for i1 in xrange(len(ljets)-1) for i2 in xrange(i1+1,len(ljets)) ]
+                def fillTwoPairs(pairs):
+                    print 'choosing among %d pairs'%len(pairs)
+                    if len(pairs)==0: return
+                    pairs.sort(key = lambda (j1,j2,m) : abs(m-80.419))
+                    self.mem.addJet("jetClosestMw", pairs[0][0].p4(), pairs[0][0].btagCSV)
+                    self.mem.addJet("jetClosestMw", pairs[0][1].p4(), pairs[0][1].btagCSV)
+                    #print 'chosen close mw pair:',pairs[0][0].pt,pairs[0][1].pt
+                    pairs.sort(key = lambda (j1,j2,m) : m)
+                    self.mem.addJet("jetLowestMjj", pairs[0][0].p4(), pairs[0][0].btagCSV)
+                    self.mem.addJet("jetLowestMjj", pairs[0][1].p4(), pairs[0][1].btagCSV)
+                    #print 'chosen low mjj pair:',pairs[0][0].pt,pairs[0][1].pt
+                    return ([pairs[0][0],pairs[0][1]])
 
-            chosen_mw = fillTwoPairs(pairs)
-            # -- second pair is not needed for 3l final state, will not include it to be safe --
-            #print 'chosen for mw are', [x.pt for x in chosen_mw]," removing from list"
-            #pairs = [x for x in pairs if (x[0] not in chosen_mw and x[1] not in chosen_mw)]
-            #fillTwoPairs(pairs)
-        elif len(ljets)==1:
-            print "CATEGORY: ","3l_2b_1j"
-            ok = self.mem.setCategory("3l_2b_1j")
-            if not ok: raise RuntimeError, "Hypothesis not found"
-            #print 'chosen highest pt jet:',jets[2].pt
-            self.mem.addJet("jetHighestPt", jets[2].p4(), jets[2].btagCSV)
-            #return dict([("MEM_"+p,0) for p in self._procs ]) # FIXME
-        elif len(ljets)==0:
-            print "CATEGORY: ","3l_2b_0j"
-            ok = self.mem.setCategory("3l_2b_0j")
-            if not ok: raise RuntimeError, "Hypothesis not found"
+                chosen_mw = fillTwoPairs(pairs)
+                # -- second pair is not needed for 3l final state, will not include it to be safe --
+                #print 'chosen for mw are', [x.pt for x in chosen_mw]," removing from list"
+                #pairs = [x for x in pairs if (x[0] not in chosen_mw and x[1] not in chosen_mw)]
+                #fillTwoPairs(pairs)
+                ljByPt = ljets[:]; ljByPt.sort(key = lambda j : -j.pt)
+                self.mem.addJet("jetHighestPt", ljByPt[0].p4(), ljByPt[0].btagCSV)
+                self.mem.addJet("jetHighestPt", ljByPt[1].p4(), ljByPt[1].btagCSV)
+            elif len(ljets)==1:
+                print "CATEGORY: ","3l_"+nb+"_1j"
+                ok = self.mem.setCategory("3l_"+nb+"_1j")
+                if not ok: raise RuntimeError, "Hypothesis not found"
+                #print 'chosen highest pt jet:',jets[2].pt
+                self.mem.addJet("jetHighestPt", ljets[0].p4(), ljets[0].btagCSV)
+                #return dict([("MEM_"+p,0) for p in self._procs ]) # FIXME
+            elif len(ljets)==0:
+                if (nb == "1b"): return null_output # MEM not implemented for 3l_1b_0j
+                print "CATEGORY: ","3l_"+nb+"_0j"
+                ok = self.mem.setCategory("3l_"+nb+"_0j")
+                if not ok: raise RuntimeError, "Hypothesis not found"
+            else:
+                raise RuntimeError, "Error, unsupported hypothesis"
         else:
-            raise RuntimeError, "Error, unsupported hypothesis"
+            return null_output
         met = getattr(event,"met"+self.systsJEC[_var]+"_pt")
         metphi = getattr(event,"met"+self.systsJEC[_var]+"_phi")
         mht = event.met_sumEt
@@ -126,6 +133,6 @@ if __name__ == '__main__':
     el.loop([tree], maxEvents = 50)
 
 MODULES = [ 
-    ( 'MEM_3l', lambda : ttHLepMEMFriend("/afs/cern.ch/user/p/peruzzi/work/CMSSW_8_0_25/src/IPHCNtuple/MEM/test/JobsReco/config.cfg",
+    ( 'MEM_3l', lambda : ttHLepMEMFriend("/afs/cern.ch/work/g/gpetrucc/ttH/CMSSW_8_0_25/src/CMGTools/TTHAnalysis/python/tools/ttHLepMEMFriend_memcfg.cfg",
                                          blooseWP = 0.5426) ),
 ]
