@@ -5,15 +5,19 @@
 ANALYSIS=$1; if [[ "$1" == "" ]]; then exit 1; fi; shift;
 case $ANALYSIS in
 ttH) 
-    T_TTH=/afs/cern.ch/work/g/gpetrucc/TREES_80X_ttH_180117_1L;
-    hostname | grep -q cmsco01 && T=/data1/gpetrucc/TREES_80X_ttH_180117_1L
-    PBASE="plots/80X/${ANALYSIS}_Moriond17/lepMVA/v1.0.1/fr-mc/"
+    T_TTH=/afs/cern.ch/work/g/gpetrucc/TREES_80X_ttH_300117_1L;
+    hostname | grep -q cmsco01 && T=/data1/gpetrucc/TREES_80X_ttH_300117_1L
+    hostname | grep -q cmsphys10 && T=/data1/g/gpetrucc/TREES_80X_ttH_300117_1L
+    PBASE="plots/80X/${ANALYSIS}_Moriond17/lepMVA/v1.0.1b/fr-mc/"
     ;;
 susy) 
     T="/afs/cern.ch/work/p/peruzzi/ra5trees/TREES_80X_011216_Spring16MVA_1lepFR"
     hostname | grep -q cmsco01 && T="/data1/peruzzi/TREES_80X_011216_Spring16MVA_1lepFR --xf QCD_Pt_20to30_bcToE"
     PBASE="~/www/plots_FR/80X/lepMVA/v2.0_041216"
     ;;
+*)
+    echo "Unknown analysis '$ANALYSIS'";
+    exit 1;
 esac;
 
 
@@ -90,8 +94,8 @@ for WP in $WPs; do
 	esac
         B0="$BASE -P $T ttH-multilepton/make_fake_rates_sels.txt ttH-multilepton/make_fake_rates_xvars.txt --groupBy cut --sP ${Num} " 
         B0="$B0 --mcc ttH-multilepton/mcc-eleIdEmu2.txt  "
-        #B0="$B0 --legend=TR --showRatio --ratioRange 0.51 1.49 --xcut 10 999  --yrange 0 0.30 " 
-        B0="$B0 --legend=TR --showRatio --ratioRange 0.00 1.99 --xcut 0 999  --yrange 0 0.25 " 
+        B0="$B0 --legend=TR --showRatio --ratioRange 0.51 1.49 --xcut 10 999  --yrange 0 0.30 " 
+        #B0="$B0 --legend=TR --showRatio --ratioRange 0.00 1.99 --xcut 10 999  --yrange 0 0.20 " 
 	B1="${PLOTTER} -P $T ttH-multilepton/make_fake_rates_plots.txt"
 	B1="${B1} --mcc ttH-multilepton/mcc-eleIdEmu2.txt  "
         B1="$B1 --showRatio --plotmode=norm -f "

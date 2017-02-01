@@ -2,11 +2,11 @@
 #  use mcEfficiencies.py to make plots of the fake rate
 ################################
 T_SUSY="/data1/peruzzi/TREES_80X_011216_Spring16MVA_1lepFR --FDs /data1/peruzzi/frQCDVars_skimdata"
-T_TTH=/afs/cern.ch/work/g/gpetrucc/TREES_80X_ttH_180117_1L
+T_TTH=/afs/cern.ch/work/g/gpetrucc/TREES_80X_ttH_300117_1L
 if hostname | grep -q cmsco01; then
-    T_TTH=/data1/gpetrucc/TREES_80X_ttH_180117_1L
+    T_TTH=/data1/gpetrucc/TREES_80X_ttH_300117_1L
 elif hostname | grep -q cmsphys10; then
-    T_TTH=/data1/g/gpetrucc/TREES_80X_ttH_180117_1L
+    T_TTH=/data1/g/gpetrucc/TREES_80X_ttH_300117_1L
 fi
 ANALYSIS=$1; if [[ "$1" == "" ]]; then exit 1; fi; shift;
 case $ANALYSIS in
@@ -67,7 +67,7 @@ esac;
 what=$3;
 more=$4
 #PBASE="~/www/plots_FR/80X/lepMVA_$ANALYSIS/v2.0_041216/fr-meas/$lepton/HLT_$trigger/$what/$more"
-PBASE="plots/80X/${ANALYSIS}_Moriond17/lepMVA/v1.0.1/fr-meas/qcd1l/$lepton/HLT_$trigger/$what/$more"
+PBASE="plots/80X/${ANALYSIS}_Moriond17/lepMVA/v1.0.1b/fr-meas/qcd1l/$lepton/HLT_$trigger/$what/$more"
 
 EWKONE="-p ${QCD}_red,EWK,data"
 EWKSPLIT="-p ${QCD}_red,WJets,DYJets,data"

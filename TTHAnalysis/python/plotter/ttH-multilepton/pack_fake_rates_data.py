@@ -134,7 +134,7 @@ if __name__ == "__main__":
            h2d_el_tt = [ make2D(outfile,"FR_mva075_el_TT", ptbins_el, etabins_el) ]
            h2d_mu_tt = [ make2D(outfile,"FR_mva075_mu_TT", ptbins_mu, etabins_mu) ]
 
-           Plots="plots/80X/ttH_Moriond17/lepMVA/v1.0.1/fr-meas"
+           Plots="plots/80X/ttH_Moriond17/lepMVA/v1.0.1b/fr-meas"
            Z3l="z3l"
            QCD="qcd1l"
            #### Electrons: 
@@ -154,7 +154,7 @@ if __name__ == "__main__":
            readMany2D(XsQ, h2d_mu, "/".join([Plots, QCD, "mu/HLT_Mu17/fakerates-mtW1R/fr_sub_eta_%s_comp.root"]), "%s", etaslices_mu, (45,999) )
 
            #### TT MC-truth
-           MCPlots="plots/80X/ttH_Moriond17/lepMVA/v1.0.1/fr-mc"; ID="wp075ib1e1f30E2ptc30";
+           MCPlots="plots/80X/ttH_Moriond17/lepMVA/v1.0.1b/fr-mc"; ID="wp075ib1e1f30E2ptc30";
            XVar="mvaPt_075i_ptJI85_mvaPt075"
            readMany2D(["TT_red"], h2d_el_tt, "/".join([MCPlots, "el_ttz3l_"+ID+"_rec30_bAny_eta_%s.root"]),  XVar+"_zcoarse2_%s", etaslices_el, (10,30) )
            readMany2D(["TT_red"], h2d_el_tt, "/".join([MCPlots, "el_lbin_"+ID+"_rec30_bAny_eta_%s.root"]), XVar+"_coarselongbin_%s",   etaslices_el, (30,999) )

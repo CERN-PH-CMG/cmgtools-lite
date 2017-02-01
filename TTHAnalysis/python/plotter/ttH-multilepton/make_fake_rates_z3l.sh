@@ -3,7 +3,7 @@
 ################################
 T="NON_ESISTE"
 if hostname | grep -q cmsco01; then
-    T="/data1/peruzzi/TREES_TTH_180117_Summer16_JEC_mc25nsV5_data23SepV2_noClean_lepMVAretr_qgV1"
+    T="/data1/peruzzi/TREES_TTH_250117_Summer16_JECV3_noClean_qgV2"
 fi
 
 BG=" -j 6 "; if [[ "$1" == "-b" ]]; then BG=" & "; shift; fi
@@ -28,7 +28,7 @@ esac;
 
 what=$2; shift; shift;
 #PBASE="~/www/plots_FR/80X/lepMVA_${ANALYSIS}/v1.4_250616/fr-meas/$lepton/z3l/$what"
-PBASE="plots/80X/${ANALYSIS}_Moriond17/lepMVA/v1.0.1/fr-meas/z3l/$lepton"
+PBASE="plots/80X/${ANALYSIS}_Moriond17/lepMVA/v1.0.1b/fr-meas/z3l/$lepton/$what"
 
 case $lepton in
     el) BARREL="00_15"; ENDCAP="15_25"; ETA="1.479"; SC_EWK=1.58;  SC_DY=0.86;;
