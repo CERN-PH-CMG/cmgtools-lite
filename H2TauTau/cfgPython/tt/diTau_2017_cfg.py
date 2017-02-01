@@ -146,7 +146,7 @@ tau1Weighter = cfg.Analyzer(
     LeptonWeighter,
     name='LeptonWeighter_tau1',
     scaleFactorFiles={
-        # 'trigger': '$CMSSW_BASE/src/CMGTools/H2TauTau/data/Tau_diTau35_spring16.py',  # include in the event's overall weight
+        'trigger': '$CMSSW_BASE/src/CMGTools/H2TauTau/data/Tau_diTau35_summer16.py',  # include in the event's overall weight
     },
 
     otherScaleFactorFiles={
@@ -162,7 +162,7 @@ tau2Weighter = cfg.Analyzer(
     LeptonWeighter,
     name='LeptonWeighter_tau2',
     scaleFactorFiles={
-        # 'trigger': '$CMSSW_BASE/src/CMGTools/H2TauTau/data/Tau_diTau35_spring16.py',  # include in the event's overall weight
+        'trigger': '$CMSSW_BASE/src/CMGTools/H2TauTau/data/Tau_diTau35_summer16.py',  # include in the event's overall weight
     },
 
     otherScaleFactorFiles={
@@ -218,7 +218,6 @@ metFilter = cfg.Analyzer(
 ###################################################
 from CMGTools.RootTools.utils.splitFactor import splitFactor
 from CMGTools.H2TauTau.proto.samples.summer16.htt_common import backgrounds, sm_signals, mssm_signals, data_tau, sync_list
-from CMGTools.H2TauTau.proto.samples.summer16.higgs_susy import HiggsSUSYGG160 as ggh160
 from CMGTools.H2TauTau.proto.samples.summer16.sms import samples_susy
 from CMGTools.RootTools.samples.samples_13TeV_signals import SignalSUSY
 # from CMGTools.H2TauTau.proto.samples.summer16.higgs_susy import HiggsSUSYGG90 as ggh90
@@ -317,7 +316,7 @@ if not production:
     if data:
         selectedComponents = [data_list[0]]
     for comp in selectedComponents:
-        comp.splitFactor = 1
+        comp.splitFactor = 100
         comp.fineSplitFactor = 1
     # comp.files = comp.files[13:20]
 

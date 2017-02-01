@@ -73,8 +73,8 @@ class LeptonWeighter(Analyzer):
             for sf_name, sf in self.scaleFactors.items():
                 pt = lep.pt()
                 eta = lep.eta()
-
-                setattr(lep, 'weight_'+sf_name, sf.getScaleFactor(pt, eta, isFake))
+                dm = lep.decayMode() if hasattr(lep, 'decayMode') else None
+                setattr(lep, 'weight_'+sf_name, sf.getScaleFactor(pt, eta, isFake, dm=dm))
                 # setattr(lep, 'eff_data_'+sf_name, sf.getEfficiencyData(pt, eta, isFake))
                 # setattr(lep, 'eff_mc_'+sf_name, sf.getEfficiencyMC(pt, eta, isFake))
 
@@ -84,7 +84,8 @@ class LeptonWeighter(Analyzer):
             for sf_name, sf in self.dataEffs.items():
                 pt = lep.pt()
                 eta = lep.eta()
-                setattr(lep, 'weight_'+sf_name, sf.getEfficiencyData(pt, eta, isFake))
+                dm = getattr(lep, 'decayMode', None)
+                setattr(lep, 'weight_'+sf_name, sf.getEfficiencyData(pt, eta, isFake, dm=dm))
 
                 if sf_name in self.cfg_ana.dataEffFiles:
                     lep.weight *= getattr(lep, 'weight_'+sf_name)

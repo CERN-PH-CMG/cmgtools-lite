@@ -20,7 +20,7 @@ from CMGTools.RootTools.samples.samples_13TeV_RunIISummer16MiniAODv2 import ZZTo
 from CMGTools.H2TauTau.proto.samples.summer16.higgs import HiggsGGH125, HiggsVBF125, HiggsTTH125
 from CMGTools.H2TauTau.proto.samples.summer16.higgs_susy import mc_higgs_susy_gg, mc_higgs_susy_bb
 
-from CMGTools.H2TauTau.proto.samples.summer16.higgs_susy import HiggsSUSYGG160 as ggh160
+from CMGTools.H2TauTau.proto.samples.summer16.higgs_susy import HiggsSUSYGG1000 as ggh1000
 
 # Full 2016
 json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/ReReco/Final/Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt'
@@ -124,4 +124,4 @@ for sample in data_single_muon + data_single_electron + data_muon_electron + dat
 sm_signals = [HiggsGGH125, HiggsVBF125, HiggsTTH125]
 mssm_signals = mc_higgs_susy_bb + mc_higgs_susy_gg
 
-sync_list = [ggh160, HiggsVBF125]
+sync_list = [ggh1000, HiggsVBF125]
