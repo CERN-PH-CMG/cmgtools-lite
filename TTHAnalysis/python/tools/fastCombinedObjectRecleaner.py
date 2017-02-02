@@ -13,15 +13,18 @@ class fastCombinedObjectRecleaner:
         self.vars_leptons = ["pdgId"]
         self.vars_taus = ["idMVAdR03"]
         self.vars_jets = ["btagCSV","qgl"]
+        self.vars_jets_nooutput = ["corr","corr_JECUp","corr_JECDown"]
 
         self.cleanTausWithLooseLeptons = cleanTausWithLooseLeptons
         self.cleanJetsWithFOTaus = cleanJetsWithFOTaus
         self.jetPts = jetPts
 
+        self.systsJEC = {0:"", 1:"_jecUp", -1:"_jecDown"}
+
         self.outmasses=['mZ1','minMllAFAS','minMllAFOS','minMllAFSS','minMllSFOS']
-        self._outjetvars = ['htJet%dj','mhtJet%d','nBJetLoose%d','nBJetMedium%d']
+        self._outjetvars = ['htJet%dj','mhtJet%d','nBJetLoose%d','nBJetMedium%d','nJet%d']
         self.outjetvars=[]
-        for jetPt in self.jetPts: self.outjetvars.extend([(x%jetPt,'I' if 'nBJet' in x else 'F') for x in self._outjetvars])
+        for jetPt in self.jetPts: self.outjetvars.extend([(x%jetPt+y,'I' if ('nBJet' in x or 'nJet' in x) else 'F') for x in self._outjetvars for y in self.systsJEC.values()])
         self.branches = [var+self.label for var in self.outmasses]
         self.branches.extend([(var+self.label,_type) for var,_type in self.outjetvars])
         self.branches += [("LepGood_conePt","F",20,"nLepGood")]
@@ -59,14 +62,14 @@ class fastCombinedObjectRecleaner:
             _vars = self.vars[:]
             if coll=='LepGood': _vars.extend(self.vars_leptons)
             if coll=='TauGood': _vars.extend(self.vars_taus)
-            if coll=='Jet': _vars.extend(self.vars_jets)
+            if coll=='Jet': _vars.extend(self.vars_jets+self.vars_jets_nooutput)
             for B in _vars:
                 setattr(self,"%s_%s"%(coll,B), tree.arrayReader("%s_%s"%(coll,B)))
 
     def initWorkers(self):
         self._worker.setLeptons(self.nLepGood, self.LepGood_pt, self.LepGood_eta, self.LepGood_phi)
         self._worker.setTaus(self.nTauGood, self.TauGood_pt, self.TauGood_eta, self.TauGood_phi)
-        self._worker.setJets(self.nJet, self.Jet_pt, self.Jet_eta, self.Jet_phi, self.Jet_btagCSV)
+        self._worker.setJets(self.nJet, self.Jet_pt, self.Jet_eta, self.Jet_phi, self.Jet_btagCSV, self.Jet_corr, self.Jet_corr_JECUp, self.Jet_corr_JECDown)
         self._workerMV.setLeptons(self.nLepGood, self.LepGood_pt, self.LepGood_eta, self.LepGood_phi, self.LepGood_mass, self.LepGood_pdgId)
 
     def listBranches(self):
@@ -86,8 +89,9 @@ class fastCombinedObjectRecleaner:
         self._worker.loadTags(tags,self.cleanTausWithLooseLeptons)
         self._worker.run()
 
-        for x in self._worker.GetJetSums():
-            for var in self._outjetvars: ret[var%x.thr+self.label]=getattr(x,var.replace('%d',''))
+        for delta,varname in self.systsJEC.iteritems():
+            for x in self._worker.GetJetSums(delta):
+                for var in self._outjetvars: ret[var%x.thr+varname+self.label]=getattr(x,var.replace('%d',''))
 
         self._workerMV.clear()
         self._workerMV.loadTags(tags)
