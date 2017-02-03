@@ -168,6 +168,8 @@ tau_vars = [
     Variable('zImpact', lambda tau : tau.zImpact()),
     Variable('dz_selfvertex', lambda tau : tau.vertex().z() - tau.associatedVertex.position().z()),
     Variable('ptScale', lambda tau : getattr(tau, 'ptScale', -999.)),
+    Variable('NewMVAID'),
+    Variable('NewMVAraw'),
 ]
 for tau_id in tauIDs:
     if type(tau_id) is str:

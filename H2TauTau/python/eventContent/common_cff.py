@@ -34,6 +34,7 @@ common = [
     'keep *_reducedEgamma_reducedConversions_*',
     'keep LHEEventProduct_*_*_*',
     'keep *_l1extraParticles_*_*',
+    'keep patPATTauDiscriminator_*_*_H2TAUTAU'
     # 'keep *_mvaMETTauMu_*_H2TAUTAU'
     ]
 
