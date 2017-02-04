@@ -8,7 +8,7 @@ class BDTv8_eventReco: # has to run on a recleaner with label _Recl
     def __init__(self, weightfile_bloose, weightfile_btight, weightfile_hj, weightfile_hjj, recllabel='Recl', selection = []):
 
         self.inputlabel = '_'+recllabel
-        self.systsJEC = {0:""}#, 1:"_jecUp", -1:"_jecDown"}
+        self.systsJEC = {0:"", 1:"_jecUp", -1:"_jecDown"}
         self.selection = selection
 
         if "/BDTv8_eventReco_C.so" not in ROOT.gSystem.GetLibraries():
@@ -46,8 +46,17 @@ class BDTv8_eventReco: # has to run on a recleaner with label _Recl
 
         for var in self.systsJEC:
             _var = var
-            if not hasattr(event,"nJetSel"+self.inputlabel+self.systsJEC[var]): _var = 0
-            jets = [j for j in Collection(event,"JetSel"+self.inputlabel+self.systsJEC[_var],"nJetSel"+self.inputlabel+self.systsJEC[_var])]
+            if not hasattr(event,"nJet25"+self.systsJEC[var]+self.inputlabel): _var = 0
+            jets = [j for j in Collection(event,"JetSel"+self.inputlabel,"nJetSel"+self.inputlabel)]
+
+            jetptcut = 25
+            if (_var==0): jets = filter(lambda x : x.pt>jetptcut, jets)
+            elif (_var==1): jets = filter(lambda x : x.pt*x.corr_JECUp/x.corr>jetptcut, jets)
+            elif (_var==-1): jets = filter(lambda x : x.pt*x.corr_JECDown/x.corr>jetptcut, jets)
+
+            if (_var==0): jetcorr = [1 for x in jets]
+            elif (_var==1): jetcorr = [x.corr_JECUp/x.corr for x in jets]
+            elif (_var==-1): jetcorr = [x.corr_JECDown/x.corr for x in jets]
 
             res = [-100]*len(self.branches)
 
@@ -59,7 +68,7 @@ class BDTv8_eventReco: # has to run on a recleaner with label _Recl
 
             if good:
                 self.run.clear()
-                for j in jets: self.run.addJet(j.pt,j.eta,j.phi,j.mass,j.btagCSV,j.qgl)
+                for i,j in enumerate(jets): self.run.addJet(j.pt*jetcorr[i],j.eta,j.phi,j.mass,j.btagCSV,j.qgl)
                 for l in leps: self.run.addLep(l.conePt,l.eta,l.phi,l.mass)
                 res = self.run.EvalMVA()
 

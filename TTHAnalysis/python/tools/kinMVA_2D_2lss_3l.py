@@ -8,7 +8,7 @@ class KinMVA_2D_2lss_3l:
         self._skip_Hj = skip_Hj
         self._skip_MEM = skip_MEM
 
-        self.systsJEC = {0:""}#, 1:"_jecUp", -1:"_jecDown"}
+        self.systsJEC = {0:"", 1:"_jecUp", -1:"_jecDown"}
 
         self._specs = [
             MVAVar("iF0 := iLepFO_Recl[0]", func = lambda ev : ev.iLepFO_Recl[0]),
@@ -18,7 +18,7 @@ class KinMVA_2D_2lss_3l:
 
         self._vars_ttbar_2lss = [ 
             MVAVar("max_Lep_eta:=max(abs(LepGood_eta[iLepFO_Recl[0]]),abs(LepGood_eta[iLepFO_Recl[1]]))", func = lambda ev : max(abs(ev.LepGood_eta[int(ev.iLepFO_Recl[0])]),abs(ev.LepGood_eta[int(ev.iLepFO_Recl[1])]))),
-            MVAVar("numJets_float:=nJetSel_Recl", func = lambda ev : ev.nJetSel_Recl),
+            MVAVar("numJets_float:=nJetSel_Recl", func = lambda ev : ev.nJet25_Recl),
             MVAVar("mindr_lep1_jet:=mindr_lep1_jet", func = lambda ev: ev.mindr_lep1_jet),
             MVAVar("mindr_lep2_jet:=mindr_lep2_jet", func = lambda ev: ev.mindr_lep2_jet),
             MVAVar("MT_met_lep1:=MT_met_lep1", func = lambda ev : ev.MT_met_lep1),
@@ -30,7 +30,7 @@ class KinMVA_2D_2lss_3l:
             ]
         self._vars_ttV_2lss = [ 
             MVAVar("max_Lep_eta:=max(abs(LepGood_eta[iLepFO_Recl[0]]),abs(LepGood_eta[iLepFO_Recl[1]]))", func = lambda ev : max(abs(ev.LepGood_eta[int(ev.iLepFO_Recl[0])]),abs(ev.LepGood_eta[int(ev.iLepFO_Recl[1])]))),
-            MVAVar("numJets_float:=nJetSel_Recl", func = lambda ev : ev.nJetSel_Recl),
+            MVAVar("numJets_float:=nJetSel_Recl", func = lambda ev : ev.nJet25_Recl),
             MVAVar("mindr_lep1_jet:=mindr_lep1_jet", func = lambda ev: ev.mindr_lep1_jet),
             MVAVar("mindr_lep2_jet:=mindr_lep2_jet", func = lambda ev: ev.mindr_lep2_jet),
             MVAVar("MT_met_lep1:=MT_met_lep1", func = lambda ev : ev.MT_met_lep1),
@@ -43,7 +43,7 @@ class KinMVA_2D_2lss_3l:
             ]
         self._vars_ttbar_3l = [ 
             MVAVar("max_Lep_eta:=max(abs(LepGood_eta[iLepFO_Recl[0]]),abs(LepGood_eta[iLepFO_Recl[1]]))", func = lambda ev : max(abs(ev.LepGood_eta[int(ev.iLepFO_Recl[0])]),abs(ev.LepGood_eta[int(ev.iLepFO_Recl[1])]))),
-            MVAVar("numJets_float:=nJetSel_Recl", func = lambda ev : ev.nJetSel_Recl),
+            MVAVar("numJets_float:=nJetSel_Recl", func = lambda ev : ev.nJet25_Recl),
             MVAVar("mindr_lep1_jet:=mindr_lep1_jet", func = lambda ev: ev.mindr_lep1_jet),
             MVAVar("mindr_lep2_jet:=mindr_lep2_jet", func = lambda ev: ev.mindr_lep2_jet),
             MVAVar("MT_met_lep1:=MT_met_lep1", func = lambda ev : ev.MT_met_lep1),
@@ -52,7 +52,7 @@ class KinMVA_2D_2lss_3l:
             ]
         self._vars_ttV_3l = [ 
             MVAVar("max_Lep_eta:=max(abs(LepGood_eta[iLepFO_Recl[0]]),abs(LepGood_eta[iLepFO_Recl[1]]))", func = lambda ev : max(abs(ev.LepGood_eta[int(ev.iLepFO_Recl[0])]),abs(ev.LepGood_eta[int(ev.iLepFO_Recl[1])]))),
-            MVAVar("numJets_float:=nJetSel_Recl", func = lambda ev : ev.nJetSel_Recl),
+            MVAVar("numJets_float:=nJetSel_Recl", func = lambda ev : ev.nJet25_Recl),
             MVAVar("mindr_lep1_jet:=mindr_lep1_jet", func = lambda ev: ev.mindr_lep1_jet),
             MVAVar("mindr_lep2_jet:=mindr_lep2_jet", func = lambda ev: ev.mindr_lep2_jet),
             MVAVar("MT_met_lep1:=MT_met_lep1", func = lambda ev : ev.MT_met_lep1),
@@ -62,7 +62,7 @@ class KinMVA_2D_2lss_3l:
 
         self._vars_ttbar_2lss_jecUp = [ 
             MVAVar("max_Lep_eta:=max(abs(LepGood_eta[iLepFO_Recl[0]]),abs(LepGood_eta[iLepFO_Recl[1]]))", func = lambda ev : max(abs(ev.LepGood_eta[int(ev.iLepFO_Recl[0])]),abs(ev.LepGood_eta[int(ev.iLepFO_Recl[1])]))),
-            MVAVar("numJets_float:=nJetSel_Recl", func = lambda ev : ev.nJetSel_Recl_jecUp),
+            MVAVar("numJets_float:=nJetSel_Recl", func = lambda ev : ev.nJet25_jecUp_Recl),
             MVAVar("mindr_lep1_jet:=mindr_lep1_jet", func = lambda ev: ev.mindr_lep1_jet_jecUp),
             MVAVar("mindr_lep2_jet:=mindr_lep2_jet", func = lambda ev: ev.mindr_lep2_jet_jecUp),
             MVAVar("MT_met_lep1:=MT_met_lep1", func = lambda ev : ev.MT_met_lep1_jecUp),
@@ -74,7 +74,7 @@ class KinMVA_2D_2lss_3l:
             ]
         self._vars_ttV_2lss_jecUp = [ 
             MVAVar("max_Lep_eta:=max(abs(LepGood_eta[iLepFO_Recl[0]]),abs(LepGood_eta[iLepFO_Recl[1]]))", func = lambda ev : max(abs(ev.LepGood_eta[int(ev.iLepFO_Recl[0])]),abs(ev.LepGood_eta[int(ev.iLepFO_Recl[1])]))),
-            MVAVar("numJets_float:=nJetSel_Recl", func = lambda ev : ev.nJetSel_Recl_jecUp),
+            MVAVar("numJets_float:=nJetSel_Recl", func = lambda ev : ev.nJet25_jecUp_Recl),
             MVAVar("mindr_lep1_jet:=mindr_lep1_jet", func = lambda ev: ev.mindr_lep1_jet_jecUp),
             MVAVar("mindr_lep2_jet:=mindr_lep2_jet", func = lambda ev: ev.mindr_lep2_jet_jecUp),
             MVAVar("MT_met_lep1:=MT_met_lep1", func = lambda ev : ev.MT_met_lep1_jecUp),
@@ -87,16 +87,16 @@ class KinMVA_2D_2lss_3l:
             ]
         self._vars_ttbar_3l_jecUp = [ 
             MVAVar("max_Lep_eta:=max(abs(LepGood_eta[iLepFO_Recl[0]]),abs(LepGood_eta[iLepFO_Recl[1]]))", func = lambda ev : max(abs(ev.LepGood_eta[int(ev.iLepFO_Recl[0])]),abs(ev.LepGood_eta[int(ev.iLepFO_Recl[1])]))),
-            MVAVar("numJets_float:=nJetSel_Recl", func = lambda ev : ev.nJetSel_Recl_jecUp),
+            MVAVar("numJets_float:=nJetSel_Recl", func = lambda ev : ev.nJet25_jecUp_Recl),
             MVAVar("mindr_lep1_jet:=mindr_lep1_jet", func = lambda ev: ev.mindr_lep1_jet_jecUp),
             MVAVar("mindr_lep2_jet:=mindr_lep2_jet", func = lambda ev: ev.mindr_lep2_jet_jecUp),
             MVAVar("MT_met_lep1:=MT_met_lep1", func = lambda ev : ev.MT_met_lep1_jecUp),
-            MVAVar("mhtJet25:=mhtJet25_Recl", func = lambda ev : ev.mhtJet25_Recl_jecUp),
+            MVAVar("mhtJet25:=mhtJet25_Recl", func = lambda ev : ev.mhtJet25_jecUp_Recl),
             MVAVar("avg_dr_jet:=avg_dr_jet", func = lambda ev : ev.avg_dr_jet_jecUp),
             ]
         self._vars_ttV_3l_jecUp = [ 
             MVAVar("max_Lep_eta:=max(abs(LepGood_eta[iLepFO_Recl[0]]),abs(LepGood_eta[iLepFO_Recl[1]]))", func = lambda ev : max(abs(ev.LepGood_eta[int(ev.iLepFO_Recl[0])]),abs(ev.LepGood_eta[int(ev.iLepFO_Recl[1])]))),
-            MVAVar("numJets_float:=nJetSel_Recl", func = lambda ev : ev.nJetSel_Recl_jecUp),
+            MVAVar("numJets_float:=nJetSel_Recl", func = lambda ev : ev.nJet25_jecUp_Recl),
             MVAVar("mindr_lep1_jet:=mindr_lep1_jet", func = lambda ev: ev.mindr_lep1_jet_jecUp),
             MVAVar("mindr_lep2_jet:=mindr_lep2_jet", func = lambda ev: ev.mindr_lep2_jet_jecUp),
             MVAVar("MT_met_lep1:=MT_met_lep1", func = lambda ev : ev.MT_met_lep1_jecUp),
@@ -106,7 +106,7 @@ class KinMVA_2D_2lss_3l:
 
         self._vars_ttbar_2lss_jecDown = [ 
             MVAVar("max_Lep_eta:=max(abs(LepGood_eta[iLepFO_Recl[0]]),abs(LepGood_eta[iLepFO_Recl[1]]))", func = lambda ev : max(abs(ev.LepGood_eta[int(ev.iLepFO_Recl[0])]),abs(ev.LepGood_eta[int(ev.iLepFO_Recl[1])]))),
-            MVAVar("numJets_float:=nJetSel_Recl", func = lambda ev : ev.nJetSel_Recl_jecDown),
+            MVAVar("numJets_float:=nJetSel_Recl", func = lambda ev : ev.nJet25_jecDown_Recl),
             MVAVar("mindr_lep1_jet:=mindr_lep1_jet", func = lambda ev: ev.mindr_lep1_jet_jecDown),
             MVAVar("mindr_lep2_jet:=mindr_lep2_jet", func = lambda ev: ev.mindr_lep2_jet_jecDown),
             MVAVar("MT_met_lep1:=MT_met_lep1", func = lambda ev : ev.MT_met_lep1_jecDown),
@@ -118,7 +118,7 @@ class KinMVA_2D_2lss_3l:
             ]
         self._vars_ttV_2lss_jecDown = [ 
             MVAVar("max_Lep_eta:=max(abs(LepGood_eta[iLepFO_Recl[0]]),abs(LepGood_eta[iLepFO_Recl[1]]))", func = lambda ev : max(abs(ev.LepGood_eta[int(ev.iLepFO_Recl[0])]),abs(ev.LepGood_eta[int(ev.iLepFO_Recl[1])]))),
-            MVAVar("numJets_float:=nJetSel_Recl", func = lambda ev : ev.nJetSel_Recl_jecDown),
+            MVAVar("numJets_float:=nJetSel_Recl", func = lambda ev : ev.nJet25_jecDown_Recl),
             MVAVar("mindr_lep1_jet:=mindr_lep1_jet", func = lambda ev: ev.mindr_lep1_jet_jecDown),
             MVAVar("mindr_lep2_jet:=mindr_lep2_jet", func = lambda ev: ev.mindr_lep2_jet_jecDown),
             MVAVar("MT_met_lep1:=MT_met_lep1", func = lambda ev : ev.MT_met_lep1_jecDown),
@@ -131,16 +131,16 @@ class KinMVA_2D_2lss_3l:
             ]
         self._vars_ttbar_3l_jecDown = [ 
             MVAVar("max_Lep_eta:=max(abs(LepGood_eta[iLepFO_Recl[0]]),abs(LepGood_eta[iLepFO_Recl[1]]))", func = lambda ev : max(abs(ev.LepGood_eta[int(ev.iLepFO_Recl[0])]),abs(ev.LepGood_eta[int(ev.iLepFO_Recl[1])]))),
-            MVAVar("numJets_float:=nJetSel_Recl", func = lambda ev : ev.nJetSel_Recl_jecDown),
+            MVAVar("numJets_float:=nJetSel_Recl", func = lambda ev : ev.nJet25_jecDown_Recl),
             MVAVar("mindr_lep1_jet:=mindr_lep1_jet", func = lambda ev: ev.mindr_lep1_jet_jecDown),
             MVAVar("mindr_lep2_jet:=mindr_lep2_jet", func = lambda ev: ev.mindr_lep2_jet_jecDown),
             MVAVar("MT_met_lep1:=MT_met_lep1", func = lambda ev : ev.MT_met_lep1_jecDown),
-            MVAVar("mhtJet25:=mhtJet25_Recl", func = lambda ev : ev.mhtJet25_Recl_jecDown),
+            MVAVar("mhtJet25:=mhtJet25_Recl", func = lambda ev : ev.mhtJet25_jecDown_Recl),
             MVAVar("avg_dr_jet:=avg_dr_jet", func = lambda ev : ev.avg_dr_jet_jecDown),
             ]
         self._vars_ttV_3l_jecDown = [ 
             MVAVar("max_Lep_eta:=max(abs(LepGood_eta[iLepFO_Recl[0]]),abs(LepGood_eta[iLepFO_Recl[1]]))", func = lambda ev : max(abs(ev.LepGood_eta[int(ev.iLepFO_Recl[0])]),abs(ev.LepGood_eta[int(ev.iLepFO_Recl[1])]))),
-            MVAVar("numJets_float:=nJetSel_Recl", func = lambda ev : ev.nJetSel_Recl_jecDown),
+            MVAVar("numJets_float:=nJetSel_Recl", func = lambda ev : ev.nJet25_jecDown_Recl),
             MVAVar("mindr_lep1_jet:=mindr_lep1_jet", func = lambda ev: ev.mindr_lep1_jet_jecDown),
             MVAVar("mindr_lep2_jet:=mindr_lep2_jet", func = lambda ev: ev.mindr_lep2_jet_jecDown),
             MVAVar("MT_met_lep1:=MT_met_lep1", func = lambda ev : ev.MT_met_lep1_jecDown),
@@ -182,7 +182,7 @@ class KinMVA_2D_2lss_3l:
         for name, mva in self._MVAs.iteritems():
             _mva = mva
             for i,j in self.systsJEC.iteritems():
-                if j in name and not hasattr(event,"nJet"+j): _mva = self._MVAs[name.replace(j,"")]
+                if j in name and not hasattr(event,"nJet25"+j+'_Recl'): _mva = self._MVAs[name.replace(j,"")]
             if '2lss' in name: out[name] = _mva(event) if event.nLepFO_Recl>=2 else -99
             elif '3l' in name: out[name] = _mva(event) if event.nLepFO_Recl>=3 else -99
         return out

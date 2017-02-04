@@ -28,8 +28,14 @@ class EventVars2LSS:
 
         for var in self.systsJEC:
             _var = var
-            if not hasattr(event,"nJet"+self.systsJEC[var]): _var = 0
-            jets = [j for j in Collection(event,"JetSel"+self.inputlabel+self.systsJEC[_var],"nJetSel"+self.inputlabel+self.systsJEC[_var])]
+            if not hasattr(event,"nJet25"+self.systsJEC[var]+self.inputlabel): _var = 0
+            jets = [j for j in Collection(event,"JetSel"+self.inputlabel,"nJetSel"+self.inputlabel)]
+            jetptcut = 25
+            if (_var==0): jets = filter(lambda x : x.pt>jetptcut, jets)
+            elif (_var==1): jets = filter(lambda x : x.pt*x.corr_JECUp/x.corr>jetptcut, jets)
+            elif (_var==-1): jets = filter(lambda x : x.pt*x.corr_JECDown/x.corr>jetptcut, jets)
+
+            ### USE ONLY ANGULAR JET VARIABLES IN THE FOLLOWING!!!
 
             met = getattr(event,"met"+self.systsJEC[_var]+"_pt")
             metphi = getattr(event,"met"+self.systsJEC[_var]+"_phi")

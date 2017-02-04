@@ -100,13 +100,13 @@ def train_multiclass(fOutName, options):
     if '_3l' in options.training:
         allcuts += "nLepFO_Recl>=3"
         allcuts += "LepGood_conePt[iLepFO_Recl[2]]>10"
-        allcuts += "nJetSel_Recl>=2"
+        allcuts += "nJet25_Recl>=2"
         # allcuts += "LepGood_isTight_Recl[iLepFO_Recl[0]]"
         # allcuts += "LepGood_isTight_Recl[iLepFO_Recl[1]]"
         # allcuts += "LepGood_isTight_Recl[iLepFO_Recl[2]]"
     else:
         allcuts += "nLepTight_Recl<=2"
-        allcuts += "nJetSel_Recl>=4"
+        allcuts += "nJet25_Recl>=4"
         allcuts += "(LepGood_charge[iLepFO_Recl[0]]*LepGood_charge[iLepFO_Recl[1]] > 0)" #!
         # allcuts += "LepGood_isTight_Recl[iLepFO_Recl[0]]"
         # allcuts += "LepGood_isTight_Recl[iLepFO_Recl[1]]"
@@ -117,7 +117,7 @@ def train_multiclass(fOutName, options):
 
     factory.AddVariable("higher_Lep_eta := max(abs(LepGood_eta[iLepFO_Recl[0]]),abs(LepGood_eta[iLepFO_Recl[1]]))", 'F')
     factory.AddVariable("MT_met_lep1 := MT_met_lep1", 'F')
-    factory.AddVariable("numJets_float := nJetSel_Recl", 'F')
+    factory.AddVariable("numJets_float := nJet25_Recl", 'F')
     factory.AddVariable("mindr_lep1_jet := mindr_lep1_jet", 'F')
     factory.AddVariable("mindr_lep2_jet := mindr_lep2_jet", 'F')
     factory.AddVariable("LepGood_conePt[iLepFO_Recl[0]] := LepGood_conePt[iLepFO_Recl[0]]", 'F')
@@ -218,19 +218,19 @@ def train_2d(fOutName, training, options):
         allcuts += "LepGood_conePt[iLepFO_Recl[1]]>10"
         allcuts += "LepGood_charge[iLepFO_Recl[0]] == LepGood_charge[iLepFO_Recl[1]]"
         allcuts += "(nBJetLoose25_Recl >= 2 || nBJetMedium25_Recl >= 1)"
-        allcuts += "nJetSel_Recl >= 4"
+        allcuts += "nJet25_Recl >= 4"
     elif '3l' in training:
         allcuts += "nLepFO_Recl>=3"
         allcuts += "abs(mZ1_Recl-91.2)>10"
         allcuts += "LepGood_conePt[iLepFO_Recl[0]]>20"
         allcuts += "LepGood_conePt[iLepFO_Recl[1]]>10"
         allcuts += "LepGood_conePt[iLepFO_Recl[2]]>10"
-        allcuts += "(nJetSel_Recl >= 4 || (met_pt*0.00397 + mhtJet25_Recl*0.00265 - 0.184 > 0.0 + 0.1*(mZ1_Recl > 0)))"
+        allcuts += "(nJet25_Recl >= 4 || (met_pt*0.00397 + mhtJet25_Recl*0.00265 - 0.184 > 0.0 + 0.1*(mZ1_Recl > 0)))"
         allcuts += "nBJetLoose25_Recl >= 2"
 
     variables = [ # Common variables
         "max_Lep_eta := max(abs(LepGood_eta[iLepFO_Recl[0]]),abs(LepGood_eta[iLepFO_Recl[1]]))",
-        "numJets_float := nJetSel_Recl",
+        "numJets_float := nJet25_Recl",
         "mindr_lep1_jet := mindr_lep1_jet",
         "mindr_lep2_jet := mindr_lep2_jet",
         "MT_met_lep1 := MT_met_lep1",
