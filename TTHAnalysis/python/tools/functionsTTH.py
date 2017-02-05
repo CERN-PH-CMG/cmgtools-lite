@@ -102,7 +102,7 @@ MODULES.append( ('BDTv8_Hj', lambda : BDTv8_eventReco(os.environ["CMSSW_BASE"]+'
                                                       os.environ["CMSSW_BASE"]+'/src/CMGTools/TTHAnalysis/data/kinMVA/tth/Hjj_csv_BDTG.weights.xml',
                                                       selection = [
                 lambda leps,jets,event : len(leps)>=2 and len(jets)>=4,
-                lambda leps,jets,event : leps[0].conePt>20 and leps[1].conePt>10 and leps[0].charge*leps[1].charge>0,
+                lambda leps,jets,event : leps[0].conePt>20 and leps[1].conePt>10,
                 ]
                                                       )) )
 

@@ -14,10 +14,10 @@ nLepFO\b : nLepFO_Recl; AlsoData
 nLepTight\b : nLepTight_Recl; AlsoData
 nTauFO\b : nTauSel_Recl; AlsoData
 nTauTight\b : Sum$(TauSel_Recl_idMVAdR03>=3); AlsoData
-nJet25\b: nJetSel_Recl; AlsoData
+nJet25\b: nJet25_Recl; AlsoData
 htJet25j\b: htJet25j_Recl; AlsoData
 mhtJet25\b: mhtJet25_Recl; AlsoData
-nJet40\b: Sum$(JetSel_Recl_pt>40); AlsoData
+nJet40\b: nJet40_Recl; AlsoData
 htJet40j\b: htJet40j_Recl; AlsoData
 mhtJet40\b: mhtJet40_Recl; AlsoData
 nBJetLoose25\b: nBJetLoose25_Recl; AlsoData

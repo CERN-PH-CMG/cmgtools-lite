@@ -12,6 +12,8 @@ debug_triggerFired_2m : HLT_DoubleMu : 2,-0.5,1.5; XTitle = "Fired 2m trigger"
 debug_triggerFired_3m : HLT_TripleMu : 2,-0.5,1.5; XTitle = "Fired 3m trigger"
 debug_triggerFired_3cross : HLT_DoubleMuEl || HLT_DoubleElMu : 2,-0.5,1.5; XTitle = "Fired 2m1e or 1m2e trigger"
 
+badMuonFilter : Flag_badMuonMoriond2017 || Flag_badCloneMuonMoriond2017 : 2,-0.5,1.5; XTitle = "Bad muon event"
+
 nJet25:	    	nJet25					: [1.5,2.5,3.5,4.5,5.5,6.5,7.5] ; XTitle='N(jet\, p_{T} > 25 GeV)', XNDdiv=505, xBinLabels="2\,3\,4\,5\,6\,#geq 7"
 nJet25_from4:  	nJet25					: [3.5,4.5,5.5,6.5,7.5] ; XTitle='N(jet\, p_{T} > 25 GeV)', XNDdiv=505, xBinLabels="4\,5\,6\,#geq 7"
 nBJetLoose25:	nBJetLoose25				: [-0.5,0.5,1.5,2.5,3.5,4.5,5.5] ; XTitle='N(jet\, p_{T} > 25 GeV\, CSVL)', XNDdiv=505
@@ -114,7 +116,7 @@ kinMVA_2lss_catbinIndex: 7*(ttH_catIndex_2lss(LepGood1_pdgId,LepGood2_pdgId,LepG
 kinMVA_3l_catbinIndex: 4*(ttH_catIndex_3l(LepGood1_charge,LepGood2_charge,LepGood3_charge,nBJetMedium25)-11)+OurBin3l(kinMVA_3l_ttbar,kinMVA_3l_ttV) : [0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5, 10.5, 11.5, 12.5, 13.5, 14.5, 15.5, 16.5]; XTitle="Category x BDT bin\, 3l"
 
 kinMVA_input_max_Lep_eta: max(abs(LepGood1_eta),abs(LepGood2_eta)) : 40,0,2.5 ; XTitle="max lepton |#eta|"
-kinMVA_input_numJets: nJetSel_Recl : [-0.5,0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5]; XTitle="nJets"
+kinMVA_input_numJets: nJet25_Recl : [-0.5,0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5]; XTitle="nJets"
 kinMVA_input_mindr_lep1_jet: mindr_lep1_jet : 40,0,4; XTitle="min #DeltaR(lep1\,jet)"
 kinMVA_input_mindr_lep2_jet: mindr_lep2_jet : 40,0,4; XTitle="min #DeltaR(lep2\,jet)"
 kinMVA_input_LepGood0_conePt: if3(nLepFO>0,LepGood1_conePt,-99) : 40,0,200; XTitle="Leading lepton corr. p_{T} [GeV]"

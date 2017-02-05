@@ -18,10 +18,10 @@ CMS_ttHl_lepEff_tight  	: ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .*3l.* : 1.09
 #CMS_ttHl_tauID		: ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .*2lss_1tau.* : 1.1
 
 # trigger efficiencies
-CMS_ttHl16_trigger_ee	: ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .*2lss_ee.* : 1.03
-CMS_ttHl16_trigger_em	: ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .*2lss_em.* : 1.02
+CMS_ttHl16_trigger_ee	: ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .*2lss_ee.* : 1.02
+CMS_ttHl16_trigger_em	: ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .*2lss_em.* : 1.01
 CMS_ttHl16_trigger_mm	: ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .*2lss_mm.* : 1.01
-CMS_ttHl16_trigger_3l	: ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .*3l.* : 1.09
+CMS_ttHl16_trigger_3l	: ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .*3l.* : 1.03
 
 # JES
 ###CMS_ttHl_JES		: ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .* : jec : templates

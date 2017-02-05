@@ -1,6 +1,83 @@
-incl_sigprompt : + ; IncludeMca="ttH-multilepton/mca-includes/mca-2lss-sigprompt.txt"
-incl_convs     : + ; IncludeMca="ttH-multilepton/mca-includes/mca-2lss-convs.txt"
-incl_dy : + ; IncludeMca="ttH-multilepton/mca-includes/mca-tt-dy-w-st.txt"
-incl_data : + ; IncludeMca="ttH-multilepton/mca-includes/mca-data.txt"
-
-incl_other : + ; IncludeMca="ttH-multilepton/mca-2lss-mc-sigextr.txt"
+DYJetsToLL_M10to50_LO : DYJetsToLL_M10to50_LO : xsec
+DYJetsToLL_M50_LO_ext_part1 : DYJetsToLL_M50_LO_ext_part1 : xsec
+DYJetsToLL_M50_LO_ext_part2 : DYJetsToLL_M50_LO_ext_part2 : xsec
+DYJetsToLL_M50_LO_ext_part3 : DYJetsToLL_M50_LO_ext_part3 : xsec
+GGHZZ4L : GGHZZ4L : xsec
+TBar_tch_powheg : TBar_tch_powheg : xsec
+TBar_tWch_ext : TBar_tWch_ext : xsec
+TGJets : TGJets : xsec
+T_tch_powheg : T_tch_powheg : xsec
+TTGJets : TTGJets : xsec
+TTHnobb_pow : TTHnobb_pow : xsec
+TTJets_DiLepton : TTJets_DiLepton : xsec
+TTJets_SingleLeptonFromT : TTJets_SingleLeptonFromT : xsec
+TTJets_SingleLeptonFromTbar : TTJets_SingleLeptonFromTbar : xsec
+TTJets_SingleLeptonFromTbar_ext : TTJets_SingleLeptonFromTbar_ext : xsec
+TTJets_SingleLeptonFromT_ext : TTJets_SingleLeptonFromT_ext : xsec
+TToLeptons_sch : TToLeptons_sch : xsec
+TTTT : TTTT : xsec
+T_tWch_ext : T_tWch_ext : xsec
+TTW_LO : TTW_LO : xsec
+TTWToLNu_ext : TTWToLNu_ext : xsec
+TTWToLNu_ext2 : TTWToLNu_ext2 : xsec
+TTZ_LO : TTZ_LO : xsec
+TTZToLLNuNu : TTZToLLNuNu : xsec
+TTZToLLNuNu_m1to10 : TTZToLLNuNu_m1to10 : xsec
+tWll : tWll : xsec
+tZq_ll_ext : tZq_ll_ext : xsec
+VHToNonbb : VHToNonbb : xsec
+WGToLNuG_amcatanlo_ext : WGToLNuG_amcatanlo_ext : xsec
+WJetsToLNu_LO : WJetsToLNu_LO : xsec
+WpWpJJ : WpWpJJ : xsec
+WWDouble : WWDouble : xsec
+WWTo2L2Nu : WWTo2L2Nu : xsec
+WWW : WWW : xsec
+WWZ : WWZ : xsec
+WZTo3LNu : WZTo3LNu : xsec
+WZZ : WZZ : xsec
+ZGTo2LG_ext : ZGTo2LG_ext : xsec
+ZZTo4L : ZZTo4L : xsec
+ZZZ : ZZZ : xsec
+data: DoubleEG_2016B
+data: DoubleEG_2016C
+data: DoubleEG_2016D
+data: DoubleEG_2016E
+data: DoubleEG_2016F
+data: DoubleEG_2016G
+data: DoubleEG_2016H_ds1
+data: DoubleEG_2016H_ds2
+data: DoubleMuon_2016B_part1
+data: DoubleMuon_2016B_part2
+data: DoubleMuon_2016C
+data: DoubleMuon_2016D
+data: DoubleMuon_2016E
+data: DoubleMuon_2016F
+data: DoubleMuon_2016G_part1
+data: DoubleMuon_2016G_part2
+data: DoubleMuon_2016H_ds1_part1
+data: DoubleMuon_2016H_ds1_part2
+data: DoubleMuon_2016H_ds2
+data: MuonEG_2016B
+data: MuonEG_2016C
+data: MuonEG_2016D
+data: MuonEG_2016E
+data: MuonEG_2016F
+data: MuonEG_2016G
+data: MuonEG_2016H_ds1
+data: MuonEG_2016H_ds2
+data: SingleElectron_2016B
+data: SingleElectron_2016C
+data: SingleElectron_2016D
+data: SingleElectron_2016E
+data: SingleElectron_2016F
+data: SingleElectron_2016G
+data: SingleElectron_2016H_ds1
+data: SingleElectron_2016H_ds2
+data: SingleMuon_2016B
+data: SingleMuon_2016C
+data: SingleMuon_2016D
+data: SingleMuon_2016E
+data: SingleMuon_2016F
+data: SingleMuon_2016G
+data: SingleMuon_2016H_ds1
+data: SingleMuon_2016H_ds2
