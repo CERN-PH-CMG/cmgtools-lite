@@ -136,3 +136,7 @@ MODULES.append( ('Trigger_3l', lambda : EvtTagger("Trigger_3l",[
                     ev.HLT_DoubleElMu or \
                     ev.Trigger_2l \
                     ] )))
+
+
+from CMGTools.TTHAnalysis.tools.bTagEventWeightsCSVFullShape import BTagEventWeightFriend
+MODULES.append( ('eventBTagWeight', lambda : BTagEventWeightFriend(csvfile=os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/btag/CSVv2_Moriond17_B_H.csv")))
