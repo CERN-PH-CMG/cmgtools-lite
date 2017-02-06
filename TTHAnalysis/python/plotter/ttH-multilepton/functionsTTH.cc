@@ -233,43 +233,57 @@ float leptonSF_ttH(int pdgid, float pt, float eta, int nlep, float var=0){
 
 }
 
-TFile *file_triggerSF_ttH = NULL;
-TH2Poly* t2poly_triggerSF_ttH_mm = NULL;
-TH2Poly* t2poly_triggerSF_ttH_ee = NULL;
-TH2Poly* t2poly_triggerSF_ttH_em = NULL;
-TH2Poly* t2poly_triggerSF_ttH_3l = NULL;
+//TFile *file_triggerSF_ttH = NULL;
+//TH2Poly* t2poly_triggerSF_ttH_mm = NULL;
+//TH2Poly* t2poly_triggerSF_ttH_ee = NULL;
+//TH2Poly* t2poly_triggerSF_ttH_em = NULL;
+//TH2Poly* t2poly_triggerSF_ttH_3l = NULL;
 
-float triggerSF_ttH(int pdgid1, float pt1, int pdgid2, float pt2, int nlep, float var=0){
-  if (!file_triggerSF_ttH) {
-    file_triggerSF_ttH = new TFile("../../data/triggerSF/trig_eff_map_v4.root");
-    t2poly_triggerSF_ttH_mm = (TH2Poly*)(file_triggerSF_ttH->Get("SSuu2DPt_effic"));
-    t2poly_triggerSF_ttH_ee = (TH2Poly*)(file_triggerSF_ttH->Get("SSee2DPt__effic"));
-    t2poly_triggerSF_ttH_em = (TH2Poly*)(file_triggerSF_ttH->Get("SSeu2DPt_effic"));
-    t2poly_triggerSF_ttH_3l = (TH2Poly*)(file_triggerSF_ttH->Get("__3l2DPt_effic"));
-    if (!(t2poly_triggerSF_ttH_mm && t2poly_triggerSF_ttH_ee && t2poly_triggerSF_ttH_em && t2poly_triggerSF_ttH_3l)) {
-	std::cout << "Impossible to load trigger scale factors!" << std::endl;
-	file_triggerSF_ttH->ls();
-	file_triggerSF_ttH = NULL;
-      }
-  }
-  TH2Poly* hist = NULL;
-  if (nlep==2){
-    if (abs(pdgid1)==13 && abs(pdgid2)==13) hist = t2poly_triggerSF_ttH_mm;
-    else if (abs(pdgid1)==11 && abs(pdgid2)==11) hist = t2poly_triggerSF_ttH_ee;
-    else hist = t2poly_triggerSF_ttH_em;
-  }
-  else if (nlep==3) hist = t2poly_triggerSF_ttH_3l;
-  else std::cout << "Wrong options to trigger scale factors" << std::endl;
-  pt1 = std::max(float(hist->GetXaxis()->GetXmin()+1e-5), std::min(float(hist->GetXaxis()->GetXmax()-1e-5), pt1));
-  pt2 = std::max(float(hist->GetYaxis()->GetXmin()+1e-5), std::min(float(hist->GetYaxis()->GetXmax()-1e-5), pt2));
-  int bin = hist->FindBin(pt1,pt2);
-  float eff = hist->GetBinContent(bin) + var * hist->GetBinError(bin);
+float triggerSF_ttH(int pdgid1, int pdgid2, int nlep){
+  
+  if (nlep>=3) return 1;
+  
+  int comb = abs(pdgid1)+abs(pdgid2);
+  if (comb==22) return 1.01; // ee
+  else if (comb==24) return 1.01; // em
+  else if (comb==26) return 1; // mm
 
-  if (nlep>2) return eff;
-  int cat = (abs(pdgid1)==11) + (abs(pdgid2)==11);
-  if (cat==2) return eff*1.02;
-  else if (cat==1) return eff*1.02;
-  else return eff*1.01;
-
+  return 1;
 
 }
+
+//float triggerSF_ttH(int pdgid1, float pt1, int pdgid2, float pt2, int nlep, float var=0){
+//
+//  if (!file_triggerSF_ttH) {
+//    file_triggerSF_ttH = new TFile("../../data/triggerSF/trig_eff_map_v4.root");
+//    t2poly_triggerSF_ttH_mm = (TH2Poly*)(file_triggerSF_ttH->Get("SSuu2DPt_effic"));
+//    t2poly_triggerSF_ttH_ee = (TH2Poly*)(file_triggerSF_ttH->Get("SSee2DPt__effic"));
+//    t2poly_triggerSF_ttH_em = (TH2Poly*)(file_triggerSF_ttH->Get("SSeu2DPt_effic"));
+//    t2poly_triggerSF_ttH_3l = (TH2Poly*)(file_triggerSF_ttH->Get("__3l2DPt_effic"));
+//    if (!(t2poly_triggerSF_ttH_mm && t2poly_triggerSF_ttH_ee && t2poly_triggerSF_ttH_em && t2poly_triggerSF_ttH_3l)) {
+//	std::cout << "Impossible to load trigger scale factors!" << std::endl;
+//	file_triggerSF_ttH->ls();
+//	file_triggerSF_ttH = NULL;
+//      }
+//  }
+//  TH2Poly* hist = NULL;
+//  if (nlep==2){
+//    if (abs(pdgid1)==13 && abs(pdgid2)==13) hist = t2poly_triggerSF_ttH_mm;
+//    else if (abs(pdgid1)==11 && abs(pdgid2)==11) hist = t2poly_triggerSF_ttH_ee;
+//    else hist = t2poly_triggerSF_ttH_em;
+//  }
+//  else if (nlep==3) hist = t2poly_triggerSF_ttH_3l;
+//  else std::cout << "Wrong options to trigger scale factors" << std::endl;
+//  pt1 = std::max(float(hist->GetXaxis()->GetXmin()+1e-5), std::min(float(hist->GetXaxis()->GetXmax()-1e-5), pt1));
+//  pt2 = std::max(float(hist->GetYaxis()->GetXmin()+1e-5), std::min(float(hist->GetYaxis()->GetXmax()-1e-5), pt2));
+//  int bin = hist->FindBin(pt1,pt2);
+//  float eff = hist->GetBinContent(bin) + var * hist->GetBinError(bin);
+//
+//  if (nlep>2) return eff;
+//  int cat = (abs(pdgid1)==11) + (abs(pdgid2)==11);
+//  if (cat==2) return eff*1.02;
+//  else if (cat==1) return eff*1.02;
+//  else return eff*1.01;
+//
+//
+//}

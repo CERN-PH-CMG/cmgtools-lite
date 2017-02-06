@@ -9,8 +9,9 @@ dowhat = "plots"
 #dowhat = "dumps" 
 #dowhat = "yields" 
 
-TREES = "-P /data1/peruzzi/TREES_TTH_250117_Summer16_JECV3_noClean_qgV2_skimOnlyMC_v1 --Fs {P}/1_recleaner_250117_v2 --Fs {P}/5_triggerDecision_250117_v1 --Fs {P}/6_bTagSF_v2"
-TREESONLYSKIM = "--Fs {P}/2_eventVars_250117_v2 --Fs {P}/3_kinMVA_250117_v3 --Fs {P}/4_BDTv8_Hj_250117_v3"
+TREES = "--Fs {P}/1_recleaner_250117_v2 --Fs {P}/5_triggerDecision_250117_v1 --Fs {P}/6_bTagSF_v2 --Fs {P}/2_eventVars_250117_v2"
+TREESONLYSKIM = "-P /data1/peruzzi/TREES_TTH_250117_Summer16_JECV3_noClean_qgV2_skimOnlyMC_v1 --Fs {P}/3_kinMVA_250117_v3 --Fs {P}/4_BDTv8_Hj_250117_v3"
+TREESONLYFULL = "-P /data1/peruzzi/TREES_TTH_250117_Summer16_JECV3_noClean_qgV2 --Fs {P}/3_kinMVA_noBDTv8_250117_v3"
 
 def base(selection):
 
@@ -31,7 +32,7 @@ def base(selection):
     elif selection=='4l':
         GO="%s ttH-multilepton/mca-4l-mc.txt ttH-multilepton/4l_tight.txt "%CORE
         GO="%s -W 'puw2016_nTrueInt_36fb(nTrueInt)*leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[0]],LepGood_pt[iLepFO_Recl[0]],LepGood_eta[iLepFO_Recl[0]],3)*leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[1]],LepGood_pt[iLepFO_Recl[1]],LepGood_eta[iLepFO_Recl[1]],3)*leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[2]],LepGood_pt[iLepFO_Recl[2]],LepGood_eta[iLepFO_Recl[2]],3)*leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[3]],LepGood_pt[iLepFO_Recl[3]],LepGood_eta[iLepFO_Recl[3]],3)*triggerSF_ttH(LepGood_pdgId[iLepFO_Recl[0]],LepGood_pdgId[iLepFO_Recl[1]],3)*eventBTagSF'"%GO
-        if dowhat == "plots": GO+=" ttH-multilepton/2lss_3l_plots.txt --xP '^(2|3)lep_.*' --xP 'kinMVA_.*' "
+        if dowhat == "plots": GO+=" ttH-multilepton/2lss_3l_plots.txt --xP '^(2|3)lep_.*' --xP '^lep(1|2|3|4)_.*' --xP 'kinMVA_.*' "
     else:
         raise RuntimeError, 'Unknown selection'
 
@@ -53,7 +54,7 @@ def setwide(x):
     x2 = x2.replace('--legendWidth 0.35','--legendWidth 0.20')
     return x2
 def fulltrees(x):
-    return x.replace(TREESONLYSKIM,'').replace("TREES_TTH_250117_Summer16_JECV3_noClean_qgV2_skimOnlyMC_v1","TREES_TTH_250117_Summer16_JECV3_noClean_qgV2")
+    return x.replace(TREESONLYSKIM,TREESONLYFULL)
 def doprescale3l(x):
     raise RuntimeError, 'temporary: no prescaled datasets defined'
     x2 = x.replace("mixture_jecv6prompt_datafull_jul20_skimOnlyMC","TREES_80X_180716_jecv6_skim_3ltight_relax")
@@ -193,25 +194,18 @@ if __name__ == '__main__':
         if '_relax' in torun: x = add(x,'-X ^TTTT ')
         if '_data' in torun: x = x.replace('mca-4l-mc.txt','mca-4l-mcdata.txt')
         if '_frdata' in torun:
-            if '_blinddata' in torun:
-                x = x.replace('mca-4l-mc.txt','mca-4l-mcdata.txt')
-                x = add(x,'--xp data')
-            elif not '_data' in torun: raise RuntimeError
-            x = x.replace('mca-4l-mcdata.txt','mca-4l-mcdata-frdata.txt')
+            raise RuntimeError, 'Fakes estimation not implemented for 4l'
         runIt(x,'%s'%torun)
 
     if 'cr_3j' in torun:
         x = base('2lss')
-        x = fulltrees(x) # otherwise OS is not there in 3j bin
         if '_data' in torun: x = x.replace('mca-2lss-mc.txt','mca-2lss-mcdata.txt')
         if '_frdata' in torun:
             if not '_data' in torun: raise RuntimeError
             x = x.replace('mca-2lss-mcdata.txt','mca-2lss-mcdata-frdata.txt')
         x = add(x,"-R ^4j 3j 'nJet25==3'")
-        plots = ['2lep_.*','nJet25','nBJetLoose25','nBJetMedium25','met','metLD','htJet25j','mhtJet25','mtWmin','htllv','kinMVA_2lss_ttbar','kinMVA_2lss_ttV','kinMVA_2lss_bins7']
+        plots = ['2lep_.*','nJet25','nBJetLoose25','nBJetMedium25','met','metLD','htJet25j','mhtJet25','mtWmin','htllv','kinMVA_2lss_ttbar.*','kinMVA_2lss_ttV.*','kinMVA_2lss_bins7','kinMVA_input.*']
         runIt(x,'%s'%torun,plots)
-        runIt(add(x,'-E ^BTight'),'%s/btight'%torun,plots)
-        runIt(add(x,'-E ^BLoose'),'%s/bloose'%torun,plots)
         if '_flav' in torun:
             for flav in ['mm','ee','em']:
                 runIt(add(x,'-E ^%s '%flav),'%s/%s'%(torun,flav),plots)
@@ -265,3 +259,12 @@ if __name__ == '__main__':
         runIt(x,'%s'%torun,plots)
         x = add(x,"-E ^4j ")
         runIt(x,'%s_4j'%torun,plots)
+
+    if 'cr_fourlep_onZ' in torun:
+        x = base('4l')
+        if '_data' in torun: x = x.replace('mca-4l-mc.txt','mca-4l-mcdata.txt')
+        if '_frdata' in torun:
+            raise RuntimeError, 'Fakes estimation not implemented for 4l'
+        x = add(x,"-I ^Zveto")
+        runIt(x,'%s'%torun)
+        
