@@ -113,8 +113,10 @@ class EventLoop:
             for i in xrange(tree.GetEntries()) if eventRange == None else eventRange:
                 if maxEvents > 0 and i >= maxEvents-1: break
                 e = Event(tree,i)
-                if cut != None and not e.eval(cut): 
-                    continue
+                if cut != None:
+                    evno = e.evt # force some eval of a plain branch (apparently this is needed)
+                    cutres = e.eval(cut)
+                    if not cutres: continue
                 ret = True
                 for m in modules: 
                     ret = m.analyze(e)

@@ -190,14 +190,13 @@ class MCAnalysis:
                         for p in p0.split(","):
                             if re.match(p+"$", pname): scale += "*("+s+")"
                     to_norm = True
+                elif len(field) == 2:
+                    pass
                 elif len(field) == 3:
                     tty.setScaleFactor(field[2])
                 else:
-                    try:
-                        pckobj  = pickle.load(open(pckfile,'r'))
-                        counters = dict(pckobj)
-                    except:
-                        pass
+                    print "Poorly formatted line: ", field
+                    raise RuntimeError                    
                 # Adjust free-float and fixed from command line
                 for p0 in options.processesToFloat:
                     for p in p0.split(","):
