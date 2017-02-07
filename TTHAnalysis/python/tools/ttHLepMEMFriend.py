@@ -9,7 +9,7 @@ def _MEMInit():
 
 class ttHLepMEMFriend:
     def __init__(self, config, blooseWP, recllabel='Recl'):
-        self._procs = [ "TTLL", "TTHfl", "TTHsl", "TTW"]#, "TTWJJ", "TTbarfl", "TTbarsl", "TTH" ]
+        self._procs = [ "TTLL", "TTHfl", "TTHsl", "TTW", "TTbarfl", "TTbarsl"]#, "TTWJJ", "TTH" ]
         self._posts = [ "", "_kinmaxint"]#, "_nHypAll", "_nNull", "_time", "_err", "_chi2" ]
         self.systsJEC = {0:"", 1:"_jecUp", -1:"_jecDown"} # not really used for the moment
         self.inputlabel = '_'+recllabel
@@ -17,12 +17,21 @@ class ttHLepMEMFriend:
         _MEMInit()
         self.mem = ROOT.MEMFriendTreeCERN();
         self.mem.init(config)
+        self._events = []
         print "Initialized MEM"
     def listBranches(self):
         return ["MEM_"+p+x for p in self._procs for x in self._posts ]
+    def selectEvents(self, events):
+        print "Will select events %s" % events
+        self._events = list(events)
     def __call__(self,event):
-
         null_output = dict([("MEM_"+p+x,0) for p in self._procs for x in self._posts ])
+        if self._events and event.evt not in self._events:  
+            #print "Skipping event %d " % event.evt
+            return null_output
+
+        print "\nrun %6d lumi %4d event %d: leps %d" % (event.run, event.lumi, event.evt, event.nLepGood)
+        timer = ROOT.TStopwatch(); timer.Start()
 
         nFO = getattr(event,"nLepFO"+self.inputlabel)
         if nFO < 3: return null_output
@@ -110,7 +119,9 @@ class ttHLepMEMFriend:
         ret0 = self.mem.compute()
         for pair in ret0:
             print pair.first, pair.second
+        timer.Stop()
         print "This was for event ",event.run,event.lumi,event.evt
+        print "T(CPU) = %.1f s, T(Real) = %.1f s " % (timer.CpuTime(),timer.RealTime())
         myout = {}
         for k in self.listBranches(): myout[k]=0
         myout.update( dict([("MEM_"+p.first,p.second) for p in ret0 ]) )
@@ -126,11 +137,11 @@ if __name__ == '__main__':
         def __init__(self, name):
             Module.__init__(self,name,None)
             self.sf = ttHLepMEMFriend(argv[3], blooseWP = 0.5426)
+            if len(argv) > 4: self.sf.selectEvents( map(int,argv[4:]) )
         def analyze(self,ev):
-            print "\nrun %6d lumi %4d event %d: leps %d" % (ev.run, ev.lumi, ev.evt, ev.nLepGood)
-            print self.sf(ev)
+            self.sf(ev)
     el = EventLoop([ Tester("tester") ])
-    el.loop([tree], maxEvents = 50)
+    el.loop([tree], maxEvents = 500)
 
 MODULES = [ 
     ( 'MEM_3l', lambda : ttHLepMEMFriend("/afs/cern.ch/work/g/gpetrucc/ttH/CMSSW_8_0_25/src/CMGTools/TTHAnalysis/python/tools/ttHLepMEMFriend_memcfg.cfg",

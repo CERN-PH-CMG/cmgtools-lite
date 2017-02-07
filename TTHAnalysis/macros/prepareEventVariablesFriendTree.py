@@ -75,6 +75,7 @@ parser.add_option("-n", "--new",  dest="newOnly", action="store_true", default=F
 parser.add_option("-I", "--import", dest="imports",  type="string", default=[], action="append", help="Modules to import");
 parser.add_option("--log", "--log-dir", dest="logdir", type="string", default=None, help="Directory of stdout and stderr");
 parser.add_option("--env",   dest="env",     type="string", default="lxbatch", help="Give the environment on which you want to use the batch system (lxbatch, psi, oviedo)");
+parser.add_option("--run",   dest="runner",     type="string", default="lxbatch_runner.sh", help="Give the runner script (default: lxbatch_runner.sh)");
 parser.add_option("--bk",   dest="bookkeeping",  action="store_true", default=False, help="If given the command used to run the friend tree will be stored");
 parser.add_option("--tra2",  dest="useTRAv2", action="store_true", default=False, help="Use the new experimental version of treeReAnalyzer");
 (options, args) = parser.parse_args()
@@ -193,7 +194,7 @@ if options.queue:
         runner = "lxbatch_runner.sh"
         theoutput = theoutput.replace('/pool/ciencias/','/pool/cienciasrw/')
     else: # Use lxbatch by default
-        runner = "lxbatch_runner.sh"
+        runner = options.runner
         super  = "bsub -q {queue}".format(queue = options.queue)
 
     basecmd = "{dir}/{runner} {dir} {cmssw} python {self} -N {chunkSize} -T {tdir} -t {tree} {data} {output}".format(
