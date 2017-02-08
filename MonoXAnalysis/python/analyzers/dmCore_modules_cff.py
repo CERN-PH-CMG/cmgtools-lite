@@ -476,7 +476,7 @@ ttHCoreEventAna = cfg.Analyzer(
 def doECalElectronCorrections(sync=False,era="25ns"):
     global lepAna, monoJetCtrlLepSkim
     lepAna.doElectronScaleCorrections = {
-        'data' : 'EgammaAnalysis/ElectronTools/data/ScalesSmearings/80X_ichepV1_2016_ele',
+        'data' : 'EgammaAnalysis/ElectronTools/data/ScalesSmearings/Winter_2016_reReco_v1_ele',
         'GBRForest': ('$CMSSW_BASE/src/CMGTools/RootTools/data/egamma_epComb_GBRForest_76X.root',
                       'gedelectron_p4combination_'+era),
         'isSync': sync
