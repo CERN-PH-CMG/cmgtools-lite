@@ -135,7 +135,7 @@ if scaleProdToLumi>0: # select only a subset of a sample, corresponding to a giv
         c.splitFactor = len(c.files)
         c.fineSplitFactor = 1
 
-json = "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-284044_13TeV_PromptReco_Collisions16_JSON_NoL1T.txt"
+
 if False:
     is50ns = False
     selectedComponents = PrivateSamplesData
@@ -151,6 +151,8 @@ if runData and not isTest: # For running on data
     selectedComponents = []; vetos = []
     ProcessingsAndRunRanges = []; Shorts = []
 
+    json = "/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-284044_13TeV_PromptReco_Collisions16_JSON_NoL1T.txt"
+
     # --- 2015 DATA ---
     # ProcessingsAndRunRanges.append( ("Run2015C_25ns-05Oct2015-v1", [254227,255031] ) ); Shorts.append("Run2015C_05Oct")
     # ProcessingsAndRunRanges.append( ("Run2015D-05Oct2015-v1", [256630,258158] ) ); Shorts.append("Run2015D_05Oct")
@@ -159,16 +161,17 @@ if runData and not isTest: # For running on data
     # ProcessingsAndRunRanges.append( ("Run2015D-16Dec2015-v1", [256630,260627] ) ); Shorts.append("Run2015D_16Dec")
     
     # --- 2016 DATA ---
-    ProcessingsAndRunRanges.append( ("Run2016B-PromptReco-v1", [272023,273146] ) ); Shorts.append("Run2016B_PromptReco_v1")
-    ProcessingsAndRunRanges.append( ("Run2016B-PromptReco-v2", [273150,275376] ) ); Shorts.append("Run2016B_PromptReco_v2")
-    ProcessingsAndRunRanges.append( ("Run2016C-PromptReco-v2", [275420,276283] ) ); Shorts.append("Run2016C_PromptReco_v2")
-    ProcessingsAndRunRanges.append( ("Run2016D-PromptReco-v2", [276315,276811] ) ); Shorts.append("Run2016D_PromptReco_v2")
-    ProcessingsAndRunRanges.append( ("Run2016E-PromptReco-v2", [276830,277420] ) ); Shorts.append("Run2016E_PromptReco_v2")
-    ProcessingsAndRunRanges.append( ("Run2016F-PromptReco-v1", [277820,278808] ) ); Shorts.append("Run2016F_PromptReco_v1")
-    ProcessingsAndRunRanges.append( ("Run2016G-PromptReco-v1", [278816,280385] ) ); Shorts.append("Run2016G_PromptReco_v1")
-    ProcessingsAndRunRanges.append( ("Run2016H-PromptReco-v1", [281010,281202] ) ); Shorts.append("Run2016H_PromptReco_v1")
+    #ProcessingsAndRunRanges.append( ("Run2016B-23Sep2016-v1", [272760,273017] ) ); Shorts.append("Run2016B_23Sep2016_v3")
+    ProcessingsAndRunRanges.append( ("Run2016B-23Sep2016-v3", [273150,275376] ) ); Shorts.append("Run2016B_23Sep2016_v3")
+    ProcessingsAndRunRanges.append( ("Run2016C-23Sep2016-v1", [271036,284044] ) ); Shorts.append("Run2016C_23Sep2016_v1")
+    ProcessingsAndRunRanges.append( ("Run2016D-23Sep2016-v1", [271036,284044] ) ); Shorts.append("Run2016D_23Sep2016_v1")
+    ProcessingsAndRunRanges.append( ("Run2016E-23Sep2016-v1", [271036,284044] ) ); Shorts.append("Run2016E_23Sep2016_v1")
+    ProcessingsAndRunRanges.append( ("Run2016F-23Sep2016-v1", [271036,284044] ) ); Shorts.append("Run2016F_23Sep2016_v1")
+    ProcessingsAndRunRanges.append( ("Run2016G-23Sep2016-v1", [271036,284044] ) ); Shorts.append("Run2016G_23Sep2016_v1")
+    #run H ==============================================================================================================
+    ProcessingsAndRunRanges.append( ("Run2016H-PromptReco-v1", [281085,281201] ) ); Shorts.append("Run2016H_PromptReco_v1")
     ProcessingsAndRunRanges.append( ("Run2016H-PromptReco-v2", [281207,284035] ) ); Shorts.append("Run2016H_PromptReco_v2")
-    ProcessingsAndRunRanges.append( ("Run2016H-PromptReco-v3", [284036,284068] ) ); Shorts.append("Run2016H_PromptReco_v3")
+    ProcessingsAndRunRanges.append( ("Run2016H-PromptReco-v3", [284036,284044] ) ); Shorts.append("Run2016H_PromptReco_v3")
 
     if diLepSkim == True:
         DatasetsAndTriggers.append( ("DoubleMuon", triggers_mumu_iso + triggers_mumu_ss + triggers_mumu_ht + triggers_3mu + triggers_3mu_alt) )
