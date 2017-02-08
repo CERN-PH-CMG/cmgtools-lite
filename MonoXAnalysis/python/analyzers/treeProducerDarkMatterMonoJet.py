@@ -55,7 +55,7 @@ dmMonoJet_globalVariables = dmCore_globalVariables + [
     ##-------------------------------------------------- 
     ## MonoJet specific ones
     ##-------------------------------------------------- 
-    NTupleVariable("apcjetmetmin",  lambda ev: ev.apcjetmetmin, help="apcjetmetmin computed using jets with pt > 50, |eta|<3"),
+    #NTupleVariable("apcjetmetmin",  lambda ev: ev.apcjetmetmin, help="apcjetmetmin computed using jets with pt > 50, |eta|<3"),
     ##--------------------------------------------------            
     ## dilepton masses
     ##--------------------------------------------------            
