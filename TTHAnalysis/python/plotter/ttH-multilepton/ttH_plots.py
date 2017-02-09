@@ -10,7 +10,7 @@ dowhat = "plots"
 #dowhat = "yields" 
 
 TREES = "--Fs {P}/1_recleaner_250117_v2 --Fs {P}/5_triggerDecision_250117_v1 --Fs {P}/6_bTagSF_v2 --Fs {P}/2_eventVars_250117_v2"
-TREESONLYSKIM = "-P /data1/peruzzi/TREES_TTH_250117_Summer16_JECV3_noClean_qgV2_skimOnlyMC_v1 --Fs {P}/3_kinMVA_250117_v3 --Fs {P}/4_BDTv8_Hj_250117_v3"
+TREESONLYSKIM = "-P /data1/peruzzi/TREES_TTH_250117_Summer16_JECV3_noClean_qgV2_skimOnlyMC_v1 --Fs {P}/3_kinMVA_250117_v4 --Fs {P}/4_BDTv8_Hj_250117_v4"
 TREESONLYFULL = "-P /data1/peruzzi/TREES_TTH_250117_Summer16_JECV3_noClean_qgV2 --Fs {P}/3_kinMVA_noBDTv8_250117_v3"
 
 def base(selection):
@@ -114,8 +114,7 @@ if __name__ == '__main__':
         if '_varsFR' in torun:
             torun += "_"+sys.argv[-1]
             x = x.replace('mca-2lss-mc.txt','mca-2lss-data-frdata-vars.txt')
-            x = add(x,"--plotmode nostack --sP 'kinMVA_.*'")
-            x = x.replace('--showRatio','')
+            x = add(x,"--plotmode nostack --sP 'kinMVA_.*' --sP 2lep_catIndex")
             x = add(x,"--ratioDen data_fakes --ratioNums data_fakes_%s --errors -p data_fakes -p data_fakes_%s"%(sys.argv[-1],sys.argv[-1]))
             if '_varsFR_norm' in torun:
                 x = x.replace("--plotmode nostack","--plotmode norm")
