@@ -1,0 +1,4 @@
+alwaystrue: 1
+lep: nLepFO>=3
+3j: nJetSel_Recl>=2
+2b1B: nBJetLoose25_Recl>=2 || nBJetMedium25_Recl>=1 || nBJetLoose25_jecUp_Recl>=2 || nBJetMedium25_jecUp_Recl>=1 || nBJetLoose25_jecDown_Recl>=2 || nBJetMedium25_jecDown_Recl>=1

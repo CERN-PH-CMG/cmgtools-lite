@@ -20,7 +20,7 @@ nBJetLoose25:	nBJetLoose25				: [-0.5,0.5,1.5,2.5,3.5,4.5,5.5] ; XTitle='N(jet\,
 nBJetMedium25:	nBJetMedium25				: [-0.5,0.5,1.5,2.5,3.5,4.5,5.5] ; XTitle='N(jet\, p_{T} > 25 GeV\, CSVM)', XNDdiv=505
 
 2lep_nTight: 	if3(nLepFO>1,LepGood1_isLepTight+LepGood2_isLepTight,-99)                                          : [-0.5,0.5,1.5,2.5]; XTitle="Tight leptons among the first two", XNDdiv=505, Legend='TL', IncludeOverflows=False
-2lep_charge:  	if3(nLepFO>1,LepGood1_charge+LepGood2_charge,-99) 	     	     	      		     : [-2.5,-1.5,-0.5,0.5,1.5,2.5]; XTitle='q(l_{1}\,l_{2})', XNDdiv=505, Legend='TR', IncludeOverflows=False, MoreY=2.0
+2lep_charge:  	if3(nLepFO>1,LepGood1_charge,-99) 	     	     	      		     : [-2,0,2]; XTitle='q(l_{1})', XNDdiv=505, Legend='TR', IncludeOverflows=False, MoreY=2.0
 2lep_flav:    	if3(nLepFO>1,if3(abs(LepGood1_pdgId)!=abs(LepGood2_pdgId),1,abs(LepGood1_pdgId)-11),-99)     : [-0.5,0.5,1.5,2.5]; XTitle="ee/e#mu/#mu#mu", XNDdiv=505, MoreY=2.0
 2lep_bestMVA:	max(LepGood1_mvaTTH,LepGood2_mvaTTH)										 : 32,0.6,1; XTitle="Best lepMVA in 2l", Legend='TL'
 2lep_worseMVA:	min(LepGood1_mvaTTH,LepGood2_mvaTTH)										 : 32,0.6,1; XTitle="Worse lepMVA in 2l", Legend='TL'
@@ -51,7 +51,7 @@ nT_3lep_miniIso: if3((nLepFO>2)*(LepGood1_isLepTight+LepGood2_isLepTight+LepGood
 3lep_worseMVA:	min(LepGood1_mvaTTH,min(LepGood2_mvaTTH,LepGood3_mvaTTH))					: 32,0.6,1; XTitle="Worse lepMVA in 3l", Legend='TL'
 3lep_mtW: 	(abs(mZ1-mass_2(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_mass,LepGood2_pt,LepGood2_eta,LepGood2_phi,LepGood2_mass)) < 0.01)*mt_2(LepGood3_pt,LepGood3_phi,met,met_phi) + (abs(mZ1-mass_2(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_mass,LepGood3_pt,LepGood3_eta,LepGood3_phi,LepGood3_mass)) < 0.01)*mt_2(LepGood2_pt,LepGood2_phi,met,met_phi) + (abs(mZ1-mass_2(LepGood2_pt,LepGood2_eta,LepGood2_phi,LepGood2_mass,LepGood3_pt,LepGood3_eta,LepGood3_phi,LepGood3_mass)) < 0.01)*mt_2(LepGood1_pt,LepGood1_phi,met,met_phi) : 36,0,180 ; XTitle="M_{T}(W#rightarrowlv) in 3l", Legend='TR'
 3lep_m3l: mass_3_cheap(LepGood1_pt,LepGood1_eta,LepGood2_pt,LepGood2_eta,LepGood2_phi-LepGood1_phi,LepGood3_pt,LepGood3_eta,LepGood3_phi-LepGood1_phi): 40,0,400; XTitle="M_{3l} [GeV]"
-3lep_catIndex: ttH_catIndex_3l(LepGood1_charge,LepGood2_charge,LepGood3_charge,nBJetMedium25) : [11.5,12.5,13.5,14.5,15.5]; XTitle="", xBinLabels="bl -\, bl +\, bt -\, bt +", MoreY=2.0
+3lep_catIndex: ttH_catIndex_3l(LepGood1_charge,LepGood2_charge,LepGood3_charge,nBJetMedium25) : [10.5,11.5,12.5,13.5,14.5]; XTitle="", xBinLabels="bl -\, bl +\, bt -\, bt +", MoreY=2.0
 
 4lep_nTight: 	if3(nLepFO>3,LepGood1_isLepTight+LepGood2_isLepTight+LepGood3_isLepTight+LepGood4_isLepTight,-99)           : [-0.5,0.5,1.5,2.5,3.5,4.5]; XTitle="Tight leptons among the first four", XNDdiv=505, Legend='TL', IncludeOverflows=False
 4lep_charge:  	if3(nLepFO>3,LepGood1_charge+LepGood2_charge+LepGood3_charge+LepGood4_charge,-99) 	     	      	        : [-2.5,-1.5,-0.5,0.5,1.5,2.5]; XTitle='q(l_{1}\,l_{2}\,l_{3}\,l_{4})', XNDdiv=505, Legend='TR', IncludeOverflows=False, MoreY=2.0
@@ -61,8 +61,8 @@ nT_3lep_miniIso: if3((nLepFO>2)*(LepGood1_isLepTight+LepGood2_isLepTight+LepGood
 4lep_worseSip:	max(LepGood1_sip3d,max(LepGood2_sip3d,max(LepGood3_sip3d,LepGood4_sip3d)))				                : 40,0,8; XTitle="Worse sip3d in 4l"
 4lep_worseMVA:	min(LepGood1_mvaTTH,min(LepGood2_mvaTTH,min(LepGood3_mvaTTH,LepGood4_mvaTTH)))					: 32,0.6,1; XTitle="Worse lepMVA in 4l", Legend='TL'
 4lep_max_Lep_eta: max(LepGood1_eta,max(abs(LepGood2_eta),max(abs(LepGood3_eta),abs(LepGood4_eta)))) : 40,0,2.5 ; XTitle="max lepton |#eta|"
-4lep_pt4l_noRecl: pt4l										    : 60,0,120 ; XTitle="pt4l (no Recl)"
-4lep_m4l_noRecl	: m4l										    : 160,0,200 ; XTitle="m4l (no Recl)"
+4lep_pt4l_noRecl: pt4l										    : 60,0,360 ; XTitle="pt4l (no Recl)"
+4lep_m4l_noRecl	: m4l										    : 80,0,560 ; XTitle="m4l (no Recl)"
 
 nBJetLoose40:	nBJetLoose40				: [-0.5,0.5,1.5,2.5,3.5,4.5,5.5] ; XTitle='N(jet\, p_{T} > 40 GeV\, CSVL)', XNDdiv=505
 nBJetMedium40:	nBJetMedium40				: [-0.5,0.5,1.5,2.5,3.5,4.5,5.5] ; XTitle='N(jet\, p_{T} > 40 GeV\, CSVM)', XNDdiv=505
