@@ -125,7 +125,7 @@ class MuEleAnalyzer(DiLeptonAnalyzer):
             #pyl = Electron(lep)
             pyl.associatedVertex = event.goodVertices[0]
             pyl.rho = event.rho
-            pyl.event = event
+            pyl.event = event.input.object()
             electrons.append(pyl)
         return electrons
 
@@ -230,7 +230,7 @@ class MuEleAnalyzer(DiLeptonAnalyzer):
         return True
 
     def testElectronID(self, electron):
-        return electron.mvaIDRun2('NonTrigSpring15MiniAOD', 'POG80')
+        return electron.mvaIDRun2('Spring16', 'POG80')
 
     def leptonAccept(self, leptons, event):
         '''Loose e/mu veto to reject DY; passes for e-mu'''

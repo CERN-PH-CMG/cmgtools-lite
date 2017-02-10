@@ -232,8 +232,8 @@ class TauTauAnalyzer(DiLeptonAnalyzer):
             pyl = Electron(lep)
             pyl.associatedVertex = event.goodVertices[0]
             pyl.rho = event.rho
-            pyl.event = event
-            if not pyl.mvaIDRun2('NonTrigSpring15MiniAOD', 'POG90'):
+            pyl.event = event.input.object()
+            if not pyl.mvaIDRun2('Spring16', 'POG90'):
                 continue
             if not pyl.relIsoR(R=0.3, dBetaFactor=0.5, allCharged=0) < 0.3:
                 continue
