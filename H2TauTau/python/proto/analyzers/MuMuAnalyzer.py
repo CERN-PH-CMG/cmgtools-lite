@@ -117,7 +117,7 @@ class MuMuAnalyzer(DiLeptonAnalyzer):
             pyl = self.__class__.OtherLeptonClass(lep)
             pyl.associatedVertex = event.goodVertices[0]
             pyl.rho = event.rho
-            pyl.event = event
+            pyl.event = event.input.object()
             otherLeptons.append(pyl)
         return otherLeptons
 
@@ -184,7 +184,7 @@ class MuMuAnalyzer(DiLeptonAnalyzer):
         return muon.relIsoR(R=0.4, dBetaFactor=0.5, allCharged=0) < isocut    
 
     def testElectronID(self, electron):
-        return electron.mvaIDRun2('NonTrigSpring15MiniAOD', 'POG90')
+        return electron.mvaIDRun2('Spring16', 'POG90')
 
     def thirdLeptonVeto(self, leptons, otherLeptons, ptcut=10, isocut=0.3):
         '''Tri-lepton veto. Returns False if > 2 leptons (e or mu).'''

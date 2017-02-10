@@ -111,7 +111,7 @@ class TauMuAnalyzer(DiLeptonAnalyzer):
             pyl = self.__class__.OtherLeptonClass(lep)
             pyl.associatedVertex = event.goodVertices[0]
             pyl.rho = event.rho
-            pyl.event = event
+            pyl.event = event.input.object()
             otherLeptons.append(pyl)
         return otherLeptons
 
@@ -200,7 +200,7 @@ class TauMuAnalyzer(DiLeptonAnalyzer):
 
 
     def testElectronID(self, electron):
-        return electron.mvaIDRun2('NonTrigSpring15MiniAOD', 'POG90')
+        return electron.mvaIDRun2('Spring16', 'POG90')
 
     def otherLeptonVeto(self, leptons, otherLeptons, isoCut=0.3):
         # count electrons
