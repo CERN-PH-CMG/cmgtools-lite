@@ -92,20 +92,6 @@ class TriggerAnalyzer(Analyzer):
             self.counters.counter('Trigger').register(trigger)
             self.counters.counter('Trigger').register(trigger + 'prescaled')
 
-    def removeDuplicates(self, trigger_infos):
-        # RIC: remove duplicated trigger objects 
-        #      (is this something that may happen in first place?)
-        for info in trigger_infos:
-            objs = info.objects     
-            for to1, to2 in combinations(info.objects, 2):
-                to1Filter = set(sorted(list(to1.filterLabels())))
-                to2Filter = set(sorted(list(to2.filterLabels())))
-                if to1Filter != to2Filter:
-                    continue
-                dR = deltaR(to1.eta(), to1.phi(), to2.eta(), to2.phi())
-                if dR<0.01 and to2 in objs:
-                    objs.remove(to2)
-            info.objects = objs
 
     def process(self, event):
         self.readCollections(event.input)
@@ -138,9 +124,6 @@ class TriggerAnalyzer(Analyzer):
 
             trigger_infos.append(TriggerInfo(trigger_name, index, fired, prescale))
 
-            #print trigger_name, fired, prescale
-            #if fired:
-            #    import pdb ; pdb.set_trace()
             if fired and (prescale == 1 or self.cfg_ana.usePrescaled):
                 if trigger_name in self.triggerList:
                     trigger_passed = True
@@ -149,11 +132,6 @@ class TriggerAnalyzer(Analyzer):
             elif fired:
                 print 'WARNING: Trigger not passing because of prescale', trigger_name
                 self.counters.counter('Trigger').inc(trigger_name + 'prescaled')
-
-        # JAN: I don't understand why the following is needed - there is a 
-        # unique loop above
-        # self.removeDuplicates(trigger_infos)
-
 
         if self.cfg_ana.requireTrigger:
             if not trigger_passed:
