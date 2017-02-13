@@ -57,9 +57,9 @@ def passBadChargedHadronFilter(muons, packedCandidates):
                     # Require very loose similarity in pt (one-sided).
                     dPtRel = (c.pt() - it.pt())/(0.5*(c.pt() + it.pt()))
                     # Flag the event bad if dR is tiny
-                if deltaR(it.eta(), it.phi(), c.eta(), c.phi()) < maxDR and dPtRel > minPtDiffRel:
-                    flagged = True
-                    break
-                    if flagged:
+                    if deltaR(it.eta(), it.phi(), c.eta(), c.phi()) < maxDR and dPtRel > minPtDiffRel:
+                        flagged = True
                         break
+                        if flagged:
+                            break
     return not flagged

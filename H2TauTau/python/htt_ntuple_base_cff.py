@@ -50,6 +50,7 @@ eventSelector = cfg.Analyzer(
 
 lheWeightAna = cfg.Analyzer(
     LHEWeightAnalyzer, name="LHEWeightAnalyzer",
+    useLumiInfo=False
 )
 
 jsonAna = cfg.Analyzer(
