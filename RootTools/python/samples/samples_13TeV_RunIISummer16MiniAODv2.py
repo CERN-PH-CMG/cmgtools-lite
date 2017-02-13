@@ -173,6 +173,7 @@ TGJets_ext,
 tZq_ll_ext,
 #tZq_nunu,
 tWll,
+tWnunu
 ]
 
 ### V+jets inclusive (from https://twiki.cern.ch/twiki/bin/viewauth/CMS/StandardModelCrossSectionsat13TeV)
@@ -447,7 +448,7 @@ QCD_Pt170to300_ext    = kreator.makeMCComponent("QCD_Pt170to300_ext"   , "/QCD_P
 QCDPt = [
 #QCD_Pt10to15,
 QCD_Pt15to30,
-# NOTAVAILYET # QCD_Pt30to50,
+QCD_Pt30to50,
 QCD_Pt50to80,
 QCD_Pt80to120,
 QCD_Pt80to120_ext2,
