@@ -212,7 +212,7 @@ vars['bjet2_id_pu'] = {'std': 'bjet2_id_pu', 'sync': 'bpuid_2'}
 vars['bjet2_csv'] = {'std': 'bjet2_csv', 'sync': 'bcsv_2'}
 
 # trigger names
-vars['trigger_ditau35'] = {'std':'trigger_ditau35', 'sync':'HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg_v'}
-vars['trigger_ditau35_combiso'] = {'std':'trigger_ditau35_combiso', 'sync':'HLT_DoubleMediumCombinedIsoPFTau35_Trk1_eta2p1_Reg_v'}
-vars['trigger_singletau140'] = {'std':'trigger_singletau140', 'sync':'HLT_VLooseIsoPFTau140_Trk50_eta2p1_v'}
-vars['trigger_singletau120'] = {'std':'trigger_singletau120', 'sync':'HLT_VLooseIsoPFTau120_Trk50_eta2p1_v'}
+vars['trigger_ditau35'] = {'std':'trigger_ditau35', 'sync':'trg_doubletau'}
+vars['trigger_ditau35_combiso'] = {'std':'trigger_ditau35_combiso', 'sync':'trg_doubletau_combiso'}
+vars['trigger_singletau140'] = {'std':'trigger_singletau140', 'sync':'trg_singletau'}
+vars['trigger_singletau120'] = {'std':'trigger_singletau120', 'sync':'trg_singletau120'}
