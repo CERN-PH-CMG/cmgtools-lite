@@ -1,8 +1,9 @@
 import math
 import re
 
+import ROOT
+
 from ROOT import gSystem
-from ROOT import LorentzVector
 from PhysicsTools.Heppy.analyzers.core.Analyzer import Analyzer
 
 from CMGTools.H2TauTau.proto.analyzers.HTTGenAnalyzer import HTTGenAnalyzer
@@ -106,8 +107,9 @@ class RecoilCorrector(Analyzer):
 
         px_new, py_new = new.first, new.second
 
-        dil.met().setP4(LorentzVector(px_new, py_new, 0., math.sqrt(px_new*px_new + py_new*py_new)))
-
+        newDiLmet = ROOT.Math.LorentzVector(ROOT.Math.PxPyPzE4D("double"))(px_new, py_new, 0., math.sqrt(px_new*px_new + py_new*py_new))
+        dil.met().setP4(newDiLmet)
+        
         # print 'px old - new', px_old, dil.met().px()
         # print 'py old - new', py_old, dil.met().py()
 
