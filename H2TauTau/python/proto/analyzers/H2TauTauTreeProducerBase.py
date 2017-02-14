@@ -29,8 +29,18 @@ class H2TauTauTreeProducerBase(TreeAnalyzerNumpy):
     def var(self, tree, varName, type=float):
         tree.var(self.varName(varName), type)
 
+    def vars(self, tree, varNames, type=float):
+        for varName in varNames:
+            self.var(tree, varName, type)
+
     def fill(self, tree, varName, value):
         tree.fill(self.varName(varName), value)
+
+    def fillVars(self, tree, varNames, obj):
+        '''Fills vars that are attributes of the passed object.
+        Fills -999. if object doesn't have attribute'''
+        for varName in varNames:
+            tree.fill(self.varName(varName), getattr(obj, varName, -999.))
 
     def varName(self, name):
         try:
@@ -219,29 +229,13 @@ class H2TauTauTreeProducerBase(TreeAnalyzerNumpy):
 
     # TauSpinner information
     def bookTauSpinner(self, tree):
-        self.var(tree, 'TauSpinnerWTisValid')
-        self.var(tree, 'TauSpinnerWT')
-        self.var(tree, 'TauSpinnerWThminus')
-        self.var(tree, 'TauSpinnerWThplus')
-        self.var(tree, 'TauSpinnerTauPolFromZ')
-        self.var(tree, 'TauSpinnerWRight')
-        self.var(tree, 'TauSpinnerWLeft')
-        self.var(tree, 'TauSpinnerIsRightLeft')
-
+        self.vars(tree, ['TauSpinnerWTisValid', 'TauSpinnerWT', 'TauSpinnerWThminus', 'TauSpinnerWThplus', 'TauSpinnerTauPolFromZ', 'TauSpinnerWRight', 'TauSpinnerWLeft', 'TauSpinnerIsRightLeft'])
+        
     def fillTauSpinner(self, tree, event):
-        self.fill(tree, 'TauSpinnerWTisValid', event.TauSpinnerWTisValid)
-        self.fill(tree, 'TauSpinnerWT', float(event.TauSpinnerWT))
-        self.fill(tree, 'TauSpinnerWThminus', float(event.TauSpinnerWThminus))
-        self.fill(tree, 'TauSpinnerWThplus', float(event.TauSpinnerWThplus))
-        self.fill(tree, 'TauSpinnerTauPolFromZ', float(event.TauSpinnerTauPolFromZ))
-        self.fill(tree, 'TauSpinnerWRight', float(event.TauSpinnerWRight))
-        self.fill(tree, 'TauSpinnerWLeft', float(event.TauSpinnerWLeft))
-        self.fill(tree, 'TauSpinnerIsRightLeft', float(event.TauSpinnerIsRightLeft))
-
+        self.fillVars(tree, ['TauSpinnerWTisValid', 'TauSpinnerWT', 'TauSpinnerWThminus', 'TauSpinnerWThplus', 'TauSpinnerTauPolFromZ', 'TauSpinnerWRight', 'TauSpinnerWLeft', 'TauSpinnerIsRightLeft'], event)
+        
     def bookTopPtReweighting(self, tree):
-        self.var(tree, 'gen_top_1_pt')
-        self.var(tree, 'gen_top_2_pt')
-        self.var(tree, 'gen_top_weight')
+        self.vars(tree, ['gen_top_1_pt', 'gen_top_2_pt', 'gen_top_weight'])
 
     def fillTopPtReweighting(self, tree, event):
         '''FIXME: Move this to extra class - only do inline calculations here'''
