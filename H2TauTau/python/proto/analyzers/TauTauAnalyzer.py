@@ -289,7 +289,7 @@ class TauTauAnalyzer(DiLeptonAnalyzer):
         return len(muons) == 0
 
     def trigMatched(self, event, diL, requireAllMatched=False):
-        matched = super(TauTauAnalyzer, self).trigMatched(event, diL, requireAllMatched=requireAllMatched, checkBothLegs=True)
+        matched = super(TauTauAnalyzer, self).trigMatched(event, diL, requireAllMatched=requireAllMatched)
 
         # Not needed in 2016, for the moment
         

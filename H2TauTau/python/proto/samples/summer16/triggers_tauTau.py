@@ -1,3 +1,5 @@
+from CMGTools.H2TauTau.proto.analyzers.TriggerAnalyzer import TriggerFilterMatch
+
 data_triggers = [
     'HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg_v2', # up to run 274733
     'HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg_v3', # up to run 276837
@@ -13,9 +15,9 @@ data_triggers = [
     ]
 
 data_triggerfilters = [
-    'hltDoublePFTau35TrackPt1MediumIsolationDz02Reg', # same trigger filter for all
-    'hltDoublePFTau35TrackPt1MediumCombinedIsolationDz02Reg',
-    'hltPFTau140TrackPt50LooseAbsOrRelVLooseIso'
+    TriggerFilterMatch(leg1_names=['hltDoublePFTau35TrackPt1MediumIsolationDz02Reg'], leg2_names=['hltDoublePFTau35TrackPt1MediumIsolationDz02Reg']),
+    TriggerFilterMatch(leg1_names=['hltDoublePFTau35TrackPt1MediumCombinedIsolationDz02Reg'], leg2_names=['hltDoublePFTau35TrackPt1MediumCombinedIsolationDz02Reg']),
+    TriggerFilterMatch(leg1_names=['hltPFTau140TrackPt50LooseAbsOrRelVLooseIso'], leg2_names=['hltPFTau140TrackPt50LooseAbsOrRelVLooseIso'], match_both_legs=False)
 ]
 
 mc_triggers = [
@@ -29,11 +31,10 @@ mc_triggers = [
     ]
 
 mc_triggerfilters = [
-    'hltDoublePFTau35TrackPt1MediumIsolationDz02Reg', # 
-    'hltDoublePFTau35TrackPt1MediumCombinedIsolationDz02Reg',
-    # 'hltDoublePFTau35TrackPt1MediumCombinedIsolationL1HLTMatchedReg',
-    'hltPFTau140TrackPt50LooseAbsOrRelVLooseIso',
-    'hltPFTau120TrackPt50LooseAbsOrRelVLooseIso',
+    TriggerFilterMatch(leg1_names=['hltDoublePFTau35TrackPt1MediumIsolationDz02Reg'], leg2_names=['hltDoublePFTau35TrackPt1MediumIsolationDz02Reg']),
+    TriggerFilterMatch(leg1_names=['hltDoublePFTau35TrackPt1MediumCombinedIsolationDz02Reg'], leg2_names=['hltDoublePFTau35TrackPt1MediumCombinedIsolationDz02Reg']),
+    TriggerFilterMatch(leg1_names=['hltPFTau140TrackPt50LooseAbsOrRelVLooseIso'], leg2_names=['hltPFTau140TrackPt50LooseAbsOrRelVLooseIso'], match_both_legs=False, triggers=['HLT_VLooseIsoPFTau140_Trk50_eta2p1_v5']),
+    TriggerFilterMatch(leg1_names=['hltPFTau120TrackPt50LooseAbsOrRelVLooseIso'], leg2_names=['hltPFTau120TrackPt50LooseAbsOrRelVLooseIso'], match_both_legs=False, triggers=['HLT_VLooseIsoPFTau120_Trk50_eta2p1_v5'])
 ]
 
 embed_triggers = [
