@@ -1,5 +1,5 @@
 cut-change: (0==1) : 1
 cut-change: (0==1) : 1
 weight: fakeRateWeight_2lss_2(LepGood1_pt,LepGood1_eta,LepGood1_pdgId,LepGood1_isTightString,LepGood2_pt,LepGood2_eta,LepGood2_pdgId,LepGood2_isTightString)
-load-histo: FR2_mu : $DATA/fakerate/sos_fr_comb.root : FR_SOS_QCD_mu_QCD
-load-histo: FR2_el : $DATA/fakerate/sos_fr_comb.root : FR_SOS_QCD_el_QCD
+load-histo: FR2_mu : $DATA/fakerate/FR_PR_SOS_v3.1.root : FR_SOS_QCD_mu_QCD
+load-histo: FR2_el : $DATA/fakerate/FR_PR_SOS_v3.1.root : FR_SOS_QCD_el_QCD

@@ -18,8 +18,8 @@
 
 
 #TChiWZ_150_dM7+: SMS_TChiWZ :  0.001*0.1*5180.86*(22297188/97372) : LepGood1_mcMatchId != 0 && LepGood2_mcMatchId != 0 && GenSusyMNeutralino < 144 && GenSusyMNeutralino > 142 && GenSusyMChargino < 151 && GenSusyMChargino > 149; FillColor=ROOT.kOrange-3, Label="TChi150/7"
-TChiWZ_150_dM20+: SMS_TChiWZ :  0.001*0.1*5180.86*(22297188/92017) : LepGood1_mcMatchId != 0 && LepGood2_mcMatchId != 0 && GenSusyMNeutralino < 131 && GenSusyMNeutralino > 129 && GenSusyMChargino < 151 && GenSusyMChargino > 149; FillColor=ROOT.kOrange, Label="TChi150/20"
-T2tt_350_dM20+ : T2ttDiLep : 3.787*(0.332)*(0.332)*(6726004/((0.332)*(0.332)*730000)): LepGood1_mcMatchId!=0 && LepGood2_mcMatchId != 0 && GenSusyMStop < 351 && GenSusyMStop > 349 && GenSusyMNeutralino < 332 && GenSusyMNeutralino > 328; FillColor=ROOT.kRed, Label="T2tt350/20"
+#TChiWZ_150_dM20+: SMS_TChiWZ :  0.001*0.1*5180.86*(22297188/92017) : LepGood1_mcMatchId != 0 && LepGood2_mcMatchId != 0 && GenSusyMNeutralino < 131 && GenSusyMNeutralino > 129 && GenSusyMChargino < 151 && GenSusyMChargino > 149; FillColor=ROOT.kOrange, Label="TChi150/20"
+#T2tt_350_dM20+ : T2ttDiLep : 3.787*(0.332)*(0.332)*(6726004/((0.332)*(0.332)*730000)): LepGood1_mcMatchId!=0 && LepGood2_mcMatchId != 0 && GenSusyMStop < 351 && GenSusyMStop > 349 && GenSusyMNeutralino < 332 && GenSusyMNeutralino > 328; FillColor=ROOT.kRed, Label="T2tt350/20"
 
 # ---- TTbar 
 TT		: TTJets_DiLepton: xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0; FillColor=ROOT.kBlue-7, Label="tt(2l)"
@@ -88,8 +88,8 @@ VV    : WWTo2L2Nu: xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0;  Label=
 
 
 # ---- Rares
-#TW       : T_tWch :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0;Label="tW", FillColor=ROOT.kBlue
-#TW       : TBar_tWch :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0;Label="tW", FillColor=ROOT.kBlue
+#TW       : T_tWch :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0;Label="tW", FillColor=ROOT.kBlue, NormSystematic=1
+#TW       : TBar_tWch :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0;Label="tW", FillColor=ROOT.kBlue, NormSystematic=1
 
 
 # # ---- Non prompt:
@@ -114,6 +114,9 @@ T 	 : TBarToLeptons_tch_powheg :  xsec: (LepGood1_mcMatchId==0 ||LepGood2_mcMatc
 #VVnp     : WWToLNuQQ: xsec: (LepGood1_mcMatchId==0 ||LepGood2_mcMatchId==0);  Label="VV(fakes)", FillColor=ROOT.kAzure-8
 
 
+data : MET_Run2016B_23Sep2016 + MET_Run2016C_23Sep2016 + MET_Run2016D_23Sep2016
+data : MET_Run2016E_23Sep2016 + MET_Run2016F_23Sep2016 + MET_Run2016G_23Sep2016 + MET_Run2016H_PromptReco_v2 + MET_Run2016H_PromptReco_v3
+
 
 
 ##### Additional: negligible contribution
@@ -135,6 +138,7 @@ T 	 : TBarToLeptons_tch_powheg :  xsec: (LepGood1_mcMatchId==0 ||LepGood2_mcMatc
 #Triboson : ZZZ :  xsec: LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0;Label="Rares", FillColor=ROOT.kMagenta+2 
 #Rares : WpWpJJ : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 ; FillColor=ROOT.kOrange-3
 #Rares : WWDouble : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 ; FillColor=ROOT.kOrange-3
+
 
 
 

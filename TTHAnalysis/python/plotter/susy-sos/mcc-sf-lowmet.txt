@@ -1,3 +1,6 @@
-### with SF
-ScaleFactorDY: 1.08; AlsoData
-ScaleFactorTT: 0.86; AlsoData
+### with SF FSR
+ScaleFactorDY: 0.953; AlsoData
+ScaleFactorTT: 1.025; AlsoData
+# ### with SF ICHEP
+# ScaleFactorDY: 1.08; AlsoData
+# ScaleFactorTT: 0.86; AlsoData
