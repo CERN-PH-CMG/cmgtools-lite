@@ -13,6 +13,8 @@ gSystem.Load("libCMGToolsH2TauTau")
 
 from ROOT import HTTRecoilCorrector as RC
 
+LorentzVector = ROOT.Math.LorentzVector(ROOT.Math.PxPyPzE4D("double"))
+
 class RecoilCorrector(Analyzer):
     '''Corrects MVA MET recoil.
     '''
@@ -20,8 +22,10 @@ class RecoilCorrector(Analyzer):
     def __init__(self, cfg_ana, cfg_comp, looperName):
         super(RecoilCorrector, self).__init__(cfg_ana, cfg_comp, looperName)
 
-        self.rcMVAMET = RC('CMGTools/H2TauTau/data/MvaMET_2016BCD.root')
-        self.rcPFMET = RC('CMGTools/H2TauTau/data/TypeIPFMET_2016BCD.root')
+        # FIXME - no MVA MET yet, and no recoil corrections, so correcting 
+        # both with PF MET
+        self.rcMVAMET = RC('CMGTools/H2TauTau/data/TypeI-PFMet_Run2016BtoH.root')
+        self.rcPFMET = RC('CMGTools/H2TauTau/data/TypeI-PFMet_Run2016BtoH.root')
 
         wpat = re.compile('W\d?Jet.*')
         match = wpat.match(self.cfg_comp.name)
@@ -107,7 +111,7 @@ class RecoilCorrector(Analyzer):
 
         px_new, py_new = new.first, new.second
 
-        newDiLmet = ROOT.Math.LorentzVector(ROOT.Math.PxPyPzE4D("double"))(px_new, py_new, 0., math.sqrt(px_new*px_new + py_new*py_new))
+        newDiLmet = LorentzVector(px_new, py_new, 0., math.sqrt(px_new*px_new + py_new*py_new))
         dil.met().setP4(newDiLmet)
         
         # print 'px old - new', px_old, dil.met().px()

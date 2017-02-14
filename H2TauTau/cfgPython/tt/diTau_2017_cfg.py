@@ -225,7 +225,7 @@ from CMGTools.RootTools.samples.samples_13TeV_signals import SignalSUSY
 from CMGTools.H2TauTau.proto.samples.summer16.triggers_tauTau import mc_triggers, mc_triggerfilters, data_triggers, data_triggerfilters
 
 data_list = data_tau
-samples = backgrounds + sm_signals + mssm_signals
+samples = backgrounds + sm_signals + mssm_signals + sync_list
 if doSUSY:
     samples += samples_susy + SignalSUSY[:1]
 split_factor = 1e5
@@ -315,8 +315,9 @@ if not production:
     selectedComponents = samples_susy if doSUSY else sync_list
     if data:
         selectedComponents = [data_list[0]]
+    selectedComponents = selectedComponents[:1]
     for comp in selectedComponents:
-        comp.splitFactor = 100
+        comp.splitFactor = 1
         comp.fineSplitFactor = 1
     # comp.files = comp.files[13:20]
 

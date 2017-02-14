@@ -68,7 +68,7 @@ def addNewTauID(process):
     process.rerunDiscriminationByIsolationMVArun2v1VVTight = process.rerunDiscriminationByIsolationMVArun2v1VLoose.clone()
     process.rerunDiscriminationByIsolationMVArun2v1VVTight.mapping[0].cut = cms.string("RecoTauTag_tauIdMVAIsoDBoldDMwLT2016v1_WPEff40")
 
-def createProcess(runOnMC=True, channel='tau-mu', runSVFit=False,
+def createProcess(runOnMC=True, channel='tau-mu', runSVFit=False, runMVAETmiss=False,
                   # Christians's default. If not touched, it would default to this anyways
                   p4TransferFunctionFile='CMGTools/SVfitStandalone/data/svFitVisMassAndPtResolutionPDF.root',
                   integrateOverP4=False, scaleTau=0., recorrectJets=True,
@@ -89,13 +89,15 @@ def createProcess(runOnMC=True, channel='tau-mu', runSVFit=False,
 
     process.load('RecoTauTag.Configuration.loadRecoTauTagMVAsFromPrepDB_cfi')
     addNewTauID(process)
-    
+
     if recorrectJets:
         # Adding jet collection
         process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
-        process.GlobalTag.globaltag = '80X_mcRun2_asymptotic_2016_TrancheIV_v6'
+
+        # Global tags from https://twiki.cern.ch/twiki/bin/view/CMS/JECDataMC 07 Feb 2017
+        process.GlobalTag.globaltag = '80X_dataRun2_2016SeptRepro_v7'
         if not runOnMC:
-            process.GlobalTag.globaltag = '80X_mcRun2_asymptotic_2016_TrancheIV_v6'
+            process.GlobalTag.globaltag = '80X_mcRun2_asymptotic_2016_TrancheIV_v8'
 
         process.load('Configuration.StandardSequences.GeometryRecoDB_cff')
         process.load('Configuration.StandardSequences.MagneticField_38T_cff')
@@ -118,10 +120,11 @@ def createProcess(runOnMC=True, channel='tau-mu', runSVFit=False,
             jetCorrFactorsSource=cms.VInputTag(cms.InputTag("patJetCorrFactorsReapplyJEC"))
         )
 
-    if recorrectJets:
-        runMVAMET(process, jetCollectionPF="patJetsReapplyJEC")
-    else:
-        runMVAMET(process)
+    if runMVAETmiss:
+        if recorrectJets:
+            runMVAMET(process, jetCollectionPF="patJetsReapplyJEC")
+        else:
+            runMVAMET(process)
 
     # We always need this
     runMetCorAndUncFromMiniAOD(process, isData=not runOnMC)
@@ -225,24 +228,29 @@ def createProcess(runOnMC=True, channel='tau-mu', runSVFit=False,
 
     # load the channel paths -------------------------------------------
 
-    process.MVAMET.requireOS = cms.bool(False)
-    process.MVAMET.srcMETs = cms.VInputTag(cms.InputTag("slimmedMETs", "", "PAT" if runOnMC else "RECO"),
-                                           cms.InputTag("patpfMET"),
-                                           cms.InputTag("patpfMETT1"),
-                                           cms.InputTag("patpfTrackMET"),
-                                           cms.InputTag("patpfNoPUMET"),
-                                           cms.InputTag("patpfPUCorrectedMET"),
-                                           cms.InputTag("patpfPUMET"),
-                                           cms.InputTag("slimmedMETsPuppi", "", "PAT" if runOnMC else "RECO"))
+    if runMVAETmiss:
+        process.MVAMET.requireOS = cms.bool(False)
+        process.MVAMET.srcMETs = cms.VInputTag(cms.InputTag("slimmedMETs", "", "PAT" if runOnMC else "RECO"),
+                                               cms.InputTag("patpfMET"),
+                                               cms.InputTag("patpfMETT1"),
+                                               cms.InputTag("patpfTrackMET"),
+                                               cms.InputTag("patpfNoPUMET"),
+                                               cms.InputTag("patpfPUCorrectedMET"),
+                                               cms.InputTag("patpfPUMET"),
+                                               cms.InputTag("slimmedMETsPuppi", "", "PAT" if runOnMC else "RECO"))
 
     if channel == 'tau-mu':
         process.load('CMGTools.H2TauTau.objects.tauMuObjectsMVAMET_cff')
         if pickEvents:
             process.tauMuPath.insert(0, process.pickEvents)
-        process.mvaMETTauMu = process.MVAMET.clone()
-        process.mvaMETTauMu.srcLeptons = cms.VInputTag("tauPreSelectionTauMu", "muonPreSelectionTauMu")
-        process.mvaMETTauMu.MVAMETLabel = cms.string('mvaMETTauMu')
-        process.cmgTauMu.metCollection = cms.InputTag('mvaMETTauMu', 'mvaMETTauMu')
+
+        if runMVAETmiss:
+            process.mvaMETTauMu = process.MVAMET.clone()
+            process.mvaMETTauMu.srcLeptons = cms.VInputTag("tauPreSelectionTauMu", "muonPreSelectionTauMu")
+            process.mvaMETTauMu.MVAMETLabel = cms.string('mvaMETTauMu')
+            process.cmgTauMu.metCollection = cms.InputTag('mvaMETTauMu', 'mvaMETTauMu')
+        else:
+            process.cmgTauMu.metCollection = cms.InputTag('slimmedMETs')
         if not runSVFit:
             process.cmgTauMuCorSVFitPreSel.SVFitVersion = 0
         if integrateOverP4:
@@ -254,10 +262,13 @@ def createProcess(runOnMC=True, channel='tau-mu', runSVFit=False,
 
     elif channel == 'tau-ele':
         process.load('CMGTools.H2TauTau.objects.tauEleObjectsMVAMET_cff')
-        process.mvaMETTauEle = process.MVAMET.clone()
-        process.mvaMETTauEle.srcLeptons = cms.VInputTag("tauPreSelectionTauEle", "electronPreSelectionTauEle")
-        process.mvaMETTauEle.MVAMETLabel = cms.string('mvaMETTauEle')
-        process.cmgTauEle.metCollection = cms.InputTag('mvaMETTauEle', 'mvaMETTauEle')
+        if runMVAETmiss:
+            process.mvaMETTauEle = process.MVAMET.clone()
+            process.mvaMETTauEle.srcLeptons = cms.VInputTag("tauPreSelectionTauEle", "electronPreSelectionTauEle")
+            process.mvaMETTauEle.MVAMETLabel = cms.string('mvaMETTauEle')
+            process.cmgTauEle.metCollection = cms.InputTag('mvaMETTauEle', 'mvaMETTauEle')
+        else:
+            process.cmgTauEle.metCollection = cms.InputTag('slimmedMETs')
         if not runSVFit:
             process.cmgTauEleCorSVFitPreSel.SVFitVersion = 0
         if integrateOverP4:
@@ -267,10 +278,13 @@ def createProcess(runOnMC=True, channel='tau-mu', runSVFit=False,
 
     elif channel == 'mu-ele':
         process.load('CMGTools.H2TauTau.objects.muEleObjectsMVAMET_cff')
-        process.mvaMETMuEle = process.MVAMET.clone()
-        process.mvaMETMuEle.srcLeptons = cms.VInputTag("muonPreSelectionMuEle", "electronPreSelectionMuEle")
-        process.mvaMETMuEle.MVAMETLabel = cms.string('mvaMETMuEle')
-        process.cmgMuEle.metCollection = cms.InputTag('mvaMETMuEle', 'mvaMETMuEle')
+        if runMVAETmiss:
+            process.mvaMETMuEle = process.MVAMET.clone()
+            process.mvaMETMuEle.srcLeptons = cms.VInputTag("muonPreSelectionMuEle", "electronPreSelectionMuEle")
+            process.mvaMETMuEle.MVAMETLabel = cms.string('mvaMETMuEle')
+            process.cmgMuEle.metCollection = cms.InputTag('mvaMETMuEle', 'mvaMETMuEle')
+        else:
+            process.cmgMuEle.metCollection = cms.InputTag('slimmedMETs')
         if not runSVFit:
             process.cmgMuEleCorSVFitPreSel.SVFitVersion = 0
         else:
@@ -281,10 +295,13 @@ def createProcess(runOnMC=True, channel='tau-mu', runSVFit=False,
     #     # process.muEleSequence.insert(4, process.MVAMET)
     elif channel == 'di-tau':
         process.load('CMGTools.H2TauTau.objects.diTauObjectsMVAMET_cff')
-        process.mvaMETDiTau = process.MVAMET.clone()
-        process.mvaMETDiTau.srcLeptons = cms.VInputTag("tauPreSelectionDiTau", "tauPreSelectionDiTau")
-        process.mvaMETDiTau.MVAMETLabel = cms.string('mvaMETDiTau')
-        process.cmgDiTau.metCollection = cms.InputTag('mvaMETDiTau', 'mvaMETDiTau')
+        if runMVAETmiss:
+            process.mvaMETDiTau = process.MVAMET.clone()
+            process.mvaMETDiTau.srcLeptons = cms.VInputTag("tauPreSelectionDiTau", "tauPreSelectionDiTau")
+            process.mvaMETDiTau.MVAMETLabel = cms.string('mvaMETDiTau')
+            process.cmgDiTau.metCollection = cms.InputTag('mvaMETDiTau', 'mvaMETDiTau')
+        else:
+            process.cmgDiTau.metCollection = cms.InputTag('slimmedMETs')
         if not runSVFit:
             process.cmgDiTauCorSVFitPreSel.SVFitVersion = 0
         if integrateOverP4:
@@ -294,10 +311,13 @@ def createProcess(runOnMC=True, channel='tau-mu', runSVFit=False,
 
     elif channel == 'di-mu':
         process.load('CMGTools.H2TauTau.objects.diMuObjectsMVAMET_cff')
-        process.mvaMETDiMu = process.MVAMET.clone()
-        process.mvaMETDiMu.srcLeptons = cms.VInputTag("muonPreSelectionDiMu", "muonPreSelectionDiMu")
-        process.mvaMETDiMu.MVAMETLabel = cms.string('mvaMETDiMu')
-        process.cmgDiMu.metCollection = cms.InputTag('mvaMETDiMu', 'mvaMETDiMu')
+        if runMVAETmiss:
+            process.mvaMETDiMu = process.MVAMET.clone()
+            process.mvaMETDiMu.srcLeptons = cms.VInputTag("muonPreSelectionDiMu", "muonPreSelectionDiMu")
+            process.mvaMETDiMu.MVAMETLabel = cms.string('mvaMETDiMu')
+            process.cmgDiMu.metCollection = cms.InputTag('mvaMETDiMu', 'mvaMETDiMu')
+        else:
+            process.cmgDiMu.metCollection = cms.InputTag('slimmedMETs')
         if not runSVFit:
             process.cmgDiMuCorSVFitPreSel.SVFitVersion = 0
         if integrateOverP4:
