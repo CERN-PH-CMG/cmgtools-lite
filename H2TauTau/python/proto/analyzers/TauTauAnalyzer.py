@@ -160,6 +160,8 @@ class TauTauAnalyzer(DiLeptonAnalyzer):
             pydil = TauTau(dil, iso=self.cfg_ana.isolation)
             pydil.leg1().associatedVertex = event.goodVertices[0]
             pydil.leg2().associatedVertex = event.goodVertices[0]
+            pydil.leg1().event = event.input.object()
+            pydil.leg2().event = event.input.object()
             diLeptons.append(pydil)
             pydil.mvaMetSig = pydil.met().getSignificanceMatrix()
 
@@ -205,6 +207,8 @@ class TauTauAnalyzer(DiLeptonAnalyzer):
                     di_tau = DirectTauTau(Tau(leg1), Tau(leg2), met)
                     di_tau.leg2().associatedVertex = event.goodVertices[0]
                     di_tau.leg1().associatedVertex = event.goodVertices[0]
+                    di_tau.leg1().event = event.input.object()
+                    di_tau.leg2().event = event.input.object()
                     di_tau.mvaMetSig = None
                     di_objects.append(di_tau)
         return di_objects
@@ -216,10 +220,8 @@ class TauTauAnalyzer(DiLeptonAnalyzer):
         for index, lep in enumerate(cmgLeptons):
             pyl = Muon(lep)
             pyl.associatedVertex = event.goodVertices[0]
-            # FIXME - need to make the following conditional on data-taking
-            # period
-            # if not pyl.muonID('POG_ID_Medium_ICHEP'):
-            if not pyl.muonID('POG_ID_Medium'):
+            pyl.event = event.input.object()
+            if not pyl.muonIDMoriond17():
                 continue
             if not pyl.relIsoR(R=0.4, dBetaFactor=0.5, allCharged=0) < 0.3:
                 continue
