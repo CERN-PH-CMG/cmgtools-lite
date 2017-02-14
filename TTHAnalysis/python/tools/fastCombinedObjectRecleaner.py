@@ -4,7 +4,7 @@ import ROOT, os
 
 class fastCombinedObjectRecleaner:
 
-    def __init__(self,label,inlabel,cleanTausWithLooseLeptons,cleanJetsWithFOTaus,doVetoZ,doVetoLMf,doVetoLMt,jetPts,btagL_thr,btagM_thr,jetCollection='Jet'):
+    def __init__(self,label,inlabel,cleanTausWithLooseLeptons,cleanJetsWithFOTaus,doVetoZ,doVetoLMf,doVetoLMt,jetPts,btagL_thr,btagM_thr,jetCollection='Jet',isMC=True):
 
         self.label = "" if (label in ["",None]) else ("_"+label)
         self.inlabel = inlabel
@@ -13,7 +13,7 @@ class fastCombinedObjectRecleaner:
         self.vars_leptons = ["pdgId"]
         self.vars_taus = ["idMVAdR03"]
         self.vars_jets = ["btagCSV","qgl","corr","corr_JECUp","corr_JECDown"]
-        self.vars_jets_int = ["hadronFlavour"]
+        self.vars_jets_int = ["hadronFlavour"] if isMC else []
         self.vars_jets_nooutput = []
         self.jc = jetCollection
 

@@ -47,47 +47,45 @@ from CMGTools.TTHAnalysis.tools.leptonJetReCleaner import LeptonJetReCleaner
 from CMGTools.TTHAnalysis.tools.conept import conept_TTH
 
 MODULES=[]
-#MODULES.append( ('leptonJetReCleanerTTH', lambda : LeptonJetReCleaner("Recl", # b1E2 definition of FO, 80X b-tag WP for Spring16
-#                   looseLeptonSel = lambda lep : lep.miniRelIso < 0.4 and lep.sip3d < 8,
-#                   cleaningLeptonSel = lambda lep : lep.conept>10 and lep.jetBTagCSV<0.8484 and (abs(lep.pdgId)!=11 or lep.conept<30 or _ttH_idEmu_cuts_E2(lep)) and (lep.jetPtRatiov2>0.3 or lep.mvaTTH>0.75) and ((abs(lep.pdgId)==13 and lep.jetBTagCSV<0.5426) or (abs(lep.pdgId)==11 and (lep.mvaIdSpring16GP>-0.5 or abs(lep.eta)<1.479)) or lep.mvaTTH>0.75), # cuts applied on top of loose
-#                   FOLeptonSel = lambda lep,ht : lep.conept>10 and lep.jetBTagCSV<0.8484 and (abs(lep.pdgId)!=11 or lep.conept<30 or _ttH_idEmu_cuts_E2(lep)) and (lep.jetPtRatiov2>0.3 or lep.mvaTTH>0.75) and ((abs(lep.pdgId)==13 and lep.jetBTagCSV<0.5426) or (abs(lep.pdgId)==11 and (lep.mvaIdSpring16GP>-0.5 or abs(lep.eta)<1.479)) or lep.mvaTTH>0.75), # cuts applied on top of loose
-#                   tightLeptonSel = lambda lep,ht : lep.conept>10 and lep.jetBTagCSV<0.8484 and (abs(lep.pdgId)!=11 or lep.conept<30 or _ttH_idEmu_cuts_E2(lep)) and (lep.jetPtRatiov2>0.3 or lep.mvaTTH>0.75) and ((abs(lep.pdgId)==13 and lep.jetBTagCSV<0.5426) or (abs(lep.pdgId)==11 and (lep.mvaIdSpring16GP>-0.5 or abs(lep.eta)<1.479)) or lep.mvaTTH>0.75) and (abs(lep.pdgId)!=13 or lep.mediumMuonId>0) and lep.mvaTTH > 0.75, # cuts applied on top of loose
-#                   cleanJet = lambda lep,jet,dr : dr<0.4, # called on cleaning leptons and loose taus
-#                   selectJet = lambda jet: abs(jet.eta)<2.4,
-#                   cleanTau = lambda lep,tau,dr: dr<0.4,
-#                   looseTau = lambda tau: tau.pt > 20 and abs(tau.eta)<2.3 and abs(tau.dxy) < 1000 and abs(tau.dz) < 0.2 and tau.idMVAdR03 >= 2 and tau.idDecayMode, # used in cleaning
-#                   tightTau = lambda tau: tau.idMVAdR03 >= 3, # cuts applied on top of loose
-#                   cleanJetsWithTaus = True,
-#                   cleanTausWithLoose = True, # cleaning taus with cleaningLeptonSel == loose
-#                   doVetoZ = True,
-#                   doVetoLMf = True,
-#                   doVetoLMt = True,
-#                   jetPt = 40,
-#                   bJetPt = 25,
-#                   coneptdef = lambda lep: conept_TTH(lep) ) ))
 
 from CMGTools.TTHAnalysis.tools.combinedObjectTaggerForCleaning import *
 from CMGTools.TTHAnalysis.tools.fastCombinedObjectRecleaner import *
 
+def clean_and_FO_selection_TTH(lep):
+    return lep.conept>10 and lep.jetBTagCSV<0.8484 and (abs(lep.pdgId)!=11 or lep.conept<30 or _ttH_idEmu_cuts_E2(lep)) \
+        and (lep.mvaTTH>0.90 or (lep.jetPtRatiov2>0.5 and lep.jetBTagCSV<0.3 and (abs(lep.pdgId)!=13 or lep.segmentCompatibility>0.3)) )
+
 MODULES.append( ('leptonJetFastReCleanerTTH_step1', lambda : CombinedObjectTaggerForCleaning("InternalRecl",
                                                                                        looseLeptonSel = lambda lep : lep.miniRelIso < 0.4 and lep.sip3d < 8,
-                                                                                       cleaningLeptonSel = lambda lep : lep.conept>10 and lep.jetBTagCSV<0.8484 and (abs(lep.pdgId)!=11 or lep.conept<30 or _ttH_idEmu_cuts_E2(lep)) and (lep.jetPtRatiov2>0.3 or lep.mvaTTH>0.75) and ((abs(lep.pdgId)==13 and lep.jetBTagCSV<0.5426) or (abs(lep.pdgId)==11 and (lep.mvaIdSpring16GP>-0.5 or abs(lep.eta)<1.479)) or lep.mvaTTH>0.75),
-                                                                                       FOLeptonSel = lambda lep : lep.conept>10 and lep.jetBTagCSV<0.8484 and (abs(lep.pdgId)!=11 or lep.conept<30 or _ttH_idEmu_cuts_E2(lep)) and (lep.jetPtRatiov2>0.3 or lep.mvaTTH>0.75) and ((abs(lep.pdgId)==13 and lep.jetBTagCSV<0.5426) or (abs(lep.pdgId)==11 and (lep.mvaIdSpring16GP>-0.5 or abs(lep.eta)<1.479)) or lep.mvaTTH>0.75),
-                                                                                       tightLeptonSel = lambda lep : lep.conept>10 and lep.jetBTagCSV<0.8484 and (abs(lep.pdgId)!=11 or lep.conept<30 or _ttH_idEmu_cuts_E2(lep)) and (lep.jetPtRatiov2>0.3 or lep.mvaTTH>0.75) and ((abs(lep.pdgId)==13 and lep.jetBTagCSV<0.5426) or (abs(lep.pdgId)==11 and (lep.mvaIdSpring16GP>-0.5 or abs(lep.eta)<1.479)) or lep.mvaTTH>0.75) and (abs(lep.pdgId)!=13 or lep.mediumMuonId>0) and lep.mvaTTH > 0.75,
+                                                                                       cleaningLeptonSel = clean_and_FO_selection_TTH,
+                                                                                       FOLeptonSel = clean_and_FO_selection_TTH,
+                                                                                       tightLeptonSel = lambda lep : clean_and_FO_selection_TTH(lep) and (abs(lep.pdgId)!=13 or lep.mediumMuonId>0) and lep.mvaTTH > 0.90,
                                                                                        FOTauSel = lambda tau: tau.pt > 20 and abs(tau.eta)<2.3 and abs(tau.dxy) < 1000 and abs(tau.dz) < 0.2 and tau.idMVAdR03 >=2  and tau.idDecayMode,
                                                                                        tightTauSel = lambda tau: tau.idMVAdR03 >= 3,
                                                                                        selectJet = lambda jet: abs(jet.eta)<2.4,
                                                                                        coneptdef = lambda lep: conept_TTH(lep) ) ))
-MODULES.append( ('leptonJetFastReCleanerTTH_step2',lambda : fastCombinedObjectRecleaner(label="Recl",
-                                                                                        inlabel="_InternalRecl",
-                                                                                        cleanTausWithLooseLeptons=True,
-                                                                                        cleanJetsWithFOTaus=True,
-                                                                                        doVetoZ=False,
-                                                                                        doVetoLMf=False,
-                                                                                        doVetoLMt=False,
-                                                                                        jetPts=[25,40],
-                                                                                        btagL_thr=0.5426,
-                                                                                        btagM_thr=0.8484) ))
+MODULES.append( ('leptonJetFastReCleanerTTH_step2_mc',lambda : fastCombinedObjectRecleaner(label="Recl",
+                                                                                           inlabel="_InternalRecl",
+                                                                                           cleanTausWithLooseLeptons=True,
+                                                                                           cleanJetsWithFOTaus=True,
+                                                                                           doVetoZ=False,
+                                                                                           doVetoLMf=False,
+                                                                                           doVetoLMt=False,
+                                                                                           jetPts=[25,40],
+                                                                                           btagL_thr=0.5426,
+                                                                                           btagM_thr=0.8484,
+                                                                                           isMC = True) ))
+MODULES.append( ('leptonJetFastReCleanerTTH_step2_data',lambda : fastCombinedObjectRecleaner(label="Recl",
+                                                                                             inlabel="_InternalRecl",
+                                                                                             cleanTausWithLooseLeptons=True,
+                                                                                             cleanJetsWithFOTaus=True,
+                                                                                             doVetoZ=False,
+                                                                                             doVetoLMf=False,
+                                                                                             doVetoLMt=False,
+                                                                                             jetPts=[25,40],
+                                                                                             btagL_thr=0.5426,
+                                                                                             btagM_thr=0.8484,
+                                                                                             isMC = False) ))
 
 from CMGTools.TTHAnalysis.tools.eventVars_2lss import EventVars2LSS
 MODULES.append( ('eventVars', lambda : EventVars2LSS('','Recl')) )
