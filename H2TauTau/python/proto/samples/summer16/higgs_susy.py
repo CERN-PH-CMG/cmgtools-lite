@@ -42,8 +42,8 @@ HiggsSUSYGG700 = creator.makeMCComponent(
     "HiggsSUSYGG700", "/SUSYGluGluToHToTauTau_M-700_TuneCUETP8M1_13TeV-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM", "CMS", ".*root", 1.0)
 HiggsSUSYGG800 = creator.makeMCComponent(
     "HiggsSUSYGG800", "/SUSYGluGluToHToTauTau_M-800_TuneCUETP8M1_13TeV-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM", "CMS", ".*root", 1.0)
-# HiggsSUSYGG900 = creator.makeMCComponent(
-#     "HiggsSUSYGG900", "/SUSYGluGluToHToTauTau_M-900_TuneCUETP8M1_13TeV-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM", "CMS", ".*root", 1.0)
+HiggsSUSYGG900 = creator.makeMCComponent(
+    "HiggsSUSYGG900", "/SUSYGluGluToHToTauTau_M-900_TuneCUETP8M1_13TeV-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM", "CMS", ".*root", 1.0)
 HiggsSUSYGG1000 = creator.makeMCComponent(
     "HiggsSUSYGG1000", "/SUSYGluGluToHToTauTau_M-1000_TuneCUETP8M1_13TeV-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM", "CMS", ".*root", 1.0)
 HiggsSUSYGG1200 = creator.makeMCComponent(
@@ -91,7 +91,7 @@ HiggsSUSYBB200 = creator.makeMCComponent(
 HiggsSUSYBB250 = creator.makeMCComponent(
     "HiggsSUSYBB250", "/SUSYGluGluToBBHToTauTau_M-250_TuneCUETP8M1_13TeV-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM", "CMS", ".*root", 1.0)
 # HiggsSUSYBB300 = creator.makeMCComponent(
-#     "HiggsSUSYBB300", "/SUSYGluGluToBBHToTauTau_M-300_TuneCUETP8M1_13TeV-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM", "CMS", ".*root", 1.0)
+    # "HiggsSUSYBB300", "/SUSYGluGluToBBHToTauTau_M-300_TuneCUETP8M1_13TeV-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM", "CMS", ".*root", 1.0)
 HiggsSUSYBB350 = creator.makeMCComponent(
     "HiggsSUSYBB350", "/SUSYGluGluToBBHToTauTau_M-350_TuneCUETP8M1_13TeV-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM", "CMS", ".*root", 1.0)
 HiggsSUSYBB400 = creator.makeMCComponent(
@@ -133,71 +133,71 @@ HiggsSUSYBB3200 = creator.makeMCComponent(
 
 
 mc_higgs_susy_gg = [
-    # HiggsSUSYGG80,
-    # HiggsSUSYGG90,
-    # HiggsSUSYGG100,
-    # HiggsSUSYGG110,
-    # HiggsSUSYGG120,
-    # HiggsSUSYGG130,
+    HiggsSUSYGG80,
+    HiggsSUSYGG90,
+    HiggsSUSYGG100,
+    HiggsSUSYGG110,
+    HiggsSUSYGG120,
+    HiggsSUSYGG130,
     # HiggsSUSYGG140,
     HiggsSUSYGG160,
-    # HiggsSUSYGG180,
-    # HiggsSUSYGG200,
-    # HiggsSUSYGG250,
-    # HiggsSUSYGG300,
-    # HiggsSUSYGG350,
-    # HiggsSUSYGG400,
-    # HiggsSUSYGG450,
+    HiggsSUSYGG180,
+    HiggsSUSYGG200,
+    HiggsSUSYGG250,
+    HiggsSUSYGG300,
+    HiggsSUSYGG350,
+    HiggsSUSYGG400,
+    HiggsSUSYGG450,
     HiggsSUSYGG500,
-    # HiggsSUSYGG600,
-    # HiggsSUSYGG700,
-    # HiggsSUSYGG800,
-    # HiggsSUSYGG900,
-    # HiggsSUSYGG1000,
-    # HiggsSUSYGG1200,
-    # HiggsSUSYGG1400,
-    # HiggsSUSYGG1500,
-    # HiggsSUSYGG1600,
-    # HiggsSUSYGG1800,
-    # HiggsSUSYGG2000,
-    # HiggsSUSYGG2300,
-    # HiggsSUSYGG2600,
-    # HiggsSUSYGG2900,
-    # HiggsSUSYGG3200
+    HiggsSUSYGG600,
+    HiggsSUSYGG700,
+    HiggsSUSYGG800,
+    HiggsSUSYGG900,
+    HiggsSUSYGG1000,
+    HiggsSUSYGG1200,
+    HiggsSUSYGG1400,
+    HiggsSUSYGG1500,
+    HiggsSUSYGG1600,
+    HiggsSUSYGG1800,
+    HiggsSUSYGG2000,
+    HiggsSUSYGG2300,
+    HiggsSUSYGG2600,
+    HiggsSUSYGG2900,
+    HiggsSUSYGG3200
 ]
 
 mc_higgs_susy_bb = [
-    # HiggsSUSYBB80,
-    # HiggsSUSYBB90,
-    # HiggsSUSYBB100,
-    # HiggsSUSYBB110,
-    # HiggsSUSYBB120,
-    # HiggsSUSYBB130,
-    # HiggsSUSYBB140,
+    HiggsSUSYBB80,
+    HiggsSUSYBB90,
+    HiggsSUSYBB100,
+    HiggsSUSYBB110,
+    HiggsSUSYBB120,
+    HiggsSUSYBB130,
+    HiggsSUSYBB140,
     HiggsSUSYBB160,
-    # HiggsSUSYBB180,
-    # HiggsSUSYBB200,
-    # HiggsSUSYBB250,
+    HiggsSUSYBB180,
+    HiggsSUSYBB200,
+    HiggsSUSYBB250,
     # HiggsSUSYBB300,
-    # HiggsSUSYBB350,
-    # HiggsSUSYBB400,
-    # HiggsSUSYBB450,
+    HiggsSUSYBB350,
+    HiggsSUSYBB400,
+    HiggsSUSYBB450,
     HiggsSUSYBB500,
-    # HiggsSUSYBB600,
-    # HiggsSUSYBB700,
-    # HiggsSUSYBB800,
-    # HiggsSUSYBB900,
+    HiggsSUSYBB600,
+    HiggsSUSYBB700,
+    HiggsSUSYBB800,
+    HiggsSUSYBB900,
     HiggsSUSYBB1000,
-    # HiggsSUSYBB1200,
-    # HiggsSUSYBB1400,
-    # HiggsSUSYBB1500,
-    # HiggsSUSYBB1600,
-    # HiggsSUSYBB1800,
-    # HiggsSUSYBB2000,
-    # HiggsSUSYBB2300,
-    # HiggsSUSYBB2600,
-    # HiggsSUSYBB2900,
-    # HiggsSUSYBB3200
+    HiggsSUSYBB1200,
+    HiggsSUSYBB1400,
+    HiggsSUSYBB1500,
+    HiggsSUSYBB1600,
+    HiggsSUSYBB1800,
+    HiggsSUSYBB2000,
+    HiggsSUSYBB2300,
+    HiggsSUSYBB2600,
+    HiggsSUSYBB2900,
+    HiggsSUSYBB3200
 ]
 
 mc_higgs_susy = copy.copy(mc_higgs_susy_gg)
