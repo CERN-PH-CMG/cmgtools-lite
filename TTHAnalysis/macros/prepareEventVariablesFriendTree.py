@@ -58,7 +58,7 @@ parser.add_option("-m", "--modules", dest="modules",  type="string", default=[],
 parser.add_option("-d", "--dataset", dest="datasets",  type="string", default=[], action="append", help="Process only this dataset (or dataset if specified multiple times)");
 parser.add_option("-D", "--dm", "--dataset-match", dest="datasetMatches",  type="string", default=[], action="append", help="Process only this dataset (or dataset if specified multiple times): REGEXP");
 parser.add_option("-c", "--chunk",   dest="chunks",    type="int",    default=[], action="append", help="Process only these chunks (works only if a single dataset is selected with -d)");
-parser.add_option("--subChunk", dest="subChunk",    type="int",    default=None, nargs=1, help="Process sub-chunk iof this chunk");
+parser.add_option("--subChunk", dest="subChunk",    type="int",    default=None, nargs=None, help="Process sub-chunk of this chunk");
 parser.add_option("--fineSplit", dest="fineSplit",    type="int",    default=None, nargs=1, help="Split each chunk in N subchunks");
 parser.add_option("-N", "--events",  dest="chunkSize", type="int",    default=500000, help="Default chunk size when splitting trees");
 parser.add_option("-j", "--jobs",    dest="jobs",      type="int",    default=1, help="Use N threads");
@@ -172,7 +172,7 @@ for D in glob(args[0]+"/*"):
                 else:
                     ev_per_fs = int(ceil(chunk/float(options.fineSplit)))
                     for ifs in xrange(options.fineSplit):
-                        if options.subChunk and ifs != options.subChunk: continue
+                        if options.subChunk != None and ifs != options.subChunk: continue
                         r = xrange(i*chunk + ifs*ev_per_fs, min(i*chunk + min((ifs+1)*ev_per_fs, chunk),entries))
                         jobs.append((short,fname,"%s/evVarFriend_%s.chunk%d.sub%d.root" % (args[1],short,i,ifs),data,r,i,(ifs,options.fineSplit)))
 print "\n"
