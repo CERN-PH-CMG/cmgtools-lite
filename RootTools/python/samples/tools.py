@@ -12,7 +12,7 @@ def _filterSamples(samples,args):
         selsamples = samples
     return selsamples
 
-def runMain(samples,args=None):
+def runMain(samples,args=None,localobjs=None):
    if args == None: args = sys.argv
    selsamples = _filterSamples(samples,args)
    if "help" in args or "--help" in args or "-h" in args:
@@ -34,6 +34,11 @@ python samplefile.py list [samples]:
 python samplefile.py summary [samples]:   
         two equivalent commands that prints a list of samples, with number of files, events, equivalent luminosity, etc
 
+python samplefile.py genXSecAna [samples] [ --pretend ] [ --verbose ]:  
+        check the cross sections using genXSecAna on one of the files
+
+python samplefile.py checkdecl:  
+        check that all samples are declared in the samples list
 
 """
    if "test" in args:
@@ -115,4 +120,17 @@ python samplefile.py summary [samples]:
             elif 0.5 < kfactor and kfactor < 2.0: (col,stat) = '\033[01;33m', "WARNING" 
             else:                                 (col,stat) = '\033[01;31m', "ERROR"
             print "XS(genAnalyzer) = %g +/- %g pb : %s kFactor = %g %s\033[00m" % (xs, xserr, col, kfactor, stat)
+   if "checkdecl" in args:
+        if localobjs == None: raise RuntimeError("you have to runMain(samples,localobjs=locals())")
+        import PhysicsTools.HeppyCore.framework.config as cfg
+        ok = 0
+        for name,obj in localobjs.iteritems():
+            if isinstance(obj, cfg.Component):  
+                if obj not in samples:
+                    print "\tERROR: component %s is not added to the samples list " % name
+                else:
+                    ok += 1
+        print "\tINFO: %d correctly declared components" % ok
+
+
 
