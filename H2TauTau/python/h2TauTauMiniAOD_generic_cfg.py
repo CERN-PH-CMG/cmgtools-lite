@@ -131,7 +131,7 @@ def createProcess(runOnMC=True, channel='tau-mu', runSVFit=False,
     if numberOfFilesToProcess > 0:
         process.source.fileNames = process.source.fileNames[:numberOfFilesToProcess]
 
-    print 'Run on MC?', runOnMC, process.source.fileNames[0]
+    print 'Run on MC?', runOnMC #, process.source.fileNames[0]
 
     # if not runOnMC:
     #     from CMGTools.H2TauTau.proto.samples.spring16.htt_common import json

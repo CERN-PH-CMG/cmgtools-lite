@@ -1,3 +1,5 @@
+#include <assert.h>
+
 void trainLeptonID(TString name, TString sig1file, TString sig2file, TString bkg1file, TString bkg2file, bool doMultiClass = false, TString file_for_sigW_1="", TString file_for_sigW_2="", TString file_for_bkgW_1="", TString file_for_bkgW_2="", double int1s=0, double int2s=0, double int1b=0, double int2b=0) {
     TFile *_f_s1 = TFile::Open(sig1file.Data(),"read");
     TFile *_f_s2 =  (sig2file=="") ? NULL : TFile::Open(sig2file.Data(),"read");
@@ -17,7 +19,7 @@ void trainLeptonID(TString name, TString sig1file, TString sig2file, TString bkg
 
     TCut lepton = "1";
     
-    if (name.Contains("forMoriond16")) {
+    if (name.Contains("forMoriond")) {
         factory->AddVariable("LepGood_pt", 'D');
         factory->AddVariable("LepGood_eta", 'D');
 	factory->AddVariable("LepGood_jetNDauChargedMVASel", 'D');
@@ -33,7 +35,10 @@ void trainLeptonID(TString name, TString sig1file, TString sig2file, TString bkg
 	if (name.Contains("_mu")) {
 	  factory->AddVariable("LepGood_segmentCompatibility",'D');
 	} else if (name.Contains("_el")) {
-	  factory->AddVariable("LepGood_mvaIdSpring15",'D');
+	  if (name.Contains("_eleHZZ")) factory->AddVariable("LepGood_mvaIdSpring16HZZ",'D');
+	  else if (name.Contains("_eleGP")) factory->AddVariable("LepGood_mvaIdSpring16GP",'D');
+	  else if (name.Contains("_eleOLD")) factory->AddVariable("LepGood_mvaIdSpring15",'D');
+	  else assert(0);
 	}
 	else { std::cerr << "ERROR: must either be electron or muon." << std::endl; return; }
 	
@@ -166,10 +171,10 @@ void trainLeptonID(TString name, TString sig1file, TString sig2file, TString bkg
       }
     }
 
-    if (file_for_sigW_1!="" || file_for_sigW_2!="") factory->SetSignalWeightExpression("addW*xsec");
-    else factory->SetSignalWeightExpression("xsec");
-    if (file_for_bkgW_1!="" || file_for_bkgW_2!="") factory->SetBackgroundWeightExpression("addW*xsec");
-    else factory->SetBackgroundWeightExpression("xsec");
+    if (file_for_sigW_1!="" || file_for_sigW_2!="") factory->SetSignalWeightExpression("addW*xsec*genWeight");
+    else factory->SetSignalWeightExpression("xsec*genWeight");
+    if (file_for_bkgW_1!="" || file_for_bkgW_2!="") factory->SetBackgroundWeightExpression("addW*xsec*genWeight");
+    else factory->SetBackgroundWeightExpression("xsec*genWeight");
 
     if (!doMultiClass) factory->PrepareTrainingAndTestTree( lepton+" LepGood_mcMatchId != 0", lepton+" LepGood_mcMatchId == 0", "" );
     else factory->PrepareTrainingAndTestTree(lepton,"SplitMode=Random:NormMode=NumEvents:!V");
@@ -178,6 +183,10 @@ void trainLeptonID(TString name, TString sig1file, TString sig2file, TString bkg
     
     // Boosted Decision Trees with gradient boosting
     TString BDTGopt = "!H:!V:NTrees=500:BoostType=Grad:Shrinkage=0.10:!UseBaggedGrad:nCuts=2000:nEventsMin=100:NNodesMax=9:UseNvars=9:MaxDepth=8";
+
+    // alternative options
+    //TString BDTGopt = "!H:!V:NTrees=1000:BoostType=Grad:Shrinkage=0.10:!UseBaggedGrad:nCuts=2000:nEventsMin=100:MaxDepth=3";
+    //TString BDTGopt = "!H:!V:NTrees=1000:BoostType=Grad:Shrinkage=0.10:!UseBaggedGrad:nCuts=2000";
 
     if (!doMultiClass) BDTGopt += ":CreateMVAPdfs"; // Create Rarity distribution
     factory->BookMethod( TMVA::Types::kBDT, "BDTG", BDTGopt);
