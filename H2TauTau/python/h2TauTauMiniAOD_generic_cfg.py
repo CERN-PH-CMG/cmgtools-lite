@@ -95,9 +95,9 @@ def createProcess(runOnMC=True, channel='tau-mu', runSVFit=False, runMVAETmiss=F
         process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
 
         # Global tags from https://twiki.cern.ch/twiki/bin/view/CMS/JECDataMC 07 Feb 2017
-        process.GlobalTag.globaltag = '80X_dataRun2_2016SeptRepro_v7'
+        process.GlobalTag.globaltag = '80X_mcRun2_asymptotic_2016_TrancheIV_v8'
         if not runOnMC:
-            process.GlobalTag.globaltag = '80X_mcRun2_asymptotic_2016_TrancheIV_v8'
+            process.GlobalTag.globaltag = '80X_dataRun2_2016SeptRepro_v7'
 
         process.load('Configuration.StandardSequences.GeometryRecoDB_cff')
         process.load('Configuration.StandardSequences.MagneticField_38T_cff')
