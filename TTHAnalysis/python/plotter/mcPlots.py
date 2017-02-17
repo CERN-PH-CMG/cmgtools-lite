@@ -284,6 +284,8 @@ def doScaleBkgNormData(pspec,pmap,mca,list = []):
 def doNormFit(pspec,pmap,mca,saveScales=False):
     global _global_workspaces
     if "data" not in pmap: return -1.0
+    gKill = ROOT.RooMsgService.instance().globalKillBelow()
+    ROOT.RooMsgService.instance().setGlobalKillBelow(ROOT.RooFit.WARNING)
     data = pmap["data"]
     w = ROOT.RooWorkspace("w","w")
     _global_workspaces.append(w)
@@ -319,13 +321,14 @@ def doNormFit(pspec,pmap,mca,saveScales=False):
     constraints = ROOT.RooArgList()
     dontDelete = []
     procNormMap = {}
-    for p in mca.listBackgrounds() + mca.listSignals():
+    for p in mca.listBackgrounds(allProcs=True) + mca.listSignals(allProcs=True):
         if p not in pmap: continue
         if pmap[p].Integral() == 0: continue
         hpdf = ROOT.RooHistPdf("pdf_"+p,"",ROOT.RooArgSet(x), rdhs[p])
         pdfs.add(hpdf); dontDelete.append(hpdf)
         if mca.getProcessOption(p,'FreeFloat',False):
             normTermName = mca.getProcessOption(p,'PegNormToProcess',p)
+            print "%s scale as %s" % (p, normTermName)
             normterm = w.factory('prod::norm_%s(%g,syst_%s[1,%g,%g])' % (p, pmap[p].Integral(), normTermName, 0.2, 5))
             dontDelete.append((normterm,))
             coeffs.add(normterm)
@@ -333,6 +336,7 @@ def doNormFit(pspec,pmap,mca,saveScales=False):
         elif mca.getProcessOption(p,'NormSystematic',0.0) > 0:
             syst = mca.getProcessOption(p,'NormSystematic',0.0)
             normTermName = mca.getProcessOption(p,'PegNormToProcess',p)
+            print "%s scale as %s with %s constraint" % (p, normTermName, syst)
             normterm = w.factory('expr::norm_%s("%g*pow(%g,@0)",syst_%s[-5,5])' % (p, pmap[p].Integral(), 1+syst, normTermName))
             if not w.pdf("systpdf_%s" % normTermName): 
                 constterm = w.factory('Gaussian::systpdf_%s(syst_%s,0,1)' % (normTermName,normTermName))
@@ -343,6 +347,7 @@ def doNormFit(pspec,pmap,mca,saveScales=False):
             coeffs.add(normterm)
             procNormMap[p] = normterm
         else:    
+            print "%s is fixed" % p
             normterm = w.factory('norm_%s[%g]' % (p, pmap[p].Integral()))
             dontDelete.append((normterm,))
             coeffs.add(normterm)
@@ -360,7 +365,7 @@ def doNormFit(pspec,pmap,mca,saveScales=False):
     if "background" in pmap and "background" not in mca.listBackgrounds(): 
         totbkg = pmap["background"]; totbkg.Reset()
     fitlog = []
-    for p in mca.listBackgrounds() + mca.listSignals():
+    for p in mca.listBackgrounds(allProcs=True) + mca.listSignals(allProcs=True):
         normSystematic = mca.getProcessOption(p,'NormSystematic', 0.0)
         if p in pmap and p in procNormMap:
            # setthe scale
@@ -390,6 +395,7 @@ def doNormFit(pspec,pmap,mca,saveScales=False):
                     for b in xrange(1,htot.GetNbinsX()+1):
                         htot.SetBinError(b, hypot(htot.GetBinError(b), pmap[p].GetBinContent(b)*syst))
     pspec.setLog("Fitting", fitlog)
+    ROOT.RooMsgService.instance().setGlobalKillBelow(gKill)
     
 
 def doRatioHists(pspec,pmap,total,totalSyst,maxRange,fixRange=False,fitRatio=None,errorsOnRef=True,ratioNums="signal",ratioDen="background",ylabel="Data/pred.",doWide=False,showStatTotLegend=False):
@@ -816,7 +822,7 @@ class PlotMaker:
                             plot.SetFillStyle(0)
                             if plotmode == "norm" and (plot.ClassName()[:2] == "TH"):
                                 ref = pmap['data'].Integral() if 'data' in pmap else 1.0
-                                plot.Scale(ref/plot.Integral())
+                                if (plot.Integral()): plot.Scale(ref/plot.Integral())
                             stack.Add(plot)
                             total.SetMaximum(max(total.GetMaximum(),1.3*plot.GetMaximum()))
                         if self._options.errors and plotmode != "stack":

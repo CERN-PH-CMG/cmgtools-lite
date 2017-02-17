@@ -207,6 +207,9 @@ class MCAnalysis:
                 for p0, p1 in options.processesToPeg:
                     for p in p0.split(","):
                         if re.match(p+"$", pname): tty.setOption('PegNormToProcess', p1)
+                for p0, p1 in options.processesToSetNormSystematic:
+                    for p in p0.split(","):
+                        if re.match(p+"$", pname): tty.setOption('NormSystematic', float(p1))
                 if pname not in self._rank: self._rank[pname] = len(self._rank)
             if to_norm: 
                 for tty in ttys: tty.setScaleFactor("%s*%g" % (scale, 1000.0/total_w))
@@ -254,6 +257,8 @@ class MCAnalysis:
         else: raise RuntimeError, "Can't set option %s for undefined process %s" % (name,process)
     def getScales(self,process):
         return [ tty.getScaleFactor() for tty in self._allData[process] ] 
+    def setScales(self,process,scales):
+        for (tty,factor) in zip(self._allData[process],scales): tty.setScaleFactor(factor,mcCorrs=False)
     def getYields(self,cuts,process=None,nodata=False,makeSummary=False,noEntryLine=False):
         ## first figure out what we want to do
         tasks = []
@@ -589,6 +594,7 @@ def addMCAnalysisOptions(parser,addTreeToYieldOnesToo=True):
     parser.add_option("--fix-process", "--fxp", dest="processesToFix", type="string", default=[], action="append", help="Processes to set as not freely floating (overriding the 'FreeFloat' in the text file; affects e.g. mcPlots with --fitData)");
     parser.add_option("--peg-process", dest="processesToPeg", type="string", default=[], nargs=2, action="append", help="--peg-process X Y make X scale as Y (equivalent to set PegNormToProcess=Y in the mca.txt)");
     parser.add_option("--scale-process", dest="processesToScale", type="string", default=[], nargs=2, action="append", help="--scale-process X Y make X scale by Y (equivalent to add it in the mca.txt)");
+    parser.add_option("--process-norm-syst", dest="processesToSetNormSystematic", type="string", default=[], nargs=2, action="append", help="--process-norm-syst X Y sets the NormSystematic of X to be Y (for plots, etc. Overrides mca.txt)");
     parser.add_option("--AP", "--all-processes", dest="allProcesses", action="store_true", help="Include also processes that are marked with SkipMe=True in the MCA.txt")
     parser.add_option("--use-cnames",  dest="useCnames", action="store_true", help="Use component names instead of process names (for debugging)")
     parser.add_option("--project", dest="project", type="string", help="Project to a scenario (e.g 14TeV_300fb_scenario2)")
