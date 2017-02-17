@@ -1,7 +1,5 @@
 # luminosity
-###lumi_13TeV_norm		: ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .* : 1.023
-###lumi_13TeV_2016		: ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .* : 1.058
-lumi_13TeV_2016		: ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .* : 1.06
+lumi_13TeV_2016		: ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .* : 1.026
 
 # lepton efficiencies
 CMS_ttHl_lepEff_muloose : ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .*2lss_mm.* : 1.04
