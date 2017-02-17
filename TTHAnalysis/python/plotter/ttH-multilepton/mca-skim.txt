@@ -8,6 +8,7 @@ TBar_tWch_ext : TBar_tWch_ext : xsec
 TGJets : TGJets : xsec
 T_tch_powheg : T_tch_powheg : xsec
 TTGJets : TTGJets : xsec
+TTHnobb_mWCutfix_ext : TTHnobb_mWCutfix_ext : xsec
 TTHnobb_pow : TTHnobb_pow : xsec
 TTJets_DiLepton : TTJets_DiLepton : xsec
 TTJets_SingleLeptonFromT : TTJets_SingleLeptonFromT : xsec
@@ -25,6 +26,7 @@ TTZToLLNuNu : TTZToLLNuNu : xsec
 TTZToLLNuNu_m1to10 : TTZToLLNuNu_m1to10 : xsec
 tWll : tWll : xsec
 tZq_ll_ext : tZq_ll_ext : xsec
+tZq_ll_ext_highstat : tZq_ll_ext_highstat : xsec
 VHToNonbb : VHToNonbb : xsec
 WGToLNuG_amcatanlo_ext : WGToLNuG_amcatanlo_ext : xsec
 WJetsToLNu_LO : WJetsToLNu_LO : xsec
@@ -81,3 +83,46 @@ data: SingleMuon_2016F
 data: SingleMuon_2016G
 data: SingleMuon_2016H_ds1
 data: SingleMuon_2016H_ds2
+data_flips: DoubleEG_2016B_forFlips
+data_flips: DoubleEG_2016C_forFlips
+data_flips: DoubleEG_2016D_forFlips
+data_flips: DoubleEG_2016E_forFlips
+data_flips: DoubleEG_2016F_forFlips
+data_flips: DoubleEG_2016G_forFlips
+data_flips: DoubleEG_2016H_ds1_forFlips
+data_flips: DoubleEG_2016H_ds2_forFlips
+data_flips: DoubleMuon_2016B_part1_forFlips
+data_flips: DoubleMuon_2016B_part2_forFlips
+data_flips: DoubleMuon_2016C_forFlips
+data_flips: DoubleMuon_2016D_forFlips
+data_flips: DoubleMuon_2016E_forFlips
+data_flips: DoubleMuon_2016F_forFlips
+data_flips: DoubleMuon_2016G_part1_forFlips
+data_flips: DoubleMuon_2016G_part2_forFlips
+data_flips: DoubleMuon_2016H_ds1_part1_forFlips
+data_flips: DoubleMuon_2016H_ds1_part2_forFlips
+data_flips: DoubleMuon_2016H_ds2_forFlips
+data_flips: MuonEG_2016B_forFlips
+data_flips: MuonEG_2016C_forFlips
+data_flips: MuonEG_2016D_forFlips
+data_flips: MuonEG_2016E_forFlips
+data_flips: MuonEG_2016F_forFlips
+data_flips: MuonEG_2016G_forFlips
+data_flips: MuonEG_2016H_ds1_forFlips
+data_flips: MuonEG_2016H_ds2_forFlips
+data_flips: SingleElectron_2016B_forFlips
+data_flips: SingleElectron_2016C_forFlips
+data_flips: SingleElectron_2016D_forFlips
+data_flips: SingleElectron_2016E_forFlips
+data_flips: SingleElectron_2016F_forFlips
+data_flips: SingleElectron_2016G_forFlips
+data_flips: SingleElectron_2016H_ds1_forFlips
+data_flips: SingleElectron_2016H_ds2_forFlips
+data_flips: SingleMuon_2016B_forFlips
+data_flips: SingleMuon_2016C_forFlips
+data_flips: SingleMuon_2016D_forFlips
+data_flips: SingleMuon_2016E_forFlips
+data_flips: SingleMuon_2016F_forFlips
+data_flips: SingleMuon_2016G_forFlips
+data_flips: SingleMuon_2016H_ds1_forFlips
+data_flips: SingleMuon_2016H_ds2_forFlips

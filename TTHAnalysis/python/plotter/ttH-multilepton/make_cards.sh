@@ -1,11 +1,11 @@
 #!/bin/bash
 
 if [[ "$HOSTNAME" == "cmsco01.cern.ch" ]]; then
-    T2L=" -P /data1/peruzzi/TREES_TTH_250117_Summer16_JECV3_noClean_qgV2_skimOnlyMC_v1 --Fs {P}/1_recleaner_250117_v2 --Fs {P}/5_triggerDecision_250117_v1 --Fs {P}/6_bTagSF_v2 --Fs {P}/2_eventVars_250117_v2 --Fs {P}/3_kinMVA_250117_v4 --Fs {P}/4_BDTv8_Hj_250117_v4"
+    T2L=" -P /data1/peruzzi/TREES_TTH_250117_Summer16_JECV3_noClean_qgV2_skimOnlyMC_v5 --Fs {P}/1_recleaner_130217_mva0p90_v5 --Fs {P}/5_triggerDecision_130217_v5 --Fs {P}/6_bTagSF_v5 --Fs {P}/3_kinMVA_BDTv8_130217_v5"
     T3L=${T2L}
     J=8;
 else
-    T2L=" -P /afs/cern.ch/work/p/peruzzi/tthtrees/TREES_TTH_250117_Summer16_JECV3_noClean_qgV2_skimOnlyMC_v1 --Fs {P}/1_recleaner_250117_v2 --Fs {P}/5_triggerDecision_250117_v1 --Fs {P}/6_bTagSF_v2 --Fs {P}/2_eventVars_250117_v2 --Fs {P}/3_kinMVA_250117_v4 --Fs {P}/4_BDTv8_Hj_250117_v4"
+    T2L=" -P /afs/cern.ch/work/p/peruzzi/tthtrees/TREES_TTH_250117_Summer16_JECV3_noClean_qgV2_skimOnlyMC_v5 --Fs {P}/1_recleaner_130217_mva0p90_v5 --Fs {P}/5_triggerDecision_130217_v5 --Fs {P}/6_bTagSF_v5 --Fs {P}/3_kinMVA_BDTv8_130217_v5"
     T3L=${T2L}
     J=8;
 fi
@@ -115,3 +115,13 @@ if [[ "$1" == "3l_zpeak" || "$1" == "3l_zpeak_btight" ]]; then
    echo "Done at $(date)"
 fi
 
+if [[ "$1" == "all" || "$1" == "4l" ]]; then
+    OPT_4L="${T3L} ${OPTIONS} -W puw2016_nTrueInt_36fb(nTrueInt)*leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[0]],LepGood_pt[iLepFO_Recl[0]],LepGood_eta[iLepFO_Recl[0]],3)*leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[1]],LepGood_pt[iLepFO_Recl[1]],LepGood_eta[iLepFO_Recl[1]],3)*leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[2]],LepGood_pt[iLepFO_Recl[2]],LepGood_eta[iLepFO_Recl[2]],3)*leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[3]],LepGood_pt[iLepFO_Recl[3]],LepGood_eta[iLepFO_Recl[3]],3)*triggerSF_ttH(LepGood_pdgId[iLepFO_Recl[0]],LepGood_pdgId[iLepFO_Recl[1]],3)*eventBTagSF"
+
+    ONEBIN_4L="1 1,0.5,1.5"
+
+    echo "4l";
+    python makeShapeCards.py ${DOFILE} ttH-multilepton/mca-4l-${MCASUFFIX}${SPLITDECAYS}.txt ttH-multilepton/3l_tight.txt ${ONEBIN_4L} $SYSTS $OPT_4L -o 4l${CATPOSTFIX};
+
+   echo "Done at $(date)"
+fi

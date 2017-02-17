@@ -99,6 +99,8 @@ kinMVA_2lss_bins7_withBDTv8_withHj_classicalBinning: classicalBinning2l(kinMVA_2
 kinMVA_2lss_bins7_ourBinning: OurBin2l(kinMVA_2lss_ttbar,kinMVA_2lss_ttV) : [0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5]; XTitle="BDT (ttH\,tt/ttV) bin", MoreY=2.0, Legend='TR'
 kinMVA_2lss_bins7_withBDTv8_withHj_ourBinning: OurBin2l(kinMVA_2lss_ttbar_withBDTv8,kinMVA_2lss_ttV_withHj) : [0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5]; XTitle="BDT (ttH\,tt/ttV) bin", MoreY=2.0, Legend='TR'
 
+newBinning : newBinning(kinMVA_2lss_ttbar,kinMVA_2lss_ttV) :  [0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5,10.5,11.5]; XTitle="new binning",  MoreY=2.0, Legend='TR'
+
 kinMVA_3l_ttbar: kinMVA_3l_ttbar : 40,-1,1 ; XTitle="BDT (ttH\,tt)", MoreY=2.0, Legend='TR'
 kinMVA_3l_ttV: kinMVA_3l_ttV : 40,-1,1 ; XTitle="BDT (ttH\,ttV)", MoreY=2.0, Legend='TL'
 #kinMVA_3l_ttV_withMEM: kinMVA_3l_ttV_withMEM : 40,-1,1 ; XTitle="BDT (ttH\,ttV)", MoreY=2.0, Legend='TR'

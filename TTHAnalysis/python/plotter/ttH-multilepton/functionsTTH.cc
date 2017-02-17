@@ -46,6 +46,15 @@ float ttH_MVAto1D_5_3l_Marco (float kinMVA_3l_ttbar, float kinMVA_3l_ttV){
 }
 
 
+float newBinning(float x, float y){
+  float r =  4*((y>-0.16)+(y>0.28))+(x>-0.22)+(x>0.09)+(x>0.42)+1;
+  if (r==9) r-=4;
+  if (r>9) r-=1;
+  return r;
+}
+
+#include "ttH-multilepton/GetBinning.C"
+
 
 float ttH_MVAto1D_6_flex (float kinMVA_2lss_ttbar, float kinMVA_2lss_ttV, int pdg1, int pdg2, float ttVcut, float ttcut1, float ttcut2){
 

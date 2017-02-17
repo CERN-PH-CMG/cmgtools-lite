@@ -58,13 +58,13 @@ Int_t OurBin3l(Double_t x, Double_t y)
 
 
 Int_t classicalBinning2l(Double_t y, Double_t x){
-  if      ((-1. < y ) && ( y <= 1)   && (-1.0 < y) && (y <= -0.2))  return 0;
-  else if ((-1. < x ) && ( x <= 1)   && (-0.2 < y) && ( y  <=  0.1))  return 1;
-  else if ((-1. < x ) && ( x <= 0.3) && (0.1  < y) && ( y  <=  0.4))  return 2;
-  else if ((0.3 < x ) && ( x <= 1.)  && (0.1  < y) && ( y  <=  0.4))  return 3;
-  else if ((-1. < x ) && ( x <= 0.1) && (0.4  < y) && ( y  <=  1.0))  return 4;
-  else if ((0.1 < x ) && ( x <= 0.4) && (0.4  < y) && ( y  <=  1.0))  return 5;
-  else if ((0.4 < x ) && ( x <= 1.)  && (0.4  < y) && ( y  <=  1.0))  return 6;
+  if      ((-1. < y ) && ( y <= 1)   && (-1.0 < y) && (y <= -0.2))  return 0+1;
+  else if ((-1. < x ) && ( x <= 1)   && (-0.2 < y) && ( y  <=  0.1))  return 1+1;
+  else if ((-1. < x ) && ( x <= 0.3) && (0.1  < y) && ( y  <=  0.4))  return 2+1;
+  else if ((0.3 < x ) && ( x <= 1.)  && (0.1  < y) && ( y  <=  0.4))  return 3+1;
+  else if ((-1. < x ) && ( x <= 0.1) && (0.4  < y) && ( y  <=  1.0))  return 4+1;
+  else if ((0.1 < x ) && ( x <= 0.4) && (0.4  < y) && ( y  <=  1.0))  return 5+1;
+  else if ((0.4 < x ) && ( x <= 1.)  && (0.4  < y) && ( y  <=  1.0))  return 6+1;
   else {
     cout <<  "one bin is missing " << x << " " << y << endl;
     return -1;
@@ -73,11 +73,11 @@ Int_t classicalBinning2l(Double_t y, Double_t x){
 
 
 Int_t classicalBinning3l(Double_t y, Double_t x){
-  if      ((-1. < x)  && ( x <= 1   ) && (-1.0 < y)  && (y <= -0.3))    return 0;
-  else if ((-1. < x ) && ( x <= 0.25) && (-0.3 < y)  && ( y  <=  0.3))  return 1;
-  else if ((0.25 < x )&& ( x <= 1.  ) && (-0.3  < y) && ( y  <=  0.3))  return 2;
-  else if ((-1. < x ) && ( x <= 0.25) && (0.3  < y)  && ( y  <=  1.0))  return 3;
-  else if ((0.25 < x )&& ( x <= 1.  ) && (0.3  < y)  && ( y  <=  1.0))  return 4;
+  if      ((-1. < x)  && ( x <= 1   ) && (-1.0 < y)  && (y <= -0.3))    return 0+1;
+  else if ((-1. < x ) && ( x <= 0.25) && (-0.3 < y)  && ( y  <=  0.3))  return 1+1;
+  else if ((0.25 < x )&& ( x <= 1.  ) && (-0.3  < y) && ( y  <=  0.3))  return 2+1;
+  else if ((-1. < x ) && ( x <= 0.25) && (0.3  < y)  && ( y  <=  1.0))  return 3+1;
+  else if ((0.25 < x )&& ( x <= 1.  ) && (0.3  < y)  && ( y  <=  1.0))  return 4+1;
   else {
     cout <<  "one bin is missing " << x << " " << y << endl;
     return -1;

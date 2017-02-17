@@ -9,9 +9,9 @@ dowhat = "plots"
 #dowhat = "dumps" 
 #dowhat = "yields" 
 
-TREES = "--Fs {P}/1_recleaner_250117_v2 --Fs {P}/5_triggerDecision_250117_v1 --Fs {P}/6_bTagSF_v2 --Fs {P}/2_eventVars_250117_v2"
-TREESONLYSKIM = "-P /data1/peruzzi/TREES_TTH_250117_Summer16_JECV3_noClean_qgV2_skimOnlyMC_v1 --Fs {P}/3_kinMVA_250117_v4 --Fs {P}/4_BDTv8_Hj_250117_v4"
-TREESONLYFULL = "-P /data1/peruzzi/TREES_TTH_250117_Summer16_JECV3_noClean_qgV2 --Fs {P}/3_kinMVA_noBDTv8_250117_v3"
+TREES = "--Fs {P}/1_recleaner_130217_mva0p90_v5"
+TREESONLYSKIM = "-P /data1/peruzzi/TREES_TTH_250117_Summer16_JECV3_noClean_qgV2_skimOnlyMC_v5 --Fs {P}/3_kinMVA_BDTv8_130217_v5 --Fs {P}/4_BDTv8_Hj_130217_v5 --Fs {P}/5_triggerDecision_130217_v5 --Fs {P}/6_bTagSF_v5 --Fs {P}/2_eventVars_130217_v5"
+TREESONLYFULL = "-P /data1/peruzzi/TREES_TTH_250117_Summer16_JECV3_noClean_qgV2"
 
 def base(selection):
 
