@@ -140,8 +140,8 @@ void BDTv8_eventReco::Init(std::string weight_file_name_bloose, std::string weig
 
   TMVAReader_Hj_ = new TMVA::Reader( "!Color:!Silent" );
   TMVAReader_Hj_->AddVariable( "Jet_lepdrmin", &iv1_1);
-  TMVAReader_Hj_->AddVariable( "Jet_pfCombinedInclusiveSecondaryVertexV2BJetTags", &iv1_2);
-  TMVAReader_Hj_->AddVariable( "Jet_qg", &iv1_3);
+  TMVAReader_Hj_->AddVariable( "max(Jet_pfCombinedInclusiveSecondaryVertexV2BJetTags,0.)", &iv1_2);
+  TMVAReader_Hj_->AddVariable( "max(Jet_qg,0.)", &iv1_3);
   TMVAReader_Hj_->AddVariable( "Jet_lepdrmax", &iv1_4);
   TMVAReader_Hj_->AddVariable( "Jet_pt", &iv1_5);
   TMVAReader_Hj_->BookMVA("BDTG method", weight_file_name_Hj);
@@ -414,8 +414,8 @@ std::vector<float> BDTv8_eventReco::CalcHjTagger(char* _permlep, char* _x, std::
       float dr_lep1 = dR(lep_fromHig,jet_fromHiggs);
 	
       iv1_1 = std::min(dr_lep0,dr_lep1);
-      iv1_2 = jet_fromHiggs->csv;
-      iv1_3 = jet_fromHiggs->qgl;
+      iv1_2 = std::max(jet_fromHiggs->csv,float(0));
+      iv1_3 = std::max(jet_fromHiggs->qgl,float(0));
       iv1_4 = std::max(dr_lep0,dr_lep1);
       iv1_5 = jet_fromHiggs->p4.Pt();
 	
