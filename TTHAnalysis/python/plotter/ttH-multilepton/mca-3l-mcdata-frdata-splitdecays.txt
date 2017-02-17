@@ -33,3 +33,21 @@ incl_sigprompt_bTag_cErr2_Dn : + ; IncludeMca="ttH-multilepton/mca-includes/mca-
 incl_sigprompt_elLooseUnc_Up : + ; IncludeMca="ttH-multilepton/mca-includes/mca-3l-sigprompt-splitdecays.txt", AddWeight="elLooseUnc_3l_up", SkipMe=True, PostFix="_elLooseUnc_Up"
 incl_sigprompt_elLooseUnc_Dn : + ; IncludeMca="ttH-multilepton/mca-includes/mca-3l-sigprompt-splitdecays.txt", AddWeight="elLooseUnc_3l_dn", SkipMe=True, PostFix="_elLooseUnc_Dn"
 
+incl_datafakes_FRe_norm_Up : + ; IncludeMca="ttH-multilepton/mca-includes/mca-data.txt", FakeRate="ttH-multilepton/fakerate-vars/fakeRate-3l-frdata-e-up.txt", SkipMe=True, PostFix='_fakes_FRe_norm_Up'
+incl_datafakes_FRe_norm_Dn : + ; IncludeMca="ttH-multilepton/mca-includes/mca-data.txt", FakeRate="ttH-multilepton/fakerate-vars/fakeRate-3l-frdata-e-down.txt", SkipMe=True, PostFix='_fakes_FRe_norm_Dn'
+incl_datafakes_FRe_pt_Up : + ; IncludeMca="ttH-multilepton/mca-includes/mca-data.txt", FakeRate="ttH-multilepton/fakerate-vars/fakeRate-3l-frdata-e-pt1.txt", SkipMe=True, PostFix='_fakes_FRe_pt_Up'
+incl_datafakes_FRe_pt_Dn : + ; IncludeMca="ttH-multilepton/mca-includes/mca-data.txt", FakeRate="ttH-multilepton/fakerate-vars/fakeRate-3l-frdata-e-pt2.txt", SkipMe=True, PostFix='_fakes_FRe_pt_Dn'
+incl_datafakes_FRe_b_Up : + ; IncludeMca="ttH-multilepton/mca-includes/mca-data.txt", FakeRate="ttH-multilepton/fakerate-vars/fakeRate-3l-frdata-e-b1.txt", SkipMe=True, PostFix='_fakes_FRe_b_Up'
+incl_datafakes_FRe_b_Dn : + ; IncludeMca="ttH-multilepton/mca-includes/mca-data.txt", FakeRate="ttH-multilepton/fakerate-vars/fakeRate-3l-frdata-e-b2.txt", SkipMe=True, PostFix='_fakes_FRe_b_Dn'
+incl_datafakes_FRe_ec_Up : + ; IncludeMca="ttH-multilepton/mca-includes/mca-data.txt", FakeRate="ttH-multilepton/fakerate-vars/fakeRate-3l-frdata-e-ec1.txt", SkipMe=True, PostFix='_fakes_FRe_ec_Up'
+incl_datafakes_FRe_ec_Dn : + ; IncludeMca="ttH-multilepton/mca-includes/mca-data.txt", FakeRate="ttH-multilepton/fakerate-vars/fakeRate-3l-frdata-e-ec2.txt", SkipMe=True, PostFix='_fakes_FRe_ec_Dn'
+
+incl_datafakes_FRm_norm_Up : + ; IncludeMca="ttH-multilepton/mca-includes/mca-data.txt", FakeRate="ttH-multilepton/fakerate-vars/fakeRate-3l-frdata-m-up.txt", SkipMe=True, PostFix='_fakes_FRm_norm_Up'
+incl_datafakes_FRm_norm_Dn : + ; IncludeMca="ttH-multilepton/mca-includes/mca-data.txt", FakeRate="ttH-multilepton/fakerate-vars/fakeRate-3l-frdata-m-down.txt", SkipMe=True, PostFix='_fakes_FRm_norm_Dn'
+incl_datafakes_FRm_pt_Up : + ; IncludeMca="ttH-multilepton/mca-includes/mca-data.txt", FakeRate="ttH-multilepton/fakerate-vars/fakeRate-3l-frdata-m-pt1.txt", SkipMe=True, PostFix='_fakes_FRm_pt_Up'
+incl_datafakes_FRm_pt_Dn : + ; IncludeMca="ttH-multilepton/mca-includes/mca-data.txt", FakeRate="ttH-multilepton/fakerate-vars/fakeRate-3l-frdata-m-pt2.txt", SkipMe=True, PostFix='_fakes_FRm_pt_Dn'
+incl_datafakes_FRm_b_Up : + ; IncludeMca="ttH-multilepton/mca-includes/mca-data.txt", FakeRate="ttH-multilepton/fakerate-vars/fakeRate-3l-frdata-m-b1.txt", SkipMe=True, PostFix='_fakes_FRm_b_Up'
+incl_datafakes_FRm_b_Dn : + ; IncludeMca="ttH-multilepton/mca-includes/mca-data.txt", FakeRate="ttH-multilepton/fakerate-vars/fakeRate-3l-frdata-m-b2.txt", SkipMe=True, PostFix='_fakes_FRm_b_Dn'
+incl_datafakes_FRm_ec_Up : + ; IncludeMca="ttH-multilepton/mca-includes/mca-data.txt", FakeRate="ttH-multilepton/fakerate-vars/fakeRate-3l-frdata-m-ec1.txt", SkipMe=True, PostFix='_fakes_FRm_ec_Up'
+incl_datafakes_FRm_ec_Dn : + ; IncludeMca="ttH-multilepton/mca-includes/mca-data.txt", FakeRate="ttH-multilepton/fakerate-vars/fakeRate-3l-frdata-m-ec2.txt", SkipMe=True, PostFix='_fakes_FRm_ec_Dn'
+
