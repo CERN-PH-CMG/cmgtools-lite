@@ -10,7 +10,7 @@ BG=" -j 6 "; if [[ "$1" == "-b" ]]; then BG=" & "; shift; fi
 
 ANALYSIS=$1; if [[ "$1" == "" ]]; then exit 1; fi; shift;
 case $ANALYSIS in
-ttH) CUTFILE="ttH-multilepton/fr-z3l.txt"; XVAR="l3CPt"; NUM="mva075";;
+ttH) CUTFILE="ttH-multilepton/fr-z3l.txt"; XVAR="l3CPt"; NUM="mva090";;
 susy_wpM) CUTFILE="susy-ewkino/fr-z3l-wpM.txt"; XVAR="ptJIMIX4"; NUM="mvaSusy_sMi";;
 susy_wpV) CUTFILE="susy-ewkino/fr-z3l-wpV.txt"; XVAR="ptJIMIX3"; NUM="mvaSusy_sVi";;
 *) echo "unknown analysis $ANALYSIS"; exit 1; ;;
@@ -22,13 +22,13 @@ BCORE="$BCORE --mcc ttH-multilepton/ttH_2lss3l_triggerdefs.txt -X ^Trig -A Z1 pt
 lepton=$1; if [[ "$1" == "" ]]; then exit 1; fi
 case $lepton in
 mu) BCORE="${BCORE} -E ^${lepton} -E tightZ1 ";; #;--mcc ttH-multilepton/mcc-ichepMediumMuonId.txt "; ;;
-el) BCORE="${BCORE} -E ^${lepton} ";; #--mcc ttH-multilepton/mcc-ichepMediumMuonId-fake.txt"; ;;
+el) BCORE="${BCORE} -E ^${lepton} -E tight70";; #--mcc ttH-multilepton/mcc-ichepMediumMuonId-fake.txt"; ;;
 *) echo "unknown lepton $lepton"; exit 1; ;;
 esac;
 
 what=$2; shift; shift;
 #PBASE="~/www/plots_FR/80X/lepMVA_${ANALYSIS}/v1.4_250616/fr-meas/$lepton/z3l/$what"
-PBASE="plots/80X/${ANALYSIS}_Moriond17/lepMVA/v1.0.1b/fr-meas/z3l/$lepton/$what"
+PBASE="plots/80X/${ANALYSIS}_Moriond17/lepMVA/v2.1-dev/fr-meas/z3l/$lepton/$what"
 
 case $lepton in
     el) BARREL="00_15"; ENDCAP="15_25"; ETA="1.479"; SC_EWK=1.58;  SC_DY=0.86;;

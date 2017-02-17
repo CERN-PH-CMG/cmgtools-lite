@@ -10,21 +10,23 @@ elif hostname | grep -q cmsphys10; then
 fi
 ANALYSIS=$1; if [[ "$1" == "" ]]; then exit 1; fi; shift;
 case $ANALYSIS in
-ttH) T="${T_TTH}"; CUTFILE="ttH-multilepton/qcd1l.txt"; XVAR="ptJI85_mvaPt075_coarselongbin"; NUM="mvaPt_075i";;
+ttH) T="${T_TTH}"; CUTFILE="ttH-multilepton/qcd1l.txt"; XVAR="ptJI80_mvaPt090_coarselongbin"; NUM="mvaPt_090i";;
 susy_wpM) T="${T_SUSY}"; CUTFILE="susy-ewkino/qcd1l_wpM.txt"; XVAR="ptJIMIX4_mvaSusy_sMi_coarselongbin"; NUM="mvaSusy_sMi";;
 susy_wpV) T="${T_SUSY}"; CUTFILE="susy-ewkino/qcd1l_wpV.txt"; XVAR="ptJIMIX3_mvaSusy_sVi_coarselongbin"; NUM="mvaSusy_sVi";;
 susy_RA7) T="${T_SUSY}"; CUTFILE="susy-ewkino/qcd1l_RA7.txt"; XVAR="conePt_RA7_coarselongbin"; NUM="ra7_tight";;
+*) echo "You did not specify the analysis"; exit 1;;
 esac;
 BCORE=" --s2v --tree treeProducerSusyMultilepton ttH-multilepton/mca-qcd1l.txt ${CUTFILE} -P $T -l 36.5 --AP  "
+BCORE="${BCORE} --Fs {P}/1_extraVars_v1  "
 BCORE="${BCORE} --mcc ttH-multilepton/mcc-eleIdEmu2.txt  "; 
-BCORE="${BCORE} --mcc ttH-multilepton/mcc-noHLTinMC.txt  "; 
+BCORE="${BCORE} --mcc ttH-multilepton/mcc-noHLTinMC-some.txt  "; 
 
 BG=" -j 8 "; if [[ "$1" == "-b" ]]; then BG=" & "; shift; fi
 
 lepton=$1; if [[ "$1" == "" ]]; then exit 1; fi
 case $lepton in
 mu) BCORE="${BCORE} -E ^${lepton} --xf 'DoubleEG.*,JetHT.*'  "; QCD=QCDMu; ;;
-el) BCORE="${BCORE} -E ^${lepton} --xf 'DoubleMu.*,JetHT.*' "; QCD=QCDEl; ;;
+el) BCORE="${BCORE} -E ^${lepton} --xf 'DoubleMu.*,JetHT.*,SingleMu.*' "; QCD=QCDEl; ;;
 #mu_jet) lepton="mu"; BCORE="${BCORE} -E ${lepton} --xf 'Double.*' -X idEmuCut -R minimal ptj40 ' LepGood_awayJet_pt > 40'  "; QCD=QCDMu; ;;
 #mu_jet6) lepton="mu"; BCORE="${BCORE} -E ${lepton} --xf 'Double.*,JetHT_.*' -X idEmuCut -R minimal ptj40 ' LepGood_awayJet_pt > 60'  "; QCD=QCDMu; ;;
 #mu_ht)  lepton="mu"; BCORE="${BCORE} -E ${lepton} --xf 'Double.*' -X idEmuCut -R minimal ptj40 ' LepGood_awayJet_pt > 40'  "; QCD=QCDMu; ;;
@@ -38,27 +40,43 @@ case $trigger in
 #    PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw$lepton$trigger(nVert)' "
 #    ;;
 Mu3_PFJet40)
-    BCORE="${BCORE} -A veto trigger 'HLT_FR_${trigger} || (!isData)' -A veto recoptfortrigger 'LepGood_pt>4.0 && LepGood_awayJet_pt > 50'  "; 
+    BCORE="${BCORE} -A veto trigger 'HLT_FR_${trigger}' -A veto recoptfortrigger 'LepGood_pt>4.0' --xf 'SingleMu.*'  "; 
     PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw$trigger(nVert)' "
     ;;
 Mu8)
-    BCORE="${BCORE} -A veto trigger 'HLT_FR_${trigger} || (!isData)' -A veto recoptfortrigger 'LepGood_pt>8.5'  "; 
+    BCORE="${BCORE} -A veto trigger 'HLT_FR_${trigger}' -A veto recoptfortrigger 'LepGood_pt>8.5' --xf 'SingleMu.*'  "; 
     PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw$trigger(nVert)' "
     ;;
 Mu17)
-    BCORE="${BCORE} -A veto trigger 'HLT_FR_${trigger} || (!isData)' -A veto recoptfortrigger 'LepGood_pt>17.5'  "; 
+    BCORE="${BCORE} -A veto trigger 'HLT_FR_${trigger}' -A veto recoptfortrigger 'LepGood_pt>17.5' --xf 'SingleMu.*' "; 
     PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw$trigger(nVert)' "
     ;;
+Mu27)
+    BCORE="${BCORE} -A veto trigger 'HLT_FR_${trigger}' -A veto recoptfortrigger 'LepGood_pt>27.5' --xf 'DoubleMu.*' "; 
+    PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw$trigger(nVert)' "
+    ;;
+Mu1727)
+    BCORE="${BCORE} -A veto trigger '(HLT_FR_Mu17 || HLT_FR_Mu27)' -A veto recoptfortrigger 'LepGood_pt>27.5'  "; 
+    PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw$trigger(nVert)' "
+    ;;
+Mu50)
+    BCORE="${BCORE} -A veto trigger 'HLT_FR_${trigger}' -A veto recoptfortrigger 'LepGood_pt>50.5' --xf 'DoubleMu.*' "; 
+    PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw$trigger(nVert)' "
+    ;;
+MuX_Combined)
+    BCORE="${BCORE} -A veto trigger 'HLT_FR_${trigger}' -A veto recoptfortrigger 'LepGood_pt>8.5' --xf 'SingleMu.*'  "; 
+    PUW=" "
+    ;;
 Ele8_CaloIdM_TrackIdM_PFJet30)
-    BCORE="${BCORE} -A veto trigger 'HLT_FR_${trigger} || (!isData)' -A veto recoptfortrigger 'LepGood_pt>10'  "; 
+    BCORE="${BCORE} -A veto trigger 'HLT_FR_${trigger}' -A veto recoptfortrigger 'LepGood_pt>10'  "; 
     PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw$trigger(nVert)' "
     ;;
 Ele12_CaloIdM_TrackIdM_PFJet30)
-    BCORE="${BCORE} -A veto trigger 'HLT_FR_${trigger} || (!isData)' -A veto recoptfortrigger 'LepGood_pt>15'  "; 
+    BCORE="${BCORE} -A veto trigger 'HLT_FR_${trigger}' -A veto recoptfortrigger 'LepGood_pt>15'  "; 
     PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw$trigger(nVert)' "
     ;;
 *)
-    BCORE="${BCORE} -A veto trigger 'HLT_FR_${trigger} || (!isData)'  "; 
+    BCORE="${BCORE} -A veto trigger 'HLT_FR_${trigger}'  "; 
     PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw$trigger(nVert)' "
     ;;
 esac;
@@ -67,7 +85,7 @@ esac;
 what=$3;
 more=$4
 #PBASE="~/www/plots_FR/80X/lepMVA_$ANALYSIS/v2.0_041216/fr-meas/$lepton/HLT_$trigger/$what/$more"
-PBASE="plots/80X/${ANALYSIS}_Moriond17/lepMVA/v1.0.1b/fr-meas/qcd1l/$lepton/HLT_$trigger/$what/$more"
+PBASE="plots/80X/${ANALYSIS}_Moriond17/lepMVA/v2.1-dev/fr-meas/qcd1l/$lepton/HLT_$trigger/$what/$more"
 
 EWKONE="-p ${QCD}_red,EWK,data"
 EWKSPLIT="-p ${QCD}_red,WJets,DYJets,data"
@@ -92,11 +110,14 @@ case $what in
     nvtx)
         echo "python mcPlots.py -f -j 6 $BCORE ttH-multilepton/qcd1l_plots.txt --pdir $PBASE --sP nvtx $EWKONE " 
         echo "echo; echo; ";
-        echo "python ../tools/vertexWeightFriend.py no $PBASE/qcd1l_plots.root ";
+        echo "python ../tools/vertexWeightFriend.py _puw$trigger $PBASE/qcd1l_plots.root ";
         echo "echo; echo ' ---- Now you should put the normalization and weight into frPuReweight.cc defining a puw$trigger ----- ' ";
         ;;
     nvtx-closure)
         echo "python mcPlots.py -f -j 6 $BCORE $PUW ttH-multilepton/qcd1l_plots.txt --pdir $PBASE --sP nvtx $EWKONE  --showRatio --maxRatioRange 0.9 1.1 " 
+        ;;
+    mc-yields)
+        echo "python mcAnalysis.py -f -j 6 $BCORE $PUW ${EWKSPLIT} --sp 'QCD.*' --fom S/B --fom S/errSB -G " 
         ;;
     fit-*)
         echo "python mcPlots.py -f -j 6 $BCORE $PUW ttH-multilepton/qcd1l_plots.txt --pdir $PBASE -E $what $FITEWK --preFitData ${what/fit-/} --showRatio --maxRatioRange 0.0 1.99 " 
@@ -127,6 +148,7 @@ case $what in
         LEGEND=" --legend=TL --fontsize 0.05 --legendWidth 0.4"
         RANGES=" --showRatio  --ratioRange 0.00 2.99 "
         STACK="python ttH-multilepton/stack_fake_rates_data.py "
+        ISCOMB=false
         case $lepton in  # 0,5,10,15,20,30,45,65,100
            el) 
 		RANGES="$RANGES  --yrange 0 0.25  --xcut 20 100 --xline 30 " ;
@@ -135,32 +157,80 @@ case $what in
 		fi;
 		;;
            mu)
-                 RANGES="$RANGES  --yrange 0 0.25  --xcut 15 100 --xline 20 --xline 45" ;
+                 RANGES="$RANGES  --yrange 0 0.25 " ;
 		 if [[ "$ANALYSIS" == "susy_wpM" ]]; then RANGES=${RANGES/--xcut 15 100/--xcut 10 100}; fi
 		 if [[ "$ANALYSIS" == "susy_wpV" ]]; then RANGES=${RANGES/--xcut 15 100/--xcut 10 100}; fi
 		 if [[ "$ANALYSIS" == "susy_RA7" ]]; then RANGES=${RANGES/--xcut 15 100/--xcut 10 100}; fi
 
                  if [[ "$trigger" == "Mu17" ]]; then 
-                     RANGES=${RANGES/--xcut 15 100/--xcut 30 100}; 
+                     MCEFF="${MCEFF/_coarselongbin/_coarsemu17bin}"
+                     XVAR="${XVAR/_coarselongbin/_coarsemu17bin}"
+                     RANGES="${RANGES} --xcut 25 100 --xline 30 --xline 65"; 
 		     if [[ "$ANALYSIS" == "susy_wpM" ]]; then RANGES=${RANGES/--xcut 10 100/--xcut 30 100}; fi
 		     if [[ "$ANALYSIS" == "susy_wpV" ]]; then RANGES=${RANGES/--xcut 10 100/--xcut 30 100}; fi
 		     if [[ "$ANALYSIS" == "susy_RA7" ]]; then RANGES=${RANGES/--xcut 10 100/--xcut 30 100}; fi
-                     RANGES=${RANGES/--xline 20 --xline 45/--xline 45}; 
+                 elif [[ "$trigger" == "Mu8" ]]; then
+                     MCEFF="${MCEFF/_coarselongbin/_coarsemu8bin}"
+                     XVAR="${XVAR/_coarselongbin/_coarsemu8bin}"
+                     RANGES="${RANGES} --xcut 13 45 --xline 15 --xline 30"; 
+                 elif [[ "$trigger" == "Mu27" ]]; then
+                     MCEFF="${MCEFF/_coarselongbin/_coarsemu27bin}"
+                     XVAR="${XVAR/_coarselongbin/_coarsemu27bin}"
+                     RANGES="${RANGES} --xcut 40 100 --xline 45 "; 
+                 elif [[ "$trigger" == "Mu50" ]]; then
+                     MCEFF="${MCEFF/_coarselongbin/_coarsemu50bin}"
+                     XVAR="${XVAR/_coarselongbin/_coarsemu50bin}"
+                     RANGES="${RANGES} --xcut 81 100 "; 
                  elif [[ "$trigger" == "Mu3_PFJet40" ]]; then
-                     RANGES=${RANGES/--xcut 15 100/--xcut 5 30};
-                     RANGES=${RANGES/--xline 20 --xline 45/--xline 10 --xline 20};
-                 #elif [[ "$trigger" == "PFJet6" ]]; then
-                 #    MCEFF="${MCEFF/_coarse/_low}"
-                 #    RANGES=${RANGES/--xcut 15 100/--xcut 10 30};
-                 #    RANGES=${RANGES/--xline 20 --xline 45/--xline 10 --xline 20};
-                 #    RANGES=${RANGES/--yrange 0 0.??/--yrange 0 0.12};
-                 fi;
+                     RANGES="${RANGES} --xcut 10 30 --xline 10 --xline 15"; 
+                 elif [[ "$trigger" == "MuX_Combined" ]]; then
+                     ISCOMB=true
+                     MCEFF="${MCEFF/_coarselongbin/_coarsecomb}"
+                     XVAR="${XVAR/_coarselongbin/_coarsecomb}"
+                     RANGES="${RANGES} --xcut 10 100 --xline 10 --xline 15 --xline 30 --xline 45 "; 
+                     for E in ${BARREL} ${ENDCAP}; do
+                        STACK=""
+                        STACK="${STACK}  ${PBASE/MuX_Combined/Mu3_PFJet40}/fr_sub_eta_${E}.root:5-30"
+                        STACK="${STACK}  ${PBASE/MuX_Combined/Mu8}/fr_sub_eta_${E}.root:15-45"
+                        STACK="${STACK}  ${PBASE/MuX_Combined/Mu17}/fr_sub_eta_${E}.root:30-100"
+                        STACK="${STACK}  ${PBASE/MuX_Combined/Mu27}/fr_sub_eta_${E}.root:45-100"
+                        #STACK="${STACK}  ${PBASE/MuX_Combined/Mu50}/fr_sub_eta_${E}.root:81-100"
+                        echo "python ttH-multilepton/combine-fr-bins-prefit.py ${STACK} $PBASE/fr_sub_eta_${E}.root --oprefix ${NUM}_vs_${fitVar}_${XVAR}";
+                     done;
+                 elif [[ "$trigger" == "MuX_CombLow" ]]; then
+                     ISCOMB=true
+                     MCEFF="${MCEFF/_coarselongbin/_coarsecomblo}"
+                     XVAR="${XVAR/_coarselongbin/_coarsecomblo}"
+                     RANGES="${RANGES} --xcut 10 45 --xline 15 --xline 30"; 
+                     for E in ${BARREL} ${ENDCAP}; do
+                        STACK=""
+                        STACK="${STACK}  ${PBASE/MuX_CombLow/Mu3_PFJet40}/fr_sub_eta_${E}.root:5-30"
+                        STACK="${STACK}  ${PBASE/MuX_CombLow/Mu8}/fr_sub_eta_${E}.root:15-45"
+                        #STACK="${STACK}  ${PBASE/MuX_CombLow/Mu50}/fr_sub_eta_${E}.root:81-100"
+                        echo "python ttH-multilepton/combine-fr-bins-prefit.py ${STACK} $PBASE/fr_sub_eta_${E}.root --oprefix ${NUM}_vs_${fitVar}_${XVAR}";
+                     done;
+                  elif [[ "$trigger" == "MuX_CombHigh" ]]; then
+                     ISCOMB=true
+                     MCEFF="${MCEFF/_coarselongbin/_coarsecombhi}"
+                     XVAR="${XVAR/_coarselongbin/_coarsecombhi}"
+                     RANGES="${RANGES} --xcut 20 100 --xline 30 --xline 45 "; 
+                     for E in ${BARREL} ${ENDCAP}; do
+                        STACK=""
+                        STACK="${STACK}  ${PBASE/MuX_CombHigh/Mu8}/fr_sub_eta_${E}.root:20-45"
+                        STACK="${STACK}  ${PBASE/MuX_CombHigh/Mu17}/fr_sub_eta_${E}.root:30-100"
+                        STACK="${STACK}  ${PBASE/MuX_CombHigh/Mu27}/fr_sub_eta_${E}.root:45-100"
+                        #STACK="${STACK}  ${PBASE/MuX_CombHigh/Mu50}/fr_sub_eta_${E}.root:81-100"
+                        echo "python ttH-multilepton/combine-fr-bins-prefit.py ${STACK} $PBASE/fr_sub_eta_${E}.root --oprefix ${NUM}_vs_${fitVar}_${XVAR}";
+                     done;
+                 fi
             ;;
         esac;
 	if [[ "$ANALYSIS" == "susy_wpM" ]]; then RANGES=${RANGES/--yrange 0 0.??/--yrange 0 0.50}; fi
         MCEFF="$MCEFF $LEGEND $RANGES"
+        if ! $ISCOMB; then
         echo " ( $MCEFF -o $PBASE/fr_sub_eta_${BARREL}.root --bare -A veto eta 'abs(LepGood_eta)<$ETA' $BG )"
         echo " ( $MCEFF -o $PBASE/fr_sub_eta_${ENDCAP}.root --bare -A veto eta 'abs(LepGood_eta)>$ETA' $BG )"
+        fi;
         MCGO="$MCEFF --compare ${QCD}_red_prefit,data_sub_syst_prefit,data_sub_prefit --algo=globalFit "
         echo " ( $MCGO -i $PBASE/fr_sub_eta_${BARREL}.root -o $PBASE/fr_sub_eta_${BARREL}_globalFit.root --algo=globalFit --fcut 0 20 --subSyst 0.1 $BG )"
         echo " ( $MCGO -i $PBASE/fr_sub_eta_${ENDCAP}.root -o $PBASE/fr_sub_eta_${ENDCAP}_globalFit.root --algo=globalFit --fcut 0 20 --subSyst 0.1 $BG )"
