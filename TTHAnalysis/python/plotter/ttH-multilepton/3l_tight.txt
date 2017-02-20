@@ -1,6 +1,6 @@
 alwaystrue: 1
 trilep: nLepFO>=3
-exclusive: nLepTight <= 3 ;  Disable=True
+exclusive: nLepTight <= 3
 cleanup: minMllAFAS > 12
 trigger: Trigger_3l
 pt2010: LepGood1_conePt>20 && LepGood2_conePt>10 && LepGood3_conePt>10
