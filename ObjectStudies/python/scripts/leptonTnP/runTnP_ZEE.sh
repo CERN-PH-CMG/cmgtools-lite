@@ -18,6 +18,7 @@ PDS="$DATA $MC"
 
 OPTS=" --doRatio  --pdir $PDIR/$JOB  " 
 OPTS="$OPTS -t tree  --mc-cut TnP_tag_mcMatchId&&TnP_probe_mcMatchId --mc-mass TnP_mass   "
+OPTS="$OPTS -L $CMSSW_BASE/src/CMGTools/TTHAnalysis/python/plotter/susy-sos/functionsSOS.cc "
 case $HOSTNAME in
 cmsphys10|cmsco01.cern.ch) OPTS="$OPTS -j 8 ";;
 lxplus*.cern.ch) OPTS="$OPTS -j 4" ;;

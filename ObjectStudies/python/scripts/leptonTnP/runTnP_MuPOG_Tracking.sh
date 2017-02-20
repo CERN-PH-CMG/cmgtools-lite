@@ -50,7 +50,7 @@ OPTS=" --doRatio  --pdir $PDIR/$JOB -j 8 " #--mcw vtxWeight2015(nVert)"
 OPTS="$OPTS -t tpTreeSta/fitter_tree  --mc-cut 1 --mc-mass mass   "
 OPTS="$OPTS -s voigt -b expo "
 MASS="  -m mass 40,60,130 "
-CDEN="(tag_IsoMu20||tag_IsoMu22||tag_IsoMu24) && tag_pt > 22 && outerValidHits "
+CDEN="(tag_IsoMu20||tag_IsoMu22||tag_IsoMu24||tag_IsoMu27) && tag_pt > 22 && outerValidHits "
 for match in dr03e03; do
     for tk in tk0 tk; do
         for PostFix in '' _NoZ; do
@@ -60,11 +60,11 @@ for match in dr03e03; do
                 dr03e03) NUM="${tk}_deltaR${PostFix} < 0.3" ;;
                 *) echo "Matching $match not defined"; exit 1;; 
             esac;
-            #python tnpEfficiency.py $PDS -d "pt > 15 && $CDEN"                 -n "$NUM" $OPTS --x-var abseta $TWOBINS      -N mu_${match}_${tk}${PostFix}_pt15_two      $MASS --xtitle "|#eta|" --ytitle "$YTIT";
-            #python tnpEfficiency.py $PDS -d "pt > 15 && $CDEN"                 -n "$NUM" $OPTS --x-var eta $EBINS           -N mu_${match}_${tk}${PostFix}_pt15_eta      $MASS --xtitle "#eta"  --ytitle "$YTIT";
-            #python tnpEfficiency.py $PDS -d "pt > 15 && $CDEN && abseta < 2.4" -n "$NUM" $OPTS --x-var tag_nVertices $VBINS -N mu_${match}_${tk}${PostFix}_pt15eta24_vtx $MASS --xtitle "N(vertices)" --ytitle "$YTIT";
-            python tnpEfficiency.py $PDS -d "pt > 15 && $CDEN && abseta < 2.4" -n "$NUM" $OPTS --x-var tag_instLumi $LBINS -N mu_${match}_${tk}${PostFix}_pt15eta24_ilumi $MASS --xtitle "Inst. Lumi (1E30)" --ytitle "$YTIT";
-            python tnpEfficiency.py $PDS -d "pt > 15 && $CDEN && abseta < 2.4" -n "$NUM" $OPTS --x-var 0.5 $DBINS -N mu_${match}_${tk}${PostFix}_pt15eta24_one $MASS --xtitle "Inst. Lumi (1E30)" --ytitle "$YTIT";
+            python tnpEfficiency.py $PDS -d "pt > 15 && $CDEN"                 -n "$NUM" $OPTS --x-var abseta $TWOBINS      -N mu_${match}_${tk}${PostFix}_pt15_two      $MASS --xtitle "|#eta|" --ytitle "$YTIT";
+            python tnpEfficiency.py $PDS -d "pt > 15 && $CDEN"                 -n "$NUM" $OPTS --x-var eta $EBINS           -N mu_${match}_${tk}${PostFix}_pt15_eta      $MASS --xtitle "#eta"  --ytitle "$YTIT";
+            python tnpEfficiency.py $PDS -d "pt > 15 && $CDEN && abseta < 2.4" -n "$NUM" $OPTS --x-var tag_nVertices $VBINS -N mu_${match}_${tk}${PostFix}_pt15eta24_vtx $MASS --xtitle "N(vertices)" --ytitle "$YTIT";
+            #python tnpEfficiency.py $PDS -d "pt > 15 && $CDEN && abseta < 2.4" -n "$NUM" $OPTS --x-var tag_instLumi $LBINS -N mu_${match}_${tk}${PostFix}_pt15eta24_ilumi $MASS --xtitle "Inst. Lumi (1E30)" --ytitle "$YTIT";
+            #python tnpEfficiency.py $PDS -d "pt > 15 && $CDEN && abseta < 2.4" -n "$NUM" $OPTS --x-var 0.5 $DBINS -N mu_${match}_${tk}${PostFix}_pt15eta24_one $MASS --ytitle "$YTIT";
         done;
     done;
 done

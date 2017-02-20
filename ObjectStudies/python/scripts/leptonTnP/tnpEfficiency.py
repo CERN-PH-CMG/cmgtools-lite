@@ -831,6 +831,7 @@ def addTnPEfficiencyOptions(parser):
     parser.add_option("--reqname", dest="requestName", type="string", default=None, help="don't do anything unlesshe name (from -N) matches this");
     parser.add_option("-j", "--jobs",    dest="jobs",      type="int",    default=0, help="Use N threads");
     parser.add_option("--pretend", dest="pretend", action="store_true",  default=False, help="Don't run")
+    parser.add_option("-L", "--load", dest="loadLibs", action="append",  type="string", default=[], help="Load the following macro")
 
 if __name__ == "__main__":
     from optparse import OptionParser
@@ -863,6 +864,8 @@ if __name__ == "__main__":
     ROOT.gSystem.Load("libHiggsAnalysisCombinedLimit")
     if "/functions_cc.so" not in ROOT.gSystem.GetLibraries(): 
         ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/TTHAnalysis/python/plotter/functions.cc+" % os.environ['CMSSW_BASE']);
+    for L in options.loadLibs:
+        ROOT.gROOT.ProcessLine(".L %s+" % L);
     ROOT.RooMsgService.instance().setGlobalKillBelow(ROOT.RooFit.ERROR)
     tree = ROOT.TChain(options.tree)
     for fname in args: tree.Add(fname)
@@ -878,8 +881,10 @@ if __name__ == "__main__":
         proof = ROOT.TProof.Open("workers=%d" % options.jobs)
         #os.system("cp %s/src/CMGTools/TTHAnalysis/python/plotter/functions.cc ." % os.environ['CMSSW_BASE']);
         #proof.Load("functions.cc+", True);
-        os.system("cp %s/src/CMGTools/TTHAnalysis/python/plotter/susy-sos/functionsSOS.cc ." % os.environ['CMSSW_BASE']);
-        proof.Load("functionsSOS.cc+");
+        for L in options.loadLibs:
+            if "/" in L:
+                os.system("cp %s . -v" % L);
+            proof.Load(os.path.basename(L)+"+");
         tree.SetProof()
         if reftree: reftree.SetProof()
     effs =  [ makeHistos2D(t,options.num,options.den,options.xvar,options.mvar,options,post=l,reftree=reftree) for (t,l) in trees ]
