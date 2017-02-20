@@ -125,9 +125,12 @@ python samplefile.py checkdecl:
         import PhysicsTools.HeppyCore.framework.config as cfg
         ok = 0
         for name,obj in localobjs.iteritems():
+            if name == "comp": continue # local variable used in loops
             if isinstance(obj, cfg.Component):  
                 if obj not in samples:
                     print "\tERROR: component %s is not added to the samples list " % name
+                elif obj.name != name:
+                    print "\tERROR: component %s has inconsistent name %s " % (name, obj.name)
                 else:
                     ok += 1
         print "\tINFO: %d correctly declared components" % ok
