@@ -55,6 +55,7 @@ class ttHLepMEMFriend:
         self.mem.clear();
 
         for lep in leps[:3]:
+            print "DEBUG: multilepton->FillParticle(\"lepton\", %d, TLorentzVector(%.10g,%.10g,%.10g,%.10g));" %  (lep.pdgId, lep.p4().X(), lep.p4().Y(), lep.p4().Z(), lep.p4().T())
             self.mem.addLepton(lep.p4(), lep.pdgId)
 
         bjets = filter(lambda j : j.btagCSV>self.blooseWP, jets)[:2]
@@ -62,6 +63,7 @@ class ttHLepMEMFriend:
         for j in bjets: 
             #print 'chosen b-jet:',j.pt
             self.mem.addBJet(j.p4(), j.btagCSV)
+            print "DEBUG: multilepton->FillParticle(\"bjet\", 0, %.10g, 0,0,0,0, TLorentzVector(%.10g,%.10g,%.10g,%.10g));" %  (j.btagCSV, j.p4().X(), j.p4().Y(), j.p4().Z(), j.p4().T())
 
         if len(bjets) >= 1:
             nb = "2b" if (len(bjets) >= 2) else "1b"
@@ -76,10 +78,14 @@ class ttHLepMEMFriend:
                     pairs.sort(key = lambda (j1,j2,m) : abs(m-80.419))
                     self.mem.addJet("jetClosestMw", pairs[0][0].p4(), pairs[0][0].btagCSV)
                     self.mem.addJet("jetClosestMw", pairs[0][1].p4(), pairs[0][1].btagCSV)
+                    print "DEBUG: multilepton->FillParticle(\"jetClosestMw\", 0, %.10g, 0,0,0,0, TLorentzVector(%.10g,%.10g,%.10g,%.10g));" %  (pairs[0][0].btagCSV, pairs[0][0].p4().X(), pairs[0][0].p4().Y(), pairs[0][0].p4().Z(), pairs[0][0].p4().T())
+                    print "DEBUG: multilepton->FillParticle(\"jetClosestMw\", 0, %.10g, 0,0,0,0, TLorentzVector(%.10g,%.10g,%.10g,%.10g));" %  (pairs[0][1].btagCSV, pairs[0][1].p4().X(), pairs[0][1].p4().Y(), pairs[0][1].p4().Z(), pairs[0][1].p4().T())
                     #print 'chosen close mw pair:',pairs[0][0].pt,pairs[0][1].pt
                     pairs.sort(key = lambda (j1,j2,m) : m)
                     self.mem.addJet("jetLowestMjj", pairs[0][0].p4(), pairs[0][0].btagCSV)
                     self.mem.addJet("jetLowestMjj", pairs[0][1].p4(), pairs[0][1].btagCSV)
+                    print "DEBUG: multilepton->FillParticle(\"jetLowestMjj\", 0, %.10g, 0,0,0,0, TLorentzVector(%.10g,%.10g,%.10g,%.10g));" %  (pairs[0][0].btagCSV, pairs[0][0].p4().X(), pairs[0][0].p4().Y(), pairs[0][0].p4().Z(), pairs[0][0].p4().T())
+                    print "DEBUG: multilepton->FillParticle(\"jetLowestMjj\", 0, %.10g, 0,0,0,0, TLorentzVector(%.10g,%.10g,%.10g,%.10g));" %  (pairs[0][1].btagCSV, pairs[0][1].p4().X(), pairs[0][1].p4().Y(), pairs[0][1].p4().Z(), pairs[0][1].p4().T())
                     #print 'chosen low mjj pair:',pairs[0][0].pt,pairs[0][1].pt
                     return ([pairs[0][0],pairs[0][1]])
 
@@ -91,12 +97,15 @@ class ttHLepMEMFriend:
                 ljByPt = ljets[:]; ljByPt.sort(key = lambda j : -j.pt)
                 self.mem.addJet("jetHighestPt", ljByPt[0].p4(), ljByPt[0].btagCSV)
                 self.mem.addJet("jetHighestPt", ljByPt[1].p4(), ljByPt[1].btagCSV)
+                print "DEBUG: multilepton->FillParticle(\"jetHighestPt\", 0, %.10g, 0,0,0,0, TLorentzVector(%.10g,%.10g,%.10g,%.10g));" %  (ljByPt[0].btagCSV, ljByPt[0].p4().X(), ljByPt[0].p4().Y(), ljByPt[0].p4().Z(), ljByPt[0].p4().T())
+                print "DEBUG: multilepton->FillParticle(\"jetHighestPt\", 0, %.10g, 0,0,0,0, TLorentzVector(%.10g,%.10g,%.10g,%.10g));" %  (ljByPt[1].btagCSV, ljByPt[1].p4().X(), ljByPt[1].p4().Y(), ljByPt[1].p4().Z(), ljByPt[1].p4().T())
             elif len(ljets)==1:
                 print "CATEGORY: ","3l_"+nb+"_1j"
                 ok = self.mem.setCategory("3l_"+nb+"_1j")
                 if not ok: raise RuntimeError, "Hypothesis not found"
                 #print 'chosen highest pt jet:',jets[2].pt
                 self.mem.addJet("jetHighestPt", ljets[0].p4(), ljets[0].btagCSV)
+                print "DEBUG: multilepton->FillParticle(\"jetHighestPt\", 0, %.10g, 0,0,0,0, TLorentzVector(%.10g,%.10g,%.10g,%.10g));" %  (ljets[0].btagCSV, ljets[0].p4().X(), ljets[0].p4().Y(), ljets[0].p4().Z(), ljets[0].p4().T())
                 #return dict([("MEM_"+p,0) for p in self._procs ]) # FIXME
             elif len(ljets)==0:
                 if (nb == "1b"): return null_output # MEM not implemented for 3l_1b_0j
@@ -115,6 +124,12 @@ class ttHLepMEMFriend:
         print 'met pt %.7f phi %.7f:' % (met, metphi)
         print 'mht %.7f ' % (mht,)
         self.mem.setMET(met4, 1,0,0,1, mht)
+        print "DEBUG: multilepton->mET = TLorentzVector(%.10g,%.10g,%.10g,%.10g);" %  (met4.X(), met4.Y(), met4.Z(), met4.T())
+        print "DEBUG: multilepton->mET_cov00 = 1;" 
+        print "DEBUG: multilepton->mET_cov01 = 1;" 
+        print "DEBUG: multilepton->mET_cov10 = 1;" 
+        print "DEBUG: multilepton->mET_cov11 = 1;" 
+        print "DEBUG: multilepton->mHT = %.10g;" % mht
         
         ret0 = self.mem.compute()
         for pair in ret0:
