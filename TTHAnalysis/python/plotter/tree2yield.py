@@ -189,9 +189,9 @@ class TreeToYield:
         self._elist = None
         self._entries = None
         #print "Done creation  %s for task %s in pid %d " % (self._fname, self._name, os.getpid())
-    def setScaleFactor(self,scaleFactor):
+    def setScaleFactor(self,scaleFactor,mcCorrs=True):
         if (not self._options.forceunweight) and scaleFactor != 1: self._weight = True
-        if self._mcCorrs and scaleFactor and scaleFactor != 1.0:
+        if mcCorrs and self._mcCorrs and scaleFactor and scaleFactor != 1.0:
             # apply MC corrections to the scale factor
             self._scaleFactor = self.adaptExpr(scaleFactor, cut=True)
         else:

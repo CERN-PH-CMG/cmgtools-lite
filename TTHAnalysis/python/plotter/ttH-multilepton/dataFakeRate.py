@@ -45,6 +45,7 @@ def addBbB(tlist,ycutoff,relcutoff,verbose=False):
     ret = []
     ref = tlist.At(0)
     ytot = ref.Integral()
+    if (ytot == 0): return ret
     for b in xrange(1,ref.GetNbinsX()+1):
         y, e = ref.GetBinContent(b), ref.GetBinError(b)
         if y/ytot < ycutoff: continue
@@ -481,8 +482,17 @@ if __name__ == "__main__":
                     minim.setPrintLevel(-1); minim.setStrategy(0);
                     minim.minimize("Minuit2","migrad");
                     nll0 = nll.getVal(); f0 = var.getVal()
-                    bounds = []
-                    for x1,x2 in ((f0,f0-4*var.getError()), (f0,f0+4*var.getError())):
+                    bounds = []; search = []
+                    if f0 > 0: search.append((f0,max(0,f0-4*var.getError())))
+                    if f0 < 0: search.append((f0,min(1,f0+4*var.getError())))
+                    for x1,x2 in search:
+                        for iTry in xrange(10):
+                            var.setVal(x2)
+                            minim.minimize("Minuit2","migrad");
+                            y2 = 2*(nll.getVal()-nll0)
+                            if y2 > 1: break
+                            if x2 > x1: x2 = min((x2+1)/2, x2+(x2-x1))
+                            else:       x2 = max((x2+0)/2, x2-(x1-x2))
                         while abs(x1-x2) > 0.0005:
                             xc = 0.5*(x1+x2)
                             var.setVal(xc)
