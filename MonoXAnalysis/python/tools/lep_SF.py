@@ -9,20 +9,18 @@ class Lep_SF_one:
             h2d = h.Clone("Lep_one_"+h.GetName())
             h2d.SetDirectory(None)
             self.hists.append(h2d)
-            # all the hists need to have the same range, take the last one
-            self.xmin = h.GetXaxis().GetXmin()+1e-3
-            self.xmax = h.GetXaxis().GetXmax()-1e-3
-            self.ymin = h.GetYaxis().GetXmin()+1e-3
-            self.ymax = h.GetYaxis().GetXmax()-1e-3
     def fetch(self,pt,eta,pdgid):
-        if abs(pdgid)==11:
-            xbin = self.hists[0].GetXaxis().FindBin(min(max(eta,self.xmin),self.xmax))
-            ybin = self.hists[0].GetYaxis().FindBin(min(max(pt,self.ymin),self.ymax))
-        else:
-            xbin = self.hists[0].GetXaxis().FindBin(min(max(pt,self.xmin),self.xmax))
-            ybin = self.hists[0].GetYaxis().FindBin(min(max(abs(eta),self.ymin),self.ymax))
         sfone = 1.0
         for h2d in self.hists:
+            xmin = h2d.GetXaxis().GetXmin()+1e-3
+            xmax = h2d.GetXaxis().GetXmax()-1e-3
+            ymin = h2d.GetYaxis().GetXmin()+1e-3
+            ymax = h2d.GetYaxis().GetXmax()-1e-3
+            ybin = h2d.GetYaxis().FindBin(min(max(pt,ymin),ymax))
+            if abs(pdgid)==11:
+                xbin = h2d.GetXaxis().FindBin(min(max(eta,xmin),xmax))
+            else:
+                xbin = h2d.GetXaxis().FindBin(min(max(abs(eta),xmin),xmax))
             sfone *= h2d.GetBinContent(xbin,ybin)
         return sfone
     def __call__(self,lepton):        
@@ -32,9 +30,9 @@ class Lep_SF_both:
     def __init__(self,hists_el,hists_mu):
         thists_el = [hists_el[0].Get("EGamma_SF2D")]
         thists_mu = []
-        thists_mu.append(hists_mu[0].Get("Lep_effIsoMu24_OR_IsoTkMu24_PtEtaBins_abseta_pt_ratio"))
-        thists_mu.append(hists_mu[1].Get("Lep_effMC_NUM_TightID_DEN_genTracks_PAR_pt_eta_abseta_pt_ratio"))
-        thists_mu.append(hists_mu[2].Get("Lep_effTightISO_TightID_pt_eta_abseta_pt_ratio"))
+        thists_mu.append(hists_mu[0].Get("Lep_eff_IsoMu24_OR_IsoTkMu24_PtEtaBins_abseta_pt_ratio"))
+        thists_mu.append(hists_mu[1].Get("Lep_eff_MC_NUM_TightID_DEN_genTracks_PAR_pt_eta_abseta_pt_ratio"))
+        thists_mu.append(hists_mu[2].Get("Lep_eff_TightISO_TightID_pt_eta_abseta_pt_ratio"))
         self.sf_el = Lep_SF_one(thists_el)
         self.sf_mu = Lep_SF_one(thists_mu)
     def __call__(self,lepton):

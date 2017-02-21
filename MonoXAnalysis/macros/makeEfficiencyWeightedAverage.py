@@ -17,7 +17,7 @@ class effWeighter:
         for i,f in enumerate(self.files):
             weight = self.luminosities[i]/lumi_tot
             print "weight for chunk ",i," = ",weight
-            h = f.Get(self.hname).Clone(("Lep_eff"+self.hname).replace("/","_"))
+            h = f.Get(self.hname).Clone(("Lep_eff_"+self.hname).replace("/","_"))
             f.Close()
             hweight.Add(h,weight)
         self.tout.WriteTObject(hweight.Clone())
