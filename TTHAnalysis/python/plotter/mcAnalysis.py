@@ -148,7 +148,14 @@ class MCAnalysis:
             variations=[]
             if self.variationsFile:
                 for var in self.variationsFile.uncertainty():
-                    if var.procmatch().match(pname) and var.binmatch().match(options.binname): variations.append(var)
+                    if var.procmatch().match(pname) and var.binmatch().match(options.binname): 
+                        print "Variation %s enabled for process %s" % (var, pname)
+                        variations.append(var)
+                if 'NormSystematic' in extra:
+                    del extra['NormSystematic']
+                    if pname not in getattr(options, '_warning_NormSystematic_variationsFile',[]):
+                       options._warning_NormSystematic_variationsFile = [pname] + getattr(options, '_warning_NormSystematic_variationsFile',[])
+                       print "Using both a NormSystematic and a variationFile is not supported. Will disable the NormSystematic for process %s" % pname
             if 'NormSystematic' in extra:
                 variations.append(Uncertainty('norm_%s'%pname,re.compile(pname+'$'),re.compile(options.binname+'$'),'normSymm',[{'NormFactor': 1+float(extra['NormSystematic'])}]))
                 if not hasattr(options, '_deprecation_warning_NormSystematic'):

@@ -8,12 +8,13 @@ from copy import *
 from CMGTools.TTHAnalysis.plotter.fakeRate import *
 
 class Uncertainty:
-    def __init__(self,name,procmatch,binmatch,unc_type,extra_args={}):
+    def __init__(self,name,procmatch,binmatch,unc_type,more_args=None,extra=None,options=None):
         self.name = name
         self._procmatch = procmatch
         self._binmatch = binmatch
         self.unc_type = unc_type
-        self.extra_args = extra_args
+        self.args = list(more_args) if more_args else []
+        self.extra = dict(extra) if extra else {}
         self.fakerate = [FakeRate(''),FakeRate('')]
         self.fakerate[0]._weight = '1'
         self.fakerate[1]._weight = '1'
@@ -24,36 +25,37 @@ class Uncertainty:
     def prepFR(self):
 
         if self.unc_type=='templateAsymm':
-            for idx in xrange(2):
-                if 'FakeRate' in self.extra_args[idx]:
-                    self.fakerate[idx] = FakeRate(self.extra_args[idx]['FakeRate'])
-                if 'AddWeight' in self.extra_args[idx]:
-                    self.fakerate[idx]._weight = '(%s)*(%s)'%(self.fakerate[idx]._weight,self.extra_args[idx]['AddWeight'])
-
+            if 'FakeRates' in self.extra:
+                for idx in xrange(2):
+                    self.fakerate[idx] = FakeRate(self.extra_args['FakeRates'][idx])
+            if 'AddWeights' in self.extra[idx]:
+                for idx in xrange(2):
+                    self.fakerate[idx]._weight = '(%s)*(%s)'%(self.fakerate[idx]._weight,self.extra_args['AddWeights'][idx])
+            if 'FakeRates' not in self.extra and 'AddWeights' not in self.extra:
+                raise RuntimeError("templateAsym requires at least one of FakeRates=['fname1','fname2'] or AddWeights=['expr1','expr2']")
         elif self.unc_type=='templateSymm':
             self.fakerate[1] = None
             self.trivialFunc[1] = 'symmetrize_up_to_dn'
-            idx=0
-            if 'FakeRate' in self.extra_args[idx]:
-                self.fakerate[idx] = FakeRate(self.extra_args[idx]['FakeRate'])
-            if 'AddWeight' in self.extra_args[idx]:
-                self.fakerate[idx]._weight = '(%s)*(%s)'%(self.fakerate[idx]._weight,self.extra_args[idx]['AddWeight'])
-
+            if 'FakeRate' in self.extra:
+                self.fakerate[0] = FakeRate(self.extra_args[idx]['FakeRate'])
+            if 'AddWeight' in self.extra:
+                self.fakerate[0]._weight = '(%s)*(%s)'%(self.fakerate[idx]._weight,self.extra_args[idx]['AddWeight'])
+            if 'FakeRate' not in self.extra and 'AddWeight' not in self.extra:
+                raise RuntimeError("templateAsym requires at least one of FakeRate='fname' or AddWeight='expr'")
         elif self.unc_type=='normAsymm':
+            if len(self.args) != 2:
+                raise RuntimeError("normAsymm requires two arguments: low and high")
             self.fakerate = [None,None]
             self.trivialFunc = ['apply_norm_up','apply_norm_dn']
             for idx in xrange(2):
-                if 'NormFactor' in self.extra_args[idx]: self.normUnc[idx] = float(self.extra_args[idx]['NormFactor'])
-                else: self.normUnc[idx] = 1
-
+                self.normUnc[idx] = float(self.args[1-idx])
         elif self.unc_type=='normSymm':
+            if len(self.args) != 1:
+                raise RuntimeError("normAsymm requires one argument")
             self.fakerate = [None,None]
             self.trivialFunc = ['apply_norm_up','apply_norm_dn']
-            idx=0
-            if 'NormFactor' in self.extra_args[idx]:
-                self.normUnc[idx] = float(self.extra_args[idx]['NormFactor'])
-                self.normUnc[1] = 1.0/self.normUnc[0]
-            
+            self.normUnc[0] = float(self.args[0])
+            self.normUnc[1] = 1.0/self.normUnc[0]
         else: raise RuntimeError, 'Uncertainty type not recognised'
             
     def isTrivial(self,sign):
@@ -118,16 +120,17 @@ class UncertaintyFile:
                 (name, procmatch, binmatch, unc_type) = field[:4]
                 procmatch = re.compile(procmatch+'$')
                 binmatch = re.compile(binmatch+'$')
-
-                def getSettings(_this_f):
-                    extra = {}
-                    for setting in [f.replace(';',',').strip() for f in _this_f.replace('\\,',';').split(',')]:
-                        if "=" in setting:
+                more_args = field[4:]
+                extra = {}
+                if ";" in line:
+                    (line,more) = line.split(";")[:2]
+                    more = more.replace("\\,",";")
+                    for setting in [f.strip().replace(";",",") for f in more.split(',')]:
+                        if "=" in setting: 
                             (key,val) = [f.strip() for f in setting.split("=")]
                             extra[key] = eval(val)
                         else: extra[setting] = True
-                    return extra
-                self._uncertainty.append(Uncertainty(name,procmatch,binmatch,unc_type,[getSettings(_f) for _f in field[4:]]))
+                self._uncertainty.append(Uncertainty(name,procmatch,binmatch,unc_type,more_args,extra))
 
               except ValueError, e:
                 print "Error parsing cut line [%s]" % line.strip()
