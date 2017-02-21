@@ -149,7 +149,7 @@ class MCAnalysis:
             if self.variationsFile:
                 for var in self.variationsFile.uncertainty():
                     if var.procmatch().match(pname) and var.binmatch().match(options.binname): 
-                        print "Variation %s enabled for process %s" % (var, pname)
+                        #print "Variation %s enabled for process %s" % (var, pname)
                         variations.append(var)
                 if 'NormSystematic' in extra:
                     del extra['NormSystematic']

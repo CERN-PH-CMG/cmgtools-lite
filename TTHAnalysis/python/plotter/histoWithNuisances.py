@@ -31,10 +31,11 @@ class HistoWithNuisances:
         return self.nominal
     def sumSystUncertainties(self,toadd=None):
         # in each bin, this does max/min of (central,up,down) of each variation and then sums in quadrature upward and downward shifts
-        if not toadd: toadd = list(self.variations.keys())
+        if toadd == None: toadd = list(self.variations.keys())
         if "TH" not in self.ClassName(): raise RuntimeError, 'Cannot compute systematic uncertainty for scatter plot'
         hempty = self.raw().Clone(''); hempty.Reset();
         hvars={}
+        # compute up envelope and down envelope for all variations
         for var in toadd:
             hvarup = hempty.Clone('')
             hvardn = hempty.Clone('')
@@ -49,6 +50,7 @@ class HistoWithNuisances:
                         hvarup.SetBinContent(b1,b2,max(self.GetBinContent(b1,b2),hup.GetBinContent(b1,b2),hdn.GetBinContent(b1,b2))-self.GetBinContent(b1,b2))
                         hvardn.SetBinContent(b1,b2,self.GetBinContent(b1,b2)-min(self.GetBinContent(b1,b2),hup.GetBinContent(b1,b2),hdn.GetBinContent(b1,b2)))
             hvars[var]=[hvarup,hvardn]
+        # sum in quadrature all the up envelopes and down envelopes
         htotup = hempty.Clone(self.GetName()+'_systUp')
         htotdn = hempty.Clone(self.GetName()+'_systDn')
         if 'TH1' in self.ClassName():
@@ -61,6 +63,21 @@ class HistoWithNuisances:
                     htotup.SetBinContent(b1,b2,self.GetBinContent(b1,b2)+sqrt(sum(map(lambda x: (hvars[x][0].GetBinContent(b1,b2))**2, hvars))))
                     htotdn.SetBinContent(b1,b2,self.GetBinContent(b1,b2)-sqrt(sum(map(lambda x: (hvars[x][1].GetBinContent(b1,b2))**2, hvars))))
         return [htotup,htotdn]
+    def integralSystError(self,toadd=None,relative=False,symmetrize=True,cropAtZero=True):
+        i0 = self.raw().Integral()
+        if relative and i0 == 0: return (0,0) if symmetrize else 0
+        if toadd == None: toadd = list(self.variations.keys())
+        if "TH" not in self.ClassName(): raise RuntimeError, 'Cannot compute systematic uncertainty for scatter plot'
+        iup2, idown2 = 0., 0.
+        for var in toadd:
+            shifts = [self.variations[var][i].Integral()-i0 for i in (0,1)]
+            iup2   += max(0, max(shifts))**2
+            idown2 += max(0,-min(shifts))**2
+        iup, idown = sqrt(iup2), sqrt(idown2)
+        if cropAtZero: idown = min(idown,i0)
+        if relative:
+            iup /= i0; idown /= i0
+        return sqrt(0.5*(iup**2+idown**2)) if symmetrize else (-idown,iup)
     def graphAsymmTotalErrors(self,toadd=None,relative=False):
         h = self.raw()
         hup, hdn = self.sumSystUncertainties(toadd)
@@ -71,8 +88,8 @@ class HistoWithNuisances:
             dN = h.GetBinError(i+1)
             if N == 0 and (dN == 0 or relative): continue
             x = xaxis.GetBinCenter(i+1);
-            EYlow = hypot(N-min(N,hup.GetBinContent(i+1),hdn.GetBinContent(i+1)),dN)
-            EYhigh = hypot(max(N,hup.GetBinContent(i+1),hdn.GetBinContent(i+1))-N,dN)
+            EYlow = hypot(N-hdn.GetBinContent(i+1),dN)
+            EYhigh = hypot(hup.GetBinContent(i+1)-N,dN)
             EXhigh, EXlow = (xaxis.GetBinUpEdge(i+1)-x, x-xaxis.GetBinLowEdge(i+1))
             if relative:
                 errors.append( (EXlow,EXhigh,EYlow/N,EYhigh/N) )
