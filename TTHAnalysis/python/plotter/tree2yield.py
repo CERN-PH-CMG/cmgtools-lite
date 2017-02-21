@@ -18,6 +18,7 @@ from copy import *
 from CMGTools.TTHAnalysis.plotter.cutsFile import *
 from CMGTools.TTHAnalysis.plotter.mcCorrections import *
 from CMGTools.TTHAnalysis.plotter.fakeRate import *
+from CMGTools.TTHAnalysis.plotter.uncertaintyFile import *
 
 if "/functions_cc.so" not in ROOT.gSystem.GetLibraries(): 
     ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/TTHAnalysis/python/plotter/functions.cc+" % os.environ['CMSSW_BASE']);
@@ -133,20 +134,22 @@ def cropNegativeBins(histo):
 
 
 class TreeToYield:
-    def __init__(self,root,options,scaleFactor=1.0,name=None,cname=None,settings={},objname=None):
+    def __init__(self,root,options,scaleFactor=1.0,name=None,cname=None,settings={},objname=None,variation_inputs=[]):
         self._name  = name  if name != None else root
         self._cname = cname if cname != None else self._name
         self._fname = root
         self._isInit = False
         self._options = options
         self._objname = objname if objname else options.obj
-        self._weight  = (options.weight and 'data' not in self._name and '2012' not in self._name and '2011' not in self._name )
+        self._weight  = (options.weight and 'data' not in self._name )
         self._isdata = 'data' in self._name
         self._weightString  = options.weightString if not self._isdata else "1"
         self._scaleFactor = scaleFactor
         self._fullYield = 0 # yield of the full sample, as if it passed the full skim and all cuts
         self._fullNevt = 0 # number of events of the full sample, as if it passed the full skim and all cuts
         self._settings = settings
+        self._isVariation = None
+        self._variations = []
         loadMCCorrections(options)            ## make sure this is loaded
         self._mcCorrs = globalMCCorrections() ##  get defaults
         if 'SkipDefaultMCCorrections' in settings: ## unless requested to 
@@ -169,18 +172,13 @@ class TreeToYield:
         if self._mcCorrs and self._scaleFactor and self._scaleFactor != 1.0:
             # apply MC corrections to the scale factor
             self._scaleFactor = self.adaptExpr(self._scaleFactor, cut=True)
+        self._mcCorrsInit = self._mcCorrs[:]
+        self._weightString = self.adaptExpr(self._weightString, cut=True)
         if 'FakeRate' in settings:
             self._FR = FakeRate(settings['FakeRate'],self._options.lumi)
-            ## add additional weight correction.
-            ## note that the weight receives the other mcCorrections, but not itself
-            frweight = self.adaptExpr(self._FR.weight(), cut=True)
-            ## modify cuts to get to control region. order is important
-            self._mcCorrs = self._mcCorrs + self._FR.cutMods()  + self._FR.mods()
-            self._weightString = self.adaptExpr(self._weightString, cut=True) + "* (" + frweight + ")"
-            self._weight = True
+            self.applyFR(self._FR)
         else:
-            self._weightString = self.adaptExpr(self._weightString, cut=True)
-        if self._options.forceunweight: self._weight = False
+            if self._options.forceunweight: self._weight = False
         for macro in self._options.loadMacro:
             libname = macro.replace(".cc","_cc.so").replace(".cxx","_cxx.so")
             if libname not in ROOT.gSystem.GetLibraries():
@@ -189,8 +187,36 @@ class TreeToYield:
         self._elist = None
         self._entries = None
         #print "Done creation  %s for task %s in pid %d " % (self._fname, self._name, os.getpid())
+        for _var in variation_inputs:
+            self._variations.append(_var)
+    def getVariations(self):
+        return self._variations
+    def getTTYVariations(self):
+        ttys = []
+        for var in self.getVariations():
+            for direction in ['up','dn']:
+                tty2 = copy(self)
+                tty2._name = tty2._name + '_%s_%s'%(var.name,direction)
+                tty2._isVariation = (var,direction)
+                tty2._variations = []
+                tty2.applyFR(var.getFR(direction))
+                ttys.append((var,direction,tty2))
+        return ttys
+    def isVariation(self):
+        return self._isVariation
+    def applyFR(self,FR):
+        if FR==None: return
+        ## add additional weight correction.
+        ## note that the weight receives the other mcCorrections, but not itself
+        frweight = self.adaptExpr(FR.weight(), cut=True, mcCorrList=self._mcCorrsInit)
+        ## modify cuts to get to control region. order is important
+        self._weightString = self.adaptExpr(self._weightString, cut=True, mcCorrList=(FR.cutMods()+FR.mods())) + "* (" + frweight + ")"
+        self._mcCorrs = self._mcCorrs[:] + FR.cutMods()  + FR.mods()
+        self._weight = True
+        if self._options.forceunweight: self._weight = False
     def setScaleFactor(self,scaleFactor,mcCorrs=True):
-        if (not self._options.forceunweight) and scaleFactor != 1: self._weight = True
+        if (not self._options.forceunweight) and scaleFactor != 1: 
+            self._weight = True
         if mcCorrs and self._mcCorrs and scaleFactor and scaleFactor != 1.0:
             # apply MC corrections to the scale factor
             self._scaleFactor = self.adaptExpr(scaleFactor, cut=True)
@@ -220,9 +246,10 @@ class TreeToYield:
         else:
             ret = re.sub(r'\$DATA\{.*?\}', '', re.sub(r'\$MC\{(.*?)\}', r'\1', expr));
         return ret
-    def adaptExpr(self,expr,cut=False):
+    def adaptExpr(self,expr,cut=False,mcCorrList=None):
+        _mcCorrList = mcCorrList if mcCorrList else self._mcCorrs
         ret = self.adaptDataMCExpr(expr)
-        for mcc in self._mcCorrs:
+        for mcc in _mcCorrList:
             ret = mcc(ret,self._name,self._cname,cut)
         return ret
     def _init(self):
@@ -417,6 +444,7 @@ class TreeToYield:
         return cut
     def getPlotRaw(self,name,expr,bins,cut,plotspec,fsplit=None,closeTreeAfter=False):
         unbinnedData2D = plotspec.getOption('UnbinnedData2D',False) if plotspec != None else False
+        perPlotCut = plotspec.getOption('CutString',None) if plotspec != None else None
         if not self._isInit: self._init()
         if self._appliedCut != None:
             if cut != self._appliedCut: 
@@ -427,7 +455,7 @@ class TreeToYield:
                 self._tree.SetEntryList(self._elist)
                 #self._tree.SetEventList(self._elist)
         #print "for %s, %s, does my tree have an elist? %s " % ( self._name, self._cname, "yes" if self._tree.GetEntryList() else "no" )
-        cut = self.getWeightForCut(cut)
+        cut = self.getWeightForCut('(%s)*(%s)'%(cut,perPlotCut) if perPlotCut else cut)
         expr = self.adaptExpr(expr)
         if self._options.doS2V:
             cut  = scalarToVector(cut)
@@ -565,6 +593,7 @@ def addTreeToYieldOptions(parser):
     parser.add_option("--max-entries",     dest="maxEntries", default=1000000000, type="int", help="Max entries to process in each tree") 
     parser.add_option("-L", "--load-macro",  dest="loadMacro",   type="string", action="append", default=[], help="Load the following macro, with .L <file>+");
 
+
 def mergeReports(reports):
     import copy
     one = copy.deepcopy(reports[0])
@@ -577,17 +606,5 @@ def mergeReports(reports):
             one[i][1][2] += x[2]
     for i,(c,x) in enumerate(one):
         one[i][1][1] = sqrt(one[i][1][1])
-    return one
-
-def mergePlots(name,plots):
-    one = plots[0].Clone(name)
-    if "TGraph" in one.ClassName():
-        others = ROOT.TList()
-        for two in plots[1:]: 
-            others.Add(two)
-        one.Merge(others)
-    else:         
-        for two in plots[1:]: 
-            one.Add(two)
     return one
 

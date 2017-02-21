@@ -16,6 +16,7 @@ class FakeRate:
         self._mods = []
         self._cutMods = []
         for file in files:
+            if file=='': continue
             stream = open(file,'r')
 	    for line in stream:
 	        if len(line.strip()) == 0 or line.strip()[0] == '#': continue
