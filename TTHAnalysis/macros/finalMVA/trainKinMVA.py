@@ -258,14 +258,14 @@ def train_2d(fOutName, training, options):
         ]
     if '2lss' in training and 'ttbar' in training:
         variables += [
-            "met := min(met_pt, 400)",
-            "avg_dr_jet : = avg_dr_jet",
+#            "met := min(met_pt, 400)",
+#            "avg_dr_jet : = avg_dr_jet",
         ]
         dsets += [
-            ('TTJets_SingleLeptonFromT',        'Background', 0.1),
-            ('TTJets_SingleLeptonFromTbar',     'Background', 0.1),
-            ('TTJets_SingleLeptonFromT_ext',    'Background', 0.9),
-            ('TTJets_SingleLeptonFromTbar_ext', 'Background', 0.9),
+            ('TTJets_SingleLeptonFromT',        'Background', 0.2),
+            ('TTJets_SingleLeptonFromTbar',     'Background', 0.2),
+            ('TTJets_SingleLeptonFromT_ext',    'Background', 0.8),
+            ('TTJets_SingleLeptonFromTbar_ext', 'Background', 0.8),
         ]
 
 
@@ -290,16 +290,18 @@ def train_2d(fOutName, training, options):
                 ]
     if '3l' in training and 'ttbar' in training:
         variables += [
-            "mhtJet25 := mhtJet25_Recl",
-            "avg_dr_jet : = avg_dr_jet",
+#            "mhtJet25 := mhtJet25_Recl",
+#            "avg_dr_jet : = avg_dr_jet",
         ]
         dsets += [
-            ('TTJets_DiLepton',            'Background', 1),
-#            ('TTJets_DiLepton_ext_skim3l', 'Background', 0.9),
-            ('TTJets_SingleLeptonFromT',        'Background', 0.1),
-            ('TTJets_SingleLeptonFromTbar',     'Background', 0.1),
-            ('TTJets_SingleLeptonFromT_ext',    'Background', 0.9),
-            ('TTJets_SingleLeptonFromTbar_ext', 'Background', 0.9),
+            ('TTJets_DiLepton',            'Background', 1.0/6),
+            ('TTJets_DiLepton_ext_part1',            'Background', 2.0/6),
+            ('TTJets_DiLepton_ext_part2',            'Background', 2.0/6),
+            ('TTJets_DiLepton_ext_part3',            'Background', 1.0/6),
+            ('TTJets_SingleLeptonFromT',        'Background', 0.2),
+            ('TTJets_SingleLeptonFromTbar',     'Background', 0.2),
+            ('TTJets_SingleLeptonFromT_ext',    'Background', 0.8),
+            ('TTJets_SingleLeptonFromTbar_ext', 'Background', 0.8),
         ]
 
     if 'bdtv8_bestchoice' in training:
@@ -358,7 +360,7 @@ def train_2d(fOutName, training, options):
     if 'hj_value' in training:
         variables += [
             'BDTv8_eventReco_Hj_score := max(-1.1,BDTv8_eventReco_Hj_score)',
-            'BDTv8_eventReco_Hjj_score := max(-1.1,BDTv8_eventReco_Hjj_score)',
+#            'BDTv8_eventReco_Hjj_score := max(-1.1,BDTv8_eventReco_Hjj_score)',
             ]
 
     outname = fOutName+'_'+training+'.root'

@@ -1,3 +1,4 @@
+#define __BLOOSE__WORKING__POINT__ 0.5426
 #define __BMEDIUM__WORKING__POINT__ 0.8484
 
 #include <vector>
@@ -332,10 +333,10 @@ std::vector<float> BDTv8_eventReco::CalcHadTopTagger(char* _permlep, char* _x){
 	//      BDTv8_eventReco_Jet *wjet2_fromHadTop = ((int)(_x[3])>=0) ? jets[(int)(_x[3])] : nulljet;
       
 	if (bjet_fromHadTop==nulljet && bjet_fromLepTop==nulljet) return std::vector<float>(1,this_hadTop_value);
-	if (nBMedium>1 && std::min(bjet_fromHadTop->csv,bjet_fromLepTop->csv)<0.8) return std::vector<float>(1,this_hadTop_value);
-	if (bjet_fromHadTop->csv>0 && bjet_fromHadTop->csv<0.46) return std::vector<float>(1,this_hadTop_value);
-	if (bjet_fromLepTop->csv>0 && bjet_fromLepTop->csv<0.46) return std::vector<float>(1,this_hadTop_value);
-	if (std::max(bjet_fromHadTop->csv,bjet_fromLepTop->csv)<0.80 && std::min(bjet_fromHadTop->csv,bjet_fromLepTop->csv)<0.46) return std::vector<float>(1,this_hadTop_value);
+	if (nBMedium>1 && std::min(bjet_fromHadTop->csv,bjet_fromLepTop->csv)<__BMEDIUM__WORKING__POINT__) return std::vector<float>(1,this_hadTop_value);
+	if (bjet_fromHadTop->csv>0 && bjet_fromHadTop->csv<__BLOOSE__WORKING__POINT__) return std::vector<float>(1,this_hadTop_value);
+	if (bjet_fromLepTop->csv>0 && bjet_fromLepTop->csv<__BLOOSE__WORKING__POINT__) return std::vector<float>(1,this_hadTop_value);
+	if (std::max(bjet_fromHadTop->csv,bjet_fromLepTop->csv)<__BMEDIUM__WORKING__POINT__ && std::min(bjet_fromHadTop->csv,bjet_fromLepTop->csv)<__BLOOSE__WORKING__POINT__) return std::vector<float>(1,this_hadTop_value);
 
 	auto hadTop_W = CalcJetComb(&done_jetcomb,_x[2],_x[3]);
 	auto hadTop = CalcJetComb(&done_jetcomb,_x[2],_x[3],_x[0]);
