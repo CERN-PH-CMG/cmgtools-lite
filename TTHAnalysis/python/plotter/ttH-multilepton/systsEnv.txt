@@ -5,11 +5,19 @@ lumi_13TeV_2016		: ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .* : 1.026
 CMS_ttHl_lepEff_muloose : ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .*2lss_mm.* : 1.04
 CMS_ttHl_lepEff_muloose : ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .*2lss_em.* : 1.02
 CMS_ttHl_lepEff_muloose : ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .*3l.* : 1.03
+CMS_ttHl_lepEff_muloose : ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .*4l.* : 1.04
 
 CMS_ttHl_lepEff_elloose : ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .* : elLooseUnc : templates
 
-CMS_ttHl_lepEff_tight  	: ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .*2lss.* : 1.06
-CMS_ttHl_lepEff_tight  	: ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .*3l.* : 1.09
+CMS_ttHl_lepEff_mutight : ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .*2lss_mm.* : 1.06
+CMS_ttHl_lepEff_mutight : ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .*2lss_em.* : 1.03
+CMS_ttHl_lepEff_mutight : ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .*3l.* : 1.04
+CMS_ttHl_lepEff_mutight : ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .*4l.* : 1.06
+
+CMS_ttHl_lepEff_eltight : ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .*2lss_ee.* : 1.06
+CMS_ttHl_lepEff_eltight : ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .*2lss_em.* : 1.03
+CMS_ttHl_lepEff_eltight : ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .*3l.* : 1.04
+CMS_ttHl_lepEff_eltight : ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .*4l.* : 1.06
 
 ### todo: replace with tau veto efficiency
 #CMS_ttHl_tauID		: ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .*2lss_1tau.* : 1.1
@@ -19,6 +27,7 @@ CMS_ttHl16_trigger_ee	: ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .*2lss_ee.* : 1.02
 CMS_ttHl16_trigger_em	: ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .*2lss_em.* : 1.01
 CMS_ttHl16_trigger_mm	: ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .*2lss_mm.* : 1.01
 CMS_ttHl16_trigger_3l	: ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .*3l.* : 1.03
+CMS_ttHl16_trigger_3l	: ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .*4l.* : 1.03
 
 # JES
 CMS_ttHl_JES		: ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .* : jec : templates
@@ -37,7 +46,7 @@ CMS_ttHl_btag_cErr2	: ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .* : bTag_cErr2 	: t
 CMS_ttHl16_templstat 	: ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs|data_fakes|data_flips : .* : 1.0 : stat_foreach_shape_bins : .*
 
 # Diboson background
-CMS_ttHl16_WZ_stat : WZ : .*3l.* : 1.1
+CMS_ttHl_WZ_stat : WZ : .*3l.* : 1.1
 CMS_ttHl_WZ_bkgs : WZ : .*3l.* : 1.2
 CMS_ttHl_WZ_btag : WZ : .*3l_bl.* : 1.1
 CMS_ttHl_WZ_btag : WZ : .*3l_bt.* : 1.4
@@ -46,7 +55,7 @@ CMS_ttHl_WZ_4j : WZ : .*2lss.* : 2.0
 
 # Other normalizations
 CMS_ttHl_Rares		: Rares|Gstar|WWss : .* : 1.5
-CMS_ttHl_Convs		: Convs : .* : 1.3 # unused at the moment (convs from FR)
+CMS_ttHl_Convs		: Convs : .* : 1.3
 
 
 # common theoretical uncertainties (fully correlated everywhere)
@@ -85,20 +94,33 @@ CMS_ttHl_FRm_pt	  : data_fakes  : .* : FRm_pt 	: templatesShapeOnly
 CMS_ttHl_FRm_b	  : data_fakes  : .* : FRm_b 	: templatesShapeOnly
 CMS_ttHl_FRm_ec	  : data_fakes  : .* : FRm_ec 	: templatesShapeOnly
 
+
+# 3l uncertainties not checked, to be updated
+
 # 3) Closure: QCD vs. TT fake rate, normalization
-CMS_ttHl_Clos_e_norm : data_fakes  : .*2lss_ee.* : 0.9
-CMS_ttHl_Clos_e_norm : data_fakes  : .*2lss_em.* : 0.95
-CMS_ttHl_Clos_e_norm : data_fakes  : .*3l.*      : 0.95
-CMS_ttHl_Clos_m_norm : data_fakes  : .*2lss_mm.* : 1.2
-CMS_ttHl_Clos_m_norm : data_fakes  : .*2lss_em.* : 1.1
-CMS_ttHl_Clos_m_norm : data_fakes  : .*3l.*      : 1.1
+CMS_ttHl_Clos_e_bl_norm : data_fakes : .*2lss_ee.* : 1.1
+CMS_ttHl_Clos_e_bl_norm : data_fakes : .*2lss_em_bl.* : 1.06
+CMS_ttHl_Clos_e_bl_norm : data_fakes : .*3l_bl.* : 1.1
+CMS_ttHl_Clos_e_bt_norm : data_fakes : .*2lss_ee.* : 1.2
+CMS_ttHl_Clos_e_bt_norm : data_fakes : .*2lss_em_bt.* : 1.4
+CMS_ttHl_Clos_e_bt_norm : data_fakes : .*3l_bt.* : 1.5
+CMS_ttHl_Clos_m_bl_norm : data_fakes : .*2lss_mm.* : 1.1
+CMS_ttHl_Clos_m_bl_norm : data_fakes : .*2lss_em_bl.* : 1.06
+CMS_ttHl_Clos_m_bl_norm : data_fakes : .*3l_bl.* : 1.1
+CMS_ttHl_Clos_m_bt_norm : data_fakes : .*2lss_mm.* : 1.3
+CMS_ttHl_Clos_m_bt_norm : data_fakes : .*2lss_em.* : 1.1
+CMS_ttHl_Clos_m_bt_norm : data_fakes : .*3l_bt.* : 1.2
+
 # 4) Closure: QCD vs. TT fake rate, shape
-CMS_ttHl_Clos_e_shape : data_fakes  : .*2lss_ee.* : 1.0 : shapeOnly2D_1.05X_1.15Y
-CMS_ttHl_Clos_e_shape : data_fakes  : .*2lss_em.* : 1.0 : shapeOnly2D_1.03X_1.10Y
-CMS_ttHl_Clos_e_shape : data_fakes  : .*3l.*      : 1.0 : shapeOnly2D_1.05X_1.05Y
-CMS_ttHl_Clos_m_shape : data_fakes  : .*2lss_mm.* : 1.0 : shapeOnly2D_1.05X_1.10Y
-CMS_ttHl_Clos_m_shape : data_fakes  : .*2lss_em.* : 1.0 : shapeOnly2D_1.03X_1.15Y
-CMS_ttHl_Clos_m_shape : data_fakes  : .*3l.*      : 1.0 : shapeOnly2D_1.05X_1.05Y
+CMS_ttHl_Clos_e_bl_shape : data_fakes  : .*2lss_ee.* : 1.0 : shapeOnly2D_0.71X_1.60Y
+CMS_ttHl_Clos_e_bl_shape : data_fakes  : .*2lss_em_bl.* : 1.0 : shapeOnly2D_0.67X_1.50Y
+CMS_ttHl_Clos_e_bt_shape : data_fakes  : .*2lss_em_bt.* : 1.0 : shapeOnly2D_1.10X_1.30Y
+CMS_ttHl_Clos_e_bl_shape : data_fakes  : .*3l.*      	: 1.0 : shapeOnly2D_0.71X_1.50Y
+CMS_ttHl_Clos_m_bl_shape : data_fakes  : .*2lss_mm_bl.* : 1.0 : shapeOnly2D_1.10X_1.05Y
+CMS_ttHl_Clos_m_bt_shape : data_fakes  : .*2lss_mm_bt.* : 1.0 : shapeOnly2D_2.00X_1.10Y
+CMS_ttHl_Clos_m_bl_shape : data_fakes  : .*2lss_em_bl.* : 1.0 : shapeOnly2D_1.30X_0.77Y
+CMS_ttHl_Clos_m_bt_shape : data_fakes  : .*2lss_em_bt.* : 1.0 : shapeOnly2D_1.03X_1.15Y
+CMS_ttHl_Clos_m_bl_shape : data_fakes  : .*3l.*      	: 1.0 : shapeOnly2D_1.10X_1.10Y
 
 # Charge flip uncertainty
 CMS_ttHl_QF     : data_flips  : .* : 1.3
