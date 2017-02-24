@@ -2,8 +2,9 @@
 #@lep_mcMatchId : abs(LepGood_mcMatchId) : 101,-0.5,100.5; XTitle="abs(LepGood_mcMatchId)", Legend='TR', LegendCutoff=1e-2
 lep_mcMatchAny : abs(LepGood_mcMatchAny) : 11,-0.5,10.5; XTitle="abs(LepGood_mcMatchAny)", Legend='TR', LegendCutoff=1e-2
 
+lep_conePt090:  LepGood_pt*if3(LepGood_mvaTTH>0.90&&LepGood_mediumMuonId>0, 1.0, 0.90/LepGood_jetPtRatiov2): 10,0,150; XTitle="lepton p_{T}^{corr} (GeV)"
 lep_pt: LepGood_pt: 25,0,25; XTitle="Lepton p_{T} [GeV]", Legend='TR', LegendCutoff=1e-2
-#lep_pt: LepGood_pt: 12,0,150; XTitle="Lepton p_{T} [GeV]", Legend='TR', LegendCutoff=1e-2
+lep_pt_wide: LepGood_pt: 12,0,150; XTitle="Lepton p_{T} [GeV]", Legend='TR', LegendCutoff=1e-2
 lep_eta: abs(LepGood_eta): 12,0,1.2; XTitle="Lepton #eta", Legend='TR', LegendCutoff=1e-2
 lep_miniRelIso: LepGood_miniRelIso: 12,0,.4; XTitle="Lepton Isolation", LegendCutoff=1e-2
 #lep_miniRelIso_log: LepGood_miniRelIso: 12,0,.4; Logy, XTitle="Lepton Isolation", LegendCutoff=1e-2, MoreY=2.0
@@ -40,7 +41,10 @@ lep_mvaSUSY_log: LepGood_mvaSUSY: 20,-1,1; Logy, XTitle="Lepton mvaSUSY", Legend
 ###lep_pixelLayers: LepGood_pixelLayers: 10,0,10; XTitle="Pixel Layers", Legend='TR', LegendCutoff=1e-2
 ###lep_trackerLayers: LepGood_trackerLayers: 20,0,20; XTitle="Tracker Layers", Legend='TL', LegendCutoff=1e-2
 #@lep_lostHits: LepGood_lostHits: 3,-0.5,2.5; XTitle="Lost hits on inner track", Legend='TR', LegendCutoff=1e-2
-lep_jetBTagCSV: LepGood_jetBTagCSV: 20,0,1; XTitle="CSV btag of nearest jet ", Legend='TR', LegendCutoff=1e-2
+lep_jetBTagCSV: LepGood_jetBTagCSV: 20,0,1; XTitle="CSV btag of nearest jet ", Legend='TR'
+#lep_lostHits: LepGood_lostHits: [-0.5,0.5,1.5,2.5]; XTitle="Lost hits on inner track", Legend='TR', XNDiv=303
+#lep_convVeto: LepGood_convVeto: [-0.5,0.5,1.5]; XTitle="Conversion veto", Legend='TL', XNDiv=202
+#lep_cvlh: LepGood_lostHits==0 && LepGood_convVeto: [-0.5,0.5,1.5]; XTitle="CV+LH0", Legend='TL', XNDiv=202, LegendCutoff=1e-2
 
 away_NJet25 : LepGood_awayNJet25 : [-0.5,0.5,1.5,2.5,3.5,4.5]; XTitle="away jets pt 25", Logy
 away_NJet30 : LepGood_awayNJet30 : [-0.5,0.5,1.5,2.5,3.5,4.5]; XTitle="away jets pt 30", Logy
