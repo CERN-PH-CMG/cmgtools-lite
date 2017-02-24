@@ -134,7 +134,7 @@ def cropNegativeBins(histo):
 
 
 class TreeToYield:
-    def __init__(self,root,options,scaleFactor=1.0,name=None,cname=None,settings={},objname=None,variation_inputs=[]):
+    def __init__(self,root,options,scaleFactor='1.0',name=None,cname=None,settings={},objname=None,variation_inputs=[]):
         self._name  = name  if name != None else root
         self._cname = cname if cname != None else self._name
         self._fname = root
@@ -143,42 +143,26 @@ class TreeToYield:
         self._objname = objname if objname else options.obj
         self._weight  = (options.weight and 'data' not in self._name )
         self._isdata = 'data' in self._name
-        self._weightString  = options.weightString if not self._isdata else "1"
-        self._scaleFactor = scaleFactor
+        self._weightString0  = options.weightString if not self._isdata else "1"
+        self._scaleFactor0  = scaleFactor
         self._fullYield = 0 # yield of the full sample, as if it passed the full skim and all cuts
         self._fullNevt = 0 # number of events of the full sample, as if it passed the full skim and all cuts
         self._settings = settings
         self._isVariation = None
         self._variations = []
         loadMCCorrections(options)            ## make sure this is loaded
-        self._mcCorrs = globalMCCorrections() ##  get defaults
+        self._mcCorrSourceList = []
+        self._FRSourceList = []
         if 'SkipDefaultMCCorrections' in settings: ## unless requested to 
-            self._mcCorrs = []                     ##  skip them
-        if self._isdata: 
-# bug: does not work
-#            self._mcCorrs = [c for c in self._mcCorrs if c.alsoData] ## most don't apply to data, some do 
-            newcorrs=[]
-            for corr in self._mcCorrs:
-                newcorr = copy(corr)
-                newlist = copy(newcorr._corrections)
-                newlist = [icorr for icorr in newlist if icorr.alsoData]
-                newcorr._corrections = newlist
-                newcorrs.append(newcorr)
-            self._mcCorrs=newcorrs
+            self._mcCorrSourceList = []            ##  skip them
+        else:
+            self._mcCorrSourceList = [('_default_',x) for x in globalMCCorrections()]            
         if 'MCCorrections' in settings:
             self._mcCorrs = self._mcCorrs[:] # make copy
             for cfile in settings['MCCorrections'].split(','): 
-                self._mcCorrs.append( MCCorrections(cfile) )
-        if self._mcCorrs and self._scaleFactor and self._scaleFactor != 1.0:
-            # apply MC corrections to the scale factor
-            self._scaleFactor = self.adaptExpr(self._scaleFactor, cut=True)
-        self._mcCorrsInit = self._mcCorrs[:]
-        self._weightString = self.adaptExpr(self._weightString, cut=True)
+                self._mcCorrSourceList.append( (cfile,MCCorrections(cfile)) )            
         if 'FakeRate' in settings:
-            self._FR = FakeRate(settings['FakeRate'],self._options.lumi)
-            self.applyFR(self._FR)
-        else:
-            if self._options.forceunweight: self._weight = False
+            self._FRSourceList.append( (settings['FakeRate'], FakeRate(settings['FakeRate'],self._options.lumi) ) )
         for macro in self._options.loadMacro:
             libname = macro.replace(".cc","_cc.so").replace(".cxx","_cxx.so")
             if libname not in ROOT.gSystem.GetLibraries():
@@ -189,6 +173,20 @@ class TreeToYield:
         #print "Done creation  %s for task %s in pid %d " % (self._fname, self._name, os.getpid())
         for _var in variation_inputs:
             self._variations.append(_var)
+        self._makeMCCAndScaleFactor()
+    def _makeMCCAndScaleFactor(self):
+        self._scaleFactor = self._scaleFactor0 # before any MCC
+        mcCorrs = []
+        for (fname,mcc) in self._mcCorrSourceList:
+            mcCorrs.append(mcc)
+        self._mcCorrsInit = mcCorrs[:]
+        self._mcCorrs     = mcCorrs
+        if mcCorrs and self._scaleFactor and self._scaleFactor != '1.0':
+            self._scaleFactor = self.adaptExpr(self._scaleFactor, cut=True)
+        self._weightString = self.adaptExpr(self._weightString0, cut=True)
+        for (fname,FR) in self._FRSourceList:
+            self.applyFR(FR)
+        if self._options.forceunweight: self._weight = False
     def getVariations(self):
         return self._variations
     def getTTYVariations(self):
@@ -199,6 +197,17 @@ class TreeToYield:
                 tty2._name = tty2._name + '_%s_%s'%(var.name,direction)
                 tty2._isVariation = (var,direction)
                 tty2._variations = []
+                if var.getFRToRemove() != None:
+                    tty2._FRSourceList = []
+                    found = False
+                    for fname,FR in self._FRSourceList:
+                        if fname == var.getFRToRemove():
+                            found = True
+                            continue
+                        tty2._FRSourceList.append((fname,FR))
+                    if not found: 
+                        raise RuntimeError, "Variation %s%s for %s %s would want to remove a FR %s which is not found" % (var.name,direction,self._name,self._cname,var.getFRToRemove())
+                    tty2._makeMCCAndScaleFactor()
                 tty2.applyFR(var.getFR(direction))
                 ttys.append((var,direction,tty2))
         return ttys
@@ -250,7 +259,7 @@ class TreeToYield:
         _mcCorrList = mcCorrList if mcCorrList else self._mcCorrs
         ret = self.adaptDataMCExpr(expr)
         for mcc in _mcCorrList:
-            ret = mcc(ret,self._name,self._cname,cut)
+            ret = mcc(ret,self._name,self._cname,cut,self._isdata)
         return ret
     def _init(self):
         if "root://" in self._fname:

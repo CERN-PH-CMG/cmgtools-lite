@@ -27,9 +27,9 @@ class FakeRate:
 	            if self._weight is not None: raise RuntimeError, "Duplicate weight definition in fake rate file "+file
 	            self._weight = fields[1]
 	        elif fields[0] == "change": 
-	            self._mods.append( SimpleCorrection(fields[1],fields[2]) )
+	            self._mods.append( SimpleCorrection(fields[1],fields[2],alsoData=True) )
 	        elif fields[0] == "cut-change": 
-	            self._cutMods.append( SimpleCorrection(fields[1],fields[2],onlyForCuts=True) )
+	            self._cutMods.append( SimpleCorrection(fields[1],fields[2],onlyForCuts=True,alsoData=True) )
 	        elif fields[0] == "load-histo":
 	            data = "%s/src/CMGTools/TTHAnalysis/data/" % os.environ['CMSSW_BASE'];
                     fname = fields[2].replace("$DATA",data)

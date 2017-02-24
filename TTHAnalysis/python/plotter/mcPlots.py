@@ -469,11 +469,11 @@ def doRatioHists(pspec,pmap,total,maxRange,fixRange=False,fitRatio=None,errorsOn
         unityErr.SetFillStyle(3013);
         unityErr0.SetFillStyle(3013);
         if errorsOnRef:
-            unity.Draw("AXIS SAME");
             unityErr0.Draw("E2 SAME");
     else:
         if errorsOnRef:
             unityErr0.Draw("E2 SAME");
+    unity.Draw("AXIS SAME");
     rmin = float(pspec.getOption("RMin",rmin))
     rmax = float(pspec.getOption("RMax",rmax))
     unity.GetYaxis().SetRangeUser(rmin,rmax);

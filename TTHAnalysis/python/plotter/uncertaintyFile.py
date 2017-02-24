@@ -18,6 +18,7 @@ class Uncertainty:
         self.fakerate = [FakeRate(''),FakeRate('')]
         self.fakerate[0]._weight = '1'
         self.fakerate[1]._weight = '1'
+        self.removeFR = None
         self.trivialFunc=[None,None]
         self.normUnc=[None,None]
         self.prepFR()
@@ -27,19 +28,19 @@ class Uncertainty:
         if self.unc_type=='templateAsymm':
             if 'FakeRates' in self.extra:
                 for idx in xrange(2):
-                    self.fakerate[idx] = FakeRate(self.extra_args['FakeRates'][idx])
-            if 'AddWeights' in self.extra[idx]:
+                    self.fakerate[idx] = FakeRate(self.extra['FakeRates'][idx])
+            if 'AddWeights' in self.extra:
                 for idx in xrange(2):
-                    self.fakerate[idx]._weight = '(%s)*(%s)'%(self.fakerate[idx]._weight,self.extra_args['AddWeights'][idx])
+                    self.fakerate[idx]._weight = '(%s)*(%s)'%(self.fakerate[idx]._weight,self.extra['AddWeights'][idx])
             if 'FakeRates' not in self.extra and 'AddWeights' not in self.extra:
-                raise RuntimeError("templateAsym requires at least one of FakeRates=['fname1','fname2'] or AddWeights=['expr1','expr2']")
+                raise RuntimeError("templateAsym requires at least one of FakeRates=['fname1'\\,'fname2'] or AddWeights=['expr1'\\,'expr2']")
         elif self.unc_type=='templateSymm':
             self.fakerate[1] = None
             self.trivialFunc[1] = 'symmetrize_up_to_dn'
             if 'FakeRate' in self.extra:
-                self.fakerate[0] = FakeRate(self.extra_args[idx]['FakeRate'])
+                self.fakerate[0] = FakeRate(self.extra['FakeRate'])
             if 'AddWeight' in self.extra:
-                self.fakerate[0]._weight = '(%s)*(%s)'%(self.fakerate[idx]._weight,self.extra_args[idx]['AddWeight'])
+                self.fakerate[0]._weight = '(%s)*(%s)'%(self.fakerate[0]._weight,self.extra['AddWeight'])
             if 'FakeRate' not in self.extra and 'AddWeight' not in self.extra:
                 raise RuntimeError("templateAsym requires at least one of FakeRate='fname' or AddWeight='expr'")
         elif self.unc_type=='normAsymm':
@@ -56,8 +57,9 @@ class Uncertainty:
             self.trivialFunc = ['apply_norm_up','apply_norm_dn']
             self.normUnc[0] = float(self.args[0])
             self.normUnc[1] = 1.0/self.normUnc[0]
-        else: raise RuntimeError, 'Uncertainty type not recognised'
-            
+        else: raise RuntimeError, 'Uncertainty type "%s" not recognised' % self.unc_type
+        if 'RemoveFakeRate' in self.extra:
+            self.removeFR = self.extra['RemoveFakeRate']
     def isTrivial(self,sign):
         return (self.getFR(sign)==None)
     def getTrivial(self,sign,results):
@@ -93,6 +95,8 @@ class Uncertainty:
         if sign=='up': return self.fakerate[0]
         elif sign=='dn': return self.fakerate[1]
         else: raise RuntimeError
+    def getFRToRemove(self):
+        return self.removeFR
     def __str__(self):
         return ' : '.join([self.name,self._procmatch.pattern,self._binmatch.pattern,self.unc_type])+'\n'
 
@@ -116,11 +120,6 @@ class UncertaintyFile:
                     line = line[:-1] + " " + file.next().strip()
                     line = re.sub(r"(?<!\\)#.*","",line)  ## regexp black magic: match a # only if not preceded by a \!
                     line = line.replace(r"\#","#")        ## and now we just unescape the remaining #'s
-                field = [f.strip() for f in line.split(':')]
-                (name, procmatch, binmatch, unc_type) = field[:4]
-                procmatch = re.compile(procmatch+'$')
-                binmatch = re.compile(binmatch+'$')
-                more_args = field[4:]
                 extra = {}
                 if ";" in line:
                     (line,more) = line.split(";")[:2]
@@ -130,6 +129,11 @@ class UncertaintyFile:
                             (key,val) = [f.strip() for f in setting.split("=")]
                             extra[key] = eval(val)
                         else: extra[setting] = True
+                field = [f.strip() for f in line.split(':')]
+                (name, procmatch, binmatch, unc_type) = field[:4]
+                procmatch = re.compile(procmatch+'$')
+                binmatch = re.compile(binmatch+'$')
+                more_args = field[4:]
                 self._uncertainty.append(Uncertainty(name,procmatch,binmatch,unc_type,more_args,extra))
 
               except ValueError, e:
