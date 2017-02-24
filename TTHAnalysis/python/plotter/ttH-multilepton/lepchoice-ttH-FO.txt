@@ -13,7 +13,7 @@ LepGood4_(\w+) : LepGood_\1[iLepFO_Recl[3]]; AlsoData
 nLepFO\b : nLepFO_Recl; AlsoData
 nLepTight\b : nLepTight_Recl; AlsoData
 nTauFO\b : nTauSel_Recl; AlsoData
-nTauTight\b : Sum$(TauSel_Recl_idMVAdR03>=3); AlsoData
+nTauTight\b : nTauSel_Recl_isTauTight; AlsoData
 nJet25\b: nJet25_Recl; AlsoData
 htJet25j\b: htJet25j_Recl; AlsoData
 mhtJet25\b: mhtJet25_Recl; AlsoData
