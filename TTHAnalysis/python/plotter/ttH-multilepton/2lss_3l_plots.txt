@@ -12,7 +12,7 @@ debug_triggerFired_2m : HLT_DoubleMu : 2,-0.5,1.5; XTitle = "Fired 2m trigger"
 debug_triggerFired_3m : HLT_TripleMu : 2,-0.5,1.5; XTitle = "Fired 3m trigger"
 debug_triggerFired_3cross : HLT_DoubleMuEl || HLT_DoubleElMu : 2,-0.5,1.5; XTitle = "Fired 2m1e or 1m2e trigger"
 
-badMuonFilter : Flag_badMuonMoriond2017 || Flag_badCloneMuonMoriond2017 : 2,-0.5,1.5; XTitle = "Bad muon event"
+badMuonFilter : Flag_badMuonMoriond2017 || Flag_badCloneMuonMoriond2017 : 2,-0.5,1.5; XTitle = "Bad muon event", Logy
 
 nJet25:	    	nJet25					: [1.5,2.5,3.5,4.5,5.5,6.5,7.5] ; XTitle='N(jet\, p_{T} > 25 GeV)', XNDdiv=505, xBinLabels="2\,3\,4\,5\,6\,#geq 7"
 nJet25_from4:  	nJet25					: [3.5,4.5,5.5,6.5,7.5] ; XTitle='N(jet\, p_{T} > 25 GeV)', XNDdiv=505, xBinLabels="4\,5\,6\,#geq 7"
@@ -28,6 +28,7 @@ nBJetMedium25:	nBJetMedium25				: [-0.5,0.5,1.5,2.5,3.5,4.5,5.5] ; XTitle='N(jet
 2lep_mtWmin: 	if3(nLepFO>1,min(mt_2(LepGood1_conePt,LepGood1_phi,met_pt,met_phi),mt_2(LepGood2_conePt,LepGood2_phi,met_pt,met_phi)),-99) 		  : 40,0,200; XTitle="min M_{T}(l_{i}\,E_{T}^{miss}) [GeV]"
 2lep_htllv:	if3(nLepFO>1,LepGood1_conePt+LepGood2_conePt+met_pt,-99)										  : 40,0,600; XTitle="l_{1} p_{T} + l_{2} p_{T} + E_{T}^{miss} [GeV]"
 2lep_catIndex: ttH_catIndex_2lss(LepGood1_pdgId,LepGood2_pdgId,LepGood1_charge,nBJetMedium25) : [0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5,10.5]; XTitle="", xBinLabels="ee -\,ee +\,e#mu bl -\,e#mu bl +\,e#mu bt -\,e#mu bt +\,#mu#mu bl -\,#mu#mu bl  +\,#mu#mu bt -\,#mu#mu bt +", MoreY=2.0
+2lep_catIndex_nosign: ttH_catIndex_2lss_nosign(LepGood1_pdgId,LepGood2_pdgId,nBJetMedium25) : [0.5,1.5,2.5,3.5,4.5,5.5]; XTitle="", xBinLabels="ee\,e#mu bl\,e#mu bt\,#mu#mu bl\,#mu#mu bt", MoreY=2.0
 
 nT_2lep_conePt: if3((nLepFO>1)*(LepGood1_isLepTight+LepGood2_isLepTight==1),if3(LepGood1_isLepTight,LepGood2_conePt,LepGood1_conePt),-99) : 60,0,80; XTitle="Lepton cone p_{T} [GeV] in TL ev."
 nT_2lep_pdgId: if3((nLepFO>1)*(LepGood1_isLepTight+LepGood2_isLepTight==1),if3(LepGood1_isLepTight,LepGood2_pdgId,LepGood1_pdgId),-99) : [-13.5,-12,-10.5,0,10.5,12,13.5]; XTitle="Lepton PDG ID (#mu^{-}/e^{-}/e^{+}/#mu^{+}) in TL ev.", IncludeOverflows=False
