@@ -21,6 +21,7 @@ class Uncertainty:
         self.removeFR = None
         self.trivialFunc=[None,None]
         self.normUnc=[None,None]
+        self._postProcess = None
         self.prepFR()
 
     def prepFR(self):
@@ -60,12 +61,30 @@ class Uncertainty:
         else: raise RuntimeError, 'Uncertainty type "%s" not recognised' % self.unc_type
         if 'RemoveFakeRate' in self.extra:
             self.removeFR = self.extra['RemoveFakeRate']
+        if 'Normalize' in self.extra:
+            self._postProcess = "Normalize"
     def isTrivial(self,sign):
         return (self.getFR(sign)==None)
     def getTrivial(self,sign,results):
         idx = 0 if sign=='up' else 1
         if self.getFR(sign) or (self.trivialFunc[idx]==None): raise RuntimeError
         return getattr(self,self.trivialFunc[idx])(results)
+    def postProcess(self,central,up,down):
+        if self._postProcess == None:
+            return
+        if self._postProcess == "Normalize":
+            h0 = central.Integral()
+            if h0 != 0:
+                if up.Integral(): 
+                    up.Scale(h0/up.Integral())
+                else:             
+                    for b in xrange(1,up.GetNbinsX()+1): up.SetBinContent(b, central.GetBinContent(b))
+                if down.Integral(): 
+                    down.Scale(h0/down.Integral())
+                else:             
+                    for b in xrange(1,up.GetNbinsX()+1): up.SetBinContent(b, central.GetBinContent(b))
+            else:
+                up.Scale(0); down.Scale(0);
     def isNorm(self):
         return (self.normUnc!=[None,None])
 

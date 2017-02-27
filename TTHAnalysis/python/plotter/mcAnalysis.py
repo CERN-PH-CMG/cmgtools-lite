@@ -412,11 +412,16 @@ class MCAnalysis:
             else: raise RuntimeError
         for (idk,var),(idk2up,idk2dn) in varofmap.iteritems():
             if idk2up not in _retlist:
+                #print 'Calculating trivially variation %s %s'%(ttymap[idk2up].isVariation()[0].name,ttymap[idk2up].isVariation()[1]),_retlist[idk2up].Integral()
                 _retlist[idk2up]=ttymap[idk2up].isVariation()[0].getTrivial(ttymap[idk2up].isVariation()[1],[_retlist[idk],None,None])
-#                print 'Calculating trivially variation %s %s'%(ttymap[idk2up].isVariation()[0].name,ttymap[idk2up].isVariation()[1]),_retlist[idk2up].Integral()
             if idk2dn not in _retlist:
+                #print 'Calculating trivially variation %s %s'%(ttymap[idk2dn].isVariation()[0].name,ttymap[idk2dn].isVariation()[1]),_retlist[idk2dn].Integral()
                 _retlist[idk2dn]=ttymap[idk2dn].isVariation()[0].getTrivial(ttymap[idk2dn].isVariation()[1],[_retlist[idk],_retlist[idk2up],None])
-#                print 'Calculating trivially variation %s %s'%(ttymap[idk2dn].isVariation()[0].name,ttymap[idk2dn].isVariation()[1]),_retlist[idk2dn].Integral()
+        # postprocessing, if neded
+        for (idk,var),(idk2up,idk2dn) in varofmap.iteritems():
+            varobj = ttymap[idk2up].isVariation()[0]
+            if varobj.name != var: raise RuntimeError, "Mismatch in variations"
+            varobj.postProcess(_retlist[idk], _retlist[idk2up],_retlist[idk2dn])
 
         ## attach variations to each primary tty
         retlist=[]

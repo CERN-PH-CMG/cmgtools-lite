@@ -136,6 +136,16 @@ class HistoWithNuisances:
         h+=x
         return h
 
+    def writeToFile(self,tfile,writeVariations=True):
+        tfile.WriteTObject(self.nominal, self.GetName())
+        for key,vals in self.variations.iteritems():
+            tfile.WriteTObject(vals[0], self.GetName()+"_"+key+"Up")
+            tfile.WriteTObject(vals[1], self.GetName()+"_"+key+"Down")
+        if self.nominal.InheritsFrom("TH1"): 
+            self.nominal.SetDirectory(tfile) 
+            for vals in self.variations.itervalues():
+                for v in vals: v.SetDirectory(tfile) 
+
 def mergePlots(name,plots):
     one = plots[0].Clone(name)
     for p in plots[1:]:

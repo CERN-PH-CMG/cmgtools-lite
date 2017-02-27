@@ -720,8 +720,11 @@ class PlotMaker:
                 #
                 if not makeStack: 
                     for k,v in pmap.iteritems():
-                        if v.InheritsFrom("TH1"): v.SetDirectory(dir) 
-                        dir.WriteTObject(v.raw())
+                        if hasattr(v,'writeToFile'):
+                            v.writeToFile(dir)
+                        else:
+                            if v.InheritsFrom("TH1"): v.SetDirectory(dir) 
+                            dir.WriteTObject(v.raw())
                     continue
                 #
                 stack = ROOT.THStack(pspec.name+"_stack",pspec.name)
@@ -741,8 +744,11 @@ class PlotMaker:
                     doNormFit(pspec,pmap,mca,saveScales=True)
                 #
                 for k,v in pmap.iteritems():
-                    if v.InheritsFrom("TH1"): v.SetDirectory(dir) 
-                    dir.WriteTObject(v.raw())
+                    if hasattr(v,'writeToFile'):
+                        v.writeToFile(dir)
+                    else:
+                        if v.InheritsFrom("TH1"): v.SetDirectory(dir) 
+                        dir.WriteTObject(v.raw())
                 #
                 self.printOnePlot(mca,pspec,pmap,
                                   xblind=xblind,
