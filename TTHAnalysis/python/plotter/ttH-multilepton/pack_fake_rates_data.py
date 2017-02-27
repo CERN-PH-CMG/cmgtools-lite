@@ -42,7 +42,7 @@ def make2D(out,name,xedges,yedges):
     th2 = makeH2D(name,xedges,yedges)
     return th2
 
-def makeVariants(h):
+def makeVariants(h,altsrc=None):
     lptmin = log(h.GetXaxis().GetBinCenter(1))
     lptmax = log(h.GetXaxis().GetBinCenter(h.GetNbinsX()))
     lptc     = 0.5*(lptmax+lptmin)
@@ -63,14 +63,17 @@ def makeVariants(h):
             for by in xrange(1,h.GetNbinsY()+1):
                 y = h.GetYaxis().GetBinCenter(by) 
                 fr0 = h.GetBinContent(bx,by)
-                err = h.GetBinError(bx,by)
+                if altsrc == None:
+                    err = h.GetBinError(bx,by)
+                else:
+                    err = fr0 * altsrc.GetBinError(bx,by)/altsrc.GetBinContent(bx,by)
                 fr = func(x,y,fr0,err)
                 print "Variation %-15s: pt %4.1f, eta %3.1f: nominal %.3f +- %.3f --> shifted %.3f "  % (hsyst.GetName(), x, y, fr0, err, fr)
                 hsyst.SetBinContent(bx, by, fr)
                 hsyst.SetBinError(bx, by, 0)
         ret.append(hsyst)
     return ret
-    
+
 def styles(hs):
     colors = [ ('Data',ROOT.kBlack), ('MC tt',ROOT.kRed+1), ('QCD',ROOT.kAzure+1 ),
                ('QCD, #gamma corr',ROOT.kGreen+2), ('Data, #gamma corr',ROOT.kGray+2),
@@ -225,14 +228,18 @@ if __name__ == "__main__":
                   styles(effs)
                   options.xlines = xcuts
                   stackEffs(options.outdir+"/fr_%s_%s.root"%(lep,eta), None,effs,options)
-              variants = makeVariants(h2d[1])
+              variants = makeVariants(h2d[-1])
               for v in variants: outfile.WriteTObject(v, v.GetName())
               for ieta,eta in enumerate(["barrel","endcap"]):
-                  effs = [ ('nominal', graphFromXSlice(h2d[1],ieta+1)) ]
+                  effs = [ ('nominal', graphFromXSlice(h2d[-1],ieta+1)) ]
                   for v in variants: 
                     label = v.GetName().rsplit("_",1)[1]
                     effs.append( (label, graphFromXSlice(v,ieta+1) ) )
                   styles(effs)
                   options.xlines = xcuts
                   stackEffs(options.outdir+"/variants_fr_%s_%s.root"%(lep,eta), None,effs,options)
+              mcttvariants = makeVariants(h2dtt[0],h2d[-1])
+              for v in mcttvariants: outfile.WriteTObject(v, v.GetName())
+              mcvariants = makeVariants(h2d[-2],h2d[-1])
+              for v in mcvariants: outfile.WriteTObject(v, v.GetName())
     outfile.ls()
