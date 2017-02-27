@@ -3,7 +3,9 @@
 from CMGTools.TTHAnalysis.plotter.tree2yield import *
 from CMGTools.TTHAnalysis.plotter.projections import *
 from CMGTools.TTHAnalysis.plotter.figuresOfMerit import FOM_BY_NAME
+from CMGTools.TTHAnalysis.plotter.histoWithNuisances import HistoWithNuisances,mergePlots
 import pickle, re, random, time
+from copy import copy, deepcopy
 
 #_T0 = long(ROOT.gSystem.Now())
 
@@ -48,9 +50,12 @@ class MCAnalysis:
             to = to.strip()
             for k in fro.split(","):
                 self._premap.append((re.compile(k.strip()+"$"), to))
+        self.variationsFile = UncertaintyFile(options.variationsFile) if options.variationsFile else None
         self.readMca(samples,options)
 
     def readMca(self,samples,options,addExtras={}):
+        field_previous = None
+        extra_previous = {}
         for line in open(samples,'r'):
             if re.match("\s*#.*", line): continue
             line = re.sub(r"(?<!\\)#.*","",line)  ## regexp black magic: match a # only if not preceded by a \!
@@ -85,6 +90,16 @@ class MCAnalysis:
                 if hasPlus: field[0] = field[0][:-1]
                 field[0] += extra['PostFix']
                 if hasPlus: field[0]+='+'
+            # copy fields from previous component if field is "prev" (careful: does not copy extra)
+            if "$prev" in field and not field_previous: raise RuntimeError, "You used a prev directive to clone fields from the previous component, but no previous component exists"
+            field = [field_previous[i] if field[i]=="$prev" else field[i] for i in xrange(len(field))]
+            field_previous = field[:]
+            if "$prev" in extra:
+                del extra['$prev']
+                new_extra = copy(extra_previous)
+                new_extra.update(extra)
+                extra = new_extra
+            extra_previous = copy(extra)
             signal = False
             pname = field[0]
             if pname[-1] == "+": 
@@ -128,6 +143,25 @@ class MCAnalysis:
                 for p in p0.split(","):
                     if re.match(p+"$", field[1]): skipMe = True
             if skipMe: continue
+
+            # Load variations if matching this process name
+            variations=[]
+            if self.variationsFile:
+                for var in self.variationsFile.uncertainty():
+                    if var.procmatch().match(pname) and var.binmatch().match(options.binname): 
+                        #print "Variation %s enabled for process %s" % (var, pname)
+                        variations.append(var)
+                if 'NormSystematic' in extra:
+                    del extra['NormSystematic']
+                    if pname not in getattr(options, '_warning_NormSystematic_variationsFile',[]):
+                       options._warning_NormSystematic_variationsFile = [pname] + getattr(options, '_warning_NormSystematic_variationsFile',[])
+                       print "Using both a NormSystematic and a variationFile is not supported. Will disable the NormSystematic for process %s" % pname
+            if 'NormSystematic' in extra:
+                variations.append(Uncertainty('norm_%s'%pname,re.compile(pname+'$'),re.compile(options.binname+'$'),'normSymm',[{'NormFactor': 1+float(extra['NormSystematic'])}]))
+                if not hasattr(options, '_deprecation_warning_NormSystematic'):
+                    print 'Added normalization uncertainty %s to %s, %s. Please migrate away from using the deprecated NormSystematic option.'%(extra['NormSystematic'],pname,field[1])
+                    options._deprecation_warning_NormSystematic = False
+
             cnames = [ x.strip() for x in field[1].split("+") ]
             total_w = 0.; to_norm = False; ttys = [];
             is_w = -1
@@ -161,7 +195,7 @@ class MCAnalysis:
                     rootfile = open(rootfile+".url","r").readline().strip()
                 pckfile = basepath+"/%s/skimAnalyzerCount/SkimReport.pck" % cname
 
-                tty = TreeToYield(rootfile, options, settings=extra, name=pname, cname=cname, objname=objname); ttys.append(tty)
+                tty = TreeToYield(rootfile, options, settings=extra, name=pname, cname=cname, objname=objname, variation_inputs=variations); ttys.append(tty)
                 if signal: 
                     self._signals.append(tty)
                     self._isSignal[pname] = True
@@ -304,26 +338,105 @@ class MCAnalysis:
             if self._backgrounds and not ret.has_key('background') and len(allBg) > 0:
                 ret['background'] = mergeReports(allBg)
         return ret
+    def getYieldsHN(self,cuts,process=None,nodata=False,makeSummary=False,noEntryLine=False,addUncertainties=True):
+        report = []; cut = ""
+        cutseq = [ ['entry point','1'] ]
+        if noEntryLine: cutseq = []
+        sequential = False
+        if self._options.nMinusOne or self._options.nMinusOneInverted: 
+            if self._options.nMinusOneSelection:
+                cutseq = cuts.nMinusOneSelectedCuts(self._options.nMinusOneSelection,inverted=self._options.nMinusOneInverted)
+            else:
+                cutseq = cuts.nMinusOneCuts(inverted=self._options.nMinusOneInverted)
+            cutseq += [ ['all',cuts.allCuts()] ]
+            sequential = False
+        elif self._options.final:
+            cutseq = [ ['all', cuts.allCuts()] ]
+        else:
+            cutseq += cuts.cuts();
+            sequential = True
+        for cn,cv in cutseq:
+            if sequential:
+                if cut: cut += " && "
+                cut += "(%s)" % cv
+            else:
+                cut = cv
+            report.append((cn,self.getPlotsRaw('yield','1','1,0.5,1.5',cut,process,nodata,makeSummary)))
+        formatted_report = []
+        for cn,ret in report:
+            thisret = {}
+            for k,h in ret.iteritems():
+                thisret[k]=[h.GetBinContent(1),h.GetBinError(1),h.GetEntries()]
+                if addUncertainties:
+                    unc = {}
+                    for var in h.getVariationList():
+                        up,dn = h.getVariation(var)
+                        unc[var] = (up.Integral(),dn.Integral())
+                    thisret[k].append(copy(unc))
+            formatted_report.append((cn,copy(thisret)))
+        print formatted_report
+        return formatted_report
     def getPlotsRaw(self,name,expr,bins,cut,process=None,nodata=False,makeSummary=False,closeTreeAfter=False):
         return self.getPlots(PlotSpec(name,expr,bins,{}),cut,process,nodata,makeSummary,closeTreeAfter)
     def getPlots(self,plotspec,cut,process=None,nodata=False,makeSummary=False,closeTreeAfter=False):
-        ret = { }
         allSig = []; allBg = []
         tasks = []
+        ttymap = {} # idkey -> tty, for both primaries and variations
+        procmap = {} # idkey -> key (name), only primaries
+        isvarofmap = {} # idkey_var -> idkey_parent, for variations
         for key,ttys in self._allData.iteritems():
             if key == 'data' and nodata: continue
             if process != None and key != process: continue
             for tty in ttys:
-                tasks.append((key,tty,plotspec,cut,None,closeTreeAfter))
+                idkey = id(tty)
+                procmap[idkey]=key
+                ttymap[idkey]=tty
+                tasks.append((idkey,tty,plotspec,cut,None,closeTreeAfter))
+                for var,sign,tty2 in tty.getTTYVariations():
+                    idkey2 = id(tty2)
+                    isvarofmap[idkey2]=idkey
+                    ttymap[idkey2]=tty2
+                    if not var.isTrivial(sign): tasks.append((idkey2,tty2,plotspec,cut,None,closeTreeAfter))
         if self._options.splitFactor > 1 or  self._options.splitFactor == -1:
             tasks = self._splitTasks(tasks)
-        retlist = self._processTasks(_runPlot, tasks, name="plot "+plotspec.name)
+        _retlist = dict(self._processTasks(_runPlot, tasks, name="plot "+plotspec.name)) # idkey, result
+
+        ## calculate the trivial variations
+        varofmap = {}
+        for idk2,idk in isvarofmap.iteritems():
+            var = ttymap[idk2].isVariation()[0].name
+            sign = ttymap[idk2].isVariation()[1]
+            if (idk,var) not in varofmap: varofmap[(idk,var)]=[None,None]
+            if sign=='up': varofmap[(idk,var)][0]=idk2
+            elif sign=='dn': varofmap[(idk,var)][1]=idk2
+            else: raise RuntimeError
+        for (idk,var),(idk2up,idk2dn) in varofmap.iteritems():
+            if idk2up not in _retlist:
+                #print 'Calculating trivially variation %s %s'%(ttymap[idk2up].isVariation()[0].name,ttymap[idk2up].isVariation()[1]),_retlist[idk2up].Integral()
+                _retlist[idk2up]=ttymap[idk2up].isVariation()[0].getTrivial(ttymap[idk2up].isVariation()[1],[_retlist[idk],None,None])
+            if idk2dn not in _retlist:
+                #print 'Calculating trivially variation %s %s'%(ttymap[idk2dn].isVariation()[0].name,ttymap[idk2dn].isVariation()[1]),_retlist[idk2dn].Integral()
+                _retlist[idk2dn]=ttymap[idk2dn].isVariation()[0].getTrivial(ttymap[idk2dn].isVariation()[1],[_retlist[idk],_retlist[idk2up],None])
+        # postprocessing, if neded
+        for (idk,var),(idk2up,idk2dn) in varofmap.iteritems():
+            varobj = ttymap[idk2up].isVariation()[0]
+            if varobj.name != var: raise RuntimeError, "Mismatch in variations"
+            varobj.postProcess(_retlist[idk], _retlist[idk2up],_retlist[idk2dn])
+
+        ## attach variations to each primary tty
+        retlist=[]
+        for idk,key in procmap.iteritems():
+            h = HistoWithNuisances(_retlist[idk])
+            for idk2,idk1 in isvarofmap.iteritems():
+                if idk==idk1:
+                    h.addVariation(ttymap[idk2].isVariation()[0].name,ttymap[idk2].isVariation()[1],_retlist[idk2])
+            retlist.append((key,h))
+
         ## then gather results with the same process
         mergemap = {}
         for (k,v) in retlist: 
             if k not in mergemap: mergemap[k] = []
             mergemap[k].append(v)
-        ## and finally merge them
         ret = dict([ (k,mergePlots(plotspec.name+"_"+k,v)) for k,v in mergemap.iteritems() ])
 
         rescales = []
@@ -339,6 +452,7 @@ class MCAnalysis:
         # if necessary project to different lumi, energy,
         if self._projection:
             self._projection.scalePlots(ret)
+
         if makeSummary:
             allSig = [v for k,v in ret.iteritems() if k != 'data'and self._isSignal[k] == True  ]
             allBg  = [v for k,v in ret.iteritems() if k != 'data'and self._isSignal[k] == False ]
@@ -469,8 +583,6 @@ class MCAnalysis:
                     print "%s%s%s" % (k,sep,sep.join(ytxt.split()))
                 print ""
 
-    def _getYields(self,ttylist,cuts):
-        return mergeReports([tty.getYields(cuts) for tty in ttylist])
     def __str__(self):
         mystr = ""
         for a in self._allData:
@@ -602,6 +714,8 @@ def addMCAnalysisOptions(parser,addTreeToYieldOnesToo=True):
     parser.add_option("--scaleplot", dest="plotscalemap", type="string", default=[], action="append", help="Scale plots by this factor (before grouping). Syntax is '<newname> := (comma-separated list of regexp)', can specify multiple times.")
     parser.add_option("-t", "--tree",          dest="tree", default='ttHLepTreeProducerTTH', help="Pattern for tree name");
     parser.add_option("--fom", "--figure-of-merit", dest="figureOfMerit", type="string", default=[], action="append", help="Add this figure of merit to the output table (S/B, S/sqrB, S/sqrSB)")
+    parser.add_option("--binname", dest="binname", type="string", default='default', help="Bin name for uncertainties matching and datacard preparation [default]")
+    parser.add_option("--unc", dest="variationsFile", type="string", default=None, help="Uncertainty file to be loaded")
 
 if __name__ == "__main__":
     from optparse import OptionParser
