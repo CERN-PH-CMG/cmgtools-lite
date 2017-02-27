@@ -43,15 +43,17 @@ def make2D(out,name,xedges,yedges):
     return th2
 
 def makeVariants(h):
+    lptmin = log(h.GetXaxis().GetBinCenter(1))
+    lptmax = log(h.GetXaxis().GetBinCenter(h.GetNbinsX()))
+    lptc     = 0.5*(lptmax+lptmin)
+    lptslope = 1.0/(lptmax-lptc)
     shifters = [
         ("up"  ,  lambda pt,eta,fr,err : min(fr+err, 1.0) ),
-        ("down",  lambda pt,eta,fr,err : max(fr-err, 0.0) ),
-        ("pt1" ,  lambda pt,eta,fr,err : min(max( fr + err * (log(pt/30)/log(3.)), 0.0),1.0) ),
-        ("pt2" ,  lambda pt,eta,fr,err : min(max( fr - err * (log(pt/30)/log(3.)), 0.0),1.0) ),
-        ("b1"  ,  lambda pt,eta,fr,err : min(max( fr + err if eta < 1.3 else fr, 0.0),1.0) ), 
-        ("b2"  ,  lambda pt,eta,fr,err : min(max( fr - err if eta < 1.3 else fr, 0.0),1.0) ),
-        ("ec1" ,  lambda pt,eta,fr,err : min(max( fr + err if eta > 1.3 else fr, 0.0),1.0) ), 
-        ("ec2" ,  lambda pt,eta,fr,err : min(max( fr - err if eta > 1.3 else fr, 0.0),1.0) ),
+        ("down",  lambda pt,eta,fr,err : max(fr-err, 0.05*fr) ),
+        ("pt1" ,  lambda pt,eta,fr,err : min(max( fr + err * lptslope*(log(pt)-lptc),  0.05*fr),1.0) ),
+        ("pt2" ,  lambda pt,eta,fr,err : min(max( fr - err * lptslope*(log(pt)-lptc),  0.05*fr),1.0) ),
+        ("be1" ,  lambda pt,eta,fr,err : min(max( fr + err*0.707 if eta < 1.3 else fr-err*0.707, 0.05*fr),1.0) ), 
+        ("be2" ,  lambda pt,eta,fr,err : min(max( fr - err*0.707 if eta < 1.3 else fr+err*0.707, 0.05*fr),1.0) ),
     ]
     ret = []
     for s,func in shifters:
@@ -74,8 +76,7 @@ def styles(hs):
                ('QCD, #gamma corr',ROOT.kGreen+2), ('Data, #gamma corr',ROOT.kGray+2),
                ('nominal',ROOT.kBlack), ('up',ROOT.kGray+1), ('down',ROOT.kGray+1), 
                 ('pt1',ROOT.kRed+1), ('pt2',ROOT.kBlue+2),
-                ('b1',ROOT.kViolet+1), ('b2',ROOT.kGreen+2),
-                ('ec1',ROOT.kViolet+1), ('ec2',ROOT.kGreen+2),]
+                ('be1',ROOT.kViolet+1), ('be2',ROOT.kGreen+2)]
     for label,h in hs:
         for n,c in colors:
             if n in label:
@@ -230,8 +231,6 @@ if __name__ == "__main__":
                   effs = [ ('nominal', graphFromXSlice(h2d[1],ieta+1)) ]
                   for v in variants: 
                     label = v.GetName().rsplit("_",1)[1]
-                    if label in ('b1' ,'b2' ) and eta == "endcap": continue
-                    if label in ('ec1','ec2') and eta == "barrel": continue
                     effs.append( (label, graphFromXSlice(v,ieta+1) ) )
                   styles(effs)
                   options.xlines = xcuts
