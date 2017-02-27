@@ -96,18 +96,17 @@ CMS_ttHl_FRm_be	  : data_fakes  : .* : FRm_be 	: templatesShapeOnly
 # 3l uncertainties not checked, to be updated
 
 # 3) Closure: QCD vs. TT fake rate, normalization
-CMS_ttHl_Clos_e_bl_norm : data_fakes : .*2lss_ee.* : 1.1
-CMS_ttHl_Clos_e_bl_norm : data_fakes : .*2lss_em_bl.* : 1.2
-CMS_ttHl_Clos_e_bl_norm : data_fakes : .*3l_bl.* : 1.2
-CMS_ttHl_Clos_e_bt_norm : data_fakes : .*2lss_ee.* : 1.1
-CMS_ttHl_Clos_e_bt_norm : data_fakes : .*2lss_em_bt.* : 1.3
-CMS_ttHl_Clos_e_bt_norm : data_fakes : .*3l_bt.* : 1.2
-CMS_ttHl_Clos_m_bl_norm : data_fakes : .*2lss_mm.* : 1.2
-CMS_ttHl_Clos_m_bl_norm : data_fakes : .*2lss_em_bl.* : 1.2
-CMS_ttHl_Clos_m_bl_norm : data_fakes : .*3l_bl.* : 1.2
-CMS_ttHl_Clos_m_bt_norm : data_fakes : .*2lss_mm.* : 1.4
-CMS_ttHl_Clos_m_bt_norm : data_fakes : .*2lss_em.* : 1.2
-CMS_ttHl_Clos_m_bt_norm : data_fakes : .*3l_bt.* : 1.2
+CMS_ttHl_Clos_e_norm : data_fakes : .*2lss_ee.* : 1.2
+CMS_ttHl_Clos_e_norm : data_fakes : .*2lss_em.* : 1.1
+CMS_ttHl_Clos_e_norm : data_fakes : .*3l_.* : 1.1
+CMS_ttHl_Clos_e_bt_norm : data_fakes : .*2lss_em_bt.* : 1.1
+CMS_ttHl_Clos_e_bt_norm : data_fakes : .*3l_bt.* : 1.1
+CMS_ttHl_Clos_m_norm : data_fakes : .*2lss_mm.* : 1.2
+CMS_ttHl_Clos_m_norm : data_fakes : .*2lss_em.* : 1.1
+CMS_ttHl_Clos_m_norm : data_fakes : .*3l_.* : 1.15
+CMS_ttHl_Clos_m_bt_norm : data_fakes : .*2lss_mm_bt.* : 1.3
+CMS_ttHl_Clos_m_bt_norm : data_fakes : .*2lss_em_bt.* : 1.15
+CMS_ttHl_Clos_m_bt_norm : data_fakes : .*3l_bt.* : 1.15
 
 # 4) Closure: QCD vs. TT fake rate, shape
 CMS_ttHl_Clos_e_bl_shape : data_fakes  : .*2lss_ee.*	: 1.0 : shapeOnly2D_0.83X_1.20Y
