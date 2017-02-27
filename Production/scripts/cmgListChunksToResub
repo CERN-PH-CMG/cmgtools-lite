@@ -1,85 +1,112 @@
 #!/bin/bash
-if [[ "$1" == "" || "$1" == "-h" || "$1" == "--help" ]]; then
-    echo "Usage: $0 [ -q <queue> ] [ directory ] "
+
+# define valid options, those with trailing colon have a second argument
+OPTS=`getopt -n 'parse-options' -o hTdt:lpq:z --long help -- "$@"`
+
+if [ $? != 0 ] ; then echo "Failed parsing options." >&2 ; exit 1 ; fi
+
+eval set -- "$OPTS"
+# set default values
+HELP=false
+TERSE=/bin/false
+LSFL=false
+F=JSONAnalyzer/JSON.pck
+LOC=false
+P=false
+Q=8nh
+Z=false
+
+# evaluate parameters
+while true; do
+  case "$1" in
+    -h | --help )   HELP=true; shift ;;
+    -T )            TERSE=/bin/true; shift ;;
+    -d )            LSFL=true; shift ;;
+    -t )            F="$2"; shift 2 ;;
+    -l )            LOC=true; shift ;;
+    -p )            P=true; shift ;;
+    -q )            Q="$2"; shift 2 ;;
+    -z )            Z=true; shift ;;
+    -- )            shift; break ;;
+    *  )            break ;;
+  esac
+done
+
+# define help function with instructions
+function help {
+    echo "Usage: $0 [ -q <queue> ] directory"
     echo "Will look in the specified directory (or in the current one if none is specified),  "
     echo "list failed jobs and print the cmgResubChunk commands to resubmit them."
-    echo "The default queue is 8nh" 
+    echo "The default queue is 8nh"
+    echo "further options:"
+    echo "-T  terse output"
+    echo "-d  check for a LSFJOB_ dir"
+    echo "-t <filename>  name of ROOT file to check for zombie (option -z)"
+    echo "-l  print commands for local running instead of batch submission"
+    echo "-p  check for null pck files"
+    echo "-z  check for zombie ROOT files"
     exit 1;
+}
+
+# call help function in case help parameter has been set or no directory parameter has been given
+if $HELP || [ "$1" == "" ]; then
+    help;
 fi
 
-TERSE=/bin/false
-if [[ "$1" == "-T" ]]; then 
-    TERSE=/bin/true; shift; 
-fi;
-
-LSFL=0
-if [[ "$1" == "-d" ]]; then
-    LSFL=1; shift; 
+if $LSFL; then
     $TERSE || echo "# Will check for a LSFJOB_ dir "
-fi;
+fi
 
-F=JSONAnalyzer/JSON.pck
-if [[ "$1" == "-t" ]]; then
-    F=$2; shift; shift;
-    $TERSE || echo "# Will test for the presence of file $F "
-fi;
+$TERSE || echo "# Will test for the presence of file $F"
 
-LOC=0
-if [[ "$1" == "-l" ]]; then
-    LOC=1; shift;
-fi;
-
-P=false
-if [[ "$1" == "-p" ]]; then
+if $P; then
     $TERSE || echo "# Will also check for null pck files"
-    P=true; shift;
-fi;
+fi
 
-Q=8nh
-if [[ "$1" == "-q" ]]; then
-    Q=$2; shift; shift;
-fi;
+if $Z; then
+    $TERSE || echo "# Will also check if rootfiles are zombies or not"
+fi
 
-Z=0
-if [[ "$1" == "-z" ]]; then
-    if echo $F | grep -q "\.root$"; then
-        $TERSE || echo "# Will also check if rootfiles $F are zombies or not"
-        Z=1; shift;
-    else
-        $TERSE || echo "# Error: can't test for zombies (-z) if the specified file to test is not a rootfile (-t $F)";
-        exit 1;
-    fi;
-fi;
-
-
+# set the base directory to start from
 BASE="";
 if [[ "$1" != "" && "$1" != "." ]]; then
     test -d $1 && cd $1 && BASE="$PWD/";
 fi
 
 $TERSE || echo "# Will print out the commands to resubmit the chunks that failed "
-for D in *_Chunk[0-9]*; do
+for D in */; do
+    if [ ! -f "$D/config.pck" ]; then
+        # only consider standard heppy output directories
+        echo "# skipping directory: $D"
+        continue
+    fi
     PCKBAD=false
-    ${P} && find $D -name '*.pck' -empty | grep -q pck && PCKBAD=true; 
+    # test if there are empty pickle files
+    ${P} && find $D -name '*.pck' -empty | grep -q pck && PCKBAD=true;
+    # test if file to be tested for is present and whether bad pickle file flag has been set
     if test \! -s $D/$F || $PCKBAD; then
-        if [[ "${LSFL}" == "0"  ]] || find $D -maxdepth 1 -type d -name 'LSFJOB_*' | grep -q LSFJ || test -f $D/submission_failed ; then
-            if [[ "$LOC" == "1" ]]; then
+        # check for batch directory if requested or proceed to command printout
+        if [ "${LSFL}" = false ] || find $D -maxdepth 1 -type d -name 'LSFJOB_*' | grep -q LSFJ || test -f $D/submission_failed ; then
+            if $LOC; then
+                # print local command
                 echo "cmgRunChunkLocally ${BASE}${D} ";
-	    else
-		echo "cmgResubChunk -q $Q ${BASE}${D} ";
+	        else
+                # print batch command
+		        echo "cmgResubChunk -q $Q ${BASE}${D} ";
             fi
         else
-            $TERSE || echo "# Chunk ${BASE}${D} does not have a LSFJOB directory, maybe still running? "; 
+            $TERSE || echo "# Chunk ${BASE}${D} does not have a LSFJOB directory, maybe still running? ";
         fi;
     fi;
 done;
-if [[ "$Z" != "0" ]]; then
+
+if $Z; then
     $TERSE || echo "# Testing for zombies";
-    for Z in $(cmgListZombies  "*_Chunk[0-9]*/$F"); do
-        if test -s $Z; then # empty files have already been found
-            D=${Z%%/*};
-            if [[ "$LOC" == "1" ]]; then
-                echo "cmgRunChunkLocally ${BASE}${D}     # zombie"; 
+    for ZOMBIE in $(cmgListZombies  "*/$F"); do
+        if test -s $ZOMBIE; then # empty files have already been found
+            D=${ZOMBIE%%/*};
+            if $LOC; then
+                echo "cmgRunChunkLocally ${BASE}${D}     # zombie";
             else
                 echo "cmgResubChunk -q $Q ${BASE}${D}    # zombie";
             fi
