@@ -40,6 +40,16 @@ WZZ : WZZ : xsec
 ZGTo2LG_ext : ZGTo2LG_ext : xsec
 ZZTo4L : ZZTo4L : xsec
 ZZZ : ZZZ : xsec
+TTZToLLNuNu_m1to10_LHE :  TTZToLLNuNu_m1to10_LHE : xsec
+TTJets_DiLepton_ext_part1 :  TTJets_DiLepton_ext_part1 : xsec
+TTJets_DiLepton_ext_part2 :  TTJets_DiLepton_ext_part2 : xsec
+TTJets_DiLepton_ext_part3 :  TTJets_DiLepton_ext_part3 : xsec
+TTWToLNu_ext2_LHE :  TTWToLNu_ext2_LHE : xsec
+TTWToLNu_ext_LHE :  TTWToLNu_ext_LHE : xsec
+TT_pow_part1 :  TT_pow_part1 : xsec
+TT_pow_part2 :  TT_pow_part2 : xsec
+TTHnobb_mWCutfix_ext_LHE :  TTHnobb_mWCutfix_ext_LHE : xsec
+TTZToLLNuNu_LHE :  TTZToLLNuNu_LHE : xsec
 data: DoubleEG_2016B
 data: DoubleEG_2016C
 data: DoubleEG_2016D

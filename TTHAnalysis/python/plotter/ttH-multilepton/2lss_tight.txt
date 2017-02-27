@@ -2,7 +2,7 @@ alwaystrue: 1
 trigger: Trigger_2l
 cleanup: minMllAFAS > 12
 dilep: nLepFO>=2
-pt2010: LepGood1_conePt>25 && LepGood2_conePt>10 && (abs(LepGood2_pdgId)!=11 || LepGood2_conePt>15)
+pt2515: LepGood1_conePt>25 && LepGood2_conePt>15
 #htllv100 : LepGood1_conept+LepGood2_conept+met_pt > 100
 TT: LepGood1_isLepTight && LepGood2_isLepTight
 exclusive: nLepTight<=2
@@ -54,3 +54,4 @@ b2lss_bt: nBJetMedium25 >= 2 ; Disable=True
 2lep_promptrightcharge: (!isData) && LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge; Disable=True
 fakeIsMu : if3((nLepFO>1)*(LepGood1_isLepTight+LepGood2_isLepTight==1),if3(LepGood1_isLepTight,(abs(LepGood2_pdgId)==13),(abs(LepGood1_pdgId)==13)),0); Disable=True
 fakeIsEl : if3((nLepFO>1)*(LepGood1_isLepTight+LepGood2_isLepTight==1),if3(LepGood1_isLepTight,(abs(LepGood2_pdgId)==11),(abs(LepGood1_pdgId)==11)),0); Disable=True
+muChargeConsistencyThree: (abs(LepGood1_pdgId)!=13 || LepGood1_chargeConsistency>=3) && (abs(LepGood2_pdgId)!=13 || LepGood2_chargeConsistency>=3); Disable=True

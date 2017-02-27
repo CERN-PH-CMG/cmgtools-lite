@@ -87,10 +87,8 @@ def train_multiclass(fOutName, options):
         allcuts += cut
 
     allcuts += "nLepFO_Recl>=2"
-    allcuts += "LepGood_conePt[iLepFO_Recl[0]]>20"
-    allcuts += "(abs(LepGood_pdgId[iLepFO_Recl[0]])!=11 || LepGood_conePt[iLepFO_Recl[0]]>25)" #!
-    allcuts += "LepGood_conePt[iLepFO_Recl[1]]>10"
-    allcuts += "(abs(LepGood_pdgId[iLepFO_Recl[1]])!=11 || LepGood_conePt[iLepFO_Recl[1]]>15)" #!
+    allcuts += "LepGood_conePt[iLepFO_Recl[0]]>25"
+    allcuts += "LepGood_conePt[iLepFO_Recl[1]]>15"
 
     allcuts += "abs(mZ1_Recl-91.2) > 10"
     allcuts += "(met_pt*0.00397 + mhtJet25_Recl*0.00265 > 0.2)"
@@ -99,7 +97,7 @@ def train_multiclass(fOutName, options):
 
     if '_3l' in options.training:
         allcuts += "nLepFO_Recl>=3"
-        allcuts += "LepGood_conePt[iLepFO_Recl[2]]>10"
+        allcuts += "LepGood_conePt[iLepFO_Recl[2]]>15"
         allcuts += "nJet25_Recl>=2"
         # allcuts += "LepGood_isTight_Recl[iLepFO_Recl[0]]"
         # allcuts += "LepGood_isTight_Recl[iLepFO_Recl[1]]"
@@ -214,17 +212,17 @@ def train_2d(fOutName, training, options):
     allcuts = ROOT.TCut('1')
     if '2lss' in training:
         allcuts += "nLepFO_Recl>=2"
-        allcuts += "LepGood_conePt[iLepFO_Recl[0]]>20"
-        allcuts += "LepGood_conePt[iLepFO_Recl[1]]>10"
+        allcuts += "LepGood_conePt[iLepFO_Recl[0]]>25"
+        allcuts += "LepGood_conePt[iLepFO_Recl[1]]>15"
         allcuts += "LepGood_charge[iLepFO_Recl[0]] == LepGood_charge[iLepFO_Recl[1]]"
         allcuts += "(nBJetLoose25_Recl >= 2 || nBJetMedium25_Recl >= 1)"
         allcuts += "nJet25_Recl >= 4"
     elif '3l' in training:
         allcuts += "nLepFO_Recl>=3"
         allcuts += "abs(mZ1_Recl-91.2)>10"
-        allcuts += "LepGood_conePt[iLepFO_Recl[0]]>20"
-        allcuts += "LepGood_conePt[iLepFO_Recl[1]]>10"
-        allcuts += "LepGood_conePt[iLepFO_Recl[2]]>10"
+        allcuts += "LepGood_conePt[iLepFO_Recl[0]]>25"
+        allcuts += "LepGood_conePt[iLepFO_Recl[1]]>15"
+        allcuts += "LepGood_conePt[iLepFO_Recl[2]]>15"
         allcuts += "(nJet25_Recl >= 4 || (met_pt*0.00397 + mhtJet25_Recl*0.00265 - 0.184 > 0.0 + 0.1*(mZ1_Recl > 0)))"
         allcuts += "nBJetLoose25_Recl >= 2"
 
@@ -258,14 +256,14 @@ def train_2d(fOutName, training, options):
         ]
     if '2lss' in training and 'ttbar' in training:
         variables += [
-            "met := min(met_pt, 400)",
-            "avg_dr_jet : = avg_dr_jet",
+#            "met := min(met_pt, 400)",
+#            "avg_dr_jet : = avg_dr_jet",
         ]
         dsets += [
-            ('TTJets_SingleLeptonFromT',        'Background', 0.1),
-            ('TTJets_SingleLeptonFromTbar',     'Background', 0.1),
-            ('TTJets_SingleLeptonFromT_ext',    'Background', 0.9),
-            ('TTJets_SingleLeptonFromTbar_ext', 'Background', 0.9),
+            ('TTJets_SingleLeptonFromT',        'Background', 0.2),
+            ('TTJets_SingleLeptonFromTbar',     'Background', 0.2),
+            ('TTJets_SingleLeptonFromT_ext',    'Background', 0.8),
+            ('TTJets_SingleLeptonFromTbar_ext', 'Background', 0.8),
         ]
 
 
@@ -290,16 +288,18 @@ def train_2d(fOutName, training, options):
                 ]
     if '3l' in training and 'ttbar' in training:
         variables += [
-            "mhtJet25 := mhtJet25_Recl",
-            "avg_dr_jet : = avg_dr_jet",
+#            "mhtJet25 := mhtJet25_Recl",
+#            "avg_dr_jet : = avg_dr_jet",
         ]
         dsets += [
-            ('TTJets_DiLepton',            'Background', 1),
-#            ('TTJets_DiLepton_ext_skim3l', 'Background', 0.9),
-            ('TTJets_SingleLeptonFromT',        'Background', 0.1),
-            ('TTJets_SingleLeptonFromTbar',     'Background', 0.1),
-            ('TTJets_SingleLeptonFromT_ext',    'Background', 0.9),
-            ('TTJets_SingleLeptonFromTbar_ext', 'Background', 0.9),
+            ('TTJets_DiLepton',            'Background', 1.0/6),
+            ('TTJets_DiLepton_ext_part1',            'Background', 2.0/6),
+            ('TTJets_DiLepton_ext_part2',            'Background', 2.0/6),
+            ('TTJets_DiLepton_ext_part3',            'Background', 1.0/6),
+            ('TTJets_SingleLeptonFromT',        'Background', 0.2),
+            ('TTJets_SingleLeptonFromTbar',     'Background', 0.2),
+            ('TTJets_SingleLeptonFromT_ext',    'Background', 0.8),
+            ('TTJets_SingleLeptonFromTbar_ext', 'Background', 0.8),
         ]
 
     if 'bdtv8_bestchoice' in training:
@@ -358,7 +358,7 @@ def train_2d(fOutName, training, options):
     if 'hj_value' in training:
         variables += [
             'BDTv8_eventReco_Hj_score := max(-1.1,BDTv8_eventReco_Hj_score)',
-            'BDTv8_eventReco_Hjj_score := max(-1.1,BDTv8_eventReco_Hjj_score)',
+#            'BDTv8_eventReco_Hjj_score := max(-1.1,BDTv8_eventReco_Hjj_score)',
             ]
 
     outname = fOutName+'_'+training+'.root'

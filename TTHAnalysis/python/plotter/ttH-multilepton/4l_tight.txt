@@ -2,7 +2,7 @@ alwaystrue: 1
 trilep: nLepFO>=4
 cleanup: minMllAFAS > 12
 trigger: Trigger_3l
-pt2010: LepGood1_conePt>20 && LepGood2_conePt>10 && LepGood3_conePt>10 && LepGood4_conePt>10
+pt25151510: LepGood1_conePt>25 && LepGood2_conePt>15 && LepGood3_conePt>15 && LepGood4_conePt>10
 TTTT: LepGood1_isLepTight && LepGood2_isLepTight && LepGood3_isLepTight && LepGood4_isLepTight
 Zveto: abs(mZ1-91.2) > 10
 

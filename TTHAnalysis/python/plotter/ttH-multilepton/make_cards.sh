@@ -1,11 +1,11 @@
 #!/bin/bash
 
 if [[ "$HOSTNAME" == "cmsco01.cern.ch" ]]; then
-    T2L=" -P /data1/peruzzi/TREES_TTH_250117_Summer16_JECV3_noClean_qgV2_skimOnlyMC_v5 --Fs {P}/1_recleaner_130217_mva0p90_v5 --Fs {P}/5_triggerDecision_130217_v5 --Fs {P}/6_bTagSF_v5 --Fs {P}/3_kinMVA_BDTv8_130217_v5"
+    T2L=" -P /data1/peruzzi/TREES_TTH_250117_Summer16_JECV3_noClean_qgV2_skimOnlyMC_v6 --Fs {P}/1_recleaner_230217_v6 --Fs {P}/2_eventVars_230217_v6 --Fs {P}/3_kinMVA_BDTv8_230217_v6 --Fs {P}/4_BDTv8_Hj_230217_v6 --Fs {P}/5_triggerDecision_230217_v6 --Fs {P}/6_bTagSF_v6 --Fs {P}/7_tauTightSel_v6"
     T3L=${T2L}
     J=8;
 else
-    T2L=" -P /afs/cern.ch/work/p/peruzzi/tthtrees/TREES_TTH_250117_Summer16_JECV3_noClean_qgV2_skimOnlyMC_v5 --Fs {P}/1_recleaner_130217_mva0p90_v5 --Fs {P}/5_triggerDecision_130217_v5 --Fs {P}/6_bTagSF_v5 --Fs {P}/3_kinMVA_BDTv8_130217_v5"
+    T2L=" -P /afs/cern.ch/work/p/peruzzi/tthtrees/TREES_TTH_250117_Summer16_JECV3_noClean_qgV2_skimOnlyMC_v6 --Fs {P}/1_recleaner_230217_v6 --Fs {P}/2_eventVars_230217_v6 --Fs {P}/3_kinMVA_BDTv8_230217_v6 --Fs {P}/4_BDTv8_Hj_230217_v6 --Fs {P}/5_triggerDecision_230217_v6 --Fs {P}/6_bTagSF_v6 --Fs {P}/7_tauTightSel_v6"
     T3L=${T2L}
     J=8;
 fi
@@ -37,8 +37,8 @@ FUNCTION_2L="kinMVA_2lss_ttV_withHj:kinMVA_2lss_ttbar_withBDTv8 40,-1,1,40,-1,1"
 
 #BINFUNCTION_2L="7:ttH_MVAto1D_7_2lss_Marco"
 #BINFUNCTION_3L="5:ttH_MVAto1D_5_3l_Marco"
-BINFUNCTION_2L="7:OurBin2l"
-BINFUNCTION_3L="4:OurBin3l"
+BINFUNCTION_2L="8:OurBin2l"
+BINFUNCTION_3L="5:OurBin3l"
 
 MCASUFFIX="mcdata-frdata"
 
@@ -121,7 +121,7 @@ if [[ "$1" == "all" || "$1" == "4l" ]]; then
     ONEBIN_4L="1 1,0.5,1.5"
 
     echo "4l";
-    python makeShapeCards.py ${DOFILE} ttH-multilepton/mca-4l-${MCASUFFIX}${SPLITDECAYS}.txt ttH-multilepton/3l_tight.txt ${ONEBIN_4L} $SYSTS $OPT_4L -o 4l${CATPOSTFIX};
+    python makeShapeCards.py ${DOFILE} ttH-multilepton/mca-4l-${MCASUFFIX}${SPLITDECAYS}.txt ttH-multilepton/4l_tight.txt ${ONEBIN_4L} $SYSTS $OPT_4L -o 4l${CATPOSTFIX};
 
    echo "Done at $(date)"
 fi
