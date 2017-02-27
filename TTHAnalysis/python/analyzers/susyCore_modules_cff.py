@@ -82,7 +82,9 @@ eventFlagsAna = cfg.Analyzer(
         "trkPOG_manystripclus53X" : [ "Flag_trkPOG_manystripclus53X" ],
         "trkPOG_toomanystripclus53X" : [ "Flag_trkPOG_toomanystripclus53X" ],
         "trkPOG_logErrorTooManyClusters" : [ "Flag_trkPOG_logErrorTooManyClusters" ],
-        "METFilters" : [ "Flag_METFilters" ],
+        "MuFlag_good" : [ "Flag_noBadMuons" ],
+        "MuFlag_bad" : [ "Flag_badMuons" ],
+        "MuFlag_dup" : [ "Flag_duplicateMuons" ],
     }
     )
 

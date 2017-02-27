@@ -84,7 +84,7 @@ triggers_FR_1e_noiso = [ "HLT_Ele%d_CaloIdM_TrackIdM_PFJet30_v*" % pt for pt in 
 triggers_FR_1e_iso   = [ "HLT_Ele%d_CaloIdL_TrackIdL_IsoVL_PFJet30_v*" % pt for pt in (8,12,17,23,33) ] # DoubleEG
 triggers_FR_1e_b2g = [ "HLT_Ele17_CaloIdL_TrkIdL_IsoVL_v*", "HLT_Ele12_CaloIdL_TrackIdL_IsoVL_v*" ]
 triggers_FR_jet  =  [ "HLT_PFJet40_v*", "HLT_PFJet60_v*", "HLT_PFJet80_v*" ]
-triggers_FR_muNoIso = [ "HLT_Mu%d_v*" % pt for pt in (20,27,) ] + [ "HLT_Mu%d_eta2p1_v*" % pt for pt in (24,45,) ] + [ "HLT_L2Mu%d_v*" % pt for pt in (10,) ] # SingleMu PD
+triggers_FR_muNoIso = [ "HLT_Mu%d_v*" % pt for pt in (20,27,50) ] #+ [ "HLT_Mu%d_eta2p1_v*" % pt for pt in (24,45,) ] + [ "HLT_L2Mu%d_v*" % pt for pt in (10,) ] # SingleMu PD
 
 ### GP: did not look at anything below this
 
