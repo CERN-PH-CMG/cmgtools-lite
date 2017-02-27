@@ -34,9 +34,10 @@ def haddPck(file, odir, idirs):
     txtFile.write( str(sum) )
     txtFile.write( '\n' )
     txtFile.close()
-    
 
-def hadd(file, odir, idirs):
+
+def hadd(file, odir, idirs, appx=''):
+    MAX_ARG_STRLEN = 131072
     if file.endswith('.pck'):
         try:
             haddPck( file, odir, idirs)
@@ -46,18 +47,30 @@ def hadd(file, odir, idirs):
     elif not file.endswith('.root'):
         return
     haddCmd = ['hadd']
-    haddCmd.append( file.replace( idirs[0], odir ) )
+    haddCmd.append(file.replace(idirs[0], odir).replace('.root', appx+'.root'))
     for dir in idirs:
         haddCmd.append( file.replace( idirs[0], dir ) )
     # import pdb; pdb.set_trace()
     cmd = ' '.join(haddCmd)
     print cmd
-    os.system(cmd)
+    if len(cmd) > MAX_ARG_STRLEN:
+        print 'Command longer than maximum unix string length; dividing into 2'
+        hadd(file, odir, idirs[:len(idirs)/2], '1')
+        hadd(file.replace(idirs[0], idirs[len(idirs)/2]), odir, idirs[len(idirs)/2:], '2')
+        haddCmd = ['hadd']
+        haddCmd.append(file.replace(idirs[0], odir).replace('.root', appx+'.root'))
+        haddCmd.append(file.replace(idirs[0], odir).replace('.root', '1.root'))
+        haddCmd.append(file.replace(idirs[0], odir).replace('.root', '2.root'))
+        cmd = ' '.join(haddCmd)
+        print 'Running merge cmd:', cmd
+        os.system(cmd)
+    else:
+        os.system(cmd)
 
 
 def haddRec(odir, idirs):
     print 'adding', idirs
-    print 'to', odir 
+    print 'to', odir
 
     cmd = ' '.join( ['mkdir', odir])
     # import pdb; pdb.set_trace()
