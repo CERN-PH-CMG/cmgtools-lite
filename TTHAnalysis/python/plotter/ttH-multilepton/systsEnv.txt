@@ -87,12 +87,10 @@ CMS_ttHl_thu_shape_ttZ_y  : TTZ : .*2lss.*|.*3l.* : 1.0 : shapeOnly2D_1X_1.02Y
 # 1+2) Measurement of the fake rate: normalization and shapes
 CMS_ttHl_FRe_norm : data_fakes  : .* : FRe_norm : templates
 CMS_ttHl_FRe_pt	  : data_fakes  : .* : FRe_pt 	: templatesShapeOnly
-CMS_ttHl_FRe_b	  : data_fakes  : .* : FRe_b 	: templatesShapeOnly
-CMS_ttHl_FRe_ec	  : data_fakes  : .* : FRe_ec 	: templatesShapeOnly
+CMS_ttHl_FRe_be   : data_fakes  : .* : FRe_be 	: templatesShapeOnly
 CMS_ttHl_FRm_norm : data_fakes  : .* : FRm_norm : templates
 CMS_ttHl_FRm_pt	  : data_fakes  : .* : FRm_pt 	: templatesShapeOnly
-CMS_ttHl_FRm_b	  : data_fakes  : .* : FRm_b 	: templatesShapeOnly
-CMS_ttHl_FRm_ec	  : data_fakes  : .* : FRm_ec 	: templatesShapeOnly
+CMS_ttHl_FRm_be	  : data_fakes  : .* : FRm_be 	: templatesShapeOnly
 
 
 # 3l uncertainties not checked, to be updated
