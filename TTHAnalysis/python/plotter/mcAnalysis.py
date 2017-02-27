@@ -50,7 +50,7 @@ class MCAnalysis:
             to = to.strip()
             for k in fro.split(","):
                 self._premap.append((re.compile(k.strip()+"$"), to))
-        self.variationsFile = UncertaintyFile(options.variationsFile) if options.variationsFile else None
+        self.variationsFile = UncertaintyFile(options.variationsFile,options) if options.variationsFile else None
         self.readMca(samples,options)
 
     def readMca(self,samples,options,addExtras={}):
@@ -145,19 +145,21 @@ class MCAnalysis:
             if skipMe: continue
 
             # Load variations if matching this process name
-            variations=[]
+            variations={}
             if self.variationsFile:
                 for var in self.variationsFile.uncertainty():
                     if var.procmatch().match(pname) and var.binmatch().match(options.binname): 
-                        #print "Variation %s enabled for process %s" % (var, pname)
-                        variations.append(var)
+                        if var.name in variations:
+                            print "Variation %s overriden for process %s, new process pattern %r, bin %r (old had %r, %r)" % (
+                                    var.name, pname, var.procpattern(), var.binpattern(), variations[var.name].procpattern(), variations[var.name].binpattern())
+                        variations[var.name] = var
                 if 'NormSystematic' in extra:
                     del extra['NormSystematic']
                     if pname not in getattr(options, '_warning_NormSystematic_variationsFile',[]):
                        options._warning_NormSystematic_variationsFile = [pname] + getattr(options, '_warning_NormSystematic_variationsFile',[])
                        print "Using both a NormSystematic and a variationFile is not supported. Will disable the NormSystematic for process %s" % pname
             if 'NormSystematic' in extra:
-                variations.append(Uncertainty('norm_%s'%pname,re.compile(pname+'$'),re.compile(options.binname+'$'),'normSymm',[{'NormFactor': 1+float(extra['NormSystematic'])}]))
+                variations['_norm'] = Uncertainty('norm_%s'%pname,pname,options.binname,'normSymm',[{'NormFactor': 1+float(extra['NormSystematic'])}])
                 if not hasattr(options, '_deprecation_warning_NormSystematic'):
                     print 'Added normalization uncertainty %s to %s, %s. Please migrate away from using the deprecated NormSystematic option.'%(extra['NormSystematic'],pname,field[1])
                     options._deprecation_warning_NormSystematic = False
@@ -195,7 +197,7 @@ class MCAnalysis:
                     rootfile = open(rootfile+".url","r").readline().strip()
                 pckfile = basepath+"/%s/skimAnalyzerCount/SkimReport.pck" % cname
 
-                tty = TreeToYield(rootfile, options, settings=extra, name=pname, cname=cname, objname=objname, variation_inputs=variations); ttys.append(tty)
+                tty = TreeToYield(rootfile, options, settings=extra, name=pname, cname=cname, objname=objname, variation_inputs=variations.values()); ttys.append(tty)
                 if signal: 
                     self._signals.append(tty)
                     self._isSignal[pname] = True
@@ -716,6 +718,7 @@ def addMCAnalysisOptions(parser,addTreeToYieldOnesToo=True):
     parser.add_option("--fom", "--figure-of-merit", dest="figureOfMerit", type="string", default=[], action="append", help="Add this figure of merit to the output table (S/B, S/sqrB, S/sqrSB)")
     parser.add_option("--binname", dest="binname", type="string", default='default', help="Bin name for uncertainties matching and datacard preparation [default]")
     parser.add_option("--unc", dest="variationsFile", type="string", default=None, help="Uncertainty file to be loaded")
+    parser.add_option("--xu", "--exclude-uncertainty", dest="uncertaintiesToExclude", type="string", default=[], action="append", help="Uncertainties to exclude (comma-separated list of regexp, can specify multiple ones)");
 
 if __name__ == "__main__":
     from optparse import OptionParser

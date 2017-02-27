@@ -10,8 +10,10 @@ from CMGTools.TTHAnalysis.plotter.fakeRate import *
 class Uncertainty:
     def __init__(self,name,procmatch,binmatch,unc_type,more_args=None,extra=None,options=None):
         self.name = name
-        self._procmatch = procmatch
-        self._binmatch = binmatch
+        self._procpattern = procmatch
+        self._binpattern = binmatch
+        self._procmatch = re.compile(procmatch+'$')
+        self._binmatch = re.compile(binmatch+'$')
         self.unc_type = unc_type
         self.args = list(more_args) if more_args else []
         self.extra = dict(extra) if extra else {}
@@ -29,7 +31,7 @@ class Uncertainty:
         if self.unc_type=='templateAsymm':
             if 'FakeRates' in self.extra:
                 for idx in xrange(2):
-                    self.fakerate[idx] = FakeRate(self.extra['FakeRates'][idx])
+                    self.fakerate[idx] = FakeRate(self.extra['FakeRates'][idx],loadFilesNow=False)
             if 'AddWeights' in self.extra:
                 for idx in xrange(2):
                     self.fakerate[idx]._weight = '(%s)*(%s)'%(self.fakerate[idx]._weight,self.extra['AddWeights'][idx])
@@ -39,7 +41,7 @@ class Uncertainty:
             self.fakerate[1] = None
             self.trivialFunc[1] = 'symmetrize_up_to_dn'
             if 'FakeRate' in self.extra:
-                self.fakerate[0] = FakeRate(self.extra['FakeRate'])
+                self.fakerate[0] = FakeRate(self.extra['FakeRate'],loadFilesNow=False)
             if 'AddWeight' in self.extra:
                 self.fakerate[0]._weight = '(%s)*(%s)'%(self.fakerate[0]._weight,self.extra['AddWeight'])
             if 'FakeRate' not in self.extra and 'AddWeight' not in self.extra:
@@ -58,11 +60,15 @@ class Uncertainty:
             self.trivialFunc = ['apply_norm_up','apply_norm_dn']
             self.normUnc[0] = float(self.args[0])
             self.normUnc[1] = 1.0/self.normUnc[0]
+        elif self.unc_type=='none':
+            pass
         else: raise RuntimeError, 'Uncertainty type "%s" not recognised' % self.unc_type
         if 'RemoveFakeRate' in self.extra:
             self.removeFR = self.extra['RemoveFakeRate']
         if 'Normalize' in self.extra:
             self._postProcess = "Normalize"
+    def isDummy(self):
+        return  self.unc_type == 'none'
     def isTrivial(self,sign):
         return (self.getFR(sign)==None)
     def getTrivial(self,sign,results):
@@ -104,6 +110,10 @@ class Uncertainty:
         h.Scale(self.normUnc[0] if sign=='up' else self.normUnc[1])
         return h
 
+    def procpattern(self):
+        return self._procpattern
+    def binpattern(self):
+        return self._binpattern
     def procmatch(self):
         return self._procmatch
     def binmatch(self):
@@ -111,16 +121,16 @@ class Uncertainty:
     def unc_type(self):
         return self.unc_type
     def getFR(self,sign):
-        if sign=='up': return self.fakerate[0]
-        elif sign=='dn': return self.fakerate[1]
-        else: raise RuntimeError
+        FR = self.fakerate[0 if sign=='up' else 1]
+        if FR: FR.loadFiles()
+        return FR
     def getFRToRemove(self):
         return self.removeFR
     def __str__(self):
         return ' : '.join([self.name,self._procmatch.pattern,self._binmatch.pattern,self.unc_type])+'\n'
 
 class UncertaintyFile:
-    def __init__(self,txtfileOrUncertainty):
+    def __init__(self,txtfileOrUncertainty,options=None):
         if type(txtfileOrUncertainty) == list:
             self._uncertainty = deepcopy(txtfileOrUncertainty[:])
         elif isinstance(txtfileOrUncertainty,UncertaintyFile):
@@ -145,13 +155,17 @@ class UncertaintyFile:
                     more = more.replace("\\,",";")
                     for setting in [f.strip().replace(";",",") for f in more.split(',')]:
                         if "=" in setting: 
-                            (key,val) = [f.strip() for f in setting.split("=")]
+                            (key,val) = [f.strip() for f in setting.split("=",1)]
                             extra[key] = eval(val)
                         else: extra[setting] = True
                 field = [f.strip() for f in line.split(':')]
+                if options and getattr(options,'uncertaintiesToExclude',[]):
+                    skipme = True
+                    for p0 in options.uncertaintiesToExclude:
+                        for p in p0.split(","):
+                            if re.match(p+"$", field[0]): skipMe = True
+                    if skipme: continue
                 (name, procmatch, binmatch, unc_type) = field[:4]
-                procmatch = re.compile(procmatch+'$')
-                binmatch = re.compile(binmatch+'$')
                 more_args = field[4:]
                 self._uncertainty.append(Uncertainty(name,procmatch,binmatch,unc_type,more_args,extra))
 

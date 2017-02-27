@@ -172,6 +172,7 @@ class TreeToYield:
         self._entries = None
         #print "Done creation  %s for task %s in pid %d " % (self._fname, self._name, os.getpid())
         for _var in variation_inputs:
+            if _var.isDummy(): continue
             self._variations.append(_var)
         self._makeMCCAndScaleFactor()
     def _makeMCCAndScaleFactor(self):
@@ -228,7 +229,8 @@ class TreeToYield:
             self._weight = True
         if mcCorrs and self._mcCorrs and scaleFactor and scaleFactor != 1.0:
             # apply MC corrections to the scale factor
-            self._scaleFactor = self.adaptExpr(scaleFactor, cut=True)
+            self._scaleFactor0 = scaleFactor
+            self._scaleFactor  = self.adaptExpr(scaleFactor, cut=True)
         else:
             self._scaleFactor = scaleFactor
     def getScaleFactor(self):
@@ -256,7 +258,7 @@ class TreeToYield:
             ret = re.sub(r'\$DATA\{.*?\}', '', re.sub(r'\$MC\{(.*?)\}', r'\1', expr));
         return ret
     def adaptExpr(self,expr,cut=False,mcCorrList=None):
-        _mcCorrList = mcCorrList if mcCorrList else self._mcCorrs
+        _mcCorrList = mcCorrList if mcCorrList != None else self._mcCorrs
         ret = self.adaptDataMCExpr(expr)
         for mcc in _mcCorrList:
             ret = mcc(ret,self._name,self._cname,cut,self._isdata)
