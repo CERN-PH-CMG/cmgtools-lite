@@ -1,0 +1,90 @@
+# vim: syntax=sh
+#CMS_ttHl_FR_norm : data_fakes  : .* : normAsymm : 0.65 : 1.35
+#CMS_ttHl_Flips_norm : data_flips  : .* : normAsymm : 0.70 : 1.30
+
+CMS_ttHl_btag_LF	: ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .* : templateAsymm; AddWeights=['eventBTagSF_up_lf/eventBTagSF'\,'eventBTagSF_down_lf/eventBTagSF']		
+CMS_ttHl_btag_HF	: ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .* : templateAsymm; AddWeights=['eventBTagSF_up_hf/eventBTagSF'\,'eventBTagSF_down_hf/eventBTagSF']
+ 		
+CMS_ttHl_jec	: ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .* : templateAsymm; \
+        FakeRates=['ttH-multilepton/fr-jecUp.txt'\,'ttH-multilepton/fr-jecDn.txt'], \
+        AddWeights=['eventBTagSF_up_jes/eventBTagSF'\,'eventBTagSF_down_jes/eventBTagSF']
+
+CMS_ttHl_FRe_norm : data_fakes  : .*2lss.* : templateAsymm; FakeRates=["ttH-multilepton/fakerate-vars/fakeRate-2lss-frdata-e-up.txt"\,"ttH-multilepton/fakerate-vars/fakeRate-2lss-frdata-e-down.txt"], \
+        RemoveFakeRate="ttH-multilepton/fakeRate-2lss-frdata.txt"
+CMS_ttHl_FRe_pt : data_fakes  : .*2lss.* : templateAsymm; FakeRates=["ttH-multilepton/fakerate-vars/fakeRate-2lss-frdata-e-pt1.txt"\,"ttH-multilepton/fakerate-vars/fakeRate-2lss-frdata-e-pt2.txt"], \
+        Normalize=True, RemoveFakeRate="ttH-multilepton/fakeRate-2lss-frdata.txt"
+CMS_ttHl_FRe_be : data_fakes  : .*2lss.* : templateAsymm; FakeRates=["ttH-multilepton/fakerate-vars/fakeRate-2lss-frdata-e-be1.txt"\,"ttH-multilepton/fakerate-vars/fakeRate-2lss-frdata-e-be2.txt"], \
+        Normalize=True, RemoveFakeRate="ttH-multilepton/fakeRate-2lss-frdata.txt"
+CMS_ttHl_FRm_norm : data_fakes  : .*2lss.* : templateAsymm; FakeRates=["ttH-multilepton/fakerate-vars/fakeRate-2lss-frdata-m-up.txt"\,"ttH-multilepton/fakerate-vars/fakeRate-2lss-frdata-m-down.txt"], \
+        RemoveFakeRate="ttH-multilepton/fakeRate-2lss-frdata.txt"
+CMS_ttHl_FRm_pt : data_fakes  : .*2lss.* : templateAsymm; FakeRates=["ttH-multilepton/fakerate-vars/fakeRate-2lss-frdata-m-pt1.txt"\,"ttH-multilepton/fakerate-vars/fakeRate-2lss-frdata-m-pt2.txt"], \
+        Normalize=True, RemoveFakeRate="ttH-multilepton/fakeRate-2lss-frdata.txt"
+CMS_ttHl_FRm_be : data_fakes  : .*2lss.* : templateAsymm; FakeRates=["ttH-multilepton/fakerate-vars/fakeRate-2lss-frdata-m-be1.txt"\,"ttH-multilepton/fakerate-vars/fakeRate-2lss-frdata-m-be2.txt"], \
+        Normalize=True, RemoveFakeRate="ttH-multilepton/fakeRate-2lss-frdata.txt"
+CMS_ttHl_FRe_norm : data_fakes  : .*3l.* : templateAsymm; FakeRates=["ttH-multilepton/fakerate-vars/fakeRate-3l-frdata-e-up.txt"\,"ttH-multilepton/fakerate-vars/fakeRate-3l-frdata-e-down.txt"], \
+        RemoveFakeRate="ttH-multilepton/fakeRate-3l-frdata.txt"
+CMS_ttHl_FRe_pt : data_fakes  : .*3l.* : templateAsymm; FakeRates=["ttH-multilepton/fakerate-vars/fakeRate-3l-frdata-e-pt1.txt"\,"ttH-multilepton/fakerate-vars/fakeRate-3l-frdata-e-pt2.txt"], \
+        Normalize=True, RemoveFakeRate="ttH-multilepton/fakeRate-3l-frdata.txt"
+CMS_ttHl_FRe_be : data_fakes  : .*3l.* : templateAsymm; FakeRates=["ttH-multilepton/fakerate-vars/fakeRate-3l-frdata-e-be1.txt"\,"ttH-multilepton/fakerate-vars/fakeRate-3l-frdata-e-be2.txt"], \
+        Normalize=True, RemoveFakeRate="ttH-multilepton/fakeRate-3l-frdata.txt"
+CMS_ttHl_FRm_norm : data_fakes  : .*3l.* : templateAsymm; FakeRates=["ttH-multilepton/fakerate-vars/fakeRate-3l-frdata-m-up.txt"\,"ttH-multilepton/fakerate-vars/fakeRate-3l-frdata-m-down.txt"], \
+        RemoveFakeRate="ttH-multilepton/fakeRate-3l-frdata.txt"
+CMS_ttHl_FRm_pt : data_fakes  : .*3l.* : templateAsymm; FakeRates=["ttH-multilepton/fakerate-vars/fakeRate-3l-frdata-m-pt1.txt"\,"ttH-multilepton/fakerate-vars/fakeRate-3l-frdata-m-pt2.txt"], \
+        Normalize=True, RemoveFakeRate="ttH-multilepton/fakeRate-3l-frdata.txt"
+CMS_ttHl_FRm_be : data_fakes  : .*3l.* : templateAsymm; FakeRates=["ttH-multilepton/fakerate-vars/fakeRate-3l-frdata-m-be1.txt"\,"ttH-multilepton/fakerate-vars/fakeRate-3l-frdata-m-be2.txt"], \
+        Normalize=True, RemoveFakeRate="ttH-multilepton/fakeRate-3l-frdata.txt"
+
+
+
+#CMS_ttHl_FRe_norm : TT_FR_QCD  : .*2lss.* : templateAsymm; FakeRates=["ttH-multilepton/fakerate-vars/fakeRate-2lss-frmc-qcd-e-up.txt"\,"ttH-multilepton/fakerate-vars/fakeRate-2lss-frmc-qcd-e-down.txt"], \
+#        RemoveFakeRate="ttH-multilepton/fakeRate-2lss-frmc-qcd.txt"
+CMS_ttHl_FRe_pt : TT_FR_QCD  : .*2lss.* : templateAsymm; FakeRates=["ttH-multilepton/fakerate-vars/fakeRate-2lss-frmc-qcd-e-pt1.txt"\,"ttH-multilepton/fakerate-vars/fakeRate-2lss-frmc-qcd-e-pt2.txt"], \
+        Normalize=True, RemoveFakeRate="ttH-multilepton/fakeRate-2lss-frmc-qcd.txt"
+CMS_ttHl_FRe_be : TT_FR_QCD  : .*2lss.* : templateAsymm; FakeRates=["ttH-multilepton/fakerate-vars/fakeRate-2lss-frmc-qcd-e-be1.txt"\,"ttH-multilepton/fakerate-vars/fakeRate-2lss-frmc-qcd-e-be2.txt"], \
+        Normalize=True, RemoveFakeRate="ttH-multilepton/fakeRate-2lss-frmc-qcd.txt"
+#CMS_ttHl_FRm_norm : TT_FR_QCD  : .*2lss.* : templateAsymm; FakeRates=["ttH-multilepton/fakerate-vars/fakeRate-2lss-frmc-qcd-m-up.txt"\,"ttH-multilepton/fakerate-vars/fakeRate-2lss-frmc-qcd-m-down.txt"], \
+#        RemoveFakeRate="ttH-multilepton/fakeRate-2lss-frmc-qcd.txt"
+CMS_ttHl_FRm_pt : TT_FR_QCD  : .*2lss.* : templateAsymm; FakeRates=["ttH-multilepton/fakerate-vars/fakeRate-2lss-frmc-qcd-m-pt1.txt"\,"ttH-multilepton/fakerate-vars/fakeRate-2lss-frmc-qcd-m-pt2.txt"], \
+        Normalize=True, RemoveFakeRate="ttH-multilepton/fakeRate-2lss-frmc-qcd.txt"
+CMS_ttHl_FRm_be : TT_FR_QCD  : .*2lss.* : templateAsymm; FakeRates=["ttH-multilepton/fakerate-vars/fakeRate-2lss-frmc-qcd-m-be1.txt"\,"ttH-multilepton/fakerate-vars/fakeRate-2lss-frmc-qcd-m-be2.txt"], \
+        Normalize=True, RemoveFakeRate="ttH-multilepton/fakeRate-2lss-frmc-qcd.txt"
+#CMS_ttHl_FRe_norm : TT_FR_QCD  : .*3l.* : templateAsymm; FakeRates=["ttH-multilepton/fakerate-vars/fakeRate-3l-frmc-qcd-e-up.txt"\,"ttH-multilepton/fakerate-vars/fakeRate-3l-frmc-qcd-e-down.txt"], \
+#        RemoveFakeRate="ttH-multilepton/fakeRate-3l-frmc-qcd.txt"
+CMS_ttHl_FRe_pt : TT_FR_QCD  : .*3l.* : templateAsymm; FakeRates=["ttH-multilepton/fakerate-vars/fakeRate-3l-frmc-qcd-e-pt1.txt"\,"ttH-multilepton/fakerate-vars/fakeRate-3l-frmc-qcd-e-pt2.txt"], \
+        Normalize=True, RemoveFakeRate="ttH-multilepton/fakeRate-3l-frmc-qcd.txt"
+CMS_ttHl_FRe_be : TT_FR_QCD  : .*3l.* : templateAsymm; FakeRates=["ttH-multilepton/fakerate-vars/fakeRate-3l-frmc-qcd-e-be1.txt"\,"ttH-multilepton/fakerate-vars/fakeRate-3l-frmc-qcd-e-be2.txt"], \
+        Normalize=True, RemoveFakeRate="ttH-multilepton/fakeRate-3l-frmc-qcd.txt"
+#CMS_ttHl_FRm_norm : TT_FR_QCD  : .*3l.* : templateAsymm; FakeRates=["ttH-multilepton/fakerate-vars/fakeRate-3l-frmc-qcd-m-up.txt"\,"ttH-multilepton/fakerate-vars/fakeRate-3l-frmc-qcd-m-down.txt"], \
+#        RemoveFakeRate="ttH-multilepton/fakeRate-3l-frmc-qcd.txt"
+CMS_ttHl_FRm_pt : TT_FR_QCD  : .*3l.* : templateAsymm; FakeRates=["ttH-multilepton/fakerate-vars/fakeRate-3l-frmc-qcd-m-pt1.txt"\,"ttH-multilepton/fakerate-vars/fakeRate-3l-frmc-qcd-m-pt2.txt"], \
+        Normalize=True, RemoveFakeRate="ttH-multilepton/fakeRate-3l-frmc-qcd.txt"
+CMS_ttHl_FRm_be : TT_FR_QCD  : .*3l.* : templateAsymm; FakeRates=["ttH-multilepton/fakerate-vars/fakeRate-3l-frmc-qcd-m-be1.txt"\,"ttH-multilepton/fakerate-vars/fakeRate-3l-frmc-qcd-m-be2.txt"], \
+        Normalize=True, RemoveFakeRate="ttH-multilepton/fakeRate-3l-frmc-qcd.txt"
+
+CMS_ttHl_Clos_e_norm : data_fakes|TT_FR_QCD : .*2lss.* : templateSymm ; AddWeight='ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\, 1.2\, 1.1\, 1.0)'
+CMS_ttHl_Clos_e_norm : data_fakes|TT_FR_QCD : .*2lss_ee.* : normSymm : 1.2
+CMS_ttHl_Clos_e_norm : data_fakes|TT_FR_QCD : .*2lss_em.* : normSymm : 1.1
+CMS_ttHl_Clos_e_norm : data_fakes|TT_FR_QCD : .*2lss_mm.* : none
+CMS_ttHl_Clos_e_norm : data_fakes|TT_FR_QCD : .*3l.* : normSymm : 1.1
+CMS_ttHl_Clos_e_bt_norm : data_fakes|TT_FR_QCD : .*2lss.* : templateSymm ; AddWeight='ttH_2lss_ifflavnb(LepGood1_pdgId\,LepGood2_pdgId\,nBJetMedium25\, 1.0\, 1.0\,1.1\, 1.0\,1.0)'
+CMS_ttHl_Clos_e_bt_norm : data_fakes|TT_FR_QCD : .*2lss_ee.* : none
+CMS_ttHl_Clos_e_bt_norm : data_fakes|TT_FR_QCD : .*2lss_em_bl.* : none
+CMS_ttHl_Clos_e_bt_norm : data_fakes|TT_FR_QCD : .*2lss_em_bt.* : normSymm : 1.1
+CMS_ttHl_Clos_e_bt_norm : data_fakes|TT_FR_QCD : .*2lss_mm* : none
+CMS_ttHl_Clos_e_bt_norm : data_fakes|TT_FR_QCD : .*3l.* : templateSymm ; AddWeight='if3(nBJetMedium25<=1\, 1.0\, 1.1)'
+CMS_ttHl_Clos_e_bt_norm : data_fakes|TT_FR_QCD : .*3l_bl.* : none
+CMS_ttHl_Clos_e_bt_norm : data_fakes|TT_FR_QCD : .*3l_bt.* : normSymm : 1.1
+CMS_ttHl_Clos_m_norm : data_fakes|TT_FR_QCD : .*2lss.* : templateSymm ; AddWeight='ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\, 1.0\, 1.1\, 1.2)'
+CMS_ttHl_Clos_m_norm : data_fakes|TT_FR_QCD : .*2lss_ee.* : none
+CMS_ttHl_Clos_m_norm : data_fakes|TT_FR_QCD : .*2lss_em.* : normSymm : 1.1
+CMS_ttHl_Clos_m_norm : data_fakes|TT_FR_QCD : .*2lss_mm.* : normSymm : 1.2
+CMS_ttHl_Clos_m_norm : data_fakes|TT_FR_QCD : .*3l.* : normSymm : 1.15
+CMS_ttHl_Clos_m_bt_norm : data_fakes|TT_FR_QCD : .*2lss.* : templateSymm ; AddWeight='ttH_2lss_ifflavnb(LepGood1_pdgId\,LepGood2_pdgId\,nBJetMedium25\, 1.0\, 1.0\,1.15\, 1.0\,1.3)'
+CMS_ttHl_Clos_m_bt_norm : data_fakes|TT_FR_QCD : .*2lss_ee.*    : none
+CMS_ttHl_Clos_m_bt_norm : data_fakes|TT_FR_QCD : .*2lss_em_bl.* : none
+CMS_ttHl_Clos_m_bt_norm : data_fakes|TT_FR_QCD : .*2lss_em_bt.* : normSymm : 1.15
+CMS_ttHl_Clos_m_bt_norm : data_fakes|TT_FR_QCD : .*2lss_mm_bl.* : none
+CMS_ttHl_Clos_m_bt_norm : data_fakes|TT_FR_QCD : .*2lss_mm_bt.* : normSymm : 1.3
+CMS_ttHl_Clos_m_bt_norm : data_fakes|TT_FR_QCD : .*3l.* : templateSymm ; AddWeight='if3(nBJetMedium25<=1\, 1.0\, 1.2)'
+CMS_ttHl_Clos_m_bt_norm : data_fakes|TT_FR_QCD : .*3l_bl.* : none
+CMS_ttHl_Clos_m_bt_norm : data_fakes|TT_FR_QCD : .*3l_bt.* : normSymm : 1.2
