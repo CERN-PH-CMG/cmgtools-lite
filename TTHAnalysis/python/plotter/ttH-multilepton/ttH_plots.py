@@ -11,7 +11,7 @@ dowhat = "plots"
 #dowhat = "ntuple" # syntax: python ttH-multilepton/ttH_plots.py no 2lss_SR_extr outfile_{cname}.root --sP var1,var2,...
 
 TREES = "--Fs {P}/1_recleaner_230217_v6"
-TREESONLYSKIM = "-P /data1/peruzzi/TREES_TTH_250117_Summer16_JECV3_noClean_qgV2_skimOnlyMC_v6 --Fs {P}/4_BDTv8_Hj_230217_v6 --Fs {P}/3_kinMVA_BDTv8_230217_v6 --Fs {P}/5_triggerDecision_230217_v6 --Fs {P}/6_bTagSF_v6 --Fs {P}/2_eventVars_230217_v6 --Fs {P}/7_tauTightSel_v6 --Fs {P}/8_MEM_v6"
+TREESONLYSKIM = "-P /data1/peruzzi/TREES_TTH_250117_Summer16_JECV3_noClean_qgV2_skimOnlyMC_v6 --Fs {P}/4_BDTv8_Hj_230217_v6 --Fs {P}/3_kinMVA_BDTv8_230217_v6 --Fs {P}/5_triggerDecision_230217_v6 --Fs {P}/6_bTagSF_v6 --Fs {P}/2_eventVars_230217_v6 --Fs {P}/7_tauTightSel_v6"
 TREESONLYFULL = "-P /data1/peruzzi/TREES_TTH_250117_Summer16_JECV3_noClean_qgV2"
 
 def base(selection):
@@ -37,6 +37,9 @@ def base(selection):
     else:
         raise RuntimeError, 'Unknown selection'
 
+    if '_prescale' in torun:
+        GO = doprescale3l(GO)
+
     return GO
 
 def procs(GO,mylist):
@@ -58,10 +61,9 @@ def setwide(x):
 def fulltrees(x):
     return x.replace(TREESONLYSKIM,TREESONLYFULL)
 def doprescale3l(x):
-    raise RuntimeError, 'temporary: no prescaled datasets defined'
-    x2 = x.replace("mixture_jecv6prompt_datafull_jul20_skimOnlyMC","TREES_80X_180716_jecv6_skim_3ltight_relax")
-    x2 = x2.replace("--Fs {P}/4_kinMVA_without_MEM_v5 --Fs {P}/8_bTagSF_12fb_v45","--Fs {P}/4_kinMVA_with_MEM_v5 --Fs {P}/7_MEM_v5 --Fs {P}/8_bTagSF_12fb_v5")
-#    x2 = add(x2,"--sP kinMVA.*")
+    x2 = x.replace("TREES_TTH_250117_Summer16_JECV3_noClean_qgV2_skimOnlyMC_v6","TREES_TTH_250117_Summer16_JECV3_noClean_qgV2_skim3l2j2b1B_v6")
+    x2 = x2.replace("3_kinMVA_BDTv8_230217_v6","3_kinMVA_BDTv8_withMEM_230217_v6")
+    x2 = add(x2,"--Fs {P}/8_MEM_v6")
     return x2
 
 allow_unblinding = False
@@ -152,20 +154,8 @@ if __name__ == '__main__':
                 x = add(x,'--xp data')
             elif not '_data' in torun: raise RuntimeError
             x = x.replace('mca-3l-mcdata.txt','mca-3l-mcdata-frdata.txt')
-            if '_prescale' in torun:
-                x = doprescale3l(x)
-                x = x.replace('mca-3l-mcdata-frdata.txt','mca-3l-mcdata-frdata-prescale.txt')
             if '_table' in torun:
                 x = x.replace('mca-3l-mcdata-frdata.txt','mca-3l-mcdata-frdata-table.txt')
-        else:
-            if 'data' in torun and '_prescale' in torun:
-                raise RuntimeError # trees not ready
-                x = doprescale3l(x)
-                x = x.replace('mca-3l-mcdata.txt','mca-3l-mcdata-prescale.txt')
-            elif '_prescale' in torun:
-                raise RuntimeError # trees not ready
-                x = doprescale3l(x)
-                x = x.replace('mca-3l-mc.txt','mca-3l-mc-prescale.txt')
         if '_table' in torun:
             x = x.replace('mca-3l-mc.txt','mca-3l-mc-table.txt')
 

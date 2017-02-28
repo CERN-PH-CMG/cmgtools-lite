@@ -100,13 +100,13 @@ kinMVA_2lss_bins8_withBDTv8_withHj_ourBinning: OurBin2l(kinMVA_2lss_ttbar_withBD
 
 kinMVA_3l_ttbar: kinMVA_3l_ttbar : 40,-1,1 ; XTitle="BDT (ttH\,tt)", MoreY=2.0, Legend='TR'
 kinMVA_3l_ttV: kinMVA_3l_ttV : 40,-1,1 ; XTitle="BDT (ttH\,ttV)", MoreY=2.0, Legend='TL'
-#kinMVA_3l_ttV_withMEM: kinMVA_3l_ttV_withMEM : 40,-1,1 ; XTitle="BDT (ttH\,ttV)", MoreY=2.0, Legend='TR'
+kinMVA_3l_ttV_withMEM: kinMVA_3l_ttV_withMEM : 40,-1,1 ; XTitle="BDT (ttH\,ttV) with MEM", MoreY=2.0, Legend='TR'
 
 kinMVA_3l_bins5_oldBinning: ttH_MVAto1D_5_3l_Marco(kinMVA_3l_ttbar,kinMVA_3l_ttV) : [0.5,1.5,2.5,3.5,4.5,5.5]; XTitle="BDT (ttH\,tt/ttV) bin", MoreY=2.0, Legend='TL'
-#kinMVA_3l_bins5_withMEM_oldBinning: ttH_MVAto1D_5_3l_Marco(kinMVA_3l_ttbar,kinMVA_3l_ttV_withMEM) : [0.5,1.5,2.5,3.5,4.5,5.5]; XTitle="BDT (ttH\,tt/ttV) bin", MoreY=2.0, Legend='TR'
+kinMVA_3l_bins5_withMEM_oldBinning: ttH_MVAto1D_5_3l_Marco(kinMVA_3l_ttbar,kinMVA_3l_ttV_withMEM) : [0.5,1.5,2.5,3.5,4.5,5.5]; XTitle="BDT (ttH\,tt/ttV) bin", MoreY=2.0, Legend='TR'
 
 kinMVA_3l_bins5_ourBinning: OurBin3l(kinMVA_3l_ttbar,kinMVA_3l_ttV) : [0.5,1.5,2.5,3.5,4.5,5.5]; XTitle="BDT (ttH\,tt/ttV) bin", MoreY=2.0, Legend='TR'
-#kinMVA_3l_bins5_withMEM_ourBinning: OurBin3l(kinMVA_3l_ttbar,kinMVA_3l_ttV_withMEM) : [0.5,1.5,2.5,3.5,4.5,5.5]; XTitle="BDT (ttH\,tt/ttV) bin", MoreY=2.0, Legend='TR'
+kinMVA_3l_bins5_withMEM_ourBinning: OurBin3l(kinMVA_3l_ttbar,kinMVA_3l_ttV_withMEM) : [0.5,1.5,2.5,3.5,4.5,5.5]; XTitle="BDT (ttH\,tt/ttV) bin", MoreY=2.0, Legend='TR'
 
 kinMVA_2lss_catbinIndex: 7*(ttH_catIndex_2lss(LepGood1_pdgId,LepGood2_pdgId,LepGood1_charge,nBJetMedium25)-1)+OurBin2l(kinMVA_2lss_ttbar_withBDTv8,kinMVA_2lss_ttV_withHj) : [0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5, 10.5, 11.5, 12.5, 13.5, 14.5, 15.5, 16.5, 17.5, 18.5, 19.5, 20.5, 21.5, 22.5, 23.5, 24.5, 25.5, 26.5, 27.5, 28.5, 29.5, 30.5, 31.5, 32.5, 33.5, 34.5, 35.5, 36.5, 37.5, 38.5, 39.5, 40.5, 41.5, 42.5, 43.5, 44.5, 45.5, 46.5, 47.5, 48.5, 49.5, 50.5, 51.5, 52.5, 53.5, 54.5, 55.5, 56.5, 57.5, 58.5, 59.5, 60.5, 61.5, 62.5, 63.5, 64.5, 65.5, 66.5, 67.5, 68.5, 69.5, 70.5]; XTitle="Category x BDT bin\, 2lss"
 kinMVA_3l_catbinIndex: 4*(ttH_catIndex_3l(LepGood1_charge,LepGood2_charge,LepGood3_charge,nBJetMedium25)-11)+OurBin3l(kinMVA_3l_ttbar,kinMVA_3l_ttV) : [0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5, 10.5, 11.5, 12.5, 13.5, 14.5, 15.5, 16.5]; XTitle="Category x BDT bin\, 3l"
@@ -125,9 +125,11 @@ kinMVA_input_avg_dr_jet: avg_dr_jet : 40,0.5,4; XTitle="<#DeltaR(jet\,jet)>"
 kinMVA_input_BDTv8_eventReco_mvaValue : BDTv8_eventReco_mvaValue : 80,-0.4,1; XTitle="BDTv8 mvaValue", Legend="TL"
 kinMVA_input_BDTv8_eventReco_Hj_score : BDTv8_eventReco_Hj_score : 40,-1,1 ; XTitle="Hj score", MoreY=2.0, Legend='TR'
 kinMVA_input_BDTv8_eventReco_Hjj_score : BDTv8_eventReco_Hjj_score : 40,-1,1 ; XTitle="Hjj score", MoreY=2.0, Legend='TR'
-#kinMVA_input_MEM_TTH : min(0,log(max(3.72e-44,MEM_TTH))) : 60,-100,0; XTitle="MEM weight (ttH)", Legend="TL"
-#kinMVA_input_MEM_TTW : min(0,log(max(3.72e-44,MEM_TTW))) : 60,-60,-20; XTitle="MEM weight (ttW)", Legend="TL"
-#kinMVA_input_MEM_TTZ : min(0,log(max(3.72e-44,MEM_TTLL))) : 60,-100,0; XTitle="MEM weight (ttZ)", Legend="TR"
+kinMVA_input_MEM_TTHfl : min(0,log(max(3.72e-44,MEM_TTHfl*(MEM_TTHfl<1)))) : 60,-100,0; XTitle="MEM_TTHfl weight", Legend="TL"
+kinMVA_input_MEM_TTHsl : min(0,log(max(3.72e-44,MEM_TTHsl*(MEM_TTHsl<1)))) : 60,-100,0; XTitle="MEM_TTHsl weight", Legend="TR"
+kinMVA_input_MEM_TTW : min(0,log(max(3.72e-44,MEM_TTW*(MEM_TTW<1)))) : 60,-100,0; XTitle="MEM_TTW weight", Legend="TL"
+kinMVA_input_MEM_TTLL : min(0,log(max(3.72e-44,MEM_TTLL*(MEM_TTLL<1)))) : 60,-100,0; XTitle="MEM_TTLL weight", Legend="TR"
+kinMVA_input_MEM_LR : -log((0.00389464*MEM_TTLL*(MEM_TTLL<1) + 3.12221e-14*MEM_TTW*(MEM_TTW<1)) / (0.00389464*MEM_TTLL*(MEM_TTLL<1) + 3.12221e-14*MEM_TTW*(MEM_TTW<1)+9.99571e-05*(MEM_TTHfl*(MEM_TTHfl<1)+MEM_TTHsl*(MEM_TTHsl<1))/2)) : 60,0,60; XTitle="MEM LR", Legend="TR"
 
 nLepFO:      nLepFO    : [-0.5,0.5,1.5,2.5,3.5,4.5,5.5] ; XTitle="Number of fakeable leptons", XNDdiv=505
 nLepTight:   nLepTight : [-0.5,0.5,1.5,2.5,3.5,4.5,5.5] ; XTitle="Number of tight leptons", XNDdiv=505
