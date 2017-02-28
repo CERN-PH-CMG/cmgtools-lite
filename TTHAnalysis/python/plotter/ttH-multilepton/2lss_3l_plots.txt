@@ -1,3 +1,4 @@
+# vim: syntax=sh
 tot_weight: 1 : 1,0.5,1.5; XTitle = "Selected events", Legend='TR', MoreY=2.0
 
 debug_era : dTakingEra : [-0.5,0.5,1.5,2.5,3.5,4.5,5.5,6.5]; XTitle = "2016 data taking era", IncludeOverflows=False, MoreY=1.5, xBinLabels="B\,C\,D\,E\,F\,G\,H"
@@ -24,6 +25,7 @@ nBJetMedium25:	nBJetMedium25				: [-0.5,0.5,1.5,2.5,3.5,4.5,5.5] ; XTitle='N(jet
 2lep_flav:    	if3(nLepFO>1,if3(abs(LepGood1_pdgId)!=abs(LepGood2_pdgId),1,abs(LepGood1_pdgId)-11),-99)     : [-0.5,0.5,1.5,2.5]; XTitle="ee/e#mu/#mu#mu", XNDdiv=505, MoreY=2.0
 2lep_bestMVA:	max(LepGood1_mvaTTH,LepGood2_mvaTTH)										 : 32,0.6,1; XTitle="Best lepMVA in 2l", Legend='TL'
 2lep_worseMVA:	min(LepGood1_mvaTTH,LepGood2_mvaTTH)										 : 32,0.6,1; XTitle="Worse lepMVA in 2l", Legend='TL'
+2lep_worsedz:   max(abs(LepGood1_dz),abs(LepGood2_dz))*10000	 : 40,0.0,200.; XTitle="Max lepton dz [#mum]"
 2lep_mll:	if3(nLepFO>1,mass_2(LepGood1_conePt,LepGood1_eta,LepGood1_phi,LepGood1_mass,LepGood2_conePt,LepGood2_eta,LepGood2_phi,LepGood2_mass),-99) : 40,0,400; XTitle="m(ll) [GeV]"
 2lep_mtWmin: 	if3(nLepFO>1,min(mt_2(LepGood1_conePt,LepGood1_phi,met_pt,met_phi),mt_2(LepGood2_conePt,LepGood2_phi,met_pt,met_phi)),-99) 		  : 40,0,200; XTitle="min M_{T}(l_{i}\,E_{T}^{miss}) [GeV]"
 2lep_htllv:	if3(nLepFO>1,LepGood1_conePt+LepGood2_conePt+met_pt,-99)										  : 40,0,600; XTitle="l_{1} p_{T} + l_{2} p_{T} + E_{T}^{miss} [GeV]"
@@ -229,3 +231,40 @@ lep4_tCharge:	 LepGood4_tightCharge				 : [-0.5,0.5,1.5,2.5]; XTitle="Fourth lep
 lep4_elIdMVA:	 LepGood4_mvaIdSpring16GP				 : 40,0,1; XTitle="Fourth lepton electron ID MVA", Legend='TR', Logy
 lep4_relIso04:	 LepGood4_relIso04				 : 40,0,0.5; XTitle="Fourth lepton relIso04", Legend='TR', Logy
 lep4_relIso03:	 LepGood4_relIso03				 : 40,0,0.5; XTitle="Fourth lepton relIso03", Legend='TR', Logy
+
+
+# Jet variables
+jet1_pt: 	 JetSel_Recl_pt[0]			: 40,0,400; XTitle="1st jet p_{T} [GeV]"
+jet1_btagCSV: 	 JetSel_Recl_btagCSV[0]			: 40,0,1.0; XTitle="1st jet btag CSV"
+jet1_eta: 	 abs(JetSel_Recl_eta[0])		: 40,0,2.5; XTitle="1st jet |#eta|"
+jet2_pt: 	 JetSel_Recl_pt[1]			: 40,0,200; XTitle="2nd jet p_{T} [GeV]"
+jet2_btagCSV: 	 JetSel_Recl_btagCSV[1]			: 40,0,1.0; XTitle="2nd jet btag CSV"
+jet2_eta: 	 abs(JetSel_Recl_eta[1])		: 40,0,2.5; XTitle="2nd jet |#eta|"
+jet3_pt: 	 JetSel_Recl_pt[2]			: 40,0,120; XTitle="3rd jet p_{T} [GeV]"
+jet3_btagCSV: 	 JetSel_Recl_btagCSV[2]			: 40,0,1.0; XTitle="3rd jet btag CSV"
+jet3_eta: 	 abs(JetSel_Recl_eta[2])		: 40,0,2.5; XTitle="3rd jet |#eta|"
+jet4_pt: 	 JetSel_Recl_pt[3]			: 40,0,120; XTitle="4th jet p_{T} [GeV]"
+jet4_btagCSV: 	 JetSel_Recl_btagCSV[3]			: 40,0,1.0; XTitle="4th jet btag CSV"
+jet4_eta: 	 abs(JetSel_Recl_eta[3])		: 40,0,2.5; XTitle="4th jet |#eta|"
+jet123_lowestCSV:  min(min(JetSel_Recl_btagCSV[0],JetSel_Recl_btagCSV[1]),JetSel_Recl_btagCSV[2]): 40,0,1.0; XTitle="lowest b-tag of the first 3 jets"
+
+# MC variables for closure
+mc_GenTop_ptLead : if3(nGenTop>0,GenTop_pt[0],-99) : 60,0,600; XTitle="gen leading top pt"
+mc_GenTop_ptSubLead : if3(nGenTop>1,GenTop_pt[1],-99) : 40,0,200; XTitle="gen subleading top pt"
+mc_GenTop_etaLead : if3(nGenTop>0,GenTop_eta[0],-99) : 60,-3,3; XTitle="gen leading top eta"
+mc_GenTop_etaSubLead : if3(nGenTop>1,GenTop_eta[1],-99) : 60,-3,3; XTitle="gen subleading top eta"
+
+# Some variables to debug 3-jet CR events with the assumption that it's ttbar with one top going to b(=j1) l(=l1), v(=met) and the other to b(=l2) jj(=j2,j3)
+rec3j_mtW1: mt_2(LepGood1_pt,LepGood1_phi,met_pt,met_phi) : 40,0,200; XTitle="M_{T}(l1\,E_{T}^{miss}) [GeV]"
+rec3j_mtl1j1v: mt_llv(LepGood1_pt,LepGood1_phi,JetSel_Recl_pt[0],JetSel_Recl_phi[0],met_pt,met_phi) : 60,0,600; XTitle="M_{T}(l1\,j1\,E_{T}^{miss}) [GeV]"
+rec3j_mj2j3: mass_2(JetSel_Recl_pt[1],JetSel_Recl_eta[1],JetSel_Recl_phi[1],JetSel_Recl_mass[1],JetSel_Recl_pt[2],JetSel_Recl_eta[2],JetSel_Recl_phi[2],JetSel_Recl_mass[2]) : 60,0,300; XTitle="M(j2\,j3) [GeV]"
+rec3j_ml2j2j3: mass_2(LepGood2_pt,LepGood2_eta,LepGood2_phi,LepGood2_mass,\
+    pt_2(JetSel_Recl_pt[1],JetSel_Recl_phi[1],JetSel_Recl_pt[2],JetSel_Recl_phi[2]),\
+    eta_2(JetSel_Recl_pt[1],JetSel_Recl_eta[1],JetSel_Recl_phi[1],JetSel_Recl_mass[1],JetSel_Recl_pt[2],JetSel_Recl_eta[2],JetSel_Recl_phi[2],JetSel_Recl_mass[2]),\
+    phi_2(JetSel_Recl_pt[1],JetSel_Recl_phi[1],JetSel_Recl_pt[2],JetSel_Recl_phi[2]),\
+    mass_2(JetSel_Recl_pt[1],JetSel_Recl_eta[1],JetSel_Recl_phi[1],JetSel_Recl_mass[1],JetSel_Recl_pt[2],JetSel_Recl_eta[2],JetSel_Recl_phi[2],JetSel_Recl_mass[2])) : 40,0,400; XTitle="M(l2\,j2\,j3) [GeV]"
+rec3j_j2j3_lowestCSV:  min(JetSel_Recl_btagCSV[2],JetSel_Recl_btagCSV[1]): 40,0,1.0; XTitle="lowest b-tag of j2\, j3"
+
+# Davis MT_2
+rec_MT2llv: mt2davis(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood2_pt,LepGood2_eta,LepGood2_phi,met_pt,met_phi) : 40,0,200 ; XTitle="M_{T2} (GeV)"
+
