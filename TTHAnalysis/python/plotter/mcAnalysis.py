@@ -133,6 +133,11 @@ class MCAnalysis:
             is_w = -1
             pname0 = pname
             for cname in cnames:
+                skipMe = False
+                for p0 in options.filesToExclude:
+                    for p in p0.split(","):
+                        if re.match(p+"$", cname): skipMe = True
+                if skipMe: continue
                 if options.useCnames: pname = pname0+"."+cname
                 for (ffrom, fto) in options.filesToSwap:
                     if cname == ffrom: cname = fto
