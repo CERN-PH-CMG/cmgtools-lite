@@ -149,9 +149,7 @@ class KinMVA_2D_2lss_3l:
             ]
 
         memvars = [
-            MVAVar("MEM_TTH := min(0,log(max(3.72e-44,MEM_TTH)))", func = lambda ev : min(0,log(max(3.72e-44,ev.MEM_TTH)))),
-            MVAVar("MEM_TTW := min(0,log(max(3.72e-44,MEM_TTW)))", func = lambda ev : min(0,log(max(3.72e-44,ev.MEM_TTW)))),
-            MVAVar("MEM_TTZ := min(0,log(max(3.72e-44,MEM_TTLL)))", func = lambda ev : min(0,log(max(3.72e-44,ev.MEM_TTLL)))),
+            MVAVar("MEM_LR := -log((0.00389464*MEM_TTLL*(MEM_TTLL<1) + 3.12221e-14*MEM_TTW*(MEM_TTW<1)) / (0.00389464*MEM_TTLL*(MEM_TTLL<1) + 3.12221e-14*MEM_TTW*(MEM_TTW<1)+9.99571e-05*(MEM_TTHfl*(MEM_TTHfl<1)+MEM_TTHsl*(MEM_TTHsl<1))/2))", func = lambda ev : -log((0.00389464*ev.MEM_TTLL + 3.12221e-14*ev.MEM_TTW) / (0.00389464*ev.MEM_TTLL + 3.12221e-14*ev.MEM_TTW+9.99571e-05*(ev.MEM_TTHfl+ev.MEM_TTHsl)/2)) if (ev.MEM_TTLL>=0 and ev.MEM_TTLL<1 and ev.MEM_TTW>=0 and ev.MEM_TTW<1 and ev.MEM_TTHfl>=0 and ev.MEM_TTHfl<1 and ev.MEM_TTHsl>=0 and ev.MEM_TTHsl<1 and not (ev.MEM_TTLL==0 and ev.MEM_TTW==0)) else 0)
             ]
         self._vars_ttV_3l_withMEM = self._vars_ttV_3l + memvars
         self._vars_ttV_3l_withMEM_jecUp = self._vars_ttV_3l_jecUp + memvars

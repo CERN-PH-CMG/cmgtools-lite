@@ -236,8 +236,8 @@ def train_2d(fOutName, training, options):
     
     dsets = []
     if '3l' in training and 'ttv' in training and 'mem' in training:
-        if not 'skim_BDT_3l_Training_Prescaled' in options.treepath: raise RuntimeError
-        dsets += [('TTHnobb_pow', 'Signal', 3.)]
+        if not 'skim3l2j2b1B' in options.treepath: raise RuntimeError
+        dsets += [('TTHnobb_pow', 'Signal', 6.)]
     else:
         dsets += [('TTHnobb_pow', 'Signal', 1)]
 
@@ -276,10 +276,10 @@ def train_2d(fOutName, training, options):
             "LepGood_conePt[iLepFO_Recl[0]] := LepGood_conePt[iLepFO_Recl[0]]"
         ]
         if "mem" in training:
-            if not 'skim_BDT_3l_Training_Prescaled' in options.treepath: raise RuntimeError
+            if not 'skim3l2j2b1B' in options.treepath: raise RuntimeError
             dsets += [
-                ('TTW_LO', 'Background', 3.),
-                ('TTZ_LO', 'Background', 8.),
+                ('TTW_LO', 'Background', 4.),
+                ('TTZ_LO', 'Background', 26.),
                 ]
         else:
             dsets += [
@@ -354,6 +354,10 @@ def train_2d(fOutName, training, options):
             "MEM_TTH := min(0,log(max(3.72e-44,MEM_TTH)))",
             "MEM_TTW := min(0,log(max(3.72e-44,MEM_TTW)))",
             "MEM_TTZ := min(0,log(max(3.72e-44,MEM_TTLL)))",
+            ]
+    if 'memlr' in training:
+        variables += [
+            "MEM_LR := -log((0.00389464*MEM_TTLL*(MEM_TTLL<1) + 3.12221e-14*MEM_TTW*(MEM_TTW<1)) / (0.00389464*MEM_TTLL*(MEM_TTLL<1) + 3.12221e-14*MEM_TTW*(MEM_TTW<1)+9.99571e-05*(MEM_TTHfl*(MEM_TTHfl<1)+MEM_TTHsl*(MEM_TTHsl<1))/2))"
             ]
     if 'hj_value' in training:
         variables += [
