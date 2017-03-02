@@ -82,7 +82,7 @@ minMllAFOS:     minMllAFOS                              : 40,0,320; XTitle="min 
 minMllSFOS:     minMllSFOS                              : 40,0,320; XTitle="min M_{ll}\, SF/OS [GeV]", Legend='TR'
 mZ1:		mZ1					: 80,50,130; XTitle="Best Z candidate mass [GeV]"
 mZ2_noRecl:	mZ2					: 80,50,130; XTitle="Best second Z candidate mass (no Recl) [GeV]"
-nVert:		nVert					: 40,-0.5,41.5; XTitle="N_{vtx}"
+nVert:		nVert					: 40,0.5,40.5; XTitle="N_{vtx}"
 
 
 #kinMVA_opt_2lss_2Dplot : kinMVA_2lss_ttV\:kinMVA_2lss_ttbar : 40,-1,1,40,-1,1; XTitle="BDT (ttH\,tt)", YTitle="BDT (ttH\,ttV)"
