@@ -269,17 +269,17 @@ def doScaleBkgNormData(pspec,pmap,mca,list = []):
 
 def doNormFit(pspec,pmap,mca,saveScales=False):
     global _global_workspaces
-    if "data" not in pmap: return -1.0
+    if "data" not in pmap: return None 
+    # suppress roofit messages
     gKill = ROOT.RooMsgService.instance().globalKillBelow()
     ROOT.RooMsgService.instance().setGlobalKillBelow(ROOT.RooFit.WARNING)
-    data = pmap["data"]
+    # create an empty workspace
     w = ROOT.RooWorkspace("w","w")
+    w.nodelete = []
     _global_workspaces.append(w)
-    x = w.factory("x[%g,%g]" % (data.GetXaxis().GetXmin(), data.GetXaxis().GetXmax()))
-    x.setBins(data.GetNbinsX())
-    obs = ROOT.RooArgList(w.var("x"))
-    hdata = pmap['data']; hdata.killbins = False
+    # get the data, deal with non-empty bins where the MC prediction is zero
     hmc = mergePlots('htemp', [v for (k,v) in pmap.iteritems() if k != 'data'])
+    hdata = pmap['data'].raw(); hdata.killbins = False
     for b in xrange(1,hmc.GetNbinsX()+2):
         if hdata.GetBinContent(b) > 0 and hmc.GetBinContent(b) == 0:
             if not hdata.killbins:
@@ -297,92 +297,73 @@ def doNormFit(pspec,pmap,mca,saveScales=False):
                         hdata.SetBinContent(b, 0)
                         break
             if hdata.GetBinContent(b) > 0: hdata.SetBinContent(b, 0)
-    rdhs = {};
-    w.imp = getattr(w, 'import')
-    for p,h in pmap.iteritems():
-        rdhs[p] = ROOT.RooDataHist("hist_"+p,"",obs,h if p != "data" else hdata)
-        w.imp(rdhs[p])
+        if hdata.killbins: 
+            print "WARNING: data has been modified to avoid non-zero observations for zero expectations in some bins"
+    # create the nuisances
+    nuisances = hmc.getVariationList()
+    nuisanceList = ROOT.RooArgList()
+    constraints = ROOT.RooArgList()
+    for nuisance in nuisances:
+        x = w.factory("Gaussian::%sPdf(%s[0,-7,7],0,1)" % (nuisance, nuisance));
+        w.nodelete.append(x)
+        nuisanceList.add(w.var(nuisance))
+        constraints.add(x)
+    # roofitize templates 
+    roofit = roofitizeReport(pmap, w, xvarName=pspec.name, density=pspec.getOption('Density',False))
+    # create the data
+    obs = ROOT.RooArgList(roofit.xvar)
+    roodata = ROOT.RooDataHist("data","data", obs, roofit.hist2roofit(hdata))
     pdfs   = ROOT.RooArgList()
     coeffs = ROOT.RooArgList()
-    constraints = ROOT.RooArgList()
-    dontDelete = []
     procNormMap = {}
+    pois = set()
     for p in mca.listBackgrounds(allProcs=True) + mca.listSignals(allProcs=True):
         if p not in pmap: continue
-        if pmap[p].Integral() == 0: continue
-        hpdf = ROOT.RooHistPdf("pdf_"+p,"",ROOT.RooArgSet(x), rdhs[p])
-        pdfs.add(hpdf); dontDelete.append(hpdf)
+        if pmap[p].Integral() <= 0: continue
+        (pdf,norm) = pmap[p].rooFitPdfAndNorm()
         if mca.getProcessOption(p,'FreeFloat',False):
             normTermName = mca.getProcessOption(p,'PegNormToProcess',p)
             print "%s scale as %s" % (p, normTermName)
-            normterm = w.factory('prod::norm_%s(%g,syst_%s[1,%g,%g])' % (p, pmap[p].Integral(), normTermName, 0.2, 5))
-            dontDelete.append((normterm,))
-            coeffs.add(normterm)
-            procNormMap[p] = normterm
-        elif mca.getProcessOption(p,'NormSystematic',0.0) > 0:
-            syst = mca.getProcessOption(p,'NormSystematic',0.0)
-            normTermName = mca.getProcessOption(p,'PegNormToProcess',p)
-            print "%s scale as %s with %s constraint" % (p, normTermName, syst)
-            normterm = w.factory('expr::norm_%s("%g*pow(%g,@0)",syst_%s[-5,5])' % (p, pmap[p].Integral(), 1+syst, normTermName))
-            if not w.pdf("systpdf_%s" % normTermName): 
-                constterm = w.factory('Gaussian::systpdf_%s(syst_%s,0,1)' % (normTermName,normTermName))
-                constraints.add(constterm)
-                dontDelete.append((normterm,constterm))
-            else:
-                dontDelete.append((normterm))
-            coeffs.add(normterm)
-            procNormMap[p] = normterm
-        else:    
-            print "%s is fixed" % p
-            normterm = w.factory('norm_%s[%g]' % (p, pmap[p].Integral()))
-            dontDelete.append((normterm,))
-            coeffs.add(normterm)
-    pdfs.Print("V")
-    coeffs.Print("V")
+            poi = w.factory('r_%s[1,%g,%g]' % (p, pmap[p].Integral(), normTermName, 0.0, 5)); w.nodelete.append(poi)
+            pois.add('r_%s' % normTermName)
+            norm.addOtherFactor(poi)
+            procNormMap[p] = norm.getVal()
+        elif pmap[p].hasVariations():
+            procNormMap[p] = norm.getVal()
+        pdfs.add(pdf)
+        coeffs.add(norm)
     addpdf = ROOT.RooAddPdf("tot","",pdfs,coeffs,False)
     model  = addpdf
     if constraints.getSize() > 0:
         constraints.add(addpdf)
         model = ROOT.RooProdPdf("prod","",constraints)
-    result = model.fitTo( rdhs["data"], ROOT.RooFit.Save(1) )
-    totsig, totbkg = None, None
-    if "signal" in pmap and "signal" not in mca.listSignals(): 
-        totsig = pmap["signal"]; totsig.Reset()
-    if "background" in pmap and "background" not in mca.listBackgrounds(): 
-        totbkg = pmap["background"]; totbkg.Reset()
+    result = model.fitTo( roodata, ROOT.RooFit.Save(1) )
+    postfit = PostFitSetup(w,fitResult=result)
+    for k,h in pmap.iteritems():
+        if k != "data" and h.Integral() > 0:
+            h.setPostFitInfo(postfit,True)
     fitlog = []
     for p in mca.listBackgrounds(allProcs=True) + mca.listSignals(allProcs=True):
-        normSystematic = mca.getProcessOption(p,'NormSystematic', 0.0)
         if p in pmap and p in procNormMap:
-           # setthe scale
-           newscale = procNormMap[p].getVal()/pmap[p].Integral()
-           pmap[p].Scale(newscale)
-           # now get the 1 sigma
-           normTermName = mca.getProcessOption(p,'PegNormToProcess',p)
-           nuis = w.var("syst_"+normTermName);
-           val,err = (nuis.getVal(), nuis.getError())
-           v0 =  procNormMap[p].getVal()
-           nuis.setVal(val+err)
-           v1 =  procNormMap[p].getVal()
-           nuis.setVal(val)
-           #print [ p, val, err, v0, v1, (v1-v0)/v0, mca.getProcessOption(p,'NormSystematic',0.0) ]
-           fitlog.append("Process %s scaled by %.3f +/- %.3f" % (p,newscale,newscale*(v1-v0)/v0))
-           if saveScales:
-              print "Scaling process %s by the extracted scale factor %.3f with rel. syst uncertainty %.3f" % (p,newscale,(v1-v0)/v0)
-              mca.setProcessOption(p,'NormSystematic', (v1-v0)/v0);
-              mca.scaleUpProcess(p,newscale)
-        # recompute totals
-        if p in pmap:
-            htot = totsig if mca.isSignal(p) else totbkg
-            if htot != None:
-                htot.Add(pmap[p])
-                syst = normSystematic
-                if syst > 0:
-                    for b in xrange(1,htot.GetNbinsX()+1):
-                        htot.SetBinError(b, hypot(htot.GetBinError(b), pmap[p].GetBinContent(b)*syst))
+           norm0 = procNormMap[p]
+           sf    = pmap[p].Integral()/norm0
+           sferr = pmap[p].integralSystError()/norm0
+           fitlog.append("Process %s scaled by %.3f +/- %.3f [ rel: %.3f ]" % (p,sf,sferr,sferr/sf if sf else 0))
+        # no need to recompute totals as they are also roofitized
+    fitlog.append("")
+    if pois:
+        fitlog += [ "", "---- POI ----" ] 
+        poilength = max(len(p) for p in pois)
+        for poi in sorted(pois):
+           fitlog.append("%-*s : %.3f +/- %.3f" % (poilength, poi, w.var(poi).getVal(), w.var(poi).getError()))
+    if nuisances:
+        fitlog += [ "", "---- NUISANCES ----" ] 
+        nuisancelength = max(len(p) for p in nuisances)
+        for nuis in sorted(nuisances):
+           fitlog.append("%-*s : %.3f +/- %.3f" % (nuisancelength, nuis, w.var(nuis).getVal(), w.var(nuis).getError()))
     pspec.setLog("Fitting", fitlog)
     ROOT.RooMsgService.instance().setGlobalKillBelow(gKill)
-    
+    return postfit
 
 def doRatioHists(pspec,pmap,total,maxRange,fixRange=False,fitRatio=None,errorsOnRef=True,ratioNums="signal",ratioDen="background",ylabel="Data/pred.",doWide=False,showStatTotLegend=False):
     numkeys = [ "data" ]
@@ -729,17 +710,12 @@ class PlotMaker:
                 #
                 stack = ROOT.THStack(pspec.name+"_stack",pspec.name)
                 hists = [v for k,v in pmap.iteritems() if k != 'data']
-                total = hists[0].Clone(pspec.name+"_total"); total.Reset()
-                totalSyst = hists[0].Clone(pspec.name+"_totalSyst"); totalSyst.Reset()
-                if self._options.plotmode == "norm": 
-                    if 'data' in pmap:
-                        total.GetYaxis().SetTitle(total.GetYaxis().GetTitle()+" (normalized)")
-                    else:
-                        total.GetYaxis().SetTitle("density/bin")
-                    total.GetYaxis().SetDecimals(True)
-                if self._options.scaleSignalToData: self._sf = doScaleSigNormData(pspec,pmap,mca)
-                if self._options.scaleBackgroundToData != []: self._sf = doScaleBkgNormData(pspec,pmap,mca,self._options.scaleBackgroundToData)
-                elif self._options.fitData: doNormFit(pspec,pmap,mca)
+                if self._options.scaleSignalToData: 
+                    self._sf = doScaleSigNormData(pspec,pmap,mca)
+                elif self._options.scaleBackgroundToData != []: 
+                    self._sf = doScaleBkgNormData(pspec,pmap,mca,self._options.scaleBackgroundToData)
+                elif self._options.fitData: 
+                    doNormFit(pspec,pmap,mca)
                 elif self._options.preFitData and pspec.name == self._options.preFitData:
                     doNormFit(pspec,pmap,mca,saveScales=True)
                 #
@@ -767,7 +743,6 @@ class PlotMaker:
                 stack = ROOT.THStack(outputName+"_stack",outputName)
                 hists = [v for k,v in pmap.iteritems() if k != 'data']
                 total = hists[0].Clone(outputName+"_total"); total.Reset()
-
                 if plotmode == "norm": 
                     if 'data' in pmap:
                         total.GetYaxis().SetTitle(total.GetYaxis().GetTitle()+" (normalized)")
@@ -813,7 +788,6 @@ class PlotMaker:
                             plot.SetMarkerSize(1.5)
                         else:
                             plot.SetMarkerStyle(0)
-                totalSyst = [total.raw()]+total.sumSystUncertainties()
 
                 binlabels = pspec.getOption("xBinLabels","")
                 if binlabels != "" and len(binlabels.split(",")) == total.GetNbinsX():
@@ -919,7 +893,7 @@ class PlotMaker:
                         blindbox.Draw()
                         xblind.append(blindbox) # so it doesn't get deleted
                     if options.doStatTests:
-                        doStatTests(totalSyst, pmap['data'], options.doStatTests, legendCorner=pspec.getOption('Legend','TR'))
+                        doStatTests(total, pmap['data'], options.doStatTests, legendCorner=pspec.getOption('Legend','TR'))
                 if pspec.hasOption('YMin') and pspec.hasOption('YMax'):
                     total.GetYaxis().SetRangeUser(pspec.getOption('YMin',1.0), pspec.getOption('YMax',1.0))
                 if pspec.hasOption('ZMin') and pspec.hasOption('ZMax'):

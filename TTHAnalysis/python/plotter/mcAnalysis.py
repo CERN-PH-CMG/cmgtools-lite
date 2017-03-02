@@ -3,7 +3,7 @@
 from CMGTools.TTHAnalysis.plotter.tree2yield import *
 from CMGTools.TTHAnalysis.plotter.projections import *
 from CMGTools.TTHAnalysis.plotter.figuresOfMerit import FOM_BY_NAME
-from CMGTools.TTHAnalysis.plotter.histoWithNuisances import HistoWithNuisances,mergePlots
+from CMGTools.TTHAnalysis.plotter.histoWithNuisances import HistoWithNuisances,mergePlots,roofitizeReport,PostFitSetup
 import pickle, re, random, time
 from copy import copy, deepcopy
 
@@ -424,7 +424,7 @@ class MCAnalysis:
             varobj = ttymap[idk2up].isVariation()[0]
             if varobj.name != var: raise RuntimeError, "Mismatch in variations"
             varobj.postProcess(_retlist[idk], _retlist[idk2up],_retlist[idk2dn])
-
+            #print "DEBUG: For %s var %s: nominal yield %.3f, up %.4f, down %.3f" % (_retlist[idk].GetName(), var, _retlist[idk].Integral(), _retlist[idk2up].Integral(), _retlist[idk2dn].Integral())
         ## attach variations to each primary tty
         retlist=[]
         for idk,key in procmap.iteritems():

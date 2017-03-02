@@ -199,6 +199,7 @@ class TreeToYield:
                 tty2._isVariation = (var,direction)
                 tty2._variations = []
                 if var.getFRToRemove() != None:
+                    #print "Passa di qui"
                     tty2._FRSourceList = []
                     found = False
                     for fname,FR in self._FRSourceList:
@@ -471,8 +472,7 @@ class TreeToYield:
         if self._options.doS2V:
             cut  = scalarToVector(cut)
             expr = scalarToVector(expr)
-#        print cut 
-#        print expr
+        #print "DEBUG: ",self._name, self._cname, cut, expr
         (firstEntry, maxEntries) = self._rangeToProcess(fsplit)
         if ROOT.gROOT.FindObject("dummy") != None: ROOT.gROOT.FindObject("dummy").Delete()
         histo = makeHistFromBinsAndSpec("dummy",expr,bins,plotspec)
