@@ -10,8 +10,8 @@ dowhat = "plots"
 #dowhat = "yields" 
 #dowhat = "ntuple" # syntax: python ttH-multilepton/ttH_plots.py no 2lss_SR_extr outfile_{cname}.root --sP var1,var2,...
 
-TREES = "--Fs {P}/1_recleaner_230217_v6"
-TREESONLYSKIM = "-P /data1/peruzzi/TREES_TTH_250117_Summer16_JECV3_noClean_qgV2_skimOnlyMC_v6 --Fs {P}/4_BDTv8_Hj_230217_v6 --Fs {P}/3_kinMVA_BDTv8_230217_v6 --Fs {P}/5_triggerDecision_230217_v6 --Fs {P}/6_bTagSF_v6 --Fs {P}/2_eventVars_230217_v6 --Fs {P}/7_tauTightSel_v6"
+TREES = "--Fs {P}/1_recleaner_230217_v6 --Fs {P}/5_triggerDecision_230217_v6 --Fs {P}/6_bTagSF_v6 --Fs {P}/7_tauTightSel_v6"
+TREESONLYSKIM = "-P /data1/peruzzi/TREES_TTH_250117_Summer16_JECV3_noClean_qgV2_skimOnlyMC_v6 --Fs {P}/4_BDTv8_Hj_230217_v6 --Fs {P}/3_kinMVA_BDTv8_230217_v6  --Fs {P}/2_eventVars_230217_v6"
 TREESONLYFULL = "-P /data1/peruzzi/TREES_TTH_250117_Summer16_JECV3_noClean_qgV2"
 
 def base(selection):
@@ -19,7 +19,7 @@ def base(selection):
     CORE=' '.join([TREES,TREESONLYSKIM])
     if 'cmsco01' not in os.environ['HOSTNAME']: CORE = CORE.replace('/data1/peruzzi','/afs/cern.ch/work/p/peruzzi/tthtrees')
 
-    CORE+=" -f -j 8 -l 36.9 --s2v -L ttH-multilepton/functionsTTH.cc --tree treeProducerSusyMultilepton --mcc ttH-multilepton/lepchoice-ttH-FO.txt --mcc ttH-multilepton/ttH_2lss3l_triggerdefs.txt"# --neg"
+    CORE+=" -f -j 8 -l 35.9 --s2v -L ttH-multilepton/functionsTTH.cc --tree treeProducerSusyMultilepton --mcc ttH-multilepton/lepchoice-ttH-FO.txt --mcc ttH-multilepton/ttH_2lss3l_triggerdefs.txt"# --neg"
     if dowhat == "plots": CORE+=" --lspam '#bf{CMS} #it{Preliminary}' --legendWidth 0.20 --legendFontSize 0.035 --showRatio --maxRatioRange 0 2 --fixRatioRange  --showMCError --rebin 4 --xP 'nT_.*' --xP 'debug_.*'"
 
     if selection=='2lss':
@@ -66,7 +66,7 @@ def doprescale3l(x):
     x2 = add(x2,"--Fs {P}/8_MEM_v6")
     return x2
 
-allow_unblinding = False
+allow_unblinding = True
 
 if __name__ == '__main__':
 
@@ -225,7 +225,7 @@ if __name__ == '__main__':
         x = add(x,"-I same-sign -X ^4j -X ^2b1B -E ^2j -E ^em ")
         if '_highMetNoBCut' in torun: x = add(x,"-A 'entry point' highMET 'met_pt>60'")
         else: x = add(x,"-E ^1B ")
-        plots = ['2lep_.*','met','metLD','nVert','nJet25','nBJetMedium25','nBJetLoose25','nBJetLoose40','nBJetMedium40',"'kinMVA_input.*'"]
+        plots = ['2lep_.*','met','metLD','nVert','nJet25','nBJetMedium25','nBJetLoose25','nBJetLoose40','nBJetMedium40']
         runIt(x,'%s'%torun,plots)
 
     if 'cr_zjets' in torun:

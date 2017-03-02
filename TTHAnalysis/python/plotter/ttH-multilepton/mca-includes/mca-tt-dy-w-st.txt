@@ -1,6 +1,9 @@
 TT      : TTJets_DiLepton+TTJets_DiLepton_ext_part1+TTJets_DiLepton_ext_part2+TTJets_DiLepton_ext_part3 : xsec ; FillColor=ROOT.kGray
 TT      : TTJets_SingleLeptonFromT+TTJets_SingleLeptonFromT_ext : xsec ; FillColor=ROOT.kGray
 TT      : TTJets_SingleLeptonFromTbar+TTJets_SingleLeptonFromTbar_ext : xsec ; FillColor=ROOT.kGray
+
+TT_pow	: TT_pow_part1+TT_pow_part2 : xsec ; Label="TT (Powheg)", FillColor=11, SkipMe=True
+
 DY      : DYJetsToLL_M10to50_LO: xsec  ; FillColor=ROOT.kCyan
 DY      : DYJetsToLL_M50_LO_ext_part1+DYJetsToLL_M50_LO_ext_part2+DYJetsToLL_M50_LO_ext_part3: xsec  ; FillColor=ROOT.kCyan
 WJets   : WJetsToLNu_LO  : xsec  ; FillColor=ROOT.kCyan+2

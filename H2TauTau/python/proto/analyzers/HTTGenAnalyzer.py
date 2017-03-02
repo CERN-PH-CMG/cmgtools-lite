@@ -8,6 +8,7 @@ from PhysicsTools.HeppyCore.utils.deltar import bestMatch
 
 from PhysicsTools.Heppy.physicsobjects.PhysicsObject import PhysicsObject
 from PhysicsTools.Heppy.physicsobjects.GenParticle import GenParticle
+from PhysicsTools.Heppy.physicsutils.TauDecayModes import tauDecayModes
 
 from CMGTools.H2TauTau.proto.analyzers.TauGenTreeProducer import TauGenTreeProducer
 
@@ -153,6 +154,8 @@ class HTTGenAnalyzer(Analyzer):
 
             genjet = GenParticle(gentau)
             genjet.setP4(p4_genjet)
+            genjet.daughters = c_genjet
+            genjet.decayMode = tauDecayModes.genDecayModeInt(c_genjet)
 
             if p4_genjet.pt() > 15.:
                 event.genTauJets.append(genjet)
@@ -193,7 +196,8 @@ class HTTGenAnalyzer(Analyzer):
         l1match, dR2best = bestMatch(leg, event.genTauJets)
         if dR2best < best_dr2:
             best_dr2 = dR2best
-            leg.genp = GenParticle(l1match)
+            # leg.genp = GenParticle(l1match)
+            leg.genp = l1match
             leg.genp.setPdgId(-15 * leg.genp.charge())
             leg.isTauHad = True
             # if not leg.genJet():
@@ -249,7 +253,7 @@ class HTTGenAnalyzer(Analyzer):
             # Now this may be a pileup lepton, or one whose ancestor doesn't
             # appear in the gen summary because it's an unclear case in Pythia 8
             # To check the latter, match against jets as well...
-            l1match, dR2best = bestMatch(leg, event.genJets)
+            l1match, dR2best = bestMatch(leg, getattr(event, 'genJets', []))
             # Check if there's a gen jet with pT > 10 GeV (otherwise it's PU)
             if dR2best < dR2 and l1match.pt() > 10.:
                 leg.genp = PhysicsObject(l1match)

@@ -45,9 +45,14 @@ class SOSLepCleanerIP3D:
         self.branches =  [ ("nLepSel"+self.label, "I") ]
         self.branches += [ ("iLepSel"+self.label, "I", 20, "nLepSel"+self.label) ]
         self.branches += [ ("m2lSel"+self.label, "F") ]
+        self.branches += [ ("m3lSel"+self.label, "F") ]
+        self.branches += [ ("mZ1Sel"+self.label, "F") ]
+        self.branches += [ ("minMllSFOSSel"+self.label, "F") ]
+        
         if "/functions_cc.so" not in ROOT.gSystem.GetLibraries(): 
             ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/TTHAnalysis/python/plotter/functions.cc+" % os.environ['CMSSW_BASE']);
         self.m2l = ROOT.mass_2
+        self.m3l = ROOT.mass_3
         self.mu_sip3d = mu_sip3d
         self.el_sip3d = el_sip3d
         self.mu_ip3d = mu_ip3d
@@ -63,6 +68,8 @@ class SOSLepCleanerIP3D:
         if event._tree._ttreereaderversion > self._ttreereaderversion: 
             self.init(event._tree)
         LepSel = []; 
+        leps = [l for l in Collection(event,"LepGood","nLepGood")]
+        lepsSel = [];
         pt = self.LepGood_pt.At
         eta = self.LepGood_eta.At
         phi = self.LepGood_phi.At
@@ -76,12 +83,19 @@ class SOSLepCleanerIP3D:
             if not( sip(iL) < (self.mu_sip3d if abs(pdgId(iL)) == 13 else self.el_sip3d) ): continue
             if not( abs(ip(iL)) < (self.mu_ip3d  if abs(pdgId(iL)) == 13 else self.el_ip3d)  ): continue
             LepSel.append(iL)
-            if len(LepSel) == 2: break
+            lepsSel.append(leps[iL])
+            if len(LepSel) == 3: break
         ret = { 'nLepSel'+self.label : len(LepSel),
                 'iLepSel'+self.label : LepSel }
         if len(LepSel) >= 2:
             ret['m2lSel'] = self.m2l(pt(LepSel[0]),eta(LepSel[0]),phi(LepSel[0]),mass(LepSel[0]),
                                      pt(LepSel[1]),eta(LepSel[1]),phi(LepSel[1]),mass(LepSel[1]))
+        if len(LepSel) >= 3:
+            ret['m3lSel'] = self.m3l(pt(LepSel[0]),eta(LepSel[0]),phi(LepSel[0]),mass(LepSel[0]),
+                                     pt(LepSel[1]),eta(LepSel[1]),phi(LepSel[1]),mass(LepSel[1]),
+                                     pt(LepSel[2]),eta(LepSel[2]),phi(LepSel[2]),mass(LepSel[2]))            
+        ret['mZ1Sel'] = bestZ1TL(lepsSel, lepsSel)
+        ret['minMllSFOSSel'] = minMllTL(lepsSel, lepsSel, paircut = lambda l1,l2 : l1.pdgId == -l2.pdgId)     
         return ret
 
 
@@ -200,3 +214,32 @@ MODULES = [
 ]
 
 
+
+def bestZ1TL(lepsl,lepst,cut=lambda lep:True):
+      pairs = []
+      for l1 in lepst:
+        if not cut(l1): continue
+        for l2 in lepsl:
+            if not cut(l2): continue
+            if l1.pdgId == -l2.pdgId:
+               mz = (l1.p4() + l2.p4()).M()
+               diff = abs(mz-91.188)
+               pairs.append( (diff,mz) )
+      if len(pairs):
+          pairs.sort()
+          return pairs[0][1]
+      return 0.
+
+def minMllTL(lepsl, lepst, bothcut=lambda lep:True, onecut=lambda lep:True, paircut=lambda lep1,lep2:True):
+        pairs = []
+        for l1 in lepst:
+            if not bothcut(l1): continue
+            for l2 in lepsl:
+                if l2 == l1 or not bothcut(l2): continue
+                if not onecut(l1) and not onecut(l2): continue
+                if not paircut(l1,l2): continue
+                mll = (l1.p4() + l2.p4()).M()
+                pairs.append(mll)
+        if len(pairs):
+            return min(pairs)
+        return -1
