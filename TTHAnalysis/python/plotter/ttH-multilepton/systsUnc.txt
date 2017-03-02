@@ -9,7 +9,8 @@ CMS_ttHl_lepEff_muloose : ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .*2lss_em.* : no
 CMS_ttHl_lepEff_muloose : ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .*3l.* : normSymm : 1.03
 CMS_ttHl_lepEff_muloose : ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .*4l.* : normSymm : 1.04
 
-#CMS_ttHl_lepEff_elloose : ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .* : elLooseUnc : templates
+#FIXME
+#CMS_ttHl_lepEff_elloose : ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .* : elLooseUnc : templates 
 
 CMS_ttHl_lepEff_mutight : ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .*2lss.* : templateSymm ; AddWeight='ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\, 1.0\, 1.03\, 1.06)'
 CMS_ttHl_lepEff_mutight : ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .*2lss_ee.* : none
@@ -36,16 +37,16 @@ CMS_ttHl16_trigger_3l	: ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .*3l.* : normSymm 
 CMS_ttHl16_trigger_3l	: ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .*4l.* : normSymm : 1.03
 
 
-CMS_ttHl_jec	: ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .* : templateAsymm; \
+CMS_ttHl_JES	: ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .* : templateAsymm; \
         FakeRates=['ttH-multilepton/fr-jecUp.txt'\,'ttH-multilepton/fr-jecDn.txt'], \
         AddWeights=['eventBTagSF_up_jes/eventBTagSF'\,'eventBTagSF_down_jes/eventBTagSF']
 
 CMS_ttHl_btag_LF    : ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .* : templateAsymm; AddWeights=['eventBTagSF_up_lf/eventBTagSF'\,'eventBTagSF_down_lf/eventBTagSF']		
 CMS_ttHl_btag_HF    : ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .* : templateAsymm; AddWeights=['eventBTagSF_up_hf/eventBTagSF'\,'eventBTagSF_down_hf/eventBTagSF']
-CMS_ttHl_btag_LFStats1   : ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .* : templateAsymm; AddWeights=['eventBTagSF_up_lfstats1/eventBTagSF'\,'eventBTagSF_down_lfstats1/eventBTagSF']		
-CMS_ttHl_btag_HFStats1   : ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .* : templateAsymm; AddWeights=['eventBTagSF_up_hfstats1/eventBTagSF'\,'eventBTagSF_down_hfstats1/eventBTagSF']
-CMS_ttHl_btag_LFStats2   : ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .* : templateAsymm; AddWeights=['eventBTagSF_up_lfstats2/eventBTagSF'\,'eventBTagSF_down_lfstats2/eventBTagSF']		
-CMS_ttHl_btag_HFStats2   : ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .* : templateAsymm; AddWeights=['eventBTagSF_up_hfstats2/eventBTagSF'\,'eventBTagSF_down_hfstats2/eventBTagSF']
+CMS_ttHl16_btag_LFStats1   : ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .* : templateAsymm; AddWeights=['eventBTagSF_up_lfstats1/eventBTagSF'\,'eventBTagSF_down_lfstats1/eventBTagSF']		
+CMS_ttHl16_btag_HFStats1   : ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .* : templateAsymm; AddWeights=['eventBTagSF_up_hfstats1/eventBTagSF'\,'eventBTagSF_down_hfstats1/eventBTagSF']
+CMS_ttHl16_btag_LFStats2   : ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .* : templateAsymm; AddWeights=['eventBTagSF_up_lfstats2/eventBTagSF'\,'eventBTagSF_down_lfstats2/eventBTagSF']		
+CMS_ttHl16_btag_HFStats2   : ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .* : templateAsymm; AddWeights=['eventBTagSF_up_hfstats2/eventBTagSF'\,'eventBTagSF_down_hfstats2/eventBTagSF']
 CMS_ttHl_btag_cErr1   : ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .* : templateAsymm; AddWeights=['eventBTagSF_up_cferr1/eventBTagSF'\,'eventBTagSF_down_cferr1/eventBTagSF']
 CMS_ttHl_btag_cErr2   : ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .* : templateAsymm; AddWeights=['eventBTagSF_up_cferr2/eventBTagSF'\,'eventBTagSF_down_cferr2/eventBTagSF']
 
@@ -159,6 +160,18 @@ CMS_ttHl_Clos_m_bt_norm : data_fakes|TT_FR_QCD : .*2lss_mm_bt.* : normSymm : 1.3
 CMS_ttHl_Clos_m_bt_norm : data_fakes|TT_FR_QCD : .*3l.* : templateSymm ; AddWeight='if3(nBJetMedium25<=1\, 1.0\, 1.2)'
 CMS_ttHl_Clos_m_bt_norm : data_fakes|TT_FR_QCD : .*3l_bl.* : none
 CMS_ttHl_Clos_m_bt_norm : data_fakes|TT_FR_QCD : .*3l_bt.* : normSymm : 1.2
+
+# 4) Closure: QCD vs. TT fake rate, shape
+#CMS_ttHl_Clos_e_bl_shape : data_fakes  : .*2lss_ee.*	: 1.0 : shapeOnly2D_0.83X_1.20Y
+#CMS_ttHl_Clos_e_bl_shape : data_fakes  : .*2lss_em_bl.* : 1.0 : shapeOnly2D_0.83X_1.20Y
+#CMS_ttHl_Clos_e_bt_shape : data_fakes  : .*2lss_em_bt.* : 1.0 : shapeOnly2D_0.71X_1.10Y
+#CMS_ttHl_Clos_e_bl_shape : data_fakes  : .*3l.*      	: 1.0 : shapeOnly2D_0.83X_1.20Y
+#CMS_ttHl_Clos_m_bl_shape : data_fakes  : .*2lss_mm_bl.* : 1.0 : shapeOnly2D_1.10X_1.10Y
+#CMS_ttHl_Clos_m_bt_shape : data_fakes  : .*2lss_mm_bt.* : 1.0 : shapeOnly2D_2.00X_1.20Y
+#CMS_ttHl_Clos_m_bl_shape : data_fakes  : .*2lss_em_bl.* : 1.0 : shapeOnly2D_1.31X_1.30Y
+#CMS_ttHl_Clos_m_bt_shape : data_fakes  : .*2lss_em_bt.* : 1.0 : shapeOnly2D_1.30X_1.40Y
+#CMS_ttHl_Clos_m_bl_shape : data_fakes  : .*3l.*      	: 1.0 : shapeOnly2D_1.10X_1.10Y
+
 
 # Charge flip uncertainty
 CMS_ttHl_QF     : data_flips  : .* : normSymm : 1.3
