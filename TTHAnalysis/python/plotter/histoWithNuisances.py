@@ -61,8 +61,7 @@ class RooFitContext:
         
         
 class PostFitSetup:
-    def __init__(self,workspace,params=None,constraints=None,fitResult=None,throwPreFitToys=0,throwPostFitToys=0):
-        self.workspace = workspace
+    def __init__(self,params=None,constraints=None,fitResult=None,throwPreFitToys=0,throwPostFitToys=0):
         self.params    = (params if params != None else (fitResult.floatParsFinal() if fitResult else None))
         self.constraints = constraints
         self.fitResult = fitResult
@@ -372,9 +371,10 @@ def mergePlots(name,plots):
         one+=p
     return one
 
-def roofitizeReport(histoWithNuisanceMap, workspace, xvarName="x", density=False):
-    # setup the context
-    roofit = RooFitContext(workspace) 
+def listAllNuisances(histWithNuisanceMap):
+    return set().union(*(h.getVariationList() for (k,h) in histWithNuisanceMap.iteritems() if k != "data" and h.Integral() >= 0))
+    
+def roofitizeReport(histoWithNuisanceMap, workspace=None, xvarName="x", density=False):
     # sanity check all inputs, and get one representative histogram
     h0 = None
     for k,h in histoWithNuisanceMap.iteritems():
@@ -386,6 +386,12 @@ def roofitizeReport(histoWithNuisanceMap, workspace, xvarName="x", density=False
         if h.Integral() <= 0: continue
         if h0 == None: h0 = h
     if h0 == None: raise RuntimeError("Empty report")
+    # setup the context
+    if workspace == None:
+        workspace = ROOT.RooWorkspace("w","w"); workspace.nodelete = []
+        for nuis in listAllNuisances(histoWithNuisanceMap):
+            workspace.nodelete.append(workspace.factory("%s[0,-7,7]" % nuis))
+    roofit = RooFitContext(workspace) 
     # create the x variable
     roofit.prepareXVar(h0, density, name=xvarName)
     # now roofitise all objects

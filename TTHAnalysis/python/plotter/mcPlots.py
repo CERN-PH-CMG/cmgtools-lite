@@ -338,10 +338,13 @@ def doNormFit(pspec,pmap,mca,saveScales=False):
         constraints.add(addpdf)
         model = ROOT.RooProdPdf("prod","",constraints)
     result = model.fitTo( roodata, ROOT.RooFit.Save(1) )
-    postfit = PostFitSetup(w,fitResult=result)
+    postfit = PostFitSetup(fitResult=result)
     for k,h in pmap.iteritems():
         if k != "data" and h.Integral() > 0:
             h.setPostFitInfo(postfit,True)
+    if saveScales:
+        postfit._roofitContext = roofit # so it's not deleted
+        mca._postFit = postfit
     fitlog = []
     for p in mca.listBackgrounds(allProcs=True) + mca.listSignals(allProcs=True):
         if p in pmap and p in procNormMap:
@@ -349,18 +352,19 @@ def doNormFit(pspec,pmap,mca,saveScales=False):
            sf    = pmap[p].Integral()/norm0
            sferr = pmap[p].integralSystError()/norm0
            fitlog.append("Process %s scaled by %.3f +/- %.3f [ rel: %.3f ]" % (p,sf,sferr,sferr/sf if sf else 0))
+           if saveScales: print fitlog[-1]
         # no need to recompute totals as they are also roofitized
     fitlog.append("")
     if pois:
         fitlog += [ "", "---- POI ----" ] 
         poilength = max(len(p) for p in pois)
         for poi in sorted(pois):
-           fitlog.append("%-*s : %.3f +/- %.3f" % (poilength, poi, w.var(poi).getVal(), w.var(poi).getError()))
+           fitlog.append("%-*s : % .3f +/- %.3f" % (poilength, poi, w.var(poi).getVal(), w.var(poi).getError()))
     if nuisances:
         fitlog += [ "", "---- NUISANCES ----" ] 
         nuisancelength = max(len(p) for p in nuisances)
         for nuis in sorted(nuisances):
-           fitlog.append("%-*s : %.3f +/- %.3f" % (nuisancelength, nuis, w.var(nuis).getVal(), w.var(nuis).getError()))
+           fitlog.append("%-*s : % .3f +/- %.3f" % (nuisancelength, nuis, w.var(nuis).getVal(), w.var(nuis).getError()))
     pspec.setLog("Fitting", fitlog)
     ROOT.RooMsgService.instance().setGlobalKillBelow(gKill)
     return postfit
@@ -505,7 +509,7 @@ def doRatioHists(pspec,pmap,total,maxRange,fixRange=False,fitRatio=None,errorsOn
     leg0.SetLineColor(0)
     leg0.SetTextFont(42)
     leg0.SetTextSize(0.035*0.7/0.3)
-    leg0.AddEntry(unityErr0, "stat. bkg. unc.", "F")
+    leg0.AddEntry(unityErr0, "stat. unc.", "F")
     if showStatTotLegend: leg0.Draw()
     leg1 = ROOT.TLegend(0.25 if doWide else 0.45, 0.8, 0.38 if doWide else 0.7, 0.9)
     leg1.SetFillColor(0)
@@ -513,7 +517,7 @@ def doRatioHists(pspec,pmap,total,maxRange,fixRange=False,fitRatio=None,errorsOn
     leg1.SetLineColor(0)
     leg1.SetTextFont(42)
     leg1.SetTextSize(0.035*0.7/0.3)
-    leg1.AddEntry(unityErr, "total bkg. unc.", "F")
+    leg1.AddEntry(unityErr, "total unc.", "F")
     if showStatTotLegend: leg1.Draw()
     global legendratio0_, legendratio1_
     legendratio0_ = leg0
@@ -604,7 +608,7 @@ def doLegend(pmap,mca,corner="TR",textSize=0.035,cutoff=1e-2,cutoffSignals=True,
         total = sum([x.Integral() for x in pmap.itervalues()])
         for (plot,label,style) in sigEntries: leg.AddEntry(plot.raw(),label,style)
         for (plot,label,style) in  bgEntries: leg.AddEntry(plot.raw(),label,style)
-        if totalError: leg.AddEntry(totalError,"total bkg. unc.","F") 
+        if totalError: leg.AddEntry(totalError,"total unc.","F") 
         leg.Draw()
         ## assign it to a global variable so it's not deleted
         global legend_

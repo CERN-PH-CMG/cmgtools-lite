@@ -3,7 +3,7 @@
 from CMGTools.TTHAnalysis.plotter.tree2yield import *
 from CMGTools.TTHAnalysis.plotter.projections import *
 from CMGTools.TTHAnalysis.plotter.figuresOfMerit import FOM_BY_NAME
-from CMGTools.TTHAnalysis.plotter.histoWithNuisances import HistoWithNuisances,mergePlots,roofitizeReport,PostFitSetup
+from CMGTools.TTHAnalysis.plotter.histoWithNuisances import *
 import pickle, re, random, time
 from copy import copy, deepcopy
 
@@ -159,7 +159,7 @@ class MCAnalysis:
                        options._warning_NormSystematic_variationsFile = [pname] + getattr(options, '_warning_NormSystematic_variationsFile',[])
                        print "Using both a NormSystematic and a variationFile is not supported. Will disable the NormSystematic for process %s" % pname
             if 'NormSystematic' in extra:
-                variations['_norm'] = Uncertainty('norm_%s'%pname,pname,options.binname,'normSymm',[{'NormFactor': 1+float(extra['NormSystematic'])}])
+                variations['_norm'] = Uncertainty('norm_%s'%pname,pname,options.binname,'normSymm',[1+float(extra['NormSystematic'])])
                 if not hasattr(options, '_deprecation_warning_NormSystematic'):
                     print 'Added normalization uncertainty %s to %s, %s. Please migrate away from using the deprecated NormSystematic option.'%(extra['NormSystematic'],pname,field[1])
                     options._deprecation_warning_NormSystematic = False
@@ -470,6 +470,29 @@ class MCAnalysis:
                 ret['background'] = mergePlots(plotspec.name+"_background",allBg)
                 ret['background'].summary = True
 
+        if self._options.externalFitResult:
+            if not getattr(self,'_postFit',None):
+                efrfile = ROOT.TFile.Open(self._options.externalFitResult[0])
+                if not efrfile: raise IOError("Error, could not open %s" % self._options.externalFitResult[0])
+                fitResults = efrfile.Get(self._options.externalFitResult[1])
+                if not fitResults: raise IOError("Error, could not find %s in %s" % (self._options.externalFitResult[1], self._options.externalFitResult[0]))
+                efrfile.Close()
+                self._postFit = PostFitSetup(fitResult=fitResults)
+        if getattr(self, '_postFit', None):
+            roofit = roofitizeReport(ret)
+            for k,h in ret.iteritems():
+                if k != "data" and h.Integral() > 0:
+                    h.setPostFitInfo(self._postFit,True)
+            if self._options.externalFitResult and not getattr(self._options, 'externalFitResult_checked', False):
+                notfound = False
+                for nuis in listAllNuisances(ret):
+                    if not self._postFit.params.find(nuis):
+                        print "WARNING: nuisance %s is not found in the input fitResult %s" % (nuis, self._options.externalFitResult)
+                        notfound = True
+                if notfound:
+                    print "Available nuisances: ",; self._postFit.params.Print("")
+                self._options.externalFitResult_checked = True
+                # sanity check of the nuisances
         #print "DONE getPlots at %.2f" % (0.001*(long(ROOT.gSystem.Now()) - _T0))
         return ret
     def prepareForSplit(self):
@@ -724,6 +747,7 @@ def addMCAnalysisOptions(parser,addTreeToYieldOnesToo=True):
     parser.add_option("--binname", dest="binname", type="string", default='default', help="Bin name for uncertainties matching and datacard preparation [default]")
     parser.add_option("--unc", dest="variationsFile", type="string", default=None, help="Uncertainty file to be loaded")
     parser.add_option("--xu", "--exclude-uncertainty", dest="uncertaintiesToExclude", type="string", default=[], action="append", help="Uncertainties to exclude (comma-separated list of regexp, can specify multiple ones)");
+    parser.add_option("--efr", "--external-fitResult", dest="externalFitResult", type="string", default=None, nargs=2, help="External fitResult")
 
 if __name__ == "__main__":
     from optparse import OptionParser
