@@ -24,12 +24,14 @@ class Uncertainty:
         self.trivialFunc=[None,None]
         self.normUnc=[None,None]
         self._postProcess = None
+        self._nontrivialSelectionChange = False
         self.prepFR()
 
     def prepFR(self):
 
         if self.unc_type=='templateAsymm':
             if 'FakeRates' in self.extra:
+                self._nontrivialSelectionChange = True
                 for idx in xrange(2):
                     self.fakerate[idx] = FakeRate(self.extra['FakeRates'][idx],loadFilesNow=False)
             if 'AddWeights' in self.extra:
@@ -41,6 +43,7 @@ class Uncertainty:
             self.fakerate[1] = None
             self.trivialFunc[1] = 'symmetrize_up_to_dn'
             if 'FakeRate' in self.extra:
+                self._nontrivialSelectionChange = True
                 self.fakerate[0] = FakeRate(self.extra['FakeRate'],loadFilesNow=False)
             if 'AddWeight' in self.extra:
                 self.fakerate[0]._weight = '(%s)*(%s)'%(self.fakerate[0]._weight,self.extra['AddWeight'])
@@ -64,6 +67,7 @@ class Uncertainty:
             pass
         else: raise RuntimeError, 'Uncertainty type "%s" not recognised' % self.unc_type
         if 'RemoveFakeRate' in self.extra:
+            self._nontrivialSelectionChange = True
             self.removeFR = self.extra['RemoveFakeRate']
         if 'Normalize' in self.extra:
             self._postProcess = "Normalize"
@@ -71,6 +75,9 @@ class Uncertainty:
         return  self.unc_type == 'none'
     def isTrivial(self,sign):
         return (self.getFR(sign)==None)
+    def changesSelection(self,sign):
+        if self.isTrivial(sign): return False
+        return self._nontrivialSelectionChange
     def getTrivial(self,sign,results):
         idx = 0 if sign=='up' else 1
         if self.getFR(sign) or (self.trivialFunc[idx]==None): raise RuntimeError

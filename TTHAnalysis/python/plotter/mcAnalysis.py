@@ -6,6 +6,7 @@ from CMGTools.TTHAnalysis.plotter.figuresOfMerit import FOM_BY_NAME
 from CMGTools.TTHAnalysis.plotter.histoWithNuisances import *
 import pickle, re, random, time
 from copy import copy, deepcopy
+from collections import defaultdict
 
 #_T0 = long(ROOT.gSystem.Now())
 
@@ -254,6 +255,7 @@ class MCAnalysis:
                 if pname not in self._rank: self._rank[pname] = len(self._rank)
             if to_norm: 
                 for tty in ttys: tty.setScaleFactor("%s*%g" % (scale, 1000.0/total_w))
+            for tty in ttys: tty.makeTTYVariations()
         #if len(self._signals) == 0: raise RuntimeError, "No signals!"
         #if len(self._backgrounds) == 0: raise RuntimeError, "No backgrounds!"
     def listProcesses(self,allProcs=False):
@@ -496,22 +498,38 @@ class MCAnalysis:
         #print "DONE getPlots at %.2f" % (0.001*(long(ROOT.gSystem.Now()) - _T0))
         return ret
     def prepareForSplit(self):
-        ttymap = {}
+        fname2tty = defaultdict(list)
+        fname2entries = {}
         for key,ttys in self._allData.iteritems():
             for tty in ttys:
-                if not tty.hasEntries(): 
+                if not tty.hasEntries(useEList=False):
                     #print "For tty %s/%s, I don't have the number of entries" % (tty._name, tty._cname)
-                    ttymap[id(tty)] = tty
-        if len(ttymap):
-            retlist = self._processTasks(_runGetEntries, ttymap.items(), name="GetEntries")
-            for ttid, entries in retlist:
-                ttymap[ttid].setEntries(entries)
+                    fname2tty[tty.fname()].append(tty)
+                else:
+                    fname2entries[tty.fname()] = tty.getEntries(useEList=False)
+        if len(fname2tty) and len(fname2entries):
+            for fname,entries in fname2entries.iteritems():
+                if fname not in fname2tty: continue
+                for tty in fname2tty[fname]: tty.setEntries(entries)
+                del fname2tty[fname]
+        if len(fname2tty):
+            retlist = self._processTasks(_runGetEntries, [(k,v[0]) for (k,v) in fname2tty.iteritems()], name="GetEntries")
+            for fname, entries in retlist:
+                for tty in fname2tty[fname]: tty.setEntries(entries)
     def applyCut(self,cut):
-        tasks = []; revmap = {}
+        tasks = []; revmap = {}; ttysNotToRun = []
         for key,ttys in self._allData.iteritems():
             for tty in ttys:
-                revmap[id(tty)] = tty
-                tasks.append( (id(tty), tty, cut, None) )
+                myttys = [tty]
+                for (variation,direction,vtty) in tty.getTTYVariations():
+                    if variation.isTrivial(direction): continue # these are never run
+                    if variation.changesSelection(direction):
+                        myttys.append(vtty)
+                    else:
+                        ttysNotToRun.append((vtty,tty))
+                for itty in myttys:
+                    revmap[id(itty)] = itty
+                    tasks.append( (id(itty), itty, cut, None) )
         if self._options.splitFactor > 1 or self._options.splitFactor == -1:
             tasks = self._splitTasks(tasks)
         retlist = self._processTasks(_runApplyCut, tasks, name="apply cut "+cut)
@@ -524,10 +542,14 @@ class MCAnalysis:
         for ttid, elist in retlist:
             tty = revmap[ttid]
             tty.applyCutAndElist(cut, elist)
+        for vtty,tty in ttysNotToRun:
+            vtty.applyCutAndElist(*tty.cutAndElist())
     def clearCut(self):
         for key,ttys in self._allData.iteritems():
             for tty in ttys:
                 tty.clearCut() 
+                for (v,d,vtty) in tty.getTTYVariations():
+                    vtty.clearCut()
     def prettyPrint(self,reports,makeSummary=True):
         allSig = []; allBg = []
         for key in reports:
@@ -670,17 +692,20 @@ class MCAnalysis:
             stylePlot(plot, pspec, lambda key,default : opts[key] if key in opts else default)
         elif not mayBeMissing:
             raise KeyError, "Process %r not found" % process
-    def _processTasks(self,func,tasks,name=None):
+    def _processTasks(self,func,tasks,name=None,chunkTasks=200):
         #timer = ROOT.TStopwatch()
         #print "Starting job %s with %d tasks, %d threads" % (name,len(tasks),self._options.jobs)
         if self._options.jobs == 0: 
             retlist = map(func, tasks)
         else:
             from multiprocessing import Pool
-            pool = Pool(self._options.jobs)
-            retlist = pool.map(func, tasks, 1)
-            pool.close()
-            pool.join()
+            retlist = []
+            for i in xrange(0,len(tasks),chunkTasks):
+                pool = Pool(self._options.jobs)
+                retlist += pool.map(func, tasks[i:(i+chunkTasks)], 1)
+                pool.close()
+                pool.join()
+                del pool
         #print "Done %s in %s s at %.2f " % (name,timer.RealTime(),0.001*(long(ROOT.gSystem.Now()) - _T0))
         return retlist
     def _splitTasks(self,tasks):

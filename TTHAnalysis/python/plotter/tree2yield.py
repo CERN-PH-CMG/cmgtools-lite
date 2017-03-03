@@ -149,7 +149,9 @@ class TreeToYield:
         self._fullNevt = 0 # number of events of the full sample, as if it passed the full skim and all cuts
         self._settings = settings
         self._isVariation = None
+        self._maintty = None
         self._variations = []
+        self._ttyVariations = None
         loadMCCorrections(options)            ## make sure this is loaded
         self._mcCorrSourceList = []
         self._FRSourceList = []
@@ -191,7 +193,14 @@ class TreeToYield:
     def getVariations(self):
         return self._variations
     def getTTYVariations(self):
+        if not getattr(self, '_ttyVariations'):
+            self.makeTTYVariations()
         ttys = []
+        for (var,direction),tty in self._ttyVariations.iteritems():
+            ttys.append((var,direction,tty))
+        return ttys
+    def makeTTYVariations(self):
+        ttyVariations = {}
         for var in self.getVariations():
             for direction in ['up','dn']:
                 tty2 = copy(self)
@@ -211,12 +220,16 @@ class TreeToYield:
                         raise RuntimeError, "Variation %s%s for %s %s would want to remove a FR %s which is not found" % (var.name,direction,self._name,self._cname,var.getFRToRemove())
                     tty2._makeMCCAndScaleFactor()
                 tty2.applyFR(var.getFR(direction))
-                ttys.append((var,direction,tty2))
-        return ttys
+                tty2._maintty = self
+                ttyVariations[(var,direction)] = tty2
+        self._ttyVariations = ttyVariations
+    def variationName(self):
+        return "%s %s" % (self._isVariation[0].name,self._isVariation[1]) if self._isVariation else "-"
     def isVariation(self):
         return self._isVariation
     def applyFR(self,FR):
         if FR==None: return
+        self._ttyVariations = None # invalidate
         ## add additional weight correction.
         ## note that the weight receives the other mcCorrections, but not itself
         frweight = self.adaptExpr(FR.weight(), cut=True, mcCorrList=self._mcCorrsInit)
@@ -234,6 +247,7 @@ class TreeToYield:
             self._scaleFactor  = self.adaptExpr(scaleFactor, cut=True)
         else:
             self._scaleFactor = scaleFactor
+        self._ttyVariations = None # invalidate ttys
     def getScaleFactor(self):
         return self._scaleFactor
     def setFullYield(self,fullYield):
@@ -244,6 +258,8 @@ class TreeToYield:
         return self._name
     def cname(self):
         return self._cname
+    def fname(self):
+        return self._fname
     def hasOption(self,name):
         return (name in self._settings)
     def getOption(self,name,default=None):
@@ -310,6 +326,9 @@ class TreeToYield:
         if useEList and self._elist: 
             return self._elist.GetN()
         if self._entries is None:
+            if self._maintty != None:
+                self._entries = self._maintty.getEntries()
+                return self._entries
             if closeFileAfterwards and (not self._isInit):
                 if "root://" in self._fname: ROOT.gEnv.SetValue("XNet.Debug", -1); # suppress output about opening connections
                 tfile = ROOT.TFile.Open(self._fname)
@@ -528,6 +547,8 @@ class TreeToYield:
             print "WARNING: changing applied cut from %s to %s\n" % (self._appliedCut, cut)
         self._appliedCut = cut
         self._elist = elist
+    def cutAndElist(self):
+        return (self._appliedCut,self._elist)
     def cutToElist(self,cut,fsplit=None):
         if not self._isInit: self._init()
         if self._weight:
