@@ -1,0 +1,60 @@
+alwaystrue: 1
+triggerAll: $DATA{HLT_SOSHighMET || HLT_SOSDoubleMuLowMET || HLT_SOSTripleMu } $MC{1}
+trilep: nLepGood == 3
+# if trigger high MET
+ledlepPt: 5 < LepGood1_pt && LepGood1_pt < 30
+# sublepPt: (fabs(LepGood2_pdgId)==13 && LepGood2_pt > 3.5) || (fabs(LepGood2_pdgId)==11 && LepGood2_pt > 5)
+# trilepPt: (fabs(LepGood3_pdgId)==13 && LepGood2_pt > 3.5) || (fabs(LepGood3_pdgId)==11 && LepGood3_pt > 5)
+# # if trigger mumuMET
+# mml
+
+# mmm: abs(LepGood1_pdgId)==13 && abs(LepGood2_pdgId)==13 && abs(LepGood3_pdgId)==13; Disable=True
+# ledlepPt: 5 < LepGood1_pt && LepGood1_pt < 30
+# sublepPt: (fabs(LepGood2_pdgId)==13 && LepGood2_pt > 3.5) || (fabs(LepGood2_pdgId)==11 && LepGood2_pt > 5)	  
+# trilepPt: (fabs(LepGood3_pdgId)==13 && LepGood3_pt > 3.5) || (fabs(LepGood3_pdgId)==11 && LepGood3_pt > 5)
+
+
+
+
+# ledlepPt: 30< LepGood1_pt
+
+# sublepPt:  LepGood2_pt >10 &&  LepGood3_pt >10
+
+# Mll: minMllSFOS>4
+# Mll: minMllSFOS>4 
+
+# TTT: ((0==1)||(((fabs(LepGood1_pdgId)==13 && LepGood1_softMuonId>0) || (fabs(LepGood1_pdgId)==11 && eleWPT(LepGood1_pt,LepGood1_etaSc,LepGood1_mvaIdSpring15))) && LepGood1_relIso03<0.5 && (LepGood1_relIso03*LepGood1_pt)<5. && LepGood1_sip3d<4)) && ((0==1)||(((fabs(Le
+# pGood2_pdgId)==13 && LepGood2_softMuonId>0) || (fabs(LepGood2_pdgId)==11 && eleWPT(LepGood2_pt,LepGood2_etaSc,LepGood2_mvaIdSpring15))) && LepGood2_relIso03<0.5 && (LepGood2_relIso03*LepGood2_pt)<5. && LepGood2_sip3d<4)) &&  ((0==1)||(((fabs(LepGood3_pdgId)==13 && Le
+# pGood3_softMuonId>0) || (fabs(LepGood3_pdgId)==11 && eleWPT(LepGood3_pt,LepGood3_etaSc,LepGood3_mvaIdSpring15))) && LepGood3_relIso03<0.5 && (LepGood3_relIso03*LepGood2_pt)<5. && LepGood3_sip3d<4))
+
+# bveto : Sum$(Jet_btagCSV>0.46)==0
+
+# Upsilon_veto:(mass_2(LepGood1_pt, LepGood1_eta, LepGood1_phi, LepGood1_mass, LepGood2_pt, LepGood2_eta, LepGood2_phi, LepGood2_mass) < 9 ||(mass_2(LepGood1_pt, LepGood1_eta, LepGood1_phi, LepGood1_mass, LepGood2_pt, LepGood2_eta, LepGood2_phi, LepGood2_mass) > 10.5))
+#  && (mass_2(LepGood1_pt, LepGood1_eta, LepGood1_phi, LepGood1_mass, LepGood3_pt, LepGood3_eta, LepGood3_phi, LepGood3_mass) < 9 || (mass_2(LepGood1_pt, LepGood1_eta, LepGood1_phi, LepGood1_mass, LepGood3_pt, LepGood3_eta, LepGood3_phi, LepGood3_mass) > 10.5)) && ( ma
+# ss_2(LepGood2_pt, LepGood2_eta, LepGood2_phi, LepGood2_mass, LepGood3_pt, LepGood3_eta, LepGood3_phi, LepGood3_mass) < 9 || ( mass_2(LepGood2_pt, LepGood2_eta, LepGood2_phi, LepGood2_mass, LepGood3_pt, LepGood3_eta, LepGood3_phi, LepGood3_mass) > 10.5))
+
+# Zveto: abs(mZ1-91.2)<10
+
+#  met: met_pt>200
+
+# # met: met_pt>125 && met_pt<200
+
+# # met: met_pt<125 && met_pt>75
+
+# # minLepMetDphi:min(abs(deltaPhi(LepGood1_phi, met_phi)),min(abs(deltaPhi(LepGood2_phi, met_phi)), abs(deltaPhi(LepGood3_phi, met_phi))))<1
+
+# # ptlll : pt_3(LepGood1_pt,LepGood1_phi,LepGood2_pt,LepGood2_phi,LepGood3_pt,LepGood3_phi)<30
+
+# #triggerAll: $DATA{HLT_SOSHighMET} $MC{1}
+
+# #triggerAll: $DATA{HLT_SOSDoubleMuLowMET} $MC{1}
+
+# #runRange: (!isData) || run >= 274954
+
+
+# # some cuts that are off by default but can be turned on with -E
+# mml: ((abs(LepGood1_pdgId)==13 && abs(LepGood2_pdgId)==13) &&
+# LepGood1_pdgId*LepGood2_pdgId<0 && LepGood2_pt>5) ||
+# ((abs(LepGood1_pdgId)==13 && abs(LepGood3_pdgId)==13) &&
+# LepGood1_pdgId*LepGood3_pdgId<0 && Lep) || ((abs(LepGood2_pdgId)==13 && abs(LepGood3_pdgId)==13) && LepGood2_pdgId*LepGood3_pdgId<0); Disable=True
+

@@ -5,6 +5,9 @@
 # T2ttDeg_330+: T2ttDeg_mStop350_mChi330_4bodydec_lepOnly : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ;FillColor=ROOT.kOrange,   Label="T2tt(20)", FakeRate="susy-sos/mca-2los-noMuonsFilters.txt" 
 # T2ttDeg_315+: T2ttDeg_mStop350_mChi315_4bodydec_lepOnly : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ;FillColor=ROOT.kRed-7,   Label="T2tt(35)", FakeRate="susy-sos/mca-2los-noMuonsFilters.txt" 
 # T2ttDeg_300+: T2ttDeg_mStop350_mChi300_4bodydec_lepOnly : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 ;FillColor=ROOT.kRed-10,   Label="T2tt(50)", FakeRate="susy-sos/mca-2los-noMuonsFilters.txt" 
+# ---- SUSY scan points:
+TChiWZ_150_dM20+: TChiWZ_150_130 :  0.001*0.1*5180.86 : LepGood1_mcMatchId != 0 && LepGood2_mcMatchId != 0; FillColor=ROOT.kOrange, Label="TChi150/20"
+T2tt_350_dM20+ : T2ttDiLep_350_330 : 3.787*(0.332)*(0.332): LepGood1_mcMatchId!=0 && LepGood2_mcMatchId != 0 ; FillColor=ROOT.kRed, Label="T2tt350/20"
 
 
 # ---- TTbar 
@@ -75,9 +78,9 @@ TW       : TBar_tWch :  xsec: (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0);L
 
 
 # ---- Non prompt:
-fakes_data: MET_Run2016B_PromptReco_v2_runs_273150_276811 ; FakeRate="susy-sos/fakeRate-2los-frdata-qcd-prdata.txt", Label="Fakes", FillColor=ROOT.kGray
-fakes_data: MET_Run2016C_PromptReco_v2_runs_273150_276811 ; FakeRate="susy-sos/fakeRate-2los-frdata-qcd-prdata.txt", Label="Fakes", FillColor=ROOT.kGray
-fakes_data: MET_Run2016D_PromptReco_v2_runs_273150_276811 ; FakeRate="susy-sos/fakeRate-2los-frdata-qcd-prdata.txt", Label="Fakes", FillColor=ROOT.kGray
+fakes_data: MET_Run2016B_PromptReco_v2_runs_273150_276811 ; FakeRate="susy-sos/fakeRate-2los-frdata-qcd-prdata-old.txt", Label="Fakes", FillColor=ROOT.kGray
+fakes_data: MET_Run2016C_PromptReco_v2_runs_273150_276811 ; FakeRate="susy-sos/fakeRate-2los-frdata-qcd-prdata-old.txt", Label="Fakes", FillColor=ROOT.kGray
+fakes_data: MET_Run2016D_PromptReco_v2_runs_273150_276811 ; FakeRate="susy-sos/fakeRate-2los-frdata-qcd-prdata-old.txt", Label="Fakes", FillColor=ROOT.kGray
 
 
 ##### Additional: negligible contribution

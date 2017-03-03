@@ -1,3 +1,5 @@
+LepGood1_isTightString\b:((abs(LepGood[iLepSel[0]]_pdgId)==13 && LepGood[iLepSel[0]]_ICHEPsoftMuonId>0) || (abs(LepGood[iLepSel[0]]_pdgId)==11 && eleWPT(LepGood[iLepSel[0]]_pt,LepGood[iLepSel[0]]_etaSc,LepGood[iLepSel[0]]_mvaIdSpring15))) && LepGood[iLepSel[0]]_relIso03<0.5 && (LepGood[iLepSel[0]]_relIso03*LepGood[iLepSel[0]]_pt)<5. && fabs(LepGood[iLepSel[0]]_ip3d)<0.01 && LepGood[iLepSel[0]]_sip3d<2 ; AlsoData
+LepGood2_isTightString\b:((abs(LepGood[iLepSel[1]]_pdgId)==13 && LepGood[iLepSel[1]]_ICHEPsoftMuonId>0) || (abs(LepGood[iLepSel[1]]_pdgId)==11 && eleWPT(LepGood[iLepSel[1]]_pt,LepGood[iLepSel[1]]_etaSc,LepGood[iLepSel[1]]_mvaIdSpring15))) && LepGood[iLepSel[1]]_relIso03<0.5 && (LepGood[iLepSel[1]]_relIso03*LepGood[iLepSel[1]]_pt)<5. && fabs(LepGood[iLepSel[1]]_ip3d)<0.01 && LepGood[iLepSel[1]]_sip3d<2 ; AlsoData
 LepGood_(\w+) : LepGood_\1[iLepSel]; AlsoData
 LepGood1_(\w+) : LepGood_\1[iLepSel[0]]; AlsoData
 LepGood2_(\w+) : LepGood_\1[iLepSel[1]]; AlsoData
