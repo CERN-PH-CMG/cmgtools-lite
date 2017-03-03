@@ -71,6 +71,8 @@ class Uncertainty:
             self.removeFR = self.extra['RemoveFakeRate']
         if 'Normalize' in self.extra:
             self._postProcess = "Normalize"
+        if 'DoesNotChangeEventSelection' in self.extra and self.extra['DoesNotChangeEventSelection']:
+            self._nontrivialSelectionChange = False
     def isDummy(self):
         return  self.unc_type == 'none'
     def isTrivial(self,sign):

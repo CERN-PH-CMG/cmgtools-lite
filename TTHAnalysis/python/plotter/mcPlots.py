@@ -735,6 +735,19 @@ class PlotMaker:
                                   makeCanvas=makeCanvas,
                                   outputDir=dir,
                                   printDir=self._options.printDir+(("/"+subname) if subname else ""))
+                if getattr(mca,'_altPostFits',None):
+                    roofit = roofitizeReport(pmap)
+                    addDefaultPOI(roofit,pmap,mca,"r")
+                    for key,pfs in mca._altPostFits.iteritems():
+                        for k,h in pmap.iteritems():
+                            if k != "data" and h.Integral() > 0:
+                                h.setPostFitInfo(pfs,True)
+                        subdir = dir.mkdir("post_"+key)
+                        self.printOnePlot(mca,pspec,pmap,
+                                          xblind=xblind,
+                                          makeCanvas=makeCanvas,
+                                          outputDir=subdir,
+                                          printDir=self._options.printDir+(("/"+subname) if subname else "")+"/post_"+key)
 
             if elist: mca.clearCut()
 

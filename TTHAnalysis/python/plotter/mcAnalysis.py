@@ -480,6 +480,19 @@ class MCAnalysis:
                 if not fitResults: raise IOError("Error, could not find %s in %s" % (self._options.externalFitResult[1], self._options.externalFitResult[0]))
                 efrfile.Close()
                 self._postFit = PostFitSetup(fitResult=fitResults)
+        if self._options.altExternalFitResults:
+            if not getattr(self,'_altPostFits',None):
+                self._altPostFits = {}
+                for fname, resname in self._options.altExternalFitResults:
+                    resalias = resname
+                    if "=" in resname: (resalias,resname) = resname.split("=")
+                    efrfile = ROOT.TFile.Open(fname)
+                    if not efrfile: raise IOError("Error, could not open %s" % fname)
+                    fitResults = efrfile.Get(resname)
+                    if not fitResults: raise IOError("Error, could not find %s in %s" % (fname,resname))
+                    efrfile.Close()
+                    print "Loaded fit result %s from %s for fit %s " % (resname,fname,resalias)
+                    self._altPostFits[resalias] = PostFitSetup(fitResult=fitResults)
         if getattr(self, '_postFit', None):
             roofit = roofitizeReport(ret)
             for k,h in ret.iteritems():
@@ -773,6 +786,7 @@ def addMCAnalysisOptions(parser,addTreeToYieldOnesToo=True):
     parser.add_option("--unc", dest="variationsFile", type="string", default=None, help="Uncertainty file to be loaded")
     parser.add_option("--xu", "--exclude-uncertainty", dest="uncertaintiesToExclude", type="string", default=[], action="append", help="Uncertainties to exclude (comma-separated list of regexp, can specify multiple ones)");
     parser.add_option("--efr", "--external-fitResult", dest="externalFitResult", type="string", default=None, nargs=2, help="External fitResult")
+    parser.add_option("--aefr", "--alt-external-fitResults", dest="altExternalFitResults", type="string", default=[], nargs=2, action="append", help="External fitResult")
 
 if __name__ == "__main__":
     from optparse import OptionParser

@@ -129,6 +129,10 @@ class HistoWithNuisances:
         self.central.Scale(x)
         if self.nominal != self.central: self.nominal.Scale(x)
         for v,p in self.variations.iteritems(): map(lambda h: h.Scale(x), p)
+    def addRooFitScaleFactor(self,roofunc):
+        if not self._rooFit: raise RuntimeError, "Component was not roofitized before"
+        if "norm" not in self._rooFit: self._makePdfAndNorm()
+        self._rooFit["norm"].addOtherFactor(roofunc)
     def raw(self):
         return self.nominal if self._usePostFit else self.central
     def sumSystUncertainties(self,toadd=None):
@@ -373,6 +377,18 @@ def mergePlots(name,plots):
 
 def listAllNuisances(histWithNuisanceMap):
     return set().union(*(h.getVariationList() for (k,h) in histWithNuisanceMap.iteritems() if k != "data" and h.Integral() >= 0))
+
+def addDefaultPOI(context,histoWithNuisanceMap,mca,poiName):
+    if context.workspace.var(poiName):
+        return
+    poi = context.workspace.factory("%s[1]" % poiName); context.workspace.nodelete.append(poi)
+    poi.setConstant(False)
+    poi.removeRange()
+    for p in mca.listSignals(allProcs=True):
+        if p not in histoWithNuisanceMap: continue
+        h = histoWithNuisanceMap[p]
+        if h.Integral() > 0:
+            h.addRooFitScaleFactor(poi)
     
 def roofitizeReport(histoWithNuisanceMap, workspace=None, xvarName="x", density=False):
     # sanity check all inputs, and get one representative histogram

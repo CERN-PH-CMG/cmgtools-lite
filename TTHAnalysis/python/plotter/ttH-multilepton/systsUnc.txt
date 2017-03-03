@@ -82,29 +82,29 @@ pdf_qqbar      : TTW   : .* : normSymm : 1.04
 #CMS_ttHl_thu_shape_ttZ_y  : TTZ : .*2lss.*|.*3l.* : 1.0 : shapeOnly2D_1X_1.02Y
 
 CMS_ttHl_FRe_norm : data_fakes  : .*2lss.* : templateAsymm; FakeRates=["ttH-multilepton/fakerate-vars/fakeRate-2lss-frdata-e-up.txt"\,"ttH-multilepton/fakerate-vars/fakeRate-2lss-frdata-e-down.txt"], \
-        RemoveFakeRate="ttH-multilepton/fakeRate-2lss-frdata.txt"
+        RemoveFakeRate="ttH-multilepton/fakeRate-2lss-frdata.txt", DoesNotChangeEventSelection=True
 CMS_ttHl_FRe_pt : data_fakes  : .*2lss.* : templateAsymm; FakeRates=["ttH-multilepton/fakerate-vars/fakeRate-2lss-frdata-e-pt1.txt"\,"ttH-multilepton/fakerate-vars/fakeRate-2lss-frdata-e-pt2.txt"], \
-        Normalize=True, RemoveFakeRate="ttH-multilepton/fakeRate-2lss-frdata.txt"
+        Normalize=True, RemoveFakeRate="ttH-multilepton/fakeRate-2lss-frdata.txt", DoesNotChangeEventSelection=True
 CMS_ttHl_FRe_be : data_fakes  : .*2lss.* : templateAsymm; FakeRates=["ttH-multilepton/fakerate-vars/fakeRate-2lss-frdata-e-be1.txt"\,"ttH-multilepton/fakerate-vars/fakeRate-2lss-frdata-e-be2.txt"], \
-        Normalize=True, RemoveFakeRate="ttH-multilepton/fakeRate-2lss-frdata.txt"
+        Normalize=True, RemoveFakeRate="ttH-multilepton/fakeRate-2lss-frdata.txt", DoesNotChangeEventSelection=True
 CMS_ttHl_FRm_norm : data_fakes  : .*2lss.* : templateAsymm; FakeRates=["ttH-multilepton/fakerate-vars/fakeRate-2lss-frdata-m-up.txt"\,"ttH-multilepton/fakerate-vars/fakeRate-2lss-frdata-m-down.txt"], \
-        RemoveFakeRate="ttH-multilepton/fakeRate-2lss-frdata.txt"
+        RemoveFakeRate="ttH-multilepton/fakeRate-2lss-frdata.txt", DoesNotChangeEventSelection=True
 CMS_ttHl_FRm_pt : data_fakes  : .*2lss.* : templateAsymm; FakeRates=["ttH-multilepton/fakerate-vars/fakeRate-2lss-frdata-m-pt1.txt"\,"ttH-multilepton/fakerate-vars/fakeRate-2lss-frdata-m-pt2.txt"], \
-        Normalize=True, RemoveFakeRate="ttH-multilepton/fakeRate-2lss-frdata.txt"
+        Normalize=True, RemoveFakeRate="ttH-multilepton/fakeRate-2lss-frdata.txt", DoesNotChangeEventSelection=True
 CMS_ttHl_FRm_be : data_fakes  : .*2lss.* : templateAsymm; FakeRates=["ttH-multilepton/fakerate-vars/fakeRate-2lss-frdata-m-be1.txt"\,"ttH-multilepton/fakerate-vars/fakeRate-2lss-frdata-m-be2.txt"], \
-        Normalize=True, RemoveFakeRate="ttH-multilepton/fakeRate-2lss-frdata.txt"
+        Normalize=True, RemoveFakeRate="ttH-multilepton/fakeRate-2lss-frdata.txt", DoesNotChangeEventSelection=True
 CMS_ttHl_FRe_norm : data_fakes  : .*3l.* : templateAsymm; FakeRates=["ttH-multilepton/fakerate-vars/fakeRate-3l-frdata-e-up.txt"\,"ttH-multilepton/fakerate-vars/fakeRate-3l-frdata-e-down.txt"], \
-        RemoveFakeRate="ttH-multilepton/fakeRate-3l-frdata.txt"
+        RemoveFakeRate="ttH-multilepton/fakeRate-3l-frdata.txt", DoesNotChangeEventSelection=True
 CMS_ttHl_FRe_pt : data_fakes  : .*3l.* : templateAsymm; FakeRates=["ttH-multilepton/fakerate-vars/fakeRate-3l-frdata-e-pt1.txt"\,"ttH-multilepton/fakerate-vars/fakeRate-3l-frdata-e-pt2.txt"], \
-        Normalize=True, RemoveFakeRate="ttH-multilepton/fakeRate-3l-frdata.txt"
+        Normalize=True, RemoveFakeRate="ttH-multilepton/fakeRate-3l-frdata.txt", DoesNotChangeEventSelection=True
 CMS_ttHl_FRe_be : data_fakes  : .*3l.* : templateAsymm; FakeRates=["ttH-multilepton/fakerate-vars/fakeRate-3l-frdata-e-be1.txt"\,"ttH-multilepton/fakerate-vars/fakeRate-3l-frdata-e-be2.txt"], \
-        Normalize=True, RemoveFakeRate="ttH-multilepton/fakeRate-3l-frdata.txt"
+        Normalize=True, RemoveFakeRate="ttH-multilepton/fakeRate-3l-frdata.txt", DoesNotChangeEventSelection=True
 CMS_ttHl_FRm_norm : data_fakes  : .*3l.* : templateAsymm; FakeRates=["ttH-multilepton/fakerate-vars/fakeRate-3l-frdata-m-up.txt"\,"ttH-multilepton/fakerate-vars/fakeRate-3l-frdata-m-down.txt"], \
-        RemoveFakeRate="ttH-multilepton/fakeRate-3l-frdata.txt"
+        RemoveFakeRate="ttH-multilepton/fakeRate-3l-frdata.txt", DoesNotChangeEventSelection=True
 CMS_ttHl_FRm_pt : data_fakes  : .*3l.* : templateAsymm; FakeRates=["ttH-multilepton/fakerate-vars/fakeRate-3l-frdata-m-pt1.txt"\,"ttH-multilepton/fakerate-vars/fakeRate-3l-frdata-m-pt2.txt"], \
-        Normalize=True, RemoveFakeRate="ttH-multilepton/fakeRate-3l-frdata.txt"
+        Normalize=True, RemoveFakeRate="ttH-multilepton/fakeRate-3l-frdata.txt", DoesNotChangeEventSelection=True
 CMS_ttHl_FRm_be : data_fakes  : .*3l.* : templateAsymm; FakeRates=["ttH-multilepton/fakerate-vars/fakeRate-3l-frdata-m-be1.txt"\,"ttH-multilepton/fakerate-vars/fakeRate-3l-frdata-m-be2.txt"], \
-        Normalize=True, RemoveFakeRate="ttH-multilepton/fakeRate-3l-frdata.txt"
+        Normalize=True, RemoveFakeRate="ttH-multilepton/fakeRate-3l-frdata.txt", DoesNotChangeEventSelection=True
 
 
 
