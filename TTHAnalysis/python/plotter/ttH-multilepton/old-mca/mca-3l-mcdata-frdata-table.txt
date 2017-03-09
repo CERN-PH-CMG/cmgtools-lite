@@ -5,7 +5,7 @@ ttH_htt+    : TTHnobb_pow : 0.5071*0.418 : LepGood1_mcMatchId!=0 && LepGood2_mcM
 
 
 TTW     : TTWToLNu_ext+TTWToLNu_ext2 : 0.196 : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 ;  FillColor=ROOT.kGreen-5
-TTZ     : TTZToLLNuNu : 0.2526 : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 ;  FillColor=ROOT.kSpring+2
+TTZ     : TTZToLLNuNu : 0.2728 : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 ;  FillColor=ROOT.kSpring+2
 TTZ     : TTZToLLNuNu_m1to10 : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 ;  FillColor=ROOT.kSpring+2
 TTZ	: TTJets_DiLepton+TTJets_DiLepton_ext_skim3l : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 ; FillColor=ROOT.kSpring+2
 TTZ   	: TTJets_SingleLeptonFromT+TTJets_SingleLeptonFromT_ext : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 ; FillColor=ROOT.kSpring+2
@@ -51,7 +51,7 @@ fakes_data: SingleMuon_Run2016B_PromptReco_v2+SingleMuon_Run2016C_PromptReco_v2+
 
 ttH_jec_Up+    : TTHnobb_pow : 0.5071*0.418 : eventBTagSF_up_jes/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0); FillColor=ROOT.kOrange+10, FakeRate="ttH-multilepton/fr-jecUp.txt", SkipMe=True
 TTW_jec_Up     : TTWToLNu_ext+TTWToLNu_ext2 : 0.196 : eventBTagSF_up_jes/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  FillColor=ROOT.kGreen-5, FakeRate="ttH-multilepton/fr-jecUp.txt", SkipMe=True
-TTZ_jec_Up     : TTZToLLNuNu : 0.2526 : eventBTagSF_up_jes/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  FillColor=ROOT.kSpring+2, FakeRate="ttH-multilepton/fr-jecUp.txt", SkipMe=True
+TTZ_jec_Up     : TTZToLLNuNu : 0.2728 : eventBTagSF_up_jes/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  FillColor=ROOT.kSpring+2, FakeRate="ttH-multilepton/fr-jecUp.txt", SkipMe=True
 TTZ_jec_Up     : TTZToLLNuNu_m1to10 : xsec : eventBTagSF_up_jes/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  FillColor=ROOT.kSpring+2, FakeRate="ttH-multilepton/fr-jecUp.txt", SkipMe=True
 TTZ_jec_Up     : TTJets_DiLepton+TTJets_DiLepton_ext_skim3l : xsec : eventBTagSF_up_jes/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ; FillColor=ROOT.kSpring+2, FakeRate="ttH-multilepton/fr-jecUp.txt", SkipMe=True
 TTZ_jec_Up     : TTJets_SingleLeptonFromT+TTJets_SingleLeptonFromT_ext : xsec : eventBTagSF_up_jes/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ; FillColor=ROOT.kSpring+2, FakeRate="ttH-multilepton/fr-jecUp.txt", SkipMe=True
@@ -75,7 +75,7 @@ Rares_jec_Up   : tZq_ll_ext : xsec : eventBTagSF_up_jes/eventBTagSF*(LepGood1_mc
 
 ttH_jec_Dn+    : TTHnobb_pow : 0.5071*0.418 : eventBTagSF_down_jes/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0); FillColor=ROOT.kOrange+10, FakeRate="ttH-multilepton/fr-jecDn.txt", SkipMe=True
 TTW_jec_Dn     : TTWToLNu_ext+TTWToLNu_ext2 : 0.196 : eventBTagSF_down_jes/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  FillColor=ROOT.kGreen-5, FakeRate="ttH-multilepton/fr-jecDn.txt", SkipMe=True
-TTZ_jec_Dn     : TTZToLLNuNu : 0.2526 : eventBTagSF_down_jes/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  FillColor=ROOT.kSpring+2, FakeRate="ttH-multilepton/fr-jecDn.txt", SkipMe=True
+TTZ_jec_Dn     : TTZToLLNuNu : 0.2728 : eventBTagSF_down_jes/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  FillColor=ROOT.kSpring+2, FakeRate="ttH-multilepton/fr-jecDn.txt", SkipMe=True
 TTZ_jec_Dn     : TTZToLLNuNu_m1to10 : xsec : eventBTagSF_down_jes/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  FillColor=ROOT.kSpring+2, FakeRate="ttH-multilepton/fr-jecDn.txt", SkipMe=True
 TTZ_jec_Dn     : TTJets_DiLepton+TTJets_DiLepton_ext_skim3l : xsec : eventBTagSF_down_jes/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ; FillColor=ROOT.kSpring+2, FakeRate="ttH-multilepton/fr-jecDn.txt", SkipMe=True
 TTZ_jec_Dn     : TTJets_SingleLeptonFromT+TTJets_SingleLeptonFromT_ext : xsec : eventBTagSF_down_jes/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ; FillColor=ROOT.kSpring+2, FakeRate="ttH-multilepton/fr-jecDn.txt", SkipMe=True
@@ -100,7 +100,7 @@ Rares_jec_Dn   : tZq_ll_ext : xsec : eventBTagSF_down_jes/eventBTagSF*(LepGood1_
 
 ttH_bTag_LF_Up+    : TTHnobb_pow : 0.5071*0.418 : eventBTagSF_up_lf/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0); SkipMe=True
 TTW_bTag_LF_Up     : TTWToLNu_ext+TTWToLNu_ext2 : 0.196 : eventBTagSF_up_lf/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
-TTZ_bTag_LF_Up     : TTZToLLNuNu : 0.2526 : eventBTagSF_up_lf/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
+TTZ_bTag_LF_Up     : TTZToLLNuNu : 0.2728 : eventBTagSF_up_lf/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
 TTZ_bTag_LF_Up     : TTZToLLNuNu_m1to10 : xsec : eventBTagSF_up_lf/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
 TTZ_bTag_LF_Up     : TTJets_DiLepton+TTJets_DiLepton_ext_skim3l : xsec : eventBTagSF_up_lf/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ; SkipMe=True
 TTZ_bTag_LF_Up     : TTJets_SingleLeptonFromT+TTJets_SingleLeptonFromT_ext : xsec : eventBTagSF_up_lf/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ; SkipMe=True
@@ -124,7 +124,7 @@ Rares_bTag_LF_Up   : tZq_ll_ext : xsec : eventBTagSF_up_lf/eventBTagSF*(LepGood1
 
 ttH_bTag_LF_Dn+    : TTHnobb_pow : 0.5071*0.418 : eventBTagSF_down_lf/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0); SkipMe=True
 TTW_bTag_LF_Dn     : TTWToLNu_ext+TTWToLNu_ext2 : 0.196 : eventBTagSF_down_lf/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
-TTZ_bTag_LF_Dn     : TTZToLLNuNu : 0.2526 : eventBTagSF_down_lf/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
+TTZ_bTag_LF_Dn     : TTZToLLNuNu : 0.2728 : eventBTagSF_down_lf/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
 TTZ_bTag_LF_Dn     : TTZToLLNuNu_m1to10 : xsec : eventBTagSF_down_lf/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
 TTZ_bTag_LF_Dn     : TTJets_DiLepton+TTJets_DiLepton_ext_skim3l : xsec : eventBTagSF_down_lf/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ; SkipMe=True
 TTZ_bTag_LF_Dn     : TTJets_SingleLeptonFromT+TTJets_SingleLeptonFromT_ext : xsec : eventBTagSF_down_lf/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ; SkipMe=True
@@ -148,7 +148,7 @@ Rares_bTag_LF_Dn   : tZq_ll_ext : xsec : eventBTagSF_down_lf/eventBTagSF*(LepGoo
 
 ttH_bTag_HF_Up+    : TTHnobb_pow : 0.5071*0.418 : eventBTagSF_up_hf/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0); SkipMe=True
 TTW_bTag_HF_Up     : TTWToLNu_ext+TTWToLNu_ext2 : 0.196 : eventBTagSF_up_hf/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
-TTZ_bTag_HF_Up     : TTZToLLNuNu : 0.2526 : eventBTagSF_up_hf/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
+TTZ_bTag_HF_Up     : TTZToLLNuNu : 0.2728 : eventBTagSF_up_hf/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
 TTZ_bTag_HF_Up     : TTZToLLNuNu_m1to10 : xsec : eventBTagSF_up_hf/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
 TTZ_bTag_HF_Up     : TTJets_DiLepton+TTJets_DiLepton_ext_skim3l : xsec : eventBTagSF_up_hf/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ; SkipMe=True
 TTZ_bTag_HF_Up     : TTJets_SingleLeptonFromT+TTJets_SingleLeptonFromT_ext : xsec : eventBTagSF_up_hf/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ; SkipMe=True
@@ -172,7 +172,7 @@ Rares_bTag_HF_Up   : tZq_ll_ext : xsec : eventBTagSF_up_hf/eventBTagSF*(LepGood1
 
 ttH_bTag_HF_Dn+    : TTHnobb_pow : 0.5071*0.418 : eventBTagSF_down_hf/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0); SkipMe=True
 TTW_bTag_HF_Dn     : TTWToLNu_ext+TTWToLNu_ext2 : 0.196 : eventBTagSF_down_hf/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
-TTZ_bTag_HF_Dn     : TTZToLLNuNu : 0.2526 : eventBTagSF_down_hf/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
+TTZ_bTag_HF_Dn     : TTZToLLNuNu : 0.2728 : eventBTagSF_down_hf/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
 TTZ_bTag_HF_Dn     : TTZToLLNuNu_m1to10 : xsec : eventBTagSF_down_hf/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
 TTZ_bTag_HF_Dn     : TTJets_DiLepton+TTJets_DiLepton_ext_skim3l : xsec : eventBTagSF_down_hf/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ; SkipMe=True
 TTZ_bTag_HF_Dn     : TTJets_SingleLeptonFromT+TTJets_SingleLeptonFromT_ext : xsec : eventBTagSF_down_hf/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ; SkipMe=True
@@ -196,7 +196,7 @@ Rares_bTag_HF_Dn   : tZq_ll_ext : xsec : eventBTagSF_down_hf/eventBTagSF*(LepGoo
 
 ttH_bTag_HFStats1_Up+    : TTHnobb_pow : 0.5071*0.418 : eventBTagSF_up_hfstats1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0); SkipMe=True
 TTW_bTag_HFStats1_Up     : TTWToLNu_ext+TTWToLNu_ext2 : 0.196 : eventBTagSF_up_hfstats1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
-TTZ_bTag_HFStats1_Up     : TTZToLLNuNu : 0.2526 : eventBTagSF_up_hfstats1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
+TTZ_bTag_HFStats1_Up     : TTZToLLNuNu : 0.2728 : eventBTagSF_up_hfstats1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
 TTZ_bTag_HFStats1_Up     : TTZToLLNuNu_m1to10 : xsec : eventBTagSF_up_hfstats1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
 TTZ_bTag_HFStats1_Up     : TTJets_DiLepton+TTJets_DiLepton_ext_skim3l : xsec : eventBTagSF_up_hfstats1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ; SkipMe=True
 TTZ_bTag_HFStats1_Up     : TTJets_SingleLeptonFromT+TTJets_SingleLeptonFromT_ext : xsec : eventBTagSF_up_hfstats1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ; SkipMe=True
@@ -220,7 +220,7 @@ Rares_bTag_HFStats1_Up   : tZq_ll_ext : xsec : eventBTagSF_up_hfstats1/eventBTag
 
 ttH_bTag_HFStats1_Dn+    : TTHnobb_pow : 0.5071*0.418 : eventBTagSF_down_hfstats1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0); SkipMe=True
 TTW_bTag_HFStats1_Dn     : TTWToLNu_ext+TTWToLNu_ext2 : 0.196 : eventBTagSF_down_hfstats1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
-TTZ_bTag_HFStats1_Dn     : TTZToLLNuNu : 0.2526 : eventBTagSF_down_hfstats1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
+TTZ_bTag_HFStats1_Dn     : TTZToLLNuNu : 0.2728 : eventBTagSF_down_hfstats1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
 TTZ_bTag_HFStats1_Dn     : TTZToLLNuNu_m1to10 : xsec : eventBTagSF_down_hfstats1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
 TTZ_bTag_HFStats1_Dn     : TTJets_DiLepton+TTJets_DiLepton_ext_skim3l : xsec : eventBTagSF_down_hfstats1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ; SkipMe=True
 TTZ_bTag_HFStats1_Dn     : TTJets_SingleLeptonFromT+TTJets_SingleLeptonFromT_ext : xsec : eventBTagSF_down_hfstats1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ; SkipMe=True
@@ -244,7 +244,7 @@ Rares_bTag_HFStats1_Dn   : tZq_ll_ext : xsec : eventBTagSF_down_hfstats1/eventBT
 
 ttH_bTag_HFStats2_Up+    : TTHnobb_pow : 0.5071*0.418 : eventBTagSF_up_hfstats2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0); SkipMe=True
 TTW_bTag_HFStats2_Up     : TTWToLNu_ext+TTWToLNu_ext2 : 0.196 : eventBTagSF_up_hfstats2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
-TTZ_bTag_HFStats2_Up     : TTZToLLNuNu : 0.2526 : eventBTagSF_up_hfstats2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
+TTZ_bTag_HFStats2_Up     : TTZToLLNuNu : 0.2728 : eventBTagSF_up_hfstats2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
 TTZ_bTag_HFStats2_Up     : TTZToLLNuNu_m1to10 : xsec : eventBTagSF_up_hfstats2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
 TTZ_bTag_HFStats2_Up     : TTJets_DiLepton+TTJets_DiLepton_ext_skim3l : xsec : eventBTagSF_up_hfstats2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ; SkipMe=True
 TTZ_bTag_HFStats2_Up     : TTJets_SingleLeptonFromT+TTJets_SingleLeptonFromT_ext : xsec : eventBTagSF_up_hfstats2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ; SkipMe=True
@@ -268,7 +268,7 @@ Rares_bTag_HFStats2_Up   : tZq_ll_ext : xsec : eventBTagSF_up_hfstats2/eventBTag
 
 ttH_bTag_HFStats2_Dn+    : TTHnobb_pow : 0.5071*0.418 : eventBTagSF_down_hfstats2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0); SkipMe=True
 TTW_bTag_HFStats2_Dn     : TTWToLNu_ext+TTWToLNu_ext2 : 0.196 : eventBTagSF_down_hfstats2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
-TTZ_bTag_HFStats2_Dn     : TTZToLLNuNu : 0.2526 : eventBTagSF_down_hfstats2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
+TTZ_bTag_HFStats2_Dn     : TTZToLLNuNu : 0.2728 : eventBTagSF_down_hfstats2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
 TTZ_bTag_HFStats2_Dn     : TTZToLLNuNu_m1to10 : xsec : eventBTagSF_down_hfstats2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
 TTZ_bTag_HFStats2_Dn     : TTJets_DiLepton+TTJets_DiLepton_ext_skim3l : xsec : eventBTagSF_down_hfstats2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ; SkipMe=True
 TTZ_bTag_HFStats2_Dn     : TTJets_SingleLeptonFromT+TTJets_SingleLeptonFromT_ext : xsec : eventBTagSF_down_hfstats2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ; SkipMe=True
@@ -292,7 +292,7 @@ Rares_bTag_HFStats2_Dn   : tZq_ll_ext : xsec : eventBTagSF_down_hfstats2/eventBT
 
 ttH_bTag_LFStats1_Up+    : TTHnobb_pow : 0.5071*0.418 : eventBTagSF_up_lfstats1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0); SkipMe=True
 TTW_bTag_LFStats1_Up     : TTWToLNu_ext+TTWToLNu_ext2 : 0.196 : eventBTagSF_up_lfstats1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
-TTZ_bTag_LFStats1_Up     : TTZToLLNuNu : 0.2526 : eventBTagSF_up_lfstats1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
+TTZ_bTag_LFStats1_Up     : TTZToLLNuNu : 0.2728 : eventBTagSF_up_lfstats1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
 TTZ_bTag_LFStats1_Up     : TTZToLLNuNu_m1to10 : xsec : eventBTagSF_up_lfstats1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
 TTZ_bTag_LFStats1_Up     : TTJets_DiLepton+TTJets_DiLepton_ext_skim3l : xsec : eventBTagSF_up_lfstats1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ; SkipMe=True
 TTZ_bTag_LFStats1_Up     : TTJets_SingleLeptonFromT+TTJets_SingleLeptonFromT_ext : xsec : eventBTagSF_up_lfstats1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ; SkipMe=True
@@ -316,7 +316,7 @@ Rares_bTag_LFStats1_Up   : tZq_ll_ext : xsec : eventBTagSF_up_lfstats1/eventBTag
 
 ttH_bTag_LFStats1_Dn+    : TTHnobb_pow : 0.5071*0.418 : eventBTagSF_down_lfstats1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0); SkipMe=True
 TTW_bTag_LFStats1_Dn     : TTWToLNu_ext+TTWToLNu_ext2 : 0.196 : eventBTagSF_down_lfstats1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
-TTZ_bTag_LFStats1_Dn     : TTZToLLNuNu : 0.2526 : eventBTagSF_down_lfstats1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
+TTZ_bTag_LFStats1_Dn     : TTZToLLNuNu : 0.2728 : eventBTagSF_down_lfstats1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
 TTZ_bTag_LFStats1_Dn     : TTZToLLNuNu_m1to10 : xsec : eventBTagSF_down_lfstats1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
 TTZ_bTag_LFStats1_Dn     : TTJets_DiLepton+TTJets_DiLepton_ext_skim3l : xsec : eventBTagSF_down_lfstats1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ; SkipMe=True
 TTZ_bTag_LFStats1_Dn     : TTJets_SingleLeptonFromT+TTJets_SingleLeptonFromT_ext : xsec : eventBTagSF_down_lfstats1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ; SkipMe=True
@@ -340,7 +340,7 @@ Rares_bTag_LFStats1_Dn   : tZq_ll_ext : xsec : eventBTagSF_down_lfstats1/eventBT
 
 ttH_bTag_LFStats2_Up+    : TTHnobb_pow : 0.5071*0.418 : eventBTagSF_up_lfstats2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0); SkipMe=True
 TTW_bTag_LFStats2_Up     : TTWToLNu_ext+TTWToLNu_ext2 : 0.196 : eventBTagSF_up_lfstats2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
-TTZ_bTag_LFStats2_Up     : TTZToLLNuNu : 0.2526 : eventBTagSF_up_lfstats2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
+TTZ_bTag_LFStats2_Up     : TTZToLLNuNu : 0.2728 : eventBTagSF_up_lfstats2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
 TTZ_bTag_LFStats2_Up     : TTZToLLNuNu_m1to10 : xsec : eventBTagSF_up_lfstats2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
 TTZ_bTag_LFStats2_Up     : TTJets_DiLepton+TTJets_DiLepton_ext_skim3l : xsec : eventBTagSF_up_lfstats2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ; SkipMe=True
 TTZ_bTag_LFStats2_Up     : TTJets_SingleLeptonFromT+TTJets_SingleLeptonFromT_ext : xsec : eventBTagSF_up_lfstats2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ; SkipMe=True
@@ -364,7 +364,7 @@ Rares_bTag_LFStats2_Up   : tZq_ll_ext : xsec : eventBTagSF_up_lfstats2/eventBTag
 
 ttH_bTag_LFStats2_Dn+    : TTHnobb_pow : 0.5071*0.418 : eventBTagSF_down_lfstats2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0); SkipMe=True
 TTW_bTag_LFStats2_Dn     : TTWToLNu_ext+TTWToLNu_ext2 : 0.196 : eventBTagSF_down_lfstats2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
-TTZ_bTag_LFStats2_Dn     : TTZToLLNuNu : 0.2526 : eventBTagSF_down_lfstats2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
+TTZ_bTag_LFStats2_Dn     : TTZToLLNuNu : 0.2728 : eventBTagSF_down_lfstats2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
 TTZ_bTag_LFStats2_Dn     : TTZToLLNuNu_m1to10 : xsec : eventBTagSF_down_lfstats2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
 TTZ_bTag_LFStats2_Dn     : TTJets_DiLepton+TTJets_DiLepton_ext_skim3l : xsec : eventBTagSF_down_lfstats2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ; SkipMe=True
 TTZ_bTag_LFStats2_Dn     : TTJets_SingleLeptonFromT+TTJets_SingleLeptonFromT_ext : xsec : eventBTagSF_down_lfstats2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ; SkipMe=True
@@ -388,7 +388,7 @@ Rares_bTag_LFStats2_Dn   : tZq_ll_ext : xsec : eventBTagSF_down_lfstats2/eventBT
 
 ttH_bTag_cErr1_Up+    : TTHnobb_pow : 0.5071*0.418 : eventBTagSF_up_cferr1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0); SkipMe=True
 TTW_bTag_cErr1_Up     : TTWToLNu_ext+TTWToLNu_ext2 : 0.196 : eventBTagSF_up_cferr1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
-TTZ_bTag_cErr1_Up     : TTZToLLNuNu : 0.2526 : eventBTagSF_up_cferr1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
+TTZ_bTag_cErr1_Up     : TTZToLLNuNu : 0.2728 : eventBTagSF_up_cferr1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
 TTZ_bTag_cErr1_Up     : TTZToLLNuNu_m1to10 : xsec : eventBTagSF_up_cferr1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
 TTZ_bTag_cErr1_Up     : TTJets_DiLepton+TTJets_DiLepton_ext_skim3l : xsec : eventBTagSF_up_cferr1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ; SkipMe=True
 TTZ_bTag_cErr1_Up     : TTJets_SingleLeptonFromT+TTJets_SingleLeptonFromT_ext : xsec : eventBTagSF_up_cferr1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ; SkipMe=True
@@ -412,7 +412,7 @@ Rares_bTag_cErr1_Up   : tZq_ll_ext : xsec : eventBTagSF_up_cferr1/eventBTagSF*(L
 
 ttH_bTag_cErr1_Dn+    : TTHnobb_pow : 0.5071*0.418 : eventBTagSF_down_cferr1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0); SkipMe=True
 TTW_bTag_cErr1_Dn     : TTWToLNu_ext+TTWToLNu_ext2 : 0.196 : eventBTagSF_down_cferr1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
-TTZ_bTag_cErr1_Dn     : TTZToLLNuNu : 0.2526 : eventBTagSF_down_cferr1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
+TTZ_bTag_cErr1_Dn     : TTZToLLNuNu : 0.2728 : eventBTagSF_down_cferr1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
 TTZ_bTag_cErr1_Dn     : TTZToLLNuNu_m1to10 : xsec : eventBTagSF_down_cferr1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
 TTZ_bTag_cErr1_Dn     : TTJets_DiLepton+TTJets_DiLepton_ext_skim3l : xsec : eventBTagSF_down_cferr1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ; SkipMe=True
 TTZ_bTag_cErr1_Dn     : TTJets_SingleLeptonFromT+TTJets_SingleLeptonFromT_ext : xsec : eventBTagSF_down_cferr1/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ; SkipMe=True
@@ -436,7 +436,7 @@ Rares_bTag_cErr1_Dn   : tZq_ll_ext : xsec : eventBTagSF_down_cferr1/eventBTagSF*
 
 ttH_bTag_cErr2_Up+    : TTHnobb_pow : 0.5071*0.418 : eventBTagSF_up_cferr2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0); SkipMe=True
 TTW_bTag_cErr2_Up     : TTWToLNu_ext+TTWToLNu_ext2 : 0.196 : eventBTagSF_up_cferr2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
-TTZ_bTag_cErr2_Up     : TTZToLLNuNu : 0.2526 : eventBTagSF_up_cferr2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
+TTZ_bTag_cErr2_Up     : TTZToLLNuNu : 0.2728 : eventBTagSF_up_cferr2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
 TTZ_bTag_cErr2_Up     : TTZToLLNuNu_m1to10 : xsec : eventBTagSF_up_cferr2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
 TTZ_bTag_cErr2_Up     : TTJets_DiLepton+TTJets_DiLepton_ext_skim3l : xsec : eventBTagSF_up_cferr2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ; SkipMe=True
 TTZ_bTag_cErr2_Up     : TTJets_SingleLeptonFromT+TTJets_SingleLeptonFromT_ext : xsec : eventBTagSF_up_cferr2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ; SkipMe=True
@@ -460,7 +460,7 @@ Rares_bTag_cErr2_Up   : tZq_ll_ext : xsec : eventBTagSF_up_cferr2/eventBTagSF*(L
 
 ttH_bTag_cErr2_Dn+    : TTHnobb_pow : 0.5071*0.418 : eventBTagSF_down_cferr2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0); SkipMe=True
 TTW_bTag_cErr2_Dn     : TTWToLNu_ext+TTWToLNu_ext2 : 0.196 : eventBTagSF_down_cferr2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
-TTZ_bTag_cErr2_Dn     : TTZToLLNuNu : 0.2526 : eventBTagSF_down_cferr2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
+TTZ_bTag_cErr2_Dn     : TTZToLLNuNu : 0.2728 : eventBTagSF_down_cferr2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
 TTZ_bTag_cErr2_Dn     : TTZToLLNuNu_m1to10 : xsec : eventBTagSF_down_cferr2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ;  SkipMe=True
 TTZ_bTag_cErr2_Dn     : TTJets_DiLepton+TTJets_DiLepton_ext_skim3l : xsec : eventBTagSF_down_cferr2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ; SkipMe=True
 TTZ_bTag_cErr2_Dn     : TTJets_SingleLeptonFromT+TTJets_SingleLeptonFromT_ext : xsec : eventBTagSF_down_cferr2/eventBTagSF*(LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0) ; SkipMe=True
