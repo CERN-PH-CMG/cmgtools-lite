@@ -3,7 +3,7 @@ ttH_hzz+    : TTHnobb_mWCutfix_ext_LHE : 0.5071*0.418 : LepGood1_isMatchRightCha
 ttH_htt+    : TTHnobb_mWCutfix_ext_LHE : 0.5071*0.418 : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge && (GenHiggsDecayMode==15); FillColor=ROOT.kOrange+10
 
 TTW     : TTWToLNu_ext_LHE+TTWToLNu_ext2_LHE : 0.196 : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ;  FillColor=ROOT.kGreen-5
-TTZ     : TTZToLLNuNu_LHE : 0.2526 : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ;  FillColor=ROOT.kSpring+2
+TTZ     : TTZToLLNuNu_LHE : 0.2728 : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ;  FillColor=ROOT.kSpring+2
 TTZ     : TTZToLLNuNu_m1to10_LHE : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ;  FillColor=ROOT.kSpring+2
 TTZ	: TTJets_DiLepton+TTJets_DiLepton_ext_part1+TTJets_DiLepton_ext_part2+TTJets_DiLepton_ext_part3 : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kSpring+2
 TTZ   	: TTJets_SingleLeptonFromT+TTJets_SingleLeptonFromT_ext : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kSpring+2

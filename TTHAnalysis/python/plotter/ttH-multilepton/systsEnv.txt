@@ -67,20 +67,18 @@ pdf_Higgs_ttH  : ttH.* : .* : 1.036
 pdf_gg         : TTZ   : .* : 0.966
 pdf_qqbar      : TTW   : .* : 1.04
 
-# shape theoretical uncertainties (private to this channel)
-CMS_ttHl_thu_shape_ttH_x  : ttH.* : .*2lss.*|.*3l.* : 1.0 : shapeOnly2D_1.03X_1Y
-CMS_ttHl_thu_shape_ttH_y  : ttH.* : .*2lss.*|.*3l.* : 1.0 : shapeOnly2D_1X_1.02Y
-CMS_ttHl_thu_shape_ttW_x  : TTW : .*2lss.*|.*3l.* : 1.0 : shapeOnly2D_1.04X_1Y
-CMS_ttHl_thu_shape_ttW_y  : TTW : .*2lss.*|.*3l.* : 1.0 : shapeOnly2D_1X_1.01Y
-CMS_ttHl_thu_shape_ttZ_x  : TTZ : .*2lss.*|.*3l.* : 1.0 : shapeOnly2D_1.02X_1Y
-CMS_ttHl_thu_shape_ttZ_y  : TTZ : .*2lss.*|.*3l.* : 1.0 : shapeOnly2D_1X_1.02Y
-#####CMS_ttHl_pdf_shape_ttH_x  : ttH.* : .*2lss.*|.*3l.* : 1.0 : shapeOnly2D_X_1Y
-#####CMS_ttHl_pdf_shape_ttH_y  : ttH.* : .*2lss.*|.*3l.* : 1.0 : shapeOnly2D_1X_Y
-#####CMS_ttHl_pdf_shape_ttW_x  : TTW : .*2lss.*|.*3l.* : 1.0 : shapeOnly2D_X_1Y
-#####CMS_ttHl_pdf_shape_ttW_y  : TTW : .*2lss.*|.*3l.* : 1.0 : shapeOnly2D_1X_Y
-#####CMS_ttHl_pdf_shape_ttZ_x  : TTZ : .*2lss.*|.*3l.* : 1.0 : shapeOnly2D_X_1Y
-#####CMS_ttHl_pdf_shape_ttZ_y  : TTZ : .*2lss.*|.*3l.* : 1.0 : shapeOnly2D_1X_Y
+BR_hbb         : ttH$  	 : .* : 1.0126 # in this analysis un-splitted ttH sample is TTHnobb
+BR_hww	       : ttH_hww : .* : 1.0154
+BR_hzz	       : ttH_hzz : .* : 1.0154
+BR_htt	       : ttH_htt : .* : 1.0165
 
+# shape theoretical uncertainties (private to this channel)
+CMS_ttHl_thu_shape_ttH  : ttH.* : .*2lss.* : 1.0 : shapeOnly2D_1.05X_1.02Y
+CMS_ttHl_thu_shape_ttW  : TTW 	: .*2lss.* : 1.0 : shapeOnly2D_1.02X_1.03Y
+CMS_ttHl_thu_shape_ttZ  : TTZ 	: .*2lss.* : 1.0 : shapeOnly2D_1.06X_1.06Y
+CMS_ttHl_thu_shape_ttH  : ttH.* : .*3l.*   : 1.0 : shapeOnly2D_1.05X_1.10Y
+CMS_ttHl_thu_shape_ttW  : TTW 	: .*3l.*   : 1.0 : shapeOnly2D_1.04X_1.10Y
+CMS_ttHl_thu_shape_ttZ  : TTZ 	: .*3l.*   : 1.0 : shapeOnly2D_1.08X_1.13Y
 
 
 # Fake rate uncertainties
