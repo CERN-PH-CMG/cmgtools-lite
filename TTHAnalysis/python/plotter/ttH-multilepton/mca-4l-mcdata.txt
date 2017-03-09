@@ -31,8 +31,8 @@ incl_sigprompt_bTag_cErr1_Dn : + ; IncludeMca="ttH-multilepton/mca-includes/mca-
 incl_sigprompt_bTag_cErr2_Up : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-sigprompt.txt", AddWeight="eventBTagSF_up_cferr2/eventBTagSF", SkipMe=True, PostFix="_bTag_cErr2_Up"
 incl_sigprompt_bTag_cErr2_Dn : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-sigprompt.txt", AddWeight="eventBTagSF_down_cferr2/eventBTagSF", SkipMe=True, PostFix="_bTag_cErr2_Dn"
 
-incl_sigprompt_elLooseUnc_Up : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-sigprompt.txt", AddWeight="elLooseUnc_3l_up", SkipMe=True, PostFix="_elLooseUnc_Up"
-incl_sigprompt_elLooseUnc_Dn : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-sigprompt.txt", AddWeight="elLooseUnc_3l_dn", SkipMe=True, PostFix="_elLooseUnc_Dn"
+incl_sigprompt_elLooseUnc_Up : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-sigprompt.txt", AddWeight="elLooseUnc_4l_up", SkipMe=True, PostFix="_elLooseUnc_Up"
+incl_sigprompt_elLooseUnc_Dn : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-sigprompt.txt", AddWeight="elLooseUnc_4l_dn", SkipMe=True, PostFix="_elLooseUnc_Dn"
 
 incl_convs_jec_Up : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-convs.txt", AddWeight="eventBTagSF_up_jes/eventBTagSF", FakeRate="ttH-multilepton/fr-jecUp.txt", SkipMe=True, PostFix="_jec_Up"
 incl_convs_jec_Dn : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-convs.txt", AddWeight="eventBTagSF_down_jes/eventBTagSF", FakeRate="ttH-multilepton/fr-jecDn.txt", SkipMe=True, PostFix="_jec_Dn"
@@ -61,5 +61,5 @@ incl_convs_bTag_cErr1_Dn : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-c
 incl_convs_bTag_cErr2_Up : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-convs.txt", AddWeight="eventBTagSF_up_cferr2/eventBTagSF", SkipMe=True, PostFix="_bTag_cErr2_Up"
 incl_convs_bTag_cErr2_Dn : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-convs.txt", AddWeight="eventBTagSF_down_cferr2/eventBTagSF", SkipMe=True, PostFix="_bTag_cErr2_Dn"
 
-incl_convs_elLooseUnc_Up : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-convs.txt", AddWeight="elLooseUnc_3l_up", SkipMe=True, PostFix="_elLooseUnc_Up"
-incl_convs_elLooseUnc_Dn : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-convs.txt", AddWeight="elLooseUnc_3l_dn", SkipMe=True, PostFix="_elLooseUnc_Dn"
+incl_convs_elLooseUnc_Up : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-convs.txt", AddWeight="elLooseUnc_4l_up", SkipMe=True, PostFix="_elLooseUnc_Up"
+incl_convs_elLooseUnc_Dn : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-convs.txt", AddWeight="elLooseUnc_4l_dn", SkipMe=True, PostFix="_elLooseUnc_Dn"
