@@ -712,8 +712,6 @@ class PlotMaker:
                             dir.WriteTObject(v.raw())
                     continue
                 #
-                stack = ROOT.THStack(pspec.name+"_stack",pspec.name)
-                hists = [v for k,v in pmap.iteritems() if k != 'data']
                 if self._options.scaleSignalToData: 
                     self._sf = doScaleSigNormData(pspec,pmap,mca)
                 elif self._options.scaleBackgroundToData != []: 
@@ -737,12 +735,16 @@ class PlotMaker:
                                   printDir=self._options.printDir+(("/"+subname) if subname else ""))
                 if getattr(mca,'_altPostFits',None):
                     roofit = roofitizeReport(pmap)
-                    addDefaultPOI(roofit,pmap,mca,"r")
+                    if self._options.processesToPeg == []:
+                        addDefaultPOI(roofit,pmap,mca,"r")
+                    else:
+                        addPhysicsModelPOIs(roofit,pmap,mca,self._options.processesToPeg)
                     for key,pfs in mca._altPostFits.iteritems():
                         for k,h in pmap.iteritems():
                             if k != "data" and h.Integral() > 0:
                                 h.setPostFitInfo(pfs,True)
-                        subdir = dir.mkdir("post_"+key)
+                        subdir = dir.GetDirectory("post_"+key);
+                        if not subdir: subdir = dir.mkdir("post_"+key)
                         self.printOnePlot(mca,pspec,pmap,
                                           xblind=xblind,
                                           makeCanvas=makeCanvas,
@@ -1066,8 +1068,8 @@ class PlotMaker:
                                     plot.SetMarkerSize(pspec.getOption("MarkerSize",1))
                                     if pspec.hasOption('ZMin') and pspec.hasOption('ZMax'):
                                         plot.GetZaxis().SetRangeUser(pspec.getOption('ZMin',1.0), pspec.getOption('ZMax',1.0))
-                                    plot.SetMarkerStyle(mca.getProcessOption(p,'MarkerStyle',1))
-                                    plot.SetMarkerColor(mca.getProcessOption(p,'FillColor',ROOT.kBlack))
+                                    plot.SetMarkerStyle(mca.getProcessOption(p,'MarkerStyle',1,noThrow=True))
+                                    plot.SetMarkerColor(mca.getProcessOption(p,'FillColor',ROOT.kBlack,noThrow=True))
                                     plot.Draw(pspec.getOption("PlotMode","COLZ TEXT45"))
                                     c1.Print("%s/%s_%s.%s" % (fdir, outputName, p, ext))
                                 if "data" in pmap and "TGraph" in pmap["data"].ClassName():

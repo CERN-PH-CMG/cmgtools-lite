@@ -389,7 +389,33 @@ def addDefaultPOI(context,histoWithNuisanceMap,mca,poiName):
         h = histoWithNuisanceMap[p]
         if h.Integral() > 0:
             h.addRooFitScaleFactor(poi)
-    
+
+def addPhysicsModelPOIs(context,histoWithNuisanceMap,mca,processPegs):
+    pois  = set(v for (p,v) in processPegs)
+    done = True
+    for p in pois:
+        if p in ("0","1"): continue
+        if not context.workspace.var(p):
+            done = False; break
+    if done: return
+    for poiName in pois:
+        if poiName in ("1","0"): continue
+        poi = context.workspace.factory("%s[1]" % poiName); context.workspace.nodelete.append(poi)
+        poi.removeRange()
+        poi.setConstant(False)
+    for p in mca.listSignals(allProcs=True)+mca.listBackgrounds(allProcs=True):
+        if p not in histoWithNuisanceMap: continue
+        h = histoWithNuisanceMap[p]
+        if h.Integral() <= 0: continue
+        poi = mca.getProcessOption(p,'PegNormToProcess',None)
+        if poi == None or poi == "1":
+            continue
+        elif poi == "0":
+            h.Scale(0);
+        else:
+            h.addRooFitScaleFactor(context.workspace.var(poi))
+
+ 
 def roofitizeReport(histoWithNuisanceMap, workspace=None, xvarName="x", density=False):
     # sanity check all inputs, and get one representative histogram
     h0 = None
