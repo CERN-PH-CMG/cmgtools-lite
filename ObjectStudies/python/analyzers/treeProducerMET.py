@@ -26,7 +26,14 @@ met_globalVariables = [
 #    NTupleVariable("Flag_HBHENoiseFilter", lambda ev: ev.hbheFilterNew, help="HBEHE temporary filter decision"),
 #    NTupleVariable("Flag_HBHEIsoNoiseFilter", lambda ev: ev.hbheFilterIso, help="HBEHE isolation temporary filter decision"),
     NTupleVariable("Flag_badChargedHadronFilter", lambda ev: ev.badChargedHadron, help="bad charged hadron filter decision"),
-    NTupleVariable("Flag_badMuonFilter", lambda ev: ev.badMuon, help="bad muon filter decision"),
+
+    NTupleVariable("Flag_badMuonMoriond2017",  lambda ev: ev.badMuonMoriond2017, int, help="bad muon found in event (Moriond 2017 filter)?"),
+    NTupleVariable("Flag_badCloneMuonMoriond2017",  lambda ev: ev.badCloneMuonMoriond2017, int, help="clone muon found in event (Moriond 2017 filter)?"),
+    NTupleVariable("badCloneMuonMoriond2017_maxPt",  lambda ev: max(mu.pt() for mu in ev.badCloneMuonMoriond2017_badMuons) if not ev.badCloneMuonMoriond2017 else 0, help="max pt of any clone muon found in event (Moriond 2017 filter)"),
+    NTupleVariable("badNotCloneMuonMoriond2017_maxPt",  lambda ev: max((mu.pt() if mu not in ev.badCloneMuonMoriond2017_badMuons else 0) for mu in ev.badMuonMoriond2017_badMuons) if not ev.badMuonMoriond2017 else 0, help="max pt of any bad non-clone muon found in event (Moriond 2017 filter)"),
+
+    NTupleVariable("metPuppi_EGCorX", lambda ev : ev.met_EGCorXPuppi if  hasattr(ev,'met_EGCorXPuppi') else  0 , help="Puppi EGCorX"),
+    NTupleVariable("metPuppi_EGCorY", lambda ev : ev.met_EGCorYPuppi if  hasattr(ev,'met_EGCorYPuppi') else  0 , help="Puppi EGCorY"),
 
    # ----------------------- jet info  --------------------------------------------------------------------- #
 

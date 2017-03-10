@@ -93,57 +93,59 @@ from CondCore.DBCommon.CondDBSetup_cfi import *
 
 ##___________________________External JER file________________________________||
 ##https://github.com/cms-jet/JRDatabase/tree/master/SQLiteFiles
-process.jer = cms.ESSource("PoolDBESSource",CondDBSetup,
-##                           connect = cms.string("sqlite:PhysicsTools/PatUtils/data/Fall15_25nsV2_MC.db"),
-                           connect = cms.string('sqlite_file:'+os.path.expandvars(options.jerDBFile)),
-                           toGet =  cms.VPSet(
-    #######
-    ### read the PFchs JER
 
-    cms.PSet(
-      record = cms.string('JetResolutionRcd'),
-      #tag    = cms.string('JR_MC_PtResolution_Summer15_25nsV6_AK4PF'),
-      tag    = cms.string('JR_'+options.jerEra+'_MC_PtResolution_AK4PFchs'),
-      label  = cms.untracked.string('AK4PFchs_pt')
-      ),
-    cms.PSet(
-      record = cms.string("JetResolutionRcd"),
-      #tag = cms.string("JR_MC_PhiResolution_Summer15_25nsV6_AK4PF"),
-      tag = cms.string('JR_'+options.jerEra+'_MC_PhiResolution_AK4PFchs'),
-      label= cms.untracked.string("AK4PFchs_phi")
-      ),
-    cms.PSet(
-      record = cms.string('JetResolutionScaleFactorRcd'),
-      #tag    = cms.string('JR_DATAMCSF_Summer15_25nsV6_AK4PFchs'),
-      tag    = cms.string('JR_'+options.jerEra+'_MC_SF_AK4PFchs'),
-      label  = cms.untracked.string('AK4PFchs')
-      ),
+usePrivateSQliteJER = options.jerDBFile!=''
+if usePrivateSQliteJER:
+    process.jer = cms.ESSource("PoolDBESSource",CondDBSetup,
+                               connect = cms.string('sqlite_file:'+os.path.expandvars(options.jerDBFile)),
+                               toGet =  cms.VPSet(
+            #######
+            ### read the PFchs JER
 
-    #######
-    ### read the Puppi JER
+            cms.PSet(
+                record = cms.string('JetResolutionRcd'),
+                #tag    = cms.string('JR_MC_PtResolution_Summer15_25nsV6_AK4PF'),
+                tag    = cms.string('JR_'+options.jerEra+'_MC_PtResolution_AK4PFchs'),
+                label  = cms.untracked.string('AK4PFchs_pt')
+                ),
+            cms.PSet(
+                record = cms.string("JetResolutionRcd"),
+                #tag = cms.string("JR_MC_PhiResolution_Summer15_25nsV6_AK4PF"),
+                tag = cms.string('JR_'+options.jerEra+'_MC_PhiResolution_AK4PFchs'),
+                label= cms.untracked.string("AK4PFchs_phi")
+                ),
+            cms.PSet(
+                record = cms.string('JetResolutionScaleFactorRcd'),
+                #tag    = cms.string('JR_DATAMCSF_Summer15_25nsV6_AK4PFchs'),
+                tag    = cms.string('JR_'+options.jerEra+'_MC_SF_AK4PFchs'),
+                label  = cms.untracked.string('AK4PFchs')
+                ),
 
-    cms.PSet(
-      record = cms.string('JetResolutionRcd'),
-      #tag    = cms.string('JR_MC_PtResolution_Summer15_25nsV6_AK4PF'),
-      tag    = cms.string('JR_'+options.jerEra+'_MC_PtResolution_AK4PFPuppi'),
-      label  = cms.untracked.string('AK4PFPuppi_pt')
-      ),
-    cms.PSet(
-      record = cms.string("JetResolutionRcd"),
-      #tag = cms.string("JR_MC_PhiResolution_Summer15_25nsV6_AK4PF"),
-      tag = cms.string('JR_'+options.jerEra+'_MC_PhiResolution_AK4PFPuppi'),
-      label= cms.untracked.string("AK4PFPuppi_phi")
-      ),
-    cms.PSet(
-      record = cms.string('JetResolutionScaleFactorRcd'),
-      #tag    = cms.string('JR_DATAMCSF_Summer15_25nsV6_AK4PFchs'),
-      tag    = cms.string('JR_'+options.jerEra+'_MC_SF_AK4PFPuppi'),
-      label  = cms.untracked.string('AK4PFPuppi')
-      ),
+            #######
+            ### read the Puppi JER
+
+            cms.PSet(
+                record = cms.string('JetResolutionRcd'),
+                #tag    = cms.string('JR_MC_PtResolution_Summer15_25nsV6_AK4PF'),
+                tag    = cms.string('JR_'+options.jerEra+'_MC_PtResolution_AK4PFPuppi'),
+                label  = cms.untracked.string('AK4PFPuppi_pt')
+                ),
+            cms.PSet(
+                record = cms.string("JetResolutionRcd"),
+                #tag = cms.string("JR_MC_PhiResolution_Summer15_25nsV6_AK4PF"),
+                tag = cms.string('JR_'+options.jerEra+'_MC_PhiResolution_AK4PFPuppi'),
+                label= cms.untracked.string("AK4PFPuppi_phi")
+                ),
+            cms.PSet(
+                record = cms.string('JetResolutionScaleFactorRcd'),
+                #tag    = cms.string('JR_DATAMCSF_Summer15_25nsV6_AK4PFchs'),
+                tag    = cms.string('JR_'+options.jerEra+'_MC_SF_AK4PFPuppi'),
+                label  = cms.untracked.string('AK4PFPuppi')
+                ),
 
 
-    ) )
-process.es_prefer_jer = cms.ESPrefer("PoolDBESSource",'jer')
+            ) )
+    process.es_prefer_jer = cms.ESPrefer("PoolDBESSource",'jer')
 
 
 
@@ -227,12 +229,13 @@ process.MINIAODSIMoutput = cms.OutputModule("PoolOutputModule",
     compressionLevel = cms.untracked.int32(4),
     compressionAlgorithm = cms.untracked.string('LZMA'),
     eventAutoFlushCompressedSize = cms.untracked.int32(15728640),
-    outputCommands = cms.untracked.vstring( "keep *_slimmedMETs_*_*",
+    outputCommands = cms.untracked.vstring( "keep *_slimmedMETs*_*_*",
                                             "keep *_patPFMetT1Txy_*_*",
 #                                            "keep patJets_*_*_RERUN", #for debugging only
                                             "keep *_slimmedMETsNoHF_*_*",
                                             "keep *_slimmedMETsPuppi_*_*",
                                             "keep *_patPFMetT1TxyNoHF_*_*",
+                                            "keep *_puppiMETEGCor_*_*",
 ##                                            "keep *_*_*_RERUN",
                                             ),
     fileName = cms.untracked.string('corMETMiniAOD.root'),
