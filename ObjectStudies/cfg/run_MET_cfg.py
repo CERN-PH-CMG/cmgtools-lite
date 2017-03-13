@@ -239,6 +239,9 @@ elif test==25:
 
 from CMGTools.ObjectStudies.analyzers.metCoreModules_cff import *
 
+if test==13 or test==15 and test==16:
+    metPuppiAna.storePuppiExtra = True
+
 cfg.Analyzer.nosubdir = True
 
 ##------------------------------------------
