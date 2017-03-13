@@ -190,6 +190,7 @@ def createProcess(runOnMC=True, channel='tau-mu', runSVFit=False, runMVAETmiss=F
     # Message logger setup.
     process.load("FWCore.MessageLogger.MessageLogger_cfi")
     process.MessageLogger.cerr.FwkReport.reportEvery = reportInterval
+    process.MessageLogger.suppressWarning = cms.untracked.vstring('cmgDiTau')
     process.options = cms.untracked.PSet(wantSummary=cms.untracked.bool(True))
 
     process.options = cms.untracked.PSet(
