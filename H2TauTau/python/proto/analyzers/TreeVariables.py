@@ -58,7 +58,9 @@ event_vars = [
     Variable('Flag_eeBadScFilter', type=int),
     Variable('Flag_globalTightHalo2016Filter', type=int),
     Variable('passBadMuonFilter', type=int),
-    Variable('passBadChargedHadronFilter', type=int)
+    Variable('passBadChargedHadronFilter', type=int),
+    Variable('badMuonMoriond2017', type=int),
+    Variable('badCloneMuonMoriond2017', type=int)
 ]
 
 # di-tau object variables
@@ -168,8 +170,6 @@ tau_vars = [
     Variable('zImpact', lambda tau : tau.zImpact()),
     Variable('dz_selfvertex', lambda tau : tau.vertex().z() - tau.associatedVertex.position().z()),
     Variable('ptScale', lambda tau : getattr(tau, 'ptScale', -999.)),
-    Variable('NewMVAID'),
-    Variable('NewMVAraw'),
 ]
 for tau_id in tauIDs:
     if type(tau_id) is str:

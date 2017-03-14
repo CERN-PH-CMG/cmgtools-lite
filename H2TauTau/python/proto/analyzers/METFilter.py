@@ -1,8 +1,6 @@
 from PhysicsTools.Heppy.analyzers.core.Analyzer import Analyzer
 from PhysicsTools.Heppy.analyzers.core.AutoHandle import AutoHandle
 
-from CMGTools.H2TauTau.proto.analyzers.met_filter_implementations import passBadMuonFilter, passBadChargedHadronFilter
-
 class METFilter(Analyzer):
 
     def __init__(self, cfg_ana, cfg_comp, looperName):
@@ -14,8 +12,9 @@ class METFilter(Analyzer):
     def declareHandles(self):
         super(METFilter, self).declareHandles()
         self.handles['TriggerResults'] = AutoHandle(('TriggerResults', '', self.processName), 'edm::TriggerResults', fallbackLabel=('TriggerResults', '', 'PAT')) # fallback for FastSim
-        self.handles['packedCandidates'] = AutoHandle('packedPFCandidates', 'std::vector<pat::PackedCandidate>')
-        self.handles['muons'] = AutoHandle('slimmedMuons', 'std::vector<pat::Muon>')
+
+        self.handles['badChargedHadronFilter'] = AutoHandle('BadChargedCandidateFilter', 'bool')
+        self.handles['badPFMuonFilter'] = AutoHandle('BadPFMuonFilter', 'bool')
 
     def beginLoop(self, setup):
         super(METFilter, self).beginLoop(setup)
@@ -51,11 +50,8 @@ class METFilter(Analyzer):
             else:
                 setattr(event, trigger_name, False)
 
-        packedCandidates = self.handles['packedCandidates'].product()
-        muons = self.handles['muons'].product()
-
-        event.passBadMuonFilter = passBadMuonFilter(muons, packedCandidates)
-        event.passBadChargedHadronFilter = passBadChargedHadronFilter(muons, packedCandidates)
+        event.passBadMuonFilter = self.handles['badPFMuonFilter'].product()[0]
+        event.passBadChargedHadronFilter = self.handles['badChargedHadronFilter'].product()[0]
 
         if event.passBadMuonFilter:
             self.count.inc('pass bad muon')
