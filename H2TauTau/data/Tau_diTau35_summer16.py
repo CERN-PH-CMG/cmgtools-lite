@@ -1,36 +1,21 @@
 from CMGTools.H2TauTau.proto.weights.auxFunctions import crystalballEfficiency
-from CMGTools.H2TauTau.proto.weights.eff_ditauh35_tightMVAiso import parameters
+from CMGTools.H2TauTau.proto.weights.tauh_trigger_effs import parameters
 # global parameters
 
 
 # https://github.com/rmanzoni/triggerSF/tree/moriond17/di-tau
 
-lumi_weight_bcdefg = 27916.0/36773.0
-lumi_weight_h = (36773.0-27916.0)/36773.0
+def effData(pt, eta, dm, wp='Tight'):
+    return crystalballEfficiency(pt, parameters['data_genuine_{wp}Iso_dm{dm}'.format(wp=wp, dm=dm)])
 
-def effData(pt, eta, dm):
-    if dm == 0:
-        return lumi_weight_bcdefg * crystalballEfficiency(pt, parameters['Data BCDEFG decay mode =  0']) + lumi_weight_h *  crystalballEfficiency(pt, parameters['Data H decay mode =  0'])
-    elif dm == 1:
-        return lumi_weight_bcdefg * crystalballEfficiency(pt, parameters['Data BCDEFG decay mode =  1']) + lumi_weight_h *  crystalballEfficiency(pt, parameters['Data H decay mode =  1'])
-    elif dm == 10:
-        return lumi_weight_bcdefg * crystalballEfficiency(pt, parameters['Data BCDEFG decay mode = 10']) + lumi_weight_h * crystalballEfficiency(pt, parameters['Data H decay mode = 10'])
-    
-    raise RuntimeError('Unsupported decay mode', dm)
+def effDataFakeTau(pt, eta, dm, wp='Tight'):
+    return crystalballEfficiency(pt, parameters['data_fake_{wp}Iso_dm{dm}'.format(wp=wp, dm=dm)])
 
-def effDataFakeTau(pt, eta, dm):
-    return effData(pt, eta, dm)
+def effMC(pt, eta, dm, wp='Tight'):
+    return crystalballEfficiency(pt, parameters['mc_genuine_{wp}Iso_dm{dm}'.format(wp=wp, dm=dm)])
 
-def effMC(pt, eta, dm):
-    if dm == 0:
-        return crystalballEfficiency(pt, parameters['MC decay mode =  0'])
-    elif dm == 1:
-        return crystalballEfficiency(pt, parameters['MC decay mode =  1'])
-    elif dm == 10:
-        return crystalballEfficiency(pt, parameters['MC decay mode = 10'])
-
-def effMCFakeTau(pt, eta, dm):
-    return effMC(pt, eta, dm)
+def effMCFakeTau(pt, eta, dm, wp='Tight'):
+    return crystalballEfficiency(pt, parameters['mc_genuine_{wp}Iso_dm{dm}'.format(wp=wp, dm=dm)])
 
 if __name__ == '__main__':
 

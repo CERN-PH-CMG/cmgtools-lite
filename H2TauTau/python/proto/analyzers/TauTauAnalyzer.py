@@ -334,8 +334,6 @@ class TauTauAnalyzer(DiLeptonAnalyzer):
         # if osDiLeptons : return sorted(osDiLeptons, key=lambda dl : least_iso(dl), reverse=False)[0]
         # else           :
 
-        # import pdb; pdb.set_trace()
-
         return sorted(diLeptons, key=lambda dl: least_iso_highest_pt(dl), reverse=False)[0]
 
     def scaleP4(self, tau, scale):
