@@ -10,7 +10,7 @@ class BTagSF(object):
     def __init__ (self, seed, wp='medium', measurement='central') :
         self.randm = TRandom3(seed)
 
-        self.mc_eff_file = TFile('$CMSSW_BASE/src/CMGTools/H2TauTau/data/tagging_efficiencies_ichep2016.root')
+        self.mc_eff_file = TFile('/afs/cern.ch/work/d/dwinterb/public/MSSM2016/tagging_efficiencies_Moriond2017.root')
 
         # MC b-tag efficiencies as measured in HTT by Adinda
         self.btag_eff_b = self.mc_eff_file.Get('btag_eff_b')
