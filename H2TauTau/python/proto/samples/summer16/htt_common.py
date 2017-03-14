@@ -13,6 +13,7 @@ from CMGTools.RootTools.samples.samples_13TeV_DATA2016 import SingleMuon_Run2016
 from CMGTools.RootTools.samples.samples_13TeV_DATA2016 import SingleMuon_Run2016F_23Sep2016, SingleElectron_Run2016F_23Sep2016, MuonEG_Run2016F_23Sep2016, Tau_Run2016F_23Sep2016
 from CMGTools.RootTools.samples.samples_13TeV_DATA2016 import SingleMuon_Run2016G_23Sep2016, SingleElectron_Run2016G_23Sep2016, MuonEG_Run2016G_23Sep2016, Tau_Run2016G_23Sep2016
 from CMGTools.RootTools.samples.samples_13TeV_RunIISummer16MiniAODv2 import ZZTo4L, WZTo1L3Nu, WWTo1L1Nu2Q, WZTo1L1Nu2Q, ZZTo2L2Q, WZTo2L2Q, VVTo2L2Nu, WZTo3LNu_amcatnlo
+from CMGTools.RootTools.samples.samples_13TeV_DATA2016 import Tau_Run2016B_03Feb2017_v2, Tau_Run2016C_03Feb2017, Tau_Run2016D_03Feb2017, Tau_Run2016E_03Feb2017, Tau_Run2016F_03Feb2017, Tau_Run2016G_03Feb2017, Tau_Run2016H_03Feb2017_v2, Tau_Run2016H_03Feb2017_v3
 
 # from CMGTools.RootTools.samples.samples_13TeV_RunIISummer16MiniAODv2 import DYJetsToLL_M10to50_ext1
 # DY1JetsToLL_M50_LO, DY2JetsToLL_M50_LO, DY3JetsToLL_M50_LO, DY4JetsToLL_M50_LO,
@@ -114,7 +115,7 @@ backgrounds_ele += QCDPtbcToE
 data_single_muon = [SingleMuon_Run2016B_23Sep2016, SingleMuon_Run2016C_23Sep2016, SingleMuon_Run2016D_23Sep2016, SingleMuon_Run2016E_23Sep2016, SingleMuon_Run2016F_23Sep2016, SingleMuon_Run2016G_23Sep2016]
 data_single_electron = [SingleElectron_Run2016B_23Sep2016, SingleElectron_Run2016C_23Sep2016, SingleElectron_Run2016D_23Sep2016, SingleElectron_Run2016E_23Sep2016, SingleElectron_Run2016F_23Sep2016, SingleElectron_Run2016G_23Sep2016]
 data_muon_electron = [MuonEG_Run2016B_23Sep2016, MuonEG_Run2016C_23Sep2016, MuonEG_Run2016D_23Sep2016, MuonEG_Run2016E_23Sep2016, MuonEG_Run2016F_23Sep2016, MuonEG_Run2016G_23Sep2016]
-data_tau = [Tau_Run2016B_23Sep2016, Tau_Run2016C_23Sep2016, Tau_Run2016D_23Sep2016, Tau_Run2016E_23Sep2016, Tau_Run2016F_23Sep2016, Tau_Run2016G_23Sep2016]
+data_tau = [Tau_Run2016B_03Feb2017_v2, Tau_Run2016C_03Feb2017, Tau_Run2016D_03Feb2017, Tau_Run2016E_03Feb2017, Tau_Run2016F_03Feb2017, Tau_Run2016G_03Feb2017, Tau_Run2016H_03Feb2017_v2, Tau_Run2016H_03Feb2017_v3]
 
 for sample in data_single_muon + data_single_electron + data_muon_electron + data_tau:
     sample.json = json
