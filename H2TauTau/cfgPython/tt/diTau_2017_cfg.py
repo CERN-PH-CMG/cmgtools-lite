@@ -32,7 +32,7 @@ def getHeppyOption(option, default):
 production = getHeppyOption('production', False)
 pick_events = getHeppyOption('pick_events', False)
 syncntuple = getHeppyOption('syncntuple', True)
-cmssw = getHeppyOption('cmssw', True)
+cmssw = getHeppyOption('cmssw', False)
 doSUSY = getHeppyOption('susy', False)
 computeSVfit = getHeppyOption('computeSVfit', False)
 data = getHeppyOption('data', False)
@@ -78,7 +78,7 @@ tauTauAna = cfg.Analyzer(
     eta2=2.1,
     iso2=1.,
     looseiso2=999999999.,
-    isolation='byIsolationMVArun2v1DBoldDMwLTrawNew',
+    isolation='byIsolationMVArun2v1DBoldDMwLTraw',
     m_min=10,
     m_max=99999,
     dR_min=0.5,
@@ -202,7 +202,7 @@ svfitProducer = cfg.Analyzer(
 metFilter = cfg.Analyzer(
     METFilter,
     name='METFilter',
-    processName='RECO',
+    processName='AOD',
     triggers=[
         'Flag_HBHENoiseFilter', 
         'Flag_HBHENoiseIsoFilter', 
@@ -283,7 +283,7 @@ if not cmssw:
 ###             CHERRY PICK EVENTS              ###
 ###################################################
 if pick_events:
-    evtsToPick = [457708, 425293, 447970, 178882, 3374, 14658, 443850, 21582, 4403, 12924, 11275, 68723, 96792, 120270, 247339, 88508, 104454, 344845, 333579, 384277, 390123, 453005, 477401, 482485, 478466, 273199, 307046, 312583, 317090, 344426, 345958, 463044, 463051, 468768, 276616, 159307, 359291, 386755, 172125, 185981, 318270, 382006, 332328, 301617, 69428, 167235, 155761, 156001, 246652, 246812, 187713, 201555, 199365, 205348, 239434, 354001, 242066, 263854, 57426, 485885, 136766, 222003, 459882, 145312, 139491, 63131, 94633, 92860, 97245, 175535, 190598, 200504, 243541]
+    evtsToPick = [7125, 7204, 19150, 19157, 30297, 67087, 74521, 87615, 93964, 13385, 19948, 21748, 22048, 68695, 68980, 90677, 4019, 5003, 5228, 33261, 48241, 40571, 17727, 42382, 42762, 52834, 52756, 76821, 70141, 4266, 26879, 36797, 92495, 401, 3451, 3526, 32430, 15065, 48579, 44338, 88971, 6115, 55642, 1616, 43645, 51727, 57548, 27953, 22307, 38311, 43239, 43257, 55067, 62198, 76475, 79555, 45228, 91707]
 
     eventSelector.toSelect = evtsToPick
     sequence.insert(0, eventSelector)
@@ -315,7 +315,7 @@ if not production:
         selectedComponents = [data_list[0]]
     selectedComponents = selectedComponents[:1]
     for comp in selectedComponents:
-        comp.splitFactor = 100
+        comp.splitFactor = 4
         comp.fineSplitFactor = 1
     # comp.files = comp.files[13:20]
 

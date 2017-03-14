@@ -39,8 +39,10 @@ class METFilter(Analyzer):
 
         for trigger_name in self.triggers:
             index = names.triggerIndex(trigger_name)
+
             if index == len(triggerBits):
                 setattr(event, trigger_name, False)
+                print 'WARNING, MET filter', trigger_name, 'not found in TriggerResults for processing step', self.processName 
                 continue
 
             fired = triggerBits.accept(index)
@@ -49,13 +51,16 @@ class METFilter(Analyzer):
                 self.count.inc('pass {t}'.format(t=trigger_name))
             else:
                 setattr(event, trigger_name, False)
+    
+        if not self.handles['badPFMuonFilter'].isValid():
+            print 'WARNING: Bad PF muon filter only works with CMSSW pre-sequence'
+            return True
 
         event.passBadMuonFilter = self.handles['badPFMuonFilter'].product()[0]
         event.passBadChargedHadronFilter = self.handles['badChargedHadronFilter'].product()[0]
-
         if event.passBadMuonFilter:
             self.count.inc('pass bad muon')
         if event.passBadChargedHadronFilter:
             self.count.inc('pass bad charged hadron')
-
+        
         return True

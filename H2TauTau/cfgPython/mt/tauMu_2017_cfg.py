@@ -156,7 +156,7 @@ svfitProducer = cfg.Analyzer(
 metFilter = cfg.Analyzer(
     METFilter,
     name='METFilter',
-    processName='RECO',
+    processName='PAT',
     triggers=[
         'Flag_HBHENoiseFilter', 
         'Flag_HBHENoiseIsoFilter', 
