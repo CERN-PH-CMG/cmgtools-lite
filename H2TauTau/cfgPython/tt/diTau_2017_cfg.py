@@ -184,8 +184,8 @@ syncTreeProducer = cfg.Analyzer(
     H2TauTauTreeProducerTauTau,
     name='H2TauTauSyncTreeProducerTauTau',
     varStyle='sync',
-    treename='sync_tree'
-    # skimFunction = 'event.isSignal' #don't cut out any events from the sync tuple
+    treename='sync_tree',
+    skimFunction=' and '.join(['event.'+met_filter for met_filter in ['Flag_HBHENoiseFilter', 'Flag_HBHENoiseIsoFilter', 'Flag_EcalDeadCellTriggerPrimitiveFilter', 'Flag_goodVertices', 'Flag_eeBadScFilter', 'Flag_globalTightHalo2016Filter', 'passBadMuonFilter', 'passBadChargedHadronFilter']])
 )
 
 svfitProducer = cfg.Analyzer(

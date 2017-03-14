@@ -54,6 +54,8 @@ class METFilter(Analyzer):
     
         if not self.handles['badPFMuonFilter'].isValid():
             print 'WARNING: Bad PF muon filter only works with CMSSW pre-sequence'
+            event.passBadMuonFilter = True
+            event.passBadChargedHadronFilter = True
             return True
 
         event.passBadMuonFilter = self.handles['badPFMuonFilter'].product()[0]
