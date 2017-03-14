@@ -10,6 +10,7 @@ from PhysicsTools.PatUtils.tools.runMETCorrectionsAndUncertainties import runMet
 from RecoTauTag.RecoTau.TauDiscriminatorTools import noPrediscriminants
 from RecoTauTag.RecoTau.PATTauDiscriminationByMVAIsolationRun2_cff import *
 
+
 # def loadLocalSqlite(process, sqliteFilename, tag='JetCorrectorParametersCollection_Spring16_25nsV3_DATA_AK4PFchs'):
 #     process.load("CondCore.CondDB.CondDB_cfi")
 #     print 'Loading local sqlite file:', sqliteFilename
@@ -30,7 +31,21 @@ from RecoTauTag.RecoTau.PATTauDiscriminationByMVAIsolationRun2_cff import *
 #     # add an es_prefer statement to resolve a possible conflict from simultaneous connection to a global tag
 #     process.es_prefer_jec = cms.ESPrefer('PoolDBESSource', 'jec')
 
+
+def addMETFilters(process):
+    process.load('RecoMET.METFilters.BadPFMuonFilter_cfi')
+    process.BadPFMuonFilter.muons = cms.InputTag("slimmedMuons")
+    process.BadPFMuonFilter.PFCandidates = cms.InputTag("packedPFCandidates")
+    process.BadPFMuonFilter.taggingMode = cms.bool(True)
+
+    process.load('RecoMET.METFilters.BadChargedCandidateFilter_cfi')
+    process.BadChargedCandidateFilter.muons = cms.InputTag("slimmedMuons")
+    process.BadChargedCandidateFilter.PFCandidates = cms.InputTag("packedPFCandidates")
+    process.BadChargedCandidateFilter.taggingMode = cms.bool(True)
+
 def addNewTauID(process):
+    process.load('RecoTauTag.Configuration.loadRecoTauTagMVAsFromPrepDB_cfi')
+    
     process.rerunDiscriminationByIsolationMVArun2v1raw = patDiscriminationByIsolationMVArun2v1raw.clone(
         PATTauProducer = cms.InputTag('slimmedTaus'),
         Prediscriminants = noPrediscriminants,
@@ -68,6 +83,19 @@ def addNewTauID(process):
     process.rerunDiscriminationByIsolationMVArun2v1VVTight = process.rerunDiscriminationByIsolationMVArun2v1VLoose.clone()
     process.rerunDiscriminationByIsolationMVArun2v1VVTight.mapping[0].cut = cms.string("RecoTauTag_tauIdMVAIsoDBoldDMwLT2016v1_WPEff40")
 
+    process.slimmedTausExtraIDs = cms.EDProducer("PATTauIDEmbedder",
+        src = cms.InputTag('slimmedTaus'),
+        tauIDSources = cms.PSet(
+          byIsolationMVArun2v1DBoldDMwLTrawNew = cms.InputTag('rerunDiscriminationByIsolationMVArun2v1raw'),
+          byVLooseIsolationMVArun2v1DBoldDMwLTNew = cms.InputTag('rerunDiscriminationByIsolationMVArun2v1VLoose'),
+          byLooseIsolationMVArun2v1DBoldDMwLTNew = cms.InputTag('rerunDiscriminationByIsolationMVArun2v1Loose'),
+          byMediumIsolationMVArun2v1DBoldDMwLTNew = cms.InputTag('rerunDiscriminationByIsolationMVArun2v1Medium'),
+          byTightIsolationMVArun2v1DBoldDMwLTNew = cms.InputTag('rerunDiscriminationByIsolationMVArun2v1Tight'),
+          byVTightIsolationMVArun2v1DBoldDMwLTNew = cms.InputTag('rerunDiscriminationByIsolationMVArun2v1VTight'),
+          byVVTightIsolationMVArun2v1DBoldDMwLTNew = cms.InputTag('rerunDiscriminationByIsolationMVArun2v1VVTight')
+          )
+    )
+
 def createProcess(runOnMC=True, channel='tau-mu', runSVFit=False, runMVAETmiss=False,
                   # Christians's default. If not touched, it would default to this anyways
                   p4TransferFunctionFile='CMGTools/SVfitStandalone/data/svFitVisMassAndPtResolutionPDF.root',
@@ -87,8 +115,8 @@ def createProcess(runOnMC=True, channel='tau-mu', runSVFit=False, runMVAETmiss=F
 
     process = cms.Process("H2TAUTAU")
 
-    process.load('RecoTauTag.Configuration.loadRecoTauTagMVAsFromPrepDB_cfi')
     addNewTauID(process)
+    addMETFilters(process)
 
     if recorrectJets:
         # Adding jet collection
@@ -154,7 +182,7 @@ def createProcess(runOnMC=True, channel='tau-mu', runSVFit=False, runMVAETmiss=F
     # dataset_files = 'miniAOD-prod_PAT_.*root'
 
     if runOnMC:
-        from CMGTools.H2TauTau.proto.samples.spring16.higgs_susy import HiggsSUSYGG160 as ggh160
+        from CMGTools.H2TauTau.proto.samples.summer16.higgs_susy import HiggsSUSYGG160 as ggh160
         process.source = cms.Source(
             "PoolSource",
             noEventSort=cms.untracked.bool(True),
@@ -163,7 +191,7 @@ def createProcess(runOnMC=True, channel='tau-mu', runSVFit=False, runMVAETmiss=F
         )
     else:
         # from CMGTools.RootTools.samples.samples_13TeV_DATA2015 import SingleMuon_Run2015D_Promptv4
-        from CMGTools.H2TauTau.proto.samples.spring16.htt_common import data_single_muon
+        from CMGTools.H2TauTau.proto.samples.summer16.htt_common import data_single_muon
         process.source = cms.Source(
             "PoolSource",
             noEventSort=cms.untracked.bool(True),

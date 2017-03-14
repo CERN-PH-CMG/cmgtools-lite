@@ -78,7 +78,7 @@ tauTauAna = cfg.Analyzer(
     eta2=2.1,
     iso2=1.,
     looseiso2=999999999.,
-    isolation='byIsolationMVArun2v1DBoldDMwLTraw',
+    isolation='byIsolationMVArun2v1DBoldDMwLTrawNew',
     m_min=10,
     m_max=99999,
     dR_min=0.5,
@@ -220,8 +220,6 @@ from CMGTools.RootTools.utils.splitFactor import splitFactor
 from CMGTools.H2TauTau.proto.samples.summer16.htt_common import backgrounds, sm_signals, mssm_signals, data_tau, sync_list
 from CMGTools.H2TauTau.proto.samples.summer16.sms import samples_susy
 from CMGTools.RootTools.samples.samples_13TeV_signals import SignalSUSY
-# from CMGTools.H2TauTau.proto.samples.summer16.higgs_susy import HiggsSUSYGG90 as ggh90
-# from CMGTools.H2TauTau.proto.samples.summer16.higgs_susy import HiggsSUSYGG1000 as ggh1000
 from CMGTools.H2TauTau.proto.samples.summer16.triggers_tauTau import mc_triggers, mc_triggerfilters, data_triggers, data_triggerfilters
 
 data_list = data_tau
@@ -317,7 +315,7 @@ if not production:
         selectedComponents = [data_list[0]]
     selectedComponents = selectedComponents[:1]
     for comp in selectedComponents:
-        comp.splitFactor = 1
+        comp.splitFactor = 100
         comp.fineSplitFactor = 1
     # comp.files = comp.files[13:20]
 

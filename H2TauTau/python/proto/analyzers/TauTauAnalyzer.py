@@ -19,8 +19,6 @@ class TauTauAnalyzer(DiLeptonAnalyzer):
     DiObjectClass = TauTau
     LeptonClass = Electron
     OtherLeptonClass = Muon
-
-    tau_wps = ['Loose', 'Medium', 'Tight', 'VLoose', 'VTight', 'VVTight', 'raw']
   
     def __init__(self, cfg_ana, cfg_comp, looperName):
         super(TauTauAnalyzer, self).__init__(cfg_ana, cfg_comp, looperName)
@@ -98,12 +96,6 @@ class TauTauAnalyzer(DiLeptonAnalyzer):
             'std::vector<l1extra::L1JetParticle>'   
         )
 
-        for wp in self.tau_wps:
-            self.handles['taumva_{wp}'.format(wp=wp)] = AutoHandle(
-                'rerunDiscriminationByIsolationMVArun2v1{wp}'.format(wp=wp),
-                'pat::PATTauDiscriminator'
-            )
-
     def process(self, event):
 
         # method inherited from parent class DiLeptonAnalyzer
@@ -164,24 +156,6 @@ class TauTauAnalyzer(DiLeptonAnalyzer):
             pydil.leg2().event = event.input.object()
             diLeptons.append(pydil)
             pydil.mvaMetSig = pydil.met().getSignificanceMatrix()
-
-            for wp in self.tau_wps:
-                mvas = self.handles['taumva_{wp}'.format(wp=wp)].product()
-                for i_mva in xrange(len(mvas)):
-                    for tau in [pydil.leg1(), pydil.leg2()]:
-                        ref_tau = mvas.key(i_mva).get()
-                        ref_tau_pt, ref_tau_eta, ref_tau_phi = ref_tau.pt(), ref_tau.eta(), ref_tau.phi()
-                        eps = 0.0001
-                        # The CompositeCandidate owns the taus (copy on construction)
-                        # so we cannot use the refs to the taus
-                        if abs(ref_tau_phi - tau.phi()) < eps and \
-                           abs(ref_tau_eta - tau.eta()) < eps and \
-                           abs(ref_tau_pt - tau.pt()) < eps:
-                           setattr(tau, 'NewMVA'+wp, mvas.value(i_mva))
-            for leg in [pydil.leg1(), pydil.leg2()]:
-                if not hasattr(leg, 'NewMVA'+self.tau_wps[0]):
-                    raise RuntimeError('Tau MVA Value', 'NewMVA'+self.tau_wps[0], 'not saved in tau')
-                leg.NewMVAID = sum(getattr(leg, 'NewMVA'+wp) for wp in self.tau_wps if not 'raw' in wp)
 
         return diLeptons
 
