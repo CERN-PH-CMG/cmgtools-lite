@@ -52,6 +52,10 @@ if reapplyJEC:
         httGenAna.jetCol = 'patJetsReapplyJEC'
     else:
         jetAna.recalibrateJets = True
+        jetAna.mcGT = 'Summer16_23Sep2016V3_MC'
+        jetAna.dataGT = 'Summer16_23Sep2016HV3_DATA'
+        # Summer16_23Sep2016EFV3_DATA
+        # Summer16_23Sep2016GV3_DATA
 
 if not data:
     triggerAna.requireTrigger = False
@@ -315,7 +319,7 @@ if not production:
         selectedComponents = [data_list[0]]
     selectedComponents = selectedComponents[:1]
     for comp in selectedComponents:
-        comp.splitFactor = 4
+        comp.splitFactor = 1
         comp.fineSplitFactor = 1
     # comp.files = comp.files[13:20]
 

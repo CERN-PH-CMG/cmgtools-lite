@@ -53,8 +53,8 @@ class JetAnalyzer(Analyzer):
         self.btagSF = BTagSF(0, wp='medium')
         self.recalibrateJets = getattr(cfg_ana, 'recalibrateJets', False)
 
-        mcGT = getattr(cfg_ana, 'mcGT', 'Spring16_25nsV6_MC')
-        dataGT = getattr(cfg_ana, 'dataGT', 'Spring16_25nsV6_DATA')
+        mcGT = getattr(cfg_ana, 'mcGT', '80X_mcRun2_asymptotic_2016_TrancheIV_v8')
+        dataGT = getattr(cfg_ana, 'dataGT', '80X_dataRun2_2016SeptRepro_v7')
 
         if self.recalibrateJets:
             doResidual = getattr(cfg_ana, 'applyL2L3Residual', 'Data')
