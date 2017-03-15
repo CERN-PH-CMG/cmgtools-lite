@@ -13,8 +13,8 @@ class METFilter(Analyzer):
         super(METFilter, self).declareHandles()
         self.handles['TriggerResults'] = AutoHandle(('TriggerResults', '', self.processName), 'edm::TriggerResults', fallbackLabel=('TriggerResults', '', 'PAT')) # fallback for FastSim
 
-        self.handles['badChargedHadronFilter'] = AutoHandle('BadChargedCandidateFilter', 'bool')
-        self.handles['badPFMuonFilter'] = AutoHandle('BadPFMuonFilter', 'bool')
+        self.handles['badChargedHadronFilter'] = AutoHandle('BadChargedCandidateFilter', 'bool', mayFail=True)
+        self.handles['badPFMuonFilter'] = AutoHandle('BadPFMuonFilter', 'bool', mayFail=True)
 
     def beginLoop(self, setup):
         super(METFilter, self).beginLoop(setup)
@@ -52,8 +52,11 @@ class METFilter(Analyzer):
             else:
                 setattr(event, trigger_name, False)
     
-        if not self.handles['badPFMuonFilter'].isValid():
-            print 'WARNING: Bad PF muon filter only works with CMSSW pre-sequence'
+        self.handles['badPFMuonFilter'].ReallyLoad(self.handles['badPFMuonFilter'].event)
+        self.handles['badChargedHadronFilter'].ReallyLoad(self.handles['badChargedHadronFilter'].event)
+
+        if not self.handles['badPFMuonFilter'].isValid() or not self.handles['badChargedHadronFilter'].isValid():
+            print 'WARNING: Bad PF muon filter and bad charged hadron filters only work with CMSSW pre-sequence'
             event.passBadMuonFilter = True
             event.passBadChargedHadronFilter = True
             return True
