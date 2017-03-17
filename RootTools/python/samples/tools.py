@@ -25,19 +25,19 @@ python samplefile.py test [--AAA] [samples] :
 python samplefile.py locality [samples] :
         check the locality of the samples
 
-python samplefile.py refresh [samples] [ --pretend ] [ --suspicious ]: 
+python samplefile.py refresh [samples] [ --pretend ] [ --suspicious ]:
         forces a refresh of the cache
         option --pretend: print the list of samples to refresh, instead of actually refreshing them
         option --suspicious: selects for refresh the samples that look bogus (zero files, or zero events for official CMS datasets)
 
-python samplefile.py list [samples]:  
-python samplefile.py summary [samples]:   
+python samplefile.py list [samples]:
+python samplefile.py summary [samples]:
         two equivalent commands that prints a list of samples, with number of files, events, equivalent luminosity, etc
 
-python samplefile.py genXSecAna [samples] [ --pretend ] [ --verbose ]:  
+python samplefile.py genXSecAna [samples] [ --pretend ] [ --verbose ]:
         check the cross sections using genXSecAna on one of the files
 
-python samplefile.py checkdecl:  
+python samplefile.py checkdecl:
         check that all samples are declared in the samples list
 
 """
@@ -49,7 +49,7 @@ python samplefile.py checkdecl:
        from CMGTools.Production.localityChecker import LocalityChecker
        tier2Checker = LocalityChecker("T2_CH_CERN", datasets="/*/*/MINIAOD*")
        for comp in selsamples:
-           if len(comp.files) == 0: 
+           if len(comp.files) == 0:
                print '\033[34mE: Empty component: '+comp.name+'\033[0m'
                continue
            if not hasattr(comp,'dataset'): continue
@@ -77,7 +77,7 @@ python samplefile.py checkdecl:
         from CMGTools.Production.datasetVersionChecker import DatasetVersionChecker
         checker = DatasetVersionChecker()
         for d in selsamples:
-            if "--pretend" in args: 
+            if "--pretend" in args:
                 print "Would check ",d.name," aka ",d.dataset
             else:
                 print "Checking",d.name," ",
@@ -91,17 +91,17 @@ python samplefile.py checkdecl:
             print "Retrieving genXSecAna.py"
             os.system("wget -O "+os.environ['CMSSW_BASE']+"/src/genXSecAna.py  https://raw.githubusercontent.com/syuvivida/generator/master/cross_section/runJob/ana.py")
         for d in selsamples:
-            if not hasattr(d, 'xSection'): 
+            if not hasattr(d, 'xSection'):
                 print "Skipping %s which has no cross section" % d.name
                 continue
-            if "--pretend" in args: 
+            if "--pretend" in args:
                 print "Would check ",d.name," aka ",d.dataset
                 continue
             print "Sample %s: XS(sample file) = %g pb, ... " % (d.name,d.xSection),
-            if "--verbose" in args: 
+            if "--verbose" in args:
                 print "\n ".join(["cmsRun", os.environ['CMSSW_BASE']+"/src/genXSecAna.py", "inputFiles=%s" % d.files[0], "maxEvents=-1"])
             xsecAnaOut = subprocess.check_output(["cmsRun", os.environ['CMSSW_BASE']+"/src/genXSecAna.py", "inputFiles=%s" % d.files[0], "maxEvents=-1"], stderr=subprocess.STDOUT)
-            if "--verbose" in args: 
+            if "--verbose" in args:
                 for l in xsecAnaOut.split("\n"): print "\t>> "+l
             m = re.search(r"After filter: final cross section = (\S+) \+- (\S+) pb", xsecAnaOut)
             if m and float(m.group(1)) == 0:
@@ -116,8 +116,8 @@ python samplefile.py checkdecl:
             xs, xserr = float(m.group(1)), float(m.group(2))
             kfactor = d.xSection/xs
             if abs(xs-d.xSection) < min(3*xserr,1e-2*xs): (col,stat) = '\033[01;36m', "OK"
-            elif 0.8 < kfactor and kfactor < 1.4: (col,stat) = '\033[01;36m', "OK?" 
-            elif 0.5 < kfactor and kfactor < 2.0: (col,stat) = '\033[01;33m', "WARNING" 
+            elif 0.8 < kfactor and kfactor < 1.4: (col,stat) = '\033[01;36m', "OK?"
+            elif 0.5 < kfactor and kfactor < 2.0: (col,stat) = '\033[01;33m', "WARNING"
             else:                                 (col,stat) = '\033[01;31m', "ERROR"
             print "XS(genAnalyzer) = %g +/- %g pb : %s kFactor = %g %s\033[00m" % (xs, xserr, col, kfactor, stat)
    if "checkdecl" in args:
@@ -125,12 +125,12 @@ python samplefile.py checkdecl:
         import PhysicsTools.HeppyCore.framework.config as cfg
         ok = 0
         for name,obj in localobjs.iteritems():
-            if isinstance(obj, cfg.Component):  
+            if name == "comp": continue # local variable used in loops
+            if isinstance(obj, cfg.Component):
                 if obj not in samples:
                     print "\tERROR: component %s is not added to the samples list " % name
+                elif obj.name != name:
+                    print "\tERROR: component %s has inconsistent name %s " % (name, obj.name)
                 else:
                     ok += 1
         print "\tINFO: %d correctly declared components" % ok
-
-
-
