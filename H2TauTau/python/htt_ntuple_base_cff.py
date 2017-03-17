@@ -17,7 +17,7 @@ from CMGTools.H2TauTau.proto.analyzers.JetAnalyzer import JetAnalyzer
 from CMGTools.H2TauTau.proto.analyzers.EmbedWeighter import EmbedWeighter
 from CMGTools.H2TauTau.proto.analyzers.HTTGenAnalyzer import HTTGenAnalyzer
 from CMGTools.H2TauTau.proto.analyzers.NJetsAnalyzer import NJetsAnalyzer
-from CMGTools.H2TauTau.proto.analyzers.HiggsPtWeighter import HiggsPtWeighter
+# from CMGTools.H2TauTau.proto.analyzers.HiggsPtWeighter import HiggsPtWeighter
 from CMGTools.H2TauTau.proto.analyzers.VBFAnalyzer import VBFAnalyzer
 from CMGTools.H2TauTau.proto.analyzers.RecoilCorrector import RecoilCorrector
 
@@ -168,10 +168,10 @@ NJetsAna = cfg.Analyzer(
     verbose=False
 )
 
-higgsWeighter = cfg.Analyzer(
-    HiggsPtWeighter,
-    name='HiggsPtWeighter',
-)
+# higgsWeighter = cfg.Analyzer(
+#     HiggsPtWeighter,
+#     name='HiggsPtWeighter',
+# )
 
 
 ###################################################
@@ -193,7 +193,7 @@ commonSequence = cfg.Sequence([
     pileUpAna,
     embedWeighter,
     NJetsAna,
-    higgsWeighter,
+    # higgsWeighter,
     badCloneMuonAnaMoriond2017,
     badMuonAnaMoriond2017
 ])
