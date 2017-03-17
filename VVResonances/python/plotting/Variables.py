@@ -46,6 +46,7 @@ lnujj_generic_vars = [
     VCfg(name='lnujj_deltaR_lep_jet', drawname='sqrt(pow(lnujj_l1_l_eta-lnujj_l2_eta, 2) + pow(lnujj_l1_l_phi-lnujj_l2_phi, 2))', binning={'nbinsx':50, 'xmin':0, 'xmax':5}, unit=None, xtitle='#Delta R(lepton, jet)'),
     VCfg(name='lnujj_deltaPhi_Wlep_jet', drawname='TVector2::Phi_0_2pi(lnujj_l1_phi-lnujj_l2_phi)', binning={'nbinsx': 40, 'xmin': 0, 'xmax': 2*pi}, unit=None, xtitle='#Delta #phi(W_l, jet)'),
     VCfg(name='lnujj_deltaPhi_met_jet', drawname='TVector2::Phi_0_2pi(met_phi-lnujj_l2_phi)', binning={'nbinsx': 40, 'xmin': 0, 'xmax': 2*pi}, unit=None, xtitle='#Delta #phi(MET, jet)'),
+    VCfg(name='lnujj_highestOtherBTag', binning={'nbinsx':40, 'xmin':-1., 'xmax':1.}, unit=None, xtitle='spectator jets highest CSV'),
 ]
 
 lnujj_l1_vars = [
@@ -70,17 +71,20 @@ lnujj_l2_vars = [
     VCfg(name='lnujj_l2_softDrop_mass', drawname='lnujj_l2_softDrop_massCorr*lnujj_l2_softDrop_massBare', binning={'nbinsx':100, 'xmin':0., 'xmax':250.}, unit='GeV', xtitle='jet soft-drop mass'),
     VCfg(name='lnujj_l2_s1BTag', binning={'nbinsx':40, 'xmin':-1., 'xmax':1.}, unit=None, xtitle='jet subjet1 CSV'),
     VCfg(name='lnujj_l2_s2BTag', binning={'nbinsx':40, 'xmin':-1., 'xmax':1.}, unit=None, xtitle='jet subjet2 CSV'),
+    VCfg(name='lnujj_l2_btagCSV', binning={'nbinsx':40, 'xmin':-1., 'xmax':1.}, unit=None, xtitle='jet CSV'),
 ]
 
 lnujj_vbf_vars = [
     VCfg(name='lnujj_vbfDEta', binning={'nbinsx':50, 'xmin':0, 'xmax':10.}, unit='', xtitle='VBF jets #Delta #eta'),
     VCfg(name='lnujj_vbfMass', binning={'nbinsx':100, 'xmin':0., 'xmax':2000.}, unit='GeV', xtitle='VBF jets mass'),
-    VCfg(name='lnujj_vbf_j1_pt', binning=pt_binning, unit='GeV', xtitle='W p_{T}'),
-    VCfg(name='lnujj_vbf_j1_eta', binning=eta_binning, unit=None, xtitle='W #eta'),
-    VCfg(name='lnujj_vbf_j1_phi', binning=phi_binning, unit=None, xtitle='W #phi'),
-    VCfg(name='lnujj_vbf_j2_pt', binning=pt_binning, unit='GeV', xtitle='jet p_{T}'),
-    VCfg(name='lnujj_vbf_j2_eta', binning=eta_binning, unit=None, xtitle='jet #eta'),
-    VCfg(name='lnujj_vbf_j2_phi', binning=phi_binning, unit=None, xtitle='jet #phi'),
+    VCfg(name='lnujj_vbf_j1_pt', binning=pt_binning, unit='GeV', xtitle='VBF jet1 p_{T}'),
+    VCfg(name='lnujj_vbf_j1_eta', binning=eta_binning, unit=None, xtitle='VBF jet1 #eta'),
+    VCfg(name='lnujj_vbf_j1_phi', binning=phi_binning, unit=None, xtitle='VBF jet1 #phi'),
+    VCfg(name='lnujj_vbf_j1_btagCSV', binning={'nbinsx':40, 'xmin':-1., 'xmax':1.}, unit=None, xtitle='VBF jet1 CSV'),
+    VCfg(name='lnujj_vbf_j2_pt', binning=pt_binning, unit='GeV', xtitle='VBF jet2 p_{T}'),
+    VCfg(name='lnujj_vbf_j2_eta', binning=eta_binning, unit=None, xtitle='VBF jet2 #eta'),
+    VCfg(name='lnujj_vbf_j2_phi', binning=phi_binning, unit=None, xtitle='VBF jet2 #phi'),
+    VCfg(name='lnujj_vbf_j2_btagCSV', binning={'nbinsx':40, 'xmin':-1., 'xmax':1.}, unit=None, xtitle='VBF jet2 CSV'),
 ]
 
 

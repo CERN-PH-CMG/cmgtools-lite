@@ -260,8 +260,8 @@ class VVBuilder(Analyzer):
 
 
         bestW = max(W,key = lambda x: x.leg1.pt())
-        #now the jets
-        fatJets=self.selectJets(event.jetsAK8,lambda x: x.pt()>200.0 and abs(x.eta())<2.4 and x.jetID('POG_PFID_Loose')  ,tightLeptonsForW,1.0)
+        #now the jets, use lower pT cut since we'll recluster
+        fatJets=self.selectJets(event.jetsAK8,lambda x: x.pt()>150.0 and abs(x.eta())<2.4 and x.jetID('POG_PFID_Loose')  ,tightLeptonsForW,1.0)
         if len(fatJets)==0:
             return output
         bestJet = max(fatJets,key=lambda x: x.pt())
@@ -277,6 +277,10 @@ class VVBuilder(Analyzer):
         #substructure
         self.substructure(VV.leg2,event)
         if not hasattr(VV.leg2,'substructure'):
+            return output
+
+        # substructure function has reclustered jet, so we need to check the pT again
+        if not VV.leg2.pt() > 200.:
             return output
 
         #substructure truth

@@ -14,7 +14,7 @@ print 'Total weight:', total_weight
 
 weight_MC = "genWeight * puWeight"
 
-int_lumi = 12900
+int_lumi = 35867
 
 cuts = {}
 
@@ -51,7 +51,7 @@ for cutName, cut in cuts.iteritems():
 cuts = vbfCuts
 
 # -> Command line
-analysis_dir = '/data/clange/ntuples/VV_20161203/'
+analysis_dir = '/data/clange/ntuples/FixNeutrino/'
 tree_prod_name = ''
 
 samples_mc, samples_data, samples, all_samples, sampleDict = createSampleLists(analysis_dir, channel='WV', weight=weight_MC)

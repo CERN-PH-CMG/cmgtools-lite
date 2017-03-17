@@ -38,10 +38,10 @@ class LeptonIDOverloader( Analyzer ):
         return mu.isHighPtMuon(mu.associatedVertex)
 
     def muonIDHighPtIso(self,mu):
-        return mu.isHighPtMuon(mu.associatedVertex) and mu.isolationR03().sumPt/mu.pt() < 0.1
+        return mu.isHighPtMuon(mu.associatedVertex) and mu.relIso04 < 0.05
 
     def muonIDTrackerHighPtIso(self,mu):
-        return self.muonIDTrackerHighPt(mu) and mu.isolationR03().sumPt/mu.pt() < 0.1
+        return self.muonIDTrackerHighPt(mu) and mu.relIso04 < 0.05
 
 
     def process(self, event):
