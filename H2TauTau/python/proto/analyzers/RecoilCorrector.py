@@ -44,7 +44,7 @@ class RecoilCorrector(Analyzer):
 
         taus_prompt_vis = [p for p in taus_prompt if abs(p.pdgId()) not in [12, 14, 16]]
 
-        if 'DY' in self.cfg_comp.name or 'Higgs' in self.cfg_comp.name or 'WJ' in self.cfg_comp.name:
+        if 'DY' in self.cfg_comp.name or ('Higgs' in self.cfg_comp.name and 'TTH' not in self.cfg_comp.name) or 'WJ' in self.cfg_comp.name:
             if len(leptons_prompt) != 2 and len(taus_prompt) < 2:
                 print 'ERROR: No 2 prompt leptons found'
                 # import pdb; pdb.set_trace()
