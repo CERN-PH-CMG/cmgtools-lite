@@ -14,37 +14,32 @@ print 'Total weight:', total_weight
 
 weight_MC = "genWeight * puWeight"
 
-int_lumi = 12900
+int_lumi = 35867
 
 cuts = {}
 
 # if adding additional cuts, join with * and not &&, e.g.
 # inc_cut = '*'.join([lnujj_inc])
 # cuts['lnujj_Inclusive'] = categories["lnujj_Inclusive"]
-# cuts['lnujj_e'] = categories["lnujj_lep_e"]
-# cuts['lnujj_mu'] = categories["lnujj_lep_mu"]
-# cuts['lnujj_e_HP'] = categories["lnujj_lep_e_tau21_HP"]
-# cuts['lnujj_mu_HP'] = categories["lnujj_lep_mu_tau21_HP"]
-# cuts['lnujj_e_LP'] = categories["lnujj_lep_e_tau21_LP"]
-# cuts['lnujj_mu_LP'] = categories["lnujj_lep_mu_tau21_LP"]
+
 cuts['lnujj_mu'] = findCut(categories, cat="lnujj", lep="mu")
 cuts['lnujj_e'] = findCut(categories, cat="lnujj", lep="e")
-cuts['lnujj_ttbar_mu_b'] = findCut(categories, cat="lnujj", lep="mu", reg="b")
-cuts['lnujj_ttbar_e_b'] = findCut(categories, cat="lnujj", lep="e", reg="b")
-cuts['lnujj_mu_nob'] = findCut(categories, cat="lnujj", lep="mu", reg="nob")
-cuts['lnujj_e_nob'] = findCut(categories, cat="lnujj", lep="e", reg="nob")
-cuts['lnujj_ttbar_mu_SP_b'] = findCut(categories, cat="lnujj", lep="mu", tau21="SP", reg="b")
-cuts['lnujj_ttbar_e_SP_b'] = findCut(categories, cat="lnujj", lep="e", tau21="SP", reg="b")
-cuts['lnujj_ttbar_mu_mV_b'] = findCut(categories, cat="lnujj", lep="mu", mJ="V", reg="b")
-cuts['lnujj_ttbar_e_mV_b'] = findCut(categories, cat="lnujj", lep="e", mJ="V", reg="b")
-cuts['lnujj_mu_SP_veto_mV'] = findCut(categories, cat="lnujj", lep="mu", tau21="SP", mJ="VetoV")
-cuts['lnujj_e_SP_veto_mV'] = findCut(categories, cat="lnujj", lep="e", tau21="SP", mJ="VetoV")
-cuts['lnujj_e_HP_veto_mV_nob'] = findCut(categories, cat="lnujj", lep="e", tau21="HP", mJ="VetoV", reg="nob")
-cuts['lnujj_mu_HP_veto_mV_nob'] = findCut(categories, cat="lnujj", lep="mu", tau21="HP", mJ="VetoV", reg="nob")
-cuts['lnujj_e_HP_veto_mV'] = findCut(categories, cat="lnujj", lep="e", tau21="HP", mJ="VetoV")
-cuts['lnujj_mu_HP_veto_mV'] = findCut(categories, cat="lnujj", lep="mu", tau21="HP", mJ="VetoV")
-cuts['lnujj_ttbar_e_HP_b'] = findCut(categories, cat="lnujj", lep="e", tau21="HP", reg="b")
-cuts['lnujj_ttbar_mu_HP_b'] = findCut(categories, cat="lnujj", lep="mu", tau21="HP", reg="b")
+# cuts['lnujj_ttbar_mu_b'] = findCut(categories, cat="lnujj", lep="mu", reg="b")
+# cuts['lnujj_ttbar_e_b'] = findCut(categories, cat="lnujj", lep="e", reg="b")
+# cuts['lnujj_mu_nob'] = findCut(categories, cat="lnujj", lep="mu", reg="nob")
+# cuts['lnujj_e_nob'] = findCut(categories, cat="lnujj", lep="e", reg="nob")
+# cuts['lnujj_ttbar_mu_SP_b'] = findCut(categories, cat="lnujj", lep="mu", tau21="SP", reg="b")
+# cuts['lnujj_ttbar_e_SP_b'] = findCut(categories, cat="lnujj", lep="e", tau21="SP", reg="b")
+# cuts['lnujj_ttbar_mu_mV_b'] = findCut(categories, cat="lnujj", lep="mu", mJ="V", reg="b")
+# cuts['lnujj_ttbar_e_mV_b'] = findCut(categories, cat="lnujj", lep="e", mJ="V", reg="b")
+# cuts['lnujj_mu_SP_veto_mV'] = findCut(categories, cat="lnujj", lep="mu", tau21="SP", mJ="VetoV")
+# cuts['lnujj_e_SP_veto_mV'] = findCut(categories, cat="lnujj", lep="e", tau21="SP", mJ="VetoV")
+# cuts['lnujj_e_HP_veto_mV_nob'] = findCut(categories, cat="lnujj", lep="e", tau21="HP", mJ="VetoV", reg="nob")
+# cuts['lnujj_mu_HP_veto_mV_nob'] = findCut(categories, cat="lnujj", lep="mu", tau21="HP", mJ="VetoV", reg="nob")
+# cuts['lnujj_e_HP_veto_mV'] = findCut(categories, cat="lnujj", lep="e", tau21="HP", mJ="VetoV")
+# cuts['lnujj_mu_HP_veto_mV'] = findCut(categories, cat="lnujj", lep="mu", tau21="HP", mJ="VetoV")
+# cuts['lnujj_ttbar_e_HP_b'] = findCut(categories, cat="lnujj", lep="e", tau21="HP", reg="b")
+# cuts['lnujj_ttbar_mu_HP_b'] = findCut(categories, cat="lnujj", lep="mu", tau21="HP", reg="b")
 
 # in order to be able to use standard categories, replace all cuts with vbf ones
 vbfCuts = {}
@@ -56,7 +51,7 @@ for cutName, cut in cuts.iteritems():
 cuts = vbfCuts
 
 # -> Command line
-analysis_dir = '/data/clange/ntuples/VV_20161203/'
+analysis_dir = '/data/clange/ntuples/FixNeutrino/'
 tree_prod_name = ''
 
 samples_mc, samples_data, samples, all_samples, sampleDict = createSampleLists(analysis_dir, channel='WV', weight=weight_MC)
@@ -77,17 +72,17 @@ for cut_name in cuts:
     cfg_example.vars = variables
 
     channel = "l#nujj"
-    if cfg_example.cut.find("mu_"):
+    if cut_name.find("_mu") >= 0:
         channel = "#mu#nujj"
-    elif cfg_example.cut.find("e_"):
+    elif cut_name.find("_e") >= 0:
         channel = "e#nujj"
-    if cfg_example.cut.find("novbf"):
+    if cut_name.find("novbf") >= 0:
         channel += " noVBF"
     else:
         channel += " VBF"
-    if cfg_example.cut.find("HP"):
+    if cut_name.find("HP") >= 0:
         channel += " HP"
-    elif cfg_example.cut.find("LP"):
+    elif cut_name.find("LP") >= 0:
         channel += " LP"
 
     plots = createHistograms(cfg_example, verbose=False)

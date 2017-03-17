@@ -43,7 +43,7 @@ class VVBuilder(Analyzer):
         self.handles['packed'] = AutoHandle( 'packedPFCandidates', 'std::vector<pat::PackedCandidate>' )
         if self.cfg_comp.isMC:
             self.handles['packedGen'] = AutoHandle( 'packedGenParticles', 'std::vector<pat::PackedGenParticle>' )
-            
+
     def copyLV(self,LV):
         out=[]
         for i in LV:
@@ -56,7 +56,7 @@ class VVBuilder(Analyzer):
         if hasattr(jet,tag):
             return
 
-        
+
         constituents=[]
         LVs = ROOT.std.vector("math::XYZTLorentzVector")()
 
@@ -124,6 +124,7 @@ class VVBuilder(Analyzer):
             softDropJetUnCorr = self.copyLV(interface.get(False))[0]
             substructure.softDropJetMassCor = self.getPUPPIMassWeight(softDropJetUnCorr)
             substructure.softDropJetMassBare = softDropJetUnCorr.mass()
+            substructure.softDropJetMassL2L3 = substructure.softDropJet.mass()
 
         interface.makeSubJets(False,0,2)
         substructure.softDropSubjets = self.copyLV(interface.get(False))
@@ -134,7 +135,7 @@ class VVBuilder(Analyzer):
         substructure.tau21_DDT = 0
         if (substructure.softDropJet.mass() > 0):
             substructure.tau21_DDT = substructure.ntau[1]/substructure.ntau[0] + ( 0.063 * math.log( (substructure.softDropJet.mass()*substructure.softDropJet.mass())/substructure.softDropJet.pt()))
-        setattr(jet,tag,substructure)    
+        setattr(jet,tag,substructure)
 
     def substructureGEN(self,jet,event):
         #if we already filled it exit
@@ -196,9 +197,9 @@ class VVBuilder(Analyzer):
 
         VV.satteliteCentralJets=jetsCentral
         # cuts are taken from https://twiki.cern.ch/twiki/bin/view/CMS/BtagRecommendation80X (20.06.2016)
-        VV.nLooseBTags = len(filter(lambda x: x.bDiscriminator(self.cfg_ana.bDiscriminator)>0.460,jetsCentral))
-        VV.nMediumBTags = len(filter(lambda x: x.bDiscriminator(self.cfg_ana.bDiscriminator)>0.800,jetsCentral))
-        VV.nTightBTags = len(filter(lambda x: x.bDiscriminator(self.cfg_ana.bDiscriminator)>0.935,jetsCentral))
+        VV.nLooseBTags = len(filter(lambda x: x.bDiscriminator(self.cfg_ana.bDiscriminator)>0.5426,jetsCentral))
+        VV.nMediumBTags = len(filter(lambda x: x.bDiscriminator(self.cfg_ana.bDiscriminator)>0.8484,jetsCentral))
+        VV.nTightBTags = len(filter(lambda x: x.bDiscriminator(self.cfg_ana.bDiscriminator)>0.9535,jetsCentral))
         VV.nOtherLeptons = len(leptons)
 
         maxbtag=-100.0
@@ -243,9 +244,9 @@ class VVBuilder(Analyzer):
     def makeWV(self,event):
         output=[]
 
-        #loop on the leptons
-        looseLeptonsForW = filter(lambda x: (abs(x.pdgId())==11 and x.heepID) or (abs(x.pdgId())==13 and x.highPtIDIso ),event.selectedLeptons)
-        tightLeptonsForW = filter(lambda x: (abs(x.pdgId())==11 and x.heepID and x.pt()>120) or (abs(x.pdgId())==13 and x.highPtIDIso and x.pt()>53 and abs(x.eta())<2.1),event.selectedLeptons)
+        # loop on the leptons
+        looseLeptonsForW = filter(lambda x: (abs(x.pdgId()) == 11 and x.heepID) or (abs(x.pdgId()) == 13 and x.highPtIDIso), event.selectedLeptons)
+        tightLeptonsForW = filter(lambda x: (abs(x.pdgId()) == 11 and x.heepID and x.pt() > 55) or (abs(x.pdgId()) == 13 and x.highPtIDIso and x.pt() > 55), event.selectedLeptons)
 
 
 
@@ -259,8 +260,8 @@ class VVBuilder(Analyzer):
 
 
         bestW = max(W,key = lambda x: x.leg1.pt())
-        #now the jets
-        fatJets=self.selectJets(event.jetsAK8,lambda x: x.pt()>200.0 and abs(x.eta())<2.4 and x.jetID('POG_PFID_Loose')  ,tightLeptonsForW,1.0)
+        #now the jets, use lower pT cut since we'll recluster
+        fatJets=self.selectJets(event.jetsAK8,lambda x: x.pt()>150.0 and abs(x.eta())<2.4 and x.jetID('POG_PFID_Loose')  ,tightLeptonsForW,1.0)
         if len(fatJets)==0:
             return output
         bestJet = max(fatJets,key=lambda x: x.pt())
@@ -278,6 +279,10 @@ class VVBuilder(Analyzer):
         if not hasattr(VV.leg2,'substructure'):
             return output
 
+        # substructure function has reclustered jet, so we need to check the pT again
+        if not VV.leg2.pt() > 200.:
+            return output
+
         #substructure truth
         if self.cfg_comp.isMC:
             self.substructureGEN(VV.leg2,event)
@@ -292,7 +297,7 @@ class VVBuilder(Analyzer):
 
 
         #topology
-        satteliteJets = self.selectJets(event.jets,lambda x: x.pt()>30.0  and x.jetID('POG_PFID_Loose')  ,tightLeptonsForW,0.3,[bestJet],0.8)
+        satteliteJets = self.selectJets(event.jets,lambda x: x.pt()>30.0  and x.jetID('POG_PFID_Loose')  ,tightLeptonsForW,0.4,[bestJet],0.8)
         otherLeptons = self.cleanOverlap(looseLeptonsForW,[bestW.leg1])
         self.topology(VV,satteliteJets,otherLeptons)
 
@@ -343,7 +348,7 @@ class VVBuilder(Analyzer):
  #           return output
 
         #topology
-        satteliteJets = self.selectJets(event.jets,lambda x: x.pt()>30.0  and x.jetID('POG_PFID_Loose')  ,otherTightLeptons,0.3,[bestJet],0.8)
+        satteliteJets = self.selectJets(event.jets,lambda x: x.pt()>30.0  and x.jetID('POG_PFID_Loose')  ,otherTightLeptons,0.4,[bestJet],0.8)
         self.topology(VV,satteliteJets,otherTightLeptons)
         output.append(VV)
         return output
@@ -530,7 +535,7 @@ class VVBuilder(Analyzer):
 
 
         #if MC create the stable particles for Gen Jet reco and substructure
-        event.genParticleLVs=ROOT.std.vector("math::XYZTLorentzVector")()        
+        event.genParticleLVs=ROOT.std.vector("math::XYZTLorentzVector")()
         if self.cfg_comp.isMC:
             event.genPacked = self.handles['packedGen'].product()
             for p in event.genPacked:

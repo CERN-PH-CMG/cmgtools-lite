@@ -139,6 +139,7 @@ histPref['Zl1jet*'] = {'style': sVV_DYJets,
 # histPref['Zl2jet*'] = {'style': sVV_Higgs, 'layer': 3.2,
 #                        'legend': 'Z#rightarrow ll + #geq 2 jets'}
 histPref['ZLL'] = {'style': sVV_DYJets, 'layer': 3.2, 'legend': 'Z#rightarrow ll'}
+histPref['DYJetsToLL*'] = {'style': sVV_DYJets, 'layer': 3.2, 'legend': 'Z/#gamma #rightarrow ll'}
 histPref['Ztt_TL'] = {'style': sViolet, 'layer': 4.1,
                       'legend': 'Z#rightarrow#tau#tau/Z#rightarrow ll, j#rightarrow#tau'}
 histPref['MC'] = {'style': sVV_WJets, 'layer': 3, 'legend': 'simulation'}
