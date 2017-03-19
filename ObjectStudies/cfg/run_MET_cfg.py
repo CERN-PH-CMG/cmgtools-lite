@@ -139,7 +139,7 @@ elif test==13:
         if isEle:
             comp.triggers = triggers_ee + triggers_1ele_iso_Zeynep + triggers_ee_noniso_Dominick
         else:
-            comp.triggers = triggers_mumu + triggers_1mu_iso_Zeynep + triggers_ee_noniso_Dominick
+            comp.triggers = triggers_mumu + triggers_1mu_iso_Zeynep + triggers_mumu_noniso_Dominick
         comp.json = goldenJson
         comp.intLumi= 0.04003
         print comp
@@ -239,8 +239,9 @@ elif test==25:
 
 from CMGTools.ObjectStudies.analyzers.metCoreModules_cff import *
 
-if test==13 or test==15 and test==16:
+if test==13 or test==15 or test==16:
     metPuppiAna.storePuppiExtra = True
+    metAna.metCollection     = ("slimmedMETsMuEGClean","","RERUN")
 
 cfg.Analyzer.nosubdir = True
 

@@ -175,6 +175,29 @@ runMetCorAndUncFromMiniAOD(process,
                            isData=options.isData,
                            )
 
+
+##https://twiki.cern.ch/twiki/bin/view/CMSPublic/ReMiniAOD03Feb2017Notes#MET_Recipes
+if options.isData:
+    from PhysicsTools.PatUtils.tools.corMETFromMuonAndEG import corMETFromMuonAndEG
+    corMETFromMuonAndEG(process,
+                        pfCandCollection="", #not needed
+                        electronCollection="slimmedElectronsBeforeGSFix",
+                        photonCollection="slimmedPhotonsBeforeGSFix",
+                        corElectronCollection="slimmedElectrons",
+                        corPhotonCollection="slimmedPhotons",
+                        allMETEGCorrected=True,
+                        muCorrection=False,
+                        eGCorrection=True,
+                        runOnMiniAOD=True,
+                        postfix="MuEGClean"
+                        )
+    process.slimmedMETsMuEGClean = process.slimmedMETs.clone()
+    process.slimmedMETsMuEGClean.src = cms.InputTag("patPFMetT1MuEGClean")
+    process.slimmedMETsMuEGClean.rawVariation =  cms.InputTag("patPFMetRawMuEGClean")
+    process.slimmedMETsMuEGClean.t1Uncertainties = cms.InputTag("patPFMetT1%sMuEGClean")
+    del process.slimmedMETsMuEGClean.caloMET
+
+
 if not useHFCandidates:
     runMetCorAndUncFromMiniAOD(process,
                                isData=options.isData,
