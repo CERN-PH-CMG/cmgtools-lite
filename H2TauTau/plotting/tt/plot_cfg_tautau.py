@@ -1,7 +1,7 @@
 from collections import namedtuple
 from operator import itemgetter
 
-from CMGTools.H2TauTau.proto.samples.spring16.htt_common import lumi_tt as lumi
+from CMGTools.H2TauTau.proto.samples.summer16.htt_common import lumi
 from CMGTools.H2TauTau.proto.plotter.PlotConfigs import SampleCfg, HistogramCfg, VariableCfg
 from CMGTools.H2TauTau.proto.plotter.categories_TauTau import inc_sig_tau1_iso, inc_sig_tau2_iso, inc_sig_no_iso
 from CMGTools.H2TauTau.proto.plotter.categories_common import cat_J1, cat_VBF
@@ -14,12 +14,12 @@ from CMGTools.H2TauTau.proto.plotter.cut import Cut
 from CMGTools.H2TauTau.proto.plotter.metrics import ams_hists
 
 int_lumi = lumi
-analysis_dir = '/data1/steggema/tt/230816/DiTauNewMC'
+analysis_dir = '/data1/steggema/Gael/MC/'
 verbose = True
 total_weight = 'weight'
-optimisation = True
+optimisation = False
 make_plots = True
-mode = 'mva' #'mva_train' #'susy' #'mssm'
+mode = 'mssm' #'mva_train' #'susy' #'mssm'
 
 # Infer whether this is mssm
 mssm = True
@@ -47,13 +47,13 @@ vbf_cut = inc_sig_no_iso & Cut(cat_VBF)
 
 # iso and charge cuts, need to have them explicitly for the QCD estimation
 iso_cut = inc_sig_tau1_iso & inc_sig_tau2_iso
-max_iso_cut = Cut('l1_byIsolationMVArun2v1DBoldDMwLT > 1.5 && l2_byIsolationMVArun2v1DBoldDMwLT > 1.5')
+max_iso_cut = Cut('l1_byIsolationMVArun2v1DBoldDMwLT > 2.5 && l2_byIsolationMVArun2v1DBoldDMwLT > 2.5')
 iso_sideband_cut = (~iso_cut) & max_iso_cut
 charge_cut = Cut('l1_charge != l2_charge')
 
 # append categories to plot
 
-# cuts.append(myCut('inclusive', inc_cut & Cut('n_bjets==0')))
+cuts.append(myCut('inclusive', inc_cut & Cut('n_bjets==0')))
 
 # cuts.append(myCut('inclusive_SS', inc_cut))
 # cuts.append(myCut('mZ', inc_cut & Cut('mvis < 110.')))
@@ -72,17 +72,17 @@ charge_cut = Cut('l1_charge != l2_charge')
 # cuts.append(myCut('susy_loose_met', inc_cut & Cut('mvis>100 && n_bjets==0 && met_pt>100.')))
 # cuts.append(myCut('susy_loose', inc_cut & Cut('mvis>100 && n_bjets==0 && pzeta_disc < -40.')))
 
-cuts.append(myCut('susy_mtsum200', inc_cut & Cut('n_bjets==0 && mt + mt_leg2>200.')))
-cuts.append(myCut('susy_highmva', inc_cut & Cut('n_bjets==0 && mva1>0.75')))
+# cuts.append(myCut('susy_mtsum200', inc_cut & Cut('n_bjets==0 && mt + mt_leg2>200.')))
+# cuts.append(myCut('susy_highmva', inc_cut & Cut('n_bjets==0 && mva1>0.75')))
 
-cuts.append(myCut('susy_mva_mtsum200_mt2_20', inc_cut & Cut('n_bjets==0 && mt2>20 && mt + mt_leg2>200. && mva1>0.85')))
-cuts.append(myCut('susy_mva2_mtsum200_mt2_20', inc_cut & Cut('n_bjets==0 && mt2>20 && mt + mt_leg2>200. && mva1>0.90')))
-cuts.append(myCut('susy_mva3_mtsum200_mt2_20', inc_cut & Cut('n_bjets==0 && mt2>20 && mt + mt_leg2>200. && mva1>0.95')))
-cuts.append(myCut('susy_mtsum200_mt2_20', inc_cut & Cut('n_bjets==0 && mt2>20 && mt + mt_leg2>200.')))
+# cuts.append(myCut('susy_mva_mtsum200_mt2_20', inc_cut & Cut('n_bjets==0 && mt2>20 && mt + mt_leg2>200. && mva1>0.85')))
+# cuts.append(myCut('susy_mva2_mtsum200_mt2_20', inc_cut & Cut('n_bjets==0 && mt2>20 && mt + mt_leg2>200. && mva1>0.90')))
+# cuts.append(myCut('susy_mva3_mtsum200_mt2_20', inc_cut & Cut('n_bjets==0 && mt2>20 && mt + mt_leg2>200. && mva1>0.95')))
+# cuts.append(myCut('susy_mtsum200_mt2_20', inc_cut & Cut('n_bjets==0 && mt2>20 && mt + mt_leg2>200.')))
 
-cuts.append(myCut('pieter_1', inc_cut & Cut('n_bjets==0 && mt2>70. && delta_phi_l1_l2>1.5')))
-cuts.append(myCut('pieter_2', inc_cut & Cut('n_bjets==0 && mt>200. && mt2>40. && delta_phi_l1_l2>1.5')))
-cuts.append(myCut('pieter_3', inc_cut & Cut('n_bjets==0 && mt>300. && mt2>40. && delta_phi_l1_l2>1.5')))
+# cuts.append(myCut('pieter_1', inc_cut & Cut('n_bjets==0 && mt2>70. && delta_phi_l1_l2>1.5')))
+# cuts.append(myCut('pieter_2', inc_cut & Cut('n_bjets==0 && mt>200. && mt2>40. && delta_phi_l1_l2>1.5')))
+# cuts.append(myCut('pieter_3', inc_cut & Cut('n_bjets==0 && mt>300. && mt2>40. && delta_phi_l1_l2>1.5')))
 
 # cuts.append(myCut('susy_onlytaupt', inc_cut & Cut('mvis>100 && n_bjets==0 && l1_pt>60 && met_pt>20.')))
 # cuts.append(myCut('susy_taupt', inc_cut & Cut('mvis>100 && n_bjets==0 && l1_pt>60 && met_pt>20. && mt>50.')))
@@ -138,7 +138,7 @@ cuts.append(myCut('pieter_3', inc_cut & Cut('n_bjets==0 && mt>300. && mt2>40. &&
 # Taken from Variables.py, can get subset with e.g. getVars(['mt', 'mvis'])
 variables = tautau_vars
 
-variables = getVars(['mvis', 'mt2', 'l1_pt', 'l2_pt', 'delta_phi_l1_l2', 'delta_eta_l1_l2', 'met_pt', 'mt_total', 'mt_sum', 'pzeta_met', 'l2_mt', 'mt', 'pzeta_vis', 'pzeta_disc', 'pthiggs', 'jet1_pt', 'n_jets', 'pt_l1l2']) #, 'l1_pt',  '_norm_', ])
+variables = getVars(['mvis', 'mt2', 'l1_pt', 'l2_pt', 'delta_phi_l1_l2', 'delta_eta_l1_l2', 'met_pt', 'mt_total', 'mt_sum', 'pzeta_met', 'l2_mt', 'mt', 'pzeta_vis', 'pzeta_disc', 'pthiggs', 'jet1_pt', 'n_jets', 'pt_l1l2'], channel='tautau') #, 'l1_pt',  '_norm_', ])
 # variables += [
 #     VariableCfg(name='mt2', binning={'nbinsx':15, 'xmin':0., 'xmax':150.}, unit='GeV', xtitle='m_{T2}')
 # ]
@@ -208,6 +208,11 @@ for cut in cuts:
         if variable.name == 'mt_sum':
             blindxmin = 250.
             blindxmax = variable.binning['xmax']
+
+        if variable.name == 'mt_total':
+            blindxmin = 200.
+            blindxmax = variable.binning['xmax']
+
 
         HistDrawer.draw(plot, channel='#tau_{h}#tau_{h}', plot_dir='plot_%s' % cut.name, blindxmin=blindxmin, blindxmax=blindxmax)
             # blindxmin=variable.binning[

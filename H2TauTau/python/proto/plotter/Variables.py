@@ -257,6 +257,15 @@ dict_all_vars = {}
 for v in all_vars:
     dict_all_vars[v.name] = v
 
-def getVars(names):
-    return [dict_all_vars[n] for n in names]
+dict_tautau_vars = {}
+for v in tautau_vars:
+    dict_tautau_vars[v.name] = v
+
+dict_channel_vars = {
+    'all':dict_all_vars,
+    'tautau':dict_tautau_vars
+}
+
+def getVars(names, channel='all'):
+    return [dict_channel_vars[channel][n] for n in names]
     
