@@ -110,29 +110,32 @@ class ScaleFactor(object):
 
     def getScaleFactor(self, pt, eta, isFake=False, iso=None, dm=None):
         if hasattr(self, 'ws'):
-            return self.getFactorWS(pt, eta, 'ratio', isFake=isFake, iso=iso)
+            return self.getFactorWS(pt, eta, 'ratio', isFake=isFake, iso=iso, dm=dm)
         return self.getEfficiencyData(pt, eta, isFake, iso, dm)/max(self.getEfficiencyMC(pt, eta, isFake, iso, dm), 1.e-6)
 
     def getEfficiencyData(self, pt, eta, isFake=False, iso=None, dm=None):
         if hasattr(self, 'ws'):
-            return self.getFactorWS(pt, eta, 'data', isFake=isFake, iso=iso)
+            return self.getFactorWS(pt, eta, 'data', isFake=isFake, iso=iso, dm=dm)
         return self.getEfficiency(pt, eta, iso, dm, self.eff_data_fakes if isFake and hasattr(self, 'eff_data_fakes') else self.eff_data)
 
     def getEfficiencyMC(self, pt, eta, isFake=False, iso=None, dm=None):
         if hasattr(self, 'ws'):
-            return self.getFactorWS(pt, eta, 'mc', isFake=isFake, iso=iso)
+            return self.getFactorWS(pt, eta, 'mc', isFake=isFake, iso=iso, dm=dm)
         return self.getEfficiency(pt, eta,  iso, dm, self.eff_mc_fakes if isFake and hasattr(self, 'eff_mc_fakes') else self.eff_mc)
 
     def getFactorWS(self, pt, eta, tag, isFake=False, iso=None, dm=None):
         ''' See https://github.com/CMS-HTT/CorrectionsWorkspace
-        FIXME:  add proper isFake implementation (but may need to change inputs)
         '''
         self.ws.var('_'.join([self.obj_tag, 'pt'])).setVal(pt)
         self.ws.var('_'.join([self.obj_tag, 'eta'])).setVal(eta)
-        if iso:
+        if iso is not None:
             self.ws.var('_'.join([self.obj_tag, 'iso'])).setVal(iso)
+        if dm is not None:
+            self.ws.var('_'.join([self.obj_tag, 'dm'])).setVal(dm)
 
-        return self.ws.function('_'.join([self.sf_name, tag])).getVal()
+        sf_name = self.sf_name.replace('genuine', 'fake') if isFake else self.sf_name
+
+        return self.ws.function('_'.join([sf_name, tag])).getVal()
 
     def findEtaLabel(self, eta, eff_dict):
         eta = abs(eta)
@@ -160,8 +163,9 @@ class ScaleFactor(object):
 
         # return efficiency for when using analytical function
         if not isinstance(eff_dict, dict):
+            func = eff_dict
             args = (a for a in [pt, eta, iso, dm] if a is not None)
-            eff = eff_dict(*args)
+            eff = func(*args)
             return eff
 
         label = self.findEtaLabel(eta, eff_dict)
@@ -199,9 +203,9 @@ if __name__ == '__main__':
 
     sf = ScaleFactor('$CMSSW_BASE/src/CMGTools/H2TauTau/data/Tau_diTau35_summer16.py', )
 
-    for pt, eta, dm in [(29.3577, 1.4845, 0),
-                        (50., 0.2, 1),
-                        (17., 0.05, 10),
+    for pt, eta, dm in [(50., 0.05, 0),
+                        (50., 0.05, 1),
+                        (50., 0.05, 10),
                         (45., 0.05, 0),
                         (50., 0.05, 0),
                         (55., 0.05, 0),

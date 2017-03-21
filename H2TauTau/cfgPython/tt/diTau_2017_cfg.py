@@ -32,7 +32,7 @@ def getHeppyOption(option, default):
 production = getHeppyOption('production', False)
 pick_events = getHeppyOption('pick_events', False)
 syncntuple = getHeppyOption('syncntuple', True)
-cmssw = getHeppyOption('cmssw', False)
+cmssw = getHeppyOption('cmssw', True)
 doSUSY = getHeppyOption('susy', False)
 computeSVfit = getHeppyOption('computeSVfit', False)
 data = getHeppyOption('data', False)
@@ -150,7 +150,8 @@ tau1Weighter = cfg.Analyzer(
     LeptonWeighter,
     name='LeptonWeighter_tau1',
     scaleFactorFiles={
-        'trigger': '$CMSSW_BASE/src/CMGTools/H2TauTau/data/Tau_diTau35_summer16.py',  # include in the event's overall weight
+        'trigger': ('$CMSSW_BASE/src/CMGTools/H2TauTau/data/htt_scalefactors_v16_4.root', 't_genuine_TightIso_tt'),
+        # 'trigger': '$CMSSW_BASE/src/CMGTools/H2TauTau/data/Tau_diTau35_summer16.py',  # include in the event's overall weight
     },
 
     otherScaleFactorFiles={
@@ -166,7 +167,8 @@ tau2Weighter = cfg.Analyzer(
     LeptonWeighter,
     name='LeptonWeighter_tau2',
     scaleFactorFiles={
-        'trigger': '$CMSSW_BASE/src/CMGTools/H2TauTau/data/Tau_diTau35_summer16.py',  # include in the event's overall weight
+        'trigger': ('$CMSSW_BASE/src/CMGTools/H2TauTau/data/htt_scalefactors_v16_4.root', 't_genuine_TightIso_tt'),
+        # 'trigger': '$CMSSW_BASE/src/CMGTools/H2TauTau/data/Tau_diTau35_summer16.py',  # include in the event's overall weight
     },
 
     otherScaleFactorFiles={
@@ -319,7 +321,7 @@ if not production:
         selectedComponents = [data_list[0]]
     selectedComponents = selectedComponents[:1]
     for comp in selectedComponents:
-        comp.splitFactor = 1
+        comp.splitFactor = 4
         comp.fineSplitFactor = 1
     # comp.files = comp.files[13:20]
 
