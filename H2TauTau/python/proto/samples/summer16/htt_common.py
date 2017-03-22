@@ -1,4 +1,4 @@
-from CMGTools.RootTools.samples.samples_13TeV_RunIISummer16MiniAODv2 import WJetsToLNu,  WWTo2L2Nu, QCD_Mu5, QCDPtEMEnriched, QCDPtbcToE, TBar_tch_powheg, DYNJets, WNJets, T_tch_powheg, DYJetsToLL_M10to50_LO #DYJetsToLL_M50_LO WJetsToLNu_LO
+from CMGTools.RootTools.samples.samples_13TeV_RunIISummer16MiniAODv2 import WJetsToLNu,  WWTo2L2Nu, QCD_Mu5, QCDPtEMEnriched, QCDPtbcToE, TBar_tch_powheg, DYNJets, WNJets, T_tch_powheg, DYJetsToLL_M10to50_LO, DYJetsToLL_M50_LO_ext2 #DYJetsToLL_M50_LO WJetsToLNu_LO
 
 from CMGTools.RootTools.samples.samples_13TeV_RunIISummer16MiniAODv2 import DYJetsToLL_M50_LO_ext as DYJetsToLL_M50_LO
 from CMGTools.RootTools.samples.samples_13TeV_RunIISummer16MiniAODv2 import TBar_tWch_ext as TBar_tWch
@@ -42,10 +42,9 @@ w_xsec = 61526.7
 dy_xsec = 5765.4
 
 DYJetsToLL_M50_LO.xSection = dy_xsec
+DYJetsToLL_M50_LO_ext2.xSection = dy_xsec
 # DYJetsToLL_M50.xSection = dy_xsec
 
-DYJetsToLL_M50_LO.nevents = [1000.] # Temporary entry
-WJetsToLNu_LO.nevents = [1000.] # Temporary entry
 
 # From https://twiki.cern.ch/twiki/pub/CMS/HiggsToTauTauWorking2015/DYNjetWeights.xls r3
 dy_weight_dict = {
@@ -66,7 +65,7 @@ def getDYWeight(n_jets, m_gen):
         return dy_weight_dict[(n_jets, 150)]
     return dy_weight_dict[(n_jets, 0)]
 
-for sample in [DYJetsToLL_M50_LO] + DYNJets: # + [DYJetsToTauTau_M150_LO]:
+for sample in [DYJetsToLL_M50_LO, DYJetsToLL_M50_LO_ext2] + DYNJets: # + [DYJetsToTauTau_M150_LO]:
     # sample.fractions = [0.7, 0.204374, 0.0671836, 0.0205415, 0.0110539]
 
     sample.weight_func = getDYWeight
@@ -94,7 +93,7 @@ WJetsHT = [] # WJetsToLNu_HT100to200, WJetsToLNu_HT200to400, WJetsToLNu_HT400to6
 # Backgrounds
 diboson_nlo = [ZZTo4L, WZTo1L3Nu, WWTo1L1Nu2Q, ZZTo2L2Q,  WZTo2L2Q, WZTo1L1Nu2Q, VVTo2L2Nu, WZTo3LNu_amcatnlo]
 
-essential = [TT_pow, DYJetsToLL_M50_LO, DYJetsToLL_M10to50_LO, TBar_tWch, T_tWch, TBar_tch_powheg, T_tch_powheg, WJetsToLNu_LO]  # WJetsToLNu, 
+essential = [TT_pow, DYJetsToLL_M50_LO, DYJetsToLL_M50_LO_ext2, DYJetsToLL_M10to50_LO, TBar_tWch, T_tWch, TBar_tch_powheg, T_tch_powheg, WJetsToLNu_LO]  # WJetsToLNu, 
 
 # Build default background list
 backgrounds = essential
