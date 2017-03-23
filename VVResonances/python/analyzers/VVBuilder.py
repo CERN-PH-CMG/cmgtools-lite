@@ -282,6 +282,8 @@ class VVBuilder(Analyzer):
         # substructure function has reclustered jet, so we need to check the pT again
         if not VV.leg2.pt() > 200.:
             return output
+        # also recalculate the resonance mass four vector
+        VV=Pair(bestW,bestJet)
 
         #substructure truth
         if self.cfg_comp.isMC:
@@ -300,8 +302,6 @@ class VVBuilder(Analyzer):
         satteliteJets = self.selectJets(event.jets,lambda x: x.pt()>30.0  and x.jetID('POG_PFID_Loose')  ,tightLeptonsForW,0.4,[bestJet],0.8)
         otherLeptons = self.cleanOverlap(looseLeptonsForW,[bestW.leg1])
         self.topology(VV,satteliteJets,otherLeptons)
-
-
 
         output.append(VV)
         return output
@@ -334,8 +334,11 @@ class VVBuilder(Analyzer):
 
         VV=Pair(bestZ,bestJet)
 
-        #substructure
+        # substructure
         self.substructure(VV.leg2,event)
+
+        # substructure changes jet, so we need to recalculate the resonance mass
+        VV=Pair(bestZ,bestJet)
 
         if not hasattr(VV.leg2,"substructure"):
             return output
@@ -343,9 +346,9 @@ class VVBuilder(Analyzer):
 
         #check if there are subjets
 
- #       if len(VV.leg2.substructure.prunedSubjets)<2:
- #           print 'No substructure',len(VV.leg2.substructure.prunedSubjets)
- #           return output
+     # if len(VV.leg2.substructure.prunedSubjets)<2:
+     #     print 'No substructure',len(VV.leg2.substructure.prunedSubjets)
+     #     return output
 
         #topology
         satteliteJets = self.selectJets(event.jets,lambda x: x.pt()>30.0  and x.jetID('POG_PFID_Loose')  ,otherTightLeptons,0.4,[bestJet],0.8)
@@ -374,6 +377,9 @@ class VVBuilder(Analyzer):
         self.substructure(VV.leg1,event)
         self.substructure(VV.leg2,event)
 
+        # substructure changes jet, so we need to recalculate the resonance mass
+        VV=Pair(fatJets[0],fatJets[1])
+
         #substructure truth
         if self.cfg_comp.isMC:
             self.substructureGEN(VV.leg2,event)
@@ -388,9 +394,9 @@ class VVBuilder(Analyzer):
 
         #check if there are subjets
 
-  #      if len(VV.leg2.substructure.prunedSubjets)<2 or len(VV.leg1.substructure.prunedSubjets)<2:
-  #          print 'No substructure'
-  #          return output
+      # if len(VV.leg2.substructure.prunedSubjets)<2 or len(VV.leg1.substructure.prunedSubjets)<2:
+      #     print 'No substructure'
+      #     return output
 
 
 
@@ -424,12 +430,14 @@ class VVBuilder(Analyzer):
         if not hasattr(VV.leg2,"substructure"):
             return output
 
+        # substructure changes jet, so we need to recalculate the resonance mass
+        VV=Pair(event.met,fatJets[0])
 
         #check if there are subjets
 
-#        if len(VV.leg2.substructure.prunedSubjets)<2:
-#            print 'No substructure'
-#            return output
+        # if len(VV.leg2.substructure.prunedSubjets)<2:
+        #     print 'No substructure'
+        #     return output
 
 
         #topology
