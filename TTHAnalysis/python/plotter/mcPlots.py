@@ -145,9 +145,9 @@ def doTinyCmsPrelim(textLeft="_default_",textRight="_default_",hasExpo=False,tex
     textLeft = textLeft.replace("%(lumi)",lumitext)
     textRight = textRight.replace("%(lumi)",lumitext)
     if textLeft not in ['', None]:
-        doSpam(textLeft, (.28 if hasExpo else 0.07 if doWide else .17)+xoffs, .955, .60+xoffs, .995, align=12, textSize=textSize)
+        doSpam(textLeft, (.28 if hasExpo else 0.07 if doWide else .16)+xoffs, .955, .60+xoffs, .995, align=12, textSize=textSize)
     if textRight not in ['', None]:
-        doSpam(textRight,(0.6 if doWide else .68)+xoffs, .955, .99+xoffs, .995, align=32, textSize=textSize)
+        doSpam(textRight,(0.5 if doWide else .58)+xoffs, .955, .98+xoffs, .995, align=32, textSize=textSize)
 
 def reMax(hist,hist2,islog,factorLin=1.3,factorLog=2.0,doWide=False):
     if  hist.ClassName() == 'THStack':
@@ -369,7 +369,7 @@ def doNormFit(pspec,pmap,mca,saveScales=False):
     ROOT.RooMsgService.instance().setGlobalKillBelow(gKill)
     return postfit
 
-def doRatioHists(pspec,pmap,total,maxRange,fixRange=False,fitRatio=None,errorsOnRef=True,ratioNums="signal",ratioDen="background",ylabel="Data/pred.",doWide=False,showStatTotLegend=False):
+def doRatioHists(pspec,pmap,total,maxRange,fixRange=False,fitRatio=None,errorsOnRef=True,ratioNums="signal",ratioDen="background",ylabel="Data/pred.",yndiv=505,doWide=False,showStatTotLegend=False,textSize=0.035):
     numkeys = [ "data" ]
     if "data" not in pmap: 
         if len(pmap) >= 4 and ratioDen in pmap:
@@ -464,18 +464,18 @@ def doRatioHists(pspec,pmap,total,maxRange,fixRange=False,fitRatio=None,errorsOn
     unity.GetYaxis().SetRangeUser(rmin,rmax);
     unity.GetXaxis().SetTitleFont(42)
     unity.GetXaxis().SetTitleSize(0.14)
-    unity.GetXaxis().SetTitleOffset(0.9)
+    unity.GetXaxis().SetTitleOffset(1.0)
     unity.GetXaxis().SetLabelFont(42)
     unity.GetXaxis().SetLabelSize(0.1)
-    unity.GetXaxis().SetLabelOffset(0.007)
-    unity.GetYaxis().SetNdivisions(505)
+    unity.GetXaxis().SetLabelOffset(0.015)
+    unity.GetYaxis().SetNdivisions(yndiv)
     unity.GetYaxis().SetTitleFont(42)
     unity.GetYaxis().SetTitleSize(0.14)
     offset = 0.32 if doWide else 0.62
     unity.GetYaxis().SetTitleOffset(offset)
     unity.GetYaxis().SetLabelFont(42)
     unity.GetYaxis().SetLabelSize(0.11)
-    unity.GetYaxis().SetLabelOffset(0.007)
+    unity.GetYaxis().SetLabelOffset(0.01)
     unity.GetYaxis().SetDecimals(True) 
     unity.GetYaxis().SetTitle(ylabel)
     total.GetXaxis().SetLabelOffset(999) ## send them away
@@ -489,7 +489,7 @@ def doRatioHists(pspec,pmap,total,maxRange,fixRange=False,fitRatio=None,errorsOn
         blist = binlabels.split(",")
         for i in range(1,unity.GetNbinsX()+1): 
             unity.GetXaxis().SetBinLabel(i,blist[i-1]) 
-        unity.GetXaxis().SetLabelSize(0.15)
+        unity.GetXaxis().SetLabelSize(0.15*(textSize/0.035))
     #ratio.SetMarkerSize(0.7*ratio.GetMarkerSize()) # no it is confusing
     binlabels = pspec.getOption("xBinLabels","")
     if binlabels != "" and len(binlabels.split(",")) == unity.GetNbinsX():
@@ -503,20 +503,20 @@ def doRatioHists(pspec,pmap,total,maxRange,fixRange=False,fitRatio=None,errorsOn
     line.Draw("L")
     for ratio in ratios:
         ratio.Draw("E SAME" if ratio.ClassName() != "TGraphAsymmErrors" else "PZ SAME");
-    leg0 = ROOT.TLegend(0.12 if doWide else 0.2, 0.8, 0.25 if doWide else 0.45, 0.9)
+    leg0 = ROOT.TLegend(0.12 if doWide else 0.2, 0.84, 0.25 if doWide else 0.45, 0.94)
     leg0.SetFillColor(0)
     leg0.SetShadowColor(0)
     leg0.SetLineColor(0)
     leg0.SetTextFont(42)
-    leg0.SetTextSize(0.035*0.7/0.3)
+    leg0.SetTextSize(textSize*0.7/0.3)
     leg0.AddEntry(unityErr0, "stat. unc.", "F")
     if showStatTotLegend: leg0.Draw()
-    leg1 = ROOT.TLegend(0.25 if doWide else 0.45, 0.8, 0.38 if doWide else 0.7, 0.9)
+    leg1 = ROOT.TLegend(0.25 if doWide else 0.45, 0.84, 0.38 if doWide else 0.7, 0.94)
     leg1.SetFillColor(0)
     leg1.SetShadowColor(0)
     leg1.SetLineColor(0)
     leg1.SetTextFont(42)
-    leg1.SetTextSize(0.035*0.7/0.3)
+    leg1.SetTextSize(textSize*0.7/0.3)
     leg1.AddEntry(unityErr, "total unc.", "F")
     if showStatTotLegend: leg1.Draw()
     global legendratio0_, legendratio1_
@@ -559,7 +559,7 @@ def doStatTests(total,data,test,legendCorner):
 
 
 legend_ = None;
-def doLegend(pmap,mca,corner="TR",textSize=0.035,cutoff=1e-2,cutoffSignals=True,mcStyle="F",legWidth=0.18,legBorder=True,signalPlotScale=None,totalError=None,header="",doWide=False):
+def doLegend(pmap,mca,corner="TR",textSize=0.035,cutoff=1e-2,cutoffSignals=True,mcStyle="F",legWidth=0.18,legBorder=True,signalPlotScale=None,totalError=None,header="",doWide=False,columns=1):
         if (corner == None): return
         total = sum([x.Integral() for x in pmap.itervalues()])
         sigEntries = []; bgEntries = []
@@ -580,19 +580,21 @@ def doLegend(pmap,mca,corner="TR",textSize=0.035,cutoff=1e-2,cutoffSignals=True,
                 bgEntries.append( (pmap[p],lbl,myStyle) )
         nentries = len(sigEntries) + len(bgEntries) + ('data' in pmap)
 
-        (x1,y1,x2,y2) = (0.97-legWidth if doWide else .85-legWidth, .7 - textSize*max(nentries-3,0), .90, .91)
+        height = (.20 + textSize*max(nentries-3,0))
+        if columns > 1: height = 1.3*height/columns
+        (x1,y1,x2,y2) = (0.97-legWidth if doWide else .85-legWidth, .9 - height, .90, .91)
         if corner == "TR":
-            (x1,y1,x2,y2) = (0.97-legWidth if doWide else .85-legWidth, .7 - textSize*max(nentries-3,0), .90, .91)
+            (x1,y1,x2,y2) = (0.97-legWidth if doWide else .85-legWidth, .9 - height, .90, .91)
         elif corner == "TC":
-            (x1,y1,x2,y2) = (.5, .75 - textSize*max(nentries-3,0), .5+legWidth, .91)
+            (x1,y1,x2,y2) = (.5, .9 - height, .55+legWidth, .91)
         elif corner == "TL":
-            (x1,y1,x2,y2) = (.2, .75 - textSize*max(nentries-3,0), .2+legWidth, .91)
+            (x1,y1,x2,y2) = (.2, .9 - height, .25+legWidth, .91)
         elif corner == "BR":
-            (x1,y1,x2,y2) = (.85-legWidth, .33 + textSize*max(nentries-3,0), .90, .15)
+            (x1,y1,x2,y2) = (.85-legWidth, .16 + height, .90, .15)
         elif corner == "BC":
-            (x1,y1,x2,y2) = (.5, .33 + textSize*max(nentries-3,0), .5+legWidth, .15)
+            (x1,y1,x2,y2) = (.5, .16 + height, .5+legWidth, .15)
         elif corner == "BL":
-            (x1,y1,x2,y2) = (.2, .33 + textSize*max(nentries-3,0), .2+legWidth, .15)
+            (x1,y1,x2,y2) = (.2, .16 + height, .2+legWidth, .15)
 
         leg = ROOT.TLegend(x1,y1,x2,y2)
         if header: leg.SetHeader(header.replace("\#", "#"))
@@ -603,12 +605,19 @@ def doLegend(pmap,mca,corner="TR",textSize=0.035,cutoff=1e-2,cutoffSignals=True,
             leg.SetLineColor(0)
         leg.SetTextFont(42)
         leg.SetTextSize(textSize)
+        leg.SetNColumns(columns)
+        entries = []
         if 'data' in pmap: 
-            leg.AddEntry(pmap['data'].raw(), mca.getProcessOption('data','Label','Data', noThrow=True), 'LPE')
-        total = sum([x.Integral() for x in pmap.itervalues()])
-        for (plot,label,style) in sigEntries: leg.AddEntry(plot.raw(),label,style)
-        for (plot,label,style) in  bgEntries: leg.AddEntry(plot.raw(),label,style)
-        if totalError: leg.AddEntry(totalError,"total unc.","F") 
+            entries.append((pmap['data'].raw(), mca.getProcessOption('data','Label','Data', noThrow=True), 'LPE'))
+        for (plot,label,style) in sigEntries: entries.append((plot.raw(),label,style))
+        for (plot,label,style) in  bgEntries: entries.append((plot.raw(),label,style))
+        if totalError:  entries.append((totalError,"Total unc.","F"))
+        nrows = int(ceil(len(entries)/float(columns)))
+        for r in xrange(nrows):
+            for c in xrange(columns):
+                i = r+c*nrows
+                if i >= len(entries): break
+                leg.AddEntry(*entries[i])
         leg.Draw()
         ## assign it to a global variable so it's not deleted
         global legend_
@@ -885,10 +894,10 @@ class PlotMaker:
                     c1.SetWindowSize(plotformat[0] + (plotformat[0] - c1.GetWw()), (plotformat[1]+150 + (plotformat[1]+150 - c1.GetWh())));
                     p1 = ROOT.TPad("pad1","pad1",0,0.30,1,1);
                     p1.SetTopMargin(p1.GetTopMargin()*options.topSpamSize);
-                    p1.SetBottomMargin(0.025);
+                    p1.SetBottomMargin(0 if options.attachRatioPanel else 0.025);
                     p1.Draw();
                     p2 = ROOT.TPad("pad2","pad2",0,0,1,0.30);
-                    p2.SetTopMargin(0.06);
+                    p2.SetTopMargin(0 if options.attachRatioPanel else 0.06);
                     p2.SetBottomMargin(0.3);
                     p2.SetFillStyle(0);
                     p2.Draw();
@@ -942,6 +951,11 @@ class PlotMaker:
                     total.GetZaxis().SetRangeUser(pspec.getOption('ZMin',1.0), pspec.getOption('ZMax',1.0))
                 #if options.yrange: 
                 #    total.GetYaxis().SetRangeUser(options.yrange[0], options.yrange[1])
+                if options.addspam:
+                    if pspec.getOption('Legend','TR')=="TL":
+                        doSpam(options.addspam, .68, .855, .9, .895, align=32, textSize=(0.045 if doRatio else 0.033)*options.topSpamSize)
+                    else:
+                        doSpam(options.addspam, .23, .855, .6, .895, align=12, textSize=(0.045 if doRatio else 0.033)*options.topSpamSize)
                 legendCutoff = pspec.getOption('LegendCutoff', 1e-5 if c1.GetLogy() else 1e-2)
                 if plotmode == "norm": legendCutoff = 0 
                 if plotmode == "stack":
@@ -952,9 +966,9 @@ class PlotMaker:
                                   cutoff=legendCutoff, mcStyle=mcStyle,
                                   cutoffSignals=not(options.showSigShape or options.showIndivSigShapes or options.showSFitShape), 
                                   textSize=( (0.045 if doRatio else 0.022) if options.legendFontSize <= 0 else options.legendFontSize ),
-                                  legWidth=options.legendWidth, legBorder=options.legendBorder, signalPlotScale=options.signalPlotScale,
+                                  legWidth=pspec.getOption('LegendWidth',options.legendWidth), legBorder=options.legendBorder, signalPlotScale=options.signalPlotScale,
                                   header=self._options.legendHeader if self._options.legendHeader else pspec.getOption("LegendHeader", ""),
-                                  doWide=doWide, totalError=totalError)
+                                  doWide=doWide, totalError=totalError, columns = pspec.getOption('LegendColumns',options.legendColumns))
                 if self._options.doOfficialCMS:
                     CMS_lumi.lumi_13TeV = "%.1f fb^{-1}" % self._options.lumi
                     CMS_lumi.extraText  = self._options.cmsprel
@@ -962,11 +976,6 @@ class PlotMaker:
                     CMS_lumi.CMS_lumi(ROOT.gPad, 4, 0, -0.005 if doWide and doRatio else 0.01 if doWide else 0.05)
                 else: 
                     doTinyCmsPrelim(hasExpo = total.GetMaximum() > 9e4 and not c1.GetLogy(),textSize=(0.045 if doRatio else 0.033)*options.topSpamSize, options=options,doWide=doWide)
-                if options.addspam:
-                    if pspec.getOption('Legend','TR')=="TL":
-                        doSpam(options.addspam, .68, .855, .9, .895, align=32, textSize=(0.045 if doRatio else 0.033)*options.topSpamSize)
-                    else:
-                        doSpam(options.addspam, .23, .855, .6, .895, align=12, textSize=(0.045 if doRatio else 0.033)*options.topSpamSize)
                 signorm = None; datnorm = None; sfitnorm = None
                 if options.showSigShape or options.showIndivSigShapes or options.showIndivSigs: 
                     signorms = doStackSignalNorm(pspec,pmap,options.showIndivSigShapes or options.showIndivSigs,extrascale=options.signalPlotScale, norm=not options.showIndivSigs)
@@ -1002,7 +1011,7 @@ class PlotMaker:
                     p2.cd(); 
                     rdata,rnorm,rnorm2,rline = doRatioHists(pspec,pmap,total, maxRange=options.maxRatioRange, fixRange=options.fixRatioRange,
                                                             fitRatio=options.fitRatio, errorsOnRef=options.errorBandOnRatio, 
-                                                            ratioNums=options.ratioNums, ratioDen=options.ratioDen, ylabel=options.ratioYLabel, doWide=doWide, showStatTotLegend=True)
+                                                            ratioNums=options.ratioNums, ratioDen=options.ratioDen, ylabel=options.ratioYLabel, yndiv=options.ratioYNDiv, doWide=doWide, showStatTotLegend=options.showStatTotLegend, textSize=options.legendFontSize)
                 if self._options.printPlots:
                     for ext in self._options.printPlots.split(","):
                         fdir = printDir;
@@ -1139,7 +1148,10 @@ def addPlotMakerOptions(parser, addAlsoMCAnalysis=True):
     parser.add_option("--ratioDen", dest="ratioDen", type="string", default="background", help="Denominator of the ratio, when comparing MCs")
     parser.add_option("--ratioNums", dest="ratioNums", type="string", default="signal", help="Numerator(s) of the ratio, when comparing MCs (comma separated list of regexps)")
     parser.add_option("--ratioYLabel", dest="ratioYLabel", type="string", default="Data/pred.", help="Y axis label of the ratio histogram.")
+    parser.add_option("--ratioYNDiv", dest="ratioYNDiv", type="int", default=505, help="Y axis divisions in the ratio histogram.")
     parser.add_option("--noErrorBandOnRatio", dest="errorBandOnRatio", action="store_false", default=True, help="Do not show the error band on the reference in the ratio plots")
+    parser.add_option("--noStatTotLegendOnRatio", dest="showStatTotLegend", action="store_false", default=True, help="Do not show the legend in the ratio plots")
+    parser.add_option("--attachRatioPanel", dest="attachRatioPanel", action="store_true", default=False, help="Attach the ratio panel to the main plot, without a white spacer in between")
     parser.add_option("--fitRatio", dest="fitRatio", type="int", default=None, help="Fit the ratio with a polynomial of the specified order")
     parser.add_option("--scaleSigToData", dest="scaleSignalToData", action="store_true", default=False, help="Scale all signal processes so that the overall event yield matches the observed one")
     parser.add_option("--scaleBkgToData", dest="scaleBackgroundToData", action="append", default=[], help="Scale all background processes so that the overall event yield matches the observed one")
@@ -1169,6 +1181,7 @@ def addPlotMakerOptions(parser, addAlsoMCAnalysis=True):
     parser.add_option("--emptyStack", dest="emptyStack", action="store_true", default=False, help="Allow empty stack in order to plot, for example, only signals but no backgrounds.")
     parser.add_option("--perBin", dest="perBin", action="store_true", default=False, help="Print the contents of every bin in another txt file");
     parser.add_option("--legendHeader", dest="legendHeader", type="string", default=None, help="Put a header to the legend")
+    parser.add_option("--legendColumns", dest="legendColumns", type="int", default=1, help="Number of columns in the legend")
     parser.add_option("--ratioOffset", dest="ratioOffset", type="float", default=0.0, help="Put an offset between ratio and main pad")
     parser.add_option("--noCms", dest="doOfficialCMS", action="store_false", default=True, help="Use official tool to write CMS spam")
     parser.add_option("--cmsprel", dest="cmsprel", type="string", default="Preliminary", help="Additional text (Simulation, Preliminary, Internal)")
