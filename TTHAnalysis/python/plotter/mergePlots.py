@@ -18,9 +18,9 @@ if __name__ == "__main__":
     parser.add_option("--addErrorsLinearlyForTotal", dest="addErrorsLinearlyForTotal", action="store_true", default=False, help="Add errors linearly for the total histogram")
     addPlotMakerOptions(parser)
     (options, args) = parser.parse_args()
-    options.path = "/data1/peruzzi/mixture_jecv6prompt_datafull_jul20_skimOnlyMC"
-#    options.path = "/data1/peruzzi/TREES_80X_180716_jecv6_skim_3ltight_relax"
-    options.lumi = 12.9
+    options.path = ["/data1/peruzzi/TREES_TTH_250117_Summer16_JECV3_noClean_qgV2_skimOnlyMC_v6"]
+#    options.path = ["/data1/peruzzi/TREES_TTH_250117_Summer16_JECV3_noClean_qgV2_skim3l2j2b1B_v6"]
+    options.lumi = 35.9
     if options.postFit_s or options.postFit_b: options.useTotal = True
     mca  = MCAnalysis(args[0],options)
     FS = options.channels.split(",")
@@ -83,10 +83,10 @@ if __name__ == "__main__":
                             totSyst.SetBinError(b, hypot(totSyst.GetBinError(b), syst*h.GetBinContent(b)))
         tot.GetYaxis().SetRangeUser(0, 1.0*pspec.getOption('MoreY',2.0)*max(tot.GetMaximum(), data.GetMaximum()))
         ## Prepare split screen
-#        c1 = ROOT.TCanvas("c1", "c1", 600, 750); c1.Draw()
-#        c1.SetWindowSize(600 + (600 - c1.GetWw()), (750 + (750 - c1.GetWh())));
-        c1 = ROOT.TCanvas("c1", "c1", 1200, 750); c1.Draw()
-        c1.SetWindowSize(1200 + (1200 - c1.GetWw()), (750 + (750 - c1.GetWh())));
+        c1 = ROOT.TCanvas("c1", "c1", 600, 750); c1.Draw()
+        c1.SetWindowSize(600 + (600 - c1.GetWw()), (750 + (750 - c1.GetWh())));
+#        c1 = ROOT.TCanvas("c1", "c1", 1200, 750); c1.Draw()
+#        c1.SetWindowSize(1200 + (1200 - c1.GetWw()), (750 + (750 - c1.GetWh())));
 
         p1 = ROOT.TPad("pad1","pad1",0,0.30,1,1);
         p1.SetTopMargin(p1.GetTopMargin()*options.topSpamSize);
@@ -118,7 +118,7 @@ if __name__ == "__main__":
                         options=options)
         ## Draw relaive prediction in the bottom frame
         p2.cd() 
-        rdata,rnorm,rnorm2,rline,leg0,leg1 = doRatioHists(pspec,plots,tot,totSyst, maxRange=options.maxRatioRange, fitRatio=options.fitRatio)
+        rdata,rnorm,rnorm2,rline = doRatioHists(pspec,plots,tot,totSyst, maxRange=options.maxRatioRange, fitRatio=options.fitRatio)
         #rframe = ROOT.TH1F("rframe","rframe",1,xmin,xmax)
         #rframe.GetXaxis().SetTitle(bandN.GetXaxis().GetTitle())
         #rframe.GetYaxis().SetRangeUser(0,1.95);
