@@ -291,6 +291,7 @@ class HistoWithNuisances:
         roofit = self._rooFit["context"]
         roofit.workspace.allVars().assignValueOnly(self._postFit.fitResult.floatParsFinal())
         self.nominal = self.central.Clone("%s_postfit" % self.central.GetName())
+        if self.central.Integral() == 0: return
         if "pdf" not in self._rooFit: self._makePdfAndNorm()
         roofit.roopdf2hist("", self._rooFit["pdf"], self._rooFit["norm"], target=self.nominal)
         # FIXME this should be improved

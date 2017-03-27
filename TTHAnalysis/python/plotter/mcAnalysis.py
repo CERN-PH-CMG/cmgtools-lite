@@ -483,7 +483,7 @@ class MCAnalysis:
         if self._options.altExternalFitResults:
             if not getattr(self,'_altPostFits',None):
                 self._altPostFits = {}
-                for fname, resname in self._options.altExternalFitResults:
+                for i,(fname, resname) in enumerate(self._options.altExternalFitResults):
                     resalias = resname
                     if "=" in resname: (resalias,resname) = resname.split("=")
                     efrfile = ROOT.TFile.Open(fname)
@@ -493,6 +493,8 @@ class MCAnalysis:
                     efrfile.Close()
                     print "Loaded fit result %s from %s for fit %s " % (resname,fname,resalias)
                     self._altPostFits[resalias] = PostFitSetup(fitResult=fitResults)
+                    if self._options.altExternalFitResultLabels:
+                        self._altPostFits[resalias].label = self._options.altExternalFitResultLabels[i]
         if getattr(self, '_postFit', None):
             roofit = roofitizeReport(ret)
             for k,h in ret.iteritems():
@@ -738,6 +740,9 @@ class MCAnalysis:
             #print "Largest task has %d entries. Will use %d as grain " % (maxent, grain)
             if grain < 10: return tasks # sanity check
             newtasks_wsize = []
+            if self._options.splitSort:
+                tasks.sort(key = lambda task: task[1].getEntries(), reverse = True)
+                #for s,t in newtasks_wsize: print "\t%9d %s/%s %s" % (s,t[1]._name, t[1]._cname, t[-1])
             for task in tasks:
                 tty = task[1]; 
                 entries = tty.getEntries()
@@ -745,11 +750,7 @@ class MCAnalysis:
                 fsplits = [ (i,chunks) for i in xrange(chunks) ]
                 #print "    task %s/%s has %d entries. N/g = %.1f, chunks = %d" % (tty._name, tty._cname, entries, entries/float(grain), chunks)
                 for fsplit in fsplits:
-                    newtasks_wsize.append( (entries/float(chunks), tuple( (list(task)[:-1]) + [fsplit] ) ) )
-            if self._options.splitSort:
-                newtasks_wsize.sort(key = lambda (size,task) : size, reverse = True)
-                #for s,t in newtasks_wsize: print "\t%9d %s/%s %s" % (s,t[1]._name, t[1]._cname, t[-1])
-            newtasks = [ task for (size,task) in newtasks_wsize ]
+                    newtasks.append( tuple( (list(task)[:-1]) + [fsplit] ) )
         #print "New task list has %d entries; actual split factor %.2f" % (len(newtasks), len(newtasks)/float(len(tasks)))
         return newtasks
 
@@ -787,6 +788,7 @@ def addMCAnalysisOptions(parser,addTreeToYieldOnesToo=True):
     parser.add_option("--xu", "--exclude-uncertainty", dest="uncertaintiesToExclude", type="string", default=[], action="append", help="Uncertainties to exclude (comma-separated list of regexp, can specify multiple ones)");
     parser.add_option("--efr", "--external-fitResult", dest="externalFitResult", type="string", default=None, nargs=2, help="External fitResult")
     parser.add_option("--aefr", "--alt-external-fitResults", dest="altExternalFitResults", type="string", default=[], nargs=2, action="append", help="External fitResult")
+    parser.add_option("--aefrl", "--alt-external-fitResult-labels", dest="altExternalFitResultLabels", type="string", default=[], nargs=1, action="append", help="External fitResult")
 
 if __name__ == "__main__":
     from optparse import OptionParser

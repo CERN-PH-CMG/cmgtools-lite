@@ -741,27 +741,50 @@ class PlotMaker:
                         addPhysicsModelPOIs(roofit,pmap,mca,self._options.processesToPeg)
                     for key,pfs in mca._altPostFits.iteritems():
                         for k,h in pmap.iteritems():
-                            if k != "data" and h.Integral() > 0:
+                            if k != "data":
                                 h.setPostFitInfo(pfs,True)
                         subdir = dir.GetDirectory("post_"+key);
                         if not subdir: subdir = dir.mkdir("post_"+key)
+                        if getattr(pfs, 'label', None):
+                            legendHeaderBackup = self._options.legendHeader
+                            self._options.legendHeader = pfs.label
                         self.printOnePlot(mca,pspec,pmap,
                                           xblind=xblind,
                                           makeCanvas=makeCanvas,
                                           outputDir=subdir,
                                           printDir=self._options.printDir+(("/"+subname) if subname else "")+"/post_"+key)
-
+                        if getattr(pfs, 'label', None):
+                            self._options.legendHeader = legendHeaderBackup
+                if pspec.getOption("SlicesY",None):
+                    h0 = pmap.values()[0]
+                    for iy in xrange(1,h0.GetNbinsY()+1):
+                        postfix = "_"+(pspec.getOption("SlicesY") % (h0.GetYaxis().GetBinLowEdge(iy), h0.GetYaxis().GetBinUpEdge(iy)))
+                        bins_slice = pspec.bins.split("*",1) if "[" == pspec.bins[0] else ",".join(pspec.bins.split(",")[:3])
+                        pspec_slice = PlotSpec(pspec.name+postfix, pspec.expr, bins_slice, pspec.opts)
+                        pmap_slice = dict( (k,HistoWithNuisances(h.ProjectionX(h.GetName()+postfix,iy,iy))) for (k,h) in pmap.iteritems() )
+                        allprocs = mca.listSignals(True)+mca.listBackgrounds(True)+["data"]
+                        for k,h in pmap_slice.iteritems():
+                            if k in allprocs:
+                                print "%s goes in style for %s" % (k, h.GetName())
+                                stylePlot(h,pspec_slice, lambda opt, deft: mca.getProcessOption(k, opt, deft))
+                        self.printOnePlot(mca,pspec_slice,pmap_slice,
+                                          xblind=xblind, makeCanvas=makeCanvas, outputDir=dir,
+                                          printDir=self._options.printDir+(("/"+subname) if subname else ""))
             if elist: mca.clearCut()
 
-    def printOnePlot(self,mca,pspec,pmap,makeCanvas=True,outputDir=None,printDir=None,xblind=[9e99,-9e99],extraProcesses=[],plotmode="auto",outputName=None):
+    def printOnePlot(self,mca,pspec,pmap,mytotal=None,makeCanvas=True,outputDir=None,printDir=None,xblind=[9e99,-9e99],extraProcesses=[],plotmode="auto",outputName=None):
                 options = self._options
                 if printDir == None: printDir=self._options.printDir
                 if outputDir == None: outputDir = self._dir
                 if plotmode == "auto": plotmode = self._options.plotmode
                 if outputName == None: outputName = pspec.name
                 stack = ROOT.THStack(outputName+"_stack",outputName)
-                hists = [v for k,v in pmap.iteritems() if k != 'data']
-                total = hists[0].Clone(outputName+"_total"); total.Reset()
+                if mytotal != None:
+                    total = mytotal
+                else:
+                    hists = [v for k,v in pmap.iteritems() if k != 'data'  and v.Integral() > 0 ]
+                    if not hists: hists = [v for k,v in pmap.iteritems() if k != 'data' ]
+                    total = hists[0].Clone(outputName+"_total"); total.Reset()
                 if plotmode == "norm": 
                     if 'data' in pmap:
                         total.GetYaxis().SetTitle(total.GetYaxis().GetTitle()+" (normalized)")
@@ -791,7 +814,7 @@ class PlotMaker:
                             continue 
                         if plotmode == "stack":
                             stack.Add(plot.raw())
-                            total+=plot
+                            if mytotal == None: total+=plot
                         else:
                             plot.SetLineColor(plot.GetFillColor())
                             plot.SetLineWidth(3)
