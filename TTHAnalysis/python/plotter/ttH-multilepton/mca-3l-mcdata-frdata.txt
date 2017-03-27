@@ -1,6 +1,6 @@
 incl_sigprompt : + ; IncludeMca="ttH-multilepton/mca-includes/mca-3l-sigprompt.txt"
 incl_convs     : + ; IncludeMca="ttH-multilepton/mca-includes/mca-3l-convs.txt"
-incl_datafakes  : + ; IncludeMca="ttH-multilepton/mca-includes/mca-data.txt", FakeRate="ttH-multilepton/fakeRate-3l-frdata.txt", Label="Fakes", FillColor=ROOT.kBlack, FillStyle=3005, NormSystematic=0.35, PostFix='_fakes'
+incl_datafakes  : + ; IncludeMca="ttH-multilepton/mca-includes/mca-data.txt", FakeRate="ttH-multilepton/fakeRate-3l-frdata.txt", Label="Non-prompt", FillColor=ROOT.kBlack, FillStyle=3005, NormSystematic=0.35, PostFix='_fakes'
 
 incl_data : + ; IncludeMca="ttH-multilepton/mca-includes/mca-data.txt"
 

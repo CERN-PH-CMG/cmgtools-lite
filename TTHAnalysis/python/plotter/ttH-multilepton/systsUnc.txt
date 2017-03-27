@@ -9,8 +9,9 @@ CMS_ttHl_lepEff_muloose : ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .*2lss_em.* : no
 CMS_ttHl_lepEff_muloose : ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .*3l.* : normSymm : 1.03
 CMS_ttHl_lepEff_muloose : ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .*4l.* : normSymm : 1.04
 
-#FIXME
-#CMS_ttHl_lepEff_elloose : ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .* : elLooseUnc : templates 
+CMS_ttHl_lepEff_elloose : ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .*2lss.* : templateAsymm ; AddWeights=['elLooseUnc_2lss_up'\,'elLooseUnc_2lss_dn']
+CMS_ttHl_lepEff_elloose : ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .*3l*    : templateAsymm ; AddWeights=['elLooseUnc_3l_up'\,'elLooseUnc_3l_dn']
+CMS_ttHl_lepEff_elloose : ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .*4l*    : templateAsymm ; AddWeights=['elLooseUnc_4l_up'\,'elLooseUnc_4l_dn']
 
 CMS_ttHl_lepEff_mutight : ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .*2lss.* : templateSymm ; AddWeight='ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\, 1.0\, 1.03\, 1.06)'
 CMS_ttHl_lepEff_mutight : ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .*2lss_ee.* : none
@@ -73,13 +74,17 @@ pdf_Higgs_ttH  : ttH.* : .* : normSymm : 1.036
 pdf_gg         : TTZ   : .* : normSymm : 0.966
 pdf_qqbar      : TTW   : .* : normSymm : 1.04
 
+BR_hbb         : ttH$  	       : .* : normSymm : 1.0126 # in this analysis un-splitted ttH sample is TTHnobb
+BR_hvv	       : ttH_h[wz][wz] : .* : normSymm : 1.0154
+BR_htt	       : ttH_htt       : .* : normSymm : 1.0165
+
 # shape theoretical uncertainties (private to this channel)
-#CMS_ttHl_thu_shape_ttH_x  : ttH.* : .*2lss.*|.*3l.* : 1.0 : shapeOnly2D_1.03X_1Y
-#CMS_ttHl_thu_shape_ttH_y  : ttH.* : .*2lss.*|.*3l.* : 1.0 : shapeOnly2D_1X_1.02Y
-#CMS_ttHl_thu_shape_ttW_x  : TTW : .*2lss.*|.*3l.* : 1.0 : shapeOnly2D_1.04X_1Y
-#CMS_ttHl_thu_shape_ttW_y  : TTW : .*2lss.*|.*3l.* : 1.0 : shapeOnly2D_1X_1.01Y
-#CMS_ttHl_thu_shape_ttZ_x  : TTZ : .*2lss.*|.*3l.* : 1.0 : shapeOnly2D_1.02X_1Y
-#CMS_ttHl_thu_shape_ttZ_y  : TTZ : .*2lss.*|.*3l.* : 1.0 : shapeOnly2D_1X_1.02Y
+CMS_ttHl_thu_shape_ttH  : ttH.* : .*2lss.* : templateSymm ; Normalize=True, AddWeight='lnN1D_p1(1.05\,kinMVA_2lss_ttbar_withBDTv8\,-1\,1)*lnN1D_p1(1.02\,kinMVA_2lss_ttV_withHj\,-1\,1)' #shapeOnly2D_1.05X_1.02Y
+CMS_ttHl_thu_shape_ttW  : TTW 	: .*2lss.* : templateSymm ; Normalize=True, AddWeight='lnN1D_p1(1.02\,kinMVA_2lss_ttbar_withBDTv8\,-1\,1)*lnN1D_p1(1.03\,kinMVA_2lss_ttV_withHj\,-1\,1)' #shapeOnly2D_1.02X_1.03Y
+CMS_ttHl_thu_shape_ttZ  : TTZ 	: .*2lss.* : templateSymm ; Normalize=True, AddWeight='lnN1D_p1(1.06\,kinMVA_2lss_ttbar_withBDTv8\,-1\,1)*lnN1D_p1(1.06\,kinMVA_2lss_ttV_withHj\,-1\,1)' #shapeOnly2D_1.06X_1.06Y
+CMS_ttHl_thu_shape_ttH  : ttH.* : .*3l.*   : templateSymm ; Normalize=True, AddWeight='lnN1D_p1(1.05\,kinMVA_3l_ttbar\,-1\,1)*lnN1D_p1(1.10\,kinMVA_3l_ttV_withMEM\,-1\,1)' #shapeOnly2D_1.05X_1.10Y
+CMS_ttHl_thu_shape_ttW  : TTW 	: .*3l.*   : templateSymm ; Normalize=True, AddWeight='lnN1D_p1(1.04\,kinMVA_3l_ttbar\,-1\,1)*lnN1D_p1(1.10\,kinMVA_3l_ttV_withMEM\,-1\,1)' #shapeOnly2D_1.04X_1.10Y
+CMS_ttHl_thu_shape_ttZ  : TTZ 	: .*3l.*   : templateSymm ; Normalize=True, AddWeight='lnN1D_p1(1.08\,kinMVA_3l_ttbar\,-1\,1)*lnN1D_p1(1.13\,kinMVA_3l_ttV_withMEM\,-1\,1)' #shapeOnly2D_1.08X_1.13Y
 
 CMS_ttHl_FRe_norm : data_fakes  : .*2lss.* : templateAsymm; FakeRates=["ttH-multilepton/fakerate-vars/fakeRate-2lss-frdata-e-up.txt"\,"ttH-multilepton/fakerate-vars/fakeRate-2lss-frdata-e-down.txt"], \
         RemoveFakeRate="ttH-multilepton/fakeRate-2lss-frdata.txt", DoesNotChangeEventSelection=True
@@ -162,16 +167,22 @@ CMS_ttHl_Clos_m_bt_norm : data_fakes|TT_FR_QCD : .*3l_bl.* : none
 CMS_ttHl_Clos_m_bt_norm : data_fakes|TT_FR_QCD : .*3l_bt.* : normSymm : 1.2
 
 # 4) Closure: QCD vs. TT fake rate, shape
-#CMS_ttHl_Clos_e_bl_shape : data_fakes  : .*2lss_ee.*	: 1.0 : shapeOnly2D_0.83X_1.20Y
-#CMS_ttHl_Clos_e_bl_shape : data_fakes  : .*2lss_em_bl.* : 1.0 : shapeOnly2D_0.83X_1.20Y
-#CMS_ttHl_Clos_e_bt_shape : data_fakes  : .*2lss_em_bt.* : 1.0 : shapeOnly2D_0.71X_1.10Y
-#CMS_ttHl_Clos_e_bl_shape : data_fakes  : .*3l.*      	: 1.0 : shapeOnly2D_0.83X_1.20Y
-#CMS_ttHl_Clos_m_bl_shape : data_fakes  : .*2lss_mm_bl.* : 1.0 : shapeOnly2D_1.10X_1.10Y
-#CMS_ttHl_Clos_m_bt_shape : data_fakes  : .*2lss_mm_bt.* : 1.0 : shapeOnly2D_2.00X_1.20Y
-#CMS_ttHl_Clos_m_bl_shape : data_fakes  : .*2lss_em_bl.* : 1.0 : shapeOnly2D_1.31X_1.30Y
-#CMS_ttHl_Clos_m_bt_shape : data_fakes  : .*2lss_em_bt.* : 1.0 : shapeOnly2D_1.30X_1.40Y
-#CMS_ttHl_Clos_m_bl_shape : data_fakes  : .*3l.*      	: 1.0 : shapeOnly2D_1.10X_1.10Y
-
+CMS_ttHl_Clos_e_bt_shape : data_fakes|TT_FR_QCD  : .*2lss.*       : templateSymm ; Normalize=True, AddWeight='lnN1D_p1(ttH_2lss_ifflavnb(LepGood1_pdgId\,LepGood2_pdgId\,nBJetMedium25\, .83\, 1.2\,1.1\, 1.0\,1.0)\,kinMVA_2lss_ttbar_withBDTv8\,-1\,1)*lnN1D_p1(ttH_2lss_ifflavnb(LepGood1_pdgId\,LepGood2_pdgId\,nBJetMedium25\, 1.2\, .83\,.71\, 1.0\,1.0)\,kinMVA_2lss_ttV_withHj\,-1\,1)' #shapeOnly2D_0.71X_1.10Y
+CMS_ttHl_Clos_e_bl_shape : data_fakes|TT_FR_QCD  : .*2lss_ee.*	  : templateSymm ; Normalize=True, AddWeight='lnN1D_p1(0.83\,kinMVA_2lss_ttbar_withBDTv8\,-1\,1)*lnN1D_p1(1.20\,kinMVA_2lss_ttV_withHj\,-1\,1)' #shapeOnly2D_0.83X_1.20Y
+CMS_ttHl_Clos_e_bl_shape : data_fakes|TT_FR_QCD  : .*2lss_em.*    : templateSymm ; Normalize=True, AddWeight='lnN1D_p1(if3(nBJetMedium25<=1\,0.83\,0.71)\,kinMVA_2lss_ttbar_withBDTv8\,-1\,1)*lnN1D_p1(if3(nBJetMedium25<=1\,1.2\,1.1)\,kinMVA_2lss_ttV_withHj\,-1\,1)' 
+CMS_ttHl_Clos_e_bl_shape : data_fakes|TT_FR_QCD  : .*2lss_em_bl.* : templateSymm ; Normalize=True, AddWeight='lnN1D_p1(0.83\,kinMVA_2lss_ttbar_withBDTv8\,-1\,1)*lnN1D_p1(1.20\,kinMVA_2lss_ttV_withHj\,-1\,1)' #shapeOnly2D_0.83X_1.20Y
+CMS_ttHl_Clos_e_bt_shape : data_fakes|TT_FR_QCD  : .*2lss_em_bt.* : templateSymm ; Normalize=True, AddWeight='lnN1D_p1(0.71\,kinMVA_2lss_ttbar_withBDTv8\,-1\,1)*lnN1D_p1(1.10\,kinMVA_2lss_ttV_withHj\,-1\,1)' #shapeOnly2D_0.71X_1.10Y
+CMS_ttHl_Clos_e_bt_shape : data_fakes|TT_FR_QCD  : .*2lss_mm.*    : none
+CMS_ttHl_Clos_e_bl_shape : data_fakes|TT_FR_QCD  : .*3l.*         : templateSymm ; Normalize=True, AddWeight='lnN1D_p1(0.83\,kinMVA_3l_ttbar\,-1\,1)*lnN1D_p1(1.20\,kinMVA_3l_ttV_withMEM\,-1\,1)' #shapeOnly2D_0.83X_1.20Y
+CMS_ttHl_Clos_m_bl_shape : data_fakes|TT_FR_QCD  : .*2lss.*       : templateSymm ; Normalize=True, AddWeight='lnN1D_p1(ttH_2lss_ifflavnb(LepGood1_pdgId\,LepGood2_pdgId\,nBJetMedium25\, 1.0\, 1.31\,1.30\, 1.1\,2.0)\,kinMVA_2lss_ttbar_withBDTv8\,-1\,1)*lnN1D_p1(ttH_2lss_ifflavnb(LepGood1_pdgId\,LepGood2_pdgId\,nBJetMedium25\, 1.0\, 1.3\,1.4\, 1.1\,1.2)\,kinMVA_2lss_ttV_withHj\,-1\,1)' #shapeOnly2D_1.10X_1.10Y
+CMS_ttHl_Clos_m_bt_shape : data_fakes|TT_FR_QCD  : .*2lss_ee.*    : none 
+CMS_ttHl_Clos_m_bt_shape : data_fakes|TT_FR_QCD  : .*2lss_em.*    : templateSymm ; Normalize=True, AddWeight='lnN1D_p1(if3(nBJetMedium25<=1\,1.31\,1.30)\,kinMVA_2lss_ttbar_withBDTv8\,-1\,1)*lnN1D_p1(if3(nBJetMedium25<=1\,1.3\,1.4)\,kinMVA_2lss_ttV_withHj\,-1\,1)' #shapeOnly2D_1.30X_1.40Y
+CMS_ttHl_Clos_m_bl_shape : data_fakes|TT_FR_QCD  : .*2lss_em_bl.* : templateSymm ; Normalize=True, AddWeight='lnN1D_p1(1.31\,kinMVA_2lss_ttbar_withBDTv8\,-1\,1)*lnN1D_p1(1.30\,kinMVA_2lss_ttV_withHj\,-1\,1)' #shapeOnly2D_1.31X_1.30Y
+CMS_ttHl_Clos_m_bt_shape : data_fakes|TT_FR_QCD  : .*2lss_em_bt.* : templateSymm ; Normalize=True, AddWeight='lnN1D_p1(1.30\,kinMVA_2lss_ttbar_withBDTv8\,-1\,1)*lnN1D_p1(1.40\,kinMVA_2lss_ttV_withHj\,-1\,1)' #shapeOnly2D_1.30X_1.40Y
+CMS_ttHl_Clos_m_bl_shape : data_fakes|TT_FR_QCD  : .*2lss_mm.*    : templateSymm ; Normalize=True, AddWeight='lnN1D_p1(if3(nBJetMedium25<=1\,1.10\,2.00)\,kinMVA_2lss_ttbar_withBDTv8\,-1\,1)*lnN1D_p1(if3(nBJetMedium25<=1\,1.1\,1.2)\,kinMVA_2lss_ttV_withHj\,-1\,1)' #shapeOnly2D_1.10X_1.10Y
+CMS_ttHl_Clos_m_bl_shape : data_fakes|TT_FR_QCD  : .*2lss_mm_bl.* : templateSymm ; Normalize=True, AddWeight='lnN1D_p1(1.10\,kinMVA_2lss_ttbar_withBDTv8\,-1\,1)*lnN1D_p1(1.10\,kinMVA_2lss_ttV_withHj\,-1\,1)' #shapeOnly2D_1.10X_1.10Y
+CMS_ttHl_Clos_m_bt_shape : data_fakes|TT_FR_QCD  : .*2lss_mm_bt.* : templateSymm ; Normalize=True, AddWeight='lnN1D_p1(2.00\,kinMVA_2lss_ttbar_withBDTv8\,-1\,1)*lnN1D_p1(1.20\,kinMVA_2lss_ttV_withHj\,-1\,1)' #shapeOnly2D_2.00X_1.20Y
+CMS_ttHl_Clos_m_bl_shape : data_fakes|TT_FR_QCD  : .*3l.*      	  : templateSymm ; Normalize=True, AddWeight='lnN1D_p1(1.10\,kinMVA_3l_ttbar\,-1\,1)*lnN1D_p1(1.10\,kinMVA_3l_ttV_withMEM\,-1\,1)' #shapeOnly2D_1.10X_1.10Y
 
 # Charge flip uncertainty
 CMS_ttHl_QF     : data_flips  : .* : normSymm : 1.3

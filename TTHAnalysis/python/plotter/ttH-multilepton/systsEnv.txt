@@ -1,3 +1,4 @@
+# vim: syntax=sh
 # luminosity
 lumi_13TeV_2016		: ttH.*|TT[WZ]|Rares|Gstar|WWss|Convs : .* : 1.026
 
