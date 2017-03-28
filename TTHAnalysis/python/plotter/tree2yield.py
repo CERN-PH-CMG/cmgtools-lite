@@ -19,6 +19,7 @@ from CMGTools.TTHAnalysis.plotter.cutsFile import *
 from CMGTools.TTHAnalysis.plotter.mcCorrections import *
 from CMGTools.TTHAnalysis.plotter.fakeRate import *
 from CMGTools.TTHAnalysis.plotter.uncertaintyFile import *
+from CMGTools.TTHAnalysis.plotter.histoWithNuisances import HistoWithNuisances
 
 if "/functions_cc.so" not in ROOT.gSystem.GetLibraries(): 
     ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/TTHAnalysis/python/plotter/functions.cc+" % os.environ['CMSSW_BASE']);
@@ -317,7 +318,12 @@ class TreeToYield:
             tf = self._tree.AddFriend(tf_tree, tf_filename),
             self._friends.append(tf)
         self._isInit = True
-        
+    def _close(self):
+        self._tree = None
+        self._friends = []
+        self._tfile.Close()
+        self._tfile = None
+        self._isInit = False
     def getTree(self):
         if not self._isInit: self._init()
         return self._tree
@@ -343,6 +349,10 @@ class TreeToYield:
         if useEList and self._elist:
             return True
         return (self._entries != None)
+    def isEmpty(self,useEList=True):
+        if useEList and self._elist:
+            return self._elist.GetN() == 0
+        return self._entries != None and self._entries == 0
     def setEntries(self,entries):
         self._entries = entries
     def getYields(self,cuts,noEntryLine=False,fsplit=None):
@@ -431,7 +441,26 @@ class TreeToYield:
             return [ npass, sqrt(npass), npass ]
     def _stylePlot(self,plot,spec):
         return stylePlot(plot,spec,self.getOption)
-    def getPlot(self,plotspec,cut,fsplit=None,closeTreeAfter=False):
+    def getPlot(self,plotspec,cut,fsplit=None,closeTreeAfter=False,noUncertainties=False):
+        if self._isVariation == None and noUncertainties == False:
+            nominal = self.getPlot(plotspec,cut,fsplit=fsplit,closeTreeAfter=False,noUncertainties=True)
+            ret = HistoWithNuisances( nominal )
+            variations = {}
+            for var,sign,tty2 in self.getTTYVariations():
+                if var.name not in variations: variations[var.name] = [var,None,None]
+                isign = (1 if sign == "up" else 2)
+                if not var.isTrivial(sign):
+                    tty2._isInit = True; tty2._tree = self.getTree()
+                    variations[var.name][isign] = tty2.getPlot(plotspec,cut,fsplit=fsplit,closeTreeAfter=False,noUncertainties=True)
+                    tty2._isInit = False; tty2._tree = None
+            for (var,up,down) in variations.itervalues():
+                if up   == None: up   = var.getTrivial("up",  [nominal,None,None])
+                if down == None: down = var.getTrivial("down",[nominal,up,  None])
+                var.postProcess(nominal, up, down)
+                ret.addVariation(var.name, "up",   up)
+                ret.addVariation(var.name, "down", down)
+            if closeTreeAfter: self._close()
+            return ret
         ret = self.getPlotRaw(plotspec.name, plotspec.expr, plotspec.bins, cut, plotspec, fsplit=fsplit, closeTreeAfter=closeTreeAfter)
         # fold overflow
         if ret.ClassName() in [ "TH1F", "TH1D" ] :
@@ -513,16 +542,18 @@ class TreeToYield:
             histo = ROOT.TH1KeysNew("dummyk","dummyk",int(nb),float(xmin),float(xmax),"a",1.0)
             self._tree.Draw("%s>>%s" % (expr,"dummyk"), cut, "goff", maxEntries, firstEntry)
             self.negativeCheck(histo)
-            histo.SetDirectory(0)
-            if closeTreeAfter: self._tfile.Close()
-            return histo.GetHisto().Clone(name)
+            histo = histo.Clone(name)
+            histo.SetDirectory(None)
+            if closeTreeAfter: self._close()
+            return histo
         #elif not self._isdata and self.getOption("KeysPdf",False):
         #else:
         #    print "Histogram for %s/%s has %d entries, so won't use KeysPdf (%s, %s) " % (self._cname, self._name, histo.GetEntries(), canKeys, self.getOption("KeysPdf",False))
         self.negativeCheck(histo)
-        histo.SetDirectory(0)
-        if closeTreeAfter: self._tfile.Close()
-        return histo.Clone(name)
+        histo = histo.Clone(name)
+        histo.SetDirectory(None)
+        if closeTreeAfter: self._close()
+        return histo
     def negativeCheck(self,histo):
         if not self._options.allowNegative and not self._name in self._options.negAllowed: 
             cropNegativeBins(histo)
@@ -550,6 +581,7 @@ class TreeToYield:
     def cutAndElist(self):
         return (self._appliedCut,self._elist)
     def cutToElist(self,cut,fsplit=None):
+        _wasclosed = not self._isInit
         if not self._isInit: self._init()
         if self._weight:
             if self._isdata: cut = "(%s)     *(%s)*(%s)" % (self._weightString,                    self._scaleFactor, self.adaptExpr(cut,cut=True))
@@ -560,6 +592,9 @@ class TreeToYield:
         self._tree.Draw('>>elist', cut, 'entrylist', maxEntries, firstEntry)
         elist = ROOT.gDirectory.Get('elist')
         if self._tree.GetEntries()==0 and elist==None: elist = ROOT.TEntryList("elist",cut) # empty list if tree is empty, elist would be a ROOT.nullptr TObject otherwise
+        elist = ROOT.TEntryList(elist)    
+        elist.SetDirectory(None)
+        if _wasclosed: self._close()
         return elist
     def clearCut(self):
         #if not self._isInit: raise RuntimeError, "Error, clearing a cut on something that wasn't even initialized"

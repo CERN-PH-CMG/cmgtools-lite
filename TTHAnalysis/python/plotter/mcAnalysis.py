@@ -16,8 +16,8 @@ def _runYields(args):
     return (key, tty.getYields(cuts,noEntryLine=noEntryLine,fsplit=fsplit))
 
 def _runPlot(args):
-    key,tty,plotspec,cut,fsplit,closeTree = args
-    timer = ROOT.TStopwatch()
+    key,tty,plotspec,cut,closeTree,fsplit = args
+    #timer = ROOT.TStopwatch()
     #print "Starting plot %s for %s, %s" % (plotspec.name,key,tty._cname)
     ret = (key,tty.getPlot(plotspec,cut,fsplit=fsplit,closeTreeAfter=closeTree))
     #print "Done plot %s for %s, %s, fsplit %s in %s s, at %.2f; entries = %d, time/entry = %.3f ms" % (plotspec.name,key,tty._cname,fsplit,timer.RealTime(), 0.001*(long(ROOT.gSystem.Now()) - _T0), ret[1].GetEntries(), (long(ROOT.gSystem.Now()) - _T0)/float(ret[1].GetEntries()))
@@ -386,61 +386,20 @@ class MCAnalysis:
         print formatted_report
         return formatted_report
     def getPlotsRaw(self,name,expr,bins,cut,process=None,nodata=False,makeSummary=False,closeTreeAfter=False):
-        return self.getPlots(PlotSpec(name,expr,bins,{}),cut,process,nodata,makeSummary,closeTreeAfter)
+        return self.getPlots(PlotSpec(name,expr,bins,{}),cut,process=process,nodata=nodata,makeSummary=makeSummary,closeTreeAfter=closeTreeAfter)
     def getPlots(self,plotspec,cut,process=None,nodata=False,makeSummary=False,closeTreeAfter=False):
         allSig = []; allBg = []
         tasks = []
-        ttymap = {} # idkey -> tty, for both primaries and variations
-        procmap = {} # idkey -> key (name), only primaries
-        isvarofmap = {} # idkey_var -> idkey_parent, for variations
         for key,ttys in self._allData.iteritems():
             if key == 'data' and nodata: continue
             if process != None and key != process: continue
             for tty in ttys:
-                idkey = id(tty)
-                procmap[idkey]=key
-                ttymap[idkey]=tty
-                tasks.append((idkey,tty,plotspec,cut,None,closeTreeAfter))
-                for var,sign,tty2 in tty.getTTYVariations():
-                    idkey2 = id(tty2)
-                    isvarofmap[idkey2]=idkey
-                    ttymap[idkey2]=tty2
-                    if not var.isTrivial(sign): tasks.append((idkey2,tty2,plotspec,cut,None,closeTreeAfter))
+                if tty.isEmpty(): continue
+                tasks.append((key,tty,plotspec,cut,closeTreeAfter,None))
         if self._options.splitFactor > 1 or  self._options.splitFactor == -1:
             tasks = self._splitTasks(tasks)
-        _retlist = dict(self._processTasks(_runPlot, tasks, name="plot "+plotspec.name)) # idkey, result
-
-        ## calculate the trivial variations
-        varofmap = {}
-        for idk2,idk in isvarofmap.iteritems():
-            var = ttymap[idk2].isVariation()[0].name
-            sign = ttymap[idk2].isVariation()[1]
-            if (idk,var) not in varofmap: varofmap[(idk,var)]=[None,None]
-            if sign=='up': varofmap[(idk,var)][0]=idk2
-            elif sign=='dn': varofmap[(idk,var)][1]=idk2
-            else: raise RuntimeError
-        for (idk,var),(idk2up,idk2dn) in varofmap.iteritems():
-            if idk2up not in _retlist:
-                #print 'Calculating trivially variation %s %s'%(ttymap[idk2up].isVariation()[0].name,ttymap[idk2up].isVariation()[1]),_retlist[idk2up].Integral()
-                _retlist[idk2up]=ttymap[idk2up].isVariation()[0].getTrivial(ttymap[idk2up].isVariation()[1],[_retlist[idk],None,None])
-            if idk2dn not in _retlist:
-                #print 'Calculating trivially variation %s %s'%(ttymap[idk2dn].isVariation()[0].name,ttymap[idk2dn].isVariation()[1]),_retlist[idk2dn].Integral()
-                _retlist[idk2dn]=ttymap[idk2dn].isVariation()[0].getTrivial(ttymap[idk2dn].isVariation()[1],[_retlist[idk],_retlist[idk2up],None])
-        # postprocessing, if neded
-        for (idk,var),(idk2up,idk2dn) in varofmap.iteritems():
-            varobj = ttymap[idk2up].isVariation()[0]
-            if varobj.name != var: raise RuntimeError, "Mismatch in variations"
-            varobj.postProcess(_retlist[idk], _retlist[idk2up],_retlist[idk2dn])
-            #print "DEBUG: For %s var %s: nominal yield %.3f, up %.4f, down %.3f" % (_retlist[idk].GetName(), var, _retlist[idk].Integral(), _retlist[idk2up].Integral(), _retlist[idk2dn].Integral())
-        ## attach variations to each primary tty
-        retlist=[]
-        for idk,key in procmap.iteritems():
-            h = HistoWithNuisances(_retlist[idk])
-            for idk2,idk1 in isvarofmap.iteritems():
-                if idk==idk1:
-                    h.addVariation(ttymap[idk2].isVariation()[0].name,ttymap[idk2].isVariation()[1],_retlist[idk2])
-            retlist.append((key,h))
-
+        retlist = self._processTasks(_runPlot, tasks, name="plot "+plotspec.name) # list of pairs (idkey, result)
+                                                                                   # note that a key can appear multiple times if a task is split!
         ## then gather results with the same process
         mergemap = {}
         for (k,v) in retlist: 
@@ -736,9 +695,9 @@ class MCAnalysis:
             self.prepareForSplit() 
             #print "Original task list has %d entries; split factor %d." % (len(tasks), nsplit)
             maxent = max( task[1].getEntries() for task in tasks )
-            grain  = maxent / nsplit / 1 # factor 2 may be optimized
+            grain  = maxent / nsplit # may be optimized
             #print "Largest task has %d entries. Will use %d as grain " % (maxent, grain)
-            if grain < 10: return tasks # sanity check
+            if grain < 10000: grain = 10000 # avoid splitting too finely
             newtasks_wsize = []
             if self._options.splitSort:
                 tasks.sort(key = lambda task: task[1].getEntries(), reverse = True)

@@ -92,7 +92,9 @@ class PostFitSetup:
 
 class HistoWithNuisances:
     def __init__(self,histo_central,reset=False):
+        if isinstance(histo_central, HistoWithNuisances): raise RuntimeError, "Created with HWN instead of THn or TGraph"
         self.central = histo_central.Clone(histo_central.GetName())
+        self.central.SetDirectory(None)
         self.nominal = self.central # pre-fit state
         self.variations = {}
         if reset:
@@ -100,17 +102,44 @@ class HistoWithNuisances:
         self._rooFit  = None
         self._postFit = None
         self._usePostFit = True
+    def __getstate__(self):
+        """Needed to pickle"""
+        ret = { 'name':self.central.GetName(), 'central':self.central, 'nominal':None }
+        if self.nominal != self.central:
+            ret['nominal'] = self.nominal; 
+        variations = []
+        for (x,(v1,v2)) in self.variations.iteritems():
+            variations.append((x,(v1,v2)))
+        ret['variations'] = variations
+        return ret
+    def __setstate__(self,state):
+        """Needed to un-pickle"""
+        self.central = state['central'].Clone(state['name'])
+        self.nominal = state['nominal'].Clone(state['name']+"_nominal") if (state['nominal'] != None) else self.central
+        self.central.SetDirectory(None)
+        self.nominal.SetDirectory(None)
+        self.variations = dict()
+        for (x,(v1,v2)) in state['variations']:
+            v1c = v1.Clone("%s_%s_up"   % (self.central.GetName(),x)); v1c.SetDirectory(None)
+            v2c = v2.Clone("%s_%s_down" % (self.central.GetName(),x)); v2c.SetDirectory(None)
+            self.variations[x] = (v1c, v2c)
+        self._rooFit  = None
+        self._postFit = None
+        self._usePostFit = True
     def __getattr__(self,name):
         if name in self.__dict__: return self.__dict__[name]
         return getattr(self.nominal if self._usePostFit else self.central, name)
     def Clone(self,newname):
-        h = HistoWithNuisances(self.central.Clone(newname))
+        h = HistoWithNuisances(self.central)
+        self.central.SetName(newname)
         for v,p in self.variations.iteritems():
             h.variations[v]=map(lambda x:x.Clone(), p)
+            for hi in h.variations[v]: hi.SetDirectory(None)
         if self.nominal == self.central:
             h.nominal = h.central
         else:
             h.nominal = self.nominal.Clone(newname)
+            h.nominal.SetDirectory(None)
         if self._rooFit: h.setupRooFit(self._rooFit["context"])
         h._postFit = self._postFit
         return h
@@ -258,6 +287,7 @@ class HistoWithNuisances:
         idx = 0 if sign=='up' else 1
         if name not in self.variations: self.variations[name] = [None,None]
         self.variations[name][idx] = histo_varied.Clone('')
+        self.variations[name][idx].SetDirectory(None)
         # invalidate caches
         if self._rooFit or self._postFit:
             print "WARNING: adding a variantion on an object that already has roofit/postfit info"
