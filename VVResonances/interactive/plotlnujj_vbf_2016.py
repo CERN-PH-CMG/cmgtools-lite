@@ -51,7 +51,7 @@ for cutName, cut in cuts.iteritems():
 cuts = vbfCuts
 
 # -> Command line
-analysis_dir = '/data/clange/ntuples/FixNeutrino/'
+analysis_dir = '/data/clange/ntuples/FixMass/'
 tree_prod_name = ''
 
 samples_mc, samples_data, samples, all_samples, sampleDict = createSampleLists(analysis_dir, channel='WV', weight=weight_MC)
