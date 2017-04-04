@@ -47,23 +47,46 @@ DYJetsToLL_M50_LO_ext2.xSection = dy_xsec
 
 
 # From https://twiki.cern.ch/twiki/pub/CMS/HiggsToTauTauWorking2015/DYNjetWeights.xls r3
+# dy_weight_dict = {
+#     (0, 0): 0.669144882/dy_xsec,
+#     (0, 150): 0.001329134/dy_xsec,
+#     (1, 0): 0.018336763/dy_xsec,
+#     (1, 150): 0.001241603/dy_xsec,
+#     (2, 0): 0.019627356/dy_xsec,
+#     (2, 150): 0.001247156/dy_xsec,
+#     (3, 0): 0.021024291/dy_xsec,
+#     (3, 150): 0.001252443/dy_xsec,
+#     (4, 0): 0.015530181/dy_xsec,
+#     (4, 150): 0.001226594/dy_xsec,
+# }
+
+n_ev_dy_incl = 49144274.0 + 96658943.0
+n_ev_dy_1jet = 62627174.0
+n_ev_dy_2jet = 19970551.0
+n_ev_dy_3jet = 5856110.0
+n_ev_dy_4jet = 4197868.0
+
+
+k_factor = 5765.4/4954.0
+dy_xsec_incl = 4954.0 * k_factor
+dy_xsec_1jet = 1012.5 * k_factor
+dy_xsec_2jet = 332.8 * k_factor
+dy_xsec_3jet = 101.8 * k_factor
+dy_xsec_4jet = 54.8 * k_factor
+
+
 dy_weight_dict = {
-    (0, 0): 0.669144882/dy_xsec,
-    (0, 150): 0.001329134/dy_xsec,
-    (1, 0): 0.018336763/dy_xsec,
-    (1, 150): 0.001241603/dy_xsec,
-    (2, 0): 0.019627356/dy_xsec,
-    (2, 150): 0.001247156/dy_xsec,
-    (3, 0): 0.021024291/dy_xsec,
-    (3, 150): 0.001252443/dy_xsec,
-    (4, 0): 0.015530181/dy_xsec,
-    (4, 150): 0.001226594/dy_xsec,
+    0:dy_xsec_incl/n_ev_dy_incl,
+    1:dy_xsec_1jet/(n_ev_dy_incl*dy_xsec_1jet/dy_xsec_incl + n_ev_dy_1jet),
+    2:dy_xsec_2jet/(n_ev_dy_incl*dy_xsec_2jet/dy_xsec_incl  + n_ev_dy_2jet),
+    3:dy_xsec_3jet/(n_ev_dy_incl*dy_xsec_3jet/dy_xsec_incl  + n_ev_dy_3jet),
+    4:dy_xsec_4jet/(n_ev_dy_incl*dy_xsec_4jet/dy_xsec_incl  + n_ev_dy_4jet),
 }
 
-def getDYWeight(n_jets, m_gen):
-    if m_gen > 150.:
-        return dy_weight_dict[(n_jets, 150)]
-    return dy_weight_dict[(n_jets, 0)]
+def getDYWeight(n_jets): # , m_gen): # mass > 150 GeV sample buggy...
+    # if m_gen > 150.:
+    #     return dy_weight_dict[(n_jets, 150)]
+    return dy_weight_dict[n_jets]
 
 for sample in [DYJetsToLL_M50_LO, DYJetsToLL_M50_LO_ext2] + DYNJets: # + [DYJetsToTauTau_M150_LO]:
     # sample.fractions = [0.7, 0.204374, 0.0671836, 0.0205415, 0.0110539]
