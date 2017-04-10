@@ -36,7 +36,7 @@ is25ns = True
 
 #-------- HOW TO RUN
 
-test = 23
+test = 1
 
 if test==0:
     selectedComponents = [DoubleMu_742, DoubleMu_740p9]
@@ -47,10 +47,11 @@ if test==0:
         comp.triggers = triggers_8TeV_mumu
 
 elif test==1:
-    selectedComponents = [ DoubleMuon_Run2016H_03Feb2017_v3 ]
+    selectedComponents = [ SinglePhoton_Run2016E_03Feb2017 ]
     for comp in selectedComponents:
         comp.splitFactor = 1
-        comp.files = ['root://eoscms//store/data/Run2016H/DoubleMuon/MINIAOD/03Feb2017_ver3-v1/50000/36C4C2FB-4AEB-E611-ADD7-008CFA580778.root']
+###        comp.files = ['root://eoscms//store/data/Run2016H/DoubleMuon/MINIAOD/03Feb2017_ver3-v1/50000/run_MET_cfg.py']
+        comp.files = ['/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_26_patch1_METpaper/src/CMGTools/ObjectStudies/cfg/PickedEvents_Met_Xcheck.root']
         comp.json = None
 
 elif test==2:
@@ -239,7 +240,7 @@ elif test==25:
 
 from CMGTools.ObjectStudies.analyzers.metCoreModules_cff import *
 
-if test==13 or test==15 or test==16:
+if test==13 or test==15 or test==16 or test==1:
     metPuppiAna.storePuppiExtra = True
     metAna.metCollection     = ("slimmedMETsMuEGClean","","RERUN")
 
