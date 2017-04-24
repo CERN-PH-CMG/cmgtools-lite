@@ -17,7 +17,7 @@ public:
 
 private:
     HistProvider() {
-        f_in = new TFile("/afs/cern.ch/user/r/rlane/public/HIG16037/zpt_weights/zpt_weights_2016.root");
+        f_in = new TFile("/afs/cern.ch/work/d/dwinterb/public/MSSM2016/zpt_weights_summer2016.root");
         std::cout << "Creating HistProvider instance in DYReweighting" << std::endl;
         h_zptmass = dynamic_cast<TH2D*>(f_in->Get("zptmass_histo"));
         if (!h_zptmass)
