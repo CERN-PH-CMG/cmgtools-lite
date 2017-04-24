@@ -67,7 +67,7 @@ n_ev_dy_3jet = 5856110.0
 n_ev_dy_4jet = 4197868.0
 
 
-k_factor = 5765.4/4954.0
+k_factor = dy_xsec/4954.0
 dy_xsec_incl = 4954.0 * k_factor
 dy_xsec_1jet = 1012.5 * k_factor
 dy_xsec_2jet = 332.8 * k_factor
