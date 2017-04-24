@@ -23,11 +23,11 @@ inc_sig_tau2_iso = Cut(
 )
 
 inc_sig_tau1_other = Cut(
-    'l1_againstMuon3>0.5 && l1_againstElectronMVA6>0.5 && l1_pt>{pt1}'.format(pt1=pt1)
+    'l1_againstMuon3>0.5 && l1_againstElectronMVA6>0.5 && l1_pt>{pt1} && abs(l1_eta)<2.1'.format(pt1=pt1)
 )
 
 inc_sig_tau2_other = Cut(
-    'l2_againstMuon3>0.5 && l2_againstElectronMVA6>0.5 && l2_pt>{pt2}'.format(pt2=pt2)
+    'l2_againstMuon3>0.5 && l2_againstElectronMVA6>0.5 && l2_pt>{pt2} && abs(l2_eta)<2.1'.format(pt2=pt2)
 )
 
 inc_sig = inc_event & inc_trigger & inc_sig_tau1_iso & inc_sig_tau1_other & inc_sig_tau2_iso & inc_sig_tau2_other

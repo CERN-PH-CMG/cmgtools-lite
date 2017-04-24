@@ -1,13 +1,14 @@
 from CMGTools.H2TauTau.proto.plotter.PlotConfigs import VariableCfg as VCfg
 
-from CMGTools.H2TauTau.proto.plotter.binning import binning_svfitMass_finer, binning_mttottal
+from CMGTools.H2TauTau.proto.plotter.binning import binning_svfitMass_finer, binning_mttotal, binning_mttotal_fine
 
 generic_vars = [
     VCfg(name='_norm_', drawname='1.', binning={'nbinsx':5, 'xmin':-1.5, 'xmax':3.5}, unit='', xtitle='Normalisation'),
     VCfg(name='svfit_mass', binning=binning_svfitMass_finer, unit='GeV', xtitle='m_{#tau#tau}'),
     VCfg(name='svfit_transverse_mass', binning={'nbinsx':40, 'xmin':0., 'xmax':300.}, unit='GeV', xtitle='M_{T}^{SVFit}'),
     VCfg(name='mt_total', binning={'nbinsx':40, 'xmin':0., 'xmax':800.}, unit='GeV', xtitle='M_{T}^{total}'),
-    VCfg(name='mt_total_mssm', drawname='mt_total', binning=binning_mttottal, unit='GeV', xtitle='M_{T}^{total}'),
+    VCfg(name='mt_total_mssm', drawname='mt_total', binning=binning_mttotal, unit='GeV', xtitle='M_{T}^{total}'),
+    VCfg(name='mt_total_mssm_fine', drawname='mt_total', binning=binning_mttotal_fine, unit='GeV', xtitle='M_{T}^{total}'),
     VCfg(name='max_mt', drawname='max(mt, mt_leg2)', binning={'nbinsx':60, 'xmin':0., 'xmax':600.}, unit='GeV', xtitle='max(M_{T} (leg 1), M_{T} (leg 2))'),
     VCfg(name='mvis', binning=binning_svfitMass_finer, unit='GeV', xtitle='m_{vis}'),
     VCfg(name='mvis_fine', drawname='mvis', binning={'nbinsx':200, 'xmin':0., 'xmax':200.}, unit='GeV', xtitle='m_{vis}'),

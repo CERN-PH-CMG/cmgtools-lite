@@ -15,7 +15,7 @@ if "/sDYReweighting_cc.so" not in gSystem.GetLibraries():
     gROOT.ProcessLine(".L %s/src/CMGTools/H2TauTau/python/proto/plotter/DYReweighting.cc+" % os.environ['CMSSW_BASE']);
     from ROOT import getDYWeight
 
-splitDY = True
+splitDY = False
 useDYWeight = False
 # data2016G = True
 
@@ -28,9 +28,11 @@ if useDYWeight or splitDY:
             # dy_exps.append('(geninfo_nup == {njet} && (geninfo_invmass<150. || !(l2_gen_match==5 || l1_gen_lepfromtau)))*{weight}'.format(njet=njet, weight=weight))
             # weight = dy_weight_dict[(njet, 150)]
             # dy_exps.append('(geninfo_nup == {njet} && (geninfo_invmass>=150. && (l2_gen_match==5 || l1_gen_lepfromtau)))*{weight}'.format(njet=njet, weight=weight))
-    if useDYWeight:
-        dy_exps.append('getDYWeight(genboson_mass, genboson_pt)')
+    # if useDYWeight:
+    #     dy_exps.append('')
     dy_exp = '*({})'.format(' + '.join(dy_exps))
+    if useDYWeight:
+        dy_exp += '*getDYWeight(genboson_mass, genboson_pt)'
     print 'Using DY expression', dy_exp
 
 w_exps = []
@@ -93,16 +95,25 @@ def createSampleLists(analysis_dir='/afs/cern.ch/user/s/steggema/work/public/mt/
             SampleCfg(name='ZJ', dir_name=DYJetsToLL_M50_LO.name, ana_dir=analysis_dir, tree_prod_name=tree_prod_name,
                       xsec=DYJetsToLL_M50_LO.xSection, sumweights=DYJetsToLL_M50_LO.nGenEvents, weight_expr=zj_cut),
             ]
+
+    if channel == 'tt':
+        samples_essential += [
+            # SampleCfg(name='TTT', dir_name='TT_pow', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=TT_pow.xSection, sumweights=TT_pow.nGenEvents, weight_expr='l1_gen_match==5 && l2_gen_match==5'),
+            # SampleCfg(name='TTJ', dir_name='TT_pow', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=TT_pow.xSection, sumweights=TT_pow.nGenEvents, weight_expr='!(l1_gen_match==5 && l2_gen_match==5)'),
+            SampleCfg(name='TT', dir_name='TT_pow', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=TT_pow.xSection, sumweights=TT_pow.nGenEvents),
+        ]
+    else:
+        samples_essential += [
+            SampleCfg(name='TT', dir_name='TT_pow', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=TT_pow.xSection, sumweights=TT_pow.nGenEvents),
+        ]
+
     samples_essential += [
-        # SampleCfg(name='W', dir_name='WJetsToLNu_LO' if channel != 'mm' else 'WJetsToLNu', ana_dir=analysis_dir, tree_prod_name=tree_prod_name,
-        #           xsec=WJetsToLNu_LO.xSection, sumweights=WJetsToLNu_LO.nGenEvents, weight_expr=w_exp if channel != 'tau_fr' else '(geninfo_htgen<100.)'),
-        SampleCfg(name='TT', dir_name='TT_pow', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=TT_pow.xSection, sumweights=TT_pow.nGenEvents),
-        SampleCfg(name='T_tWch', dir_name='T_tWch_ext', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=T_tWch.xSection, sumweights=T_tWch.nGenEvents),
-        SampleCfg(name='TBar_tWch', dir_name='TBar_tWch_ext', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=TBar_tWch.xSection, sumweights=TBar_tWch.nGenEvents),
-        # SampleCfg(name='HiggsGGH125', dir_name='HiggsGGH125', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=HiggsGGH125.xSection, sumweights=HiggsGGH125.nGenEvents),
-        # SampleCfg(name='HiggsVBF125', dir_name='HiggsVBF125', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=HiggsVBF125.xSection, sumweights=HiggsVBF125.nGenEvents),
-        # SampleCfg(name='QCD', dir_name='QCD_Mu15', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=QCD_Mu15.xSection)
-    ]
+            SampleCfg(name='T_tWch', dir_name='T_tWch_ext', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=T_tWch.xSection, sumweights=T_tWch.nGenEvents),
+            SampleCfg(name='TBar_tWch', dir_name='TBar_tWch_ext', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=TBar_tWch.xSection, sumweights=TBar_tWch.nGenEvents),
+            # SampleCfg(name='HiggsGGH125', dir_name='HiggsGGH125', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=HiggsGGH125.xSection, sumweights=HiggsGGH125.nGenEvents),
+            # SampleCfg(name='HiggsVBF125', dir_name='HiggsVBF125', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=HiggsVBF125.xSection, sumweights=HiggsVBF125.nGenEvents),
+            # SampleCfg(name='QCD', dir_name='QCD_Mu15', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=QCD_Mu15.xSection)
+        ]
 
     if splitDY and channel not in ['mm', 'tau_fr']:
         for sample in DYNJets:
@@ -170,13 +181,39 @@ def createSampleLists(analysis_dir='/afs/cern.ch/user/s/steggema/work/public/mt/
     ]
 
     samples_mssm = []
-    mssm_names = ['HiggsSUSYBB80', 'HiggsSUSYBB90', 'HiggsSUSYBB100', 'HiggsSUSYBB110', 'HiggsSUSYBB120', 'HiggsSUSYBB130', 'HiggsSUSYBB140', 'HiggsSUSYBB160', 'HiggsSUSYBB180', 'HiggsSUSYBB200', 'HiggsSUSYBB250',  'HiggsSUSYBB350', 'HiggsSUSYBB400', 'HiggsSUSYBB450', 'HiggsSUSYBB500', 'HiggsSUSYBB600', 'HiggsSUSYBB700', 'HiggsSUSYBB800', 'HiggsSUSYBB900', 'HiggsSUSYBB1000',  'HiggsSUSYBB1400', 'HiggsSUSYBB1500', 'HiggsSUSYBB1600', 'HiggsSUSYBB1800', 'HiggsSUSYBB2000', 'HiggsSUSYBB2300', 'HiggsSUSYBB2900', 'HiggsSUSYBB3200', 'HiggsSUSYGG80', 'HiggsSUSYGG90',
-                  'HiggsSUSYGG100', 'HiggsSUSYGG110', 'HiggsSUSYGG120', 'HiggsSUSYGG130', 'HiggsSUSYGG140', 'HiggsSUSYGG160', 'HiggsSUSYGG180', 'HiggsSUSYGG200', 'HiggsSUSYGG250', 'HiggsSUSYGG300', 'HiggsSUSYGG350', 'HiggsSUSYGG400', 'HiggsSUSYGG450', 'HiggsSUSYGG500', 'HiggsSUSYGG600', 'HiggsSUSYGG700', 'HiggsSUSYGG800', 'HiggsSUSYGG900', 'HiggsSUSYGG1000', 'HiggsSUSYGG1200', 'HiggsSUSYGG1400', 'HiggsSUSYGG1500', 'HiggsSUSYGG1600', 'HiggsSUSYGG1800', 'HiggsSUSYGG2000', 'HiggsSUSYGG2300', 'HiggsSUSYGG2600', 'HiggsSUSYGG2900', 'HiggsSUSYGG3200']  # 'HiggsSUSYBB300','HiggsSUSYBB1200', 'HiggsSUSYBB2600',
-    # mssm_names = ['HiggsSUSYGG160', 'HiggsSUSYGG500', 'HiggsSUSYGG1000',
-    #               'HiggsSUSYBB160', 'HiggsSUSYBB500', 'HiggsSUSYBB1000',]
-    for name in mssm_names:
-        samples_mssm.append(SampleCfg(name=name.replace('HiggsSUSYBB', 'bbH').replace('HiggsSUSYGG', 'ggH'), dir_name=name,
-                                      ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=1., sumweights=1., is_signal=True),)
+    # '80', '90',
+    masses_bbh = [ '100', '110', '120', '130', '140', '160', '180', '200', '250',  '350', '400', '450',  '500', '600', '700', '800', '900', '1000',  '1400', '1500', '1600', '1800', '2000', '2300', '2900', '3200']
+    # '80', '90',
+    masses_ggh = ['100', '110', '120', '130', '160', '180', '200', '250', '300', '350', '400', '450', '500', '600', '700', '800',  '1000', '1200', '1400', '1500',  '1800', '2000', '2300', '2600', '2900', '3200']
+
+    # mssm_names = ['HiggsSUSYBB80', 'HiggsSUSYBB90', 'HiggsSUSYBB100', 'HiggsSUSYBB110', 'HiggsSUSYBB120', 'HiggsSUSYBB130', 'HiggsSUSYBB140', 'HiggsSUSYBB160', 'HiggsSUSYBB180', 'HiggsSUSYBB200', 'HiggsSUSYBB250',  'HiggsSUSYBB350', 'HiggsSUSYBB400', 'HiggsSUSYBB450', 'HiggsSUSYBB500', 'HiggsSUSYBB600', 'HiggsSUSYBB700', 'HiggsSUSYBB800', 'HiggsSUSYBB900', 'HiggsSUSYBB1000',  'HiggsSUSYBB1400', 'HiggsSUSYBB1500', 'HiggsSUSYBB1600', 'HiggsSUSYBB1800', 'HiggsSUSYBB2000', 'HiggsSUSYBB2300', 'HiggsSUSYBB2900', 'HiggsSUSYBB3200', 'HiggsSUSYGG80', 'HiggsSUSYGG90',
+    #               'HiggsSUSYGG100', 'HiggsSUSYGG110', 'HiggsSUSYGG120', 'HiggsSUSYGG130', 'HiggsSUSYGG160', 'HiggsSUSYGG180', 'HiggsSUSYGG200', 'HiggsSUSYGG250', 'HiggsSUSYGG300', 'HiggsSUSYGG350', 'HiggsSUSYGG400', 'HiggsSUSYGG450', 'HiggsSUSYGG500', 'HiggsSUSYGG600', 'HiggsSUSYGG700', 'HiggsSUSYGG800',  'HiggsSUSYGG1000', 'HiggsSUSYGG1200', 'HiggsSUSYGG1400', 'HiggsSUSYGG1500',  'HiggsSUSYGG1800', 'HiggsSUSYGG2000', 'HiggsSUSYGG2300', 'HiggsSUSYGG2600', 'HiggsSUSYGG2900', 'HiggsSUSYGG3200']  # 'HiggsSUSYBB300','HiggsSUSYBB1200', 'HiggsSUSYBB2600', 'HiggsSUSYGG140', 'HiggsSUSYGG900','HiggsSUSYGG1600',
+    # # mssm_names = ['HiggsSUSYGG160', 'HiggsSUSYGG500', 'HiggsSUSYGG1000',
+    # #               'HiggsSUSYBB160', 'HiggsSUSYBB500', 'HiggsSUSYBB1000',]
+
+    limits_ichep_ggh = {'2900': 0.0064239501953125, '450': 0.12127685546875, '700': 0.0381317138671875, '130': 10.5439453125, '110': 21.0205078125, '250': 0.79638671875, '2300': 0.007214355282485485, '180': 2.4345703125, '400': 0.17047119140625, '1400': 0.010340881533920765, '500': 0.089935302734375, '200': 1.708984375, '140': 7.3095703125, '120': 15.7705078125, '100': 24.57275390625, '160': 3.9550781249999996, '900': 0.02440795861184597, '1800': 0.008679199032485485, '1600': 0.009762573055922985, '3200': 0.0063995360396802425, '2000': 0.008056640625, '350': 0.2442626953125, '800': 0.0279693603515625, '1000': 0.01924438402056694, '1200':0.013682556338608265, '2600':0.0067382813431322575}
+
+    limits_ichep_ggh['300'] = 0.5
+    limits_ichep_ggh['600'] = 0.06
+    limits_ichep_ggh['1500'] = 0.01
+
+    limits_ichep_bbh = {'2900': 0.005267334170639515, '450': 0.069732666015625, '700': 0.030960083007812497, '130': 4.880859375, '110': 10.3125, '250': 0.3885498046875, '2300': 0.0059265135787427425, '180': 1.17919921875, '400': 0.095672607421875, '1400': 0.01087188720703125, '500': 0.0551605224609375, '200': 0.80517578125, '140': 3.818359375, '120': 6.77490234375, '100': 15.25390625, '160': 1.8818359375, '900': 0.02145080640912056, '1800': 0.007534789852797985, '1600': 0.00846252404153347, '3200': 0.0050369263626635075, '2000': 0.0066925049759447575, '350': 0.13861083984375, '800': 0.025848388671875, '1000': 0.01756439171731472}
+
+    limits_ichep_bbh['600'] = 0.045
+    limits_ichep_bbh['1500'] = 0.0095
+
+
+    for mass in masses_bbh:
+        samples_mssm.append(SampleCfg(name='bbH'+mass, dir_name='HiggsSUSYBB'+mass, ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=limits_ichep_bbh[mass], sumweights=1., is_signal=True))
+
+    for mass in masses_ggh:
+        if mass not in limits_ichep_ggh: import pdb; pdb.set_trace()
+        samples_mssm.append(SampleCfg(name='ggH'+mass, dir_name='HiggsSUSYGG'+mass, ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=limits_ichep_ggh[mass], sumweights=1., is_signal=True))
+
+    # for name in mssm_names:
+    #     samples_mssm.append(SampleCfg(name=name.replace('HiggsSUSYBB', 'bbH').replace('HiggsSUSYGG', 'ggH'), dir_name=name,
+    #                                   ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=1., sumweights=1., is_signal=True),)
+        
         # SampleCfg(name='HiggsSUSYGG200', dir_name='HiggsSUSYGG200', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=100., sumweights=1., is_signal=True),
         # SampleCfg(name='HiggsSUSYGG500', dir_name='HiggsSUSYGG500', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=100., sumweights=1., is_signal=True),
         # SampleCfg(name='HiggsSUSYGG1000', dir_name='HiggsSUSYGG1000', ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=100., sumweights=1., is_signal=True),
@@ -189,9 +226,12 @@ def createSampleLists(analysis_dir='/afs/cern.ch/user/s/steggema/work/public/mt/
         normfile = ROOT.TFile('/data1/steggema/tt/230816/DiTauNewMC/SMS_TStauStau/ttHhistoCounterAnalyzer/sumhist.root')
         normhist = normfile.Get('SumGenWeightsSMS')
 
+        from CMGTools.H2TauTau.proto.plotter.categories_TauTau import inc_trigger
         def createSusySampleCfg(m_stau=150, m_chi0=1):
-            sname = 'SMS_TStauStau'
-            return SampleCfg(name=sname+'MStau{m_stau}MChi{m_chi0}'.format(m_stau=m_stau, m_chi0=m_chi0), dir_name=sname, ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=get_xsec(m_stau), sumweights=normhist.GetBinContent(m_stau+1, m_chi0+1, 1), is_signal=True, weight_expr='(GenSusyMStau=={m_stau}. && GenSusyMNeutralino=={m_chi0})'.format(m_stau=m_stau, m_chi0=m_chi0))
+
+            sname = 'SMS_TStauStau_righthanded'
+            return SampleCfg(name=sname+'MStau{m_stau}MChi{m_chi0}'.format(m_stau=m_stau, m_chi0=m_chi0), dir_name=sname, ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=get_xsec(m_stau), sumweights=normhist.GetBinContent(m_stau+1, m_chi0+1, 1), is_signal=True, weight_expr='(GenSusyMStau2=={m_stau}. && GenSusyMNeutralino=={m_chi0})'.format(m_stau=m_stau, m_chi0=m_chi0),
+                cut_replace_func=lambda s : s.replace(inc_trigger.cutstr, '1.'))
 
         samples_susy.append(createSusySampleCfg(100, 1))
         samples_susy.append(createSusySampleCfg(200, 1))

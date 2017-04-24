@@ -84,6 +84,12 @@ def createHistograms(hist_cfg, all_stack=False, verbose=False, friend_func=None,
             if cfg.weight_expr:
                 weight = '*'.join([weight, cfg.weight_expr])
 
+            if cfg.cut_replace_func:
+                print '\nReplacing norm_cut', norm_cut
+                norm_cut = cfg.cut_replace_func(norm_cut)
+                shape_cut = cfg.cut_replace_func(norm_cut)
+                print 'New:', norm_cut, '\n'
+
             if hist_cfg.weight:
                 norm_cut = '({c}) * {we}'.format(c=norm_cut, we=weight)
                 shape_cut = '({c}) * {we}'.format(c=shape_cut, we=weight)
@@ -129,7 +135,7 @@ def createHistograms(hist_cfg, all_stack=False, verbose=False, friend_func=None,
                 hist.Scale(cfg.scale)
 
                 if cfg.name in plot:
-                    # print 'Histogram', cfg.name, 'already exists; adding...'
+                    print 'Histogram', cfg.name, 'already exists; adding...', cfg.dir_name
                     plot[cfg.name].Add(Histogram(cfg.name, hist))
                 else:
                     plot_hist = plot.AddHistogram(cfg.name, hist, stack=stack)
@@ -187,6 +193,12 @@ def createHistogram(hist_cfg, all_stack=False, verbose=False, friend_func=None):
 
             if cfg.shape_cut:
                 shape_cut = cfg.shape_cut
+
+            if cfg.cut_replace_func:
+                print '\nReplacing norm_cut', norm_cut
+                norm_cut = cfg.cut_replace_func(norm_cut)
+                shape_cut = cfg.cut_replace_func(norm_cut)
+                print 'New:', norm_cut, '\n'
 
             weight = hist_cfg.weight
             if cfg.weight_expr:

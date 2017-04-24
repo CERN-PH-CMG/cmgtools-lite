@@ -29,11 +29,11 @@ def getHeppyOption(option, default):
 # Get all heppy options; set via '-o production' or '-o production=True'
 
 # production = True run on batch, production = False (or unset) run locally
-production = getHeppyOption('production', False)
+production = getHeppyOption('production', True)
 pick_events = getHeppyOption('pick_events', False)
 syncntuple = getHeppyOption('syncntuple', True)
-cmssw = getHeppyOption('cmssw', True)
-doSUSY = getHeppyOption('susy', False)
+cmssw = getHeppyOption('cmssw', False)
+doSUSY = getHeppyOption('susy', True)
 computeSVfit = getHeppyOption('computeSVfit', False)
 data = getHeppyOption('data', False)
 tes_string = getHeppyOption('tes_string', '') # '_tesup' '_tesdown'
@@ -180,6 +180,11 @@ tau2Weighter = cfg.Analyzer(
     disable=False,
 )
 
+if doSUSY:
+    for module in tau1Weighter, tau2Weighter:
+        module.dataEffFiles = module.scaleFactorFiles
+        module.scaleFactorFiles = {}
+
 treeProducer = cfg.Analyzer(
     H2TauTauTreeProducerTauTau,
     name='H2TauTauTreeProducerTauTau',
@@ -225,13 +230,13 @@ metFilter = cfg.Analyzer(
 from CMGTools.RootTools.utils.splitFactor import splitFactor
 from CMGTools.H2TauTau.proto.samples.summer16.htt_common import backgrounds, sm_signals, mssm_signals, data_tau, sync_list
 from CMGTools.H2TauTau.proto.samples.summer16.sms import samples_susy
-from CMGTools.RootTools.samples.samples_13TeV_signals import SignalSUSY
+# from CMGTools.RootTools.samples.samples_13TeV_signals import SignalSUSY
 from CMGTools.H2TauTau.proto.samples.summer16.triggers_tauTau import mc_triggers, mc_triggerfilters, data_triggers, data_triggerfilters
 
 data_list = data_tau
 samples = backgrounds + sm_signals + mssm_signals + sync_list
 if doSUSY:
-    samples += samples_susy + SignalSUSY[:1]
+    samples = samples_susy #+ SignalSUSY[:1]
 split_factor = 1e5
 
 for sample in data_list:
@@ -250,6 +255,10 @@ for sample in samples:
 for mc in samples:
     mc.puFileData = puFileData
     mc.puFileMC = puFileMC
+    if 'PUSpring16' in mc.dataset:
+        print 'Attaching Spring 16 pileup to sample', mc.dataset
+        # mc.puFileData = '$CMSSW_BASE/src/CMGTools/H2TauTau/data/data_pu_25-07-2016_69p2mb_60.root'
+        mc.puFileMC = '$CMSSW_BASE/src/CMGTools/H2TauTau/data/MC_Spring16_PU25_Startup_800.root'
 
 ###################################################
 ###             SET COMPONENTS BY HAND          ###
@@ -307,8 +316,6 @@ if doSUSY:
     )
     outputService.append(output_service)
 
-selectedComponents = [s for s in selectedComponents if 'WJetsToLNu_LO' in s.name]
-
 ###################################################
 ###            SET BATCH OR LOCAL               ###
 ###################################################
@@ -321,9 +328,15 @@ if not production:
         selectedComponents = [data_list[0]]
     selectedComponents = selectedComponents[:1]
     for comp in selectedComponents:
-        comp.splitFactor = 4
+        comp.splitFactor = 1
         comp.fineSplitFactor = 1
     # comp.files = comp.files[13:20]
+
+# selectedComponents = selectedComponents[-1:]
+
+if doSUSY:
+    from CMGTools.RootTools.samples.autoAAAconfig import autoAAA
+    autoAAA(selectedComponents)
 
 preprocessor = None
 if cmssw:
