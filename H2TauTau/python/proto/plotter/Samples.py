@@ -15,8 +15,8 @@ if "/sDYReweighting_cc.so" not in gSystem.GetLibraries():
     gROOT.ProcessLine(".L %s/src/CMGTools/H2TauTau/python/proto/plotter/DYReweighting.cc+" % os.environ['CMSSW_BASE']);
     from ROOT import getDYWeight
 
-splitDY = False
-useDYWeight = False
+splitDY = True
+useDYWeight = True
 # data2016G = True
 
 if useDYWeight or splitDY:
@@ -65,9 +65,6 @@ def createSampleLists(analysis_dir='/afs/cern.ch/user/s/steggema/work/public/mt/
     elif channel == 'tau_fr':
         tree_prod_name = 'TauFRTreeProducer'
 
-    DYJetsToLL_M50_LO.nGenEvents = 1000.
-    # WJetsToLNu_LO.nGenEvents = 1000.
-
     samples_essential = [
         # SampleCfg(name='ZTTM10', dir_name='DYJetsToLL_M10to50', ana_dir=analysis_dir, tree_prod_name=tree_prod_name,
                       # xsec=DYJetsToLL_M10to50_ext1.xSection, sumweights=DYJetsToLL_M10to50_ext1.nGenEvents, weight_expr=ztt_cut),
@@ -88,12 +85,12 @@ def createSampleLists(analysis_dir='/afs/cern.ch/user/s/steggema/work/public/mt/
         
     else:
         samples_essential += [
-            SampleCfg(name='ZTT', dir_name=DYJetsToLL_M50_LO.name, ana_dir=analysis_dir, tree_prod_name=tree_prod_name,
-                      xsec=DYJetsToLL_M50_LO.xSection, sumweights=DYJetsToLL_M50_LO.nGenEvents, weight_expr=ztt_cut),
-            SampleCfg(name='ZL', dir_name=DYJetsToLL_M50_LO.name, ana_dir=analysis_dir, tree_prod_name=tree_prod_name,
-                      xsec=DYJetsToLL_M50_LO.xSection, sumweights=DYJetsToLL_M50_LO.nGenEvents, weight_expr=zl_cut),
-            SampleCfg(name='ZJ', dir_name=DYJetsToLL_M50_LO.name, ana_dir=analysis_dir, tree_prod_name=tree_prod_name,
-                      xsec=DYJetsToLL_M50_LO.xSection, sumweights=DYJetsToLL_M50_LO.nGenEvents, weight_expr=zj_cut),
+            SampleCfg(name='ZTT', dir_name=DYJetsToLL_M50_LO_ext2.name, ana_dir=analysis_dir, tree_prod_name=tree_prod_name,
+                      xsec=DYJetsToLL_M50_LO_ext2.xSection, sumweights=DYJetsToLL_M50_LO_ext2.nGenEvents, weight_expr=ztt_cut),
+            SampleCfg(name='ZL', dir_name=DYJetsToLL_M50_LO_ext2.name, ana_dir=analysis_dir, tree_prod_name=tree_prod_name,
+                      xsec=DYJetsToLL_M50_LO_ext2.xSection, sumweights=DYJetsToLL_M50_LO_ext2.nGenEvents, weight_expr=zl_cut),
+            SampleCfg(name='ZJ', dir_name=DYJetsToLL_M50_LO_ext2.name, ana_dir=analysis_dir, tree_prod_name=tree_prod_name,
+                      xsec=DYJetsToLL_M50_LO_ext2.xSection, sumweights=DYJetsToLL_M50_LO_ext2.nGenEvents, weight_expr=zj_cut),
             ]
 
     if channel == 'tt':

@@ -28,13 +28,13 @@ def prepareCuts(mode):
     # append categories to plot
     if mode == 'control':
         cuts.append(MyCut('inclusive', inc_cut & Cut('n_bjets==0')))
-        cuts.append(MyCut('dilpt50', inc_cut & Cut('n_bjets==0 && dil_pt>50')))
+        # cuts.append(MyCut('dilpt50', inc_cut & Cut('n_bjets==0 && dil_pt>50')))
 
-        cuts.append(MyCut('2bjet', inc_cut & Cut('n_bjets>=2')))
+        # cuts.append(MyCut('2bjet', inc_cut & Cut('n_bjets>=2')))
 
-        cuts.append(MyCut('sm_dysel', inc_cut & Cut('n_bjets==0 && n_jets>=1 && l1_pt>50 && l2_pt>40 && abs(l1_eta - l2_eta)<1. && pzeta_vis>60.')))
+        # cuts.append(MyCut('sm_dysel', inc_cut & Cut('n_bjets==0 && n_jets>=1 && l1_pt>50 && l2_pt>40 && abs(l1_eta - l2_eta)<1. && pzeta_vis>60.')))
 
-        cuts.append(MyCut('inclusive_SS', inc_cut))
+        # cuts.append(MyCut('inclusive_SS', inc_cut))
         # cuts.append(MyCut('mZ', inc_cut & Cut('mvis < 110.')))
         # cuts.append(MyCut('low_deta', inc_cut & Cut('delta_eta_l1_l2 < 1.5')))
         # cuts.append(MyCut('high_deta', inc_cut & Cut('delta_eta_l1_l2 > 1.5')))
@@ -42,7 +42,7 @@ def prepareCuts(mode):
         # cuts.append(MyCut('mZ_0jet', inc_cut & Cut('mvis < 110. && n_jets==0')))
         # cuts.append(MyCut('mZ_1jet', inc_cut & Cut('mvis < 110. && n_jets>=1')))
         # Next is a failed attempt to get a W+jets-enriched control region
-        cuts.append(MyCut('mva_met_sig_1_low_deta', inc_cut & Cut('met_pt/sqrt(met_cov00 + met_cov11) > 1. && delta_eta_l1_l2 < 2.')))
+        # cuts.append(MyCut('mva_met_sig_1_low_deta', inc_cut & Cut('met_pt/sqrt(met_cov00 + met_cov11) > 1. && delta_eta_l1_l2 < 2.')))
 
     if mode == 'mssm':
         cuts.append(MyCut('nobtag', inc_cut & Cut('n_bjets==0')))
@@ -147,9 +147,10 @@ def prepareCuts(mode):
 def getVariables(mode):
     # Taken from Variables.py, can get subset with e.g. getVars(['mt', 'mvis'])
     # variables = tautau_vars
-
-    # variables = getVars(['mvis', 'mt2', 'l1_pt', 'l2_pt', 'delta_phi_l1_l2', 'delta_eta_l1_l2', 'met_pt', 'mt_total', 'mt_total_mssm', 'mt_sum', 'pzeta_met', 'l2_mt', 'mt', 'pzeta_vis', 'pzeta_disc', 'pthiggs', 'jet1_pt', 'n_jets', 'dil_pt'], channel='tautau') #, 'l1_pt',  '_norm_', ])
-    variables = getVars(['mt_total', 'mt_total_mssm', 'mt_total_mssm_fine', 'mvis_extended', 'l1_pt'], channel='tautau')
+    if mode == 'control':
+        variables = getVars(['_norm_', 'mvis', 'mt2', 'l1_pt', 'l2_pt', 'delta_phi_l1_l2', 'delta_eta_l1_l2', 'met_pt', 'mt_total', 'mt_total_mssm', 'mt_sum', 'pzeta_met', 'l2_mt', 'mt', 'pzeta_vis', 'pzeta_disc', 'pthiggs', 'jet1_pt', 'n_jets', 'dil_pt'], channel='tautau')
+    if mode == 'mssm':
+        variables = getVars(['mt_total', 'mt_total_mssm', 'mt_total_mssm_fine', 'mvis_extended', 'l1_pt'], channel='tautau')
     # variables += [
     #     VariableCfg(name='mt2', binning={'nbinsx':15, 'xmin':0., 'xmax':150.}, unit='GeV', xtitle='m_{T2}')
     # ]
@@ -181,8 +182,8 @@ def makePlots(variables, cuts, total_weight, all_samples, samples, friend_func, 
     # def_iso_cut = inc_sig_tau1_iso & inc_sig_tau2_iso
     iso_cuts = {
         # 'vvtight':(Cut('l1_byIsolationMVArun2v1DBoldDMwLT>5.5') & Cut('l2_byIsolationMVArun2v1DBoldDMwLT>5.5'), Cut('l1_byIsolationMVArun2v1DBoldDMwLT>3.5') & Cut('l2_byIsolationMVArun2v1DBoldDMwLT>3.5')),
-        # 'vtight':(Cut('l1_byIsolationMVArun2v1DBoldDMwLT>4.5') & Cut('l2_byIsolationMVArun2v1DBoldDMwLT>4.5'), Cut('l1_byIsolationMVArun2v1DBoldDMwLT>2.5') & Cut('l2_byIsolationMVArun2v1DBoldDMwLT>2.5')),
-        'tight':(Cut('l1_byIsolationMVArun2v1DBoldDMwLT>3.5') & Cut('l2_byIsolationMVArun2v1DBoldDMwLT>3.5'), Cut('l1_byIsolationMVArun2v1DBoldDMwLT>3.5') & Cut('l2_byIsolationMVArun2v1DBoldDMwLT>1.5')),
+        'vtight':(Cut('l1_byIsolationMVArun2v1DBoldDMwLT>4.5') & Cut('l2_byIsolationMVArun2v1DBoldDMwLT>4.5'), Cut('l1_byIsolationMVArun2v1DBoldDMwLT>2.5') & Cut('l2_byIsolationMVArun2v1DBoldDMwLT>2.5')),
+        # 'tight':(Cut('l1_byIsolationMVArun2v1DBoldDMwLT>3.5') & Cut('l2_byIsolationMVArun2v1DBoldDMwLT>3.5'), Cut('l1_byIsolationMVArun2v1DBoldDMwLT>3.5') & Cut('l2_byIsolationMVArun2v1DBoldDMwLT>1.5')),
         # 'medium':(Cut('l1_byIsolationMVArun2v1DBoldDMwLT>2.5') & Cut('l2_byIsolationMVArun2v1DBoldDMwLT>2.5'), Cut('l1_byIsolationMVArun2v1DBoldDMwLT>0.5') & Cut('l2_byIsolationMVArun2v1DBoldDMwLT>0.5')),
         # 'loose':(Cut('l1_byIsolationMVArun2v1DBoldDMwLT>1.5') & Cut('l2_byIsolationMVArun2v1DBoldDMwLT>1.5'), Cut('1')),
         # 'vloose':(Cut('l1_byIsolationMVArun2v1DBoldDMwLT>0.5') & Cut('l2_byIsolationMVArun2v1DBoldDMwLT>0.5'), Cut('1')),
@@ -293,12 +294,20 @@ def makePlots(variables, cuts, total_weight, all_samples, samples, friend_func, 
 
 
 if __name__ == '__main__':
-    mode = 'mssm' # 'control' 'mssm' 'mva_train' 'susy' 'sm'
+    mode = 'control' # 'control' 'mssm' 'mva_train' 'susy' 'sm'
 
     int_lumi = lumi
     analysis_dir = '/data1/steggema/Gael2/MC/'
     verbose = True
     total_weight = 'weight'
+
+    tau_id_weight = '*(1. - 0.05*({leg}_gen_match==5))'
+
+    total_weight += tau_id_weight.format(leg='l1')
+    total_weight += tau_id_weight.format(leg='l2')
+
+    mu_to_tau = '(1. + ( ({leg}_gen_match==2 || {leg}_gen_match==4)*( (abs({leg}_eta)<0.4)*0.22 + (abs({leg}_eta)>0.4 && abs({leg}_eta)<0.8)*0.12 + (abs({leg}_eta)>0.8 && abs({leg}_eta)<1.2)*0.26 + (abs({leg}_eta)>1.2 && abs({leg}_eta)<1.7)*0.22) + (abs({leg}_eta)>1.7 && abs({leg}_eta)<2.3)*1.39)))'
+
     optimisation = True
     make_plots = True
 

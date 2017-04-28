@@ -71,6 +71,8 @@ generic_vars = [
     # VCfg(name='pt_l1l2_div_pt_l1', drawname="sqrt(l1_pt**2 + l2_pt**2 + 2*l1_pt*l2_pt*(cos(l1_phi - l2_phi)))/l1_pt", binning={'nbinsx':40, 'xmin':0, 'xmax':2.}, unit=None, xtitle='p_{T}^{l1+l2}/p_{T}^{l1}'),
     # VCfg(name='pt_l1l2_div_pt_l2', drawname="sqrt(l1_pt**2 + l2_pt**2 + 2*l1_pt*l2_pt*(cos(l1_phi - l2_phi)))/l2_pt", binning={'nbinsx':50, 'xmin':0, 'xmax':10.}, unit=None, xtitle='p_{T}^{l1+l2}/p_{T}^{l2}'),
     VCfg(name='dil_pt', drawname="dil_pt", binning={'nbinsx':50, 'xmin':0, 'xmax':250.}, unit='GeV', xtitle='p_{T}^{l1+l2}'),
+
+    VCfg(name='geninfo_nup', binning={'nbinsx':10, 'xmin':-0.5, 'xmax':9.5}, unit=None, xtitle='N_{partons}'),
         
 
     # VCfg(name='jet1_chargedHadronMultiplicity', binning={'nbinsx':40, 'xmin':-0.5, 'xmax':39.5}, unit=None, xtitle='jet 1 N_{CH}'),
