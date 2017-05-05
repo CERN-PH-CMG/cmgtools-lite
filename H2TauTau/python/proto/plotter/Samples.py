@@ -179,9 +179,9 @@ def createSampleLists(analysis_dir='/afs/cern.ch/user/s/steggema/work/public/mt/
 
     samples_mssm = []
     # '80', '90',
-    masses_bbh = [ '100', '110', '120', '130', '140', '160', '180', '200', '250',  '350', '400', '450',  '500', '600', '700', '800', '900', '1000',  '1400', '1500', '1600', '1800', '2000', '2300', '2900', '3200']
+    masses_bbh = [ '100', '110', '120', '130', '140', '160', '180', '200', '250',  '350', '400', '450',  '500', '600', '700', '800', '900', '1000',  '1400', '1600', '1800', '2000', '2300', '2900', '3200']
     # '80', '90',
-    masses_ggh = ['100', '110', '120', '130', '160', '180', '200', '250', '300', '350', '400', '450', '500', '600', '700', '800',  '1000', '1200', '1400', '1500',  '1800', '2000', '2300', '2600', '2900', '3200']
+    masses_ggh = ['100', '110', '120', '130', '160', '180', '200', '250', '350', '400', '450', '500', '600', '700', '800',  '1000', '1200', '1400', '1800', '2000', '2300', '2600', '2900', '3200']
 
     # mssm_names = ['HiggsSUSYBB80', 'HiggsSUSYBB90', 'HiggsSUSYBB100', 'HiggsSUSYBB110', 'HiggsSUSYBB120', 'HiggsSUSYBB130', 'HiggsSUSYBB140', 'HiggsSUSYBB160', 'HiggsSUSYBB180', 'HiggsSUSYBB200', 'HiggsSUSYBB250',  'HiggsSUSYBB350', 'HiggsSUSYBB400', 'HiggsSUSYBB450', 'HiggsSUSYBB500', 'HiggsSUSYBB600', 'HiggsSUSYBB700', 'HiggsSUSYBB800', 'HiggsSUSYBB900', 'HiggsSUSYBB1000',  'HiggsSUSYBB1400', 'HiggsSUSYBB1500', 'HiggsSUSYBB1600', 'HiggsSUSYBB1800', 'HiggsSUSYBB2000', 'HiggsSUSYBB2300', 'HiggsSUSYBB2900', 'HiggsSUSYBB3200', 'HiggsSUSYGG80', 'HiggsSUSYGG90',
     #               'HiggsSUSYGG100', 'HiggsSUSYGG110', 'HiggsSUSYGG120', 'HiggsSUSYGG130', 'HiggsSUSYGG160', 'HiggsSUSYGG180', 'HiggsSUSYGG200', 'HiggsSUSYGG250', 'HiggsSUSYGG300', 'HiggsSUSYGG350', 'HiggsSUSYGG400', 'HiggsSUSYGG450', 'HiggsSUSYGG500', 'HiggsSUSYGG600', 'HiggsSUSYGG700', 'HiggsSUSYGG800',  'HiggsSUSYGG1000', 'HiggsSUSYGG1200', 'HiggsSUSYGG1400', 'HiggsSUSYGG1500',  'HiggsSUSYGG1800', 'HiggsSUSYGG2000', 'HiggsSUSYGG2300', 'HiggsSUSYGG2600', 'HiggsSUSYGG2900', 'HiggsSUSYGG3200']  # 'HiggsSUSYBB300','HiggsSUSYBB1200', 'HiggsSUSYBB2600', 'HiggsSUSYGG140', 'HiggsSUSYGG900','HiggsSUSYGG1600',

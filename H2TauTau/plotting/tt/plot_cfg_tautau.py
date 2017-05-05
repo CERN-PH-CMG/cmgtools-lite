@@ -181,12 +181,12 @@ def makePlots(variables, cuts, total_weight, all_samples, samples, friend_func, 
 
     # def_iso_cut = inc_sig_tau1_iso & inc_sig_tau2_iso
     iso_cuts = {
-        # 'vvtight':(Cut('l1_byIsolationMVArun2v1DBoldDMwLT>5.5') & Cut('l2_byIsolationMVArun2v1DBoldDMwLT>5.5'), Cut('l1_byIsolationMVArun2v1DBoldDMwLT>3.5') & Cut('l2_byIsolationMVArun2v1DBoldDMwLT>3.5')),
+        'vvtight':(Cut('l1_byIsolationMVArun2v1DBoldDMwLT>5.5') & Cut('l2_byIsolationMVArun2v1DBoldDMwLT>5.5'), Cut('l1_byIsolationMVArun2v1DBoldDMwLT>3.5') & Cut('l2_byIsolationMVArun2v1DBoldDMwLT>3.5')),
         'vtight':(Cut('l1_byIsolationMVArun2v1DBoldDMwLT>4.5') & Cut('l2_byIsolationMVArun2v1DBoldDMwLT>4.5'), Cut('l1_byIsolationMVArun2v1DBoldDMwLT>2.5') & Cut('l2_byIsolationMVArun2v1DBoldDMwLT>2.5')),
-        # 'tight':(Cut('l1_byIsolationMVArun2v1DBoldDMwLT>3.5') & Cut('l2_byIsolationMVArun2v1DBoldDMwLT>3.5'), Cut('l1_byIsolationMVArun2v1DBoldDMwLT>3.5') & Cut('l2_byIsolationMVArun2v1DBoldDMwLT>1.5')),
-        # 'medium':(Cut('l1_byIsolationMVArun2v1DBoldDMwLT>2.5') & Cut('l2_byIsolationMVArun2v1DBoldDMwLT>2.5'), Cut('l1_byIsolationMVArun2v1DBoldDMwLT>0.5') & Cut('l2_byIsolationMVArun2v1DBoldDMwLT>0.5')),
-        # 'loose':(Cut('l1_byIsolationMVArun2v1DBoldDMwLT>1.5') & Cut('l2_byIsolationMVArun2v1DBoldDMwLT>1.5'), Cut('1')),
-        # 'vloose':(Cut('l1_byIsolationMVArun2v1DBoldDMwLT>0.5') & Cut('l2_byIsolationMVArun2v1DBoldDMwLT>0.5'), Cut('1')),
+        'tight':(Cut('l1_byIsolationMVArun2v1DBoldDMwLT>3.5') & Cut('l2_byIsolationMVArun2v1DBoldDMwLT>3.5'), Cut('l1_byIsolationMVArun2v1DBoldDMwLT>3.5') & Cut('l2_byIsolationMVArun2v1DBoldDMwLT>1.5')),
+        'medium':(Cut('l1_byIsolationMVArun2v1DBoldDMwLT>2.5') & Cut('l2_byIsolationMVArun2v1DBoldDMwLT>2.5'), Cut('l1_byIsolationMVArun2v1DBoldDMwLT>0.5') & Cut('l2_byIsolationMVArun2v1DBoldDMwLT>0.5')),
+        'loose':(Cut('l1_byIsolationMVArun2v1DBoldDMwLT>1.5') & Cut('l2_byIsolationMVArun2v1DBoldDMwLT>1.5'), Cut('1')),
+        'vloose':(Cut('l1_byIsolationMVArun2v1DBoldDMwLT>0.5') & Cut('l2_byIsolationMVArun2v1DBoldDMwLT>0.5'), Cut('1')),
     }
 
     for cut in cuts:
@@ -294,19 +294,27 @@ def makePlots(variables, cuts, total_weight, all_samples, samples, friend_func, 
 
 
 if __name__ == '__main__':
-    mode = 'control' # 'control' 'mssm' 'mva_train' 'susy' 'sm'
+    mode = 'mssm' # 'control' 'mssm' 'mva_train' 'susy' 'sm'
 
     int_lumi = lumi
-    analysis_dir = '/data1/steggema/Gael2/MC/'
+    analysis_dir = '/data1/steggema/Gael3/MC/'
     verbose = True
     total_weight = 'weight'
 
-    tau_id_weight = '*(1. - 0.05*({leg}_gen_match==5))'
+    # tau_id_weight = '*(1. - 0.05*({leg}_gen_match==5))'
 
-    total_weight += tau_id_weight.format(leg='l1')
-    total_weight += tau_id_weight.format(leg='l2')
+    # total_weight += tau_id_weight.format(leg='l1')
+    # total_weight += tau_id_weight.format(leg='l2')
 
-    mu_to_tau = '(1. + ( ({leg}_gen_match==2 || {leg}_gen_match==4)*( (abs({leg}_eta)<0.4)*0.22 + (abs({leg}_eta)>0.4 && abs({leg}_eta)<0.8)*0.12 + (abs({leg}_eta)>0.8 && abs({leg}_eta)<1.2)*0.26 + (abs({leg}_eta)>1.2 && abs({leg}_eta)<1.7)*0.22) + (abs({leg}_eta)>1.7 && abs({leg}_eta)<2.3)*1.39)))'
+    # mu_to_tau = '(1. + ( ({leg}_gen_match==2 || {leg}_gen_match==4)*( (abs({leg}_eta)<0.4)*0.22 + (abs({leg}_eta)>0.4 && abs({leg}_eta)<0.8)*0.12 + (abs({leg}_eta)>0.8 && abs({leg}_eta)<1.2)*0.26 + (abs({leg}_eta)>1.2 && abs({leg}_eta)<1.7)*0.22) + (abs({leg}_eta)>1.7 && abs({leg}_eta)<2.3)*1.39)))'
+
+    import os
+    from ROOT import gSystem, gROOT
+    if "/sHTTEfficiencies_cc.so" not in gSystem.GetLibraries(): 
+        gROOT.ProcessLine(".L %s/src/CMGTools/H2TauTau/python/proto/plotter/HTTEfficiencies.cc+" % os.environ['CMSSW_BASE']);
+        from ROOT import getTauWeight
+
+    total_weight = 'weight*getTauWeight(l1_gen_match, l1_pt, l1_eta, l1_decayMode)*getTauWeight(l2_gen_match, l2_pt, l2_eta, l2_decayMode)'
 
     optimisation = True
     make_plots = True
