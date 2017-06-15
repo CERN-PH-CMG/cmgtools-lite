@@ -142,9 +142,20 @@ T6ttWW = [ ]
 T6qqWW = [ ]
 
 
+##Higgsino
+## ------------------------------------------------------
+#Higgsino_300_120=kreator.makeMCComponentFromLocal("Higgsino_300_120","/higgsino_300_120_v5/","/afs/cern.ch/work/b/bschneid/public/higgsino-points/%s",".*root")
+#Higgsino_300_80=kreator.makeMCComponentFromLocal("Higgsino_300_80","/higgsino_300_80_v5/","/afs/cern.ch/work/b/bschneid/public/higgsino-points/%s",".*root")
+#Higgsino_500_120=kreator.makeMCComponentFromLocal("Higgsino_500_120","higgsino_500_120_v5","/afs/cern.ch/work/b/bschneid/public/higgsino-points/%s",".*root")
+#Higgsino_500_80=kreator.makeMCComponentFromLocal("Higgsino_500_80","higgsino_500_80_v5","/afs/cern.ch/work/b/bschneid/public/higgsino-points/%s",".*root")
+Higgsino = [] #Higgsino_300_120, Higgsino_300_80, Higgsino_500_120, Higgsino_500_80]
+
+
+
+
 ## mcSamplesPriv
 ## ------------------------------------------------------
-mcSamplesPriv = SqGltttt + T1ttbb + T1ttbbWW + T1tttt + T2tt + T2ttDeg + T2cc + T5qqqqVV + T5qqqqVVDeg + T5ttttDeg + T6ttWW + T6qqWW
+mcSamplesPriv = SqGltttt + T1ttbb + T1ttbbWW + T1tttt + T2tt + T2ttDeg + T2cc + T5qqqqVV + T5qqqqVVDeg + T5ttttDeg + T6ttWW + T6qqWW + Higgsino
 
 
 

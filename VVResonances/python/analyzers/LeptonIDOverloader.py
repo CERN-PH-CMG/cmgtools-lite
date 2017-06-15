@@ -8,12 +8,12 @@ import PhysicsTools.HeppyCore.framework.config as cfg
 class LeptonIDOverloader( Analyzer ):
     def __init__(self, cfg_ana, cfg_comp, looperName):
         super(LeptonIDOverloader,self).__init__(cfg_ana, cfg_comp, looperName)
-        self.heepIDCalculator = ROOT.cmg.HEEPEleIDRecalculator()  
+        self.heepIDCalculator = ROOT.cmg.HEEPEleIDRecalculator()
     def beginLoop(self, setup):
         super(LeptonIDOverloader,self).beginLoop(setup)
 
 
-    def heepID(self,lepton):    
+    def heepID(self,lepton):
         return self.heepIDNoIso(lepton) and self.heepIDCalculator.iso(lepton.physObj,lepton.rho,self.handles['electrons'].product(),self.handles['lostTracks'].product(),self.handles['packed'].product())
 
     def declareHandles(self):
@@ -27,23 +27,23 @@ class LeptonIDOverloader( Analyzer ):
         return self.heepIDCalculator.id(e.physObj)
 
 
-    def muonIDTrackerHighPt(self,mu):    
+    def muonIDTrackerHighPt(self,mu):
         decision =  mu.isTrackerMuon() and mu.numberOfMatchedStations() > 1 and\
             mu.muonBestTrack().ptError()/mu.muonBestTrack().pt()<0.3 and mu.dB()< 0.2 and mu.innerTrack().hitPattern().numberOfValidPixelHits() > 0 and\
             mu.innerTrack().hitPattern().trackerLayersWithMeasurement()>5
         return decision
 
 
-    def muonIDHighPt(self,mu):    
+    def muonIDHighPt(self,mu):
         return mu.isHighPtMuon(mu.associatedVertex)
 
-    def muonIDHighPtIso(self,mu):    
-        return mu.isHighPtMuon(mu.associatedVertex) and mu.isolationR03().sumPt/mu.pt()<0.05 # per discussion with Zuchetta go down to 0.05
+    def muonIDHighPtIso(self,mu):
+        return mu.isHighPtMuon(mu.associatedVertex) and mu.relIso04 < 0.05
 
-    def muonIDTrackerHighPtIso(self,mu):    
-        return self.muonIDTrackerHighPt(mu) and mu.isolationR03().sumPt/mu.pt()<0.05
+    def muonIDTrackerHighPtIso(self,mu):
+        return self.muonIDTrackerHighPt(mu) and mu.relIso04 < 0.05
 
-        
+
     def process(self, event):
         self.readCollections( event.input )
 
@@ -56,15 +56,3 @@ class LeptonIDOverloader( Analyzer ):
                 lepton.highPtTrackID = self.muonIDTrackerHighPt(lepton)
                 lepton.highPtIDIso = self.muonIDHighPtIso(lepton)
                 lepton.highPtTrackIDIso = self.muonIDTrackerHighPtIso(lepton)
-
-
-
-
-        
-            
-
-        
-
-
-                
-                

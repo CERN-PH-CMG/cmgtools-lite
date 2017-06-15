@@ -12,7 +12,7 @@ def _filterSamples(samples,args):
         selsamples = samples
     return selsamples
 
-def runMain(samples,args=None):
+def runMain(samples,args=None,localobjs=None):
    if args == None: args = sys.argv
    selsamples = _filterSamples(samples,args)
    if "help" in args or "--help" in args or "-h" in args:
@@ -34,6 +34,11 @@ python samplefile.py list [samples]:
 python samplefile.py summary [samples]:   
         two equivalent commands that prints a list of samples, with number of files, events, equivalent luminosity, etc
 
+python samplefile.py genXSecAna [samples] [ --pretend ] [ --verbose ]:  
+        check the cross sections using genXSecAna on one of the files
+
+python samplefile.py checkdecl:  
+        check that all samples are declared in the samples list
 
 """
    if "test" in args:
@@ -79,6 +84,56 @@ python samplefile.py summary [samples]:
                 checker.checkComp(d, verbose=True)
    if "list" in args or "summary" in args:
         from CMGTools.HToZZ4L.tools.configTools import printSummary
-        dataSamples = samples
         printSummary(selsamples)
+   if "genXSecAna" in args:
+        import subprocess, re;
+        if "--fetch" in args or not os.path.exists("%s/src/genXSecAna.py" % os.environ['CMSSW_BASE']):
+            print "Retrieving genXSecAna.py"
+            os.system("wget -O "+os.environ['CMSSW_BASE']+"/src/genXSecAna.py  https://raw.githubusercontent.com/syuvivida/generator/master/cross_section/runJob/ana.py")
+        for d in selsamples:
+            if not hasattr(d, 'xSection'): 
+                print "Skipping %s which has no cross section" % d.name
+                continue
+            if "--pretend" in args: 
+                print "Would check ",d.name," aka ",d.dataset
+                continue
+            print "Sample %s: XS(sample file) = %g pb, ... " % (d.name,d.xSection),
+            if "--verbose" in args: 
+                print "\n ".join(["cmsRun", os.environ['CMSSW_BASE']+"/src/genXSecAna.py", "inputFiles=%s" % d.files[0], "maxEvents=-1"])
+            xsecAnaOut = subprocess.check_output(["cmsRun", os.environ['CMSSW_BASE']+"/src/genXSecAna.py", "inputFiles=%s" % d.files[0], "maxEvents=-1"], stderr=subprocess.STDOUT)
+            if "--verbose" in args: 
+                for l in xsecAnaOut.split("\n"): print "\t>> "+l
+            m = re.search(r"After filter: final cross section = (\S+) \+- (\S+) pb", xsecAnaOut)
+            if m and float(m.group(1)) == 0:
+                m  = re.search(r"Before matching: total cross section = (\S+) \+- (\S+) pb", xsecAnaOut)
+                m1 = re.search(r"After matching: total cross section = (\S+) \+- (\S+) pb", xsecAnaOut)
+                if m1 and m and float(m1.group(1)) < 0 and float(m.group(1)) > 0 and abs(float(m1.group(1))/float(m.group(1))+1)<1e-2:
+                    print "\033[01;33m [after filter Xsec is zero, using before filter one] \033[00m"
+                else: m = None
+            if not m or float(m.group(1)) <= 0:
+                print "\n\033[01;31m ERROR: could not find After filter cross section in the output, or it's zero. \033[00m"
+                continue
+            xs, xserr = float(m.group(1)), float(m.group(2))
+            kfactor = d.xSection/xs
+            if abs(xs-d.xSection) < min(3*xserr,1e-2*xs): (col,stat) = '\033[01;36m', "OK"
+            elif 0.8 < kfactor and kfactor < 1.4: (col,stat) = '\033[01;36m', "OK?" 
+            elif 0.5 < kfactor and kfactor < 2.0: (col,stat) = '\033[01;33m', "WARNING" 
+            else:                                 (col,stat) = '\033[01;31m', "ERROR"
+            print "XS(genAnalyzer) = %g +/- %g pb : %s kFactor = %g %s\033[00m" % (xs, xserr, col, kfactor, stat)
+   if "checkdecl" in args:
+        if localobjs == None: raise RuntimeError("you have to runMain(samples,localobjs=locals())")
+        import PhysicsTools.HeppyCore.framework.config as cfg
+        ok = 0
+        for name,obj in localobjs.iteritems():
+            if name == "comp": continue # local variable used in loops
+            if isinstance(obj, cfg.Component):  
+                if obj not in samples:
+                    print "\tERROR: component %s is not added to the samples list " % name
+                elif obj.name != name:
+                    print "\tERROR: component %s has inconsistent name %s " % (name, obj.name)
+                else:
+                    ok += 1
+        print "\tINFO: %d correctly declared components" % ok
+
+
 

@@ -68,4 +68,3 @@ float eleWPT(float pt, float etaSc, float mva){
   else if (pt>10 && ((std::abs(etaSc)<0.8 && mva > 0.87) || (std::abs(etaSc)>=0.8 && std::abs(etaSc)<1.479 && mva > 0.60) || (std::abs(etaSc)>=1.479 && mva >0.17))) return 1;
   else return 0;
 }
-

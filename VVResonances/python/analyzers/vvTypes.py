@@ -72,10 +72,15 @@ VVType = NTupleObjectType("VVType", baseObjectTypes=[], variables = [
 
 VJType = NTupleObjectType("VJType", baseObjectTypes=[VVType], variables = [
     NTupleSubObject("l2",  lambda x : x.leg2,FatJetType),
-    NTupleSubObject("l2_softDrop",  lambda x : x.leg2.substructure.softDropJet,fourVectorType),
+    # NTupleSubObject("l2_softDrop",  lambda x : x.leg2.substructure.softDropJet,fourVectorType),
+    NTupleVariable("l2_softDrop_pt", lambda x: x.leg2.substructure.softDropJet.pt(), float),
+    NTupleVariable("l2_softDrop_eta", lambda x: x.leg2.substructure.softDropJet.eta(), float),
+    NTupleVariable("l2_softDrop_phi", lambda x: x.leg2.substructure.softDropJet.phi(), float),
+    NTupleVariable("l2_softDrop_mass", lambda x: x.leg2.substructure.softDropJetMassBare*x.leg2.substructure.softDropJetMassCor, float),
     NTupleSubObject("l2_pruned",  lambda x : x.leg2.substructure.prunedJet,fourVectorType),
     NTupleVariable("l2_softDrop_massCorr",  lambda x : x.leg2.substructure.softDropJetMassCor,float),
     NTupleVariable("l2_softDrop_massBare",  lambda x : x.leg2.substructure.softDropJetMassBare,float),
+    NTupleVariable("l2_softDrop_massL2L3",  lambda x : x.leg2.substructure.softDropJetMassL2L3,float),
     NTupleVariable("l2_softDrop_nSubJets",  lambda x : len(x.leg2.substructure.softDropSubjets),int),
     NTupleSubObject("l2_softDrop_s1",  lambda x : x.leg2.substructure.softDropSubjets[0] if len(x.leg2.substructure.softDropSubjets)>0 else dummyLV,fourVectorType),
     NTupleSubObject("l2_softDrop_s2",  lambda x : x.leg2.substructure.softDropSubjets[1] if len(x.leg2.substructure.softDropSubjets)>1 else dummyLV,fourVectorType),
@@ -97,13 +102,14 @@ LNuJJType = NTupleObjectType("LNuJJType", baseObjectTypes=[VJType], variables = 
     NTupleSubObject("l1",  lambda x : x.leg1,LNuType),
     NTupleSubObject("altl1",  lambda x : x.leg1.alternateLV,fourVectorType),
     NTupleSubObject("l1_l",  lambda x : x.leg1.leg1,leptonTypeExtra),
+    NTupleVariable("l1_l_chargedHadronIsoRel", lambda x: x.leg1.leg1.chargedHadronIso()/x.leg1.leg1.pt(), float),
     NTupleSubObject("l1_met",  lambda x : x.leg1.leg2,metType),
     #Scale factors , For HLT use the OR between the two triggers:
     NTupleVariable("gen_partialMass",   lambda x : x.genPartialMass if hasattr(x.leg2,'substructureGEN') else -99, float,"",-99,True),
-    NTupleVariable("sf",  lambda x : x.leg1.leg1.sfWV*(x.leg1.leg1.sfHLT+x.sfHLTMET-x.leg1.leg1.sfHLT*x.sfHLTMET),float),
+    NTupleVariable("sf",  lambda x : x.leg1.leg1.sfWV*(x.leg1.leg1.eff_HLT_DATA+x.eff_HLTMET_DATA-x.leg1.leg1.eff_HLT_DATA*x.eff_HLTMET_DATA)/(x.leg1.leg1.eff_HLT_MC+x.eff_HLTMET_MC-x.leg1.leg1.eff_HLT_MC*x.eff_HLTMET_MC),float),
     NTupleVariable("sfWV",  lambda x : x.leg1.leg1.sfWV, float),
-    NTupleVariable("sfHLT",  lambda x : x.leg1.leg1.sfHLT, float),
-    NTupleVariable("sfHLTMET",  lambda x : x.sfHLTMET, float)
+#    NTupleVariable("sfHLT",  lambda x : x.leg1.leg1.sfHLT, float),
+#    NTupleVariable("sfHLTMET",  lambda x : x.sfHLTMET, float)
 ])
 
 
@@ -119,10 +125,15 @@ JJType = NTupleObjectType("JJType", baseObjectTypes=[VJType], variables = [
 
 
     NTupleSubObject("l1",  lambda x : x.leg1,FatJetType),
-    NTupleSubObject("l1_softDrop",  lambda x : x.leg1.substructure.softDropJet,fourVectorType),
+    # NTupleSubObject("l1_softDrop",  lambda x : x.leg1.substructure.softDropJet,fourVectorType),
+    NTupleVariable("l1_softDrop_pt", lambda x: x.leg1.substructure.softDropJet.pt(), float),
+    NTupleVariable("l1_softDrop_eta", lambda x: x.leg1.substructure.softDropJet.eta(), float),
+    NTupleVariable("l1_softDrop_phi", lambda x: x.leg1.substructure.softDropJet.phi(), float),
+    NTupleVariable("l1_softDrop_mass", lambda x: x.leg1.substructure.softDropJetMassBare*x.leg1.substructure.softDropJetMassCor, float),
     NTupleSubObject("l1_pruned",  lambda x : x.leg1.substructure.prunedJet,fourVectorType),
     NTupleVariable("l1_softDrop_massCorr",  lambda x : x.leg1.substructure.softDropJetMassCor,float),
     NTupleVariable("l1_softDrop_massBare",  lambda x : x.leg1.substructure.softDropJetMassBare,float),
+    NTupleVariable("l1_softDrop_massL2L3",  lambda x : x.leg1.substructure.softDropJetMassL2L3,float),
     NTupleVariable("l1_softDrop_nSubJets",  lambda x : len(x.leg1.substructure.softDropSubjets),int),
     NTupleSubObject("l1_softDrop_s1",  lambda x : x.leg1.substructure.softDropSubjets[0] if len(x.leg1.substructure.softDropSubjets)>0 else dummyLV,fourVectorType),
     NTupleSubObject("l1_softDrop_s2",  lambda x : x.leg1.substructure.softDropSubjets[1] if len(x.leg1.substructure.softDropSubjets)>1 else dummyLV,fourVectorType),

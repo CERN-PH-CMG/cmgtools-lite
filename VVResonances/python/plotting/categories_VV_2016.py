@@ -22,7 +22,7 @@ cut_massVhigh = cut_massZhigh
 cut_massHlow = cut_massZhigh
 cut_massHhigh = 135
 cut_tau21HP_jj = 0.4
-cut_tau21HP_lnujj = 0.6
+cut_tau21HP_lnujj = 0.55
 cut_tau21LP = 0.75
 cut_mjj = 986
 cut_mlnujj = 600
@@ -33,11 +33,10 @@ cut_HbbTight = 0.9
 cut_vbfDEta = 4.0
 cut_vbfMass = 400
 
-# cat_lnujj_trigOrSF = "(((HLT2_MU||HLT2_ELE||HLT2_ISOMU||HLT2_ISOELE||HLT2_MET120)&&run>2000)+((run<2000)*lnujj_sf))"
-cat_lnujj_trigOrSF = "(((HLT2_MU||HLT2_ELE||HLT2_MET120)&&run>2000)+((run<2000)*lnujj_sf))"
-cat_metFilters = "(Flag_goodVertices&&Flag_CSCTightHaloFilter&&Flag_HBHENoiseFilter&&Flag_HBHENoiseIsoFilter&&Flag_eeBadScFilter&&Flag_badChargedHadronFilter&&Flag_badMuonFilter)"
-cat_lnujj_basic = "(lnujj_nOtherLeptons==0&&lnujj_l2_softDrop_massBare*lnujj_l2_softDrop_massCorr>0&&lnujj_LV_mass>{cut_mlnujj}&&(abs(lnujj_l1_l_pdgId)==11||(abs(lnujj_l1_l_pdgId)==13&&lnujj_l1_l_chargedHadRelIso03<0.05)))".format(cut_mlnujj=cut_mlnujj)
-cat_jj_basic = 'lnujj_nOtherLeptons==0&&((HLT2_HT800||HLT2_HT900)&&run>2000)+(run<2000)&&jj_LV_mass>{cut_mjj}'.format(cut_mjj=cut_mjj)
+cat_lnujj_trigOrSF = "((HLT_MU||HLT_ELE||HLT_ISOMU||HLT_ISOELE||HLT_MET120)&&((run>2000*Flag_eeBadScFilter)+((run<2000)*lnujj_sf)))"
+cat_metFilters = "(Flag_goodVertices&&Flag_CSCTightHaloFilter&&Flag_HBHENoiseFilter&&Flag_HBHENoiseIsoFilter&&Flag_badChargedHadronFilter&&Flag_badMuonFilter)"
+cat_lnujj_basic = "(lnujj_nOtherLeptons==0&&lnujj_l2_softDrop_mass>0&&lnujj_LV_mass>{cut_mlnujj}&&((abs(lnujj_l1_l_pdgId)==11||(abs(lnujj_l1_l_pdgId)==13))))".format(cut_mlnujj=cut_mlnujj)
+cat_jj_basic = 'lnujj_nOtherLeptons==0&&((HLT_HT800||HLT_HT900)&&run>2000)+(run<2000)&&jj_LV_mass>{cut_mjj}'.format(cut_mjj=cut_mjj)
 
 cat_lnujj_mu = '(abs(lnujj_l1_l_pdgId)==13)'
 cat_lnujj_e = '(abs(lnujj_l1_l_pdgId)==11)'
@@ -53,20 +52,20 @@ cat_jj_l1_HP = '(jj_l1_tau2/jj_l1_tau1<{cut_tau21HP_jj})'.format(cut_tau21HP_jj=
 cat_jj_l1_LP = '(jj_l1_tau2/jj_l1_tau1>{cut_tau21HP_jj}&&jj_l1_tau2/jj_l1_tau1<{cut_tau21LP})'.format(cut_tau21HP_jj=cut_tau21HP_jj, cut_tau21LP=cut_tau21LP)
 
 # mass cuts for VV
-cat_jj_l2_mLowSB = '(jj_l2_softDrop_massBare*jj_l2_softDrop_massCorr<{cut_massWlow})'.format(cut_massWlow=cut_massWlow)
-cat_jj_l2_mW = '(jj_l2_softDrop_massBare*jj_l2_softDrop_massCorr>{cut_massWlow})&&(jj_l2_softDrop_massBare*jj_l2_softDrop_massCorr<{cut_massWhigh})'.format(cut_massWlow=cut_massWlow, cut_massWhigh=cut_massWhigh)
-cat_jj_l2_mZ = '(jj_l2_softDrop_massBare*jj_l2_softDrop_massCorr>{cut_massZlow})&&(jj_l2_softDrop_massBare*jj_l2_softDrop_massCorr<{cut_massZhigh})'.format(cut_massZlow=cut_massZlow, cut_massZhigh=cut_massZhigh)
-cat_jj_l2_mV = '(jj_l2_softDrop_massBare*jj_l2_softDrop_massCorr>{cut_massVlow})&&(jj_l2_softDrop_massBare*jj_l2_softDrop_massCorr<{cut_massVhigh})'.format(cut_massVlow=cut_massVlow, cut_massVhigh=cut_massVhigh)
-cat_jj_l2_mH = '(jj_l2_softDrop_massBare*jj_l2_softDrop_massCorr>{cut_massHlow})&&(jj_l2_softDrop_massBare*jj_l2_softDrop_massCorr<{cut_massHhigh})'.format(cut_massHlow=cut_massHlow, cut_massHhigh=cut_massHhigh)
-cat_jj_l2_mHighSB = '(jj_l2_softDrop_massBare*jj_l2_softDrop_massCorr>{cut_massHhigh})'.format(cut_massHhigh=cut_massHhigh)
-cat_jj_l2_veto_mV = '(jj_l2_softDrop_massBare*jj_l2_softDrop_massCorr<{cut_massVlow})||(jj_l2_softDrop_massBare*jj_l2_softDrop_massCorr>{cut_massVhigh})'.format(cut_massVlow=cut_massVlow, cut_massVhigh=cut_massVhigh)
-cat_jj_l1_mLowSB = '(jj_l1_softDrop_massBare*jj_l1_softDrop_massCorr<{cut_massWlow})'.format(cut_massWlow=cut_massWlow)
-cat_jj_l1_mW = '(jj_l1_softDrop_massBare*jj_l1_softDrop_massCorr>{cut_massWlow})&&(jj_l1_softDrop_massBare*jj_l1_softDrop_massCorr<{cut_massWhigh})'.format(cut_massWlow=cut_massWlow, cut_massWhigh=cut_massWhigh)
-cat_jj_l1_mZ = '(jj_l1_softDrop_massBare*jj_l1_softDrop_massCorr>{cut_massZlow})&&(jj_l1_softDrop_massBare*jj_l1_softDrop_massCorr<{cut_massZhigh})'.format(cut_massZlow=cut_massZlow, cut_massZhigh=cut_massZhigh)
-cat_jj_l1_mV = '(jj_l1_softDrop_massBare*jj_l1_softDrop_massCorr>{cut_massVlow})&&(jj_l1_softDrop_massBare*jj_l1_softDrop_massCorr<{cut_massVhigh})'.format(cut_massVlow=cut_massVlow, cut_massVhigh=cut_massVhigh)
-cat_jj_l1_mH = '(jj_l1_softDrop_massBare*jj_l1_softDrop_massCorr>{cut_massHlow})&&(jj_l1_softDrop_massBare*jj_l1_softDrop_massCorr<{cut_massHhigh})'.format(cut_massHlow=cut_massHlow, cut_massHhigh=cut_massHhigh)
-cat_jj_l1_mHighSB = '(jj_l1_softDrop_massBare*jj_l1_softDrop_massCorr>{cut_massHhigh})'.format(cut_massHhigh=cut_massHhigh)
-cat_jj_l1_veto_mV = '(jj_l1_softDrop_massBare*jj_l1_softDrop_massCorr<{cut_massVlow})||(jj_l1_softDrop_massBare*jj_l1_softDrop_massCorr>{cut_massVhigh})'.format(cut_massVlow=cut_massVlow, cut_massVhigh=cut_massVhigh)
+cat_jj_l2_mLowSB = '(jj_l2_softDrop_mass<{cut_massWlow})'.format(cut_massWlow=cut_massWlow)
+cat_jj_l2_mW = '((jj_l2_softDrop_mass>{cut_massWlow})&&(jj_l2_softDrop_mass<{cut_massWhigh}))'.format(cut_massWlow=cut_massWlow, cut_massWhigh=cut_massWhigh)
+cat_jj_l2_mZ = '((jj_l2_softDrop_mass>{cut_massZlow})&&(jj_l2_softDrop_mass<{cut_massZhigh}))'.format(cut_massZlow=cut_massZlow, cut_massZhigh=cut_massZhigh)
+cat_jj_l2_mV = '((jj_l2_softDrop_mass>{cut_massVlow})&&(jj_l2_softDrop_mass<{cut_massVhigh}))'.format(cut_massVlow=cut_massVlow, cut_massVhigh=cut_massVhigh)
+cat_jj_l2_mH = '((jj_l2_softDrop_mass>{cut_massHlow})&&(jj_l2_softDrop_mass<{cut_massHhigh}))'.format(cut_massHlow=cut_massHlow, cut_massHhigh=cut_massHhigh)
+cat_jj_l2_mHighSB = '(jj_l2_softDrop_mass>{cut_massHhigh})'.format(cut_massHhigh=cut_massHhigh)
+cat_jj_l2_veto_mV = '((jj_l2_softDrop_mass<{cut_massVlow})||(jj_l2_softDrop_mass>{cut_massVhigh}))'.format(cut_massVlow=cut_massVlow, cut_massVhigh=cut_massVhigh)
+cat_jj_l1_mLowSB = '(jj_l1_softDrop_mass<{cut_massWlow})'.format(cut_massWlow=cut_massWlow)
+cat_jj_l1_mW = '((jj_l1_softDrop_mass>{cut_massWlow})&&(jj_l1_softDrop_mass<{cut_massWhigh}))'.format(cut_massWlow=cut_massWlow, cut_massWhigh=cut_massWhigh)
+cat_jj_l1_mZ = '((jj_l1_softDrop_mass>{cut_massZlow})&&(jj_l1_softDrop_mass<{cut_massZhigh}))'.format(cut_massZlow=cut_massZlow, cut_massZhigh=cut_massZhigh)
+cat_jj_l1_mV = '((jj_l1_softDrop_mass>{cut_massVlow})&&(jj_l1_softDrop_mass<{cut_massVhigh}))'.format(cut_massVlow=cut_massVlow, cut_massVhigh=cut_massVhigh)
+cat_jj_l1_mH = '((jj_l1_softDrop_mass>{cut_massHlow})&&(jj_l1_softDrop_mass<{cut_massHhigh}))'.format(cut_massHlow=cut_massHlow, cut_massHhigh=cut_massHhigh)
+cat_jj_l1_mHighSB = '(jj_l1_softDrop_mass>{cut_massHhigh})'.format(cut_massHhigh=cut_massHhigh)
+cat_jj_l1_veto_mV = '((jj_l1_softDrop_mass<{cut_massVlow})||(jj_l1_softDrop_mass>{cut_massVhigh}))'.format(cut_massVlow=cut_massVlow, cut_massVhigh=cut_massVhigh)
 
 # Hbb cuts for VV
 # still need to add Hbbtagger SFs
