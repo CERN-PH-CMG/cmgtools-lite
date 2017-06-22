@@ -220,23 +220,34 @@ def createSampleLists(analysis_dir='/afs/cern.ch/user/s/steggema/work/public/mt/
     samples_susy = []
     if mode == 'susy':
         
-        normfile = ROOT.TFile('/data1/steggema/tt/230816/DiTauNewMC/SMS_TStauStau/ttHhistoCounterAnalyzer/sumhist.root')
+        # normfile = ROOT.TFile(' /afs/cern.ch/work/s/steggema/public/tt/100417/SMS_TChipmStauSnu/ttHhistoCounterAnalyzer/sumhist.root')
+        normfile = ROOT.TFile(' /afs/cern.ch/work/s/steggema/public/tt/100417/SMS_TChipmStauSnu//H2TauTauTreeProducerTauTau/tree.root')
         normhist = normfile.Get('SumGenWeightsSMS')
 
         from CMGTools.H2TauTau.proto.plotter.categories_TauTau import inc_trigger
         def createSusySampleCfg(m_stau=150, m_chi0=1):
 
-            sname = 'SMS_TStauStau_righthanded'
-            return SampleCfg(name=sname+'MStau{m_stau}MChi{m_chi0}'.format(m_stau=m_stau, m_chi0=m_chi0), dir_name=sname, ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=get_xsec(m_stau), sumweights=normhist.GetBinContent(m_stau+1, m_chi0+1, 1), is_signal=True, weight_expr='(GenSusyMStau2=={m_stau}. && GenSusyMNeutralino=={m_chi0})'.format(m_stau=m_stau, m_chi0=m_chi0),
+            sname = 'SMS_TChipmStauSnu'
+            print "setting sum of weights to", normhist.GetBinContent(m_stau+1, m_chi0+1, 1), 'for', sname+'MStau{m_stau}MChi{m_chi0}'.format(m_stau=m_stau, m_chi0=m_chi0)
+            return SampleCfg(name=sname+'MStau{m_stau}MChi{m_chi0}'.format(m_stau=m_stau, m_chi0=m_chi0), dir_name=sname, ana_dir=analysis_dir, tree_prod_name=tree_prod_name, xsec=get_xsec(m_stau), sumweights=normhist.GetBinContent(m_stau+1, m_chi0+1, 1), is_signal=True, weight_expr='(GenSusyMChargino=={m_stau}. && GenSusyMNeutralino=={m_chi0})'.format(m_stau=m_stau, m_chi0=m_chi0),
                 cut_replace_func=lambda s : s.replace(inc_trigger.cutstr, '1.'))
 
-        samples_susy.append(createSusySampleCfg(100, 1))
-        samples_susy.append(createSusySampleCfg(200, 1))
-        samples_susy.append(createSusySampleCfg(150, 1))
-        samples_susy.append(createSusySampleCfg(150, 10))
-        samples_susy.append(createSusySampleCfg(150, 20))
-        samples_susy.append(createSusySampleCfg(150, 50))
-        samples_susy.append(createSusySampleCfg(150, 100))
+        # # the following is good for staus
+        # samples_susy.append(createSusySampleCfg(100, 1))
+        # samples_susy.append(createSusySampleCfg(200, 1))
+        # samples_susy.append(createSusySampleCfg(150, 1))
+        # samples_susy.append(createSusySampleCfg(150, 10))
+        # samples_susy.append(createSusySampleCfg(150, 20))
+        # samples_susy.append(createSusySampleCfg(150, 50))
+        # samples_susy.append(createSusySampleCfg(150, 100))
+
+        # samples_susy.append(createSusySampleCfg(100, 1))
+        # samples_susy.append(createSusySampleCfg(200, 1))
+        # samples_susy.append(createSusySampleCfg(150, 1))
+        samples_susy.append(createSusySampleCfg(150, 25))
+        samples_susy.append(createSusySampleCfg(300, 100))
+        samples_susy.append(createSusySampleCfg(500, 1))
+        samples_susy.append(createSusySampleCfg(600, 1))
 
     if mode in ['sm', 'mva']:
         samples_additional += samples_sm

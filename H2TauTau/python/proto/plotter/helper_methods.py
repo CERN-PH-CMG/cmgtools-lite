@@ -83,7 +83,7 @@ def plotDataOverMCEff(hist_mc_tight, hist_mc_loose, hist_data_tight, hist_data_l
 
     g = TGraphAsymmErrors(hist_mc_tight)
     g.Divide(hist_mc_tight, hist_mc_loose)
-    g.GetYaxis().SetTitle('Fake rate')
+    g.GetYaxis().SetTitle('Misidentification rate')
     g.GetXaxis().SetTitle(hist_mc_tight.GetXaxis().GetTitle())
     g.GetYaxis().SetTitleOffset(1.2)
     g.GetYaxis().SetTitleOffset(1.3)
@@ -97,7 +97,7 @@ def plotDataOverMCEff(hist_mc_tight, hist_mc_loose, hist_data_tight, hist_data_l
     # if g_data.GetN() != hist_data_tight.GetNbinsX():
     #     import pdb; pdb.set_trace()
 
-    g_data.GetYaxis().SetTitle('Fake rate')
+    g_data.GetYaxis().SetTitle('Misidentification rate')
     g_data.GetXaxis().SetTitle(hist_data_tight.GetXaxis().GetTitle())
     g_data.GetYaxis().SetTitleOffset(1.2)
     g_data.GetYaxis().SetTitleOffset(1.3)
@@ -192,7 +192,7 @@ def plotMCEffs(input_list, plot_name='fakerate.pdf'):
     for (hist_tight, hist_loose, legend, colour, style) in input_list:
         g = TGraphAsymmErrors(hist_tight)
         g.Divide(hist_tight, hist_loose)
-        g.GetYaxis().SetTitle('Fake rate')
+        g.GetYaxis().SetTitle('Misidentification rate')
         g.GetXaxis().SetTitle(hist_tight.GetXaxis().GetTitle())
         g.GetYaxis().SetTitleOffset(1.2)
         g.GetYaxis().SetTitleOffset(1.3)
@@ -301,8 +301,8 @@ def plotMCEffs(input_list, plot_name='fakerate.pdf'):
     g.GetYaxis().SetRangeUser(0.0001, 1)
     pad.SetLogy(True)
     cv.Print(plot_name.replace('.', '_log.'))
-    # f = ROOT.TFile(plot_name.replace('.', '_log.').replace('.pdf', '.root'), 'RECREATE')
-    # g.Write()
+    f = ROOT.TFile(plot_name.replace('.', '_log.').replace('.pdf', '.root'), 'RECREATE')
+    g.Write()
     # g_data.Write()
-    # cv.Write()
-    # f.Close()
+    cv.Write()
+    f.Close()

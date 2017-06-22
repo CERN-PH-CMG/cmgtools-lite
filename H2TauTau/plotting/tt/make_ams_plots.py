@@ -18,24 +18,28 @@ var_name = 'mt_total_mssm'
 bbh_name = 'HiggsSUSYBB'
 ggh_name = 'HiggsSUSYGG'
 
-isos = ['vvtight', 'vtight', 'tight', 'medium']
-isos_titles = ['VVTight', 'VTight', 'Tight', 'Medium']
+isos = ['vvtight', 'vtight', 'tight', 'medium', 'loose']
+isos_titles = ['VVTight', 'VTight', 'Tight', 'Medium', 'Loose']
 
 groups = {
     'inclusive':['inclusive'],
-    'btag':['1bjet_1jet'],
-    'taupt60split':['inclusive_tau1pt60', 'inclusive_tau1ptl60'],
-    'taupt75split':['inclusive_tau1pt75', 'inclusive_tau1ptl75'],
-    'taupt100split':['inclusive_tau1pt100', 'inclusive_tau1ptl100'],
-    'taupt60':['inclusive_tau1pt60'],
-    'taupt75':['inclusive_tau1pt75'],
-    'taupt100':['inclusive_tau1pt100']
+    'btag':['btag'],
+    'nobtag':['nobtag'],
+    # 'taupt60split':['inclusive_tau1pt60', 'inclusive_tau1ptl60'],
+    # 'taupt75split':['inclusive_tau1pt75', 'inclusive_tau1ptl75'],
+    # 'taupt100split':['inclusive_tau1pt100', 'inclusive_tau1ptl100'],
+    # 'taupt60':['inclusive_tau1pt60'],
+    # 'taupt75':['inclusive_tau1pt75'],
+    # 'taupt100':['inclusive_tau1pt100']
 }
 
 ams_dict = pickle.load(open('opt.pkl'))
 
 process = 'ggH'
 masses = masses_ggh
+
+process = 'bbH'
+masses = masses_bbh
 
 graphs = {}
 
@@ -55,19 +59,28 @@ for group, cats in groups.items():
 colours = [1, 2, 3, 4, 6, 7, 8, 9, 47, 46, 44, 43, 42, 41, 40]
 # markers = [20, 21, 22, 23, 24, 25, 26, 27]
 
-cats_pt = ['inclusive', 'taupt60split', 'taupt75split', 'taupt100split']
-cats_pt_titles = ['Inclusive', 'p_{T} > 60 GeV', 'p_{T} > 75 GeV', 'p_{T} > 100 GeV', ]
+cats_pt = ['inclusive']#, 'taupt60split', 'taupt75split', 'taupt100split']
+cats_pt_titles = ['Inclusive']#, 'p_{T} > 60 GeV', 'p_{T} > 75 GeV', 'p_{T} > 100 GeV', ]
+cats_jets = ['inclusive', 'nobtag', 'btag']
+cats_jets_titles = ['Inclusive', 'No b-tag', 'b-tag']#, 'p_{T} > 60 GeV', 'p_{T} > 75 GeV', 'p_{T} > 100 GeV', ]
 
 plots = {
-    'cats_pt_medium':([c+'medium' for c in cats_pt], [t for t in cats_pt_titles]),
-    'cats_pt_tight':([c+'tight' for c in cats_pt], [t for t in cats_pt_titles]),
-    'cats_pt_vtight':([c+'vtight' for c in cats_pt], [t for t in cats_pt_titles]),
-    'cats_pt_vvtight':([c+'vvtight' for c in cats_pt], [t for t in cats_pt_titles]),
+    # 'cats_pt_loose':([c+'loose' for c in cats_pt], [t for t in cats_pt_titles]),
+    # 'cats_pt_medium':([c+'medium' for c in cats_pt], [t for t in cats_pt_titles]),
+    # 'cats_pt_tight':([c+'tight' for c in cats_pt], [t for t in cats_pt_titles]),
+    # 'cats_pt_vtight':([c+'vtight' for c in cats_pt], [t for t in cats_pt_titles]),
+    # 'cats_pt_vvtight':([c+'vvtight' for c in cats_pt], [t for t in cats_pt_titles]),
+    'cats_jets_loose':([c+'loose' for c in cats_jets], [t for t in cats_jets_titles]),
+    'cats_jets_medium':([c+'medium' for c in cats_jets], [t for t in cats_jets_titles]),
+    'cats_jets_tight':([c+'tight' for c in cats_jets], [t for t in cats_jets_titles]),
+    'cats_jets_vtight':([c+'vtight' for c in cats_jets], [t for t in cats_jets_titles]),
+    'cats_jets_vvtight':([c+'vvtight' for c in cats_jets], [t for t in cats_jets_titles]),
     'cats_iso_inclusive':(['inclusive'+c for c in isos], [iso for iso in isos_titles]),
     'cats_iso_btag':(['btag'+c for c in isos], [iso for iso in isos_titles]),
-    'cats_iso_taupt60split':(['taupt60split'+c for c in isos], [iso for iso in isos_titles]),
-    'cats_iso_taupt75split':(['taupt75split'+c for c in isos], [iso for iso in isos_titles]),
-    'cats_iso_taupt100split':(['taupt100split'+c for c in isos], [iso for iso in isos_titles]),
+    'cats_iso_nobtag':(['nobtag'+c for c in isos], [iso for iso in isos_titles]),
+    # 'cats_iso_taupt60split':(['taupt60split'+c for c in isos], [iso for iso in isos_titles]),
+    # 'cats_iso_taupt75split':(['taupt75split'+c for c in isos], [iso for iso in isos_titles]),
+    # 'cats_iso_taupt100split':(['taupt100split'+c for c in isos], [iso for iso in isos_titles]),
 }
 
 c = ROOT.TCanvas()
@@ -93,4 +106,4 @@ for plot_name, (cats, titles) in plots.items():
 
     g_multi.leg = makeLegend(zip(titles, c_graphs), left=False)
 
-    c.Print('amsplots/'+plot_name+'.pdf')
+    c.Print('amsplots/bbh'+plot_name+'.pdf')
