@@ -29,17 +29,21 @@ def getHeppyOption(option, default):
 # Get all heppy options; set via '-o production' or '-o production=True'
 
 # production = True run on batch, production = False (or unset) run locally
-production = getHeppyOption('production', True)
+production = getHeppyOption('production', False)
 pick_events = getHeppyOption('pick_events', False)
 syncntuple = getHeppyOption('syncntuple', True)
-cmssw = getHeppyOption('cmssw', False)
-doSUSY = getHeppyOption('susy', True)
+cmssw = getHeppyOption('cmssw', True)
+doSUSY = getHeppyOption('susy', False)
 computeSVfit = getHeppyOption('computeSVfit', False)
 data = getHeppyOption('data', False)
 tes_string = getHeppyOption('tes_string', '') # '_tesup' '_tesdown'
 reapplyJEC = getHeppyOption('reapplyJEC', True)
 calibrateTaus = getHeppyOption('calibrateTaus', False)
+scaleTaus = getHeppyOption('scaleTaus', False)
 correct_recoil = getHeppyOption('correct_recoil', True)
+
+scaleTaus = True
+tes_scale = 1.03
 
 # Just to be sure
 if production:
@@ -92,7 +96,8 @@ tauTauAna = cfg.Analyzer(
     verbose=False,
     from_single_objects=False,
     ignoreTriggerMatch=True, 
-    scaleTaus=calibrateTaus,
+    scaleTaus=calibrateTaus or scaleTaus,
+    tes_scale=tes_scale
 )
 
 if not cmssw:

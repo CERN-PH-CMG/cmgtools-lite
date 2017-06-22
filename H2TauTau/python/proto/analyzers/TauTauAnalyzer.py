@@ -1,15 +1,10 @@
 import os
 import ROOT
-import array
-from collections import OrderedDict
-
-from PhysicsTools.HeppyCore.utils.deltar import matchObjectCollection
 from PhysicsTools.HeppyCore.utils.deltar import deltaR
 from PhysicsTools.Heppy.analyzers.core.AutoHandle import AutoHandle
 from PhysicsTools.Heppy.physicsobjects.PhysicsObjects import Tau, Muon
 from PhysicsTools.Heppy.physicsobjects.Electron import Electron
 
-from CMGTools.H2TauTau.proto.analyzers.TauIsolationCalculator import TauIsolationCalculator
 from CMGTools.H2TauTau.proto.analyzers.DiLeptonAnalyzer import DiLeptonAnalyzer
 from CMGTools.H2TauTau.proto.physicsobjects.DiObject import TauTau, DirectTauTau
 
@@ -22,42 +17,6 @@ class TauTauAnalyzer(DiLeptonAnalyzer):
   
     def __init__(self, cfg_ana, cfg_comp, looperName):
         super(TauTauAnalyzer, self).__init__(cfg_ana, cfg_comp, looperName)
-
-        if hasattr(self.cfg_ana, 'scaleTaus') and self.cfg_ana.scaleTaus:
-            weights = '/'.join( [os.environ['CMSSW_BASE'], 
-                                 'src', 
-                                 'CMGTools', 
-                                 'H2TauTau', 
-                                 'data', 
-                                 'tau_energy_scale_calibration_weights.xml'] )
-    
-            self.reader = ROOT.TMVA.Reader('Color:Silent')
-            
-            self.variables = OrderedDict()
-            
-            self.variables['tau_pt'                     ] = array.array('f',[0])
-            self.variables['tau_eta'                    ] = array.array('f',[0])
-            self.variables['tau_mass'                   ] = array.array('f',[0])
-            self.variables['tau_decayMode'              ] = array.array('f',[0])
-    
-            self.variables['tau_charged_iso'            ] = array.array('f',[0])
-            self.variables['tau_gamma_iso'              ] = array.array('f',[0])
-            self.variables['tau_charged_sig'            ] = array.array('f',[0])
-            self.variables['tau_gamma_sig'              ] = array.array('f',[0])
-    
-            self.variables['tau_jet_pt'                 ] = array.array('f',[0])
-            self.variables['tau_jet_mass'               ] = array.array('f',[0])
-            self.variables['tau_jet_nConstituents'      ] = array.array('f',[0])
-            self.variables['tau_jet_rawFactor'          ] = array.array('f',[0])
-            self.variables['tau_jet_chargedHadronEnergy'] = array.array('f',[0])
-            self.variables['tau_jet_neutralHadronEnergy'] = array.array('f',[0])
-            self.variables['tau_jet_neutralEmEnergy'    ] = array.array('f',[0])
-            self.variables['tau_jet_chargedEmEnergy'    ] = array.array('f',[0])
-            
-            for k, v in self.variables.items():
-                self.reader.AddVariable(k, v)    
-            
-            self.reader.BookMVA('BDTG', weights)
 
     def declareHandles(self):
         super(TauTauAnalyzer, self).declareHandles()
@@ -130,9 +89,6 @@ class TauTauAnalyzer(DiLeptonAnalyzer):
         if not (hasattr(event, 'leg1') and hasattr(event, 'leg2')):
             return False
 
-        if hasattr(self.cfg_ana, 'scaleTaus') and self.cfg_ana.scaleTaus:
-            self.scaleDiLep(event.diLepton)
-
         if hasattr(event, 'calibratedPfMet'):
             event.pfmet = event.calibratedPfMet
         else:
@@ -142,6 +98,9 @@ class TauTauAnalyzer(DiLeptonAnalyzer):
             event.puppimet = event.calibratedPuppiMet
         else:
             event.puppimet = self.handles['puppiMET'].product()[0]
+
+        if getattr(self.cfg_ana, 'scaleTaus', False):
+            self.scaleMet(event, event.diLepton)
 
         return True
 
@@ -157,12 +116,15 @@ class TauTauAnalyzer(DiLeptonAnalyzer):
             diLeptons.append(pydil)
             pydil.mvaMetSig = pydil.met().getSignificanceMatrix()
 
+            if getattr(self.cfg_ana, 'scaleTaus', False):
+                self.scaleP4(pydil.leg1(), self.cfg_ana.tes_scale)
+                self.scaleP4(pydil.leg2(), self.cfg_ana.tes_scale)
+
         return diLeptons
 
     def buildDiLeptonsSingle(self, leptons, event):
         '''
         '''
-        # RIC: patch to adapt it to the di-tau case. Need to talk to Jan
         di_objects = []
         
         if hasattr(event, 'calibratedTaus'):
@@ -174,11 +136,17 @@ class TauTauAnalyzer(DiLeptonAnalyzer):
             met = event.calibratedPfMet
         else:
             met = self.handles['pfMET'].product()[0]
-    
+        
+        taus = [Tau(tau) for tau in taus]
+
+        if getattr(self.cfg_ana, 'scaleTaus', False):
+            for tau in taus:
+                self.scaleP4(tau, self.cfg_ana.tes_scale)
+
         for leg1 in taus:
             for leg2 in taus:
                 if leg1 != leg2:
-                    di_tau = DirectTauTau(Tau(leg1), Tau(leg2), met)
+                    di_tau = DirectTauTau(leg1, leg2, met)
                     di_tau.leg2().associatedVertex = event.goodVertices[0]
                     di_tau.leg1().associatedVertex = event.goodVertices[0]
                     di_tau.leg1().event = event.input.object()
@@ -337,7 +305,7 @@ class TauTauAnalyzer(DiLeptonAnalyzer):
         return sorted(diLeptons, key=lambda dl: least_iso_highest_pt(dl), reverse=False)[0]
 
     def scaleP4(self, tau, scale):
-       
+        deltaMet = ROOT.LorentzVector(tau.p4())
         modifiedP4 = ROOT.TLorentzVector()
         modifiedP4.SetPtEtaPhiM(
             tau.pt() * scale,
@@ -355,81 +323,28 @@ class TauTauAnalyzer(DiLeptonAnalyzer):
         )
         
         tau.setP4(modifiedP4LV)
+        deltaMet -= tau.p4()
+        tau.deltaMet = deltaMet
 
-    def scaleDiLep(self, diLep):
+    def scaleMet(self, event, diLep):
        
-        if hasattr(diLep, 'daughter(0)') and \
-           hasattr(diLep, 'daughter(1)'):
-            taus = [diLep.daughter(0), diLep.daughter(1)]
-        else:
-            taus = [diLep.leg1(), diLep.leg2()]     
-        jets     = [Jet(jet) for jet in self.handles['jets'].product()]
-        pfmet    = self.handles['pfMET'   ].product()[0]
-        puppimet = self.handles['puppiMET'].product()[0]
-        if hasattr(diLep, 'daughter(2)'):
-            met = diLep.daughter(2)
-        else:
-            met = diLep.met()
-        
-        pairs = matchObjectCollection(taus, jets, 0.5 * 0.5)
-        
-        # associating a jet to each tau
-        for tau in taus:
-            jet = pairs[tau]
-            if jet is None:
-                pass
-            else:
-                tau.jet = jet
+        pfmet = event.pfmet
+        puppimet = event.pfmet
+        met = diLep.met()
 
-        tau_p4_scale = 1.
-        
+        taus =[diLep.leg1(), diLep.leg2()]
+
         for tau in taus:
-            if tau.decayMode() in (0, 1, 10) and hasattr(tau, 'jet'):
-    
-                TauIsolationCalculator.tauIsoBreakdown(tau)
-    
-                self.variables['tau_pt'                     ][0] = tau.pt()               
-                self.variables['tau_eta'                    ][0] = tau.eta()              
-                self.variables['tau_mass'                   ][0] = tau.mass()             
-                self.variables['tau_decayMode'              ][0] = tau.decayMode()        
-    
-                self.variables['tau_charged_iso'            ][0] = tau.chargedPtSumIso    
-                self.variables['tau_gamma_iso'              ][0] = tau.gammaPtSumIso      
-                self.variables['tau_charged_sig'            ][0] = tau.chargedPtSumSignal 
-                self.variables['tau_gamma_sig'              ][0] = tau.gammaPtSumSignal   
-    
-                self.variables['tau_jet_pt'                 ][0] = tau.jet.pt()           
-                self.variables['tau_jet_mass'               ][0] = tau.jet.mass()         
-                self.variables['tau_jet_nConstituents'      ][0] = tau.jet.nConstituents()
-                self.variables['tau_jet_rawFactor'          ][0] = tau.jet.rawFactor()
-                self.variables['tau_jet_chargedHadronEnergy'][0] = tau.jet.chargedHadronEnergy()      
-                self.variables['tau_jet_neutralHadronEnergy'][0] = tau.jet.neutralHadronEnergy()      
-                self.variables['tau_jet_neutralEmEnergy'    ][0] = tau.jet.neutralEmEnergy()    
-                self.variables['tau_jet_chargedEmEnergy'    ][0] = tau.jet.chargedEmEnergy()          
-    
-                calibrated_tau_pt = self.reader.EvaluateRegression('BDTG')[0]
-                tau_p4_scale = calibrated_tau_pt / tau.pt()
-                    
-                pfmetP4    = pfmet   .p4()
-                puppimetP4 = puppimet.p4()
-                metP4      = met     .p4()
-                        
-                # remove pre-calibrated tau from met computation
-                pfmetP4    += tau.p4()
-                puppimetP4 += tau.p4()
-                metP4      += tau.p4()
-                
-                self.scaleP4(tau, tau_p4_scale)
-                tau.ptScale = tau_p4_scale
-    
-                # include calibrated tau into the met computation
-                pfmetP4    -= tau.p4()
-                puppimetP4 -= tau.p4()
-                metP4      -= tau.p4()
-            
-                pfmet   .setP4(pfmetP4   )
-                puppimet.setP4(puppimetP4)
-                met     .setP4(metP4     )
+            pfmetP4    = pfmet.p4()
+            puppimetP4 = puppimet.p4()
+            metP4      = met.p4()
+            # remove pre-calibrated tau from met computation
+            pfmetP4    += tau.deltaMet
+            puppimetP4 += tau.deltaMet
+            metP4      += tau.deltaMet
         
+            pfmet.setP4(pfmetP4)
+            puppimet.setP4(puppimetP4)
+            met.setP4(metP4)
                     
         return True
