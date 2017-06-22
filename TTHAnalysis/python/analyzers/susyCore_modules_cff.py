@@ -488,6 +488,7 @@ metAna = cfg.Analyzer(
     doMetNoMu = False,
     doMetNoEle = False,
     doMetNoPhoton = False,
+    storePuppiExtra = False, # False for MC, True for re-MiniAOD
     recalibrate = False, # or "type1", or True
     applyJetSmearing = False, # does nothing unless the jet smearing is turned on in the jet analyzer
     old74XMiniAODs = False, # set to True to get the correct Raw MET when running on old 74X MiniAODs
