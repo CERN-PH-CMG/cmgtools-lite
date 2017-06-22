@@ -32,7 +32,7 @@ event_vars = [
     Variable('n_jets_20', lambda ev : len(ev.cleanJets), type=int),
     Variable('n_jets_20_puid', lambda ev : sum(1 for j in ev.cleanJets if j.puJetId()), type=int),
     Variable('n_bjets', lambda ev : len(ev.cleanBJets), type=int),
-    Variable('n_jets_csvl', lambda ev : sum(1 for jet in ev.cleanJets if jet.btagWP('CSVv2IVFL')), type=int),
+    Variable('n_bjets_loose', lambda ev : len(ev.cleanBJetsLoose), type=int),
     Variable('n_vertices', lambda ev : len(ev.vertices), type=int),
     Variable('rho', lambda ev : ev.rho),
     Variable('weight', lambda ev : ev.eventWeight),
