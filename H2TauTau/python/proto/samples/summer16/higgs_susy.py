@@ -16,8 +16,8 @@ HiggsSUSYGG120 = creator.makeMCComponent(
     "HiggsSUSYGG120", "/SUSYGluGluToHToTauTau_M-120_TuneCUETP8M1_13TeV-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM", "CMS", ".*root", 1.0)
 HiggsSUSYGG130 = creator.makeMCComponent(
     "HiggsSUSYGG130", "/SUSYGluGluToHToTauTau_M-130_TuneCUETP8M1_13TeV-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM", "CMS", ".*root", 1.0)
-# HiggsSUSYGG140 = creator.makeMCComponent(
-#     "HiggsSUSYGG140", "/SUSYGluGluToHToTauTau_M-140_TuneCUETP8M1_13TeV-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM", "CMS", ".*root", 1.0)
+HiggsSUSYGG140 = creator.makeMCComponent(
+    "HiggsSUSYGG140", "/SUSYGluGluToHToTauTau_M-140_TuneCUETP8M1_13TeV-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM", "CMS", ".*root", 1.0)
 HiggsSUSYGG160 = creator.makeMCComponent(
     "HiggsSUSYGG160", "/SUSYGluGluToHToTauTau_M-160_TuneCUETP8M1_13TeV-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM", "CMS", ".*root", 1.0)
 HiggsSUSYGG180 = creator.makeMCComponent(
@@ -25,13 +25,13 @@ HiggsSUSYGG180 = creator.makeMCComponent(
 HiggsSUSYGG200 = creator.makeMCComponent(
     "HiggsSUSYGG200", "/SUSYGluGluToHToTauTau_M-200_TuneCUETP8M1_13TeV-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM", "CMS", ".*root", 1.0)
 HiggsSUSYGG250 = creator.makeMCComponent(
-    "HiggsSUSYGG250", "/SUSYGluGluToHToTauTau_M-250_TuneCUETP8M1_13TeV-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v2/MINIAODSIM", "CMS", ".*root", 1.0)
+    "HiggsSUSYGG250", "/SUSYGluGluToHToTauTau_M-250_TuneCUETP8M1_13TeV-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM", "CMS", ".*root", 1.0)
 HiggsSUSYGG300 = creator.makeMCComponent(
-    "HiggsSUSYGG300", "/SUSYGluGluToHToTauTau_M-300_TuneCUETP8M1_13TeV-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v2/MINIAODSIM", "CMS", ".*root", 1.0)
+    "HiggsSUSYGG300", "/SUSYGluGluToHToTauTau_M-300_TuneCUETP8M1_13TeV-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM", "CMS", ".*root", 1.0)
 HiggsSUSYGG350 = creator.makeMCComponent(
     "HiggsSUSYGG350", "/SUSYGluGluToHToTauTau_M-350_TuneCUETP8M1_13TeV-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM", "CMS", ".*root", 1.0)
 HiggsSUSYGG400 = creator.makeMCComponent(
-    "HiggsSUSYGG400", "/SUSYGluGluToHToTauTau_M-400_TuneCUETP8M1_13TeV-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v3/MINIAODSIM", "CMS", ".*root", 1.0)
+    "HiggsSUSYGG400", "/SUSYGluGluToHToTauTau_M-400_TuneCUETP8M1_13TeV-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM", "CMS", ".*root", 1.0)
 HiggsSUSYGG450 = creator.makeMCComponent(
     "HiggsSUSYGG450", "/SUSYGluGluToHToTauTau_M-450_TuneCUETP8M1_13TeV-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM", "CMS", ".*root", 1.0)
 HiggsSUSYGG500 = creator.makeMCComponent(
@@ -87,7 +87,7 @@ HiggsSUSYBB160 = creator.makeMCComponent(
 HiggsSUSYBB180 = creator.makeMCComponent(
     "HiggsSUSYBB180", "/SUSYGluGluToBBHToTauTau_M-180_TuneCUETP8M1_13TeV-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM", "CMS", ".*root", 1.0)
 HiggsSUSYBB200 = creator.makeMCComponent(
-    "HiggsSUSYBB200", "/SUSYGluGluToBBHToTauTau_M-200_TuneCUETP8M1_13TeV-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v4/MINIAODSIM", "CMS", ".*root", 1.0)
+    "HiggsSUSYBB200", "/SUSYGluGluToBBHToTauTau_M-200_TuneCUETP8M1_13TeV-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM", "CMS", ".*root", 1.0)
 HiggsSUSYBB250 = creator.makeMCComponent(
     "HiggsSUSYBB250", "/SUSYGluGluToBBHToTauTau_M-250_TuneCUETP8M1_13TeV-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM", "CMS", ".*root", 1.0)
 # HiggsSUSYBB300 = creator.makeMCComponent(
@@ -123,7 +123,7 @@ HiggsSUSYBB1800 = creator.makeMCComponent(
 HiggsSUSYBB2000 = creator.makeMCComponent(
     "HiggsSUSYBB2000", "/SUSYGluGluToBBHToTauTau_M-2000_TuneCUETP8M1_13TeV-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM", "CMS", ".*root", 1.0)
 HiggsSUSYBB2300 = creator.makeMCComponent(
-    "HiggsSUSYBB2300", "/SUSYGluGluToBBHToTauTau_M-2300_TuneCUETP8M1_13TeV-pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v4/MINIAODSIM", "CMS", ".*root", 1.0)
+    "HiggsSUSYBB2300", "/SUSYGluGluToBBHToTauTau_M-2300_TuneCUETP8M1_13TeV-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM", "CMS", ".*root", 1.0)
 HiggsSUSYBB2600 = creator.makeMCComponent(
     "HiggsSUSYBB2600", "/SUSYGluGluToBBHToTauTau_M-2600_TuneCUETP8M1_13TeV-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM", "CMS", ".*root", 1.0)
 HiggsSUSYBB2900 = creator.makeMCComponent(
@@ -139,12 +139,12 @@ mc_higgs_susy_gg = [
     HiggsSUSYGG110,
     HiggsSUSYGG120,
     HiggsSUSYGG130,
-    # HiggsSUSYGG140,
+    HiggsSUSYGG140,
     HiggsSUSYGG160,
     HiggsSUSYGG180,
     HiggsSUSYGG200,
     HiggsSUSYGG250,
-    HiggsSUSYGG300,
+    # HiggsSUSYGG300,
     HiggsSUSYGG350,
     HiggsSUSYGG400,
     HiggsSUSYGG450,
@@ -156,7 +156,7 @@ mc_higgs_susy_gg = [
     HiggsSUSYGG1000,
     HiggsSUSYGG1200,
     HiggsSUSYGG1400,
-    HiggsSUSYGG1500,
+    # HiggsSUSYGG1500,
     HiggsSUSYGG1600,
     HiggsSUSYGG1800,
     HiggsSUSYGG2000,
@@ -190,7 +190,7 @@ mc_higgs_susy_bb = [
     HiggsSUSYBB1000,
     HiggsSUSYBB1200,
     HiggsSUSYBB1400,
-    HiggsSUSYBB1500,
+    # HiggsSUSYBB1500,
     HiggsSUSYBB1600,
     HiggsSUSYBB1800,
     HiggsSUSYBB2000,
