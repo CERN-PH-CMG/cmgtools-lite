@@ -70,39 +70,22 @@ class HTTGenAnalyzer(Analyzer):
         event.genmet_py = genmet.py()
         event.genmet_phi = genmet.phi()
 
+        if self.cfg_comp.name.find('TT') != -1 or self.cfg_comp.name.find('TTH') == -1:
+            self.getTopPtWeight(event)
+
+        if self.cfg_comp.name.find('DY') != -1:
+            self.getDYMassPtWeight(event)
+
+
         ptcut = 0.
         # you can apply a pt cut on the gen leptons, electrons and muons
         # in HIG-13-004 it was 8 GeV
         if hasattr(self.cfg_ana, 'genPtCut'):
             ptcut = self.cfg_ana.genPtCut
 
-
-
-        self.ptSelGentauleps = [lep for lep in event.gentauleps if lep.pt() > ptcut]
-        self.ptSelGenleps = [lep for lep in event.genleps if lep.pt() > ptcut]
-        self.ptSelGenSummary = []
-        # self.ptSelGenSummary = [p for p in event.generatorSummary if p.pt() > ptcut and abs(p.pdgId()) not in [6, 11, 13, 15, 23, 24, 25, 35, 36, 37]]
-        # self.ptSelGentaus    = [ lep for lep in event.gentaus    if lep.pt()
-        # > ptcut ] # not needed
-
-        self.l1 = event.diLepton.leg1()
-        self.l2 = event.diLepton.leg2()
-
-        self.genMatch(event, self.l1, self.ptSelGentauleps, self.ptSelGenleps, self.ptSelGenSummary)
-        self.genMatch(event, self.l2, self.ptSelGentauleps, self.ptSelGenleps, self.ptSelGenSummary)
-
-        self.attachGenStatusFlag(self.l1)
-        self.attachGenStatusFlag(self.l2)
-
-        if hasattr(event, 'selectedTaus'):
-            for tau in event.selectedTaus:
-                self.genMatch(event, tau, self.ptSelGentauleps, self.ptSelGenleps, self.ptSelGenSummary)
-
-        if self.cfg_comp.name.find('TT') != -1 or self.cfg_comp.name.find('TTH') == -1:
-            self.getTopPtWeight(event)
-
-        if self.cfg_comp.name.find('DY') != -1:
-            self.getDYMassPtWeight(event)
+        event.ptSelGentauleps = [lep for lep in event.gentauleps if lep.pt() > ptcut]
+        event.ptSelGenleps = [lep for lep in event.genleps if lep.pt() > ptcut]
+        event.ptSelGenSummary = []
 
         return True
 
