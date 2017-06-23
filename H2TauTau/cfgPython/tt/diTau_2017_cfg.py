@@ -29,7 +29,7 @@ def getHeppyOption(option, default):
 # Get all heppy options; set via '-o production' or '-o production=True'
 
 # production = True run on batch, production = False (or unset) run locally
-production = getHeppyOption('production', False)
+production = getHeppyOption('production', True)
 pick_events = getHeppyOption('pick_events', False)
 syncntuple = getHeppyOption('syncntuple', True)
 cmssw = getHeppyOption('cmssw', True)
@@ -37,10 +37,13 @@ doSUSY = getHeppyOption('susy', False)
 computeSVfit = getHeppyOption('computeSVfit', False)
 data = getHeppyOption('data', False)
 tes_string = getHeppyOption('tes_string', '') # '_tesup' '_tesdown'
-reapplyJEC = getHeppyOption('reapplyJEC', True)
+reapplyJEC = getHeppyOption('reapplyJEC', False)
 calibrateTaus = getHeppyOption('calibrateTaus', False)
 scaleTaus = getHeppyOption('scaleTaus', False)
 correct_recoil = getHeppyOption('correct_recoil', True)
+
+if doSUSY:
+    cmssw = False
 
 scaleTaus = True
 tes_scale = 1.03
@@ -155,7 +158,7 @@ tau1Weighter = cfg.Analyzer(
     LeptonWeighter,
     name='LeptonWeighter_tau1',
     scaleFactorFiles={
-        'trigger': ('$CMSSW_BASE/src/CMGTools/H2TauTau/data/htt_scalefactors_v16_4.root', 't_genuine_TightIso_tt'),
+        'trigger': ('$CMSSW_BASE/src/CMGTools/H2TauTau/data/htt_scalefactors_v16_5.root', 't_genuine_TightIso_tt'),
         # 'trigger': '$CMSSW_BASE/src/CMGTools/H2TauTau/data/Tau_diTau35_summer16.py',  # include in the event's overall weight
     },
 
@@ -172,7 +175,7 @@ tau2Weighter = cfg.Analyzer(
     LeptonWeighter,
     name='LeptonWeighter_tau2',
     scaleFactorFiles={
-        'trigger': ('$CMSSW_BASE/src/CMGTools/H2TauTau/data/htt_scalefactors_v16_4.root', 't_genuine_TightIso_tt'),
+        'trigger': ('$CMSSW_BASE/src/CMGTools/H2TauTau/data/htt_scalefactors_v16_5.root', 't_genuine_TightIso_tt'),
         # 'trigger': '$CMSSW_BASE/src/CMGTools/H2TauTau/data/Tau_diTau35_summer16.py',  # include in the event's overall weight
     },
 
@@ -239,7 +242,7 @@ from CMGTools.H2TauTau.proto.samples.summer16.sms import samples_susy
 from CMGTools.H2TauTau.proto.samples.summer16.triggers_tauTau import mc_triggers, mc_triggerfilters, data_triggers, data_triggerfilters
 
 data_list = data_tau
-samples = backgrounds + sm_signals + mssm_signals + sync_list
+samples = backgrounds + sm_signals + sync_list #+ mssm_signals 
 if doSUSY:
     samples = samples_susy #+ SignalSUSY[:1]
 split_factor = 1e5

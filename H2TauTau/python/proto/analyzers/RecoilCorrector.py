@@ -99,8 +99,8 @@ class RecoilCorrector(Analyzer):
         py_old = dil.met().py()
 
         # Correct by mean and resolution as default (otherwise use .Correct(..))
-        # new = self.rcMVAMET.CorrectByMeanResolution(
-        new = self.rcMVAMET.Correct(
+        new = self.rcMVAMET.CorrectByMeanResolution(
+        # new = self.rcMVAMET.Correct(
             px_old, 
             py_old, 
             gen_z_px,    
@@ -124,8 +124,8 @@ class RecoilCorrector(Analyzer):
         pfmet_py_old = event.pfmet.py()
 
         # Correct by mean and resolution as default (otherwise use .Correct(..))
-        # new = self.rcPFMET.CorrectByMeanResolution(
-        new = self.rcPFMET.Correct(    
+        new = self.rcPFMET.CorrectByMeanResolution(
+        # new = self.rcPFMET.Correct(    
             pfmet_px_old, 
             pfmet_py_old, 
             gen_z_px,    
