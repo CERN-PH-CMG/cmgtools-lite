@@ -7,6 +7,7 @@ from PhysicsTools.Heppy.physicsobjects.Electron import Electron
 
 from CMGTools.H2TauTau.proto.analyzers.DiLeptonAnalyzer import DiLeptonAnalyzer
 from CMGTools.H2TauTau.proto.physicsobjects.DiObject import TauTau, DirectTauTau
+from CMGTools.H2TauTau.proto.analyzers.HTTGenAnalyzer import HTTGenAnalyzer
 
 
 class TauTauAnalyzer(DiLeptonAnalyzer):
@@ -65,7 +66,6 @@ class TauTauAnalyzer(DiLeptonAnalyzer):
         # applies the trigger matching to the two signal leptons
         # choses the best di-tau pair, with the bestDiLepton method
         # as implemented here
-
         event.goodVertices = event.vertices
 
         result = super(TauTauAnalyzer, self).process(event)
@@ -117,6 +117,8 @@ class TauTauAnalyzer(DiLeptonAnalyzer):
             pydil.mvaMetSig = pydil.met().getSignificanceMatrix()
 
             if getattr(self.cfg_ana, 'scaleTaus', False):
+                HTTGenAnalyzer.attachGenStatusFlag(pydil.leg1())
+                HTTGenAnalyzer.attachGenStatusFlag(pydil.leg2())
                 self.scaleP4(pydil.leg1(), self.cfg_ana.tes_scale)
                 self.scaleP4(pydil.leg2(), self.cfg_ana.tes_scale)
 
@@ -305,8 +307,12 @@ class TauTauAnalyzer(DiLeptonAnalyzer):
         return sorted(diLeptons, key=lambda dl: least_iso_highest_pt(dl), reverse=False)[0]
 
     def scaleP4(self, tau, scale):
+        if tau.gen_match != 5:
+            return
+
         deltaMet = ROOT.LorentzVector(tau.p4())
         modifiedP4 = ROOT.TLorentzVector()
+
         modifiedP4.SetPtEtaPhiM(
             tau.pt() * scale,
             tau.eta(),
@@ -335,6 +341,9 @@ class TauTauAnalyzer(DiLeptonAnalyzer):
         taus =[diLep.leg1(), diLep.leg2()]
 
         for tau in taus:
+            if not hasattr(tau, 'deltaMet'):
+                # tau wasn't scaled
+                continue
             pfmetP4    = pfmet.p4()
             puppimetP4 = puppimet.p4()
             metP4      = met.p4()
