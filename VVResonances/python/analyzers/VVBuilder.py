@@ -366,6 +366,11 @@ class VVBuilder(Analyzer):
         if not hasattr(VV.leg2, "substructure"):
             return output
 
+
+        if self.cfg_comp.isMC:
+            self.substructureGEN(VV.leg2, event)
+            if hasattr(VV.leg2, 'substructureGEN'):
+                VV.genPartialMass = (VV.leg1.p4() + VV.leg2.substructureGEN.jet).M()
         # check if there are subjets
 
         # if len(VV.leg2.substructure.prunedSubjets)<2:
@@ -408,6 +413,11 @@ class VVBuilder(Analyzer):
         if self.cfg_comp.isMC:
             self.substructureGEN(VV.leg2, event)
             self.substructureGEN(VV.leg1, event)
+            if hasattr(VV.leg2, 'substructureGEN') and hasattr(VV.leg1,'substructureGEN'):
+                VV.genPartialMass = (VV.leg1.substructureGEN.jet + VV.leg2.substructureGEN.jet).M()
+
+
+
 
         if not hasattr(VV.leg1, "substructure"):
             return output
@@ -447,8 +457,6 @@ class VVBuilder(Analyzer):
             return output
 
         self.substructure(VV.leg2, event)
-        if self.cfg_comp.isMC:
-            self.substructureGEN(VV.leg2, event)
 
         if not hasattr(VV.leg2, "substructure"):
             return output
@@ -462,6 +470,12 @@ class VVBuilder(Analyzer):
         # if len(VV.leg2.substructure.prunedSubjets)<2:
         #     print 'No substructure'
         #     return output
+        if self.cfg_comp.isMC:
+            self.substructureGEN(VV.leg2, event)
+            if hasattr(VV.leg2, 'substructureGEN'):
+                VVGEN = Pair(event.met,Singlet(VV.leg2.substructureGEN.jet))            
+                VV.genPartialMass = VVGEN.mt()
+
 
         # topology
         satteliteJets = self.selectJets(event.jets, lambda x: x.pt() > 30.0 and x.jetID(
