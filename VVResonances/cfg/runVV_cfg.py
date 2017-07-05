@@ -65,9 +65,7 @@ from CMGTools.VVResonances.analyzers.core_cff import *
 #-------- SAMPLES AND TRIGGERS -----------
 from CMGTools.VVResonances.samples.loadSamples import *
 
-selectedComponents = mcSamples
-
-
+selectedComponents = mcSamples+dataSamples
 
 #import pdb;pdb.set_trace()
 
