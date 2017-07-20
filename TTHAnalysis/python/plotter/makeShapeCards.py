@@ -133,7 +133,7 @@ if options.infile!=None:
         h = infile.Get(p)
         if h: report[p] = h
 else:
-    report = mca.getPlotsRaw("x", args[2], args[3], cuts.allCuts(), nodata=options.asimov)
+    for n,h in mca.getPlotsRaw("x", args[2], args[3], cuts.allCuts(), nodata=options.asimov).iteritems(): report[n]=h.raw().Clone('x_%s'%n)
 
 if options.savefile!=None:
     savefile = ROOT.TFile(myout+binname+".bare.root","recreate")
