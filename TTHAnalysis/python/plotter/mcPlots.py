@@ -541,7 +541,7 @@ def doRatioHists(pspec,pmap,total,totalSyst,maxRange,fixRange=False,fitRatio=Non
     leg0.SetLineColor(0)
     leg0.SetTextFont(42)
     leg0.SetTextSize(0.035*0.7/0.3)
-    leg0.AddEntry(unity0, "stat. bkg. unc.", "F")
+    leg0.AddEntry(unity0, "stat. unc.", "F")
     if showStatTotLegend: leg0.Draw()
     leg1 = ROOT.TLegend(0.25 if doWide else 0.45, 0.8, 0.38 if doWide else 0.7, 0.9)
     leg1.SetFillColor(0)
@@ -549,7 +549,7 @@ def doRatioHists(pspec,pmap,total,totalSyst,maxRange,fixRange=False,fitRatio=Non
     leg1.SetLineColor(0)
     leg1.SetTextFont(42)
     leg1.SetTextSize(0.035*0.7/0.3)
-    leg1.AddEntry(unity, "total bkg. unc.", "F")
+    leg1.AddEntry(unity, "total unc.", "F")
     if showStatTotLegend: leg1.Draw()
     global legendratio0_, legendratio1_
     legendratio0_ = leg0
@@ -640,7 +640,7 @@ def doLegend(pmap,mca,corner="TR",textSize=0.035,cutoff=1e-2,cutoffSignals=True,
         total = sum([x.Integral() for x in pmap.itervalues()])
         for (plot,label,style) in sigEntries: leg.AddEntry(plot,label,style)
         for (plot,label,style) in  bgEntries: leg.AddEntry(plot,label,style)
-        if totalError: leg.AddEntry(totalError,"total bkg. unc.","F") 
+#        if totalError: leg.AddEntry(totalError,"total unc.","F") 
         leg.Draw()
         ## assign it to a global variable so it's not deleted
         global legend_
@@ -853,13 +853,13 @@ class PlotMaker:
                 ytitle = "Events" if not self._options.printBinning else "Events / %s" %(self._options.printBinning)
                 total.GetXaxis().SetTitleFont(42)
                 total.GetXaxis().SetTitleSize(0.05)
-                total.GetXaxis().SetTitleOffset(0.9)
+                total.GetXaxis().SetTitleOffset(1.1)
                 total.GetXaxis().SetLabelFont(42)
                 total.GetXaxis().SetLabelSize(0.05)
                 total.GetXaxis().SetLabelOffset(0.007)
                 total.GetYaxis().SetTitleFont(42)
                 total.GetYaxis().SetTitleSize(0.05)
-                total.GetYaxis().SetTitleOffset(0.90 if doWide else 1.7)
+                total.GetYaxis().SetTitleOffset(0.9 if doWide else 2.0)
                 total.GetYaxis().SetLabelFont(42)
                 total.GetYaxis().SetLabelSize(0.05)
                 total.GetYaxis().SetLabelOffset(0.007)
@@ -923,7 +923,7 @@ class PlotMaker:
                 is2D = total.InheritsFrom("TH2")
                 if 'data' in pmap: 
                     if options.poisson and not is2D:
-                        pdata = getDataPoissonErrors(pmap['data'], False, True)
+                        pdata = getDataPoissonErrors(pmap['data'], True, True)
                         pdata.Draw("PZ SAME")
                         pmap['data'].poissonGraph = pdata ## attach it so it doesn't get deleted
                     else:
