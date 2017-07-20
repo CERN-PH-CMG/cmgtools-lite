@@ -5,7 +5,7 @@ tHW	: THW : 1499200.0/0.273617*0.01561 : LHEweight_wgt[457]*(LepGood1_mcMatchId!
 TTWW	: TTWWTo2LSS2Nu_LO : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0 ; FillColor=ROOT.kGreen
 
 #TTW     : TTWToLNu_ext_LHE+TTWToLNu_ext2_LHE : 0.196 : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0 ;  FillColor=ROOT.kGreen-5
-TTZ     : TTZToLLNuNu_LHE : 0.2728 : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0 ;  FillColor=ROOT.kSpring+2
+TTZ     : TTZToLLNuNu_LHE : 0.2728 : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0 ;  FillColor=ROOT.kSpring+2, Label="ttZ   "
 TTZ     : TTZToLLNuNu_m1to10_LHE : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0 ;  FillColor=ROOT.kSpring+2
 TTZ	: TTJets_DiLepton+TTJets_DiLepton_ext_part1+TTJets_DiLepton_ext_part2+TTJets_DiLepton_ext_part3 : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0 ; FillColor=ROOT.kSpring+2
 TTZ   	: TTJets_SingleLeptonFromT+TTJets_SingleLeptonFromT_ext : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0 ; FillColor=ROOT.kSpring+2
@@ -20,11 +20,11 @@ Rares	: DYJetsToLL_M50_LO_ext_part1+DYJetsToLL_M50_LO_ext_part2+DYJetsToLL_M50_L
 
 Rares	: WpWpJJ : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0 ; FillColor=ROOT.kOrange-3
 
-Rares: WWDouble : 0.1729 : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0 ; FillColor=ROOT.kMagenta-7
-Rares: WWW : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0 ; FillColor=ROOT.kMagenta-7
-Rares: WWZ : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0 ; FillColor=ROOT.kMagenta-7
-Rares: WZZ : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0 ; FillColor=ROOT.kMagenta-7
-Rares: ZZZ : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0 ; FillColor=ROOT.kMagenta-7
-Rares: TTTT : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0 ; FillColor=ROOT.kMagenta-7, AllowPrescaleRelAcc=0.2
-Rares: tZq_ll_ext_highstat : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0 ; FillColor=ROOT.kMagenta-7, AllowPrescaleRelAcc=0.2
-Rares: tWll : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0 ; FillColor=ROOT.kMagenta-7, AllowPrescaleRelAcc=0.2
+Rares: WWDouble : 0.1729 : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0 ; FillColor=ROOT.kAzure-9
+Rares: WWW : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0 ; FillColor=ROOT.kAzure-9
+Rares: WWZ : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0 ; FillColor=ROOT.kAzure-9
+Rares: WZZ : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0 ; FillColor=ROOT.kAzure-9
+Rares: ZZZ : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0 ; FillColor=ROOT.kAzure-9
+Rares: TTTT : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0 ; FillColor=ROOT.kAzure-9, AllowPrescaleRelAcc=0.2
+Rares: tZq_ll_ext_highstat : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0 ; FillColor=ROOT.kAzure-9, AllowPrescaleRelAcc=0.2
+Rares: tWll : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0 ; FillColor=ROOT.kAzure-9, AllowPrescaleRelAcc=0.2
