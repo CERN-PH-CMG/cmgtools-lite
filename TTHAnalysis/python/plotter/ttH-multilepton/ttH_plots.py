@@ -19,7 +19,8 @@ def base(selection):
     CORE=' '.join([TREES,TREESONLYSKIM])
     if 'cmsco01' not in os.environ['HOSTNAME']: CORE = CORE.replace('/data1/peruzzi','/afs/cern.ch/work/p/peruzzi/tthtrees')
 
-    CORE+=" -f -j 8 -l 35.9 --s2v -L ttH-multilepton/functionsTTH.cc --tree treeProducerSusyMultilepton --mcc ttH-multilepton/lepchoice-ttH-FO.txt --mcc ttH-multilepton/ttH_2lss3l_triggerdefs.txt"# --neg"
+    PROMPTSUB=' '.join(["--plotgroup data_fakes%s+='.*_promptsub%s'"%(x,x) for x in ['','_FRe_norm_Up','_FRe_norm_Dn','_FRe_pt_Up','_FRe_pt_Dn','_FRe_be_Up','_FRe_be_Dn','_FRm_norm_Up','_FRm_norm_Dn','_FRm_pt_Up','_FRm_pt_Dn','_FRm_be_Up','_FRm_be_Dn']])+" --neglist '.*_promptsub.*'"
+    CORE+=" -f -j 8 -l 35.9 --s2v -L ttH-multilepton/functionsTTH.cc --tree treeProducerSusyMultilepton --mcc ttH-multilepton/lepchoice-ttH-FO.txt --mcc ttH-multilepton/ttH_2lss3l_triggerdefs.txt %s "%PROMPTSUB
     if dowhat == "plots": CORE+=" --lspam '#bf{CMS} #it{Preliminary}' --legendWidth 0.20 --legendFontSize 0.035 --showRatio --maxRatioRange 0 2 --fixRatioRange  --showMCError --rebin 4 --xP 'nT_.*' --xP 'debug_.*'"
 
     if selection=='2lss':
