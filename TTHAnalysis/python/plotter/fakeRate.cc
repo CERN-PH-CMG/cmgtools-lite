@@ -186,7 +186,7 @@ float fakeRateWeight_2lssCB_i(float l1pt, float l1eta, int l1pdgId, float l1relI
             int ptbin  = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(fpt)));
             int etabin = std::max(1, std::min(hist->GetNbinsY(), hist->GetYaxis()->FindBin(feta)));
             double fr = hist->GetBinContent(ptbin,etabin);
-            if (fr <= 0)  { std::cerr << "WARNING, FR is " << fr << " for " << hist->GetName() << ", pt " << fpt << " eta " << feta << std::endl; if (fr<0) std::abort(); }
+            if (fr < 0)  { std::cerr << "WARNING, FR is " << fr << " for " << hist->GetName() << ", pt " << fpt << " eta " << feta << std::endl; if (fr<0) std::abort(); }
             return fr/(1-fr);
         }
         case 2: {
@@ -195,13 +195,13 @@ float fakeRateWeight_2lssCB_i(float l1pt, float l1eta, int l1pdgId, float l1relI
             int ptbin1  = std::max(1, std::min(hist1->GetNbinsX(), hist1->GetXaxis()->FindBin(l1pt)));
             int etabin1 = std::max(1, std::min(hist1->GetNbinsY(), hist1->GetYaxis()->FindBin(std::abs(l1eta))));
             double fr1 = hist1->GetBinContent(ptbin1,etabin1);
-            if (fr1 <= 0)  { std::cerr << "WARNING, FR is " << fr1 << " for " << hist1->GetName() << ", pt " << l1pt << " eta " << l1eta << std::endl; if (fr1<0) std::abort(); }
+            if (fr1 < 0)  { std::cerr << "WARNING, FR is " << fr1 << " for " << hist1->GetName() << ", pt " << l1pt << " eta " << l1eta << std::endl; if (fr1<0) std::abort(); }
             TH2 *hist2 = (abs(l2pdgId) == 11 ? FRi_el[iFR] : FRi_mu[iFR]);
             if (hist2 == 0) { std::cerr << "ERROR, missing FR for pdgId " << l2pdgId << ", iFR " << iFR << std::endl; std::abort(); }
             int ptbin2  = std::max(1, std::min(hist2->GetNbinsX(), hist2->GetXaxis()->FindBin(l2pt)));
             int etabin2 = std::max(1, std::min(hist2->GetNbinsY(), hist2->GetYaxis()->FindBin(std::abs(l2eta))));
             double fr2 = hist2->GetBinContent(ptbin2,etabin2);
-            if (fr2 <= 0)  { std::cerr << "WARNING, FR is " << fr2 << " for " << hist2->GetName() << ", pt " << l2pt << " eta " << l2eta << std::endl; if (fr2<0) std::abort(); }
+            if (fr2 < 0)  { std::cerr << "WARNING, FR is " << fr2 << " for " << hist2->GetName() << ", pt " << l2pt << " eta " << l2eta << std::endl; if (fr2<0) std::abort(); }
             return -fr1*fr2/((1-fr1)*(1-fr2));
         }
         default: return 0;
@@ -699,7 +699,7 @@ float fetchFR_i(float l1pt, float l1eta, int l1pdgId, int iFR)
     int ptbin1  = std::max(1, std::min(hist1->GetNbinsX(), hist1->GetXaxis()->FindBin(l1pt)));
     int etabin1 = std::max(1, std::min(hist1->GetNbinsY(), hist1->GetYaxis()->FindBin(std::abs(l1eta))));
     double fr1 = hist1->GetBinContent(ptbin1,etabin1);
-    if (fr1 <= 0)  { std::cerr << "WARNING, FR is " << fr1 << " for " << hist1->GetName() << ", pt " << l1pt << " eta " << l1eta << std::endl; if (fr1<0) std::abort(); }
+    if (fr1 < 0)  { std::cerr << "WARNING, FR is " << fr1 << " for " << hist1->GetName() << ", pt " << l1pt << " eta " << l1eta << std::endl; if (fr1<0) std::abort(); }
     return fr1;
 }
    
