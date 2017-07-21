@@ -27,8 +27,8 @@ SYSTS="ttH-multilepton/systsEnv.txt"
 BLoose=" -E ^BLoose "
 BTight=" -E ^BTight "
 
-SPLITDECAYS=""
-#SPLITDECAYS="-splitdecays"
+#SPLITDECAYS=""
+SPLITDECAYS="-splitdecays"
 
 PROMPTSUB="--plotgroup data_fakes+=.*_promptsub --plotgroup data_fakes_FRe_norm_Up+=.*_promptsub_FRe_norm_Up --plotgroup data_fakes_FRe_norm_Dn+=.*_promptsub_FRe_norm_Dn --plotgroup data_fakes_FRe_pt_Up+=.*_promptsub_FRe_pt_Up --plotgroup data_fakes_FRe_pt_Dn+=.*_promptsub_FRe_pt_Dn --plotgroup data_fakes_FRe_be_Up+=.*_promptsub_FRe_be_Up --plotgroup data_fakes_FRe_be_Dn+=.*_promptsub_FRe_be_Dn --plotgroup data_fakes_FRm_norm_Up+=.*_promptsub_FRm_norm_Up --plotgroup data_fakes_FRm_norm_Dn+=.*_promptsub_FRm_norm_Dn --plotgroup data_fakes_FRm_pt_Up+=.*_promptsub_FRm_pt_Up --plotgroup data_fakes_FRm_pt_Dn+=.*_promptsub_FRm_pt_Dn --plotgroup data_fakes_FRm_be_Up+=.*_promptsub_FRm_be_Up --plotgroup data_fakes_FRm_be_Dn+=.*_promptsub_FRm_be_Dn"
 OPTIONS="${OPTIONS} -L ttH-multilepton/functionsTTH.cc --mcc ttH-multilepton/lepchoice-ttH-FO.txt --mcc ttH-multilepton/ttH_2lss3l_triggerdefs.txt ${PROMPTSUB} --neg" # neg necessary for subsequent rebin
