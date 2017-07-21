@@ -50,10 +50,10 @@ cuts['lnujj_mu_HP_veto_mV_nob'] = findCut(categories, cat="lnujj", lep="mu", tau
 
 
 # -> Command line
-analysis_dir = '/data/clange/ntuples/FixNeutrino/'
+analysis_dir = '/data/clange/ntuples/FixMass/'
 tree_prod_name = ''
 
-samples_mc, samples_data, samples, all_samples, sampleDict = createSampleLists(analysis_dir, channel='WV', weight=weight_MC, vJetsKFac=0.92, useWJetsPt=True)
+samples_mc, samples_data, samples, all_samples, sampleDict = createSampleLists(analysis_dir, channel='WV', weight=weight_MC, vJetsKFac=1., useWJetsPt=True)
 
 # Taken from Variables.py, can get subset with e.g. getVars(['mt', 'mvis'])
 variables = generic_vars + lnujj_vars + lnujj_vbf_vars

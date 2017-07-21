@@ -10,7 +10,7 @@ from CMGTools.RootTools.samples.samples_13TeV_RunIISummer16MiniAODv2 import *
 
 # TTs = [TTJets, TT_pow_ext3, TT_pow_ext4]
 TTs = [TTJets, TT_pow, TT_pow_ext3]
-background = TTs+SingleTop+DYJetsM50HT+WJetsToLNuHT+QCDHT+DiBosons+WJetsToLNuPT
+background = TTs+SingleTop+DYJetsM50HT+WJetsToLNuHT+QCDHT+DiBosons+WJetsToLNuPT+ZJetsToNuNuHT
 
 # Load signal from here
 from CMGTools.VVResonances.samples.signal_13TeV_80X_Summer16 import *

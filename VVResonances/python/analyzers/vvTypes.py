@@ -87,6 +87,7 @@ VJType = NTupleObjectType("VJType", baseObjectTypes=[VVType], variables = [
     NTupleSubObject("l2_pruned_s1",  lambda x : x.leg2.substructure.prunedSubjets[0] if len(x.leg2.substructure.prunedSubjets)>0 else dummyLV,fourVectorType),
     NTupleSubObject("l2_pruned_s2",  lambda x : x.leg2.substructure.prunedSubjets[1] if len(x.leg2.substructure.prunedSubjets)>1 else dummyLV,fourVectorType),
     NTupleVariable("btagWeight",  lambda x : x.btagWeight,float),
+    NTupleVariable("gen_partialMass",   lambda x : x.genPartialMass if hasattr(x.leg2,'substructureGEN') else -99, float,"",-99,True),
 
     ## GEN LEVEL STUFF
     NTupleSubObject("l2_gen",  lambda x : x.leg2.substructureGEN.jet if hasattr(x.leg2,'substructureGEN') else dummyLV,fourVectorType,True),
@@ -105,7 +106,6 @@ LNuJJType = NTupleObjectType("LNuJJType", baseObjectTypes=[VJType], variables = 
     NTupleVariable("l1_l_chargedHadronIsoRel", lambda x: x.leg1.leg1.chargedHadronIso()/x.leg1.leg1.pt(), float),
     NTupleSubObject("l1_met",  lambda x : x.leg1.leg2,metType),
     #Scale factors , For HLT use the OR between the two triggers:
-    NTupleVariable("gen_partialMass",   lambda x : x.genPartialMass if hasattr(x.leg2,'substructureGEN') else -99, float,"",-99,True),
     NTupleVariable("sf",  lambda x : x.leg1.leg1.sfWV*(x.leg1.leg1.eff_HLT_DATA+x.eff_HLTMET_DATA-x.leg1.leg1.eff_HLT_DATA*x.eff_HLTMET_DATA)/(x.leg1.leg1.eff_HLT_MC+x.eff_HLTMET_MC-x.leg1.leg1.eff_HLT_MC*x.eff_HLTMET_MC),float),
     NTupleVariable("sfWV",  lambda x : x.leg1.leg1.sfWV, float),
 #    NTupleVariable("sfHLT",  lambda x : x.leg1.leg1.sfHLT, float),
