@@ -64,6 +64,24 @@ badMuonAna = cfg.Analyzer(
     packedCandidates = 'packedPFCandidates',
 )
 
+from CMGTools.TTHAnalysis.analyzers.badMuonAnalyzerMoriond2017 import badMuonAnalyzerMoriond2017
+badCloneMuonAnaMoriond2017 = cfg.Analyzer(
+    badMuonAnalyzerMoriond2017, name = 'badCloneMuonMoriond2017',
+    muons = 'slimmedMuons',
+    vertices         = 'offlineSlimmedPrimaryVertices',
+    minMuPt = 20,
+    selectClones = True,
+    postFix = '',
+)
+
+badMuonAnaMoriond2017 = cfg.Analyzer(
+    badMuonAnalyzerMoriond2017, name = 'badMuonMoriond2017',
+    muons = 'slimmedMuons',
+    vertices         = 'offlineSlimmedPrimaryVertices',
+    minMuPt = 20,
+    selectClones = False,
+    postFix = '',
+)
 
 # Create flags for MET filter bits
 eventFlagsAna = cfg.Analyzer(
@@ -79,6 +97,9 @@ eventFlagsAna = cfg.Analyzer(
         "globalTightHalo2016Filter" : [ "Flag_globalTightHalo2016Filter" ],
         "eeBadScFilter" : [ "Flag_eeBadScFilter" ],
         "EcalDeadCellTriggerPrimitiveFilter" : [ "Flag_EcalDeadCellTriggerPrimitiveFilter" ],
+        "badMuons" : [ "Flag_badMuons" ],
+        "duplicateMuons" : [ "Flag_duplicateMuons" ],
+        "noBadMuons" : [ "Flag_noBadMuons" ],
     }
     )
 
@@ -259,8 +280,9 @@ metAna = cfg.Analyzer(
     doMetNoPU = False,
     doMetNoMu = False,
     doMetNoEle = False,
+    storePuppiExtra = False,
     doMetNoPhoton = False,
-    recalibrate = "type1", # or "type1", or True
+    recalibrate = False, # or "type1", or True or False if pre-processor is used
     applyJetSmearing = False, # does nothing unless the jet smearing is turned on in the jet analyzer
     old74XMiniAODs = False, # set to True to get the correct Raw MET when running on old 74X MiniAODs
     jetAnalyzerPostFix = "",
@@ -298,6 +320,7 @@ metPuppiAna = cfg.Analyzer(
     doMetNoMu = False,
     doMetNoEle = False,
     doMetNoPhoton = False,
+    storePuppiExtra = False, # False for MC, True for re-MiniAOD
 ##    recalibrate = "type1", # or "type1", or True
     recalibrate = False, # or "type1", or True or False if pre-processor is used
     applyJetSmearing = False, # does nothing unless the jet smearing is turned on in the jet analyzer
@@ -399,8 +422,8 @@ jetAna = cfg.Analyzer(
     recalibrateJets = True, #'MC', # True, False, 'MC', 'Data'
     applyL2L3Residual = True, # Switch to 'Data' when they will become available for Data
     recalibrationType = "AK4PFchs",
-    mcGT     = "Spring16_25nsV10_MC",
-    dataGT   = "Spring16_25nsV10_DATA",
+    mcGT     = "Spring16_23Sep2016V2_MC",
+    dataGT   = [(1,"Spring16_23Sep2016BCDV2_DATA"),(276831,"Spring16_23Sep2016EFV2_DATA"),(278802,"Spring16_23Sep2016GV2_DATA"),(280919,"Spring16_23Sep2016HV2_DATA")],
     jecPath = "${CMSSW_BASE}/src/CMGTools/RootTools/data/jec/",
     shiftJEC = 0, # set to +1 or -1 to apply +/-1 sigma shift to the nominal jet energies
     addJECShifts = False, # if true, add  "corr", "corrJECUp", and "corrJECDown" for each jet (requires uncertainties to be available!)
@@ -460,8 +483,8 @@ jetPuppiAna = cfg.Analyzer(
     recalibrateJets = True, #'MC', # True, False, 'MC', 'Data'
     applyL2L3Residual = True, # Switch to 'Data' when they will become available for Data
     recalibrationType = "AK4PFPuppi", ## waiting for JEC those not exist yet
-    mcGT     = "Spring16_25nsV10_MC",
-    dataGT   = "Spring16_25nsV10_DATA",
+    mcGT     = "Spring16_23Sep2016V2_MC",
+    dataGT   = [(1,"Spring16_23Sep2016BCDV2_DATA"),(276831,"Spring16_23Sep2016EFV2_DATA"),(278802,"Spring16_23Sep2016GV2_DATA"),(280919,"Spring16_23Sep2016HV2_DATA")],
     jecPath = "${CMSSW_BASE}/src/CMGTools/RootTools/data/jec/",
     shiftJEC = 0, # set to +1 or -1 to apply +/-1 sigma shift to the nominal jet energies
     addJECShifts = False, # if true, add  "corr", "corrJECUp", and "corrJECDown" for each jet (requires uncertainties to be available!)
@@ -552,7 +575,8 @@ metCoreSequence = [
     metPuppiAnaScaleUp,
     metPuppiAnaScaleDown,
     badChargedHadronAna,
-    badMuonAna,
+    badMuonAnaMoriond2017,
+    badCloneMuonAnaMoriond2017,
     eventFlagsAna,
 ##    hbheFilterAna,
 ##### tree

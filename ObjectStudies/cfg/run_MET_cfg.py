@@ -3,7 +3,8 @@ import PhysicsTools.HeppyCore.framework.config as cfg
 ##from CMGTools.RootTools.samples.autoAAAconfig import *
 
 #-------- SAMPLES AND TRIGGERS -----------
-from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv2 import * #<--miniAOD v2 2016 MC for ICHEP
+from CMGTools.RootTools.samples.samples_13TeV_RunIISummer16MiniAODv2 import * #<--miniAOD v2 2016 MC for Moriond
+##from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv2 import * #<--miniAOD v2 2016 MC for ICHEP
 from CMGTools.RootTools.samples.samples_13TeV_DATA2016 import *  #<--miniAOD v1 2016 DATA
 
 from CMGTools.RootTools.samples.triggers_13TeV_Spring15 import triggers_1mu_iso_50ns, triggers_mumu, triggers_ee, triggers_photon30, triggers_photon50, triggers_photon75, triggers_photon90, triggers_photon120, triggers_photon165_HE10, triggers_jet, triggers_dijet, triggers_HT350, triggers_HT475, triggers_HT600, triggers_HT800, triggers_HT900, triggers_Jet80MET90
@@ -16,8 +17,7 @@ triggers_1ele_iso_Zeynep = [ 'HLT_Ele27_eta2p1_WPLoose_Gsf_v*','HLT_Ele27_WPTigh
 triggers_mumu_noniso_Dominick = ['HLT_Mu30_TkMu11_v3','HLT_Mu50_v4', 'HLT_TkMu50_v3']
 triggers_ee_noniso_Dominick = ['HLT_DoubleEle33_CaloIdL_GsfTrkIdVL_MW_v6','HLT_Ele105_CaloIdVT_GsfTrkIdT_v6']
 
-##goldenJson = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-276384_13TeV_PromptReco_Collisions16_JSON_NoL1T.txt'
-goldenJson = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-284044_13TeV_PromptReco_Collisions16_JSON_NoL1T.txt'
+goldenJson = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/ReReco/Final/Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt'
 
 #-------- INITIAL FLAG
 isDiJet = False
@@ -36,7 +36,7 @@ is25ns = True
 
 #-------- HOW TO RUN
 
-test = 23
+test = 1
 
 if test==0:
     selectedComponents = [DoubleMu_742, DoubleMu_740p9]
@@ -47,10 +47,11 @@ if test==0:
         comp.triggers = triggers_8TeV_mumu
 
 elif test==1:
-    selectedComponents = [ DoubleMuon_Run2016H_PromptReco_v3 ]
+    selectedComponents = [ SinglePhoton_Run2016E_03Feb2017 ]
     for comp in selectedComponents:
         comp.splitFactor = 1
-        comp.files = ['root://eoscms////store/relval/CMSSW_8_0_20/MET/MINIAOD/80X_dataRun2_relval_Candidate_2016_09_02_10_27_40_RelVal_met2016B-v1/00000/2E6B9138-1C7A-E611-AE72-0025905A60DE.root']
+###        comp.files = ['root://eoscms//store/data/Run2016H/DoubleMuon/MINIAOD/03Feb2017_ver3-v1/50000/run_MET_cfg.py']
+        comp.files = ['/afs/cern.ch/work/d/dalfonso/CMSSW_8_0_26_patch1_METpaper/src/CMGTools/ObjectStudies/cfg/PickedEvents_Met_Xcheck.root']
         comp.json = None
 
 elif test==2:
@@ -127,11 +128,9 @@ elif test==7:
 elif test==13:
     isZSkim=True
     if isEle:
-        selectedComponents = [ DoubleEG_Run2016B_PromptReco_v2, DoubleEG_Run2016C_PromptReco_v2, DoubleEG_Run2016D_PromptReco_v2, DoubleEG_Run2016E_PromptReco_v2, DoubleEG_Run2016F_PromptReco_v1,DoubleEG_Run2016G_PromptReco_v1, DoubleEG_Run2016H_PromptReco_v2, DoubleEG_Run2016H_PromptReco_v3 ]
-#        selectedComponents = [ DoubleEG_Run2016B_23Sep2016, DoubleEG_Run2016C_23Sep2016, DoubleEG_Run2016D_23Sep2016, DoubleEG_Run2016E_23Sep2016, DoubleEG_Run2016F_23Sep2016, DoubleEG_Run2016G_23Sep2016 ]
+        selectedComponents = [ DoubleEG_Run2016B_03Feb2017_v2, DoubleEG_Run2016C_03Feb2017, DoubleEG_Run2016D_03Feb2017, DoubleEG_Run2016E_03Feb2017, DoubleEG_Run2016F_03Feb2017, DoubleEG_Run2016G_03Feb2017, DoubleEG_Run2016H_03Feb2017_v2, DoubleEG_Run2016H_03Feb2017_v3 ]
     else:
-        selectedComponents = [  DoubleMuon_Run2016B_PromptReco_v2, DoubleMuon_Run2016C_PromptReco_v2, DoubleMuon_Run2016D_PromptReco_v2, DoubleMuon_Run2016E_PromptReco_v2, DoubleMuon_Run2016F_PromptReco_v1, DoubleMuon_Run2016G_PromptReco_v1, DoubleMuon_Run2016H_PromptReco_v2, DoubleMuon_Run2016H_PromptReco_v3 ]
-#        selectedComponents = [ DoubleMuon_Run2016B_23Sep2016, DoubleMuon_Run2016C_23Sep2016, DoubleMuon_Run2016D_23Sep2016, DoubleMuon_Run2016E_23Sep2016, DoubleMuon_Run2016F_23Sep2016, DoubleMuon_Run2016G_23Sep2016 ]
+        selectedComponents = [ DoubleMuon_Run2016B_03Feb2017_v2, DoubleMuon_Run2016C_03Feb2017, DoubleMuon_Run2016D_03Feb2017, DoubleMuon_Run2016E_03Feb2017, DoubleMuon_Run2016F_03Feb2017, DoubleMuon_Run2016G_03Feb2017, DoubleMuon_Run2016H_03Feb2017_v2, DoubleMuon_Run2016H_03Feb2017_v3 ]
     for comp in selectedComponents:
 #        comp.splitFactor = 1
 #        comp.files = comp.files[5:10]
@@ -141,7 +140,7 @@ elif test==13:
         if isEle:
             comp.triggers = triggers_ee + triggers_1ele_iso_Zeynep + triggers_ee_noniso_Dominick
         else:
-            comp.triggers = triggers_mumu + triggers_1mu_iso_Zeynep + triggers_ee_noniso_Dominick
+            comp.triggers = triggers_mumu + triggers_1mu_iso_Zeynep + triggers_mumu_noniso_Dominick
         comp.json = goldenJson
         comp.intLumi= 0.04003
         print comp
@@ -175,9 +174,9 @@ elif test==15:
 ### this is for the PhotonSkim
 elif test==16:
     is1PH=True
-    selectedComponents = [ SinglePhoton_Run2016B_PromptReco_v2, SinglePhoton_Run2016C_PromptReco_v2, SinglePhoton_Run2016D_PromptReco_v2,
-                           SinglePhoton_Run2016E_PromptReco_v2, SinglePhoton_Run2016F_PromptReco_v1, SinglePhoton_Run2016G_PromptReco_v1,
-                           SinglePhoton_Run2016H_PromptReco_v2, SinglePhoton_Run2016H_PromptReco_v3 ]
+    selectedComponents = [ SinglePhoton_Run2016B_03Feb2017_v2, SinglePhoton_Run2016C_03Feb2017 , SinglePhoton_Run2016D_03Feb2017,
+                           SinglePhoton_Run2016E_03Feb2017, SinglePhoton_Run2016F_03Feb2017, SinglePhoton_Run2016G_03Feb2017,
+                           SinglePhoton_Run2016H_03Feb2017_v2, SinglePhoton_Run2016H_03Feb2017_v3 ]
     for comp in selectedComponents:
         comp.triggers = triggers_photon30 + triggers_photon50 + triggers_photon75 + triggers_photon90 + triggers_photon120 + triggers_photon165_HE10
         comp.splitFactor = 1000
@@ -199,7 +198,7 @@ elif test==17:
 
 # GJets
 elif test==18:
-    selectedComponents = [GJets_HT40to100,GJets_HT100to200, GJets_HT200to400, GJets_HT400to600, GJets_HT600toInf]
+    selectedComponents = GJetsHT
     is1PH=True
     for comp in selectedComponents:
         comp.splitFactor = 1000
@@ -207,7 +206,7 @@ elif test==18:
 
 # WG/ZG/TTG
 elif test==19:
-    selectedComponents = [ZGJets, ZNuNuGJets_40130, ZGTo2LG, WGToLNuG, WGJets, TTGJets, TGJets, TGJets_ext]
+    selectedComponents = [ZGTo2NuG,ZGTo2LG_ext, WGToLNuG_amcatnlo_ext,WGToLNuG_amcatnlo_ext2, TTGJets_ext,TTGJets, TGJets,TGJets_ext]
     is1PH=True
     for comp in selectedComponents:
         comp.splitFactor = 1000
@@ -216,7 +215,7 @@ elif test==19:
 elif test==23:
     isZSkim=True
     is25ns=True
-    selectedComponents = [ DYJetsToLL_M50, TTJets_DiLepton, TTJets_DiLepton_ext, ZZTo4L, ZZTo2L2Q, ZZTo2L2Nu, WWTo2L2Nu, WZTo2L2Q, WZTo3LNu ] + TriBosons + [ TBar_tWch, T_tWch, TToLeptons_tch_powheg, TBarToLeptons_tch_powheg, TToLeptons_sch_amcatnlo, TTJets_SingleLeptonFromTbar, TTJets_SingleLeptonFromT]
+    selectedComponents = [ DYJetsToLL_M50, DYJetsToLL_M50_LO_ext, TTLep_pow, ZZTo4L, ZZTo2L2Q, ZZTo2L2Nu, WWTo2L2Nu, WZTo2L2Q, WZTo3LNu_amcatnlo ] + TriBosons + [ TBar_tWch_ext, T_tWch_ext, T_tch_powheg, TBar_tch_powheg, TToLeptons_sch ,TTSemiLep_pow ]
     for comp in selectedComponents:
 # no trigger on MC for now
 #        if isEle:
@@ -240,6 +239,10 @@ elif test==25:
     # ------------------------------------------------------------------------------------------- #
 
 from CMGTools.ObjectStudies.analyzers.metCoreModules_cff import *
+
+if test==13 or test==15 or test==16 or test==1:
+    metPuppiAna.storePuppiExtra = True
+    metAna.metCollection     = ("slimmedMETsMuEGClean","","RERUN")
 
 cfg.Analyzer.nosubdir = True
 
@@ -326,10 +329,11 @@ if is1PH and (test==17 or test==19):
 
 if isZSkim or is1PH or test==2:
     met_globalObjects.update({
-            "met_jecUp" : NTupleObject("met_jecUp", metType, help="PF E_{T}^{miss}, after type 1 corrections with JEC up variation"),
-            "met_jecDown" : NTupleObject("met_jecDown", metType, help="PF E_{T}^{miss}, after type 1 corrections with JEC down variation"),
-#            "met_shifted_JetEnUp" : NTupleObject("met_jecUp", metType, help="PF E_{T}^{miss}, after type 1 corrections with JEC up variation"),
-#            "met_shifted_JetEnDown" : NTupleObject("met_jecDown", metType, help="PF E_{T}^{miss}, after type 1 corrections with JEC down variation"),
+            #need to take from the preprocessor
+#            "met_jecUp" : NTupleObject("met_jecUp", metType, help="PF E_{T}^{miss}, after type 1 corrections with JEC up variation"),
+#            "met_jecDown" : NTupleObject("met_jecDown", metType, help="PF E_{T}^{miss}, after type 1 corrections with JEC down variation"),
+            "met_shifted_JetEnUp" : NTupleObject("met_jecUp", metType, help="PF E_{T}^{miss}, after type 1 corrections with JEC up variation"),
+            "met_shifted_JetEnDown" : NTupleObject("met_jecDown", metType, help="PF E_{T}^{miss}, after type 1 corrections with JEC down variation"),
             "met_shifted_UnclusteredEnUp" : NTupleObject("met_shifted_UnclusteredEnUp", metType, help="PF E_{T}^{miss}, after type 1 corrections with met unclustered Up"),
             "met_shifted_UnclusteredEnDown" : NTupleObject("met_shifted_UnclusteredEnDown", metType, help="PF E_{T}^{miss}, after type 1 corrections with met unclustered Down"),
             "met_shifted_JetResUp" : NTupleObject("met_shifted_JetResUp", metType, help="PF E_{T}^{miss}, after type 1 corrections with jet resolution Up"),
@@ -439,41 +443,51 @@ if getHeppyOption("nofetch"):
 # -------------------- Running pre-processor
 
 import subprocess
-if comp.isData:
-    ## DATA 25ns
-    removeResiduals = False
-    #Prompt
-    jecDBFile = os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/jec/Spring16_25nsV10_DATA.db'
-    jecEra    = 'Spring16_25nsV10_DATA'
-    #Re-Reco
-#    jecDBFile = os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/jec/Spring16_23Sep2016AllV1_DATA.db'
-#    jecEra    = 'Spring16_23Sep2016AllV1_DATA'
-    jerDBFile = os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/jer/Spring16_25nsV6_MC.db'
-    jerEra    = 'Spring16_25nsV6'
-else:
-    ## MC 25ns
-    removeResiduals = False
-    jecDBFile = os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/jec/Spring16_25nsV10_MC.db'
-    jecEra    = 'Spring16_25nsV10_MC'
-    jerDBFile = os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/jer/Spring16_25nsV6_MC.db'
-    jerEra    = 'Spring16_25nsV6'
+# take everything from the GT
+#if comp.isData:
+#    ## DATA 25ns
+#    removeResiduals = False
+#    #Prompt
+#    jecDBFile = os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/jec/Spring16_25nsV10_DATA.db'
+#    jecEra    = 'Spring16_25nsV10_DATA'
+#    #Re-Reco
+##    jecDBFile = os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/jec/Spring16_23Sep2016AllV1_DATA.db'
+##    jecEra    = 'Spring16_23Sep2016AllV1_DATA'
+#    jerDBFile = os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/jer/Spring16_25nsV6_MC.db'
+#    jerEra    = 'Spring16_25nsV6'
+#else:
+#    ## MC 25ns
+#    removeResiduals = False
+#    jecDBFile = os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/jec/Spring16_25nsV10_MC.db'
+#    jecEra    = 'Spring16_25nsV10_MC'
+#    jerDBFile = os.environ['CMSSW_BASE']+'/src/CMGTools/RootTools/data/jer/Spring16_25nsV6_MC.db'
+#    jerEra    = 'Spring16_25nsV6'
+#
+#preprocessorFile = "$CMSSW_BASE/tmp/MetType1_jec_%s.py"%(jecEra)
 
-preprocessorFile = "$CMSSW_BASE/tmp/MetType1_jec_%s.py"%(jecEra)
+removeResiduals = False
+jecEra=''
+jerEra=''
+
 extraArgs=[]
 if comp.isData:
     extraArgs.append('--isData')
-    GT= '80X_dataRun2_Prompt_ICHEP16JEC_v0'
+    GT= '80X_dataRun2_2016SeptRepro_v7'
 else:
-    GT= '80X_mcRun2_asymptotic_2016_miniAODv2_v1'
+    GT= '80X_mcRun2_asymptotic_2016_TrancheIV_v8'
+
+preprocessorFile = "$CMSSW_BASE/tmp/MetType1_jec_%s.py"%(GT)
 
 if removeResiduals:extraArgs.append('--removeResiduals')
 args = ['python',
   os.path.expandvars(os.environ['CMSSW_BASE']+'/python/CMGTools/ObjectStudies/corMETMiniAOD_cfgCreator.py'),\
   '--GT='+GT,
   '--outputFile='+preprocessorFile,
-  '--jecDBFile='+jecDBFile,
+###  '--jecDBFile='+jecDBFile, # take from the GT
+  '--jecDBFile=',
   '--jecEra='+jecEra,
-  '--jerDBFile='+jerDBFile,
+##  '--jerDBFile='+jerDBFile,
+  '--jerDBFile=',
   '--jerEra='+jerEra
   ] + extraArgs
 #print "Making pre-processorfile:"
