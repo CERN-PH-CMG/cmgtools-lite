@@ -90,7 +90,7 @@ class EOSEventsWithDownload(object):
         fpath = filename.replace("root://eoscms.cern.ch//","/").replace("root://eoscms//","/")
         if "?" in fpath: fpath = fpath.split["?"][0]
         try:
-            finfo = subprocess.check_output(["/afs/cern.ch/project/eos/installation/pro/bin/eos.select", "fileinfo", fpath])
+            finfo = subprocess.check_output(["eos", "fileinfo", fpath])
             replicas = False
             nears    = False
             for line in finfo.split("\n"):
