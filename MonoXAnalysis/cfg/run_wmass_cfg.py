@@ -32,7 +32,7 @@ selectedEvents=getHeppyOption("selectEvents","")
 ttHLepSkim.minLeptons = 1
 ttHLepSkim.maxLeptons = 999
 #ttHLepSkim.idCut  = ""
-#ttHLepSkim.ptCuts = []
+ttHLepSkim.ptCuts = [15]
 
 # Run miniIso
 lepAna.doMiniIsolation = True
@@ -224,14 +224,16 @@ from CMGTools.HToZZ4L.tools.configTools import printSummary, configureSplittingF
 
 selectedComponents = [ DYJetsToLL_M50 ]
 
-selectedComponents = selectedComponents
-#    samples_1fake = [QCD_Mu15] + QCD_Mu5 + [WJetsToLNu_LO,DYJetsToLL_M10to50_LO,DYJetsToLL_M50_LO,TT_pow] + QCDPtEMEnriched + QCDPtbcToE
-samples_1prompt = [WJetsToLNu_LO, WJetsToLNu, DYJetsToLL_M50, DYJetsToLL_M50_LO, TTJets_SingleLeptonFromTbar, TTJets_SingleLeptonFromT, TBar_tWch, T_tWch, TToLeptons_tch_amcatnlo, WW, WZ, ZZ]
-#    selectedComponents = samples_1prompt
-#    for comp in selectedComponents: comp.splitFactor = 200
-#    printSummary(selectedComponents)
-#    configureSplittingFromTime(samples_1fake,50,3)
-#    configureSplittingFromTime(samples_1prompt,100,3)
+samples_1fake = [QCD_Mu15] + QCD_Mu5 + [WJetsToLNu_LO,DYJetsToLL_M10to50_LO,DYJetsToLL_M50_LO,TTJets] + QCDPtEMEnriched + QCDPtbcToE + GJetsDR04HT
+samples_WZ = [WJetsToLNu_LO, WJetsToLNu, DYJetsToLL_M50, DYJetsToLL_M50_LO,ZToMuMu_pow,ZToEE_pow]
+samples_BKG = [TTJets_SingleLeptonFromTbar, TTJets_SingleLeptonFromT, TBar_tWch, T_tWch, TToLeptons_tch_amcatnlo, WW, WZ, ZZ]
+
+selectedComponents = samples_WZ
+
+for comp in selectedComponents: comp.splitFactor = 200
+configureSplittingFromTime(samples_1fake,50,3)
+configureSplittingFromTime(samples_WZ,100,3)
+configureSplittingFromTime(samples_BKG,100,3)
 
 if scaleProdToLumi>0: # select only a subset of a sample, corresponding to a given luminosity (assuming ~30k events per MiniAOD file, which is ok for central production)
     target_lumi = scaleProdToLumi # in inverse picobarns
