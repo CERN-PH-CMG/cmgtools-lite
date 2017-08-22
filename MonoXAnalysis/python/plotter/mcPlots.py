@@ -3,10 +3,8 @@
 from CMGTools.MonoXAnalysis.plotter.mcAnalysis import *
 import itertools
 
-if "/bin2Dto1Dlib_cc.so" not in ROOT.gSystem.GetLibraries():
-    ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/TTHAnalysis/python/plotter/bin2Dto1Dlib.cc+" % os.environ['CMSSW_BASE']);
 if "/fakeRate_cc.so" not in ROOT.gSystem.GetLibraries(): 
-    ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/TTHAnalysis/python/plotter/fakeRate.cc+" % os.environ['CMSSW_BASE']);
+    ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/MonoXAnalysis/python/plotter/fakeRate.cc+" % os.environ['CMSSW_BASE']);
 
 SAFE_COLOR_LIST=[
 ROOT.kBlack, ROOT.kRed, ROOT.kGreen+2, ROOT.kBlue, ROOT.kMagenta+1, ROOT.kOrange+7, ROOT.kCyan+1, ROOT.kGray+2, ROOT.kViolet+5, ROOT.kSpring+5, ROOT.kAzure+1, ROOT.kPink+7, ROOT.kOrange+3, ROOT.kBlue+3, ROOT.kMagenta+3, ROOT.kRed+2,
@@ -29,7 +27,10 @@ class PlotFile:
                 more = more.replace("\\,",";")
                 for setting in [f.strip().replace(";",",") for f in more.split(',')]:
                     if "=" in setting: 
-                        (key,val) = [f.strip() for f in setting.split("=")]
+                        # in following line, if setting has more than one '=' an error will occur, e.g., if you have XTitle="muon isolation (#DeltaR=0.4)"
+                        #(key,val) = [f.strip() for f in setting.split("=")]  
+                        # therefore, split only on the first occurrence of '='
+                        (key,val) = [f.strip() for f in setting.split("=",1)]  
                         extra[key] = eval(val)
                     else: extra[setting] = True
             line = re.sub("#.*","",line) 
@@ -766,7 +767,7 @@ class PlotMaker:
                             plot.SetMarkerStyle(0)
 
 
-                if not self._options.emptyStack and stack.GetNhists() == 0:
+                if not self._options.emptyStack and stack.GetHists().Capacity() == 0:
                     print "ERROR: for %s, all histograms are empty\n " % pspec.name
                     return
 

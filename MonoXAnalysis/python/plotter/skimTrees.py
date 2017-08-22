@@ -4,6 +4,7 @@
 from CMGTools.MonoXAnalysis.plotter.mcAnalysis import *
 
 import array
+import json
 import ROOT
 
 class CheckEventVetoList:
@@ -25,6 +26,24 @@ class CheckEventVetoList:
     def filter(self,run,lumi,evt):
         mylist=self._store.get((run,lumi),None)
         return ((not mylist) or (long(evt) not in mylist))
+
+class JSONSelector:
+    jsonmap = {}
+    def __init__(self,jsonfile):
+        self.name = "jsonSelector"
+        J = json.load(open(jsonfile, 'r'))
+        for r,l in J.iteritems():
+            self.jsonmap[long(r)] = l
+        print "Loaded JSON %s with %d runs\n" % (jsonfile, len(self.jsonmap))
+    def filter(self,run,lumi,evt):
+        try:
+            lumilist = self.jsonmap[run]
+            for (start,end) in lumilist:
+                if start <= lumi and lumi <= end:
+                    return True
+            return False
+        except KeyError:
+            return False
 
 def _runIt(args):
         (tty,mysource,myoutpath,cut,mycut,options,selectors) = args
@@ -91,6 +110,7 @@ if __name__ == "__main__":
     parser.add_option("-K", "--keep",  dest="keep", type="string", default=[], action="append",  help="Branches to keep, as per TTree::SetBranchStatus") 
     parser.add_option("--oldstyle",    dest="oldstyle", default=False, action="store_true",  help="Oldstyle naming (e.g. file named as <analyzer>_tree.root)") 
     parser.add_option("--vetoevents",  dest="vetoevents", type="string", default=[], action="append",  help="File containing list of events to filter out")
+    parser.add_option("--json",        dest="json", type="string", default=None, help="JSON file selecting events to keep")
     parser.add_option("--pretend",    dest="pretend", default=False, action="store_true",  help="Pretend to skim, don't actually do it") 
     addMCAnalysisOptions(parser)
     (options, args) = parser.parse_args()
@@ -105,6 +125,7 @@ if __name__ == "__main__":
         os.system("mkdir -p "+outdir)
 
     selectors=[CheckEventVetoList(fname) for fname in options.vetoevents]
+    if options.json: selectors.append(JSONSelector(options.json))
 
     tasks = []
     for proc in mca.listProcesses():
@@ -112,7 +133,9 @@ if __name__ == "__main__":
         for tty in mca._allData[proc]:
             print "\t component %-40s" % tty.cname()
             myoutpath = outdir+"/"+tty.cname()
-            mysource  = options.path+"/"+tty.cname()
+            for path in options.path:
+                mysource = path+"/"+tty.cname()
+                if os.path.exists(mysource): break
             mycut = tty.adaptExpr(cut.allCuts(),cut=True)
             if options.doS2V: mycut  = scalarToVector(mycut)
             if options.pretend: continue
