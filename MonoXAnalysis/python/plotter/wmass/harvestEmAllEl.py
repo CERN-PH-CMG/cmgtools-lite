@@ -39,7 +39,6 @@ class WMassFitMaker:
 
         # We'll have three copies of the observation, one for each mass point.
         # Filter all but one copy.
-        #cmb.FilterObs(lambda obj: obj.mass() != '15')
         cmb.FilterObs(lambda obj: obj.mass() != '%d' % self.mwcentral)
 
         # Create workspace to hold the morphing pdfs and the mass
