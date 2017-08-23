@@ -24,8 +24,7 @@ options.final  = True
 options.allProcesses  = True
 
 if "/functions_cc.so" not in ROOT.gSystem.GetLibraries(): 
-# FIXME: shouldn't it use funcions.cc from MonoXAnalysis?
-    ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/TTHAnalysis/python/plotter/functions.cc+" % os.environ['CMSSW_BASE']);
+    ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/MonoXAnalysis/python/plotter/functions.cc+" % os.environ['CMSSW_BASE']);
 
 mca  = MCAnalysis(args[0],options)
 cuts = CutsFile(args[1],options)
