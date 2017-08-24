@@ -187,6 +187,23 @@ met_globalVariables = [
 #    NTupleVariable("tkmetPuppiNotReconstructedPrimary_phi", lambda ev : ev.tkMetPuppiNotReconstructedPrimary.phi() if  hasattr(ev,'tkMetPuppiNotReconstructedPrimary') else  0, help="TK Puppi E_{T}^{miss} w/o PV"),
 #    NTupleVariable("tkmetPuppiOtherDeltaZ_pt", lambda ev : ev.tkMetPuppiOtherDeltaZ.pt() if  hasattr(ev,'tkMetPuppiOtherDeltaZ') else  0, help="TK Puppi E_{T}^{miss} fromPV>0 pt"),
 #    NTupleVariable("tkmetPuppiOtherDeltaZ_phi", lambda ev : ev.tkMetPuppiOtherDeltaZ.phi() if  hasattr(ev,'tkMetPuppiOtherDeltaZ') else  0, help="TK Puppi E_{T}^{miss} fromPV>0 phi"),
+
+    NTupleVariable("puppiMetCh_pt", lambda ev : ev.puppiMetCh.pt(), help="TK E_{T}^{miss} Puppi Charged pt"),
+    NTupleVariable("puppiMetCh_phi", lambda ev : ev.puppiMetCh.phi(), help="TK E_{T}^{miss} Puppi Charged phi"),
+    NTupleVariable("puppiMetCh_sumEt", lambda ev : ev.puppiMetCh.sumEt, help="TK E_{T}^{miss} Puppi Charged sumEt"),
+
+    NTupleVariable("puppiMetPh_pt", lambda ev : ev.puppiMetPh.pt(), help="TK E_{T}^{miss} Puppi PH pt"),
+    NTupleVariable("puppiMetPh_phi", lambda ev : ev.puppiMetPh.phi(), help="TK E_{T}^{miss} Puppi PH phi"),
+    NTupleVariable("puppiMetPh_sumEt", lambda ev : ev.puppiMetPh.sumEt, help="TK E_{T}^{miss} Puppi PH sumEt"),
+
+    NTupleVariable("puppiMetNh_pt", lambda ev : ev.puppiMetNh.pt(), help="TK E_{T}^{miss} Puppi NH pt"),
+    NTupleVariable("puppiMetNh_phi", lambda ev : ev.puppiMetNh.phi(), help="TK E_{T}^{miss} Puppi NH phi"),
+    NTupleVariable("puppiMetNh_sumEt", lambda ev : ev.puppiMetNh.sumEt, help="TK E_{T}^{miss} Puppi NH sumEt"),
+
+    NTupleVariable("puppiMetHF_pt", lambda ev : ev.puppiMetHF.pt(), help="TK E_{T}^{miss} Puppi HF pt"),
+    NTupleVariable("puppiMetHF_phi", lambda ev : ev.puppiMetHF.phi(), help="TK E_{T}^{miss} Puppi HF phi"),
+    NTupleVariable("puppiMetHF_sumEt", lambda ev : ev.puppiMetHF.sumEt, help="TK E_{T}^{miss} Puppi HF sumEt"),
+
     ]
 
 met_globalObjects = {
@@ -209,6 +226,6 @@ met_collections = {
 #    "gentaus"         : NTupleCollection("genTau",     genParticleWithLinksType, 10, help="Generated leptons (tau) from W/Z decays"),
 #    "generatorSummary" : NTupleCollection("GenPart", genParticleWithLinksType, 100 , help="Hard scattering particles, with ancestry and links"),
     "selectedLeptons" : NTupleCollection("lep", leptonType, 50, help="Leptons after the preselection", filter=lambda l : l.pt()>10 ),
-    "selectedPhotons"    : NTupleCollection("gamma", photonType, 50, help="photons with pt>20 and loose cut based ID"),
+#    "selectedPhotons"    : NTupleCollection("gamma", photonType, 50, help="photons with pt>20 and loose cut based ID"),
 #    "cleanJetsAll"       : NTupleCollection("jet", jetType, 100, help="all jets (w/ x-cleaning, w/ ID applied w/o PUID applied pt>20 |eta|<5.2) , sorted by pt", filter=lambda l : l.pt()>100  ),
     }
