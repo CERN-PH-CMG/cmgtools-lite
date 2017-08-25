@@ -238,7 +238,6 @@ class H2TauTauTreeProducerBase(TreeAnalyzerNumpy):
         self.vars(tree, ['gen_top_1_pt', 'gen_top_2_pt', 'gen_top_weight'])
 
     def fillTopPtReweighting(self, tree, event):
-        '''FIXME: Move this to extra class - only do inline calculations here'''
         if not self.cfg_comp.isMC:
             self.fill(tree, 'gen_top_weight', 1.)
             return
@@ -246,3 +245,13 @@ class H2TauTauTreeProducerBase(TreeAnalyzerNumpy):
         self.fill(tree, 'gen_top_1_pt', getattr(event, 'top_1_pt', -999.))
         self.fill(tree, 'gen_top_2_pt', getattr(event, 'top_2_pt', -999.))
         self.fill(tree, 'gen_top_weight', getattr(event, 'topweight', 1.))
+
+    def bookLHEWeights(self, tree, n_max=10):
+    	for n_lhe in xrange(1, n_max+1):
+    		self.var(tree, 'LHE_weight_{}'.format(n_lhe))
+
+    def fillLHEWeights(self, tree, event, n_max=10):
+    	for n_lhe in xrange(n_max):
+    		if hasattr(event, 'LHE_weights') and len(event.LHE_weights) > n_lhe:
+    			self.fill(tree, 'LHE_weight_{}'.format(n_lhe+1), event.LHE_weights[n_lhe].wgt)
+

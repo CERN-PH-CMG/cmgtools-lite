@@ -32,7 +32,7 @@ def getHeppyOption(option, default):
 production = getHeppyOption('production', True)
 pick_events = getHeppyOption('pick_events', False)
 syncntuple = getHeppyOption('syncntuple', True)
-cmssw = getHeppyOption('cmssw', False)
+cmssw = getHeppyOption('cmssw', True)
 doSUSY = getHeppyOption('susy', True)
 computeSVfit = getHeppyOption('computeSVfit', False)
 data = getHeppyOption('data', False)
@@ -45,11 +45,8 @@ correct_recoil = getHeppyOption('correct_recoil', True)
 if doSUSY:
     cmssw = False
 
-tes_up = False
-tes_scale = 1.0
-if tes_up:
-    scaleTaus = True
-    tes_scale = 1.03
+scaleTaus = True
+tes_scale = 1.03
 
 # Just to be sure
 if production:
@@ -336,7 +333,7 @@ if not production:
     # comp = data_list[0] if data else sync_list[0]
     # comp = SMS
     # comp = samples_susy[1]
-    selectedComponents = [samples_susy[2]] if doSUSY else sync_list
+    selectedComponents = samples_susy if doSUSY else sync_list
     if data:
         selectedComponents = [data_list[0]]
     selectedComponents = selectedComponents[:1]
@@ -345,10 +342,11 @@ if not production:
         comp.fineSplitFactor = 1
     # comp.files = comp.files[13:20]
 
+# selectedComponents = selectedComponents[-1:]
+
 if doSUSY:
     from CMGTools.RootTools.samples.autoAAAconfig import autoAAA
     autoAAA(selectedComponents)
-    selectedComponents = [samples_susy[2]] # FIXME
 
 preprocessor = None
 if cmssw:

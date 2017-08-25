@@ -30,6 +30,15 @@ class HTTGenAnalyzer(Analyzer):
 
         self.handles['jets'] = AutoHandle(self.cfg_ana.jetCol, 'std::vector<pat::Jet>')
 
+    def beginLoop(self, setup):
+        super(HTTGenAnalyzer, self).beginLoop(setup)
+        self.counters.addCounter('LHEWeights')
+        self.count = self.counters.counter('LHEWeights')
+
+        for n_lhe in xrange(1, 11):
+            self.count.register('Sum LHEWeight {}'.format(n_lhe))
+
+
     def process(self, event):
         event.genmet_pt = -99.
         event.genmet_eta = -99.
@@ -41,6 +50,10 @@ class HTTGenAnalyzer(Analyzer):
 
         if self.cfg_comp.isData:
             return True
+
+        for n_lhe in xrange(1, 11):
+            if hasattr(event, 'LHE_weights') and len(event.LHE_weights) > n_lhe:
+                self.count.inc('Sum LHEWeight {}'.format(n_lhe), event.LHE_weights[n_lhe].wgt)
 
         self.readCollections(event.input)
         event.genJets = self.mchandles['genJets'].product()
@@ -293,4 +306,11 @@ class HTTGenAnalyzer(Analyzer):
         if not hasattr(event, 'parentBoson'):
             event.parentBoson = HTTGenAnalyzer.getParentBoson(event)
         event.dy_weight = getDYWeight(event.parentBoson.mass(), event.parentBoson.pt())
+
+    @staticmethod
+    def getSusySystem(event):
+        initialSusyParticles = [p for p in event.genParticles if abs(p.pdgId()) in (1000024, 1000023) and p.daughter(0).pdgId() != p.pdgId()]
+        if len(initialSusyParticles) != 2:
+            import pdb; pdb.set_trace()
+        return initialSusyParticles[0].p4() + initialSusyParticles[1].p4()
 

@@ -221,7 +221,7 @@ def createSampleLists(analysis_dir='/afs/cern.ch/user/s/steggema/work/public/mt/
     if mode == 'susy':
         
         # normfile = ROOT.TFile(' /afs/cern.ch/work/s/steggema/public/tt/100417/SMS_TChipmStauSnu/ttHhistoCounterAnalyzer/sumhist.root')
-        normfile = ROOT.TFile(' /afs/cern.ch/work/s/steggema/public/tt/100417/SMS_TChipmStauSnu//H2TauTauTreeProducerTauTau/tree.root')
+        normfile = ROOT.TFile(' /afs/cern.ch/work/s/steggema/public/tt/270617/sms_sys/SMS_TChipmStauSnu//H2TauTauTreeProducerTauTau/tree.root')
         normhist = normfile.Get('SumGenWeightsSMS')
 
         from CMGTools.H2TauTau.proto.plotter.categories_TauTau import inc_trigger

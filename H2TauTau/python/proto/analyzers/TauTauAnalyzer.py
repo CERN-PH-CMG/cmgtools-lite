@@ -115,12 +115,11 @@ class TauTauAnalyzer(DiLeptonAnalyzer):
             pydil.leg2().event = event.input.object()
             diLeptons.append(pydil)
             pydil.mvaMetSig = pydil.met().getSignificanceMatrix()
-
             if getattr(self.cfg_ana, 'scaleTaus', False):
-                HTTGenAnalyzer.attachGenStatusFlag(pydil.leg1())
-                HTTGenAnalyzer.attachGenStatusFlag(pydil.leg2())
-                self.scaleP4(pydil.leg1(), self.cfg_ana.tes_scale)
-                self.scaleP4(pydil.leg2(), self.cfg_ana.tes_scale)
+                for leg in [pydil.leg1(), pydil.leg2()]:
+                    HTTGenAnalyzer.genMatch(event, leg, event.ptSelGentauleps, event.ptSelGenleps, event.ptSelGenSummary)
+                    HTTGenAnalyzer.attachGenStatusFlag(leg)
+                    self.scaleP4(leg, self.cfg_ana.tes_scale)
 
         return diLeptons
 
@@ -143,6 +142,8 @@ class TauTauAnalyzer(DiLeptonAnalyzer):
 
         if getattr(self.cfg_ana, 'scaleTaus', False):
             for tau in taus:
+                HTTGenAnalyzer.genMatch(event, tau, event.ptSelGentauleps, event.ptSelGenleps, event.ptSelGenSummary)
+                HTTGenAnalyzer.attachGenStatusFlag(tau)
                 self.scaleP4(tau, self.cfg_ana.tes_scale)
 
         for leg1 in taus:

@@ -1,6 +1,7 @@
 from CMGTools.H2TauTau.proto.analyzers.H2TauTauTreeProducer import H2TauTauTreeProducer
 from PhysicsTools.Heppy.physicsutils.TauDecayModes import tauDecayModes
 
+from CMGTools.H2TauTau.proto.analyzers.HTTGenAnalyzer import HTTGenAnalyzer
 
 class H2TauTauTreeProducerTauTau(H2TauTauTreeProducer):
 
@@ -47,7 +48,7 @@ class H2TauTauTreeProducerTauTau(H2TauTauTreeProducer):
         self.var(self.tree, 'trigger_matched_singletau140')
         self.var(self.tree, 'trigger_matched_singletau120')
 
-        if self.cfg_comp.isMC:
+        if self.cfg_comp.isMC and getattr(self.cfg_ana, 'isSUSY', False):
             self.var(self.tree, 'GenSusyMScan1')
             self.var(self.tree, 'GenSusyMScan2')
             self.var(self.tree, 'GenSusyMScan3')
@@ -56,10 +57,14 @@ class H2TauTauTreeProducerTauTau(H2TauTauTreeProducer):
             self.var(self.tree, 'GenSusyMChargino')
             self.var(self.tree, 'GenSusyMStau')
             self.var(self.tree, 'GenSusyMStau2')
+            self.bookLHEWeights(self.tree)
+            self.var(self.tree, 'gen_dichargino_pt')
 
     def process(self, event):
 
         super(H2TauTauTreeProducerTauTau, self).process(event)
+
+        isSUSY = getattr(self.cfg_ana, 'isSUSY', False)
 
         tau1 = event.diLepton.leg1()
         tau2 = event.diLepton.leg2()
@@ -106,18 +111,18 @@ class H2TauTauTreeProducerTauTau(H2TauTauTreeProducer):
 
         fired_triggers = [info.name for info in getattr(event, 'trigger_infos', []) if info.fired]
 
-        self.fill(self.tree, 'trigger_ditau35', any('HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg_v' in name for name in fired_triggers))
-        self.fill(self.tree, 'trigger_ditau35_combiso', any('HLT_DoubleMediumCombinedIsoPFTau35_Trk1_eta2p1_Reg_' in name for name in fired_triggers))
-        self.fill(self.tree, 'trigger_singletau140', any('HLT_VLooseIsoPFTau140_Trk50_eta2p1_v' in name for name in fired_triggers))
-        self.fill(self.tree, 'trigger_singletau120', any('HLT_VLooseIsoPFTau120_Trk50_eta2p1_v' in name for name in fired_triggers))
+        self.fill(self.tree, 'trigger_ditau35', any('HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg_v' in name for name in fired_triggers) or isSUSY)
+        self.fill(self.tree, 'trigger_ditau35_combiso', any('HLT_DoubleMediumCombinedIsoPFTau35_Trk1_eta2p1_Reg_' in name for name in fired_triggers) or isSUSY)
+        self.fill(self.tree, 'trigger_singletau140', any('HLT_VLooseIsoPFTau140_Trk50_eta2p1_v' in name for name in fired_triggers) or isSUSY)
+        self.fill(self.tree, 'trigger_singletau120', any('HLT_VLooseIsoPFTau120_Trk50_eta2p1_v' in name for name in fired_triggers) or isSUSY)
 
         matched_paths = getattr(event.diLepton, 'matchedPaths', [])
-        self.fill(self.tree, 'trigger_matched_ditau35', any('HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg_v' in name for name in matched_paths))
-        self.fill(self.tree, 'trigger_matched_ditau35_combiso', any('HLT_DoubleMediumCombinedIsoPFTau35_Trk1_eta2p1_Reg_' in name for name in matched_paths))
-        self.fill(self.tree, 'trigger_matched_singletau140', any('HLT_VLooseIsoPFTau140_Trk50_eta2p1_v' in name for name in matched_paths))
-        self.fill(self.tree, 'trigger_matched_singletau120', any('HLT_VLooseIsoPFTau120_Trk50_eta2p1_v' in name for name in matched_paths))
+        self.fill(self.tree, 'trigger_matched_ditau35', any('HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg_v' in name for name in matched_paths) or isSUSY)
+        self.fill(self.tree, 'trigger_matched_ditau35_combiso', any('HLT_DoubleMediumCombinedIsoPFTau35_Trk1_eta2p1_Reg_' in name for name in matched_paths) or isSUSY)
+        self.fill(self.tree, 'trigger_matched_singletau140', any('HLT_VLooseIsoPFTau140_Trk50_eta2p1_v' in name for name in matched_paths) or isSUSY)
+        self.fill(self.tree, 'trigger_matched_singletau120', any('HLT_VLooseIsoPFTau120_Trk50_eta2p1_v' in name for name in matched_paths) or isSUSY)
 
-        if self.cfg_comp.isMC:
+        if self.cfg_comp.isMC and isSUSY:
             self.fill(self.tree, 'GenSusyMScan1',  getattr(event, 'genSusyMScan1', -999.))
             self.fill(self.tree, 'GenSusyMScan2',  getattr(event, 'genSusyMScan2', -999.))
             self.fill(self.tree, 'GenSusyMScan3',  getattr(event, 'genSusyMScan3', -999.))
@@ -126,5 +131,10 @@ class H2TauTauTreeProducerTauTau(H2TauTauTreeProducer):
             self.fill(self.tree, 'GenSusyMChargino',  getattr(event, 'genSusyMChargino', -999.))
             self.fill(self.tree, 'GenSusyMStau',  getattr(event, 'genSusyMStau', -999.))
             self.fill(self.tree, 'GenSusyMStau2',  getattr(event, 'genSusyMStau2', -999.))
+
+        
+            self.fillLHEWeights(self.tree, event)
+
+            self.fill(self.tree, 'gen_dichargino_pt', HTTGenAnalyzer.getSusySystem(event).pt())
 
         self.fillTree(event)

@@ -103,7 +103,7 @@ w_weight_dict = {
     4:0.06275589/w_xsec
 }
 
-def getWWeight(n_jets, m_gen_dummy):
+def getWWeight(n_jets):
     return w_weight_dict[n_jets]
 
 for sample in [WJetsToLNu_LO] + WNJets: # 

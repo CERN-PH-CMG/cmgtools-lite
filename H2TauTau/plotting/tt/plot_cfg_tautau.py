@@ -27,12 +27,22 @@ def prepareCuts(mode):
 
     # append categories to plot
     if mode == 'control':
-        cuts.append(MyCut('inclusive', inc_cut & Cut('n_bjets==0')))
+        # cuts.append(MyCut('inclusive', inc_cut & Cut('n_bjets==0')))
         # cuts.append(MyCut('dilpt50', inc_cut & Cut('n_bjets==0 && dil_pt>50')))
 
-        # cuts.append(MyCut('2bjet', inc_cut & Cut('n_bjets>=2')))
+        cuts.append(MyCut('2bjet', inc_cut & Cut('n_bjets>=2')))
+        cuts.append(MyCut('gr1bjet', inc_cut & Cut('n_bjets>=1')))
 
-        # cuts.append(MyCut('sm_dysel', inc_cut & Cut('n_bjets==0 && n_jets>=1 && l1_pt>50 && l2_pt>40 && abs(l1_eta - l2_eta)<1. && pzeta_vis>60.')))
+        # cuts.append(MyCut('sm_dysel_new_mz', inc_cut & Cut('n_bjets==0 && n_jets>=1 && l1_pt>50 && l2_pt>40 && abs(l1_eta - l2_eta)<1. && pzeta_vis>60. && mvis<100')))
+        # cuts.append(MyCut('sm_dysel_ptgr100_mz', inc_cut & Cut('n_bjets==0 && n_jets>=1 && l1_pt>100 && l2_pt>40 && abs(l1_eta - l2_eta)<1. && pzeta_vis>60. && mvis<100')))
+
+        # cuts.append(MyCut('sm_dysel_new', inc_cut & Cut('n_bjets==0 && n_jets>=1 && l1_pt>50 && l2_pt>40 && abs(l1_eta - l2_eta)<1. && pzeta_vis>60.')))
+        # cuts.append(MyCut('sm_dysel_ptgr100', inc_cut & Cut('n_bjets==0 && n_jets>=1 && l1_pt>100 && l2_pt>40 && abs(l1_eta - l2_eta)<1. && pzeta_vis>60.')))
+        # cuts.append(MyCut('sm_dysel_ptgr200', inc_cut & Cut('n_bjets==0 && n_jets>=1 && l1_pt>200 && l2_pt>40 && abs(l1_eta - l2_eta)<1. && pzeta_vis>60.')))
+        # cuts.append(MyCut('sm_dysel_pt150_200', inc_cut & Cut('n_bjets==0 && n_jets>=1 && l1_pt>150 && l1_pt<200 && l2_pt>40 && abs(l1_eta - l2_eta)<1. && pzeta_vis>60.')))
+        # cuts.append(MyCut('sm_dysel_pt100_150', inc_cut & Cut('n_bjets==0 && n_jets>=1 && l1_pt>100 && l1_pt<150 && l2_pt>40 && abs(l1_eta - l2_eta)<1. && pzeta_vis>60.')))
+        # cuts.append(MyCut('sm_dysel_pt80_100', inc_cut & Cut('n_bjets==0 && n_jets>=1 && l1_pt>80 && l1_pt<100 && l2_pt>40 && abs(l1_eta - l2_eta)<1. && pzeta_vis>60.')))
+        # cuts.append(MyCut('sm_dysel_pt50_80', inc_cut & Cut('n_bjets==0 && n_jets>=1 && l1_pt>50 && l1_pt<80 && l2_pt>40 && abs(l1_eta - l2_eta)<1. && pzeta_vis>60.')))
 
         # cuts.append(MyCut('inclusive_SS', inc_cut))
         # cuts.append(MyCut('mZ', inc_cut & Cut('mvis < 110.')))
@@ -90,9 +100,28 @@ def prepareCuts(mode):
         # cuts.append(MyCut('susy_mva3_mtsum200_mt2_20', inc_cut & Cut('n_bjets==0 && mt2>20 && mt + mt_leg2>200. && mva1>0.95')))
         # cuts.append(MyCut('susy_mtsum200_mt2_20', inc_cut & Cut('n_bjets==0 && mt2>20 && mt + mt_leg2>200.')))
 
-        cuts.append(MyCut('pieter_1', inc_cut & Cut('n_bjets==0 && mt2>90. && abs(TVector2::Phi_mpi_pi(l1_phi - l2_phi))>1.5')))
-        cuts.append(MyCut('pieter_2', inc_cut & Cut('n_bjets==0 && mt2>40. && mt2<90. && mt2>40. && abs(TVector2::Phi_mpi_pi(l1_phi - l2_phi))>1.5 && mt + mt_leg2>300. && mt + mt_leg2<300. ')))
-        cuts.append(MyCut('pieter_3', inc_cut & Cut('n_bjets==0 && mt2>40. && mt2<90. && mt2>40. && abs(TVector2::Phi_mpi_pi(l1_phi - l2_phi))>1.5 && mt + mt_leg2>350.')))
+        # cuts.append(MyCut('pieter_1', inc_cut & Cut('n_bjets==0 && mt2>90. && abs(TVector2::Phi_mpi_pi(l1_phi - l2_phi))>1.5')))
+        # cuts.append(MyCut('pieter_2', inc_cut & Cut('n_bjets==0 && mt2>40. && mt2<90. && mt2>40. && abs(TVector2::Phi_mpi_pi(l1_phi - l2_phi))>1.5 && mt + mt_leg2>300. && mt + mt_leg2<300. ')))
+        # cuts.append(MyCut('pieter_3', inc_cut & Cut('n_bjets==0 && mt2>40. && mt2<90. && mt2>40. && abs(TVector2::Phi_mpi_pi(l1_phi - l2_phi))>1.5 && mt + mt_leg2>350.')))
+
+        # cuts.append(MyCut('maryam_incl', inc_cut & Cut('n_bjets==0 && mt2>20. && mvis>85. && pfmet_pt>30.')))
+        
+        # cuts.append(MyCut('maryam_1', inc_cut & Cut('n_bjets==0 && mt2>90. && mvis>85. && pfmet_pt>30.')))
+        # cuts.append(MyCut('maryam_1_0jet', inc_cut & Cut('n_bjets==0 && mt2>90. && mvis>85. && pfmet_pt>30. && n_jets==0')))
+        # cuts.append(MyCut('maryam_1_1jet', inc_cut & Cut('n_bjets==0 && mt2>90. && mvis>85. && pfmet_pt>30. && n_jets>=1')))
+
+        # cuts.append(MyCut('maryam_1_SS', inc_cut & Cut('n_bjets==0 && mt2>90. && mvis>85. && pfmet_pt>30.')))
+        # cuts.append(MyCut('maryam_1_0jet_SS', inc_cut & Cut('n_bjets==0 && mt2>90. && mvis>85. && pfmet_pt>30. && n_jets==0')))
+        # cuts.append(MyCut('maryam_1_1jet_SS', inc_cut & Cut('n_bjets==0 && mt2>90. && mvis>85. && pfmet_pt>30. && n_jets>=1')))
+
+
+        cuts.append(MyCut('maryam_1_mt2sideband_1jet', inc_cut & Cut('n_bjets==0 && mt2>75. && mt2<90. && mvis>85. && pfmet_pt>30. && n_jets>=1')))
+        cuts.append(MyCut('maryam_1_mt2sideband_1jet_SS', inc_cut & Cut('n_bjets==0 && mt2>75. && mt2<90. && mvis>85. && pfmet_pt>30. && n_jets>=1')))
+
+        # cuts.append(MyCut('maryam_1_tight', inc_cut & Cut('n_bjets==0 && mt2>90. && mvis>85. && pfmet_pt>30. && l1_pt>100.')))
+        # cuts.append(MyCut('maryam_1_tight_1jet', inc_cut & Cut('n_bjets==0 && mt2>90. && mvis>85. && pfmet_pt>30. && l1_pt>100. && n_jets>=1')))
+        # cuts.append(MyCut('maryam_1_tight_0jet', inc_cut & Cut('n_bjets==0 && mt2>90. && mvis>85. && pfmet_pt>30. && l1_pt>100. && n_jets==0')))
+        # cuts.append(MyCut('maryam_2', inc_cut & Cut('n_bjets==0 && mt2<90. && mvis>85. && pfmet_pt>30. && mt + mt_leg2 > 250. && l1_pt>100.')))
 
         # cuts.append(MyCut('susy_onlytaupt', inc_cut & Cut('mvis>100 && n_bjets==0 && l1_pt>60 && met_pt>20.')))
         # cuts.append(MyCut('susy_taupt', inc_cut & Cut('mvis>100 && n_bjets==0 && l1_pt>60 && met_pt>20. && mt>50.')))
@@ -148,9 +177,9 @@ def getVariables(mode):
     # Taken from Variables.py, can get subset with e.g. getVars(['mt', 'mvis'])
     # variables = tautau_vars
     if mode == 'control':
-        variables = getVars(['_norm_', 'mvis', 'mt2', 'l1_pt', 'l2_pt', 'delta_phi_l1_l2', 'delta_eta_l1_l2', 'met_pt', 'mt_total', 'mt_total_mssm', 'mt_sum', 'pzeta_met', 'l2_mt', 'mt', 'pzeta_vis', 'pzeta_disc', 'pthiggs', 'jet1_pt', 'n_jets', 'dil_pt'], channel='tautau')
+        variables = getVars(['_norm_', 'mvis', 'mt2', 'l1_pt', 'l2_pt', 'delta_phi_l1_l2', 'delta_eta_l1_l2', 'met_pt', 'mt_total', 'mt_total_mssm', 'mt_sum', 'pzeta_met', 'l2_mt', 'mt', 'pzeta_vis', 'pzeta_disc', 'pthiggs', 'jet1_pt', 'n_jets', 'dil_pt', 'l1_byCombinedIsolationDeltaBetaCorrRaw3Hits', 'l1_byIsolationMVArun2v1DBoldDMwLTraw', 'l1_dz_sig', 'l1_log_dz', 'l1_dxy_sig', 'l1_log_dxy', 'l1_decayMode', 'l1_chargedIsoPtSum', 'l1_neutralIsoPtSum', 'l1_puCorrPtSum', 'l1_photonPtSumOutsideSignalCone', 'l1_zImpact', 'l1_jet_charge', 'l1_jet_pt_div_l1_pt'], channel='tautau')
     if mode == 'mssm':
-        variables = getVars(['mt_total', 'mt_total_mssm', 'mt_total_mssm_fine', 'mvis_extended', 'l1_pt'], channel='tautau')
+        variables = getVars(['mt_total', 'mt_total_mssm', 'mt_total_mssm_fine', 'mvis_extended', 'l1_pt', 'dil_pt'], channel='tautau')
     # variables += [
     #     VariableCfg(name='mt2', binning={'nbinsx':15, 'xmin':0., 'xmax':150.}, unit='GeV', xtitle='m_{T2}')
     # ]
@@ -161,7 +190,7 @@ def getVariables(mode):
         ]
 
     if mode == 'susy':
-        variables = getVars(['l1_pt', '_norm_', 'l2_pt', 'mt2', 'mt', 'mt_leg2', 'mt_total_mssm'])
+        variables = getVars(['l1_pt', '_norm_', 'l2_pt', 'mt2', 'mt', 'mt_leg2', 'mt_total_mssm', 'min_delta_phi_tau1tau2_met'], channel='tautau')
 
     return variables
 
@@ -181,13 +210,25 @@ def makePlots(variables, cuts, total_weight, all_samples, samples, friend_func, 
 
     # def_iso_cut = inc_sig_tau1_iso & inc_sig_tau2_iso
     iso_cuts = {
-        'vvtight':(Cut('l1_byIsolationMVArun2v1DBoldDMwLT>5.5') & Cut('l2_byIsolationMVArun2v1DBoldDMwLT>5.5'), Cut('l1_byIsolationMVArun2v1DBoldDMwLT>3.5') & Cut('l2_byIsolationMVArun2v1DBoldDMwLT>3.5')),
-        'vtight':(Cut('l1_byIsolationMVArun2v1DBoldDMwLT>4.5') & Cut('l2_byIsolationMVArun2v1DBoldDMwLT>4.5'), Cut('l1_byIsolationMVArun2v1DBoldDMwLT>2.5') & Cut('l2_byIsolationMVArun2v1DBoldDMwLT>2.5')),
-        'tight':(Cut('l1_byIsolationMVArun2v1DBoldDMwLT>3.5') & Cut('l2_byIsolationMVArun2v1DBoldDMwLT>3.5'), Cut('l1_byIsolationMVArun2v1DBoldDMwLT>3.5') & Cut('l2_byIsolationMVArun2v1DBoldDMwLT>1.5')),
-        'medium':(Cut('l1_byIsolationMVArun2v1DBoldDMwLT>2.5') & Cut('l2_byIsolationMVArun2v1DBoldDMwLT>2.5'), Cut('l1_byIsolationMVArun2v1DBoldDMwLT>0.5') & Cut('l2_byIsolationMVArun2v1DBoldDMwLT>0.5')),
-        'loose':(Cut('l1_byIsolationMVArun2v1DBoldDMwLT>1.5') & Cut('l2_byIsolationMVArun2v1DBoldDMwLT>1.5'), Cut('1')),
-        'vloose':(Cut('l1_byIsolationMVArun2v1DBoldDMwLT>0.5') & Cut('l2_byIsolationMVArun2v1DBoldDMwLT>0.5'), Cut('1')),
+        # 'vvtight':(Cut('l1_byIsolationMVArun2v1DBoldDMwLT>5.5') & Cut('l2_byIsolationMVArun2v1DBoldDMwLT>5.5'), Cut('l1_byIsolationMVArun2v1DBoldDMwLT>3.5') & Cut('l2_byIsolationMVArun2v1DBoldDMwLT>3.5')),
+        'vtight_relax2nd':(Cut('l1_byIsolationMVArun2v1DBoldDMwLT>4.5') & Cut('l2_byIsolationMVArun2v1DBoldDMwLT>4.5'), Cut('l1_byIsolationMVArun2v1DBoldDMwLT>4.5') & Cut('l2_byIsolationMVArun2v1DBoldDMwLT>2.5')),
+        'loose_not_vtight':(Cut('l1_byIsolationMVArun2v1DBoldDMwLT>1.5 && l1_byIsolationMVArun2v1DBoldDMwLT<4.5') & Cut('l2_byIsolationMVArun2v1DBoldDMwLT>1.5&&l2_byIsolationMVArun2v1DBoldDMwLT<4.5'), Cut('l1_byIsolationMVArun2v1DBoldDMwLT<1.5 && l1_byIsolationMVArun2v1DBoldDMwLT>0.5') & Cut('l2_byIsolationMVArun2v1DBoldDMwLT<1.5 && l2_byIsolationMVArun2v1DBoldDMwLT>0.5')),
+        'one_loose_other_vtight':(Cut('(l1_byIsolationMVArun2v1DBoldDMwLT>4.5 && (l2_byIsolationMVArun2v1DBoldDMwLT>1.5&&l2_byIsolationMVArun2v1DBoldDMwLT<4.5)) || (l2_byIsolationMVArun2v1DBoldDMwLT>4.5 && (l1_byIsolationMVArun2v1DBoldDMwLT>1.5&&l1_byIsolationMVArun2v1DBoldDMwLT<4.5)) '), Cut('l1_byIsolationMVArun2v1DBoldDMwLT<1.5 && l1_byIsolationMVArun2v1DBoldDMwLT>0.5') & Cut('l2_byIsolationMVArun2v1DBoldDMwLT<1.5 && l2_byIsolationMVArun2v1DBoldDMwLT>0.5')),
+        # 'vtight':(Cut('l1_byIsolationMVArun2v1DBoldDMwLT>4.5') & Cut('l2_byIsolationMVArun2v1DBoldDMwLT>4.5'), Cut('l1_byIsolationMVArun2v1DBoldDMwLT>2.5') & Cut('l2_byIsolationMVArun2v1DBoldDMwLT>2.5')),
+        # 'tight':(Cut('l1_byIsolationMVArun2v1DBoldDMwLT>3.5') & Cut('l2_byIsolationMVArun2v1DBoldDMwLT>3.5'), Cut('l1_byIsolationMVArun2v1DBoldDMwLT>3.5') & Cut('l2_byIsolationMVArun2v1DBoldDMwLT>1.5')),
+        # 'medium':(Cut('l1_byIsolationMVArun2v1DBoldDMwLT>2.5') & Cut('l2_byIsolationMVArun2v1DBoldDMwLT>2.5'), Cut('l1_byIsolationMVArun2v1DBoldDMwLT>0.5') & Cut('l2_byIsolationMVArun2v1DBoldDMwLT>0.5')),
+        # 'loose':(Cut('l1_byIsolationMVArun2v1DBoldDMwLT>1.5') & Cut('l2_byIsolationMVArun2v1DBoldDMwLT>1.5'), Cut('1')),
+        # 'vloose':(Cut('l1_byIsolationMVArun2v1DBoldDMwLT>0.5') & Cut('l2_byIsolationMVArun2v1DBoldDMwLT>0.5'), Cut('1')),
     }
+
+    # iso_cuts = {
+    #     'l1_vvtight':(Cut('l1_byIsolationMVArun2v1DBoldDMwLT>5.5') & Cut('l2_byIsolationMVArun2v1DBoldDMwLT>4.5'), Cut('l1_byIsolationMVArun2v1DBoldDMwLT>5.5') & Cut('l2_byIsolationMVArun2v1DBoldDMwLT>3.5')),
+    #     'l1_vtight':(Cut('l1_byIsolationMVArun2v1DBoldDMwLT>4.5') & Cut('l2_byIsolationMVArun2v1DBoldDMwLT>4.5'), Cut('l1_byIsolationMVArun2v1DBoldDMwLT>4.5') & Cut('l2_byIsolationMVArun2v1DBoldDMwLT>2.5')),
+    #     'l1_tight':(Cut('l1_byIsolationMVArun2v1DBoldDMwLT>3.5') & Cut('l2_byIsolationMVArun2v1DBoldDMwLT>4.5'), Cut('l1_byIsolationMVArun2v1DBoldDMwLT>3.5') & Cut('l2_byIsolationMVArun2v1DBoldDMwLT>1.5')),
+    #     'l1_medium':(Cut('l1_byIsolationMVArun2v1DBoldDMwLT>2.5') & Cut('l2_byIsolationMVArun2v1DBoldDMwLT>4.5'), Cut('l1_byIsolationMVArun2v1DBoldDMwLT>2.5') & Cut('l2_byIsolationMVArun2v1DBoldDMwLT>0.5')),
+    #     'l1_loose':(Cut('l1_byIsolationMVArun2v1DBoldDMwLT>1.5') & Cut('l2_byIsolationMVArun2v1DBoldDMwLT>4.5'), Cut('l1_byIsolationMVArun2v1DBoldDMwLT>1.5') & Cut('l2_byIsolationMVArun2v1DBoldDMwLT>0.5')),
+    #     'l1_vloose':(Cut('l1_byIsolationMVArun2v1DBoldDMwLT>0.5') & Cut('l2_byIsolationMVArun2v1DBoldDMwLT>4.5'),Cut('l1_byIsolationMVArun2v1DBoldDMwLT>0.5') & Cut('1')),
+    # }
 
     for cut in cuts:
         for iso_cut_name, (iso_cut, max_iso_cut) in iso_cuts.items():
@@ -294,19 +335,12 @@ def makePlots(variables, cuts, total_weight, all_samples, samples, friend_func, 
 
 
 if __name__ == '__main__':
-    mode = 'mssm' # 'control' 'mssm' 'mva_train' 'susy' 'sm'
+    mode = 'susy' # 'control' 'mssm' 'mva_train' 'susy' 'sm'
 
     int_lumi = lumi
     analysis_dir = '/data1/steggema/Gael3/MC/'
     verbose = True
     total_weight = 'weight'
-
-    # tau_id_weight = '*(1. - 0.05*({leg}_gen_match==5))'
-
-    # total_weight += tau_id_weight.format(leg='l1')
-    # total_weight += tau_id_weight.format(leg='l2')
-
-    # mu_to_tau = '(1. + ( ({leg}_gen_match==2 || {leg}_gen_match==4)*( (abs({leg}_eta)<0.4)*0.22 + (abs({leg}_eta)>0.4 && abs({leg}_eta)<0.8)*0.12 + (abs({leg}_eta)>0.8 && abs({leg}_eta)<1.2)*0.26 + (abs({leg}_eta)>1.2 && abs({leg}_eta)<1.7)*0.22) + (abs({leg}_eta)>1.7 && abs({leg}_eta)<2.3)*1.39)))'
 
     import os
     from ROOT import gSystem, gROOT
