@@ -8,7 +8,7 @@ from CMGTools.VVResonances.plotting.Samples_2016 import createSampleLists
 # from CMGTools.H2TauTau.proto.plotter.helper_methods import plotDataOverMCEff
 
 # always cut on category, otherwise normalisation is off!
-total_weight = '(nlnujj>0)'
+total_weight = '(nlnujj>0)*(lnujj_l2_softDrop_mass>30.)'
 
 print 'Total weight:', total_weight
 
@@ -44,10 +44,10 @@ cuts['lnujj_e_nob'] = findCut(categories, cat="lnujj", lep="e", reg="nob")
 
 
 # -> Command line
-analysis_dir = '/data/clange/ntuples/FixNeutrino/'
+analysis_dir = '/data/clange/ntuples/FixMass/'
 tree_prod_name = ''
 
-samples_mc, samples_data, samples, all_samples, sampleDict = createSampleLists(analysis_dir, channel='WV', weight=weight_MC, signalSample='BulkGravToWW_narrow_2000')
+samples_mc, samples_data, samples, all_samples, sampleDict = createSampleLists(analysis_dir, channel='WV', weight=weight_MC, vJetsKFac=0.92, signalSample='BulkGravToWW_narrow_2000')
 
 # Taken from Variables.py, can get subset with e.g. getVars(['mt', 'mvis'])
 variables = generic_vars + lnujj_vars
