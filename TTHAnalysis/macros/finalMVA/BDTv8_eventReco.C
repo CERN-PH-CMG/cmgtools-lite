@@ -1,6 +1,7 @@
 #define __BLOOSE__WORKING__POINT__ 0.5426
 #define __BMEDIUM__WORKING__POINT__ 0.8484
 
+#include <tuple>
 #include <vector>
 #include <string>
 #include <unordered_set>
@@ -79,7 +80,7 @@ class BDTv8_eventReco {
     return deltaR(x->eta(),x->phi(),y->eta(),y->phi());
   }
 
-  std::pair<float,float> CalcJetComb(std::unordered_map<std::string,std::pair<float,float> > *done_jetcomb, int i1, int i2, int i3=-99);
+  std::tuple<float,float,float,float,ptvec> CalcJetComb(std::unordered_map<std::string,std::tuple<float,float,float,float,ptvec> > *done_jetcomb, int i1, int i2, int i3=-99);
 
   TMVA::Reader *TMVAReader_[2];
   TMVA::Reader *TMVAReader_Hj_, *TMVAReader_Hjj_;
@@ -113,11 +114,12 @@ class BDTv8_eventReco {
 
   std::unordered_map<std::string,float> done_perms;
   std::unordered_map<std::string,std::pair<float,float> > done_perms_Hj;
-  std::unordered_map<std::string,std::pair<float,float> > done_jetcomb;
+  std::unordered_map<std::string,std::tuple<float,float,float,float,ptvec> > done_jetcomb;
 
   const uint warn_n_jets = 10;
   const uint max_n_jets = 11;
-  const uint nOutputVariables = 14;
+  const uint nOutputVariablesHadTop = 20;
+  const uint nOutputVariablesHig = 4;
 
 };
 
@@ -200,7 +202,8 @@ void BDTv8_eventReco::clear(){
 
 }
 
-std::pair<float,float> BDTv8_eventReco::CalcJetComb(std::unordered_map<std::string,std::pair<float,float> > *done_jetcomb, int i1, int i2, int i3){
+std::tuple<float,float,float,float,ptvec> BDTv8_eventReco::CalcJetComb(std::unordered_map<std::string,std::tuple<float,float,float,float,ptvec> > *done_jetcomb, int i1, int i2, int i3){
+
   BDTv8_eventReco_Jet *j1 = (i1<0) ? nulljet : jets.at(i1);
   BDTv8_eventReco_Jet *j2 = (i2<0) ? nulljet : jets.at(i2);
   BDTv8_eventReco_Jet *j3 = (i3<0) ? nulljet : jets.at(i3);
@@ -209,8 +212,13 @@ std::pair<float,float> BDTv8_eventReco::CalcJetComb(std::unordered_map<std::stri
   std::string _x(_xc,_xc+3);
   auto it = done_jetcomb->find(_x);
   if (it!=done_jetcomb->end()) return (*it).second;
-  auto comb = (i3<0) ? (j1->p4+j2->p4) : (j1->p4+j2->p4+j3->p4);
-  std::pair<float,float> res = std::pair<float,float>(comb.Pt(),comb.M());
+  ptvec comb = (i3<0) ? (j1->p4+j2->p4) : (j1->p4+j2->p4+j3->p4);
+  float comb_pt = comb.Pt();
+  float comb_M = comb.M();
+  float comb_eta = comb.Eta();
+  float comb_phi = comb.Phi();
+
+  std::tuple<float,float,float,float,ptvec> res =  std::make_tuple(comb_pt,comb_M,comb_eta,comb_phi,comb);
   (*done_jetcomb)[_x] = res;
   return res;
 }
@@ -256,9 +264,9 @@ std::vector<float> BDTv8_eventReco::EvalMVA(){
   uint nlep = _permlep ? permlep.size() : 0;
   uint njet = _permjet ? permjet.size() : 0;
 
-  std::vector<float> best_permutation_hadTop(1,-99);
-  std::vector<float> best_permutation_Hj(1,-99);
-  std::vector<float> best_permutation_Hjj(2,-99);
+  std::vector<float> best_permutation_hadTop(nOutputVariablesHadTop,-99);
+  std::vector<float> best_permutation_Hj(nOutputVariablesHig,-99);
+  std::vector<float> best_permutation_Hjj(nOutputVariablesHig,-99);
   
   do {
     
@@ -308,7 +316,7 @@ std::vector<float> BDTv8_eventReco::EvalMVA(){
   std::vector<float> output(best_permutation_hadTop);
   output.push_back(best_permutation_Hj[0]);
   output.insert(output.end(),best_permutation_Hjj.begin()+1,best_permutation_Hjj.end());
-  assert(output.size()==nOutputVariables);
+  if (output.size()!=(nOutputVariablesHadTop+nOutputVariablesHig)) std::cout << "ERROR: mismatch in output vector size: " << output.size() << " " << nOutputVariablesHadTop+nOutputVariablesHig << std::endl;
   return output;
 
 };
@@ -321,7 +329,9 @@ std::vector<float> BDTv8_eventReco::CalcHadTopTagger(char* _permlep, char* _x){
 
       if (done_perms.find(this_hadTop) != done_perms.end()){
 	this_hadTop_value = done_perms[this_hadTop];
-	return std::vector<float>(1,this_hadTop_value);
+	auto output = std::vector<float>(1,this_hadTop_value);
+	output.resize(nOutputVariablesHadTop,-99);
+	return output;
       }
       else {
 
@@ -341,17 +351,34 @@ std::vector<float> BDTv8_eventReco::CalcHadTopTagger(char* _permlep, char* _x){
 	auto hadTop_W = CalcJetComb(&done_jetcomb,_x[2],_x[3]);
 	auto hadTop = CalcJetComb(&done_jetcomb,_x[2],_x[3],_x[0]);
 
-	if (hadTop_W.second > 120) return std::vector<float>(1,this_hadTop_value);
-	if (hadTop.second > 220) return std::vector<float>(1,this_hadTop_value);
+	float comb_pt = std::get<0>(hadTop);
+	float comb_M = std::get<1>(hadTop);
+	float comb_eta = std::get<2>(hadTop);
+	float comb_phi = std::get<3>(hadTop);
+	auto comb = std::get<4>(hadTop);
+
+	if (std::get<1>(hadTop_W) > 120) return std::vector<float>(1,this_hadTop_value);
+	if (comb_M > 220) return std::vector<float>(1,this_hadTop_value);
+
 
 	auto lepTop = lep_fromTop->p4 + bjet_fromLepTop->p4;
+	float leptop_pt = lepTop.Pt();
+	float leptop_eta = lepTop.Eta();
+	float leptop_phi = lepTop.Phi();
+
 	if (lepTop.M() > 180) return std::vector<float>(1,this_hadTop_value);
 
 	bJet_fromLepTop_CSV_var = bjet_fromLepTop->csv;
 	bJet_fromHadTop_CSV_var = bjet_fromHadTop->csv;
-	HadTop_pT_var = hadTop.first;
-	W_fromHadTop_mass_var = hadTop_W.second;
-	HadTop_mass_var = hadTop.second;
+	HadTop_pT_var = comb_pt;
+	W_fromHadTop_mass_var = std::get<1>(hadTop_W);
+	HadTop_mass_var = comb_M;
+	auto X_info = lepTop + comb;
+	auto X_invariant_mass = X_info.M(); 
+	auto X_pt = X_info.Pt();
+	auto X_eta = X_info.Eta();
+	auto X_phi = X_info.Phi();
+
 	lep_ptRatio_fromTop_fromHig_var = lep_fromTop->p4.Pt()/lep_fromHig->p4.Pt();
 	dR_lep_fromTop_bJet_fromLepTop_var = (bjet_fromLepTop != nulljet) ? dR(lep_fromTop,bjet_fromLepTop) : -1;
 	dR_lep_fromTop_bJet_fromHadTop_var = (bjet_fromHadTop != nulljet) ? dR(lep_fromTop,bjet_fromHadTop) : -1;
@@ -371,6 +398,16 @@ std::vector<float> BDTv8_eventReco::CalcHadTopTagger(char* _permlep, char* _x){
 	output.push_back(dR_lep_fromTop_bJet_fromLepTop_var);
 	output.push_back(dR_lep_fromTop_bJet_fromHadTop_var);
 	output.push_back(dR_lep_fromHig_bJet_fromLepTop_var);
+	output.push_back(lepTop.M());
+	output.push_back(X_invariant_mass);
+	output.push_back(comb_eta);
+	output.push_back(comb_phi);
+	output.push_back(leptop_pt);
+	output.push_back(leptop_eta);
+	output.push_back(leptop_phi);
+	output.push_back(X_pt);
+	output.push_back(X_eta);
+	output.push_back(X_phi);
 	return output;
 
       }
@@ -393,6 +430,7 @@ std::vector<float> BDTv8_eventReco::CalcHjTagger(char* _permlep, char* _x, std::
     this_Hj_values = done_perms_Hj[this_Hj];
     output.push_back(this_Hj_values.first);
     output.push_back(this_Hj_values.second);
+    output.resize(nOutputVariablesHig,-99);
   }
   else {
 
@@ -439,7 +477,7 @@ std::vector<float> BDTv8_eventReco::CalcHjTagger(char* _permlep, char* _x, std::
       }
       std::sort(drs.begin(),drs.end());
       iv2_4 = drs.at(0);
-      iv2_5 = higgs_W.second;
+      iv2_5 = std::get<1>(higgs_W);
       iv2_6 = drs.at(0)/drs.at(drs.size()-1);
 
       Hjj_value = TMVAReader_Hjj_->EvaluateMVA("BDTG method");

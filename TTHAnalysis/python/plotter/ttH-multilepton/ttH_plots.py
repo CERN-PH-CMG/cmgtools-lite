@@ -5,9 +5,9 @@ import os
 
 ODIR=sys.argv[1]
 
-#dowhat = "plots" 
+dowhat = "plots" 
 #dowhat = "dumps" 
-dowhat = "yields" 
+#dowhat = "yields" 
 #dowhat = "ntuple" # syntax: python ttH-multilepton/ttH_plots.py no 2lss_SR_extr outfile_{cname}.root --sP var1,var2,...
 
 TREES = "--Fs {P}/1_recleaner_230217_v6 --Fs {P}/5_triggerDecision_230217_v6 --Fs {P}/6_bTagSF_v6 --Fs {P}/7_tauTightSel_v6"
@@ -142,6 +142,14 @@ if __name__ == '__main__':
                 x = add(x,"--fitRatio 1")
             if '_varsFR_e' in torun: x = add(x,"--xp 'data_fakes_m_.*'")
             if '_varsFR_m' in torun: x = add(x,"--xp 'data_fakes_e_.*'")
+
+        if '_Xh' in torun:
+            x = x.replace('4_BDTv8_Hj_230217_v6','4_BDTv8_Hj_Xmass_bkg')
+            x = x.replace('mca-2lss-mc.txt','mca-2lss-mc-sigextr-Xh.txt').replace('--showRatio','')
+            x = x.replace('--legendColumns 3 --legendWidth 0.46','--legendWidth 0.30')
+            x = x.replace('--showMCError','')
+            x = add(x,'--plotmode norm')
+            x = add(x,"--sP kinMVA_input_BDTv8_eventReco_X_mass --sP kinMVA_2lss_ttbar_withBDTv8 --sP kinMVA_input_BDTv8_eventReco_MT_HadLepTop_MET")
 
         runIt(x,'%s'%torun)
         if '_flav' in torun:
