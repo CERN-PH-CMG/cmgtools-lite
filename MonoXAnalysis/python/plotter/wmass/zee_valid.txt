@@ -1,0 +1,7 @@
+alwaystrue: 1
+trigger: HLT_DoubleEl==1
+2ele: abs(LepGood1_pdgId)==11 && abs(LepGood2_pdgId)==11
+eletag: LepGood1_pt > 25 && LepGood2_pt > 25 && abs(LepGood1_eta)<2.5 && abs(LepGood2_eta)<2.5 && LepGood1_pdgId == -LepGood2_pdgId && mZ1 > 80 && mZ1 < 100 && z_mll > 80 && z_mll < 100
+tightId: LepGood1_eleMVAId >=2 && LepGood2_eleMVAId >=2
+isolation: LepGood1_relIso04 < 0.15 && LepGood2_relIso04 < 0.15 
+convveto: LepGood1_convVetoFull==1 && LepGood2_convVetoFull==1

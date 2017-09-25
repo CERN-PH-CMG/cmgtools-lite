@@ -1,0 +1,22 @@
+incl_ewkmc : + ; IncludeMca="wmass_e/mca-includes/mca-ewkmc.txt"
+#incl_datafakes: + ; IncludeMca="wmass_e/mca-includes/mca-data.txt", FakeRate="wmass_e/fakeRate-frdata.txt", Label="Fakes", FillColor=ROOT.kBlack, FillStyle=3005, NormSystematic=0.30, PostFix='_fakes'
+
+incl_data : + ; IncludeMca="wmass_e/mca-includes/mca-data.txt"
+
+# electron scale systematics
+incl_ewkmc_elescale_Up : + ; IncludeMca="wmass_e/mca-includes/mca-ewkmc.txt", FakeRate="wmass_e/fr-lepUp.txt", SkipMe=True, PostFix="_elescale_Up" 
+incl_ewkmc_elescale_Up : + ; IncludeMca="wmass_e/mca-includes/mca-ewkmc.txt", FakeRate="wmass_e/fr-lepDn.txt", SkipMe=True, PostFix="_elescale_Dn" 
+
+# recoil systematics
+incl_ewkmc_recoil_Up : + ; IncludeMca="wmass_e/mca-includes/mca-ewkmc.txt", FakeRate="wmass_e/fr-recoilUp.txt", SkipMe=True, PostFix="_recoil_Up" 
+incl_ewkmc_recoil_Dn : + ; IncludeMca="wmass_e/mca-includes/mca-ewkmc.txt", FakeRate="wmass_e/fr-recoilDn.txt", SkipMe=True, PostFix="_recoil_Dn" 
+
+# fake-lepton background systematics
+incl_datafakes_FRe_norm_Up : + ; IncludeMca="wmass_e/mca-includes/mca-data.txt", FakeRate="wmass_e/fakerate-vars/fakeRate-frdata-e-up.txt", SkipMe=True, PostFix='_fakes_FRe_norm_Up'
+incl_datafakes_FRe_norm_Dn : + ; IncludeMca="wmass_e/mca-includes/mca-data.txt", FakeRate="wmass_e/fakerate-vars/fakeRate-frdata-e-down.txt", SkipMe=True, PostFix='_fakes_FRe_norm_Dn'
+incl_datafakes_FRe_pt_Up : + ; IncludeMca="wmass_e/mca-includes/mca-data.txt", FakeRate="wmass_e/fakerate-vars/fakeRate-frdata-e-pt1.txt", SkipMe=True, PostFix='_fakes_FRe_pt_Up'
+incl_datafakes_FRe_pt_Dn : + ; IncludeMca="wmass_e/mca-includes/mca-data.txt", FakeRate="wmass_e/fakerate-vars/fakeRate-frdata-e-pt2.txt", SkipMe=True, PostFix='_fakes_FRe_pt_Dn'
+
+# theoretical pTW systematics
+W_theoryptw_Up+  :  WJets :  37509.0 : zpt_w_up; SkipMe=True
+W_theoryptw_Dn+  :  WJets :  37509.0 : zpt_w_dn; SkipMe=True

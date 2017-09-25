@@ -1,0 +1,3 @@
+data: MuEGAB
+data: MuEGC
+data: MuEGD

@@ -1,0 +1,12 @@
+ptl: LepCorr1_pt: 60,30,60 ; XTitle="electron p_{T} [GeV]", Legend='TR', IncludeOverflows=False
+etal: LepGood1_eta: 100,-2.5,2.5 ; XTitle="electron #eta", Legend='TL', IncludeOverflows=False
+
+pfmet: met_pt : 60,20,80 ; XTitle="PF E_{T}^{miss} [GeV]", Legend='TR', IncludeOverflows=False
+tkmet: tkmet_pt : 40,20,60 ; XTitle="charged PF E_{T}^{miss} [GeV]", Legend='TR', IncludeOverflows=False
+
+pfmt: mt_2(met_pt,met_phi,LepCorr1_pt,LepGood1_phi) : 80,30,120 ; XTitle="m_{T} [GeV]", Legend='TL', IncludeOverflows=False
+trkmt: mt_lu_cart(LepGood1_pt,LepGood1_phi,w_ux,w_uy) : 60,50,110 ; XTitle="m_{T} [GeV]", Legend='TL', IncludeOverflows=False
+recoil: Hypot(w_ux,w_uy) : 40,0,40 ; XTitle="transverse recoil [GeV]", Legend='TR', IncludeOverflows=False
+
+gen_ptv: GenP6StatusThree_pt[6] : 80,0,40 ; XTitle="Gen. p_{T}^{V} [GeV]", IncludeOverflows=False
+gen_scaledptv: GenP6StatusThree_pt[6]/GenP6StatusThree_mass[6]*91.1876 : 80,0,40 ; XTitle="scaled gen. p_{T}^{V} [GeV]", IncludeOverflows=False

@@ -1,0 +1,11 @@
+Z    : DYJetsM50 : 3531.8; FillColor=ROOT.kAzure+2, Label="Z", NormSystematic=0.04
+W+   : WJets :  36703.2; FillColor=ROOT.kRed+2, Label="W", NormSystematic=0.03
+Top  : TTJets :  247.74; FillColor=ROOT.kGray+2, Label="Top", NormSystematic=0.09
+Top  : Tsch :      3.79; FillColor=ROOT.kGray+2, Label="Top", NormSystematic=0.04
+Top  : Tbarsch :   1.76; FillColor=ROOT.kGray+2, Label="Top", NormSystematic=0.04
+Top  : Ttch :     56.4;  FillColor=ROOT.kGray+2, Label="Top", NormSystematic=0.04
+Top  : Tbartch :  30.7;  FillColor=ROOT.kGray+2, Label="Top", NormSystematic=0.04
+Top  : TtW :      11.73; FillColor=ROOT.kGray+2, Label="Top", NormSystematic=0.06
+Top  : TbartW :   11.73; FillColor=ROOT.kGray+2, Label="Top", NormSystematic=0.06
+DiBosons : WWJets : 5.81;      FillColor=ROOT.kViolet+2, Label="DiBosons", NormSystematic=0.03
+DiBosons : WZJets : 1.057*1.10; FillColor=ROOT.kViolet+2, Label="DiBosons", NormSystematic=0.05

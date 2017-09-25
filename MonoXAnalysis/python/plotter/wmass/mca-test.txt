@@ -1,0 +1,1 @@
+incl_datafakes: + ; IncludeMca="wmass_e/mca-includes/mca-data.txt", FakeRate="wmass_e/fakeRate-frdata.txt", Label="Fakes", FillColor=ROOT.kBlack, FillStyle=3005, NormSystematic=0.35, PostFix='_fakes'
