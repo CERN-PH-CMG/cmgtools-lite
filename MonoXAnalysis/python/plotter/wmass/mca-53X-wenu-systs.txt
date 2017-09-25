@@ -1,4 +1,5 @@
 incl_ewkmc : + ; IncludeMca="wmass_e/mca-includes/mca-ewkmc.txt"
+incl_qcdmc : + ; IncludeMca="wmass_e/mca-includes/mca-qcdmc.txt"
 incl_datafakes: + ; IncludeMca="wmass_e/mca-includes/mca-data.txt", FakeRate="wmass_e/fakeRate-frdata.txt", Label="Fakes", FillColor=ROOT.kBlack, FillStyle=3005, NormSystematic=0.30, PostFix='_fakes'
 
 incl_data : + ; IncludeMca="wmass_e/mca-includes/mca-data.txt"
