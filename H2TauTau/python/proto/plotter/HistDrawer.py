@@ -193,7 +193,7 @@ class HistDrawer:
         can.SaveAs(plotname + '.root')
 
         # Also save with log y
-        h.GetYaxis().SetRangeUser(pad.GetUymax() * 5./10000., pad.GetUymax() * 5.)
+        h.GetYaxis().SetRangeUser(pad.GetUymax() * 5./1000000., pad.GetUymax() * 5.)
         pad.SetLogy(True)
         can.SaveAs(plotname + '_log.png')
         can.SaveAs(plotname + '_log.pdf')

@@ -3,13 +3,14 @@ from PhysicsTools.HeppyCore.utils.deltar import deltaR, deltaPhi
 from CMGTools.H2TauTau.proto.analyzers.tauIDs import tauIDs, tauIDs_extra
 
 class Variable():
-    def __init__(self, name, function=None, type=float):
+    def __init__(self, name, function=None, type=float, storageType="default"):
         self.name = name
         self.function = function
         if function is None:
             # Note: works for attributes, not member functions
             self.function = lambda x : getattr(x, self.name, -999.) 
         self.type = type
+        self.storageType = storageType
 
 def default():
     return -999.
@@ -18,7 +19,7 @@ def default():
 event_vars = [
     Variable('run', type=int),
     Variable('lumi', type=int),
-    Variable('event', lambda ev : ev.eventId, type=int),
+    Variable('event', lambda ev : ev.eventId, type=int, storageType="l"),
     Variable('bx', lambda ev : (ev.input.eventAuxiliary().bunchCrossing() * ev.input.eventAuxiliary().isRealData()), type=int),
     Variable('orbit_number', lambda ev : (ev.input.eventAuxiliary().orbitNumber() * ev.input.eventAuxiliary().isRealData()), type=int),
     Variable('is_data', lambda ev: ev.input.eventAuxiliary().isRealData(), type=int),
@@ -32,7 +33,7 @@ event_vars = [
     Variable('n_jets_20', lambda ev : len(ev.cleanJets), type=int),
     Variable('n_jets_20_puid', lambda ev : sum(1 for j in ev.cleanJets if j.puJetId()), type=int),
     Variable('n_bjets', lambda ev : len(ev.cleanBJets), type=int),
-    Variable('n_jets_csvl', lambda ev : sum(1 for jet in ev.cleanJets if jet.btagWP('CSVv2IVFL')), type=int),
+    Variable('n_bjets_loose', lambda ev : len(ev.cleanBJetsLoose), type=int),
     Variable('n_vertices', lambda ev : len(ev.vertices), type=int),
     Variable('rho', lambda ev : ev.rho),
     Variable('weight', lambda ev : ev.eventWeight),
@@ -58,7 +59,9 @@ event_vars = [
     Variable('Flag_eeBadScFilter', type=int),
     Variable('Flag_globalTightHalo2016Filter', type=int),
     Variable('passBadMuonFilter', type=int),
-    Variable('passBadChargedHadronFilter', type=int)
+    Variable('passBadChargedHadronFilter', type=int),
+    Variable('badMuonMoriond2017', type=int),
+    Variable('badCloneMuonMoriond2017', type=int)
 ]
 
 # di-tau object variables
@@ -128,7 +131,7 @@ lepton_vars = [
     Variable('weight_idiso', lambda lep : getattr(lep, 'weight_idiso', 1.)),
     # Variable('eff_idiso_data', lambda lep : getattr(lep, 'eff_data_idiso', -999.)),
     # Variable('eff_idiso_mc', lambda lep : getattr(lep, 'eff_mc_idiso', -999.)),
-    Variable('gen_match')
+    Variable('gen_match', type=int)
 ]
 
 # electron
@@ -164,7 +167,7 @@ muon_vars = [
 
 # tau
 tau_vars = [
-    Variable('decayMode', lambda tau : tau.decayMode()),
+    Variable('decayMode', lambda tau : tau.decayMode(), type=int),
     Variable('zImpact', lambda tau : tau.zImpact()),
     Variable('dz_selfvertex', lambda tau : tau.vertex().z() - tau.associatedVertex.position().z()),
     Variable('ptScale', lambda tau : getattr(tau, 'ptScale', -999.)),
@@ -204,7 +207,7 @@ jet_vars = [
 
 # extended jet vars
 jet_vars_extra = [
-    Variable('nConstituents', lambda jet : getattr(jet, 'nConstituents', default)()),
+    Variable('nConstituents', lambda jet : getattr(jet, 'nConstituents', default)(), type=int),
     Variable('rawFactor', lambda jet : getattr(jet, 'rawFactor', default)()),
     Variable('chargedHadronEnergy', lambda jet : getattr(jet, 'chargedHadronEnergy', default)()),
     Variable('neutralHadronEnergy', lambda jet : getattr(jet, 'neutralHadronEnergy', default)()),
@@ -212,8 +215,8 @@ jet_vars_extra = [
     Variable('muonEnergy', lambda jet : getattr(jet, 'muonEnergy', default)()),
     Variable('chargedEmEnergy', lambda jet : getattr(jet, 'chargedEmEnergy', default)()),
     Variable('chargedHadronMultiplicity', lambda jet : getattr(jet, 'chargedHadronMultiplicity', default)()),
-    Variable('chargedMultiplicity', lambda jet : getattr(jet, 'chargedMultiplicity', default)()),
-    Variable('neutralMultiplicity', lambda jet : getattr(jet, 'neutralMultiplicity', default)()),
+    Variable('chargedMultiplicity', lambda jet : getattr(jet, 'chargedMultiplicity', default)(), type=int),
+    Variable('neutralMultiplicity', lambda jet : getattr(jet, 'neutralMultiplicity', default)(), type=int),
 ]
 
 

@@ -66,6 +66,8 @@ def doubleSidedCrystalball(x, par):
 
 
 def crystalballEfficiency(x, par):
+    if isinstance(par, dict):
+        par = [par['m_{0}'], par['sigma'], par['alpha'], par['n'], par['norm']]
     # x     = x[0]
     m0    = par[0]
     sigma = par[1]

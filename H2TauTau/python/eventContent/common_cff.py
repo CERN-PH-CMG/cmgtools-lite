@@ -12,7 +12,8 @@ common = [
     'keep patMuons_slimmedMuons_*_*',
     # 'keep patPacked*_*_*_*',
     'keep patPackedCandidate*_*packedPFCandidates*_*_*', # RIC: agreed to keep it to: 1. tau vtx 2. possibly compute isolations at analysis level
-    'keep patTaus_slimmedTaus_*_*',
+    # 'keep patTaus_slimmedTaus_*_*',
+    'keep patTaus_slimmedTausExtraIDs_*_*',
     'keep patTrigger*_*_*_*',
     'keep recoVertexs_*_*_*',
     'keep cmgMETSignificances_*_*_*',
@@ -34,7 +35,10 @@ common = [
     'keep *_reducedEgamma_reducedConversions_*',
     'keep LHEEventProduct_*_*_*',
     'keep *_l1extraParticles_*_*',
+    'keep patPATTauDiscriminator_*_*_H2TAUTAU',
     # 'keep *_mvaMETTauMu_*_H2TAUTAU'
+    'keep *_BadPFMuonFilter_*_H2TAUTAU',
+    'keep *_BadChargedCandidateFilter_*_H2TAUTAU'
     ]
 
 commonDebug = copy.deepcopy(common) 

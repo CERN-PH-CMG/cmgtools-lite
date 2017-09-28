@@ -69,6 +69,8 @@ class MuMuAnalyzer(DiLeptonAnalyzer):
             pydil = self.__class__.DiObjectClass(dil)
             pydil.leg1().associatedVertex = event.goodVertices[0]
             pydil.leg2().associatedVertex = event.goodVertices[0]
+            pydil.leg1().event = event.input.object()
+            pydil.leg2().event = event.input.object()
             if not self.testLeg2(pydil.leg2(), 99999):
                 continue
 
@@ -90,6 +92,8 @@ class MuMuAnalyzer(DiLeptonAnalyzer):
                 di_tau = DirectDiTau(muon1, muon2, met)
                 di_tau.leg2().associatedVertex = event.goodVertices[0]
                 di_tau.leg1().associatedVertex = event.goodVertices[0]
+                di_tau.leg1().event = event.input.object()
+                di_tau.leg2().event = event.input.object()
                 if not self.testLeg1(di_tau.leg1(), 99999):
                     continue
 
@@ -105,6 +109,7 @@ class MuMuAnalyzer(DiLeptonAnalyzer):
         for index, lep in enumerate(patLeptons):
             pyl = self.__class__.LeptonClass(lep)
             pyl.associatedVertex = event.goodVertices[0]
+            pyl.event = event.input.object()
             leptons.append(pyl)
         return leptons
 
@@ -117,7 +122,7 @@ class MuMuAnalyzer(DiLeptonAnalyzer):
             pyl = self.__class__.OtherLeptonClass(lep)
             pyl.associatedVertex = event.goodVertices[0]
             pyl.rho = event.rho
-            pyl.event = event
+            pyl.event = event.input.object()
             otherLeptons.append(pyl)
         return otherLeptons
 
@@ -173,7 +178,7 @@ class MuMuAnalyzer(DiLeptonAnalyzer):
 
     def testLeg2ID(self, muon):
         '''Tight muon selection, no isolation requirement'''
-        return muon.muonID('POG_ID_Medium_ICHEP') and self.testVertex(muon)
+        return muon.muonIDMoriond17() and self.testVertex(muon)
                
 
     def testLeg2Iso(self, muon, isocut):
@@ -184,7 +189,7 @@ class MuMuAnalyzer(DiLeptonAnalyzer):
         return muon.relIsoR(R=0.4, dBetaFactor=0.5, allCharged=0) < isocut    
 
     def testElectronID(self, electron):
-        return electron.mvaIDRun2('NonTrigSpring15MiniAOD', 'POG90')
+        return electron.mvaIDRun2('Spring16', 'POG90')
 
     def thirdLeptonVeto(self, leptons, otherLeptons, ptcut=10, isocut=0.3):
         '''Tri-lepton veto. Returns False if > 2 leptons (e or mu).'''

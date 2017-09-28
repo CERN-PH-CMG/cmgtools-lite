@@ -130,7 +130,7 @@ class NJetsAnalyzer(Analyzer):
                 print 'NUP, njets, weight', event.NUP, njets, event.NJetWeight
 
         if self.applyWeightFunc:
-            event.NJetWeight = self.weight_func(njets, event.geninvmass)
+            event.NJetWeight = self.weight_func(njets)
 
         if self.cfg_ana.fillTree:
             self.tree.reset()

@@ -36,6 +36,25 @@ def ams_lists(s_list, b_list, b_e=0.):
 def ams_hists(s_hist, b_hist, b_e=0.):
     return ams_lists(th1_to_list(s_hist), th1_to_list(b_hist), b_e)
 
+def ams_hists_rebin(s_hist, b_hist, max_rel_error=0.5, b_e=0., debug=False):
+    for i in reversed(xrange(b_hist.GetNbinsX())):
+        if i > 1 and (b_hist.GetBinContent(i) <= 0. or b_hist.GetBinError(i)/b_hist.GetBinContent(i) > 0.5):
+
+            b_hist.SetBinContent(i-1, b_hist.GetBinContent(i) + b_hist.GetBinContent(i-1))
+            b_hist.SetBinError(i-1, math.sqrt(b_hist.GetBinError(i)**2 + b_hist.GetBinError(i-1)**2))
+            b_hist.SetBinContent(i, 0.)
+            b_hist.SetBinError(i, 0.)
+
+            s_hist.SetBinContent(i-1, s_hist.GetBinContent(i) + s_hist.GetBinContent(i-1))
+            s_hist.SetBinError(i-1, math.sqrt(s_hist.GetBinError(i)**2 + s_hist.GetBinError(i-1)**2))
+            s_hist.SetBinContent(i, 0.)
+            s_hist.SetBinError(i, 0.)
+
+    if debug:
+        print th1_to_list(s_hist)
+        print th1_to_list(b_hist)
+    return ams_lists(th1_to_list(s_hist), th1_to_list(b_hist), b_e)
+
 def th1_to_list(hist):
     return [hist.GetBinContent(i+1) for i in xrange(hist.GetNbinsX())]
 
