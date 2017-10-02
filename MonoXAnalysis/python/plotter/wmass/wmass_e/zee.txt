@@ -1,6 +1,8 @@
 alwaystrue: 1
 #trigger: HLT_SingleEl==1
 el acceptance: abs(LepGood1_pdgId)==11 && LepGood1_pt > 30 && LepGood2_pt > 20 && abs(LepGood1_eta)<2.5 && abs(LepGood2_eta)<2.5 && LepGood1_pdgId == -LepGood2_pdgId
-el selection: LepGood1_tightId >=2 && LepGood1_relIso04 < 0.15 && LepGood1_convVeto==1 && LepGood1_lostHits<=1 && LepGood2_tightId >=2 && LepGood2_relIso04 < 0.15 && LepGood2_convVeto==1 && LepGood2_lostHits<=1
+el ID: LepGood1_tightId >=2 && LepGood2_tightId >=2
+el iso: LepGood1_relIso04 < if3(abs(LepGood1_eta)<1.479,0.0695,0.0821) && LepGood2_relIso04 < if3(abs(LepGood2_eta)<1.479,0.0695,0.0821)
+el conv rej: LepGood1_convVeto && LepGood1_lostHits <= 1 && LepGood2_convVeto && LepGood2_lostHits <= 1
 inv mass: abs(mass_2(LepGood1_pt,LepGood1_eta,LepGood1_phi,0.5e-3,LepGood2_pt,LepGood2_eta,LepGood2_phi,0.5e-3)-90) < 20
 #zpt:  pt_2(LepGood1_pt,LepGood1_phi,LepGood2_pt,LepGood2_phi) < 40
