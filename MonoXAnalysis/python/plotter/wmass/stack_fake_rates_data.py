@@ -63,6 +63,7 @@ def attrs(filename,process):
     if "fQCD" in filename:
         if "W_fake"    in process: return { 'Label':'W+jets MC',         'Color':ROOT.kPink-2, '#':0, 'key':'W_fake'       }
         if "data_fqcd" in process: return { 'Label':'Data EWK-subtracted', 'Color':ROOT.kGray+2, '#':4, 'key':'data_fqcd' }
+        if "QCD_fake"       in process: return { 'Label':'QCD MC', 'Color':ROOT.kBlue, '#':0, 'key':'QCD_fake' }
     else: raise RuntimeError, "No idea of the file"
     raise RuntimeError, "No idea of the process"
 
@@ -76,7 +77,7 @@ def setattrs(graph, opts, xtitle):
 
 
 if __name__ == "__main__":
-    from CMGTools.WMass.plotter.mcEfficiencies import stackEffs
+    from CMGTools.MonoXAnalysis.plotter.mcEfficiencies import stackEffs
     import os.path
     from optparse import OptionParser
     parser = OptionParser(usage="%prog [options] what path out")

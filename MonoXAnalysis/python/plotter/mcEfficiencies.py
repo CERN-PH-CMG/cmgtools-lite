@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 #from mcPlots import *
-from CMGTools.WMass.plotter.mcPlots import *
+from CMGTools.MonoXAnalysis.plotter.mcPlots import *
 
 if "/fakeRate_cc.so" not in ROOT.gSystem.GetLibraries():
-    ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/WMass/python/plotter/fakeRate.cc+" % os.environ['CMSSW_BASE']);
+    ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/MonoXAnalysis/python/plotter/fakeRate.cc+" % os.environ['CMSSW_BASE']);
 
 def addMCEfficiencyOptions(parser):
     addMCAnalysisOptions(parser)
@@ -316,7 +316,7 @@ def makeEff(mca,cut,idplot,xvarplot,returnSeparatePassFail=False,notDoProfile="a
             mybins += "*[-0.5,0.5,1.5]"
         else:
             mybins += ",2,-0.5,1.5"
-    print "makeing eff for idplot = ",idplot.name,"  ", idplot.expr, " vs ",xvarplot.expr
+    print "making eff for idplot = ",idplot.name,"  ", idplot.expr, " vs ",xvarplot.expr
     pspec = PlotSpec("%s_vs_%s"  % (idplot.name, xvarplot.name), 
                      "%s:%s" % (idplot.expr,xvarplot.expr),
                      mybins,

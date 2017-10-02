@@ -22,9 +22,9 @@ elif 'lxplus' in os.environ['HOSTNAME']: T = T.replace('/data1/emanuele/wmass','
 elif 'cmsrm-an' in os.environ['HOSTNAME']: T = T.replace('/data1/emanuele/wmass','/t3/users/dimarcoe/')
 print "used trees from: ",T
 J=4
-BASECONFIG="wmass_e"
+BASECONFIG="wmass/wmass_e"
 #BASECONFIG=""
-MCA=BASECONFIG+'/mca-53X-wenu.txt'
+MCA=BASECONFIG+'/mca-80X-wenu.txt'
 CUTFILE=BASECONFIG+'/wenu.txt'
 SYSTFILE=BASECONFIG+'/systsEnv.txt'
 # moved below option parser to allow their setting with options
@@ -48,7 +48,9 @@ def writePdfSystsToSystFile(sample,syst,channel,filename):
         
 from optparse import OptionParser
 parser = OptionParser(usage="%prog testname ")
-parser.add_option("--etaBins", dest="etaBins", action="append", default=['0','0.45','0.8','1.15','1.479','2.0','2.5'], help="Give a list of lepton eta bins to make fit categories")
+
+parser.add_option("--etaBins", dest="etaBins", action="append", default=[], help="Give a list of lepton eta bins to make fit categories")
+parser.add_option("--etaBinEdges", dest="etaBinEdges", type="string", default=None, help="Give a comma separated list of lepton eta bin edges to make fit categories")
 parser.add_option("--fitVar", dest="fitVar", type="string", default="pt", help="Pass the name of variable to fit (pt or mt, default is pt)")
 parser.add_option("--fitRange", dest="fitRange", type="string", default="", help="Pass the number of bins and range to be used for the fit, e.g '40,30,50'. Arguments are separated by commas with no spaces (use only integer numbers please")
 parser.add_option("-q", "--queue",    dest="queue",     type="string", default=None, help="Run jobs on lxbatch instead of locally");
@@ -108,6 +110,11 @@ etaBins=[]
 isEtaIncl = True
 if len(options.etaBins):
     etaBins = [binEdge for binEdge in options.etaBins.split(",")]
+    for eb0 in options.etaBins:
+        [etaBins.append(eb) for eb in eb0.split(",")]
+    isEtaIncl = False
+elif len(options.etaBinEdges):
+    etaBins = [binEdge for binEdge in options.etaBinEdges.split(",")]
     isEtaIncl = False
 else: 
     etaBins=['0','5']

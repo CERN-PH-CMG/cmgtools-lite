@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from CMGTools.WMass.plotter.mcPlots import *
+from CMGTools.MonoXAnalysis.plotter.mcPlots import *
 
 ## safe batch mode
 ## safe batch mode
