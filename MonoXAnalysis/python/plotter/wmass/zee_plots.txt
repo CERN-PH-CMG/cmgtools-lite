@@ -1,19 +1,19 @@
 nvtx  : nVert       : 40,0.5,40.5 ; XTitle="N_{vtx}", Legend='TR'
 mZ1   : mZ1         : 60,75,105  ; XTitle="m(e^{+}e^{-})  [GeV]", Legend='TL', IncludeOverflows=False
-z_mll : mass_2(LepCorr1_pt,LepGood1_eta,LepGood1_phi,0.5e-3,LepCorr2_pt,LepGood2_eta,LepGood2_phi,0.5e-3) : 60,75,105  ; XTitle="calib m(e^{+}e^{-})  [GeV]", Legend='TL', IncludeOverflows=False
-pt1   : LepCorr1_pt : 90,30,75 ; XTitle="p_{T}^{1} [GeV]", Legend='TR', IncludeOverflows=False
-pt2   : LepCorr2_pt : 60,25,55 ; XTitle="p_{T}^{1} [GeV]", Legend='TR', IncludeOverflows=False
-ptZ   : pt_2(LepCorr1_pt,LepGood1_phi,LepCorr2_pt,LepGood2_phi) : 100,0,50 ; XTitle="p_{T}^{Z} [GeV]", Legend='TR', IncludeOverflows=False
-scaledptZ : pt_2(LepCorr1_pt,LepGood1_phi,LepCorr2_pt,LepGood2_phi)/mass_2(LepCorr1_pt,LepGood1_eta,LepGood1_phi,0.5e-3,LepCorr2_pt,LepGood2_eta,LepGood2_phi,0.5e-3)*91.1876 : 100,0,50 ; XTitle="scaled p_{T}^{Z} [GeV]", Legend='TR', IncludeOverflows=False
-costheta_cs : costheta_cs : 50,-1,1 ; XTitle="cos #theta_{CS}", Legend='TR'
-phi_cs : phi_cs : 50,0,6.2831853 ; XTitle="#phi_{CS}", Legend='TR'
-sumAiPi : 1 + costheta_cs*costheta_cs + AP[0] + AP[1] + AP[2] + AP[3] + AP[4] : 50,0.98,1.7 ; XTitle="1+cos^{2} #theta_{CS}+#sum_{i} A_{i}P_{i}", Legend='TR'
-recoil: Hypot(z_ux,z_uy) : 50,0,50 ; XTitle="transverse recoil [GeV]", Legend='TR', IncludeOverflows=False
-pfmet: met_pt : 60,20,80 ; XTitle="PF E_{T}^{miss} [GeV]", Legend='TR', IncludeOverflows=False
-tkmet: tkmet_pt : 40,20,60 ; XTitle="charged PF E_{T}^{miss} [GeV]", Legend='TR', IncludeOverflows=False
-y_vs_ctheta : z_y\:costheta_cs : 50,-1,1,20,0,1.8 ; XTitle="cos #theta_{CS}", YTitle="|y(Z)|", Legend='TR'
-y_vs_phi : z_y\:phi_cs : 50,0,6.2831853,20,0,1.8 ; XTitle="#phi_{CS}", YTitle="|y(Z)|", Legend='TR'
-y_vs_sumAiPi : z_y\:1 + costheta_cs*costheta_cs + AP[0] + AP[1] + AP[2] + AP[3] + AP[4] : [0,1.02,1.04,1.06,1.08,1.1,1.12,1.14,1.16,1.20,1.24,1.30,1.35,1.40,1.50,1.60,2.0]*[0,0.2,0.4,0.6,0.8,1.0,1.4,1.8] ; XTitle="1+cos^{2} #theta_{CS}+#sum_{i} A_{i}P_{i}", YTitle="|y(Z)|", Legend='TR'
+z_mll : mass_2(LepGood1_pt,LepGood1_eta,LepGood1_phi,0.5e-3,LepGood2_pt,LepGood2_eta,LepGood2_phi,0.5e-3) : 60,75,105  ; XTitle="calib m(e^{+}e^{-})  [GeV]", Legend='TL', IncludeOverflows=False
+pt1   : LepGood1_pt : 90,30,75 ; XTitle="p_{T}^{1} [GeV]", Legend='TR', IncludeOverflows=False
+pt2   : LepGood2_pt : 60,25,55 ; XTitle="p_{T}^{1} [GeV]", Legend='TR', IncludeOverflows=False
+ptZ   : pt_2(LepGood1_pt,LepGood1_phi,LepGood2_pt,LepGood2_phi) : 100,0,50 ; XTitle="p_{T}^{Z} [GeV]", Legend='TR', IncludeOverflows=False
+scaledptZ : pt_2(LepGood1_pt,LepGood1_phi,LepGood2_pt,LepGood2_phi)/mass_2(LepGood1_pt,LepGood1_eta,LepGood1_phi,0.5e-3,LepGood2_pt,LepGood2_eta,LepGood2_phi,0.5e-3)*91.1876 : 100,0,50 ; XTitle="scaled p_{T}^{Z} [GeV]", Legend='TR', IncludeOverflows=False
+#costheta_cs : costheta_cs : 50,-1,1 ; XTitle="cos #theta_{CS}", Legend='TR'
+#phi_cs : phi_cs : 50,0,6.2831853 ; XTitle="#phi_{CS}", Legend='TR'
+#sumAiPi : 1 + costheta_cs*costheta_cs + AP[0] + AP[1] + AP[2] + AP[3] + AP[4] : 50,0.98,1.7 ; XTitle="1+cos^{2} #theta_{CS}+#sum_{i} A_{i}P_{i}", Legend='TR'
+#recoil: Hypot(z_ux,z_uy) : 50,0,50 ; XTitle="transverse recoil [GeV]", Legend='TR', IncludeOverflows=False
+#pfmet: met_pt : 60,20,80 ; XTitle="PF E_{T}^{miss} [GeV]", Legend='TR', IncludeOverflows=False
+#tkmet: tkmet_pt : 40,20,60 ; XTitle="charged PF E_{T}^{miss} [GeV]", Legend='TR', IncludeOverflows=False
+#y_vs_ctheta : z_y\:costheta_cs : 50,-1,1,20,0,1.8 ; XTitle="cos #theta_{CS}", YTitle="|y(Z)|", Legend='TR'
+#y_vs_phi : z_y\:phi_cs : 50,0,6.2831853,20,0,1.8 ; XTitle="#phi_{CS}", YTitle="|y(Z)|", Legend='TR'
+#y_vs_sumAiPi : z_y\:1 + costheta_cs*costheta_cs + AP[0] + AP[1] + AP[2] + AP[3] + AP[4] : [0,1.02,1.04,1.06,1.08,1.1,1.12,1.14,1.16,1.20,1.24,1.30,1.35,1.40,1.50,1.60,2.0]*[0,0.2,0.4,0.6,0.8,1.0,1.4,1.8] ; XTitle="1+cos^{2} #theta_{CS}+#sum_{i} A_{i}P_{i}", YTitle="|y(Z)|", Legend='TR'
 
-gen_ptv: GenP6StatusThree_pt[6] : 80,0,40 ; XTitle="Gen. p_{T}^{V} [GeV]", IncludeOverflows=False
-gen_scaledptv: GenP6StatusThree_pt[6]/GenP6StatusThree_mass[6]*91.1876 : 80,0,40 ; XTitle="scaled gen. p_{T}^{V} [GeV]", IncludeOverflows=False
+#gen_ptv: GenP6StatusThree_pt[6] : 80,0,40 ; XTitle="Gen. p_{T}^{V} [GeV]", IncludeOverflows=False
+#gen_scaledptv: GenP6StatusThree_pt[6]/GenP6StatusThree_mass[6]*91.1876 : 80,0,40 ; XTitle="scaled gen. p_{T}^{V} [GeV]", IncludeOverflows=False

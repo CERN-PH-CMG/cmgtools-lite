@@ -1,6 +1,6 @@
 alwaystrue: 1
-trigger: HLT_SingleEl==1
-el acceptance: abs(LepGood1_pdgId)==11 && LepCorr1_pt > 30 && LepCorr2_pt > 20 && abs(LepCorr1_eta)<2.5 && abs(LepCorr2_eta)<2.5 && LepGood1_pdgId == -LepGood2_pdgId
-el selection: LepGood1_eleMVAId >=2 && LepGood1_relIso04 < 0.15 && LepGood1_convVetoFull==1 && LepGood2_eleMVAId >=2 && LepGood2_relIso04 < 0.15 && LepGood2_convVetoFull==1
-inv mass: abs(mass_2(LepCorr1_pt,LepGood1_eta,LepGood1_phi,0.5e-3,LepCorr2_pt,LepGood2_eta,LepGood2_phi,0.5e-3)-90) < 20
-#zpt:  pt_2(LepCorr1_pt,LepGood1_phi,LepCorr2_pt,LepGood2_phi) < 40
+#trigger: HLT_SingleEl==1
+el acceptance: abs(LepGood1_pdgId)==11 && LepGood1_pt > 30 && LepGood2_pt > 20 && abs(LepGood1_eta)<2.5 && abs(LepGood2_eta)<2.5 && LepGood1_pdgId == -LepGood2_pdgId
+el selection: LepGood1_tightId >=2 && LepGood1_relIso04 < 0.15 && LepGood1_convVeto==1 && LepGood1_lostHits<=1 && LepGood2_tightId >=2 && LepGood2_relIso04 < 0.15 && LepGood2_convVeto==1 && LepGood2_lostHits<=1
+inv mass: abs(mass_2(LepGood1_pt,LepGood1_eta,LepGood1_phi,0.5e-3,LepGood2_pt,LepGood2_eta,LepGood2_phi,0.5e-3)-90) < 20
+#zpt:  pt_2(LepGood1_pt,LepGood1_phi,LepGood2_pt,LepGood2_phi) < 40
