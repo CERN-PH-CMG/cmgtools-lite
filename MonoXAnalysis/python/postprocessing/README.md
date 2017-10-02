@@ -53,4 +53,4 @@ The output branches should be filled calling the `fillBranch(branchname, value)`
 ## Typical use-cases:
 These examples run the lepton scale-factors and the PU-reweighting modules and put the output in friend trees.
 
-python postproc.py test_output /eos/cms/store/cmst3/user/emanuele/wmass/TREES_1LEP_80X_V2_nano/QCD_Pt20to30_EMEnriched/treeProducerWMass/tree.root -I CMGTools.MonoXAnalysis.postprocessing.examples.lepSFProducer lepSF -I CMGTools.MonoXAnalysis.postprocessing.examples.puWeightProducer puWeight --friend
+`python postproc.py test_output /eos/cms/store/cmst3/user/emanuele/wmass/TREES_1LEP_80X_V2_nano/QCD_Pt20to30_EMEnriched/treeProducerWMass/tree.root -I CMGTools.MonoXAnalysis.postprocessing.examples.lepSFProducer lepSF -I CMGTools.MonoXAnalysis.postprocessing.examples.puWeightProducer puWeight --friend`
