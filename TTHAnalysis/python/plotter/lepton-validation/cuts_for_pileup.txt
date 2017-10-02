@@ -1,6 +1,0 @@
-filters : hbheFilterNew25ns==1 && Flag_CSCTightHaloFilter==1 && Flag_eeBadScFilter==1
-trigger : $DATA{HLT_DoubleMu || HLT_BIT_HLT_IsoMu22_v || HLT_BIT_HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v || HLT_BIT_HLT_Ele25_eta2p1_WPTight_Gsf_v || HLT_BIT_HLT_Ele27_WPTight_Gsf_v || HLT_BIT_HLT_Ele27_eta2p1_WPLoose_Gsf_v} $MC{1}
-2L SF/OS : nLepGood >= 2 && LepGood1_pdgId == -LepGood2_pdgId
-pt2515eta21: LepGood1_pt > 25 && LepGood2_pt > 15 && max(abs(LepGood1_eta),abs(LepGood2_eta)) < 2.1
-mll>60 : 60 < mZ1 && mZ1 < 120
-mu : abs(LepGood1_pdgId)==13 && LepGood1_ICHEPmediumMuonId && LepGood2_ICHEPmediumMuonId

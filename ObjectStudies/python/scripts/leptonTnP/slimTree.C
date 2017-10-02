@@ -1,4 +1,4 @@
-void slimTree(TString out="slimTree.root", TString cut="tag_IsoMu22 && tag_combRelIsoPF03dBeta/tag_pt < 0.2 && tag_SIP < 2.5 && (pt > 20 || TM || Glb) && (65 <= mass && mass <= 125)", TString dir="tpTree") {
+void slimTree(TString out="slimTree.root", TString cut="(tag_IsoMu22 || tag_IsoMu24) && tag_combRelIsoPF03dBeta/tag_pt < 0.2 && tag_SIP < 2.5 && (pt > 20 || TM || Glb) && (65 <= mass && mass <= 125)", TString dir="tpTree") {
     TTree *in  = (TTree *)gFile->Get(dir+"/fitter_tree");
     TFile *fout = new TFile(out, "RECREATE");
     TDirectory *dout = fout->mkdir(dir); dout->cd();
@@ -29,6 +29,7 @@ void slimTree(TString out="slimTree.root", TString cut="tag_IsoMu22 && tag_combR
     in->SetBranchStatus("isoTrk03Rel",1);
 
     // Impact parameter
+    in->SetBranchStatus("IP",1);
     in->SetBranchStatus("SIP",1);
     in->SetBranchStatus("dzPV",1);
     in->SetBranchStatus("dB",1);
@@ -38,6 +39,7 @@ void slimTree(TString out="slimTree.root", TString cut="tag_IsoMu22 && tag_combR
 
     in->SetBranchStatus("tag_nVertices",1);
     in->SetBranchStatus("tag_IsoMu22",1); 
+    in->SetBranchStatus("tag_IsoMu24",1); 
     in->SetBranchStatus("tag_combRelIsoPF03dBeta",1); 
     in->SetBranchStatus("tag_pt",1);
     in->SetBranchStatus("tag_SIP",1);

@@ -138,13 +138,13 @@ lepAna = cfg.Analyzer(
     loose_electron_isoCut = lambda el : True,
     loose_electron_lostHits = 9999,
     # muon isolation correction method (can be "rhoArea" or "deltaBeta")
-    mu_isoCorr = "deltaBeta" ,
+    mu_isoCorr = "rhoArea" ,
     mu_effectiveAreas = "Spring15_25ns_v1", #(can be 'Data2012' or 'Phys14_25ns_v1')
     mu_tightId = "POG_ID_Medium",
     # electron isolation correction method (can be "rhoArea" or "deltaBeta")
-    ele_isoCorr = "deltaBeta" ,
+    ele_isoCorr = "rhoArea" ,
     ele_effectiveAreas = "Spring15_25ns_v1" , #(can be 'Data2012' or 'Phys14_25ns_v1')
-    ele_tightId = "POG_Cuts_ID_SPRING15_25ns_v1_ConvVetoDxyDz_Tight_full5x5" ,
+    ele_tightId = "MVA_ID_NonTrig_Spring15_HZZ" ,
     # Mini-isolation, with pT dependent cone: will fill in the miniRelIso, miniRelIsoCharged, miniRelIsoNeutral variables of the leptons (see https://indico.cern.ch/event/368826/ )
     doMiniIsolation  = False, # off by default since it requires access to all PFCandidates 
     packedCandidates = 'packedPFCandidates',
@@ -164,7 +164,7 @@ trigMatcher1Mu = cfg.Analyzer(
     processName = 'PAT',
     fallbackProcessName = 'RECO',
     unpackPathNames = True,
-    trgObjSelectors = [ lambda t : t.path("HLT_IsoMu22_v*",1,0) or t.path("HLT_IsoMu20_v*",1,0) or t.path("HLT_IsoTkMu22_v*",1,0) or t.path("HLT_IsoTkMu20_v*",1,0)],
+    trgObjSelectors = [ lambda t : t.path("HLT_IsoMu22_v*",1,0) or t.path("HLT_IsoMu24_v*",1,0) or t.path("HLT_IsoTkMu22_v*",1,0) or t.path("HLT_IsoTkMu24_v*",1,0)],
     collToMatch = 'selectedLeptons',
     collMatchSelectors = [ lambda l,t : abs(l.pdgId()) == 13 ],
     collMatchDRCut = 0.2,
@@ -174,7 +174,7 @@ trigMatcher1Mu = cfg.Analyzer(
 trigMatcher1El = trigMatcher1Mu.clone(
     name="trigMatcher1El",
     label='1El',
-    trgObjSelectors = [ lambda t : t.path("HLT_Ele23_WPLoose_Gsf_v*",1,0) or t.path("HLT_Ele27_WPLoose_Gsf_v*",1,0) or t.path("HLT_Ele27_WPTight_Gsf_v*",1,0) or t.path("HLT_Ele25_eta2p1_WPLoose_Gsf_v*",1,0) or t.path("HLT_Ele25_eta2p1_WPTight_Gsf_v*",1,0) ],
+    trgObjSelectors = [ lambda t : t.path("HLT_Ele27_eta2p1_WPLoose_Gsf_v*",1,0) or t.path("HLT_Ele27_WPTight_Gsf_v*",1,0) or t.path("HLT_Ele25_eta2p1_WPLoose_Gsf_v*",1,0) or t.path("HLT_Ele25_eta2p1_WPTight_Gsf_v*",1,0) ],
     collMatchSelectors = [ lambda l,t : abs(l.pdgId()) == 11 ],
 )
 
@@ -197,8 +197,8 @@ jetAna = cfg.Analyzer(
     recalibrateJets = True, #'MC', # True, False, 'MC', 'Data'
     applyL2L3Residual = True, # Switch to 'Data' when they will become available for Data
     recalibrationType = "AK4PFchs",
-    mcGT     = "Spring16_25nsV6_MC",
-    dataGT   = "Spring16_25nsV6_DATA",
+    mcGT     = "Summer16_23Sep2016V3_MC",
+    dataGT   = [(1,"Summer16_23Sep2016BCDV3_DATA"),(276831,"Summer16_23Sep2016EFV3_DATA"),(278802,"Summer16_23Sep2016GV3_DATA"),(280919,"Summer16_23Sep2016HV3_DATA")],
     jecPath = "${CMSSW_BASE}/src/CMGTools/RootTools/data/jec/",
     shiftJEC = 0, # set to +1 or -1 to apply +/-1 sigma shift to the nominal jet energies
     addJECShifts = False, # if true, add  "corr", "corrJECUp", and "corrJECDown" for each jet (requires uncertainties to be available!)

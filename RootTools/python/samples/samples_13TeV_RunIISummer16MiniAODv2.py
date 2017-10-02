@@ -76,13 +76,8 @@ TTJets_LO_HT2500toInf_ext
 #TTHnobb     = kreator.makeMCComponent("TTHnobb", "/ttHJetToNonbb_M125_13TeV_amcatnloFXFX_madspin_pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/MINIAODSIM", "CMS", ".*root",0.5085*(1-0.577))
 # NOTAVAILYET # TTHnobb_ext = kreator.makeMCComponent("TTHnobb_ext", "/ttHJetToNonbb_M125_13TeV_amcatnloFXFX_madspin_pythia8_mWCutfix/RunIISpring16MiniAODv2-PUSpring16RAWAODSIM_80X_mcRun2_asymptotic_2016_miniAODv2_v0_ext1-v2/MINIAODSIM", "CMS", ".*root",0.5085*(1-0.577))
 TTHnobb_pow = kreator.makeMCComponent("TTHnobb_pow", "/ttHToNonbb_M125_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM", "CMS", ".*root",0.5085*(1-0.577))
-# NOTAVAILYET # TTHnobb_mWCutfix_ch0 = kreator.makeMCComponent("TTHnobb_mWCutfix_ch0", "/ttHJetToNonbb_M125_13TeV_amcatnloFXFX_madspin_pythia8_mWCutfix/RunIISpring16MiniAODv2-PUSpring16RAWAODSIM_80X_mcRun2_asymptotic_2016_miniAODv2_v0_ext1-v2/MINIAODSIM", "CMS", ".*root", 0.5085*(1-0.577))
-#TTHnobb_mWCutfix_ch1 = kreator.makeMCComponent("TTHnobb_mWCutfix_ch1", "/ttHJetToNonbb_M125_13TeV_amcatnloFXFX_madspin_pythia8_mWCutfix/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12_ext1-v1/MINIAODSIM", "CMS", ".*root", 0.5085*(1-0.577))
+TTHnobb_mWCutfix_ext = kreator.makeMCComponent("TTHnobb_mWCutfix_ext", "/ttHJetToNonbb_M125_13TeV_amcatnloFXFX_madspin_pythia8_mWCutfix/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v1/MINIAODSIM", "CMS", ".*root", 0.5085*(1-0.577))
 
-TTHnobb_mWCutfix = [
-# NOTAVAILYET # TTHnobb_mWCutfix_ch0,
-#TTHnobb_mWCutfix_ch1
-]
 
 # GGH cross section from LHC Higgs XS WG: https://twiki.cern.ch/twiki/bin/view/LHCPhysics/CERNYellowReportPageAt1314TeV?rev=15
 GGHZZ4L = kreator.makeMCComponent("GGHZZ4L", "/GluGluHToZZTo4L_M125_13TeV_powheg2_JHUgenV6_pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM", "CMS", ".*root", 0.01212) #43.92*2.76E-04)
@@ -100,6 +95,7 @@ Higgs = [
 #TTHnobb,
 # NOTAVAILYET # TTHnobb_ext,
 TTHnobb_pow,
+TTHnobb_mWCutfix_ext,
 GGHZZ4L,
 #QQHZZ4L,
 #WpHZZ4L,
@@ -107,7 +103,7 @@ GGHZZ4L,
 #ZHZZ4LF,
 #TTHZZ4LF,
 VHToNonbb,
-] + TTHnobb_mWCutfix
+]
 
 #TTHbb       = kreator.makeMCComponent("TTHbb",      "/ttHJetTobb_M125_13TeV_amcatnloFXFX_madspin_pythia8/RunIISpring16MiniAODv2-PUSpring16RAWAODSIM_80X_mcRun2_asymptotic_2016_miniAODv2_v0_ext3-v2/MINIAODSIM", "CMS", ".*root", 0.5085*(0.577))
 #TTHbb_ext1   = kreator.makeMCComponent("TTHbb_ext1",  "/ttHJetTobb_M125_13TeV_amcatnloFXFX_madspin_pythia8/RunIIFall15MiniAODv2-PU25nsData2015v1_76X_mcRun2_asymptotic_v12_ext1-v1/MINIAODSIM", "CMS", ".*root",  0.5085*(0.577))

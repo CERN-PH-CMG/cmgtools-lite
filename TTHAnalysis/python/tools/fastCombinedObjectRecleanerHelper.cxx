@@ -14,6 +14,7 @@ struct JetSumCalculatorOutput {
   float mhtJet;
   int nBJetLoose;
   int nBJetMedium; 
+  int nJet;
 };
 
 class fastCombinedObjectRecleanerHelper {
@@ -33,8 +34,8 @@ public:
   void setTaus(rint *nTau, rfloats *tauPt, rfloats *tauEta, rfloats *tauPhi) {
     nTau_ = nTau; Tau_pt_ = tauPt; Tau_eta_ = tauEta; Tau_phi_ = tauPhi;
   }
-  void setJets(rint *nJet, rfloats *jetPt, rfloats *jetEta, rfloats *jetPhi, rfloats *jetbtagCSV) {
-    nJet_ = nJet; Jet_pt_ = jetPt; Jet_eta_ = jetEta; Jet_phi_ = jetPhi; Jet_btagCSV_ = jetbtagCSV;
+  void setJets(rint *nJet, rfloats *jetPt, rfloats *jetEta, rfloats *jetPhi, rfloats *jetbtagCSV, rfloats *jetcorr, rfloats *jetcorr_JECUp, rfloats *jetcorr_JECDown) {
+    nJet_ = nJet; Jet_pt_ = jetPt; Jet_eta_ = jetEta; Jet_phi_ = jetPhi; Jet_btagCSV_ = jetbtagCSV; Jet_corr_ = jetcorr; Jet_corr_JECUp_ = jetcorr_JECUp; Jet_corr_JECDown_ = jetcorr_JECDown;
   }
 
   void addJetPt(int pt){
@@ -44,7 +45,7 @@ public:
   typedef math::PtEtaPhiMLorentzVectorD ptvec;
   typedef math::XYZTLorentzVectorD crvec;
 
-  std::vector<JetSumCalculatorOutput> GetJetSums(){
+  std::vector<JetSumCalculatorOutput> GetJetSums(int variation = 0){
 
     std::vector<JetSumCalculatorOutput> output;
     
@@ -63,15 +64,18 @@ public:
     }
     
     for (auto thr : _jetptcuts){
-      auto mht = _mht;      
+      auto mht = _mht;
       JetSumCalculatorOutput sums;
       sums.thr = float(thr);
       sums.htJetj = 0;
       sums.nBJetLoose = 0;
       sums.nBJetMedium = 0;
+      sums.nJet = 0;
       
       for (auto j : *_cj){
 	float pt = (*Jet_pt_)[j];
+	if (variation==1) pt *= (*Jet_corr_JECUp_)[j] / (*Jet_corr_)[j];
+	if (variation==-1) pt *= (*Jet_corr_JECDown_)[j] / (*Jet_corr_)[j];
 	if (pt<=thr) continue;
 	float phi = (*Jet_phi_)[j];
 	float csv = (*Jet_btagCSV_)[j];
@@ -80,6 +84,7 @@ public:
 	mht = mht - jp4;
 	if (csv>bTagL_) sums.nBJetLoose += 1;
 	if (csv>bTagM_) sums.nBJetMedium += 1;
+	sums.nJet += 1;
       }
 
       sums.mhtJet = mht.Pt();
@@ -174,7 +179,7 @@ private:
   rint *nLep_, *nTau_, *nJet_;
   rfloats *Lep_pt_, *Lep_eta_, *Lep_phi_;
   rfloats *Tau_pt_, *Tau_eta_, *Tau_phi_;
-  rfloats *Jet_pt_, *Jet_phi_, *Jet_eta_, *Jet_btagCSV_;
+  rfloats *Jet_pt_, *Jet_phi_, *Jet_eta_, *Jet_btagCSV_, *Jet_corr_, *Jet_corr_JECUp_, *Jet_corr_JECDown_;
   float deltaR2cut;
   std::set<int> _jetptcuts;
   std::unique_ptr<std::vector<int> > _ct;

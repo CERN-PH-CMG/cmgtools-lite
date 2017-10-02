@@ -56,7 +56,7 @@ public :
    Int_t           HLT_DoubleMu;
 
    Int_t           nLepGood;
-   Float_t         LepGood_mvaIdSpring15[4];   //[nLepGood]
+   Float_t         LepGood_mvaIdSpring16GP[4];   //[nLepGood]
    Float_t         LepGood_mvaTTH[4];   //[nLepGood]
    Float_t         LepGood_jetPtRatiov2[4];   //[nLepGood]
    Float_t         LepGood_jetPtRelv2[4];   //[nLepGood]
@@ -124,7 +124,7 @@ public :
    TBranch *b_HLT_DoubleEl;
    TBranch *b_HLT_DoubleMu;
    TBranch *b_nLepGood;
-   TBranch *b_LepGood_mvaIdSpring15;
+   TBranch *b_LepGood_mvaIdSpring16GP;
    TBranch *b_LepGood_mvaTTH;
    TBranch *b_LepGood_jetPtRatiov2;
    TBranch *b_LepGood_jetPtRelv2;
@@ -183,10 +183,10 @@ public :
    virtual bool     SelectTagMuon(int);
 
    virtual bool     PassLooseLepton(int);
+   virtual bool     PassFOLepton(int);
    virtual bool     PassTightLepton(int);
    virtual bool     PassConvRejection(int);
    virtual bool     PassTightCharge(int);
-   virtual bool     PassICHEPMediumMuonID(int);
    virtual float    ConePt(int);
    virtual float    PuWeight();
 
@@ -199,7 +199,7 @@ public :
    Long64_t fMaxEvents;
    virtual inline void setMaxEvents(int maxevents){fMaxEvents = maxevents;};
 
-   Float_t fPUw2016_vtx_13fb[60] = { 1.0,
+   Float_t fPUw2016_vtx_13fb[60] = {1.0,
                                    0.046904649804193066,
                                    0.09278031810949669,
                                    0.18880389403907694,
@@ -260,6 +260,87 @@ public :
                                    1.0,
                                    1.0};
 
+   Float_t fPUw2016_nTrueInt_36fb[100] = {0.3505407355600995,
+                                     0.8996968628890968,
+                                     1.100322319466069,
+                                     0.9562526765089195,
+                                     1.0366251229154624,
+                                     1.0713954619016586,
+                                     0.7593488199769544,
+                                     0.47490309461978414,
+                                     0.7059895997695581,
+                                     0.8447022252423783,
+                                     0.9169159386164522,
+                                     1.0248924033173097,
+                                     1.0848877947714115,
+                                     1.1350984224561655,
+                                     1.1589888429954602,
+                                     1.169048420382294,
+                                     1.1650383018054549,
+                                     1.1507200023444994,
+                                     1.1152571438041776,
+                                     1.0739529436969637,
+                                     1.0458014000030829,
+                                     1.032500407707141,
+                                     1.0391236062781293,
+                                     1.041283620738903,
+                                     1.0412963370894526,
+                                     1.0558823002770783,
+                                     1.073481674823461,
+                                     1.0887053272606795,
+                                     1.1041701696801014,
+                                     1.123218903738397,
+                                     1.1157169321377927,
+                                     1.1052520327174429,
+                                     1.0697489590429388,
+                                     1.0144652740600584,
+                                     0.9402657069968621,
+                                     0.857142825520793,
+                                     0.7527112615290031,
+                                     0.6420618248685722,
+                                     0.5324755829715156,
+                                     0.4306470627563325,
+                                     0.33289171600176093,
+                                     0.24686361729094983,
+                                     0.17781595237914027,
+                                     0.12404411884835284,
+                                     0.08487088505600057,
+                                     0.056447805688061216,
+                                     0.03540829360547507,
+                                     0.022412461576677457,
+                                     0.013970541270658443,
+                                     0.008587896629717911,
+                                     0.004986410514292661,
+                                     0.00305102303701641,
+                                     0.001832072556146534,
+                                     0.0011570757619737708,
+                                     0.0008992999249003301,
+                                     0.0008241241729452477,
+                                     0.0008825716073180279,
+                                     0.001187003960081393,
+                                     0.0016454104270429153,
+                                     0.0022514113879764414,
+                                     0.003683196037880878,
+                                     0.005456695951503178,
+                                     0.006165248770884191,
+                                     0.007552675218762607,
+                                     0.008525338219226993,
+                                     0.008654690499815343,
+                                     0.006289068906974821,
+                                     0.00652551838513972,
+                                     0.005139581024893171,
+                                     0.005115751962934923,
+                                     0.004182527768384693,
+                                     0.004317593022028565,
+                                     0.0035749335962533355,
+                                     0.003773660372937113,
+                                     0.002618732319396435,
+                                     1.0,1.0,1.0,1.0,1.0,
+                                     1.0,1.0,1.0,1.0,1.0,
+                                     1.0,1.0,1.0,1.0,1.0,
+                                     1.0,1.0,1.0,1.0,1.0,
+                                     1.0,1.0,1.0,1.0,1.0};
+
    TH1I *fHCutFlow;
 
    TTree *fTnPTree;
@@ -279,6 +360,7 @@ public :
    Int_t   fT_pdgId;
    Int_t   fT_passLoose;
    Int_t   fT_passConvRej;
+   Int_t   fT_passFO;
    Int_t   fT_passTight;
    Int_t   fT_passTCharge;
    Float_t fT_conePt;
@@ -299,9 +381,8 @@ public :
    Int_t   fT_lostHits;
    Int_t   fT_tightCharge;
    Int_t   fT_mediumMuonId;
-   Int_t   fT_ICHEPmediumMuonId;
    Float_t fT_mvaIdPhys14;
-   Float_t fT_mvaIdSpring15;
+   Float_t fT_mvaIdSpring16GP;
    Int_t   fT_mcMatchId;
    Float_t fT_idEmu;
    Int_t   fT_nJet25;
@@ -321,7 +402,7 @@ lepTnPFriendTreeMaker::lepTnPFriendTreeMaker(TTree *tree) : fChain(0){
    Init(tree);
    fTnPTree = 0;
    fMaxEvents = -1;
-   fHCutFlow = new TH1I("CutFlow", "CutFlow", 12, 0, 12);
+   fHCutFlow = new TH1I("CutFlow", "CutFlow", 14, 0, 14);
    fHCutFlow->GetXaxis()->SetBinLabel(1, "All events");
    fHCutFlow->GetXaxis()->SetBinLabel(2, "Two loose leptons");
    fHCutFlow->GetXaxis()->SetBinLabel(3, "ee, e#mu, #mu#mu channels");
@@ -329,11 +410,13 @@ lepTnPFriendTreeMaker::lepTnPFriendTreeMaker(TTree *tree) : fChain(0){
    fHCutFlow->GetXaxis()->SetBinLabel(5, "Found a tag electron");
    fHCutFlow->GetXaxis()->SetBinLabel(6, "Found a probe electron");
    fHCutFlow->GetXaxis()->SetBinLabel(7, "Probe electron passes loose");
-   fHCutFlow->GetXaxis()->SetBinLabel(8, "Probe electron passes tight");
-   fHCutFlow->GetXaxis()->SetBinLabel(9, "Found a tag muon");
-   fHCutFlow->GetXaxis()->SetBinLabel(10, "Found a probe muon");
-   fHCutFlow->GetXaxis()->SetBinLabel(11, "Probe muon passes loose");
-   fHCutFlow->GetXaxis()->SetBinLabel(12, "Probe muon passes tight");
+   fHCutFlow->GetXaxis()->SetBinLabel(8, "Probe electron passes FO");
+   fHCutFlow->GetXaxis()->SetBinLabel(9, "Probe electron passes tight");
+   fHCutFlow->GetXaxis()->SetBinLabel(10, "Found a tag muon");
+   fHCutFlow->GetXaxis()->SetBinLabel(11, "Found a probe muon");
+   fHCutFlow->GetXaxis()->SetBinLabel(12, "Probe muon passes loose");
+   fHCutFlow->GetXaxis()->SetBinLabel(13, "Probe muon passes FO");
+   fHCutFlow->GetXaxis()->SetBinLabel(14, "Probe muon passes tight");
 }
 
 lepTnPFriendTreeMaker::~lepTnPFriendTreeMaker(){
@@ -395,7 +478,7 @@ void lepTnPFriendTreeMaker::Init(TTree *tree){
    fChain->SetBranchStatus("HLT_DoubleEl"           , 1);
    fChain->SetBranchStatus("HLT_DoubleMu"           , 1);
    fChain->SetBranchStatus("nLepGood"               , 1);
-   fChain->SetBranchStatus("LepGood_mvaIdSpring15"  , 1);
+   fChain->SetBranchStatus("LepGood_mvaIdSpring16GP", 1);
    fChain->SetBranchStatus("LepGood_mvaTTH"         , 1);
    fChain->SetBranchStatus("LepGood_jetPtRatiov2"   , 1);
    fChain->SetBranchStatus("LepGood_jetPtRelv2"     , 1);
@@ -460,7 +543,7 @@ void lepTnPFriendTreeMaker::Init(TTree *tree){
    fChain->SetBranchAddress("HLT_DoubleEl"           , &HLT_DoubleEl          , &b_HLT_DoubleEl);
    fChain->SetBranchAddress("HLT_DoubleMu"           , &HLT_DoubleMu          , &b_HLT_DoubleMu);
    fChain->SetBranchAddress("nLepGood"               , &nLepGood              , &b_nLepGood);
-   fChain->SetBranchAddress("LepGood_mvaIdSpring15"  , LepGood_mvaIdSpring15  , &b_LepGood_mvaIdSpring15);
+   fChain->SetBranchAddress("LepGood_mvaIdSpring16GP"  , LepGood_mvaIdSpring16GP  , &b_LepGood_mvaIdSpring16GP);
    fChain->SetBranchAddress("LepGood_mvaTTH"         , LepGood_mvaTTH         , &b_LepGood_mvaTTH);
    fChain->SetBranchAddress("LepGood_jetPtRatiov2"   , LepGood_jetPtRatiov2   , &b_LepGood_jetPtRatiov2);
    fChain->SetBranchAddress("LepGood_jetPtRelv2"     , LepGood_jetPtRelv2     , &b_LepGood_jetPtRelv2);
@@ -533,6 +616,7 @@ void lepTnPFriendTreeMaker::Begin(TFile *file){
    fTnPTree->Branch("pdgId"         ,&fT_pdgId         ,"pdgId/I");
    fTnPTree->Branch("passLoose"     ,&fT_passLoose     ,"passLoose/I");
    fTnPTree->Branch("passConvRej"   ,&fT_passConvRej   ,"passConvRej/I");
+   fTnPTree->Branch("passFO"        ,&fT_passFO        ,"passFO/I");
    fTnPTree->Branch("passTight"     ,&fT_passTight     ,"passTight/I");
    fTnPTree->Branch("passTCharge"   ,&fT_passTCharge   ,"passTCharge/I");
    fTnPTree->Branch("conePt"        ,&fT_conePt        ,"conePt/F");
@@ -552,9 +636,8 @@ void lepTnPFriendTreeMaker::Begin(TFile *file){
    fTnPTree->Branch("lostHits"      ,&fT_lostHits      ,"lostHits/I");
    fTnPTree->Branch("tightCharge"   ,&fT_tightCharge   ,"tightCharge/I");
    fTnPTree->Branch("mediumMuonId"  ,&fT_mediumMuonId  ,"mediumMuonId/I");
-   fTnPTree->Branch("ICHEPmediumMuonId"  ,&fT_ICHEPmediumMuonId  ,"ICHEPmediumMuonId/I");
    fTnPTree->Branch("mvaIdPhys14"   ,&fT_mvaIdPhys14   ,"mvaIdPhys14/F");
-   fTnPTree->Branch("mvaIdSpring15" ,&fT_mvaIdSpring15 ,"mvaIdSpring15/F");
+   fTnPTree->Branch("mvaIdSpring16GP" ,&fT_mvaIdSpring16GP ,"mvaIdSpring16GP/F");
    fTnPTree->Branch("mcMatchId"     ,&fT_mcMatchId     ,"mcMatchId/I");
    fTnPTree->Branch("idEmu"         ,&fT_idEmu         ,"idEmu/F");
    fTnPTree->Branch("nJet25"        ,&fT_nJet25        ,"nJet25/I");
@@ -596,6 +679,7 @@ void lepTnPFriendTreeMaker::ResetTnPTree(){
    fT_pdgId         = -999;
    fT_passLoose     = -999;
    fT_passConvRej   = -999;
+   fT_passFO        = -999;
    fT_passTight     = -999;
    fT_passTCharge   = -999;
    fT_conePt        = -999.99;
@@ -616,9 +700,8 @@ void lepTnPFriendTreeMaker::ResetTnPTree(){
    fT_lostHits      = -999;
    fT_tightCharge   = -999;
    fT_mediumMuonId  = -999;
-   fT_ICHEPmediumMuonId  = -999;
    fT_mvaIdPhys14   = -999.99;
-   fT_mvaIdSpring15 = -999.99;
+   fT_mvaIdSpring16GP = -999.99;
    fT_idEmu         = -999.99;
    fT_nJet25        = -999;
    fT_nBJetLoose25  = -999;
@@ -637,10 +720,10 @@ bool lepTnPFriendTreeMaker::PassSingleTriggers(){
 }
 
 bool lepTnPFriendTreeMaker::PassDoubleTriggers(){
-   return ( HLT_DoubleElHT || HLT_TripleEl || HLT_DoubleMuEl ||
-            HLT_TripleMu || HLT_DoubleElMu || HLT_DoubleMuNoIso ||
-            HLT_DoubleMuSS || HLT_TripleMuA || HLT_MuEG || HLT_DoubleMuHT ||
-            HLT_DoubleEl || HLT_DoubleMu );
+   return ( HLT_DoubleElHT || HLT_TripleEl   || HLT_DoubleMuEl ||
+            HLT_TripleMu   || HLT_DoubleElMu || HLT_DoubleMuNoIso ||
+            HLT_DoubleMuSS || HLT_TripleMuA  || HLT_MuEG || HLT_DoubleMuHT ||
+            HLT_DoubleEl   || HLT_DoubleMu );
 }
 
 bool lepTnPFriendTreeMaker::SelectEvent(){
@@ -707,8 +790,12 @@ float lepTnPFriendTreeMaker::PuWeight(){
    if( fIsData ) return 1.0;
 
    // For json up to 276811 (12.9/fb)
+   // int nTrueInt_int = int(nTrueInt);
+   // if( nTrueInt_int < 60 ) return fPUw2016_vtx_13fb[nTrueInt_int];
+
+   // For full ICHEP dataset
    int nTrueInt_int = int(nTrueInt);
-   if( nTrueInt_int < 60 ) return fPUw2016_vtx_13fb[nTrueInt_int];
+   if( nTrueInt_int < 100 ) return fPUw2016_nTrueInt_36fb[nTrueInt_int];
    else return 0;
 }
 
@@ -724,8 +811,20 @@ bool lepTnPFriendTreeMaker::_ttH_idEmu_cuts_E2(int i){
 }
 
 bool lepTnPFriendTreeMaker::PassLooseLepton(int i){
-   if(LepGood_sip3d[i] > 8)         return false;
+   // if(LepGood_sip3d[i] > 8)         return false;
+   return true;
+}
 
+bool lepTnPFriendTreeMaker::PassFOLepton(int i){
+   if( !PassLooseLepton(i) ) return false;
+   if( ConePt(i) < 10. ) return false;
+   if( LepGood_jetBTagCSV[i] > 0.8484 ) return false;
+   if( (fabs(LepGood_pdgId[i])==11) && ConePt(i) > 30. && !_ttH_idEmu_cuts_E2(i) ) return false;
+   if( LepGood_mvaTTH[i] < 0.75 ){
+      if( LepGood_jetPtRatiov2[i] < 0.3 ) return false;
+      if( fabs(LepGood_pdgId[i])==13 && LepGood_jetBTagCSV[i]>0.5426 ) return false;
+      if( fabs(LepGood_pdgId[i])==11 && fabs(LepGood_eta[i])>1.479 && LepGood_mvaIdSpring16GP[i]<-0.5 ) return false;
+   }
    return true;
 }
 
@@ -742,35 +841,11 @@ bool lepTnPFriendTreeMaker::PassTightCharge(int i){
    return false;
 }
 
-bool lepTnPFriendTreeMaker::PassICHEPMediumMuonID(int i){
-   if( abs(LepGood_pdgId[i]) != 13 ) return true;
-   if( LepGood_innerTrackValidHitFraction[i] <= 0.49 ) return false;
-
-   float segcomp_cut = 0.451;
-   if( LepGood_isGlobalMuon[i] && LepGood_globalTrackChi2[i] < 3
-                               && LepGood_chi2LocalPosition[i] < 12
-                               && LepGood_trkKink[i] < 20) segcomp_cut = 0.303;
-
-   if( LepGood_segmentCompatibility[i] > segcomp_cut) return true;
-   return false;
-}
-
 bool lepTnPFriendTreeMaker::PassTightLepton(int i){
-   if( !PassLooseLepton(i) ) return false;
+   if( !PassFOLepton(i) ) return false;
    if( LepGood_mvaTTH[i] < 0.75 ) return false;
-   if( LepGood_jetBTagCSV[i] > 0.80 ) return false;
-   if( LepGood_jetPtRatiov2[i] < 0.3 ) return false;
-
-   // Tight electrons
-   if (abs(LepGood_pdgId[i]) == 11){
-      if(LepGood_pt[i] > 30. && _ttH_idEmu_cuts_E2(i) < 1) return false;
-      if(!PassConvRejection(i)) return false;
-      return true;
-   }
-
-   // Tight Muons
-   if( PassICHEPMediumMuonID(i) ) return true;
-   return false;
+   if( LepGood_mediumMuonId[i] < 1 ) return false;
+   return true;
 }
 
 int lepTnPFriendTreeMaker::SelectPair(int lep1, int lep2, float mass){
@@ -805,11 +880,15 @@ void lepTnPFriendTreeMaker::Loop(){
       return;
    }
 
-   Long64_t nentries = fChain->GetEntriesFast();
+   Long64_t nentries = fChain->GetEntries();
    if( fMaxEvents > 0 ){
       printf(" Processing only %lld of %lld entries\n", fMaxEvents, nentries);
       nentries = min(fMaxEvents, nentries);
    }
+   else{
+      printf(" Processing %lld entries from %s\n", nentries, fChain->GetCurrentFile()->GetName());
+   }
+
 
    Long64_t nbytes = 0, nb = 0;
    for (Long64_t jentry=0; jentry<nentries;jentry++) {
@@ -842,7 +921,7 @@ void lepTnPFriendTreeMaker::Loop(){
             || (abs(LepGood_pdgId[lep1])==13 && SelectTagMuon(lep1)) ) {
 
             if( abs(LepGood_pdgId[lep1])==11 ) fHCutFlow->Fill(4);
-            if( abs(LepGood_pdgId[lep1])==13 ) fHCutFlow->Fill(8);
+            if( abs(LepGood_pdgId[lep1])==13 ) fHCutFlow->Fill(9);
 
             // Find a probe lepton
             for (int lep2 = lep1+1; lep2 < nLepGood; ++lep2){
@@ -861,7 +940,7 @@ void lepTnPFriendTreeMaker::Loop(){
 
                // Found a pair!
                if( abs(LepGood_pdgId[lep1])==11 ) fHCutFlow->Fill(5);
-               if( abs(LepGood_pdgId[lep1])==13 ) fHCutFlow->Fill(9);
+               if( abs(LepGood_pdgId[lep1])==13 ) fHCutFlow->Fill(10);
                fT_evSel = pairsel;
                fT_pair_probeMultiplicity++;
                fT_mass          = mass;
@@ -873,12 +952,15 @@ void lepTnPFriendTreeMaker::Loop(){
                fT_pdgId         = LepGood_pdgId[lep2];
                fT_passLoose     = PassLooseLepton(lep2);
                if( abs(LepGood_pdgId[lep1])==11 && PassLooseLepton(lep2)) fHCutFlow->Fill(6);
-               if( abs(LepGood_pdgId[lep1])==13 && PassLooseLepton(lep2)) fHCutFlow->Fill(10);
+               if( abs(LepGood_pdgId[lep1])==13 && PassLooseLepton(lep2)) fHCutFlow->Fill(11);
 
                fT_passConvRej   = PassConvRejection(lep2);
+               fT_passFO        = PassFOLepton(lep2);
                fT_passTight     = PassTightLepton(lep2);
-               if( abs(LepGood_pdgId[lep1])==11 && PassTightLepton(lep2)) fHCutFlow->Fill(7);
-               if( abs(LepGood_pdgId[lep1])==13 && PassTightLepton(lep2)) fHCutFlow->Fill(11);
+               if( abs(LepGood_pdgId[lep1])==11 && PassFOLepton(lep2)) fHCutFlow->Fill(7);
+               if( abs(LepGood_pdgId[lep1])==13 && PassFOLepton(lep2)) fHCutFlow->Fill(12);
+               if( abs(LepGood_pdgId[lep1])==11 && PassTightLepton(lep2)) fHCutFlow->Fill(8);
+               if( abs(LepGood_pdgId[lep1])==13 && PassTightLepton(lep2)) fHCutFlow->Fill(13);
                fT_passTCharge   = PassTightCharge(lep2);
                fT_conePt        = ConePt(lep2);
                fT_dxy           = LepGood_dxy[lep2];
@@ -897,8 +979,7 @@ void lepTnPFriendTreeMaker::Loop(){
                fT_lostHits      = LepGood_lostHits[lep2];
                fT_tightCharge   = LepGood_tightCharge[lep2];
                fT_mediumMuonId  = LepGood_mediumMuonId[lep2];
-               fT_ICHEPmediumMuonId = PassICHEPMediumMuonID(lep2);
-               fT_mvaIdSpring15 = LepGood_mvaIdSpring15[lep2];
+               fT_mvaIdSpring16GP = LepGood_mvaIdSpring16GP[lep2];
                fT_idEmu         = _ttH_idEmu_cuts_E2(lep2);
                if( !fIsData ) fT_mcMatchId = LepGood_mcMatchId[lep2];
                else           fT_mcMatchId = 1;

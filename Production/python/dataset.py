@@ -137,7 +137,8 @@ class BaseDataset( object ):
 
 class CMSDataset( BaseDataset ):
 
-    def __init__(self, name, run_range = None, json = None):
+    def __init__(self, name, run_range = None, json = None, unsafe=False):
+        self.unsafe = unsafe
         super(CMSDataset, self).__init__( name, 'CMS', run_range=run_range, json=json)
 
     def buildListOfFilesDBS(self, pattern, begin=-1, end=-1, run_range="self"):
@@ -225,7 +226,7 @@ class CMSDataset( BaseDataset ):
             return
 
         self.files = self.buildListOfFilesDBS(pattern)
-        if len(self.files) != num_files:
+        if len(self.files) != num_files and not self.unsafe:
             raise RuntimeError, "ERROR: mismatching number of files between dataset summary (%d) and dataset query for files(%d)\n" % (num_files, len(self.files))
             
     @staticmethod
@@ -482,7 +483,7 @@ def writeDatasetToCache( cachename, dataset ):
     pickle.dump(dataset, pckfile)
 
 def createDataset( user, dataset, pattern, readcache=False, 
-                   basedir = None, run_range = None, json = None):
+                   basedir = None, run_range = None, json = None, unsafe = False):
     if user == 'CMS' and pattern != ".*root":
         raise RuntimeError, "For 'CMS' datasets, the pattern must be '.*root', while you configured '%s' for %s, %s" % (pattern, dataset.name, dataset)
 
@@ -505,7 +506,7 @@ def createDataset( user, dataset, pattern, readcache=False,
     if not readcache:
         #print "CreateDataset called: '%s', '%s', '%s', run_range %r" % (user, dataset, pattern, run_range) 
         if user == 'CMS':
-            data = CMSDataset( dataset, run_range = run_range, json = json)
+            data = CMSDataset( dataset, run_range = run_range, json = json, unsafe = unsafe)
             info = False
         elif user == 'LOCAL':
             data = LocalDataset( dataset, basedir, pattern)

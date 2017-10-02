@@ -1,5 +1,0 @@
-lumi      : ttH.*|TT[WZ] : .* : 1.046
-
-fakes_shape : TT : .* : 1.0 : shapeOnly2D_1.3X_1.2Y
-
-dummy_templstat : ttH.* : .* : 1.0 : stat_foreach_shape_bins : .*

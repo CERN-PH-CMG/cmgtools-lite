@@ -1,0 +1,14 @@
+TTV: TTW_LO:     xsec ;  FillColor=ROOT.kOrange
+TTV: TTZ_LO:     xsec ;  FillColor=ROOT.kOrange
+TTH : TTHnobb_pow : xsec ; FillColor=ROOT.kRed
+
+VV : WZTo3LNu: xsec ; FillColor=ROOT.kViolet-4
+#VV : ZZTo2L2Q: xsec ; FillColor=ROOT.kViolet-4
+VV : WWTo2L2Nu: xsec ; FillColor=ROOT.kViolet-4
+
+TW : T_tWch_ext: xsec; FillColor=ROOT.kGray+2
+TW : TBar_tWch_ext: xsec; FillColor=ROOT.kGray+2
+
+Single top    : T_tch_powheg:     xsec ;  FillColor=ROOT.kGray+2
+Single top    : TBar_tch_powheg:     xsec ;  FillColor=ROOT.kGray+2
+Single top    : TToLeptons_sch:     xsec ;  FillColor=ROOT.kGray+2

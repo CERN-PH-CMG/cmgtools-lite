@@ -57,11 +57,9 @@ tauAna.loose_tauID = "byVLooseIsolationMVArun2v1DBnewDMwLT"
 
 # Jets
 jetAna.jetPt = 20
-jetAna.mcGT   = "Spring16_25nsV6_MC"
-jetAna.dataGT = "Spring16_25nsV6_DATA"
 jetAna.calculateType1METCorrection = True
-jetAna.jetLepDR = 0.0
-jetAna.minLepPt = 1e9
+jetAna.jetLepDR = 0.4
+jetAna.minLepPt = 0
 jetAna.cleanSelectedLeptons = False
 #jetAna.recalibrateJets = False
 #jetAna.relaxJetId = True
@@ -139,13 +137,14 @@ triggerFlagsAna.triggerBits = {
 }
 triggerFlagsAna.unrollbits = True
 
-from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv2 import *
+from CMGTools.RootTools.samples.samples_13TeV_RunIISummer16MiniAODv2 import *
 from CMGTools.RootTools.samples.samples_13TeV_80X_susySignalsPriv import *
 from CMGTools.RootTools.samples.samples_13TeV_DATA2016 import *
 
 #what = "SR" 
 what = "CRWc" 
 what = "CR2L" 
+#what = "CRLL"
 
 ## ==== MC: 2L CR ====
 if what == "SR":
@@ -164,37 +163,59 @@ if what == "SR":
     for d in dataSamples: d.triggers = triggers_met90_mht90 + triggers_met100_mht100 + triggers_met120_mht120 + triggers_metNoMu90_mhtNoMu90  + triggers_metNoMu120_mhtNoMu120 + triggers_Jet80MET90 + triggers_Jet80MET120
     sigSamples = T2cc #T2ttDeg + T2cc
     for s in sigSamples: s.splitFactor = 5 
-elif what == "CR2L":
+elif what in ("CR2L", "CRLL"):
     ttHFastMETSkim.metCut = 20
     ttHJetMETSkim.metCut  = 30 
     ttHLepSkim.minLeptons = 2
     from CMGTools.TTHAnalysis.analyzers.ttHFastLepSkimmer import ttHFastLepSkimmer
-    fastSkim = cfg.Analyzer(
-        ttHFastLepSkimmer, name="ttHFastLepSkimmer",
+    fastSkim = cfg.Analyzer(ttHFastLepSkimmer, name="ttHFastLepSkimmer",
         muons = 'slimmedMuons', muCut = lambda mu : mu.pt() > 5 and mu.isLooseMuon(),
         electrons = 'slimmedElectrons', eleCut = lambda ele : ele.pt() > 5,
         minLeptons = 2,
-        ptCuts = [20,10],
+        ptCuts = [25,20],
+        requireOppositeFlavourPair = (what == "CR2L")
     )
     susyCoreSequence.insert(susyCoreSequence.index(skimAnalyzer)+1, fastSkim)
-    #mcSamples = [ TTJets, TBar_tWch, T_tWch, TBarToLeptons_tch_powheg, TToLeptons_tch_powheg,
-    #              WJetsToLNu, DYJetsToLL_M10to50, DYJetsToLL_M50, WWTo2L2Nu, WZTo3LNu ]
-    #mcSamples = [ TTJets_LO, TTLep_powUEP8M2, TTSemi_powUEP8M2 ] #, DYJetsToLL_M10to50, DYJetsToLL_M10to50_LO, DY1JetsToLL_M10to50, DY2JetsToLL_M10to50 ]
-    #jetAna.mcGT = "Spring16_FastSimV1_MC"
-    #jetAna.applyL2L3Residual = False
-    #autoAAA(mcSamples)
-    cropToLumi(mcSamples,50) 
-    #mcSamples = WNJets
-    configureSplittingFromTime(mcSamples, 12, 2)
-    #configureSplittingFromTime(WNJets, 5, 1)
+    from CMGTools.TTHAnalysis.analyzers.ttHFastJetSkimmer import ttHFastJetSkimmer
+    fastBSkim = cfg.Analyzer(ttHFastJetSkimmer, name="ttHFastJetSkimmer",
+        jets = 'slimmedJets',
+        jetCut = lambda j : j.pt() > 20 and j.bDiscriminator('pfCombinedInclusiveSecondaryVertexV2BJetTags') > 0.8484, # looser pt because of non-final JECs
+        minJets = 1,
+    )
+    susyCoreSequence.insert(susyCoreSequence.index(skimAnalyzer)+2, fastBSkim)
+    stopSoftBAna.bJet = "require"
+    if what == "CR2L":
+        stopSoftBAna.eMu = "require"
+    else:
+        stopSoftBAna.eMu   = "veto"
+        stopSoftBAna.llNoZ = "require"
+    mcSamples = [ TTLep_pow,
+                  TTJets_DiLepton, TTJets_DiLepton_ext,
+                  T_tWch_noFullyHad, T_tWch_noFullyHad_ext, TBar_tWch_noFullyHad_ext, TBar_tWch_noFullyHad,
+                  DYJetsToLL_M50_LO_ext,
+                  DYJetsToLL_M10to50, DYJetsToLL_M10to50_ext,
+                  WWTo2L2Nu, WZTo3LNu,
+                  W2JetsToLNu_LO, W3JetsToLNu_LO, W4JetsToLNu_LO,
+                  T_tch_powheg, TBar_tch_powheg,
+                  TTJets_SingleLeptonFromT, TTJets_SingleLeptonFromT_ext, TTJets_SingleLeptonFromTbar, TTJets_SingleLeptonFromTbar_ext ]
+    autoAAA(mcSamples)
+    mcSamples, mcSamplesMap = mergeExtensions(mcSamples)
+    cropToLumi(mcSamples,200)
+    DSAndTrig = [ ("MuonEG",triggers_mue), ] if what == "CR2L" else [ ("DoubleMu",triggers_mumu), ("DoubleEG",triggers_ee) ]
     dataSamples = [ ]; vetoTrig = []
-    for name, trig in ("MuonEG",triggers_mue),: # ("DoubleMu",triggers_mumu), ("DoubleEG",triggers_ee):#, ("SingleMu", triggers_1mu_iso), ("SingleEl", triggers_1e):
-        for d in [ MuonEG_Run2016H_PromptReco_v2 ]:#dataSamples_23Sep2016PlusPrompt: 
+    for name, trig in DSAndTrig:
+        for d in dataSamples_23Sep2016PlusPrompt:
             if name in d.name: 
                 d.triggers = trig[:]; d.vetoTriggers = vetoTrig[:]
                 dataSamples.append(d)
         vetoTrig += trig
-    configureSplittingFromTime(dataSamples, 10, 1, maxFiles=15)
+    if what == "CR2L":
+        configureSplittingFromTime(mcSamples, 12, 2.0)
+        configureSplittingFromTime([mcSamplesMap[X] for X in "W2JetsToLNu_LO W3JetsToLNu_LO DYJetsToLL_M50_LO DYJetsToLL_M10to50".split()], 5, 2, maxFiles=15)
+        configureSplittingFromTime(dataSamples, 5, 2, maxFiles=15)
+    elif what == "CRLL":
+        configureSplittingFromTime(mcSamples, 15, 2.0, maxFiles=15)
+        configureSplittingFromTime(dataSamples, 15, 2.0, maxFiles=15)
     #configureSplittingFromTime([d for d in dataSamples if "Single" in d.name], 8, 2)
 elif what == "CRWc":
     ttHFastMETSkim.metCut = 30
@@ -231,18 +252,18 @@ elif what == "CRWc":
 
 
 for d in dataSamples:
-    d.json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-284044_13TeV_PromptReco_Collisions16_JSON_NoL1T.txt'
+    d.json='/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/ReReco/Final/Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt'
     if "PromptReco" in d.dataset: filterPromptRecoComponent(d,verbose=0)
 
-selectedComponents = dataSamples # [mcSamplesMap["ZJetsToNuNu_HT800t1200"]]#sigSamples # dataSamples # mcSamples #
+selectedComponents = dataSamples + mcSamples # [mcSamplesMap["ZJetsToNuNu_HT800t1200"]]#sigSamples # dataSamples # mcSamples #
 
 
 #-------- SEQUENCE -----------
 sequence = cfg.Sequence(susyCoreSequence+[
         ttHFatJetAna,
         ttHSVAna, 
-        ttHHeavyFlavourHadronAna,
         stopSoftBAna,
+        #ttHHeavyFlavourHadronAna,
         hbheAna,
         treeProducer,
     ])
@@ -263,6 +284,8 @@ elif test == "sync":
         selectedComponents[0].splitFactor = 1
         insertEventSelector(sequence)
 elif test in ('2','3','5s'):
+    selectedComponents = [ TTLep_pow, mcSamplesMap["DYJetsToLL_M50_LO"] ]  + [ d for d in dataSamples if "Run2016G" in d.name ]
+    #selectedComponents = [ mcSamplesMap[X] for X in "TTJets_SingleLeptonFromT W3JetsToLNu_LO".split() ]
     #from CMGTools.Production.promptRecoRunRangeFilter import filterWithCollection
     #for comp in selectedComponents:
     #    if comp.isData and "PromptReco" in comp.name: comp.files = filterWithCollection(comp.files, [274315,275658,275832,276363,276454])

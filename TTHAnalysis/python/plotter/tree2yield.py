@@ -189,8 +189,9 @@ class TreeToYield:
         self._elist = None
         self._entries = None
         #print "Done creation  %s for task %s in pid %d " % (self._fname, self._name, os.getpid())
-    def setScaleFactor(self,scaleFactor):
-        if self._mcCorrs and scaleFactor and scaleFactor != 1.0:
+    def setScaleFactor(self,scaleFactor,mcCorrs=True):
+        if (not self._options.forceunweight) and scaleFactor != 1: self._weight = True
+        if mcCorrs and self._mcCorrs and scaleFactor and scaleFactor != 1.0:
             # apply MC corrections to the scale factor
             self._scaleFactor = self.adaptExpr(scaleFactor, cut=True)
         else:
@@ -407,6 +408,13 @@ class TreeToYield:
         self._stylePlot(ret,plotspec)
         ret._cname = self._cname
         return ret
+    def getWeightForCut(self,cut):
+        if self._weight:
+            if self._isdata: cut = "(%s)     *(%s)*(%s)" % (self._weightString,                    self._scaleFactor, self.adaptExpr(cut,cut=True))
+            else:            cut = "(%s)*(%s)*(%s)*(%s)" % (self._weightString,self._options.lumi, self._scaleFactor, self.adaptExpr(cut,cut=True))
+        else:
+            cut = self.adaptExpr(cut,cut=True)
+        return cut
     def getPlotRaw(self,name,expr,bins,cut,plotspec,fsplit=None,closeTreeAfter=False):
         unbinnedData2D = plotspec.getOption('UnbinnedData2D',False) if plotspec != None else False
         if not self._isInit: self._init()
@@ -419,11 +427,7 @@ class TreeToYield:
                 self._tree.SetEntryList(self._elist)
                 #self._tree.SetEventList(self._elist)
         #print "for %s, %s, does my tree have an elist? %s " % ( self._name, self._cname, "yes" if self._tree.GetEntryList() else "no" )
-        if self._weight:
-            if self._isdata: cut = "(%s)     *(%s)*(%s)" % (self._weightString,                    self._scaleFactor, self.adaptExpr(cut,cut=True))
-            else:            cut = "(%s)*(%s)*(%s)*(%s)" % (self._weightString,self._options.lumi, self._scaleFactor, self.adaptExpr(cut,cut=True))
-        else:
-            cut = self.adaptExpr(cut,cut=True)
+        cut = self.getWeightForCut(cut)
         expr = self.adaptExpr(expr)
         if self._options.doS2V:
             cut  = scalarToVector(cut)
