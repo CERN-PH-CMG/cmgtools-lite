@@ -170,13 +170,12 @@ class DirectDiTau(DiTau):
         self.leg1_ = leg1
         self.leg2_ = leg2
         self.met_ = met
-        self.p4_ = (leg1.p4() + leg2.p4())
 
     def mass(self):
         return self.p4_.mass()
 
     def p4(self):
-        return self.p4_
+        return self.leg1_.p4() + self.leg2_.p4()
 
     def leg1(self):
         return self.leg1_

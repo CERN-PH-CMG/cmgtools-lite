@@ -3,19 +3,22 @@ import imp
 import ROOT
 import array
 
+
 class ScaleFactor(object):
+
     ''' HTT lepton scale factor class
     Translated to python from CMS-HTT/LeptonEff-interface
     '''
+
     def __init__(self, inputFile, histBaseName='ZMass'):
         ''' Polymorphic: can either compute the scale factors from 
         a root file containing either TGraph's or TF1's, or it can 
         analytically compute the SF from functiond defined in python
         '''
         if inputFile.endswith('.root'):
-            if 'scalefactors' in inputFile: # Andrew's workspace
+            if 'scalefactors' in inputFile:  # Andrew's workspace
                 self._initFromRooFit(inputFile, histBaseName)
-            else: # DESY workspace
+            else:  # DESY workspace
                 self._initFromRoot(inputFile, histBaseName)
         elif inputFile.endswith('.py'):
             self._initFromPython(inputFile)
@@ -29,15 +32,19 @@ class ScaleFactor(object):
 
     def _initFromPython(self, inputPythonFile):
         path = inputPythonFile.split('/')
-        explicitPathItems =[]
+        explicitPathItems = []
         for p in path:
             if '$' in p:
-                p1 =  os.environ[p.replace('$', '')]
+                p1 = os.environ[p.replace('$', '')]
                 explicitPathItems.append(p1)
-            else:            
+            else:
                 explicitPathItems.append(p)
         explicitPath = '/'.join(explicitPathItems)
-        efficiencies = imp.load_source(explicitPathItems[-1].replace('.py', ''), explicitPath)
+        try:
+            efficiencies = imp.load_source(explicitPathItems[-1].replace('.py', ''), explicitPath)
+        except IOError:
+            print 'Cannot find source', explicitPathItems[-1].replace('.py', ''), explicitPath
+            raise
         self.eff_data = efficiencies.effData
         self.eff_data_fakes = efficiencies.effDataFakeTau
         self.eff_mc = efficiencies.effMC
@@ -54,14 +61,14 @@ class ScaleFactor(object):
 
         etaLabel = ''
         graphName = ''
-        
+
         for iBin in xrange(self.etaBinsH.GetNbinsX()):
             etaLabel = self.etaBinsH.GetXaxis().GetBinLabel(iBin+1)
 
             for label, eff_dict in [('_Data', self.eff_data), ('_MC', self.eff_mc)]:
-                graphName = histBaseName + etaLabel + label                
-                graph = self.fileIn.Get(graphName) # RM: this can be either a TGraph or a TF1
-                if not graph: 
+                graphName = histBaseName + etaLabel + label
+                graph = self.fileIn.Get(graphName)  # RM: this can be either a TGraph or a TF1
+                if not graph:
                     continue
                 eff_dict[etaLabel] = graph
                 if isinstance(graph, ROOT.TF1):
@@ -73,7 +80,8 @@ class ScaleFactor(object):
             if isinstance(self.eff_mc[etaLabel], ROOT.TF1) and isinstance(self.eff_data[etaLabel], ROOT.TF1):
                 continue
             elif not self.checkSameBinning(self.eff_mc[etaLabel], self.eff_data[etaLabel]):
-                raise RuntimeError('ERROR in ScaleFactor::init_ScaleFactor(TString inputRootFile) from LepEffInterface/src/ScaleFactor.cc . Can not proceed because ScaleFactor::check_SameBinning returned different pT binning for data and MC for eta label', etaLabel)
+                raise RuntimeError(
+                    'ERROR in ScaleFactor::init_ScaleFactor(TString inputRootFile) from LepEffInterface/src/ScaleFactor.cc . Can not proceed because ScaleFactor::check_SameBinning returned different pT binning for data and MC for eta label', etaLabel)
 
     def setAxisBins(self, graph):
         ''' Wow this is crazy. No way in ROOT to do it?? '''
@@ -86,7 +94,6 @@ class ScaleFactor(object):
         bins.append(graph.GetX()[nPoints - 1] + graph.GetErrorXhigh(nPoints - 1))
 
         graph.GetXaxis().Set(nPoints, array.array('d', bins))
-
 
     def checkSameBinning(self, graph1, graph2):
         n1 = graph1.GetXaxis().GetNbins()
@@ -101,38 +108,42 @@ class ScaleFactor(object):
 
         return True
 
-    def getScaleFactor(self, pt, eta, isFake=False, iso=None):
+    def getScaleFactor(self, pt, eta, isFake=False, iso=None, dm=None):
         if hasattr(self, 'ws'):
-            return self.getFactorWS(pt, eta, 'ratio', isFake=isFake, iso=iso)
-        return self.getEfficiencyData(pt, eta, isFake)/max(self.getEfficiencyMC(pt, eta, isFake), 1.e-6)
+            return self.getFactorWS(pt, eta, 'ratio', isFake=isFake, iso=iso, dm=dm)
+        return self.getEfficiencyData(pt, eta, isFake, iso, dm)/max(self.getEfficiencyMC(pt, eta, isFake, iso, dm), 1.e-6)
 
-    def getEfficiencyData(self, pt, eta, isFake=False, iso=None):
+    def getEfficiencyData(self, pt, eta, isFake=False, iso=None, dm=None):
         if hasattr(self, 'ws'):
-            return self.getFactorWS(pt, eta, 'data', isFake=isFake, iso=iso)
-        return self.getEfficiency(pt, eta, self.eff_data_fakes if isFake and hasattr(self, 'eff_data_fakes') else self.eff_data)
+            return self.getFactorWS(pt, eta, 'data', isFake=isFake, iso=iso, dm=dm)
+        return self.getEfficiency(pt, eta, iso, dm, self.eff_data_fakes if isFake and hasattr(self, 'eff_data_fakes') else self.eff_data)
 
-    def getEfficiencyMC(self, pt, eta, isFake=False, iso=None):
+    def getEfficiencyMC(self, pt, eta, isFake=False, iso=None, dm=None):
         if hasattr(self, 'ws'):
-            return self.getFactorWS(pt, eta, 'mc', isFake=isFake, iso=iso)
-        return self.getEfficiency(pt, eta, self.eff_mc_fakes if isFake and hasattr(self, 'eff_mc_fakes') else self.eff_mc)
+            return self.getFactorWS(pt, eta, 'mc', isFake=isFake, iso=iso, dm=dm)
+        return self.getEfficiency(pt, eta,  iso, dm, self.eff_mc_fakes if isFake and hasattr(self, 'eff_mc_fakes') else self.eff_mc)
 
-    def getFactorWS(self, pt, eta, tag, isFake=False, iso=None):
+    def getFactorWS(self, pt, eta, tag, isFake=False, iso=None, dm=None):
         ''' See https://github.com/CMS-HTT/CorrectionsWorkspace
-        FIXME:  add proper isFake implementation (but may need to change inputs)
         '''
         self.ws.var('_'.join([self.obj_tag, 'pt'])).setVal(pt)
         self.ws.var('_'.join([self.obj_tag, 'eta'])).setVal(eta)
-        if iso:
+        if iso is not None:
             self.ws.var('_'.join([self.obj_tag, 'iso'])).setVal(iso)
+        if dm is not None:
+            self.ws.var('_'.join([self.obj_tag, 'dm'])).setVal(dm)
 
-        return self.ws.function('_'.join([self.sf_name, tag])).getVal()
+        sf_name = self.sf_name.replace('genuine', 'fake') if isFake else self.sf_name
+
+        return self.ws.function('_'.join([sf_name, tag])).getVal()
 
     def findEtaLabel(self, eta, eff_dict):
         eta = abs(eta)
         binNumber = self.etaBinsH.GetXaxis().FindFixBin(eta)
         label = self.etaBinsH.GetXaxis().GetBinLabel(binNumber)
         if label not in eff_dict:
-            raise RuntimeError('ERROR in ScaleFactor::get_EfficiencyData(double pt, double eta) from LepEffInterface/src/ScaleFactor.cc : no object corresponding to eta label', label)
+            raise RuntimeError(
+                'ERROR in ScaleFactor::get_EfficiencyData(double pt, double eta) from LepEffInterface/src/ScaleFactor.cc : no object corresponding to eta label', label)
         return label
 
     def findPtBin(self, pt, g_eff):
@@ -148,28 +159,30 @@ class ScaleFactor(object):
         else:
             return g_eff.GetXaxis().FindFixBin(pt)
 
-    def getEfficiency(self, pt, eta, eff_dict):
-        
+    def getEfficiency(self, pt, eta, iso, dm, eff_dict):
+
         # return efficiency for when using analytical function
         if not isinstance(eff_dict, dict):
-            eff = eff_dict(pt, eta)
+            func = eff_dict
+            args = (a for a in [pt, eta, iso, dm] if a is not None)
+            eff = func(*args)
             return eff
-        
+
         label = self.findEtaLabel(eta, eff_dict)
-        
+
         g_eff = eff_dict[label]
-        
+
         if isinstance(g_eff, ROOT.TF1):
             eff = g_eff.Eval(pt)
-        
+
         else:
             ptBin = self.findPtBin(pt, g_eff)
-    
+
             if ptBin == -99:
                 return 1.
-    
+
             eff = g_eff.GetY()[ptBin-1]
-        
+
         if eff > 1.:
             print 'Warning: Efficiency larger 1'
         elif eff < 0.:
@@ -179,32 +192,29 @@ class ScaleFactor(object):
         return 1.
 
 if __name__ == '__main__':
-#     sf = ScaleFactor('$CMSSW_BASE/src/CMGTools/H2TauTau/data/Electron_Ele23_fall15.root')
-#     for pt, eta in [(29.3577, 1.4845), (50., 0.2), (17., 0.05), (1000., 2.04)]:
-#         print 'Eff data', sf.getEfficiencyData(pt, eta)
-#         print 'Eff MC', sf.getEfficiencyMC(pt, eta)
-#         print 'SF', sf.getScaleFactor(pt, eta)
+    #     sf = ScaleFactor('$CMSSW_BASE/src/CMGTools/H2TauTau/data/Electron_Ele23_fall15.root')
+    #     for pt, eta in [(29.3577, 1.4845), (50., 0.2), (17., 0.05), (1000., 2.04)]:
+    #         print 'Eff data', sf.getEfficiencyData(pt, eta)
+    #         print 'Eff MC', sf.getEfficiencyMC(pt, eta)
+    #         print 'SF', sf.getScaleFactor(pt, eta)
 
+    #     sf = ScaleFactor('$CMSSW_BASE/src/CMGTools/H2TauTau/data/Tau_diTau35_fall15.root',
+    #                      histBaseName='Eff')
 
+    sf = ScaleFactor('$CMSSW_BASE/src/CMGTools/H2TauTau/data/Tau_diTau35_summer16.py', )
 
-#     sf = ScaleFactor('$CMSSW_BASE/src/CMGTools/H2TauTau/data/Tau_diTau35_fall15.root', 
-#                      histBaseName='Eff')
-
-    sf = ScaleFactor('$CMSSW_BASE/src/CMGTools/H2TauTau/data/Tau_diTau35_fall15.py', )
-
-    for pt, eta in [(  29.3577, 1.4845), 
-                    (  50.    , 0.2   ), 
-                    (  17.    , 0.05  ), 
-                    (  45.    , 0.05  ), 
-                    (  50.    , 0.05  ), 
-                    (  55.    , 0.05  ), 
-                    (  60.    , 0.05  ), 
-                    (  80.    , 0.05  ), 
-                    ( 100.    , 0.05  ), 
-                    (1000.    , 2.04  )]:
+    for pt, eta, dm in [(50., 0.05, 0),
+                        (50., 0.05, 1),
+                        (50., 0.05, 10),
+                        (45., 0.05, 0),
+                        (50., 0.05, 0),
+                        (55., 0.05, 0),
+                        (60., 0.05, 0),
+                        (80., 0.05, 0),
+                        (100., 0.05, 0),
+                        (1000., 2.04, 0)]:
         print '\n==========>'
-        print 'pt %f, eta %f' %(pt, eta)
-        print 'Eff data', sf.getEfficiencyData(pt, eta)
-        print 'Eff MC', sf.getEfficiencyMC(pt, eta)
-        print 'SF', sf.getScaleFactor(pt, eta)
-
+        print 'pt %f, eta %f, dm %i' % (pt, eta, dm)
+        print 'Eff data', sf.getEfficiencyData(pt, eta, dm=dm)
+        print 'Eff MC', sf.getEfficiencyMC(pt, eta, dm=dm)
+        print 'SF', sf.getScaleFactor(pt, eta, dm=dm)

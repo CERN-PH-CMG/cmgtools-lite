@@ -66,6 +66,8 @@ class TauMuAnalyzer(DiLeptonAnalyzer):
             pydil = self.__class__.DiObjectClass(dil)
             pydil.leg2().associatedVertex = event.goodVertices[0]
             pydil.leg1().associatedVertex = event.goodVertices[0]
+            pydil.leg1().event = event.input.object()
+            pydil.leg2().event = event.input.object()
             if not self.testLeg1(pydil.leg1(), 99999):
                 continue
             # JAN: This crashes. Waiting for idea how to fix this; may have
@@ -86,6 +88,8 @@ class TauMuAnalyzer(DiLeptonAnalyzer):
                 di_tau = DirectDiTau(muon, tau, met)
                 di_tau.leg2().associatedVertex = event.goodVertices[0]
                 di_tau.leg1().associatedVertex = event.goodVertices[0]
+                di_tau.leg1().event = event.input.object()
+                di_tau.leg2().event = event.input.object()
                 if not self.testLeg1(di_tau.leg1(), 99999):
                     continue
 
@@ -100,6 +104,7 @@ class TauMuAnalyzer(DiLeptonAnalyzer):
         for index, lep in enumerate(patLeptons):
             pyl = self.__class__.LeptonClass(lep)
             pyl.associatedVertex = event.goodVertices[0]
+            pyl.event = event.input.object()
             leptons.append(pyl)
         return leptons
 
@@ -111,7 +116,7 @@ class TauMuAnalyzer(DiLeptonAnalyzer):
             pyl = self.__class__.OtherLeptonClass(lep)
             pyl.associatedVertex = event.goodVertices[0]
             pyl.rho = event.rho
-            pyl.event = event
+            pyl.event = event.input.object()
             otherLeptons.append(pyl)
         return otherLeptons
 
@@ -175,7 +180,7 @@ class TauMuAnalyzer(DiLeptonAnalyzer):
 
     def testLeg1ID(self, muon):
         '''Tight muon selection, no isolation requirement'''
-        return muon.muonID('POG_ID_Medium_ICHEP') and self.testVertex(muon)
+        return muon.muonIDMoriond17() and self.testVertex(muon)
 
     def testLeg1Iso(self, muon, isocut):
         '''Tight muon selection, with isolation requirement'''
@@ -187,7 +192,7 @@ class TauMuAnalyzer(DiLeptonAnalyzer):
     def thirdLeptonVeto(self, leptons, otherLeptons, isoCut=0.3):
         # count tight muons
         vLeptons = [muon for muon in leptons if
-                    muon.muonID('POG_ID_Medium_ICHEP') and
+                    muon.muonIDMoriond17() and
                     self.testVertex(muon) and
                     self.testLegKine(muon, ptcut=10, etacut=2.4) and
                     self.testLeg1Iso(muon, 0.3)
@@ -200,7 +205,7 @@ class TauMuAnalyzer(DiLeptonAnalyzer):
 
 
     def testElectronID(self, electron):
-        return electron.mvaIDRun2('NonTrigSpring15MiniAOD', 'POG90')
+        return electron.mvaIDRun2('Spring16', 'POG90')
 
     def otherLeptonVeto(self, leptons, otherLeptons, isoCut=0.3):
         # count electrons

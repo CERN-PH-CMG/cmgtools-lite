@@ -84,9 +84,15 @@ def createHistograms(hist_cfg, all_stack=False, verbose=False, friend_func=None,
             if cfg.weight_expr:
                 weight = '*'.join([weight, cfg.weight_expr])
 
+            if cfg.cut_replace_func:
+                norm_cut = cfg.cut_replace_func(norm_cut)
+                shape_cut = cfg.cut_replace_func(norm_cut)
+
             if hist_cfg.weight:
                 norm_cut = '({c}) * {we}'.format(c=norm_cut, we=weight)
                 shape_cut = '({c}) * {we}'.format(c=shape_cut, we=weight)
+
+            # print '#### FULL CUT ####', norm_cut
 
             # Initialise all hists before the multidraw
             hists = {}
@@ -95,7 +101,7 @@ def createHistograms(hist_cfg, all_stack=False, verbose=False, friend_func=None,
                 # plot = plots[vcfg.name]
 
                 hname = '_'.join([hist_cfg.name, hashlib.md5(hist_cfg.cut).hexdigest(), cfg.name, vcfg.name, cfg.dir_name])
-                if 'xmin' in vcfg.binning:
+                if any(str(b) == 'xmin' for b in vcfg.binning):
                     hist = TH1F(hname, '', vcfg.binning['nbinsx'],
                                 vcfg.binning['xmin'], vcfg.binning['xmax'])
                 else:
@@ -129,13 +135,16 @@ def createHistograms(hist_cfg, all_stack=False, verbose=False, friend_func=None,
                 hist.Scale(cfg.scale)
 
                 if cfg.name in plot:
-                    # print 'Histogram', cfg.name, 'already exists; adding...'
-                    plot[cfg.name].Add(Histogram(cfg.name, hist))
+                    print 'Histogram', cfg.name, 'already exists; adding...', cfg.dir_name
+                    hist_to_add = Histogram(cfg.name, hist)
+                    if not cfg.is_data:
+                        hist_to_add.SetWeight(hist_cfg.lumi*cfg.xsec/cfg.sumweights)
+                    plot[cfg.name].Add(hist_to_add)
                 else:
                     plot_hist = plot.AddHistogram(cfg.name, hist, stack=stack)
 
-                if not cfg.is_data:
-                    plot_hist.SetWeight(hist_cfg.lumi*cfg.xsec/cfg.sumweights)
+                    if not cfg.is_data:
+                        plot_hist.SetWeight(hist_cfg.lumi*cfg.xsec/cfg.sumweights)
 
     for plot in plots.itervalues():
         plot._ApplyPrefs()
@@ -167,7 +176,7 @@ def createHistogram(hist_cfg, all_stack=False, verbose=False, friend_func=None):
         else:
             # It's a sample cfg
             hname = '_'.join([hist_cfg.name, hashlib.md5(hist_cfg.cut).hexdigest(), cfg.name, vcfg.name, cfg.dir_name])
-            if 'xmin' in vcfg.binning:
+            if any(str(b) == 'xmin' for b in vcfg.binning):
                 hist = TH1F(hname, '', vcfg.binning['nbinsx'],
                             vcfg.binning['xmin'], vcfg.binning['xmax'])
             else:
@@ -188,6 +197,10 @@ def createHistogram(hist_cfg, all_stack=False, verbose=False, friend_func=None):
             if cfg.shape_cut:
                 shape_cut = cfg.shape_cut
 
+            if cfg.cut_replace_func:
+                norm_cut = cfg.cut_replace_func(norm_cut)
+                shape_cut = cfg.cut_replace_func(norm_cut)
+
             weight = hist_cfg.weight
             if cfg.weight_expr:
                 weight = '*'.join([weight, cfg.weight_expr])
@@ -207,13 +220,18 @@ def createHistogram(hist_cfg, all_stack=False, verbose=False, friend_func=None):
 
             hist.Scale(cfg.scale)
 
+
             if cfg.name in plot:
-                plot[cfg.name].Add(Histogram(cfg.name, hist))
+                print 'Histogram', cfg.name, 'already exists; adding...', cfg.dir_name
+                hist_to_add = Histogram(cfg.name, hist)
+                if not cfg.is_data:
+                    hist_to_add.SetWeight(hist_cfg.lumi*cfg.xsec/cfg.sumweights)
+                plot[cfg.name].Add(hist_to_add)
             else:
                 plot_hist = plot.AddHistogram(cfg.name, hist, stack=stack)
 
-            if not cfg.is_data:
-                plot_hist.SetWeight(hist_cfg.lumi*cfg.xsec/cfg.sumweights)
+                if not cfg.is_data:
+                    plot_hist.SetWeight(hist_cfg.lumi*cfg.xsec/cfg.sumweights)
 
     plot._ApplyPrefs()
     return plot

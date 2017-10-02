@@ -62,7 +62,8 @@ class TauEleAnalyzer(DiLeptonAnalyzer):
             pydil.leg2().associatedVertex = event.goodVertices[0]
             pydil.leg1().associatedVertex = event.goodVertices[0]
             pydil.leg1().rho = event.rho
-            pydil.leg1().event = event
+            pydil.leg1().event = event.input.object()
+            pydil.leg2().event = event.input.object()
             pydil.mvaMetSig = pydil.met().getSignificanceMatrix()
             diLeptons.append(pydil)
         return diLeptons
@@ -77,8 +78,9 @@ class TauEleAnalyzer(DiLeptonAnalyzer):
                 di_tau = DirectDiTau(ele, tau, met)
                 di_tau.leg2().associatedVertex = event.goodVertices[0]
                 di_tau.leg1().associatedVertex = event.goodVertices[0]
+                di_tau.leg1().event = event.input.object()
+                di_tau.leg2().event = event.input.object()
                 di_tau.leg1().rho = event.rho
-                di_tau.leg1().event = event
 
                 di_tau.mvaMetSig = None
                 di_leptons.append(di_tau)
@@ -93,7 +95,7 @@ class TauEleAnalyzer(DiLeptonAnalyzer):
             pyl = self.__class__.LeptonClass(lep)
             pyl.associatedVertex = event.goodVertices[0]
             pyl.rho = event.rho
-            pyl.event = event
+            pyl.event = event.input.object()
 
             if pyl.relIsoR(R=0.3, dBetaFactor=0.5, allCharged=0) > 0.3:
                 continue
@@ -118,6 +120,7 @@ class TauEleAnalyzer(DiLeptonAnalyzer):
         for index, lep in enumerate(cmgOtherLeptons):
             pyl = self.__class__.OtherLeptonClass(lep)
             pyl.associatedVertex = event.goodVertices[0]
+            pyl.event = event.input.object()
             # if not self.testMuonIDLoose(pyl):
             #     continue
             otherLeptons.append(pyl)
@@ -188,14 +191,14 @@ class TauEleAnalyzer(DiLeptonAnalyzer):
 
     def testTightElectronID(self, electron):
         '''Selection for electron from tau decay'''
-        return electron.mvaIDRun2('NonTrigSpring15MiniAOD', 'POG80')
+        return electron.mvaIDRun2('Spring16', 'POG80')
 
     def testElectronID(self, electron):
         '''Loose selection for generic electrons'''
-        return electron.mvaIDRun2('NonTrigSpring15MiniAOD', 'POG90')
+        return electron.mvaIDRun2('Spring16', 'POG90')
 
     def testVetoElectronID(self, electron):
-        return electron.cutBasedId('POG_SPRING15_25ns_v1_Veto')
+        return electron.mvaIDRun2('Spring16', 'POG90')
 
     def testLeg1ID(self, electron):
         '''Tight electron selection, no isolation requirement.
@@ -226,7 +229,7 @@ class TauEleAnalyzer(DiLeptonAnalyzer):
 
     def testTightOtherLepton(self, muon):
         '''Tight muon selection, no isolation requirement'''
-        return muon.muonID('POG_ID_Medium_ICHEP') and \
+        return muon.muonIDMoriond17() and \
             self.testVertex(muon) and \
             abs(muon.eta()) < 2.4 and \
             muon.pt() > 10. and \
@@ -235,7 +238,7 @@ class TauEleAnalyzer(DiLeptonAnalyzer):
     def otherLeptonVeto(self, leptons, otherLeptons, isoCut=0.3):
         # count veto muons
         vOtherLeptons = [muon for muon in otherLeptons if
-                         muon.muonID('POG_ID_Medium_ICHEP') and
+                         muon.muonIDMoriond17() and
                          self.testVertex(muon) and
                          self.testLegKine(muon, ptcut=10, etacut=2.4) and
                          muon.relIsoR(R=0.4, dBetaFactor=0.5, allCharged=0) < 0.3]
