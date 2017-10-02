@@ -41,6 +41,20 @@ CUTFILE=BASECONFIG+'/qcd1l.txt'
 XVAR="pt_coarse"
 FITVAR="mt"
 NUM="FullSel"
+
+BARREL="00_15"; ENDCAP="15_25"; ETA="1.479";
+
+from optparse import OptionParser
+parser = OptionParser(usage="%prog testname ")
+(options, args) = parser.parse_args()
+
+OPTIONS = MCA+" "+CUTFILE+" -f -P "+T+" --s2v -j "+str(J)+" -l 19.7 "
+OPTIONS += ' -F mjvars/t "'+T+'/friends/evVarFriend_{cname}.root" '
+
+PBASE = "plots/fake-rate/el/"
+EWKSPLIT="-p 'W_fake,W,Z,data'"
+MCEFF="  python wmass_e/dataFakeRate.py "+ OPTIONS + " " + EWKSPLIT + " --groupBy cut wmass_e/make_fake_rates_sels.txt wmass_e/make_fake_rates_xvars.txt  "
+MCEFF += "--sp W_fake "
 BARREL="00_15"; ENDCAP="15_25"; ETA="1.479";
 
 if useMuon:

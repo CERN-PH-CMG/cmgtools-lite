@@ -29,7 +29,8 @@ class SampleCfg(object):
     def __init__(self, name='Default', dir_name=None, ana_dir='', 
         tree_prod_name='H2TauTauTreeProducerTauMu', tree_name=None,
         scale=1., weight_expr=None, norm_cut=None, shape_cut=None, 
-        xsec=1., sumweights=1., is_signal=False, is_data=False):
+        xsec=1., sumweights=1., is_signal=False, is_data=False,
+        cut_replace_func=None):
         self.name = name
         self.dir_name = name if dir_name is None else dir_name
         self.ana_dir = ana_dir
@@ -41,6 +42,7 @@ class SampleCfg(object):
         self.weight_expr = weight_expr 
         self.norm_cut = norm_cut
         self.shape_cut = shape_cut
+        self.cut_replace_func = cut_replace_func
 
         self.xsec = xsec
         self.sumweights = sumweights

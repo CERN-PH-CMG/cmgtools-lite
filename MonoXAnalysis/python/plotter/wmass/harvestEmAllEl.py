@@ -3,9 +3,12 @@ import CombineHarvester.CombinePdfs.morphing as morphing
 import ROOT
 import sys, glob,datetime,os,re
 
+Iamdebugging = True
 # import some parameters from wmass_parameters.py, they are also used by other scripts
 from wmass_parameters import *
-    
+
+if Iamdebugging:
+    print "mass_id_down, mass_id_up = %s,%s" % (mass_id_down,mass_id_up)    
 
 if len(sys.argv) < 2:
     print "----- WARNING -----"
@@ -291,8 +294,8 @@ if not os.path.exists(comb_dir):
     os.mkdir(comb_dir)
 comb_dc = comb_dir+"/morphed_datacard_comb.txt"
 comb_ws = comb_dc.replace('txt','root')
-workspaces.append(comb_ws)
-        
+workspaces.append(comb_ws)        
+
 if combineCards:
     if options.debug:
         print ""

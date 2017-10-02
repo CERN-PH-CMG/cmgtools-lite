@@ -3,7 +3,6 @@
 # e.g.: python wmass_e/skims.py wmass_e/mca-53X-wenu.txt wmass_e/wenu.txt /data1/emanuele/wmass/TREES_1LEP_53X_V2 /data1/emanuele/wmass/TREES_1LEP_53X_V2_WSKIM_V3 -f wmass_e/varsSkim_53X.txt
 #       python wmass_e/skims.py wmass_e/mca-53X-zee.txt wmass_e/zee.txt /data1/emanuele/wmass/TREES_1LEP_53X_V2 /data1/emanuele/wmass/TREES_1LEP_53X_V2_ZEESKIM_V3 -f wmass_e/varsSkim_53X.txt
 #       python wmass_e/skims.py wmass_e/mca-53X-wenu.txt wmass_e/qcd_e.txt /data1/emanuele/wmass/TREES_1LEP_53X_V2 /data1/emanuele/wmass/TREES_1LEP_53X_V2_QCDSKIM_V3 -f wmass_e/varsSkim_53X.txt
-
 import os, subprocess
 
 if __name__ == "__main__":
@@ -34,7 +33,7 @@ if __name__ == "__main__":
            os.makedirs(outputDirFSkims)
     else: print "Make only the friend trees in dir ",outputDirFSkims
 
-    OPTS = ' --obj treeProducerWMassEle -P '+treeDir+' --s2v -j 4 -F mjvars/t "'+treeFDir+'/evVarFriend_{cname}.root" '
+    OPTS = ' --obj tree -P '+treeDir+' --s2v -j 4 -F mjvars/t "'+treeFDir+'/evVarFriend_{cname}.root" '
 
     varsToKeep = []
     if options.varfile!=None:

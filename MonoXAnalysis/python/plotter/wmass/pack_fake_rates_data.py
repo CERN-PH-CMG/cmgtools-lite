@@ -122,98 +122,98 @@ if __name__ == "__main__":
         ROOT.gStyle.SetOptStat(0)
     if True:
         # should get these from file where they are set
-       # ptbins_el = [ 25,27,30,35,40,50,65,100 ]
-       # ptbins_mu = [ 15,20,30,45,65,100 ]
-       ptbins_el = [ 25,30, 35,45,55,100 ]
-       ptbins_mu = [ 25,27,30,35,45,100 ]
-       etabins_el = [0, 1.479, 2.5]
-       etabins_mu = [0, 1.2,   2.4]
+        # ptbins_el = [ 25,27,30,35,40,50,65,100 ]
+        # ptbins_mu = [ 15,20,30,45,65,100 ]
+        ptbins_el = [ 25,30, 35,45,55,100 ]
+        ptbins_mu = [ 25,27,30,35,45,100 ]
+        etabins_el = [0, 1.479, 2.5]
+        etabins_mu = [0, 1.2,   2.4]
        #etabins_mu = [0,  2.4]
-       if an=='e':
-           ptbins = ptbins_el
-           etabins = etabins_el
-       elif an=='mu':
-           ptbins = ptbins_mu
-           etabins = etabins_mu
-       else: 
+        if an=='e':
+            ptbins = ptbins_el
+            etabins = etabins_el
+        elif an=='mu':
+            ptbins = ptbins_mu
+            etabins = etabins_mu
+        else: 
             raise RuntimeError, "What analysis (e, mu)??"
 
-       if len(options.etaBinEdges):
-           etabins = [float(binEdge) for binEdge in options.etaBinEdges.split(",")]
-       if len(options.ptBinEdges):
-           ptbins = [float(binEdge) for binEdge in options.ptBinEdges.split(",")]
+        if len(options.etaBinEdges):
+            etabins = [float(binEdge) for binEdge in options.etaBinEdges.split(",")]
+        if len(options.ptBinEdges):
+            ptbins = [float(binEdge) for binEdge in options.ptBinEdges.split(",")]
 
-       #etaslices_el = [ (0.4,"00_15"), (1.8,"15_25") ]   # first value in pair can be any value in the range defined by the string argument, used to look for the bin
-       #etaslices_mu = [ (0.4,"00_12"), (1.8,"12_24") ]
-       #etaslices_mu = [ (1.8,"00_24") ]
+        #etaslices_el = [ (0.4,"00_15"), (1.8,"15_25") ]   # first value in pair can be any value in the range defined by the string argument, used to look for the bin
+        #etaslices_mu = [ (0.4,"00_12"), (1.8,"12_24") ]
+        #etaslices_mu = [ (1.8,"00_24") ]
 
-       etaslices = []
-       for bin in range(0,len(etabins)-1):
-           bincenter = (etabins[bin]+etabins[bin+1])/2.0
-           binrange_str = "{0:.1f}".format(etabins[bin]) + "_" + "{0:.1f}".format(etabins[bin+1])
-           etaslices.append( ( bincenter, binrange_str.replace(".","") ) )
+        etaslices = []
+        for bin in range(0,len(etabins)-1):
+            bincenter = (etabins[bin]+etabins[bin+1])/2.0
+            binrange_str = "{0:.1f}".format(etabins[bin]) + "_" + "{0:.1f}".format(etabins[bin+1])
+            etaslices.append( ( bincenter, binrange_str.replace(".","") ) )
 
-       XsQ    = [ "W_fake", "data_comb" ]
-       Xnices = [ "MC fakes", "Data, EWK-sub." ]
+        XsQ    = [ "W_fake", "data_comb" ]
+        Xnices = [ "MC fakes", "Data, EWK-sub." ]
 
-       if an=='e':
-           # TTH
+        if an=='e':
+            # TTH
 
-           h2d_el = [ make2D(outfile,"FR_FullSel_MVATrig_el_"+X, ptbins_el, etabins_el) for X in XsQ ]
+            h2d_el = [ make2D(outfile,"FR_FullSel_MVATrig_el_"+X, ptbins_el, etabins_el) for X in XsQ ]
 
-           Plots="plots/fake-rate/el"
-           if options.charge == "p":
-               Plots=Plots +"pos"
-           elif options.charge == "n":
-               Plots=Plots +"neg"
-           else:
-               Plots=Plots +"comb"
+            Plots="plots/fake-rate/el"
+            if options.charge == "p":
+                Plots=Plots +"pos"
+            elif options.charge == "n":
+                Plots=Plots +"neg"
+            else:
+                Plots=Plots +"comb"
 
-           #### Electrons: 
-           readMany2D(XsQ, h2d_el, Plots+"/fr_sub_eta_%s_comp.root", "%s", etaslices, (25,100) )
-           # Serialize
-           for h in h2d_el:    outfile.WriteTObject(h)
+            #### Electrons: 
+            readMany2D(XsQ, h2d_el, Plots+"/fr_sub_eta_%s_comp.root", "%s", etaslices, (25,100) )
+            # Serialize
+            for h in h2d_el:    outfile.WriteTObject(h)
 
-       elif an=='mu':
+        elif an=='mu':
 
-           h2d_mu = [ make2D(outfile,"FR_FullSel_MVATrig_mu_"+X, ptbins_mu, etabins_mu) for X in XsQ ]
-           Plots="plots/fake-rate/mu"
-           if options.charge == "p":
-               Plots=Plots +"pos"
-           elif options.charge == "n":
-               Plots=Plots +"neg"
-           else:
-               Plots=Plots +"comb"
+            h2d_mu = [ make2D(outfile,"FR_FullSel_MVATrig_mu_"+X, ptbins_mu, etabins_mu) for X in XsQ ]
+            Plots="plots/fake-rate/mu"
+            if options.charge == "p":
+                Plots=Plots +"pos"
+            elif options.charge == "n":
+                Plots=Plots +"neg"
+            else:
+                Plots=Plots +"comb"
 
-           #### Muons: 
-           readMany2D(XsQ, h2d_mu, "plots/fake-rate/mu/fr_sub_eta_%s_comp.root", "%s", etaslices, (25,100) )
-           # Serialize
-           for h in h2d_mu:    outfile.WriteTObject(h)
-           
-       else: 
-            raise RuntimeError, "What analysis (e, mu)??"
+            #### Muons: 
+            readMany2D(XsQ, h2d_mu, "plots/fake-rate/mu/fr_sub_eta_%s_comp.root", "%s", etaslices, (25,100) )
+            # Serialize
+            for h in h2d_mu:    outfile.WriteTObject(h)
+
+        else: 
+             raise RuntimeError, "What analysis (e, mu)??"
 
 
-       # Plot
-       if options.outdir:
-           for lep,h2d,xcuts in (("el",h2d_el,[25])),(("mu",h2d_mu,[15])):
-              if len(h2d)==0: continue # protection for muons FR, empty for the time being
-              for ieta,eta in enumerate(["barrel","endcap"]):
-                  effs = [ (n,graphFromXSlice(h,ieta+1)) for (n,h) in zip(Xnices,h2d) ]
-                  styles(effs)
-                  options.xlines = xcuts
-                  print effs
-                  stackEffs(options.outdir+"/fr_%s_%s.root"%(lep,eta), None,effs,options)
-              variants = makeVariants(h2d[-1])
-              for v in variants: outfile.WriteTObject(v, v.GetName())
-              for ieta,eta in enumerate(["barrel","endcap"]):
-                  effs = [ ('nominal', graphFromXSlice(h2d[-1],ieta+1)) ]
-                  for v in variants: 
-                    label = v.GetName().rsplit("_",1)[1]
-                    effs.append( (label, graphFromXSlice(v,ieta+1) ) )
-                  styles(effs)
-                  options.xlines = xcuts
-                  stackEffs(options.outdir+"/variants_fr_%s_%s.root"%(lep,eta), None,effs,options)
-              mcvariants = makeVariants(h2d[-2],h2d[-1])
-              for v in mcvariants: outfile.WriteTObject(v, v.GetName())
-    outfile.ls()
+        # Plot
+        if options.outdir:
+            for lep,h2d,xcuts in (("el",h2d_el,[25])),(("mu",h2d_mu,[15])):
+               if len(h2d)==0: continue # protection for muons FR, empty for the time being
+               for ieta,eta in enumerate(["barrel","endcap"]):
+                   effs = [ (n,graphFromXSlice(h,ieta+1)) for (n,h) in zip(Xnices,h2d) ]
+                   styles(effs)
+                   options.xlines = xcuts
+                   print effs
+                   stackEffs(options.outdir+"/fr_%s_%s.root"%(lep,eta), None,effs,options)
+               variants = makeVariants(h2d[-1])
+               for v in variants: outfile.WriteTObject(v, v.GetName())
+               for ieta,eta in enumerate(["barrel","endcap"]):
+                   effs = [ ('nominal', graphFromXSlice(h2d[-1],ieta+1)) ]
+                   for v in variants: 
+                     label = v.GetName().rsplit("_",1)[1]
+                     effs.append( (label, graphFromXSlice(v,ieta+1) ) )
+                   styles(effs)
+                   options.xlines = xcuts
+                   stackEffs(options.outdir+"/variants_fr_%s_%s.root"%(lep,eta), None,effs,options)
+               mcvariants = makeVariants(h2d[-2],h2d[-1])
+               for v in mcvariants: outfile.WriteTObject(v, v.GetName())
+     outfile.ls()

@@ -193,7 +193,9 @@ if __name__ == "__main__":
         ttycuts = ttys[ttyn]
         (tty, mycut,p) = ttycuts[0]
         myoutpath = outdir+"/"+tty.cname()
-        mysource  = options.path+"/"+tty.cname()
+        for path in options.path:
+            mysource  = path+"/"+tty.cname()
+            if os.path.exists(mysource): break
         if len(ttycuts) > 1:
             print "Consolidating cuts for %s (%d different cuts), strategy = %s" % (ttyn, len(ttycuts), options.consolidate)
             #for ttyi, mycuti, proc in ttycuts: print "\t",proc,"\t",mycuti,"\t",hx(mycuti)
@@ -215,5 +217,6 @@ if __name__ == "__main__":
     if options.jobs == 0: 
         map(_runIt, tasks)
     else:
+        raise RuntimeError, 'Multithreading crashes with skimTreesWithPrescales, please run with -j 0'
         from multiprocessing import Pool
         Pool(options.jobs).map(_runIt, tasks)

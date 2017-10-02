@@ -1,48 +1,65 @@
-ttH+    : TTHnobb_mWCutfix_ch0 : 0.5071*0.418 : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0; FillColor=ROOT.kOrange+10
+incl_sigprompt : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-sigprompt.txt"
+incl_convs     : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-convs.txt"
+incl_mcfakes   : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-mcfakes.txt"
 
-TTW     : TTWToLNu : 0.196 : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0 ;  FillColor=ROOT.kGreen-5
-TTZ     : TTZToLLNuNu : 0.2526 : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0 ;  FillColor=ROOT.kSpring+2
-TTZ     : TTLLJets_m1to10 : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0 ;  FillColor=ROOT.kSpring+2
-TTZ	: TTJets_DiLepton : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0 ; FillColor=ROOT.kSpring+2
-TTZ   	: TTJets_SingleLeptonFromT+TTJets_SingleLeptonFromT_ext : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0 ; FillColor=ROOT.kSpring+2
-TTZ     : TTJets_SingleLeptonFromTbar+TTJets_SingleLeptonFromTbar_ext : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0 ; FillColor=ROOT.kSpring+2
+incl_data : + ; IncludeMca="ttH-multilepton/mca-includes/mca-data.txt"
 
-WZ 	: WZTo3LNu : 1.1*xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0 ;  FillColor=ROOT.kViolet-4
-WZ 	: WJetsToLNu_LO : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0 ;  FillColor=ROOT.kViolet-4
-Rares      : ZZTo4L : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0 ;  FillColor=ROOT.kAzure-9
+incl_sigprompt_jec_Up : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-sigprompt.txt", AddWeight="eventBTagSF_up_jes/eventBTagSF", FakeRate="ttH-multilepton/fr-jecUp.txt", SkipMe=True, PostFix="_jec_Up"
+incl_sigprompt_jec_Dn : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-sigprompt.txt", AddWeight="eventBTagSF_down_jes/eventBTagSF", FakeRate="ttH-multilepton/fr-jecDn.txt", SkipMe=True, PostFix="_jec_Dn"
 
-Gstar   : DYJetsToLL_M10to50: xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0 ; FillColor=ROOT.kCyan+1
-Gstar   : DYJetsToLL_M50: xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0 ; FillColor=ROOT.kCyan+1
+incl_sigprompt_bTag_LF_Up : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-sigprompt.txt", AddWeight="eventBTagSF_up_lf/eventBTagSF", SkipMe=True, PostFix="_bTag_LF_Up"
+incl_sigprompt_bTag_LF_Dn : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-sigprompt.txt", AddWeight="eventBTagSF_down_lf/eventBTagSF", SkipMe=True, PostFix="_bTag_LF_Dn"
 
-WWss: WpWpJJ : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0 ; FillColor=ROOT.kOrange-3
+incl_sigprompt_bTag_HF_Up : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-sigprompt.txt", AddWeight="eventBTagSF_up_hf/eventBTagSF", SkipMe=True, PostFix="_bTag_HF_Up"
+incl_sigprompt_bTag_HF_Dn : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-sigprompt.txt", AddWeight="eventBTagSF_down_hf/eventBTagSF", SkipMe=True, PostFix="_bTag_HF_Dn"
 
-Rares: WWDouble : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0 ; FillColor=ROOT.kMagenta-7
-Rares: WWZ : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0 ; FillColor=ROOT.kMagenta-7
-Rares: WZZ : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0 ; FillColor=ROOT.kMagenta-7
-Rares: ZZZ : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0 ; FillColor=ROOT.kMagenta-7
-Rares: TTTT : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0 ; FillColor=ROOT.kMagenta-7
-Rares: tZq_ll : xsec : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && LepGood3_mcMatchId!=0 && LepGood4_mcMatchId!=0 ; FillColor=ROOT.kMagenta-7
+incl_sigprompt_bTag_HFStats1_Up : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-sigprompt.txt", AddWeight="eventBTagSF_up_hfstats1/eventBTagSF", SkipMe=True, PostFix="_bTag_HFStats1_Up"
+incl_sigprompt_bTag_HFStats1_Dn : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-sigprompt.txt", AddWeight="eventBTagSF_down_hfstats1/eventBTagSF", SkipMe=True, PostFix="_bTag_HFStats1_Dn"
 
-Convs  : TTGJets : xsec : ((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==1) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==1) || (LepGood3_mcMatchId==0 && LepGood3_mcPromptGamma==1) || (LepGood4_mcMatchId==0 && LepGood4_mcPromptGamma==1)) ; FillColor=ROOT.kOrange
-Convs  : WGToLNuG : xsec : ((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==1) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==1) || (LepGood3_mcMatchId==0 && LepGood3_mcPromptGamma==1) || (LepGood4_mcMatchId==0 && LepGood4_mcPromptGamma==1)) ; FillColor=ROOT.kOrange
-Convs  : ZGTo2LG : xsec : ((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==1) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==1) || (LepGood3_mcMatchId==0 && LepGood3_mcPromptGamma==1) || (LepGood4_mcMatchId==0 && LepGood4_mcPromptGamma==1)) ; FillColor=ROOT.kOrange
-Convs  : TGJets : xsec : ((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==1) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==1) || (LepGood3_mcMatchId==0 && LepGood3_mcPromptGamma==1) || (LepGood4_mcMatchId==0 && LepGood4_mcPromptGamma==1)) ; FillColor=ROOT.kOrange
+incl_sigprompt_bTag_HFStats2_Up : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-sigprompt.txt", AddWeight="eventBTagSF_up_hfstats2/eventBTagSF", SkipMe=True, PostFix="_bTag_HFStats2_Up"
+incl_sigprompt_bTag_HFStats2_Dn : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-sigprompt.txt", AddWeight="eventBTagSF_down_hfstats2/eventBTagSF", SkipMe=True, PostFix="_bTag_HFStats2_Dn"
 
-TT      : TTJets_DiLepton : xsec : ((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==0) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==0) || (LepGood3_mcMatchId==0 && LepGood3_mcPromptGamma==0) || (LepGood4_mcMatchId==0 && LepGood4_mcPromptGamma==0)) ; FillColor=ROOT.kGray
-TT      : TTJets_SingleLeptonFromT+TTJets_SingleLeptonFromT_ext : xsec : ((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==0) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==0) || (LepGood3_mcMatchId==0 && LepGood3_mcPromptGamma==0) || (LepGood4_mcMatchId==0 && LepGood4_mcPromptGamma==0)) ; FillColor=ROOT.kGray
-TT      : TTJets_SingleLeptonFromTbar+TTJets_SingleLeptonFromTbar_ext : xsec : ((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==0) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==0) || (LepGood3_mcMatchId==0 && LepGood3_mcPromptGamma==0) || (LepGood4_mcMatchId==0 && LepGood4_mcPromptGamma==0)) ; FillColor=ROOT.kGray
-DY      : DYJetsToLL_M10to50: xsec : ((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==0) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==0) || (LepGood3_mcMatchId==0 && LepGood3_mcPromptGamma==0) || (LepGood4_mcMatchId==0 && LepGood4_mcPromptGamma==0)) ; FillColor=ROOT.kCyan
-DY      : DYJetsToLL_M50: xsec : ((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==0) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==0) || (LepGood3_mcMatchId==0 && LepGood3_mcPromptGamma==0) || (LepGood4_mcMatchId==0 && LepGood4_mcPromptGamma==0)) ; FillColor=ROOT.kCyan
-WJets   : WJetsToLNu_LO  : xsec : ((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==0) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==0) || (LepGood3_mcMatchId==0 && LepGood3_mcPromptGamma==0) || (LepGood4_mcMatchId==0 && LepGood4_mcPromptGamma==0)) ; FillColor=ROOT.kCyan+2
-SingleTop: TToLeptons_tch_powheg: xsec : ((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==0) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==0) || (LepGood3_mcMatchId==0 && LepGood3_mcPromptGamma==0) || (LepGood4_mcMatchId==0 && LepGood4_mcPromptGamma==0)) ; FillColor=ROOT.kGray+2, Label="Single T"
-SingleTop: TBarToLeptons_tch_powheg: xsec : ((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==0) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==0) || (LepGood3_mcMatchId==0 && LepGood3_mcPromptGamma==0) || (LepGood4_mcMatchId==0 && LepGood4_mcPromptGamma==0)) ; FillColor=ROOT.kGray+2, Label="Single T"
-SingleTop: TToLeptons_sch: xsec : ((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==0) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==0) || (LepGood3_mcMatchId==0 && LepGood3_mcPromptGamma==0) || (LepGood4_mcMatchId==0 && LepGood4_mcPromptGamma==0)) ; FillColor=ROOT.kGray+2, Label="Single T"
-SingleTop: T_tWch: xsec : ((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==0) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==0) || (LepGood3_mcMatchId==0 && LepGood3_mcPromptGamma==0) || (LepGood4_mcMatchId==0 && LepGood4_mcPromptGamma==0)) ; FillColor=ROOT.kGray+2, Label="Single T"
-SingleTop: TBar_tWch: xsec : ((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==0) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==0) || (LepGood3_mcMatchId==0 && LepGood3_mcPromptGamma==0) || (LepGood4_mcMatchId==0 && LepGood4_mcPromptGamma==0)) ; FillColor=ROOT.kGray+2, Label="Single T"
-WW: WWTo2L2Nu: xsec : ((LepGood1_mcMatchId==0 && LepGood1_mcPromptGamma==0) || (LepGood2_mcMatchId==0 && LepGood2_mcPromptGamma==0) || (LepGood3_mcMatchId==0 && LepGood3_mcPromptGamma==0) || (LepGood4_mcMatchId==0 && LepGood4_mcPromptGamma==0)) ; FillColor=ROOT.kGray+1
+incl_sigprompt_bTag_LFStats1_Up : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-sigprompt.txt", AddWeight="eventBTagSF_up_lfstats1/eventBTagSF", SkipMe=True, PostFix="_bTag_LFStats1_Up"
+incl_sigprompt_bTag_LFStats1_Dn : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-sigprompt.txt", AddWeight="eventBTagSF_down_lfstats1/eventBTagSF", SkipMe=True, PostFix="_bTag_LFStats1_Dn"
 
-data : DoubleEG_Run2016B_PromptReco_v2+DoubleEG_Run2016C_PromptReco_v2+DoubleEG_Run2016D_PromptReco_v2_runs_276315_276384+DoubleEG_Run2016D_PromptReco_v2_runs_276385_276811
-data : DoubleMuon_Run2016B_PromptReco_v2+DoubleMuon_Run2016C_PromptReco_v2+DoubleMuon_Run2016D_PromptReco_v2_runs_276315_276384+DoubleMuon_Run2016D_PromptReco_v2_runs_276385_276811
-data : MuonEG_Run2016B_PromptReco_v2+MuonEG_Run2016C_PromptReco_v2+MuonEG_Run2016D_PromptReco_v2_runs_276315_276384+MuonEG_Run2016D_PromptReco_v2_runs_276385_276811
-data : SingleElectron_Run2016B_PromptReco_v2+SingleElectron_Run2016C_PromptReco_v2+SingleElectron_Run2016D_PromptReco_v2_runs_276315_276384+SingleElectron_Run2016D_PromptReco_v2_runs_276385_276811
-data : SingleMuon_Run2016B_PromptReco_v2+SingleMuon_Run2016C_PromptReco_v2+SingleMuon_Run2016D_PromptReco_v2_runs_276315_276384+SingleMuon_Run2016D_PromptReco_v2_runs_276385_276811
+incl_sigprompt_bTag_LFStats2_Up : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-sigprompt.txt", AddWeight="eventBTagSF_up_lfstats2/eventBTagSF", SkipMe=True, PostFix="_bTag_LFStats2_Up"
+incl_sigprompt_bTag_LFStats2_Dn : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-sigprompt.txt", AddWeight="eventBTagSF_down_lfstats2/eventBTagSF", SkipMe=True, PostFix="_bTag_LFStats2_Dn"
+
+incl_sigprompt_bTag_cErr1_Up : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-sigprompt.txt", AddWeight="eventBTagSF_up_cferr1/eventBTagSF", SkipMe=True, PostFix="_bTag_cErr1_Up"
+incl_sigprompt_bTag_cErr1_Dn : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-sigprompt.txt", AddWeight="eventBTagSF_down_cferr1/eventBTagSF", SkipMe=True, PostFix="_bTag_cErr1_Dn"
+
+incl_sigprompt_bTag_cErr2_Up : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-sigprompt.txt", AddWeight="eventBTagSF_up_cferr2/eventBTagSF", SkipMe=True, PostFix="_bTag_cErr2_Up"
+incl_sigprompt_bTag_cErr2_Dn : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-sigprompt.txt", AddWeight="eventBTagSF_down_cferr2/eventBTagSF", SkipMe=True, PostFix="_bTag_cErr2_Dn"
+
+incl_sigprompt_elLooseUnc_Up : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-sigprompt.txt", AddWeight="elLooseUnc_4l_up", SkipMe=True, PostFix="_elLooseUnc_Up"
+incl_sigprompt_elLooseUnc_Dn : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-sigprompt.txt", AddWeight="elLooseUnc_4l_dn", SkipMe=True, PostFix="_elLooseUnc_Dn"
+
+incl_convs_jec_Up : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-convs.txt", AddWeight="eventBTagSF_up_jes/eventBTagSF", FakeRate="ttH-multilepton/fr-jecUp.txt", SkipMe=True, PostFix="_jec_Up"
+incl_convs_jec_Dn : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-convs.txt", AddWeight="eventBTagSF_down_jes/eventBTagSF", FakeRate="ttH-multilepton/fr-jecDn.txt", SkipMe=True, PostFix="_jec_Dn"
+
+incl_convs_bTag_LF_Up : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-convs.txt", AddWeight="eventBTagSF_up_lf/eventBTagSF", SkipMe=True, PostFix="_bTag_LF_Up"
+incl_convs_bTag_LF_Dn : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-convs.txt", AddWeight="eventBTagSF_down_lf/eventBTagSF", SkipMe=True, PostFix="_bTag_LF_Dn"
+
+incl_convs_bTag_HF_Up : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-convs.txt", AddWeight="eventBTagSF_up_hf/eventBTagSF", SkipMe=True, PostFix="_bTag_HF_Up"
+incl_convs_bTag_HF_Dn : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-convs.txt", AddWeight="eventBTagSF_down_hf/eventBTagSF", SkipMe=True, PostFix="_bTag_HF_Dn"
+
+incl_convs_bTag_HFStats1_Up : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-convs.txt", AddWeight="eventBTagSF_up_hfstats1/eventBTagSF", SkipMe=True, PostFix="_bTag_HFStats1_Up"
+incl_convs_bTag_HFStats1_Dn : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-convs.txt", AddWeight="eventBTagSF_down_hfstats1/eventBTagSF", SkipMe=True, PostFix="_bTag_HFStats1_Dn"
+
+incl_convs_bTag_HFStats2_Up : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-convs.txt", AddWeight="eventBTagSF_up_hfstats2/eventBTagSF", SkipMe=True, PostFix="_bTag_HFStats2_Up"
+incl_convs_bTag_HFStats2_Dn : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-convs.txt", AddWeight="eventBTagSF_down_hfstats2/eventBTagSF", SkipMe=True, PostFix="_bTag_HFStats2_Dn"
+
+incl_convs_bTag_LFStats1_Up : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-convs.txt", AddWeight="eventBTagSF_up_lfstats1/eventBTagSF", SkipMe=True, PostFix="_bTag_LFStats1_Up"
+incl_convs_bTag_LFStats1_Dn : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-convs.txt", AddWeight="eventBTagSF_down_lfstats1/eventBTagSF", SkipMe=True, PostFix="_bTag_LFStats1_Dn"
+
+incl_convs_bTag_LFStats2_Up : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-convs.txt", AddWeight="eventBTagSF_up_lfstats2/eventBTagSF", SkipMe=True, PostFix="_bTag_LFStats2_Up"
+incl_convs_bTag_LFStats2_Dn : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-convs.txt", AddWeight="eventBTagSF_down_lfstats2/eventBTagSF", SkipMe=True, PostFix="_bTag_LFStats2_Dn"
+
+incl_convs_bTag_cErr1_Up : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-convs.txt", AddWeight="eventBTagSF_up_cferr1/eventBTagSF", SkipMe=True, PostFix="_bTag_cErr1_Up"
+incl_convs_bTag_cErr1_Dn : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-convs.txt", AddWeight="eventBTagSF_down_cferr1/eventBTagSF", SkipMe=True, PostFix="_bTag_cErr1_Dn"
+
+incl_convs_bTag_cErr2_Up : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-convs.txt", AddWeight="eventBTagSF_up_cferr2/eventBTagSF", SkipMe=True, PostFix="_bTag_cErr2_Up"
+incl_convs_bTag_cErr2_Dn : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-convs.txt", AddWeight="eventBTagSF_down_cferr2/eventBTagSF", SkipMe=True, PostFix="_bTag_cErr2_Dn"
+
+incl_convs_elLooseUnc_Up : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-convs.txt", AddWeight="elLooseUnc_4l_up", SkipMe=True, PostFix="_elLooseUnc_Up"
+incl_convs_elLooseUnc_Dn : + ; IncludeMca="ttH-multilepton/mca-includes/mca-4l-convs.txt", AddWeight="elLooseUnc_4l_dn", SkipMe=True, PostFix="_elLooseUnc_Dn"

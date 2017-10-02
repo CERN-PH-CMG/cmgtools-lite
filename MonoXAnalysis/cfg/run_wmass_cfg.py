@@ -12,7 +12,7 @@ from PhysicsTools.HeppyCore.framework.heppy_loop import getHeppyOption
 
 #-------- SET OPTIONS AND REDEFINE CONFIGURATIONS -----------
 
-runData = getHeppyOption("runData",False)
+runData = getHeppyOption("runData",True)
 runDataQCD = getHeppyOption("runDataQCD",False)
 runQCDBM = getHeppyOption("runQCDBM",False)
 runFRMC = getHeppyOption("runFRMC",False)
@@ -224,11 +224,11 @@ from CMGTools.HToZZ4L.tools.configTools import printSummary, configureSplittingF
 
 selectedComponents = [ DYJetsToLL_M50 ]
 
-samples_1fake = [QCD_Mu15] + QCD_Mu5 + [WJetsToLNu_LO,DYJetsToLL_M10to50_LO,DYJetsToLL_M50_LO,TTJets] + QCDPtEMEnriched + QCDPtbcToE + GJetsDR04HT
-samples_WZ = [WJetsToLNu_LO, WJetsToLNu, DYJetsToLL_M50, DYJetsToLL_M50_LO,ZToMuMu_pow,ZToEE_pow]
-samples_BKG = [TTJets_SingleLeptonFromTbar, TTJets_SingleLeptonFromT, TBar_tWch, T_tWch, TToLeptons_tch_amcatnlo, WW, WZ, ZZ]
+samples_1fake = [QCD_Mu15] + QCD_Mu5 + QCDPtEMEnriched + QCDPtbcToE + GJetsDR04HT
+samples_WZ = [WJetsToLNu_LO, WJetsToLNu, DYJetsToLL_M50, DYJetsToLL_M50_LO, ZToMuMu_pow, ZToEE_pow]
+samples_BKG = [TTJets_SingleLeptonFromTbar, TTJets_SingleLeptonFromT, TBar_tWch, T_tWch, TToLeptons_sch_amcatnlo, TToLeptons_tch_amcatnlo, WW, WZ, ZZ]
 
-selectedComponents = samples_WZ
+selectedComponents = samples_1fake
 
 for comp in selectedComponents: comp.splitFactor = 200
 configureSplittingFromTime(samples_1fake,50,3)
@@ -254,16 +254,19 @@ if runData and not isTest: # For running on data
 
     json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/ReReco/Final/Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt' # 36.5/fb
 
-    for era in 'BCDEFGH': dataChunks.append((json,filter(dataSamples_18Apr2017,lambda dset: '2016'+era in dset),'2016'+era,[],False))
+    run_ranges = []; useAAA=True;
+    processing = "Run2016B-18Apr2017_ver2-v1"; short = "Run2016B"; dataChunks.append((json,processing,short,run_ranges,useAAA))
+    for era in 'CDEFGH':
+        processing = "Run2016%s-18Apr2017-v1" % era; short = "Run2016%s" % era; dataChunks.append((json,processing,short,run_ranges,useAAA))
 
     DatasetsAndTriggers = []
     selectedComponents = [];
     exclusiveDatasets = False; # this will veto triggers from previous PDs in each PD, so that there are no duplicate events
  
-    DatasetsAndTriggers.append( ("DoubleMuon", triggers_mumu_iso + triggers_mumu_ss + triggers_mumu_ht + triggers_3mu + triggers_3mu_alt) )
-    DatasetsAndTriggers.append( ("DoubleEG",   triggers_ee + triggers_ee_ht + triggers_3e) )
-    DatasetsAndTriggers.append( ("MuonEG",     triggers_mue + triggers_mue_ht + triggers_2mu1e + triggers_2e1mu) )
-    DatasetsAndTriggers.append( ("SingleMuon", triggers_1mu_iso + triggers_1mu_noniso) )
+    # DatasetsAndTriggers.append( ("DoubleMuon", triggers_mumu_iso + triggers_mumu_ss + triggers_mumu_ht + triggers_3mu + triggers_3mu_alt) )
+    # DatasetsAndTriggers.append( ("DoubleEG",   triggers_ee + triggers_ee_ht + triggers_3e) )
+    # DatasetsAndTriggers.append( ("MuonEG",     triggers_mue + triggers_mue_ht + triggers_2mu1e + triggers_2e1mu) )
+    # DatasetsAndTriggers.append( ("SingleMuon", triggers_1mu_iso + triggers_1mu_noniso) )
     DatasetsAndTriggers.append( ("SingleElectron", triggers_1e) )
 
     if runDataQCD: # for fake rate measurements in data
@@ -280,7 +283,7 @@ if runData and not isTest: # For running on data
         FRTrigs_el = triggers_FR_1e_noiso + triggers_FR_1e_iso + triggers_FR_1e_b2g
         DatasetsAndTriggers = [
             ("SingleMuon", triggers_FR_muNoIso ),
-            #("DoubleMuon",  triggers_FR_1mu_noiso ),
+            ("DoubleMuon",  triggers_FR_1mu_noiso ),
         ]
         exclusiveDatasets = True
 
@@ -303,7 +306,7 @@ if runData and not isTest: # For running on data
                     print 'the strategy for trigger selection on MuonEG for FR studies should yet be implemented'
                     #assert(False)
 
-    for json,dsets,short,run_ranges,useAAA in dataChunks:
+    for json,processing,short,run_ranges,useAAA in dataChunks:
         if len(run_ranges)==0: run_ranges=[None]
         vetos = []
         for pd,triggers in DatasetsAndTriggers:
@@ -312,21 +315,20 @@ if runData and not isTest: # For running on data
                 if run_range!=None:
                     label = "_runs_%d_%d" % run_range if run_range[0] != run_range[1] else "run_%d" % (run_range[0],)
                 compname = pd+"_"+short+label
-                for _comp in filter(dsets,lambda dset : re.match('/%s/.*'%pd,dset.name)):
-                    comp = kreator.makeDataComponent(compname, 
-                                                     _comp.dataset,
-                                                     "CMS", ".*root", 
-                                                     json=json, 
-                                                     run_range=(run_range if "PromptReco" not in _comp.dataset else None), 
-                                                     triggers=triggers[:], vetoTriggers = vetos[:],
-                                                     useAAA=useAAA)
-                    if "PromptReco" in comp.dataset:
-                        from CMGTools.Production.promptRecoRunRangeFilter import filterComponent
-                        filterComponent(comp, verbose=1)
-                    print "Will process %s (%d files)" % (comp.name, len(comp.files))
-                    comp.splitFactor = len(comp.files)/8
-                    comp.fineSplitFactor = 1
-                    selectedComponents.append( comp )
+                comp = kreator.makeDataComponent(compname, 
+                                                 "/"+pd+"/"+processing+"/MINIAOD",
+                                                 "CMS", ".*root", 
+                                                 json=json, 
+                                                 run_range=(run_range if "PromptReco" not in processing else None), 
+                                                 triggers=triggers[:], vetoTriggers = vetos[:],
+                                                 useAAA=useAAA)
+                if "PromptReco" in processing:
+                    from CMGTools.Production.promptRecoRunRangeFilter import filterComponent
+                    filterComponent(comp, verbose=1)
+                print "Will process %s (%d files)" % (comp.name, len(comp.files))
+                comp.splitFactor = len(comp.files)/8
+                comp.fineSplitFactor = 1
+                selectedComponents.append( comp )
             if exclusiveDatasets: vetos += triggers
     if json is None:
         susyCoreSequence.remove(jsonAna)
@@ -523,18 +525,18 @@ elif test == '80X-MC':
         if not getHeppyOption("single"): comp.fineSplitFactor = 4
     else: raise RuntimeError, "Unknown MC sample: %s" % what
 elif test == '80X-Data':
-    DoubleMuon = kreator.makeDataComponent("DoubleMuon_Run2016B_run274315", "/DoubleMuon/Run2016B-PromptReco-v2/MINIAOD", "CMS", ".*root", run_range = (274315,274315), triggers = triggers_mumu)
-    DoubleEG = kreator.makeDataComponent("DoubleEG_Run2016B_run274315", "/DoubleEG/Run2016B-PromptReco-v2/MINIAOD", "CMS", ".*root", run_range = (274315,274315), triggers = triggers_ee)
-    DoubleMuon.files = [ 'root://eoscms//eos/cms/store/data/Run2016B/DoubleMuon/MINIAOD/PromptReco-v2/000/274/315/00000/A287989F-E129-E611-B5FB-02163E0142C2.root' ]
-    DoubleEG.files = [ 'root://eoscms//eos/cms/store/data/Run2016B/DoubleEG/MINIAOD/PromptReco-v2/000/274/315/00000/FEF59D1D-EE29-E611-8793-02163E0143AE.root' ]
+    DoubleMuon = kreator.makeDataComponent("DoubleMuon_Run2016B_run274315", "/DoubleMuon/Run2016B-18Apr2017_ver2-v1/MINIAOD", "CMS", ".*root", run_range = (274315,274315), triggers = triggers_mumu)
+    DoubleEG = kreator.makeDataComponent("DoubleEG_Run2016B_run274315", "/DoubleEG/Run2016B-18Apr2017_ver2-v1/MINIAOD", "CMS", ".*root", run_range = (274315,274315), triggers = triggers_ee)
+    DoubleMuon.files = [ 'root://xrootd-cms.infn.it//store/data/Run2016B/DoubleMuon/MINIAOD/18Apr2017_ver2-v1/120000/5A3F07DC-8D34-E711-8E2E-1866DAEB528C.root' ]
+    DoubleEG.files = [ 'root://xrootd-cms.infn.it//store/data/Run2016B/DoubleEG/MINIAOD/18Apr2017_ver2-v1/00000/84E8D574-F93D-E711-AD25-0242AC130006.root' ]
     selectedComponents = [ DoubleMuon, DoubleEG ]
     for comp in selectedComponents:
-        comp.json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Cert_271036-275125_13TeV_PromptReco_Collisions16_JSON.txt'
+        comp.json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/ReReco/Final/Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt'
         tmpfil = os.path.expandvars("/tmp/$USER/%s" % os.path.basename(comp.files[0]))
         if not os.path.exists(tmpfil): os.system("xrdcp %s %s" % (comp.files[0],tmpfil)) 
         comp.files = [tmpfil]
         comp.splitFactor = 1
-        comp.fineSplitFactor = 4
+        comp.fineSplitFactor = 1
 elif test == 'ttH-sync':
     ttHLepSkim.minLeptons=0
     selectedComponents = selectedComponents[:1]

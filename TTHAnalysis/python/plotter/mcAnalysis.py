@@ -50,7 +50,7 @@ class MCAnalysis:
                 self._premap.append((re.compile(k.strip()+"$"), to))
         self.readMca(samples,options)
 
-    def readMca(self,samples,options):
+    def readMca(self,samples,options,addExtras={}):
         for line in open(samples,'r'):
             if re.match("\s*#.*", line): continue
             line = re.sub(r"(?<!\\)#.*","",line)  ## regexp black magic: match a # only if not preceded by a \!
@@ -64,6 +64,9 @@ class MCAnalysis:
                         (key,val) = [f.strip() for f in setting.split("=",1)]
                         extra[key] = eval(val)
                     else: extra[setting] = True
+            for k,v in addExtras.iteritems():
+                if k in extra: raise RuntimeError, 'You are trying to overwrite an extra option already set'
+                extra[k] = v
             field = [f.strip() for f in line.split(':')]
             if len(field) == 1 and field[0] == "*":
                 if len(self._allData): raise RuntimeError, "MCA defaults ('*') can be specified only before all processes"
@@ -77,6 +80,11 @@ class MCAnalysis:
                     if k not in extra: extra[k] = v
             if len(field) <= 1: continue
             if "SkipMe" in extra and extra["SkipMe"] == True and not options.allProcesses: continue
+            if 'PostFix' in extra:
+                hasPlus = (field[0][-1]=='+')
+                if hasPlus: field[0] = field[0][:-1]
+                field[0] += extra['PostFix']
+                if hasPlus: field[0]+='+'
             signal = False
             pname = field[0]
             if pname[-1] == "+": 
@@ -99,9 +107,15 @@ class MCAnalysis:
                 continue
             if field[1] == "+": # include an mca into another one, usage:   otherprocesses : + ; IncludeMca="path/to/other/mca.txt"
                 if 'IncludeMca' not in extra: raise RuntimeError, 'You have declared a component with IncludeMca format, but not included this option'
-                if len(extra)>1: raise RuntimeError, 'You cannot declare extra options together with IncludeMca directive'
-                self.readMca(extra['IncludeMca'],options) # call readMca recursively on included mca files
+                extra_to_pass = copy(extra)
+                del extra_to_pass['IncludeMca']
+                self.readMca(extra['IncludeMca'],options,addExtras=extra_to_pass) # call readMca recursively on included mca files
                 continue
+            # Customize with additional weight if requested
+            if 'AddWeight' in extra:
+                if len(field)<2: raise RuntimeError, 'You are trying to set an additional weight, but there is no weight initially defined for this component'
+                elif len(field)==2: field.append(extra['AddWeight'])
+                else: field[2] = '(%s)*(%s)'%(field[2],extra['AddWeight'])
             ## If we have a selection of process names, apply it
             skipMe = (len(options.processes) > 0)
             for p0 in options.processes:
@@ -176,14 +190,13 @@ class MCAnalysis:
                         for p in p0.split(","):
                             if re.match(p+"$", pname): scale += "*("+s+")"
                     to_norm = True
+                elif len(field) == 2:
+                    pass
                 elif len(field) == 3:
                     tty.setScaleFactor(field[2])
                 else:
-                    try:
-                        pckobj  = pickle.load(open(pckfile,'r'))
-                        counters = dict(pckobj)
-                    except:
-                        pass
+                    print "Poorly formatted line: ", field
+                    raise RuntimeError                    
                 # Adjust free-float and fixed from command line
                 for p0 in options.processesToFloat:
                     for p in p0.split(","):
@@ -194,6 +207,9 @@ class MCAnalysis:
                 for p0, p1 in options.processesToPeg:
                     for p in p0.split(","):
                         if re.match(p+"$", pname): tty.setOption('PegNormToProcess', p1)
+                for p0, p1 in options.processesToSetNormSystematic:
+                    for p in p0.split(","):
+                        if re.match(p+"$", pname): tty.setOption('NormSystematic', float(p1))
                 if pname not in self._rank: self._rank[pname] = len(self._rank)
             if to_norm: 
                 for tty in ttys: tty.setScaleFactor("%s*%g" % (scale, 1000.0/total_w))
@@ -241,6 +257,8 @@ class MCAnalysis:
         else: raise RuntimeError, "Can't set option %s for undefined process %s" % (name,process)
     def getScales(self,process):
         return [ tty.getScaleFactor() for tty in self._allData[process] ] 
+    def setScales(self,process,scales):
+        for (tty,factor) in zip(self._allData[process],scales): tty.setScaleFactor(factor,mcCorrs=False)
     def getYields(self,cuts,process=None,nodata=False,makeSummary=False,noEntryLine=False):
         ## first figure out what we want to do
         tasks = []
@@ -576,6 +594,7 @@ def addMCAnalysisOptions(parser,addTreeToYieldOnesToo=True):
     parser.add_option("--fix-process", "--fxp", dest="processesToFix", type="string", default=[], action="append", help="Processes to set as not freely floating (overriding the 'FreeFloat' in the text file; affects e.g. mcPlots with --fitData)");
     parser.add_option("--peg-process", dest="processesToPeg", type="string", default=[], nargs=2, action="append", help="--peg-process X Y make X scale as Y (equivalent to set PegNormToProcess=Y in the mca.txt)");
     parser.add_option("--scale-process", dest="processesToScale", type="string", default=[], nargs=2, action="append", help="--scale-process X Y make X scale by Y (equivalent to add it in the mca.txt)");
+    parser.add_option("--process-norm-syst", dest="processesToSetNormSystematic", type="string", default=[], nargs=2, action="append", help="--process-norm-syst X Y sets the NormSystematic of X to be Y (for plots, etc. Overrides mca.txt)");
     parser.add_option("--AP", "--all-processes", dest="allProcesses", action="store_true", help="Include also processes that are marked with SkipMe=True in the MCA.txt")
     parser.add_option("--use-cnames",  dest="useCnames", action="store_true", help="Use component names instead of process names (for debugging)")
     parser.add_option("--project", dest="project", type="string", help="Project to a scenario (e.g 14TeV_300fb_scenario2)")

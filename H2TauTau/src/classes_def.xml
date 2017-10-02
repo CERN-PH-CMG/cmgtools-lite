@@ -6,6 +6,5 @@
  <class name="std::vector<cmg::METSignificance>" />
  <class name="edm::Wrapper<std::vector<cmg::METSignificance> >" />
  <class name="HTTRecoilCorrector"/>
- <!-- <class name="ROOT::Math::SMatrix<double,2,2,ROOT::Math::MatRepStd<double,2,2> >" /> -->
- 
+  
 </lcgdict>

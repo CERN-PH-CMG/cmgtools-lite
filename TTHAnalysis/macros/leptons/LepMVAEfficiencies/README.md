@@ -19,19 +19,19 @@ First, compile the tree class: ```root -l -b -q -n lepTnPFriendTreeMaker.cc+```
 Produce the tag and probe trees:
 
 ```
-python runLepTnPFriendMaker.py /store/user/mmarionn/heppyTrees/809_June9/
+python runLepTnPFriendMaker.py /store/cmst3/group/tthlep/peruzzi/TREES_TTH_180117_Summer16_JEC_mc25nsV5_data23SepV2_noClean_lepMVAretr_qgV1/ -q 8nh
 ```
 
-This will process all events for all samples containing `Run2016`,`DYJetsToLL_M50`, or `TTJets` strings. For debugging, you can use the `-f/--filter` option to restrict to individual samples and the `-m` option to process only a certain number of events. To run in parallel, use the `-j/--jobs` option.
+This will process all files in that directory containing `2016` or `DYJetsToLL_M50` strings. For debugging, you can use the `-f/--filter` option to restrict to individual samples and the `-m` option to process only a certain number of events. To run in parallel, use the `-j/--jobs` option. To submit to batch, use the `-q/--queue` option.
 
 By default, the output is stored in a directory called `tnptrees/`. You can change this with the `-o/--outDir` option.
 
-Note that samples are checked to be data or not depending on whether their name contains the string `PromptReco`.
+Note that samples are checked to be data or not depending on whether their name contains the string `2016`.
 
 Merge the data trees:
 
 ```
-hadd tnptrees/Run2016.root tnptrees/*PromptReco*.root
+hadd tnptrees/Run2016.root tnptrees/*2016*.root
 ```
 
 Generate the cross section weights (stored in `.xsecweights.pck` by default):

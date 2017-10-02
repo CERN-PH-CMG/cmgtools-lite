@@ -64,7 +64,7 @@ fi;
 if [ $mv = "true" ]; then
     ls $DIR | sort > allChunks.txt
     grep $DIR chunksToResub.sh | awk -F "$DIR" '{print $2}' | awk -F "/" '{print $2}' | awk '{print $1}' | sort | uniq > runningChunks.txt
-    grep -Fxvf runningChunks.txt allChunks.txt | awk '{print "mv " $1 " '$MVDIR'"}' > chunksToStore.sh
+    grep -Fxvf runningChunks.txt allChunks.txt | awk '{print "mv '$DIR'/" $1 " '$MVDIR'"}' > chunksToStore.sh
     echo $DIR " has " `wc allChunks.txt | awk '{print $2}'` " chunks: " `wc runningChunks.txt | awk '{print $2}'` " running, " `wc chunksToStore.sh | awk '{print $1}'` " to be safely moved in " $MVDIR "."
     rm allChunks.txt runningChunks.txt
     if [ $saveList = "false" ]; then 

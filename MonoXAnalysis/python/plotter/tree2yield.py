@@ -228,7 +228,7 @@ class TreeToYield:
     def _init(self):
         if "root://" in self._fname:
             ROOT.gEnv.SetValue("TFile.AsyncReading", 1);
-            ROOT.gEnv.SetValue("XNet.Debug", -1); # suppress output about opening connections
+#            ROOT.gEnv.SetValue("XNet.Debug", -1); # suppress output about opening connections
             #self._tfile = ROOT.TFile.Open(self._fname+"?readaheadsz=200000") # worse than 65k
             #self._tfile = ROOT.TFile.Open(self._fname+"?readaheadsz=32768") # worse than 65k
             self._tfile = ROOT.TFile.Open(self._fname+"?readaheadsz=65535") # good
@@ -552,7 +552,7 @@ def addTreeToYieldOptions(parser):
     parser.add_option("-N", "--n-minus-one", dest="nMinusOne", action="store_true", help="Compute n-minus-one yields and plots")
     parser.add_option("--select-n-minus-one", dest="nMinusOneSelection", type="string", default=None, help="Select which cuts to do N-1 for (comma separated list of regexps)")
     parser.add_option("--NI", "--inv-n-minus-one", dest="nMinusOneInverted", action="store_true", help="Compute n-minus-one yields and plots")
-    parser.add_option("--obj", "--objname",    dest="obj", default='treeProducerWMassEle', help="Pattern for the name of the TTree inside the file");
+    parser.add_option("--obj", "--objname",    dest="obj", default='tree', help="Pattern for the name of the TTree inside the file");
     parser.add_option("-G", "--no-fractions",  dest="fractions",action="store_false", default=True, help="Don't print the fractions");
     parser.add_option("-F", "--add-friend",    dest="friendTrees",  action="append", default=[], nargs=2, help="Add a friend tree (treename, filename). Can use {name}, {cname} patterns in the treename") 
     parser.add_option("--Fs", "--add-friend-simple",    dest="friendTreesSimple",  action="append", default=[], nargs=1, help="Add friends in a directory. The rootfile must be called evVarFriend_{cname}.root and tree must be called 't' in a subdir 'sf' inside the rootfile.") 

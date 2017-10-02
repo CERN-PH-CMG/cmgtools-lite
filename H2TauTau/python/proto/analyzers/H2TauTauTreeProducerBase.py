@@ -26,12 +26,12 @@ class H2TauTauTreeProducerBase(TreeAnalyzerNumpy):
         if hasattr(self.cfg_ana, 'skimFunction'):
             self.skimFunction = self.cfg_ana.skimFunction
 
-    def var(self, tree, varName, type=float):
-        tree.var(self.varName(varName), type)
+    def var(self, tree, varName, type=float, storageType="default"):
+        tree.var(self.varName(varName), type, storageType=storageType)
 
-    def vars(self, tree, varNames, type=float):
+    def vars(self, tree, varNames, type=float, storageType="default"):
         for varName in varNames:
-            self.var(tree, varName, type)
+            self.var(tree, varName, type, storageType=storageType)
 
     def fill(self, tree, varName, value):
         tree.fill(self.varName(varName), value)
@@ -58,7 +58,7 @@ class H2TauTauTreeProducerBase(TreeAnalyzerNumpy):
     def bookGeneric(self, tree, var_list, obj_name=None):
         for var in var_list:
             names = [obj_name, var.name] if obj_name else [var.name]
-            self.var(tree, '_'.join(names), var.type)
+            self.var(tree, '_'.join(names), var.type, var.storageType)
 
     def fillGeneric(self, tree, var_list, obj, obj_name=None):
         for var in var_list:
@@ -238,7 +238,6 @@ class H2TauTauTreeProducerBase(TreeAnalyzerNumpy):
         self.vars(tree, ['gen_top_1_pt', 'gen_top_2_pt', 'gen_top_weight'])
 
     def fillTopPtReweighting(self, tree, event):
-        '''FIXME: Move this to extra class - only do inline calculations here'''
         if not self.cfg_comp.isMC:
             self.fill(tree, 'gen_top_weight', 1.)
             return
@@ -246,3 +245,13 @@ class H2TauTauTreeProducerBase(TreeAnalyzerNumpy):
         self.fill(tree, 'gen_top_1_pt', getattr(event, 'top_1_pt', -999.))
         self.fill(tree, 'gen_top_2_pt', getattr(event, 'top_2_pt', -999.))
         self.fill(tree, 'gen_top_weight', getattr(event, 'topweight', 1.))
+
+    def bookLHEWeights(self, tree, n_max=10):
+    	for n_lhe in xrange(1, n_max+1):
+    		self.var(tree, 'LHE_weight_{}'.format(n_lhe))
+
+    def fillLHEWeights(self, tree, event, n_max=10):
+    	for n_lhe in xrange(n_max):
+    		if hasattr(event, 'LHE_weights') and len(event.LHE_weights) > n_lhe:
+    			self.fill(tree, 'LHE_weight_{}'.format(n_lhe+1), event.LHE_weights[n_lhe].wgt)
+

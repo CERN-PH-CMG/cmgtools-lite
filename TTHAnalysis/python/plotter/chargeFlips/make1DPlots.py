@@ -37,9 +37,9 @@ def make2DPlot(histo, outname='probmap'):
         c.SaveAs("%s%s" % (outname, ext))
 
 def make1DPlots(hist_data, hist_mc, basename=''):
-    xhists_da = [hist_data.ProjectionX(hist_data.GetName()+'_data_%d'%i, i, i+1)
+    xhists_da = [hist_data.ProjectionX(hist_data.GetName()+'_data_%d'%i, i+1, i+1)
                                     for i in range(hist_data.GetNbinsY())]
-    xhists_mc = [hist_mc.ProjectionX(hist_mc.GetName()+'_mc_%d'%i, i, i+1)
+    xhists_mc = [hist_mc.ProjectionX(hist_mc.GetName()+'_mc_%d'%i, i+1, i+1)
                                     for i in range(hist_mc.GetNbinsY())]
 
     assert len(xhists_da) == len(xhists_mc)
@@ -75,7 +75,7 @@ def make1DPlots(hist_data, hist_mc, basename=''):
         leg.SetShadowColor(0)
         leg.SetTextFont(43)
         leg.SetTextSize(20)
-        leg.AddEntry(hda, "Data 0.83 fb^{-1}", "P")
+        leg.AddEntry(hda, "Data 36.5 fb^{-1}", "P")
         leg.AddEntry(hmc, "DY MC", "F")
 
         c = ROOT.TCanvas("c", "C", 800, 600)
@@ -96,7 +96,7 @@ def make1DPlots(hist_data, hist_mc, basename=''):
         hda.GetXaxis().SetMoreLogLabels()
 
         for ext in ['.pdf', '.png']:
-            c.SaveAs("chmid_prob_proj_%d%s%s" % (n, basename, ext))
+            c.SaveAs("chmid_%d%s%s" % (n, basename, ext))
 
     return 0
 
@@ -149,8 +149,8 @@ def main():
         return -1
 
 
-    make2DPlot(histo_da, outname='chmid_prob_map_'+BASENAME1)
-    make2DPlot(histo_mc, outname='chmid_prob_map_'+BASENAME2)
+    make2DPlot(histo_da, outname='map_'+BASENAME1)
+    make2DPlot(histo_mc, outname='map_'+BASENAME2)
     make1DPlots(histo_da, histo_mc, basename='_%s_%s'%(BASENAME1,BASENAME2))
     printTable(histo_da,title='Data')
     printTable(histo_mc,title='MC')

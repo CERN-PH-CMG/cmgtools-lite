@@ -82,7 +82,7 @@ for D in */; do
     fi
     PCKBAD=false
     # test if there are empty pickle files
-    ${P} && find $D -name '*.pck' -empty | grep -q pck && PCKBAD=true;
+    ${P} && find $D -name '*.pck' -empty -follow | grep -q pck && PCKBAD=true;
     # test if file to be tested for is present and whether bad pickle file flag has been set
     if test \! -s $D/$F || $PCKBAD; then
         # check for batch directory if requested or proceed to command printout

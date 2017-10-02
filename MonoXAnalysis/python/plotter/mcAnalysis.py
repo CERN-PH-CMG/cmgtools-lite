@@ -600,7 +600,7 @@ def addMCAnalysisOptions(parser,addTreeToYieldOnesToo=True):
     parser.add_option("--project", dest="project", type="string", help="Project to a scenario (e.g 14TeV_300fb_scenario2)")
     parser.add_option("--plotgroup", dest="plotmergemap", type="string", default=[], action="append", help="Group plots into one. Syntax is '<newname> := (comma-separated list of regexp)', can specify multiple times. Note it is applied after plotting.")
     parser.add_option("--scaleplot", dest="plotscalemap", type="string", default=[], action="append", help="Scale plots by this factor (before grouping). Syntax is '<newname> := (comma-separated list of regexp)', can specify multiple times.")
-    parser.add_option("-t", "--tree",          dest="tree", default='treeProducerWMassEle', help="Pattern for tree name");
+    parser.add_option("-t", "--tree",          dest="tree", default='treeProducerWMass', help="Pattern for tree name");
     parser.add_option("--fom", "--figure-of-merit", dest="figureOfMerit", type="string", default=[], action="append", help="Add this figure of merit to the output table (S/B, S/sqrB, S/sqrSB)")
 
 if __name__ == "__main__":

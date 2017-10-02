@@ -71,6 +71,8 @@ class MuEleAnalyzer(DiLeptonAnalyzer):
             pydil = self.__class__.DiObjectClass(dil)
             pydil.leg1().associatedVertex = event.goodVertices[0]
             pydil.leg2().associatedVertex = event.goodVertices[0]
+            pydil.leg1().event = event.input.object()
+            pydil.leg2().event = event.input.object()
 #            pydil.leg2().rho = event.rho
             pydil.leg1().rho = event.rho
             pydil.leg1().event = event
@@ -94,8 +96,9 @@ class MuEleAnalyzer(DiLeptonAnalyzer):
                 di_tau = DirectDiTau(electron, muon, met)
                 di_tau.leg1().associatedVertex = event.goodVertices[0]
                 di_tau.leg2().associatedVertex = event.goodVertices[0]
+                di_tau.leg1().event = event.input.object()
+                di_tau.leg2().event = event.input.object()
                 di_tau.leg1().rho = event.rho
-                di_tau.leg1().event = event
 
                 if not self.testLeg1(di_tau.leg1(), 99999):
                     continue
@@ -112,6 +115,7 @@ class MuEleAnalyzer(DiLeptonAnalyzer):
             pyl = self.__class__.OtherLeptonClass(lep)
             #pyl = Muon(lep)
             pyl.associatedVertex = event.goodVertices[0]
+            pyl.event = event.input.object()
             muons.append(pyl)
         return muons
 
@@ -125,7 +129,7 @@ class MuEleAnalyzer(DiLeptonAnalyzer):
             #pyl = Electron(lep)
             pyl.associatedVertex = event.goodVertices[0]
             pyl.rho = event.rho
-            pyl.event = event
+            pyl.event = event.input.object()
             electrons.append(pyl)
         return electrons
 
@@ -173,7 +177,7 @@ class MuEleAnalyzer(DiLeptonAnalyzer):
 
     def testLeg2ID(self, muon):
         '''Tight muon selection, no isolation requirement'''
-        return muon.muonID('POG_ID_Medium_ICHEP') and self.testVertex(muon)
+        return muon.muonIDMoriond17() and self.testVertex(muon)
 
     def testLeg2Iso(self, muon, isocut):
         '''Muon isolation to be implemented'''
@@ -219,7 +223,7 @@ class MuEleAnalyzer(DiLeptonAnalyzer):
         '''Second muon veto'''
         # count tight muons
         vLeptons = [muon for muon in otherLeptons if
-                    muon.muonID('POG_ID_Medium_ICHEP') and
+                    muon.muonIDMoriond17() and
                     self.testVertex(muon) and
                     self.testLegKine(muon, ptcut=10, etacut=2.4) and
                     muon.relIsoR(R=0.4, dBetaFactor=0.5, allCharged=False) < 0.3]
@@ -230,7 +234,7 @@ class MuEleAnalyzer(DiLeptonAnalyzer):
         return True
 
     def testElectronID(self, electron):
-        return electron.mvaIDRun2('NonTrigSpring15MiniAOD', 'POG80')
+        return electron.mvaIDRun2('Spring16', 'POG80')
 
     def leptonAccept(self, leptons, event):
         '''Loose e/mu veto to reject DY; passes for e-mu'''

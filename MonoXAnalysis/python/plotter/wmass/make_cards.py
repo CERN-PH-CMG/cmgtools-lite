@@ -48,6 +48,7 @@ def writePdfSystsToSystFile(sample,syst,channel,filename):
         
 from optparse import OptionParser
 parser = OptionParser(usage="%prog testname ")
+
 parser.add_option("--etaBins", dest="etaBins", action="append", default=[], help="Give a list of lepton eta bins to make fit categories")
 parser.add_option("--etaBinEdges", dest="etaBinEdges", type="string", default=None, help="Give a comma separated list of lepton eta bin edges to make fit categories")
 parser.add_option("--fitVar", dest="fitVar", type="string", default="pt", help="Pass the name of variable to fit (pt or mt, default is pt)")
@@ -108,6 +109,7 @@ if options.queue:
 etaBins=[]
 isEtaIncl = True
 if len(options.etaBins):
+    etaBins = [binEdge for binEdge in options.etaBins.split(",")]
     for eb0 in options.etaBins:
         [etaBins.append(eb) for eb in eb0.split(",")]
     isEtaIncl = False

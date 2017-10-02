@@ -1,0 +1,5 @@
+alwaystrue: 1
+trigger: HLT_SingleMu==1
+onelep: nLepGood == 1
+mu : abs(LepGood1_pdgId)==13
+nJet40: nJetClean > 0 && JetClean1_pt > 40

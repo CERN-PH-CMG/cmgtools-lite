@@ -1,20 +1,23 @@
 #!/bin/bash
 
 case $HOSTNAME in
-cmsco01*) exit 1; P=/data1/gpetrucc/MUPOG_TnP_76X/ ;;
+#cmsco01*) exit 1; P=/data1/gpetrucc/MUPOG_TnP_76X/ ;;
 cmsphys10*) P=/data1/g/gpetrucc/MuTnP80X/ ;;
 *) exit 1; P=root://eoscms//eos/cms/store/group/phys_muon/TagAndProbe/76XtreeProduction/v41/ ;;
 esac;
 
-PDIR="plots/80X/TnP/"
-JOB="mupog_v1.0_jpsi"
-XBINS="[3,3.5,4,4.5,5,6,7,8,10,12,18,25]"
+PDIR="plots/80X/TnP_Moriond17/"
+JOB="mupog_jpsi_v1"
+XBINS="[3,3.5,4,4.5,5,6,7,8,10,12]"
 EBINS="[-2.4,-2.1,-1.6,-1.2,-0.9,-0.6,-0.3,-0.2,0.2,0.3,0.6,0.9,1.2,1.6,2.1,2.4]"
 VBINS="[0.5,5.5,6.5,7.5,8.5,9.5,10.5,11.5,12.5,13.5,14.5,15.5,16.5,17.5,18.5,19.5,20.5,21.5,22.5,24.5,26.5,28.5,30.5,34.5]"
 
-MC=$P/jpsi/TnPTree_80X_TuneCUEP8M1.root
-DATA=$P/jpsi/TnPTree_80X_Run2016B_v2_GoldenJSON_Run271036to275376.root
-DATA="$DATA $P/jpsi/TnPTree_80X_Run2016C_v2_GoldenJSON_Run275377to276097.root"
+MC=$P/jpsi/tnpJPsi_MC_JpsiPt8_TuneCUEP8M1_13TeV_pythia8.root
+DATA=""
+for R in B C D E F G; do
+    DATA="$DATA $P/jpsi/tnpJPsi_Data_Run2016${R}_part1.root $P/jpsi/tnpJPsi_Data_Run2016${R}_part2.root"
+done
+DATA="$DATA $P/jpsi/tnpJPsi_Data_Run2016Hv2.root $P/jpsi/tnpJPsi_Data_Run2016Hv3.root"
 PDS="$DATA --refmc $MC"
 
 OPTS=" --doRatio  --pdir $PDIR/$JOB -j 5 " #--mcw vtxWeight2015(nVert)"
@@ -28,16 +31,15 @@ for ID in Loose Reco ; do
   NUM="$ID"
   if [[ "$ID" == "Reco" ]]; then NUM="(Glb || TM)"; fi
   if [[ "$ID" == "LooseIdOnly" ]]; then NUM="Loose"; CDEN="$CDEN && (Glb || TM)"; fi
-  for BMOD in bern3 ; do # bern4 expo
+  for BMOD in bern3 bern4; do # bern4 expo
     if [[ "$SEL" != "" ]] && echo $SEL | grep -q "_" && echo $SEL | grep -q -v $BMOD; then continue; fi
-    for SMOD in  JDGauss; do # JGauss  JCB
+    for SMOD in  JDGauss JCB; do # JGauss  JCB
         if [[ "$SEL" != "" ]] && echo $SEL | grep -q "_" && echo $SEL | grep -q -v $BMOD; then continue; fi
         DEN="$CDEN"; POST=""
         python tnpEfficiency.py $PDS -d "abs(eta)<1.2 && $DEN" -n "$NUM" $OPTS --x-var pt $XBINS -N mu_${SMOD}_${BMOD}${POST}_${ID}_barrel -b $BMOD -s $SMOD $MASS --xtitle "p_{T} (GeV)" ;
         python tnpEfficiency.py $PDS -d "abs(eta)>1.2 && $DEN" -n "$NUM" $OPTS --x-var pt $XBINS -N mu_${SMOD}_${BMOD}${POST}_${ID}_endcap -b $BMOD -s $SMOD $MASS --xtitle "p_{T} (GeV)";
         python tnpEfficiency.py $PDS -d "pt > 7 && $DEN" -n "$NUM" $OPTS --x-var eta $EBINS -N mu_${SMOD}_${BMOD}${POST}_${ID}_pt7   -b $BMOD -s $SMOD $MASS  --xtitle "#eta";
         python tnpEfficiency.py $PDS -d "pt > 7 && $DEN" -n "$NUM" $OPTS --x-var tag_nVertices $VBINS -N mu_${SMOD}_${BMOD}${POST}_${ID}_pt7_vtx   -b $BMOD -s $SMOD $MASS --xtitle "N(vertices)";
-        exit
         if [[ "$SMOD" == "JDGauss" && "$BMOD" == "bern3" ]]; then
             MASS2=" -m mass 80,2.9,3.28"; POST="_mass"
             python tnpEfficiency.py $PDS -d "abs(eta)<1.2 && $DEN" -n "$NUM" $OPTS --x-var pt $XBINS -N mu_${SMOD}_${BMOD}${POST}_${ID}_barrel -b $BMOD -s $SMOD $MASS2 --xtitle "p_{T} (GeV)" ;
