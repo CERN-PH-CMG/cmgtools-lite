@@ -8,8 +8,7 @@ Iamdebugging = True
 from wmass_parameters import *
 
 if Iamdebugging:
-    print "mass_id_down, mass_id_up = %s,%s" % (mass_id_down,mass_id_up)
-    
+    print "mass_id_down, mass_id_up = %s,%s" % (mass_id_down,mass_id_up)    
 
 if len(sys.argv) < 2:
     print "----- WARNING -----"
@@ -43,7 +42,6 @@ class WMassFitMaker:
 
         # We'll have three copies of the observation, one for each mass point.
         # Filter all but one copy.
-        #cmb.FilterObs(lambda obj: obj.mass() != '15')
         cmb.FilterObs(lambda obj: obj.mass() != '%d' % self.mwcentral)
 
         # Create workspace to hold the morphing pdfs and the mass
@@ -116,7 +114,7 @@ class WMassFitMaker:
                 name="comb"
             else:
                 name=name.group(1)
-            if Iamdebugging:
+            if self.options.debug:
                 print "In run() function: name = " + str(name)
             ## constructing the command                                                                                                                                     
             combine_base  = 'combine -t -1 -M MultiDimFit --setPhysicsModelParameters mw={central},r=1 --setPhysicsModelParameterRanges mw={mwrange} '.format(central=self.mwcentral,mwrange=self.mwrange)
@@ -124,6 +122,7 @@ class WMassFitMaker:
 
             saveNuisances = ''
             saveNuisances += ' --saveSpecifiedNuis {vs}'.format(vs=','.join('CMS_We_pdf'+str(i) for i in range(1,27)))
+            saveNuisances += ','
             saveNuisances += '{vs} '.format(vs=','.join(['CMS_W_ptw','CMS_We_elescale']))
 
             combineCmds["nominal"] = combine_base + ' -n {date}_{name} {sn} '.format(date=date,name=name,sn=saveNuisances)
@@ -204,16 +203,20 @@ parser = OptionParser(usage="%prog /afs/path/to/datacard/in/CMSSW_5_3_22/ [optio
 parser.add_option("--freezeNuisances",dest="freezeNuisances",action="append", default=[],help="append a nuisance parameter to freeze when doing the fit. Can pass two names separated by comma: the first is the nuisance name in the datacard, the second a user friendly name for recording (if not given, use the first name)")
 parser.add_option("--freezeNuisanceGroups",dest="freezeNuisanceGroups",action="append", default=[],help="append a group of nuisance parameters to freeze when doing the fit. Can pass two names separated by comma: the first is the nuisance name in the datacard, the second a user friendly name for recording (if not given, use the first name)")
 parser.add_option("--step", dest="step", type="string", default=None, help="Specify which step to do: available options are runHarvest, combineCards, runFit. This option is mandatory.")
+parser.add_option("-d", "--debug", dest="debug", action="store_true", default=False, help="if True, print some info on stdout (default is False)")
 (options, args) = parser.parse_args()
+
+if options.debug:
+    print "mass_id_down, mass_id_up = %s,%s" % (mass_id_down,mass_id_up)
 
 card_dir = str(args[0])  # it should be the absolute path to CMSSW_5_3_22 release
 if not card_dir.endswith("/"):
     card_dir = card_dir + "/"
-# if not "CMSSW_5_3_22" in str(args[0]) or not str(args[0]).startswith("/afs/"):
-#     print "### WARNING ###"    
-#     print "The path to datacard folder is expected to be inside a CMSSW_5_3_22 release and the absolute path should be passed. Did you type the right full path?"
-#     print "Quitting ..."
-#     quit()
+if not "CMSSW_5_3_22" in str(args[0]) or not str(args[0]).startswith("/afs/"):
+    print "### WARNING ###"    
+    print "The path to datacard folder is expected to be inside a CMSSW_5_3_22 release and the absolute path should be passed. Did you type the right full path?"
+    print "Quitting ..."
+    quit()
 
 
 if not options.step:
@@ -249,14 +252,14 @@ else:
 input_dcs_alleta = ""
 workspaces = []
 for isub, subdir in enumerate(subdirs):
-    if Iamdebugging: 
+    if options.debug: 
         print "### subdir"
         print str(subdir)
     if subdir == subdirs[0]: continue
     if 'wenu_cards_morphed' in subdir: continue
     name = subdir.split('/')[-1]
     if not 'eta_' in name: continue
-    if Iamdebugging:
+    if options.debug:
         print "subdir was accepted"
     print '--------------------------------------------------------------------'
     print '- running for {mode} -----------------------------------------------'.format(mode=name)
@@ -278,7 +281,7 @@ for isub, subdir in enumerate(subdirs):
         input_dcs=" ".join(["%s=%s" % (os.path.splitext(dc)[0],subdir+"/wenu_cards_morphed_both/"+dc) for dc in dcs if "txt" in dc])
         input_dcs_alleta += " "+input_dcs
 
-        if Iamdebugging:
+        if options.debug:
             print ""
             print "input datacards --> input_dcs = " + str(input_dcs)
             print "target datacard --> target_dc = " + str(target_dc)
@@ -291,18 +294,17 @@ if not os.path.exists(comb_dir):
     os.mkdir(comb_dir)
 comb_dc = comb_dir+"/morphed_datacard_comb.txt"
 comb_ws = comb_dc.replace('txt','root')
-workspaces.append(comb_ws)
+workspaces.append(comb_ws)        
 
-if Iamdebugging:
-    print ""
-    print ""
-    print "Now the final step to combine datacards"
-    print "input datacards --> input_dcs_alleta = " + str(input_dcs_alleta)
-    print "target datacard --> comb_dc          = " + str(comb_dc)
-    print ""
-    print ""
-        
 if combineCards:
+    if options.debug:
+        print ""
+        print ""
+        print "Now the final step to combine datacards"
+        print "input datacards --> input_dcs_alleta = " + str(input_dcs_alleta)
+        print "target datacard --> comb_dc          = " + str(comb_dc)
+        print ""
+        print ""
     fit.combineCards(input_dcs_alleta,comb_dc)
 
 if runFit:

@@ -2,15 +2,19 @@ import ROOT, math, datetime, os
 from array import array
 ROOT.gROOT.SetBatch(True)
 
+# import some parameters from wmass_parameters.py, they are also used by other scripts                                                                                      
+from wmass_parameters import *
+
 colorArray = [1, 2, 3, 4, 6, 7, 8, 9, 45, 38, 28, 29, 13, 41, 30, 40, ROOT.kOrange, ROOT.kPink, ROOT.kCyan+1, ROOT.kSpring, ROOT.kYellow-3, ROOT.kRed-3, ROOT.kBlue-3, ROOT.kOrange-3, ROOT.kMagenta-3, ROOT.kGreen-8]
 
 date = datetime.date.today().isoformat()
 date+='-manyPoints'
 
-mcentral = 19
+mcentral = mass_id_central # from wmass_parameters
 
 def getMW(massid):
-    wmass_steps = [x for x in range(0,24,2)] + [x for x in range(24,54,10)] + [x for x in range(54,141,20)]
+    #wmass_steps = [x for x in range(0,24,2)] + [x for x in range(24,54,10)] + [x for x in range(54,141,20)]
+    wmass_steps = wmass_steps_MeV  # from wmass_parameters
     wmass_central = 80.398
     wmass_steps_full = [-1e-3*x + wmass_central for x in wmass_steps[1:]]
     wmass_steps_full += [1e-3*x + wmass_central for x in wmass_steps]
@@ -99,10 +103,15 @@ class likelihood:
         self.graph.GetYaxis().SetTitle('-2 #Delta ln L')
         self.graph.GetYaxis().SetRangeUser(-0.01, 4.0)
 
-lh_eta_0           = likelihood('higgsCombine2017-07-31_00_05.MultiDimFit.mH120.root'                       , 'eta_00_05_withPDF'    , 'W^{#pm} w/ syst'    ,  1 , 20)
-lh_eta_0_noPDF     = likelihood('higgsCombine2017-07-31_00_05_noPDFUncertainty.MultiDimFit.mH120.root'      , 'eta_00_05_noPDF'      , 'W^{#pm} no PDF'    ,  1 , 24)
-lh_eta_0_noPTW     = likelihood('higgsCombine2017-07-31_00_05_noPTWUncertainty.MultiDimFit.mH120.root'      , 'eta_00_05_noPtW'      , 'W^{#pm} no p_{T}^{W}'  ,  1 , 21)
-lh_eta_0_noEScale  = likelihood('higgsCombine2017-07-31_00_05_noEScaleUncertainty.MultiDimFit.mH120.root'   , 'eta_00_05_noEScale'   , 'W^{#pm} no e-scale'    ,  1 , 25)
+# lh_eta_0           = likelihood('higgsCombine2017-07-13_charges_00_04.MultiDimFit.mH120.root'                       , 'eta_00_04_withPDF'    , 'W^{#pm} w/ syst'    ,  1 , 20)
+# lh_eta_0_noPDF     = likelihood('higgsCombine2017-07-13_charges_00_04_noPDFUncertainty.MultiDimFit.mH120.root'      , 'eta_00_04_noPDF'      , 'W^{#pm} no PDF'    ,  1 , 24)
+# lh_eta_0_noPTW     = likelihood('higgsCombine2017-07-13_charges_00_04_noPTWUncertainty.MultiDimFit.mH120.root'      , 'eta_00_04_noPtW'      , 'W^{#pm} no p_{T}^{W}'  ,  1 , 21)
+# lh_eta_0_noEScale  = likelihood('higgsCombine2017-07-13_charges_00_04_noEScaleUncertainty.MultiDimFit.mH120.root'   , 'eta_00_04_noEScale'   , 'W^{#pm} no e-scale'    ,  1 , 25)
+
+lh_eta_0           = likelihood('higgsCombine2017-08-18_comb.MultiDimFit.mH120.root'                       , 'comb_withPDF'    , 'W^{#pm} w/ syst'    ,  1 , 20)
+lh_eta_0_noPDF     = likelihood('higgsCombine2017-08-18_comb_noPDFUncertainty.MultiDimFit.mH120.root'      , 'comb_noPDF'      , 'W^{#pm} no PDF'    ,  1 , 24)
+lh_eta_0_noPTW     = likelihood('higgsCombine2017-08-18_comb_noPtWUncertainty.MultiDimFit.mH120.root'      , 'comb_noPtW'      , 'W^{#pm} no p_{T}^{W}'  ,  1 , 21)
+lh_eta_0_noEScale  = likelihood('higgsCombine2017-08-18_comb_noEScaleUncertainty.MultiDimFit.mH120.root'   , 'comb_noEScale'   , 'W^{#pm} no e-scale'    ,  1 , 25)
 
 lhs = [
     lh_eta_0      ,
@@ -143,13 +152,15 @@ line.Draw('same')
 #for i,l in enumerate(lhs):
 #    l.line.Draw()
 
-outpath = '/afs/cern.ch/user/e/emanuele/www/Analysis/WMass/8TeV/we/fitTests/{date}/'.format(date=date)
+outpath = '/afs/cern.ch/user/e/emanuele/www/Analysis/WMass/13TeV/we/fitTests/{date}/'.format(date=date)
+if 'mciprian' in os.environ['USER']: 
+    outpath = "{cmssw_base}/src/CMGTools/MonoXAnalysis/python/plotter/plots/Likelihood/{date}/".format(cmssw_base=os.environ['CMSSW_BASE'],date=date)
 if not os.path.exists(outpath):
     os.makedirs(outpath)
-    os.system('cp ~/index.php {op}'.format(op=outpath))
+    os.system('cp /afs/cern.ch/user/g/gpetrucc/php/index.php {op}'.format(op=outpath))
     
-canv.SaveAs('{op}/syst_effects_00_05.pdf'.format(op=outpath))
-canv.SaveAs('{op}/syst_effects_00_05.png'.format(op=outpath))
+canv.SaveAs('{op}/syst_effects_comb.pdf'.format(op=outpath))
+canv.SaveAs('{op}/syst_effects_comb.png'.format(op=outpath))
 
 for i,l in enumerate(lhs):
     if l.hasVars:

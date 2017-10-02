@@ -63,7 +63,7 @@ float fakeRateWeight_1l_i(float lpt, float leta, int lpdgId, bool passWP, int iF
     int ptbin  = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(fpt)));
     int etabin = std::max(1, std::min(hist->GetNbinsY(), hist->GetYaxis()->FindBin(feta)));
     double fr = hist->GetBinContent(ptbin,etabin);
-    return fr*(1-fr);
+    return fr/(1-fr);
   } else return 0;
 }
 

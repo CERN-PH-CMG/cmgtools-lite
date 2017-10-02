@@ -27,7 +27,10 @@ class PlotFile:
                 more = more.replace("\\,",";")
                 for setting in [f.strip().replace(";",",") for f in more.split(',')]:
                     if "=" in setting: 
-                        (key,val) = [f.strip() for f in setting.split("=")]
+                        # in following line, if setting has more than one '=' an error will occur, e.g., if you have XTitle="muon isolation (#DeltaR=0.4)"
+                        #(key,val) = [f.strip() for f in setting.split("=")]  
+                        # therefore, split only on the first occurrence of '='
+                        (key,val) = [f.strip() for f in setting.split("=",1)]  
                         extra[key] = eval(val)
                     else: extra[setting] = True
             line = re.sub("#.*","",line) 
@@ -695,15 +698,18 @@ class PlotMaker:
                     if v.InheritsFrom("TH1"): v.SetDirectory(dir) 
                     dir.WriteTObject(v)
                 #
+                print "Check before printOnePlot() in mcPlots.py, plotter::run()"
                 self.printOnePlot(mca,pspec,pmap,
                                   xblind=xblind,
                                   makeCanvas=makeCanvas,
                                   outputDir=dir,
                                   printDir=self._options.printDir+(("/"+subname) if subname else ""))
+                print "Check after printOnePlot() in mcPlots.py, plotter::run()"
 
             if elist: mca.clearCut()
 
     def printOnePlot(self,mca,pspec,pmap,makeCanvas=True,outputDir=None,printDir=None,xblind=[9e99,-9e99],extraProcesses=[],plotmode="auto",outputName=None):
+                print "Just inside printOnePlot() in mcPlots.py, plotter::run()"
                 options = self._options
                 if printDir == None: printDir=self._options.printDir
                 if outputDir == None: outputDir = self._dir
@@ -954,6 +960,8 @@ class PlotMaker:
                             else:
                                 c1.Print("%s/%s.%s" % (fdir, outputName, ext))
                 c1.Close()
+                print "Check after c1.Close() in mcPlots.py, plotter::run()"
+
 
 def addPlotMakerOptions(parser, addAlsoMCAnalysis=True):
     if addAlsoMCAnalysis: addMCAnalysisOptions(parser)
@@ -1033,6 +1041,7 @@ if __name__ == "__main__":
     outfile  = ROOT.TFile(outname,"RECREATE")
     plotter = PlotMaker(outfile,options)
     plotter.run(mca,cuts,plots)
+    print "Check before outfile.Close() in mcPlots.py"
     outfile.Close()
 
 

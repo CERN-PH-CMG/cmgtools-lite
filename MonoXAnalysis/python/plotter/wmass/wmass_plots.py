@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# may use as: cat wmass_e/zee_catlist.txt | xargs -i python wmass_e/wmass_plots.py plots/testZskim {} > runplots.sh
+# may use as: cat wmass/wmass_e/zee_catlist.txt | xargs -i python wmass/wmass_plots.py plots/testZskim {} > runplots.sh
 import sys
 import re
 import os
@@ -16,7 +16,7 @@ dowhat = "plots"
 TREES = "-F mjvars/t '{P}/friends/evVarFriend_{cname}.root' --FMC sf/t '{P}/friends/sfFriend_{cname}.root' --FMC kinvars/t '{P}/friends/kinVarFriend_{cname}.root' "
 TREESONLYSKIMW = "-P /data1/emanuele/wmass/TREES_1LEP_53X_V3_WSKIM_V7/"
 TREESONLYSKIMZ = "-P /data1/emanuele/wmass/TREES_1LEP_53X_V3_ZEESKIM_V7/"
-TREESONLYFULL = "-P /data1/emanuele/wmass/TREES_1LEP_53X_V3"
+TREESONLYFULL = "-P /data1/emanuele/wmass/TREES_1LEP_53X_V3/"
 
 def base(selection):
 
@@ -32,13 +32,13 @@ def base(selection):
     if dowhat == "plots": CORE+=" --lspam '#bf{CMS} #it{Preliminary}' --legendWidth 0.20 --legendFontSize 0.035 --showRatio --maxRatioRange 0.75 1.25 --fixRatioRange "
 
     if selection=='wenu':
-        GO="%s wmass_e/mca-53X-wenu.txt wmass_e/wenu.txt "%CORE
+        GO="%s wmass/wmass_e/mca-53X-wenu.txt wmass/wmass_e/wenu.txt "%CORE
         GO="%s -W 'puWeight*SF_LepTight_1l'"%GO
-        if dowhat in ["plots","ntuple"]: GO+=" wmass_e/wenu_plots.txt "
+        if dowhat in ["plots","ntuple"]: GO+=" wmass/wmass_e/wenu_plots.txt "
     elif selection=='zee':
-        GO="%s wmass_e/mca-53X-zee.txt wmass_e/zee.txt "%CORE
+        GO="%s wmass/wmass_e/mca-53X-zee.txt wmass/wmass_e/zee.txt "%CORE
         GO="%s -W 'puWeight*SF_LepTight_2l*zpt_w*aipi_w' --sp 'Z' "%GO
-        if dowhat in ["plots","ntuple"]: GO+=" wmass_e/zee_plots.txt "
+        if dowhat in ["plots","ntuple"]: GO+=" wmass/wmass_e/zee_plots.txt "
     else:
         raise RuntimeError, 'Unknown selection'
 
