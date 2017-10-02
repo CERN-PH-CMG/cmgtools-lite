@@ -7,10 +7,23 @@ parser = OptionParser(usage="%prog testname ")
 parser.add_option("--mu", dest="useMuon", default=False, action='store_true', help="Do fake rate for muons");
 parser.add_option("--qcdmc", dest="addQCDMC", default=False, action='store_true', help="Add QCD MC in plots (but do not subtract from data)");
 parser.add_option("--singleEtaBin", dest="singleEtaBin", default=-1.0, type='float', help="Use a single eta bin (pass the upper eta boundary)");
+parser.add_option("--charge", dest="charge", default="", type='string', help="Select charge: p for positive, n for negative");
 (options, args) = parser.parse_args()
+
+chargeSelection = ""
+if options.charge != "":
+    if options.charge == "p":
+        chargeSelection = "-A onelep positive 'LepGood1_pdgId < 0'"
+    elif options.charge == "n":
+        chargeSelection = "-A onelep negative 'LepGood1_pdgId > 0'"
+    else:
+        print "%s is not a valid input for charge setting: use p or n" % options.charge
+        quit()
 
 useMuon = options.useMuon
 addQCDMC = options.addQCDMC  # trying to add QCD MC to graphs to be compared
+if useMuon:
+    addQCDMC = True
 
 T='/data1/emanuele/wmass/TREES_1LEP_53X_V3_FRELSKIM_V3'  # WARNING, for the moment it is stored in pccmsrm29, but not in lxplus
 objName='tree' # name of TTree object in Root file, passed to option --obj in tree2yield.py
@@ -49,14 +62,23 @@ OPTIONS += ' -F mjvars/t "'+T+'/friends/evVarFriend_{cname}.root" '
 PBASE = "plots/fake-rate/el/"
 if useMuon:
     PBASE = "plots/fake-rate/mu/"
+if options.charge == "p":
+    PBASE = PBASE + "pos/"
+elif options.charge == "n":
+    PBASE = PBASE + "neg/"
+else:
+    PBASE = PBASE + "comb/"
+
 EWKSPLIT="-p 'W_fake,W,Z,Top,DiBosons,data'"
 if addQCDMC:
-    EWKSPLIT="-p 'W_fake,W,Z,data,Top,DiBosons,QCD'"
+    EWKSPLIT="-p 'QCD,W,Z,data,Top,DiBosons'"
 
 MCEFF="  python wmass/dataFakeRate.py "+ OPTIONS + " " + EWKSPLIT + " --groupBy cut wmass/make_fake_rates_sels.txt wmass/make_fake_rates_xvars.txt  "
-MCEFF += "--sp W_fake "
 if addQCDMC:
     MCEFF += "--sp QCD "
+else:
+    MCEFF += "--sp W_fake "
+
 MCEFF += "--sP "+NUM+" --sP "+XVAR+"  --sP "+FITVAR+" "+FITVAR+"  --ytitle 'Fake rate' "
 MCEFF += " --fixRatioRange --maxRatioRange 0.7 1.29 " # ratio for other plots
 LEGEND=" --legend=TL --fontsize 0.05 --legendWidth 0.4"
@@ -69,17 +91,17 @@ else:
 MCEFF += (LEGEND+RANGES)
 
 if addQCDMC:
-    MCGO=MCEFF + " --algo=fQCD --compare W_fake_prefit,data_fqcd,data_prefit,QCD_prefit "
+    MCGO=MCEFF + " --algo=fQCD --compare QCD_prefit,data_fqcd,data_prefit "
 else:
     MCGO=MCEFF + " --algo=fQCD --compare W_fake_prefit,data_fqcd,data_prefit "
 
 if options.singleEtaBin > 0.0:
-    print MCEFF+" -o "+PBASE+"/fr_sub_eta_"+ALL+".root --bare -A onelep eta 'abs(LepGood_eta)<"+ETA+"'\n"
+    print MCEFF+" -o "+PBASE+"/fr_sub_eta_"+ALL+".root --bare -A onelep eta 'abs(LepGood1_eta)<"+ETA+"' " + str(chargeSelection) +"\n"
     print "\n\n"
     print MCGO + "-i " + PBASE + "/fr_sub_eta_"+ALL+".root -o "+PBASE+"/fr_sub_eta_"+ALL+"_fQCD.root --subSyst 0.2\n" 
 else:
-    print MCEFF+" -o "+PBASE+"/fr_sub_eta_"+BARREL+".root --bare -A onelep eta 'abs(LepGood_eta)<"+ETA+"'\n"
-    print MCEFF+" -o "+PBASE+"/fr_sub_eta_"+ENDCAP+".root --bare -A onelep eta 'abs(LepGood_eta)>"+ETA+"'\n"
+    print MCEFF+" -o "+PBASE+"/fr_sub_eta_"+BARREL+".root --bare -A onelep eta 'abs(LepGood1_eta)<"+ETA+"' " + str(chargeSelection) +"\n"
+    print MCEFF+" -o "+PBASE+"/fr_sub_eta_"+ENDCAP+".root --bare -A onelep eta 'abs(LepGood1_eta)>"+ETA+"' " + str(chargeSelection) +"\n"
     print "\n\n"
     print MCGO + "-i " + PBASE + "/fr_sub_eta_"+BARREL+".root -o "+PBASE+"/fr_sub_eta_"+BARREL+"_fQCD.root --subSyst 0.2\n" 
     print MCGO + "-i " + PBASE + "/fr_sub_eta_"+ENDCAP+".root -o "+PBASE+"/fr_sub_eta_"+ENDCAP+"_fQCD.root --subSyst 0.2\n" 
@@ -89,7 +111,7 @@ STACK="python wmass/stack_fake_rates_data.py "+RANGES+LEGEND+" --comb-mode=midpo
 PATT=NUM+"_vs_"+XVAR+"_"+FITVAR+"_%s"
 
 if addQCDMC:
-    procToCompare="W_fake_prefit,data_fqcd,QCD_prefit"
+    procToCompare="QCD_prefit,data_fqcd"
 else:
     procToCompare="W_fake_prefit,data_fqcd"
 

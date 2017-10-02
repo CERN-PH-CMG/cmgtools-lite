@@ -107,6 +107,7 @@ if __name__ == "__main__":
     parser.add_option("--normEffUncToLumi", dest="normEffUncToLumi", action="store_true", default=False, help="Normalize the dataset to the given lumi for the uncertainties on the calculated efficiency")
     parser.add_option("--etaBinEdges", dest="etaBinEdges", type="string", default="", help="Give a comma separated list of lepton eta bin edges to make fit categories. Be consistent with binning used to compute fake rate")
     parser.add_option("--ptBinEdges", dest="ptBinEdges", type="string", default="", help="Give a comma separated list of lepton pt bin edges to make fit categories. Be consistent with binning used to compute fake rate")
+    parser.add_option("--charge", dest="charge", default="", type='string', help="Select charge: p for positive, n for negative");
     (options, args) = parser.parse_args()
     (outname) = args[0]
     an = args[1]
@@ -161,8 +162,15 @@ if __name__ == "__main__":
            h2d_el = [ make2D(outfile,"FR_FullSel_MVATrig_el_"+X, ptbins_el, etabins_el) for X in XsQ ]
 
            Plots="plots/fake-rate/el"
+           if options.charge == "p":
+               Plots=Plots +"pos"
+           elif options.charge == "n":
+               Plots=Plots +"neg"
+           else:
+               Plots=Plots +"comb"
+
            #### Electrons: 
-           readMany2D(XsQ, h2d_el, "plots/fake-rate/el/fr_sub_eta_%s_comp.root", "%s", etaslices, (25,100) )
+           readMany2D(XsQ, h2d_el, Plots+"/fr_sub_eta_%s_comp.root", "%s", etaslices, (25,100) )
            # Serialize
            for h in h2d_el:    outfile.WriteTObject(h)
 
@@ -170,8 +178,14 @@ if __name__ == "__main__":
 
            h2d_mu = [ make2D(outfile,"FR_FullSel_MVATrig_mu_"+X, ptbins_mu, etabins_mu) for X in XsQ ]
            Plots="plots/fake-rate/mu"
+           if options.charge == "p":
+               Plots=Plots +"pos"
+           elif options.charge == "n":
+               Plots=Plots +"neg"
+           else:
+               Plots=Plots +"comb"
+
            #### Muons: 
-           #readMany2D(XsQ, h2d_mu, "plots/fake-rate/mu/fr_sub_eta_%s_comp.root", "%s", etaslices, (25,100) )
            readMany2D(XsQ, h2d_mu, "plots/fake-rate/mu/fr_sub_eta_%s_comp.root", "%s", etaslices, (25,100) )
            # Serialize
            for h in h2d_mu:    outfile.WriteTObject(h)
