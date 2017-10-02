@@ -1,0 +1,15 @@
+data_w: SingleElectron_Run2016B
+data_w: SingleElectron_Run2016C
+data_w: SingleElectron_Run2016D
+data_w: SingleElectron_Run2016E
+data_w: SingleElectron_Run2016F
+data_w: SingleElectron_Run2016G
+data_w: SingleElectron_Run2016H
+
+data_z: DoubleEG_Run2016B
+data_z: DoubleEG_Run2016C
+data_z: DoubleEG_Run2016D
+data_z: DoubleEG_Run2016E
+data_z: DoubleEG_Run2016F
+data_z: DoubleEG_Run2016G
+data_z: DoubleEG_Run2016H
