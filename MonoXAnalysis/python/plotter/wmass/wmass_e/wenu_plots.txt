@@ -7,10 +7,13 @@ tkmet: met_trkPt : 60,0,60 ; XTitle="charged PF E_{T}^{miss} [GeV]", Legend='TR'
 wpt_tk: pt_2(LepGood1_pt, LepGood1_phi, met_trkPt, met_trkPhi ): 40,0,40 ; XTitle="W p_{T} (charged PF E_{T}^{miss}) [GeV]", Legend='TR', IncludeOverflows=False 
 wpt_pf: pt_2(LepGood1_pt, LepGood1_phi, met_pt, met_phi ): 40,0,40 ; XTitle="W p_{T} (PF E_{T}^{miss}) [GeV]", Legend='TR', IncludeOverflows=False 
 
-eleIso04: LepGood1_relIso04 : 60,0,0.6 ; XTitle="relative isolation 04", Legend='TR', IncludeOverflows=True
+eleIso04: LepGood1_relIso04 : 120,0,0.6 ; XTitle="relative isolation 04", Legend='TR', IncludeOverflows=True
 #jetClean: nJetClean : 5,-0.5,4.5 ; XTitle="number of cleaned jet (pT>30 GeV)", Legend='TR', IncludeOverflows=False
 #dphilj: abs(deltaPhi(LepGood1_phi,JetClean1_phi)) : 31,0,31 ; XTitle="#Delta#phi(electron\,Jet)", Legend='TR', IncludeOverflows=True 
-dxy: abs(Lep_Good1_dxy) : 100,0,0.05; XTitle="#Deltaxy", Legend='TR', IncludeOverflows=True 
+dxy: abs(LepGood1_dxy) : 100,0,0.05; XTitle="#Deltaxy", Legend='TR', IncludeOverflows=True 
+
+nVert: nVert : 40,0.5,40.5; XTitle="number of vertices", Legend='TR', IncludeOverflows=True 
+rho: rho : 80,0.5,40.5; XTitle="#rho", Legend='TR', IncludeOverflows=True 
 
 pfmt: mt_2(met_pt,met_phi,LepGood1_pt,LepGood1_phi) : 80,40,120 ; XTitle="m_{T} [GeV]", Legend='TL', IncludeOverflows=False
 trkmt: mt_2(met_trkPt,met_trkPhi,LepGood1_pt,LepGood1_phi) : 60,50,110 ; XTitle="m_{T} [GeV]", Legend='TL', IncludeOverflows=False
