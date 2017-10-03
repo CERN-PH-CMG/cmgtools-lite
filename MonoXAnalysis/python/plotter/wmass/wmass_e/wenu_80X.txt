@@ -7,7 +7,7 @@ kin accept: LepGood1_pt > 30 && abs(LepGood1_eta)<2.5
 #lostHits: LepGood1_lostHits <= 1
 #conVeto: LepGood1_convVeto
 # medium WP for ID
-cut based ID: LepGood_tightId >= 2
+cut based ID: LepGood1_tightId >= 2
 # iso for medium WP
 iso04: LepGood1_relIso04 < if3(abs(LepGood1_eta)<1.479,0.0695,0.0821)
 conVeto: LepGood1_convVeto
