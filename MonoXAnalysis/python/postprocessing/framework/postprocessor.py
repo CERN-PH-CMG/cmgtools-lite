@@ -9,7 +9,7 @@ from CMGTools.MonoXAnalysis.postprocessing.framework.output import FriendOutput,
 from CMGTools.MonoXAnalysis.postprocessing.framework.preskimming import preSkim
 
 class PostProcessor :
-    def __init__(self,outputDir,inputFiles,cut=None,branchsel=None,modules=[],compression="LZMA:9",friend=False,postfix=None,json=None,noOut=False,justcount=False):
+    def __init__(self,outputDir,inputFiles,cut=None,branchsel=None,modules=[],compression="LZMA:9",friend=False,postfix=None,json=None,noOut=False,justcount=False,eventRange=None):
 	self.outputDir=outputDir
 	self.inputFiles=inputFiles
 	self.cut=cut
@@ -20,6 +20,7 @@ class PostProcessor :
 	self.noOut=noOut
 	self.friend=friend
 	self.justcount=justcount
+        self.eventRange=eventRange
  	self.branchsel = BranchSelection(branchsel) if branchsel else None 
     def run(self) :
     	if not self.noOut:
@@ -48,7 +49,32 @@ class PostProcessor :
 
 	for fname in self.inputFiles:
 	    # open input file
-	    inFile = ROOT.TFile.Open(fname)
+            fetchedfile = None
+            if 'LSB_JOBID' in os.environ or 'LSF_JOBID' in os.environ:
+                if fname.startswith("root://"):
+                    try:
+                        tmpdir = os.environ['TMPDIR'] if 'TMPDIR' in os.environ else "/tmp"
+                        tmpfile =  "%s/%s" % (tmpdir, os.path.basename(fname))
+                        print "xrdcp %s %s" % (fname, tmpfile)
+                        os.system("xrdcp %s %s" % (fname, tmpfile))
+                        if os.path.exists(tmpfile):
+                            fname = tmpfile
+                            fetchedfile = fname
+                            print "success :-)"
+                    except:
+                        pass
+                inFile = ROOT.TFile.Open(fname)
+            elif "root://" in fname:
+                ROOT.gEnv.SetValue("TFile.AsyncReading", 1);
+                ROOT.gEnv.SetValue("XNet.Debug", 0); # suppress output about opening connections
+                ROOT.gEnv.SetValue("XrdClientDebug.kUSERDEBUG", 0); # suppress output about opening connections
+                inFile   = ROOT.TXNetFile(fname+"?readaheadsz=65535&DebugLevel=0")
+                os.environ["XRD_DEBUGLEVEL"]="0"
+                os.environ["XRD_DebugLevel"]="0"
+                os.environ["DEBUGLEVEL"]="0"
+                os.environ["DebugLevel"]="0"
+            else:
+                inFile = ROOT.TFile.Open(fname)
 
 	    #get input tree
 	    inTree = inFile.Get("tree")
@@ -80,7 +106,7 @@ class PostProcessor :
 
 	    # process events, if needed
 	    if not fullClone:
-		(nall, npass, time) = eventLoop(self.modules, inFile, outFile, inTree, outTree)
+		(nall, npass, time) = eventLoop(self.modules, inFile, outFile, inTree, outTree, eventRange=self.eventRange)
 		print 'Processed %d entries from %s, selected %d entries' % (nall, fname, npass)
 	    else:
 		print 'Selected %d entries from %s' % (outTree.tree().GetEntries(), fname)
@@ -89,5 +115,8 @@ class PostProcessor :
 	    outTree.write()
 	    outFile.Close()
 	    print "Done %s" % outFileName
+            if fetchedfile and os.path.exists(fetchedfile):
+                print 'Cleaning up: removing %s'%fetchedfile
+                os.system("rm %s"%fetchedfile)
 
 	for m in self.modules: m.endJob()
