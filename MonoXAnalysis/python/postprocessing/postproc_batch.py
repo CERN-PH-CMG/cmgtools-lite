@@ -130,7 +130,6 @@ if __name__ == "__main__":
     maintimer = ROOT.TStopwatch()
     def _runIt(myargs):
         (name,fin,sample_nevt,fout,data,range,chunk) = myargs
-        
         modules = []
         for mod, names in options.imports: 
             import_module(mod)
