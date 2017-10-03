@@ -1,5 +1,5 @@
 alwaystrue: 1
-trigger: HLT_SingleEl==1
+#trigger: HLT_SingleEl==1
 onelep: nLepGood == 1
 ele: abs(LepGood1_pdgId)==11
 kin accept: LepGood1_pt > 30 && abs(LepGood1_eta)<2.5
