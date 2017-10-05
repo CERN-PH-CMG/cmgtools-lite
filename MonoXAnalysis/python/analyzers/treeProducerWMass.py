@@ -1,4 +1,7 @@
+from PhysicsTools.Heppy.analyzers.core.AutoFillTreeProducer  import * 
+
 from CMGTools.TTHAnalysis.analyzers.ntupleTypes import *
+from CMGTools.MonoXAnalysis.analyzers.ntupleTypes import *
 
 wmass_globalVariables = [
 
@@ -18,36 +21,31 @@ wmass_globalVariables = [
 
             ##--------------------------------------------------            
             NTupleVariable("mZ1", lambda ev : ev.bestZ1[0], help="Best m(ll) SF/OS"),
-            NTupleVariable("mZ1SFSS", lambda ev : ev.bestZ1sfss[0], help="Best m(ll) SF/SS"),
-            NTupleVariable("m2l", lambda ev: ev.m2l, help="m(ll)"),
-            ##--------------------------------------------------
-            NTupleVariable("mZ2", lambda ev : ev.bestZ2[3], help="m(ll) of second SF/OS pair, for ZZ reco."),
-            NTupleVariable("pt2l", lambda ev: ev.pt2l, help="p_{T}(ll)"),
-
-            NTupleVariable("Flag_badChargedHadronFilter", lambda ev: ev.badChargedHadron, help="bad charged hadron filter decision"),
-            NTupleVariable("Flag_badMuonFilter", lambda ev: ev.badMuon, help="bad muon filter decision"),
 ]
 
 wmass_globalObjects = {
-            "met" : NTupleObject("met", metType, help="PF E_{T}^{miss}, after type 1 corrections"),
-            #"metNoPU" : NTupleObject("metNoPU", fourVectorType, help="PF noPU E_{T}^{miss}"),
+            "met"   : NTupleObject("met", metType, help="PF E_{T}^{miss}, after type 1 corrections"),
+            "tkMet" : NTupleObject("tkMet", fourVectorType, help="PF E_{T}^{miss} from charged candidates with dz<0.1"),
+            "tkMetPVchs" : NTupleObject("tkMetPVchs", fourVectorType, help="PF E_{T}^{miss} from charged candidates with chs"),
+            "tkMetPVLoose" : NTupleObject("tkMetPVLoose", fourVectorType, help="PF E_{T}^{miss} from charged candidates with Loose chs"),
+            "tkMetPVTight" : NTupleObject("tkMetPVTight", fourVectorType, help="PF E_{T}^{miss} from charged candidates with Tight chs"),
 }
 
 wmass_collections = {
-            "selectedLeptons" : NTupleCollection("LepGood",  leptonTypeSusyExtraLight, 8, help="Leptons after the preselection"),
-            "otherLeptons"    : NTupleCollection("LepOther", leptonTypeSusy, 8, help="Leptons after the preselection"),
+            "selectedLeptons" : NTupleCollection("LepGood",  leptonTypeWMass, 8, help="Leptons after the preselection"),
+            #"otherLeptons"    : NTupleCollection("LepOther", leptonTypeSusy, 8, help="Leptons after the preselection"),
             ##------------------------------------------------
             "cleanJets"       : NTupleCollection("Jet",     jetTypeSusyExtraLight, 15, help="Cental jets after full selection and cleaning, sorted by pt"),
-            "cleanJetsFwd"    : NTupleCollection("JetFwd",  jetTypeSusy,  6, help="Forward jets after full selection and cleaning, sorted by pt"),            
+            #"cleanJetsFwd"    : NTupleCollection("JetFwd",  jetTypeSusy,  6, help="Forward jets after full selection and cleaning, sorted by pt"),            
             #"fatJets"         : NTupleCollection("FatJet",  fatJetType,  15, help="AK8 jets, sorted by pt"),
             ##------------------------------------------------
             #"ivf"       : NTupleCollection("SV",     svType, 20, help="SVs from IVF"),
             ##------------------------------------------------
             "LHE_weights"    : NTupleCollection("LHEweight",  weightsInfoType, 1000, mcOnly=True, help="LHE weight info"),
             ##------------------------------------------------
-            "genleps"         : NTupleCollection("genLep",     genParticleWithLinksType, 10, help="Generated leptons (e/mu) from W/Z decays"),                                                                                                
-            "gentauleps"      : NTupleCollection("genLepFromTau", genParticleWithLinksType, 10, help="Generated leptons (e/mu) from decays of taus from W/Z/h decays"),                                                                       
-            "gentaus"         : NTupleCollection("genTau",     genParticleWithLinksType, 10, help="Generated leptons (tau) from W/Z decays"),                            
-            "generatorSummary" : NTupleCollection("GenPart", genParticleWithLinksType, 100 , help="Hard scattering particles, with ancestry and links"),
+            #"genleps"         : NTupleCollection("genLep",     genParticleWithLinksType, 10, help="Generated leptons (e/mu) from W/Z decays"),                                                                                                
+            #"gentauleps"      : NTupleCollection("genLepFromTau", genParticleWithLinksType, 10, help="Generated leptons (e/mu) from decays of taus from W/Z/h decays"),                                                                       
+            #"gentaus"         : NTupleCollection("genTau",     genParticleWithLinksType, 10, help="Generated leptons (tau) from W/Z decays"),                            
+            "generatorSummary" : NTupleCollection("GenPart", genParticleWithLinksType, 20 , help="Hard scattering particles, with ancestry and links"),
 }
 
