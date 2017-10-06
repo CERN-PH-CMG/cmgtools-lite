@@ -25,7 +25,6 @@ wmass_globalVariables = [
 
 wmass_globalObjects = {
             "met"   : NTupleObject("met", metType, help="PF E_{T}^{miss}, after type 1 corrections"),
-            "tkMet" : NTupleObject("tkMet", fourVectorType, help="PF E_{T}^{miss} from charged candidates with dz<0.1"),
             "tkMetPVchs" : NTupleObject("tkMetPVchs", fourVectorType, help="PF E_{T}^{miss} from charged candidates with chs"),
             "tkMetPVLoose" : NTupleObject("tkMetPVLoose", fourVectorType, help="PF E_{T}^{miss} from charged candidates with Loose chs"),
             "tkMetPVTight" : NTupleObject("tkMetPVTight", fourVectorType, help="PF E_{T}^{miss} from charged candidates with Tight chs"),

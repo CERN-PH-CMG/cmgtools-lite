@@ -147,6 +147,7 @@ genAna = cfg.Analyzer(
     # Make also the splitted lists
     makeSplittedGenLists = True,
     allGenTaus = False,
+    saveIncomingPartons = True,
     # Print out debug information
     verbose = False,
     )

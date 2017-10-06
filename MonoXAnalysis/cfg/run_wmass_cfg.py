@@ -470,6 +470,18 @@ elif test == '80X-MC':
         comp.files = [ tmpfil ]
         comp.splitFactor = 1
         if not getHeppyOption("single"): comp.fineSplitFactor = 4
+    if what == "WJets":
+        WJetsToLNu = kreator.makeMCComponent("WJetsToLNu", "/WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM", "CMS", ".*root", 3* 20508.9)
+        selectedComponents = [ WJetsToLNu ]
+        comp = selectedComponents[0]
+        comp.triggers = []
+        comp.files = [ '/store/mc/RunIISummer16MiniAODv2/WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/120000/160DFF65-E8BF-E611-A4AD-0CC47AC08C1A.root' ]
+        tmpfil = os.path.expandvars("/tmp/$USER/160DFF65-E8BF-E611-A4AD-0CC47AC08C1A.root")
+        if not os.path.exists(tmpfil):
+            os.system("xrdcp root://eoscms//eos/cms%s %s" % (comp.files[0],tmpfil))
+        comp.files = [ tmpfil ]
+        comp.splitFactor = 1
+        if not getHeppyOption("single"): comp.fineSplitFactor = 4
     else: raise RuntimeError, "Unknown MC sample: %s" % what
 elif test == '80X-Data':
     DoubleMuon = kreator.makeDataComponent("DoubleMuon_Run2016B_run274315", "/DoubleMuon/Run2016B-18Apr2017_ver2-v1/MINIAOD", "CMS", ".*root", run_range = (274315,274315), triggers = triggers_mumu)
