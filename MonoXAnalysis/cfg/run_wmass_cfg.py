@@ -27,6 +27,10 @@ forcedFineSplitFactor = getHeppyOption("fineSplitFactor",-1)
 isTest = getHeppyOption("test",None) != None and not re.match("^\d+$",getHeppyOption("test"))
 selectedEvents=getHeppyOption("selectEvents","")
 
+# save LHE weights: very big! do only for needed MC samples
+runOnSignal = True
+keepLHEweights = False
+
 # Lepton Skimming
 ttHLepSkim.minLeptons = 1
 ttHLepSkim.maxLeptons = 999
@@ -210,14 +214,24 @@ selectedComponents = [ DYJetsToLL_M50 ]
 samples_1fake = [QCD_Mu15] + QCD_Mu5 + QCDPtEMEnriched + QCDPtbcToE + GJetsDR04HT
 single_t = [TToLeptons_sch_amcatnlo,T_tch_powheg,TBar_tch_powheg,T_tWch_ext,TBar_tWch_ext] # single top + tW
 tt_1l = [TTJets_SingleLeptonFromT,TTJets_SingleLeptonFromT_ext,TTJets_SingleLeptonFromTbar,TTJets_SingleLeptonFromTbar_ext] # TT 1l
-v_jets = [WJetsToLNu_LO,WJetsToLNu_LO_ext,WJetsToLNu,DYJetsToLL_M50_LO_ext,DYJetsToLL_M50_LO_ext2,DYJetsToLL_M50] # V+jets
+w_jets = [WJetsToLNu_LO,WJetsToLNu_LO_ext,WJetsToLNu] # W+jets
+z_jets = [DYJetsToLL_M50_LO_ext,DYJetsToLL_M50_LO_ext2,DYJetsToLL_M50] # Z+jets
 dibosons = [WW,WW_ext,WZ,WZ_ext,ZZ,ZZ_ext] # di-boson
 
-samples_1prompt = single_t + tt_1l + v_jets + dibosons
+samples_signal = v_jets
+samples_1prompt = single_t + tt_1l + z_jets + dibosons
 
 for comp in selectedComponents: comp.splitFactor = 200
 configureSplittingFromTime(samples_1fake,30,6)
 configureSplittingFromTime(samples_1prompt,50,6)
+configureSplittingFromTime(samples_signal,100,6)
+
+if runOnSignal:
+    keepLHEweights = True
+    selectedComponents = samples_signal
+else:
+    keepLHEweights = False
+    selectedComponents = samples_1prompt + samples_1fake 
 
 if scaleProdToLumi>0: # select only a subset of a sample, corresponding to a given luminosity (assuming ~30k events per MiniAOD file, which is ok for central production)
     target_lumi = scaleProdToLumi # in inverse picobarns
@@ -470,7 +484,7 @@ elif test == '80X-MC':
         comp.files = [ tmpfil ]
         comp.splitFactor = 1
         if not getHeppyOption("single"): comp.fineSplitFactor = 4
-    if what == "WJets":
+    elif what == "WJets":
         WJetsToLNu = kreator.makeMCComponent("WJetsToLNu", "/WJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM", "CMS", ".*root", 3* 20508.9)
         selectedComponents = [ WJetsToLNu ]
         comp = selectedComponents[0]
@@ -514,7 +528,8 @@ if getHeppyOption("fast"):
         sequence.insert(sequence.index(jsonAna)+1, fastSkim)
     else:
         sequence.insert(sequence.index(skimAnalyzer)+1, fastSkim)
-if not getHeppyOption("keepLHEweights",False):
+
+if not keepLHEweights:
     if "LHE_weights" in treeProducer.collections: treeProducer.collections.pop("LHE_weights")
     if lheWeightAna in sequence: sequence.remove(lheWeightAna)
     histoCounter.doLHE = False
