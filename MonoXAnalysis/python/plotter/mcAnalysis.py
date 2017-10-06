@@ -180,6 +180,11 @@ class MCAnalysis:
                         is_w = 1; 
                         total_w += counters['Sum Weights']
                         scale = "genWeight*(%s)" % field[2]
+                    elif not options.weight:
+                        scale = 1
+                        total_w = 1
+                        if (is_w==1): raise RuntimeError, "Can't put together a weighted and an unweighted component (%s)" % cnames
+                        is_w = 0
                     else:
                         if (is_w==1): raise RuntimeError, "Can't put together a weighted and an unweighted component (%s)" % cnames
                         is_w = 0;
@@ -212,7 +217,11 @@ class MCAnalysis:
                         if re.match(p+"$", pname): tty.setOption('NormSystematic', float(p1))
                 if pname not in self._rank: self._rank[pname] = len(self._rank)
             if to_norm: 
-                for tty in ttys: tty.setScaleFactor("%s*%g" % (scale, 1000.0/total_w))
+                for tty in ttys: 
+                    if options.weight: 
+                        tty.setScaleFactor("%s*%g" % (scale, 1000.0/total_w))
+                    else: 
+                        tty.setScaleFactor(1)
         #if len(self._signals) == 0: raise RuntimeError, "No signals!"
         #if len(self._backgrounds) == 0: raise RuntimeError, "No backgrounds!"
     def listProcesses(self,allProcs=False):
