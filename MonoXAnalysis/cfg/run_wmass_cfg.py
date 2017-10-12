@@ -12,7 +12,7 @@ from PhysicsTools.HeppyCore.framework.heppy_loop import getHeppyOption
 
 #-------- SET OPTIONS AND REDEFINE CONFIGURATIONS -----------
 
-runData = getHeppyOption("runData",False)
+runData = getHeppyOption("runData",True)
 runDataQCD = getHeppyOption("runDataQCD",False)
 runFRMC = getHeppyOption("runFRMC",False)
 scaleProdToLumi = float(getHeppyOption("scaleProdToLumi",-1)) # produce rough equivalent of X /pb for MC datasets
@@ -28,7 +28,7 @@ isTest = getHeppyOption("test",None) != None and not re.match("^\d+$",getHeppyOp
 selectedEvents=getHeppyOption("selectEvents","")
 
 # save LHE weights: very big! do only for needed MC samples
-runOnSignal = True
+runOnSignal = False
 keepLHEweights = False
 
 # Lepton Skimming
@@ -218,7 +218,7 @@ w_jets = [WJetsToLNu_LO,WJetsToLNu_LO_ext,WJetsToLNu] # W+jets
 z_jets = [DYJetsToLL_M50_LO_ext,DYJetsToLL_M50_LO_ext2,DYJetsToLL_M50] # Z+jets
 dibosons = [WW,WW_ext,WZ,WZ_ext,ZZ,ZZ_ext] # di-boson
 
-samples_signal = v_jets
+samples_signal = w_jets
 samples_1prompt = single_t + tt_1l + z_jets + dibosons
 
 for comp in selectedComponents: comp.splitFactor = 200
@@ -264,8 +264,8 @@ if runData and not isTest: # For running on data
     # DatasetsAndTriggers.append( ("DoubleMuon", triggers_mumu_iso + triggers_mumu_ss + triggers_mumu_ht + triggers_3mu + triggers_3mu_alt) )
     # DatasetsAndTriggers.append( ("DoubleEG",   triggers_ee + triggers_ee_ht + triggers_3e) )
     # DatasetsAndTriggers.append( ("MuonEG",     triggers_mue + triggers_mue_ht + triggers_2mu1e + triggers_2e1mu) )
-    # DatasetsAndTriggers.append( ("SingleMuon", triggers_1mu_iso + triggers_1mu_noniso) )
-    DatasetsAndTriggers.append( ("SingleElectron", triggers_1e) )
+    DatasetsAndTriggers.append( ("SingleMuon", triggers_1mu_iso + triggers_1mu_noniso) )
+    # DatasetsAndTriggers.append( ("SingleElectron", triggers_1e) )
 
     if runDataQCD: # for fake rate measurements in data
         FRTrigs_mu = triggers_FR_1mu_noiso
@@ -305,6 +305,7 @@ if runData and not isTest: # For running on data
                 if run_range!=None:
                     label = "_runs_%d_%d" % run_range if run_range[0] != run_range[1] else "run_%d" % (run_range[0],)
                 compname = pd+"_"+short+label
+                if pd=='SingleMuon' and 'Run2016F-18Apr2017-v1' in processing: processing='Run2016F-18Apr2017-v2'
                 comp = kreator.makeDataComponent(compname, 
                                                  "/"+pd+"/"+processing+"/MINIAOD",
                                                  "CMS", ".*root", 
