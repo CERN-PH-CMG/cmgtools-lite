@@ -12,9 +12,9 @@ from PhysicsTools.HeppyCore.framework.heppy_loop import getHeppyOption
 
 #-------- SET OPTIONS AND REDEFINE CONFIGURATIONS -----------
 
-runData = getHeppyOption("runData",True)
+runData = getHeppyOption("runData",False)
 runDataQCD = getHeppyOption("runDataQCD",False)
-runFRMC = getHeppyOption("runFRMC",False)
+runFRMC = getHeppyOption("runFRMC",True)
 scaleProdToLumi = float(getHeppyOption("scaleProdToLumi",-1)) # produce rough equivalent of X /pb for MC datasets
 removeJetReCalibration = getHeppyOption("removeJetReCalibration",False)
 removeJecUncertainty = getHeppyOption("removeJecUncertainty",False)
@@ -206,7 +206,7 @@ triggerFlagsAna.checkL1Prescale = True
 
 from CMGTools.RootTools.samples.samples_13TeV_RunIISummer16MiniAODv2 import *
 from CMGTools.RootTools.samples.samples_13TeV_DATA2016 import *
-from CMGTools.HToZZ4L.tools.configTools import printSummary, configureSplittingFromTime, cropToLumi, prescaleComponents, insertEventSelector
+from CMGTools.HToZZ4L.tools.configTools import printSummary, configureSplittingFromTime, cropToLumi, prescaleComponents, insertEventSelector, mergeExtensions
 from CMGTools.RootTools.samples.autoAAAconfig import *
 
 selectedComponents = [ DYJetsToLL_M50 ]
@@ -343,9 +343,9 @@ if runFRMC:
     autoAAA(QCDPtEMEnriched+QCDPtbcToE)
     QCDEm, _ = mergeExtensions([q for q in QCDPtEMEnriched+QCDPtbcToE if "toInf" not in q.name])
     selectedComponents = [QCD_Mu15] + QCD_Mu5 + [WJetsToLNu_LO,DYJetsToLL_M10to50_LO,DYJetsToLL_M50_LO_ext] + QCDEm
-    selectedComponents = [TTJets_DiLepton]#TTJets_SingleLeptonFromT,TTJets_SingleLeptonFromTbar]
-    selectedComponents = [TBar_tWch_noFullyHad,T_tWch_noFullyHad]
-    TTJets_DiLepton.fineSplitFactor = 2
+    #selectedComponents = [TTJets_DiLepton]#TTJets_SingleLeptonFromT,TTJets_SingleLeptonFromTbar]
+    #selectedComponents = [TBar_tWch_noFullyHad,T_tWch_noFullyHad]
+    #TTJets_DiLepton.fineSplitFactor = 2
     #selectedComponents = TT_pow 
     cropToLumi(selectedComponents, 1.0)
     time = 5.0; extra = dict(maxFiles=10)
@@ -369,7 +369,7 @@ if runFRMC or runDataQCD:
         tShort = t.replace("HLT_","FR_").replace("_v*","")
         triggerFlagsAna.triggerBits[tShort] = [ t ]
     treeProducer.collections = {
-        "selectedLeptons" : NTupleCollection("LepGood",  leptonTypeSusyExtraLight, 8, help="Leptons after the preselection"),
+        "selectedLeptons" : NTupleCollection("LepGood",  leptonTypeWMass, 8, help="Leptons after the preselection"),
         "cleanJets"       : NTupleCollection("Jet",     jetTypeSusyExtraLight, 15, help="Cental jets after full selection and cleaning, sorted by pt"),
     }
     if True: # 
@@ -380,7 +380,7 @@ if runFRMC or runDataQCD:
             pairSel = lambda lep, jet: deltaR(lep.eta(),lep.phi(), jet.eta(), jet.phi()) > 0.7,
         )
         dmCoreSequence.insert(dmCoreSequence.index(jetAna)+1, ttHLepQCDFakeRateAna)
-        leptonTypeSusyExtraLight.addVariables([
+        leptonTypeWMass.addVariables([
             NTupleVariable("awayJet_pt", lambda x: x.awayJet.pt() if x.awayJet else 0, help="pT of away jet"),
             NTupleVariable("awayJet_eta", lambda x: x.awayJet.eta() if x.awayJet else 0, help="eta of away jet"),
             NTupleVariable("awayJet_phi", lambda x: x.awayJet.phi() if x.awayJet else 0, help="phi of away jet"),
@@ -393,8 +393,8 @@ if runFRMC or runDataQCD:
         from CMGTools.TTHAnalysis.analyzers.ttHFastLepSkimmer import ttHFastLepSkimmer
         fastSkim = cfg.Analyzer(
             ttHFastLepSkimmer, name="ttHFastLepSkimmer1lep",
-            muons = 'slimmedMuons', muCut = lambda mu : mu.pt() > 3 and mu.isLooseMuon(),
-            electrons = 'slimmedElectrons', eleCut = lambda ele : ele.pt() > 5,
+            muons = 'slimmedMuons', muCut = lambda mu : mu.pt() > 15 and mu.isLooseMuon(),
+            electrons = 'slimmedElectrons', eleCut = lambda ele : ele.pt() > 15,
             minLeptons = 1,
         )
         dmCoreSequence.insert(dmCoreSequence.index(jsonAna)+1, fastSkim)
