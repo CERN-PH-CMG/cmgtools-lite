@@ -1,6 +1,6 @@
 #!/bin/bash
 if [[ "$1" == "" || "$1" == "-h" || "$1" == "--help" ]]; then
-    echo "Usage: $0 [ -z ] "
+    echo "Usage: $0 [ -z ] [ dir ]"
     echo "Will look for chunks and check if there is some one missing. "
     echo "It only looks for holes in the sequence of chunks, " 
     echo "and the presence of zombies if option -z is given. " 
@@ -13,9 +13,9 @@ if [[ "$1" == "-z" ]]; then
     Z=1; shift;
 fi;
 
-for F in $(ls *_Friend_*.chunk*.root | sed 's/\.chunk[0-9]\+//' | sort | uniq); do
-    echo cacca
-    echo $F
+dir="./"
+if [[ "$1" != "" ]]; then dir=$1; fi
+for F in $(ls ${dir}/*_Friend_*.chunk*.root | sed 's/\.chunk[0-9]\+//' | sort | uniq); do
     FILES=$(ls ${F/.root/.chunk*.root} | \
             perl -npe 's/\.chunk(\d+)\./sprintf(".%06d.",$1)/e' | \
             sort -n | \
@@ -35,7 +35,7 @@ done
 
 if [[ "$Z" != "0" ]]; then
     echo "# Testing for zombies";
-    FILES=$(ls *_Friend_*.chunk*.root);
+    FILES=$(ls ${dir}/*_Friend_*.chunk*.root);
     for Z in $(cmgListZombies  $FILES); do
         if test -s $Z; then # empty files have already been found
             D=${Z%%/*};
