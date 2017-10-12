@@ -61,7 +61,7 @@ else
     sed 's|cmgResubChunk -q 8nh |rm -r |g' clean2polished.sh > chunksToResub.sh
 fi;
 
-if [ $mv = "true" ]; then
+if [ $mv == "true" ]; then
     ls $DIR | sort > allChunks.txt
     grep $DIR chunksToResub.sh | awk -F "$DIR" '{print $2}' | awk -F "/" '{print $2}' | awk '{print $1}' | sort | uniq > runningChunks.txt
     grep -Fxvf runningChunks.txt allChunks.txt | awk '{print "mv '$DIR'/" $1 " '$MVDIR'"}' > chunksToStore.sh
