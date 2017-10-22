@@ -108,10 +108,15 @@ if __name__ == "__main__":
     parser.add_option("--etaBinEdges", dest="etaBinEdges", type="string", default="", help="Give a comma separated list of lepton eta bin edges to make fit categories. Be consistent with binning used to compute fake rate")
     parser.add_option("--ptBinEdges", dest="ptBinEdges", type="string", default="", help="Give a comma separated list of lepton pt bin edges to make fit categories. Be consistent with binning used to compute fake rate")
     parser.add_option("--charge", dest="charge", default="", type='string', help="Select charge: p for positive, n for negative");
-    parser.add_option("--qcdmc", dest="useQCDMC", action="store_true", default=False, help="Use QCD MC instead of W_fake sample")
+    parser.add_option("--wfake", dest="useWfake", action="store_true", default=False, help="Use W_fake MC instead of QCD sample")
+    parser.add_option("--lep-flavour", dest="lepFlavour", type="string", default="", help="Specify lepton flavour (el,mu). This option is mandatory (default is \"\" because you have to be consistent with output file name in args[0])")
     (options, args) = parser.parse_args()
     (outname) = args[0]
-    an = args[1]
+
+    lep = options.lepFlavour
+    if lep == "":
+        raise RuntimeError, "What analysis (el, mu)?? Specify as --lep-flavour <arg>"
+
 
     print outname
     outfile = ROOT.TFile.Open(outname,"RECREATE")
@@ -130,14 +135,14 @@ if __name__ == "__main__":
         etabins_el = [0, 1.479, 2.5]
         etabins_mu = [0, 1.2,   2.4]
        #etabins_mu = [0,  2.4]
-        if an=='e':
+        if lep=='el':
             ptbins = ptbins_el
             etabins = etabins_el
-        elif an=='mu':
+        elif lep=='mu':
             ptbins = ptbins_mu
             etabins = etabins_mu
         else: 
-            raise RuntimeError, "What analysis (e, mu)??"
+            raise RuntimeError, "What analysis (el, mu)?? Specify as --lep-flavour <arg>)"
 
         if len(options.etaBinEdges):
             etabins = [float(binEdge) for binEdge in options.etaBinEdges.split(",")]
@@ -153,40 +158,34 @@ if __name__ == "__main__":
             bincenter = (etabins[bin]+etabins[bin+1])/2.0
             binrange_str = "{0:.1f}".format(etabins[bin]) + "_" + "{0:.1f}".format(etabins[bin+1])
             etaslices.append( ( bincenter, binrange_str.replace(".","") ) )
-
-        XsQ    = [ "W_fake", "data_comb" ]
-        if options.useQCDMC:
-            XsQ    = [ "QCD", "data_comb" ]
+            
+        XsQ    = [ "QCD", "data_comb" ]
         Xnices = [ "MC fakes", "Data, EWK-sub." ]
+        if options.useWfake:
+            XsQ    = [ "W_fake", "data_comb" ]
+        
+        Plots="plots/fake-rate/" + str(lep)
+        if options.charge == "p":
+            Plots=Plots +"/pos"
+        elif options.charge == "n":
+            Plots=Plots +"/neg"
+        else:
+            Plots=Plots +"/comb"
 
-        if an=='e':
+
+        if lep=='el':
             # TTH
 
-            h2d_el = [ make2D(outfile,"FR_FullSel_MVATrig_el_"+X, ptbins_el, etabins_el) for X in XsQ ]
-
-            Plots="plots/fake-rate/el"
-            if options.charge == "p":
-                Plots=Plots +"/pos"
-            elif options.charge == "n":
-                Plots=Plots +"/neg"
-            else:
-                Plots=Plots +"/comb"
+            h2d_el = [ make2D(outfile,"FR_FullSel_el_"+X, ptbins_el, etabins_el) for X in XsQ ]
 
             #### Electrons: 
             readMany2D(XsQ, h2d_el, Plots+"/fr_sub_eta_%s_comp.root", "%s", etaslices, (25,100) )
             # Serialize
             for h in h2d_el:    outfile.WriteTObject(h)
 
-        elif an=='mu':
+        elif lep=='mu':
 
-            h2d_mu = [ make2D(outfile,"FR_FullSel_MVATrig_mu_"+X, ptbins_mu, etabins_mu) for X in XsQ ]
-            Plots="plots/fake-rate/mu"
-            if options.charge == "p":
-                Plots=Plots +"/pos"
-            elif options.charge == "n":
-                Plots=Plots +"/neg"
-            else:
-                Plots=Plots +"/comb"
+            h2d_mu = [ make2D(outfile,"FR_FullSel_mu_"+X, ptbins_mu, etabins_mu) for X in XsQ ]
 
             #### Muons: 
             readMany2D(XsQ, h2d_mu, "plots/fake-rate/mu/fr_sub_eta_%s_comp.root", "%s", etaslices, (25,100) )
@@ -194,7 +193,7 @@ if __name__ == "__main__":
             for h in h2d_mu:    outfile.WriteTObject(h)
 
         else: 
-             raise RuntimeError, "What analysis (e, mu)??"
+             raise RuntimeError, "What analysis (el, mu)??"
 
 
         # Plot

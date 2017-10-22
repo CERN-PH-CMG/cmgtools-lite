@@ -15,16 +15,17 @@ Use --charge [p/n] to select positive or negative leptons (default use both)
 WARNING, check the ntuples you are going to use are actually present (e.g. they could be on pccmsrm29 but not on lxplus)
 
 
-Then you can use pack_fake_rates_data.py, which creates the files with TH2 histogram.
+Then you can use pack_fake_rates_data.py, which creates the files with TH2 histogram. First argument is the output file name (give absolute path)
+Options --lep-flavour is used to select electrons or muons and it is mandatory.
 
 Use for electrons
-python wmass/pack_fake_rates_data.py /afs/cern.ch/work/m/mciprian/w_mass_analysis/heppy/CMSSW_8_0_25/src/CMGTools/MonoXAnalysis/data/fakerate/FR_data_e_mvatrg.root e
+python wmass/pack_fake_rates_data.py /afs/cern.ch/work/m/mciprian/w_mass_analysis/heppy/CMSSW_8_0_25/src/CMGTools/MonoXAnalysis/data/fakerate/FR_data_el.root --lep-flavour el
 
 and for muons
-python wmass/pack_fake_rates_data.py /afs/cern.ch/work/m/mciprian/w_mass_analysis/heppy/CMSSW_8_0_25/src/CMGTools/MonoXAnalysis/data/fakerate/FR_data_mu_mvatrg.root mu
+python wmass/pack_fake_rates_data.py /afs/cern.ch/work/m/mciprian/w_mass_analysis/heppy/CMSSW_8_0_25/src/CMGTools/MonoXAnalysis/data/fakerate/FR_data_mu.root --lep-flavour mu
 
 Use --charge [p/n] to select positive or negative leptons (default use both)
-Use --qcdmc to use QCD MC instead of W_fake (default is W_fake, but since we have QCd MC it is better to use that one)
+Use --wfake to use W_fake instead of QCD as MC (default is QCD)
 
 REMEMBER to change some settings consistently with the pt,eta binning. This can be done by using options --etaBinEdges and --ptBinEdges
 
