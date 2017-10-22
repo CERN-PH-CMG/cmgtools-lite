@@ -6,12 +6,19 @@ kin accept: LepGood1_pt > 30 && abs(LepGood1_eta)<2.5
 #MVAIdSpring16GP: if3(abs(LepGood1_eta)<1.479,LepGood1_mvaIdSpring16GP > if3(abs(LepGood1_eta)<0.8,0.837,0.715), LepGood1_mvaIdSpring16GP > 0.357)
 #lostHits: LepGood1_lostHits <= 1
 #conVeto: LepGood1_convVeto
-# medium WP for ID
-cut based ID: LepGood1_tightId >= 2
+# medium WP for ID, cut based
+medium-ID: LepGood1_tightId >= 2
 # iso for medium WP
 iso04: LepGood1_relIso04 < if3(abs(LepGood1_eta)<1.479,0.0695,0.0821)
-conVeto: LepGood1_convVeto
+# tight WP for ID, cut based
+tight-ID: LepGood1_tightId >= 3
+# iso for tight WP
+tight-iso04: LepGood1_relIso04 < if3(abs(LepGood1_eta)<1.479,0.0588,0.0571)
+HLTid: LepGood1_hltId > 0
+conVeto: LepGood1_convVeto > 0
 lostHits: LepGood1_lostHits <= 1
+dxy: LepGood1_dz < if3(abs(LepGood1_eta)<1.479,0.05,0.1)
+dz: LepGood1_dz < if3(abs(LepGood1_eta)<1.479,0.1,0.2)
 pfmet: met_pt > 20
 w_pt: pt_2(LepGood1_pt, LepGood1_phi, met_trkPt, met_trkPhi ) < 40
-w_tkmt: mt_2(met_trkPt,met_trkPhi,LepGood1_pt,LepGood1_phi) < 110
+w_tkmt: mt_2(met_trkPt,met_trkPhi,LepGood1_pt,LepGood1_phi) > 20 && mt_2(met_trkPt,met_trkPhi,LepGood1_pt,LepGood1_phi) < 110

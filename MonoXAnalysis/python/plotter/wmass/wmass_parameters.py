@@ -2,6 +2,8 @@
 # this parameters are used to name the datacards, and represents the steps for the nominal mass shift
 # the mass variations are defined in $CMSSW_BASE/src/CMGTools/WMass/python/tools/eventVars_wmass.py
 
+luminosity = 19.3
+
 wmass_steps_MeV = [x for x in range(0,24,2)] + [x for x in range(24,54,10)] + [x for x in range(54,141,20)]
 n_wmass_steps_MeV = 1 + 2 * (len(wmass_steps_MeV) - 1)  # count + and - variations: subtract the central value, double the number and add the central again
 #print n_wmass_steps_MeV

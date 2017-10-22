@@ -1,0 +1,30 @@
+decide if you want to use muon or electrons by setting the flag in wmass_e/make_fake_rates_data.py
+
+Then you can do for electrons:
+python wmass/make_fake_rates_data.py | grep python > commands4fakeRate.sh
+that prints the commands to be used
+grep python is just needed to select only commands that run python scripts, removing all other lines
+
+For muons, do 
+python wmass/make_fake_rates_data.py --mu | grep python > commands4fakeRate_mu.sh
+
+Use --singleEtaBin <arg> to use a single eta bin (<arg> is the maximum eta range)
+Use --qcdmc to add QCD MC (true for if --mu option is used)
+Use --charge [p/n] to select positive or negative leptons (default use both)
+
+WARNING, check the ntuples you are going to use are actually present (e.g. they could be on pccmsrm29 but not on lxplus)
+
+
+Then you can use pack_fake_rates_data.py, which creates the files with TH2 histogram.
+
+Use for electrons
+python wmass/pack_fake_rates_data.py /afs/cern.ch/work/m/mciprian/w_mass_analysis/heppy/CMSSW_8_0_25/src/CMGTools/MonoXAnalysis/data/fakerate/FR_data_e_mvatrg.root e
+
+and for muons
+python wmass/pack_fake_rates_data.py /afs/cern.ch/work/m/mciprian/w_mass_analysis/heppy/CMSSW_8_0_25/src/CMGTools/MonoXAnalysis/data/fakerate/FR_data_mu_mvatrg.root mu
+
+Use --charge [p/n] to select positive or negative leptons (default use both)
+Use --qcdmc to use QCD MC instead of W_fake (default is W_fake, but since we have QCd MC it is better to use that one)
+
+REMEMBER to change some settings consistently with the pt,eta binning. This can be done by using options --etaBinEdges and --ptBinEdges
+

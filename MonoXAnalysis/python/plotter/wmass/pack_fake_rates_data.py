@@ -108,6 +108,7 @@ if __name__ == "__main__":
     parser.add_option("--etaBinEdges", dest="etaBinEdges", type="string", default="", help="Give a comma separated list of lepton eta bin edges to make fit categories. Be consistent with binning used to compute fake rate")
     parser.add_option("--ptBinEdges", dest="ptBinEdges", type="string", default="", help="Give a comma separated list of lepton pt bin edges to make fit categories. Be consistent with binning used to compute fake rate")
     parser.add_option("--charge", dest="charge", default="", type='string', help="Select charge: p for positive, n for negative");
+    parser.add_option("--qcdmc", dest="useQCDMC", action="store_true", default=False, help="Use QCD MC instead of W_fake sample")
     (options, args) = parser.parse_args()
     (outname) = args[0]
     an = args[1]
@@ -154,6 +155,8 @@ if __name__ == "__main__":
             etaslices.append( ( bincenter, binrange_str.replace(".","") ) )
 
         XsQ    = [ "W_fake", "data_comb" ]
+        if options.useQCDMC:
+            XsQ    = [ "QCD", "data_comb" ]
         Xnices = [ "MC fakes", "Data, EWK-sub." ]
 
         if an=='e':
@@ -163,11 +166,11 @@ if __name__ == "__main__":
 
             Plots="plots/fake-rate/el"
             if options.charge == "p":
-                Plots=Plots +"pos"
+                Plots=Plots +"/pos"
             elif options.charge == "n":
-                Plots=Plots +"neg"
+                Plots=Plots +"/neg"
             else:
-                Plots=Plots +"comb"
+                Plots=Plots +"/comb"
 
             #### Electrons: 
             readMany2D(XsQ, h2d_el, Plots+"/fr_sub_eta_%s_comp.root", "%s", etaslices, (25,100) )
@@ -179,11 +182,11 @@ if __name__ == "__main__":
             h2d_mu = [ make2D(outfile,"FR_FullSel_MVATrig_mu_"+X, ptbins_mu, etabins_mu) for X in XsQ ]
             Plots="plots/fake-rate/mu"
             if options.charge == "p":
-                Plots=Plots +"pos"
+                Plots=Plots +"/pos"
             elif options.charge == "n":
-                Plots=Plots +"neg"
+                Plots=Plots +"/neg"
             else:
-                Plots=Plots +"comb"
+                Plots=Plots +"/comb"
 
             #### Muons: 
             readMany2D(XsQ, h2d_mu, "plots/fake-rate/mu/fr_sub_eta_%s_comp.root", "%s", etaslices, (25,100) )
@@ -216,4 +219,4 @@ if __name__ == "__main__":
                    stackEffs(options.outdir+"/variants_fr_%s_%s.root"%(lep,eta), None,effs,options)
                mcvariants = makeVariants(h2d[-2],h2d[-1])
                for v in mcvariants: outfile.WriteTObject(v, v.GetName())
-     outfile.ls()
+    outfile.ls()

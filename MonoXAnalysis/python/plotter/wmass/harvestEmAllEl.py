@@ -198,7 +198,7 @@ class WMassFitMaker:
 
 
 from optparse import OptionParser
-parser = OptionParser(usage="%prog /afs/path/to/datacard/in/CMSSW_5_3_22/ [options]")
+parser = OptionParser(usage="%prog /afs/path/to/datacard/in/CMSSW_8_0_25/ [options]")
 # add options
 parser.add_option("--freezeNuisances",dest="freezeNuisances",action="append", default=[],help="append a nuisance parameter to freeze when doing the fit. Can pass two names separated by comma: the first is the nuisance name in the datacard, the second a user friendly name for recording (if not given, use the first name)")
 parser.add_option("--freezeNuisanceGroups",dest="freezeNuisanceGroups",action="append", default=[],help="append a group of nuisance parameters to freeze when doing the fit. Can pass two names separated by comma: the first is the nuisance name in the datacard, the second a user friendly name for recording (if not given, use the first name)")
@@ -209,12 +209,12 @@ parser.add_option("-d", "--debug", dest="debug", action="store_true", default=Fa
 if options.debug:
     print "mass_id_down, mass_id_up = %s,%s" % (mass_id_down,mass_id_up)
 
-card_dir = str(args[0])  # it should be the absolute path to CMSSW_5_3_22 release
+card_dir = str(args[0])  # it should be the absolute path to CMSSW_8_0_25 release
 if not card_dir.endswith("/"):
     card_dir = card_dir + "/"
-if not "CMSSW_5_3_22" in str(args[0]) or not str(args[0]).startswith("/afs/"):
+if not "CMSSW_8_0_25" in str(args[0]) or not str(args[0]).startswith("/afs/"):
     print "### WARNING ###"    
-    print "The path to datacard folder is expected to be inside a CMSSW_5_3_22 release and the absolute path should be passed. Did you type the right full path?"
+    print "The path to datacard folder is expected to be inside a CMSSW_8_0_25 release and the absolute path should be passed. Did you type the right full path?"
     print "Quitting ..."
     quit()
 

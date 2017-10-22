@@ -12,6 +12,8 @@ eleIso04: LepGood1_relIso04 : 120,0,0.6 ; XTitle="relative isolation 04", Legend
 #dphilj: abs(deltaPhi(LepGood1_phi,JetClean1_phi)) : 31,0,31 ; XTitle="#Delta#phi(electron\,Jet)", Legend='TR', IncludeOverflows=True 
 dxy: abs(LepGood1_dxy) : 100,0,0.05; XTitle="#Deltaxy", Legend='TR', IncludeOverflows=True 
 
+nJet: nJet : 6,-0.5,5.5 ; XTitle="number of jets (not cleaned)", Legend='TR', IncludeOverflows=False
+
 nVert: nVert : 40,0.5,40.5; XTitle="number of vertices", Legend='TR', IncludeOverflows=True 
 rho: rho : 80,0.5,40.5; XTitle="#rho", Legend='TR', IncludeOverflows=True 
 

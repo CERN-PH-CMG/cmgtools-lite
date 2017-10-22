@@ -25,57 +25,44 @@ addQCDMC = options.addQCDMC  # trying to add QCD MC to graphs to be compared
 if useMuon:
     addQCDMC = True
 
-T='/data1/emanuele/wmass/TREES_1LEP_53X_V3_FRELSKIM_V3'  # WARNING, for the moment it is stored in pccmsrm29, but not in lxplus
+T='/eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3_FR/'  # WARNING, for the moment it is stored on eos, not in pccmsrm29 or in lxplus
 objName='tree' # name of TTree object in Root file, passed to option --obj in tree2yield.py
-if useMuon:
-    T='/data1/emanuele/wmass/TREES_1LEP_53X_V2'
-    objName='treeProducerWMassEle'
-if 'pccmsrm29' in os.environ['HOSTNAME']: T = T.replace('/data1/emanuele/wmass','/u2/emanuele')
-elif 'lxplus' in os.environ['HOSTNAME']: T = T.replace('/data1/emanuele/wmass','/afs/cern.ch/work/e/emanuele/TREES/')
-elif 'cmsrm-an' in os.environ['HOSTNAME']: T = T.replace('/data1/emanuele/wmass','/t3/users/dimarcoe/')
+# if 'pccmsrm29' in os.environ['HOSTNAME']: T = T.replace('/data1/emanuele/wmass','/u2/emanuele')
+# elif 'lxplus' in os.environ['HOSTNAME']: T = T.replace('/data1/emanuele/wmass','/afs/cern.ch/work/e/emanuele/TREES/')
+# elif 'cmsrm-an' in os.environ['HOSTNAME']: T = T.replace('/data1/emanuele/wmass','/t3/users/dimarcoe/')
 print "used trees from: ",T
+
+luminosity = 19.3
 J=4
+
 BASECONFIG="wmass/wmass_e"
 MCA=BASECONFIG+'/mca-qcd1l.txt'
 CUTFILE=BASECONFIG+'/qcd1l.txt'
 XVAR="pt_coarse"
-FITVAR="mt"
+FITVAR="mtfix"
 NUM="FullSel"
-
 BARREL="00_15"; ENDCAP="15_25"; ETA="1.479";
-
-from optparse import OptionParser
-parser = OptionParser(usage="%prog testname ")
-(options, args) = parser.parse_args()
-
-OPTIONS = MCA+" "+CUTFILE+" -f -P "+T+" --s2v -j "+str(J)+" -l 19.7 "
-OPTIONS += ' -F mjvars/t "'+T+'/friends/evVarFriend_{cname}.root" '
-
-PBASE = "plots/fake-rate/el/"
-EWKSPLIT="-p 'W_fake,W,Z,data'"
-MCEFF="  python wmass_e/dataFakeRate.py "+ OPTIONS + " " + EWKSPLIT + " --groupBy cut wmass_e/make_fake_rates_sels.txt wmass_e/make_fake_rates_xvars.txt  "
-MCEFF += "--sp W_fake "
-BARREL="00_15"; ENDCAP="15_25"; ETA="1.479";
-
 if useMuon:
     BASECONFIG="wmass/wmass_mu"
     MCA=BASECONFIG+'/mca-qcd1l_mu.txt'
     CUTFILE=BASECONFIG+'/qcd1l_mu.txt'
     XVAR="pt_finer"
-    FITVAR="mt"
+    FITVAR="mtfix"
     NUM="MuonTightIso"
     BARREL="00_12"; ENDCAP="12_24"; ETA="1.2";
-    
+
+OPTIONS = MCA+" "+CUTFILE+" -f -P "+T+" --obj "+objName+" --s2v -j "+str(J)+" -l "+str(luminosity)
+# no friends for the moment
+#OPTIONS += ' -F mjvars/t "'+T+'/friends/evVarFriend_{cname}.root" '
+
 if options.singleEtaBin > 0.0:
     ALL="00_" + "{0:.1f}".format(options.singleEtaBin).replace(".","p")
     ETA=options.singleEtaBin
 
-OPTIONS = MCA+" "+CUTFILE+" -f -P "+T+" --obj "+objName+" --s2v -j "+str(J)+" -l 19.7 "
-OPTIONS += ' -F mjvars/t "'+T+'/friends/evVarFriend_{cname}.root" '
-
 PBASE = "plots/fake-rate/el/"
 if useMuon:
     PBASE = "plots/fake-rate/mu/"
+
 if options.charge == "p":
     PBASE = PBASE + "pos/"
 elif options.charge == "n":
@@ -83,9 +70,11 @@ elif options.charge == "n":
 else:
     PBASE = PBASE + "comb/"
 
-EWKSPLIT="-p 'W_fake,W,Z,Top,DiBosons,data'"
+# EWKSPLIT="-p 'W_fake,W,Z,Top,DiBosons,data'"
+# check if Diboson and Top samples are present for the FR trees at 13 TeV
+EWKSPLIT="-p 'W_fake,W,Z,data'"
 if addQCDMC:
-    EWKSPLIT="-p 'QCD,W,Z,data,Top,DiBosons'"
+    EWKSPLIT="-p 'QCD,W,Z,data'"
 
 MCEFF="  python wmass/dataFakeRate.py "+ OPTIONS + " " + EWKSPLIT + " --groupBy cut wmass/make_fake_rates_sels.txt wmass/make_fake_rates_xvars.txt  "
 if addQCDMC:
@@ -96,11 +85,11 @@ else:
 MCEFF += "--sP "+NUM+" --sP "+XVAR+"  --sP "+FITVAR+" "+FITVAR+"  --ytitle 'Fake rate' "
 MCEFF += " --fixRatioRange --maxRatioRange 0.7 1.29 " # ratio for other plots
 LEGEND=" --legend=TL --fontsize 0.05 --legendWidth 0.4"
-RANGES=" --showRatio  --ratioRange 0.00 3.99 "
+RANGES=" --showRatio  --ratioRange 0.00 2.99 "
 if useMuon:
     RANGES+=" --yrange 0 1.0  --xcut 25 100 "
 else:
-    RANGES+=" --yrange 0 0.40  --xcut 25 100 "
+    RANGES+=" --yrange 0.1 1.0  --xcut 25 100 "
 
 MCEFF += (LEGEND+RANGES)
 
