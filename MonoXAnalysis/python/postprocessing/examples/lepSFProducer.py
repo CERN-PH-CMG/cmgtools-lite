@@ -14,8 +14,15 @@ class lepSFProducer(Module):
                     "MC_NUM_LooseID_DEN_genTracks_PAR_pt_eta/pt_abseta_ratio",
                     "LooseISO_LooseID_pt_eta/pt_abseta_ratio"]
         if electronSelectionTag=="GPMVA90_2016":
+            el_f = ["EGM2D_eleGSF.root","EGM2D_eleMVA90.root"]
+        elif electronSelectionTag=="CutBasedTight_2016":
+            el_f = ["EGM2D_eleGSF.root","EGM2D_eleCutBasedTightWP.root"]
+        elif electronSelectionTag=="CutBasedMedium_2016":
             el_f = ["EGM2D_eleGSF.root","EGM2D_eleCutBasedMediumWP.root"]
-            el_h = ["EGamma_SF2D", "EGamma_SF2D"]
+        else:
+            print "Not foreseen WP: ",electronSelectionTag
+            el_f = []
+        el_h = ["EGamma_SF2D", "EGamma_SF2D"]
         mu_f = ["%s/src/CMGTools/MonoXAnalysis/python/postprocessing/data/leptonSF/" % os.environ['CMSSW_BASE'] + f for f in mu_f]
         el_f = ["%s/src/CMGTools/MonoXAnalysis/python/postprocessing/data/leptonSF/" % os.environ['CMSSW_BASE'] + f for f in el_f]
 
@@ -51,5 +58,5 @@ class lepSFProducer(Module):
 
 # define modules using the syntax 'name = lambda : constructor' to avoid having them loaded when not needed
 
-lepSF = lambda : lepSFProducer( "LooseWP_2016", "GPMVA90_2016")
+lepSF = lambda : lepSFProducer( "LooseWP_2016", "CutBasedTight_2016")
 
