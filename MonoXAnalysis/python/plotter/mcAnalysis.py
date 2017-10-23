@@ -50,7 +50,14 @@ class MCAnalysis:
                 self._premap.append((re.compile(k.strip()+"$"), to))
         self.readMca(samples,options)
 
-    def readMca(self,samples,options,addExtras={}):
+    def readMca(self,samples,options,addExtras={},field0_addExtras=""):
+
+        # when called with not empty addExtras, issue a warning in case you are overwriting settings
+        if "ALLOW_OVERWRITE_SETTINGS" in addExtras:
+            if addExtras["ALLOW_OVERWRITE_SETTINGS"] == True:
+                print "### WARNING: found setting ALLOW_OVERWRITE_SETTINGS=True in %s. " % str(field0_addExtras)
+                print "### Will use new settings overwriting those in mca included file %s." % str(samples)                    
+
         for line in open(samples,'r'):
             if re.match("\s*#.*", line): continue
             line = re.sub(r"(?<!\\)#.*","",line)  ## regexp black magic: match a # only if not preceded by a \!
@@ -65,7 +72,11 @@ class MCAnalysis:
                         extra[key] = eval(val)
                     else: extra[setting] = True
             for k,v in addExtras.iteritems():
-                if k in extra: raise RuntimeError, 'You are trying to overwrite an extra option already set'
+                if k in extra: 
+                    if "ALLOW_OVERWRITE_SETTINGS" in addExtras and addExtras["ALLOW_OVERWRITE_SETTINGS"] == True:
+                        pass
+                    else:
+                        raise RuntimeError, 'You are trying to overwrite an extra option already set (did you forget ALLOW_OVERWRITE_SETTINGS=True ?)'
                 extra[k] = v
             field = [f.strip() for f in line.split(':')]
             if len(field) == 1 and field[0] == "*":
@@ -80,6 +91,7 @@ class MCAnalysis:
                     if k not in extra: extra[k] = v
             if len(field) <= 1: continue
             if "SkipMe" in extra and extra["SkipMe"] == True and not options.allProcesses: continue
+            field0noPostFix = field[0]
             if 'PostFix' in extra:
                 hasPlus = (field[0][-1]=='+')
                 if hasPlus: field[0] = field[0][:-1]
@@ -109,7 +121,7 @@ class MCAnalysis:
                 if 'IncludeMca' not in extra: raise RuntimeError, 'You have declared a component with IncludeMca format, but not included this option'
                 extra_to_pass = copy(extra)
                 del extra_to_pass['IncludeMca']
-                self.readMca(extra['IncludeMca'],options,addExtras=extra_to_pass) # call readMca recursively on included mca files
+                self.readMca(extra['IncludeMca'],options,addExtras=extra_to_pass,field0_addExtras=field0noPostFix) # call readMca recursively on included mca files
                 continue
             # Customize with additional weight if requested
             if 'AddWeight' in extra:
