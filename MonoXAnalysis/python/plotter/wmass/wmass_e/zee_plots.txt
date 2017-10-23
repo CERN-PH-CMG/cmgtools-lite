@@ -1,7 +1,7 @@
 ptl1: LepGood1_pt: 70,25,60 ; XTitle="leading electron p_{T} [GeV]", Legend='TR', IncludeOverflows=False
 etal1: LepGood1_eta: 100,-2.5,2.5 ; XTitle="trailing electron #eta", Legend='TL', IncludeOverflows=False
 
-ptl2: LepGood2_pt: 70,25,60 ; XTitle="leading electron p_{T} [GeV]", Legend='TR', IncludeOverflows=False
+ptl2: LepGood2_pt: 70,25,60 ; XTitle="trailing electron p_{T} [GeV]", Legend='TR', IncludeOverflows=False
 etal2: LepGood2_eta: 100,-2.5,2.5 ; XTitle="trailing electron #eta", Legend='TL', IncludeOverflows=False
 
 pfmet_all: met_pt : 80,0,80 ; XTitle="PF E_{T}^{miss} [GeV]", Legend='TR', IncludeOverflows=False

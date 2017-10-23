@@ -1,15 +1,45 @@
-data: SingleElectron_Run2016B
-data: SingleElectron_Run2016C
-data: SingleElectron_Run2016D
-data: SingleElectron_Run2016E
-data: SingleElectron_Run2016F
-#data: SingleElectron_Run2016G
-#data: SingleElectron_Run2016H
-
-# data: DoubleEG_Run2016B
-# data: DoubleEG_Run2016C
-# data: DoubleEG_Run2016D
-# data: DoubleEG_Run2016E
-# data: DoubleEG_Run2016F
-# data: DoubleEG_Run2016G
-# data: DoubleEG_Run2016H
+# for data, that are unweighted, can use a list, otherwise I should join all "partXX" with + in the same line
+data: SingleElectron_Run2016B_part1
+data: SingleElectron_Run2016B_part10
+data: SingleElectron_Run2016B_part11
+data: SingleElectron_Run2016B_part12
+data: SingleElectron_Run2016B_part2
+data: SingleElectron_Run2016B_part3
+data: SingleElectron_Run2016B_part4
+data: SingleElectron_Run2016B_part5
+data: SingleElectron_Run2016B_part6
+data: SingleElectron_Run2016B_part7
+data: SingleElectron_Run2016B_part8
+data: SingleElectron_Run2016B_part9
+data: SingleElectron_Run2016C_part1
+data: SingleElectron_Run2016C_part2
+data: SingleElectron_Run2016C_part3
+data: SingleElectron_Run2016C_part4
+data: SingleElectron_Run2016C_part5
+data: SingleElectron_Run2016C_part6
+data: SingleElectron_Run2016C_part7
+data: SingleElectron_Run2016D_part1
+data: SingleElectron_Run2016D_part10
+data: SingleElectron_Run2016D_part11
+data: SingleElectron_Run2016D_part2
+data: SingleElectron_Run2016D_part3
+data: SingleElectron_Run2016D_part4
+data: SingleElectron_Run2016D_part5
+data: SingleElectron_Run2016D_part6
+data: SingleElectron_Run2016D_part7
+data: SingleElectron_Run2016D_part8
+data: SingleElectron_Run2016D_part9
+data: SingleElectron_Run2016E_part1
+data: SingleElectron_Run2016E_part2
+data: SingleElectron_Run2016E_part3
+data: SingleElectron_Run2016E_part4
+data: SingleElectron_Run2016E_part5
+data: SingleElectron_Run2016E_part6
+data: SingleElectron_Run2016E_part7
+data: SingleElectron_Run2016E_part8
+data: SingleElectron_Run2016F_part1
+data: SingleElectron_Run2016F_part2
+data: SingleElectron_Run2016F_part3
+data: SingleElectron_Run2016F_part4
+data: SingleElectron_Run2016F_part5
+data: SingleElectron_Run2016F_part6
