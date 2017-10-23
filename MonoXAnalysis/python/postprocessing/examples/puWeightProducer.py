@@ -7,7 +7,7 @@ from CMGTools.MonoXAnalysis.postprocessing.framework.datamodel import Collection
 from CMGTools.MonoXAnalysis.postprocessing.framework.eventloop import Module
 
 class puWeightProducer(Module):
-    def __init__(self,myfile,targetfile,myhist="pileup",targethist="pileup",name="puWeight",norm=True,verbose=False,nvtx_var="nTrueInt"):
+    def __init__(self,myfile,targetfile,myhist="pu_mc",targethist="pileup",name="puWeight",norm=True,verbose=False,nvtx_var="nTrueInt"):
         self.myh = self.loadHisto(myfile,myhist)
         self.targeth = self.loadHisto(targetfile,targethist)
         self.name = name
@@ -20,6 +20,7 @@ class puWeightProducer(Module):
             ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/MonoXAnalysis/python/postprocessing/helpers/WeightCalculatorFromHistogram.cc+" % os.environ['CMSSW_BASE'])
     def loadHisto(self,filename,hname):
         tf = ROOT.TFile.Open(filename)
+        tf.Print()
         hist = tf.Get(hname)
         hist.SetDirectory(None)
         tf.Close()
@@ -44,6 +45,6 @@ class puWeightProducer(Module):
 
 # define modules using the syntax 'name = lambda : constructor' to avoid having them loaded when not needed
 
-pufile_mc="%s/src/CMGTools/MonoXAnalysis/python/postprocessing/data/pileup/pileup_profile_Spring16.root" % os.environ['CMSSW_BASE']
+pufile_mc="%s/src/CMGTools/MonoXAnalysis/python/postprocessing/data/pileup/pileup_profile_Summer16.root" % os.environ['CMSSW_BASE']
 pufile_data="%s/src/CMGTools/MonoXAnalysis/python/postprocessing/data/pileup/PileupData_GoldenJSON_Full2016.root" % os.environ['CMSSW_BASE']
 puWeight = lambda : puWeightProducer(pufile_mc,pufile_data,"pu_mc","pileup",verbose=False)
