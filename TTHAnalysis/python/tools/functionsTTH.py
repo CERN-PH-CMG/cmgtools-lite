@@ -143,3 +143,9 @@ MODULES.append( ('TauTightFlag', lambda : ObjTagger("isTauTight","TauSel_Recl",
 
 from CMGTools.TTHAnalysis.tools.bTagEventWeightsCSVFullShape import BTagEventWeightFriend
 MODULES.append( ('eventBTagWeight', lambda : BTagEventWeightFriend(csvfile=os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/btag/CSVv2_Moriond17_B_H.csv")))
+
+from CMGTools.TTHAnalysis.tools.ttHMCEventReco import TTHMCEventReco
+MODULES.append( ('genLevelChain', lambda : TTHMCEventReco()) )
+
+from CMGTools.TTHAnalysis.tools.matchRecoToPartonsTTH import MatchRecoToPartonsTTH
+MODULES.append( ('matchPartons', lambda : MatchRecoToPartonsTTH(label="_Recl")) )
