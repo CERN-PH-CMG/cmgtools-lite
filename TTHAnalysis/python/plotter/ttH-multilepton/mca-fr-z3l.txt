@@ -1,18 +1,12 @@
 # vim: syntax=sh
-WZ 	: WZTo3LNu           : xsec : LepGood3_mcMatchId != 0 ;  FillColor=ROOT.kViolet-4, KeysPdf=True
-ZZ      : ZZTo4L             : xsec : LepGood3_mcMatchId != 0 ;  FillColor=ROOT.kAzure-9, KeysPdf=True
+WZ 	: WZTo3LNu           : xsec : LepGood3_mcMatchId != 0 ;  FillColor=ROOT.kViolet-4, KeysPdf=False
+ZZ      : ZZTo4L             : xsec : LepGood3_mcMatchId != 0 ;  FillColor=ROOT.kAzure-9, KeysPdf=False
 TT      : TTJets_DiLepton    : xsec : LepGood3_mcMatchId == 0; FillColor=ROOT.kGray
-#DY     : DYJetsToLL_M10to50 : xsec : LepGood3_mcMatchId == 0; FillColor=ROOT.kCyan
-DY      : DYJetsToLL_M50     : xsec : LepGood3_mcMatchId == 0; FillColor=ROOT.kPink-2, KeysPdf=True
+DY      : DYJetsToLL_M50_LO_ext_part1+DYJetsToLL_M50_LO_ext_part2+DYJetsToLL_M50_LO_ext_part3     : xsec : LepGood3_mcMatchId == 0; FillColor=ROOT.kPink-2, KeysPdf=False
 
-VZ 	: WZTo3LNu           : xsec : LepGood3_mcMatchId != 0 ;  FillColor=ROOT.kViolet-2, KeysPdf=True
-VZ      : ZZTo4L             : xsec : LepGood3_mcMatchId != 0 ;  FillColor=ROOT.kAzure-2, KeysPdf=True
+VZ 	: WZTo3LNu           : xsec : LepGood3_mcMatchId != 0 ;  FillColor=ROOT.kViolet-2, KeysPdf=False
+VZ      : ZZTo4L             : xsec : LepGood3_mcMatchId != 0 ;  FillColor=ROOT.kAzure-2, KeysPdf=False
 
-data: DoubleEG_Run2016B_PromptReco_v2+DoubleEG_Run2016C_PromptReco_v2+DoubleEG_Run2016D_PromptReco_v2_runs_276315_276384+DoubleEG_Run2016D_PromptReco_v2_runs_276385_276811
-data: DoubleMuon_Run2016B_PromptReco_v2+DoubleMuon_Run2016C_PromptReco_v2+DoubleMuon_Run2016D_PromptReco_v2_runs_276315_276384+DoubleMuon_Run2016D_PromptReco_v2_runs_276385_276811
-data: MuonEG_Run2016B_PromptReco_v2+MuonEG_Run2016C_PromptReco_v2+MuonEG_Run2016D_PromptReco_v2_runs_276315_276384+MuonEG_Run2016D_PromptReco_v2_runs_276385_276811
-data: SingleElectron_Run2016B_PromptReco_v2+SingleElectron_Run2016C_PromptReco_v2+SingleElectron_Run2016D_PromptReco_v2_runs_276315_276384+SingleElectron_Run2016D_PromptReco_v2_runs_276385_276811
-data: SingleMuon_Run2016B_PromptReco_v2+SingleMuon_Run2016C_PromptReco_v2+SingleMuon_Run2016D_PromptReco_v2_runs_276315_276384+SingleMuon_Run2016D_PromptReco_v2_runs_276385_276811
 
 ## Options only
 DY_prefit : - ; FillColor=ROOT.kPink-2, Label="DY MC"
@@ -27,6 +21,42 @@ total_prefit     : - ; FillColor=ROOT.kGreen+2, Label="DY+VZ MC"
 data_fqcd        : - ; FillColor=ROOT.kGray+2, Label="Data unfolded"
 data_fit         : - ; FillColor=ROOT.kGreen+2, Label="DY sim fit"
 data_prefit      : - ; FillColor=ROOT.kBlack, Label="Data"
+
+data : DoubleEG_2016B
+data : DoubleEG_2016C
+data : DoubleEG_2016D
+data : DoubleEG_2016E
+data : DoubleEG_2016F
+data : DoubleEG_2016G
+data : DoubleEG_2016H_ds1+DoubleEG_2016H_ds2
+data : DoubleMuon_2016B_part1+DoubleMuon_2016B_part2
+data : DoubleMuon_2016C
+data : DoubleMuon_2016D
+data : DoubleMuon_2016E
+data : DoubleMuon_2016F
+data : DoubleMuon_2016G_part1+DoubleMuon_2016G_part2
+data : DoubleMuon_2016H_ds1_part1+DoubleMuon_2016H_ds1_part2+DoubleMuon_2016H_ds2
+data : MuonEG_2016B
+data : MuonEG_2016C
+data : MuonEG_2016D
+data : MuonEG_2016E
+data : MuonEG_2016F
+data : MuonEG_2016G
+data : MuonEG_2016H_ds1+MuonEG_2016H_ds2
+data : SingleElectron_2016B
+data : SingleElectron_2016C
+data : SingleElectron_2016D
+data : SingleElectron_2016E
+data : SingleElectron_2016F
+data : SingleElectron_2016G
+data : SingleElectron_2016H_ds1+SingleElectron_2016H_ds2
+data : SingleMuon_2016B
+data : SingleMuon_2016C
+data : SingleMuon_2016D
+data : SingleMuon_2016E
+data : SingleMuon_2016F
+data : SingleMuon_2016G
+data : SingleMuon_2016H_ds1+SingleMuon_2016H_ds2
 
 DY_lUp : - ; FillColor=ROOT.kBlue-7, Label="Lin Up"
 DY_lUp : - ; FillColor=ROOT.kBlue-7, Label="Lin Up"

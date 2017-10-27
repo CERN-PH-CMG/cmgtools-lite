@@ -55,7 +55,7 @@ dmMonoJet_globalVariables = dmCore_globalVariables + [
     ##-------------------------------------------------- 
     ## MonoJet specific ones
     ##-------------------------------------------------- 
-    NTupleVariable("apcjetmetmin",  lambda ev: ev.apcjetmetmin, help="apcjetmetmin computed using jets with pt > 50, |eta|<3"),
+    #NTupleVariable("apcjetmetmin",  lambda ev: ev.apcjetmetmin, help="apcjetmetmin computed using jets with pt > 50, |eta|<3"),
     ##--------------------------------------------------            
     ## dilepton masses
     ##--------------------------------------------------            
@@ -124,18 +124,18 @@ dmMonoJet_collections.update({
             # put more here
             #"genleps"         : NTupleCollection("genLep",     genParticleWithLinksType, 10, help="Generated leptons (e/mu) from W/Z decays"), 
             ##------------------------------------------------                       
-            "monoxSelectedTaus" : NTupleCollection("TauGood",  tauType, 3, help="Taus after the preselection"),
+            #"monoxSelectedTaus" : NTupleCollection("TauGood",  tauType, 3, help="Taus after the preselection"),
             "selectedLeptons"   : NTupleCollection("LepGood",  leptonTypeMonoJet, 10, help="Leptons after the preselection"),
-            "selectedPhotons"   : NTupleCollection("GammaGood", photonTypeSusy, 20, help="photons with pt>20 and loose cut based ID"),
+            #"selectedPhotons"   : NTupleCollection("GammaGood", photonTypeSusy, 20, help="photons with pt>20 and loose cut based ID"),
             ##------------------------------------------------
             "cleanJets"       : NTupleCollection("Jet",     jetTypeSusyExtra, 20, help="Cental jets after full selection and cleaning, sorted by pt"),
             "cleanJetsFwd"    : NTupleCollection("JetFwd",  jetTypeSusyExtra,  5, help="Forward jets after full selection and cleaning, sorted by pt"),
-            "fatJets"         : NTupleCollection("FatJet",  fatJetType,       20, help="AK8 jets, sorted by pt"),
+            #"fatJets"         : NTupleCollection("FatJet",  fatJetType,       20, help="AK8 jets, sorted by pt"),
             ##------------------------------------------------
             #"discardedJets"    : NTupleCollection("DiscJet", jetTypeSusyExtra, 10, help="Jets discarted in the jet-lepton cleaning"),
             #"discardedLeptons" : NTupleCollection("DiscLep", leptonTypeSusyExtra, 8, help="Leptons discarded in the jet-lepton cleaning"),
             ##------------------------------------------------
-            "selectedIsoTrack"    : NTupleCollection("isoTrack", isoTrackType, 50, help="isoTrack, sorted by pt"),
+            #"selectedIsoTrack"    : NTupleCollection("isoTrack", isoTrackType, 50, help="isoTrack, sorted by pt"),
             ##------------------------------------------------
             "LHE_weights"    : NTupleCollection("LHEweight",  weightsInfoType, 1000, mcOnly=True, help="LHE weight info"),
             ##------------------------------------------------

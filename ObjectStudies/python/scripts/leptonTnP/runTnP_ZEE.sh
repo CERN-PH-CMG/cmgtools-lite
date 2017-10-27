@@ -2,23 +2,23 @@
 
 P=/afs/cern.ch/user/g/gpetrucc/w/TREES_80X_SOS_130716_TnP
 case $HOSTNAME in
-cmsco01*) P=/data1/gpetrucc/TREES_80X_SOS_130716_TnP ;;
+cmsco01*) P=/data/g/gpetrucc/TREES_80X_SOS_080217_TnP ;;
 esac;
 
-PDIR="plots/80X/TnP/"
-JOB="zee_v2.0"
-XBINS="[5,12.5,20,25,40,70,120]"
+PDIR="plots/80X/TnP_Moriond17/"
+JOB="zee_sos_v1.0"
+XBINS="[5,12.5,16,20,25,30]" #25,40,70,120]"
 EBINS="[-2.5,-2.0,-1.52,-1.44,-1,0,1,1.44,1.52,2.0,2.5]"
 VBINS="[0.5,5.5,6.5,7.5,8.5,9.5,10.5,11.5,12.5,13.5,14.5,15.5,16.5,17.5,18.5,19.5,20.5,21.5,22.5,24.5,26.5,28.5,30.5,34.5]"
-DATA="$P/SingleElectron_Run2016B_PromptReco_v2/treeProducerTnP/tree.root"
-DATA="$DATA $P/SingleElectron_Run2016C_PromptReco_v2/treeProducerTnP/tree.root"
-DATA="$DATA $P/SingleElectron_Run2016C_PromptReco_v2_275784_276811/treeProducerTnP/tree.root"
-DATA="$DATA $P/SingleElectron_Run2016D_PromptReco_v2_275784_276811/treeProducerTnP/tree.root"
+DATA=""
+for L in B C D E F G; do DATA="$DATA $P/SingleElectron_Run2016${L}_23Sep2016/treeProducerTnP/tree.root"; done
+for V in 2 3; do DATA="$DATA $P/SingleElectron_Run2016H_PromptReco_v${V}/treeProducerTnP/tree.root"; done
 MC="--refmc  $P/DYJetsToLL_M50_LO/treeProducerTnP/tree.root"
 PDS="$DATA $MC"
 
 OPTS=" --doRatio  --pdir $PDIR/$JOB  " 
 OPTS="$OPTS -t tree  --mc-cut TnP_tag_mcMatchId&&TnP_probe_mcMatchId --mc-mass TnP_mass   "
+OPTS="$OPTS -L $CMSSW_BASE/src/CMGTools/TTHAnalysis/python/plotter/susy-sos/functionsSOS.cc "
 case $HOSTNAME in
 cmsphys10|cmsco01.cern.ch) OPTS="$OPTS -j 8 ";;
 lxplus*.cern.ch) OPTS="$OPTS -j 4" ;;
@@ -32,11 +32,11 @@ fi;
 
 if [[ "$1" == "all" ]]; then
   shift;
-  for ID in SOS_NM1_{Id,Iso,Ip};do # SOS_NM1_{Id,Iso,Ip} # SOS_003 SOS_NoIP SOS_presel SOS_FO SOS SOS_PR
+  for ID in SOS SOS_FO SOS_PR SOS_NM1_{ID,ISO,IP}; do # SOS_NM1_{Id,Iso,Ip} # SOS_003 SOS_NoIP SOS_presel SOS_FO SOS SOS_PR
      for SMOD in MCTG BWDCB2; do  
         for BMOD in bern4 bern3; do
             for X in barrel endcap eta vtx; do
-               echo $LAUNCHER $0 $ID $SMOD $BMOD $X
+               echo $LAUNCHER $0 $ID $SMOD $BMOD $X;
             done
         done
      done
@@ -53,31 +53,28 @@ if [[ "$1" != "" ]]; then OPTS="$OPTS $* "; fi
 MASS=" -m TnP_mass 80,70,115 "
 
 SOS_PRESEL_ID="TnP_probe_eleMVASpring15_VLooseIdEmu"
-SOS_PRESEL_IDCV="TnP_probe_eleMVASpring15_VLooseIdEmu && TnP_probe_convVeto && TnP_probe_lostHits == 0"
-SOS_PRESEL_ISO="TnP_probe_relIso04*TnP_probe_pt < 10"
-SOS_PRESEL_IP="abs(TnP_probe_dz) < 1.0 && abs(TnP_probe_dxy) < 0.50 && abs(TnP_probe_sip3d) < 8"
-SOS_SEL_ISO="TnP_probe_relIso03 < 0.5 && (TnP_probe_relIso03*TnP_probe_pt < 5 || TnP_probe_relIso03 < 0.1) && $SOS_PRESEL_ISO"
-SOS_SEL_ID="TnP_probe_eleMVASpring15_HZZ"
-SOS_SEL_IDCV="TnP_probe_eleMVASpring15_HZZ && TnP_probe_convVeto && TnP_probe_lostHits == 0"
-SOS_SEL_IP="abs(TnP_probe_dz) < 0.01 && abs(TnP_probe_dxy) < 0.01 && abs(TnP_probe_sip3d) < 8"
-SOS_SEL_IP003="abs(TnP_probe_dz) < 0.03 && abs(TnP_probe_dxy) < 0.03 && abs(TnP_probe_sip3d) < 8"
 SOS_FO_ID="eleWPVVL(TnP_probe_pt,TnP_probe_etaSc,TnP_probe_mvaIdSpring15)"
-MET_PRESEL="met_pt < 40 && mt_2(met_pt,met_phi,TnP_tag_pt,TnP_tag_phi) < 50 && TnP_tag_relIso04 < 0.1"
+SOS_SEL_ID="TnP_probe_eleMVASpring15_HZZ"
 
-CDEN="TnP_tag_sip3d < 4 "
+SOS_FO_IDCV="${SOS_FO_ID}   && TnP_probe_convVeto && TnP_probe_lostHits == 0"
+SOS_SEL_IDCV="${SOS_SEL_ID} && TnP_probe_convVeto && TnP_probe_lostHits == 0"
+SOS_FO_ISO="TnP_probe_relIso03*TnP_probe_pt < 20 + 300/TnP_probe_pt"
+SOS_SEL_ISO="TnP_probe_relIso03 < 0.5 && TnP_probe_relIso03*TnP_probe_pt < 5"
+SOS_PRESEL_IP="abs(TnP_probe_dz) < 1.0 && abs(TnP_probe_dxy) < 0.50"
+SOS_FO_IP=" ${SOS_PRESEL_IP} && abs(TnP_probe_sip3d) < 2.5 && abs(TnP_probe_ip3d) < 0.0175"
+SOS_SEL_IP="${SOS_PRESEL_IP} && abs(TnP_probe_sip3d) < 2.0 && abs(TnP_probe_ip3d) < 0.0100"
+#MET_PRESEL="met_pt < 40 && mt_2(met_pt,met_phi,TnP_tag_pt,TnP_tag_phi) < 50 && TnP_tag_relIso04 < 0.1"
+MET_PRESEL="met_pt < 40 && sqrt(2*met_pt*TnP_tag_pt*(1-cos(met_phi-TnP_tag_phi))) < 50"
+
+CDEN="TnP_tag_sip3d < 2.5 && TnP_tag_relIso04 < 0.1 "
 case $ID in
   SOS) NUM="$SOS_SEL_ISO && $SOS_SEL_IDCV && $SOS_SEL_IP" ; CDEN="$CDEN && $MET_PRESEL" ;;
-  SOS_003) NUM="$SOS_SEL_ISO && $SOS_SEL_IDCV && $SOS_SEL_IP003" ; CDEN="$CDEN && $MET_PRESEL" ;;
-  SOS_NoIP) NUM="$SOS_SEL_ISO && $SOS_SEL_IDCV" ; CDEN="$CDEN && $MET_PRESEL" ;;
-  SOS_presel) NUM="$SOS_PRESEL_ISO && $SOS_PRESEL_IDCV && $SOS_PRESEL_IP" ; CDEN="$CDEN && $MET_PRESEL" ;;
-  SOS_FO) NUM="$CDEN &&  $SOS_PRESEL_IDCV && $SOS_PRESEL_IP && $SOS_FO_ID"; CDEN="$CDEN && $MET_PRESEL" ;;
-  SOS_PR) NUM="$SOS_SEL_ISO && $SOS_SEL_IDCV && $SOS_SEL_IP" ; 
-          CDEN="$CDEN &&  $SOS_PRESEL_IDCV && $SOS_PRESEL_IP && $SOS_FO_ID && $MET_PRESEL" ;;
-  SOS_NM1_Id)  NUM="$SOS_SEL_IDCV" ; CDEN="$CDEN && $SOS_SEL_ISO  && $SOS_SEL_IP  && $MET_PRESEL"  ;;
-  SOS_NM1_Ip)  NUM="$SOS_SEL_IP" ;   CDEN="$CDEN && $SOS_SEL_IDCV && $SOS_SEL_ISO && $MET_PRESEL" ;;
-  SOS_NM1_Iso) NUM="$SOS_SEL_ISO" ;  CDEN="$CDEN && $SOS_SEL_IDCV && $SOS_SEL_IP  && $MET_PRESEL"  ;;
-  #SOS_IdCV_tkIsoSip4)  NUM="$SOS_SEL_IDCV" ; CDEN="$CDEN && TnP_probe_trkIso045 < 0.2*TnP_probe_pt && abs(TnP_probe_sip3d) < 4" ;;
-  #SOS_IsoIp) NUM="$SOS_SEL_ISO && $SOS_SEL_IP" ; CDEN="$CDEN && $SOS_SEL_IDCV";
+  SOS_FO) NUM="$SOS_FO_IDCV && $SOS_FO_IP && $SOS_FO_ISO"; CDEN="$CDEN && $MET_PRESEL" ;;
+  SOS_PR) NUM="$SOS_SEL_ISO && $SOS_SEL_ID && $SOS_SEL_IP" ; 
+          CDEN="$CDEN &&  $SOS_FO_IDCV && $SOS_FO_IP && $SOS_FO_ISO && $MET_PRESEL" ;;
+  SOS_NM1_ID)  NUM="$SOS_SEL_IDCV" ; CDEN="$CDEN && $SOS_SEL_ISO  && $SOS_SEL_IP  && $MET_PRESEL"  ;;
+  SOS_NM1_IP)  NUM="$SOS_SEL_IP" ;   CDEN="$CDEN && $SOS_SEL_IDCV && $SOS_SEL_ISO && $MET_PRESEL" ;;
+  SOS_NM1_ISO) NUM="$SOS_SEL_ISO" ;  CDEN="$CDEN && $SOS_SEL_IDCV && $SOS_SEL_IP  && $MET_PRESEL"  ;;
   *) echo "Uknown ID $ID"; exit 2;;
 esac;
 
@@ -119,7 +116,7 @@ esac;
 #python tnpEfficiency.py $PDS -d "TnP_probe_pt > 20 && $DEN" -n "$NUM" $OPTS --x-var nVert $VBINS -N el_${SMOD}_${BMOD}${POST}_${ID}_pt20_vtx   -b $BMOD -s $SMOD $MASS --xtitle "N(vertices)" ;
 
 if [[ "$SMOD" == "MCTG" && "$BMOD" == "bern4" ]]; then
-    MASS2=" -m TnP_mass 100,65,125"; POST="_mass"
+    MASS2=" -m TnP_mass 100,65,125"; POST="_mass";
     #echo "python tnpEfficiency.py $PDS -d "abs(TnP_probe_eta)<1.2 && $DEN" -n "$NUM" $OPTS --x-var pt $XBINS -N el_${SMOD}_${BMOD}${POST}_${ID}_barrel -b $BMOD -s $SMOD $MASS2 --xtitle "p_{T} (GeV)" ;
     #echo "python tnpEfficiency.py $PDS -d "abs(TnP_probe_eta)>1.2 && $DEN" -n "$NUM" $OPTS --x-var pt $XBINS -N el_${SMOD}_${BMOD}${POST}_${ID}_endcap -b $BMOD -s $SMOD $MASS2 --xtitle "p_{T} (GeV)" ;
     #echo "python tnpEfficiency.py $PDS -d "pt > 20 && $DEN" -n "$NUM" $OPTS --x-var eta $EBINS -N el_${SMOD}_${BMOD}${POST}_${ID}_pt20   -b $BMOD -s $SMOD $MASS2  --xtitle "#eta" ;
@@ -128,7 +125,7 @@ if [[ "$SMOD" == "MCTG" && "$BMOD" == "bern4" ]]; then
     #echo "python tnpEfficiency.py $PDS -d "pt > 5 && pt < 20 && $DEN" -n "$NUM" $OPTS --x-var nVert $VBINS -N el_${SMOD}_${BMOD}${POST}_${ID}_pt520_vtx   -b $BMOD -s $SMOD $MASS2 --xtitle "N(vertices)" ;
 fi
 if [[ "$SMOD" == "MCTG" && "$BMOD" == "bern4" ]]; then
-    DEN="$CDEN && TnP_tag_pt > 25 && TnP_tag_relIso03 < 0.1"; POST="_tightTag"
+    DEN="$CDEN && TnP_tag_pt > 25 && TnP_tag_relIso03 < 0.1"; POST="_tightTag";
     #echo "python tnpEfficiency.py $PDS -d "abs(TnP_probe_eta)<1.2 && $DEN" -n "$NUM" $OPTS --x-var pt $XBINS -N el_${SMOD}_${BMOD}${POST}_${ID}_barrel -b $BMOD -s $SMOD $MASS --xtitle "p_{T} (GeV)" ;
     #echo "python tnpEfficiency.py $PDS -d "abs(TnP_probe_eta)>1.2 && $DEN" -n "$NUM" $OPTS --x-var pt $XBINS -N el_${SMOD}_${BMOD}${POST}_${ID}_endcap -b $BMOD -s $SMOD $MASS --xtitle "p_{T} (GeV)" ;
     #echo "python tnpEfficiency.py $PDS -d "pt > 20 && $DEN" -n "$NUM" $OPTS --x-var eta $EBINS -N el_${SMOD}_${BMOD}${POST}_${ID}_pt20   -b $BMOD -s $SMOD $MASS  --xtitle "#eta" ;
@@ -136,7 +133,7 @@ if [[ "$SMOD" == "MCTG" && "$BMOD" == "bern4" ]]; then
     #echo "python tnpEfficiency.py $PDS -d "pt > 5 && pt < 20 && $DEN" -n "$NUM" $OPTS --x-var eta $EBINS -N el_${SMOD}_${BMOD}${POST}_${ID}_pt520   -b $BMOD -s $SMOD $MASS  --xtitle "#eta" ;
     #echo "python tnpEfficiency.py $PDS -d "pt > 5 && pt < 20 && $DEN" -n "$NUM" $OPTS --x-var nVert $VBINS -N el_${SMOD}_${BMOD}${POST}_${ID}_pt520_vtx   -b $BMOD -s $SMOD $MASS --xtitle "N(vertices)" ;
 
-    DEN="$CDEN && SIP < 2"; POST="_tightSIP"
+    DEN="$CDEN && SIP < 2"; POST="_tightSIP";
     #echo "python tnpEfficiency.py $PDS -d "abs(TnP_probe_eta)<1.2 && $DEN" -n "$NUM" $OPTS --x-var pt $XBINS -N el_${SMOD}_${BMOD}${POST}_${ID}_barrel -b $BMOD -s $SMOD $MASS --xtitle "p_{T} (GeV)" ;
     #echo "python tnpEfficiency.py $PDS -d "abs(TnP_probe_eta)>1.2 && $DEN" -n "$NUM" $OPTS --x-var pt $XBINS -N el_${SMOD}_${BMOD}${POST}_${ID}_endcap -b $BMOD -s $SMOD $MASS --xtitle "p_{T} (GeV)" ;
     #echo "python tnpEfficiency.py $PDS -d "pt > 20 && $DEN" -n "$NUM" $OPTS --x-var eta $EBINS -N el_${SMOD}_${BMOD}${POST}_${ID}_pt20   -b $BMOD -s $SMOD $MASS  --xtitle "#eta" ;

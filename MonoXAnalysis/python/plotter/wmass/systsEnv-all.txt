@@ -1,0 +1,58 @@
+# luminosity
+lumi_8TeV              : W|Z|Top|DiBosons: .* : 1.026
+
+# lepton efficiencies
+CMS_We_lepEff   : W|Z|Top|DiBosons: .* : 1.10
+
+# charge asymmetry uncertainties: this should be Y-dependent
+# actual numbers to be changed
+CMS_We_pdf_qasym  : W : .*pos.* : 1.02
+CMS_We_pdf_qasym  : W : .*neg.* : 0.95
+
+# Diboson backgrounds 
+CMS_We_VV : DiBosons : .* : 1.16 
+
+# QCD
+CMS_We_QCDnorm  : qcd_.* : .* : 100.0
+CMS_We_QCDshape : qcd_.* : .* : shape : templates 
+CMS_We_QCDcrsel : qcd_.* : .* : crsel : templates 
+
+# lepton scale
+CMS_We_elescale :  W: .* : elescale       : templates 
+
+# recoil uncertainty
+CMS_We_recoil :  W: .* : recoil       : templates 
+
+# Fake rate uncertainties
+# 1+2) Measurement of the fake rate: normalization and shapes
+CMS_We_FRe_norm   : data_fakes  : .* : FRe_norm : templates
+CMS_We_FRe_pt     : data_fakes  : .* : FRe_pt   : templatesShapeOnly
+
+# ptW uncertainty (from Z pT reweighting)
+CMS_W_ptw  : W : .* : theoryptw : templates
+CMS_We_pdf1  : W : .* : pdf1 : templates
+CMS_We_pdf2  : W : .* : pdf2 : templates
+CMS_We_pdf3  : W : .* : pdf3 : templates
+CMS_We_pdf4  : W : .* : pdf4 : templates
+CMS_We_pdf5  : W : .* : pdf5 : templates
+CMS_We_pdf6  : W : .* : pdf6 : templates
+CMS_We_pdf7  : W : .* : pdf7 : templates
+CMS_We_pdf8  : W : .* : pdf8 : templates
+CMS_We_pdf9  : W : .* : pdf9 : templates
+CMS_We_pdf10  : W : .* : pdf10 : templates
+CMS_We_pdf11  : W : .* : pdf11 : templates
+CMS_We_pdf12  : W : .* : pdf12 : templates
+CMS_We_pdf13  : W : .* : pdf13 : templates
+CMS_We_pdf14  : W : .* : pdf14 : templates
+CMS_We_pdf15  : W : .* : pdf15 : templates
+CMS_We_pdf16  : W : .* : pdf16 : templates
+CMS_We_pdf17  : W : .* : pdf17 : templates
+CMS_We_pdf18  : W : .* : pdf18 : templates
+CMS_We_pdf19  : W : .* : pdf19 : templates
+CMS_We_pdf20  : W : .* : pdf20 : templates
+CMS_We_pdf21  : W : .* : pdf21 : templates
+CMS_We_pdf22  : W : .* : pdf22 : templates
+CMS_We_pdf23  : W : .* : pdf23 : templates
+CMS_We_pdf24  : W : .* : pdf24 : templates
+CMS_We_pdf25  : W : .* : pdf25 : templates
+CMS_We_pdf26  : W : .* : pdf26 : templates

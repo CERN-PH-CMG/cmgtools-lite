@@ -5,16 +5,19 @@ import os.path, re, pickle
 
 MODULES = []
 
-from CMGTools.MonoXAnalysis.tools.eventVars_monojet import EventVarsMonojet
-MODULES.append( ('vars_mj', EventVarsMonojet()) )
+#from CMGTools.MonoXAnalysis.tools.eventVars_monojet import EventVarsMonojet
+#MODULES.append( ('vars_mj', EventVarsMonojet()) )
+
+from CMGTools.MonoXAnalysis.tools.eventVars_wmass import EventVarsWmass
+MODULES.append( ('vars_w', EventVarsWmass()) )
 
 from CMGTools.TTHAnalysis.tools.vertexWeightFriend import VertexWeightFriend
-pufile_mc="/afs/cern.ch/work/e/emanuele/public/monox/pileup/pileup_profile_Spring16.root"
-pufile_data="/afs/cern.ch/work/e/emanuele/public/monox/pileup/pileup_profile_runs_271036_279931.root"
+pufile_mc="/afs/cern.ch/work/e/emanuele/public/wmass/pileup/pileup_profile_Spring16.root"
+pufile_data="/afs/cern.ch/work/e/emanuele/public/wmass/pileup/PileupData_GoldenJSON_Full2016.root"
 MODULES.append ( ('puWeights', VertexWeightFriend(pufile_mc,pufile_data,"pu_mc","pileup",name="puw",verbose=True,vtx_coll_to_reweight="nTrueInt") ) )
 
-pathvetolists="/afs/cern.ch/work/e/emanuele/public/monox/met_vetolists/"
-vetoLists= ["cscfilter", "ecalfilter"]
+#pathvetolists="/afs/cern.ch/work/e/emanuele/public/monox/met_vetolists/"
+#vetoLists= ["cscfilter", "ecalfilter"]
 
 #from CMGTools.MonoXAnalysis.tools.eventVetoListChecker import EventVetoListChecker
 #MODULES.append( ('eventVetoChecker', EventVetoListChecker(pathvetolists,vetoLists)) )
@@ -31,7 +34,7 @@ class VariableProducer(Module):
         self.branches = {}
         for name,mod in self._modules:
             if name == "eventVetoChecker": mod.initDataset(self.dataset)
-            if name == "vars_mj": mod.initSample(self.region,self._sample_nevt)
+            if name == "vars_mj" or name == "vars_w": mod.initSample(self.region,self._sample_nevt)
             for B in mod.listBranches():
                 # don't add the same branch twice
                 if B in self.branches: 

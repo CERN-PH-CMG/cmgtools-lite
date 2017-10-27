@@ -70,7 +70,8 @@ def makeSignalModel(w, model, refhpass, refhfail, options):
         w.factory("FCONV::signal2(mass,zBW,resol2)")
         return ("signal","signal2")
     elif model in ("MCT","MCTG","MCTCB","MCTDCB"):
-        if refhfail.Integral() <= 10 or refhpass.Integral() <= 10:
+        if refhfail.Integral() <= 5 or refhpass.Integral() <= 5 or refhpass.Integral()+refhfail.Integral() < 100:
+            print "ERROR: Not enough data to fill the templates (%d, %d)" % (refhfail.Integral() , refhpass.Integral())
             return None
         print "Creating %s templates with %.2f pass, %.2f fail" % (model, refhpass.Integral(), refhfail.Integral())
         if options.fineBinning > 1: 
@@ -82,9 +83,9 @@ def makeSignalModel(w, model, refhpass, refhfail, options):
                 print "Using kernel method smoothing"
                 if "/TH1Keys_cc.so" not in ROOT.gSystem.GetLibraries(): 
                     ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/TTHAnalysis/python/plotter/TH1Keys.cc+" % os.environ['CMSSW_BASE']);
-                c1 = ROOT.TCanvas("c1","c1")
-                hin.Draw(); c1.Print("~/public_html/drop/h1.png");
-                hout.Draw(); c1.Print("~/public_html/drop/h2.png");
+                #c1 = ROOT.TCanvas("c1","c1")
+                #hin.Draw(); c1.Print("~/public_html/drop/h1.png");
+                #hout.Draw(); c1.Print("~/public_html/drop/h2.png");
                 nb, xmin, xmax = hout.GetNbinsX(), hout.GetXaxis().GetXmin(), hout.GetXaxis().GetXmax()
                 hkeys = ROOT.TH1KeysNew("dummyk","dummyk",int(nb),float(xmin),float(xmax), "a", 1.0)
                 for b in xrange(1,hin.GetNbinsX()+1):
@@ -101,7 +102,7 @@ def makeSignalModel(w, model, refhpass, refhfail, options):
                 hist = hkeys.GetHisto()
                 for b in xrange(1,nb+1):
                     hout.SetBinContent(b, hist.GetBinContent(b))
-                hout.Draw(); c1.Print("~/public_html/drop/h3.png");
+                #hout.Draw(); c1.Print("~/public_html/drop/h3.png");
                 del hkeys
             refhpass = refrpass
             refhfail = refrfail
@@ -830,6 +831,7 @@ def addTnPEfficiencyOptions(parser):
     parser.add_option("--reqname", dest="requestName", type="string", default=None, help="don't do anything unlesshe name (from -N) matches this");
     parser.add_option("-j", "--jobs",    dest="jobs",      type="int",    default=0, help="Use N threads");
     parser.add_option("--pretend", dest="pretend", action="store_true",  default=False, help="Don't run")
+    parser.add_option("-L", "--load", dest="loadLibs", action="append",  type="string", default=[], help="Load the following macro")
 
 if __name__ == "__main__":
     from optparse import OptionParser
@@ -862,6 +864,8 @@ if __name__ == "__main__":
     ROOT.gSystem.Load("libHiggsAnalysisCombinedLimit")
     if "/functions_cc.so" not in ROOT.gSystem.GetLibraries(): 
         ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/TTHAnalysis/python/plotter/functions.cc+" % os.environ['CMSSW_BASE']);
+    for L in options.loadLibs:
+        ROOT.gROOT.ProcessLine(".L %s+" % L);
     ROOT.RooMsgService.instance().setGlobalKillBelow(ROOT.RooFit.ERROR)
     tree = ROOT.TChain(options.tree)
     for fname in args: tree.Add(fname)
@@ -875,6 +879,12 @@ if __name__ == "__main__":
         reftree = None
     if options.jobs > 0:
         proof = ROOT.TProof.Open("workers=%d" % options.jobs)
+        #os.system("cp %s/src/CMGTools/TTHAnalysis/python/plotter/functions.cc ." % os.environ['CMSSW_BASE']);
+        #proof.Load("functions.cc+", True);
+        for L in options.loadLibs:
+            if "/" in L:
+                os.system("cp %s . -v" % L);
+            proof.Load(os.path.basename(L)+"+");
         tree.SetProof()
         if reftree: reftree.SetProof()
     effs =  [ makeHistos2D(t,options.num,options.den,options.xvar,options.mvar,options,post=l,reftree=reftree) for (t,l) in trees ]

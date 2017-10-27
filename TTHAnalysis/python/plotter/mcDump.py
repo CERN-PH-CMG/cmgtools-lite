@@ -17,9 +17,11 @@ class MCDumpEvent:
         self._exprMaps =  {}
     def update(self,event):
         self.event = event
-    def __getitem__(self, attr):
+    def __getitem__(self, attr, adapt=True):
+        return self.get(attr, adapt=adapt)
+    def get(self, attr, adapt=True, cut=False):
         if attr not in self._exprMaps:
-            expr = self._tty.adaptExpr(attr,cut=False)
+            expr = self._tty.adaptExpr(attr,cut=cut) if adapt else attr
             if self._tty._options.doS2V:
                 expr = scalarToVector(expr)
             self._exprMaps[attr] = expr 

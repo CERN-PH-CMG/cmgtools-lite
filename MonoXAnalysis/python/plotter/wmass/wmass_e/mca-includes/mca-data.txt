@@ -1,0 +1,8 @@
+data: SingleElectron_Run2016B_part*
+data: SingleElectron_Run2016C_part*
+data: SingleElectron_Run2016D_part*
+data: SingleElectron_Run2016E_part*
+data: SingleElectron_Run2016F_part*
+data: SingleElectron_Run2016G_part*
+data: SingleElectron_Run2016H_part*
+

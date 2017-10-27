@@ -1,4 +1,12 @@
 #!/usr/bin/env python
+"""
+makeLepTnPFriends.py
+
+- Issues:
+    > Fit plots are overwritten for each file when several files in one process
+    > Could introduce another layer of caching for the raw mass histograms
+"""
+
 import sys, os, pickle
 import ROOT
 
@@ -6,17 +14,17 @@ from array import array
 from ROOT import TEfficiency
 import os.path as osp
 
-LUMI = 12.9
+LUMI = 36.5
 WEIGHT = "puWeight"
 PAIRSEL = ("((pdgId*tag_pdgId==-11*11||pdgId*tag_pdgId==-13*13)"
            "&&abs(mass-91.)<30.&&abs(mcMatchId)>0)")
 SELECTIONS = {
     'inclusive':               PAIRSEL,
     # mcMatchId is never ==1 for MC but always for data
-    'runs (<= 275125)':        PAIRSEL+"&&(mcMatchId==1&&run<=275125)",
-    'runs (>275125 <=275783)': PAIRSEL+"&&(mcMatchId==1&&run>275125&&run<=275783)",
-    'runs (>275783 <=276384)': PAIRSEL+"&&(mcMatchId==1&&run>275783&&run<=276384)",
-    'runs (>276384 <=276811)': PAIRSEL+"&&(mcMatchId==1&&run>276384&&run<=276811)",
+    # 'runs (<= 275125)':        PAIRSEL+"&&(mcMatchId==1&&run<=275125)",
+    # 'runs (>275125 <=275783)': PAIRSEL+"&&(mcMatchId==1&&run>275125&&run<=275783)",
+    # 'runs (>275783 <=276384)': PAIRSEL+"&&(mcMatchId==1&&run>275783&&run<=276384)",
+    # 'runs (>276384 <=276811)': PAIRSEL+"&&(mcMatchId==1&&run>276384&&run<=276811)",
     # 'singleTriggers': PAIRSEL+"&&passSingle",
     # 'doubleTriggers': PAIRSEL+"&&passDouble",
     # 'ttbar': "( (pdgId*tag_pdgId==-11*13)||"
@@ -65,21 +73,25 @@ NBJETBINS = [0,1,2,3]
 BINNINGS = [
     ('pt',            PTBINS,    'p_{T} [GeV]'),
     ('nVert',         NVERTBINS, 'N_{vertices}'),
-    ('nJet25',        NJETBINS,  'N_{jets}'),
-    ('nBJetMedium25', NBJETBINS, 'N_{bjets, CSVM}'),
+#    ('nJet25',        NJETBINS,  'N_{jets}'),
+#    ('nBJetMedium25', NBJETBINS, 'N_{bjets, CSVM}'),
 ]
 
-DENOMINATOR = "passLoose"
+DENOMINATOR = "passLoose" # or passFO?
 NUMERATORS  = [
-    ('2lss',"passTight&&passTCharge&&ICHEPmediumMuonId", 'same-sign 2 lepton definition'),
-    ('3l',  "passTight&&ICHEPmediumMuonId", '3 lepton definition'),
+    ('2lss',"passTight&&passTCharge", 'same-sign 2 lepton definition'),
+    ('3l',  "passTight", '3 lepton definition'),
 ]
 
 INPUTS = {
     'data':[
         "Run2016",
         ],
-    'DY':["DYJetsToLL_M50"],
+    'DY':[
+        "DYJetsToLL_M50_LO_ext_part1_treeProducerSusyMultilepton_tree",
+        "DYJetsToLL_M50_LO_ext_part2_treeProducerSusyMultilepton_tree",
+        "DYJetsToLL_M50_LO_ext_part3_treeProducerSusyMultilepton_tree",
+        ],
     # 'ttbar':[
     #     "TTJets_DiLepton",
     #     "TTJets_SingleLeptonFromTbar_ext",
@@ -728,11 +740,13 @@ def makePlots(efficiencies, options):
 
                 plot.reference = [efficiencies['DY'][(lep,'inclusive',nname,var)]]
 
+                fitlabel = 'Z mass fit' if not options.cutNCount else 'cut & count'
+
                 plot.add(efficiencies['data'][(lep,'inclusive',nname,var)],
-                         'Data (%.2f fb^{-1}), Z mass fit' % LUMI,
+                         'Data (%.2f fb^{-1}), %s' % (LUMI, fitlabel),
                          includeInRatio=True)
                 plot.add(efficiencies['DY'][(lep,'inclusive',nname,var)],
-                         'DY MC, Z mass fit',
+                         'DY MC, %s' % fitlabel,
                          includeInRatio=False)
 
                 for selname in SELECTIONS.keys():

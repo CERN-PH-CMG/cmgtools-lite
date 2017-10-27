@@ -58,7 +58,7 @@ parser.add_option("-m", "--modules", dest="modules",  type="string", default=[],
 parser.add_option("-d", "--dataset", dest="datasets",  type="string", default=[], action="append", help="Process only this dataset (or dataset if specified multiple times)");
 parser.add_option("-D", "--dm", "--dataset-match", dest="datasetMatches",  type="string", default=[], action="append", help="Process only this dataset (or dataset if specified multiple times): REGEXP");
 parser.add_option("-c", "--chunk",   dest="chunks",    type="int",    default=[], action="append", help="Process only these chunks (works only if a single dataset is selected with -d)");
-parser.add_option("--subChunk", dest="subChunk",    type="int",    default=None, nargs=1, help="Process sub-chunk iof this chunk");
+parser.add_option("--subChunk", dest="subChunk",    type="int",    default=None, nargs=None, help="Process sub-chunk of this chunk");
 parser.add_option("--fineSplit", dest="fineSplit",    type="int",    default=None, nargs=1, help="Split each chunk in N subchunks");
 parser.add_option("-N", "--events",  dest="chunkSize", type="int",    default=500000, help="Default chunk size when splitting trees");
 parser.add_option("-j", "--jobs",    dest="jobs",      type="int",    default=1, help="Use N threads");
@@ -75,6 +75,7 @@ parser.add_option("-n", "--new",  dest="newOnly", action="store_true", default=F
 parser.add_option("-I", "--import", dest="imports",  type="string", default=[], action="append", help="Modules to import");
 parser.add_option("--log", "--log-dir", dest="logdir", type="string", default=None, help="Directory of stdout and stderr");
 parser.add_option("--env",   dest="env",     type="string", default="lxbatch", help="Give the environment on which you want to use the batch system (lxbatch, psi, oviedo)");
+parser.add_option("--run",   dest="runner",     type="string", default="lxbatch_runner.sh", help="Give the runner script (default: lxbatch_runner.sh)");
 parser.add_option("--bk",   dest="bookkeeping",  action="store_true", default=False, help="If given the command used to run the friend tree will be stored");
 parser.add_option("--tra2",  dest="useTRAv2", action="store_true", default=False, help="Use the new experimental version of treeReAnalyzer");
 (options, args) = parser.parse_args()
@@ -171,7 +172,7 @@ for D in glob(args[0]+"/*"):
                 else:
                     ev_per_fs = int(ceil(chunk/float(options.fineSplit)))
                     for ifs in xrange(options.fineSplit):
-                        if options.subChunk and ifs != options.subChunk: continue
+                        if options.subChunk != None and ifs != options.subChunk: continue
                         r = xrange(i*chunk + ifs*ev_per_fs, min(i*chunk + min((ifs+1)*ev_per_fs, chunk),entries))
                         jobs.append((short,fname,"%s/evVarFriend_%s.chunk%d.sub%d.root" % (args[1],short,i,ifs),data,r,i,(ifs,options.fineSplit)))
 print "\n"
@@ -193,7 +194,7 @@ if options.queue:
         runner = "lxbatch_runner.sh"
         theoutput = theoutput.replace('/pool/ciencias/','/pool/cienciasrw/')
     else: # Use lxbatch by default
-        runner = "lxbatch_runner.sh"
+        runner = options.runner
         super  = "bsub -q {queue}".format(queue = options.queue)
 
     basecmd = "{dir}/{runner} {dir} {cmssw} python {self} -N {chunkSize} -T {tdir} -t {tree} {data} {output}".format(

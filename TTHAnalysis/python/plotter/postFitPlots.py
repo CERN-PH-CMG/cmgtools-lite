@@ -25,9 +25,9 @@ if __name__ == "__main__":
     parser = OptionParser(usage="%prog [options] mcaplot.txt mcafit.txt plotfile varname mlfile channel [onlyNorm]")
     addPlotMakerOptions(parser)
     (options, args) = parser.parse_args()
-    options.path = "/data1/peruzzi/mixture_jecv6prompt_datafull_jul20_skimOnlyMC"
-#    options.path = "/data1/peruzzi/TREES_80X_180716_jecv6_skim_3ltight_relax"
-    options.lumi = 12.9
+    options.path = ["/data1/peruzzi/TREES_TTH_250117_Summer16_JECV3_noClean_qgV2_skimOnlyMC_v6"]
+#    options.path = ["/data1/peruzzi/TREES_TTH_250117_Summer16_JECV3_noClean_qgV2_skim3l2j2b1B_v6"]
+    options.lumi = 35.9
     mcap = MCAnalysis(args[0],options)
     mca  = MCAnalysis(args[1],options)
     basedir = dirname(args[2]);
@@ -164,9 +164,9 @@ if __name__ == "__main__":
                       textLeft = options.lspam, textRight = options.rspam, lumi = options.lumi)
       ## Draw relaive prediction in the bottom frame
       p2.cd() 
-      rdata,rnorm,rnorm2,rline,leg0,leg1 = doRatioHists(PlotSpec(var,var,"",{}), plots, htot, htot, maxRange=options.maxRatioRange, fixRange=options.fixRatioRange,
-                                                                      fitRatio=options.fitRatio, errorsOnRef=options.errorBandOnRatio,
-                                                                      ratioNums=options.ratioNums, ratioDen=options.ratioDen, doWide=options.wideplot, showStatTotLegend=False)
+      rdata,rnorm,rnorm2,rline = doRatioHists(PlotSpec(var,var,"",{}), plots, htot, htot, maxRange=options.maxRatioRange, fixRange=options.fixRatioRange,
+                                              fitRatio=options.fitRatio, errorsOnRef=options.errorBandOnRatio,
+                                              ratioNums=options.ratioNums, ratioDen=options.ratioDen, ylabel="Data/pred.", doWide=options.wideplot, showStatTotLegend=False)
       c1.cd()
       c1.Print("%s/%s_%s.png" % (basedir,O,var))
       c1.Print("%s/%s_%s.pdf" % (basedir,O,var))

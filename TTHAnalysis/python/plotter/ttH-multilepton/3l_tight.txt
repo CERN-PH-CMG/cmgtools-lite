@@ -1,10 +1,10 @@
 alwaystrue: 1
 trilep: nLepFO>=3
-exclusive: nLepTight <= 3 ;  Disable=True
+exclusive: nLepTight <= 3
 cleanup: minMllAFAS > 12
-trigger: $DATA{Triggers_3l} $MC{1}
-pt2010: LepGood1_conePt>20 && LepGood2_conePt>10 && LepGood3_conePt>10
-TTT: LepGood1_isTight && LepGood2_isTight && LepGood3_isTight
+trigger: Trigger_3l
+pt251515: LepGood1_conePt>25 && LepGood2_conePt>15 && LepGood3_conePt>15
+TTT: LepGood1_isLepTight && LepGood2_isLepTight && LepGood3_isLepTight
 Zveto: abs(mZ1-91.2) > 10
 met LD: nJet25 >= 4 || met_pt*0.00397 + mhtJet25*0.00265 > 0.2 + 0.1*(mZ1 > 0)
 q1: abs(LepGood1_charge + LepGood2_charge + LepGood3_charge) == 1
@@ -16,6 +16,8 @@ ele conv cuts: (abs(LepGood1_pdgId)!=11 || (LepGood1_convVeto && LepGood1_lostHi
 
 vetottHZZ: !(mZ2>0 && m4l<140)
 
+tauveto: nTauTight==0
+
 x2j: nJet25==2 ; Disable=True
 4j: nJet25>=4 ; Disable=True
 gt2b: nBJetLoose25 >= 2 ; Disable=True
@@ -24,8 +26,6 @@ gt2b: nBJetLoose25 >= 2 ; Disable=True
 BLoose: nBJetMedium25 < 2 ; Disable=True
 BTight: nBJetMedium25 >= 2 ; Disable=True
 Bveto: nBJetMedium25 == 0 ; Disable=True
-0tau: nTauTight==0 ; Disable=True
-1tau: nTauTight>=1 ; Disable=True
 tightMVA075: LepGood1_mvaTTH>0.75 && LepGood2_mvaTTH>0.75 && LepGood3_mvaTTH>0.75 ; Disable=True
 b3l_bl_neg: (LepGood1_charge+LepGood2_charge+LepGood3_charge)<0 && nBJetMedium25 < 2 ; Disable=True
 b3l_bl_pos: (LepGood1_charge+LepGood2_charge+LepGood3_charge)>0 && nBJetMedium25 < 2 ; Disable=True

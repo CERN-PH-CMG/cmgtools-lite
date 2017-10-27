@@ -16,7 +16,7 @@ TH2 * FR3_el = 0;
 TH2 * FR4_el = 0;
 TH2 * FR5_el = 0;
 TH2 * QF_el = 0;
-TH2 * FRi_mu[6], *FRi_el[6], *FRi_tau[6];
+TH2 * FRi_mu[30], *FRi_el[30], *FRi_tau[6];
 TH2 * FR_tau = 0;
 TH2 * FR2_tau = 0;
 TH2 * FR3_tau = 0;
@@ -56,7 +56,8 @@ TH2 * MUSF2 = 0;
 TH2 * MUSF3 = 0;
 
 bool loadFRHisto(const std::string &histoName, const char *file, const char *name) {
-    TH2 **histo = 0, **hptr2 = 0;
+  TH2 **histo = 0, **hptr2 = 0;
+  TH2 * FR_temp = 0;
     if      (histoName == "FR_tau") { histo = & FR_tau; hptr2 = & FRi_tau[0]; }
     else if (histoName == "FR_mu")  { histo = & FR_mu;  hptr2 = & FRi_mu[0]; }
     else if (histoName == "FR_el")  { histo = & FR_el;  hptr2 = & FRi_el[0]; }
@@ -70,6 +71,8 @@ bool loadFRHisto(const std::string &histoName, const char *file, const char *nam
     else if (histoName == "FR4_el") { histo = & FR4_el; hptr2 = & FRi_el[4]; }
     else if (histoName == "FR5_mu") { histo = & FR5_mu; hptr2 = & FRi_mu[5]; }
     else if (histoName == "FR5_el") { histo = & FR5_el; hptr2 = & FRi_el[5]; }
+    else if (TString(histoName).BeginsWith("FR_mu_i")) {histo = & FR_temp; hptr2 = & FRi_mu[TString(histoName).ReplaceAll("FR_mu_i","").Atoi()];}
+    else if (TString(histoName).BeginsWith("FR_el_i")) {histo = & FR_temp; hptr2 = & FRi_el[TString(histoName).ReplaceAll("FR_el_i","").Atoi()];}
     else if (histoName == "QF_el") histo = & QF_el;
     else if (histoName == "FR_mu_FO1_QCD")  { histo = &FR_mu_FO1_QCD ;  hptr2 = & FRi_FO_mu[0]; }
     else if (histoName == "FR_mu_FO1_insitu")  { histo = &FR_mu_FO1_insitu ;  hptr2 = & FRi_FO_mu[1]; }
@@ -223,6 +226,12 @@ float fakeRateWeight_2lss_2(float l1pt, float l1eta, int l1pdgId, float l1pass,
 {
     return fakeRateWeight_2lssCB_i(l1pt, l1eta, l1pdgId, -l1pass,
                             l2pt, l2eta, l2pdgId, -l2pass, -0.5, 2);
+}
+float fakeRateWeight_2lss_i(float l1pt, float l1eta, int l1pdgId, float l1pass,
+                            float l2pt, float l2eta, int l2pdgId, float l2pass, int iFR) 
+{
+    return fakeRateWeight_2lssCB_i(l1pt, l1eta, l1pdgId, -l1pass,
+                            l2pt, l2eta, l2pdgId, -l2pass, -0.5, iFR);
 }
 
 float fakeRateWeight_2lss_up(float l1pt, float l1eta, int l1pdgId, float l1pass,

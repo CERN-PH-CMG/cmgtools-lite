@@ -1,10 +1,11 @@
 #!/bin/bash
 if [[ "$1" == "-h" || "$1" == "--help" ]]; then
-    echo "Usage: $0 [ option(s) ]"
+    echo "Usage: $0 [ option(s) ] directory"
     echo "Will run cmgListChunksToResub on all the chunks and make a list of chunks to be resubmitted "
-    echo "It runs on both treeProducerDarkMatterMonoJet/tree.root and JSONAnalyzer/RLTInfo.root " 
+    echo "It runs on both treeProducerWMass/tree.root and JSONAnalyzer/RLTInfo.root " 
     echo "If -r option is given, it will print the command to remove the bad chunks. " 
     echo "If -s option is given, it will save the command to resubmit/remove the bad chunks in a script file named chunksToResub.sh. " 
+    echo "If -m option is given, it will save the command to move the good chunks in a script file named chunksToStore.sh. " 
     exit 1;
 fi
 
@@ -12,21 +13,23 @@ RM=0
 saveList=false # if option -s is passed, it is set to true. If true, the commands are saved in a bash script for later usage
 
 # loop on all options passed and get flags
-for option in "$@";
-do
-    if [ $option = "-r" ]; then
-	RM=1
-	echo "# Will print the command to remove the bad chunks"
-    elif [ $option = "-s" ]; then
-	saveList=true
-	echo "# Will save the command to resubmit/remove the bad chunks in a script file named chunksToResub.sh"
-    fi
+while true; do
+    case "$1" in
+        -r )  RM=1; echo "# Will print the command to remove the bad chunks"; shift ;;
+        -s )  saveList=true; echo "# Will save the command to resubmit/remove the bad chunks in a script file named chunksToResub.sh"; shift ;;
+        -m )  mv=true; echo "# Will save the command to move the good chunks in a script file named chunksToStore.sh"; shift ;;
+        -- )            shift; break ;;
+        *  )            break ;;
+    esac
 done
 
+DIR=$1
+MVDIR=$2
+
 echo "# Check the trees..."
-cmgListChunksToResub -t treeProducerDarkMatterMonoJet/tree.root -z > clean.sh
+cmgListChunksToResub -t treeProducerWMass/tree.root -z -p $DIR > clean.sh
 echo "# Check the RLTInfo.root..."
-cmgListChunksToResub -t JSONAnalyzer/RLTInfo.root -z >> clean.sh
+cmgListChunksToResub -t JSONAnalyzer/RLTInfo.root -z $DIR >> clean.sh
 echo "# Preparing the script to run..."
 sort clean.sh | uniq > clean2.sh
 
@@ -57,6 +60,18 @@ if [[ "$RM" == 0 ]]; then
 else
     sed 's|cmgResubChunk -q 8nh |rm -r |g' clean2polished.sh > chunksToResub.sh
 fi;
+
+if [ $mv == "true" ]; then
+    ls $DIR | sort > allChunks.txt
+    grep $DIR chunksToResub.sh | awk -F "$DIR" '{print $2}' | awk -F "/" '{print $2}' | awk '{print $1}' | sort | uniq > runningChunks.txt
+    grep -Fxvf runningChunks.txt allChunks.txt | awk '{print "mv '$DIR'/" $1 " '$MVDIR'"}' > chunksToStore.sh
+    echo $DIR " has " `wc allChunks.txt | awk '{print $2}'` " chunks: " `wc runningChunks.txt | awk '{print $2}'` " running, " `wc chunksToStore.sh | awk '{print $1}'` " to be safely moved in " $MVDIR "."
+    rm allChunks.txt runningChunks.txt
+    if [ $saveList = "false" ]; then 
+        cat chunksToStore.sh
+        rm chunksToStore.sh
+    fi
+fi
 
 if [ $saveList = "false" ]; then 
     cat chunksToResub.sh

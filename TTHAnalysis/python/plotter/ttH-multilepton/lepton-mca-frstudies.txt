@@ -1,180 +1,215 @@
 # vim: syntax=sh
-TT_true+:  TTJets_SingleLeptonFromT   : 1: LepGood_mcMatchId != 0 ; FillColor=ROOT.kGreen+2, Label="prompt (tt)"
-TT_true+:  TTJets_SingleLeptonFromTbar: 1: LepGood_mcMatchId != 0 ; FillColor=ROOT.kGreen+2, Label="prompt (tt)"
+TT_true+:  dilep_TTJets_SingleLeptonFromT+dilep_TTJets_SingleLeptonFromT_ext      : 1: LepGood_mcMatchId != 0 ; FillColor=ROOT.kGreen+2, Label="prompt (tt)"
+TT_true+:  dilep_TTJets_SingleLeptonFromTbar+dilep_TTJets_SingleLeptonFromTbar_ext: 1: LepGood_mcMatchId != 0 ; FillColor=ROOT.kGreen+2, Label="prompt (tt)"
 
-TT_red:   TTJets_SingleLeptonFromT   : xsec: LepGood_mcMatchId  == 0; FillColor=ROOT.kGray+2, Label="non-pr (tt)", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT.txt"
-TT_red:   TTJets_SingleLeptonFromTbar: xsec: LepGood_mcMatchId  == 0 ; FillColor=ROOT.kGray+2, Label="non-pr (tt)", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT.txt"
-TT_redNC: TTJets_SingleLeptonFromT   : xsec: LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma == 0; FillColor=ROOT.kGray+3, Label="non-pr (tt\, w/o \#gamma)", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT.txt"
-TT_redNC: TTJets_SingleLeptonFromTbar: xsec: LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma == 0; FillColor=ROOT.kGray+3, Label="non-pr (tt\, w/o \#gamma)", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT.txt"
-TT_bjets: TTJets_SingleLeptonFromT   : xsec: LepGood_mcMatchId  == 0 && LepGood_mcMatchAny == 5 ; FillColor=ROOT.kBlue-2, Label="b-jets (tt)", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT.txt"
-TT_bjets: TTJets_SingleLeptonFromTbar: xsec: LepGood_mcMatchId  == 0 && LepGood_mcMatchAny == 5 ; FillColor=ROOT.kBlue-2, Label="b-jets (tt)", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT.txt"
-TT_cjets: TTJets_SingleLeptonFromT   : xsec: LepGood_mcMatchAny == 4 ; FillColor=ROOT.kGray+2, Label="c-jets (tt)", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT.txt"
-TT_cjets: TTJets_SingleLeptonFromTbar: xsec: LepGood_mcMatchAny == 4 ; FillColor=ROOT.kGray+2, Label="c-jets (tt)", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT.txt"
-TT_ljets: TTJets_SingleLeptonFromT   : xsec: LepGood_mcMatchId  == 0  && LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 ; FillColor=ROOT.kTeal+2, Label="l-jets (tt)", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT.txt"
-TT_ljets: TTJets_SingleLeptonFromTbar: xsec: LepGood_mcMatchId  == 0  && LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 ; FillColor=ROOT.kTeal+2, Label="l-jets (tt)", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT.txt"
-TT_fake:  TTJets_SingleLeptonFromT   : xsec: LepGood_mcMatchAny == 0 ; FillColor=ROOT.kGray+3, Label="fakes (tt)", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT.txt"
-TT_fake:  TTJets_SingleLeptonFromTbar: xsec: LepGood_mcMatchAny == 0 ; FillColor=ROOT.kGray+3, Label="fakes (tt)", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT.txt"
-TT_conv:  TTJets_SingleLeptonFromT   : xsec: LepGood_mcMatchAny == 0; FillColor=ROOT.kYellow+2, Label="\#gamma (tt)", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT.txt"
-TT_conv:  TTJets_SingleLeptonFromTbar: xsec: LepGood_mcMatchAny == 0; FillColor=ROOT.kYellow+2, Label="\#gamma (tt)", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT.txt"
+TT_red:   dilep_TTJets_SingleLeptonFromT+dilep_TTJets_SingleLeptonFromT_ext      : xsec: LepGood_mcMatchId  == 0; FillColor=ROOT.kGray+2, Label="non-pr (tt)", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT.txt"
+TT_red:   dilep_TTJets_SingleLeptonFromTbar+dilep_TTJets_SingleLeptonFromTbar_ext: xsec: LepGood_mcMatchId  == 0 ; FillColor=ROOT.kGray+2, Label="non-pr (tt)", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT.txt"
+TT_redNC: dilep_TTJets_SingleLeptonFromT+dilep_TTJets_SingleLeptonFromT_ext      : xsec: LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma == 0; FillColor=ROOT.kGray+3, Label="non-pr (tt\, w/o \#gamma)", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT.txt"
+TT_redNC: dilep_TTJets_SingleLeptonFromTbar+dilep_TTJets_SingleLeptonFromTbar_ext: xsec: LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma == 0; FillColor=ROOT.kGray+3, Label="non-pr (tt\, w/o \#gamma)", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT.txt"
+TT_bjets: dilep_TTJets_SingleLeptonFromT+dilep_TTJets_SingleLeptonFromT_ext      : xsec: LepGood_mcMatchId  == 0 && LepGood_mcMatchAny == 5 ; FillColor=ROOT.kBlue-2, Label="b-jets (tt)", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT.txt"
+TT_bjets: dilep_TTJets_SingleLeptonFromTbar+dilep_TTJets_SingleLeptonFromTbar_ext: xsec: LepGood_mcMatchId  == 0 && LepGood_mcMatchAny == 5 ; FillColor=ROOT.kBlue-2, Label="b-jets (tt)", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT.txt"
+TT_cjets: dilep_TTJets_SingleLeptonFromT+dilep_TTJets_SingleLeptonFromT_ext      : xsec: LepGood_mcMatchAny == 4 ; FillColor=ROOT.kGray+2, Label="c-jets (tt)", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT.txt"
+TT_cjets: dilep_TTJets_SingleLeptonFromTbar+dilep_TTJets_SingleLeptonFromTbar_ext: xsec: LepGood_mcMatchAny == 4 ; FillColor=ROOT.kGray+2, Label="c-jets (tt)", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT.txt"
+TT_ljets: dilep_TTJets_SingleLeptonFromT+dilep_TTJets_SingleLeptonFromT_ext      : xsec: LepGood_mcMatchId  == 0  && LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 ; FillColor=ROOT.kTeal+2, Label="l-jets (tt)", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT.txt"
+TT_ljets: dilep_TTJets_SingleLeptonFromTbar+dilep_TTJets_SingleLeptonFromTbar_ext: xsec: LepGood_mcMatchId  == 0  && LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 ; FillColor=ROOT.kTeal+2, Label="l-jets (tt)", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT.txt"
+TT_ljetsC: dilep_TTJets_SingleLeptonFromT+dilep_TTJets_SingleLeptonFromT_ext      : xsec: LepGood_mcMatchId  == 0  && LepGood_mcPromptGamma != 0 && LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 ; FillColor=ROOT.kAzure+2, Label="l-jets (tt\, \#gamma)", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT.txt"
+TT_ljetsC: dilep_TTJets_SingleLeptonFromT+dilep_TTJets_SingleLeptonFromT_ext      : xsec: LepGood_mcMatchId  == 0  && LepGood_mcPromptGamma != 0 && LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 ; FillColor=ROOT.kAzure+2, Label="l-jets (tt\, \#gamma)", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT.txt"
+TT_ljetsNC: dilep_TTJets_SingleLeptonFromTbar+dilep_TTJets_SingleLeptonFromTbar_ext: xsec: LepGood_mcMatchId  == 0  && LepGood_mcPromptGamma == 0 && LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 ; FillColor=ROOT.kGreen+2, Label="l-jets (tt\, no \#gamma)", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT.txt"
+TT_ljetsNC: dilep_TTJets_SingleLeptonFromTbar+dilep_TTJets_SingleLeptonFromTbar_ext: xsec: LepGood_mcMatchId  == 0  && LepGood_mcPromptGamma == 0 && LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 ; FillColor=ROOT.kGreen+2, Label="l-jets (tt\, no \#gamma)", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT.txt"
+TT_fake:  dilep_TTJets_SingleLeptonFromT+dilep_TTJets_SingleLeptonFromT_ext      : xsec: LepGood_mcMatchAny == 0 ; FillColor=ROOT.kGray+3, Label="fakes (tt)", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT.txt"
+TT_fake:  dilep_TTJets_SingleLeptonFromTbar+dilep_TTJets_SingleLeptonFromTbar_ext: xsec: LepGood_mcMatchAny == 0 ; FillColor=ROOT.kGray+3, Label="fakes (tt)", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT.txt"
+TT_conv:  dilep_TTJets_SingleLeptonFromT+dilep_TTJets_SingleLeptonFromT_ext      : xsec: LepGood_mcMatchId  == 0  && LepGood_mcPromptGamma != 0 ; FillColor=ROOT.kYellow+2, Label="\#gamma (tt)", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT.txt"
+TT_conv:  dilep_TTJets_SingleLeptonFromTbar+dilep_TTJets_SingleLeptonFromTbar_ext: xsec: LepGood_mcMatchId  == 0  && LepGood_mcPromptGamma != 0 ; FillColor=ROOT.kYellow+2, Label="\#gamma (tt)", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT.txt"
 
-Wjets_red: WJetsToLNu  : xsec: LepGood_mcMatchId  == 0; FillColor=ROOT.kCyan, Label="non-pr (Wj)", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT.txt"
-Wjets_ljets: WJetsToLNu  : xsec: LepGood_mcMatchId  == 0 && LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4; FillColor=ROOT.kGreen+2, Label="l-jets (Wj)", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT.txt"
+Wjets_red: WJetsToLNu_LO    : xsec: LepGood_mcMatchId  == 0; FillColor=ROOT.kCyan, Label="non-pr (Wj)", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT.txt"
+Wjets_ljets: WJetsToLNu_LO  : xsec: LepGood_mcMatchId  == 0 && LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4; FillColor=ROOT.kGreen+2, Label="l-jets (Wj)", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT.txt"
 
-DY_red:   DYJetsToLL_M10to50  : xsec: LepGood_mcMatchId  == 0; FillColor=ROOT.kCyan, Label="non-pr (DY)", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT.txt"
-DY_red:   DYJetsToLL_M50  : xsec: LepGood_mcMatchId  == 0; FillColor=ROOT.kCyan, Label="non-pr (DY)", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT.txt"
-DY_ljets: DYJetsToLL_M10to50  : xsec: LepGood_mcMatchId  == 0 && LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4; FillColor=ROOT.kGreen+2, Label="l-jets (DY)", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT.txt"
-DY_ljets: DYJetsToLL_M50  : xsec: LepGood_mcMatchId  == 0 && LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4; FillColor=ROOT.kGreen+2, Label="l-jets (DY)", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT.txt"
+DY_red:   DYJetsToLL_M10to50_LO                                                                : xsec: LepGood_mcMatchId  == 0; FillColor=ROOT.kCyan, Label="non-pr (DY)", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT.txt"
+DY_red:   DYJetsToLL_M50_LO_ext_part1+DYJetsToLL_M50_LO_ext_part2+DYJetsToLL_M50_LO_ext_part3  : xsec: LepGood_mcMatchId  == 0; FillColor=ROOT.kCyan, Label="non-pr (DY)", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT.txt"
+DY_ljets: DYJetsToLL_M10to50_LO                                                                : xsec: LepGood_mcMatchId  == 0 && LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4; FillColor=ROOT.kGreen+2, Label="l-jets (DY)", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT.txt"
+DY_ljets: DYJetsToLL_M50_LO_ext_part1+DYJetsToLL_M50_LO_ext_part2+DYJetsToLL_M50_LO_ext_part3  : xsec: LepGood_mcMatchId  == 0 && LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4; FillColor=ROOT.kGreen+2, Label="l-jets (DY)", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT.txt"
 
-TT_SS_red:   TTJets_SingleLeptonFromT         : xsec: LepGood_mcMatchId  == 0 ; FillColor=ROOT.kGreen+2, Label="(tt ss)", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT-sameSign.txt"
-TT_SS_red:   TTJets_SingleLeptonFromTbar      : xsec: LepGood_mcMatchId  == 0 ; FillColor=ROOT.kGreen+2, Label="(tt ss)", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT-sameSign.txt"
-TT_SSbl_red: TTJets_SingleLeptonFromT         : xsec: LepGood_mcMatchId  == 0 && nBJetMedium25 <= 1; FillColor=ROOT.kAzure+1, Label="(tt ss bl)", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT-sameSign.txt"
-TT_SSbl_red: TTJets_SingleLeptonFromTbar      : xsec: LepGood_mcMatchId  == 0 && nBJetMedium25 <= 1; FillColor=ROOT.kAzure+1, Label="(tt ss bl)", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT-sameSign.txt"
-TT_SSbt_red: TTJets_SingleLeptonFromT         : xsec: LepGood_mcMatchId  == 0 && nBJetMedium25 >= 2; FillColor=ROOT.kRed-3, Label="(tt ss bt)", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT-sameSign.txt"
-TT_SSbt_red: TTJets_SingleLeptonFromTbar      : xsec: LepGood_mcMatchId  == 0 && nBJetMedium25 >= 2; FillColor=ROOT.kRed-3, Label="(tt ss bt)", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT-sameSign.txt"
-TT_SSbt_black: TTJets_SingleLeptonFromT       : xsec: LepGood_mcMatchId  == 0 && nBJetMedium25 >= 2; FillColor=ROOT.kBlack, Label="tt b-tight", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT-sameSign.txt"
-TT_SSbt_black: TTJets_SingleLeptonFromTbar    : xsec: LepGood_mcMatchId  == 0 && nBJetMedium25 >= 2; FillColor=ROOT.kBlack, Label="tt b-tight", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT-sameSign.txt"
+TT_SS_red:   dilep_TTJets_SingleLeptonFromT+dilep_TTJets_SingleLeptonFromT_ext         : xsec: LepGood_mcMatchId  == 0 ; FillColor=ROOT.kGreen+2, Label="(tt ss)", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT-sameSign.txt"
+TT_SS_red:   dilep_TTJets_SingleLeptonFromTbar+dilep_TTJets_SingleLeptonFromTbar_ext   : xsec: LepGood_mcMatchId  == 0 ; FillColor=ROOT.kGreen+2, Label="(tt ss)", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT-sameSign.txt"
+TT_SSbl_red: dilep_TTJets_SingleLeptonFromT+dilep_TTJets_SingleLeptonFromT_ext         : xsec: LepGood_mcMatchId  == 0 && nBJetMedium25 <= 1; FillColor=ROOT.kAzure+1, Label="(tt ss bl)", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT-sameSign.txt"
+TT_SSbl_red: dilep_TTJets_SingleLeptonFromTbar+dilep_TTJets_SingleLeptonFromTbar_ext   : xsec: LepGood_mcMatchId  == 0 && nBJetMedium25 <= 1; FillColor=ROOT.kAzure+1, Label="(tt ss bl)", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT-sameSign.txt"
+TT_SSbt_red: dilep_TTJets_SingleLeptonFromT+dilep_TTJets_SingleLeptonFromT_ext         : xsec: LepGood_mcMatchId  == 0 && nBJetMedium25 >= 2; FillColor=ROOT.kRed-3, Label="(tt ss bt)", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT-sameSign.txt"
+TT_SSbt_red: dilep_TTJets_SingleLeptonFromTbar+dilep_TTJets_SingleLeptonFromTbar_ext   : xsec: LepGood_mcMatchId  == 0 && nBJetMedium25 >= 2; FillColor=ROOT.kRed-3, Label="(tt ss bt)", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT-sameSign.txt"
+TT_SSbt_black: dilep_TTJets_SingleLeptonFromT+dilep_TTJets_SingleLeptonFromT_ext       : xsec: LepGood_mcMatchId  == 0 && nBJetMedium25 >= 2; FillColor=ROOT.kBlack, Label="tt b-tight", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT-sameSign.txt"
+TT_SSbt_black: dilep_TTJets_SingleLeptonFromTbar+dilep_TTJets_SingleLeptonFromTbar_ext : xsec: LepGood_mcMatchId  == 0 && nBJetMedium25 >= 2; FillColor=ROOT.kBlack, Label="tt b-tight", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT-sameSign.txt"
 
-TT_pt8_red:  TTJets_SingleLeptonFromT   : xsec: LepGood_mcMatchId  == 0 && LepGood_pt >  8;  FillColor=ROOT.kBlue+2,  Label="tt p_{T} >  8", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT.txt"
-TT_pt8_red:  TTJets_SingleLeptonFromTbar: xsec: LepGood_mcMatchId  == 0 && LepGood_pt >  8;  FillColor=ROOT.kBlue+2,  Label="tt p_{T} >  8", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT.txt"
-TT_pt12_red: TTJets_SingleLeptonFromT   : xsec: LepGood_mcMatchId  == 0 && LepGood_pt > 12; FillColor=ROOT.kAzure+1,  Label="tt p_{T} > 12", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT.txt"
-TT_pt12_red: TTJets_SingleLeptonFromTbar: xsec: LepGood_mcMatchId  == 0 && LepGood_pt > 12; FillColor=ROOT.kAzure+1,  Label="tt p_{T} > 12", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT.txt"
-TT_pt17_red: TTJets_SingleLeptonFromT   : xsec: LepGood_mcMatchId  == 0 && LepGood_pt > 17; FillColor=ROOT.kAzure+1,  Label="tt p_{T} > 17", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT.txt"
-TT_pt17_red: TTJets_SingleLeptonFromTbar: xsec: LepGood_mcMatchId  == 0 && LepGood_pt > 17; FillColor=ROOT.kAzure+1,  Label="tt p_{T} > 17", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT.txt"
-TT_pt23_red: TTJets_SingleLeptonFromT   : xsec: LepGood_mcMatchId  == 0 && LepGood_pt > 23; FillColor=ROOT.kTeal+7,   Label="tt p_{T} > 23", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT.txt"
-TT_pt23_red: TTJets_SingleLeptonFromTbar: xsec: LepGood_mcMatchId  == 0 && LepGood_pt > 23; FillColor=ROOT.kTeal+7,   Label="tt p_{T} > 23", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT.txt"
+TT_SS_redNC:   dilep_TTJets_SingleLeptonFromT+dilep_TTJets_SingleLeptonFromT_ext         : xsec: LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma == 0 ; FillColor=ROOT.kGreen+2, Label="(tt ss)", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT-sameSign.txt"
+TT_SS_redNC:   dilep_TTJets_SingleLeptonFromTbar+dilep_TTJets_SingleLeptonFromTbar_ext   : xsec: LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma == 0 ; FillColor=ROOT.kGreen+2, Label="(tt ss)", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT-sameSign.txt"
+TT_SSbl_redNC: dilep_TTJets_SingleLeptonFromT+dilep_TTJets_SingleLeptonFromT_ext         : xsec: LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma == 0 && nBJetMedium25 <= 1; FillColor=ROOT.kAzure+1, Label="(tt ss bl)", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT-sameSign.txt"
+TT_SSbl_redNC: dilep_TTJets_SingleLeptonFromTbar+dilep_TTJets_SingleLeptonFromTbar_ext   : xsec: LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma == 0 && nBJetMedium25 <= 1; FillColor=ROOT.kAzure+1, Label="(tt ss bl)", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT-sameSign.txt"
+TT_SSbt_redNC: dilep_TTJets_SingleLeptonFromT+dilep_TTJets_SingleLeptonFromT_ext         : xsec: LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma == 0 && nBJetMedium25 >= 2; FillColor=ROOT.kRed-3, Label="(tt ss bt)", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT-sameSign.txt"
+TT_SSbt_redNC: dilep_TTJets_SingleLeptonFromTbar+dilep_TTJets_SingleLeptonFromTbar_ext   : xsec: LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma == 0 && nBJetMedium25 >= 2; FillColor=ROOT.kRed-3, Label="(tt ss bt)", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT-sameSign.txt"
+T
+TT_pt8_red:  dilep_TTJets_SingleLeptonFromT+dilep_TTJets_SingleLeptonFromT_ext      : xsec: LepGood_mcMatchId  == 0 && LepGood_pt >  8;  FillColor=ROOT.kBlue+2,  Label="tt p_{T} >  8", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT.txt"
+TT_pt8_red:  dilep_TTJets_SingleLeptonFromTbar+dilep_TTJets_SingleLeptonFromTbar_ext: xsec: LepGood_mcMatchId  == 0 && LepGood_pt >  8;  FillColor=ROOT.kBlue+2,  Label="tt p_{T} >  8", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT.txt"
+TT_pt12_red: dilep_TTJets_SingleLeptonFromT+dilep_TTJets_SingleLeptonFromT_ext      : xsec: LepGood_mcMatchId  == 0 && LepGood_pt > 12; FillColor=ROOT.kAzure+1,  Label="tt p_{T} > 12", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT.txt"
+TT_pt12_red: dilep_TTJets_SingleLeptonFromTbar+dilep_TTJets_SingleLeptonFromTbar_ext: xsec: LepGood_mcMatchId  == 0 && LepGood_pt > 12; FillColor=ROOT.kAzure+1,  Label="tt p_{T} > 12", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT.txt"
+TT_pt17_red: dilep_TTJets_SingleLeptonFromT+dilep_TTJets_SingleLeptonFromT_ext      : xsec: LepGood_mcMatchId  == 0 && LepGood_pt > 17; FillColor=ROOT.kAzure+1,  Label="tt p_{T} > 17", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT.txt"
+TT_pt17_red: dilep_TTJets_SingleLeptonFromTbar+dilep_TTJets_SingleLeptonFromTbar_ext: xsec: LepGood_mcMatchId  == 0 && LepGood_pt > 17; FillColor=ROOT.kAzure+1,  Label="tt p_{T} > 17", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT.txt"
+TT_pt23_red: dilep_TTJets_SingleLeptonFromT+dilep_TTJets_SingleLeptonFromT_ext      : xsec: LepGood_mcMatchId  == 0 && LepGood_pt > 23; FillColor=ROOT.kTeal+7,   Label="tt p_{T} > 23", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT.txt"
+TT_pt23_red: dilep_TTJets_SingleLeptonFromTbar+dilep_TTJets_SingleLeptonFromTbar_ext: xsec: LepGood_mcMatchId  == 0 && LepGood_pt > 23; FillColor=ROOT.kTeal+7,   Label="tt p_{T} > 23", FakeRate="ttH-multilepton/lepton-mca-frstudies-noJetCutOnTT.txt"
 
 
-QCDMu_red   : QCD_Mu15          : xsec*(LepGood_pt>15.5) : LepGood_mcMatchId  == 0; FillColor=ROOT.kPink-2, Label="QCD\#mu"
-QCDMu_red   : QCD_Pt20to30_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0; FillColor=ROOT.kPink-2, Label="QCD\#mu"
-QCDMu_red   : QCD_Pt30to50_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0; FillColor=ROOT.kPink-2, Label="QCD\#mu"
-QCDMu_red   : QCD_Pt50to80_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0; FillColor=ROOT.kPink-2, Label="QCD\#mu"
-QCDMu_red   : QCD_Pt80to120_Mu5 : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0; FillColor=ROOT.kPink-2, Label="QCD\#mu"
-#QCDMu_red   : QCD_Pt120to170_Mu5: xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0; FillColor=ROOT.kPink-2, Label="QCD\#mu"
-QCDMu_redNC : QCD_Mu15          : xsec*(LepGood_pt>15.5) : LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma == 0; FillColor=ROOT.kPink-6, Label="QCD\#mu (w/o \#gamma)"
+QCDMu_red   : QCD_Mu15          : xsec*(LepGood_pt>15.5)*0.88 : LepGood_mcMatchId  == 0; FillColor=ROOT.kPink-2, Label="QCD\#mu", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red   : QCD_Pt20to30_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0; FillColor=ROOT.kPink-2, Label="QCD\#mu", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red   : QCD_Pt30to50_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0; FillColor=ROOT.kPink-2, Label="QCD\#mu", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red   : QCD_Pt50to80_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0; FillColor=ROOT.kPink-2, Label="QCD\#mu", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red   : QCD_Pt80to120_Mu5 : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0; FillColor=ROOT.kPink-2, Label="QCD\#mu", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red   : QCD_Pt120to170_Mu5: xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0; FillColor=ROOT.kPink-2, Label="QCD\#mu", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_redNC : QCD_Mu15          : xsec*(LepGood_pt>15.5)*0.88 : LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma == 0; FillColor=ROOT.kPink-6, Label="QCD\#mu (w/o \#gamma)"
 QCDMu_redNC : QCD_Pt20to30_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma == 0; FillColor=ROOT.kPink-6, Label="QCD\#mu (w/o \#gamma)"
 QCDMu_redNC : QCD_Pt30to50_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma == 0; FillColor=ROOT.kPink-6, Label="QCD\#mu (w/o \#gamma)"
 QCDMu_redNC : QCD_Pt50to80_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma == 0; FillColor=ROOT.kPink-6, Label="QCD\#mu (w/o \#gamma)"
 QCDMu_redNC : QCD_Pt80to120_Mu5 : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma == 0; FillColor=ROOT.kPink-6, Label="QCD\#mu (w/o \#gamma)"
-#QCDMu_redNC : QCD_Pt120to170_Mu5: xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma == 0; FillColor=ROOT.kPink-6, Label="QCD\#mu (w/o \#gamma)"
-QCDMu_bjets: QCD_Mu15          : xsec*(LepGood_pt>15.5) : LepGood_mcMatchId  == 0 && LepGood_mcMatchAny == 5; FillColor=ROOT.kPink+5, Label="b-jets (QCD\#mu)"
-QCDMu_bjets: QCD_Pt20to30_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_mcMatchAny == 5; FillColor=ROOT.kPink+5, Label="b-jets (QCD\#mu)"
-QCDMu_bjets: QCD_Pt30to50_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_mcMatchAny == 5; FillColor=ROOT.kPink+5, Label="b-jets (QCD\#mu)"
-QCDMu_bjets: QCD_Pt50to80_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_mcMatchAny == 5; FillColor=ROOT.kPink+5, Label="b-jets (QCD\#mu)"
-QCDMu_bjets: QCD_Pt80to120_Mu5 : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_mcMatchAny == 5; FillColor=ROOT.kPink+5, Label="b-jets (QCD\#mu)"
-#QCDMu_bjets: QCD_Pt120to170_Mu5: xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_mcMatchAny == 5; FillColor=ROOT.kPink+5, Label="b-jets (QCD\#mu)"
-QCDMu_cjets: QCD_Mu15          : xsec*(LepGood_pt>15.5) : LepGood_mcMatchAny == 4; FillColor=ROOT.kRed-3, Label="c-jets (QCD\#mu)"
-QCDMu_cjets: QCD_Pt20to30_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchAny == 4; FillColor=ROOT.kRed-3, Label="c-jets (QCD\#mu)"
-QCDMu_cjets: QCD_Pt30to50_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchAny == 4; FillColor=ROOT.kRed-3, Label="c-jets (QCD\#mu)"
-QCDMu_cjets: QCD_Pt50to80_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchAny == 4; FillColor=ROOT.kRed-3, Label="c-jets (QCD\#mu)"
-QCDMu_cjets: QCD_Pt80to120_Mu5 : xsec*(LepGood_pt<15.5) : LepGood_mcMatchAny == 4; FillColor=ROOT.kRed-3, Label="c-jets (QCD\#mu)"
-#QCDMu_cjets: QCD_Pt120to170_Mu5: xsec*(LepGood_pt<15.5) : LepGood_mcMatchAny == 4; FillColor=ROOT.kRed-3, Label="c-jets (QCD\#mu)"
-QCDMu_ljets: QCD_Mu15          : xsec*(LepGood_pt>15.5) : LepGood_mcMatchId  == 0  && LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4; FillColor=ROOT.kOrange-3, Label="l-jets (QCD\#mu)"
-QCDMu_ljets: QCD_Pt20to30_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0  && LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4; FillColor=ROOT.kOrange-3, Label="l-jets (QCD\#mu)"
-QCDMu_ljets: QCD_Pt30to50_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0  && LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4; FillColor=ROOT.kOrange-3, Label="l-jets (QCD\#mu)"
-QCDMu_ljets: QCD_Pt50to80_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0  && LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4; FillColor=ROOT.kOrange-3, Label="l-jets (QCD\#mu)"
-QCDMu_ljets: QCD_Pt80to120_Mu5 : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0  && LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4; FillColor=ROOT.kOrange-3, Label="l-jets (QCD\#mu)"
-#QCDMu_ljets: QCD_Pt120to170_Mu5: xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0  && LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4; FillColor=ROOT.kOrange-3, Label="l-jets (QCD\#mu)"
+QCDMu_redNC : QCD_Pt120to170_Mu5: xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma == 0; FillColor=ROOT.kPink-6, Label="QCD\#mu (w/o \#gamma)"
+QCDMu_bjets: QCD_Mu15          : xsec*(LepGood_pt>15.5)*0.88 : LepGood_mcMatchId  == 0 && LepGood_mcMatchAny == 5; FillColor=ROOT.kPink+5, Label="b-jets (QCD\#mu)", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_bjets: QCD_Pt20to30_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_mcMatchAny == 5; FillColor=ROOT.kPink+5, Label="b-jets (QCD\#mu)", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_bjets: QCD_Pt30to50_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_mcMatchAny == 5; FillColor=ROOT.kPink+5, Label="b-jets (QCD\#mu)", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_bjets: QCD_Pt50to80_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_mcMatchAny == 5; FillColor=ROOT.kPink+5, Label="b-jets (QCD\#mu)", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_bjets: QCD_Pt80to120_Mu5 : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_mcMatchAny == 5; FillColor=ROOT.kPink+5, Label="b-jets (QCD\#mu)", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_bjets: QCD_Pt120to170_Mu5: xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_mcMatchAny == 5; FillColor=ROOT.kPink+5, Label="b-jets (QCD\#mu)", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+
+QCDMu_cjets: QCD_Mu15          : xsec*(LepGood_pt>15.5)*0.88 : LepGood_mcMatchAny == 4; FillColor=ROOT.kRed-3, Label="c-jets (QCD\#mu)", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_cjets: QCD_Pt20to30_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchAny == 4; FillColor=ROOT.kRed-3, Label="c-jets (QCD\#mu)", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_cjets: QCD_Pt30to50_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchAny == 4; FillColor=ROOT.kRed-3, Label="c-jets (QCD\#mu)", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_cjets: QCD_Pt50to80_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchAny == 4; FillColor=ROOT.kRed-3, Label="c-jets (QCD\#mu)", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_cjets: QCD_Pt80to120_Mu5 : xsec*(LepGood_pt<15.5) : LepGood_mcMatchAny == 4; FillColor=ROOT.kRed-3, Label="c-jets (QCD\#mu)", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_cjets: QCD_Pt120to170_Mu5: xsec*(LepGood_pt<15.5) : LepGood_mcMatchAny == 4; FillColor=ROOT.kRed-3, Label="c-jets (QCD\#mu)", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_ljets: QCD_Mu15          : xsec*(LepGood_pt>15.5)*0.88 : LepGood_mcMatchId  == 0  && LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4; FillColor=ROOT.kOrange-3, Label="l-jets (QCD\#mu)", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_ljets: QCD_Pt20to30_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0  && LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4; FillColor=ROOT.kOrange-3, Label="l-jets (QCD\#mu)", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_ljets: QCD_Pt30to50_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0  && LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4; FillColor=ROOT.kOrange-3, Label="l-jets (QCD\#mu)", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_ljets: QCD_Pt50to80_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0  && LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4; FillColor=ROOT.kOrange-3, Label="l-jets (QCD\#mu)", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_ljets: QCD_Pt80to120_Mu5 : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0  && LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4; FillColor=ROOT.kOrange-3, Label="l-jets (QCD\#mu)", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_ljets: QCD_Pt120to170_Mu5: xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0  && LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4; FillColor=ROOT.kOrange-3, Label="l-jets (QCD\#mu)", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
 
 
-QCDMu_red_aj25: QCD_Mu15          : xsec*(LepGood_pt>15.5) : LepGood_mcMatchId  == 0 && LepGood_awayJet_pt > 25; FillColor=ROOT.kOrange-3, Label="p_{T}(aj) > 25"
-QCDMu_red_aj25: QCD_Pt20to30_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayJet_pt > 25; FillColor=ROOT.kOrange-3, Label="p_{T}(aj) > 25"
-QCDMu_red_aj25: QCD_Pt30to50_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayJet_pt > 25; FillColor=ROOT.kOrange-3, Label="p_{T}(aj) > 25"
-QCDMu_red_aj25: QCD_Pt50to80_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayJet_pt > 25; FillColor=ROOT.kOrange-3, Label="p_{T}(aj) > 25"
-QCDMu_red_aj25: QCD_Pt80to120_Mu5 : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayJet_pt > 25; FillColor=ROOT.kOrange-3, Label="p_{T}(aj) > 25"
-#QCDMu_red_aj25: QCD_Pt120to170_Mu5: xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayJet_pt > 25; FillColor=ROOT.kOrange-3, Label="p_{T}(aj) > 25"
+QCDMu_red_aj25: QCD_Mu15          : xsec*(LepGood_pt>15.5)*0.88 : LepGood_mcMatchId  == 0 && LepGood_awayNJet25 > 1; FillColor=ROOT.kOrange-3, Label="p_{T}(aj) > 25", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_aj25: QCD_Pt20to30_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayNJet25 > 1; FillColor=ROOT.kOrange-3, Label="p_{T}(aj) > 25", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_aj25: QCD_Pt30to50_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayNJet25 > 1; FillColor=ROOT.kOrange-3, Label="p_{T}(aj) > 25", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_aj25: QCD_Pt50to80_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayNJet25 > 1; FillColor=ROOT.kOrange-3, Label="p_{T}(aj) > 25", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_aj25: QCD_Pt80to120_Mu5 : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayNJet25 > 1; FillColor=ROOT.kOrange-3, Label="p_{T}(aj) > 25", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_aj25: QCD_Pt120to170_Mu5: xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayNJet25 > 1; FillColor=ROOT.kOrange-3, Label="p_{T}(aj) > 25", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
 
-QCDMu_red_aj30: QCD_Mu15          : xsec*(LepGood_pt>15.5) : LepGood_mcMatchId  == 0 && LepGood_awayJet_pt > 30; FillColor=ROOT.kRed-4, Label="p_{T}(aj) > 30"
-QCDMu_red_aj30: QCD_Pt20to30_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayJet_pt > 30; FillColor=ROOT.kRed-4, Label="p_{T}(aj) > 30"
-QCDMu_red_aj30: QCD_Pt30to50_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayJet_pt > 30; FillColor=ROOT.kRed-4, Label="p_{T}(aj) > 30"
-QCDMu_red_aj30: QCD_Pt50to80_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayJet_pt > 30; FillColor=ROOT.kRed-4, Label="p_{T}(aj) > 30"
-QCDMu_red_aj30: QCD_Pt80to120_Mu5 : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayJet_pt > 30; FillColor=ROOT.kRed-4, Label="p_{T}(aj) > 30"
-#QCDMu_red_aj30: QCD_Pt120to170_Mu5: xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayJet_pt > 30; FillColor=ROOT.kRed-4, Label="p_{T}(aj) > 30"
+QCDMu_red_aj30: QCD_Mu15          : xsec*(LepGood_pt>15.5)*0.88 : LepGood_mcMatchId  == 0 && LepGood_awayNJet30 > 1; FillColor=ROOT.kRed-4, Label="p_{T}(aj) > 30", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_aj30: QCD_Pt20to30_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayNJet30 > 1; FillColor=ROOT.kRed-4, Label="p_{T}(aj) > 30", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_aj30: QCD_Pt30to50_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayNJet30 > 1; FillColor=ROOT.kRed-4, Label="p_{T}(aj) > 30", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_aj30: QCD_Pt50to80_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayNJet30 > 1; FillColor=ROOT.kRed-4, Label="p_{T}(aj) > 30", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_aj30: QCD_Pt80to120_Mu5 : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayNJet30 > 1; FillColor=ROOT.kRed-4, Label="p_{T}(aj) > 30", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_aj30: QCD_Pt120to170_Mu5: xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayNJet30 > 1; FillColor=ROOT.kRed-4, Label="p_{T}(aj) > 30", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
 
-QCDMu_red_aj50: QCD_Mu15          : xsec*(LepGood_pt>15.5) : LepGood_mcMatchId  == 0 && LepGood_awayJet_pt > 50; FillColor=ROOT.kAzure+1, Label="p_{T}(aj) > 50"
-QCDMu_red_aj50: QCD_Pt20to30_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayJet_pt > 50; FillColor=ROOT.kAzure+1, Label="p_{T}(aj) > 50"
-QCDMu_red_aj50: QCD_Pt30to50_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayJet_pt > 50; FillColor=ROOT.kAzure+1, Label="p_{T}(aj) > 50"
-QCDMu_red_aj50: QCD_Pt50to80_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayJet_pt > 50; FillColor=ROOT.kAzure+1, Label="p_{T}(aj) > 50"
-QCDMu_red_aj50: QCD_Pt80to120_Mu5 : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayJet_pt > 50; FillColor=ROOT.kAzure+1, Label="p_{T}(aj) > 50"
-#QCDMu_red_aj50: QCD_Pt120to170_Mu5: xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayJet_pt > 50; FillColor=ROOT.kAzure+1, Label="p_{T}(aj) > 50"
+QCDMu_red_aj50: QCD_Mu15          : xsec*(LepGood_pt>15.5)*0.88 : LepGood_mcMatchId  == 0 && LepGood_awayNJet40 > 1 && LepGood_awayJet_pt > 50; FillColor=ROOT.kAzure+1, Label="p_{T}(aj) > 50", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_aj50: QCD_Pt20to30_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayNJet40 > 1 && LepGood_awayJet_pt > 50; FillColor=ROOT.kAzure+1, Label="p_{T}(aj) > 50", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_aj50: QCD_Pt30to50_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayNJet40 > 1 && LepGood_awayJet_pt > 50; FillColor=ROOT.kAzure+1, Label="p_{T}(aj) > 50", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_aj50: QCD_Pt50to80_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayNJet40 > 1 && LepGood_awayJet_pt > 50; FillColor=ROOT.kAzure+1, Label="p_{T}(aj) > 50", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_aj50: QCD_Pt80to120_Mu5 : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayNJet40 > 1 && LepGood_awayJet_pt > 50; FillColor=ROOT.kAzure+1, Label="p_{T}(aj) > 50", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_aj50: QCD_Pt120to170_Mu5: xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayNJet40 > 1 && LepGood_awayJet_pt > 50; FillColor=ROOT.kAzure+1, Label="p_{T}(aj) > 50", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
 
-QCDMu_red_aj60: QCD_Mu15          : xsec*(LepGood_pt>15.5) : LepGood_mcMatchId  == 0 && LepGood_awayJet_pt > 60; FillColor=ROOT.kGreen+1, Label="p_{T}(aj) > 60"
-QCDMu_red_aj60: QCD_Pt20to30_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayJet_pt > 60; FillColor=ROOT.kGreen+1, Label="p_{T}(aj) > 60"
-QCDMu_red_aj60: QCD_Pt30to50_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayJet_pt > 60; FillColor=ROOT.kGreen+1, Label="p_{T}(aj) > 60"
-QCDMu_red_aj60: QCD_Pt50to80_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayJet_pt > 60; FillColor=ROOT.kGreen+1, Label="p_{T}(aj) > 60"
-QCDMu_red_aj60: QCD_Pt80to120_Mu5 : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayJet_pt > 60; FillColor=ROOT.kGreen+1, Label="p_{T}(aj) > 60"
-#QCDMu_red_aj60: QCD_Pt120to170_Mu5: xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayJet_pt > 60; FillColor=ROOT.kGreen+1, Label="p_{T}(aj) > 60"
+QCDMu_red_aj60: QCD_Mu15          : xsec*(LepGood_pt>15.5)*0.88 : LepGood_mcMatchId  == 0 && LepGood_awayNJet40 > 1 && LepGood_awayNJet60 > 0; FillColor=ROOT.kGreen+1, Label="p_{T}(aj) > 60", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_aj60: QCD_Pt20to30_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayNJet40 > 1 && LepGood_awayNJet60 > 0; FillColor=ROOT.kGreen+1, Label="p_{T}(aj) > 60", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_aj60: QCD_Pt30to50_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayNJet40 > 1 && LepGood_awayNJet60 > 0; FillColor=ROOT.kGreen+1, Label="p_{T}(aj) > 60", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_aj60: QCD_Pt50to80_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayNJet40 > 1 && LepGood_awayNJet60 > 0; FillColor=ROOT.kGreen+1, Label="p_{T}(aj) > 60", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_aj60: QCD_Pt80to120_Mu5 : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayNJet40 > 1 && LepGood_awayNJet60 > 0; FillColor=ROOT.kGreen+1, Label="p_{T}(aj) > 60", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_aj60: QCD_Pt120to170_Mu5: xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayNJet40 > 1 && LepGood_awayNJet60 > 0; FillColor=ROOT.kGreen+1, Label="p_{T}(aj) > 60", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
 
-QCDMu_red_aj40: QCD_Mu15          : xsec*(LepGood_pt>15.5) : LepGood_mcMatchId  == 0 && LepGood_awayJet_pt > 40; FillColor=ROOT.kViolet+6, Label="p_{T}(aj) > 40"
-QCDMu_red_aj40: QCD_Pt20to30_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayJet_pt > 40; FillColor=ROOT.kViolet+6, Label="p_{T}(aj) > 40"
-QCDMu_red_aj40: QCD_Pt30to50_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayJet_pt > 40; FillColor=ROOT.kViolet+6, Label="p_{T}(aj) > 40"
-QCDMu_red_aj40: QCD_Pt50to80_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayJet_pt > 40; FillColor=ROOT.kViolet+6, Label="p_{T}(aj) > 40"
-QCDMu_red_aj40: QCD_Pt80to120_Mu5 : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayJet_pt > 40; FillColor=ROOT.kViolet+6, Label="p_{T}(aj) > 40"
-#QCDMu_red_aj40: QCD_Pt120to170_Mu5: xsec*(LepGood_pt<15.5) : LepGood_awayJet_pt > 40; FillColor=ROOT.kViolet+6, Label="p_{T}(aj) > 40"
+QCDMu_red_aj40: QCD_Mu15          : xsec*(LepGood_pt>15.5)*0.88 : LepGood_mcMatchId  == 0 && LepGood_awayNJet40 > 1; FillColor=ROOT.kViolet+6, Label="p_{T}(aj) > 40", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_aj40: QCD_Pt20to30_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayNJet40 > 1; FillColor=ROOT.kViolet+6, Label="p_{T}(aj) > 40", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_aj40: QCD_Pt30to50_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayNJet40 > 1; FillColor=ROOT.kViolet+6, Label="p_{T}(aj) > 40", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_aj40: QCD_Pt50to80_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayNJet40 > 1; FillColor=ROOT.kViolet+6, Label="p_{T}(aj) > 40", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_aj40: QCD_Pt80to120_Mu5 : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayNJet40 > 1; FillColor=ROOT.kViolet+6, Label="p_{T}(aj) > 40", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_aj40: QCD_Pt120to170_Mu5: xsec*(LepGood_pt<15.5) : LepGood_awayJet_pt > 40; FillColor=ROOT.kViolet+6, Label="p_{T}(aj) > 40", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
 
-QCDMu_red_ajbv: QCD_Mu15          : xsec*(LepGood_pt>15.5) : LepGood_mcMatchId  == 0 && LepGood_awayJet_btagCSV < 0.46; FillColor=ROOT.kOrange-3, Label="CSV(aj) < 0.46"
-QCDMu_red_ajbv: QCD_Pt20to30_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayJet_btagCSV < 0.46; FillColor=ROOT.kOrange-3, Label="CSV(aj) < 0.46"
-QCDMu_red_ajbv: QCD_Pt30to50_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayJet_btagCSV < 0.46; FillColor=ROOT.kOrange-3, Label="CSV(aj) < 0.46"
-QCDMu_red_ajbv: QCD_Pt50to80_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayJet_btagCSV < 0.46; FillColor=ROOT.kOrange-3, Label="CSV(aj) < 0.46"
-QCDMu_red_ajbv: QCD_Pt80to120_Mu5 : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayJet_btagCSV < 0.46; FillColor=ROOT.kOrange-3, Label="CSV(aj) < 0.46"
-#QCDMu_red_ajbv: QCD_Pt120to170_Mu5: xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayJet_btagCSV < 0.46; FillColor=ROOT.kOrange-3, Label="CSV(aj) < 0.46"
+QCDMu_red_ajbv: QCD_Mu15          : xsec*(LepGood_pt>15.5)*0.88 : LepGood_mcMatchId  == 0 && LepGood_awayNBJetLoose25 < 1; FillColor=ROOT.kOrange-3, Label="CSV(aj) < 0.5426", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_ajbv: QCD_Pt20to30_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayNBJetLoose25 < 1; FillColor=ROOT.kOrange-3, Label="CSV(aj) < 0.5426", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_ajbv: QCD_Pt30to50_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayNBJetLoose25 < 1; FillColor=ROOT.kOrange-3, Label="CSV(aj) < 0.5426", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_ajbv: QCD_Pt50to80_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayNBJetLoose25 < 1; FillColor=ROOT.kOrange-3, Label="CSV(aj) < 0.5426", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_ajbv: QCD_Pt80to120_Mu5 : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayNBJetLoose25 < 1; FillColor=ROOT.kOrange-3, Label="CSV(aj) < 0.5426", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_ajbv: QCD_Pt120to170_Mu5: xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayNBJetLoose25 < 1; FillColor=ROOT.kOrange-3, Label="CSV(aj) < 0.5426", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
 
-QCDMu_red_ajbl: QCD_Mu15          : xsec*(LepGood_pt>15.5) : LepGood_mcMatchId  == 0 && LepGood_awayJet_btagCSV > 0.46; FillColor=ROOT.kMagenta-3, Label="CSV(aj) > 0.46"
-QCDMu_red_ajbl: QCD_Pt20to30_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayJet_btagCSV > 0.46; FillColor=ROOT.kMagenta-3, Label="CSV(aj) > 0.46"
-QCDMu_red_ajbl: QCD_Pt30to50_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayJet_btagCSV > 0.46; FillColor=ROOT.kMagenta-3, Label="CSV(aj) > 0.46"
-QCDMu_red_ajbl: QCD_Pt50to80_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayJet_btagCSV > 0.46; FillColor=ROOT.kMagenta-3, Label="CSV(aj) > 0.46"
-QCDMu_red_ajbl: QCD_Pt80to120_Mu5 : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayJet_btagCSV > 0.46; FillColor=ROOT.kMagenta-3, Label="CSV(aj) > 0.46"
-#QCDMu_red_ajbl: QCD_Pt120to170_Mu5: xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayJet_btagCSV > 0.46; FillColor=ROOT.kMagenta-3, Label="CSV(aj) > 0.46"
+QCDMu_red_ajbl: QCD_Mu15          : xsec*(LepGood_pt>15.5)*0.88 : LepGood_mcMatchId  == 0 && LepGood_awayNBJetLoose25 > 0; FillColor=ROOT.kMagenta-3, Label="CSV(aj) > 0.5426", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_ajbl: QCD_Pt20to30_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayNBJetLoose25 > 0; FillColor=ROOT.kMagenta-3, Label="CSV(aj) > 0.5426", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_ajbl: QCD_Pt30to50_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayNBJetLoose25 > 0; FillColor=ROOT.kMagenta-3, Label="CSV(aj) > 0.5426", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_ajbl: QCD_Pt50to80_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayNBJetLoose25 > 0; FillColor=ROOT.kMagenta-3, Label="CSV(aj) > 0.5426", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_ajbl: QCD_Pt80to120_Mu5 : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayNBJetLoose25 > 0; FillColor=ROOT.kMagenta-3, Label="CSV(aj) > 0.5426", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_ajbl: QCD_Pt120to170_Mu5: xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayNBJetLoose25 > 0; FillColor=ROOT.kMagenta-3, Label="CSV(aj) > 0.5426", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
 
-QCDMu_red_ajbm: QCD_Mu15          : xsec*(LepGood_pt>15.5) : LepGood_mcMatchId  == 0 && LepGood_awayJet_btagCSV > 0.80; FillColor=ROOT.kViolet+2, Label="CSV(aj) > 0.80"
-QCDMu_red_ajbm: QCD_Pt20to30_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayJet_btagCSV > 0.80; FillColor=ROOT.kViolet+2, Label="CSV(aj) > 0.80"
-QCDMu_red_ajbm: QCD_Pt30to50_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayJet_btagCSV > 0.80; FillColor=ROOT.kViolet+2, Label="CSV(aj) > 0.80"
-QCDMu_red_ajbm: QCD_Pt50to80_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayJet_btagCSV > 0.80; FillColor=ROOT.kViolet+2, Label="CSV(aj) > 0.80"
-QCDMu_red_ajbm: QCD_Pt80to120_Mu5 : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayJet_btagCSV > 0.80; FillColor=ROOT.kViolet+2, Label="CSV(aj) > 0.80"
-#QCDMu_red_ajbm: QCD_Pt120to170_Mu5: xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayJet_btagCSV > 0.80; FillColor=ROOT.kViolet+2, Label="CSV(aj) > 0.80"
+QCDMu_red_ajbm: QCD_Mu15          : xsec*(LepGood_pt>15.5)*0.88 : LepGood_mcMatchId  == 0 && LepGood_awayNBJetMedium25 > 0; FillColor=ROOT.kViolet+2, Label="CSV(aj) > 0.8484", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_ajbm: QCD_Pt20to30_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayNBJetMedium25 > 0; FillColor=ROOT.kViolet+2, Label="CSV(aj) > 0.8484", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_ajbm: QCD_Pt30to50_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayNBJetMedium25 > 0; FillColor=ROOT.kViolet+2, Label="CSV(aj) > 0.8484", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_ajbm: QCD_Pt50to80_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayNBJetMedium25 > 0; FillColor=ROOT.kViolet+2, Label="CSV(aj) > 0.8484", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_ajbm: QCD_Pt80to120_Mu5 : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayNBJetMedium25 > 0; FillColor=ROOT.kViolet+2, Label="CSV(aj) > 0.8484", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_ajbm: QCD_Pt120to170_Mu5: xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayNBJetMedium25 > 0; FillColor=ROOT.kViolet+2, Label="CSV(aj) > 0.8484", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
 
-QCDMu_red_ajbt: QCD_Mu15          : xsec*(LepGood_pt>15.5) : LepGood_mcMatchId  == 0 && LepGood_awayJet_btagCSV > 0.935; FillColor=ROOT.kBlue+0, Label="CSV(aj) > 0.935"
-QCDMu_red_ajbt: QCD_Pt20to30_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayJet_btagCSV > 0.935; FillColor=ROOT.kBlue+0, Label="CSV(aj) > 0.935"
-QCDMu_red_ajbt: QCD_Pt30to50_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayJet_btagCSV > 0.935; FillColor=ROOT.kBlue+0, Label="CSV(aj) > 0.935"
-QCDMu_red_ajbt: QCD_Pt50to80_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayJet_btagCSV > 0.935; FillColor=ROOT.kBlue+0, Label="CSV(aj) > 0.935"
-QCDMu_red_ajbt: QCD_Pt80to120_Mu5 : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayJet_btagCSV > 0.935; FillColor=ROOT.kBlue+0, Label="CSV(aj) > 0.935"
-#QCDMu_red_ajbt: QCD_Pt120to170_Mu5: xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayJet_btagCSV > 0.935; FillColor=ROOT.kBlue+0, Label="CSV(aj) > 0.935"
+QCDMu_red_ajbt: QCD_Mu15          : xsec*(LepGood_pt>15.5)*0.88 : LepGood_mcMatchId  == 0 && LepGood_awayNBJetTight25 > 0; FillColor=ROOT.kBlue+0, Label="CSV(aj) > 0.9535", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_ajbt: QCD_Pt20to30_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayNBJetTight25 > 0; FillColor=ROOT.kBlue+0, Label="CSV(aj) > 0.9535", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_ajbt: QCD_Pt30to50_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayNBJetTight25 > 0; FillColor=ROOT.kBlue+0, Label="CSV(aj) > 0.9535", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_ajbt: QCD_Pt50to80_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayNBJetTight25 > 0; FillColor=ROOT.kBlue+0, Label="CSV(aj) > 0.9535", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_ajbt: QCD_Pt80to120_Mu5 : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayNBJetTight25 > 0; FillColor=ROOT.kBlue+0, Label="CSV(aj) > 0.9535", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_ajbt: QCD_Pt120to170_Mu5: xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayNBJetTight25 > 0; FillColor=ROOT.kBlue+0, Label="CSV(aj) > 0.9535", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
 
-QCDMu_red_ajba: QCD_Mu15          : xsec*(LepGood_pt>15.5) : LepGood_mcMatchId  == 0 && LepGood_awayJet_btagCSV < 9e9; FillColor=ROOT.kGreen+1, Label="CSV(aj) any"
-QCDMu_red_ajba: QCD_Pt20to30_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayJet_btagCSV < 9e9; FillColor=ROOT.kGreen+1, Label="CSV(aj) any"
-QCDMu_red_ajba: QCD_Pt30to50_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayJet_btagCSV < 9e9; FillColor=ROOT.kGreen+1, Label="CSV(aj) any"
-QCDMu_red_ajba: QCD_Pt50to80_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayJet_btagCSV < 9e9; FillColor=ROOT.kGreen+1, Label="CSV(aj) any"
-QCDMu_red_ajba: QCD_Pt80to120_Mu5 : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayJet_btagCSV < 9e9; FillColor=ROOT.kGreen+1, Label="CSV(aj) any"
-#QCDMu_red_ajba: QCD_Pt120to170_Mu5: xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_awayJet_btagCSV < 9e9; FillColor=ROOT.kGreen+1, Label="CSV(aj) any"
+QCDMu_red_ajba: QCD_Mu15          : xsec*(LepGood_pt>15.5)*0.88 : LepGood_mcMatchId  == 0; FillColor=ROOT.kGreen+1, Label="CSV(aj) any", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_ajba: QCD_Pt20to30_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0; FillColor=ROOT.kGreen+1, Label="CSV(aj) any", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_ajba: QCD_Pt30to50_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0; FillColor=ROOT.kGreen+1, Label="CSV(aj) any", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_ajba: QCD_Pt50to80_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0; FillColor=ROOT.kGreen+1, Label="CSV(aj) any", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_ajba: QCD_Pt80to120_Mu5 : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0; FillColor=ROOT.kGreen+1, Label="CSV(aj) any", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_ajba: QCD_Pt120to170_Mu5: xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0; FillColor=ROOT.kGreen+1, Label="CSV(aj) any", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
 
-QCDMu_red_Mu8 : QCD_Mu15          : xsec*(LepGood_pt>15.5) : LepGood_mcMatchId  == 0 && HLT_FR_Mu8 ; FillColor=ROOT.kGreen+1, Label="QCD Mu8"
-QCDMu_red_Mu8 : QCD_Pt20to30_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && HLT_FR_Mu8 ; FillColor=ROOT.kGreen+1, Label="QCD Mu8"
-QCDMu_red_Mu8 : QCD_Pt30to50_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && HLT_FR_Mu8 ; FillColor=ROOT.kGreen+1, Label="QCD Mu8"
-QCDMu_red_Mu8 : QCD_Pt50to80_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && HLT_FR_Mu8 ; FillColor=ROOT.kGreen+1, Label="QCD Mu8"
-QCDMu_red_Mu8 : QCD_Pt80to120_Mu5 : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && HLT_FR_Mu8 ; FillColor=ROOT.kGreen+1, Label="QCD Mu8"
-#QCDMu_red_Mu8 : QCD_Pt120to170_Mu5: xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && HLT_FR_Mu8 ; FillColor=ROOT.kGreen+1, Label="QCD Mu8"
+QCDMu_red_Mu8 : QCD_Mu15          : xsec*(LepGood_pt>15.5)*0.88 : LepGood_mcMatchId  == 0 && HLT_FR_Mu8 ; FillColor=ROOT.kGreen+1, Label="QCD Mu8", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_Mu8 : QCD_Pt20to30_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && HLT_FR_Mu8 ; FillColor=ROOT.kGreen+1, Label="QCD Mu8", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_Mu8 : QCD_Pt30to50_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && HLT_FR_Mu8 ; FillColor=ROOT.kGreen+1, Label="QCD Mu8", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_Mu8 : QCD_Pt50to80_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && HLT_FR_Mu8 ; FillColor=ROOT.kGreen+1, Label="QCD Mu8", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_Mu8 : QCD_Pt80to120_Mu5 : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && HLT_FR_Mu8 ; FillColor=ROOT.kGreen+1, Label="QCD Mu8", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_Mu8 : QCD_Pt120to170_Mu5: xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && HLT_FR_Mu8 ; FillColor=ROOT.kGreen+1, Label="QCD Mu8", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
 
-QCDMu_red_Mu8I : QCD_Mu15          : xsec*(LepGood_pt>15.5) : LepGood_mcMatchId  == 0 && HLT_FR_Mu8_TrkIsoVVL ; FillColor=ROOT.kAzure+1, Label="QCD Mu8 Iso"
-QCDMu_red_Mu8I : QCD_Pt20to30_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && HLT_FR_Mu8_TrkIsoVVL ; FillColor=ROOT.kAzure+1, Label="QCD Mu8 Iso"
-QCDMu_red_Mu8I : QCD_Pt30to50_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && HLT_FR_Mu8_TrkIsoVVL ; FillColor=ROOT.kAzure+1, Label="QCD Mu8 Iso"
-QCDMu_red_Mu8I : QCD_Pt50to80_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && HLT_FR_Mu8_TrkIsoVVL ; FillColor=ROOT.kAzure+1, Label="QCD Mu8 Iso"
-QCDMu_red_Mu8I : QCD_Pt80to120_Mu5 : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && HLT_FR_Mu8_TrkIsoVVL ; FillColor=ROOT.kAzure+1, Label="QCD Mu8 Iso"
+QCDMu_red_Mu17 : QCD_Mu15          : xsec*(LepGood_pt>15.5)*0.88 : LepGood_mcMatchId  == 0 && HLT_FR_Mu17 ; FillColor=ROOT.kGreen+2, Label="QCD Mu17", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_Mu17 : QCD_Pt20to30_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && HLT_FR_Mu17 ; FillColor=ROOT.kGreen+2, Label="QCD Mu17", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_Mu17 : QCD_Pt30to50_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && HLT_FR_Mu17 ; FillColor=ROOT.kGreen+2, Label="QCD Mu17", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_Mu17 : QCD_Pt50to80_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && HLT_FR_Mu17 ; FillColor=ROOT.kGreen+2, Label="QCD Mu17", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_Mu17 : QCD_Pt80to120_Mu5 : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && HLT_FR_Mu17 ; FillColor=ROOT.kGreen+2, Label="QCD Mu17", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_Mu17 : QCD_Pt120to170_Mu5: xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && HLT_FR_Mu17 ; FillColor=ROOT.kGreen+2, Label="QCD Mu17", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+
+QCDMu_red_Mu27 : QCD_Mu15          : xsec*(LepGood_pt>15.5)*0.88 : LepGood_mcMatchId  == 0 && HLT_FR_Mu27 ; FillColor=ROOT.kGreen+3, Label="QCD Mu27", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_Mu27 : QCD_Pt20to30_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && HLT_FR_Mu27 ; FillColor=ROOT.kGreen+3, Label="QCD Mu27", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_Mu27 : QCD_Pt30to50_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && HLT_FR_Mu27 ; FillColor=ROOT.kGreen+3, Label="QCD Mu27", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_Mu27 : QCD_Pt50to80_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && HLT_FR_Mu27 ; FillColor=ROOT.kGreen+3, Label="QCD Mu27", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_Mu27 : QCD_Pt80to120_Mu5 : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && HLT_FR_Mu27 ; FillColor=ROOT.kGreen+3, Label="QCD Mu27", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_Mu27 : QCD_Pt120to170_Mu5: xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && HLT_FR_Mu27 ; FillColor=ROOT.kGreen+3, Label="QCD Mu27", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+
+#
+#QCDMu_red_Mu8I : QCD_Mu15          : xsec*(LepGood_pt>15.5)*0.88 : LepGood_mcMatchId  == 0 && HLT_FR_Mu8_TrkIsoVVL ; FillColor=ROOT.kAzure+1, Label="QCD Mu8 Iso"
+#QCDMu_red_Mu8I : QCD_Pt20to30_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && HLT_FR_Mu8_TrkIsoVVL ; FillColor=ROOT.kAzure+1, Label="QCD Mu8 Iso"
+#QCDMu_red_Mu8I : QCD_Pt30to50_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && HLT_FR_Mu8_TrkIsoVVL ; FillColor=ROOT.kAzure+1, Label="QCD Mu8 Iso"
+#QCDMu_red_Mu8I : QCD_Pt50to80_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && HLT_FR_Mu8_TrkIsoVVL ; FillColor=ROOT.kAzure+1, Label="QCD Mu8 Iso"
+#QCDMu_red_Mu8I : QCD_Pt80to120_Mu5 : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && HLT_FR_Mu8_TrkIsoVVL ; FillColor=ROOT.kAzure+1, Label="QCD Mu8 Iso"
 #QCDMu_red_Mu8I : QCD_Pt120to170_Mu5: xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && HLT_FR_Mu8_TrkIsoVVL ; FillColor=ROOT.kAzure+1, Label="QCD Mu8 Iso"
 
-QCDMu_red_pt8 : QCD_Mu15          : xsec*(LepGood_pt>15.5) : LepGood_mcMatchId  == 0 && LepGood_pt > 8; FillColor=ROOT.kViolet+1, Label="QCD p_{T} 8"
-QCDMu_red_pt8 : QCD_Pt20to30_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_pt > 8; FillColor=ROOT.kViolet+1, Label="QCD p_{T} 8"
-QCDMu_red_pt8 : QCD_Pt30to50_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_pt > 8; FillColor=ROOT.kViolet+1, Label="QCD p_{T} 8"
-QCDMu_red_pt8 : QCD_Pt50to80_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_pt > 8; FillColor=ROOT.kViolet+1, Label="QCD p_{T} 8"
-QCDMu_red_pt8 : QCD_Pt80to120_Mu5 : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_pt > 8; FillColor=ROOT.kViolet+1, Label="QCD p_{T} 8"
-#QCDMu_red_pt8 : QCD_Pt120to170_Mu5: xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_pt > 8; FillColor=ROOT.kViolet+1, Label="QCD p_{T} 8"
+QCDMu_red_pt8 : QCD_Mu15          : xsec*(LepGood_pt>15.5)*0.88 : LepGood_mcMatchId  == 0 && LepGood_pt > 8; FillColor=ROOT.kViolet+1, Label="QCD p_{T} 8", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_pt8 : QCD_Pt20to30_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_pt > 8; FillColor=ROOT.kViolet+1, Label="QCD p_{T} 8", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_pt8 : QCD_Pt30to50_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_pt > 8; FillColor=ROOT.kViolet+1, Label="QCD p_{T} 8", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_pt8 : QCD_Pt50to80_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_pt > 8; FillColor=ROOT.kViolet+1, Label="QCD p_{T} 8", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_pt8 : QCD_Pt80to120_Mu5 : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_pt > 8; FillColor=ROOT.kViolet+1, Label="QCD p_{T} 8", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_pt8 : QCD_Pt120to170_Mu5: xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_pt > 8; FillColor=ROOT.kViolet+1, Label="QCD p_{T} 8", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
 
-QCDMu_red_pt17 : QCD_Mu15          : xsec*(LepGood_pt>15.5) : LepGood_mcMatchId  == 0 && LepGood_pt > 17; FillColor=ROOT.kOrange, Label="QCD p_{T} 17"
-QCDMu_red_pt17 : QCD_Pt20to30_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_pt > 17; FillColor=ROOT.kOrange, Label="QCD p_{T} 17"
-QCDMu_red_pt17 : QCD_Pt30to50_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_pt > 17; FillColor=ROOT.kOrange, Label="QCD p_{T} 17"
-QCDMu_red_pt17 : QCD_Pt50to80_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_pt > 17; FillColor=ROOT.kOrange, Label="QCD p_{T} 17"
-QCDMu_red_pt17 : QCD_Pt80to120_Mu5 : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_pt > 17; FillColor=ROOT.kOrange, Label="QCD p_{T} 17"
-#QCDMu_red_pt17 : QCD_Pt120to170_Mu5: xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_pt > 17; FillColor=ROOT.kOrange, Label="QCD p_{T} 17"
+QCDMu_red_pt17 : QCD_Mu15          : xsec*(LepGood_pt>15.5)*0.88 : LepGood_mcMatchId  == 0 && LepGood_pt > 17; FillColor=ROOT.kOrange, Label="QCD p_{T} 17", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_pt17 : QCD_Pt20to30_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_pt > 17; FillColor=ROOT.kOrange, Label="QCD p_{T} 17", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_pt17 : QCD_Pt30to50_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_pt > 17; FillColor=ROOT.kOrange, Label="QCD p_{T} 17", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_pt17 : QCD_Pt50to80_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_pt > 17; FillColor=ROOT.kOrange, Label="QCD p_{T} 17", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_pt17 : QCD_Pt80to120_Mu5 : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_pt > 17; FillColor=ROOT.kOrange, Label="QCD p_{T} 17", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_pt17 : QCD_Pt120to170_Mu5: xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_pt > 17; FillColor=ROOT.kOrange, Label="QCD p_{T} 17", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
 
-#QCDMu_red_pt8T : QCD_Mu15          : xsec*(LepGood_pt>15.5) : LepGood_pt > 8 && LepGood_tightId;  FillColor=ROOT.kViolet+3, Label="QCD p_{T} 8T"
+QCDMu_red_pt27 : QCD_Mu15          : xsec*(LepGood_pt>15.5)*0.88 : LepGood_mcMatchId  == 0 && LepGood_pt > 27; FillColor=ROOT.kOrange-3, Label="QCD p_{T} 27", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_pt27 : QCD_Pt20to30_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_pt > 27; FillColor=ROOT.kOrange-3, Label="QCD p_{T} 27", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_pt27 : QCD_Pt30to50_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_pt > 27; FillColor=ROOT.kOrange-3, Label="QCD p_{T} 27", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_pt27 : QCD_Pt50to80_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_pt > 27; FillColor=ROOT.kOrange-3, Label="QCD p_{T} 27", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_pt27 : QCD_Pt80to120_Mu5 : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_pt > 27; FillColor=ROOT.kOrange-3, Label="QCD p_{T} 27", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDMu_red_pt27 : QCD_Pt120to170_Mu5: xsec*(LepGood_pt<15.5) : LepGood_mcMatchId  == 0 && LepGood_pt > 27; FillColor=ROOT.kOrange-3, Label="QCD p_{T} 27", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+
+
+#QCDMu_red_pt8T : QCD_Mu15          : xsec*(LepGood_pt>15.5)*0.88 : LepGood_pt > 8 && LepGood_tightId;  FillColor=ROOT.kViolet+3, Label="QCD p_{T} 8T"
 #QCDMu_red_pt8T : QCD_Pt20to30_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_pt > 8 && LepGood_tightId;  FillColor=ROOT.kViolet+3, Label="QCD p_{T} 8T"
 #QCDMu_red_pt8T : QCD_Pt30to50_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_pt > 8 && LepGood_tightId;  FillColor=ROOT.kViolet+3, Label="QCD p_{T} 8T"
 #QCDMu_red_pt8T : QCD_Pt50to80_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_pt > 8 && LepGood_tightId;  FillColor=ROOT.kViolet+3, Label="QCD p_{T} 8T"
@@ -182,278 +217,350 @@ QCDMu_red_pt17 : QCD_Pt80to120_Mu5 : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId 
 #QCDMu_red_pt8T : QCD_Pt120to170_Mu5: xsec*(LepGood_pt<15.5) : LepGood_pt > 8 && LepGood_tightId;  FillColor=ROOT.kViolet+3, Label="QCD p_{T} 8T"
 
 
-QCDEl_red: QCD_Pt20to30_EMEnriched   : xsec : LepGood_mcMatchId  == 0 ; FillColor=ROOT.kPink-2, Label="QCDe", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red: QCD_Pt30to50_EMEnriched   : xsec : LepGood_mcMatchId  == 0 ; FillColor=ROOT.kPink-2, Label="QCDe", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red: QCD_Pt50to80_EMEnriched   : xsec : LepGood_mcMatchId  == 0 ; FillColor=ROOT.kPink-2, Label="QCDe", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red: QCD_Pt80to120_EMEnriched  : xsec : LepGood_mcMatchId  == 0 ; FillColor=ROOT.kPink-2, Label="QCDe", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red: QCD_Pt120to170_EMEnriched : xsec : LepGood_mcMatchId  == 0 ; FillColor=ROOT.kPink-2, Label="QCDe", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red: QCD_Pt_20to30_bcToE       : xsec : LepGood_mcMatchId  == 0 ; FillColor=ROOT.kPink-2, Label="QCDe", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red: QCD_Pt_30to80_bcToE       : xsec : LepGood_mcMatchId  == 0 ; FillColor=ROOT.kPink-2, Label="QCDe", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red: QCD_Pt_80to170_bcToE      : xsec : LepGood_mcMatchId  == 0 ; FillColor=ROOT.kPink-2, Label="QCDe", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
+QCDEl_red: QCD_Pt20to30_EMEnriched   : xsec : LepGood_mcMatchId  == 0 ; FillColor=ROOT.kPink-2, Label="QCDe", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red: QCD_Pt30to50_EMEnriched   : xsec : LepGood_mcMatchId  == 0 ; FillColor=ROOT.kPink-2, Label="QCDe", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red: QCD_Pt50to80_EMEnriched   : xsec : LepGood_mcMatchId  == 0 ; FillColor=ROOT.kPink-2, Label="QCDe", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red: QCD_Pt80to120_EMEnriched  : xsec : LepGood_mcMatchId  == 0 ; FillColor=ROOT.kPink-2, Label="QCDe", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red: QCD_Pt120to170_EMEnriched : xsec : LepGood_mcMatchId  == 0 ; FillColor=ROOT.kPink-2, Label="QCDe", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red: QCD_Pt_20to30_bcToE       : xsec : LepGood_mcMatchId  == 0 ; FillColor=ROOT.kPink-2, Label="QCDe", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red: QCD_Pt_30to80_bcToE       : xsec : LepGood_mcMatchId  == 0 ; FillColor=ROOT.kPink-2, Label="QCDe", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red: QCD_Pt_80to170_bcToE      : xsec : LepGood_mcMatchId  == 0 ; FillColor=ROOT.kPink-2, Label="QCDe", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
 
-QCDEl_redNC: QCD_Pt20to30_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma == 0; FillColor=ROOT.kPink-6, Label="QCDe (w/o \#gamma)", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_redNC: QCD_Pt30to50_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma == 0; FillColor=ROOT.kPink-6, Label="QCDe (w/o \#gamma)", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_redNC: QCD_Pt50to80_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma == 0; FillColor=ROOT.kPink-6, Label="QCDe (w/o \#gamma)", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_redNC: QCD_Pt80to120_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma == 0; FillColor=ROOT.kPink-6, Label="QCDe (w/o \#gamma)", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_redNC: QCD_Pt120to170_EMEnriched : xsec : LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma == 0; FillColor=ROOT.kPink-6, Label="QCDe (w/o \#gamma)", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_redNC: QCD_Pt_20to30_bcToE       : xsec : LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma == 0; FillColor=ROOT.kPink-6, Label="QCDe (w/o \#gamma)", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_redNC: QCD_Pt_30to80_bcToE       : xsec : LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma == 0; FillColor=ROOT.kPink-6, Label="QCDe (w/o \#gamma)", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_redNC: QCD_Pt_80to170_bcToE      : xsec : LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma == 0; FillColor=ROOT.kPink-6, Label="QCDe (w/o \#gamma)", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-
-
-QCDEl_bjets: QCD_Pt_20to30_bcToE   : xsec : LepGood_mcMatchId  == 0 && LepGood_mcMatchAny == 5 ; FillColor=ROOT.kPink+5, Label="b-jets (QCDe)", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_bjets: QCD_Pt_30to80_bcToE   : xsec : LepGood_mcMatchId  == 0 && LepGood_mcMatchAny == 5 ; FillColor=ROOT.kPink+5, Label="b-jets (QCDe)", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_bjets: QCD_Pt_80to170_bcToE  : xsec : LepGood_mcMatchId  == 0 && LepGood_mcMatchAny == 5 ; FillColor=ROOT.kPink+5, Label="b-jets (QCDe)", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-
-QCDEl_conv: QCD_Pt20to30_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma != 0 ; FillColor=ROOT.kPink-6, Label="QCDe \#gamma", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_conv: QCD_Pt30to50_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma != 0 ; FillColor=ROOT.kPink-6, Label="QCDe \#gamma", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_conv: QCD_Pt50to80_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma != 0 ; FillColor=ROOT.kPink-6, Label="QCDe \#gamma", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_conv: QCD_Pt80to120_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma != 0 ; FillColor=ROOT.kPink-6, Label="QCDe \#gamma", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_conv: QCD_Pt120to170_EMEnriched : xsec : LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma != 0 ; FillColor=ROOT.kPink-6, Label="QCDe \#gamma", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-
-QCDEl_ljets: QCD_Pt20to30_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 ; FillColor=ROOT.kOrange-3, Label="l-jets (QCDe)", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_ljets: QCD_Pt30to50_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 ; FillColor=ROOT.kOrange-3, Label="l-jets (QCDe)", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_ljets: QCD_Pt50to80_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 ; FillColor=ROOT.kOrange-3, Label="l-jets (QCDe)", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_ljets: QCD_Pt80to120_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 ; FillColor=ROOT.kOrange-3, Label="l-jets (QCDe)", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_ljets: QCD_Pt120to170_EMEnriched : xsec : LepGood_mcMatchId  == 0 && LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 ; FillColor=ROOT.kOrange-3, Label="l-jets (QCDe)", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_ljets: QCD_Pt_20to30_bcToE       : xsec : LepGood_mcMatchId  == 0 && LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 ; FillColor=ROOT.kOrange-3, Label="l-jets (QCDe)", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_ljets: QCD_Pt_30to80_bcToE       : xsec : LepGood_mcMatchId  == 0 && LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 ; FillColor=ROOT.kOrange-3, Label="l-jets (QCDe)", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_ljets: QCD_Pt_80to170_bcToE      : xsec : LepGood_mcMatchId  == 0 && LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 ; FillColor=ROOT.kOrange-3, Label="l-jets (QCDe)", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-
-QCDEl_ljets_noconv: QCD_Pt20to30_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma==0 && LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 ; FillColor=ROOT.kCyan, Label="l-jets no\#gamma (QCDe)", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_ljets_noconv: QCD_Pt30to50_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma==0 && LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 ; FillColor=ROOT.kCyan, Label="l-jets no\#gamma (QCDe)", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_ljets_noconv: QCD_Pt50to80_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma==0 && LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 ; FillColor=ROOT.kCyan, Label="l-jets no\#gamma (QCDe)", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_ljets_noconv: QCD_Pt80to120_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma==0 && LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 ; FillColor=ROOT.kCyan, Label="l-jets no\#gamma (QCDe)", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_ljets_noconv: QCD_Pt120to170_EMEnriched : xsec : LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma==0 && LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 ; FillColor=ROOT.kCyan, Label="l-jets no\#gamma (QCDe)", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_ljets_noconv: QCD_Pt_20to30_bcToE       : xsec : LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma==0 && LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 ; FillColor=ROOT.kCyan, Label="l-jets no\#gamma (QCDe)", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_ljets_noconv: QCD_Pt_30to80_bcToE       : xsec : LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma==0 && LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 ; FillColor=ROOT.kCyan, Label="l-jets no\#gamma (QCDe)", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_ljets_noconv: QCD_Pt_80to170_bcToE      : xsec : LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma==0 && LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 ; FillColor=ROOT.kCyan, Label="l-jets no\#gamma (QCDe)", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-
-QCDEl_ljets_conv: QCD_Pt20to30_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma==1 && LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 ; FillColor=ROOT.kMagenta, Label="conv. (QCDe)", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_ljets_conv: QCD_Pt30to50_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma==1 && LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 ; FillColor=ROOT.kMagenta, Label="conv. (QCDe)", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_ljets_conv: QCD_Pt50to80_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma==1 && LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 ; FillColor=ROOT.kMagenta, Label="conv. (QCDe)", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_ljets_conv: QCD_Pt80to120_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma==1 && LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 ; FillColor=ROOT.kMagenta, Label="conv. (QCDe)", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_ljets_conv: QCD_Pt120to170_EMEnriched : xsec : LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma==1 && LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 ; FillColor=ROOT.kMagenta, Label="conv. (QCDe)", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_ljets_conv: QCD_Pt_20to30_bcToE       : xsec : LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma==1 && LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 ; FillColor=ROOT.kMagenta, Label="conv. (QCDe)", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_ljets_conv: QCD_Pt_30to80_bcToE       : xsec : LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma==1 && LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 ; FillColor=ROOT.kMagenta, Label="conv. (QCDe)", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_ljets_conv: QCD_Pt_80to170_bcToE      : xsec : LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma==1 && LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 ; FillColor=ROOT.kMagenta, Label="conv. (QCDe)", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-
-QCDEl_red_aj25: QCD_Pt20to30_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_pt > 25 ; FillColor=ROOT.kOrange-3, Label="p_{T}(aj) > 25", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_aj25: QCD_Pt30to50_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_pt > 25 ; FillColor=ROOT.kOrange-3, Label="p_{T}(aj) > 25", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_aj25: QCD_Pt50to80_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_pt > 25 ; FillColor=ROOT.kOrange-3, Label="p_{T}(aj) > 25", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_aj25: QCD_Pt80to120_EMEnriched : xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_pt > 25 ; FillColor=ROOT.kOrange-3, Label="p_{T}(aj) > 25", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_aj25: QCD_Pt120to170_EMEnriched: xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_pt > 25 ; FillColor=ROOT.kOrange-3, Label="p_{T}(aj) > 25", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_aj25: QCD_Pt_20to30_bcToE :      xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_pt > 25 ; FillColor=ROOT.kOrange-3, Label="p_{T}(aj) > 25", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_aj25: QCD_Pt_30to80_bcToE :      xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_pt > 25 ; FillColor=ROOT.kOrange-3, Label="p_{T}(aj) > 25", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_aj25: QCD_Pt_80to170_bcToE:      xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_pt > 25 ; FillColor=ROOT.kOrange-3, Label="p_{T}(aj) > 25", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-
-QCDEl_red_aj30: QCD_Pt20to30_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_pt > 30 ; FillColor=ROOT.kRed-4, Label="p_{T}(aj) > 30", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_aj30: QCD_Pt30to50_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_pt > 30 ; FillColor=ROOT.kRed-4, Label="p_{T}(aj) > 30", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_aj30: QCD_Pt50to80_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_pt > 30 ; FillColor=ROOT.kRed-4, Label="p_{T}(aj) > 30", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_aj30: QCD_Pt80to120_EMEnriched : xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_pt > 30 ; FillColor=ROOT.kRed-4, Label="p_{T}(aj) > 30", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_aj30: QCD_Pt120to170_EMEnriched: xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_pt > 30 ; FillColor=ROOT.kRed-4, Label="p_{T}(aj) > 30", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_aj30: QCD_Pt_20to30_bcToE :      xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_pt > 30 ; FillColor=ROOT.kRed-4, Label="p_{T}(aj) > 30", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_aj30: QCD_Pt_30to80_bcToE :      xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_pt > 30 ; FillColor=ROOT.kRed-4, Label="p_{T}(aj) > 30", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_aj30: QCD_Pt_80to170_bcToE:      xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_pt > 30 ; FillColor=ROOT.kRed-4, Label="p_{T}(aj) > 30", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-
-QCDEl_red_aj40: QCD_Pt20to30_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_pt > 40 ; FillColor=ROOT.kViolet+6, Label="p_{T}(aj) > 40", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_aj40: QCD_Pt30to50_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_pt > 40 ; FillColor=ROOT.kViolet+6, Label="p_{T}(aj) > 40", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_aj40: QCD_Pt50to80_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_pt > 40 ; FillColor=ROOT.kViolet+6, Label="p_{T}(aj) > 40", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_aj40: QCD_Pt80to120_EMEnriched : xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_pt > 40 ; FillColor=ROOT.kViolet+6, Label="p_{T}(aj) > 40", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_aj40: QCD_Pt120to170_EMEnriched: xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_pt > 40 ; FillColor=ROOT.kViolet+6, Label="p_{T}(aj) > 40", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_aj40: QCD_Pt_20to30_bcToE :      xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_pt > 40 ; FillColor=ROOT.kViolet+6, Label="p_{T}(aj) > 40", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_aj40: QCD_Pt_30to80_bcToE :      xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_pt > 40 ; FillColor=ROOT.kViolet+6, Label="p_{T}(aj) > 40", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_aj40: QCD_Pt_80to170_bcToE:      xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_pt > 40 ; FillColor=ROOT.kViolet+6, Label="p_{T}(aj) > 40", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-
-QCDEl_red_aj50: QCD_Pt20to30_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_pt > 50 ; FillColor=ROOT.kAzure+1, Label="p_{T}(aj) > 50", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_aj50: QCD_Pt30to50_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_pt > 50 ; FillColor=ROOT.kAzure+1, Label="p_{T}(aj) > 50", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_aj50: QCD_Pt50to80_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_pt > 50 ; FillColor=ROOT.kAzure+1, Label="p_{T}(aj) > 50", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_aj50: QCD_Pt80to120_EMEnriched : xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_pt > 50 ; FillColor=ROOT.kAzure+1, Label="p_{T}(aj) > 50", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_aj50: QCD_Pt120to170_EMEnriched: xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_pt > 50 ; FillColor=ROOT.kAzure+1, Label="p_{T}(aj) > 50", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_aj50: QCD_Pt_20to30_bcToE :      xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_pt > 50 ; FillColor=ROOT.kAzure+1, Label="p_{T}(aj) > 50", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_aj50: QCD_Pt_30to80_bcToE :      xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_pt > 50 ; FillColor=ROOT.kAzure+1, Label="p_{T}(aj) > 50", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_aj50: QCD_Pt_80to170_bcToE:      xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_pt > 50 ; FillColor=ROOT.kAzure+1, Label="p_{T}(aj) > 50", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-
-QCDEl_red_aj60: QCD_Pt20to30_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_pt > 60 ; FillColor=ROOT.kGreen+1, Label="p_{T}(aj) > 60", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_aj60: QCD_Pt30to50_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_pt > 60 ; FillColor=ROOT.kGreen+1, Label="p_{T}(aj) > 60", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_aj60: QCD_Pt50to80_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_pt > 60 ; FillColor=ROOT.kGreen+1, Label="p_{T}(aj) > 60", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_aj60: QCD_Pt80to120_EMEnriched : xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_pt > 60 ; FillColor=ROOT.kGreen+1, Label="p_{T}(aj) > 60", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_aj60: QCD_Pt120to170_EMEnriched: xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_pt > 60 ; FillColor=ROOT.kGreen+1, Label="p_{T}(aj) > 60", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_aj60: QCD_Pt_20to30_bcToE :      xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_pt > 60 ; FillColor=ROOT.kGreen+1, Label="p_{T}(aj) > 60", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_aj60: QCD_Pt_30to80_bcToE :      xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_pt > 60 ; FillColor=ROOT.kGreen+1, Label="p_{T}(aj) > 60", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_aj60: QCD_Pt_80to170_bcToE:      xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_pt > 60 ; FillColor=ROOT.kGreen+1, Label="p_{T}(aj) > 60", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-
-QCDEl_red_ajbv: QCD_Pt20to30_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_btagCSV < 0.46 ; FillColor=ROOT.kOrange-3, Label="CSV(aj) < 0.46", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_ajbv: QCD_Pt30to50_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_btagCSV < 0.46 ; FillColor=ROOT.kOrange-3, Label="CSV(aj) < 0.46", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_ajbv: QCD_Pt50to80_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_btagCSV < 0.46 ; FillColor=ROOT.kOrange-3, Label="CSV(aj) < 0.46", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_ajbv: QCD_Pt80to120_EMEnriched : xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_btagCSV < 0.46 ; FillColor=ROOT.kOrange-3, Label="CSV(aj) < 0.46", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_ajbv: QCD_Pt120to170_EMEnriched: xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_btagCSV < 0.46 ; FillColor=ROOT.kOrange-3, Label="CSV(aj) < 0.46", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_ajbv: QCD_Pt_20to30_bcToE :      xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_btagCSV < 0.46 ; FillColor=ROOT.kOrange-3, Label="CSV(aj) < 0.46", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_ajbv: QCD_Pt_30to80_bcToE :      xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_btagCSV < 0.46 ; FillColor=ROOT.kOrange-3, Label="CSV(aj) < 0.46", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_ajbv: QCD_Pt_80to170_bcToE:      xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_btagCSV < 0.46 ; FillColor=ROOT.kOrange-3, Label="CSV(aj) < 0.46", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-
-QCDEl_red_ajbl: QCD_Pt20to30_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_btagCSV > 0.46 ; FillColor=ROOT.kMagenta-3, Label="CSV(aj) > 0.46", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_ajbl: QCD_Pt30to50_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_btagCSV > 0.46 ; FillColor=ROOT.kMagenta-3, Label="CSV(aj) > 0.46", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_ajbl: QCD_Pt50to80_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_btagCSV > 0.46 ; FillColor=ROOT.kMagenta-3, Label="CSV(aj) > 0.46", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_ajbl: QCD_Pt80to120_EMEnriched : xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_btagCSV > 0.46 ; FillColor=ROOT.kMagenta-3, Label="CSV(aj) > 0.46", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_ajbl: QCD_Pt120to170_EMEnriched: xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_btagCSV > 0.46 ; FillColor=ROOT.kMagenta-3, Label="CSV(aj) > 0.46", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_ajbl: QCD_Pt_20to30_bcToE :      xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_btagCSV > 0.46 ; FillColor=ROOT.kMagenta-3, Label="CSV(aj) > 0.46", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_ajbl: QCD_Pt_30to80_bcToE :      xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_btagCSV > 0.46 ; FillColor=ROOT.kMagenta-3, Label="CSV(aj) > 0.46", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_ajbl: QCD_Pt_80to170_bcToE:      xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_btagCSV > 0.46 ; FillColor=ROOT.kMagenta-3, Label="CSV(aj) > 0.46", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-
-QCDEl_red_ajbm: QCD_Pt20to30_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_btagCSV > 0.80 ; FillColor=ROOT.kViolet+2, Label="CSV(aj) > 0.80", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_ajbm: QCD_Pt30to50_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_btagCSV > 0.80 ; FillColor=ROOT.kViolet+2, Label="CSV(aj) > 0.80", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_ajbm: QCD_Pt50to80_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_btagCSV > 0.80 ; FillColor=ROOT.kViolet+2, Label="CSV(aj) > 0.80", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_ajbm: QCD_Pt80to120_EMEnriched : xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_btagCSV > 0.80 ; FillColor=ROOT.kViolet+2, Label="CSV(aj) > 0.80", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_ajbm: QCD_Pt120to170_EMEnriched: xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_btagCSV > 0.80 ; FillColor=ROOT.kViolet+2, Label="CSV(aj) > 0.80", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_ajbm: QCD_Pt_20to30_bcToE :      xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_btagCSV > 0.80 ; FillColor=ROOT.kViolet+2, Label="CSV(aj) > 0.80", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_ajbm: QCD_Pt_30to80_bcToE :      xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_btagCSV > 0.80 ; FillColor=ROOT.kViolet+2, Label="CSV(aj) > 0.80", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_ajbm: QCD_Pt_80to170_bcToE:      xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_btagCSV > 0.80 ; FillColor=ROOT.kViolet+2, Label="CSV(aj) > 0.80", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-
-QCDEl_red_ajbt: QCD_Pt20to30_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_btagCSV > 0.935 ; FillColor=ROOT.kBlue+0, Label="CSV(aj) > 0.935", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_ajbt: QCD_Pt30to50_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_btagCSV > 0.935 ; FillColor=ROOT.kBlue+0, Label="CSV(aj) > 0.935", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_ajbt: QCD_Pt50to80_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_btagCSV > 0.935 ; FillColor=ROOT.kBlue+0, Label="CSV(aj) > 0.935", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_ajbt: QCD_Pt80to120_EMEnriched : xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_btagCSV > 0.935 ; FillColor=ROOT.kBlue+0, Label="CSV(aj) > 0.935", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_ajbt: QCD_Pt120to170_EMEnriched: xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_btagCSV > 0.935 ; FillColor=ROOT.kBlue+0, Label="CSV(aj) > 0.935", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_ajbt: QCD_Pt_20to30_bcToE :      xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_btagCSV > 0.935 ; FillColor=ROOT.kBlue+0, Label="CSV(aj) > 0.935", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_ajbt: QCD_Pt_30to80_bcToE :      xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_btagCSV > 0.935 ; FillColor=ROOT.kBlue+0, Label="CSV(aj) > 0.935", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_ajbt: QCD_Pt_80to170_bcToE:      xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_btagCSV > 0.935 ; FillColor=ROOT.kBlue+0, Label="CSV(aj) > 0.935", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-
-QCDEl_red_ajba: QCD_Pt20to30_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_btagCSV < 0.9e9 ; FillColor=ROOT.kGreen+1, Label="CSV(aj) any", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_ajba: QCD_Pt30to50_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_btagCSV < 0.9e9 ; FillColor=ROOT.kGreen+1, Label="CSV(aj) any", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_ajba: QCD_Pt50to80_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_btagCSV < 0.9e9 ; FillColor=ROOT.kGreen+1, Label="CSV(aj) any", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_ajba: QCD_Pt80to120_EMEnriched : xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_btagCSV < 0.9e9 ; FillColor=ROOT.kGreen+1, Label="CSV(aj) any", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_ajba: QCD_Pt120to170_EMEnriched: xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_btagCSV < 0.9e9 ; FillColor=ROOT.kGreen+1, Label="CSV(aj) any", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_ajba: QCD_Pt_20to30_bcToE :      xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_btagCSV < 0.9e9 ; FillColor=ROOT.kGreen+1, Label="CSV(aj) any", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_ajba: QCD_Pt_30to80_bcToE :      xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_btagCSV < 0.9e9 ; FillColor=ROOT.kGreen+1, Label="CSV(aj) any", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_ajba: QCD_Pt_80to170_bcToE:      xsec : LepGood_mcMatchId  == 0 && LepGood_awayJet_btagCSV < 0.9e9 ; FillColor=ROOT.kGreen+1, Label="CSV(aj) any", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
+QCDEl_redNC: QCD_Pt20to30_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma == 0; FillColor=ROOT.kPink-6, Label="QCDe w/o \#gamma", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_redNC: QCD_Pt30to50_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma == 0; FillColor=ROOT.kPink-6, Label="QCDe w/o \#gamma", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_redNC: QCD_Pt50to80_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma == 0; FillColor=ROOT.kPink-6, Label="QCDe w/o \#gamma", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_redNC: QCD_Pt80to120_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma == 0; FillColor=ROOT.kPink-6, Label="QCDe w/o \#gamma", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_redNC: QCD_Pt120to170_EMEnriched : xsec : LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma == 0; FillColor=ROOT.kPink-6, Label="QCDe w/o \#gamma", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_redNC: QCD_Pt_20to30_bcToE       : xsec : LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma == 0; FillColor=ROOT.kPink-6, Label="QCDe w/o \#gamma", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_redNC: QCD_Pt_30to80_bcToE       : xsec : LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma == 0; FillColor=ROOT.kPink-6, Label="QCDe w/o \#gamma", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_redNC: QCD_Pt_80to170_bcToE      : xsec : LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma == 0; FillColor=ROOT.kPink-6, Label="QCDe w/o \#gamma", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
 
 
-#QCDEl_red_El8: QCD_Pt20to30_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && HLT_FR_Ele8_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+2, Label="QCDe El8", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-#QCDEl_red_El8: QCD_Pt30to50_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && HLT_FR_Ele8_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+2, Label="QCDe El8", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-#QCDEl_red_El8: QCD_Pt50to80_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && HLT_FR_Ele8_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+2, Label="QCDe El8", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-#QCDEl_red_El8: QCD_Pt80to120_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && HLT_FR_Ele8_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+2, Label="QCDe El8", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-#QCDEl_red_El8: QCD_Pt120to170_EMEnriched : xsec : LepGood_mcMatchId  == 0 && HLT_FR_Ele8_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+2, Label="QCDe El8", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-#QCDEl_red_El8: QCD_Pt_20to30_bcToE       : xsec : LepGood_mcMatchId  == 0 && HLT_FR_Ele8_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+2, Label="QCDe El8", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-#QCDEl_red_El8: QCD_Pt_30to80_bcToE       : xsec : LepGood_mcMatchId  == 0 && HLT_FR_Ele8_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+2, Label="QCDe El8", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-#QCDEl_red_El8: QCD_Pt_80to170_bcToE      : xsec : LepGood_mcMatchId  == 0 && HLT_FR_Ele8_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+2, Label="QCDe El8", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
+QCDEl_bjets: QCD_Pt_20to30_bcToE   : xsec : LepGood_mcMatchId  == 0 && LepGood_mcMatchAny == 5 ; FillColor=ROOT.kPink+5, Label="b-jets (QCDe)", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_bjets: QCD_Pt_30to80_bcToE   : xsec : LepGood_mcMatchId  == 0 && LepGood_mcMatchAny == 5 ; FillColor=ROOT.kPink+5, Label="b-jets (QCDe)", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_bjets: QCD_Pt_80to170_bcToE  : xsec : LepGood_mcMatchId  == 0 && LepGood_mcMatchAny == 5 ; FillColor=ROOT.kPink+5, Label="b-jets (QCDe)", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+
+QCDEl_conv: QCD_Pt20to30_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma != 0 ; FillColor=ROOT.kAzure+1, Label="QCDe \#gamma", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_conv: QCD_Pt30to50_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma != 0 ; FillColor=ROOT.kAzure+1, Label="QCDe \#gamma", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_conv: QCD_Pt50to80_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma != 0 ; FillColor=ROOT.kAzure+1, Label="QCDe \#gamma", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_conv: QCD_Pt80to120_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma != 0 ; FillColor=ROOT.kAzure+1, Label="QCDe \#gamma", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_conv: QCD_Pt120to170_EMEnriched : xsec : LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma != 0 ; FillColor=ROOT.kAzure+1, Label="QCDe \#gamma", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_conv: QCD_Pt_20to30_bcToE       : xsec : LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma != 0 ; FillColor=ROOT.kAzure+1, Label="QCDe \#gamma", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_conv: QCD_Pt_30to80_bcToE       : xsec : LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma != 0 ; FillColor=ROOT.kAzure+1, Label="QCDe \#gamma", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_conv: QCD_Pt_80to170_bcToE      : xsec : LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma != 0 ; FillColor=ROOT.kAzure+1, Label="QCDe \#gamma", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+
+QCDEl_ljets: QCD_Pt20to30_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 ; FillColor=ROOT.kOrange-3, Label="l-jets (QCDe)", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_ljets: QCD_Pt30to50_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 ; FillColor=ROOT.kOrange-3, Label="l-jets (QCDe)", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_ljets: QCD_Pt50to80_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 ; FillColor=ROOT.kOrange-3, Label="l-jets (QCDe)", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_ljets: QCD_Pt80to120_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 ; FillColor=ROOT.kOrange-3, Label="l-jets (QCDe)", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_ljets: QCD_Pt120to170_EMEnriched : xsec : LepGood_mcMatchId  == 0 && LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 ; FillColor=ROOT.kOrange-3, Label="l-jets (QCDe)", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_ljets: QCD_Pt_20to30_bcToE       : xsec : LepGood_mcMatchId  == 0 && LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 ; FillColor=ROOT.kOrange-3, Label="l-jets (QCDe)", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_ljets: QCD_Pt_30to80_bcToE       : xsec : LepGood_mcMatchId  == 0 && LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 ; FillColor=ROOT.kOrange-3, Label="l-jets (QCDe)", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_ljets: QCD_Pt_80to170_bcToE      : xsec : LepGood_mcMatchId  == 0 && LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 ; FillColor=ROOT.kOrange-3, Label="l-jets (QCDe)", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+
+QCDEl_ljets_noconv: QCD_Pt20to30_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma==0 && LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 ; FillColor=ROOT.kCyan, Label="l-jets no\#gamma (QCDe)", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_ljets_noconv: QCD_Pt30to50_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma==0 && LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 ; FillColor=ROOT.kCyan, Label="l-jets no\#gamma (QCDe)", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_ljets_noconv: QCD_Pt50to80_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma==0 && LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 ; FillColor=ROOT.kCyan, Label="l-jets no\#gamma (QCDe)", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_ljets_noconv: QCD_Pt80to120_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma==0 && LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 ; FillColor=ROOT.kCyan, Label="l-jets no\#gamma (QCDe)", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_ljets_noconv: QCD_Pt120to170_EMEnriched : xsec : LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma==0 && LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 ; FillColor=ROOT.kCyan, Label="l-jets no\#gamma (QCDe)", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_ljets_noconv: QCD_Pt_20to30_bcToE       : xsec : LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma==0 && LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 ; FillColor=ROOT.kCyan, Label="l-jets no\#gamma (QCDe)", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_ljets_noconv: QCD_Pt_30to80_bcToE       : xsec : LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma==0 && LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 ; FillColor=ROOT.kCyan, Label="l-jets no\#gamma (QCDe)", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_ljets_noconv: QCD_Pt_80to170_bcToE      : xsec : LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma==0 && LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 ; FillColor=ROOT.kCyan, Label="l-jets no\#gamma (QCDe)", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+
+QCDEl_ljets_conv: QCD_Pt20to30_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma==1 && LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 ; FillColor=ROOT.kMagenta, Label="conv. (QCDe)", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_ljets_conv: QCD_Pt30to50_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma==1 && LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 ; FillColor=ROOT.kMagenta, Label="conv. (QCDe)", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_ljets_conv: QCD_Pt50to80_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma==1 && LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 ; FillColor=ROOT.kMagenta, Label="conv. (QCDe)", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_ljets_conv: QCD_Pt80to120_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma==1 && LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 ; FillColor=ROOT.kMagenta, Label="conv. (QCDe)", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_ljets_conv: QCD_Pt120to170_EMEnriched : xsec : LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma==1 && LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 ; FillColor=ROOT.kMagenta, Label="conv. (QCDe)", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_ljets_conv: QCD_Pt_20to30_bcToE       : xsec : LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma==1 && LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 ; FillColor=ROOT.kMagenta, Label="conv. (QCDe)", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_ljets_conv: QCD_Pt_30to80_bcToE       : xsec : LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma==1 && LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 ; FillColor=ROOT.kMagenta, Label="conv. (QCDe)", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_ljets_conv: QCD_Pt_80to170_bcToE      : xsec : LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma==1 && LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 ; FillColor=ROOT.kMagenta, Label="conv. (QCDe)", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+
+QCDEl_red_aj25: QCD_Pt20to30_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_awayNJet25 > 1; FillColor=ROOT.kOrange-3, Label="p_{T}(aj) > 25", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_aj25: QCD_Pt30to50_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_awayNJet25 > 1; FillColor=ROOT.kOrange-3, Label="p_{T}(aj) > 25", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_aj25: QCD_Pt50to80_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_awayNJet25 > 1; FillColor=ROOT.kOrange-3, Label="p_{T}(aj) > 25", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_aj25: QCD_Pt80to120_EMEnriched : xsec : LepGood_mcMatchId  == 0 && LepGood_awayNJet25 > 1; FillColor=ROOT.kOrange-3, Label="p_{T}(aj) > 25", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_aj25: QCD_Pt120to170_EMEnriched: xsec : LepGood_mcMatchId  == 0 && LepGood_awayNJet25 > 1; FillColor=ROOT.kOrange-3, Label="p_{T}(aj) > 25", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_aj25: QCD_Pt_20to30_bcToE :      xsec : LepGood_mcMatchId  == 0 && LepGood_awayNJet25 > 1; FillColor=ROOT.kOrange-3, Label="p_{T}(aj) > 25", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_aj25: QCD_Pt_30to80_bcToE :      xsec : LepGood_mcMatchId  == 0 && LepGood_awayNJet25 > 1; FillColor=ROOT.kOrange-3, Label="p_{T}(aj) > 25", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_aj25: QCD_Pt_80to170_bcToE:      xsec : LepGood_mcMatchId  == 0 && LepGood_awayNJet25 > 1; FillColor=ROOT.kOrange-3, Label="p_{T}(aj) > 25", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+
+QCDEl_red_aj30: QCD_Pt20to30_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_awayNJet30 > 1; FillColor=ROOT.kRed-4, Label="p_{T}(aj) > 30", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_aj30: QCD_Pt30to50_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_awayNJet30 > 1; FillColor=ROOT.kRed-4, Label="p_{T}(aj) > 30", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_aj30: QCD_Pt50to80_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_awayNJet30 > 1; FillColor=ROOT.kRed-4, Label="p_{T}(aj) > 30", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_aj30: QCD_Pt80to120_EMEnriched : xsec : LepGood_mcMatchId  == 0 && LepGood_awayNJet30 > 1; FillColor=ROOT.kRed-4, Label="p_{T}(aj) > 30", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_aj30: QCD_Pt120to170_EMEnriched: xsec : LepGood_mcMatchId  == 0 && LepGood_awayNJet30 > 1; FillColor=ROOT.kRed-4, Label="p_{T}(aj) > 30", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_aj30: QCD_Pt_20to30_bcToE :      xsec : LepGood_mcMatchId  == 0 && LepGood_awayNJet30 > 1; FillColor=ROOT.kRed-4, Label="p_{T}(aj) > 30", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_aj30: QCD_Pt_30to80_bcToE :      xsec : LepGood_mcMatchId  == 0 && LepGood_awayNJet30 > 1; FillColor=ROOT.kRed-4, Label="p_{T}(aj) > 30", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_aj30: QCD_Pt_80to170_bcToE:      xsec : LepGood_mcMatchId  == 0 && LepGood_awayNJet30 > 1; FillColor=ROOT.kRed-4, Label="p_{T}(aj) > 30", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+
+QCDEl_red_aj40: QCD_Pt20to30_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_awayNJet40 > 1; FillColor=ROOT.kViolet+6, Label="p_{T}(aj) > 40", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_aj40: QCD_Pt30to50_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_awayNJet40 > 1; FillColor=ROOT.kViolet+6, Label="p_{T}(aj) > 40", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_aj40: QCD_Pt50to80_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_awayNJet40 > 1; FillColor=ROOT.kViolet+6, Label="p_{T}(aj) > 40", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_aj40: QCD_Pt80to120_EMEnriched : xsec : LepGood_mcMatchId  == 0 && LepGood_awayNJet40 > 1; FillColor=ROOT.kViolet+6, Label="p_{T}(aj) > 40", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_aj40: QCD_Pt120to170_EMEnriched: xsec : LepGood_mcMatchId  == 0 && LepGood_awayNJet40 > 1; FillColor=ROOT.kViolet+6, Label="p_{T}(aj) > 40", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_aj40: QCD_Pt_20to30_bcToE :      xsec : LepGood_mcMatchId  == 0 && LepGood_awayNJet40 > 1; FillColor=ROOT.kViolet+6, Label="p_{T}(aj) > 40", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_aj40: QCD_Pt_30to80_bcToE :      xsec : LepGood_mcMatchId  == 0 && LepGood_awayNJet40 > 1; FillColor=ROOT.kViolet+6, Label="p_{T}(aj) > 40", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_aj40: QCD_Pt_80to170_bcToE:      xsec : LepGood_mcMatchId  == 0 && LepGood_awayNJet40 > 1; FillColor=ROOT.kViolet+6, Label="p_{T}(aj) > 40", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+
+QCDEl_red_aj50: QCD_Pt20to30_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_awayNJet40 > 1 && LepGood_awayJet_pt > 50  ; FillColor=ROOT.kAzure+1, Label="p_{T}(aj) > 50", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_aj50: QCD_Pt30to50_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_awayNJet40 > 1 && LepGood_awayJet_pt > 50  ; FillColor=ROOT.kAzure+1, Label="p_{T}(aj) > 50", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_aj50: QCD_Pt50to80_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_awayNJet40 > 1 && LepGood_awayJet_pt > 50  ; FillColor=ROOT.kAzure+1, Label="p_{T}(aj) > 50", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_aj50: QCD_Pt80to120_EMEnriched : xsec : LepGood_mcMatchId  == 0 && LepGood_awayNJet40 > 1 && LepGood_awayJet_pt > 50  ; FillColor=ROOT.kAzure+1, Label="p_{T}(aj) > 50", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_aj50: QCD_Pt120to170_EMEnriched: xsec : LepGood_mcMatchId  == 0 && LepGood_awayNJet40 > 1 && LepGood_awayJet_pt > 50  ; FillColor=ROOT.kAzure+1, Label="p_{T}(aj) > 50", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_aj50: QCD_Pt_20to30_bcToE :      xsec : LepGood_mcMatchId  == 0 && LepGood_awayNJet40 > 1 && LepGood_awayJet_pt > 50  ; FillColor=ROOT.kAzure+1, Label="p_{T}(aj) > 50", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_aj50: QCD_Pt_30to80_bcToE :      xsec : LepGood_mcMatchId  == 0 && LepGood_awayNJet40 > 1 && LepGood_awayJet_pt > 50  ; FillColor=ROOT.kAzure+1, Label="p_{T}(aj) > 50", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_aj50: QCD_Pt_80to170_bcToE:      xsec : LepGood_mcMatchId  == 0 && LepGood_awayNJet40 > 1 && LepGood_awayJet_pt > 50  ; FillColor=ROOT.kAzure+1, Label="p_{T}(aj) > 50", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+
+QCDEl_red_aj60: QCD_Pt20to30_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_awayNJet40 > 1 && LepGood_awayNJet60 > 0  ; FillColor=ROOT.kGreen+1, Label="p_{T}(aj) > 60", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_aj60: QCD_Pt30to50_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_awayNJet40 > 1 && LepGood_awayNJet60 > 0  ; FillColor=ROOT.kGreen+1, Label="p_{T}(aj) > 60", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_aj60: QCD_Pt50to80_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_awayNJet40 > 1 && LepGood_awayNJet60 > 0  ; FillColor=ROOT.kGreen+1, Label="p_{T}(aj) > 60", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_aj60: QCD_Pt80to120_EMEnriched : xsec : LepGood_mcMatchId  == 0 && LepGood_awayNJet40 > 1 && LepGood_awayNJet60 > 0  ; FillColor=ROOT.kGreen+1, Label="p_{T}(aj) > 60", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_aj60: QCD_Pt120to170_EMEnriched: xsec : LepGood_mcMatchId  == 0 && LepGood_awayNJet40 > 1 && LepGood_awayNJet60 > 0  ; FillColor=ROOT.kGreen+1, Label="p_{T}(aj) > 60", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_aj60: QCD_Pt_20to30_bcToE :      xsec : LepGood_mcMatchId  == 0 && LepGood_awayNJet40 > 1 && LepGood_awayNJet60 > 0  ; FillColor=ROOT.kGreen+1, Label="p_{T}(aj) > 60", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_aj60: QCD_Pt_30to80_bcToE :      xsec : LepGood_mcMatchId  == 0 && LepGood_awayNJet40 > 1 && LepGood_awayNJet60 > 0  ; FillColor=ROOT.kGreen+1, Label="p_{T}(aj) > 60", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_aj60: QCD_Pt_80to170_bcToE:      xsec : LepGood_mcMatchId  == 0 && LepGood_awayNJet40 > 1 && LepGood_awayNJet60 > 0  ; FillColor=ROOT.kGreen+1, Label="p_{T}(aj) > 60", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+
+QCDEl_red_ajbv: QCD_Pt20to30_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_awayNBJetLoose25 < 1 ; FillColor=ROOT.kOrange-3, Label="CSV(aj) < 0.5426", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_ajbv: QCD_Pt30to50_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_awayNBJetLoose25 < 1 ; FillColor=ROOT.kOrange-3, Label="CSV(aj) < 0.5426", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_ajbv: QCD_Pt50to80_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_awayNBJetLoose25 < 1 ; FillColor=ROOT.kOrange-3, Label="CSV(aj) < 0.5426", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_ajbv: QCD_Pt80to120_EMEnriched : xsec : LepGood_mcMatchId  == 0 && LepGood_awayNBJetLoose25 < 1 ; FillColor=ROOT.kOrange-3, Label="CSV(aj) < 0.5426", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_ajbv: QCD_Pt120to170_EMEnriched: xsec : LepGood_mcMatchId  == 0 && LepGood_awayNBJetLoose25 < 1 ; FillColor=ROOT.kOrange-3, Label="CSV(aj) < 0.5426", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_ajbv: QCD_Pt_20to30_bcToE :      xsec : LepGood_mcMatchId  == 0 && LepGood_awayNBJetLoose25 < 1 ; FillColor=ROOT.kOrange-3, Label="CSV(aj) < 0.5426", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_ajbv: QCD_Pt_30to80_bcToE :      xsec : LepGood_mcMatchId  == 0 && LepGood_awayNBJetLoose25 < 1 ; FillColor=ROOT.kOrange-3, Label="CSV(aj) < 0.5426", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_ajbv: QCD_Pt_80to170_bcToE:      xsec : LepGood_mcMatchId  == 0 && LepGood_awayNBJetLoose25 < 1 ; FillColor=ROOT.kOrange-3, Label="CSV(aj) < 0.5426", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+
+QCDEl_red_ajbl: QCD_Pt20to30_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_awayNBJetLoose25 > 0 ; FillColor=ROOT.kMagenta-3, Label="CSV(aj) > 0.5426", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_ajbl: QCD_Pt30to50_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_awayNBJetLoose25 > 0 ; FillColor=ROOT.kMagenta-3, Label="CSV(aj) > 0.5426", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_ajbl: QCD_Pt50to80_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_awayNBJetLoose25 > 0 ; FillColor=ROOT.kMagenta-3, Label="CSV(aj) > 0.5426", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_ajbl: QCD_Pt80to120_EMEnriched : xsec : LepGood_mcMatchId  == 0 && LepGood_awayNBJetLoose25 > 0 ; FillColor=ROOT.kMagenta-3, Label="CSV(aj) > 0.5426", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_ajbl: QCD_Pt120to170_EMEnriched: xsec : LepGood_mcMatchId  == 0 && LepGood_awayNBJetLoose25 > 0 ; FillColor=ROOT.kMagenta-3, Label="CSV(aj) > 0.5426", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_ajbl: QCD_Pt_20to30_bcToE :      xsec : LepGood_mcMatchId  == 0 && LepGood_awayNBJetLoose25 > 0 ; FillColor=ROOT.kMagenta-3, Label="CSV(aj) > 0.5426", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_ajbl: QCD_Pt_30to80_bcToE :      xsec : LepGood_mcMatchId  == 0 && LepGood_awayNBJetLoose25 > 0 ; FillColor=ROOT.kMagenta-3, Label="CSV(aj) > 0.5426", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_ajbl: QCD_Pt_80to170_bcToE:      xsec : LepGood_mcMatchId  == 0 && LepGood_awayNBJetLoose25 > 0 ; FillColor=ROOT.kMagenta-3, Label="CSV(aj) > 0.5426", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+
+QCDEl_red_ajbm: QCD_Pt20to30_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_awayNBJetMedium25 > 0 ; FillColor=ROOT.kViolet+2, Label="CSV(aj) > 0.8484", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_ajbm: QCD_Pt30to50_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_awayNBJetMedium25 > 0 ; FillColor=ROOT.kViolet+2, Label="CSV(aj) > 0.8484", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_ajbm: QCD_Pt50to80_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_awayNBJetMedium25 > 0 ; FillColor=ROOT.kViolet+2, Label="CSV(aj) > 0.8484", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_ajbm: QCD_Pt80to120_EMEnriched : xsec : LepGood_mcMatchId  == 0 && LepGood_awayNBJetMedium25 > 0 ; FillColor=ROOT.kViolet+2, Label="CSV(aj) > 0.8484", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_ajbm: QCD_Pt120to170_EMEnriched: xsec : LepGood_mcMatchId  == 0 && LepGood_awayNBJetMedium25 > 0 ; FillColor=ROOT.kViolet+2, Label="CSV(aj) > 0.8484", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_ajbm: QCD_Pt_20to30_bcToE :      xsec : LepGood_mcMatchId  == 0 && LepGood_awayNBJetMedium25 > 0 ; FillColor=ROOT.kViolet+2, Label="CSV(aj) > 0.8484", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_ajbm: QCD_Pt_30to80_bcToE :      xsec : LepGood_mcMatchId  == 0 && LepGood_awayNBJetMedium25 > 0 ; FillColor=ROOT.kViolet+2, Label="CSV(aj) > 0.8484", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_ajbm: QCD_Pt_80to170_bcToE:      xsec : LepGood_mcMatchId  == 0 && LepGood_awayNBJetMedium25 > 0 ; FillColor=ROOT.kViolet+2, Label="CSV(aj) > 0.8484", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+
+QCDEl_red_ajbt: QCD_Pt20to30_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_awayNBJetTight25 > 0 ; FillColor=ROOT.kBlue+0, Label="CSV(aj) > 0.9535", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_ajbt: QCD_Pt30to50_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_awayNBJetTight25 > 0 ; FillColor=ROOT.kBlue+0, Label="CSV(aj) > 0.9535", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_ajbt: QCD_Pt50to80_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_awayNBJetTight25 > 0 ; FillColor=ROOT.kBlue+0, Label="CSV(aj) > 0.9535", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_ajbt: QCD_Pt80to120_EMEnriched : xsec : LepGood_mcMatchId  == 0 && LepGood_awayNBJetTight25 > 0 ; FillColor=ROOT.kBlue+0, Label="CSV(aj) > 0.9535", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_ajbt: QCD_Pt120to170_EMEnriched: xsec : LepGood_mcMatchId  == 0 && LepGood_awayNBJetTight25 > 0 ; FillColor=ROOT.kBlue+0, Label="CSV(aj) > 0.9535", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_ajbt: QCD_Pt_20to30_bcToE :      xsec : LepGood_mcMatchId  == 0 && LepGood_awayNBJetTight25 > 0 ; FillColor=ROOT.kBlue+0, Label="CSV(aj) > 0.9535", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_ajbt: QCD_Pt_30to80_bcToE :      xsec : LepGood_mcMatchId  == 0 && LepGood_awayNBJetTight25 > 0 ; FillColor=ROOT.kBlue+0, Label="CSV(aj) > 0.9535", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_ajbt: QCD_Pt_80to170_bcToE:      xsec : LepGood_mcMatchId  == 0 && LepGood_awayNBJetTight25 > 0 ; FillColor=ROOT.kBlue+0, Label="CSV(aj) > 0.9535", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+
+QCDEl_red_ajba: QCD_Pt20to30_EMEnriched  : xsec : LepGood_mcMatchId  == 0 ; FillColor=ROOT.kGreen+1, Label="CSV(aj) any", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_ajba: QCD_Pt30to50_EMEnriched  : xsec : LepGood_mcMatchId  == 0 ; FillColor=ROOT.kGreen+1, Label="CSV(aj) any", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_ajba: QCD_Pt50to80_EMEnriched  : xsec : LepGood_mcMatchId  == 0 ; FillColor=ROOT.kGreen+1, Label="CSV(aj) any", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_ajba: QCD_Pt80to120_EMEnriched : xsec : LepGood_mcMatchId  == 0 ; FillColor=ROOT.kGreen+1, Label="CSV(aj) any", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_ajba: QCD_Pt120to170_EMEnriched: xsec : LepGood_mcMatchId  == 0 ; FillColor=ROOT.kGreen+1, Label="CSV(aj) any", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_ajba: QCD_Pt_20to30_bcToE :      xsec : LepGood_mcMatchId  == 0 ; FillColor=ROOT.kGreen+1, Label="CSV(aj) any", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_ajba: QCD_Pt_30to80_bcToE :      xsec : LepGood_mcMatchId  == 0 ; FillColor=ROOT.kGreen+1, Label="CSV(aj) any", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_ajba: QCD_Pt_80to170_bcToE:      xsec : LepGood_mcMatchId  == 0 ; FillColor=ROOT.kGreen+1, Label="CSV(aj) any", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+
+QCDEl_red_El8: QCD_Pt20to30_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 8 && HLT_FR_Ele8_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kRed+0, Label="QCDe El8", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_El8: QCD_Pt30to50_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 8 && HLT_FR_Ele8_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kRed+0, Label="QCDe El8", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_El8: QCD_Pt50to80_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 8 && HLT_FR_Ele8_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kRed+0, Label="QCDe El8", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_El8: QCD_Pt80to120_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 8 && HLT_FR_Ele8_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kRed+0, Label="QCDe El8", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_El8: QCD_Pt120to170_EMEnriched : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 8 && HLT_FR_Ele8_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kRed+0, Label="QCDe El8", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_El8: QCD_Pt_20to30_bcToE       : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 8 && HLT_FR_Ele8_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kRed+0, Label="QCDe El8", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_El8: QCD_Pt_30to80_bcToE       : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 8 && HLT_FR_Ele8_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kRed+0, Label="QCDe El8", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_El8: QCD_Pt_80to170_bcToE      : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 8 && HLT_FR_Ele8_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kRed+0, Label="QCDe El8", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_redNC_El8: QCD_Pt20to30_EMEnriched   : xsec : LepGood_mcMatchId == 0 && LepGood_mcPromptGamma == 0 && LepGood_pt > 8 && HLT_FR_Ele8_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kRed+2, Label="QCD El8 no\#gamma", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_redNC_El8: QCD_Pt30to50_EMEnriched   : xsec : LepGood_mcMatchId == 0 && LepGood_mcPromptGamma == 0 && LepGood_pt > 8 && HLT_FR_Ele8_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kRed+2, Label="QCD El8 no\#gamma", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_redNC_El8: QCD_Pt50to80_EMEnriched   : xsec : LepGood_mcMatchId == 0 && LepGood_mcPromptGamma == 0 && LepGood_pt > 8 && HLT_FR_Ele8_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kRed+2, Label="QCD El8 no\#gamma", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_redNC_El8: QCD_Pt80to120_EMEnriched  : xsec : LepGood_mcMatchId == 0 && LepGood_mcPromptGamma == 0 && LepGood_pt > 8 && HLT_FR_Ele8_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kRed+2, Label="QCD El8 no\#gamma", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_redNC_El8: QCD_Pt120to170_EMEnriched : xsec : LepGood_mcMatchId == 0 && LepGood_mcPromptGamma == 0 && LepGood_pt > 8 && HLT_FR_Ele8_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kRed+2, Label="QCD El8 no\#gamma", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_redNC_El8: QCD_Pt_20to30_bcToE       : xsec : LepGood_mcMatchId == 0 && LepGood_mcPromptGamma == 0 && LepGood_pt > 8 && HLT_FR_Ele8_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kRed+2, Label="QCD El8 no\#gamma", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_redNC_El8: QCD_Pt_30to80_bcToE       : xsec : LepGood_mcMatchId == 0 && LepGood_mcPromptGamma == 0 && LepGood_pt > 8 && HLT_FR_Ele8_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kRed+2, Label="QCD El8 no\#gamma", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_redNC_El8: QCD_Pt_80to170_bcToE      : xsec : LepGood_mcMatchId == 0 && LepGood_mcPromptGamma == 0 && LepGood_pt > 8 && HLT_FR_Ele8_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kRed+2, Label="QCD El8 no\#gamma", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+
+QCDEl_red_El12: QCD_Pt20to30_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+1, Label="QCDe El12", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_El12: QCD_Pt30to50_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+1, Label="QCDe El12", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_El12: QCD_Pt50to80_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+1, Label="QCDe El12", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_El12: QCD_Pt80to120_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+1, Label="QCDe El12", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_El12: QCD_Pt120to170_EMEnriched : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+1, Label="QCDe El12", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_El12: QCD_Pt_20to30_bcToE       : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+1, Label="QCDe El12", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_El12: QCD_Pt_30to80_bcToE       : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+1, Label="QCDe El12", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_El12: QCD_Pt_80to170_bcToE      : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+1, Label="QCDe El12", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+
+QCDEl_redNC_El12: QCD_Pt20to30_EMEnriched   : xsec : LepGood_mcMatchId == 0 && LepGood_mcPromptGamma == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+3, Label="QCD El12 no\#gamma", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_redNC_El12: QCD_Pt30to50_EMEnriched   : xsec : LepGood_mcMatchId == 0 && LepGood_mcPromptGamma == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+3, Label="QCD El12 no\#gamma", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_redNC_El12: QCD_Pt50to80_EMEnriched   : xsec : LepGood_mcMatchId == 0 && LepGood_mcPromptGamma == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+3, Label="QCD El12 no\#gamma", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_redNC_El12: QCD_Pt80to120_EMEnriched  : xsec : LepGood_mcMatchId == 0 && LepGood_mcPromptGamma == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+3, Label="QCD El12 no\#gamma", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_redNC_El12: QCD_Pt120to170_EMEnriched : xsec : LepGood_mcMatchId == 0 && LepGood_mcPromptGamma == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+3, Label="QCD El12 no\#gamma", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_redNC_El12: QCD_Pt_20to30_bcToE       : xsec : LepGood_mcMatchId == 0 && LepGood_mcPromptGamma == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+3, Label="QCD El12 no\#gamma", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_redNC_El12: QCD_Pt_30to80_bcToE       : xsec : LepGood_mcMatchId == 0 && LepGood_mcPromptGamma == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+3, Label="QCD El12 no\#gamma", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_redNC_El12: QCD_Pt_80to170_bcToE      : xsec : LepGood_mcMatchId == 0 && LepGood_mcPromptGamma == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+3, Label="QCD El12 no\#gamma", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+
+QCDEl_conv_El12: QCD_Pt20to30_EMEnriched   : xsec : LepGood_mcMatchId == 0 && LepGood_mcPromptGamma != 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kAzure+2, Label="QCD El12 \#gamma", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_conv_El12: QCD_Pt30to50_EMEnriched   : xsec : LepGood_mcMatchId == 0 && LepGood_mcPromptGamma != 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kAzure+2, Label="QCD El12 \#gamma", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_conv_El12: QCD_Pt50to80_EMEnriched   : xsec : LepGood_mcMatchId == 0 && LepGood_mcPromptGamma != 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kAzure+2, Label="QCD El12 \#gamma", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_conv_El12: QCD_Pt80to120_EMEnriched  : xsec : LepGood_mcMatchId == 0 && LepGood_mcPromptGamma != 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kAzure+2, Label="QCD El12 \#gamma", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_conv_El12: QCD_Pt120to170_EMEnriched : xsec : LepGood_mcMatchId == 0 && LepGood_mcPromptGamma != 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kAzure+2, Label="QCD El12 \#gamma", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_conv_El12: QCD_Pt_20to30_bcToE       : xsec : LepGood_mcMatchId == 0 && LepGood_mcPromptGamma != 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kAzure+2, Label="QCD El12 \#gamma", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_conv_El12: QCD_Pt_30to80_bcToE       : xsec : LepGood_mcMatchId == 0 && LepGood_mcPromptGamma != 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kAzure+2, Label="QCD El12 \#gamma", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_conv_El12: QCD_Pt_80to170_bcToE      : xsec : LepGood_mcMatchId == 0 && LepGood_mcPromptGamma != 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kAzure+2, Label="QCD El12 \#gamma", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
 
 
-QCDEl_red_El12: QCD_Pt20to30_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+1, Label="QCDe El12", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_El12: QCD_Pt30to50_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+1, Label="QCDe El12", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_El12: QCD_Pt50to80_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+1, Label="QCDe El12", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_El12: QCD_Pt80to120_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+1, Label="QCDe El12", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_El12: QCD_Pt120to170_EMEnriched : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+1, Label="QCDe El12", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_El12: QCD_Pt_20to30_bcToE       : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+1, Label="QCDe El12", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_El12: QCD_Pt_30to80_bcToE       : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+1, Label="QCDe El12", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_El12: QCD_Pt_80to170_bcToE      : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+1, Label="QCDe El12", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
+QCDEl_red_El17: QCD_Pt20to30_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele17_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+3, Label="QCDe El17", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_El17: QCD_Pt30to50_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele17_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+3, Label="QCDe El17", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_El17: QCD_Pt50to80_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele17_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+3, Label="QCDe El17", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_El17: QCD_Pt80to120_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele17_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+3, Label="QCDe El17", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_El17: QCD_Pt120to170_EMEnriched : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele17_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+3, Label="QCDe El17", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_El17: QCD_Pt_20to30_bcToE       : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele17_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+3, Label="QCDe El17", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_El17: QCD_Pt_30to80_bcToE       : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele17_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+3, Label="QCDe El17", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_El17: QCD_Pt_80to170_bcToE      : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele17_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+3, Label="QCDe El17", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_redNC_El17: QCD_Pt20to30_EMEnriched   : xsec : LepGood_mcMatchId == 0 && LepGood_mcPromptGamma == 0 && LepGood_pt > 12 && HLT_FR_Ele17_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+1, Label="QCD El17 no\#gamma", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_redNC_El17: QCD_Pt30to50_EMEnriched   : xsec : LepGood_mcMatchId == 0 && LepGood_mcPromptGamma == 0 && LepGood_pt > 12 && HLT_FR_Ele17_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+1, Label="QCD El17 no\#gamma", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_redNC_El17: QCD_Pt50to80_EMEnriched   : xsec : LepGood_mcMatchId == 0 && LepGood_mcPromptGamma == 0 && LepGood_pt > 12 && HLT_FR_Ele17_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+1, Label="QCD El17 no\#gamma", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_redNC_El17: QCD_Pt80to120_EMEnriched  : xsec : LepGood_mcMatchId == 0 && LepGood_mcPromptGamma == 0 && LepGood_pt > 12 && HLT_FR_Ele17_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+1, Label="QCD El17 no\#gamma", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_redNC_El17: QCD_Pt120to170_EMEnriched : xsec : LepGood_mcMatchId == 0 && LepGood_mcPromptGamma == 0 && LepGood_pt > 12 && HLT_FR_Ele17_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+1, Label="QCD El17 no\#gamma", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_redNC_El17: QCD_Pt_20to30_bcToE       : xsec : LepGood_mcMatchId == 0 && LepGood_mcPromptGamma == 0 && LepGood_pt > 12 && HLT_FR_Ele17_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+1, Label="QCD El17 no\#gamma", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_redNC_El17: QCD_Pt_30to80_bcToE       : xsec : LepGood_mcMatchId == 0 && LepGood_mcPromptGamma == 0 && LepGood_pt > 12 && HLT_FR_Ele17_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+1, Label="QCD El17 no\#gamma", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_redNC_El17: QCD_Pt_80to170_bcToE      : xsec : LepGood_mcMatchId == 0 && LepGood_mcPromptGamma == 0 && LepGood_pt > 12 && HLT_FR_Ele17_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+1, Label="QCD El17 no\#gamma", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+
+
+
+#QCDEl_red_El23: QCD_Pt20to30_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 23 && HLT_FR_Ele23_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+1, Label="QCDe El23"
+#QCDEl_red_El23: QCD_Pt30to50_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 23 && HLT_FR_Ele23_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+1, Label="QCDe El23"
+#QCDEl_red_El23: QCD_Pt50to80_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 23 && HLT_FR_Ele23_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+1, Label="QCDe El23"
+#QCDEl_red_El23: QCD_Pt80to120_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 23 && HLT_FR_Ele23_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+1, Label="QCDe El23"
+#QCDEl_red_El23: QCD_Pt120to170_EMEnriched : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 23 && HLT_FR_Ele23_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+1, Label="QCDe El23"
+#QCDEl_red_El23: QCD_Pt_20to30_bcToE       : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 23 && HLT_FR_Ele23_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+1, Label="QCDe El23"
+#QCDEl_red_El23: QCD_Pt_30to80_bcToE       : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 23 && HLT_FR_Ele23_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+1, Label="QCDe El23"
+#QCDEl_red_El23: QCD_Pt_80to170_bcToE      : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 23 && HLT_FR_Ele23_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+1, Label="QCDe El23"
+
+
+#QCDEl_red_El12idEmu: QCD_Pt20to30_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 && LepGood_idEmu; FillColor=ROOT.kGreen+2, Label="QCDe El12 idEmu"
+#QCDEl_red_El12idEmu: QCD_Pt30to50_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 && LepGood_idEmu; FillColor=ROOT.kGreen+2, Label="QCDe El12 idEmu"
+#QCDEl_red_El12idEmu: QCD_Pt50to80_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 && LepGood_idEmu; FillColor=ROOT.kGreen+2, Label="QCDe El12 idEmu"
+#QCDEl_red_El12idEmu: QCD_Pt80to120_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 && LepGood_idEmu; FillColor=ROOT.kGreen+2, Label="QCDe El12 idEmu"
+#QCDEl_red_El12idEmu: QCD_Pt120to170_EMEnriched : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 && LepGood_idEmu; FillColor=ROOT.kGreen+2, Label="QCDe El12 idEmu"
+#QCDEl_red_El12idEmu: QCD_Pt_20to30_bcToE       : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 && LepGood_idEmu; FillColor=ROOT.kGreen+2, Label="QCDe El12 idEmu"
+#QCDEl_red_El12idEmu: QCD_Pt_30to80_bcToE       : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 && LepGood_idEmu; FillColor=ROOT.kGreen+2, Label="QCDe El12 idEmu"
+#QCDEl_red_El12idEmu: QCD_Pt_80to170_bcToE      : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 && LepGood_idEmu; FillColor=ROOT.kGreen+2, Label="QCDe El12 idEmu"
+#QCDEl_red_El12idEmu2: QCD_Pt20to30_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 && LepGood_idEmu2; FillColor=ROOT.kOrange-3, Label="El12 idEmu2", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+#QCDEl_red_El12idEmu2: QCD_Pt30to50_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 && LepGood_idEmu2; FillColor=ROOT.kOrange-3, Label="El12 idEmu2", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+#QCDEl_red_El12idEmu2: QCD_Pt50to80_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 && LepGood_idEmu2; FillColor=ROOT.kOrange-3, Label="El12 idEmu2", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+#QCDEl_red_El12idEmu2: QCD_Pt80to120_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 && LepGood_idEmu2; FillColor=ROOT.kOrange-3, Label="El12 idEmu2", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+#QCDEl_red_El12idEmu2: QCD_Pt120to170_EMEnriched : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 && LepGood_idEmu2; FillColor=ROOT.kOrange-3, Label="El12 idEmu2", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+#QCDEl_red_El12idEmu2: QCD_Pt_20to30_bcToE       : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 && LepGood_idEmu2; FillColor=ROOT.kOrange-3, Label="El12 idEmu2", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+#QCDEl_red_El12idEmu2: QCD_Pt_30to80_bcToE       : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 && LepGood_idEmu2; FillColor=ROOT.kOrange-3, Label="El12 idEmu2", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+#QCDEl_red_El12idEmu2: QCD_Pt_80to170_bcToE      : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 && LepGood_idEmu2; FillColor=ROOT.kOrange-3, Label="El12 idEmu2", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+
+QCDEl_red_pt8: QCD_Pt20to30_EMEnriched   : xsec : LepGood_mcMatchId == 0 && LepGood_pt > 8 ; FillColor=ROOT.kBlue+0, Label="QCDe p_{T} 8", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_pt8: QCD_Pt30to50_EMEnriched   : xsec : LepGood_mcMatchId == 0 && LepGood_pt > 8 ; FillColor=ROOT.kBlue+0, Label="QCDe p_{T} 8", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_pt8: QCD_Pt50to80_EMEnriched   : xsec : LepGood_mcMatchId == 0 && LepGood_pt > 8 ; FillColor=ROOT.kBlue+0, Label="QCDe p_{T} 8", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_pt8: QCD_Pt80to120_EMEnriched  : xsec : LepGood_mcMatchId == 0 && LepGood_pt > 8 ; FillColor=ROOT.kBlue+0, Label="QCDe p_{T} 8", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_pt8: QCD_Pt120to170_EMEnriched : xsec : LepGood_mcMatchId == 0 && LepGood_pt > 8 ; FillColor=ROOT.kBlue+0, Label="QCDe p_{T} 8", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_pt8: QCD_Pt_20to30_bcToE       : xsec : LepGood_mcMatchId == 0 && LepGood_pt > 8 ; FillColor=ROOT.kBlue+0, Label="QCDe p_{T} 8", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_pt8: QCD_Pt_30to80_bcToE       : xsec : LepGood_mcMatchId == 0 && LepGood_pt > 8 ; FillColor=ROOT.kBlue+0, Label="QCDe p_{T} 8", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_pt8: QCD_Pt_80to170_bcToE      : xsec : LepGood_mcMatchId == 0 && LepGood_pt > 8 ; FillColor=ROOT.kBlue+0, Label="QCDe p_{T} 8", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_redNC_pt8: QCD_Pt20to30_EMEnriched   : xsec : LepGood_mcPromptGamma == 0 && LepGood_mcMatchId == 0 && LepGood_pt > 8 ; FillColor=ROOT.kBlue+1, Label="p_{T} 8 (no \#gamma)", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_redNC_pt8: QCD_Pt30to50_EMEnriched   : xsec : LepGood_mcPromptGamma == 0 && LepGood_mcMatchId == 0 && LepGood_pt > 8 ; FillColor=ROOT.kBlue+1, Label="p_{T} 8 (no \#gamma)", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_redNC_pt8: QCD_Pt50to80_EMEnriched   : xsec : LepGood_mcPromptGamma == 0 && LepGood_mcMatchId == 0 && LepGood_pt > 8 ; FillColor=ROOT.kBlue+1, Label="p_{T} 8 (no \#gamma)", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_redNC_pt8: QCD_Pt80to120_EMEnriched  : xsec : LepGood_mcPromptGamma == 0 && LepGood_mcMatchId == 0 && LepGood_pt > 8 ; FillColor=ROOT.kBlue+1, Label="p_{T} 8 (no \#gamma)", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_redNC_pt8: QCD_Pt120to170_EMEnriched : xsec : LepGood_mcPromptGamma == 0 && LepGood_mcMatchId == 0 && LepGood_pt > 8 ; FillColor=ROOT.kBlue+1, Label="p_{T} 8 (no \#gamma)", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_redNC_pt8: QCD_Pt_20to30_bcToE       : xsec : LepGood_mcPromptGamma == 0 && LepGood_mcMatchId == 0 && LepGood_pt > 8 ; FillColor=ROOT.kBlue+1, Label="p_{T} 8 (no \#gamma)", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_redNC_pt8: QCD_Pt_30to80_bcToE       : xsec : LepGood_mcPromptGamma == 0 && LepGood_mcMatchId == 0 && LepGood_pt > 8 ; FillColor=ROOT.kBlue+1, Label="p_{T} 8 (no \#gamma)", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_redNC_pt8: QCD_Pt_80to170_bcToE      : xsec : LepGood_mcPromptGamma == 0 && LepGood_mcMatchId == 0 && LepGood_pt > 8 ; FillColor=ROOT.kBlue+1, Label="p_{T} 8 (no \#gamma)", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+
+QCDEl_red_pt12: QCD_Pt20to30_EMEnriched   : xsec : LepGood_mcMatchId == 0 && LepGood_pt > 12 ; FillColor=ROOT.kViolet+0, Label="QCDe p_{T} 12", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_pt12: QCD_Pt30to50_EMEnriched   : xsec : LepGood_mcMatchId == 0 && LepGood_pt > 12 ; FillColor=ROOT.kViolet+0, Label="QCDe p_{T} 12", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_pt12: QCD_Pt50to80_EMEnriched   : xsec : LepGood_mcMatchId == 0 && LepGood_pt > 12 ; FillColor=ROOT.kViolet+0, Label="QCDe p_{T} 12", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_pt12: QCD_Pt80to120_EMEnriched  : xsec : LepGood_mcMatchId == 0 && LepGood_pt > 12 ; FillColor=ROOT.kViolet+0, Label="QCDe p_{T} 12", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_pt12: QCD_Pt120to170_EMEnriched : xsec : LepGood_mcMatchId == 0 && LepGood_pt > 12 ; FillColor=ROOT.kViolet+0, Label="QCDe p_{T} 12", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_pt12: QCD_Pt_20to30_bcToE       : xsec : LepGood_mcMatchId == 0 && LepGood_pt > 12 ; FillColor=ROOT.kViolet+0, Label="QCDe p_{T} 12", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_pt12: QCD_Pt_30to80_bcToE       : xsec : LepGood_mcMatchId == 0 && LepGood_pt > 12 ; FillColor=ROOT.kViolet+0, Label="QCDe p_{T} 12", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_pt12: QCD_Pt_80to170_bcToE      : xsec : LepGood_mcMatchId == 0 && LepGood_pt > 12 ; FillColor=ROOT.kViolet+0, Label="QCDe p_{T} 12", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_redNC_pt12: QCD_Pt20to30_EMEnriched   : xsec : LepGood_mcPromptGamma == 0 && LepGood_mcMatchId == 0 && LepGood_pt > 12 ; FillColor=ROOT.kViolet+2, Label="p_{T} 12 (no \#gamma)", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_redNC_pt12: QCD_Pt30to50_EMEnriched   : xsec : LepGood_mcPromptGamma == 0 && LepGood_mcMatchId == 0 && LepGood_pt > 12 ; FillColor=ROOT.kViolet+2, Label="p_{T} 12 (no \#gamma)", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_redNC_pt12: QCD_Pt50to80_EMEnriched   : xsec : LepGood_mcPromptGamma == 0 && LepGood_mcMatchId == 0 && LepGood_pt > 12 ; FillColor=ROOT.kViolet+2, Label="p_{T} 12 (no \#gamma)", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_redNC_pt12: QCD_Pt80to120_EMEnriched  : xsec : LepGood_mcPromptGamma == 0 && LepGood_mcMatchId == 0 && LepGood_pt > 12 ; FillColor=ROOT.kViolet+2, Label="p_{T} 12 (no \#gamma)", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_redNC_pt12: QCD_Pt120to170_EMEnriched : xsec : LepGood_mcPromptGamma == 0 && LepGood_mcMatchId == 0 && LepGood_pt > 12 ; FillColor=ROOT.kViolet+2, Label="p_{T} 12 (no \#gamma)", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_redNC_pt12: QCD_Pt_20to30_bcToE       : xsec : LepGood_mcPromptGamma == 0 && LepGood_mcMatchId == 0 && LepGood_pt > 12 ; FillColor=ROOT.kViolet+2, Label="p_{T} 12 (no \#gamma)", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_redNC_pt12: QCD_Pt_30to80_bcToE       : xsec : LepGood_mcPromptGamma == 0 && LepGood_mcMatchId == 0 && LepGood_pt > 12 ; FillColor=ROOT.kViolet+2, Label="p_{T} 12 (no \#gamma)", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_redNC_pt12: QCD_Pt_80to170_bcToE      : xsec : LepGood_mcPromptGamma == 0 && LepGood_mcMatchId == 0 && LepGood_pt > 12 ; FillColor=ROOT.kViolet+2, Label="p_{T} 12 (no \#gamma)", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+
+QCDEl_red_pt17: QCD_Pt20to30_EMEnriched   : xsec : LepGood_mcMatchId == 0 && LepGood_pt > 17 ; FillColor=ROOT.kViolet+2, Label="QCDe p_{T} 17", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_pt17: QCD_Pt30to50_EMEnriched   : xsec : LepGood_mcMatchId == 0 && LepGood_pt > 17 ; FillColor=ROOT.kViolet+2, Label="QCDe p_{T} 17", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_pt17: QCD_Pt50to80_EMEnriched   : xsec : LepGood_mcMatchId == 0 && LepGood_pt > 17 ; FillColor=ROOT.kViolet+2, Label="QCDe p_{T} 17", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_pt17: QCD_Pt80to120_EMEnriched  : xsec : LepGood_mcMatchId == 0 && LepGood_pt > 17 ; FillColor=ROOT.kViolet+2, Label="QCDe p_{T} 17", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_pt17: QCD_Pt120to170_EMEnriched : xsec : LepGood_mcMatchId == 0 && LepGood_pt > 17 ; FillColor=ROOT.kViolet+2, Label="QCDe p_{T} 17", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_pt17: QCD_Pt_20to30_bcToE       : xsec : LepGood_mcMatchId == 0 && LepGood_pt > 17 ; FillColor=ROOT.kViolet+2, Label="QCDe p_{T} 17", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_pt17: QCD_Pt_30to80_bcToE       : xsec : LepGood_mcMatchId == 0 && LepGood_pt > 17 ; FillColor=ROOT.kViolet+2, Label="QCDe p_{T} 17", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_red_pt17: QCD_Pt_80to170_bcToE      : xsec : LepGood_mcMatchId == 0 && LepGood_pt > 17 ; FillColor=ROOT.kViolet+2, Label="QCDe p_{T} 17", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_redNC_pt17: QCD_Pt20to30_EMEnriched   : xsec : LepGood_mcPromptGamma == 0 && LepGood_mcMatchId == 0 && LepGood_pt > 17 ; FillColor=ROOT.kViolet+0, Label="p_{T} 17 (no \#gamma)", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_redNC_pt17: QCD_Pt30to50_EMEnriched   : xsec : LepGood_mcPromptGamma == 0 && LepGood_mcMatchId == 0 && LepGood_pt > 17 ; FillColor=ROOT.kViolet+0, Label="p_{T} 17 (no \#gamma)", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_redNC_pt17: QCD_Pt50to80_EMEnriched   : xsec : LepGood_mcPromptGamma == 0 && LepGood_mcMatchId == 0 && LepGood_pt > 17 ; FillColor=ROOT.kViolet+0, Label="p_{T} 17 (no \#gamma)", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_redNC_pt17: QCD_Pt80to120_EMEnriched  : xsec : LepGood_mcPromptGamma == 0 && LepGood_mcMatchId == 0 && LepGood_pt > 17 ; FillColor=ROOT.kViolet+0, Label="p_{T} 17 (no \#gamma)", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_redNC_pt17: QCD_Pt120to170_EMEnriched : xsec : LepGood_mcPromptGamma == 0 && LepGood_mcMatchId == 0 && LepGood_pt > 17 ; FillColor=ROOT.kViolet+0, Label="p_{T} 17 (no \#gamma)", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_redNC_pt17: QCD_Pt_20to30_bcToE       : xsec : LepGood_mcPromptGamma == 0 && LepGood_mcMatchId == 0 && LepGood_pt > 17 ; FillColor=ROOT.kViolet+0, Label="p_{T} 17 (no \#gamma)", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_redNC_pt17: QCD_Pt_30to80_bcToE       : xsec : LepGood_mcPromptGamma == 0 && LepGood_mcMatchId == 0 && LepGood_pt > 17 ; FillColor=ROOT.kViolet+0, Label="p_{T} 17 (no \#gamma)", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+QCDEl_redNC_pt17: QCD_Pt_80to170_bcToE      : xsec : LepGood_mcPromptGamma == 0 && LepGood_mcMatchId == 0 && LepGood_pt > 17 ; FillColor=ROOT.kViolet+0, Label="p_{T} 17 (no \#gamma)", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+
+
+
+#QCDEl_red_pt12hlt: QCD_Pt20to30_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+1, Label="Pass HLT"
+#QCDEl_red_pt12hlt: QCD_Pt30to50_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+1, Label="Pass HLT"
+#QCDEl_red_pt12hlt: QCD_Pt50to80_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+1, Label="Pass HLT"
+#QCDEl_red_pt12hlt: QCD_Pt80to120_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+1, Label="Pass HLT"
+#QCDEl_red_pt12hlt: QCD_Pt120to170_EMEnriched : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+1, Label="Pass HLT"
+#QCDEl_red_pt12hlt: QCD_Pt_20to30_bcToE       : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+1, Label="Pass HLT"
+#QCDEl_red_pt12hlt: QCD_Pt_30to80_bcToE       : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+1, Label="Pass HLT"
+#QCDEl_red_pt12hlt: QCD_Pt_80to170_bcToE      : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+1, Label="Pass HLT"
 #
-#QCDEl_red_El23: QCD_Pt20to30_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 23 && HLT_FR_Ele23_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+1, Label="QCDe El23", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-#QCDEl_red_El23: QCD_Pt30to50_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 23 && HLT_FR_Ele23_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+1, Label="QCDe El23", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-#QCDEl_red_El23: QCD_Pt50to80_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 23 && HLT_FR_Ele23_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+1, Label="QCDe El23", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-#QCDEl_red_El23: QCD_Pt80to120_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 23 && HLT_FR_Ele23_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+1, Label="QCDe El23", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-#QCDEl_red_El23: QCD_Pt120to170_EMEnriched : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 23 && HLT_FR_Ele23_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+1, Label="QCDe El23", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-#QCDEl_red_El23: QCD_Pt_20to30_bcToE       : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 23 && HLT_FR_Ele23_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+1, Label="QCDe El23", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-#QCDEl_red_El23: QCD_Pt_30to80_bcToE       : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 23 && HLT_FR_Ele23_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+1, Label="QCDe El23", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-#QCDEl_red_El23: QCD_Pt_80to170_bcToE      : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 23 && HLT_FR_Ele23_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+1, Label="QCDe El23", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
+#QCDEl_red_pt12nohlt: QCD_Pt20to30_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && !HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kRed, Label="Fail HLT"
+#QCDEl_red_pt12nohlt: QCD_Pt30to50_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && !HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kRed, Label="Fail HLT"
+#QCDEl_red_pt12nohlt: QCD_Pt50to80_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && !HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kRed, Label="Fail HLT"
+#QCDEl_red_pt12nohlt: QCD_Pt80to120_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && !HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kRed, Label="Fail HLT"
+#QCDEl_red_pt12nohlt: QCD_Pt120to170_EMEnriched : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && !HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kRed, Label="Fail HLT"
+#QCDEl_red_pt12nohlt: QCD_Pt_20to30_bcToE       : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && !HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kRed, Label="Fail HLT"
+#QCDEl_red_pt12nohlt: QCD_Pt_30to80_bcToE       : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && !HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kRed, Label="Fail HLT"
+#QCDEl_red_pt12nohlt: QCD_Pt_80to170_bcToE      : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && !HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kRed, Label="Fail HLT"
+#
 
 
-QCDEl_red_El12idEmu: QCD_Pt20to30_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 && LepGood_idEmu; FillColor=ROOT.kGreen+2, Label="QCDe El12 idEmu", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_El12idEmu: QCD_Pt30to50_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 && LepGood_idEmu; FillColor=ROOT.kGreen+2, Label="QCDe El12 idEmu", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_El12idEmu: QCD_Pt50to80_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 && LepGood_idEmu; FillColor=ROOT.kGreen+2, Label="QCDe El12 idEmu", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_El12idEmu: QCD_Pt80to120_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 && LepGood_idEmu; FillColor=ROOT.kGreen+2, Label="QCDe El12 idEmu", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_El12idEmu: QCD_Pt120to170_EMEnriched : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 && LepGood_idEmu; FillColor=ROOT.kGreen+2, Label="QCDe El12 idEmu", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_El12idEmu: QCD_Pt_20to30_bcToE       : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 && LepGood_idEmu; FillColor=ROOT.kGreen+2, Label="QCDe El12 idEmu", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_El12idEmu: QCD_Pt_30to80_bcToE       : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 && LepGood_idEmu; FillColor=ROOT.kGreen+2, Label="QCDe El12 idEmu", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_El12idEmu: QCD_Pt_80to170_bcToE      : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 && LepGood_idEmu; FillColor=ROOT.kGreen+2, Label="QCDe El12 idEmu", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
+#QCDEl_red_pt12idEmu: QCD_Pt20to30_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && LepGood_idEmu; FillColor=ROOT.kViolet+3, Label="QCDe p_{T} 12 idEmu"
+#QCDEl_red_pt12idEmu: QCD_Pt30to50_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && LepGood_idEmu; FillColor=ROOT.kViolet+3, Label="QCDe p_{T} 12 idEmu"
+#QCDEl_red_pt12idEmu: QCD_Pt50to80_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && LepGood_idEmu; FillColor=ROOT.kViolet+3, Label="QCDe p_{T} 12 idEmu"
+#QCDEl_red_pt12idEmu: QCD_Pt80to120_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && LepGood_idEmu; FillColor=ROOT.kViolet+3, Label="QCDe p_{T} 12 idEmu"
+#QCDEl_red_pt12idEmu: QCD_Pt120to170_EMEnriched : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && LepGood_idEmu; FillColor=ROOT.kViolet+3, Label="QCDe p_{T} 12 idEmu"
+#QCDEl_red_pt12idEmu: QCD_Pt_20to30_bcToE       : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && LepGood_idEmu; FillColor=ROOT.kViolet+3, Label="QCDe p_{T} 12 idEmu"
+#QCDEl_red_pt12idEmu: QCD_Pt_30to80_bcToE       : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && LepGood_idEmu; FillColor=ROOT.kViolet+3, Label="QCDe p_{T} 12 idEmu"
+#QCDEl_red_pt12idEmu: QCD_Pt_80to170_bcToE      : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && LepGood_idEmu; FillColor=ROOT.kViolet+3, Label="QCDe p_{T} 12 idEmu"
 
-QCDEl_red_El12idEmu2: QCD_Pt20to30_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 && LepGood_idEmu2; FillColor=ROOT.kOrange-3, Label="El12 idEmu2", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_El12idEmu2: QCD_Pt30to50_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 && LepGood_idEmu2; FillColor=ROOT.kOrange-3, Label="El12 idEmu2", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_El12idEmu2: QCD_Pt50to80_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 && LepGood_idEmu2; FillColor=ROOT.kOrange-3, Label="El12 idEmu2", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_El12idEmu2: QCD_Pt80to120_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 && LepGood_idEmu2; FillColor=ROOT.kOrange-3, Label="El12 idEmu2", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_El12idEmu2: QCD_Pt120to170_EMEnriched : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 && LepGood_idEmu2; FillColor=ROOT.kOrange-3, Label="El12 idEmu2", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_El12idEmu2: QCD_Pt_20to30_bcToE       : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 && LepGood_idEmu2; FillColor=ROOT.kOrange-3, Label="El12 idEmu2", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_El12idEmu2: QCD_Pt_30to80_bcToE       : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 && LepGood_idEmu2; FillColor=ROOT.kOrange-3, Label="El12 idEmu2", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_El12idEmu2: QCD_Pt_80to170_bcToE      : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 && LepGood_idEmu2; FillColor=ROOT.kOrange-3, Label="El12 idEmu2", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
+#QCDEl_red_pt12idEmu2: QCD_Pt20to30_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && LepGood_idEmu2; FillColor=ROOT.kRed, Label="QCDe idEmu2", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+#QCDEl_red_pt12idEmu2: QCD_Pt30to50_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && LepGood_idEmu2; FillColor=ROOT.kRed, Label="QCDe idEmu2", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+#QCDEl_red_pt12idEmu2: QCD_Pt50to80_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && LepGood_idEmu2; FillColor=ROOT.kRed, Label="QCDe idEmu2", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+#QCDEl_red_pt12idEmu2: QCD_Pt80to120_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && LepGood_idEmu2; FillColor=ROOT.kRed, Label="QCDe idEmu2", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+#QCDEl_red_pt12idEmu2: QCD_Pt120to170_EMEnriched : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && LepGood_idEmu2; FillColor=ROOT.kRed, Label="QCDe idEmu2", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+#QCDEl_red_pt12idEmu2: QCD_Pt_20to30_bcToE       : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && LepGood_idEmu2; FillColor=ROOT.kRed, Label="QCDe idEmu2", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+#QCDEl_red_pt12idEmu2: QCD_Pt_30to80_bcToE       : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && LepGood_idEmu2; FillColor=ROOT.kRed, Label="QCDe idEmu2", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
+#QCDEl_red_pt12idEmu2: QCD_Pt_80to170_bcToE      : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && LepGood_idEmu2; FillColor=ROOT.kRed, Label="QCDe idEmu2", Friends=[('sf/t'\,'{P}/1_extraVars_v1/evVarFriend_{cname}.root')]
 
-#QCDEl_red_El12idEmu2A: QCD_Pt20to30_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 && LepGood_idEmu2A; FillColor=ROOT.kOrange, Label="El12 idEmu2A", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-#QCDEl_red_El12idEmu2A: QCD_Pt30to50_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 && LepGood_idEmu2A; FillColor=ROOT.kOrange, Label="El12 idEmu2A", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-#QCDEl_red_El12idEmu2A: QCD_Pt50to80_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 && LepGood_idEmu2A; FillColor=ROOT.kOrange, Label="El12 idEmu2A", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-#QCDEl_red_El12idEmu2A: QCD_Pt80to120_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 && LepGood_idEmu2A; FillColor=ROOT.kOrange, Label="El12 idEmu2A", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-#QCDEl_red_El12idEmu2A: QCD_Pt120to170_EMEnriched : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 && LepGood_idEmu2A; FillColor=ROOT.kOrange, Label="El12 idEmu2A", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-#QCDEl_red_El12idEmu2A: QCD_Pt_20to30_bcToE       : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 && LepGood_idEmu2A; FillColor=ROOT.kOrange, Label="El12 idEmu2A", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-#QCDEl_red_El12idEmu2A: QCD_Pt_30to80_bcToE       : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 && LepGood_idEmu2A; FillColor=ROOT.kOrange, Label="El12 idEmu2A", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-#QCDEl_red_El12idEmu2A: QCD_Pt_80to170_bcToE      : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 && LepGood_idEmu2A; FillColor=ROOT.kOrange, Label="El12 idEmu2A", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
+#QCDEl_red_pt12idEmu2A: QCD_Pt20to30_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && LepGood_idEmu2A; FillColor=ROOT.kAzure+1, Label="QCDe idEmu2A"
+#QCDEl_red_pt12idEmu2A: QCD_Pt30to50_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && LepGood_idEmu2A; FillColor=ROOT.kAzure+1, Label="QCDe idEmu2A"
+#QCDEl_red_pt12idEmu2A: QCD_Pt50to80_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && LepGood_idEmu2A; FillColor=ROOT.kAzure+1, Label="QCDe idEmu2A"
+#QCDEl_red_pt12idEmu2A: QCD_Pt80to120_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && LepGood_idEmu2A; FillColor=ROOT.kAzure+1, Label="QCDe idEmu2A"
+#QCDEl_red_pt12idEmu2A: QCD_Pt120to170_EMEnriched : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && LepGood_idEmu2A; FillColor=ROOT.kAzure+1, Label="QCDe idEmu2A"
+#QCDEl_red_pt12idEmu2A: QCD_Pt_20to30_bcToE       : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && LepGood_idEmu2A; FillColor=ROOT.kAzure+1, Label="QCDe idEmu2A"
+#QCDEl_red_pt12idEmu2A: QCD_Pt_30to80_bcToE       : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && LepGood_idEmu2A; FillColor=ROOT.kAzure+1, Label="QCDe idEmu2A"
+#QCDEl_red_pt12idEmu2A: QCD_Pt_80to170_bcToE      : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && LepGood_idEmu2A; FillColor=ROOT.kAzure+1, Label="QCDe idEmu2A"
 
-#QCDEl_red_El12I: QCD_Pt20to30_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && HLT_FR_Ele12_CaloIdL_TrackIdL_IsoVL_PFJet30 ; FillColor=ROOT.kAzure+1, Label="QCDe El12 Iso", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-#QCDEl_red_El12I: QCD_Pt30to50_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && HLT_FR_Ele12_CaloIdL_TrackIdL_IsoVL_PFJet30 ; FillColor=ROOT.kAzure+1, Label="QCDe El12 Iso", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-#QCDEl_red_El12I: QCD_Pt50to80_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && HLT_FR_Ele12_CaloIdL_TrackIdL_IsoVL_PFJet30 ; FillColor=ROOT.kAzure+1, Label="QCDe El12 Iso", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-#QCDEl_red_El12I: QCD_Pt80to120_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && HLT_FR_Ele12_CaloIdL_TrackIdL_IsoVL_PFJet30 ; FillColor=ROOT.kAzure+1, Label="QCDe El12 Iso", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-#QCDEl_red_El12I: QCD_Pt120to170_EMEnriched : xsec : LepGood_mcMatchId  == 0 && HLT_FR_Ele12_CaloIdL_TrackIdL_IsoVL_PFJet30 ; FillColor=ROOT.kAzure+1, Label="QCDe El12 Iso", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-#QCDEl_red_El12I: QCD_Pt_20to30_bcToE       : xsec : LepGood_mcMatchId  == 0 && HLT_FR_Ele12_CaloIdL_TrackIdL_IsoVL_PFJet30 ; FillColor=ROOT.kAzure+1, Label="QCDe El12 Iso", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-#QCDEl_red_El12I: QCD_Pt_30to80_bcToE       : xsec : LepGood_mcMatchId  == 0 && HLT_FR_Ele12_CaloIdL_TrackIdL_IsoVL_PFJet30 ; FillColor=ROOT.kAzure+1, Label="QCDe El12 Iso", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-#QCDEl_red_El12I: QCD_Pt_80to170_bcToE      : xsec : LepGood_mcMatchId  == 0 && HLT_FR_Ele12_CaloIdL_TrackIdL_IsoVL_PFJet30 ; FillColor=ROOT.kAzure+1, Label="QCDe El12 Iso", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-
-
-
-QCDEl_red_pt12: QCD_Pt20to30_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 ; FillColor=ROOT.kViolet+1, Label="QCDe p_{T} 12", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_pt12: QCD_Pt30to50_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 ; FillColor=ROOT.kViolet+1, Label="QCDe p_{T} 12", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_pt12: QCD_Pt50to80_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 ; FillColor=ROOT.kViolet+1, Label="QCDe p_{T} 12", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_pt12: QCD_Pt80to120_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 ; FillColor=ROOT.kViolet+1, Label="QCDe p_{T} 12", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_pt12: QCD_Pt120to170_EMEnriched : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 ; FillColor=ROOT.kViolet+1, Label="QCDe p_{T} 12", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_pt12: QCD_Pt_20to30_bcToE       : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 ; FillColor=ROOT.kViolet+1, Label="QCDe p_{T} 12", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_pt12: QCD_Pt_30to80_bcToE       : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 ; FillColor=ROOT.kViolet+1, Label="QCDe p_{T} 12", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_pt12: QCD_Pt_80to170_bcToE      : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 ; FillColor=ROOT.kViolet+1, Label="QCDe p_{T} 12", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-
-QCDEl_red_pt12hlt: QCD_Pt20to30_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+1, Label="Pass HLT", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_pt12hlt: QCD_Pt30to50_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+1, Label="Pass HLT", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_pt12hlt: QCD_Pt50to80_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+1, Label="Pass HLT", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_pt12hlt: QCD_Pt80to120_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+1, Label="Pass HLT", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_pt12hlt: QCD_Pt120to170_EMEnriched : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+1, Label="Pass HLT", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_pt12hlt: QCD_Pt_20to30_bcToE       : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+1, Label="Pass HLT", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_pt12hlt: QCD_Pt_30to80_bcToE       : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+1, Label="Pass HLT", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_pt12hlt: QCD_Pt_80to170_bcToE      : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kGreen+1, Label="Pass HLT", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-
-QCDEl_red_pt12nohlt: QCD_Pt20to30_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && !HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kRed, Label="Fail HLT", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_pt12nohlt: QCD_Pt30to50_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && !HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kRed, Label="Fail HLT", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_pt12nohlt: QCD_Pt50to80_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && !HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kRed, Label="Fail HLT", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_pt12nohlt: QCD_Pt80to120_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && !HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kRed, Label="Fail HLT", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_pt12nohlt: QCD_Pt120to170_EMEnriched : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && !HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kRed, Label="Fail HLT", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_pt12nohlt: QCD_Pt_20to30_bcToE       : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && !HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kRed, Label="Fail HLT", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_pt12nohlt: QCD_Pt_30to80_bcToE       : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && !HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kRed, Label="Fail HLT", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_pt12nohlt: QCD_Pt_80to170_bcToE      : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && !HLT_FR_Ele12_CaloIdM_TrackIdM_PFJet30 ; FillColor=ROOT.kRed, Label="Fail HLT", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-
-
-
-QCDEl_red_pt12idEmu: QCD_Pt20to30_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && LepGood_idEmu; FillColor=ROOT.kViolet+3, Label="QCDe p_{T} 12 idEmu", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_pt12idEmu: QCD_Pt30to50_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && LepGood_idEmu; FillColor=ROOT.kViolet+3, Label="QCDe p_{T} 12 idEmu", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_pt12idEmu: QCD_Pt50to80_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && LepGood_idEmu; FillColor=ROOT.kViolet+3, Label="QCDe p_{T} 12 idEmu", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_pt12idEmu: QCD_Pt80to120_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && LepGood_idEmu; FillColor=ROOT.kViolet+3, Label="QCDe p_{T} 12 idEmu", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_pt12idEmu: QCD_Pt120to170_EMEnriched : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && LepGood_idEmu; FillColor=ROOT.kViolet+3, Label="QCDe p_{T} 12 idEmu", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_pt12idEmu: QCD_Pt_20to30_bcToE       : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && LepGood_idEmu; FillColor=ROOT.kViolet+3, Label="QCDe p_{T} 12 idEmu", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_pt12idEmu: QCD_Pt_30to80_bcToE       : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && LepGood_idEmu; FillColor=ROOT.kViolet+3, Label="QCDe p_{T} 12 idEmu", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_pt12idEmu: QCD_Pt_80to170_bcToE      : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && LepGood_idEmu; FillColor=ROOT.kViolet+3, Label="QCDe p_{T} 12 idEmu", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-
-QCDEl_red_pt12idEmu2: QCD_Pt20to30_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && LepGood_idEmu2; FillColor=ROOT.kRed, Label="QCDe idEmu2", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_pt12idEmu2: QCD_Pt30to50_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && LepGood_idEmu2; FillColor=ROOT.kRed, Label="QCDe idEmu2", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_pt12idEmu2: QCD_Pt50to80_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && LepGood_idEmu2; FillColor=ROOT.kRed, Label="QCDe idEmu2", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_pt12idEmu2: QCD_Pt80to120_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && LepGood_idEmu2; FillColor=ROOT.kRed, Label="QCDe idEmu2", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_pt12idEmu2: QCD_Pt120to170_EMEnriched : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && LepGood_idEmu2; FillColor=ROOT.kRed, Label="QCDe idEmu2", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_pt12idEmu2: QCD_Pt_20to30_bcToE       : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && LepGood_idEmu2; FillColor=ROOT.kRed, Label="QCDe idEmu2", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_pt12idEmu2: QCD_Pt_30to80_bcToE       : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && LepGood_idEmu2; FillColor=ROOT.kRed, Label="QCDe idEmu2", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red_pt12idEmu2: QCD_Pt_80to170_bcToE      : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && LepGood_idEmu2; FillColor=ROOT.kRed, Label="QCDe idEmu2", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-
-#QCDEl_red_pt12idEmu2A: QCD_Pt20to30_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && LepGood_idEmu2A; FillColor=ROOT.kAzure+1, Label="QCDe idEmu2A", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-#QCDEl_red_pt12idEmu2A: QCD_Pt30to50_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && LepGood_idEmu2A; FillColor=ROOT.kAzure+1, Label="QCDe idEmu2A", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-#QCDEl_red_pt12idEmu2A: QCD_Pt50to80_EMEnriched   : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && LepGood_idEmu2A; FillColor=ROOT.kAzure+1, Label="QCDe idEmu2A", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-#QCDEl_red_pt12idEmu2A: QCD_Pt80to120_EMEnriched  : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && LepGood_idEmu2A; FillColor=ROOT.kAzure+1, Label="QCDe idEmu2A", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-#QCDEl_red_pt12idEmu2A: QCD_Pt120to170_EMEnriched : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && LepGood_idEmu2A; FillColor=ROOT.kAzure+1, Label="QCDe idEmu2A", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-#QCDEl_red_pt12idEmu2A: QCD_Pt_20to30_bcToE       : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && LepGood_idEmu2A; FillColor=ROOT.kAzure+1, Label="QCDe idEmu2A", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-#QCDEl_red_pt12idEmu2A: QCD_Pt_30to80_bcToE       : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && LepGood_idEmu2A; FillColor=ROOT.kAzure+1, Label="QCDe idEmu2A", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-#QCDEl_red_pt12idEmu2A: QCD_Pt_80to170_bcToE      : xsec : LepGood_mcMatchId  == 0 && LepGood_pt > 12 && LepGood_idEmu2A; FillColor=ROOT.kAzure+1, Label="QCDe idEmu2A", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-
-Z3l_red_80:     DYJetsToLL_M50: xsec: LepGood_mcMatchId  == 0 && mZ1 > 80; FillColor=ROOT.kCyan+0,   Label="Z_{tight}+l",             FakeRate="ttH-multilepton/lepton-mca-frstudies-z3l-fr.txt"
-Z3l_redNC_80:   DYJetsToLL_M50: xsec: LepGood_mcMatchId  == 0 && mZ1 > 80 && LepGood_mcPromptGamma == 0; FillColor=ROOT.kCyan+1,   Label="Z_{tight}+l\, w/o \#gamma", FakeRate="ttH-multilepton/lepton-mca-frstudies-z3l-fr.txt"
-Z3l_red:   DYJetsToLL_M50: xsec: LepGood_mcMatchId  == 0; FillColor=ROOT.kGreen+1,   Label="Z+l",            FakeRate="ttH-multilepton/lepton-mca-frstudies-z3l-fr.txt"
-Z3l_redNC: DYJetsToLL_M50: xsec: LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma == 0; FillColor=ROOT.kGreen+2,   Label="Z+l\, w/o \#gamma", FakeRate="ttH-multilepton/lepton-mca-frstudies-z3l-fr.txt"
-Z3l_conv:  DYJetsToLL_M50: xsec: LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma != 0; FillColor=ROOT.kOrange+7, Label="Z+l\, \#gamma",   FakeRate="ttH-multilepton/lepton-mca-frstudies-z3l-fr.txt"
+Z3l_red_70:     dilep_DYJetsToLL_M50_LO_ext_part1+dilep_DYJetsToLL_M50_LO_ext_part2+dilep_DYJetsToLL_M50_LO_ext_part3: xsec: LepGood_mcMatchId  == 0 && mZ1 > 70; FillColor=ROOT.kCyan+0,   Label="Z_{m>70}+l",             FakeRate="ttH-multilepton/lepton-mca-frstudies-z3l-fr.txt"
+Z3l_red_80:     dilep_DYJetsToLL_M50_LO_ext_part1+dilep_DYJetsToLL_M50_LO_ext_part2+dilep_DYJetsToLL_M50_LO_ext_part3: xsec: LepGood_mcMatchId  == 0 && mZ1 > 80; FillColor=ROOT.kCyan+0,   Label="Z_{tight}+l",             FakeRate="ttH-multilepton/lepton-mca-frstudies-z3l-fr.txt"
+Z3l_redNC_80:   dilep_DYJetsToLL_M50_LO_ext_part1+dilep_DYJetsToLL_M50_LO_ext_part2+dilep_DYJetsToLL_M50_LO_ext_part3: xsec: LepGood_mcMatchId  == 0 && mZ1 > 80 && LepGood_mcPromptGamma == 0; FillColor=ROOT.kCyan+1,   Label="Z_{tight}+l\, w/o \#gamma", FakeRate="ttH-multilepton/lepton-mca-frstudies-z3l-fr.txt"
+Z3l_red:   dilep_DYJetsToLL_M50_LO_ext_part1+dilep_DYJetsToLL_M50_LO_ext_part2+dilep_DYJetsToLL_M50_LO_ext_part3: xsec: LepGood_mcMatchId  == 0; FillColor=ROOT.kGreen+1,   Label="Z+l",            FakeRate="ttH-multilepton/lepton-mca-frstudies-z3l-fr.txt"
+Z3l_redNC: dilep_DYJetsToLL_M50_LO_ext_part1+dilep_DYJetsToLL_M50_LO_ext_part2+dilep_DYJetsToLL_M50_LO_ext_part3: xsec: LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma == 0; FillColor=ROOT.kGreen+2,   Label="Z+l\, w/o \#gamma", FakeRate="ttH-multilepton/lepton-mca-frstudies-z3l-fr.txt"
+Z3l_conv:  dilep_DYJetsToLL_M50_LO_ext_part1+dilep_DYJetsToLL_M50_LO_ext_part2+dilep_DYJetsToLL_M50_LO_ext_part3: xsec: LepGood_mcMatchId  == 0 && LepGood_mcPromptGamma != 0; FillColor=ROOT.kOrange+7, Label="Z+l\, \#gamma",   FakeRate="ttH-multilepton/lepton-mca-frstudies-z3l-fr.txt"
+Z3l_red_m3l:     dilep_DYJetsToLL_M50_LO_ext_part1+dilep_DYJetsToLL_M50_LO_ext_part2+dilep_DYJetsToLL_M50_LO_ext_part3: xsec: LepGood_mcMatchId  == 0 && m3l > 110; FillColor=ROOT.kCyan+2,   Label="Z_{t3}+l",             FakeRate="ttH-multilepton/lepton-mca-frstudies-z3l-fr.txt"
