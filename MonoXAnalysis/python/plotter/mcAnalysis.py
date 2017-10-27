@@ -3,7 +3,7 @@
 from CMGTools.MonoXAnalysis.plotter.tree2yield import *
 from CMGTools.MonoXAnalysis.plotter.projections import *
 from CMGTools.MonoXAnalysis.plotter.figuresOfMerit import FOM_BY_NAME
-import pickle, re, random, time
+import pickle, re, random, time, glob
 
 #_T0 = long(ROOT.gSystem.Now())
 
@@ -128,7 +128,13 @@ class MCAnalysis:
                 for p in p0.split(","):
                     if re.match(p+"$", field[1]): skipMe = True
             if skipMe: continue
-            cnames = [ x.strip() for x in field[1].split("+") ]
+            match=re.match("(\S+)\*",field[1]) 
+            if match:
+                cnamesWithPath = []
+                for treepath in options.path:
+                    cnamesWithPath += (list(glob.iglob("%s/%s*" % (treepath,match.group(0)))))
+                cnames = [os.path.basename(cname) for cname in cnamesWithPath]
+            else: cnames = [ x.strip() for x in field[1].split("+") ]
             total_w = 0.; to_norm = False; ttys = [];
             is_w = -1
             pname0 = pname
