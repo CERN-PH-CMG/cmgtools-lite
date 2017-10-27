@@ -1,5 +1,0 @@
-### SIGNAL AND CONTROL SAMPLES
-
-# signals for sync 
-DM+:        TTbarDM          : 1.0; FillColor=ROOT.kRed-9, Label="TTDM"
-
