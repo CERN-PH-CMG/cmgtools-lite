@@ -14,7 +14,7 @@ from PhysicsTools.HeppyCore.framework.heppy_loop import getHeppyOption
 
 runData = getHeppyOption("runData",False)
 runDataQCD = getHeppyOption("runDataQCD",False)
-runFRMC = getHeppyOption("runFRMC",True)
+runFRMC = getHeppyOption("runFRMC",False)
 scaleProdToLumi = float(getHeppyOption("scaleProdToLumi",-1)) # produce rough equivalent of X /pb for MC datasets
 removeJetReCalibration = getHeppyOption("removeJetReCalibration",False)
 removeJecUncertainty = getHeppyOption("removeJecUncertainty",False)
@@ -231,7 +231,8 @@ if runOnSignal:
     selectedComponents = samples_signal
 else:
     keepLHEweights = False
-    selectedComponents = samples_1prompt + samples_1fake 
+    #selectedComponents = samples_1prompt + samples_1fake 
+    selectedComponents = QCDPtbcToE
 
 if scaleProdToLumi>0: # select only a subset of a sample, corresponding to a given luminosity (assuming ~30k events per MiniAOD file, which is ok for central production)
     target_lumi = scaleProdToLumi # in inverse picobarns
@@ -265,7 +266,7 @@ if runData and not isTest: # For running on data
     # DatasetsAndTriggers.append( ("DoubleEG",   triggers_ee + triggers_ee_ht + triggers_3e) )
     # DatasetsAndTriggers.append( ("MuonEG",     triggers_mue + triggers_mue_ht + triggers_2mu1e + triggers_2e1mu) )
     DatasetsAndTriggers.append( ("SingleMuon", triggers_1mu_iso + triggers_1mu_noniso) )
-    # DatasetsAndTriggers.append( ("SingleElectron", triggers_1e) )
+    #DatasetsAndTriggers.append( ("SingleElectron", triggers_1e) )
 
     if runDataQCD: # for fake rate measurements in data
         FRTrigs_mu = triggers_FR_1mu_noiso
@@ -275,26 +276,9 @@ if runData and not isTest: # For running on data
             ("DoubleEG",   FRTrigs_el ),
             #("JetHT",   triggers_FR_jet )
         ]
+        triggers_FR_muNoIso = [ 'HLT_Mu27_v*', 'HLT_Mu50_v*' ]
+        triggerAna.myTriggerPrescales = { 'HLT_Mu50_v*':10 }
         exclusiveDatasets = False
-
-    if runDataQCD: # for fake rate measurements in data
-        ttHLepSkim.minLeptons = 1
-        if getHeppyOption("fast"): raise RuntimeError, 'Already added ttHFastLepSkimmer with 2-lep configuration, this is wrong.'
-        FRTrigs = triggers_FR_1mu_iso + triggers_FR_1mu_noiso + triggers_FR_1e_noiso + triggers_FR_1e_iso + triggers_FR_1e_b2g
-        for t in FRTrigs:
-            tShort = t.replace("HLT_","FR_").replace("_v*","")
-            triggerFlagsAna.triggerBits[tShort] = [ t ]
-            FRTrigs_mu = triggers_FR_1mu_iso + triggers_FR_1mu_noiso
-            FRTrigs_el = triggers_FR_1e_noiso + triggers_FR_1e_iso + triggers_FR_1e_b2g
-            DatasetsAndTriggers = [ (pd,trig) for pd,trig in DatasetsAndTriggers ] # if pd in ['DoubleMuon','DoubleEG'] ]
-            for pd,trig in DatasetsAndTriggers:
-                if pd in ['DoubleMuon']:
-                    trig.extend(FRTrigs_mu)
-                elif pd in ['DoubleEG']:
-                    trig.extend(FRTrigs_el)
-                else:
-                    print 'the strategy for trigger selection on MuonEG for FR studies should yet be implemented'
-                    #assert(False)
 
     for json,processing,short,run_ranges,useAAA in dataChunks:
         if len(run_ranges)==0: run_ranges=[None]
@@ -317,8 +301,7 @@ if runData and not isTest: # For running on data
                     from CMGTools.Production.promptRecoRunRangeFilter import filterComponent
                     filterComponent(comp, verbose=1)
                 print "Will process %s (%d files)" % (comp.name, len(comp.files))
-                comp.splitFactor = len(comp.files)/8 if 'Single' not in comp.name else len(comp.files)/16
-                comp.splitFactor = len(comp.files)/8
+                comp.splitFactor = len(comp.files)/4
                 comp.fineSplitFactor = 1
                 selectedComponents.append( comp )
             if exclusiveDatasets: vetos += triggers
