@@ -9,35 +9,35 @@ ODIR=sys.argv[1]
 FASTTEST=''
 #FASTTEST='--max-entries 1000 '
 
-dowhat = "plots" 
+#dowhat = "plots" 
 #dowhat = "dumps" 
-#dowhat = "yields" 
+dowhat = "yields" 
 
-TREES = "-F mjvars/t '{P}/friends/evVarFriend_{cname}.root' --FMC sf/t '{P}/friends/sfFriend_{cname}.root' --FMC kinvars/t '{P}/friends/kinVarFriend_{cname}.root' "
-TREESONLYSKIMW = "-P /data1/emanuele/wmass/TREES_1LEP_53X_V3_WSKIM_V7/"
-TREESONLYSKIMZ = "-P /data1/emanuele/wmass/TREES_1LEP_53X_V3_ZEESKIM_V7/"
-TREESONLYFULL = "-P /data1/emanuele/wmass/TREES_1LEP_53X_V3/"
+TREES = "--FMC Friends '{P}/friends/tree_Friend_{cname}.root' "
+TREESONLYSKIMW = "-P /data1/emanuele/wmass/TREES_1LEP_53X_V3_WSKIM_V7/" # to be done 
+TREESONLYSKIMZ = "-P /data1/emanuele/wmass/TREES_1LEP_53X_V3_ZEESKIM_V7/" # to be done
+TREESONLYFULL = "-P /eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3/"
 
-def base(selection):
+def base(selection,useSkim=True):
 
-    if selection=='wenu': TREESONLYSKIM=TREESONLYSKIMW
-    elif selection=='zee': TREESONLYSKIM=TREESONLYSKIMZ
+    if 'wenu' in selection: TREESONLYSKIM=TREESONLYSKIMW
+    elif 'zee' in selection: TREESONLYSKIM=TREESONLYSKIMZ
     else:
         raise RuntimeError, 'Unknown selection'
 
     CORE=' '.join([TREES,TREESONLYSKIM])
     if 'pccmsrm29' in os.environ['HOSTNAME']: CORE = CORE.replace('/data1/emanuele/wmass','/u2/emanuele')
 
-    CORE+=" -f -j 4 -l 19.7 --s2v --tree treeProducerWMassEle --obj tree "+FASTTEST
+    CORE+=" -f -j 4 -l 36.26 --s2v --tree treeProducerWMass --obj tree "+FASTTEST
     if dowhat == "plots": CORE+=" --lspam '#bf{CMS} #it{Preliminary}' --legendWidth 0.20 --legendFontSize 0.035 --showRatio --maxRatioRange 0.75 1.25 --fixRatioRange "
 
     if selection=='wenu':
-        GO="%s wmass/wmass_e/mca-53X-wenu.txt wmass/wmass_e/wenu.txt "%CORE
-        GO="%s -W 'puWeight*SF_LepTight_1l'"%GO
+        GO="%s wmass/wmass_e/mca-80X-wenu.txt wmass/wmass_e/wenu.txt "%CORE
+        GO="%s -W 'puWeight*LepGood_effSF[0]'"%GO
         if dowhat in ["plots","ntuple"]: GO+=" wmass/wmass_e/wenu_plots.txt "
     elif selection=='zee':
-        GO="%s wmass/wmass_e/mca-53X-zee.txt wmass/wmass_e/zee.txt "%CORE
-        GO="%s -W 'puWeight*SF_LepTight_2l*zpt_w*aipi_w' --sp 'Z' "%GO
+        GO="%s wmass/wmass_e/mca-80X-zee.txt wmass/wmass_e/zee.txt "%CORE
+        GO="%s -W 'puWeight*LepGood_effSF[0]*LepGood_effSF[1]' --sp 'Z' "%GO
         if dowhat in ["plots","ntuple"]: GO+=" wmass/wmass_e/zee_plots.txt "
     else:
         raise RuntimeError, 'Unknown selection'
@@ -61,8 +61,8 @@ def setwide(x):
     x2 = x2.replace('--legendWidth 0.35','--legendWidth 0.20')
     return x2
 def fulltrees(x,selection):
-    if selection=='wenu': TREESONLYSKIM=TREESONLYSKIMW
-    elif selection=='zee': TREESONLYSKIM=TREESONLYSKIMZ
+    if 'wenu' in selection: TREESONLYSKIM=TREESONLYSKIMW
+    elif 'zee' in selection: TREESONLYSKIM=TREESONLYSKIMZ
     else:
         raise RuntimeError, 'Unknown selection'
     return x.replace(TREESONLYSKIM,TREESONLYFULL)
@@ -75,7 +75,8 @@ if __name__ == '__main__':
 
     if (not allow_unblinding) and '_data' in torun and (not any([re.match(x.strip()+'$',torun) for x in ['.*_appl.*','cr_.*']])): raise RuntimeError, 'You are trying to unblind!'
 
-    if 'zee_' in torun:
+    x=""
+    if 'zee' in torun:
         x = base('zee')
         if '_ebeb' in torun: x = add(x,"-A alwaystrue ebeb 'max(abs(LepGood1_eta),abs(LepGood2_eta))<1.44'  --scaleSigToData --sP 'z_mll,mZ1' ")
         if '_notebeb' in torun: x = add(x,"-A alwaystrue notebeb 'max(abs(LepGood1_eta),abs(LepGood2_eta))>1.57' --scaleSigToData --sP 'z_mll,mZ1' ")
@@ -87,6 +88,9 @@ if __name__ == '__main__':
         x = base('wenu')
         if '_w_reweight' in torun: x = x.replace("-W 'puWeight*SF_LepTight_1l'","-W 'puWeight*SF_LepTight_1l*zpt_w*aipi_w'")
         if '_genpt' in torun: x = add(x,"--sP 'gen_ptv,gen_scaledptv' --xp 'data' -p 'W' ")
+        
+    # skims not ready yet
+    x = fulltrees(x,torun)
 
     
     plots = [] # if empty, to all the ones of the txt file
