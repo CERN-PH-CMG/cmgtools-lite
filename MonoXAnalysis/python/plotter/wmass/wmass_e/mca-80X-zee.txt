@@ -2,7 +2,9 @@ incl_ewkmc : + ; IncludeMca="wmass/wmass_e/mca-includes/mca-ewkmc.txt"
 incl_qcdmc : + ; IncludeMca="wmass/wmass_e/mca-includes/mca-qcdmc.txt"
 #incl_datafakes: + ; IncludeMca="wmass/wmass_e/mca-includes/mca-data-zee.txt", FakeRate="wmass/fakeRate-frdata.txt", Label="Fakes", FillColor=ROOT.kBlack, FillStyle=3005, NormSystematic=0.30, PostFix='_fakes'
 
-incl_data : + ; IncludeMca="wmass/wmass_e/mca-includes/mca-data-zee.txt"
+# This is DoubleEG
+#incl_data : + ; IncludeMca="wmass/wmass_e/mca-includes/mca-data-zee.txt" 
+incl_data : + ; IncludeMca="wmass/wmass_e/mca-includes/mca-data.txt" 
 
 # electron scale systematics
 incl_ewkmc_elescale_Up : + ; IncludeMca="wmass/mca-includes/mca-ewkmc.txt", FakeRate="wmass/fr-lepUp.txt", SkipMe=True, PostFix="_elescale_Up" 
