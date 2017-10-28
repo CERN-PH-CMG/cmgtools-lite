@@ -47,4 +47,4 @@ class puWeightProducer(Module):
 
 pufile_mc="%s/src/CMGTools/MonoXAnalysis/python/postprocessing/data/pileup/pileup_profile_Summer16.root" % os.environ['CMSSW_BASE']
 pufile_data="%s/src/CMGTools/MonoXAnalysis/python/postprocessing/data/pileup/PileupData_GoldenJSON_Full2016.root" % os.environ['CMSSW_BASE']
-puWeight = lambda : puWeightProducer(pufile_mc,pufile_data,"pu_mc","pileup",verbose=False)
+puWeight = lambda : puWeightProducer(pufile_mc,pufile_data,"pu_mc","pileup",name="puw",verbose=False)
