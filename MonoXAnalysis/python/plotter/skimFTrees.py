@@ -20,9 +20,9 @@ def _runIt(args):
         os.system('mkdir -p %s'%outdir)
         f2 = ROOT.TFile('%s/%s_%s.root'%(outdir,ffilename,dset),'recreate')
         f2.cd()
-        fdirname = [x for x in treename.split('/') if x!=''][0]
-        f2.mkdir(fdirname)
-        f2.cd(fdirname)
+        #fdirname = [x for x in treename.split('/') if x!=''][0]
+        #f2.mkdir(fdirname)
+        #f2.cd(fdirname)
         t2 = t_f.CopyTree('1')
         f2.Write()
         print ': skimmed friend trees put in %s'%f2.GetName()
