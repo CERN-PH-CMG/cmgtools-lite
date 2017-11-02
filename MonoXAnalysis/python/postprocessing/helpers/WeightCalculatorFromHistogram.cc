@@ -87,10 +87,7 @@ std::vector<float> WeightCalculatorFromHistogram::loadVals(TH1 *hist, bool norm)
   if(verbose_) std::cout << "Normalization of " << hist->GetName() << ": " << hist->Integral() << std::endl;
   if(norm) {
     float scale = 1.0/hist->Integral();
-    for(int i=0; i<nbins; ++i) {
-      vals[i] *= scale;
-      std::cout << "Vals [" <<  i << "]=" << vals[i] << std::endl;
-    }
+    for(int i=0; i<nbins; ++i) vals[i] *= scale;
   }
   return vals;
 }
