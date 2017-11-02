@@ -51,8 +51,11 @@ class lepSFProducer(Module):
         leps = Collection(event, "LepGood")
         sf = []
         for l in leps:
-            worker = self._worker_el if abs(l.pdgId)==11 else self._worker_mu
-            sf.append(worker.getSF(l.pdgId,l.pt,l.eta))
+            if event.isData:
+                sf.append(1.)
+            else:
+                worker = self._worker_el if abs(l.pdgId)==11 else self._worker_mu
+                sf.append(worker.getSF(l.pdgId,l.pt,l.eta))
         self.out.fillBranch("LepGood_effSF", sf)
         return True
 

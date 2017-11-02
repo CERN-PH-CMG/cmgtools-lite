@@ -108,7 +108,10 @@ if __name__ == "__main__":
 
         writelog = ""
         logdir   = ""
-        if options.logdir: logdir = options.logdir.rstrip("/")
+        if options.logdir: 
+            logdir = options.logdir.rstrip("/")
+            if not os.path.exists(logdir):
+                os.system("mkdir -p "+logdir)
         friendPost = "".join(["  -I  %s %s  " % (mf,mn) for mf,mn in imports])
         if options.friend: 
             friendPost += " --friend " 
