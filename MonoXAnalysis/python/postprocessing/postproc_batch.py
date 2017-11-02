@@ -7,6 +7,10 @@ from glob import glob
 import re, pickle, math
 from CMGTools.MonoXAnalysis.postprocessing.framework.postprocessor import PostProcessor
 
+DEFAULT_MODULES = [("CMGTools.MonoXAnalysis.postprocessing.examples.puWeightProducer", "puWeight,puWeight2016BF"),
+                   ("CMGTools.MonoXAnalysis.postprocessing.examples.lepSFProducer","lepSF"),
+                   ("CMGTools.MonoXAnalysis.postprocessing.examples.jetReCleaner","jetReCleaner")]
+
 if __name__ == "__main__":
     from optparse import OptionParser
     parser = OptionParser(usage="%prog [options] inputDir outputDir")
@@ -88,6 +92,7 @@ if __name__ == "__main__":
     print "\n"
     print "I have %d taks to process" % len(jobs)
 
+    imports = DEFAULT_MODULES + options.imports
     if options.queue:
         import os, sys
 
@@ -104,7 +109,7 @@ if __name__ == "__main__":
         writelog = ""
         logdir   = ""
         if options.logdir: logdir = options.logdir.rstrip("/")
-        friendPost = "".join(["  -I  %s %s  " % (mf,mn) for mf,mn in options.imports])
+        friendPost = "".join(["  -I  %s %s  " % (mf,mn) for mf,mn in imports])
         if options.friend: 
             friendPost += " --friend " 
         for (name,fin,sample_nevt,fout,data,range,chunk) in jobs:
@@ -131,7 +136,7 @@ if __name__ == "__main__":
     def _runIt(myargs):
         (name,fin,sample_nevt,fout,data,range,chunk) = myargs
         modules = []
-        for mod, names in options.imports: 
+        for mod, names in imports: 
             import_module(mod)
             obj = sys.modules[mod]
             selnames = names.split(",")

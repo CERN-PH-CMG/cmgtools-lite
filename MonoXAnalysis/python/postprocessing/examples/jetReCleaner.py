@@ -40,6 +40,11 @@ class JetReCleaner(Module):
 
     def analyze(self, event):
         """process event, return True (go to next module) or False (fail, go to next event)"""
+        ret={}
+        jets = Collection(event,"Jet")
+        for V in self.vars:
+            branch = getattr(self, "Jet_"+V)
+            ret["Jet"+self.label+"_"+V] = [getattr(j,V) for j in jets]
         if event._tree._ttreereaderversion > self._ttreereaderversion: # do this check at every event, as other modules might have read further branches
             self.initReaders(event._tree)
         # do NOT access other branches in python between the check/call to initReaders and the call to C++ worker code
@@ -48,8 +53,7 @@ class JetReCleaner(Module):
         ## Output
         self.out.fillBranch('nJet'+self.label, len(cleanJets))
         for V in self.vars:
-            branch = getattr(self, "Jet_"+V)
-            self.out.fillBranch("Jet"+self.label+"_"+V, [branch[j] for j in cleanJets])
+            self.out.fillBranch("Jet"+self.label+"_"+V, [ ret["Jet"+self.label+"_"+V][j] for j in cleanJets ])
         return True
 
 # define modules using the syntax 'name = lambda : constructor' to avoid having them loaded when not needed
