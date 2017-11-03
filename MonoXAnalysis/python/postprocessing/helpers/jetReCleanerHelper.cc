@@ -28,7 +28,7 @@ class JetReCleanerHelper {
     for (int iJ = 0, nJ = **nJet_; iJ < nJ; ++iJ) {
       bool ok = true;
       for (int iL = 0, nL = **nLep_; iL < nL; ++iL) {
-        if (deltaR2((*Lep_eta_)[iL], (*Lep_phi_)[iL], (*Jet_eta_)[iJ], (*Jet_phi_)[iJ]) < deltaR_) {
+        if (deltaR2((*Lep_eta_)[iL], (*Lep_phi_)[iL], (*Jet_eta_)[iJ], (*Jet_phi_)[iJ]) < deltaR_*deltaR_) {
           ok = false;
           break;
         }

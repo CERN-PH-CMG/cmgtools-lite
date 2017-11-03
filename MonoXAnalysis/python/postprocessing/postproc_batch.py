@@ -9,6 +9,7 @@ from CMGTools.MonoXAnalysis.postprocessing.framework.postprocessor import PostPr
 
 DEFAULT_MODULES = [("CMGTools.MonoXAnalysis.postprocessing.examples.puWeightProducer", "puWeight,puWeight2016BF"),
                    ("CMGTools.MonoXAnalysis.postprocessing.examples.lepSFProducer","lepSF"),
+                   ("CMGTools.MonoXAnalysis.postprocessing.examples.lepVarProducer","eleRelIsoEA"),
                    ("CMGTools.MonoXAnalysis.postprocessing.examples.jetReCleaner","jetReCleaner")]
 
 if __name__ == "__main__":
@@ -25,7 +26,7 @@ if __name__ == "__main__":
     parser.add_option("-z", "--compression",  dest="compression", type="string", default=("LZMA:9"), help="Compression: none, or (algo):(level) ")
     parser.add_option("-d", "--dataset", dest="datasets",  type="string", default=[], action="append", help="Process only this dataset (or dataset if specified multiple times)");
     parser.add_option("-c", "--chunk",   dest="chunks",    type="int",    default=[], action="append", help="Process only these chunks (works only if a single dataset is selected with -d)");
-    parser.add_option("-N", "--events",  dest="chunkSize", type="int",    default=500000, help="Default chunk size when splitting trees");
+    parser.add_option("-N", "--events",  dest="chunkSize", type="int",    default=2000000, help="Default chunk size when splitting trees");
     parser.add_option("-p", "--pretend", dest="pretend",   action="store_true", default=False, help="Don't run anything");
     parser.add_option("-j", "--jobs",    dest="jobs",      type="int",    default=1, help="Use N threads");
     parser.add_option("-q", "--queue",   dest="queue",     type="string", default=None, help="Run jobs on lxbatch instead of locally");
@@ -89,6 +90,7 @@ if __name__ == "__main__":
                         if i not in options.chunks: continue
                     r = xrange(int(i*chunk),min(int((i+1)*chunk),entries))
                     jobs.append((short,fname,sample_nevt,"_Friend_%s.chunk%d" % (short,i),data,r,i))
+
     print "\n"
     print "I have %d taks to process" % len(jobs)
 
@@ -108,8 +110,11 @@ if __name__ == "__main__":
 
         writelog = ""
         logdir   = ""
-        if options.logdir: logdir = options.logdir.rstrip("/")
-        friendPost = "".join(["  -I  %s %s  " % (mf,mn) for mf,mn in imports])
+        if options.logdir: 
+            logdir = options.logdir.rstrip("/")
+            if not os.path.exists(logdir):
+                os.system("mkdir -p "+logdir)
+        friendPost = ""
         if options.friend: 
             friendPost += " --friend " 
         for (name,fin,sample_nevt,fout,data,range,chunk) in jobs:

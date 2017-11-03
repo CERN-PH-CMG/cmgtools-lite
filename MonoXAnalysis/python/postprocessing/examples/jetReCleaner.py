@@ -13,7 +13,7 @@ class JetReCleaner(Module):
         self.vars = ("pt","eta","phi","mass","btagCSV")
         if "jetReCleanerHelper.cc_cc.so" not in ROOT.gSystem.GetLibraries():
             print "Load C++ Worker"
-            ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/MonoXAnalysis/python/postprocessing/helpers/jetReCleanerHelper.cc" % os.environ['CMSSW_BASE'])
+            ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/MonoXAnalysis/python/postprocessing/helpers/jetReCleanerHelper.cc+" % os.environ['CMSSW_BASE'])
         self._worker = ROOT.JetReCleanerHelper(0.4)
     def beginJob(self):
         pass

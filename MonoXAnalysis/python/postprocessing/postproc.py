@@ -4,10 +4,7 @@ import ROOT
 ROOT.PyConfig.IgnoreCommandLineOptions = True
 from importlib import import_module
 from CMGTools.MonoXAnalysis.postprocessing.framework.postprocessor import PostProcessor
-
-DEFAULT_MODULES = [("CMGTools.MonoXAnalysis.postprocessing.examples.puWeightProducer", "puWeight,puWeight2016BF"),
-                   ("CMGTools.MonoXAnalysis.postprocessing.examples.lepSFProducer","lepSF"),
-                   ("CMGTools.MonoXAnalysis.postprocessing.examples.jetReCleaner","jetReCleaner")]
+from CMGTools.MonoXAnalysis.postprocessing.postproc_batch import DEFAULT_MODULES
 
 if __name__ == "__main__":
     from optparse import OptionParser
