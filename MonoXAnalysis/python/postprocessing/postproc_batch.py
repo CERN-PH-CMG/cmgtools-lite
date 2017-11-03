@@ -89,6 +89,7 @@ if __name__ == "__main__":
                         if i not in options.chunks: continue
                     r = xrange(int(i*chunk),min(int((i+1)*chunk),entries))
                     jobs.append((short,fname,sample_nevt,"_Friend_%s.chunk%d" % (short,i),data,r,i))
+
     print "\n"
     print "I have %d taks to process" % len(jobs)
 
@@ -112,7 +113,7 @@ if __name__ == "__main__":
             logdir = options.logdir.rstrip("/")
             if not os.path.exists(logdir):
                 os.system("mkdir -p "+logdir)
-        friendPost = "".join(["  -I  %s %s  " % (mf,mn) for mf,mn in imports])
+        friendPost = ""
         if options.friend: 
             friendPost += " --friend " 
         for (name,fin,sample_nevt,fout,data,range,chunk) in jobs:
