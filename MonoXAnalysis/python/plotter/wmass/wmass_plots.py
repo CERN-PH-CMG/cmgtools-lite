@@ -14,9 +14,9 @@ FASTTEST=''
 dowhat = "yields" 
 
 TREES = "--FMC Friends '{P}/friends/tree_Friend_{cname}.root' "
-TREESONLYSKIMW = "-P /data1/emanuele/wmass/TREES_1LEP_53X_V3_WSKIM_V7/" # to be done 
-TREESONLYSKIMZ = "-P /data1/emanuele/wmass/TREES_1LEP_53X_V3_ZEESKIM_V7/" # to be done
-TREESONLYFULL = "-P /eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3/"
+TREESONLYSKIMW = "-P /eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3_WENUSKIM_V1"
+TREESONLYSKIMZ = "-P /eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3_ZEESKIM_V1"
+TREESONLYFULL  = "-P /eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3"
 
 def base(selection,useSkim=True):
 
@@ -25,7 +25,7 @@ def base(selection,useSkim=True):
     else:
         raise RuntimeError, 'Unknown selection'
 
-    CORE=' '.join([TREES,TREESONLYSKIM])
+    CORE=' '.join([TREES,TREESONLYSKIM if useSkim else TREESONLYFULL])
     if 'pccmsrm29' in os.environ['HOSTNAME']: CORE = CORE.replace('/data1/emanuele/wmass','/u2/emanuele')
 
     CORE+=" -f -j 4 -l 36.26 --s2v --tree treeProducerWMass --obj tree "+FASTTEST
@@ -33,11 +33,11 @@ def base(selection,useSkim=True):
 
     if selection=='wenu':
         GO="%s wmass/wmass_e/mca-80X-wenu.txt wmass/wmass_e/wenu.txt "%CORE
-        GO="%s -W 'puWeight*LepGood_effSF[0]'"%GO
+        GO="%s -W 'puw*LepGood_effSF[0]'"%GO
         if dowhat in ["plots","ntuple"]: GO+=" wmass/wmass_e/wenu_plots.txt "
     elif selection=='zee':
         GO="%s wmass/wmass_e/mca-80X-zee.txt wmass/wmass_e/zee.txt "%CORE
-        GO="%s -W 'puWeight*LepGood_effSF[0]*LepGood_effSF[1]' --sp 'Z' "%GO
+        GO="%s -W 'puw*LepGood_effSF[0]*LepGood_effSF[1]' --sp 'Z' "%GO
         if dowhat in ["plots","ntuple"]: GO+=" wmass/wmass_e/zee_plots.txt "
     else:
         raise RuntimeError, 'Unknown selection'
@@ -86,13 +86,9 @@ if __name__ == '__main__':
         if '_genpt' in torun: x = add(x,"--sP 'gen_ptv,gen_scaledptv' --xp 'data' -p 'Z' ")
     elif 'wenu' in torun:
         x = base('wenu')
-        if '_w_reweight' in torun: x = x.replace("-W 'puWeight*SF_LepTight_1l'","-W 'puWeight*SF_LepTight_1l*zpt_w*aipi_w'")
+        if '_w_reweight' in torun: x = x.replace("-W 'puw*SF_LepTight_1l'","-W 'puw*SF_LepTight_1l*zpt_w*aipi_w'")
         if '_genpt' in torun: x = add(x,"--sP 'gen_ptv,gen_scaledptv' --xp 'data' -p 'W' ")
         
-    # skims not ready yet
-    x = fulltrees(x,torun)
-
-    
     plots = [] # if empty, to all the ones of the txt file
     if "gen" in torun: noplots = []
     else: noplots = ["^gen_.*"]
