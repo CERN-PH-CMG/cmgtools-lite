@@ -9,6 +9,7 @@ from CMGTools.MonoXAnalysis.postprocessing.framework.postprocessor import PostPr
 
 DEFAULT_MODULES = [("CMGTools.MonoXAnalysis.postprocessing.examples.puWeightProducer", "puWeight,puWeight2016BF"),
                    ("CMGTools.MonoXAnalysis.postprocessing.examples.lepSFProducer","lepSF"),
+                   ("CMGTools.MonoXAnalysis.postprocessing.examples.lepVarProducer","eleRelIsoEA"),
                    ("CMGTools.MonoXAnalysis.postprocessing.examples.jetReCleaner","jetReCleaner")]
 
 if __name__ == "__main__":
