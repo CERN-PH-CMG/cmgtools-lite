@@ -12,6 +12,8 @@ DEFAULT_MODULES = [("CMGTools.MonoXAnalysis.postprocessing.examples.puWeightProd
                    ("CMGTools.MonoXAnalysis.postprocessing.examples.lepVarProducer","eleRelIsoEA"),
                    ("CMGTools.MonoXAnalysis.postprocessing.examples.jetReCleaner","jetReCleaner")]
 
+DEFAULT_MODULES = []
+
 if __name__ == "__main__":
     from optparse import OptionParser
     parser = OptionParser(usage="%prog [options] inputDir outputDir")
@@ -67,7 +69,7 @@ if __name__ == "__main__":
             short = os.path.basename(D)
             if options.datasets != []:
                 if short not in options.datasets: continue
-            data = any(x in short for x in "DoubleMu DoubleEG MuEG MuonEG SingleMu SingleEl".split())
+            data = any(x in short for x in "DoubleMu DoubleEG MuEG MuonEG SingleMuon SingleElectron".split())
             pckobj  = pickle.load(open(pckfile,'r'))
             counters = dict(pckobj)
             if ('Sum Weights' in counters):
