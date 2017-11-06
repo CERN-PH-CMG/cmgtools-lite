@@ -27,8 +27,8 @@ forcedFineSplitFactor = getHeppyOption("fineSplitFactor",-1)
 isTest = getHeppyOption("test",None) != None and not re.match("^\d+$",getHeppyOption("test"))
 selectedEvents=getHeppyOption("selectEvents","")
 
-# save LHE weights: very big! do only for needed MC samples
-runOnSignal = False
+# save PDF information and do not skim. Do only for needed MC samples
+runOnSignal = True
 keepLHEweights = False
 
 # Lepton Skimming
@@ -141,6 +141,8 @@ if not removeJecUncertainty:
             "met_jecDown" : NTupleObject("met_jecDown", metType, help="PF E_{T}^{miss}, after type 1 corrections (JEC minus 1sigma)"),
             })
 
+if runOnSignal: wmass_globalVariables += pdfsVariables
+
 ## Tree Producer
 treeProducer = cfg.Analyzer(
      AutoFillTreeProducer, name='treeProducerWMass',
@@ -227,10 +229,8 @@ configureSplittingFromTime(samples_1prompt,50,6)
 configureSplittingFromTime(samples_signal,100,6)
 
 if runOnSignal:
-    keepLHEweights = True
     selectedComponents = samples_signal
 else:
-    keepLHEweights = False
     #selectedComponents = samples_1prompt + samples_1fake 
     selectedComponents = QCDPtbcToE
 
@@ -517,6 +517,10 @@ if not keepLHEweights:
     if "LHE_weights" in treeProducer.collections: treeProducer.collections.pop("LHE_weights")
     if lheWeightAna in sequence: sequence.remove(lheWeightAna)
     histoCounter.doLHE = False
+
+if runOnSignal:
+    if ttHLepSkim in sequence: sequence.remove(ttHLepSkim)
+    if triggerFlagsAna in sequence: sequence.remove(triggerFlagsAna)
 
 ## Auto-AAA
 if not getHeppyOption("isCrab"):
