@@ -1,4 +1,4 @@
-Z     : DYJetsToLL_M50_part* : 1921.8; FillColor=ROOT.kAzure+2, Label="Z", NormSystematic=0.04
+Z    : DYJetsToLL_M50_part* : 1921.8; FillColor=ROOT.kAzure+2, Label="Z", NormSystematic=0.04
 W+   : WJetsToLNu_part* :  xsec; FillColor=ROOT.kRed+2, Label="W", NormSystematic=0.03
 Top  : TTJets_SingleLeptonFromT_ext_part* :  xsec; FillColor=ROOT.kGray+2, Label="Top", NormSystematic=0.09
 Top  : TTJets_SingleLeptonFromTbar_part* :  xsec; FillColor=ROOT.kGray+2, Label="Top", NormSystematic=0.09
@@ -12,4 +12,3 @@ DiBosons : WZ+WZ_ext : xsec; FillColor=ROOT.kViolet+2, Label="DiBosons", NormSys
 DiBosons : ZZ+ZZ_ext : xsec; FillColor=ROOT.kViolet+2, Label="DiBosons", NormSystematic=0.05
 
 # Alternative samples
-
