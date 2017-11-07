@@ -101,7 +101,7 @@ else:
 # check if Diboson and Top samples are present for the FR trees at 13 TeV
 EWKSPLIT="-p 'W_fake,W,Z,data'"
 if addQCDMC:
-    EWKSPLIT="-p 'QCD,data'" # "-p 'QCD,W,Z,data'"
+    EWKSPLIT="-p 'QCD,W,Z,data'"
 #if useSRtrees:
 #    EWKSPLIT = EWKSPLIT.replace('W,Z,data','W,Z,Top,DiBosons,data')
 
