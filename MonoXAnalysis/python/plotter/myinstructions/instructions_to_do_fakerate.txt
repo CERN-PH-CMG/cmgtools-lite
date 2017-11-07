@@ -9,9 +9,10 @@ For muons, do
 python wmass/make_fake_rates_data.py --mu | grep python > commands4fakeRate_mu.sh
 
 Use --singleEtaBin <arg> to use a single eta bin (<arg> is the maximum eta range)
-Use --qcdmc to add QCD MC (true for if --mu option is used)
+Use --qcdmc to add QCD MC (true if --mu option is used)
 Use --charge [p/n] to select positive or negative leptons (default use both)
-
+Use --useSRtrees to use singal region trees instead of fake-rate trees (note that the selection file will have the HLT_SingleEl trigger required)
+Use --mediumWP to use medium working point for numerator selection (for electrons). Default is the tight one
 WARNING, check the ntuples you are going to use are actually present (e.g. they could be on pccmsrm29 but not on lxplus)
 
 
