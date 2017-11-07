@@ -51,15 +51,27 @@ def _runIt(args):
         ntot  = mytree.GetEntries() 
         print "  Start  %-40s: %8d" % (tty.cname(), ntot)
         timer = ROOT.TStopwatch(); timer.Start()
+        compression = options.compression
+        if compression != "none":
+            ROOT.gInterpreter.ProcessLine("#include <Compression.h>")
+            (algo, level) = compression.split(":")
+            compressionLevel = int(level)
+            if   algo == "LZMA": compressionAlgo  = ROOT.ROOT.kLZMA
+            elif algo == "ZLIB": compressionAlgo  = ROOT.ROOT.kZLIB
+            else: raise RuntimeError("Unsupported compression %s" % algo)
+            print "Using compression algo %s with level %d" % (algo,compressionLevel)
+        else:
+            compressionLevel = 0 
         # now we do
         os.system("mkdir -p "+myoutpath)
         os.system("cp -r %s/skimAnalyzerCount %s/" % (mysource,myoutpath))
         os.system("mkdir -p %s/%s" % (myoutpath,options.tree))
         histo = ROOT.gROOT.FindObject("Count")
         if not options.oldstyle:
-            fout = ROOT.TFile("%s/%s/tree.root" % (myoutpath,options.tree), "RECREATE");
+            fout = ROOT.TFile("%s/%s/tree.root" % (myoutpath,options.tree), "RECREATE", "", compressionLevel);
         else:
-            fout = ROOT.TFile("%s/%s/%s_tree.root" % (myoutpath,options.tree,options.tree), "RECREATE");
+            fout = ROOT.TFile("%s/%s/%s_tree.root" % (myoutpath,options.tree,options.tree), "RECREATE", "", compressionLevel);
+        if compressionLevel: fout.SetCompressionAlgorithm(compressionAlgo)
         mytree.Draw('>>elist',mycut)
         elist = ROOT.gDirectory.Get('elist')
         if len(options.vetoevents)>0:
@@ -111,7 +123,8 @@ if __name__ == "__main__":
     parser.add_option("--oldstyle",    dest="oldstyle", default=False, action="store_true",  help="Oldstyle naming (e.g. file named as <analyzer>_tree.root)") 
     parser.add_option("--vetoevents",  dest="vetoevents", type="string", default=[], action="append",  help="File containing list of events to filter out")
     parser.add_option("--json",        dest="json", type="string", default=None, help="JSON file selecting events to keep")
-    parser.add_option("--pretend",    dest="pretend", default=False, action="store_true",  help="Pretend to skim, don't actually do it") 
+    parser.add_option("--pretend",     dest="pretend", default=False, action="store_true",  help="Pretend to skim, don't actually do it") 
+    parser.add_option("-z", "--compression",  dest="compression", type="string", default=("LZMA:9"), help="Compression: none, or (algo):(level) ")
     addMCAnalysisOptions(parser)
     (options, args) = parser.parse_args()
     options.weight = False

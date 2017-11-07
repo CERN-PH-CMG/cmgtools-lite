@@ -5,6 +5,7 @@ ROOT.PyConfig.IgnoreCommandLineOptions = True
 
 from CMGTools.MonoXAnalysis.postprocessing.framework.datamodel import Collection 
 from CMGTools.MonoXAnalysis.postprocessing.framework.eventloop import Module
+from PhysicsTools.HeppyCore.utils.deltar import deltaR
 
 class lepIsoEAProducer(Module):
     def __init__(self,EAfile,rho='rho'):
@@ -38,7 +39,45 @@ class lepIsoEAProducer(Module):
         self.out.fillBranch("LepGood_relIso04EA", iso)
         return True
 
+class lepAwayJetProducer(Module):
+    def __init__(self, lepSel = lambda lep: True, jetSel = lambda jet : True, pairSel = lambda lep, jet : True):
+        self.lepSel = lepSel
+        self.jetSel = jetSel
+        self.pairSel = pairSel
+        self.jetSort = lambda jet: jet.pt 
+        self.vars = ("pt","eta","phi")
+    def beginJob(self):
+        pass
+    def endJob(self):
+        pass
+    def beginFile(self, inputFile, outputFile, inputTree, wrappedOutputTree):
+        self.out = wrappedOutputTree
+        for V in self.vars:
+            self.out.branch("LepGood_awayJet_"+V, "F", lenVar="nLepGood")
+    def endFile(self, inputFile, outputFile, inputTree, wrappedOutputTree):
+        pass
+    def analyze(self, event):
+        """process event, return True (go to next module) or False (fail, go to next event)"""
+        leps = filter(self.lepSel, Collection(event, "LepGood"))
+        jets = filter(self.jetSel, Collection(event, "Jet"))
+        jets.sort(key = self.jetSort, reverse=True)
+        ret = {}
+        for V in self.vars: ret[V] = []
+        for lep in leps: lep.awayJet = None
+        for lep in leps:
+            for jet in jets:
+                if self.pairSel(lep,jet):
+                    lep.awayJet = jet
+                    break
+            for V in self.vars: 
+                ret[V].append(getattr(lep.awayJet,V) if lep.awayJet else 0)
+        for V in self.vars:
+            self.out.fillBranch("LepGood_awayJet_"+V,ret[V])
+        return True
+
+
 # define modules using the syntax 'name = lambda : constructor' to avoid having them loaded when not needed
 
 eleRelIsoEA = lambda : lepIsoEAProducer("%s/src/RecoEgamma/ElectronIdentification/data/Summer16/effAreaElectrons_cone03_pfNeuHadronsAndPhotons_80X.txt" % os.environ['CMSSW_BASE'])
-
+lepQCDAwayJet = lambda : lepAwayJetProducer(jetSel = lambda jet : jet.pt > 30 and abs(jet.eta) < 2.4,
+                                            pairSel =lambda lep, jet: deltaR(lep.eta,lep.phi, jet.eta, jet.phi) > 0.7)

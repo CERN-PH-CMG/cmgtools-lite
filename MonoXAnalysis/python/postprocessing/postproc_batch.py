@@ -20,7 +20,7 @@ if __name__ == "__main__":
     parser.add_option("-J", "--json",  dest="json", type="string", default=None, help="Select events using this JSON file")
     parser.add_option("-C", "--cut",  dest="cut", type="string", default=None, help="Cut string")
     parser.add_option("-b", "--branch-selection",  dest="branchsel", type="string", default=None, help="Branch selection")
-    parser.add_option("--friend",  dest="friend", action="store_true", default=False, help="Produce friend trees in output (current default is to produce full trees)")
+    parser.add_option("--friend",  dest="friend", action="store_true", default=True, help="Produce friend trees in output (current default is to produce full trees)")
     parser.add_option("--full",  dest="friend", action="store_false",  default=False, help="Produce full trees in output (this is the current default)")
     parser.add_option("--noout",  dest="noOut", action="store_true",  default=False, help="Do not produce output, just run modules")
     parser.add_option("--justcount",   dest="justcount", default=False, action="store_true",  help="Just report the number of selected events") 

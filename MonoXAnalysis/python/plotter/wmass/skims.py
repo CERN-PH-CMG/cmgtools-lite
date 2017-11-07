@@ -1,8 +1,7 @@
 #!/usr/bin/env python
-# change wmass_e/ to wmass/wmass_e/ or wmass/wmass_mu/, and use proper config files and trees
-# e.g.: python wmass_e/skims.py wmass_e/mca-53X-wenu.txt wmass_e/wenu.txt /data1/emanuele/wmass/TREES_1LEP_53X_V2 /data1/emanuele/wmass/TREES_1LEP_53X_V2_WSKIM_V3 -f wmass_e/varsSkim_53X.txt
-#       python wmass_e/skims.py wmass_e/mca-53X-zee.txt wmass_e/zee.txt /data1/emanuele/wmass/TREES_1LEP_53X_V2 /data1/emanuele/wmass/TREES_1LEP_53X_V2_ZEESKIM_V3 -f wmass_e/varsSkim_53X.txt
-#       python wmass_e/skims.py wmass_e/mca-53X-wenu.txt wmass_e/qcd_e.txt /data1/emanuele/wmass/TREES_1LEP_53X_V2 /data1/emanuele/wmass/TREES_1LEP_53X_V2_QCDSKIM_V3 -f wmass_e/varsSkim_53X.txt
+# e.g.: python wmass/skims.py wmass/wmass_e/mca-80X-wenu.txt wmass/wmass_e/skim_wenu.txt  TREES_1LEP_80X_V3 /eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3_WENUSKIM_V2 -f wmass/wmass_e/varsSkim_80X.txt
+#       python wmass/skims.py wmass/wmass_e/mca-80X-wenu.txt wmass/wmass_e/skim_zee.txt   TREES_1LEP_80X_V3 /eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3_ZEESKIM_V2  -f wmass/wmass_e/varsSkim_80X.txt
+#       python wmass/skims.py wmass/wmass_e/mca-80X-wenu.txt wmass/wmass_e/skim_fr_el.txt TREES_1LEP_80X_V3 /eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3_FRELSKIM_V2 -f wmass/wmass_e/varsSkim_80X.txt
 import os, subprocess
 
 if __name__ == "__main__":
@@ -10,13 +9,14 @@ if __name__ == "__main__":
     parser = OptionParser(usage="%prog [options] mc.txt cuts.txt treeDir outputDirSkims ")
     parser.add_option("-f", "--varfile",  dest="varfile", type="string", default=None, action="store",  help="File with the list of Branches to drop, as per TTree::SetBranchStatus")
     parser.add_option("--fo", "--friend-only",  dest="friendOnly", action="store_true", default=False,  help="Do not redo skim of the main trees, only of the friends")
+    parser.add_option("-p", "--pretend",     dest="pretend", default=False, action="store_true",  help="Pretend to skim, don't actually do it") 
+    parser.add_option("--max-entries",     dest="maxEntries", default=1000000000, type="int", help="Max entries to process in each tree") 
     (options, args) = parser.parse_args() 
 
     mcargs = args[:2]
     treeDir = args[2]
     outputDirSkims = args[3]
 
-    treeFDir = treeDir+"/friends"
     outputDirFSkims = outputDirSkims+"/friends"
 
     if not options.friendOnly:
@@ -33,29 +33,28 @@ if __name__ == "__main__":
            os.makedirs(outputDirFSkims)
     else: print "Make only the friend trees in dir ",outputDirFSkims
 
-    OPTS = ' --obj tree -P '+treeDir+' --s2v -j 4 --FMC Friends "'+treeFDir+'/tree_Friend_{cname}.root" '
+    OPTS = ' --obj tree -P '+treeDir+' --s2v -j 4 -F Friends "{P}/friends/tree_Friend_{cname}.root" -F Friends "{P}/friends/tree_FRFriend_{cname}.root" '
+    OPTS += ' --max-entries %d ' % options.maxEntries 
+    if options.pretend: OPTS += ' -p '
 
     varsToKeep = []
     if options.varfile!=None:
         with open(options.varfile) as f:
             varsToKeep = f.read().splitlines()
-        OPTS += "--drop '*' --keep "+" --keep ".join(varsToKeep)
+        OPTS += " --drop '*' --keep "+" --keep ".join(varsToKeep)
     
     cmdSkim = "python skimTrees.py "+" ".join(mcargs)+" " + outputDirSkims + OPTS
-    #cmdFSkimEv = " python skimFTrees.py "+outputDirSkims+" "+treeFDir+" "+outputDirFSkims
-    cmdFSkimSf = " python skimFTrees.py "+outputDirSkims+" "+treeFDir+" "+outputDirFSkims+' -f tree_Friend -t "Friends" '
-    #cmdFSkimKin = " python skimFTrees.py "+outputDirSkims+" "+treeFDir+" "+outputDirFSkims+' -f kinVarFriend -t "kinvars/t" '
+    cmdFSkimEv = " python skimFTrees.py "+outputDirSkims+" "+treeDir+"/friends "+outputDirFSkims+' -f tree_Friend -t "Friends" '
+    cmdFSkimFr = " python skimFTrees.py "+outputDirSkims+" "+treeDir+"/friends "+outputDirFSkims+' -f tree_FRFriend -t "Friends" '
 
     if not options.friendOnly:
         print "Now skimming the main trees, keeping the following vars:\n",varsToKeep
         print "This step may take time...\n"
         os.system(cmdSkim)
-    # print "Now skimming the event variables friend trees:\n"
-    # os.system(cmdFSkimEv)
-    print "Now skimming the scale factors friend trees:\n"
-    os.system(cmdFSkimSf)
-    # print "Now skimming the kinematic variables friend trees:\n"
-    # os.system(cmdFSkimKin)
+    print "Now skimming the event variables friend trees:\n"
+    os.system(cmdFSkimEv)
+    print "Now skimming the fake rate friend trees:\n"
+    os.system(cmdFSkimFr)
 
     print "VERY DONE\n"
 
