@@ -14,7 +14,7 @@ for F in $(ls ${dir}/*_Friend_*.chunk*.root | sed 's/\.chunk[0-9]\+//' | sort | 
             sort -n | \
             perl -npe 's/\.(\d+)\.root$/sprintf(".chunk%d.root",$1)/e' );
     echo -e "\nWill merge into $F:\n$FILES"; 
-    hadd -f $F $FILES
+    $CMSSW_BASE/src/CMGTools/MonoXAnalysis/python/postprocessing/scripts/haddnano.py $F $FILES
 done
 
 if [[ $clean == 1 ]]; then mv ${dir}/*_Friend_*.chunk*.root Chunks; fi
