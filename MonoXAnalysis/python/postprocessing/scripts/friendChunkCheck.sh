@@ -34,7 +34,7 @@ for F in $(ls ${dir}/*_Friend_*.chunk*.root | sed 's/\.chunk[0-9]\+//' | sort | 
 done
 
 if [[ "$Z" != "0" ]]; then
-    echo "# Testing for zombies";
+    echo "# Testing for zombies or not correctly closed files";
     FILES=$(ls ${dir}/*_Friend_*.chunk*.root);
     for Z in $(cmgListZombies  $FILES); do
         if test -s $Z; then # empty files have already been found
