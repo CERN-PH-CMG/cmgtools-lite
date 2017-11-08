@@ -43,7 +43,7 @@ for e in fileHandles[0].GetListOfKeys() :
 	for fh in fileHandles[1:] :
 		otherObj=fh.GetListOfKeys().FindObject(name).ReadObj()
 		inputs.Add(otherObj)
-		if isTree and obj.GetName()=='Events'  :	
+		if isTree and obj.GetName()=='Friends'  :
 			otherObj.SetAutoFlush(0)
 			otherBranches=set([ x.GetName() for x in otherObj.GetListOfBranches() ])
 			missingBranches=list(branchNames-otherBranches)
