@@ -2,6 +2,7 @@
 # e.g.: python wmass/skims.py wmass/wmass_e/mca-80X-wenu.txt wmass/wmass_e/skim_wenu.txt  TREES_1LEP_80X_V3 /eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3_WENUSKIM_V2 -f wmass/wmass_e/varsSkim_80X.txt
 #       python wmass/skims.py wmass/wmass_e/mca-80X-wenu.txt wmass/wmass_e/skim_zee.txt   TREES_1LEP_80X_V3 /eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3_ZEESKIM_V2  -f wmass/wmass_e/varsSkim_80X.txt
 #       python wmass/skims.py wmass/wmass_e/mca-80X-wenu.txt wmass/wmass_e/skim_fr_el.txt TREES_1LEP_80X_V3 /eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3_FRELSKIM_V2 -f wmass/wmass_e/varsSkim_80X.txt
+# add -q 8nh --log logs to run in batch 1 job/component (and --pretend to just check the command that will be run)
 import os, subprocess
 
 if __name__ == "__main__":
@@ -9,8 +10,9 @@ if __name__ == "__main__":
     parser = OptionParser(usage="%prog [options] mc.txt cuts.txt treeDir outputDirSkims ")
     parser.add_option("-f", "--varfile",  dest="varfile", type="string", default=None, action="store",  help="File with the list of Branches to drop, as per TTree::SetBranchStatus")
     parser.add_option("--fo", "--friend-only",  dest="friendOnly", action="store_true", default=False,  help="Do not redo skim of the main trees, only of the friends")
-    parser.add_option("-p", "--pretend",     dest="pretend", default=False, action="store_true",  help="Pretend to skim, don't actually do it") 
     parser.add_option("--max-entries",     dest="maxEntries", default=1000000000, type="int", help="Max entries to process in each tree") 
+    from CMGTools.MonoXAnalysis.plotter.skimTrees import addSkimTreesOptions
+    addSkimTreesOptions(parser)
     (options, args) = parser.parse_args() 
 
     mcargs = args[:2]
@@ -35,7 +37,9 @@ if __name__ == "__main__":
 
     OPTS = ' --obj tree -P '+treeDir+' --s2v -j 4 -F Friends "{P}/friends/tree_Friend_{cname}.root" -F Friends "{P}/friends/tree_FRFriend_{cname}.root" '
     OPTS += ' --max-entries %d ' % options.maxEntries 
-    if options.pretend: OPTS += ' -p '
+    if options.pretend: OPTS += ' --pretend '
+    if options.queue: OPTS += ' -q %s ' % options.queue
+    if options.logdir: OPTS += ' --log %s ' % options.logdir
 
     varsToKeep = []
     if options.varfile!=None:
@@ -51,10 +55,11 @@ if __name__ == "__main__":
         print "Now skimming the main trees, keeping the following vars:\n",varsToKeep
         print "This step may take time...\n"
         os.system(cmdSkim)
-    print "Now skimming the event variables friend trees:\n"
-    os.system(cmdFSkimEv)
-    print "Now skimming the fake rate friend trees:\n"
-    os.system(cmdFSkimFr)
+    if not options.queue:
+        print "Now skimming the event variables friend trees:\n"
+        os.system(cmdFSkimEv)
+        print "Now skimming the fake rate friend trees:\n"
+        os.system(cmdFSkimFr)
 
     print "VERY DONE\n"
 
