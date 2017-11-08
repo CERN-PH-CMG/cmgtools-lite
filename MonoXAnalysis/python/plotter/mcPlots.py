@@ -34,7 +34,9 @@ class PlotFile:
                 more = more.replace("\\,",";")
                 for setting in [f.strip().replace(";",",") for f in more.split(',')]:
                     if "=" in setting: 
-                        (key,val) = [f.strip() for f in setting.split("=")]
+                        # in following line, if setting has more than one '=' an error will occur, e.g., if you have XTitle="muon isolation (#DeltaR=0.4)"
+                        # therefore, split only on the first occurrence of '='
+                        (key,val) = [f.strip() for f in setting.split("=",1)]  
                         extra[key] = eval(val)
                     else: extra[setting] = True
             line = re.sub("#.*","",line) 
