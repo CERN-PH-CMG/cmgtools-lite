@@ -59,7 +59,67 @@ class lepSFProducer(Module):
         self.out.fillBranch("LepGood_effSF", sf)
         return True
 
+class lepTrgSFProducer(Module):
+    def __init__(self,dimensions=2,prefer1Dvar="eta",maxrun=278808):
+        # from  https://indico.cern.ch/event/570616/contributions/2354285/attachments/1365274/2067939/tnpBuda_nov03_v1.pdf
+        # should make the weighted average in the data chunk considered.
+        # here take the last measurement, since similar
+        self.versions = {(273158,274442): "v1",
+                         (274954,275066): "v2",
+                         (275067,275311): "v3",
+                         (275319,276834): "v4",
+                         (276870,278240): "v5",
+                         (278273,280385): "v6",
+                         (281639,283059): "v7"}
+        self.maxrun = maxrun
+        self.dim = dimensions
+        self.var = prefer1Dvar
+        if "/WeightCalculatorFromHistogram_cc.so" not in ROOT.gSystem.GetLibraries():
+            print "Load C++ Worker"
+            ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/MonoXAnalysis/python/postprocessing/helpers/WeightCalculatorFromHistogram.cc+" % os.environ['CMSSW_BASE'])
+    def beginJob(self):
+        ver=None
+        for k,v in self.versions.iteritems(): 
+            if k[0] < self.maxrun < k[1]: ver = v
+        if ver:
+            f = "%s/src/CMGTools/MonoXAnalysis/python/postprocessing/data/leptonSF/el_trg/%s/%s/passHLT/eff1D.root" % (os.environ['CMSSW_BASE'],ver,self.var)
+            h = "s1c_eff"
+            if self.dim==2:
+                f2D = "%s/src/CMGTools/MonoXAnalysis/python/postprocessing/data/leptonSF/el_trg/%s/sf/passHLT/eff2D.root" % (os.environ['CMSSW_BASE'],ver)
+                if os.path.isfile(f2D):
+                    f = f2D
+                    h = "s2c_eff"
+                else: self.dim = 1
+        else: raise Exception('No suitable version of trigger scale factors found!')
+        print "Reading trigger scale factors in %d dimensions from file %s..." % (self.dim,f)
+        tf = ROOT.TFile.Open(f)
+        th = tf.Get(h).Clone("sf_%s" % v)
+        th.SetDirectory(None)
+        self._worker = ROOT.WeightCalculatorFromHistogram(th)
+    def endJob(self):
+        pass
+    def beginFile(self, inputFile, outputFile, inputTree, wrappedOutputTree):
+        self.out = wrappedOutputTree
+        self.out.branch("LepGood_trgSF", "F", lenVar="nLepGood")
+    def endFile(self, inputFile, outputFile, inputTree, wrappedOutputTree):
+        pass
+    def analyze(self, event):
+        """process event, return True (go to next module) or False (fail, go to next event)"""
+        leps = Collection(event, "LepGood")
+        sf = []
+        for l in leps:
+            if event.isData or abs(l.pdgId)!=11:
+                sf.append(1.)
+            else:
+                if self.dim == 2:
+                    wgt = self._worker.getWeight(l.pt,l.eta)
+                    sf.append(wgt if wgt>0 else 1.)
+                else:
+                    sf.append(self._worker.getWeight(getattr(l,sef.var)))
+        self.out.fillBranch("LepGood_trgSF", sf)
+        return True
+
 # define modules using the syntax 'name = lambda : constructor' to avoid having them loaded when not needed
 
 lepSF = lambda : lepSFProducer( "LooseWP_2016", "CutBasedTight_2016")
-
+trgSF = lambda : lepTrgSFProducer()

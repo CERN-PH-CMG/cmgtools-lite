@@ -9,13 +9,16 @@
 
 class WeightCalculatorFromHistogram {
  public:
-  WeightCalculatorFromHistogram() {}
+  // get the weight from the bin content of the histogram (has to be set with set histogram
+  WeightCalculatorFromHistogram(bool verbose=false) : verbose_(verbose) {}
   // get the weight from the bin content of the passed histogram
   WeightCalculatorFromHistogram(TH1 *histogram, bool verbose=false) : histogram_(histogram), verbose_(verbose) {}
   // get the weight from the bin content of the ratio hist/targethist
   WeightCalculatorFromHistogram(TH1 *hist, TH1* targethist, bool norm=true, bool fixLargeWeights=true, bool verbose=false);
   ~WeightCalculatorFromHistogram() {}
-  
+
+  void setHistogram(TH1 *histogram) { histogram_ = histogram; }
+
   float getWeight(float x, float y=0) const;
   float getWeightErr(float x, float y=0) const;
   
@@ -25,7 +28,7 @@ class WeightCalculatorFromHistogram {
   void fixLargeWeights(std::vector<float> &weights, float maxshift=0.0025,float hardmax=3);
   float checkIntegral(std::vector<float> wgt1, std::vector<float> wgt2);
 
-  TH1* histogram_;
+  TH1* histogram_ = nullptr;
   std::vector<float> refvals_,targetvals_;
   bool verbose_;
   bool norm_;

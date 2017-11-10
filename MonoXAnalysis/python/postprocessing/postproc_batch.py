@@ -8,10 +8,11 @@ import re, pickle, math
 from CMGTools.MonoXAnalysis.postprocessing.framework.postprocessor import PostProcessor
 
 DEFAULT_MODULES = [("CMGTools.MonoXAnalysis.postprocessing.examples.puWeightProducer", "puWeight,puWeight2016BF"),
-                   ("CMGTools.MonoXAnalysis.postprocessing.examples.lepSFProducer","lepSF"),
+                   ("CMGTools.MonoXAnalysis.postprocessing.examples.lepSFProducer","lepSF,trgSF"),
                    ("CMGTools.MonoXAnalysis.postprocessing.examples.lepVarProducer","eleRelIsoEA,lepQCDAwayJet"),
                    ("CMGTools.MonoXAnalysis.postprocessing.examples.jetReCleaner","jetReCleaner"),
-                   ("CMGTools.MonoXAnalysis.postprocessing.examples.genFriendProducer","genQEDJets")]
+#                   ("CMGTools.MonoXAnalysis.postprocessing.examples.genFriendProducer","genQEDJets")
+                   ]
 
 if __name__ == "__main__":
     from optparse import OptionParser
@@ -33,8 +34,10 @@ if __name__ == "__main__":
     parser.add_option("-q", "--queue",   dest="queue",     type="string", default=None, help="Run jobs on lxbatch instead of locally");
     parser.add_option("-t", "--tree",    dest="tree",      default='treeProducerWMass', help="Pattern for tree name");
     parser.add_option("--log", "--log-dir", dest="logdir", type="string", default=None, help="Directory of stdout and stderr");
-    parser.add_option("--env",   dest="env",     type="string", default="lxbatch", help="Give the environment on which you want to use the batch system (lxbatch, psi, oviedo)");
-    parser.add_option("--run",   dest="runner",     type="string", default="lxbatch_runner.sh", help="Give the runner script (default: lxbatch_runner.sh)");
+    parser.add_option("--env",   dest="env", type="string", default="lxbatch", help="Give the environment on which you want to use the batch system (lxbatch, psi, oviedo)");
+    parser.add_option("--run",   dest="runner",  type="string", default="lxbatch_runner.sh", help="Give the runner script (default: lxbatch_runner.sh)");
+    parser.add_option("--mconly", dest="mconly",  action="store_true", default=True, help="Run only on MC samples");
+    parser.add_option("-m", "--modules", dest="modules",  type="string", default=[], action="append", help="Run only these modules among the imported ones");
 
     (options, args) = parser.parse_args()
 
@@ -69,6 +72,7 @@ if __name__ == "__main__":
             if options.datasets != []:
                 if short not in options.datasets: continue
             data = any(x in short for x in "DoubleMu DoubleEG MuEG MuonEG SingleMuon SingleElectron".split())
+            if data and options.mconly: continue
             pckobj  = pickle.load(open(pckfile,'r'))
             counters = dict(pckobj)
             if ('Sum Weights' in counters):
@@ -149,6 +153,8 @@ if __name__ == "__main__":
             for name in dir(obj):
                 if name[0] == "_": continue
                 if name in selnames:
+                    print "Modules to run: ",options.modules,"  name = ",name
+                    if len(options.modules) and name not in options.modules: continue
                     print "Loading %s from %s " % (name, mod)
                     modules.append(getattr(obj,name)())
         if options.noOut:
