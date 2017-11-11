@@ -5,12 +5,14 @@ import re, sys, os, os.path, subprocess
 from optparse import OptionParser
 parser = OptionParser(usage="%prog testname ")
 parser.add_option("--mu", dest="useMuon", default=False, action='store_true', help="Do fake rate for muons");
-parser.add_option("--mediumWP", dest="useMediumWP", default=False, action='store_true', help="Use medium working point in numerator for electrons");
 parser.add_option("--qcdmc", dest="addQCDMC", default=False, action='store_true', help="Add QCD MC in plots (but do not subtract from data)");
 parser.add_option("--singleEtaBin", dest="singleEtaBin", default=-1.0, type='float', help="Use a single eta bin (pass the upper eta boundary)");
 parser.add_option("--charge", dest="charge", default="", type='string', help="Select charge: p for positive, n for negative");
+parser.add_option("--wp", dest="workingPoint", default="tight", type='string', help="Select ID working point: tight (default), medium, loose");
 parser.add_option("--useSRtrees", dest="useSRtrees", default=False, action='store_true', help="Use trees of signal region instead of fake-rate trees (and apply HLT_SingleEl)");
 parser.add_option("--test", dest="test", default="", type='string', help="pass the name of a folder (mandatory) to store test FR plots. It is created in plots/fake-rate/test/");
+parser.add_option("--fqcd-ranges", dest="fqcd_ranges", default="0,40,50,120", type='string', help="Pass a list of 4 comma separated numbers that represents the ranges for the two mT regions to compute the fake rate");
+parser.add_option("--mt", dest="fitvar", default="trkmtfix", type='string', help="Select mT definition: pfmt, trkmt, pfmtfix, trkmtfix");
 (options, args) = parser.parse_args()
 
 useMuon = options.useMuon
@@ -18,7 +20,23 @@ addQCDMC = options.addQCDMC  # trying to add QCD MC to graphs to be compared
 charge = str(options.charge)
 useSRtrees = options.useSRtrees
 testDir = str(options.test)
-useMediumWP = options.useMediumWP
+workingPoint = options.workingPoint
+fqcd_ranges = str(options.fqcd_ranges)
+fitvar = str(options.fitvar)
+
+
+if fqcd_ranges.count(",") != 3:
+    print "warning: options --fqcd-ranges requires 4 numbers separated by commas (3 commas expected), but %s was passed" % fqcd_ranges
+    quit()
+
+if workingPoint not in ["loose","medium","tight"]:
+    print "warning: unknown working point %s, use loose, medium or tight" % workingPoint
+    quit()
+numForWP={'loose': 'FullSel_looseID', 'medium': 'FullSel_mediumID', 'tight': 'FullSel_tightID'}
+
+if fitvar not in ["pfmt", "trkmt", "pfmtfix", "trkmtfix"]:
+    print "warning: unknown mt definition %s, use pfmt, trkmt, pfmtfix, trkmtfix" % fitvar
+    quit()
 
 if useMuon:
     addQCDMC = True
@@ -49,17 +67,15 @@ BASECONFIG="wmass/wmass_e"
 MCA=BASECONFIG+'/mca-qcd1l.txt'
 CUTFILE=BASECONFIG+'/qcd1l.txt'
 XVAR="pt_coarse"
-FITVAR="mtfix"
-NUM="FullSel"
-if useMediumWP:
-    NUM="FullSel_mediumID"
+FITVAR=fitvar
+NUM=numForWP[str(workingPoint)]
 BARREL="00_15"; ENDCAP="15_25"; ETA="1.479";
 if useMuon:
     BASECONFIG="wmass/wmass_mu"
     MCA=BASECONFIG+'/mca-qcd1l_mu.txt'
     CUTFILE=BASECONFIG+'/qcd1l_mu.txt'
     XVAR="pt_finer"
-    FITVAR="mtfix"
+    FITVAR="fitvar"
     NUM="MuonTightIso"
     BARREL="00_12"; ENDCAP="12_24"; ETA="1.2";
 
@@ -70,11 +86,12 @@ if useSRtrees:
 OPTIONS = MCA+" "+CUTFILE+" -f -P "+T+" --obj "+objName+" --s2v -j "+str(J)+" -l "+str(luminosity)
 # no friends for the moment
 OPTIONS += ' -F Friends '+T+'/friends/tree_Friend_{cname}.root '
-#OPTIONS += ' -F Friends '+T+'/friends/tree_FRFriend_{cname}.root '
+OPTIONS += ' -F Friends '+T+'/friends/tree_FRFriend_{cname}.root '
+OPTIONS += ' --fqcd-ranges %s' % fqcd_ranges.replace(","," ")
 
 # event weight (NB: not needed for data, and sf not good for MC since here we have fake electrons)
 # puwBF should be used, but for the moment I don't
-#OPTIONS += ' -W "LepGood1_effSF*puwBF" '
+#OPTIONS += ' -W "puwBF" '
 
 if options.singleEtaBin > 0.0:
     ALL="00_" + "{0:.1f}".format(options.singleEtaBin).replace(".","p")
@@ -115,10 +132,7 @@ MCEFF += "--sP "+NUM+" --sP "+XVAR+"  --sP "+FITVAR+" "+FITVAR+"  --ytitle 'Fake
 MCEFF += " --fixRatioRange --maxRatioRange 0.7 1.29 " # ratio for other plots
 LEGEND=" --legend=TL --fontsize 0.05 --legendWidth 0.4"
 RANGES=" --showRatio  --ratioRange 0.50 1.99 "
-if useMuon:
-    RANGES+=" --yrange 0 1.0  --xcut 25 100 "
-else:
-    RANGES+=" --yrange 0.0 0.8  --xcut 25 100 "
+RANGES+=" --yrange 0 1.0  --xcut 25 100 "
 
 MCEFF += (LEGEND+RANGES)
 
