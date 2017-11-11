@@ -1,5 +1,5 @@
-#Z+     : DYJetsToLL_M50 : xsec; FillColor=ROOT.kAzure+2, Label="Z", NormSystematic=0.04
-Z+     : DYJetsToLL_M50_LO : xsec; FillColor=ROOT.kAzure+2, Label="Z", NormSystematic=0.04
+#Z+     : DYJetsToLL_M50 : 1921.8 ; FillColor=ROOT.kAzure+2, Label="Z", NormSystematic=0.04
+Z+     : DYJetsToLL_M50_LO : 1921.8 ; FillColor=ROOT.kAzure+2, Label="Z", NormSystematic=0.04
 W   : WJetsToLNu :  xsec; FillColor=ROOT.kRed+2, Label="W", NormSystematic=0.03
 Top  : TTJets_SingleLeptonFromT :  xsec; FillColor=ROOT.kGray+2, Label="Top", NormSystematic=0.09
 Top  : TTJets_SingleLeptonFromTbar :  xsec; FillColor=ROOT.kGray+2, Label="Top", NormSystematic=0.09
