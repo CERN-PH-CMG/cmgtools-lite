@@ -4,6 +4,7 @@ import ROOT
 ROOT.PyConfig.IgnoreCommandLineOptions = True
 from importlib import import_module
 from CMGTools.MonoXAnalysis.postprocessing.framework.postprocessor import PostProcessor
+from CMGTools.MonoXAnalysis.postprocessing.postproc_batch import DEFAULT_MODULES
 
 if __name__ == "__main__":
     from optparse import OptionParser
@@ -16,6 +17,7 @@ if __name__ == "__main__":
     parser.add_option("--full",  dest="friend", action="store_false",  default=False, help="Produce full trees in output (this is the current default)")
     parser.add_option("--noout",  dest="noOut", action="store_true",  default=False, help="Do not produce output, just run modules")
     parser.add_option("--justcount",   dest="justcount", default=False, action="store_true",  help="Just report the number of selected events") 
+    parser.add_option("--max-entries",   dest="maxEntries", default=1000000000, type=int,  help="Max entries to process (from the first)") 
     parser.add_option("-I", "--import", dest="imports",  type="string", default=[], action="append", nargs=2, help="Import modules (python package, comma-separated list of ");
     parser.add_option("-z", "--compression",  dest="compression", type="string", default=("LZMA:9"), help="Compression: none, or (algo):(level) ")
 
@@ -30,7 +32,8 @@ if __name__ == "__main__":
     outdir = args[0]; args = args[1:]
 
     modules = []
-    for mod, names in options.imports: 
+    imports = DEFAULT_MODULES + options.imports
+    for mod, names in imports: 
         import_module(mod)
         obj = sys.modules[mod]
         selnames = names.split(",")
@@ -42,6 +45,7 @@ if __name__ == "__main__":
     if options.noOut:
         if len(modules) == 0: 
             raise RuntimeError("Running with --noout and no modules does nothing!")
-    p=PostProcessor(outdir,args,options.cut,options.branchsel,modules,options.compression,options.friend,options.postfix,options.json,options.noOut,options.justcount)
+    evrange = xrange(options.maxEntries)
+    p=PostProcessor(outdir,args,options.cut,options.branchsel,modules,options.compression,options.friend,options.postfix,options.json,options.noOut,options.justcount,evrange)
     p.run()
 

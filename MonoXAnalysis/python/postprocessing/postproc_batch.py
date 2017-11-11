@@ -7,13 +7,20 @@ from glob import glob
 import re, pickle, math
 from CMGTools.MonoXAnalysis.postprocessing.framework.postprocessor import PostProcessor
 
+DEFAULT_MODULES = [("CMGTools.MonoXAnalysis.postprocessing.examples.puWeightProducer", "puWeight,puWeight2016BF"),
+                   ("CMGTools.MonoXAnalysis.postprocessing.examples.lepSFProducer","lepSF,trgSF"),
+                   ("CMGTools.MonoXAnalysis.postprocessing.examples.lepVarProducer","eleRelIsoEA,lepQCDAwayJet"),
+                   ("CMGTools.MonoXAnalysis.postprocessing.examples.jetReCleaner","jetReCleaner"),
+#                   ("CMGTools.MonoXAnalysis.postprocessing.examples.genFriendProducer","genQEDJets")
+                   ]
+
 if __name__ == "__main__":
     from optparse import OptionParser
     parser = OptionParser(usage="%prog [options] inputDir outputDir")
     parser.add_option("-J", "--json",  dest="json", type="string", default=None, help="Select events using this JSON file")
     parser.add_option("-C", "--cut",  dest="cut", type="string", default=None, help="Cut string")
     parser.add_option("-b", "--branch-selection",  dest="branchsel", type="string", default=None, help="Branch selection")
-    parser.add_option("--friend",  dest="friend", action="store_true", default=False, help="Produce friend trees in output (current default is to produce full trees)")
+    parser.add_option("--friend",  dest="friend", action="store_true", default=True, help="Produce friend trees in output (current default is to produce full trees)")
     parser.add_option("--full",  dest="friend", action="store_false",  default=False, help="Produce full trees in output (this is the current default)")
     parser.add_option("--noout",  dest="noOut", action="store_true",  default=False, help="Do not produce output, just run modules")
     parser.add_option("--justcount",   dest="justcount", default=False, action="store_true",  help="Just report the number of selected events") 
@@ -21,14 +28,16 @@ if __name__ == "__main__":
     parser.add_option("-z", "--compression",  dest="compression", type="string", default=("LZMA:9"), help="Compression: none, or (algo):(level) ")
     parser.add_option("-d", "--dataset", dest="datasets",  type="string", default=[], action="append", help="Process only this dataset (or dataset if specified multiple times)");
     parser.add_option("-c", "--chunk",   dest="chunks",    type="int",    default=[], action="append", help="Process only these chunks (works only if a single dataset is selected with -d)");
-    parser.add_option("-N", "--events",  dest="chunkSize", type="int",    default=500000, help="Default chunk size when splitting trees");
+    parser.add_option("-N", "--events",  dest="chunkSize", type="int",    default=2000000, help="Default chunk size when splitting trees");
     parser.add_option("-p", "--pretend", dest="pretend",   action="store_true", default=False, help="Don't run anything");
     parser.add_option("-j", "--jobs",    dest="jobs",      type="int",    default=1, help="Use N threads");
     parser.add_option("-q", "--queue",   dest="queue",     type="string", default=None, help="Run jobs on lxbatch instead of locally");
     parser.add_option("-t", "--tree",    dest="tree",      default='treeProducerWMass', help="Pattern for tree name");
     parser.add_option("--log", "--log-dir", dest="logdir", type="string", default=None, help="Directory of stdout and stderr");
-    parser.add_option("--env",   dest="env",     type="string", default="lxbatch", help="Give the environment on which you want to use the batch system (lxbatch, psi, oviedo)");
-    parser.add_option("--run",   dest="runner",     type="string", default="lxbatch_runner.sh", help="Give the runner script (default: lxbatch_runner.sh)");
+    parser.add_option("--env",   dest="env", type="string", default="lxbatch", help="Give the environment on which you want to use the batch system (lxbatch, psi, oviedo)");
+    parser.add_option("--run",   dest="runner",  type="string", default="lxbatch_runner.sh", help="Give the runner script (default: lxbatch_runner.sh)");
+    parser.add_option("--mconly", dest="mconly",  action="store_true", default=True, help="Run only on MC samples");
+    parser.add_option("-m", "--modules", dest="modules",  type="string", default=[], action="append", help="Run only these modules among the imported ones");
 
     (options, args) = parser.parse_args()
 
@@ -62,7 +71,8 @@ if __name__ == "__main__":
             short = os.path.basename(D)
             if options.datasets != []:
                 if short not in options.datasets: continue
-            data = any(x in short for x in "DoubleMu DoubleEG MuEG MuonEG SingleMu SingleEl".split())
+            data = any(x in short for x in "DoubleMu DoubleEG MuEG MuonEG SingleMuon SingleElectron".split())
+            if data and options.mconly: continue
             pckobj  = pickle.load(open(pckfile,'r'))
             counters = dict(pckobj)
             if ('Sum Weights' in counters):
@@ -85,9 +95,11 @@ if __name__ == "__main__":
                         if i not in options.chunks: continue
                     r = xrange(int(i*chunk),min(int((i+1)*chunk),entries))
                     jobs.append((short,fname,sample_nevt,"_Friend_%s.chunk%d" % (short,i),data,r,i))
+
     print "\n"
     print "I have %d taks to process" % len(jobs)
 
+    imports = DEFAULT_MODULES + options.imports
     if options.queue:
         import os, sys
 
@@ -103,8 +115,11 @@ if __name__ == "__main__":
 
         writelog = ""
         logdir   = ""
-        if options.logdir: logdir = options.logdir.rstrip("/")
-        friendPost = "".join(["  -I  %s %s  " % (mf,mn) for mf,mn in options.imports])
+        if options.logdir: 
+            logdir = options.logdir.rstrip("/")
+            if not os.path.exists(logdir):
+                os.system("mkdir -p "+logdir)
+        friendPost = ""
         if options.friend: 
             friendPost += " --friend " 
         for (name,fin,sample_nevt,fout,data,range,chunk) in jobs:
@@ -131,13 +146,15 @@ if __name__ == "__main__":
     def _runIt(myargs):
         (name,fin,sample_nevt,fout,data,range,chunk) = myargs
         modules = []
-        for mod, names in options.imports: 
+        for mod, names in imports: 
             import_module(mod)
             obj = sys.modules[mod]
             selnames = names.split(",")
             for name in dir(obj):
                 if name[0] == "_": continue
                 if name in selnames:
+                    print "Modules to run: ",options.modules,"  name = ",name
+                    if len(options.modules) and name not in options.modules: continue
                     print "Loading %s from %s " % (name, mod)
                     modules.append(getattr(obj,name)())
         if options.noOut:

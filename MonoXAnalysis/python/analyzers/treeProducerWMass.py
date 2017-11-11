@@ -30,6 +30,17 @@ wmass_globalObjects = {
             "tkMetPVTight" : NTupleObject("tkMetPVTight", fourVectorType, help="PF E_{T}^{miss} from charged candidates with Tight chs"),
 }
 
+##------------------------------------------  
+## PDFs
+##------------------------------------------  
+
+pdfsVariables = [
+        NTupleVariable("x1", lambda ev: ev.pdf_x1, help="fraction of proton momentum carried by the first parton"),
+        NTupleVariable("x2", lambda ev: ev.pdf_x2, help="fraction of proton momentum carried by the second parton"),
+        NTupleVariable("id1", lambda ev: ev.pdf_id1, int, help="id of the first parton in the proton"),
+        NTupleVariable("id2", lambda ev: ev.pdf_id2, int, help="id of the second parton in the proton"),
+        ]
+
 wmass_collections = {
             "selectedLeptons" : NTupleCollection("LepGood",  leptonTypeWMass, 8, help="Leptons after the preselection"),
             #"otherLeptons"    : NTupleCollection("LepOther", leptonTypeSusy, 8, help="Leptons after the preselection"),
@@ -40,7 +51,7 @@ wmass_collections = {
             ##------------------------------------------------
             #"ivf"       : NTupleCollection("SV",     svType, 20, help="SVs from IVF"),
             ##------------------------------------------------
-            "LHE_weights"    : NTupleCollection("LHEweight",  weightsInfoType, 1000, mcOnly=True, help="LHE weight info"),
+            #"LHE_weights"    : NTupleCollection("LHEweight",  weightsInfoType, 1000, mcOnly=True, help="LHE weight info"),
             ##------------------------------------------------
             #"genleps"         : NTupleCollection("genLep",     genParticleWithLinksType, 10, help="Generated leptons (e/mu) from W/Z decays"),                                                                                                
             #"gentauleps"      : NTupleCollection("genLepFromTau", genParticleWithLinksType, 10, help="Generated leptons (e/mu) from decays of taus from W/Z/h decays"),                                                                       

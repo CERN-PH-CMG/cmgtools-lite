@@ -9,13 +9,16 @@
 
 class WeightCalculatorFromHistogram {
  public:
-  WeightCalculatorFromHistogram() {}
+  // get the weight from the bin content of the histogram (has to be set with set histogram
+  WeightCalculatorFromHistogram(bool verbose=false) : verbose_(verbose) {}
   // get the weight from the bin content of the passed histogram
   WeightCalculatorFromHistogram(TH1 *histogram, bool verbose=false) : histogram_(histogram), verbose_(verbose) {}
   // get the weight from the bin content of the ratio hist/targethist
   WeightCalculatorFromHistogram(TH1 *hist, TH1* targethist, bool norm=true, bool fixLargeWeights=true, bool verbose=false);
   ~WeightCalculatorFromHistogram() {}
-  
+
+  void setHistogram(TH1 *histogram) { histogram_ = histogram; }
+
   float getWeight(float x, float y=0) const;
   float getWeightErr(float x, float y=0) const;
   
@@ -25,7 +28,7 @@ class WeightCalculatorFromHistogram {
   void fixLargeWeights(std::vector<float> &weights, float maxshift=0.0025,float hardmax=3);
   float checkIntegral(std::vector<float> wgt1, std::vector<float> wgt2);
 
-  TH1* histogram_;
+  TH1* histogram_ = nullptr;
   std::vector<float> refvals_,targetvals_;
   bool verbose_;
   bool norm_;
@@ -79,7 +82,11 @@ float WeightCalculatorFromHistogram::getWeightErr(float x, float y) const {
 std::vector<float> WeightCalculatorFromHistogram::loadVals(TH1 *hist, bool norm) {
   int nbins=hist->GetNcells();
   std::vector<float> vals;
-  for(int i=0; i<nbins; ++i) vals.push_back(std::max(hist->GetBinContent(i),0.));
+  for(int i=0; i<nbins; ++i) {
+    double bc=hist->GetBinContent(i);
+    double val = (i>0 && bc==0 && hist->GetBinContent(i-1)>0 && hist->GetBinContent(i+1)>0) ? 0.5*(hist->GetBinContent(i-1)+hist->GetBinContent(i+1)) : bc;
+    vals.push_back(std::max(bc,0.));
+  }
   if(verbose_) std::cout << "Normalization of " << hist->GetName() << ": " << hist->Integral() << std::endl;
   if(norm) {
     float scale = 1.0/hist->Integral();
@@ -98,8 +105,12 @@ TH1* WeightCalculatorFromHistogram::ratio(TH1 *hist, TH1* targethist, bool fixLa
   int nbins = vals.size();
   if(verbose_) std::cout << "Weights for variable " << hist->GetName() << " with a number of bins equal to " << nbins << ":" << std::endl;
   for(int i=0; i<nbins; ++i) {
-    float weight = targetvals[i] !=0 ? vals[i]/targetvals[i] : 1.;
-    if(verbose_) std::cout <<  std::setprecision(3) << weight << " ";
+    if(norm_ && fixLargeWgts) {
+      if(targetvals[i]<1e-3) targetvals[i]=0.;
+      if(vals[i]<1e-3) vals[i]=0.;
+    }
+    float weight = vals[i] !=0 ? targetvals[i]/vals[i] : 1.;
+    if(verbose_) std::cout <<  std::setprecision(4) << weight << " ";
     weights.push_back(weight);
   }
   if(verbose_) std::cout << "." << std::endl;
@@ -107,7 +118,7 @@ TH1* WeightCalculatorFromHistogram::ratio(TH1 *hist, TH1* targethist, bool fixLa
   if(verbose_) std::cout << "Final weights: " << std::endl;
   for(int i=0; i<(int)weights.size(); ++i) {
     ret->SetBinContent(i,weights[i]);
-    if(verbose_) std::cout << std::setprecision(3) << weights[i] << " ";
+    if(verbose_) std::cout << std::setprecision(4) << weights[i] << " ";
   }
   if(verbose_) std::cout << "." << std::endl;
   return ret;
