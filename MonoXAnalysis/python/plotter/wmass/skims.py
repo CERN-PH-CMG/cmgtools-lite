@@ -50,6 +50,7 @@ if __name__ == "__main__":
     cmdSkim = "python skimTrees.py "+" ".join(mcargs)+" " + outputDirSkims + OPTS
     cmdFSkimEv = " python skimFTrees.py "+outputDirSkims+" "+treeDir+"/friends "+outputDirFSkims+' -f tree_Friend -t "Friends" '
     cmdFSkimFr = " python skimFTrees.py "+outputDirSkims+" "+treeDir+"/friends "+outputDirFSkims+' -f tree_FRFriend -t "Friends" '
+    cmdFSkimTg = " python skimFTrees.py "+outputDirSkims+" "+treeDir+"/friends "+outputDirFSkims+' -f tree_TrgFriend -t "Friends" '
 
     if not options.friendOnly:
         print "Now skimming the main trees, keeping the following vars:\n",varsToKeep
@@ -60,6 +61,8 @@ if __name__ == "__main__":
         os.system(cmdFSkimEv)
         print "Now skimming the fake rate friend trees:\n"
         os.system(cmdFSkimFr)
+        print "Now skimming the trigger friend trees:\n"
+        os.system(cmdFSkimTg)
 
     print "VERY DONE\n"
 
