@@ -12,9 +12,12 @@ Use --singleEtaBin <arg> to use a single eta bin (<arg> is the maximum eta range
 Use --qcdmc to add QCD MC (true if --mu option is used)
 Use --charge [p/n] to select positive or negative leptons (default use both)
 Use --useSRtrees to use singal region trees instead of fake-rate trees (note that the selection file will have the HLT_SingleEl trigger required)
-Use --mediumWP to use medium working point for numerator selection (for electrons). Default is the tight one
-WARNING, check the ntuples you are going to use are actually present (e.g. they could be on pccmsrm29 but not on lxplus)
+Use --wp to select working point for numerator selection (for electrons). Default is the tight one, can choose tight,medium,loose (more can be defined)
+Use --fqcd-ranges to pass the ranges for mt to be used to compute FR (4 numbers separated by commas, e.g. 0,50,70,120 will use [0,50] and [70,120]
+Use --test to selectthe name of a folder (useful for tests, so that you leave the default directory for the final version). Plots will be put in plots/fake-rate/test/ (NB: for me 'plots' is a link to my website folders where I store all the plots)
+Use --mt to select which definition of mT to use pfmt, trkmt, pfmtfix, trkmtfix (default)
 
+WARNING, check the ntuples you are going to use are actually present (e.g. they could be on pccmsrm29 but not on lxplus)
 
 Then you can use pack_fake_rates_data.py, which creates the files with TH2 histogram. First argument is the output file name (give absolute path)
 Options --lep-flavour is used to select electrons or muons and it is mandatory.
@@ -27,6 +30,7 @@ python wmass/pack_fake_rates_data.py /afs/cern.ch/work/m/mciprian/w_mass_analysi
 
 Use --charge [p/n] to select positive or negative leptons (default use both)
 Use --wfake to use W_fake instead of QCD as MC (default is QCD)
+Use --inputh-path to specify the path where root files with FR are (provide full path up to the folder containing the root file) 
 
-REMEMBER to change some settings consistently with the pt,eta binning. This can be done by using options --etaBinEdges and --ptBinEdges
+REMEMBER to change some settings consistently with the pt,eta binning defined in make_fake_rates_xvars.txt. This can be done by using options --etaBinEdges and --ptBinEdges
 
