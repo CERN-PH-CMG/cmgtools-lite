@@ -110,13 +110,13 @@ if __name__ == "__main__":
     parser.add_option("--charge", dest="charge", default="", type='string', help="Select charge: p for positive, n for negative");
     parser.add_option("--wfake", dest="useWfake", action="store_true", default=False, help="Use W_fake MC instead of QCD sample")
     parser.add_option("--lep-flavour", dest="lepFlavour", type="string", default="", help="Specify lepton flavour (el,mu). This option is mandatory (default is \"\" because you have to be consistent with output file name in args[0])")
+    parser.add_option("--input-path", dest="input_path", default="", type='string', help="provide path where to find fake-rate files (if empty, 'fake-rate' will use");
     (options, args) = parser.parse_args()
     (outname) = args[0]
 
     lep = options.lepFlavour
     if lep == "":
         raise RuntimeError, "What analysis (el, mu)?? Specify as --lep-flavour <arg>"
-
 
     print outname
     outfile = ROOT.TFile.Open(outname,"RECREATE")
@@ -130,7 +130,8 @@ if __name__ == "__main__":
         # should get these from file where they are set
         # ptbins_el = [ 25,27,30,35,40,50,65,100 ]
         # ptbins_mu = [ 15,20,30,45,65,100 ]
-        ptbins_el = [ 25,30, 35,45,55,100 ]
+        # ptbins_el = [ 25,30, 35,45,55,100 ]
+        ptbins_el = [ 25,30,32,36,38,40,42,44,46,50,60 ]
         ptbins_mu = [ 25,27,30,35,45,100 ]
         etabins_el = [0, 1.479, 2.5]
         etabins_mu = [0, 1.2,   2.4]
@@ -143,6 +144,13 @@ if __name__ == "__main__":
             etabins = etabins_mu
         else: 
             raise RuntimeError, "What analysis (el, mu)?? Specify as --lep-flavour <arg>)"
+
+        print "################################"
+        print "### WARNING : READ CAREFULLY ###"
+        print "################################"
+        print "Using pt bins  --> %s" % ptbins
+        print "Using eta bins --> %s" % etabins
+        print "################################"
 
         if len(options.etaBinEdges):
             etabins = [float(binEdge) for binEdge in options.etaBinEdges.split(",")]
@@ -164,13 +172,18 @@ if __name__ == "__main__":
         if options.useWfake:
             XsQ    = [ "W_fake", "data_comb" ]
         
-        Plots="plots/fake-rate/" + str(lep)
-        if options.charge == "p":
-            Plots=Plots +"/pos"
-        elif options.charge == "n":
-            Plots=Plots +"/neg"
-        else:
-            Plots=Plots +"/comb"
+        if options.input_path == "":
+            Plots = "plots/fake-rate/" + str(lep) +"/"  
+            if options.charge == "p":
+                Plots=Plots +"pos"
+            elif options.charge == "n":
+                Plots=Plots +"neg"
+            else:
+                Plots=Plots +"comb"
+        else :
+            Plots = options.input_path 
+            if Plots.endswith("/"):
+                Plots = Plots[:-1]
 
 
         if lep=='el':
