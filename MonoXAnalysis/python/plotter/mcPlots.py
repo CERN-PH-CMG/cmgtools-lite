@@ -403,11 +403,17 @@ def doNormFit(pspec,pmap,mca,saveScales=False):
 def doRatioHists(pspec,pmap,total,totalSyst,maxRange,fixRange=False,fitRatio=None,errorsOnRef=True,ratioNums="signal",ratioDen="background",ylabel="Data/pred.",doWide=False,showStatTotLegend=False):
     numkeys = [ "data" ]
     if "data" not in pmap: 
-        if len(pmap) >= 4 and ratioDen in pmap:
+        #print str(pmap)
+        # >= 3 instead of 4 because I might have no signal process, 
+        # while I always have background as sum of everything but data (minimum two processes to make ratio of them)
+        if len(pmap) >= 3 and ratioDen in pmap:   
             numkeys = []
-            for p in pmap.iterkeys():
+            for p in pmap.iterkeys():                
                 for s in ratioNums.split(","):
-                    if re.match(s,p): 
+                    #print "p, s : %s,%s" % (p,s)
+                    # do we want a match or equality? If I have QCD in numerator but I have processes QCD and QCD_1, I will have 2 matches, and this is not what I want
+                    # if re.match(s,p): 
+                    if s==p: 
                         numkeys.append(p)
                         break
             if len(numkeys) == 0:
