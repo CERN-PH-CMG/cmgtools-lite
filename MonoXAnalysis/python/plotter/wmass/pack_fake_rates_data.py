@@ -108,9 +108,15 @@ if __name__ == "__main__":
     parser.add_option("--etaBinEdges", dest="etaBinEdges", type="string", default="", help="Give a comma separated list of lepton eta bin edges to make fit categories. Be consistent with binning used to compute fake rate")
     parser.add_option("--ptBinEdges", dest="ptBinEdges", type="string", default="", help="Give a comma separated list of lepton pt bin edges to make fit categories. Be consistent with binning used to compute fake rate")
     parser.add_option("--charge", dest="charge", default="", type='string', help="Select charge: p for positive, n for negative");
+    parser.add_option("--wfake", dest="useWfake", action="store_true", default=False, help="Use W_fake MC instead of QCD sample")
+    parser.add_option("--lep-flavour", dest="lepFlavour", type="string", default="", help="Specify lepton flavour (el,mu). This option is mandatory (default is \"\" because you have to be consistent with output file name in args[0])")
+    parser.add_option("--input-path", dest="input_path", default="", type='string', help="provide path where to find fake-rate files (if empty, 'fake-rate' will use");
     (options, args) = parser.parse_args()
     (outname) = args[0]
-    an = args[1]
+
+    lep = options.lepFlavour
+    if lep == "":
+        raise RuntimeError, "What analysis (el, mu)?? Specify as --lep-flavour <arg>"
 
     print outname
     outfile = ROOT.TFile.Open(outname,"RECREATE")
@@ -124,19 +130,27 @@ if __name__ == "__main__":
         # should get these from file where they are set
         # ptbins_el = [ 25,27,30,35,40,50,65,100 ]
         # ptbins_mu = [ 15,20,30,45,65,100 ]
-        ptbins_el = [ 25,30, 35,45,55,100 ]
+        # ptbins_el = [ 25,30, 35,45,55,100 ]
+        ptbins_el = [ 25,30,32,36,38,40,42,44,46,50,60 ]
         ptbins_mu = [ 25,27,30,35,45,100 ]
         etabins_el = [0, 1.479, 2.5]
         etabins_mu = [0, 1.2,   2.4]
        #etabins_mu = [0,  2.4]
-        if an=='e':
+        if lep=='el':
             ptbins = ptbins_el
             etabins = etabins_el
-        elif an=='mu':
+        elif lep=='mu':
             ptbins = ptbins_mu
             etabins = etabins_mu
         else: 
-            raise RuntimeError, "What analysis (e, mu)??"
+            raise RuntimeError, "What analysis (el, mu)?? Specify as --lep-flavour <arg>)"
+
+        print "################################"
+        print "### WARNING : READ CAREFULLY ###"
+        print "################################"
+        print "Using pt bins  --> %s" % ptbins
+        print "Using eta bins --> %s" % etabins
+        print "################################"
 
         if len(options.etaBinEdges):
             etabins = [float(binEdge) for binEdge in options.etaBinEdges.split(",")]
@@ -152,38 +166,39 @@ if __name__ == "__main__":
             bincenter = (etabins[bin]+etabins[bin+1])/2.0
             binrange_str = "{0:.1f}".format(etabins[bin]) + "_" + "{0:.1f}".format(etabins[bin+1])
             etaslices.append( ( bincenter, binrange_str.replace(".","") ) )
-
-        XsQ    = [ "W_fake", "data_comb" ]
+            
+        XsQ    = [ "QCD", "data_comb" ]
         Xnices = [ "MC fakes", "Data, EWK-sub." ]
-
-        if an=='e':
-            # TTH
-
-            h2d_el = [ make2D(outfile,"FR_FullSel_MVATrig_el_"+X, ptbins_el, etabins_el) for X in XsQ ]
-
-            Plots="plots/fake-rate/el"
+        if options.useWfake:
+            XsQ    = [ "W_fake", "data_comb" ]
+        
+        if options.input_path == "":
+            Plots = "plots/fake-rate/" + str(lep) +"/"  
             if options.charge == "p":
                 Plots=Plots +"pos"
             elif options.charge == "n":
                 Plots=Plots +"neg"
             else:
                 Plots=Plots +"comb"
+        else :
+            Plots = options.input_path 
+            if Plots.endswith("/"):
+                Plots = Plots[:-1]
+
+
+        if lep=='el':
+            # TTH
+
+            h2d_el = [ make2D(outfile,"FR_FullSel_el_"+X, ptbins_el, etabins_el) for X in XsQ ]
 
             #### Electrons: 
             readMany2D(XsQ, h2d_el, Plots+"/fr_sub_eta_%s_comp.root", "%s", etaslices, (25,100) )
             # Serialize
             for h in h2d_el:    outfile.WriteTObject(h)
 
-        elif an=='mu':
+        elif lep=='mu':
 
-            h2d_mu = [ make2D(outfile,"FR_FullSel_MVATrig_mu_"+X, ptbins_mu, etabins_mu) for X in XsQ ]
-            Plots="plots/fake-rate/mu"
-            if options.charge == "p":
-                Plots=Plots +"pos"
-            elif options.charge == "n":
-                Plots=Plots +"neg"
-            else:
-                Plots=Plots +"comb"
+            h2d_mu = [ make2D(outfile,"FR_FullSel_mu_"+X, ptbins_mu, etabins_mu) for X in XsQ ]
 
             #### Muons: 
             readMany2D(XsQ, h2d_mu, "plots/fake-rate/mu/fr_sub_eta_%s_comp.root", "%s", etaslices, (25,100) )
@@ -191,7 +206,7 @@ if __name__ == "__main__":
             for h in h2d_mu:    outfile.WriteTObject(h)
 
         else: 
-             raise RuntimeError, "What analysis (e, mu)??"
+             raise RuntimeError, "What analysis (el, mu)??"
 
 
         # Plot
@@ -216,4 +231,4 @@ if __name__ == "__main__":
                    stackEffs(options.outdir+"/variants_fr_%s_%s.root"%(lep,eta), None,effs,options)
                mcvariants = makeVariants(h2d[-2],h2d[-1])
                for v in mcvariants: outfile.WriteTObject(v, v.GetName())
-     outfile.ls()
+    outfile.ls()

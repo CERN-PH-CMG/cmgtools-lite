@@ -16,20 +16,22 @@ FASTTEST=''
 #FASTTEST='--max-entries 1000 '
 masses = range(mass_id_down, mass_id_down + n_mass_id)
 #masses = [19]
-T='/data1/emanuele/wmass/TREES_1LEP_53X_V3_WSKIM_V7/'
-if 'pccmsrm29' in os.environ['HOSTNAME']: T = T.replace('/data1/emanuele/wmass','/u2/emanuele')
-elif 'lxplus' in os.environ['HOSTNAME']: T = T.replace('/data1/emanuele/wmass','/afs/cern.ch/work/e/emanuele/TREES/')
-elif 'cmsrm-an' in os.environ['HOSTNAME']: T = T.replace('/data1/emanuele/wmass','/t3/users/dimarcoe/')
+# T='/data1/emanuele/wmass/TREES_1LEP_53X_V3_WSKIM_V7/'
+# if 'pccmsrm29' in os.environ['HOSTNAME']: T = T.replace('/data1/emanuele/wmass','/u2/emanuele')
+# elif 'lxplus' in os.environ['HOSTNAME']: T = T.replace('/data1/emanuele/wmass','/afs/cern.ch/work/e/emanuele/TREES/')
+# elif 'cmsrm-an' in os.environ['HOSTNAME']: T = T.replace('/data1/emanuele/wmass','/t3/users/dimarcoe/')
+T='/eos/cms/store/cmst3/user/emanuele/wmass/TREES_1LEP_80X_V2_nano/'
 print "used trees from: ",T
 J=4
 BASECONFIG="wmass/wmass_e"
 #BASECONFIG=""
 MCA=BASECONFIG+'/mca-80X-wenu.txt'
-CUTFILE=BASECONFIG+'/wenu.txt'
+CUTFILE=BASECONFIG+'/wenu_80X.txt'
 SYSTFILE=BASECONFIG+'/systsEnv.txt'
 # moved below option parser to allow their setting with options
 #VAR="mt_lu_cart(LepCorr1_pt,LepGood1_phi,w_ux,w_uy) 90,30,120"
 #VAR="LepCorr1_pt 28,36,50"
+# FIMXE: NPDFSYSTS to be made consistent with 13 TeV setup (CT10 was for 8 TeV)
 NPDFSYSTS=53 # for CT10
 
 def writePdfSystsToMCA(sample,syst,dataset,xsec,vec_weight,filename):
@@ -59,14 +61,14 @@ parser.add_option("--dry-run", dest="dryRun",    action="store_true", default=Fa
 
 if options.fitVar == "mt":
     if len(options.fitRange)>0:
-        VAR="mt_lu_cart(LepCorr1_pt,LepGood1_phi,w_ux,w_uy) " + options.fitRange
+        VAR="mt_2(met_trkPt,met_trkPhi,LepGood1_pt,LepGood1_phi) " + options.fitRange
     else:
-        VAR="mt_lu_cart(LepCorr1_pt,LepGood1_phi,w_ux,w_uy) 90,30,120"
+        VAR="mt_2(met_trkPt,met_trkPhi,LepGood1_pt,LepGood1_phi) 90,30,120"
 elif options.fitVar == "pt":
     if len(options.fitRange)>0:
-        VAR="LepCorr1_pt " + options.fitRange
+        VAR="LepGood1_pt " + options.fitRange
     else:
-        VAR="LepCorr1_pt 40,30,50"
+        VAR="LepGood1_pt 40,30,50"
 else:
     print "options.fitVar = '%s': not a valid option (use pt or mt)" % options.fitVar
 print str(VAR)
@@ -75,24 +77,26 @@ if not os.path.exists("cards/"):
     os.makedirs("cards/")
 outdir="cards/"+args[0]
 
+#FIXME: for the moment avoid this part, need to understand which weight to use
 # write systematic variations to be considered in the MCA file
 MCASYSTS=('.').join(MCA.split('.')[:-1])+"-systs.txt"
 copyfile(MCA,MCASYSTS)
-writePdfSystsToMCA("W","pdf","WJets",37509.0,"pdfWeight_CT10",MCASYSTS)
+#writePdfSystsToMCA("W","pdf","WJets",61526.7,"LHEweight_wgt",MCASYSTS)
 
 # write the complete systematics file
 SYSTFILEALL=('.').join(SYSTFILE.split('.')[:-1])+"-all.txt"
 copyfile(SYSTFILE,SYSTFILEALL)
-writePdfSystsToSystFile("W","pdf","CMS_We",SYSTFILEALL)
+#writePdfSystsToSystFile("W","pdf","CMS_We",SYSTFILEALL)
 
 fitvar = VAR.split()[0]
 x_range = (VAR.split()[1]).split(",")[-2:]
 ARGS=" ".join([MCASYSTS,CUTFILE,"'"+fitvar+"' "+VAR.split()[1],SYSTFILEALL])
 if options.queue:
     ARGS = ARGS.replace(BASECONFIG,os.getcwd()+"/"+BASECONFIG)
-OPTIONS=" -P "+T+" --s2v -j "+str(J)+" -l 19.7 -f --obj tree "+FASTTEST
+OPTIONS=" -P "+T+" --s2v -j "+str(J)+" -l "+str(luminosity)+" -f --obj tree "+FASTTEST
 if not os.path.exists(outdir): os.makedirs(outdir)
-OPTIONS+=" -F mjvars/t '{P}/friends/evVarFriend_{cname}.root' --FMC sf/t '{P}/friends/sfFriend_{cname}.root' --FMC kinvars/t '{P}/friends/kinVarFriend_{cname}.root' "
+#FIXME: no friends for the moment
+#OPTIONS+=" -F mjvars/t '{P}/friends/evVarFriend_{cname}.root' --FMC sf/t '{P}/friends/sfFriend_{cname}.root' --FMC kinvars/t '{P}/friends/kinVarFriend_{cname}.root' "
 
 print "Mass IDs that will be done: ",masses," (",mass_id_central," is the central one)"
 mass_offs = 0
