@@ -10,7 +10,6 @@ parser.add_option("--full2016data", dest="useFullData2016", default=False, actio
 parser.add_option("--singleEtaBin", dest="singleEtaBin", default=-1.0, type='float', help="Use a single eta bin (pass the upper eta boundary)");
 parser.add_option("--charge", dest="charge", default="", type='string', help="Select charge: p for positive, n for negative");
 parser.add_option("--wp", dest="workingPoint", default="tight", type='string', help="Select ID working point: tight (default), medium, loose");
-parser.add_option("--useSRtrees", dest="useSRtrees", default=False, action='store_true', help="Use trees of signal region instead of fake-rate trees (and apply HLT_SingleEl)");
 parser.add_option("--test", dest="test", default="", type='string', help="pass the name of a folder (mandatory) to store test FR plots. It is created in plots/fake-rate/test/");
 parser.add_option("--fqcd-ranges", dest="fqcd_ranges", default="0,40,50,120", type='string', help="Pass a list of 4 comma separated numbers that represents the ranges for the two mT regions to compute the fake rate");
 parser.add_option("--mt", dest="fitvar", default="trkmtfix", type='string', help="Select mT definition: pfmt, trkmt, pfmtfix, trkmtfix");
@@ -19,7 +18,6 @@ parser.add_option("--mt", dest="fitvar", default="trkmtfix", type='string', help
 useMuon = options.useMuon
 addQCDMC = options.addQCDMC  # trying to add QCD MC to graphs to be compared
 charge = str(options.charge)
-useSRtrees = options.useSRtrees
 testDir = str(options.test)
 workingPoint = options.workingPoint
 fqcd_ranges = str(options.fqcd_ranges)
@@ -53,9 +51,8 @@ if charge != "":
         print "%s is not a valid input for charge setting: use p or n" % charge
         quit()
 
-T="/eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3_FR/"  # WARNING, for the moment it is stored on eos, not in pccmsrm29 or in lxplus
-if useSRtrees:
-    T="/eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3/" 
+#T="/eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3_FR/"  # WARNING, for the moment it is stored on eos, not in pccmsrm29 or in lxplus
+T="/eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3/" 
 objName='tree' # name of TTree object in Root file, passed to option --obj in tree2yield.py
 # if 'pccmsrm29' in os.environ['HOSTNAME']: T = T.replace('/data1/emanuele/wmass','/u2/emanuele')
 # elif 'lxplus' in os.environ['HOSTNAME']: T = T.replace('/data1/emanuele/wmass','/afs/cern.ch/work/e/emanuele/TREES/')
@@ -73,12 +70,13 @@ if useFullData2016:
 J=4
 
 BASECONFIG="wmass/wmass_e"
-MCA=BASECONFIG+'/mca-qcd1l.txt'
-CUTFILE=BASECONFIG+'/qcd1l.txt'
+MCA = BASECONFIG+'/mca-80X_V3.txt'
+CUTFILE =BASECONFIG+'/qcd1l_SRtrees.txt'
 XVAR="pt_coarse"
 FITVAR=fitvar
 NUM=numForWP[str(workingPoint)]
 BARREL="00_15"; ENDCAP="15_25"; ETA="1.479";
+
 if useMuon:
     BASECONFIG="wmass/wmass_mu"
     MCA=BASECONFIG+'/mca-qcd1l_mu.txt'
@@ -88,9 +86,6 @@ if useMuon:
     NUM="MuonTightIso"
     BARREL="00_12"; ENDCAP="12_24"; ETA="1.2";
 
-if useSRtrees:
-    MCA = MCA.replace('mca-qcd1l','mca-qcd1l_SRtrees')
-    CUTFILE = CUTFILE.replace('qcd1l','qcd1l_SRtrees')
 
 OPTIONS = MCA+" "+CUTFILE+" -f -P "+T+" --obj "+objName+" --s2v -j "+str(J)+" -l "+str(luminosity)
 # no friends for the moment
@@ -109,12 +104,8 @@ if options.singleEtaBin > 0.0:
     ETA=options.singleEtaBin
 
 PBASE = "plots/fake-rate/el/"
-if useSRtrees:
-    PBASE = "plots/fake-rate/el_SRtrees/"
 if useMuon:
     PBASE = "plots/fake-rate/mu/"
-    if useSRtrees:
-        PBASE = "plots/fake-rate/mu_SRtrees/"
 if testDir != "":
     PBASE = PBASE.replace('plots/fake-rate/','plots/fake-rate/test/'+str(testDir)+'/')
 
@@ -126,14 +117,12 @@ else:
     PBASE = PBASE + "comb/"
 
 # EWKSPLIT="-p 'W_fake,W,Z,Top,DiBosons,data'"
-# check if Diboson and Top samples are present for the FR trees at 13 TeV
 EWKSPLIT="-p 'W_fake,W,Z,data'"
+EWKEXCLUDE="--xp 'W_LO,Z_LO'"
 if addQCDMC:
     EWKSPLIT="-p 'QCD,W,Z,data'"
-#if useSRtrees:
-#    EWKSPLIT = EWKSPLIT.replace('W,Z,data','W,Z,Top,DiBosons,data')
 
-MCEFF="  python wmass/dataFakeRate.py "+ OPTIONS + " " + EWKSPLIT + " --groupBy cut wmass/make_fake_rates_sels.txt wmass/make_fake_rates_xvars.txt  "
+MCEFF="  python wmass/dataFakeRate.py "+ OPTIONS + " " + EWKSPLIT + " " + EWKEXCLUDE +" --groupBy cut wmass/make_fake_rates_sels.txt wmass/make_fake_rates_xvars.txt  "
 if addQCDMC:
     MCEFF += "--sp QCD "
 else:
