@@ -13,6 +13,7 @@ parser.add_option("--wp", dest="workingPoint", default="tight", type='string', h
 parser.add_option("--test", dest="test", default="", type='string', help="pass the name of a folder (mandatory) to store test FR plots. It is created in plots/fake-rate/test/");
 parser.add_option("--fqcd-ranges", dest="fqcd_ranges", default="0,40,50,120", type='string', help="Pass a list of 4 comma separated numbers that represents the ranges for the two mT regions to compute the fake rate");
 parser.add_option("--mt", dest="fitvar", default="trkmtfix", type='string', help="Select mT definition: pfmt, trkmt, pfmtfix, trkmtfix");
+parser.add_option("--addOpts", dest="addOpts", default="", type='string', help="Options to pass some other options from outside to build the command");
 (options, args) = parser.parse_args()
 
 useMuon = options.useMuon
@@ -23,7 +24,7 @@ workingPoint = options.workingPoint
 fqcd_ranges = str(options.fqcd_ranges)
 fitvar = str(options.fitvar)
 useFullData2016 = options.useFullData2016
-
+addOpts = options.addOpts
 
 if fqcd_ranges.count(",") != 3:
     print "warning: options --fqcd-ranges requires 4 numbers separated by commas (3 commas expected), but %s was passed" % fqcd_ranges
@@ -87,7 +88,8 @@ if useMuon:
     BARREL="00_12"; ENDCAP="12_24"; ETA="1.2";
 
 
-OPTIONS = MCA+" "+CUTFILE+" -f -P "+T+" --obj "+objName+" --s2v -j "+str(J)+" -l "+str(luminosity)
+OPTIONS = MCA+" "+CUTFILE+" -f -P "+T+" --obj "+objName+" --s2v -j "+str(J)+" -l "+str(luminosity) + " " + str(addOpts)
+ 
 # no friends for the moment
 OPTIONS += ' -F Friends '+T+'/friends/tree_Friend_{cname}.root '
 OPTIONS += ' -F Friends '+T+'/friends/tree_FRFriend_{cname}.root '

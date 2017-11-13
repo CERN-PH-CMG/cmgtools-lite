@@ -11,7 +11,7 @@
 useFull2016dataset="y"
 #--------------------------
 istest="y"
-testdir="SRtrees_new/hltID_looseWP_iso0p2_noSF_trkmtfix_0_50_50_120"  # used only if istest is 'y', be as much informative as possible
+testdir="SRtrees_new/hltID_looseWP_iso0p2_noSF_trkmtfix_0_50_50_120_jetPt45"  # used only if istest is 'y', be as much informative as possible
 # by default, if this is a test we do not pack to avoid overwriting something when we just do tests
 # you can override this feature setting this flag to 'y'
 # even if you don't pack, the command you would use is printed in stdout
@@ -22,6 +22,9 @@ mtRanges="0,50,50,120"
 mtDefinition="trkmtfix"
 ######################
 ######################
+# additional cuts to change on the fly
+addOption=" -A eleKin awayJetPt 'LepGood_awayJet_pt > 45' "
+
 
 # check we are on lxplus  
 host=`echo "$HOSTNAME"`
@@ -39,7 +42,7 @@ if [[ "${istest}" == "y" ]]; then
     packdir="test/${testdir}/${frGraphDir}"
 fi
 
-cmdComputeFR="python wmass/make_fake_rates_data.py --qcdmc --wp ${WPoption} --mt ${mtDefinition} ${testoption} --fqcd-ranges ${mtRanges}"
+cmdComputeFR="python wmass/make_fake_rates_data.py --qcdmc --wp ${WPoption} --mt ${mtDefinition} ${testoption} --fqcd-ranges ${mtRanges} --addOpts \"${addOption}\" "
 if [[ "${useFull2016dataset}" == "y" ]]; then
     cmdComputeFR="${cmdComputeFR} --full2016data "
 fi
