@@ -6,6 +6,7 @@ from optparse import OptionParser
 parser = OptionParser(usage="%prog testname ")
 parser.add_option("--mu", dest="useMuon", default=False, action='store_true', help="Do fake rate for muons");
 parser.add_option("--qcdmc", dest="addQCDMC", default=False, action='store_true', help="Add QCD MC in plots (but do not subtract from data)");
+parser.add_option("--full2016data", dest="useFullData2016", default=False, action='store_true', help="Use all 2016 data (B to H, 35.5/fb). By default, only B to F are used (19.3/fb. Luminosity is automatically set depending on this choice");
 parser.add_option("--singleEtaBin", dest="singleEtaBin", default=-1.0, type='float', help="Use a single eta bin (pass the upper eta boundary)");
 parser.add_option("--charge", dest="charge", default="", type='string', help="Select charge: p for positive, n for negative");
 parser.add_option("--wp", dest="workingPoint", default="tight", type='string', help="Select ID working point: tight (default), medium, loose");
@@ -23,6 +24,7 @@ testDir = str(options.test)
 workingPoint = options.workingPoint
 fqcd_ranges = str(options.fqcd_ranges)
 fitvar = str(options.fitvar)
+useFullData2016 = options.useFullData2016
 
 
 if fqcd_ranges.count(",") != 3:
@@ -61,6 +63,13 @@ objName='tree' # name of TTree object in Root file, passed to option --obj in tr
 print "used trees from: ",T
 
 luminosity = 19.3
+datasetOption = " --pg 'data := data_B,data_C,data_D,data_E,data_F' --xp 'data_G,data_H' "
+MCweightOption = ' -W "puw2016_nTrueInt_BF(nTrueInt)*LepGood1_trgSF" '
+if useFullData2016:
+    datasetOption = " --pg 'data := data_B,data_C,data_D,data_E,data_F,data_G,data_H' "
+    luminosity = 35.5
+    MCweightOption = ' -W "puw2016_nTrueInt_36fb(nTrueInt)*LepGood1_trgSF" '
+
 J=4
 
 BASECONFIG="wmass/wmass_e"
@@ -87,11 +96,13 @@ OPTIONS = MCA+" "+CUTFILE+" -f -P "+T+" --obj "+objName+" --s2v -j "+str(J)+" -l
 # no friends for the moment
 OPTIONS += ' -F Friends '+T+'/friends/tree_Friend_{cname}.root '
 OPTIONS += ' -F Friends '+T+'/friends/tree_FRFriend_{cname}.root '
+OPTIONS += ' --FMC Friends '+T+'/friends/tree_TrgFriend_{cname}.root '  # only for MC, they have trigger scale factors
 OPTIONS += ' --fqcd-ranges %s' % fqcd_ranges.replace(","," ")
+OPTIONS += datasetOption
 
-# event weight (NB: not needed for data, and sf not good for MC since here we have fake electrons)
-# puwBF should be used, but for the moment I don't
-#OPTIONS += ' -W "puwBF" '
+# event weight (NB: not needed for data, and efficiency sf not good for MC since here we have fake electrons)
+# use PU reweighting for BF or BH
+OPTIONS += MCweightOption
 
 if options.singleEtaBin > 0.0:
     ALL="00_" + "{0:.1f}".format(options.singleEtaBin).replace(".","p")

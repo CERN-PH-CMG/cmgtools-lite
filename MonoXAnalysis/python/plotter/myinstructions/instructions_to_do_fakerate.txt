@@ -1,6 +1,8 @@
-decide if you want to use muon or electrons by setting the flag in wmass_e/make_fake_rates_data.py
+N.B.: to run the whole machinery I created the script runfakerate.sh located in ${CMSSW_BASE}/src/CMGTools/MonoXAnalysis/python/plotter
+This script is a wrapper of the python commands described below
+To access the files on eos, the script should be run from lxplus, not pccmsrm29 or other local pc
 
-Then you can do for electrons:
+The base command for electrons (you can use more options) is:
 python wmass/make_fake_rates_data.py | grep python > commands4fakeRate.sh
 that prints the commands to be used
 grep python is just needed to select only commands that run python scripts, removing all other lines
@@ -14,8 +16,9 @@ Use --charge [p/n] to select positive or negative leptons (default use both)
 Use --useSRtrees to use singal region trees instead of fake-rate trees (note that the selection file will have the HLT_SingleEl trigger required)
 Use --wp to select working point for numerator selection (for electrons). Default is the tight one, can choose tight,medium,loose (more can be defined)
 Use --fqcd-ranges to pass the ranges for mt to be used to compute FR (4 numbers separated by commas, e.g. 0,50,70,120 will use [0,50] and [70,120]
-Use --test to selectthe name of a folder (useful for tests, so that you leave the default directory for the final version). Plots will be put in plots/fake-rate/test/ (NB: for me 'plots' is a link to my website folders where I store all the plots)
+Use --test to select the name of a folder (useful for tests, so that you leave the default directory for the final version). Plots will be put in plots/fake-rate/test/ (NB: for me 'plots' is a link to my website folders where I store all the plots)
 Use --mt to select which definition of mT to use pfmt, trkmt, pfmtfix, trkmtfix (default)
+Use --full2016data to use full 2016 dataset (default is B to F). Luminosity is automatically set (35.5 for BtoH, 19.3 for BtoF)
 
 WARNING, check the ntuples you are going to use are actually present (e.g. they could be on pccmsrm29 but not on lxplus)
 
