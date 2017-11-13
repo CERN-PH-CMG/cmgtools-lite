@@ -877,7 +877,8 @@ class PlotMaker:
                 if outputDir: outputDir.WriteTObject(stack)
                 # 
                 if not makeCanvas and not self._options.printPlots: return
-                doRatio = self._options.showRatio and ('data' in pmap or (plotmode != "stack")) and ("TH2" not in total.ClassName())
+                #doRatio = self._options.showRatio and ('data' in pmap or (plotmode != "stack" ) and ("TH2" not in total.ClassName())
+                doRatio = self._options.showRatio and ("TH2" not in total.ClassName())
                 islog = pspec.hasOption('Logy'); 
                 if doRatio: ROOT.gStyle.SetPaperSize(20.,sf*(plotformat[1]+150))
                 else:       ROOT.gStyle.SetPaperSize(20.,sf*plotformat[1])
@@ -1106,7 +1107,7 @@ class PlotMaker:
                                     plot.Draw(pspec.getOption("PlotMode","COLZ"))
                                     c1.Print("%s/%s_%s.%s" % (fdir, outputName, p, ext))
                                 if "data" in pmap and "TGraph" in pmap["data"].ClassName():
-                                    #pmap["data"].SetMarkerStyle(mca.getProcessOption('data','MarkerStyle',1))
+                                    pmap["data"].SetMarkerStyle(mca.getProcessOption('data','MarkerStyle',1))
                                     pmap["data"].SetMarkerSize(pspec.getOption("MarkerSize",1.6))
                                     for p in ["signal", "background", "total"]:
                                         if p not in pmap: continue
