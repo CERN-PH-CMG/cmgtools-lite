@@ -2,6 +2,8 @@ N.B.: to run the whole machinery I created the script runfakerate.sh located in 
 This script is a wrapper of the python commands described below
 To access the files on eos, the script should be run from lxplus, not pccmsrm29 or other local pc
 
+The trees we use are the same of the signal region (we also have another set obtained with special Fake-rate triggers, but we do not use them)
+
 The base command for electrons (you can use more options) is:
 python wmass/make_fake_rates_data.py | grep python > commands4fakeRate.sh
 that prints the commands to be used
@@ -13,7 +15,6 @@ python wmass/make_fake_rates_data.py --mu | grep python > commands4fakeRate_mu.s
 Use --singleEtaBin <arg> to use a single eta bin (<arg> is the maximum eta range)
 Use --qcdmc to add QCD MC (true if --mu option is used)
 Use --charge [p/n] to select positive or negative leptons (default use both)
-Use --useSRtrees to use singal region trees instead of fake-rate trees (note that the selection file will have the HLT_SingleEl trigger required)
 Use --wp to select working point for numerator selection (for electrons). Default is the tight one, can choose tight,medium,loose (more can be defined)
 Use --fqcd-ranges to pass the ranges for mt to be used to compute FR (4 numbers separated by commas, e.g. 0,50,70,120 will use [0,50] and [70,120]
 Use --test to select the name of a folder (useful for tests, so that you leave the default directory for the final version). Plots will be put in plots/fake-rate/test/ (NB: for me 'plots' is a link to my website folders where I store all the plots)
