@@ -5,6 +5,9 @@
 # selection and mca of fake rate to see how plots look like
 
 echo ""
+
+# first, choose which of the three analysis you want to run (plots for computation region, application one, closure test
+# select also if you want to use data GH
 doCompRegion="y" # y or n (or any key but y for no)
 doApplRegion="y"
 doClosureTest="n"
@@ -17,7 +20,7 @@ mcafile="mca-80X_V3.txt"
 cutfile="qcd1l_SRtrees.txt"
 plotfile="test_plots.txt"
 #excludeprocesses="Z_LO,W_LO,Z,Top,DiBosons"
-excludeprocesses="Z_LO,W_LO" # decide whether to use NLO (amc@NLO) or LO (MadGraph) MC, non both! 
+excludeprocesses="Z_LO,W_LO" # decide whether to use NLO (amc@NLO) or LO (MadGraph) MC, non both! In case you can add other samples (Top, Dibosons) to speed up things
 maxentries="2000000000" # max int number is > 2*10^9
 #maxentries="100"
 outdirComp="full2016dataBH_puAndTrgSf"
