@@ -1,8 +1,11 @@
+rho   : rho         : 40,0.,40. ; XTitle="#rho [GeV]", Legend='TR'
 nvtx  : nVert       : 40,0.5,40.5 ; XTitle="N_{vtx}", Legend='TR'
 mZ1   : mZ1         : 60,75,105  ; XTitle="m(e^{+}e^{-})  [GeV]", Legend='TL', IncludeOverflows=False
 z_mll : mass_2(LepGood1_pt,LepGood1_eta,LepGood1_phi,0.5e-3,LepGood2_pt,LepGood2_eta,LepGood2_phi,0.5e-3) : 60,75,105  ; XTitle="calib m(e^{+}e^{-})  [GeV]", Legend='TL', IncludeOverflows=False
+eta1  : LepGood1_eta : 100,-2.5,2.5 ; XTitle="#eta leading", Legend='TL', IncludeOverflows=False
+eta2  : LepGood2_eta : 100,-2.5,2.5 ; XTitle="#eta trailing", Legend='TL', IncludeOverflows=False
 pt1   : LepGood1_pt : 90,30,75 ; XTitle="p_{T}^{1} [GeV]", Legend='TR', IncludeOverflows=False
-pt2   : LepGood2_pt : 60,25,55 ; XTitle="p_{T}^{1} [GeV]", Legend='TR', IncludeOverflows=False
+pt2   : LepGood2_pt : 60,20,55 ; XTitle="p_{T}^{1} [GeV]", Legend='TR', IncludeOverflows=False
 ptZ   : pt_2(LepGood1_pt,LepGood1_phi,LepGood2_pt,LepGood2_phi) : 100,0,50 ; XTitle="p_{T}^{Z} [GeV]", Legend='TR', IncludeOverflows=False
 scaledptZ : pt_2(LepGood1_pt,LepGood1_phi,LepGood2_pt,LepGood2_phi)/mass_2(LepGood1_pt,LepGood1_eta,LepGood1_phi,0.5e-3,LepGood2_pt,LepGood2_eta,LepGood2_phi,0.5e-3)*91.1876 : 100,0,50 ; XTitle="scaled p_{T}^{Z} [GeV]", Legend='TR', IncludeOverflows=False
 #costheta_cs : costheta_cs : 50,-1,1 ; XTitle="cos #theta_{CS}", Legend='TR'
