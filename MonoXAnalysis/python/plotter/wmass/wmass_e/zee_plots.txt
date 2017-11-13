@@ -1,19 +1,17 @@
-nvtx  : nVert       : 40,0.5,40.5 ; XTitle="N_{vtx}", Legend='TR'
-mZ1   : mZ1         : 60,75,105  ; XTitle="m(e^{+}e^{-})  [GeV]", Legend='TL', IncludeOverflows=False
-z_mll : mass_2(LepGood1_pt,LepGood1_eta,LepGood1_phi,0.5e-3,LepGood2_pt,LepGood2_eta,LepGood2_phi,0.5e-3) : 60,75,105  ; XTitle="calib m(e^{+}e^{-})  [GeV]", Legend='TL', IncludeOverflows=False
-pt1   : LepGood1_pt : 90,30,75 ; XTitle="p_{T}^{1} [GeV]", Legend='TR', IncludeOverflows=False
-pt2   : LepGood2_pt : 60,25,55 ; XTitle="p_{T}^{1} [GeV]", Legend='TR', IncludeOverflows=False
-ptZ   : pt_2(LepGood1_pt,LepGood1_phi,LepGood2_pt,LepGood2_phi) : 100,0,50 ; XTitle="p_{T}^{Z} [GeV]", Legend='TR', IncludeOverflows=False
-scaledptZ : pt_2(LepGood1_pt,LepGood1_phi,LepGood2_pt,LepGood2_phi)/mass_2(LepGood1_pt,LepGood1_eta,LepGood1_phi,0.5e-3,LepGood2_pt,LepGood2_eta,LepGood2_phi,0.5e-3)*91.1876 : 100,0,50 ; XTitle="scaled p_{T}^{Z} [GeV]", Legend='TR', IncludeOverflows=False
-#costheta_cs : costheta_cs : 50,-1,1 ; XTitle="cos #theta_{CS}", Legend='TR'
-#phi_cs : phi_cs : 50,0,6.2831853 ; XTitle="#phi_{CS}", Legend='TR'
-#sumAiPi : 1 + costheta_cs*costheta_cs + AP[0] + AP[1] + AP[2] + AP[3] + AP[4] : 50,0.98,1.7 ; XTitle="1+cos^{2} #theta_{CS}+#sum_{i} A_{i}P_{i}", Legend='TR'
-#recoil: Hypot(z_ux,z_uy) : 50,0,50 ; XTitle="transverse recoil [GeV]", Legend='TR', IncludeOverflows=False
-#pfmet: met_pt : 60,20,80 ; XTitle="PF E_{T}^{miss} [GeV]", Legend='TR', IncludeOverflows=False
-#tkmet: tkmet_pt : 40,20,60 ; XTitle="charged PF E_{T}^{miss} [GeV]", Legend='TR', IncludeOverflows=False
-#y_vs_ctheta : z_y\:costheta_cs : 50,-1,1,20,0,1.8 ; XTitle="cos #theta_{CS}", YTitle="|y(Z)|", Legend='TR'
-#y_vs_phi : z_y\:phi_cs : 50,0,6.2831853,20,0,1.8 ; XTitle="#phi_{CS}", YTitle="|y(Z)|", Legend='TR'
-#y_vs_sumAiPi : z_y\:1 + costheta_cs*costheta_cs + AP[0] + AP[1] + AP[2] + AP[3] + AP[4] : [0,1.02,1.04,1.06,1.08,1.1,1.12,1.14,1.16,1.20,1.24,1.30,1.35,1.40,1.50,1.60,2.0]*[0,0.2,0.4,0.6,0.8,1.0,1.4,1.8] ; XTitle="1+cos^{2} #theta_{CS}+#sum_{i} A_{i}P_{i}", YTitle="|y(Z)|", Legend='TR'
+nVert: nVert : 40,0.5,40.5; XTitle="number of vertices", Legend='TR', IncludeOverflows=True 
+rho: rho : 80,0.5,40.5; XTitle="#rho", Legend='TR', IncludeOverflows=True 
+ptl1: LepGood1_pt: 80,25,65 ; XTitle="leading electron p_{T} [GeV]", Legend='TR', IncludeOverflows=False
+etal1: LepGood1_eta: 100,-2.5,2.5 ; XTitle="leading electron #eta", Legend='TL', IncludeOverflows=False
+zpt: pt_2(LepGood1_pt, LepGood1_phi, LepGood2_pt, LepGood2_phi ): 100,0,100 ; XTitle="Z p_{T} [GeV]", Legend='TR', IncludeOverflows=False 
+zmass: mZ1 : 81,70.0,110.5 ; XTitle="Z mass [GeV]", Legend='TR', IncludeOverflows=False 
+nJetClean: nJet_Clean : 5,-0.5,4.5 ; XTitle="number of jets (cleaned)", Legend='TR', IncludeOverflows=False
+ele1Iso04: LepGood1_relIso04EA : 40,0,0.1 ; XTitle="relative isolation 04 (ele1)", Legend='TR', IncludeOverflows=True, Logy=True
 
-#gen_ptv: GenP6StatusThree_pt[6] : 80,0,40 ; XTitle="Gen. p_{T}^{V} [GeV]", IncludeOverflows=False
-#gen_scaledptv: GenP6StatusThree_pt[6]/GenP6StatusThree_mass[6]*91.1876 : 80,0,40 ; XTitle="scaled gen. p_{T}^{V} [GeV]", IncludeOverflows=False
+pfmet: met_pt : 80,0,80 ; XTitle="PF E_{T}^{miss} [GeV]", Legend='TR', IncludeOverflows=False
+tkmet: met_trkPt : 60,0,60 ; XTitle="charged PF E_{T}^{miss} [GeV]", Legend='TR', IncludeOverflows=False
+
+ptl2: LepGood2_pt: 80,25,65 ; XTitle="trailing electron p_{T} [GeV]", Legend='TR', IncludeOverflows=False
+etal2: LepGood2_eta: 100,-2.5,2.5 ; XTitle="trailing electron #eta", Legend='TL', IncludeOverflows=False
+ele2Iso04: LepGood2_relIso04EA : 40,0,0.1 ; XTitle="relative isolation 04 (ele2)", Legend='TR', IncludeOverflows=True, Logy=True
+
+#etaZ: eta_2(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_mass,LepGood2_pt,LepGood2_eta,LepGood2_phi,LepGood2_mass): 200,-5.0,5.0 ; XTitle="Z(ee) #eta", Legend='TL', IncludeOverflows=False

@@ -61,9 +61,9 @@ def combine(graphs,mode):
 
 def attrs(filename,process):
     if "fQCD" in filename:
-        if "W_fake"    in process: return { 'Label':'W+jets MC',         'Color':ROOT.kPink-2, '#':0, 'key':'W_fake'       }
-        if "data_fqcd" in process: return { 'Label':'Data EWK-subtracted', 'Color':ROOT.kGray+2, '#':4, 'key':'data_fqcd' }
-        if "QCD"       in process: return { 'Label':'QCD MC', 'Color':ROOT.kBlue, '#':0, 'key':'QCD' }
+        if "W_fake"    in process: return { 'Label':'W+jets MC',         'Color':ROOT.kBlue, '#':0, 'key':'W_fake'       }
+        if "data_fqcd" in process: return { 'Label':'Data EWK-subtracted', 'Color':ROOT.kRed, '#':4, 'key':'data_fqcd' }
+        if "QCD"       in process: return { 'Label':'QCD MC', 'Color':ROOT.kBlack, '#':1, 'key':'QCD' }
     else: raise RuntimeError, "No idea of the file"
     raise RuntimeError, "No idea of the process"
 
@@ -108,7 +108,7 @@ if __name__ == "__main__":
     outfile = ROOT.TFile(options.out, "RECREATE")
     ROOT.gROOT.ProcessLine(".x tdrstyle.cc")
     ROOT.gStyle.SetOptStat(0)
-    
+
     alleffs = []
     for i,arg in enumerate(args):
         filename,pattern,processes = arg.split(":")

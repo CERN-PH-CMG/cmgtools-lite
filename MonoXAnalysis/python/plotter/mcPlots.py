@@ -34,7 +34,9 @@ class PlotFile:
                 more = more.replace("\\,",";")
                 for setting in [f.strip().replace(";",",") for f in more.split(',')]:
                     if "=" in setting: 
-                        (key,val) = [f.strip() for f in setting.split("=")]
+                        # in following line, if setting has more than one '=' an error will occur, e.g., if you have XTitle="muon isolation (#DeltaR=0.4)"
+                        # therefore, split only on the first occurrence of '='
+                        (key,val) = [f.strip() for f in setting.split("=",1)]  
                         extra[key] = eval(val)
                     else: extra[setting] = True
             line = re.sub("#.*","",line) 
@@ -401,11 +403,17 @@ def doNormFit(pspec,pmap,mca,saveScales=False):
 def doRatioHists(pspec,pmap,total,totalSyst,maxRange,fixRange=False,fitRatio=None,errorsOnRef=True,ratioNums="signal",ratioDen="background",ylabel="Data/pred.",doWide=False,showStatTotLegend=False):
     numkeys = [ "data" ]
     if "data" not in pmap: 
-        if len(pmap) >= 4 and ratioDen in pmap:
+        #print str(pmap)
+        # >= 3 instead of 4 because I might have no signal process, 
+        # while I always have background as sum of everything but data (minimum two processes to make ratio of them)
+        if len(pmap) >= 3 and ratioDen in pmap:   
             numkeys = []
-            for p in pmap.iterkeys():
+            for p in pmap.iterkeys():                
                 for s in ratioNums.split(","):
-                    if re.match(s,p): 
+                    #print "p, s : %s,%s" % (p,s)
+                    # do we want a match or equality? If I have QCD in numerator but I have processes QCD and QCD_1, I will have 2 matches, and this is not what I want
+                    # if re.match(s,p): 
+                    if s==p: 
                         numkeys.append(p)
                         break
             if len(numkeys) == 0:
@@ -869,7 +877,8 @@ class PlotMaker:
                 if outputDir: outputDir.WriteTObject(stack)
                 # 
                 if not makeCanvas and not self._options.printPlots: return
-                doRatio = self._options.showRatio and ('data' in pmap or (plotmode != "stack")) and ("TH2" not in total.ClassName())
+                #doRatio = self._options.showRatio and ('data' in pmap or (plotmode != "stack" ) and ("TH2" not in total.ClassName())
+                doRatio = self._options.showRatio and ("TH2" not in total.ClassName())
                 islog = pspec.hasOption('Logy'); 
                 if doRatio: ROOT.gStyle.SetPaperSize(20.,sf*(plotformat[1]+150))
                 else:       ROOT.gStyle.SetPaperSize(20.,sf*plotformat[1])
@@ -1092,9 +1101,10 @@ class PlotMaker:
                                     plot.SetMarkerSize(pspec.getOption("MarkerSize",1))
                                     if pspec.hasOption('ZMin') and pspec.hasOption('ZMax'):
                                         plot.GetZaxis().SetRangeUser(pspec.getOption('ZMin',1.0), pspec.getOption('ZMax',1.0))
-                                    plot.SetMarkerStyle(mca.getProcessOption(p,'MarkerStyle',1))
-                                    plot.SetMarkerColor(mca.getProcessOption(p,'FillColor',ROOT.kBlack))
-                                    plot.Draw(pspec.getOption("PlotMode","COLZ TEXT45"))
+                                    # plot.SetMarkerStyle(mca.getProcessOption(p,'MarkerStyle',1))
+                                    # plot.SetMarkerColor(mca.getProcessOption(p,'FillColor',ROOT.kBlack))
+                                    #plot.Draw(pspec.getOption("PlotMode","COLZ TEXT45"))
+                                    plot.Draw(pspec.getOption("PlotMode","COLZ"))
                                     c1.Print("%s/%s_%s.%s" % (fdir, outputName, p, ext))
                                 if "data" in pmap and "TGraph" in pmap["data"].ClassName():
                                     pmap["data"].SetMarkerStyle(mca.getProcessOption('data','MarkerStyle',1))
@@ -1104,7 +1114,8 @@ class PlotMaker:
                                         plot = pmap[p]
                                         c1.SetRightMargin(0.20)
                                         plot.SetContour(100)
-                                        plot.Draw(pspec.getOption("PlotMode","COLZ TEXT45"))
+                                        #plot.Draw(pspec.getOption("PlotMode","COLZ TEXT45"))
+                                        plot.Draw(pspec.getOption("PlotMode","COLZ"))
                                         pmap["data"].Draw("P SAME")
                                         c1.Print("%s/%s_data_%s.%s" % (fdir, outputName, p, ext))
                             else:
@@ -1166,7 +1177,7 @@ def addPlotMakerOptions(parser, addAlsoMCAnalysis=True):
     parser.add_option("--wide", dest="wideplot", action="store_true", default=False, help="Draw a wide canvas")
     parser.add_option("--elist", dest="elist", action="store_true", default='auto', help="Use elist (on by default if making more than 2 plots)")
     parser.add_option("--no-elist", dest="elist", action="store_false", default='auto', help="Don't elist (which are on by default if making more than 2 plots)")
-    #if not parser.has_option("--yrange"): parser.add_option("--yrange", dest="yrange", default=None, nargs=2, type='float', help="Y axis range");
+    if not parser.has_option("--yrange"): parser.add_option("--yrange", dest="yrange", default=None, nargs=2, type='float', help="Y axis range");
     parser.add_option("--emptyStack", dest="emptyStack", action="store_true", default=False, help="Allow empty stack in order to plot, for example, only signals but no backgrounds.")
     parser.add_option("--perBin", dest="perBin", action="store_true", default=False, help="Print the contents of every bin in another txt file");
     parser.add_option("--legendHeader", dest="legendHeader", type="string", default=None, help="Put a header to the legend")
