@@ -3,12 +3,11 @@ trigger: HLT_SingleEl==1
 onelep: nLepGood == 1
 ele: abs(LepGood1_pdgId)==11
 kin accept: LepGood1_pt > 30 && abs(LepGood1_eta)<2.5
-# tight WP for ID
-cut based ID: LepGood1_tightId >= 3
-# iso for tight WP
-iso04: LepGood1_relIso04 < if3(abs(LepGood1_eta)<1.479,0.0588,0.0571)
+pfmet: met_pt > 20
+barrel: abs(LepGood1_eta)<1.479
+# loose(EB) or medium (EE) WP for ID
+cut based ID: LepGood1_tightId >= if3(abs(LepGood1_eta)<1.479,1,2)
+# iso for medium-custom WP
+iso04: LepGood1_relIso04EA < if3(abs(LepGood1_eta)<1.479,0.2,0.0821)
 conVeto: LepGood1_convVeto
 lostHits: LepGood1_lostHits <= 1
-pfmet: met_pt > 20
-w_pt: pt_2(LepGood1_pt, LepGood1_phi, met_trkPt, met_trkPhi ) < 40
-w_tkmt: mt_2(met_trkPt,met_trkPhi,LepGood1_pt,LepGood1_phi) < 110
