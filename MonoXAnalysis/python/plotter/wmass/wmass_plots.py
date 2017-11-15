@@ -9,13 +9,13 @@ ODIR=sys.argv[1]
 FASTTEST=''
 #FASTTEST='--max-entries 1000 '
 
-#dowhat = "plots" 
+dowhat = "plots" 
 #dowhat = "dumps" 
-dowhat = "yields" 
+#dowhat = "yields" 
 
-TREES = "--FMC Friends '{P}/friends/tree_Friend_{cname}.root' "
-TREESONLYSKIMW = "-P /eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3_WENUSKIM_V1"
-TREESONLYSKIMZ = "-P /eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3_ZEESKIM_V1"
+TREES = "-F Friends '{P}/friends/tree_Friend_{cname}.root' "
+TREESONLYSKIMW = "-P /eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3_WENUSKIM_V2"
+TREESONLYSKIMZ = "-P /eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3_ZEESKIM_V2"
 TREESONLYFULL  = "-P /eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3"
 
 def base(selection,useSkim=True):
@@ -26,18 +26,18 @@ def base(selection,useSkim=True):
         raise RuntimeError, 'Unknown selection'
 
     CORE=' '.join([TREES,TREESONLYSKIM if useSkim else TREESONLYFULL])
-    if 'pccmsrm29' in os.environ['HOSTNAME']: CORE = CORE.replace('/data1/emanuele/wmass','/u2/emanuele')
+    if 'cmsphys06' in os.environ['HOSTNAME']: CORE = CORE.replace('/eos/cms/store/group/dpg_ecal/comm_ecal/localreco/','/data1/emanuele/wmass/')
 
-    CORE+=" -f -j 4 -l 36.26 --s2v --tree treeProducerWMass --obj tree "+FASTTEST
+    CORE+=" -f -j 8 -l 35.9 --s2v "+FASTTEST
     if dowhat == "plots": CORE+=" --lspam '#bf{CMS} #it{Preliminary}' --legendWidth 0.20 --legendFontSize 0.035 --showRatio --maxRatioRange 0.75 1.25 --fixRatioRange "
 
     if selection=='wenu':
         GO="%s wmass/wmass_e/mca-80X-wenu.txt wmass/wmass_e/wenu.txt "%CORE
-        GO="%s -W 'puw*LepGood_effSF[0]'"%GO
+        GO="%s -W 'puw2016_nTrueInt_36fb(nTrueInt)*trgSF_We(LepGood1_pdgId,LepGood1_pt,LepGood1_eta,2)*leptonSF_We(LepGood1_pdgId,LepGood1_pt,LepGood1_eta)'"%GO
         if dowhat in ["plots","ntuple"]: GO+=" wmass/wmass_e/wenu_plots.txt "
     elif selection=='zee':
-        GO="%s wmass/wmass_e/mca-80X-zee.txt wmass/wmass_e/zee.txt "%CORE
-        GO="%s -W 'puw*LepGood_effSF[0]*LepGood_effSF[1]' --sp 'Z' "%GO
+        GO="%s wmass/wmass_e/mca-80X-wenu.txt wmass/wmass_e/zee.txt "%CORE
+        GO="%s -W 'puw2016_nTrueInt_36fb(nTrueInt)*trgSF_We(LepGood1_pdgId,LepGood1_pt,LepGood1_eta,2)*leptonSF_We(LepGood1_pdgId,LepGood1_pt,LepGood1_eta)*leptonSF_We(LepGood2_pdgId,LepGood2_pt,LepGood2_eta)' --sp 'Z' "%GO
         if dowhat in ["plots","ntuple"]: GO+=" wmass/wmass_e/zee_plots.txt "
     else:
         raise RuntimeError, 'Unknown selection'
@@ -78,16 +78,17 @@ if __name__ == '__main__':
     x=""
     if 'zee' in torun:
         x = base('zee')
-        if '_ebeb' in torun: x = add(x,"-A alwaystrue ebeb 'max(abs(LepGood1_eta),abs(LepGood2_eta))<1.44'  --scaleSigToData --sP 'z_mll,mZ1' ")
-        if '_notebeb' in torun: x = add(x,"-A alwaystrue notebeb 'max(abs(LepGood1_eta),abs(LepGood2_eta))>1.57' --scaleSigToData --sP 'z_mll,mZ1' ")
-        if '_gg' in torun: x = add(x,"-A alwaystrue goldgold 'min(LepGood1_r9,LepGood2_r9)>0.94' --scaleSigToData --sP 'z_mll,mZ1' ")
-        if '_notgg' in torun: x = add(x,"-A alwaystrue notgoldgold 'min(LepGood1_r9,LepGood2_r9)<0.94' --scaleSigToData --sP 'z_mll,mZ1' ")
-        if '_w_reweight' in torun and dowhat=="plots": x = add(x,"--sP 'z_mll,pt1,pt2,ptZ,scaledptZ,costheta_cs,phi_cs,sumAiPi,y_vs_ctheta,y_vs_phi,y_vs_sumAiPi' ")
-        if '_genpt' in torun: x = add(x,"--sP 'gen_ptv,gen_scaledptv' --xp 'data' -p 'Z' ")
+        if '_incl' in torun: x = add(x," --sP 'etal1,etal2' ")
+        if '_ebeb' in torun: x = add(x,"-A alwaystrue ebeb 'max(abs(LepGood1_eta),abs(LepGood2_eta))<1.44'  --sP 'zmass,ptl1,ptl2,trkmet,zpt' ")
+        if '_notebeb' in torun: x = add(x,"-A alwaystrue notebeb 'max(abs(LepGood1_eta),abs(LepGood2_eta))>1.57' --sP 'zmass,ptl1,ptl2,trkmet,zpt' ")
+        if '_gg' in torun: x = add(x,"-A alwaystrue goldgold 'min(LepGood1_r9,LepGood2_r9)>0.94' --sP 'zmass' ")
+        if '_notgg' in torun: x = add(x,"-A alwaystrue notgoldgold 'min(LepGood1_r9,LepGood2_r9)<0.94' --sP 'zmass' ")
+        #if '_w_reweight' in torun and dowhat=="plots": x = add(x,"--sP 'z_mll,pt1,pt2,ptZ,scaledptZ,costheta_cs,phi_cs,sumAiPi,y_vs_ctheta,y_vs_phi,y_vs_sumAiPi' ")
+        #if '_genpt' in torun: x = add(x,"--sP 'gen_ptv,gen_scaledptv' --xp 'data' -p 'Z' ")
     elif 'wenu' in torun:
         x = base('wenu')
-        if '_w_reweight' in torun: x = x.replace("-W 'puw*SF_LepTight_1l'","-W 'puw*SF_LepTight_1l*zpt_w*aipi_w'")
-        if '_genpt' in torun: x = add(x,"--sP 'gen_ptv,gen_scaledptv' --xp 'data' -p 'W' ")
+        #if '_w_reweight' in torun: x = x.replace("-W 'puw*SF_LepTight_1l'","-W 'puw*SF_LepTight_1l*zpt_w*aipi_w'")
+        #if '_genpt' in torun: x = add(x,"--sP 'gen_ptv,gen_scaledptv' --xp 'data' -p 'W' ")
         
     plots = [] # if empty, to all the ones of the txt file
     if "gen" in torun: noplots = []
