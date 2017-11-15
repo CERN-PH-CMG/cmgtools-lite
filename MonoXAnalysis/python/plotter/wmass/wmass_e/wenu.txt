@@ -11,3 +11,4 @@ cut based ID: LepGood1_tightId >= if3(abs(LepGood1_eta)<1.479,1,2)
 iso04: LepGood1_relIso04EA < if3(abs(LepGood1_eta)<1.479,0.2,0.0821)
 conVeto: LepGood1_convVeto
 lostHits: LepGood1_lostHits <= 1
+pfmet: met_pt > 20
