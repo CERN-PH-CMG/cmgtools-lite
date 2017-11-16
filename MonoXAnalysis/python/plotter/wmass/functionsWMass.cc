@@ -49,6 +49,27 @@ TH2F *_histo_eltrg_leptonSF_2D = NULL;
 TFile *_file_eltrg_leptonSF_1D = NULL;
 TH1F *_histo_eltrg_leptonSF_1D = NULL;
 
+float _get_electronSF_trg_top(int pdgid, float pt, float eta, int ndim, float var) {
+
+  if (!_histo_eltrg_leptonSF_2D) {
+    _file_eltrg_leptonSF_2D = new TFile("../postprocessing/data/leptonSF/el_trg/HLT_Ele32_eta2p1_WPTight_Gsf_FullRunRange.root","read");
+    _histo_eltrg_leptonSF_2D = (TH2F*)(_file_eltrg_leptonSF_2D->Get("SF"));
+  }
+
+  if(abs(pdgid)==11) {
+    TH2F *hist = _histo_eltrg_leptonSF_2D;
+    int etabin = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(eta)));
+    int ptbin  = std::max(1, std::min(hist->GetNbinsY(), hist->GetYaxis()->FindBin(pt)));
+    float out = hist->GetBinContent(etabin,ptbin)+var*hist->GetBinError(etabin,ptbin);
+    return out;
+  }
+
+  std::cout << "ERROR Trg SF" << std::endl;
+  std::abort();
+  return -999;
+  
+}
+
 float _get_electronSF_trg(int pdgid, float pt, float eta, int ndim, float var) {
 
   if (!_histo_eltrg_leptonSF_2D) {
@@ -89,7 +110,7 @@ float _get_electronSF_trg(int pdgid, float pt, float eta, int ndim, float var) {
 
 }
 
-float leptonSF_We(int pdgid, float pt, float eta, float var=0){
+float leptonSF_We(int pdgid, float pt, float eta, float var=0) {
 
   float recoToTight = _get_electronSF_recoToCustomTight(pdgid,pt,eta,var);
   float res = recoToTight;
@@ -98,7 +119,7 @@ float leptonSF_We(int pdgid, float pt, float eta, float var=0){
 
 }
 
-float trgSF_We(int pdgid, float pt, float eta, int ndim, float var=0){
+float trgSF_We(int pdgid, float pt, float eta, int ndim, float var=0) {
 
   float trg = _get_electronSF_trg(pdgid,pt,eta,ndim,var);
   float res = trg;
