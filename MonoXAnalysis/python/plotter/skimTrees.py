@@ -153,7 +153,7 @@ if __name__ == "__main__":
         cmdargs = [x for x in sys.argv[1:] if x not in ['-q',options.queue]]
         strargs=""
         for a in cmdargs: # join do not preserve " or '
-            if "{P}" in a: 
+            if "{P}" in a or "*" in a: 
                 a = '''"'''+a+'''"'''
             strargs += " "+a+" "
         basecmd = "{runner} {dir} {cmssw} python {self} {cmdargs}".format(
