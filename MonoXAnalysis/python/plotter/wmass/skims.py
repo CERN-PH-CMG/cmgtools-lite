@@ -45,7 +45,7 @@ if __name__ == "__main__":
     if options.varfile!=None:
         with open(options.varfile) as f:
             varsToKeep = f.read().splitlines()
-        OPTS += " --drop '*' --keep "+" --keep ".join(varsToKeep)
+        OPTS += " --dropall --keep "+" --keep ".join(varsToKeep)
     
     cmdSkim = "python skimTrees.py "+" ".join(mcargs)+" " + outputDirSkims + OPTS
     cmdFSkimEv = " python skimFTrees.py "+outputDirSkims+" "+treeDir+"/friends "+outputDirFSkims+' -f tree_Friend -t "Friends" '
