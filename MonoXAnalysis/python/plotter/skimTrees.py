@@ -96,6 +96,7 @@ def _runIt(args):
             elist.Subtract(elistveto)
             print '%d events survived vetoes'%(elist.GetN(),)
         # drop and keep branches
+        if options.dropall: mytree.SetBranchStatus("*",0)
         for drop in options.drop: mytree.SetBranchStatus(drop,0)
         for keep in options.keep: mytree.SetBranchStatus(keep,1)
         f2 = ROOT.TFile("%s/selection_eventlist.root"%myoutpath,"recreate")
@@ -117,6 +118,7 @@ def _runIt(args):
 
 def addSkimTreesOptions(parser):
     parser.add_option("-D", "--drop",  dest="drop", type="string", default=[], action="append",  help="Branches to drop, as per TTree::SetBranchStatus") 
+    parser.add_option("--dropall",     dest="dropall", default=False, action="store_true",  help="Drop all the branches (to keep only the selected ones with keep)") 
     parser.add_option("-K", "--keep",  dest="keep", type="string", default=[], action="append",  help="Branches to keep, as per TTree::SetBranchStatus") 
     parser.add_option("--oldstyle",    dest="oldstyle", default=False, action="store_true",  help="Oldstyle naming (e.g. file named as <analyzer>_tree.root)") 
     parser.add_option("--vetoevents",  dest="vetoevents", type="string", default=[], action="append",  help="File containing list of events to filter out")
