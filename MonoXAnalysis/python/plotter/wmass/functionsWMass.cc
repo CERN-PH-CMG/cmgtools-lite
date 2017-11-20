@@ -1,6 +1,8 @@
 #include "TFile.h"
 #include "TH2.h"
 #include "TH2Poly.h"
+#include "TSpline.h"
+#include "TCanvas.h"
 #include "TGraphAsymmErrors.h"
 
 #include <iostream>
@@ -48,6 +50,8 @@ TFile *_file_eltrg_leptonSF_2D = NULL;
 TH2F *_histo_eltrg_leptonSF_2D = NULL;
 TFile *_file_eltrg_leptonSF_1D = NULL;
 TH1F *_histo_eltrg_leptonSF_1D = NULL;
+std::vector<TSpline3*> _splines_trg;
+bool _cache_splines = false;
 
 float _get_electronSF_trg_top(int pdgid, float pt, float eta, int ndim, float var) {
 
@@ -70,18 +74,41 @@ float _get_electronSF_trg_top(int pdgid, float pt, float eta, int ndim, float va
   
 }
 
-float _get_electronSF_trg(int pdgid, float pt, float eta, int ndim, float var) {
+void _smoothTrgSF(TH2F* hist) {
+  if(_cache_splines) return;
+  _splines_trg.clear();
+  double *x=0, *y=0;
+  //  TCanvas c1;
+  for(int ptbin=0; ptbin<hist->GetNbinsX()+1; ++ptbin) {
+    int nbinseta = hist->GetNbinsY();
+    if(x) delete x;
+    x = new double[nbinseta];
+    if(y) delete y;
+    y = new double[nbinseta];
+    for(int etabin=1; etabin<hist->GetNbinsY()+1; ++etabin) {
+      x[etabin-1] = hist->GetYaxis()->GetBinCenter(etabin);
+      y[etabin-1] = hist->GetBinContent(ptbin,etabin);
+    }
+    char name[50];
+    sprintf(name,"smooth_ptbin_%d",ptbin);
+    TSpline3 *spline = new TSpline3(name,x,y,hist->GetNbinsY());
+    // spline->Draw();
+    // c1.SaveAs((std::string(name)+".png").c_str());
+    _splines_trg.push_back(spline);
+  }
+  _cache_splines = true;
+}
+
+float _get_electronSF_trg(int pdgid, float pt, float eta, int ndim, float var, bool smooth=true) {
 
   if (!_histo_eltrg_leptonSF_2D) {
-    _file_eltrg_leptonSF_2D = new TFile("../postprocessing/data/leptonSF/el_trg/v6/sf/passHLT/eff2D.root","read");
+    _file_eltrg_leptonSF_2D = new TFile("../postprocessing/data/leptonSF/el_trg/v5/sf/passHLT/eff2D.root","read");
     _histo_eltrg_leptonSF_2D = (TH2F*)(_file_eltrg_leptonSF_2D->Get("s2c_eff"));
-    //_histo_eltrg_leptonSF_2D->Smooth(1,"k3a");
   }
 
   if (!_histo_eltrg_leptonSF_1D) {
-    _file_eltrg_leptonSF_1D = new TFile("../postprocessing/data/leptonSF/el_trg/v6/eta/passHLT/eff1D.root","read");
+    _file_eltrg_leptonSF_1D = new TFile("../postprocessing/data/leptonSF/el_trg/v5/eta/passHLT/eff1D.root","read");
     _histo_eltrg_leptonSF_1D = (TH1F*)(_file_eltrg_leptonSF_1D->Get("s1c_eff"));
-    //_histo_eltrg_leptonSF_1D->Smooth();
   }
 
   if(abs(pdgid)==11) {
@@ -90,7 +117,12 @@ float _get_electronSF_trg(int pdgid, float pt, float eta, int ndim, float var) {
       TH2F *hist = _histo_eltrg_leptonSF_2D;
       int ptbin  = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(pt))); // different convention for axes
       int etabin = std::max(1, std::min(hist->GetNbinsY(), hist->GetYaxis()->FindBin(eta)));
-      out = hist->GetBinContent(ptbin,etabin)+var*hist->GetBinError(ptbin,etabin);
+      if (!smooth) out = hist->GetBinContent(ptbin,etabin)+var*hist->GetBinError(ptbin,etabin);
+      else {
+        if(!_cache_splines) _smoothTrgSF(hist);
+        TSpline3 *spline = _splines_trg[ptbin];
+        out = spline->Eval(eta)+var*hist->GetBinError(ptbin,etabin);
+      }
       if (fabs(eta)>1.479) out = std::min(double(out),1.1); // crazy values in EE- 
       // correct way would do a weighted average of the run-dep SFs. Here something rough from slide 5 of HLT eff talk
       if (fabs(eta)>1.479) out *= 0.96;
