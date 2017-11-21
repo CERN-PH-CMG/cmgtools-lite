@@ -11,7 +11,7 @@ pfmet: met_pt : 80,0,80 ; XTitle="PF E_{T}^{miss} [GeV]", Legend='TR', IncludeOv
 tkmet: met_trkPt : 60,0,60 ; XTitle="charged PF E_{T}^{miss} [GeV]", Legend='TR', IncludeOverflows=False
 
 ptl2: LepGood2_pt: 80,25,65 ; XTitle="trailing electron p_{T} [GeV]", Legend='TR', IncludeOverflows=False
-etal2: LepGood2_eta: 30,-2.1,2.1 ; XTitle="leading electron #eta", Legend='TL', IncludeOverflows=False
+etal2: LepGood2_eta: 30,-2.1,2.1 ; XTitle="trailing electron #eta", Legend='TL', IncludeOverflows=False
 phil2: LepGood2_phi: 50,-3.14,3.14 ; XTitle="trailing electron #phi", Legend='TL', IncludeOverflows=False
 ele2Iso04: LepGood2_relIso04EA : 40,0,0.1 ; XTitle="relative isolation 04 (ele2)", Legend='TR', IncludeOverflows=True, Logy=True
 

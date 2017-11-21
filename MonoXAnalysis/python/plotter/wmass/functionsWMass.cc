@@ -7,8 +7,10 @@
 
 #include <iostream>
 
-TFile *_file_recoToTight_leptonSF_el = NULL;
-TH2F *_histo_recoToTight_leptonSF_el = NULL;
+TFile *_file_recoToMedium_leptonSF_el = NULL;
+TH2F *_histo_recoToMedium_leptonSF_el = NULL;
+TFile *_file_recoToLoose_leptonSF_el = NULL;
+TH2F *_histo_recoToLoose_leptonSF_el = NULL;
 TFile *_file_elereco_leptonSF_gsf = NULL;
 TH2F *_histo_elereco_leptonSF_gsf = NULL;
 
@@ -20,19 +22,28 @@ float _get_electronSF_recoToCustomTight(int pdgid, float pt, float eta, float va
     _histo_elereco_leptonSF_gsf->Smooth(1,"k3a");
   }
 
-  if (!_histo_recoToTight_leptonSF_el) {
-    _file_recoToTight_leptonSF_el = new TFile("../postprocessing/data/leptonSF/EGM2D_eleCutBasedMediumWP.root","read");
-    _histo_recoToTight_leptonSF_el = (TH2F*)(_file_recoToTight_leptonSF_el->Get("EGamma_SF2D"));
-    _histo_recoToTight_leptonSF_el->Smooth(1,"k3a");
+  if (!_histo_recoToMedium_leptonSF_el) {
+    _file_recoToMedium_leptonSF_el = new TFile("../postprocessing/data/leptonSF/EGM2D_eleCutBasedMediumWP.root","read");
+    _histo_recoToMedium_leptonSF_el = (TH2F*)(_file_recoToMedium_leptonSF_el->Get("EGamma_SF2D"));
+    _histo_recoToMedium_leptonSF_el->Smooth(1,"k3a");
+  }
+
+  if (!_histo_recoToLoose_leptonSF_el) {
+    _file_recoToLoose_leptonSF_el = new TFile("../postprocessing/data/leptonSF/EGM2D_eleCutBasedLooseWP.root","read");
+    _histo_recoToLoose_leptonSF_el = (TH2F*)(_file_recoToLoose_leptonSF_el->Get("EGamma_SF2D"));
+    _histo_recoToLoose_leptonSF_el->Smooth(1,"k3a");
   }
 
   if(abs(pdgid)==11) {
-    TH2F *hist = _histo_recoToTight_leptonSF_el;
-    int etabin = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(eta)));
-    int ptbin  = std::max(1, std::min(hist->GetNbinsY(), hist->GetYaxis()->FindBin(pt)));
-    float out = hist->GetBinContent(etabin,ptbin)+var*hist->GetBinError(etabin,ptbin);
+    TH2F *histMedium = _histo_recoToMedium_leptonSF_el;
+    TH2F *histLoose = _histo_recoToLoose_leptonSF_el;
+    int etabin = std::max(1, std::min(histMedium->GetNbinsX(), histMedium->GetXaxis()->FindBin(eta)));
+    int ptbin  = std::max(1, std::min(histMedium->GetNbinsY(), histMedium->GetYaxis()->FindBin(pt)));
+    float out = 0;
+    if(fabs(eta)<1.479) out = histLoose->GetBinContent(etabin,ptbin)+var*histLoose->GetBinError(etabin,ptbin);
+    else out = histMedium->GetBinContent(etabin,ptbin)+var*histMedium->GetBinError(etabin,ptbin);
 
-    hist = _histo_elereco_leptonSF_gsf;
+    TH2F *hist = _histo_elereco_leptonSF_gsf;
     etabin = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(eta)));
     ptbin  = std::max(1, std::min(hist->GetNbinsY(), hist->GetYaxis()->FindBin(pt)));
     out *= (hist->GetBinContent(etabin,ptbin)+var*(hist->GetBinError(etabin,ptbin) + 0.01*((pt<20) || (pt>80))));
@@ -142,10 +153,27 @@ float _get_electronSF_trg(int pdgid, float pt, float eta, int ndim, float var, b
 
 }
 
+TFile *_file_elofflineWP_1D = NULL;
+TH2F *_histo_elofflineWP_1D = NULL;
+
+float _get_electronSF_offlineWP_residual(float eta) {
+
+  if (!_histo_elofflineWP_1D) {
+    _file_elofflineWP_1D = new TFile("../postprocessing/data/leptonSF/el_eta_offlineWP_SF.root");
+    _histo_elofflineWP_1D = (TH2F*)(_file_elofflineWP_1D->Get("etal2_data"));
+  }
+  TH2F *hist = _histo_elofflineWP_1D;
+  int etabin = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(eta)));
+  float out = sqrt(hist->GetBinContent(etabin));
+  return out;
+
+}
+
 float leptonSF_We(int pdgid, float pt, float eta, float var=0) {
 
-  float recoToTight = _get_electronSF_recoToCustomTight(pdgid,pt,eta,var);
-  float res = recoToTight;
+  float recoToStdWP = _get_electronSF_recoToCustomTight(pdgid,pt,eta,var);
+  float stdWPToAnaWP = _get_electronSF_offlineWP_residual(eta);
+  float res = recoToStdWP*stdWPToAnaWP;
   if (res<0) {std::cout << "ERROR negative result" << std::endl; std::abort();}
   return res;
 
