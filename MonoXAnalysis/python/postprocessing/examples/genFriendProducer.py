@@ -64,7 +64,7 @@ class GenQEDJetProducer(Module):
     def __init__(self,deltaR):
         self.deltaR = deltaR
         self.vars = ("pt","eta","phi","mass","pdgId")
-        self.genwvars = ("pt","eta","phi","mass","y","costcs","phics")
+        self.genwvars = ("charge","pt","eta","phi","mass","y","costcs","phics")
         if "genQEDJetHelper_cc.so" not in ROOT.gSystem.GetLibraries():
             print "Load C++ Worker"
             ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/MonoXAnalysis/python/postprocessing/helpers/genQEDJetHelper.cc+" % os.environ['CMSSW_BASE'])
@@ -128,6 +128,7 @@ class GenQEDJetProducer(Module):
 
         if len(dressedLeptons) and len(neutrinos):
             genw = dressedLeptons[0] + neutrinos[0]
+            self.out.fillBranch("genw_charge",float(-1*np.sign(lepPdgIds[0])))
             self.out.fillBranch("genw_pt",genw.Pt())
             self.out.fillBranch("genw_eta",genw.Eta())
             self.out.fillBranch("genw_phi",genw.Phi())
