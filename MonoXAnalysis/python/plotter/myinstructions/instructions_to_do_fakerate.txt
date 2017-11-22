@@ -20,7 +20,11 @@ Use --fqcd-ranges to pass the ranges for mt to be used to compute FR (4 numbers 
 Use --test to select the name of a folder (useful for tests, so that you leave the default directory for the final version). Plots will be put in plots/fake-rate/test/ (NB: for me 'plots' is a link to my website folders where I store all the plots)
 Use --mt to select which definition of mT to use pfmt, trkmt, pfmtfix, trkmtfix (default)
 Use --full2016data to use full 2016 dataset (default is B to F). Luminosity is automatically set (35.5 for BtoH, 19.3 for BtoF)
+Use --useSkim to run fake rate on skimmed samples in TREES_1LEP_80X_V3_FRELSKIM_V2 (currently on eos)
+Use --EB-only to run fake rate only on EB (useful with --wp when you use different working points for EB and EE)
+Use --EE-only to run fake rate only on EE (useful with --wp when you use different working points for EB and EE)
 Use --addOpts to pass some options to add to the command (useful when you run the script from another one where you change settings). The argument is a string, use "" to enclose the command (important when you pass options with arguments, e.g. --addOpts " -A cut newcut 'var > threshold' " 
+
 
 WARNING, check the ntuples you are going to use are actually present (e.g. they could be on pccmsrm29 but not on lxplus)
 

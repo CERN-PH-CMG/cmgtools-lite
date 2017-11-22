@@ -1,7 +1,16 @@
+// #include <stdio.h>
+// #include <stdlib.h>
+#include <iostream>
+#include <cstdlib> //as stdlib.h                 
+#include <cstdio>
+#include <map>
+#include <string>
 #include <cmath>
 #include "TH2F.h"
 #include "Math/GenVector/LorentzVector.h"
 #include "Math/GenVector/PtEtaPhiM4D.h"
+
+using namespace std;
 
 //// UTILITY FUNCTIONS NOT IN TFORMULA ALREADY
 
@@ -155,6 +164,168 @@ float puw2016_nTrueInt_BF(int nTrueInt) { if (nTrueInt<60) return _puw2016_nTrue
 
 float _puw2016_nTrueInt_36fb[100] = {0.3505407355600995, 0.8996968628890968, 1.100322319466069, 0.9562526765089195, 1.0366251229154624, 1.0713954619016586, 0.7593488199769544, 0.47490309461978414, 0.7059895997695581, 0.8447022252423783, 0.9169159386164522, 1.0248924033173097, 1.0848877947714115, 1.1350984224561655, 1.1589888429954602, 1.169048420382294, 1.1650383018054549, 1.1507200023444994, 1.1152571438041776, 1.0739529436969637, 1.0458014000030829, 1.032500407707141, 1.0391236062781293, 1.041283620738903, 1.0412963370894526, 1.0558823002770783, 1.073481674823461, 1.0887053272606795, 1.1041701696801014, 1.123218903738397, 1.1157169321377927, 1.1052520327174429, 1.0697489590429388, 1.0144652740600584, 0.9402657069968621, 0.857142825520793, 0.7527112615290031, 0.6420618248685722, 0.5324755829715156, 0.4306470627563325, 0.33289171600176093, 0.24686361729094983, 0.17781595237914027, 0.12404411884835284, 0.08487088505600057, 0.056447805688061216, 0.03540829360547507, 0.022412461576677457, 0.013970541270658443, 0.008587896629717911, 0.004986410514292661, 0.00305102303701641, 0.001832072556146534, 0.0011570757619737708, 0.0008992999249003301, 0.0008241241729452477, 0.0008825716073180279, 0.001187003960081393, 0.0016454104270429153, 0.0022514113879764414, 0.003683196037880878, 0.005456695951503178, 0.006165248770884191, 0.007552675218762607, 0.008525338219226993, 0.008654690499815343, 0.006289068906974821, 0.00652551838513972, 0.005139581024893171, 0.005115751962934923, 0.004182527768384693, 0.004317593022028565, 0.0035749335962533355, 0.003773660372937113, 0.002618732319396435, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
 float puw2016_nTrueInt_36fb(int nTrueInt) { if (nTrueInt<100) return _puw2016_nTrueInt_36fb[nTrueInt]; else return 0; }
+
+// functions to assess if events pass given ID cuts
+// isEB can be defined as (LepGood1_etaSc)<1.479 
+// note that 2016 cut-based ID defines thesholds for EB and EE using SuperCluster eta
+// the real ID WP part is in LepGood1_tightId, LepGood1_lostHits and LepGood1_convVeto
+// dxy and dz are not part of the official ID WP, but we use the suggested thresholds anyway
+// https://twiki.cern.ch/twiki/bin/viewauth/CMS/CutBasedElectronIdentificationRun2
+// 
+// list of functions to manage IDs
+// -------------------------------
+// pass_dxy_dz
+// pass_looseIDnoIso_2016
+// pass_mediumIDnoIso_2016
+// pass_tightIDnoIso_2016
+// pass_workingPointIDnoIso_2016
+// pass_isolation_2016
+// passFakerateNumerator2016
+// isInFakerateApplicationRegion2016
+// -------------------------------
+
+
+// pass dxy and dz
+bool pass_dxy_dz(const bool& isEB = true, 
+		 const float& LepGood1_dxy = -999, 
+		 const float& LepGood1_dz = -999
+		 ) 
+{
+  
+  if (isEB) return (abs(LepGood1_dxy) < 0.05 && abs(LepGood1_dz) < 0.1);
+  else      return (abs(LepGood1_dxy) < 0.1  && abs(LepGood1_dz) < 0.2);
+
+}
+
+
+
+// loose ID no isolation
+bool pass_looseIDnoIso_2016(const bool&  isEB = true, 
+			    const int&   LepGood1_tightId = -1, 
+			    const float& LepGood1_dxy = -999, 
+			    const float& LepGood1_dz = -999,
+			    const int&   LepGood1_lostHits = -1,
+			    const int&   LepGood1_convVeto = -999
+			    ) 
+{
+
+  return (LepGood1_tightId >= 1 && pass_dxy_dz(isEB,LepGood1_dxy,LepGood1_dz) && LepGood1_lostHits <= 1 && LepGood1_convVeto == 1);
+
+}
+
+// medium ID no isolation
+bool pass_mediumIDnoIso_2016(const bool&  isEB = true, 
+			     const int&   LepGood1_tightId = -1, 
+			     const float& LepGood1_dxy = -999, 
+			     const float& LepGood1_dz = -999,
+			     const int&   LepGood1_lostHits = -1,
+			     const int&   LepGood1_convVeto = -999
+			     ) 
+{
+
+  return (LepGood1_tightId >= 2 && pass_dxy_dz(isEB,LepGood1_dxy,LepGood1_dz) && LepGood1_lostHits <= 1 && LepGood1_convVeto == 1);
+
+}
+
+// tight ID no isolation
+bool pass_tightIDnoIso_2016(const bool&  isEB = true, 
+			    const int&   LepGood1_tightId = -1, 
+			    const float& LepGood1_dxy = -999, 
+			    const float& LepGood1_dz = -999,
+			    const int&   LepGood1_lostHits = -1,
+			    const int&   LepGood1_convVeto = -999
+			    ) 
+{
+
+  return (LepGood1_tightId >= 3 && pass_dxy_dz(isEB,LepGood1_dxy,LepGood1_dz) && LepGood1_lostHits <= 1 && LepGood1_convVeto == 1);
+
+}
+
+bool pass_workingPointIDnoIso_2016(const string& workingPoint = "loose", // loose, medium, tight
+				   const bool&  isEB = true, 
+				   const int&   LepGood1_tightId = -1, 
+				   const float& LepGood1_dxy = -999, 
+				   const float& LepGood1_dz = -999,
+				   const int&   LepGood1_lostHits = -1,
+				   const int&   LepGood1_convVeto = -999
+				   ) 
+{
+
+  if      (workingPoint == "loose" ) return pass_looseIDnoIso_2016(  isEB,LepGood1_tightId,LepGood1_dxy,LepGood1_dz,LepGood1_lostHits,LepGood1_convVeto);
+  else if (workingPoint == "medium") return pass_mediumIDnoIso_2016( isEB,LepGood1_tightId,LepGood1_dxy,LepGood1_dz,LepGood1_lostHits,LepGood1_convVeto);
+  else if (workingPoint == "tight" ) return pass_tightIDnoIso_2016(  isEB,LepGood1_tightId,LepGood1_dxy,LepGood1_dz,LepGood1_lostHits,LepGood1_convVeto);
+  else {
+    cout << "Error in function pass_workingPointIDnoIso_2016(): undefined working point "<< workingPoint << ", please check. Exiting ..." <<endl;
+    exit(EXIT_FAILURE);
+  }
+
+}
+
+bool pass_isolation_2016(const string& workingPoint = "loose", // loose, medium, tight
+			 const bool&   isEB = true,
+			 const float&  LepGood1_relIso04EA = -1,
+			 const bool&   useCustomRelIso04EA = true // use user defined isolation threshold, not the E/gamma value
+			 )
+{
+
+  std::map<string,float> workingPointIsolation_EB;
+  workingPointIsolation_EB["veto"  ] = 0.175; 
+  workingPointIsolation_EB["loose" ] = 0.0994; 
+  workingPointIsolation_EB["medium"] = 0.0695; 
+  workingPointIsolation_EB["tight" ] = 0.0588; 
+  workingPointIsolation_EB["custom"] = 0.2; 
+  std::map<std::string,float> workingPointIsolation_EE;
+  workingPointIsolation_EE["veto"  ] = 0.159; 
+  workingPointIsolation_EE["loose" ] = 0.107; 
+  workingPointIsolation_EE["medium"] = 0.0821; 
+  workingPointIsolation_EE["tight" ] = 0.0571; 
+  workingPointIsolation_EE["custom"] = 0.107; 
+
+  string wp = useCustomRelIso04EA ? "custom" : workingPoint;
+  if (isEB) return LepGood1_relIso04EA < workingPointIsolation_EB[wp];
+  else      return LepGood1_relIso04EA < workingPointIsolation_EE[wp];
+
+}
+
+bool passFakerateNumerator2016(const string& workingPoint = "loose", // loose, medium, tight
+			       const bool&   isEB = true, 
+			       const int&    LepGood1_tightId = -1, 
+			       const float&  LepGood1_dxy = -999, 
+			       const float&  LepGood1_dz = -999,
+			       const int&    LepGood1_lostHits = -1,
+			       const int&    LepGood1_convVeto = -999,
+			       const float&  LepGood1_relIso04EA = -1,
+			       const bool&   useCustomRelIso04EA = true // use user defined isolation threshold, not the E/gamma value
+			       ) 
+{
+
+  return (pass_workingPointIDnoIso_2016(workingPoint,isEB,LepGood1_tightId,LepGood1_dxy,LepGood1_dz,LepGood1_lostHits,LepGood1_convVeto) 
+	  && 
+	  pass_isolation_2016(workingPoint,isEB,LepGood1_relIso04EA,useCustomRelIso04EA)
+	  );
+
+}
+
+
+bool isInFakerateApplicationRegion2016(const string& workingPoint = "loose", // loose, medium, tight
+				       const bool&   isEB = true, 
+				       const int&    LepGood1_tightId = -1, 
+				       const float&  LepGood1_dxy = -999, 
+				       const float&  LepGood1_dz = -999,
+				       const int&    LepGood1_lostHits = -1,
+				       const int&    LepGood1_convVeto = -999,
+				       const float&  LepGood1_relIso04EA = -1,
+				       const bool&   useCustomRelIso04EA = true // use user defined isolation threshold, not the E/gamma value
+				       ) 
+{
+
+  return (not passFakerateNumerator2016(workingPoint,isEB,
+					LepGood1_tightId,LepGood1_dxy,LepGood1_dz,LepGood1_lostHits,LepGood1_convVeto,
+					LepGood1_relIso04EA,useCustomRelIso04EA
+					)
+	  );
+
+}
 
 
 void functions() {}

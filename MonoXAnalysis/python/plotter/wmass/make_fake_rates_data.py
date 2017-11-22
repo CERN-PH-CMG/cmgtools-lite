@@ -13,6 +13,9 @@ parser.add_option("--wp", dest="workingPoint", default="tight", type='string', h
 parser.add_option("--test", dest="test", default="", type='string', help="pass the name of a folder (mandatory) to store test FR plots. It is created in plots/fake-rate/test/");
 parser.add_option("--fqcd-ranges", dest="fqcd_ranges", default="0,40,50,120", type='string', help="Pass a list of 4 comma separated numbers that represents the ranges for the two mT regions to compute the fake rate");
 parser.add_option("--mt", dest="fitvar", default="trkmtfix", type='string', help="Select mT definition: pfmt, trkmt, pfmtfix, trkmtfix");
+parser.add_option("--useSkim", dest="useSkim", default=False, action='store_true', help="Use skimmed sample for fake rates");
+parser.add_option("--EB-only", dest="useEBonly", default=False, action='store_true', help="Compute fake rate for EB only (useful when you use different WP for EB and EE)");
+parser.add_option("--EE-only", dest="useEEonly", default=False, action='store_true', help="Compute fake rate for EE only (useful when you use different WP for EB and EE)");
 parser.add_option("--addOpts", dest="addOpts", default="", type='string', help="Options to pass some other options from outside to build the command");
 (options, args) = parser.parse_args()
 
@@ -24,7 +27,10 @@ workingPoint = options.workingPoint
 fqcd_ranges = str(options.fqcd_ranges)
 fitvar = str(options.fitvar)
 useFullData2016 = options.useFullData2016
+useSkim = options.useSkim
 addOpts = options.addOpts
+useEBonly = options.useEBonly
+useEEonly = options.useEEonly
 
 if fqcd_ranges.count(",") != 3:
     print "warning: options --fqcd-ranges requires 4 numbers separated by commas (3 commas expected), but %s was passed" % fqcd_ranges
@@ -54,6 +60,8 @@ if charge != "":
 
 #T="/eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3_FR/"  # WARNING, for the moment it is stored on eos, not in pccmsrm29 or in lxplus
 T="/eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3/" 
+if useSkim:
+    T="/eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3_FRELSKIM_V2/"
 objName='tree' # name of TTree object in Root file, passed to option --obj in tree2yield.py
 # if 'pccmsrm29' in os.environ['HOSTNAME']: T = T.replace('/data1/emanuele/wmass','/u2/emanuele')
 # elif 'lxplus' in os.environ['HOSTNAME']: T = T.replace('/data1/emanuele/wmass','/afs/cern.ch/work/e/emanuele/TREES/')
@@ -72,6 +80,7 @@ J=4
 
 BASECONFIG="wmass/wmass_e"
 MCA = BASECONFIG+'/mca-80X_V3.txt'
+#MCA = BASECONFIG+'/mca-80X_V3_FRskim.txt' # temporary patch, it is as above, but has less Top samples
 CUTFILE =BASECONFIG+'/qcd1l_SRtrees.txt'
 XVAR="pt_coarse"
 FITVAR=fitvar
@@ -148,11 +157,11 @@ if options.singleEtaBin > 0.0:
     print "\n\n"
     print MCGO + "-i " + PBASE + "/fr_sub_eta_"+ALL+".root -o "+PBASE+"/fr_sub_eta_"+ALL+"_fQCD.root --subSyst 0.2\n" 
 else:
-    print MCEFF+" -o "+PBASE+"/fr_sub_eta_"+BARREL+".root --bare -A onelep eta 'abs(LepGood1_eta)<"+ETA+"' " + str(chargeSelection) +"\n"
-    print MCEFF+" -o "+PBASE+"/fr_sub_eta_"+ENDCAP+".root --bare -A onelep eta 'abs(LepGood1_eta)>"+ETA+"' " + str(chargeSelection) +"\n"
+    if not useEEonly: print MCEFF+" -o "+PBASE+"/fr_sub_eta_"+BARREL+".root --bare -A onelep eta 'abs(LepGood1_eta)<"+ETA+"' " + str(chargeSelection) +"\n"
+    if not useEBonly: print MCEFF+" -o "+PBASE+"/fr_sub_eta_"+ENDCAP+".root --bare -A onelep eta 'abs(LepGood1_eta)>"+ETA+"' " + str(chargeSelection) +"\n"
     print "\n\n"
-    print MCGO + "-i " + PBASE + "/fr_sub_eta_"+BARREL+".root -o "+PBASE+"/fr_sub_eta_"+BARREL+"_fQCD.root --subSyst 0.2\n" 
-    print MCGO + "-i " + PBASE + "/fr_sub_eta_"+ENDCAP+".root -o "+PBASE+"/fr_sub_eta_"+ENDCAP+"_fQCD.root --subSyst 0.2\n" 
+    if not useEEonly: print MCGO + "-i " + PBASE + "/fr_sub_eta_"+BARREL+".root -o "+PBASE+"/fr_sub_eta_"+BARREL+"_fQCD.root --subSyst 0.2\n" 
+    if not useEBonly: print MCGO + "-i " + PBASE + "/fr_sub_eta_"+ENDCAP+".root -o "+PBASE+"/fr_sub_eta_"+ENDCAP+"_fQCD.root --subSyst 0.2\n" 
 
 
 STACK="python wmass/stack_fake_rates_data.py "+RANGES+LEGEND+" --comb-mode=midpoint " # :_fit
@@ -167,4 +176,7 @@ if options.singleEtaBin > 0.0:
     print STACK + "-o "+PBASE+"fr_sub_eta_"+ALL+"_comp.root "+PBASE+"/fr_sub_eta_"+ALL+"_fQCD.root:"+PATT+":"+procToCompare
 else:
     for E in [BARREL,ENDCAP]:
-        print STACK + "-o "+PBASE+"fr_sub_eta_"+E+"_comp.root "+PBASE+"/fr_sub_eta_"+E+"_fQCD.root:"+PATT+":"+procToCompare
+        if (E == BARREL and useEEonly) or (E == ENDCAP and useEBonly):
+            pass
+        else:
+            print STACK + "-o "+PBASE+"fr_sub_eta_"+E+"_comp.root "+PBASE+"/fr_sub_eta_"+E+"_fQCD.root:"+PATT+":"+procToCompare
