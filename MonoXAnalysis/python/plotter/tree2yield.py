@@ -25,6 +25,8 @@ if "/functions_cc.so" not in ROOT.gSystem.GetLibraries():
     if not success:
         print "Loading and compiling functions.cc failed! Exit"
         quit()
+if "/wmass/functionsWMass_cc.so" not in ROOT.gSystem.GetLibraries(): 
+    ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/MonoXAnalysis/python/plotter/wmass/functionsWMass.cc+" % os.environ['CMSSW_BASE']);
     
 def scalarToVector(x):
     x0 = x

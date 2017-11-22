@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # e.g.: python wmass/skims.py wmass/wmass_e/mca-80X-wenu.txt wmass/wmass_e/skim_wenu.txt  TREES_1LEP_80X_V3 /eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3_WENUSKIM_V2 -f wmass/wmass_e/varsSkim_80X.txt
 #       python wmass/skims.py wmass/wmass_e/mca-80X-wenu.txt wmass/wmass_e/skim_zee.txt   TREES_1LEP_80X_V3 /eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3_ZEESKIM_V2  -f wmass/wmass_e/varsSkim_80X.txt
-#       python wmass/skims.py wmass/wmass_e/mca-80X-wenu.txt wmass/wmass_e/skim_fr_el.txt TREES_1LEP_80X_V3 /eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3_FRELSKIM_V2 -f wmass/wmass_e/varsSkim_80X.txt
+#       python wmass/skims.py wmass/wmass_e/mca-80X-wenu.txt wmass/wmass_e/skim_fr_el.txt TREES_1LEP_80X_V3 /eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3_FRELSKIM_V2 -f wmass/wmass_e/varsSkim_80X_fr.txt
 # add -q 8nh --log logs to run in batch 1 job/component (and --pretend to just check the command that will be run)
 import os, subprocess
 
@@ -45,7 +45,7 @@ if __name__ == "__main__":
     if options.varfile!=None:
         with open(options.varfile) as f:
             varsToKeep = f.read().splitlines()
-        OPTS += " --drop '*' --keep "+" --keep ".join(varsToKeep)
+        OPTS += " --dropall --keep "+" --keep ".join(varsToKeep)
     
     cmdSkim = "python skimTrees.py "+" ".join(mcargs)+" " + outputDirSkims + OPTS
     cmdFSkimEv = " python skimFTrees.py "+outputDirSkims+" "+treeDir+"/friends "+outputDirFSkims+' -f tree_Friend -t "Friends" '
