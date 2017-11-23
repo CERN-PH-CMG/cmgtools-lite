@@ -202,8 +202,10 @@ evRecoilAna = cfg.Analyzer(
 )
 for tag in ['lep','chs','inclusive','central','dbeta_inclusive','dbeta_central','neutral_dbeta_inclusive','neutral_dbeta_central']:
     for var in ['pt','m','ht','ptoverht','dphi2vtx','dphi2leadcharged','dphi2leadneut','dphi2all','dphi2lepsys','e1','e2']:
-        name='%s_%s'%(tag,var)
-        treeProducer.globalVariables.append(NTupleVariable(name, lambda ev: getattr(ev,name) if hasattr(ev,name) else 0., int, help="%s (recoil analysis)"%var))
+        varname='%s_%s'%(tag,var)
+        treeProducer.globalVariables.append(NTupleVariable(varname, 
+                                                           lambda ev : getattr(ev,varname),                  
+                                                           help="%s (recoil analysis)"%varname))
 
 
 #-------- SAMPLES AND TRIGGERS -----------

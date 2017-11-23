@@ -158,8 +158,8 @@ class eventRecoilAnalyzer(Analyzer):
         pcounts[N_DBETA_CENTRAL] = pcounts[N_CENTRAL]+dbeta*pcounts[CH_PU]
 
         #dump info to event
-        if leadChargedCand : setattr(event,'leading_particle_tk_p4',leadChargedCand)
-        if leadNeutCand    : setattr(event,'leading_particle_nt_p4',leadNeutCand)
+        setattr(event,'leading_particle_tk_p4',leadChargedCand)
+        setattr(event,'leading_particle_nt_p4',leadNeutCand)
         for idx,tag in [ (LEP,             'lep'), 
                          (CH_PV,           'chs'),
                          (ALL,             'inclusive'),
@@ -168,23 +168,23 @@ class eventRecoilAnalyzer(Analyzer):
                          (DBETA_CENTRAL,   'dbeta_central'),
                          (N_DBETA,         'neutral_dbeta_inclusive'),
                          (N_DBETA_CENTRAL, 'neutral_dbeta_central')]:
-            if ptsums[idx]==0: continue
-            setattr(event,tag+'_pt',p4sums[idx].pt())
-            setattr(event,tag+'_m',p4sums[idx].mass())            
-            setattr(event,tag+'_ht',ptsums[idx])
-            setattr(event,tag+'_ptoverht',p4sums[idx].pt()/ptsums[idx])
-            setattr(event,tag+'_np',pcounts[idx])
-            setattr(event,tag+'_dphi2vtx',         deltaPhi(vertex.p4().phi(),          p4sums[idx].phi()))
-            setattr(event,tag+'_dphi2leadcharged', deltaPhi(leadChargedCand.p4().phi(), p4sums[idx].phi()))
-            setattr(event,tag+'_dphi2leadneut',    deltaPhi(leadNeutCand.p4().phi(),    p4sums[idx].phi()))
-            setattr(event,tag+'_dphi2all',         deltaPhi(p4sums[ALL].phi(),          p4sums[idx].phi()))
-            setattr(event,tag+'_dphi2lepsys',      deltaPhi(lepsump4.phi(),             p4sums[idx].phi()))
+            addTrueVal=False if ptsums[idx]==0 else True
+            setattr(event,tag+'_pt',p4sums[idx].pt() if addTrueVal else 0.)
+            setattr(event,tag+'_m',p4sums[idx].mass() if addTrueVal else 0.)            
+            setattr(event,tag+'_ht',ptsums[idx] if addTrueVal else 0.)
+            setattr(event,tag+'_ptoverht',p4sums[idx].pt()/ptsums[idx] if addTrueVal else 0.)
+            setattr(event,tag+'_np',pcounts[idx] if addTrueVal else 0.)
+            setattr(event,tag+'_dphi2vtx',         deltaPhi(vertex.p4().phi(),          p4sums[idx].phi()) if addTrueVal else 0.)
+            setattr(event,tag+'_dphi2leadcharged', deltaPhi(leadChargedCand.p4().phi(), p4sums[idx].phi()) if addTrueVal else 0.)
+            setattr(event,tag+'_dphi2leadneut',    deltaPhi(leadNeutCand.p4().phi(),    p4sums[idx].phi()) if addTrueVal else 0.)
+            setattr(event,tag+'_dphi2all',         deltaPhi(p4sums[ALL].phi(),          p4sums[idx].phi()) if addTrueVal else 0.)
+            setattr(event,tag+'_dphi2lepsys',      deltaPhi(lepsump4.phi(),             p4sums[idx].phi()) if addTrueVal else 0.)
 
             #recoil corrections (if available)
             e1,e2=0.,0.
-            if genBoson:
+            if genBoson and ptsums[idx]>0:
                 e1=genBoson.pt()/ptsums[idx]
                 e2=deltaPhi(genBoson.phi(),p4sums[idx].phi())            
-                setattr(event,tag+'_e1',e1)
-                setattr(event,tag+'_e2',e2)
+            setattr(event,tag+'_e1',e1 if addTrueVal else 0.)
+            setattr(event,tag+'_e2',e2 if addTrueVal else 0.)
 
