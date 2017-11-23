@@ -127,19 +127,6 @@ ttHEventAna = cfg.Analyzer(
     minJets25 = 0,
     )
 
-from CMGTools.MonoXAnalysis.analyzers.eventRecoilAnalyzer import *
-evRecoilAna = cfg.Analyzer(
-    eventRecoilAnalyzer, 
-    name              = 'eventRecoilAnalyzer',
-    candidates        = 'packedPFCandidates',
-    candidatesTypes   = 'std::vector<pat::PackedCandidate>',
-    pvAssoc           = 0,
-    centralEta        = 2.4,
-    dbeta             = -0.5,
-    maxSelLeptons     = 2,
-    collectionPostFix = ''
-)
-
 from CMGTools.MonoXAnalysis.analyzers.treeProducerWMass import * 
 
 # Spring16 electron MVA - follow instructions on pull request for correct area setup
@@ -185,7 +172,6 @@ treeProducer.globalVariables.append(NTupleVariable("hbheFilterIso", lambda ev: e
 treeProducer.globalVariables.append(NTupleVariable("Flag_badChargedHadronFilter", lambda ev: ev.badChargedHadron, help="bad charged hadron filter decision"))
 treeProducer.globalVariables.append(NTupleVariable("Flag_badMuonFilter", lambda ev: ev.badMuon, help="bad muon filter decision"))
 
-
 #additional MET quantities
 metAna.doTkMet = True
 treeProducer.globalVariables.append(NTupleVariable("met_trkPt", lambda ev : ev.tkMet.pt() if  hasattr(ev,'tkMet') else  0, help="tkmet p_{T}"))
@@ -200,6 +186,24 @@ if not skipT1METCorr:
     metAnaScaleUp.recalibrate = "type1"
     jetAnaScaleDown.calculateType1METCorrection = True
     metAnaScaleDown.recalibrate = "type1"
+
+#recoil analyzer
+from CMGTools.MonoXAnalysis.analyzers.eventRecoilAnalyzer import *
+evRecoilAna = cfg.Analyzer(
+    eventRecoilAnalyzer, 
+    name              = 'eventRecoilAnalyzer',
+    candidates        = 'packedPFCandidates',
+    candidatesTypes   = 'std::vector<pat::PackedCandidate>',
+    mcTruth           = 'genParticles',
+    pvAssoc           = 0,
+    centralEta        = 2.4,
+    dbeta             = -0.5,
+    maxSelLeptons     = 2,
+)
+for tag in ['lep','chs','inclusive','central','dbeta_inclusive','dbeta_central','neutral_dbeta_inclusive','neutral_dbeta_central']:
+    for var in ['pt','m','ht','ptoverht','dphi2vtx','dphi2leadcharged','dphi2leadneut','dphi2all','dphi2lepsys','e1','e2']:
+        name='%s_%s'%(tag,var)
+        treeProducer.globalVariables.append(NTupleVariable(name, lambda ev: getattr(ev,name) if hasattr(ev,name) else 0., int, help="%s (recoil analysis)"%var))
 
 
 #-------- SAMPLES AND TRIGGERS -----------

@@ -1,6 +1,6 @@
 from PhysicsTools.Heppy.analyzers.core.Analyzer import Analyzer
 from CMGTools.RootTools.fwlite.AutoHandle import AutoHandle
-from PhysicsTools.HeppyCore.utils.deltar import deltaR
+from PhysicsTools.HeppyCore.utils.deltar import deltaR,deltaPhi
 
 import operator
 import itertools
@@ -11,28 +11,9 @@ import os
  
 class eventRecoilAnalyzer(Analyzer):
     '''
-    FIXME: adapt the original header from Nicolo and Olmo
-    Loop on PF candidates, skipping muons and storing useful variables.
- 
-    First declaring the auxiliar variables for tracks from primary vertex (tk), for neutral (nt).
-    Secondly, loop on the candidates to compute the variables.
-    Eventually, store the variables as attributes of the object event.
- 
-    event field needed:
-        pf_candidates
-        muons
-        muon_W
- 
-    event field added:
-        h_p4_tk
-        sum_pt_tk
-        N_tk
-        h_eta_mean_tk
-        leading_particle_tk_p4
-        m_inv_tk
-        leading12_pt_vector_sum_tk
-        leading12_pt_scalar_sum_tk
-        ratio_vec_scalar_tk
+    Analyzes the event recoil and derives the corrections in pt and phi to bring the estimators to the true vector boson recoil.
+    Loop on PF candidates, skipping selected leptons and storing useful variables.
+    Based on the original code by N. Foppiani and O. Cerri (Pisa)
     '''
 
     def __init__(self, cfg_ana, cfg_comp, looperName ):
@@ -44,14 +25,34 @@ class eventRecoilAnalyzer(Analyzer):
 
     def beginLoop(self, setup):
         super(eventRecoilAnalyzer,self).beginLoop(setup) 
+
+    def getMCtruth(self,event):
+        """loops over a gen level collection and returns the first V"""
+        try:
+            genColl=getattr(event,self.cfg_ana.mcTruth)
+            for p in genColl:
+                pid=abs(p.pdgId())
+                if pid!=24 and pid!=23: continue
+                if abs(p.eta())>6: continue
+                return p
+        except:
+            pass
+        return None
  
     def process(self, event):
  
         self.readCollections( event.input)
 
+        #primary vertex
+        if len(event.vertices)==0 : return
+        vertex=event.vertices[0]
+
+        #mc truth
+        genBoson=self.getMCtruth(event)
+
         #possible recoil estimators
-        CH_PU, CH_PV, CH_ALL, N_DBETA, N_ALL, N_DBETA_CENTRAL, N_CENTRAL, DBETA_CENTRAL, CENTRAL, DBETA_ALL, ALL = range(0,11)
-        
+        LEP, CH_PU, CH_PV, CH_ALL, N_DBETA, N_ALL, N_DBETA_CENTRAL, N_CENTRAL, DBETA_CENTRAL, CENTRAL, DBETA_ALL, ALL = range(0,12)
+                
         #lepton prefered direction
         sellepp4=[]
         lepsump4=ROOT.Math.LorentzVector(ROOT.Math.PxPyPzE4D('double'))(0,0,0,0)
@@ -119,6 +120,11 @@ class eventRecoilAnalyzer(Analyzer):
                     if not leadNeutCand or leadNeutCand.pt()<particle.pt():
                         leadNeutCand = particle 
 
+        #leptonic
+        pcounts[LEP]=len(sellepp4)
+        p4sums[LEP]=lepsump4
+        ptsums[LEP]=sum([ l.pt() for l in sellepp4 ]) if pcounts[LEP]>0 else 0.
+        
         #inclusive
         p4sums[ALL]      = p4sums[CH_ALL]+p4sums[N_ALL]
         ptsums[ALL]      = ptsums[CH_ALL]+ptsums[N_ALL]
@@ -151,30 +157,34 @@ class eventRecoilAnalyzer(Analyzer):
         ptsums[N_DBETA_CENTRAL]  = ptsums[N_CENTRAL]+dbeta*ptsums[CH_PU]
         pcounts[N_DBETA_CENTRAL] = pcounts[N_CENTRAL]+dbeta*pcounts[CH_PU]
 
-        #primary vertex
-        vertex=event.vertices[0]
-
         #dump info to event
-        pfix=self.cfg_ana.collectionPostFix
-        for idx,tag in [(CH_PV,           'chs'),
-                        (ALL,'             inclusive'),
-                        (CENTRAL,         'central'),
-                        (DBETA_ALL,       'dbeta_inclusive'),
-                        (DBETA_CENTRAL,   'dbeta_central'),
-                        (N_DBETA,         'neutral_dbeta_inclusive'),
-                        (N_DBETA_CENTRAL, 'neutral_dbeta_central')]:
-            setattr(event,tag+'_pt'+pfix,p4sums[idx].pt())
-            setattr(event,tag+'_m'+pfix,p4sums[idx].mass())            
-            setattr(event,tag+'_ht'+pfix,ptsums[idx])
-            pt_over_ht=-1 if ptsums[idx]==0 else p4sums[idx].pt()/ptsums[idx]
-            setattr(event,tag+'_ptoverht'+pfix,pt_over_ht)
-            setattr(event,tag+'_np'+pfix,pcounts[idx])
-            setattr(event,tag+'_dphi2vtx'+pfix,         ROOT.Math.VectorUtil.DeltaPhi(vertex.p4(),          p4sums[idx]))
-            setattr(event,tag+'_dphi2leadcharged'+pfix, ROOT.Math.VectorUtil.DeltaPhi(leadChargedCand.p4(), p4sums[idx]))
-            setattr(event,tag+'_dphi2leadneut'+pfix,    ROOT.Math.VectorUtil.DeltaPhi(leadNeutCand.p4(),    p4sums[idx]))
-            setattr(event,tag+'_dphi2all'+pfix,         ROOT.Math.VectorUtil.DeltaPhi(p4sums[ALL],          p4sums[idx]))
-            setattr(event,tag+'_dphi2lepsys'+pfix,      ROOT.Math.VectorUtil.DeltaPhi(lepsump4,             p4sums[idx]))
-            
-        setattr(event,'leading_particle_tk_p4',leadChargedCand)
-        setattr(event,'leading_particle_nt_p4',leadNeutCand)
+        if leadChargedCand : setattr(event,'leading_particle_tk_p4',leadChargedCand)
+        if leadNeutCand    : setattr(event,'leading_particle_nt_p4',leadNeutCand)
+        for idx,tag in [ (LEP,             'lep'), 
+                         (CH_PV,           'chs'),
+                         (ALL,             'inclusive'),
+                         (CENTRAL,         'central'),
+                         (DBETA_ALL,       'dbeta_inclusive'),
+                         (DBETA_CENTRAL,   'dbeta_central'),
+                         (N_DBETA,         'neutral_dbeta_inclusive'),
+                         (N_DBETA_CENTRAL, 'neutral_dbeta_central')]:
+            if ptsums[idx]==0: continue
+            setattr(event,tag+'_pt',p4sums[idx].pt())
+            setattr(event,tag+'_m',p4sums[idx].mass())            
+            setattr(event,tag+'_ht',ptsums[idx])
+            setattr(event,tag+'_ptoverht',p4sums[idx].pt()/ptsums[idx])
+            setattr(event,tag+'_np',pcounts[idx])
+            setattr(event,tag+'_dphi2vtx',         deltaPhi(vertex.p4().phi(),          p4sums[idx].phi()))
+            setattr(event,tag+'_dphi2leadcharged', deltaPhi(leadChargedCand.p4().phi(), p4sums[idx].phi()))
+            setattr(event,tag+'_dphi2leadneut',    deltaPhi(leadNeutCand.p4().phi(),    p4sums[idx].phi()))
+            setattr(event,tag+'_dphi2all',         deltaPhi(p4sums[ALL].phi(),          p4sums[idx].phi()))
+            setattr(event,tag+'_dphi2lepsys',      deltaPhi(lepsump4.phi(),             p4sums[idx].phi()))
+
+            #recoil corrections (if available)
+            e1,e2=0.,0.
+            if genBoson:
+                e1=genBoson.pt()/ptsums[idx]
+                e2=deltaPhi(genBoson.phi(),p4sums[idx].phi())            
+                setattr(event,tag+'_e1',e1)
+                setattr(event,tag+'_e2',e2)
 
