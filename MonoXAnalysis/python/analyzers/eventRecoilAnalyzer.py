@@ -1,5 +1,6 @@
 from PhysicsTools.Heppy.analyzers.core.Analyzer import Analyzer
 from CMGTools.RootTools.fwlite.AutoHandle import AutoHandle
+from PhysicsTools.HeppyCore.utils.deltar import deltaR
 
 import operator
 import itertools
@@ -10,6 +11,7 @@ import os
  
 class eventRecoilAnalyzer(Analyzer):
     '''
+    FIXME: adapt the original header from Nicolo and Olmo
     Loop on PF candidates, skipping muons and storing useful variables.
  
     First declaring the auxiliar variables for tracks from primary vertex (tk), for neutral (nt).
@@ -55,8 +57,7 @@ class eventRecoilAnalyzer(Analyzer):
         lepsump4=ROOT.Math.LorentzVector(ROOT.Math.PxPyPzE4D('double'))(0,0,0,0)
         for i in xrange(0,len(event.selectedLeptons)):
             if i>self.cfg_ana.maxSelLeptons : break
-            p4=event.selectedLeptons[i].p4()
-            sellepp4.append(ROOT.Math.LorentzVector(ROOT.Math.PxPyPzE4D('double'))(p4.px(),p4.py(),p4.pz(),p4.e()))
+            sellepp4.append( event.selectedLeptons[i].p4() )
             lepsump4+=sellepp4[-1]
 
         #build charged particle sums and identify leading particles
@@ -79,8 +80,7 @@ class eventRecoilAnalyzer(Analyzer):
                 #clean up wrt to selected leptons
                 veto=False
                 for l in sellepp4:
-                    print type(l),type(particle.p4())
-                    if ROOT.Math.VectorUtil.DeltaR(l,particle.p4())>0.05: continue
+                    if deltaR(l,particle.p4())>0.05: continue
                     veto=True
                     break
                 if veto: continue
@@ -163,7 +163,6 @@ class eventRecoilAnalyzer(Analyzer):
                         (DBETA_CENTRAL,   'dbeta_central'),
                         (N_DBETA,         'neutral_dbeta_inclusive'),
                         (N_DBETA_CENTRAL, 'neutral_dbeta_central')]:
-            print idx,tag
             setattr(event,tag+'_pt'+pfix,p4sums[idx].pt())
             setattr(event,tag+'_m'+pfix,p4sums[idx].mass())            
             setattr(event,tag+'_ht'+pfix,ptsums[idx])
