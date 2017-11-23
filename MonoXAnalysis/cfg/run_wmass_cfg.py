@@ -127,6 +127,19 @@ ttHEventAna = cfg.Analyzer(
     minJets25 = 0,
     )
 
+from CMGTools.MonoXAnalysis.analyzers.eventRecoilAnalyzer import *
+evRecoilAna = cfg.Analyzer(
+    eventRecoilAnalyzer, 
+    name              = 'eventRecoilAnalyzer',
+    candidates        = 'packedPFCandidates',
+    candidatesTypes   = 'std::vector<pat::PackedCandidate>',
+    pvAssoc           = 0,
+    centralEta        = 2.4,
+    dbeta             = -0.5,
+    maxSelLeptons     = 2,
+    collectionPostFix = ''
+)
+
 from CMGTools.MonoXAnalysis.analyzers.treeProducerWMass import * 
 
 # Spring16 electron MVA - follow instructions on pull request for correct area setup
@@ -411,7 +424,8 @@ if selectedEvents!="":
 #-------- SEQUENCE -----------
 
 sequence = cfg.Sequence(dmCoreSequence+[
-        ttHEventAna,
+        ttHEventAna,        
+        evRecoilAna,
         treeProducer,
     ])
 preprocessor = None
@@ -420,13 +434,10 @@ preprocessor = None
 
 test = getHeppyOption('test')
 if test == '1':
-    comp = selectedComponents[0]
-    if getHeppyOption('manyfiles'):
-        filesPerJob = max(len(comp.files)/comp.splitFactor, 1)
-        comp.files = comp.files[:filesPerJob]
-    else:
-        #comp.files = comp.files[:1]
-        comp.files = comp.files[8:9]
+    comp = WJetsToLNu_LO
+    print comp.files[8:9] 
+    comp.files = ['/eos/cms/store/cmst3/user/psilva/Wmass/WJetsMG_test/0A85AA82-45BB-E611-8ACD-001E674FB063-9552f253c2fa2ae.root'] #comp.files[8:9]
+    print comp.files
     comp.splitFactor = 1
     comp.fineSplitFactor = 1
     selectedComponents = [ comp ]
