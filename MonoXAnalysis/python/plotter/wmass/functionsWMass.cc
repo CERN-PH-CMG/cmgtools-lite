@@ -198,7 +198,6 @@ ElectronEnergyCalibratorRun2Standalone *calibratorData = NULL;
 ElectronEnergyCalibratorRun2Standalone *calibratorMC = NULL;
 
 float ptCorr(float pt, float eta, float phi, float r9, int run, int isData) {
-  std::string env = std::string(getenv("CMSSW_BASE"));
   if(!calibratorData && isData ) calibratorData = new ElectronEnergyCalibratorRun2Standalone(false,false,"CMGTools/MonoXAnalysis/python/postprocessing/data/leptonScale/el/Run2016_legacyrereco");
   if(!calibratorMC && !isData ) calibratorMC = new ElectronEnergyCalibratorRun2Standalone(true,false,"CMGTools/MonoXAnalysis/python/postprocessing/data/leptonScale/el/Run2016_legacyrereco");
   ElectronEnergyCalibratorRun2Standalone *calibrator = isData ? calibratorData : calibratorMC;
@@ -219,4 +218,24 @@ float ptCorr(float pt, float eta, float phi, float r9, int run, int isData) {
   //           << "pt,eta,phi,r9 = " << pt << " " << eta << " " << phi << " " << r9 
   //           << "  SCALE = " << scale << std::endl;
   return pt * scale;
+}
+
+TFile *_file_residualcorr_scale = NULL;
+TH2D *_histo_residualcorr_scale = NULL;
+
+float residualScale(float pt, float eta, int isData) {
+  if(!isData) return 1.;
+
+  if(!_histo_residualcorr_scale) {
+    _file_residualcorr_scale = new TFile("../postprocessing/data/leptonScale/el/plot_dm_diff.root");
+    _histo_residualcorr_scale = (TH2D*)(_file_residualcorr_scale->Get("plot_dm_diff"));
+  }
+  
+  TH2D *hist = _histo_residualcorr_scale;
+  int etabin  = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(fabs(eta))));
+  int ptbin = std::max(1, std::min(hist->GetNbinsY(), hist->GetYaxis()->FindBin(pt)));
+  
+  const float MZ0 = 91.1876;
+  float scale = 1. - hist->GetBinContent(etabin,ptbin)/MZ0/sqrt(2.);
+  return scale;
 }
