@@ -143,6 +143,21 @@ if not removeJecUncertainty:
 
 if runOnSignal: wmass_globalVariables += pdfsVariables
 
+#recoil analyzer
+from CMGTools.MonoXAnalysis.analyzers.eventRecoilAnalyzer import *
+evRecoilAna = cfg.Analyzer(
+    eventRecoilAnalyzer, 
+    name              = 'eventRecoilAnalyzer',
+    candidates        = 'packedPFCandidates',
+    candidatesTypes   = 'std::vector<pat::PackedCandidate>',
+    mcTruth           = 'genParticles',
+    pvAssoc           = 0,
+    centralEta        = 2.4,
+    dbeta             = -0.5,
+    maxSelLeptons     = 2,
+)
+wmass_globalVariables+=getEventRecoilVariablesForTree()
+
 ## Tree Producer
 treeProducer = cfg.Analyzer(
      AutoFillTreeProducer, name='treeProducerWMass',
@@ -186,28 +201,7 @@ if not skipT1METCorr:
     metAnaScaleUp.recalibrate = "type1"
     jetAnaScaleDown.calculateType1METCorrection = True
     metAnaScaleDown.recalibrate = "type1"
-
-#recoil analyzer
-from CMGTools.MonoXAnalysis.analyzers.eventRecoilAnalyzer import *
-evRecoilAna = cfg.Analyzer(
-    eventRecoilAnalyzer, 
-    name              = 'eventRecoilAnalyzer',
-    candidates        = 'packedPFCandidates',
-    candidatesTypes   = 'std::vector<pat::PackedCandidate>',
-    mcTruth           = 'genParticles',
-    pvAssoc           = 0,
-    centralEta        = 2.4,
-    dbeta             = -0.5,
-    maxSelLeptons     = 2,
-)
-for tag in ['lep','chs','inclusive','central','dbeta_inclusive','dbeta_central','neutral_dbeta_inclusive','neutral_dbeta_central']:
-    for var in ['pt','m','ht','ptoverht','dphi2vtx','dphi2leadcharged','dphi2leadneut','dphi2all','dphi2lepsys','e1','e2']:
-        varname='%s_%s'%(tag,var)
-        treeProducer.globalVariables.append(NTupleVariable(varname, 
-                                                           lambda ev : getattr(ev,varname),                  
-                                                           help="%s (recoil analysis)"%varname))
-
-
+                                         
 #-------- SAMPLES AND TRIGGERS -----------
 
 

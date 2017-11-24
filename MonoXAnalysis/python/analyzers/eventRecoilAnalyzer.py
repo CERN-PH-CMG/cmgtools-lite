@@ -188,3 +188,87 @@ class eventRecoilAnalyzer(Analyzer):
             setattr(event,tag+'_e1',e1 if addTrueVal else 0.)
             setattr(event,tag+'_e2',e2 if addTrueVal else 0.)
 
+
+def getEventRecoilVariablesForTree():
+    """ 
+    declares variables of interest 
+    in principle this could be simplified a lot with for loops and string replacement 
+    but it looks like the variables get assigned the value of the last one declared
+    """
+    from PhysicsTools.Heppy.analyzers.core.autovars import NTupleVariable as ntv
+
+    vList=[
+        ntv('lep_pt',               lambda ev : getattr(ev,'lep_pt'),               float, help=''),
+        ntv('lep_m',                lambda ev : getattr(ev,'lep_m'),                float, help=''),
+        ntv('lep_ht',               lambda ev : getattr(ev,'lep_ht'),               float, help=''),
+        ntv('lep_ptoverht',         lambda ev : getattr(ev,'lep_ptoverht'),         float, help=''),
+        ntv('lep_dphi2vtx',         lambda ev : getattr(ev,'lep_dphi2vtx'),         float, help=''),
+        ntv('lep_dphi2leadcharged', lambda ev : getattr(ev,'lep_dphi2leadcharged'), float, help=''),
+        ntv('lep_dphi2leadneut',    lambda ev : getattr(ev,'lep_dphi2leadneut'),    float, help=''),
+        ntv('lep_dphi2all',         lambda ev : getattr(ev,'lep_dphi2all'),         float, help=''),
+        ntv('lep_dphi2lepsys',      lambda ev : getattr(ev,'lep_dphi2lepsys'),      float, help=''),
+        ntv('lep_e1',               lambda ev : getattr(ev,'lep_e1'),               float, help=''),
+        ntv('lep_e2',               lambda ev : getattr(ev,'lep_e2'),               float, help=''),
+
+        ntv('chs_pt',               lambda ev : getattr(ev,'chs_pt'),               float, help=''),
+        ntv('chs_m',                lambda ev : getattr(ev,'chs_m'),                float, help=''),
+        ntv('chs_ht',               lambda ev : getattr(ev,'chs_ht'),               float, help=''),
+        ntv('chs_ptoverht',         lambda ev : getattr(ev,'chs_ptoverht'),         float, help=''),
+        ntv('chs_dphi2vtx',         lambda ev : getattr(ev,'chs_dphi2vtx'),         float, help=''),
+        ntv('chs_dphi2leadcharged', lambda ev : getattr(ev,'chs_dphi2leadcharged'), float, help=''),
+        ntv('chs_dphi2leadneut',    lambda ev : getattr(ev,'chs_dphi2leadneut'),    float, help=''),
+        ntv('chs_dphi2all',         lambda ev : getattr(ev,'chs_dphi2all'),         float, help=''),
+        ntv('chs_dphi2lepsys',      lambda ev : getattr(ev,'chs_dphi2lepsys'),      float, help=''),
+        ntv('chs_e1',               lambda ev : getattr(ev,'chs_e1'),               float, help=''),
+        ntv('chs_e2',               lambda ev : getattr(ev,'chs_e2'),               float, help=''),
+     
+        ntv('inclusive_pt',               lambda ev : getattr(ev,'inclusive_pt'),               float, help=''),
+        ntv('inclusive_m',                lambda ev : getattr(ev,'inclusive_m'),                float, help=''),
+        ntv('inclusive_ht',               lambda ev : getattr(ev,'inclusive_ht'),               float, help=''),
+        ntv('inclusive_ptoverht',         lambda ev : getattr(ev,'inclusive_ptoverht'),         float, help=''),
+        ntv('inclusive_dphi2vtx',         lambda ev : getattr(ev,'inclusive_dphi2vtx'),         float, help=''),
+        ntv('inclusive_dphi2leadcharged', lambda ev : getattr(ev,'inclusive_dphi2leadcharged'), float, help=''),
+        ntv('inclusive_dphi2leadneut',    lambda ev : getattr(ev,'inclusive_dphi2leadneut'),    float, help=''),
+        ntv('inclusive_dphi2all',         lambda ev : getattr(ev,'inclusive_dphi2all'),         float, help=''),
+        ntv('inclusive_dphi2lepsys',      lambda ev : getattr(ev,'inclusive_dphi2lepsys'),      float, help=''),
+        ntv('inclusive_e1',               lambda ev : getattr(ev,'inclusive_e1'),               float, help=''),
+        ntv('inclusive_e2',               lambda ev : getattr(ev,'inclusive_e2'),               float, help=''),
+
+        ntv('central_pt',               lambda ev : getattr(ev,'central_pt'),               float, help=''),
+        ntv('central_m',                lambda ev : getattr(ev,'central_m'),                float, help=''),
+        ntv('central_ht',               lambda ev : getattr(ev,'central_ht'),               float, help=''),
+        ntv('central_ptoverht',         lambda ev : getattr(ev,'central_ptoverht'),         float, help=''),
+        ntv('central_dphi2vtx',         lambda ev : getattr(ev,'central_dphi2vtx'),         float, help=''),
+        ntv('central_dphi2leadcharged', lambda ev : getattr(ev,'central_dphi2leadcharged'), float, help=''),
+        ntv('central_dphi2leadneut',    lambda ev : getattr(ev,'central_dphi2leadneut'),    float, help=''),
+        ntv('central_dphi2all',         lambda ev : getattr(ev,'central_dphi2all'),         float, help=''),
+        ntv('central_dphi2lepsys',      lambda ev : getattr(ev,'central_dphi2lepsys'),      float, help=''),
+        ntv('central_e1',               lambda ev : getattr(ev,'central_e1'),               float, help=''),
+        ntv('central_e2',               lambda ev : getattr(ev,'central_e2'),               float, help=''),
+
+        ntv('dbeta_inclusive_pt',               lambda ev : getattr(ev,'dbeta_inclusive_pt'),               float, help=''),
+        ntv('dbeta_inclusive_m',                lambda ev : getattr(ev,'dbeta_inclusive_m'),                float, help=''),
+        ntv('dbeta_inclusive_ht',               lambda ev : getattr(ev,'dbeta_inclusive_ht'),               float, help=''),
+        ntv('dbeta_inclusiveptover_ht',         lambda ev : getattr(ev,'dbeta_inclusive_ptoverht'),         float, help=''),
+        ntv('dbeta_inclusive_dphi2vtx',         lambda ev : getattr(ev,'dbeta_inclusive_dphi2vtx'),         float, help=''),
+        ntv('dbeta_inclusived_phi2leadcharged', lambda ev : getattr(ev,'dbeta_inclusive_dphi2leadcharged'), float, help=''),
+        ntv('dbeta_inclusive_dphi2leadneut',    lambda ev : getattr(ev,'dbeta_inclusive_dphi2leadneut'),    float, help=''),
+        ntv('dbeta_inclusive_dphi2all',         lambda ev : getattr(ev,'dbeta_inclusive_dphi2all'),         float, help=''),
+        ntv('dbeta_inclusive_dphi2lepsys',      lambda ev : getattr(ev,'dbeta_inclusive_dphi2lepsys'),      float, help=''),
+        ntv('dbeta_inclusive_e1',               lambda ev : getattr(ev,'dbeta_inclusive_e1'),               float, help=''),
+        ntv('dbeta_inclusive_e2',               lambda ev : getattr(ev,'dbeta_inclusive_e2'),               float, help=''),
+
+        ntv('dbeta_central_pt',               lambda ev : getattr(ev,'dbeta_central_pt'),               float, help=''),
+        ntv('dbeta_central_m',                lambda ev : getattr(ev,'dbeta_central_m'),                float, help=''),
+        ntv('dbeta_central_ht',               lambda ev : getattr(ev,'dbeta_central_ht'),               float, help=''),
+        ntv('dbeta_central_ptoverht',         lambda ev : getattr(ev,'dbeta_central_ptoverht'),         float, help=''),
+        ntv('dbeta_central_dphi2vtx',         lambda ev : getattr(ev,'dbeta_central_dphi2vtx'),         float, help=''),
+        ntv('dbeta_central_dphi2leadcharged', lambda ev : getattr(ev,'dbeta_central_dphi2leadcharged'), float, help=''),
+        ntv('dbeta_central_dphi2leadneut',    lambda ev : getattr(ev,'dbeta_central_dphi2leadneut'),    float, help=''),
+        ntv('dbeta_central_dphi2all',         lambda ev : getattr(ev,'dbeta_central_dphi2all'),         float, help=''),
+        ntv('dbeta_central_dphi2lepsys',      lambda ev : getattr(ev,'dbeta_central_dphi2lepsys'),      float, help=''),
+        ntv('dbeta_central_e1',               lambda ev : getattr(ev,'dbeta_central_e1'),               float, help=''),
+        ntv('dbeta_central_e2',               lambda ev : getattr(ev,'dbeta_central_e2'),               float, help=''),
+        ]
+
+    return vList
