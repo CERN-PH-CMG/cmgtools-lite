@@ -4,8 +4,12 @@
 #include "TSpline.h"
 #include "TCanvas.h"
 #include "TGraphAsymmErrors.h"
+#include "TLorentzVector.h"
+#include "EgammaAnalysis/ElectronTools/interface/ElectronEnergyCalibratorRun2Standalone.h"
+#include "EgammaAnalysis/ElectronTools/interface/SimpleElectronStandalone.h"
 
 #include <iostream>
+#include <stdlib.h>
 
 TFile *_file_recoToMedium_leptonSF_el = NULL;
 TH2F *_histo_recoToMedium_leptonSF_el = NULL;
@@ -186,4 +190,30 @@ float trgSF_We(int pdgid, float pt, float eta, int ndim, float var=0) {
   if (res<0) {std::cout << "ERROR negative result" << std::endl; std::abort();}
   return res;
 
+}
+
+#include "TRandom.h"
+TRandom3 *rng = NULL;
+ElectronEnergyCalibratorRun2Standalone *calibratorData = NULL;
+ElectronEnergyCalibratorRun2Standalone *calibratorMC = NULL;
+
+float ptCorr(float pt, float eta, float phi, float r9, float scen, float eoverp, int run, int isData) {
+  std::string env = std::string(getenv("CMSSW_BASE"));
+  if(!calibratorData && isData ) calibratorData = new ElectronEnergyCalibratorRun2Standalone(false,false,"CMGTools/MonoXAnalysis/python/postprocessing/data/leptonScale/el/Run2016_legacyrereco");
+  if(!calibratorMC && !isData ) calibratorMC = new ElectronEnergyCalibratorRun2Standalone(true,false,"CMGTools/MonoXAnalysis/python/postprocessing/data/leptonScale/el/Run2016_legacyrereco");
+  ElectronEnergyCalibratorRun2Standalone *calibrator = isData ? calibratorData : calibratorMC;
+
+  if(!isData) {
+    if(!rng) rng = new TRandom3();
+    rng->SetSeed(0); // make it really random across different jobs
+    calibrator->initPrivateRng(rng);
+  }
+
+  TLorentzVector oldMomentum;
+  oldMomentum.SetPtEtaPhiM(pt,eta,phi,0.51e-3);
+  float p = oldMomentum.E();
+  SimpleElectron electron(run,-1,r9,scen,0,scen/eoverp,0,p,0,p,0,eta,fabs(eta)<1.479,!isData,1,0);
+  calibrator->calibrate(electron);
+  float scale = electron.getNewEnergy()/p;
+  return pt * scale;
 }
