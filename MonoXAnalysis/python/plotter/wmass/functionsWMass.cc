@@ -197,7 +197,7 @@ TRandom3 *rng = NULL;
 ElectronEnergyCalibratorRun2Standalone *calibratorData = NULL;
 ElectronEnergyCalibratorRun2Standalone *calibratorMC = NULL;
 
-float ptCorr(float pt, float eta, float phi, float r9, float scen, float eoverp, int run, int isData) {
+float ptCorr(float pt, float eta, float phi, float r9, int run, int isData) {
   std::string env = std::string(getenv("CMSSW_BASE"));
   if(!calibratorData && isData ) calibratorData = new ElectronEnergyCalibratorRun2Standalone(false,false,"CMGTools/MonoXAnalysis/python/postprocessing/data/leptonScale/el/Run2016_legacyrereco");
   if(!calibratorMC && !isData ) calibratorMC = new ElectronEnergyCalibratorRun2Standalone(true,false,"CMGTools/MonoXAnalysis/python/postprocessing/data/leptonScale/el/Run2016_legacyrereco");
@@ -212,8 +212,11 @@ float ptCorr(float pt, float eta, float phi, float r9, float scen, float eoverp,
   TLorentzVector oldMomentum;
   oldMomentum.SetPtEtaPhiM(pt,eta,phi,0.51e-3);
   float p = oldMomentum.E();
-  SimpleElectron electron(run,-1,r9,scen,0,scen/eoverp,0,p,0,p,0,eta,fabs(eta)<1.479,!isData,1,0);
+  SimpleElectron electron(run,-1,r9,p,0,p,0,p,0,p,0,eta,fabs(eta)<1.479,!isData,1,0);
   calibrator->calibrate(electron);
   float scale = electron.getNewEnergy()/p;
+  // std::cout << "isData = " << isData << " run = " << run 
+  //           << "pt,eta,phi,r9 = " << pt << " " << eta << " " << phi << " " << r9 
+  //           << "  SCALE = " << scale << std::endl;
   return pt * scale;
 }
