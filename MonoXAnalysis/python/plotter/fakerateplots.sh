@@ -12,21 +12,43 @@ doCompRegion="n" # y or n (or any key but y for no)
 doApplRegion="y"
 doClosureTest="n"
 useDataGH="y"
-useEBorEE="EE" # ALL (EB and EE), EB (EB only), EE (EE only)
+useEBorEE="EE" # ALL (EB and EE), EB (EB only), EE (EE only) (actually any key different from EB or EE means both)
 runBatch="y"
+useSkimmedTrees="y" # skimmed samples are on pccmsrm28
 
-# SR trees
-treepath="/eos/cms/store/group/dpg_ecal/comm_ecal/localreco"
-treedir="TREES_1LEP_80X_V3"
-mcafile="mca-80X_V3.txt"
+
+treepath="" # set below depending on where we are
+mcafile="mca-80X_V3.txt" # if using skimmed trees on pccmsrm28, few top samples are missing, be careful (new mca is automatically set below
+if [[ "${useSkimmedTrees}" == "y" ]]; then
+    mcafile="mca-80X_V3_skimTrees.txt"
+fi
 cutfile="qcd1l_SRtrees.txt"
 plotfile="test_plots.txt"
-excludeprocesses="data,Z_LO,W_LO,Z,Top,DiBosons"
-#excludeprocesses="Z_LO,W_LO" # decide whether to use NLO (amc@NLO) or LO (MadGraph) MC, non both! In case you can add other samples (Top, Dibosons) to speed up things
+#excludeprocesses="data,Z_LO,W_LO,Z,Top,DiBosons"
+excludeprocesses="Z_LO,W_LO" # decide whether to use NLO (amc@NLO) or LO (MadGraph) MC, non both! In case you can add other samples (Top, Dibosons) to speed up things
 maxentries="2000000000" # max int number is > 2*10^9
 #maxentries="100"
 outdirComp="full2016dataBH_puAndTrgSf"
 outdirAppl="full2016dataBH_puAndTrgSf_mediumWP"
+
+# end of settings to be changed by user
+#----------------------------------------
+
+host=`echo "$HOSTNAME"`
+if [[ "${useSkimmedTrees}" == "y" ]]; then
+    if [[ ${host} != *"pccmsrm28"* ]]; then
+        echo "Error! You must be on pccmsrm28 to use skimmed ntuples. Do ssh -XY pccmsrm28 and work from a release."
+        return 0
+    fi
+    treepath="/u2/emanuele/wmass/" # from pccmsrm28
+elif [[ ${host} != *"lxplus"* ]]; then
+  echo "Error! You must be on lxplus. Do ssh -XY lxplus and work from a release."
+  return 0
+else
+    treepath="/eos/cms/store/group/dpg_ecal/comm_ecal/localreco"
+    treedir="TREES_1LEP_80X_V3"
+fi
+
 
 luminosity=""
 dataOption=""
@@ -48,7 +70,7 @@ fi
 # echo "${command}" | bash
 # otherwise the parsing of the option parameters is not done correctly
 
-commonCommand="python mcPlots.py -P ${treepath}/${treedir}/ -f -j 4 -l ${luminosity} --s2v --tree treeProducerWMass --obj tree -F Friends ${treepath}/${treedir}/friends/tree_Friend_{cname}.root -F Friends ${treepath}/${treedir}/friends/tree_FRFriend_{cname}.root --FMC Friends ${treepath}/${treedir}/friends/tree_TrgFriend_{cname}.root --lspam '#bf{CMS} #it{Preliminary}' --legendWidth 0.20 --legendFontSize 0.035 --showRatio --maxRatioRange 0.75 1.25 --fixRatioRange wmass/wmass_e/${mcafile} wmass/wmass_e/${cutfile} wmass/wmass_e/${plotfile} --max-entries ${maxentries} ${dataOption} ${MCweigthOption} "
+commonCommand="python mcPlots.py -f -j 4 -l ${luminosity} --s2v --tree treeProducerWMass --obj tree --lspam '.    #bf{CMS} #it{Preliminary}' --legendWidth 0.20 --legendFontSize 0.035 --showRatio --maxRatioRange 0.5 1.5 --fixRatioRange wmass/wmass_e/${mcafile} wmass/wmass_e/${cutfile} wmass/wmass_e/${plotfile} --max-entries ${maxentries} ${dataOption} ${MCweigthOption} "
 
 if [[ "X${excludeprocesses}" != "X" ]]; then
     commonCommand="${commonCommand} --xp ${excludeprocesses}"
@@ -61,15 +83,22 @@ inEE=" -A eleKin EE 'abs(LepGood1_eta) > 1.479' "
 
 # computation region
 if [[ "${doCompRegion}" == "y" ]]; then
+    if [[ "${useSkimmedTrees}" == "y" ]]; then
+	treedir="TREES_1LEP_80X_V3_FRELSKIM_V3"  # skimmed tree from pccmsrm28    
+    fi
+
+    treeAndFriendCompRegion=" -P ${treepath}/${treedir}/ -F Friends ${treepath}/${treedir}/friends/tree_Friend_{cname}.root -F Friends ${treepath}/${treedir}/friends/tree_FRFriend_{cname}.root --FMC Friends ${treepath}/${treedir}/friends/tree_TrgFriend_{cname}.root "
+
     if [[ "${useEBorEE}" != "EE" ]]; then
-	echo "${commonCommand} --pdir plots/test/${treedir}/fakeRateSel/computation_region/${outdirComp}/EB/ ${inEB} ${jetCleanSel}" | bash
+	echo "${commonCommand} ${treeAndFriendCompRegion} --pdir plots/test/${treedir}/fakeRateSel/computation_region/${outdirComp}/EB/ ${inEB} ${jetCleanSel}" | bash
     fi
     if [[ "${useEBorEE}" != "EB" ]]; then
-	echo "${commonCommand} --pdir plots/test/${treedir}/fakeRateSel/computation_region/${outdirComp}/EE/ ${inEE} ${jetCleanSel}" | bash
+	echo "${commonCommand} ${treeAndFriendCompRegion --pdir plots/test/${treedir}/fakeRateSel/computation_region/${outdirComp}/EE/ ${inEE} ${jetCleanSel}" | bash
     fi
 fi
 
 # application region
+
 
 not_pass_tightWP="-A eleKin not-fullTightID 'LepGood1_tightId < 3 || if3(abs(LepGood1_etaSc)<1.479,LepGood1_relIso04EA > 0.0588 || abs(LepGood1_dz) > 0.1 || abs(LepGood1_dxy) > 0.05, LepGood1_relIso04EA > 0.0571 || abs(LepGood1_dz) > 0.2 || abs(LepGood1_dxy) > 0.1) || LepGood1_lostHits > 1 || LepGood1_convVeto == 0'"
 
@@ -87,6 +116,12 @@ Wsel="-A eleKin WregionSel 'LepGood1_pt>30 && met_pt>20 && pt_2(LepGood1_pt, Lep
 
 
 if [[ "${doApplRegion}" == "y" ]]; then
+    if [[ "${useSkimmedTrees}" == "y" ]]; then
+	treedir="TREES_1LEP_80X_V3_WENUSKIM_V3"  # skimmed tree from pccmsrm28
+    fi
+    treeAndFriendApplRegion=" -P ${treepath}/${treedir}/ -F Friends ${treepath}/${treedir}/friends/tree_Friend_{cname}.root -F Friends ${treepath}/${treedir}/friends/tree_FRFriend_{cname}.root --FMC Friends ${treepath}/${treedir}/friends/tree_TrgFriend_{cname}.root "
+
+    commonApplReg="${commonCommand} ${treeAndFriendApplRegion}"
     if [[ "${useEBorEE}" != "EE" ]]; then
 	commonApplReg="${commonCommand} -X nJet30 ${not_pass_looseWP_iso0p2} ${Wsel}" 
 	echo "${commonApplReg} --pdir plots/test/${treedir}/fakeRateSel/application_region/${outdirAppl}/EB/ ${inEB}"

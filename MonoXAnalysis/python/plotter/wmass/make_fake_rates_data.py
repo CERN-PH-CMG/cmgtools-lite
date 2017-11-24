@@ -58,10 +58,10 @@ if charge != "":
         print "%s is not a valid input for charge setting: use p or n" % charge
         quit()
 
-#T="/eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3_FR/"  # WARNING, for the moment it is stored on eos, not in pccmsrm29 or in lxplus
 T="/eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3/" 
 if useSkim:
-    T="/eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3_FRELSKIM_V2/"
+    # must be on pccmsrm28 to use the skimmed samples
+    T="/u2/emanuele/wmass/TREES_1LEP_80X_V3_FRELSKIM_V3/"
 objName='tree' # name of TTree object in Root file, passed to option --obj in tree2yield.py
 # if 'pccmsrm29' in os.environ['HOSTNAME']: T = T.replace('/data1/emanuele/wmass','/u2/emanuele')
 # elif 'lxplus' in os.environ['HOSTNAME']: T = T.replace('/data1/emanuele/wmass','/afs/cern.ch/work/e/emanuele/TREES/')
@@ -70,11 +70,11 @@ print "used trees from: ",T
 
 luminosity = 19.3
 datasetOption = " --pg 'data := data_B,data_C,data_D,data_E,data_F' --xp 'data_G,data_H' "
-MCweightOption = ' -W "puw2016_nTrueInt_BF(nTrueInt)*LepGood1_trgSF" '
+MCweightOption = ' -W "puw2016_nTrueInt_BF(nTrueInt)*trgSF_We(LepGood1_pdgId,LepGood1_pt,LepGood1_eta,2)" '
 if useFullData2016:
     datasetOption = " --pg 'data := data_B,data_C,data_D,data_E,data_F,data_G,data_H' "
     luminosity = 35.5
-    MCweightOption = ' -W "puw2016_nTrueInt_36fb(nTrueInt)*LepGood1_trgSF" '
+    MCweightOption = ' -W "puw2016_nTrueInt_36fb(nTrueInt)*trgSF_We(LepGood1_pdgId,LepGood1_pt,LepGood1_eta,2)" '
 
 J=4
 

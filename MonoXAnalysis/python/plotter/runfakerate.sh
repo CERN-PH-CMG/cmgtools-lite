@@ -1,7 +1,7 @@
 #! /bin/bash
 
 # this script is a wrapper for the commands used to compute and pack the fake rate
-# it should be run from lxplus, the check is made below
+# it should be run from lxplus to use ntuples on eos (the skimmed ntuples are on pccmsrm28), the check is made below
 
 ######################
 # options to set
@@ -10,13 +10,14 @@
 # choose the dataset to use (2016 B to F or 2016 B to H)
 useDetector="EE" #  EB or EE to do only barrel or endcap, any other value makes the code run both EB and EE
 useFull2016dataset="y"
-useSkimmedTrees="n"
+useSkimmedTrees="y" # skimmed samples are on pccmsrm28
 onlypack="n" # just pack an already existing fake-rate 
 # if onlypack='n', the packing might still be done at the end of FR computation, see options below
 # else, if onlypack='y', it overrides the packFRfromTest option below
 #--------------------------
 istest="y"
-testdir="SRtrees_new/hltID_mediumWP_36fb_PUTrgSF_trkmtfix_0_50_50_120_EE"  # used only if istest is 'y', be as much informative as possible
+#testdir="SRtrees_new/hltID_looseWPiso0p2_36fb_PUTrgSF_trkmtfix_0_50_50_120_EB_fineBinning"  # used only if istest is 'y', be as much informative as possible
+testdir="SRtrees_new/hltID_mediumWP_36fb_PUTrgSF_trkmtfix_0_50_50_120_EE_fineBinning"
 # by default, if this is a test we do not pack to avoid overwriting something when we just do tests
 # you can override this feature setting this flag to 'y'
 # even if you don't pack, the command you would use is printed in stdout
@@ -35,7 +36,12 @@ addOption=""
 
 # check we are on lxplus  
 host=`echo "$HOSTNAME"`
-if [[ ${host} != *"lxplus"* ]]; then
+if [[ "${useSkimmedTrees}" == "y" ]]; then
+    if [[ ${host} != *"pccmsrm28"* ]]; then
+	echo "Error! You must be on pccmsrm28 to use skimmed ntuples. Do ssh -XY pccmsrm28 and work from a release."
+	return 0
+    fi
+elif [[ ${host} != *"lxplus"* ]]; then
   echo "Error! You must be on lxplus. Do ssh -XY lxplus and work from a release."
   return 0
 fi
@@ -49,7 +55,7 @@ if [[ "${istest}" == "y" ]]; then
     packdir="test/${testdir}/${frGraphDir}"
 fi
 
-cmdComputeFR="python wmass/make_fake_rates_data.py --qcdmc --wp ${WPoption} --mt ${mtDefinition} ${testoption} --fqcd-ranges ${mtRanges} --addOpts \"${addOption}\" "
+cmdComputeFR="python wmass/make_fake_rates_data.py --qcdmc --wp ${WPoption} --mt ${mtDefinition} ${testoption} --fqcd-ranges ${mtRanges} "
 if [[ "${useFull2016dataset}" == "y" ]]; then
     cmdComputeFR="${cmdComputeFR} --full2016data "
 fi
@@ -62,6 +68,10 @@ if [[ "${useDetector}" == "EB" ]]; then
     cmdComputeFR="${cmdComputeFR} --EB-only "
 elif [[ "${useDetector}" == "EE" ]]; then
     cmdComputeFR="${cmdComputeFR} --EE-only "
+fi
+
+if [[ "X${addOption}" == "X" ]]; then
+    cmdComputeFR="${cmdComputeFR} --addOpts \"${addOption}\" "
 fi
 
 if [[ "${onlypack}" == "y" ]]; then

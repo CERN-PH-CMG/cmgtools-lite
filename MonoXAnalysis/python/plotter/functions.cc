@@ -173,15 +173,22 @@ float puw2016_nTrueInt_36fb(int nTrueInt) { if (nTrueInt<100) return _puw2016_nT
 // https://twiki.cern.ch/twiki/bin/viewauth/CMS/CutBasedElectronIdentificationRun2
 // 
 // list of functions to manage IDs
+// those marked with ** are work in progress (problems with string, format is n tcompatible with TTree::Draw() used by mcPlots.py)
 // -------------------------------
 // pass_dxy_dz
+// pass_lostHits_conVe
 // pass_looseIDnoIso_2016
 // pass_mediumIDnoIso_2016
 // pass_tightIDnoIso_2016
-// pass_workingPointIDnoIso_2016
-// pass_isolation_2016
-// passFakerateNumerator2016
-// isInFakerateApplicationRegion2016
+// pass_workingPointIDnoIso_2016 **
+// pass_isolation_2016 **
+// passFakerateNumerator2016 **
+// isInFakerateApplicationRegion2016 **
+// pass_isolation_WP
+// pass_FakerateNumerator2016
+// pass_FakerateApplicationRegion2016
+//
+//
 // -------------------------------
 
 
@@ -197,6 +204,13 @@ bool pass_dxy_dz(const bool& isEB = true,
 
 }
 
+// missing hits and conversion veto
+bool pass_lostHits_conVeto(const float& LepGood1_lostHits = -999, 
+			   const float& LepGood1_convVeto = -999
+			   ) 
+{
+  return (LepGood1_lostHits <= 1 && LepGood1_convVeto == 1);
+}
 
 
 // loose ID no isolation
@@ -209,7 +223,7 @@ bool pass_looseIDnoIso_2016(const bool&  isEB = true,
 			    ) 
 {
 
-  return (LepGood1_tightId >= 1 && pass_dxy_dz(isEB,LepGood1_dxy,LepGood1_dz) && LepGood1_lostHits <= 1 && LepGood1_convVeto == 1);
+  return (LepGood1_tightId >= 1 && pass_dxy_dz(isEB,LepGood1_dxy,LepGood1_dz) && pass_lostHits_conVeto(LepGood1_lostHits,LepGood1_convVeto) );
 
 }
 
@@ -223,7 +237,7 @@ bool pass_mediumIDnoIso_2016(const bool&  isEB = true,
 			     ) 
 {
 
-  return (LepGood1_tightId >= 2 && pass_dxy_dz(isEB,LepGood1_dxy,LepGood1_dz) && LepGood1_lostHits <= 1 && LepGood1_convVeto == 1);
+  return (LepGood1_tightId >= 2 && pass_dxy_dz(isEB,LepGood1_dxy,LepGood1_dz) && pass_lostHits_conVeto(LepGood1_lostHits,LepGood1_convVeto) );
 
 }
 
@@ -237,95 +251,161 @@ bool pass_tightIDnoIso_2016(const bool&  isEB = true,
 			    ) 
 {
 
-  return (LepGood1_tightId >= 3 && pass_dxy_dz(isEB,LepGood1_dxy,LepGood1_dz) && LepGood1_lostHits <= 1 && LepGood1_convVeto == 1);
+  return (LepGood1_tightId >= 3 && pass_dxy_dz(isEB,LepGood1_dxy,LepGood1_dz) && pass_lostHits_conVeto(LepGood1_lostHits,LepGood1_convVeto) );
 
 }
 
-bool pass_workingPointIDnoIso_2016(const string& workingPoint = "loose", // loose, medium, tight
-				   const bool&  isEB = true, 
-				   const int&   LepGood1_tightId = -1, 
-				   const float& LepGood1_dxy = -999, 
-				   const float& LepGood1_dz = -999,
-				   const int&   LepGood1_lostHits = -1,
-				   const int&   LepGood1_convVeto = -999
-				   ) 
+/////////////////////////////////////////////////////
+//
+// Following commented functions are work in progress
+// Problems in using string
+//
+/////////////////////////////////////////////////////
+
+// bool pass_workingPointIDnoIso_2016(const string& workingPoint = "loose", // loose, medium, tight
+// 				   const bool&  isEB = true, 
+// 				   const int&   LepGood1_tightId = -1, 
+// 				   const float& LepGood1_dxy = -999, 
+// 				   const float& LepGood1_dz = -999,
+// 				   const int&   LepGood1_lostHits = -1,
+// 				   const int&   LepGood1_convVeto = -999
+// 				   ) 
+// {
+
+//   if      (workingPoint == "loose" ) return pass_looseIDnoIso_2016(  isEB,LepGood1_tightId,LepGood1_dxy,LepGood1_dz,LepGood1_lostHits,LepGood1_convVeto);
+//   else if (workingPoint == "medium") return pass_mediumIDnoIso_2016( isEB,LepGood1_tightId,LepGood1_dxy,LepGood1_dz,LepGood1_lostHits,LepGood1_convVeto);
+//   else if (workingPoint == "tight" ) return pass_tightIDnoIso_2016(  isEB,LepGood1_tightId,LepGood1_dxy,LepGood1_dz,LepGood1_lostHits,LepGood1_convVeto);
+//   else {
+//     cout << "Error in function pass_workingPointIDnoIso_2016(): undefined working point "<< workingPoint << ", please check. Exiting ..." <<endl;
+//     exit(EXIT_FAILURE);
+//   }
+
+// }
+
+
+// bool pass_isolation_2016(const string& workingPoint = "loose", // loose, medium, tight, custom
+// 			 const bool&   isEB = true,
+// 			 const float&  LepGood1_relIso04EA = -1,
+// 			 )
+// {
+
+//   // WARNING: test that strings are accepted by mc*.py, currently they are not
+//   // function format should be compatible with TTre::Draw()
+//   std::map<string,float> workingPointIsolation_EB;
+//   workingPointIsolation_EB["veto"  ] = 0.175; 
+//   workingPointIsolation_EB["loose" ] = 0.0994; 
+//   workingPointIsolation_EB["medium"] = 0.0695; 
+//   workingPointIsolation_EB["tight" ] = 0.0588; 
+//   workingPointIsolation_EB["custom"] = 0.2; 
+//   std::map<std::string,float> workingPointIsolation_EE;
+//   workingPointIsolation_EE["veto"  ] = 0.159; 
+//   workingPointIsolation_EE["loose" ] = 0.107; 
+//   workingPointIsolation_EE["medium"] = 0.0821; 
+//   workingPointIsolation_EE["tight" ] = 0.0571; 
+//   workingPointIsolation_EE["custom"] = 0.0821;
+
+//   if (isEB) return LepGood1_relIso04EA < workingPointIsolation_EB[workingPoint];
+//   else      return LepGood1_relIso04EA < workingPointIsolation_EE[workingPoint];
+
+// }
+
+// bool passFakerateNumerator2016(const string& workingPoint = "loose", // loose, medium, tight
+// 			       const bool&   isEB = true, 
+// 			       const int&    LepGood1_tightId = -1, 
+// 			       const float&  LepGood1_dxy = -999, 
+// 			       const float&  LepGood1_dz = -999,
+// 			       const int&    LepGood1_lostHits = -1,
+// 			       const int&    LepGood1_convVeto = -999,
+// 			       const float&  LepGood1_relIso04EA = -1,
+// 			       const bool&   useCustomRelIso04EA = true // use user defined isolation threshold, not the E/gamma value
+// 			       ) 
+// {
+
+//   return (pass_workingPointIDnoIso_2016(workingPoint,isEB,LepGood1_tightId,LepGood1_dxy,LepGood1_dz,LepGood1_lostHits,LepGood1_convVeto) 
+// 	  && 
+// 	  pass_isolation_2016(workingPoint,isEB,LepGood1_relIso04EA,useCustomRelIso04EA)
+// 	  );
+
+// }
+
+
+// bool isInFakerateApplicationRegion2016(const string& workingPoint = "loose", // loose, medium, tight
+// 				       const bool&   isEB = true, 
+// 				       const int&    LepGood1_tightId = -1, 
+// 				       const float&  LepGood1_dxy = -999, 
+// 				       const float&  LepGood1_dz = -999,
+// 				       const int&    LepGood1_lostHits = -1,
+// 				       const int&    LepGood1_convVeto = -999,
+// 				       const float&  LepGood1_relIso04EA = -1,
+// 				       const bool&   useCustomRelIso04EA = true // use user defined isolation threshold, not the E/gamma value
+// 				       ) 
+// {
+
+//   return (not passFakerateNumerator2016(workingPoint,isEB,
+// 					LepGood1_tightId,LepGood1_dxy,LepGood1_dz,LepGood1_lostHits,LepGood1_convVeto,
+// 					LepGood1_relIso04EA,useCustomRelIso04EA
+// 					)
+// 	  );
+
+// }
+
+//==========================
+
+bool pass_isolation_WP(const Bool_t isEB = true, const float&  LepGood1_relIso04EA = -1)
+{
+  return LepGood1_relIso04EA < (isEB ? 0.2 : 0.0821); // custom value for EB, medium WP for EE
+}
+
+//==========================
+
+bool pass_FakerateNumerator2016(const bool&   isEB = true, 
+				const int&    LepGood1_tightId = -1, 
+				const float&  LepGood1_dxy = -999, 
+				const float&  LepGood1_dz = -999,
+				const int&    LepGood1_lostHits = -1,
+				const int&    LepGood1_convVeto = -999,
+				const float&  LepGood1_relIso04EA = -1,
+				) 
 {
 
-  if      (workingPoint == "loose" ) return pass_looseIDnoIso_2016(  isEB,LepGood1_tightId,LepGood1_dxy,LepGood1_dz,LepGood1_lostHits,LepGood1_convVeto);
-  else if (workingPoint == "medium") return pass_mediumIDnoIso_2016( isEB,LepGood1_tightId,LepGood1_dxy,LepGood1_dz,LepGood1_lostHits,LepGood1_convVeto);
-  else if (workingPoint == "tight" ) return pass_tightIDnoIso_2016(  isEB,LepGood1_tightId,LepGood1_dxy,LepGood1_dz,LepGood1_lostHits,LepGood1_convVeto);
-  else {
-    cout << "Error in function pass_workingPointIDnoIso_2016(): undefined working point "<< workingPoint << ", please check. Exiting ..." <<endl;
-    exit(EXIT_FAILURE);
+  // EB, loose ID + iso < 0.2
+  // EE full medium ID + iso
+
+  if (isEB) {
+    return (pass_looseIDnoIso_2016(isEB,LepGood1_tightId,LepGood1_dxy,LepGood1_dz,LepGood1_lostHits,LepGood1_convVeto)
+	    && 
+	    pass_isolation_WP(isEB,LepGood1_relIso04EA)
+	    );
+  } else {
+    return (pass_mediumIDnoIso_2016(isEB,LepGood1_tightId,LepGood1_dxy,LepGood1_dz,LepGood1_lostHits,LepGood1_convVeto)
+	    &&
+	    pass_isolation_WP(isEB,LepGood1_relIso04EA)
+	    );
   }
 
 }
 
-bool pass_isolation_2016(const string& workingPoint = "loose", // loose, medium, tight
-			 const bool&   isEB = true,
-			 const float&  LepGood1_relIso04EA = -1,
-			 const bool&   useCustomRelIso04EA = true // use user defined isolation threshold, not the E/gamma value
-			 )
+//==========================
+
+
+bool pass_FakerateApplicationRegion2016(const bool&   isEB = true, 
+					const int&    LepGood1_tightId = -1, 
+					const float&  LepGood1_dxy = -999, 
+					const float&  LepGood1_dz = -999,
+					const int&    LepGood1_lostHits = -1,
+					const int&    LepGood1_convVeto = -999,
+					const float&  LepGood1_relIso04EA = -1,
+					) 
 {
 
-  std::map<string,float> workingPointIsolation_EB;
-  workingPointIsolation_EB["veto"  ] = 0.175; 
-  workingPointIsolation_EB["loose" ] = 0.0994; 
-  workingPointIsolation_EB["medium"] = 0.0695; 
-  workingPointIsolation_EB["tight" ] = 0.0588; 
-  workingPointIsolation_EB["custom"] = 0.2; 
-  std::map<std::string,float> workingPointIsolation_EE;
-  workingPointIsolation_EE["veto"  ] = 0.159; 
-  workingPointIsolation_EE["loose" ] = 0.107; 
-  workingPointIsolation_EE["medium"] = 0.0821; 
-  workingPointIsolation_EE["tight" ] = 0.0571; 
-  workingPointIsolation_EE["custom"] = 0.107; 
-
-  string wp = useCustomRelIso04EA ? "custom" : workingPoint;
-  if (isEB) return LepGood1_relIso04EA < workingPointIsolation_EB[wp];
-  else      return LepGood1_relIso04EA < workingPointIsolation_EE[wp];
-
-}
-
-bool passFakerateNumerator2016(const string& workingPoint = "loose", // loose, medium, tight
-			       const bool&   isEB = true, 
-			       const int&    LepGood1_tightId = -1, 
-			       const float&  LepGood1_dxy = -999, 
-			       const float&  LepGood1_dz = -999,
-			       const int&    LepGood1_lostHits = -1,
-			       const int&    LepGood1_convVeto = -999,
-			       const float&  LepGood1_relIso04EA = -1,
-			       const bool&   useCustomRelIso04EA = true // use user defined isolation threshold, not the E/gamma value
-			       ) 
-{
-
-  return (pass_workingPointIDnoIso_2016(workingPoint,isEB,LepGood1_tightId,LepGood1_dxy,LepGood1_dz,LepGood1_lostHits,LepGood1_convVeto) 
-	  && 
-	  pass_isolation_2016(workingPoint,isEB,LepGood1_relIso04EA,useCustomRelIso04EA)
+  return (not pass_FakerateNumerator2016(isEB,
+					 LepGood1_tightId,LepGood1_dxy,LepGood1_dz,LepGood1_lostHits,LepGood1_convVeto,
+					 LepGood1_relIso04EA,useCustomRelIso04EA
+					 )
 	  );
 
 }
 
-
-bool isInFakerateApplicationRegion2016(const string& workingPoint = "loose", // loose, medium, tight
-				       const bool&   isEB = true, 
-				       const int&    LepGood1_tightId = -1, 
-				       const float&  LepGood1_dxy = -999, 
-				       const float&  LepGood1_dz = -999,
-				       const int&    LepGood1_lostHits = -1,
-				       const int&    LepGood1_convVeto = -999,
-				       const float&  LepGood1_relIso04EA = -1,
-				       const bool&   useCustomRelIso04EA = true // use user defined isolation threshold, not the E/gamma value
-				       ) 
-{
-
-  return (not passFakerateNumerator2016(workingPoint,isEB,
-					LepGood1_tightId,LepGood1_dxy,LepGood1_dz,LepGood1_lostHits,LepGood1_convVeto,
-					LepGood1_relIso04EA,useCustomRelIso04EA
-					)
-	  );
-
-}
 
 
 void functions() {}
