@@ -4,10 +4,23 @@ import numpy as np
 ROOT.PyConfig.IgnoreCommandLineOptions = True
 from math import *
 
-from CMGTools.MonoXAnalysis.postprocessing.framework.datamodel import Collection 
+from CMGTools.MonoXAnalysis.postprocessing.framework.datamodel import Collection,Object
 from CMGTools.MonoXAnalysis.postprocessing.framework.eventloop import Module
 from PhysicsTools.HeppyCore.utils.deltar import deltaR,deltaPhi
  
+class VisibleVectorBoson():
+    def __init__(self,selLeptons):
+        self.p4=ROOT.TLorentzVector(0,0,0,0)
+        self.sumEt=0
+        self.legs=[]
+        for l in selLeptons:
+            self.legs.append(l)
+            self.p4+=l
+            self.sumEt+=l.Pt()
+    def VectorT(self):
+        return ROOT.TVector3(self.p4.Px(),self.p4.Py(),0)
+    
+
 class eventRecoilAnalyzer(Module):
     '''
     Analyzes the event recoil and derives the corrections in pt and phi to bring the estimators to the true vector boson recoil.
@@ -33,8 +46,8 @@ class eventRecoilAnalyzer(Module):
 
         #define output
         self.out = wrappedOutputTree    
-        for rtype in ["met", "tkMetPVchs", "tkMetPVLoose", "tkMetPVTight"]:
-            for var in ['pt','e1','e2']:
+        for rtype in ["truth","gen","met", "puppimet", "tkMetPVchs", "tkMetPVLoose", "tkMetPVTight"]:
+            for var in ['recoil_pt','recoil_e1','recoil_e2','mt','recoil_ht','recoil_ptoverht','dphi2vtx','dphi2met','dphi2puppimet','dphi2ntnpv']:
                 self.out.branch("{0}_{1}".format(rtype,var), "F")
 
     def endFile(self, inputFile, outputFile, inputTree, wrappedOutputTree):
@@ -48,11 +61,25 @@ class eventRecoilAnalyzer(Module):
         self._ttreereaderversion = tree._ttreereaderversion
 
     def getMCTruth(self,event):
+        """computes the MC truth for this event"""
 
-        #helper p4
-        p4=ROOT.TLorentzVector(0,0,0,0)
+        #nothing to do for data :)
+        if event.isData : return None,None,None
 
-        #dressed leptons 
+        #get the neutrinos
+        ngenNu = self.out._branches["nGenPromptNu"].buff[0]
+        nuSum=ROOT.TLorentzVector(0,0,0,0)
+        for i in xrange(0,ngenNu):
+            p4=ROOT.TLorentzVector(0,0,0,0)
+            p4.SetPtEtaPhiM( self.out._branches["GenPromptNu_pt"].buff[i],
+                             self.out._branches["GenPromptNu_eta"].buff[i],
+                             self.out._branches["GenPromptNu_phi"].buff[i],
+                             self.out._branches["GenPromptNu_mass"].buff[i] )
+            nuSum+=p4
+            break
+
+        #construct the visible boson
+        visibleV,V=None,None
         dressedLeps=[]
         ngenLep=self.out._branches["nGenLepDressed"].buff[0]
         for i in xrange(0,ngenLep):
@@ -61,96 +88,126 @@ class eventRecoilAnalyzer(Module):
                                           self.out._branches["GenLepDressed_eta"].buff[i],
                                           self.out._branches["GenLepDressed_phi"].buff[i],
                                           self.out._branches["GenLepDressed_mass"].buff[i] )
+            if i==0 :
+                visibleV=VisibleVectorBoson(selLeptons=[dressedLeps[-1]])
+                V=visibleV.p4+nuSum
+            for j in xrange(0,i):
+                ll=dressedLeps[j]+dressedLeps[i]
+                if abs(ll.M()-91)>15 : continue
+                visibleV=VisibleVectorBoson(selLeptons=[dressedLeps[j],dressedLeps[i]])
+                V=visibleV.p4
+                break
 
-        #neutrinos
-        nus=[]
-        ngenNu=self.out._branches["nGenPromptNu"].buff[0]
-        for i in xrange(0,ngenNu):
-            nus.append( ROOT.TLorentzVector(0,0,0,0) )
-            nus[-1].SetPtEtaPhiM( self.out._branches["GenPromptNu_pt"].buff[i],
-                                  self.out._branches["GenPromptNu_eta"].buff[i],
-                                  self.out._branches["GenPromptNu_phi"].buff[i],
-                                  self.out._branches["GenPromptNu_mass"].buff[i] )
+        #hadronic recoil
+        met=ROOT.TLorentzVector(0,0,0,0)
+        met.SetPtEtaPhiM(event.tkGenMet_pt,0,event.tkGenMet_phi,0.)
+        if visibleV : met+=visibleV.p4
+        h=ROOT.TVector3(-met.Px(),-met.Py(),0.)
+        ht=event.tkGenMetInc_sumEt
+        if visibleV : ht -= visibleV.sumEt
 
-        #recoil
-        gen_h=ROOT.TLorentzVector(event.met_genPt,0,event.met_genPhi,0)
-        if len(nus) and len(dressedLeps) :
-            gen_h += nus[0]+dressedLeps[0]
-        gen_h *= (-1)
-        return dressedLeps,nus,gen_h
+        return visibleV,V,h,ht
+
+    def getVisibleV(self,event):
+        """
+        tries to reconstruct a Z from the selected leptons
+        for a W only the leading lepton is returned
+        """
+        
+        lepColl = Collection(event, "LepGood")
+        leps=[]
+        zCand=None
+        nl=len(lepColl)
+        for i in xrange(0,nl):
+            l=lepColl[i]
+            leps.append( l.p4() )
+
+            #check if a Z candidate can be formed
+            for j in xrange(0,i):
+                if lepColl[i].pdgId != lepColl[j].pdgId : continue
+                ll=leps[i]+leps[j]
+                if abs(ll.M()-91)>15 : continue
+                zCand=(i,j)
+                break
+
+        #build the visible V from what has been found
+        visibleV=VisibleVectorBoson(selLeptons=[leps[0]]) if len(leps)>0  else None
+        if zCand:
+            visibleV=VisibleVectorBoson(selLeptons=[leps[zCand[0]],leps[zCand[1]]])
+
+        return visibleV
+
+    def getRecoRecoil(self,event,metType,visibleV,dBeta=None):
+        """computes the MC truth for this event"""
+
+        #MET
+        met = Object(event, metType)
+        metP4=met.p4()
+
+        #apply a delta beta scaling if required
+        if dBeta:
+            chpuMet=Object(event,'tkMetPUPVLoose')
+            metP4 += dBeta*chpuMet
+
+        #charged recoil estimators
+        ht=met.sumEt
+        h=ROOT.TVector3(-metP4.Px(),-metP4.Py(),0.)
+        if visibleV:
+            for l in visibleV.legs:
+                ht -= l.Pt()
+                h  -= l.Vect()
+
+        return h,ht,metP4.M()
     
-
     def analyze(self, event):
         """process event, return True (go to next module) or False (fail, go to next event)"""
+
         if event._tree._ttreereaderversion > self._ttreereaderversion:
             self.initReaders(event._tree)
 
         #MC truth
-        dressedLeps,nus,gen_h=self.getMCTruth(event)
-        gen_v=dressedLeps[0]+nus[0]
+        gen_visibleV,gen_V,gen_h,gen_ht=self.getMCTruth(event)
 
-        #selected leptons
-        lepColl = Collection(event, "LepGood")
-        leps=[]
-        for l in lepColl:
-            leps.append( ROOT.TLorentzVector(0,0,0,0) )
-            leps[-1].SetPtEtaPhiM( l.pt, l.eta, l.phi, l.mass )
-        if len(leps)==0 : return False
-        if leps[0].Pt() <20 or abs(leps[0].Eta())>2.4 : return False
+        #selected leptons at reco level
+        visibleV=self.getVisibleV(event)
+        if not visibleV : return False
+
+        #vertex
+        #vertex=Collection(event,"Vertex")
 
         #met estimators
-        for met in ["met", "tkMetPVchs", "tkMetPVLoose", "tkMetPVTight"]:
-            metp4=ROOT.TLorentzVector(0,0,0,0)
-            metp4.SetPtEtaPhiM(getattr(event,'%s_pt'%met),0,getattr(event,'%s_phi'%met),0)
-            h=(metp4+leps[0])*(-1)
+        met      = Object(event,"met")
+        puppimet = Object(event,"puppimet")
+
+        #recoil estimators
+        for metType in ["truth","gen", "met","puppimet", "tkMetPVchs", "tkMetPVLoose", "tkMetPVTight"]:
+
+            imet=Object(event,metType)
+            if metType=="truth":
+                vis,h,ht=gen_visibleV.VectorT(),ROOT.TVector3(-gen_V.Px(),-gen_V.Py(),0),gen_V.Pt()
+            elif metType=='gen':
+                vis,h,ht=gen_visibleV.VectorT(),gen_h,gen_ht
+            else:
+                vis=visibleV.VectorT()
+                h,ht,m=self.getRecoRecoil(event=event,metType=metType,visibleV=visibleV,dBeta=None)
 
             pt=h.Pt()
-            e1=gen_h.Pt()/h.Pt()
-            e2=deltaPhi(gen_h.Phi(),h.Phi())
+            mt=np.sqrt( 2*vis.Pt()*((vis+h).Pt())+vis.Pt()**2+vis.Dot(h) )
+            e1=gen_V.Pt()/h.Pt()
+            e2=deltaPhi(gen_V.Phi()+np.pi,h.Phi())
 
-            self.out.fillBranch('%s_pt'%met,pt)
-            self.out.fillBranch('%s_e1'%met,e1)
-            self.out.fillBranch('%s_e2'%met,e2)
-             
+            self.out.fillBranch('%s_recoil_pt'%metType,       pt)
+            self.out.fillBranch('%s_recoil_e1'%metType,       e1)
+            self.out.fillBranch('%s_recoil_e2'%metType,       e2)
+            self.out.fillBranch('%s_recoil_ht'%metType,       ht)
+            self.out.fillBranch('%s_recoil_ptoverht'%metType, pt/ht)
+            self.out.fillBranch('%s_mt'%metType,              mt)
+            self.out.fillBranch('%s_m'%metType,              m)
+            self.out.fillBranch('%s_dphi2met'%metType,deltaPhi(met.phi(),imet.phi()))
+            self.out.fillBranch('%s_dphi2puppimet',deltaPhi(puppimet.phi(),imet.phi()))
+
         return True
 
-#    def getMCtruth(self,event):
-#        """retrieves the true boson and recoil kinematics from the generator level particles"""
-#
-#        mcTruthColl=self.cfg_ana.mcTruth
-#
-#        #generated boson kinematics
-#        genV=None
-#        try:
-#            genV=getattr(event,mcTruthColl['V'])[0].p4()
-#        except: 
-#            pass
-#
-#        #generated leptons kinematics
-#        genLepSum=None        
-#        try:
-#            genLeps=[l.p4() for l in getattr(event,mcTruthColl['lep'])]
-#            genLepSum=genLeps[0].p4()
-#        except:
-#            pass
-#
-#        #true recoil (final state particles excluding forward particles)
-#        genRecoil=None
-#        try:
-#            genColl=getattr(event,mcTruthColl['particles'])
-#            for p in genColl:
-#                if p.status()!=1 : continue
-#                if abs(p.eta())>4.7 : continue
-#                #if abs(p.pdgId()) in [12,14,16]: continue
-#                if genRecoil : genRecoil += p.p4()
-#                else         : genRecoil  = p.p4()
-#            genRecoil -= genLepSum
-#        except:
-#            pass
-#
-#        return genV,genRecoil
-#
-# 
 #    def process(self, event):
 # 
 #        self.readCollections( event.input)

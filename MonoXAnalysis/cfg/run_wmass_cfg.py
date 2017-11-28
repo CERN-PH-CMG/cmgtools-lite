@@ -143,21 +143,6 @@ if not removeJecUncertainty:
 
 if runOnSignal: wmass_globalVariables += pdfsVariables
 
-#recoil analyzer
-from CMGTools.MonoXAnalysis.analyzers.eventRecoilAnalyzer import *
-evRecoilAna = cfg.Analyzer(
-    eventRecoilAnalyzer, 
-    name              = 'eventRecoilAnalyzer',
-    candidates        = 'packedPFCandidates',
-    candidatesTypes   = 'std::vector<pat::PackedCandidate>',
-    mcTruth           = {'V':'genVBosons','lep':'genleps','particles':'genParticles'},
-    pvAssoc           = 0,
-    centralEta        = 2.4,
-    dbeta             = -0.5,
-    maxSelLeptons     = 2,
-)
-wmass_globalVariables+=getEventRecoilVariablesForTree()
-
 ## Tree Producer
 treeProducer = cfg.Analyzer(
      AutoFillTreeProducer, name='treeProducerWMass',
@@ -201,6 +186,19 @@ if not skipT1METCorr:
     metAnaScaleUp.recalibrate = "type1"
     jetAnaScaleDown.calculateType1METCorrection = True
     metAnaScaleDown.recalibrate = "type1"
+
+# add puppi met
+puppiMetAna=metAna.clone(
+    name='pupimetAnalyzer',
+    metCollection='slimmedMETsPuppi',
+    noPUMetCollection='slimmedMETsPuppi',
+    doTkMet=False,
+    includeTkMetCHS=False,
+    includeTkMetPVTight=False,
+    doMetNoPU=False,
+    storePuppiExtra=False,
+    collectionPostFix='puppi')
+
                                          
 #-------- SAMPLES AND TRIGGERS -----------
 
@@ -424,8 +422,8 @@ if selectedEvents!="":
 #-------- SEQUENCE -----------
 
 sequence = cfg.Sequence(dmCoreSequence+[
+        puppiMetAna,
         ttHEventAna,        
-        evRecoilAna,
         treeProducer,
     ])
 preprocessor = None

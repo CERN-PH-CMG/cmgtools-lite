@@ -9,6 +9,7 @@ from genFriendProducer import *
 from eventRecoilAnalyzer import *
 
 p=PostProcessor(outputDir=".",
+#                eventRange=xrange(1000),
                 inputFiles=["../../../cfg/mytest/WJetsToLNu_LO/treeProducerWMass/tree.root"],
                 cut=None,
                 branchsel=None, #"keep_and_drop.txt",
