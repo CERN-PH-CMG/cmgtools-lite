@@ -46,8 +46,13 @@ class eventRecoilAnalyzer(Module):
 
         #define output
         self.out = wrappedOutputTree    
-        for rtype in ["truth","gen","met", "puppimet", "tkMetPVchs", "tkMetPVLoose", "tkMetPVTight"]:
-            for var in ['recoil_pt','recoil_e1','recoil_e2','mt','recoil_ht','recoil_ptoverht','dphi2vtx','dphi2met','dphi2puppimet','dphi2ntnpv']:
+        self.out.branch("leadch_pt",   "F")
+        self.out.branch("leadneut_pt", "F")
+        for rtype in ["truth","gen","met", "puppimet", "tkMetPVchs", "tkMetPVLoose"]:
+            for var in ['recoil_pt','recoil_phi', 'recoil_sphericity', 'm','n',
+                        'recoil_e1','recoil_e2', 
+                        'mt',
+                        'dphi2met','dphi2puppimet','dphi2ntnpv','dphi2centralntnpv','dphi2centralmetdbeta','dphi2leadch','dphi2leadneut']:
                 self.out.branch("{0}_{1}".format(rtype,var), "F")
 
     def endFile(self, inputFile, outputFile, inputTree, wrappedOutputTree):
@@ -137,17 +142,11 @@ class eventRecoilAnalyzer(Module):
 
         return visibleV
 
-    def getRecoRecoil(self,event,metType,visibleV,dBeta=None):
+    def getRecoRecoil(self,event,met,visibleV):
         """computes the MC truth for this event"""
 
         #MET
-        met = Object(event, metType)
         metP4=met.p4()
-
-        #apply a delta beta scaling if required
-        if dBeta:
-            chpuMet=Object(event,'tkMetPUPVLoose')
-            metP4 += dBeta*chpuMet
 
         #charged recoil estimators
         ht=met.sumEt
@@ -157,7 +156,7 @@ class eventRecoilAnalyzer(Module):
                 ht -= l.Pt()
                 h  -= l.Vect()
 
-        return h,ht,metP4.M()
+        return h,max(ht,0.),metP4.M()
     
     def analyze(self, event):
         """process event, return True (go to next module) or False (fail, go to next event)"""
@@ -172,203 +171,62 @@ class eventRecoilAnalyzer(Module):
         visibleV=self.getVisibleV(event)
         if not visibleV : return False
 
-        #vertex
-        #vertex=Collection(event,"Vertex")
+        #leading PF candidates
+        self.out.fillBranch('leadch_pt',   event.leadCharged_pt)
+        self.out.fillBranch('leadneut_pt', event.leadNeutral_pt)
 
         #met estimators
-        met      = Object(event,"met")
-        puppimet = Object(event,"puppimet")
+        met               = Object(event,"met")
+        puppimet          = Object(event,"puppimet")
+        ntmet             = Object(event,"ntMet")
+        ntCentralmet      = Object(event,"ntCentralMet")
+        tkmet             = Object(event,"tkMetPVLoose")
+        npvmet            = Object(event,"tkMetPUPVLoose")
+        ntnpv             = ntmet.p4()+npvmet.p4()
+        centralntnpv      = ntCentralmet.p4()+npvmet.p4()
+        centralmetdbeta = tkmet.p4()+ntCentralmet.p4()-npvmet.p4()*0.5
 
         #recoil estimators
-        for metType in ["truth","gen", "met","puppimet", "tkMetPVchs", "tkMetPVLoose", "tkMetPVTight"]:
+        for metType in ["truth","gen", "met","puppimet", "tkMetPVchs", "tkMetPVLoose"]:
 
-            imet=Object(event,metType)
+            imet=None
             if metType=="truth":
                 vis,h,ht=gen_visibleV.VectorT(),ROOT.TVector3(-gen_V.Px(),-gen_V.Py(),0),gen_V.Pt()
             elif metType=='gen':
-                vis,h,ht=gen_visibleV.VectorT(),gen_h,gen_ht
+                vis,h,ht=gen_visibleV.VectorT(),gen_h,gen_ht            
             else:
+                imet=Object(event,metType)
                 vis=visibleV.VectorT()
-                h,ht,m=self.getRecoRecoil(event=event,metType=metType,visibleV=visibleV,dBeta=None)
+                h,ht,m=self.getRecoRecoil(event=event,met=imet,visibleV=visibleV)
 
             pt=h.Pt()
-            mt=np.sqrt( 2*vis.Pt()*((vis+h).Pt())+vis.Pt()**2+vis.Dot(h) )
+            phi=h.Phi()
+            m=imet.p4().M() if imet else 0
+            metphi=imet.p4().Phi() if imet else -99
+            sphericity=pt/ht if ht>0 else -1   
+            count=0
+            try:
+                count = getattr(event,'%s_Count'%metType)
+            except:
+                pass
             e1=gen_V.Pt()/h.Pt()
             e2=deltaPhi(gen_V.Phi()+np.pi,h.Phi())
+            mt=np.sqrt( 2*vis.Pt()*((vis+h).Pt())+vis.Pt()**2+vis.Dot(h) )
 
-            self.out.fillBranch('%s_recoil_pt'%metType,       pt)
-            self.out.fillBranch('%s_recoil_e1'%metType,       e1)
-            self.out.fillBranch('%s_recoil_e2'%metType,       e2)
-            self.out.fillBranch('%s_recoil_ht'%metType,       ht)
-            self.out.fillBranch('%s_recoil_ptoverht'%metType, pt/ht)
-            self.out.fillBranch('%s_mt'%metType,              mt)
-            self.out.fillBranch('%s_m'%metType,              m)
-            self.out.fillBranch('%s_dphi2met'%metType,deltaPhi(met.phi(),imet.phi()))
-            self.out.fillBranch('%s_dphi2puppimet',deltaPhi(puppimet.phi(),imet.phi()))
+            self.out.fillBranch('%s_recoil_pt'%metType,            pt)
+            self.out.fillBranch('%s_recoil_phi'%metType,           phi)
+            self.out.fillBranch('%s_m'%metType,                    m)
+            self.out.fillBranch('%s_recoil_sphericity'%metType,    sphericity)
+            self.out.fillBranch('%s_n'%metType,                    count)
+            self.out.fillBranch('%s_recoil_e1'%metType,            e1)
+            self.out.fillBranch('%s_recoil_e2'%metType,            e2)
+            self.out.fillBranch('%s_mt'%metType,                   mt)
+            self.out.fillBranch('%s_dphi2met'%metType,             deltaPhi(met.p4().Phi(),metphi) )
+            self.out.fillBranch('%s_dphi2puppimet'%metType,        deltaPhi(puppimet.p4().Phi(),metphi) )
+            self.out.fillBranch('%s_dphi2ntnpv'%metType,           deltaPhi(ntnpv.Phi(),metphi) )
+            self.out.fillBranch('%s_dphi2centralntnpv'%metType,    deltaPhi(centralntnpv.Phi(),metphi) )
+            self.out.fillBranch('%s_dphi2centralmetdbeta'%metType, deltaPhi(centralmetdbeta.Phi(),metphi) )
+            self.out.fillBranch('%s_dphi2leadch'%metType,          deltaPhi(event.leadCharged_phi,metphi) )
+            self.out.fillBranch('%s_dphi2leadneut'%metType,        deltaPhi(event.leadNeutral_phi,metphi) )
 
         return True
-
-#    def process(self, event):
-# 
-#        self.readCollections( event.input)
-#
-#        #primary vertex
-#        if len(event.vertices)==0 : return
-#        vertex=event.vertices[0]
-#
-#        #mc truth
-#        genBoson,genRecoil=self.getMCtruth(event)
-#
-#        #possible recoil estimators
-#        TRUTH, LEP, CH_PU, CH_PV, CH_ALL, N_DBETA, N_ALL, N_DBETA_CENTRAL, N_CENTRAL, DBETA_CENTRAL, CENTRAL, DBETA_ALL, ALL = range(0,13)
-#                
-#        #lepton prefered direction
-#        sellepp4=[]
-#        sellepid=[]
-#        lepsump4=ROOT.Math.LorentzVector(ROOT.Math.PxPyPzE4D('double'))(0,0,0,0)
-#        for i in xrange(0,len(event.selectedLeptons)):
-#            if i>self.cfg_ana.maxSelLeptons : break
-#            sellepid.append( event.selectedLeptons[i].pdgId() )
-#            sellepp4.append( event.selectedLeptons[i].p4() )
-#            lepsump4+=sellepp4[-1]
-#
-#        #build charged particle sums and identify leading particles
-#        leadChargedCand,leadNeutCand=None,None
-#        p4sums  = [ROOT.Math.LorentzVector(ROOT.Math.PxPyPzE4D('double'))(0,0,0,0) for i in xrange(0,ALL+1)]
-#        ptsums  = [0. for i in xrange(0,ALL+1)]        
-#        pcounts = [0. for i in xrange(0,ALL+1)]
-#        pfcands = self.handles['pfcands'].product()
-#        for particle in pfcands:
-#
-#            charge = particle.charge()
-#            eta    = particle.eta()
-#
-#            #charged
-#            if charge!=0:
-#
-#                #association to PV
-#                pvflag = particle.fromPV()
-#
-#                #clean up wrt to selected leptons
-#                veto=False
-#                for il in xrange(0,len(sellepp4)):
-#                    if particle.pdgId()!=sellepid[il] : continue
-#                    if deltaR(sellepp4[il],particle.p4())>0.05: continue
-#                    veto=True
-#                    break
-#                if veto: continue
-#
-#                p4sums[CH_ALL]  += particle.p4()
-#                ptsums[CH_ALL]  += particle.pt()
-#                pcounts[CH_ALL] += 1
-#
-#                if abs(eta)<self.cfg_ana.centralEta:
-#                    if pvflag>self.cfg_ana.pvAssoc:
-#                        p4sums[CH_PV]  += particle.p4()
-#                        ptsums[CH_PV]  += particle.pt()
-#                        pcounts[CH_PV] += 1
-#
-#                        #update leading charged candidate in tracker acceptance region
-#                        if not leadChargedCand or leadChargedCand.pt()<particle.pt():
-#                            leadChargedCand = particle 
-#                    else:
-#                        p4sums[CH_PU]  += particle.p4()
-#                        ptsums[CH_PU]  += particle.pt()
-#                        pcounts[CH_PU] += 1
-#
-#            #neutrals
-#            else:
-#
-#                p4sums[N_ALL]  += particle.p4()
-#                ptsums[N_ALL]  += particle.pt()
-#                pcounts[N_ALL] += 1
-#
-#                if abs(eta)<self.cfg_ana.centralEta:
-#                    p4sums[N_CENTRAL]  += particle.p4()
-#                    ptsums[N_CENTRAL]  += particle.pt()
-#                    pcounts[N_CENTRAL] += 1
-#
-#                    #update leading neutral candidate in tracker acceptance region
-#                    if not leadNeutCand or leadNeutCand.pt()<particle.pt():
-#                        leadNeutCand = particle 
-#
-#        #truth
-#        pcounts[TRUTH]=1             if genRecoil else 0
-#        p4sums[TRUTH]=genRecoil      if genRecoil else 0
-#        ptsums[TRUTH]=genRecoil.pt() if genRecoil else 0
-#
-#        #leptonic
-#        pcounts[LEP]=len(sellepp4)
-#        p4sums[LEP]=lepsump4
-#        ptsums[LEP]=sum([ l.pt() for l in sellepp4 ]) if pcounts[LEP]>0 else 0.
-#        
-#        #inclusive
-#        p4sums[ALL]      = p4sums[CH_ALL]+p4sums[N_ALL]
-#        ptsums[ALL]      = ptsums[CH_ALL]+ptsums[N_ALL]
-#        pcounts[ALL]     = pcounts[CH_ALL]+pcounts[N_ALL]
-#
-#        #central
-#        p4sums[CENTRAL]  = p4sums[CH_PV]+p4sums[N_CENTRAL]
-#        ptsums[CENTRAL]  = ptsums[CH_PV]+ptsums[N_CENTRAL]
-#        pcounts[CENTRAL] = pcounts[CH_PV]+pcounts[N_CENTRAL]
-#
-#        #delta-beta estimator inclusive
-#        dbeta=self.cfg_ana.dbeta
-#        p4sums[DBETA_ALL]      = p4sums[CH_ALL]+p4sums[N_ALL]+p4sums[CH_PU]*dbeta
-#        ptsums[DBETA_ALL]      = ptsums[CH_ALL]+ptsums[N_ALL]+dbeta*ptsums[CH_PU]
-#        pcounts[DBETA_ALL]     = pcounts[CH_ALL]+pcounts[N_ALL]+dbeta*pcounts[CH_PU]
-#
-#        #delta-beta estimator central
-#        p4sums[DBETA_CENTRAL]  = p4sums[CH_PV]+p4sums[N_CENTRAL]+p4sums[CH_PU]*dbeta
-#        ptsums[DBETA_CENTRAL]  = ptsums[CH_PV]+ptsums[N_CENTRAL]+dbeta*ptsums[CH_PU]
-#        pcounts[DBETA_CENTRAL] = pcounts[CH_PV]+pcounts[N_CENTRAL]+dbeta*pcounts[CH_PU]
-#
-#        #delta-beta estimator neutral inclusive
-#        dbeta=self.cfg_ana.dbeta
-#        p4sums[N_DBETA]      = p4sums[N_ALL]+p4sums[CH_PU]*dbeta
-#        ptsums[N_DBETA]      = ptsums[N_ALL]+dbeta*ptsums[CH_PU]
-#        pcounts[N_DBETA]     = pcounts[N_ALL]+dbeta*pcounts[CH_PU]
-#
-#        #delta-beta estimator neutral central
-#        p4sums[N_DBETA_CENTRAL]  = p4sums[N_CENTRAL]+p4sums[CH_PU]*dbeta
-#        ptsums[N_DBETA_CENTRAL]  = ptsums[N_CENTRAL]+dbeta*ptsums[CH_PU]
-#        pcounts[N_DBETA_CENTRAL] = pcounts[N_CENTRAL]+dbeta*pcounts[CH_PU]
-#        
-#        #invert the sign for the recoil
-#        for i in xrange(0,len(p4sums)):
-#            if i in [LEP,TRUTH] : continue
-#            p4sums[i]=p4sums[i]*(-1)
-#
-#        #dump info to event
-#        setattr(event,'leading_particle_tk_p4',leadChargedCand)
-#        setattr(event,'leading_particle_nt_p4',leadNeutCand)
-#        for idx,tag in [ (TRUTH,            'truth'),
-#                         (LEP,             'lep'), 
-#                         (CH_PV,           'chs'),
-#                         (ALL,             'inclusive'),
-#                         (CENTRAL,         'central'),
-#                         (DBETA_ALL,       'dbeta_inclusive'),
-#                         (DBETA_CENTRAL,   'dbeta_central'),
-#                         (N_DBETA,         'neutral_dbeta_inclusive'),
-#                         (N_DBETA_CENTRAL, 'neutral_dbeta_central')]:
-#            addTrueVal=False if ptsums[idx]==0 else True
-#            setattr(event,tag+'_pt',p4sums[idx].pt() if addTrueVal else 0.)
-#            setattr(event,tag+'_phi',p4sums[idx].phi() if addTrueVal else 0.)
-#            setattr(event,tag+'_m',p4sums[idx].mass() if addTrueVal else 0.)            
-#            setattr(event,tag+'_ht',ptsums[idx] if addTrueVal else 0.)
-#            setattr(event,tag+'_ptoverht',p4sums[idx].pt()/ptsums[idx] if addTrueVal else 0.)
-#            setattr(event,tag+'_np',pcounts[idx] if addTrueVal else 0.)
-#            setattr(event,tag+'_dphi2vtx',         deltaPhi(vertex.p4().phi(),          p4sums[idx].phi()) if addTrueVal else 0.)
-#            setattr(event,tag+'_dphi2leadcharged', deltaPhi(leadChargedCand.p4().phi(), p4sums[idx].phi()) if addTrueVal else 0.)
-#            setattr(event,tag+'_dphi2leadneut',    deltaPhi(leadNeutCand.p4().phi(),    p4sums[idx].phi()) if addTrueVal else 0.)
-#            setattr(event,tag+'_dphi2all',         deltaPhi(p4sums[ALL].phi(),          p4sums[idx].phi()) if addTrueVal else 0.)
-#            setattr(event,tag+'_dphi2lepsys',      deltaPhi(lepsump4.phi(),             p4sums[idx].phi()) if addTrueVal else 0.)
-#
-#            #recoil corrections (if available)
-#            e1,e2=0.,0.
-#            if genRecoil and p4sums[idx].pt()>0:
-#                e1=genRecoil.pt()/p4sums[idx].pt()
-#                e2=deltaPhi(genRecoil.phi(),p4sums[idx].phi())            
-#            setattr(event,tag+'_e1',e1 if addTrueVal else 0.)
-#            setattr(event,tag+'_e2',e2 if addTrueVal else 0.)
-#

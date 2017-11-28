@@ -9,10 +9,10 @@ from genFriendProducer import *
 from eventRecoilAnalyzer import *
 
 p=PostProcessor(outputDir=".",
-#                eventRange=xrange(1000),
+                #eventRange=xrange(1000),
                 inputFiles=["../../../cfg/mytest/WJetsToLNu_LO/treeProducerWMass/tree.root"],
                 cut=None,
-                branchsel=None, #"keep_and_drop.txt",
+                branchsel=None, #"recoil_keep_and_drop.txt",
                 modules=[GenQEDJetProducer(deltaR=0.1,beamEn=13000.),
                          eventRecoilAnalyzer(tag='test')])
 p.run()
