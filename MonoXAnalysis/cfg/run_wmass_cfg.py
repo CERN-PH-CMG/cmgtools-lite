@@ -172,7 +172,6 @@ treeProducer.globalVariables.append(NTupleVariable("hbheFilterIso", lambda ev: e
 treeProducer.globalVariables.append(NTupleVariable("Flag_badChargedHadronFilter", lambda ev: ev.badChargedHadron, help="bad charged hadron filter decision"))
 treeProducer.globalVariables.append(NTupleVariable("Flag_badMuonFilter", lambda ev: ev.badMuon, help="bad muon filter decision"))
 
-
 #additional MET quantities
 metAna.doTkMet = True
 treeProducer.globalVariables.append(NTupleVariable("met_trkPt", lambda ev : ev.tkMet.pt() if  hasattr(ev,'tkMet') else  0, help="tkmet p_{T}"))
@@ -188,7 +187,19 @@ if not skipT1METCorr:
     jetAnaScaleDown.calculateType1METCorrection = True
     metAnaScaleDown.recalibrate = "type1"
 
+# add puppi met
+puppiMetAna=metAna.clone(
+    name='pupimetAnalyzer',
+    metCollection='slimmedMETsPuppi',
+    noPUMetCollection='slimmedMETsPuppi',
+    doTkMet=False,
+    includeTkMetCHS=False,
+    includeTkMetPVTight=False,
+    doMetNoPU=False,
+    storePuppiExtra=False,
+    collectionPostFix='puppi')
 
+                                         
 #-------- SAMPLES AND TRIGGERS -----------
 
 
@@ -411,7 +422,8 @@ if selectedEvents!="":
 #-------- SEQUENCE -----------
 
 sequence = cfg.Sequence(dmCoreSequence+[
-        ttHEventAna,
+        puppiMetAna,
+        ttHEventAna,        
         treeProducer,
     ])
 preprocessor = None
@@ -419,14 +431,14 @@ preprocessor = None
 #-------- HOW TO RUN -----------
 
 test = getHeppyOption('test')
-if test == '1':
-    comp = selectedComponents[0]
-    if getHeppyOption('manyfiles'):
-        filesPerJob = max(len(comp.files)/comp.splitFactor, 1)
-        comp.files = comp.files[:filesPerJob]
+if test == 'testw' or test=='testz':
+    if test=='testw':
+        comp = WJetsToLNu_LO
+        comp.files = ['/eos/cms/store/cmst3/user/psilva/Wmass/WJetsMG_test/0A85AA82-45BB-E611-8ACD-001E674FB063-9552f253c2fa2ae.root']
     else:
-        #comp.files = comp.files[:1]
-        comp.files = comp.files[8:9]
+        comp=DYJetsToLL_M50
+        comp.files=comp.files[8:9]    
+    print comp.files
     comp.splitFactor = 1
     comp.fineSplitFactor = 1
     selectedComponents = [ comp ]
