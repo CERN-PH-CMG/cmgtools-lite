@@ -431,10 +431,13 @@ preprocessor = None
 #-------- HOW TO RUN -----------
 
 test = getHeppyOption('test')
-if test == '1':
-    comp = WJetsToLNu_LO
-    print comp.files[8:9] 
-    comp.files = ['/eos/cms/store/cmst3/user/psilva/Wmass/WJetsMG_test/0A85AA82-45BB-E611-8ACD-001E674FB063-9552f253c2fa2ae.root'] #comp.files[8:9]
+if test == 'testw' or test=='testz':
+    if test=='testw':
+        comp = WJetsToLNu_LO
+        comp.files = ['/eos/cms/store/cmst3/user/psilva/Wmass/WJetsMG_test/0A85AA82-45BB-E611-8ACD-001E674FB063-9552f253c2fa2ae.root']
+    else:
+        comp=DYJetsToLL_M50
+        comp.files=comp.files[8:9]    
     print comp.files
     comp.splitFactor = 1
     comp.fineSplitFactor = 1

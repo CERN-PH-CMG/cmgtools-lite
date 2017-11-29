@@ -47,11 +47,13 @@ class eventRecoilAnalyzer(Module):
         #define output
         self.out = wrappedOutputTree    
         self.out.branch("leadch_pt",   "F")
+        self.out.branch("leadch_phi",   "F")
         self.out.branch("leadneut_pt", "F")
-        for rtype in ["truth","gen","met", "puppimet", "tkMetPVchs", "tkMetPVLoose"]:
-            for var in ['recoil_pt','recoil_phi', 'recoil_sphericity', 'm','n',
-                        'recoil_e1','recoil_e2', 
-                        'mt',
+        self.out.branch("leadneut_phi", "F")
+    
+        #recoil types
+        for rtype in ["truth","gen","met", "puppimet", 'ntmet','ntcentralmet', 'tkmet', 'chsmet', 'npvmet', 'ntnpv', 'centralntnpv', 'centralmetdbeta']:
+            for var in ['recoil_pt','recoil_phi', 'recoil_sphericity', 'm','n','recoil_e1','recoil_e2', 'mt',
                         'dphi2met','dphi2puppimet','dphi2ntnpv','dphi2centralntnpv','dphi2centralmetdbeta','dphi2leadch','dphi2leadneut']:
                 self.out.branch("{0}_{1}".format(rtype,var), "F")
 
@@ -142,15 +144,27 @@ class eventRecoilAnalyzer(Module):
 
         return visibleV
 
-    def getRecoRecoil(self,event,met,visibleV):
+    def summarizeMetEstimator(self,event, metObjects=['met'], weights=[] ):
+        """gets the summary out of a met estimator"""
+        p4,sumEt,count=None,0,0
+        for i in xrange(0,len(metObjects)):
+            wgt=weights[i]
+            imet=Object(event,metObjects[i])
+            if p4 is None: p4 = imet.p4()*wgt
+            else : p4 += imet.p4()*wgt
+            sumEt += imet.sumEt*wgt
+            try:
+                count += getattr(event,'%s_Count'%metObjects[i])*wgt
+            except:
+                pass
+        return p4,sumEt,count
+
+    def getRecoRecoil(self,event,metP4,sumEt,visibleV):
         """computes the MC truth for this event"""
 
-        #MET
-        metP4=met.p4()
-
         #charged recoil estimators
-        ht=met.sumEt
         h=ROOT.TVector3(-metP4.Px(),-metP4.Py(),0.)
+        ht=sumEt
         if visibleV:
             for l in visibleV.legs:
                 ht -= l.Pt()
@@ -172,43 +186,74 @@ class eventRecoilAnalyzer(Module):
         if not visibleV : return False
 
         #leading PF candidates
-        self.out.fillBranch('leadch_pt',   event.leadCharged_pt)
-        self.out.fillBranch('leadneut_pt', event.leadNeutral_pt)
+        self.out.fillBranch('leadch_pt',    event.leadCharged_pt)
+        self.out.fillBranch('leadch_phi',   event.leadCharged_phi)
+        self.out.fillBranch('leadneut_pt',  event.leadNeutral_pt)
+        self.out.fillBranch('leadneut_phi', event.leadNeutral_phi)
 
         #met estimators
-        met               = Object(event,"met")
-        puppimet          = Object(event,"puppimet")
-        ntmet             = Object(event,"ntMet")
-        ntCentralmet      = Object(event,"ntCentralMet")
-        tkmet             = Object(event,"tkMetPVLoose")
-        npvmet            = Object(event,"tkMetPUPVLoose")
-        ntnpv             = ntmet.p4()+npvmet.p4()
-        centralntnpv      = ntCentralmet.p4()+npvmet.p4()
-        centralmetdbeta = tkmet.p4()+ntCentralmet.p4()-npvmet.p4()*0.5
-
+        metEstimators={
+            'met'               : self.summarizeMetEstimator(event,
+                                                             ['met'], 
+                                                             [1]),
+            'puppimet'          : self.summarizeMetEstimator(event,
+                                                             ['puppimet'], 
+                                                             [1]),
+            'ntmet'             : self.summarizeMetEstimator(event,
+                                                             ['ntMet'],       
+                                                             [1]),
+            'ntcentralmet'      : self.summarizeMetEstimator(event,
+                                                             ['ntCentralMet'], 
+                                                             [1]),             
+            'tkmet'             : self.summarizeMetEstimator(event,
+                                                             ['tkMetPVLoose'], 
+                                                             [1]),  
+            'chsmet'            : self.summarizeMetEstimator(event,
+                                                             ['tkMetPVchs'], 
+                                                             [1]),  
+            'npvmet'            : self.summarizeMetEstimator(event,
+                                                             ['tkMetPUPVLoose'],                               
+                                                             [1]),  
+            'ntnpv'             : self.summarizeMetEstimator(event,
+                                                             ['ntMet','tkMetPUPVLoose'],                       
+                                                             [1,1]),  
+            'centralntnpv'      : self.summarizeMetEstimator(event,
+                                                             ['ntCentralMet','tkMetPUPVLoose'],                
+                                                             [1,1]),  
+            'centralmetdbeta'   : self.summarizeMetEstimator(event,
+                                                             ['tkMetPVLoose','ntCentralMet','tkMetPUPVLoose'], 
+                                                             [1,1,0.5]),  
+            }
+       
         #recoil estimators
-        for metType in ["truth","gen", "met","puppimet", "tkMetPVchs", "tkMetPVLoose"]:
+        for metType in metEstimators.keys() + ["truth","gen"]:
 
-            imet=None
+            #some may need to be specified
             if metType=="truth":
-                vis,h,ht=gen_visibleV.VectorT(),ROOT.TVector3(-gen_V.Px(),-gen_V.Py(),0),gen_V.Pt()
+                vis   = gen_visibleV.VectorT()
+                metP4 = gen_V
+                h     = ROOT.TVector3(-gen_V.Px(),-gen_V.Py(),0)
+                ht    = gen_V.Pt()
+                m     = gen_V.M()
+                count = 0
             elif metType=='gen':
-                vis,h,ht=gen_visibleV.VectorT(),gen_h,gen_ht            
+                vis   = gen_visibleV.VectorT()
+                metP4=ROOT.TLorentzVector(0,0,0,0)
+                metP4.SetPtEtaPhiM(event.tkGenMet_pt,0,event.tkGenMet_phi,0.)
+                h     = gen_h
+                ht    = gen_ht
+                m     = 0
+                count = 0
             else:
-                imet=Object(event,metType)
-                vis=visibleV.VectorT()
-                h,ht,m=self.getRecoRecoil(event=event,met=imet,visibleV=visibleV)
+                vis = visibleV.VectorT()
+                metP4, sumEt, count = metEstimators[metType]
+                h, ht, m = self.getRecoRecoil(event=event,metP4=metP4,sumEt=sumEt,visibleV=visibleV)
 
+            #save information to tree
             pt=h.Pt()
             phi=h.Phi()
-            m=imet.p4().M() if imet else 0
-            metphi=imet.p4().Phi() if imet else -99
+            metphi=metP4.Phi()
             sphericity=pt/ht if ht>0 else -1   
-            count=0
-            try:
-                count = getattr(event,'%s_Count'%metType)
-            except:
-                pass
             e1=gen_V.Pt()/h.Pt()
             e2=deltaPhi(gen_V.Phi()+np.pi,h.Phi())
             mt=np.sqrt( 2*vis.Pt()*((vis+h).Pt())+vis.Pt()**2+vis.Dot(h) )
@@ -221,12 +266,12 @@ class eventRecoilAnalyzer(Module):
             self.out.fillBranch('%s_recoil_e1'%metType,            e1)
             self.out.fillBranch('%s_recoil_e2'%metType,            e2)
             self.out.fillBranch('%s_mt'%metType,                   mt)
-            self.out.fillBranch('%s_dphi2met'%metType,             deltaPhi(met.p4().Phi(),metphi) )
-            self.out.fillBranch('%s_dphi2puppimet'%metType,        deltaPhi(puppimet.p4().Phi(),metphi) )
-            self.out.fillBranch('%s_dphi2ntnpv'%metType,           deltaPhi(ntnpv.Phi(),metphi) )
-            self.out.fillBranch('%s_dphi2centralntnpv'%metType,    deltaPhi(centralntnpv.Phi(),metphi) )
-            self.out.fillBranch('%s_dphi2centralmetdbeta'%metType, deltaPhi(centralmetdbeta.Phi(),metphi) )
-            self.out.fillBranch('%s_dphi2leadch'%metType,          deltaPhi(event.leadCharged_phi,metphi) )
-            self.out.fillBranch('%s_dphi2leadneut'%metType,        deltaPhi(event.leadNeutral_phi,metphi) )
+            self.out.fillBranch('%s_dphi2met'%metType,             deltaPhi(metEstimators['met'][0].Phi(),             metphi) )
+            self.out.fillBranch('%s_dphi2puppimet'%metType,        deltaPhi(metEstimators['puppimet'][0].Phi(),        metphi) )
+            self.out.fillBranch('%s_dphi2ntnpv'%metType,           deltaPhi(metEstimators['ntnpv'][0].Phi(),           metphi) )
+            self.out.fillBranch('%s_dphi2centralntnpv'%metType,    deltaPhi(metEstimators['centralntnpv'][0].Phi(),    metphi) )
+            self.out.fillBranch('%s_dphi2centralmetdbeta'%metType, deltaPhi(metEstimators['centralmetdbeta'][0].Phi(), metphi) )
+            self.out.fillBranch('%s_dphi2leadch'%metType,          deltaPhi(event.leadCharged_phi,                     metphi) )
+            self.out.fillBranch('%s_dphi2leadneut'%metType,        deltaPhi(event.leadNeutral_phi,                     metphi) )
 
         return True
