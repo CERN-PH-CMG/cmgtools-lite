@@ -4,8 +4,12 @@
 #include "TSpline.h"
 #include "TCanvas.h"
 #include "TGraphAsymmErrors.h"
+#include "TLorentzVector.h"
+#include "EgammaAnalysis/ElectronTools/interface/ElectronEnergyCalibratorRun2Standalone.h"
+#include "EgammaAnalysis/ElectronTools/interface/SimpleElectronStandalone.h"
 
 #include <iostream>
+#include <stdlib.h>
 
 TFile *_file_recoToMedium_leptonSF_el = NULL;
 TH2F *_histo_recoToMedium_leptonSF_el = NULL;
@@ -186,4 +190,52 @@ float trgSF_We(int pdgid, float pt, float eta, int ndim, float var=0) {
   if (res<0) {std::cout << "ERROR negative result" << std::endl; std::abort();}
   return res;
 
+}
+
+#include "TRandom.h"
+TRandom3 *rng = NULL;
+ElectronEnergyCalibratorRun2Standalone *calibratorData = NULL;
+ElectronEnergyCalibratorRun2Standalone *calibratorMC = NULL;
+
+float ptCorr(float pt, float eta, float phi, float r9, int run, int isData) {
+  if(!calibratorData && isData ) calibratorData = new ElectronEnergyCalibratorRun2Standalone(false,false,"CMGTools/MonoXAnalysis/python/postprocessing/data/leptonScale/el/Run2016_legacyrereco");
+  if(!calibratorMC && !isData ) calibratorMC = new ElectronEnergyCalibratorRun2Standalone(true,false,"CMGTools/MonoXAnalysis/python/postprocessing/data/leptonScale/el/Run2016_legacyrereco");
+  ElectronEnergyCalibratorRun2Standalone *calibrator = isData ? calibratorData : calibratorMC;
+
+  if(!isData) {
+    if(!rng) rng = new TRandom3();
+    rng->SetSeed(0); // make it really random across different jobs
+    calibrator->initPrivateRng(rng);
+  }
+
+  TLorentzVector oldMomentum;
+  oldMomentum.SetPtEtaPhiM(pt,eta,phi,0.51e-3);
+  float p = oldMomentum.E();
+  SimpleElectron electron(run,-1,r9,p,0,p,0,p,0,p,0,eta,fabs(eta)<1.479,!isData,1,0);
+  calibrator->calibrate(electron);
+  float scale = electron.getNewEnergy()/p;
+  // std::cout << "isData = " << isData << " run = " << run 
+  //           << "pt,eta,phi,r9 = " << pt << " " << eta << " " << phi << " " << r9 
+  //           << "  SCALE = " << scale << std::endl;
+  return pt * scale;
+}
+
+TFile *_file_residualcorr_scale = NULL;
+TH2D *_histo_residualcorr_scale = NULL;
+
+float residualScale(float pt, float eta, int isData) {
+  if(!isData) return 1.;
+
+  if(!_histo_residualcorr_scale) {
+    _file_residualcorr_scale = new TFile("../postprocessing/data/leptonScale/el/plot_dm_diff.root");
+    _histo_residualcorr_scale = (TH2D*)(_file_residualcorr_scale->Get("plot_dm_diff"));
+  }
+  
+  TH2D *hist = _histo_residualcorr_scale;
+  int etabin  = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(fabs(eta))));
+  int ptbin = std::max(1, std::min(hist->GetNbinsY(), hist->GetYaxis()->FindBin(pt)));
+  
+  const float MZ0 = 91.1876;
+  float scale = 1. - hist->GetBinContent(etabin,ptbin)/MZ0/sqrt(2.);
+  return scale;
 }

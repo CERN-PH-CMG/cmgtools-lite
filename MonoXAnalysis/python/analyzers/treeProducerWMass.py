@@ -14,6 +14,7 @@ wmass_globalVariables = [
             NTupleVariable("rho",  lambda ev: ev.rho, float, help="kt6PFJets rho"),
             NTupleVariable("rhoCN",  lambda ev: ev.rhoCN, float, help="fixed grid rho central neutral"),
             NTupleVariable("nVert",  lambda ev: len(ev.goodVertices), int, help="Number of good vertices"), 
+            ## NTupleVariable("nTrueInt",  lambda ev: ev.nTrueInteractions, mcOnly=True, int, help="Number of true interaction from MC"), 
 
             ## ------- lheHT, needed for merging HT binned samples 
             NTupleVariable("lheHT", lambda ev : getattr(ev,"lheHT",-999), mcOnly=True, help="H_{T} computed from quarks and gluons in Heppy LHEAnalyzer"),
@@ -21,13 +22,41 @@ wmass_globalVariables = [
 
             ##--------------------------------------------------            
             NTupleVariable("mZ1", lambda ev : ev.bestZ1[0], help="Best m(ll) SF/OS"),
+
+            ##--------------------------------------------------
+            NTupleVariable("puppimet_sumEt",       lambda ev : getattr(ev,'met_sumetpuppi'),       help="Puppi Sum E_{T}"),
+            NTupleVariable("met_sumEt",            lambda ev : getattr(ev,'met_sumet'),            help="Puppi Sum E_{T}"),
+            NTupleVariable("tkGenMet_sumEt",       lambda ev : getattr(ev,'tkGenMet').sumEt,       help="Gen charged Sum E_{T} eta<2.4"),   
+            NTupleVariable("tkGenMetInc_sumEt",    lambda ev : getattr(ev,'tkGenMetInc').sumEt,    help="Gen charged Sum E_{T} eta<5"),   
+            NTupleVariable("tkMetPVchs_sumEt",     lambda ev : getattr(ev,'tkMetPVchs').sumEt,     help="Sum E_{T} from charged candidates with chs"),
+            NTupleVariable("tkMetPVLoose_sumEt",   lambda ev : getattr(ev,'tkMetPVLoose').sumEt,   help="Sum E_{T} from charged candidates with Loose chs"),
+            NTupleVariable("tkMetPUPVLoose_sumEt", lambda ev : getattr(ev,'tkMetPUPVLoose').sumEt, help="Sum E_{T} from PU charged candidates with Loose chs"),
+            NTupleVariable("tkMetPVTight_sumEt",   lambda ev : getattr(ev,'tkMetPVTight').sumEt,   help="Sum E_{T} from charged candidates with Tight chs"),            
+            NTupleVariable("ntMet_sumEt",          lambda ev : getattr(ev,'ntMet').sumEt,          help="Sum E_{T} from neutral PF candidates"),
+            NTupleVariable("ntCentralMet_sumEt",   lambda ev : getattr(ev,'ntCentralMet').sumEt,   help="Sum E_{T} from neutral PF candidates with eta<2.4"),            
+
+            NTupleVariable("tkMetPVchs_Count",     lambda ev : getattr(ev,'tkMetPVchs_Count'),     help="Count of charged candidates with chs"),
+            NTupleVariable("tkMetPVLoose_Count",   lambda ev : getattr(ev,'tkMetPVLoose_Count'),   help="Count of from charged candidates with Loose chs"),
+            NTupleVariable("tkMetPUPVLoose_Count", lambda ev : getattr(ev,'tkMetPUPVLoose_Count'), help="Count of from PU charged candidates with Loose chs"),
+            NTupleVariable("tkMetPVTight_Count",   lambda ev : getattr(ev,'tkMetPVTight_Count'),   help="Count of from charged candidates with Tight chs"),            
+            NTupleVariable("ntMet_Count",          lambda ev : getattr(ev,'ntMet_Count'),          help="Count of from neutral PF candidates"),
+            NTupleVariable("ntCentralMet_Count",   lambda ev : getattr(ev,'ntCentralMet_Count'),   help="Count of from neutral PF candidates with eta<2.4"),            
 ]
 
 wmass_globalObjects = {
-            "met"   : NTupleObject("met", metType, help="PF E_{T}^{miss}, after type 1 corrections"),
-            "tkMetPVchs" : NTupleObject("tkMetPVchs", fourVectorType, help="PF E_{T}^{miss} from charged candidates with chs"),
-            "tkMetPVLoose" : NTupleObject("tkMetPVLoose", fourVectorType, help="PF E_{T}^{miss} from charged candidates with Loose chs"),
-            "tkMetPVTight" : NTupleObject("tkMetPVTight", fourVectorType, help="PF E_{T}^{miss} from charged candidates with Tight chs"),
+    ##--------------------------------------------------
+    "tkGenMet"     :   NTupleObject("tkGenMet",       fourVectorType, help="Gen charged E_{T}^{miss} eta<2.4"),
+    "tkGenMetInc"  :   NTupleObject("tkGenMetInc", fourVectorType, help="Gen charged E_{T}^{miss} eta<5"),
+    "met"          :   NTupleObject("met",            fourVectorType, help="PF E_{T}^{miss}, after type 1 corrections"),
+    "metpuppi"     :   NTupleObject("puppimet",       fourVectorType, help="Puppi E_{T}^{miss}"),
+    "tkMetPVchs"   :   NTupleObject("tkMetPVchs",     fourVectorType, help="PF E_{T}^{miss} from charged candidates with chs"),
+    "tkMetPVLoose" :   NTupleObject("tkMetPVLoose",   fourVectorType, help="PF E_{T}^{miss} from charged candidates with Loose chs"),
+    "tkMetPUPVLoose" : NTupleObject("tkMetPUPVLoose", fourVectorType, help="PF E_{T}^{miss} from PU charged candidates with Loose chs"),
+    "tkMetPVTight" :   NTupleObject("tkMetPVTight",   fourVectorType, help="PF E_{T}^{miss} from charged candidates with Tight chs"),
+    "ntMet"        :   NTupleObject("ntMet",          fourVectorType, help="PF E_{T}^{miss} from neutral candidates"),
+    "ntCentralMet" :   NTupleObject("ntCentralMet",   fourVectorType, help="PF E_{T}^{miss} from neutral eta<2.4 candidates"),
+    "leadCharged"  :   NTupleObject("leadCharged",    fourVectorType, help="leading pT charged PF candidate"),
+    "leadNeutral"  :   NTupleObject("leadNeutral",    fourVectorType, help="leading pT neutral PF candidate"),
 }
 
 ##------------------------------------------  

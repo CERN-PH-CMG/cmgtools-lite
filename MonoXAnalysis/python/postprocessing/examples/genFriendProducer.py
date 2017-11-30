@@ -61,7 +61,8 @@ class KinematicVars:
         else: return phi
 
 class GenQEDJetProducer(Module):
-    def __init__(self,deltaR):
+    def __init__(self,deltaR,beamEn=7000.):
+        self.beamEn=beamEn
         self.deltaR = deltaR
         self.vars = ("pt","eta","phi","mass","pdgId")
         self.genwvars = ("charge","pt","eta","phi","mass","y","costcs","phics")
@@ -134,7 +135,7 @@ class GenQEDJetProducer(Module):
             self.out.fillBranch("genw_phi",genw.Phi())
             self.out.fillBranch("genw_y",genw.Rapidity())
             self.out.fillBranch("genw_mass",genw.M())
-            kv = KinematicVars()
+            kv = KinematicVars(self.beamEn)
             # convention for phiCS: use l- direction for W-, use neutrino for W+
             (lplus,lminus) = (neutrinos[0],dressedLeptons[0]) if lepPdgIds[0]<0 else (dressedLeptons[0],neutrinos[0])
             self.out.fillBranch("genw_costcs",kv.cosThetaCS(lplus,lminus))
