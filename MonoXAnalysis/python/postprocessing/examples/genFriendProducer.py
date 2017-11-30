@@ -32,7 +32,7 @@ class SimpleVBoson:
         return sqrt(2*self.pt1*self.pt2*(cosh(self.deta)-cos(self.dphi)))
 
 class KinematicVars:
-    def __init__(self,beamE=7000):
+    def __init__(self,beamE=6500):
         self.beamE = beamE
     def CSFrame(self,dilepton):
         pMass = 0.938272
