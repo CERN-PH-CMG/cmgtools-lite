@@ -26,8 +26,8 @@ wmass_globalVariables = [
             ##--------------------------------------------------
             NTupleVariable("puppimet_sumEt",       lambda ev : getattr(ev,'met_sumetpuppi'),       help="Puppi Sum E_{T}"),
             NTupleVariable("met_sumEt",            lambda ev : getattr(ev,'met_sumet'),            help="Puppi Sum E_{T}"),
-            NTupleVariable("tkGenMet_sumEt",       lambda ev : getattr(ev,'tkGenMet').sumEt,       help="Gen charged Sum E_{T} eta<2.4"),   
-            NTupleVariable("tkGenMetInc_sumEt",    lambda ev : getattr(ev,'tkGenMetInc').sumEt,    help="Gen charged Sum E_{T} eta<5"),   
+            NTupleVariable("tkGenMet_sumEt",       lambda ev : getattr(ev,'tkGenMet').sumEt,  mcOnly=True,       help="Gen charged Sum E_{T} eta<2.4"),   
+            NTupleVariable("tkGenMetInc_sumEt",    lambda ev : getattr(ev,'tkGenMetInc').sumEt,  mcOnly=True, help="Gen charged Sum E_{T} eta<5"),   
             NTupleVariable("tkMetPVchs_sumEt",     lambda ev : getattr(ev,'tkMetPVchs').sumEt,     help="Sum E_{T} from charged candidates with chs"),
             NTupleVariable("tkMetPVLoose_sumEt",   lambda ev : getattr(ev,'tkMetPVLoose').sumEt,   help="Sum E_{T} from charged candidates with Loose chs"),
             NTupleVariable("tkMetPUPVLoose_sumEt", lambda ev : getattr(ev,'tkMetPUPVLoose').sumEt, help="Sum E_{T} from PU charged candidates with Loose chs"),
@@ -45,8 +45,8 @@ wmass_globalVariables = [
 
 wmass_globalObjects = {
     ##--------------------------------------------------
-    "tkGenMet"     :   NTupleObject("tkGenMet",       fourVectorType, help="Gen charged E_{T}^{miss} eta<2.4"),
-    "tkGenMetInc"  :   NTupleObject("tkGenMetInc", fourVectorType, help="Gen charged E_{T}^{miss} eta<5"),
+    "tkGenMet"     :   NTupleObject("tkGenMet",       fourVectorType,  mcOnly=True, help="Gen charged E_{T}^{miss} eta<2.4"),
+    "tkGenMetInc"  :   NTupleObject("tkGenMetInc",    fourVectorType,  mcOnly=True, help="Gen charged E_{T}^{miss} eta<5"),
     "met"          :   NTupleObject("met",            fourVectorType, help="PF E_{T}^{miss}, after type 1 corrections"),
     "metpuppi"     :   NTupleObject("puppimet",       fourVectorType, help="Puppi E_{T}^{miss}"),
     "tkMetPVchs"   :   NTupleObject("tkMetPVchs",     fourVectorType, help="PF E_{T}^{miss} from charged candidates with chs"),
@@ -64,10 +64,10 @@ wmass_globalObjects = {
 ##------------------------------------------  
 
 pdfsVariables = [
-        NTupleVariable("x1", lambda ev: ev.pdf_x1, help="fraction of proton momentum carried by the first parton"),
-        NTupleVariable("x2", lambda ev: ev.pdf_x2, help="fraction of proton momentum carried by the second parton"),
-        NTupleVariable("id1", lambda ev: ev.pdf_id1, int, help="id of the first parton in the proton"),
-        NTupleVariable("id2", lambda ev: ev.pdf_id2, int, help="id of the second parton in the proton"),
+        NTupleVariable("x1", lambda ev: ev.pdf_x1, mcOnly=True, help="fraction of proton momentum carried by the first parton"),
+        NTupleVariable("x2", lambda ev: ev.pdf_x2, mcOnly=True, help="fraction of proton momentum carried by the second parton"),
+        NTupleVariable("id1", lambda ev: ev.pdf_id1, int, mcOnly=True, help="id of the first parton in the proton"),
+        NTupleVariable("id2", lambda ev: ev.pdf_id2, int, mcOnly=True, help="id of the second parton in the proton"),
         ]
 
 wmass_collections = {
@@ -85,6 +85,6 @@ wmass_collections = {
             #"genleps"         : NTupleCollection("genLep",     genParticleWithLinksType, 10, help="Generated leptons (e/mu) from W/Z decays"),                                                                                                
             #"gentauleps"      : NTupleCollection("genLepFromTau", genParticleWithLinksType, 10, help="Generated leptons (e/mu) from decays of taus from W/Z/h decays"),                                                                       
             #"gentaus"         : NTupleCollection("genTau",     genParticleWithLinksType, 10, help="Generated leptons (tau) from W/Z decays"),                            
-            "generatorSummary" : NTupleCollection("GenPart", genParticleWithLinksType, 20 , help="Hard scattering particles, with ancestry and links"),
+            "generatorSummary" : NTupleCollection("GenPart", genParticleWithLinksType, 20 , mcOnly=True, help="Hard scattering particles, with ancestry and links"),
 }
 
