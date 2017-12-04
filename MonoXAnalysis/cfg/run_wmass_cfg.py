@@ -533,6 +533,7 @@ if not keepLHEweights:
 if runOnSignal:
     if ttHLepSkim in sequence: sequence.remove(ttHLepSkim)
     if triggerFlagsAna in sequence: sequence.remove(triggerFlagsAna)
+    if genAna in sequence: genAna.saveAllInterestingGenParticles = True
 
 ## Auto-AAA
 if not getHeppyOption("isCrab"):
