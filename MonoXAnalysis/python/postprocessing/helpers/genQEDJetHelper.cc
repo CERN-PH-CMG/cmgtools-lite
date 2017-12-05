@@ -19,14 +19,18 @@ class GenQEDJetHelper {
   GenQEDJetHelper(float dR=0.1) { deltaR_=dR; }
   ~GenQEDJetHelper() {}
   
-  void setGenParticles(rint *nGp, rfloats *gpPt, rfloats *gpEta, rfloats *gpPhi, rfloats *gpMass, rints *gpPdgId, rints *gpPromptHard) {
-    nGp_ = nGp; Gp_pt_ = gpPt; Gp_eta_ = gpEta; Gp_phi_ = gpPhi; Gp_mass_ = gpMass; Gp_pdgId_ = gpPdgId; Gp_prompt_ = gpPromptHard;
+  void setGenParticles(rint *nGp, rfloats *gpPt, rfloats *gpEta, rfloats *gpPhi, rfloats *gpMass, rints *gpPdgId, rints *gpPromptHard, rints *gpMotherId) {
+    nGp_ = nGp; Gp_pt_ = gpPt; Gp_eta_ = gpEta; Gp_phi_ = gpPhi; Gp_mass_ = gpMass; Gp_pdgId_ = gpPdgId; Gp_prompt_ = gpPromptHard, Gp_motherId_ = gpMotherId;
   }
   void run() {
     dressedLeptons_.clear();
     neutrinos_.clear();
+    lheWs_.clear();
+    lheWPdgIds_.clear();
     lepPdgIds_.clear();
     nuPdgIds_.clear();
+    lheLeps_.clear();
+    lheLepPdgIds_.clear();
 
     // fill the prmpt hard particles and leptons / neutrinos
     genparticles promptgp;
@@ -42,6 +46,13 @@ class GenQEDJetHelper {
       } else if ( (*Gp_prompt_)[iP] && (*Gp_pt_)[iP]>0 && (abs(pdgId)==12 || abs(pdgId)==14 || abs(pdgId)==16) ) {
         neutrinos_.push_back(gp);
         nuPdgIds_.push_back(pdgId);
+      } else if ( (*Gp_pt_)[iP]>=0. && (abs(pdgId)==24) ) {
+        lheWs_.push_back(gp);
+        lheWPdgIds_.push_back(pdgId);
+      } 
+      if ( (*Gp_pt_)[iP]>=0. && isChLep && abs((*Gp_motherId_)[iP]) == 24 ) {
+        lheLeps_.push_back(gp);
+        lheLepPdgIds_.push_back(pdgId);
       }
     }
 
@@ -65,12 +76,16 @@ class GenQEDJetHelper {
 
   const genparticles & dressedLeptons() { return dressedLeptons_; }
   const genparticles & promptNeutrinos() { return neutrinos_; }
+  const genparticles & lheWs() { return lheWs_; }
+  const genparticles & lheLeps() { return lheLeps_; }
   const std::vector<int> & dressedLeptonsPdgId() { return lepPdgIds_; }
   const std::vector<int> & promptNeutrinosPdgId() { return nuPdgIds_; }
+  const std::vector<int> & lheWsPdgId() { return lheWPdgIds_; }
+  const std::vector<int> & lheLepsPdgId() { return lheLepPdgIds_; }
 
 private:
-  genparticles dressedLeptons_, neutrinos_;
-  std::vector<int> lepPdgIds_,nuPdgIds_;
+  genparticles dressedLeptons_, neutrinos_, lheWs_, lheLeps_;
+  std::vector<int> lepPdgIds_,nuPdgIds_,lheWPdgIds_,lheLepPdgIds_;
   float deltaR_;
   rint *nGp_ = nullptr;
   rfloats *Gp_pt_ = nullptr;
@@ -79,6 +94,7 @@ private:
   rfloats *Gp_mass_ = nullptr;
   rints *Gp_pdgId_ = nullptr;
   rints *Gp_prompt_ = nullptr;
+  rints *Gp_motherId_ = nullptr;
 };
 
 #endif
