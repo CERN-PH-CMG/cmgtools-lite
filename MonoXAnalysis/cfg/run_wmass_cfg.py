@@ -222,7 +222,7 @@ from CMGTools.RootTools.samples.samples_13TeV_DATA2016 import *
 from CMGTools.HToZZ4L.tools.configTools import printSummary, configureSplittingFromTime, cropToLumi, prescaleComponents, insertEventSelector, mergeExtensions
 from CMGTools.RootTools.samples.autoAAAconfig import *
 
-selectedComponents = [ DYJetsToLL_M50 ]
+selectedComponents = [ DYJetsToLL_M50, WJetsToLNu ]
 
 samples_1fake = [QCD_Mu15] + QCD_Mu5 + QCDPtEMEnriched + QCDPtbcToE + GJetsDR04HT
 single_t = [TToLeptons_sch_amcatnlo,T_tch_powheg,TBar_tch_powheg,T_tWch_ext,TBar_tWch_ext] # single top + tW
@@ -234,13 +234,14 @@ dibosons = [WW,WW_ext,WZ,WZ_ext,ZZ,ZZ_ext] # di-boson
 samples_signal = w_jets
 samples_1prompt = single_t + tt_1l + z_jets + dibosons
 
-for comp in selectedComponents: comp.splitFactor = 200
+for comp in selectedComponents: comp.splitFactor = len(comp.files) #200
 configureSplittingFromTime(samples_1fake,30,6)
 configureSplittingFromTime(samples_1prompt,50,6)
 configureSplittingFromTime(samples_signal,100,6)
 
 if runOnSignal:
     selectedComponents = samples_signal
+    selectedComponents = [DYJetsToLL_M50, WJetsToLNu ]
 else:
     #selectedComponents = samples_1prompt + samples_1fake 
     selectedComponents = QCDPtbcToE
@@ -265,10 +266,11 @@ if runData and not isTest: # For running on data
     json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/ReReco/Final/Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt' # 36.5/fb
 
     run_ranges = []; useAAA=False;
-    processing = "Run2016B-18Apr2017_ver2-v1"; short = "Run2016B"; dataChunks.append((json,processing,short,run_ranges,useAAA))
-    for era in 'CDEFGH':
+    #processing = "Run2016B-18Apr2017_ver2-v1"; short = "Run2016B"; dataChunks.append((json,processing,short,run_ranges,useAAA))
+    #for era in 'CDEFGH':
+    for era in 'G':
         processing = "Run2016%s-18Apr2017-v1" % era; short = "Run2016%s" % era; dataChunks.append((json,processing,short,run_ranges,useAAA))
-
+    
     DatasetsAndTriggers = []
     selectedComponents = [];
     exclusiveDatasets = False; # this will veto triggers from previous PDs in each PD, so that there are no duplicate events
@@ -431,13 +433,16 @@ preprocessor = None
 #-------- HOW TO RUN -----------
 
 test = getHeppyOption('test')
-if test == 'testw' or test=='testz':
+if test == 'testw' or test=='testz' or test=='testdata':
     if test=='testw':
         comp = WJetsToLNu_LO
         comp.files = ['/eos/cms/store/cmst3/user/psilva/Wmass/WJetsMG_test/0A85AA82-45BB-E611-8ACD-001E674FB063-9552f253c2fa2ae.root']
-    else:
+    elif test=='testz':
         comp=DYJetsToLL_M50
-        comp.files=comp.files[8:9]    
+        comp.files=['/eos/cms/store/cmst3/user/psilva/Wmass/DYJetsMG_test/FCDD4D28-12C4-E611-8BFC-C4346BC8F6D0.root']
+    else:
+        comp=MuonEG_Run2016B_18Apr2017
+        comp.files=['/eos/cms/store/data/Run2016G/SingleMuon/MINIAOD/18Apr2017-v1/120000/1C169863-7541-E711-81BD-1CC1DE1CEFE0.root']
     print comp.files
     comp.splitFactor = 1
     comp.fineSplitFactor = 1
