@@ -88,15 +88,22 @@ class GenQEDJetProducer(Module):
         pass
 
     def initReaders(self,tree): # this function gets the pointers to Value and ArrayReaders and sets them in the C++ worker class
-        self.nGenPart = tree.valueReader("nGenPart")
-        for B in ("pt","eta","phi","mass","pdgId","isPromptHard") : setattr(self,"GenPart_"+B, tree.arrayReader("GenPart_"+B))
-        self._worker.setGenParticles(self.nGenPart,self.GenPart_pt,self.GenPart_eta,self.GenPart_phi,self.GenPart_mass,self.GenPart_pdgId,self.GenPart_isPromptHard)
+        try:
+            self.nGenPart = tree.valueReader("nGenPart")
+            for B in ("pt","eta","phi","mass","pdgId","isPromptHard") : setattr(self,"GenPart_"+B, tree.arrayReader("GenPart_"+B))
+            self._worker.setGenParticles(self.nGenPart,self.GenPart_pt,self.GenPart_eta,self.GenPart_phi,self.GenPart_mass,self.GenPart_pdgId,self.GenPart_isPromptHard)
+        except:
+            print '[genFriendProducer][Warning] Unable to attach to generator-level particles (data only?). No info will be produced'
         self._ttreereaderversion = tree._ttreereaderversion # self._ttreereaderversion must be set AFTER all calls to tree.valueReader or tree.arrayReader
 
     def analyze(self, event):
         """process event, return True (go to next module) or False (fail, go to next event)"""
         if event._tree._ttreereaderversion > self._ttreereaderversion: # do this check at every event, as other modules might have read further branches
             self.initReaders(event._tree)
+
+        #nothing to do if this is data
+        if event.isData: return
+
         # do NOT access other branches in python between the check/call to initReaders and the call to C++ worker code
         ## Algo
         self._worker.run()

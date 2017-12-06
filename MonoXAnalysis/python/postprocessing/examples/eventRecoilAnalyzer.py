@@ -62,9 +62,12 @@ class EventRecoilAnalyzer(Module):
         pass
 
     def initReaders(self,tree): # this function gets the pointers to Value and ArrayReaders and sets them in the C++ worker class                                 
-        self.nGenPart = tree.valueReader("nGenPart")
-        for var in ["pt","eta","phi","mass","pdgId","status"] : 
-            setattr(self,"GenPart_"+var, tree.arrayReader("GenPart_"+var))
+        try:
+            self.nGenPart = tree.valueReader("nGenPart")
+            for var in ["pt","eta","phi","mass","pdgId","status"] : 
+                setattr(self,"GenPart_"+var, tree.arrayReader("GenPart_"+var))
+        except:
+            print '[eventRecoilAnalyzer][Warning] Unable to attach to generator-level particles, only reco info will be made available'
         self._ttreereaderversion = tree._ttreereaderversion
 
     def getMCTruth(self,event):
