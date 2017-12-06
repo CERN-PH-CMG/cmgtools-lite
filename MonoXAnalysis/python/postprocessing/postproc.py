@@ -4,7 +4,7 @@ import ROOT
 ROOT.PyConfig.IgnoreCommandLineOptions = True
 from importlib import import_module
 from CMGTools.MonoXAnalysis.postprocessing.framework.postprocessor import PostProcessor
-from CMGTools.MonoXAnalysis.postprocessing.postproc_batch import * #DEFAULT_MODULES
+from CMGTools.MonoXAnalysis.postprocessing.postproc_batch import * 
 
 if __name__ == "__main__":
     from optparse import OptionParser
@@ -33,7 +33,6 @@ if __name__ == "__main__":
     outdir = args[0]; args = args[1:]
 
     modules = []
-    #imports = DEFAULT_MODULES + options.imports
     imports = globals()[options.moduleList] + options.imports
     for mod, names in imports: 
         import_module(mod)
