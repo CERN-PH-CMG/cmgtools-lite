@@ -14,5 +14,5 @@ p=PostProcessor(outputDir=".",
                 cut=None,
                 branchsel=None, #"recoil_keep_and_drop.txt",
                 modules=[GenQEDJetProducer(deltaR=0.1,beamEn=13000.),
-                         eventRecoilAnalyzer(tag='test')])
+                         EventRecoilAnalyzer(tag='test')])
 p.run()

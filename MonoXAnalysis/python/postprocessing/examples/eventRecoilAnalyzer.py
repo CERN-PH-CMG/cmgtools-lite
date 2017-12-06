@@ -21,7 +21,7 @@ class VisibleVectorBoson():
         return ROOT.TVector3(self.p4.Px(),self.p4.Py(),0)
     
 
-class eventRecoilAnalyzer(Module):
+class EventRecoilAnalyzer(Module):
     '''
     Analyzes the event recoil and derives the corrections in pt and phi to bring the estimators to the true vector boson recoil.
     Loop on PF candidates, skipping selected leptons and storing useful variables.
@@ -275,3 +275,6 @@ class eventRecoilAnalyzer(Module):
             self.out.fillBranch('%s_dphi2leadneut'%metType,        deltaPhi(event.leadNeutral_phi,                     metphi) )
 
         return True
+
+# define modules using the syntax 'name = lambda : constructor' to avoid having them loaded when not needed
+eventRecoilAnalyzer = lambda : EventRecoilAnalyzer(tag='')

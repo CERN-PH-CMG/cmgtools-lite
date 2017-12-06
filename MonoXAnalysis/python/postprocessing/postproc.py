@@ -4,7 +4,7 @@ import ROOT
 ROOT.PyConfig.IgnoreCommandLineOptions = True
 from importlib import import_module
 from CMGTools.MonoXAnalysis.postprocessing.framework.postprocessor import PostProcessor
-from CMGTools.MonoXAnalysis.postprocessing.postproc_batch import DEFAULT_MODULES
+from CMGTools.MonoXAnalysis.postprocessing.postproc_batch import * #DEFAULT_MODULES
 
 if __name__ == "__main__":
     from optparse import OptionParser
@@ -20,6 +20,7 @@ if __name__ == "__main__":
     parser.add_option("--max-entries",   dest="maxEntries", default=1000000000, type=int,  help="Max entries to process (from the first)") 
     parser.add_option("-I", "--import", dest="imports",  type="string", default=[], action="append", nargs=2, help="Import modules (python package, comma-separated list of ");
     parser.add_option("-z", "--compression",  dest="compression", type="string", default=("LZMA:9"), help="Compression: none, or (algo):(level) ")
+    parser.add_option(      "--moduleList", dest="moduleList",  type="string", default='DEFAULT_MODULES', help="use this list as a starting point for the modules to run [%default]")
 
     (options, args) = parser.parse_args()
 
@@ -32,7 +33,8 @@ if __name__ == "__main__":
     outdir = args[0]; args = args[1:]
 
     modules = []
-    imports = DEFAULT_MODULES + options.imports
+    #imports = DEFAULT_MODULES + options.imports
+    imports = globals()[options.moduleList] + options.imports
     for mod, names in imports: 
         import_module(mod)
         obj = sys.modules[mod]

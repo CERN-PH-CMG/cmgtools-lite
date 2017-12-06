@@ -148,5 +148,6 @@ class GenQEDJetProducer(Module):
 
 # define modules using the syntax 'name = lambda : constructor' to avoid having them loaded when not needed
 
-genQEDJets = lambda : GenQEDJetProducer(deltaR=0.1)
+genQEDJets = lambda : GenQEDJetProducer(deltaR=0.1,beamEn=7000.)
+genQEDJets13TeV = lambda : GenQEDJetProducer(deltaR=0.1,beamEn=13000.)
 
