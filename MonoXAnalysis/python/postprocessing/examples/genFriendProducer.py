@@ -77,6 +77,8 @@ class GenQEDJetProducer(Module):
         if "genQEDJetHelper_cc.so" not in ROOT.gSystem.GetLibraries():
             print "Load C++ Worker"
             ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/MonoXAnalysis/python/postprocessing/helpers/genQEDJetHelper.cc+" % os.environ['CMSSW_BASE'])
+        else:
+            print "genQEDJetHelper_cc.so found in ROOT libraries"
         self._worker = ROOT.GenQEDJetHelper(deltaR)
     def beginJob(self):
         pass

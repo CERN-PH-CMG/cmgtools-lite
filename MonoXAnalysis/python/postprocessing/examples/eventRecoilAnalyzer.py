@@ -73,8 +73,12 @@ class EventRecoilAnalyzer(Module):
     def getMCTruth(self,event):
         """computes the MC truth for this event"""
 
+        #dummy values
+        visibleV,V,h,ht=VisibleVectorBoson(selLeptons=[]),ROOT.TLorentzVector(0,0,0,0),ROOT.TVector3(0,0,0),0
+
         #nothing to do for data :)
-        if event.isData : return None,None,None
+        if event.isData : 
+            return visibleV,V,h,ht
 
         #get the neutrinos
         ngenNu = self.out._branches["nGenPromptNu"].buff[0]
@@ -89,7 +93,6 @@ class EventRecoilAnalyzer(Module):
             break
 
         #construct the visible boson
-        visibleV,V=None,None
         dressedLeps=[]
         ngenLep=self.out._branches["nGenLepDressed"].buff[0]
         for i in xrange(0,ngenLep):
@@ -187,7 +190,7 @@ class EventRecoilAnalyzer(Module):
         #selected leptons at reco level
         visibleV=self.getVisibleV(event)
         if not visibleV : return False
-
+        
         #leading PF candidates
         self.out.fillBranch('leadch_pt',    event.leadCharged_pt)
         self.out.fillBranch('leadch_phi',   event.leadCharged_phi)
@@ -235,7 +238,7 @@ class EventRecoilAnalyzer(Module):
             if metType=="truth":
                 vis   = gen_visibleV.VectorT()
                 metP4 = gen_V
-                h     = ROOT.TVector3(-gen_V.Px(),-gen_V.Py(),0)
+                h     = ROOT.TVector3(-gen_V.Px(),-gen_V.Py(),0)                
                 ht    = gen_V.Pt()
                 m     = gen_V.M()
                 count = 0
@@ -256,10 +259,11 @@ class EventRecoilAnalyzer(Module):
             pt=h.Pt()
             phi=h.Phi()
             metphi=metP4.Phi()
-            sphericity=pt/ht if ht>0 else -1   
-            e1=gen_V.Pt()/h.Pt()
+            sphericity=pt/ht if ht>0 else -1               
+            e1=gen_V.Pt()/h.Pt() if h.Pt()>0 else -1
             e2=deltaPhi(gen_V.Phi()+np.pi,h.Phi())
-            mt=np.sqrt( 2*vis.Pt()*((vis+h).Pt())+vis.Pt()**2+vis.Dot(h) )
+            mt2= 2*vis.Pt()*((vis+h).Pt())+vis.Pt()**2+vis.Dot(h) 
+            mt=np.sqrt(mt2) if mt2>=0. else -np.sqrt(-mt2)
 
             self.out.fillBranch('%s_recoil_pt'%metType,            pt)
             self.out.fillBranch('%s_recoil_phi'%metType,           phi)
