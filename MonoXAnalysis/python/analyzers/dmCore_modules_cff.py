@@ -144,6 +144,8 @@ genAna = cfg.Analyzer(
     savePreFSRParticleIds = [ 1,2,3,4,5, 11,12,13,14,15,16, 21,22 ],
     # Make also the list of all genParticles, for other analyzers to handle
     makeAllGenParticles = True,
+    # save all the genParticles in the generatorSummary object of the event
+    saveAllGenParticles = False,
     # Make also the splitted lists
     makeSplittedGenLists = True,
     allGenTaus = False,

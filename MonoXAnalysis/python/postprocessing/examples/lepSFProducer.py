@@ -8,11 +8,11 @@ from CMGTools.MonoXAnalysis.postprocessing.framework.eventloop import Module
 
 class lepSFProducer(Module):
     def __init__(self, muonSelectionTag, electronSelectionTag):
-        if muonSelectionTag=="LooseWP_2016":
+        if muonSelectionTag=="TightWP_2016":
             mu_f=["Mu_Trg.root","Mu_ID.root","Mu_Iso.root"]
             mu_h = ["IsoMu24_OR_IsoTkMu24_PtEtaBins/pt_abseta_ratio",
-                    "MC_NUM_LooseID_DEN_genTracks_PAR_pt_eta/pt_abseta_ratio",
-                    "LooseISO_LooseID_pt_eta/pt_abseta_ratio"]
+                    "MC_NUM_TightID_DEN_genTracks_PAR_pt_eta/pt_abseta_ratio",
+                    "TightISO_TightID_pt_eta/pt_abseta_ratio"]
         if electronSelectionTag=="GPMVA90_2016":
             el_f = ["EGM2D_eleGSF.root","EGM2D_eleMVA90.root"]
         elif electronSelectionTag=="CutBasedTight_2016":
@@ -121,5 +121,5 @@ class lepTrgSFProducer(Module):
 
 # define modules using the syntax 'name = lambda : constructor' to avoid having them loaded when not needed
 
-lepSF = lambda : lepSFProducer( "LooseWP_2016", "CutBasedTight_2016")
+lepSF = lambda : lepSFProducer( "TightWP_2016", "CutBasedTight_2016")
 trgSF = lambda : lepTrgSFProducer()
