@@ -14,6 +14,7 @@ parser.add_option("--mass-int-algo", dest="massIntAlgo", type="string", default=
 parser.add_option("--asimov", dest="asimov", action="store_true", help="Asimov")
 parser.add_option("--2d-binning-function",dest="binfunction", type="string", default=None, help="Function used to bin the 2D histogram: nbins:func, where func(x,y) = bin in [1,nbins]")
 parser.add_option("--infile",dest="infile", type="string", default=None, help="File to read histos from")
+parser.add_option("--pff", "--processes-from-file", dest="processesFromFile", type="string", default=[], nargs=2, action="append", help="Processes to take from file (process file.root)");
 parser.add_option("--savefile",dest="savefile", type="string", default=None, help="File to save histos to")
 parser.add_option("--floatProcesses",dest="floatProcesses", type="string", default=None, help="Completely float the yields of these processes")
 parser.add_option("--groupSystematics",dest="groupSystematics", type="string", nargs=2, default=None, help="Group systematics by [groupname pattern]")
@@ -22,6 +23,11 @@ parser.add_option("--groupSystematics",dest="groupSystematics", type="string", n
 options.weight = True
 options.final  = True
 options.allProcesses  = True
+
+procsToExclude = [p0 for p0, p1 in options.processesFromFile]
+if len(procsToExclude):
+    print "Taking the processes ",procsToExclude," from external file"
+    options.processesToExclude = procsToExclude
 
 if "/functions_cc.so" not in ROOT.gSystem.GetLibraries(): 
     ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/MonoXAnalysis/python/plotter/functions.cc+" % os.environ['CMSSW_BASE']);
@@ -32,7 +38,7 @@ cuts = CutsFile(args[1],options)
 truebinname = os.path.basename(args[1]).replace(".txt","") if options.outname == None else options.outname
 binname = truebinname if truebinname[0] not in "234" else "ttH_"+truebinname
 print binname
-outdir  = options.outdir+"/" if options.outdir else ""
+outdir  = options.outdir+"/" if options.outdir else "./"
 
 masses = [ 20 ]
 if options.masses:
@@ -55,10 +61,6 @@ def file2map(x):
             fields = [ float(i) for i in cols ]
             ret[fields[0]] = dict(zip(headers,fields[1:]))
     return ret
-YRpath = os.environ['CMSSW_RELEASE_BASE']+"/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/";
-#XStth = file2map(YRpath+"xs/8TeV/8TeV-ttH.txt")
-BRhvv = file2map(YRpath+"br/BR2bosons.txt")
-BRhff = file2map(YRpath+"br/BR2fermions.txt")
 def mkspline(table,column,sf=1.0):
     pairs = [ (x,c[column]/sf) for (x,c) in table.iteritems() ]
     pairs.sort()
@@ -86,10 +88,6 @@ splines = {
     'hww' : mkOneSpline(),
     'hzz' : mkOneSpline(),
     'htt' : mkOneSpline(),
-#    'ttH' : mkspline(XStth, "XS_pb",   0.1271 * 1.00757982823 ), ## get 1 at 125.7
-#    'hww' : mkspline(BRhvv, "H_WW",    2.15e-01 ),
-#    'hzz' : mkspline(BRhvv, "H_ZZ",    2.64e-02 ),
-#    'htt' : mkspline(BRhff, "H_tautau",6.32e-02 ),
 }
 def getYieldScale(mass,process):
     if "ttH_" not in process: return 1.0
@@ -132,6 +130,7 @@ def rebin2Dto1D(h,funcstring):
 myout = outdir+"/common/" if len(masses) > 1 else outdir;
 
 report={}
+
 if options.infile!=None:
     infile = ROOT.TFile(myout+binname+".bare.root","read")
     for p in mca.listSignals(True)+mca.listBackgrounds(True)+['data']:
@@ -139,6 +138,8 @@ if options.infile!=None:
         if h: report[p] = h
 else:
     report = mca.getPlotsRaw("x", args[2], args[3], cuts.allCuts(), nodata=options.asimov)
+
+print report
 
 if options.savefile!=None:
     savefile = ROOT.TFile(myout+binname+".bare.root","recreate")
