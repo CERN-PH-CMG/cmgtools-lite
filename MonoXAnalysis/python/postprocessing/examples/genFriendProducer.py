@@ -5,6 +5,7 @@ ROOT.PyConfig.IgnoreCommandLineOptions = True
 
 from CMGTools.MonoXAnalysis.postprocessing.framework.datamodel import Collection 
 from CMGTools.MonoXAnalysis.postprocessing.framework.eventloop import Module
+from PhysicsTools.HeppyCore.utils.deltar import deltaPhi
 from math import *
 
 class SimpleVBoson:
@@ -73,7 +74,7 @@ class GenQEDJetProducer(Module):
         self.beamEn=beamEn
         self.deltaR = deltaR
         self.vars = ("pt","eta","phi","mass","pdgId")
-        self.genwvars = ("charge","pt","eta","phi","mass","y","costcs","phics","costcm","decayId")
+        self.genwvars = ("charge","pt","eta","phi","mass","mt","y","costcs","phics","costcm","decayId")
         if "genQEDJetHelper_cc.so" not in ROOT.gSystem.GetLibraries():
             print "Load C++ Worker"
             ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/MonoXAnalysis/python/postprocessing/helpers/genQEDJetHelper.cc+" % os.environ['CMSSW_BASE'])
@@ -104,8 +105,8 @@ class GenQEDJetProducer(Module):
     def initReaders(self,tree): # this function gets the pointers to Value and ArrayReaders and sets them in the C++ worker class
         try:
             self.nGenPart = tree.valueReader("nGenPart")
-            for B in ("pt","eta","phi","mass","pdgId","isPromptHard","motherId") : setattr(self,"GenPart_"+B, tree.arrayReader("GenPart_"+B))
-            self._worker.setGenParticles(self.nGenPart,self.GenPart_pt,self.GenPart_eta,self.GenPart_phi,self.GenPart_mass,self.GenPart_pdgId,self.GenPart_isPromptHard,self.GenPart_motherId)
+            for B in ("pt","eta","phi","mass","pdgId","isPromptHard","motherId","status") : setattr(self,"GenPart_"+B, tree.arrayReader("GenPart_"+B))
+            self._worker.setGenParticles(self.nGenPart,self.GenPart_pt,self.GenPart_eta,self.GenPart_phi,self.GenPart_mass,self.GenPart_pdgId,self.GenPart_isPromptHard,self.GenPart_motherId,self.GenPart_status)
         except:
             print '[genFriendProducer][Warning] Unable to attach to generator-level particles (data only?). No info will be produced'
         self._ttreereaderversion = tree._ttreereaderversion # self._ttreereaderversion must be set AFTER all calls to tree.valueReader or tree.arrayReader
@@ -174,6 +175,7 @@ class GenQEDJetProducer(Module):
             self.out.fillBranch("lhew_costcm" , kv.cosThetaCM(lplus,lminus))
             self.out.fillBranch("lhew_costcs" , kv.cosThetaCS(lplus,lminus))
             self.out.fillBranch("lhew_phics"  , kv.phiCS(lplus,lminus))
+            self.out.fillBranch("lhew_mt"     , sqrt(2*lplus.Pt()*lminus.Pt()*(1.-cos(deltaPhi(lplus.Phi(),lminus.Phi())))))
             self.out.fillBranch("lhew_decayId", abs(nuPdgIds[0]))
         else:
             for V in self.genwvars:
@@ -193,6 +195,7 @@ class GenQEDJetProducer(Module):
             self.out.fillBranch("genw_costcm",kv.cosThetaCM(lplus,lminus))
             self.out.fillBranch("genw_costcs",kv.cosThetaCS(lplus,lminus))
             self.out.fillBranch("genw_phics",kv.phiCS(lplus,lminus))
+            self.out.fillBranch("genw_mt"   , sqrt(2*lplus.Pt()*lminus.Pt()*(1.-cos(deltaPhi(lplus.Phi(),lminus.Phi())) )))
             self.out.fillBranch("genw_decayId", abs(nuPdgIds[0]))
         else:
             ##if not len(dressedLeptons): 

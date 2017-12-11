@@ -19,8 +19,8 @@ class GenQEDJetHelper {
   GenQEDJetHelper(float dR=0.1) { deltaR_=dR; }
   ~GenQEDJetHelper() {}
   
-  void setGenParticles(rint *nGp, rfloats *gpPt, rfloats *gpEta, rfloats *gpPhi, rfloats *gpMass, rints *gpPdgId, rints *gpPromptHard, rints *gpMotherId) {
-    nGp_ = nGp; Gp_pt_ = gpPt; Gp_eta_ = gpEta; Gp_phi_ = gpPhi; Gp_mass_ = gpMass; Gp_pdgId_ = gpPdgId; Gp_prompt_ = gpPromptHard, Gp_motherId_ = gpMotherId;
+  void setGenParticles(rint *nGp, rfloats *gpPt, rfloats *gpEta, rfloats *gpPhi, rfloats *gpMass, rints *gpPdgId, rints *gpPromptHard, rints *gpMotherId, rints *gpStatus) {
+    nGp_ = nGp; Gp_pt_ = gpPt; Gp_eta_ = gpEta; Gp_phi_ = gpPhi; Gp_mass_ = gpMass; Gp_pdgId_ = gpPdgId; Gp_prompt_ = gpPromptHard, Gp_motherId_ = gpMotherId, Gp_status_ = gpStatus;
   }
   void run() {
     dressedLeptons_.clear();
@@ -40,17 +40,17 @@ class GenQEDJetHelper {
       bool isChLep = abs(pdgId)==11 || abs(pdgId)==13 || abs(pdgId)==15;
       genparticle gp = TLorentzVector();
       gp.SetPtEtaPhiM((*Gp_pt_)[iP],(*Gp_eta_)[iP],(*Gp_phi_)[iP],(*Gp_mass_)[iP]);
-      if( (*Gp_prompt_)[iP] && (*Gp_pt_)[iP]>0 && (isChLep || abs(pdgId)==22) ) {
+      if( (*Gp_prompt_)[iP] && (*Gp_pt_)[iP]>0 && (isChLep || abs(pdgId)==22)){ // && (*Gp_status_)[iP] == 1) { no longer needed
         promptgp.push_back(gp);
         pdgIds.push_back(pdgId);
-      } else if ( (*Gp_prompt_)[iP] && (*Gp_pt_)[iP]>0 && (abs(pdgId)==12 || abs(pdgId)==14 || abs(pdgId)==16) ) {
+      } else if ( (*Gp_prompt_)[iP] && (*Gp_pt_)[iP]>0. && (abs(pdgId)==12 || abs(pdgId)==14 || abs(pdgId)==16) ) {
         neutrinos_.push_back(gp);
         nuPdgIds_.push_back(pdgId);
-      } else if ( (*Gp_pt_)[iP]>=0. && (abs(pdgId)==24) ) {
+      } else if ( (*Gp_pt_)[iP]>0. && (abs(pdgId)==24 && (*Gp_status_)[iP] == 62) ) {
         lheWs_.push_back(gp);
         lheWPdgIds_.push_back(pdgId);
       } 
-      if ( (*Gp_pt_)[iP]>=0. && isChLep && abs((*Gp_motherId_)[iP]) == 24 ) {
+      if ( (*Gp_pt_)[iP]>0. && isChLep && abs((*Gp_motherId_)[iP]) == 24) {
         lheLeps_.push_back(gp);
         lheLepPdgIds_.push_back(pdgId);
       }
@@ -95,6 +95,7 @@ private:
   rints *Gp_pdgId_ = nullptr;
   rints *Gp_prompt_ = nullptr;
   rints *Gp_motherId_ = nullptr;
+  rints *Gp_status_ = nullptr;
 };
 
 #endif
