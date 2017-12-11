@@ -10,8 +10,8 @@ from CMGTools.MonoXAnalysis.postprocessing.framework.postprocessor import PostPr
 DEFAULT_MODULES = [("CMGTools.MonoXAnalysis.postprocessing.examples.puWeightProducer", "puWeight,puWeight2016BF"),
                    ("CMGTools.MonoXAnalysis.postprocessing.examples.lepSFProducer","lepSF,trgSF"),
                    ("CMGTools.MonoXAnalysis.postprocessing.examples.lepVarProducer","eleRelIsoEA,lepQCDAwayJet"),
-                   ("CMGTools.MonoXAnalysis.postprocessing.examples.jetReCleaner","jetReCleaner"),
-#                   ("CMGTools.MonoXAnalysis.postprocessing.examples.genFriendProducer","genQEDJets")
+                   #("CMGTools.MonoXAnalysis.postprocessing.examples.jetReCleaner","jetReCleaner"),
+                   #("CMGTools.MonoXAnalysis.postprocessing.examples.genFriendProducer","genQEDJets")
                    ]
 
 if __name__ == "__main__":
@@ -36,7 +36,7 @@ if __name__ == "__main__":
     parser.add_option("--log", "--log-dir", dest="logdir", type="string", default=None, help="Directory of stdout and stderr");
     parser.add_option("--env",   dest="env", type="string", default="lxbatch", help="Give the environment on which you want to use the batch system (lxbatch, psi, oviedo)");
     parser.add_option("--run",   dest="runner",  type="string", default="lxbatch_runner.sh", help="Give the runner script (default: lxbatch_runner.sh)");
-    parser.add_option("--mconly", dest="mconly",  action="store_true", default=True, help="Run only on MC samples");
+    parser.add_option("--mconly", dest="mconly",  action="store_true", default=False, help="Run only on MC samples");
     parser.add_option("-m", "--modules", dest="modules",  type="string", default=[], action="append", help="Run only these modules among the imported ones");
 
     (options, args) = parser.parse_args()
