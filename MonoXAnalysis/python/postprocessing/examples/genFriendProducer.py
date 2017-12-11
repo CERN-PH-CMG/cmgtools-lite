@@ -70,13 +70,16 @@ class KinematicVars:
         else: return phi
 
 class GenQEDJetProducer(Module):
-    def __init__(self,deltaR):
+    def __init__(self,deltaR,beamEn=7000.):
+        self.beamEn=beamEn
         self.deltaR = deltaR
         self.vars = ("pt","eta","phi","mass","pdgId")
         self.genwvars = ("charge","pt","eta","phi","mass","mt","y","costcs","phics","costcm","decayId")
         if "genQEDJetHelper_cc.so" not in ROOT.gSystem.GetLibraries():
             print "Load C++ Worker"
             ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/MonoXAnalysis/python/postprocessing/helpers/genQEDJetHelper.cc+" % os.environ['CMSSW_BASE'])
+        else:
+            print "genQEDJetHelper_cc.so found in ROOT libraries"
         self._worker = ROOT.GenQEDJetHelper(deltaR)
     def beginJob(self):
         pass
@@ -100,15 +103,22 @@ class GenQEDJetProducer(Module):
         pass
 
     def initReaders(self,tree): # this function gets the pointers to Value and ArrayReaders and sets them in the C++ worker class
-        self.nGenPart = tree.valueReader("nGenPart")
-        for B in ("pt","eta","phi","mass","pdgId","isPromptHard","motherId","status") : setattr(self,"GenPart_"+B, tree.arrayReader("GenPart_"+B))
-        self._worker.setGenParticles(self.nGenPart,self.GenPart_pt,self.GenPart_eta,self.GenPart_phi,self.GenPart_mass,self.GenPart_pdgId,self.GenPart_isPromptHard,self.GenPart_motherId,self.GenPart_status)
+        try:
+            self.nGenPart = tree.valueReader("nGenPart")
+            for B in ("pt","eta","phi","mass","pdgId","isPromptHard","motherId","status") : setattr(self,"GenPart_"+B, tree.arrayReader("GenPart_"+B))
+            self._worker.setGenParticles(self.nGenPart,self.GenPart_pt,self.GenPart_eta,self.GenPart_phi,self.GenPart_mass,self.GenPart_pdgId,self.GenPart_isPromptHard,self.GenPart_motherId,self.GenPart_status)
+        except:
+            print '[genFriendProducer][Warning] Unable to attach to generator-level particles (data only?). No info will be produced'
         self._ttreereaderversion = tree._ttreereaderversion # self._ttreereaderversion must be set AFTER all calls to tree.valueReader or tree.arrayReader
 
     def analyze(self, event):
         """process event, return True (go to next module) or False (fail, go to next event)"""
         if event._tree._ttreereaderversion > self._ttreereaderversion: # do this check at every event, as other modules might have read further branches
             self.initReaders(event._tree)
+
+        #nothing to do if this is data
+        if event.isData: return
+
         # do NOT access other branches in python between the check/call to initReaders and the call to C++ worker code
         ## Algo
         self._worker.run()
@@ -179,7 +189,7 @@ class GenQEDJetProducer(Module):
             self.out.fillBranch("genw_phi",genw.Phi())
             self.out.fillBranch("genw_y",genw.Rapidity())
             self.out.fillBranch("genw_mass",genw.M())
-            kv = KinematicVars()
+            kv = KinematicVars(self.beamEn)
             # convention for phiCS: use l- direction for W-, use neutrino for W+
             (lplus,lminus) = (neutrinos[0],dressedLeptons[0]) if lepPdgIds[0]<0 else (dressedLeptons[0],neutrinos[0])
             self.out.fillBranch("genw_costcm",kv.cosThetaCM(lplus,lminus))
@@ -202,5 +212,6 @@ class GenQEDJetProducer(Module):
 
 # define modules using the syntax 'name = lambda : constructor' to avoid having them loaded when not needed
 
-genQEDJets = lambda : GenQEDJetProducer(deltaR=0.1)
+genQEDJets = lambda : GenQEDJetProducer(deltaR=0.1,beamEn=7000.)
+genQEDJets13TeV = lambda : GenQEDJetProducer(deltaR=0.1,beamEn=6500.)
 
