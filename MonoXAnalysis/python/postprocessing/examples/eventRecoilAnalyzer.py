@@ -21,7 +21,7 @@ class VisibleVectorBoson():
         return ROOT.TVector3(self.p4.Px(),self.p4.Py(),0)
     
 
-class eventRecoilAnalyzer(Module):
+class EventRecoilAnalyzer(Module):
     '''
     Analyzes the event recoil and derives the corrections in pt and phi to bring the estimators to the true vector boson recoil.
     Loop on PF candidates, skipping selected leptons and storing useful variables.
@@ -62,16 +62,23 @@ class eventRecoilAnalyzer(Module):
         pass
 
     def initReaders(self,tree): # this function gets the pointers to Value and ArrayReaders and sets them in the C++ worker class                                 
-        self.nGenPart = tree.valueReader("nGenPart")
-        for var in ["pt","eta","phi","mass","pdgId","status"] : 
-            setattr(self,"GenPart_"+var, tree.arrayReader("GenPart_"+var))
+        try:
+            self.nGenPart = tree.valueReader("nGenPart")
+            for var in ["pt","eta","phi","mass","pdgId","status"] : 
+                setattr(self,"GenPart_"+var, tree.arrayReader("GenPart_"+var))
+        except:
+            print '[eventRecoilAnalyzer][Warning] Unable to attach to generator-level particles, only reco info will be made available'
         self._ttreereaderversion = tree._ttreereaderversion
 
     def getMCTruth(self,event):
         """computes the MC truth for this event"""
 
+        #dummy values
+        visibleV,V,h,ht=VisibleVectorBoson(selLeptons=[]),ROOT.TLorentzVector(0,0,0,0),ROOT.TVector3(0,0,0),0
+
         #nothing to do for data :)
-        if event.isData : return None,None,None
+        if event.isData : 
+            return visibleV,V,h,ht
 
         #get the neutrinos
         ngenNu = self.out._branches["nGenPromptNu"].buff[0]
@@ -86,7 +93,6 @@ class eventRecoilAnalyzer(Module):
             break
 
         #construct the visible boson
-        visibleV,V=None,None
         dressedLeps=[]
         ngenLep=self.out._branches["nGenLepDressed"].buff[0]
         for i in xrange(0,ngenLep):
@@ -184,7 +190,7 @@ class eventRecoilAnalyzer(Module):
         #selected leptons at reco level
         visibleV=self.getVisibleV(event)
         if not visibleV : return False
-
+        
         #leading PF candidates
         self.out.fillBranch('leadch_pt',    event.leadCharged_pt)
         self.out.fillBranch('leadch_phi',   event.leadCharged_phi)
@@ -232,7 +238,7 @@ class eventRecoilAnalyzer(Module):
             if metType=="truth":
                 vis   = gen_visibleV.VectorT()
                 metP4 = gen_V
-                h     = ROOT.TVector3(-gen_V.Px(),-gen_V.Py(),0)
+                h     = ROOT.TVector3(-gen_V.Px(),-gen_V.Py(),0)                
                 ht    = gen_V.Pt()
                 m     = gen_V.M()
                 count = 0
@@ -253,10 +259,11 @@ class eventRecoilAnalyzer(Module):
             pt=h.Pt()
             phi=h.Phi()
             metphi=metP4.Phi()
-            sphericity=pt/ht if ht>0 else -1   
-            e1=gen_V.Pt()/h.Pt()
+            sphericity=pt/ht if ht>0 else -1               
+            e1=gen_V.Pt()/h.Pt() if h.Pt()>0 else -1
             e2=deltaPhi(gen_V.Phi()+np.pi,h.Phi())
-            mt=np.sqrt( 2*vis.Pt()*((vis+h).Pt())+vis.Pt()**2+vis.Dot(h) )
+            mt2= 2*vis.Pt()*((vis+h).Pt())+vis.Pt()**2+vis.Dot(h) 
+            mt=np.sqrt(mt2) if mt2>=0. else -np.sqrt(-mt2)
 
             self.out.fillBranch('%s_recoil_pt'%metType,            pt)
             self.out.fillBranch('%s_recoil_phi'%metType,           phi)
@@ -275,3 +282,6 @@ class eventRecoilAnalyzer(Module):
             self.out.fillBranch('%s_dphi2leadneut'%metType,        deltaPhi(event.leadNeutral_phi,                     metphi) )
 
         return True
+
+# define modules using the syntax 'name = lambda : constructor' to avoid having them loaded when not needed
+eventRecoilAnalyzer = lambda : EventRecoilAnalyzer(tag='')
