@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 from CMGTools.MonoXAnalysis.plotter.mcAnalysis import *
+from CMGTools.MonoXAnalysis.plotter.wmass.slice3DTemplate import Template3DSlicer
 import re, sys, os, os.path
 systs = {}
 
@@ -139,7 +140,10 @@ if options.infile!=None:
 else:
     report = mca.getPlotsRaw("x", args[2], args[3], cuts.allCuts(), nodata=options.asimov)
 
-print report
+if len(options.processesFromFile):
+    for proc, infile in options.processesFromFile:
+        ts = Template3DSlicer(infile)
+        report.update(ts.getTemplates())
 
 if options.savefile!=None:
     savefile = ROOT.TFile(myout+binname+".bare.root","recreate")

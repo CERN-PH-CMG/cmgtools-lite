@@ -7,7 +7,7 @@ class Template3DSlicer:
     def __init__(self,filename,xy='yx'):
         self.xy = xy
         self.tf = ROOT.TFile.Open(filename)
-    def getTemplates(self,var,proc,suffixes):
+    def getTemplates(self,var="etaPtY",proc="W",suffixes=['right','left','long']):
         ret = { }
         for s in suffixes:
             hname = var+"_"+proc+"_"+s
