@@ -231,3 +231,19 @@ float residualScale(float pt, float eta, int isData) {
   float scale = 1. - hist->GetBinContent(etabin,ptbin)/MZ0/sqrt(2.);
   return scale;
 }
+
+float ptElFull(float pt, float eta, float phi, float r9, int run, int isData, int nSigma=0) {
+  float relSyst=0.;
+  if(fabs(eta)<1.0) relSyst = 0.0015;  
+  else if(fabs(eta)<1.479) relSyst = 0.005;  
+  else relSyst = 0.01; 
+  return (1.+nSigma*relSyst) * ptCorr(pt,eta,phi,r9,run,isData) * residualScale(pt,eta,isData);
+}
+
+float ptElFullUp(float pt, float eta, float phi, float r9, int run, int isData) {
+  return ptElFull(pt,eta,phi,r9,run,isData,1);
+}
+
+float ptElFullDn(float pt, float eta, float phi, float r9, int run, int isData) {
+  return ptElFull(pt,eta,phi,r9,run,isData,-1);
+}

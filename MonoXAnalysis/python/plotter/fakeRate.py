@@ -35,7 +35,8 @@ class FakeRate:
                     hname = fields[3] if len(fields) >= 4 else fields[1]
                     if fields[1] in _loads:
                         if _loads[fields[1]] != (fname,hname):
-                            print "Conflicting load for %s: %s, %s vs older %s " % (fields[1],fields[2],hname, _loads[fields[1]])
+                            #print "Conflicting load for %s: %s, %s vs older %s " % (fields[1],fields[2],hname, _loads[fields[1]])
+                            pass
                         else:
                             #print "Duplicate load for %s: %s, %s" % (fields[1],fields[2],hname)
                             pass

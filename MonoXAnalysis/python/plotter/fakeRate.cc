@@ -23,9 +23,9 @@ bool loadFRHisto(const std::string &histoName, const char *file, const char *nam
     else if (histoName == "FR_el_qcdmc")  { histo = & FR_el;  hptr2 = & FRi_el[0]; }
     else if (TString(histoName).BeginsWith("FR_mu_i")) {histo = & FR_temp; hptr2 = & FRi_mu[TString(histoName).ReplaceAll("FR_mu_i","").Atoi()];}
     else if (TString(histoName).BeginsWith("FR_el_i")) {histo = & FR_temp; hptr2 = & FRi_el[TString(histoName).ReplaceAll("FR_el_i","").Atoi()];}
-    else if (histoName == "helicityFractions_0") { histo = & helicityFractions_0; }
-    else if (histoName == "helicityFractions_L") { histo = & helicityFractions_L; }
-    else if (histoName == "helicityFractions_R") { histo = & helicityFractions_R; }
+    else if (TString(histoName).Contains("helicityFractions_0")) { histo = & helicityFractions_0; }
+    else if (TString(histoName).Contains("helicityFractions_L")) { histo = & helicityFractions_L; }
+    else if (TString(histoName).Contains("helicityFractions_R")) { histo = & helicityFractions_R; }
     if (histo == 0)  {
         std::cerr << "ERROR: histogram " << histoName << " is not defined in fakeRate.cc." << std::endl;
         return 0;
@@ -34,7 +34,7 @@ bool loadFRHisto(const std::string &histoName, const char *file, const char *nam
     TFile *f = TFile::Open(file);
     if (*histo != 0) {
       if (std::string(name) != (*histo)->GetName()) {
-          std::cerr << "WARNING: overwriting histogram " << (*histo)->GetName() << std::endl;
+        //std::cerr << "WARNING: overwriting histogram " << (*histo)->GetName() << std::endl;
       } else {
           TH2* hnew = (TH2*) f->Get(name);
           if (hnew == 0 || hnew->GetNbinsX() != (*histo)->GetNbinsX() || hnew->GetNbinsY() != (*histo)->GetNbinsY()) {

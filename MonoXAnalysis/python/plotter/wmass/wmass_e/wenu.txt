@@ -3,8 +3,6 @@ alwaystrue: 1
 onelep: nLepGood == 1
 ele: abs(LepGood1_pdgId)==11
 kin accept: LepGood1_pt > 30 && abs(LepGood1_eta)<2.5
-#pfmet: met_pt > 20
-#barrel: abs(LepGood1_eta)<1.479
 # loose(EB) or medium (EE) WP for ID
 cut based ID: LepGood1_tightId >= if3(abs(LepGood1_eta)<1.479,1,2)
 # iso for medium-custom WP

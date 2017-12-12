@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 from shutil import copyfile
 import re, sys, os, os.path, subprocess
+import numpy as np
 # import some parameters from wmass_parameters.py, they are also used by other scripts
 from wmass_parameters import *
 
@@ -20,7 +21,6 @@ T='/eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3_WENUSKIM_
 print "used trees from: ",T
 J=4
 BASECONFIG="wmass/wmass_e"
-#BASECONFIG=""
 MCA=BASECONFIG+'/mca-80X-wenu-helicity.txt'
 CUTFILE=BASECONFIG+'/wenu.txt'
 SYSTFILE=BASECONFIG+'/systsEnv.txt'
@@ -47,16 +47,14 @@ def writePdfSystsToSystFile(sample,syst,channel,filename):
 from optparse import OptionParser
 parser = OptionParser(usage="%prog testname ")
 
-parser.add_option("--fitVar", dest="fitVar", type="string", default="etapt", help="Pass the name of variable to fit (default is 2d etapt of the lepton)")
 parser.add_option("-q", "--queue",    dest="queue",     type="string", default=None, help="Run jobs on lxbatch instead of locally");
 parser.add_option("--dry-run", dest="dryRun",    action="store_true", default=False, help="Do not run the job, only print the command");
+parser.add_option("-s", "--signal-cards",  dest="signalCards",  action="store_true", default=False, help="Make the signal part of the datacards");
+parser.add_option("-b", "--bkgdata-cards", dest="bkgdataCards", action="store_true", default=False, help="Make the background and data part of the datacards");
 (options, args) = parser.parse_args()
 
-if options.fitVar == "etapt":
-    VAR="LepGood1_pt:LepGood1_eta 48,-2.1,2.1,20,30.,50."
-else:
-    print "options.fitVar = '%s': not a valid option " % options.fitVar
-print str(VAR)
+VAR="ptElFull(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_r9,run,isData):LepGood1_eta 48,-2.1,2.1,20,30.,50."
+print "Fitting ", str(VAR)
 
 if not os.path.exists("cards/"):
     os.makedirs("cards/")
@@ -92,18 +90,55 @@ if not os.path.exists(outdir): os.mkdir(outdir)
 if options.queue and not os.path.exists(outdir+"/jobs"): os.mkdir(outdir+"/jobs")
 
 W=" -W 'puw2016_nTrueInt_36fb(nTrueInt)*trgSF_We(LepGood1_pdgId,LepGood1_pt,LepGood1_eta,2)*leptonSF_We(LepGood1_pdgId,LepGood1_pt,LepGood1_eta)' "
-WYBins=list(xrange(-6,7))
-#WYBins=[-1,0,1]
-SignalProcesses=['Wp_long','Wp_left','Wp_right','Wm_long','Wm_left','Wm_right']
-for sp in SignalProcesses:
-    for iy in xrange(len(WYBins)-1):
-        print "Making card for %s<genw_y<%s and signal process %s" (WYBins[iy],WYBins[iy+1],sp)
-        ycut=" -A alwaystrue YW%d 'genw_y>%s && genw_y<%s' " % (iy,WYBins[iy],WYBins[iy+1])
-        spsel=' -p %s --asimov ' % sp
-        if not os.path.exists(outdir): os.mkdir(outdir)
-        if options.queue and not os.path.exists(outdir+"/jobs"): os.mkdir(outdir+"/jobs")
-        dcname = "%s_el_Ybin_%d" % (sp,iy)
-        BIN_OPTS=OPTIONS+W+" -o "+dcname+" --od "+outdir + spsel + ycut
+POSCUT=" -A alwaystrue positive 'LepGood1_charge>0' "
+NEGCUT=" -A alwaystrue negative 'LepGood1_charge<0' "
+if options.signalCards:
+    print "MAKING SIGNAL PART: WYBinsEdges = ",WYBinsEdges
+    for charge in ['p','m']:
+        WYBins=(12,-5,5)
+        bWidth=(WYBins[2]-WYBins[1])/float(WYBins[0])
+        WYBinsEdges=np.arange(WYBins[1],WYBins[2]+0.001,bWidth)
+        for iy in xrange(len(WYBinsEdges)-1):
+            print "Making card for %s<genw_y<%s and signal process with charge %s " % (WYBinsEdges[iy],WYBinsEdges[iy+1],charge)
+            ycut=" -A alwaystrue YW%d 'genw_y>%s && genw_y<%s' " % (iy,WYBinsEdges[iy],WYBinsEdges[iy+1])
+            ycut += POSCUT if charge=='p' else NEGCUT
+            xpsel=' --xp "W%s.*,Z,Top,DiBosons,data.*" --asimov ' % ('p' if charge=='m' else 'm')
+            if not os.path.exists(outdir): os.mkdir(outdir)
+            if options.queue and not os.path.exists(outdir+"/jobs"): os.mkdir(outdir+"/jobs")
+            dcname = "W%s_el_Ybin_%d" % (charge,iy)
+            BIN_OPTS=OPTIONS+W+" -o "+dcname+" --od "+outdir + xpsel + ycut
+            if options.queue:
+                srcfile=outdir+"/jobs/"+dcname+".sh"
+                logfile=outdir+"/jobs/"+dcname+".log"
+                srcfile_op = open(srcfile,"w")
+                srcfile_op.write("#! /bin/sh\n")
+                srcfile_op.write("cd {cmssw};\neval $(scramv1 runtime -sh);\ncd {dir};\n".format( 
+                        dir = os.getcwd(), cmssw = os.environ['CMSSW_BASE']))
+                srcfile_op.write("python {dir}/makeShapeCards.py {args} \n".format(
+                        dir = os.getcwd(), args = ARGS+" "+BIN_OPTS))
+                os.system("chmod a+x "+srcfile)
+                cmd = "bsub -q {queue} -o {dir}/{logfile} {dir}/{srcfile}\n".format(
+                    queue=options.queue, dir=os.getcwd(), logfile=logfile, srcfile=srcfile)
+                if options.dryRun: print cmd
+                else: os.system(cmd)
+            else:
+                cmd = "python makeShapeCards.py "+ARGS+" "+BIN_OPTS
+                if options.dryRun: print cmd
+                else:
+                    p = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
+                    out, err = p.communicate() 
+                    result = out.split('\n')
+                    for lin in result:
+                        if not lin.startswith('#'):
+                            print(lin)
+
+if options.bkgdataCards:
+    print "MAKING BKG and DATA PART:\n"
+    for charge in ['p','m']:
+        xpsel=' --xp "W.*" '
+        chargecut = POSCUT if charge=='p' else NEGCUT
+        dcname = "bkg_plus_data_el_%s" % charge
+        BIN_OPTS=OPTIONS+W+" -o "+dcname+" --od "+outdir + xpsel + chargecut
         if options.queue:
             srcfile=outdir+"/jobs/"+dcname+".sh"
             logfile=outdir+"/jobs/"+dcname+".log"
