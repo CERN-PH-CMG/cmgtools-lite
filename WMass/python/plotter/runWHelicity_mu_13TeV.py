@@ -110,12 +110,12 @@ def simplePlot():
     print 'running simple plots'
     print '=========================================='
     trees     = ['/eos/cms/store/group/phys_tracking/elisabetta/WSkims/']
-    friends   = '/eos/user/m/mdunser/w-helicity-13TeV/friends/friends_SFs_2017-12-01/'
+    friends   = '/eos/user/m/mdunser/w-helicity-13TeV/friends/friends_SFs_pu_awayJet-2017-12-11/'
     targetdir = '/afs/cern.ch/user/m/mdunser/www/private/w-helicity-13TeV/simple_plots/{date}{pf}/'.format(date=date, pf=('-'+postfix if postfix else '') )
 
-    fmca      = 'w-helicity-13TeV/simple/mca_simple.txt'
-    fcut      = 'w-helicity-13TeV/simple/cuts_simple.txt'
-    fplots    = 'w-helicity-13TeV/simple/plots.txt'
+    fmca      = 'w-helicity-13TeV/wmass_mu/simple/mca_simple.txt'
+    fcut      = 'w-helicity-13TeV/wmass_mu/simple/cuts_simple.txt'
+    fplots    = 'w-helicity-13TeV/wmass_mu/simple/plots.txt'
 
     enable    = []
     disable   = []
@@ -123,7 +123,7 @@ def simplePlot():
     fittodata = []
     scalethem = {}
     extraopts = '  --maxRatioRange 0.8 1.2 --fixRatioRange ' #'--plotmode=norm '
-    makeplots = ['nVert', 'ptl1', 'etal1', 'mtl1tk', 'mtl1pf', 'tkmet', 'pfmet']
+    makeplots = ['mtl1tk']#'nVert', 'ptl1', 'etal1', 'mtl1tk', 'mtl1pf', 'tkmet', 'pfmet']
     showratio = True
     runplots(trees, friends, targetdir, fmca, fcut, fplots, enable, disable, processes, scalethem, fittodata, makeplots, showratio, extraopts)
     
