@@ -8,6 +8,7 @@ from optparse import OptionParser
 parser = OptionParser(usage="%prog [options] shapes.root combinedcard.txt cards/card*.txt")
 parser.add_option("-m","--merge-root", dest="mergeRoot", default=False, action="store_true", help="Merge the root files with the inputs also")
 parser.add_option("-b","--bin", dest="bin", default="ch1", type="string", help="name of the bin")
+parser.add_option("-c","--constrain-rates", dest="constrainRateParams", type="string", default="0,1,2", help="add constraints on the rate parameters of (comma-separated list of) rapidity bins. Give only the left ones (e.g. 1 will constrain 1 with n-1 ")
 (options, args) = parser.parse_args()
 
 outfile=args[0]
@@ -61,6 +62,7 @@ combinedCard.write("imax 1\n")
 combinedCard.write("jmax *\n")
 combinedCard.write("kmax *\n")
 combinedCard.write('##----------------------------------\n') 
+realprocesses = [] # array to preserve the sorting
 with open("tmpcard.txt") as file:    
     nmatchbin=0
     nmatchprocess=0
@@ -83,7 +85,6 @@ with open("tmpcard.txt") as file:
         if re.match("process",l):
             if nmatchprocess==0:
                 pseudoprocesses = l.split()[1:]
-                realprocesses = [] # array to preserve the sorting
                 klen = 7
                 kpatt = " %%%ds "  % klen
                 for i in xrange(len(pseudobins)):
@@ -102,3 +103,26 @@ if options.mergeRoot:
     os.system("rm tmp_*root")
 
 print "merged datacard in ",cardfile
+
+if options.constrainRateParams:
+    signal_procs = filter(lambda x: re.match('Wp|Wm',x), realprocesses)
+    signal_procs.sort(key=lambda x: int(x.split('_')[-1]))
+    signal_L = filter(lambda x: re.match('.*left.*',x),signal_procs)
+    signal_R = filter(lambda x: re.match('.*right.*',x),signal_procs)
+    signal_0 = filter(lambda x: re.match('.*long.*',x),signal_procs)
+    
+    hel_to_constrain = [signal_L,signal_R]
+    bins_to_constrain = options.constrainRateParams.split(',')
+    for hel in hel_to_constrain:
+        for i in xrange(len(hel)/2):
+            pfx = '_'.join(hel[i].split('_')[:-1])
+            sfx = (hel[i].split('_')[-1],hel[-i-1].split('_')[-1])
+            param_range = '[0.95,1.05]' if sfx[0] in bins_to_constrain else '[0.80,1.20]'
+            combinedCard.write('norm_%s_%s_%-5s   rateParam * %s_%-5s    1 %s\n' % (pfx,sfx[0],sfx[1],pfx,sfx[0],param_range))
+            combinedCard.write('norm_%s_%s_%-5s   rateParam * %s_%-5s    1 %s\n' % (pfx,sfx[0],sfx[1],pfx,sfx[1],param_range))
+    for i in xrange(len(signal_0)/2):
+        sfx = signal_0[i].split('_')[-1]
+        param_range = '[0.95,1.05]' if sfx in bins_to_constrain else '[0.80,1.20]'
+        combinedCard.write('norm_%-5s   rateParam * %-5s    1 %s\n' % (signal_0[i],signal_0[i],param_range))
+        combinedCard.write('norm_%-5s   rateParam * %-5s    1 %s\n' % (signal_0[-1-i],signal_0[-1-i],param_range))
+        

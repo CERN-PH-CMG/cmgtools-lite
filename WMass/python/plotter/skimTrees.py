@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #from mcPlots import *
 # python skimTrees.py wmass/wmass_e/mca-80X-wenu.txt wmass/wmass_e/skim_wenu.txt skims -P TREES_1LEP_80X_V3 --s2v -j 8 -F Friends "{P}/friends/tree_Friend_{cname}.root" -F Friends "{P}/friends/tree_FRFriend_{cname}.root"
-from CMGTools.MonoXAnalysis.plotter.mcAnalysis import *
+from CMGTools.WMass.plotter.mcAnalysis import *
 
 import array
 import json
@@ -150,7 +150,7 @@ if __name__ == "__main__":
     if options.json: selectors.append(JSONSelector(options.json))
 
     if options.queue:
-        runner = "%s/src/CMGTools/MonoXAnalysis/python/postprocessing/lxbatch_runner.sh" % os.environ['CMSSW_BASE']
+        runner = "%s/src/CMGTools/WMass/python/postprocessing/lxbatch_runner.sh" % os.environ['CMSSW_BASE']
         super = "bsub -q {queue}".format(queue = options.queue)
         cmdargs = [x for x in sys.argv[1:] if x not in ['-q',options.queue]]
         strargs=""

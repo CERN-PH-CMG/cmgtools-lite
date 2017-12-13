@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# may use as: cat wmass/wmass_e/zee_catlist.txt | xargs -i python wmass/wmass_plots.py plots/testZskim {} > runplots.sh
+# may use as: cat w-helicity-13TeV/wmass_e/zee_catlist.txt | xargs -i python wmass/wmass_plots.py plots/testZskim {} > runplots.sh
 import sys
 import re
 import os
@@ -32,13 +32,13 @@ def base(selection,useSkim=True):
     if dowhat == "plots": CORE+=" --lspam '#bf{CMS} #it{Preliminary}' --legendWidth 0.20 --legendFontSize 0.035 --showRatio --maxRatioRange 0.75 1.25 --fixRatioRange "
 
     if selection=='wenu':
-        GO="%s wmass/wmass_e/mca-80X-wenu.txt wmass/wmass_e/wenu.txt "%CORE
+        GO="%s w-helicity-13TeV/wmass_e/mca-80X-wenu.txt w-helicity-13TeV/wmass_e/wenu.txt "%CORE
         GO="%s -W 'puw2016_nTrueInt_36fb(nTrueInt)*trgSF_We(LepGood1_pdgId,LepGood1_pt,LepGood1_eta,2)*leptonSF_We(LepGood1_pdgId,LepGood1_pt,LepGood1_eta)'"%GO
-        if dowhat in ["plots","ntuple"]: GO+=" wmass/wmass_e/wenu_plots.txt "
+        if dowhat in ["plots","ntuple"]: GO+=" w-helicity-13TeV/wmass_e/wenu_plots.txt "
     elif selection=='zee':
-        GO="%s wmass/wmass_e/mca-80X-wenu.txt wmass/wmass_e/zee.txt "%CORE
+        GO="%s w-helicity-13TeV/wmass_e/mca-80X-wenu.txt w-helicity-13TeV/wmass_e/zee.txt "%CORE
         GO="%s -W 'puw2016_nTrueInt_36fb(nTrueInt)*trgSF_We(LepGood1_pdgId,LepGood1_pt,LepGood1_eta,2)*leptonSF_We(LepGood1_pdgId,LepGood1_pt,LepGood1_eta)*leptonSF_We(LepGood2_pdgId,LepGood2_pt,LepGood2_eta)' --sp 'Z' "%GO
-        if dowhat in ["plots","ntuple"]: GO+=" wmass/wmass_e/zee_plots.txt "
+        if dowhat in ["plots","ntuple"]: GO+=" w-helicity-13TeV/wmass_e/zee_plots.txt "
     else:
         raise RuntimeError, 'Unknown selection'
 
