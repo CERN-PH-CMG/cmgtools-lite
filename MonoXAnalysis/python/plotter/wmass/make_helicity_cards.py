@@ -93,11 +93,11 @@ W=" -W 'puw2016_nTrueInt_36fb(nTrueInt)*trgSF_We(LepGood1_pdgId,LepGood1_pt,LepG
 POSCUT=" -A alwaystrue positive 'LepGood1_charge>0' "
 NEGCUT=" -A alwaystrue negative 'LepGood1_charge<0' "
 if options.signalCards:
+    WYBins=(14,-5.25,5.25)
+    bWidth=(WYBins[2]-WYBins[1])/float(WYBins[0])
+    WYBinsEdges=np.arange(WYBins[1],WYBins[2]+0.001,bWidth)
     print "MAKING SIGNAL PART: WYBinsEdges = ",WYBinsEdges
     for charge in ['p','m']:
-        WYBins=(12,-5,5)
-        bWidth=(WYBins[2]-WYBins[1])/float(WYBins[0])
-        WYBinsEdges=np.arange(WYBins[1],WYBins[2]+0.001,bWidth)
         for iy in xrange(len(WYBinsEdges)-1):
             print "Making card for %s<genw_y<%s and signal process with charge %s " % (WYBinsEdges[iy],WYBinsEdges[iy+1],charge)
             ycut=" -A alwaystrue YW%d 'genw_y>%s && genw_y<%s' " % (iy,WYBinsEdges[iy],WYBinsEdges[iy+1])
