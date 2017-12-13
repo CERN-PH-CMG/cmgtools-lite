@@ -1,6 +1,6 @@
-trkmt: ptCorrAndResidualScale(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_r9,run,isData,evt) : 60,0,120 ; XTitle="Trk m_{T} [GeV]", Legend='TR', IncludeOverflows=False
+trkmt: mt_2(met_trkPt,met_trkPhi,ptCorrAndResidualScale(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_r9,run,isData,evt),LepGood_phi) : 60,0,120 ; XTitle="Trk m_{T} [GeV]", Legend='TR', IncludeOverflows=False
 trkmtfix: mt_2(met_trkPt,met_trkPhi,35,LepGood_phi): 60,0,120 ; XTitle="Trk m_{T} (fix p_{T} = 35 GeV) [GeV]", Legend='TR', IncludeOverflows=False
-pfmt: ptCorrAndResidualScale(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_r9,run,isData,evt) : 60,0,120 ; XTitle="m_{T} [GeV]", Legend='TL', IncludeOverflows=False
+pfmt: mt_2(met_pt,met_phi,ptCorrAndResidualScale(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_r9,run,isData,evt),LepGood_phi) : 60,0,120 ; XTitle="m_{T} [GeV]", Legend='TL', IncludeOverflows=False
 pfmtfix: mt_2(met_pt,met_phi,35,LepGood_phi): 60,0,120 ; XTitle="PF m_{T} (fix p_{T} = 35 GeV) [GeV]", Legend='TR', IncludeOverflows=False
 
 ele1Iso04: LepGood1_relIso04EA : 50,0,0.5 ; XTitle="relative isolation 04 (ele1)", Legend='TR', IncludeOverflows=True, Logy=True
