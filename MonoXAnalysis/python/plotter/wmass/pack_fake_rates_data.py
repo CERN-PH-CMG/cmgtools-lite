@@ -13,7 +13,7 @@ def makeH2D(name,xedges,yedges):
     return ROOT.TH2F(name,name,len(xedges)-1,array('f',xedges),len(yedges)-1,array('f',yedges))
 
 def fillSliceY(th2,plot1d,yvalue,xslice):
-    ybin = th2.GetYaxis().FindBin(yvalue)
+    ybin = th2.GetYaxis().FindFixBin(yvalue)
     for xbin in xrange(1,th2.GetNbinsX()+1):
         xval = th2.GetXaxis().GetBinCenter(xbin)
         if xslice[0] <= xval and xval <= xslice[1]:
@@ -127,23 +127,24 @@ if __name__ == "__main__":
         ROOT.gROOT.ProcessLine(".x tdrstyle.cc")
         ROOT.gStyle.SetOptStat(0)
     if True:
-        # should get these from file where they are set
-        # ptbins_el = [ 25,27,30,35,40,50,65,100 ]
-        # ptbins_mu = [ 15,20,30,45,65,100 ]
-        # ptbins_el = [ 25,30, 35,45,55,100 ]
-        ptbins_el = [ 25,30,32,34,36,38,40,42,44,46,50,60 ]
-        ptbins_mu = [ 25,27,30,35,45,100 ]
-        etabins_el = [0, 1.479, 2.5]
-        etabins_mu = [0, 1.2,   2.4]
-       #etabins_mu = [0,  2.4]
-        if lep=='el':
-            ptbins = ptbins_el
-            etabins = etabins_el
-        elif lep=='mu':
-            ptbins = ptbins_mu
-            etabins = etabins_mu
-        else: 
-            raise RuntimeError, "What analysis (el, mu)?? Specify as --lep-flavour <arg>)"
+        # ptbins_el = [ 25,30,32,34,36,38,40,42,44,46,50,60 ]
+        # ptbins_mu = [ 25,27,30,35,45,100 ]
+        # etabins_el = [0, 1.479, 2.5]
+        # etabins_mu = [0, 1.2,   2.4]
+        # if lep=='el':
+        #     ptbins = ptbins_el
+        #     etabins = etabins_el
+        # elif lep=='mu':
+        #     ptbins = ptbins_mu
+        #     etabins = etabins_mu
+        # else: 
+        #     raise RuntimeError, "What analysis (el, mu)?? Specify as --lep-flavour <arg>)"
+
+        if len(options.etaBinEdges):
+            etabins = [float(binEdge) for binEdge in options.etaBinEdges.split(",")]
+            etabins_str = [str(binEdge).replace(".","p") for binEdge in options.etaBinEdges.split(",")]
+        if len(options.ptBinEdges):
+            ptbins = [float(binEdge) for binEdge in options.ptBinEdges.split(",")]
 
         print "################################"
         print "### WARNING : READ CAREFULLY ###"
@@ -152,11 +153,6 @@ if __name__ == "__main__":
         print "Using eta bins --> %s" % etabins
         print "################################"
 
-        if len(options.etaBinEdges):
-            etabins = [float(binEdge) for binEdge in options.etaBinEdges.split(",")]
-        if len(options.ptBinEdges):
-            ptbins = [float(binEdge) for binEdge in options.ptBinEdges.split(",")]
-
         #etaslices_el = [ (0.4,"00_15"), (1.8,"15_25") ]   # first value in pair can be any value in the range defined by the string argument, used to look for the bin
         #etaslices_mu = [ (0.4,"00_12"), (1.8,"12_24") ]
         #etaslices_mu = [ (1.8,"00_24") ]
@@ -164,8 +160,8 @@ if __name__ == "__main__":
         etaslices = []
         for bin in range(0,len(etabins)-1):
             bincenter = (etabins[bin]+etabins[bin+1])/2.0
-            binrange_str = "{0:.1f}".format(etabins[bin]) + "_" + "{0:.1f}".format(etabins[bin+1])
-            etaslices.append( ( bincenter, binrange_str.replace(".","") ) )
+            binrange_str = etabins_str[bin] + "_" + etabins_str[bin+1]
+            etaslices.append( ( bincenter, binrange_str ) )
             
         XsQ    = [ "QCD", "data_comb" ]
         Xnices = [ "MC fakes", "Data, EWK-sub." ]
@@ -189,7 +185,7 @@ if __name__ == "__main__":
         if lep=='el':
             # TTH
 
-            h2d_el = [ make2D(outfile,"FR_FullSel_el_"+X, ptbins_el, etabins_el) for X in XsQ ]
+            h2d_el = [ make2D(outfile,"FR_FullSel_el_"+X, ptbins, etabins) for X in XsQ ]
 
             #### Electrons: 
             readMany2D(XsQ, h2d_el, Plots+"/fr_sub_eta_%s_comp.root", "%s", etaslices, (25,100) )
@@ -198,7 +194,7 @@ if __name__ == "__main__":
 
         elif lep=='mu':
 
-            h2d_mu = [ make2D(outfile,"FR_FullSel_mu_"+X, ptbins_mu, etabins_mu) for X in XsQ ]
+            h2d_mu = [ make2D(outfile,"FR_FullSel_mu_"+X, ptbins, etabins) for X in XsQ ]
 
             #### Muons: 
             readMany2D(XsQ, h2d_mu, "plots/fake-rate/mu/fr_sub_eta_%s_comp.root", "%s", etaslices, (25,100) )
