@@ -1,0 +1,22 @@
+# luminosity
+lumi_8TeV              : W_.*|Z|Top|DiBosons: .* : 1.026
+
+# lepton efficiencies
+CMS_We_lepEff   : W.*|Z|Top|DiBosons: .* : 1.10
+
+# Diboson backgrounds 
+CMS_We_VV : DiBosons : .* : 1.16 
+
+# lepton scale
+CMS_We_elescale :  W.*: .* : elescale       : templates 
+
+# recoil uncertainty
+#CMS_We_recoil :  W.*: .* : recoil       : templates 
+
+# Fake rate uncertainties
+# 1+2) Measurement of the fake rate: normalization and shapes
+CMS_We_FRe_norm   : data_fakes  : .* : FRe_norm : templates
+CMS_We_FRe_pt     : data_fakes  : .* : FRe_pt   : templatesShapeOnly
+
+# ptW uncertainty (from Z pT reweighting)
+#CMS_W_ptw  : W_.* : .* : theoryptw : templates
