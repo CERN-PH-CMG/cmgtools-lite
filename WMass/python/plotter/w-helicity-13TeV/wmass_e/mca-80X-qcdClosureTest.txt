@@ -1,0 +1,14 @@
+# The option ALLOW_OVERWRITE_SETTING is needed because, when we include mca files, basically a new mca is created recursively in mcAnalysis. 
+# Now, if you include a sample with some settings (for example, like FillColor) ReadMca method of mcPlots.py will complain because you 
+# are trying to attach additional labels to the sample, but some where already present.
+# With ALLOW_OVERWRITE_SETTINGS the error is overcome (be careful about the option you overwrite, though).
+
+incl_qcdmc: + ; IncludeMca="wmass/wmass_e/mca-includes/mca-qcdmc.txt", FillColor=ROOT.kBlack, Label="QCD MC", NormSystematic=1.0, ALLOW_OVERWRITE_SETTINGS=True
+
+#incl_datafakes: + ; IncludeMca="wmass/wmass_e/mca-includes/mca-data.txt", FakeRate="wmass/wmass_e/fakeRate-frdata.txt", Label="Fakes (data)", FillColor=ROOT.kGreen+2, FillStyle=3005, NormSystematic=0.30, PostFix='_fakes'
+
+incl_qcdfakes: + ; IncludeMca="wmass/wmass_e/mca-includes/mca-qcdmc.txt", FakeRate="wmass/wmass_e/fakeRate-frqcdmc.txt", Label="QCD (QCD MC FR)", FillColor=ROOT.kGreen+2, PostFix='_mcfakes', ALLOW_OVERWRITE_SETTINGS=True
+
+incl_zfakes: + ; IncludeMca="wmass/wmass_e/mca-includes/mca-zmc.txt", FakeRate="wmass/wmass_e/fakeRate-frqcdmc.txt", Label="Z (QCD MC FR)", FillColor=ROOT.kRed+2, PostFix='_mcfakes', ALLOW_OVERWRITE_SETTINGS=True
+
+incl_wfakes: + ; IncludeMca="wmass/wmass_e/mca-includes/mca-wmc.txt", FakeRate="wmass/wmass_e/fakeRate-frqcdmc.txt", Label="W (QCD MC FR)", FillColor=ROOT.kAzure+2, PostFix='_mcfakes', ALLOW_OVERWRITE_SETTINGS=True

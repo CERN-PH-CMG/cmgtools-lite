@@ -1,0 +1,10 @@
+ptl1     : LepGood1_pt   : 25,0.,100; XTitle="p_{T}^{#mu 1}"
+etal1    : LepGood1_eta   : 25,-2.5,2.5; XTitle="#eta^{#mu}"
+tkmet    : tkmet_pt      : 20,0.,100.; XTitle="tk ME_{T}"
+pfmet    :   met_pt      : 20,0.,100.; XTitle="pf ME_{T}"
+mtl1tk   : mt_2(LepGood1_pt,LepGood1_phi,tkmet_pt,tkmet_phi)  : 30,0.,150; XTitle="m_{T} mu tkmet"
+mtl1pf   : mt_2(LepGood1_pt,LepGood1_phi,met_pt,met_phi)      : 30,50.,150; XTitle="m_{T} mu pfmet"
+njetclean40   : Sum$(JetClean_pt > 40)      : 5,-0.5,4.5; XTitle="n_{jet} clean 40"
+##foob     : LepGood1_pt : 50,0.,150; XTitle="p_{T}^{#mu 1}", Legend="TL"
+l1reliso04 : LepGood1_relIso04 : 50,0.,1. ; XTitle="reliso04", Logy
+l1reliso03 : LepGood1_relIso03 : 50,0.,1. ; XTitle="reliso03", Logy

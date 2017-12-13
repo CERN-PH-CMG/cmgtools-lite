@@ -55,9 +55,7 @@ float _get_electronSF_recoToCustomTight(int pdgid, float pt, float eta, float va
     return out;
   }
 
-  std::cout << "ERROR ele offline SF" << std::endl;
-  std::abort();
-  return -999;
+  return 0;
 
 }
 
@@ -83,9 +81,7 @@ float _get_electronSF_trg_top(int pdgid, float pt, float eta, int ndim, float va
     return out;
   }
 
-  std::cout << "ERROR Trg SF" << std::endl;
-  std::abort();
-  return -999;
+  return 0.;
   
 }
 
@@ -186,9 +182,7 @@ float _get_electronSF_trg(int pdgid, float pt, float eta, int ndim, float var, b
     return out;
   }
 
-  std::cout << "ERROR Trg SF" << std::endl;
-  std::abort();
-  return -999;
+  return 0;
 
 }
 
@@ -212,17 +206,15 @@ float leptonSF_We(int pdgid, float pt, float eta, float var=0) {
 
   float recoToStdWP = _get_electronSF_recoToCustomTight(pdgid,pt,eta,var);
   float stdWPToAnaWP = _get_electronSF_offlineWP_residual(eta);
-  float res = recoToStdWP*stdWPToAnaWP;
-  if (res<0) {std::cout << "ERROR negative result" << std::endl; std::abort();}
+  float res = std::max(0.,double(recoToStdWP*stdWPToAnaWP));
   return res;
 
 }
 
 float trgSF_We(int pdgid, float pt, float eta, int ndim, float var=0) {
 
-  float trg = _get_electronSF_trg(pdgid,pt,eta,ndim,var);
-  float res = trg;
-  if (res<0) {std::cout << "ERROR negative result" << std::endl; std::abort();}
+  double trg = _get_electronSF_trg(pdgid,pt,eta,ndim,var);
+  float res = std::max(0.,trg);
   return res;
 
 }
@@ -288,4 +280,20 @@ float ptCorrAndResidualScale(float pt, float eta, float phi, float r9, int run, 
 
   return ( ptCorr(pt, eta, phi, r9, run, isData, eventNumber) * residualScale(pt, eta, isData) );
 
+}
+
+float ptElFull(float pt, float eta, float phi, float r9, int run, int isData, int nSigma=0) {
+  float relSyst=0.;
+  if(fabs(eta)<1.0) relSyst = 0.0015;  
+  else if(fabs(eta)<1.479) relSyst = 0.005;  
+  else relSyst = 0.01; 
+  return (1.+nSigma*relSyst) * ptCorr(pt,eta,phi,r9,run,isData) * residualScale(pt,eta,isData);
+}
+
+float ptElFullUp(float pt, float eta, float phi, float r9, int run, int isData) {
+  return ptElFull(pt,eta,phi,r9,run,isData,1);
+}
+
+float ptElFullDn(float pt, float eta, float phi, float r9, int run, int isData) {
+  return ptElFull(pt,eta,phi,r9,run,isData,-1);
 }

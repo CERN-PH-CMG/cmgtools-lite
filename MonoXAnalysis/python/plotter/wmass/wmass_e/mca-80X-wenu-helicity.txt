@@ -1,0 +1,53 @@
+# signal from the weighted uncut sample
+Wp_long  : WJetsToLNu_NoSkim_part* : 3.*20508.9    : genw_decayId == 12 && genw_charge>0 ; FillColor=ROOT.kGray+1   , FakeRate="w-helicity-13TeV/fractionReweighting/reweighting_0_plus.txt", Label="W+ long"
+Wp_left  : WJetsToLNu_NoSkim_part* : 3.*20508.9    : genw_decayId == 12 && genw_charge>0 ; FillColor=ROOT.kBlue-1   , FakeRate="w-helicity-13TeV/fractionReweighting/reweighting_L_plus.txt", Label="W+ left"
+Wp_right : WJetsToLNu_NoSkim_part* : 3.*20508.9    : genw_decayId == 12 && genw_charge>0 ; FillColor=ROOT.kGreen+1  , FakeRate="w-helicity-13TeV/fractionReweighting/reweighting_R_plus.txt", Label="W+ right"
+
+Wm_long  : WJetsToLNu_NoSkim_part* : 3.*20508.9    : genw_decayId == 12 && genw_charge<0 ; FillColor=ROOT.kYellow+1 , FakeRate="w-helicity-13TeV/fractionReweighting/reweighting_0_minus.txt", Label="W- long"
+Wm_left  : WJetsToLNu_NoSkim_part* : 3.*20508.9    : genw_decayId == 12 && genw_charge<0 ; FillColor=ROOT.kViolet-1 , FakeRate="w-helicity-13TeV/fractionReweighting/reweighting_L_minus.txt", Label="W- left"
+Wm_right : WJetsToLNu_NoSkim_part* : 3.*20508.9    : genw_decayId == 12 && genw_charge<0 ; FillColor=ROOT.kAzure+1  , FakeRate="w-helicity-13TeV/fractionReweighting/reweighting_R_minus.txt", Label="W- right"
+
+Z    : DYJetsToLL_M50_part* : 1921.8*3; FillColor=ROOT.kAzure+2, Label="Z", NormSystematic=0.04
+
+Top  : TTJets_SingleLeptonFromT_ext_part* + TTJets_SingleLeptonFromT_part* :  xsec; FillColor=ROOT.kGray+2, Label="Top", NormSystematic=0.09
+Top  : TTJets_SingleLeptonFromTbar_ext_part* + TTJets_SingleLeptonFromTbar_part* :  xsec; FillColor=ROOT.kGray+2, Label="Top", NormSystematic=0.09
+Top  : TToLeptons_sch_amcatnlo :      xsec; FillColor=ROOT.kGray+2, Label="Top", NormSystematic=0.04
+Top  : T_tch_powheg_part* :     xsec;  FillColor=ROOT.kGray+2, Label="Top", NormSystematic=0.04
+Top  : TBar_tch_powheg_part* :     xsec;  FillColor=ROOT.kGray+2, Label="Top", NormSystematic=0.04
+Top  : T_tWch_ext :      xsec; FillColor=ROOT.kGray+2, Label="Top", NormSystematic=0.06
+Top  : TBar_tWch_ext :   xsec; FillColor=ROOT.kGray+2, Label="Top", NormSystematic=0.06
+DiBosons : WW+WW_ext : xsec;      FillColor=ROOT.kViolet+2, Label="DiBosons", NormSystematic=0.03
+DiBosons : WZ+WZ_ext : xsec; FillColor=ROOT.kViolet+2, Label="DiBosons", NormSystematic=0.05
+DiBosons : ZZ+ZZ_ext : xsec; FillColor=ROOT.kViolet+2, Label="DiBosons", NormSystematic=0.05
+
+#incl_qcdmc : + ; IncludeMca="wmass/wmass_e/mca-includes/mca-qcdmc.txt"
+incl_datafakes: + ; IncludeMca="wmass/wmass_e/mca-includes/mca-data.txt", FakeRate="wmass/wmass_e/fakeRate-frdata.txt", Label="Fakes", FillColor=ROOT.kBlack, FillStyle=3005, NormSystematic=0.30, PostFix='_fakes'
+
+incl_data : + ; IncludeMca="wmass/wmass_e/mca-includes/mca-data.txt"
+
+# electron scale systematics 
+Wp_long_elescale_Up   : WJetsToLNu_NoSkim_part* : 3.*20508.9   : genw_decayId == 12 && genw_charge>0 ; FillColor=ROOT.kGray+1   , FakeRate="wmass/wmass_e/fr-includes/reweighting_0_plus_lepUp.txt", Label="W+ long lep scale Up", SkipMe=True 
+Wp_left_elescale_Up   : WJetsToLNu_NoSkim_part* : 3.*20508.9   : genw_decayId == 12 && genw_charge>0 ; FillColor=ROOT.kGray+1   , FakeRate="wmass/wmass_e/fr-includes/reweighting_L_plus_lepUp.txt", Label="W+ left lep scale Up", SkipMe=True 
+Wp_right_elescale_Up  : WJetsToLNu_NoSkim_part* : 3.*20508.9   : genw_decayId == 12 && genw_charge>0 ; FillColor=ROOT.kGray+1   , FakeRate="wmass/wmass_e/fr-includes/reweighting_R_plus_lepUp.txt", Label="W+ right lep scale Up", SkipMe=True 
+Wm_long_elescale_Up   : WJetsToLNu_NoSkim_part* : 3.*20508.9   : genw_decayId == 12 && genw_charge<0 ; FillColor=ROOT.kGray+1   , FakeRate="wmass/wmass_e/fr-includes/reweighting_0_minus_lepUp.txt", Label="W- long lep scale Up", SkipMe=True 
+Wm_left_elescale_Up   : WJetsToLNu_NoSkim_part* : 3.*20508.9   : genw_decayId == 12 && genw_charge<0 ; FillColor=ROOT.kGray+1   , FakeRate="wmass/wmass_e/fr-includes/reweighting_L_minus_lepUp.txt", Label="W- left lep scale Up", SkipMe=True 
+Wm_right_elescale_Up  : WJetsToLNu_NoSkim_part* : 3.*20508.9   : genw_decayId == 12 && genw_charge<0 ; FillColor=ROOT.kGray+1   , FakeRate="wmass/wmass_e/fr-includes/reweighting_R_minus_lepUp.txt", Label="W- right lep scale Up", SkipMe=True 
+
+Wp_long_elescale_Dn  : WJetsToLNu_NoSkim_part* : 3.*20508.9   : genw_decayId == 12 && genw_charge>0 ; FillColor=ROOT.kGray+1   , FakeRate="wmass/wmass_e/fr-includes/reweighting_0_plus_lepDn.txt", Label="W+ long lep scale Dn", SkipMe=True 
+Wp_left_elescale_Dn  : WJetsToLNu_NoSkim_part* : 3.*20508.9   : genw_decayId == 12 && genw_charge>0 ; FillColor=ROOT.kGray+1   , FakeRate="wmass/wmass_e/fr-includes/reweighting_L_plus_lepDn.txt", Label="W+ left lep scale Dn", SkipMe=True 
+Wp_right_elescale_Dn : WJetsToLNu_NoSkim_part* : 3.*20508.9   : genw_decayId == 12 && genw_charge>0 ; FillColor=ROOT.kGray+1   , FakeRate="wmass/wmass_e/fr-includes/reweighting_R_plus_lepDn.txt", Label="W+ right lep scale Dn", SkipMe=True 
+Wm_long_elescale_Dn  : WJetsToLNu_NoSkim_part* : 3.*20508.9   : genw_decayId == 12 && genw_charge<0 ; FillColor=ROOT.kGray+1   , FakeRate="wmass/wmass_e/fr-includes/reweighting_0_minus_lepDn.txt", Label="W- long lep scale Dn", SkipMe=True 
+Wm_left_elescale_Dn  : WJetsToLNu_NoSkim_part* : 3.*20508.9   : genw_decayId == 12 && genw_charge<0 ; FillColor=ROOT.kGray+1   , FakeRate="wmass/wmass_e/fr-includes/reweighting_L_minus_lepDn.txt", Label="W- left lep scale Dn", SkipMe=True 
+Wm_right_elescale_Dn : WJetsToLNu_NoSkim_part* : 3.*20508.9   : genw_decayId == 12 && genw_charge<0 ; FillColor=ROOT.kGray+1   , FakeRate="wmass/wmass_e/fr-includes/reweighting_R_minus_lepDn.txt", Label="W- right lep scale Dn", SkipMe=True 
+
+
+# recoil systematics
+#incl_ewkmc_recoil_Up : + ; IncludeMca="wmass/wmass_e/mca-includes/mca-ewkmc-helicity.txt", FakeRate="wmass/wmass_e/fr-recoilUp.txt", SkipMe=True, PostFix="_recoil_Up" 
+#incl_ewkmc_recoil_Dn : + ; IncludeMca="wmass/wmass_e/mca-includes/mca-ewkmc-helicity.txt", FakeRate="wmass/wmass_e/fr-recoilDn.txt", SkipMe=True, PostFix="_recoil_Dn" 
+
+# fake-lepton background systematics
+incl_datafakes_FRe_norm_Up : + ; IncludeMca="wmass/wmass_e/mca-includes/mca-data.txt", FakeRate="wmass/wmass_e/fakerate-vars/fakeRate-frdata-e-up.txt", SkipMe=True, PostFix='_fakes_FRe_norm_Up'
+incl_datafakes_FRe_norm_Dn : + ; IncludeMca="wmass/wmass_e/mca-includes/mca-data.txt", FakeRate="wmass/wmass_e/fakerate-vars/fakeRate-frdata-e-down.txt", SkipMe=True, PostFix='_fakes_FRe_norm_Dn'
+incl_datafakes_FRe_pt_Up : + ; IncludeMca="wmass/wmass_e/mca-includes/mca-data.txt", FakeRate="wmass/wmass_e/fakerate-vars/fakeRate-frdata-e-pt1.txt", SkipMe=True, PostFix='_fakes_FRe_pt_Up'
+incl_datafakes_FRe_pt_Dn : + ; IncludeMca="wmass/wmass_e/mca-includes/mca-data.txt", FakeRate="wmass/wmass_e/fakerate-vars/fakeRate-frdata-e-pt2.txt", SkipMe=True, PostFix='_fakes_FRe_pt_Dn'
+
