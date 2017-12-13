@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #from mcAnalysis import *
-from CMGTools.MonoXAnalysis.plotter.mcEfficiencies import *
+from CMGTools.WMass.plotter.mcEfficiencies import *
 import itertools
 
 def _h1NormWithError(h,normSyst):

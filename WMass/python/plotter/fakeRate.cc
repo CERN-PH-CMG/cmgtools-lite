@@ -78,7 +78,7 @@ float fakeRateWeight_1l_i_smoothed(float lpt, float leta, int lpdgId, bool passW
     int etabin = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(feta)));
     float p0 = hist->GetBinContent(etabin, 1);
     float p1 = hist->GetBinContent(etabin, 2);
-    float fr = p0 + p1*pt;
+    float fr = p0 + p1*lpt;
     return fr/(1-fr);
   } else return 0;
 }
