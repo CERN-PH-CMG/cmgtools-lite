@@ -282,18 +282,18 @@ float ptCorrAndResidualScale(float pt, float eta, float phi, float r9, int run, 
 
 }
 
-float ptElFull(float pt, float eta, float phi, float r9, int run, int isData, int nSigma=0) {
+float ptElFull(float pt, float eta, float phi, float r9, int run, int isData, ULong64_t eventNumber, int nSigma=0) {
   float relSyst=0.;
   if(fabs(eta)<1.0) relSyst = 0.0015;  
   else if(fabs(eta)<1.479) relSyst = 0.005;  
   else relSyst = 0.01; 
-  return (1.+nSigma*relSyst) * ptCorr(pt,eta,phi,r9,run,isData) * residualScale(pt,eta,isData);
+  return (1.+nSigma*relSyst) * ptCorr(pt,eta,phi,r9,run,isData,eventNumber) * residualScale(pt,eta,isData);
 }
 
-float ptElFullUp(float pt, float eta, float phi, float r9, int run, int isData) {
+float ptElFullUp(float pt, float eta, float phi, float r9, int run, int isData, ULong64_t eventNumber) {
   return ptElFull(pt,eta,phi,r9,run,isData,1);
 }
 
-float ptElFullDn(float pt, float eta, float phi, float r9, int run, int isData) {
+float ptElFullDn(float pt, float eta, float phi, float r9, int run, int isData, ULong64_t eventNumber) {
   return ptElFull(pt,eta,phi,r9,run,isData,-1);
 }
