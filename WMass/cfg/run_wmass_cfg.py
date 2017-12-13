@@ -7,12 +7,12 @@ import re
 
 #-------- LOAD ALL ANALYZERS -----------
 
-from CMGTools.MonoXAnalysis.analyzers.dmCore_modules_cff import *
+from CMGTools.WMass.analyzers.dmCore_modules_cff import *
 from PhysicsTools.HeppyCore.framework.heppy_loop import getHeppyOption
 
 #-------- SET OPTIONS AND REDEFINE CONFIGURATIONS -----------
 
-runData = getHeppyOption("runData",False)
+runData = getHeppyOption("runData",True)
 runDataQCD = getHeppyOption("runDataQCD",False)
 runFRMC = getHeppyOption("runFRMC",False)
 scaleProdToLumi = float(getHeppyOption("scaleProdToLumi",-1)) # produce rough equivalent of X /pb for MC datasets
@@ -28,14 +28,14 @@ isTest = getHeppyOption("test",None) != None and not re.match("^\d+$",getHeppyOp
 selectedEvents=getHeppyOption("selectEvents","")
 
 # save PDF information and do not skim. Do only for needed MC samples
-runOnSignal = True
+runOnSignal = False
 keepLHEweights = False
 
 # Lepton Skimming
 ttHLepSkim.minLeptons = 1
 ttHLepSkim.maxLeptons = 999
 #ttHLepSkim.idCut  = ""
-ttHLepSkim.ptCuts = [15]
+ttHLepSkim.ptCuts = [25]
 
 # Run miniIso
 lepAna.doMiniIsolation = True
@@ -127,7 +127,7 @@ ttHEventAna = cfg.Analyzer(
     minJets25 = 0,
     )
 
-from CMGTools.MonoXAnalysis.analyzers.treeProducerWMass import * 
+from CMGTools.WMass.analyzers.treeProducerWMass import * 
 
 # Spring16 electron MVA - follow instructions on pull request for correct area setup
 leptonTypeSusy.addVariables([
@@ -266,10 +266,9 @@ if runData and not isTest: # For running on data
     json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/ReReco/Final/Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt' # 36.5/fb
 
     run_ranges = []; useAAA=False;
-    #processing = "Run2016B-18Apr2017_ver2-v1"; short = "Run2016B"; dataChunks.append((json,processing,short,run_ranges,useAAA))
-    #for era in 'CDEFGH':
-    for era in 'G':
-        processing = "Run2016%s-18Apr2017-v1" % era; short = "Run2016%s" % era; dataChunks.append((json,processing,short,run_ranges,useAAA))
+    processing = "Run2016B-07Aug17_ver2-v2"; short = "Run2016B"; dataChunks.append((json,processing,short,run_ranges,useAAA))
+    for era in 'CDEFGH':
+        processing = "Run2016%s-07Aug17-v1" % era; short = "Run2016%s" % era; dataChunks.append((json,processing,short,run_ranges,useAAA))
     
     DatasetsAndTriggers = []
     selectedComponents = [];
@@ -278,8 +277,8 @@ if runData and not isTest: # For running on data
     # DatasetsAndTriggers.append( ("DoubleMuon", triggers_mumu_iso + triggers_mumu_ss + triggers_mumu_ht + triggers_3mu + triggers_3mu_alt) )
     # DatasetsAndTriggers.append( ("DoubleEG",   triggers_ee + triggers_ee_ht + triggers_3e) )
     # DatasetsAndTriggers.append( ("MuonEG",     triggers_mue + triggers_mue_ht + triggers_2mu1e + triggers_2e1mu) )
-    DatasetsAndTriggers.append( ("SingleMuon", triggers_1mu_iso + triggers_1mu_noniso) )
-    #DatasetsAndTriggers.append( ("SingleElectron", triggers_1e) )
+    #DatasetsAndTriggers.append( ("SingleMuon", triggers_1mu_iso + triggers_1mu_noniso) )
+    DatasetsAndTriggers.append( ("SingleElectron", triggers_1e) )
 
     if runDataQCD: # for fake rate measurements in data
         FRTrigs_mu = triggers_FR_1mu_noiso
@@ -302,7 +301,6 @@ if runData and not isTest: # For running on data
                 if run_range!=None:
                     label = "_runs_%d_%d" % run_range if run_range[0] != run_range[1] else "run_%d" % (run_range[0],)
                 compname = pd+"_"+short+label
-                if pd=='SingleMuon' and 'Run2016F-18Apr2017-v1' in processing: processing='Run2016F-18Apr2017-v2'
                 comp = kreator.makeDataComponent(compname, 
                                                  "/"+pd+"/"+processing+"/MINIAOD",
                                                  "CMS", ".*root", 
