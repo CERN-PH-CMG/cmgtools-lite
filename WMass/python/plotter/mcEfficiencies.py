@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 #from mcPlots import *
-from CMGTools.MonoXAnalysis.plotter.mcPlots import *
+from CMGTools.WMass.plotter.mcPlots import *
 
 if "/fakeRate_cc.so" not in ROOT.gSystem.GetLibraries():
-    ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/MonoXAnalysis/python/plotter/fakeRate.cc+" % os.environ['CMSSW_BASE']);
+    ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/WMass/python/plotter/fakeRate.cc+" % os.environ['CMSSW_BASE']);
 
 def addMCEfficiencyOptions(parser):
     addMCAnalysisOptions(parser)
