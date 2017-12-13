@@ -8,29 +8,32 @@
 ######################
 #--------------------------
 # choose the dataset to use (2016 B to F or 2016 B to H)
-useDetector="EE" #  EB or EE to do only barrel or endcap, any other value makes the code run both EB and EE
 useFull2016dataset="y"
 useSkimmedTrees="y" # skimmed samples are on pccmsrm28
 onlypack="n" # just pack an already existing fake-rate 
 # if onlypack='n', the packing might still be done at the end of FR computation, see options below
 # else, if onlypack='y', it overrides the packFRfromTest option below
 #--------------------------
+etaRange="0.0,1.0,1.479,2.1,2.5"
+wp_etaRange="loose,loose,medium,medium" # loose, medium, tight (loose uses iso < 0.2, check wmass/make_fake_rates_sels.txt)
+mtRanges="0,30,30,120"
+mtDefinition="trkmtfix"  # trkmtfix, trkmt, pfmtfix, pfmt
+ptDefinition="pt_coarse"  # pt_coarse, pt_granular (first is mainly for QCD)
+#-------------------------
 istest="y"
-#testdir="SRtrees_new/hltID_looseWPiso0p2_36fb_PUTrgSF_trkmtfix_0_50_50_120_EB_fineBinning"  # used only if istest is 'y', be as much informative as possible
-testdir="SRtrees_new/hltID_mediumWP_36fb_PUTrgSF_trkmtfix_0_50_50_120_EE_fineBinning"
+# following option testdit is used only if istest is 'y'
+testdir="SRtrees_new/fakeRate_36fb_PUTrgSF_${mtDefinition}_${ptDefinition}_pfmetLess20"
 # by default, if this is a test we do not pack to avoid overwriting something when we just do tests
 # you can override this feature setting this flag to 'y'
 # even if you don't pack, the command you would use is printed in stdout
 packFRfromTest="n" 
-#-------------------------
-WPoption="medium" # loose, medium, tight (loose uses iso < 0.2, check wmass/make_fake_rates_sels.txt)
-mtRanges="0,50,50,120"
-mtDefinition="trkmtfix"  # trkmtfix, trkmt, pfmtfix, pfmt
+# anyway, the packing uses the FR made with the 2-mt-regions method, which is not good. Unles I modify the script, it is not needed (also because we have to smooth the FR)
 ######################
 ######################
 # additional options to be passed to wmass/make_fake_rates_data.py
 # can pass a new cut as you would do with mcPlots.py 
-addOption=""
+#addOption=" -A eleKin pfmet 'met_pt<20' -A eleKin pfmtLess40 'mt_2(met_pt,met_phi,ptCorrAndResidualScale(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_r9,run,isData,evt) ,LepGood_phi)<40' "
+addOption=" -A eleKin pfmet 'met_pt<20' "
 #addOption=" -A eleKin awayJetPt 'LepGood_awayJet_pt > 45' "
 
 
@@ -55,7 +58,7 @@ if [[ "${istest}" == "y" ]]; then
     packdir="test/${testdir}/${frGraphDir}"
 fi
 
-cmdComputeFR="python wmass/make_fake_rates_data.py --qcdmc --wp ${WPoption} --mt ${mtDefinition} ${testoption} --fqcd-ranges ${mtRanges} "
+cmdComputeFR="python wmass/make_fake_rates_data.py --qcdmc --mt ${mtDefinition} ${testoption} --fqcd-ranges ${mtRanges} --pt ${ptDefinition} "
 if [[ "${useFull2016dataset}" == "y" ]]; then
     cmdComputeFR="${cmdComputeFR} --full2016data "
 fi
@@ -64,13 +67,15 @@ if [[ "${useSkimmedTrees}" == "y" ]]; then
     cmdComputeFR="${cmdComputeFR} --useSkim "
 fi
 
-if [[ "${useDetector}" == "EB" ]]; then
-    cmdComputeFR="${cmdComputeFR} --EB-only "
-elif [[ "${useDetector}" == "EE" ]]; then
-    cmdComputeFR="${cmdComputeFR} --EE-only "
+if [[ "X${etaRange}" != "X" ]]; then
+    cmdComputeFR="${cmdComputeFR} --etaRange \"${etaRange}\" "
 fi
 
-if [[ "X${addOption}" == "X" ]]; then
+if [[ "X${wp_etaRange}" != "X" ]]; then
+    cmdComputeFR="${cmdComputeFR} --wp \"${wp_etaRange}\" "
+fi
+
+if [[ "X${addOption}" != "X" ]]; then
     cmdComputeFR="${cmdComputeFR} --addOpts \"${addOption}\" "
 fi
 

@@ -12,17 +12,16 @@ grep python is just needed to select only commands that run python scripts, remo
 For muons, do 
 python wmass/make_fake_rates_data.py --mu | grep python > commands4fakeRate_mu.sh
 
-Use --singleEtaBin <arg> to use a single eta bin (<arg> is the maximum eta range)
+Use --etaRange "<arg1>,<arg2>,...,<argN>" passing two or more numbers separated by a comma. They represent the eta bins used to compute fake rate. E.g., 0,1.479,2.1,25 uses a single bin in EB and 2 bins in EE, separated at eta=2.1.
 Use --qcdmc to add QCD MC (true if --mu option is used)
 Use --charge [p/n] to select positive or negative leptons (default use both)
-Use --wp to select working point for numerator selection (for electrons). Default is the tight one, can choose tight,medium,loose (more can be defined)
+Use --wp to select working points for numerator selection, 1 for each eta range defined by --etaRange (1 less than number of boundaries). Default is the tight one, can choose tight,medium,loose
 Use --fqcd-ranges to pass the ranges for mt to be used to compute FR (4 numbers separated by commas, e.g. 0,50,70,120 will use [0,50] and [70,120]
 Use --test to select the name of a folder (useful for tests, so that you leave the default directory for the final version). Plots will be put in plots/fake-rate/test/ (NB: for me 'plots' is a link to my website folders where I store all the plots)
-Use --mt to select which definition of mT to use pfmt, trkmt, pfmtfix, trkmtfix (default)
+Use --mt to select which definition of mT to use: pfmt, trkmt, pfmtfix, trkmtfix (default)
+Use --pt to select which definition of pT to use: pt_coarse, pt_granular (default). Note that this is only for electrons, muons use another definition by default (to be fixed)
 Use --full2016data to use full 2016 dataset (default is B to F). Luminosity is automatically set (35.5 for BtoH, 19.3 for BtoF)
 Use --useSkim to run fake rate on skimmed samples in TREES_1LEP_80X_V3_FRELSKIM_V2 (currently on eos)
-Use --EB-only to run fake rate only on EB (useful with --wp when you use different working points for EB and EE)
-Use --EE-only to run fake rate only on EE (useful with --wp when you use different working points for EB and EE)
 Use --addOpts to pass some options to add to the command (useful when you run the script from another one where you change settings). The argument is a string, use "" to enclose the command (important when you pass options with arguments, e.g. --addOpts " -A cut newcut 'var > threshold' " 
 
 
