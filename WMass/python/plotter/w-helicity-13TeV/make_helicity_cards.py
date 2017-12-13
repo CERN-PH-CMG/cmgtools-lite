@@ -20,7 +20,7 @@ T='/eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3_WENUSKIM_
 # elif 'cmsrm-an' in os.environ['HOSTNAME']: T = T.replace('/data1/emanuele/wmass','/t3/users/dimarcoe/')
 print "used trees from: ",T
 J=4
-BASECONFIG="wmass/wmass_e"
+BASECONFIG="w-helicity-13TeV/wmass_e"
 MCA=BASECONFIG+'/mca-80X-wenu-helicity.txt'
 CUTFILE=BASECONFIG+'/wenu.txt'
 SYSTFILE=BASECONFIG+'/systsEnv.txt'
@@ -53,7 +53,7 @@ parser.add_option("-s", "--signal-cards",  dest="signalCards",  action="store_tr
 parser.add_option("-b", "--bkgdata-cards", dest="bkgdataCards", action="store_true", default=False, help="Make the background and data part of the datacards");
 (options, args) = parser.parse_args()
 
-VAR="ptElFull(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_r9,run,isData):LepGood1_eta 48,-2.1,2.1,20,30.,50."
+VAR="ptElFull(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_r9,run,isData,evt):LepGood1_eta 48,-2.5,2.5,20,30.,50."
 print "Fitting ", str(VAR)
 
 if not os.path.exists("cards/"):

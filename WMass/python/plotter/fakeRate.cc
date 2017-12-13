@@ -71,6 +71,19 @@ bool loadFRHisto(const std::string &histoName, const char *file, const char *nam
     return histo != 0;
 }
 
+float fakeRateWeight_1l_i_smoothed(float lpt, float leta, int lpdgId, bool passWP, int iFR) {
+  if (!passWP) {
+    double fpt = lpt; double feta = std::abs(leta); int fid = abs(lpdgId);
+    TH2 *hist = (fid == 11 ? FRi_el[iFR] : FRi_mu[iFR]);
+    if (hist == 0) return 0;
+    int etabin = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(feta)));
+    float p0 = hist->GetBinContent(etabin, 1);
+    float p1 = hist->GetBinContent(etabin, 2);
+    float fr = p0 + p1*lpt;
+    return fr/(1-fr);
+  } else return 0;
+}
+
 float fakeRateWeight_1l_i(float lpt, float leta, int lpdgId, bool passWP, int iFR) {
   if (!passWP) {
     double fpt = lpt; double feta = std::abs(leta); int fid = abs(lpdgId);
@@ -115,33 +128,32 @@ float getSmoothedFakeRateWeight(float lpt, float leta, int lpdgId, bool passWP, 
       
       if (FR_el_smooth == 0) {
 
-	char* cmsswPath;                                                                                               
-	cmsswPath = getenv ("CMSSW_BASE");                                                                             
-	if (cmsswPath == NULL) {                                                                                       
-	  cout << "Error in getSmoothedFakeRateWeight(): environment variable CMSSW_BASE not found. Exit" << endl;         
-	  exit(EXIT_FAILURE);                                                                                          
-	}                                                                                                              
-	string frSmoothFileName = Form("%s/src/CMGTools/WMass/data/fakerate/fakeRateSmoothed_el.root",cmsswPath); 
-	//cout << "This is the first time that file " << frSmoothFileName << " is opened. Now reading histogram" << endl;
+        char* cmsswPath;                                                                                               
+        cmsswPath = getenv ("CMSSW_BASE");                                                                             
+        if (cmsswPath == NULL) {                                                                                       
+          cout << "Error in getSmoothedFakeRateWeight(): environment variable CMSSW_BASE not found. Exit" << endl;         
+          exit(EXIT_FAILURE);                                                                                          
+        }                                                                                                              
+        string frSmoothFileName = Form("%s/src/CMGTools/WMass/data/fakerate/fakeRateSmoothed_el.root",cmsswPath); 
+        //cout << "This is the first time that file " << frSmoothFileName << " is opened. Now reading histogram" << endl;
 
-	TFile* frSmoothFile = new TFile(frSmoothFileName.c_str(),"READ");
-	if (!frSmoothFile || frSmoothFile->IsZombie()) {
-	  cout << "Error in getSmoothedFakeRateWeight(): file " << frSmoothFileName << " not opened. Exit" << endl;
-	  exit(EXIT_FAILURE);
-	}
+        TFile* frSmoothFile = new TFile(frSmoothFileName.c_str(),"READ");
+        if (!frSmoothFile || frSmoothFile->IsZombie()) {
+          cout << "Error in getSmoothedFakeRateWeight(): file " << frSmoothFileName << " not opened. Exit" << endl;
+          exit(EXIT_FAILURE);
+        }
 
-	if (isData) FR_el_smooth = new TH2D( *( (TH2D*) frSmoothFile->Get("frSmoothParameter_data")->Clone()));
-	else FR_el_smooth = new TH2D( *( (TH2D*) frSmoothFile->Get("frSmoothParameter_qcd")->Clone() ));
+        if (isData) FR_el_smooth = new TH2D( *( (TH2D*) frSmoothFile->Get("frSmoothParameter_data")->Clone()));
+        else FR_el_smooth = new TH2D( *( (TH2D*) frSmoothFile->Get("frSmoothParameter_qcd")->Clone() ));
 
-	if ( FR_el_smooth == 0) {
-	  cout << "Error in getSmoothedFakeRateWeight(): pointer FR_el_smooth is NULL. Exit" << endl;
-	  exit(EXIT_FAILURE);
-	} else {
-	  FR_el_smooth->SetDirectory(0);
-	}	
-	frSmoothFile->Close();
-	delete frSmoothFile;
-	
+        if ( FR_el_smooth == 0) {
+          cout << "Error in getSmoothedFakeRateWeight(): pointer FR_el_smooth is NULL. Exit" << endl;
+          exit(EXIT_FAILURE);
+        } else {
+          FR_el_smooth->SetDirectory(0);
+        }       
+        frSmoothFile->Close();
+        delete frSmoothFile;
       }
 
       // 2D histogram defined with offset and slope on y axis, eta on x axis

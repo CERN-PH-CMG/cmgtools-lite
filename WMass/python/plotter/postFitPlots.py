@@ -5,7 +5,7 @@ ROOT.gROOT.SetBatch(True)
 from math import *
 from os.path import dirname,basename
 from CMGTools.TTHAnalysis.tools.plotDecorations import *
-from CMGTools.MonoXAnalysis.plotter.mcPlots import *
+from CMGTools.WMass.plotter.mcPlots import *
 
 mergeMap = { 
 #    "ttH_hww" : "ttH",
