@@ -79,10 +79,10 @@ void doFakeRateGraphPlots(const string& outputDIR_tmp = "./",
   vector<string> graphLegend;
   vector <Double_t> legCoord = {0.12,0.65,0.60,0.9};
 
-  string graphPrefix = isEB ? "FullSel_looseID_vs_pt_granular" : "FullSel_mediumID_vs_pt_granular";
+  string graphPrefix = isEB ? "fakeRateNumerator_el_vs_pt_granular" : "fakeRateNumerator_el_vs_pt_granular";
   string graphPrefixQCD = "";
   if (inputFileNameForQCD == "") graphPrefixQCD = graphPrefix;
-  else graphPrefixQCD = isEB ? "FullSel_looseID_vs_pt_coarse" : "FullSel_mediumID_vs_pt_coarse";
+  else graphPrefixQCD = isEB ? "fakeRateNumerator_el_vs_pt_coarse" : "fakeRateNumerator_el_vs_pt_coarse";
 
   fr_data_subEWKMC         = (TGraphAsymmErrors*) getGraphCloneFromFile(inputFile, graphPrefix + "_data_2d_prefit_sub_graph", "", inputFileName);
   fr_data_orig             = (TGraphAsymmErrors*) getGraphCloneFromFile(inputFile, graphPrefix + "_trkmtfix_data_prefit", "", inputFileName);
@@ -331,10 +331,10 @@ void doFakeRateSmoothing(const string& outputDIR_tmp = "./",
   string detId = isEB ? "EB" : "EE";
 
   // hardcoded name of Tgraphs inside file :(
-  string graphPrefix = isEB ? "FullSel_looseID_vs_pt_granular" : "FullSel_mediumID_vs_pt_granular";
+  string graphPrefix = isEB ? "fakeRateNumerator_el_vs_pt_granular" : "fakeRateNumerator_el_vs_pt_granular";
   string graphPrefixQCD = "";
   if (inputFileNameForQCD == "") graphPrefixQCD = graphPrefix;
-  else graphPrefixQCD = isEB ? "FullSel_looseID_vs_pt_coarse" : "FullSel_mediumID_vs_pt_coarse";
+  else graphPrefixQCD = isEB ? "fakeRateNumerator_el_vs_pt_coarse" : "fakeRateNumerator_el_vs_pt_coarse";
 
   fr_data_subEWKMC           = (TGraphAsymmErrors*) getGraphCloneFromFile(inputFile, graphPrefix + "_data_2d_prefit_sub_graph", "", inputFileName);
   // fr_data_subEWKpromptRate   = (TGraphAsymmErrors*) getGraphCloneFromFile(inputFile, graphPrefix + "_trkmtfix_data_fqcd", "", inputFileName);
