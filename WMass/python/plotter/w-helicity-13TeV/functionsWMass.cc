@@ -189,14 +189,14 @@ TRandom3 *rng = NULL;
 ElectronEnergyCalibratorRun2Standalone *calibratorData = NULL;
 ElectronEnergyCalibratorRun2Standalone *calibratorMC = NULL;
 
-float ptCorr(float pt, float eta, float phi, float r9, int run, int isData) {
+float ptCorr(float pt, float eta, float phi, float r9, int run, int isData, ULong64_t eventNumber) {
   if(!calibratorData && isData ) calibratorData = new ElectronEnergyCalibratorRun2Standalone(false,false,"CMGTools/MonoXAnalysis/python/postprocessing/data/leptonScale/el/Run2016_legacyrereco");
   if(!calibratorMC && !isData ) calibratorMC = new ElectronEnergyCalibratorRun2Standalone(true,false,"CMGTools/MonoXAnalysis/python/postprocessing/data/leptonScale/el/Run2016_legacyrereco");
   ElectronEnergyCalibratorRun2Standalone *calibrator = isData ? calibratorData : calibratorMC;
 
   if(!isData) {
     if(!rng) rng = new TRandom3();
-    rng->SetSeed(0); // make it really random across different jobs
+    rng->SetSeed(eventNumber);
     calibrator->initPrivateRng(rng);
   }
 
@@ -232,18 +232,19 @@ float residualScale(float pt, float eta, int isData) {
   return scale;
 }
 
-float ptElFull(float pt, float eta, float phi, float r9, int run, int isData, int nSigma=0) {
+float ptElFull(float pt, float eta, float phi, float r9, int run, int isData, ULong64_t eventNumber, int nSigma=0) {
   float relSyst=0.;
   if(fabs(eta)<1.0) relSyst = 0.0015;  
   else if(fabs(eta)<1.479) relSyst = 0.005;  
   else relSyst = 0.01; 
-  return (1.+nSigma*relSyst) * ptCorr(pt,eta,phi,r9,run,isData) * residualScale(pt,eta,isData);
+  return (1.+nSigma*relSyst) * ptCorr(pt,eta,phi,r9,run,isData,eventNumber) * residualScale(pt,eta,isData);
 }
 
-float ptElFullUp(float pt, float eta, float phi, float r9, int run, int isData) {
-  return ptElFull(pt,eta,phi,r9,run,isData,1);
+float ptElFullUp(float pt, float eta, float phi, float r9, int run, int isData, ULong64_t eventNumber) {
+  return ptElFull(pt,eta,phi,r9,run,isData,eventNumber,1);
 }
 
-float ptElFullDn(float pt, float eta, float phi, float r9, int run, int isData) {
-  return ptElFull(pt,eta,phi,r9,run,isData,-1);
+float ptElFullDn(float pt, float eta, float phi, float r9, int run, int isData, ULong64_t eventNumber) {
+  return ptElFull(pt,eta,phi,r9,run,isData,eventNumber,-1);
 }
+

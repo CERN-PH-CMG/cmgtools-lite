@@ -53,7 +53,7 @@ parser.add_option("-s", "--signal-cards",  dest="signalCards",  action="store_tr
 parser.add_option("-b", "--bkgdata-cards", dest="bkgdataCards", action="store_true", default=False, help="Make the background and data part of the datacards");
 (options, args) = parser.parse_args()
 
-VAR="ptElFull(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_r9,run,isData):LepGood1_eta 48,-2.1,2.1,20,30.,50."
+VAR="ptElFull(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_r9,run,isData,evt):LepGood1_eta 48,-2.5,2.5,20,30.,50."
 print "Fitting ", str(VAR)
 
 if not os.path.exists("cards/"):
