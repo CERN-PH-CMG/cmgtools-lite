@@ -15,7 +15,6 @@ onlypack="n" # just pack an already existing fake-rate
 # else, if onlypack='y', it overrides the packFRfromTest option below
 #--------------------------
 etaRange="0.0,1.0,1.479,2.1,2.5"
-wp_etaRange="loose,loose,medium,medium" # loose, medium, tight (loose uses iso < 0.2, check wmass/make_fake_rates_sels.txt)
 mtRanges="0,30,30,120"
 mtDefinition="trkmtfix"  # trkmtfix, trkmt, pfmtfix, pfmt
 ptDefinition="pt_coarse"  # pt_coarse, pt_granular (first is mainly for QCD)
@@ -69,10 +68,6 @@ fi
 
 if [[ "X${etaRange}" != "X" ]]; then
     cmdComputeFR="${cmdComputeFR} --etaRange \"${etaRange}\" "
-fi
-
-if [[ "X${wp_etaRange}" != "X" ]]; then
-    cmdComputeFR="${cmdComputeFR} --wp \"${wp_etaRange}\" "
 fi
 
 if [[ "X${addOption}" != "X" ]]; then

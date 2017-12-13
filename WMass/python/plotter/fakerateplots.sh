@@ -33,17 +33,17 @@ plotfile="test_plots.txt"
 excludeprocesses="Z_LO,W_LO" # decide whether to use NLO (amc@NLO) or LO (MadGraph) MC, non both! In case you can add other samples (Top, Dibosons) to speed up things
 selectplots="ptl1"  # if empty it uses all plots in cfg file
 #selectplots="trkmt,ptl1,etal1,pfmt,pfmet"  # if empty it uses all plots in cfg file
-maxentries="2000000000" # max int number is > 2*10^9
-#maxentries="1000"
+#maxentries="2000000000" # max int number is > 2*10^9
+maxentries="10"
 outdirComp="full2016dataBH_puAndTrgSf_ptResScale_8dec"
 outdirAppl="full2016dataBH_puAndTrgSf_ptResScale_8dec"
-outdirFRcheck="full2016dataBH_puAndTrgSf_ptResScale_11dec"
-#outdirFRcheck="test"
+#outdirFRcheck="full2016dataBH_puAndTrgSf_ptResScale_11dec"
+outdirFRcheck="test"
 outdirSignal="full2016dataBH_puAndTrgSf_ptResScale_8dec"
 
 # end of settings to be changed by user
 #----------------------------------------
-ptcorr="ptCorrAndResidualScale(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_r9,run,isData,evt)"
+ptcorr="ptElFull(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_r9,run,isData,evt)"
 ptForScaleFactors="LepGood1_pt"
 if [[ "${usePtCorrForScaleFactors}" == "y" ]]; then
     echo "Will use corrected pt instead of LepGood1_pt to compute the trigger/efficiency scale factors"
@@ -71,11 +71,11 @@ luminosity=""
 dataOption=""
 MCweightOption=""
 if [[ "${useDataGH}" == "y" ]]; then
-    dataOption=" --pg 'data := data_B,data_C,data_D,data_E,data_F,data_G,data_H' "
+    #dataOption=" --pg 'data := data_B,data_C,data_D,data_E,data_F,data_G,data_H' "
     luminosity="35.9"
     MCweigthOption=" -W 'puw2016_nTrueInt_36fb(nTrueInt)*trgSF_We(LepGood1_pdgId,${ptForScaleFactors},LepGood1_eta,2)*leptonSF_We(LepGood1_pdgId,${ptForScaleFactors},LepGood1_eta)' "
 else 
-    dataOption=" --pg 'data := data_B,data_C,data_D,data_E,data_F' --xp data_G,data_H "
+    #dataOption=" --pg 'data := data_B,data_C,data_D,data_E,data_F' --xp data_G,data_H "
     luminosity="19.3"
     MCweigthOption=" -W 'puw2016_nTrueInt_BF(nTrueInt)*trgSF_We(LepGood1_pdgId,${ptForScaleFactors},LepGood1_eta,2)*leptonSF_We(LepGood1_pdgId,${ptForScaleFactors},LepGood1_eta)' "
 fi
@@ -250,14 +250,6 @@ if [[ "${doFakeRateCheckData}" == "y" ]]; then
     commonCommandFRcheck="${commonCommand}"
     commonCommandFRcheck="${commonCommandFRcheck/${mcafile}/${mcafileFRcheck}}"
     #echo "commonCommandFRcheck = ${commonCommandFRcheck}"
-
-    # now we assume that PostFix='_fakes' in mcafileFRcheck
-    # check 
-    # if [[ "${useDataGH}" == "y" ]]; then
-    # 	dataOptionFakes=" --pg 'data_fakes := data_B_fakes,data_C_fakes,data_D_fakes,data_E_fakes,data_F_fakes,data_G_fakes,data_H_fakes' "
-    # else 
-    # 	dataOptionFakes=" --pg 'data_fakes := data_B_fakes,data_C_fakes,data_D_fakes,data_E_fakes,data_F_fakes' --xp data_G_fakes,data_H_fakes "
-    # fi
 
     #commonCommandFRcheck="python mcPlots.py -f -j 4 -l ${luminosity} --s2v --tree treeProducerWMass --obj tree --lspam '#bf{CMS} #it{Preliminary}' --legendWidth 0.20 --legendFontSize 0.035 --showRatio --maxRatioRange 0.5 1.5 --fixRatioRange wmass/wmass_e/${mcafileFRcheck} wmass/wmass_e/${cutfile} wmass/wmass_e/${plotfile} --max-entries ${maxentries} ${dataOption} ${MCweigthOption} --xp ${excludeprocesses}"
 
