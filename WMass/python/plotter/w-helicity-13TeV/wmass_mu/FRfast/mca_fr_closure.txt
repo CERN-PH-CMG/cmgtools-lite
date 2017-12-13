@@ -1,0 +1,22 @@
+# vim: syntax=sh
+* ; TreeName="treeProducerWMass"
+
+
+WandZ      : WJetsToLNu_part*                      : 3.*20508.9    : 1 ; FillColor=ROOT.kGreen+1   , Label="WandZ"
+WandZ      : DYJetsToLL_M50_part*                  : 3.*1921.8     : 1 ; FillColor=ROOT.kGreen+1   , Label="WandZ"
+QCD        : QCD_Mu15_part*                        : 302673.0      : 1 ; FillColor=ROOT.kOrange-2    , Label="QCD"
+Top        : TTJets_SingleLeptonFromT_ext_part1    : xsec          :   ; FillColor=ROOT.kGray+2   , Label="Top"      , NormSystematic=0.09
+Top        : TTJets_SingleLeptonFromTbar_ext_part1 : xsec          :   ; FillColor=ROOT.kGray+2   , Label="Top"      , NormSystematic=0.09
+Top        : TToLeptons_sch_amcatnlo               : xsec          :   ; FillColor=ROOT.kGray+2   , Label="Top"      , NormSystematic=0.04
+Top        : T_tch_powheg_part1+T_tch_powheg_part2 : xsec          :   ; FillColor=ROOT.kGray+2   , Label="Top"      , NormSystematic=0.04
+Top        : TBar_tch_powheg_part1                 : xsec          :   ; FillColor=ROOT.kGray+2   , Label="Top"      , NormSystematic=0.04
+Top        : T_tWch_ext                            : xsec          :   ; FillColor=ROOT.kGray+2   , Label="Top"      , NormSystematic=0.06
+Top        : TBar_tWch_ext                         : xsec          :   ; FillColor=ROOT.kGray+2   , Label="Top"      , NormSystematic=0.06
+DiBosons   : WW+WW_ext                             : xsec          :   ; FillColor=ROOT.kViolet+2 , Label="DiBosons" , NormSystematic=0.03
+DiBosons   : WZ+WZ_ext                             : xsec          :   ; FillColor=ROOT.kViolet+2 , Label="DiBosons" , NormSystematic=0.05
+DiBosons   : ZZ+ZZ_ext                             : xsec          :   ; FillColor=ROOT.kViolet+2 , Label="DiBosons" , NormSystematic=0.05
+
+data       : SingleMuon_Run2016*
+
+fakes_data : SingleMuon_Run2016*                                   : 1 ; FillColor=ROOT.kGray, FakeRate="w-helicity-13TeV/wmass_mu/FRfast/fakeRate_application_data.txt", Label="Fakes"
+

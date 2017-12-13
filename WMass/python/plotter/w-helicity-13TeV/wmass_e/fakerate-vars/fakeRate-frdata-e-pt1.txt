@@ -1,0 +1,8 @@
+cut-change: LepGood1_tightId: 4
+cut-change: LepGood1_relIso04EA: 0.0
+cut-change: LepGood1_dz: 0.0
+cut-change: LepGood1_dxy: 0.0
+cut-change: LepGood1_lostHits: 0
+cut-change: LepGood1_convVeto: 1
+weight: fakeRateWeight_1l_i(LepGood1_pt,LepGood1_eta,LepGood1_pdgId,LepGood1_tightId >= 1 && if3(abs(LepGood1_etaSc)<1.479,LepGood1_relIso04EA < 0.2 && abs(LepGood1_dz) < 0.1 && abs(LepGood1_dxy) < 0.05, LepGood1_relIso04EA < 0.2 && abs(LepGood1_dz) < 0.2 && abs(LepGood1_dxy) < 0.1) && LepGood1_lostHits <= 1 && LepGood1_convVeto == 1,3)
+load-histo: FR_el_i3 : $DATA/fakerate/FR_data_el.root : FR_FullSel_MVATrig_el_data_comb_pt1

@@ -1,0 +1,8 @@
+alwaystrue: 1
+trigger: HLT_SingleEl==1
+two electrons: abs(LepGood1_pdgId)==11 && LepGood1_pdgId == -LepGood2_pdgId
+el acceptance: LepGood1_pt > 30 && LepGood2_pt > 20 && abs(LepGood1_eta)<2.5 && abs(LepGood2_eta)<2.5
+el ID: LepGood1_tightId >= if3(abs(LepGood1_eta)<1.479,1,2) && LepGood2_tightId >= if3(abs(LepGood2_eta)<1.479,1,2)
+el iso: LepGood1_relIso04EA < if3(abs(LepGood1_eta)<1.479,0.2,0.0821) && LepGood2_relIso04EA < if3(abs(LepGood2_eta)<1.479,0.2,0.0821)
+el conv rej: LepGood1_convVeto && LepGood1_lostHits <= 1 && LepGood2_convVeto && LepGood2_lostHits <= 1
+inv mass: abs(mass_2(LepGood1_pt,LepGood1_eta,LepGood1_phi,0.5e-3,LepGood2_pt,LepGood2_eta,LepGood2_phi,0.5e-3)-90) < 20

@@ -1,0 +1,9 @@
+alwaystrue: 1
+#trigger: HLT_SingleEl==1
+onelep: nLepGood == 1 && abs(LepGood1_pdgId)==11
+eleKin: LepGood1_pt > 30 && abs(LepGood1_eta)<2.5
+HLTid: LepGood1_hltId > 0
+id: LepGood1_tightId >= 3 && if3(abs(LepGood1_etaSc)<1.479,LepGood1_relIso04EA < 0.0588 && abs(LepGood1_dz) < 0.1 && abs(LepGood1_dxy) < 0.05, LepGood1_relIso04EA < 0.0571 && abs(LepGood1_dz) < 0.2 && abs(LepGood1_dxy) < 0.1) && LepGood1_lostHits <= 1 && LepGood1_convVeto > 0
+#pfmet: met_pt > 20
+#w_pt: pt_2(LepGood1_pt, LepGood1_phi, met_trkPt, met_trkPhi ) < 40
+#w_tkmt: mt_2(met_trkPt,met_trkPhi,LepGood1_pt,LepGood1_phi) > 40 && mt_2(met_trkPt,met_trkPhi,LepGood1_pt,LepGood1_phi) < 110

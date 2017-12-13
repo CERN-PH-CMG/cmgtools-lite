@@ -1,0 +1,11 @@
+## trigger selection
+## =============================================
+trigger1mu    : HLT_SingleMu > 0
+## muon selection
+## =============================================
+1l            : nLepGood == 1
+muon          : abs(LepGood1_pdgId) == 13
+muonTightId   : LepGood1_tightId > 0
+## kinematic selection
+## =============================================
+lpt25         : LepGood1_pt > 25.
