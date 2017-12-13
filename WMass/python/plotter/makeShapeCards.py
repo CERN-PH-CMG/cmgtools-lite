@@ -1,6 +1,5 @@
 #!/usr/bin/env python
-from CMGTools.MonoXAnalysis.plotter.mcAnalysis import *
-from CMGTools.MonoXAnalysis.plotter.wmass.slice3DTemplate import Template3DSlicer
+from CMGTools.WMass.plotter.mcAnalysis import *
 import re, sys, os, os.path
 systs = {}
 
@@ -15,7 +14,6 @@ parser.add_option("--mass-int-algo", dest="massIntAlgo", type="string", default=
 parser.add_option("--asimov", dest="asimov", action="store_true", help="Asimov")
 parser.add_option("--2d-binning-function",dest="binfunction", type="string", default=None, help="Function used to bin the 2D histogram: nbins:func, where func(x,y) = bin in [1,nbins]")
 parser.add_option("--infile",dest="infile", type="string", default=None, help="File to read histos from")
-parser.add_option("--pff", "--processes-from-file", dest="processesFromFile", type="string", default=[], nargs=2, action="append", help="Processes to take from file (process file.root)");
 parser.add_option("--savefile",dest="savefile", type="string", default=None, help="File to save histos to")
 parser.add_option("--floatProcesses",dest="floatProcesses", type="string", default=None, help="Completely float the yields of these processes")
 parser.add_option("--groupSystematics",dest="groupSystematics", type="string", nargs=2, default=None, help="Group systematics by [groupname pattern]")
@@ -25,13 +23,8 @@ options.weight = True
 options.final  = True
 options.allProcesses  = True
 
-procsToExclude = [p0 for p0, p1 in options.processesFromFile]
-if len(procsToExclude):
-    print "Taking the processes ",procsToExclude," from external file"
-    options.processesToExclude = procsToExclude
-
 if "/functions_cc.so" not in ROOT.gSystem.GetLibraries(): 
-    ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/MonoXAnalysis/python/plotter/functions.cc+" % os.environ['CMSSW_BASE']);
+    ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/WMass/python/plotter/functions.cc+" % os.environ['CMSSW_BASE']);
 
 mca  = MCAnalysis(args[0],options)
 cuts = CutsFile(args[1],options)
@@ -139,11 +132,6 @@ if options.infile!=None:
         if h: report[p] = h
 else:
     report = mca.getPlotsRaw("x", args[2], args[3], cuts.allCuts(), nodata=options.asimov)
-
-if len(options.processesFromFile):
-    for proc, infile in options.processesFromFile:
-        ts = Template3DSlicer(infile)
-        report.update(ts.getTemplates())
 
 if options.savefile!=None:
     savefile = ROOT.TFile(myout+binname+".bare.root","recreate")

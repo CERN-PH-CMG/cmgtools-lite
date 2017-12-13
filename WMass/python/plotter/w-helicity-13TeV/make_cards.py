@@ -23,7 +23,7 @@ masses = range(mass_id_down, mass_id_down + n_mass_id)
 T='/eos/cms/store/cmst3/user/emanuele/wmass/TREES_1LEP_80X_V2_nano/'
 print "used trees from: ",T
 J=4
-BASECONFIG="wmass/wmass_e"
+BASECONFIG="w-helicity-13TeV/wmass_e"
 #BASECONFIG=""
 MCA=BASECONFIG+'/mca-80X-wenu.txt'
 CUTFILE=BASECONFIG+'/wenu_80X.txt'

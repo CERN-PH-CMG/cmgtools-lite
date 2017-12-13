@@ -15,14 +15,14 @@ ROOT.PyConfig.IgnoreCommandLineOptions = True
 
 from copy import *
 
-from CMGTools.MonoXAnalysis.plotter.cutsFile import *
-from CMGTools.MonoXAnalysis.plotter.fakeRate import *
+from CMGTools.WMass.plotter.cutsFile import *
+from CMGTools.WMass.plotter.fakeRate import *
 from CMGTools.TTHAnalysis.plotter.mcCorrections import *
 
 if "/functions_cc.so" not in ROOT.gSystem.GetLibraries(): 
-    ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/MonoXAnalysis/python/plotter/functions.cc+" % os.environ['CMSSW_BASE']);
+    ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/WMass/python/plotter/functions.cc+" % os.environ['CMSSW_BASE']);
 if "/wmass/functionsWMass_cc.so" not in ROOT.gSystem.GetLibraries(): 
-    ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/MonoXAnalysis/python/plotter/wmass/functionsWMass.cc+" % os.environ['CMSSW_BASE']);
+    ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/WMass/python/plotter/w-helicity-13TeV/functionsWMass.cc+" % os.environ['CMSSW_BASE']);
 
 def scalarToVector(x):
     x0 = x

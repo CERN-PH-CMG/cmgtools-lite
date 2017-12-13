@@ -20,7 +20,7 @@ T='/eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3_WENUSKIM_
 # elif 'cmsrm-an' in os.environ['HOSTNAME']: T = T.replace('/data1/emanuele/wmass','/t3/users/dimarcoe/')
 print "used trees from: ",T
 J=4
-BASECONFIG="wmass/wmass_e"
+BASECONFIG="w-helicity-13TeV/wmass_e"
 MCA=BASECONFIG+'/mca-80X-wenu-helicity.txt'
 CUTFILE=BASECONFIG+'/wenu.txt'
 SYSTFILE=BASECONFIG+'/systsEnv.txt'

@@ -132,7 +132,7 @@ float getSmoothedFakeRateWeight(float lpt, float leta, int lpdgId, bool passWP, 
           cout << "Error in getSmoothedFakeRateWeight(): environment variable CMSSW_BASE not found. Exit" << endl;         
           exit(EXIT_FAILURE);                                                                                          
         }                                                                                                              
-        string frSmoothFileName = Form("%s/src/CMGTools/MonoXAnalysis/data/fakerate/fakeRateSmoothed_el.root",cmsswPath); 
+        string frSmoothFileName = Form("%s/src/CMGTools/WMass/data/fakerate/fakeRateSmoothed_el.root",cmsswPath); 
         //cout << "This is the first time that file " << frSmoothFileName << " is opened. Now reading histogram" << endl;
 
         TFile* frSmoothFile = new TFile(frSmoothFileName.c_str(),"READ");

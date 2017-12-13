@@ -2,13 +2,13 @@ import ROOT
 from math import *
 import re, os, glob
 from array import array
-from CMGTools.MonoXAnalysis.plotter.tree2yield import scalarToVector
+from CMGTools.WMass.plotter.tree2yield import scalarToVector
 from CMGTools.TTHAnalysis.tools.plotDecorations import doSpam
 
 if "/functions_cc.so" not in ROOT.gSystem.GetLibraries(): 
-    ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/MonoXAnalysis/python/plotter/functions.cc+" % os.environ['CMSSW_BASE']);
+    ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/WMass/python/plotter/functions.cc+" % os.environ['CMSSW_BASE']);
 if "/wmass/functionsWMass_cc.so" not in ROOT.gSystem.GetLibraries(): 
-    ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/MonoXAnalysis/python/plotter/wmass/functionsWMass.cc+" % os.environ['CMSSW_BASE']);
+    ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/WMass/python/plotter/wmass/functionsWMass.cc+" % os.environ['CMSSW_BASE']);
 
 def makeSignalModel(model, w):
     if model == "Z-Voit":
