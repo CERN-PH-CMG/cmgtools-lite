@@ -1,0 +1,6 @@
+alwaystrue: 1
+HLT_SingleEL : HLT_SingleEl
+onelep: nLepGood == 1 && abs(LepGood1_pdgId)==11
+eleKin: ptCorrAndResidualScale(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_r9,run,isData,evt) > 25 && abs(LepGood1_eta)<2.5
+nJet30: LepGood_awayJet_pt > 30
+den_HLToutcome: LepGood1_hltId > 0
