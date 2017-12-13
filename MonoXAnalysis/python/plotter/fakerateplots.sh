@@ -31,8 +31,8 @@ cutfile="qcd1l_SRtrees.txt"
 plotfile="test_plots.txt"
 #excludeprocesses="data,Z_LO,W_LO,Z,Top,DiBosons"
 excludeprocesses="Z_LO,W_LO" # decide whether to use NLO (amc@NLO) or LO (MadGraph) MC, non both! In case you can add other samples (Top, Dibosons) to speed up things
-selectplots="ptl1"  # if empty it uses all plots in cfg file
-#selectplots="trkmt,ptl1,etal1,pfmt,pfmet"  # if empty it uses all plots in cfg file
+#selectplots="ptl1"  # if empty it uses all plots in cfg file
+selectplots="trkmt,ptl1,etal1,pfmt,pfmet"  # if empty it uses all plots in cfg file
 maxentries="2000000000" # max int number is > 2*10^9
 #maxentries="1000"
 outdirComp="full2016dataBH_puAndTrgSf_ptResScale_8dec"
@@ -120,7 +120,7 @@ not_pass_looseWP="-A eleKin not-fullLooseID 'LepGood1_tightId < 1 || if3(abs(Lep
 not_pass_looseWP_iso0p2="-A eleKin not-fullLooseID 'LepGood1_tightId < 1 || if3(abs(LepGood1_etaSc)<1.479,LepGood1_relIso04EA > 0.2 || abs(LepGood1_dz) > 0.1 || abs(LepGood1_dxy) > 0.05, LepGood1_relIso04EA > 0.2 || abs(LepGood1_dz) > 0.2 || abs(LepGood1_dxy) > 0.1) || LepGood1_lostHits > 1 || LepGood1_convVeto == 0'"
 
 # use bult-in functions in functions.cc, which automatically select EB or EE, manage cuts and so on
-FRnumSel=" -A eleKin FRnumSel 'pass_FakerateNumerator2016((abs(LepGood1_etaSc)<1.479),LepGood1_tightId,LepGood1_dxy,LepGood1_dz,LepGood1_lostHits,LepGood1_convVeto,LepGood1_relIso04EA)' "
+FRnumSel=" -A eleKin passFRnumSel 'pass_FakerateNumerator2016((abs(LepGood1_etaSc)<1.479),LepGood1_tightId,LepGood1_dxy,LepGood1_dz,LepGood1_lostHits,LepGood1_convVeto,LepGood1_relIso04EA)' "
 
 notFRnumSel="-A eleKin failFRnumSel 'pass_FakerateApplicationRegion2016(abs(LepGood1_etaSc)<1.479,LepGood1_tightId,LepGood1_dxy,LepGood1_dz,LepGood1_lostHits,LepGood1_convVeto,LepGood1_relIso04EA)' "
 
