@@ -1,0 +1,6 @@
+change: ptElFull: ptElFullUp
+## and call with polarisation == 1
+load-histo: helicityFractions_0 : w-helicity-13TeV/fractionReweighting/fractions.root : fraction0_minus_sym
+load-histo: helicityFractions_L : w-helicity-13TeV/fractionReweighting/fractions.root : fractionL_minus_sym
+load-histo: helicityFractions_R : w-helicity-13TeV/fractionReweighting/fractions.root : fractionR_minus_sym
+weight: helicityWeight(genw_y,genw_pt,genw_costcs,1)

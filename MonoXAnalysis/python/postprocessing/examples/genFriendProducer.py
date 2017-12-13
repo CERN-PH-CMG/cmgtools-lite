@@ -116,9 +116,6 @@ class GenQEDJetProducer(Module):
         if event._tree._ttreereaderversion > self._ttreereaderversion: # do this check at every event, as other modules might have read further branches
             self.initReaders(event._tree)
 
-        #nothing to do if this is data
-        if event.isData: return
-
         # do NOT access other branches in python between the check/call to initReaders and the call to C++ worker code
         ## Algo
         self._worker.run()
@@ -130,7 +127,10 @@ class GenQEDJetProducer(Module):
         lheWPdgIds = self._worker.lheWsPdgId()
         lheLeps    = self._worker.lheLeps()
         lheLepPdgIds = self._worker.lheLepsPdgId()
-        
+
+        #nothing to do if this is data
+        if event.isData: return True
+
         if hasattr(event,"genWeight"):
             self.out.fillBranch("weightGen", getattr(event, "genWeight"))
             self.out.fillBranch("partonId1", getattr(event, "id1"))
@@ -212,6 +212,6 @@ class GenQEDJetProducer(Module):
 
 # define modules using the syntax 'name = lambda : constructor' to avoid having them loaded when not needed
 
-genQEDJets = lambda : GenQEDJetProducer(deltaR=0.1,beamEn=7000.)
-genQEDJets13TeV = lambda : GenQEDJetProducer(deltaR=0.1,beamEn=6500.)
+genQEDJets14TeV = lambda : GenQEDJetProducer(deltaR=0.1,beamEn=7000.)
+genQEDJets = lambda : GenQEDJetProducer(deltaR=0.1,beamEn=6500.)
 
