@@ -1,7 +1,7 @@
 from PhysicsTools.Heppy.analyzers.core.AutoFillTreeProducer  import * 
 
 from CMGTools.TTHAnalysis.analyzers.ntupleTypes import *
-from CMGTools.MonoXAnalysis.analyzers.ntupleTypes import *
+from CMGTools.WMass.analyzers.ntupleTypes import *
 
 wmass_globalVariables = [
 
