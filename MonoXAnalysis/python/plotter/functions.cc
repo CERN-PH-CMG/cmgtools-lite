@@ -193,9 +193,9 @@ float puw2016_nTrueInt_36fb(int nTrueInt) { if (nTrueInt<100) return _puw2016_nT
 
 
 // pass dxy and dz
-bool pass_dxy_dz(const bool& isEB = true, 
-		 const float& LepGood1_dxy = -999, 
-		 const float& LepGood1_dz = -999
+bool pass_dxy_dz(const bool isEB = true, 
+		 const float LepGood1_dxy = -999, 
+		 const float LepGood1_dz = -999
 		 ) 
 {
   
@@ -205,8 +205,8 @@ bool pass_dxy_dz(const bool& isEB = true,
 }
 
 // missing hits and conversion veto
-bool pass_lostHits_conVeto(const float& LepGood1_lostHits = -999, 
-			   const float& LepGood1_convVeto = -999
+bool pass_lostHits_conVeto(const float LepGood1_lostHits = -999, 
+			   const float LepGood1_convVeto = -999
 			   ) 
 {
   return (LepGood1_lostHits <= 1 && LepGood1_convVeto == 1);
@@ -214,12 +214,12 @@ bool pass_lostHits_conVeto(const float& LepGood1_lostHits = -999,
 
 
 // loose ID no isolation
-bool pass_looseIDnoIso_2016(const bool&  isEB = true, 
-			    const int&   LepGood1_tightId = -1, 
-			    const float& LepGood1_dxy = -999, 
-			    const float& LepGood1_dz = -999,
-			    const int&   LepGood1_lostHits = -1,
-			    const int&   LepGood1_convVeto = -999
+bool pass_looseIDnoIso_2016(const bool  isEB = true, 
+			    const int   LepGood1_tightId = -1, 
+			    const float LepGood1_dxy = -999, 
+			    const float LepGood1_dz = -999,
+			    const int   LepGood1_lostHits = -1,
+			    const int   LepGood1_convVeto = -999
 			    ) 
 {
 
@@ -228,12 +228,12 @@ bool pass_looseIDnoIso_2016(const bool&  isEB = true,
 }
 
 // medium ID no isolation
-bool pass_mediumIDnoIso_2016(const bool&  isEB = true, 
-			     const int&   LepGood1_tightId = -1, 
-			     const float& LepGood1_dxy = -999, 
-			     const float& LepGood1_dz = -999,
-			     const int&   LepGood1_lostHits = -1,
-			     const int&   LepGood1_convVeto = -999
+bool pass_mediumIDnoIso_2016(const bool  isEB = true, 
+			     const int   LepGood1_tightId = -1, 
+			     const float LepGood1_dxy = -999, 
+			     const float LepGood1_dz = -999,
+			     const int   LepGood1_lostHits = -1,
+			     const int   LepGood1_convVeto = -999
 			     ) 
 {
 
@@ -242,12 +242,12 @@ bool pass_mediumIDnoIso_2016(const bool&  isEB = true,
 }
 
 // tight ID no isolation
-bool pass_tightIDnoIso_2016(const bool&  isEB = true, 
-			    const int&   LepGood1_tightId = -1, 
-			    const float& LepGood1_dxy = -999, 
-			    const float& LepGood1_dz = -999,
-			    const int&   LepGood1_lostHits = -1,
-			    const int&   LepGood1_convVeto = -999
+bool pass_tightIDnoIso_2016(const bool  isEB = true, 
+			    const int   LepGood1_tightId = -1, 
+			    const float LepGood1_dxy = -999, 
+			    const float LepGood1_dz = -999,
+			    const int   LepGood1_lostHits = -1,
+			    const int   LepGood1_convVeto = -999
 			    ) 
 {
 
@@ -262,13 +262,13 @@ bool pass_tightIDnoIso_2016(const bool&  isEB = true,
 //
 /////////////////////////////////////////////////////
 
-// bool pass_workingPointIDnoIso_2016(const string& workingPoint = "loose", // loose, medium, tight
-// 				   const bool&  isEB = true, 
-// 				   const int&   LepGood1_tightId = -1, 
-// 				   const float& LepGood1_dxy = -999, 
-// 				   const float& LepGood1_dz = -999,
-// 				   const int&   LepGood1_lostHits = -1,
-// 				   const int&   LepGood1_convVeto = -999
+// bool pass_workingPointIDnoIso_2016(const string workingPoint = "loose", // loose, medium, tight
+// 				   const bool  isEB = true, 
+// 				   const int   LepGood1_tightId = -1, 
+// 				   const float LepGood1_dxy = -999, 
+// 				   const float LepGood1_dz = -999,
+// 				   const int   LepGood1_lostHits = -1,
+// 				   const int   LepGood1_convVeto = -999
 // 				   ) 
 // {
 
@@ -283,9 +283,9 @@ bool pass_tightIDnoIso_2016(const bool&  isEB = true,
 // }
 
 
-// bool pass_isolation_2016(const string& workingPoint = "loose", // loose, medium, tight, custom
-// 			 const bool&   isEB = true,
-// 			 const float&  LepGood1_relIso04EA = -1,
+// bool pass_isolation_2016(const string workingPoint = "loose", // loose, medium, tight, custom
+// 			 const bool   isEB = true,
+// 			 const float  LepGood1_relIso04EA = -1,
 // 			 )
 // {
 
@@ -309,15 +309,15 @@ bool pass_tightIDnoIso_2016(const bool&  isEB = true,
 
 // }
 
-// bool passFakerateNumerator2016(const string& workingPoint = "loose", // loose, medium, tight
-// 			       const bool&   isEB = true, 
-// 			       const int&    LepGood1_tightId = -1, 
-// 			       const float&  LepGood1_dxy = -999, 
-// 			       const float&  LepGood1_dz = -999,
-// 			       const int&    LepGood1_lostHits = -1,
-// 			       const int&    LepGood1_convVeto = -999,
-// 			       const float&  LepGood1_relIso04EA = -1,
-// 			       const bool&   useCustomRelIso04EA = true // use user defined isolation threshold, not the E/gamma value
+// bool passFakerateNumerator2016(const string workingPoint = "loose", // loose, medium, tight
+// 			       const bool   isEB = true, 
+// 			       const int    LepGood1_tightId = -1, 
+// 			       const float  LepGood1_dxy = -999, 
+// 			       const float  LepGood1_dz = -999,
+// 			       const int    LepGood1_lostHits = -1,
+// 			       const int    LepGood1_convVeto = -999,
+// 			       const float  LepGood1_relIso04EA = -1,
+// 			       const bool   useCustomRelIso04EA = true // use user defined isolation threshold, not the E/gamma value
 // 			       ) 
 // {
 
@@ -329,15 +329,15 @@ bool pass_tightIDnoIso_2016(const bool&  isEB = true,
 // }
 
 
-// bool isInFakerateApplicationRegion2016(const string& workingPoint = "loose", // loose, medium, tight
-// 				       const bool&   isEB = true, 
-// 				       const int&    LepGood1_tightId = -1, 
-// 				       const float&  LepGood1_dxy = -999, 
-// 				       const float&  LepGood1_dz = -999,
-// 				       const int&    LepGood1_lostHits = -1,
-// 				       const int&    LepGood1_convVeto = -999,
-// 				       const float&  LepGood1_relIso04EA = -1,
-// 				       const bool&   useCustomRelIso04EA = true // use user defined isolation threshold, not the E/gamma value
+// bool isInFakerateApplicationRegion2016(const string workingPoint = "loose", // loose, medium, tight
+// 				       const bool   isEB = true, 
+// 				       const int    LepGood1_tightId = -1, 
+// 				       const float  LepGood1_dxy = -999, 
+// 				       const float  LepGood1_dz = -999,
+// 				       const int    LepGood1_lostHits = -1,
+// 				       const int    LepGood1_convVeto = -999,
+// 				       const float  LepGood1_relIso04EA = -1,
+// 				       const bool   useCustomRelIso04EA = true // use user defined isolation threshold, not the E/gamma value
 // 				       ) 
 // {
 
@@ -351,20 +351,20 @@ bool pass_tightIDnoIso_2016(const bool&  isEB = true,
 
 //==========================
 
-bool pass_isolation_WP(const Bool_t isEB = true, const float&  LepGood1_relIso04EA = -1)
+bool pass_isolation_WP(const bool isEB = true, const float  LepGood1_relIso04EA = -1)
 {
-  return LepGood1_relIso04EA < (isEB ? 0.2 : 0.0821); // custom value for EB, medium WP for EE
+  return (LepGood1_relIso04EA < (isEB ? 0.2 : 0.0821)); // custom value for EB, medium WP for EE
 }
 
 //==========================
 
-bool pass_FakerateNumerator2016(const bool&   isEB = true, 
-				const int&    LepGood1_tightId = -1, 
-				const float&  LepGood1_dxy = -999, 
-				const float&  LepGood1_dz = -999,
-				const int&    LepGood1_lostHits = -1,
-				const int&    LepGood1_convVeto = -999,
-				const float&  LepGood1_relIso04EA = -1,
+bool pass_FakerateNumerator2016(const bool   isEB = true, 
+				const int    LepGood1_tightId = -1, 
+				const float  LepGood1_dxy = -999, 
+				const float  LepGood1_dz = -999,
+				const int    LepGood1_lostHits = -1,
+				const int    LepGood1_convVeto = -999,
+				const float  LepGood1_relIso04EA = -1
 				) 
 {
 
@@ -388,24 +388,44 @@ bool pass_FakerateNumerator2016(const bool&   isEB = true,
 //==========================
 
 
-bool pass_FakerateApplicationRegion2016(const bool&   isEB = true, 
-					const int&    LepGood1_tightId = -1, 
-					const float&  LepGood1_dxy = -999, 
-					const float&  LepGood1_dz = -999,
-					const int&    LepGood1_lostHits = -1,
-					const int&    LepGood1_convVeto = -999,
-					const float&  LepGood1_relIso04EA = -1,
+bool pass_FakerateApplicationRegion2016(const bool   isEB = true, 
+					const int    LepGood1_tightId = -1, 
+					const float  LepGood1_dxy = -999, 
+					const float  LepGood1_dz = -999,
+					const int    LepGood1_lostHits = -1,
+					const int    LepGood1_convVeto = -999,
+					const float  LepGood1_relIso04EA = -1
 					) 
 {
 
-  return (not pass_FakerateNumerator2016(isEB,
-					 LepGood1_tightId,LepGood1_dxy,LepGood1_dz,LepGood1_lostHits,LepGood1_convVeto,
-					 LepGood1_relIso04EA,useCustomRelIso04EA
-					 )
-	  );
+  return (not pass_FakerateNumerator2016(isEB,LepGood1_tightId,LepGood1_dxy,LepGood1_dz,LepGood1_lostHits,LepGood1_convVeto,LepGood1_relIso04EA));
 
 }
 
+
+//==================================================
+
+bool pass_FakerateNum_debug(const bool  isEB = true, 
+			    const int   LepGood1_tightId = -1, 
+			    const float LepGood1_dxy = -999, 
+			    const float LepGood1_dz = -999,
+			    const int   LepGood1_lostHits = -1,
+			    const int   LepGood1_convVeto = -999,
+			    const float LepGood1_relIso04EA = -1
+			    ) 
+{
+
+  // EB, loose ID + iso < 0.2
+  // EE full medium ID + iso
+
+  if (isEB) {
+    return (LepGood1_tightId >= 1 && abs(LepGood1_dxy) <= 0.05 && abs(LepGood1_dxy) <= 0.1 && LepGood1_lostHits <= 1 && LepGood1_convVeto == 1 && LepGood1_relIso04EA <= 0.2);
+  } else {
+    return (LepGood1_tightId >= 2 && abs(LepGood1_dxy) <= 0.1 && abs(LepGood1_dxy) <= 0.2 && LepGood1_lostHits <= 1 && LepGood1_convVeto == 1 && LepGood1_relIso04EA <= 0.0821);
+  }
+
+}
+//==================================================
 
 
 void functions() {}

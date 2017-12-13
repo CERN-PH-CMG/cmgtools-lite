@@ -116,7 +116,7 @@ float getSmoothedFakeRateWeight(float lpt, float leta, int lpdgId, bool passWP, 
 	  exit(EXIT_FAILURE);                                                                                          
 	}                                                                                                              
 	string frSmoothFileName = Form("%s/src/CMGTools/MonoXAnalysis/data/fakerate/fakeRateSmoothed_el.root",cmsswPath); 
-	cout << "This is the first time that file " << frSmoothFileName << " is opened. Now reading histogram" << endl;
+	//cout << "This is the first time that file " << frSmoothFileName << " is opened. Now reading histogram" << endl;
 
 	TFile* frSmoothFile = new TFile(frSmoothFileName.c_str(),"READ");
 	if (!frSmoothFile || frSmoothFile->IsZombie()) {
@@ -138,8 +138,10 @@ float getSmoothedFakeRateWeight(float lpt, float leta, int lpdgId, bool passWP, 
 	
       }
 
-      coeff = FR_el_smooth->GetBinContent(FR_el_smooth->FindFixBin(leta,0));
-      slope = FR_el_smooth->GetBinContent(FR_el_smooth->FindFixBin(leta,1));
+      // 2D histogram defined with offset and slope on y axis, eta on x axis
+      // y axis defined between -0.5 and 1.5 (2 bins centered at 0 and 1)
+      coeff = FR_el_smooth->GetBinContent(FR_el_smooth->FindFixBin(fabs(leta),0));
+      slope = FR_el_smooth->GetBinContent(FR_el_smooth->FindFixBin(fabs(leta),1));
 
     } else {
       
