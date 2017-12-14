@@ -6,9 +6,9 @@ Z_LO : DYJetsToLL_M50_LO_ext2_part1+DYJetsToLL_M50_LO_ext2_part10+DYJetsToLL_M50
 
 Z   : DYJetsToLL_M50_part1+DYJetsToLL_M50_part2 : 5765.40 ; FillColor=ROOT.kAzure+2, Label="Z (amc@NLO)", NormSystematic=0.04
 
-Top : TTJets_SingleLeptonFromT_part1+TTJets_SingleLeptonFromT_part2+TTJets_SingleLeptonFromT_ext_part1+TTJets_SingleLeptonFromT_ext_part2+TTJets_SingleLeptonFromT_ext_part3+TTJets_SingleLeptonFromT_ext_part4+TTJets_SingleLeptonFromT_ext_part5+TTJets_SingleLeptonFromT_ext_part6+TTJets_SingleLeptonFromT_ext_part7+TTJets_SingleLeptonFromT_ext_part8+TTJets_SingleLeptonFromT_ext_part9 : xsec; FillColor=ROOT.kGreen+2, Label="Top", NormSystematic=0.09
+Top : TTJets_SingleLeptonFromT_ext_part1+TTJets_SingleLeptonFromT_ext_part2+TTJets_SingleLeptonFromT_ext_part3+TTJets_SingleLeptonFromT_ext_part4+TTJets_SingleLeptonFromT_ext_part5+TTJets_SingleLeptonFromT_ext_part6+TTJets_SingleLeptonFromT_ext_part7+TTJets_SingleLeptonFromT_ext_part8+TTJets_SingleLeptonFromT_ext_part9 : xsec; FillColor=ROOT.kGreen+2, Label="Top", NormSystematic=0.09
 
-Top : TTJets_SingleLeptonFromTbar_ext_part1+TTJets_SingleLeptonFromTbar_ext_part2+TTJets_SingleLeptonFromTbar_ext_part3+TTJets_SingleLeptonFromTbar_ext_part4+TTJets_SingleLeptonFromTbar_ext_part5+TTJets_SingleLeptonFromTbar_part1+TTJets_SingleLeptonFromTbar_part2 :  xsec; FillColor=ROOT.kGreen+2, Label="Top", NormSystematic=0.09
+Top : TTJets_SingleLeptonFromTbar_ext_part1+TTJets_SingleLeptonFromTbar_ext_part2+TTJets_SingleLeptonFromTbar_ext_part3+TTJets_SingleLeptonFromTbar_ext_part4+TTJets_SingleLeptonFromTbar_ext_part5 :  xsec; FillColor=ROOT.kGreen+2, Label="Top", NormSystematic=0.09
 
 Top : TToLeptons_sch_amcatnlo : xsec; FillColor=ROOT.kGreen+2, Label="Top", NormSystematic=0.04
 Top : T_tWch_ext              : xsec; FillColor=ROOT.kGreen+2, Label="Top", NormSystematic=0.06
