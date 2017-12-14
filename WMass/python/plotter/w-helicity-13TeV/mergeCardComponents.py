@@ -1,5 +1,5 @@
 #!/bin/env python                                                                                                                                                                                          
-# usage: ./mergeCardComponents.py shapes.root combcard.txt -b Wm_el cards/helicity/card_bin*.card.txt
+# usage: ./mergeCardComponents.py -b Wm_el cards/helicity/card_bin*.card.txt
 
 import ROOT
 import sys,os,re
@@ -11,9 +11,9 @@ parser.add_option("-b","--bin", dest="bin", default="ch1", type="string", help="
 parser.add_option("-c","--constrain-rates", dest="constrainRateParams", type="string", default="0,1,2", help="add constraints on the rate parameters of (comma-separated list of) rapidity bins. Give only the left ones (e.g. 1 will constrain 1 with n-1 ")
 (options, args) = parser.parse_args()
 
-outfile=args[0]
-cardfile=args[1]
-files=args[2:]
+outfile=options.bin+"_shapes.root"
+cardfile=options.bin+"_card.txt"
+files=args[:]
 
 if options.mergeRoot:
     for f in files:
@@ -26,9 +26,7 @@ if options.mergeRoot:
                     bin = l.split()[1]
                 if re.match("process\s+",l) and '1' not in l:
                     processes = l.split()[1:]
-        print "rootfile = ",rootfile
-        print "bin = ",bin
-        print "processes = ",processes
+        print "processing bin = ",bin
         tf = ROOT.TFile.Open(rootfile)
         of=ROOT.TFile("tmp_"+bin+".root","recreate")
         # remove the duplicates also
@@ -38,11 +36,11 @@ if options.mergeRoot:
             obj=e.ReadObj()
             for p in processes:
                 if p in name:
-                    newprocname = p+"_"+bin if ('Wm' in p or 'Wm' in p) else p
+                    newprocname = p+"_"+bin if re.match('Wp|Wm',p) else p
                     newname = name.replace(p,newprocname)
                     if newname not in plots:
                         plots[newname] = obj.Clone(newname)
-                        print "replacing old %s with %s" % (name,newname)
+                        #print "replacing old %s with %s" % (name,newname)
                         plots[newname].Write()
      
         of.Close()
@@ -52,7 +50,7 @@ if options.mergeRoot:
 combineCmd="combineCards.py "
 for f in files:
     basename = os.path.basename(f).split(".")[0]
-    binname = basename if ("Wp_" in basename or "Wm_" in basename) else "other"
+    binname = basename if re.match('Wp|Wm',basename) else "other"
     combineCmd += " %s=%s " % (binname,f)
 combineCmd += " > tmpcard.txt"
 os.system(combineCmd)
