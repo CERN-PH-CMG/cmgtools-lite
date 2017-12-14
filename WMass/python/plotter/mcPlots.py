@@ -9,13 +9,11 @@ CMS_lumi.writeExtraText = 1
 _global_workspaces=[] # avoid crash in 80X, to be investigated
 
 if "/bin2Dto1Dlib_cc.so" not in ROOT.gSystem.GetLibraries():
-    #ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/TTHAnalysis/python/plotter/bin2Dto1Dlib.cc+" % os.environ['CMSSW_BASE']);
     success = ROOT.gSystem.CompileMacro("%s/src/CMGTools/TTHAnalysis/python/plotter/bin2Dto1Dlib.cc" % os.environ['CMSSW_BASE'])
     if not success:
        print "Loading and compiling bin2Dto1Dlib.cc failed! Exit"
        quit()
 if "/fakeRate_cc.so" not in ROOT.gSystem.GetLibraries(): 
-    #ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/WMass/python/plotter/fakeRate.cc+" % os.environ['CMSSW_BASE']);
     success = ROOT.gSystem.CompileMacro("%s/src/CMGTools/WMass/python/plotter/fakeRate.cc" % os.environ['CMSSW_BASE'])
     if not success:
        print "Loading and compiling fakeRate.cc failed! Exit"

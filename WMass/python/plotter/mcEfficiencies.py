@@ -3,7 +3,6 @@
 from CMGTools.WMass.plotter.mcPlots import *
 
 if "/fakeRate_cc.so" not in ROOT.gSystem.GetLibraries():
-    #ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/WMass/python/plotter/fakeRate.cc+" % os.environ['CMSSW_BASE']);
     success = ROOT.gSystem.CompileMacro("%s/src/CMGTools/WMass/python/plotter/fakeRate.cc" % os.environ['CMSSW_BASE'])
     if not success:
        print "Loading and compiling fakeRate.cc failed! Exit"

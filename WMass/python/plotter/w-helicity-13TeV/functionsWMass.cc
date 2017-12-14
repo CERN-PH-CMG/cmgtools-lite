@@ -279,12 +279,6 @@ float residualScale(float pt, float eta, int isData) {
 
 }
 
-float ptCorrAndResidualScale(float pt, float eta, float phi, float r9, int run, int isData, ULong64_t eventNumber) {
-
-  return ( ptCorr(pt, eta, phi, r9, run, isData, eventNumber) * residualScale(pt, eta, isData) );
-
-}
-
 float ptElFull(float pt, float eta, float phi, float r9, int run, int isData, ULong64_t eventNumber, int nSigma=0) {
   float relSyst=0.;
   if(fabs(eta)<1.0) relSyst = 0.0015;  
