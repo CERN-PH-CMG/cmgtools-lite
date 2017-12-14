@@ -9,6 +9,7 @@ parser = OptionParser(usage="%prog [options] shapes.root combinedcard.txt cards/
 parser.add_option("-m","--merge-root", dest="mergeRoot", default=False, action="store_true", help="Merge the root files with the inputs also")
 parser.add_option("-b","--bin", dest="bin", default="ch1", type="string", help="name of the bin")
 parser.add_option("-c","--constrain-rates", dest="constrainRateParams", type="string", default="0,1,2", help="add constraints on the rate parameters of (comma-separated list of) rapidity bins. Give only the left ones (e.g. 1 will constrain 1 with n-1 ")
+parser.add_option("-l","--long-lnN", dest="longLnN", default=None, help="add a common lnN constraint to all longitudinal components")
 (options, args) = parser.parse_args()
 
 outfile=options.bin+"_shapes.root"
@@ -34,6 +35,7 @@ if options.mergeRoot:
         for e in tf.GetListOfKeys() :
             name=e.GetName()
             obj=e.ReadObj()
+            if (not re.match('Wp|Wm',os.path.basename(f))) and "data_obs" in name: obj.Clone().Write()
             for p in processes:
                 if p in name:
                     newprocname = p+"_"+bin if re.match('Wp|Wm',p) else p
@@ -100,7 +102,10 @@ if options.mergeRoot:
     print "merged inputs in ",outfile
     os.system("rm tmp_*root")
 
-print "merged datacard in ",cardfile
+
+if options.longLnN:
+    kpatt = " %7s "
+    combinedCard.write('norm_long_'+options.bin+'       lnN    ' + ' '.join([kpatt % (options.longLnN if 'long' in x else '-') for x in realprocesses])+'\n')
 
 if options.constrainRateParams:
     signal_procs = filter(lambda x: re.match('Wp|Wm',x), realprocesses)
@@ -115,12 +120,15 @@ if options.constrainRateParams:
         for i in xrange(len(hel)/2):
             pfx = '_'.join(hel[i].split('_')[:-1])
             sfx = (hel[i].split('_')[-1],hel[-i-1].split('_')[-1])
-            param_range = '[0.95,1.05]' if sfx[0] in bins_to_constrain else '[0.80,1.20]'
+            param_range = '[0.95,1.05]' if sfx[0] in bins_to_constrain else '[0.50,1.50]'
             combinedCard.write('norm_%s_%s_%-5s   rateParam * %s_%-5s    1 %s\n' % (pfx,sfx[0],sfx[1],pfx,sfx[0],param_range))
             combinedCard.write('norm_%s_%s_%-5s   rateParam * %s_%-5s    1 %s\n' % (pfx,sfx[0],sfx[1],pfx,sfx[1],param_range))
-    for i in xrange(len(signal_0)/2):
-        sfx = signal_0[i].split('_')[-1]
-        param_range = '[0.95,1.05]' if sfx in bins_to_constrain else '[0.80,1.20]'
-        combinedCard.write('norm_%-5s   rateParam * %-5s    1 %s\n' % (signal_0[i],signal_0[i],param_range))
-        combinedCard.write('norm_%-5s   rateParam * %-5s    1 %s\n' % (signal_0[-1-i],signal_0[-1-i],param_range))
-        
+    if not options.longLnN:
+        for i in xrange(len(signal_0)/2):
+            sfx = signal_0[i].split('_')[-1]
+            param_range = '[0.95,1.05]' if sfx in bins_to_constrain else '[0.50,1.50]'
+            combinedCard.write('norm_%-5s   rateParam * %-5s    1 %s\n' % (signal_0[i],signal_0[i],param_range))
+            combinedCard.write('norm_%-5s   rateParam * %-5s    1 %s\n' % (signal_0[-1-i],signal_0[-1-i],param_range))
+
+print "merged datacard in ",cardfile
+
