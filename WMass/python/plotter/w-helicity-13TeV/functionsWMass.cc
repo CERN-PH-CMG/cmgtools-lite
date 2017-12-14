@@ -1,3 +1,6 @@
+#ifndef FUNCTIONS_WMASS_H
+#define FUNCTIONS_WMASS_H
+
 #include "TFile.h"
 #include "TH2.h"
 #include "TH2Poly.h"
@@ -298,3 +301,6 @@ float ptElFullDn(float pt, float eta, float phi, float r9, int run, int isData, 
   return ptElFull(pt,eta,phi,r9,run,isData,eventNumber,-1);
 }
 
+
+
+#endif

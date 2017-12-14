@@ -1,3 +1,6 @@
+#ifndef FAKERATE_H
+#define FAKERATE_H
+
 #include <TH2.h>
 #include <TH2D.h>
 #include <TFile.h>
@@ -135,7 +138,7 @@ float getSmoothedFakeRateWeight(float lpt, float leta, int lpdgId, bool passWP, 
           exit(EXIT_FAILURE);                                                                                          
         }                                                                                                              
         string frSmoothFileName = Form("%s/src/CMGTools/WMass/data/fakerate/fakeRateSmoothed_el.root",cmsswPath); 
-        //cout << "This is the first time that file " << frSmoothFileName << " is opened. Now reading histogram" << endl;
+        cout << "This is the first time that file " << frSmoothFileName << " is opened. Now reading histogram" << endl;
 
         TFile* frSmoothFile = new TFile(frSmoothFileName.c_str(),"READ");
         if (!frSmoothFile || frSmoothFile->IsZombie()) {
@@ -214,3 +217,6 @@ float helicityWeight(float yw, float ptw, float costheta, int pol)
   return -99999.;
 
 }
+
+
+#endif

@@ -15,7 +15,7 @@ doSignalRegion="n"
 doFakeRateCheckData="y"  # in principle it is the same region as doApplControlRegion, but the former has the direct selection, while the latter has the inverted one
 doClosureTest="n"
 useDataGH="y"
-useEBorEE="ALL" # ALL (EB and EE), EB (EB only), EE (EE only) (actually any key different from EB or EE means both)
+useEBorEE="EB" # ALL (EB and EE), EB (EB only), EE (EE only) (actually any key different from EB or EE means both)
 runBatch="y" # to be implemented
 useSkimmedTrees="y" # skimmed samples are on pccmsrm28
 usePtCorrForScaleFactors="n" # y: use corrected pt for scsle factor weight; n: use LepGood_pt (which is what would ave been used if the scale factors where in a friend tree)
@@ -87,7 +87,7 @@ fi
 # echo "${command}" | bash
 # otherwise the parsing of the option parameters is not done correctly
 
-commonCommand="python mcPlots.py -f -j 4 -l ${luminosity} --s2v --tree treeProducerWMass --obj tree --lspam '#bf{CMS} #it{Preliminary}' --legendWidth 0.20 --legendFontSize 0.035 --showRatio --maxRatioRange 0.5 1.5 --fixRatioRange wmass/wmass_e/${mcafile} wmass/wmass_e/${cutfile} wmass/wmass_e/${plotfile} --max-entries ${maxentries} ${dataOption} ${MCweigthOption} "
+commonCommand="python mcPlots.py -f -j 4 -l ${luminosity} --s2v --tree treeProducerWMass --obj tree --lspam '#bf{CMS} #it{Preliminary}' --legendWidth 0.20 --legendFontSize 0.035 --showRatio --maxRatioRange 0.5 1.5 --fixRatioRange w-helicity-13TeV/wmass_e/${mcafile} w-helicity-13TeV/wmass_e/${cutfile} w-helicity-13TeV/wmass_e/${plotfile} --max-entries ${maxentries} ${dataOption} ${MCweigthOption} "
 
 if [[ "X${excludeprocesses}" != "X" ]]; then
     commonCommand="${commonCommand} --xp ${excludeprocesses}"
@@ -251,7 +251,7 @@ if [[ "${doFakeRateCheckData}" == "y" ]]; then
     commonCommandFRcheck="${commonCommandFRcheck/${mcafile}/${mcafileFRcheck}}"
     #echo "commonCommandFRcheck = ${commonCommandFRcheck}"
 
-    #commonCommandFRcheck="python mcPlots.py -f -j 4 -l ${luminosity} --s2v --tree treeProducerWMass --obj tree --lspam '#bf{CMS} #it{Preliminary}' --legendWidth 0.20 --legendFontSize 0.035 --showRatio --maxRatioRange 0.5 1.5 --fixRatioRange wmass/wmass_e/${mcafileFRcheck} wmass/wmass_e/${cutfile} wmass/wmass_e/${plotfile} --max-entries ${maxentries} ${dataOption} ${MCweigthOption} --xp ${excludeprocesses}"
+    #commonCommandFRcheck="python mcPlots.py -f -j 4 -l ${luminosity} --s2v --tree treeProducerWMass --obj tree --lspam '#bf{CMS} #it{Preliminary}' --legendWidth 0.20 --legendFontSize 0.035 --showRatio --maxRatioRange 0.5 1.5 --fixRatioRange w-helicity-13TeV/wmass_e/${mcafileFRcheck} w-helicity-13TeV/wmass_e/${cutfile} w-helicity-13TeV/wmass_e/${plotfile} --max-entries ${maxentries} ${dataOption} ${MCweigthOption} --xp ${excludeprocesses}"
 
     treeAndFriendFRcheck=" -P ${treepath}/${treedir}/ -F Friends ${treepath}/${treedir}/friends/tree_Friend_{cname}.root -F Friends ${treepath}/${treedir}/friends/tree_FRFriend_{cname}.root --FMC Friends ${treepath}/${treedir}/friends/tree_TrgFriend_{cname}.root "
     #commonFRcheck="${commonCommandFRcheck} ${treeAndFriendFRcheck} -X nJet30 ${Wsel} ${FRnumSel} ${mtCutApplControlRegion} ${dataOptionFakes}"
@@ -284,7 +284,7 @@ maxentries_clos="2000000000"
 #maxentries_clos="1000"
 otherCut=" -X pfmet -X w_pt "
 
-cmdClosure="python mcPlots.py -P ${treepath}/${treedir}/ -f -j 4 -l ${luminosity} --s2v --tree treeProducerWMass --obj tree -F Friends ${treepath}/${treedir}/friends/tree_Friend_{cname}.root -F Friends ${treepath}/${treedir}/friends/tree_FRFriend_{cname}.root --FMC Friends ${treepath}/${treedir}/friends/tree_TrgFriend_{cname}.root --lspam '     #bf{CMS} #it{Preliminary}' --legendWidth 0.20 --legendFontSize 0.035 --showRatio --maxRatioRange 0.0 2.0 --fixRatioRange wmass/wmass_e/${mca_clos} wmass/wmass_e/${sel_clos} wmass/wmass_e/${plot_clos} --plotmode ${plotmode_clos} --max-entries ${maxentries_clos} --sp QCD --ratioDen QCD --ratioNums QCD_mcfakes,background --ratioYLabel 'fake/MC' --noStackSig --showIndivSigs ${MCweigthOption} "
+cmdClosure="python mcPlots.py -P ${treepath}/${treedir}/ -f -j 4 -l ${luminosity} --s2v --tree treeProducerWMass --obj tree -F Friends ${treepath}/${treedir}/friends/tree_Friend_{cname}.root -F Friends ${treepath}/${treedir}/friends/tree_FRFriend_{cname}.root --FMC Friends ${treepath}/${treedir}/friends/tree_TrgFriend_{cname}.root --lspam '     #bf{CMS} #it{Preliminary}' --legendWidth 0.20 --legendFontSize 0.035 --showRatio --maxRatioRange 0.0 2.0 --fixRatioRange w-helicity-13TeV/wmass_e/${mca_clos} w-helicity-13TeV/wmass_e/${sel_clos} w-helicity-13TeV/wmass_e/${plot_clos} --plotmode ${plotmode_clos} --max-entries ${maxentries_clos} --sp QCD --ratioDen QCD --ratioNums QCD_mcfakes,background --ratioYLabel 'fake/MC' --noStackSig --showIndivSigs ${MCweigthOption} "
 
 # --sp QCD --noStackSig --showSigShape --ratioNums background
 

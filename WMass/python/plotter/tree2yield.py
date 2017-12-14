@@ -25,12 +25,13 @@ if "/functions_cc.so" not in ROOT.gSystem.GetLibraries():
     if not success:
         print "Loading and compiling functions.cc failed! Exit"
         quit()
+
 if "/w-helicity-13TeV/functionsWMass_cc.so" not in ROOT.gSystem.GetLibraries(): 
     #ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/WMass/python/plotter/w-helicity-13TeV/functionsWMass.cc+" % os.environ['CMSSW_BASE']);
     success = ROOT.gSystem.CompileMacro("%s/src/CMGTools/WMass/python/plotter/w-helicity-13TeV/functionsWMass.cc" % os.environ['CMSSW_BASE'])
     if not success:
-        print "Loading and compiling /w-helicity-13TeV/functionsWMass.cc failed! Exit"
-        quit()
+       print "Loading and compiling /w-helicity-13TeV/functionsWMass.cc failed! Exit"
+       quit()
 
 def scalarToVector(x):
     x0 = x
