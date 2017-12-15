@@ -107,6 +107,7 @@ if options.longLnN:
     kpatt = " %7s "
     combinedCard.write('norm_long_'+options.bin+'       lnN    ' + ' '.join([kpatt % (options.longLnN if 'long' in x else '-') for x in realprocesses])+'\n')
 
+POIs = []
 if options.constrainRateParams:
     signal_procs = filter(lambda x: re.match('Wp|Wm',x), realprocesses)
     signal_procs.sort(key=lambda x: int(x.split('_')[-1]))
@@ -123,12 +124,22 @@ if options.constrainRateParams:
             param_range = '[0.95,1.05]' if sfx[0] in bins_to_constrain else '[0.50,1.50]'
             combinedCard.write('norm_%s_%s_%-5s   rateParam * %s_%-5s    1 %s\n' % (pfx,sfx[0],sfx[1],pfx,sfx[0],param_range))
             combinedCard.write('norm_%s_%s_%-5s   rateParam * %s_%-5s    1 %s\n' % (pfx,sfx[0],sfx[1],pfx,sfx[1],param_range))
+            POIs.append('norm_%s_%s_%s' % (pfx,sfx[0],sfx[1]))
     if not options.longLnN:
         for i in xrange(len(signal_0)/2):
             sfx = signal_0[i].split('_')[-1]
             param_range = '[0.95,1.05]' if sfx in bins_to_constrain else '[0.50,1.50]'
             combinedCard.write('norm_%-5s   rateParam * %-5s    1 %s\n' % (signal_0[i],signal_0[i],param_range))
             combinedCard.write('norm_%-5s   rateParam * %-5s    1 %s\n' % (signal_0[-1-i],signal_0[-1-i],param_range))
+            POIs.append('norm_%s' % signal_0[i])
+            POIs.append('norm_%s' % signal_0[-1-i])
 
 print "merged datacard in ",cardfile
 
+ws = "%s_ws.root" % options.bin
+txt2wsCmd = "text2workspace.py %s_card.txt -o %s --X-allow-no-signal " % (options.bin,ws)
+os.system(txt2wsCmd)
+print "workspace in %s_ws.root." % options.bin
+
+print "combine -M FitDiagnostics %s --saveShapes --saveWithUncertainties -t -1 --expectSignal=1 -m 999 --redefineSignalPOIs %s" % (ws,','.join(POIs))
+print "combine -M MultiDimFit %s --saveFitResult -t -1 --expectSignal=1 -m 999 --redefineSignalPOIs %s" % (ws,','.join(POIs))
