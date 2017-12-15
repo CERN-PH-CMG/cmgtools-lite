@@ -65,7 +65,7 @@ void cmg::DiObjectUpdateFactory<T, U>::produce(edm::Event& iEvent, const edm::Ev
   edm::Handle< std::vector<reco::GenParticle> > genparticles;
   iEvent.getByLabel(genParticleLabel_, genparticles);
    
-  std::auto_ptr<collection> result(new collection);
+  std::unique_ptr<collection> result(new collection);
   
   unsigned index = 0;
   for(typename collection::const_iterator it = diObjects->begin(); it != diObjects->end(); ++it, ++index ){
@@ -152,7 +152,7 @@ void cmg::DiObjectUpdateFactory<T, U>::produce(edm::Event& iEvent, const edm::Ev
     DiTauObjectFactory<T, U>::set( std::make_pair(leg1, leg2), met, result->back() );
   }
   
-  iEvent.put(result);
+  iEvent.put(std::move(result));
 }
 
 

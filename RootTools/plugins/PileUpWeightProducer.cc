@@ -101,8 +101,8 @@ void PileUpWeightProducer::produce(edm::Event& iEvent, const edm::EventSetup& iS
 	<<" histXmax="<<histWeight_->GetXaxis()->GetXmax()
 	<<endl;
 
-  std::auto_ptr<double> output( new double( mcPUPWeight ) ); 
-  iEvent.put( output );
+  std::unique_ptr<double> output( new double( mcPUPWeight ) ); 
+  iEvent.put( std::move(output) );
 
 }
 

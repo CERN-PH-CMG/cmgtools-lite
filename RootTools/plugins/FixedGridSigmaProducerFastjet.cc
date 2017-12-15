@@ -31,8 +31,8 @@ void FixedGridSigmaProducerFastjet::produce(edm::Event& iEvent, const edm::Event
      inputs.push_back( fastjet::PseudoJet(i->px(), i->py(), i->pz(), i->energy()) );
    }
    bge_.set_particles(inputs);
-   std::auto_ptr<double> outputSigma(new double(bge_.sigma()));
-   iEvent.put(outputSigma);
+   std::unique_ptr<double> outputSigma(new double(bge_.sigma()));
+   iEvent.put(std::move(outputSigma));
 }
 
 DEFINE_FWK_MODULE(FixedGridSigmaProducerFastjet);

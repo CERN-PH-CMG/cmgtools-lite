@@ -21,6 +21,7 @@
 
 #include "FWCore/Framework/interface/Frameworkfwd.h"
 #include "FWCore/Framework/interface/one/EDProducer.h"
+#include "FWCore/Framework/interface/Run.h"
 #include "FWCore/Framework/interface/LuminosityBlock.h"
 
 #include "FWCore/Framework/interface/Event.h"
@@ -117,14 +118,14 @@ GenEvtWeightCounter::endRun(edm::Run const& iRun, edm::EventSetup const& iSetup)
 void
 GenEvtWeightCounter::endRunProduce(edm::Run& iRun, edm::EventSetup const& iSetup)
 {
-    // std::auto_ptr<std::vector<double> > pweights( new std::vector<double>(weights_) ); 
+    // std::unique_ptr<std::vector<double> > pweights( new std::vector<double>(weights_) ); 
     // iRun.put(pweights, "genWeight");
 
-    std::auto_ptr<double> sumW(new double(sumWeights_));
-    std::auto_ptr<double> sumUW(new double(sumUnityWeights_));
+    std::unique_ptr<double> sumW(new double(sumWeights_));
+    std::unique_ptr<double> sumUW(new double(sumUnityWeights_));
 
-    iRun.put(sumW);
-    iRun.put(sumUW, "sumUnityGenWeights");
+    iRun.put(std::move(sumW));
+    iRun.put(std::move(sumUW), "sumUnityGenWeights");
     sumW.reset();
     return;
 }

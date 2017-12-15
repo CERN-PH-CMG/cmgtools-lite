@@ -115,7 +115,7 @@ void cmg::DiTauObjectFactory<T, U>::produce(edm::Event& iEvent, const edm::Event
     iEvent.getByLabel(metLabel_, metCands);
   }
 
-  std::auto_ptr<std::vector<DiTauObject>> result(new std::vector<DiTauObject>);
+  std::unique_ptr<std::vector<DiTauObject>> result(new std::vector<DiTauObject>);
 
   bool patMet = false;
 
@@ -180,7 +180,7 @@ void cmg::DiTauObjectFactory<T, U>::produce(edm::Event& iEvent, const edm::Event
     }
   }
 
-  iEvent.put(result); 
+  iEvent.put(std::move(result)); 
 }
 
 } // namespace cmg

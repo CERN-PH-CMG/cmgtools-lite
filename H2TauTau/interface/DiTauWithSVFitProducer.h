@@ -25,7 +25,7 @@ typedef pat::CompositeCandidate DiTauObject;
 
 public:
   typedef std::vector<DiTauObject> DiTauCollection;
-  typedef std::auto_ptr<DiTauCollection> OutPtr;
+  typedef std::unique_ptr<DiTauCollection> OutPtr;
   explicit DiTauWithSVFitProducer(const edm::ParameterSet& iConfig);
   virtual ~DiTauWithSVFitProducer() {}
 
@@ -225,7 +225,7 @@ void DiTauWithSVFitProducer<T, U>::produce(edm::Event& iEvent, const edm::EventS
     }
   }
 
-  iEvent.put(pOut);
+  iEvent.put(std::move(pOut));
 
   if(verbose_ && !diTauH->empty()) {
     std::cout << "DiTauWithSVFitProducer done" << std::endl;

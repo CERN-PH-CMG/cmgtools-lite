@@ -73,8 +73,8 @@ void PileUpWeight3DProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
   edm::EventBase* iEventB = dynamic_cast<edm::EventBase*>(&iEvent);
   double mcPUPWeight = LumiWeights_->weight3D( (*iEventB) );
 
-  std::auto_ptr<double> output( new double( mcPUPWeight ) ); 
-  iEvent.put( output );
+  std::unique_ptr<double> output( new double( mcPUPWeight ) ); 
+  iEvent.put( std::move(output) );
 
 }
 
