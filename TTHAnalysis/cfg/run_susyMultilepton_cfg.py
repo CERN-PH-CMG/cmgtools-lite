@@ -25,7 +25,7 @@ runSMS = getHeppyOption("runSMS",False)
 scaleProdToLumi = float(getHeppyOption("scaleProdToLumi",-1)) # produce rough equivalent of X /pb for MC datasets
 saveSuperClusterVariables = getHeppyOption("saveSuperClusterVariables",False)
 removeJetReCalibration = getHeppyOption("removeJetReCalibration",False)
-removeJecUncertainty = getHeppyOption("removeJecUncertainty",False)
+removeJecUncertainty = getHeppyOption("removeJecUncertainty",True)
 doMETpreprocessor = getHeppyOption("doMETpreprocessor",False)
 skipT1METCorr = getHeppyOption("skipT1METCorr",False)
 #doAK4PFCHSchargedJets = getHeppyOption("doAK4PFCHSchargedJets",False)
@@ -52,12 +52,18 @@ if analysis=='susy':
 #   [ lambda ev: 2<=sum([(lep.miniRelIso<0.4) for lep in ev.selectedLeptons]) ] 
 #   ["2lep5[os:!DS_TTW_RA5_sync]_1lep50"]#, "1lep5_1tau18", "2tau18","2lep5_1met50"]
 
+###--------- Global Skimming 1 lepton skim ------------------------------
+    if runDataQCD or runFRMC or runQCDBM:
+        globalSkim.selections=["1lep5[maxObj]"]
+###---------------------------------------------------------------------
+
 # Run miniIso
 lepAna.doMiniIsolation = True
 lepAna.packedCandidates = 'packedPFCandidates'
 lepAna.miniIsolationPUCorr = 'rhoArea'
 lepAna.miniIsolationVetoLeptons = None # use 'inclusive' to veto inclusive leptons and their footprint in all isolation cones
 lepAna.doIsolationScan = False
+lepAna.doIsoAnnulus = True
 
 # Lepton Preselection
 lepAna.loose_electron_id = "MVA_ID_NonTrig_Spring16_VLooseIdEmu"
@@ -70,21 +76,25 @@ if analysis=='susy':
     jetAna.cleanJetsFromLeptons=False
     jetAna.cleanSelectedLeptons=True
     jetAna.storeLowPtJets=True
+    jetAna.jetPtOrUpOrDnSelection=True
     jetAna.jetEtaCentral = jetAna.jetEta
-    jetAna.mcGT="Spring16_25nsV8_MC"    
-    jetAna.dataGT   = "Spring16_25nsV8BCD_DATA Spring16_25nsV8E_DATA Spring16_25nsV8F_DATA Spring16_25nsV8_DATA"
-    jetAna.runsDataJEC   = [276811, 277420, 278802]
-if not removeJecUncertainty:
-    jetAna.addJECShifts = True
-    jetAnaScaleDown.copyJetsByValue = True # do not remove this
-    metAnaScaleDown.copyMETsByValue = True # do not remove this
-    jetAnaScaleUp.copyJetsByValue = True # do not remove this
-    metAnaScaleUp.copyMETsByValue = True # do not remove this
-    susyCoreSequence.insert(susyCoreSequence.index(jetAna)+1, jetAnaScaleDown)
-    susyCoreSequence.insert(susyCoreSequence.index(jetAna)+1, jetAnaScaleUp)
-    susyCoreSequence.insert(susyCoreSequence.index(metAna)+1, metAnaScaleDown)
-    susyCoreSequence.insert(susyCoreSequence.index(metAna)+1, metAnaScaleUp)
-    if analysis=='susy':
+    jetAna.mcGT=[[-1,"Summer16_23Sep2016V3_MC"]]
+    jetAna.dataGT =[ [-1    ,"Summer16_23Sep2016BCDV3_DATA"],
+                     [276831,"Summer16_23Sep2016EFV3_DATA"],
+                     [278802,"Summer16_23Sep2016GV3_DATA"],
+                     [280919,"Summer16_23Sep2016HV3_DATA"] ]
+
+jetAna.addJECShifts = True
+metAnaScaleDown.copyMETsByValue = True # do not remove this
+metAnaScaleUp.copyMETsByValue = True # do not remove this
+jetAnaScaleDown.copyJetsByValue = True # do not remove this
+jetAnaScaleUp.copyJetsByValue = True # do not remove this
+susyCoreSequence.insert(susyCoreSequence.index(jetAna)+1, jetAnaScaleDown)
+susyCoreSequence.insert(susyCoreSequence.index(jetAna)+1, jetAnaScaleUp)
+susyCoreSequence.insert(susyCoreSequence.index(metAna)+1, metAnaScaleDown)
+susyCoreSequence.insert(susyCoreSequence.index(metAna)+1, metAnaScaleUp)
+if not removeJecUncertainty:     
+    if analysis in ['susy','top']:
         jetAnaScaleDown.cleanJetsFromLeptons=False
         jetAnaScaleDown.cleanSelectedLeptons=True
         jetAnaScaleDown.storeLowPtJets=True
@@ -93,13 +103,17 @@ if not removeJecUncertainty:
         jetAnaScaleUp.cleanSelectedLeptons=True
         jetAnaScaleUp.storeLowPtJets=True
         jetAnaScaleUp.jetEtaCentral = jetAnaScaleUp.jetEta
-        jetAnaScaleDown.mcGT="Spring16_25nsV8_MC"    
-        jetAnaScaleDown.dataGT   = "Spring16_25nsV8BCD_DATA Spring16_25nsV8E_DATA Spring16_25nsV8F_DATA Spring16_25nsV8_DATA"
-        jetAnaScaleDown.runsDataJEC   = [276811, 277420, 278802]
-        jetAnaScaleUp.mcGT="Spring16_25nsV8_MC"    
-        jetAnaScaleUp.dataGT   = "Spring16_25nsV8BCD_DATA Spring16_25nsV8E_DATA Spring16_25nsV8F_DATA Spring16_25nsV8_DATA"
-        jetAnaScaleUp.runsDataJEC   = [276811, 277420, 278802]
+        jetAnaScaleDown.mcGT=jetAna.mcGT
+        jetAnaScaleDown.dataGT=jetAna.dataGT
+        jetAnaScaleUp.mcGT=jetAna.mcGT
+        jetAnaScaleUp.dataGT=jetAna.dataGT
 
+
+if analysis=='susy':
+    # Isolated Track
+    isoTrackAna.setOff=False
+    isoTrackAna.doIsoAnnulus = True
+    #susyCoreSequence.insert(susyCoreSequence.index(),isoTrackAna)
 
 if analysis in ['SOS']:
 ## -- SOS preselection settings ---
@@ -290,6 +304,13 @@ if lepAna.doIsolationScan:
             NTupleVariable("rhoForEA", lambda x: getattr(x,'rho',-999), help="rho used for EA PU subtraction")
             ])
 
+if lepAna.doIsoAnnulus:
+    leptonTypeSusy.addVariables([
+            #NTupleVariable("absIsoAn04", lambda x : x.absIsoAn04 if hasattr(x,'absIsoAn04') else -999, help="iso annealus 0.4"),
+            NTupleVariable("absIsoAnM", lambda x : x.absIsoAnM if hasattr(x,'absIsoAnM') else -999, help="iso annealus miniIso"),
+            #NTupleVariable("relIsoAn04", lambda x : x.relIsoAn04 if hasattr(x,'relIsoAn04') else -999, help="rel iso annealus 0.4"),
+            NTupleVariable("relIsoAnM", lambda x : x.relIsoAnM if hasattr(x,'relIsoAnM') else -999, help="iso annealus miniIso")
+            ])
 # for electron scale and resolution checks
 if saveSuperClusterVariables:
     leptonTypeSusyExtraLight.addVariables([
@@ -314,11 +335,11 @@ if saveSuperClusterVariables:
             NTupleVariable("superCluster_seed.energy", lambda x: x.superCluster().seed().energy() if (abs(x.pdgId())==11 and hasattr(x,"superCluster")) else -999, help="Electron superCluster.seed.energy"),
 ])
 
+susyMultilepton_globalObjects.update({
+        "met_jecUp" : NTupleObject("met_jecUp", metType, help="PF E_{T}^{miss}, after type 1 corrections (JEC plus 1sigma)"),
+        "met_jecDown" : NTupleObject("met_jecDown", metType, help="PF E_{T}^{miss}, after type 1 corrections (JEC minus 1sigma)"),
+        })
 if not removeJecUncertainty:
-    susyMultilepton_globalObjects.update({
-            "met_jecUp" : NTupleObject("met_jecUp", metType, help="PF E_{T}^{miss}, after type 1 corrections (JEC plus 1sigma)"),
-            "met_jecDown" : NTupleObject("met_jecDown", metType, help="PF E_{T}^{miss}, after type 1 corrections (JEC minus 1sigma)"),
-            })
     susyMultilepton_collections.update({
             "cleanJets_jecUp"       : NTupleCollection("Jet_jecUp",     jetTypeSusyExtraLight, 15, help="Cental jets after full selection and cleaning, sorted by pt (JEC plus 1sigma)"),
             "cleanJets_jecDown"     : NTupleCollection("Jet_jecDown",     jetTypeSusyExtraLight, 15, help="Cental jets after full selection and cleaning, sorted by pt (JEC minus 1sigma)"),
@@ -338,6 +359,11 @@ treeProducer = cfg.Analyzer(
      collections = susyMultilepton_collections,
 )
 
+#if analysis in ['susy']:
+#    treeProducer.globalVariables.append(NTupleVariable("nPFLep5", lambda ev: ev.nPFLep5, int, help="number of PF leptons (e,mu) with pt > 5, reliso < 0.2"))
+#    treeProducer.globalVariables.append(NTupleVariable("nPFHad10", lambda ev: ev.nPFHad10, int, help="number of PF hadrons with pt > 10, reliso < 0.1"))
+
+
 if analysis in ['SOS']:
     del treeProducer.collections["discardedLeptons"]
 
@@ -350,7 +376,10 @@ else:
     susyScanAna.useLumiInfo=True
     susyScanAna.doLHE=True
     susyCounter.bypass_trackMass_check = False
-    susyCounter.SMS_varying_masses=['genSusyMGluino','genSusyMNeutralino','genSusyMChargino','genSusyMNeutralino2', 'genSusyMStau', 'genSusyMSnuTau', 'genSusyMStop']
+    #susyCounter.SMS_varying_masses=['genSusyMGluino','genSusyMNeutralino','genSusyMChargino','genSusyMNeutralino2', 'genSusyMStau', 'genSusyMSnuTau', 'genSusyMStop']
+    susyCounter.SMS_varying_masses=['genSusyMGluino','genSusyMChargino','genSusyMNeutralino','genSusyMNeutralino2','genSusyMNeutralino3',
+                                    'genSusyMStau', 'genSusyMSnuTau', 'genSusyMStop', 'genSusyMStop2', 'genSusyMSbottom', 
+                                    'genSusyMSelectron', 'genSusyMSelectron2', 'genSusyMSmuon', 'genSusyMSmuon2']
     susyCoreSequence.insert(susyCoreSequence.index(susyScanAna)+1,susyCounter)
 
 # HBHE new filter
@@ -392,6 +421,12 @@ if analysis=='SOS':
     susyCoreSequence.insert(susyCoreSequence.index(jetAna)+1,nIsrAnalyzer)
     treeProducer.globalVariables.append(NTupleVariable("nISR", lambda ev: ev.nIsr, int, help="number of ISR jets according to SUSY recommendations"))
 
+if runData: #bad muon filters, kept for now
+    eventFlagsAna.triggerBits["cloneGlobalMuonTagger"]="Flag_cloneGlobalMuonTagger"
+    eventFlagsAna.triggerBits["badGlobalMuonTagger"]="Flag_badGlobalMuonTagger"
+    
+    treeProducer.globalVariables.append(NTupleVariable("Flag_cloneGlobalMuonTagger", lambda ev: ev.Flag_cloneGlobalMuonTagger, int, help="Moriond duplicated muons"))
+    treeProducer.globalVariables.append(NTupleVariable("Flag_badGlobalMuonTagger", lambda ev: ev.Flag_badGlobalMuonTagger, int, help="Moriond bad muons"))
 
 #-------- SAMPLES AND TRIGGERS -----------
 
@@ -448,11 +483,11 @@ from CMGTools.HToZZ4L.tools.configTools import printSummary, configureSplittingF
 selectedComponents = [TTLep_pow]
 
 if analysis=='susy':
-    samples = [DYJetsToLL_M10to50, DYJetsToLL_M50, DYJetsToLL_M10to50_LO, DYJetsToLL_M50_LO, GGHZZ4L, TBarToLeptons_tch_powheg, TBar_tWch, TGJets, TTGJets, TTJets, TTJets_DiLepton, TTJets_SingleLeptonFromT, 
-               TTJets_SingleLeptonFromTbar, TTTT, TT_pow_ext4, TToLeptons_sch_amcatnlo, TToLeptons_tch_amcatnlo, TToLeptons_tch_powheg, T_tWch, VHToNonbb, WGToLNuG, WJetsToLNu, WJetsToLNu_LO, 
-               WWDouble, WWTo2L2Nu, WWW, WWZ, WZTo3LNu, WZTo3LNu_amcatnlo, WZZ, WpWpJJ, ZGTo2LG, ZZTo4L, ZZZ, tZq_ll]
+    samples = [ DYJetsToLL_M50]#, DYJetsToLL_M10to50, DYJetsToLL_M10to50_LO, DYJetsToLL_M50_LO, GGHZZ4L, TBarToLeptons_tch_powheg, TBar_tWch, TGJets, TTGJets, TTJets, TTJets_DiLepton, TTJets_SingleLeptonFromT, 
+               #TTJets_SingleLeptonFromTbar, TTTT, TT_pow_ext4, TToLeptons_sch_amcatnlo, TToLeptons_tch_amcatnlo, TToLeptons_tch_powheg, T_tWch, VHToNonbb, WGToLNuG, WJetsToLNu, WJetsToLNu_LO, 
+               #WWDouble, WWTo2L2Nu, WWW, WWZ, WZTo3LNu, WZTo3LNu_amcatnlo, WZZ, WpWpJJ, ZGTo2LG, ZZTo4L, ZZZ, tZq_ll]
    
-    samples_LHE = [TTHnobb_pow, TTLLJets_m1to10, TTWToLNu, TTW_LO, TTZToLLNuNu, TTZ_LO,]
+    samples_LHE = []#TTHnobb_pow, TTLLJets_m1to10, TTWToLNu, TTW_LO, TTZToLLNuNu, TTZ_LO,]
     
     #samples_2l = [TTW_LO,TTZ_LO,WZTo3LNu_amcatnlo,DYJetsToLL_M10to50,DYJetsToLL_M50,WWTo2L2Nu,ZZTo2L2Q,WZTo3LNu,TTWToLNu,TTZToLLNuNu,TTJets_DiLepton,TTHnobb_mWCutfix_ext1,TTHnobb_pow]
     #samples_1l = [WJetsToLNu,TTJets_SingleLeptonFromT,TTJets_SingleLeptonFromTbar,TBarToLeptons_tch_powheg,TToLeptons_sch_amcatnlo,TBar_tWch,T_tWch]
