@@ -390,7 +390,7 @@ if analysis=='SOS':
         NIsrAnalyzer, name='nIsrAnalyzer',
     )
     susyCoreSequence.insert(susyCoreSequence.index(jetAna)+1,nIsrAnalyzer)
-    treeProducer.globalVariables.append(NTupleVariable("nISR", lambda ev: ev.nIsr, int, help="number of ISR jets according to SUSY recommendations"))
+    treeProducer.globalVariables.append(NTupleVariable("nISR", lambda ev: ev.nIsr, int, mcOnly=True, help="number of ISR jets according to SUSY recommendations"))
 
 
 #-------- SAMPLES AND TRIGGERS -----------
