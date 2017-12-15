@@ -49,8 +49,8 @@ def histsToRoc(hsig, hbg):
     return roc
 
 
-def makeLegend(rocs, textSize=0.035):
-    (x1, y1, x2, y2) = (.18, .76 - textSize*max(len(rocs)-3, 0), .5, .88)
+def makeLegend(rocs, textSize=0.035, left=True):
+    (x1, y1, x2, y2) = (.18 if left else .68, .76 - textSize*max(len(rocs)-3, 0), .5 if left else .95, .88)
     leg = ROOT.TLegend(x1, y1, x2, y2)
     leg.SetFillColor(0)
     leg.SetShadowColor(0)

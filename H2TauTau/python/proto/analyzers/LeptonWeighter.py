@@ -68,13 +68,19 @@ class LeptonWeighter(Analyzer):
             if hasattr(lep, 'tau') and lep.gen_match == 6:
                 isFake = True
 
+            iso = None
+            if hasattr(lep, 'muonId'): # muon
+                iso = lep.relIsoR(R=0.4, dBetaFactor=0.5)
+
+            if hasattr(lep, 'mvaNonTrigV0'): # electron
+                iso = lep.relIsoR(R=0.3, dBetaFactor=0.5)
 
             # Get scale factors
             for sf_name, sf in self.scaleFactors.items():
                 pt = lep.pt()
                 eta = lep.eta()
-
-                setattr(lep, 'weight_'+sf_name, sf.getScaleFactor(pt, eta, isFake))
+                dm = lep.decayMode() if hasattr(lep, 'decayMode') else None
+                setattr(lep, 'weight_'+sf_name, sf.getScaleFactor(pt, eta, isFake, iso=iso, dm=dm))
                 # setattr(lep, 'eff_data_'+sf_name, sf.getEfficiencyData(pt, eta, isFake))
                 # setattr(lep, 'eff_mc_'+sf_name, sf.getEfficiencyMC(pt, eta, isFake))
 
@@ -84,7 +90,8 @@ class LeptonWeighter(Analyzer):
             for sf_name, sf in self.dataEffs.items():
                 pt = lep.pt()
                 eta = lep.eta()
-                setattr(lep, 'weight_'+sf_name, sf.getEfficiencyData(pt, eta, isFake))
+                dm = lep.decayMode() if hasattr(lep, 'decayMode') else None
+                setattr(lep, 'weight_'+sf_name, sf.getEfficiencyData(pt, eta, isFake, iso=iso, dm=dm))
 
                 if sf_name in self.cfg_ana.dataEffFiles:
                     lep.weight *= getattr(lep, 'weight_'+sf_name)

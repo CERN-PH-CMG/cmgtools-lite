@@ -307,22 +307,18 @@ class DiLeptonAnalyzer(Analyzer):
         '''Returns the best diLepton (the one with highest pt1 + pt2).'''
         return max(diLeptons, key=operator.methodcaller('sumPt'))
 
-    def trigMatched(self, event, diL, requireAllMatched=False, ptMin=None,  etaMax=None, relaxIds=[11, 15], onlyLeg1=False, checkBothLegs=False):
-        '''Check that at least one trigger object per pgdId from a given trigger 
-        has a matched leg with the same pdg ID. If requireAllMatched is True, 
-        requires that each single trigger object name given in the sample
-        cfg has a match.'''
+    def trigMatched(self, event, diL, requireAllMatched=False, ptMin=None,  etaMax=None):
+        '''Check that at least one trigger object is matched to the corresponding
+        leg. If requireAllMatched is True, 
+        requires that each single trigger object has a match.'''
         matched = False
-        legs = [diL.leg1(), diL.leg2()]
+
         diL.matchedPaths = set()
 
-        sameFlavour = (abs(legs[0].pdgId()) == abs(legs[1].pdgId()))
-
-        if onlyLeg1:
-            legs = legs[:1]
-
         if hasattr(self.cfg_ana, 'filtersToMatch'):
+            
             filtersToMatch = self.cfg_ana.filtersToMatch[0]
+            legs = [diL.leg1(), diL.leg2()]
             leg = legs[self.cfg_ana.filtersToMatch[1] - 1]
             triggerObjects = self.handles['triggerObjects'].product()
 
@@ -332,8 +328,8 @@ class DiLeptonAnalyzer(Analyzer):
                 print to.filterLabels()[-1], to.filterLabels()[-1] != filter
                 if to.filterLabels()[-1] != filter:
                     continue
-#                 import pdb ; pdb.set_trace()
-                if self.trigObjMatched(to, [leg]):
+
+                if self.trigObjMatched(to, leg):
                     setattr(leg, filter, to)
                     
         if not self.cfg_comp.triggerobjects:
@@ -346,69 +342,69 @@ class DiLeptonAnalyzer(Analyzer):
             if not info.fired:
                 continue
 
-            matchedIds = []
-            matchedLegs = []
-            
-            for to, to_names in zip(info.objects, info.object_names):
+            l1_matched = False
+            l2_matched = False
+
+
+            for to, to_names in zip(info.leg1_objs, info.leg1_names):
                 if ptMin and to.pt() < ptMin:
                     continue
                 if etaMax and abs(to.eta()) > etaMax:
                     continue
-                toMatched, objMatchedLegs = self.trigObjMatched(to, legs, names=to_names, relaxIds=relaxIds)
-                if requireAllMatched:
-                    objMatchedLegs = [mleg for mleg in objMatchedLegs if set(self.cfg_comp.triggerobjects) == mleg.triggernames]
 
-                else:
-                    matchedLegs += objMatchedLegs
-                if toMatched:
-                    matchedIds.append(abs(to.pdgId()))
+                if self.trigObjMatched(to, diL.leg1(), to_names):
+                    l1_matched = True
 
+            if requireAllMatched and len(info.leg1_names) > diL.leg1().triggernames:
+                l1_matched = False
+
+            for to, to_names in zip(info.leg2_objs, info.leg2_names):
+                if ptMin and to.pt() < ptMin:
+                    continue
+                if etaMax and abs(to.eta()) > etaMax:
+                    continue
+
+                if self.trigObjMatched(to, diL.leg2(), to_names):
+                    l2_matched = True
+
+            if requireAllMatched and len(info.leg2_names) > diL.leg2().triggernames:
+                l1_matched = False
             
+            if len(info.leg1_objs) == 0:
+                l1_matched = True
 
+            if len(info.leg2_objs) == 0:
+                l2_matched = True
 
-            if set(matchedIds) == info.objIds and \
-               len(matchedIds) >= len(legs) * sameFlavour:
-                if checkBothLegs:
-                    if all(l in matchedLegs for l in legs):
-                        matched = True
-                        diL.matchedPaths.add(info.name)
-                    else:
-                        matched = False
-                else:
-                    matched = True
-                    diL.matchedPaths.add(info.name)
+            path_matched = False
+            if (l1_matched and l2_matched) or (not info.match_both and (l1_matched or l2_matched)):
+                path_matched = True
+
+            if path_matched:
+                matched = True
+                diL.matchedPaths.add(info.name)
         
         return matched
 
-    def trigObjMatched(self, to, legs, names=None, dR2Max=0.25, relaxIds=[11, 15]):  # dR2Max=0.089999
+    def trigObjMatched(self, to, leg, names=None, dR2Max=0.25):  # dR2Max=0.089999
         '''Returns true if the trigger object is matched to one of the given
         legs'''
         eta = to.eta()
         phi = to.phi()
-        pdgId = abs(to.pdgId())
         to.matched = False
-        matchedLegs = []
-        for leg in legs:
-            # JAN - Single-ele trigger filter has pdg ID 0, to be understood
-            # RIC - same seems to happen with di-tau
-            # JAN - If it's two triggers, there's a logical flaw in the e-tau
-            # channel, so maybe we'll have to move to explicit but not very
-            # general requirements (for now added option to relax explicitly)
-            if pdgId == abs(leg.pdgId()) or \
-               (pdgId == 0 and abs(leg.pdgId()) in relaxIds):
-                if deltaR2(eta, phi, leg.eta(), leg.phi()) < dR2Max:
-                    to.matched = True
-                    matchedLegs.append(leg)
-                    if hasattr(leg, 'triggerobjects'):
-                        if to not in leg.triggerobjects:
-                            leg.triggerobjects.append(to)
-                    else:
-                        leg.triggerobjects = [to]
 
-                    if names:
-                        if hasattr(leg, 'triggernames'):
-                            leg.triggernames.update(names)
-                        else:
-                            leg.triggernames = set(names)
+        if deltaR2(eta, phi, leg.eta(), leg.phi()) < dR2Max:
+            to.matched = True
+            if hasattr(leg, 'triggerobjects'):
+                if to not in leg.triggerobjects:
+                    leg.triggerobjects.append(to)
+            else:
+                leg.triggerobjects = [to]
 
-        return to.matched, matchedLegs
+            if names:
+                if hasattr(leg, 'triggernames'):
+                    leg.triggernames.update(names)
+                else:
+                    leg.triggernames = set(names)
+
+        return to.matched

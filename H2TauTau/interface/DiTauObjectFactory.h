@@ -151,10 +151,11 @@ void cmg::DiTauObjectFactory<T, U>::produce(edm::Event& iEvent, const edm::Event
       result->push_back(cmgTmp);
     }
   }
-  if (! found)
+
+  if (!found)
     edm::LogWarning("produce") << "Did not find suitable user candidates in the pat::MET of types T and U" << std::endl;
 
-  if (!patMet) {
+  if (!patMet || !found) {
     for (size_t i1 = 0; i1 < leg1Cands->size(); ++i1) {
       for (size_t i2 = 0; i2 < leg2Cands->size(); ++i2) {
 
@@ -165,10 +166,14 @@ void cmg::DiTauObjectFactory<T, U>::produce(edm::Event& iEvent, const edm::Event
         //enable sorting only if we are using the same collection - see Savannah #20217
         cmg::DiTauObject cmgTmp = sameCollection ? cmg::makeDiTau<T>((*leg1Cands)[i1], (*leg2Cands)[i2]) : cmg::makeDiTau<T, U>((*leg1Cands)[i1], (*leg2Cands)[i2]); 
         
-        if (metAvailable && ! metCands->empty()) {
-            if (metCands->size() < result->size()+1)
+        if (metAvailable && !metCands->empty()) {
+            if (metCands->size() < result->size()+1) {
               edm::LogWarning("produce") << "Fewer MET candidates than leg1/leg2 combinations; are the inputs to the MET producer and the di-tau object producer the same?" << std::endl;
-            cmg::DiTauObjectFactory<T, U>::set(metCands->at(result->size()), cmgTmp);
+              cmg::DiTauObjectFactory<T, U>::set(metCands->at(0), cmgTmp);
+            }
+            else {
+              cmg::DiTauObjectFactory<T, U>::set(metCands->at(result->size()), cmgTmp);
+            }
             result->push_back(cmgTmp);
         }
       }

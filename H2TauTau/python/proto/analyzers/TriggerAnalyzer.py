@@ -1,10 +1,20 @@
-from itertools import combinations
-
 from PhysicsTools.Heppy.analyzers.core.Analyzer import Analyzer
 from PhysicsTools.Heppy.analyzers.core.AutoHandle import AutoHandle
-from PhysicsTools.HeppyCore.utils.deltar import deltaR
 
 import PhysicsTools.HeppyCore.framework.config as cfg
+
+class TriggerFilterMatch(object):
+    def __init__(self, leg1_names, leg2_names, match_both_legs=True, triggers=None):
+        self.leg1_names = leg1_names
+        self.leg2_names = leg2_names
+        # If true, requires both legs to be matched (if there are names)
+        self.match_both_legs = match_both_legs
+        # If set, will only attach this to passed trigger names; other,
+        # TriggerAnalyzer will figure it out
+        self.triggers = [] if triggers is None else triggers
+    def __str__(self):
+        return 'TriggerFilterMatch: leg1_names={leg1_names}, leg2_names={leg2_names}, match_both_legs={match_both_legs}'.format(leg1_names=self.leg1_names, leg2_names=self.leg2_names,
+            match_both_legs=self.match_both_legs)
 
 class TriggerInfo(object):
     def __init__(self, name, index, fired=True, prescale=1.):
@@ -12,13 +22,17 @@ class TriggerInfo(object):
         self.index = index
         self.fired = fired
         self.prescale = prescale
-        self.objects = []
-        self.objIds = set()
-        self.object_names = []
+
+        self.leg1_objs = []
+        self.leg1_names = []
+        self.leg2_objs = []
+        self.leg2_names = []
+        self.match_both = True
+        self.match_infos = set()
 
     def __str__(self):
         return 'TriggerInfo: name={name}, fired={fired}, n_objects={n_o}'.format(
-            name=self.name, fired=self.fired, n_o=len(self.objects))
+            name=self.name, fired=self.fired, n_o=len(self.match_infos))
 
 class TriggerAnalyzer(Analyzer):
     '''Access to trigger information, and trigger selection. The required
@@ -92,20 +106,6 @@ class TriggerAnalyzer(Analyzer):
             self.counters.counter('Trigger').register(trigger)
             self.counters.counter('Trigger').register(trigger + 'prescaled')
 
-    def removeDuplicates(self, trigger_infos):
-        # RIC: remove duplicated trigger objects 
-        #      (is this something that may happen in first place?)
-        for info in trigger_infos:
-            objs = info.objects     
-            for to1, to2 in combinations(info.objects, 2):
-                to1Filter = set(sorted(list(to1.filterLabels())))
-                to2Filter = set(sorted(list(to2.filterLabels())))
-                if to1Filter != to2Filter:
-                    continue
-                dR = deltaR(to1.eta(), to1.phi(), to2.eta(), to2.phi())
-                if dR<0.01 and to2 in objs:
-                    objs.remove(to2)
-            info.objects = objs
 
     def process(self, event):
         self.readCollections(event.input)
@@ -138,9 +138,6 @@ class TriggerAnalyzer(Analyzer):
 
             trigger_infos.append(TriggerInfo(trigger_name, index, fired, prescale))
 
-            #print trigger_name, fired, prescale
-            #if fired:
-            #    import pdb ; pdb.set_trace()
             if fired and (prescale == 1 or self.cfg_ana.usePrescaled):
                 if trigger_name in self.triggerList:
                     trigger_passed = True
@@ -149,11 +146,6 @@ class TriggerAnalyzer(Analyzer):
             elif fired:
                 print 'WARNING: Trigger not passing because of prescale', trigger_name
                 self.counters.counter('Trigger').inc(trigger_name + 'prescaled')
-
-        # JAN: I don't understand why the following is needed - there is a 
-        # unique loop above
-        # self.removeDuplicates(trigger_infos)
-
 
         if self.cfg_ana.requireTrigger:
             if not trigger_passed:
@@ -165,18 +157,40 @@ class TriggerAnalyzer(Analyzer):
                 to.unpackPathNames(names)
                 for info in trigger_infos:
                     if to.hasPathName(info.name):
-                        if to in info.objects:
-                            continue
-                        # print 'TO name', [n for n in to.filterLabels()], to.hasPathName(info.name, False)
-                        if self.triggerObjects or self.extraTriggerObjects:
-                            if not any(n in to.filterLabels() for n in self.triggerObjects + self.extraTriggerObjects):
-                                continue
-                            info.object_names.append([obj_n for obj_n in self.triggerObjects if obj_n in to.filterLabels()])
-                        else:
-                            info.object_names.append('')
-                        info.objects.append(to)
-                        info.objIds.add(abs(to.pdgId()))
-        
+                        for match_info in self.triggerObjects + self.extraTriggerObjects:
+                            if match_info.triggers:
+                                if not info.name in match_info.triggers:
+                                    continue
+                            if any(n in to.filterLabels() for n in match_info.leg1_names):
+                                info.leg1_objs.append(to)
+                                info.leg1_names.append([n for n in to.filterLabels() if n in match_info.leg1_names])
+                                info.match_both = match_info.match_both_legs
+                                info.match_infos.add(match_info)
+
+                            if any(n in to.filterLabels() for n in match_info.leg2_names):
+                                info.leg2_objs.append(to)
+                                info.leg2_names.append([n for n in to.filterLabels() if n in match_info.leg2_names])
+                                info.match_both = match_info.match_both_legs
+                                info.match_infos.add(match_info)
+
+            for info in trigger_infos:
+                if not info.fired: 
+                    break
+
+                if len(info.match_infos) == 0:
+                    print 'Warning in TriggerAnalyzer, did not find trigger matching information for trigger path', info.name
+
+                if len(info.match_infos) > 1:
+                    print 'Warning in TriggerAnalyzer, found several matching trigger matching information pieces for trigger path', info.name
+                    for match_info in info.match_infos: 
+                        print match_info
+
+                for match_info in info.match_infos:
+                    if info.fired:
+                        if match_info.leg1_names and not info.leg1_objs:
+                            print 'Warning in TriggerAnalyzer, matching info associated but no leg1 objects set', info.name, match_info
+                        if match_info.leg2_names and not info.leg2_objs:
+                            print 'Warning in TriggerAnalyzer, matching info associated but no leg2 objects set', info.name, match_info
 
                                                 
         event.trigger_infos = trigger_infos

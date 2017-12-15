@@ -10,7 +10,7 @@ class BTagSF(object):
     def __init__ (self, seed, wp='medium', measurement='central') :
         self.randm = TRandom3(seed)
 
-        self.mc_eff_file = TFile('$CMSSW_BASE/src/CMGTools/H2TauTau/data/tagging_efficiencies_ichep2016.root')
+        self.mc_eff_file = TFile('/afs/cern.ch/work/d/dwinterb/public/MSSM2016/tagging_efficiencies_Moriond2017.root')
 
         # MC b-tag efficiencies as measured in HTT by Adinda
         self.btag_eff_b = self.mc_eff_file.Get('btag_eff_b')
@@ -18,7 +18,7 @@ class BTagSF(object):
         self.btag_eff_oth = self.mc_eff_file.Get('btag_eff_oth')
 
         # b-tag SFs from POG
-        calib = ROOT.BTagCalibration("csvv2", os.path.expandvars("$CMSSW_BASE/src/CMGTools/H2TauTau/data/CSVv2_ichep.csv"))
+        calib = ROOT.BTagCalibration("csvv2", os.path.expandvars("$CMSSW_BASE/src/CMGTools/RootTools/data/btag/CSVv2_Moriond17_B_H.csv"))
         
         op_dict = {
             'loose':0,
@@ -64,7 +64,7 @@ class BTagSF(object):
 
         return self.reader_light.eval_auto_bounds('central', self.getBTVJetFlav(flavor), eta, pt)
 
-    def isBTagged(self, pt, eta, csv, jetflavor, is_data, csv_cut=0.8):
+    def isBTagged(self, pt, eta, csv, jetflavor, is_data, csv_cut=0.8484):
         jetflavor = abs(jetflavor)
 
         if is_data or pt < 20. or abs(eta) > 2.4:
@@ -113,4 +113,5 @@ if __name__ == '__main__':
     btag = BTagSF(12345)
     print 'created BTagSF instance'
     print btag.isBTagged(25., 2.3, 0.9, 5, False)
+    print btag.isBTagged(104.3933, -0.885529, 0.9720, 5, False)
 

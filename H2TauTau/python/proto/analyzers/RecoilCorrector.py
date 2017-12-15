@@ -1,8 +1,9 @@
 import math
 import re
 
+import ROOT
+
 from ROOT import gSystem
-from ROOT import LorentzVector
 from PhysicsTools.Heppy.analyzers.core.Analyzer import Analyzer
 
 from CMGTools.H2TauTau.proto.analyzers.HTTGenAnalyzer import HTTGenAnalyzer
@@ -12,6 +13,8 @@ gSystem.Load("libCMGToolsH2TauTau")
 
 from ROOT import HTTRecoilCorrector as RC
 
+LorentzVector = ROOT.Math.LorentzVector(ROOT.Math.PxPyPzE4D("double"))
+
 class RecoilCorrector(Analyzer):
     '''Corrects MVA MET recoil.
     '''
@@ -19,8 +22,10 @@ class RecoilCorrector(Analyzer):
     def __init__(self, cfg_ana, cfg_comp, looperName):
         super(RecoilCorrector, self).__init__(cfg_ana, cfg_comp, looperName)
 
-        self.rcMVAMET = RC('CMGTools/H2TauTau/data/MvaMET_2016BCD.root')
-        self.rcPFMET = RC('CMGTools/H2TauTau/data/TypeIPFMET_2016BCD.root')
+        # FIXME - no MVA MET yet, and no recoil corrections, so correcting 
+        # both with PF MET
+        self.rcMVAMET = RC('CMGTools/H2TauTau/data/TypeI-PFMet_Run2016BtoH.root')
+        self.rcPFMET = RC('CMGTools/H2TauTau/data/TypeI-PFMet_Run2016BtoH.root')
 
         wpat = re.compile('W\d?Jet.*')
         match = wpat.match(self.cfg_comp.name)
@@ -39,7 +44,7 @@ class RecoilCorrector(Analyzer):
 
         taus_prompt_vis = [p for p in taus_prompt if abs(p.pdgId()) not in [12, 14, 16]]
 
-        if 'DY' in self.cfg_comp.name or 'Higgs' in self.cfg_comp.name or 'WJ' in self.cfg_comp.name:
+        if 'DY' in self.cfg_comp.name or ('Higgs' in self.cfg_comp.name and 'TTH' not in self.cfg_comp.name) or 'WJ' in self.cfg_comp.name:
             if len(leptons_prompt) != 2 and len(taus_prompt) < 2:
                 print 'ERROR: No 2 prompt leptons found'
                 # import pdb; pdb.set_trace()
@@ -95,6 +100,7 @@ class RecoilCorrector(Analyzer):
 
         # Correct by mean and resolution as default (otherwise use .Correct(..))
         new = self.rcMVAMET.CorrectByMeanResolution(
+        # new = self.rcMVAMET.Correct(
             px_old, 
             py_old, 
             gen_z_px,    
@@ -106,8 +112,10 @@ class RecoilCorrector(Analyzer):
 
         px_new, py_new = new.first, new.second
 
-        dil.met().setP4(LorentzVector(px_new, py_new, 0., math.sqrt(px_new*px_new + py_new*py_new)))
-
+        newDiLmet = LorentzVector(px_new, py_new, 0., math.sqrt(px_new*px_new + py_new*py_new))
+        dil.met().setP4(newDiLmet)
+        
+        # print '## Recoil corrector event #', event.eventId
         # print 'px old - new', px_old, dil.met().px()
         # print 'py old - new', py_old, dil.met().py()
 
@@ -117,6 +125,7 @@ class RecoilCorrector(Analyzer):
 
         # Correct by mean and resolution as default (otherwise use .Correct(..))
         new = self.rcPFMET.CorrectByMeanResolution(
+        # new = self.rcPFMET.Correct(    
             pfmet_px_old, 
             pfmet_py_old, 
             gen_z_px,    
