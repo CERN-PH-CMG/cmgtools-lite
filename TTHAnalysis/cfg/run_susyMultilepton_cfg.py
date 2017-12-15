@@ -135,8 +135,9 @@ if analysis in ['SOS']:
     lepAna.loose_muon_pt  = 3
     lepAna.inclusive_electron_pt  = 5
     lepAna.loose_electron_pt  = 5
-    isolation = "absIso04"
-    #isolation = "Iperbolic"
+    #isolation = "absIso04"
+    #isolation = None
+    isolation = "Iperbolic"
     lepAna.loose_electron_id = "POG_MVA_ID_Spring15_NonTrig_VLooseIdEmu"
 
     # Lepton-Jet Cleaning
