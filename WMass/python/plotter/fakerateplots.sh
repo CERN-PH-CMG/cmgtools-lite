@@ -15,10 +15,12 @@ doSignalRegion="n"
 doFakeRateCheckData="y"  # in principle it is the same region as doApplControlRegion, but the former has the direct selection, while the latter has the inverted one
 doClosureTest="n"
 useDataGH="y"
-useEBorEE="EB" # ALL (EB and EE), EB (EB only), EE (EE only) (actually any key different from EB or EE means both)
-runBatch="y" # to be implemented
-useSkimmedTrees="y" # skimmed samples are on pccmsrm28
+useEBorEE="EE" # ALL (EB and EE), EB (EB only), EE (EE only) (actually any key different from EB or EE means both)
+runBatch="n" # to be implemented
+queueForBatch="cmscaf1nd"
+useSkimmedTrees="y" # skimmed samples are on both pccmsrm28 and eos 
 usePtCorrForScaleFactors="n" # y: use corrected pt for scsle factor weight; n: use LepGood_pt (which is what would ave been used if the scale factors where in a friend tree)
+etaBinBoundaries=("0.0" "1.479" "2.1" "2.5")
 
 treepath="" # set below depending on where we are
 mcafile="mca-80X_V3.txt" # if using skimmed trees on pccmsrm28, few top samples are missing, be careful (new mca is automatically set below)
@@ -31,18 +33,47 @@ cutfile="qcd1l_SRtrees.txt"
 plotfile="test_plots.txt"
 #excludeprocesses="data,Z_LO,W_LO,Z,Top,DiBosons"
 excludeprocesses="Z_LO,W_LO" # decide whether to use NLO (amc@NLO) or LO (MadGraph) MC, non both! In case you can add other samples (Top, Dibosons) to speed up things
-selectplots="ptl1"  # if empty it uses all plots in cfg file
-#selectplots="trkmt,ptl1,etal1,pfmt,pfmet"  # if empty it uses all plots in cfg file
-#maxentries="2000000000" # max int number is > 2*10^9
-maxentries="10"
+#selectplots="etal1"  # if empty it uses all plots in cfg file
+selectplots="trkmt,ptl1,etal1,pfmt,pfmet"  # if empty it uses all plots in cfg file
+maxentries="2000000000" # max int number is > 2*10^9
+#maxentries="10"
 outdirComp="full2016dataBH_puAndTrgSf_ptResScale_8dec"
+#outdirComp="test"
 outdirAppl="full2016dataBH_puAndTrgSf_ptResScale_8dec"
-#outdirFRcheck="full2016dataBH_puAndTrgSf_ptResScale_11dec"
-outdirFRcheck="test"
+outdirFRcheck="full2016dataBH_puAndTrgSf_ptResScale_11dec"
+#outdirFRcheck="testBatch"
 outdirSignal="full2016dataBH_puAndTrgSf_ptResScale_8dec"
 
 # end of settings to be changed by user
 #----------------------------------------
+
+host=`echo "$HOSTNAME"`
+if [[ "${runBatch}" == "y" ]]; then
+    if [[ ${host} != *"lxplus"* ]]; then
+	echo "Error! You must be on lxplus to run on batch queues. Do ssh -XY lxplus and work from a release."
+	return 0
+    fi
+fi
+mypath="$PWD"
+
+evalScram="eval \`scramv1 runtime -sh\`"
+batchFolder="${mypath}/jobsLog"
+baseBatchScript="${batchFolder}/baseBatchScript.sh"
+batchFileName="${batchFolder}/src/PLOTREGION_ETABIN.sh"  # PLOTREGION and ETABIN will be changed to proper names depending on region
+###############################################
+# now we build base script to submit batch jobs
+# it will be used later to create script to submit batch jobs
+###############################################
+cat > ${baseBatchScript} <<EOF
+#! /bin/bash
+
+cd ${mypath}
+${evalScram}
+
+EOF
+###############################################
+
+
 ptcorr="ptElFull(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_r9,run,isData,evt)"
 ptForScaleFactors="LepGood1_pt"
 if [[ "${usePtCorrForScaleFactors}" == "y" ]]; then
@@ -51,19 +82,17 @@ if [[ "${usePtCorrForScaleFactors}" == "y" ]]; then
 fi
 
 
-host=`echo "$HOSTNAME"`
-if [[ "${useSkimmedTrees}" == "y" ]]; then
-    if [[ ${host} != *"pccmsrm28"* ]]; then
-        echo "Error! You must be on pccmsrm28 to use skimmed ntuples. Do ssh -XY pccmsrm28 and work from a release."
-        return 0
-    fi
-    treepath="/u2/emanuele/wmass/" # from pccmsrm28
-elif [[ ${host} != *"lxplus"* ]]; then
-  echo "Error! You must be on lxplus. Do ssh -XY lxplus and work from a release."
-  return 0
-else
+if [[ ${host} == *"pccmsrm28"* ]]; then
+    treepath="/u2/emanuele/wmass/" # from pccmsrm28 
+elif [[ ${host} == *"lxplus"* ]]; then
     treepath="/eos/cms/store/group/dpg_ecal/comm_ecal/localreco"
-    treedir="TREES_1LEP_80X_V3"
+fi
+
+if [[ "${runBatch}" == "y" ]]; then
+    if [[ ${host} != *"lxplus"* ]]; then
+	echo "Warning: to run on batch you must use the trees on eos and be on lxplus."
+	return 0
+    fi
 fi
 
 
@@ -87,7 +116,7 @@ fi
 # echo "${command}" | bash
 # otherwise the parsing of the option parameters is not done correctly
 
-commonCommand="python mcPlots.py -f -j 4 -l ${luminosity} --s2v --tree treeProducerWMass --obj tree --lspam '#bf{CMS} #it{Preliminary}' --legendWidth 0.20 --legendFontSize 0.035 --showRatio --maxRatioRange 0.5 1.5 --fixRatioRange w-helicity-13TeV/wmass_e/${mcafile} w-helicity-13TeV/wmass_e/${cutfile} w-helicity-13TeV/wmass_e/${plotfile} --max-entries ${maxentries} ${dataOption} ${MCweigthOption} "
+commonCommand="python ${mypath}/mcPlots.py -f -j 4 -l ${luminosity} --s2v --tree treeProducerWMass --obj tree --lspam '#bf{CMS} #it{Preliminary}' --legendWidth 0.20 --legendFontSize 0.035 --showRatio --maxRatioRange 0.5 1.5 --fixRatioRange ${mypath}/w-helicity-13TeV/wmass_e/${mcafile} ${mypath}/w-helicity-13TeV/wmass_e/${cutfile} ${mypath}/w-helicity-13TeV/wmass_e/${plotfile} --max-entries ${maxentries} ${dataOption} ${MCweigthOption} "
 
 if [[ "X${excludeprocesses}" != "X" ]]; then
     commonCommand="${commonCommand} --xp ${excludeprocesses}"
@@ -145,10 +174,10 @@ if [[ "${doCompRegion}" == "y" ]]; then
 
     if [[ "${useEBorEE}" != "EE" ]]; then
 
-	commonCompRegEB="${commonCompReg} --pdir plots/test/${treedir}/fakeRateSel/computation_region/${outdirComp}/denSel/EB/ ${inEB} "
+	commonCompRegEB="${commonCompReg} --pdir ${mypath}/plots/test/${treedir}/fakeRateSel/computation_region/${outdirComp}/denSel/EB/ ${inEB} "
 	echo "${commonCompRegEB}"
 	echo "${commonCompRegEB}" | bash
-	commonCompRegEB="${commonCompReg} --pdir plots/test/${treedir}/fakeRateSel/computation_region/${outdirComp}/numSel/EB/ ${inEB} "
+	commonCompRegEB="${commonCompReg} --pdir ${mypath}/plots/test/${treedir}/fakeRateSel/computation_region/${outdirComp}/numSel/EB/ ${inEB} "
 	echo "${commonCompRegEB} ${FRnumSel} " 
 	echo "${commonCompRegEB} ${FRnumSel} " | bash
 
@@ -158,18 +187,18 @@ if [[ "${doCompRegion}" == "y" ]]; then
 	commonCompRegEE="${commonCompReg} ${inEE} "
 
         # den
-	commonCompRegEEin="${commonCompRegEE} --pdir plots/test/${treedir}/fakeRateSel/computation_region/${outdirComp}/denSel/EE_eta1p479to2p1/ ${innerEE}"
+	commonCompRegEEin="${commonCompRegEE} --pdir ${mypath}/plots/test/${treedir}/fakeRateSel/computation_region/${outdirComp}/denSel/EE_eta1p479to2p1/ ${innerEE}"
 	echo "${commonCompRegEEin}"
 	echo "${commonCompRegEEin}" | bash
-	# commonCompRegEEout="${commonCompRegEE} --pdir plots/test/${treedir}/fakeRateSel/computation_region/${outdirComp}/denSel/EE_eta2p1to2p5/ ${outerEE}"
+	# commonCompRegEEout="${commonCompRegEE} --pdir ${mypath}/plots/test/${treedir}/fakeRateSel/computation_region/${outdirComp}/denSel/EE_eta2p1to2p5/ ${outerEE}"
 	# echo "${commonCompRegEEout}"
 	# echo "${commonCompRegEEout}" | bash
 
 	# num
-	commonCompRegEEin="${commonCompRegEE} --pdir plots/test/${treedir}/fakeRateSel/computation_region/${outdirComp}/numSel/EE_eta1p479to2p1/ ${innerEE}"
+	commonCompRegEEin="${commonCompRegEE} --pdir ${mypath}/plots/test/${treedir}/fakeRateSel/computation_region/${outdirComp}/numSel/EE_eta1p479to2p1/ ${innerEE}"
 	echo "${commonCompRegEEin} ${FRnumSel} " 
 	echo "${commonCompRegEEin} ${FRnumSel} " | bash
-	# commonCompRegEEout="${commonCompRegEE} --pdir plots/test/${treedir}/fakeRateSel/computation_region/${outdirComp}/numSel/EE_eta2p1to2p5/ ${outerEE}"
+	# commonCompRegEEout="${commonCompRegEE} --pdir ${mypath}/plots/test/${treedir}/fakeRateSel/computation_region/${outdirComp}/numSel/EE_eta2p1to2p5/ ${outerEE}"
 	# echo "${commonCompRegEEout} ${FRnumSel} " 
 	# echo "${commonCompRegEEout} ${FRnumSel} " | bash
     fi
@@ -192,19 +221,19 @@ if [[ "${doApplRegion}" == "y" ]] || [[ "${doApplControlRegion}" == "y" ]] || [[
     if [[ "${useEBorEE}" != "EE" ]]; then
 
 	if [[ "${doApplRegion}" == "y" ]]; then
-	    commonApplRegEB="${commonApplReg} --pdir plots/test/${treedir}/fakeRateSel/application_region/${outdirAppl}/EB/ ${inEB}" 
+	    commonApplRegEB="${commonApplReg} --pdir ${mypath}/plots/test/${treedir}/fakeRateSel/application_region/${outdirAppl}/EB/ ${inEB}" 
 	    echo "${commonApplRegEB}"
 	    echo "${commonApplRegEB}" | bash
 	fi
 
 	if [[ "${doApplControlRegion}" == "y" ]]; then
-	    commonApplControlRegEB="${commonApplReg} --pdir plots/test/${treedir}/fakeRateSel/application_region/${outdirAppl}/EB/ ${inEB} ${mtCutApplControlRegion}" 
+	    commonApplControlRegEB="${commonApplReg} --pdir ${mypath}/plots/test/${treedir}/fakeRateSel/application_region/${outdirAppl}/EB/ ${inEB} ${mtCutApplControlRegion}" 
 	    echo "${commonApplControlRegEB}"
 	    echo "${commonApplControlRegEB}" | bash
 	fi
 
 	if [[ "${doSignalRegion}" == "y" ]]; then
-	    commonSigRegEB="${commonSigReg} --pdir plots/test/${treedir}/fakeRateSel/signal_region/${outdirSignal}/EB/ ${inEB} ${mtCutApplSignalRegion}"
+	    commonSigRegEB="${commonSigReg} --pdir ${mypath}/plots/test/${treedir}/fakeRateSel/signal_region/${outdirSignal}/EB/ ${inEB} ${mtCutApplSignalRegion}"
 	    echo "${commonSigRegEB}"
             echo "${commonSigRegEB}" | bash
 	fi
@@ -214,19 +243,19 @@ if [[ "${doApplRegion}" == "y" ]] || [[ "${doApplControlRegion}" == "y" ]] || [[
     if [[ "${useEBorEE}" != "EB" ]]; then
 
 	if [[ "${doApplRegion}" == "y" ]]; then
-	    commonApplRegEE="${commonApplReg} --pdir plots/test/${treedir}/fakeRateSel/application_region/${outdirAppl}/EE_eta1p479to2p1/ ${innerEE}" 
+	    commonApplRegEE="${commonApplReg} --pdir ${mypath}/plots/test/${treedir}/fakeRateSel/application_region/${outdirAppl}/EE_eta1p479to2p1/ ${innerEE}" 
 	    echo "${commonApplRegEE}"
 	    echo "${commonApplRegEE}" | bash
 	fi
 
 	if [[ "${doApplControlRegion}" == "y" ]]; then
-	    commonApplControlRegEE="${commonApplReg} --pdir plots/test/${treedir}/fakeRateSel/application_region/${outdirAppl}/EE_eta1p479to2p1/ ${innerEE} ${mtCutApplControlRegion}" 
+	    commonApplControlRegEE="${commonApplReg} --pdir ${mypath}/plots/test/${treedir}/fakeRateSel/application_region/${outdirAppl}/EE_eta1p479to2p1/ ${innerEE} ${mtCutApplControlRegion}" 
 	    echo "${commonApplControlRegEE}"
 	    echo "${commonApplControlRegEE}" | bash
 	fi
 
 	if [[ "${doSignalRegion}" == "y" ]]; then
-	    commonSigRegEE="${commonSigReg} --pdir plots/test/${treedir}/fakeRateSel/signal_region/${outdirSignal}/EE_eta1p479to2p1/ ${innerEE} ${mtCutApplSignalRegion}"
+	    commonSigRegEE="${commonSigReg} --pdir ${mypath}/plots/test/${treedir}/fakeRateSel/signal_region/${outdirSignal}/EE_eta1p479to2p1/ ${innerEE} ${mtCutApplSignalRegion}"
 	    echo "${commonSigRegEE}"
             echo "${commonSigRegEE}" | bash
 	fi
@@ -257,17 +286,41 @@ if [[ "${doFakeRateCheckData}" == "y" ]]; then
     #commonFRcheck="${commonCommandFRcheck} ${treeAndFriendFRcheck} -X nJet30 ${Wsel} ${FRnumSel} ${mtCutApplControlRegion} ${dataOptionFakes}"
     commonFRcheck="${commonCommandFRcheck} ${treeAndFriendFRcheck} -X nJet30 ${Wsel} ${FRnumSel} ${mtCutApplControlRegion}"
 
+    regionName="frCheckData_region"
+    thisBatchFileName="${batchFileName}"
+    thisBatchFileName=${thisBatchFileName/PLOTREGION/${regionName}}
+    
     if [[ "${useEBorEE}" != "EE" ]]; then
-	commonFRcheckEB="${commonFRcheck} --pdir plots/test/${treedir}/fakeRateSel/frCheckData_region/${outdirFRcheck}/EB/ ${inEB}" 
+
+	etabin=""
+	thisBatchFileName=${thisBatchFileName/ETABIN/${etabin}}
+
+	batchLogFileName="${batchFileNameBase}_EB.log"
+	batchSrcFileName="${batchFileNameBase/log/src}"
+	batchSrcFileName="${batchSrcFileName}_EB.sh"
+
+	commonFRcheckEB="${commonFRcheck} --pdir ${mypath}/plots/test/${treedir}/fakeRateSel/frCheckData_region/${outdirFRcheck}/EB/ ${inEB}" 
 	echo "${commonFRcheckEB}"
-	echo "${commonFRcheckEB}" | bash
+        # print to file 
+	# echo "echo \"#! /bin/bash \" > ${batchSrcFileName}" | bash
+	# echo "echo \"cd ${mypath}/\" >> ${batchSrcFileName}" | bash
+	# echo "echo \"eval \\`scramv1 runtime -sh\\`\" >> ${batchSrcFileName}" | bash
+	# echo "echo \"${commonFRcheckEB}\" >> ${batchSrcFileName}" | bash
+
+	if [[ "${runBatch}" == "y" ]]; then
+	    echo ""
+	    commandBatch="bsub -q ${queueForBatch} -oo ${batchLogFileName}  \"source ${batchSrcFileName}\" "
+	    echo "${commandBatch}"
+	    #echo "${commandBatch}" | bash
+	fi
+
     fi
     if [[ "${useEBorEE}" != "EB" ]]; then
-	commonFRcheckEE="${commonFRcheck} --pdir plots/test/${treedir}/fakeRateSel/frCheckData_region/${outdirFRcheck}/EE_eta1p479to2p1/ ${innerEE}" 
+	commonFRcheckEE="${commonFRcheck} --pdir ${mypath}/plots/test/${treedir}/fakeRateSel/frCheckData_region/${outdirFRcheck}/EE_eta1p479to2p1/ ${innerEE}" 
 	echo "${commonFRcheckEE}"
 	echo "${commonFRcheckEE}" | bash
 	#
-	commonFRcheckEE="${commonFRcheck} --pdir plots/test/${treedir}/fakeRateSel/frCheckData_region/${outdirFRcheck}/EE_eta2p1to2p5/ ${outerEE}" 
+	commonFRcheckEE="${commonFRcheck} --pdir ${mypath}/plots/test/${treedir}/fakeRateSel/frCheckData_region/${outdirFRcheck}/EE_eta2p1to2p5/ ${outerEE}" 
 	echo "${commonFRcheckEE}"
 	echo "${commonFRcheckEE}" | bash
     fi
@@ -284,7 +337,7 @@ maxentries_clos="2000000000"
 #maxentries_clos="1000"
 otherCut=" -X pfmet -X w_pt "
 
-cmdClosure="python mcPlots.py -P ${treepath}/${treedir}/ -f -j 4 -l ${luminosity} --s2v --tree treeProducerWMass --obj tree -F Friends ${treepath}/${treedir}/friends/tree_Friend_{cname}.root -F Friends ${treepath}/${treedir}/friends/tree_FRFriend_{cname}.root --FMC Friends ${treepath}/${treedir}/friends/tree_TrgFriend_{cname}.root --lspam '     #bf{CMS} #it{Preliminary}' --legendWidth 0.20 --legendFontSize 0.035 --showRatio --maxRatioRange 0.0 2.0 --fixRatioRange w-helicity-13TeV/wmass_e/${mca_clos} w-helicity-13TeV/wmass_e/${sel_clos} w-helicity-13TeV/wmass_e/${plot_clos} --plotmode ${plotmode_clos} --max-entries ${maxentries_clos} --sp QCD --ratioDen QCD --ratioNums QCD_mcfakes,background --ratioYLabel 'fake/MC' --noStackSig --showIndivSigs ${MCweigthOption} "
+cmdClosure="python ${mypath}/mcPlots.py -P ${treepath}/${treedir}/ -f -j 4 -l ${luminosity} --s2v --tree treeProducerWMass --obj tree -F Friends ${treepath}/${treedir}/friends/tree_Friend_{cname}.root -F Friends ${treepath}/${treedir}/friends/tree_FRFriend_{cname}.root --FMC Friends ${treepath}/${treedir}/friends/tree_TrgFriend_{cname}.root --lspam '     #bf{CMS} #it{Preliminary}' --legendWidth 0.20 --legendFontSize 0.035 --showRatio --maxRatioRange 0.0 2.0 --fixRatioRange ${mypath}/w-helicity-13TeV/wmass_e/${mca_clos} ${mypath}/w-helicity-13TeV/wmass_e/${sel_clos} ${mypath}/w-helicity-13TeV/wmass_e/${plot_clos} --plotmode ${plotmode_clos} --max-entries ${maxentries_clos} --sp QCD --ratioDen QCD --ratioNums QCD_mcfakes,background --ratioYLabel 'fake/MC' --noStackSig --showIndivSigs ${MCweigthOption} "
 
 # --sp QCD --noStackSig --showSigShape --ratioNums background
 
@@ -292,9 +345,9 @@ qcdclosTest_cut=" -R id looseWP_iso0p2 'LepGood1_tightId >= 1 && if3(abs(LepGood
 
 if [[ "${doClosureTest}" == "y" ]]; then
     if [[ "${useEBorEE}" != "EE" ]]; then
-	echo "${cmdClosure} ${qcdclosTest_cut} --pdir plots/test/${treedir}/fakeRateSel/closureTest/${subdir_clos}/EB ${inEB}" | bash
+	echo "${cmdClosure} ${qcdclosTest_cut} --pdir ${mypath}/plots/test/${treedir}/fakeRateSel/closureTest/${subdir_clos}/EB ${inEB}" | bash
     fi
     if [[ "${useEBorEE}" != "EB" ]]; then
-	echo "${cmdClosure} ${qcdclosTest_cut} --pdir plots/test/${treedir}/fakeRateSel/closureTest/${subdir_clos}/EE ${inEE}" | bash
+	echo "${cmdClosure} ${qcdclosTest_cut} --pdir ${mypath}/plots/test/${treedir}/fakeRateSel/closureTest/${subdir_clos}/EE ${inEE}" | bash
     fi
 fi
