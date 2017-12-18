@@ -449,7 +449,7 @@ from CMGTools.TTHAnalysis.analyzers.ttHFatJetAnalyzer import ttHFatJetAnalyzer
 ttHFatJetAna = cfg.Analyzer(
     ttHFatJetAnalyzer, name = 'ttHFatJetAnalyzer',
     jetCol = 'slimmedJetsAK8',
-    jetPt = 100.,
+    jetPt = 170.,
     jetEta = 2.4,
     jetLepDR = 0.4,
     # v--- not implemented for AK8
