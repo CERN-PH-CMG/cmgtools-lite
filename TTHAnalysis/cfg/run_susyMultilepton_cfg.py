@@ -936,6 +936,20 @@ elif test == '80X-MC':
         comp.files = [ tmpfil ]
         if not getHeppyOption("single"): comp.fineSplitFactor = 4
     else: raise RuntimeError, "Unknown MC sample: %s" % what
+elif test == '94X-MC':
+    what = getHeppyOption("sample","TTLep")
+    if what == "TTLep":
+        TTLep_pow = kreator.makeMCComponent("TTLep_pow", "/TTTo2L2Nu_mtop166p5_TuneCP5_PSweights_13TeV-powheg-pythia8/RunIIFall17MiniAOD-94X_mc2017_realistic_v10-v1/MINIAODSIM", "CMS", ".*root", 831.76*((3*0.108)**2) )
+        selectedComponents = [ TTLep_pow ]
+        comp = selectedComponents[0]
+        comp.triggers = []
+        comp.files = [ '/store/mc/RunIIFall17MiniAOD/TTTo2L2Nu_mtop166p5_TuneCP5_PSweights_13TeV-powheg-pythia8/MINIAODSIM/94X_mc2017_realistic_v10-v1/70000/3CC234EB-44E0-E711-904F-FA163E0DF774.root' ]
+        tmpfil = os.path.expandvars("/tmp/$USER/3CC234EB-44E0-E711-904F-FA163E0DF774.root")
+        if not os.path.exists(tmpfil):
+            os.system("xrdcp root://cms-xrd-global.cern.ch/%s %s" % (comp.files[0],tmpfil))
+        comp.files = [ tmpfil ]
+        if not getHeppyOption("single"): comp.fineSplitFactor = 4
+    else: raise RuntimeError, "Unknown MC sample: %s" % what
 elif test == '80X-Data':
     what = getHeppyOption("sample","ZLL")
     if what == "ZLL":
@@ -962,16 +976,20 @@ elif test == '80X-Data':
         comp.files = [tmpfil]
         comp.splitFactor = 1
         comp.fineSplitFactor = 4
-elif test == 'ttH-sync':
-    ttHLepSkim.minLeptons = 0
-    selectedComponents = selectedComponents[:1]
-    comp = selectedComponents[0]
-    comp.files = ['/store/mc/RunIIFall15MiniAODv2/ttHToNonbb_M125_13TeV_powheg_pythia8/MINIAODSIM/PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/00000/021B993B-4DBB-E511-BBA6-008CFA1111B4.root']
-    tmpfil = os.path.expandvars("/tmp/$USER/021B993B-4DBB-E511-BBA6-008CFA1111B4.root")
-    if not os.path.exists(tmpfil):
-        os.system("xrdcp root://eoscms//eos/cms%s %s" % (comp.files[0],tmpfil))
-    comp.files = [ tmpfil ]
-    if not getHeppyOption("single"): comp.fineSplitFactor = 8
+elif test == '94X-Data':
+    what = getHeppyOption("sample","ZLL")
+    if what == "DoubleMuon":
+        json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions17/13TeV/Final/Cert_294927-306462_13TeV_PromptReco_Collisions17_JSON.txt'
+        DoubleMuon = kreator.makeDataComponent("DoubleMuon_Run2017C_run299649", "/DoubleMuon/Run2017C-17Nov2017-v1/MINIAOD", "CMS", ".*root", run_range = (299649,299649), triggers = [])
+        DoubleMuon.files = [ 'root://eoscms//eos/cms/store/data/Run2017C/DoubleMuon/MINIAOD/17Nov2017-v1/50000/00519DC1-7ED3-E711-96E1-008CFAFBE5E0.root'  ]
+        selectedComponents = [ DoubleMuon ]
+    for comp in selectedComponents:
+        comp.json = json
+        tmpfil = os.path.expandvars("/tmp/$USER/%s" % os.path.basename(comp.files[0]))
+        if not os.path.exists(tmpfil): os.system("xrdcp %s %s" % (comp.files[0],tmpfil)) 
+        comp.files = [tmpfil]
+        comp.splitFactor = 1
+        if not getHeppyOption("single"): comp.fineSplitFactor = 4
 elif test != None:
     raise RuntimeError, "Unknown test %r" % test
 
