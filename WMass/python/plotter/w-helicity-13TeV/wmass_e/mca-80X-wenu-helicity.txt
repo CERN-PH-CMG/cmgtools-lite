@@ -20,6 +20,8 @@ DiBosons : WW+WW_ext : xsec;      FillColor=ROOT.kViolet+2, Label="DiBosons", No
 DiBosons : WZ+WZ_ext : xsec; FillColor=ROOT.kViolet+2, Label="DiBosons", NormSystematic=0.05
 DiBosons : ZZ+ZZ_ext : xsec; FillColor=ROOT.kViolet+2, Label="DiBosons", NormSystematic=0.05
 
+TauDecaysW : WJetsToLNu_NoSkim_part* : 3.*20508.9    : genw_decayId != 12 && genw_decayId != 14 ; FillColor=ROOT.kPink   ,  Label="W+ long"
+
 #incl_qcdmc : + ; IncludeMca="w-helicity-13TeV/wmass_e/mca-includes/mca-qcdmc.txt"
 incl_datafakes: + ; IncludeMca="w-helicity-13TeV/wmass_e/mca-includes/mca-data.txt", FakeRate="w-helicity-13TeV/wmass_e/fakeRate-frdata.txt", Label="Fakes", FillColor=ROOT.kBlack, FillStyle=3005, NormSystematic=0.30, PostFix='_fakes'
 
@@ -39,7 +41,6 @@ Wp_right_elescale_Dn : WJetsToLNu_NoSkim_part* : 3.*20508.9   : genw_decayId == 
 Wm_long_elescale_Dn  : WJetsToLNu_NoSkim_part* : 3.*20508.9   : genw_decayId == 12 && genw_charge<0 ; FillColor=ROOT.kGray+1   , FakeRate="w-helicity-13TeV/wmass_e/fr-includes/reweighting_0_minus_lepDn.txt", Label="W- long lep scale Dn", SkipMe=True 
 Wm_left_elescale_Dn  : WJetsToLNu_NoSkim_part* : 3.*20508.9   : genw_decayId == 12 && genw_charge<0 ; FillColor=ROOT.kGray+1   , FakeRate="w-helicity-13TeV/wmass_e/fr-includes/reweighting_L_minus_lepDn.txt", Label="W- left lep scale Dn", SkipMe=True 
 Wm_right_elescale_Dn : WJetsToLNu_NoSkim_part* : 3.*20508.9   : genw_decayId == 12 && genw_charge<0 ; FillColor=ROOT.kGray+1   , FakeRate="w-helicity-13TeV/wmass_e/fr-includes/reweighting_R_minus_lepDn.txt", Label="W- right lep scale Dn", SkipMe=True 
-
 
 # recoil systematics
 #incl_ewkmc_recoil_Up : + ; IncludeMca="w-helicity-13TeV/wmass_e/mca-includes/mca-ewkmc-helicity.txt", FakeRate="w-helicity-13TeV/wmass_e/fr-recoilUp.txt", SkipMe=True, PostFix="_recoil_Up" 

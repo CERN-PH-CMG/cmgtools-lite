@@ -3,10 +3,7 @@ import os
 
 import ROOT
 if "/fakeRate_cc.so" not in ROOT.gSystem.GetLibraries(): 
-    success = ROOT.gSystem.CompileMacro("%s/src/CMGTools/WMass/python/plotter/fakeRate.cc" % os.environ['CMSSW_BASE'])
-    if not success:
-       print "Loading and compiling fakeRate.cc failed! Exit"
-       quit()    
+    ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/WMass/python/plotter/fakeRate.cc+" % os.environ['CMSSW_BASE'])
 
 from CMGTools.TTHAnalysis.plotter.mcCorrections import SimpleCorrection
 from CMGTools.WMass.plotter.cutsFile import *
