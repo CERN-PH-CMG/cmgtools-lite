@@ -3,6 +3,12 @@ import os
 
 import ROOT
 
+def compileMacro(x,basedir=os.environ['CMSSW_BASE']):
+    success = ROOT.gSystem.CompileMacro("%s/%s" % (os.environ['CMSSW_BASE'],x),"k")
+    if not success:
+        print ("Loading and compiling %s failed! Exit" % x)
+        quit()
+
 if "/fakeRate_cc.so" not in ROOT.gSystem.GetLibraries(): 
    compileMacro("src/CMGTools/WMass/python/plotter/fakeRate.cc")
 

@@ -15,15 +15,8 @@ ROOT.PyConfig.IgnoreCommandLineOptions = True
 
 from copy import *
 
-from CMGTools.WMass.plotter.cutsFile import *
 from CMGTools.WMass.plotter.fakeRate import *
 from CMGTools.TTHAnalysis.plotter.mcCorrections import *
-
-def compileMacro(x,basedir=os.environ['CMSSW_BASE']):
-    success = ROOT.gSystem.CompileMacro("%s/%s" % (os.environ['CMSSW_BASE'],x),"k")
-    if not success:
-        print ("Loading and compiling %s failed! Exit" % x)
-        quit()
 
 if "/functions_cc.so" not in ROOT.gSystem.GetLibraries(): 
     compileMacro("src/CMGTools/WMass/python/plotter/functions.cc")
