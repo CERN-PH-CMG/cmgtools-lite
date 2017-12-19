@@ -9,15 +9,10 @@ CMS_lumi.writeExtraText = 1
 _global_workspaces=[] # avoid crash in 80X, to be investigated
 
 if "/bin2Dto1Dlib_cc.so" not in ROOT.gSystem.GetLibraries():
-    success = ROOT.gSystem.CompileMacro("%s/src/CMGTools/TTHAnalysis/python/plotter/bin2Dto1Dlib.cc" % os.environ['CMSSW_BASE'],"k")
-    if not success:
-       print "Loading and compiling bin2Dto1Dlib.cc failed! Exit"
-       quit()
+    compileMacro("src/CMGTools/TTHAnalysis/python/plotter/bin2Dto1Dlib.cc")
+
 if "/fakeRate_cc.so" not in ROOT.gSystem.GetLibraries(): 
-    success = ROOT.gSystem.CompileMacro("%s/src/CMGTools/WMass/python/plotter/fakeRate.cc" % os.environ['CMSSW_BASE'],"k")
-    if not success:
-       print "Loading and compiling fakeRate.cc failed! Exit"
-       quit()
+    compileMacro("src/CMGTools/WMass/python/plotter/fakeRate.cc")
 
 SAFE_COLOR_LIST=[
 ROOT.kBlack, ROOT.kRed, ROOT.kGreen+2, ROOT.kBlue, ROOT.kMagenta+1, ROOT.kOrange+7, ROOT.kCyan+1, ROOT.kGray+2, ROOT.kViolet+5, ROOT.kSpring+5, ROOT.kAzure+1, ROOT.kPink+7, ROOT.kOrange+3, ROOT.kBlue+3, ROOT.kMagenta+3, ROOT.kRed+2,

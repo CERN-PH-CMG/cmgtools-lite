@@ -23,11 +23,8 @@ options.weight = True
 options.final  = True
 options.allProcesses  = True
 
-if "/functions_cc.so" not in ROOT.gSystem.GetLibraries(): 
-    success = ROOT.gSystem.CompileMacro("%s/src/CMGTools/WMass/python/plotter/functions.cc" % os.environ['CMSSW_BASE'])
-    if not success:
-        print "Loading and compiling functions.cc failed! Exit"
-        quit()
+if "/functions_cc.so" not in ROOT.gSystem.GetLibraries():
+    compileMacro("src/CMGTools/WMass/python/plotter/functions.cc")
 
 mca  = MCAnalysis(args[0],options)
 cuts = CutsFile(args[1],options)
@@ -115,6 +112,26 @@ def rebin2Dto1D(h,funcstring):
             if bin not in allowed: raise RuntimeError, "Binning function gives not admissible result"
             newh.SetBinContent(bin,newh.GetBinContent(bin)+h.GetBinContent(i+1,j+1))
             newh.SetBinError(bin,math.hypot(newh.GetBinError(bin),h.GetBinError(i+1,j+1)))
+    for bin in range(1,nbins+1):
+        if newh.GetBinContent(bin)<0:
+            print 'Warning: cropping to zero bin %d in %s (was %f)'%(bin,newh.GetName(),newh.GetBinContent(bin))
+            newh.SetBinContent(bin,0)
+    newh.SetLineWidth(h.GetLineWidth())
+    newh.SetLineStyle(h.GetLineStyle())
+    newh.SetLineColor(h.GetLineColor())
+    return newh
+
+def unroll2Dto1D(h):
+    nbins = h.GetNbinsX() * h.GetNbinsY()
+    goodname = h.GetName()
+    h.SetName(goodname+"_oldbinning")
+    newh = ROOT.TH1D(goodname,h.GetTitle(),nbins,0.5,nbins+0.5)
+    if 'TH2' not in h.ClassName(): raise RuntimeError, "Calling rebin2Dto1D on something that is not TH2"
+    for i in xrange(h.GetNbinsX()):
+        for j in xrange(h.GetNbinsY()):
+            bin = 1 + i + j*h.GetNbinsX()
+            newh.SetBinContent(bin,h.GetBinContent(i+1,j+1))
+            newh.SetBinError(bin,h.GetBinError(i+1,j+1))
     for bin in range(1,nbins+1):
         if newh.GetBinContent(bin)<0:
             print 'Warning: cropping to zero bin %d in %s (was %f)'%(bin,newh.GetName(),newh.GetBinContent(bin))
@@ -302,7 +319,8 @@ if options.binfunction:
     for n,h in report.iteritems(): _to_be_rebinned[h.GetName()]=h
     for n,h in _to_be_rebinned.iteritems():
         thisname = h.GetName()
-        newhistos[thisname]=rebin2Dto1D(h,options.binfunction)
+        if(options.binfunction=='unroll2Dto1D'): newhistos[thisname]=unroll2Dto1D(h)
+        else: newhistos[thisname]=rebin2Dto1D(h,options.binfunction)
     for n,h in report.iteritems(): report[n] = newhistos[h.GetName().replace('_oldbinning','')]
     allyields = dict([(p,h.Integral()) for p,h in report.iteritems()])
     procs = []; iproc = {}

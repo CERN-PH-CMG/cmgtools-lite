@@ -51,6 +51,7 @@ parser.add_option("-q", "--queue",    dest="queue",     type="string", default=N
 parser.add_option("--dry-run", dest="dryRun",    action="store_true", default=False, help="Do not run the job, only print the command");
 parser.add_option("-s", "--signal-cards",  dest="signalCards",  action="store_true", default=False, help="Make the signal part of the datacards");
 parser.add_option("-b", "--bkgdata-cards", dest="bkgdataCards", action="store_true", default=False, help="Make the background and data part of the datacards");
+parser.add_option("--not-unroll2D", dest="notUnroll2D", action="store_true", default=False, help="Do not unroll the TH2Ds in TH1Ds needed for combine (to make 2D plots)");
 (options, args) = parser.parse_args()
 
 VAR="ptElFull(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_r9,run,isData,evt):LepGood1_eta 48,-2.5,2.5,20,30.,50."
@@ -79,6 +80,8 @@ if options.queue:
 OPTIONS=" -P "+T+" --s2v -j "+str(J)+" -l "+str(luminosity)+" -f --obj tree "+FASTTEST
 if not os.path.exists(outdir): os.makedirs(outdir)
 OPTIONS+=" -F Friends '{P}/friends/tree_Friend_{cname}.root' "
+if not options.notUnroll2D:
+    OPTIONS+=" --2d-binning-function unroll2Dto1D "
 
 if options.queue:
     import os, sys
@@ -93,7 +96,7 @@ W=" -W 'puw2016_nTrueInt_36fb(nTrueInt)*trgSF_We(LepGood1_pdgId,LepGood1_pt,LepG
 POSCUT=" -A alwaystrue positive 'LepGood1_charge>0' "
 NEGCUT=" -A alwaystrue negative 'LepGood1_charge<0' "
 if options.signalCards:
-    WYBins=(14,-5.25,5.25)
+    WYBins=(16,-6,6)
     bWidth=(WYBins[2]-WYBins[1])/float(WYBins[0])
     WYBinsEdges=np.arange(WYBins[1],WYBins[2]+0.001,bWidth)
     print "MAKING SIGNAL PART: WYBinsEdges = ",WYBinsEdges

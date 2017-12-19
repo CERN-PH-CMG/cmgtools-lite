@@ -19,17 +19,17 @@ from CMGTools.WMass.plotter.cutsFile import *
 from CMGTools.WMass.plotter.fakeRate import *
 from CMGTools.TTHAnalysis.plotter.mcCorrections import *
 
-if "/functions_cc.so" not in ROOT.gSystem.GetLibraries(): 
-    success = ROOT.gSystem.CompileMacro("%s/src/CMGTools/WMass/python/plotter/functions.cc" % os.environ['CMSSW_BASE'],"k")
+def compileMacro(x,basedir=os.environ['CMSSW_BASE']):
+    success = ROOT.gSystem.CompileMacro("%s/%s" % (os.environ['CMSSW_BASE'],x),"k")
     if not success:
-        print "Loading and compiling functions.cc failed! Exit"
+        print ("Loading and compiling %s failed! Exit" % x)
         quit()
 
+if "/functions_cc.so" not in ROOT.gSystem.GetLibraries(): 
+    compileMacro("src/CMGTools/WMass/python/plotter/functions.cc")
+
 if "/w-helicity-13TeV/functionsWMass_cc.so" not in ROOT.gSystem.GetLibraries(): 
-    success = ROOT.gSystem.CompileMacro("%s/src/CMGTools/WMass/python/plotter/w-helicity-13TeV/functionsWMass.cc" % os.environ['CMSSW_BASE'],"k")
-    if not success:
-       print "Loading and compiling /w-helicity-13TeV/functionsWMass.cc failed! Exit"
-       quit()
+    compileMacro("src/CMGTools/WMass/python/plotter/w-helicity-13TeV/functionsWMass.cc")
 
 def scalarToVector(x):
     x0 = x

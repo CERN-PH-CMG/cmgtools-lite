@@ -14,10 +14,11 @@ from CMGTools.TTHAnalysis.tools.functionsRAX import _susy2lss_idEmu_cuts_obj,_su
 
 leptonTypeWMass = NTupleObjectType("leptonWMass", baseObjectTypes = [ leptonType ], variables = [
     # Lepton MVA-id related variables
-    NTupleVariable("mvaTTH",    lambda lepton : getattr(lepton, 'mvaValueTTH', -1), help="Lepton MVA (TTH version)"),
-    NTupleVariable("mvaSUSY",    lambda lepton : getattr(lepton, 'mvaValueSUSY', -1), help="Lepton MVA (SUSY version)"),
     NTupleVariable("jetDR",      lambda lepton : deltaR(lepton.eta(),lepton.phi(),lepton.jet.eta(),lepton.jet.phi()) if hasattr(lepton,'jet') else -1, help="deltaR(lepton, nearest jet)"),
     NTupleVariable("r9",      lambda lepton : lepton.full5x5_r9() if abs(lepton.pdgId()) == 11 else -99, help="SuperCluster 5x5 r9 variable, only for electrons; -99 for muons"),
+    NTupleVariable("chIso04", lambda lepton : lepton.chargedHadronIsoR(0.4), help="Lepton charged hadron isolation in a cone DeltaR=0.4"),
+    NTupleVariable("nhIso04", lambda lepton : lepton.neutralHadronIsoR(0.4), help="Lepton neutral hadron isolation in a cone DeltaR=0.4"),
+    NTupleVariable("phIso04", lambda lepton : lepton.photonIsoR(0.4), help="Lepton photon isolation in a cone DeltaR=0.4"),
     #2016 muon Id
     NTupleVariable("softMuonId2016", lambda lepton: _soft_MuonId_2016ICHEP(lepton), help="Soft muon ID retuned for ICHEP 2016"),
     NTupleVariable("mediumMuonID2016", lambda lepton: _medium_MuonId_2016ICHEP(lepton), help="Medium muon ID retuned for ICHEP 2016"),
