@@ -1,5 +1,5 @@
-#ifndef FUNCTIONS_H
-#define FUNCTIONS_H
+// #ifndef FUNCTIONS_H
+// #define FUNCTIONS_H
 
 // #include <stdio.h>
 // #include <stdlib.h>
@@ -433,4 +433,4 @@ bool pass_FakerateNum_debug(const bool  isEB = true,
 
 void functions() {}
 
-#endif
+//#endif
