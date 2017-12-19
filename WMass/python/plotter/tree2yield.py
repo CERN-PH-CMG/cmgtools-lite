@@ -15,6 +15,7 @@ ROOT.PyConfig.IgnoreCommandLineOptions = True
 
 from copy import *
 
+from CMGTools.WMass.plotter.cutsFile import *
 from CMGTools.WMass.plotter.fakeRate import *
 from CMGTools.TTHAnalysis.plotter.mcCorrections import *
 
