@@ -46,23 +46,45 @@ mtCutApplSignalRegion="-A eleKin pfmt 'mt_2(met_pt,met_phi,${ptcorr},LepGood1_ph
 
 # Here we have some options to be customized
 
-# first, choose which of the three analysis you want to run (plots for computation region, application one, closure test
-# select also if you want to use data GH
-# doCompRegion="n" # y or n (or any key but y for no)
-# doApplRegion="n"
-# doApplControlRegion="n"
-# doSignalRegion="n"
-# doFakeRateCheckData="y"  # in principle it is the same region as doApplControlRegion, but the former has the direct selection, while the latter has the inverted one
-# doClosureTest="n"
-
+##################################
+##################################
+# Some general options
+##################################
 useDataGH="y"
-runBatch="n" # to be implemented
+runBatch="y" # to be implemented
 queueForBatch="cmscaf1nw"
 useSkimmedTrees="y" # skimmed samples are on both pccmsrm28 and eos 
 usePtCorrForScaleFactors="n" # y: use corrected pt for scale factor weight; n: use LepGood_pt (which is what would have been used if the scale factors where in a friend tree)
 # eta bin boundaries to divide regions in eta
 etaBinBoundaries=("0.0" "1.479" "2.1" "2.5")
+#etaBinBoundaries=("0.0" "2.5")
 batchDirName="plots_15_12_2017"  # name of directory to create inside jobsLog
+##################################
+##################################
+# MCA files
+##################################
+mcafile="mca-80X_V3.txt" # if using skimmed trees on pccmsrm28, few top samples are missing, be careful (new mca is automatically set below)
+mcafileFRcheck="mca-80X_V3_FRcheck.txt"  # automatically used instead of mcafile when doing part under doFakeRateCheckData
+mcafileLessTop="mca-80X_V3_lessTop.txt"  # patch to avoid warnings: trees for FRELSKIM miss the friends of some top samples 
+cutfile="qcd1l_SRtrees.txt" # we start from it and add or remove cuts
+plotfile="test_plots.txt"
+#
+##################################
+##################################
+# Some MCA options
+##################################
+#excludeprocesses="data,Z_LO,W_LO,Z,Top,DiBosons"
+excludeprocesses="Z_LO,W_LO" # decide whether to use NLO (amc@NLO) or LO (MadGraph) MC, non both! In case you can add other samples (Top, Dibosons) to speed up things
+selectplots=""  # if empty it uses all plots in cfg file
+#selectplots="nJetClean,ptl1,etal1,pfmet,tkmet,ele1ID,awayJet_pt,wpt_tk,ele1dxy"  # if empty it uses all plots in cfg file
+#selectplots="trkmt,ptl1,etal1,pfmt,pfmet,wpt_tk"  # if empty it uses all plots in cfg file
+maxentries="2000000000" # max int number is > 2*10^9
+#maxentries="10"
+#
+##################################
+##################################
+
+
 
 #############################
 # Now we declare some dictionary in bash
@@ -147,29 +169,6 @@ qcdFromFR["FRclosureCompRegion"]="y"
 #
 #############################
 
-
-##################################
-##################################
-# MCA files
-##################################
-mcafile="mca-80X_V3.txt" # if using skimmed trees on pccmsrm28, few top samples are missing, be careful (new mca is automatically set below)
-mcafileFRcheck="mca-80X_V3_FRcheck.txt"  # automatically used instead of mcafile when doing part under doFakeRateCheckData
-mcafileLessTop="mca-80X_V3_lessTop.txt"  # patch to avoid warnings: trees for FRELSKIM miss the friends of some top samples 
-cutfile="qcd1l_SRtrees.txt" # we start from it and add or remove cuts
-plotfile="test_plots.txt"
-#
-##################################
-##################################
-# Some MCA options
-#excludeprocesses="data,Z_LO,W_LO,Z,Top,DiBosons"
-excludeprocesses="Z_LO,W_LO" # decide whether to use NLO (amc@NLO) or LO (MadGraph) MC, non both! In case you can add other samples (Top, Dibosons) to speed up things
-selectplots="nJetClean,ptl1,etal1,pfmet,tkmet,ele1ID,awayJet_pt,wpt_tk,ele1dxy"  # if empty it uses all plots in cfg file
-#selectplots="trkmt,ptl1,etal1,pfmt,pfmet,wpt_tk"  # if empty it uses all plots in cfg file
-maxentries="2000000000" # max int number is > 2*10^9
-#maxentries="10"
-#
-##################################
-##################################
 
 
 ######################################################
