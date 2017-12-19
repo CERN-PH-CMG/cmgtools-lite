@@ -24,7 +24,7 @@ options.final  = True
 options.allProcesses  = True
 
 if "/functions_cc.so" not in ROOT.gSystem.GetLibraries():
-    ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/WMass/python/plotter/functions.cc+" % os.environ['CMSSW_BASE']);
+    compileMacro("src/CMGTools/WMass/python/plotter/functions.cc")
 
 mca  = MCAnalysis(args[0],options)
 cuts = CutsFile(args[1],options)
