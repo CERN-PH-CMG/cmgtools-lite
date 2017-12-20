@@ -4,6 +4,7 @@ class ttHPrescaler( Analyzer ):
     def __init__(self, cfg_ana, cfg_comp, looperName ):
         super(ttHPrescaler,self).__init__(cfg_ana,cfg_comp,looperName)
         self.prescaleFactor = cfg_ana.prescaleFactor
+        self.useEventNumber = getattr(cfg_ana,'useEventNumber',False)
         self.events = 0
 
     def declareHandles(self):
@@ -20,7 +21,9 @@ class ttHPrescaler( Analyzer ):
     def process(self, event):
         self.events += 1
         self.counters.counter('events').inc('all events')
-        if (self.events % self.prescaleFactor == 1):
+        evno = self.events
+        if self.useEventNumber: evno = event.input.eventAuxiliary().id().event()
+        if (evno % self.prescaleFactor == 1):
             self.counters.counter('events').inc('accepted events')
             return True
         else:

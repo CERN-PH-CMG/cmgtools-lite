@@ -7,6 +7,8 @@ __init__.py
 *DS_Store
 *cc.so
 *cc.d
+*C.so
+*C.d
 *.pcm
 LSFJOB*/
 

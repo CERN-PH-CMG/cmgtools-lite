@@ -1,18 +1,20 @@
 change: met_pt\b: met_jecUp_pt
-change: nJet25_Recl\b: nJet25_Recl_jecUp
-change: htJet25j_Recl\b: htJet25j_Recl_jecUp
-change: mhtJet25_Recl\b: mhtJet25_Recl_jecUp
-change: nJet40_Recl\b: nJet40_Recl_jecUp
-change: htJet40j_Recl\b: htJet40j_Recl_jecUp
-change: mhtJet40_Recl\b: mhtJet40_Recl_jecUp
-change: nBJetLoose25_Recl\b: nBJetLoose25_Recl_jecUp
-change: nBJetMedium25_Recl\b: nBJetMedium25_Recl_jecUp
-change: nBJetTight25_Recl\b: nBJetTight25_Recl_jecUp
-change: nBJetLoose40_Recl\b: nBJetLoose40_Recl_jecUp
-change: nBJetMedium40_Recl\b: nBJetMedium40_Recl_jecUp
-change: nBJetTight40_Recl\b: nBJetTight40_Recl_jecUp
+change: nJet25_Recl\b: nJet25_jecUp_Recl
+change: htJet25j_Recl\b: htJet25j_jecUp_Recl
+change: mhtJet25_Recl\b: mhtJet25_jecUp_Recl
+change: nJet40_Recl\b: nJet40_jecUp_Recl
+change: htJet40j_Recl\b: htJet40j_jecUp_Recl
+change: mhtJet40_Recl\b: mhtJet40_jecUp_Recl
+change: nBJetLoose25_Recl\b: nBJetLoose25_jecUp_Recl
+change: nBJetMedium25_Recl\b: nBJetMedium25_jecUp_Recl
+change: nBJetTight25_Recl\b: nBJetTight25_jecUp_Recl
+change: nBJetLoose40_Recl\b: nBJetLoose40_jecUp_Recl
+change: nBJetMedium40_Recl\b: nBJetMedium40_jecUp_Recl
+change: nBJetTight40_Recl\b: nBJetTight40_jecUp_Recl
 change: kinMVA_2lss_ttbar\b : kinMVA_2lss_ttbar_jecUp
+change: kinMVA_2lss_ttbar_withBDTv8\b : kinMVA_2lss_ttbar_withBDTv8_jecUp
 change: kinMVA_2lss_ttV\b : kinMVA_2lss_ttV_jecUp
+change: kinMVA_2lss_ttV_withHj\b : kinMVA_2lss_ttV_withHj_jecUp
 change: kinMVA_3l_ttbar\b : kinMVA_3l_ttbar_jecUp
 change: kinMVA_3l_ttV\b : kinMVA_3l_ttV_jecUp
 change: kinMVA_3l_ttV_withMEM\b : kinMVA_3l_ttV_withMEM_jecUp

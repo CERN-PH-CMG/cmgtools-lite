@@ -6,6 +6,9 @@ from math import sqrt, cos
 class susyStopSoftBEventAnalyzer( Analyzer ):
     def __init__(self, cfg_ana, cfg_comp, looperName ):
         super(susyStopSoftBEventAnalyzer,self).__init__(cfg_ana,cfg_comp,looperName)
+        self.eMu = getattr(cfg_ana, 'eMu', False)
+        self.llNoZ = getattr(cfg_ana, 'llNoZ', False)
+        self.bJet = getattr(cfg_ana, 'bJet', False)
 
     def declareHandles(self):
         super(susyStopSoftBEventAnalyzer, self).declareHandles()
@@ -24,6 +27,27 @@ class susyStopSoftBEventAnalyzer( Analyzer ):
         self.readCollections( event.input )
         self.counters.counter('events').inc('all events')
 
+        if self.eMu in ("require","veto"):
+            has = True
+            if len(event.selectedLeptons) < 2: has =  False
+            lep1, lep2 = event.selectedLeptons[:2]
+            if abs(lep1.pdgId()+lep2.pdgId()) != 2: has =  False
+            if lep1.pt() < 25 or lep2.pt() < 20: has =  False
+            if   self.eMu == "require" and not has: return False
+            elif self.eMu == "veto"    and    has:  return False
+        if self.llNoZ in ("require","veto"):
+            has = True
+            if len(event.selectedLeptons) < 2: has =  False
+            lep1, lep2 = event.selectedLeptons[:2]
+            if lep1.pdgId()+lep2.pdgId() != 0: has =  False
+            if lep1.pt() < 25 or lep2.pt() < 20: has =  False
+            if abs((lep1.p4()+lep2.p4()).M() - 91.2) < 15: has = False
+            if   self.llNoZ == "require" and not has: return False
+            elif self.llNoZ == "veto"    and    has:  return False
+        if self.bJet == "require":
+            if  len(event.cleanJets) < 1: return False
+            if not sum((j.pt() > 30 and j.btagWP("CSVv2IVFM")) for j in event.cleanJets):
+                return False
         if len(event.cleanJets) >= 0:
             self.counters.counter('events').inc('one jet')
 
