@@ -17,16 +17,17 @@ function do_run {
     read DUMMY;
 }
 function do_plot {
-    PROC=$1; PROCR=$2; LABEL=$3
+    PROC=$1; PROCR=$2; LABEL=$3; RVER=$4
     if [[ "${PROCR}" == "" ]]; then return; fi;
     if test \! -d ${DIR}/${PROC}; then echo "Did not find ${PROC} in ${DIR}"; exit 1; fi
+    if [[ "${RVER}" == "" ]]; then RVER=94X; fi;
     if [[ "${LABEL}" != "MANUAL" ]]; then 
         test -L ${DIR}/Ref && rm ${DIR}/Ref    
         test -L ${DIR}/New && rm ${DIR}/New    
-        if test -d ~/Reference_80X_${PROCR}${LABEL}; then
-             ln -sd ~/Reference_80X_${PROCR}${LABEL} ${DIR}/Ref;
+        if test -d ~/Reference_${RVER}_${PROCR}${LABEL}; then
+             ln -sd ~/Reference_${RVER}_${PROCR}${LABEL} ${DIR}/Ref;
         else
-             ln -sd $PWD/Reference_80X_${PROCR}${LABEL} ${DIR}/Ref;
+             ln -sd $PWD/Reference_${RVER}_${PROCR}${LABEL} ${DIR}/Ref;
         fi
     else
         test -L ${DIR}/Ref && rm ${DIR}/Ref    
@@ -39,7 +40,7 @@ function do_plot {
         fi;
     fi
     ln -sd ${DIR}/${PROC} ${DIR}/New;
-    if [[ "$4" == "" ]]; then OUTNAME=${PROCR}; else OUTNAME=$4; fi
+    OUTNAME=${WHAT}-${PROCR}${LABEL}
     ( cd ../python/plotter;
       # ---- MCA ---
       MCA=susy-multilepton/validation_mca.txt
@@ -47,17 +48,17 @@ function do_plot {
       CUTS=susy-multilepton/validation.txt;
       if [ -f susy-multilepton/validation-${PROC}.txt ]; then 
         CUTS=susy-multilepton/validation-${PROC}.txt
-      elif echo $PROC | grep -q Run2016; then
+      elif echo $PROC | grep -q Run201[67]; then
         if echo $PROC | grep -q Single; then
              CUTS=susy-multilepton/validation-data-single.txt
-        elif echo $PROC | grep -q MET; then
+        elif echo $PROC | grep -q 'MET\|2017'; then
              CUTS=susy-multilepton/validation.txt
         else
              CUTS=susy-multilepton/validation-data.txt
         fi;
       fi
       python mcPlots.py -f --s2v --tree treeProducerSusyMultilepton  -P ${DIR} $MCA $CUTS ${CUTS/.txt/_plots.txt} \
-              --pdir plots/80X/validation/${OUTNAME}${LABEL} -p new,ref -u -e \
+              --pdir plots/94X/validation/${OUTNAME} -p new,ref -u -e \
               --plotmode=nostack --showRatio --maxRatioRange 0.65 1.35 --flagDifferences
     );
 }
@@ -74,12 +75,20 @@ case $WHAT in
         do_plot TTLep_pow TTLep_pow
         ;;
     SOSData)
+        $RUN && do_run $DIR -o test=94X-Data  -N 40000 -o runData -o sample=DoubleMuon  -o analysis=SOS;
+        do_plot DoubleMuon_Run2017C_run299649 DoubleMuon_Run2017C_run299649 _SOS
+        ;;
+    SOSData80X)
         $RUN && do_run $DIR -o test=80X-Data  -N 100000 -o runData -o sample=MET  -o analysis=SOS;
         do_plot MET_Run2016H_run283885 MET_Run2016H_run283885 _SOS
         ;;
     SOSMC)
-        $RUN && do_run $DIR -o test=80X-MC -o sample=TTLep -N 2000 -o analysis=SOS;
+        $RUN && do_run $DIR -o test=94X-MC -o sample=TTLep -N 2000 -o analysis=SOS;
         do_plot TTLep_pow TTLep_pow _SOS
+        ;;
+    SOSMC80X)
+        $RUN && do_run $DIR -o test=80X-MC -o sample=TTLep -N 2000 -o analysis=SOS;
+        do_plot TTLep_pow TTLep_pow _SOS 80X
         ;;
 
     -manual)
