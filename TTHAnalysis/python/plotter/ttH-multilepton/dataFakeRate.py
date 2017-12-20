@@ -45,6 +45,7 @@ def addBbB(tlist,ycutoff,relcutoff,verbose=False):
     ret = []
     ref = tlist.At(0)
     ytot = ref.Integral()
+    if (ytot == 0): return ret
     for b in xrange(1,ref.GetNbinsX()+1):
         y, e = ref.GetBinContent(b), ref.GetBinError(b)
         if y/ytot < ycutoff: continue
@@ -213,6 +214,10 @@ if __name__ == "__main__":
                         if p in [ "signal", "background", "total", "data_sub" ] : continue
                         hproj = fitvarhist.Clone("%s_for_%s%s_%s%s_%s" % (fspec.name,xspec.name,bxname,yspec.name,bzname,p))
                         hproj.SetDirectory(None)
+                        # sanity check binning
+                        if h.GetNbinsX() != projection.GetNbinsX(): raise RuntimeError, "Inconsistent input binning with x variable binning"
+                        if h.GetXaxis().GetBinLowEdge(ix) != projection.GetXaxis().GetBinLowEdge(ix): raise RuntimeError, "Inconsistent input binning with x variable binning"
+                        if h.GetXaxis().GetBinUpEdge(ix) != projection.GetXaxis().GetBinUpEdge(ix): raise RuntimeError, "Inconsistent input binning with x variable binning"
                         myfz = fzreport[p]
                         for iy in xrange(1,h.GetNbinsY()+1):
                             if options.fcut:
@@ -240,7 +245,7 @@ if __name__ == "__main__":
                             xzreport[p].SetBinError(  ix,iz, _h1NormWithError(h, mca.getProcessOption(p,'NormSystematic',0.))[1])
                         plotter.printOnePlot(mca, fspec, freport, printDir=bindirname,
                                              outputName = "%s_for_%s%s_%s%s" % (fspec.name,xspec.name,bxname,yspec.name,bzname)) 
-                if options.algo == "fQCD":
+                if options.algo in ("fQCD","ifQCD"):
                     # == save settings ===
                     ybackup = options.yrange; xcbackup = options.xcut; rbackup = options.showRatio
                     options.yrange = (0,1.3); options.xcut = None; options.showRatio = False
@@ -297,15 +302,66 @@ if __name__ == "__main__":
                     r_slp = (b_s_a/n_s_a)/(b_l_a/n_l_a)
                     r_slp_stat = r_slp * sqrt(sum(x**2 for x in [db_s_a/b_s_a, db_l_a/b_l_a, dn_s_a/n_s_a, dn_l_a/n_l_a]))
                     r_slp_syst = r_slp * 2 * abs(fb_s[0]-fb_l[0])/(fb_s[0]+fb_l[0])
-                    if options.subSyst > 0: 
-                        r_slp_syst = hypot(r_slp_syst, r_slp * options.subSyst)
-                    dr     = hypot(r_slp_stat, r_slp_syst)
-                    f_qcd  = max(0,f_s[0] - r_slp*f_l[0])/(1-r_slp)
-                    df_s = max(f_s[1],f_s[2])/(1-r_slp)
-                    df_l = (r_slp*max(f_l[1],f_l[2]))/(1-r_slp)
-                    df_r = 0.5*abs((f_s[0] - (r_slp-dr)*f_l[0])/(1-(r_slp-dr)) - (f_s[0] - (r_slp+dr)*f_l[0])/(1-(r_slp+dr)))
-                    df   = sqrt(sum(x**2 for x in [df_s,df_l,df_r]))
-                    #print "%s  f_s %.3f  f_l %.3f  r_slp %.3f +- %.3f +- %.3f  f_qcd %.3f +- %.3f" % (bxname, f_s[0], f_l[0], r_slp, r_slp_stat, r_slp_syst, f_qcd, df)
+                    if options.algo == "fQCD":
+                        if options.subSyst > 0: 
+                            r_slp_syst = hypot(r_slp_syst, r_slp * options.subSyst)
+                        dr     = hypot(r_slp_stat, r_slp_syst)
+                        f_qcd  = max(0,f_s[0] - r_slp*f_l[0])/(1-r_slp)
+                        df_s = max(f_s[1],f_s[2])/(1-r_slp)
+                        df_l = (r_slp*max(f_l[1],f_l[2]))/(1-r_slp)
+                        df_r = 0.5*abs((f_s[0] - (r_slp-dr)*f_l[0])/(1-(r_slp-dr)) - (f_s[0] - (r_slp+dr)*f_l[0])/(1-(r_slp+dr)))
+                        df   = sqrt(sum(x**2 for x in [df_s,df_l,df_r]))
+                        print "%s  f_s %.3f  f_l %.3f  r_slp %.3f +- %.3f +- %.3f  f_qcd %.3f +- %.3f" % (bxname, f_s[0], f_l[0], r_slp, r_slp_stat, r_slp_syst, f_qcd, df)
+                    elif options.algo == "ifQCD":
+                        fs_s = (ereport["signal"].GetY()[0], ereport["signal"].GetErrorYlow(0), ereport["signal"].GetErrorYhigh(0))
+                        fs_l = (ereport["signal"].GetY()[1], ereport["signal"].GetErrorYlow(1), ereport["signal"].GetErrorYhigh(1))
+                        gamma, dgamma = fs_l[0]/fs_s[0], fs_l[0]/fs_s[0]*hypot(max(fs_s[1:])/fs_s[0], max(fs_l[1:])/fs_l[0])
+                        mu   , dmu    = fb_s[0]/fb_l[0], fb_s[0]/fb_l[0]*hypot(max(fb_s[1:])/fb_s[0], max(fb_l[1:])/fb_l[0])
+                        s_s_a = (fzreport["signal"].GetBinContent(1,1) + fzreport["signal"].GetBinContent(1,2))
+                        ds_s_a = hypot(fzreport["signal"].GetBinError(1,1), fzreport["signal"].GetBinError(1,2))
+                        bs_ns  = b_s_a / (b_s_a + s_s_a)
+                        dbs_ns = (b_s_a * s_s_a)/((b_s_a+s_s_a)**2)*hypot(db_s_a/b_s_a, ds_s_a/s_s_a)
+                        def ifqcd(fs,fl,r,m,g,bsns):
+                            fs,fl,r,m,g,bsns = map( lambda x : max(x,0), [fs,fl,r,m,g,bsns] );
+                            return max(0,fs - r*m*fl)/(1 - r*m*g + bsns*(g*m-1)) 
+                        def mhypot(*args):
+                            return sqrt(sum(x**2 for x in args))
+                        def ifqcd_werr(fsv,flv,r,dr,m,dm,g,dg,bsns,dbsns):
+                            fs, fl = fsv[0], flv[0]
+                            f = ifqcd(fs,fl,r,m,g,bsns)
+                            df_f = hypot(ifqcd(max(fsv[1],fsv[2]),0,r,m,g,bsns), ifqcd(0,max(flv[1],flv[2]),r,m,g,bsns))
+                            df_r = 0.5*abs(ifqcd(fs,fl,r+dr,m,g,bsns)-ifqcd(fs,fl,r-dr,m,g,bsns))
+                            if m == 1: 
+                                return (f, df_f, df_r, mhypot(df_r,df_r))
+                            df_m = 0.5*abs(ifqcd(fs,fl,r,m+dm,g,bsns)-ifqcd(fs,fl,r,m-dm,g,bsns))
+                            if g == 1:
+                                return (f, df_f, df_r, df_m, mhypot(df_r,df_r,df_m))
+                            df_g = 0.5*abs(ifqcd(fs,fl,r,m,g+dg,bsns)-ifqcd(fs,fl,r,m,g-dg,bsns))
+                            if bsns == 0:
+                                return (f, df_f, df_r, df_m, df_g, mhypot(df_r,df_r,df_m,df_g))
+                            df_bsns = 0.5*abs(ifqcd(fs,fl,r,m,g,bsns+dbsns)-ifqcd(fs,fl,r,m,g,bsns-dbsns))
+                            return (f, df_f, df_r, df_m, df_g, df_bsns, mhypot(df_r,df_r,df_m,df_g,df_bsns))
+                        print "First iteration for %s, f_s %.3f  f_l %.3f :" % (bxname, f_s[0], f_l[0])
+                        print "    r_slp               %.3f +- %.3f (stat) as in fQCD " % (r_slp, r_slp_stat)
+                        print "    mu    = fb_s/fb_l = %.3f +- %.3f (stat) from MC" % (mu, dmu)
+                        print "    gamma = fs_l/fs_s = %.3f +- %.3f (stat) from MC" % (gamma, dgamma)
+                        print "    b_s/n_s           = %.3f +- %.3f (stat) from MC" % (bs_ns, dbs_ns)
+                        print "    f_qcd(r, mu=1, gamma=1, bsns=*) = %.4f +- %.4f (f) +- %.4f (r)                                            [ +- %.4f (tot) ]" % ( 
+                                ifqcd_werr(f_s,f_l, r_slp,r_slp_stat,  1,0,   1,0,    0,0  ) )
+                        print "    f_qcd(r,  mu , gamma=1, bsns=0) = %.4f +- %.4f (f) +- %.4f (r) +- %.4f (g)                              [ +- %.4f (tot) ]" % ( 
+                                ifqcd_werr(f_s,f_l, r_slp,r_slp_stat, mu,dmu,  1,0,   0,0  ) )
+                        print "    f_qcd(r,  mu ,  gamma , bsns=0) = %.4f +- %.4f (f) +- %.4f (r) +- %.4f (g) +- %.4f (m)                [ +- %.4f (tot) ]" % ( 
+                                ifqcd_werr(f_s,f_l, r_slp,r_slp_stat, mu,dmu,  gamma,dgamma,  0,0  ) ) 
+                        print "    f_qcd(r,  mu ,  gamma ,  bsns ) = %.4f +- %.4f (f) +- %.4f (r) +- %.4f (g) +- %.4f (m) +- %.4f (b)  [ +- %.4f (tot) ]" % ( 
+                                ifqcd_werr(f_s,f_l, r_slp,r_slp_stat, mu,dmu,  gamma,dgamma,  bs_ns,dbs_ns) )
+                        print "Now with conservative systematics:"
+                        print "    mu    = fb_s/fb_l = %.3f +- %.3f (full) from MC with additional %3.0f%% uncertainty" % (mu, hypot(dmu,options.subSyst*(mu-1)), 100*options.subSyst)
+                        print "    gamma = fs_l/fs_s = %.3f +- %.3f (full) from MC with additional %3.0f%% uncertainty" % (gamma, hypot(dgamma,options.subSyst*(gamma-1)), 100*options.subSyst)
+                        print "    b_s/n_s           = %.3f +- %.3f (full) from MC with additional %3.0f%% uncertainty" % (bs_ns, hypot(dbs_ns,options.subSyst*bs_ns), 100*options.subSyst)
+                        print "    f_qcd(r,  mu ,  gamma ,  bsns ) = %.4f +- %.4f (f) +- %.4f (r) +- %.4f (g) +- %.4f (m) +- %.4f (b)  [ +- %.4f (tot) ]" % ( 
+                                ifqcd_werr(f_s,f_l, r_slp, r_slp_stat, mu,hypot(dmu,options.subSyst*(mu-1)),  gamma,hypot(dgamma,options.subSyst*(gamma-1)),  bs_ns,hypot(dbs_ns,options.subSyst*bs_ns)) )
+                        final = ifqcd_werr(f_s,f_l, r_slp, r_slp_stat, mu,hypot(dmu,options.subSyst*(mu-1)),  gamma,hypot(dgamma,options.subSyst*(gamma-1)),  bs_ns,hypot(dbs_ns,options.subSyst*bs_ns))
+                        f_qcd, df = final[0], final[-1] 
                     ilast = fr_fit.GetN()
                     fr_fit.Set(ilast+1)
                     fr_fit.SetPoint(ilast, xval, f_qcd)
@@ -361,6 +417,11 @@ if __name__ == "__main__":
                         else: 
                             rep["signal"]     = mergePlots("signal_"+zstate,     [rep[p] for p in mca.listSignals()     if p in rep])
                             rep["background"] = mergePlots("background_"+zstate, [rep[p] for p in mca.listBackgrounds() if p in rep])
+                            nsig, nsigErr = _h1NormWithError(rep["signal"],0)
+                            if zstate == "pass" and (nsig < 10*nsigErr):
+                                print "Very poor statistics in the signal passing template (%g +/- %g), will use the failing one (normalized to the passing)" % (nsig, nsigErr)
+                                rep["signal"] = mergePlots("signal_"+zstate,     [r[p] for p in mca.listSignals()     for r in freport_num_den.values() if p in r])
+                                rep["signal"].Scale(nsig/rep["signal"].Integral()) 
                         #rep["signal"].Smooth()
                         #rep["background"].Smooth()
                         # make dataset 
@@ -481,8 +542,17 @@ if __name__ == "__main__":
                     minim.setPrintLevel(-1); minim.setStrategy(0);
                     minim.minimize("Minuit2","migrad");
                     nll0 = nll.getVal(); f0 = var.getVal()
-                    bounds = []
-                    for x1,x2 in ((f0,f0-4*var.getError()), (f0,f0+4*var.getError())):
+                    bounds = []; search = []
+                    if f0 > 0: search.append((f0,max(0,f0-4*var.getError())))
+                    if f0 < 0: search.append((f0,min(1,f0+4*var.getError())))
+                    for x1,x2 in search:
+                        for iTry in xrange(10):
+                            var.setVal(x2)
+                            minim.minimize("Minuit2","migrad");
+                            y2 = 2*(nll.getVal()-nll0)
+                            if y2 > 1: break
+                            if x2 > x1: x2 = min((x2+1)/2, x2+(x2-x1))
+                            else:       x2 = max((x2+0)/2, x2-(x1-x2))
                         while abs(x1-x2) > 0.0005:
                             xc = 0.5*(x1+x2)
                             var.setVal(xc)
@@ -516,7 +586,7 @@ if __name__ == "__main__":
         for p,h in xzreport.iteritems(): outfile.WriteTObject(h)
         if is2D: ereport = dict([(title, effFromH3D(hist,options)) for (title, hist) in xzreport.iteritems()])
         else:    ereport = dict([(title, effFromH2D(hist,options, uncertainties="PF")) for (title, hist) in xzreport.iteritems()])
-        if options.algo == "fQCD":
+        if options.algo in ("fQCD","ifQCD"):
             ereport["data_fqcd"] = fr_fit
         elif options.algo == "fitSimND":
             ereport["data_fit"] = fr_fit

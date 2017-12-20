@@ -39,6 +39,24 @@ def fillXSecsFromSamplesFile(filename):
 
             xsections[sample_name] = xsec
 
+def checkIsData(dirname):
+    with open(osp.join(dirname,'config.pck'), 'r') as cfile:
+        config = pickle.load(cfile)
+        try:
+            return config.isData
+        except AttributeError:
+            return None
+
+def getXSecFromConfig(dirname):
+    with open(osp.join(dirname,'config.pck'), 'r') as cfile:
+        config = pickle.load(cfile)
+        try:
+            return config.xSection
+        except AttributeError:
+            if config.isData:
+                return None
+            else: raise
+
 def getNEvents(dirname):
     with open(osp.join(dirname,
                        'skimAnalyzerCount',
@@ -72,7 +90,7 @@ if __name__ == '__main__':
     parser.add_option("--samplesfile",
                       default=osp.join(os.environ.get('CMSSW_BASE',''),
                                        'src/CMGTools/RootTools/python/samples',
-                                       'samples_13TeV_RunIISpring16MiniAODv2.py'),
+                                       'samples_13TeV_RunIISummer16MiniAODv2.py'),
                       action="store", dest="samplesfile",
                       help=("Cache for xsec weights [default: %default]"))
     (options, args) = parser.parse_args()
@@ -91,6 +109,10 @@ if __name__ == '__main__':
         # try:
         nevs = getNEvents(osp.join(args[0],procdir))
         xsec = xsections.get(procdir, None)
+        if xsec == None:
+            try:
+                xsec = getXSecFromConfig(osp.join(args[0],procdir))
+            except IOError: pass
         try:
             newweight = 1000*float(xsec)/float(nevs)
             oldweight = xsecweights.setdefault(procdir,newweight)
@@ -103,7 +125,7 @@ if __name__ == '__main__':
                 print '...adding %-36s' % procdir,
                 print '  ', newweight, '(%f/%d)'%(xsec,nevs)
         except TypeError:
-            if not procdir in xsections and 'PromptReco' in procdir:
+            if not procdir in xsections and '2016' in procdir:
                 xsecweights[procdir] = 1.0
         # except IOError: pass
 

@@ -1,13 +1,13 @@
 #!/bin/bash
-P=plots/80X/TnP/
-IN="mupog_v0_jpsi"; OUT="$IN/00_harvest"
+P=plots/80X/TnP_Moriond17/
+IN="mupog_jpsi_v1"; OUT="$IN/00_harvest"
 
 MEAS="mu_Loose mu_Reco mu_LooseIdOnly"
 if [[ "$1" != "" ]]; then MEAS="$*"; fi
 for M in $MEAS; do
     case $M in
-        #mu_Loose)  MODS=" -s JDGauss -b bern3 --salt JGauss --salt JCB --balt bern4 --balt expo --alt mass --alt sip4 --alt sep "; TIT='Muon Loose id + reco efficiency' ;; 
-        mu_Loose)  MODS=" -s JDGauss -b bern3  "; TIT='Muon Loose id + reco efficiency' ;; 
+        mu_Loose)  MODS=" -s JDGauss -b bern3  --salt JCB --balt bern4  --alt mass --alt sip4 --alt sep "; TIT='Muon Loose id + reco efficiency' ;; 
+        #mu_Loose)  MODS=" -s JDGauss -b bern3  "; TIT='Muon Loose id + reco efficiency' ;; 
         mu_LooseIdOnly)  MODS=" -s JDGauss -b bern3 --salt JGauss --salt JCB --balt bern4 --balt expo --alt mass --alt sip4 --alt sep "; TIT='Muon Loose id efficiency' ;; 
         mu_Reco)   MODS=" -s JDGauss -b bern3 --salt JGauss --salt JCB --balt bern4 --balt expo --alt mass --alt sip4 --alt sep "; TIT='Muon reco efficiency' ;; 
     esac;
