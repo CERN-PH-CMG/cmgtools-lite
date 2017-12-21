@@ -1,1 +1,1 @@
-iChosen: if3(LepGood1_pdgId == -13, 0, 1) ; AlsoData
+iChosen: if3(LepGood1_pdgId == -13, iLepFO_Recl[0], iLepFO_Recl[1]) ; AlsoData

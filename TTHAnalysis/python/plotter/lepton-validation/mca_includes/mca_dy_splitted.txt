@@ -1,0 +1,8 @@
+DYbb : DYJetsToLL_M10to50_LO : xsec :   LepGood3_mcMatchId==0 && LepGood3_mcMatchAny == 5; FillColor=75,        Label="Z + b\#rightarrowl"
+DYcc : DYJetsToLL_M10to50_LO : xsec :   LepGood3_mcMatchId==0 && LepGood3_mcMatchAny == 4; FillColor=65,        Label="Z + c\#rightarrowl"
+DYjets : DYJetsToLL_M10to50_LO : xsec : LepGood3_mcMatchId==0 && LepGood3_mcMatchAny < 4 ;  FillColor=ROOT.kCyan, Label="Z + j\#rightarrowl"
+DYprompt : DYJetsToLL_M10to50_LO : xsec : LepGood3_mcMatchId!=0 ;  FillColor=ROOT.kYellow, Label="Z + l"
+DYbb : DYJetsToLL_M50_LO_ext_part1+DYJetsToLL_M50_LO_ext_part2+DYJetsToLL_M50_LO_ext_part3 : xsec : LepGood3_mcMatchId==0 && LepGood3_mcMatchAny == 5; FillColor=75, Label="Z + b\#rightarrowl"
+DYcc : DYJetsToLL_M50_LO_ext_part1+DYJetsToLL_M50_LO_ext_part2+DYJetsToLL_M50_LO_ext_part3 : xsec : LepGood3_mcMatchId==0 && LepGood3_mcMatchAny == 4; FillColor=50, Label="Z + c\#rightarrowl"
+DYjets : DYJetsToLL_M50_LO_ext_part1+DYJetsToLL_M50_LO_ext_part2+DYJetsToLL_M50_LO_ext_part3 : xsec : LepGood3_mcMatchId==0 && LepGood3_mcMatchAny < 4; FillColor=50, Label="Z + j\#rightarrowl"
+DYprompt : DYJetsToLL_M50_LO_ext_part1+DYJetsToLL_M50_LO_ext_part2+DYJetsToLL_M50_LO_ext_part3 : xsec : LepGood3_mcMatchId!=0; FillColor=ROOT.kYellow, Label="Z + l"

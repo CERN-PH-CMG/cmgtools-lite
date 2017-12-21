@@ -1,6 +1,8 @@
 TTfakes : TTJets_DiLepton             : xsec : ((LepGood_mcMatchId[0]==0 && LepGood_mcPromptGamma[0]==0) || (LepGood_mcMatchId[1]==0 && LepGood_mcPromptGamma[1]==0)) ; FillColor=ROOT.kGray, Label="t\#bar{t} fakes"
 TTfakes : TTJets_SingleLeptonFromT    : xsec : ((LepGood_mcMatchId[0]==0 && LepGood_mcPromptGamma[0]==0) || (LepGood_mcMatchId[1]==0 && LepGood_mcPromptGamma[1]==0)) ; FillColor=ROOT.kGray, Label="t\#bar{t} fakes"
 TTfakes : TTJets_SingleLeptonFromTbar : xsec : ((LepGood_mcMatchId[0]==0 && LepGood_mcPromptGamma[0]==0) || (LepGood_mcMatchId[1]==0 && LepGood_mcPromptGamma[1]==0)) ; FillColor=ROOT.kGray, Label="t\#bar{t} fakes"
+TTfakes : TTJets_SingleLeptonFromT_ext   : xsec : ((LepGood_mcMatchId[0]==0 && LepGood_mcPromptGamma[0]==0) || (LepGood_mcMatchId[1]==0 && LepGood_mcPromptGamma[1]==0)) ; FillColor=ROOT.kGray, Label="t\#bar{t} fakes"
+TTfakes : TTJets_SingleLeptonFromTbar_ext : xsec : ((LepGood_mcMatchId[0]==0 && LepGood_mcPromptGamma[0]==0) || (LepGood_mcMatchId[1]==0 && LepGood_mcPromptGamma[1]==0)) ; FillColor=ROOT.kGray, Label="t\#bar{t} fakes"
 
 WZ : WZTo3LNu:  xsec : ((LepGood_mcMatchId[0]==0 && LepGood_mcPromptGamma[0]==0) || (LepGood_mcMatchId[1]==0 && LepGood_mcPromptGamma[1]==0)) ; FillColor=ROOT.kOrange,   Label="WZ"
 
@@ -10,25 +12,46 @@ WZ : WZTo3LNu:  xsec : ((LepGood_mcMatchId[0]==0 && LepGood_mcPromptGamma[0]==0)
 #Single top : TToLeptons_sch_amcatnlo: xsec; FillColor=ROOT.kGray+2, Label="Single top"
 
 WJets : WJetsToLNu_LO: xsec ; FillColor=ROOT.kCyan+2, Label="W+jets"
-#DY    : DYJetsToLL_M10to50: xsec ; FillColor=ROOT.kCyan, Label="DY"
-#DY    : DYJetsToLL_M50:     xsec ; FillColor=ROOT.kCyan, Label="DY"
-DYfakes: DYJetsToLL_M10to50: xsec : ((LepGood_mcMatchId[0]==0 && LepGood_mcPromptGamma[0]==0) || (LepGood_mcMatchId[1]==0 && LepGood_mcPromptGamma[1]==0)) ; FillColor=ROOT.kCyan, Label="DY fakes"
-DYfakes: DYJetsToLL_M50:     xsec : ((LepGood_mcMatchId[0]==0 && LepGood_mcPromptGamma[0]==0) || (LepGood_mcMatchId[1]==0 && LepGood_mcPromptGamma[1]==0)) ; FillColor=ROOT.kCyan, Label="DY fakes"
+DYfakes: DYJetsToLL_M10to50_LO: xsec : ((LepGood_mcMatchId[0]==0 && LepGood_mcPromptGamma[0]==0) || (LepGood_mcMatchId[1]==0 && LepGood_mcPromptGamma[1]==0)) ; FillColor=ROOT.kCyan, Label="DY fakes"
+DYfakes: DYJetsToLL_M50_LO_ext_part1:     xsec : ((LepGood_mcMatchId[0]==0 && LepGood_mcPromptGamma[0]==0) || (LepGood_mcMatchId[1]==0 && LepGood_mcPromptGamma[1]==0)) ; FillColor=ROOT.kCyan, Label="DY fakes"
+DYfakes: DYJetsToLL_M50_LO_ext_part2:     xsec : ((LepGood_mcMatchId[0]==0 && LepGood_mcPromptGamma[0]==0) || (LepGood_mcMatchId[1]==0 && LepGood_mcPromptGamma[1]==0)) ; FillColor=ROOT.kCyan, Label="DY fakes"
+DYfakes: DYJetsToLL_M50_LO_ext_part3:     xsec : ((LepGood_mcMatchId[0]==0 && LepGood_mcPromptGamma[0]==0) || (LepGood_mcMatchId[1]==0 && LepGood_mcPromptGamma[1]==0)) ; FillColor=ROOT.kCyan, Label="DY fakes"
 
-TTW     : TTWToLNu    : 0.196  ; FillColor=ROOT.kGreen-5, Label="t\#bar{t}W"
-TTZ     : TTZToLLNuNu : 0.2526 ; FillColor=ROOT.kSpring+2, Label="t\#bar{t}Z"
+TTW     : TTWToLNu_ext+TTWToLNu_ext2     : xsec ; FillColor=ROOT.kGreen-5, Label="t\#bar{t}W"
+TTZ     : TTZToLLNuNu+TTZToLLNuNu_m1to10 : xsec ; FillColor=ROOT.kSpring+2, Label="t\#bar{t}Z"
 WWqq    : WpWpJJ      : xsec   ; FillColor=ROOT.kAzure-7, Label="W^{\#pm}W^{\#pm}qq"
 
-# 3.99 /fb
-data : DoubleEG_Run2016B_PromptReco_v2_runs_273150_274443+DoubleEG_Run2016B_PromptReco_v2_runs_274444_275125
-data : DoubleMuon_Run2016B_PromptReco_v2_runs_273150_274443+DoubleMuon_Run2016B_PromptReco_v2_runs_274444_275125
-data : MuonEG_Run2016B_PromptReco_v2_runs_273150_274443+MuonEG_Run2016B_PromptReco_v2_runs_274444_275125
-data : SingleElectron_Run2016B_PromptReco_v2_runs_273150_274443+SingleElectron_Run2016B_PromptReco_v2_runs_274444_275125
-data : SingleMuon_Run2016B_PromptReco_v2_runs_273150_274443+SingleMuon_Run2016B_PromptReco_v2_runs_274444_275125
+data : DoubleEG_2016B
+data : DoubleEG_2016C
+data : DoubleEG_2016D
+data : DoubleEG_2016E
+data : DoubleEG_2016F
+data : DoubleEG_2016G
+data : DoubleEG_2016H_ds1
+data : DoubleEG_2016H_ds2
+data : SingleElectron_2016B
+data : SingleElectron_2016C
+data : SingleElectron_2016D
+data : SingleElectron_2016E
+data : SingleElectron_2016F
+data : SingleElectron_2016G
+data : SingleElectron_2016H_ds1
+data : SingleElectron_2016H_ds2
 
-# 3.99 /fb
-QF_data: DoubleEG_Run2016B_PromptReco_v2_runs_273150_274443+DoubleEG_Run2016B_PromptReco_v2_runs_274444_275125            ; FillColor=ROOT.kGray+1, FakeRate='chargeFlips/fakeRate_chargeFlip_el.txt', Label='Ch. Mis.Id'
-QF_data: DoubleMuon_Run2016B_PromptReco_v2_runs_273150_274443+DoubleMuon_Run2016B_PromptReco_v2_runs_274444_275125        ; FillColor=ROOT.kGray+1, FakeRate='chargeFlips/fakeRate_chargeFlip_el.txt', Label='Ch. Mis.Id'
-QF_data: MuonEG_Run2016B_PromptReco_v2_runs_273150_274443+MuonEG_Run2016B_PromptReco_v2_runs_274444_275125                ; FillColor=ROOT.kGray+1, FakeRate='chargeFlips/fakeRate_chargeFlip_el.txt', Label='Ch. Mis.Id'
-QF_data: SingleElectron_Run2016B_PromptReco_v2_runs_273150_274443+SingleElectron_Run2016B_PromptReco_v2_runs_274444_275125; FillColor=ROOT.kGray+1, FakeRate='chargeFlips/fakeRate_chargeFlip_el.txt', Label='Ch. Mis.Id'
-QF_data: SingleMuon_Run2016B_PromptReco_v2_runs_273150_274443+SingleMuon_Run2016B_PromptReco_v2_runs_274444_275125        ; FillColor=ROOT.kGray+1, FakeRate='chargeFlips/fakeRate_chargeFlip_el.txt', Label='Ch. Mis.Id'
+QF_data : DoubleEG_2016B           ; FillColor=ROOT.kGray+1, FakeRate='chargeFlips/fakeRate_chargeFlip_el.txt', Label='Ch. Mis.Id'
+QF_data : DoubleEG_2016C           ; FillColor=ROOT.kGray+1, FakeRate='chargeFlips/fakeRate_chargeFlip_el.txt', Label='Ch. Mis.Id'
+QF_data : DoubleEG_2016D           ; FillColor=ROOT.kGray+1, FakeRate='chargeFlips/fakeRate_chargeFlip_el.txt', Label='Ch. Mis.Id'
+QF_data : DoubleEG_2016E           ; FillColor=ROOT.kGray+1, FakeRate='chargeFlips/fakeRate_chargeFlip_el.txt', Label='Ch. Mis.Id'
+QF_data : DoubleEG_2016F           ; FillColor=ROOT.kGray+1, FakeRate='chargeFlips/fakeRate_chargeFlip_el.txt', Label='Ch. Mis.Id'
+QF_data : DoubleEG_2016G           ; FillColor=ROOT.kGray+1, FakeRate='chargeFlips/fakeRate_chargeFlip_el.txt', Label='Ch. Mis.Id'
+QF_data : DoubleEG_2016H_ds1       ; FillColor=ROOT.kGray+1, FakeRate='chargeFlips/fakeRate_chargeFlip_el.txt', Label='Ch. Mis.Id'
+QF_data : DoubleEG_2016H_ds2       ; FillColor=ROOT.kGray+1, FakeRate='chargeFlips/fakeRate_chargeFlip_el.txt', Label='Ch. Mis.Id'
+QF_data : SingleElectron_2016B     ; FillColor=ROOT.kGray+1, FakeRate='chargeFlips/fakeRate_chargeFlip_el.txt', Label='Ch. Mis.Id'
+QF_data : SingleElectron_2016C     ; FillColor=ROOT.kGray+1, FakeRate='chargeFlips/fakeRate_chargeFlip_el.txt', Label='Ch. Mis.Id'
+QF_data : SingleElectron_2016D     ; FillColor=ROOT.kGray+1, FakeRate='chargeFlips/fakeRate_chargeFlip_el.txt', Label='Ch. Mis.Id'
+QF_data : SingleElectron_2016E     ; FillColor=ROOT.kGray+1, FakeRate='chargeFlips/fakeRate_chargeFlip_el.txt', Label='Ch. Mis.Id'
+QF_data : SingleElectron_2016F     ; FillColor=ROOT.kGray+1, FakeRate='chargeFlips/fakeRate_chargeFlip_el.txt', Label='Ch. Mis.Id'
+QF_data : SingleElectron_2016G     ; FillColor=ROOT.kGray+1, FakeRate='chargeFlips/fakeRate_chargeFlip_el.txt', Label='Ch. Mis.Id'
+QF_data : SingleElectron_2016H_ds1 ; FillColor=ROOT.kGray+1, FakeRate='chargeFlips/fakeRate_chargeFlip_el.txt', Label='Ch. Mis.Id'
+QF_data : SingleElectron_2016H_ds2 ; FillColor=ROOT.kGray+1, FakeRate='chargeFlips/fakeRate_chargeFlip_el.txt', Label='Ch. Mis.Id'
+

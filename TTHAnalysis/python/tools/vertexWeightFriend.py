@@ -4,8 +4,8 @@ class VertexWeightFriend:
     def __init__(self,myfile,targetfile,myhist="pileup",targethist="pileup",name="vtxWeight",verbose=False,vtx_coll_to_reweight="nVert"):
         self.name = name
         self.verbose = verbose
-        self.myvals = self.load(myfile,myhist)
-        self.targetvals = self.load(targetfile,targethist)
+        self.myvals, self.dennorm = self.load(myfile,myhist)
+        self.targetvals, self.numnorm = self.load(targetfile,targethist)
         self.vtxCollectionInEvent = vtx_coll_to_reweight
         self.warned = False
         def w2(t,m):
@@ -46,13 +46,16 @@ class VertexWeightFriend:
         tf = ROOT.TFile.Open(filename)
         hist = tf.Get(hname)
         vals = [ hist.GetBinContent(i) for i in xrange(1,hist.GetNbinsX()+1) ]
+        for i in xrange(1,len(vals)-1):
+            if vals[i] == 0 and vals[i-1] > 0 and vals[i+1] > 0:
+                vals[i] = 0.5*(vals[i-1]+vals[i+1])
         if self.verbose:
             print "Normalization of ",hname,": ",sum(vals)
         tf.Close()
         if norm: 
             scale = 1.0/sum(vals)
             vals = [ v*scale for v in vals ]
-        return vals
+        return vals, (1.0/scale if norm else 1)
     def listBranches(self):
         return [ (self.name,'F') ]
     def __call__(self,event):
@@ -65,7 +68,13 @@ class VertexWeightFriend:
                 print "WARNING! Variable ",self.vtxCollectionInEvent," is missing in the tree. Setting the weight to 1."
                 self.warned = True
             return { self.name: 1 }
-
+    def printPUWCode(self,name):
+        privname = name
+        pubname  = name[1:]
+        print ""
+        print "float %s[%d] = { %s };" % (privname, len(self.weights), ", ".join(map(str,self.weights)))
+        print "float %s(int nVert) { return %s[std::min(nVert,%d)] * (%s/%s); } " % (pubname, privname, len(self.weights)-1, self.numnorm, self.dennorm);
+        print ""
 if __name__ == '__main__':
     from sys import argv
     class Tester(Module):
@@ -76,10 +85,12 @@ if __name__ == '__main__':
             ret = self.mc(ev)
             print ev.nVert, ret.values()[0]
     test = Tester("tester")              
-    el = EventLoop([ test ])
     import os.path
     if os.path.exists(argv[1]):
+        el = EventLoop([ test ])
         file = ROOT.TFile(argv[1])
         tree = file.Get("tree")
         tree.vectorTree = True
         el.loop([tree], maxEvents = 100000 if len(argv) < 4 else int(argv[3]))
+    elif argv[1].startswith("_puw"):
+        test.mc.printPUWCode(argv[1]) 

@@ -35,6 +35,7 @@ def makeRatios(data):
             if abs(xn[i]-xd[i2]) < 1e-4: 
                 found = True; break
         if yd[i2] <= 0 or not found:
+            print "Missing ratio for x[%d] = %g" % (i,xn[i])
             unity.SetPoint(i , xn[i ], -99)
             ratio.SetPoint(i , xn[i ], -99)
             rater.SetPoint(i , xn[i ], -99)
