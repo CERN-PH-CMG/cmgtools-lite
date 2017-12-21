@@ -5,29 +5,6 @@ import numpy as np
 # import some parameters from wmass_parameters.py, they are also used by other scripts
 from wmass_parameters import *
 
-if len(sys.argv) < 2:
-    print "----- WARNING -----"
-    print "Too few arguments: need at list output folder name."
-    print "-------------------"
-    quit()
-
-
-FASTTEST=''
-#FASTTEST='--max-entries 1000 '
-T='/eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3_WENUSKIM_V3'
-# if 'pccmsrm29' in os.environ['HOSTNAME']: T = T.replace('/data1/emanuele/wmass','/u2/emanuele')
-# elif 'lxplus' in os.environ['HOSTNAME']: T = T.replace('/data1/emanuele/wmass','/afs/cern.ch/work/e/emanuele/TREES/')
-# elif 'cmsrm-an' in os.environ['HOSTNAME']: T = T.replace('/data1/emanuele/wmass','/t3/users/dimarcoe/')
-print "used trees from: ",T
-J=4
-BASECONFIG="w-helicity-13TeV/wmass_e"
-MCA=BASECONFIG+'/mca-80X-wenu-helicity.txt'
-CUTFILE=BASECONFIG+'/wenu.txt'
-SYSTFILE=BASECONFIG+'/systsEnv.txt'
-# moved below option parser to allow their setting with options
-#VAR="mt_lu_cart(LepCorr1_pt,LepGood1_phi,w_ux,w_uy) 90,30,120"
-#VAR="LepCorr1_pt 28,36,50"
-# FIMXE: NPDFSYSTS to be made consistent with 13 TeV setup (CT10 was for 8 TeV)
 NPDFSYSTS=53 # for CT10
 
 def writePdfSystsToMCA(sample,syst,dataset,xsec,vec_weight,filename):
@@ -45,21 +22,35 @@ def writePdfSystsToSystFile(sample,syst,channel,filename):
     print "written pdf syst configuration to ",filename
         
 from optparse import OptionParser
-parser = OptionParser(usage="%prog testname ")
-
+parser = OptionParser(usage="%prog [options] mc.txt cuts.txt var bins systs.txt outdir ")
 parser.add_option("-q", "--queue",    dest="queue",     type="string", default=None, help="Run jobs on lxbatch instead of locally");
 parser.add_option("--dry-run", dest="dryRun",    action="store_true", default=False, help="Do not run the job, only print the command");
 parser.add_option("-s", "--signal-cards",  dest="signalCards",  action="store_true", default=False, help="Make the signal part of the datacards");
 parser.add_option("-b", "--bkgdata-cards", dest="bkgdataCards", action="store_true", default=False, help="Make the background and data part of the datacards");
+parser.add_option("-W", "--weight", dest="weightExpr", default="-W 1", help="Event weight expression (default 1)");
+parser.add_option("-P", "--path", dest="path", type="string",default=None, help="Path to directory with input trees and pickle files");
 parser.add_option("--not-unroll2D", dest="notUnroll2D", action="store_true", default=False, help="Do not unroll the TH2Ds in TH1Ds needed for combine (to make 2D plots)");
 (options, args) = parser.parse_args()
 
-VAR="ptElFull(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_r9,run,isData,evt):LepGood1_eta 48,-2.5,2.5,20,30.,50."
-print "Fitting ", str(VAR)
+if len(sys.argv) < 6:
+    parser.print_usage()
+    quit()
+
+
+FASTTEST=''
+#FASTTEST='--max-entries 1000 '
+T=options.path
+print "used trees from: ",T
+J=4
+MCA = args[0]
+CUTFILE = args[1]
+fitvar = args[2]
+binning = args[3]
+SYSTFILE = args[4]
 
 if not os.path.exists("cards/"):
     os.makedirs("cards/")
-outdir="cards/"+args[0]
+outdir="cards/"+args[5]
 
 #FIXME: for the moment avoid this part, need to understand which weight to use
 # write systematic variations to be considered in the MCA file
@@ -72,9 +63,8 @@ SYSTFILEALL=('.').join(SYSTFILE.split('.')[:-1])+"-all.txt"
 copyfile(SYSTFILE,SYSTFILEALL)
 #writePdfSystsToSystFile("W","pdf","CMS_We",SYSTFILEALL)
 
-fitvar = VAR.split()[0]
-x_range = (VAR.split()[1]).split(",")[-2:]
-ARGS=" ".join([MCASYSTS,CUTFILE,"'"+fitvar+"' "+VAR.split()[1],SYSTFILEALL])
+ARGS=" ".join([MCASYSTS,CUTFILE,"'"+fitvar+"' "+"'"+binning+"'",SYSTFILEALL])
+BASECONFIG=os.path.dirname(MCA)
 if options.queue:
     ARGS = ARGS.replace(BASECONFIG,os.getcwd()+"/"+BASECONFIG)
 OPTIONS=" -P "+T+" --s2v -j "+str(J)+" -l "+str(luminosity)+" -f --obj tree "+FASTTEST
@@ -92,7 +82,6 @@ if options.queue:
 if not os.path.exists(outdir): os.mkdir(outdir)
 if options.queue and not os.path.exists(outdir+"/jobs"): os.mkdir(outdir+"/jobs")
 
-W=" -W 'puw2016_nTrueInt_36fb(nTrueInt)*trgSF_We(LepGood1_pdgId,LepGood1_pt,LepGood1_eta,2)*leptonSF_We(LepGood1_pdgId,LepGood1_pt,LepGood1_eta)' "
 POSCUT=" -A alwaystrue positive 'LepGood1_charge>0' "
 NEGCUT=" -A alwaystrue negative 'LepGood1_charge<0' "
 if options.signalCards:
@@ -105,11 +94,11 @@ if options.signalCards:
             print "Making card for %s<genw_y<%s and signal process with charge %s " % (WYBinsEdges[iy],WYBinsEdges[iy+1],charge)
             ycut=" -A alwaystrue YW%d 'genw_y>%s && genw_y<%s' " % (iy,WYBinsEdges[iy],WYBinsEdges[iy+1])
             ycut += POSCUT if charge=='p' else NEGCUT
-            xpsel=' --xp "W%s.*,Z,Top,DiBosons,data.*" --asimov ' % ('p' if charge=='m' else 'm')
+            xpsel=' --xp "W%s.*,Z,Top,DiBosons,TauDecaysW,data.*" --asimov ' % ('p' if charge=='m' else 'm')
             if not os.path.exists(outdir): os.mkdir(outdir)
             if options.queue and not os.path.exists(outdir+"/jobs"): os.mkdir(outdir+"/jobs")
             dcname = "W%s_el_Ybin_%d" % (charge,iy)
-            BIN_OPTS=OPTIONS+W+" -o "+dcname+" --od "+outdir + xpsel + ycut
+            BIN_OPTS=OPTIONS + " -W '" + options.weightExpr + "'" + " -o "+dcname+" --od "+outdir + xpsel + ycut
             if options.queue:
                 srcfile=outdir+"/jobs/"+dcname+".sh"
                 logfile=outdir+"/jobs/"+dcname+".log"
@@ -141,7 +130,7 @@ if options.bkgdataCards:
         xpsel=' --xp "W.*" '
         chargecut = POSCUT if charge=='p' else NEGCUT
         dcname = "bkg_plus_data_el_%s" % charge
-        BIN_OPTS=OPTIONS+W+" -o "+dcname+" --od "+outdir + xpsel + chargecut
+        BIN_OPTS=OPTIONS + " -W '" + options.weightExpr + "'" + " -o "+dcname+" --od "+outdir + xpsel + chargecut
         if options.queue:
             srcfile=outdir+"/jobs/"+dcname+".sh"
             logfile=outdir+"/jobs/"+dcname+".log"
