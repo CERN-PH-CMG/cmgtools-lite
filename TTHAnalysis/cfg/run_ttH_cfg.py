@@ -576,9 +576,9 @@ elif test == '94X-Data':
     if what == "DoubleLeps":
         json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions17/13TeV/Final/Cert_294927-306462_13TeV_PromptReco_Collisions17_JSON.txt'
         DoubleMuon = kreator.makeDataComponent("DoubleMuon_Run2017C", "/DoubleMuon/Run2017C-17Nov2017-v1/MINIAOD", "CMS", ".*root", run_range = (299649,299649), triggers = [])
-        DoubleEG = kreator.makeDataComponent("DoubleEG_Run2017E", "/DoubleMuon/Run2017E-17Nov2017-v1/MINIAOD", "CMS", ".*root", run_range = (304062,304062), triggers = [])
+        DoubleEG = kreator.makeDataComponent("DoubleEG_Run2017E", "/DoubleEG/Run2017E-17Nov2017-v1/MINIAOD", "CMS", ".*root", run_range = (304062,304062), triggers = [])
         DoubleMuon.files = [ 'root://eoscms//eos/cms/store/data/Run2017C/DoubleMuon/MINIAOD/17Nov2017-v1/50000/00519DC1-7ED3-E711-96E1-008CFAFBE5E0.root'  ]
-        DoubleEG.files = [ 'root://eoscms//eos/cms/store/data/Run2017E/DoubleEG/MINIAOD/17Nov2017-v1/40000/4AA76120-84D3-E711-8585-02163E01A59E.root'  ]
+        DoubleEG.files = [ 'root://eoscms//eos/cms/store/data/Run2017E/DoubleEG/MINIAOD/17Nov2017-v1/40000/C4E9555D-B4D3-E711-98E0-02163E01A1CF.root'  ]
         selectedComponents = [ DoubleMuon, DoubleEG ]
     for comp in selectedComponents:
         comp.json = json
