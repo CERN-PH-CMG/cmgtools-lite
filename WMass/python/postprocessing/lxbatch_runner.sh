@@ -7,7 +7,7 @@ WORK=$1; shift
 SRC=$1; shift
 cd $SRC; 
 eval $(scramv1 runtime -sh);
-export LD_LIBRARY_PATH=${CMSSW_BASE}/src/CMGTools/MonoXAnalysis/python/postprocessing/helpers:${LD_LIBRARY_PATH}
+export LD_LIBRARY_PATH=${CMSSW_BASE}/src/CMGTools/WMass/python/postprocessing/helpers:${LD_LIBRARY_PATH}
 cd $WORK;
 ulimit -c 0
 exec $*

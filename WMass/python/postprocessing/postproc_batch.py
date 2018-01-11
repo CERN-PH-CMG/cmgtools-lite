@@ -5,21 +5,21 @@ ROOT.PyConfig.IgnoreCommandLineOptions = True
 from importlib import import_module
 from glob import glob
 import re, pickle, math
-from CMGTools.MonoXAnalysis.postprocessing.framework.postprocessor import PostProcessor
+from CMGTools.WMass.postprocessing.framework.postprocessor import PostProcessor
 
-DEFAULT_MODULES = [("CMGTools.MonoXAnalysis.postprocessing.examples.puWeightProducer", "puWeight,puWeight2016BF"),
-                   ("CMGTools.MonoXAnalysis.postprocessing.examples.lepSFProducer","lepSF,trgSF"),
-                   ("CMGTools.MonoXAnalysis.postprocessing.examples.lepVarProducer","eleRelIsoEA,lepQCDAwayJet"),
-                   ("CMGTools.MonoXAnalysis.postprocessing.examples.jetReCleaner","jetReCleaner"),
-                   #("CMGTools.MonoXAnalysis.postprocessing.examples.genFriendProducer","genQEDJets"),
+DEFAULT_MODULES = [("CMGTools.WMass.postprocessing.examples.puWeightProducer", "puWeight,puWeight2016BF"),
+                   ("CMGTools.WMass.postprocessing.examples.lepSFProducer","lepSF,trgSF"),
+                   ("CMGTools.WMass.postprocessing.examples.lepVarProducer","eleRelIsoEA,lepQCDAwayJet,eleCalibrated"),
+                   ("CMGTools.WMass.postprocessing.examples.jetReCleaner","jetReCleaner"),
+                   #("CMGTools.WMass.postprocessing.examples.genFriendProducer","genQEDJets"),
                    ]
 
-RECOILTEST_MODULES=[("CMGTools.MonoXAnalysis.postprocessing.examples.puWeightProducer", "puWeight2016G"),
-                    ("CMGTools.MonoXAnalysis.postprocessing.examples.lepSFProducer","lepSF,trgSF"),
-                    ("CMGTools.MonoXAnalysis.postprocessing.examples.lepVarProducer","eleRelIsoEA,lepQCDAwayJet"),
-                    ("CMGTools.MonoXAnalysis.postprocessing.examples.jetReCleaner","jetReCleaner"),
-                    ("CMGTools.MonoXAnalysis.postprocessing.examples.genFriendProducer","genQEDJets13TeV"),
-                    ("CMGTools.MonoXAnalysis.postprocessing.examples.eventRecoilAnalyzer","eventRecoilAnalyzer"),
+RECOILTEST_MODULES=[("CMGTools.WMass.postprocessing.examples.puWeightProducer", "puWeight2016G"),
+                    ("CMGTools.WMass.postprocessing.examples.lepSFProducer","lepSF,trgSF"),
+                    ("CMGTools.WMass.postprocessing.examples.lepVarProducer","eleRelIsoEA,lepQCDAwayJet,eleCalibrated"),
+                    ("CMGTools.WMass.postprocessing.examples.jetReCleaner","jetReCleaner"),
+                    ("CMGTools.WMass.postprocessing.examples.genFriendProducer","genQEDJets13TeV"),
+                    ("CMGTools.WMass.postprocessing.examples.eventRecoilAnalyzer","eventRecoilAnalyzer"),
                    ]
 
 if __name__ == "__main__":

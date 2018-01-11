@@ -2,11 +2,11 @@
 import os
 import ROOT
 ROOT.PyConfig.IgnoreCommandLineOptions = True
-from CMGTools.MonoXAnalysis.postprocessing.framework.branchselection import BranchSelection
-from CMGTools.MonoXAnalysis.postprocessing.framework.datamodel import InputTree
-from CMGTools.MonoXAnalysis.postprocessing.framework.eventloop import eventLoop
-from CMGTools.MonoXAnalysis.postprocessing.framework.output import FriendOutput, FullOutput
-from CMGTools.MonoXAnalysis.postprocessing.framework.preskimming import preSkim
+from CMGTools.WMass.postprocessing.framework.branchselection import BranchSelection
+from CMGTools.WMass.postprocessing.framework.datamodel import InputTree
+from CMGTools.WMass.postprocessing.framework.eventloop import eventLoop
+from CMGTools.WMass.postprocessing.framework.output import FriendOutput, FullOutput
+from CMGTools.WMass.postprocessing.framework.preskimming import preSkim
 
 class PostProcessor :
     def __init__(self,outputDir,inputFiles,cut=None,branchsel=None,modules=[],compression="LZMA:9",friend=False,postfix=None,json=None,noOut=False,justcount=False,eventRange=None):

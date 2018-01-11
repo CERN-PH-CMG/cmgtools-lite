@@ -1,5 +1,5 @@
-#ifndef CMGTools_MonoXAnalysisTools_genQEDJetHelperHelper_h
-#define CMGTools_MonoXAnalysisTools_genQEDJetHelperHelper_h
+#ifndef CMGTools_WMassTools_genQEDJetHelperHelper_h
+#define CMGTools_WMassTools_genQEDJetHelperHelper_h
 
 #include <iostream>
 #include <vector>

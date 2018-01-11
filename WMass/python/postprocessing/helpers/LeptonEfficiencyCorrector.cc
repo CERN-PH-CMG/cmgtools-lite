@@ -1,5 +1,5 @@
-#ifndef CMGTools_MonoXAnalysisTools_LeptonEfficiencyCorrector_h
-#define CMGTools_MonoXAnalysisTools_LeptonEfficiencyCorrector_h
+#ifndef CMGTools_WMassTools_LeptonEfficiencyCorrector_h
+#define CMGTools_WMassTools_LeptonEfficiencyCorrector_h
 
 #include <iostream>
 #include <string>

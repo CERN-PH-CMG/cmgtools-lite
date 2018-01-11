@@ -3,8 +3,8 @@ import os
 import numpy as np
 ROOT.PyConfig.IgnoreCommandLineOptions = True
 
-from CMGTools.MonoXAnalysis.postprocessing.framework.datamodel import Collection 
-from CMGTools.MonoXAnalysis.postprocessing.framework.eventloop import Module
+from CMGTools.WMass.postprocessing.framework.datamodel import Collection 
+from CMGTools.WMass.postprocessing.framework.eventloop import Module
 from PhysicsTools.HeppyCore.utils.deltar import deltaR
 
 class lepIsoEAProducer(Module):
@@ -12,7 +12,7 @@ class lepIsoEAProducer(Module):
         self.rho = rho
         self.EAinputfile = EAfile
         if "/EffectiveAreas_cc.so" not in ROOT.gSystem.GetLibraries():
-            ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/MonoXAnalysis/python/postprocessing/helpers/EffectiveAreas.cc+" % os.environ['CMSSW_BASE'])
+            ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/WMass/python/postprocessing/helpers/EffectiveAreas.cc+" % os.environ['CMSSW_BASE'])
     def beginJob(self):
         self._worker = ROOT.EffectiveAreas(self.EAinputfile)
     def endJob(self):
@@ -75,9 +75,52 @@ class lepAwayJetProducer(Module):
             self.out.fillBranch("LepGood_awayJet_"+V,ret[V])
         return True
 
+class lepCalibratedEnergyProducer(Module):
+    def __init__(self,correctionFile,seed=0,synchronization=False):
+        self.corrFile = correctionFile
+        self.seed = seed
+        self.synchronization = synchronization
+        if "/EnergyScaleCorrection_class_cc.so" not in ROOT.gSystem.GetLibraries():
+            ROOT.gROOT.ProcessLine(".L %s/src/EgammaAnalysis/ElectronTools/src/EnergyScaleCorrection_class.cc+" % os.environ['CMSSW_BASE'])
+    def beginJob(self):
+        self._worker = ROOT.EnergyScaleCorrection_class(self.corrFile,self.seed)
+        self.rng = ROOT.TRandom3()
+        self.rng.SetSeed(self.seed)
+    def endJob(self):
+        pass
+    def beginFile(self, inputFile, outputFile, inputTree, wrappedOutputTree):
+        self.out = wrappedOutputTree
+        self.out.branch("LepGood_calPt_step1", "F", lenVar="nLepGood")
+        #self.out.branch("LepGood_calPt", "F", lenVar="nLepGood")
+    def endFile(self, inputFile, outputFile, inputTree, wrappedOutputTree):
+        pass
+    def gauss(self):
+        if self.synchronization: return 1.0
+        else: return self.rng.Gaus()
+    def analyze(self, event):
+        """process event, return True (go to next module) or False (fail, go to next event)"""
+        leps = Collection(event, "LepGood")
+        calPt_step1 = []
+        calPt = []
+        for l in leps:
+            if abs(l.pdgId)!=11: # implemented only for electrons
+                calPt.append(-999.) 
+                calPt_step1.append(-999.) 
+            else:
+                scale = self._worker.ScaleCorrection(event.run,abs(l.etaSc)<1.479,l.r9,abs(l.eta),l.pt)
+                smear = self._worker.getSmearingSigma(event.run,abs(l.etaSc)<1.479,l.r9,abs(l.eta),l.pt,0.,0.)
+                if event.isData:
+                    calPt_step1.append(l.pt * scale)
+                else:
+                    corr = 1.0 + smear * self.gauss()
+                    calPt_step1.append(l.pt * corr)
+        self.out.fillBranch("LepGood_calPt_step1", calPt_step1)
+        return True
+    
 
 # define modules using the syntax 'name = lambda : constructor' to avoid having them loaded when not needed
 
 eleRelIsoEA = lambda : lepIsoEAProducer("%s/src/RecoEgamma/ElectronIdentification/data/Summer16/effAreaElectrons_cone03_pfNeuHadronsAndPhotons_80X.txt" % os.environ['CMSSW_BASE'])
 lepQCDAwayJet = lambda : lepAwayJetProducer(jetSel = lambda jet : jet.pt > 30 and abs(jet.eta) < 2.4,
                                             pairSel =lambda lep, jet: deltaR(lep.eta,lep.phi, jet.eta, jet.phi) > 0.7)
+eleCalibrated = lambda : lepCalibratedEnergyProducer("CMGTools/WMass/python/postprocessing/data/leptonScale/el/Run2016_legacyrereco")
