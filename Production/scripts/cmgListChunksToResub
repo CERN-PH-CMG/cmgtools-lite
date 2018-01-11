@@ -13,7 +13,7 @@ LSFL=false
 F=JSONAnalyzer/JSON.pck
 LOC=false
 P=false
-Q=8nh
+Q=""
 Z=false
 
 # evaluate parameters
@@ -25,7 +25,7 @@ while true; do
     -t )            F="$2"; shift 2 ;;
     -l )            LOC=true; shift ;;
     -p )            P=true; shift ;;
-    -q )            Q="$2"; shift 2 ;;
+    -q )            Q="-q $2"; shift 2 ;;
     -z )            Z=true; shift ;;
     -- )            shift; break ;;
     *  )            break ;;
@@ -92,7 +92,7 @@ for D in */; do
                 echo "cmgRunChunkLocally ${BASE}${D} ";
 	        else
                 # print batch command
-		        echo "cmgResubChunk -q $Q ${BASE}${D} ";
+		        echo "cmgResubChunk $Q ${BASE}${D} ";
             fi
         else
             $TERSE || echo "# Chunk ${BASE}${D} does not have a LSFJOB directory, maybe still running? ";
@@ -108,7 +108,7 @@ if $Z; then
             if $LOC; then
                 echo "cmgRunChunkLocally ${BASE}${D}     # zombie";
             else
-                echo "cmgResubChunk -q $Q ${BASE}${D}    # zombie";
+                echo "cmgResubChunk $Q ${BASE}${D}    # zombie";
             fi
         fi;
     done

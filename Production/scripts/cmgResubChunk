@@ -20,4 +20,9 @@ fi
 LAB="$(basename $PWD)"; if [[ "$1" != "" ]]; then LAB=$1; fi;
 rename LSFJ OLD_LSFJ *; 
 test -f submission_failed && rm submission_failed
-bsub -q $Q -J $LAB < batchScript.sh
+
+if [[ "$Q" != "" ]]; then
+    bsub -q $Q -J $LAB < batchScript.sh;
+else; then
+    run_condor.sh batchScript.sh
+fi;
