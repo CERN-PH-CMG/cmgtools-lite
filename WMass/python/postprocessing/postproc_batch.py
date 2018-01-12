@@ -11,7 +11,7 @@ DEFAULT_MODULES = [("CMGTools.WMass.postprocessing.examples.puWeightProducer", "
                    ("CMGTools.WMass.postprocessing.examples.lepSFProducer","lepSF,trgSF"),
                    ("CMGTools.WMass.postprocessing.examples.lepVarProducer","eleRelIsoEA,lepQCDAwayJet,eleCalibrated"),
                    ("CMGTools.WMass.postprocessing.examples.jetReCleaner","jetReCleaner"),
-                   #("CMGTools.WMass.postprocessing.examples.genFriendProducer","genQEDJets"),
+                   ("CMGTools.WMass.postprocessing.examples.genFriendProducer","genQEDJets"),
                    ]
 
 RECOILTEST_MODULES=[("CMGTools.WMass.postprocessing.examples.puWeightProducer", "puWeight2016G"),
@@ -154,7 +154,7 @@ if __name__ == "__main__":
 
     maintimer = ROOT.TStopwatch()
     def _runIt(myargs):
-        (name,fin,sample_nevt,fout,data,range,chunk) = myargs
+        (dataset,fin,sample_nevt,fout,data,range,chunk) = myargs
         modules = []
         for mod, names in imports: 
             import_module(mod)
@@ -166,6 +166,9 @@ if __name__ == "__main__":
                     print "Modules to run: ",options.modules,"  name = ",name
                     if len(options.modules) and name not in options.modules: continue
                     print "Loading %s from %s " % (name, mod)
+                    print "Running on dataset = ",dataset
+                    signal = any(x in dataset for x in "WJetsToLNu_NoSkim".split())
+                    if name=='genQEDJets' and not signal: continue
                     modules.append(getattr(obj,name)())
         if options.noOut:
             if len(modules) == 0: 
