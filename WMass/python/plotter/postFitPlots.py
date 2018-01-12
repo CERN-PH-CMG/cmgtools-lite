@@ -50,7 +50,7 @@ if __name__ == "__main__":
     parser.add_option("--do-stack", dest="doStack", action="store_true", default=False, help="do the stack plot of all the processes and compare with data")
     parser.add_option("--rollback2D", dest="rollBackTo2D", type='string', default=None, help="roll back to 2D. It uses the option variable, which has to be in plots.txt")
     (options, args) = parser.parse_args()
-    options.path = ["/data1/emanuele/wmass/TREES_1LEP_80X_V3_WENUSKIM_V3/"]
+    #options.path = ["/data1/emanuele/wmass/TREES_1LEP_80X_V3_WENUSKIM_V3/"]
     options.lumi = 35.9
     basedir = args[0]
     infile = ROOT.TFile(args[1]);
@@ -168,7 +168,7 @@ if __name__ == "__main__":
                   h2d.Draw("COLZ0")
                   outfile.WriteTObject(h2d)
               else:
-                  g.GetXaxis().SetTitle("rolled bin number")
+                  h.GetXaxis().SetTitle("rolled bin number")
                   h.Draw("HIST")
                   if options.showMCError:
                       totalError = doShadedUncertainty(p)

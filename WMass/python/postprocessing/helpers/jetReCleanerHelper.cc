@@ -1,5 +1,5 @@
-#ifndef CMGTools_MonoXAnalysisTools_JetReCleanerHelper_h
-#define CMGTools_MonoXAnalysisTools_JetReCleanerHelper_h
+#ifndef CMGTools_WMassTools_JetReCleanerHelper_h
+#define CMGTools_WMassTools_JetReCleanerHelper_h
 
 #include <iostream>
 #include <vector>

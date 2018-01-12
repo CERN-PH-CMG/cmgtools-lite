@@ -1,8 +1,8 @@
 import ROOT
 ROOT.PyConfig.IgnoreCommandLineOptions = True
 
-from CMGTools.MonoXAnalysis.postprocessing.framework.datamodel import Collection 
-from CMGTools.MonoXAnalysis.postprocessing.framework.eventloop import Module
+from CMGTools.WMass.postprocessing.framework.datamodel import Collection 
+from CMGTools.WMass.postprocessing.framework.eventloop import Module
 
 class mhtProducer(Module):
     def __init__(self, jetSelection, muonSelection, electronSelection):

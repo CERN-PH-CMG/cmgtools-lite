@@ -3,7 +3,7 @@ import os, sys
 import ROOT
 ROOT.PyConfig.IgnoreCommandLineOptions = True
 from importlib import import_module
-from CMGTools.MonoXAnalysis.postprocessing.framework.postprocessor import PostProcessor
+from CMGTools.WMass.postprocessing.framework.postprocessor import PostProcessor
 
 from genFriendProducer import *
 from eventRecoilAnalyzer import *

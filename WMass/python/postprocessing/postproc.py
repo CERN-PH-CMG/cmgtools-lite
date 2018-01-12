@@ -3,8 +3,8 @@ import os, sys
 import ROOT
 ROOT.PyConfig.IgnoreCommandLineOptions = True
 from importlib import import_module
-from CMGTools.MonoXAnalysis.postprocessing.framework.postprocessor import PostProcessor
-from CMGTools.MonoXAnalysis.postprocessing.postproc_batch import * 
+from CMGTools.WMass.postprocessing.framework.postprocessor import PostProcessor
+from CMGTools.WMass.postprocessing.postproc_batch import * 
 
 if __name__ == "__main__":
     from optparse import OptionParser
