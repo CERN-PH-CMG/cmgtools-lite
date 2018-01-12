@@ -9,8 +9,8 @@ Wminus_right : WJetsToLNu_NoSkim_part* : 3.*20508.9    : genw_decayId == 12 && g
 
 Z    : DYJetsToLL_M50_part* : 1921.8*3; FillColor=ROOT.kAzure+2, Label="Z", NormSystematic=0.04
 
-Top  : TTJets_SingleLeptonFromT_ext_part* + TTJets_SingleLeptonFromT_part* :  xsec; FillColor=ROOT.kGray+2, Label="Top", NormSystematic=0.09
-Top  : TTJets_SingleLeptonFromTbar_ext_part* + TTJets_SingleLeptonFromTbar_part* :  xsec; FillColor=ROOT.kGray+2, Label="Top", NormSystematic=0.09
+Top  : TTJets_SingleLeptonFromT_part* :  xsec; FillColor=ROOT.kGray+2, Label="Top", NormSystematic=0.09
+Top  : TTJets_SingleLeptonFromTbar_part* :  xsec; FillColor=ROOT.kGray+2, Label="Top", NormSystematic=0.09
 Top  : TToLeptons_sch_amcatnlo :      xsec; FillColor=ROOT.kGray+2, Label="Top", NormSystematic=0.04
 Top  : T_tch_powheg_part* :     xsec;  FillColor=ROOT.kGray+2, Label="Top", NormSystematic=0.04
 Top  : TBar_tch_powheg_part* :     xsec;  FillColor=ROOT.kGray+2, Label="Top", NormSystematic=0.04
@@ -23,7 +23,7 @@ DiBosons : ZZ+ZZ_ext : xsec; FillColor=ROOT.kViolet+2, Label="DiBosons", NormSys
 TauDecaysW : WJetsToLNu_NoSkim_part* : 3.*20508.9    : genw_decayId != 12 && genw_decayId != 14 ; FillColor=ROOT.kPink   ,  Label="W+ long"
 
 #incl_qcdmc : + ; IncludeMca="w-helicity-13TeV/wmass_e/mca-includes/mca-qcdmc.txt"
-incl_datafakes: + ; IncludeMca="w-helicity-13TeV/wmass_e/mca-includes/mca-data.txt", FakeRate="w-helicity-13TeV/wmass_e/fakeRate-frdata.txt", Label="Fakes", FillColor=ROOT.kBlack, FillStyle=3005, NormSystematic=0.30, PostFix='_fakes'
+incl_datafakes: + ; IncludeMca="w-helicity-13TeV/wmass_e/mca-includes/mca-data.txt", FakeRate="w-helicity-13TeV/wmass_e/fakeRate-frdata_smooth.txt", Label="Fakes", FillColor=ROOT.kBlack, FillStyle=3005, NormSystematic=0.30, PostFix='_fakes'
 
 incl_data : + ; IncludeMca="w-helicity-13TeV/wmass_e/mca-includes/mca-data.txt"
 
@@ -49,6 +49,5 @@ Wminus_right_elescale_Dn : WJetsToLNu_NoSkim_part* : 3.*20508.9   : genw_decayId
 # fake-lepton background systematics
 #incl_datafakes_FRe_norm_Up : + ; IncludeMca="w-helicity-13TeV/wmass_e/mca-includes/mca-data.txt", FakeRate="w-helicity-13TeV/wmass_e/fakerate-vars/fakeRate-frdata-e-up.txt", SkipMe=True, PostFix='_fakes_FRe_norm_Up'
 #incl_datafakes_FRe_norm_Dn : + ; IncludeMca="w-helicity-13TeV/wmass_e/mca-includes/mca-data.txt", FakeRate="w-helicity-13TeV/wmass_e/fakerate-vars/fakeRate-frdata-e-down.txt", SkipMe=True, PostFix='_fakes_FRe_norm_Dn'
-#incl_datafakes_FRe_pt_Up : + ; IncludeMca="w-helicity-13TeV/wmass_e/mca-includes/mca-data.txt", FakeRate="w-helicity-13TeV/wmass_e/fakerate-vars/fakeRate-frdata-e-pt1.txt", SkipMe=True, PostFix='_fakes_FRe_pt_Up'
-#incl_datafakes_FRe_pt_Dn : + ; IncludeMca="w-helicity-13TeV/wmass_e/mca-includes/mca-data.txt", FakeRate="w-helicity-13TeV/wmass_e/fakerate-vars/fakeRate-frdata-e-pt2.txt", SkipMe=True, PostFix='_fakes_FRe_pt_Dn'
+
 
