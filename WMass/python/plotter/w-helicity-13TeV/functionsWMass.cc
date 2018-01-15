@@ -229,8 +229,8 @@ ElectronEnergyCalibratorRun2Standalone *calibratorMC = NULL;
 
 float ptCorr(float pt, float eta, float phi, float r9, int run, int isData, ULong64_t eventNumber) {
 
-  if(!calibratorData && isData ) calibratorData = new ElectronEnergyCalibratorRun2Standalone(false,false,"CMGTools/MonoXAnalysis/python/postprocessing/data/leptonScale/el/Run2016_legacyrereco");
-  if(!calibratorMC && !isData ) calibratorMC = new ElectronEnergyCalibratorRun2Standalone(true,false,"CMGTools/MonoXAnalysis/python/postprocessing/data/leptonScale/el/Run2016_legacyrereco");
+  if(!calibratorData && isData ) calibratorData = new ElectronEnergyCalibratorRun2Standalone(false,false,"CMGTools/WMass/python/postprocessing/data/leptonScale/el/Run2016_legacyrereco");
+  if(!calibratorMC && !isData ) calibratorMC = new ElectronEnergyCalibratorRun2Standalone(true,false,"CMGTools/WMass/python/postprocessing/data/leptonScale/el/Run2016_legacyrereco");
   ElectronEnergyCalibratorRun2Standalone *calibrator = isData ? calibratorData : calibratorMC;
 
   if(!isData) {
@@ -279,7 +279,7 @@ float residualScale(float pt, float eta, int isData) {
 
 }
 
-float ptElFull(float pt, int nSigma=0) {
+float ptElFull(float pt, float eta, int nSigma=0) {
   float relSyst=0.;
   if(fabs(eta)<1.0) relSyst = 0.0015;  
   else if(fabs(eta)<1.479) relSyst = 0.005;  
@@ -289,11 +289,11 @@ float ptElFull(float pt, int nSigma=0) {
   return (1.+nSigma*relSyst) * pt;
 }
 
-float ptElFullUp(float pt) {
+float ptElFullUp(float pt, float eta) {
   return ptElFull(pt,1);
 }
 
-float ptElFullDn(float pt) {
+float ptElFullDn(float pt, float eta) {
   return ptElFull(pt,-1);
 }
 
