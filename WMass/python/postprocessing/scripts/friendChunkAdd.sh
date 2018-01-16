@@ -1,7 +1,13 @@
 #!/bin/bash
 clean=0
 if [[ "$1" == "-c" ]]; then
-    rm -rf Chunks; mkdir Chunks;
+    if test -d Chunks; then
+        echo "Dir Chunks existing. Moving friend chunks there";
+    else
+        echo "Creating Chunks"
+        mkdir /tmp/$USER/Chunks;
+        ln -s /tmp/$USER/Chunks;
+    fi
     clean=1; shift;
 fi;
 
@@ -14,7 +20,7 @@ for F in $(ls ${dir}/*_Friend_*.chunk*.root | sed 's/\.chunk[0-9]\+//' | sort | 
             sort -n | \
             perl -npe 's/\.(\d+)\.root$/sprintf(".chunk%d.root",$1)/e' );
     echo -e "\nWill merge into $F:\n$FILES"; 
-    $CMSSW_BASE/src/CMGTools/WMass/python/postprocessing/scripts/haddnano.py $F $FILES
+    hadd -ff $F $FILES
 done
 
 if [[ $clean == 1 ]]; then mv ${dir}/*_Friend_*.chunk*.root Chunks; fi
