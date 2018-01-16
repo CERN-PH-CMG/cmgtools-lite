@@ -1,7 +1,7 @@
 #!/usr/bin/env python
-# e.g.: python wmass/skims.py w-helicity-13TeV/wmass_e/mca-80X-wenu.txt w-helicity-13TeV/wmass_e/skim_wenu.txt  TREES_1LEP_80X_V3 /eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3_WENUSKIM_V2 -f w-helicity-13TeV/wmass_e/varsSkim_80X.txt
-#       python wmass/skims.py w-helicity-13TeV/wmass_e/mca-80X-wenu.txt w-helicity-13TeV/wmass_e/skim_zee.txt   TREES_1LEP_80X_V3 /eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3_ZEESKIM_V2  -f w-helicity-13TeV/wmass_e/varsSkim_80X.txt
-#       python wmass/skims.py w-helicity-13TeV/wmass_e/mca-80X-wenu.txt w-helicity-13TeV/wmass_e/skim_fr_el.txt TREES_1LEP_80X_V3 /eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3_FRELSKIM_V2 -f w-helicity-13TeV/wmass_e/varsSkim_80X_fr.txt
+# e.g.: python  w-helicity-13TeV/skims.py w-helicity-13TeV/wmass_e/mca-80X-wenu.txt w-helicity-13TeV/wmass_e/skim_wenu.txt  TREES_1LEP_80X_V3 /eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3_WENUSKIM_V2 -f w-helicity-13TeV/wmass_e/varsSkim_80X.txt
+#       python  w-helicity-13TeV/skims.py w-helicity-13TeV/wmass_e/mca-80X-wenu.txt w-helicity-13TeV/wmass_e/skim_zee.txt   TREES_1LEP_80X_V3 /eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3_ZEESKIM_V2  -f w-helicity-13TeV/wmass_e/varsSkim_80X.txt
+#       python  w-helicity-13TeV/skims.py w-helicity-13TeV/wmass_e/mca-80X-wenu.txt w-helicity-13TeV/wmass_e/skim_fr_el.txt TREES_1LEP_80X_V3 /eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3_FRELSKIM_V2 -f w-helicity-13TeV/wmass_e/varsSkim_80X_fr.txt
 # add -q 8nh --log logs to run in batch 1 job/component (and --pretend to just check the command that will be run)
 import os, subprocess
 
@@ -11,7 +11,7 @@ if __name__ == "__main__":
     parser.add_option("-f", "--varfile",  dest="varfile", type="string", default=None, action="store",  help="File with the list of Branches to drop, as per TTree::SetBranchStatus")
     parser.add_option("--fo", "--friend-only",  dest="friendOnly", action="store_true", default=False,  help="Do not redo skim of the main trees, only of the friends")
     parser.add_option("--max-entries",     dest="maxEntries", default=1000000000, type="int", help="Max entries to process in each tree") 
-    from CMGTools.MonoXAnalysis.plotter.skimTrees import addSkimTreesOptions
+    from CMGTools.WMass.plotter.skimTrees import addSkimTreesOptions
     addSkimTreesOptions(parser)
     (options, args) = parser.parse_args() 
 
