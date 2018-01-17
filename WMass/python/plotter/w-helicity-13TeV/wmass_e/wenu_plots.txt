@@ -22,4 +22,5 @@ trkmt: mt_2(met_trkPt,met_trkPhi,LepGood1_pt,LepGood1_phi) : 35,40,110 ; XTitle=
 nVert: nVert : 20,0.5,40.5; XTitle="number of vertices", Legend='TR', IncludeOverflows=True 
 rho: rho : 20,0.5,40.5; XTitle="#rho", Legend='TR', IncludeOverflows=True 
 
-etaPt   : ptCorr(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_r9,run,isData)*residualScale(LepGood1_pt,LepGood1_eta,isData)\:LepGood1_eta  : 48,-2.1,2.1,20,30.,50. ; XTitle="#eta^{e}", YTitle="p_{T}^{e} [GeV]"
+#etaPt   : ptElFull(LepGood1_calPt,LepGood1_eta)\:LepGood1_eta : 48,-2.5,2.5,20,30.,50. ; XTitle="#eta^{e}", YTitle="p_{T}^{e} [GeV]"
+etaPt   : ptElFull(LepGood1_calPt,LepGood1_eta)\:LepGood1_eta : 24,-2.5,2.5,20,30.,50. ; XTitle="#eta^{e}", YTitle="p_{T}^{e} [GeV]"

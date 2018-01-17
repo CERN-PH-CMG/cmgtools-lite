@@ -5,11 +5,11 @@ import ROOT
 import sys,os,re
 
 from optparse import OptionParser
-parser = OptionParser(usage="%prog [options] shapes.root combinedcard.txt cards/card*.txt")
+parser = OptionParser(usage="%prog [options] cards/card*.txt")
 parser.add_option("-m","--merge-root", dest="mergeRoot", default=False, action="store_true", help="Merge the root files with the inputs also")
 parser.add_option("-b","--bin", dest="bin", default="ch1", type="string", help="name of the bin")
 parser.add_option("-c","--constrain-rates", dest="constrainRateParams", type="string", default="0,1,2", help="add constraints on the rate parameters of (comma-separated list of) rapidity bins. Give only the left ones (e.g. 1 will constrain 1 with n-1 ")
-parser.add_option("-l","--long-lnN", dest="longLnN", default=None, help="add a common lnN constraint to all longitudinal components")
+parser.add_option("-l","--long-lnN", dest="longLnN", type="float", default=None, help="add a common lnN constraint to all longitudinal components")
 (options, args) = parser.parse_args()
 
 outfile=options.bin+"_shapes.root"
@@ -121,14 +121,14 @@ if options.constrainRateParams:
         for i in xrange(len(hel)/2):
             pfx = '_'.join(hel[i].split('_')[:-1])
             sfx = (hel[i].split('_')[-1],hel[-i-1].split('_')[-1])
-            param_range = '[0.95,1.05]' if sfx[0] in bins_to_constrain else '[0.50,1.50]'
+            param_range = '[0.95,1.05]' if sfx[0] in bins_to_constrain else '[0.80,1.20]'
             combinedCard.write('norm_%s_%s_%-5s   rateParam * %s_%-5s    1 %s\n' % (pfx,sfx[0],sfx[1],pfx,sfx[0],param_range))
             combinedCard.write('norm_%s_%s_%-5s   rateParam * %s_%-5s    1 %s\n' % (pfx,sfx[0],sfx[1],pfx,sfx[1],param_range))
             POIs.append('norm_%s_%s_%s' % (pfx,sfx[0],sfx[1]))
     if not options.longLnN:
         for i in xrange(len(signal_0)/2):
             sfx = signal_0[i].split('_')[-1]
-            param_range = '[0.95,1.05]' if sfx in bins_to_constrain else '[0.50,1.50]'
+            param_range = '[0.95,1.05]' if sfx in bins_to_constrain else '[0.80,1.20]'
             combinedCard.write('norm_%-5s   rateParam * %-5s    1 %s\n' % (signal_0[i],signal_0[i],param_range))
             combinedCard.write('norm_%-5s   rateParam * %-5s    1 %s\n' % (signal_0[-1-i],signal_0[-1-i],param_range))
             POIs.append('norm_%s' % signal_0[i])
@@ -138,8 +138,7 @@ print "merged datacard in ",cardfile
 
 ws = "%s_ws.root" % options.bin
 txt2wsCmd = "text2workspace.py %s_card.txt -o %s --X-allow-no-signal " % (options.bin,ws)
-os.system(txt2wsCmd)
-print "workspace in %s_ws.root." % options.bin
+print txt2wsCmd
 
 print "combine -M FitDiagnostics %s --saveShapes --saveWithUncertainties -t -1 --expectSignal=1 -m 999 --redefineSignalPOIs %s" % (ws,','.join(POIs))
 print "combine -M MultiDimFit %s --saveFitResult -t -1 --expectSignal=1 -m 999 --redefineSignalPOIs %s" % (ws,','.join(POIs))

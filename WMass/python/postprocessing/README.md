@@ -53,4 +53,10 @@ The output branches should be filled calling the `fillBranch(branchname, value)`
 ## Typical use-cases:
 These examples run the lepton scale-factors and the PU-reweighting modules and put the output in friend trees.
 
-`python postproc.py test_output /eos/cms/store/cmst3/user/emanuele/wmass/TREES_1LEP_80X_V2_nano/QCD_Pt20to30_EMEnriched/treeProducerWMass/tree.root -I CMGTools.MonoXAnalysis.postprocessing.examples.lepSFProducer lepSF -I CMGTools.MonoXAnalysis.postprocessing.examples.puWeightProducer puWeight --friend`
+`python postproc.py test_output /eos/cms/store/cmst3/user/emanuele/wmass/TREES_1LEP_80X_V2_nano/QCD_Pt20to30_EMEnriched/treeProducerWMass/tree.root -I CMGTools.WMass.postprocessing.examples.lepSFProducer lepSF -I CMGTools.WMass.postprocessing.examples.puWeightProducer puWeight --friend`
+
+Typically one wants to run on all datasets splitting the processing in a number of batch jobs. To do this for example:
+`python postproc_batch.py -q 8nh ../plotter/TREES_1LEP_80X_V3/ friends --friend --log friends_log`
+
+To test interactively 30k events for one dataset:
+`python postproc_batch.py ../plotter/TREES_1LEP_80X_V3/ friends --friend --log friends_log -d DYJetsToLL_M50_part1 -c 0 -N 30000`

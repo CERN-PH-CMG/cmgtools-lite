@@ -3,8 +3,8 @@ import numpy as np
 import itertools
 ROOT.PyConfig.IgnoreCommandLineOptions = True
 
-from CMGTools.MonoXAnalysis.postprocessing.framework.datamodel import Collection
-from CMGTools.MonoXAnalysis.postprocessing.framework.eventloop import Module
+from CMGTools.WMass.postprocessing.framework.datamodel import Collection
+from CMGTools.WMass.postprocessing.framework.eventloop import Module
 _rootLeafType2rootBranchType = { 'UChar_t':'b', 'Char_t':'B', 'UInt_t':'i', 'Int_t':'I', 'Float_t':'F', 'Double_t':'D', 'ULong64_t':'l', 'Long64_t':'L', 'Bool_t':'O' }
 
 class collectionMerger(Module):

@@ -1,6 +1,6 @@
 import ROOT
 ROOT.PyConfig.IgnoreCommandLineOptions = True
-from CMGTools.MonoXAnalysis.postprocessing.framework.treeReaderArrayTools import InputTree 
+from CMGTools.WMass.postprocessing.framework.treeReaderArrayTools import InputTree 
 
 class Event:
     """Class that allows seeing an entry of a PyROOT TTree as an Event"""

@@ -1,5 +1,5 @@
-#ifndef FAKERATE_H
-#define FAKERATE_H
+// #ifndef FAKERATE_H
+// #define FAKERATE_H
 
 #include <TH2.h>
 #include <TH2D.h>
@@ -79,6 +79,8 @@ float fakeRateWeight_1l_i_smoothed(float lpt, float leta, int lpdgId, bool passW
     int etabin = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(feta)));
     float p0 = hist->GetBinContent(etabin, 1);
     float p1 = hist->GetBinContent(etabin, 2);
+    if (iFR==1) p0 += hist->GetBinError(etabin, 1);
+    if (iFR==2) p0 -= hist->GetBinError(etabin, 1);
     float fr = p0 + p1*lpt;
     return fr/(1-fr);
   } else return 0;
@@ -154,4 +156,4 @@ float helicityWeight(float yw, float ptw, float costheta, int pol)
 }
 
 
-#endif
+//#endif

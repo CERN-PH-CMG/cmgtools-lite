@@ -74,7 +74,7 @@ print "used trees from: ",T
 
 luminosity = 19.3
 #datasetOption = " --pg 'data := data_B,data_C,data_D,data_E,data_F' --xp 'data_G,data_H' "
-ptcorr = "ptElFull(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_r9,run,isData,evt)"
+ptcorr = "ptElFull(LepGood1_calPt,LepGood1_eta)"
 ptForScaleFactors =  "LepGood_pt"  # or ptcorr
 MCweightOption = ' -W "puw2016_nTrueInt_BF(nTrueInt)*trgSF_We(LepGood1_pdgId,%s,LepGood1_eta,2)" ' % str(ptForScaleFactors)
 if useFullData2016:
