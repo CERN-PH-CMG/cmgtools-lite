@@ -14,15 +14,16 @@ if len(sys.argv) < 2:
 
 FASTTEST=''
 #FASTTEST='--max-entries 1000 '
-T='/eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3_WENUSKIM_V3'
+## T='/eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3_WENUSKIM_V3'
+T='/eos/user/m/mdunser/w-helicity-13TeV/trees/trees_all_skims/'
 # if 'pccmsrm29' in os.environ['HOSTNAME']: T = T.replace('/data1/emanuele/wmass','/u2/emanuele')
 # elif 'lxplus' in os.environ['HOSTNAME']: T = T.replace('/data1/emanuele/wmass','/afs/cern.ch/work/e/emanuele/TREES/')
 # elif 'cmsrm-an' in os.environ['HOSTNAME']: T = T.replace('/data1/emanuele/wmass','/t3/users/dimarcoe/')
 print "used trees from: ",T
 J=4
-BASECONFIG="w-helicity-13TeV/wmass_e"
-MCA=BASECONFIG+'/mca-80X-wenu-helicity.txt'
-CUTFILE=BASECONFIG+'/wenu.txt'
+BASECONFIG="w-helicity-13TeV/wmass_mu"
+MCA=BASECONFIG+'/mca-wmu-helicity.txt'
+CUTFILE=BASECONFIG+'/cuts_wmu.txt'
 SYSTFILE=BASECONFIG+'/systsEnv.txt'
 # moved below option parser to allow their setting with options
 #VAR="mt_lu_cart(LepCorr1_pt,LepGood1_phi,w_ux,w_uy) 90,30,120"
@@ -54,7 +55,8 @@ parser.add_option("-b", "--bkgdata-cards", dest="bkgdataCards", action="store_tr
 parser.add_option("--not-unroll2D", dest="notUnroll2D", action="store_true", default=False, help="Do not unroll the TH2Ds in TH1Ds needed for combine (to make 2D plots)");
 (options, args) = parser.parse_args()
 
-VAR="ptElFull(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_r9,run,isData,evt):LepGood1_eta 48,-2.5,2.5,20,30.,50."
+#VAR="ptElFull(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_r9,run,isData,evt):LepGood1_eta 48,-2.5,2.5,20,30.,50."
+VAR="LepGood1_pt:LepGood1_eta 48,-2.4,2.4,25,25.,50."
 print "Fitting ", str(VAR)
 
 if not os.path.exists("cards/"):
@@ -92,7 +94,8 @@ if options.queue:
 if not os.path.exists(outdir): os.mkdir(outdir)
 if options.queue and not os.path.exists(outdir+"/jobs"): os.mkdir(outdir+"/jobs")
 
-W=" -W 'puw2016_nTrueInt_36fb(nTrueInt)*trgSF_We(LepGood1_pdgId,LepGood1_pt,LepGood1_eta,2)*leptonSF_We(LepGood1_pdgId,LepGood1_pt,LepGood1_eta)' "
+## electron specific W=" -W 'puw2016_nTrueInt_36fb(nTrueInt)*trgSF_We(LepGood1_pdgId,LepGood1_pt,LepGood1_eta,2)*leptonSF_We(LepGood1_pdgId,LepGood1_pt,LepGood1_eta)' "
+W=" -W 'puw2016_nTrueInt_36fb(nTrueInt)' " ##*LepGood_effSF[0]' " TEMPORARY
 POSCUT=" -A alwaystrue positive 'LepGood1_charge>0' "
 NEGCUT=" -A alwaystrue negative 'LepGood1_charge<0' "
 if options.signalCards:
@@ -108,7 +111,7 @@ if options.signalCards:
             xpsel=' --xp "W%s.*,Z,Top,DiBosons,data.*" --asimov ' % ('p' if charge=='m' else 'm')
             if not os.path.exists(outdir): os.mkdir(outdir)
             if options.queue and not os.path.exists(outdir+"/jobs"): os.mkdir(outdir+"/jobs")
-            dcname = "W%s_el_Ybin_%d" % (charge,iy)
+            dcname = "W%s_mu_Ybin_%d" % (charge,iy)
             BIN_OPTS=OPTIONS+W+" -o "+dcname+" --od "+outdir + xpsel + ycut
             if options.queue:
                 srcfile=outdir+"/jobs/"+dcname+".sh"
@@ -140,7 +143,7 @@ if options.bkgdataCards:
     for charge in ['p','m']:
         xpsel=' --xp "W.*" '
         chargecut = POSCUT if charge=='p' else NEGCUT
-        dcname = "bkg_plus_data_el_%s" % charge
+        dcname = "bkg_plus_data_mu_%s" % charge
         BIN_OPTS=OPTIONS+W+" -o "+dcname+" --od "+outdir + xpsel + chargecut
         if options.queue:
             srcfile=outdir+"/jobs/"+dcname+".sh"

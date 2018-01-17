@@ -229,8 +229,8 @@ ElectronEnergyCalibratorRun2Standalone *calibratorMC = NULL;
 
 float ptCorr(float pt, float eta, float phi, float r9, int run, int isData, ULong64_t eventNumber) {
 
-  if(!calibratorData && isData ) calibratorData = new ElectronEnergyCalibratorRun2Standalone(false,false,"CMGTools/MonoXAnalysis/python/postprocessing/data/leptonScale/el/Run2016_legacyrereco");
-  if(!calibratorMC && !isData ) calibratorMC = new ElectronEnergyCalibratorRun2Standalone(true,false,"CMGTools/MonoXAnalysis/python/postprocessing/data/leptonScale/el/Run2016_legacyrereco");
+  if(!calibratorData && isData ) calibratorData = new ElectronEnergyCalibratorRun2Standalone(false,false,"CMGTools/WMass/python/postprocessing/data/leptonScale/el/Run2016_legacyrereco");
+  if(!calibratorMC && !isData ) calibratorMC = new ElectronEnergyCalibratorRun2Standalone(true,false,"CMGTools/WMass/python/postprocessing/data/leptonScale/el/Run2016_legacyrereco");
   ElectronEnergyCalibratorRun2Standalone *calibrator = isData ? calibratorData : calibratorMC;
 
   if(!isData) {

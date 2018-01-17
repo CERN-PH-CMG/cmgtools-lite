@@ -11,7 +11,7 @@ if __name__ == "__main__":
     parser.add_option("-f", "--varfile",  dest="varfile", type="string", default=None, action="store",  help="File with the list of Branches to drop, as per TTree::SetBranchStatus")
     parser.add_option("--fo", "--friend-only",  dest="friendOnly", action="store_true", default=False,  help="Do not redo skim of the main trees, only of the friends")
     parser.add_option("--max-entries",     dest="maxEntries", default=1000000000, type="int", help="Max entries to process in each tree") 
-    from CMGTools.MonoXAnalysis.plotter.skimTrees import addSkimTreesOptions
+    from CMGTools.WMass.plotter.skimTrees import addSkimTreesOptions
     addSkimTreesOptions(parser)
     (options, args) = parser.parse_args() 
 
