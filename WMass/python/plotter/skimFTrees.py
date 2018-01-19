@@ -13,7 +13,7 @@ def _runIt(args,excludeProcesses=[]):
     for p0 in excludeProcesses:
         for p in p0.split(","):
             procsToExclude.append(p)
-    print "skimFTrees: exlude the following datasets: ", ", ".join(procsToExclude)
+    if len(excludeProcesses)>0: print "skimFTrees: exlude the following datasets: ", ", ".join(procsToExclude)
 
     for dset in dsets:
         skipMe = False
@@ -42,8 +42,8 @@ def _runIt(args,excludeProcesses=[]):
 if __name__ == "__main__":
     from optparse import OptionParser
     parser = OptionParser(usage="%prog [options] BIGTREE_DIR FTREE_DIR outdir")
-    parser.add_option("-t", "--tree", dest="tree", type="string", default="mjvars/t", help="Name of the friend tree")
-    parser.add_option("-f", "--friend", dest="friend", type="string", default="evVarFriend", help="Prefix of the friend ROOT file name")
+    parser.add_option("-t", "--tree", dest="tree", type="string", default="Friends", help="Name of the friend tree")
+    parser.add_option("-f", "--friend", dest="friend", type="string", default="tree_Friend", help="Prefix of the friend ROOT file name")
     parser.add_option("-x", "--exclude-process", dest="excludeProcess", action="append", default=[], help="exclude some processes with a given pattern (comma-separated patterns)")
     (options, args) = parser.parse_args()
     if len(args)<3:
