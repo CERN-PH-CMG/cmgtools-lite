@@ -1,3 +1,3 @@
 cut-change: LepGood1_customId: 1
 load-histo: FR_el_i1 : $DATA/fakerate/fakeRateSmoothed_el.root : frSmoothParameter_data
-weight: fakeRateWeight_1l_i_smoothed(LepGood1_calPt,LepGood1_eta,LepGood1_pdgId,LepGood1_customId,1)
+weight: fakeRateWeight_1l_i_smoothed(LepGood1_calPt_step1,LepGood1_eta,LepGood1_pdgId,LepGood1_customId,1)

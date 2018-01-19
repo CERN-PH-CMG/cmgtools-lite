@@ -5,8 +5,8 @@ etal1: LepGood1_eta: 30,-2.1,2.1 ; XTitle="leading electron #eta", Legend='TL', 
 phil1: LepGood1_phi: 50,-3.14,3.14 ; XTitle="leading electron #phi", Legend='TL', IncludeOverflows=False
 zpt: pt_2(LepGood1_pt, LepGood1_phi, LepGood2_pt, LepGood2_phi ): 100,0,100 ; XTitle="Z p_{T} [GeV]", Legend='TR', IncludeOverflows=False 
 zmass: mZ1 : 81,70.0,110.5 ; XTitle="Z mass [GeV]", Legend='TR', IncludeOverflows=False 
-zmass_corr: mass_2(ptCorr(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_r9,run,isData),LepGood1_eta,LepGood1_phi,0.00051,ptCorr(LepGood2_pt,LepGood2_eta,LepGood2_phi,LepGood2_r9,run,isData),LepGood2_eta,LepGood2_phi,0.00051) : 81,70.0,110.5 ; XTitle="Z mass [GeV]", Legend='TR', IncludeOverflows=False 
-zmass_corr_res: mass_2(ptCorr(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_r9,run,isData)*residualScale(LepGood1_pt,LepGood1_eta,isData),LepGood1_eta,LepGood1_phi,0.00051,ptCorr(LepGood2_pt,LepGood2_eta,LepGood2_phi,LepGood2_r9,run,isData)*residualScale(LepGood2_pt,LepGood2_eta,isData),LepGood2_eta,LepGood2_phi,0.00051) : 81,70.0,110.5 ; XTitle="Z mass [GeV]", Legend='TR', IncludeOverflows=False 
+zmass_corr: mass_2(LepGood1_calPt_step1,LepGood1_eta,LepGood1_phi,0.00051,LepGood2_calPt_step1,LepGood2_eta,LepGood2_phi,0.00051) : 81,70.0,110.5 ; XTitle="Z mass [GeV]", Legend='TR', IncludeOverflows=False 
+zmass_corr_res: mass_2(LepGood1_calPt,LepGood1_eta,LepGood1_phi,0.00051,LepGood2_calPt,LepGood2_eta,LepGood2_phi,0.00051) : 81,70.0,110.5 ; XTitle="Z mass [GeV]", Legend='TR', IncludeOverflows=False 
 nJetClean: nJet_Clean : 5,-0.5,4.5 ; XTitle="number of jets (cleaned)", Legend='TR', IncludeOverflows=False
 ele1Iso04: LepGood1_relIso04EA : 40,0,0.1 ; XTitle="relative isolation 04 (ele1)", Legend='TR', IncludeOverflows=True, Logy=True
 pfmet: met_pt : 80,0,80 ; XTitle="PF E_{T}^{miss} [GeV]", Legend='TR', IncludeOverflows=False
