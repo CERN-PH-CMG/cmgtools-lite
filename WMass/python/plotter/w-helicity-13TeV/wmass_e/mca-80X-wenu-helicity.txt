@@ -1,3 +1,6 @@
+# unweighted signal for simple plots
+W : WJetsToLNu_NoSkim_part* : 3.*20508.9   ; FillColor=ROOT.kRed+2,  , Label="W", SkipMe=True
+
 # signal from the weighted uncut sample
 Wplus_long  : WJetsToLNu_NoSkim_part* : 3.*20508.9    : genw_decayId == 12 && genw_charge>0 ; FillColor=ROOT.kGray+1   , FakeRate="w-helicity-13TeV/fractionReweighting/reweighting_0_plus.txt", Label="W+ long"
 Wplus_left  : WJetsToLNu_NoSkim_part* : 3.*20508.9    : genw_decayId == 12 && genw_charge>0 ; FillColor=ROOT.kBlue-1   , FakeRate="w-helicity-13TeV/fractionReweighting/reweighting_L_plus.txt", Label="W+ left"
@@ -20,7 +23,7 @@ DiBosons : WW+WW_ext : xsec;      FillColor=ROOT.kViolet+2, Label="DiBosons", No
 DiBosons : WZ+WZ_ext : xsec; FillColor=ROOT.kViolet+2, Label="DiBosons", NormSystematic=0.05
 DiBosons : ZZ+ZZ_ext : xsec; FillColor=ROOT.kViolet+2, Label="DiBosons", NormSystematic=0.05
 
-TauDecaysW : WJetsToLNu_NoSkim_part* : 3.*20508.9    : genw_decayId != 12 && genw_decayId != 14 ; FillColor=ROOT.kPink   ,  Label="W+ long"
+TauDecaysW : WJetsToLNu_NoSkim_part* : 3.*20508.9    : genw_decayId != 12 && genw_decayId != 14 ; FillColor=ROOT.kPink   ,  Label="W\#rightarrow\#tau\#nu"
 
 #incl_qcdmc : + ; IncludeMca="w-helicity-13TeV/wmass_e/mca-includes/mca-qcdmc.txt"
 incl_datafakes: + ; IncludeMca="w-helicity-13TeV/wmass_e/mca-includes/mca-data.txt", FakeRate="w-helicity-13TeV/wmass_e/fakeRate-frdata_smooth.txt", Label="Fakes", FillColor=ROOT.kGray+2, FillStyle=3005, NormSystematic=0.30, PostFix='_fakes'
@@ -51,5 +54,3 @@ Wminus_right_elescale_Dn : WJetsToLNu_NoSkim_part* : 3.*20508.9   : genw_decayId
 #incl_datafakes_FRe_norm_Dn : + ; IncludeMca="w-helicity-13TeV/wmass_e/mca-includes/mca-data.txt", FakeRate="w-helicity-13TeV/wmass_e/fakerate-vars/fakeRate-frdata-e-down.txt", SkipMe=True, PostFix='_fakes_FRe_norm_Dn'
 
 
-# unweighted signal for simple plots
-W : WJetsToLNu_NoSkim_part1 : 3.*20508.9   ; FillColor=ROOT.kRed+2,  , Label="W", SkipMe=True
