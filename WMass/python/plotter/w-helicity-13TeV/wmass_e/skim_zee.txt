@@ -1,5 +1,5 @@
 alwaystrue: 1
-#trigger: HLT_SingleEl==1
+trigger: HLT_SingleEl==1
 two electrons: abs(LepGood1_pdgId)==11 && LepGood1_pdgId == -LepGood2_pdgId
 el acceptance: LepGood1_calPt_step1 > 30 && LepGood2_calPt > 20 && abs(LepGood1_eta)<2.5 && abs(LepGood2_eta)<2.5
 el ID: LepGood1_customId == 1 && LepGood2_customId == 1
