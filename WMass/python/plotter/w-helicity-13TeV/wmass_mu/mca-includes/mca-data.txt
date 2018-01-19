@@ -1,0 +1,11 @@
+# use options --pg 'data := data_B,data_C,data_D,data_E,data_F' --xp data_G,data_H
+# to exlude samples you don't want to run on and group all the remaining data together 
+# reminder: mcAnalysis identify data as "data", while "dataXXX" will not be considered data (unless you use the --pg trick)
+# data_B: SingleMuon_Run2016B_part*
+# data_C: SingleMuon_Run2016C_part*
+# data_D: SingleMuon_Run2016D_part*
+# data_E: SingleMuon_Run2016E_part*
+# data_F: SingleMuon_Run2016F_part*
+# data_G: SingleMuon_Run2016G_part*
+# data_H: SingleMuon_Run2016H_part*
+data: SingleMuon_Run2016*
