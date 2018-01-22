@@ -1,90 +1,109 @@
 # vim: syntax=sh
-QCDMu_red  : QCD_Mu15          : xsec*(LepGood_pt>15.5) : LepGood_mcMatchId == 0; FillColor=ROOT.kPink-2, Label="QCD\#mu"
+QCDMu_red  : QCD_Mu15          : xsec*(LepGood_pt>15.5)*0.88 : LepGood_mcMatchId == 0; FillColor=ROOT.kPink-2, Label="QCD\#mu"
 QCDMu_red  : QCD_Pt20to30_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId == 0; FillColor=ROOT.kPink-2, Label="QCD\#mu"
 QCDMu_red  : QCD_Pt30to50_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId == 0; FillColor=ROOT.kPink-2, Label="QCD\#mu"
 QCDMu_red  : QCD_Pt50to80_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId == 0; FillColor=ROOT.kPink-2, Label="QCD\#mu"
 QCDMu_red  : QCD_Pt80to120_Mu5 : xsec*(LepGood_pt<15.5) : LepGood_mcMatchId == 0; FillColor=ROOT.kPink-2, Label="QCD\#mu"
 QCDMu_red  : QCD_Pt120to170_Mu5: xsec*(LepGood_pt<15.5) : LepGood_mcMatchId == 0; FillColor=ROOT.kPink-2, Label="QCD\#mu"
 
-QCDMu_bjets: QCD_Mu15          : xsec*(LepGood_pt>15.5) : LepGood_mcMatchAny == 5; FillColor=ROOT.kPink+5, Label="QCD\#mu\, b\#rightarrowl"
+QCDMu_bjets: QCD_Mu15          : xsec*(LepGood_pt>15.5)*0.88 : LepGood_mcMatchAny == 5; FillColor=ROOT.kPink+5, Label="QCD\#mu\, b\#rightarrowl"
 QCDMu_bjets: QCD_Pt20to30_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchAny == 5; FillColor=ROOT.kPink+5, Label="QCD\#mu\, b\#rightarrowl"
 QCDMu_bjets: QCD_Pt30to50_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchAny == 5; FillColor=ROOT.kPink+5, Label="QCD\#mu\, b\#rightarrowl"
 QCDMu_bjets: QCD_Pt50to80_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchAny == 5; FillColor=ROOT.kPink+5, Label="QCD\#mu\, b\#rightarrowl"
 QCDMu_bjets: QCD_Pt80to120_Mu5 : xsec*(LepGood_pt<15.5) : LepGood_mcMatchAny == 5; FillColor=ROOT.kPink+5, Label="QCD\#mu\, b\#rightarrowl"
 QCDMu_bjets: QCD_Pt120to170_Mu5: xsec*(LepGood_pt<15.5) : LepGood_mcMatchAny == 5; FillColor=ROOT.kPink+5, Label="QCD\#mu\, b\#rightarrowl"
-QCDMu_cjets: QCD_Mu15          : xsec*(LepGood_pt>15.5) : LepGood_mcMatchAny == 4; FillColor=ROOT.kRed-3, Label="QCD\#mu\, c\#rightarrowl"
+QCDMu_cjets: QCD_Mu15          : xsec*(LepGood_pt>15.5)*0.88 : LepGood_mcMatchAny == 4; FillColor=ROOT.kRed-3, Label="QCD\#mu\, c\#rightarrowl"
 QCDMu_cjets: QCD_Pt20to30_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchAny == 4; FillColor=ROOT.kRed-3, Label="QCD\#mu\, c\#rightarrowl"
 QCDMu_cjets: QCD_Pt30to50_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchAny == 4; FillColor=ROOT.kRed-3, Label="QCD\#mu\, c\#rightarrowl"
 QCDMu_cjets: QCD_Pt50to80_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchAny == 4; FillColor=ROOT.kRed-3, Label="QCD\#mu\, c\#rightarrowl"
 QCDMu_cjets: QCD_Pt80to120_Mu5 : xsec*(LepGood_pt<15.5) : LepGood_mcMatchAny == 4; FillColor=ROOT.kRed-3, Label="QCD\#mu\, c\#rightarrowl"
 QCDMu_cjets: QCD_Pt120to170_Mu5: xsec*(LepGood_pt<15.5) : LepGood_mcMatchAny == 4; FillColor=ROOT.kRed-3, Label="QCD\#mu\, c\#rightarrowl"
-QCDMu_ljets: QCD_Mu15          : xsec*(LepGood_pt>15.5) : LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 && LepGood_mcMatchId == 0 ; FillColor=ROOT.kOrange-3, Label="QCD\#mu\, l\#rightarrowl"
+QCDMu_ljets: QCD_Mu15          : xsec*(LepGood_pt>15.5)*0.88 : LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 && LepGood_mcMatchId == 0 ; FillColor=ROOT.kOrange-3, Label="QCD\#mu\, l\#rightarrowl"
 QCDMu_ljets: QCD_Pt20to30_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 && LepGood_mcMatchId == 0 ; FillColor=ROOT.kOrange-3, Label="QCD\#mu\, l\#rightarrowl"
 QCDMu_ljets: QCD_Pt30to50_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 && LepGood_mcMatchId == 0 ; FillColor=ROOT.kOrange-3, Label="QCD\#mu\, l\#rightarrowl"
 QCDMu_ljets: QCD_Pt50to80_Mu5  : xsec*(LepGood_pt<15.5) : LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 && LepGood_mcMatchId == 0 ; FillColor=ROOT.kOrange-3, Label="QCD\#mu\, l\#rightarrowl"
 QCDMu_ljets: QCD_Pt80to120_Mu5 : xsec*(LepGood_pt<15.5) : LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 && LepGood_mcMatchId == 0 ; FillColor=ROOT.kOrange-3, Label="QCD\#mu\, l\#rightarrowl"
 QCDMu_ljets: QCD_Pt120to170_Mu5: xsec*(LepGood_pt<15.5) : LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 && LepGood_mcMatchId == 0 ; FillColor=ROOT.kOrange-3, Label="QCD\#mu\, l\#rightarrowl"
 
-QCDEl_red: QCD_Pt20to30_EMEnriched  : xsec : LepGood_mcMatchId == 0 ; FillColor=ROOT.kPink-2, Label="QCDe", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red: QCD_Pt30to50_EMEnriched  : xsec : LepGood_mcMatchId == 0 ; FillColor=ROOT.kPink-2, Label="QCDe", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red: QCD_Pt50to80_EMEnriched  : xsec : LepGood_mcMatchId == 0 ; FillColor=ROOT.kPink-2, Label="QCDe", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red: QCD_Pt80to120_EMEnriched : xsec : LepGood_mcMatchId == 0 ; FillColor=ROOT.kPink-2, Label="QCDe", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red: QCD_Pt120to170_EMEnriched: xsec : LepGood_mcMatchId == 0 ; FillColor=ROOT.kPink-2, Label="QCDe", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red: QCD_Pt170to300_EMEnriched: xsec : LepGood_mcMatchId == 0 ; FillColor=ROOT.kPink-2, Label="QCDe", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red: QCD_Pt_20to30_bcToE      : xsec : LepGood_mcMatchId == 0 ; FillColor=ROOT.kPink-2, Label="QCDe", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red: QCD_Pt_30to80_bcToE      : xsec : LepGood_mcMatchId == 0 ; FillColor=ROOT.kPink-2, Label="QCDe", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red: QCD_Pt_80to170_bcToE     : xsec : LepGood_mcMatchId == 0 ; FillColor=ROOT.kPink-2, Label="QCDe", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_red: QCD_Pt_170to250_bcToE    : xsec : LepGood_mcMatchId == 0 ; FillColor=ROOT.kPink-2, Label="QCDe", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
+QCDEl_red: QCD_Pt20to30_EMEnriched  : xsec : LepGood_mcMatchId == 0 ; FillColor=ROOT.kPink-2, Label="QCDe"
+QCDEl_red: QCD_Pt30to50_EMEnriched  : xsec : LepGood_mcMatchId == 0 ; FillColor=ROOT.kPink-2, Label="QCDe"
+QCDEl_red: QCD_Pt50to80_EMEnriched  : xsec : LepGood_mcMatchId == 0 ; FillColor=ROOT.kPink-2, Label="QCDe"
+QCDEl_red: QCD_Pt80to120_EMEnriched : xsec : LepGood_mcMatchId == 0 ; FillColor=ROOT.kPink-2, Label="QCDe"
+QCDEl_red: QCD_Pt120to170_EMEnriched: xsec : LepGood_mcMatchId == 0 ; FillColor=ROOT.kPink-2, Label="QCDe"
+QCDEl_red: QCD_Pt_20to30_bcToE      : xsec : LepGood_mcMatchId == 0 ; FillColor=ROOT.kPink-2, Label="QCDe"
+QCDEl_red: QCD_Pt_30to80_bcToE      : xsec : LepGood_mcMatchId == 0 ; FillColor=ROOT.kPink-2, Label="QCDe"
+QCDEl_red: QCD_Pt_80to170_bcToE     : xsec : LepGood_mcMatchId == 0 ; FillColor=ROOT.kPink-2, Label="QCDe"
 
-QCDEl_bjets: QCD_Pt_20to30_bcToE   : xsec : LepGood_mcMatchAny == 5 ; FillColor=ROOT.kPink+5, Label="QCDe\, b\#rightarrowl", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_bjets: QCD_Pt_30to80_bcToE   : xsec : LepGood_mcMatchAny == 5 ; FillColor=ROOT.kPink+5, Label="QCDe\, b\#rightarrowl", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_bjets: QCD_Pt_80to170_bcToE  : xsec : LepGood_mcMatchAny == 5 ; FillColor=ROOT.kPink+5, Label="QCDe\, b\#rightarrowl", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_bjets: QCD_Pt_170to250_bcToE : xsec : LepGood_mcMatchAny == 5 ; FillColor=ROOT.kPink+5, Label="QCDe\, b\#rightarrowl", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_cjets: QCD_Pt_20to30_bcToE   : xsec : LepGood_mcMatchAny == 4 ; FillColor=ROOT.kRed-3,  Label="QCDe\, c\#rightarrowl", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_cjets: QCD_Pt_30to80_bcToE   : xsec : LepGood_mcMatchAny == 4 ; FillColor=ROOT.kRed-3,  Label="QCDe\, c\#rightarrowl", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_cjets: QCD_Pt_80to170_bcToE  : xsec : LepGood_mcMatchAny == 4 ; FillColor=ROOT.kRed-3,  Label="QCDe\, c\#rightarrowl", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_cjets: QCD_Pt_170to250_bcToE : xsec : LepGood_mcMatchAny == 4 ; FillColor=ROOT.kRed-3,  Label="QCDe\, c\#rightarrowl", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
+QCDEl_redNC: QCD_Pt20to30_EMEnriched  : xsec : LepGood_mcMatchId == 0 && LepGood_mcPromptGamma == 0 ; FillColor=ROOT.kMagenta+1, Label="QCDe no \#gamma"
+QCDEl_redNC: QCD_Pt30to50_EMEnriched  : xsec : LepGood_mcMatchId == 0 && LepGood_mcPromptGamma == 0 ; FillColor=ROOT.kMagenta+1, Label="QCDe no \#gamma"
+QCDEl_redNC: QCD_Pt50to80_EMEnriched  : xsec : LepGood_mcMatchId == 0 && LepGood_mcPromptGamma == 0 ; FillColor=ROOT.kMagenta+1, Label="QCDe no \#gamma"
+QCDEl_redNC: QCD_Pt80to120_EMEnriched : xsec : LepGood_mcMatchId == 0 && LepGood_mcPromptGamma == 0 ; FillColor=ROOT.kMagenta+1, Label="QCDe no \#gamma"
+QCDEl_redNC: QCD_Pt120to170_EMEnriched: xsec : LepGood_mcMatchId == 0 && LepGood_mcPromptGamma == 0 ; FillColor=ROOT.kMagenta+1, Label="QCDe no \#gamma"
+QCDEl_redNC: QCD_Pt_20to30_bcToE      : xsec : LepGood_mcMatchId == 0 && LepGood_mcPromptGamma == 0 ; FillColor=ROOT.kMagenta+1, Label="QCDe no \#gamma"
+QCDEl_redNC: QCD_Pt_30to80_bcToE      : xsec : LepGood_mcMatchId == 0 && LepGood_mcPromptGamma == 0 ; FillColor=ROOT.kMagenta+1, Label="QCDe no \#gamma"
+QCDEl_redNC: QCD_Pt_80to170_bcToE     : xsec : LepGood_mcMatchId == 0 && LepGood_mcPromptGamma == 0 ; FillColor=ROOT.kMagenta+1, Label="QCDe no \#gamma"
+QCDEl_conv: QCD_Pt20to30_EMEnriched  : xsec : LepGood_mcMatchId == 0 && LepGood_mcPromptGamma != 0 ; FillColor=ROOT.kOrange-3, Label="QCDe \#gamma"
+QCDEl_conv: QCD_Pt30to50_EMEnriched  : xsec : LepGood_mcMatchId == 0 && LepGood_mcPromptGamma != 0 ; FillColor=ROOT.kOrange-3, Label="QCDe \#gamma"
+QCDEl_conv: QCD_Pt50to80_EMEnriched  : xsec : LepGood_mcMatchId == 0 && LepGood_mcPromptGamma != 0 ; FillColor=ROOT.kOrange-3, Label="QCDe \#gamma"
+QCDEl_conv: QCD_Pt80to120_EMEnriched : xsec : LepGood_mcMatchId == 0 && LepGood_mcPromptGamma != 0 ; FillColor=ROOT.kOrange-3, Label="QCDe \#gamma"
+QCDEl_conv: QCD_Pt120to170_EMEnriched: xsec : LepGood_mcMatchId == 0 && LepGood_mcPromptGamma != 0 ; FillColor=ROOT.kOrange-3, Label="QCDe \#gamma"
+QCDEl_conv: QCD_Pt_20to30_bcToE      : xsec : LepGood_mcMatchId == 0 && LepGood_mcPromptGamma != 0 ; FillColor=ROOT.kOrange-3, Label="QCDe \#gamma"
+QCDEl_conv: QCD_Pt_30to80_bcToE      : xsec : LepGood_mcMatchId == 0 && LepGood_mcPromptGamma != 0 ; FillColor=ROOT.kOrange-3, Label="QCDe \#gamma"
+QCDEl_conv: QCD_Pt_80to170_bcToE     : xsec : LepGood_mcMatchId == 0 && LepGood_mcPromptGamma != 0 ; FillColor=ROOT.kOrange-3, Label="QCDe \#gamma"
 
-QCDEl_ljets: QCD_Pt20to30_EMEnriched   : xsec : LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 && LepGood_mcMatchId == 0 && LepGood_mcPromptGamma == 0 ; FillColor=ROOT.kOrange-3, Label="QCDe\, j\#rightarrowl", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_ljets: QCD_Pt30to50_EMEnriched   : xsec : LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 && LepGood_mcMatchId == 0 && LepGood_mcPromptGamma == 0 ; FillColor=ROOT.kOrange-3, Label="QCDe\, j\#rightarrowl", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_ljets: QCD_Pt50to80_EMEnriched   : xsec : LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 && LepGood_mcMatchId == 0 && LepGood_mcPromptGamma == 0 ; FillColor=ROOT.kOrange-3, Label="QCDe\, j\#rightarrowl", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_ljets: QCD_Pt80to120_EMEnriched  : xsec : LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 && LepGood_mcMatchId == 0 && LepGood_mcPromptGamma == 0 ; FillColor=ROOT.kOrange-3, Label="QCDe\, j\#rightarrowl", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_ljets: QCD_Pt120to170_EMEnriched : xsec : LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 && LepGood_mcMatchId == 0 && LepGood_mcPromptGamma == 0 ; FillColor=ROOT.kOrange-3, Label="QCDe\, j\#rightarrowl", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_ljets: QCD_Pt170to300_EMEnriched : xsec : LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 && LepGood_mcMatchId == 0 && LepGood_mcPromptGamma == 0 ; FillColor=ROOT.kOrange-3, Label="QCDe\, j\#rightarrowl", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_ljets: QCD_Pt_20to30_bcToE       : xsec : LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 && LepGood_mcMatchId == 0 && LepGood_mcPromptGamma == 0 ; FillColor=ROOT.kOrange-3, Label="QCDe\, j\#rightarrowl", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_ljets: QCD_Pt_30to80_bcToE       : xsec : LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 && LepGood_mcMatchId == 0 && LepGood_mcPromptGamma == 0 ; FillColor=ROOT.kOrange-3, Label="QCDe\, j\#rightarrowl", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_ljets: QCD_Pt_170to250_bcToE     : xsec : LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 && LepGood_mcMatchId == 0 && LepGood_mcPromptGamma == 0 ; FillColor=ROOT.kOrange-3, Label="QCDe\, j\#rightarrowl", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
 
-QCDEl_gjets: QCD_Pt20to30_EMEnriched   : xsec : LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 && LepGood_mcMatchId == 0 && LepGood_mcPromptGamma != 0; FillColor=ROOT.kOrange+0, Label="QCDe\, \#gamma\#rightarrowl", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_gjets: QCD_Pt30to50_EMEnriched   : xsec : LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 && LepGood_mcMatchId == 0 && LepGood_mcPromptGamma != 0; FillColor=ROOT.kOrange+0, Label="QCDe\, \#gamma\#rightarrowl", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_gjets: QCD_Pt50to80_EMEnriched   : xsec : LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 && LepGood_mcMatchId == 0 && LepGood_mcPromptGamma != 0; FillColor=ROOT.kOrange+0, Label="QCDe\, \#gamma\#rightarrowl", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_gjets: QCD_Pt80to120_EMEnriched  : xsec : LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 && LepGood_mcMatchId == 0 && LepGood_mcPromptGamma != 0; FillColor=ROOT.kOrange+0, Label="QCDe\, \#gamma\#rightarrowl", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_gjets: QCD_Pt120to170_EMEnriched : xsec : LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 && LepGood_mcMatchId == 0 && LepGood_mcPromptGamma != 0; FillColor=ROOT.kOrange+0, Label="QCDe\, \#gamma\#rightarrowl", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_gjets: QCD_Pt170to300_EMEnriched : xsec : LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 && LepGood_mcMatchId == 0 && LepGood_mcPromptGamma != 0; FillColor=ROOT.kOrange+0, Label="QCDe\, \#gamma\#rightarrowl", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_gjets: QCD_Pt_20to30_bcToE       : xsec : LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 && LepGood_mcMatchId == 0 && LepGood_mcPromptGamma != 0; FillColor=ROOT.kOrange+0, Label="QCDe\, \#gamma\#rightarrowl", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_gjets: QCD_Pt_30to80_bcToE       : xsec : LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 && LepGood_mcMatchId == 0 && LepGood_mcPromptGamma != 0; FillColor=ROOT.kOrange+0, Label="QCDe\, \#gamma\#rightarrowl", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
-QCDEl_gjets: QCD_Pt_170to250_bcToE     : xsec : LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 && LepGood_mcMatchId == 0 && LepGood_mcPromptGamma != 0; FillColor=ROOT.kOrange+0, Label="QCDe\, \#gamma\#rightarrowl", FriendsSimple=["/data1/peruzzi/TREES_80X_210616_1lep/fr_mvaSUSY"]
 
-WJets  : WJetsToLNu         : xsec : 1 ; Label="W+jets", FillColor=ROOT.kAzure+1
-DYJets : DYJetsToLL_M10to50 : xsec : 1 ; Label="Z+jets", FillColor=ROOT.kAzure+3
-DYJets : DYJetsToLL_M50     : xsec : 1 ; Label="Z+jets", FillColor=ROOT.kAzure+3 
-EWK    : WJetsToLNu         : xsec : 1 ; Label="V+jets", FillColor=ROOT.kAzure+1
-EWK    : DYJetsToLL_M10to50 : xsec : 1 ; Label="V+jets", FillColor=ROOT.kAzure+1
-EWK    : DYJetsToLL_M50     : xsec : 1 ; Label="V+jets", FillColor=ROOT.kAzure+1
+QCDEl_bjets: QCD_Pt_20to30_bcToE   : xsec : LepGood_mcMatchAny == 5 ; FillColor=ROOT.kPink+5, Label="QCDe\, b\#rightarrowl"
+QCDEl_bjets: QCD_Pt_30to80_bcToE   : xsec : LepGood_mcMatchAny == 5 ; FillColor=ROOT.kPink+5, Label="QCDe\, b\#rightarrowl"
+QCDEl_bjets: QCD_Pt_80to170_bcToE  : xsec : LepGood_mcMatchAny == 5 ; FillColor=ROOT.kPink+5, Label="QCDe\, b\#rightarrowl"
+QCDEl_cjets: QCD_Pt_20to30_bcToE   : xsec : LepGood_mcMatchAny == 4 ; FillColor=ROOT.kRed-3,  Label="QCDe\, c\#rightarrowl"
+QCDEl_cjets: QCD_Pt_30to80_bcToE   : xsec : LepGood_mcMatchAny == 4 ; FillColor=ROOT.kRed-3,  Label="QCDe\, c\#rightarrowl"
+QCDEl_cjets: QCD_Pt_80to170_bcToE  : xsec : LepGood_mcMatchAny == 4 ; FillColor=ROOT.kRed-3,  Label="QCDe\, c\#rightarrowl"
 
-data : DoubleEG_Run2016B_PromptReco_v2; FillColor=ROOT.kBlack, Label="Data"
-data : DoubleEG_Run2016C_PromptReco_v2; FillColor=ROOT.kBlack, Label="Data"
-data : DoubleEG_Run2016D_PromptReco_v2_runs_273150_276384; FillColor=ROOT.kBlack, Label="Data"
-data : DoubleEG_Run2016D_PromptReco_v2_runs_276385_276811; FillColor=ROOT.kBlack, Label="Data"
-data : DoubleMuon_Run2016B_PromptReco_v2; FillColor=ROOT.kBlack, Label="Data"
-data : DoubleMuon_Run2016C_PromptReco_v2; FillColor=ROOT.kBlack, Label="Data"
-data : DoubleMuon_Run2016D_PromptReco_v2_runs_273150_276384; FillColor=ROOT.kBlack, Label="Data"
-data : DoubleMuon_Run2016D_PromptReco_v2_runs_276385_276811; FillColor=ROOT.kBlack, Label="Data"
-#data : JetHT_Run2016B_PromptReco_v2_runs_273150_275125;           FillColor=ROOT.kBlack, Label="Data"#, MCCorrections='ttH-multilepton/mcc-pftrig.txt'
-#data : JetHT2_Run2016B_PromptReco_v2_runs_273150_275125;          FillColor=ROOT.kBlack, Label="Data"
-#data : DoubleEG_Run2016B_PromptReco_v2_runs_273150_275125
-#data : DoubleMuon_Run2016B_PromptReco_v2_runs_273150_275125
-#
+QCDEl_ljets: QCD_Pt20to30_EMEnriched   : xsec : LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 && LepGood_mcMatchId == 0 && LepGood_mcPromptGamma == 0 ; FillColor=ROOT.kOrange-3, Label="QCDe\, j\#rightarrowl"
+QCDEl_ljets: QCD_Pt30to50_EMEnriched   : xsec : LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 && LepGood_mcMatchId == 0 && LepGood_mcPromptGamma == 0 ; FillColor=ROOT.kOrange-3, Label="QCDe\, j\#rightarrowl"
+QCDEl_ljets: QCD_Pt50to80_EMEnriched   : xsec : LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 && LepGood_mcMatchId == 0 && LepGood_mcPromptGamma == 0 ; FillColor=ROOT.kOrange-3, Label="QCDe\, j\#rightarrowl"
+QCDEl_ljets: QCD_Pt80to120_EMEnriched  : xsec : LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 && LepGood_mcMatchId == 0 && LepGood_mcPromptGamma == 0 ; FillColor=ROOT.kOrange-3, Label="QCDe\, j\#rightarrowl"
+QCDEl_ljets: QCD_Pt120to170_EMEnriched : xsec : LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 && LepGood_mcMatchId == 0 && LepGood_mcPromptGamma == 0 ; FillColor=ROOT.kOrange-3, Label="QCDe\, j\#rightarrowl"
+QCDEl_ljets: QCD_Pt_20to30_bcToE       : xsec : LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 && LepGood_mcMatchId == 0 && LepGood_mcPromptGamma == 0 ; FillColor=ROOT.kOrange-3, Label="QCDe\, j\#rightarrowl"
+QCDEl_ljets: QCD_Pt_30to80_bcToE       : xsec : LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 && LepGood_mcMatchId == 0 && LepGood_mcPromptGamma == 0 ; FillColor=ROOT.kOrange-3, Label="QCDe\, j\#rightarrowl"
+
+QCDEl_gjets: QCD_Pt20to30_EMEnriched   : xsec : LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 && LepGood_mcMatchId == 0 && LepGood_mcPromptGamma != 0; FillColor=ROOT.kOrange+0, Label="QCDe\, \#gamma\#rightarrowl"
+QCDEl_gjets: QCD_Pt30to50_EMEnriched   : xsec : LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 && LepGood_mcMatchId == 0 && LepGood_mcPromptGamma != 0; FillColor=ROOT.kOrange+0, Label="QCDe\, \#gamma\#rightarrowl"
+QCDEl_gjets: QCD_Pt50to80_EMEnriched   : xsec : LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 && LepGood_mcMatchId == 0 && LepGood_mcPromptGamma != 0; FillColor=ROOT.kOrange+0, Label="QCDe\, \#gamma\#rightarrowl"
+QCDEl_gjets: QCD_Pt80to120_EMEnriched  : xsec : LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 && LepGood_mcMatchId == 0 && LepGood_mcPromptGamma != 0; FillColor=ROOT.kOrange+0, Label="QCDe\, \#gamma\#rightarrowl"
+QCDEl_gjets: QCD_Pt120to170_EMEnriched : xsec : LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 && LepGood_mcMatchId == 0 && LepGood_mcPromptGamma != 0; FillColor=ROOT.kOrange+0, Label="QCDe\, \#gamma\#rightarrowl"
+QCDEl_gjets: QCD_Pt_20to30_bcToE       : xsec : LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 && LepGood_mcMatchId == 0 && LepGood_mcPromptGamma != 0; FillColor=ROOT.kOrange+0, Label="QCDe\, \#gamma\#rightarrowl"
+QCDEl_gjets: QCD_Pt_30to80_bcToE       : xsec : LepGood_mcMatchAny != 5 && LepGood_mcMatchAny != 4 && LepGood_mcMatchId == 0 && LepGood_mcPromptGamma != 0; FillColor=ROOT.kOrange+0, Label="QCDe\, \#gamma\#rightarrowl"
+
+
+WJets  : WJetsToLNu_LO         : xsec : LepGood_mcMatchId != 0 ; Label="W+jets", NormSystematic=0.2, FillColor=ROOT.kAzure+1
+DYJets : DYJetsToLL_M10to50_LO : xsec : LepGood_mcMatchId != 0 ; Label="Z+jets", NormSystematic=0.2, FillColor=ROOT.kAzure+3
+DYJets : DYJetsToLL_M50_LO_ext : xsec : LepGood_mcMatchId != 0 ; Label="Z+jets", NormSystematic=0.2, FillColor=ROOT.kAzure+3 
+VJets : WJetsToLNu_LO         : xsec : LepGood_mcMatchId != 0 ; Label="V+jets", NormSystematic=0.2, FillColor=ROOT.kAzure+2
+VJets : DYJetsToLL_M10to50_LO : xsec : LepGood_mcMatchId != 0 ; Label="V+jets", NormSystematic=0.2, FillColor=ROOT.kAzure+2
+VJets : DYJetsToLL_M50_LO_ext : xsec : LepGood_mcMatchId != 0 ; Label="V+jets", NormSystematic=0.2, FillColor=ROOT.kAzure+2 
+TT: TTJets_SingleLeptonFromT    : xsec : LepGood_mcMatchId != 0 ; Label="Top", FillColor=ROOT.kOrange+3
+TT: TTJets_SingleLeptonFromTbar : xsec : LepGood_mcMatchId != 0 ; Label="Top", FillColor=ROOT.kOrange+3
+TT: TTJets_DiLepton             : xsec : LepGood_mcMatchId != 0 ; Label="Top", FillColor=ROOT.kOrange+3
+TT: T_tch_powheg                : xsec  : LepGood_mcMatchId != 0 ; Label="Top", FillColor=ROOT.kOrange+3
+TT: TBar_tch_powheg             : 80.95 : LepGood_mcMatchId != 0 ; Label="Top", FillColor=ROOT.kOrange+3
+TT: T_tWch_noFullyHad           : xsec : LepGood_mcMatchId != 0 ; Label="Top", FillColor=ROOT.kOrange+3
+TT: TBar_tWch_noFullyHad        : xsec : LepGood_mcMatchId != 0 ; Label="Top", FillColor=ROOT.kOrange+3
+EWK : WJetsToLNu_LO         : xsec : LepGood_mcMatchId != 0 ; Label="Prompt", FillColor=ROOT.kAzure+1
+EWK : DYJetsToLL_M10to50_LO : xsec : LepGood_mcMatchId != 0 ; Label="Prompt", FillColor=ROOT.kAzure+1
+EWK : DYJetsToLL_M50_LO_ext : xsec : LepGood_mcMatchId != 0 ; Label="Prompt", FillColor=ROOT.kAzure+1
+EWK : TTJets_SingleLeptonFromT    : xsec : LepGood_mcMatchId != 0 ; Label="Prompt", FillColor=ROOT.kAzure+1
+EWK : TTJets_SingleLeptonFromTbar : xsec : LepGood_mcMatchId != 0 ; Label="Prompt", FillColor=ROOT.kAzure+1
+EWK : TTJets_DiLepton             : xsec : LepGood_mcMatchId != 0 ; Label="Prompt", FillColor=ROOT.kAzure+1
+EWK : T_tch_powheg                : xsec  : LepGood_mcMatchId != 0 ; Label="Prompt", FillColor=ROOT.kAzure+1
+EWK : TBar_tch_powheg             : 80.95 : LepGood_mcMatchId != 0 ; Label="Prompt", FillColor=ROOT.kAzure+1
+EWK : T_tWch_noFullyHad     : xsec : LepGood_mcMatchId != 0 ; Label="Prompt", FillColor=ROOT.kAzure+1
+EWK : TBar_tWch_noFullyHad  : xsec : LepGood_mcMatchId != 0 ; Label="Prompt", FillColor=ROOT.kAzure+1
+
+data : DoubleEG_2016B+DoubleEG_2016C+DoubleEG_2016D+DoubleEG_2016E+DoubleEG_2016F+DoubleEG_2016G+DoubleEG_2016H_ds1+DoubleEG_2016H_ds2 ; FillColor=ROOT.kBlack, Label="Data"
+data : DoubleMuon_2016B+DoubleMuon_2016C+DoubleMuon_2016D+DoubleMuon_2016E+DoubleMuon_2016F+DoubleMuon_2016G+DoubleMuon_2016H_ds1+DoubleMuon_2016H_ds2 ; FillColor=ROOT.kBlack, Label="Data"
+data : SingleMuon_2016B+SingleMuon_2016C+SingleMuon_2016D+SingleMuon_2016E+SingleMuon_2016F+SingleMuon_2016G+SingleMuon_2016H_ds1+SingleMuon_2016H_ds2 ; FillColor=ROOT.kBlack, Label="Data"
 
 ## Options only
 QCDMu_red_prefit : - ; FillColor=ROOT.kPink-2, Label="QCD MC"

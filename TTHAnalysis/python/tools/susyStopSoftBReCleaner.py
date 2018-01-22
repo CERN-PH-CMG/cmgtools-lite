@@ -41,7 +41,7 @@ class LepOtherCleaner:
     def __init__(self,label=""):
         self.label = "" if (label in ["",None]) else ("_"+label)
         self.floats = ("pt","eta","phi","miniRelIso","sip3d")
-        self.ints = ("mcMatchAny","mcMatchId","mediumMuonId",)
+        self.ints = ("mcMatchAny","mcMatchId","ICHEPmediumMuonId",)
     def init(self,tree):
         for v in self.floats+self.ints:
             if not tree.GetBranch("LepOther_"+v): print "Missing branch LepOther_"+v

@@ -23,8 +23,13 @@ def openRootOrUrl(myfile):
                 _f_t = ROOT.TFile.Open(myfile)
     return _f_t
 
+allok = True
+tot_ev = 0
+tot_comp = 0
+
 for dset in dsets:
-    print "running " + dset
+    if '.url' in dset: continue
+#    print "running " + dset
     f_t = openRootOrUrl(sys.argv[1]+'/'+dset+'/treeProducerSusyMultilepton/tree.root')
     t_t = f_t.Get("tree")
     n_t = t_t.GetEntries()
@@ -34,3 +39,8 @@ for dset in dsets:
     n_f = t_f.GetEntries()
     f_f.Close()
     print '%s: %d - %d : %s'%(dset,n_t,n_f,'OK' if n_t==n_f else 'ERROR '*15+' !!!')
+    if not (n_t==n_f): allok = False
+    tot_ev += n_f
+    tot_comp += 1
+
+if allok: print '--- ALL OK --- (%d components, %d events)'%(tot_comp,tot_ev)

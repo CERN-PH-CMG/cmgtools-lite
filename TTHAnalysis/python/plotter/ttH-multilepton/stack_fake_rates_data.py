@@ -23,9 +23,16 @@ def readGraphs(filename,pattern,keys):
     slicefile.Close()
     return ret
 
-def combine(graphs):
-    xvals = []
+def combine(graphs,mode):
+    xvals = []; g0 = None
+    if mode.startswith("main:"):
+       preferred = mode.replace("main:","")
+       g0s = [ g for g in graphs if preferred in (g.GetName())]
+       if len(g0s) != 1: 
+            raise RuntimeError("Can't use mode %s if there's not just one preferred graph in %s"%(mode,[g.GetName() for g in graphs]))
+       g0 = g0s[0]
     for g in graphs:
+        if g0 and g != g0: continue
         for i in xrange(g.GetN()):
             xi = g.GetX()[i]
             if len(xvals) == 0 or (min([abs(x[0]-xi) for x in xvals]) > 0.01):
@@ -33,10 +40,19 @@ def combine(graphs):
     xvals.sort()
     ret = ROOT.TGraphAsymmErrors(len(xvals))
     for j,(x,xl,xh) in enumerate(xvals):
-        yhli = [ (g.GetY()[i], g.GetErrorYhigh(i), g.GetErrorYlow(i)) for g in graphs for i in xrange(g.GetN()) if abs(g.GetX()[i]-x) <= 0.01 ]
-        yavg = sum((y/(h**2+l**2)) for (y,h,l) in yhli)/sum(1.0/(h**2+l**2) for (y,h,l) in yhli)
-        ymax = max(y+h for (y,h,l) in yhli)
-        ymin = min(y-l for (y,h,l) in yhli)
+        if mode in ("default","midpoint"): 
+            yhli = [ (g.GetY()[i], g.GetErrorYhigh(i), g.GetErrorYlow(i)) for g in graphs for i in xrange(g.GetN()) if abs(g.GetX()[i]-x) <= 0.01 ]
+            yavg = sum((y/(h**2+l**2)) for (y,h,l) in yhli)/sum(1.0/(h**2+l**2) for (y,h,l) in yhli)
+            ymax = max(y+h for (y,h,l) in yhli)
+            ymin = min(y-l for (y,h,l) in yhli)
+            if mode == "midpoint":
+                yavg = 0.5*(ymax+ymin)
+        elif mode.startswith("main:"):
+            yhli0 = [ (g0.GetY()[i], g0.GetErrorYhigh(i), g0.GetErrorYlow(i)) for i in xrange(g0.GetN()) if abs(g0.GetX()[i]-x) <= 0.01 ][0]
+            yhli  = [ (g.GetY()[i], g.GetErrorYhigh(i), g.GetErrorYlow(i)) for g in graphs for i in xrange(g.GetN()) if g != g0 and abs(g.GetX()[i]-x) <= 0.01 ]
+            yavg  = yhli0[0]
+            ymax  = max([yavg+yhli0[1]]+[y for (y,h,l) in yhli])
+            ymin  = min([yavg-yhli0[2]]+[y for (y,h,l) in yhli])
         ret.SetPoint(j, x, yavg);
         ret.SetPointError(j, xl, xh, yavg-ymin, ymax-yavg);
     return ret
@@ -89,6 +105,7 @@ if __name__ == "__main__":
     parser.add_option("--showRatio", dest="showRatio", action="store_true", default=False, help="Add a data/sim ratio plot at the bottom")
     parser.add_option("--rr", "--ratioRange", dest="ratioRange", type="float", nargs=2, default=(-1,-1), help="Min and max for the ratio")
     parser.add_option("--normEffUncToLumi", dest="normEffUncToLumi", action="store_true", default=False, help="Normalize the dataset to the given lumi for the uncertainties on the calculated efficiency")
+    parser.add_option("--comb-mode", dest="combMode", default="default", help="Comb. mode")
     (options, args) = parser.parse_args()
     if not options.out: raise RuntimeError
     outdir = os.path.basename(options.out)
@@ -114,7 +131,7 @@ if __name__ == "__main__":
     alleffs.sort(key = lambda (l,g) : g.order)
     stackEffs(options.out,None,alleffs,options)
     shortEffs = [ (l,g) for (l,g) in alleffs if g.order == 0 ]
-    cdata = combine([ g for (l,g) in alleffs if 'data' in g.GetName() ])
+    cdata = combine([ g for (l,g) in alleffs if 'data' in g.GetName() ], options.combMode)
     setattrs(cdata, { 'Color':ROOT.kBlack, 'key':'data_comb', 'Label':'Data, comb.' }, options.xtitle)
     outfile.WriteTObject(cdata)
     shortEffs.append( ( 'Data, comb.', cdata) )

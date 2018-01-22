@@ -8,6 +8,7 @@ class ttHFastLepSkimmer( Analyzer ):
         self.muIdCut = self.cfg_ana.muCut
         self.eleIdCut = self.cfg_ana.eleCut
         self.requireSameSignPair = getattr(cfg_ana,"requireSameSignPair",False)
+        self.requireOppositeFlavourPair = getattr(cfg_ana,"requireOppositeFlavourPair",False)
         self.ptCuts = getattr(cfg_ana,"ptCuts",[])
         self.minMll = getattr(cfg_ana, 'minMll', None)
         self.maxMll = getattr(cfg_ana, 'maxMll', None)
@@ -30,20 +31,20 @@ class ttHFastLepSkimmer( Analyzer ):
         self.count.inc('all events')
         
         leptons = 0
-        charges = []
+        pdgIds = []
         pts     = []
         p4s     = []
 
         for el in self.handles['electrons'].product():
             if self.eleIdCut(el): 
-                charges.append(el.charge())
+                pdgIds.append(el.pdgId())
                 pts.append(el.pt())
                 p4s.append(ROOT.reco.Candidate.p4(el))
                 leptons += 1
 
         for mu in self.handles['muons'].product():
             if self.muIdCut(mu): 
-                charges.append(mu.charge())
+                pdgIds.append(mu.pdgId())
                 pts.append(mu.pt())
                 p4s.append(mu.p4())
                 leptons += 1
@@ -56,7 +57,10 @@ class ttHFastLepSkimmer( Analyzer ):
                         return False
              self.count.inc('accepted events')
              if self.requireSameSignPair:
-                 if not any([(q1 == q2) for q1,q2 in itertools.combinations(charges,2)]):
+                 if not any([(q1 * q2 > 0) for q1,q2 in itertools.combinations(pdgIds,2)]):
+                    return False
+             if self.requireOppositeFlavourPair:
+                 if not any([(abs(q1) != abs(q2)) for q1,q2 in itertools.combinations(pdgIds,2)]):
                     return False
              if self.minMll:
                  if not any([((p1+p2).M() >= self.minMll) for p1,p2 in itertools.combinations(p4s,2)]):

@@ -8,7 +8,7 @@ def getEOSlslist(directory, mask='', prepend='root://eoscms//eos/cms'):
     from subprocess import Popen, PIPE
     print 'looking into:',directory,'...'
 
-    eos_cmd = '/afs/cern.ch/project/eos/installation/0.3.84-aquamarine/bin/eos.select'
+    eos_cmd = 'eos'
     if not osp.exists(eos_cmd):
         raise RuntimeError('check eos alias: %s'%eos_cmd)
     data = Popen([eos_cmd, 'ls', '/eos/cms/'+directory],
@@ -78,7 +78,7 @@ def run((infile, outfile, options)):
         ana.setMaxEvents(options.maxEntries)
 
     ## Check if it's data or MC
-    isdata = 'PromptReco' in osp.basename(infile)
+    isdata = '2016' in osp.basename(infile)
 
     ## Run the loop
     ana.RunJob(outfile, isdata)
@@ -106,8 +106,12 @@ if __name__ == '__main__':
                       action="store", type="string", dest="outDir",
                       help=("Output directory for tnp trees "
                             "[default: %default/]"))
+    parser.add_option("-q", "--queue", default="",
+                      action="store", type="string", dest="queue",
+                      help=("Run on lxbatch in this queue "
+                            "[default: run locally]"))
     parser.add_option("-f", "--filter",
-                      default='Run2016,-DCSonly,-MuonEG,-Single,DYJetsToLL_M50,-DYJetsToLL_M50_LO',
+                      default='2016,-DCSonly,-MuonEG,-Single,DYJetsToLL_M50',
                       type="string", dest="filter",
                       help=("Comma separated list of filters to apply. "
                             "Use '-' at beginning to veto files. "
@@ -123,7 +127,10 @@ if __name__ == '__main__':
         elif osp.isfile(idir) and idir.endswith('.root'):
             inputfiles = [idir]
     elif idir.startswith('/store/') or idir.startswith('root://'):
-        inputfiles = getEOSlslist(idir)
+        if idir.endswith('.root'):
+            inputfiles = [idir]
+        else:
+            inputfiles = getEOSlslist(idir)
     else:
         parser.print_help()
         sys.exit(-1)
@@ -153,7 +160,27 @@ if __name__ == '__main__':
         ofile = osp.join(options.outDir, oname)
         tasks.append((ifile,ofile,options))
 
-    if options.jobs > 0 and len(tasks) > 1:
+    if options.queue:
+        runner = osp.join(os.environ['CMSSW_BASE'],
+                              'src/CMGTools/TTHAnalysis/macros/lxbatch_runner.sh')
+
+        basecmd = "{runner} {dir} {cmssw} {self} ".format(
+                    dir=os.getcwd(),
+                    runner=runner,
+                    cmssw=os.environ['CMSSW_BASE'],
+                    self=osp.abspath(__file__))
+
+        for (ifile,ofile,opt) in tasks:
+            cmd = 'bsub -q {queue} {basecmd} {ifile} -o {odir}'.format(
+                              queue=options.queue,
+                              basecmd=basecmd,
+                              ifile=ifile,
+                              odir=osp.abspath(options.outDir))
+            os.system(cmd)
+        print "Submitted %d jobs to queue <%s>" % (len(tasks), options.queue)
+
+
+    elif options.jobs > 0 and len(tasks) > 1:
         print "Running in parallel using %d jobs" % options.jobs
         from multiprocessing import Pool
         pool = Pool(options.jobs)

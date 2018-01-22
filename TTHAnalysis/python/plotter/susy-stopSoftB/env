@@ -12,10 +12,10 @@ SR)
     ;;
 CR2L)
     case $HOSTNAME in
-        cmsco01.cern.ch) P=/data/gpetrucc/TREES_80X_SusyStopSoftB_181116/${WHAT} ;;
-        *) P=/afs/cern.ch/user/g/gpetrucc/w/TREES_80X_SusyStopSoftB_181116/${WHAT} ;;
+        cmsco01.cern.ch) P=/data1/gpetrucc/TREES_80X_SusyStopSoftB_140217/${WHAT} ;;
+        *) P=/afs/cern.ch/user/g/gpetrucc/w/TREES_80X_SusyStopSoftB_140217/${WHAT} ;;
     esac;
-    OPTS="${OPTS}  --Fs {P}/1_recleaner_v3 --Fs {P}/2_leprecleaner_v3 "
+    OPTS="${OPTS}  --Fs {P}/1_lepreclean_v1 "
     if [[ "$1" != "-" ]]; then
         OPTS="${OPTS}  susy-stopSoftB/mca-CR2L-Spring16.txt susy-stopSoftB/cuts-CR2L.txt "
     fi;

@@ -133,7 +133,7 @@ if options.infile!=None:
         h = infile.Get(p)
         if h: report[p] = h
 else:
-    report = mca.getPlotsRaw("x", args[2], args[3], cuts.allCuts(), nodata=options.asimov)
+    for n,h in mca.getPlotsRaw("x", args[2], args[3], cuts.allCuts(), nodata=options.asimov).iteritems(): report[n]=h.raw().Clone('x_%s'%n)
 
 if options.savefile!=None:
     savefile = ROOT.TFile(myout+binname+".bare.root","recreate")
@@ -151,9 +151,11 @@ else:
 allyields = dict([(p,h.Integral()) for p,h in report.iteritems()])
 procs = []; iproc = {}
 for i,s in enumerate(mca.listSignals()):
+    if s not in allyields: continue
     if allyields[s] == 0: continue
     procs.append(s); iproc[s] = i-len(mca.listSignals())+1
 for i,b in enumerate(mca.listBackgrounds()):
+    if b not in allyields: continue
     if allyields[b] == 0: continue
     procs.append(b); iproc[b] = i+1
 
@@ -172,7 +174,7 @@ for sysfile in args[4:]:
             if re.match(binmap+"$",truebinname) == None: continue
             if name not in systs: systs[name] = []
             systs[name].append((re.compile(procmap+"$"),amount))
-        elif field[4] in ["envelop","shapeOnly","templates","alternateShape","alternateShapeOnly"] or '2D' in field[4]:
+        elif field[4] in ["envelop","shapeOnly","templates","templatesShapeOnly","alternateShape","alternateShapeOnly"] or '2D' in field[4]:
             (name, procmap, binmap, amount) = field[:4]
             if re.match(binmap+"$",truebinname) == None: continue
             if name not in systs: systsEnv[name] = []
@@ -218,7 +220,7 @@ for name in systsEnv.keys():
         effect12 = "-"
         for entry in systsEnv[name]:
             procmap,amount,mode = entry[:3]
-            if re.match(procmap, p): effect = float(amount) if mode not in ["templates","alternateShape", "alternateShapeOnly"] else amount
+            if re.match(procmap, p): effect = float(amount) if mode not in ["templates","templatesShapeOnly","alternateShape", "alternateShapeOnly"] else amount
         if mca._projection != None and effect not in ["-","0","1",1.0,0.0] and type(effect) == type(1.0):
             effect = mca._projection.scaleSyst(name, effect)
         if effect == "-" or effect == "0": 
@@ -254,6 +256,7 @@ for name in systsEnv.keys():
                     p2up.SetBinContent(b, p2up.GetBinContent(b) * pow(effect,+c2))
                     p2dn.SetBinContent(b, p2dn.GetBinContent(b) * pow(effect,-c2))
             else: # e.g. shapeOnly2D_1.25X_0.83Y with effect == 1 will do an anti-correlated shape distorsion of the x and y axes by 25% and -20% respectively
+                if 'TH2' not in nominal.ClassName(): raise RuntimeError, 'Trying to use 2D shape systs on a 1D histogram'
                 parsed = mode.split('_')
                 if len(parsed)!=3 or parsed[0]!="shapeOnly2D" or effect!=1: raise RuntimeError, 'Incorrect option parsing for shapeOnly2D: %s %s'%(mode,effect)
                 effectX = float(parsed[1].strip('X'))
@@ -305,9 +308,11 @@ if options.binfunction:
     allyields = dict([(p,h.Integral()) for p,h in report.iteritems()])
     procs = []; iproc = {}
     for i,s in enumerate(mca.listSignals()):
+        if s not in allyields: continue
         if allyields[s] == 0: continue
         procs.append(s); iproc[s] = i-len(mca.listSignals())+1
     for i,b in enumerate(mca.listBackgrounds()):
+        if b not in allyields: continue
         if allyields[b] == 0: continue
         procs.append(b); iproc[b] = i+1
 
@@ -326,7 +331,7 @@ for name in systsEnv.keys():
         for entry in systsEnv[name]:
             procmap,amount,mode = entry[:3]
             if re.match(procmap, p):
-                effect = float(amount) if mode not in ["templates","alternateShape", "alternateShapeOnly"] else amount
+                effect = float(amount) if mode not in ["templates","templatesShapeOnly","alternateShape", "alternateShapeOnly"] else amount
                 morefields=entry[3:]
         if mca._projection != None and effect not in ["-","0","1",1.0,0.0] and type(effect) == type(1.0):
             effect = mca._projection.scaleSyst(name, effect)
@@ -377,7 +382,7 @@ for name in systsEnv.keys():
                                 report[str(p0Dn.GetName())[2:]] = p0Dn
                                 systsEnv2["%s_%s_%s_bin%d_%d"%(name,truebinname,p,binx,biny)] = (dict([(_p,"1" if _p==p else "-") for _p in procs]),dict([(_p,"1" if _p==p else "-") for _p in procs]),"templates")
                                 break # otherwise you apply more than once to the same bin if more regexps match
-        elif mode in ["templates"]:
+        elif mode in ["templates","templatesShapeOnly"]:
             nominal = report[p]
             p0Up = report["%s_%s_Up" % (p, effect)]
             p0Dn = report["%s_%s_Dn" % (p, effect)]
@@ -399,6 +404,9 @@ for name in systsEnv.keys():
                     if p0Up.Integral()>0: p0Dn.SetBinContent(b, yM)
                     else: p0Up.SetBinContent(b, yM)
                 print 'The integral is now: %s, Nominal %f, Up %f, Down %f'%(p,nominal.Integral(),p0Up.Integral(),p0Dn.Integral())
+            if mode == 'templatesShapeOnly':
+                p0Up.Scale(nominal.Integral()/p0Up.Integral())
+                p0Dn.Scale(nominal.Integral()/p0Dn.Integral())
             report[str(p0Up.GetName())[2:]] = p0Up
             report[str(p0Dn.GetName())[2:]] = p0Dn
             effect0  = "1"
@@ -541,7 +549,7 @@ for mass in masses:
     for name,effmap in systs.iteritems():
         datacard.write(('%-12s lnN' % name) + " ".join([kpatt % effmap[p]   for p in procs]) +"\n")
     for name,(effmap0,effmap12,mode) in systsEnv.iteritems():
-        if mode == "templates":
+        if re.match('templates.*',mode):
             datacard.write(('%-10s shape' % name) + " ".join([kpatt % effmap0[p]  for p in procs]) +"\n")
         if re.match('envelop.*',mode):
             datacard.write(('%-10s shape' % (name+"0")) + " ".join([kpatt % effmap0[p]  for p in procs]) +"\n")
@@ -575,7 +583,7 @@ if len(masses) > 1:
     for name,effmap in systs.iteritems():
         datacard.write(('%-12s lnN' % name) + " ".join([kpatt % effmap[p]   for p in procs]) +"\n")
     for name,(effmap0,effmap12,mode) in systsEnv.iteritems():
-        if mode == "templates":
+        if re.match('templates.*',mode):
             datacard.write(('%-10s shape' % name) + " ".join([kpatt % effmap0[p]  for p in procs]) +"\n")
         if re.match('envelop.*',mode):
             datacard.write(('%-10s shape' % (name+"0")) + " ".join([kpatt % effmap0[p]  for p in procs]) +"\n")

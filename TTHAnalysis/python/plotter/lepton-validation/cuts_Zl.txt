@@ -1,10 +1,9 @@
-filters : hbheFilterNew25ns==1 && Flag_CSCTightHaloFilter==1 && Flag_eeBadScFilter==1
-trigger : $DATA{HLT_DoubleMu || HLT_BIT_HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v || HLT_BIT_HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v || HLT_BIT_HLT_Mu23_TrkIsoVVL_Ele8_CaloIdL_TrackIdL_IsoVL_v} $MC{1}
-3L : nLepGood == 3
+filters : Flag_HBHENoiseFilter && Flag_HBHENoiseIsoFilter && Flag_globalTightHalo2016Filter && Flag_EcalDeadCellTriggerPrimitiveFilter $DATA{&& Flag_eeBadScFilter}
+trigger : Triggers_3l
+3L : nLepFO == 3
 pt2515: LepGood1_pt > 25 && LepGood2_pt > 15
 SF/OS : LepGood1_pdgId == -LepGood2_pdgId
 lep3_pt30 : LepGood3_pt < 50
-lep3_pt10 : nLepGood10 == 3
 mll > 12 : minMllAFAS > 12
 Z peak : abs(mZ1-91.2) < 15
 mt_2 : mt_2(LepGood3_pt, LepGood3_phi, met_pt, met_phi) < 55

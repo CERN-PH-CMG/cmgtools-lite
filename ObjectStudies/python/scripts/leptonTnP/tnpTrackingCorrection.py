@@ -30,6 +30,7 @@ def fakeMatchingCorr(graphs):
         gfit  = graphs[0][k]
         gfake = graphs[1][k] 
         n = gfit.GetN()
+        if gfake.GetN() != n: raise RuntimeError, "Mismatching N points for "+k
         g = ROOT.TGraphAsymmErrors(n)
         for i in xrange(n):
             y = gfit.GetY()[i]   
@@ -41,6 +42,7 @@ def fakeMatchingCorr(graphs):
             ycorr =    (   y   -    yf   )/(1-    yf   );
             ycorr_hi = ((y+eyh)-(yf-eylf))/(1-(yf-eylf));
             ycorr_lo = ((y-eyl)-(yf+eyhf))/(1-(yf+eyhf));
+            if abs(gfit.GetX()[i] - gfake.GetX()[i]) > 0.001: raise RuntimeError, "Mismatching points %d for %s" % (i,k)
             g.SetPoint(i, gfit.GetX()[i], ycorr);
             g.SetPointError(i, gfit.GetErrorXlow(i), gfit.GetErrorXhigh(i), ycorr - ycorr_lo, ycorr_hi - ycorr);
         ret[k] = g

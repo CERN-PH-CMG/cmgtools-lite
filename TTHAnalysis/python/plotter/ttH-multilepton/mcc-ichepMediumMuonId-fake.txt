@@ -1,2 +1,0 @@
-LepGood_ICHEPmediumMuonId(\[\d]): (abs(LepGood_pdgId\1) != 13); AlsoData
-LepGood(\d*)_ICHEPmediumMuonId: (abs(LepGood\1_pdgId) != 13); AlsoData
