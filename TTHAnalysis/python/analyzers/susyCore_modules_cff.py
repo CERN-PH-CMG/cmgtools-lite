@@ -322,6 +322,7 @@ tauAna = cfg.Analyzer(
 ## those are the cuts for the nonEMu                                                                                                                                                                         
 isoTrackAna = cfg.Analyzer(
     IsoTrackAnalyzer, name='isoTrackAnalyzer',
+    useLegacy2016=True,
     setOff=True,
     #####
     candidates='packedPFCandidates',
