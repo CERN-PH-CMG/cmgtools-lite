@@ -38,7 +38,7 @@ class lepIsoEAProducer(Module):
             return True # not yet implemented in friends
     def passCustomIso2016(self,lep,isoEA):
         if abs(lep.pdgId)==11:
-            return isoEA < 0.2 if abs(lep.etaSc)<1.479 else 0.0821
+            return isoEA < (0.2 if abs(lep.etaSc)<1.479 else 0.0821)
         else: return True
     def analyze(self, event):
         """process event, return True (go to next module) or False (fail, go to next event)"""
