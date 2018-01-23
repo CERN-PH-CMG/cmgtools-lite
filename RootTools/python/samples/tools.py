@@ -34,7 +34,7 @@ python samplefile.py list [samples]:
 python samplefile.py summary [samples]:   
         two equivalent commands that prints a list of samples, with number of files, events, equivalent luminosity, etc
 
-python samplefile.py genXSecAna [samples] [ --pretend ] [ --verbose ]:  
+python samplefile.py genXSecAna [samples] [ --pretend ] [ --verbose ] [ --AAA ]:  
         check the cross sections using genXSecAna on one of the files
 
 python samplefile.py checkdecl:  
