@@ -21,7 +21,7 @@ class CheckOneFriend:
         tree = tf.Get(self.tree)
         tentries = tree.GetEntries()
         tf.Close()
-        if not os.path.isfile(self.file): 
+        if not os.path.isfile(self.friendfile): 
             print "Friend file %s does not exist!" % self.friendfile
             return False
         ff = ROOT.TFile.Open(self.friendfile)
