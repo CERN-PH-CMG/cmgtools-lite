@@ -116,7 +116,7 @@ class lepCalibratedEnergyProducer(Module):
         pass
     def beginFile(self, inputFile, outputFile, inputTree, wrappedOutputTree):
         self.out = wrappedOutputTree
-        self.out.branch("LepGood_calPt_step1", "F", lenVar="nLepGood")
+        #self.out.branch("LepGood_calPt_step1", "F", lenVar="nLepGood")
         self.out.branch("LepGood_calPt", "F", lenVar="nLepGood")
     def endFile(self, inputFile, outputFile, inputTree, wrappedOutputTree):
         pass
@@ -138,23 +138,23 @@ class lepCalibratedEnergyProducer(Module):
     def analyze(self, event):
         """process event, return True (go to next module) or False (fail, go to next event)"""
         leps = Collection(event, "LepGood")
-        calPt_step1 = []
+        #calPt_step1 = []
         calPt = []
         for l in leps:
             if abs(l.pdgId)!=11: # implemented only for electrons
                 calPt.append(-999.) 
-                calPt_step1.append(-999.) 
+                #calPt_step1.append(-999.) 
             else:
                 scale = self._worker.ScaleCorrection(event.run,abs(l.etaSc)<1.479,l.r9,abs(l.eta),l.pt)
                 smear = self._worker.getSmearingSigma(event.run,abs(l.etaSc)<1.479,l.r9,abs(l.eta),l.pt,0.,0.)
                 if event.isData:
-                    calPt_step1.append(l.pt * scale)
-                    calPt.append(l.pt * scale * self.residualScale(l.pt,l.eta,event.isData))
+                    calPt.append(l.pt * scale)
+                    #calPt.append(l.pt * scale * self.residualScale(l.pt,l.eta,event.isData))
                 else:
                     corr = 1.0 + smear * self.gauss()
-                    calPt_step1.append(l.pt * corr)
+                    #calPt_step1.append(l.pt * corr)
                     calPt.append(l.pt * corr)
-        self.out.fillBranch("LepGood_calPt_step1", calPt_step1)
+        #self.out.fillBranch("LepGood_calPt_step1", calPt_step1)
         self.out.fillBranch("LepGood_calPt", calPt)
         return True
 
