@@ -1,7 +1,7 @@
 #!/usr/bin/env python
-# e.g.: python  w-helicity-13TeV/skims.py w-helicity-13TeV/wmass_e/mca-80X-wenu.txt w-helicity-13TeV/wmass_e/skim_wenu.txt  TREES_1LEP_80X_V3 /eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3_WENUSKIM_V2 -f w-helicity-13TeV/wmass_e/varsSkim_80X.txt
-#       python  w-helicity-13TeV/skims.py w-helicity-13TeV/wmass_e/mca-80X-wenu.txt w-helicity-13TeV/wmass_e/skim_zee.txt   TREES_1LEP_80X_V3 /eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3_ZEESKIM_V2  -f w-helicity-13TeV/wmass_e/varsSkim_80X.txt
-#       python  w-helicity-13TeV/skims.py w-helicity-13TeV/wmass_e/mca-80X-wenu.txt w-helicity-13TeV/wmass_e/skim_fr_el.txt TREES_1LEP_80X_V3 /eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3_FRELSKIM_V2 -f w-helicity-13TeV/wmass_e/varsSkim_80X_fr.txt
+# e.g.: python  w-helicity-13TeV/skims.py w-helicity-13TeV/wmass_e/mca-80X-skims.txt w-helicity-13TeV/wmass_e/skim_wenu.txt  TREES_1LEP_80X_V3 /eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3_WENUSKIM_V2 -f w-helicity-13TeV/wmass_e/varsSkim_80X.txt
+#       python  w-helicity-13TeV/skims.py w-helicity-13TeV/wmass_e/mca-80X-skims.txt w-helicity-13TeV/wmass_e/skim_zee.txt   TREES_1LEP_80X_V3 /eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3_ZEESKIM_V2  -f w-helicity-13TeV/wmass_e/varsSkim_80X.txt
+#       python  w-helicity-13TeV/skims.py w-helicity-13TeV/wmass_e/mca-80X-skims.txt w-helicity-13TeV/wmass_e/skim_fr_el.txt TREES_1LEP_80X_V3 /eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3_FRELSKIM_V2 -f w-helicity-13TeV/wmass_e/varsSkim_80X_fr.txt
 # add -q 8nh --log logs to run in batch 1 job/component (and --pretend to just check the command that will be run)
 import os, subprocess
 
@@ -48,9 +48,9 @@ if __name__ == "__main__":
         OPTS += " --dropall --keep "+" --keep ".join(varsToKeep)
     
     cmdSkim = "python skimTrees.py "+" ".join(mcargs)+" " + outputDirSkims + OPTS
-    cmdFSkimEv = " python skimFTrees.py "+outputDirSkims+" "+treeDir+"/friends "+outputDirFSkims+' -f tree_Friend -t "Friends" '
-    cmdFSkimFr = " python skimFTrees.py "+outputDirSkims+" "+treeDir+"/friends "+outputDirFSkims+' -f tree_FRFriend -t "Friends" '
-    cmdFSkimTg = " python skimFTrees.py "+outputDirSkims+" "+treeDir+"/friends "+outputDirFSkims+' -f tree_TrgFriend -t "Friends" '
+    cmdFSkimEv = " python skimFTrees.py "+outputDirSkims+" "+treeDir+"/friends "+outputDirFSkims+' -f tree_Friend -t "Friends" -x "WJetsToLNu_NoSkim" '
+    cmdFSkimFr = " python skimFTrees.py "+outputDirSkims+" "+treeDir+"/friends "+outputDirFSkims+' -f tree_FRFriend -t "Friends" -x "WJetsToLNu_NoSkim" '
+    cmdFSkimTg = " python skimFTrees.py "+outputDirSkims+" "+treeDir+"/friends "+outputDirFSkims+' -f tree_TrgFriend -t "Friends" -x "WJetsToLNu_NoSkim" '
 
     if not options.friendOnly:
         print "Now skimming the main trees, keeping the following vars:\n",varsToKeep
@@ -59,10 +59,10 @@ if __name__ == "__main__":
     if not options.queue:
         print "Now skimming the event variables friend trees:\n"
         os.system(cmdFSkimEv)
-        print "Now skimming the fake rate friend trees:\n"
-        os.system(cmdFSkimFr)
-        print "Now skimming the trigger friend trees:\n"
-        os.system(cmdFSkimTg)
+        # print "Now skimming the fake rate friend trees:\n"
+        # os.system(cmdFSkimFr)
+        # print "Now skimming the trigger friend trees:\n"
+        # os.system(cmdFSkimTg)
 
     print "VERY DONE\n"
 
