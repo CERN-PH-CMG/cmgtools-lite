@@ -34,7 +34,7 @@ python samplefile.py list [samples]:
 python samplefile.py summary [samples]:   
         two equivalent commands that prints a list of samples, with number of files, events, equivalent luminosity, etc
 
-python samplefile.py genXSecAna [samples] [ --pretend ] [ --verbose ]:  
+python samplefile.py genXSecAna [samples] [ --pretend ] [ --verbose ] [ --AAA ]:  
         check the cross sections using genXSecAna on one of the files
 
 python samplefile.py checkdecl:  
@@ -97,6 +97,9 @@ python samplefile.py checkdecl:
             if "--pretend" in args: 
                 print "Would check ",d.name," aka ",d.dataset
                 continue
+            if "--AAA" in args:
+                from CMGTools.Production.changeComponentAccessMode import convertComponent
+                convertComponent(d, "root://cms-xrd-global.cern.ch/%s")
             print "Sample %s: XS(sample file) = %g pb, ... " % (d.name,d.xSection),
             if "--verbose" in args: 
                 print "\n ".join(["cmsRun", os.environ['CMSSW_BASE']+"/src/genXSecAna.py", "inputFiles=%s" % d.files[0], "maxEvents=-1"])
