@@ -7,7 +7,7 @@ if [[ "$1" == "" || "$1" == "-h" || "$1" == "--help" ]]; then
     exit 1;
 fi
 
-Q=2nd
+Q=""
 if [[ "$1" == "-q" ]]; then
     Q=$2; shift; shift;
 fi;
@@ -20,4 +20,9 @@ fi
 LAB="$(basename $PWD)"; if [[ "$1" != "" ]]; then LAB=$1; fi;
 rename LSFJ OLD_LSFJ *; 
 test -f submission_failed && rm submission_failed
-bsub -q $Q -J $LAB < batchScript.sh
+
+if [ "$Q" != "" ]; then
+    bsub -q $Q -J $LAB < batchScript.sh
+else
+    run_condor.sh batchScript.sh
+fi;
