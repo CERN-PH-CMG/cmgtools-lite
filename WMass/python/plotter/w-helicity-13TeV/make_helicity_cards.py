@@ -29,6 +29,7 @@ parser.add_option("-s", "--signal-cards",  dest="signalCards",  action="store_tr
 parser.add_option("-b", "--bkgdata-cards", dest="bkgdataCards", action="store_true", default=False, help="Make the background and data part of the datacards");
 parser.add_option("-W", "--weight", dest="weightExpr", default="-W 1", help="Event weight expression (default 1)");
 parser.add_option("-P", "--path", dest="path", type="string",default=None, help="Path to directory with input trees and pickle files");
+parser.add_option("-C", "--channel", dest="channel", type="string", default='el', help="Channel. either 'el' or 'mu'");
 parser.add_option("--not-unroll2D", dest="notUnroll2D", action="store_true", default=False, help="Do not unroll the TH2Ds in TH1Ds needed for combine (to make 2D plots)");
 (options, args) = parser.parse_args()
 
@@ -97,7 +98,7 @@ if options.signalCards:
             xpsel=' --xp "W%s.*,Z,Top,DiBosons,TauDecaysW,data.*" --asimov ' % ('p' if charge=='m' else 'm')
             if not os.path.exists(outdir): os.mkdir(outdir)
             if options.queue and not os.path.exists(outdir+"/jobs"): os.mkdir(outdir+"/jobs")
-            dcname = "W%s_el_Ybin_%d" % (charge,iy)
+            dcname = "W{charge}_{channel}_Ybin_{iy}".format(charge=charge, channel=options.channel,iy=iy)
             BIN_OPTS=OPTIONS + " -W '" + options.weightExpr + "'" + " -o "+dcname+" --od "+outdir + xpsel + ycut
             if options.queue:
                 srcfile=outdir+"/jobs/"+dcname+".sh"
@@ -129,7 +130,7 @@ if options.bkgdataCards:
     for charge in ['p','m']:
         xpsel=' --xp "W.*" '
         chargecut = POSCUT if charge=='p' else NEGCUT
-        dcname = "bkg_plus_data_el_%s" % charge
+        dcname = "bkg_plus_data_{channel}_{charge}".format(channel=options.channel, charge=charge)
         BIN_OPTS=OPTIONS + " -W '" + options.weightExpr + "'" + " -o "+dcname+" --od "+outdir + xpsel + chargecut
         if options.queue:
             srcfile=outdir+"/jobs/"+dcname+".sh"

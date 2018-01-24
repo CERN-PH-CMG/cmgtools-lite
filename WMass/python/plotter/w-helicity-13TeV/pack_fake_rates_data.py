@@ -87,7 +87,7 @@ def styles(hs):
         h.GetXaxis().SetTitle("lepton p_{T}^{corr} (GeV)")
 
 if __name__ == "__main__":
-    from CMGTools.MonoXAnalysis.plotter.mcEfficiencies import stackEffs, graphFromXSlice
+    from CMGTools.WMass.plotter.mcEfficiencies import stackEffs, graphFromXSlice
     import os.path
     from optparse import OptionParser
     parser = OptionParser(usage="%prog [options] path out")

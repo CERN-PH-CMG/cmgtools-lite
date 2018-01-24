@@ -154,7 +154,7 @@ line.Draw('same')
 
 outpath = '/afs/cern.ch/user/e/emanuele/www/Analysis/WMass/13TeV/we/fitTests/{date}/'.format(date=date)
 if 'mciprian' in os.environ['USER']: 
-    outpath = "{cmssw_base}/src/CMGTools/MonoXAnalysis/python/plotter/plots/Likelihood/{date}/".format(cmssw_base=os.environ['CMSSW_BASE'],date=date)
+    outpath = "{cmssw_base}/src/CMGTools/WMass/python/plotter/plots/Likelihood/{date}/".format(cmssw_base=os.environ['CMSSW_BASE'],date=date)
 if not os.path.exists(outpath):
     os.makedirs(outpath)
     os.system('cp /afs/cern.ch/user/g/gpetrucc/php/index.php {op}'.format(op=outpath))

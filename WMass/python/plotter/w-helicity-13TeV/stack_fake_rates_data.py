@@ -77,7 +77,7 @@ def setattrs(graph, opts, xtitle):
 
 
 if __name__ == "__main__":
-    from CMGTools.MonoXAnalysis.plotter.mcEfficiencies import stackEffs
+    from CMGTools.WMass.plotter.mcEfficiencies import stackEffs
     import os.path
     from optparse import OptionParser
     parser = OptionParser(usage="%prog [options] what path out")
