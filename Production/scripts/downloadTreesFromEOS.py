@@ -45,7 +45,7 @@ if __name__ == "__main__":
 				raise RuntimeError,'Chunk %s does not contain url file %s'%(d,furl)
 		with open(furl,'r') as _furl:
 			rem = _furl.readline().replace('root://eoscms.cern.ch/','').replace('\n','')
-			if not eostools.isFile(rem):
+			if not os.path.isfile(rem):
 				raise RuntimeError,'Remote file %s not found'%rem
 			eostools.xrdcp(rem,f)
 
