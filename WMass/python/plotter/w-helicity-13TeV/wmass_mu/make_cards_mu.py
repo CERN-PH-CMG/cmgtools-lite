@@ -24,7 +24,7 @@ if options.suffix: OUTDIR += ('_%s' % options.suffix)
 components=[' -s ',' -b ']
 
 for c in components:
-    cmd='python ' + ' '.join([PROG,MCA,CUTFILE,VAR,BINNING,SYSTFILE,OUTDIR]) + \
+    cmd='python ' + ' '.join([PROG,MCA,CUTFILE,VAR,BINNING,SYSTFILE,OUTDIR,'-C mu']) + \
         (' -W %s ' % WEIGHTSTRING) + (' -P %s ' % TREEPATH) + (' -q %s ' % QUEUE) + c
     if options.dryRun: cmd += '  --dry-run '
     os.system(cmd)
