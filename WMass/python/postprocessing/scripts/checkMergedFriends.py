@@ -45,6 +45,8 @@ if __name__ == "__main__":
     inputdir = args[1]
     for root,dirs,files in os.walk(inputdir):
         for d in dirs:
+            if "friends" in d: continue
             print "Checking dataset %s..." % d
             cf = CheckOneFriend(inputdir,d)
             cf.check(1)
+        break

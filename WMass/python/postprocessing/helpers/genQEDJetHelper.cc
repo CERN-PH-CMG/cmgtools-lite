@@ -39,6 +39,7 @@ class GenQEDJetHelper {
       int pdgId = (*Gp_pdgId_)[iP];
       bool isChLep = abs(pdgId)==11 || abs(pdgId)==13 || abs(pdgId)==15;
       genparticle gp = TLorentzVector();
+      if ((*Gp_pt_)[iP]==0) continue;
       gp.SetPtEtaPhiM((*Gp_pt_)[iP],(*Gp_eta_)[iP],(*Gp_phi_)[iP],(*Gp_mass_)[iP]);
       if( (*Gp_prompt_)[iP] && (*Gp_pt_)[iP]>0 && (isChLep || abs(pdgId)==22)){ // && (*Gp_status_)[iP] == 1) { no longer needed
         promptgp.push_back(gp);
@@ -61,7 +62,7 @@ class GenQEDJetHelper {
     for(int iL=0; iL<(int)promptgp.size(); ++iL) {
       for(int iP=iL+1; iP<(int)promptgp.size(); ++iP) {
         if(!usedPart[iP] && promptgp[iL].DeltaR(promptgp[iP]) < deltaR_) {
-          // std::cout << "Dressing a lepton with a particle of pt = " << promptgp[iP].Pt() << " and within dR = " << leps[iL].DeltaR(promptgp[iP]) << std::endl;
+          // std::cout << "Dressing a lepton with a particle of pt = " << promptgp[iP].Pt() << " and within dR = " << lheLeps_[iL].DeltaR(promptgp[iP]) << std::endl;
           promptgp[iL] += promptgp[iP];
           usedPart[iP] = true;
         }
