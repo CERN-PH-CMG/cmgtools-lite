@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# may use as: cat w-helicity-13TeV/wmass_e/zee_catlist.txt | xargs -i python wmass/wmass_plots.py plots/testZskim {} > runplots.sh
+# may use as: cat w-helicity-13TeV/wmass_e/zee_catlist.txt | xargs -i python w-helicity-13TeV/wmass_e/wmass_plots.py plots/testZskim {} > runplots.sh
 import sys
 import re
 import os
@@ -14,8 +14,8 @@ dowhat = "plots"
 #dowhat = "yields" 
 
 TREES = "-F Friends '{P}/friends/tree_Friend_{cname}.root' "
-TREESONLYSKIMW = "-P /eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3_WENUSKIM_V4"
-TREESONLYSKIMZ = "-P /eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3_ZEESKIM_V4"
+TREESONLYSKIMW = "-P /eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3_WENUSKIM_V5"
+TREESONLYSKIMZ = "-P /eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3_ZEESKIM_V5"
 TREESONLYFULL  = "-P /eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3"
 
 def base(selection,useSkim=True):
@@ -34,7 +34,7 @@ def base(selection,useSkim=True):
     if selection=='wenu':
         GO="%s w-helicity-13TeV/wmass_e/mca-80X-wenu-helicity.txt w-helicity-13TeV/wmass_e/wenu_80X.txt "%CORE
         GO="%s -W 'puw2016_nTrueInt_36fb(nTrueInt)*trgSF_We(LepGood1_pdgId,LepGood1_pt,LepGood1_eta,2)*leptonSF_We(LepGood1_pdgId,LepGood1_pt,LepGood1_eta)'"%GO
-        GO="%s --AP --xp 'Wplus*.,Wminus*.' "%GO
+        GO="%s --AP --xp 'Wplus.*,Wminus.*' "%GO
         if dowhat in ["plots","ntuple"]: GO+=" w-helicity-13TeV/wmass_e/wenu_plots.txt "
     elif selection=='zee':
         GO="%s w-helicity-13TeV/wmass_e/mca-80X-skims.txt w-helicity-13TeV/wmass_e/zee.txt "%CORE
