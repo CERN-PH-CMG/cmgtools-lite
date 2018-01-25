@@ -86,16 +86,18 @@ if options.queue and not os.path.exists(outdir+"/jobs"): os.mkdir(outdir+"/jobs"
 POSCUT=" -A alwaystrue positive 'LepGood1_charge>0' "
 NEGCUT=" -A alwaystrue negative 'LepGood1_charge<0' "
 if options.signalCards:
-    WYBins=(16,-6,6)
-    bWidth=(WYBins[2]-WYBins[1])/float(WYBins[0])
-    WYBinsEdges=np.arange(WYBins[1],WYBins[2]+0.001,bWidth)
+    ## WYBins=(16,-6,6)
+    ## bWidth=(WYBins[2]-WYBins[1])/float(WYBins[0])
+    ## WYBinsEdges=np.arange(WYBins[1],WYBins[2]+0.001,bWidth)
+    WYBinsEdges = [-6., -4.,  -3.,   -2.25, -1.5,  -0.75,  0. ,   0.75 , 1.5,   2.25,  3.,  4.,   6.  ]
+    print WYBinsEdges
     print "MAKING SIGNAL PART: WYBinsEdges = ",WYBinsEdges
-    for charge in ['p','m']:
+    for charge in ['plus','minus']:
         for iy in xrange(len(WYBinsEdges)-1):
             print "Making card for %s<genw_y<%s and signal process with charge %s " % (WYBinsEdges[iy],WYBinsEdges[iy+1],charge)
             ycut=" -A alwaystrue YW%d 'genw_y>%s && genw_y<%s' " % (iy,WYBinsEdges[iy],WYBinsEdges[iy+1])
-            ycut += POSCUT if charge=='p' else NEGCUT
-            xpsel=' --xp "W%s.*,Z,Top,DiBosons,TauDecaysW,data.*" --asimov ' % ('p' if charge=='m' else 'm')
+            ycut += POSCUT if charge=='plus' else NEGCUT
+            xpsel=' --xp "W{antich}.*,Z,Top,DiBosons,TauDecaysW,data.*" --asimov '.format(antich = ('plus' if charge=='minus' else 'minus') )
             if not os.path.exists(outdir): os.mkdir(outdir)
             if options.queue and not os.path.exists(outdir+"/jobs"): os.mkdir(outdir+"/jobs")
             dcname = "W{charge}_{channel}_Ybin_{iy}".format(charge=charge, channel=options.channel,iy=iy)
@@ -127,10 +129,10 @@ if options.signalCards:
 
 if options.bkgdataCards:
     print "MAKING BKG and DATA PART:\n"
-    for charge in ['p','m']:
+    for charge in ['plus','minus']:
         xpsel=' --xp "W.*" '
-        chargecut = POSCUT if charge=='p' else NEGCUT
-        dcname = "bkg_plus_data_{channel}_{charge}".format(channel=options.channel, charge=charge)
+        chargecut = POSCUT if charge=='plus' else NEGCUT
+        dcname = "bkg_and_data_{channel}_{charge}".format(channel=options.channel, charge=charge)
         BIN_OPTS=OPTIONS + " -W '" + options.weightExpr + "'" + " -o "+dcname+" --od "+outdir + xpsel + chargecut
         if options.queue:
             srcfile=outdir+"/jobs/"+dcname+".sh"
