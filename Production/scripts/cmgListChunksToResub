@@ -44,6 +44,7 @@ function help {
     echo "-t <filename>  name of ROOT file to check for zombie (option -z)"
     echo "-l  print commands for local running instead of batch submission"
     echo "-p  check for null pck files"
+    echo "-q  queue to resubmit to (use HTCondor to resubmit to HTCondor instead of LSF)"
     echo "-z  check for zombie ROOT files"
     exit 1;
 }
