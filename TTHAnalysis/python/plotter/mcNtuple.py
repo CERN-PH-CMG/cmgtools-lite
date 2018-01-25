@@ -31,7 +31,7 @@ class MCNtupleModule(Module):
             self.dumpTTree = ROOT.TTree("t","t")
             self.dumpPyTree = PyTree(self.dumpTTree)
             for p in self.columns: 
-                self.dumpPyTree.branch(p.name,"F")
+                self.dumpPyTree.branch(p.name,"F" if 'evt'!=p.name else "l")
             self.dumpPyTree.branch("_weight_","F")
             self.thisWeight = tty.getWeightForCut(self.cut)
     def openOutFile(self,dumpFileName):
