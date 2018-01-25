@@ -1,5 +1,5 @@
 # unweighted signal for simple plots
-W : WJetsToLNu_NoSkim : 3.*20508.9   ; FillColor=ROOT.kRed+2,  , Label="W", SkipMe=True
+W : WJetsToLNu_NoSkim    : 3.*20508.9   ; FillColor=ROOT.kRed+2, Label="W", SkipMe=True
 
 # signal from the weighted uncut sample
 Wplus_long  : WJetsToLNu_NoSkim : 3.*20508.9    : genw_decayId == 12 && genw_charge>0 ; FillColor=ROOT.kGray+1   , FakeRate="w-helicity-13TeV/fractionReweighting/reweighting_0_plus.txt", Label="W+ long"
@@ -26,9 +26,9 @@ DiBosons : ZZ+ZZ_ext : xsec; FillColor=ROOT.kViolet+2, Label="DiBosons", NormSys
 TauDecaysW : WJetsToLNu_NoSkim : 3.*20508.9    : genw_decayId != 12 && genw_decayId != 14 ; FillColor=ROOT.kPink   ,  Label="W\#rightarrow\#tau\#nu"
 
 #incl_qcdmc : + ; IncludeMca="w-helicity-13TeV/wmass_e/mca-includes/mca-qcdmc.txt"
-incl_datafakes: + ; IncludeMca="w-helicity-13TeV/wmass_e/mca-includes/mca-data.txt", FakeRate="w-helicity-13TeV/wmass_e/fakeRate-frdata_smooth.txt", Label="Fakes", FillColor=ROOT.kGray+2, FillStyle=3005, NormSystematic=0.30, PostFix='_fakes'
+incl_datafakes: + ; IncludeMca="w-helicity-13TeV/wmass_e/mca-includes/mca-data-legacy2016.txt", FakeRate="w-helicity-13TeV/wmass_e/fakeRate-frdata_smooth.txt", Label="Fakes", FillColor=ROOT.kGray+2, FillStyle=3005, NormSystematic=0.30, PostFix='_fakes'
 
-incl_data : + ; IncludeMca="w-helicity-13TeV/wmass_e/mca-includes/mca-data.txt"
+incl_data : + ; IncludeMca="w-helicity-13TeV/wmass_e/mca-includes/mca-data-legacy2016.txt"
 
 # electron scale systematics 
 Wplus_long_elescale_Up   : WJetsToLNu_NoSkim : 3.*20508.9   : genw_decayId == 12 && genw_charge>0 ; FillColor=ROOT.kRed+2   , FakeRate="w-helicity-13TeV/wmass_e/fr-includes/reweighting_0_plus_lepUp.txt", Label="W+ long lep scale Up", SkipMe=True 
@@ -50,7 +50,7 @@ Wminus_right_elescale_Dn : WJetsToLNu_NoSkim : 3.*20508.9   : genw_decayId == 12
 #incl_ewkmc_recoil_Dn : + ; IncludeMca="w-helicity-13TeV/wmass_e/mca-includes/mca-ewkmc-helicity.txt", FakeRate="w-helicity-13TeV/wmass_e/fr-recoilDn.txt", SkipMe=True, PostFix="_recoil_Dn" 
 
 # fake-lepton background systematics
-#incl_datafakes_FRe_norm_Up : + ; IncludeMca="w-helicity-13TeV/wmass_e/mca-includes/mca-data.txt", FakeRate="w-helicity-13TeV/wmass_e/fakerate-vars/fakeRate-frdata-e-up.txt", SkipMe=True, PostFix='_fakes_FRe_norm_Up'
-#incl_datafakes_FRe_norm_Dn : + ; IncludeMca="w-helicity-13TeV/wmass_e/mca-includes/mca-data.txt", FakeRate="w-helicity-13TeV/wmass_e/fakerate-vars/fakeRate-frdata-e-down.txt", SkipMe=True, PostFix='_fakes_FRe_norm_Dn'
+#incl_datafakes_FRe_norm_Up : + ; IncludeMca="w-helicity-13TeV/wmass_e/mca-includes/mca-data-legacy2016.txt", FakeRate="w-helicity-13TeV/wmass_e/fakerate-vars/fakeRate-frdata-e-up.txt", SkipMe=True, PostFix='_fakes_FRe_norm_Up'
+#incl_datafakes_FRe_norm_Dn : + ; IncludeMca="w-helicity-13TeV/wmass_e/mca-includes/mca-data-legacy2016.txt", FakeRate="w-helicity-13TeV/wmass_e/fakerate-vars/fakeRate-frdata-e-down.txt", SkipMe=True, PostFix='_fakes_FRe_norm_Dn'
 
 
