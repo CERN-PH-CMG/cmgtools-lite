@@ -73,7 +73,7 @@ bool loadFRHisto(const std::string &histoName, const char *file, const char *nam
 
 float fakeRateWeight_1l_i_smoothed(float lpt, float leta, int lpdgId, bool passWP, int iFR) {
   if (!passWP) {
-    double fpt = lpt; double feta = std::abs(leta); int fid = abs(lpdgId);
+    double fpt = lpt; double feta = std::fabs(leta); int fid = abs(lpdgId);
     TH2 *hist = (fid == 11 ? FRi_el[iFR] : FRi_mu[iFR]);
     if (hist == 0) return 0;
     int etabin = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(feta)));
@@ -88,7 +88,7 @@ float fakeRateWeight_1l_i_smoothed(float lpt, float leta, int lpdgId, bool passW
 
 float fakeRateWeight_1l_i(float lpt, float leta, int lpdgId, bool passWP, int iFR) {
   if (!passWP) {
-    double fpt = lpt; double feta = std::abs(leta); int fid = abs(lpdgId);
+    double fpt = lpt; double feta = std::fabs(leta); int fid = abs(lpdgId);
     TH2 *hist = (fid == 11 ? FRi_el[iFR] : FRi_mu[iFR]);
     if (hist == 0) return 0;
     int ptbin  = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(fpt)));

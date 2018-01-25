@@ -7,7 +7,7 @@ W   : WJetsToLNu_part1+WJetsToLNu_part2+WJetsToLNu_part3+WJetsToLNu_part4+WJetsT
 
 W_LO   : WJetsToLNu_LO_ext_part1+WJetsToLNu_LO_ext_part10+WJetsToLNu_LO_ext_part2+WJetsToLNu_LO_ext_part3+WJetsToLNu_LO_ext_part4+WJetsToLNu_LO_ext_part5+WJetsToLNu_LO_ext_part6+WJetsToLNu_LO_ext_part7+WJetsToLNu_LO_ext_part8+WJetsToLNu_LO_ext_part9+WJetsToLNu_LO_part1+WJetsToLNu_LO_part2+WJetsToLNu_LO_part3+WJetsToLNu_LO_part4+WJetsToLNu_LO_part5+WJetsToLNu_LO_part6 :  xsec; FillColor=ROOT.kRed+2, Label="W (Madgraph)", NormSystematic=0.03
 
-#incl_datafakes: + ; IncludeMca="wmass/wmass_e/mca-includes/mca-data.txt", FakeRate="wmass/wmass_e/fakeRate-frdata.txt", Label="Fakes (data)", FillColor=ROOT.kGray, NormSystematic=0.30, PostFix='_fakes'
+#incl_datafakes: + ; IncludeMca="wmass/wmass_e/mca-includes/mca-data-legacy2016.txt", FakeRate="wmass/wmass_e/fakeRate-frdata.txt", Label="Fakes (data)", FillColor=ROOT.kGray, NormSystematic=0.30, PostFix='_fakes'
 # , FillStyle=3005
 
 data_fakes: SingleElectron_Run2016* : 1 ; FakeRate="w-helicity-13TeV/wmass_e/fakeRate-frdata_smooth.txt", Label="Fakes (data)", FillColor=ROOT.kGray, NormSystematic=0.30, PostFix='_fakes'

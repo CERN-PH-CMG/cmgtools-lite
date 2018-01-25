@@ -196,7 +196,7 @@ float _get_electronSF_offlineWP_residual(float eta) {
 
   if (!_histo_elofflineWP_1D) {
     _file_elofflineWP_1D = new TFile("../postprocessing/data/leptonSF/el_eta_offlineWP_SF.root");
-    _histo_elofflineWP_1D = (TH2F*)(_file_elofflineWP_1D->Get("etal2_data"));
+    _histo_elofflineWP_1D = (TH2F*)(_file_elofflineWP_1D->Get("hsf_offlineWP"));
   }
   TH2F *hist = _histo_elofflineWP_1D;
   int etabin = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindFixBin(eta)));

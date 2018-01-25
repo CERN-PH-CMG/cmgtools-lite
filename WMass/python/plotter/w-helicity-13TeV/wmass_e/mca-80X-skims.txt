@@ -14,4 +14,4 @@ DiBosons : ZZ+ZZ_ext : xsec; FillColor=ROOT.kViolet+2, Label="DiBosons", NormSys
 
 incl_qcdmc : + ; IncludeMca="w-helicity-13TeV/wmass_e/mca-includes/mca-qcdmc.txt"
 
-incl_data : + ; IncludeMca="w-helicity-13TeV/wmass_e/mca-includes/mca-data.txt"
+incl_data : + ; IncludeMca="w-helicity-13TeV/wmass_e/mca-includes/mca-data-legacy2016.txt"

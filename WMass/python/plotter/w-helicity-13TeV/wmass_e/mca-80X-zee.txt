@@ -18,9 +18,8 @@ QCD: QCD_Pt80to120_EMEnriched  : xsec; FillColor=ROOT.kGray+2, Label="QCD", Norm
 QCD: QCD_Pt120to170_EMEnriched : xsec; FillColor=ROOT.kGray+2, Label="QCD", NormSystematic=1.00
 QCD: QCD_Pt170to300_EMEnriched : xsec; FillColor=ROOT.kGray+2, Label="QCD", NormSystematic=1.00
 QCD: QCD_Pt300toInf_EMEnriched : xsec; FillColor=ROOT.kGray+2, Label="QCD", NormSystematic=1.00
-# This is DoubleEG
-#incl_data : + ; IncludeMca="wmass/wmass_e/mca-includes/mca-data-zee.txt" 
-incl_data : + ; IncludeMca="wmass/wmass_e/mca-includes/mca-data.txt" 
+
+incl_data : + ; IncludeMca="wmass/wmass_e/mca-includes/mca-data-legacy2016.txt" 
 
 QCD: QCD_Pt_30to80_bcToE    : xsec; FillColor=ROOT.kGray+2, Label="QCD", NormSystematic=1.00
 QCD: QCD_Pt_170to250_bcToE  : xsec; FillColor=ROOT.kGray+2, Label="QCD", NormSystematic=1.00

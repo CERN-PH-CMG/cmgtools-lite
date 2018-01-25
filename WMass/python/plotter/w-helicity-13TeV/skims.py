@@ -35,7 +35,7 @@ if __name__ == "__main__":
            os.makedirs(outputDirFSkims)
     else: print "Make only the friend trees in dir ",outputDirFSkims
 
-    OPTS = ' --obj tree -P '+treeDir+' --s2v -j 4 -F Friends "{P}/friends/tree_Friend_{cname}.root" -F Friends "{P}/friends/tree_FRFriend_{cname}.root" '
+    OPTS = ' --obj tree -P '+treeDir+' --s2v -j 4 -F Friends "{P}/friends/tree_Friend_{cname}.root" '
     OPTS += ' --max-entries %d ' % options.maxEntries 
     if options.pretend: OPTS += ' --pretend '
     if options.queue: OPTS += ' -q %s ' % options.queue
@@ -49,8 +49,6 @@ if __name__ == "__main__":
     
     cmdSkim = "python skimTrees.py "+" ".join(mcargs)+" " + outputDirSkims + OPTS
     cmdFSkimEv = " python skimFTrees.py "+outputDirSkims+" "+treeDir+"/friends "+outputDirFSkims+' -f tree_Friend -t "Friends" -x "WJetsToLNu_NoSkim" '
-    cmdFSkimFr = " python skimFTrees.py "+outputDirSkims+" "+treeDir+"/friends "+outputDirFSkims+' -f tree_FRFriend -t "Friends" -x "WJetsToLNu_NoSkim" '
-    cmdFSkimTg = " python skimFTrees.py "+outputDirSkims+" "+treeDir+"/friends "+outputDirFSkims+' -f tree_TrgFriend -t "Friends" -x "WJetsToLNu_NoSkim" '
 
     if not options.friendOnly:
         print "Now skimming the main trees, keeping the following vars:\n",varsToKeep
