@@ -26,6 +26,7 @@ forcedSplitFactor = getHeppyOption("splitFactor",-1)
 forcedFineSplitFactor = getHeppyOption("fineSplitFactor",-1)
 isTest = getHeppyOption("test",None) != None and not re.match("^\d+$",getHeppyOption("test"))
 selectedEvents=getHeppyOption("selectEvents","")
+keepGenPart=getHeppyOption("keepGenPart",False)
 
 sample = "main"
 #if runDataQCD or runFRMC: sample="qcd1l"
@@ -123,7 +124,8 @@ ttHSVAna.preselection = lambda ivf : abs(ivf.dxy.value())<2 and ivf.cosTheta>0.9
 
 
 from CMGTools.TTHAnalysis.analyzers.treeProducerSusyMultilepton import * 
-del susyMultilepton_collections['generatorSummary']
+if not keepGenPart:
+    del susyMultilepton_collections['generatorSummary']
 del susyMultilepton_collections['otherTaus']
 del susyMultilepton_collections['otherLeptons']
 del susyMultilepton_collections['discardedJets']
