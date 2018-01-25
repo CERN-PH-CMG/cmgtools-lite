@@ -21,7 +21,7 @@ class CheckOneFriend:
         tree = tf.Get(self.tree)
         tentries = tree.GetEntries()
         tf.Close()
-        if not os.path.isfile(self.file): 
+        if not os.path.isfile(self.friendfile): 
             print "Friend file %s does not exist!" % self.friendfile
             return False
         ff = ROOT.TFile.Open(self.friendfile)
@@ -45,6 +45,8 @@ if __name__ == "__main__":
     inputdir = args[1]
     for root,dirs,files in os.walk(inputdir):
         for d in dirs:
+            if "friends" in d: continue
             print "Checking dataset %s..." % d
             cf = CheckOneFriend(inputdir,d)
             cf.check(1)
+        break

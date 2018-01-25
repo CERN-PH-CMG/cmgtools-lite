@@ -7,6 +7,7 @@
 # This script prints the commands to produce plots or send jobs to manage the production 
 
 echo ""
+plotterPath="${CMSSW_BASE}/src/CMGTools/WMass/python/plotter"
 
 #####################################################
 # some selections (other customizable options start below)
@@ -252,7 +253,7 @@ fi
 # otherwise the parsing of the option parameters is not done correctly
 
 
-commonCommand="python ${mypath}/mcPlots.py -f -l ${luminosity} --s2v --tree treeProducerWMass --obj tree --lspam '#bf{CMS} #it{Preliminary}' --legendWidth 0.20 --legendFontSize 0.035 --showRatio --maxRatioRange 0.5 1.5 --fixRatioRange ${mypath}/w-helicity-13TeV/wmass_e/${mcafile} ${mypath}/w-helicity-13TeV/wmass_e/${cutfile} ${mypath}/w-helicity-13TeV/wmass_e/${plotfile} --max-entries ${maxentries} ${dataOption} ${MCweigthOption} "
+commonCommand="python ${plotterPath}/mcPlots.py -f -l ${luminosity} --s2v --tree treeProducerWMass --obj tree --lspam '#bf{CMS} #it{Preliminary}' --legendWidth 0.20 --legendFontSize 0.035 --showRatio --maxRatioRange 0.5 1.5 --fixRatioRange ${plotterPath}/w-helicity-13TeV/wmass_e/${mcafile} ${plotterPath}/w-helicity-13TeV/wmass_e/${cutfile} ${plotterPath}/w-helicity-13TeV/wmass_e/${plotfile} --max-entries ${maxentries} ${dataOption} ${MCweigthOption} "
 
 if [[ "${runBatch}" != "y" ]]; then
     commonCommand="${commonCommand} -j 4 "
@@ -333,7 +334,7 @@ do
 	    cp ${baseBatchScript} ${srcBatchFileName}
 
 	    etaRangeCut=" -A eleKin ${etabin} 'abs(LepGood1_etaSc) > ${etaBinBoundaries[$i]} && abs(LepGood1_etaSc) < ${etaBinBoundaries[($i+1)]}' "
-	    regionCommand_eta="${regionCommand} --pdir ${mypath}/plots/distribution/${treedir}/${thisRegionName}/${outputDir[${region}]}/${etabin}/ ${etaRangeCut}" 
+	    regionCommand_eta="${regionCommand} --pdir ${plotterPath}/plots/distribution/${treedir}/${thisRegionName}/${outputDir[${region}]}/${etabin}/ ${etaRangeCut}" 
 	    echo "${regionCommand_eta}" >> ${srcBatchFileName}
 	    
 	    if [[ "${runBatch}" == "y" ]]; then
