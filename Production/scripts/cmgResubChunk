@@ -1,16 +1,22 @@
 #!/bin/bash
+Q="8nh"; T="240"; HAST=false
 if [[ "$1" == "" || "$1" == "-h" || "$1" == "--help" ]]; then
-    echo "Usage: $0 [ -q <queue> ] <Component_ChunkXYZ> [ <JobName> ] "
-    echo " will resubmit the chunk <Component_ChunkXYZ> to the queue <queue> (default: 2nd)  "
+    echo "Usage: $0 [ -q <queue> | -t <time-in-minutes> ] <Component_ChunkXYZ> [ <JobName> ] "
+    echo " will resubmit the chunk <Component_ChunkXYZ> to the queue <queue> (default: $Q),  "
     echo " if no jobname is specified, the job name in LSF will be the chunk name."
+    echo " setting -q HTCondor will submit to HTCondor instead of LXF using the exising submit file"
+    echo " setting [ -q HTCondor ] -t time will submit to HTCondor with an alternate job length in minutes"
     echo " you can also run this command from within the Component_ChunkXYZ directory, in that case you can omit the chunk name"
     exit 1;
 fi
 
-Q=2nd
 if [[ "$1" == "-q" ]]; then
     Q=$2; shift; shift;
 fi;
+if [[ "$1" == "-t" ]]; then
+    Q="HTCondor"; T=$2; HAST=true; shift; shift;
+fi;
+
 if [[ "$1" != "" ]] && test -d $1 && test -f $1/batchScript.sh; then
     cd $1; shift;
 elif test \! -f batchScript.sh; then
@@ -19,5 +25,27 @@ elif test \! -f batchScript.sh; then
 fi
 LAB="$(basename $PWD)"; if [[ "$1" != "" ]]; then LAB=$1; fi;
 rename LSFJ OLD_LSFJ *; 
+rename condor_job OLD_condor_job *; 
+
 test -f submission_failed && rm submission_failed
-bsub -q $Q -J $LAB < batchScript.sh
+
+if [ "$Q" != "HTCondor" ]; then
+    echo "Resubmitting using LXBatch on queue $Q"
+    bsub -q $Q -J $LAB < batchScript.sh
+else 
+    if $HAST; then
+        if [ -f ../src.tar.gz ]; then
+            echo "Found ../src.tar.gz. Will resubmit with run_condor.sh"
+            run_condor.sh -t $T batchScript.sh
+        else
+            echo "Will resubmit with run_condor_simple.sh"
+            run_condor_simple.sh -t $T batchScript.sh
+        fi
+    else
+        if [ -f job_desc.cfg ]; then
+            condor_submit job_desc.cfg
+        else
+            echo "job_desc.cfg not found. please rerun with -t <time>"
+        fi;
+    fi;
+fi;
