@@ -13,7 +13,8 @@ echo ""
 # cuts are added after eleKin selection step (check in the cut file, could use also a dummy step like alwaystrue)
 #####################################################
 
-ptcorr="ptElFull(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_r9,run,isData,evt)"
+#ptcorr="ptElFull(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_r9,run,isData,evt)"
+ptcorr="LepGood1_calPt_step1"
 
 inEB=" -A eleKin EB 'abs(LepGood1_etaSc) < 1.479' "
 inEE=" -A eleKin EE 'abs(LepGood1_etaSc) > 1.479' "
@@ -31,9 +32,15 @@ not_pass_looseWP="-A eleKin not-fullLooseID 'LepGood1_tightId < 1 || if3(abs(Lep
 not_pass_looseWP_iso0p2="-A eleKin not-fullLooseID 'LepGood1_tightId < 1 || if3(abs(LepGood1_etaSc)<1.479,LepGood1_relIso04EA > 0.2 || abs(LepGood1_dz) > 0.1 || abs(LepGood1_dxy) > 0.05, LepGood1_relIso04EA > 0.2 || abs(LepGood1_dz) > 0.2 || abs(LepGood1_dxy) > 0.1) || LepGood1_lostHits > 1 || LepGood1_convVeto == 0'"
 
 # use bult-in functions in functions.cc, which automatically select EB or EE, manage cuts and so on
-FRnumSel=" -A eleKin FRnumSel 'pass_FakerateNumerator2016((abs(LepGood1_etaSc)<1.479),LepGood1_tightId,LepGood1_dxy,LepGood1_dz,LepGood1_lostHits,LepGood1_convVeto,LepGood1_relIso04EA)' "
+#FRnumSel=" -A eleKin FRnumSel 'pass_FakerateNumerator2016((abs(LepGood1_etaSc)<1.479),LepGood1_tightId,LepGood1_dxy,LepGood1_dz,LepGood1_lostHits,LepGood1_convVeto,LepGood1_relIso04EA)' "
 
-notFRnumSel="-A eleKin failFRnumSel 'pass_FakerateApplicationRegion2016(abs(LepGood1_etaSc)<1.479,LepGood1_tightId,LepGood1_dxy,LepGood1_dz,LepGood1_lostHits,LepGood1_convVeto,LepGood1_relIso04EA)' "
+#notFRnumSel="-A eleKin failFRnumSel 'pass_FakerateApplicationRegion2016(abs(LepGood1_etaSc)<1.479,LepGood1_tightId,LepGood1_dxy,LepGood1_dz,LepGood1_lostHits,LepGood1_convVeto,LepGood1_relIso04EA)' "
+
+# use variables in friend trees, which were filled with the conditions to pass the ID+iso (the one we decided to use at the moment)
+FRnumSel=" -A eleKin FRnumSel 'LepGood1_customId == 1' "
+
+notFRnumSel="-A eleKin failFRnumSel 'LepGood1_customId == 0' "
+
 
 Wsel="-A eleKin WregionSel '(${ptcorr})>30 && met_pt>20 && pt_2(${ptcorr}, LepGood1_phi, met_trkPt, met_trkPhi ) < 40 && mt_2(met_trkPt,met_trkPhi,${ptcorr},LepGood1_phi) < 110'"
 
@@ -58,7 +65,8 @@ usePtCorrForScaleFactors="n" # y: use corrected pt for scale factor weight; n: u
 # eta bin boundaries to divide regions in eta
 etaBinBoundaries=("0.0" "1.479" "2.1" "2.5")
 #etaBinBoundaries=("0.0" "2.5")
-batchDirName="plots_15_12_2017"  # name of directory to create inside jobsLog
+today=`date +"%d_%m_%Y"`
+batchDirName="plots_${today}"  # name of directory to create inside jobsLog
 ##################################
 ##################################
 # MCA files
