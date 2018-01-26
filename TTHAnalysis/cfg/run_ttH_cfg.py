@@ -12,6 +12,7 @@ from PhysicsTools.HeppyCore.framework.heppy_loop import getHeppyOption
 
 #-------- SET OPTIONS AND REDEFINE CONFIGURATIONS -----------
 
+run80X = getHeppyOption("run80X",False)
 runData = getHeppyOption("runData",False)
 runDataQCD = getHeppyOption("runDataQCD",False)
 runQCDBM = getHeppyOption("runQCDBM",False)
@@ -35,6 +36,9 @@ ttHLepSkim.minLeptons = 2
 ttHLepSkim.maxLeptons = 999
 #ttHLepSkim.idCut  = ""
 #ttHLepSkim.ptCuts = []
+if not ttHLepSkim.allowLepTauComb:
+    susyCoreSequence.remove(tauAna)
+    susyCoreSequence.insert(susyCoreSequence.index(ttHLepSkim)+1, tauAna)
 
 # Run miniIso
 lepAna.doMiniIsolation = True
@@ -42,6 +46,7 @@ lepAna.packedCandidates = 'packedPFCandidates'
 lepAna.miniIsolationPUCorr = 'rhoArea'
 lepAna.miniIsolationVetoLeptons = None # use 'inclusive' to veto inclusive leptons and their footprint in all isolation cones
 lepAna.doIsolationScan = False
+lepAna.doMiniIsolation = True if run80X else "precomputed"
 
 # Lepton Preselection
 lepAna.loose_electron_id = "MVA_ID_NonTrig_Spring16_VLooseIdEmu"
@@ -547,16 +552,18 @@ elif test == '94X-MC':
     what = getHeppyOption("sample","TTLep")
     if what == "TTLep":
         TTLep_pow = kreator.makeMCComponent("TTLep_pow", "/TTTo2L2Nu_mtop166p5_TuneCP5_PSweights_13TeV-powheg-pythia8/RunIIFall17MiniAOD-94X_mc2017_realistic_v10-v1/MINIAODSIM", "CMS", ".*root", 831.76*((3*0.108)**2) )
+        TTLep_pow.files = [ '/store/mc/RunIIFall17MiniAOD/TTTo2L2Nu_mtop166p5_TuneCP5_PSweights_13TeV-powheg-pythia8/MINIAODSIM/94X_mc2017_realistic_v10-v1/70000/3CC234EB-44E0-E711-904F-FA163E0DF774.root' ]
         selectedComponents = [ TTLep_pow ]
-        comp = selectedComponents[0]
-        comp.triggers = []
-        comp.files = [ '/store/mc/RunIIFall17MiniAOD/TTTo2L2Nu_mtop166p5_TuneCP5_PSweights_13TeV-powheg-pythia8/MINIAODSIM/94X_mc2017_realistic_v10-v1/70000/3CC234EB-44E0-E711-904F-FA163E0DF774.root' ]
-        tmpfil = os.path.expandvars("/tmp/$USER/3CC234EB-44E0-E711-904F-FA163E0DF774.root")
-        if not os.path.exists(tmpfil):
-            os.system("xrdcp root://cms-xrd-global.cern.ch/%s %s" % (comp.files[0],tmpfil))
-        comp.files = [ tmpfil ]
-        if not getHeppyOption("single"): comp.fineSplitFactor = 4
+    elif what == "TTSemi":
+        selectedComponents = [ kreator.makeMCComponent("TTSemi", "/TTToSemiLeptonic_TuneCP5_PSweights_13TeV-powheg-pythia8/RunIIFall17MiniAOD-94X_mc2017_realistic_v10-v1/MINIAODSIM", "CMS", ".*root", 831.76*(3*0.108)*(1-3*0.108)*2) ]
     else: raise RuntimeError, "Unknown MC sample: %s" % what
+    for comp in selectedComponents:
+        comp.triggers = []
+        tmpfil = os.path.expandvars("/tmp/$USER/%s" % os.path.basename(comp.files[0]))
+        if not os.path.exists(tmpfil): os.system("xrdcp %s %s" % (comp.files[0],tmpfil)) 
+        comp.files = [tmpfil]
+        comp.splitFactor = 1
+        if not getHeppyOption("single"): comp.fineSplitFactor = 4
 elif test == '80X-Data':
     json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/Final/Cert_271036-284044_13TeV_PromptReco_Collisions16_JSON.txt'
     DoubleMuon = kreator.makeDataComponent("DoubleMuon_Run2016H_run283885", "/DoubleMuon/Run2016H-PromptReco-v2/MINIAOD", "CMS", ".*root", run_range = (283885,283885), triggers = triggers_mumu)
@@ -618,6 +625,9 @@ if getHeppyOption("fast"):
         electrons = 'slimmedElectrons', eleCut = lambda ele : ele.pt() > 5,
         minLeptons = 2, 
     )
+    if isolation == "miniIso" and lepAna.doMiniIsolation == "precomputed":
+        fastSkim.muCut = lambda mu : mu.pt() > 3 and mu.isLooseMuon() and mu.miniPFIsolation().chargedHadronIso() < 0.4*mu.pt()
+        fastSkim.eleCut = lambda ele : ele.pt() > 5 and ele.miniPFIsolation().chargedHadronIso() < 0.4*ele.pt()
     if jsonAna in sequence:
         sequence.insert(sequence.index(jsonAna)+1, fastSkim)
     else:
