@@ -49,7 +49,7 @@ lepAna.doIsolationScan = False
 lepAna.doMiniIsolation = True if run80X else "precomputed"
 
 # Lepton Preselection
-lepAna.loose_electron_id = "MVA_ID_NonTrig_Spring16_VLooseIdEmu"
+lepAna.loose_electron_id = "MVA_ID_nonIso_Fall17_Loose"
 isolation = "miniIso"
 
 jetAna.lepSelCut = lambda lep : False # no cleaning of jets with leptons
