@@ -12,6 +12,7 @@ from PhysicsTools.HeppyCore.framework.heppy_loop import getHeppyOption
 
 #-------- SET OPTIONS AND REDEFINE CONFIGURATIONS -----------
 
+run80X = getHeppyOption("run80X",False)
 runData = getHeppyOption("runData",False)
 runDataQCD = getHeppyOption("runDataQCD",False)
 runQCDBM = getHeppyOption("runQCDBM",False)
@@ -35,6 +36,9 @@ ttHLepSkim.minLeptons = 2
 ttHLepSkim.maxLeptons = 999
 #ttHLepSkim.idCut  = ""
 #ttHLepSkim.ptCuts = []
+if not ttHLepSkim.allowLepTauComb:
+    susyCoreSequence.remove(tauAna)
+    susyCoreSequence.insert(susyCoreSequence.index(ttHLepSkim)+1, tauAna)
 
 # Run miniIso
 lepAna.doMiniIsolation = True
@@ -42,6 +46,7 @@ lepAna.packedCandidates = 'packedPFCandidates'
 lepAna.miniIsolationPUCorr = 'rhoArea'
 lepAna.miniIsolationVetoLeptons = None # use 'inclusive' to veto inclusive leptons and their footprint in all isolation cones
 lepAna.doIsolationScan = False
+lepAna.doMiniIsolation = True if run80X else "precomputed"
 
 # Lepton Preselection
 lepAna.loose_electron_id = "MVA_ID_NonTrig_Spring16_VLooseIdEmu"
@@ -620,6 +625,9 @@ if getHeppyOption("fast"):
         electrons = 'slimmedElectrons', eleCut = lambda ele : ele.pt() > 5,
         minLeptons = 2, 
     )
+    if isolation == "miniIso" and lepAna.doMiniIsolation == "precomputed":
+        fastSkim.muCut = lambda mu : mu.pt() > 3 and mu.isLooseMuon() and mu.miniPFIsolation().chargedHadronIso() < 0.4*mu.pt()
+        fastSkim.eleCut = lambda ele : ele.pt() > 5 and ele.miniPFIsolation().chargedHadronIso() < 0.4*ele.pt()
     if jsonAna in sequence:
         sequence.insert(sequence.index(jsonAna)+1, fastSkim)
     else:

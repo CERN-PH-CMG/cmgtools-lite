@@ -80,12 +80,12 @@ case $WHAT in
         do_plot TTSemi TTSemi
         ;;
     ttHData80X)
-        $RUN && do_run run_ttH_cfg.py $DIR -o test=80X-Data  -N 10000 -o runData;
+        $RUN && do_run run_ttH_cfg.py $DIR -o test=80X-Data  -N 10000 -o runData -o run80X;
         do_plot DoubleMuon_Run2016H_run283885 DoubleMuon_Run2016H_run283885 "" 80X
         do_plot DoubleEG_Run2016H_run283885 DoubleEG_Run2016H_run283885 "" 80X
         ;;
     ttHMC80X)
-        $RUN && do_run run_ttH_cfg.py $DIR -o test=80X-MC -o sample=TTLep -N 2000;
+        $RUN && do_run run_ttH_cfg.py $DIR -o test=80X-MC -o sample=TTLep  -o run80X -N 2000;
         do_plot TTLep_pow TTLep_pow "" 80X
         ;;
     SOSData)
