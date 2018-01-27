@@ -19,8 +19,8 @@ onlypack="n" # just pack an already existing fake-rate
 #--------------------------
 etaRange="0.0,1.0,1.479,2.1,2.5"
 mtRanges="0,30,30,120"
-mtDefinition="trkmtfix"  # trkmtfix, trkmt, pfmtfix, pfmt
-ptDefinition="pt_coarse"  # pt_coarse, pt_granular (first is mainly for QCD)
+mtDefinition="pfmtfix"  # trkmtfix, trkmt, pfmtfix, pfmt: even though we no longer use the 2-mT-regions method, I think pfmt should be better because trkmt is correlated with ID variables
+ptDefinition="pt_granular"  # pt_coarse, pt_granular (first is mainly for QCD MC)
 #-------------------------
 istest="y"
 # following option testdit is used only if istest is 'y'
@@ -32,7 +32,7 @@ packFRfromTest="n"
 # anyway, the packing uses the FR made with the 2-mt-regions method, which is not good. Unles I modify the script, it is not needed (also because we have to smooth the FR)
 ######################
 ######################
-# additional options to be passed to wmass/make_fake_rates_data.py
+# additional options to be passed to w-helicity-13TeV/make_fake_rates_data.py
 # can pass a new cut as you would do with mcPlots.py 
 #addOption=" -A eleKin pfmet 'met_pt<20' -A eleKin pfmtLess40 'mt_2(met_pt,met_phi,ptCorrAndResidualScale(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_r9,run,isData,evt) ,LepGood_phi)<40' "
 addOption=" -A eleKin pfmet 'met_pt<20' "
@@ -41,15 +41,15 @@ addOption=" -A eleKin pfmet 'met_pt<20' "
 
 # check we are on lxplus  
 host=`echo "$HOSTNAME"`
-if [[ "${useSkimmedTrees}" == "y" ]]; then
-    if [[ ${host} != *"pccmsrm28"* ]]; then
-	echo "Error! You must be on pccmsrm28 to use skimmed ntuples. Do ssh -XY pccmsrm28 and work from a release."
-	return 0
-    fi
-elif [[ ${host} != *"lxplus"* ]]; then
-  echo "Error! You must be on lxplus. Do ssh -XY lxplus and work from a release."
-  return 0
-fi
+# if [[ "${useSkimmedTrees}" == "y" ]]; then
+#     if [[ ${host} != *"pccmsrm28"* ]]; then
+# 	echo "Error! You must be on pccmsrm28 to use skimmed ntuples. Do ssh -XY pccmsrm28 and work from a release."
+# 	return 0
+#     fi
+# elif [[ ${host} != *"lxplus"* ]]; then
+#   echo "Error! You must be on lxplus. Do ssh -XY lxplus and work from a release."
+#   return 0
+# fi
 
 srtreeoption=""
 frGraphDir="el"
@@ -83,6 +83,7 @@ if [[ "${onlypack}" == "y" ]]; then
 else
     echo "Running: ${cmdComputeFR}"
     echo "${cmdComputeFR} | grep python > commands4fakeRate.sh" | bash
+    #echo "${cmdComputeFR} > commands4fakeRate.sh"
     echo "The commands used for fake-rate are stored in commands4fakeRate.sh"
     cat commands4fakeRate.sh | bash  # here we really run the commands saved in commands4fakeRate.sh
 fi
