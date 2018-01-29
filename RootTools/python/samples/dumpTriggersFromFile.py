@@ -17,7 +17,7 @@ if len(argv) == 1:
 events = Events(argv[1])
 
 triggerBits, triggerBitLabel = Handle("edm::TriggerResults"), ("TriggerResults","","HLT")
-triggerObjects, triggerObjectLabel  = Handle("std::vector<pat::TriggerObjectStandAlone>"), "selectedPatTrigger"
+triggerObjects, triggerObjectLabel  = Handle("std::vector<pat::TriggerObjectStandAlone>"), "slimmedPatTrigger"
 triggerPrescales, triggerPrescaleLabel  = Handle("pat::PackedTriggerPrescales"), "patTrigger"
 
 for iev,event in enumerate(events):
@@ -33,7 +33,7 @@ for iev,event in enumerate(events):
 
     print "\n === TRIGGER OBJECTS ==="
     for j,to in enumerate(triggerObjects.product()):
-        to.unpackPathNames(names);
+        to.unpackNamesAndLabels(event.object(), triggerBits.product());
         print "Trigger object pt %6.2f eta %+5.3f phi %+5.3f  " % (to.pt(),to.eta(),to.phi())
         print "         collection: ", to.collection()
         print "         type ids: ", ", ".join([str(f) for f in to.filterIds()])
