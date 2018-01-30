@@ -7,6 +7,7 @@ import sys,os,re
 
 from optparse import OptionParser
 parser = OptionParser(usage='%prog [options] cards/card*.txt')
+parser.add_option('-n','--nYbins', dest='nYbins', default=12, type="int", help='Number of W rapidity bins generated')
 parser.add_option('-m','--merge-root', dest='mergeRoot', default=False, action='store_true', help='Merge the root files with the inputs also')
 parser.add_option('-i','--input', dest='inputdir', default='', type='string', help='input directory with all the cards inside')
 parser.add_option('-b','--bin', dest='bin', default='ch1', type='string', help='name of the bin')
@@ -28,16 +29,25 @@ for charge in charges:
     files = sorted(files, key = lambda x: int(x.rstrip('.card.txt').split('_')[-1]) if not 'bkg' in x else -1) ## ugly but works
     files = list( ( os.path.join(options.inputdir, f) for f in files ) )
     
+    existing_bins = []
+    empty_bins = []
+
     ## look for the maximum ybin bin number
     nbins = 0
+    print "FILES = ",files
     for f in files:
         if 'Ybin_' in f:
             n = int(f[f.find('Ybin_')+5 : f.find('.card')])
             if n>nbins: nbins=n
+            if n not in existing_bins: existing_bins.append(n)
     print 'found {n} bins of rapidity'.format(n=nbins+1)
-    
-    empty_bins = []
-    
+
+    for b in xrange(options.nYbins):
+        if b not in existing_bins: 
+            if b not in empty_bins:
+                empty_bins.append(b)
+                empty_bins.append(nbins+1-b)            
+        
     if options.mergeRoot:
         tmpfiles = []
         for f in files:
@@ -157,7 +167,7 @@ for charge in charges:
     
     POIs = []
     if options.constrainRateParams:
-        signal_procs = filter(lambda x: re.match('Wp|Wm',x), realprocesses)
+        signal_procs = filter(lambda x: re.match('Wplus|Wminus',x), realprocesses)
         signal_procs.sort(key=lambda x: int(x.split('_')[-1]))
         signal_L = filter(lambda x: re.match('.*left.*',x),signal_procs)
         signal_R = filter(lambda x: re.match('.*right.*',x),signal_procs)
