@@ -191,8 +191,8 @@ lepAna = cfg.Analyzer(
     # input collections
     muons='slimmedMuons',
     electrons='slimmedElectrons',
-    rhoMuon= 'fixedGridRhoFastjetCentralNeutral',
-    rhoElectron = 'fixedGridRhoFastjetCentralNeutral',
+    rhoMuon= 'fixedGridRhoFastjetAll',
+    rhoElectron = 'fixedGridRhoFastjetAll',
     # energy scale corrections and ghost muon suppression (off by default)
     doMuonScaleCorrections=False,
     doElectronScaleCorrections=False, # "embedded" in 5.18 for regression
@@ -228,10 +228,10 @@ lepAna = cfg.Analyzer(
     loose_electron_lostHits = 1.0,
     # muon isolation correction method (can be "rhoArea" or "deltaBeta")
     mu_isoCorr = "rhoArea" ,
-    mu_effectiveAreas = "Spring15_25ns_v1", #(can be 'Data2012' or 'Phys14_25ns_v1' or 'Spring15_25ns_v1')
+    mu_effectiveAreas = "Fall17", #(can be 'Data2012' or 'Phys14_25ns_v1' or 'Spring15_25ns_v1')
     # electron isolation correction method (can be "rhoArea" or "deltaBeta")
     ele_isoCorr = "rhoArea" ,
-    ele_effectiveAreas = "Spring15_25ns_v1" , #(can be 'Data2012' or 'Phys14_25ns_v1' or 'Spring15_25ns_v1')
+    ele_effectiveAreas = "Fall17" , #(can be 'Data2012' or 'Phys14_25ns_v1' or 'Spring15_25ns_v1')
     ele_tightId = "Cuts_2012" ,
     # Mini-isolation, with pT dependent cone: will fill in the miniRelIso, miniRelIsoCharged, miniRelIsoNeutral variables of the leptons (see https://indico.cern.ch/event/368826/ )
     doMiniIsolation = False, # off by default since it requires access to all PFCandidates 
