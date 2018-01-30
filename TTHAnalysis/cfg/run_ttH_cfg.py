@@ -181,7 +181,7 @@ if not skipT1METCorr:
 #-------- SAMPLES AND TRIGGERS -----------
 
 
-from CMGTools.RootTools.samples.triggers_13TeV_DATA2016 import *
+from CMGTools.RootTools.samples.triggers_13TeV_DATA2017 import *
 triggerFlagsAna.triggerBits = {
     'DoubleMu' : triggers_mumu_iso,
     'DoubleMuSS' : triggers_mumu_ss,
@@ -193,16 +193,15 @@ triggerFlagsAna.triggerBits = {
     'MuEGHT' : triggers_mue_ht,
     'TripleEl' : triggers_3e,
     'TripleMu' : triggers_3mu,
-    'TripleMuA' : triggers_3mu_alt,
     'DoubleMuEl' : triggers_2mu1e,
     'DoubleElMu' : triggers_2e1mu,
     'SingleMu' : triggers_1mu_iso,
-    'SingleEl'     : triggers_1e,
-    'SOSHighMET' : triggers_SOS_highMET,
-    'SOSDoubleMuLowMET' : triggers_SOS_doublemulowMET,
-    'SOSTripleMu' : triggers_SOS_tripleMu,
-    'LepTau' : triggers_leptau,
-    'MET' : triggers_metNoMu90_mhtNoMu90,
+    'SingleEl'     : triggers_1e_iso,
+#    'SOSHighMET' : triggers_SOS_highMET,
+#    'SOSDoubleMuLowMET' : triggers_SOS_doublemulowMET,
+#    'SOSTripleMu' : triggers_SOS_tripleMu,
+#    'LepTau' : triggers_leptau,
+#    'MET' : triggers_metNoMu90_mhtNoMu90,
     #'MonoJet80MET90' : triggers_Jet80MET90,
     #'MonoJet80MET120' : triggers_Jet80MET120,
     #'METMu5' : triggers_MET120Mu5,
@@ -211,31 +210,30 @@ triggerFlagsAna.unrollbits = True
 triggerFlagsAna.saveIsUnprescaled = True
 triggerFlagsAna.checkL1Prescale = True
 
-from CMGTools.RootTools.samples.samples_13TeV_RunIISummer16MiniAODv2 import *
-from CMGTools.RootTools.samples.samples_13TeV_DATA2016 import *
+from CMGTools.RootTools.samples.samples_13TeV_RunIIFall17MiniAOD import *
+from CMGTools.RootTools.samples.samples_13TeV_DATA2017 import *
 from CMGTools.HToZZ4L.tools.configTools import printSummary, configureSplittingFromTime, cropToLumi, prescaleComponents, insertEventSelector, mergeExtensions
 from CMGTools.RootTools.samples.autoAAAconfig import *
 
 selectedComponents = [TTLep_pow]
 
 
-sig_ttv = [TTHnobb_pow,TTHnobb_mWCutfix_ext,TTWToLNu_ext,TTWToLNu_ext2,TTZToLLNuNu_ext,TTZToLLNuNu_m1to10] # signal + TTV
-ttv_lo = [TTW_LO,TTZ_LO,TTWWTo2LSS2Nu_LO] # TTV LO
-rares = [ZZTo4L,GGHZZ4L,VHToNonbb,tZq_ll_ext,WpWpJJ,WWDoubleTo2L,TTTT,tWll] # rares
-single_t = [TToLeptons_sch_amcatnlo,T_tch_powheg,TBar_tch_powheg,T_tWch_ext,TBar_tWch_ext,THQ,THW] # single top + tW
-convs = [WGToLNuG_amcatnlo_ext,WGToLNuG_amcatnlo_ext2,ZGTo2LG_ext,TGJets,TGJets_ext,TTGJets,TTGJets_ext] # X+G
-v_jets = [WJetsToLNu_LO,DYJetsToLL_M10to50_LO,DYJetsToLL_M50_LO_ext,WWTo2L2Nu] # V+jets
-tt_1l = [TTJets_SingleLeptonFromT,TTJets_SingleLeptonFromT_ext,TTJets_SingleLeptonFromTbar,TTJets_SingleLeptonFromTbar_ext] # TT 1l
-tt_2l = [TTJets_DiLepton,TTJets_DiLepton_ext,TT_pow] # TT 2l
-boson = [WZTo3LNu,WZTo3LNu_amcatnlo]+TriBosons # multi-boson
+sig_ttv = [TTHnobb_pow,TTHnobb_fxfx,TTWToLNu_pow,TTWToLNu_fxfx,TTZToLLNuNu_amc,TTZToLLNuNu_m1to10] # signal + TTV
+ttv_lo = [TTW_LO,TTZ_LO] # TTV LO
+rares = [ZZTo4L,WW_DPS]+TTXXs # rares # MISSING: GGHZZ4L,VHToNonbb,tZq_ll_ext,WpWpJJ,tWll
+single_t = Ts # single top + tW # MISSING: THQ,THW
+convs = [TTGJets] # X+G # MISSING: WGToLNuG_amcatnlo_ext,WGToLNuG_amcatnlo_ext2,ZGTo2LG_ext,TGJets,TGJets_ext
+v_jets = [WJetsToLNu_LO,DYJetsToLL_M50_LO,DYJetsToLL_M50_LO_ext,WWTo2L2Nu] # V+jets # MISSING: DYJetsToLL_M10to50_LO
+tt_1l = [TTSemi_pow] # TT 1l # MISSING: Madgraph
+tt_2l = [TTLep_pow] # TT 2l # MISSING: Madgraph
+boson = [] # multi-boson # MISSING: WZTo3LNu, TriBosons
 
 samples_slow = sig_ttv + ttv_lo + rares + convs + boson + tt_2l
 samples_fast = single_t + v_jets + tt_1l
 
 cropToLumi(rares,500)
-cropToLumi([T_tch_powheg,TBar_tch_powheg],50)
-configureSplittingFromTime(samples_fast,50,6)
-configureSplittingFromTime(samples_slow,100,6)
+configureSplittingFromTime(samples_fast,50,3)
+configureSplittingFromTime(samples_slow,100,3)
 
 selectedComponents = samples_slow+samples_fast
 
@@ -256,9 +254,9 @@ if runData and not isTest: # For running on data
     is50ns = False
     dataChunks = []
 
-    json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/ReReco/Final/Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt' # 36.5/fb
+    json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions17/13TeV/Final/Cert_294927-306462_13TeV_PromptReco_Collisions17_JSON.txt' # full 2017 dataset, 42.4/fb
 
-    for era in 'BCDEFGH': dataChunks.append((json,filter(lambda dset: 'Run2016'+era in dset.name,dataSamples_23Sep2016PlusPrompt),'2016'+era,[],False))
+    for era in 'BCDEF': dataChunks.append((json,filter(lambda dset: 'Run2017'+era in dset.name,dataSamples_17Nov2017),'2017'+era,[],False))
 
     DatasetsAndTriggers = []
     selectedComponents = [];
@@ -313,7 +311,7 @@ if runData and not isTest: # For running on data
                         from CMGTools.Production.promptRecoRunRangeFilter import filterComponent
                         filterComponent(comp, verbose=0)
                     #print "Will process %s (%d files)" % (comp.name, len(comp.files))
-                    comp.splitFactor = len(comp.files)/8 if 'Single' not in comp.name else len(comp.files)/16
+                    comp.splitFactor = len(comp.files)/8# if 'Single' not in comp.name else len(comp.files)/16 # numbers yet to be tuned for 2017
                     comp.fineSplitFactor = 1
                     selectedComponents.append( comp )
             if exclusiveDatasets: vetos += triggers
