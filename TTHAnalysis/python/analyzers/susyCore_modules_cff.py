@@ -135,7 +135,7 @@ vertexAna = cfg.Analyzer(
 pileUpAna = cfg.Analyzer(
     PileUpAnalyzer, name="PileUpAnalyzer",
     true = True,  # use number of true interactions for reweighting
-    makeHists=False
+    makeHists=True
     )
 
 
@@ -563,11 +563,11 @@ susyTauMatchAna = cfg.Analyzer(
 # Core sequence of all common modules
 susyCoreSequence = [
     lheWeightAna,
+    pileUpAna,
     skimAnalyzer,
    #eventSelector,
     jsonAna,
     triggerAna,
-    pileUpAna,
     genAna,
     genHiggsAna,
     genHFAna,
