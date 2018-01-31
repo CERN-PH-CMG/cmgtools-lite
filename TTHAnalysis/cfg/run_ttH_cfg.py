@@ -47,6 +47,7 @@ lepAna.miniIsolationPUCorr = 'rhoArea'
 lepAna.miniIsolationVetoLeptons = None # use 'inclusive' to veto inclusive leptons and their footprint in all isolation cones
 lepAna.doIsolationScan = False
 lepAna.doMiniIsolation = True if run80X else "precomputed"
+lepAna.mu_isoCorr = "deltaBeta"
 
 # Lepton Preselection
 lepAna.loose_electron_id = "MVA_ID_nonIso_Fall17_Loose"
