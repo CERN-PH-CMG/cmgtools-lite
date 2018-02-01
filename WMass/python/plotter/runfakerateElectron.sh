@@ -12,7 +12,8 @@ plotterPath="${CMSSW_BASE}/src/CMGTools/WMass/python/plotter"
 #--------------------------
 # choose the dataset to use (2016 B to F or 2016 B to H)
 useFull2016dataset="y"
-useSkimmedTrees="y" # skimmed samples are on pccmsrm28
+useSkimmedTrees="y" 
+skipStackPlots="y" # skip stack plots made by make_fake_rates_data.py
 onlypack="n" # just pack an already existing fake-rate 
 # if onlypack='n', the packing might still be done at the end of FR computation, see options below
 # else, if onlypack='y', it overrides the packFRfromTest option below
@@ -24,12 +25,12 @@ ptDefinition="pt_granular"  # pt_coarse, pt_granular (first is mainly for QCD MC
 #-------------------------
 istest="y"
 # following option testdit is used only if istest is 'y'
-testdir="SRtrees_new/fakeRate_36fb_PUTrgSF_${mtDefinition}_${ptDefinition}_pfmetLess20"
+testdir="SRtrees_new/fakeRate_36fb_PUTrgSF_${mtDefinition}_${ptDefinition}_pfmetLess20_legacy07Aug2017_mediumWP"
 # by default, if this is a test we do not pack to avoid overwriting something when we just do tests
 # you can override this feature setting this flag to 'y'
 # even if you don't pack, the command you would use is printed in stdout
 packFRfromTest="n" 
-# anyway, the packing uses the FR made with the 2-mt-regions method, which is not good. Unles I modify the script, it is not needed (also because we have to smooth the FR)
+# anyway, the packing uses the FR made with the 2-mt-regions method, which is not good. Unless I modify the script, it is not needed (also because we have to smooth the FR)
 ######################
 ######################
 # additional options to be passed to w-helicity-13TeV/make_fake_rates_data.py
@@ -67,6 +68,10 @@ fi
 
 if [[ "${useSkimmedTrees}" == "y" ]]; then
     cmdComputeFR="${cmdComputeFR} --useSkim "
+fi
+
+if [[ "${skipStackPlots}" == "y" ]]; then
+    cmdComputeFR="${cmdComputeFR} --skipStack "
 fi
 
 if [[ "X${etaRange}" != "X" ]]; then
