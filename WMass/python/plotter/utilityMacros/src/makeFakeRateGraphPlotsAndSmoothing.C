@@ -1,5 +1,7 @@
 #include "../interface/utility.h"
 
+const static int smoothPolinDegree = 1; 
+
 using namespace std;
 
 // the core of this macro is makeFakeRateGraphPlotsAndSmoothing(), which is at the bottom of this code and calls all the rest
@@ -24,16 +26,21 @@ using namespace std;
 
 void doFakeRateGraphPlots(const string& outputDIR_tmp = "./", 
 			  const string& inputFileName_tmp = "wmass_varhists.root", 
+			  const string& graphPrefix = "",
+			  const string& mtDefinition = "trkmtfix",
 			  const Bool_t isMuon = false, 
 			  const Bool_t isEB = true,
 			  const Double_t inputLuminosity = -1,
 			  const string& plotPostFix = "",
-			  const string& inputFileNameForQCD = ""
+			  const string& inputFileNameForQCD_tmp = "",
+			  const string& graphPrefixQCD_tmp = "",
+			  const string& fr_fQCD_file = ""
 			  ) 
 {
   
   string outputDIR = outputDIR_tmp + "FR_graphs/";
-  string inputFileName = inputFileName_tmp;
+  string inputFileName = inputFileName_tmp + fr_fQCD_file;
+  string inputFileNameForQCD = inputFileNameForQCD_tmp + fr_fQCD_file;
 
   createPlotDirAndCopyPhp(outputDIR);
 
@@ -50,7 +57,7 @@ void doFakeRateGraphPlots(const string& outputDIR_tmp = "./",
   inputFile->cd();
 
   TFile* inputFileForQCD = NULL;
-  if (inputFileNameForQCD != "") {
+  if (inputFileNameForQCD_tmp != "") {
     inputFileForQCD = new TFile(inputFileNameForQCD.c_str(),"READ");
     if (!inputFileForQCD || inputFileForQCD->IsZombie()) {
       cout << "Error: file not opened. Exit" << endl;
@@ -79,20 +86,19 @@ void doFakeRateGraphPlots(const string& outputDIR_tmp = "./",
   vector<string> graphLegend;
   vector <Double_t> legCoord = {0.12,0.65,0.60,0.9};
 
-  string graphPrefix = isEB ? "fakeRateNumerator_el_vs_pt_granular" : "fakeRateNumerator_el_vs_pt_granular";
   string graphPrefixQCD = "";
-  if (inputFileNameForQCD == "") graphPrefixQCD = graphPrefix;
-  else graphPrefixQCD = isEB ? "fakeRateNumerator_el_vs_pt_coarse" : "fakeRateNumerator_el_vs_pt_coarse";
+  if (graphPrefixQCD_tmp == "") graphPrefixQCD = graphPrefix;
+  else                          graphPrefixQCD = graphPrefixQCD_tmp;
 
   fr_data_subEWKMC         = (TGraphAsymmErrors*) getGraphCloneFromFile(inputFile, graphPrefix + "_data_2d_prefit_sub_graph", "", inputFileName);
-  fr_data_orig             = (TGraphAsymmErrors*) getGraphCloneFromFile(inputFile, graphPrefix + "_trkmtfix_data_prefit", "", inputFileName);
-  if (inputFileNameForQCD == "") 
-    fr_qcdmc               = (TGraphAsymmErrors*) getGraphCloneFromFile(inputFile, graphPrefix + "_trkmtfix_QCD_prefit", "", inputFileName);
+  fr_data_orig             = (TGraphAsymmErrors*) getGraphCloneFromFile(inputFile, graphPrefix + "_" + mtDefinition + "_data_prefit", "", inputFileName);
+  if (inputFileNameForQCD_tmp == "") 
+    fr_qcdmc               = (TGraphAsymmErrors*) getGraphCloneFromFile(inputFile, graphPrefix + "_" + mtDefinition + "_QCD_prefit", "", inputFileName);
   else { 
     inputFileForQCD->cd();
-    fr_qcdmc               = (TGraphAsymmErrors*) getGraphCloneFromFile(inputFileForQCD, graphPrefixQCD + "_trkmtfix_QCD_prefit", "", inputFileNameForQCD);
+    fr_qcdmc               = (TGraphAsymmErrors*) getGraphCloneFromFile(inputFileForQCD, graphPrefixQCD + "_" + mtDefinition + "_QCD_prefit", "", inputFileNameForQCD);
   }
-  // fr_data_subEWKpromptRate = (TGraphAsymmErrors*) getGraphCloneFromFile(inputFile, graphPrefix + "_trkmtfix_data_fqcd", "", inputFileName);
+  // fr_data_subEWKpromptRate = (TGraphAsymmErrors*) getGraphCloneFromFile(inputFile, graphPrefix + "_" + mtDefinition + "_data_fqcd", "", inputFileName);
   
   checkNotNullPtr(fr_data_subEWKMC,"fr_data_subEWKMC");
   checkNotNullPtr(fr_data_orig,"fr_data_orig");
@@ -145,25 +151,34 @@ TFitResultPtr fitGraph(TGraph* gr = NULL,
   Double_t ymax = 0;
   Bool_t setYAxisRangeFromUser = getAxisRangeFromUser(yAxisName, ymin, ymax, yAxisNameTmp);
 
+  string polN = string(Form("pol%d",smoothPolinDegree));
   // see fit options here: https://root.cern.ch/doc/master/classTGraph.html#aa978c8ee0162e661eae795f6f3a35589
-  TF1 * f1 = new TF1("f1","pol1",25,60);
-  TF1 * f2 = new TF1("f2","pol1",30,46);
+  TF1 * f1 = new TF1("f1",polN.c_str(),30,60);
+  TF1 * f2 = new TF1("f2",polN.c_str(),30,50);
   // TF1 * f1 = new TF1("f1","[0] * (x - 25.) + [1]",25,60);
   // TF1 * f2 = new TF1("f2","[0] * (x - 25.) + [1]",30,46);
   if (isEB) {
-    f1->SetParameters(0.8,0.0);
+    if (smoothPolinDegree > 1) f1->SetParameters(0.8,0.0,0.0);
+    else f1->SetParameters(0.8,0.0);
     f1->SetParLimits(0,0.65,0.9);
     f1->SetParLimits(1,-0.02,0.02);
-    f2->SetParameters(0.8,0.0);
+    if (smoothPolinDegree > 1) f1->SetParLimits(2,-0.05,0.05);
+    if (smoothPolinDegree > 1) f2->SetParameters(0.8,0.0,0.0);
+    else f2->SetParameters(0.8,0.0);
     f2->SetParLimits(0,0.5,0.9);
     f2->SetParLimits(1,-0.02,0.02);
+    if (smoothPolinDegree > 1) f2->SetParLimits(2,-0.05,0.05);
   } else {
-    f1->SetParameters(0.3,0.0);	
+    if (smoothPolinDegree > 1) f1->SetParameters(0.3,0.0,0.0);	
+    else f1->SetParameters(0.3,0.0);
     f1->SetParLimits(0,0.15,0.4);
     f1->SetParLimits(1,-0.005,0.005);
-    f2->SetParameters(0.3,0.0);	
+    if (smoothPolinDegree > 1) f1->SetParLimits(2,-0.02,0.02);
+    if (smoothPolinDegree > 1) f2->SetParameters(0.3,0.0,0.0);	
+    else f2->SetParameters(0.3,0.0); 
     f2->SetParLimits(0,0.15,0.4);
     f2->SetParLimits(1,-0.005,0.005);
+    if (smoothPolinDegree > 1) f2->SetParLimits(2,-0.01,0.01);
   }
 
   TFitResultPtr fitres = gr->Fit("f1","EMFRS+"); // fit with straigth line
@@ -174,14 +189,16 @@ TFitResultPtr fitGraph(TGraph* gr = NULL,
   Double_t xmaxfit = 0.0;
   linefit->GetRange(xminfit,xmaxfit);
 
-  TF1 * linefit_p0up = new TF1("linefit_p0up","pol1",xminfit,xmaxfit);
+  TF1 * linefit_p0up = new TF1("linefit_p0up",polN.c_str(),xminfit,xmaxfit);
   linefit_p0up->SetNpx(10000);
   linefit_p0up->SetParameter(0, linefit->GetParameter(0)+2*linefit->GetParError(0));
   linefit_p0up->SetParameter(1, linefit->GetParameter(1));
-  TF1 * linefit_p0dn = new TF1("linefit_p0dn","pol1",xminfit,xmaxfit);
+  if (smoothPolinDegree > 1) linefit_p0up->SetParameter(2, linefit->GetParameter(2));
+  TF1 * linefit_p0dn = new TF1("linefit_p0dn",polN.c_str(),xminfit,xmaxfit);
   linefit_p0dn->SetNpx(10000);
   linefit_p0dn->SetParameter(0, linefit->GetParameter(0)-2*linefit->GetParError(0));
   linefit_p0dn->SetParameter(1, linefit->GetParameter(1));
+  if (smoothPolinDegree > 1) linefit_p0dn->SetParameter(2, linefit->GetParameter(2));
 
   linefit_p0up->SetLineColor(kGreen+1);
   linefit_p0dn->SetLineColor(kGreen+1);
@@ -194,14 +211,16 @@ TFitResultPtr fitGraph(TGraph* gr = NULL,
   Double_t xminfit2 = 0.0;
   Double_t xmaxfit2 = 0.0;
   linefit2->GetRange(xminfit2,xmaxfit2);
-  TF1 * linefit2_p0up = new TF1("linefit2_p0up","pol1",xminfit2,xmaxfit2);
+  TF1 * linefit2_p0up = new TF1("linefit2_p0up",polN.c_str(),xminfit2,xmaxfit2);
   linefit2_p0up->SetNpx(10000);
   linefit2_p0up->SetParameter(0, linefit2->GetParameter(0)+2*linefit2->GetParError(0));
   linefit2_p0up->SetParameter(1, linefit2->GetParameter(1));
-  TF1 * linefit2_p0dn = new TF1("linefit2_p0dn","pol1",xminfit2,xmaxfit2);
+  if (smoothPolinDegree > 1) linefit2_p0up->SetParameter(2, linefit2->GetParameter(2));
+  TF1 * linefit2_p0dn = new TF1("linefit2_p0dn",polN.c_str(),xminfit2,xmaxfit2);
   linefit2_p0dn->SetNpx(10000);
   linefit2_p0dn->SetParameter(0, linefit2->GetParameter(0)-2*linefit2->GetParError(0));
   linefit2_p0dn->SetParameter(1, linefit2->GetParameter(1));
+  if (smoothPolinDegree > 1) linefit2_p0dn->SetParameter(2, linefit2->GetParameter(2));
 
   linefit2_p0up->SetLineColor(kOrange+2);
   linefit2_p0dn->SetLineColor(kOrange+2);
@@ -229,7 +248,9 @@ TFitResultPtr fitGraph(TGraph* gr = NULL,
   gr->SetLineWidth(2);
   gr->Draw("ap");
   leg.AddEntry(gr,legEntry.c_str(),"PLE");
-  leg.AddEntry(linefit,"fit: p_{0} + p_{1}#upointx","L");
+  //leg.AddEntry(linefit,"fit: p_{0} + p_{1}#upointx","L");
+  if (smoothPolinDegree > 1) leg.AddEntry(linefit,"fit: p_{0} + p_{1}#upointx + p_{2}#upointx^{2}","L");
+  else leg.AddEntry(linefit,"fit: p_{0} + p_{1}#upointx","L");
   leg.AddEntry(linefit_p0dn,"p_{0} up/down (2#sigma)","L");
   leg.AddEntry(linefit2,"fit narrow range","L");
   leg.AddEntry(linefit2_p0dn,"p_{0} up/down (2#sigma)","L");
@@ -266,6 +287,8 @@ TFitResultPtr fitGraph(TGraph* gr = NULL,
   canvas->SaveAs((outputDIR+canvasName+".png").c_str());
   canvas->SaveAs((outputDIR+canvasName+".pdf").c_str());
 
+  delete canvas;
+
   if (isData) return fitres2;  // return fit in shorter range
   else return fitres; // for QCD, it makes much more sense to use graph in full range, because we don't have to worry about prompt lepton rate at high pt
   // also, for QCD the binning is tipically much less granular, so the fit in the narrow range would have just 4 points
@@ -276,11 +299,15 @@ TFitResultPtr fitGraph(TGraph* gr = NULL,
 
 void doFakeRateSmoothing(const string& outputDIR_tmp = "./", 
 			 const string& inputFileName_tmp = "wmass_varhists.root", 
+			 const string& graphPrefix = "",
+			 const string& mtDefinition = "trkmtfix",
 			 const Bool_t isMuon = false, 
 			 const Bool_t isEB = true,
 			 const Double_t inputLuminosity = -1,
 			 const string& plotPostFix = "",
-			 const string& inputFileNameForQCD = "",
+			 const string& inputFileNameForQCD_tmp = "",
+			 const string& graphPrefixQCD_tmp = "",
+			 const string& fr_fQCD_file = "",
 			 TH2D* h2_fitParVsEta_data = NULL,
 			 TH2D* h2_fitParVsEta_qcd = NULL,
 			 const Int_t etaBinNumber = 1
@@ -288,7 +315,8 @@ void doFakeRateSmoothing(const string& outputDIR_tmp = "./",
 {
   
   string outputDIR = outputDIR_tmp + "FR_graphs/";
-  string inputFileName = inputFileName_tmp;
+  string inputFileName = inputFileName_tmp + fr_fQCD_file;;
+  string inputFileNameForQCD = inputFileNameForQCD_tmp + fr_fQCD_file;
 
   createPlotDirAndCopyPhp(outputDIR);
 
@@ -305,7 +333,7 @@ void doFakeRateSmoothing(const string& outputDIR_tmp = "./",
   inputFile->cd();
 
   TFile* inputFileForQCD = NULL;
-  if (inputFileNameForQCD != "") {
+  if (inputFileNameForQCD_tmp != "") {
     inputFileForQCD = new TFile(inputFileNameForQCD.c_str(),"READ");
     if (!inputFileForQCD || inputFileForQCD->IsZombie()) {
       cout << "Error: file not opened. Exit" << endl;
@@ -331,19 +359,18 @@ void doFakeRateSmoothing(const string& outputDIR_tmp = "./",
   string detId = isEB ? "EB" : "EE";
 
   // hardcoded name of Tgraphs inside file :(
-  string graphPrefix = isEB ? "fakeRateNumerator_el_vs_pt_granular" : "fakeRateNumerator_el_vs_pt_granular";
   string graphPrefixQCD = "";
-  if (inputFileNameForQCD == "") graphPrefixQCD = graphPrefix;
-  else graphPrefixQCD = isEB ? "fakeRateNumerator_el_vs_pt_coarse" : "fakeRateNumerator_el_vs_pt_coarse";
+  if (graphPrefixQCD_tmp == "") graphPrefixQCD = graphPrefix;
+  else                          graphPrefixQCD = graphPrefixQCD_tmp;
 
   fr_data_subEWKMC           = (TGraphAsymmErrors*) getGraphCloneFromFile(inputFile, graphPrefix + "_data_2d_prefit_sub_graph", "", inputFileName);
-  // fr_data_subEWKpromptRate   = (TGraphAsymmErrors*) getGraphCloneFromFile(inputFile, graphPrefix + "_trkmtfix_data_fqcd", "", inputFileName);
-  // fr_data_orig               = (TGraphAsymmErrors*) getGraphCloneFromFile(inputFile, graphPrefix + "_trkmtfix_data_prefit", "", inputFileName);
-  if (inputFileNameForQCD == "") 
-    fr_qcdmc               = (TGraphAsymmErrors*) getGraphCloneFromFile(inputFile, graphPrefix + "_trkmtfix_QCD_prefit", "", inputFileName);
+  // fr_data_subEWKpromptRate   = (TGraphAsymmErrors*) getGraphCloneFromFile(inputFile, graphPrefix + "_" + mtDefinition + "_data_fqcd", "", inputFileName);
+  // fr_data_orig               = (TGraphAsymmErrors*) getGraphCloneFromFile(inputFile, graphPrefix + "_" + mtDefinition + "_data_prefit", "", inputFileName);
+  if (inputFileNameForQCD_tmp == "") 
+    fr_qcdmc               = (TGraphAsymmErrors*) getGraphCloneFromFile(inputFile, graphPrefix + "_" + mtDefinition + "_QCD_prefit", "", inputFileName);
   else { 
     inputFileForQCD->cd();
-    fr_qcdmc               = (TGraphAsymmErrors*) getGraphCloneFromFile(inputFileForQCD, graphPrefixQCD + "_trkmtfix_QCD_prefit", "", inputFileNameForQCD);
+    fr_qcdmc               = (TGraphAsymmErrors*) getGraphCloneFromFile(inputFileForQCD, graphPrefixQCD + "_" + mtDefinition + "_QCD_prefit", "", inputFileNameForQCD);
   }
       
   //checkNotNullPtr(fr_data_subEWKpromptRate,"fr_data_subEWKpromptRate");
@@ -375,12 +402,15 @@ void doFakeRateSmoothing(const string& outputDIR_tmp = "./",
 
 //================================================================
 
-void makeFakeRateGraphPlotsAndSmoothing(const string& inputFilePath = "www/wmass/13TeV/fake-rate/test/SRtrees_new/hltID_mediumWP_36fb_PUTrgSF_trkmtfix_0_50_50_120_EE_fineBinning/el/comb/", 
+void makeFakeRateGraphPlotsAndSmoothing(const string& inputFilePath = "www/wmass/13TeV/fake-rate/test/SRtrees_new/fakeRate_36fb_PUTrgSF_pfmtfix_pt_granular_pfmetLess20/el/comb/", 
+					const string& graphPrefix = "fakeRateNumerator_el_vs_pt_granular",
+					const string& mtDefinition = "pfmtfix",
 					const Bool_t isMuon = false, 
-					const TString& etaBinBoundariesList = "0.0,1.479,2.1,2.5",  // important to use dots also for 1.0
-					const Double_t inputLuminosity = -1,
-					const Bool_t saveToFile = false,
-					const string& inputFilePathForQCD_tmp = ""
+					const TString& etaBinBoundariesList = "0.0,1.0,1.479,2.1,2.5",  // important to use dots also for 1.0
+					const Double_t inputLuminosity = 35.9,  // -1 in case luminosity should not be printed
+					const Bool_t saveToFile = false,  // save is WMass/data/fakerate/
+					const string& inputFilePathForQCD_tmp = "",
+					const string& graphPrefixQCD = ""
 			   ) 
 {
 
@@ -430,59 +460,68 @@ void makeFakeRateGraphPlotsAndSmoothing(const string& inputFilePath = "www/wmass
     string fr_fQCD_file = "fr_sub_" + etabinPostFix + "_fQCD.root";
 
     Bool_t isEB = (etaBoundaries[i] < 1.479) ? true : false; 
-    doFakeRateGraphPlots(outputDIR,inputFilePath+fr_fQCD_file,isMuon,isEB,inputLuminosity,etabinPostFix,inputFilePathForQCD+fr_fQCD_file);
+    doFakeRateGraphPlots(outputDIR,
+			 inputFilePath,graphPrefix,mtDefinition,
+			 isMuon,isEB,inputLuminosity,etabinPostFix,
+			 inputFilePathForQCD,graphPrefixQCD,fr_fQCD_file);
 
-    doFakeRateSmoothing(outputDIR,inputFilePath+fr_fQCD_file,isMuon,isEB,inputLuminosity,etabinPostFix,inputFilePathForQCD+fr_fQCD_file,frSmoothParameter_data,frSmoothParameter_qcd,i+1);  // pass i+1 as bin number because TH2 binning numbering starts from 1
+    doFakeRateSmoothing(outputDIR,
+			inputFilePath,graphPrefix,mtDefinition,
+			isMuon,isEB,inputLuminosity,etabinPostFix,
+			inputFilePathForQCD,graphPrefixQCD,fr_fQCD_file,
+			frSmoothParameter_data,frSmoothParameter_qcd,i+1);  // pass i+1 as bin number because TH2 binning numbering starts from 1
 
   }
 
 
-  if (saveToFile) {
 
-    // following works only if you are in the CMSSW_BASE area where you have CMGTools/WMass/...
-    char* cmsswPath;
-    cmsswPath = getenv ("CMSSW_BASE");
-    if (cmsswPath == NULL) {
-      cout << "Error in makeFakeRateSmoothing(): environment variable CMSSW_BASE not found. Exit" << endl;
-      exit(EXIT_FAILURE);
-    }
-    char* currentPath_ptr;
-    currentPath_ptr = getenv ("PWD");
-    string currentPath = string(currentPath_ptr);
+  // following works only if you are in the CMSSW_BASE area where you have CMGTools/WMass/...
+  char* cmsswPath;
+  cmsswPath = getenv ("CMSSW_BASE");
+  if (cmsswPath == NULL) {
+    cout << "Error in makeFakeRateSmoothing(): environment variable CMSSW_BASE not found. Exit" << endl;
+    exit(EXIT_FAILURE);
+  }
+  char* currentPath_ptr;
+  currentPath_ptr = getenv ("PWD");
+  string currentPath = string(currentPath_ptr);
 
-    string frSmoothFileName = "";
-    if (currentPath.find("src/CMGTools/WMass") != string::npos) {
-      frSmoothFileName += Form("%s/src/CMGTools/WMass/data/fakerate/",cmsswPath);
+  string frSmoothFileName = "";
+
+  if (saveToFile && currentPath.find("src/CMGTools/WMass") != string::npos) {
+    frSmoothFileName += Form("%s/src/CMGTools/WMass/data/fakerate/",cmsswPath);
+  } else {
+    if (not saveToFile) {
+      cout << endl;
+      cout << endl;
+      cout << "##############" << endl;
+      cout << "### WARNING: " << endl;
+      cout << "### Not saving smoothed FR fit parameters to file in CMGTools/WMass/data/fakerate/ because saveToFile option is false." << endl;
+      cout << "### Output file will be produced in current directory." << endl;
+      cout << "##############" << endl;
+      cout << endl;
     } else {
-      cout << "Warning: current working path doesn't match 'src/CMGTools/WMass/data/fakerate/'." << endl;
+      cout << "Warning: current working path doesn't match 'src/CMGTools/WMass'." << endl;
       cout << "Output file will be produced in current directory" << endl;
     }
-    frSmoothFileName += (isMuon ? "fakeRateSmoothed_mu.root" : "fakeRateSmoothed_el.root");
-    cout << endl;
-    cout << endl;
-    cout << "Created file " << frSmoothFileName << endl;
-    cout << endl;
-
-    TFile* frSmoothFile = new TFile(frSmoothFileName.c_str(),"RECREATE");
-    if (!frSmoothFile || frSmoothFile->IsZombie()) {
-      cout << "Error: file not opened. Exit" << endl;
-      exit(EXIT_FAILURE);
-    }
-
-    frSmoothFile->cd();
-    frSmoothParameter_data->Write();
-    frSmoothParameter_qcd->Write();
-    frSmoothFile->Close();
-    delete frSmoothFile;
-
-  } else {
-    cout << endl;
-    cout << endl;
-    cout << "##############" << endl;
-    cout << "### WARNING: " << endl;
-    cout << "### Not saving smoothed FR fit parameters to file because saveToFile option is false." << endl;
-    cout << "##############" << endl;
-    cout << endl;
   }
+
+  frSmoothFileName += (isMuon ? "fakeRateSmoothed_mu.root" : "fakeRateSmoothed_el.root");
+  cout << endl;
+  cout << endl;
+  cout << "Created file " << frSmoothFileName << endl;
+  cout << endl;
+
+  TFile* frSmoothFile = new TFile(frSmoothFileName.c_str(),"RECREATE");
+  if (!frSmoothFile || frSmoothFile->IsZombie()) {
+    cout << "Error: file not opened. Exit" << endl;
+    exit(EXIT_FAILURE);
+  }
+
+  frSmoothFile->cd();
+  frSmoothParameter_data->Write();
+  frSmoothParameter_qcd->Write();
+  frSmoothFile->Close();
+  delete frSmoothFile;
 
 }
