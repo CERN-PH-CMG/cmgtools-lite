@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+# usage: python postFitPlots.py localplots/templates cards/helicity_2018_01_25_eta48pt20/Wel_plus_shapes.root x ~/w/wmass/fit/CMSSW_8_1_0/src/fitDiagnostics.root Wel w-helicity-13TeV/wmass_e/wenu_plots.txt --rollback2D etaPt
+
 import ROOT
 ROOT.gROOT.SetBatch(True)
 
