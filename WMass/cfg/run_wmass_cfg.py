@@ -12,7 +12,7 @@ from PhysicsTools.HeppyCore.framework.heppy_loop import getHeppyOption
 
 #-------- SET OPTIONS AND REDEFINE CONFIGURATIONS -----------
 
-runData = getHeppyOption("runData",True)
+runData = getHeppyOption("runData",False)
 runDataQCD = getHeppyOption("runDataQCD",False)
 runFRMC = getHeppyOption("runFRMC",False)
 scaleProdToLumi = float(getHeppyOption("scaleProdToLumi",-1)) # produce rough equivalent of X /pb for MC datasets
@@ -28,7 +28,7 @@ isTest = getHeppyOption("test",None) != None and not re.match("^\d+$",getHeppyOp
 selectedEvents=getHeppyOption("selectEvents","")
 
 # save PDF information and do not skim. Do only for needed MC samples
-runOnSignal = False
+runOnSignal = True
 keepLHEweights = False
 
 # Lepton Skimming
@@ -240,8 +240,9 @@ configureSplittingFromTime(samples_1prompt,50,6)
 configureSplittingFromTime(samples_signal,100,6)
 
 if runOnSignal:
-    selectedComponents = samples_signal
-    selectedComponents = [DYJetsToLL_M50, WJetsToLNu ]
+    #selectedComponents = samples_signal
+    #selectedComponents = [DYJetsToLL_M50, WJetsToLNu ]
+    selectedComponents = [WJetsToLNu ]
 else:
     #selectedComponents = samples_1prompt + samples_1fake 
     selectedComponents = QCDPtbcToE
@@ -535,7 +536,7 @@ if not keepLHEweights:
 
 if runOnSignal:
     if ttHLepSkim in sequence: sequence.remove(ttHLepSkim)
-    if triggerFlagsAna in sequence: sequence.remove(triggerFlagsAna)
+    if triggerAna in sequence: sequence.remove(triggerAna)
     if genAna in sequence: genAna.saveAllInterestingGenParticles = True
 
 ## Auto-AAA

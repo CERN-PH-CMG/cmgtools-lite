@@ -17,7 +17,7 @@ while true; do
     case "$1" in
         -r )  RM=1; echo "# Will print the command to remove the bad chunks"; shift ;;
         -s )  saveList=true; echo "# Will save the command to resubmit/remove the bad chunks in a script file named chunksToResub.sh"; shift ;;
-        -m )  mv=true; echo "# Will save the command to move the good chunks in a script file named chunksToStore.sh"; shift ;;
+        -m )  mvopt=true; echo "# Will save the command to move the good chunks in a script file named chunksToStore.sh"; shift ;;
         -- )            shift; break ;;
         *  )            break ;;
     esac
@@ -26,10 +26,13 @@ done
 DIR=$1
 MVDIR=$2
 
+# sometime I tried removing -z option because it induced "fake" zombie files in the output
 echo "# Check the trees..."
-cmgListChunksToResub -t treeProducerWMass/tree.root -z -p $DIR > clean.sh
+#cmgListChunksToResub -t treeProducerWMass/tree.root -z -p $DIR > clean.sh
+cmgListChunksToResub -t treeProducerWMass/tree.root -p $DIR > clean.sh
 echo "# Check the RLTInfo.root..."
-cmgListChunksToResub -t JSONAnalyzer/RLTInfo.root -z $DIR >> clean.sh
+#cmgListChunksToResub -t JSONAnalyzer/RLTInfo.root -z $DIR >> clean.sh
+cmgListChunksToResub -t JSONAnalyzer/RLTInfo.root $DIR >> clean.sh
 echo "# Preparing the script to run..."
 sort clean.sh | uniq > clean2.sh
 
@@ -61,19 +64,19 @@ else
     sed 's|cmgResubChunk -q 8nh |rm -r |g' clean2polished.sh > chunksToResub.sh
 fi;
 
-if [ $mv == "true" ]; then
+if [ "${mvopt}" = true ]; then
     ls $DIR | sort > allChunks.txt
     grep $DIR chunksToResub.sh | awk -F "$DIR" '{print $2}' | awk -F "/" '{print $2}' | awk '{print $1}' | sort | uniq > runningChunks.txt
     grep -Fxvf runningChunks.txt allChunks.txt | awk '{print "mv '$DIR'/" $1 " '$MVDIR'"}' > chunksToStore.sh
     echo $DIR " has " `wc allChunks.txt | awk '{print $2}'` " chunks: " `wc runningChunks.txt | awk '{print $2}'` " running, " `wc chunksToStore.sh | awk '{print $1}'` " to be safely moved in " $MVDIR "."
     rm allChunks.txt runningChunks.txt
-    if [ $saveList = "false" ]; then 
+    if [ "${saveList}" = false ]; then 
         cat chunksToStore.sh
         rm chunksToStore.sh
     fi
 fi
 
-if [ $saveList = "false" ]; then 
+if [ "${saveList}" = false ]; then 
     cat chunksToResub.sh
     rm chunksToResub.sh 
 fi
