@@ -115,7 +115,7 @@ void doFakeRateGraphPlots(const string& outputDIR_tmp = "./",
   graphLegend.push_back("QCD MC");
   // graphLegend.push_back("data subtr. prompt rate");
 
-  string yrange = isEB ? "0.2,1.3" : "0,0.8";
+  string yrange = isEB ? "0.0,1.1" : "0,0.8";
 
   drawGraphCMS(graphList,"electron p_{T} [GeV]",Form("Fake Rate::%s",yrange.c_str()),Form("fakerateComparison_%s_%s",detId.c_str(),plotPostFix.c_str()),outputDIR,graphLegend,legCoord,inputLuminosity);
 
@@ -160,13 +160,13 @@ TFitResultPtr fitGraph(TGraph* gr = NULL,
   if (isEB) {
     if (smoothPolinDegree > 1) f1->SetParameters(0.8,0.0,0.0);
     else f1->SetParameters(0.8,0.0);
-    f1->SetParLimits(0,0.65,0.9);
-    f1->SetParLimits(1,-0.02,0.02);
+    f1->SetParLimits(0,0.2,0.6);
+    f1->SetParLimits(1,-0.03,0.03);
     if (smoothPolinDegree > 1) f1->SetParLimits(2,-0.05,0.05);
     if (smoothPolinDegree > 1) f2->SetParameters(0.8,0.0,0.0);
     else f2->SetParameters(0.8,0.0);
-    f2->SetParLimits(0,0.5,0.9);
-    f2->SetParLimits(1,-0.02,0.02);
+    f2->SetParLimits(0,0.2,0.6);
+    f2->SetParLimits(1,-0.03,0.03);
     if (smoothPolinDegree > 1) f2->SetParLimits(2,-0.05,0.05);
   } else {
     if (smoothPolinDegree > 1) f1->SetParameters(0.3,0.0,0.0);	
@@ -378,8 +378,8 @@ void doFakeRateSmoothing(const string& outputDIR_tmp = "./",
   // checkNotNullPtr(fr_data_orig,"fr_data_orig");
   checkNotNullPtr(fr_qcdmc,"fr_qcdmc");
 
-  string yrange_data = isEB ? "0.5,1.0" : "0.2,0.4";
-  string yrange_qcdmc = isEB ? "0.3,1.2" : "0.0,0.6";
+  string yrange_data = isEB ? "0.2,0.5" : "0.2,0.4";
+  string yrange_qcdmc = isEB ? "0.0,0.8" : "0.0,0.8";
   vector <Double_t> legCoord = {0.12,0.7,0.60,0.9};
 
   TFitResultPtr ptr_data = fitGraph(fr_data_subEWKMC, isEB, "electron p_{T} [GeV]", Form("Fake Rate::%s",yrange_data.c_str()), Form("fr_data_subEWKMC_%s_%s",detId.c_str(),plotPostFix.c_str()), outputDIR, "data subtr. EWK MC", legCoord,inputLuminosity,true);

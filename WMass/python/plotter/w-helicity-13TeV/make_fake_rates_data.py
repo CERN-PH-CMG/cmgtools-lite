@@ -14,6 +14,7 @@ parser.add_option("--fqcd-ranges", dest="fqcd_ranges", default="0,40,50,120", ty
 parser.add_option("--mt", dest="fitvar", default="trkmtfix", type='string', help="Select mT definition: pfmt, trkmt, pfmtfix, trkmtfix");
 parser.add_option("--pt", dest="ptvar", default="pt_granular", type='string', help="Select pT definition: pt_granular (default) or pt_coarse");
 parser.add_option("--useSkim", dest="useSkim", default=False, action='store_true', help="Use skimmed sample for fake rates");
+parser.add_option("--skipStack", dest="skipStack", default=False, action='store_true', help="Skip stack plots");
 parser.add_option("--addOpts", dest="addOpts", default="", type='string', help="Options to pass some other options from outside to build the command");
 (options, args) = parser.parse_args()
 
@@ -26,6 +27,7 @@ fitvar = str(options.fitvar)
 ptvar = str(options.ptvar)
 useFullData2016 = options.useFullData2016
 useSkim = options.useSkim
+skipStack = options.skipStack
 addOpts = options.addOpts
 etaRange = options.etaRange.split(",");
 
@@ -164,4 +166,5 @@ else:
 for i in range(0,len(etaRange)-1):
     PATT=NUM[i]+"_vs_"+XVAR+"_"+FITVAR+"_%s"
     thisRange = etaRange[i].replace(".","p") + "_" + etaRange[i+1].replace(".","p")
-    print STACK + "-o " + PBASE + "fr_sub_eta_" + str(thisRange) + "_comp.root " + PBASE + "/fr_sub_eta_" + str(thisRange) + "_fQCD.root:" + PATT + ":" + procToCompare
+    if not skipStack:
+        print STACK + "-o " + PBASE + "fr_sub_eta_" + str(thisRange) + "_comp.root " + PBASE + "/fr_sub_eta_" + str(thisRange) + "_fQCD.root:" + PATT + ":" + procToCompare

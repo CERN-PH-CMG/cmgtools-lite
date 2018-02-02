@@ -1,7 +1,9 @@
 #pt_coarse:     LepGood_pt: [ 25,27,30,35,40,50,65,100 ] ; XTitle="lepton p_{T} (GeV)", Density=True
 #pt_coarse:     LepGood_pt: [ 25,30,32,34,36,38,40,42,44,46,50,60 ] ; XTitle="lepton p_{T} (GeV)", Density=True
-pt_granular:    ptElFull(LepGood1_calPt,LepGood1_eta) : [ 25,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,46,50,54,60 ] ; XTitle="lepton p_{T} (GeV)", Density=True
-pt_coarse:     ptElFull(LepGood1_calPt,LepGood1_eta) : [ 25,30,34,38,42,46,50,54,60 ] ; XTitle="lepton p_{T} (GeV)", Density=True
+pt_granular:    ptElFull(LepGood1_calPt,LepGood1_eta) : [ 30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,46,48,50,54,60 ] ; XTitle="lepton p_{T} (GeV)", Density=True
+pt_coarse:     ptElFull(LepGood1_calPt,LepGood1_eta) : [ 30,34,38,42,46,50,54,60 ] ; XTitle="lepton p_{T} (GeV)", Density=True
+# pt_granular:    ptElFull(LepGood1_calPt,LepGood1_eta) : [ 25,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,46,50,54,60 ] ; XTitle="lepton p_{T} (GeV)", Density=True
+# pt_coarse:     ptElFull(LepGood1_calPt,LepGood1_eta) : [ 25,30,34,38,42,46,50,54,60 ] ; XTitle="lepton p_{T} (GeV)", Density=True
 #pt_finer:      LepGood_pt: [ 25,27,30,35,45,55,100 ] ; XTitle="lepton p_{T} (GeV)", Density=True
 #pt_finer:      LepGood_pt: [ 25,27,30,35,45,100 ] ; XTitle="lepton p_{T} (GeV)", Density=True
 
