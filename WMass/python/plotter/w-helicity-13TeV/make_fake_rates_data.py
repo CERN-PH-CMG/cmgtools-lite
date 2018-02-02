@@ -14,6 +14,7 @@ parser.add_option("--fqcd-ranges", dest="fqcd_ranges", default="0,40,50,120", ty
 parser.add_option("--mt", dest="fitvar", default="trkmtfix", type='string', help="Select mT definition: pfmt, trkmt, pfmtfix, trkmtfix");
 parser.add_option("--pt", dest="ptvar", default="pt_granular", type='string', help="Select pT definition: pt_granular (default) or pt_coarse");
 parser.add_option("--useSkim", dest="useSkim", default=False, action='store_true', help="Use skimmed sample for fake rates");
+parser.add_option("--skipStack", dest="skipStack", default=False, action='store_true', help="Skip stack plots");
 parser.add_option("--addOpts", dest="addOpts", default="", type='string', help="Options to pass some other options from outside to build the command");
 (options, args) = parser.parse_args()
 
@@ -26,15 +27,12 @@ fitvar = str(options.fitvar)
 ptvar = str(options.ptvar)
 useFullData2016 = options.useFullData2016
 useSkim = options.useSkim
+skipStack = options.skipStack
 addOpts = options.addOpts
 etaRange = options.etaRange.split(",");
 
 if fqcd_ranges.count(",") != 3:
     print "warning: options --fqcd-ranges requires 4 numbers separated by commas (3 commas expected), but %s was passed" % fqcd_ranges
-    quit()
-
-if len(workingPoints)<1:
-    print "warning: must specify at least 1 working point. Use option --wp '<arg1,arg2,...argN>'"
     quit()
 
 if len(etaRange)<2:
@@ -52,6 +50,9 @@ if not useMuon and ptvar not in ["pt_coarse", "pt_granular"]:
 if useMuon:
     addQCDMC = True
 
+plotterPath = str(os.environ.get('CMSSW_BASE'))
+plotterPath = plotterPath + "/src/CMGTools/WMass/python/plotter/"
+
 chargeSelection = ""
 if charge != "":
     if charge == "p":
@@ -64,8 +65,7 @@ if charge != "":
 
 T="/eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3/" 
 if useSkim:
-    # must be on pccmsrm28 to use the skimmed samples
-    T="/u2/emanuele/wmass/TREES_1LEP_80X_V3_FRELSKIM_V3/"
+    T="/eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3_FRELSKIM_V5/"
 objName='tree' # name of TTree object in Root file, passed to option --obj in tree2yield.py
 # if 'pccmsrm29' in os.environ['HOSTNAME']: T = T.replace('/data1/emanuele/wmass','/u2/emanuele')
 # elif 'lxplus' in os.environ['HOSTNAME']: T = T.replace('/data1/emanuele/wmass','/afs/cern.ch/work/e/emanuele/TREES/')
@@ -84,7 +84,7 @@ if useFullData2016:
 
 J=4
 
-BASECONFIG="wmass/wmass_e"
+BASECONFIG = plotterPath + "w-helicity-13TeV/wmass_e"
 MCA = BASECONFIG+'/mca-80X_V3.txt'
 # if useSkim:
 #     MCA = BASECONFIG+'/mca-80X_V3_skimTrees.txt'  # now we have also the missing top samples
@@ -94,7 +94,7 @@ FITVAR=fitvar
 NUM = "fakeRateNumerator_el"
 
 if useMuon:
-    BASECONFIG="wmass/wmass_mu"
+    BASECONFIG=plotterPath + "w-helicity-13TeV/wmass_mu"
     MCA=BASECONFIG+'/mca-qcd1l_mu.txt'
     CUTFILE=BASECONFIG+'/qcd1l_mu.txt'
     XVAR="pt_finer"
@@ -104,8 +104,8 @@ OPTIONS = MCA + " " + CUTFILE + " -f -P " + T + " --obj " + objName + " --s2v -j
  
 # no friends for the moment
 OPTIONS += ' -F Friends '+T+'/friends/tree_Friend_{cname}.root '
-OPTIONS += ' -F Friends '+T+'/friends/tree_FRFriend_{cname}.root '
-OPTIONS += ' --FMC Friends '+T+'/friends/tree_TrgFriend_{cname}.root '  # only for MC, they have trigger scale factors
+# OPTIONS += ' -F Friends '+T+'/friends/tree_FRFriend_{cname}.root '
+# OPTIONS += ' --FMC Friends '+T+'/friends/tree_TrgFriend_{cname}.root '  # only for MC, they have trigger scale factors
 OPTIONS += ' --fqcd-ranges %s' % fqcd_ranges.replace(","," ")
 #OPTIONS += datasetOption
 
@@ -113,9 +113,9 @@ OPTIONS += ' --fqcd-ranges %s' % fqcd_ranges.replace(","," ")
 # use PU reweighting for BF or BH
 OPTIONS += MCweightOption
 
-PBASE = "plots/fake-rate/el/"
+PBASE = plotterPath + "plots/fake-rate/el/"
 if useMuon:
-    PBASE = "plots/fake-rate/mu/"
+    PBASE = plotterPath + "plots/fake-rate/mu/"
 if testDir != "":
     PBASE = PBASE.replace('plots/fake-rate/','plots/fake-rate/test/'+str(testDir)+'/')
 
@@ -132,7 +132,7 @@ EWKEXCLUDE="--xp 'W_LO,Z_LO'"
 if addQCDMC:
     EWKSPLIT="-p 'QCD,W,Z,data'"
 
-MCEFF = "python wmass/dataFakeRate.py " + OPTIONS + " " + EWKSPLIT + " " + EWKEXCLUDE +" --groupBy cut wmass/make_fake_rates_sels.txt wmass/make_fake_rates_xvars.txt  "
+MCEFF = "python " + plotterPath + "w-helicity-13TeV/dataFakeRate.py " + OPTIONS + " " + EWKSPLIT + " " + EWKEXCLUDE +" --groupBy cut " + plotterPath + "w-helicity-13TeV/make_fake_rates_sels.txt " + plotterPath + "w-helicity-13TeV/make_fake_rates_xvars.txt  "
 if addQCDMC:
     MCEFF += "--sp QCD "
 else:
@@ -156,7 +156,7 @@ for i in range(0,len(etaRange)-1):
     print "\n\n"
     print MCGO + " -i " + PBASE + "/fr_sub_eta_" + thisRange + ".root -o " + PBASE + "/fr_sub_eta_" + thisRange + "_fQCD.root --subSyst 0.2\n" 
 
-STACK = "python wmass/stack_fake_rates_data.py "+ RANGES + LEGEND + " --comb-mode=midpoint " # :_fit
+STACK = "python " + plotterPath + "w-helicity-13TeV/stack_fake_rates_data.py "+ RANGES + LEGEND + " --comb-mode=midpoint " # :_fit
 
 if addQCDMC:
     procToCompare="QCD_prefit,data_fqcd"
@@ -166,4 +166,5 @@ else:
 for i in range(0,len(etaRange)-1):
     PATT=NUM[i]+"_vs_"+XVAR+"_"+FITVAR+"_%s"
     thisRange = etaRange[i].replace(".","p") + "_" + etaRange[i+1].replace(".","p")
-    print STACK + "-o " + PBASE + "fr_sub_eta_" + str(thisRange) + "_comp.root " + PBASE + "/fr_sub_eta_" + str(thisRange) + "_fQCD.root:" + PATT + ":" + procToCompare
+    if not skipStack:
+        print STACK + "-o " + PBASE + "fr_sub_eta_" + str(thisRange) + "_comp.root " + PBASE + "/fr_sub_eta_" + str(thisRange) + "_fQCD.root:" + PATT + ":" + procToCompare

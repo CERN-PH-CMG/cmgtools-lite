@@ -37,11 +37,11 @@ def roll1Dto2D(h1d,h2dname,plotfile,options):
     if p2d.hasOption('ZMin') and p2d.hasOption('ZMax'):
         histo.GetZaxis().SetRangeUser(p2d.getOption('ZMin',1.0), p2d.getOption('ZMax',1.0))
     if 'TH2' not in histo.ClassName(): raise RuntimeError, "Trying to roll the 1D histo on something that is not TH2"
-    for i in xrange(1,h1d.GetNbinsX()+1):
+    for i in xrange(h1d.GetNbinsX()+1):
         xbin = i % histo.GetNbinsX()
-        ybin = i / histo.GetNbinsX() + 1
+        ybin = i / histo.GetNbinsX()
         val = h1d.GetBinContent(i)
-        if val>1: histo.SetBinContent(xbin,ybin,h1d.GetBinContent(i))
+        if val>1: histo.SetBinContent(xbin+1,ybin+1,h1d.GetBinContent(i))
     return histo
 
 options = None
@@ -137,7 +137,7 @@ if __name__ == "__main__":
       doRatio = True
       htot.GetYaxis().SetRangeUser(0, 1.8*max(htot.GetMaximum(), hdata.GetMaximum()))
       ## Prepare split screen
-      plotformat = (1200,600) if options.rollBackTo2D else (600,600)
+      plotformat = (600,600)
       c1 = ROOT.TCanvas("c1", "c1", plotformat[0], plotformat[1]); c1.Draw()
       c1.SetWindowSize(plotformat[0] + (plotformat[0] - c1.GetWw()), (plotformat[1] + (plotformat[1] - c1.GetWh())));
       p1 = ROOT.TPad("pad1","pad1",0,0.29,1,0.99);
