@@ -240,9 +240,7 @@ configureSplittingFromTime(samples_1prompt,50,6)
 configureSplittingFromTime(samples_signal,100,6)
 
 if runOnSignal:
-    #selectedComponents = samples_signal
-    #selectedComponents = [DYJetsToLL_M50, WJetsToLNu ]
-    selectedComponents = [WJetsToLNu ]
+    selectedComponents = [WJetsToLNu_LO,WJetsToLNu_LO_ext]
 else:
     #selectedComponents = samples_1prompt + samples_1fake 
     selectedComponents = QCDPtbcToE

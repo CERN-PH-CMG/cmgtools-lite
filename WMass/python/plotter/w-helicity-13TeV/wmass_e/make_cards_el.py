@@ -10,12 +10,12 @@ parser.add_option("-s", "--suffix", dest="suffix", type="string", default=None, 
 PROG="w-helicity-13TeV/make_helicity_cards.py"
 BASECONFIG="w-helicity-13TeV/wmass_e"
 MCA=BASECONFIG+'/mca-80X-wenu-helicity.txt'
-CUTFILE=BASECONFIG+'/wenu.txt'
+CUTFILE=BASECONFIG+'/wenu_80X.txt'
 SYSTFILE=BASECONFIG+'/systsEnv.txt'
-TREEPATH="/eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3_WENUSKIM_V3"
+TREEPATH="/eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3_WENUSKIM_V5"
 QUEUE="cmscaf1nd"
 VAR="\"ptElFull(LepGood1_calPt,LepGood1_eta):LepGood1_eta\""
-BINNING="\"50,-2.5,2.5,20,30.,50.\""
+BINNING="\"48,-2.5,2.5,20,30.,50.\""
 #BINNING="\"24,-2.5,2.5,20,30.,50.\""
 WEIGHTSTRING=" \'puw2016_nTrueInt_36fb(nTrueInt)*trgSF_We(LepGood1_pdgId,LepGood1_pt,LepGood1_eta,2)*leptonSF_We(LepGood1_pdgId,LepGood1_pt,LepGood1_eta)\' "
 OUTDIR="helicity_%s" % datetime.now().strftime("%Y_%m_%d")
