@@ -42,7 +42,7 @@ def roll1Dto2D(h1d,h2dname,plotfile,options):
         if not xbin: xbin = xbin+histo.GetNbinsX()
         ybin = i / histo.GetNbinsX() + (1 if i%histo.GetNbinsX() else 0)
         val = h1d.GetBinContent(i)
-        if val>1.0e-3: histo.SetBinContent(xbin,ybin,h1d.GetBinContent(i))
+        if val>1.0: histo.SetBinContent(xbin,ybin,h1d.GetBinContent(i))
     return histo
 
 options = None
