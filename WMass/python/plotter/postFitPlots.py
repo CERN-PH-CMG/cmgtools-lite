@@ -37,11 +37,12 @@ def roll1Dto2D(h1d,h2dname,plotfile,options):
     if p2d.hasOption('ZMin') and p2d.hasOption('ZMax'):
         histo.GetZaxis().SetRangeUser(p2d.getOption('ZMin',1.0), p2d.getOption('ZMax',1.0))
     if 'TH2' not in histo.ClassName(): raise RuntimeError, "Trying to roll the 1D histo on something that is not TH2"
-    for i in xrange(h1d.GetNbinsX()+1):
+    for i in xrange(1,h1d.GetNbinsX()+1):
         xbin = i % histo.GetNbinsX()
-        ybin = i / histo.GetNbinsX()
+        if not xbin: xbin = xbin+histo.GetNbinsX()
+        ybin = i / histo.GetNbinsX() + (1 if i%histo.GetNbinsX() else 0)
         val = h1d.GetBinContent(i)
-        if val>1: histo.SetBinContent(xbin+1,ybin+1,h1d.GetBinContent(i))
+        if val>1.0e-3: histo.SetBinContent(xbin,ybin,h1d.GetBinContent(i))
     return histo
 
 options = None
