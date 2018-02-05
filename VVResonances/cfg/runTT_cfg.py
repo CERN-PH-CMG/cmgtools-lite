@@ -100,7 +100,7 @@ elif test==2:
 else:
     # full scale production
     # split samples in a smarter way
-    from CMGTools.HToZZ4L.tools.configTools import configureSplittingFromTime, printSummary
+    from CMGTools.RootTools.samples.configTools import configureSplittingFromTime, printSummary
     configureSplittingFromTime(selectedComponents, 40, 3)  # means 40 ms per event, job to last 3h
     # print summary of components to process
     printSummary(selectedComponents)

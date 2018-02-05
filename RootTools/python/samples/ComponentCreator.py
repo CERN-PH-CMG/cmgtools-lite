@@ -4,7 +4,7 @@ from CMGTools.Production.dataset import createDataset, createMyDataset
 import re
 
 class ComponentCreator(object):
-    def makeMCComponent(self,name,dataset,user,pattern,xSec=1,useAAA=False,unsafe=False):
+    def makeMCComponent(self,name,dataset,user,pattern,xSec=1,useAAA=False,unsafe=False,fracNegWeights=None):
         
          component = cfg.MCComponent(
              dataset=dataset,
@@ -16,6 +16,7 @@ class ComponentCreator(object):
              effCorrFactor = 1,
          )
          component.splitFactor = 100
+         component.fracNegWeights = fracNegWeights
          component.dataset_entries = self.getPrimaryDatasetEntries(dataset,user,pattern,useAAA=useAAA)
          return component
 
