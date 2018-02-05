@@ -3,6 +3,7 @@
 
 #include "TFile.h"
 #include "TH2.h"
+#include "TF1.h"
 #include "TH2Poly.h"
 #include "TSpline.h"
 #include "TCanvas.h"
@@ -13,6 +14,58 @@
 
 #include <iostream>
 #include <stdlib.h>
+
+TF1 * helicityFractionSimple_0 = new TF1("helicityFraction_0", "3./4*(TMath::Sqrt(1-x*x))^2", -1., 1.);
+TF1 * helicityFractionSimple_L = new TF1("helicityFraction_L", "3./8.*(1-x)^2"              , -1., 1.);
+TF1 * helicityFractionSimple_R = new TF1("helicityFraction_R", "3./8.*(1+x)^2"              , -1., 1.);
+
+TFile *_file_helicityFractionsSimple = NULL;
+TH2 * helicityFractionsSimple_0 = NULL;
+TH2 * helicityFractionsSimple_L = NULL;
+TH2 * helicityFractionsSimple_R = NULL;
+
+float helicityWeightSimple(float yw, float ptw, float costheta, int pol)
+{
+
+  if (!helicityFractionsSimple_0 || !helicityFractionsSimple_L || !helicityFractionsSimple_R) {
+    _file_helicityFractionsSimple = new TFile("w-helicity-13TeV/fractionReweighting/fractions.root","read");
+    helicityFractionsSimple_0 = (TH2F*)(_file_helicityFractionsSimple->Get("fraction0_plus_sym"));
+    helicityFractionsSimple_L = (TH2F*)(_file_helicityFractionsSimple->Get("fractionL_plus_sym"));
+    helicityFractionsSimple_R = (TH2F*)(_file_helicityFractionsSimple->Get("fractionR_plus_sym"));
+  }
+
+  if (std::abs(costheta) > 1.) {
+    //std::cout << " found an event with weird cosTheta = " << costheta << std::endl;
+    //std::cout << " setting event weight to 0" << std::endl;
+    return 0;
+  }
+
+  TH2 *hist_f0 = helicityFractionsSimple_0;
+  TH2 *hist_fL = helicityFractionsSimple_L;
+  TH2 *hist_fR = helicityFractionsSimple_R;
+
+  // float yval  = std::abs(yw) > hist_f0->GetXaxis()->GetXmax() ? hist_f0->GetXaxis()->GetXmax() : yw;
+  // float ptval = ptw > hist_f0->GetYaxis()->GetXmax() ? hist_f0->GetYaxis()->GetXmax() : ptw;
+
+  int ywbin = std::max(1, std::min(hist_f0->GetNbinsX(), hist_f0->GetXaxis()->FindBin(yw )));
+  int ptbin = std::max(1, std::min(hist_f0->GetNbinsY(), hist_f0->GetYaxis()->FindBin(ptw)));
+
+  float f0 = hist_f0->GetBinContent(ywbin, ptbin);
+  float fL = hist_fL->GetBinContent(ywbin, ptbin);
+  float fR = hist_fR->GetBinContent(ywbin, ptbin);
+
+  float f0Term = helicityFractionSimple_0->Eval(costheta);
+  float fLTerm = helicityFractionSimple_L->Eval(costheta);
+  float fRTerm = helicityFractionSimple_R->Eval(costheta);
+
+  if      (pol == 0) return f0*f0Term/(f0*f0Term+fL*fLTerm+fR*fRTerm);
+  else if (pol == 1) return fL*fLTerm/(f0*f0Term+fL*fLTerm+fR*fRTerm);
+  else if (pol == 2) return fR*fRTerm/(f0*f0Term+fL*fLTerm+fR*fRTerm);
+        
+  std::cout << "something went wrong in the helicity reweighting" << std::endl;
+  return -99999.;
+
+}
 
 TFile *_file_recoToMedium_leptonSF_el = NULL;
 TH2F *_histo_recoToMedium_leptonSF_el = NULL;

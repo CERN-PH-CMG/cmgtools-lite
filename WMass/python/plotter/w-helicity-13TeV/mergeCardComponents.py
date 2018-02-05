@@ -146,7 +146,7 @@ for charge in charges:
                     klen = 7
                     kpatt = " %%%ds "  % klen
                     for i in xrange(len(pseudobins)):
-                        realprocesses.append(pseudoprocesses[i]+"_"+pseudobins[i] if ('Wm' in pseudobins[i] or 'Wp' in pseudobins[i]) else pseudoprocesses[i])
+                        realprocesses.append(pseudoprocesses[i]+"_"+pseudobins[i] if ('Wminus' in pseudobins[i] or 'Wplus' in pseudobins[i]) else pseudoprocesses[i])
                     combinedCard.write('bin            %s \n' % ' '.join([kpatt % options.bin for p in pseudoprocesses]))
                     combinedCard.write('process        %s \n' % ' '.join([kpatt % p for p in realprocesses]))
                     combinedCard.write('process        %s \n' % ' '.join([kpatt % str(i+1) for i in xrange(len(pseudobins))]))
