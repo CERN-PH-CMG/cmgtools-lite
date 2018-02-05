@@ -245,7 +245,7 @@ if runSMS:
 from CMGTools.RootTools.samples.samples_13TeV_RunIISpring16MiniAODv2 import *
 from CMGTools.RootTools.samples.samples_13TeV_signals import *
 
-from CMGTools.HToZZ4L.tools.configTools import printSummary, configureSplittingFromTime, cropToLumi
+from CMGTools.RootTools.samples.configTools import printSummary, configureSplittingFromTime, cropToLumi
 
 #print 'After cropping to lumi and adjusting the splitting:'
 #printSummary(selectedComponents)

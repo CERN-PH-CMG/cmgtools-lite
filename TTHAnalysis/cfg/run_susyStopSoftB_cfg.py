@@ -7,7 +7,7 @@ import re
 #-------- LOAD ALL ANALYZERS -----------
 from CMGTools.TTHAnalysis.analyzers.susyCore_modules_cff import *
 from PhysicsTools.HeppyCore.framework.heppy_loop import getHeppyOption
-from CMGTools.HToZZ4L.tools.configTools import * 
+from CMGTools.RootTools.samples.configTools import *
 from CMGTools.RootTools.samples.autoAAAconfig import *
 from CMGTools.Production.promptRecoRunRangeFilter import filterComponent as filterPromptRecoComponent
 
