@@ -146,9 +146,12 @@ float helicityWeight(float yw, float ptw, float costheta, int pol)
   float fLTerm = helicityFraction_L->Eval(costheta);
   float fRTerm = helicityFraction_R->Eval(costheta);
 
-  if      (pol == 0) return f0*f0Term/(f0*f0Term+fL*fLTerm+fR*fRTerm);
-  else if (pol == 1) return fL*fLTerm/(f0*f0Term+fL*fLTerm+fR*fRTerm);
-  else if (pol == 2) return fR*fRTerm/(f0*f0Term+fL*fLTerm+fR*fRTerm);
+  float weight = 0.;
+  float max_weight = 4.;
+
+  if      (pol == 0) return std::min( f0*f0Term/(f0*f0Term+fL*fLTerm+fR*fRTerm), max_weight);
+  else if (pol == 1) return std::min( fL*fLTerm/(f0*f0Term+fL*fLTerm+fR*fRTerm), max_weight);
+  else if (pol == 2) return std::min( fR*fRTerm/(f0*f0Term+fL*fLTerm+fR*fRTerm), max_weight);
         
   std::cout << "something went wrong in the helicity reweighting" << std::endl;
   return -99999.;
