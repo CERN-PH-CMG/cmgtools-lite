@@ -144,6 +144,16 @@ MODULES.append( ('TauTightFlag', lambda : ObjTagger("isTauTight","TauSel_Recl",
 from CMGTools.TTHAnalysis.tools.bTagEventWeightsCSVFullShape import BTagEventWeightFriend
 MODULES.append( ('eventBTagWeight', lambda : BTagEventWeightFriend(csvfile=os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/btag/CSVv2_Moriond17_B_H.csv")))
 
+from CMGTools.TTHAnalysis.tools.BDT_resolvedTopTagger_cpp import BDT_resolvedTopTagger
+MODULES.append( ('BDT_rTT', lambda : BDT_resolvedTopTagger(os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/kinMVA/tth/resTop_xGBoost_v0.weights.xml")) )
+
+from CMGTools.TTHAnalysis.tools.higgsRecoTTH import HiggsRecoTTH
+MODULES.append( ('higgsRecoTTH', lambda : HiggsRecoTTH(label="_Recl",
+                                                       cut_BDT_rTT_score = 0.0,
+                                                       cuts_mW_had = (60.,100.),
+                                                       cuts_mH_vis = (80.,140.),
+                                                       btagCSVveto = 0.5426) ))
+
 from CMGTools.TTHAnalysis.tools.ttHMCEventReco import TTHMCEventReco
 MODULES.append( ('genLevelChain', lambda : TTHMCEventReco()) )
 
