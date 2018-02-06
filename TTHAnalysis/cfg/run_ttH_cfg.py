@@ -224,10 +224,10 @@ ttv_lo = [TTW_LO,TTZ_LO] # TTV LO
 rares = [ZZTo4L,WW_DPS]+TTXXs # rares # MISSING: GGHZZ4L,VHToNonbb,tZq_ll_ext,WpWpJJ,tWll
 single_t = Ts # single top + tW # MISSING: THQ,THW
 convs = [TTGJets] # X+G # MISSING: WGToLNuG_amcatnlo_ext,WGToLNuG_amcatnlo_ext2,ZGTo2LG_ext,TGJets,TGJets_ext
-v_jets = [WJetsToLNu_LO,DYJetsToLL_M50_LO,DYJetsToLL_M50_LO_ext,WWTo2L2Nu] # V+jets # MISSING: DYJetsToLL_M10to50_LO
+v_jets = [WJetsToLNu_LO,DYJetsToLL_M10to50_LO,DYJetsToLL_M50_LO,DYJetsToLL_M50_LO_ext,WWTo2L2Nu] # V+jets
 tt_1l = [TTSemi_pow] # TT 1l # MISSING: Madgraph
 tt_2l = [TTLep_pow] # TT 2l # MISSING: Madgraph
-boson = [] # multi-boson # MISSING: WZTo3LNu, TriBosons
+boson = [WZTo3LNu_fxfx] # multi-boson # MISSING: WZTo3LNu_pow, TriBosons
 
 samples_slow = sig_ttv + ttv_lo + rares + convs + boson + tt_2l
 samples_fast = single_t + v_jets + tt_1l
@@ -263,11 +263,11 @@ if runData and not isTest: # For running on data
     selectedComponents = [];
     exclusiveDatasets = True; # this will veto triggers from previous PDs in each PD, so that there are no duplicate events
  
-    DatasetsAndTriggers.append( ("DoubleMuon", triggers_mumu_iso + triggers_mumu_ss + triggers_mumu_ht + triggers_3mu + triggers_3mu_alt) )
-    DatasetsAndTriggers.append( ("DoubleEG",   triggers_ee + triggers_ee_ht + triggers_3e) )
-    DatasetsAndTriggers.append( ("MuonEG",     triggers_mue + triggers_mue_ht + triggers_2mu1e + triggers_2e1mu) )
-    DatasetsAndTriggers.append( ("SingleMuon", triggers_1mu_iso + triggers_1mu_noniso) )
-    DatasetsAndTriggers.append( ("SingleElectron", triggers_1e) )
+    DatasetsAndTriggers.append( ("DoubleMuon", triggers_mumu_iso + triggers_3mu) )
+    DatasetsAndTriggers.append( ("DoubleEG",   triggers_ee + triggers_3e) )
+    DatasetsAndTriggers.append( ("MuonEG",     triggers_mue + triggers_2mu1e + triggers_2e1mu) )
+    DatasetsAndTriggers.append( ("SingleMuon", triggers_1mu_iso) )
+    DatasetsAndTriggers.append( ("SingleElectron", triggers_1e_iso) )
 
     if runDataQCD: # for fake rate measurements in data
         FRTrigs_mu = triggers_FR_1mu_noiso
@@ -320,6 +320,9 @@ if runData and not isTest: # For running on data
         susyCoreSequence.remove(jsonAna)
     if runDataQCD: # for fake rate measurements in data
          configureSplittingFromTime(selectedComponents, 3.5, 2, maxFiles=15)
+    else:
+        configureSplittingFromTime(filter(lambda x: 'Double' in x.name or 'MuonEG' in x.name,selectedComponents),50,5)
+        configureSplittingFromTime(filter(lambda x: 'Single' in x.name,selectedComponents),30,5)
 
 #printSummary(selectedComponents)
 
