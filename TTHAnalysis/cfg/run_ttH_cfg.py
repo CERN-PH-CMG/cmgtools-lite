@@ -219,7 +219,7 @@ from CMGTools.RootTools.samples.autoAAAconfig import *
 selectedComponents = [TTLep_pow]
 
 
-sig_ttv = [TTHnobb_pow,TTHnobb_fxfx,TTWToLNu_pow,TTWToLNu_fxfx,TTZToLLNuNu_amc,TTZToLLNuNu_m1to10] # signal + TTV
+sig_ttv = [TTHnobb_pow,TTHnobb_fxfx,TTWToLNu_fxfx,TTZToLLNuNu_amc,TTZToLLNuNu_m1to10] # signal + TTV
 ttv_lo = [TTW_LO,TTZ_LO] # TTV LO
 rares = [ZZTo4L,WW_DPS]+TTXXs # rares # MISSING: GGHZZ4L,VHToNonbb,tZq_ll_ext,WpWpJJ,tWll
 single_t = Ts # single top + tW # MISSING: THQ,THW
@@ -255,7 +255,7 @@ if runData and not isTest: # For running on data
     is50ns = False
     dataChunks = []
 
-    json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions17/13TeV/Final/Cert_294927-306462_13TeV_PromptReco_Collisions17_JSON.txt' # full 2017 dataset, 42.4/fb
+    json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions17/13TeV/ReReco/Cert_294927-306462_13TeV_EOY2017ReReco_Collisions17_JSON.txt' # full 2017 dataset, EOY rereco, 41.4/fb
 
     for era in 'BCDEF': dataChunks.append((json,filter(lambda dset: 'Run2017'+era in dset.name,dataSamples_17Nov2017),'2017'+era,[],False))
 
