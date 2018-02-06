@@ -25,6 +25,7 @@ from optparse import OptionParser
 parser = OptionParser(usage="%prog [options] mc.txt cuts.txt var bins systs.txt outdir ")
 parser.add_option("-q", "--queue",    dest="queue",     type="string", default=None, help="Run jobs on lxbatch instead of locally");
 parser.add_option("--dry-run", dest="dryRun",    action="store_true", default=False, help="Do not run the job, only print the command");
+parser.add_option("--long-bkg", dest="longBkg",    action="store_true", default=False, help="Treat the longitudinal polarization as one background template.");
 parser.add_option("-s", "--signal-cards",  dest="signalCards",  action="store_true", default=False, help="Make the signal part of the datacards");
 parser.add_option("-b", "--bkgdata-cards", dest="bkgdataCards", action="store_true", default=False, help="Make the background and data part of the datacards");
 parser.add_option("-W", "--weight", dest="weightExpr", default="-W 1", help="Event weight expression (default 1)");
@@ -89,7 +90,8 @@ if options.signalCards:
     ## WYBins=(16,-6,6)
     ## bWidth=(WYBins[2]-WYBins[1])/float(WYBins[0])
     ## WYBinsEdges=np.arange(WYBins[1],WYBins[2]+0.001,bWidth)
-    WYBinsEdges = [-6., -4.,  -3.,   -2.25, -1.5,  -0.75,  0. ,   0.75 , 1.5,   2.25,  3.,  4.,   6.  ]
+    #WYBinsEdges = [-6., -4.,  -3.,   -2.25, -1.5,  -0.75,  0. ,   0.75 , 1.5,   2.25,  3.,  4.,   6.  ]
+    WYBinsEdges = [-6.0, -3.0, -2.5, -2.0, -1.5, -1.0, -0.5, 0., 0.5, 1.0, 1.5, 2.0, 2.5,  3.0,   6.  ]
     print WYBinsEdges
     print "MAKING SIGNAL PART: WYBinsEdges = ",WYBinsEdges
     for charge in ['plus','minus']:
@@ -97,7 +99,8 @@ if options.signalCards:
             print "Making card for %s<genw_y<%s and signal process with charge %s " % (WYBinsEdges[iy],WYBinsEdges[iy+1],charge)
             ycut=" -A alwaystrue YW%d 'genw_y>%s && genw_y<%s' " % (iy,WYBinsEdges[iy],WYBinsEdges[iy+1])
             ycut += POSCUT if charge=='plus' else NEGCUT
-            xpsel=' --xp "W{antich}.*,Z,Top,DiBosons,TauDecaysW,data.*" --asimov '.format(antich = ('plus' if charge=='minus' else 'minus') )
+            excl_long_signal  = '' if not options.longBkg else ',W{ch}_long'.format(ch=charge)
+            xpsel=' --xp "W{antich}.*,Z,Top,DiBosons,TauDecaysW{longbkg},data.*" --asimov '.format(antich = ('plus' if charge=='minus' else 'minus'), longbkg = excl_long_signal )
             if not os.path.exists(outdir): os.mkdir(outdir)
             if options.queue and not os.path.exists(outdir+"/jobs"): os.mkdir(outdir+"/jobs")
             dcname = "W{charge}_{channel}_Ybin_{iy}".format(charge=charge, channel=options.channel,iy=iy)
@@ -130,7 +133,7 @@ if options.signalCards:
 if options.bkgdataCards:
     print "MAKING BKG and DATA PART:\n"
     for charge in ['plus','minus']:
-        xpsel=' --xp "W.*" '
+        xpsel=' --xp "W.*" ' if not options.longBkg else ' --xp "W{ch}_left,W{ch}_right,W{ach}.*" '.format(ch=charge, ach='minus' if charge=='plus' else 'plus')
         chargecut = POSCUT if charge=='plus' else NEGCUT
         dcname = "bkg_and_data_{channel}_{charge}".format(channel=options.channel, charge=charge)
         BIN_OPTS=OPTIONS + " -W '" + options.weightExpr + "'" + " -o "+dcname+" --od "+outdir + xpsel + chargecut
