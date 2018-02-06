@@ -345,7 +345,7 @@ if runData==False and isTest: # Synch MC sample
         comp.fineSplitFactor = 1
 
 
-from CMGTools.HToZZ4L.tools.configTools import printSummary
+from CMGTools.RootTools.samples.configTools import printSummary
 
 if not getHeppyOption("test"):
     printSummary(selectedComponents)

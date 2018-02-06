@@ -14,7 +14,7 @@ from CMGTools.RootTools.samples.autoAAAconfig import *
 
 #Load all analyzers
 from CMGTools.ObjectStudies.analyzers.lepTnPModules_cff import * 
-from CMGTools.HToZZ4L.tools.configTools import * 
+from CMGTools.RootTools.samples.configTools import *
 
 
 

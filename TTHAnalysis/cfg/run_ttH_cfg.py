@@ -213,7 +213,7 @@ triggerFlagsAna.checkL1Prescale = True
 
 from CMGTools.RootTools.samples.samples_13TeV_RunIIFall17MiniAOD import *
 from CMGTools.RootTools.samples.samples_13TeV_DATA2017 import *
-from CMGTools.HToZZ4L.tools.configTools import printSummary, configureSplittingFromTime, cropToLumi, prescaleComponents, insertEventSelector, mergeExtensions
+from CMGTools.RootTools.samples.configTools import printSummary, configureSplittingFromTime, cropToLumi, prescaleComponents, insertEventSelector, mergeExtensions
 from CMGTools.RootTools.samples.autoAAAconfig import *
 
 selectedComponents = [TTLep_pow]

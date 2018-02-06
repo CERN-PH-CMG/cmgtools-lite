@@ -523,7 +523,7 @@ if runData==False and not isTest: # MC all
 ####        comp.fineSplitFactor = 1
 ####
 
-from CMGTools.HToZZ4L.tools.configTools import printSummary
+from CMGTools.RootTools.samples.configTools import printSummary
 
 if not getHeppyOption("test"):
     printSummary(selectedComponents)
