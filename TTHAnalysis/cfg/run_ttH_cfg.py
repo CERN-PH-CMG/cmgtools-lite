@@ -133,6 +133,8 @@ del susyMultilepton_collections['discardedLeptons']
 leptonTypeSusy.addVariables([
         NTupleVariable("mvaIdSpring16HZZ",   lambda lepton : lepton.mvaRun2("Spring16HZZ") if abs(lepton.pdgId()) == 11 else 1, help="EGamma POG MVA ID, Spring16, HZZ; 1 for muons"),
         NTupleVariable("mvaIdSpring16GP",   lambda lepton : lepton.mvaRun2("Spring16GP") if abs(lepton.pdgId()) == 11 else 1, help="EGamma POG MVA ID, Spring16, GeneralPurpose; 1 for muons"),
+        NTupleVariable("mvaIdFall17noIso",   lambda lepton : lepton.mvaRun2("Fall17noIso") if abs(lepton.pdgId()) == 11 else 1, help="EGamma POG MVA ID, Fall17 training, without isolation; 1 for muons"),
+        NTupleVariable("mvaIdFall17Iso",   lambda lepton : lepton.mvaRun2("Fall17Iso") if abs(lepton.pdgId()) == 11 else 1, help="EGamma POG MVA ID, Fall17 training, with isolation; 1 for muons"),
         ])
 
 if not removeJecUncertainty:
