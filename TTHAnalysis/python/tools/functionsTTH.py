@@ -107,26 +107,22 @@ MODULES.append( ('BDTv8_Hj', lambda : BDTv8_eventReco(os.environ["CMSSW_BASE"]+'
                                                       )) )
 
 from CMGTools.TTHAnalysis.tools.evtTagger import EvtTagger
+# Activated below, but not present in 2017B:
+# HLT_Ele32_WPTight_Gsf_v
+# HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_v
+# HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v
+# Moreover, some 3mu triggers are only in last part of the dataset (e.g. 5_3_3)
 MODULES.append( ('Trigger_2lss', lambda : EvtTagger("Trigger_2l",[
                 lambda ev : \
+                    ev.HLT_BIT_HLT_IsoMu27_v or \
+                    ev.HLT_BIT_HLT_Ele32_WPTight_Gsf_v or \
+                    ev.HLT_BIT_HLT_Ele35_WPTight_Gsf_v or \
+                    ev.HLT_BIT_HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass8_v or \
                     ev.HLT_BIT_HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v or \
-                    ev.HLT_BIT_HLT_Ele27_WPTight_Gsf_v or \
-                    ev.HLT_BIT_HLT_Ele25_eta2p1_WPTight_Gsf_v or \
-                    ev.HLT_DoubleMu or \
-                    ev.HLT_BIT_HLT_IsoMu24_v or \
-                    ev.HLT_BIT_HLT_IsoTkMu24_v or \
-                    ev.HLT_BIT_HLT_IsoMu22_eta2p1_v or \
-                    ev.HLT_BIT_HLT_IsoTkMu22_eta2p1_v or \
-                    ev.HLT_BIT_HLT_Mu23_TrkIsoVVL_Ele8_CaloIdL_TrackIdL_IsoVL_v or \
-                    ev.HLT_BIT_HLT_Mu23_TrkIsoVVL_Ele8_CaloIdL_TrackIdL_IsoVL_DZ_v or \
-                    ev.HLT_BIT_HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v or \
-                    ev.HLT_BIT_HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v or \
-                    ev.HLT_BIT_HLT_IsoMu24_v or \
-                    ev.HLT_BIT_HLT_IsoTkMu24_v or \
-                    ev.HLT_BIT_HLT_IsoMu22_eta2p1_v or \
-                    ev.HLT_BIT_HLT_IsoTkMu22_eta2p1_v or \
-                    ev.HLT_BIT_HLT_Ele27_WPTight_Gsf_v or \
-                    ev.HLT_BIT_HLT_Ele25_eta2p1_WPTight_Gsf_v \
+                    ev.HLT_BIT_HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_v or \
+                    ev.HLT_BIT_HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v or \
+                    ev.HLT_BIT_HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v or \
+                    ev.HLT_BIT_HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v \
                     ] )))
 MODULES.append( ('Trigger_3l', lambda : EvtTagger("Trigger_3l",[
                 lambda ev : \
