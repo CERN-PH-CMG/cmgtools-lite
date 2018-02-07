@@ -1,50 +1,50 @@
 # vim: syntax=sh
 # luminosity
-lumi_13TeV_2016		: ttH.*|TT[WZ]|tHq|tHW|TTWW|Rares|Convs : .* : 1.026
+lumi_13TeV_2016		: ttH.*|TT[WZ]|tHq.*|tHW.*|TTWW|Rares|Convs : .* : 1.026
 
 # lepton efficiencies
-CMS_ttHl16_lepEff_muloose : ttH.*|TT[WZ]|tHq|tHW|TTWW|Rares|Convs : .*2lss_mm.* : 1.04
-CMS_ttHl16_lepEff_muloose : ttH.*|TT[WZ]|tHq|tHW|TTWW|Rares|Convs : .*2lss_em.* : 1.02
-CMS_ttHl16_lepEff_muloose : ttH.*|TT[WZ]|tHq|tHW|TTWW|Rares|Convs : .*3l.* : 1.03
-CMS_ttHl16_lepEff_muloose : ttH.*|TT[WZ]|tHq|tHW|TTWW|Rares|Convs : .*4l.* : 1.04
+CMS_ttHl16_lepEff_muloose : ttH.*|TT[WZ]|tHq.*|tHW.*|TTWW|Rares|Convs : .*2lss_mm.* : 1.04
+CMS_ttHl16_lepEff_muloose : ttH.*|TT[WZ]|tHq.*|tHW.*|TTWW|Rares|Convs : .*2lss_em.* : 1.02
+CMS_ttHl16_lepEff_muloose : ttH.*|TT[WZ]|tHq.*|tHW.*|TTWW|Rares|Convs : .*3l.* : 1.03
+CMS_ttHl16_lepEff_muloose : ttH.*|TT[WZ]|tHq.*|tHW.*|TTWW|Rares|Convs : .*4l.* : 1.04
 
-CMS_ttHl16_lepEff_elloose : ttH.*|TT[WZ]|tHq|tHW|TTWW|Rares|Convs : .* : elLooseUnc : templates
+CMS_ttHl16_lepEff_elloose : ttH.*|TT[WZ]|tHq.*|tHW.*|TTWW|Rares|Convs : .* : elLooseUnc : templates
 
-CMS_ttHl16_lepEff_mutight : ttH.*|TT[WZ]|tHq|tHW|TTWW|Rares|Convs : .*2lss_mm.* : 1.06
-CMS_ttHl16_lepEff_mutight : ttH.*|TT[WZ]|tHq|tHW|TTWW|Rares|Convs : .*2lss_em.* : 1.03
-CMS_ttHl16_lepEff_mutight : ttH.*|TT[WZ]|tHq|tHW|TTWW|Rares|Convs : .*3l.* : 1.04
-CMS_ttHl16_lepEff_mutight : ttH.*|TT[WZ]|tHq|tHW|TTWW|Rares|Convs : .*4l.* : 1.06
+CMS_ttHl16_lepEff_mutight : ttH.*|TT[WZ]|tHq.*|tHW.*|TTWW|Rares|Convs : .*2lss_mm.* : 1.06
+CMS_ttHl16_lepEff_mutight : ttH.*|TT[WZ]|tHq.*|tHW.*|TTWW|Rares|Convs : .*2lss_em.* : 1.03
+CMS_ttHl16_lepEff_mutight : ttH.*|TT[WZ]|tHq.*|tHW.*|TTWW|Rares|Convs : .*3l.* : 1.04
+CMS_ttHl16_lepEff_mutight : ttH.*|TT[WZ]|tHq.*|tHW.*|TTWW|Rares|Convs : .*4l.* : 1.06
 
-CMS_ttHl16_lepEff_eltight : ttH.*|TT[WZ]|tHq|tHW|TTWW|Rares|Convs : .*2lss_ee.* : 1.06
-CMS_ttHl16_lepEff_eltight : ttH.*|TT[WZ]|tHq|tHW|TTWW|Rares|Convs : .*2lss_em.* : 1.03
-CMS_ttHl16_lepEff_eltight : ttH.*|TT[WZ]|tHq|tHW|TTWW|Rares|Convs : .*3l.* : 1.04
-CMS_ttHl16_lepEff_eltight : ttH.*|TT[WZ]|tHq|tHW|TTWW|Rares|Convs : .*4l.* : 1.06
+CMS_ttHl16_lepEff_eltight : ttH.*|TT[WZ]|tHq.*|tHW.*|TTWW|Rares|Convs : .*2lss_ee.* : 1.06
+CMS_ttHl16_lepEff_eltight : ttH.*|TT[WZ]|tHq.*|tHW.*|TTWW|Rares|Convs : .*2lss_em.* : 1.03
+CMS_ttHl16_lepEff_eltight : ttH.*|TT[WZ]|tHq.*|tHW.*|TTWW|Rares|Convs : .*3l.* : 1.04
+CMS_ttHl16_lepEff_eltight : ttH.*|TT[WZ]|tHq.*|tHW.*|TTWW|Rares|Convs : .*4l.* : 1.06
 
 ### todo: replace with tau veto efficiency
-#CMS_ttHl_tauID		: ttH.*|TT[WZ]|tHq|tHW|TTWW|Rares|Convs : .*2lss_1tau.* : 1.1
+#CMS_ttHl_tauID		: ttH.*|TT[WZ]|tHq.*|tHW.*|TTWW|Rares|Convs : .*2lss_1tau.* : 1.1
 
 # trigger efficiencies
-CMS_ttHl16_trigger_ee	: ttH.*|TT[WZ]|tHq|tHW|TTWW|Rares|Convs : .*2lss_ee.* : 1.02
-CMS_ttHl16_trigger_em	: ttH.*|TT[WZ]|tHq|tHW|TTWW|Rares|Convs : .*2lss_em.* : 1.01
-CMS_ttHl16_trigger_mm	: ttH.*|TT[WZ]|tHq|tHW|TTWW|Rares|Convs : .*2lss_mm.* : 1.01
-CMS_ttHl16_trigger_3l	: ttH.*|TT[WZ]|tHq|tHW|TTWW|Rares|Convs : .*3l.* : 1.03
-CMS_ttHl16_trigger_3l	: ttH.*|TT[WZ]|tHq|tHW|TTWW|Rares|Convs : .*4l.* : 1.03
+CMS_ttHl16_trigger_ee	: ttH.*|TT[WZ]|tHq.*|tHW.*|TTWW|Rares|Convs : .*2lss_ee.* : 1.02
+CMS_ttHl16_trigger_em	: ttH.*|TT[WZ]|tHq.*|tHW.*|TTWW|Rares|Convs : .*2lss_em.* : 1.01
+CMS_ttHl16_trigger_mm	: ttH.*|TT[WZ]|tHq.*|tHW.*|TTWW|Rares|Convs : .*2lss_mm.* : 1.01
+CMS_ttHl16_trigger_3l	: ttH.*|TT[WZ]|tHq.*|tHW.*|TTWW|Rares|Convs : .*3l.* : 1.03
+CMS_ttHl16_trigger_3l	: ttH.*|TT[WZ]|tHq.*|tHW.*|TTWW|Rares|Convs : .*4l.* : 1.03
 
 # JES
-CMS_scale_j		: ttH.*|TT[WZ]|tHq|tHW|TTWW|Rares|Convs : .* : jec : templates
+CMS_scale_j		: ttH.*|TT[WZ]|tHq.*|tHW.*|TTWW|Rares|Convs : .* : jec : templates
 
 #### btag
-CMS_ttHl16_btag_LF	: ttH.*|TT[WZ]|tHq|tHW|TTWW|Rares|Convs : .* : bTag_LF		: templates
-CMS_ttHl16_btag_HF	: ttH.*|TT[WZ]|tHq|tHW|TTWW|Rares|Convs : .* : bTag_HF 		: templates
-CMS_ttHl16_btag_HFStats1	: ttH.*|TT[WZ]|tHq|tHW|TTWW|Rares|Convs : .* : bTag_HFStats1 	: templates
-CMS_ttHl16_btag_HFStats2	: ttH.*|TT[WZ]|tHq|tHW|TTWW|Rares|Convs : .* : bTag_HFStats2 	: templates	
-CMS_ttHl16_btag_LFStats1	: ttH.*|TT[WZ]|tHq|tHW|TTWW|Rares|Convs : .* : bTag_LFStats1 	: templates
-CMS_ttHl16_btag_LFStats2	: ttH.*|TT[WZ]|tHq|tHW|TTWW|Rares|Convs : .* : bTag_LFStats2 	: templates
-CMS_ttHl16_btag_cErr1	: ttH.*|TT[WZ]|tHq|tHW|TTWW|Rares|Convs : .* : bTag_cErr1 	: templates
-CMS_ttHl16_btag_cErr2	: ttH.*|TT[WZ]|tHq|tHW|TTWW|Rares|Convs : .* : bTag_cErr2 	: templates
+CMS_ttHl16_btag_LF	: ttH.*|TT[WZ]|tHq.*|tHW.*|TTWW|Rares|Convs : .* : bTag_LF		: templates
+CMS_ttHl16_btag_HF	: ttH.*|TT[WZ]|tHq.*|tHW.*|TTWW|Rares|Convs : .* : bTag_HF 		: templates
+CMS_ttHl16_btag_HFStats1	: ttH.*|TT[WZ]|tHq.*|tHW.*|TTWW|Rares|Convs : .* : bTag_HFStats1 	: templates
+CMS_ttHl16_btag_HFStats2	: ttH.*|TT[WZ]|tHq.*|tHW.*|TTWW|Rares|Convs : .* : bTag_HFStats2 	: templates	
+CMS_ttHl16_btag_LFStats1	: ttH.*|TT[WZ]|tHq.*|tHW.*|TTWW|Rares|Convs : .* : bTag_LFStats1 	: templates
+CMS_ttHl16_btag_LFStats2	: ttH.*|TT[WZ]|tHq.*|tHW.*|TTWW|Rares|Convs : .* : bTag_LFStats2 	: templates
+CMS_ttHl16_btag_cErr1	: ttH.*|TT[WZ]|tHq.*|tHW.*|TTWW|Rares|Convs : .* : bTag_cErr1 	: templates
+CMS_ttHl16_btag_cErr2	: ttH.*|TT[WZ]|tHq.*|tHW.*|TTWW|Rares|Convs : .* : bTag_cErr2 	: templates
 
 # statistical fluctuations of all templates
-CMS_ttHl16_templstat 	: ttH.*|TT[WZ]|tHq|tHW|TTWW|Rares|Convs|data_fakes|data_flips : .* : 1.0 : stat_foreach_shape_bins : .*
+CMS_ttHl16_templstat 	: ttH.*|TT[WZ]|tHq.*|tHW.*|TTWW|Rares|Convs|data_fakes|data_flips : .* : 1.0 : stat_foreach_shape_bins : .*
 
 # Diboson background
 CMS_ttHl_EWK_stat : EWK : .*3l.* : 1.1
@@ -64,13 +64,13 @@ CMS_ttHl_Convs		: Convs : .* : 1.3
 QCDscale_ttH   : ttH.* : .* : 0.915/1.058
 QCDscale_ttW   : TTW$   : .* : 1.12
 QCDscale_ttZ   : TTZ   : .* : 1.11
-QCDscale_tHq   : tHq   : .* : 0.933/1.041
-QCDscale_tHW   : tHW   : .* : 0.939/1.046
+QCDscale_tHq   : tHq.*   : .* : 0.933/1.041
+QCDscale_tHW   : tHW.*   : .* : 0.939/1.046
 QCDscale_ttWW  : TTWW  : .* : 0.891/1.081
 pdf_Higgs_ttH  : ttH.* : .* : 1.036
 pdf_gg         : TTZ   : .* : 0.966
-pdf_qg	       : tHq   : .* : 1.01
-pdf_qg	       : tHW   : .* : 1.027
+pdf_qg	       : tHq.*   : .* : 1.01
+pdf_qg	       : tHW.*   : .* : 1.027
 pdf_qqbar      : TTW$   : .* : 1.04
 pdf_TTWW       : TTWW  : .* : 1.03
 

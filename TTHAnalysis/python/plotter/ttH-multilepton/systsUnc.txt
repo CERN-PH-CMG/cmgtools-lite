@@ -1,55 +1,55 @@
 # vim: syntax=sh
-lumi_13TeV_2016		: ttH.*|TT[WZ]|tHq|tHW|TTWW|Rares|Convs : .* : normSymm : 1.026
+lumi_13TeV_2016		: ttH.*|TT[WZ]|tHq.*|tHW.*|TTWW|Rares|Convs : .* : normSymm : 1.026
 
 # lepton efficiencies
-CMS_ttHl16_lepEff_muloose : ttH.*|TT[WZ]|tHq|tHW|TTWW|Rares|Convs : .*2lss.* : templateSymm ; AddWeight='ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\, 1.0\, 1.02\, 1.04)'
-CMS_ttHl16_lepEff_muloose : ttH.*|TT[WZ]|tHq|tHW|TTWW|Rares|Convs : .*2lss_ee.* : none
-CMS_ttHl16_lepEff_muloose : ttH.*|TT[WZ]|tHq|tHW|TTWW|Rares|Convs : .*2lss_mm.* : normSymm : 1.04
-CMS_ttHl16_lepEff_muloose : ttH.*|TT[WZ]|tHq|tHW|TTWW|Rares|Convs : .*2lss_em.* : normSymm : 1.02
-CMS_ttHl16_lepEff_muloose : ttH.*|TT[WZ]|tHq|tHW|TTWW|Rares|Convs : .*3l.* : normSymm : 1.03
-CMS_ttHl16_lepEff_muloose : ttH.*|TT[WZ]|tHq|tHW|TTWW|Rares|Convs : .*4l.* : normSymm : 1.04
+CMS_ttHl16_lepEff_muloose : ttH.*|TT[WZ]|tHq.*|tHW.*|TTWW|Rares|Convs : .*2lss.* : templateSymm ; AddWeight='ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\, 1.0\, 1.02\, 1.04)'
+CMS_ttHl16_lepEff_muloose : ttH.*|TT[WZ]|tHq.*|tHW.*|TTWW|Rares|Convs : .*2lss_ee.* : none
+CMS_ttHl16_lepEff_muloose : ttH.*|TT[WZ]|tHq.*|tHW.*|TTWW|Rares|Convs : .*2lss_mm.* : normSymm : 1.04
+CMS_ttHl16_lepEff_muloose : ttH.*|TT[WZ]|tHq.*|tHW.*|TTWW|Rares|Convs : .*2lss_em.* : normSymm : 1.02
+CMS_ttHl16_lepEff_muloose : ttH.*|TT[WZ]|tHq.*|tHW.*|TTWW|Rares|Convs : .*3l.* : normSymm : 1.03
+CMS_ttHl16_lepEff_muloose : ttH.*|TT[WZ]|tHq.*|tHW.*|TTWW|Rares|Convs : .*4l.* : normSymm : 1.04
 
-CMS_ttHl16_lepEff_elloose : ttH.*|TT[WZ]|tHq|tHW|TTWW|Rares|Convs : .*2lss.* : templateAsymm ; AddWeights=['elLooseUnc_2lss_up'\,'elLooseUnc_2lss_dn']
-CMS_ttHl16_lepEff_elloose : ttH.*|TT[WZ]|tHq|tHW|TTWW|Rares|Convs : .*3l*    : templateAsymm ; AddWeights=['elLooseUnc_3l_up'\,'elLooseUnc_3l_dn']
-CMS_ttHl16_lepEff_elloose : ttH.*|TT[WZ]|tHq|tHW|TTWW|Rares|Convs : .*4l*    : templateAsymm ; AddWeights=['elLooseUnc_4l_up'\,'elLooseUnc_4l_dn']
+CMS_ttHl16_lepEff_elloose : ttH.*|TT[WZ]|tHq.*|tHW.*|TTWW|Rares|Convs : .*2lss.* : templateAsymm ; AddWeights=['elLooseUnc_2lss_up'\,'elLooseUnc_2lss_dn']
+CMS_ttHl16_lepEff_elloose : ttH.*|TT[WZ]|tHq.*|tHW.*|TTWW|Rares|Convs : .*3l*    : templateAsymm ; AddWeights=['elLooseUnc_3l_up'\,'elLooseUnc_3l_dn']
+CMS_ttHl16_lepEff_elloose : ttH.*|TT[WZ]|tHq.*|tHW.*|TTWW|Rares|Convs : .*4l*    : templateAsymm ; AddWeights=['elLooseUnc_4l_up'\,'elLooseUnc_4l_dn']
 
-CMS_ttHl16_lepEff_mutight : ttH.*|TT[WZ]|tHq|tHW|TTWW|Rares|Convs : .*2lss.* : templateSymm ; AddWeight='ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\, 1.0\, 1.03\, 1.06)'
-CMS_ttHl16_lepEff_mutight : ttH.*|TT[WZ]|tHq|tHW|TTWW|Rares|Convs : .*2lss_ee.* : none
-CMS_ttHl16_lepEff_mutight : ttH.*|TT[WZ]|tHq|tHW|TTWW|Rares|Convs : .*2lss_mm.* : normSymm : 1.06
-CMS_ttHl16_lepEff_mutight : ttH.*|TT[WZ]|tHq|tHW|TTWW|Rares|Convs : .*2lss_em.* : normSymm : 1.03
-CMS_ttHl16_lepEff_mutight : ttH.*|TT[WZ]|tHq|tHW|TTWW|Rares|Convs : .*3l.* : normSymm : 1.04
-CMS_ttHl16_lepEff_mutight : ttH.*|TT[WZ]|tHq|tHW|TTWW|Rares|Convs : .*4l.* : normSymm : 1.06
+CMS_ttHl16_lepEff_mutight : ttH.*|TT[WZ]|tHq.*|tHW.*|TTWW|Rares|Convs : .*2lss.* : templateSymm ; AddWeight='ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\, 1.0\, 1.03\, 1.06)'
+CMS_ttHl16_lepEff_mutight : ttH.*|TT[WZ]|tHq.*|tHW.*|TTWW|Rares|Convs : .*2lss_ee.* : none
+CMS_ttHl16_lepEff_mutight : ttH.*|TT[WZ]|tHq.*|tHW.*|TTWW|Rares|Convs : .*2lss_mm.* : normSymm : 1.06
+CMS_ttHl16_lepEff_mutight : ttH.*|TT[WZ]|tHq.*|tHW.*|TTWW|Rares|Convs : .*2lss_em.* : normSymm : 1.03
+CMS_ttHl16_lepEff_mutight : ttH.*|TT[WZ]|tHq.*|tHW.*|TTWW|Rares|Convs : .*3l.* : normSymm : 1.04
+CMS_ttHl16_lepEff_mutight : ttH.*|TT[WZ]|tHq.*|tHW.*|TTWW|Rares|Convs : .*4l.* : normSymm : 1.06
 
-CMS_ttHl16_lepEff_eltight : ttH.*|TT[WZ]|tHq|tHW|TTWW|Rares|Convs : .*2lss.* : templateSymm ; AddWeight='ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\, 1.06\, 1.03\, 1.00)'
-CMS_ttHl16_lepEff_eltight : ttH.*|TT[WZ]|tHq|tHW|TTWW|Rares|Convs : .*2lss_ee.* : normSymm : 1.06
-CMS_ttHl16_lepEff_eltight : ttH.*|TT[WZ]|tHq|tHW|TTWW|Rares|Convs : .*2lss_em.* : normSymm : 1.03
-CMS_ttHl16_lepEff_eltight : ttH.*|TT[WZ]|tHq|tHW|TTWW|Rares|Convs : .*2lss_mm.* : none
-CMS_ttHl16_lepEff_eltight : ttH.*|TT[WZ]|tHq|tHW|TTWW|Rares|Convs : .*3l.* : normSymm : 1.04
-CMS_ttHl16_lepEff_eltight : ttH.*|TT[WZ]|tHq|tHW|TTWW|Rares|Convs : .*4l.* : normSymm : 1.06
+CMS_ttHl16_lepEff_eltight : ttH.*|TT[WZ]|tHq.*|tHW.*|TTWW|Rares|Convs : .*2lss.* : templateSymm ; AddWeight='ttH_2lss_ifflav(LepGood1_pdgId\,LepGood2_pdgId\, 1.06\, 1.03\, 1.00)'
+CMS_ttHl16_lepEff_eltight : ttH.*|TT[WZ]|tHq.*|tHW.*|TTWW|Rares|Convs : .*2lss_ee.* : normSymm : 1.06
+CMS_ttHl16_lepEff_eltight : ttH.*|TT[WZ]|tHq.*|tHW.*|TTWW|Rares|Convs : .*2lss_em.* : normSymm : 1.03
+CMS_ttHl16_lepEff_eltight : ttH.*|TT[WZ]|tHq.*|tHW.*|TTWW|Rares|Convs : .*2lss_mm.* : none
+CMS_ttHl16_lepEff_eltight : ttH.*|TT[WZ]|tHq.*|tHW.*|TTWW|Rares|Convs : .*3l.* : normSymm : 1.04
+CMS_ttHl16_lepEff_eltight : ttH.*|TT[WZ]|tHq.*|tHW.*|TTWW|Rares|Convs : .*4l.* : normSymm : 1.06
 
 ### todo: replace with tau veto efficiency
-#CMS_ttHl_tauID		: ttH.*|TT[WZ]|tHq|tHW|TTWW|Rares|Convs : .*2lss_1tau.* : 1.1
+#CMS_ttHl_tauID		: ttH.*|TT[WZ]|tHq.*|tHW.*|TTWW|Rares|Convs : .*2lss_1tau.* : 1.1
 
 # trigger efficiencies
-CMS_ttHl16_trigger_ee	: ttH.*|TT[WZ]|tHq|tHW|TTWW|Rares|Convs : .*2lss_ee.* : normSymm : 1.02
-CMS_ttHl16_trigger_em	: ttH.*|TT[WZ]|tHq|tHW|TTWW|Rares|Convs : .*2lss_em.* : normSymm : 1.01
-CMS_ttHl16_trigger_mm	: ttH.*|TT[WZ]|tHq|tHW|TTWW|Rares|Convs : .*2lss_mm.* : normSymm : 1.01
-CMS_ttHl16_trigger_3l	: ttH.*|TT[WZ]|tHq|tHW|TTWW|Rares|Convs : .*3l.* : normSymm : 1.03
-CMS_ttHl16_trigger_3l	: ttH.*|TT[WZ]|tHq|tHW|TTWW|Rares|Convs : .*4l.* : normSymm : 1.03
+CMS_ttHl16_trigger_ee	: ttH.*|TT[WZ]|tHq.*|tHW.*|TTWW|Rares|Convs : .*2lss_ee.* : normSymm : 1.02
+CMS_ttHl16_trigger_em	: ttH.*|TT[WZ]|tHq.*|tHW.*|TTWW|Rares|Convs : .*2lss_em.* : normSymm : 1.01
+CMS_ttHl16_trigger_mm	: ttH.*|TT[WZ]|tHq.*|tHW.*|TTWW|Rares|Convs : .*2lss_mm.* : normSymm : 1.01
+CMS_ttHl16_trigger_3l	: ttH.*|TT[WZ]|tHq.*|tHW.*|TTWW|Rares|Convs : .*3l.* : normSymm : 1.03
+CMS_ttHl16_trigger_3l	: ttH.*|TT[WZ]|tHq.*|tHW.*|TTWW|Rares|Convs : .*4l.* : normSymm : 1.03
 
 
-CMS_scale_j	: ttH.*|TT[WZ]|tHq|tHW|TTWW|Rares|Convs : .* : templateAsymm; \
+CMS_scale_j	: ttH.*|TT[WZ]|tHq.*|tHW.*|TTWW|Rares|Convs : .* : templateAsymm; \
         FakeRates=['ttH-multilepton/fr-jecUp.txt'\,'ttH-multilepton/fr-jecDn.txt'], \
         AddWeights=['eventBTagSF_up_jes/eventBTagSF'\,'eventBTagSF_down_jes/eventBTagSF']
 
-CMS_ttHl16_btag_LF    : ttH.*|TT[WZ]|tHq|tHW|TTWW|Rares|Convs : .* : templateAsymm; AddWeights=['eventBTagSF_up_lf/eventBTagSF'\,'eventBTagSF_down_lf/eventBTagSF']		
-CMS_ttHl16_btag_HF    : ttH.*|TT[WZ]|tHq|tHW|TTWW|Rares|Convs : .* : templateAsymm; AddWeights=['eventBTagSF_up_hf/eventBTagSF'\,'eventBTagSF_down_hf/eventBTagSF']
-CMS_ttHl16_btag_LFStats1   : ttH.*|TT[WZ]|tHq|tHW|TTWW|Rares|Convs : .* : templateAsymm; AddWeights=['eventBTagSF_up_lfstats1/eventBTagSF'\,'eventBTagSF_down_lfstats1/eventBTagSF']		
-CMS_ttHl16_btag_HFStats1   : ttH.*|TT[WZ]|tHq|tHW|TTWW|Rares|Convs : .* : templateAsymm; AddWeights=['eventBTagSF_up_hfstats1/eventBTagSF'\,'eventBTagSF_down_hfstats1/eventBTagSF']
-CMS_ttHl16_btag_LFStats2   : ttH.*|TT[WZ]|tHq|tHW|TTWW|Rares|Convs : .* : templateAsymm; AddWeights=['eventBTagSF_up_lfstats2/eventBTagSF'\,'eventBTagSF_down_lfstats2/eventBTagSF']		
-CMS_ttHl16_btag_HFStats2   : ttH.*|TT[WZ]|tHq|tHW|TTWW|Rares|Convs : .* : templateAsymm; AddWeights=['eventBTagSF_up_hfstats2/eventBTagSF'\,'eventBTagSF_down_hfstats2/eventBTagSF']
-CMS_ttHl16_btag_cErr1   : ttH.*|TT[WZ]|tHq|tHW|TTWW|Rares|Convs : .* : templateAsymm; AddWeights=['eventBTagSF_up_cferr1/eventBTagSF'\,'eventBTagSF_down_cferr1/eventBTagSF']
-CMS_ttHl16_btag_cErr2   : ttH.*|TT[WZ]|tHq|tHW|TTWW|Rares|Convs : .* : templateAsymm; AddWeights=['eventBTagSF_up_cferr2/eventBTagSF'\,'eventBTagSF_down_cferr2/eventBTagSF']
+CMS_ttHl16_btag_LF    : ttH.*|TT[WZ]|tHq.*|tHW.*|TTWW|Rares|Convs : .* : templateAsymm; AddWeights=['eventBTagSF_up_lf/eventBTagSF'\,'eventBTagSF_down_lf/eventBTagSF']		
+CMS_ttHl16_btag_HF    : ttH.*|TT[WZ]|tHq.*|tHW.*|TTWW|Rares|Convs : .* : templateAsymm; AddWeights=['eventBTagSF_up_hf/eventBTagSF'\,'eventBTagSF_down_hf/eventBTagSF']
+CMS_ttHl16_btag_LFStats1   : ttH.*|TT[WZ]|tHq.*|tHW.*|TTWW|Rares|Convs : .* : templateAsymm; AddWeights=['eventBTagSF_up_lfstats1/eventBTagSF'\,'eventBTagSF_down_lfstats1/eventBTagSF']		
+CMS_ttHl16_btag_HFStats1   : ttH.*|TT[WZ]|tHq.*|tHW.*|TTWW|Rares|Convs : .* : templateAsymm; AddWeights=['eventBTagSF_up_hfstats1/eventBTagSF'\,'eventBTagSF_down_hfstats1/eventBTagSF']
+CMS_ttHl16_btag_LFStats2   : ttH.*|TT[WZ]|tHq.*|tHW.*|TTWW|Rares|Convs : .* : templateAsymm; AddWeights=['eventBTagSF_up_lfstats2/eventBTagSF'\,'eventBTagSF_down_lfstats2/eventBTagSF']		
+CMS_ttHl16_btag_HFStats2   : ttH.*|TT[WZ]|tHq.*|tHW.*|TTWW|Rares|Convs : .* : templateAsymm; AddWeights=['eventBTagSF_up_hfstats2/eventBTagSF'\,'eventBTagSF_down_hfstats2/eventBTagSF']
+CMS_ttHl16_btag_cErr1   : ttH.*|TT[WZ]|tHq.*|tHW.*|TTWW|Rares|Convs : .* : templateAsymm; AddWeights=['eventBTagSF_up_cferr1/eventBTagSF'\,'eventBTagSF_down_cferr1/eventBTagSF']
+CMS_ttHl16_btag_cErr2   : ttH.*|TT[WZ]|tHq.*|tHW.*|TTWW|Rares|Convs : .* : templateAsymm; AddWeights=['eventBTagSF_up_cferr2/eventBTagSF'\,'eventBTagSF_down_cferr2/eventBTagSF']
 
 # Diboson background
 CMS_ttHl_EWK_stat : EWK : .*3l.* : normSymm : 1.1
@@ -70,13 +70,13 @@ CMS_ttHl_Convs		: Convs : .* : normSymm : 1.3
 QCDscale_ttH   : ttH.* : .* : normAsymm : 0.915 : 1.058
 QCDscale_ttW   : TTW   : .* : normSymm : 1.12
 QCDscale_ttZ   : TTZ   : .* : normSymm : 1.11
-QCDscale_tHq   : tHq   : .* : normAsymm : 0.933 : 1.041
-QCDscale_tHW   : tHW   : .* : normAsymm : 0.939 : 1.046
+QCDscale_tHq   : tHq.*   : .* : normAsymm : 0.933 : 1.041
+QCDscale_tHW   : tHW.*   : .* : normAsymm : 0.939 : 1.046
 QCDscale_ttWW  : TTWW  : .* : normAsymm : 0.891 : 1.081
 pdf_Higgs_ttH  : ttH.* : .* : normSymm : 1.036
 pdf_gg         : TTZ   : .* : normSymm : 0.966
-pdf_qg	       : tHq   : .* : normSymm : 1.01
-pdf_qg	       : tHW   : .* : normSymm : 1.027
+pdf_qg	       : tHq.*   : .* : normSymm : 1.01
+pdf_qg	       : tHW.*   : .* : normSymm : 1.027
 pdf_qqbar      : TTW   : .* : normSymm : 1.04
 pdf_TTWW       : TTWW  : .* : normSymm : 1.03
 
