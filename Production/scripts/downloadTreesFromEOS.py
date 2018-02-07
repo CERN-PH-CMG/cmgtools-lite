@@ -3,6 +3,7 @@
 import os
 import CMGTools.Production.eostools as eostools
 from optparse import OptionParser
+from multiprocessing import Pool
 
 if __name__ == "__main__":
 
@@ -16,6 +17,7 @@ if __name__ == "__main__":
 	parser.add_option("-t", dest="treeproducername", type='string', default="myTreeProducer", help='Name of the tree producer module')
 	parser.add_option("-T", dest="treename", type='string', default="tree.root", help='Name of the tree file')
 	parser.add_option("-c", "--continue", dest="continueCopy", action="store_true", default=False, help='Continue downloading if a chunk failed and print a summary at the end')
+	parser.add_option("-j", dest="njobs", type=int, default=0, help='Number of parallel downloading tasks')
 	(options, args) = parser.parse_args()
 
 	locdir = args[0]
@@ -47,7 +49,17 @@ if __name__ == "__main__":
 			rem = _furl.readline().replace('root://eoscms.cern.ch/','').replace('\n','')
 			if not os.path.isfile(rem):
 				raise RuntimeError,'Remote file %s not found'%rem
+			if options.njobs>0:
+				tocopy.append((rem,f))
+			else:
+				eostools.xrdcp(rem,f)
+
+	if options.njobs>0:
+		def _runIt(args):
+			rem,f = args
+			print 'Downloading %s...'%rem
 			eostools.xrdcp(rem,f)
+		Pool(options.njobs).map(_runIt,tocopy)
 
 	if (options.continueCopy and (len(failedDict.keys()) > 0)):
 		print "="*100
