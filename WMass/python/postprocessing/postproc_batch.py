@@ -14,11 +14,11 @@ DEFAULT_MODULES = [("CMGTools.WMass.postprocessing.examples.puWeightProducer", "
                    ("CMGTools.WMass.postprocessing.examples.genFriendProducer","genQEDJets"),
                    ]
 
-RECOILTEST_MODULES=[("CMGTools.WMass.postprocessing.examples.puWeightProducer", "puWeight2016G"),
+RECOILTEST_MODULES=[("CMGTools.WMass.postprocessing.examples.puWeightProducer", "puWeight2016BF"),
                     ("CMGTools.WMass.postprocessing.examples.lepSFProducer","lepSF,trgSF"),
                     ("CMGTools.WMass.postprocessing.examples.lepVarProducer","eleRelIsoEA,lepQCDAwayJet,eleCalibrated"),
                     ("CMGTools.WMass.postprocessing.examples.jetReCleaner","jetReCleaner"),
-                    ("CMGTools.WMass.postprocessing.examples.genFriendProducer","genQEDJets13TeV"),
+                    ("CMGTools.WMass.postprocessing.examples.genFriendProducer","genQEDJets"),
                     ("CMGTools.WMass.postprocessing.examples.eventRecoilAnalyzer","eventRecoilAnalyzer"),
                    ]
 
