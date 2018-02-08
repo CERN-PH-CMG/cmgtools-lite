@@ -22,5 +22,7 @@ trkmt: mt_2(met_trkPt,met_trkPhi,LepGood1_calPt,LepGood1_phi) : 35,40,110 ; XTit
 nVert: nVert : 20,0.5,40.5; XTitle="number of vertices", Legend='TR', IncludeOverflows=True 
 rho: rho : 20,0.5,40.5; XTitle="#rho", Legend='TR', IncludeOverflows=True 
 
-etaPt   : ptElFull(LepGood1_calPt,LepGood1_eta)\:LepGood1_eta : 48,-2.5,2.5,20,30.,50. ; XTitle="#eta^{e}", YTitle="p_{T}^{e} [GeV]"
+#etaPt   : ptElFull(LepGood1_calPt,LepGood1_eta)\:LepGood1_eta : 48,-2.5,2.5,20,30.,50. ; XTitle="#eta^{e}", YTitle="p_{T}^{e} [GeV]"
 #etaPt   : ptElFull(LepGood1_calPt,LepGood1_eta)\:LepGood1_eta : 24,-2.5,2.5,20,30.,50. ; XTitle="#eta^{e}", YTitle="p_{T}^{e} [GeV]"
+etaPt   : ptElFull(LepGood1_calPt,LepGood1_eta)\:LepGood1_eta : [-2.5,-2.25,-2.0,-1.8,-1.566,-1.4442,-1.3,-1.2,-1.1,-1.0,-0.9,-0.8,-0.7,-0.6,-0.5,-0.4,-0.3,-0.2,-0.1,0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.1,1.2,1.3,1.4442,1.566,1.8,2.0,2.25,2.5]*[30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 44, 47, 50] ; XTitle="#eta^{e}", YTitle="p_{T}^{e} [GeV]"
+
