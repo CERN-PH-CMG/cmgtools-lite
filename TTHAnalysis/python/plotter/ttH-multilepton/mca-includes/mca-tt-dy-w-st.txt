@@ -1,7 +1,7 @@
 TT      : TTLep_pow : xsec ; FillColor=ROOT.kGray
 TT      : TTSemi_pow : xsec ; FillColor=ROOT.kGray
 
-TT_pow	: TT_pow_part1+TT_pow_part2 : xsec ; Label="TT (Powheg)", FillColor=11, SkipMe=True
+TT_fxfx	: TTJets_part1+TTJets_part2 : xsec ; Label="TT (FXFX)", FillColor=11, SkipMe=True
 
 DY      : DYJetsToLL_M10to50_LO: xsec  ; FillColor=ROOT.kCyan
 DY      : DYJetsToLL_M50_LO_part1+DYJetsToLL_M50_LO_part2+DYJetsToLL_M50_LO_part3: xsec  ; FillColor=ROOT.kCyan

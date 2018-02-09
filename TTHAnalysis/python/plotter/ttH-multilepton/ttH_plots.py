@@ -11,7 +11,7 @@ dowhat = "plots"
 #dowhat = "ntuple" # syntax: python ttH-multilepton/ttH_plots.py no 2lss_SR_extr outfile_{cname}.root --sP var1,var2,...
 
 TREES = "--Fs {P}/1_recleaner_060218_v1 --Fs {P}/5_triggerDecision_060218_v1 --Fs {P}/7_tauTightSel_v1"
-TREESONLYSKIM = "-P /data1/peruzzi/TREES_TTH_050218_Fall17_JECV1NoRes_skim2LSS_v1 --Fs {P}/2_eventVars_060218_v1 --Fs {P}/3_kinMVA_noBDTv8_noMEM_060218_v1"
+TREESONLYSKIM = "-P /data1/peruzzi/TREES_TTH_050218_Fall17_JECV1NoRes_skim2LSS_v1 --Fs {P}/2_eventVars_060218_v1 --Fs {P}/3_kinMVA_noMEM_060218_v1"
 TREESONLYFULL = "-P /data1/peruzzi/TREES_TTH_050218_Fall17_JECV1NoRes"
 
 def base(selection):
@@ -285,7 +285,7 @@ if __name__ == '__main__':
         x = add(x,"-I 'Zveto' -X ^2b1B -E ^gt2b -E ^1B ")
         runIt(x,'%s'%torun,plots)
         x = add(x,"-E ^4j ")
-        runIt(x,'%s_4j'%torun,plots)
+        runIt(x,'%s/4j'%torun,plots)
 
     if 'cr_fourlep_onZ' in torun:
         x = base('4l')
