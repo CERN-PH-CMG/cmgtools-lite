@@ -155,3 +155,9 @@ MODULES.append( ('genLevelChain', lambda : TTHMCEventReco()) )
 
 from CMGTools.TTHAnalysis.tools.matchRecoToPartonsTTH import MatchRecoToPartonsTTH
 MODULES.append( ('matchPartons', lambda : MatchRecoToPartonsTTH(label="_Recl")) )
+
+from CMGTools.TTHAnalysis.tools.vertexWeightFriend import VertexWeightFriend
+# run on a big number of events, ideally one job per file using -N big_number, and not on skimmed trees when auto-reweighthing the pileup to avoid loss of statistical power!
+MODULES.append( ('vtxWeight', lambda : VertexWeightFriend(myfile=None, targetfile=os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/pileup/puWeights_2017_41p4fb_rereco_69p2mb.root",
+                                                          myhist=None,targethist="pileup",name="vtxWeight2017",
+                                                          verbose=False,vtx_coll_to_reweight="nTrueInt",autoPU=True)) )
