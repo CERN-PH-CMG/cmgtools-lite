@@ -444,6 +444,7 @@ metAna = cfg.Analyzer(
     includeTkMetCHS = True,
     includeTkMetPVLoose = True,
     includeTkMetPVTight = True,
+    doPuppiMet = True,
     doMetNoPU = True,
     doMetNoMu = False,
     doMetNoEle = False,
