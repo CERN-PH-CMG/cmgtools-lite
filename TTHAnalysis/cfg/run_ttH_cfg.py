@@ -141,7 +141,8 @@ treeProducer = cfg.Analyzer(
      globalObjects = ttH_globalObjects,
      collections = ttH_collections,
 )
-
+if getHeppyOption("reduceMantissa",False) in ("True","true","yes","1"):
+    setLossyFloatCompression(10,16)
 
 ## histo counter
 susyCoreSequence.insert(susyCoreSequence.index(skimAnalyzer), susyCounter)
