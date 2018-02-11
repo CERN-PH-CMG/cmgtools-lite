@@ -69,23 +69,13 @@ eventFlagsAna = cfg.Analyzer(
         "HBHENoiseFilter" : [ "Flag_HBHENoiseFilter" ],
         "HBHENoiseIsoFilter" : [ "Flag_HBHENoiseIsoFilter" ],
         "globalTightHalo2016Filter" : [ "Flag_globalTightHalo2016Filter" ],
-        "CSCTightHalo2015Filter" : [ "Flag_CSCTightHalo2015Filter" ],
-        "CSCTightHaloFilter" : [ "Flag_CSCTightHaloFilter" ],
-        "CSCTightHalo2016Filter" : [ "Flag_globalTightHalo2016Filter" ],
-        "hcalLaserEventFilter" : [ "Flag_hcalLaserEventFilter" ],
         "EcalDeadCellTriggerPrimitiveFilter" : [ "Flag_EcalDeadCellTriggerPrimitiveFilter" ],
         "goodVertices" : [ "Flag_goodVertices" ],
-        "trackingFailureFilter" : [ "Flag_trackingFailureFilter" ],
         "eeBadScFilter" : [ "Flag_eeBadScFilter" ],
-        "ecalLaserCorrFilter" : [ "Flag_ecalLaserCorrFilter" ],
-        "trkPOGFilters" : [ "Flag_trkPOGFilters" ],
-        "trkPOG_manystripclus53X" : [ "Flag_trkPOG_manystripclus53X" ],
-        "trkPOG_toomanystripclus53X" : [ "Flag_trkPOG_toomanystripclus53X" ],
-        "trkPOG_logErrorTooManyClusters" : [ "Flag_trkPOG_logErrorTooManyClusters" ],
-        "MuFlag_good" : [ "Flag_noBadMuons" ],
-        "MuFlag_bad" : [ "Flag_badMuons" ],
-        "MuFlag_dup" : [ "Flag_duplicateMuons" ],
-    }
+        "ecalBadCalibFilter" : [ "Flag_ecalBadCalibFilter" ],
+        "BadPFMuonFilter" : [ "Flag_BadPFMuonFilter" ],
+        "BadChargedCandidateFilter" : [ "BadChargedCandidateFilter" ],
+        }
     )
 
 from CMGTools.TTHAnalysis.analyzers.badChargedHadronAnalyzer import badChargedHadronAnalyzer
@@ -488,7 +478,7 @@ metAna = cfg.Analyzer(
     copyMETsByValue = False,
     doTkMet = False,
     doPuppiMet = False,
-    doMetNoPU = True,
+    doMetNoPU = False,
     doMetNoMu = False,
     doMetNoEle = False,
     doMetNoPhoton = False,

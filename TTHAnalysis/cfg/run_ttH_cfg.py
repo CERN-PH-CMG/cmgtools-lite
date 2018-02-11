@@ -82,8 +82,8 @@ elif isolation == None:
     lepAna.loose_muon_isoCut     = lambda muon : True
     lepAna.loose_electron_isoCut = lambda elec : True
 elif isolation == "absIso04":
-    lepAna.loose_muon_isoCut     = lambda muon : muon.RelIsoMIV04*muon.pt() < 10 and muon.sip3D() < 8
-    lepAna.loose_electron_isoCut = lambda elec : elec.RelIsoMIV04*elec.pt() < 10 and elec.sip3D() < 8
+    lepAna.loose_muon_isoCut     = lambda muon : muon.relIso04*muon.pt() < 10 and muon.sip3D() < 8
+    lepAna.loose_electron_isoCut = lambda elec : elec.relIso04*elec.pt() < 10 and elec.sip3D() < 8
 else:
     # nothing to do, will use normal relIso03
     pass
@@ -118,29 +118,15 @@ ttHJetTauAna = cfg.Analyzer(
     )
 
 ## Insert the SV analyzer in the sequence
-susyCoreSequence.insert(susyCoreSequence.index(ttHCoreEventAna), 
-                        ttHSVAna)
-ttHSVAna.preselection = lambda ivf : abs(ivf.dxy.value())<2 and ivf.cosTheta>0.98
+#susyCoreSequence.insert(susyCoreSequence.index(ttHCoreEventAna), ttHSVAna)
+#ttHSVAna.preselection = lambda ivf : abs(ivf.dxy.value())<2 and ivf.cosTheta>0.98
+for M in isoTrackAna, badMuonAna, badMuonAnaMoriond2017, badCloneMuonAnaMoriond2017, badChargedHadronAna:
+    susyCoreSequence.remove(M)
 
-
-from CMGTools.TTHAnalysis.analyzers.treeProducerSusyMultilepton import * 
-if not keepGenPart:
-    del susyMultilepton_collections['generatorSummary']
-del susyMultilepton_collections['otherTaus']
-del susyMultilepton_collections['otherLeptons']
-del susyMultilepton_collections['discardedJets']
-del susyMultilepton_collections['discardedLeptons']
-
-# Spring16 electron MVA - follow instructions on pull request for correct area setup
-leptonTypeSusy.addVariables([
-        NTupleVariable("mvaIdSpring16HZZ",   lambda lepton : lepton.mvaRun2("Spring16HZZ") if abs(lepton.pdgId()) == 11 else 1, help="EGamma POG MVA ID, Spring16, HZZ; 1 for muons"),
-        NTupleVariable("mvaIdSpring16GP",   lambda lepton : lepton.mvaRun2("Spring16GP") if abs(lepton.pdgId()) == 11 else 1, help="EGamma POG MVA ID, Spring16, GeneralPurpose; 1 for muons"),
-        NTupleVariable("mvaIdFall17noIso",   lambda lepton : lepton.mvaRun2("Fall17noIso") if abs(lepton.pdgId()) == 11 else 1, help="EGamma POG MVA ID, Fall17 training, without isolation; 1 for muons"),
-        NTupleVariable("mvaIdFall17Iso",   lambda lepton : lepton.mvaRun2("Fall17Iso") if abs(lepton.pdgId()) == 11 else 1, help="EGamma POG MVA ID, Fall17 training, with isolation; 1 for muons"),
-        ])
+from CMGTools.TTHAnalysis.analyzers.treeProducerTTH import * 
 
 if not removeJecUncertainty:
-    susyMultilepton_globalObjects.update({
+    ttH_globalObjects.update({
             "met_jecUp" : NTupleObject("met_jecUp", metType, help="PF E_{T}^{miss}, after type 1 corrections (JEC plus 1sigma)"),
             "met_jecDown" : NTupleObject("met_jecDown", metType, help="PF E_{T}^{miss}, after type 1 corrections (JEC minus 1sigma)"),
             })
@@ -152,25 +138,16 @@ treeProducer = cfg.Analyzer(
      saveTLorentzVectors = False,  # can set to True to get also the TLorentzVectors, but trees will be bigger
      defaultFloatType = 'F', # use Float_t for floating point
      PDFWeights = PDFWeights,
-     globalVariables = susyMultilepton_globalVariables,
-     globalObjects = susyMultilepton_globalObjects,
-     collections = susyMultilepton_collections,
+     globalVariables = ttH_globalVariables,
+     globalObjects = ttH_globalObjects,
+     collections = ttH_collections,
 )
-
+if getHeppyOption("reduceMantissa",False) in ("True","true","yes","1"):
+    setLossyFloatCompression(10,16)
 
 ## histo counter
-susyCoreSequence.insert(susyCoreSequence.index(skimAnalyzer),
-                        susyCounter)
-susyScanAna.doLHE=False # until a proper fix is put in the analyzer
-
-treeProducer.globalVariables.append(NTupleVariable("Flag_badChargedHadronFilter", lambda ev: ev.badChargedHadron, help="bad charged hadron filter decision"))
-treeProducer.globalVariables.append(NTupleVariable("Flag_badMuonFilter", lambda ev: ev.badMuon, help="bad muon filter decision"))
-
-
-#additional MET quantities
-metAna.doTkMet = True
-treeProducer.globalVariables.append(NTupleVariable("met_trkPt", lambda ev : ev.tkMet.pt() if  hasattr(ev,'tkMet') else  0, help="tkmet p_{T}"))
-treeProducer.globalVariables.append(NTupleVariable("met_trkPhi", lambda ev : ev.tkMet.phi() if  hasattr(ev,'tkMet') else  0, help="tkmet phi"))
+susyCoreSequence.insert(susyCoreSequence.index(skimAnalyzer), susyCounter)
+susyCoreSequence.remove(susyScanAna)
 
 if not skipT1METCorr:
     if doMETpreprocessor: 
@@ -558,7 +535,7 @@ elif test == '94X-MC':
     what = getHeppyOption("sample","TTLep")
     if what == "TTLep":
         TTLep_pow = kreator.makeMCComponent("TTLep_pow", "/TTTo2L2Nu_mtop166p5_TuneCP5_PSweights_13TeV-powheg-pythia8/RunIIFall17MiniAOD-94X_mc2017_realistic_v10-v1/MINIAODSIM", "CMS", ".*root", 831.76*((3*0.108)**2) )
-        TTLep_pow.files = [ '/store/mc/RunIIFall17MiniAOD/TTTo2L2Nu_mtop166p5_TuneCP5_PSweights_13TeV-powheg-pythia8/MINIAODSIM/94X_mc2017_realistic_v10-v1/70000/3CC234EB-44E0-E711-904F-FA163E0DF774.root' ]
+        TTLep_pow.files = [ 'root://cms-xrd-global.cern.ch//store/mc/RunIIFall17MiniAOD/TTTo2L2Nu_mtop166p5_TuneCP5_PSweights_13TeV-powheg-pythia8/MINIAODSIM/94X_mc2017_realistic_v10-v1/70000/3CC234EB-44E0-E711-904F-FA163E0DF774.root' ]
         selectedComponents = [ TTLep_pow ]
     elif what == "TTSemi":
         selectedComponents = [ kreator.makeMCComponent("TTSemi", "/TTToSemiLeptonic_TuneCP5_PSweights_13TeV-powheg-pythia8/RunIIFall17MiniAOD-94X_mc2017_realistic_v10-v1/MINIAODSIM", "CMS", ".*root", 831.76*(3*0.108)*(1-3*0.108)*2) ]

@@ -63,6 +63,10 @@ function do_plot {
               --plotmode=nostack --showRatio --maxRatioRange 0.65 1.35 --flagDifferences
     );
 }
+function do_size {
+    PROC=$1; SUB=$2; 
+    perl /afs/cern.ch/user/g/gpetrucc/pl/treeSize.pl $DIR/$PROC/treeProducerSusyMultilepton/tree.root > ../python/plotter/plots/94X/validation/treeSize/${PROC}${SUB}.html
+}
 
 
 case $WHAT in
@@ -78,6 +82,18 @@ case $WHAT in
     ttHSpeed)
         $RUN && do_run run_ttH_cfg.py $DIR -o test=94X-MC -o sample=TTSemi -N 10000 -t -o fast -o single;
         do_plot TTSemi TTSemi
+        ;;
+    ttHMCSize)
+        $RUN && do_run run_ttH_cfg.py $DIR -o test=94X-MC -o sample=TTLep -o fast;
+        do_size TTLep_pow
+        do_plot TTLep_pow TTLep_pow big
+        ;;
+    ttHDataSize)
+        $RUN && do_run run_ttH_cfg.py $DIR -o test=94X-Data  -N 100000 -o runData -o fast;
+        do_size DoubleMuon_Run2017C 
+        do_size DoubleEG_Run2017E
+        do_plot DoubleMuon_Run2017C DoubleMuon_Run2017C big
+        do_plot DoubleEG_Run2017E DoubleEG_Run2017E big
         ;;
     ttHData80X)
         $RUN && do_run run_ttH_cfg.py $DIR -o test=80X-Data  -N 10000 -o runData -o run80X;
