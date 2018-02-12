@@ -13,6 +13,7 @@ class lepIsoEAProducer(Module):
         self.rho = rho
         self.EAinputfile = EAfile
         if "/EffectiveAreas_cc.so" not in ROOT.gSystem.GetLibraries():
+            ROOT.gSystem.Load("$CMSSW_RELEASE_BASE/lib/$SCRAM_ARCH/libFWCoreParameterSet.so")
             ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/WMass/python/postprocessing/helpers/EffectiveAreas.cc+" % os.environ['CMSSW_BASE'])
     def beginJob(self):
         self._worker = ROOT.EffectiveAreas(self.EAinputfile)

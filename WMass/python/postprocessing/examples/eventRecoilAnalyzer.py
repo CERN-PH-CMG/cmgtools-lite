@@ -29,6 +29,7 @@ class EventRecoilAnalyzer(Module):
     '''
     def __init__(self, tag ):
         self.tag=tag
+        self.llMassWindow=(91.,15.)
 
     def beginJob(self):
         """actions taken start of the job"""
@@ -53,7 +54,8 @@ class EventRecoilAnalyzer(Module):
     
         #recoil types
         for rtype in ["truth","gen","met", "puppimet", 'ntmet','ntcentralmet', 'tkmet', 'chsmet', 'npvmet', 'ntnpv', 'centralntnpv', 'centralmetdbeta']:
-            for var in ['recoil_pt','recoil_phi', 'recoil_sphericity', 'm','n','recoil_e1','recoil_e2', 'mt',
+            for var in ['recoil_pt','recoil_phi', 'recoil_sphericity', 'm','n',
+                        #'recoil_e1','recoil_e2', 'mt',
                         'dphi2met','dphi2puppimet','dphi2ntnpv','dphi2centralntnpv','dphi2centralmetdbeta','dphi2leadch','dphi2leadneut']:
                 self.out.branch("{0}_{1}".format(rtype,var), "F")
 
@@ -80,42 +82,50 @@ class EventRecoilAnalyzer(Module):
         if event.isData : 
             return visibleV,V,h,ht
 
-        #get the neutrinos
-        ngenNu = self.out._branches["nGenPromptNu"].buff[0]
+        #get the neutrinos (if available, otherwise pass it)
         nuSum=ROOT.TLorentzVector(0,0,0,0)
-        for i in xrange(0,ngenNu):
-            p4=ROOT.TLorentzVector(0,0,0,0)
-            p4.SetPtEtaPhiM( self.out._branches["GenPromptNu_pt"].buff[i],
-                             self.out._branches["GenPromptNu_eta"].buff[i],
-                             self.out._branches["GenPromptNu_phi"].buff[i],
-                             self.out._branches["GenPromptNu_mass"].buff[i] )
-            nuSum+=p4
-            break
+        try:
+            ngenNu = self.out._branches["nGenPromptNu"].buff[0]
+            for i in xrange(0,ngenNu):
+                p4=ROOT.TLorentzVector(0,0,0,0)
+                p4.SetPtEtaPhiM( self.out._branches["GenPromptNu_pt"].buff[i],
+                                 self.out._branches["GenPromptNu_eta"].buff[i],
+                                 self.out._branches["GenPromptNu_phi"].buff[i],
+                                 self.out._branches["GenPromptNu_mass"].buff[i] )
+                nuSum+=p4
+                break
+        except:
+            pass
 
         #construct the visible boson
-        dressedLeps=[]
-        ngenLep=self.out._branches["nGenLepDressed"].buff[0]
-        for i in xrange(0,ngenLep):
-            dressedLeps.append( ROOT.TLorentzVector(0,0,0,0) )
-            dressedLeps[-1].SetPtEtaPhiM( self.out._branches["GenLepDressed_pt"].buff[i],
-                                          self.out._branches["GenLepDressed_eta"].buff[i],
-                                          self.out._branches["GenLepDressed_phi"].buff[i],
-                                          self.out._branches["GenLepDressed_mass"].buff[i] )
-            if i==0 :
-                visibleV=VisibleVectorBoson(selLeptons=[dressedLeps[-1]])
-                V=visibleV.p4+nuSum
-            for j in xrange(0,i):
-                ll=dressedLeps[j]+dressedLeps[i]
-                if abs(ll.M()-91)>15 : continue
-                visibleV=VisibleVectorBoson(selLeptons=[dressedLeps[j],dressedLeps[i]])
-                V=visibleV.p4
-                break
+        try:
+            dressedLeps=[]
+            ngenLep=self.out._branches["nGenLepDressed"].buff[0]
+            for i in xrange(0,ngenLep):
+                dressedLeps.append( ROOT.TLorentzVector(0,0,0,0) )
+                dressedLeps[-1].SetPtEtaPhiM( self.out._branches["GenLepDressed_pt"].buff[i],
+                                              self.out._branches["GenLepDressed_eta"].buff[i],
+                                              self.out._branches["GenLepDressed_phi"].buff[i],
+                                              self.out._branches["GenLepDressed_mass"].buff[i] )
+                if i==0 :
+                    visibleV=VisibleVectorBoson(selLeptons=[dressedLeps[-1]])
+                    V=visibleV.p4+nuSum
+                for j in xrange(0,i):
+                    ll=dressedLeps[j]+dressedLeps[i]
+                    if abs(ll.M()-self.llMassWindow[0])>self.llMassWindow[1] : continue
+                    visibleV=VisibleVectorBoson(selLeptons=[dressedLeps[j],dressedLeps[i]])
+                    V=visibleV.p4
+                    break
+        except:
+            pass
 
         #hadronic recoil
         met=ROOT.TLorentzVector(0,0,0,0)
         met.SetPtEtaPhiM(event.tkGenMet_pt,0,event.tkGenMet_phi,0.)
         if visibleV : met+=visibleV.p4
         h=ROOT.TVector3(-met.Px(),-met.Py(),0.)
+
+        #hadronic scalar sum
         ht=event.tkGenMetInc_sumEt
         if visibleV : ht -= visibleV.sumEt
 
@@ -137,9 +147,9 @@ class EventRecoilAnalyzer(Module):
 
             #check if a Z candidate can be formed
             for j in xrange(0,i):
-                if lepColl[i].pdgId != lepColl[j].pdgId : continue
+                if abs(lepColl[i].pdgId) != abs(lepColl[j].pdgId) : continue
                 ll=leps[i]+leps[j]
-                if abs(ll.M()-91)>15 : continue
+                if abs(ll.M()-self.llMassWindow[0])>self.llMassWindow[1] : continue                
                 zCand=(i,j)
                 break
 
@@ -189,7 +199,6 @@ class EventRecoilAnalyzer(Module):
 
         #selected leptons at reco level
         visibleV=self.getVisibleV(event)
-        if not visibleV : return False
         
         #leading PF candidates
         self.out.fillBranch('leadch_pt',    event.leadCharged_pt)
@@ -231,8 +240,11 @@ class EventRecoilAnalyzer(Module):
                                                              [1,1,0.5]),  
             }
        
+        metEstimatorsList=metEstimators.keys()
+        if not event.isData: metEstimatorsList+=["truth","gen"]
+        
         #recoil estimators
-        for metType in metEstimators.keys() + ["truth","gen"]:
+        for metType in metEstimatorsList:
 
             #some may need to be specified
             if metType=="truth":
@@ -260,19 +272,19 @@ class EventRecoilAnalyzer(Module):
             phi=h.Phi()
             metphi=metP4.Phi()
             sphericity=pt/ht if ht>0 else -1               
-            e1=gen_V.Pt()/h.Pt() if h.Pt()>0 else -1
-            e2=deltaPhi(gen_V.Phi()+np.pi,h.Phi())
-            mt2= 2*vis.Pt()*((vis+h).Pt())+vis.Pt()**2+vis.Dot(h) 
-            mt=np.sqrt(mt2) if mt2>=0. else -np.sqrt(-mt2)
+            #e1=gen_V.Pt()/h.Pt() if h.Pt()>0 else -1
+            #e2=deltaPhi(gen_V.Phi()+np.pi,h.Phi())
+            #mt2= 2*vis.Pt()*((vis+h).Pt())+vis.Pt()**2+vis.Dot(h) 
+            #mt=np.sqrt(mt2) if mt2>=0. else -np.sqrt(-mt2)
 
             self.out.fillBranch('%s_recoil_pt'%metType,            pt)
             self.out.fillBranch('%s_recoil_phi'%metType,           phi)
             self.out.fillBranch('%s_m'%metType,                    m)
             self.out.fillBranch('%s_recoil_sphericity'%metType,    sphericity)
             self.out.fillBranch('%s_n'%metType,                    count)
-            self.out.fillBranch('%s_recoil_e1'%metType,            e1)
-            self.out.fillBranch('%s_recoil_e2'%metType,            e2)
-            self.out.fillBranch('%s_mt'%metType,                   mt)
+            #self.out.fillBranch('%s_recoil_e1'%metType,            e1)
+            #self.out.fillBranch('%s_recoil_e2'%metType,            e2)
+            #self.out.fillBranch('%s_mt'%metType,                   mt)
             self.out.fillBranch('%s_dphi2met'%metType,             deltaPhi(metEstimators['met'][0].Phi(),             metphi) )
             self.out.fillBranch('%s_dphi2puppimet'%metType,        deltaPhi(metEstimators['puppimet'][0].Phi(),        metphi) )
             self.out.fillBranch('%s_dphi2ntnpv'%metType,           deltaPhi(metEstimators['ntnpv'][0].Phi(),           metphi) )
