@@ -142,7 +142,8 @@ treeProducer = cfg.Analyzer(
      globalObjects = ttH_globalObjects,
      collections = ttH_collections,
 )
-if getHeppyOption("reduceMantissa",False) in ("True","true","yes","1"):
+if getHeppyOption("reduceMantissa",False) in (True,"True","true","yes","1"):
+    print 'Activating reduceMantissa!'
     setLossyFloatCompression(10,16)
 
 ## histo counter
