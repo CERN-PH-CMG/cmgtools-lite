@@ -7,7 +7,7 @@ import sys,os,re
 
 from optparse import OptionParser
 parser = OptionParser(usage='%prog [options] cards/card*.txt')
-parser.add_option('-n','--nYbins', dest='nYbins', default=12, type="int", help='Number of W rapidity bins generated')
+parser.add_option('-n','--nYbins', dest='nYbins', default=14, type="int", help='Number of W rapidity bins generated')
 parser.add_option('-m','--merge-root', dest='mergeRoot', default=False, action='store_true', help='Merge the root files with the inputs also')
 parser.add_option('-i','--input', dest='inputdir', default='', type='string', help='input directory with all the cards inside')
 parser.add_option('-b','--bin', dest='bin', default='ch1', type='string', help='name of the bin')
@@ -47,7 +47,8 @@ for charge in charges:
             if b not in empty_bins:
                 empty_bins.append(b)
                 empty_bins.append(nbins+1-b)            
-        
+
+    longBKG = False
     if options.mergeRoot:
         tmpfiles = []
         for f in files:
@@ -65,13 +66,16 @@ for charge in charges:
                     #if re.match('process\s+',l) and '1' not in l:
                     if re.match('process\s+',l): 
                         if len(l.split()) > 1 and all(n.isdigit() for n in l.split()[1:]) : continue
-                        if not ('left' in l and 'right' in l and 'long' in l):
+                        if not ('left' in l and 'right' in l):
                             if not binn in empty_bins: 
                                 if binn >= 0:
                                     empty_bins.append(binn)
                                     empty_bins.append(nbins-binn)
                             isEmpty = True
                         processes = l.split()[1:]
+                    if re.match('process\s+W.*long',l) and 'bkg' in f:
+                        print "===> W long is treated as a background"
+                        longBKG = True
             if not binn in empty_bins:
                 print 'processing bin = ',bin
                 tf = ROOT.TFile.Open(rootfile)
@@ -87,6 +91,7 @@ for charge in charges:
                     for p in processes:
                         if p in name:
                             newprocname = p+'_'+bin if re.match('Wplus|Wminus',p) else p
+                            if longBKG and re.match('(Wplus_long|Wminus_long)',p): newprocname = p
                             newname = name.replace(p,newprocname)
                             if newname not in plots:
                                 plots[newname] = obj.Clone(newname)
@@ -168,6 +173,7 @@ for charge in charges:
     POIs = []
     if options.constrainRateParams:
         signal_procs = filter(lambda x: re.match('Wplus|Wminus',x), realprocesses)
+        if longBKG: signal_procs = filter(lambda x: re.match('(?!Wplus_long|Wminus_long)',x), signal_procs)
         signal_procs.sort(key=lambda x: int(x.split('_')[-1]))
         signal_L = filter(lambda x: re.match('.*left.*',x),signal_procs)
         signal_R = filter(lambda x: re.match('.*right.*',x),signal_procs)
@@ -183,7 +189,7 @@ for charge in charges:
                 combinedCard.write('norm_%s_%s_%-5s   rateParam * %s_%-5s    1 %s\n' % (pfx,sfx[0],sfx[1],pfx,sfx[0],param_range))
                 combinedCard.write('norm_%s_%s_%-5s   rateParam * %s_%-5s    1 %s\n' % (pfx,sfx[0],sfx[1],pfx,sfx[1],param_range))
                 POIs.append('norm_%s_%s_%s' % (pfx,sfx[0],sfx[1]))
-        if not options.longLnN:
+        if not longBKG and not options.longLnN:
             for i in xrange(len(signal_0)/2):
                 sfx = signal_0[i].split('_')[-1]
                 param_range = '[0.95,1.05]' if sfx in bins_to_constrain else '[0.80,1.20]'
@@ -199,5 +205,5 @@ for charge in charges:
     txt2wsCmd = 'text2workspace.py {cf} -o {ws} --X-allow-no-signal '.format(cf=cardfile, ws=ws)
     print txt2wsCmd
     
-    print 'combine {ws} -M FitDiagnostics -t -1 --expectSignal=1 -m 999 --saveShapes --saveWithUncertainties --redefineSignalPOIs {pois}'.format(ws=ws,pois=','.join(POIs))
-    print 'combine {ws} -M MultiDimFit    -t -1 --expectSignal=1 -m 999 --saveFitResult                      --redefineSignalPOIs {pois}'.format(ws=ws, pois=','.join(POIs))
+    print 'combine {ws} -M FitDiagnostics -t -1 --expectSignal=1 -m 999 --saveShapes --saveWithUncertainties --redefineSignalPOIs {pois} --skipBOnlyFit -v 9'.format(ws=ws,pois=','.join(POIs))
+    print 'combine {ws} -M MultiDimFit    -t -1 --expectSignal=1 -m 999 --saveFitResult --redefineSignalPOIs {pois} -P {floatPOIs} --floatOtherPOIs=0 -v 9'.format(ws=ws, pois=','.join(POIs), floatPOIs=' -P '.join(POIs))
