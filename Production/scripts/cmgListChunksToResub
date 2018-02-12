@@ -40,7 +40,7 @@ function help {
     echo "The default queue is 8nh"
     echo "further options:"
     echo "-T  terse output"
-    echo "-d  check for a LSFJOB_ dir"
+    echo "-d  check for a LSFJOB_ dir or non-empty condor*.out"
     echo "-t <filename>  name of ROOT file to check for zombie (option -z)"
     echo "-l  print commands for local running instead of batch submission"
     echo "-p  check for null pck files"
@@ -55,7 +55,7 @@ if $HELP || [ "$1" == "" ]; then
 fi
 
 if $LSFL; then
-    $TERSE || echo "# Will check for a LSFJOB_ dir "
+    $TERSE || echo "# Will check for a LSFJOB_ dir or non-empty condor*.out "
 fi
 
 $TERSE || echo "# Will test for the presence of file $F"
@@ -87,7 +87,7 @@ for D in */; do
     # test if file to be tested for is present and whether bad pickle file flag has been set
     if test \! -s $D/$F || $PCKBAD; then
         # check for batch directory if requested or proceed to command printout
-        if [ "${LSFL}" = false ] || find $D -maxdepth 1 -type d -name 'LSFJOB_*' | grep -q LSFJ || test -f $D/submission_failed ; then
+        if [ "${LSFL}" = false ] || find $D -maxdepth 1 -type d -name 'LSFJOB_*'  -or -name 'condor_job*.out' -not -empty | grep -q . || test -f $D/submission_failed ; then
             if $LOC; then
                 # print local command
                 echo "cmgRunChunkLocally ${BASE}${D} ";
