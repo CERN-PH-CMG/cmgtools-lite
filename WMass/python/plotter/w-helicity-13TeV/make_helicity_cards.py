@@ -91,7 +91,8 @@ if options.signalCards:
     ## bWidth=(WYBins[2]-WYBins[1])/float(WYBins[0])
     ## WYBinsEdges=np.arange(WYBins[1],WYBins[2]+0.001,bWidth)
     #WYBinsEdges = [-6., -4.,  -3.,   -2.25, -1.5,  -0.75,  0. ,   0.75 , 1.5,   2.25,  3.,  4.,   6.  ]
-    WYBinsEdges = [-6.0, -3.0, -2.5, -2.0, -1.5, -1.0, -0.5, 0., 0.5, 1.0, 1.5, 2.0, 2.5,  3.0,   6.  ]
+    #WYBinsEdges = [-6.0, -2.5, -2.0, -1.5, -1.0, -0.5, 0., 0.5, 1.0, 1.5, 2.0, 2.5, 6.  ]
+    WYBinsEdges = [-6.0, -3.25, -2.75, -2.5, -2.25, -2.0, -1.75, -1.5, -1.25, -1.0, -0.75, -0.5, -0.25, 0., 0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0, 2.25, 2.5, 2.75, 3.25, 6.0 ]
     print WYBinsEdges
     print "MAKING SIGNAL PART: WYBinsEdges = ",WYBinsEdges
     for charge in ['plus','minus']:
