@@ -45,6 +45,7 @@ function do_plot {
     ( cd ../python/plotter;
       # ---- MCA ---
       MCA=susy-multilepton/validation_mca.txt
+      if echo $PROC | grep -q Run201[2567]; then MCA=susy-multilepton/validation-data_mca.txt; fi;
       # ---- CUT FILE ---
       CUTS=susy-multilepton/validation.txt;
       if [ -f susy-multilepton/validation-${PROC}.txt ]; then 
@@ -58,8 +59,9 @@ function do_plot {
              CUTS=susy-multilepton/validation-data.txt
         fi;
       fi
+      WA=1; if echo $WHAT | grep -q Presc; then WA=prescaleFromSkim; fi;
       python mcPlots.py -f --s2v --tree treeProducerSusyMultilepton  -P ${DIR} $MCA $CUTS ${CUTS/.txt/_plots.txt} \
-              --pdir plots/94X/validation/${OUTNAME} -p new,ref -u -e \
+              --pdir plots/94X/validation/${OUTNAME}  -u -e --WA $WA \
               --plotmode=nostack --showRatio --maxRatioRange 0.65 1.35 --flagDifferences
     );
 }
@@ -86,14 +88,19 @@ case $WHAT in
     ttHMCSize)
         $RUN && do_run run_ttH_cfg.py $DIR -o test=94X-MC -o sample=TTLep -o fast;
         do_size TTLep_pow
-        do_plot TTLep_pow TTLep_pow big
+        do_plot TTLep_pow TTLep_pow _big
         ;;
     ttHDataSize)
         $RUN && do_run run_ttH_cfg.py $DIR -o test=94X-Data  -N 100000 -o runData -o fast;
         do_size DoubleMuon_Run2017C 
         do_size DoubleEG_Run2017E
-        do_plot DoubleMuon_Run2017C DoubleMuon_Run2017C big
-        do_plot DoubleEG_Run2017E DoubleEG_Run2017E big
+        do_plot DoubleMuon_Run2017C DoubleMuon_Run2017C _big
+        do_plot DoubleEG_Run2017E DoubleEG_Run2017E _big
+        ;;
+    ttHDataPresc)
+        $RUN && do_run run_ttH_cfg.py $DIR -o test=94X-Data  -N 100000 -o runData -o fast -o prescaleskim;
+        do_plot DoubleMuon_Run2017C DoubleMuon_Run2017C _big
+        do_plot DoubleEG_Run2017E DoubleEG_Run2017E _big
         ;;
     ttHData80X)
         $RUN && do_run run_ttH_cfg.py $DIR -o test=80X-Data  -N 10000 -o runData -o run80X;
