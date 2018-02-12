@@ -69,6 +69,8 @@ ttH_globalVariables = [
             NTupleVariable("nLepGood20", lambda ev: sum([l.pt() > 20 for l in ev.selectedLeptons]), int, help="Number of leptons with pt > 20"),
             NTupleVariable("nLepGood15", lambda ev: sum([l.pt() > 15 for l in ev.selectedLeptons]), int, help="Number of leptons with pt > 15"),
             NTupleVariable("nLepGood10", lambda ev: sum([l.pt() > 10 for l in ev.selectedLeptons]), int, help="Number of leptons with pt > 10"),
+            ##--------------------------------------------------
+            NTupleVariable("prescaleFromSkim", lambda ev : getattr(ev, "prescaleFromSkim", 1), help="event prescale from the skimming module"),
 ]
 
 ttH_globalObjects = {
