@@ -80,7 +80,7 @@ wmass_collections = {
             ##------------------------------------------------
             #"ivf"       : NTupleCollection("SV",     svType, 20, help="SVs from IVF"),
             ##------------------------------------------------
-            #"LHE_weights"    : NTupleCollection("LHEweight",  weightsInfoType, 1000, mcOnly=True, help="LHE weight info"),
+            "LHE_weights"    : NTupleCollection("LHEweight",  weightsInfoType, 1000, mcOnly=True, help="LHE weight info"),
             ##------------------------------------------------
             #"genleps"         : NTupleCollection("genLep",     genParticleWithLinksType, 10, help="Generated leptons (e/mu) from W/Z decays"),                                                                                                
             #"gentauleps"      : NTupleCollection("genLepFromTau", genParticleWithLinksType, 10, help="Generated leptons (e/mu) from decays of taus from W/Z/h decays"),                                                                       
@@ -88,3 +88,12 @@ wmass_collections = {
             "generatorSummary" : NTupleCollection("GenPart", genParticleWithLinksType, 50 , mcOnly=True, help="Hard scattering particles, with ancestry and links"),
 }
 
+wmass_vertexVariables=[
+    NTupleVariable("vx",    lambda ev: ev.goodVertices[0].x() if len(ev.goodVertices)>0 else 0, mcOnly=False, help="PV position x"),
+    NTupleVariable("vy",    lambda ev: ev.goodVertices[0].y() if len(ev.goodVertices)>0 else 0, mcOnly=False, help="PV position y"),
+    NTupleVariable("vz",    lambda ev: ev.goodVertices[0].z() if len(ev.goodVertices)>0 else 0, mcOnly=False, help="PV position z"),
+    NTupleVariable("mindz", 
+                   lambda ev: min([abs(ev.goodVertices[0].z()-ev.goodVertices[i].z()) for i in xrange(1,len(ev.goodVertices))]) if len(ev.goodVertices)>1 else 0, 
+                   mcOnly=False, 
+                   help="closest to PV in z")
+]
