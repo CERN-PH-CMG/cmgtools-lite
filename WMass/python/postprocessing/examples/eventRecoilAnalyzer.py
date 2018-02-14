@@ -53,7 +53,8 @@ class EventRecoilAnalyzer(Module):
         self.out.branch("leadneut_phi", "F")
     
         #recoil types
-        for rtype in ["truth","gen","met", "puppimet", 'ntmet','ntcentralmet', 'tkmet', 'chsmet', 'npvmet', 'ntnpv', 'centralntnpv', 'centralmetdbeta']:
+        #for rtype in ["truth","gen","met", "puppimet", 'ntmet','ntcentralmet', 'tkmet', 'chsmet', 'npvmet', 'ntnpv', 'centralntnpv', 'centralmetdbeta']:
+        for rtype in ["truth","gen","puppimet", 'ntmet','ntcentralmet', 'tkmet', 'npvmet', 'ntnpv']:
             for var in ['recoil_pt','recoil_phi', 'recoil_sphericity', 'm','n',
                         #'recoil_e1','recoil_e2', 'mt',
                         'dphi2met','dphi2puppimet','dphi2ntnpv','dphi2centralntnpv','dphi2centralmetdbeta','dphi2leadch','dphi2leadneut']:
@@ -116,7 +117,8 @@ class EventRecoilAnalyzer(Module):
                     visibleV=VisibleVectorBoson(selLeptons=[dressedLeps[j],dressedLeps[i]])
                     V=visibleV.p4
                     break
-        except:
+        except Exception,e:
+            print e
             pass
 
         #hadronic recoil
@@ -245,6 +247,8 @@ class EventRecoilAnalyzer(Module):
         
         #recoil estimators
         for metType in metEstimatorsList:
+
+            if not metType in ["truth","gen","puppimet", 'ntmet','ntcentralmet', 'tkmet', 'npvmet', 'ntnpv']: continue
 
             #some may need to be specified
             if metType=="truth":
