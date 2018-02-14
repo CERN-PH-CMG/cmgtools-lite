@@ -7,13 +7,14 @@ import sys,os,re
 
 from optparse import OptionParser
 parser = OptionParser(usage='%prog [options] cards/card*.txt')
-parser.add_option('-n','--nYbins', dest='nYbins', default=14, type="int", help='Number of W rapidity bins generated')
+parser.add_option('-n','--nYbins', dest='nYbins', default=26, type="int", help='Number of W rapidity bins generated')
 parser.add_option('-m','--merge-root', dest='mergeRoot', default=False, action='store_true', help='Merge the root files with the inputs also')
 parser.add_option('-i','--input', dest='inputdir', default='', type='string', help='input directory with all the cards inside')
 parser.add_option('-b','--bin', dest='bin', default='ch1', type='string', help='name of the bin')
 parser.add_option('-C','--charge', dest='charge', default='plus,minus', type='string', help='process given charge. default is both')
 parser.add_option('-c','--constrain-rates', dest='constrainRateParams', type='string', default='0,1,2', help='add constraints on the rate parameters of (comma-separated list of) rapidity bins. Give only the left ones (e.g. 1 will constrain 1 with n-1 ')
 parser.add_option('-l','--long-lnN', dest='longLnN', type='float', default=None, help='add a common lnN constraint to all longitudinal components')
+parser.add_option('--longToTotal', dest='longToTotal', type='float', default=None, help='Apply a constraint on the Wlong/Wtot rate. Implies fitting for absolute rates')
 (options, args) = parser.parse_args()
 
 charges = options.charge.split(',')
@@ -166,10 +167,23 @@ for charge in charges:
     ## already done     os.system("rm tmp_*root")
     
     
-    if options.longLnN:
-        kpatt = " %7s "
+    kpatt = " %7s "
+    if options.longLnN and not options.longToTotal:
         combinedCard.write('norm_long_'+options.bin+'       lnN    ' + ' '.join([kpatt % (options.longLnN if 'long' in x else '-') for x in realprocesses])+'\n')
+
+    combinedCard = open(cardfile,'r')
+    procs = []
+    rates = []
+    for l in combinedCard.readlines():
+        if re.match("process\s+",l) and not re.match("process\s+\d",l): # my regexp qualities are bad... 
+            procs = (l.rstrip().split())[1:]
+        if re.match("rate\s+",l):
+            rates = (l.rstrip().split())[1:]
+        if len(procs) and len(rates): break
+    ProcsAndRates = zip(procs,rates)
+    ProcsAndRatesDict = dict(zip(procs,rates))
     
+    combinedCard = open(cardfile,'a')
     POIs = []
     if options.constrainRateParams:
         signal_procs = filter(lambda x: re.match('Wplus|Wminus',x), realprocesses)
@@ -181,13 +195,23 @@ for charge in charges:
         
         hel_to_constrain = [signal_L,signal_R]
         bins_to_constrain = options.constrainRateParams.split(',')
+        tightConstraint = 0.05
+        looseConstraint = 0.20
         for hel in hel_to_constrain:
             for i in xrange(len(hel)/2):
                 pfx = '_'.join(hel[i].split('_')[:-1])
                 sfx = (hel[i].split('_')[-1],hel[-i-1].split('_')[-1])
-                param_range = '[0.95,1.05]' if sfx[0] in bins_to_constrain else '[0.80,1.20]'
-                combinedCard.write('norm_%s_%s_%-5s   rateParam * %s_%-5s    1 %s\n' % (pfx,sfx[0],sfx[1],pfx,sfx[0],param_range))
-                combinedCard.write('norm_%s_%s_%-5s   rateParam * %s_%-5s    1 %s\n' % (pfx,sfx[0],sfx[1],pfx,sfx[1],param_range))
+                rateNuis = tightConstraint if sfx[0] in bins_to_constrain else looseConstraint
+                if options.longToTotal:
+                    expRate0 = float(ProcsAndRatesDict[pfx+'_'+sfx[0]])
+                    expRate1 = float(ProcsAndRatesDict[pfx+'_'+sfx[1]])
+                    param_range_0 = '%15.1f [%.0f,%.0f]' % (expRate0,(1-rateNuis)*expRate0,(1+rateNuis)*expRate0)
+                    param_range_1 = '%15.1f [%.0f,%.0f]' % (expRate1,(1-rateNuis)*expRate1,(1+rateNuis)*expRate1)
+                else:
+                    param_range_0 = '1 [%.2f,%.2f]' % (1-rateNuis,1+rateNuis)
+                    param_range_1 = param_range_0
+                combinedCard.write('norm_%s_%s_%-5s   rateParam * %s_%-5s    %s\n' % (pfx,sfx[0],sfx[1],pfx,sfx[0],param_range_0))
+                combinedCard.write('norm_%s_%s_%-5s   rateParam * %s_%-5s    %s\n' % (pfx,sfx[0],sfx[1],pfx,sfx[1],param_range_1))
                 POIs.append('norm_%s_%s_%s' % (pfx,sfx[0],sfx[1]))
         if not longBKG and not options.longLnN:
             for i in xrange(len(signal_0)/2):
@@ -198,12 +222,47 @@ for charge in charges:
                 POIs.append('norm_%s' % signal_0[i])
                 POIs.append('norm_%s' % signal_0[-1-i])
     
+        if options.longToTotal:
+            combinedCard = open(cardfile,'r')
+            procs = []
+            rates = []
+            for l in combinedCard.readlines():
+                if re.match("process\s+",l) and not re.match("process\s+\d",l): # my regexp qualities are bad... 
+                    procs = (l.rstrip().split())[1:]
+                if re.match("rate\s+",l):
+                    rates = (l.rstrip().split())[1:]
+                if len(procs) and len(rates): break
+            ProcsAndRates = zip(procs,rates)
+
+            combinedCard = open(cardfile,'r')
+            ProcsAndRatesUnity = []
+            for (p,r) in ProcsAndRates:
+                ProcsAndRatesUnity.append((p,'1') if ('left' in p or 'right' in p or 'long' in p) else (p,r))
+
+            combinedCardNew = open(cardfile+"_new",'w')
+            for l in combinedCard.readlines():
+                if re.match("rate\s+",l):
+                    combinedCardNew.write('rate            %s \n' % ' '.join([kpatt % r for (p,r) in ProcsAndRatesUnity])+'\n')
+                else: combinedCardNew.write(l)
+            Wlong = [(p,r) for (p,r) in ProcsAndRates if re.match('W.*long',p)]
+            WLeftOrRight = [(p,r) for (p,r) in ProcsAndRates if ('left' in p or 'right' in p)]
+            normWlong = sum([float(r) for (p,r) in Wlong]) # there should be only 1 Wlong/charge
+            normWLeftOrRight = sum([float(r) for (p,r) in WLeftOrRight])
+            r0overLR = normWlong/normWLeftOrRight
+            combinedCardNew.write("norm_%-50s   rateParam * %-5s    %15.1f [%.0f,%.0f]\n" % (Wlong[0][0],Wlong[0][0],normWlong,0.50*normWlong,1.50*normWlong))
+            wLongNormString = "ratio_%-5s   rateParam * %-5s   0.5*@0/(%s) %s\n" \
+            % (Wlong[0][0],Wlong[0][0],'+'.join(['@%d'%i for i in xrange(1,len(POIs)+1)]),'norm_'+Wlong[0][0]+','+','.join([p for p in POIs]))
+            combinedCardNew.write(wLongNormString)
+
+            os.system("mv {cardfile}_new {cardfile}".format(cardfile=cardfile))
+
     print "merged datacard in ",cardfile
     
     #ws = "%s_ws.root" % options.bin
     ws = cardfile.replace('_card.txt', '_ws.root')
     txt2wsCmd = 'text2workspace.py {cf} -o {ws} --X-allow-no-signal '.format(cf=cardfile, ws=ws)
+    if options.longToTotal: txt2wsCmd += "  --X-no-check-norm"
     print txt2wsCmd
     
-    print 'combine {ws} -M FitDiagnostics -t -1 --expectSignal=1 -m 999 --saveShapes --saveWithUncertainties --redefineSignalPOIs {pois} --skipBOnlyFit -v 9'.format(ws=ws,pois=','.join(POIs))
-    print 'combine {ws} -M MultiDimFit    -t -1 --expectSignal=1 -m 999 --saveFitResult --redefineSignalPOIs {pois} -P {floatPOIs} --floatOtherPOIs=0 -v 9'.format(ws=ws, pois=','.join(POIs), floatPOIs=' -P '.join(POIs))
+    #print 'combine {ws} -M FitDiagnostics -t -1 --expectSignal=1 -m 999 --saveShapes --saveWithUncertainties --redefineSignalPOIs {pois} --skipBOnlyFit -v 9'.format(ws=ws,pois=','.join(POIs))
+    print 'combine {ws} -M MultiDimFit    -t -1 --expectSignal=1 -m 999 --saveFitResult --cminInitialHesse 1 --cminFinalHesse 1 --cminPreFit 1 --redefineSignalPOIs {pois} -P {floatPOIs} --floatOtherPOIs=0 -v 9'.format(ws=ws, pois=','.join(POIs), floatPOIs=' -P '.join(POIs))
