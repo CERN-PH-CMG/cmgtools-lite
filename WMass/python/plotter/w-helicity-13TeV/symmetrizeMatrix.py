@@ -118,23 +118,42 @@ if options.Ybins:
     arr_rhi   = array.array('f', [])
 
     totalrate = 0.
+    fitAbsoluteRates = False
     for p in sorted_rap:
         tmp_procname = '_'.join(p.split('_')[1:-1])
-        totalrate += float(rates[procs.index(tmp_procname)])
+        if float(rates[procs.index(tmp_procname)]) > 1: # means that the rates are SFs wrt the expected ones
+            totalrate += float(rates[procs.index(tmp_procname)])
+        else: fitAbsoluteRates = True
+    if fitAbsoluteRates:
+        for ip,p in enumerate(sorted_rap):
+            tmp_par = fitresult.floatParsFinal().find(p) if p in l_sorted_new else fitresult.constPars().find(p)
+            print tmp_par," has rate = ",tmp_par.getVal()
+            totalrate += tmp_par.getVal()
+        
     #totalrate=1.
     #sys.exit()
 
     for ip,p in enumerate(sorted_rap):
         tmp_par = fitresult.floatParsFinal().find(p) if p in l_sorted_new else fitresult.constPars().find(p)
         tmp_procname = '_'.join(p.split('_')[1:-1])
-        tmp_rate = float(rates[procs.index(tmp_procname)])
-        arr_val.append(tmp_rate/totalrate*tmp_par.getVal())
-        arr_ehi.append(tmp_rate/totalrate*abs(tmp_par.getAsymErrorHi()))
-        arr_elo.append(tmp_rate/totalrate*abs(tmp_par.getAsymErrorLo() if tmp_par.hasAsymError() else tmp_par.getAsymErrorHi()))
+        if fitAbsoluteRates:
+            arr_val.append(tmp_par.getVal()/totalrate)
+            arr_ehi.append(abs(tmp_par.getAsymErrorHi())/totalrate)
+            arr_elo.append(abs(tmp_par.getAsymErrorLo() if tmp_par.hasAsymError() else tmp_par.getAsymErrorHi())/totalrate)
 
-        arr_relv .append(tmp_par.getVal())
-        arr_rello.append(abs(tmp_par.getAsymErrorHi()))
-        arr_relhi.append(abs(tmp_par.getAsymErrorLo() if tmp_par.hasAsymError() else tmp_par.getAsymErrorHi()))
+            tmp_par_init = fitresult.floatParsFinal().find(p) if p in l_sorted_new else fitresult.constPars().find(p)
+            arr_relv .append(tmp_par.getVal()/tmp_par_init.getVal())
+            arr_rello.append(abs(tmp_par.getAsymErrorHi())/tmp_par_init.getVal())
+            arr_relhi.append(abs(tmp_par.getAsymErrorLo() if tmp_par.hasAsymError() else tmp_par.getAsymErrorHi())/tmp_par_init.getVal())
+        else:
+            tmp_rate = float(rates[procs.index(tmp_procname)])
+            arr_val.append(tmp_rate/totalrate*tmp_par.getVal())
+            arr_ehi.append(tmp_rate/totalrate*abs(tmp_par.getAsymErrorHi()))
+            arr_elo.append(tmp_rate/totalrate*abs(tmp_par.getAsymErrorLo() if tmp_par.hasAsymError() else tmp_par.getAsymErrorHi()))
+
+            arr_relv .append(tmp_par.getVal())
+            arr_rello.append(abs(tmp_par.getAsymErrorHi()))
+            arr_relhi.append(abs(tmp_par.getAsymErrorLo() if tmp_par.hasAsymError() else tmp_par.getAsymErrorHi()))
 
         arr_rap.append((ybins[ip]+ybins[ip+1])/2.)
         arr_rlo.append(abs(ybins[ip]-arr_rap[-1]))
