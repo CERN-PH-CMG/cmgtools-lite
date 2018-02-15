@@ -127,7 +127,6 @@ if options.Ybins:
     if fitAbsoluteRates:
         for ip,p in enumerate(sorted_rap):
             tmp_par = fitresult.floatParsFinal().find(p) if p in l_sorted_new else fitresult.constPars().find(p)
-            print tmp_par," has rate = ",tmp_par.getVal()
             totalrate += tmp_par.getVal()
         
     #totalrate=1.
