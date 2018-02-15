@@ -82,7 +82,9 @@ def unroll2Dto1D(h):
 ROOT.gROOT.SetBatch()
 
 #shapesfile = '/afs/cern.ch/work/m/mdunser/public/cmssw/w-helicity-13TeV/CMSSW_8_0_25/src/CMGTools/WMass/python/plotter/cards/helicity_2018_02_08_binsEta32_binsPt20_binsY26/Wmu_plus_shapes.root'
-shapesfile = '/afs/cern.ch/work/m/mdunser/public/cmssw/w-helicity-13TeV/CMSSW_8_0_25/src/CMGTools/WMass/python/plotter/cards/helicity_2018_02_09_variablebinningEta_binsPt20_longBkg/mu_minus_shapes.root'
+#shapesfile = '/afs/cern.ch/work/m/mdunser/public/cmssw/w-helicity-13TeV/CMSSW_8_0_25/src/CMGTools/WMass/python/plotter/cards/helicity_2018_02_09_variablebinningEta_binsPt20_longBkg/mu_minus_shapes.root'
+#shapesfile = '/afs/cern.ch/work/m/mdunser/public/cmssw/w-helicity-13TeV/CMSSW_8_0_25/src/CMGTools/WMass/python/plotter/cards/helicity_2018_02_12_variableEta_ptBins20_longBkg_MTTK45/mu_minus_shapes.root'
+shapesfile = '/afs/cern.ch/work/m/mdunser/public/cmssw/w-helicity-13TeV/CMSSW_8_0_25/src/CMGTools/WMass/python/plotter/cards/helicity_2018_02_12_variableEta_ptBins20_longBkg_MTTK45/mu_minus_shapes.root'
 
 
 infile = ROOT.TFile(shapesfile, 'read')
@@ -119,7 +121,7 @@ for charge in ['minus']:#, 'minus']:
             canv = ROOT.TCanvas()
             h2_backrolled_1.Draw('colz')
             for ext in ['pdf', 'png']:
-                canv.SaveAs('~/www/private/w-helicity-13TeV/helicityTemplates/backrolledTemplates/W{ch}_{pol}_W{ch}_mu_Ybin_{ybin}.{ext}'.format(ch=charge,pol=pol,ybin=ybin,ext=ext))
+                canv.SaveAs('~/www/private/w-helicity-13TeV/helicityTemplates/backrolledTemplates/W{ch}_{pol}_W{ch}_mu_Ybin_{ybin}_MTTK45.{ext}'.format(ch=charge,pol=pol,ybin=ybin,ext=ext))
 ## canv.Divide(1,2)
 ## canv.cd(1)
 ## h2.Draw('colz')

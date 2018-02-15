@@ -1,5 +1,8 @@
-import ROOT, datetime
-from array import array
+import ROOT, datetime, array
+
+
+## usage:
+## python symmetrizeMatrix.py --infile multidimfit.root --outdir ~/www/private/w-helicity-13TeV/correlationMatrices/ --suffix variableEta_ptBins20_longBkg_MTTK45_lepEff1p02 --Ybins -6.0,-3.25,-2.75,-2.5,-2.25,-2.0,-1.75,-1.5,-1.25,-1.0,-0.75,-0.5,-0.25,0.,0.25,0.5,0.75,1.0,1.25,1.5,1.75,2.0,2.25,2.5,2.75,3.25,6.0 --dc mu_plus_card.txt
 
 ROOT.gROOT.SetBatch()
 ROOT.gStyle.SetOptStat(0)
@@ -30,22 +33,27 @@ h2_corr = fitresult.correlationHist()
 
 c = ROOT.TCanvas()
 
-h2_corr.Draw('colz')
-for ext in ['png', 'pdf']:
-    c.SaveAs('{od}/corrMatrix_{date}_{suff}_original.{ext}'.format(od=options.outdir, date=date, suff=options.suffix, ext=ext))
-
-bins = {}
-labels = []
-
-for ix in range(1,h2_corr.GetXaxis().GetNbins()+1):
-    labels.append(h2_corr.GetXaxis().GetBinLabel(ix))
-
-h2_new = h2_corr.Clone('correlationMatrix_symmetric')
-h2_new.Reset()
-
 ## some more ROOT "magic"
 parlist = fitresult.floatParsFinal()
 l_params = list(parlist.at(i).GetName() for i in range(len(parlist)))
+
+## pretty dumb check if we're dealing with W+ or W-
+nplus  = len(list(p for p in l_params if 'plus'  in p))
+nminus = len(list(p for p in l_params if 'minus' in p))
+charge = 'plus' if nplus > nminus else 'minus'
+
+print 'assuming this is W {ch}'.format(ch=charge)
+
+## ======================================
+## saving the original correlation matrix
+h2_corr.Draw('colz')
+for ext in ['png', 'pdf']:
+    c.SaveAs('{od}/corrMatrix_{date}_{suff}_{ch}_original.{ext}'.format(od=options.outdir, date=date, suff=options.suffix, ch=charge, ext=ext))
+
+h2_new = h2_corr.Clone('correlationMatrix_symmetric')
+h2_new.Reset()
+## ======================================
+
 
 hel_pars = list(p for p in l_params if 'norm_W' in p)
 long_par = list(a for a in l_params if 'long' in a)
@@ -73,7 +81,7 @@ for il,l in enumerate(l_sorted_new):
 
 h2_new.Draw('colz')
 for ext in ['png', 'pdf']:
-    c.SaveAs('{od}/corrMatrix_{date}_{suff}_symmetric.{ext}'.format(od=options.outdir, date=date, suff=options.suffix, ext=ext))
+    c.SaveAs('{od}/corrMatrix_{date}_{suff}_{ch}_symmetric.{ext}'.format(od=options.outdir, date=date, suff=options.suffix, ch=charge, ext=ext))
 
 if options.Ybins:
     ybins = list(float(i) for i in options.Ybins.split(','))
@@ -90,7 +98,7 @@ if options.Ybins:
 
     sorted_rap = rpars2 + pars_r + pars_l + lpars2
 
-    if not len(ybins)-1 == sorted_rap: 
+    if not len(ybins)-1 == len(sorted_rap):
         print 'SOMETHING WENT TERRIBLY WRONG'
 
     ## get the rates and processes from the datacard. they're necessarily in the same order
@@ -99,18 +107,22 @@ if options.Ybins:
     procline = list(line for line in dclines if line.startswith('process')); procline = procline[0]; procs = procline.split()
     rateline = list(line for line in dclines if line.startswith('rate'   )); rateline = rateline[0]; rates = rateline.split()
     
-    arr_val = array('f', [])
-    arr_ehi = array('f', [])
-    arr_elo = array('f', [])
-    arr_rap = array('f', [])
-    arr_rlo = array('f', [])
-    arr_rhi = array('f', [])
+    arr_val   = array.array('f', [])
+    arr_ehi   = array.array('f', [])
+    arr_elo   = array.array('f', [])
+    arr_relv  = array.array('f', [])
+    arr_relhi = array.array('f', [])
+    arr_rello = array.array('f', [])
+    arr_rap   = array.array('f', [])
+    arr_rlo   = array.array('f', [])
+    arr_rhi   = array.array('f', [])
 
     totalrate = 0.
     for p in sorted_rap:
         tmp_procname = '_'.join(p.split('_')[1:-1])
         totalrate += float(rates[procs.index(tmp_procname)])
     #totalrate=1.
+    #sys.exit()
 
     for ip,p in enumerate(sorted_rap):
         tmp_par = fitresult.floatParsFinal().find(p) if p in l_sorted_new else fitresult.constPars().find(p)
@@ -118,13 +130,18 @@ if options.Ybins:
         tmp_rate = float(rates[procs.index(tmp_procname)])
         arr_val.append(tmp_rate/totalrate*tmp_par.getVal())
         arr_ehi.append(tmp_rate/totalrate*abs(tmp_par.getAsymErrorHi()))
-        arr_elo.append(tmp_rate/totalrate*abs(tmp_par.getAsymErrorLo()))
+        arr_elo.append(tmp_rate/totalrate*abs(tmp_par.getAsymErrorLo() if tmp_par.hasAsymError() else tmp_par.getAsymErrorHi()))
+
+        arr_relv .append(tmp_par.getVal())
+        arr_rello.append(abs(tmp_par.getAsymErrorHi()))
+        arr_relhi.append(abs(tmp_par.getAsymErrorLo() if tmp_par.hasAsymError() else tmp_par.getAsymErrorHi()))
+
         arr_rap.append((ybins[ip]+ybins[ip+1])/2.)
         arr_rlo.append(abs(ybins[ip]-arr_rap[-1]))
         arr_rhi.append(abs(ybins[ip]-arr_rap[-1]))
 
-    graph = ROOT.TGraphAsymmErrors(len(arr_val), arr_rap, arr_val, arr_rlo, arr_rhi, arr_elo, arr_ehi)
-    graph.SetTitle('W^{+}: Y_{W}')
+    graph     = ROOT.TGraphAsymmErrors(len(arr_val), arr_rap, arr_val, arr_rlo, arr_rhi, arr_elo, arr_ehi)
+    graph.SetTitle('W {ch}: Y_{{W}}'.format(ch=charge))
     graph.SetFillColor(ROOT.kBlue+1)
     graph.SetFillStyle(3001)
     #graph.GetXaxis().SetRangeUser(ybins[0],ybins[-1])
@@ -134,10 +151,57 @@ if options.Ybins:
     c2 = ROOT.TCanvas()
     graph.Draw('a2')
     for ext in ['png', 'pdf']:
-        c2.SaveAs('{od}/rapidityDistribution_{date}_{suff}.{ext}'.format(od=options.outdir, date=date, suff=options.suffix, ext=ext))
+        c2.SaveAs('{od}/rapidityDistribution_{date}_{suff}_{ch}.{ext}'.format(od=options.outdir, date=date, suff=options.suffix, ch=charge, ext=ext))
 
-    
-    
+    graph_rel = ROOT.TGraphAsymmErrors(len(arr_val), arr_rap, arr_relv, arr_rlo, arr_rhi, arr_rello, arr_relhi)
+    graph_rel.SetTitle('W {ch}: Y_{{W}}'.format(ch=charge))
+    graph_rel.SetMarkerStyle(20)
+    graph_rel.SetMarkerColor(ROOT.kBlack)
+    graph_rel.SetMarkerSize(0.8)
+    graph_rel.SetFillColor(ROOT.kBlue+1)
+    graph_rel.SetFillStyle(3003)
+    graph_rel.GetXaxis().SetRangeUser(-4.,4.)
+    graph_rel.GetYaxis().SetRangeUser(0.97,1.03)
+    graph_rel.GetXaxis().SetTitle('Y_{W}')
+    graph_rel.GetYaxis().SetTitle('rate par. fit value')
+    graph_rel.Draw('Pa5')
+    for ext in ['png', 'pdf']:
+        c2.SaveAs('{od}/rapidityDistribution_{date}_{suff}_{ch}_relative.{ext}'.format(od=options.outdir, date=date, suff=options.suffix, ch=charge, ext=ext))
 
-    
+    c3 = ROOT.TCanvas('foo','',800,800)
+    half = len(arr_val)/2
+    graph_right = ROOT.TGraphAsymmErrors(half, arr_rap[half:], arr_val[:half][::-1], arr_rlo[half:], arr_rhi[half:], arr_elo[:half][::-1], arr_ehi[:half][::-1])
+    graph_left  = ROOT.TGraphAsymmErrors(half, arr_rap[half:], arr_val[half:], arr_rlo[half:], arr_rhi[half:], arr_elo[half:], arr_ehi[half:])
+    graph_left .SetFillColor(ROOT.kAzure+8 )
+    graph_right.SetFillColor(ROOT.kOrange+7)
+    graph_left .GetXaxis().SetRangeUser(0.,3.0)
+    graph_right.GetXaxis().SetRangeUser(0.,3.0)
+
+    leg = ROOT.TLegend(0.20, 0.20, 0.5, 0.35)
+    leg.SetFillStyle(0)
+    leg.SetBorderSize(0)
+
+    mg = ROOT.TMultiGraph()
+    mg.Add(graph_right)
+    mg.Add(graph_left )
+    leg.AddEntry(graph_left , 'W^{{{ch}}} left' .format(ch='+' if charge == 'plus' else '-'), 'f')
+    leg.AddEntry(graph_right, 'W^{{{ch}}} right'.format(ch='+' if charge == 'plus' else '-'), 'f')
+    mg.Draw('Pa5')
+    mg.GetXaxis().SetRangeUser(0.0,3.0)
+    mg.GetXaxis().SetTitle('|Y_{W}|')
+    mg.GetXaxis().SetTitleSize(0.06)
+    mg.GetXaxis().SetLabelSize(0.04)
+    mg.GetYaxis().SetTitleSize(0.06)
+    mg.GetYaxis().SetLabelSize(0.04)
+    mg.GetYaxis().SetTitle('N_{events}/N_{total}')
+    mg.GetYaxis().SetTitleOffset(1.2)
+    c3.GetPad(0).SetTopMargin(0.05)
+    c3.GetPad(0).SetBottomMargin(0.15)
+    c3.GetPad(0).SetLeftMargin(0.16)
+
+    leg.Draw('same')
+
+    for ext in ['png', 'pdf']:
+        c3.SaveAs('{od}/rapidityDistribution_{date}_{suff}_{ch}_absRapLeftRight.{ext}'.format(od=options.outdir, date=date, suff=options.suffix, ch=charge, ext=ext))
+
     
