@@ -4,6 +4,23 @@ import ROOT, datetime, array
 ## usage:
 ## python symmetrizeMatrix.py --infile multidimfit.root --outdir ~/www/private/w-helicity-13TeV/correlationMatrices/ --suffix variableEta_ptBins20_longBkg_MTTK45_lepEff1p02 --Ybins -6.0,-3.25,-2.75,-2.5,-2.25,-2.0,-1.75,-1.5,-1.25,-1.0,-0.75,-0.5,-0.25,0.,0.25,0.5,0.75,1.0,1.25,1.5,1.75,2.0,2.25,2.5,2.75,3.25,6.0 --dc mu_plus_card.txt
 
+def getScales(ybins, charge, pol, infile):
+    histo_file = ROOT.TFile(infile, 'READ')
+
+    histo_gen  = histo_file.Get('w{ch}_wy_W{ch}_{pol}'     .format(ch=charge, pol=pol))
+    histo_reco = histo_file.Get('w{ch}_wy_reco_W{ch}_{pol}'.format(ch=charge, pol=pol))
+
+    scales = []
+    for iv, val in enumerate(ybins[:-1]):
+        istart = histo_gen.FindBin(val)
+        iend   = histo_gen.FindBin(ybins[ybins.index(val)+1])
+        num = histo_gen .Integral(istart, iend-1) ## do not include next bin
+        den = histo_reco.Integral(istart, iend-1) ## do not include next bin
+        tmp_ratio = num/den
+        scales.append(tmp_ratio)
+
+    return scales
+
 ROOT.gROOT.SetBatch()
 ROOT.gStyle.SetOptStat(0)
 
@@ -18,6 +35,7 @@ parser.add_option('-o','--outdir', dest='outdir', default='', type='string', hel
 parser.add_option(     '--suffix', dest='suffix', default='', type='string', help='suffix for the correlation matrix')
 parser.add_option(     '--Ybins' , dest='Ybins' , default='', type='string', help='binning in Y')
 parser.add_option(     '--dc'    , dest='dc'    , default='', type='string', help='the corresponding datacard (for the rates)')
+parser.add_option(     '--sf'    , dest='scaleFile'    , default='', type='string', help='path of file with the scaling/unfolding')
 (options, args) = parser.parse_args()
 
 ##infile = ROOT.TFile('/afs/cern.ch/work/e/emanuele/wmass/fit/CMSSW_8_1_0/src/multidimfit.root','read')
@@ -117,6 +135,7 @@ if options.Ybins:
     arr_rlo   = array.array('f', [])
     arr_rhi   = array.array('f', [])
 
+
     totalrate = 0.
     fitAbsoluteRates = False
     for p in sorted_rap:
@@ -186,10 +205,25 @@ if options.Ybins:
     for ext in ['png', 'pdf']:
         c2.SaveAs('{od}/rapidityDistribution_{date}_{suff}_{ch}_relative.{ext}'.format(od=options.outdir, date=date, suff=options.suffix, ch=charge, ext=ext))
 
+    ## some "unfolding" stuff first
+    arr_scales_left  = array.array('f', getScales(ybins, charge, 'left' , options.scaleFile))
+    arr_scales_right = array.array('f', getScales(ybins, charge, 'right', options.scaleFile))
+
+    arr_val_scaled_left  = []
+    arr_val_scaled_right = []
+
+    for i in range(len(arr_scales_left)):
+        arr_val_scaled_left .append(arr_scales_left[i] *arr_val[i])
+        arr_val_scaled_right.append(arr_scales_right[i]*arr_val[i])
+    
+    arr_val_scaled_left  = array.array('f', arr_val_scaled_left )
+    arr_val_scaled_right = array.array('f', arr_val_scaled_right)
+    
+
     c3 = ROOT.TCanvas('foo','',800,800)
     half = len(arr_val)/2
-    graph_right = ROOT.TGraphAsymmErrors(half, arr_rap[half:], arr_val[:half][::-1], arr_rlo[half:], arr_rhi[half:], arr_elo[:half][::-1], arr_ehi[:half][::-1])
-    graph_left  = ROOT.TGraphAsymmErrors(half, arr_rap[half:], arr_val[half:], arr_rlo[half:], arr_rhi[half:], arr_elo[half:], arr_ehi[half:])
+    graph_right = ROOT.TGraphAsymmErrors(half, arr_rap[half:], arr_val_scaled_right[:half][::-1], arr_rlo[half:], arr_rhi[half:], arr_elo[:half][::-1], arr_ehi[:half][::-1])
+    graph_left  = ROOT.TGraphAsymmErrors(half, arr_rap[half:], arr_val_scaled_left[half:], arr_rlo[half:], arr_rhi[half:], arr_elo[half:], arr_ehi[half:])
     graph_left .SetFillColor(ROOT.kAzure+8 )
     graph_right.SetFillColor(ROOT.kOrange+7)
     graph_left .GetXaxis().SetRangeUser(0.,3.0)
