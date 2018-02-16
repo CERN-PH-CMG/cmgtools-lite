@@ -49,8 +49,8 @@ Wminus_right_elescale_Dn : WJetsToLNu_NoSkim : 3.*20508.9   : genw_decayId == 12
 #incl_ewkmc_recoil_Up : + ; IncludeMca="w-helicity-13TeV/wmass_e/mca-includes/mca-ewkmc-helicity.txt", FakeRate="w-helicity-13TeV/wmass_e/fr-recoilUp.txt", SkipMe=True, PostFix="_recoil_Up" 
 #incl_ewkmc_recoil_Dn : + ; IncludeMca="w-helicity-13TeV/wmass_e/mca-includes/mca-ewkmc-helicity.txt", FakeRate="w-helicity-13TeV/wmass_e/fr-recoilDn.txt", SkipMe=True, PostFix="_recoil_Dn" 
 
-# fake-lepton background systematics
-#incl_datafakes_FRe_norm_Up : + ; IncludeMca="w-helicity-13TeV/wmass_e/mca-includes/mca-data-legacy2016.txt", FakeRate="w-helicity-13TeV/wmass_e/fakerate-vars/fakeRate-frdata-e-up.txt", SkipMe=True, PostFix='_fakes_FRe_norm_Up'
-#incl_datafakes_FRe_norm_Dn : + ; IncludeMca="w-helicity-13TeV/wmass_e/mca-includes/mca-data-legacy2016.txt", FakeRate="w-helicity-13TeV/wmass_e/fakerate-vars/fakeRate-frdata-e-down.txt", SkipMe=True, PostFix='_fakes_FRe_norm_Dn'
+# fake-lepton background systematics (shape systematics)
+#incl_datafakes_FRe_pt_Up : + ; IncludeMca="w-helicity-13TeV/wmass_e/mca-includes/mca-data-legacy2016.txt", FakeRate="w-helicity-13TeV/wmass_e/fakerate-vars/fakeRate-frdata-e-up.txt", SkipMe=True, PostFix='_fakes_FRe_pt_Up'
+#incl_datafakes_FRe_pt_Dn : + ; IncludeMca="w-helicity-13TeV/wmass_e/mca-includes/mca-data-legacy2016.txt", FakeRate="w-helicity-13TeV/wmass_e/fakerate-vars/fakeRate-frdata-e-down.txt", SkipMe=True, PostFix='_fakes_FRe_pt_Dn'
 
 
