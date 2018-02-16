@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # may use as: cat w-helicity-13TeV/wmass_e/zee_catlist.txt | xargs -i python w-helicity-13TeV/wmass_e/wmass_plots.py plots/testZskim {} > runplots.sh
+# may use as: cat w-helicity-13TeV/wmass_e/wgen_catlist.txt | xargs -i python w-helicity-13TeV/wmass_e/wmass_plots.py plots/gen {} > runplots.sh
 import sys
 import re
 import os
@@ -21,6 +22,7 @@ TREESONLYFULL  = "-P /eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LE
 def base(selection,useSkim=True):
 
     if 'wenu' in selection: TREESONLYSKIM=TREESONLYSKIMW
+    if 'wgen' in selection: TREESONLYSKIM=TREESONLYSKIMW
     elif 'zee' in selection: TREESONLYSKIM=TREESONLYSKIMZ
     else:
         raise RuntimeError, 'Unknown selection'
@@ -36,6 +38,11 @@ def base(selection,useSkim=True):
         GO="%s -W 'puw2016_nTrueInt_36fb(nTrueInt)*trgSF_We(LepGood1_pdgId,LepGood1_pt,LepGood1_eta,2)*leptonSF_We(LepGood1_pdgId,LepGood1_pt,LepGood1_eta)'"%GO
         GO="%s --AP --xp 'Wplus.*,Wminus.*' "%GO
         if dowhat in ["plots","ntuple"]: GO+=" w-helicity-13TeV/wmass_e/wenu_plots.txt "
+    elif selection=='wgen':
+        GO="%s w-helicity-13TeV/wmass_e/mca-80X-wenu-helicity.txt w-helicity-13TeV/wmass_e/wenu_80X.txt "%CORE
+        GO="%s -p Wplus_long,Wplus_left,Wplus_right --plotmode=norm "%GO
+        GO="%s --sP wplus_mtwtk,wplus_etal1,wplus_ptl1,wplus_etal1gen,wplus_ptl1gen,wplus_wy,wplus_wpt "%GO
+        if dowhat in ["plots","ntuple"]: GO+=" w-helicity-13TeV/wmass_e/wenu_plots.txt "        
     elif selection=='zee':
         GO="%s w-helicity-13TeV/wmass_e/mca-80X-skims.txt w-helicity-13TeV/wmass_e/zee.txt "%CORE
         GO="%s -W 'puw2016_nTrueInt_36fb(nTrueInt)*trgSF_We(LepGood1_pdgId,LepGood1_pt,LepGood1_eta,2)*leptonSF_We(LepGood1_pdgId,LepGood1_pt,LepGood1_eta)*leptonSF_We(LepGood2_pdgId,LepGood2_pt,LepGood2_eta)' --sp 'Z' "%GO
@@ -57,6 +64,10 @@ def runIt(GO,name,plots=[],noplots=[]):
 
 def add(GO,opt):
     return '%s %s'%(GO,opt)
+def remove(GO,opt):
+    return GO.replace(opt,'')
+def swapcharge(GO,charge):
+    return GO.replace('plus',charge)
 def setwide(x):
     x2 = add(x,'--wide')
     x2 = x2.replace('--legendWidth 0.35','--legendWidth 0.20')
@@ -88,10 +99,14 @@ if __name__ == '__main__':
         #if '_genpt' in torun: x = add(x,"--sP 'gen_ptv,gen_scaledptv' --xp 'data' -p 'Z' ")
     elif 'wenu' in torun:
         x = base('wenu')
-        #if '_w_reweight' in torun: x = x.replace("-W 'puw*SF_LepTight_1l'","-W 'puw*SF_LepTight_1l*zpt_w*aipi_w'")
-        #if '_genpt' in torun: x = add(x,"--sP 'gen_ptv,gen_scaledptv' --xp 'data' -p 'W' ")
-        
+    elif 'wgen' in torun:
+        x = base('wgen')
+        if 'plus' in torun: x = swapcharge(x,'plus')
+        elif 'minus' in torun: x = swapcharge(x,'minus')
+        if 'nosel' in torun:
+            x = add(x," -U 'alwaystrue' ")
+        if 'fullsel' in torun:
+            x = add(x," -W 'puw2016_nTrueInt_36fb(nTrueInt)*trgSF_We(LepGood1_pdgId,LepGood1_pt,LepGood1_eta,2)*leptonSF_We(LepGood1_pdgId,LepGood1_pt,LepGood1_eta)' ")
+
     plots = [] # if empty, to all the ones of the txt file
-    if "gen" in torun: noplots = []
-    else: noplots = ["^gen_.*"]
-    runIt(x,'%s'%torun,plots,noplots)
+    runIt(x,'%s'%torun,plots)

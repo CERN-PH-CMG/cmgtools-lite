@@ -50,33 +50,33 @@ for charge in charges:
                 empty_bins.append(nbins+1-b)            
 
     longBKG = False
-    if options.mergeRoot:
-        tmpfiles = []
-        for f in files:
-            dir = os.path.dirname(f)
-            bin = ''
-            isEmpty = False
-            with open(f) as file:
-                for l in file.readlines():
-                    if re.match('shapes.*',l):
-                        rootfile = dir+'/'+l.split()[3]
-                    if re.match('bin.*',l):
-                        if len(l.split()) < 2: continue ## skip the second bin line if empty
-                        bin = l.split()[1]
-                        binn = int(bin.split('_')[-1]) if 'Ybin_' in bin else -1
-                    #if re.match('process\s+',l) and '1' not in l:
-                    if re.match('process\s+',l): 
-                        if len(l.split()) > 1 and all(n.isdigit() for n in l.split()[1:]) : continue
-                        if not ('left' in l and 'right' in l):
-                            if not binn in empty_bins: 
-                                if binn >= 0:
-                                    empty_bins.append(binn)
-                                    empty_bins.append(nbins-binn)
-                            isEmpty = True
-                        processes = l.split()[1:]
-                    if re.match('process\s+W.*long',l) and 'bkg' in f:
-                        print "===> W long is treated as a background"
-                        longBKG = True
+    tmpfiles = []
+    for f in files:
+        dir = os.path.dirname(f)
+        bin = ''
+        isEmpty = False
+        with open(f) as file:
+            for l in file.readlines():
+                if re.match('shapes.*',l):
+                    rootfile = dir+'/'+l.split()[3]
+                if re.match('bin.*',l):
+                    if len(l.split()) < 2: continue ## skip the second bin line if empty
+                    bin = l.split()[1]
+                    binn = int(bin.split('_')[-1]) if 'Ybin_' in bin else -1
+                #if re.match('process\s+',l) and '1' not in l:
+                if re.match('process\s+',l): 
+                    if len(l.split()) > 1 and all(n.isdigit() for n in l.split()[1:]) : continue
+                    if not ('left' in l and 'right' in l):
+                        if not binn in empty_bins: 
+                            if binn >= 0:
+                                empty_bins.append(binn)
+                                empty_bins.append(nbins-binn)
+                        isEmpty = True
+                    processes = l.split()[1:]
+                if re.match('process\s+W.*long',l) and 'bkg' in f:
+                    print "===> W long is treated as a background"
+                    longBKG = True
+        if options.mergeRoot:
             if not binn in empty_bins:
                 print 'processing bin = ',bin
                 tf = ROOT.TFile.Open(rootfile)
@@ -100,14 +100,15 @@ for charge in charges:
                                 plots[newname].Write()
          
                 of.Close()
-        if len(empty_bins):
-            print 'found a bunch of empty bins:', empty_bins
+    if len(empty_bins):
+        print 'found a bunch of empty bins:', empty_bins
+    if options.mergeRoot:
         haddcmd = 'hadd -f {of} {tmpfiles}'.format(of=outfile, tmpfiles=' '.join(tmpfiles) )
         #print 'would run this now: ', haddcmd
         #sys.exit()
         os.system(haddcmd)
         os.system('rm {rm}'.format(rm=' '.join(tmpfiles)))
-    
+
         
     combineCmd="combineCards.py "
     for f in files:
@@ -249,7 +250,7 @@ for charge in charges:
             normWlong = sum([float(r) for (p,r) in Wlong]) # there should be only 1 Wlong/charge
             normWLeftOrRight = sum([float(r) for (p,r) in WLeftOrRight])
             r0overLR = normWlong/normWLeftOrRight
-            combinedCardNew.write("norm_%-50s   rateParam * %-5s    %15.1f [%.0f,%.0f]\n" % (Wlong[0][0],Wlong[0][0],normWlong,0.50*normWlong,1.50*normWlong))
+            combinedCardNew.write("norm_%-50s   rateParam * %-5s    %15.1f [%.0f,%.0f]\n" % (Wlong[0][0],Wlong[0][0],normWlong,(1-options.longToTotal)*normWlong,(1+options.longToTotal)*normWlong))
             wLongNormString = "ratio_%-5s   rateParam * %-5s   0.5*@0/(%s) %s\n" \
             % (Wlong[0][0],Wlong[0][0],'+'.join(['@%d'%i for i in xrange(1,len(POIs)+1)]),'norm_'+Wlong[0][0]+','+','.join([p for p in POIs]))
             combinedCardNew.write(wLongNormString)
