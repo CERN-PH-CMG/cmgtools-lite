@@ -423,7 +423,7 @@ class TreeToYield:
         if self._options.doS2V:
             cut  = scalarToVector(cut)
         if self._weightStringAll != "1":
-            cut = "(%s)*%s" % (self._weightStringAll, cut)
+            cut = "(%s)*(%s)" % (self._weightStringAll, cut)
         return cut
     def _getYield(self,tree,cut,fsplit=None,cutNeedsPreprocessing=True):
         cut = self._getCut(cut) if cutNeedsPreprocessing else cut
@@ -505,7 +505,7 @@ class TreeToYield:
         else:
             cut = self.adaptExpr(cut,cut=True)
         if self._weightStringAll != "1":
-            cut = "(%s)*%s" % (self._weightStringAll, cut)
+            cut = "(%s)*(%s)" % (self._weightStringAll, cut)
         return cut
     def getPlotRaw(self,name,expr,bins,cut,plotspec,fsplit=None,closeTreeAfter=False):
         unbinnedData2D = plotspec.getOption('UnbinnedData2D',False) if plotspec != None else False
@@ -593,7 +593,7 @@ class TreeToYield:
             else:            cut = "(%s)*(%s)*(%s)*(%s)" % (self._weightString,self._options.lumi, self._scaleFactor, self.adaptExpr(cut,cut=True))
         else: cut = self.adaptExpr(cut,cut=True)
         if self._options.doS2V: cut  = scalarToVector(cut)
-        if self._weightStringAll != "1": cut = "(%s)*%s" % (self._weightStringAll, cut)
+        if self._weightStringAll != "1": cut = "(%s)*(%s)" % (self._weightStringAll, cut)
         (firstEntry, maxEntries) = self._rangeToProcess(fsplit)
         self._tree.Draw('>>elist', cut, 'entrylist', maxEntries, firstEntry)
         elist = ROOT.gDirectory.Get('elist')
