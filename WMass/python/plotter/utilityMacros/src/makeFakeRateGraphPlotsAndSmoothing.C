@@ -77,7 +77,8 @@ void doFakeRateGraphPlots(const string& outputDIR_tmp = "./",
   htmp1->Fill(0.5);
   htmp2->Fill(0.5);
   vector<TH1*> htmpVec; htmpVec.push_back(htmp2);
-  drawTH1dataMCstack(htmp1, htmpVec, "variable", "Events", "tmpToBeRemoved", outputDIR);
+  vector<string> htmpleg; htmpleg.push_back("");
+  drawTH1dataMCstack(htmp1, htmpVec, "variable", "Events", "tmpToBeRemoved", outputDIR,"",htmpleg,"",-1.0,1,false,1);
   system(("rm " + outputDIR + "*tmpToBeRemoved*").c_str());
 
   string detId = isEB ? "EB" : "EE";
@@ -115,7 +116,8 @@ void doFakeRateGraphPlots(const string& outputDIR_tmp = "./",
   graphLegend.push_back("QCD MC");
   // graphLegend.push_back("data subtr. prompt rate");
 
-  string yrange = isEB ? "0.0,1.1" : "0,0.8";
+  //  string yrange = isEB ? "0.0,1.1" : "0,0.8";
+  string yrange = isEB ? "0.2,1.3" : "0,0.8";
 
   drawGraphCMS(graphList,"electron p_{T} [GeV]",Form("Fake Rate::%s",yrange.c_str()),Form("fakerateComparison_%s_%s",detId.c_str(),plotPostFix.c_str()),outputDIR,graphLegend,legCoord,inputLuminosity);
 
@@ -160,12 +162,14 @@ TFitResultPtr fitGraph(TGraph* gr = NULL,
   if (isEB) {
     if (smoothPolinDegree > 1) f1->SetParameters(0.8,0.0,0.0);
     else f1->SetParameters(0.8,0.0);
-    f1->SetParLimits(0,0.2,0.6);
+    //    f1->SetParLimits(0,0.2,0.6);
+    f1->SetParLimits(0,0.6,0.9);
     f1->SetParLimits(1,-0.03,0.03);
     if (smoothPolinDegree > 1) f1->SetParLimits(2,-0.05,0.05);
     if (smoothPolinDegree > 1) f2->SetParameters(0.8,0.0,0.0);
     else f2->SetParameters(0.8,0.0);
-    f2->SetParLimits(0,0.2,0.6);
+    //    f2->SetParLimits(0,0.2,0.6);
+    f2->SetParLimits(0,0.6,0.9);
     f2->SetParLimits(1,-0.03,0.03);
     if (smoothPolinDegree > 1) f2->SetParLimits(2,-0.05,0.05);
   } else {
@@ -353,7 +357,8 @@ void doFakeRateSmoothing(const string& outputDIR_tmp = "./",
   htmp1->Fill(0.5);
   htmp2->Fill(0.5);
   vector<TH1*> htmpVec; htmpVec.push_back(htmp2);
-  drawTH1dataMCstack(htmp1, htmpVec, "variable", "Events", "tmpToBeRemoved", outputDIR);
+  vector<string> htmpleg; htmpleg.push_back("");
+  drawTH1dataMCstack(htmp1, htmpVec, "variable", "Events", "tmpToBeRemoved", outputDIR,"",htmpleg,"",-1.0,1,false,1);
   system(("rm " + outputDIR + "*tmpToBeRemoved*").c_str());
 
   string detId = isEB ? "EB" : "EE";
@@ -378,7 +383,8 @@ void doFakeRateSmoothing(const string& outputDIR_tmp = "./",
   // checkNotNullPtr(fr_data_orig,"fr_data_orig");
   checkNotNullPtr(fr_qcdmc,"fr_qcdmc");
 
-  string yrange_data = isEB ? "0.2,0.5" : "0.2,0.4";
+  //  string yrange_data = isEB ? "0.2,0.5" : "0.2,0.4";
+  string yrange_data = isEB ? "0.5,1.0" : "0.2,0.4";
   string yrange_qcdmc = isEB ? "0.0,0.8" : "0.0,0.8";
   vector <Double_t> legCoord = {0.12,0.7,0.60,0.9};
 
@@ -507,10 +513,6 @@ void makeFakeRateGraphPlotsAndSmoothing(const string& inputFilePath = "www/wmass
   }
 
   frSmoothFileName += (isMuon ? "fakeRateSmoothed_mu.root" : "fakeRateSmoothed_el.root");
-  cout << endl;
-  cout << endl;
-  cout << "Created file " << frSmoothFileName << endl;
-  cout << endl;
 
   TFile* frSmoothFile = new TFile(frSmoothFileName.c_str(),"RECREATE");
   if (!frSmoothFile || frSmoothFile->IsZombie()) {
@@ -522,6 +524,13 @@ void makeFakeRateGraphPlotsAndSmoothing(const string& inputFilePath = "www/wmass
   frSmoothParameter_data->Write();
   frSmoothParameter_qcd->Write();
   frSmoothFile->Close();
+
+  cout << endl;
+  cout << endl;
+  cout << "Created file " << frSmoothFileName << endl;
+  cout << endl;
+
+
   delete frSmoothFile;
 
 }
