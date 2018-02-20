@@ -14,11 +14,11 @@ DEFAULT_MODULES = [("CMGTools.WMass.postprocessing.examples.puWeightProducer", "
                    ("CMGTools.WMass.postprocessing.examples.genFriendProducer","genQEDJets"),
                    ]
 
-RECOILTEST_MODULES=[("CMGTools.WMass.postprocessing.examples.puWeightProducer", "puWeight2016G"),
+RECOILTEST_MODULES=[("CMGTools.WMass.postprocessing.examples.puWeightProducer", "puWeight2016BF"),
                     ("CMGTools.WMass.postprocessing.examples.lepSFProducer","lepSF,trgSF"),
                     ("CMGTools.WMass.postprocessing.examples.lepVarProducer","eleRelIsoEA,lepQCDAwayJet,eleCalibrated"),
                     ("CMGTools.WMass.postprocessing.examples.jetReCleaner","jetReCleaner"),
-                    ("CMGTools.WMass.postprocessing.examples.genFriendProducer","genQEDJets13TeV"),
+                    ("CMGTools.WMass.postprocessing.examples.genFriendProducer","genQEDJets"),
                     ("CMGTools.WMass.postprocessing.examples.eventRecoilAnalyzer","eventRecoilAnalyzer"),
                    ]
 
@@ -45,6 +45,7 @@ if __name__ == "__main__":
     parser.add_option("--env",   dest="env", type="string", default="lxbatch", help="Give the environment on which you want to use the batch system (lxbatch, psi, oviedo)");
     parser.add_option("--run",   dest="runner",  type="string", default="lxbatch_runner.sh", help="Give the runner script (default: lxbatch_runner.sh)");
     parser.add_option("--mconly", dest="mconly",  action="store_true", default=False, help="Run only on MC samples");
+    parser.add_option("--signals", dest="signals", default="WJetsToLNu", help="declare signals (CSV list) [%default]",type='string');
     parser.add_option("-m", "--modules", dest="modules",  type="string", default=[], action="append", help="Run only these modules among the imported ones");
     parser.add_option(      "--moduleList", dest="moduleList",  type="string", default='DEFAULT_MODULES', help="use this list as a starting point for the modules to run [%default]")
 
@@ -167,7 +168,7 @@ if __name__ == "__main__":
                     if len(options.modules) and name not in options.modules: continue
                     print "Loading %s from %s " % (name, mod)
                     print "Running on dataset = ",dataset
-                    signal = any(x in dataset for x in "WJetsToLNu".split())
+                    signal = any(x in dataset for x in options.signals.split(','))
                     if name=='genQEDJets' and not signal: continue
                     modules.append(getattr(obj,name)())
         if options.noOut:

@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+# usage: python postFitPlots.py localplots/templates cards/helicity_2018_01_25_eta48pt20/Wel_plus_shapes.root x ~/w/wmass/fit/CMSSW_8_1_0/src/fitDiagnostics.root Wel w-helicity-13TeV/wmass_e/wenu_plots.txt --rollback2D etaPt
+
 import ROOT
 ROOT.gROOT.SetBatch(True)
 
@@ -37,9 +39,10 @@ def roll1Dto2D(h1d,h2dname,plotfile,options):
     if 'TH2' not in histo.ClassName(): raise RuntimeError, "Trying to roll the 1D histo on something that is not TH2"
     for i in xrange(1,h1d.GetNbinsX()+1):
         xbin = i % histo.GetNbinsX()
-        ybin = i / histo.GetNbinsX() + 1
+        if not xbin: xbin = xbin+histo.GetNbinsX()
+        ybin = i / histo.GetNbinsX() + (1 if i%histo.GetNbinsX() else 0)
         val = h1d.GetBinContent(i)
-        if val>1: histo.SetBinContent(xbin,ybin,h1d.GetBinContent(i))
+        if val>1.0: histo.SetBinContent(xbin,ybin,h1d.GetBinContent(i))
     return histo
 
 options = None
@@ -135,7 +138,7 @@ if __name__ == "__main__":
       doRatio = True
       htot.GetYaxis().SetRangeUser(0, 1.8*max(htot.GetMaximum(), hdata.GetMaximum()))
       ## Prepare split screen
-      plotformat = (1200,600) if options.rollBackTo2D else (600,600)
+      plotformat = (600,600)
       c1 = ROOT.TCanvas("c1", "c1", plotformat[0], plotformat[1]); c1.Draw()
       c1.SetWindowSize(plotformat[0] + (plotformat[0] - c1.GetWw()), (plotformat[1] + (plotformat[1] - c1.GetWh())));
       p1 = ROOT.TPad("pad1","pad1",0,0.29,1,0.99);

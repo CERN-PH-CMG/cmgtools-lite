@@ -7,13 +7,14 @@ import sys,os,re
 
 from optparse import OptionParser
 parser = OptionParser(usage='%prog [options] cards/card*.txt')
-parser.add_option('-n','--nYbins', dest='nYbins', default=12, type="int", help='Number of W rapidity bins generated')
+parser.add_option('-n','--nYbins', dest='nYbins', default=26, type="int", help='Number of W rapidity bins generated')
 parser.add_option('-m','--merge-root', dest='mergeRoot', default=False, action='store_true', help='Merge the root files with the inputs also')
 parser.add_option('-i','--input', dest='inputdir', default='', type='string', help='input directory with all the cards inside')
 parser.add_option('-b','--bin', dest='bin', default='ch1', type='string', help='name of the bin')
 parser.add_option('-C','--charge', dest='charge', default='plus,minus', type='string', help='process given charge. default is both')
 parser.add_option('-c','--constrain-rates', dest='constrainRateParams', type='string', default='0,1,2', help='add constraints on the rate parameters of (comma-separated list of) rapidity bins. Give only the left ones (e.g. 1 will constrain 1 with n-1 ')
 parser.add_option('-l','--long-lnN', dest='longLnN', type='float', default=None, help='add a common lnN constraint to all longitudinal components')
+parser.add_option('--longToTotal', dest='longToTotal', type='float', default=None, help='Apply a constraint on the Wlong/Wtot rate. Implies fitting for absolute rates')
 (options, args) = parser.parse_args()
 
 charges = options.charge.split(',')
@@ -47,31 +48,35 @@ for charge in charges:
             if b not in empty_bins:
                 empty_bins.append(b)
                 empty_bins.append(nbins+1-b)            
-        
-    if options.mergeRoot:
-        tmpfiles = []
-        for f in files:
-            dir = os.path.dirname(f)
-            bin = ''
-            isEmpty = False
-            with open(f) as file:
-                for l in file.readlines():
-                    if re.match('shapes.*',l):
-                        rootfile = dir+'/'+l.split()[3]
-                    if re.match('bin.*',l):
-                        if len(l.split()) < 2: continue ## skip the second bin line if empty
-                        bin = l.split()[1]
-                        binn = int(bin.split('_')[-1]) if 'Ybin_' in bin else -1
-                    #if re.match('process\s+',l) and '1' not in l:
-                    if re.match('process\s+',l): 
-                        if len(l.split()) > 1 and all(n.isdigit() for n in l.split()[1:]) : continue
-                        if not ('left' in l and 'right' in l and 'long' in l):
-                            if not binn in empty_bins: 
-                                if binn >= 0:
-                                    empty_bins.append(binn)
-                                    empty_bins.append(nbins-binn)
-                            isEmpty = True
-                        processes = l.split()[1:]
+
+    longBKG = False
+    tmpfiles = []
+    for f in files:
+        dir = os.path.dirname(f)
+        bin = ''
+        isEmpty = False
+        with open(f) as file:
+            for l in file.readlines():
+                if re.match('shapes.*',l):
+                    rootfile = dir+'/'+l.split()[3]
+                if re.match('bin.*',l):
+                    if len(l.split()) < 2: continue ## skip the second bin line if empty
+                    bin = l.split()[1]
+                    binn = int(bin.split('_')[-1]) if 'Ybin_' in bin else -1
+                #if re.match('process\s+',l) and '1' not in l:
+                if re.match('process\s+',l): 
+                    if len(l.split()) > 1 and all(n.isdigit() for n in l.split()[1:]) : continue
+                    if not ('left' in l and 'right' in l):
+                        if not binn in empty_bins: 
+                            if binn >= 0:
+                                empty_bins.append(binn)
+                                empty_bins.append(nbins-binn)
+                        isEmpty = True
+                    processes = l.split()[1:]
+                if re.match('process\s+W.*long',l) and 'bkg' in f:
+                    print "===> W long is treated as a background"
+                    longBKG = True
+        if options.mergeRoot:
             if not binn in empty_bins:
                 print 'processing bin = ',bin
                 tf = ROOT.TFile.Open(rootfile)
@@ -87,6 +92,7 @@ for charge in charges:
                     for p in processes:
                         if p in name:
                             newprocname = p+'_'+bin if re.match('Wplus|Wminus',p) else p
+                            if longBKG and re.match('(Wplus_long|Wminus_long)',p): newprocname = p
                             newname = name.replace(p,newprocname)
                             if newname not in plots:
                                 plots[newname] = obj.Clone(newname)
@@ -94,14 +100,15 @@ for charge in charges:
                                 plots[newname].Write()
          
                 of.Close()
-        if len(empty_bins):
-            print 'found a bunch of empty bins:', empty_bins
+    if len(empty_bins):
+        print 'found a bunch of empty bins:', empty_bins
+    if options.mergeRoot:
         haddcmd = 'hadd -f {of} {tmpfiles}'.format(of=outfile, tmpfiles=' '.join(tmpfiles) )
         #print 'would run this now: ', haddcmd
         #sys.exit()
         os.system(haddcmd)
         os.system('rm {rm}'.format(rm=' '.join(tmpfiles)))
-    
+
         
     combineCmd="combineCards.py "
     for f in files:
@@ -146,7 +153,7 @@ for charge in charges:
                     klen = 7
                     kpatt = " %%%ds "  % klen
                     for i in xrange(len(pseudobins)):
-                        realprocesses.append(pseudoprocesses[i]+"_"+pseudobins[i] if ('Wm' in pseudobins[i] or 'Wp' in pseudobins[i]) else pseudoprocesses[i])
+                        realprocesses.append(pseudoprocesses[i]+"_"+pseudobins[i] if ('Wminus' in pseudobins[i] or 'Wplus' in pseudobins[i]) else pseudoprocesses[i])
                     combinedCard.write('bin            %s \n' % ' '.join([kpatt % options.bin for p in pseudoprocesses]))
                     combinedCard.write('process        %s \n' % ' '.join([kpatt % p for p in realprocesses]))
                     combinedCard.write('process        %s \n' % ' '.join([kpatt % str(i+1) for i in xrange(len(pseudobins))]))
@@ -161,13 +168,27 @@ for charge in charges:
     ## already done     os.system("rm tmp_*root")
     
     
-    if options.longLnN:
-        kpatt = " %7s "
+    kpatt = " %7s "
+    if options.longLnN and not options.longToTotal:
         combinedCard.write('norm_long_'+options.bin+'       lnN    ' + ' '.join([kpatt % (options.longLnN if 'long' in x else '-') for x in realprocesses])+'\n')
+
+    combinedCard = open(cardfile,'r')
+    procs = []
+    rates = []
+    for l in combinedCard.readlines():
+        if re.match("process\s+",l) and not re.match("process\s+\d",l): # my regexp qualities are bad... 
+            procs = (l.rstrip().split())[1:]
+        if re.match("rate\s+",l):
+            rates = (l.rstrip().split())[1:]
+        if len(procs) and len(rates): break
+    ProcsAndRates = zip(procs,rates)
+    ProcsAndRatesDict = dict(zip(procs,rates))
     
+    combinedCard = open(cardfile,'a')
     POIs = []
     if options.constrainRateParams:
         signal_procs = filter(lambda x: re.match('Wplus|Wminus',x), realprocesses)
+        if longBKG: signal_procs = filter(lambda x: re.match('(?!Wplus_long|Wminus_long)',x), signal_procs)
         signal_procs.sort(key=lambda x: int(x.split('_')[-1]))
         signal_L = filter(lambda x: re.match('.*left.*',x),signal_procs)
         signal_R = filter(lambda x: re.match('.*right.*',x),signal_procs)
@@ -175,15 +196,25 @@ for charge in charges:
         
         hel_to_constrain = [signal_L,signal_R]
         bins_to_constrain = options.constrainRateParams.split(',')
+        tightConstraint = 0.05
+        looseConstraint = 0.20
         for hel in hel_to_constrain:
             for i in xrange(len(hel)/2):
                 pfx = '_'.join(hel[i].split('_')[:-1])
                 sfx = (hel[i].split('_')[-1],hel[-i-1].split('_')[-1])
-                param_range = '[0.95,1.05]' if sfx[0] in bins_to_constrain else '[0.80,1.20]'
-                combinedCard.write('norm_%s_%s_%-5s   rateParam * %s_%-5s    1 %s\n' % (pfx,sfx[0],sfx[1],pfx,sfx[0],param_range))
-                combinedCard.write('norm_%s_%s_%-5s   rateParam * %s_%-5s    1 %s\n' % (pfx,sfx[0],sfx[1],pfx,sfx[1],param_range))
+                rateNuis = tightConstraint if sfx[0] in bins_to_constrain else looseConstraint
+                if options.longToTotal:
+                    expRate0 = float(ProcsAndRatesDict[pfx+'_'+sfx[0]])
+                    expRate1 = float(ProcsAndRatesDict[pfx+'_'+sfx[1]])
+                    param_range_0 = '%15.1f [%.0f,%.0f]' % (expRate0,(1-rateNuis)*expRate0,(1+rateNuis)*expRate0)
+                    param_range_1 = '%15.1f [%.0f,%.0f]' % (expRate1,(1-rateNuis)*expRate1,(1+rateNuis)*expRate1)
+                else:
+                    param_range_0 = '1 [%.2f,%.2f]' % (1-rateNuis,1+rateNuis)
+                    param_range_1 = param_range_0
+                combinedCard.write('norm_%s_%s_%-5s   rateParam * %s_%-5s    %s\n' % (pfx,sfx[0],sfx[1],pfx,sfx[0],param_range_0))
+                combinedCard.write('norm_%s_%s_%-5s   rateParam * %s_%-5s    %s\n' % (pfx,sfx[0],sfx[1],pfx,sfx[1],param_range_1))
                 POIs.append('norm_%s_%s_%s' % (pfx,sfx[0],sfx[1]))
-        if not options.longLnN:
+        if not longBKG and not options.longLnN:
             for i in xrange(len(signal_0)/2):
                 sfx = signal_0[i].split('_')[-1]
                 param_range = '[0.95,1.05]' if sfx in bins_to_constrain else '[0.80,1.20]'
@@ -192,12 +223,47 @@ for charge in charges:
                 POIs.append('norm_%s' % signal_0[i])
                 POIs.append('norm_%s' % signal_0[-1-i])
     
+        if options.longToTotal:
+            combinedCard = open(cardfile,'r')
+            procs = []
+            rates = []
+            for l in combinedCard.readlines():
+                if re.match("process\s+",l) and not re.match("process\s+\d",l): # my regexp qualities are bad... 
+                    procs = (l.rstrip().split())[1:]
+                if re.match("rate\s+",l):
+                    rates = (l.rstrip().split())[1:]
+                if len(procs) and len(rates): break
+            ProcsAndRates = zip(procs,rates)
+
+            combinedCard = open(cardfile,'r')
+            ProcsAndRatesUnity = []
+            for (p,r) in ProcsAndRates:
+                ProcsAndRatesUnity.append((p,'1') if ('left' in p or 'right' in p or 'long' in p) else (p,r))
+
+            combinedCardNew = open(cardfile+"_new",'w')
+            for l in combinedCard.readlines():
+                if re.match("rate\s+",l):
+                    combinedCardNew.write('rate            %s \n' % ' '.join([kpatt % r for (p,r) in ProcsAndRatesUnity])+'\n')
+                else: combinedCardNew.write(l)
+            Wlong = [(p,r) for (p,r) in ProcsAndRates if re.match('W.*long',p)]
+            WLeftOrRight = [(p,r) for (p,r) in ProcsAndRates if ('left' in p or 'right' in p)]
+            normWlong = sum([float(r) for (p,r) in Wlong]) # there should be only 1 Wlong/charge
+            normWLeftOrRight = sum([float(r) for (p,r) in WLeftOrRight])
+            r0overLR = normWlong/normWLeftOrRight
+            combinedCardNew.write("norm_%-50s   rateParam * %-5s    %15.1f [%.0f,%.0f]\n" % (Wlong[0][0],Wlong[0][0],normWlong,(1-options.longToTotal)*normWlong,(1+options.longToTotal)*normWlong))
+            wLongNormString = "ratio_%-5s   rateParam * %-5s   0.5*@0/(%s) %s\n" \
+            % (Wlong[0][0],Wlong[0][0],'+'.join(['@%d'%i for i in xrange(1,len(POIs)+1)]),'norm_'+Wlong[0][0]+','+','.join([p for p in POIs]))
+            combinedCardNew.write(wLongNormString)
+
+            os.system("mv {cardfile}_new {cardfile}".format(cardfile=cardfile))
+
     print "merged datacard in ",cardfile
     
     #ws = "%s_ws.root" % options.bin
     ws = cardfile.replace('_card.txt', '_ws.root')
     txt2wsCmd = 'text2workspace.py {cf} -o {ws} --X-allow-no-signal '.format(cf=cardfile, ws=ws)
+    if options.longToTotal: txt2wsCmd += "  --X-no-check-norm"
     print txt2wsCmd
     
-    print 'combine {ws} -M FitDiagnostics -t -1 --expectSignal=1 -m 999 --saveShapes --saveWithUncertainties --redefineSignalPOIs {pois}'.format(ws=ws,pois=','.join(POIs))
-    print 'combine {ws} -M MultiDimFit    -t -1 --expectSignal=1 -m 999 --saveFitResult                      --redefineSignalPOIs {pois}'.format(ws=ws, pois=','.join(POIs))
+    #print 'combine {ws} -M FitDiagnostics -t -1 --expectSignal=1 -m 999 --saveShapes --saveWithUncertainties --redefineSignalPOIs {pois} --skipBOnlyFit -v 9'.format(ws=ws,pois=','.join(POIs))
+    print 'combine {ws} -M MultiDimFit    -t -1 --expectSignal=1 -m 999 --saveFitResult --cminInitialHesse 1 --cminFinalHesse 1 --cminPreFit 1 --redefineSignalPOIs {pois} -P {floatPOIs} --floatOtherPOIs=0 -v 9'.format(ws=ws, pois=','.join(POIs), floatPOIs=' -P '.join(POIs))
