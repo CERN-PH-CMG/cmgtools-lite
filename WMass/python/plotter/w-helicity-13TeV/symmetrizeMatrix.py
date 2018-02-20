@@ -13,7 +13,8 @@ def getScales(ybins, charge, pol, infile):
     scales = []
     for iv, val in enumerate(ybins[:-1]):
         istart = histo_gen.FindBin(val)
-        iend   = histo_gen.FindBin(ybins[ybins.index(val)+1])
+        iend   = histo_gen.FindBin(ybins[iv+1])
+        print istart, iend
         num = histo_gen .Integral(istart, iend-1) ## do not include next bin
         den = histo_reco.Integral(istart, iend-1) ## do not include next bin
         tmp_ratio = num/den
@@ -140,7 +141,7 @@ if options.Ybins:
     for p in sorted_rap:
         tmp_procname = '_'.join(p.split('_')[1:-1])
         totalrate += float(rates[procs.index(tmp_procname)])
-    #totalrate=1.
+    totalrate=1.
     #sys.exit()
 
     for ip,p in enumerate(sorted_rap):
@@ -195,7 +196,7 @@ if options.Ybins:
     arr_val_scaled_right = []
 
     for i in range(len(arr_scales_left)):
-        arr_val_scaled_left .append(arr_scales_left[i] *arr_val[i])
+        arr_val_scaled_left .append(arr_scales_left [i]*arr_val[i])
         arr_val_scaled_right.append(arr_scales_right[i]*arr_val[i])
     
     arr_val_scaled_left  = array.array('f', arr_val_scaled_left )
@@ -208,8 +209,9 @@ if options.Ybins:
     graph_left  = ROOT.TGraphAsymmErrors(half, arr_rap[half:], arr_val_scaled_left[half:], arr_rlo[half:], arr_rhi[half:], arr_elo[half:], arr_ehi[half:])
     graph_left .SetFillColor(ROOT.kAzure+8 )
     graph_right.SetFillColor(ROOT.kOrange+7)
-    graph_left .GetXaxis().SetRangeUser(0.,3.0)
-    graph_right.GetXaxis().SetRangeUser(0.,3.0)
+    ywmax = 3.0
+    graph_left .GetXaxis().SetRangeUser(0.,ywmax)
+    graph_right.GetXaxis().SetRangeUser(0.,ywmax)
 
     leg = ROOT.TLegend(0.20, 0.20, 0.5, 0.35)
     leg.SetFillStyle(0)
@@ -221,7 +223,7 @@ if options.Ybins:
     leg.AddEntry(graph_left , 'W^{{{ch}}} left' .format(ch='+' if charge == 'plus' else '-'), 'f')
     leg.AddEntry(graph_right, 'W^{{{ch}}} right'.format(ch='+' if charge == 'plus' else '-'), 'f')
     mg.Draw('Pa5')
-    mg.GetXaxis().SetRangeUser(0.0,3.0)
+    mg.GetXaxis().SetRangeUser(0.0,ywmax)
     mg.GetXaxis().SetTitle('|Y_{W}|')
     mg.GetXaxis().SetTitleSize(0.06)
     mg.GetXaxis().SetLabelSize(0.04)
