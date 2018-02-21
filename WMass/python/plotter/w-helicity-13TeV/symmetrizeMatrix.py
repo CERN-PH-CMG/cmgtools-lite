@@ -13,7 +13,8 @@ def getScales(ybins, charge, pol, infile):
     scales = []
     for iv, val in enumerate(ybins[:-1]):
         istart = histo_gen.FindBin(val)
-        iend   = histo_gen.FindBin(ybins[ybins.index(val)+1])
+        iend   = histo_gen.FindBin(ybins[iv+1])
+        print istart, iend
         num = histo_gen .Integral(istart, iend-1) ## do not include next bin
         den = histo_reco.Integral(istart, iend-1) ## do not include next bin
         tmp_ratio = num/den
@@ -42,7 +43,6 @@ if __name__ == "__main__":
 
     ##infile = ROOT.TFile('/afs/cern.ch/work/e/emanuele/wmass/fit/CMSSW_8_1_0/src/multidimfit.root','read')
     infile = ROOT.TFile(options.infile, 'read')
-
 
     if 'multidimfit' in options.infile:
         fitresult = infile.Get('fit_mdf')
