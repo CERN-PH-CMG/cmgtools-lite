@@ -1,5 +1,5 @@
 # luminosity
-lumi_13TeV              : W_.*|Z|Top|DiBosons|TaudecayW: .* : 1.026
+lumi_13TeV              : W.*|Z|Top|DiBosons|TaudecayW: .* : 1.026
 
 # lepton efficiencies
 CMS_Wmu_lepEff   : W.*|Z|Top|DiBosonsTaudecayW: .* : 1.02
