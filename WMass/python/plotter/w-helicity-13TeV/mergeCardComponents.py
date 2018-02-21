@@ -219,7 +219,6 @@ for charge in charges:
                 normPOI = 'norm_%s_%s_%s' % (pfx,sfx[0],sfx[1])
                 if options.absoluteRates:
                     if options.scaleFile:
-                        genPOI = normPOI.replace('norm','gen')
                         effPar = normPOI.replace('norm','eff')
                         ybin_0 = int(sfx[0].split('_')[-1])
                         ybin_1 = int(sfx[1].split('_')[-1])
@@ -229,8 +228,8 @@ for charge in charges:
                         expRate1 = float(ProcsAndRatesDict[pfx+'_'+sfx[1]])/efficiencies[pol][ybin_1]
                         param_range_0 = '%15.1f [%.0f,%.0f]' % (expRate0,(1-rateNuis)*expRate0,(1+rateNuis)*expRate0)
                         param_range_1 = '%15.1f [%.0f,%.0f]' % (expRate1,(1-rateNuis)*expRate1,(1+rateNuis)*expRate1)
-                        combinedCard.write('%-5s   rateParam * %s_%-5s %s\n' % (genPOI,pfx,sfx[0],param_range_0))
-                        combinedCard.write('%-5s   rateParam * %s_%-5s %s\n' % (genPOI,pfx,sfx[1],param_range_1))
+                        combinedCard.write('%-5s   rateParam * %s_%-5s %s\n' % (normPOI,pfx,sfx[0],param_range_0))
+                        combinedCard.write('%-5s   rateParam * %s_%-5s %s\n' % (normPOI,pfx,sfx[1],param_range_1))
                     else:
                         expRate0 = float(ProcsAndRatesDict[pfx+'_'+sfx[0]])
                         expRate1 = float(ProcsAndRatesDict[pfx+'_'+sfx[1]])
@@ -281,16 +280,16 @@ for charge in charges:
                 eff_long = 1./getScales([ybins[0],ybins[-1]], charge, 'long', options.scaleFile)[0]
                 eff_left = 1./getScales([ybins[0],ybins[-1]], charge, 'left', options.scaleFile)[0]
                 eff_right = 1./getScales([ybins[0],ybins[-1]], charge, 'right', options.scaleFile)[0]
-                genWlong = sum([float(r) for (p,r) in Wlong])/eff_long # there should be only 1 Wlong/charge
-                genWLeft = sum([float(r) for (p,r) in WLeftOrRight if 'left' in p])/eff_left
-                genWRight = sum([float(r) for (p,r) in WLeftOrRight if 'right' in p])/eff_left
-                genWLeftOrRight = genWLeft + genWRight
-                r0overLR = genWlong/genWLeftOrRight
+                normWlong = sum([float(r) for (p,r) in Wlong])/eff_long # there should be only 1 Wlong/charge
+                normWLeft = sum([float(r) for (p,r) in WLeftOrRight if 'left' in p])/eff_left
+                normWRight = sum([float(r) for (p,r) in WLeftOrRight if 'right' in p])/eff_left
+                normWLeftOrRight = normWLeft + normWRight
+                r0overLR = normWlong/normWLeftOrRight
                 combinedCardNew.write("eff_%-50s   rateParam * %-5s    %.4f [%.4f,%.4f]\n" % (Wlong[0][0],Wlong[0][0],eff_long,(1-1E-04)*eff_long,(1+1E-04)*eff_long))
-                combinedCardNew.write("gen_%-50s    rateParam * %-5s    %15.1f [%.0f,%.0f]\n" % (Wlong[0][0],Wlong[0][0],genWlong,(1-options.longToTotal)*genWlong,(1+options.longToTotal)*genWlong))
+                combinedCardNew.write("norm_%-50s    rateParam * %-5s    %15.1f [%.0f,%.0f]\n" % (Wlong[0][0],Wlong[0][0],normWlong,(1-options.longToTotal)*normWlong,(1+options.longToTotal)*normWlong))
                 if options.longToTotal:
                     wLongNormString = "ratio_%-5s   rateParam * %-5s   0.5*@0/(%s) %s\n" \
-                        % (Wlong[0][0],Wlong[0][0],'+'.join(['@%d'%i for i in xrange(1,len(POIs)+1)]),'gen_'+Wlong[0][0]+','+','.join([p.replace('norm','gen') for p in POIs]))
+                        % (Wlong[0][0],Wlong[0][0],'+'.join(['@%d'%i for i in xrange(1,len(POIs)+1)]),'norm_'+Wlong[0][0]+','+','.join([p for p in POIs]))
                     combinedCardNew.write(wLongNormString)
             else:
                 normWlong = sum([float(r) for (p,r) in Wlong]) # there should be only 1 Wlong/charge

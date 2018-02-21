@@ -14,7 +14,6 @@ def getScales(ybins, charge, pol, infile):
     for iv, val in enumerate(ybins[:-1]):
         istart = histo_gen.FindBin(val)
         iend   = histo_gen.FindBin(ybins[iv+1])
-        print istart, iend
         num = histo_gen .Integral(istart, iend-1) ## do not include next bin
         den = histo_reco.Integral(istart, iend-1) ## do not include next bin
         tmp_ratio = num/den
@@ -75,7 +74,7 @@ if __name__ == "__main__":
     ## ======================================
 
 
-    hel_pars = list(p for p in l_params if ('norm_W' in p or 'gen_W' in p))
+    hel_pars = list(p for p in l_params if 'norm_W' in p)
     long_par = list(a for a in l_params if 'long' in a)
     rest     = list(p for p in l_params if p not in hel_pars and p not in long_par)
     pars_r   = list(p for p in hel_pars if 'right' in p)
@@ -87,7 +86,6 @@ if __name__ == "__main__":
 
     for il,l in enumerate(l_sorted_new):
         new_l = l.lstrip('norm_').replace('right','WR').replace('left','WL').replace('Ybin_','')
-        new_l = l.lstrip('gen_').replace('right','WR').replace('left','WL').replace('Ybin_','')
         if 'Ybin' in l:
             name_l = l.split('_')[1:]
             new_l  = name_l[0].replace('plus','+').replace('minus','-')+' '+name_l[-4]
@@ -98,7 +96,6 @@ if __name__ == "__main__":
             binx = h2_corr.GetXaxis().FindBin(l)
             biny = h2_corr.GetYaxis().FindBin(l2)
             new_l2 = l2.lstrip('norm_').replace('right','WR ').replace('left','WL ')
-            new_l2 = l2.lstrip('gen_').replace('right','WR ').replace('left','WL ')
             h2_new.SetBinContent(il+1, il2+1, h2_corr.GetBinContent(binx, biny))
 
     h2_new.Draw('colz')
@@ -110,7 +107,7 @@ if __name__ == "__main__":
         plist2 = fitresult.constPars()
         lpars2 = list(plist2.at(i).GetName() for i in range(len(plist2)))
 
-        hel_pars2 = list(p for p in lpars2 if ('norm_W' in p or 'gen_W' in p))
+        hel_pars2 = list(p for p in lpars2 if 'norm_W' in p)
         long_par2 = list(a for a in lpars2 if 'long' in a)
         rest      = list(p for p in lpars2 if p not in hel_pars2 and p not in long_par2)
         rpars2    = list(p for p in hel_pars2 if 'right' in p)
