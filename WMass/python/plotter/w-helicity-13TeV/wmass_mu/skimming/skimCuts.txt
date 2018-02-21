@@ -1,0 +1,6 @@
+alwaystrue : 1
+trigger    : (HLT_BIT_HLT_IsoMu24_v > 0 || HLT_BIT_HLT_IsoTkMu24_v > 0 )
+onelep     : nLepGood >= 1
+muons      : abs(LepGood_pdgId)==13
+kin accept : LepGood1_pt > 23. && abs(LepGood1_eta)<2.4
+muTightId  : LepGood1_tightId  > 0
