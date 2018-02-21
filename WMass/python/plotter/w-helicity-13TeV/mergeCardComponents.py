@@ -27,7 +27,7 @@ charges = options.charge.split(',')
 fixedYBins = {'plusR' : [0,1,2],
               'plusL' : [0],
               'minusR': [0,1,2],
-              'minusR': [0],
+              'minusL': [0],
              }
 
 if options.fixYBins:
@@ -38,6 +38,9 @@ if options.fixYBins:
         fixedYBins[chhel] = list(int(i) for i in bins.split(','))
         if not fixedYBins[chhel][0] == 0:
             raise RuntimeError, "Your fixed bins should start at 0!!"
+        if not max(fixedYBins[chhel]) == len(fixedYBins[chhel])-1:
+            raise RuntimeError, "This list does not seem to be continuous. Fix!"
+
 
 for charge in charges:
 
