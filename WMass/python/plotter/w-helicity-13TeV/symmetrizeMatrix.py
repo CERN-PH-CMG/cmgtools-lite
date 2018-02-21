@@ -1,8 +1,8 @@
-import ROOT, datetime, array
+import ROOT, datetime, array, os
 
 
 ## usage:
-## python symmetrizeMatrix.py --infile multidimfit.root --outdir ~/www/private/w-helicity-13TeV/correlationMatrices/ --suffix variableEta_ptBins20_longBkg_MTTK45_lepEff1p02 --Ybins -6.0,-3.25,-2.75,-2.5,-2.25,-2.0,-1.75,-1.5,-1.25,-1.0,-0.75,-0.5,-0.25,0.,0.25,0.5,0.75,1.0,1.25,1.5,1.75,2.0,2.25,2.5,2.75,3.25,6.0 --dc mu_plus_card.txt
+## python symmetrizeMatrix.py --infile multidimfit.root --outdir ~/www/private/w-helicity-13TeV/correlationMatrices/ --suffix <suffix>  --dc <input_datacard>
 
 def getScales(ybins, charge, pol, infile):
     histo_file = ROOT.TFile(infile, 'READ')
@@ -35,7 +35,6 @@ if __name__ == "__main__":
     parser.add_option('-i','--infile', dest='infile', default='', type='string', help='file with fitresult')
     parser.add_option('-o','--outdir', dest='outdir', default='', type='string', help='outdput directory to save the matrix')
     parser.add_option(     '--suffix', dest='suffix', default='', type='string', help='suffix for the correlation matrix')
-    parser.add_option(     '--Ybins' , dest='Ybins' , default='', type='string', help='binning in Y')
     parser.add_option(     '--dc'    , dest='dc'    , default='', type='string', help='the corresponding datacard (for the rates)')
     parser.add_option(     '--sf'    , dest='scaleFile'    , default='', type='string', help='path of file with the scaling/unfolding')
     (options, args) = parser.parse_args()
@@ -102,8 +101,13 @@ if __name__ == "__main__":
     for ext in ['png', 'pdf']:
         c.SaveAs('{od}/corrMatrix_{date}_{suff}_{ch}_symmetric.{ext}'.format(od=options.outdir, date=date, suff=options.suffix, ch=charge, ext=ext))
 
-    if options.Ybins:
-        ybins = list(float(i) for i in options.Ybins.split(','))
+    if options.dc:
+        ## assuming the datacard and the binningYW.txt file are in the same directory
+        ybinfile = open(options.dc.replace(os.path.basename(options.dc),'binningYW.txt'), 'r')
+        ybinline = ybinfile.readlines()[0]
+        ybins = list(float(i) for i in ybinline.split())
+        ybinfile.close()
+
         plist2 = fitresult.constPars()
         lpars2 = list(plist2.at(i).GetName() for i in range(len(plist2)))
 

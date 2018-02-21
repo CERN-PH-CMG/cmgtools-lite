@@ -8,12 +8,12 @@ import sys,os,re
 
 from optparse import OptionParser
 parser = OptionParser(usage='%prog [options] cards/card*.txt')
-parser.add_option(     '--Ybins' , dest='Ybins' , default='-6.0,-3.25,-2.75,-2.5,-2.25,-2.0,-1.75,-1.5,-1.25,-1.0,-0.75,-0.5,-0.25,0.,0.25,0.5,0.75,1.0,1.25,1.5,1.75,2.0,2.25,2.5,2.75,3.25,6.0', type='string', help='binning in Y')
 parser.add_option('-m','--merge-root', dest='mergeRoot', default=False, action='store_true', help='Merge the root files with the inputs also')
 parser.add_option('-i','--input', dest='inputdir', default='', type='string', help='input directory with all the cards inside')
 parser.add_option('-b','--bin', dest='bin', default='ch1', type='string', help='name of the bin')
 parser.add_option('-C','--charge', dest='charge', default='plus,minus', type='string', help='process given charge. default is both')
 parser.add_option('-c','--constrain-rates', dest='constrainRateParams', type='string', default='0,1,2', help='add constraints on the rate parameters of (comma-separated list of) rapidity bins. Give only the left ones (e.g. 1 will constrain 1 with n-1 ')
+parser.add_option(     '--fix-YBins', dest='fixYBins', type='string', default='', help='add here replacement of default rate-fixing. with format plusR=0,1,2;plusL=0,1;minusR=0,1,2;minusL=0,1 ')
 parser.add_option('-l','--long-lnN', dest='longLnN', type='float', default=None, help='add a common lnN constraint to all longitudinal components')
 parser.add_option(     '--absolute', dest='absoluteRates', default=False, action='store_true', help='Fit for absolute rates, not scale factors')
 parser.add_option(     '--longToTotal', dest='longToTotal', type='float', default=None, help='Apply a constraint on the Wlong/Wtot rate. Implies fitting for absolute rates')
@@ -23,6 +23,21 @@ parser.add_option(     '--sf'    , dest='scaleFile'    , default='', type='strin
 from symmetrizeMatrix import getScales
 
 charges = options.charge.split(',')
+
+fixedYBins = {'plusR' : [0,1,2],
+              'plusL' : [0],
+              'minusR': [0,1,2],
+              'minusR': [0],
+             }
+
+if options.fixYBins:
+    splitted = options.fixYBins.split(';')
+    for comp in splitted:
+        chhel = comp.split('=')[0]
+        bins  = comp.split('=')[1]
+        fixedYBins[chhel] = list(int(i) for i in bins.split(','))
+        if not fixedYBins[chhel][0] == 0:
+            raise RuntimeError, "Your fixed bins should start at 0!!"
 
 for charge in charges:
 
@@ -48,7 +63,11 @@ for charge in charges:
             if n not in existing_bins: existing_bins.append(n)
     print 'found {n} bins of rapidity'.format(n=nbins+1)
 
-    ybins = list(float(i) for i in options.Ybins.split(','))
+    ybinfile = open(os.path.join(options.inputdir, 'binningYW.txt'),'r')
+    ybinline = ybinfile.readlines()[0]
+    ybins = list(float(i) for i in ybinline.split())
+    ybinfile.close()
+    #ybins = list(float(i) for i in options.Ybins.split(','))
     for b in xrange(len(ybins)-1):
         if b not in existing_bins: 
             if b not in empty_bins:
@@ -194,7 +213,7 @@ for charge in charges:
     efficiencies = {}
     if options.scaleFile:
         for pol in ['left','right','long']: 
-            efficiencies[pol] = [1./x for x in getScales(ybins, charge, pol, options.scaleFile)]
+            efficiencies[pol] = [1./x for x in getScales(ybins, charge, pol, os.path.abspath(options.scaleFile))]
 
     combinedCard = open(cardfile,'a')
     POIs = []
@@ -209,7 +228,7 @@ for charge in charges:
         hel_to_constrain = [signal_L,signal_R]
         bins_to_constrain = options.constrainRateParams.split(',')
         tightConstraint = 0.05
-        looseConstraint = 0.20
+        looseConstraint = tightConstraint
         for hel in hel_to_constrain:
             for i in xrange(len(hel)/2):
                 pfx = '_'.join(hel[i].split('_')[:-1])
@@ -315,6 +334,16 @@ for charge in charges:
     txt2wsCmd = 'text2workspace.py {cf} -o {ws} --X-allow-no-signal '.format(cf=cardfile, ws=ws)
     if options.longToTotal: txt2wsCmd += "  --X-no-check-norm"
     print txt2wsCmd
-    
+
+    ## remove all the POIs that we want to fix
+    fixedPOIs = []
+    for poi in POIs:
+        if 'right' in poi and any('Ybin_'+str(i)+'_' in poi for i in fixedYBins[charge+'R']):
+            fixedPOIs.append(poi)
+        if 'left'  in poi and any('Ybin_'+str(i)+'_' in poi for i in fixedYBins[charge+'L']):
+            fixedPOIs.append(poi)
+    floatPOIs = list(poi for poi in POIs if not poi in fixedPOIs)
+    allPOIs = fixedPOIs+floatPOIs
+        
     #print 'combine {ws} -M FitDiagnostics -t -1 --expectSignal=1 -m 999 --saveShapes --saveWithUncertainties --redefineSignalPOIs {pois} --skipBOnlyFit -v 9'.format(ws=ws,pois=','.join(POIs))
-    print 'combine {ws} -M MultiDimFit    -t -1 --expectSignal=1 -m 999 --saveFitResult --cminInitialHesse 1 --cminFinalHesse 1 --cminPreFit 1 --redefineSignalPOIs {pois} -P {floatPOIs} --floatOtherPOIs=0 -v 9'.format(ws=ws, pois=','.join(POIs), floatPOIs=' -P '.join(POIs))
+    print 'combine {ws} -M MultiDimFit    -t -1 --expectSignal=1 -m 999 --saveFitResult --cminInitialHesse 1 --cminFinalHesse 1 --cminPreFit 1 \t --redefineSignalPOIs {pois} \t\t -P {floatingPOIs} --floatOtherPOIs=0 -v 9'.format(ws=ws, pois=','.join(allPOIs), floatingPOIs=' -P '.join(floatPOIs))
