@@ -81,6 +81,8 @@ float fakeRateWeight_1l_i_smoothed(float lpt, float leta, int lpdgId, bool passW
     float p1 = hist->GetBinContent(etabin, 2);
     if (iFR==1) p0 += hist->GetBinError(etabin, 1);
     if (iFR==2) p0 -= hist->GetBinError(etabin, 1);
+    if (iFR==3) p1 += hist->GetBinError(etabin, 2);
+    if (iFR==4) p1 -= hist->GetBinError(etabin, 2);
     float fr = p0 + p1*lpt;
     return fr/(1-fr);
   } else return 0;

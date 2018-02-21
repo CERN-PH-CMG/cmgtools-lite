@@ -15,6 +15,9 @@ DiBosons : WZ+WZ_ext                             : xsec          ; FillColor=ROO
 DiBosons : ZZ+ZZ_ext                             : xsec          ; FillColor=ROOT.kViolet+2 , Label="DiBosons" , NormSystematic=0.05
 QCD      : QCD_Mu15_part*                        : 0.65*302673.0 ; FillColor=ROOT.kOrange-2 , Label="QCD"      , NormSystematic=0.30
 
+WplusNoSkim  : WJetsToLNu_NoSkim_part* : 3.*20508.9    : genw_decayId == 14 && genw_charge>0 ; FillColor=ROOT.kGray+1   , Label="W+"
+WminusNoSkim : WJetsToLNu_NoSkim_part* : 3.*20508.9    : genw_decayId == 14 && genw_charge>0 ; FillColor=ROOT.kGreen+1  , Label="W-"
+
 data: SingleMuon_Run2016*
 
 fakes_data : SingleMuon_Run2016* : 1 ; FillColor=ROOT.kGray, FakeRate="w-helicity-13TeV/wmass_mu/FRfast/fakeRate_application_data.txt", Label="Fakes"
