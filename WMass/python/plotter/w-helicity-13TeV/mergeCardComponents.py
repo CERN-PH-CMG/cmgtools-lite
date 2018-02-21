@@ -190,7 +190,7 @@ for charge in charges:
         if len(procs) and len(rates): break
     ProcsAndRates = zip(procs,rates)
     ProcsAndRatesDict = dict(zip(procs,rates))
-    
+
     efficiencies = {}
     if options.scaleFile:
         for pol in ['left','right','long']: 
@@ -280,27 +280,32 @@ for charge in charges:
                 eff_long = 1./getScales([ybins[0],ybins[-1]], charge, 'long', options.scaleFile)[0]
                 eff_left = 1./getScales([ybins[0],ybins[-1]], charge, 'left', options.scaleFile)[0]
                 eff_right = 1./getScales([ybins[0],ybins[-1]], charge, 'right', options.scaleFile)[0]
-                normWlong = sum([float(r) for (p,r) in Wlong])/eff_long # there should be only 1 Wlong/charge
+                normWLong = sum([float(r) for (p,r) in Wlong])/eff_long # there should be only 1 Wlong/charge
                 normWLeft = sum([float(r) for (p,r) in WLeftOrRight if 'left' in p])/eff_left
-                normWRight = sum([float(r) for (p,r) in WLeftOrRight if 'right' in p])/eff_left
+                normWRight = sum([float(r) for (p,r) in WLeftOrRight if 'right' in p])/eff_right
                 normWLeftOrRight = normWLeft + normWRight
-                r0overLR = normWlong/normWLeftOrRight
                 combinedCardNew.write("eff_%-50s   rateParam * %-5s    %.4f [%.4f,%.4f]\n" % (Wlong[0][0],Wlong[0][0],eff_long,(1-1E-04)*eff_long,(1+1E-04)*eff_long))
-                combinedCardNew.write("norm_%-50s    rateParam * %-5s    %15.1f [%.0f,%.0f]\n" % (Wlong[0][0],Wlong[0][0],normWlong,(1-options.longToTotal)*normWlong,(1+options.longToTotal)*normWlong))
                 if options.longToTotal:
-                    wLongNormString = "ratio_%-5s   rateParam * %-5s   0.5*@0/(%s) %s\n" \
-                        % (Wlong[0][0],Wlong[0][0],'+'.join(['@%d'%i for i in xrange(1,len(POIs)+1)]),'norm_'+Wlong[0][0]+','+','.join([p for p in POIs]))
+                    r0overLR = normWLong/normWLeftOrRight
+                    combinedCardNew.write("norm_%-50s    rateParam * %-5s    %15.1f [%.0f,%.0f]\n" % (Wlong[0][0],Wlong[0][0],normWLeftOrRight,(1-options.longToTotal)*normWLeftOrRight,(1+options.longToTotal)*normWLeftOrRight))
+                    wLongNormString = "ratio_%-5s   rateParam * %-5s   2*(%s)*%.3f %s\n" \
+                        % (Wlong[0][0],Wlong[0][0],'+'.join(['@%d'%i for i in xrange(len(POIs))]),r0overLR,','.join([p for p in POIs]))
                     combinedCardNew.write(wLongNormString)
+                else:
+                    combinedCardNew.write("norm_%-50s    rateParam * %-5s    %15.1f [%.0f,%.0f]\n" % (Wlong[0][0],Wlong[0][0],normWLong,(1-tightConstraint)*normWLong,(1+tightConstraint)*normWLong))                    
             else:
-                normWlong = sum([float(r) for (p,r) in Wlong]) # there should be only 1 Wlong/charge
+                normWLong = sum([float(r) for (p,r) in Wlong]) # there should be only 1 Wlong/charge
                 normWLeftOrRight = sum([float(r) for (p,r) in WLeftOrRight])
-                r0overLR = normWlong/normWLeftOrRight
-                combinedCardNew.write("norm_%-50s   rateParam * %-5s    %15.1f [%.0f,%.0f]\n" % (Wlong[0][0],Wlong[0][0],normWlong,(1-options.longToTotal)*normWlong,(1+options.longToTotal)*normWlong))
                 if options.longToTotal:
-                    wLongNormString = "ratio_%-5s   rateParam * %-5s   0.5*@0/(%s) %s\n" \
-                        % (Wlong[0][0],Wlong[0][0],'+'.join(['@%d'%i for i in xrange(1,len(POIs)+1)]),'norm_'+Wlong[0][0]+','+','.join([p for p in POIs]))
+                    r0overLR = normWLong/normWLeftOrRight
+                    combinedCardNew.write("norm_%-50s   rateParam * %-5s  %15.1f [%.0f,%.0f]\n" % (Wlong[0][0],Wlong[0][0],normWLeftOrRight,(1-options.longToTotal)*normWLeftOrRight,(1+options.longToTotal)*normWLeftOrRight))
+                    wLongNormString = "ratio_%-5s   rateParam * %-5s   2*(%s)*%.3f %s\n" \
+                        % (Wlong[0][0],Wlong[0][0],'+'.join(['@%d'%i for i in xrange(len(POIs))]),r0overLR,','.join([p for p in POIs]))
                     combinedCardNew.write(wLongNormString)
-            
+                else:
+                    combinedCardNew.write("norm_%-50s   rateParam * %-5s  %15.1f [%.0f,%.0f]\n" % (Wlong[0][0],Wlong[0][0],normWLong,(1-tightConstraint)*normWLong,(1+tightConstraint)*normWLong))                    
+            combinedCardNew.write("efficiencies group = %s" % 'eff_'+Wlong[0][0]+' '+' '.join([p.replace('norm','eff') for p in POIs]) )
+
             os.system("mv {cardfile}_new {cardfile}".format(cardfile=cardfile))
 
     print "merged datacard in ",cardfile
