@@ -335,7 +335,7 @@ for charge in charges:
     #ws = "%s_ws.root" % options.bin
     ws = cardfile.replace('_card.txt', '_ws.root')
     txt2wsCmd = 'text2workspace.py {cf} -o {ws} --X-allow-no-signal '.format(cf=cardfile, ws=ws)
-    if options.longToTotal: txt2wsCmd += "  --X-no-check-norm"
+    if options.absoluteRates: txt2wsCmd += "  --X-no-check-norm"
     print txt2wsCmd
 
     ## remove all the POIs that we want to fix
