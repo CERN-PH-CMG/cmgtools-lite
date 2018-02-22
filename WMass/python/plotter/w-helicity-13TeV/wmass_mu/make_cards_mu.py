@@ -5,7 +5,7 @@ from optparse import OptionParser
 parser = OptionParser(usage='%prog [options]')
 parser.add_option('-d', '--dry-run', dest='dryRun',   action='store_true', default=False, help='Do not run the job, only print the command');
 parser.add_option('-s', '--suffix', dest='suffix', type='string', default=None, help='Append a suffix to the default outputdir (helicity_<date>)');
-parser.add_option("--long-bkg", dest="longBkg",    action="store_true", default=False, help="Treat the longitudinal polarization as one background template.");
+parser.add_option("--long-bkg", dest="longBkg",    action="store_true", default=True, help="Treat the longitudinal polarization as one background template.");
 (options, args) = parser.parse_args()
 
 PROG         = 'w-helicity-13TeV/make_helicity_cards.py'
