@@ -113,7 +113,7 @@ if __name__ == "__main__":
         ybinfile.close()
 
         ## calculate the bin widths for the rapidity bins
-        ybinwidths = list(abs(i - ybins[ybins.index(i)+1]) for i in ybins[:-1])
+        ybinswidths = list(abs(i - ybins[ybins.index(i)+1]) for i in ybins[:-1])
 
         plist2 = fitresult.constPars()
         lpars2 = list(plist2.at(i).GetName() for i in range(len(plist2)))
@@ -175,18 +175,18 @@ if __name__ == "__main__":
                 arr_elo.append(abs(tmp_par.getAsymErrorLo() if tmp_par.hasAsymError() else tmp_par.getAsymErrorHi())/totalrate/ybinswidths[ip])
 
                 tmp_par_init = fitresult.floatParsFinal().find(p) if p in l_sorted_new else fitresult.constPars().find(p)
-                arr_relv .append(tmp_par.getVal()/tmp_par_init.getVal()/ybinswidths[ip])
-                arr_rello.append(abs(tmp_par.getAsymErrorHi())/tmp_par_init.getVal()/ybinswidths[ip])
-                arr_relhi.append(abs(tmp_par.getAsymErrorLo() if tmp_par.hasAsymError() else tmp_par.getAsymErrorHi())/tmp_par_init.getVal()/ybinswidths[ip])
+                arr_relv .append(tmp_par.getVal()/tmp_par_init.getVal())
+                arr_rello.append(abs(tmp_par.getAsymErrorHi())/tmp_par_init.getVal())
+                arr_relhi.append(abs(tmp_par.getAsymErrorLo() if tmp_par.hasAsymError() else tmp_par.getAsymErrorHi())/tmp_par_init.getVal())
             else:
                 tmp_rate = float(rates[procs.index(tmp_procname)])
                 arr_val.append(tmp_rate/totalrate/ybinwidths[ip]*tmp_par.getVal())
                 arr_ehi.append(tmp_rate/totalrate/ybinwidths[ip]*abs(tmp_par.getAsymErrorHi()))
                 arr_elo.append(tmp_rate/totalrate/ybinwidths[ip]*abs(tmp_par.getAsymErrorLo() if tmp_par.hasAsymError() else tmp_par.getAsymErrorHi()))
 
-                arr_relv .append(tmp_par.getVal()/ybinwidths[ip])
-                arr_rello.append(abs(tmp_par.getAsymErrorHi())/ybinwidths[ip])
-                arr_relhi.append(abs(tmp_par.getAsymErrorLo() if tmp_par.hasAsymError() else tmp_par.getAsymErrorHi())/ybinwidths[ip])
+                arr_relv .append(tmp_par.getVal())
+                arr_rello.append(abs(tmp_par.getAsymErrorHi()))
+                arr_relhi.append(abs(tmp_par.getAsymErrorLo() if tmp_par.hasAsymError() else tmp_par.getAsymErrorHi()))
 
             arr_rap.append((ybins[ip]+ybins[ip+1])/2.)
             arr_rlo.append(abs(ybins[ip]-arr_rap[-1]))
@@ -248,7 +248,7 @@ if __name__ == "__main__":
         graph_left .GetXaxis().SetRangeUser(0.,3.0)
         graph_right.GetXaxis().SetRangeUser(0.,3.0)
 
-        leg = ROOT.TLegend(0.20, 0.20, 0.5, 0.35)
+        leg = ROOT.TLegend(0.70, 0.70, 0.90, 0.90)
         leg.SetFillStyle(0)
         leg.SetBorderSize(0)
 

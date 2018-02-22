@@ -315,6 +315,7 @@ for charge in charges:
                     combinedCardNew.write(wLongNormString)
                 else:
                     combinedCardNew.write("norm_%-50s    rateParam * %-5s    %15.1f [%.0f,%.0f]\n" % (Wlong[0][0],Wlong[0][0],normWLong,(1-tightConstraint)*normWLong,(1+tightConstraint)*normWLong))                    
+                combinedCardNew.write("efficiencies group = %s" % 'eff_'+Wlong[0][0]+' '+' '.join([p.replace('norm','eff') for p in POIs]) )
             else:
                 normWLong = sum([float(r) for (p,r) in Wlong]) # there should be only 1 Wlong/charge
                 normWLeftOrRight = sum([float(r) for (p,r) in WLeftOrRight])
@@ -326,7 +327,6 @@ for charge in charges:
                     combinedCardNew.write(wLongNormString)
                 else:
                     combinedCardNew.write("norm_%-50s   rateParam * %-5s  %15.1f [%.0f,%.0f]\n" % (Wlong[0][0],Wlong[0][0],normWLong,(1-tightConstraint)*normWLong,(1+tightConstraint)*normWLong))                    
-            combinedCardNew.write("efficiencies group = %s" % 'eff_'+Wlong[0][0]+' '+' '.join([p.replace('norm','eff') for p in POIs]) )
 
             os.system("mv {cardfile}_new {cardfile}".format(cardfile=cardfile))
 
@@ -335,7 +335,7 @@ for charge in charges:
     #ws = "%s_ws.root" % options.bin
     ws = cardfile.replace('_card.txt', '_ws.root')
     txt2wsCmd = 'text2workspace.py {cf} -o {ws} --X-allow-no-signal '.format(cf=cardfile, ws=ws)
-    if options.longToTotal: txt2wsCmd += "  --X-no-check-norm"
+    if options.absoluteRates: txt2wsCmd += "  --X-no-check-norm"
     print txt2wsCmd
 
     ## remove all the POIs that we want to fix
