@@ -20,8 +20,8 @@ TH2 * FR_mu = 0;
 TH2 * FR_el = 0;
 TH2 * FRi_mu[30], *FRi_el[30];
 
-TH2 * FRcorrectionForPFMET = 0;
-TH2 * FRcorrectionForPFMET_i[5];
+// TH2 * FRcorrectionForPFMET = 0;
+// TH2 * FRcorrectionForPFMET_i[5];
 
 bool loadFRHisto(const std::string &histoName, const char *file, const char *name) {
   TH2 **histo = 0, **hptr2 = 0;
@@ -30,7 +30,7 @@ bool loadFRHisto(const std::string &histoName, const char *file, const char *nam
     else if (histoName == "FR_mu_qcdmc")  { histo = & FR_mu;  hptr2 = & FRi_mu[0]; }
     else if (histoName == "FR_el")  { histo = & FR_el;  hptr2 = & FRi_el[0]; }
     else if (histoName == "FR_el_qcdmc")  { histo = & FR_el;  hptr2 = & FRi_el[0]; }
-    else if (histoName == "FR_correction")  { histo = & FRcorrectionForPFMET; hptr2 = & FRcorrectionForPFMET_i[0]; }
+    // else if (histoName == "FR_correction")  { histo = & FRcorrectionForPFMET; hptr2 = & FRcorrectionForPFMET_i[0]; }
     else if (TString(histoName).BeginsWith("FR_mu_i")) {histo = & FR_temp; hptr2 = & FRi_mu[TString(histoName).ReplaceAll("FR_mu_i","").Atoi()];}
     else if (TString(histoName).BeginsWith("FR_el_i")) {histo = & FR_temp; hptr2 = & FRi_el[TString(histoName).ReplaceAll("FR_el_i","").Atoi()];}
     else if (TString(histoName).Contains("helicityFractions_0")) { histo = & helicityFractions_0; }
@@ -75,12 +75,54 @@ bool loadFRHisto(const std::string &histoName, const char *file, const char *nam
     return histo != 0;
 }
 
-float fakeRateWeight_1l_i_smoothed_FRcorr(float lpt, float leta, int lpdgId, bool passWP, int iFR, float pfmet) {
+// float fakeRateWeight_1l_i_smoothed_FRcorr(float lpt, float leta, int lpdgId, bool passWP, int iFR, float pfmet) {
+//   if (!passWP) {
+//     double fpt = lpt; double feta = std::fabs(leta); int fid = abs(lpdgId);
+//     TH2 *hist = (fid == 11 ? FRi_el[iFR] : FRi_mu[iFR]);
+//     if (hist == 0) {
+//       std::cout << "Error in fakeRateWeight_1l_i_smoothed_FRcorr: hist == 0. Returning 0" << std::endl;	
+//       return 0;
+//     }
+//     int etabin = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(feta)));
+//     float p0 = hist->GetBinContent(etabin, 1);
+//     float p1 = hist->GetBinContent(etabin, 2);
+//     if (iFR==1) p0 += hist->GetBinError(etabin, 1);
+//     if (iFR==2) p0 -= hist->GetBinError(etabin, 1);
+//     if (iFR==3) p1 += hist->GetBinError(etabin, 2);
+//     if (iFR==4) p1 -= hist->GetBinError(etabin, 2);
+//     float fr = p0 + p1*lpt;
+//     /////////////
+//     float FRcorrection = 1;
+//     TH2 *hist_FRcorr = 0;
+//     if (fid == 11 && pfmet >= 0) {
+//       hist_FRcorr = FRcorrectionForPFMET_i[iFR];
+//       if (hist_FRcorr == 0) {
+// 	std::cout << "Error in fakeRateWeight_1l_i_smoothed_FRcorr: hist_FRcorr == 0. Returning 0" << std::endl;
+// 	return 0;
+//       } else {
+// 	int pfmetbin = std::max(1, std::min(hist_FRcorr->GetNbinsX(), hist_FRcorr->GetXaxis()->FindBin(pfmet))); 
+// 	etabin = std::max(1, std::min(hist_FRcorr->GetNbinsY(), hist_FRcorr->GetYaxis()->FindBin(leta))); 
+// 	FRcorrection = hist_FRcorr->GetBinContent(pfmetbin,etabin); 
+//       }
+//     }
+//     /////////////
+//     return FRcorrection * fr/(1-fr);
+//   } else return 0;
+// }
+
+// float fakeRateWeight_1l_i_smoothed(float lpt, float leta, int lpdgId, bool passWP, int iFR) {
+
+//   // this function is used for backward compatibility, becasue I added a new argument with respect to original fakeRateWeight_1l_i_smoothed(...)
+//   return fakeRateWeight_1l_i_smoothed_FRcorr(lpt, leta, lpdgId, passWP, iFR, -1);
+
+// }
+
+float fakeRateWeight_1l_i_smoothed(float lpt, float leta, int lpdgId, bool passWP, int iFR) {
   if (!passWP) {
     double fpt = lpt; double feta = std::fabs(leta); int fid = abs(lpdgId);
     TH2 *hist = (fid == 11 ? FRi_el[iFR] : FRi_mu[iFR]);
     if (hist == 0) {
-      std::cout << "Error in fakeRateWeight_1l_i_smoothed_FRcorr: hist == 0. Returning 0" << std::endl;	
+      std::cout << "Error in fakeRateWeight_1l_i_smoothed: hist == 0. Returning 0" << std::endl;	
       return 0;
     }
     int etabin = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(feta)));
@@ -91,32 +133,9 @@ float fakeRateWeight_1l_i_smoothed_FRcorr(float lpt, float leta, int lpdgId, boo
     if (iFR==3) p1 += hist->GetBinError(etabin, 2);
     if (iFR==4) p1 -= hist->GetBinError(etabin, 2);
     float fr = p0 + p1*lpt;
-    /////////////
-    float FRcorrection = 1;
-    TH2 *hist_FRcorr = 0;
-    if (fid == 11 && pfmet >= 0) {
-      hist_FRcorr = FRcorrectionForPFMET_i[iFR];
-      if (hist_FRcorr == 0) {
-	std::cout << "Error in fakeRateWeight_1l_i_smoothed_FRcorr: hist_FRcorr == 0. Returning 0" << std::endl;
-	return 0;
-      } else {
-	int pfmetbin = std::max(1, std::min(hist_FRcorr->GetNbinsX(), hist_FRcorr->GetXaxis()->FindBin(pfmet))); 
-	etabin = std::max(1, std::min(hist_FRcorr->GetNbinsY(), hist_FRcorr->GetYaxis()->FindBin(leta))); 
-	FRcorrection = hist_FRcorr->GetBinContent(pfmetbin,etabin); 
-      }
-    }
-    /////////////
-    return FRcorrection * fr/(1-fr);
+    return fr/(1-fr);
   } else return 0;
 }
-
-float fakeRateWeight_1l_i_smoothed(float lpt, float leta, int lpdgId, bool passWP, int iFR) {
-
-  // this function is used for backward compatibility, becasue I added a new argument with respect to original fakeRateWeight_1l_i_smoothed(...)
-  return fakeRateWeight_1l_i_smoothed_FRcorr(lpt, leta, lpdgId, passWP, iFR, -1);
-
-}
-
 
 float fakeRateWeight_1l_i(float lpt, float leta, int lpdgId, bool passWP, int iFR) {
   if (!passWP) {
