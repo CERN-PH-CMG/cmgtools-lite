@@ -1,3 +1,4 @@
+alwaystrue : 1
 ## trigger selection
 ## =============================================
 ## trigger1mu    : HLT_SingleMu > 0

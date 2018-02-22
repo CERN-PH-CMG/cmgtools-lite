@@ -24,23 +24,6 @@ from symmetrizeMatrix import getScales
 
 charges = options.charge.split(',')
 
-fixedYBins = {'plusR' : [0,1,2],
-              'plusL' : [0],
-              'minusR': [0,1,2],
-              'minusL': [0],
-             }
-
-if options.fixYBins:
-    splitted = options.fixYBins.split(';')
-    for comp in splitted:
-        chhel = comp.split('=')[0]
-        bins  = comp.split('=')[1]
-        fixedYBins[chhel] = list(int(i) for i in bins.split(','))
-        if not fixedYBins[chhel][0] == 0:
-            raise RuntimeError, "Your fixed bins should start at 0!!"
-        if not max(fixedYBins[chhel]) == len(fixedYBins[chhel])-1:
-            raise RuntimeError, "This list does not seem to be continuous. Fix!"
-
 
 for charge in charges:
 
@@ -65,6 +48,25 @@ for charge in charges:
             if n>nbins: nbins=n
             if n not in existing_bins: existing_bins.append(n)
     print 'found {n} bins of rapidity'.format(n=nbins+1)
+
+    fixedYBins = {'plusR' : [n,n-1,n-2],
+                  'plusL' : [n],
+                  'minusR': [n,n-1,n-2],
+                  'minusL': [n],
+                 }
+    
+    if options.fixYBins:
+        splitted = options.fixYBins.split(';')
+        for comp in splitted:
+            chhel = comp.split('=')[0]
+            bins  = comp.split('=')[1]
+            fixedYBins[chhel] = list(int(i) for i in bins.split(','))
+            ## this doesn't work here anymore if not fixedYBins[chhel][0] == 0:
+            ## this doesn't work here anymore     raise RuntimeError, "Your fixed bins should start at 0!!"
+            ## this doesn't work here anymore if not max(fixedYBins[chhel]) == len(fixedYBins[chhel])-1:
+            ## this doesn't work here anymore     raise RuntimeError, "This list does not seem to be continuous. Fix!"
+    print fixedYBins
+
 
     ybinfile = open(os.path.join(options.inputdir, 'binningYW.txt'),'r')
     ybinline = ybinfile.readlines()[0]
@@ -191,9 +193,6 @@ for charge in charges:
             elif nmatchprocess>2: combinedCard.write(l)
     
     os.system('rm {tmpcard}'.format(tmpcard=tmpcard))
-    ## already done if options.mergeRoot: 
-    ## already done     print "merged inputs in ",outfile
-    ## already done     os.system("rm tmp_*root")
     
     if options.longToTotal or options.scaleFile: options.absoluteRates = True
     
@@ -233,46 +232,43 @@ for charge in charges:
         tightConstraint = 0.05
         looseConstraint = tightConstraint
         for hel in hel_to_constrain:
-            for i in xrange(len(hel)/2):
-                pfx = '_'.join(hel[i].split('_')[:-1])
-                sfx = (hel[i].split('_')[-1],hel[-i-1].split('_')[-1])
-                pol = pfx.split('_')[1]
-                rateNuis = tightConstraint if sfx[0] in bins_to_constrain else looseConstraint
-                normPOI = 'norm_%s_%s_%s' % (pfx,sfx[0],sfx[1])
+            for iy,helbin in enumerate(hel):
+                sfx = str(iy)
+                pol = helbin.split('_')[1]
+                rateNuis = tightConstraint if iy in bins_to_constrain else looseConstraint
+                normPOI = 'norm_{n}'.format(n=helbin)
+
+                ## if we fit absolute rates, we need to get them from the process and plug them in below
                 if options.absoluteRates:
+
+                    ## if we want to fit with the efficiency gen-reco, we need to add one efficiency parameter
                     if options.scaleFile:
-                        effPar = normPOI.replace('norm','eff')
-                        ybin_0 = int(sfx[0].split('_')[-1])
-                        ybin_1 = int(sfx[1].split('_')[-1])
-                        combinedCard.write('%-5s   rateParam * %s_%-5s %.4f [%.4f,%.4f]\n' % (effPar,pfx,sfx[0],efficiencies[pol][ybin_0],(1-1E-04)*efficiencies[pol][ybin_0],(1+1E-04)*efficiencies[pol][ybin_0]))
-                        combinedCard.write('%-5s   rateParam * %s_%-5s %.4f [%.4f,%.4f]\n' % (effPar,pfx,sfx[1],efficiencies[pol][ybin_1],(1-1E-04)*efficiencies[pol][ybin_1],(1+1E-04)*efficiencies[pol][ybin_1]))
-                        expRate0 = float(ProcsAndRatesDict[pfx+'_'+sfx[0]])/efficiencies[pol][ybin_0]
-                        expRate1 = float(ProcsAndRatesDict[pfx+'_'+sfx[1]])/efficiencies[pol][ybin_1]
-                        param_range_0 = '%15.1f [%.0f,%.0f]' % (expRate0,(1-rateNuis)*expRate0,(1+rateNuis)*expRate0)
-                        param_range_1 = '%15.1f [%.0f,%.0f]' % (expRate1,(1-rateNuis)*expRate1,(1+rateNuis)*expRate1)
-                        combinedCard.write('%-5s   rateParam * %s_%-5s %s\n' % (normPOI,pfx,sfx[0],param_range_0))
-                        combinedCard.write('%-5s   rateParam * %s_%-5s %s\n' % (normPOI,pfx,sfx[1],param_range_1))
+                        tmp_eff = efficiencies[pol][iy]
+                        combinedCard.write('eff_{n}    rateParam * {n} \t {eff:.5f} [{dn:.5f},{up:.5f}]\n'.format(n=helbin,eff=tmp_eff,dn=(1-1E-04)*tmp_eff,up=(1+1E-04)*tmp_eff))
+                        expRate0 = float(ProcsAndRatesDict[helbin])/tmp_eff
+                        param_range_0 = '{r:15.1f} [{dn:.1f},{up:.1f}]'.format(r=expRate0,dn=(1-rateNuis)*expRate0,up=(1+rateNuis)*expRate0)
+                        combinedCard.write('norm_{n}  rateParam * {n} \t {pr}\n'.format(n=helbin,pr=param_range_0))
+
+                    ## if we do not want to fit the gen-level thing, we want to just put the absolute reco rates here
                     else:
-                        expRate0 = float(ProcsAndRatesDict[pfx+'_'+sfx[0]])
-                        expRate1 = float(ProcsAndRatesDict[pfx+'_'+sfx[1]])
-                        param_range_0 = '%15.1f [%.0f,%.0f]' % (expRate0,(1-rateNuis)*expRate0,(1+rateNuis)*expRate0)
-                        param_range_1 = '%15.1f [%.0f,%.0f]' % (expRate1,(1-rateNuis)*expRate1,(1+rateNuis)*expRate1)
-                        combinedCard.write('%-5s   rateParam * %s_%-5s    %s\n' % (normPOI,pfx,sfx[0],param_range_0))
-                        combinedCard.write('%-5s   rateParam * %s_%-5s    %s\n' % (normPOI,pfx,sfx[1],param_range_1))
+                        expRate0 = float(ProcsAndRatesDict[helbin])
+                        param_range_0 = '{r:15.1f} [{dn:.1f},{up:.1f}]'.format(r=expRate0,dn=(1-rateNuis)*expRate0,up=(1+rateNuis)*expRate0)
+                        combinedCard.write('norm_{n}  rateParam * {n} \t {pr}\n'.format(n=helbin,pr=param_range_0))
+
+                ## if not fitting full rates, we do the relative rateParams close to 1.
                 else:
-                    param_range_0 = '1 [%.2f,%.2f]' % (1-rateNuis,1+rateNuis)
+                    param_range_0 = '1. [{dn:.2f},{up:.2f}]'.format(dn=1-rateNuis,up=1+rateNuis)
                     param_range_1 = param_range_0
-                    combinedCard.write('%-5s   rateParam * %s_%-5s    %s\n' % (normPOI,pfx,sfx[0],param_range_0))
-                    combinedCard.write('%-5s   rateParam * %s_%-5s    %s\n' % (normPOI,pfx,sfx[1],param_range_1))
+                    combinedCard.write('norm_{n}   rateParam * {n}    {pr}\n'.format(n=helbin,pr=param_range_0))
                 POIs.append(normPOI)
+
+        ## not sure this below will still work with absY, but for now i don't care (marc)
         if not longBKG and not options.longLnN:
-            for i in xrange(len(signal_0)/2):
+            for i in xrange(len(signal_0)):
                 sfx = signal_0[i].split('_')[-1]
-                param_range = '[0.95,1.05]' if sfx in bins_to_constrain else '[0.80,1.20]'
+                param_range = '[0.95,1.05]' if sfx in bins_to_constrain else '[0.95,1.05]'
                 combinedCard.write('norm_%-5s   rateParam * %-5s    1 %s\n' % (signal_0[i],signal_0[i],param_range))
-                combinedCard.write('norm_%-5s   rateParam * %-5s    1 %s\n' % (signal_0[-1-i],signal_0[-1-i],param_range))
                 POIs.append('norm_%s' % signal_0[i])
-                POIs.append('norm_%s' % signal_0[-1-i])
     
         if options.absoluteRates:
             combinedCard = open(cardfile,'r')
@@ -306,16 +302,23 @@ for charge in charges:
                 normWLeft = sum([float(r) for (p,r) in WLeftOrRight if 'left' in p])/eff_left
                 normWRight = sum([float(r) for (p,r) in WLeftOrRight if 'right' in p])/eff_right
                 normWLeftOrRight = normWLeft + normWRight
-                combinedCardNew.write("eff_%-50s   rateParam * %-5s    %.4f [%.4f,%.4f]\n" % (Wlong[0][0],Wlong[0][0],eff_long,(1-1E-04)*eff_long,(1+1E-04)*eff_long))
+                combinedCardNew.write("eff_{n}   rateParam * {n}    {eff:.5f} [{dn:.5f},{up:.5f}]\n".format(n=Wlong[0][0],eff=eff_long,dn=(1-1E-04)*eff_long,up=(1+1E-04)*eff_long))
+
+                ## i have no idea what happens after here in this if block...
                 if options.longToTotal:
                     r0overLR = normWLong/normWLeftOrRight
                     combinedCardNew.write("norm_%-50s    rateParam * %-5s    %15.1f [%.0f,%.0f]\n" % (Wlong[0][0],Wlong[0][0],normWLeftOrRight,(1-options.longToTotal)*normWLeftOrRight,(1+options.longToTotal)*normWLeftOrRight))
                     wLongNormString = "ratio_%-5s   rateParam * %-5s   2*(%s)*%.3f %s\n" \
                         % (Wlong[0][0],Wlong[0][0],'+'.join(['@%d'%i for i in xrange(len(POIs))]),r0overLR,','.join([p for p in POIs]))
                     combinedCardNew.write(wLongNormString)
+
+                ## if we do not constrain the long to the total, we should write the long yield here
                 else:
-                    combinedCardNew.write("norm_%-50s    rateParam * %-5s    %15.1f [%.0f,%.0f]\n" % (Wlong[0][0],Wlong[0][0],normWLong,(1-tightConstraint)*normWLong,(1+tightConstraint)*normWLong))                    
-                combinedCardNew.write("efficiencies group = %s" % 'eff_'+Wlong[0][0]+' '+' '.join([p.replace('norm','eff') for p in POIs]) )
+                    nl = normWLong; tc = tightConstraint
+                    combinedCardNew.write("norm_{n} rateParam * {n} {r:15.1f} [{dn:.1f},{up:.1f}]\n".format(n=Wlong[0][0],r=nl,dn=(1-tc)*nl,up=(1+tc)*nl))
+                    POIs.append('norm_{n}'.format(n=Wlong[0][0]))
+
+            ## if we do not scale gen-reco, then we go back to before...
             else:
                 normWLong = sum([float(r) for (p,r) in Wlong]) # there should be only 1 Wlong/charge
                 normWLeftOrRight = sum([float(r) for (p,r) in WLeftOrRight])
@@ -326,27 +329,40 @@ for charge in charges:
                         % (Wlong[0][0],Wlong[0][0],'+'.join(['@%d'%i for i in xrange(len(POIs))]),r0overLR,','.join([p for p in POIs]))
                     combinedCardNew.write(wLongNormString)
                 else:
-                    combinedCardNew.write("norm_%-50s   rateParam * %-5s  %15.1f [%.0f,%.0f]\n" % (Wlong[0][0],Wlong[0][0],normWLong,(1-tightConstraint)*normWLong,(1+tightConstraint)*normWLong))                    
+                    combinedCardNew.write("norm_%-50s   rateParam * %-5s  %15.1f [%.0f,%.0f]\n" % (Wlong[0][0],Wlong[0][0],normWLong,(1-tightConstraint)*normWLong,(1+tightConstraint)*normWLong))
+
+            ## make an efficiency nuisance group
+            combinedCardNew.write('\nefficiencies group = eff_'+Wlong[0][0]+' '+' '.join([p.replace('norm','eff') for p in POIs])+'\n' )
+            combinedCardNew.close() ## for some reason this is really necessary
 
             os.system("mv {cardfile}_new {cardfile}".format(cardfile=cardfile))
+
+    
+    ## remove all the POIs that we want to fix
+    fixedPOIs = []
+    for poi in POIs:
+        if 'right' in poi and any('Ybin_'+str(i) in poi for i in fixedYBins[charge+'R']):
+            fixedPOIs.append(poi)
+        if 'left'  in poi and any('Ybin_'+str(i) in poi for i in fixedYBins[charge+'L']):
+            fixedPOIs.append(poi)
+    floatPOIs = list(poi for poi in POIs if not poi in fixedPOIs)
+    allPOIs = fixedPOIs+floatPOIs
+
+    ## make a group for the fixed rate parameters. just append it to the file.
+    print 'adding a nuisance group for the fixed rateParams'
+    with open(cardfile,'a+') as finalCardfile:
+        finalCardfile.write('\nfixedY group = {fixed} '.format(fixed=' '.join(i.strip() for i in fixedPOIs)))
+        finalCardfile.write('\n\n## end of file')
+    #finalCardfile.close()
 
     print "merged datacard in ",cardfile
     
     #ws = "%s_ws.root" % options.bin
     ws = cardfile.replace('_card.txt', '_ws.root')
-    txt2wsCmd = 'text2workspace.py {cf} -o {ws} --X-allow-no-signal '.format(cf=cardfile, ws=ws)
-    if options.absoluteRates: txt2wsCmd += "  --X-no-check-norm"
+    txt2wsCmd = 'text2workspace.py {cf} -o {ws} --X-allow-no-signal --X-no-check-norm '.format(cf=cardfile, ws=ws)
     print txt2wsCmd
-
-    ## remove all the POIs that we want to fix
-    fixedPOIs = []
-    for poi in POIs:
-        if 'right' in poi and any('Ybin_'+str(i)+'_' in poi for i in fixedYBins[charge+'R']):
-            fixedPOIs.append(poi)
-        if 'left'  in poi and any('Ybin_'+str(i)+'_' in poi for i in fixedYBins[charge+'L']):
-            fixedPOIs.append(poi)
-    floatPOIs = list(poi for poi in POIs if not poi in fixedPOIs)
-    allPOIs = fixedPOIs+floatPOIs
+    os.system(txt2wsCmd)
         
-    #print 'combine {ws} -M FitDiagnostics -t -1 --expectSignal=1 -m 999 --saveShapes --saveWithUncertainties --redefineSignalPOIs {pois} --skipBOnlyFit -v 9'.format(ws=ws,pois=','.join(POIs))
-    print 'combine {ws} -M MultiDimFit    -t -1 --expectSignal=1 -m 999 --saveFitResult --cminInitialHesse 1 --cminFinalHesse 1 --cminPreFit 1 \t --redefineSignalPOIs {pois} \t\t -P {floatingPOIs} --floatOtherPOIs=0 -v 9'.format(ws=ws, pois=','.join(allPOIs), floatingPOIs=' -P '.join(floatPOIs))
+    combineCmd = 'combine {ws} -M MultiDimFit    -t -1 --expectSignal=1 -m 999 --saveFitResult --cminInitialHesse 1 --cminFinalHesse 1 --cminPreFit 1       --redefineSignalPOIs {pois}            --floatOtherPOIs=0 --freezeNuisanceGroups efficiencies,fixedY -v 9'.format(ws=ws, pois=','.join(allPOIs))
+    print combineCmd
+

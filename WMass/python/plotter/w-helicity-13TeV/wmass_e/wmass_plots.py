@@ -31,7 +31,9 @@ def base(selection,useSkim=True):
     if 'cmsphys06' in os.environ['HOSTNAME']: CORE = CORE.replace('/eos/cms/store/group/dpg_ecal/comm_ecal/localreco/','/data1/emanuele/wmass/')
 
     CORE+=" -f -j 8 -l 35.9 --s2v "+FASTTEST
-    if dowhat == "plots": CORE+=" --lspam '#bf{CMS} #it{Preliminary}' --legendWidth 0.20 --legendFontSize 0.035 --showRatio --maxRatioRange 0.75 1.25 --fixRatioRange "
+    if dowhat == "plots": CORE+=" --lspam '#bf{CMS} #it{Preliminary}' --legendWidth 0.20 --legendFontSize 0.035 "
+    if selection != "wgen":
+        CORE+=" --showRatio --maxRatioRange 0.75 1.25 --fixRatioRange "
 
     if selection=='wenu':
         GO="%s w-helicity-13TeV/wmass_e/mca-80X-wenu-helicity.txt w-helicity-13TeV/wmass_e/wenu_80X.txt "%CORE
@@ -40,7 +42,7 @@ def base(selection,useSkim=True):
         if dowhat in ["plots","ntuple"]: GO+=" w-helicity-13TeV/wmass_e/wenu_plots.txt "
     elif selection=='wgen':
         GO="%s w-helicity-13TeV/wmass_e/mca-80X-wenu-helicity.txt w-helicity-13TeV/wmass_e/wenu_80X.txt "%CORE
-        GO="%s -p Wplus_long,Wplus_left,Wplus_right --plotmode=norm "%GO
+        GO="%s -p Wplus_long,Wplus_left,Wplus_right --plotmode=nostack "%GO
         GO="%s --sP wplus_mtwtk,wplus_etal1,wplus_ptl1,wplus_etal1gen,wplus_ptl1gen,wplus_wy,wplus_wpt "%GO
         if dowhat in ["plots","ntuple"]: GO+=" w-helicity-13TeV/wmass_e/wenu_plots.txt "        
     elif selection=='zee':
