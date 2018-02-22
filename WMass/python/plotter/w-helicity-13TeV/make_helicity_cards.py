@@ -87,12 +87,7 @@ if options.queue and not os.path.exists(outdir+"/jobs"): os.mkdir(outdir+"/jobs"
 POSCUT=" -A alwaystrue positive 'LepGood1_charge>0' "
 NEGCUT=" -A alwaystrue negative 'LepGood1_charge<0' "
 if options.signalCards:
-    ## WYBins=(16,-6,6)
-    ## bWidth=(WYBins[2]-WYBins[1])/float(WYBins[0])
-    ## WYBinsEdges=np.arange(WYBins[1],WYBins[2]+0.001,bWidth)
-    #WYBinsEdges = [-6., -4.,  -3.,   -2.25, -1.5,  -0.75,  0. ,   0.75 , 1.5,   2.25,  3.,  4.,   6.  ]
-    #WYBinsEdges = [-6.0, -2.5, -2.0, -1.5, -1.0, -0.5, 0., 0.5, 1.0, 1.5, 2.0, 2.5, 6.  ]
-    WYBinsEdges = [-6.0, -3.25, -2.75, -2.5, -2.25, -2.0, -1.75, -1.5, -1.25, -1.0, -0.75, -0.5, -0.25, 0., 0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0, 2.25, 2.5, 2.75, 3.25, 6.0 ]
+    WYBinsEdges = [0., 0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0, 2.25, 2.5, 2.75, 3.25, 6.0 ]
     ybinfile = open(outdir+'/binningYW.txt','w')
     ybinfile.writelines(' '.join(str(i) for i in WYBinsEdges))
     ybinfile.close()
@@ -100,8 +95,8 @@ if options.signalCards:
     print "MAKING SIGNAL PART: WYBinsEdges = ",WYBinsEdges
     for charge in ['plus','minus']:
         for iy in xrange(len(WYBinsEdges)-1):
-            print "Making card for %s<genw_y<%s and signal process with charge %s " % (WYBinsEdges[iy],WYBinsEdges[iy+1],charge)
-            ycut=" -A alwaystrue YW%d 'genw_y>%s && genw_y<%s' " % (iy,WYBinsEdges[iy],WYBinsEdges[iy+1])
+            print "Making card for %s<=abs(genw_y)<%s and signal process with charge %s " % (WYBinsEdges[iy],WYBinsEdges[iy+1],charge)
+            ycut=" -A alwaystrue YW%d 'abs(genw_y)>=%s && abs(genw_y)<%s' " % (iy,WYBinsEdges[iy],WYBinsEdges[iy+1])
             ycut += POSCUT if charge=='plus' else NEGCUT
             excl_long_signal  = '' if not options.longBkg else ',W{ch}_long'.format(ch=charge)
             xpsel=' --xp "W{antich}.*,Z,Top,DiBosons,TauDecaysW{longbkg},data.*" --asimov '.format(antich = ('plus' if charge=='minus' else 'minus'), longbkg = excl_long_signal )

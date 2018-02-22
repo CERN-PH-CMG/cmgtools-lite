@@ -264,7 +264,6 @@ for charge in charges:
 
         ## not sure this below will still work with absY, but for now i don't care (marc)
         if not longBKG and not options.longLnN:
-            print 'i am here'
             for i in xrange(len(signal_0)):
                 sfx = signal_0[i].split('_')[-1]
                 param_range = '[0.95,1.05]' if sfx in bins_to_constrain else '[0.95,1.05]'
@@ -303,7 +302,7 @@ for charge in charges:
                 normWLeft = sum([float(r) for (p,r) in WLeftOrRight if 'left' in p])/eff_left
                 normWRight = sum([float(r) for (p,r) in WLeftOrRight if 'right' in p])/eff_right
                 normWLeftOrRight = normWLeft + normWRight
-                combinedCardNew.write("eff_{n}   rateParam * {n}    {eff:.5f} [{dn:.5f},{up:.4f}]\n".format(n=Wlong[0][0],eff=eff_long,dn=(1-1E-04)*eff_long,up=(1+1E-04)*eff_long))
+                combinedCardNew.write("eff_{n}   rateParam * {n}    {eff:.5f} [{dn:.5f},{up:.5f}]\n".format(n=Wlong[0][0],eff=eff_long,dn=(1-1E-04)*eff_long,up=(1+1E-04)*eff_long))
 
                 ## i have no idea what happens after here in this if block...
                 if options.longToTotal:
@@ -316,7 +315,8 @@ for charge in charges:
                 ## if we do not constrain the long to the total, we should write the long yield here
                 else:
                     nl = normWLong; tc = tightConstraint
-                    combinedCardNew.write("norm_{n} rateParam * {n} {r:15.1f} [{dn:.0f},{up:.0f}]\n".format(n=Wlong[0][0],r=nl,dn=(1-tc)*nl,up=(1+tc)*nl))
+                    combinedCardNew.write("norm_{n} rateParam * {n} {r:15.1f} [{dn:.1f},{up:.1f}]\n".format(n=Wlong[0][0],r=nl,dn=(1-tc)*nl,up=(1+tc)*nl))
+                    POIs.append('norm_{n}'.format(n=Wlong[0][0]))
 
             ## if we do not scale gen-reco, then we go back to before...
             else:
@@ -332,18 +332,12 @@ for charge in charges:
                     combinedCardNew.write("norm_%-50s   rateParam * %-5s  %15.1f [%.0f,%.0f]\n" % (Wlong[0][0],Wlong[0][0],normWLong,(1-tightConstraint)*normWLong,(1+tightConstraint)*normWLong))
 
             ## make an efficiency nuisance group
-            combinedCardNew.write('efficiencies group = eff_'+Wlong[0][0]+' '+' '.join([p.replace('norm','eff') for p in POIs]) )
+            combinedCardNew.write('\nefficiencies group = eff_'+Wlong[0][0]+' '+' '.join([p.replace('norm','eff') for p in POIs])+'\n' )
+            combinedCardNew.close() ## for some reason this is really necessary
 
             os.system("mv {cardfile}_new {cardfile}".format(cardfile=cardfile))
 
-    print "merged datacard in ",cardfile
     
-    #ws = "%s_ws.root" % options.bin
-    ws = cardfile.replace('_card.txt', '_ws.root')
-    txt2wsCmd = 'text2workspace.py {cf} -o {ws} --X-allow-no-signal --X-no-check-norm '.format(cf=cardfile, ws=ws)
-    if options.longToTotal: txt2wsCmd += "  --X-no-check-norm"
-    print txt2wsCmd
-
     ## remove all the POIs that we want to fix
     fixedPOIs = []
     for poi in POIs:
@@ -353,6 +347,22 @@ for charge in charges:
             fixedPOIs.append(poi)
     floatPOIs = list(poi for poi in POIs if not poi in fixedPOIs)
     allPOIs = fixedPOIs+floatPOIs
+
+    ## make a group for the fixed rate parameters. just append it to the file.
+    print 'adding a nuisance group for the fixed rateParams'
+    with open(cardfile,'a+') as finalCardfile:
+        finalCardfile.write('\nfixedY group = {fixed} '.format(fixed=' '.join(i.strip() for i in fixedPOIs)))
+        finalCardfile.write('\n\n## end of file')
+    #finalCardfile.close()
+
+    print "merged datacard in ",cardfile
+    
+    #ws = "%s_ws.root" % options.bin
+    ws = cardfile.replace('_card.txt', '_ws.root')
+    txt2wsCmd = 'text2workspace.py {cf} -o {ws} --X-allow-no-signal --X-no-check-norm '.format(cf=cardfile, ws=ws)
+    print txt2wsCmd
+    os.system(txt2wsCmd)
         
-    #print 'combine {ws} -M FitDiagnostics -t -1 --expectSignal=1 -m 999 --saveShapes --saveWithUncertainties --redefineSignalPOIs {pois} --skipBOnlyFit -v 9'.format(ws=ws,pois=','.join(POIs))
-    print 'combine {ws} -M MultiDimFit    -t -1 --expectSignal=1 -m 999 --saveFitResult --cminInitialHesse 1 --cminFinalHesse 1 --cminPreFit 1 \t --redefineSignalPOIs {pois} \t\t -P {floatingPOIs} --floatOtherPOIs=0 --freezeNuisanceGroups efficiencies -v 9'.format(ws=ws, pois=','.join(allPOIs), floatingPOIs=' -P '.join(floatPOIs))
+    combineCmd = 'combine {ws} -M MultiDimFit    -t -1 --expectSignal=1 -m 999 --saveFitResult --cminInitialHesse 1 --cminFinalHesse 1 --cminPreFit 1       --redefineSignalPOIs {pois}            --floatOtherPOIs=0 --freezeNuisanceGroups efficiencies,fixedY -v 9'.format(ws=ws, pois=','.join(allPOIs))
+    print combineCmd
+
