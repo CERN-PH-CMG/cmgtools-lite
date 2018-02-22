@@ -101,12 +101,19 @@ if __name__ == "__main__":
     for ext in ['png', 'pdf']:
         c.SaveAs('{od}/corrMatrix_{date}_{suff}_{ch}_symmetric.{ext}'.format(od=options.outdir, date=date, suff=options.suffix, ch=charge, ext=ext))
 
+    ## =======================================================
+    ## == MAKING THE RAPIDITY DISTRIBUTIONS ==================
+    ## =======================================================
+
     if options.dc:
         ## assuming the datacard and the binningYW.txt file are in the same directory
         ybinfile = open(options.dc.replace(os.path.basename(options.dc),'binningYW.txt'), 'r')
         ybinline = ybinfile.readlines()[0]
         ybins = list(float(i) for i in ybinline.split())
         ybinfile.close()
+
+        ## calculate the bin widths for the rapidity bins
+        ybinwidths = list(abs(i - ybins[ybins.index(i)+1]) for i in ybins[:-1])
 
         plist2 = fitresult.constPars()
         lpars2 = list(plist2.at(i).GetName() for i in range(len(plist2)))
@@ -146,8 +153,11 @@ if __name__ == "__main__":
         for p in sorted_rap:
             tmp_procname = '_'.join(p.split('_')[1:-1])
             if float(rates[procs.index(tmp_procname)]) > 1: # means that the rates are SFs wrt the expected ones
+                print 'I FIGURE YOU FIT RELATIVE RATES (i.e. rate parameters around 1.0)!'
                 totalrate += float(rates[procs.index(tmp_procname)])
-            else: fitAbsoluteRates = True
+            else: 
+                print 'I FIGURE YOU FIT ABSOLUTE RATES (i.e. big numbers)!'
+                fitAbsoluteRates = True
         if fitAbsoluteRates:
             for ip,p in enumerate(sorted_rap):
                 tmp_par = fitresult.floatParsFinal().find(p) if p in l_sorted_new else fitresult.constPars().find(p)
@@ -160,23 +170,23 @@ if __name__ == "__main__":
             tmp_par = fitresult.floatParsFinal().find(p) if p in l_sorted_new else fitresult.constPars().find(p)
             tmp_procname = '_'.join(p.split('_')[1:-1])
             if fitAbsoluteRates:
-                arr_val.append(tmp_par.getVal()/totalrate)
-                arr_ehi.append(abs(tmp_par.getAsymErrorHi())/totalrate)
-                arr_elo.append(abs(tmp_par.getAsymErrorLo() if tmp_par.hasAsymError() else tmp_par.getAsymErrorHi())/totalrate)
+                arr_val.append(tmp_par.getVal()/totalrate/ybinswidths[ip])
+                arr_ehi.append(abs(tmp_par.getAsymErrorHi())/totalrate/ybinswidths[ip])
+                arr_elo.append(abs(tmp_par.getAsymErrorLo() if tmp_par.hasAsymError() else tmp_par.getAsymErrorHi())/totalrate/ybinswidths[ip])
 
                 tmp_par_init = fitresult.floatParsFinal().find(p) if p in l_sorted_new else fitresult.constPars().find(p)
-                arr_relv .append(tmp_par.getVal()/tmp_par_init.getVal())
-                arr_rello.append(abs(tmp_par.getAsymErrorHi())/tmp_par_init.getVal())
-                arr_relhi.append(abs(tmp_par.getAsymErrorLo() if tmp_par.hasAsymError() else tmp_par.getAsymErrorHi())/tmp_par_init.getVal())
+                arr_relv .append(tmp_par.getVal()/tmp_par_init.getVal()/ybinswidths[ip])
+                arr_rello.append(abs(tmp_par.getAsymErrorHi())/tmp_par_init.getVal()/ybinswidths[ip])
+                arr_relhi.append(abs(tmp_par.getAsymErrorLo() if tmp_par.hasAsymError() else tmp_par.getAsymErrorHi())/tmp_par_init.getVal()/ybinswidths[ip])
             else:
                 tmp_rate = float(rates[procs.index(tmp_procname)])
-                arr_val.append(tmp_rate/totalrate*tmp_par.getVal())
-                arr_ehi.append(tmp_rate/totalrate*abs(tmp_par.getAsymErrorHi()))
-                arr_elo.append(tmp_rate/totalrate*abs(tmp_par.getAsymErrorLo() if tmp_par.hasAsymError() else tmp_par.getAsymErrorHi()))
+                arr_val.append(tmp_rate/totalrate/ybinwidths[ip]*tmp_par.getVal())
+                arr_ehi.append(tmp_rate/totalrate/ybinwidths[ip]*abs(tmp_par.getAsymErrorHi()))
+                arr_elo.append(tmp_rate/totalrate/ybinwidths[ip]*abs(tmp_par.getAsymErrorLo() if tmp_par.hasAsymError() else tmp_par.getAsymErrorHi()))
 
-                arr_relv .append(tmp_par.getVal())
-                arr_rello.append(abs(tmp_par.getAsymErrorHi()))
-                arr_relhi.append(abs(tmp_par.getAsymErrorLo() if tmp_par.hasAsymError() else tmp_par.getAsymErrorHi()))
+                arr_relv .append(tmp_par.getVal()/ybinwidths[ip])
+                arr_rello.append(abs(tmp_par.getAsymErrorHi())/ybinwidths[ip])
+                arr_relhi.append(abs(tmp_par.getAsymErrorLo() if tmp_par.hasAsymError() else tmp_par.getAsymErrorHi())/ybinwidths[ip])
 
             arr_rap.append((ybins[ip]+ybins[ip+1])/2.)
             arr_rlo.append(abs(ybins[ip]-arr_rap[-1]))
@@ -242,13 +252,15 @@ if __name__ == "__main__":
         leg.SetFillStyle(0)
         leg.SetBorderSize(0)
 
+        ymax = 6.0
+
         mg = ROOT.TMultiGraph()
         mg.Add(graph_right)
         mg.Add(graph_left )
         leg.AddEntry(graph_left , 'W^{{{ch}}} left' .format(ch='+' if charge == 'plus' else '-'), 'f')
         leg.AddEntry(graph_right, 'W^{{{ch}}} right'.format(ch='+' if charge == 'plus' else '-'), 'f')
         mg.Draw('Pa5')
-        mg.GetXaxis().SetRangeUser(0.0,3.0)
+        mg.GetXaxis().SetRangeUser(0.0,ymax)
         mg.GetXaxis().SetTitle('|Y_{W}|')
         mg.GetXaxis().SetTitleSize(0.06)
         mg.GetXaxis().SetLabelSize(0.04)
