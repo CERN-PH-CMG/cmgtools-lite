@@ -254,10 +254,10 @@ TFitResultPtr fitGraph(TGraph* gr = NULL,
   leg.AddEntry(gr,legEntry.c_str(),"PLE");
   //leg.AddEntry(linefit,"fit: p_{0} + p_{1}#upointx","L");
   if (smoothPolinDegree > 1) leg.AddEntry(linefit,"fit: p_{0} + p_{1}#upointx + p_{2}#upointx^{2}","L");
-  else leg.AddEntry(linefit,"fit: p_{0} + p_{1}#upointx","L");
-  leg.AddEntry(linefit_p0dn,"p_{0} up/down (2#sigma)","L");
-  leg.AddEntry(linefit2,"fit narrow range","L");
-  leg.AddEntry(linefit2_p0dn,"p_{0} up/down (2#sigma)","L");
+  else leg.AddEntry(linefit,Form("fit: %.2g %s %.2g #upoint x",fitres->Parameter(0),((fitres->Parameter(1) > 0) ? "+":"-"), fabs(fitres->Parameter(1))),"L");
+  leg.AddEntry(linefit_p0dn,"offset up/down (2#sigma)","L");
+  leg.AddEntry(linefit2,Form("fit: %.2g %s %.2g #upoint x",fitres2->Parameter(0),((fitres2->Parameter(1) > 0) ? "+":"-"), fabs(fitres2->Parameter(1))),"L");
+  leg.AddEntry(linefit2_p0dn,"offset up/down (2#sigma)","L");
   leg.Draw("same");
   // draw envelope
   linefit_p0up->Draw("Lsame");
@@ -385,7 +385,7 @@ void doFakeRateSmoothing(const string& outputDIR_tmp = "./",
 
   //  string yrange_data = isEB ? "0.2,0.5" : "0.2,0.4";
   string yrange_data = isEB ? "0.5,1.0" : "0.2,0.4";
-  string yrange_qcdmc = isEB ? "0.0,0.8" : "0.0,0.8";
+  string yrange_qcdmc = isEB ? "0.0,1.2" : "0.0,0.8";
   vector <Double_t> legCoord = {0.12,0.7,0.60,0.9};
 
   TFitResultPtr ptr_data = fitGraph(fr_data_subEWKMC, isEB, "electron p_{T} [GeV]", Form("Fake Rate::%s",yrange_data.c_str()), Form("fr_data_subEWKMC_%s_%s",detId.c_str(),plotPostFix.c_str()), outputDIR, "data subtr. EWK MC", legCoord,inputLuminosity,true);
@@ -414,7 +414,7 @@ void makeFakeRateGraphPlotsAndSmoothing(const string& inputFilePath = "www/wmass
 					const Bool_t isMuon = false, 
 					const TString& etaBinBoundariesList = "0.0,1.0,1.479,2.1,2.5",  // important to use dots also for 1.0
 					const Double_t inputLuminosity = 35.9,  // -1 in case luminosity should not be printed
-					const Bool_t saveToFile = false,  // save is WMass/data/fakerate/
+					const Bool_t saveToFile = false,  // whether to save is WMass/data/fakerate/ (if false, save in current folder)
 					const string& inputFilePathForQCD_tmp = "",
 					const string& graphPrefixQCD = ""
 			   ) 
