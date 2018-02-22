@@ -26,7 +26,7 @@ charges = options.charge.split(',')
 
 fixedYBins = {'plusR' : [0,1,2],
               'plusL' : [0],
-              'minusR': [0,1,2],
+              'minusL': [0,1,2],
               'minusR': [0],
              }
 
@@ -312,6 +312,7 @@ for charge in charges:
                     combinedCardNew.write(wLongNormString)
                 else:
                     combinedCardNew.write("norm_%-50s    rateParam * %-5s    %15.1f [%.0f,%.0f]\n" % (Wlong[0][0],Wlong[0][0],normWLong,(1-tightConstraint)*normWLong,(1+tightConstraint)*normWLong))                    
+                combinedCardNew.write("efficiencies group = %s" % 'eff_'+Wlong[0][0]+' '+' '.join([p.replace('norm','eff') for p in POIs]) )
             else:
                 normWLong = sum([float(r) for (p,r) in Wlong]) # there should be only 1 Wlong/charge
                 normWLeftOrRight = sum([float(r) for (p,r) in WLeftOrRight])
@@ -323,7 +324,6 @@ for charge in charges:
                     combinedCardNew.write(wLongNormString)
                 else:
                     combinedCardNew.write("norm_%-50s   rateParam * %-5s  %15.1f [%.0f,%.0f]\n" % (Wlong[0][0],Wlong[0][0],normWLong,(1-tightConstraint)*normWLong,(1+tightConstraint)*normWLong))                    
-            combinedCardNew.write("efficiencies group = %s" % 'eff_'+Wlong[0][0]+' '+' '.join([p.replace('norm','eff') for p in POIs]) )
 
             os.system("mv {cardfile}_new {cardfile}".format(cardfile=cardfile))
 
