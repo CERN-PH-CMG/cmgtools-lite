@@ -208,8 +208,8 @@ bool pass_dxy_dz(const bool isEB = true,
 }
 
 // missing hits and conversion veto
-bool pass_lostHits_conVeto(const float LepGood1_lostHits = -999, 
-			   const float LepGood1_convVeto = -999
+bool pass_lostHits_conVeto(const int LepGood1_lostHits = -999, 
+			   const int LepGood1_convVeto = -999
 			   ) 
 {
   return (LepGood1_lostHits <= 1 && LepGood1_convVeto == 1);
