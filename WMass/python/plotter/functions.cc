@@ -10,6 +10,7 @@
 #include <string>
 #include <cmath>
 #include "TH2F.h"
+#include "TVector2.h"
 #include "Math/GenVector/LorentzVector.h"
 #include "Math/GenVector/PtEtaPhiM4D.h"
 
@@ -506,6 +507,43 @@ bool pass_FakerateNum_debug(const bool  isEB = true,
 
 }
 //==================================================
+
+
+// call like 
+// tkmt_tkmetEleCorr(met_trkPt,
+// 		     met_trkPhi,
+// 		     ptElFull(LepGood1_calPt,LepGood1_eta),
+// 		     LepGood_phi, 
+// 		     pass_dxy_dz(abs(LepGood1_eta)<1.479, LepGood1_dxy, LepGood1_dz) && pass_lostHits_conVeto(LepGood1_lostHits, LepGood1_convVeto))
+
+
+float tkmt_tkmetEleCorr(float tkmet_pt, float tkmet_phi, float lep_pt, float lep_phi, bool eleTrackIsVertexCompatible) {
+
+  if (eleTrackIsVertexCompatible) {
+
+    return mt_2(tkmet_pt, tkmet_phi, lep_pt, lep_phi);
+
+  } else {
+
+    // when the electron is not compatible with the primary vertex, its track is not used to compute tkMet (it is a bug in our ntuples)
+    // in that case, add the electron back
+    // We have the following (assuming vectorial object in the equation)
+    // TkMEt_corr = -Sum(pT_tracks_noBadEle) - pT_badEle
+    // in the ntuples we have TkMEt = -Sum(pT_tracks_noBadEle)
+
+    // here we define the tkMet as the wrong one and will correct later (we avoid declaring 2 TVector2) 
+    TVector2 trkmet_corr; trkmet_corr.SetMagPhi(tkmet_pt, tkmet_phi);  
+    TVector2 badEle;      badEle.SetMagPhi(lep_pt,lep_phi);
+    trkmet_corr -= badEle;
+
+    return mt_2(trkmet_corr.Mod(),trkmet_corr.Phi(),lep_pt,lep_phi);
+
+  }
+
+}
+
+//==================================================
+
 
 
 void functions() {}
