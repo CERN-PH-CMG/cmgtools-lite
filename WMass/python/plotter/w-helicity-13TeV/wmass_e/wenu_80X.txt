@@ -2,6 +2,6 @@ alwaystrue: 1
 HLT_SingleEL : HLT_SingleEl == 1
 onelep : nLepGood == 1 && abs(LepGood1_pdgId)==11
 fiducial : abs(LepGood1_eta)<1.4442 || abs(LepGood1_eta)>1.566
-eleKin : ptElFull(LepGood1_calPt,LepGood1_eta) > 30 && abs(LepGood1_eta)<2.5
+eleKin : ptElFull(LepGood1_calPt,LepGood1_eta) > 30 && ptElFull(LepGood1_calPt,LepGood1_eta) < 45 && abs(LepGood1_eta)<2.5
 HLTid : LepGood1_hltId > 0
 numSel : LepGood1_customId == 1
