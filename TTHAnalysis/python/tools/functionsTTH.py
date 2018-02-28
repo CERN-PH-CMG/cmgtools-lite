@@ -52,8 +52,8 @@ from CMGTools.TTHAnalysis.tools.combinedObjectTaggerForCleaning import *
 from CMGTools.TTHAnalysis.tools.fastCombinedObjectRecleaner import *
 
 def clean_and_FO_selection_TTH(lep):
-    return lep.conept>10 and lep.jetBTagCSV<0.8484 and (abs(lep.pdgId)!=11 or _ttH_idEmu_cuts_E2(lep)) \
-        and (lep.mvaTTH>0.90 or (lep.jetPtRatiov2>0.5 and lep.jetBTagCSV<0.3 and (abs(lep.pdgId)!=13 or lep.segmentCompatibility>0.3) and (abs(lep.pdgId)!=11 or lep.mvaIdSpring16HZZ > (0.0 if abs(lep.eta)<1.479 else 0.7)) ) )
+    return lep.conept>10 and lep.jetBTagDeepCSV<0.4941 and (abs(lep.pdgId)!=11 or _ttH_idEmu_cuts_E2(lep)) \
+        and (lep.mvaTTH>0.90 or (lep.jetPtRatiov2>0.5 and lep.jetBTagDeepCSV<0.1522 and (abs(lep.pdgId)!=13 or lep.segmentCompatibility>0.3) and (abs(lep.pdgId)!=11 or lep.mvaIdSpring16HZZ > (0.0 if abs(lep.eta)<1.479 else 0.7)) ) )
 
 MODULES.append( ('leptonJetFastReCleanerTTH_step1', lambda : CombinedObjectTaggerForCleaning("InternalRecl",
                                                                                        looseLeptonSel = lambda lep : lep.miniRelIso < 0.4 and lep.sip3d < 8,
@@ -72,8 +72,8 @@ MODULES.append( ('leptonJetFastReCleanerTTH_step2_mc',lambda : fastCombinedObjec
                                                                                            doVetoLMf=False,
                                                                                            doVetoLMt=False,
                                                                                            jetPts=[25,40],
-                                                                                           btagL_thr=0.5426,
-                                                                                           btagM_thr=0.8484,
+                                                                                           btagL_thr=0.1522,
+                                                                                           btagM_thr=0.4941,
                                                                                            isMC = True) ))
 MODULES.append( ('leptonJetFastReCleanerTTH_step2_data',lambda : fastCombinedObjectRecleaner(label="Recl",
                                                                                              inlabel="_InternalRecl",
@@ -83,8 +83,8 @@ MODULES.append( ('leptonJetFastReCleanerTTH_step2_data',lambda : fastCombinedObj
                                                                                              doVetoLMf=False,
                                                                                              doVetoLMt=False,
                                                                                              jetPts=[25,40],
-                                                                                             btagL_thr=0.5426,
-                                                                                             btagM_thr=0.8484,
+                                                                                             btagL_thr=0.1522,
+                                                                                             btagM_thr=0.4941,
                                                                                              isMC = False) ))
 
 from CMGTools.TTHAnalysis.tools.eventVars_2lss import EventVars2LSS
@@ -149,7 +149,7 @@ MODULES.append( ('higgsRecoTTH', lambda : HiggsRecoTTH(label="_Recl",
                                                        cut_BDT_rTT_score = 0.0,
                                                        cuts_mW_had = (60.,100.),
                                                        cuts_mH_vis = (80.,140.),
-                                                       btagCSVveto = 0.5426) ))
+                                                       btagDeepCSVveto = 0.1522) ))
 
 from CMGTools.TTHAnalysis.tools.ttHMCEventReco import TTHMCEventReco
 MODULES.append( ('genLevelChain', lambda : TTHMCEventReco()) )
