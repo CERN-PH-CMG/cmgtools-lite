@@ -138,7 +138,8 @@ MODULES.append( ('TauTightFlag', lambda : ObjTagger("isTauTight","TauSel_Recl",
                                                     [lambda tau : tau.idMVAdR03>=3] )))
 
 from CMGTools.TTHAnalysis.tools.bTagEventWeightsCSVFullShape import BTagEventWeightFriend
-MODULES.append( ('eventBTagWeight', lambda : BTagEventWeightFriend(csvfile=os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/btag/CSVv2_Moriond17_B_H.csv")))
+MODULES.append( ('eventBTagWeight', lambda : BTagEventWeightFriend(csvfile=os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/btag/DeepCSV_94XSF_V1_B_F.csv",
+                                                                   discrname="btagDeepCSV")))
 
 from CMGTools.TTHAnalysis.tools.BDT_resolvedTopTagger_cpp import BDT_resolvedTopTagger
 MODULES.append( ('BDT_rTT', lambda : BDT_resolvedTopTagger(os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/kinMVA/tth/resTop_xGBoost_v0.weights.xml")) )
