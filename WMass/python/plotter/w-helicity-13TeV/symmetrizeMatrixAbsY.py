@@ -182,6 +182,7 @@ if __name__ == "__main__":
             arr_rap   = array.array('f', []); arr_rlo   = array.array('f', []); arr_rhi   = array.array('f', []);
             ## for the reco thing...
             arr_valReco   = array.array('f', []); arr_ehiReco   = array.array('f', []); arr_eloReco   = array.array('f', []);
+
             for ip,p in enumerate(pol):
 
                 tmp_par = fitresult.floatParsFinal().find(p) if p in l_sorted_new else fitresult.constPars().find(p)
@@ -217,15 +218,17 @@ if __name__ == "__main__":
                 arr_rhi.append(abs(ybins[ip]-arr_rap[-1]))
 
             if 'left' in pol[0]:
+                print 'left {ch}: {i}'.format(ch=charge, i=sum(arr_val))
                 graphLeft      = ROOT.TGraphAsymmErrors(len(arr_val), arr_rap, arr_val, arr_rlo, arr_rhi, arr_elo, arr_ehi)
-                graphLeft_rel  = ROOT.TGraphAsymmErrors(len(arr_val), arr_rap, arr_relv, arr_rlo, arr_rhi, arr_rello, arr_relhi)
+                graphLeft_rel  = ROOT.TGraphAsymmErrors(len(arr_relv), arr_rap, arr_relv, arr_rlo, arr_rhi, arr_rello, arr_relhi)
                 graphLeft_reco = ROOT.TGraphAsymmErrors(len(arr_valReco), arr_rap, arr_valReco, arr_rlo, arr_rhi, arr_eloReco, arr_ehiReco)
                 graphLeft     .SetName('graphLeft')
                 graphLeft_rel .SetName('graphLeft_rel')
                 graphLeft_reco.SetName('graphLeft_reco')
             else:
+                print 'right {ch}: {i}'.format(ch=charge, i=sum(arr_val))
                 graphRight      = ROOT.TGraphAsymmErrors(len(arr_val), arr_rap, arr_val, arr_rlo, arr_rhi, arr_elo, arr_ehi)
-                graphRight_rel  = ROOT.TGraphAsymmErrors(len(arr_val), arr_rap, arr_relv, arr_rlo, arr_rhi, arr_rello, arr_relhi)
+                graphRight_rel  = ROOT.TGraphAsymmErrors(len(arr_relv), arr_rap, arr_relv, arr_rlo, arr_rhi, arr_rello, arr_relhi)
                 graphRight_reco = ROOT.TGraphAsymmErrors(len(arr_valReco), arr_rap, arr_valReco, arr_rlo, arr_rhi, arr_eloReco, arr_ehiReco)
                 graphRight     .SetName('graphRight')
                 graphRight_rel .SetName('graphRight_rel')
@@ -323,6 +326,17 @@ if __name__ == "__main__":
         graphLeft_rel.GetYaxis().SetRangeUser(0.97, 1.033)
         graphRight_rel.GetXaxis().SetRangeUser(0., 3.)
         graphRight_rel.GetYaxis().SetRangeUser(0.97, 1.033)
+
+        graphRight_rel.GetXaxis().SetTitle('|Y_{W}|')
+
+        graphLeft_rel .GetXaxis().SetTitleSize(0.06)
+        graphLeft_rel .GetXaxis().SetLabelSize(0.06)
+        graphLeft_rel .GetYaxis().SetTitleSize(0.06)
+        graphLeft_rel .GetYaxis().SetLabelSize(0.06)
+        graphRight_rel.GetXaxis().SetTitleSize(0.06)
+        graphRight_rel.GetXaxis().SetLabelSize(0.06)
+        graphRight_rel.GetYaxis().SetTitleSize(0.06)
+        graphRight_rel.GetYaxis().SetLabelSize(0.06)
 
         graphLeft_rel.Draw('Pa2')
         c2.cd(2)
