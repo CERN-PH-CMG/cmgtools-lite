@@ -625,6 +625,18 @@ if getHeppyOption("prescale"):
         sequence.insert(sequence.index(jsonAna)+1, thePrescale)
     else:
         sequence.insert(sequence.index(skimAnalyzer)+1, thePrescale)
+if getHeppyOption("prescaleskim"):
+    from CMGTools.TTHAnalysis.analyzers.ttHPrescalingLepSkimmer import ttHPrescalingLepSkimmer
+    psvalue = 10 #int( getHeppyOption("prescaleskim") ) if getHeppyOption("preskim") != True else 10
+    if psvalue <= 1: raise RuntimeError
+    thePreskim = cfg.Analyzer(ttHPrescalingLepSkimmer, name="ttHPrescalingLepSkimmer", 
+            minLeptons = 2, requireSameSignPair = True,
+            jetSelection = lambda jet : jet.pt()*max(1,jet.corrJECUp/jet.corr,jet.corrJECDown/jet.corr) > 25,
+            minJets = 4, 
+            minMET = 70,
+            prescaleFactor = psvalue,
+            useEventNumber = True)
+    sequence.insert(sequence.index(metAna)+1, thePreskim)
 
 if not getHeppyOption("keepLHEweights",False):
     if "LHE_weights" in treeProducer.collections: treeProducer.collections.pop("LHE_weights")

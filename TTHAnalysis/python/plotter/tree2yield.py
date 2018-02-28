@@ -144,6 +144,7 @@ class TreeToYield:
         self._objname = objname if objname else options.obj
         self._weight  = (options.weight and 'data' not in self._name )
         self._isdata = 'data' in self._name
+        self._weightStringAll  = options.weightStringAll
         self._weightString0  = options.weightString if not self._isdata else "1"
         self._scaleFactor0  = scaleFactor
         self._fullYield = 0 # yield of the full sample, as if it passed the full skim and all cuts
@@ -421,10 +422,12 @@ class TreeToYield:
             cut = self.adaptExpr(cut,cut=True)
         if self._options.doS2V:
             cut  = scalarToVector(cut)
+        if self._weightStringAll != "1":
+            cut = "(%s)*(%s)" % (self._weightStringAll, cut)
         return cut
     def _getYield(self,tree,cut,fsplit=None,cutNeedsPreprocessing=True):
         cut = self._getCut(cut) if cutNeedsPreprocessing else cut
-        if self._weight:
+        if self._weight or (self._weightStringAll != "1"):
 #            print cut
             ROOT.gROOT.cd()
             if ROOT.gROOT.FindObject("dummy") != None: ROOT.gROOT.FindObject("dummy").Delete()
@@ -501,6 +504,8 @@ class TreeToYield:
             else:            cut = "(%s)*(%s)*(%s)*(%s)" % (self._weightString,self._options.lumi, self._scaleFactor, self.adaptExpr(cut,cut=True))
         else:
             cut = self.adaptExpr(cut,cut=True)
+        if self._weightStringAll != "1":
+            cut = "(%s)*(%s)" % (self._weightStringAll, cut)
         return cut
     def getPlotRaw(self,name,expr,bins,cut,plotspec,fsplit=None,closeTreeAfter=False):
         unbinnedData2D = plotspec.getOption('UnbinnedData2D',False) if plotspec != None else False
@@ -588,6 +593,7 @@ class TreeToYield:
             else:            cut = "(%s)*(%s)*(%s)*(%s)" % (self._weightString,self._options.lumi, self._scaleFactor, self.adaptExpr(cut,cut=True))
         else: cut = self.adaptExpr(cut,cut=True)
         if self._options.doS2V: cut  = scalarToVector(cut)
+        if self._weightStringAll != "1": cut = "(%s)*(%s)" % (self._weightStringAll, cut)
         (firstEntry, maxEntries) = self._rangeToProcess(fsplit)
         self._tree.Draw('>>elist', cut, 'entrylist', maxEntries, firstEntry)
         elist = ROOT.gDirectory.Get('elist')
@@ -632,6 +638,7 @@ def addTreeToYieldOptions(parser):
     parser.add_option("-u", "--unweight",       dest="weight",       action="store_false", default=True, help="Don't use weights (in MC events), note weights are still used if a fake rate file is given");
     parser.add_option("--uf", "--unweight-forced",  dest="forceunweight", action="store_true", default=False, help="Do not use weight even if a fake rate file is given.");
     parser.add_option("-W", "--weightString",   dest="weightString", type="string", default="1", help="Use weight (in MC events)");
+    parser.add_option("--WA", "--weightAll",   dest="weightStringAll", type="string", default="1", help="Use this weight on all events (including data)");
     parser.add_option("-f", "--final",  dest="final", action="store_true", help="Just compute final yield after all cuts");
     parser.add_option("-e", "--errors",  dest="errors", action="store_true", help="Include uncertainties in the reports");
     parser.add_option("--tf", "--text-format",   dest="txtfmt", type="string", default="text", help="Output format: text, html");
