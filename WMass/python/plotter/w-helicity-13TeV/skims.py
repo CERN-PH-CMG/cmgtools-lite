@@ -5,12 +5,19 @@
 #       python  w-helicity-13TeV/skims.py w-helicity-13TeV/wmass_e/mca-80X-skims.txt w-helicity-13TeV/wmass_e/skim_zee.txt   TREES_1LEP_80X_V3 /eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3_ZEESKIM_V2  -f w-helicity-13TeV/wmass_e/varsSkim_80X.txt
 #       python  w-helicity-13TeV/skims.py w-helicity-13TeV/wmass_e/mca-80X-skims.txt w-helicity-13TeV/wmass_e/skim_fr_el.txt TREES_1LEP_80X_V3 /eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3_FRELSKIM_V2 -f w-helicity-13TeV/wmass_e/varsSkim_80X_fr.txt
 
-
-
 ## MUONS
 #       python  w-helicity-13TeV/skims.py w-helicity-13TeV/wmass_mu/skimming/mca-wmu-singleMuon.txt w-helicity-13TeV/wmass_mu/skimming/skimCuts.txt /eos/user/m/mdunser/w-helicity-13TeV/trees/2017_12_12_legacy_singlemu/ /eos/user/m/mdunser/w-helicity-13TeV/trees/2017_12_12_legacy_singlemu/skims/ -f w-helicity-13TeV/wmass_mu/skimming/varsToKeep.txt
 
 # add -q 8nh --log logs to run in batch 1 job/component (and --pretend to just check the command that will be run)
+
+### FRIEND TREES ###
+# then skim the friend trees, using the event lists saved from te previous step
+# this is enough fast to be done interactively in series for all the datasets
+# it's the same command as before, with --fo (--friend-only) option. Eventually may give a file with the list of variables to keep (as for the main trees)
+
+## ELECTRONS
+#        python w-helicity-13TeV/skims.py w-helicity-13TeV/wmass_e/mca-80X-skims.txt w-helicity-13TeV/wmass_e/skim_wenu.txt TREES_1LEP_80X_V3 /eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3_WENUSKIM_V2 -f w-helicity-13TeV/wmass_e/varsSkim_80X_helicity_friends.txt --fo
+
 import os, subprocess
 
 if __name__ == "__main__":
@@ -49,14 +56,15 @@ if __name__ == "__main__":
     if options.queue: OPTS += ' -q %s ' % options.queue
     if options.logdir: OPTS += ' --log %s ' % options.logdir
 
-    varsToKeep = []
+    varsToKeep = []; DROPVARS = ''
     if options.varfile!=None:
         with open(options.varfile) as f:
             varsToKeep = f.read().splitlines()
-        OPTS += " --dropall --keep "+" --keep ".join(varsToKeep)
+        DROPVARS = " --dropall --keep "+" --keep ".join(varsToKeep)
+        OPTS += DROPVARS
     
     cmdSkim = "python skimTrees.py "+" ".join(mcargs)+" " + outputDirSkims + OPTS
-    cmdFSkimEv = " python skimFTrees.py "+outputDirSkims+" "+treeDir+"/friends "+outputDirFSkims+' -f tree_Friend -t "Friends" -x "WJetsToLNu_NoSkim" '
+    cmdFSkimEv = " python skimFTrees.py "+outputDirSkims+" "+treeDir+"/friends "+outputDirFSkims+' -f tree_Friend -t "Friends" ' + DROPVARS
 
     if not options.friendOnly:
         print "Now skimming the main trees, keeping the following vars:\n",varsToKeep

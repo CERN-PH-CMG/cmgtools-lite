@@ -28,9 +28,7 @@ HLT_BIT_HLT_Ele45_WPLoose_Gsf_v_Prescale
 HLT_SingleEl
 HLT_SingleEl_isUnprescaled
 met_pt
-met_eta
 met_phi
-met_mass
 nLepGood
 LepGood_charge
 LepGood_hltId
