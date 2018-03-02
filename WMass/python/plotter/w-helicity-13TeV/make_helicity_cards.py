@@ -5,7 +5,7 @@ import numpy as np
 # import some parameters from wmass_parameters.py, they are also used by other scripts
 from wmass_parameters import *
 
-NPDFSYSTS=4 # Hessian variations of NNPDF 3.0
+NPDFSYSTS=60 # Hessian variations of NNPDF 3.0
 
 def writePdfSystsToMCA(mcafile,vec_weight="hessWgt",syst="pdf",incl_mca='incl_sig'):
     MCASYSTS=('.').join(mcafile.split('.')[:-1])+"-systs.txt"
