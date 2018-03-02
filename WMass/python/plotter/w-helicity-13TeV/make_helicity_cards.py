@@ -5,21 +5,46 @@ import numpy as np
 # import some parameters from wmass_parameters.py, they are also used by other scripts
 from wmass_parameters import *
 
-NPDFSYSTS=53 # for CT10
+NPDFSYSTS=4 # Hessian variations of NNPDF 3.0
 
-def writePdfSystsToMCA(sample,syst,dataset,xsec,vec_weight,filename):
-    mcafile = open(filename, "a")
-    for i in range(1,NPDFSYSTS):
-        pdfvar=str((i-1)/2+1)
+def writePdfSystsToMCA(mcafile,vec_weight="hessWgt",syst="pdf",incl_mca='incl_sig'):
+    MCASYSTS=('.').join(mcafile.split('.')[:-1])+"-systs.txt"
+    copyfile(MCA,MCASYSTS)
+
+    incl_file=''
+    mcaf = open(mcafile,'r')
+    for l in mcaf.readlines():
+        if re.match("\s*#.*", l): continue
+        tokens = [t.strip() for t in l.split(':')]
+        if len(tokens)<2: continue
+        if tokens[0]==incl_mca and "+" in tokens[1]:
+            options_str = [t.strip() for t in (l.split(';')[1]).split(',')]
+            for o in options_str:
+                if "IncludeMca" in o: 
+                    incl_file = o.split('=')[1]
+            break
+    if len(incl_file)==0: 
+        print "Warning! '%s' include directive not found. Not adding pdf systematics samples to MCA file %s" %(incl_mca,MCASYSTS)
+        return
+
+    mcafile_syst = open(MCASYSTS, "a")
+    for i in range(NPDFSYSTS):
+        pdfvar=str(i/2+1)
         direction="Up" if i%2 else "Dn"
-        mcafile.write(sample+"_"+str(syst)+pdfvar+"_"+direction+"+   : "+dataset+" :  "+str(xsec)+" : "+vec_weight+"["+str(i)+"]/"+vec_weight+"[0]; SkipMe=True \n")
-    print "written ",vec_weight," systematics into ",filename
+        postfix = "_"+str(syst)+pdfvar+'_'+direction
+        mcafile_syst.write(incl_mca+postfix+'   : + ; IncludeMca='+incl_file+', AddWeight="'+vec_weight+'['+str(i)+']/genWeight", SkipMe=True, PostFix="'+postfix+'" \n')
+    print "written ",vec_weight," systematics into ",MCASYSTS
+    return MCASYSTS
 
-def writePdfSystsToSystFile(sample,syst,channel,filename):
-    systfile=open(filename,"a")
+def writePdfSystsToSystFile(filename,sample="W.*",syst="CMS_W_pdf"):
+    SYSTFILEALL=('.').join(filename.split('.')[:-1])+"-all.txt"
+    copyfile(filename,SYSTFILEALL)
+    systfile=open(SYSTFILEALL,"a")
     for i in range(NPDFSYSTS/2):
-        systfile.write(channel+"_pdf"+str(i+1)+"  : "+sample+" : .* : pdf"+str(i+1)+" : templates\n")
-    print "written pdf syst configuration to ",filename
+        systfile.write(syst+str(i+1)+"  : "+sample+" : .* : pdf"+str(i+1)+" : templates\n")
+    print "written pdf syst configuration to ",SYSTFILEALL
+    return SYSTFILEALL
+
         
 from optparse import OptionParser
 parser = OptionParser(usage="%prog [options] mc.txt cuts.txt var bins systs.txt outdir ")
@@ -32,6 +57,7 @@ parser.add_option("-W", "--weight", dest="weightExpr", default="-W 1", help="Eve
 parser.add_option("-P", "--path", dest="path", type="string",default=None, help="Path to directory with input trees and pickle files");
 parser.add_option("-C", "--channel", dest="channel", type="string", default='el', help="Channel. either 'el' or 'mu'");
 parser.add_option("--not-unroll2D", dest="notUnroll2D", action="store_true", default=False, help="Do not unroll the TH2Ds in TH1Ds needed for combine (to make 2D plots)");
+parser.add_option("--pdf-syst", dest="addPdfSyst", action="store_true", default=False, help="Add PDF systematics to the signal (need incl_sig directive in the MCA file)");
 (options, args) = parser.parse_args()
 
 if len(sys.argv) < 6:
@@ -54,16 +80,13 @@ if not os.path.exists("cards/"):
     os.makedirs("cards/")
 outdir="cards/"+args[5]
 
-#FIXME: for the moment avoid this part, need to understand which weight to use
-# write systematic variations to be considered in the MCA file
-MCASYSTS=('.').join(MCA.split('.')[:-1])+"-systs.txt"
-copyfile(MCA,MCASYSTS)
-#writePdfSystsToMCA("W","pdf","WJets",61526.7,"LHEweight_wgt",MCASYSTS)
-
-# write the complete systematics file
-SYSTFILEALL=('.').join(SYSTFILE.split('.')[:-1])+"-all.txt"
-copyfile(SYSTFILE,SYSTFILEALL)
-#writePdfSystsToSystFile("W","pdf","CMS_We",SYSTFILEALL)
+MCASYSTS=MCA
+SYSTFILEALL=SYSTFILE
+if options.addPdfSyst:
+    # write the additional systematic samples in the MCA file
+    MCASYSTS = writePdfSystsToMCA(MCA)
+    # write the complete systematics file
+    SYSTFILEALL = writePdfSystsToSystFile(SYSTFILE)
 
 ARGS=" ".join([MCASYSTS,CUTFILE,"'"+fitvar+"' "+"'"+binning+"'",SYSTFILEALL])
 BASECONFIG=os.path.dirname(MCA)

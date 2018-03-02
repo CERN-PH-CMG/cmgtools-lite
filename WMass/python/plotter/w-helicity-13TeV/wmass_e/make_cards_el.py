@@ -13,7 +13,7 @@ BASECONFIG="w-helicity-13TeV/wmass_e"
 MCA=BASECONFIG+'/mca-80X-wenu-helicity.txt'
 CUTFILE=BASECONFIG+'/wenu_80X.txt'
 SYSTFILE=BASECONFIG+'/systsEnv.txt'
-TREEPATH="/eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3_WENUSKIM_V5"
+TREEPATH="/eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3_WENUSKIM_V5_TINY"
 QUEUE=str(options.queue)
 VAR="\"ptElFull(LepGood1_calPt,LepGood1_eta):LepGood1_eta\""
 #BINNING="\"48,-2.5,2.5,20,30.,50.\""
@@ -27,6 +27,6 @@ components=[" -s "," -b "]
 
 for c in components:
     cmd="python " + " ".join([PROG,MCA,CUTFILE,VAR,BINNING,SYSTFILE,OUTDIR]) + \
-        (" --long-bkg -W %s " % WEIGHTSTRING) + (" -P %s " % TREEPATH) + (" -q %s " % QUEUE) + c
+        (" --pdf-syst --long-bkg -W %s " % WEIGHTSTRING) + (" -P %s " % TREEPATH) + (" -q %s " % QUEUE) + c
     if options.dryRun: cmd += '  --dry-run '
     os.system(cmd)
