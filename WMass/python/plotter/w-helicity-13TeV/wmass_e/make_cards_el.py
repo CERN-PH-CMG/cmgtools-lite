@@ -6,6 +6,7 @@ parser = OptionParser(usage="%prog [options]")
 parser.add_option("-d", "--dry-run", dest="dryRun",   action="store_true", default=False, help="Do not run the job, only print the command");
 parser.add_option("-s", "--suffix", dest="suffix", type="string", default=None, help="Append a suffix to the default outputdir (helicity_<date>)");
 parser.add_option("-q", "--queue", dest="queue", type="string", default="cmscaf1nd", help="Select the queue to use");
+parser.add_option("--pdf-syst", dest="addPdfSyst", action="store_true", default=False, help="Add PDF systematics to the signal (need incl_sig directive in the MCA file)");
 (options, args) = parser.parse_args()
 
 PROG="w-helicity-13TeV/make_helicity_cards.py"
@@ -13,7 +14,7 @@ BASECONFIG="w-helicity-13TeV/wmass_e"
 MCA=BASECONFIG+'/mca-80X-wenu-helicity.txt'
 CUTFILE=BASECONFIG+'/wenu_80X.txt'
 SYSTFILE=BASECONFIG+'/systsEnv.txt'
-TREEPATH="/eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3_WENUSKIM_V5"
+TREEPATH="/eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3_WENUSKIM_V5_TINY"
 QUEUE=str(options.queue)
 VAR="\"ptElFull(LepGood1_calPt,LepGood1_eta):LepGood1_eta\""
 #BINNING="\"48,-2.5,2.5,20,30.,50.\""
@@ -29,4 +30,5 @@ for c in components:
     cmd="python " + " ".join([PROG,MCA,CUTFILE,VAR,BINNING,SYSTFILE,OUTDIR]) + \
         (" --long-bkg -W %s " % WEIGHTSTRING) + (" -P %s " % TREEPATH) + (" -q %s " % QUEUE) + c
     if options.dryRun: cmd += '  --dry-run '
+    if options.addPdfSyst: cmd += '  --pdf-syst '
     os.system(cmd)
