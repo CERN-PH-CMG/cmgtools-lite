@@ -25,6 +25,10 @@ def _runIt(args,excludeProcesses=[]):
         elist = fsel.elist
         f_f = ROOT.TFile.Open(ftreedir+'/'+ffilename+'_'+dset+'.root')
         t_f = f_f.Get(treename)
+        # drop and keep branches
+        if options.dropall: t_f.SetBranchStatus("*",0)
+        for drop in options.drop: t_f.SetBranchStatus(drop,0)
+        for keep in options.keep: t_f.SetBranchStatus(keep,1)
         t_f.SetEventList(elist)
         os.system('mkdir -p %s'%outdir)
         f2 = ROOT.TFile('%s/%s_%s.root'%(outdir,ffilename,dset),'recreate')
@@ -45,6 +49,9 @@ if __name__ == "__main__":
     parser.add_option("-t", "--tree", dest="tree", type="string", default="Friends", help="Name of the friend tree")
     parser.add_option("-f", "--friend", dest="friend", type="string", default="tree_Friend", help="Prefix of the friend ROOT file name")
     parser.add_option("-x", "--exclude-process", dest="excludeProcess", action="append", default=[], help="exclude some processes with a given pattern (comma-separated patterns)")
+    parser.add_option("-D", "--drop",  dest="drop", type="string", default=[], action="append",  help="Branches to drop, as per TTree::SetBranchStatus") 
+    parser.add_option("--dropall",     dest="dropall", default=False, action="store_true",  help="Drop all the branches (to keep only the selected ones with keep)") 
+    parser.add_option("-K", "--keep",  dest="keep", type="string", default=[], action="append",  help="Branches to keep, as per TTree::SetBranchStatus") 
     (options, args) = parser.parse_args()
     if len(args)<3:
         print "Usage: program <BIGTREE_DIR> <FTREE_DIR> <outdir>"

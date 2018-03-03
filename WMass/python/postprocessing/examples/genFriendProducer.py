@@ -1,5 +1,5 @@
 import ROOT
-import os
+import os, array
 import numpy as np
 ROOT.PyConfig.IgnoreCommandLineOptions = True
 
@@ -81,6 +81,15 @@ class GenQEDJetProducer(Module):
         else:
             print "genQEDJetHelper_cc.so found in ROOT libraries"
         self._worker = ROOT.GenQEDJetHelper(deltaR)
+        self.pdfWeightOffset = 10 #index of first mc replica weight (careful, this should not be the nominal weight, which is repeated in some mc samples).  The majority of run2 LO madgraph_aMC@NLO samples with 5fs matrix element and pdf would use index 10, corresponding to pdf set 263001, the first alternate mc replica for the nominal pdf set 263000 used for these samples
+        self.nMCReplicasWeights = 100 #number of input weights (100 for NNPDF 3.0)
+        self.nHessianWeights = 60 #number of output weights
+        if "PDFWeightsHelper_cc.so" not in ROOT.gSystem.GetLibraries():
+            ROOT.gROOT.ProcessLine(".include /cvmfs/cms.cern.ch/slc6_amd64_gcc530/external/eigen/3.2.2/include")
+            ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/WMass/python/postprocessing/helpers/PDFWeightsHelper.cc+" % os.environ['CMSSW_BASE'])
+        mc2hessianCSV = "%s/src/CMGTools/WMass/python/postprocessing/data/gen/NNPDF30_nlo_as_0118_hessian_60.csv" % os.environ['CMSSW_BASE']
+        self._pdfHelper = ROOT.PDFWeightsHelper()
+        self._pdfHelper.Init(self.nMCReplicasWeights,self.nHessianWeights,mc2hessianCSV)
     def beginJob(self):
         pass
     def endJob(self):
@@ -99,6 +108,7 @@ class GenQEDJetProducer(Module):
         for V in self.genwvars:
             self.out.branch("genw_"+V, "F")
             self.out.branch("lhew_"+V, "F")
+        self.out.branch("hessWgt", "F", n=self.nHessianWeights)
     def endFile(self, inputFile, outputFile, inputTree, wrappedOutputTree):
         pass
 
@@ -107,12 +117,23 @@ class GenQEDJetProducer(Module):
             self.nGenPart = tree.valueReader("nGenPart")
             for B in ("pt","eta","phi","mass","pdgId","isPromptHard","motherId","status") : setattr(self,"GenPart_"+B, tree.arrayReader("GenPart_"+B))
             self._worker.setGenParticles(self.nGenPart,self.GenPart_pt,self.GenPart_eta,self.GenPart_phi,self.GenPart_mass,self.GenPart_pdgId,self.GenPart_isPromptHard,self.GenPart_motherId,self.GenPart_status)
+            #self.nLHEweight = tree.valueReader("nLHEweight")
+            #self.LHEweight_wgt = tree.arrayReader("LHEweight_wgt")
         except:
             print '[genFriendProducer][Warning] Unable to attach to generator-level particles (data only?). No info will be produced'
         self._ttreereaderversion = tree._ttreereaderversion # self._ttreereaderversion must be set AFTER all calls to tree.valueReader or tree.arrayReader
 
+    def mcRep2Hess(self,weight,lheweights):
+        nomlhew = lheweights[0]
+        inPdfW = np.array(lheweights[self.pdfWeightOffset:self.pdfWeightOffset+self.nMCReplicasWeights],dtype=float)
+        outPdfW = np.array([0 for i in xrange(self.nHessianWeights)],dtype=float)
+        self._pdfHelper.DoMC2Hessian(nomlhew,inPdfW,outPdfW)
+        pdfeigweights = [wgt*weight/nomlhew for wgt in outPdfW.tolist()]
+        return pdfeigweights
+
     def analyze(self, event):
         """process event, return True (go to next module) or False (fail, go to next event)"""
+        lhe_wgts = Collection(event,"LHEweight")
         if event._tree._ttreereaderversion > self._ttreereaderversion: # do this check at every event, as other modules might have read further branches
             self.initReaders(event._tree)
 
@@ -207,6 +228,10 @@ class GenQEDJetProducer(Module):
             ##    print 'no neutrinos found, in run:lumi:evt: {a}:{b}:{c}'.format(a=getattr(event, "run"),b=getattr(event, "lumi"),c=getattr(event, "evt"))
             for V in self.genwvars:
                 self.out.fillBranch("genw_"+V, -999)
+
+        lheweights = [w.wgt for w in lhe_wgts]
+        hessWgt = self.mcRep2Hess(getattr(event, "genWeight"),lheweights)
+        self.out.fillBranch("hessWgt",hessWgt)
 
         return True
 
