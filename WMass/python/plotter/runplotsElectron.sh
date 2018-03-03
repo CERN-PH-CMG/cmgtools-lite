@@ -33,17 +33,17 @@ not_pass_looseWP="-A eleKin not-fullLooseID 'LepGood1_tightId < 1 || if3(abs(Lep
 not_pass_looseWP_iso0p2="-A eleKin not-fullLooseID 'LepGood1_tightId < 1 || if3(abs(LepGood1_eta)<1.479,LepGood1_relIso04EA > 0.2 || abs(LepGood1_dz) > 0.1 || abs(LepGood1_dxy) > 0.05, LepGood1_relIso04EA > 0.2 || abs(LepGood1_dz) > 0.2 || abs(LepGood1_dxy) > 0.1) || LepGood1_lostHits > 1 || LepGood1_convVeto == 0'"
 
 # use bult-in functions in functions.cc, which automatically select EB or EE, manage cuts and so on
-FRnumSel=" -A eleKin FRnumSel 'pass_FakerateNumerator2016((abs(LepGood1_eta)<1.479),LepGood1_tightId,LepGood1_dxy,LepGood1_dz,LepGood1_lostHits,LepGood1_convVeto,LepGood1_relIso04EA)' "
+#FRnumSel=" -A eleKin FRnumSel 'pass_FakerateNumerator2016((abs(LepGood1_eta)<1.479),LepGood1_tightId,LepGood1_dxy,LepGood1_dz,LepGood1_lostHits,LepGood1_convVeto,LepGood1_relIso04EA)' "
 #notFRnumSel="-A eleKin failFRnumSel 'pass_FakerateApplicationRegion2016(abs(LepGood1_eta)<1.479,LepGood1_tightId,LepGood1_dxy,LepGood1_dz,LepGood1_lostHits,LepGood1_convVeto,LepGood1_relIso04EA)' "
 
 # use variables in friend trees, which were filled with the conditions to pass the ID+iso (the one we decided to use at the moment)
-#FRnumSel=" -A eleKin FRnumSel 'LepGood1_customId == 1' "
+FRnumSel=" -A eleKin FRnumSel 'LepGood1_customId == 1' "  #looseID + iso<0.2 in EB, medium ID in EE
 #FRnumSel=" -A eleKin FRnumSel 'pass_FakerateNumerator_loose2016(fabs(LepGood1_eta)<1.479,LepGood1_tightId,LepGood1_dxy,LepGood1_dz,LepGood1_lostHits,LepGood1_convVeto,LepGood1_relIso04EA)' "
 #FRnumSel=" -A eleKin FRnumSel 'pass_FakerateNumerator_medium2016(fabs(LepGood1_eta)<1.479,LepGood1_tightId,LepGood1_dxy,LepGood1_dz,LepGood1_lostHits,LepGood1_convVeto,LepGood1_relIso04EA)' "
 
-#notFRnumSel="-A eleKin failFRnumSel 'LepGood1_customId == 0' "
+notFRnumSel="-A eleKin failFRnumSel 'LepGood1_customId == 0' " #looseID + iso<0.2 in EB, medium ID in EE
 #notFRnumSel="-A eleKin failFRnumSel ' !pass_FakerateNumerator_loose2016(fabs(LepGood1_eta)<1.479,LepGood1_tightId,LepGood1_dxy,LepGood1_dz,LepGood1_lostHits,LepGood1_convVeto,LepGood1_relIso04EA)' "
-notFRnumSel="-A eleKin failFRnumSel ' !pass_FakerateNumerator2016(fabs(LepGood1_eta)<1.479,LepGood1_tightId,LepGood1_dxy,LepGood1_dz,LepGood1_lostHits,LepGood1_convVeto,LepGood1_relIso04EA)' "
+#notFRnumSel="-A eleKin failFRnumSel ' !pass_FakerateNumerator2016(fabs(LepGood1_eta)<1.479,LepGood1_tightId,LepGood1_dxy,LepGood1_dz,LepGood1_lostHits,LepGood1_convVeto,LepGood1_relIso04EA)' "
 
 #Wsel="-A eleKin WregionSel '(${ptcorr})>30 && met_pt>20 && pt_2(${ptcorr}, LepGood1_phi, met_trkPt, met_trkPhi ) < 40 && mt_2(met_pt,met_phi,${ptcorr},LepGood1_phi) < 110'"
 #Wsel="-A eleKin WregionSel '(${ptcorr})>30 && met_pt>20'"
@@ -90,7 +90,7 @@ excludeprocesses="Z_LO,W_LO" # decide whether to use NLO (amc@NLO) or LO (MadGra
 #selectplots=""  # if empty it uses all plots in cfg file
 #selectplots="nJetClean,ptl1,etal1,pfmet,tkmet,ele1ID,awayJet_pt,wpt_tk,ele1dxy"  # if empty it uses all plots in cfg file
 #selectplots="ptl1,etal1,pfmet,trkmt,pfmt,wpt_tk,nJetClean,ele1Iso04,ele1ID"  # if empty it uses all plots in cfg file
-selectplots="ptl1,etal1,pfmet"
+selectplots="ptl1,etal1,pfmet,trkmt_trkmetEleCorr"
 #maxentries="150000" # max int number is > 2*10^9
 maxentries=""  # all events if ""
 #
@@ -99,6 +99,7 @@ maxentries=""  # all events if ""
 # to scale all mC to data use option --scaleBkgToData <arg> many tmes for every process 
 # you also need not to have any process defined as signal
 scaleAllMCtoData="" # if "", nothing is added to mcPlots.py command
+scaleAllMCtoData="--fitData" 
 #scaleAllMCtoData=" --scaleBkgToData QCD --scaleBkgToData W --scaleBkgToData Z --scaleBkgToData Top --scaleBkgToData DiBosons "
 
 #############################
@@ -127,7 +128,7 @@ declare -A qcdFromFR=()
 # COMPUTATION REGION
 #----------------------------
 regionKey["FRcompRegion"]="FRcompRegion"
-runRegion["FRcompRegion"]="n"
+runRegion["FRcompRegion"]="y"
 regionName["FRcompRegion"]="FR_computation_region"
 skimTreeDir["FRcompRegion"]="TREES_1LEP_80X_V3_FRELSKIM_V5"
 outputDir["FRcompRegion"]="full2016dataBH_puAndTrgSf_ptResScale_${today}"

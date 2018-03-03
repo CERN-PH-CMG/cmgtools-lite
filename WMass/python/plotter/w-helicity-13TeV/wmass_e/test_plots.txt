@@ -2,6 +2,7 @@ trkmt: mt_2(met_trkPt,met_trkPhi,ptElFull(LepGood1_calPt,LepGood1_eta),LepGood_p
 trkmtfix: mt_2(met_trkPt,met_trkPhi,35,LepGood_phi): 60,0,120 ; XTitle="Trk m_{T} (fix p_{T} = 35 GeV) [GeV]", Legend='TR', IncludeOverflows=False
 pfmt: mt_2(met_pt,met_phi,ptElFull(LepGood1_calPt,LepGood1_eta),LepGood_phi) : 60,0,120 ; XTitle="m_{T} [GeV]", Legend='TL', IncludeOverflows=False
 pfmtfix: mt_2(met_pt,met_phi,35,LepGood_phi): 60,0,120 ; XTitle="PF m_{T} (fix p_{T} = 35 GeV) [GeV]", Legend='TR', IncludeOverflows=False
+trkmt_trkmetEleCorr: tkmt_tkmetEleCorr(met_trkPt,met_trkPhi,ptElFull(LepGood1_calPt,LepGood1_eta),LepGood_phi,pass_dxy_dz(abs(LepGood1_eta)<1.479, LepGood1_dxy, LepGood1_dz) && pass_lostHits_conVeto(LepGood1_lostHits, LepGood1_convVeto)) : 60,0,120 ; XTitle="Trk m_{T} [GeV]", Legend='TR', IncludeOverflows=False
 
 ele1Iso04: LepGood1_relIso04EA : 50,0,0.5 ; XTitle="relative isolation 04 (ele1)", Legend='TR', IncludeOverflows=True, Logy=True
 nJetClean: nJet_Clean : 5,-0.5,4.5 ; XTitle="number of jets (cleaned)", Legend='TR', IncludeOverflows=True

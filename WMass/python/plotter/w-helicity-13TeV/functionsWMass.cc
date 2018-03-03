@@ -333,6 +333,9 @@ float residualScale(float pt, float eta, int isData) {
 }
 
 float ptElFull(float pt, float eta, int nSigma=0) {
+
+  if (nSigma == 0) return pt;
+
   float relSyst=0.;
   if(fabs(eta)<1.0) relSyst = 0.0015;  
   else if(fabs(eta)<1.479) relSyst = 0.005;  
