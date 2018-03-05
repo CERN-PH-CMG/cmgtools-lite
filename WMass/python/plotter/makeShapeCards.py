@@ -162,7 +162,7 @@ if options.asimov:
     tomerge = []
     for p in mca.listSignals() + mca.listBackgrounds():
         if p in report: tomerge.append(report[p])
-    report['data_obs'] = mergePlots("x_data_obs", tomerge) 
+    if len(tomerge): report['data_obs'] = mergePlots("x_data_obs", tomerge) 
 else:
     report['data_obs'] = report['data'].Clone("x_data_obs") 
 
@@ -550,7 +550,8 @@ for mass in masses:
         datacard.write("shapes *        * %s.input.root x_$PROCESS x_$PROCESS_$SYSTEMATIC\n" % binname)
     datacard.write('##----------------------------------\n')
     datacard.write('bin         %s\n' % binname)
-    datacard.write('observation %s\n' % myyields['data_obs'])
+    if 'data_obs' in myyields: datacard.write('observation %s\n' % myyields['data_obs'])
+    else: datacard.write('observation -1\n')
     datacard.write('##----------------------------------\n')
     klen = max([7, len(binname)]+[len(p) for p in procs])
     kpatt = " %%%ds "  % klen
@@ -588,7 +589,8 @@ if len(masses) > 1:
     datacard.write("shapes ttH_htt  * common/%s.input.root x_$PROCESS$MASS x_$PROCESS$MASS_$SYSTEMATIC\n" % binname)
     datacard.write('##----------------------------------\n')
     datacard.write('bin         %s\n' % binname)
-    datacard.write('observation %s\n' % myyields['data_obs'])
+    if 'data_obs' in myyields: datacard.write('observation %s\n' % myyields['data_obs'])
+    else: datacard.write('observation -1\n')
     datacard.write('##----------------------------------\n')
     klen = max([7, len(binname)]+[len(p) for p in procs])
     kpatt = " %%%ds "  % klen
