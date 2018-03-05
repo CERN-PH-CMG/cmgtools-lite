@@ -22,8 +22,8 @@ from CMGTools.TTHAnalysis.plotter.mcCorrections import *
 if "/functions_cc.so" not in ROOT.gSystem.GetLibraries(): 
     compileMacro("src/CMGTools/DPS13TeV/python/plotter/functions.cc")
 
-if "/w-helicity-13TeV/functionsDPS13TeV_cc.so" not in ROOT.gSystem.GetLibraries(): 
-    compileMacro("src/CMGTools/DPS13TeV/python/plotter/w-helicity-13TeV/functionsDPS13TeV.cc")
+## not needed for now if "/dpsww13TeV/functionsWMass_cc.so" not in ROOT.gSystem.GetLibraries(): 
+## not needed for now     compileMacro("src/CMGTools/DPS13TeV/python/plotter/dpsww13TeV/functionsWMass.cc")
 
 def scalarToVector(x):
     x0 = x
