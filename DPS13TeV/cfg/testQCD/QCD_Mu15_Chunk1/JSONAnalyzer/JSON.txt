@@ -1,0 +1,4 @@
+Counter JSON :
+	 All Events                                       0 	 -1.00 	 -1.0000
+	 Passed Events                                    0 	 -1.00 	 -1.0000
+
