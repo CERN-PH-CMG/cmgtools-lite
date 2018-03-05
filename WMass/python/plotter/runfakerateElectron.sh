@@ -25,7 +25,7 @@ ptDefinition="pt_granular"  # pt_coarse, pt_granular (first is mainly for QCD MC
 #-------------------------
 istest="y"
 # following option testdit is used only if istest is 'y'
-testdir="SRtrees_new/fakeRate_36fb_PUTrgSF_${mtDefinition}_${ptDefinition}_pfmetLess20_legacy07Aug2017_looseIso0p2_IDntupleVar"
+testdir="SRtrees_new/fakeRate_36fb_PUTrgSF_${mtDefinition}_${ptDefinition}_pfmetLess20_legacy07Aug2017_looseIso0p2_IDntupleVar_highEtaEElowHLTpt"
 # by default, if this is a test we do not pack to avoid overwriting something when we just do tests
 # you can override this feature setting this flag to 'y'
 # even if you don't pack, the command you would use is printed in stdout

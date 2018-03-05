@@ -15,7 +15,8 @@ plotterPath="${CMSSW_BASE}/src/CMGTools/WMass/python/plotter"
 #####################################################
 
 #ptcorr="ptElFull(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_r9,run,isData,evt)"
-ptcorr="LepGood1_calPt"
+#ptcorr="LepGood1_calPt"
+ptcorr="ptElFull(LepGood1_calPt,LepGood1_eta)"
 
 inEB=" -A eleKin EB 'abs(LepGood1_eta) < 1.479' "
 inEE=" -A eleKin EE 'abs(LepGood1_eta) > 1.479' "
@@ -47,7 +48,7 @@ notFRnumSel="-A eleKin failFRnumSel 'LepGood1_customId == 0' " #looseID + iso<0.
 
 #Wsel="-A eleKin WregionSel '(${ptcorr})>30 && met_pt>20 && pt_2(${ptcorr}, LepGood1_phi, met_trkPt, met_trkPhi ) < 40 && mt_2(met_pt,met_phi,${ptcorr},LepGood1_phi) < 110'"
 #Wsel="-A eleKin WregionSel '(${ptcorr})>30 && met_pt>20'"
-Wsel="-A eleKin WregionSel '(${ptcorr})>30'"
+Wsel="-A eleKin WregionSel 'ptElFull(LepGood1_calPt,LepGood1_eta) > 30 && ptElFull(LepGood1_calPt,LepGood1_eta) < 45'"
 
 mtCutApplControlRegion="-A eleKin pfmt 'mt_2(met_pt,met_phi,${ptcorr},LepGood1_phi) < 60'"
 #mtCutApplControlRegion="-A eleKin pfmt 'mt_2(met_pt,met_phi,${ptcorr},LepGood1_phi) > 40 && mt_2(met_pt,met_phi,${ptcorr},LepGood1_phi) < 60'"
@@ -76,8 +77,9 @@ batchDirName="plots_${today}"  # name of directory to create inside jobsLog
 ##################################
 # MCA files
 ##################################
-mcafile="mca-80X_V3.txt" # if using skimmed trees on pccmsrm28, few top samples are missing, be careful (new mca is automatically set below)
+mcafile="mca-80X_V3.txt"
 mcafileFRcheck="mca-80X_V3_FRcheck.txt"  # automatically used instead of mcafile when doing part under doFakeRateCheckData
+#mcafileFRskim="mca-80X_V3_FRskim.txt" # temporary patch: if using skimmed trees on lxplus the W sample has a different name
 cutfile="qcd1l_SRtrees.txt" # we start from it and add or remove cuts
 plotfile="test_plots.txt"
 #
@@ -89,8 +91,9 @@ plotfile="test_plots.txt"
 excludeprocesses="Z_LO,W_LO" # decide whether to use NLO (amc@NLO) or LO (MadGraph) MC, non both! In case you can add other samples (Top, Dibosons) to speed up things
 #selectplots=""  # if empty it uses all plots in cfg file
 #selectplots="nJetClean,ptl1,etal1,pfmet,tkmet,ele1ID,awayJet_pt,wpt_tk,ele1dxy"  # if empty it uses all plots in cfg file
-#selectplots="ptl1,etal1,pfmet,trkmt,pfmt,wpt_tk,nJetClean,ele1Iso04,ele1ID"  # if empty it uses all plots in cfg file
-selectplots="ptl1,etal1,pfmet,trkmt_trkmetEleCorr"
+#selectplots="ptl1,etal1,pfmet,trkmt_trkmetEleCorr,pfmt,wpt_tk,nJetClean,ele1Iso04,ele1ID"  # if empty it uses all plots in cfg file
+#selectplots="ptl1,etal1,pfmet,pfmt"
+selectplots="ptl1,etal1,pfmt"
 #maxentries="150000" # max int number is > 2*10^9
 maxentries=""  # all events if ""
 #
@@ -99,8 +102,8 @@ maxentries=""  # all events if ""
 # to scale all mC to data use option --scaleBkgToData <arg> many tmes for every process 
 # you also need not to have any process defined as signal
 scaleAllMCtoData="" # if "", nothing is added to mcPlots.py command
-scaleAllMCtoData="--fitData" 
-#scaleAllMCtoData=" --scaleBkgToData QCD --scaleBkgToData W --scaleBkgToData Z --scaleBkgToData Top --scaleBkgToData DiBosons "
+#scaleAllMCtoData="--fitData" 
+#scaleAllMCtoData=" --scaleBkgToData QCD --scaleBkgToData W --scaleBkgToData Z --scaleBkgToData Top --scaleBkgToData DiBosons " # does not seem to work as expected
 
 #############################
 # Now we declare some dictionary in bash
@@ -131,7 +134,7 @@ regionKey["FRcompRegion"]="FRcompRegion"
 runRegion["FRcompRegion"]="y"
 regionName["FRcompRegion"]="FR_computation_region"
 skimTreeDir["FRcompRegion"]="TREES_1LEP_80X_V3_FRELSKIM_V5"
-outputDir["FRcompRegion"]="full2016dataBH_puAndTrgSf_ptResScale_${today}"
+outputDir["FRcompRegion"]="full2016dataBH_puAndTrgSf_ptResScale_${today}_highEtaEElowHLTpt"
 regionCuts["FRcompRegion"]=" -A eleKin pfmet20 'met_pt < 20' "
 qcdFromFR["FRcompRegion"]="n"
 #
@@ -188,11 +191,11 @@ qcdFromFR["WmassSignalRegion"]="y"
 # WHELICITY SIGNAL REGION (avoid possibly all kinematic selections)
 #----------------------------
 regionKey["WhelicitySignalRegion"]="WhelicitySignalRegion"
-runRegion["WhelicitySignalRegion"]="y"
+runRegion["WhelicitySignalRegion"]="n"
 regionName["WhelicitySignalRegion"]="whelicity_signal_region"
 skimTreeDir["WhelicitySignalRegion"]="TREES_1LEP_80X_V3_WENUSKIM_V5"
-outputDir["WhelicitySignalRegion"]="full2016dataBH_puAndTrgSf_ptResScale_${today}"
-regionCuts["WhelicitySignalRegion"]=" -X nJet30 ${FRnumSel}"
+outputDir["WhelicitySignalRegion"]="full2016dataBH_puAndTrgSf_ptResScale_${today}_restrictPt"
+regionCuts["WhelicitySignalRegion"]=" -X nJet30 ${FRnumSel} ${Wsel} "
 qcdFromFR["WhelicitySignalRegion"]="y"
 #
 #############################
@@ -364,9 +367,9 @@ do
 	if [[ "${qcdFromFR[${region}]}" == "y" ]]; then
         # we change the mca file in commonCommand with the new one specific for this study
 	    regionCommand="${regionCommand/${mcafile}/${mcafileFRcheck}}"    
-	# elif [[ "${skimTreeDir[${region}]}" == "TREES_1LEP_80X_V3_FRELSKIM_V3" ]]; then
+	# elif [[ "${skimTreeDir[${region}]}" == "TREES_1LEP_80X_V3_FRELSKIM_V5" ]]; then
         # # we change the mca file in commonCommand with the new one specific for this study
-	#     regionCommand="${regionCommand/${mcafile}/${mcafileLessTop}}"    
+	#     regionCommand="${regionCommand/${mcafile}/${mcafileFRskim}}"    
 	fi
 
         #commonFRcheck="${commonCommandFRcheck} ${treeAndFriend} -X nJet30 ${Wsel} ${FRnumSel} ${mtCutApplControlRegion} ${dataOptionFakes}"
