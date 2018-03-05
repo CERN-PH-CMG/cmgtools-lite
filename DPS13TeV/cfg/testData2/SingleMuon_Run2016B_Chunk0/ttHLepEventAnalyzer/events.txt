@@ -1,0 +1,4 @@
+Counter events :
+	 all events                                    1248 	 1.00 	 1.0000
+	 accepted events                               1248 	 1.00 	 1.0000
+

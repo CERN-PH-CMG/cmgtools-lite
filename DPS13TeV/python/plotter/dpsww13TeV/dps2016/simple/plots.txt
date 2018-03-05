@@ -1,0 +1,24 @@
+ptl1     : LepGood1_pt   : 50,20.,70.; XTitle="p_{T}^{#mu}"
+etal1    : LepGood1_eta  : 48,-2.4,2.4; XTitle="#eta^{#mu}"
+tkmet    : met_trkPt      : 25,0.,100; XTitle="tk ME_{T}"
+pfmet    : met_pt      : 25,0.,100; XTitle="pf ME_{T}"
+mtl1tk   : mt_2(LepGood1_pt,LepGood1_phi,met_trkPt,met_trkPhi)  : 25,0.,100; XTitle="m_{T} mu tkmet", Legend="TL"
+mtl1pf   : mt_2(LepGood1_pt,LepGood1_phi,met_pt,met_phi)        : 25,0.,100; XTitle="m_{T} mu pfmet"
+##foob     : LepGood1_pt : 50,0.,150; XTitle="p_{T}^{#mu 1}", Legend="TL"
+nVert : nVert  : 50,0,50; XTitle="n_{vertices}"
+nJetAll : nJet : 6,-0.5,5.5 ; XTitle="n_{jets}"
+nJet40  : Sum$(Jet_pt > 40) : 6,-0.5,5.5 ; XTitle="n_{jets}^{40}"
+nJet30  : Sum$(Jet_pt > 30) : 6,-0.5,5.5 ; XTitle="n_{jets}^{30}"
+
+etaPt   : LepGood1_pt\:LepGood1_eta  : 48,-2.4,2.4,25,25.,50. ; XTitle="#eta^{#mu}", YTitle="p_{T}^{#mu}"
+
+l1reliso04        : LepGood1_relIso04 : 100,0.,1. ; XTitle="relIso04 #mu"
+l1reliso03        : LepGood1_relIso03 : 100,0.,1.2 ; XTitle="relIso03 #mu", Logy
+
+weightLongPlus : helicityWeightSimple(genw_y,genw_pt,genw_costcs,0) : 100,0.,25. ;XTitle="long weight W+", Logy
+weightLeftPlus : helicityWeightSimple(genw_y,genw_pt,genw_costcs,1) : 100,0.,25. ;XTitle="left weight W+", Logy
+weightRightPlus: helicityWeightSimple(genw_y,genw_pt,genw_costcs,2) : 100,0.,25. ;XTitle="right weight W+", Logy
+
+weightLongMinus : helicityWeightSimple(genw_y,genw_pt,genw_costcs,0) : 100,0.,25. ;XTitle="long weight W-", Logy
+weightLeftMinus : helicityWeightSimple(genw_y,genw_pt,genw_costcs,1) : 100,0.,25. ;XTitle="left weight W-", Logy
+weightRightMinus: helicityWeightSimple(genw_y,genw_pt,genw_costcs,2) : 100,0.,25. ;XTitle="right weight W-", Logy

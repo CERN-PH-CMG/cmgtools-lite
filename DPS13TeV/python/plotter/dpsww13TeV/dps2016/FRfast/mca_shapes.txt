@@ -1,0 +1,8 @@
+# vim: syntax=sh
+* ; TreeName="treeProducerWMassEle"
+
+QCDtight+   : QCDMuPt15 : 134680.  : (LepGood1_relIso04 < 0.12) ; FillColor=ROOT.kGreen-2    , Label="QCD tight"
+QCDloose    : QCDMuPt15 : 134680.  : (LepGood1_relIso04 > 0.12) ; FillColor=ROOT.kAzure-2    , Label="QCD loose"
+QCDfakes    : QCDMuPt15 : 134680.  : ; FillColor=ROOT.kRed  , FakeRate='w-helicity/fakeRate_wHelicity_qcd.txt' , Label="Fakes QCD MC", NormSystematic=0.35
+
+
