@@ -12,8 +12,8 @@ class fastCombinedObjectRecleaner:
         self.vars = ["pt","eta","phi","mass"]
         self.vars_leptons = ["pdgId"]
         self.vars_taus = ["idMVAdR03"]
-        self.vars_jets = ["btagCSV","qgl","corr","corr_JECUp","corr_JECDown"]
-        self.vars_jets_int = ["hadronFlavour"] if isMC else []
+        self.vars_jets = ["btagCSV","btagDeepCSV","qgl","ctagCsvL","ptd","axis1","corr","corr_JECUp","corr_JECDown"]
+        self.vars_jets_int = ["mult"]+(["hadronFlavour"] if isMC else [])
         self.vars_jets_nooutput = []
         self.jc = jetCollection
 
@@ -72,7 +72,7 @@ class fastCombinedObjectRecleaner:
         self._worker.setLeptons(self.nLepGood, self.LepGood_pt, self.LepGood_eta, self.LepGood_phi)
         self._worker.setTaus(self.nTauGood, self.TauGood_pt, self.TauGood_eta, self.TauGood_phi)
         self._worker.setJets(getattr(self,'n%s'%self.jc),getattr(self,'%s_pt'%self.jc),getattr(self,'%s_eta'%self.jc),getattr(self,'%s_phi'%self.jc),
-                             getattr(self,'%s_btagCSV'%self.jc),getattr(self,'%s_corr'%self.jc),getattr(self,'%s_corr_JECUp'%self.jc),getattr(self,'%s_corr_JECDown'%self.jc))
+                             getattr(self,'%s_btagDeepCSV'%self.jc),getattr(self,'%s_corr'%self.jc),getattr(self,'%s_corr_JECUp'%self.jc),getattr(self,'%s_corr_JECDown'%self.jc))
         self._workerMV.setLeptons(self.nLepGood, self.LepGood_pt, self.LepGood_eta, self.LepGood_phi, self.LepGood_mass, self.LepGood_pdgId)
 
     def listBranches(self):

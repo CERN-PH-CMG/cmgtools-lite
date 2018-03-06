@@ -144,6 +144,7 @@ if __name__ == "__main__":
     selectors=[CheckEventVetoList(fname) for fname in options.vetoevents]
     if options.json: selectors.append(JSONSelector(options.json))
 
+    options.lazyKeeps = []
     if options.varfiles:
         mykeeps = set(["run","lumi","evt","genWeight","xsec","isData"])
         def _process(vfname,_norecurse=set()):

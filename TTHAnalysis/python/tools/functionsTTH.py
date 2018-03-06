@@ -52,8 +52,8 @@ from CMGTools.TTHAnalysis.tools.combinedObjectTaggerForCleaning import *
 from CMGTools.TTHAnalysis.tools.fastCombinedObjectRecleaner import *
 
 def clean_and_FO_selection_TTH(lep):
-    return lep.conept>10 and lep.jetBTagCSV<0.8484 and (abs(lep.pdgId)!=11 or _ttH_idEmu_cuts_E2(lep)) \
-        and (lep.mvaTTH>0.90 or (lep.jetPtRatiov2>0.5 and lep.jetBTagCSV<0.3 and (abs(lep.pdgId)!=13 or lep.segmentCompatibility>0.3) and (abs(lep.pdgId)!=11 or lep.mvaIdSpring16HZZ > (0.0 if abs(lep.eta)<1.479 else 0.7)) ) )
+    return lep.conept>10 and lep.jetBTagDeepCSV<0.4941 and (abs(lep.pdgId)!=11 or _ttH_idEmu_cuts_E2(lep)) \
+        and (lep.mvaTTH>0.90 or (lep.jetPtRatiov2>0.5 and lep.jetBTagDeepCSV<0.1522 and (abs(lep.pdgId)!=13 or lep.segmentCompatibility>0.3) and (abs(lep.pdgId)!=11 or lep.mvaIdSpring16HZZ > (0.0 if abs(lep.eta)<1.479 else 0.7)) ) )
 
 MODULES.append( ('leptonJetFastReCleanerTTH_step1', lambda : CombinedObjectTaggerForCleaning("InternalRecl",
                                                                                        looseLeptonSel = lambda lep : lep.miniRelIso < 0.4 and lep.sip3d < 8,
@@ -72,8 +72,8 @@ MODULES.append( ('leptonJetFastReCleanerTTH_step2_mc',lambda : fastCombinedObjec
                                                                                            doVetoLMf=False,
                                                                                            doVetoLMt=False,
                                                                                            jetPts=[25,40],
-                                                                                           btagL_thr=0.5426,
-                                                                                           btagM_thr=0.8484,
+                                                                                           btagL_thr=0.1522,
+                                                                                           btagM_thr=0.4941,
                                                                                            isMC = True) ))
 MODULES.append( ('leptonJetFastReCleanerTTH_step2_data',lambda : fastCombinedObjectRecleaner(label="Recl",
                                                                                              inlabel="_InternalRecl",
@@ -83,8 +83,8 @@ MODULES.append( ('leptonJetFastReCleanerTTH_step2_data',lambda : fastCombinedObj
                                                                                              doVetoLMf=False,
                                                                                              doVetoLMt=False,
                                                                                              jetPts=[25,40],
-                                                                                             btagL_thr=0.5426,
-                                                                                             btagM_thr=0.8484,
+                                                                                             btagL_thr=0.1522,
+                                                                                             btagM_thr=0.4941,
                                                                                              isMC = False) ))
 
 from CMGTools.TTHAnalysis.tools.eventVars_2lss import EventVars2LSS
@@ -107,26 +107,22 @@ MODULES.append( ('BDTv8_Hj', lambda : BDTv8_eventReco(os.environ["CMSSW_BASE"]+'
                                                       )) )
 
 from CMGTools.TTHAnalysis.tools.evtTagger import EvtTagger
+# Activated below, but not present in 2017B:
+# HLT_Ele32_WPTight_Gsf_v
+# HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_v
+# HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v
+# Moreover, some 3mu triggers are only in last part of the dataset (e.g. 5_3_3)
 MODULES.append( ('Trigger_2lss', lambda : EvtTagger("Trigger_2l",[
                 lambda ev : \
+                    ev.HLT_BIT_HLT_IsoMu27_v or \
+                    ev.HLT_BIT_HLT_Ele32_WPTight_Gsf_v or \
+                    ev.HLT_BIT_HLT_Ele35_WPTight_Gsf_v or \
+                    ev.HLT_BIT_HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass8_v or \
                     ev.HLT_BIT_HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v or \
-                    ev.HLT_BIT_HLT_Ele27_WPTight_Gsf_v or \
-                    ev.HLT_BIT_HLT_Ele25_eta2p1_WPTight_Gsf_v or \
-                    ev.HLT_DoubleMu or \
-                    ev.HLT_BIT_HLT_IsoMu24_v or \
-                    ev.HLT_BIT_HLT_IsoTkMu24_v or \
-                    ev.HLT_BIT_HLT_IsoMu22_eta2p1_v or \
-                    ev.HLT_BIT_HLT_IsoTkMu22_eta2p1_v or \
-                    ev.HLT_BIT_HLT_Mu23_TrkIsoVVL_Ele8_CaloIdL_TrackIdL_IsoVL_v or \
-                    ev.HLT_BIT_HLT_Mu23_TrkIsoVVL_Ele8_CaloIdL_TrackIdL_IsoVL_DZ_v or \
-                    ev.HLT_BIT_HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_v or \
-                    ev.HLT_BIT_HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v or \
-                    ev.HLT_BIT_HLT_IsoMu24_v or \
-                    ev.HLT_BIT_HLT_IsoTkMu24_v or \
-                    ev.HLT_BIT_HLT_IsoMu22_eta2p1_v or \
-                    ev.HLT_BIT_HLT_IsoTkMu22_eta2p1_v or \
-                    ev.HLT_BIT_HLT_Ele27_WPTight_Gsf_v or \
-                    ev.HLT_BIT_HLT_Ele25_eta2p1_WPTight_Gsf_v \
+                    ev.HLT_BIT_HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_v or \
+                    ev.HLT_BIT_HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v or \
+                    ev.HLT_BIT_HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v or \
+                    ev.HLT_BIT_HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v \
                     ] )))
 MODULES.append( ('Trigger_3l', lambda : EvtTagger("Trigger_3l",[
                 lambda ev : \
@@ -142,4 +138,27 @@ MODULES.append( ('TauTightFlag', lambda : ObjTagger("isTauTight","TauSel_Recl",
                                                     [lambda tau : tau.idMVAdR03>=3] )))
 
 from CMGTools.TTHAnalysis.tools.bTagEventWeightsCSVFullShape import BTagEventWeightFriend
-MODULES.append( ('eventBTagWeight', lambda : BTagEventWeightFriend(csvfile=os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/btag/CSVv2_Moriond17_B_H.csv")))
+MODULES.append( ('eventBTagWeight', lambda : BTagEventWeightFriend(csvfile=os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/btag/DeepCSV_94XSF_V1_B_F.csv",
+                                                                   discrname="btagDeepCSV")))
+
+from CMGTools.TTHAnalysis.tools.BDT_resolvedTopTagger_cpp import BDT_resolvedTopTagger
+MODULES.append( ('BDT_rTT', lambda : BDT_resolvedTopTagger(os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/kinMVA/tth/resTop_xGBoost_v0.weights.xml")) )
+
+from CMGTools.TTHAnalysis.tools.higgsRecoTTH import HiggsRecoTTH
+MODULES.append( ('higgsRecoTTH', lambda : HiggsRecoTTH(label="_Recl",
+                                                       cut_BDT_rTT_score = 0.0,
+                                                       cuts_mW_had = (60.,100.),
+                                                       cuts_mH_vis = (80.,140.),
+                                                       btagDeepCSVveto = 0.1522) ))
+
+from CMGTools.TTHAnalysis.tools.ttHMCEventReco import TTHMCEventReco
+MODULES.append( ('genLevelChain', lambda : TTHMCEventReco()) )
+
+from CMGTools.TTHAnalysis.tools.matchRecoToPartonsTTH import MatchRecoToPartonsTTH
+MODULES.append( ('matchPartons', lambda : MatchRecoToPartonsTTH(label="_Recl")) )
+
+from CMGTools.TTHAnalysis.tools.vertexWeightFriend import VertexWeightFriend
+# run on a big number of events, ideally one job per file using -N big_number, and not on skimmed trees when auto-reweighthing the pileup to avoid loss of statistical power!
+MODULES.append( ('vtxWeight', lambda : VertexWeightFriend(myfile=None, targetfile=os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/pileup/puWeights_2017_41p4fb_rereco_69p2mb.root",
+                                                          myhist=None,targethist="pileup",name="vtxWeight2017",
+                                                          verbose=False,vtx_coll_to_reweight="nTrueInt",autoPU=True)) )

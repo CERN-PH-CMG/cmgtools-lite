@@ -1,13 +1,25 @@
 from CMGTools.TTHAnalysis.treeReAnalyzer import *
+import math
 
 class VertexWeightFriend:
-    def __init__(self,myfile,targetfile,myhist="pileup",targethist="pileup",name="vtxWeight",verbose=False,vtx_coll_to_reweight="nVert"):
+    def __init__(self,myfile,targetfile,myhist="pileup",targethist="pileup",name="vtxWeight",verbose=False,vtx_coll_to_reweight="nVert",autoPU=False):
         self.name = name
         self.verbose = verbose
-        self.myvals, self.dennorm = self.load(myfile,myhist)
-        self.targetvals, self.numnorm = self.load(targetfile,targethist)
+        self.autoPU = autoPU
+        self.files = [None,None]
+        self.files[1] = ROOT.TFile.Open(targetfile)
+        self.targetvals, self.numnorm, self.targetbounds = self.load(self.files[1].Get(targethist))
+        if not self.autoPU:
+            self.files[0] = ROOT.TFile.Open(myfile)
+            self.myvals, self.dennorm, self.mybounds = self.load(self.files[0].Get(myhist))
+            if self.mybounds!=self.targetbounds or len(self.myvals)!=len(self.targetvals): raise RuntimeError, 'Source and target histogram have different ranges or binnings'
         self.vtxCollectionInEvent = vtx_coll_to_reweight
         self.warned = False
+    def init(self,tree):
+        if self.autoPU:
+            print 'Auto-determining pileup profile from source file, using %s as the variable to reweight...'%self.vtxCollectionInEvent
+            tree.Draw("%s >> autoPUhist(%d,%f,%f)"%(self.vtxCollectionInEvent,len(self.targetvals),self.targetbounds[0],self.targetbounds[1]))
+            self.myvals, self.dennorm, self.mybounds = self.load(ROOT.gDirectory.Get('autoPUhist'))
         def w2(t,m):
             if t == 0: return (0 if m else 1)
             return (t/m if m else 1)
@@ -42,26 +54,28 @@ class VertexWeightFriend:
         if self.verbose:
             print "Cropped weights up to maximum %d. Normalization shift %.5f, corrected overall to %g" % (maxw,normshift,checkIntegral(recalibrated))
         self.weights = recalibrated
-    def load(self,filename,hname,norm=True):
-        tf = ROOT.TFile.Open(filename)
-        hist = tf.Get(hname)
+    def load(self,hist,norm=True):
         vals = [ hist.GetBinContent(i) for i in xrange(1,hist.GetNbinsX()+1) ]
         for i in xrange(1,len(vals)-1):
             if vals[i] == 0 and vals[i-1] > 0 and vals[i+1] > 0:
                 vals[i] = 0.5*(vals[i-1]+vals[i+1])
         if self.verbose:
-            print "Normalization of ",hname,": ",sum(vals)
-        tf.Close()
+            print "Normalization of ",hist.GetName(),": ",sum(vals)
         if norm: 
             scale = 1.0/sum(vals)
             vals = [ v*scale for v in vals ]
-        return vals, (1.0/scale if norm else 1)
+        return vals, (1.0/scale if norm else 1), (hist.GetXaxis().GetXmin(),hist.GetXaxis().GetXmax())
     def listBranches(self):
         return [ (self.name,'F') ]
     def __call__(self,event):
         if hasattr(event,self.vtxCollectionInEvent):
-            nvtx = int(getattr(event,self.vtxCollectionInEvent))
-            weight = self.weights[nvtx] if nvtx < len(self.weights) else 1
+            _nvtx = getattr(event,self.vtxCollectionInEvent)
+            if math.isinf(_nvtx) or math.isnan(_nvtx) or _nvtx < 0:
+                print 'WARNING: crazy value of input reweigthing variable found (%f), returning weight = 1'%_nvtx
+                weight = 1
+            else:
+                nvtx = int(_nvtx)
+                weight = self.weights[nvtx] if nvtx < len(self.weights) else 1
             return { self.name: weight }
         else:
             if not self.warned:
@@ -80,7 +94,10 @@ if __name__ == '__main__':
     class Tester(Module):
         def __init__(self, name):
             Module.__init__(self,name,None)
-            self.mc  = VertexWeightFriend(myfile=argv[2],targetfile=argv[2],myhist="nvtx_background",targethist="nvtx_data",verbose=True)
+#            self.mc  = VertexWeightFriend(myfile=argv[2],targetfile=argv[2],myhist="nvtx_background",targethist="nvtx_data",verbose=True)
+            self.mc  = VertexWeightFriend(myfile=None,targetfile=argv[2],myhist=None,targethist="pileup",vtx_coll_to_reweight="nTrueInt",verbose=True,autoPU=True)
+        def init(self,tree):
+            if tree: self.mc.init(tree)
         def analyze(self,ev):
             ret = self.mc(ev)
             print ev.nVert, ret.values()[0]
@@ -91,6 +108,6 @@ if __name__ == '__main__':
         file = ROOT.TFile(argv[1])
         tree = file.Get("tree")
         tree.vectorTree = True
-        el.loop([tree], maxEvents = 100000 if len(argv) < 4 else int(argv[3]))
+        el.loop([tree], maxEvents = 10 if len(argv) < 4 else int(argv[3]))
     elif argv[1].startswith("_puw"):
         test.mc.printPUWCode(argv[1]) 

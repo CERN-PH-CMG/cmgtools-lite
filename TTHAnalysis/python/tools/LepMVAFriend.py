@@ -54,6 +54,7 @@ _CommonSpect = {
 _CommonSpect['forMoriond_eleOLD'] = _CommonSpect['forMoriond']
 _CommonSpect['forMoriond_eleHZZ'] = _CommonSpect['forMoriond']
 _CommonSpect['forMoriond_eleGP'] = _CommonSpect['forMoriond']
+_CommonSpect['training2017'] = _CommonSpect['forMoriond']
 
 _CommonVars = {
 'mvaMultiIso' : [ 
@@ -199,7 +200,19 @@ _CommonVars = {
     MVAVar("LepGood_dxy := log(abs(LepGood_dxy))",lambda x: log(abs(x.dxy))),
     MVAVar("LepGood_dz  := log(abs(LepGood_dz))", lambda x: log(abs(x.dz))),
 ],
-
+ 'training2017':[
+    MVAVar("LepGood_pt",lambda x: x.pt),
+    MVAVar("LepGood_eta",lambda x: x.eta),
+    MVAVar("LepGood_jetNDauChargedMVASel",lambda x: x.jetNDauChargedMVASel),
+    MVAVar("LepGood_miniRelIsoCharged",lambda x: x.miniRelIsoCharged),
+    MVAVar("LepGood_miniRelIsoNeutral",lambda x: x.miniRelIsoNeutral),
+    MVAVar("LepGood_jetPtRelv2",lambda x: x.jetPtRelv2),
+    MVAVar("LepGood_jetBTagCSV := max(LepGood_jetBTagCSV,0)", lambda x : max(x.jetBTagCSV,0.)),
+    MVAVar("LepGood_jetPtRatiov2 := (LepGood_jetBTagCSV>-5)*min(LepGood_jetPtRatiov2,1.5)+(LepGood_jetBTagCSV<-5)/(1+LepGood_relIso04)", lambda x : min(x.jetPtRatiov2,1.5) if (x.jetBTagCSV>-5) else (1./(1.+x.relIso04))),
+    MVAVar("LepGood_sip3d",lambda x: x.sip3d),
+    MVAVar("LepGood_dxy := log(abs(LepGood_dxy))",lambda x: log(abs(x.dxy))),
+    MVAVar("LepGood_dz  := log(abs(LepGood_dz))", lambda x: log(abs(x.dz))),
+ ],
 }
 _CommonVars['forMoriond_eleOLD'] = _CommonVars['forMoriond']
 _CommonVars['forMoriond_eleHZZ'] = _CommonVars['forMoriond']
@@ -215,6 +228,9 @@ _ElectronVars = {
     'forMoriond_eleGP': [
         MVAVar("LepGood_mvaIdSpring16GP",lambda x: x.mvaIdSpring16GP)
     ],    
+ 'training2017': [
+    MVAVar("LepGood_mvaIdFall17noIso",lambda x: x.mvaIdFall17noIso)
+ ],
 }
 
 _MuonVars = {
@@ -264,6 +280,7 @@ _MuonVars = {
 _MuonVars['forMoriond_eleOLD'] = _MuonVars['forMoriond']
 _MuonVars['forMoriond_eleHZZ'] = _MuonVars['forMoriond']
 _MuonVars['forMoriond_eleGP'] = _MuonVars['forMoriond']
+_MuonVars['training2017'] = _MuonVars['forMoriond']
 
 class LeptonMVA:
     def __init__(self,basepath,training="forMoriond_eleGP"):

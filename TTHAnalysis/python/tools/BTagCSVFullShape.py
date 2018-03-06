@@ -12,7 +12,7 @@ class BTagCSVFullShape(object):
                  verbose=False):
         self.csvfile = csvfile
         self.verbose = True#verbose
-        self.algo = 'csvv2'
+        self.algo = 'deepcsv'
         
         self.iterative_systs = ['jes',
                                 'lf', 'hf',

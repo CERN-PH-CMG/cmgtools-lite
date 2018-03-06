@@ -12,6 +12,7 @@
 #include "TMVA/Reader.h"
 #include <iostream>
 #include "TStopwatch.h"
+#include <algorithm>
 
 typedef math::PtEtaPhiMLorentzVectorD ptvec;
 

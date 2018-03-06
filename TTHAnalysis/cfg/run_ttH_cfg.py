@@ -26,6 +26,7 @@ forcedSplitFactor = getHeppyOption("splitFactor",-1)
 forcedFineSplitFactor = getHeppyOption("fineSplitFactor",-1)
 isTest = getHeppyOption("test",None) != None and not re.match("^\d+$",getHeppyOption("test"))
 selectedEvents=getHeppyOption("selectEvents","")
+keepGenPart=getHeppyOption("keepGenPart",False)
 
 sample = "main"
 #if runDataQCD or runFRMC: sample="qcd1l"
@@ -141,7 +142,8 @@ treeProducer = cfg.Analyzer(
      globalObjects = ttH_globalObjects,
      collections = ttH_collections,
 )
-if getHeppyOption("reduceMantissa",False) in ("True","true","yes","1"):
+if getHeppyOption("reduceMantissa",False) in (True,"True","true","yes","1"):
+    print 'Activating reduceMantissa!'
     setLossyFloatCompression(10,16)
 
 ## histo counter
@@ -201,11 +203,11 @@ selectedComponents = [TTLep_pow]
 
 sig_ttv = [TTHnobb_pow,TTHnobb_fxfx,TTWToLNu_fxfx,TTZToLLNuNu_amc,TTZToLLNuNu_m1to10] # signal + TTV
 ttv_lo = [TTW_LO,TTZ_LO] # TTV LO
-rares = [ZZTo4L,WW_DPS]+TTXXs # rares # MISSING: GGHZZ4L,VHToNonbb,tZq_ll_ext,WpWpJJ,tWll
+rares = [ZZTo4L,WW_DPS,TZQToLL]+TTXXs # rares # MISSING: GGHZZ4L,VHToNonbb,WpWpJJ,tWll
 single_t = Ts # single top + tW # MISSING: THQ,THW
 convs = [TTGJets] # X+G # MISSING: WGToLNuG_amcatnlo_ext,WGToLNuG_amcatnlo_ext2,ZGTo2LG_ext,TGJets,TGJets_ext
 v_jets = [WJetsToLNu_LO,DYJetsToLL_M10to50_LO,DYJetsToLL_M50_LO,DYJetsToLL_M50_LO_ext,WWTo2L2Nu] # V+jets
-tt_1l = [TTSemi_pow] # TT 1l # MISSING: Madgraph
+tt_1l = [TTSemi_pow,TTJets] # TT 1l # MISSING: Madgraph
 tt_2l = [TTLep_pow] # TT 2l # MISSING: Madgraph
 boson = [WZTo3LNu_fxfx] # multi-boson # MISSING: WZTo3LNu_pow, TriBosons
 

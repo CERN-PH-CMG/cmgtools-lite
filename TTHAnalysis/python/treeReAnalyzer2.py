@@ -23,12 +23,7 @@ class Event:
         self._entry = entry
         self._sync()
     def _sync(self):
-        if self._tree.entry != self._entry:
-            if (self._tree.entry == self._entry-1):
-                self._tree._ttreereader.Next()
-            else:
-                self._tree._ttreereader.SetEntry(self._entry)
-            self._tree.entry = self._entry
+        self._tree.gotoEntry(self._entry)
     def __getattr__(self,name):
         if name in self.__dict__: return self.__dict__[name]
         return TRAT.readBranch(self._tree, name)
