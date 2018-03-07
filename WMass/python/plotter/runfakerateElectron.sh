@@ -20,7 +20,7 @@ onlypack="n" # just pack an already existing fake-rate
 #--------------------------
 etaRange="0.0,1.0,1.479,2.1,2.5"
 mtRanges="0,30,30,120"
-mtDefinition="trkmtfix"  # trkmtfix, trkmt, pfmtfix, pfmt: even though we no longer use the 2-mT-regions method, I think pfmt should be better because trkmt is correlated with ID variables
+mtDefinition="pfmtfix"  # trkmtfix, trkmt, pfmtfix, pfmt: even though we no longer use the 2-mT-regions method, I think pfmt should be better because trkmt is correlated with ID variables
 ptDefinition="pt_granular"  # pt_coarse, pt_granular (first is mainly for QCD MC)
 #-------------------------
 istest="y"
