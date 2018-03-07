@@ -94,10 +94,9 @@ for charge in charges:
                     bin = l.split()[1]
                     binn = int(bin.split('_')[-1]) if 'Ybin_' in bin else -1
                 basename = os.path.basename(f).split('.')[0]
-                #print "===> basename = ",basename
                 rootfiles_syst = filter(lambda x: re.match('{base}_.*_(Up|Dn)\.input\.root'.format(base=basename),x), os.listdir(options.inputdir))
-                #print "SYSTFILES = ",rootfiles_syst
-                #if re.match('process\s+',l) and '1' not in l:
+                rootfiles_syst = [dir+'/'+x for x in rootfiles_syst]
+                rootfiles_syst.sort()
                 if re.match('process\s+',l): 
                     if len(l.split()) > 1 and all(n.isdigit() for n in l.split()[1:]) : continue
                     if not ('left' in l and 'right' in l):
@@ -113,27 +112,29 @@ for charge in charges:
         if options.mergeRoot:
             if not binn in empty_bins:
                 print 'processing bin = ',bin
-                tf = ROOT.TFile.Open(rootfile)
-                tmpfile = os.path.join(options.inputdir,'tmp_'+bin+'.root')
-                of=ROOT.TFile(tmpfile,'recreate')
-                tmpfiles.append(tmpfile)
-                # remove the duplicates also
-                plots = {}
-                for e in tf.GetListOfKeys() :
-                    name=e.GetName()
-                    obj=e.ReadObj()
-                    if (not re.match('Wplus|Wminus',os.path.basename(f))) and 'data_obs' in name: obj.Clone().Write()
-                    for p in processes:
-                        if p in name:
-                            newprocname = p+'_'+bin if re.match('Wplus|Wminus',p) else p
-                            if longBKG and re.match('(Wplus_long|Wminus_long)',p): newprocname = p
-                            newname = name.replace(p,newprocname)
-                            if newname not in plots:
-                                plots[newname] = obj.Clone(newname)
-                                #print 'replacing old %s with %s' % (name,newname)
-                                plots[newname].Write()
-         
-                of.Close()
+                for irf,rf in enumerate([rootfile]+rootfiles_syst):
+                    print '\twith nominal/systematic file: ',rf
+                    tf = ROOT.TFile.Open(rf)
+                    tmpfile = os.path.join(options.inputdir,'tmp_{bin}_sys{sys}.root'.format(bin=bin,sys=irf))
+                    of=ROOT.TFile(tmpfile,'recreate')
+                    tmpfiles.append(tmpfile)
+                    # remove the duplicates also
+                    plots = {}
+                    for e in tf.GetListOfKeys() :
+                        name=e.GetName()
+                        obj=e.ReadObj()
+                        if (not re.match('Wplus|Wminus',os.path.basename(f))) and 'data_obs' in name: obj.Clone().Write()
+                        for p in processes:
+                            if p in name:
+                                newprocname = p+'_'+bin if re.match('Wplus|Wminus',p) else p
+                                if longBKG and re.match('(Wplus_long|Wminus_long)',p): newprocname = p
+                                newname = name.replace(p,newprocname)
+                                if newname not in plots:
+                                    plots[newname] = obj.Clone(newname)
+                                    #print 'replacing old %s with %s' % (name,newname)
+                                    plots[newname].Write()
+                  
+                    of.Close()
     if len(empty_bins):
         print 'found a bunch of empty bins:', empty_bins
     if options.mergeRoot:
