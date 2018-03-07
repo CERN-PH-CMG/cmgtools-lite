@@ -20,12 +20,12 @@ onlypack="n" # just pack an already existing fake-rate
 #--------------------------
 etaRange="0.0,1.0,1.479,2.1,2.5"
 mtRanges="0,30,30,120"
-mtDefinition="trkmtfix"  # trkmtfix, trkmt, pfmtfix, pfmt: even though we no longer use the 2-mT-regions method, I think pfmt should be better because trkmt is correlated with ID variables
+mtDefinition="pfmtfix"  # trkmtfix, trkmt, pfmtfix, pfmt: even though we no longer use the 2-mT-regions method, I think pfmt should be better because trkmt is correlated with ID variables
 ptDefinition="pt_granular"  # pt_coarse, pt_granular (first is mainly for QCD MC)
 #-------------------------
 istest="y"
 # following option testdit is used only if istest is 'y'
-testdir="SRtrees_new/fakeRate_36fb_PUTrgSF_${mtDefinition}_${ptDefinition}_pfmetLess20_legacy07Aug2017_looseIso0p2_IDntupleVar"
+testdir="SRtrees_new/fakeRate_36fb_PUTrgSF_${mtDefinition}_${ptDefinition}_pfmetLess20_legacy07Aug2017_looseIso0p2_IDntupleVar_highEtaEElowHLTpt"
 # by default, if this is a test we do not pack to avoid overwriting something when we just do tests
 # you can override this feature setting this flag to 'y'
 # even if you don't pack, the command you would use is printed in stdout

@@ -3,5 +3,8 @@ HLT_SingleEL : HLT_SingleEl == 1
 onelep : nLepGood == 1 && abs(LepGood1_pdgId)==11
 fiducial : abs(LepGood1_eta)<1.4442 || abs(LepGood1_eta)>1.566
 eleKin : ptElFull(LepGood1_calPt,LepGood1_eta) > 30 && ptElFull(LepGood1_calPt,LepGood1_eta) < 45 && abs(LepGood1_eta)<2.5
+highEtaEE_HLTlowPt: abs(LepGood1_eta) < 2.1 || HLT_BIT_HLT_Ele27_WPTight_Gsf_v == 1 || HLT_BIT_HLT_Ele25_WPTight_Gsf_v == 1
 HLTid : LepGood1_hltId > 0
 numSel : LepGood1_customId == 1
+# pfmt_30 : mt_2(met_pt,met_phi,ptElFull(LepGood1_calPt,LepGood1_eta),LepGood_phi) > 30
+# pfmt_50 : mt_2(met_pt,met_phi,ptElFull(LepGood1_calPt,LepGood1_eta),LepGood_phi) > 50

@@ -85,9 +85,7 @@ if useFullData2016:
 J=4
 
 BASECONFIG = plotterPath + "w-helicity-13TeV/wmass_e"
-MCA = BASECONFIG+'/mca-80X_V3.txt'
-# if useSkim:
-#     MCA = BASECONFIG+'/mca-80X_V3_skimTrees.txt'  # now we have also the missing top samples
+MCA = BASECONFIG+'/mca-80X_V3_FRskim.txt'
 CUTFILE =BASECONFIG+'/qcd1l_SRtrees.txt'
 XVAR=ptvar
 FITVAR=fitvar

@@ -10,5 +10,6 @@ pt_coarse:     ptElFull(LepGood1_calPt,LepGood1_eta) : [ 30,34,38,42,46,50,54,60
 pfmt :     mt_2(met_pt,   met_phi, ptElFull(LepGood1_calPt,LepGood1_eta), LepGood_phi) : 30,0,120; XTitle="M_{T}(l\, E_{T}^{miss}) (GeV)"
 trkmt :    mt_2(met_trkPt,met_trkPhi,ptElFull(LepGood1_calPt,LepGood1_eta) ,LepGood_phi) : 30,0,120; XTitle="M_{T}(l\, E_{T}^{miss}) (GeV)"
 pfmtfix :  mt_2(met_pt,   met_phi,   35,LepGood_phi) : 30,0,120; XTitle="M_{T}^{fix}(l\, E_{T}^{miss}) (GeV)"
-trkmtfix : mt_2(met_trkPt,met_trkPhi,35,LepGood_phi) : 30,0,120; XTitle="M_{T}^{fix}(l\, E_{T}^{miss}) (GeV)"
+#trkmtfix : mt_2(met_trkPt,met_trkPhi,35,LepGood_phi) : 30,0,120; XTitle="M_{T}^{fix}(l\, E_{T}^{miss}) (GeV)"
+trkmtfix : tkmt_tkmetEleCorr(met_trkPt,met_trkPhi,ptElFull(LepGood1_calPt,LepGood1_eta),LepGood_phi,pass_dxy_dz(abs(LepGood1_eta)<1.479, LepGood1_dxy, LepGood1_dz) && pass_lostHits_conVeto(LepGood1_lostHits, LepGood1_convVeto)) : 30,0,120; XTitle="M_{T}^{fix}(l\, E_{T}^{miss}) (GeV)"
 met : met_pt : 24,0,120; XTitle="E_{T}^{miss} (GeV)"

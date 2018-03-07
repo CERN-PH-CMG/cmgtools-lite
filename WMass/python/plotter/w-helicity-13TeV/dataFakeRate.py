@@ -93,6 +93,11 @@ if __name__ == "__main__":
         if not os.path.exists(dirname):
             os.system("mkdir -p "+dirname)
             if os.path.exists("/afs/cern.ch"): os.system("cp /afs/cern.ch/user/g/gpetrucc/php/index.php "+dirname)
+        # copy mca and cut file to output folder
+        os.system("cp %s %s " % (args[0], dirname))
+        os.system("cp %s %s " % (args[1], dirname))
+
+            
     outfile  = ROOT.TFile(outname,"RECREATE")
     plotter = PlotMaker(outfile, options)
 

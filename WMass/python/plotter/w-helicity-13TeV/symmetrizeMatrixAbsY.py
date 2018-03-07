@@ -40,8 +40,8 @@ if __name__ == "__main__":
     (options, args) = parser.parse_args()
 
     if not os.path.isdir(options.outdir):
-        os.system('mkdir {od}'.format(od=options.outdir))
-        os.system('cp {pf} {od}'.format(pf='/afs/cern.ch/user/m/mdunser/www/private/w-helicity-13TeV/correlationMatrices/index.php',od=options.outdir))
+        os.system('mkdir -p {od}'.format(od=options.outdir))
+    os.system('cp {pf} {od}'.format(pf='/afs/cern.ch/user/g/gpetrucc/php/index.php',od=options.outdir))
 
     ##infile = ROOT.TFile('/afs/cern.ch/work/e/emanuele/wmass/fit/CMSSW_8_1_0/src/multidimfit.root','read')
     infile = ROOT.TFile(options.infile, 'read')
@@ -315,7 +315,15 @@ if __name__ == "__main__":
         c2.Clear()
         c2.Divide(1,2)
 
-        c2.cd(1)
+        line = ROOT.TF1("horiz_line","1",0.0,3.0);
+        line.SetLineColor(ROOT.kBlack);
+        line.SetLineWidth(2);
+
+        padUp = c2.cd(1)
+        padUp.SetTickx(1)
+        padUp.SetTicky(1)
+        padUp.SetGridy(1)
+        padUp.SetBottomMargin(0.15)
 
         graphLeft_rel.SetTitle('W^{{{ch}}}: left'.format(ch='+' if charge=='plus' else '-'))
         graphLeft_rel.SetFillColor(colorL)
@@ -339,8 +347,17 @@ if __name__ == "__main__":
         graphRight_rel.GetYaxis().SetLabelSize(0.06)
 
         graphLeft_rel.Draw('Pa2')
-        c2.cd(2)
+        line.Draw("Lsame");
+        padUp.RedrawAxis("sameaxis");
+
+        padDown = c2.cd(2)
+        padDown.SetTickx(1)
+        padDown.SetTicky(1)
+        padDown.SetGridy(1)
+        padDown.SetBottomMargin(0.15)
         graphRight_rel.Draw('pa2')
+        line.Draw("Lsame");
+        padDown.RedrawAxis("sameaxis");
 
         for ext in ['png', 'pdf']:
             c2.SaveAs('{od}/rapidityDistribution_{date}_{suff}_{ch}_relative.{ext}'.format(od=options.outdir, date=date, suff=options.suffix, ch=charge, ext=ext))
