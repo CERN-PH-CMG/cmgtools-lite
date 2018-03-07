@@ -120,18 +120,17 @@ if options.signalCards:
     for ip,pdf in enumerate(pdfsysts):
         for charge in ['plus','minus']:
             if ip==0: 
-                exclpdf = ''
                 IARGS = ARGS
             else: 
                 IARGS = ARGS.replace(MCA,"{outdir}/mca/mca{syst}.txt".format(outdir=outdir,syst=pdf))
                 IARGS = IARGS.replace(SYSTFILE,"{outdir}/mca/systEnv-dummy.txt".format(outdir=outdir))
-                exclpdf = ',W.*pdf(?!{ip}).*,W{ch}_left,W{ch}_right'.format(ip=ip,ch=charge)
+                print "Running the systematic: ",pdf
             for iy in xrange(len(WYBinsEdges)-1):
                 print "Making card for %s<=abs(genw_y)<%s and signal process with charge %s " % (WYBinsEdges[iy],WYBinsEdges[iy+1],charge)
                 ycut=" -A alwaystrue YW%d 'abs(genw_y)>=%s && abs(genw_y)<%s' " % (iy,WYBinsEdges[iy],WYBinsEdges[iy+1])
                 ycut += POSCUT if charge=='plus' else NEGCUT
                 excl_long_signal  = '' if not options.longBkg else ',W{ch}_long'.format(ch=charge)
-                xpsel=' --xp "W{antich}.*,Z,Top,DiBosons,TauDecaysW{longbkg}{exclpdf},data.*" --asimov '.format(antich = ('plus' if charge=='minus' else 'minus'), longbkg = excl_long_signal, exclpdf = exclpdf)
+                xpsel=' --xp "W{antich}.*,Z,Top,DiBosons,TauDecaysW{longbkg},data.*" --asimov '.format(antich = ('plus' if charge=='minus' else 'minus'), longbkg = excl_long_signal)
                 if not os.path.exists(outdir): os.mkdir(outdir)
                 if options.queue and not os.path.exists(outdir+"/jobs"): os.mkdir(outdir+"/jobs")
                 syst = '' if ip==0 else pdf
