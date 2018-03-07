@@ -84,20 +84,21 @@ ROOT.gROOT.SetBatch()
 #shapesfile = '/afs/cern.ch/work/m/mdunser/public/cmssw/w-helicity-13TeV/CMSSW_8_0_25/src/CMGTools/WMass/python/plotter/cards/helicity_2018_02_08_binsEta32_binsPt20_binsY26/Wmu_plus_shapes.root'
 #shapesfile = '/afs/cern.ch/work/m/mdunser/public/cmssw/w-helicity-13TeV/CMSSW_8_0_25/src/CMGTools/WMass/python/plotter/cards/helicity_2018_02_09_variablebinningEta_binsPt20_longBkg/mu_minus_shapes.root'
 #shapesfile = '/afs/cern.ch/work/m/mdunser/public/cmssw/w-helicity-13TeV/CMSSW_8_0_25/src/CMGTools/WMass/python/plotter/cards/helicity_2018_02_12_variableEta_ptBins20_longBkg_MTTK45/mu_minus_shapes.root'
-shapesfile = '/afs/cern.ch/work/m/mdunser/public/cmssw/w-helicity-13TeV/CMSSW_8_0_25/src/CMGTools/WMass/python/plotter/cards/helicity_2018_02_12_variableEta_ptBins20_longBkg_MTTK45/mu_minus_shapes.root'
+#shapesfile = '/afs/cern.ch/work/m/mdunser/public/cmssw/w-helicity-13TeV/CMSSW_8_0_25/src/CMGTools/WMass/python/plotter/cards/helicity_2018_02_12_variableEta_ptBins20_longBkg_MTTK45/mu_minus_shapes.root'
+shapesfile = '/afs/cern.ch/work/m/mdunser/public/cmssw/w-helicity-13TeV/CMSSW_8_0_25/src/CMGTools/WMass/python/plotter/cards/helicity_2018_02_21_absY_mTtk45/mu_plus_shapes.root'
 
 
 infile = ROOT.TFile(shapesfile, 'read')
-for charge in ['minus']:#, 'minus']:
+for charge in ['plus']:#, 'minus']:
     for pol in ['right', 'left']:
-        for ybin in range(26): 
+        for ybin in range(13): 
 
             jobsdir = os.path.dirname(shapesfile)+'/jobs/'
             jobfile_name = 'W{ch}_mu_Ybin_{b}.sh'.format(ch=charge,b=ybin)
             tmp_jobfile = open(jobsdir+jobfile_name, 'r')
             tmp_line = tmp_jobfile.readlines()[-1].split()
-            ymin = list(i for i in tmp_line if 'genw_y>' in i)[0].replace('\'','').split('>')[-1]
-            ymax = list(i for i in tmp_line if 'genw_y<' in i)[0].replace('\'','').split('<')[-1]
+            ymin = list(i for i in tmp_line if '(genw_y)>' in i)[0].replace('\'','').split('>')[-1]
+            ymax = list(i for i in tmp_line if '(genw_y)<' in i)[0].replace('\'','').split('<')[-1]
 
             binning = getbinning(tmp_line)
 
@@ -107,11 +108,11 @@ for charge in ['minus']:#, 'minus']:
             if len(binning) == 4:
                 n1 = binning[0]; bins1 = array('d', binning[1])
                 n2 = binning[2]; bins2 = array('d', binning[3])
-                h2_1 = ROOT.TH2F('h2_1', 'W{ch} {pol} : Y_{{W}} #in [{ymin},{ymax}]'.format(ymin=ymin,ymax=ymax,pol=pol,ybin=ybin,ch=chs) , n1, bins1, n2, bins2 )
+                h2_1 = ROOT.TH2F('h2_1', 'W{ch} {pol} : |Y_{{W}}| #in [{ymin},{ymax}]'.format(ymin=ymin,ymax=ymax,pol=pol,ybin=ybin,ch=chs) , n1, bins1, n2, bins2 )
             else:
                 n1 = binning[0]; min1 = binning[1]; max1 = binning[2]
                 n2 = binning[3]; min2 = binning[4]; max2 = binning[5]
-                h2_1 = ROOT.TH2F('h2_1', 'W{ch} {pol} : Y_{{W}} #in [{ymin},{ymax}]'.format(ymin=ymin,ymax=ymax,pol=pol,ybin=ybin,ch=chs) , n1, min1, max1, n2, min2, max2)
+                h2_1 = ROOT.TH2F('h2_1', 'W{ch} {pol} : |Y_{{W}}| #in [{ymin},{ymax}]'.format(ymin=ymin,ymax=ymax,pol=pol,ybin=ybin,ch=chs) , n1, min1, max1, n2, min2, max2)
             h2_backrolled_1 = roll1Dto2D(h1_1, h2_1 )
             h2_backrolled_1 .GetXaxis().SetTitle('lepton #eta')
             h2_backrolled_1 .GetYaxis().SetTitle('lepton p_{T} (GeV)')
@@ -121,7 +122,7 @@ for charge in ['minus']:#, 'minus']:
             canv = ROOT.TCanvas()
             h2_backrolled_1.Draw('colz')
             for ext in ['pdf', 'png']:
-                canv.SaveAs('~/www/private/w-helicity-13TeV/helicityTemplates/backrolledTemplates/W{ch}_{pol}_W{ch}_mu_Ybin_{ybin}_MTTK45.{ext}'.format(ch=charge,pol=pol,ybin=ybin,ext=ext))
+                canv.SaveAs('~/www/private/w-helicity-13TeV/helicityTemplates/backrolledTemplates/W{ch}_{pol}_W{ch}_mu_Ybin_{ybin}_MTTK45_absY.{ext}'.format(ch=charge,pol=pol,ybin=ybin,ext=ext))
 ## canv.Divide(1,2)
 ## canv.cd(1)
 ## h2.Draw('colz')
