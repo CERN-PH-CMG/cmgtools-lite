@@ -32,8 +32,8 @@ for charge in charges:
 
     ## prepare the relevant files. only the datacards and the correct charge
     files = ( f for f in os.listdir(options.inputdir) if f.endswith('.card.txt') )
-    files = ( f for f in files if charge in f )
-    files = sorted(files, key = lambda x: int(x.rstrip('.card.txt').split('_')[-1]) if not 'bkg' in x else -1) ## ugly but works
+    files = ( f for f in files if charge in f and not any(x in f for x in 'Up Dn'.split()))
+    files = sorted(files, key = lambda x: int(x.rstrip('.card.txt').split('_')[-1]) if not 'bkg'in x else -1) ## ugly but works
     files = list( ( os.path.join(options.inputdir, f) for f in files ) )
     
     existing_bins = []
@@ -93,6 +93,10 @@ for charge in charges:
                     if len(l.split()) < 2: continue ## skip the second bin line if empty
                     bin = l.split()[1]
                     binn = int(bin.split('_')[-1]) if 'Ybin_' in bin else -1
+                basename = os.path.basename(f).split('.')[0]
+                #print "===> basename = ",basename
+                rootfiles_syst = filter(lambda x: re.match('{base}_.*_(Up|Dn)\.input\.root'.format(base=basename),x), os.listdir(options.inputdir))
+                #print "SYSTFILES = ",rootfiles_syst
                 #if re.match('process\s+',l) and '1' not in l:
                 if re.match('process\s+',l): 
                     if len(l.split()) > 1 and all(n.isdigit() for n in l.split()[1:]) : continue
