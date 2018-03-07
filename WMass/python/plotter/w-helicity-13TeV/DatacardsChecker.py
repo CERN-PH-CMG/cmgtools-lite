@@ -11,7 +11,7 @@ class CardsChecker:
         self.cardinputs = {}
         for charge in ["plus","minus"]:
             for r in xrange(nRapBins):
-                for ipdf in xrange(nPdfBins+1):
+                for ipdf in xrange(1,nPdfBins+1):
                     for idir in ["Up","Dn"]:
                         key = "W{charge}_{channel}_Ybin_{bin}_pdf{eigen}_{dir}".format(charge=charge,channel=channel,bin=r,eigen=ipdf,dir=idir)
                         f_txt = key+".card.txt" 
