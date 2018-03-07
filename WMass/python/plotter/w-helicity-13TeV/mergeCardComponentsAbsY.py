@@ -212,10 +212,11 @@ for charge in charges:
     ProcsAndRates = zip(procs,rates)
     ProcsAndRatesDict = dict(zip(procs,rates))
 
-    efficiencies = {}
+    efficiencies = {}; efferrors = {}
     if options.scaleFile:
         for pol in ['left','right','long']: 
             efficiencies[pol] = [1./x for x in getScales(ybins, charge, pol, os.path.abspath(options.scaleFile))]
+            efferrors   [pol] = [   x for x in getScales(ybins, charge, pol, os.path.abspath(options.scaleFile), returnError=True)] ## these errors are relative to the effs
 
     combinedCard = open(cardfile,'a')
     POIs = []
@@ -231,6 +232,14 @@ for charge in charges:
         bins_to_constrain = options.constrainRateParams.split(',')
         tightConstraint = 0.05
         looseConstraint = tightConstraint
+        for hel in hel_to_constrain:
+            for iy,helbin in enumerate(hel):
+                pol = helbin.split('_')[1]
+                index_procs = procs.index(helbin)
+                lns = ' - '.join('' for i in range(index_procs+1))
+                lns += ' {effunc:.4f} '.format(effunc=1.+efferrors[pol][iy])
+                lns += ' - '.join('' for i in range(len(procs) - index_procs))
+                combinedCard.write('eff_unc_{hb}    lnN {lns}\n'.format(hb=helbin,lns=lns))
         for hel in hel_to_constrain:
             for iy,helbin in enumerate(hel):
                 sfx = str(iy)
