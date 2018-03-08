@@ -129,6 +129,8 @@ for charge in charges:
                                 newprocname = p+'_'+bin if re.match('Wplus|Wminus',p) else p
                                 if longBKG and re.match('(Wplus_long|Wminus_long)',p): newprocname = p
                                 newname = name.replace(p,newprocname)
+                                if newname.endswith("_Up"): newname = re.sub('_Up$','Up',newname)
+                                if newname.endswith("_Dn"): newname = re.sub('_Dn$','Down',newname)
                                 if newname not in plots:
                                     plots[newname] = obj.Clone(newname)
                                     #print 'replacing old %s with %s' % (name,newname)
@@ -144,7 +146,21 @@ for charge in charges:
         os.system(haddcmd)
         os.system('rm {rm}'.format(rm=' '.join(tmpfiles)))
 
-        
+    print "Now trying to get info on PDF uncertainties..."
+    pdfsyst = {}
+    tf = ROOT.TFile.Open(outfile)
+    for e in tf.GetListOfKeys() :
+        name=e.GetName()
+        if 'pdf' in name:
+            if name.endswith("Up"): name = re.sub('Up$','',name)
+            if name.endswith("Down"): name = re.sub('Down$','',name)
+            syst = name.split('_')[-1]
+            binWsyst = '_'.join(name.split('_')[1:-1])
+            if syst not in pdfsyst: pdfsyst[syst] = [binWsyst]
+            else: pdfsyst[syst].append(binWsyst)
+    if len(pdfsyst): print "Found a bunch of PDF sysematics: ",pdfsyst.keys()
+    else: print "You are running w/o PDF systematics. Lucky you!"
+
     combineCmd="combineCards.py "
     for f in files:
         basename = os.path.basename(f).split(".")[0]
@@ -156,7 +172,7 @@ for charge in charges:
     combineCmd += ' > {tmpcard}'.format(tmpcard=tmpcard)
     #sys.exit()
     os.system(combineCmd)
-    
+
     combinedCard = open(cardfile,'w')
     combinedCard.write("imax 1\n")
     combinedCard.write("jmax *\n")
@@ -337,9 +353,15 @@ for charge in charges:
                     combinedCardNew.write("norm_%-50s   rateParam * %-5s  %15.1f [%.0f,%.0f]\n" % (Wlong[0][0],Wlong[0][0],normWLong,(1-tightConstraint)*normWLong,(1+tightConstraint)*normWLong))
 
             ## make an efficiency nuisance group
-            combinedCardNew.write('\nefficiencies group = eff_'+Wlong[0][0]+' '+' '.join([p.replace('norm','eff') for p in POIs])+'\n' )
-            combinedCardNew.close() ## for some reason this is really necessary
+            combinedCardNew.write('\nefficiencies group = eff_'+Wlong[0][0]+' '+' '.join([p.replace('norm','eff') for p in POIs])+'\n\n' )
 
+            ## add the PDF systematics 
+            for sys,procs in pdfsyst.iteritems():
+                # there should be 2 occurrences of the same proc in procs (Up/Down). This check should be useless if all the syst jobs are DONE
+                combinedCardNew.write('%-15s   shape %s\n' % (sys,(" ".join([kpatt % '1.0' if p in procs and procs.count(p)==2 else '  -  ' for p,r in ProcsAndRates]))) )
+            combinedCardNew.write('\npdfs group = '+' '.join([sys for sys,procs in pdfsyst.iteritems()])+'\n')
+
+            combinedCardNew.close() ## for some reason this is really necessary
             os.system("mv {cardfile}_new {cardfile}".format(cardfile=cardfile))
 
     
