@@ -32,8 +32,8 @@ for charge in charges:
 
     ## prepare the relevant files. only the datacards and the correct charge
     files = ( f for f in os.listdir(options.inputdir) if f.endswith('.card.txt') )
-    files = ( f for f in files if charge in f )
-    files = sorted(files, key = lambda x: int(x.rstrip('.card.txt').split('_')[-1]) if not 'bkg' in x else -1) ## ugly but works
+    files = ( f for f in files if charge in f and not any(x in f for x in 'Up Dn'.split()))
+    files = sorted(files, key = lambda x: int(x.rstrip('.card.txt').split('_')[-1]) if not 'bkg'in x else -1) ## ugly but works
     files = list( ( os.path.join(options.inputdir, f) for f in files ) )
     
     existing_bins = []
@@ -93,7 +93,10 @@ for charge in charges:
                     if len(l.split()) < 2: continue ## skip the second bin line if empty
                     bin = l.split()[1]
                     binn = int(bin.split('_')[-1]) if 'Ybin_' in bin else -1
-                #if re.match('process\s+',l) and '1' not in l:
+                basename = os.path.basename(f).split('.')[0]
+                rootfiles_syst = filter(lambda x: re.match('{base}_.*_(Up|Dn)\.input\.root'.format(base=basename),x), os.listdir(options.inputdir))
+                rootfiles_syst = [dir+'/'+x for x in rootfiles_syst]
+                rootfiles_syst.sort()
                 if re.match('process\s+',l): 
                     if len(l.split()) > 1 and all(n.isdigit() for n in l.split()[1:]) : continue
                     if not ('left' in l and 'right' in l):
@@ -109,27 +112,31 @@ for charge in charges:
         if options.mergeRoot:
             if not binn in empty_bins:
                 print 'processing bin = ',bin
-                tf = ROOT.TFile.Open(rootfile)
-                tmpfile = os.path.join(options.inputdir,'tmp_'+bin+'.root')
-                of=ROOT.TFile(tmpfile,'recreate')
-                tmpfiles.append(tmpfile)
-                # remove the duplicates also
-                plots = {}
-                for e in tf.GetListOfKeys() :
-                    name=e.GetName()
-                    obj=e.ReadObj()
-                    if (not re.match('Wplus|Wminus',os.path.basename(f))) and 'data_obs' in name: obj.Clone().Write()
-                    for p in processes:
-                        if p in name:
-                            newprocname = p+'_'+bin if re.match('Wplus|Wminus',p) else p
-                            if longBKG and re.match('(Wplus_long|Wminus_long)',p): newprocname = p
-                            newname = name.replace(p,newprocname)
-                            if newname not in plots:
-                                plots[newname] = obj.Clone(newname)
-                                #print 'replacing old %s with %s' % (name,newname)
-                                plots[newname].Write()
-         
-                of.Close()
+                for irf,rf in enumerate([rootfile]+rootfiles_syst):
+                    print '\twith nominal/systematic file: ',rf
+                    tf = ROOT.TFile.Open(rf)
+                    tmpfile = os.path.join(options.inputdir,'tmp_{bin}_sys{sys}.root'.format(bin=bin,sys=irf))
+                    of=ROOT.TFile(tmpfile,'recreate')
+                    tmpfiles.append(tmpfile)
+                    # remove the duplicates also
+                    plots = {}
+                    for e in tf.GetListOfKeys() :
+                        name=e.GetName()
+                        obj=e.ReadObj()
+                        if (not re.match('Wplus|Wminus',os.path.basename(f))) and 'data_obs' in name: obj.Clone().Write()
+                        for p in processes:
+                            if p in name:
+                                newprocname = p+'_'+bin if re.match('Wplus|Wminus',p) else p
+                                if longBKG and re.match('(Wplus_long|Wminus_long)',p): newprocname = p
+                                newname = name.replace(p,newprocname)
+                                if newname.endswith("_Up"): newname = re.sub('_Up$','Up',newname)
+                                if newname.endswith("_Dn"): newname = re.sub('_Dn$','Down',newname)
+                                if newname not in plots:
+                                    plots[newname] = obj.Clone(newname)
+                                    #print 'replacing old %s with %s' % (name,newname)
+                                    plots[newname].Write()
+                  
+                    of.Close()
     if len(empty_bins):
         print 'found a bunch of empty bins:', empty_bins
     if options.mergeRoot:
@@ -139,7 +146,21 @@ for charge in charges:
         os.system(haddcmd)
         os.system('rm {rm}'.format(rm=' '.join(tmpfiles)))
 
-        
+    print "Now trying to get info on PDF uncertainties..."
+    pdfsyst = {}
+    tf = ROOT.TFile.Open(outfile)
+    for e in tf.GetListOfKeys() :
+        name=e.GetName()
+        if 'pdf' in name:
+            if name.endswith("Up"): name = re.sub('Up$','',name)
+            if name.endswith("Down"): name = re.sub('Down$','',name)
+            syst = name.split('_')[-1]
+            binWsyst = '_'.join(name.split('_')[1:-1])
+            if syst not in pdfsyst: pdfsyst[syst] = [binWsyst]
+            else: pdfsyst[syst].append(binWsyst)
+    if len(pdfsyst): print "Found a bunch of PDF sysematics: ",pdfsyst.keys()
+    else: print "You are running w/o PDF systematics. Lucky you!"
+
     combineCmd="combineCards.py "
     for f in files:
         basename = os.path.basename(f).split(".")[0]
@@ -151,7 +172,7 @@ for charge in charges:
     combineCmd += ' > {tmpcard}'.format(tmpcard=tmpcard)
     #sys.exit()
     os.system(combineCmd)
-    
+
     combinedCard = open(cardfile,'w')
     combinedCard.write("imax 1\n")
     combinedCard.write("jmax *\n")
@@ -341,9 +362,15 @@ for charge in charges:
                     combinedCardNew.write("norm_%-50s   rateParam * %-5s  %15.1f [%.0f,%.0f]\n" % (Wlong[0][0],Wlong[0][0],normWLong,(1-tightConstraint)*normWLong,(1+tightConstraint)*normWLong))
 
             ## make an efficiency nuisance group
-            combinedCardNew.write('\nefficiencies group = eff_'+Wlong[0][0]+' '+' '.join([p.replace('norm','eff') for p in POIs])+'\n' )
-            combinedCardNew.close() ## for some reason this is really necessary
+            combinedCardNew.write('\nefficiencies group = eff_'+Wlong[0][0]+' '+' '.join([p.replace('norm','eff') for p in POIs])+'\n\n' )
 
+            ## add the PDF systematics 
+            for sys,procs in pdfsyst.iteritems():
+                # there should be 2 occurrences of the same proc in procs (Up/Down). This check should be useless if all the syst jobs are DONE
+                combinedCardNew.write('%-15s   shape %s\n' % (sys,(" ".join([kpatt % '1.0' if p in procs and procs.count(p)==2 else '  -  ' for p,r in ProcsAndRates]))) )
+            combinedCardNew.write('\npdfs group = '+' '.join([sys for sys,procs in pdfsyst.iteritems()])+'\n')
+
+            combinedCardNew.close() ## for some reason this is really necessary
             os.system("mv {cardfile}_new {cardfile}".format(cardfile=cardfile))
 
     
