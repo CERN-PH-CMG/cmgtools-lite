@@ -20,7 +20,7 @@ parser.add_option(     '--longToTotal', dest='longToTotal', type='float', defaul
 parser.add_option(     '--sf'    , dest='scaleFile'    , default='', type='string', help='path of file with the scaling/unfolding')
 (options, args) = parser.parse_args()
 
-from symmetrizeMatrix import getScales
+from symmetrizeMatrixAbsY import getScales
 
 charges = options.charge.split(',')
 
