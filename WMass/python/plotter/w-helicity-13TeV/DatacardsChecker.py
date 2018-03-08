@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+# python w-helicity-13TeV/DatacardsChecker.py -c cards/helicity_2018_03_06_testpdf el
+
 import os.path
 import sys,ROOT,os
 ROOT.gROOT.SetBatch(True)

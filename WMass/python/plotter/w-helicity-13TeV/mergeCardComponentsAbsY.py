@@ -399,6 +399,6 @@ for charge in charges:
     print txt2wsCmd
     os.system(txt2wsCmd)
         
-    combineCmd = 'combine {ws} -M MultiDimFit    -t -1 --expectSignal=1 -m 999 --saveFitResult --cminInitialHesse 1 --cminFinalHesse 1 --cminPreFit 1       --redefineSignalPOIs {pois}            --floatOtherPOIs=0 --freezeNuisanceGroups efficiencies,fixedY -v 9'.format(ws=ws, pois=','.join(allPOIs))
+    combineCmd = 'combine {ws} -M MultiDimFit    -t -1 --expectSignal=1 -m 999 --saveFitResult --cminInitialHesse 1 --cminFinalHesse 1 --cminPreFit 1       --redefineSignalPOIs {pois}            --floatOtherPOIs=0 --freezeNuisanceGroups efficiencies,fixedY{pdfs} -v 9'.format(ws=ws, pois=','.join(allPOIs), pdfs=(',pdfs' if len(pdfsyst) else ''))
     print combineCmd
 
