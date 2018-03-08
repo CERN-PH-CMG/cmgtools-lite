@@ -4,21 +4,34 @@ import ROOT, datetime, array, os
 ## usage:
 ## python symmetrizeMatrix.py --infile multidimfit.root --outdir ~/www/private/w-helicity-13TeV/correlationMatrices/ --suffix <suffix>  --dc <input_datacard>
 
-def getScales(ybins, charge, pol, infile):
+def getScales(ybins, charge, pol, infile, returnError = False):
     histo_file = ROOT.TFile(infile, 'READ')
 
     histo_gen  = histo_file.Get('w{ch}_wy_W{ch}_{pol}'     .format(ch=charge, pol=pol))
     histo_reco = histo_file.Get('w{ch}_wy_reco_W{ch}_{pol}'.format(ch=charge, pol=pol))
 
     scales = []
+    errors = []
+    numhist = ROOT.TH1F('num','num', 1, 0., 1.)
+    denhist = ROOT.TH1F('den','den', 1, 0., 1.)
     for iv, val in enumerate(ybins[:-1]):
+        errnum = ROOT.Double()
+        errden = ROOT.Double()
         istart = histo_gen.FindBin(val)
         iend   = histo_gen.FindBin(ybins[iv+1])
-        num = histo_gen .Integral(istart, iend-1) ## do not include next bin
-        den = histo_reco.Integral(istart, iend-1) ## do not include next bin
-        tmp_ratio = num/den
+        num = histo_gen .IntegralAndError(istart, iend-1, errnum) ## do not include next bin
+        den = histo_reco.IntegralAndError(istart, iend-1, errden) ## do not include next bin
+        numhist.SetBinContent(1, num); numhist.SetBinError(1, errnum)
+        denhist.SetBinContent(1, den); denhist.SetBinError(1, errden)
+        numhist.Divide(denhist)
+        tmp_ratio = numhist.GetBinContent(1) #num/den
         scales.append(tmp_ratio)
+        ## make the errors relative to the central value
+        errors.append(numhist.GetBinError(1)/tmp_ratio)
 
+    if returnError:
+        return errors
+    
     return scales
 
 if __name__ == "__main__":
