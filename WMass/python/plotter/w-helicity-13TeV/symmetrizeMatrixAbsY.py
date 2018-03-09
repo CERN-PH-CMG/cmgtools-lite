@@ -67,6 +67,7 @@ if __name__ == "__main__":
     h2_corr = fitresult.correlationHist()
 
     c = ROOT.TCanvas()
+    ROOT.gStyle.SetPalette(55)
 
     ## some more ROOT "magic"
     parlist = fitresult.floatParsFinal()
