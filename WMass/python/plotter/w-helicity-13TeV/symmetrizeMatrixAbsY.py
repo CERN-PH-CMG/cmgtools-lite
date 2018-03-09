@@ -4,11 +4,31 @@ import ROOT, datetime, array, os
 ## usage:
 ## python symmetrizeMatrix.py --infile multidimfit.root --outdir ~/www/private/w-helicity-13TeV/correlationMatrices/ --suffix <suffix>  --dc <input_datacard>
 
-def getScales(ybins, charge, pol, infile, returnError = False):
+def getScales(ybins, charge, pol, infile, doNLO=True, returnError=False):
     histo_file = ROOT.TFile(infile, 'READ')
 
-    histo_gen  = histo_file.Get('w{ch}_wy_W{ch}_{pol}'     .format(ch=charge, pol=pol))
-    histo_reco = histo_file.Get('w{ch}_wy_reco_W{ch}_{pol}'.format(ch=charge, pol=pol))
+    histlist = list(i.GetName() for i in histo_file.GetListOfKeys())
+
+    chs = 'W{ch}'.format(ch=charge)
+
+    if doNLO:
+        name_gen  = [i for i in histlist if chs in i and pol in i and not 'LO' in i and not 'reco' in i]
+        name_reco = [i for i in histlist if chs in i and pol in i and not 'LO' in i and     'reco' in i]
+    else:
+        name_gen  = [i for i in histlist if chs in i and pol in i and     'LO' in i and not 'reco' in i]
+        name_reco = [i for i in histlist if chs in i and pol in i and     'LO' in i and     'reco' in i]
+
+    if not name_gen or not name_reco:
+        print 'DID NOT FIND THE HISTOGRAMS IN THE SCALEFILE for {nlo}'.format(nlo='NLO' if doNLO else 'LO')
+        print 'Will continue without LO-NLO uncertainty...'
+        a = []
+        return a
+    else:
+        name_gen  = name_gen [0]
+        name_reco = name_reco[0]
+
+    histo_gen  = histo_file.Get(name_gen )
+    histo_reco = histo_file.Get(name_reco)
 
     scales = []
     errors = []
