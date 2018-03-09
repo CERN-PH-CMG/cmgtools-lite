@@ -13,7 +13,8 @@ parser.add_option('-i','--input', dest='inputdir', default='', type='string', he
 parser.add_option('-b','--bin', dest='bin', default='ch1', type='string', help='name of the bin')
 parser.add_option('-C','--charge', dest='charge', default='plus,minus', type='string', help='process given charge. default is both')
 parser.add_option('-c','--constrain-rates', dest='constrainRateParams', type='string', default='0,1,2', help='add constraints on the rate parameters of (comma-separated list of) rapidity bins. Give only the left ones (e.g. 1 will constrain 1 with n-1 ')
-parser.add_option(     '--fix-YBins', dest='fixYBins', type='string', default='', help='add here replacement of default rate-fixing. with format plusR=0,1,2;plusL=0,1;minusR=0,1,2;minusL=0,1 ')
+parser.add_option(     '--fix-YBins', dest='fixYBins', type='string', default='', help='add here replacement of default rate-fixing. with format plusR=10,11,12;plusL=11,12;minusR=10,11,12;minusL=10,11 ')
+parser.add_option('-p','--POIs', dest='POIsToMinos', type='string', default=None, help='Decide which are the nuiscances for which to run MINOS (a.k.a. POIs). Default is all non fixed YBins. With format poi1,poi2 ')
 parser.add_option('-l','--long-lnN', dest='longLnN', type='float', default=None, help='add a common lnN constraint to all longitudinal components')
 parser.add_option(     '--absolute', dest='absoluteRates', default=False, action='store_true', help='Fit for absolute rates, not scale factors')
 parser.add_option(     '--longToTotal', dest='longToTotal', type='float', default=None, help='Apply a constraint on the Wlong/Wtot rate. Implies fitting for absolute rates')
@@ -384,10 +385,14 @@ for charge in charges:
     floatPOIs = list(poi for poi in POIs if not poi in fixedPOIs)
     allPOIs = fixedPOIs+floatPOIs
 
+    ## define the combine POIs, i.e. the subset on which to run MINOS
+    minosPOIs = allPOIs if not options.POIsToMinos else options.POIsToMinos.split(',')
+
     ## make a group for the fixed rate parameters. just append it to the file.
     print 'adding a nuisance group for the fixed rateParams'
     with open(cardfile,'a+') as finalCardfile:
         finalCardfile.write('\nfixedY group = {fixed} '.format(fixed=' '.join(i.strip() for i in fixedPOIs)))
+        finalCardfile.write('\nfixedMcErr group = {fixed} '.format(fixed=' '.join(i.strip().replace('norm','eff_unc') for i in fixedPOIs))) # not used in the command, but may be useful to stabilize the fit
         finalCardfile.write('\n\n## end of file')
     #finalCardfile.close()
 
@@ -399,6 +404,6 @@ for charge in charges:
     print txt2wsCmd
     os.system(txt2wsCmd)
         
-    combineCmd = 'combine {ws} -M MultiDimFit    -t -1 --expectSignal=1 -m 999 --saveFitResult --cminInitialHesse 1 --cminFinalHesse 1 --cminPreFit 1       --redefineSignalPOIs {pois}            --floatOtherPOIs=0 --freezeNuisanceGroups efficiencies,fixedY{pdfs} -v 9'.format(ws=ws, pois=','.join(allPOIs), pdfs=(',pdfs' if len(pdfsyst) else ''))
+    combineCmd = 'combine {ws} -M MultiDimFit    -t -1 --expectSignal=1 -m 999 --saveFitResult --cminInitialHesse 1 --cminFinalHesse 1 --cminPreFit 1       --redefineSignalPOIs {pois}            --floatOtherPOIs=0 --freezeNuisanceGroups efficiencies,fixedY{pdfs} -v 9'.format(ws=ws, pois=','.join(minosPOIs), pdfs=(',pdfs' if len(pdfsyst) else ''))
     print combineCmd
 
