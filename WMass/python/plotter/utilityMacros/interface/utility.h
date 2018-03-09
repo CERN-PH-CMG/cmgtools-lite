@@ -80,7 +80,7 @@ using namespace std;
 
 //static string treeLocation = "/store/group/phys_smp/Wmass/perrozzi/ntuples/ntuples_2014_05_23_53X/";
 //static string treeLocation = "/u2/emanuele/MCTrees_1LEP_80X_V1/";
-static string PhpToCopy = "/afs/cern.ch/user/m/mciprian/www/index.php";
+static string PhpToCopy = "/afs/cern.ch/user/m/mciprian/public/index.php";
 
 // define sample
 enum class Sample {
