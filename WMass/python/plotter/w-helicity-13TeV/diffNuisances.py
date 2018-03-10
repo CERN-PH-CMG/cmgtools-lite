@@ -32,8 +32,9 @@ parser.add_option("-a", "--all",      dest="show_all_parameters",    default=Fal
 parser.add_option("-A", "--abs",      dest="absolute_values",    default=False,  action="store_true", help="Report also absolute values of nuisance values and errors, not only the ones normalized to the input sigma")
 parser.add_option("-p", "--pois",      dest="pois",  default=None,   type="string",  help="Name of the nuisances to be fitted (comma separated list of regexps)")
 parser.add_option("-f", "--format",   dest="format", default="text", type="string",  help="Output format ('text', 'latex', 'twiki'")
-parser.add_option("-g", "--histogram", dest="plotfile", default=None, type="string", help="If true, plot the pulls of the nuisances to the given file.")
 parser.add_option("", "--pullDef",  dest="pullDef", default="", type="string", help="Choose the definition of the pull, see python/calculate_pulls.py for options")
+parser.add_option('-o','--outdir', dest='outdir', default=None, type='string', help='If given, plot the pulls of the nuisances in this output directory')
+parser.add_option(     '--suffix', dest='suffix', default='', type='string', help='suffix for the correlation matrix')
 
 (options, args) = parser.parse_args()
 if len(args) == 0:
@@ -44,6 +45,7 @@ if options.pullDef!="" and options.pullDef not in CP.allowed_methods(): exit("Me
 
 
 setUpString = "diffNuisances run on %s, at %s with the following options ... "%(args[0],datetime.datetime.utcnow())+str(options)
+date = datetime.date.today().isoformat()
 
 file = ROOT.TFile(args[0])
 if file == None: raise RuntimeError, "Cannot open file %s" % args[0]
@@ -132,7 +134,7 @@ for name in pars:
 	    else: row += [ "%+.2f +%.2f %.2f" % (nuis_x.getVal(), nuis_x.getErrorHi(), nuis_x.getErrorLo()) ]
  	    if nuis_x.getErrorLo()==0 : nuis_x.setErrorLo(nuis_x.getErrorHi())
             if nuis_p != None:
-	        if options.plotfile: 
+	        if options.outdir: 
                   nuis_p_i+=1
 	          if fit_name=='s': # fit name 'b' is not there when running MultiDimFit
 		    if options.pullDef and nuis_p!=None:
@@ -279,11 +281,11 @@ elif options.format == "html":
     print "</table></body></html>"
 
 
-if options.plotfile:
+if options.outdir:
     import ROOT
     ROOT.gROOT.SetBatch()
     ROOT.gStyle.SetOptStat(0)
-    fout = ROOT.TFile(options.plotfile,"RECREATE")
+    fout = ROOT.TFile("{od}/postfit_{date}_{suff}.root".format(od=options.outdir, date=date, suff=options.suffix),"RECREATE")
 
     canvas_nuis = ROOT.TCanvas("nuisances", "nuisances", 900, 600)
     hist_fit_e_s = hist_fit_s.Clone("errors_s")
@@ -314,7 +316,7 @@ if options.plotfile:
     leg.Draw()
     fout.WriteTObject(canvas_nuis)
     for ext in ['png', 'pdf']:
-        canvas_nuis.SaveAs("nuisances.%s" % ext)
+        canvas_nuis.SaveAs("{od}/nuisances_{date}_{suff}.{ext}".format(od=options.outdir, date=date, suff=options.suffix, ext=ext))
     canvas_pferrs = ROOT.TCanvas("post_fit_errs", "post_fit_errs", 900, 600)
     for b in range(1,hist_fit_e_s.GetNbinsX()+1): 
       hist_fit_e_s.SetBinContent(b,hist_fit_s.GetBinError(b)/hist_prefit.GetBinError(b))
@@ -337,7 +339,7 @@ if options.plotfile:
     line_one.Draw()
     canvas_pferrs.RedrawAxis()
     for ext in ['png', 'pdf']:
-        canvas_pferrs.SaveAs("pferrs.%s" % ext)
+        canvas_pferrs.SaveAs("{od}/pferrs_{date}_{suff}.{ext}".format(od=options.outdir, date=date, suff=options.suffix, ext=ext))
 
     fout.WriteTObject(canvas_pferrs)
 
