@@ -1,10 +1,34 @@
-#!/bin/env python                                                                                                                                                                                          
+#!/bin/env python
 
 # usage: ./mergeCardComponents.py -b Wmu -m --long-lnN 1.10 -C minus,plus -i ../cards/helicity_xxxxx/
 # fit scaling by eff: ./mergeCardComponents.py -b Wel -m -C minus,plus -i ../cards/helicity_xxxxx/ --longToTotal 0.5 --sf mc_reco_eff.root --absolute
 
 import ROOT
 import sys,os,re
+
+def mirrorShape(nominal,alternate,newname,alternateShapeOnly=False):
+    alternate.SetName("%sUp" % newname)
+    if alternateShapeOnly:
+        alternate.Scale(nominal.Integral()/alternate.Integral())
+    mirror = nominal.Clone("%sDown" % newname)
+    for b in xrange(1,nominal.GetNbinsX()+1):
+        y0 = nominal.GetBinContent(b)
+        yA = alternate.GetBinContent(b)
+        yM = y0
+        if (y0 > 0 and yA > 0):
+            yM = y0*y0/yA
+        elif yA == 0:
+            yM = 2*y0
+        mirror.SetBinContent(b, yM)
+    if alternateShapeOnly:
+        # keep same normalization
+        mirror.Scale(nominal.Integral()/mirror.Integral())
+    else:
+        # mirror normalization
+        mnorm = (nominal.Integral()**2)/alternate.Integral()
+        mirror.Scale(mnorm/alternate.Integral())
+    return (alternate,mirror)
+
 
 from optparse import OptionParser
 parser = OptionParser(usage='%prog [options] cards/card*.txt')
@@ -113,6 +137,7 @@ for charge in charges:
         if options.mergeRoot:
             if not binn in empty_bins:
                 print 'processing bin = ',bin
+                nominals = {}
                 for irf,rf in enumerate([rootfile]+rootfiles_syst):
                     print '\twith nominal/systematic file: ',rf
                     tf = ROOT.TFile.Open(rf)
@@ -130,13 +155,24 @@ for charge in charges:
                                 newprocname = p+'_'+bin if re.match('Wplus|Wminus',p) else p
                                 if longBKG and re.match('(Wplus_long|Wminus_long)',p): newprocname = p
                                 newname = name.replace(p,newprocname)
-                                if newname.endswith("_Up"): newname = re.sub('_Up$','Up',newname)
-                                if newname.endswith("_Dn"): newname = re.sub('_Dn$','Down',newname)
-                                if newname not in plots:
-                                    plots[newname] = obj.Clone(newname)
-                                    #print 'replacing old %s with %s' % (name,newname)
-                                    plots[newname].Write()
-                  
+                                if irf==0:
+                                    if newname not in plots:
+                                        plots[newname] = obj.Clone(newname)
+                                        nominals[newname] = obj.Clone(newname+"0")
+                                        nominals[newname].SetDirectory(None)
+                                        #print 'replacing old %s with %s' % (name,newname)
+                                        plots[newname].Write()
+                                else:
+                                    tokens = newname.split("_"); pfx = '_'.join(tokens[:-2]); pdf = tokens[-2]
+                                    if newname.endswith("_Up"): newname = re.sub('_Up$','',newname)
+                                    if newname.endswith("_Dn"):
+                                        ipdf = int(pdf.split('pdf')[-1])+30
+                                        newname = "{pfx}_pdf{ipdf}".format(pfx=pfx,ipdf=ipdf)
+                                    (alternate,mirror) = mirrorShape(nominals[pfx],obj,newname)
+                                    for alt in [alternate,mirror]:
+                                        if alt.GetName() not in plots:
+                                            plots[alt.GetName()] = alt.Clone()
+                                            plots[alt.GetName()].Write()
                     of.Close()
     if len(empty_bins):
         print 'found a bunch of empty bins:', empty_bins
