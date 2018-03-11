@@ -14,12 +14,11 @@ class CardsChecker:
         for charge in ["plus","minus"]:
             for r in xrange(nRapBins):
                 for ipdf in xrange(1,nPdfBins+1):
-                    for idir in ["Up","Dn"]:
-                        key = "W{charge}_{channel}_Ybin_{bin}_pdf{eigen}_{dir}".format(charge=charge,channel=channel,bin=r,eigen=ipdf,dir=idir)
-                        f_txt = key+".card.txt" 
-                        f_root = key+".input.root"
-                        self.datacards[key] = f_txt
-                        self.cardinputs[key] = f_root
+                    key = "W{charge}_{channel}_Ybin_{bin}_pdf{eigen}".format(charge=charge,channel=channel,bin=r,eigen=ipdf)
+                    f_txt = key+".card.txt" 
+                    f_root = key+".input.root"
+                    self.datacards[key] = f_txt
+                    self.cardinputs[key] = f_root
 
     def checkCards(self):
         resubcmds = {}
@@ -57,7 +56,7 @@ if __name__ == "__main__":
         if len(args)<2: print "needed inputs: datacards_dir channel "; quit()
         if args[1] not in ["el","mu"]: print "channel must be either 'mu' or 'el'"; quit()
         nRapBins = args[2] if len(args)>2 else 13
-        nPdfBins = args[3] if len(args)>3 else 30
+        nPdfBins = args[3] if len(args)>3 else 60
         cc = CardsChecker(args[0],args[1], nRapBins, nPdfBins, options)
         result = cc.checkCards()
         if len(result)==0: print "All cards are GOOD."

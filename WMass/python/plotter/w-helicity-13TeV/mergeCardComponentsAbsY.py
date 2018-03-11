@@ -57,7 +57,7 @@ for charge in charges:
 
     ## prepare the relevant files. only the datacards and the correct charge
     files = ( f for f in os.listdir(options.inputdir) if f.endswith('.card.txt') )
-    files = ( f for f in files if charge in f and not any(x in f for x in 'Up Dn'.split()))
+    files = ( f for f in files if charge in f and 'pdf' not in f )
     files = sorted(files, key = lambda x: int(x.rstrip('.card.txt').split('_')[-1]) if not 'bkg'in x else -1) ## ugly but works
     files = list( ( os.path.join(options.inputdir, f) for f in files ) )
     
@@ -119,7 +119,7 @@ for charge in charges:
                     bin = l.split()[1]
                     binn = int(bin.split('_')[-1]) if 'Ybin_' in bin else -1
                 basename = os.path.basename(f).split('.')[0]
-                rootfiles_syst = filter(lambda x: re.match('{base}_.*_(Up|Dn)\.input\.root'.format(base=basename),x), os.listdir(options.inputdir))
+                rootfiles_syst = filter(lambda x: re.match('{base}_(pdf\d+)\.input\.root'.format(base=basename),x), os.listdir(options.inputdir))
                 rootfiles_syst = [dir+'/'+x for x in rootfiles_syst]
                 rootfiles_syst.sort()
                 if re.match('process\s+',l): 
@@ -163,11 +163,9 @@ for charge in charges:
                                         #print 'replacing old %s with %s' % (name,newname)
                                         plots[newname].Write()
                                 else:
-                                    tokens = newname.split("_"); pfx = '_'.join(tokens[:-2]); pdf = tokens[-2]
-                                    if newname.endswith("_Up"): newname = re.sub('_Up$','',newname)
-                                    if newname.endswith("_Dn"):
-                                        ipdf = int(pdf.split('pdf')[-1])+30
-                                        newname = "{pfx}_pdf{ipdf}".format(pfx=pfx,ipdf=ipdf)
+                                    tokens = newname.split("_"); pfx = '_'.join(tokens[:-1]); pdf = tokens[-1]
+                                    ipdf = int(pdf.split('pdf')[-1])
+                                    newname = "{pfx}_pdf{ipdf}".format(pfx=pfx,ipdf=ipdf)
                                     (alternate,mirror) = mirrorShape(nominals[pfx],obj,newname)
                                     for alt in [alternate,mirror]:
                                         if alt.GetName() not in plots:
