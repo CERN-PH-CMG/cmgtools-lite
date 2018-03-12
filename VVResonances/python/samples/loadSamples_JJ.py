@@ -9,7 +9,7 @@ from CMGTools.RootTools.samples.samples_13TeV_RunIIFall17MiniAOD import *
 
 
 # TTs = [TTJets, TT_pow_ext3, TT_pow_ext4]
-background = QCDHT+QCDPt
+background = QCDHT+VJetsQQHT+[QCD_Pt_15to7000_TuneCUETHS1_Flat]+[TTHad_pow]
 
 # Load signal from here
 from CMGTools.VVResonances.samples.signal_13TeV_94X_Fall17 import *
