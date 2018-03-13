@@ -9,6 +9,7 @@ import sys,os,re
 from optparse import OptionParser
 parser = OptionParser(usage='%prog [options] cards/card*.txt')
 parser.add_option('-m','--merge-root', dest='mergeRoot', default=False, action='store_true', help='Merge the root files with the inputs also')
+parser.add_option('-r','--run-fit', dest='runFit', default=False, action='store_true', help='Run fit (by default it just prints the command)')
 parser.add_option('-i','--input', dest='inputdir', default='', type='string', help='input directory with all the cards inside')
 parser.add_option('-b','--bin', dest='bin', default='ch1', type='string', help='name of the bin')
 parser.add_option('-C','--charge', dest='charge', default='plus,minus', type='string', help='process given charge. default is both')
@@ -399,6 +400,7 @@ for charge in charges:
     print txt2wsCmd
     os.system(txt2wsCmd)
         
-    combineCmd = 'combine {ws} -M MultiDimFit    -t -1 --expectSignal=1 -m 999 --saveFitResult --cminInitialHesse 1 --cminFinalHesse 1 --cminPreFit 1       --redefineSignalPOIs {pois}            --floatOtherPOIs=0 --freezeNuisanceGroups efficiencies,fixedY -v 9'.format(ws=ws, pois=','.join(allPOIs))
+    combineCmd = 'combine {ws} -M MultiDimFit -t -1 --expectSignal=1 -m 999 --saveFitResult --cminInitialHesse 1 --cminFinalHesse 1 --cminPreFit 1 --redefineSignalPOIs {pois} --floatOtherPOIs=0 --freezeNuisanceGroups efficiencies,fixedY -v 9'.format(ws=ws, pois=','.join(allPOIs))
     print combineCmd
-
+    if options.runFit:
+        os.system(combineCmd)
