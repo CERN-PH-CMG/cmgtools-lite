@@ -152,6 +152,7 @@ if __name__ == "__main__":
 
         if not len(ybins)-1 == len(sorted_rap):
             print 'SOMETHING WENT TERRIBLY WRONG'
+            print "len(ybins)-1 = %d;   len(sorted_rap) = %d" % (len(ybins)-1, len(sorted_rap))
 
         ## get the rates and processes from the datacard. they're necessarily in the same order
         dcfile = open(options.dc, 'r')
