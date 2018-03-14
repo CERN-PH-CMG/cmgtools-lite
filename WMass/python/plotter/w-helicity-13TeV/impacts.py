@@ -1,18 +1,25 @@
-# usage: python impacts.py ../cards/helicity_2018_03_09_testpdfsymm/Wel_plus_ws.root --channel el --fix-YBins "plusR=10,11,12;plusL=11,12" [--dry-run]
+# usage: 1. INITIAL FITS: python impacts.py ../cards/helicity_2018_03_09_testpdfsymm/Wel_plus_ws.root initial --channel el --fix-YBins "plusR=10,11,12;plusL=11,12" [--dry-run]
+# usage: 2. SCANS: python impacts.py ../cards/helicity_2018_03_09_testpdfsymm/Wel_plus_ws.root scan --channel el --fix-YBins "plusR=10,11,12;plusL=11,12" [--dry-run]
 
 import ROOT, random, array, os
 
 if __name__ == "__main__":
 
     from optparse import OptionParser
-    parser = OptionParser(usage='%prog workspace [options] ')
+    parser = OptionParser(usage='%prog workspace what [options] ')
     parser.add_option('-c','--channel', dest='channel', default='el', type='string', help='name of the channel')
     parser.add_option(     '--fix-YBins', dest='fixYBins', type='string', default='', help='add here replacement of default rate-fixing. with format plusR=10,11,12;plusL=11,12;minusR=10,11,12;minusL=10,11 ')
     parser.add_option(     '--dry-run', dest='dryRun',   action='store_true', default=False, help='Do not run the job, only print the command');
     (options, args) = parser.parse_args()
 
+    if(len(args)<2):
+        raise RuntimeError, "Arguments should be workspace.root what (what=initial or scan)"
+    if args[1] not in ['initial','scan']:
+        raise RuntimeError, "what should be initial for intial fits or scan (need the initial fits to be done)"
+
     workspace = args[0]; wsbase = os.path.basename(workspace).split('.')[0]; inputdir = os.path.dirname(os.path.abspath(workspace))
     charge = 'plus' if 'plus' in wsbase else 'minus'
+    what = args[1]
 
     ybinfile = open(os.path.join(inputdir, 'binningYW.txt'),'r')
     ybinline = ybinfile.readlines()[0]
@@ -49,9 +56,7 @@ if __name__ == "__main__":
     for poi in POIs:
         # first run the initial fit
         cmdInitialFit = cmdBase.format(ws=workspace,whichfit='--doInitialFit',poi=poi,name=poi,taskname='InitialFit_%s'%poi,floatOthers='--floatOtherPOIs=0')
-        # print cmdInitialFit
-        os.system(cmdInitialFit)
-        # then run the likelihood scan for each nuisance parameter (a large number of jobs if you have many nuisances!)g
+        # then run the likelihood scan for each nuisance parameter (a large number of jobs if you have many nuisances!)
         cmdScan = cmdBase.format(ws=workspace,whichfit='--doFits',poi=poi,name=poi,taskname='Scan_%s'%poi,floatOthers='')
-        # print cmdScan
-        os.system(cmdScan)
+        if what=='initial': os.system(cmdInitialFit)
+        elif what=='scan':  os.system(cmdScan)
