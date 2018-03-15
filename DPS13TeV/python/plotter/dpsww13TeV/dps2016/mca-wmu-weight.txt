@@ -1,3 +1,3 @@
-WWherw   : WW_DPS_herwig                         : xsec          ; FillColor=ROOT.kBlue     , FakeRate="dpsww13TeV/dps2016/mca-wmu-weight.txt",  Label="WWherw"  
-WWCP5    : WW_DPS                                : xsec          ; FillColor=ROOT.kGreen    , FakeRate="dpsww13TeV/dps2016/mca-wmu-weight.txt", Label="WWCP5"    
-WWCUETPM8: WWDoubleTo2L                          : xsec          ; FillColor=ROOT.kRed   , FakeRate="dpsww13TeV/dps2016/mca-wmu-weight.txt",  Label="WWCUETPM8"  
+WWherw   : WW_DPS_herwig                         : xsec          ; FillColor=ROOT.kBlue     , weight : "dpsww13TeV/dps2016/mca-wmu-weight.txt",  Label="WWherw"  
+WWCP5    : WW_DPS                                : xsec          ; FillColor=ROOT.kGreen    , weight : "dpsww13TeV/dps2016/mca-wmu-weight.txt", Label="WWCP5"    
+WWCUETPM8: WWDoubleTo2L                          : xsec          ; FillColor=ROOT.kRed   , weight : "dpsww13TeV/dps2016/mca-wmu-weight.txt",  Label="WWCUETPM8"  
