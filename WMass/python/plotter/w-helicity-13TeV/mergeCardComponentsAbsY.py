@@ -233,11 +233,14 @@ for charge in charges:
     ProcsAndRates = zip(procs,rates)
     ProcsAndRatesDict = dict(zip(procs,rates))
 
-    efficiencies = {}; efferrors = {}
+    efficiencies    = {}; efferrors    = {}
+    efficiencies_LO = {}; efferrors_LO = {}
     if options.scaleFile:
         for pol in ['left','right','long']: 
-            efficiencies[pol] = [1./x for x in getScales(ybins, charge, pol, os.path.abspath(options.scaleFile))]
-            efferrors   [pol] = [   x for x in getScales(ybins, charge, pol, os.path.abspath(options.scaleFile), returnError=True)] ## these errors are relative to the effs
+            efficiencies   [pol] = [1./x for x in getScales(ybins, charge, pol, os.path.abspath(options.scaleFile))]
+            efferrors      [pol] = [   x for x in getScales(ybins, charge, pol, os.path.abspath(options.scaleFile), returnError=True)] ## these errors are relative to the effs
+            efficiencies_LO[pol] = [1./x for x in getScales(ybins, charge, pol, os.path.abspath(options.scaleFile), doNLO=False)]
+            efferrors_LO   [pol] = [   x for x in getScales(ybins, charge, pol, os.path.abspath(options.scaleFile), doNLO=False, returnError=True)]
 
     combinedCard = open(cardfile,'a')
     POIs = []
