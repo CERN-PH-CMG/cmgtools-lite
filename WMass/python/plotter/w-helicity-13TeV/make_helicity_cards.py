@@ -27,10 +27,7 @@ def writePdfSystsToMCA(mcafile,odir,vec_weight="hessWgt",syst="pdf",incl_mca='in
         return
 
     for i in range(NPDFSYSTS):
-        pdfvar=str(i/2+1)
-        direction="Up" if i%2 else "Dn"
-        postfix = "_"+str(syst)+pdfvar+'_'+direction
-        #postfix = "_%s%d" % (syst,i+1) # this is the change needed to make all alternative variations to be symmetrized
+        postfix = "_%s%d" % (syst,i+1) # this is the change needed to make all alternative variations to be symmetrized
         mcafile_syst = open("%s/mca%s.txt" % (odir,postfix), "w")
         mcafile_syst.write(incl_mca+postfix+'   : + ; IncludeMca='+incl_file+', AddWeight="'+vec_weight+'['+str(i)+']/genWeight", PostFix="'+postfix+'" \n')
         pdfsysts.append(postfix)
