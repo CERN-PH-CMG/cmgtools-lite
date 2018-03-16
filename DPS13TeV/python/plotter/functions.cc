@@ -96,6 +96,13 @@ float eta_2(float pt1, float eta1, float phi1, float m1, float pt2, float eta2, 
     return (p41+p42).Eta();
 }
 
+float phi_2(float pt1, float eta1, float phi1, float m1, float pt2, float eta2, float phi2, float m2) {
+    typedef ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<double> > PtEtaPhiMVector;
+    PtEtaPhiMVector p41(pt1,eta1,phi1,m1);
+    PtEtaPhiMVector p42(pt2,eta2,phi2,m2);
+    return (p41+p42).Phi();
+}
+
 float pt_3(float pt1, float phi1, float pt2, float phi2, float pt3, float phi3) {
     phi2 -= phi1;
     phi3 -= phi1;
