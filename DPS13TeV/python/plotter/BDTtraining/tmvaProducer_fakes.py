@@ -15,8 +15,10 @@ r.TMVA.Tools.Instance()
 # output file, just passing None to TMVA::Factory(..)
 # does not work. Make sure you don't overwrite an
 # existing file.
+includePt = True
+useHerwig = True
 
-output_fn  = 'TL_DPSHW_BDT.root'
+output_fn  = 'TL_DPS{gen}_BDT{pt}.root'.format(pt='_noPt1' if not includePt else '',gen='Herwigpp' if useHerwig else 'Pythia')
 output_f   = r.TFile(output_fn,'RECREATE')
  
 factory = r.TMVA.Factory('TMVAClassification', output_f,
@@ -31,20 +33,22 @@ factory = r.TMVA.Factory('TMVAClassification', output_f,
 
 
 #### our variables
-factory.AddVariable('LepGood_pt[0]','p_{T1}', 'F')
+if includePt:
+	factory.AddVariable('LepGood_pt[0]','p_{T1}', 'F')
 factory.AddVariable('LepGood_pt[1]','p_{T2}', 'F') 
 factory.AddVariable('met_pt', 'F') 
-factory.AddVariable('LepGood_eta[0]*LepGood_eta[1]','#eta_{1}*#eta_{2}', 'F')
-factory.AddVariable('abs(LepGood_eta[0]+LepGood_eta[1])','abs(#eta_{1}+#eta_{2})','F')
 factory.AddVariable('mt2davis(LepGood_pt[0],LepGood_eta[0],LepGood_phi[0],LepGood_pt[1],LepGood_eta[1],LepGood_phi[1],met_pt,met_phi)','MT2_{ll}', 'F')
 factory.AddVariable('mt_2(LepGood_pt[0],LepGood_phi[0],LepGood_pt[1],LepGood_phi[1])','MT l1 l2', 'F') 
 factory.AddVariable('mt_2(LepGood_pt[0],LepGood_phi[0],met_pt,met_phi)','MT l1 met', 'F') 
-factory.AddVariable('mt_2(LepGood_pt[1],LepGood_phi[1],met_pt,met_phi)','MT l2 met', 'F') 
-factory.AddVariable('abs(deltaPhi(LepGood_phi[0],met_phi))','#Delta #phi l1 met', 'F') 
-factory.AddVariable('abs(deltaPhi(LepGood_phi[1],met_phi))','#Delta #phi l2 met', 'F') 
 factory.AddVariable('abs(deltaPhi(LepGood_phi[0],LepGood_phi[1]))','#Delta #phi l1 l2', 'F') 
-factory.AddVariable('abs(deltaPhi(deltaPhi(LepGood_phi[0],LepGood_phi[1]),met_phi))','#Delta #phi l1l2 met', 'F')
-factory.AddVariable('abs(deltaPhi(deltaPhi(LepGood_phi[0],LepGood_phi[1]),LepGood_phi[1]))','#Delta #phi l1l2 l2', 'F')
+factory.AddVariable('abs(deltaPhi(LepGood_phi[1],met_phi))','#Delta #phi l2 met', 'F') 
+factory.AddVariable('abs(deltaPhi(phi_2(LepGood_pt[0],LepGood_eta[0],LepGood_phi[0],LepGood_mass[0],LepGood_pt[1],LepGood_eta[1],LepGood_phi[1],LepGood_mass[1]),LepGood_phi[1]))','#Delta #phi l1l2 l2', 'F')
+factory.AddVariable('LepGood_eta[0]*LepGood_eta[1]','#eta_{1}*#eta_{2}', 'F')
+factory.AddVariable('abs(LepGood_eta[0]+LepGood_eta[1])','abs(#eta_{1}+#eta_{2})','F')
+
+#factory.AddVariable('mt_2(LepGood_pt[1],LepGood_phi[1],met_pt,met_phi)','MT l2 met', 'F') 
+#factory.AddVariable('abs(deltaPhi(LepGood_phi[0],met_phi))','#Delta #phi l1 met', 'F') 
+#factory.AddVariable('abs(deltaPhi(deltaPhi(LepGood_phi[0],LepGood_phi[1]),met_phi))','#Delta #phi l1l2 met', 'F')
 
 
 
