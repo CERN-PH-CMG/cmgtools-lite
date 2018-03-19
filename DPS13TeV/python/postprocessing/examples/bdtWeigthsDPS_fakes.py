@@ -59,24 +59,3 @@ class BDT_DPS_fakes(Module):
 
 BDT_fakes = lambda : BDT_DPS_fakes()
         
-##     def listBranches(self):
-##         return self._MVAs.keys()
-##     def __call__(self,event):
-##         return dict([ (name, mva(event)) for name, mva in self._MVAs.iteritems()])
-## 
-## if __name__ == '__main__':
-##     from sys import argv
-##     file = ROOT.TFile(argv[1])
-##     tree = file.Get('tree')
-##     tree.vectorTree = True
-##     #tree.AddFriend('sf/t', argv[2])
-##     class Tester(Module):
-##         def __init__(self, name):
-##             Module.__init__(self,name,None)
-##             self.sf = BDT_DPS_fakes()
-##         def analyze(self,ev):
-##             print '\nrun %6d lumi %4d event %d: leps %d' % (ev.run, ev.lumi, ev.evt, ev.nLepGood)
-##             print self.sf(ev)
-##     el = EventLoop([ Tester('tester') ])
-##     el.loop([tree], maxEvents = 50)
-
