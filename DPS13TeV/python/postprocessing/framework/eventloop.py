@@ -1,4 +1,4 @@
-from CMGTools.WMass.postprocessing.framework.datamodel import Event
+from CMGTools.DPS13TeV.postprocessing.framework.datamodel import Event
 import sys, time
 
 class Module:

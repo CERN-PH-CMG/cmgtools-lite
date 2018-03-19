@@ -1,6 +1,6 @@
 import ROOT
 ROOT.PyConfig.IgnoreCommandLineOptions = True
-from CMGTools.WMass.postprocessing.framework.treeReaderArrayTools import InputTree 
+from CMGTools.DPS13TeV.postprocessing.framework.treeReaderArrayTools import InputTree 
 
 class Event:
     """Class that allows seeing an entry of a PyROOT TTree as an Event"""
@@ -39,8 +39,19 @@ class Event:
             self._tree.entry = self._entry
             #self._tree._exprs[expr].SetQuickLoad(False)
         else:
-            self._tree.gotoEntry(entry)
-            formula = self._tree._exprs[expr]
+            formula = ROOT.TTreeFormula(expr,expr,self._tree)
+            if formula.IsInteger():
+                formula.go = formula.EvalInstance64
+            else:
+                formula.go = formula.EvalInstance
+            self._tree._exprs[expr] = formula
+            # force sync, to be safe
+            self._tree.GetEntry(self._entry)
+            self._tree.entry = self._entry
+            #self._tree._exprs[expr].SetQuickLoad(False)
+
+            ## marc self._tree.gotoEntry(entry)
+            ## marc formula = self._tree._exprs[expr]
         if "[" in expr: # unclear why this is needed, but otherwise for some arrays x[i] == 0 for all i > 0
             formula.GetNdata()
         return formula.go()
