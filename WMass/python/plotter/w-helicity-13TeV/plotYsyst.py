@@ -1,3 +1,5 @@
+# USAGE:  python plotYsyst.py -C plus ../plots/gen/pdfvar/ ../cards/helicity_2018_03_09_testpdfsymm/binningYW.txt --fitResult multidimfit_plus_wpdf.root
+
 import ROOT, datetime, array, os, math
 ROOT.gROOT.SetBatch(True)
 ROOT.PyConfig.IgnoreCommandLineOptions = True
