@@ -1,34 +1,10 @@
-#!/bin/env python
+#!/bin/env python                                                                                                                                                                                          
 
 # usage: ./mergeCardComponents.py -b Wmu -m --long-lnN 1.10 -C minus,plus -i ../cards/helicity_xxxxx/
 # fit scaling by eff: ./mergeCardComponents.py -b Wel -m -C minus,plus -i ../cards/helicity_xxxxx/ --longToTotal 0.5 --sf mc_reco_eff.root --absolute
 
 import ROOT
 import sys,os,re
-
-def mirrorShape(nominal,alternate,newname,alternateShapeOnly=False):
-    alternate.SetName("%sUp" % newname)
-    if alternateShapeOnly:
-        alternate.Scale(nominal.Integral()/alternate.Integral())
-    mirror = nominal.Clone("%sDown" % newname)
-    for b in xrange(1,nominal.GetNbinsX()+1):
-        y0 = nominal.GetBinContent(b)
-        yA = alternate.GetBinContent(b)
-        yM = y0
-        if (y0 > 0 and yA > 0):
-            yM = y0*y0/yA
-        elif yA == 0:
-            yM = 2*y0
-        mirror.SetBinContent(b, yM)
-    if alternateShapeOnly:
-        # keep same normalization
-        mirror.Scale(nominal.Integral()/mirror.Integral())
-    else:
-        # mirror normalization
-        mnorm = (nominal.Integral()**2)/alternate.Integral()
-        mirror.Scale(mnorm/alternate.Integral())
-    return (alternate,mirror)
-
 
 from optparse import OptionParser
 parser = OptionParser(usage='%prog [options] cards/card*.txt')
@@ -37,8 +13,7 @@ parser.add_option('-i','--input', dest='inputdir', default='', type='string', he
 parser.add_option('-b','--bin', dest='bin', default='ch1', type='string', help='name of the bin')
 parser.add_option('-C','--charge', dest='charge', default='plus,minus', type='string', help='process given charge. default is both')
 parser.add_option('-c','--constrain-rates', dest='constrainRateParams', type='string', default='0,1,2', help='add constraints on the rate parameters of (comma-separated list of) rapidity bins. Give only the left ones (e.g. 1 will constrain 1 with n-1 ')
-parser.add_option(     '--fix-YBins', dest='fixYBins', type='string', default='', help='add here replacement of default rate-fixing. with format plusR=10,11,12;plusL=11,12;minusR=10,11,12;minusL=10,11 ')
-parser.add_option('-p','--POIs', dest='POIsToMinos', type='string', default=None, help='Decide which are the nuiscances for which to run MINOS (a.k.a. POIs). Default is all non fixed YBins. With format poi1,poi2 ')
+parser.add_option(     '--fix-YBins', dest='fixYBins', type='string', default='', help='add here replacement of default rate-fixing. with format plusR=0,1,2;plusL=0,1;minusR=0,1,2;minusL=0,1 ')
 parser.add_option('-l','--long-lnN', dest='longLnN', type='float', default=None, help='add a common lnN constraint to all longitudinal components')
 parser.add_option(     '--absolute', dest='absoluteRates', default=False, action='store_true', help='Fit for absolute rates, not scale factors')
 parser.add_option(     '--longToTotal', dest='longToTotal', type='float', default=None, help='Apply a constraint on the Wlong/Wtot rate. Implies fitting for absolute rates')
@@ -57,7 +32,7 @@ for charge in charges:
 
     ## prepare the relevant files. only the datacards and the correct charge
     files = ( f for f in os.listdir(options.inputdir) if f.endswith('.card.txt') )
-    files = ( f for f in files if charge in f and 'pdf' not in f )
+    files = ( f for f in files if charge in f and not any(x in f for x in 'Up Dn'.split()))
     files = sorted(files, key = lambda x: int(x.rstrip('.card.txt').split('_')[-1]) if not 'bkg'in x else -1) ## ugly but works
     files = list( ( os.path.join(options.inputdir, f) for f in files ) )
     
@@ -119,7 +94,7 @@ for charge in charges:
                     bin = l.split()[1]
                     binn = int(bin.split('_')[-1]) if 'Ybin_' in bin else -1
                 basename = os.path.basename(f).split('.')[0]
-                rootfiles_syst = filter(lambda x: re.match('{base}_(pdf\d+)\.input\.root'.format(base=basename),x), os.listdir(options.inputdir))
+                rootfiles_syst = filter(lambda x: re.match('{base}_.*_(Up|Dn)\.input\.root'.format(base=basename),x), os.listdir(options.inputdir))
                 rootfiles_syst = [dir+'/'+x for x in rootfiles_syst]
                 rootfiles_syst.sort()
                 if re.match('process\s+',l): 
@@ -137,7 +112,6 @@ for charge in charges:
         if options.mergeRoot:
             if not binn in empty_bins:
                 print 'processing bin = ',bin
-                nominals = {}
                 for irf,rf in enumerate([rootfile]+rootfiles_syst):
                     print '\twith nominal/systematic file: ',rf
                     tf = ROOT.TFile.Open(rf)
@@ -155,22 +129,13 @@ for charge in charges:
                                 newprocname = p+'_'+bin if re.match('Wplus|Wminus',p) else p
                                 if longBKG and re.match('(Wplus_long|Wminus_long)',p): newprocname = p
                                 newname = name.replace(p,newprocname)
-                                if irf==0:
-                                    if newname not in plots:
-                                        plots[newname] = obj.Clone(newname)
-                                        nominals[newname] = obj.Clone(newname+"0")
-                                        nominals[newname].SetDirectory(None)
-                                        #print 'replacing old %s with %s' % (name,newname)
-                                        plots[newname].Write()
-                                else:
-                                    tokens = newname.split("_"); pfx = '_'.join(tokens[:-1]); pdf = tokens[-1]
-                                    ipdf = int(pdf.split('pdf')[-1])
-                                    newname = "{pfx}_pdf{ipdf}".format(pfx=pfx,ipdf=ipdf)
-                                    (alternate,mirror) = mirrorShape(nominals[pfx],obj,newname)
-                                    for alt in [alternate,mirror]:
-                                        if alt.GetName() not in plots:
-                                            plots[alt.GetName()] = alt.Clone()
-                                            plots[alt.GetName()].Write()
+                                if newname.endswith("_Up"): newname = re.sub('_Up$','Up',newname)
+                                if newname.endswith("_Dn"): newname = re.sub('_Dn$','Down',newname)
+                                if newname not in plots:
+                                    plots[newname] = obj.Clone(newname)
+                                    #print 'replacing old %s with %s' % (name,newname)
+                                    plots[newname].Write()
+                  
                     of.Close()
     if len(empty_bins):
         print 'found a bunch of empty bins:', empty_bins
@@ -419,14 +384,10 @@ for charge in charges:
     floatPOIs = list(poi for poi in POIs if not poi in fixedPOIs)
     allPOIs = fixedPOIs+floatPOIs
 
-    ## define the combine POIs, i.e. the subset on which to run MINOS
-    minosPOIs = allPOIs if not options.POIsToMinos else options.POIsToMinos.split(',')
-
     ## make a group for the fixed rate parameters. just append it to the file.
     print 'adding a nuisance group for the fixed rateParams'
     with open(cardfile,'a+') as finalCardfile:
         finalCardfile.write('\nfixedY group = {fixed} '.format(fixed=' '.join(i.strip() for i in fixedPOIs)))
-        finalCardfile.write('\nfixedMcErr group = {fixed} '.format(fixed=' '.join(i.strip().replace('norm','eff_unc') for i in fixedPOIs))) # not used in the command, but may be useful to stabilize the fit
         finalCardfile.write('\n\n## end of file')
     #finalCardfile.close()
 
@@ -438,6 +399,6 @@ for charge in charges:
     print txt2wsCmd
     os.system(txt2wsCmd)
         
-    combineCmd = 'combine {ws} -M MultiDimFit    -t -1 --expectSignal=1 -m 999 --saveFitResult --cminInitialHesse 1 --cminFinalHesse 1 --cminPreFit 1       --redefineSignalPOIs {pois}            --floatOtherPOIs=0 --freezeNuisanceGroups efficiencies,fixedY{pdfs} -v 9'.format(ws=ws, pois=','.join(minosPOIs), pdfs=(',pdfs' if len(pdfsyst) else ''))
+    combineCmd = 'combine {ws} -M MultiDimFit    -t -1 --expectSignal=1 -m 999 --saveFitResult --cminInitialHesse 1 --cminFinalHesse 1 --cminPreFit 1       --redefineSignalPOIs {pois}            --floatOtherPOIs=0 --freezeNuisanceGroups efficiencies,fixedY{pdfs} -v 9'.format(ws=ws, pois=','.join(allPOIs), pdfs=(',pdfs' if len(pdfsyst) else ''))
     print combineCmd
 
