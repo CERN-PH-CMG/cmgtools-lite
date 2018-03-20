@@ -1341,6 +1341,11 @@ void draw_nTH1(vector<TH1*> vecHist1d = {},
   Double_t xmax = 0;
   Bool_t setXAxisRangeFromUser = getAxisRangeFromUser(xAxisName, xmin, xmax, xAxisNameTmp);
 
+  string yAxisNameRatio = "";
+  Double_t yminRatio = 0;
+  Double_t ymaxRatio = 0;
+  Bool_t setYAxisRatioRangeFromUser = getAxisRangeFromUser(yAxisNameRatio, yminRatio, ymaxRatio, ratioPadYaxisName);
+
   // cout << "xAxisName = " << xAxisName << "   xmin = " << xmin << "  xmax = " << xmax << endl;
 
   for (UInt_t i = 0; i < vecHist1d.size(); i++) {
@@ -1350,17 +1355,19 @@ void draw_nTH1(vector<TH1*> vecHist1d = {},
   }
 
 
-  TCanvas* canvas = new TCanvas("canvas","",600,700);
+  TCanvas* canvas = new TCanvas("canvas","",700,700);
   canvas->cd();
   canvas->SetTickx(1);
   canvas->SetTicky(1);
   canvas->cd();
   if (drawRatioWithNominal) canvas->SetBottomMargin(0.3);
   canvas->SetRightMargin(0.06);
+  canvas->SetLeftMargin(0.16);
 
   TPad *pad2 = new TPad("pad2","pad2",0,0.,1,0.9);
   pad2->SetTopMargin(0.7);
   pad2->SetRightMargin(0.06);
+  pad2->SetLeftMargin(0.16);
   pad2->SetFillColor(0);
   pad2->SetGridy(1);
   pad2->SetFillStyle(0);
@@ -1387,9 +1394,10 @@ void draw_nTH1(vector<TH1*> vecHist1d = {},
     vecHist1d[0]->GetXaxis()->SetTitleSize(0.05);    
   }
   vecHist1d[0]->GetYaxis()->SetTitle(yAxisName.c_str());
-  vecHist1d[0]->GetYaxis()->SetTitleOffset(1.1);
+  vecHist1d[0]->GetYaxis()->SetTitleOffset(1.2);
   // vecHist1d[0]->GetYaxis()->SetTitleOffset(0.8);  // was 1.03 without setting also the size
   vecHist1d[0]->GetYaxis()->SetTitleSize(0.05);
+  vecHist1d[0]->GetYaxis()->SetLabelSize(0.04);
   //vecHist1d[0]->GetYaxis()->SetRangeUser(0.0, max(vecHist1d[0]->GetMaximum(),h2->GetMaximum()) * 1.2);
 
   //////////////////////////////
@@ -1450,10 +1458,8 @@ void draw_nTH1(vector<TH1*> vecHist1d = {},
   leg.Draw("same");
   canvas->RedrawAxis("sameaxis");
 
-  //  CMS_lumi(canvas,Form("%.1f",lumi));
   bool cmsPreliminaryIsUp = false;
   if (yAxisName == "a.u.") cmsPreliminaryIsUp = true;
-  if (canvasName.find("pi0mass_comparison_E") != string::npos) cmsPreliminaryIsUp = false;
 
   if (lumi < 0) CMS_lumi(canvas,"",cmsPreliminaryIsUp,false);
   else CMS_lumi(canvas,Form("%.1f",lumi),cmsPreliminaryIsUp,false);
@@ -1464,24 +1470,16 @@ void draw_nTH1(vector<TH1*> vecHist1d = {},
     pad2->cd();
   
     frame->Reset("ICES");
-    if (canvasName.find("comparisonMassVariation") != string::npos) {
-      frame->GetYaxis()->SetRangeUser(0.99, 1.01);
-      /* if      (outputDIR.find("/eta_0/") != string::npos) frame->GetYaxis()->SetRangeUser(0.99, 1.01); */
-      /* else if (outputDIR.find("/eta_1/") != string::npos) frame->GetYaxis()->SetRangeUser(0.98, 1.02); */
-      /* else if (outputDIR.find("/eta_2/") != string::npos) frame->GetYaxis()->SetRangeUser(0.98, 1.02); */
-    } else if (canvasName.find("elescale") != string::npos) {
-      frame->GetYaxis()->SetRangeUser(0.99,1.01);
-    } else if (canvasName.find("elescale") != string::npos) {
-      frame->GetYaxis()->SetRangeUser(0.99,1.01);
-    } else frame->GetYaxis()->SetRangeUser(0.9,1.1);
+    frame->GetYaxis()->SetRangeUser(0.9,1.1);
     frame->GetYaxis()->SetNdivisions(5);
-    frame->GetYaxis()->SetTitle(ratioPadYaxisName.c_str());
+    frame->GetYaxis()->SetTitle(yAxisNameRatio.c_str());
     frame->GetYaxis()->SetTitleOffset(1.2);
-    // frame->GetYaxis()->SetTitleSize(0.15);
+    frame->GetYaxis()->SetTitleSize(0.05);
+    frame->GetYaxis()->SetLabelSize(0.04);
     frame->GetYaxis()->CenterTitle();
     frame->GetXaxis()->SetTitle(xAxisName.c_str());
     if (setXAxisRangeFromUser) frame->GetXaxis()->SetRangeUser(xmin,xmax);
-    // frame->GetXaxis()->SetTitleOffset(0.8);
+    if (setYAxisRatioRangeFromUser) frame->GetYaxis()->SetRangeUser(yminRatio,ymaxRatio);
     frame->GetXaxis()->SetTitleSize(0.05);
 
     vector<TH1D*> ratio;
@@ -3431,6 +3429,26 @@ void makeFit(TH1* hist) {
   canvas->SaveAs("/afs/cern.ch/user/m/mciprian/www/test_plot/rayleigh.png");
 
 }
+
+
+//============================================
+
+void adjustSettings_CMS_lumi(const string& outputDir = "./") {
+
+  // tmp plot to be removed to adjust settings in CMS_lumi                                                                                                                  
+  TH1D* htmp1 = new TH1D("htmp1","",1,0,1);
+  TH1D* htmp2 = new TH1D("htmp2","",1,0,1);
+  htmp1->Fill(0.5);
+  htmp2->Fill(0.5);
+  vector<TH1*> htmpVec; htmpVec.push_back(htmp2);
+  drawTH1dataMCstack(htmp1, htmpVec, "variable", "Events", "tmpToBeRemoved", outputDir);
+  system(("rm " + outputDir + "*tmpToBeRemoved*").c_str());
+  delete htmp1;
+  delete htmp2;
+
+}
+
+//=============================================================                                 
 
 
 
