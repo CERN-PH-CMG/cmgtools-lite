@@ -207,6 +207,7 @@ if __name__ == "__main__":
         tmpcard = os.path.join(options.inputdir,'tmpcard.txt')
         combineCmd += ' > {tmpcard}'.format(tmpcard=tmpcard)
         #sys.exit()
+<<<<<<< HEAD
         os.system(combineCmd)
     
         combinedCard = open(cardfile,'w')
@@ -248,6 +249,116 @@ if __name__ == "__main__":
                 if nmatchprocess==2: 
                     nmatchprocess +=1
                 elif nmatchprocess>2: combinedCard.write(l)
+=======
+        os.system(haddcmd)
+        os.system('rm {rm}'.format(rm=' '.join(tmpfiles)))
+
+    print "Now trying to get info on PDF uncertainties..."
+    pdfsyst = {}
+    tf = ROOT.TFile.Open(outfile)
+    for e in tf.GetListOfKeys() :
+        name=e.GetName()
+        if 'pdf' in name:
+            if name.endswith("Up"): name = re.sub('Up$','',name)
+            if name.endswith("Down"): name = re.sub('Down$','',name)
+            syst = name.split('_')[-1]
+            binWsyst = '_'.join(name.split('_')[1:-1])
+            if syst not in pdfsyst: pdfsyst[syst] = [binWsyst]
+            else: pdfsyst[syst].append(binWsyst)
+    if len(pdfsyst): print "Found a bunch of PDF sysematics: ",pdfsyst.keys()
+    else: print "You are running w/o PDF systematics. Lucky you!"
+
+    combineCmd="combineCards.py "
+    for f in files:
+        basename = os.path.basename(f).split(".")[0]
+        binn = int(basename.split('_')[-1]) if 'Ybin_' in basename else 999
+        binname = basename if re.match('Wplus|Wminus',basename) else "other"
+        if not binn in empty_bins:
+            combineCmd += " %s=%s " % (binname,f)
+    tmpcard = os.path.join(options.inputdir,'tmpcard.txt')
+    combineCmd += ' > {tmpcard}'.format(tmpcard=tmpcard)
+    #sys.exit()
+    os.system(combineCmd)
+
+    combinedCard = open(cardfile,'w')
+    combinedCard.write("imax 1\n")
+    combinedCard.write("jmax *\n")
+    combinedCard.write("kmax *\n")
+    combinedCard.write('##----------------------------------\n') 
+    realprocesses = [] # array to preserve the sorting
+    with open(tmpcard) as file:    
+        nmatchbin=0
+        nmatchprocess=0
+        for l in file.readlines():
+            if re.match("shapes.*other",l):
+                variables = l.split()[4:]
+                combinedCard.write("shapes *  *  %s %s\n" % (os.path.abspath(outfile)," ".join(variables)))
+                combinedCard.write('##----------------------------------\n')
+            if re.match("bin",l) and nmatchbin==0: 
+                nmatchbin=1
+                combinedCard.write('bin   %s\n' % options.bin) 
+                bins = l.split()[1:]
+            if re.match("observation",l): 
+                yields = l.split()[1:]
+                observations = dict(zip(bins,yields))
+                combinedCard.write('observation %s\n' % observations['other'])
+                combinedCard.write('##----------------------------------\n')
+            if re.match("bin",l) and nmatchbin==1:
+                pseudobins = l.split()[1:]
+            if re.match("process",l):
+                if nmatchprocess==0:
+                    pseudoprocesses = l.split()[1:]
+                    klen = 7
+                    kpatt = " %%%ds "  % klen
+                    for i in xrange(len(pseudobins)):
+                        realprocesses.append(pseudoprocesses[i]+"_"+pseudobins[i] if ('Wminus' in pseudobins[i] or 'Wplus' in pseudobins[i]) else pseudoprocesses[i])
+                    combinedCard.write('bin            %s \n' % ' '.join([kpatt % options.bin for p in pseudoprocesses]))
+                    combinedCard.write('process        %s \n' % ' '.join([kpatt % p for p in realprocesses]))
+                    combinedCard.write('process        %s \n' % ' '.join([kpatt % str(i+1) for i in xrange(len(pseudobins))]))
+                nmatchprocess += 1
+            if nmatchprocess==2: 
+                nmatchprocess +=1
+            elif nmatchprocess>2: combinedCard.write(l)
+    
+    os.system('rm {tmpcard}'.format(tmpcard=tmpcard))
+    
+    if options.longToTotal or options.scaleFile: options.absoluteRates = True
+    
+    kpatt = " %7s "
+    if options.longLnN and not options.longToTotal:
+        combinedCard.write('norm_long_'+options.bin+'       lnN    ' + ' '.join([kpatt % (options.longLnN if 'long' in x else '-') for x in realprocesses])+'\n')
+
+    combinedCard = open(cardfile,'r')
+    procs = []
+    rates = []
+    for l in combinedCard.readlines():
+        if re.match("process\s+",l) and not re.match("process\s+\d",l): # my regexp qualities are bad... 
+            procs = (l.rstrip().split())[1:]
+        if re.match("rate\s+",l):
+            rates = (l.rstrip().split())[1:]
+        if len(procs) and len(rates): break
+    ProcsAndRates = zip(procs,rates)
+    ProcsAndRatesDict = dict(zip(procs,rates))
+
+    efficiencies    = {}; efferrors    = {}
+    efficiencies_LO = {}; efferrors_LO = {}
+    if options.scaleFile:
+        for pol in ['left','right','long']: 
+            efficiencies   [pol] = [1./x for x in getScales(ybins, charge, pol, os.path.abspath(options.scaleFile))]
+            efferrors      [pol] = [   x for x in getScales(ybins, charge, pol, os.path.abspath(options.scaleFile), returnError=True)] ## these errors are relative to the effs
+            efficiencies_LO[pol] = [1./x for x in getScales(ybins, charge, pol, os.path.abspath(options.scaleFile), doNLO=False)]
+            efferrors_LO   [pol] = [   x for x in getScales(ybins, charge, pol, os.path.abspath(options.scaleFile), doNLO=False, returnError=True)]
+
+    combinedCard = open(cardfile,'a')
+    POIs = []
+    if options.constrainRateParams:
+        signal_procs = filter(lambda x: re.match('Wplus|Wminus',x), realprocesses)
+        if longBKG: signal_procs = filter(lambda x: re.match('(?!Wplus_long|Wminus_long)',x), signal_procs)
+        signal_procs.sort(key=lambda x: int(x.split('_')[-1]))
+        signal_L = filter(lambda x: re.match('.*left.*',x),signal_procs)
+        signal_R = filter(lambda x: re.match('.*right.*',x),signal_procs)
+        signal_0 = filter(lambda x: re.match('.*long.*',x),signal_procs)
+>>>>>>> wmass-central/80X
         
         os.system('rm {tmpcard}'.format(tmpcard=tmpcard))
         
