@@ -1,7 +1,7 @@
 #ifndef utility_h
 #define utility_h
 
-#include "../CMS_lumi.h"
+#include "./CMS_lumi.h"
 #include "./centerOfMassEnergy.h"
 
 
@@ -52,7 +52,6 @@
 #include <TPaveStats.h>
 #include <TPaveText.h>
 #include <TProfile.h>
-#include <TSpline.h>
 #include <TTreeIndex.h>
 #include <TTreeReader.h>
 #include <TTreeReaderArray.h>
@@ -81,7 +80,7 @@ using namespace std;
 
 //static string treeLocation = "/store/group/phys_smp/Wmass/perrozzi/ntuples/ntuples_2014_05_23_53X/";
 //static string treeLocation = "/u2/emanuele/MCTrees_1LEP_80X_V1/";
-static string PhpToCopy = "/afs/cern.ch/user/m/mciprian/www/index.php";
+static string PhpToCopy = "/afs/cern.ch/user/m/mciprian/public/index.php";
 
 // define sample
 enum class Sample {
@@ -537,20 +536,16 @@ Double_t doSoverB(TGraph* gsob = NULL, TH1* hwjets = NULL, TH1* hqcd = NULL) {
 
 //=============================================
 
-void doEfficiencyFromTH2(TH2* h2 = NULL, const TH2* h2orig = NULL, const Bool_t revert = false) {
-
-  // with revert == true, the efficiency is obtained from the integral from X to end (otherwise from beginning to x)
+void doEfficiencyFromTH2(TH2* h2 = NULL, const TH2* h2orig = NULL) {
 
   for (Int_t ix = 1; ix <= h2->GetNbinsX(); ix++) {
 
     // include underflow and overflow in the integral
     Double_t yIntegralFixedX = h2orig->Integral(ix, ix, 0, 1 + h2orig->GetNbinsY());
-    Double_t integralRange = 0.0;
 
     for (Int_t iy = 1; iy <= h2->GetNbinsY(); iy++) {
 
-      integralRange = revert ? h2orig->Integral(ix, ix, iy, 1 + h2orig->GetNbinsY()) : h2orig->Integral(ix, ix, 0, iy);
-      h2->SetBinContent(ix,iy, integralRange/yIntegralFixedX);
+      h2->SetBinContent(ix,iy, h2orig->Integral(ix, ix, 0, iy)/yIntegralFixedX);
 
     }
 
@@ -744,8 +739,6 @@ void checkNotNullPtr(TH2* hptr, const string& ptrName = "hptr") {
 //======================================================
 
 string getStringFromDouble(const Double_t& num = 1.0, const Double_t epsilon = 0.00001) {
-
-  // warning: using up to 3 decimal
   
   Int_t i = (Int_t) num;
   // stringstream ss;                                                                                      
@@ -761,23 +754,6 @@ string getStringFromDouble(const Double_t& num = 1.0, const Double_t epsilon = 0
 
 //======================================================                                                                
 
-/* string getDoubleFromString(const string& numberStr = "1.0", const Double_t epsilon = 0.00001) { */
-  
-/*   int */
-
-/*   Int_t i = (Int_t) num; */
-/*   // stringstream ss;                                                                                       */
-/*   // ss<<i;                                                                                                                          */
-/*   // string numStr = ss.str();                                                                                          */
-/*   Int_t int_decim = (Int_t) (1000 * (num - (Double_t) i + epsilon)); */
-/*   if      (int_decim%1000 == 0) return string(Form("%dp%d",i,int_decim/1000)); */
-/*   else if (int_decim%100 == 0)  return string(Form("%dp%d",i,int_decim/100)); */
-/*   else if (int_decim%10 == 0)   return string(Form("%dp%d",i,int_decim/10)); */
-/*   else                          return string(Form("%dp%d",i,int_decim)); */
-
-/* } */
-
-//======================================================                                                                
 
 void fillTH1(TH1* histo, const Double_t val, const Double_t weight = 1.0, const Bool_t useOverflowBin = true) {
 
@@ -1095,8 +1071,6 @@ void drawGraph(vector<TGraph*> gr_roc_S_B = {},
   canvas->SaveAs((outputDIR+canvasName+".png").c_str());
   canvas->SaveAs((outputDIR+canvasName+".pdf").c_str());
 
-  delete canvas;
-
 }
 
 //=============================================
@@ -1172,8 +1146,6 @@ void drawGraphCMS(vector<TGraph*> grList = {},
 
   canvas->SaveAs((outputDIR+canvasName+".png").c_str());
   canvas->SaveAs((outputDIR+canvasName+".pdf").c_str());
-
-  delete canvas;
 
 }
 
@@ -1369,6 +1341,11 @@ void draw_nTH1(vector<TH1*> vecHist1d = {},
   Double_t xmax = 0;
   Bool_t setXAxisRangeFromUser = getAxisRangeFromUser(xAxisName, xmin, xmax, xAxisNameTmp);
 
+  string yAxisNameRatio = "";
+  Double_t yminRatio = 0;
+  Double_t ymaxRatio = 0;
+  Bool_t setYAxisRatioRangeFromUser = getAxisRangeFromUser(yAxisNameRatio, yminRatio, ymaxRatio, ratioPadYaxisName);
+
   // cout << "xAxisName = " << xAxisName << "   xmin = " << xmin << "  xmax = " << xmax << endl;
 
   for (UInt_t i = 0; i < vecHist1d.size(); i++) {
@@ -1377,25 +1354,20 @@ void draw_nTH1(vector<TH1*> vecHist1d = {},
     vecHist1d[i]->SetStats(0);
   }
 
-  Int_t canvasWidth = 700;
-  Int_t canvasHeight = 600;
-  if (drawRatioWithNominal) {
-    canvasWidth = 600;
-    canvasHeight = 700;
-  }
 
-
-  TCanvas* canvas = new TCanvas("canvas","",canvasWidth,canvasHeight);
+  TCanvas* canvas = new TCanvas("canvas","",700,700);
   canvas->cd();
   canvas->SetTickx(1);
   canvas->SetTicky(1);
   canvas->cd();
   if (drawRatioWithNominal) canvas->SetBottomMargin(0.3);
   canvas->SetRightMargin(0.06);
+  canvas->SetLeftMargin(0.16);
 
   TPad *pad2 = new TPad("pad2","pad2",0,0.,1,0.9);
   pad2->SetTopMargin(0.7);
   pad2->SetRightMargin(0.06);
+  pad2->SetLeftMargin(0.16);
   pad2->SetFillColor(0);
   pad2->SetGridy(1);
   pad2->SetFillStyle(0);
@@ -1422,9 +1394,10 @@ void draw_nTH1(vector<TH1*> vecHist1d = {},
     vecHist1d[0]->GetXaxis()->SetTitleSize(0.05);    
   }
   vecHist1d[0]->GetYaxis()->SetTitle(yAxisName.c_str());
-  vecHist1d[0]->GetYaxis()->SetTitleOffset(1.1);
+  vecHist1d[0]->GetYaxis()->SetTitleOffset(1.2);
   // vecHist1d[0]->GetYaxis()->SetTitleOffset(0.8);  // was 1.03 without setting also the size
   vecHist1d[0]->GetYaxis()->SetTitleSize(0.05);
+  vecHist1d[0]->GetYaxis()->SetLabelSize(0.04);
   //vecHist1d[0]->GetYaxis()->SetRangeUser(0.0, max(vecHist1d[0]->GetMaximum(),h2->GetMaximum()) * 1.2);
 
   //////////////////////////////
@@ -1485,10 +1458,8 @@ void draw_nTH1(vector<TH1*> vecHist1d = {},
   leg.Draw("same");
   canvas->RedrawAxis("sameaxis");
 
-  //  CMS_lumi(canvas,Form("%.1f",lumi));
   bool cmsPreliminaryIsUp = false;
   if (yAxisName == "a.u.") cmsPreliminaryIsUp = true;
-  if (canvasName.find("pi0mass_comparison_E") != string::npos) cmsPreliminaryIsUp = false;
 
   if (lumi < 0) CMS_lumi(canvas,"",cmsPreliminaryIsUp,false);
   else CMS_lumi(canvas,Form("%.1f",lumi),cmsPreliminaryIsUp,false);
@@ -1499,24 +1470,16 @@ void draw_nTH1(vector<TH1*> vecHist1d = {},
     pad2->cd();
   
     frame->Reset("ICES");
-    if (canvasName.find("comparisonMassVariation") != string::npos) {
-      frame->GetYaxis()->SetRangeUser(0.99, 1.01);
-      /* if      (outputDIR.find("/eta_0/") != string::npos) frame->GetYaxis()->SetRangeUser(0.99, 1.01); */
-      /* else if (outputDIR.find("/eta_1/") != string::npos) frame->GetYaxis()->SetRangeUser(0.98, 1.02); */
-      /* else if (outputDIR.find("/eta_2/") != string::npos) frame->GetYaxis()->SetRangeUser(0.98, 1.02); */
-    } else if (canvasName.find("elescale") != string::npos) {
-      frame->GetYaxis()->SetRangeUser(0.99,1.01);
-    } else if (canvasName.find("elescale") != string::npos) {
-      frame->GetYaxis()->SetRangeUser(0.99,1.01);
-    } else frame->GetYaxis()->SetRangeUser(0.9,1.1);
+    frame->GetYaxis()->SetRangeUser(0.9,1.1);
     frame->GetYaxis()->SetNdivisions(5);
-    frame->GetYaxis()->SetTitle(ratioPadYaxisName.c_str());
+    frame->GetYaxis()->SetTitle(yAxisNameRatio.c_str());
     frame->GetYaxis()->SetTitleOffset(1.2);
-    // frame->GetYaxis()->SetTitleSize(0.15);
+    frame->GetYaxis()->SetTitleSize(0.05);
+    frame->GetYaxis()->SetLabelSize(0.04);
     frame->GetYaxis()->CenterTitle();
     frame->GetXaxis()->SetTitle(xAxisName.c_str());
     if (setXAxisRangeFromUser) frame->GetXaxis()->SetRangeUser(xmin,xmax);
-    // frame->GetXaxis()->SetTitleOffset(0.8);
+    if (setYAxisRatioRangeFromUser) frame->GetYaxis()->SetRangeUser(yminRatio,ymaxRatio);
     frame->GetXaxis()->SetTitleSize(0.05);
 
     vector<TH1D*> ratio;
@@ -1779,29 +1742,11 @@ void drawTH1dataMCstack(TH1* h1 = NULL, vector<TH1*> vecMC = {},
     canvas->SetLogy(0);
   }
 
-  delete hMCstack;
-  delete pad2;
   delete canvas;
 
 }
 
-//=============================================================
 
-void adjustSettings_CMS_lumi(const string& outputDir = "./") {
-
-  // tmp plot to be removed to adjust settings in CMS_lumi                                                                                                                  
-  TH1D* htmp1 = new TH1D("htmp1","",1,0,1);
-  TH1D* htmp2 = new TH1D("htmp2","",1,0,1);
-  htmp1->Fill(0.5);
-  htmp2->Fill(0.5);
-  vector<TH1*> htmpVec; htmpVec.push_back(htmp2);
-  drawTH1dataMCstack(htmp1, htmpVec, "variable", "Events", "tmpToBeRemoved", outputDir);
-  system(("rm " + outputDir + "*tmpToBeRemoved*").c_str());
-  delete htmp1;
-  delete htmp2;
-
-}
-  
 //=============================================================
 
 /* // following function calls the previous one that is more general and takes a vector of TH1* as "data" */
@@ -2124,8 +2069,6 @@ void drawTH1dataMCstackAndNoStack(TH1* h1 = NULL, vector<TH1*> vecMC = {}, vecto
     canvas->SetLogy(0);
   }
 
-  delete hMCstack;
-  delete pad2;
   delete canvas;
 
 }
@@ -2304,128 +2247,6 @@ TFitResultPtr drawTH1(TH1* h1 = NULL,
 
   delete canvas;
   return frp2;
-
-}
-
-
-//=============================================================
-
-
-void drawSingleTH1(TH1* h1 = NULL, 
-		   const string& xAxisNameTmp = "", const string& yAxisName = "Events", const string& canvasName = "default", 
-		   const string& outputDIR = "./", 
-		   const string& legEntryTmp = "", 
-		   const Double_t lumi = -1.0, 
-		   const Int_t rebinFactor = 1,
-		   const Bool_t noStatBox = false,
-		   const Int_t draw_both0_noLog1_onlyLog2 = 0		    
-		   )
-{
-
-  string xAxisName = "";
-  Double_t xmin = 0;
-  Double_t xmax = 0;
-  Bool_t setXAxisRangeFromUser = getAxisRangeFromUser(xAxisName, xmin, xmax, xAxisNameTmp);
-
-  string legEntry = "";
-  string legHeader = "";
-  Bool_t setLegendHeader = false;
-
-  string separator = "::";
-  size_t pos = legEntryTmp.find(separator);
-  if (pos != string::npos) {
-    setLegendHeader = true;
-    legEntry.assign(legEntryTmp, 0, pos); 
-    legHeader.assign(legEntryTmp, pos + separator.size(), string::npos);
-  } else {
-    legEntry = legEntryTmp;
-  }
-
-
-  // cout << "xAxisName = " << xAxisName << "   xmin = " << xmin << "  xmax = " << xmax << endl;
-
-  TH1::SetDefaultSumw2(); //all the following histograms will automatically call TH1::Sumw2() 
-
-  myRebinHisto(h1,rebinFactor);
-  
-  TCanvas* canvas = new TCanvas("canvas","",700,700);
-  canvas->cd();
-  canvas->SetTickx(1);
-  canvas->SetTicky(1);
-  canvas->cd();
-  canvas->SetBottomMargin(0.12);
-  canvas->SetRightMargin(0.06);
-
-  h1->Draw("HE");
-
-
-  canvas->Update();
-  TPaveStats *statBox = (TPaveStats*)(h1->FindObject("stats"));
-  if (statBox) {
-    statBox->SetX1NDC(0.62);
-    statBox->SetX2NDC(0.92);
-    statBox->SetY1NDC(0.59);
-    statBox->SetY2NDC(0.91);
-    statBox->SetFillColor(0);
-    statBox->SetFillStyle(0);
-    statBox->SetBorderSize(0);
-    statBox->Draw();
-  }
-  canvas->Update();
-
-  if (setXAxisRangeFromUser) h1->GetXaxis()->SetRangeUser(xmin,xmax);
-  h1->GetXaxis()->SetTitle(xAxisName.c_str());
-  // h1->GetXaxis()->SetTitleOffset(0.8);
-  h1->GetXaxis()->SetTitleSize(0.05);
-  h1->GetYaxis()->SetTitle(yAxisName.c_str());
-  h1->GetYaxis()->SetTitleOffset(1.1);
-  // h1->GetYaxis()->SetTitleOffset(0.8);  // was 1.03 without setting also the size
-  h1->GetYaxis()->SetTitleSize(0.05);
-  h1->GetYaxis()->SetRangeUser(0.0, h1->GetMaximum() * 1.5);
-  canvas->RedrawAxis("sameaxis");
-  canvas->Update();
-
-  TLegend leg (0.15,0.7,0.6,0.9);
-  if (setLegendHeader) leg.SetHeader(legHeader.c_str());
-  leg.SetFillColor(0);
-  leg.SetFillStyle(0);
-  leg.SetBorderSize(0);
-  leg.AddEntry(h1,legEntry.c_str(),"L");
-  leg.Draw("same");
-  canvas->RedrawAxis("sameaxis");
-
-  //  CMS_lumi(canvas,Form("%.1f",lumi));
-  if (lumi < 0) CMS_lumi(canvas,"",true,false);
-  else CMS_lumi(canvas,Form("%.1f",lumi),true,false);
-  setTDRStyle();
-
-  
-  if (noStatBox) {
-    h1->SetStats(0);
-    //cout << "No Statistics box" << endl;
-  } else {
-    //canvas->Update();
-    gPad->Update();
-    gStyle->SetOptStat(1110);
-  }
-  //h1->SetStats(0);
-
-  canvas->SaveAs((outputDIR + canvasName + ".png").c_str());
-  canvas->SaveAs((outputDIR + canvasName + ".pdf").c_str());
-
-  if (draw_both0_noLog1_onlyLog2 != 1) {
-
-    if (yAxisName == "a.u.") h1->GetYaxis()->SetRangeUser(max(0.0001,h1->GetMinimum()*0.8),h1->GetMaximum()*100);
-    else                     h1->GetYaxis()->SetRangeUser(max(0.001,h1->GetMinimum()*0.8),h1->GetMaximum()*100);
-    canvas->SetLogy();
-    canvas->SaveAs((outputDIR + canvasName + "_logY.png").c_str());
-    canvas->SaveAs((outputDIR + canvasName + "_logY.pdf").c_str());
-    canvas->SetLogy(0);
-
-  }
-
-
-  delete canvas;
 
 }
 
@@ -2936,21 +2757,53 @@ Double_t getXsec13TeV(const string& sample) {
 //=========================================================
 
 Double_t getSumGenWeightFromSampleName(const string& sample) {
-
-  if (sample.find("data") != string::npos || sample.find("fake") != string::npos) 
-    return 1.0;
   
   // xsec in pb
   map<string, Double_t> map_sampleName_sumGenWgt;
 
   // map created with script getSumWeightPerSample.py
+  map_sampleName_sumGenWgt["DYJetsToLL_M50_LO_ext2_part1"] = 142209392.0;
+  map_sampleName_sumGenWgt["DYJetsToLL_M50_LO_ext2_part10"] = 142209392.0;
+  map_sampleName_sumGenWgt["DYJetsToLL_M50_LO_ext2_part11"] = 142209392.0;
+  map_sampleName_sumGenWgt["DYJetsToLL_M50_LO_ext2_part2"] = 142209392.0;
+  map_sampleName_sumGenWgt["DYJetsToLL_M50_LO_ext2_part3"] = 142209392.0;
+  map_sampleName_sumGenWgt["DYJetsToLL_M50_LO_ext2_part4"] = 142209392.0;
+  map_sampleName_sumGenWgt["DYJetsToLL_M50_LO_ext2_part5"] = 142209392.0;
+  map_sampleName_sumGenWgt["DYJetsToLL_M50_LO_ext2_part6"] = 142209392.0;
+  map_sampleName_sumGenWgt["DYJetsToLL_M50_LO_ext2_part7"] = 142209392.0;
+  map_sampleName_sumGenWgt["DYJetsToLL_M50_LO_ext2_part8"] = 142209392.0;
+  map_sampleName_sumGenWgt["DYJetsToLL_M50_LO_ext2_part9"] = 142209392.0;
+  map_sampleName_sumGenWgt["DYJetsToLL_M50_LO_ext_part1"] = 142209392.0;
+  map_sampleName_sumGenWgt["DYJetsToLL_M50_LO_ext_part2"] = 142209392.0;
+  map_sampleName_sumGenWgt["DYJetsToLL_M50_LO_ext_part3"] = 142209392.0;
+  map_sampleName_sumGenWgt["DYJetsToLL_M50_LO_ext_part4"] = 142209392.0;
+  map_sampleName_sumGenWgt["DYJetsToLL_M50_LO_ext_part5"] = 142209392.0;
+  map_sampleName_sumGenWgt["DYJetsToLL_M50_LO_ext_part6"] = 142209392.0;
   map_sampleName_sumGenWgt["DYJetsToLL_M50_part1"] = 4.4113015039e+11;
   map_sampleName_sumGenWgt["DYJetsToLL_M50_part2"] = 4.4113015039e+11;
+  map_sampleName_sumGenWgt["QCD_Mu15_part1"] = 12260254.0;
+  map_sampleName_sumGenWgt["QCD_Mu15_part2"] = 12260254.0;
+  map_sampleName_sumGenWgt["QCD_Pt1000toInf_Mu5"] = 126748460.747;
+  map_sampleName_sumGenWgt["QCD_Pt120to170_Mu5"] = 126748460.747;
+  map_sampleName_sumGenWgt["QCD_Pt15to20_Mu5"] = 126748460.747;
+  map_sampleName_sumGenWgt["QCD_Pt170to300_Mu5"] = 126748460.747;
+  map_sampleName_sumGenWgt["QCD_Pt170to300_Mu5_ext"] = 126748460.747;
   map_sampleName_sumGenWgt["QCD_Pt20to30_EMEnriched"] = 38966443.5421;
+  map_sampleName_sumGenWgt["QCD_Pt20to30_Mu5"] = 126748460.747;
+  map_sampleName_sumGenWgt["QCD_Pt300to470_Mu5"] = 126748460.747;
+  map_sampleName_sumGenWgt["QCD_Pt300to470_Mu5_ext"] = 126748460.747;
+  map_sampleName_sumGenWgt["QCD_Pt300to470_Mu5_ext2"] = 126748460.747;
   map_sampleName_sumGenWgt["QCD_Pt30to50_EMEnriched"] = 38966443.5421;
   map_sampleName_sumGenWgt["QCD_Pt30to50_EMEnriched_ext"] = 38966443.5421;
+  map_sampleName_sumGenWgt["QCD_Pt30to50_Mu5"] = 126748460.747;
+  map_sampleName_sumGenWgt["QCD_Pt470to600_Mu5_ext"] = 126748460.747;
   map_sampleName_sumGenWgt["QCD_Pt50to80_EMEnriched_ext"] = 38966443.5421;
+  map_sampleName_sumGenWgt["QCD_Pt50to80_Mu5"] = 126748460.747;
+  map_sampleName_sumGenWgt["QCD_Pt600to800_Mu5"] = 126748460.747;
+  map_sampleName_sumGenWgt["QCD_Pt800to1000_Mu5_ext2"] = 126748460.747;
   map_sampleName_sumGenWgt["QCD_Pt80to120_EMEnriched_ext"] = 38966443.5421;
+  map_sampleName_sumGenWgt["QCD_Pt80to120_Mu5"] = 126748460.747;
+  map_sampleName_sumGenWgt["QCD_Pt80to120_Mu5_ext"] = 126748460.747;
   map_sampleName_sumGenWgt["QCD_Pt_170to250_bcToE"] = 57429713.852;
   map_sampleName_sumGenWgt["QCD_Pt_20to30_bcToE"] = 57429713.852;
   map_sampleName_sumGenWgt["QCD_Pt_250toInf_bcToE"] = 57429713.852;
@@ -2960,15 +2813,51 @@ Double_t getSumGenWeightFromSampleName(const string& sample) {
   map_sampleName_sumGenWgt["TBar_tch_powheg_part1"] = 37659712.0;
   map_sampleName_sumGenWgt["TBar_tch_powheg_part2"] = 37659712.0;
   map_sampleName_sumGenWgt["TBar_tch_powheg_part3"] = 37659712.0;
-  map_sampleName_sumGenWgt["TTJets_SingleLeptonFromT_part1"] = 9949110.0;
-  map_sampleName_sumGenWgt["TTJets_SingleLeptonFromT_part2"] = 9949110.0;
-  map_sampleName_sumGenWgt["TTJets_SingleLeptonFromTbar_part1"] = 8929457.0;
-  map_sampleName_sumGenWgt["TTJets_SingleLeptonFromTbar_part2"] = 8929457.0;
+  map_sampleName_sumGenWgt["TTJets_SingleLeptonFromT_ext_part1"] = 54512878.0;
+  map_sampleName_sumGenWgt["TTJets_SingleLeptonFromT_ext_part2"] = 54512878.0;
+  map_sampleName_sumGenWgt["TTJets_SingleLeptonFromT_ext_part3"] = 54512878.0;
+  map_sampleName_sumGenWgt["TTJets_SingleLeptonFromT_ext_part4"] = 54512878.0;
+  map_sampleName_sumGenWgt["TTJets_SingleLeptonFromT_ext_part5"] = 54512878.0;
+  map_sampleName_sumGenWgt["TTJets_SingleLeptonFromT_ext_part6"] = 54512878.0;
+  map_sampleName_sumGenWgt["TTJets_SingleLeptonFromT_ext_part7"] = 54512878.0;
+  map_sampleName_sumGenWgt["TTJets_SingleLeptonFromT_ext_part8"] = 54512878.0;
+  map_sampleName_sumGenWgt["TTJets_SingleLeptonFromT_ext_part9"] = 54512878.0;
+  map_sampleName_sumGenWgt["TTJets_SingleLeptonFromT_part1"] = 54512878.0;
+  map_sampleName_sumGenWgt["TTJets_SingleLeptonFromT_part2"] = 54512878.0;
+  map_sampleName_sumGenWgt["TTJets_SingleLeptonFromTbar_ext_part1"] = 52405916.0;
+  map_sampleName_sumGenWgt["TTJets_SingleLeptonFromTbar_ext_part2"] = 52405916.0;
+  map_sampleName_sumGenWgt["TTJets_SingleLeptonFromTbar_ext_part3"] = 52405916.0;
+  map_sampleName_sumGenWgt["TTJets_SingleLeptonFromTbar_ext_part4"] = 52405916.0;
+  map_sampleName_sumGenWgt["TTJets_SingleLeptonFromTbar_ext_part5"] = 52405916.0;
+  map_sampleName_sumGenWgt["TTJets_SingleLeptonFromTbar_part1"] = 52405916.0;
+  map_sampleName_sumGenWgt["TTJets_SingleLeptonFromTbar_part2"] = 52405916.0;
   map_sampleName_sumGenWgt["TToLeptons_sch_amcatnlo"] = 3370668.5184;
   map_sampleName_sumGenWgt["T_tWch_ext"] = 6332490.0;
   map_sampleName_sumGenWgt["T_tch_powheg_part1"] = 61947468.0;
   map_sampleName_sumGenWgt["T_tch_powheg_part2"] = 61947468.0;
-  map_sampleName_sumGenWgt["WJetsToLNu_NoSkim"] = 3.69928427394e+12;
+  map_sampleName_sumGenWgt["WJetsToLNu_LO_ext_part1"] = 86099951.0;
+  map_sampleName_sumGenWgt["WJetsToLNu_LO_ext_part10"] = 86099951.0;
+  map_sampleName_sumGenWgt["WJetsToLNu_LO_ext_part2"] = 86099951.0;
+  map_sampleName_sumGenWgt["WJetsToLNu_LO_ext_part3"] = 86099951.0;
+  map_sampleName_sumGenWgt["WJetsToLNu_LO_ext_part4"] = 86099951.0;
+  map_sampleName_sumGenWgt["WJetsToLNu_LO_ext_part5"] = 86099951.0;
+  map_sampleName_sumGenWgt["WJetsToLNu_LO_ext_part6"] = 86099951.0;
+  map_sampleName_sumGenWgt["WJetsToLNu_LO_ext_part7"] = 86099951.0;
+  map_sampleName_sumGenWgt["WJetsToLNu_LO_ext_part8"] = 86099951.0;
+  map_sampleName_sumGenWgt["WJetsToLNu_LO_ext_part9"] = 86099951.0;
+  map_sampleName_sumGenWgt["WJetsToLNu_LO_part1"] = 86099951.0;
+  map_sampleName_sumGenWgt["WJetsToLNu_LO_part2"] = 86099951.0;
+  map_sampleName_sumGenWgt["WJetsToLNu_LO_part3"] = 86099951.0;
+  map_sampleName_sumGenWgt["WJetsToLNu_LO_part4"] = 86099951.0;
+  map_sampleName_sumGenWgt["WJetsToLNu_LO_part5"] = 86099951.0;
+  map_sampleName_sumGenWgt["WJetsToLNu_LO_part6"] = 86099951.0;
+  map_sampleName_sumGenWgt["WJetsToLNu_part1"] = 3.50627475345e+12;
+  map_sampleName_sumGenWgt["WJetsToLNu_part2"] = 3.50627475345e+12;
+  map_sampleName_sumGenWgt["WJetsToLNu_part3"] = 3.50627475345e+12;
+  map_sampleName_sumGenWgt["WJetsToLNu_part4"] = 3.50627475345e+12;
+  map_sampleName_sumGenWgt["WJetsToLNu_part5"] = 3.50627475345e+12;
+  map_sampleName_sumGenWgt["WJetsToLNu_part6"] = 3.50627475345e+12;
+  map_sampleName_sumGenWgt["WJetsToLNu_part7"] = 3.50627475345e+12;
   map_sampleName_sumGenWgt["WW"] = 6248191.83067;
   map_sampleName_sumGenWgt["WW_ext"] = 6248191.83067;
   map_sampleName_sumGenWgt["WZ"] = 3995828.0;
@@ -2976,7 +2865,10 @@ Double_t getSumGenWeightFromSampleName(const string& sample) {
   map_sampleName_sumGenWgt["ZZ"] = 1988098.0;
   map_sampleName_sumGenWgt["ZZ_ext"] = 1988098.0;
 
-  return map_sampleName_sumGenWgt[sample];
+  if (sample.find("data") != string::npos || sample.find("fake") != string::npos) 
+    return 1.0;
+  else
+    return map_sampleName_sumGenWgt[sample];
 
 }
 
@@ -3035,228 +2927,266 @@ void buildChain(TChain* chain, vector<Double_t>& genwgtVec, const bool use8TeVSa
     }
   } else {
 
-    /* vector<string> sampleRoots = {"DYJetsToLL_M50_part", */
-    /* 				  # "DYJetsToLL_M50_LO",                           */
-    /* 				  "WW", */
-    /* 				  "WZ", */
-    /* 				  "ZZ", */
-    /* 				  "TBar_tWch_ext", */
-    /* 				  "T_tWch_ext", */
-    /* 				  "TTJets_SingleLeptonFromT_", */
-    /* 				  "TTJets_SingleLeptonFromTbar_", */
-    /* 				  "T_tch_powheg", */
-    /* 				  "TBar_tch_powheg_", */
-    /* 				  "TToLeptons_sch_amcatnl", */
-    /* 				  "WJetsToLNu_NoSkim", */
-    /* 				  "_bcTo", */
-    /* 				  "_EMEnriched", */
-    /* 				  # "_Mu5",     */
-    /* 				  # "_Mu15"} */
-
     if (sample == Sample::wjets || sample == Sample::wenujets || sample == Sample::wmunujets || sample == Sample::wtaunujets) {
-      subSampleNameVector.push_back("WJetsToLNu_NoSkim");
-    /* } else if (sample == Sample::wjets_LO || sample == Sample::wenujets_LO || sample == Sample::wmunujets_LO || sample == Sample::wtaunujets_LO) {  */
-    /*   subSampleNameVector.push_back("WJetsToLNu_LO_ext_part1"); */
-    /*   subSampleNameVector.push_back("WJetsToLNu_LO_ext_part10"); */
-    /*   subSampleNameVector.push_back("WJetsToLNu_LO_ext_part2"); */
-    /*   subSampleNameVector.push_back("WJetsToLNu_LO_ext_part3"); */
-    /*   subSampleNameVector.push_back("WJetsToLNu_LO_ext_part4"); */
-    /*   subSampleNameVector.push_back("WJetsToLNu_LO_ext_part5"); */
-    /*   subSampleNameVector.push_back("WJetsToLNu_LO_ext_part6"); */
-    /*   subSampleNameVector.push_back("WJetsToLNu_LO_ext_part7"); */
-    /*   subSampleNameVector.push_back("WJetsToLNu_LO_ext_part8"); */
-    /*   subSampleNameVector.push_back("WJetsToLNu_LO_ext_part9"); */
-    /*   subSampleNameVector.push_back("WJetsToLNu_LO_part1"); */
-    /*   subSampleNameVector.push_back("WJetsToLNu_LO_part2"); */
-    /*   subSampleNameVector.push_back("WJetsToLNu_LO_part3"); */
-    /*   subSampleNameVector.push_back("WJetsToLNu_LO_part4"); */
-    /*   subSampleNameVector.push_back("WJetsToLNu_LO_part5"); */
-    /*   subSampleNameVector.push_back("WJetsToLNu_LO_part6"); */
+      subSampleNameVector.push_back("WJetsToLNu_part1");
+      subSampleNameVector.push_back("WJetsToLNu_part2");
+      subSampleNameVector.push_back("WJetsToLNu_part3");
+      subSampleNameVector.push_back("WJetsToLNu_part4");
+      subSampleNameVector.push_back("WJetsToLNu_part5");
+      subSampleNameVector.push_back("WJetsToLNu_part6");
+      subSampleNameVector.push_back("WJetsToLNu_part7");
+    } else if (sample == Sample::wjets_LO || sample == Sample::wenujets_LO || sample == Sample::wmunujets_LO || sample == Sample::wtaunujets_LO) { 
+      subSampleNameVector.push_back("WJetsToLNu_LO_ext_part1");
+      subSampleNameVector.push_back("WJetsToLNu_LO_ext_part10");
+      subSampleNameVector.push_back("WJetsToLNu_LO_ext_part2");
+      subSampleNameVector.push_back("WJetsToLNu_LO_ext_part3");
+      subSampleNameVector.push_back("WJetsToLNu_LO_ext_part4");
+      subSampleNameVector.push_back("WJetsToLNu_LO_ext_part5");
+      subSampleNameVector.push_back("WJetsToLNu_LO_ext_part6");
+      subSampleNameVector.push_back("WJetsToLNu_LO_ext_part7");
+      subSampleNameVector.push_back("WJetsToLNu_LO_ext_part8");
+      subSampleNameVector.push_back("WJetsToLNu_LO_ext_part9");
+      subSampleNameVector.push_back("WJetsToLNu_LO_part1");
+      subSampleNameVector.push_back("WJetsToLNu_LO_part2");
+      subSampleNameVector.push_back("WJetsToLNu_LO_part3");
+      subSampleNameVector.push_back("WJetsToLNu_LO_part4");
+      subSampleNameVector.push_back("WJetsToLNu_LO_part5");
+      subSampleNameVector.push_back("WJetsToLNu_LO_part6");
     } else if (sample == Sample::zjets) {
       subSampleNameVector.push_back("DYJetsToLL_M50_part1");
       subSampleNameVector.push_back("DYJetsToLL_M50_part2");
-    /* } else if (sample == Sample::zjets_LO) { */
-    /*   subSampleNameVector.push_back("DYJetsToLL_M50_LO_ext2_part1"); */
-    /*   subSampleNameVector.push_back("DYJetsToLL_M50_LO_ext2_part10"); */
-    /*   subSampleNameVector.push_back("DYJetsToLL_M50_LO_ext2_part11"); */
-    /*   subSampleNameVector.push_back("DYJetsToLL_M50_LO_ext2_part2"); */
-    /*   subSampleNameVector.push_back("DYJetsToLL_M50_LO_ext2_part3"); */
-    /*   subSampleNameVector.push_back("DYJetsToLL_M50_LO_ext2_part4"); */
-    /*   subSampleNameVector.push_back("DYJetsToLL_M50_LO_ext2_part5"); */
-    /*   subSampleNameVector.push_back("DYJetsToLL_M50_LO_ext2_part6"); */
-    /*   subSampleNameVector.push_back("DYJetsToLL_M50_LO_ext2_part7"); */
-    /*   subSampleNameVector.push_back("DYJetsToLL_M50_LO_ext2_part8"); */
-    /*   subSampleNameVector.push_back("DYJetsToLL_M50_LO_ext2_part9"); */
-    /*   subSampleNameVector.push_back("DYJetsToLL_M50_LO_ext_part1"); */
-    /*   subSampleNameVector.push_back("DYJetsToLL_M50_LO_ext_part2"); */
-    /*   subSampleNameVector.push_back("DYJetsToLL_M50_LO_ext_part3"); */
-    /*   subSampleNameVector.push_back("DYJetsToLL_M50_LO_ext_part4"); */
-    /*   subSampleNameVector.push_back("DYJetsToLL_M50_LO_ext_part5"); */
-    /*   subSampleNameVector.push_back("DYJetsToLL_M50_LO_ext_part6"); */
+    } else if (sample == Sample::zjets_LO) {
+      subSampleNameVector.push_back("DYJetsToLL_M50_LO_ext2_part1");
+      subSampleNameVector.push_back("DYJetsToLL_M50_LO_ext2_part10");
+      subSampleNameVector.push_back("DYJetsToLL_M50_LO_ext2_part11");
+      subSampleNameVector.push_back("DYJetsToLL_M50_LO_ext2_part2");
+      subSampleNameVector.push_back("DYJetsToLL_M50_LO_ext2_part3");
+      subSampleNameVector.push_back("DYJetsToLL_M50_LO_ext2_part4");
+      subSampleNameVector.push_back("DYJetsToLL_M50_LO_ext2_part5");
+      subSampleNameVector.push_back("DYJetsToLL_M50_LO_ext2_part6");
+      subSampleNameVector.push_back("DYJetsToLL_M50_LO_ext2_part7");
+      subSampleNameVector.push_back("DYJetsToLL_M50_LO_ext2_part8");
+      subSampleNameVector.push_back("DYJetsToLL_M50_LO_ext2_part9");
+      subSampleNameVector.push_back("DYJetsToLL_M50_LO_ext_part1");
+      subSampleNameVector.push_back("DYJetsToLL_M50_LO_ext_part2");
+      subSampleNameVector.push_back("DYJetsToLL_M50_LO_ext_part3");
+      subSampleNameVector.push_back("DYJetsToLL_M50_LO_ext_part4");
+      subSampleNameVector.push_back("DYJetsToLL_M50_LO_ext_part5");
+      subSampleNameVector.push_back("DYJetsToLL_M50_LO_ext_part6");
     /* } else if (sample == Sample::data_doubleEG) { */
     /* } else if (sample == Sample::data_doubleMu) { */
-    } else if (sample == Sample::data_singleEG || sample == Sample::qcd_ele_fake) {
-      subSampleNameVector.push_back("SingleElectron_07Aug17_Run2016B_part1");
-      subSampleNameVector.push_back("SingleElectron_07Aug17_Run2016B_part2");
-      subSampleNameVector.push_back("SingleElectron_07Aug17_Run2016B_part3");
-      subSampleNameVector.push_back("SingleElectron_07Aug17_Run2016B_part4");
-      subSampleNameVector.push_back("SingleElectron_07Aug17_Run2016C_part1");
-      subSampleNameVector.push_back("SingleElectron_07Aug17_Run2016C_part2");
-      subSampleNameVector.push_back("SingleElectron_07Aug17_Run2016D_part1");
-      subSampleNameVector.push_back("SingleElectron_07Aug17_Run2016D_part2");
-      subSampleNameVector.push_back("SingleElectron_07Aug17_Run2016D_part3");
-      subSampleNameVector.push_back("SingleElectron_07Aug17_Run2016E_part1");
-      subSampleNameVector.push_back("SingleElectron_07Aug17_Run2016E_part2");
-      subSampleNameVector.push_back("SingleElectron_07Aug17_Run2016F_part1");
-      subSampleNameVector.push_back("SingleElectron_07Aug17_Run2016F_part2");
-      subSampleNameVector.push_back("SingleElectron_07Aug17_Run2016G_part1");
-      subSampleNameVector.push_back("SingleElectron_07Aug17_Run2016G_part2");
-      subSampleNameVector.push_back("SingleElectron_07Aug17_Run2016G_part3");
-      subSampleNameVector.push_back("SingleElectron_07Aug17_Run2016G_part4");
-      subSampleNameVector.push_back("SingleElectron_07Aug17_Run2016H_part1");
-      subSampleNameVector.push_back("SingleElectron_07Aug17_Run2016H_part2");
-      subSampleNameVector.push_back("SingleElectron_07Aug17_Run2016H_part3");
-      subSampleNameVector.push_back("SingleElectron_07Aug17_Run2016H_part4");
-    /* } else if (sample == Sample::data_singleMu) {  */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016B_part1"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016B_part10"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016B_part11"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016B_part12"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016B_part13"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016B_part14"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016B_part15"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016B_part16"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016B_part17"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016B_part18"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016B_part19"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016B_part2"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016B_part20"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016B_part21"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016B_part22"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016B_part23"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016B_part3"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016B_part4"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016B_part5"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016B_part6"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016B_part7"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016B_part8"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016B_part9"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016C_part1"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016C_part10"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016C_part2"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016C_part3"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016C_part4"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016C_part5"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016C_part6"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016C_part7"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016C_part8"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016C_part9"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016D_part1"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016D_part2"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016D_part3"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016D_part4"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016D_part5"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016D_part6"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016E_part1"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016E_part10"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016E_part11"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016E_part12"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016E_part13"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016E_part14"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016E_part2"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016E_part3"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016E_part4"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016E_part5"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016E_part6"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016E_part7"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016E_part8"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016E_part9"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016F_part1"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016F_part10"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016F_part11"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016F_part2"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016F_part3"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016F_part4"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016F_part5"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016F_part6"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016F_part7"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016F_part8"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016F_part9"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016G_part1"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016G_part10"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016G_part11"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016G_part12"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016G_part13"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016G_part14"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016G_part15"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016G_part16"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016G_part17"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016G_part18"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016G_part19"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016G_part2"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016G_part20"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016G_part21"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016G_part22"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016G_part23"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016G_part3"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016G_part4"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016G_part5"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016G_part6"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016G_part7"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016G_part8"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016G_part9"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016H_part1"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016H_part10"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016H_part11"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016H_part12"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016H_part13"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016H_part14"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016H_part15"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016H_part17"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016H_part18"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016H_part19"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016H_part2"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016H_part20"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016H_part21"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016H_part22"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016H_part23"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016H_part24"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016H_part25"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016H_part26"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016H_part27"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016H_part28"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016H_part29"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016H_part3"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016H_part30"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016H_part31"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016H_part32"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016H_part4"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016H_part5"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016H_part6"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016H_part7"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016H_part8"); */
-    /*   subSampleNameVector.push_back("SingleMuon_Run2016H_part9"); */
+    } else if (sample == Sample::data_singleEG) {
+      subSampleNameVector.push_back("SingleElectron_Run2016B_part1");
+      subSampleNameVector.push_back("SingleElectron_Run2016B_part10");
+      subSampleNameVector.push_back("SingleElectron_Run2016B_part11");
+      subSampleNameVector.push_back("SingleElectron_Run2016B_part12");
+      subSampleNameVector.push_back("SingleElectron_Run2016B_part2");
+      subSampleNameVector.push_back("SingleElectron_Run2016B_part3");
+      subSampleNameVector.push_back("SingleElectron_Run2016B_part4");
+      subSampleNameVector.push_back("SingleElectron_Run2016B_part5");
+      subSampleNameVector.push_back("SingleElectron_Run2016B_part6");
+      subSampleNameVector.push_back("SingleElectron_Run2016B_part7");
+      subSampleNameVector.push_back("SingleElectron_Run2016B_part8");
+      subSampleNameVector.push_back("SingleElectron_Run2016B_part9");
+      subSampleNameVector.push_back("SingleElectron_Run2016C_part1");
+      subSampleNameVector.push_back("SingleElectron_Run2016C_part2");
+      subSampleNameVector.push_back("SingleElectron_Run2016C_part3");
+      subSampleNameVector.push_back("SingleElectron_Run2016C_part4");
+      subSampleNameVector.push_back("SingleElectron_Run2016C_part5");
+      subSampleNameVector.push_back("SingleElectron_Run2016C_part6");
+      subSampleNameVector.push_back("SingleElectron_Run2016C_part7");
+      subSampleNameVector.push_back("SingleElectron_Run2016D_part1");
+      subSampleNameVector.push_back("SingleElectron_Run2016D_part10");
+      subSampleNameVector.push_back("SingleElectron_Run2016D_part11");
+      subSampleNameVector.push_back("SingleElectron_Run2016D_part2");
+      subSampleNameVector.push_back("SingleElectron_Run2016D_part3");
+      subSampleNameVector.push_back("SingleElectron_Run2016D_part4");
+      subSampleNameVector.push_back("SingleElectron_Run2016D_part5");
+      subSampleNameVector.push_back("SingleElectron_Run2016D_part6");
+      subSampleNameVector.push_back("SingleElectron_Run2016D_part7");
+      subSampleNameVector.push_back("SingleElectron_Run2016D_part8");
+      subSampleNameVector.push_back("SingleElectron_Run2016D_part9");
+      subSampleNameVector.push_back("SingleElectron_Run2016E_part1");
+      subSampleNameVector.push_back("SingleElectron_Run2016E_part2");
+      subSampleNameVector.push_back("SingleElectron_Run2016E_part3");
+      subSampleNameVector.push_back("SingleElectron_Run2016E_part4");
+      subSampleNameVector.push_back("SingleElectron_Run2016E_part5");
+      subSampleNameVector.push_back("SingleElectron_Run2016E_part6");
+      subSampleNameVector.push_back("SingleElectron_Run2016E_part7");
+      subSampleNameVector.push_back("SingleElectron_Run2016E_part8");
+      subSampleNameVector.push_back("SingleElectron_Run2016F_part1");
+      subSampleNameVector.push_back("SingleElectron_Run2016F_part2");
+      subSampleNameVector.push_back("SingleElectron_Run2016F_part3");
+      subSampleNameVector.push_back("SingleElectron_Run2016F_part4");
+      subSampleNameVector.push_back("SingleElectron_Run2016F_part5");
+      subSampleNameVector.push_back("SingleElectron_Run2016F_part6");
+      /* subSampleNameVector.push_back("SingleElectron_Run2016G_part1"); */
+      /* subSampleNameVector.push_back("SingleElectron_Run2016G_part10"); */
+      /* subSampleNameVector.push_back("SingleElectron_Run2016G_part11"); */
+      /* subSampleNameVector.push_back("SingleElectron_Run2016G_part12"); */
+      /* subSampleNameVector.push_back("SingleElectron_Run2016G_part13"); */
+      /* subSampleNameVector.push_back("SingleElectron_Run2016G_part2"); */
+      /* subSampleNameVector.push_back("SingleElectron_Run2016G_part3"); */
+      /* subSampleNameVector.push_back("SingleElectron_Run2016G_part4"); */
+      /* subSampleNameVector.push_back("SingleElectron_Run2016G_part5"); */
+      /* subSampleNameVector.push_back("SingleElectron_Run2016G_part6"); */
+      /* subSampleNameVector.push_back("SingleElectron_Run2016G_part7"); */
+      /* subSampleNameVector.push_back("SingleElectron_Run2016G_part8"); */
+      /* subSampleNameVector.push_back("SingleElectron_Run2016G_part9"); */
+      /* subSampleNameVector.push_back("SingleElectron_Run2016H_part1"); */
+      /* subSampleNameVector.push_back("SingleElectron_Run2016H_part10"); */
+      /* subSampleNameVector.push_back("SingleElectron_Run2016H_part11"); */
+      /* subSampleNameVector.push_back("SingleElectron_Run2016H_part12"); */
+      /* subSampleNameVector.push_back("SingleElectron_Run2016H_part13"); */
+      /* subSampleNameVector.push_back("SingleElectron_Run2016H_part14"); */
+      /* subSampleNameVector.push_back("SingleElectron_Run2016H_part2"); */
+      /* subSampleNameVector.push_back("SingleElectron_Run2016H_part3"); */
+      /* subSampleNameVector.push_back("SingleElectron_Run2016H_part4"); */
+      /* subSampleNameVector.push_back("SingleElectron_Run2016H_part5"); */
+      /* subSampleNameVector.push_back("SingleElectron_Run2016H_part6"); */
+      /* subSampleNameVector.push_back("SingleElectron_Run2016H_part7"); */
+      /* subSampleNameVector.push_back("SingleElectron_Run2016H_part8"); */
+      /* subSampleNameVector.push_back("SingleElectron_Run2016H_part9"); */
+    } else if (sample == Sample::data_singleMu) { 
+      subSampleNameVector.push_back("SingleMuon_Run2016B_part1");
+      subSampleNameVector.push_back("SingleMuon_Run2016B_part10");
+      subSampleNameVector.push_back("SingleMuon_Run2016B_part11");
+      subSampleNameVector.push_back("SingleMuon_Run2016B_part12");
+      subSampleNameVector.push_back("SingleMuon_Run2016B_part13");
+      subSampleNameVector.push_back("SingleMuon_Run2016B_part14");
+      subSampleNameVector.push_back("SingleMuon_Run2016B_part15");
+      subSampleNameVector.push_back("SingleMuon_Run2016B_part16");
+      subSampleNameVector.push_back("SingleMuon_Run2016B_part17");
+      subSampleNameVector.push_back("SingleMuon_Run2016B_part18");
+      subSampleNameVector.push_back("SingleMuon_Run2016B_part19");
+      subSampleNameVector.push_back("SingleMuon_Run2016B_part2");
+      subSampleNameVector.push_back("SingleMuon_Run2016B_part20");
+      subSampleNameVector.push_back("SingleMuon_Run2016B_part21");
+      subSampleNameVector.push_back("SingleMuon_Run2016B_part22");
+      subSampleNameVector.push_back("SingleMuon_Run2016B_part23");
+      subSampleNameVector.push_back("SingleMuon_Run2016B_part3");
+      subSampleNameVector.push_back("SingleMuon_Run2016B_part4");
+      subSampleNameVector.push_back("SingleMuon_Run2016B_part5");
+      subSampleNameVector.push_back("SingleMuon_Run2016B_part6");
+      subSampleNameVector.push_back("SingleMuon_Run2016B_part7");
+      subSampleNameVector.push_back("SingleMuon_Run2016B_part8");
+      subSampleNameVector.push_back("SingleMuon_Run2016B_part9");
+      subSampleNameVector.push_back("SingleMuon_Run2016C_part1");
+      subSampleNameVector.push_back("SingleMuon_Run2016C_part10");
+      subSampleNameVector.push_back("SingleMuon_Run2016C_part2");
+      subSampleNameVector.push_back("SingleMuon_Run2016C_part3");
+      subSampleNameVector.push_back("SingleMuon_Run2016C_part4");
+      subSampleNameVector.push_back("SingleMuon_Run2016C_part5");
+      subSampleNameVector.push_back("SingleMuon_Run2016C_part6");
+      subSampleNameVector.push_back("SingleMuon_Run2016C_part7");
+      subSampleNameVector.push_back("SingleMuon_Run2016C_part8");
+      subSampleNameVector.push_back("SingleMuon_Run2016C_part9");
+      subSampleNameVector.push_back("SingleMuon_Run2016D_part1");
+      subSampleNameVector.push_back("SingleMuon_Run2016D_part2");
+      subSampleNameVector.push_back("SingleMuon_Run2016D_part3");
+      subSampleNameVector.push_back("SingleMuon_Run2016D_part4");
+      subSampleNameVector.push_back("SingleMuon_Run2016D_part5");
+      subSampleNameVector.push_back("SingleMuon_Run2016D_part6");
+      subSampleNameVector.push_back("SingleMuon_Run2016E_part1");
+      subSampleNameVector.push_back("SingleMuon_Run2016E_part10");
+      subSampleNameVector.push_back("SingleMuon_Run2016E_part11");
+      subSampleNameVector.push_back("SingleMuon_Run2016E_part12");
+      subSampleNameVector.push_back("SingleMuon_Run2016E_part13");
+      subSampleNameVector.push_back("SingleMuon_Run2016E_part14");
+      subSampleNameVector.push_back("SingleMuon_Run2016E_part2");
+      subSampleNameVector.push_back("SingleMuon_Run2016E_part3");
+      subSampleNameVector.push_back("SingleMuon_Run2016E_part4");
+      subSampleNameVector.push_back("SingleMuon_Run2016E_part5");
+      subSampleNameVector.push_back("SingleMuon_Run2016E_part6");
+      subSampleNameVector.push_back("SingleMuon_Run2016E_part7");
+      subSampleNameVector.push_back("SingleMuon_Run2016E_part8");
+      subSampleNameVector.push_back("SingleMuon_Run2016E_part9");
+      subSampleNameVector.push_back("SingleMuon_Run2016F_part1");
+      subSampleNameVector.push_back("SingleMuon_Run2016F_part10");
+      subSampleNameVector.push_back("SingleMuon_Run2016F_part11");
+      subSampleNameVector.push_back("SingleMuon_Run2016F_part2");
+      subSampleNameVector.push_back("SingleMuon_Run2016F_part3");
+      subSampleNameVector.push_back("SingleMuon_Run2016F_part4");
+      subSampleNameVector.push_back("SingleMuon_Run2016F_part5");
+      subSampleNameVector.push_back("SingleMuon_Run2016F_part6");
+      subSampleNameVector.push_back("SingleMuon_Run2016F_part7");
+      subSampleNameVector.push_back("SingleMuon_Run2016F_part8");
+      subSampleNameVector.push_back("SingleMuon_Run2016F_part9");
+      subSampleNameVector.push_back("SingleMuon_Run2016G_part1");
+      subSampleNameVector.push_back("SingleMuon_Run2016G_part10");
+      subSampleNameVector.push_back("SingleMuon_Run2016G_part11");
+      subSampleNameVector.push_back("SingleMuon_Run2016G_part12");
+      subSampleNameVector.push_back("SingleMuon_Run2016G_part13");
+      subSampleNameVector.push_back("SingleMuon_Run2016G_part14");
+      subSampleNameVector.push_back("SingleMuon_Run2016G_part15");
+      subSampleNameVector.push_back("SingleMuon_Run2016G_part16");
+      subSampleNameVector.push_back("SingleMuon_Run2016G_part17");
+      subSampleNameVector.push_back("SingleMuon_Run2016G_part18");
+      subSampleNameVector.push_back("SingleMuon_Run2016G_part19");
+      subSampleNameVector.push_back("SingleMuon_Run2016G_part2");
+      subSampleNameVector.push_back("SingleMuon_Run2016G_part20");
+      subSampleNameVector.push_back("SingleMuon_Run2016G_part21");
+      subSampleNameVector.push_back("SingleMuon_Run2016G_part22");
+      subSampleNameVector.push_back("SingleMuon_Run2016G_part23");
+      subSampleNameVector.push_back("SingleMuon_Run2016G_part3");
+      subSampleNameVector.push_back("SingleMuon_Run2016G_part4");
+      subSampleNameVector.push_back("SingleMuon_Run2016G_part5");
+      subSampleNameVector.push_back("SingleMuon_Run2016G_part6");
+      subSampleNameVector.push_back("SingleMuon_Run2016G_part7");
+      subSampleNameVector.push_back("SingleMuon_Run2016G_part8");
+      subSampleNameVector.push_back("SingleMuon_Run2016G_part9");
+      subSampleNameVector.push_back("SingleMuon_Run2016H_part1");
+      subSampleNameVector.push_back("SingleMuon_Run2016H_part10");
+      subSampleNameVector.push_back("SingleMuon_Run2016H_part11");
+      subSampleNameVector.push_back("SingleMuon_Run2016H_part12");
+      subSampleNameVector.push_back("SingleMuon_Run2016H_part13");
+      subSampleNameVector.push_back("SingleMuon_Run2016H_part14");
+      subSampleNameVector.push_back("SingleMuon_Run2016H_part15");
+      subSampleNameVector.push_back("SingleMuon_Run2016H_part17");
+      subSampleNameVector.push_back("SingleMuon_Run2016H_part18");
+      subSampleNameVector.push_back("SingleMuon_Run2016H_part19");
+      subSampleNameVector.push_back("SingleMuon_Run2016H_part2");
+      subSampleNameVector.push_back("SingleMuon_Run2016H_part20");
+      subSampleNameVector.push_back("SingleMuon_Run2016H_part21");
+      subSampleNameVector.push_back("SingleMuon_Run2016H_part22");
+      subSampleNameVector.push_back("SingleMuon_Run2016H_part23");
+      subSampleNameVector.push_back("SingleMuon_Run2016H_part24");
+      subSampleNameVector.push_back("SingleMuon_Run2016H_part25");
+      subSampleNameVector.push_back("SingleMuon_Run2016H_part26");
+      subSampleNameVector.push_back("SingleMuon_Run2016H_part27");
+      subSampleNameVector.push_back("SingleMuon_Run2016H_part28");
+      subSampleNameVector.push_back("SingleMuon_Run2016H_part29");
+      subSampleNameVector.push_back("SingleMuon_Run2016H_part3");
+      subSampleNameVector.push_back("SingleMuon_Run2016H_part30");
+      subSampleNameVector.push_back("SingleMuon_Run2016H_part31");
+      subSampleNameVector.push_back("SingleMuon_Run2016H_part32");
+      subSampleNameVector.push_back("SingleMuon_Run2016H_part4");
+      subSampleNameVector.push_back("SingleMuon_Run2016H_part5");
+      subSampleNameVector.push_back("SingleMuon_Run2016H_part6");
+      subSampleNameVector.push_back("SingleMuon_Run2016H_part7");
+      subSampleNameVector.push_back("SingleMuon_Run2016H_part8");
+      subSampleNameVector.push_back("SingleMuon_Run2016H_part9");
     } else if (sample == Sample::top) {
       subSampleNameVector.push_back("TBar_tWch_ext");
       subSampleNameVector.push_back("TBar_tch_powheg_part1");
       subSampleNameVector.push_back("TBar_tch_powheg_part2");
       subSampleNameVector.push_back("TBar_tch_powheg_part3");
-      /* subSampleNameVector.push_back("TTJets_SingleLeptonFromT_ext_part1"); */
-      /* subSampleNameVector.push_back("TTJets_SingleLeptonFromT_ext_part2"); */
-      /* subSampleNameVector.push_back("TTJets_SingleLeptonFromT_ext_part3"); */
-      /* subSampleNameVector.push_back("TTJets_SingleLeptonFromT_ext_part4"); */
-      /* subSampleNameVector.push_back("TTJets_SingleLeptonFromT_ext_part5"); */
-      /* subSampleNameVector.push_back("TTJets_SingleLeptonFromT_ext_part6"); */
-      /* subSampleNameVector.push_back("TTJets_SingleLeptonFromT_ext_part7"); */
-      /* subSampleNameVector.push_back("TTJets_SingleLeptonFromT_ext_part8"); */
-      /* subSampleNameVector.push_back("TTJets_SingleLeptonFromT_ext_part9"); */
+      subSampleNameVector.push_back("TTJets_SingleLeptonFromT_ext_part1");
+      subSampleNameVector.push_back("TTJets_SingleLeptonFromT_ext_part2");
+      subSampleNameVector.push_back("TTJets_SingleLeptonFromT_ext_part3");
+      subSampleNameVector.push_back("TTJets_SingleLeptonFromT_ext_part4");
+      subSampleNameVector.push_back("TTJets_SingleLeptonFromT_ext_part5");
+      subSampleNameVector.push_back("TTJets_SingleLeptonFromT_ext_part6");
+      subSampleNameVector.push_back("TTJets_SingleLeptonFromT_ext_part7");
+      subSampleNameVector.push_back("TTJets_SingleLeptonFromT_ext_part8");
+      subSampleNameVector.push_back("TTJets_SingleLeptonFromT_ext_part9");
       subSampleNameVector.push_back("TTJets_SingleLeptonFromT_part1");
       subSampleNameVector.push_back("TTJets_SingleLeptonFromT_part2");
-      /* subSampleNameVector.push_back("TTJets_SingleLeptonFromTbar_ext_part1"); */
-      /* subSampleNameVector.push_back("TTJets_SingleLeptonFromTbar_ext_part2"); */
-      /* subSampleNameVector.push_back("TTJets_SingleLeptonFromTbar_ext_part3"); */
-      /* subSampleNameVector.push_back("TTJets_SingleLeptonFromTbar_ext_part4"); */
-      /* subSampleNameVector.push_back("TTJets_SingleLeptonFromTbar_ext_part5"); */
+      subSampleNameVector.push_back("TTJets_SingleLeptonFromTbar_ext_part1");
+      subSampleNameVector.push_back("TTJets_SingleLeptonFromTbar_ext_part2");
+      subSampleNameVector.push_back("TTJets_SingleLeptonFromTbar_ext_part3");
+      subSampleNameVector.push_back("TTJets_SingleLeptonFromTbar_ext_part4");
+      subSampleNameVector.push_back("TTJets_SingleLeptonFromTbar_ext_part5");
       subSampleNameVector.push_back("TTJets_SingleLeptonFromTbar_part1");
       subSampleNameVector.push_back("TTJets_SingleLeptonFromTbar_part2");
       subSampleNameVector.push_back("TToLeptons_sch_amcatnlo");
@@ -3386,6 +3316,7 @@ void buildChain(TChain* chain, vector<Double_t>& genwgtVec, const bool use8TeVSa
       string friend_treeRootFile = "";
       if (use8TeVSample) friend_treeRootFile = treePath + "friends/evVarFriend_" + subSampleNameVector[i]+ ".root";
       else friend_treeRootFile = treePath + "friends/tree_Friend_" + subSampleNameVector[i]+ ".root";
+
       chFriend->Add(TString(friend_treeRootFile.c_str()));
 
     }
@@ -3430,7 +3361,7 @@ void buildChain(TChain* chain, vector<Double_t>& genwgtVec, const bool use8TeVSa
     cout << "entries in chSfFriend = " << chSfFriend->GetEntries() << endl;
     
     if (chain->GetEntries() != chSfFriend->GetEntries()) {
-      cout << "#### Error in buildChain() function: chain and chSfFriend have different number of events." << endl;      
+      cout << "#### Error in buildChain8TeV() function: chain and chSfFriend have different number of events." << endl;      
       cout << "sample: " << getStringFromEnumSample(sample) << endl;
       cout << "chain: " << chain->GetEntries() << endl;
       cout << "chSfFriend: " << chSfFriend->GetEntries() << endl;
@@ -3498,6 +3429,26 @@ void makeFit(TH1* hist) {
   canvas->SaveAs("/afs/cern.ch/user/m/mciprian/www/test_plot/rayleigh.png");
 
 }
+
+
+//============================================
+
+void adjustSettings_CMS_lumi(const string& outputDir = "./") {
+
+  // tmp plot to be removed to adjust settings in CMS_lumi                                                                                                                  
+  TH1D* htmp1 = new TH1D("htmp1","",1,0,1);
+  TH1D* htmp2 = new TH1D("htmp2","",1,0,1);
+  htmp1->Fill(0.5);
+  htmp2->Fill(0.5);
+  vector<TH1*> htmpVec; htmpVec.push_back(htmp2);
+  drawTH1dataMCstack(htmp1, htmpVec, "variable", "Events", "tmpToBeRemoved", outputDir);
+  system(("rm " + outputDir + "*tmpToBeRemoved*").c_str());
+  delete htmp1;
+  delete htmp2;
+
+}
+
+//=============================================================                                 
 
 
 
