@@ -73,7 +73,6 @@ if __name__ == "__main__":
                 nom = nominal[pol][iy]
                 totUp=0
                 for ip,pdf in enumerate(shape_syst[pol]):
-                    if ip==4: continue
                     # debug
                     relsyst = abs(nom-pdf[iy])/nom
                     if relsyst>0.20:
@@ -205,11 +204,12 @@ if __name__ == "__main__":
         leg = ROOT.TLegend(0.60, 0.60, 0.85, 0.80)
         leg.SetFillStyle(0)
         leg.SetBorderSize(0)
-        leg.AddEntry(graphLeft , 'W^{{{ch}}} left (incl. PDFs)' .format(ch='+' if charge == 'plus' else '-'), 'f')
-        leg.AddEntry(graphRight, 'W^{{{ch}}} right (incl. PDFs)'.format(ch='+' if charge == 'plus' else '-'), 'f')
+        leg.AddEntry(graphLeft , 'W^{{{ch}}} left (PDF variations)' .format(ch='+' if charge == 'plus' else '-'), 'f')
         if options.fitResult:
-            leg.AddEntry(graphLeft_fit , 'W^{{{ch}}} left (fit PDFs)' .format(ch='+' if charge == 'plus' else '-'), 'f')
-            leg.AddEntry(graphRight_fit, 'W^{{{ch}}} right (fit PDFs)'.format(ch='+' if charge == 'plus' else '-'), 'f')
+            leg.AddEntry(graphLeft_fit , 'W^{{{ch}}} left (PDF fit)' .format(ch='+' if charge == 'plus' else '-'), 'f')
+        leg.AddEntry(graphRight, 'W^{{{ch}}} right (PDF variations)'.format(ch='+' if charge == 'plus' else '-'), 'f')
+        if options.fitResult:
+            leg.AddEntry(graphRight_fit, 'W^{{{ch}}} right (PDF fit)'.format(ch='+' if charge == 'plus' else '-'), 'f')
 
         graphLeft.SetTitle('W {ch}: Y_{{W}}'.format(ch=charge))
         graphLeft.SetFillColor(colorL)
