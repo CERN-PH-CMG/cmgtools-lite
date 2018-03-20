@@ -16,8 +16,7 @@ def getRebinned(ybins, charge, infile):
             istart = histo.FindBin(val)
             iend   = histo.FindBin(ybins[iv+1])
             val = histo.IntegralAndError(istart, iend-1, err) ## do not include next bin
-            if 'pdfs' not in infile: print "pol = %s; ist,ie,val = %d,%d,%f" % (pol,istart,iend,val)
-            conts.append(2*val) ## input files are not abs(Y)
+            conts.append(float(int(2*val))) ## input files are not abs(Y)
         histos[pol] = conts
     return histos
 
@@ -28,7 +27,9 @@ if __name__ == "__main__":
     from optparse import OptionParser
     parser = OptionParser(usage='%prog inputdir ybinfile [options] ')
     parser.add_option('-C','--charge', dest='charge', default='plus,minus', type='string', help='process given charge. default is both')
+    parser.add_option(     '--fitResult', dest='fitResult', default=None, type='string', help='file with fitresult')
     parser.add_option('-o','--outdir', dest='outdir', default='.', type='string', help='outdput directory to save the matrix')
+    parser.add_option('-c','--channel', dest='channel', default='el', type='string', help='name of the channel')
     (options, args) = parser.parse_args()
 
     inputdir = args[0]
@@ -55,49 +56,82 @@ if __name__ == "__main__":
         for pol in ['left','right','long']:
             histos = []
             for ip in xrange(NPDFs):
-                print "Loading polarization %s, histograms for pdf %d" % (pol,ip)
+                #print "Loading polarization %s, histograms for pdf %d" % (pol,ip)
                 filepdf = '{dir}/wgen_nosel_{charge}_pdfs_pdf{ipdf}.root'.format(dir=inputdir,charge=charge,ipdf=ip)
                 pdf = getRebinned(ybins,charge,'{dir}/wgen_nosel_{charge}_pdfs_pdf{ipdf}.root'.format(dir=inputdir,charge=charge,ipdf=ip))
-                hnom = nominal[pol]; hpdf = pdf[pol]
-                histos.append(hpdf)
+                histos.append(pdf[pol])
             shape_syst[pol] = histos
-        
+
         systematics = {}
         for pol in ['left','right','long']:
-            # print "===> Running pol = ",pol
+            #print "===> Running pol = ",pol
             systs=[]
             for iy,y in enumerate(ybinwidths):
-                # print "\tBin iy=%d,y=%f = " % (iy,y)
+                #print "\tBin iy=%d,y=%f = " % (iy,y)
                 nom = nominal[pol][iy]
                 totUp=0
-                for pdf in shape_syst[pol]:
-                    totUp += pow(nom-pdf[iy],2)
-                    # print "\t\tUp = %f; Dn = %f" % (totUp,totDn)
-                totUp=math.sqrt(totUp)
+                for ip,pdf in enumerate(shape_syst[pol]):
+                    if ip==4: continue
+                    # debug
+                    relsyst = abs(nom-pdf[iy])/nom
+                    if relsyst>0.20:
+                        print "SOMETHING WENT WRONG WITH THIS PDF: %d HAS RELATIVE SYST = %f. SKIPPING !" % (ip,relsyst)
+                    else:
+                        totUp += math.pow(relsyst*nom,2)
+                totUp = math.sqrt(totUp)
                 print "Rel systematic for Y bin %d = +/-%.3f" % (iy,totUp/nom)
                 systs.append(totUp)
             systematics[pol]=systs
 
+        ### NOW TAKE THE FIT RESULT
+        if options.fitResult:
+            infile = ROOT.TFile(options.fitResult, 'read')
+            fitresult = infile.Get('fit_mdf')
+
+            fpars = fitresult.floatParsFinal()
+            f_params = list(fpars.at(i).GetName() for i in range(len(fpars)))
+            cpars = fitresult.constPars()
+            c_params = list(cpars.at(i).GetName() for i in range(len(cpars)))
+            params = f_params + c_params
+
+            hel_pars = list(p for p in params if 'norm_W' in p)
+            pars_r   = list(p for p in hel_pars if 'right' in p)
+            pars_r = sorted(pars_r, key = lambda x: int(x.split('_')[-1]), reverse=True)
+            pars_l   = list(p for p in hel_pars if 'left' in p)
+            pars_l = sorted(pars_l, key = lambda x: int(x.split('_')[-1]), reverse=False)
+     
         arr_val   = array.array('f', [])
         arr_ehi   = array.array('f', [])
         arr_elo   = array.array('f', [])
         arr_relv  = array.array('f', [])
         arr_relhi = array.array('f', [])
         arr_rello = array.array('f', [])
+        arr_val_fit   = array.array('f', [])
+        arr_ehi_fit   = array.array('f', [])
+        arr_elo_fit   = array.array('f', [])
+        arr_relv_fit  = array.array('f', [])
+        arr_relhi_fit = array.array('f', [])
+        arr_rello_fit = array.array('f', [])
         arr_rap   = array.array('f', [])
         arr_rlo   = array.array('f', [])
         arr_rhi   = array.array('f', [])
 
+        totalrate = 0.; totalrate_fit = 0.
         for pol in ['left','right']:
-            totalrate = 0.
             for iy,y in enumerate(ybinwidths):
                 totalrate += nominal[pol][iy]
+                if options.fitResult:
+                    parname = 'norm_W{charge}_{pol}_W{charge}_{channel}_Ybin_{iy}'.format(charge=charge,pol=pol,channel=options.channel,iy=iy)
+                    tmp_par = fpars.find(parname) if parname in f_params else cpars.find(parname)
+                    totalrate_fit += tmp_par.getVal()
 
         for pol in ['left','right']:
 
-            arr_val   = array.array('f', []); arr_ehi   = array.array('f', []); arr_elo   = array.array('f', []);
-            arr_relv  = array.array('f', []); arr_relhi = array.array('f', []); arr_rello = array.array('f', []);
-            arr_rap   = array.array('f', []); arr_rlo   = array.array('f', []); arr_rhi   = array.array('f', []);
+            arr_val       = array.array('f', []); arr_ehi       = array.array('f', []); arr_elo       = array.array('f', []);
+            arr_val_fit   = array.array('f', []); arr_ehi_fit   = array.array('f', []); arr_elo_fit   = array.array('f', []);
+            arr_relv      = array.array('f', []); arr_relhi     = array.array('f', []); arr_rello     = array.array('f', []);
+            arr_relv_fit  = array.array('f', []); arr_relhi_fit = array.array('f', []); arr_rello_fit = array.array('f', []);
+            arr_rap       = array.array('f', []); arr_rlo       = array.array('f', []); arr_rhi       = array.array('f', []);
 
             for iy,y in enumerate(ybinwidths):
                 arr_val.append(nominal[pol][iy]/totalrate/ybinwidths[iy])
@@ -107,6 +141,24 @@ if __name__ == "__main__":
                 arr_relv. append(1.);
                 arr_rello.append(systematics[pol][iy]/nominal[pol][iy])
                 arr_relhi.append(systematics[pol][iy]/nominal[pol][iy]) # symmetric for the expected
+                
+                if options.fitResult:
+                    parname = 'norm_W{charge}_{pol}_W{charge}_{channel}_Ybin_{iy}'.format(charge=charge,pol=pol,channel=options.channel,iy=iy)
+
+                    tmp_par = fpars.find(parname) if parname in f_params else cpars.find(parname)
+                    arr_val_fit.append(tmp_par.getVal()/totalrate_fit/ybinwidths[iy])
+                    arr_ehi_fit.append(abs(tmp_par.getAsymErrorHi())/totalrate_fit/ybinwidths[iy])
+                    arr_elo_fit.append(abs(tmp_par.getAsymErrorLo() if tmp_par.hasAsymError() else tmp_par.getAsymErrorHi())/totalrate_fit/ybinwidths[iy])
+
+                    # renormalize the theo to the fitted ones (should match when running on the expected)
+                    arr_ehi[-1] = arr_ehi[-1]/arr_val[-1]*arr_val_fit[-1]
+                    arr_elo[-1] = arr_elo[-1]/arr_val[-1]*arr_val_fit[-1]
+                    arr_val[-1] = arr_val_fit[-1]
+
+                    tmp_par_init = fitresult.floatParsInit().find(parname) if parname in f_params else cpars.find(parname)
+                    arr_relv_fit .append(tmp_par.getVal()/tmp_par_init.getVal())
+                    arr_rello_fit.append(abs(tmp_par.getAsymErrorHi())/tmp_par_init.getVal())
+                    arr_relhi_fit.append(abs(tmp_par.getAsymErrorLo() if tmp_par.hasAsymError() else tmp_par.getAsymErrorHi())/tmp_par_init.getVal())
 
                 arr_rap.append((ybins[iy]+ybins[iy+1])/2.)
                 arr_rlo.append(abs(ybins[iy]-arr_rap[-1]))
@@ -118,12 +170,22 @@ if __name__ == "__main__":
                 graphLeft_rel  = ROOT.TGraphAsymmErrors(len(arr_relv), arr_rap, arr_relv, arr_rlo, arr_rhi, arr_rello, arr_relhi)
                 graphLeft     .SetName('graphLeft')
                 graphLeft_rel .SetName('graphLeft_rel')
+                if options.fitResult:
+                    graphLeft_fit      = ROOT.TGraphAsymmErrors(len(arr_val_fit), arr_rap, arr_val_fit, arr_rlo, arr_rhi, arr_elo_fit, arr_ehi_fit)
+                    graphLeft_fit_rel  = ROOT.TGraphAsymmErrors(len(arr_relv_fit), arr_rap, arr_relv_fit, arr_rlo, arr_rhi, arr_rello_fit, arr_relhi_fit)
+                    graphLeft_fit     .SetName('graphLeft_fit')
+                    graphLeft_fit_rel .SetName('graphLeft_fit_rel')
             else:
                 print 'right {ch}: {i}'.format(ch=charge, i=sum(arr_val))
                 graphRight      = ROOT.TGraphAsymmErrors(len(arr_val), arr_rap, arr_val, arr_rlo, arr_rhi, arr_elo, arr_ehi)
                 graphRight_rel  = ROOT.TGraphAsymmErrors(len(arr_relv), arr_rap, arr_relv, arr_rlo, arr_rhi, arr_rello, arr_relhi)
                 graphRight     .SetName('graphRight')
                 graphRight_rel .SetName('graphRight_rel')
+                if options.fitResult:
+                    graphRight_fit      = ROOT.TGraphAsymmErrors(len(arr_val_fit), arr_rap, arr_val_fit, arr_rlo, arr_rhi, arr_elo_fit, arr_ehi_fit)
+                    graphRight_fit_rel  = ROOT.TGraphAsymmErrors(len(arr_relv_fit), arr_rap, arr_relv_fit, arr_rlo, arr_rhi, arr_rello_fit, arr_relhi_fit)
+                    graphRight_fit     .SetName('graphRight_fit')
+                    graphRight_fit_rel .SetName('graphRight_fit_rel')
 
         c2 = ROOT.TCanvas('foo','', 800, 800)
         c2.GetPad(0).SetTopMargin(0.05)
@@ -133,22 +195,33 @@ if __name__ == "__main__":
         ## these are the colors...
         colorL = ROOT.kAzure+8
         colorR = ROOT.kOrange+7
+        colorLf = ROOT.kAzure+3
+        colorRf = ROOT.kOrange+9
 
         ## the four graphs exist now. now starting to draw them
         ## ===========================================================
         leg = ROOT.TLegend(0.60, 0.60, 0.85, 0.80)
         leg.SetFillStyle(0)
         leg.SetBorderSize(0)
-        leg.AddEntry(graphLeft , 'W^{{{ch}}} left' .format(ch='+' if charge == 'plus' else '-'), 'f')
-        leg.AddEntry(graphRight, 'W^{{{ch}}} right'.format(ch='+' if charge == 'plus' else '-'), 'f')
+        leg.AddEntry(graphLeft , 'W^{{{ch}}} left (incl. PDFs)' .format(ch='+' if charge == 'plus' else '-'), 'f')
+        leg.AddEntry(graphRight, 'W^{{{ch}}} right (incl. PDFs)'.format(ch='+' if charge == 'plus' else '-'), 'f')
+        if options.fitResult:
+            leg.AddEntry(graphLeft_fit , 'W^{{{ch}}} left (fit PDFs)' .format(ch='+' if charge == 'plus' else '-'), 'f')
+            leg.AddEntry(graphRight_fit, 'W^{{{ch}}} right (fit PDFs)'.format(ch='+' if charge == 'plus' else '-'), 'f')
 
         graphLeft.SetTitle('W {ch}: Y_{{W}}'.format(ch=charge))
         graphLeft.SetFillColor(colorL)
         graphRight.SetFillColor(colorR)
-
+        if options.fitResult:
+            graphLeft_fit.SetFillColor(colorLf)
+            graphRight_fit.SetFillColor(colorRf)
+            
         mg = ROOT.TMultiGraph()
         mg.Add(graphLeft)
         mg.Add(graphRight)
+        if options.fitResult:
+            mg.Add(graphLeft_fit)
+            mg.Add(graphRight_fit)
 
         mg.Draw('Pa2')
         mg.GetXaxis().SetRangeUser(0.,6.)
@@ -186,24 +259,26 @@ if __name__ == "__main__":
         graphLeft_rel.SetFillColor(colorL)
         graphRight_rel.SetTitle('W^{{{ch}}}: right'.format(ch='+' if charge=='plus' else '-'))
         graphRight_rel.SetFillColor(colorR)
+        if options.fitResult:
+            graphLeft_fit_rel.SetFillColor(colorLf)
+            graphRight_fit_rel.SetFillColor(colorRf)
 
-        graphLeft_rel.GetXaxis().SetRangeUser(0., 3.)
-        graphLeft_rel.GetYaxis().SetRangeUser(0.97, 1.033)
-        graphRight_rel.GetXaxis().SetRangeUser(0., 3.)
-        graphRight_rel.GetYaxis().SetRangeUser(0.97, 1.033)
+        mgLeft = ROOT.TMultiGraph()
+        mgLeft.Add(graphLeft_rel)
+        mgRight = ROOT.TMultiGraph()
+        mgRight.Add(graphRight_rel)
+        if options.fitResult:
+            mgLeft.Add(graphLeft_fit_rel)
+            mgRight.Add(graphRight_fit_rel)
 
-        graphRight_rel.GetXaxis().SetTitle('|Y_{W}|')
+        mgLeft.Draw('Pa2')
+        mgLeft.GetXaxis().SetRangeUser(0., 3.)
+        mgLeft.GetYaxis().SetRangeUser(0.97, 1.033)
+        mgLeft.GetXaxis().SetTitleSize(0.06)
+        mgLeft.GetXaxis().SetLabelSize(0.06)
+        mgLeft.GetYaxis().SetTitleSize(0.06)
+        mgLeft.GetYaxis().SetLabelSize(0.06)
 
-        graphLeft_rel .GetXaxis().SetTitleSize(0.06)
-        graphLeft_rel .GetXaxis().SetLabelSize(0.06)
-        graphLeft_rel .GetYaxis().SetTitleSize(0.06)
-        graphLeft_rel .GetYaxis().SetLabelSize(0.06)
-        graphRight_rel.GetXaxis().SetTitleSize(0.06)
-        graphRight_rel.GetXaxis().SetLabelSize(0.06)
-        graphRight_rel.GetYaxis().SetTitleSize(0.06)
-        graphRight_rel.GetYaxis().SetLabelSize(0.06)
-
-        graphLeft_rel.Draw('Pa2')
         line.Draw("Lsame");
         padUp.RedrawAxis("sameaxis");
 
@@ -212,7 +287,14 @@ if __name__ == "__main__":
         padDown.SetTicky(1)
         padDown.SetGridy(1)
         padDown.SetBottomMargin(0.15)
-        graphRight_rel.Draw('pa2')
+        mgRight.Draw('pa2')
+        mgRight.GetXaxis().SetRangeUser(0., 3.)
+        mgRight.GetYaxis().SetRangeUser(0.97, 1.033)
+        mgRight.GetXaxis().SetTitle('|Y_{W}|')
+        mgRight.GetXaxis().SetTitleSize(0.06)
+        mgRight.GetXaxis().SetLabelSize(0.06)
+        mgRight.GetYaxis().SetTitleSize(0.06)
+        mgRight.GetYaxis().SetLabelSize(0.06)
         line.Draw("Lsame");
         padDown.RedrawAxis("sameaxis");
 
