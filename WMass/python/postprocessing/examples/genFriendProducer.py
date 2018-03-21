@@ -216,7 +216,7 @@ class GenQEDJetProducer(Module):
         lheweights = [w.wgt for w in lhe_wgts]
         hessWgt = self.mcRep2Hess(getattr(event, "genWeight"),lheweights)
         for N in range(1,self.nHessianWeights+1):
-            self.out.fillBranch("hessWgt"+str(N), hessWgt[N]/event.genWeight)
+            self.out.fillBranch("hessWgt"+str(N), hessWgt[N-1]/event.genWeight)
 
         return True
 
