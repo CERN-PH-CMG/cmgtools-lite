@@ -6,7 +6,7 @@
 #       python  w-helicity-13TeV/skims.py w-helicity-13TeV/wmass_e/mca-80X-skims.txt w-helicity-13TeV/wmass_e/skim_fr_el.txt TREES_1LEP_80X_V3 /eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3_FRELSKIM_V2 -f w-helicity-13TeV/wmass_e/varsSkim_80X_fr.txt
 
 ## MUONS
-#       python  w-helicity-13TeV/skims.py w-helicity-13TeV/wmass_mu/skimming/mca-wmu-singleMuon.txt w-helicity-13TeV/wmass_mu/skimming/skimCuts.txt /eos/user/m/mdunser/w-helicity-13TeV/trees/2017_12_12_legacy_singlemu/ /eos/user/m/mdunser/w-helicity-13TeV/trees/2017_12_12_legacy_singlemu/skims/ -f w-helicity-13TeV/wmass_mu/skimming/varsToKeep.txt
+#       python  w-helicity-13TeV/skims.py w-helicity-13TeV/wmass_mu/skimming/mca-wmu-skim-bkg-data.txt w-helicity-13TeV/wmass_mu/skimming/skimCuts.txt /eos/user/m/mdunser/w-helicity-13TeV/trees/2017_12_12_legacy_singlemu/ /eos/user/m/mdunser/w-helicity-13TeV/trees/2017_12_12_legacy_singlemu/skims/ -f w-helicity-13TeV/wmass_mu/skimming/varsToKeep.txt
 
 # add -q 8nh --log logs to run in batch 1 job/component (and --pretend to just check the command that will be run)
 
@@ -25,6 +25,7 @@ if __name__ == "__main__":
     parser = OptionParser(usage="%prog [options] mc.txt cuts.txt treeDir outputDirSkims ")
     parser.add_option("-f", "--varfile",  dest="varfile", type="string", default=None, action="store",  help="File with the list of Branches to drop, as per TTree::SetBranchStatus")
     parser.add_option("--fo", "--friend-only",  dest="friendOnly", action="store_true", default=False,  help="Do not redo skim of the main trees, only of the friends")
+    parser.add_option("--mo", "--main-only",  dest="mainOnly", action="store_true", default=False,  help="Do not make skim of the friend trees, only of the main")
     parser.add_option("--max-entries",     dest="maxEntries", default=1000000000, type="int", help="Max entries to process in each tree") 
     from CMGTools.WMass.plotter.skimTrees import addSkimTreesOptions
     addSkimTreesOptions(parser)
@@ -37,20 +38,25 @@ if __name__ == "__main__":
     outputDirFSkims = outputDirSkims+"/friends"
 
     if not options.friendOnly:
-       if not os.path.exists(outputDirSkims):
-           os.makedirs(outputDirSkims)
-           os.makedirs(outputDirFSkims)
-       else:
-           print "The skim output dir ",outputDirSkims," exists. Will remove it and substitute with new one. \nDo you agree?[y/N]\n"
-           if raw_input()!='y':
-               print 'Aborting'
-               exit()
-           os.system("rm -rf "+outputDirSkims)
-           os.makedirs(outputDirSkims)
-           os.makedirs(outputDirFSkims)
+        if not os.path.exists(outputDirSkims):
+            os.makedirs(outputDirSkims)
+            os.makedirs(outputDirFSkims)
+        else:
+            print "The skim output dir ",outputDirSkims," exists. Will remove it and substitute with new one. \nDo you agree?[y/N]\n"
+            if raw_input()!='y':
+                print 'Aborting'
+                exit()
+            os.system("rm -rf "+outputDirSkims)
+            os.makedirs(outputDirSkims)
+            os.makedirs(outputDirFSkims)
+        os.system('cp {vf} {od}'.format(od=outputDirSkims,vf=options.varfile))
+        os.system('cp {sf} {od}'.format(od=outputDirSkims,sf=args[1])) ## this should work??
     else: print "Make only the friend trees in dir ",outputDirFSkims
 
-    OPTS = ' --obj tree -P '+treeDir+' --s2v -j 4 -F Friends "{P}/friends/tree_Friend_{cname}.root" '
+    if not options.mainOnly:
+        OPTS = ' --obj tree -P '+treeDir+' --s2v -j 4 -F Friends "{P}/friends/tree_Friend_{cname}.root" '
+    else:
+        OPTS = ' --obj tree -P '+treeDir+' --s2v -j 4 '
     OPTS += ' --max-entries %d ' % options.maxEntries 
     if options.pretend: OPTS += ' --pretend '
     if options.queue: OPTS += ' -q %s ' % options.queue
@@ -70,7 +76,7 @@ if __name__ == "__main__":
         print "Now skimming the main trees, keeping the following vars:\n",varsToKeep
         print "This step may take time...\n"
         os.system(cmdSkim)
-    if not options.queue:
+    if not options.queue and not options.mainOnly:
         print "Now skimming the event variables friend trees:\n"
         os.system(cmdFSkimEv)
         # print "Now skimming the fake rate friend trees:\n"
