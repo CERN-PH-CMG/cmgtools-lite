@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+## USAGE: python diffNuisances.py multidimfit.root --outdir pdfsSyst/ --suffix plus -p 'pdf.*'
+
 import re
 from sys import argv, stdout, stderr, exit
 import datetime

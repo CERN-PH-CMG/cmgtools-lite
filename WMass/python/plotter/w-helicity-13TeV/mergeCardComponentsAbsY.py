@@ -444,4 +444,20 @@ if __name__ == "__main__":
              
          combineCmd = 'combine {ws} -M MultiDimFit    -t -1 --expectSignal=1 -m 999 --saveFitResult --cminInitialHesse 1 --cminFinalHesse 1 --cminPreFit 1       --redefineSignalPOIs {pois}            --floatOtherPOIs=0 --freezeNuisanceGroups efficiencies,fixedY{pdfs} -v 9'.format(ws=ws, pois=','.join(minosPOIs), pdfs=(',pdfs' if len(pdfsyst) else ''))
          print combineCmd
-     
+
+     datacards = [os.path.abspath(options.inputdir)+"/"+options.bin+'_{ch}_card.txt'.format(ch=charge) for charge in ['plus','minus']]
+     if sum([os.path.exists(card) for card in datacards])==2:
+         print "Cards for W+ and W- done. Comnining them now..."
+         combinedCard = os.path.abspath(options.inputdir)+"/"+options.bin+'_card.txt'
+         combineCards = 'combineCards.py '+' '.join(['{bin}_{ch}={bin}_{ch}_card.txt'.format(bin=options.bin,ch=charge) for charge in ['plus','minus']])+' > '+combinedCard
+         print "combining W+ and W- with: ",combineCards
+         # go into the input dir to issue the combine command w/o paths not to screw up the paths of the shapes in the cards
+         os.system('cd {inputdir}; {cmd}; cd -'.format(inputdir=os.path.abspath(options.inputdir),cmd=combineCards))
+         
+         ws = combinedCard.replace('_card.txt', '_ws.root')
+         t2w = 'text2workspace.py {cf} -o {ws} --X-allow-no-signal --X-no-check-norm '.format(cf=combinedCard, ws=ws)
+         print "combined t2w command: ",t2w
+         os.system(t2w)
+         combineCmdTwoCharges = 'combine {ws} -M MultiDimFit    -t -1 --expectSignal=1 -m 999 --saveFitResult --cminInitialHesse 1 --cminFinalHesse 1 --cminPreFit 1       --redefineSignalPOIs {pois}            --floatOtherPOIs=0 --freezeNuisanceGroups efficiencies,fixedY{pdfs} -v 9'.format(ws=ws, pois=','.join(minosPOIs), pdfs=(',pdfs' if len(pdfsyst) else ''))
+         print combineCmdTwoCharges
+         print "DONE. ENJOY FITTING !"
