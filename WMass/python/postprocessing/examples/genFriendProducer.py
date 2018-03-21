@@ -52,6 +52,13 @@ class KinematicVars:
         boostedLep.Boost(-dilep.BoostVector())
         csframe = self.CSFrame(dilep)
         return cos(boostedLep.Angle(csframe[2]))
+    def cosTheta2D(self,w,lep):
+        boostedLep = ROOT.TLorentzVector(lep)
+        neww = ROOT.TLorentzVector()
+        neww.SetPxPyPzE(w.Px(),w.Py(),0.,w.E())
+        boostedLep.Boost(-neww.BoostVector())
+        cost2d = (boostedLep.Px()*w.Px() + boostedLep.Py()*w.Py()) / (boostedLep.Pt()*w.Pt())
+        return cost2d
     def cosThetaCM(self,lplus,lminus):
         dilep = lplus + lminus
         boostedLep = ROOT.TLorentzVector(lminus)
@@ -74,7 +81,7 @@ class GenQEDJetProducer(Module):
         self.beamEn=beamEn
         self.deltaR = deltaR
         self.vars = ("pt","eta","phi","mass","pdgId")
-        self.genwvars = ("charge","pt","eta","phi","mass","mt","y","costcs","phics","costcm","decayId")
+        self.genwvars = ("charge","pt","eta","phi","mass","mt","y","costcs","cost2d","phics","costcm","decayId")
         if "genQEDJetHelper_cc.so" not in ROOT.gSystem.GetLibraries():
             print "Load C++ Worker"
             ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/WMass/python/postprocessing/helpers/genQEDJetHelper.cc+" % os.environ['CMSSW_BASE'])
@@ -107,8 +114,7 @@ class GenQEDJetProducer(Module):
             self.out.branch("GenPromptNu_"+V, "F", lenVar="nGenPromptNu")
         for V in self.genwvars:
             self.out.branch("genw_"+V, "F")
-            self.out.branch("lhew_"+V, "F")
-        self.out.branch("hessWgt", "F", n=self.nHessianWeights)
+        ## marc self.out.branch("hessWgt", "F", n=self.nHessianWeights)
     def endFile(self, inputFile, outputFile, inputTree, wrappedOutputTree):
         pass
 
@@ -144,10 +150,6 @@ class GenQEDJetProducer(Module):
         neutrinos = self._worker.promptNeutrinos()
         lepPdgIds = self._worker.dressedLeptonsPdgId()
         nuPdgIds = self._worker.promptNeutrinosPdgId()
-        lheWs    = self._worker.lheWs()
-        lheWPdgIds = self._worker.lheWsPdgId()
-        lheLeps    = self._worker.lheLeps()
-        lheLepPdgIds = self._worker.lheLepsPdgId()
 
         #nothing to do if this is data
         if event.isData: return True
@@ -182,26 +184,6 @@ class GenQEDJetProducer(Module):
             self.out.fillBranch("GenPromptNu_"+V, retN[V])
         self.out.fillBranch("GenPromptNu_pdgId", [pdgId for pdgId in nuPdgIds])
 
-        if len(lheWs):
-            if len(lheWs) > 1:
-                print 'WARNING: MORE THAN 1 W BOSON FOUND. filling first in list'
-            self.out.fillBranch("lhew_charge" , float(np.sign(lheWPdgIds[0])))
-            self.out.fillBranch("lhew_pt"     , lheWs[0].Pt())
-            self.out.fillBranch("lhew_eta"    , lheWs[0].Eta())
-            self.out.fillBranch("lhew_phi"    , lheWs[0].Phi())
-            self.out.fillBranch("lhew_y"      , lheWs[0].Rapidity())
-            self.out.fillBranch("lhew_mass"   , lheWs[0].M())
-            (lplus,lminus) = (neutrinos[0],lheLeps[0]) if lheLepPdgIds[0]<0 else (lheLeps[0],neutrinos[0])
-            kv = KinematicVars()
-            self.out.fillBranch("lhew_costcm" , kv.cosThetaCM(lplus,lminus))
-            self.out.fillBranch("lhew_costcs" , kv.cosThetaCS(lplus,lminus))
-            self.out.fillBranch("lhew_phics"  , kv.phiCS(lplus,lminus))
-            self.out.fillBranch("lhew_mt"     , sqrt(2*lplus.Pt()*lminus.Pt()*(1.-cos(deltaPhi(lplus.Phi(),lminus.Phi())))))
-            self.out.fillBranch("lhew_decayId", abs(nuPdgIds[0]))
-        else:
-            for V in self.genwvars:
-                self.out.fillBranch("lhew_"+V, -999)
-
         if len(dressedLeptons) and len(neutrinos):
             genw = dressedLeptons[0] + neutrinos[0]
             self.out.fillBranch("genw_charge",float(-1*np.sign(lepPdgIds[0])))
@@ -215,6 +197,7 @@ class GenQEDJetProducer(Module):
             (lplus,lminus) = (neutrinos[0],dressedLeptons[0]) if lepPdgIds[0]<0 else (dressedLeptons[0],neutrinos[0])
             self.out.fillBranch("genw_costcm",kv.cosThetaCM(lplus,lminus))
             self.out.fillBranch("genw_costcs",kv.cosThetaCS(lplus,lminus))
+            self.out.fillBranch("genw_cost2d",kv.cosTheta2D(genw,dressedLeptons[0]))
             self.out.fillBranch("genw_phics",kv.phiCS(lplus,lminus))
             self.out.fillBranch("genw_mt"   , sqrt(2*lplus.Pt()*lminus.Pt()*(1.-cos(deltaPhi(lplus.Phi(),lminus.Phi())) )))
             self.out.fillBranch("genw_decayId", abs(nuPdgIds[0]))
@@ -230,8 +213,8 @@ class GenQEDJetProducer(Module):
                 self.out.fillBranch("genw_"+V, -999)
 
         lheweights = [w.wgt for w in lhe_wgts]
-        hessWgt = self.mcRep2Hess(getattr(event, "genWeight"),lheweights)
-        self.out.fillBranch("hessWgt",hessWgt)
+        ## marc hessWgt = self.mcRep2Hess(getattr(event, "genWeight"),lheweights)
+        ## marc self.out.fillBranch("hessWgt",hessWgt)
 
         return True
 
