@@ -26,8 +26,8 @@ def writePdfSystsToMCA(mcafile,odir,vec_weight="hessWgt",syst="pdf",incl_mca='in
         print "Warning! '%s' include directive not found. Not adding pdf systematics samples to MCA file %s" %(incl_mca,MCASYSTS)
         return
 
-    for i in range(NPDFSYSTS):
-        postfix = "_%s%d" % (syst,i+1) # this is the change needed to make all alternative variations to be symmetrized
+    for i in range(1,NPDFSYSTS+1):
+        postfix = "_%s%d" % (syst,i) # this is the change needed to make all alternative variations to be symmetrized
         mcafile_syst = open("%s/mca%s.txt" % (odir,postfix), "w")
         mcafile_syst.write(incl_mca+postfix+'   : + ; IncludeMca='+incl_file+', AddWeight="'+vec_weight+str(i)+'", PostFix="'+postfix+'" \n')
         pdfsysts.append(postfix)
