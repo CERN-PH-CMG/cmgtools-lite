@@ -12,7 +12,7 @@ DEFAULT_MODULES = [##("CMGTools.DPS13TeV.postprocessing.examples.puWeightProduce
                    ##("CMGTools.DPS13TeV.postprocessing.examples.lepVarProducer","eleRelIsoEA,lepQCDAwayJet,eleCalibrated"),
                    ##("CMGTools.DPS13TeV.postprocessing.examples.jetReCleaner","jetReCleaner"),
                    ##("CMGTools.DPS13TeV.postprocessing.examples.genFriendProducer","genQEDJets"),
-                   ##("CMGTools.DPS13TeV.postprocessing.examples.bdtWeigthsDPS_fakes","BDT_fakes"),
+                   ("CMGTools.DPS13TeV.postprocessing.examples.bdtWeigthsDPS_fakes","BDT_WZ_and_fakes"),
                    ]
 
 RECOILTEST_MODULES=[("CMGTools.DPS13TeV.postprocessing.examples.puWeightProducer", "puWeight2016BF"),
