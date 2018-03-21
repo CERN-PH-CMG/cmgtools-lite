@@ -114,7 +114,7 @@ class GenQEDJetProducer(Module):
             self.out.branch("GenPromptNu_"+V, "F", lenVar="nGenPromptNu")
         for V in self.genwvars:
             self.out.branch("genw_"+V, "F")
-        for N in range(self.nHessianWeights):
+        for N in range(1,self.nHessianWeights+1):
             self.out.branch("hessWgt"+str(N), "F")
     def endFile(self, inputFile, outputFile, inputTree, wrappedOutputTree):
         pass
@@ -215,7 +215,7 @@ class GenQEDJetProducer(Module):
 
         lheweights = [w.wgt for w in lhe_wgts]
         hessWgt = self.mcRep2Hess(getattr(event, "genWeight"),lheweights)
-        for N in range(self.nHessianWeights):
+        for N in range(1,self.nHessianWeights+1):
             self.out.fillBranch("hessWgt"+str(N), hessWgt[N]/event.genWeight)
 
         return True
