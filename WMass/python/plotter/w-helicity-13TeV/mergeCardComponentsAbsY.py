@@ -306,7 +306,7 @@ if __name__ == "__main__":
                      pol = helbin.split('_')[1]
                      rateNuis = tightConstraint if iy in bins_to_constrain else looseConstraint
                      normPOI = 'norm_{n}'.format(n=helbin)
-     
+
                      ## if we fit absolute rates, we need to get them from the process and plug them in below
                      if options.absoluteRates:
      
@@ -316,7 +316,11 @@ if __name__ == "__main__":
                              combinedCard.write('eff_{n}    rateParam * {n} \t {eff:.5f} [{dn:.5f},{up:.5f}]\n'.format(n=helbin,eff=tmp_eff,dn=(1-1E-04)*tmp_eff,up=(1+1E-04)*tmp_eff))
                              expRate0 = float(ProcsAndRatesDict[helbin])/tmp_eff
                              param_range_0 = '{r:15.1f} [{dn:.1f},{up:.1f}]'.format(r=expRate0,dn=(1-rateNuis)*expRate0,up=(1+rateNuis)*expRate0)
-                             combinedCard.write('norm_{n}  rateParam * {n} \t {pr}\n'.format(n=helbin,pr=param_range_0))
+                             # remove the channel to allow ele/mu combination when fitting for GEN
+                             channel = 'mu' if 'mu' in helbin else 'el'
+                             helbin_nochan = helbin.replace('W{charge}_{channel}_Ybin'.format(charge=charge,channel=channel),
+                                                            'W{charge}_Ybin'.format(charge=charge))
+                             combinedCard.write('norm_{nc}  rateParam * {n} \t {pr}\n'.format(nc=helbin_nochan,n=helbin,pr=param_range_0))
      
                          ## if we do not want to fit the gen-level thing, we want to just put the absolute reco rates here
                          else:
@@ -414,6 +418,10 @@ if __name__ == "__main__":
      
          
          ## remove all the POIs that we want to fix
+         if options.absoluteRates:
+             # remove the channel to allow ele/mu combination when fitting for GEN
+             channel = 'mu' if 'mu' in helbin else 'el'
+             POIs = [poi.replace('W{charge}_{channel}_Ybin'.format(charge=charge,channel=channel),'W{charge}_Ybin'.format(charge=charge)) for poi in  POIs]
          fixedPOIs = []
          for poi in POIs:
              if 'right' in poi and any('Ybin_'+str(i) in poi for i in fixedYBins[charge+'R']):
@@ -430,7 +438,6 @@ if __name__ == "__main__":
          print 'adding a nuisance group for the fixed rateParams'
          with open(cardfile,'a+') as finalCardfile:
              finalCardfile.write('\nfixedY group = {fixed} '.format(fixed=' '.join(i.strip() for i in fixedPOIs)))
-             finalCardfile.write('\nfixedMcErr group = {fixed} '.format(fixed=' '.join(i.strip().replace('norm','eff_unc') for i in fixedPOIs))) # not used in the command, but may be useful to stabilize the fit
              finalCardfile.write('\n\n## end of file')
          #finalCardfile.close()
      
