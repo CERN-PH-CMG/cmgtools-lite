@@ -1,4 +1,8 @@
 #!/usr/bin/env python
+
+## USAGE
+## python plotParametersFromToys.py higgsLimit.root multidimfit.root
+
 import re
 from sys import argv, stdout, stderr, exit
 import datetime
@@ -7,6 +11,7 @@ import ROOT
 ROOT.gROOT.SetBatch(True)
 argv.remove( '-b-' )
 
+lat = ROOT.TLatex(); lat.SetNDC()
 def effSigma(histo):
     xaxis = histo.GetXaxis()
     nb = xaxis.GetNbins()
@@ -54,7 +59,6 @@ def effSigma(histo):
     if ismin == nrms or ismin == -nrms: ierr=3
     if ierr != 0: print "effsigma: Error of type ", ierr
     return widmin
-
 
 def plotPars(inputFile, mdFit, doPull=True, pois=None, selectString=''):
     
@@ -120,7 +124,11 @@ def plotPars(inputFile, mdFit, doPull=True, pois=None, selectString=''):
         fitPull = histo.Integral()>0
         if fitPull:
             histo.Fit("gaus")
-            histo.GetFunction("gaus").SetLineColor(4)
+            fit = histo.GetFunction("gaus")
+            fit.SetLineColor(4)
+            lat.DrawLatex(0.12, 0.8, 'mean:     {me:.2f}'.format(me=fit.GetParameter(1)))
+            lat.DrawLatex(0.12, 0.7, 'err :     {er:.2f}'.format(er=fit.GetParameter(2)))
+            lat.DrawLatex(0.12, 0.6, 'chi2/ndf: {cn:.2f}'.format(cn=fit.GetChisquare()/fit.GetNDF()))
         
         for ext in ['png', 'pdf']:
             c.SaveAs("%s_%s.%s" % (name,'pull' if doPull else 'val',ext))
