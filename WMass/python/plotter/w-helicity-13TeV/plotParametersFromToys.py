@@ -12,6 +12,53 @@ ROOT.gROOT.SetBatch(True)
 argv.remove( '-b-' )
 
 lat = ROOT.TLatex(); lat.SetNDC()
+def effSigma(histo):
+    xaxis = histo.GetXaxis()
+    nb = xaxis.GetNbins()
+    xmin = xaxis.GetXmin()
+    ave = histo.GetMean()
+    rms = histo.GetRMS()
+    total=histo.Integral()
+    if total < 100: 
+        print "effsigma: Too few entries to compute it: ", total
+        return 0.
+    ierr=0
+    ismin=999
+    rlim=0.683*total
+    bwid = xaxis.GetBinWidth(1)
+    nrms=int(rms/bwid)
+    if nrms > nb/10: nrms=int(nb/10) # Could be tuned...
+    widmin=9999999.
+    for iscan in xrange(-nrms,nrms+1): # // Scan window centre 
+        ibm=int((ave-xmin)/bwid)+1+iscan
+        x=(ibm-0.5)*bwid+xmin
+        xj=x; xk=x;
+        jbm=ibm; kbm=ibm;
+        bin=histo.GetBinContent(ibm)
+        total=bin
+        for j in xrange(1,nb):
+            if jbm < nb:
+                jbm += 1
+                xj += bwid
+                bin=histo.GetBinContent(jbm)
+                total += bin
+                if total > rlim: break
+            else: ierr=1
+            if kbm > 0:
+                kbm -= 1
+                xk -= bwid
+                bin=histo.GetBinContent(kbm)
+                total+=bin
+            if total > rlim: break
+            else: ierr=1
+        dxf=(total-rlim)*bwid/bin
+        wid=(xj-xk+bwid-dxf)*0.5
+        if wid < widmin:
+            widmin=wid
+            ismin=iscan
+    if ismin == nrms or ismin == -nrms: ierr=3
+    if ierr != 0: print "effsigma: Error of type ", ierr
+    return widmin
 
 def plotPars(inputFile, mdFit, doPull=True, pois=None, selectString=''):
     
@@ -97,7 +144,8 @@ def plotPars(inputFile, mdFit, doPull=True, pois=None, selectString=''):
             tlatex.SetTextColor(1);
             tlatex.DrawLatex(0.65,0.33,"Pre-fit #pm #sigma_{#theta}: %.3f #pm %.3f" % (mean_p, sigma_p))
 
-            pullSummaryMap[name]=(histo.GetFunction("gaus").GetParameter(1),histo.GetFunction("gaus").GetParameter(2))
+            pullSummaryMap[name]=(histo.GetFunction("gaus").GetParameter(1),histo.GetFunction("gaus").GetParameter(2),
+                                  histo.GetMean(),effSigma(histo))
             nPulls += 1
             
     if doPull and nPulls>0:
@@ -109,27 +157,44 @@ def plotPars(inputFile, mdFit, doPull=True, pois=None, selectString=''):
             nThisPulls = min(maxPullsPerPlot,nRemainingPulls)
 
             pullSummaryHist = ROOT.TH1F("pullSummary","",nThisPulls,0,nThisPulls);
+            pullSummaryHist2 = ROOT.TH1F("pullSummary2","",nThisPulls,0,nThisPulls);
             pi=1
             for name,pull in sorted(pullSummaryMap.iteritems(), key=lambda(k,v): int(k.split('pdf')[-1])):
                 if pi>nThisPulls: break
-                pullSummaryHist.GetXaxis().SetBinLabel(pi,name);
-                pullSummaryHist.SetBinContent(pi,pull[0]);
-                pullSummaryHist.SetBinError(pi,pull[1]);
+                pullSummaryHist.GetXaxis().SetBinLabel(pi,name)
+                pullSummaryHist.SetBinContent(pi,pull[0]);  pullSummaryHist.SetBinError(pi,pull[1])
+                pullSummaryHist2.SetBinContent(pi,pull[2]);  pullSummaryHist2.SetBinError(pi,pull[3])
                 del pullSummaryMap[name]
                 pi += 1
                 nRemainingPulls -= 1
-            pullSummaryHist.SetMarkerStyle(20);
-            pullSummaryHist.SetMarkerSize(1.);
-            pullSummaryHist.SetMarkerColor(ROOT.kRed);
-            pullSummaryHist.SetLineColor(ROOT.kRed);
-            pullSummaryHist.SetLineWidth(2);
-            pullSummaryHist.SetLabelSize(pullLabelSize);
-            pullSummaryHist.LabelsOption("v");
-            pullSummaryHist.GetYaxis().SetRangeUser(-1,1);
-            pullSummaryHist.GetYaxis().SetTitle("pull summary (n#sigma)");
-            pullSummaryHist.Draw("E1");
+            pullSummaryHist.SetMarkerStyle(20)
+            pullSummaryHist.SetMarkerSize(1.)
+            #pullSummaryHist.SetMarkerColor(ROOT.kBlack)
+            #pullSummaryHist.SetLineColor(ROOT.kBlack)
+            pullSummaryHist.SetFillColor(ROOT.kRed+1)
+            pullSummaryHist.SetLineWidth(2)
+
+            pullSummaryHist2.SetMarkerStyle(20)
+            pullSummaryHist2.SetMarkerSize(1.)
+            pullSummaryHist2.SetMarkerColor(ROOT.kBlack)
+            pullSummaryHist2.SetLineColor(ROOT.kBlack)
+            pullSummaryHist2.SetLineWidth(4)
+
+            pullSummaryHist.SetLabelSize(pullLabelSize)
+            pullSummaryHist.LabelsOption("v")
+            pullSummaryHist.GetYaxis().SetRangeUser(-1.,1.)
+            pullSummaryHist.GetYaxis().SetTitle("pull summary (n#sigma)")
+            pullSummaryHist.Draw("E2")
+            pullSummaryHist2.Draw("E1 SAME")
+
+            leg = ROOT.TLegend(0.60, 0.60, 0.85, 0.80)
+            leg.SetFillStyle(0)
+            leg.SetBorderSize(0)
+            leg.AddEntry(pullSummaryHist,"Gassian pull")
+            leg.AddEntry(pullSummaryHist2,"Effective pull")
+            leg.Draw("same")
             for ext in ['png', 'pdf']:
-                hc.SaveAs("pullSummaryToys_%d.%s" % (pullPlots,ext));
+                hc.SaveAs("pullSummaryToys_%d.%s" % (pullPlots,ext))
             pullPlots += 1
 
 

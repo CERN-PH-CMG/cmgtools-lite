@@ -375,12 +375,14 @@ if __name__ == "__main__":
                      normWLeft = sum([float(r) for (p,r) in WLeftOrRight if 'left' in p])/eff_left
                      normWRight = sum([float(r) for (p,r) in WLeftOrRight if 'right' in p])/eff_right
                      normWLeftOrRight = normWLeft + normWRight
-                     combinedCardNew.write("eff_{n}   rateParam * {n}    {eff:.5f} [{dn:.5f},{up:.5f}]\n".format(n=Wlong[0][0],eff=eff_long,dn=(1-1E-04)*eff_long,up=(1+1E-04)*eff_long))
+                     combinedCardNew.write("eff_{nc}   rateParam * {n}    {eff:.5f} [{dn:.5f},{up:.5f}]\n".format(nc=Wlong[0][0].replace('_long','_%s_long'%options.bin),n=Wlong[0][0],
+                                                                                                                  eff=eff_long,dn=(1-1E-04)*eff_long,up=(1+1E-04)*eff_long))
      
                      ## i have no idea what happens after here in this if block...
                      if options.longToTotal:
                          r0overLR = normWLong/normWLeftOrRight
-                         combinedCardNew.write("norm_%-50s    rateParam * %-5s    %15.1f [%.0f,%.0f]\n" % (Wlong[0][0],Wlong[0][0],normWLeftOrRight,(1-options.longToTotal)*normWLeftOrRight,(1+options.longToTotal)*normWLeftOrRight))
+                         combinedCardNew.write("norm_%-50s    rateParam * %-5s    %15.1f [%.0f,%.0f]\n" % (Wlong[0][0],Wlong[0][0].replace('_long','_%s_long'%options.bin),
+                                                                                                           normWLeftOrRight,(1-options.longToTotal)*normWLeftOrRight,(1+options.longToTotal)*normWLeftOrRight))
                          wLongNormString = "ratio_%-5s   rateParam * %-5s   2*(%s)*%.3f %s\n" \
                              % (Wlong[0][0],Wlong[0][0],'+'.join(['@%d'%i for i in xrange(len(POIs))]),r0overLR,','.join([p for p in POIs]))
                          combinedCardNew.write(wLongNormString)
@@ -389,7 +391,7 @@ if __name__ == "__main__":
                      else:
                          nl = normWLong; tc = tightConstraint
                          combinedCardNew.write("norm_{n} rateParam * {n} {r:15.1f} [{dn:.1f},{up:.1f}]\n".format(n=Wlong[0][0],r=nl,dn=(1-tc)*nl,up=(1+tc)*nl))
-                         POIs.append('norm_{n}'.format(n=Wlong[0][0]))
+                         POIs.append('norm_{nc}'.format(nc=Wlong[0][0].replace('_long','_%s_long'%options.bin)))
      
                  ## if we do not scale gen-reco, then we go back to before...
                  else:
@@ -405,7 +407,7 @@ if __name__ == "__main__":
                          combinedCardNew.write("norm_%-50s   rateParam * %-5s  %15.1f [%.0f,%.0f]\n" % (Wlong[0][0],Wlong[0][0],normWLong,(1-tightConstraint)*normWLong,(1+tightConstraint)*normWLong))
      
                  ## make an efficiency nuisance group
-                 combinedCardNew.write('\nefficiencies group = eff_'+Wlong[0][0]+' '+' '.join([p.replace('norm','eff') for p in POIs])+'\n\n' )
+                 combinedCardNew.write('\nefficiencies group = '+' '.join([p.replace('norm','eff') for p in POIs])+'\n\n' )
      
                  ## add the PDF systematics 
                  for sys,procs in pdfsyst.iteritems():
