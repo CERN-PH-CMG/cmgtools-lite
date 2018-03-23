@@ -294,7 +294,7 @@ if __name__ == "__main__":
              hel_to_constrain = [signal_L,signal_R]
              bins_to_constrain = options.constrainRateParams.split(',')
              tightConstraint = 0.05
-             looseConstraint = 0.20
+             looseConstraint = tightConstraint
              for hel in hel_to_constrain:
                  for iy,helbin in enumerate(hel):
                      pol = helbin.split('_')[1]
