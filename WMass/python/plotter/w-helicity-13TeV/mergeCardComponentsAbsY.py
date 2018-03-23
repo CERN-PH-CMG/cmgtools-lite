@@ -44,6 +44,8 @@ if __name__ == "__main__":
      parser.add_option(     '--absolute', dest='absoluteRates', default=False, action='store_true', help='Fit for absolute rates, not scale factors')
      parser.add_option(     '--longToTotal', dest='longToTotal', type='float', default=None, help='Apply a constraint on the Wlong/Wtot rate. Implies fitting for absolute rates')
      parser.add_option(     '--sf'    , dest='scaleFile'    , default='', type='string', help='path of file with the scaling/unfolding')
+     parser.add_option(     '--lumiLnU'    , dest='lumiLnU'    , default=0.026, type='float', help='Log-uniform constraint to be added to all the fixed MC processes')
+     parser.add_option(     '--wXsecLnN'   , dest='wLnN'       , default=0.038, type='float', help='Log-normal constraint to be added to all the fixed W processes')
      (options, args) = parser.parse_args()
      
      from symmetrizeMatrixAbsY import getScales
@@ -279,7 +281,8 @@ if __name__ == "__main__":
                  efferrors_LO   [pol] = [   x for x in getScales(ybins, charge, pol, os.path.abspath(options.scaleFile), doNLO=False, returnError=True)]
      
          combinedCard = open(cardfile,'a')
-         POIs = []
+
+         POIs = []; fixedPOIs = []; allPOIs = []
          if options.constrainRateParams:
              signal_procs = filter(lambda x: re.match('Wplus|Wminus',x), realprocesses)
              if longBKG: signal_procs = filter(lambda x: re.match('(?!Wplus_long|Wminus_long)',x), signal_procs)
@@ -408,30 +411,35 @@ if __name__ == "__main__":
      
                  ## make an efficiency nuisance group
                  combinedCardNew.write('\nefficiencies group = '+' '.join([p.replace('norm','eff') for p in POIs])+'\n\n' )
+
+                 ## remove all the POIs that we want to fix
+                 if options.absoluteRates:
+                     # remove the channel to allow ele/mu combination when fitting for GEN
+                     channel = 'mu' if 'mu' in helbin else 'el'
+                     POIs = [poi.replace('W{charge}_{channel}_Ybin'.format(charge=charge,channel=channel),'W{charge}_Ybin'.format(charge=charge)) for poi in  POIs]
+                 for poi in POIs:
+                     if 'right' in poi and any('Ybin_'+str(i) in poi for i in fixedYBins[charge+'R']):
+                         fixedPOIs.append(poi)
+                     if 'left'  in poi and any('Ybin_'+str(i) in poi for i in fixedYBins[charge+'L']):
+                         fixedPOIs.append(poi)
+                 floatPOIs = list(poi for poi in POIs if not poi in fixedPOIs)
+                 allPOIs = fixedPOIs+floatPOIs
      
                  ## add the PDF systematics 
                  for sys,procs in pdfsyst.iteritems():
                      # there should be 2 occurrences of the same proc in procs (Up/Down). This check should be useless if all the syst jobs are DONE
                      combinedCardNew.write('%-15s   shape %s\n' % (sys,(" ".join([kpatt % '1.0' if p in procs and procs.count(p)==2 else '  -  ' for p,r in ProcsAndRates]))) )
                  combinedCardNew.write('\npdfs group = '+' '.join([sys for sys,procs in pdfsyst.iteritems()])+'\n')
-     
+
+                 ## now assign a uniform luminosity uncertainty to all the fixed processes, to avoid constraining 
+                 channel = 'mu' if 'mu' in helbin else 'el'
+                 combinedCardNew.write('\nCMS_lumi_13TeV   lnU %s\n' % (" ".join([kpatt % '-' if ('data' in p or any(p.replace('_%s_'%channel,'_')==fPOI.replace('norm_','') for fPOI in floatPOIs)) else '%.3f'%(1+5.0*options.lumiLnU) for p,r in ProcsAndRates])) )
+                 combinedCardNew.write('CMS_W   lnN %s\n' % (" ".join([kpatt % '%.3f' % (1+options.wLnN) if (p=='TauDecaysW' or p=='Wplus_long' or any(p.replace('_%s_'%channel,'_')==fPOI.replace('norm_','') for fPOI in fixedPOIs)) else '-' for p,r in ProcsAndRates])) )
+
                  combinedCardNew.close() ## for some reason this is really necessary
                  os.system("mv {cardfile}_new {cardfile}".format(cardfile=cardfile))
      
          
-         ## remove all the POIs that we want to fix
-         if options.absoluteRates:
-             # remove the channel to allow ele/mu combination when fitting for GEN
-             channel = 'mu' if 'mu' in helbin else 'el'
-             POIs = [poi.replace('W{charge}_{channel}_Ybin'.format(charge=charge,channel=channel),'W{charge}_Ybin'.format(charge=charge)) for poi in  POIs]
-         fixedPOIs = []
-         for poi in POIs:
-             if 'right' in poi and any('Ybin_'+str(i) in poi for i in fixedYBins[charge+'R']):
-                 fixedPOIs.append(poi)
-             if 'left'  in poi and any('Ybin_'+str(i) in poi for i in fixedYBins[charge+'L']):
-                 fixedPOIs.append(poi)
-         floatPOIs = list(poi for poi in POIs if not poi in fixedPOIs)
-         allPOIs = fixedPOIs+floatPOIs
      
          ## define the combine POIs, i.e. the subset on which to run MINOS
          minosPOIs = allPOIs if not options.POIsToMinos else options.POIsToMinos.split(',')

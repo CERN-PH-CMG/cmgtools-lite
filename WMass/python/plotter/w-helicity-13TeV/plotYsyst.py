@@ -31,7 +31,7 @@ if __name__ == "__main__":
     parser.add_option('-C','--charge', dest='charge', default='plus,minus', type='string', help='process given charge. default is both')
     parser.add_option(     '--fitResult', dest='fitResult', default=None, type='string', help='file with fitresult')
     parser.add_option('-o','--outdir', dest='outdir', default='.', type='string', help='outdput directory to save the matrix')
-    parser.add_option('-c','--channel', dest='channel', default='el', type='string', help='name of the channel')
+    parser.add_option(     '--suffix', dest='suffix', default='', type='string', help='suffix for the correlation matrix')
     (options, args) = parser.parse_args()
 
     inputdir = args[0]
@@ -122,7 +122,7 @@ if __name__ == "__main__":
             for iy,y in enumerate(ybinwidths):
                 totalrate += nominal[pol][iy]
                 if options.fitResult:
-                    parname = 'norm_W{charge}_{pol}_W{charge}_{channel}_Ybin_{iy}'.format(charge=charge,pol=pol,channel=options.channel,iy=iy)
+                    parname = 'norm_W{charge}_{pol}_W{charge}_Ybin_{iy}'.format(charge=charge,pol=pol,iy=iy)
                     tmp_par = fpars.find(parname) if parname in f_params else cpars.find(parname)
                     totalrate_fit += tmp_par.getVal()
 
@@ -144,7 +144,7 @@ if __name__ == "__main__":
                 arr_relhi.append(systematics[pol][iy]/nominal[pol][iy]) # symmetric for the expected
                 
                 if options.fitResult:
-                    parname = 'norm_W{charge}_{pol}_W{charge}_{channel}_Ybin_{iy}'.format(charge=charge,pol=pol,channel=options.channel,iy=iy)
+                    parname = 'norm_W{charge}_{pol}_W{charge}_Ybin_{iy}'.format(charge=charge,pol=pol,iy=iy)
 
                     tmp_par = fpars.find(parname) if parname in f_params else cpars.find(parname)
                     arr_val_fit.append(tmp_par.getVal()/totalrate_fit/ybinwidths[iy])
@@ -239,7 +239,7 @@ if __name__ == "__main__":
 
         date = datetime.date.today().isoformat()
         for ext in ['png', 'pdf']:
-            c2.SaveAs('{od}/genAbsY_pdfs_{date}_{ch}.{ext}'.format(od=options.outdir, date=date, ch=charge, ext=ext))
+            c2.SaveAs('{od}/genAbsY_pdfs_{date}_{ch}{suffix}.{ext}'.format(od=options.outdir, date=date, ch=charge, suffix=options.suffix, ext=ext))
 
         ## now make the relative error plot:
         ## ======================================
@@ -301,4 +301,4 @@ if __name__ == "__main__":
         padDown.RedrawAxis("sameaxis");
 
         for ext in ['png', 'pdf']:
-            c2.SaveAs('{od}/genAbsY_pdfs_{date}_{ch}_relative.{ext}'.format(od=options.outdir, date=date, ch=charge, ext=ext))
+            c2.SaveAs('{od}/genAbsY_pdfs_{date}_{ch}{suffix}_relative.{ext}'.format(od=options.outdir, date=date, ch=charge, suffix=options.suffix, ext=ext))
