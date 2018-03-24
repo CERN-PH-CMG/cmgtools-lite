@@ -70,7 +70,7 @@ TH1* getEfficiency(const string& inputFile = "",
 //==================================================================
 
 void plotEfficiency(const string& inputFilePath = "/afs/cern.ch/work/m/mciprian/w_mass_analysis/heppy/CMSSW_8_0_25/src/CMGTools/WMass/data/efficiency/", 
-		    const TString& inputFileNameList = "mc_reco_eff.root,mc_reco_pfmt30_eff.root,mc_reco_pfmt40_eff.root,mc_reco_pfmt50_eff.root",
+		    const TString& inputFileNameList = "mc_reco_LO_eff.root,mc_reco_eff.root,mc_reco_pfmt30_eff.root,mc_reco_pfmt40_eff.root,mc_reco_pfmt50_eff.root",
 		    const string& outDir = "www/wmass/13TeV/efficiency_NLO/",
 		    const Bool_t isMuon = false 
 		    ) 
