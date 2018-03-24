@@ -1,27 +1,35 @@
-# usage:  python w-helicity-13TeV/hadd_wy.py <input_folder> [<cut_name_id>]
+# usage:  python w-helicity-13TeV/hadd_wy.py <input_folder> [<cut_name_ID>]
 #
-# cut_name_id is supposed to be something like nameXX, where XX is a threshold
+# first argument is list of folders with distributions for no or nominal selection
+# second one, optional, is a key for the selection, which should be in some folder names
+# See examples below
 
 # script developed to work passing a folder containing other folders like the following:
 # [mciprian@pccmsrm29 plotter]$ ls plots/gen/
 # wgen_fullsel_minus         wgen_fullsel_pfmt30_plus   wgen_fullsel_pfmt40_plus   wgen_fullsel_pfmt50_plus  wgen_nosel_minus
 # wgen_fullsel_pfmt30_minus  wgen_fullsel_pfmt40_minus  wgen_fullsel_pfmt50_minus  wgen_fullsel_plus         wgen_nosel_plus
+# [mciprian@pccmsrm29 plotter]$ python w-helicity-13TeV/hadd_wy.py plots/gen/ pfmt
 #
 # it will create root files containing histograms with no selection and with any of the other selections (no pfmt or pfmtXX in this case)
 #
-# It works also in you have only nosel and nominal selection
+# It works also in you have only nosel and nominal selection (4 folders). In this case, the second argument can be skipped
 
 import sys, os
 import ROOT, datetime, array
 import re
 
 inputdir = sys.argv[1]
+# varcut = "pfmt"
+# if varcut != "":
+#     noAdditionalCut = False
+# else:
+#     noAdditionalCut = True
+
 varcut = ""
+noAdditionalCut = True
 if len(sys.argv)>2:
     varcut = str(sys.argv[2])
     noAdditionalCut = False
-else:
-    noAdditionalCut = True
 
 #files = [ f for f in os.listdir(inputdir) if f.endswith('.root') ]
 #files = list( [os.path.join(inputdir, f) for f in files] )
@@ -33,6 +41,13 @@ for root, dirs, tmpfiles in os.walk(inputdir):
             thisfile = os.path.join(root, f)
             print("Getting file --> %s " % str(thisfile))
             files.append(str(thisfile))
+
+if len(files) > 4 and noAdditionalCut:
+    print "==================================="
+    print "WARNING: you have not specified any folder name tag, but I see more than 4 folders (%d)" % len(files)
+    print "I cannot manage this situation correctly, please check. Exit"
+    print "==================================="
+    quit()
 
 # for f in files:
 #     print f
@@ -94,7 +109,7 @@ if not noAdditionalCut:
         for p in tmpplots:
             if 'reco' not in p.GetName() or (str(thr) in p.GetName() and varcut in p.GetName()):
                 tmpNameNoCut = p.GetName().replace("%s%d_" % (varcut, thr),"")
-                print "%s%d: Writing histo: %s" % (varcut, thr, tmpNameNoCut)
+                print "%s%d: Writing histo: %s (original name --> %s)" % (varcut, thr, tmpNameNoCut, p.GetName())
                 p.Write(tmpNameNoCut)
         mergedFile.Close()
     
