@@ -52,6 +52,7 @@
 #include <TPaveStats.h>
 #include <TPaveText.h>
 #include <TProfile.h>
+#include <TSpline.h>
 #include <TTreeIndex.h>
 #include <TTreeReader.h>
 #include <TTreeReaderArray.h>
@@ -536,16 +537,18 @@ Double_t doSoverB(TGraph* gsob = NULL, TH1* hwjets = NULL, TH1* hqcd = NULL) {
 
 //=============================================
 
-void doEfficiencyFromTH2(TH2* h2 = NULL, const TH2* h2orig = NULL) {
+void doEfficiencyFromTH2(TH2* h2 = NULL, const TH2* h2orig = NULL, const Bool_t revert = false) {
 
   for (Int_t ix = 1; ix <= h2->GetNbinsX(); ix++) {
 
     // include underflow and overflow in the integral
     Double_t yIntegralFixedX = h2orig->Integral(ix, ix, 0, 1 + h2orig->GetNbinsY());
+    Double_t integralRange = 0.0;
 
     for (Int_t iy = 1; iy <= h2->GetNbinsY(); iy++) {
 
-      h2->SetBinContent(ix,iy, h2orig->Integral(ix, ix, 0, iy)/yIntegralFixedX);
+      integralRange = revert ? h2orig->Integral(ix, ix, iy, 1 + h2orig->GetNbinsY()) : h2orig->Integral(ix, ix, 0, iy);
+      h2->SetBinContent(ix,iy, (yIntegralFixedX > 0.0 ? integralRange/yIntegralFixedX : 0));
 
     }
 
@@ -740,6 +743,7 @@ void checkNotNullPtr(TH2* hptr, const string& ptrName = "hptr") {
 
 string getStringFromDouble(const Double_t& num = 1.0, const Double_t epsilon = 0.00001) {
   
+  // warning: using up to 3 decimal 
   Int_t i = (Int_t) num;
   // stringstream ss;                                                                                      
   // ss<<i;                                                                                                                         
@@ -1071,6 +1075,8 @@ void drawGraph(vector<TGraph*> gr_roc_S_B = {},
   canvas->SaveAs((outputDIR+canvasName+".png").c_str());
   canvas->SaveAs((outputDIR+canvasName+".pdf").c_str());
 
+  delete canvas;
+
 }
 
 //=============================================
@@ -1146,6 +1152,8 @@ void drawGraphCMS(vector<TGraph*> grList = {},
 
   canvas->SaveAs((outputDIR+canvasName+".png").c_str());
   canvas->SaveAs((outputDIR+canvasName+".pdf").c_str());
+
+  delete canvas;
 
 }
 
@@ -1312,6 +1320,9 @@ void drawTH1pair(TH1* h1, TH1* h2,
   }    
 
   delete canvas;
+  delete pad2;
+  delete line;
+  if (yAxisName == "a.u.") delete pvtxt;
 
 }
 
@@ -1328,7 +1339,7 @@ void draw_nTH1(vector<TH1*> vecHist1d = {},
 	       const Double_t lumi = -1.0, 
 	       const Int_t rebinFactor = 1, 
 	       const Bool_t drawPlotLogY = true,
-	       const Bool_t drawRatioWithNominal = false  // to be implemented
+	       const Bool_t drawRatioWithNominal = false 
 	       ) 
 {
 
@@ -1354,8 +1365,14 @@ void draw_nTH1(vector<TH1*> vecHist1d = {},
     vecHist1d[i]->SetStats(0);
   }
 
+  Int_t canvasWidth = 700;
+  Int_t canvasHeight = 600;
+  if (drawRatioWithNominal) {
+    canvasWidth = 600;
+    canvasHeight = 700;
+  }
 
-  TCanvas* canvas = new TCanvas("canvas","",700,700);
+  TCanvas* canvas = new TCanvas("canvas","",canvasWidth,canvasHeight);
   canvas->cd();
   canvas->SetTickx(1);
   canvas->SetTicky(1);
@@ -1536,6 +1553,7 @@ void draw_nTH1(vector<TH1*> vecHist1d = {},
   }    
 
   delete canvas;
+  delete pad2;
 
 }
 
@@ -1743,6 +1761,9 @@ void drawTH1dataMCstack(TH1* h1 = NULL, vector<TH1*> vecMC = {},
   }
 
   delete canvas;
+  delete pad2;
+  delete hMCstack;
+  delete line;
 
 }
 
@@ -2070,6 +2091,8 @@ void drawTH1dataMCstackAndNoStack(TH1* h1 = NULL, vector<TH1*> vecMC = {}, vecto
   }
 
   delete canvas;
+  delete pad2;
+  delete line;
 
 }
 
@@ -2247,6 +2270,127 @@ TFitResultPtr drawTH1(TH1* h1 = NULL,
 
   delete canvas;
   return frp2;
+
+}
+
+//=============================================================
+
+
+void drawSingleTH1(TH1* h1 = NULL, 
+		   const string& xAxisNameTmp = "", const string& yAxisName = "Events", const string& canvasName = "default", 
+		   const string& outputDIR = "./", 
+		   const string& legEntryTmp = "", 
+		   const Double_t lumi = -1.0, 
+		   const Int_t rebinFactor = 1,
+		   const Bool_t noStatBox = false,
+		   const Int_t draw_both0_noLog1_onlyLog2 = 0		    
+		   )
+{
+
+  string xAxisName = "";
+  Double_t xmin = 0;
+  Double_t xmax = 0;
+  Bool_t setXAxisRangeFromUser = getAxisRangeFromUser(xAxisName, xmin, xmax, xAxisNameTmp);
+
+  string legEntry = "";
+  string legHeader = "";
+  Bool_t setLegendHeader = false;
+
+  string separator = "::";
+  size_t pos = legEntryTmp.find(separator);
+  if (pos != string::npos) {
+    setLegendHeader = true;
+    legEntry.assign(legEntryTmp, 0, pos); 
+    legHeader.assign(legEntryTmp, pos + separator.size(), string::npos);
+  } else {
+    legEntry = legEntryTmp;
+  }
+
+
+  // cout << "xAxisName = " << xAxisName << "   xmin = " << xmin << "  xmax = " << xmax << endl;
+
+  TH1::SetDefaultSumw2(); //all the following histograms will automatically call TH1::Sumw2() 
+
+  myRebinHisto(h1,rebinFactor);
+  
+  TCanvas* canvas = new TCanvas("canvas","",700,700);
+  canvas->cd();
+  canvas->SetTickx(1);
+  canvas->SetTicky(1);
+  canvas->cd();
+  canvas->SetBottomMargin(0.12);
+  canvas->SetRightMargin(0.06);
+
+  h1->Draw("HE");
+
+
+  canvas->Update();
+  TPaveStats *statBox = (TPaveStats*)(h1->FindObject("stats"));
+  if (statBox) {
+    statBox->SetX1NDC(0.62);
+    statBox->SetX2NDC(0.92);
+    statBox->SetY1NDC(0.59);
+    statBox->SetY2NDC(0.91);
+    statBox->SetFillColor(0);
+    statBox->SetFillStyle(0);
+    statBox->SetBorderSize(0);
+    statBox->Draw();
+  }
+  canvas->Update();
+
+  if (setXAxisRangeFromUser) h1->GetXaxis()->SetRangeUser(xmin,xmax);
+  h1->GetXaxis()->SetTitle(xAxisName.c_str());
+  // h1->GetXaxis()->SetTitleOffset(0.8);
+  h1->GetXaxis()->SetTitleSize(0.05);
+  h1->GetYaxis()->SetTitle(yAxisName.c_str());
+  h1->GetYaxis()->SetTitleOffset(1.1);
+  // h1->GetYaxis()->SetTitleOffset(0.8);  // was 1.03 without setting also the size
+  h1->GetYaxis()->SetTitleSize(0.05);
+  h1->GetYaxis()->SetRangeUser(0.0, h1->GetMaximum() * 1.5);
+  canvas->RedrawAxis("sameaxis");
+  canvas->Update();
+
+  TLegend leg (0.15,0.7,0.6,0.9);
+  if (setLegendHeader) leg.SetHeader(legHeader.c_str());
+  leg.SetFillColor(0);
+  leg.SetFillStyle(0);
+  leg.SetBorderSize(0);
+  leg.AddEntry(h1,legEntry.c_str(),"L");
+  leg.Draw("same");
+  canvas->RedrawAxis("sameaxis");
+
+  //  CMS_lumi(canvas,Form("%.1f",lumi));
+  if (lumi < 0) CMS_lumi(canvas,"",true,false);
+  else CMS_lumi(canvas,Form("%.1f",lumi),true,false);
+  setTDRStyle();
+
+  
+  if (noStatBox) {
+    h1->SetStats(0);
+    //cout << "No Statistics box" << endl;
+  } else {
+    //canvas->Update();
+    gPad->Update();
+    gStyle->SetOptStat(1110);
+  }
+  //h1->SetStats(0);
+
+  canvas->SaveAs((outputDIR + canvasName + ".png").c_str());
+  canvas->SaveAs((outputDIR + canvasName + ".pdf").c_str());
+
+  if (draw_both0_noLog1_onlyLog2 != 1) {
+
+    if (yAxisName == "a.u.") h1->GetYaxis()->SetRangeUser(max(0.0001,h1->GetMinimum()*0.8),h1->GetMaximum()*100);
+    else                     h1->GetYaxis()->SetRangeUser(max(0.001,h1->GetMinimum()*0.8),h1->GetMaximum()*100);
+    canvas->SetLogy();
+    canvas->SaveAs((outputDIR + canvasName + "_logY.png").c_str());
+    canvas->SaveAs((outputDIR + canvasName + "_logY.pdf").c_str());
+    canvas->SetLogy(0);
+
+  }
+
+
+  delete canvas;
 
 }
 
@@ -2927,266 +3071,228 @@ void buildChain(TChain* chain, vector<Double_t>& genwgtVec, const bool use8TeVSa
     }
   } else {
 
+    /* vector<string> sampleRoots = {"DYJetsToLL_M50_part", */
+    /* 				  # "DYJetsToLL_M50_LO",                           */
+    /* 				  "WW", */
+    /* 				  "WZ", */
+    /* 				  "ZZ", */
+    /* 				  "TBar_tWch_ext", */
+    /* 				  "T_tWch_ext", */
+    /* 				  "TTJets_SingleLeptonFromT_", */
+    /* 				  "TTJets_SingleLeptonFromTbar_", */
+    /* 				  "T_tch_powheg", */
+    /* 				  "TBar_tch_powheg_", */
+    /* 				  "TToLeptons_sch_amcatnl", */
+    /* 				  "WJetsToLNu_NoSkim", */
+    /* 				  "_bcTo", */
+    /* 				  "_EMEnriched", */
+    /* 				  # "_Mu5",     */
+    /* 				  # "_Mu15"} */
+
     if (sample == Sample::wjets || sample == Sample::wenujets || sample == Sample::wmunujets || sample == Sample::wtaunujets) {
-      subSampleNameVector.push_back("WJetsToLNu_part1");
-      subSampleNameVector.push_back("WJetsToLNu_part2");
-      subSampleNameVector.push_back("WJetsToLNu_part3");
-      subSampleNameVector.push_back("WJetsToLNu_part4");
-      subSampleNameVector.push_back("WJetsToLNu_part5");
-      subSampleNameVector.push_back("WJetsToLNu_part6");
-      subSampleNameVector.push_back("WJetsToLNu_part7");
-    } else if (sample == Sample::wjets_LO || sample == Sample::wenujets_LO || sample == Sample::wmunujets_LO || sample == Sample::wtaunujets_LO) { 
-      subSampleNameVector.push_back("WJetsToLNu_LO_ext_part1");
-      subSampleNameVector.push_back("WJetsToLNu_LO_ext_part10");
-      subSampleNameVector.push_back("WJetsToLNu_LO_ext_part2");
-      subSampleNameVector.push_back("WJetsToLNu_LO_ext_part3");
-      subSampleNameVector.push_back("WJetsToLNu_LO_ext_part4");
-      subSampleNameVector.push_back("WJetsToLNu_LO_ext_part5");
-      subSampleNameVector.push_back("WJetsToLNu_LO_ext_part6");
-      subSampleNameVector.push_back("WJetsToLNu_LO_ext_part7");
-      subSampleNameVector.push_back("WJetsToLNu_LO_ext_part8");
-      subSampleNameVector.push_back("WJetsToLNu_LO_ext_part9");
-      subSampleNameVector.push_back("WJetsToLNu_LO_part1");
-      subSampleNameVector.push_back("WJetsToLNu_LO_part2");
-      subSampleNameVector.push_back("WJetsToLNu_LO_part3");
-      subSampleNameVector.push_back("WJetsToLNu_LO_part4");
-      subSampleNameVector.push_back("WJetsToLNu_LO_part5");
-      subSampleNameVector.push_back("WJetsToLNu_LO_part6");
+      subSampleNameVector.push_back("WJetsToLNu_NoSkim");
+    /* } else if (sample == Sample::wjets_LO || sample == Sample::wenujets_LO || sample == Sample::wmunujets_LO || sample == Sample::wtaunujets_LO) {  */
+    /*   subSampleNameVector.push_back("WJetsToLNu_LO_ext_part1"); */
+    /*   subSampleNameVector.push_back("WJetsToLNu_LO_ext_part10"); */
+    /*   subSampleNameVector.push_back("WJetsToLNu_LO_ext_part2"); */
+    /*   subSampleNameVector.push_back("WJetsToLNu_LO_ext_part3"); */
+    /*   subSampleNameVector.push_back("WJetsToLNu_LO_ext_part4"); */
+    /*   subSampleNameVector.push_back("WJetsToLNu_LO_ext_part5"); */
+    /*   subSampleNameVector.push_back("WJetsToLNu_LO_ext_part6"); */
+    /*   subSampleNameVector.push_back("WJetsToLNu_LO_ext_part7"); */
+    /*   subSampleNameVector.push_back("WJetsToLNu_LO_ext_part8"); */
+    /*   subSampleNameVector.push_back("WJetsToLNu_LO_ext_part9"); */
+    /*   subSampleNameVector.push_back("WJetsToLNu_LO_part1"); */
+    /*   subSampleNameVector.push_back("WJetsToLNu_LO_part2"); */
+    /*   subSampleNameVector.push_back("WJetsToLNu_LO_part3"); */
+    /*   subSampleNameVector.push_back("WJetsToLNu_LO_part4"); */
+    /*   subSampleNameVector.push_back("WJetsToLNu_LO_part5"); */
+    /*   subSampleNameVector.push_back("WJetsToLNu_LO_part6"); */
     } else if (sample == Sample::zjets) {
       subSampleNameVector.push_back("DYJetsToLL_M50_part1");
       subSampleNameVector.push_back("DYJetsToLL_M50_part2");
-    } else if (sample == Sample::zjets_LO) {
-      subSampleNameVector.push_back("DYJetsToLL_M50_LO_ext2_part1");
-      subSampleNameVector.push_back("DYJetsToLL_M50_LO_ext2_part10");
-      subSampleNameVector.push_back("DYJetsToLL_M50_LO_ext2_part11");
-      subSampleNameVector.push_back("DYJetsToLL_M50_LO_ext2_part2");
-      subSampleNameVector.push_back("DYJetsToLL_M50_LO_ext2_part3");
-      subSampleNameVector.push_back("DYJetsToLL_M50_LO_ext2_part4");
-      subSampleNameVector.push_back("DYJetsToLL_M50_LO_ext2_part5");
-      subSampleNameVector.push_back("DYJetsToLL_M50_LO_ext2_part6");
-      subSampleNameVector.push_back("DYJetsToLL_M50_LO_ext2_part7");
-      subSampleNameVector.push_back("DYJetsToLL_M50_LO_ext2_part8");
-      subSampleNameVector.push_back("DYJetsToLL_M50_LO_ext2_part9");
-      subSampleNameVector.push_back("DYJetsToLL_M50_LO_ext_part1");
-      subSampleNameVector.push_back("DYJetsToLL_M50_LO_ext_part2");
-      subSampleNameVector.push_back("DYJetsToLL_M50_LO_ext_part3");
-      subSampleNameVector.push_back("DYJetsToLL_M50_LO_ext_part4");
-      subSampleNameVector.push_back("DYJetsToLL_M50_LO_ext_part5");
-      subSampleNameVector.push_back("DYJetsToLL_M50_LO_ext_part6");
+    /* } else if (sample == Sample::zjets_LO) { */
+    /*   subSampleNameVector.push_back("DYJetsToLL_M50_LO_ext2_part1"); */
+    /*   subSampleNameVector.push_back("DYJetsToLL_M50_LO_ext2_part10"); */
+    /*   subSampleNameVector.push_back("DYJetsToLL_M50_LO_ext2_part11"); */
+    /*   subSampleNameVector.push_back("DYJetsToLL_M50_LO_ext2_part2"); */
+    /*   subSampleNameVector.push_back("DYJetsToLL_M50_LO_ext2_part3"); */
+    /*   subSampleNameVector.push_back("DYJetsToLL_M50_LO_ext2_part4"); */
+    /*   subSampleNameVector.push_back("DYJetsToLL_M50_LO_ext2_part5"); */
+    /*   subSampleNameVector.push_back("DYJetsToLL_M50_LO_ext2_part6"); */
+    /*   subSampleNameVector.push_back("DYJetsToLL_M50_LO_ext2_part7"); */
+    /*   subSampleNameVector.push_back("DYJetsToLL_M50_LO_ext2_part8"); */
+    /*   subSampleNameVector.push_back("DYJetsToLL_M50_LO_ext2_part9"); */
+    /*   subSampleNameVector.push_back("DYJetsToLL_M50_LO_ext_part1"); */
+    /*   subSampleNameVector.push_back("DYJetsToLL_M50_LO_ext_part2"); */
+    /*   subSampleNameVector.push_back("DYJetsToLL_M50_LO_ext_part3"); */
+    /*   subSampleNameVector.push_back("DYJetsToLL_M50_LO_ext_part4"); */
+    /*   subSampleNameVector.push_back("DYJetsToLL_M50_LO_ext_part5"); */
+    /*   subSampleNameVector.push_back("DYJetsToLL_M50_LO_ext_part6"); */
     /* } else if (sample == Sample::data_doubleEG) { */
     /* } else if (sample == Sample::data_doubleMu) { */
-    } else if (sample == Sample::data_singleEG) {
-      subSampleNameVector.push_back("SingleElectron_Run2016B_part1");
-      subSampleNameVector.push_back("SingleElectron_Run2016B_part10");
-      subSampleNameVector.push_back("SingleElectron_Run2016B_part11");
-      subSampleNameVector.push_back("SingleElectron_Run2016B_part12");
-      subSampleNameVector.push_back("SingleElectron_Run2016B_part2");
-      subSampleNameVector.push_back("SingleElectron_Run2016B_part3");
-      subSampleNameVector.push_back("SingleElectron_Run2016B_part4");
-      subSampleNameVector.push_back("SingleElectron_Run2016B_part5");
-      subSampleNameVector.push_back("SingleElectron_Run2016B_part6");
-      subSampleNameVector.push_back("SingleElectron_Run2016B_part7");
-      subSampleNameVector.push_back("SingleElectron_Run2016B_part8");
-      subSampleNameVector.push_back("SingleElectron_Run2016B_part9");
-      subSampleNameVector.push_back("SingleElectron_Run2016C_part1");
-      subSampleNameVector.push_back("SingleElectron_Run2016C_part2");
-      subSampleNameVector.push_back("SingleElectron_Run2016C_part3");
-      subSampleNameVector.push_back("SingleElectron_Run2016C_part4");
-      subSampleNameVector.push_back("SingleElectron_Run2016C_part5");
-      subSampleNameVector.push_back("SingleElectron_Run2016C_part6");
-      subSampleNameVector.push_back("SingleElectron_Run2016C_part7");
-      subSampleNameVector.push_back("SingleElectron_Run2016D_part1");
-      subSampleNameVector.push_back("SingleElectron_Run2016D_part10");
-      subSampleNameVector.push_back("SingleElectron_Run2016D_part11");
-      subSampleNameVector.push_back("SingleElectron_Run2016D_part2");
-      subSampleNameVector.push_back("SingleElectron_Run2016D_part3");
-      subSampleNameVector.push_back("SingleElectron_Run2016D_part4");
-      subSampleNameVector.push_back("SingleElectron_Run2016D_part5");
-      subSampleNameVector.push_back("SingleElectron_Run2016D_part6");
-      subSampleNameVector.push_back("SingleElectron_Run2016D_part7");
-      subSampleNameVector.push_back("SingleElectron_Run2016D_part8");
-      subSampleNameVector.push_back("SingleElectron_Run2016D_part9");
-      subSampleNameVector.push_back("SingleElectron_Run2016E_part1");
-      subSampleNameVector.push_back("SingleElectron_Run2016E_part2");
-      subSampleNameVector.push_back("SingleElectron_Run2016E_part3");
-      subSampleNameVector.push_back("SingleElectron_Run2016E_part4");
-      subSampleNameVector.push_back("SingleElectron_Run2016E_part5");
-      subSampleNameVector.push_back("SingleElectron_Run2016E_part6");
-      subSampleNameVector.push_back("SingleElectron_Run2016E_part7");
-      subSampleNameVector.push_back("SingleElectron_Run2016E_part8");
-      subSampleNameVector.push_back("SingleElectron_Run2016F_part1");
-      subSampleNameVector.push_back("SingleElectron_Run2016F_part2");
-      subSampleNameVector.push_back("SingleElectron_Run2016F_part3");
-      subSampleNameVector.push_back("SingleElectron_Run2016F_part4");
-      subSampleNameVector.push_back("SingleElectron_Run2016F_part5");
-      subSampleNameVector.push_back("SingleElectron_Run2016F_part6");
-      /* subSampleNameVector.push_back("SingleElectron_Run2016G_part1"); */
-      /* subSampleNameVector.push_back("SingleElectron_Run2016G_part10"); */
-      /* subSampleNameVector.push_back("SingleElectron_Run2016G_part11"); */
-      /* subSampleNameVector.push_back("SingleElectron_Run2016G_part12"); */
-      /* subSampleNameVector.push_back("SingleElectron_Run2016G_part13"); */
-      /* subSampleNameVector.push_back("SingleElectron_Run2016G_part2"); */
-      /* subSampleNameVector.push_back("SingleElectron_Run2016G_part3"); */
-      /* subSampleNameVector.push_back("SingleElectron_Run2016G_part4"); */
-      /* subSampleNameVector.push_back("SingleElectron_Run2016G_part5"); */
-      /* subSampleNameVector.push_back("SingleElectron_Run2016G_part6"); */
-      /* subSampleNameVector.push_back("SingleElectron_Run2016G_part7"); */
-      /* subSampleNameVector.push_back("SingleElectron_Run2016G_part8"); */
-      /* subSampleNameVector.push_back("SingleElectron_Run2016G_part9"); */
-      /* subSampleNameVector.push_back("SingleElectron_Run2016H_part1"); */
-      /* subSampleNameVector.push_back("SingleElectron_Run2016H_part10"); */
-      /* subSampleNameVector.push_back("SingleElectron_Run2016H_part11"); */
-      /* subSampleNameVector.push_back("SingleElectron_Run2016H_part12"); */
-      /* subSampleNameVector.push_back("SingleElectron_Run2016H_part13"); */
-      /* subSampleNameVector.push_back("SingleElectron_Run2016H_part14"); */
-      /* subSampleNameVector.push_back("SingleElectron_Run2016H_part2"); */
-      /* subSampleNameVector.push_back("SingleElectron_Run2016H_part3"); */
-      /* subSampleNameVector.push_back("SingleElectron_Run2016H_part4"); */
-      /* subSampleNameVector.push_back("SingleElectron_Run2016H_part5"); */
-      /* subSampleNameVector.push_back("SingleElectron_Run2016H_part6"); */
-      /* subSampleNameVector.push_back("SingleElectron_Run2016H_part7"); */
-      /* subSampleNameVector.push_back("SingleElectron_Run2016H_part8"); */
-      /* subSampleNameVector.push_back("SingleElectron_Run2016H_part9"); */
-    } else if (sample == Sample::data_singleMu) { 
-      subSampleNameVector.push_back("SingleMuon_Run2016B_part1");
-      subSampleNameVector.push_back("SingleMuon_Run2016B_part10");
-      subSampleNameVector.push_back("SingleMuon_Run2016B_part11");
-      subSampleNameVector.push_back("SingleMuon_Run2016B_part12");
-      subSampleNameVector.push_back("SingleMuon_Run2016B_part13");
-      subSampleNameVector.push_back("SingleMuon_Run2016B_part14");
-      subSampleNameVector.push_back("SingleMuon_Run2016B_part15");
-      subSampleNameVector.push_back("SingleMuon_Run2016B_part16");
-      subSampleNameVector.push_back("SingleMuon_Run2016B_part17");
-      subSampleNameVector.push_back("SingleMuon_Run2016B_part18");
-      subSampleNameVector.push_back("SingleMuon_Run2016B_part19");
-      subSampleNameVector.push_back("SingleMuon_Run2016B_part2");
-      subSampleNameVector.push_back("SingleMuon_Run2016B_part20");
-      subSampleNameVector.push_back("SingleMuon_Run2016B_part21");
-      subSampleNameVector.push_back("SingleMuon_Run2016B_part22");
-      subSampleNameVector.push_back("SingleMuon_Run2016B_part23");
-      subSampleNameVector.push_back("SingleMuon_Run2016B_part3");
-      subSampleNameVector.push_back("SingleMuon_Run2016B_part4");
-      subSampleNameVector.push_back("SingleMuon_Run2016B_part5");
-      subSampleNameVector.push_back("SingleMuon_Run2016B_part6");
-      subSampleNameVector.push_back("SingleMuon_Run2016B_part7");
-      subSampleNameVector.push_back("SingleMuon_Run2016B_part8");
-      subSampleNameVector.push_back("SingleMuon_Run2016B_part9");
-      subSampleNameVector.push_back("SingleMuon_Run2016C_part1");
-      subSampleNameVector.push_back("SingleMuon_Run2016C_part10");
-      subSampleNameVector.push_back("SingleMuon_Run2016C_part2");
-      subSampleNameVector.push_back("SingleMuon_Run2016C_part3");
-      subSampleNameVector.push_back("SingleMuon_Run2016C_part4");
-      subSampleNameVector.push_back("SingleMuon_Run2016C_part5");
-      subSampleNameVector.push_back("SingleMuon_Run2016C_part6");
-      subSampleNameVector.push_back("SingleMuon_Run2016C_part7");
-      subSampleNameVector.push_back("SingleMuon_Run2016C_part8");
-      subSampleNameVector.push_back("SingleMuon_Run2016C_part9");
-      subSampleNameVector.push_back("SingleMuon_Run2016D_part1");
-      subSampleNameVector.push_back("SingleMuon_Run2016D_part2");
-      subSampleNameVector.push_back("SingleMuon_Run2016D_part3");
-      subSampleNameVector.push_back("SingleMuon_Run2016D_part4");
-      subSampleNameVector.push_back("SingleMuon_Run2016D_part5");
-      subSampleNameVector.push_back("SingleMuon_Run2016D_part6");
-      subSampleNameVector.push_back("SingleMuon_Run2016E_part1");
-      subSampleNameVector.push_back("SingleMuon_Run2016E_part10");
-      subSampleNameVector.push_back("SingleMuon_Run2016E_part11");
-      subSampleNameVector.push_back("SingleMuon_Run2016E_part12");
-      subSampleNameVector.push_back("SingleMuon_Run2016E_part13");
-      subSampleNameVector.push_back("SingleMuon_Run2016E_part14");
-      subSampleNameVector.push_back("SingleMuon_Run2016E_part2");
-      subSampleNameVector.push_back("SingleMuon_Run2016E_part3");
-      subSampleNameVector.push_back("SingleMuon_Run2016E_part4");
-      subSampleNameVector.push_back("SingleMuon_Run2016E_part5");
-      subSampleNameVector.push_back("SingleMuon_Run2016E_part6");
-      subSampleNameVector.push_back("SingleMuon_Run2016E_part7");
-      subSampleNameVector.push_back("SingleMuon_Run2016E_part8");
-      subSampleNameVector.push_back("SingleMuon_Run2016E_part9");
-      subSampleNameVector.push_back("SingleMuon_Run2016F_part1");
-      subSampleNameVector.push_back("SingleMuon_Run2016F_part10");
-      subSampleNameVector.push_back("SingleMuon_Run2016F_part11");
-      subSampleNameVector.push_back("SingleMuon_Run2016F_part2");
-      subSampleNameVector.push_back("SingleMuon_Run2016F_part3");
-      subSampleNameVector.push_back("SingleMuon_Run2016F_part4");
-      subSampleNameVector.push_back("SingleMuon_Run2016F_part5");
-      subSampleNameVector.push_back("SingleMuon_Run2016F_part6");
-      subSampleNameVector.push_back("SingleMuon_Run2016F_part7");
-      subSampleNameVector.push_back("SingleMuon_Run2016F_part8");
-      subSampleNameVector.push_back("SingleMuon_Run2016F_part9");
-      subSampleNameVector.push_back("SingleMuon_Run2016G_part1");
-      subSampleNameVector.push_back("SingleMuon_Run2016G_part10");
-      subSampleNameVector.push_back("SingleMuon_Run2016G_part11");
-      subSampleNameVector.push_back("SingleMuon_Run2016G_part12");
-      subSampleNameVector.push_back("SingleMuon_Run2016G_part13");
-      subSampleNameVector.push_back("SingleMuon_Run2016G_part14");
-      subSampleNameVector.push_back("SingleMuon_Run2016G_part15");
-      subSampleNameVector.push_back("SingleMuon_Run2016G_part16");
-      subSampleNameVector.push_back("SingleMuon_Run2016G_part17");
-      subSampleNameVector.push_back("SingleMuon_Run2016G_part18");
-      subSampleNameVector.push_back("SingleMuon_Run2016G_part19");
-      subSampleNameVector.push_back("SingleMuon_Run2016G_part2");
-      subSampleNameVector.push_back("SingleMuon_Run2016G_part20");
-      subSampleNameVector.push_back("SingleMuon_Run2016G_part21");
-      subSampleNameVector.push_back("SingleMuon_Run2016G_part22");
-      subSampleNameVector.push_back("SingleMuon_Run2016G_part23");
-      subSampleNameVector.push_back("SingleMuon_Run2016G_part3");
-      subSampleNameVector.push_back("SingleMuon_Run2016G_part4");
-      subSampleNameVector.push_back("SingleMuon_Run2016G_part5");
-      subSampleNameVector.push_back("SingleMuon_Run2016G_part6");
-      subSampleNameVector.push_back("SingleMuon_Run2016G_part7");
-      subSampleNameVector.push_back("SingleMuon_Run2016G_part8");
-      subSampleNameVector.push_back("SingleMuon_Run2016G_part9");
-      subSampleNameVector.push_back("SingleMuon_Run2016H_part1");
-      subSampleNameVector.push_back("SingleMuon_Run2016H_part10");
-      subSampleNameVector.push_back("SingleMuon_Run2016H_part11");
-      subSampleNameVector.push_back("SingleMuon_Run2016H_part12");
-      subSampleNameVector.push_back("SingleMuon_Run2016H_part13");
-      subSampleNameVector.push_back("SingleMuon_Run2016H_part14");
-      subSampleNameVector.push_back("SingleMuon_Run2016H_part15");
-      subSampleNameVector.push_back("SingleMuon_Run2016H_part17");
-      subSampleNameVector.push_back("SingleMuon_Run2016H_part18");
-      subSampleNameVector.push_back("SingleMuon_Run2016H_part19");
-      subSampleNameVector.push_back("SingleMuon_Run2016H_part2");
-      subSampleNameVector.push_back("SingleMuon_Run2016H_part20");
-      subSampleNameVector.push_back("SingleMuon_Run2016H_part21");
-      subSampleNameVector.push_back("SingleMuon_Run2016H_part22");
-      subSampleNameVector.push_back("SingleMuon_Run2016H_part23");
-      subSampleNameVector.push_back("SingleMuon_Run2016H_part24");
-      subSampleNameVector.push_back("SingleMuon_Run2016H_part25");
-      subSampleNameVector.push_back("SingleMuon_Run2016H_part26");
-      subSampleNameVector.push_back("SingleMuon_Run2016H_part27");
-      subSampleNameVector.push_back("SingleMuon_Run2016H_part28");
-      subSampleNameVector.push_back("SingleMuon_Run2016H_part29");
-      subSampleNameVector.push_back("SingleMuon_Run2016H_part3");
-      subSampleNameVector.push_back("SingleMuon_Run2016H_part30");
-      subSampleNameVector.push_back("SingleMuon_Run2016H_part31");
-      subSampleNameVector.push_back("SingleMuon_Run2016H_part32");
-      subSampleNameVector.push_back("SingleMuon_Run2016H_part4");
-      subSampleNameVector.push_back("SingleMuon_Run2016H_part5");
-      subSampleNameVector.push_back("SingleMuon_Run2016H_part6");
-      subSampleNameVector.push_back("SingleMuon_Run2016H_part7");
-      subSampleNameVector.push_back("SingleMuon_Run2016H_part8");
-      subSampleNameVector.push_back("SingleMuon_Run2016H_part9");
+    } else if (sample == Sample::data_singleEG || sample == Sample::qcd_ele_fake) {
+      subSampleNameVector.push_back("SingleElectron_07Aug17_Run2016B_part1");
+      subSampleNameVector.push_back("SingleElectron_07Aug17_Run2016B_part2");
+      subSampleNameVector.push_back("SingleElectron_07Aug17_Run2016B_part3");
+      subSampleNameVector.push_back("SingleElectron_07Aug17_Run2016B_part4");
+      subSampleNameVector.push_back("SingleElectron_07Aug17_Run2016C_part1");
+      subSampleNameVector.push_back("SingleElectron_07Aug17_Run2016C_part2");
+      subSampleNameVector.push_back("SingleElectron_07Aug17_Run2016D_part1");
+      subSampleNameVector.push_back("SingleElectron_07Aug17_Run2016D_part2");
+      subSampleNameVector.push_back("SingleElectron_07Aug17_Run2016D_part3");
+      subSampleNameVector.push_back("SingleElectron_07Aug17_Run2016E_part1");
+      subSampleNameVector.push_back("SingleElectron_07Aug17_Run2016E_part2");
+      subSampleNameVector.push_back("SingleElectron_07Aug17_Run2016F_part1");
+      subSampleNameVector.push_back("SingleElectron_07Aug17_Run2016F_part2");
+      subSampleNameVector.push_back("SingleElectron_07Aug17_Run2016G_part1");
+      subSampleNameVector.push_back("SingleElectron_07Aug17_Run2016G_part2");
+      subSampleNameVector.push_back("SingleElectron_07Aug17_Run2016G_part3");
+      subSampleNameVector.push_back("SingleElectron_07Aug17_Run2016G_part4");
+      subSampleNameVector.push_back("SingleElectron_07Aug17_Run2016H_part1");
+      subSampleNameVector.push_back("SingleElectron_07Aug17_Run2016H_part2");
+      subSampleNameVector.push_back("SingleElectron_07Aug17_Run2016H_part3");
+      subSampleNameVector.push_back("SingleElectron_07Aug17_Run2016H_part4");
+    /* } else if (sample == Sample::data_singleMu) {  */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016B_part1"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016B_part10"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016B_part11"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016B_part12"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016B_part13"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016B_part14"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016B_part15"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016B_part16"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016B_part17"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016B_part18"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016B_part19"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016B_part2"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016B_part20"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016B_part21"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016B_part22"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016B_part23"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016B_part3"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016B_part4"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016B_part5"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016B_part6"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016B_part7"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016B_part8"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016B_part9"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016C_part1"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016C_part10"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016C_part2"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016C_part3"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016C_part4"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016C_part5"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016C_part6"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016C_part7"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016C_part8"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016C_part9"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016D_part1"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016D_part2"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016D_part3"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016D_part4"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016D_part5"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016D_part6"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016E_part1"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016E_part10"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016E_part11"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016E_part12"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016E_part13"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016E_part14"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016E_part2"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016E_part3"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016E_part4"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016E_part5"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016E_part6"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016E_part7"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016E_part8"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016E_part9"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016F_part1"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016F_part10"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016F_part11"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016F_part2"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016F_part3"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016F_part4"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016F_part5"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016F_part6"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016F_part7"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016F_part8"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016F_part9"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016G_part1"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016G_part10"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016G_part11"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016G_part12"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016G_part13"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016G_part14"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016G_part15"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016G_part16"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016G_part17"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016G_part18"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016G_part19"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016G_part2"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016G_part20"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016G_part21"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016G_part22"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016G_part23"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016G_part3"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016G_part4"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016G_part5"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016G_part6"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016G_part7"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016G_part8"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016G_part9"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016H_part1"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016H_part10"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016H_part11"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016H_part12"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016H_part13"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016H_part14"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016H_part15"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016H_part17"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016H_part18"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016H_part19"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016H_part2"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016H_part20"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016H_part21"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016H_part22"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016H_part23"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016H_part24"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016H_part25"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016H_part26"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016H_part27"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016H_part28"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016H_part29"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016H_part3"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016H_part30"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016H_part31"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016H_part32"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016H_part4"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016H_part5"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016H_part6"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016H_part7"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016H_part8"); */
+    /*   subSampleNameVector.push_back("SingleMuon_Run2016H_part9"); */
     } else if (sample == Sample::top) {
       subSampleNameVector.push_back("TBar_tWch_ext");
       subSampleNameVector.push_back("TBar_tch_powheg_part1");
       subSampleNameVector.push_back("TBar_tch_powheg_part2");
       subSampleNameVector.push_back("TBar_tch_powheg_part3");
-      subSampleNameVector.push_back("TTJets_SingleLeptonFromT_ext_part1");
-      subSampleNameVector.push_back("TTJets_SingleLeptonFromT_ext_part2");
-      subSampleNameVector.push_back("TTJets_SingleLeptonFromT_ext_part3");
-      subSampleNameVector.push_back("TTJets_SingleLeptonFromT_ext_part4");
-      subSampleNameVector.push_back("TTJets_SingleLeptonFromT_ext_part5");
-      subSampleNameVector.push_back("TTJets_SingleLeptonFromT_ext_part6");
-      subSampleNameVector.push_back("TTJets_SingleLeptonFromT_ext_part7");
-      subSampleNameVector.push_back("TTJets_SingleLeptonFromT_ext_part8");
-      subSampleNameVector.push_back("TTJets_SingleLeptonFromT_ext_part9");
+      /* subSampleNameVector.push_back("TTJets_SingleLeptonFromT_ext_part1"); */
+      /* subSampleNameVector.push_back("TTJets_SingleLeptonFromT_ext_part2"); */
+      /* subSampleNameVector.push_back("TTJets_SingleLeptonFromT_ext_part3"); */
+      /* subSampleNameVector.push_back("TTJets_SingleLeptonFromT_ext_part4"); */
+      /* subSampleNameVector.push_back("TTJets_SingleLeptonFromT_ext_part5"); */
+      /* subSampleNameVector.push_back("TTJets_SingleLeptonFromT_ext_part6"); */
+      /* subSampleNameVector.push_back("TTJets_SingleLeptonFromT_ext_part7"); */
+      /* subSampleNameVector.push_back("TTJets_SingleLeptonFromT_ext_part8"); */
+      /* subSampleNameVector.push_back("TTJets_SingleLeptonFromT_ext_part9"); */
       subSampleNameVector.push_back("TTJets_SingleLeptonFromT_part1");
       subSampleNameVector.push_back("TTJets_SingleLeptonFromT_part2");
-      subSampleNameVector.push_back("TTJets_SingleLeptonFromTbar_ext_part1");
-      subSampleNameVector.push_back("TTJets_SingleLeptonFromTbar_ext_part2");
-      subSampleNameVector.push_back("TTJets_SingleLeptonFromTbar_ext_part3");
-      subSampleNameVector.push_back("TTJets_SingleLeptonFromTbar_ext_part4");
-      subSampleNameVector.push_back("TTJets_SingleLeptonFromTbar_ext_part5");
+      /* subSampleNameVector.push_back("TTJets_SingleLeptonFromTbar_ext_part1"); */
+      /* subSampleNameVector.push_back("TTJets_SingleLeptonFromTbar_ext_part2"); */
+      /* subSampleNameVector.push_back("TTJets_SingleLeptonFromTbar_ext_part3"); */
+      /* subSampleNameVector.push_back("TTJets_SingleLeptonFromTbar_ext_part4"); */
+      /* subSampleNameVector.push_back("TTJets_SingleLeptonFromTbar_ext_part5"); */
       subSampleNameVector.push_back("TTJets_SingleLeptonFromTbar_part1");
       subSampleNameVector.push_back("TTJets_SingleLeptonFromTbar_part2");
       subSampleNameVector.push_back("TToLeptons_sch_amcatnlo");
@@ -3316,7 +3422,6 @@ void buildChain(TChain* chain, vector<Double_t>& genwgtVec, const bool use8TeVSa
       string friend_treeRootFile = "";
       if (use8TeVSample) friend_treeRootFile = treePath + "friends/evVarFriend_" + subSampleNameVector[i]+ ".root";
       else friend_treeRootFile = treePath + "friends/tree_Friend_" + subSampleNameVector[i]+ ".root";
-
       chFriend->Add(TString(friend_treeRootFile.c_str()));
 
     }
@@ -3361,7 +3466,7 @@ void buildChain(TChain* chain, vector<Double_t>& genwgtVec, const bool use8TeVSa
     cout << "entries in chSfFriend = " << chSfFriend->GetEntries() << endl;
     
     if (chain->GetEntries() != chSfFriend->GetEntries()) {
-      cout << "#### Error in buildChain8TeV() function: chain and chSfFriend have different number of events." << endl;      
+      cout << "#### Error in buildChain() function: chain and chSfFriend have different number of events." << endl;      
       cout << "sample: " << getStringFromEnumSample(sample) << endl;
       cout << "chain: " << chain->GetEntries() << endl;
       cout << "chSfFriend: " << chSfFriend->GetEntries() << endl;
@@ -3373,8 +3478,6 @@ void buildChain(TChain* chain, vector<Double_t>& genwgtVec, const bool use8TeVSa
 
 
 }
-
-
 
 //=========================================================
 
