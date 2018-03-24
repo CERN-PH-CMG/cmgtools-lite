@@ -68,7 +68,7 @@ useDataGH="y"
 useHLTpt27="y" # being tested, already there for |eta|>2.1 to fix turn on effects
 runBatch="y"
 queueForBatch="cmscaf1nw"
-nameTag="_trkmtTest" 
+nameTag="_trkmtTest_fitNorm" 
 useSkimmedTrees="y" # skimmed samples are on both pccmsrm28 and eos 
 usePtCorrForScaleFactors="n" # y: use corrected pt for scale factor weight; n: use LepGood_pt (which is what would have been used if the scale factors where in a friend tree)
 # eta bin boundaries to divide regions in eta
@@ -105,8 +105,8 @@ maxentries=""  # all events if ""
 ##################################
 # to scale all mC to data use option --scaleBkgToData <arg> many tmes for every process 
 # you also need not to have any process defined as signal
-scaleAllMCtoData="" # if "", nothing is added to mcPlots.py command
-#scaleAllMCtoData="--fitData" 
+#scaleAllMCtoData="" # if "", nothing is added to mcPlots.py command
+scaleAllMCtoData="--fitData" 
 #scaleAllMCtoData=" --scaleBkgToData QCD --scaleBkgToData W --scaleBkgToData Z --scaleBkgToData Top --scaleBkgToData DiBosons " # does not seem to work as expected
 
 #############################
