@@ -513,7 +513,7 @@ bool pass_FakerateNum_debug(const bool  isEB = true,
 // tkmt_tkmetEleCorr(met_trkPt,
 // 		     met_trkPhi,
 // 		     ptElFull(LepGood1_calPt,LepGood1_eta),
-// 		     LepGood_phi, 
+// 		     LepGood1_phi, 
 // 		     pass_dxy_dz(abs(LepGood1_eta)<1.479, LepGood1_dxy, LepGood1_dz) && pass_lostHits_conVeto(LepGood1_lostHits, LepGood1_convVeto))
 
 
