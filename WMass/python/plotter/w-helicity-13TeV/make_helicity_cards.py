@@ -26,12 +26,10 @@ def writePdfSystsToMCA(mcafile,odir,vec_weight="hessWgt",syst="pdf",incl_mca='in
         print "Warning! '%s' include directive not found. Not adding pdf systematics samples to MCA file %s" %(incl_mca,MCASYSTS)
         return
 
-    for i in range(NPDFSYSTS):
-        pdfvar=str(i/2+1)
-        direction="Up" if i%2 else "Dn"
-        postfix = "_"+str(syst)+pdfvar+'_'+direction
+    for i in range(1,NPDFSYSTS+1):
+        postfix = "_%s%d" % (syst,i) # this is the change needed to make all alternative variations to be symmetrized
         mcafile_syst = open("%s/mca%s.txt" % (odir,postfix), "w")
-        mcafile_syst.write(incl_mca+postfix+'   : + ; IncludeMca='+incl_file+', AddWeight="'+vec_weight+'['+str(i)+']/genWeight", PostFix="'+postfix+'" \n')
+        mcafile_syst.write(incl_mca+postfix+'   : + ; IncludeMca='+incl_file+', AddWeight="'+vec_weight+str(i)+'", PostFix="'+postfix+'" \n')
         pdfsysts.append(postfix)
     print "written ",vec_weight," systematics into ",MCASYSTS
     return MCASYSTS
@@ -69,7 +67,7 @@ FASTTEST=''
 #FASTTEST='--max-entries 1000 '
 T=options.path
 print "used trees from: ",T
-J=4
+J=1
 MCA = args[0]
 CUTFILE = args[1]
 fitvar = args[2]
@@ -141,6 +139,8 @@ if options.signalCards:
                     logfile=outdir+"/jobs/"+dcname+".log"
                     srcfile_op = open(srcfile,"w")
                     srcfile_op.write("#! /bin/sh\n")
+                    srcfile_op.write("ulimit -c 0 -S\n")
+                    srcfile_op.write("ulimit -c 0 -H\n")
                     srcfile_op.write("cd {cmssw};\neval $(scramv1 runtime -sh);\ncd {dir};\n".format( 
                             dir = os.getcwd(), cmssw = os.environ['CMSSW_BASE']))
                     srcfile_op.write("python {dir}/makeShapeCards.py {args} \n".format(
@@ -173,6 +173,8 @@ if options.bkgdataCards:
             logfile=outdir+"/jobs/"+dcname+".log"
             srcfile_op = open(srcfile,"w")
             srcfile_op.write("#! /bin/sh\n")
+            srcfile_op.write("ulimit -c 0 -S\n")
+            srcfile_op.write("ulimit -c 0 -H\n")
             srcfile_op.write("cd {cmssw};\neval $(scramv1 runtime -sh);\ncd {dir};\n".format( 
                     dir = os.getcwd(), cmssw = os.environ['CMSSW_BASE']))
             srcfile_op.write("python {dir}/makeShapeCards.py {args} \n".format(

@@ -16,7 +16,7 @@ dowhat = "plots"
 
 TREES = "-F Friends '{P}/friends/tree_Friend_{cname}.root' "
 TREESONLYSKIMW = "-P /eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3_WENUSKIM_V5_TINY"
-TREESONLYSKIMZ = "-P /eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3_ZEESKIM_V5"
+TREESONLYSKIMZ = "-P /eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3_ZEESKIM_V6"
 TREESONLYFULL  = "-P /eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3"
 
 def base(selection,useSkim=True):
@@ -47,7 +47,7 @@ def base(selection,useSkim=True):
         GO="%s --sP wplus_wy "%GO
         if dowhat in ["plots","ntuple"]: GO+=" w-helicity-13TeV/wmass_e/wenu_plots.txt "        
     elif selection=='zee':
-        GO="%s w-helicity-13TeV/wmass_e/mca-80X-skims.txt w-helicity-13TeV/wmass_e/zee.txt "%CORE
+        GO="%s w-helicity-13TeV/wmass_e/mca-80X-skims.txt w-helicity-13TeV/wmass_e/skim_zee.txt "%CORE
         GO="%s -W 'puw2016_nTrueInt_36fb(nTrueInt)*trgSF_We(LepGood1_pdgId,LepGood1_pt,LepGood1_eta,2)*leptonSF_We(LepGood1_pdgId,LepGood1_pt,LepGood1_eta)*leptonSF_We(LepGood2_pdgId,LepGood2_pt,LepGood2_eta)' --sp 'Z' "%GO
         if dowhat in ["plots","ntuple"]: GO+=" w-helicity-13TeV/wmass_e/zee_plots.txt "
     else:
@@ -60,11 +60,25 @@ def procs(GO,mylist):
 def sigprocs(GO,mylist):
     return procs(GO,mylist)+' --showIndivSigs --noStackSig'
 def runIt(GO,name,plots=[],noplots=[]):
-    if   dowhat == "plots":  print 'python mcPlots.py',"--pdir %s/%s"%(ODIR,name),GO,' '.join(['--sP \'%s\''%p for p in plots]),' '.join(['--xP \'%s\''%p for p in noplots]),' '.join(sys.argv[3:])
-    elif dowhat == "yields": print 'echo %s; python mcAnalysis.py'%name,GO,' '.join(sys.argv[3:])
-    elif dowhat == "dumps":  print 'echo %s; python mcDump.py'%name,GO,' '.join(sys.argv[3:])
-    elif dowhat == "ntuple": print 'echo %s; python mcNtuple.py'%name,GO,' '.join(sys.argv[3:])
-
+    if   dowhat == "plots":  print 'python mcPlots.py',"--pdir %s/%s"%(ODIR,name),GO,' '.join(['--sP \'%s\''%p for p in plots]),' '.join(['--xP \'%s\''%p for p in noplots])
+    elif dowhat == "yields": print 'echo %s; python mcAnalysis.py'%name,GO
+    elif dowhat == "dumps":  print 'echo %s; python mcDump.py'%name,GO
+    elif dowhat == "ntuple": print 'echo %s; python mcNtuple.py'%name,GO
+def submitIt(GO,name,plots=[],noplots=[],opts=None):
+    outdir=ODIR+"/jobs/"
+    if not os.path.isdir(outdir): os.mkdir(outdir)
+    srcfile = outdir+name+".sh"
+    logfile = outdir+name+".log"
+    srcfile_op = open(srcfile,"w")
+    srcfile_op.write("#! /bin/sh\n")
+    srcfile_op.write("ulimit -c 0\n")
+    srcfile_op.write("cd {cmssw};\neval $(scramv1 runtime -sh);\ncd {dir};\n".format( 
+            dir = os.getcwd(), cmssw = os.environ['CMSSW_BASE']))
+    srcfile_op.write("python mcPlots.py "+" --pdir %s/%s "%(ODIR,name)+GO+' '.join(['--sP \'%s\''%p for p in plots])+' '.join(['--xP \'%s\''%p for p in noplots])+'\n')
+    os.system("chmod a+x "+srcfile)
+    cmd = "bsub -q 8nh -o {dir}/{logfile} {dir}/{srcfile}\n".format(dir=os.getcwd(), logfile=logfile, srcfile=srcfile)
+    if opts.dryRun: print "[DRY-RUN]: ", cmd
+    else: os.system(cmd)
 def add(GO,opt):
     return '%s %s'%(GO,opt)
 def remove(GO,opt):
@@ -85,6 +99,12 @@ def fulltrees(x,selection):
 allow_unblinding = True
 
 if __name__ == '__main__':
+
+    from optparse import OptionParser
+    parser = OptionParser(usage="%prog outdir what [options] ")
+    parser.add_option("--dry-run", dest="dryRun",    action="store_true", default=False, help="Do not run the job, only print the command");
+    parser.add_option("-q", "--queue",    dest="queue",     type="string", default=None, help="Run jobs on lxbatch instead of locally");
+    (options, args) = parser.parse_args()
 
     torun = sys.argv[2]
 
@@ -107,9 +127,18 @@ if __name__ == '__main__':
         if 'plus' in torun: x = swapcharge(x,'plus')
         elif 'minus' in torun: x = swapcharge(x,'minus')
         if 'nosel' in torun:
-            x = add(x," -U 'alwaystrue' ")
+             x = add(x," -U 'alwaystrue' ")
         if 'fullsel' in torun:
             x = add(x," -W 'puw2016_nTrueInt_36fb(nTrueInt)*trgSF_We(LepGood1_pdgId,LepGood1_pt,LepGood1_eta,2)*leptonSF_We(LepGood1_pdgId,LepGood1_pt,LepGood1_eta)' ")
+        if torun.endswith('pdfs'):
+            for i in xrange(60):
+                wgt = 'hessWgt[%d]/genWeight' % i
+                output = '%s/%s_pdf%i.root' % (ODIR,torun,i)
+                xw = x
+                xw = add(xw," -W '{wgt}' -o {output}".format(wgt=wgt,output=output))
+                submitIt( xw,'%s_%s' % (torun,i), opts=options )
 
     plots = [] # if empty, to all the ones of the txt file
-    runIt(x,'%s'%torun,plots)
+    if not torun.endswith('pdfs'): 
+        if options.queue: submitIt(x,'%s'%torun,plots,opts=options)
+        else: runIt(x,'%s'%torun,plots)
