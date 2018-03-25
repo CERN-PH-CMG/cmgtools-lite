@@ -2,25 +2,6 @@
 
 using namespace std;
 
-// the core of this macro is makeFakeRateGraphPlotsAndSmoothing(), which is at the bottom of this code and calls all the rest
-
-// the idea is to get the files with the fake rate graphs and plot them together (plots produced with the fake rate script suck ;-) )
-// you need to pass:
-// inputFilePath: path to root file with fake rate graphs ( /path/to/some/where/, which contains the file(s) for the different eta bins)
-// isMuon: a boolean flag to decide if you have muons, or electrons (but now there are some hardcoded pieces that suppose you use electrons :( )
-// etaBinBoundariesList: a string with eta bin boundaries separated by commas (no space), e.g.: "0.0,1.479,2.1,2.5" (please always use at least one decimal, like 1.0)
-// saveToFile: boolean flag to decide whether to save smoothed FR fit parameters in file (you might just want to do plots to see how they look)
-// inputLuminosity: luminosity to be shown in the plot (a negative value doens't print any number, just '13 TeV' in the canvas)
-// inputFilePathForQCD_tmp: if empty, take QCD from same file as data, otherwise use this path (the reason is that you might want to use a different pt
-//   binning for QCD because you have much less statistics and in this case the graphs are in another path)
-
-
-//=======================================================================
-
-// following part is for the plotting the fake rate
-
-//=====================================================================
-
 
 //================================================================
 
