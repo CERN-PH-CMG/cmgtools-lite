@@ -7,12 +7,17 @@ using namespace std;
 // this is done by doEfficiencyFromTH2 function: by passing option "revert = true" the efficiency is defined using integral from Y' to last bin
 // overflow and underflow are considered in the integrals   
 
-void makeEffStudy(const string& outDir = "www/wmass/13TeV/efficiency_background/neg/", 
-		  const string& inputFileName = "www/wmass/13TeV/efficiency_background/neg/tmp_plots.root",
-		  const string& histName_prefix = "pfmt_etal1",
-		  const TString& processesList = "Z,TauDecaysW,DiBosons,data_fakes,Top,Wminus_left,Wminus_right,Wminus_long,Wplus_left,Wplus_right,Wplus_long",
-		  const TString& ycutList = "30,40,50"  // use integer
-		  ) 
+// use makeEffStudy(...) below
+// need path of input root file, name of root file and name of output folder
+// if output folder is passed as "SAME", it is considered as input folder
+// input file is supposed to be in a folder named neg/ or pos/ (no need to explicitly pass that, you can just pass the folder before that)
+
+void realMakeEffStudy(const string& outDir = "", 
+		      const string& inputFileName = "",
+		      const string& histName_prefix = "",
+		      const TString& processesList = "",
+		      const TString& ycutList = ""  // use integer
+		      ) 
 {
 
   createPlotDirAndCopyPhp(outDir);
@@ -29,6 +34,7 @@ void makeEffStudy(const string& outDir = "www/wmass/13TeV/efficiency_background/
     processes.push_back(str);
     cout << j << " --> " << processes[j] << endl;
   }
+
 
   string varOnYaxis = histName_prefix.substr(0,histName_prefix.find("_"));
   cout << "variable on Y axis --> " << varOnYaxis << endl;
@@ -163,5 +169,32 @@ void makeEffStudy(const string& outDir = "www/wmass/13TeV/efficiency_background/
   inputFile->Close();
 
   cout << endl;
+
+}
+
+
+//========================================================
+
+void makeEffStudy(const string& inputFilePath_tmp = "www/wmass/13TeV/efficiency_pfmt_HLT27/",
+		  const string& inputFileName = "tmp_plots.root", 
+		  const string& outDir_tmp = "SAME", 
+		  const string& histName_prefix = "pfmt_etal1",
+		  const TString& processesList = "Z,TauDecaysW,DiBosons,data_fakes,Top,Wminus_left,Wminus_right,Wminus_long,Wplus_left,Wplus_right,Wplus_long",
+		  const TString& ycutList = "30,40,50"  // use integer
+		  ) 
+{
+
+  vector<string> chargeDir;
+  chargeDir.push_back("neg/");
+  chargeDir.push_back("pos/");
+
+  for (UInt_t i = 0; i < chargeDir.size(); ++i) {
+
+    string inputFilePath = inputFilePath_tmp + chargeDir[i];
+    string outDir = ((outDir_tmp == "SAME") ? inputFilePath : (outDir_tmp+chargeDir[i]));
+
+    realMakeEffStudy(outDir, inputFilePath+inputFileName, histName_prefix, processesList, ycutList);     
+
+  }
 
 }
