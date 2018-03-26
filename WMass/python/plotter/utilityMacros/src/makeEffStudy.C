@@ -26,26 +26,15 @@ void realMakeEffStudy(const string& outDir = "",
   Bool_t isPlusCharge = (outDir.find("/neg/") == string::npos) ? true : false;
   cout << "Charge --> " << (isPlusCharge ? "positive" : "negative") << endl;
 
-  cout << "Processes to plot: " << endl;
-  TObjArray* array = processesList.Tokenize(",");
   vector<TString> processes;
-  for (Int_t j = 0; j < array->GetEntries(); j++) {
-    TString str = ((TObjString *) array->At(j))->String();
-    processes.push_back(str);
-    cout << j << " --> " << processes[j] << endl;
-  }
-
+  cout << "Processes to plot: " << endl;
+  getVectorTStringFromTStringList(processes,  processesList, ",", true);
 
   string varOnYaxis = histName_prefix.substr(0,histName_prefix.find("_"));
   cout << "variable on Y axis --> " << varOnYaxis << endl;
-  cout << "Selected cuts on " << varOnYaxis << ": " << endl;
-  array = ycutList.Tokenize(",");
   vector<Int_t> ycuts;
-  for (Int_t j = 0; j < array->GetEntries(); j++) {
-    TString str = ((TObjString *) array->At(j))->String();
-    ycuts.push_back(str.Atoi());
-    cout << j << " --> " << ycuts[j] << endl;
-  }
+  cout << "Selected cuts on " << varOnYaxis << ": " << endl;
+  getVectorIntFromTStringList(ycuts, ycutList, ",", true);
  
   string xAxisName = "";
 
