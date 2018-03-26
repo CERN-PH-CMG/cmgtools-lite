@@ -6,7 +6,8 @@ using namespace std;
 void makeVariableEfficiencyAndROC(const string& inputFilePath_tmp = "/afs/cern.ch/user/m/mciprian/www/wmass/13TeV/distribution/TREES_1LEP_80X_V3_WENUSKIM_V5/whelicity_signal_region/full2016dataBH_puAndTrgSf_ptResScale_25_03_2018_restrictPt_HLT27_mtPlots/eta_0p0_1p479/",
 				  const string& fileName = "test_plots.root",
 				  const TString& varList = "trkmt_trkmetEleCorr_dy,pfmt", 
-				  const TString& legendList = "Trk M_{T},PF M_{T}", 
+				  const TString& legendList = "Trk M_{T},PF M_{T}",
+				  const Bool_t efficiency_XtoInf = true, 
 				  const string& outDir_tmp = "SAME" 
 				  ) 
 {
@@ -78,7 +79,6 @@ void makeVariableEfficiencyAndROC(const string& inputFilePath_tmp = "/afs/cern.c
     // 21 points for efficiency (from 0 to 1 , step of 5%)
     TGraph* gr_wjets = new TGraph(21);
     TGraph* gr_qcd = new TGraph(gr_wjets->GetN());
-    Bool_t efficiency_XtoInf = true;   
 
     quantiles(gr_wjets,hwjets, efficiency_XtoInf);
     quantiles(gr_qcd,hqcd, efficiency_XtoInf);
@@ -175,7 +175,7 @@ void makeVariableEfficiencyAndROC(const string& inputFilePath_tmp = "/afs/cern.c
 
   }
 
-  vector<Double_t> legCoord = {0.15, 0.6, 0.55, 0.8};
+  vector<Double_t> legCoord = {0.5, 0.15, 0.9, 0.35};
   drawGraph(gr_roc_S_B, "background efficiency (QCD)","signal efficiency (W)", "roc_MT", outDir, leg_roc, legCoord);
 
   inputFile->Close();
