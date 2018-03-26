@@ -489,7 +489,10 @@ string getStringFromEnumSample(const Sample& sample = Sample::zjets) {
 
 // ============================================
 
-void quantiles(TGraph*gr = NULL, TH1* h = NULL) {
+void quantiles(TGraph*gr = NULL, TH1* h = NULL, const Bool_t invert = false) {
+
+  // TH1::GetQuantiles() compute efficiencies xq_i from 0 to x
+  // If invert = true, set y values of graph as 1 - xq_i
 
   const Int_t nq = gr->GetN(); // 20 bins
 
@@ -502,20 +505,20 @@ void quantiles(TGraph*gr = NULL, TH1* h = NULL) {
   h->GetQuantiles(nq,yq,xq);
 
   for (Int_t i=0 ; i<nq ; i++) 
-    gr->SetPoint(i,yq[i],xq[i]); // put efficiency on y axis
-  
+    if (invert) gr->SetPoint(i,yq[i],1.0-xq[i]); // put efficiency on y axis
+    else        gr->SetPoint(i,yq[i],xq[i]); // put efficiency on y axis 
 
 }
 
 //=============================================
 
-Double_t doSoverB(TGraph* gsob = NULL, TH1* hwjets = NULL, TH1* hqcd = NULL) {
+Double_t doSoverB(TGraph* gsob = NULL, TH1* hsig = NULL, TH1* hbkg = NULL, const Bool_t invert = false) {
 
   const UInt_t npoints = gsob->GetN(); 
 
   Double_t max = 0.0;
-  Double_t xin = hwjets->GetBinCenter(1);
-  Double_t step = (hwjets->GetBinCenter(hwjets->GetNbinsX()) - xin)/npoints;
+  Double_t xin = hsig->GetBinCenter(1);
+  Double_t step = (hsig->GetBinCenter(hsig->GetNbinsX()) - xin)/npoints;
   Double_t sob = 0.0;
   Double_t x_i = 0.0;
   Double_t s = 0.0; 
@@ -523,8 +526,13 @@ Double_t doSoverB(TGraph* gsob = NULL, TH1* hwjets = NULL, TH1* hqcd = NULL) {
 
   for (UInt_t i = 0; i <npoints; i++ ) {
     x_i = xin + ((Double_t)i) * step;
-    s = hwjets->Integral(0, hwjets->FindFixBin(x_i));
-    b = hqcd->Integral(0, hqcd->FindFixBin(x_i)); 
+    if (invert) {
+      s = hsig->Integral(hsig->FindFixBin(x_i), 1 + hsig->GetNbinsX());
+      b = hbkg->Integral(hbkg->FindFixBin(x_i), 1 + hbkg->GetNbinsX()); 
+    } else {
+      s = hsig->Integral(0, hsig->FindFixBin(x_i));
+      b = hbkg->Integral(0, hbkg->FindFixBin(x_i)); 
+    }
     sob = s / b;
     //cout << "x: " << x_i << "    s: " << s << "    b: " << b << "    s/b: " << sob << endl;
     gsob->SetPoint(i,x_i, sob);
@@ -558,7 +566,7 @@ void doEfficiencyFromTH2(TH2* h2 = NULL, const TH2* h2orig = NULL, const Bool_t 
 
 //=============================================
 
-void makeROC(TGraph* gr = NULL, const TH1* hsTmp = NULL, const TH1* hbTmp = NULL) {
+void makeROC(TGraph* gr = NULL, const TH1* hsTmp = NULL, const TH1* hbTmp = NULL, const Bool_t invert = false) {
 
   // clone original histogram
   // this is only needed if the histogram passed as argument is declared const in this function
@@ -580,7 +588,8 @@ void makeROC(TGraph* gr = NULL, const TH1* hsTmp = NULL, const TH1* hbTmp = NULL
   for (Int_t ipoint = 0; ipoint < nq; ipoint++) {
 
     Double_t effB = hb->Integral(0, hb->FindFixBin(yq[ipoint])) / integralB;
-    gr->SetPoint(ipoint, effB, xq[ipoint]);
+    if (invert) gr->SetPoint(ipoint, 1.0-effB, 1.0-xq[ipoint]);
+    else        gr->SetPoint(ipoint, effB, xq[ipoint]);
 
   }
 
@@ -3553,7 +3562,56 @@ void adjustSettings_CMS_lumi(const string& outputDir = "./") {
 
 //=============================================================                                 
 
+void getVectorTStringFromTStringList(vector<TString>& vec, const TString& stringList = "", const string& separator = ",", const Bool_t printElements = true) {
 
+  // split a TString on some separator and fill a vector of TString with the pieces
+  // separator might be a comma ","
+  
+  TObjArray* array = stringList.Tokenize(separator.c_str());
+
+  for (Int_t j = 0; j < array->GetEntries(); j++) {
+    TString str = ((TObjString *) array->At(j))->String();
+    vec.push_back(str);
+    if (printElements) cout << j << " --> " << vec[j] << endl;
+  }
+
+}
+
+//=============================================================                                 
+
+void getVectorCStringFromTStringList(vector<string>& vec, const TString& stringList = "", const string& separator = ",", const Bool_t printElements = true) {
+
+  // split a TString on some separator and fill a vector of TString with the pieces
+  // separator might be a comma ","
+  
+  TObjArray* array = stringList.Tokenize(separator.c_str());
+
+  for (Int_t j = 0; j < array->GetEntries(); j++) {
+    TString str = ((TObjString *) array->At(j))->String();
+    vec.push_back(str.Data());
+    if (printElements) cout << j << " --> " << vec[j] << endl;
+  }
+
+}
+
+//=============================================================                                 
+
+void getVectorIntFromTStringList(vector<Int_t>& vec, const TString& stringList = "", const string& separator = ",", const Bool_t printElements = true) {
+
+  // split a TString on some separator and fill a vector of Int_t with the pieces
+  // separator might be a comma ","
+  
+  TObjArray* array = stringList.Tokenize(separator.c_str());
+
+  for (Int_t j = 0; j < array->GetEntries(); j++) {
+    TString str = ((TObjString *) array->At(j))->String();
+    vec.push_back(str.Atoi());
+    if (printElements) cout << j << " --> " << vec[j] << endl;
+  }
+
+}
+
+//=============================================================                                 
 
 
 #endif
