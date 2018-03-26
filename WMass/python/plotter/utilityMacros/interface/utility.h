@@ -1319,10 +1319,10 @@ void drawTH1pair(TH1* h1, TH1* h2,
 
   }    
 
-  delete canvas;
   delete pad2;
   delete line;
   if (yAxisName == "a.u.") delete pvtxt;
+  delete canvas;
 
 }
 
@@ -1552,8 +1552,8 @@ void draw_nTH1(vector<TH1*> vecHist1d = {},
 
   }    
 
-  delete canvas;
   delete pad2;
+  delete canvas;
 
 }
 
@@ -1760,10 +1760,10 @@ void drawTH1dataMCstack(TH1* h1 = NULL, vector<TH1*> vecMC = {},
     canvas->SetLogy(0);
   }
 
-  delete canvas;
-  delete pad2;
   delete hMCstack;
   delete line;
+  delete pad2;
+  delete canvas;
 
 }
 
@@ -2090,9 +2090,9 @@ void drawTH1dataMCstackAndNoStack(TH1* h1 = NULL, vector<TH1*> vecMC = {}, vecto
     canvas->SetLogy(0);
   }
 
-  delete canvas;
-  delete pad2;
   delete line;
+  delete pad2;
+  delete canvas;
 
 }
 
