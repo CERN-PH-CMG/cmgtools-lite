@@ -96,7 +96,7 @@ if __name__ == "__main__":
 
     c.SetLeftMargin(0.09)
     c.SetRightMargin(0.11)
-    c.SetBottomMargin(0.14)
+    c.SetBottomMargin(0.15)
 
     ## some more ROOT "magic"
     parlist = fitresult.floatParsFinal()
@@ -129,6 +129,9 @@ if __name__ == "__main__":
     pars_l = sorted(pars_l, key = lambda x: int(x.split('_')[-1]), reverse=False)
 
     l_sorted_new = pars_r + pars_l + long_par + rest
+    print "######################################"
+    print "fitresult.floatParsFinal(): " + str(l_params)
+    print "######################################"
 
     helicities = ["right", "left", "long"]
 
@@ -157,7 +160,7 @@ if __name__ == "__main__":
             if l.startswith("norm"):
                 new_l = "W%s%s" % (helID, chargeID)
             elif l.startswith("eff_unc"):
-                new_l = "eff W%s%s" % (helID, chargeID)
+                new_l = "#deltaeff W%s%s" % (helID, chargeID)
             elif l.startswith("lumi"):
                 new_l = "lumi W%s%s" % (helID, chargeID)
 
@@ -199,6 +202,9 @@ if __name__ == "__main__":
 
         plist2 = fitresult.constPars()
         lpars2 = list(plist2.at(i).GetName() for i in range(len(plist2)))
+        print "######################################"
+        print "fitresult.constPars(): " + str(lpars2)
+        print "######################################"
 
         hel_pars2 = list(p for p in lpars2 if 'norm_W' in p)
         long_par2 = list(a for a in lpars2 if 'long' in a)
@@ -214,7 +220,7 @@ if __name__ == "__main__":
         pars_l = pars_l + lpars2
         pars_r = list(reversed(pars_r)) + list(reversed(rpars2))
 
-        if not len(ybins)-1 == len(sorted_rap):
+        if not  (2 * (len(ybins)-1)) == len(sorted_rap):
             print 'SOMETHING WENT TERRIBLY WRONG'
             print "len(ybins)-1 = %d;   len(sorted_rap) = %d" % (len(ybins)-1, len(sorted_rap))
 
