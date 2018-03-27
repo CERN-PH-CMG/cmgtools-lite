@@ -2,11 +2,22 @@
 
 using namespace std;
 
+// this macro compares efficiency due to a cut on some variables.
+// pass comma separated list of variables to be compared in varList (these names are the prefix of histograms in root file made wth mcPlots.py)
+//
+// pass signal and backgrounds in signalBackgroundList: this macro compares one signal with one background, but if you pass more of any, they are 
+// summed up in one component
+// use ":" to separate signals and backgrounds, and "," to separate the single signals and the single backgrounds
+//
+// efficiency_XtoInf is true if you define cut efficiency as integral from X to infinity over full integral, false to define numerator as integral from 0 to X
+// if outDir_tmp == "SAME", it is considered as inputFilePath_tmp
 
 void makeVariableEfficiencyAndROC(const string& inputFilePath_tmp = "/afs/cern.ch/user/m/mciprian/www/wmass/13TeV/distribution/TREES_1LEP_80X_V3_WENUSKIM_V5/whelicity_signal_region/full2016dataBH_puAndTrgSf_ptResScale_25_03_2018_restrictPt_HLT27_mtPlots/eta_0p0_1p479/",
 				  const string& fileName = "test_plots.root",
 				  const TString& varList = "trkmt_trkmetEleCorr_dy,pfmt", 
 				  const TString& legendList = "Trk M_{T},PF M_{T}",
+				  const TString& signalBackgroundList = "W:data_fakes_fakes", // S and B separated by ":", multiple signals or backgrounds separated by ","
+				  const TString& signalBackgroundLegendList = "W+jets,QCD (FR)",
 				  const Bool_t efficiency_XtoInf = true, 
 				  const string& outDir_tmp = "SAME" 
 				  ) 
@@ -18,10 +29,20 @@ void makeVariableEfficiencyAndROC(const string& inputFilePath_tmp = "/afs/cern.c
   createPlotDirAndCopyPhp(outDir);
   adjustSettings_CMS_lumi(outDir);
 
-
   vector<string> vars;
   cout << "Variables to plot: " << endl;
   getVectorCStringFromTStringList(vars, varList, ",", true);
+
+  vector<TString> signalBackground;
+  //cout << "Signals and backgrounds: " << endl;
+  getVectorTStringFromTStringList(signalBackground, signalBackgroundList, ":", false);
+
+  vector<string> signals;
+  cout << "Signals: " << endl;
+  getVectorCStringFromTStringList(signals, signalBackground[0], ",", true);
+  vector<string> backgrounds;
+  cout << "Backgrounds: " << endl;
+  getVectorCStringFromTStringList(backgrounds, signalBackground[1], ",", true);
 
   gROOT->SetBatch(kTRUE);
   TH1::SetDefaultSumw2(); //all the following histograms will automatically call TH1::Sumw2()                  
@@ -44,33 +65,39 @@ void makeVariableEfficiencyAndROC(const string& inputFilePath_tmp = "/afs/cern.c
   if (legendList == "") getVectorCStringFromTStringList(leg_roc,  varList, ",", false);
   else                  getVectorCStringFromTStringList(leg_roc,  legendList, ",", false);
 
-  TH1D* hqcd = NULL;
-  TH1D* hwjets = NULL;
+  vector<string> sigBkgLegendEntry;
+  getVectorCStringFromTStringList(sigBkgLegendEntry, signalBackgroundLegendList, ",", false);
+
+  TH1D* hbackground = NULL;
+  TH1D* hsignal = NULL;
+  TH1D* htmp = NULL;
 
   for (UInt_t i = 0; i < vars.size(); i++) {
 
     //if ( i > 0 ) break;  for tests with only first entry
 
-    //////////////////////////
-    // add suffix about the region in canvas title
+    // hsignal = (TH1D*) getHistCloneFromFile(inputFile, Form("%s_W",vars[i].c_str()), "");
+    // hbackground = (TH1D*) getHistCloneFromFile(inputFile, Form("%s_data_fakes_fakes",vars[i].c_str()), "");
 
-    vector<TH1*> stackElementMC;  // first element is the one on top of the stack
-    vector<string> stackLegendMC;
-
-    hwjets = (TH1D*) getHistCloneFromFile(inputFile, Form("%s_W",vars[i].c_str()), "");
-    hqcd = (TH1D*) getHistCloneFromFile(inputFile, Form("%s_data_fakes_fakes",vars[i].c_str()), "");
-
-    checkNotNullPtr(hwjets,"hwjets");
-    checkNotNullPtr(hqcd,"hqcd");
+    // checkNotNullPtr(hsignal,"hsignal");
+    // checkNotNullPtr(hbackground,"hbackground");
      
-    addOutliersInHistoRange(hwjets);
-    addOutliersInHistoRange(hqcd);
+    for (UInt_t isig = 0; isig < signals.size(); ++isig) {
+      htmp = (TH1D*) getHistCloneFromFile(inputFile, Form("%s_%s",vars[i].c_str(),signals[isig].c_str()), "");
+      checkNotNullPtr(htmp,Form("hsignal:%s",signals[isig].c_str()));
+      if (isig == 0) hsignal = (TH1D*) htmp->Clone("hsignal");
+      else           hsignal->Add(htmp);
+    }
 
-    stackElementMC.push_back(hwjets);
-    stackElementMC.push_back(hqcd);
-     
-    stackLegendMC.push_back("W+jets");
-    stackLegendMC.push_back("QCD (FR)");
+    for (UInt_t ibkg = 0; ibkg < backgrounds.size(); ++ibkg) {
+      htmp = (TH1D*) getHistCloneFromFile(inputFile, Form("%s_%s",vars[i].c_str(),backgrounds[ibkg].c_str()), "");
+      checkNotNullPtr(htmp,Form("hbackground:%s",backgrounds[ibkg].c_str()));
+      if (ibkg == 0) hbackground = (TH1D*) htmp->Clone("hbackground");
+      else           hbackground->Add(htmp);
+    }
+
+    addOutliersInHistoRange(hsignal);
+    addOutliersInHistoRange(hbackground);
 
     ///////////////////////////////////
     // efficiencies
@@ -80,14 +107,14 @@ void makeVariableEfficiencyAndROC(const string& inputFilePath_tmp = "/afs/cern.c
     TGraph* gr_wjets = new TGraph(21);
     TGraph* gr_qcd = new TGraph(gr_wjets->GetN());
 
-    quantiles(gr_wjets,hwjets, efficiency_XtoInf);
-    quantiles(gr_qcd,hqcd, efficiency_XtoInf);
+    quantiles(gr_wjets,hsignal, efficiency_XtoInf);
+    quantiles(gr_qcd,hbackground, efficiency_XtoInf);
 
     gr_roc_S_B.push_back(new TGraph(gr_wjets->GetN())); // efficiency from 0 to 100 % included
-    makeROC(gr_roc_S_B.back(), hwjets, hqcd, efficiency_XtoInf);
+    makeROC(gr_roc_S_B.back(), hsignal, hbackground, efficiency_XtoInf);
 
     TGraph* gr_sob = new TGraph(gr_wjets->GetN());
-    Double_t max_sob = doSoverB(gr_sob, hwjets, hqcd, efficiency_XtoInf);
+    Double_t max_sob = doSoverB(gr_sob, hsignal, hbackground, efficiency_XtoInf);
 
     TCanvas* canvas = new TCanvas("canvas","",600,600);
     canvas->SetRightMargin(0.06);
@@ -102,7 +129,7 @@ void makeVariableEfficiencyAndROC(const string& inputFilePath_tmp = "/afs/cern.c
     gr_wjets->SetMarkerColor(kRed);
     gr_wjets->SetLineColor(kRed);
     gr_wjets->SetFillColor(kRed);
-    gr_wjets->SetTitle(Form("quantiles;%s;efficiency",hwjets->GetXaxis()->GetTitle()));
+    gr_wjets->SetTitle(Form("quantiles;%s;efficiency",hsignal->GetXaxis()->GetTitle()));
 
     gr_wjets->Draw("alp");
 
@@ -117,8 +144,8 @@ void makeVariableEfficiencyAndROC(const string& inputFilePath_tmp = "/afs/cern.c
     leg.SetFillColor(0);
     leg.SetFillStyle(0);
     leg.SetBorderSize(0);
-    leg.AddEntry(gr_wjets,"W","LF");
-    leg.AddEntry(gr_qcd,"QCD (FR)","LF");
+    leg.AddEntry(gr_wjets,sigBkgLegendEntry[0].c_str(),"LF");
+    leg.AddEntry(gr_qcd,sigBkgLegendEntry[1].c_str(),"LF");
     leg.Draw("same");
     //    canvas->RedrawAxis("sameaxis");
 
@@ -176,7 +203,7 @@ void makeVariableEfficiencyAndROC(const string& inputFilePath_tmp = "/afs/cern.c
   }
 
   vector<Double_t> legCoord = {0.5, 0.15, 0.9, 0.35};
-  drawGraph(gr_roc_S_B, "background efficiency (QCD)","signal efficiency (W)", "roc_MT", outDir, leg_roc, legCoord);
+  drawGraph(gr_roc_S_B, Form("background efficiency: %s",sigBkgLegendEntry[1].c_str()),Form("signal efficiency: %s",sigBkgLegendEntry[0].c_str()), "roc", outDir, leg_roc, legCoord);
 
   inputFile->Close();
 
