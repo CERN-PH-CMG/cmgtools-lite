@@ -1,5 +1,5 @@
 import ROOT, datetime, array, os
-
+import re
 
 ## usage:
 ## python symmetrizeMatrix.py --infile multidimfit.root --outdir ~/www/private/w-helicity-13TeV/correlationMatrices/ --suffix <suffix>  --dc <input_datacard>
@@ -90,8 +90,13 @@ if __name__ == "__main__":
 
     h2_corr = fitresult.correlationHist()
 
-    c = ROOT.TCanvas()
+    c = ROOT.TCanvas("c","",1200,800)
     ROOT.gStyle.SetPalette(55)
+    ROOT.gStyle.SetNumberContours(40); # default is 20 (values on palette go from -1 to 1)
+
+    c.SetLeftMargin(0.09)
+    c.SetRightMargin(0.11)
+    c.SetBottomMargin(0.14)
 
     ## some more ROOT "magic"
     parlist = fitresult.floatParsFinal()
@@ -125,18 +130,53 @@ if __name__ == "__main__":
 
     l_sorted_new = pars_r + pars_l + long_par + rest
 
+    helicities = ["right", "left", "long"]
+
     for il,l in enumerate(l_sorted_new):
-        new_l = l.lstrip('norm_').replace('right','WR').replace('left','WL').replace('Ybin_','')
-        if 'Ybin' in l:
-            name_l = l.split('_')[1:]
-            new_l  = name_l[0].replace('plus','+').replace('minus','-')+' '+name_l[-4]
-            new_l += ' bin'+(name_l[-2] if 'left' in l else name_l[-1])
+
+        #####################
+        ### by default, keep the same name 
+        new_l = l.replace('CMS_We_','')
+        ### make some names shorter
+        if any(h in l for h in helicities):    
+            chargeID = ""
+            helID    = ""
+            ### Evaluate charge  
+            if 'plus' in l:
+                chargeID = "+"
+            elif 'minus' in l:
+                chargeID = "-"
+            ### evaluate helicity
+            if 'left' in l:
+                helID = "L"
+            elif 'right' in l:
+                helID = "R"
+            elif 'long' in l:
+                helID = "0"
+            ### evaluate some specific parameters
+            if l.startswith("norm"):
+                new_l = "W%s%s" % (helID, chargeID)
+            elif l.startswith("eff_unc"):
+                new_l = "eff W%s%s" % (helID, chargeID)
+            elif l.startswith("lumi"):
+                new_l = "lumi W%s%s" % (helID, chargeID)
+
+            ### evaluate rapidity bin
+            if 'Ybin_' in l:
+                regex = re.compile('Ybin_'+'([0-9]*)')
+                regexp_out = regex.findall(l)
+                if len(regexp_out):
+                    YbinNumber = "Y%d" % int(regexp_out[0])
+                    #print "bin: " + str(YbinNumber)   
+                    new_l = new_l + " " + YbinNumber
+        #####################
+
         h2_new.GetXaxis().SetBinLabel(il+1, new_l)
         h2_new.GetYaxis().SetBinLabel(il+1, new_l)
+        h2_new.GetYaxis().SetLabelSize(0.025)
         for il2,l2 in enumerate(l_sorted_new):
             binx = h2_corr.GetXaxis().FindBin(l)
             biny = h2_corr.GetYaxis().FindBin(l2)
-            new_l2 = l2.lstrip('norm_').replace('right','WR ').replace('left','WL ')
             h2_new.SetBinContent(il+1, il2+1, h2_corr.GetBinContent(binx, biny))
 
     h2_new.Draw('colz')
