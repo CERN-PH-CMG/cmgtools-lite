@@ -70,7 +70,11 @@ if __name__ == "__main__":
     parser.add_option(     '--suffix', dest='suffix', default='', type='string', help='suffix for the correlation matrix')
     parser.add_option(     '--dc'    , dest='dc'    , default='', type='string', help='the corresponding datacard (for the rates)')
     parser.add_option(     '--sf'    , dest='scaleFile'    , default='', type='string', help='path of file with the scaling/unfolding')
+    parser.add_option(     '--no-date-name', dest="noDateInName", action="store_true", default=False, help="Do not append date in output name (by default it does)")
     (options, args) = parser.parse_args()
+
+    if options.noDateInName:
+        date = ""
 
     if not os.path.isdir(options.outdir):
         os.system('mkdir -p {od}'.format(od=options.outdir))
@@ -87,6 +91,7 @@ if __name__ == "__main__":
     h2_corr = fitresult.correlationHist()
 
     c = ROOT.TCanvas()
+    ROOT.gStyle.SetPalette(55)
 
     ## some more ROOT "magic"
     parlist = fitresult.floatParsFinal()
@@ -171,6 +176,7 @@ if __name__ == "__main__":
 
         if not len(ybins)-1 == len(sorted_rap):
             print 'SOMETHING WENT TERRIBLY WRONG'
+            print "len(ybins)-1 = %d;   len(sorted_rap) = %d" % (len(ybins)-1, len(sorted_rap))
 
         ## get the rates and processes from the datacard. they're necessarily in the same order
         dcfile = open(options.dc, 'r')
@@ -196,10 +202,10 @@ if __name__ == "__main__":
         for p in sorted_rap:
             tmp_procname = '_'.join(p.split('_')[1:])
             if float(rates[procs.index(tmp_procname)]) > 1: # means that the rates are SFs wrt the expected ones
-                print 'I FIGURE YOU FIT RELATIVE RATES (i.e. rate parameters around 1.0)!'
+                #print 'I FIGURE YOU FIT RELATIVE RATES (i.e. rate parameters around 1.0)!'
                 totalrate += float(rates[procs.index(tmp_procname)])
             else: 
-                print 'I FIGURE YOU FIT ABSOLUTE RATES (i.e. big numbers)!'
+                #print 'I FIGURE YOU FIT ABSOLUTE RATES (i.e. big numbers)!'
                 fitAbsoluteRates = True
         if fitAbsoluteRates:
             for ip,p in enumerate(sorted_rap):

@@ -2,6 +2,8 @@
 #incl_sigincl  : + ; IncludeMca="w-helicity-13TeV/wmass_e/mca-includes/mca-80X-wenu-sigincl.txt", SkipMe=True
 
 incl_sig      : + ; IncludeMca="w-helicity-13TeV/wmass_e/mca-includes/mca-80X-wenu-sig.txt"
+#incl_sig      : + ; IncludeMca="w-helicity-13TeV/wmass_e/mca-includes/mca-80X-wenu-sig_LO.txt"
+#incl_sig      : + ; IncludeMca="w-helicity-13TeV/wmass_e/mca-includes/mca-80X-wenu-sig_lessFiles.txt"
 incl_bkgmc    : + ; IncludeMca="w-helicity-13TeV/wmass_e/mca-includes/mca-80X-wenu-bkgmc.txt"
 incl_datafakes: + ; IncludeMca="w-helicity-13TeV/wmass_e/mca-includes/mca-data-legacy2016.txt", FakeRate="w-helicity-13TeV/wmass_e/fakeRate-frdata_smooth.txt", Label="Fakes", FillColor=ROOT.kGray+2, FillStyle=3005, NormSystematic=0.30, PostFix='_fakes'
 
