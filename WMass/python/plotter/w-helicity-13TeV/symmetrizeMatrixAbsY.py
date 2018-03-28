@@ -284,7 +284,7 @@ if __name__ == "__main__":
                     arr_ehiReco.append(abs(tmp_par.getAsymErrorHi())/totalrate/ybinwidths[ip]*tmp_eff)
                     arr_eloReco.append(abs(tmp_par.getAsymErrorLo() if tmp_par.hasAsymError() else tmp_par.getAsymErrorHi())/totalrate/ybinwidths[ip]*tmp_eff)
 
-                    tmp_par_init = fitresult.floatParsFinal().find(p) if p in l_sorted_new else fitresult.constPars().find(p)
+                    tmp_par_init = fitresult.floatParsInit().find(p) if p in l_sorted_new else fitresult.constPars().find(p)
                     arr_relv .append(tmp_par.getVal()/tmp_par_init.getVal())
                     arr_rello.append(abs(tmp_par.getAsymErrorHi())/tmp_par_init.getVal())
                     arr_relhi.append(abs(tmp_par.getAsymErrorLo() if tmp_par.hasAsymError() else tmp_par.getAsymErrorHi())/tmp_par_init.getVal())
