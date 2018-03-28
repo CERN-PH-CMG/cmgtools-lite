@@ -59,8 +59,6 @@ if __name__ == "__main__":
     ROOT.gROOT.SetBatch()
     ROOT.gStyle.SetOptStat(0)
 
-    ROOT.gStyle.SetPalette(1)
-
     date = datetime.date.today().isoformat()
 
     from optparse import OptionParser
@@ -286,8 +284,8 @@ if __name__ == "__main__":
 
                     tmp_par_init = fitresult.floatParsInit().find(p) if p in l_sorted_new else fitresult.constPars().find(p)
                     arr_relv .append(tmp_par.getVal()/tmp_par_init.getVal())
-                    arr_rello.append(abs(tmp_par.getAsymErrorHi())/tmp_par_init.getVal())
-                    arr_relhi.append(abs(tmp_par.getAsymErrorLo() if tmp_par.hasAsymError() else tmp_par.getAsymErrorHi())/tmp_par_init.getVal())
+                    arr_rello.append(abs(tmp_par.getAsymErrorLo())/tmp_par_init.getVal() if tmp_par.hasAsymError() else tmp_par.getAsymErrorHi())/tmp_par_init.getVal()
+                    arr_relhi.append(abs(tmp_par.getAsymErrorHi()))
                 else:
                     tmp_rate = float(rates[procs.index(tmp_procname)])
                     arr_val.append(tmp_rate/totalrate/ybinwidths[ip]*tmp_par.getVal())
