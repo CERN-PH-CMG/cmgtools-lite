@@ -165,4 +165,4 @@ class lepCalibratedEnergyProducer(Module):
 eleRelIsoEA = lambda : lepIsoEAProducer("%s/src/RecoEgamma/ElectronIdentification/data/Summer16/effAreaElectrons_cone03_pfNeuHadronsAndPhotons_80X.txt" % os.environ['CMSSW_BASE'])
 lepQCDAwayJet = lambda : lepAwayJetProducer(jetSel = lambda jet : jet.pt > 30 and abs(jet.eta) < 2.4,
                                             pairSel =lambda lep, jet: deltaR(lep.eta,lep.phi, jet.eta, jet.phi) > 0.7)
-eleCalibrated = lambda : lepCalibratedEnergyProducer("CMGTools/WMass/python/postprocessing/data/leptonScale/el/Run2016_legacyrereco")
+eleCalibrated = lambda : lepCalibratedEnergyProducer("CMGTools/WMass/python/postprocessing/data/leptonScale/el/Legacy2016_07Aug2017_FineEtaR9_ele")
