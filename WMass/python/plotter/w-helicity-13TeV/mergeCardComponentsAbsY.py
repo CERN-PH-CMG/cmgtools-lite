@@ -448,6 +448,7 @@ if __name__ == "__main__":
          print 'adding a nuisance group for the fixed rateParams'
          with open(cardfile,'a+') as finalCardfile:
              finalCardfile.write('\nfixedY group = {fixed} '.format(fixed=' '.join(i.strip() for i in fixedPOIs)))
+             finalCardfile.write('\nallY group = {all} '.format(all=' '.join(i.strip().replace('_%s_'%options.bin,'_') for i in allPOIs)))
              finalCardfile.write('\n\n## end of file')
          #finalCardfile.close()
      
