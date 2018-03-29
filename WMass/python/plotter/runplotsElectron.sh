@@ -49,10 +49,11 @@ notFRnumSel="-A eleKin failFRnumSel 'LepGood1_customId == 0' " #looseID + iso<0.
 #Wsel="-A eleKin WregionSel '(${ptcorr})>30 && met_pt>20 && pt_2(${ptcorr}, LepGood1_phi, met_trkPt, met_trkPhi ) < 40 && mt_2(met_pt,met_phi,${ptcorr},LepGood1_phi) < 110'"
 #Wsel="-A eleKin WregionSel '(${ptcorr})>30 && met_pt>20'"
 Wsel="-A eleKin WregionSel 'ptElFull(LepGood1_calPt,LepGood1_eta) > 30 && ptElFull(LepGood1_calPt,LepGood1_eta) < 45'"
+HLT27sel="-R HLT_SingleEL HLT_Ele27 'HLT_BIT_HLT_Ele27_WPTight_Gsf_v == 1'"
 
 mtCutApplControlRegion="-A eleKin pfmt 'mt_2(met_pt,met_phi,${ptcorr},LepGood1_phi) < 60'"
 #mtCutApplControlRegion="-A eleKin pfmt 'mt_2(met_pt,met_phi,${ptcorr},LepGood1_phi) > 40 && mt_2(met_pt,met_phi,${ptcorr},LepGood1_phi) < 60'"
-mtCutApplSignalRegion="-A eleKin pfmt 'mt_2(met_pt,met_phi,${ptcorr},LepGood1_phi) > 60'"
+mtCutApplSignalRegion="-A eleKin pfmt 'mt_2(met_pt,met_phi,${ptcorr},LepGood1_phi) > 30'"
 
 ##############################################################
 ##############################################################
@@ -64,15 +65,17 @@ mtCutApplSignalRegion="-A eleKin pfmt 'mt_2(met_pt,met_phi,${ptcorr},LepGood1_ph
 # Some general options
 ##################################
 useDataGH="y"
+useHLTpt27="y" # being tested, already there for |eta|>2.1 to fix turn on effects
 runBatch="y"
 queueForBatch="cmscaf1nw"
+nameTag="_trkmtTest_fitNorm" 
 useSkimmedTrees="y" # skimmed samples are on both pccmsrm28 and eos 
 usePtCorrForScaleFactors="n" # y: use corrected pt for scale factor weight; n: use LepGood_pt (which is what would have been used if the scale factors where in a friend tree)
 # eta bin boundaries to divide regions in eta
 etaBinBoundaries=("0.0" "1.479" "2.1" "2.5")
 #etaBinBoundaries=("0.0" "2.5")
 today=`date +"%d_%m_%Y"`
-batchDirName="plots_${today}"  # name of directory to create inside jobsLog
+batchDirName="plots_${today}${nameTag}"  # name of directory to create inside jobsLog
 ##################################
 ##################################
 # MCA files
@@ -92,8 +95,9 @@ excludeprocesses="Z_LO,W_LO" # decide whether to use NLO (amc@NLO) or LO (MadGra
 #selectplots=""  # if empty it uses all plots in cfg file
 #selectplots="nJetClean,ptl1,etal1,pfmet,tkmet,ele1ID,awayJet_pt,wpt_tk,ele1dxy"  # if empty it uses all plots in cfg file
 #selectplots="ptl1,etal1,pfmet,trkmt_trkmetEleCorr,pfmt,wpt_tk,nJetClean,ele1Iso04,ele1ID"  # if empty it uses all plots in cfg file
-#selectplots="ptl1,etal1,pfmet,pfmt"
-selectplots="ptl1,etal1,pfmt"
+#selectplots="ptl1,etal1,pfmet,pfmt,trkmt_trkmetEleCorr,tkmet"
+selectplots="trkmt_trkmetEleCorr_dxy_dy,trkmt_trkmetEleCorr,trkmt"
+#selectplots="ptl1,etal1"
 #maxentries="150000" # max int number is > 2*10^9
 maxentries=""  # all events if ""
 #
@@ -101,8 +105,8 @@ maxentries=""  # all events if ""
 ##################################
 # to scale all mC to data use option --scaleBkgToData <arg> many tmes for every process 
 # you also need not to have any process defined as signal
-scaleAllMCtoData="" # if "", nothing is added to mcPlots.py command
-#scaleAllMCtoData="--fitData" 
+#scaleAllMCtoData="" # if "", nothing is added to mcPlots.py command
+scaleAllMCtoData="--fitData" 
 #scaleAllMCtoData=" --scaleBkgToData QCD --scaleBkgToData W --scaleBkgToData Z --scaleBkgToData Top --scaleBkgToData DiBosons " # does not seem to work as expected
 
 #############################
@@ -131,7 +135,7 @@ declare -A qcdFromFR=()
 # COMPUTATION REGION
 #----------------------------
 regionKey["FRcompRegion"]="FRcompRegion"
-runRegion["FRcompRegion"]="y"
+runRegion["FRcompRegion"]="n"
 regionName["FRcompRegion"]="FR_computation_region"
 skimTreeDir["FRcompRegion"]="TREES_1LEP_80X_V3_FRELSKIM_V5"
 outputDir["FRcompRegion"]="full2016dataBH_puAndTrgSf_ptResScale_${today}_highEtaEElowHLTpt"
@@ -191,11 +195,11 @@ qcdFromFR["WmassSignalRegion"]="y"
 # WHELICITY SIGNAL REGION (avoid possibly all kinematic selections)
 #----------------------------
 regionKey["WhelicitySignalRegion"]="WhelicitySignalRegion"
-runRegion["WhelicitySignalRegion"]="n"
+runRegion["WhelicitySignalRegion"]="y"
 regionName["WhelicitySignalRegion"]="whelicity_signal_region"
 skimTreeDir["WhelicitySignalRegion"]="TREES_1LEP_80X_V3_WENUSKIM_V5"
-outputDir["WhelicitySignalRegion"]="full2016dataBH_puAndTrgSf_ptResScale_${today}_restrictPt"
-regionCuts["WhelicitySignalRegion"]=" -X nJet30 ${FRnumSel} ${Wsel} "
+outputDir["WhelicitySignalRegion"]="full2016dataBH_puAndTrgSf_ptResScale_${today}_restrictPt_HLT27"
+regionCuts["WhelicitySignalRegion"]=" -X nJet30 ${FRnumSel} ${Wsel}" # ${mtCutApplSignalRegion}"
 qcdFromFR["WhelicitySignalRegion"]="y"
 #
 #############################
@@ -326,6 +330,10 @@ if [[ "X${selectplots}" != "X" ]]; then
     commonCommand="${commonCommand} --sP ${selectplots}"
 fi
 
+if [[ "${useHLTpt27}" == "y" ]]; then
+    commonCommand="${commonCommand} ${HLT27sel}"
+fi
+
 nEtaBoundaries="${#etaBinBoundaries[@]}"
 let "nEtaBins_minus1=${nEtaBoundaries}-2"
 
@@ -342,7 +350,7 @@ do
 	thisRegionName="${regionName[${region}]}"
         # cutThisRegion="${regionCuts[${region}]}"
         # skimtreeThisRegion="${skimTreeDir[$region]}"
-        # outputdirThisRegion="${outputDir[$region]}"
+        outputdirThisRegion="${outputDir[$region]}${nameTag}"
         # echo "runThisRegion: ${runThisRegion}"
         # echo "thisRegionName: ${thisRegionName}"
         # echo "cutThisRegion: ${cutThisRegion}"
@@ -392,7 +400,7 @@ do
 	    cp ${baseBatchScript} ${srcBatchFileName}
 
 	    etaRangeCut=" -A eleKin ${etabin} 'abs(LepGood1_eta) > ${etaBinBoundaries[$i]} && abs(LepGood1_eta) < ${etaBinBoundaries[($i+1)]}' "
-	    regionCommand_eta="${regionCommand} --pdir ${plotterPath}/plots/distribution/${treedir}/${thisRegionName}/${outputDir[${region}]}/${etabin}/ ${etaRangeCut}" 
+	    regionCommand_eta="${regionCommand} --pdir ${plotterPath}/plots/distribution/${treedir}/${thisRegionName}/${outputdirThisRegion}/${etabin}/ ${etaRangeCut}" 
 	    echo "${regionCommand_eta}" >> ${srcBatchFileName}
 	    echo "" >> ${srcBatchFileName}
 	    ######

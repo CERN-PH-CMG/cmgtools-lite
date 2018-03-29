@@ -1,5 +1,5 @@
 import ROOT, datetime, array, os
-
+import re
 
 ## usage:
 ## python symmetrizeMatrix.py --infile multidimfit.root --outdir ~/www/private/w-helicity-13TeV/correlationMatrices/ --suffix <suffix>  --dc <input_datacard>
@@ -59,8 +59,6 @@ if __name__ == "__main__":
     ROOT.gROOT.SetBatch()
     ROOT.gStyle.SetOptStat(0)
 
-    ROOT.gStyle.SetPalette(1)
-
     date = datetime.date.today().isoformat()
 
     from optparse import OptionParser
@@ -70,7 +68,11 @@ if __name__ == "__main__":
     parser.add_option(     '--suffix', dest='suffix', default='', type='string', help='suffix for the correlation matrix')
     parser.add_option(     '--dc'    , dest='dc'    , default='', type='string', help='the corresponding datacard (for the rates)')
     parser.add_option(     '--sf'    , dest='scaleFile'    , default='', type='string', help='path of file with the scaling/unfolding')
+    parser.add_option(     '--no-date-name', dest="noDateInName", action="store_true", default=False, help="Do not append date in output name (by default it does)")
     (options, args) = parser.parse_args()
+
+    if options.noDateInName:
+        date = ""
 
     if not os.path.isdir(options.outdir):
         os.system('mkdir -p {od}'.format(od=options.outdir))
@@ -86,7 +88,13 @@ if __name__ == "__main__":
 
     h2_corr = fitresult.correlationHist()
 
-    c = ROOT.TCanvas()
+    c = ROOT.TCanvas("c","",1200,800)
+    ROOT.gStyle.SetPalette(55)
+    ROOT.gStyle.SetNumberContours(40); # default is 20 (values on palette go from -1 to 1)
+
+    c.SetLeftMargin(0.09)
+    c.SetRightMargin(0.11)
+    c.SetBottomMargin(0.15)
 
     ## some more ROOT "magic"
     parlist = fitresult.floatParsFinal()
@@ -119,19 +127,57 @@ if __name__ == "__main__":
     pars_l = sorted(pars_l, key = lambda x: int(x.split('_')[-1]), reverse=False)
 
     l_sorted_new = pars_r + pars_l + long_par + rest
+    print "######################################"
+    print "fitresult.floatParsFinal(): " + str(l_params)
+    print "######################################"
+
+    helicities = ["right", "left", "long"]
 
     for il,l in enumerate(l_sorted_new):
-        new_l = l.lstrip('norm_').replace('right','WR').replace('left','WL').replace('Ybin_','')
-        if 'Ybin' in l:
-            name_l = l.split('_')[1:]
-            new_l  = name_l[0].replace('plus','+').replace('minus','-')+' '+name_l[-4]
-            new_l += ' bin'+(name_l[-2] if 'left' in l else name_l[-1])
+
+        #####################
+        ### by default, keep the same name 
+        new_l = l.replace('CMS_We_','')
+        ### make some names shorter
+        if any(h in l for h in helicities):    
+            chargeID = ""
+            helID    = ""
+            ### Evaluate charge  
+            if 'plus' in l:
+                chargeID = "+"
+            elif 'minus' in l:
+                chargeID = "-"
+            ### evaluate helicity
+            if 'left' in l:
+                helID = "L"
+            elif 'right' in l:
+                helID = "R"
+            elif 'long' in l:
+                helID = "0"
+            ### evaluate some specific parameters
+            if l.startswith("norm"):
+                new_l = "W%s%s" % (helID, chargeID)
+            elif l.startswith("eff_unc"):
+                new_l = "#deltaeff W%s%s" % (helID, chargeID)
+            elif l.startswith("lumi"):
+                new_l = "lumi W%s%s" % (helID, chargeID)
+
+            ### evaluate rapidity bin
+            if 'Ybin_' in l:
+                regex = re.compile('Ybin_'+'([0-9]*)')
+                regexp_out = regex.findall(l)
+                if len(regexp_out):
+                    YbinNumber = "Y%d" % int(regexp_out[0])
+                    #print "bin: " + str(YbinNumber)   
+                    new_l = new_l + " " + YbinNumber
+        #####################
+
         h2_new.GetXaxis().SetBinLabel(il+1, new_l)
         h2_new.GetYaxis().SetBinLabel(il+1, new_l)
+        h2_new.GetYaxis().SetLabelSize(0.025)
         for il2,l2 in enumerate(l_sorted_new):
             binx = h2_corr.GetXaxis().FindBin(l)
             biny = h2_corr.GetYaxis().FindBin(l2)
-            new_l2 = l2.lstrip('norm_').replace('right','WR ').replace('left','WL ')
             h2_new.SetBinContent(il+1, il2+1, h2_corr.GetBinContent(binx, biny))
 
     h2_new.Draw('colz')
@@ -154,6 +200,9 @@ if __name__ == "__main__":
 
         plist2 = fitresult.constPars()
         lpars2 = list(plist2.at(i).GetName() for i in range(len(plist2)))
+        print "######################################"
+        print "fitresult.constPars(): " + str(lpars2)
+        print "######################################"
 
         hel_pars2 = list(p for p in lpars2 if 'norm_W' in p)
         long_par2 = list(a for a in lpars2 if 'long' in a)
@@ -169,8 +218,9 @@ if __name__ == "__main__":
         pars_l = pars_l + lpars2
         pars_r = list(reversed(pars_r)) + list(reversed(rpars2))
 
-        if not len(ybins)-1 == len(sorted_rap):
+        if not  (2 * (len(ybins)-1)) == len(sorted_rap):
             print 'SOMETHING WENT TERRIBLY WRONG'
+            print "len(ybins)-1 = %d;   len(sorted_rap) = %d" % (len(ybins)-1, len(sorted_rap))
 
         ## get the rates and processes from the datacard. they're necessarily in the same order
         dcfile = open(options.dc, 'r')
@@ -196,10 +246,10 @@ if __name__ == "__main__":
         for p in sorted_rap:
             tmp_procname = '_'.join(p.split('_')[1:])
             if float(rates[procs.index(tmp_procname)]) > 1: # means that the rates are SFs wrt the expected ones
-                print 'I FIGURE YOU FIT RELATIVE RATES (i.e. rate parameters around 1.0)!'
+                #print 'I FIGURE YOU FIT RELATIVE RATES (i.e. rate parameters around 1.0)!'
                 totalrate += float(rates[procs.index(tmp_procname)])
             else: 
-                print 'I FIGURE YOU FIT ABSOLUTE RATES (i.e. big numbers)!'
+                #print 'I FIGURE YOU FIT ABSOLUTE RATES (i.e. big numbers)!'
                 fitAbsoluteRates = True
         if fitAbsoluteRates:
             for ip,p in enumerate(sorted_rap):
@@ -232,10 +282,10 @@ if __name__ == "__main__":
                     arr_ehiReco.append(abs(tmp_par.getAsymErrorHi())/totalrate/ybinwidths[ip]*tmp_eff)
                     arr_eloReco.append(abs(tmp_par.getAsymErrorLo() if tmp_par.hasAsymError() else tmp_par.getAsymErrorHi())/totalrate/ybinwidths[ip]*tmp_eff)
 
-                    tmp_par_init = fitresult.floatParsFinal().find(p) if p in l_sorted_new else fitresult.constPars().find(p)
+                    tmp_par_init = fitresult.floatParsInit().find(p) if p in l_sorted_new else fitresult.constPars().find(p)
                     arr_relv .append(tmp_par.getVal()/tmp_par_init.getVal())
-                    arr_rello.append(abs(tmp_par.getAsymErrorHi())/tmp_par_init.getVal())
-                    arr_relhi.append(abs(tmp_par.getAsymErrorLo() if tmp_par.hasAsymError() else tmp_par.getAsymErrorHi())/tmp_par_init.getVal())
+                    arr_rello.append(abs(tmp_par.getAsymErrorLo())/tmp_par_init.getVal() if tmp_par.hasAsymError() else tmp_par.getAsymErrorHi())/tmp_par_init.getVal()
+                    arr_relhi.append(abs(tmp_par.getAsymErrorHi()))
                 else:
                     tmp_rate = float(rates[procs.index(tmp_procname)])
                     arr_val.append(tmp_rate/totalrate/ybinwidths[ip]*tmp_par.getVal())

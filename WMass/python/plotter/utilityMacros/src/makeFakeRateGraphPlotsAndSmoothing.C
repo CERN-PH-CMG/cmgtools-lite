@@ -408,7 +408,7 @@ void doFakeRateSmoothing(const string& outputDIR_tmp = "./",
 
 //================================================================
 
-void makeFakeRateGraphPlotsAndSmoothing(const string& inputFilePath = "www/wmass/13TeV/fake-rate/test/SRtrees_new/fakeRate_36fb_PUTrgSF_pfmtfix_pt_granular_pfmetLess20/el/comb/", 
+void makeFakeRateGraphPlotsAndSmoothing(const string& inputFilePath = "www/wmass/13TeV/fake-rate/test/SRtrees_new/fakeRate_pfmtfix_pt_granular_pfmet20_HLT27/el/comb/", 
 					const string& graphPrefix = "fakeRateNumerator_el_vs_pt_granular",
 					const string& mtDefinition = "pfmtfix",
 					const Bool_t isMuon = false, 

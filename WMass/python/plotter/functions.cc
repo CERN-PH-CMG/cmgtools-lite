@@ -513,9 +513,9 @@ bool pass_FakerateNum_debug(const bool  isEB = true,
 // tkmt_tkmetEleCorr(met_trkPt,
 // 		     met_trkPhi,
 // 		     ptElFull(LepGood1_calPt,LepGood1_eta),
-// 		     LepGood_phi, 
+// 		     LepGood1_phi, 
 // 		     pass_dxy_dz(abs(LepGood1_eta)<1.479, LepGood1_dxy, LepGood1_dz) && pass_lostHits_conVeto(LepGood1_lostHits, LepGood1_convVeto))
-
+// The correct definition is actually requiring |dz| < 0.1, which is the condition to be fullfilled to have a charge particle used for TrkMET in out ntuples
 
 float tkmt_tkmetEleCorr(float tkmet_pt, float tkmet_phi, float lep_pt, float lep_phi, bool eleTrackIsVertexCompatible) {
 
