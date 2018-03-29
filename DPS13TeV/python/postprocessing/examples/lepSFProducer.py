@@ -3,8 +3,8 @@ import os
 import numpy as np
 ROOT.PyConfig.IgnoreCommandLineOptions = True
 
-from CMGTools.WMass.postprocessing.framework.datamodel import Collection 
-from CMGTools.WMass.postprocessing.framework.eventloop import Module
+from CMGTools.DPS13TeV.postprocessing.framework.datamodel import Collection 
+from CMGTools.DPS13TeV.postprocessing.framework.eventloop import Module
 
 class lepSFProducer(Module):
     def __init__(self, muonSelectionTag, electronSelectionTag):
@@ -23,8 +23,8 @@ class lepSFProducer(Module):
             print "Not foreseen WP: ",electronSelectionTag
             el_f = []
         el_h = ["EGamma_SF2D", "EGamma_SF2D"]
-        mu_f = ["%s/src/CMGTools/WMass/python/postprocessing/data/leptonSF/" % os.environ['CMSSW_BASE'] + f for f in mu_f]
-        el_f = ["%s/src/CMGTools/WMass/python/postprocessing/data/leptonSF/" % os.environ['CMSSW_BASE'] + f for f in el_f]
+        mu_f = ["%s/src/CMGTools/DPS13TeV/python/postprocessing/data/leptonSF/" % os.environ['CMSSW_BASE'] + f for f in mu_f]
+        el_f = ["%s/src/CMGTools/DPS13TeV/python/postprocessing/data/leptonSF/" % os.environ['CMSSW_BASE'] + f for f in el_f]
 
         self.mu_f = ROOT.std.vector(str)(len(mu_f))
         self.mu_h = ROOT.std.vector(str)(len(mu_f))
@@ -35,7 +35,7 @@ class lepSFProducer(Module):
 
         if "/LeptonEfficiencyCorrector_cc.so" not in ROOT.gSystem.GetLibraries():
             print "Load C++ Worker"
-            ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/WMass/python/postprocessing/helpers/LeptonEfficiencyCorrector.cc+" % os.environ['CMSSW_BASE'])
+            ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/DPS13TeV/python/postprocessing/helpers/LeptonEfficiencyCorrector.cc+" % os.environ['CMSSW_BASE'])
     def beginJob(self):
         self._worker_mu = ROOT.LeptonEfficiencyCorrector(self.mu_f,self.mu_h)
         self._worker_el = ROOT.LeptonEfficiencyCorrector(self.el_f,self.el_h)
@@ -76,16 +76,16 @@ class lepTrgSFProducer(Module):
         self.var = prefer1Dvar
         if "/WeightCalculatorFromHistogram_cc.so" not in ROOT.gSystem.GetLibraries():
             print "Load C++ Worker"
-            ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/WMass/python/postprocessing/helpers/WeightCalculatorFromHistogram.cc+" % os.environ['CMSSW_BASE'])
+            ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/DPS13TeV/python/postprocessing/helpers/WeightCalculatorFromHistogram.cc+" % os.environ['CMSSW_BASE'])
     def beginJob(self):
         ver=None
         for k,v in self.versions.iteritems(): 
             if k[0] < self.maxrun < k[1]: ver = v
         if ver:
-            f = "%s/src/CMGTools/WMass/python/postprocessing/data/leptonSF/el_trg/%s/%s/passHLT/eff1D.root" % (os.environ['CMSSW_BASE'],ver,self.var)
+            f = "%s/src/CMGTools/DPS13TeV/python/postprocessing/data/leptonSF/el_trg/%s/%s/passHLT/eff1D.root" % (os.environ['CMSSW_BASE'],ver,self.var)
             h = "s1c_eff"
             if self.dim==2:
-                f2D = "%s/src/CMGTools/WMass/python/postprocessing/data/leptonSF/el_trg/%s/sf/passHLT/eff2D.root" % (os.environ['CMSSW_BASE'],ver)
+                f2D = "%s/src/CMGTools/DPS13TeV/python/postprocessing/data/leptonSF/el_trg/%s/sf/passHLT/eff2D.root" % (os.environ['CMSSW_BASE'],ver)
                 if os.path.isfile(f2D):
                     f = f2D
                     h = "s2c_eff"

@@ -8,7 +8,7 @@ from PhysicsTools.HeppyCore.utils.deltar import deltaPhi
 
 ROOT.gROOT.ProcessLine('.L %s/src/CMGTools/DPS13TeV/python/plotter/functions.cc+' % os.environ['CMSSW_BASE']);
 
-class BDT_DPS_fakes(Module):
+class BDT_DPS(Module):
     def __init__(self):
         self._MVAs = {}
         self._vars= [
@@ -37,8 +37,11 @@ class BDT_DPS_fakes(Module):
             ## MVAVar('v10:= abs(deltaPhi(LepGood_phi[0],LepGood_phi[1]))'),
             ## MVAVar('v11:= abs(dphi_2(LepGood_pt[0],LepGood_eta[0],LepGood_phi[0],LepGood_pt[1],LepGood_eta[1],LepGood_phi[1],2))'),
         ]
-        P='/afs/cern.ch/user/a/anmehta/public/'
-        self._MVAs['BDT_DPS_fakes'] = MVATool('BDT', P+'TMVAClassification_BDT.weights.xml', self._vars, rarity=True) 
+        Pwz='/afs/cern.ch/user/v/vmariani/public/'
+        Pfakes='/afs/cern.ch/user/a/anmehta/public/'
+        #self._MVAs['BDT_DPS_WZ']    = MVATool('BDT', Pwz   +'TMVAClassification_BDT_pythia.weights.xml', self._vars, rarity=True) #for the pythia2016 weights
+        self._MVAs['BDT_DPS_WZ']    = MVATool('BDT', Pwz   +'TMVAClassification_BDT_herwNOPUweight.weights.xml', self._vars, rarity=True) #for the herwig2017 weights
+        self._MVAs['BDT_DPS_fakes'] = MVATool('BDT', Pfakes+'TMVAClassification_BDT.weights.xml', self._vars, rarity=True) 
 
     ## new stuff
     def beginJob(self):
@@ -49,13 +52,15 @@ class BDT_DPS_fakes(Module):
         #self.initReaders(inputTree) # initReaders must be called in beginFile
         self.out = wrappedOutputTree
         self.out.branch('BDT_DPS_fakes', "F")
+        self.out.branch('BDT_DPS_WZ', "F")
         pass
     def endFile(self, inputFile, outputFile, inputTree, wrappedOutputTree):
         pass
     def analyze(self, event):
         mvadict = dict([ (name, mva(event)) for name, mva in self._MVAs.iteritems()])
         self.out.fillBranch('BDT_DPS_fakes', mvadict['BDT_DPS_fakes'])
+        self.out.fillBranch('BDT_DPS_WZ'   , mvadict['BDT_DPS_WZ'])
         return True
 
-BDT_fakes = lambda : BDT_DPS_fakes()
+BDT_WZ_and_fakes = lambda : BDT_DPS()
         

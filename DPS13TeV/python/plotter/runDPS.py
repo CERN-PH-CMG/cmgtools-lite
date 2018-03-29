@@ -109,7 +109,9 @@ def runplots(trees, friends, targetdir, fmca, fcut, fplots, enabledcuts, disable
     treestring = ' '.join(' -P '+ t for t in list(trees))
     cmd  = ' mcPlots.py --s2v -f -j 6 -l {lumi} --pdir {td} {trees} {fmca} {fcut} {fplots}'.format(lumi=lumi, td=targetdir, trees=treestring, fmca=fmca, fcut=fcut, fplots=fplots)
     if friends:
-        cmd += ' -F Friends {friends}/tree_Friend_{{cname}}.root'.format(friends=friends)
+        if not type(friends)==list: friends = [friends]
+        for f in friends:
+            cmd += ' -F Friends {friends}/tree_Friend_{{cname}}.root'.format(friends=f)
     cmd += ''.join(' -E ^'+cut for cut in enabledcuts )
     cmd += ''.join(' -X ^'+cut for cut in disabledcuts)
     cmd += ' --sP '+','.join(plot for plot in plotlist)
@@ -134,28 +136,20 @@ def runplots(trees, friends, targetdir, fmca, fcut, fplots, enabledcuts, disable
     print 'running: python', cmd
     subprocess.call(['python']+cmd.split())#+['/dev/null'],stderr=subprocess.PIPE)
 
-def makeResults(sfdate, onlyMM = False, splitCharge = False):
+def makeResults(onlyMM = True, splitCharge = True): #sfdate, onlyMM = True, splitCharge = True):
 #def runCards(trees, friends, targetdir, fmca, fcut, fsyst, plotbin, enabledcuts, disabledcuts, processes, scaleprocesses, extraopts = ''):
 #python makeShapeCardsSusy.py --s2v -P /afs/cern.ch/work/e/efascion/DPStrees/TREES_110816_2muss/ --Fs /afs/cern.ch/work/e/efascion/public/friendsForDPS_110816/ -l 12.9 dps-ww/final_mca.txt dps-ww/cutfinal.txt finalMVA_DPS 10,0.,1.0  --od dps-ww/cards -p DPSWW,WZ,ZZ,WWW,WpWpJJ,Wjets  -W 0.8874 --asimov dps-ww/syst.txt
     
-    sfs = calculateScalefactors(False, sfdate)
+    #sfs = calculateScalefactors(False, sfdate)
 
-    targetcarddir = 'dps-ww/cards/{date}{pf}/'.format(date=date, pf=('-'+postfix if postfix else '') )
-    #trees     = '/afs/cern.ch/work/e/efascion/DPStrees/TREES_110816_2muss/'
-    #friends   = '/afs/cern.ch/work/e/efascion/public/friendsForDPS_110816/'
-    #trees     = '/afs/cern.ch/work/e/efascion/DPStrees/TREES_170816_2lss/'
-    #friends   = '/afs/cern.ch/work/e/efascion/public/friendsForDPS_180816/'
-    #trees     = '/afs/cern.ch/work/m/mdunser/public/dpsTrees/TREES_170816_2lss/'
-    #friends   = '/afs/cern.ch/work/m/mdunser/public/dpsTrees/TREES_170816_2lss/friends/'
-    #trees = '/afs/cern.ch/user/p/peruzzi/work/tthtrees/TREES_TTH_250117_Summer16_JECV3_noClean_qgV2/'
-    trees     = ['/afs/cern.ch/work/m/mdunser/public/HeppyProductions/TTH_150217/', '/afs/cern.ch/user/p/peruzzi/work/tthtrees/TREES_TTH_250117_Summer16_JECV3_noClean_qgV2/']
-    friends = '/afs/cern.ch/work/m/mdunser/public/dpsFriends/marcoTTHProduction_friends-2017-02-13/'
-    targetdir = '/afs/cern.ch/user/m/mdunser/www/private/dps-ww-2017/results/{date}{pf}/'.format(date=date, pf=('-'+postfix if postfix else '') )
-    fcut   = 'dps-ww/cuts_results.txt'
-    fplots = 'dps-ww/plots.txt'
-    fsyst  = 'dps-ww/syst.txt'
+    targetcarddir = 'cards/{date}{pf}/'.format(date=date, pf=('-'+postfix if postfix else '') )
+    trees     = '/eos/user/m/mdunser/dps-13TeV-combination/TREES_latest/'
+    friends = [trees+'/friends/', trees+'/friends_bdt/']
+    targetdir = '/afs/cern.ch/user/m/mdunser/www/private/dps-ww-combination/results/{date}{pf}/'.format(date=date, pf=('-'+postfix if postfix else '') )
+    fcut   = 'dpsww13TeV/dps2016/results/cuts_results.txt'#mumuelmu_mca.txt'
+    fplots = 'dpsww13TeV/dps2016/results/plots.txt'
+    fsyst  = 'dpsww13TeV/dps2016/results/syst.txt'
 
-    binningBDT = ' finalMVA_DPS 15,0.,1. '
 
     print '=========================================='
     print 'run results for MUMU'
@@ -167,58 +161,31 @@ def makeResults(sfdate, onlyMM = False, splitCharge = False):
         loop = [ [] ]
 
     print 'did i split the charge?'
-    print loop
 
-    # processes      = ['data', 'DPSWW', 'WZ', 'rares', 'ZZ', 'fakes_data', 'WG_wg', 'WZamcatnlo']
-    # processesCards = ['data', 'DPSWW', 'WZ', 'rares', 'ZZ', 'fakes_data', 'WG_wg', 'WZamcatnlo']
-    processes      = ['data', 'DPSWW', 'WZ', 'ZZ', 'WG_wg', 'rares', 'fakes_data', 'flips_data']
-    processesCards = ['data', 'DPSWW', 'WZ', 'ZZ', 'WG_wg', 'rares', 'fakes_data', 'flips_data', 'WZamcatnlo', 'DPSWW_alt']
+    processes      = ['data', 'DPSWW', 'WZ', 'ZZ', 'WG_wg', 'rares', 'fakes_data']
+    processesCards = ['data', 'DPSWW', 'WZ', 'ZZ', 'WG_wg', 'rares', 'fakes_data', 'WZamcatnlo']#, 'DPSWW_alt']
 
-    nbinspostifx = '_15bins'
+    binningBDT   = ' (BDT_DPS_WZ*BDT_DPS_fakes) 20,0.,1. '
+    nbinspostifx = '_20bins'
 
-    for ch in loop:
-        fmca   = 'dps-ww/mumu_mca.txt'
-
+    fmca   = 'dpsww13TeV/dps2016/results/mumuelmu_mca.txt'
+    
+    for ich,ch in enumerate(loop):
+        #if not ich: continue
         enable    = ['trigmumu', 'mumu'] + ch
         disable   = []
-        processesMM      = [i for i in processes      if not i == 'flips_data']
-        processesCardsMM = [i for i in processesCards if not i == 'flips_data']
         fittodata = []
-        scalethem = {'WZ': '{sf:.3f}'.format(sf=sfs['wz']),
-                     'ZZ': '{sf:.3f}'.format(sf=sfs['zz'])}
-        mumusf = sfs['mu']*sfs['mu']*sfs['mumutrig']
-        #extraopts      = ' -W {sf:.3f}  --flp DPSWW --fitData --xp data --pseudoData=all_asimov --showIndivSigs '.format(sf=mumusf)
+        scalethem = {'WZ': '{sf:.3f}'.format(sf=1.04),
+                     'ZZ': '{sf:.3f}'.format(sf=1.21)}
+        mumusf = 0.95
         extraopts = ' -W {sf:.3f} --showIndivSigs '.format(sf=mumusf)
-        makeplots = ['BDTdisc_mumu'+(ch[0] if ch else '')+nbinspostifx]
-        runplots(trees, friends, targetdir    , fmca, fcut, fplots,                          enable, disable, processesMM     , scalethem, fittodata, makeplots, True, extraopts)
+        makeplots = ['BDT_prod_mumu'+(ch[0] if ch else '')+nbinspostifx]
+        runplots(trees, friends, targetdir, fmca, fcut, fplots, enable, disable, processes, scalethem, fittodata, makeplots, True, extraopts)
         ## ==================================
         ## running datacards
         ## ==================================
-        # for blinded extraoptscards = ' -W {sf:.3f} -o mumu{ch} -b mumu{ch} --xp data --asimov '.format(sf=mumusf, ch=(ch[0] if ch else ''))
-        extraoptscards = ' -W {sf:.3f} -o mumu{ch} -b mumu{ch} '.format(sf=mumusf, ch=(ch[0] if ch else ''))
-        runCards(trees, friends, targetcarddir, fmca, fcut, fsyst , binningBDT, enable, disable, processesCardsMM, scalethem, extraoptscards)
-
-        if not onlyMM:
-            print '=========================================='
-            print 'run results for ELMU'
-            print '=========================================='
-            fmca   = 'dps-ww/elmu_mca.txt'
-
-            enable    = ['trigelmu', 'elmu'] + ch # , 'BDTblind']
-            disable   = []
-            fittodata = []
-            scalethem = {'WZ': '{sf:.3f}'.format(sf=sfs['wz']),
-                         'ZZ': '{sf:.3f}'.format(sf=sfs['zz'])}
-            elmusf = sfs['el']*sfs['mu']*sfs['elmutrig']
-            extraopts = ' -W {sf:.3f} --showIndivSigs '.format(sf=elmusf)
-            makeplots = ['BDTdisc_elmu'+(ch[0] if ch else '')+nbinspostifx]
-            runplots(trees, friends, targetdir    , fmca, fcut, fplots,                          enable, disable, processes     , scalethem, fittodata, makeplots, True, extraopts)
-            ## ==================================
-            ## running datacards
-            ## ==================================
-            # for blinded extraoptscards = ' -W {sf:.3f} -o elmu{ch} -b elmu{ch} --xp data --asimov '.format(sf=elmusf, ch=(ch[0] if ch else ''))
-            extraoptscards = ' -W {sf:.3f} -o elmu{ch} -b elmu{ch} '.format(sf=elmusf, ch=(ch[0] if ch else ''))
-            runCards(trees, friends, targetcarddir, fmca, fcut, fsyst , binningBDT, enable, disable, processesCards, scalethem, extraoptscards)
+        ####    foobar extraoptscards = ' -W {sf:.3f} -o mumu{ch} -b mumu{ch} '.format(sf=mumusf, ch=(ch[0] if ch else ''))
+        ####    foobar runCards(trees, friends, targetcarddir, fmca, fcut, fsyst , binningBDT, enable, disable, processesCards, scalethem, extraoptscards)
 
 
 def simplePlot():
@@ -523,6 +490,7 @@ if __name__ == '__main__':
     parser.add_option('--fdm'       , '--fakesDataMC', dest='fakesDataMC'   , action='store_true' , default=False , help='run fakes data MC comparison')
     parser.add_option('--frp'       , '--fakerateplots', dest='fakeratePlots', type='string' , default='' , help='run fakerate plots and fitting')
     parser.add_option('--dy'        , '--dyComparison' , dest='dyComparison' , action='store_true' , default=False , help='make dy comparisons')
+    parser.add_option('--results'   , '--makeResults'  , dest='results'      , action='store_true' , default=False , help='make results')
     (opts, args) = parser.parse_args()
 
     global date, postfix, lumi, date
@@ -559,3 +527,6 @@ if __name__ == '__main__':
     if opts.dyComparison:
         print 'running the dy comparisons'
         dyComparison()
+    if opts.results:
+        print 'running results'
+        makeResults()
