@@ -11,5 +11,5 @@ pfmt :     mt_2(met_pt,   met_phi, ptElFull(LepGood1_calPt,LepGood1_eta), LepGoo
 trkmt :    mt_2(met_trkPt,met_trkPhi,ptElFull(LepGood1_calPt,LepGood1_eta) ,LepGood1_phi) : 30,0,120; XTitle="M_{T}(l\, E_{T}^{miss}) (GeV)"
 pfmtfix :  mt_2(met_pt,   met_phi,   35,LepGood1_phi) : 30,0,120; XTitle="M_{T}^{fix}(l\, E_{T}^{miss}) (GeV)"
 #trkmtfix : mt_2(met_trkPt,met_trkPhi,35,LepGood1_phi) : 30,0,120; XTitle="M_{T}^{fix}(l\, E_{T}^{miss}) (GeV)"
-trkmtfix : tkmt_tkmetEleCorr(met_trkPt,met_trkPhi,ptElFull(LepGood1_calPt,LepGood1_eta),LepGood1_phi,pass_dxy_dz(abs(LepGood1_eta)<1.479, LepGood1_dxy, LepGood1_dz) ) : 30,0,120; XTitle="M_{T}^{fix}(l\, E_{T}^{miss}) (GeV)"
+trkmtfix : tkmt_tkmetEleCorr(met_trkPt,met_trkPhi,ptElFull(LepGood1_calPt,LepGood1_eta),LepGood1_phi, abs(LepGood1_dz)<0.1 ) : 30,0,120; XTitle="M_{T}^{fix}(l\, E_{T}^{miss}) (GeV)"
 met : met_pt : 24,0,120; XTitle="E_{T}^{miss} (GeV)"
