@@ -384,7 +384,7 @@ void doFakeRateSmoothing(const string& outputDIR_tmp = "./",
   checkNotNullPtr(fr_qcdmc,"fr_qcdmc");
 
   //  string yrange_data = isEB ? "0.2,0.5" : "0.2,0.4";
-  string yrange_data = isEB ? "0.5,1.0" : "0.2,0.4";
+  string yrange_data = isEB ? "0.5,1.0" : "0.1,0.4";
   string yrange_qcdmc = isEB ? "0.0,1.2" : "0.0,0.8";
   vector <Double_t> legCoord = {0.12,0.7,0.60,0.9};
 
@@ -408,7 +408,7 @@ void doFakeRateSmoothing(const string& outputDIR_tmp = "./",
 
 //================================================================
 
-void makeFakeRateGraphPlotsAndSmoothing(const string& inputFilePath = "www/wmass/13TeV/fake-rate/test/SRtrees_new/fakeRate_pfmtfix_pt_granular_pfmet20_HLT27/el/comb/", 
+void makeFakeRateGraphPlotsAndSmoothing(const string& inputFilePath = "www/wmass/13TeV/fake-rate/test/SRtrees_new/fakeRate_pfmtfix_pt_granular_pfmet20_HLT27_tightChargeNum/el/comb/", 
 					const string& graphPrefix = "fakeRateNumerator_el_vs_pt_granular",
 					const string& mtDefinition = "pfmtfix",
 					const Bool_t isMuon = false, 
