@@ -107,6 +107,7 @@ if __name__ == "__main__":
                     r = xrange(int(i*chunk),min(int((i+1)*chunk),entries))
                     jobs.append((short,fname,sample_nevt,"_Friend_%s.chunk%d" % (short,i),data,r,i))
 
+    #print jobs
     print "\n"
     print "I have %d taks to process" % len(jobs)
 
