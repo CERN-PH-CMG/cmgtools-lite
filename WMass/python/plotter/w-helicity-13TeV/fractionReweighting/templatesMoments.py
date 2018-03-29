@@ -1,6 +1,10 @@
 import ROOT,os
 from array import array
 
+## USAGE:
+## python templatesMoments.py --outdir ~/www/private/w-helicity-13TeV/angularCoefficients/2018-03-23/ --infile /eos/user/m/mdunser/w-helicity-13TeV/trees/TREES_latest_1muskim/friends/  --nlo  --bins-fractions fractions.root -c a7
+## if you want to run all coefficients, remove the -c option. but this might take a while
+
 def formatHisto(hist):
     hist.GetXaxis().SetTitleOffset(1.02)
     hist.GetXaxis().SetTitleSize(0.06)

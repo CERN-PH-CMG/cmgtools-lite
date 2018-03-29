@@ -6,7 +6,16 @@
 #       python  w-helicity-13TeV/skims.py w-helicity-13TeV/wmass_e/mca-80X-skims.txt w-helicity-13TeV/wmass_e/skim_fr_el.txt TREES_1LEP_80X_V3 /eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3_FRELSKIM_V2 -f w-helicity-13TeV/wmass_e/varsSkim_80X_fr.txt
 
 ## MUONS
-#       python  w-helicity-13TeV/skims.py w-helicity-13TeV/wmass_mu/skimming/mca-wmu-skim-bkg-data.txt w-helicity-13TeV/wmass_mu/skimming/skimCuts.txt /eos/user/m/mdunser/w-helicity-13TeV/trees/2017_12_12_legacy_singlemu/ /eos/user/m/mdunser/w-helicity-13TeV/trees/2017_12_12_legacy_singlemu/skims/ -f w-helicity-13TeV/wmass_mu/skimming/varsToKeep.txt
+# DATA:
+#       python  w-helicity-13TeV/skims.py w-helicity-13TeV/wmass_mu/skimming/mca-wmu-skim-bkg-data.txt w-helicity-13TeV/wmass_mu/skimming/skimCuts.txt /eos/user/m/mdunser/w-helicity-13TeV/trees/2017_12_12_legacy_singlemu/ /eos/user/m/mdunser/w-helicity-13TeV/trees/2017_12_12_legacy_singlemu/skims/ -f w-helicity-13TeV/wmass_mu/skimming/varsToKeep.txt --mo
+# MC:  
+#       python  w-helicity-13TeV/skims.py w-helicity-13TeV/wmass_mu/skimming/mca-wmu-skim-bkg-data.txt w-helicity-13TeV/wmass_mu/skimming/skimCuts.txt /eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3/ /eos/user/m/mdunser/w-helicity-13TeV/trees/TREES_2018-03-21_MC_1muskim/ -f w-helicity-13TeV/wmass_mu/skimming/varsToKeep.txt --mo
+
+# SIGNAL:  
+#       python  w-helicity-13TeV/skims.py w-helicity-13TeV/wmass_mu/skimming/mca-signal.txt w-helicity-13TeV/wmass_mu/skimming/signalCuts.txt /eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3_NoSkim5/ /eos/user/m/mdunser/w-helicity-13TeV/trees/TREES_2018-03-21_SIGNAL_1muskim/ -f w-helicity-13TeV/wmass_mu/skimming/varsToKeep.txt
+
+# SIGNAL FRIENDS:  
+#       python  w-helicity-13TeV/skims.py w-helicity-13TeV/wmass_mu/skimming/mca-signal.txt w-helicity-13TeV/wmass_mu/skimming/signalCuts.txt /eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3_NoSkim5/ /eos/user/m/mdunser/w-helicity-13TeV/trees/TREES_2018-03-21_SIGNAL_1muskim/ -f w-helicity-13TeV/wmass_mu/skimming/varsToKeep.txt
 
 # add -q 8nh --log logs to run in batch 1 job/component (and --pretend to just check the command that will be run)
 
@@ -53,10 +62,7 @@ if __name__ == "__main__":
         os.system('cp {sf} {od}'.format(od=outputDirSkims,sf=args[1])) ## this should work??
     else: print "Make only the friend trees in dir ",outputDirFSkims
 
-    if not options.mainOnly:
-        OPTS = ' --obj tree -P '+treeDir+' --s2v -j 4 -F Friends "{P}/friends/tree_Friend_{cname}.root" '
-    else:
-        OPTS = ' --obj tree -P '+treeDir+' --s2v -j 4 '
+    OPTS = ' --obj tree -P '+treeDir+' --s2v -j 4 -F Friends "{P}/friends/tree_Friend_{cname}.root" '
     OPTS += ' --max-entries %d ' % options.maxEntries 
     if options.pretend: OPTS += ' --pretend '
     if options.queue: OPTS += ' -q %s ' % options.queue
@@ -70,7 +76,7 @@ if __name__ == "__main__":
         OPTS += DROPVARS
     
     cmdSkim = "python skimTrees.py "+" ".join(mcargs)+" " + outputDirSkims + OPTS
-    cmdFSkimEv = " python skimFTrees.py "+outputDirSkims+" "+treeDir+"/friends "+outputDirFSkims+' -f tree_Friend -t "Friends" ' + DROPVARS
+    cmdFSkimEv = " python skimFTrees.py "+outputDirSkims+" "+treeDir+"/friends/ "+outputDirFSkims+' -f tree_Friend -t "Friends" ' + DROPVARS
 
     if not options.friendOnly:
         print "Now skimming the main trees, keeping the following vars:\n",varsToKeep
