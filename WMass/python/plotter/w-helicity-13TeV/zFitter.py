@@ -5,9 +5,18 @@ from array import array
 from CMGTools.WMass.plotter.tree2yield import scalarToVector
 from CMGTools.TTHAnalysis.tools.plotDecorations import doSpam
 
+## safe batch mode
+import sys
+args = sys.argv[:]
+sys.argv = ['-b']
+import ROOT
+sys.argv = args
+ROOT.gROOT.SetBatch(True)
+ROOT.PyConfig.IgnoreCommandLineOptions = True
+
 if "/functions_cc.so" not in ROOT.gSystem.GetLibraries(): 
     ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/WMass/python/plotter/functions.cc+" % os.environ['CMSSW_BASE']);
-if "/wmass/functionsWMass_cc.so" not in ROOT.gSystem.GetLibraries(): 
+if "/w-helicity-13TeV/functionsWMass_cc.so" not in ROOT.gSystem.GetLibraries(): 
     ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/WMass/python/plotter/w-helicity-13TeV/functionsWMass.cc+" % os.environ['CMSSW_BASE']);
 
 def makeSignalModel(model, w):
@@ -567,8 +576,8 @@ if __name__ == "__main__":
             gdata["sigma"].Draw("P SAME")
             printCanvas(c1, options.name+"_summary_eff", [], options)
     elif options.mode == "1D_PtEtaSlices":
-        ptbins = [30,35,40,45,60,90]; 
-        etabins = [0, 1.0, 1.5, 2.1] if "Zee" in options.cut else [0, 1.2, 2.4]
+        ptbins = [20,30,35,40,45,60,90]; 
+        etabins = [0, 1.0, 1.5, 2.1, 2.5] if "Zee" in options.cut else [0, 1.2, 2.4]
         frame2D, hists = makeHistsMPtEta(tree, ptbins, etabins, options)
         if options.refmc:
             _, refhists = makeHistsMPtEta(reftree, ptbins, etabins, options, weightedMC=True)
