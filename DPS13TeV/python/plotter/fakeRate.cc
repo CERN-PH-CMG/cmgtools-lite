@@ -75,17 +75,6 @@ bool loadFRHisto(const std::string &histoName, const char *file, const char *nam
     return histo != 0;
 }
 
-float puw2017_herwigg[80] = {0,0,0,2.27008,3.74564,2.25339,2.82139,2.97948,2.47187,2.77325,2.53951,2.33365,2.03668,1.88443,1.77833,1.67443,1.56289,1.3917,1.25253,1.06277,0.976758,0.870936,0.790535,0.713799,0.643822,0.551428,0.516994,0.465398,0.38879,0.349138,0.327546,0.30658,0.240941,0.251968,0.200709,0.181512,0.183967,0.157223,0.151671,0.106266,0.104634,0.0948796,0.0902638,0.0717555,0.0832775,0.0625131,0.0606511,0.0446805,0.036115,0.0295584,0.0344268,0.0403625,0.0211761,0.0270248,0.00522258,0.0136205,0.0214609,0.0390496,0.0286949,0.0197972,0.0425641,0,0.0236467,0.0257964,0,0,0,0.0405372,0,0,0,0,0,0,0,0,0,0,0,0};
-float puw2017_CP5[80] = {0,0,0,0.0720495,0.396272,0.368435,1.04472,1.10326,1.26087,2.03283,2.41803,1.9437,1.61881,1.51869,1.59003,1.60409,1.48697,1.55307,1.42429,1.04643,0.977148,0.925688,0.89919,0.696008,0.652616,0.619487,0.529287,0.476657,0.363019,0.380386,0.38475,0.295426,0.227875,0.243373,0.189566,0.184144,0.194828,0.150433,0.177622,0.0854195,0.0947405,0.109906,0.0900619,0.104282,0.0827099,0.0577756,0.068155,0.0438763,0.0360248,0.0237005,0.0300206,0.0309588,0.0250172,0.0200138,0.00428866,0.0180124,0.0150103,0.0204686,0.0142203,0.0225155,0.0600413,0,0.0150103,0.0300206,0,0,0,0.0900619,0,0,0,0,0,0,0,0,0,0,0,0};
-
-float puw_2017( int nVert, bool herwMC){
-  if(herwMC == true) return puw2017_herwigg[nVert];
-  else if (nVert > 80) return 0;
-  else if(herwMC == false) return puw2017_CP5[nVert];
-  else return 0;
-}
-
-
 // float fakeRateWeight_1l_i_smoothed_FRcorr(float lpt, float leta, int lpdgId, bool passWP, int iFR, float pfmet) {
 //   if (!passWP) {
 //     double fpt = lpt; double feta = std::fabs(leta); int fid = abs(lpdgId);
@@ -218,6 +207,14 @@ float helicityWeight(float yw, float ptw, float costheta, int pol)
   std::cout << "something went wrong in the helicity reweighting" << std::endl;
   return -99999.;
 
+}
+
+float weights_TT_and_TL(float iso1, float iso2, float cut, int category){
+  int sum = (iso1 < cut) + (iso2 < cut);
+  if      (sum == 2 && category == 0) return 1;
+  else if (sum == 1 && category == 1) return 1;
+  else if (sum == 0 && category == 2) return 1;
+  else return 0;
 }
 
 

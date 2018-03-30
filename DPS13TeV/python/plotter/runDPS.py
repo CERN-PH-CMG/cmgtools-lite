@@ -2,7 +2,7 @@ import optparse, subprocess, ROOT, datetime, math, array, copy, os
 import numpy as np
 
 #doPUreweighting = True
-doPUandSF = True
+doPUandSF = False
 
 def printAggressive(s):
     print '='.join('' for i in range(len(s)+1))
@@ -226,21 +226,18 @@ def simplePlot():
     print 'running simple plots'
     print '=========================================='
     trees     = ['/eos/user/m/mdunser/w-helicity-13TeV/trees/trees_all_skims/']
-    friends   = '/eos/user/m/mdunser/w-helicity-13TeV/trees/trees_all_skims/friends/'
-    targetdir = '/afs/cern.ch/user/m/mdunser/www/private/w-helicity-13TeV/simple_plots/{date}{pf}/'.format(date=date, pf=('-'+postfix if postfix else '') )
-
-    fmca      = 'w-helicity-13TeV/wmass_mu/simple/mca_simple.txt'
-    fcut      = 'w-helicity-13TeV/wmass_mu/simple/cuts_simple.txt'
-    fplots    = 'w-helicity-13TeV/wmass_mu/simple/plots.txt'
-
+    friends   = '/afs/cern.ch/work/a/anmehta/work/TestingWW2/CMSSW_8_0_25/src/CMGTools/DPS13TeV/python/postprocessing/Full_Singlemu_friends_v1//'
+    targetdir = '/eos/user/a/anmehta/www/{date}{pf}SingleMuComplete/'.format(date=date, pf=('-'+postfix if postfix else '') )
+    fmca      = 'dpsww13TeV/dps2016/simple/mca_simple.txt'
+    fcut      = 'dpsww13TeV/dps2016/simple/cuts_simple.txt'
+    fplots    = 'dpsww13TeV/dps2016/simple/plots.txt'
     enable    = []
     disable   = []
-    #processes = ['data', 'Z', 'W', 'fakes_data', 'Top', 'DiBosons']
-    processes = ['WplusNoSkim']
+    processes = ['WZ','WW','dataLL','dataTL']
     fittodata = []
     scalethem = {}
-    extraopts = '  ' #--maxRatioRange 0.8 1.2 --fixRatioRange ' #'--plotmode=norm '
-    makeplots = ['weightLongPlus', 'weightLeftPlus', 'weightRightPlus'] #'mtl1tk', 'etal1', 'ptl1']#'nVert', 'ptl1', 'etal1', 'mtl1tk', 'mtl1pf', 'tkmet', 'pfmet']
+    extraopts = '--plotmode=norm' #--maxRatioRange 0.8 1.2 --fixRatioRange ' #'--plotmode=norm '
+    makeplots = ['BDT_fakes','BDT_WZ','BDT_WZXBDT_fakes','BDT_WZSBDT_fakes'] #weightLongPlus', 'weightLeftPlus', 'weightRightPlus'] #'mtl1tk', 'etal1', 'ptl1']#'nVert', 'ptl1', 'etal1', 'mtl1tk', 'mtl1pf', 'tkmet', 'pfmet']
     showratio = False
     runplots(trees, friends, targetdir, fmca, fcut, fplots, enable, disable, processes, scalethem, fittodata, makeplots, showratio, extraopts)
     
