@@ -145,7 +145,8 @@ def makeResults(onlyMM = True, splitCharge = True): #sfdate, onlyMM = True, spli
     targetcarddir = 'cards/{date}{pf}/'.format(date=date, pf=('-'+postfix if postfix else '') )
     trees     = '/eos/user/m/mdunser/dps-13TeV-combination/TREES_latest/'
     friends = [trees+'/friends/', trees+'/friends_bdt/']
-    targetdir = '/afs/cern.ch/user/m/mdunser/www/private/dps-ww-combination/results/{date}{pf}/'.format(date=date, pf=('-'+postfix if postfix else '') )
+    #    targetdir = '/afs/cern.ch/user/m/mdunser/www/private/dps-ww-combination/results/{date}{pf}/'.format(date=date, pf=('-'+postfix if postfix else '') )
+    targetdir = '/eos/user/a/anmehta/www/{date}{pf}Complete/'.format(date=date, pf=('-'+postfix if postfix else '') )
     fcut   = 'dpsww13TeV/dps2016/results/cuts_results.txt'#mumuelmu_mca.txt'
     fplots = 'dpsww13TeV/dps2016/results/plots.txt'
     fsyst  = 'dpsww13TeV/dps2016/results/syst.txt'
@@ -179,7 +180,8 @@ def makeResults(onlyMM = True, splitCharge = True): #sfdate, onlyMM = True, spli
                      'ZZ': '{sf:.3f}'.format(sf=1.21)}
         mumusf = 0.95
         extraopts = ' -W {sf:.3f} --showIndivSigs '.format(sf=mumusf)
-        makeplots = ['BDT_prod_mumu'+(ch[0] if ch else '')+nbinspostifx]
+        #        makeplots = ['BDTfakes_BDTWZ'+(ch[0] if ch else '')+nbinspostifx]
+        makeplots=['BDT_wz_mumuplusplus_20bins','BDT_wz_mumuminusminus_20bins','BDT_fakes_mumuplusplus_20bins','BDT_fakes_mumuminusminus_20bins','BDTfakes_BDTWZ_mumuminusminus_20bins','BDTfakes_BDTWZ_mumuplusplus_20bins']
         runplots(trees, friends, targetdir, fmca, fcut, fplots, enable, disable, processes, scalethem, fittodata, makeplots, True, extraopts)
         ## ==================================
         ## running datacards
@@ -200,11 +202,11 @@ def simplePlot():
     fplots    = 'dpsww13TeV/dps2016/simple/plots.txt'
     enable    = []
     disable   = []
-    processes = ['WZ','WW','dataLL','dataTL']
+    processes = ['WZ','WW',]
     fittodata = []
     scalethem = {}
-    extraopts = '--plotmode=norm' #--maxRatioRange 0.8 1.2 --fixRatioRange ' #'--plotmode=norm '
-    makeplots = ['BDT_fakes','BDT_WZ','BDT_WZXBDT_fakes','BDT_WZSBDT_fakes'] #weightLongPlus', 'weightLeftPlus', 'weightRightPlus'] #'mtl1tk', 'etal1', 'ptl1']#'nVert', 'ptl1', 'etal1', 'mtl1tk', 'mtl1pf', 'tkmet', 'pfmet']
+    extraopts = '' #--maxRatioRange 0.8 1.2 --fixRatioRange ' #'--plotmode=norm '
+    makeplots = ['BDT_fakes','BDT_WZ','BDT_WZXBDT_fakes','BDTfakes_BDTWZ'] #weightLongPlus', 'weightLeftPlus', 'weightRightPlus'] #'mtl1tk', 'etal1', 'ptl1']#'nVert', 'ptl1', 'etal1', 'mtl1tk', 'mtl1pf', 'tkmet', 'pfmet']
     showratio = False
     runplots(trees, friends, targetdir, fmca, fcut, fplots, enable, disable, processes, scalethem, fittodata, makeplots, showratio, extraopts)
     
