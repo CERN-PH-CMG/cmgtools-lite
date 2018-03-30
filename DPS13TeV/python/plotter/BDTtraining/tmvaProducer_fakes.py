@@ -17,8 +17,9 @@ r.TMVA.Tools.Instance()
 # existing file.
 includePt = True
 useHerwig = True
+trainagainstTL = True
 
-output_fn  = 'TL_DPS{gen}_BDT{pt}.root'.format(pt='_noPt1' if not includePt else '',gen='Herwigpp' if useHerwig else 'Pythia')
+output_fn  = '{bkgsample}_DPS{gen}_BDT{pt}.root'.format(bkgsample='TL' if trainagainstTL else 'LL',pt='_noPt1' if not includePt else '',gen='Herwigpp' if useHerwig else 'Pythia')
 output_f   = r.TFile(output_fn,'RECREATE')
  
 factory = r.TMVA.Factory('TMVAClassification', output_f,
@@ -68,7 +69,9 @@ treePath = '/eos/user/m/mdunser/w-helicity-13TeV/trees/trees_all_skims/'
 #bkgtreePath = '/eos/user/m/mdunser/w-helicity-13TeV/trees/trees_all_skims/SingleMuon_Run2016H_part'
 #from ROOT import TChain, TSelector, TTree
 bkg_tfile = r.TChain('tree')
-list1 = ( list( i for i in os.listdir(treePath) if 'SingleMuon_Run2016G' in i) )
+#list1 = ( list( i for i in os.listdir(treePath) if 'SingleMuon_Run2016G' in i) )
+#list1 = ( list( i for i in os.listdir(treePath) if 'SingleMuon_Run2016B' in i or 'SingleMuon_Run2016C' in i) )
+list1 = ( list( i for i in os.listdir(treePath) if 'SingleMuon_Run2016' in i) )
 n=len(list1)
 for d in list1:
     temp = treePath+d+'/treeProducerWMass/tree.root'
@@ -88,7 +91,13 @@ bkg_weight = 1.0;
 
 ## get signal tree and friends etc p. 16
 #WWDoubleTo2L/
-sig_tfile = r.TFile(treePath+'/WW_DPS_herwig/treeProducerWMass/tree.root')
+
+if useHerwig:
+    signal='WW_DPS_herwig'
+else:
+    signal='WWDoubleTo2L' 
+
+sig_tfile = r.TFile(treePath+signal+'/treeProducerWMass/tree.root')
 #sig_ffile = r.TFile('bkgfriendtreefile')
 sig_tree = sig_tfile.Get('tree')
 #sig_tree.AddFriend('sf/t', sig_ffile)
@@ -97,15 +106,18 @@ factory.AddSignalTree    ( sig_tree, sig_weight)
 factory.AddBackgroundTree( bkg_tfile, bkg_weight)
 
 # cuts defining the signal and background sample
-common_cuts = '(LepGood_pt[0] > 25 && LepGood_pt[1] > 20 && nLepGood ==2 && met_pt > 15 && LepGood_tightId[1] > 0 && LepGood_tightId[0] > 0) &&'
-afac = '( abs(LepGood_pdgId[0]*LepGood_pdgId[1]) == 169 || abs(LepGood_pdgId[0]*LepGood_pdgId[1]) == 143 || abs(LepGood_pdgId[0]*LepGood_pdgId[1]) == 121)'
+common_cuts = '(LepGood_pt[0] > 25 && LepGood_pt[1] > 20 && nLepGood ==2 && met_pt > 15 && LepGood_tightId[1] > 0 && LepGood_tightId[0] > 0) && LepGood_relIso03[0] < 1.0 &&  LepGood_relIso03[1] < 1.0 &&'
+afac = '( abs(LepGood_pdgId[0]*LepGood_pdgId[1]) == 169 || abs(LepGood_pdgId[0]*LepGood_pdgId[1]) == 143 || abs(LepGood_pdgId[0]*LepGood_pdgId[1]) == 121) && LepGood_relIso03[0] < 0.1 &&  LepGood_relIso03[1] < 0.1'
 afss = '(LepGood_pdgId[0]*LepGood_pdgId[1] == 169) &&'
 TLnLL='(LepGood_relIso03[0] > 0.1 ||  LepGood_relIso03[1] > 0.1)'
 TL='((LepGood_relIso03[0] > 0.1 && LepGood_relIso03[1] < 0.1) || (LepGood_relIso03[0] < 0.1 && LepGood_relIso03[1] > 0.1))'
 LL='(LepGood_relIso03[0] > 0.1 &&  LepGood_relIso03[1] > 0.1)'
 sig_cutstring = common_cuts+afac
-bkg_cutstring = common_cuts+afss+TL
-
+if trainagainstTL:
+    bkg_cutstring = common_cuts+afss+TL
+else:
+    bkg_cutstring = common_cuts+afss+LL
+    
 
 
 sigCut = r.TCut(sig_cutstring)
@@ -151,26 +163,26 @@ bdt = factory.BookMethod(r.TMVA.Types.kBDT, 'BDT',
                                     'PruneMethod=NoPruning' ]))
 
 ## # Fisher discriminant (same as LD)
-fisher = factory.BookMethod(r.TMVA.Types.kFisher, "Fisher", 
-                            ':'.join(['H',
-                                      '!V',
-                                      'Fisher:CreateMVAPdfs',
-                                      'PDFInterpolMVAPdf=Spline2',
-                                       'NbinsMVAPdf=50',
-                                      'NsmoothMVAPdf=10']) )
-
-## ## likelihood
-lh = factory.BookMethod(r.TMVA.Types.kLikelihood, 'LikelihoodD', 
-                        ':'.join([ '!H', 
-                                   '!V', 
-                                   '!TRansformOutput', 
-                                   'CreateMVAPdfs',
-                                   'PDFInterpol=Spline2', 
-                                   'NSmoothSig[0]=20', 
-                                   'NSmooth=5', 
-                                   'NAvEvtPerBin=50', 
-                                   'VarTransform=Decorrelate' ]))
-
+#fisher = factory.BookMethod(r.TMVA.Types.kFisher, "Fisher", 
+#                            ':'.join(['H',
+#                                      '!V',
+#                                      'Fisher:CreateMVAPdfs',
+#                                      'PDFInterpolMVAPdf=Spline2',
+#                                       'NbinsMVAPdf=50',
+#                                      'NsmoothMVAPdf=10']) )
+#
+### ## likelihood
+#lh = factory.BookMethod(r.TMVA.Types.kLikelihood, 'LikelihoodD', 
+#                        ':'.join([ '!H', 
+#                                   '!V', 
+#                                   '!TRansformOutput', 
+#                                   'CreateMVAPdfs',
+#                                   'PDFInterpol=Spline2', 
+#                                   'NSmoothSig[0]=20', 
+#                                   'NSmooth=5', 
+#                                   'NAvEvtPerBin=50', 
+#                                   'VarTransform=Decorrelate' ]))
+#
 ## do the training
 factory.TrainAllMethods()
 factory.TestAllMethods()
@@ -182,3 +194,4 @@ output_f.Close()
 
 r.TMVA.TMVAGui(output_fn)
 
+ 
