@@ -439,7 +439,7 @@ def styleScatterMC(gmc):
 def addZFitterOptions(parser):
     parser.add_option("-n", "--name",   dest="name", default='plot', help="name");
     parser.add_option("-r", "--refmc",   dest="refmc", default=None, help="refmc");
-    parser.add_option("-m", "--mode",   dest="mode", default='1D', help="mode");
+    parser.add_option("-m", "--mode",   dest="mode", default='1D_PtEtaSlices', help="mode");
     parser.add_option("-s", "--signalModel",   dest="signalModel", default='Z-CB', help="Signal model");
     parser.add_option("-b", "--backgroundModel",   dest="backgroundModel", default='Expo', help="Background model");
     parser.add_option("-t", "--tree",    dest="tree", default='tree', help="Tree name");
