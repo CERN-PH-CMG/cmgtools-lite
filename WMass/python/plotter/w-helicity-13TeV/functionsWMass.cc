@@ -289,9 +289,9 @@ float ptCorr(float pt, float eta, float phi, float r9, int run, int isData, ULon
     rng->SetSeed(eventNumber); // make it really random across different jobs    
   }
 
-  if (isData) return pt *  calibrator->ScaleCorrection(run,fabs(eta)<1.479,fabs(eta),r9,pt);
+  if (isData) return pt *  calibrator->ScaleCorrection(run,fabs(eta)<1.479,r9,fabs(eta),pt);
   else {
-    float smear = calibrator->getSmearingSigma(run,fabs(eta)<1.479,fabs(eta),r9,pt,0,0);
+    float smear = calibrator->getSmearingSigma(run,fabs(eta)<1.479,r9,fabs(eta),pt,0,0);
     return pt * ( 1.0 + smear * rng->Gaus());
   }
 }
