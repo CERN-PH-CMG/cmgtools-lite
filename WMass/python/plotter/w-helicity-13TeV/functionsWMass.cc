@@ -9,8 +9,7 @@
 #include "TCanvas.h"
 #include "TGraphAsymmErrors.h"
 #include "TLorentzVector.h"
-#include "EgammaAnalysis/ElectronTools/interface/ElectronEnergyCalibratorRun2Standalone.h"
-#include "EgammaAnalysis/ElectronTools/interface/SimpleElectronStandalone.h"
+#include "EgammaAnalysis/ElectronTools/src/EnergyScaleCorrection_class.cc"
 
 #include <iostream>
 #include <stdlib.h>
@@ -277,33 +276,24 @@ float trgSF_We(int pdgid, float pt, float eta, int ndim, float var=0) {
 
 #include "TRandom.h"
 TRandom3 *rng = NULL;
-ElectronEnergyCalibratorRun2Standalone *calibratorData = NULL;
-ElectronEnergyCalibratorRun2Standalone *calibratorMC = NULL;
+EnergyScaleCorrection_class *calibrator = NULL;
 
 float ptCorr(float pt, float eta, float phi, float r9, int run, int isData, ULong64_t eventNumber) {
 
-  if(!calibratorData && isData ) calibratorData = new ElectronEnergyCalibratorRun2Standalone(false,false,"CMGTools/WMass/python/postprocessing/data/leptonScale/el/Run2016_legacyrereco");
-  if(!calibratorMC && !isData ) calibratorMC = new ElectronEnergyCalibratorRun2Standalone(true,false,"CMGTools/WMass/python/postprocessing/data/leptonScale/el/Run2016_legacyrereco");
-  ElectronEnergyCalibratorRun2Standalone *calibrator = isData ? calibratorData : calibratorMC;
+  if(!calibrator) calibrator = new EnergyScaleCorrection_class("CMGTools/WMass/python/postprocessing/data/leptonScale/el/Legacy2016_07Aug2017_FineEtaR9_ele",0);
 
   if(!isData) {
     if(!rng) rng = new TRandom3();
     // use eventNumber as seed, otherwise each time the function is called for the same event, the smearer produce a different pt value
     // the better solution would be to have the corrected pt in the friend trees
-    rng->SetSeed(eventNumber); // make it really random across different jobs
-    calibrator->initPrivateRng(rng);
+    rng->SetSeed(eventNumber); // make it really random across different jobs    
   }
 
-  TLorentzVector oldMomentum;
-  oldMomentum.SetPtEtaPhiM(pt,eta,phi,0.51e-3);
-  float p = oldMomentum.E();
-  SimpleElectron electron(run,-1,r9,p,0,p,0,p,0,p,0,eta,fabs(eta)<1.479,!isData,1,0);
-  calibrator->calibrate(electron);
-  float scale = electron.getNewEnergy()/p;
-  // std::cout << "isData = " << isData << " run = " << run 
-  //           << "pt,eta,phi,r9 = " << pt << " " << eta << " " << phi << " " << r9 
-  //           << "  SCALE = " << scale << std::endl;
-  return pt * scale;
+  if (isData) return pt *  calibrator->ScaleCorrection(run,fabs(eta)<1.479,r9,fabs(eta),pt);
+  else {
+    float smear = calibrator->getSmearingSigma(run,fabs(eta)<1.479,r9,fabs(eta),pt,0,0);
+    return pt * ( 1.0 + smear * rng->Gaus());
+  }
 }
 
 TFile *_file_residualcorr_scale = NULL;
