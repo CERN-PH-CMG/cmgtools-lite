@@ -5,3 +5,4 @@ fiducial : abs(LepGood1_eta)<1.4442 || abs(LepGood1_eta)>1.566
 eleKin : ptElFull(LepGood1_calPt,LepGood1_eta) > 30 && ptElFull(LepGood1_calPt,LepGood1_eta) < 45 && abs(LepGood1_eta)<2.5
 HLTid : LepGood1_hltId > 0
 numSel : LepGood1_customId == 1
+tightCharge : LepGood1_tightChargeFix == 2
