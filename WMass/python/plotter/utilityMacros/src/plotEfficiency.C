@@ -50,9 +50,14 @@ TH1* getEfficiency(const string& inputFile = "",
 
 //==================================================================
 
+// each file might have the LO histograms: their names end with '_LO'
+// if you pass compareWithLO, an additional folder is created for each file, and inside the NLO and LO samples are compared
+
 void plotEfficiency(const string& inputFilePath = "/afs/cern.ch/work/m/mciprian/w_mass_analysis/heppy/CMSSW_8_0_25/src/CMGTools/WMass/data/efficiency/", 
-		    const TString& inputFileNameList = "mc_reco_LO_eff.root,mc_reco_eff.root,mc_reco_pfmt30_eff.root,mc_reco_pfmt40_eff.root,mc_reco_pfmt50_eff.root",
-		    const string& outDir = "www/wmass/13TeV/efficiency_NLO/",
+		    const TString& inputFileNameList = "mc_reco_eff.root,mc_reco_pfmt30_eff.root,mc_reco_pfmt40_eff.root,mc_reco_pfmt50_eff.root",	
+		    const TString& legendEntryList = "no PF M_{T},PF M_{T} > 30,PF M_{T} > 40,PF M_{T} > 50",
+		    const string& outDir = "www/wmass/13TeV/efficiency_NLO_tightCharge/",
+		    const Bool_t compareWithLO = true,
 		    const Bool_t isMuon = false 
 		    ) 
 {
@@ -61,13 +66,13 @@ void plotEfficiency(const string& inputFilePath = "/afs/cern.ch/work/m/mciprian/
   createPlotDirAndCopyPhp(outDir);
   adjustSettings_CMS_lumi(outDir);
 
-  TObjArray* array = inputFileNameList.Tokenize(",");
   vector<TString> inputFileNames;
-  for (Int_t j = 0; j < array->GetEntries(); j++) {
-    TString str = ((TObjString *) array->At(j))->String();
-    inputFileNames.push_back(str);
-    cout << j << " --> " << inputFileNames[j] << endl;
-  }
+  cout << "Input file names: " << endl;
+  getVectorTStringFromTStringList(inputFileNames, inputFileNameList, ",", true);
+
+  vector<string> heffsLegEntry;
+  cout << "Legend entries: " << endl;
+  getVectorCStringFromTStringList(heffsLegEntry, legendEntryList, ",", true);
 
   vector<string> names;
   names.push_back("wminus_wy_Wminus_left");
@@ -85,7 +90,9 @@ void plotEfficiency(const string& inputFilePath = "/afs/cern.ch/work/m/mciprian/
     nameReco.insert(nameReco.find("_wy_")+4,"reco_");  
 
     vector<TH1*> heffs;
-    vector<string> heffsLegEntry;
+    vector<TH1*> heffs_LO;
+
+    string canvasName = "reco_gen_efficiency_" + names[i].substr(names[i].find("wy_W"));
 
     for (UInt_t iname = 0; iname < inputFileNames.size(); ++iname) {
       
@@ -93,18 +100,27 @@ void plotEfficiency(const string& inputFilePath = "/afs/cern.ch/work/m/mciprian/
       // remove extension 
       string extension = ".root";
       string outDirTagName = efficiencyFileName.substr(0,efficiencyFileName.size()-extension.size());
-      heffsLegEntry.push_back(outDirTagName);
       outDirTagName += "/";
 
       heffs.push_back( new TH1D( *((TH1D*) getEfficiency(inputFilePath+efficiencyFileName, isMuon, names[i], nameReco)) ) );
-      
+      if (compareWithLO) {
+	heffs_LO.push_back( new TH1D( *((TH1D*) getEfficiency(inputFilePath+efficiencyFileName, isMuon, names[i]+"_LO", nameReco+"_LO")) ) );   	
+	createPlotDirAndCopyPhp(outDir+outDirTagName);
+	adjustSettings_CMS_lumi(outDir+outDirTagName);
+	drawTH1pair(heffs.back(),heffs_LO.back(),"y_{W}", "Reco/gen efficiency",canvasName,outDir+outDirTagName,"NLO","LO","NLO/LO::0.9,1.1",-1.0,1,false);
+      }
+
     }
     
-    string canvasName = "reco_gen_efficiency_" + names[i].substr(names[i].find("wy_W"));
     draw_nTH1(heffs, "y_{W}", "Reco/gen efficiency", canvasName, outDir, heffsLegEntry, "x / first::0.80,1.05", -1, 1, false, true);
+    if (compareWithLO) draw_nTH1(heffs_LO, "y_{W}", "Reco/gen efficiency", canvasName+"_LO", outDir, heffsLegEntry, "x / first::0.80,1.05", -1, 1, false, true);
 
     for (UInt_t ieff = 0; ieff < heffs.size(); ++ieff) delete heffs[ieff];
     heffs.clear(); 
+    if (compareWithLO) {
+      for (UInt_t ieff = 0; ieff < heffs_LO.size(); ++ieff) delete heffs_LO[ieff];
+    heffs_LO.clear();
+    }
 
   }    
 
