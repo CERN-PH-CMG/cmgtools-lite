@@ -132,6 +132,15 @@ bdtFakes_vs_bdtWZ_mumuminusminus : finalMVA_DPS_FAKES\:finalMVA_DPS : 5,0.,1.,5,
 bdtFakes_vs_bdtWZ_elmuplusplus   : finalMVA_DPS_FAKES\:finalMVA_DPS : 5,0.,1.,5,0.,1.; XTitle="BDT WZ   e#mu ++", YTitle="BDT fakes"
 bdtFakes_vs_bdtWZ_elmuminusminus : finalMVA_DPS_FAKES\:finalMVA_DPS : 5,0.,1.,5,0.,1.; XTitle="BDT WZ   e#mu --", YTitle="BDT fakes"
 
+BDTfakes_BDTWZ_mumuminusminus_20bins   : BDT_DPS_WZ\:BDT_DPS_fakes  : 20,0,1.0,20,0.,1. ; XTitle="BDT_fakes(#mu^{-}#mu^{-})", YTitle="BDT_WZ(#mu^{-}#mu^{-})"
+
+BDTfakes_BDTWZ_mumuplusplus_20bins   : BDT_DPS_WZ\:BDT_DPS_fakes  : 20,0,1.0,20,0.,1. ; XTitle="BDT_fakes(#mu^{+}#mu^{+})", YTitle="BDT_WZ(#mu^{+}#mu^{+})"
+
+BDTfakes_BDTWZ_mumuminusminus_4bins   : BDT_DPS_WZ\:BDT_DPS_fakes  : 4,0,1.0,4,0.,1. ; XTitle="BDT_fakes(#mu^{-}#mu^{-})", YTitle="BDT_WZ(#mu^{-}#mu^{-})"
+
+BDTfakes_BDTWZ_mumuplusplus_4bins   : BDT_DPS_WZ\:BDT_DPS_fakes  : 4,0,1.0,4,0.,1. ; XTitle="BDT_fakes(#mu^{+}#mu^{+})", YTitle="BDT_WZ(#mu^{+}#mu^{+})"
+
+
 
 minMllSFOS : minMllSFOS : 200,0,100; XTitle="minMllSFOS (GeV)"
 

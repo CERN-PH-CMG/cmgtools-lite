@@ -145,7 +145,8 @@ def makeResults(onlyMM = True, splitCharge = True): #sfdate, onlyMM = True, spli
     targetcarddir = 'cards/{date}{pf}/'.format(date=date, pf=('-'+postfix if postfix else '') )
     trees     = '/eos/user/m/mdunser/dps-13TeV-combination/TREES_latest/'
     friends = [trees+'/friends/', trees+'/friends_bdt/']
-    targetdir = '/afs/cern.ch/user/m/mdunser/www/private/dps-ww-combination/results/{date}{pf}/'.format(date=date, pf=('-'+postfix if postfix else '') )
+#    targetdir = '/afs/cern.ch/user/m/mdunser/www/private/dps-ww-combination/results/{date}{pf}/'.format(date=date, pf=('-'+postfix if postfix else '') )
+    targetdir = '/eos/user/a/anmehta/www/{date}{pf}Complete_newbinnning/'.format(date=date, pf=('-'+postfix if postfix else '') )
     fcut   = 'dpsww13TeV/dps2016/results/cuts_results.txt'#mumuelmu_mca.txt'
     fplots = 'dpsww13TeV/dps2016/results/plots.txt'
     fsyst  = 'dpsww13TeV/dps2016/results/syst.txt'
@@ -166,7 +167,7 @@ def makeResults(onlyMM = True, splitCharge = True): #sfdate, onlyMM = True, spli
     processesCards = ['data', 'DPSWW', 'WZ', 'ZZ', 'WG_wg', 'rares', 'fakes_data', 'WZamcatnlo']#, 'DPSWW_alt']
 
     binningBDT   = ' (BDT_DPS_WZ*BDT_DPS_fakes) 20,0.,1. '
-    nbinspostifx = '_20bins'
+    nbinspostifx = '_4bins'
 
     fmca   = 'dpsww13TeV/dps2016/results/mumuelmu_mca.txt'
     
@@ -179,7 +180,7 @@ def makeResults(onlyMM = True, splitCharge = True): #sfdate, onlyMM = True, spli
                      'ZZ': '{sf:.3f}'.format(sf=1.21)}
         mumusf = 0.95
         extraopts = ' -W {sf:.3f} --showIndivSigs '.format(sf=mumusf)
-        makeplots = ['BDT_prod_mumu'+(ch[0] if ch else '')+nbinspostifx]
+        makeplots = ['BDTfakes_BDTWZ_mumu'+(ch[0] if ch else '')+nbinspostifx]
         runplots(trees, friends, targetdir, fmca, fcut, fplots, enable, disable, processes, scalethem, fittodata, makeplots, True, extraopts)
         ## ==================================
         ## running datacards
