@@ -16,8 +16,8 @@ SAFE_STYLE_LIST = [ROOT.kOpenCircle,ROOT.kOpenSquare,ROOT.kOpenTriangleUp,ROOT.k
 
 def doTinyCmsPrelimStandalone(textLeft="_default_",textRight="_default_",hasExpo=False,textSize=0.033,lumi=None, xoffs=0, options=None):
     if textLeft  == "_default_": textLeft  = "#bf{CMS} #it{Preliminary}"
-    if textRight == "_default_": textRight = "%(lumi) (8 TeV)"
-    if lumi      == None       : lumi      = 19.7
+    if textRight == "_default_": textRight = "%(lumi) (13 TeV)"
+    if lumi      == None       : lumi      = 35.9
     if   lumi > 3.54e+1: lumitext = "%.0f fb^{-1}" % lumi
     elif lumi > 3.54e+0: lumitext = "%.1f fb^{-1}" % lumi
     elif lumi > 3.54e-1: lumitext = "%.2f fb^{-1}" % lumi
@@ -89,7 +89,9 @@ if __name__ == '__main__':
     mkColors = SAFE_COLOR_LIST[:len(ids)]
     mkStyles = SAFE_STYLE_LIST[:len(ids)]
     iplot=0
-    for key,label,color,style in zip(ids,labels,mkColors,mkStyles):
+    entries = zip(ids,labels,mkColors,mkStyles)
+    sorted_entries = sorted(entries, key=lambda en: float(en[0].split('_')[0]))
+    for key,label,color,style in sorted_entries:
         print key," ",label," ",color," ", style
         histos[key].SetMarkerStyle(style)
         histos[key].SetMarkerColor(color); histos[key].SetLineColor(color)
@@ -98,7 +100,7 @@ if __name__ == '__main__':
         leg.AddEntry(histos[key],label,"pe")
         iplot += 1
 
-    doTinyCmsPrelimStandalone(lumi=19.7)
+    doTinyCmsPrelimStandalone(lumi=35.9)
     leg.Draw()
     
     [c1.SaveAs("electronscale_datamc_pt.%s" % ext) for ext in ["pdf","png"]]
