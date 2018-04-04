@@ -1,0 +1,1 @@
+Flips  : WJetsToLNu_NLO* : 3.*20508.9    : genw_decayId == 12 && LepGood1_mcMatchId*LepGood1_charge<0 ; FillColor=ROOT.kGray+1   , FakeRate="w-helicity-13TeV/fractionReweighting/reweighting_0_plus.txt", Label="W flips"
