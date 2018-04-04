@@ -244,19 +244,24 @@ if __name__ == "__main__":
         ### Names in datacard are like Wplus_right_Wplus_el_Ybin_9, but fit_mdf->Print() shows norm_Wplus_right_Wplus_Ybin_9
         ### Need a temporary patch to remove el from names copied from datacard, if they begin with 'norm_' .
         tmp_procs = []
+        channel_mu1_el2 = 0
         for process in procs:
             ### electron case
             if '_el_Ybin' in process:
+                channel_mu1_el2 = 2
                 tmp_procs.append(process.replace('_el_Ybin','_Ybin'))
             ### muon case
             elif '_mu_Ybin' in process:
                 tmp_procs.append(process.replace('_mu_Ybin','_Ybin'))
+                channel_mu1_el2 = 1
             else:
                 tmp_procs.append(process)
-
-        #print "Before: " + str(procs)
         procs = tmp_procs
-        #print "After: " + str(procs)
+
+        if channel_mu1_el2 == 1:
+            print "Assuming you are working with muons"
+        elif channel_mu1_el2 == 2:
+            print "Assuming you are working with electrons"
 
         totalrate = 0.
         fitAbsoluteRates = False
@@ -294,12 +299,13 @@ if __name__ == "__main__":
                     arr_elo.append(abs(tmp_par.getAsymErrorLo() if tmp_par.hasAsymError() else tmp_par.getAsymErrorHi())/totalrate/ybinwidths[ip])
 
                     #tmp_par_eff =  fitresult.constPars().find(p.replace('norm_','eff_'))  # won't work anymore since '_el_' is in efficiency parameter but not in p 
-                    # FIXME: need to know if we are doing muons or electrons
                     tmp_par_eff_name = p.replace('norm_','eff_')
-                    print "WARNING: hardcoded snippet to get name of efficiency parameter: we are adding 'us_el_Ybin' to 'us_Ybin' "
-                    print "before " + tmp_par_eff_name
-                    if not '_el_Ybin' in tmp_par_eff_name:                        
-                        tmp_par_eff_name = tmp_par_eff_name.replace('us_Ybin','us_el_Ybin')
+                    if channel_mu1_el2 > 0:
+                        print "WARNING: getting name of efficiency parameter: we are adding 'us_%s_Ybin' to 'us_Ybin' " % "el" if channel_mu1_el2 == 2 else "mu" 
+                        print "before " + tmp_par_eff_name
+                        if channel_mu1_el2 == 2 and not '_el_Ybin' in tmp_par_eff_name:                        
+                            tmp_par_eff_name = tmp_par_eff_name.replace('us_Ybin','us_mu_Ybin')
+                        elif channel_mu1_el2 == 1 and not '_mu_Ybin' in tmp_par_eff_name:
                         print "after " + tmp_par_eff_name
                     #print "ip, p, eff_par = %d %s %s" % (ip, str(p), str(tmp_par_eff_name))
                     tmp_par_eff =  fitresult.constPars().find(tmp_par_eff_name)
