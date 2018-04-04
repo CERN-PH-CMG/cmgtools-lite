@@ -107,13 +107,13 @@ void plotEfficiency(const string& inputFilePath = "/afs/cern.ch/work/m/mciprian/
 	heffs_LO.push_back( new TH1D( *((TH1D*) getEfficiency(inputFilePath+efficiencyFileName, isMuon, names[i]+"_LO", nameReco+"_LO")) ) );   	
 	createPlotDirAndCopyPhp(outDir+outDirTagName);
 	adjustSettings_CMS_lumi(outDir+outDirTagName);
-	drawTH1pair(heffs.back(),heffs_LO.back(),"y_{W}", "Reco/gen efficiency",canvasName,outDir+outDirTagName,"NLO","LO","NLO/LO::0.9,1.1",-1.0,1,false);
+	drawTH1pair((TH1*)heffs.back()->Clone(),heffs_LO.back(),"y_{W}", "Reco/gen efficiency",canvasName,outDir+outDirTagName,"NLO","LO","NLO/LO::0.9,1.1",-1.0,1,false);
       }
 
     }
     
-    draw_nTH1(heffs, "y_{W}", "Reco/gen efficiency", canvasName, outDir, heffsLegEntry, "x / first::0.80,1.05", -1, 1, false, true);
-    if (compareWithLO) draw_nTH1(heffs_LO, "y_{W}", "Reco/gen efficiency", canvasName+"_LO", outDir, heffsLegEntry, "x / first::0.80,1.05", -1, 1, false, true);
+    draw_nTH1(heffs, "y_{W} (NLO)", "Reco/gen efficiency", canvasName, outDir, heffsLegEntry, "x / first::0.80,1.05", -1, 1, false, true);
+    if (compareWithLO) draw_nTH1(heffs_LO, "y_{W} (LO)", "Reco/gen efficiency", canvasName+"_LO", outDir, heffsLegEntry, "x / first::0.80,1.05", -1, 1, false, true);
 
     for (UInt_t ieff = 0; ieff < heffs.size(); ++ieff) delete heffs[ieff];
     heffs.clear(); 
