@@ -146,7 +146,7 @@ def makeResults(onlyMM = True, splitCharge = True): #sfdate, onlyMM = True, spli
     trees     = '/eos/user/m/mdunser/dps-13TeV-combination/TREES_latest/'
     friends = [trees+'/friends/', trees+'/friends_bdt/']
     #    targetdir = '/afs/cern.ch/user/m/mdunser/www/private/dps-ww-combination/results/{date}{pf}/'.format(date=date, pf=('-'+postfix if postfix else '') )
-    targetdir = '/eos/user/a/anmehta/www/{date}{pf}Complete/'.format(date=date, pf=('-'+postfix if postfix else '') )
+    targetdir = '/eos/user/a/anmehta/www/{date}{pf}Complete_newbinning/'.format(date=date, pf=('-'+postfix if postfix else '') )
     fcut   = 'dpsww13TeV/dps2016/results/cuts_results.txt'#mumuelmu_mca.txt'
     fplots = 'dpsww13TeV/dps2016/results/plots.txt'
     fsyst  = 'dpsww13TeV/dps2016/results/syst.txt'
@@ -179,9 +179,10 @@ def makeResults(onlyMM = True, splitCharge = True): #sfdate, onlyMM = True, spli
         scalethem = {'WZ': '{sf:.3f}'.format(sf=1.04),
                      'ZZ': '{sf:.3f}'.format(sf=1.21)}
         mumusf = 0.95
-        extraopts = ' -W {sf:.3f} --showIndivSigs '.format(sf=mumusf)
-        #        makeplots = ['BDTfakes_BDTWZ'+(ch[0] if ch else '')+nbinspostifx]
-        makeplots=['BDT_wz_mumuplusplus_20bins','BDT_wz_mumuminusminus_20bins','BDT_fakes_mumuplusplus_20bins','BDT_fakes_mumuminusminus_20bins','BDTfakes_BDTWZ_mumuminusminus_20bins','BDTfakes_BDTWZ_mumuplusplus_20bins']
+        extraopts = ' -W {sf:.3f} --showIndivSigs'.format(sf=mumusf)# --plotmode=norm
+        #        makeplots = ['BDTfakes_BDTWZ_mumu','BDT_wz_mumu',
+        makeplots = ['BDT_wz_mumu'+(ch[0] if ch else '')+nbinspostifx]
+#        makeplots=['BDT_wz_mumuplusplus_20bins','BDT_wz_mumuminusminus_20bins','BDT_fakes_mumuplusplus_20bins','BDT_fakes_mumuminusminus_20bins','BDTfakes_BDTWZ_mumuminusminus_20bins','BDTfakes_BDTWZ_mumuplusplus_20bins']
         runplots(trees, friends, targetdir, fmca, fcut, fplots, enable, disable, processes, scalethem, fittodata, makeplots, True, extraopts)
         ## ==================================
         ## running datacards
