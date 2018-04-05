@@ -454,7 +454,8 @@ def addZFitterOptions(parser):
     parser.add_option("-t", "--tree",    dest="tree", default='tree', help="Tree name");
     parser.add_option("-c", "--cut",     dest="cut", type="string", default="Zee", help="cut")
     parser.add_option("--xcut",     dest="xcut", type="float", nargs=2, default=None, help="x axis cut")
-    parser.add_option("-x", "--x-var",   dest="xvar", type="string", default=(" mass_2(ptCorr(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_r9,run,isData,evt),LepGood1_eta,LepGood1_phi,0.00051,ptCorr(LepGood2_pt,LepGood2_eta,LepGood2_phi,LepGood2_r9,run,isData,evt),LepGood2_eta,LepGood2_phi,0.00051)","80,70,110"), nargs=2, help="X var and bin")
+#    parser.add_option("-x", "--x-var",   dest="xvar", type="string", default=(" mass_2(ptCorr(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_r9,run,isData,evt),LepGood1_eta,LepGood1_phi,0.00051,ptCorr(LepGood2_pt,LepGood2_eta,LepGood2_phi,LepGood2_r9,run,isData,evt),LepGood2_eta,LepGood2_phi,0.00051)","80,70,110"), nargs=2, help="X var and bin")
+    parser.add_option("-x", "--x-var",   dest="xvar", type="string", default=(" mass_2(ptCorr(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_r9,run,isData,evt)*residualScale(LepGood1_pt,LepGood1_eta,isData),LepGood1_eta,LepGood1_phi,0.00051,ptCorr(LepGood2_pt,LepGood2_eta,LepGood2_phi,LepGood2_r9,run,isData,evt)*residualScale(LepGood2_pt,LepGood2_eta,isData),LepGood2_eta,LepGood2_phi,0.00051)","80,70,110"), nargs=2, help="X var and bin")
     parser.add_option("--xtitle",   dest="xtitle", type="string", default="mass (GeV)", help="X title")
     parser.add_option("--textSize",   dest="textSize", type="float", default=0.04, help="Text size")
     parser.add_option("-l","--lumi",   dest="lumi", type="float", default=35.9, help="Text size")
