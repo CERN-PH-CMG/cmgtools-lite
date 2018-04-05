@@ -83,6 +83,10 @@ if options.queue and not os.path.exists(outdir+"/jobs"):
     os.mkdir(outdir+"/jobs")
     os.mkdir(outdir+"/mca")
 
+# copy some cfg for bookkeeping
+os.system("cp %s %s" % (CUTFILE, outdir))
+os.system("cp %s %s" % (MCA, outdir))
+
 MCASYSTS=MCA
 if options.addPdfSyst:
     # write the additional systematic samples in the MCA file
