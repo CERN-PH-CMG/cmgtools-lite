@@ -100,7 +100,7 @@ float phi_2(float pt1, float eta1, float phi1, float m1, float pt2, float eta2, 
     typedef ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<double> > PtEtaPhiMVector; 
     PtEtaPhiMVector l1(pt1, eta1, phi1, m1); 
     PtEtaPhiMVector l2(pt2, eta2, phi2, m2);
-    return (l1+l1).Phi();
+    return (l1+l2).Phi();
 }
 
 float pt_3(float pt1, float phi1, float pt2, float phi2, float pt3, float phi3) {
