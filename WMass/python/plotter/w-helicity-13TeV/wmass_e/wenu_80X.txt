@@ -7,4 +7,3 @@ HLTid : LepGood1_hltId > 0
 numSel : LepGood1_customId == 1
 tightCharge : LepGood1_tightChargeFix == 2
 mt: mt_2(met_pt,met_phi,ptElFull(LepGood1_calPt,LepGood1_eta),LepGood1_phi) > 40
-
