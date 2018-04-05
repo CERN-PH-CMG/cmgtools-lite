@@ -1,0 +1,18 @@
+## trigger selection
+## =============================================
+## trigger1mu    : HLT_SingleMu > 0
+trigger1mu    : (HLT_BIT_HLT_IsoMu24_v > 0 || HLT_BIT_HLT_IsoTkMu24_v > 0 )
+## muon selection
+## =============================================
+1l            : nLepGood == 1
+muon          : abs(LepGood1_pdgId) == 13
+muonTightId   : LepGood1_tightId > 0
+muonTightIso  : LepGood1_relIso03 < 0.05
+muonLooseIso  : LepGood1_relIso03 < 1.
+## kinematic selection
+## =============================================
+lpt25         : LepGood1_pt > 25.
+leta          : abs(LepGood1_eta) < 2.4
+
+tkmet15max   : met_trkPt < 30.  && met_trkPt > 15.              
+mtl1tk40max : mt_2(LepGood1_pt,LepGood1_phi,met_trkPt,met_trkPhi) < 60.

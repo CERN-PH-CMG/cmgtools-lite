@@ -1,0 +1,34 @@
+# vim: syntax=sh
+* ; TreeName="treeProducerWMass"
+
+WW+      : WW_DPS_herwig                          : xsec :LepGood1_relIso03 < 0.1 && LepGood2_relIso03 < 0.1       ; FillColor=ROOT.kCyan      , Label="WWDPS"    , NormSystematic=0.03
+
+W        : WJetsToLNu_NLO*                      : 3.*20508.9    ; FillColor=ROOT.kRed+2    , Label="W"        , NormSystematic=0.03
+Z        : DYJetsToLL_M50_part*                  : 1921.8*3.     ; FillColor=ROOT.kAzure+2  , Label="Z"        , NormSystematic=0.04
+Top      : TTJets_SingleLeptonFromT_ext_part1    : xsec          ; FillColor=ROOT.kGray+2   , Label="Top"      , NormSystematic=0.09
+Top      : TTJets_SingleLeptonFromTbar_ext_part1 : xsec          ; FillColor=ROOT.kGray+2   , Label="Top"      , NormSystematic=0.09
+Top      : TToLeptons_sch_amcatnlo               : xsec          ; FillColor=ROOT.kGray+2   , Label="Top"      , NormSystematic=0.04
+Top      : T_tch_powheg_part1                    : xsec          ; FillColor=ROOT.kGray+2   , Label="Top"      , NormSystematic=0.04
+Top      : TBar_tch_powheg_part1                 : xsec          ; FillColor=ROOT.kGray+2   , Label="Top"      , NormSystematic=0.04
+Top      : T_tWch_ext                            : xsec          ; FillColor=ROOT.kGray+2   , Label="Top"      , NormSystematic=0.06
+Top      : TBar_tWch_ext                         : xsec          ; FillColor=ROOT.kGray+2   , Label="Top"      , NormSystematic=0.06
+DiBosons : WW+WW_ext                             : xsec          ; FillColor=ROOT.kViolet+2 , Label="DiBosons" , NormSystematic=0.03
+DiBosons : WZ+WZ_ext                             : xsec          ; FillColor=ROOT.kViolet+2 , Label="DiBosons" , NormSystematic=0.05
+DiBosons : ZZ+ZZ_ext                             : xsec          ; FillColor=ROOT.kViolet+2 , Label="DiBosons" , NormSystematic=0.05
+QCD      : QCD_Mu15_part*                        : 0.65*302673.0 ; FillColor=ROOT.kOrange-2 , Label="QCD"      , NormSystematic=0.30
+
+WZ       : WZTo3LNu_fxfx_part*                   : xsec          :LepGood1_relIso03 < 0.05 && LepGood2_relIso03 < 0.05  ;FillColor=ROOT.kOrange,  Label="WZ"       , NormSystematic=0.10
+
+#data  : SingleMuon_Run2016G_part1        
+
+
+dataTL: SingleMuon_Run2016* : 1 ; FillColor=ROOT.kGreen-4, FakeRate="dpsww13TeV/dps2016/simple/reweighting_TL.txt", Label="runB-H TL"
+#dataTL: SingleMuon_Run2016C* : 1 ; FillColor=ROOT.kGreen-4, FakeRate="dpsww13TeV/dps2016/simple/reweighting_TL.txt", Label="runBC TL"
+
+
+#dataLL: SingleMuon_Run2016* : 1 ; FillColor=ROOT.kRed, FakeRate="dpsww13TeV/dps2016/simple/reweighting_LL.txt", Label="runB-H LL"
+dataLL: SingleMuon_Run2016C* : 1 ; FillColor=ROOT.kRed, FakeRate="dpsww13TeV/dps2016/simple/reweighting_LL.txt", Label="runBC LL"
+
+
+
+#fakes_data : SingleMuon_Run2016* : 1 ; FillColor=ROOT.kGray, FakeRate="w-helicity-13TeV/wmass_mu/FRfast/fakeRate_application_data.txt", Label="Fakes"

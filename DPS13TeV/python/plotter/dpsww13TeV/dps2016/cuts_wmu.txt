@@ -1,0 +1,10 @@
+#
+alwaystrue : 1
+trigger    : (HLT_BIT_HLT_IsoMu24_v > 0 || HLT_BIT_HLT_IsoTkMu24_v > 0 )
+onelep     : nLepGood == 1
+mu         : abs(LepGood1_pdgId)==13
+kinAccept  : LepGood1_pt > 25. && abs(LepGood1_eta)<2.4
+muTightId  : LepGood1_tightId  > 0
+muTightIso : LepGood1_relIso03 < 0.05
+##
+mtl1tk45   : mt_2(LepGood1_pt,LepGood1_phi,met_trkPt,met_trkPhi) > 45.
