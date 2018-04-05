@@ -304,8 +304,9 @@ if __name__ == "__main__":
                         print "WARNING: getting name of efficiency parameter: we are adding 'us_%s_Ybin' to 'us_Ybin' " % "el" if channel_mu1_el2 == 2 else "mu" 
                         print "before " + tmp_par_eff_name
                         if channel_mu1_el2 == 2 and not '_el_Ybin' in tmp_par_eff_name:                        
-                            tmp_par_eff_name = tmp_par_eff_name.replace('us_Ybin','us_mu_Ybin')
+                            tmp_par_eff_name = tmp_par_eff_name.replace('us_Ybin','us_el_Ybin')
                         elif channel_mu1_el2 == 1 and not '_mu_Ybin' in tmp_par_eff_name:
+                            tmp_par_eff_name = tmp_par_eff_name.replace('us_Ybin','us_mu_Ybin')
                         print "after " + tmp_par_eff_name
                     #print "ip, p, eff_par = %d %s %s" % (ip, str(p), str(tmp_par_eff_name))
                     tmp_par_eff =  fitresult.constPars().find(tmp_par_eff_name)
