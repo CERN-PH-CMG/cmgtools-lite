@@ -250,5 +250,11 @@ float helicityWeight(float yw, float ptw, float costheta, int pol)
 
 }
 
-
+float weights_TT_and_TL(float iso1, float iso2, float cut, int category){
+  int sum = (iso1 > cut) + (iso2 > cut);
+  if      (sum == 2 && category == 0) return 1;
+  else if (sum == 1 && category == 1) return 1;
+  else if (sum == 0 && category == 2) return 1;
+  else return 0;
+}
 //#endif
