@@ -11,7 +11,7 @@ W_LO   : WJetsToLNu_LO_* :  xsec; FillColor=ROOT.kRed+2, Label="W (Madgraph)", N
 
 #data_fakes: SingleElectron_07Aug17_Run2016* : 1 ; FakeRate="w-helicity-13TeV/wmass_e/fakeRate-frdata_smooth_IDfunc.txt", Label="Fakes (data)", FillColor=ROOT.kGray, NormSystematic=0.30, PostFix='_fakes'
 
-data_fakes: SingleElectron_07Aug17_Run2016* : 1 ; FakeRate="w-helicity-13TeV/wmass_e/fakeRate-frdata_smooth.txt", Label="Fakes (data)", FillColor=ROOT.kGray, NormSystematic=0.30, PostFix='_fakes'
+data_fakes: SingleElectron_07Aug17_Run2016* : 1 ; FakeRate="w-helicity-13TeV/wmass_e/fakeRate-frdata_smooth.txt", Label="Fakes (data)", FillColor=ROOT.kGray, NormSystematic=0.30
 
 Z_LO : DYJetsToLL_M50_LO_* : 5765.40 ; FillColor=ROOT.kAzure+2, Label="Z (Madgraph)", NormSystematic=0.04
 

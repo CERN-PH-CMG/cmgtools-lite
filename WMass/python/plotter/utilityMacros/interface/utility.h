@@ -1185,6 +1185,12 @@ void drawTH1pair(TH1* h1, TH1* h2,
   Double_t xmax = 0;
   Bool_t setXAxisRangeFromUser = getAxisRangeFromUser(xAxisName, xmin, xmax, xAxisNameTmp);
 
+  string yAxisNameRatio = "";
+  Double_t yminRatio = 0;
+  Double_t ymaxRatio = 0;
+  Bool_t setYAxisRatioRangeFromUser = getAxisRangeFromUser(yAxisNameRatio, yminRatio, ymaxRatio, ratioPadYaxisName);
+
+
   // cout << "xAxisName = " << xAxisName << "   xmin = " << xmin << "  xmax = " << xmax << endl;
 
   myRebinHisto(h1,rebinFactor);
@@ -1211,10 +1217,12 @@ void drawTH1pair(TH1* h1, TH1* h2,
   canvas->cd();
   canvas->SetBottomMargin(0.3);
   canvas->SetRightMargin(0.06);
+  canvas->SetLeftMargin(0.16);
 
   TPad *pad2 = new TPad("pad2","pad2",0,0.,1,0.9);
   pad2->SetTopMargin(0.7);
   pad2->SetRightMargin(0.06);
+  pad2->SetLeftMargin(0.16);
   pad2->SetFillColor(0);
   pad2->SetGridy(1);
   pad2->SetFillStyle(0);
@@ -1229,20 +1237,24 @@ void drawTH1pair(TH1* h1, TH1* h2,
   h1->SetMarkerSize(1);
 
   h1->GetXaxis()->SetLabelSize(0);
+  h1->GetXaxis()->SetTitle(0);  
   h1->GetYaxis()->SetTitle(yAxisName.c_str());
-  h1->GetYaxis()->SetTitleOffset(1.1);
+  h1->GetYaxis()->SetTitleOffset(1.2);
   // h1->GetYaxis()->SetTitleOffset(0.8);  // was 1.03 without setting also the size
   h1->GetYaxis()->SetTitleSize(0.05);
+  h1->GetYaxis()->SetLabelSize(0.04);
   //h1->GetYaxis()->SetRangeUser(0.0, max(h1->GetMaximum(),h2->GetMaximum()) * 1.2);
   h1->GetYaxis()->SetRangeUser(0.0, max(h1->GetBinContent(h1->GetMaximumBin()),h2->GetBinContent(h2->GetMaximumBin())) * 1.2);
   if (setXAxisRangeFromUser) h1->GetXaxis()->SetRangeUser(xmin,xmax);
   h1->Draw("EP");
 
   h2->SetLineColor(kRed);
+  h2->SetFillColor(0);
   h2->SetLineWidth(2);
   h2->Draw("hist same");
+  h1->Draw("EPsame");
 
-  TLegend leg (0.5,0.7,0.9,0.9);
+  TLegend leg (0.6,0.7,0.95,0.9);
   leg.SetFillColor(0);
   leg.SetFillStyle(0);
   leg.SetBorderSize(0);
@@ -1253,7 +1265,7 @@ void drawTH1pair(TH1* h1, TH1* h2,
 
   TPaveText *pvtxt = NULL;
   if (yAxisName == "a.u.") {
-    pvtxt = new TPaveText(0.5,0.6,0.90,0.7, "BR NDC");
+    pvtxt = new TPaveText(0.6,0.6,0.95,0.7, "BR NDC");
     pvtxt->SetFillColor(0);
     pvtxt->SetFillStyle(0);
     pvtxt->SetBorderSize(0);
@@ -1270,11 +1282,13 @@ void drawTH1pair(TH1* h1, TH1* h2,
   pad2->cd();
 
   frame->Reset("ICES");
-  frame->GetYaxis()->SetRangeUser(0.5,1.5);
+  if (setYAxisRatioRangeFromUser) frame->GetYaxis()->SetRangeUser(yminRatio,ymaxRatio);
+  else frame->GetYaxis()->SetRangeUser(0.5,1.5);
   frame->GetYaxis()->SetNdivisions(5);
-  frame->GetYaxis()->SetTitle(ratioPadYaxisName.c_str());
+  frame->GetYaxis()->SetTitle(yAxisNameRatio.c_str());
   frame->GetYaxis()->SetTitleOffset(1.2);
-  // frame->GetYaxis()->SetTitleSize(0.15);
+  frame->GetYaxis()->SetTitleSize(0.05);
+  frame->GetYaxis()->SetLabelSize(0.04);
   frame->GetYaxis()->CenterTitle();
   frame->GetXaxis()->SetTitle(xAxisName.c_str());
   if (setXAxisRangeFromUser) frame->GetXaxis()->SetRangeUser(xmin,xmax);
@@ -1292,9 +1306,10 @@ void drawTH1pair(TH1* h1, TH1* h2,
   den->SetFillColor(kGray);
   frame->Draw();
   ratio->SetMarkerSize(0.85);
-  ratio->Draw("EPsame");
+  den->SetMarkerStyle(0);  // important to remove dots at y = 1
   den->Draw("E2same");
-
+  ratio->Draw("EPsame");
+  
   TF1* line = new TF1("horiz_line","1",ratio->GetXaxis()->GetBinLowEdge(1),ratio->GetXaxis()->GetBinLowEdge(ratio->GetNbinsX()+1));
   line->SetLineColor(kRed);
   line->SetLineWidth(2);
