@@ -275,6 +275,7 @@ metPuppiAna = cfg.Analyzer(
         noPUMetCollection = "slimmedMETsPuppi",
         copyMETsByValue = False,
         doTkMet = False,
+        doPuppiMet = False,
         includeTkMetCHS = False,
         includeTkMetPVLoose = False,
         includeTkMetPVTight = False,

@@ -133,7 +133,7 @@ if options.infile!=None:
         h = infile.Get(p)
         if h: report[p] = h
 else:
-    report = mca.getPlotsRaw("x", args[2], args[3], cuts.allCuts(), nodata=options.asimov)
+    for n,h in mca.getPlotsRaw("x", args[2], args[3], cuts.allCuts(), nodata=options.asimov).iteritems(): report[n]=h.raw().Clone('x_%s'%n)
 
 if options.savefile!=None:
     savefile = ROOT.TFile(myout+binname+".bare.root","recreate")
@@ -151,9 +151,11 @@ else:
 allyields = dict([(p,h.Integral()) for p,h in report.iteritems()])
 procs = []; iproc = {}
 for i,s in enumerate(mca.listSignals()):
+    if s not in allyields: continue
     if allyields[s] == 0: continue
     procs.append(s); iproc[s] = i-len(mca.listSignals())+1
 for i,b in enumerate(mca.listBackgrounds()):
+    if b not in allyields: continue
     if allyields[b] == 0: continue
     procs.append(b); iproc[b] = i+1
 
@@ -306,9 +308,11 @@ if options.binfunction:
     allyields = dict([(p,h.Integral()) for p,h in report.iteritems()])
     procs = []; iproc = {}
     for i,s in enumerate(mca.listSignals()):
+        if s not in allyields: continue
         if allyields[s] == 0: continue
         procs.append(s); iproc[s] = i-len(mca.listSignals())+1
     for i,b in enumerate(mca.listBackgrounds()):
+        if b not in allyields: continue
         if allyields[b] == 0: continue
         procs.append(b); iproc[b] = i+1
 
