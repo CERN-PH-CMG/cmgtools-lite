@@ -1,9 +1,9 @@
 pt : LepGood_pt : 40,0,100; XTitle="lepton p_{T}  (GeV)", Logy=True
 eta : LepGood_eta : 20,-2.5,2.5; XTitle="lepton #eta", MoreY=1.8
-conePt:  LepGood_pt*if3(LepGood_mvaTTH>0.90&&LepGood_mediumMuonId>0, 1.0, 0.80/LepGood_jetPtRatiov2)  : 20,0,100; XTitle="lepton p_{T}^{cone} [GeV]", Logy=True
+conePt:  LepGood_pt*if3(LepGood_mvaTTH>0.90&&LepGood_mediumMuonId>0, 1.0, 0.90/LepGood_jetPtRatiov2)  : 20,0,100; XTitle="lepton p_{T}^{cone} [GeV]", Logy=True
 
 sip3d:  LepGood_sip3d       : 20,0,8; XTitle="lepton sip3d"
-#miniRelIso:  LepGood_miniRelIso       : 20,0,0.4; XTitle="lepton miniRelIso"
+miniRelIso:  LepGood_miniRelIso       : 20,0,0.4; XTitle="lepton miniRelIso"
 #dxy:  LepGood_dxy       : 20,-0.1,0.1; XTitle="lepton dxy", Logy
 #dz:  LepGood_dz       : 20,-0.1,0.1; XTitle="lepton dz", Logy
 jetPtRatio:  LepGood_jetPtRatiov2   : 20,0,1.3; XTitle="lepton p_{T}(l)/p_{T}(j)"

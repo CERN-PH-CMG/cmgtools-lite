@@ -9,7 +9,7 @@ def _MEMInit():
 
 class ttHLepMEMFriend:
     def __init__(self, config, blooseWP, recllabel='Recl'):
-        self._procs = [ "TTLL", "TTHfl", "TTHsl", "TTW", "TTbarfl", "TTbarsl"]#, "TTWJJ", "TTH" ]
+        self._procs = [ "TTLL", "TTHfl", "TTHsl", "TTW", "TTbarfl", "TTbarsl", "TTH" ]#, "TTWJJ", "TTH" ]
         self._posts = [ "", "_kinmaxint"]#, "_nHypAll", "_nNull", "_time", "_err", "_chi2" ]
         self.systsJEC = {0:"", 1:"_jecUp", -1:"_jecDown"} # not really used for the moment
         self.inputlabel = '_'+recllabel

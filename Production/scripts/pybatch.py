@@ -75,7 +75,7 @@ else
    do
       ff=`basename $f | cut -d . -f 1`
       d=`echo $f | cut -d / -f 2`
-      /afs/cern.ch/project/eos/installation/0.3.15/bin/eos.select mkdir {srm}
+      eos mkdir {srm}
       echo "cmsStage /`pwd`/Loop/$d/$ff.root {srm}/${{ff}}_{idx}.root"
       cmsStage /`pwd`/Loop/$d/$ff.root {srm}/${{ff}}_{idx}.root
       if [ $? -ne 0 ]; then

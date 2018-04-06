@@ -50,6 +50,9 @@ TT_pow_part1 :  TT_pow_part1 : xsec
 TT_pow_part2 :  TT_pow_part2 : xsec
 TTHnobb_mWCutfix_ext_LHE :  TTHnobb_mWCutfix_ext_LHE : xsec
 TTZToLLNuNu_LHE :  TTZToLLNuNu_LHE : xsec
+THQ : THQ : xsec
+THW : THW : xsec
+TTWWTo2LSS2Nu_LO : TTWWTo2LSS2Nu_LO : xsec
 data: DoubleEG_2016B
 data: DoubleEG_2016C
 data: DoubleEG_2016D
