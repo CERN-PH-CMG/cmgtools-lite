@@ -6,9 +6,9 @@ met20        : met_pt > 20 ; Disable=True
 2l           : nLepGood == 2
 ## noother      : nLepFO_Recl == 2
 ## noTau        : nTauSel_Recl == 0
-bVeto        : Sum$(Jet_Clean_pt > 25 && Jet_Clean_btagCSV > 0.5426) == 0
-01jets       : Sum$(Jet_Clean_pt > 30) < 2
-lepMVA       : min(LepGood1_mvaTTH,LepGood2_mvaTTH) > 0.75
+#bVeto        : Sum$(Jet_Clean_pt > 25 && Jet_Clean_btagCSV > 0.5426) == 0
+#01jets       : Sum$(Jet_Clean_pt > 30) < 2
+#lepMVA       : min(LepGood1_mvaTTH,LepGood2_mvaTTH) > 0.75
 tightele     : (LepGood1_mvaTTH > 0.85 || abs(LepGood1_pdgId)==13 ) && (LepGood2_mvaTTH > 0.85 || abs(LepGood2_pdgId)==13 )
 tightCharge  : LepGood1_tightCharge > 1 && LepGood2_tightCharge > 1
 chargecon    : (LepGood1_chargeConsistency >= 3 || abs(LepGood1_pdgId)==11) && (LepGood2_chargeConsistency >= 3 || abs(LepGood2_pdgId)==11)
