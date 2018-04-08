@@ -215,7 +215,7 @@ def retrieveInfosFromBadPublished(ds) :
       group = 'user'
 
     ### list all files in the eos directory
-    eos_command = '/afs/cern.ch/project/eos/installation/0.2.31/bin/eos.select'
+    eos_command = 'eos'
     command = "{EOS} ls /store/cmst3/{GROUP}/{USER}/CMG{SAMPLE}".format(EOS   = eos_command,\
                                                                         GROUP = group      ,\
                                                                         USER  = user       ,\

@@ -64,9 +64,10 @@ if __name__ == "__main__":
 
     OPTS = ' --obj tree -P '+treeDir+' --s2v -j 4 -F Friends "{P}/friends/tree_Friend_{cname}.root" '
     OPTS += ' --max-entries %d ' % options.maxEntries 
-    if options.pretend: OPTS += ' --pretend '
-    if options.queue: OPTS += ' -q %s ' % options.queue
-    if options.logdir: OPTS += ' --log %s ' % options.logdir
+    BATCH_OPTS = ''
+    if options.pretend: BATCH_OPTS += ' --pretend '
+    if options.queue: BATCH_OPTS += ' -q %s ' % options.queue
+    if options.logdir: BATCH_OPTS += ' --log %s ' % options.logdir
 
     varsToKeep = []; DROPVARS = ''
     if options.varfile!=None:
@@ -75,14 +76,14 @@ if __name__ == "__main__":
         DROPVARS = " --dropall --keep "+" --keep ".join(varsToKeep)
         OPTS += DROPVARS
     
-    cmdSkim = "python skimTrees.py "+" ".join(mcargs)+" " + outputDirSkims + OPTS
-    cmdFSkimEv = " python skimFTrees.py "+outputDirSkims+" "+treeDir+"/friends/ "+outputDirFSkims+' -f tree_Friend -t "Friends" ' + DROPVARS
+    cmdSkim = "python skimTrees.py "+" ".join(mcargs)+" " + outputDirSkims + OPTS + BATCH_OPTS
+    cmdFSkimEv = " python skimFTrees.py "+outputDirSkims+" "+treeDir+"/friends/ "+outputDirFSkims+' -f tree_Friend -t "Friends" ' + DROPVARS + BATCH_OPTS
 
     if not options.friendOnly:
         print "Now skimming the main trees, keeping the following vars:\n",varsToKeep
         print "This step may take time...\n"
         os.system(cmdSkim)
-    if not options.queue and not options.mainOnly:
+    if not options.mainOnly:
         print "Now skimming the event variables friend trees:\n"
         os.system(cmdFSkimEv)
         # print "Now skimming the fake rate friend trees:\n"

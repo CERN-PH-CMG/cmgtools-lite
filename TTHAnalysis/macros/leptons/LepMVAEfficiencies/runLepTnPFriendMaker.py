@@ -8,7 +8,7 @@ def getEOSlslist(directory, mask='', prepend='root://eoscms//eos/cms'):
     from subprocess import Popen, PIPE
     print 'looking into:',directory,'...'
 
-    eos_cmd = '/afs/cern.ch/project/eos/installation/0.3.84-aquamarine/bin/eos.select'
+    eos_cmd = 'eos'
     if not osp.exists(eos_cmd):
         raise RuntimeError('check eos alias: %s'%eos_cmd)
     data = Popen([eos_cmd, 'ls', '/eos/cms/'+directory],

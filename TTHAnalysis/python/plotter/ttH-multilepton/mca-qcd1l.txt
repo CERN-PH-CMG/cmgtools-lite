@@ -34,6 +34,25 @@ QCDEl_red: QCD_Pt_20to30_bcToE      : xsec : LepGood_mcMatchId == 0 ; FillColor=
 QCDEl_red: QCD_Pt_30to80_bcToE      : xsec : LepGood_mcMatchId == 0 ; FillColor=ROOT.kPink-2, Label="QCDe"
 QCDEl_red: QCD_Pt_80to170_bcToE     : xsec : LepGood_mcMatchId == 0 ; FillColor=ROOT.kPink-2, Label="QCDe"
 
+QCDEl_redNC: QCD_Pt20to30_EMEnriched  : xsec : LepGood_mcMatchId == 0 && LepGood_mcPromptGamma == 0 ; FillColor=ROOT.kMagenta+1, Label="QCDe no \#gamma"
+QCDEl_redNC: QCD_Pt30to50_EMEnriched  : xsec : LepGood_mcMatchId == 0 && LepGood_mcPromptGamma == 0 ; FillColor=ROOT.kMagenta+1, Label="QCDe no \#gamma"
+QCDEl_redNC: QCD_Pt50to80_EMEnriched  : xsec : LepGood_mcMatchId == 0 && LepGood_mcPromptGamma == 0 ; FillColor=ROOT.kMagenta+1, Label="QCDe no \#gamma"
+QCDEl_redNC: QCD_Pt80to120_EMEnriched : xsec : LepGood_mcMatchId == 0 && LepGood_mcPromptGamma == 0 ; FillColor=ROOT.kMagenta+1, Label="QCDe no \#gamma"
+QCDEl_redNC: QCD_Pt120to170_EMEnriched: xsec : LepGood_mcMatchId == 0 && LepGood_mcPromptGamma == 0 ; FillColor=ROOT.kMagenta+1, Label="QCDe no \#gamma"
+QCDEl_redNC: QCD_Pt_20to30_bcToE      : xsec : LepGood_mcMatchId == 0 && LepGood_mcPromptGamma == 0 ; FillColor=ROOT.kMagenta+1, Label="QCDe no \#gamma"
+QCDEl_redNC: QCD_Pt_30to80_bcToE      : xsec : LepGood_mcMatchId == 0 && LepGood_mcPromptGamma == 0 ; FillColor=ROOT.kMagenta+1, Label="QCDe no \#gamma"
+QCDEl_redNC: QCD_Pt_80to170_bcToE     : xsec : LepGood_mcMatchId == 0 && LepGood_mcPromptGamma == 0 ; FillColor=ROOT.kMagenta+1, Label="QCDe no \#gamma"
+QCDEl_conv: QCD_Pt20to30_EMEnriched  : xsec : LepGood_mcMatchId == 0 && LepGood_mcPromptGamma != 0 ; FillColor=ROOT.kOrange-3, Label="QCDe \#gamma"
+QCDEl_conv: QCD_Pt30to50_EMEnriched  : xsec : LepGood_mcMatchId == 0 && LepGood_mcPromptGamma != 0 ; FillColor=ROOT.kOrange-3, Label="QCDe \#gamma"
+QCDEl_conv: QCD_Pt50to80_EMEnriched  : xsec : LepGood_mcMatchId == 0 && LepGood_mcPromptGamma != 0 ; FillColor=ROOT.kOrange-3, Label="QCDe \#gamma"
+QCDEl_conv: QCD_Pt80to120_EMEnriched : xsec : LepGood_mcMatchId == 0 && LepGood_mcPromptGamma != 0 ; FillColor=ROOT.kOrange-3, Label="QCDe \#gamma"
+QCDEl_conv: QCD_Pt120to170_EMEnriched: xsec : LepGood_mcMatchId == 0 && LepGood_mcPromptGamma != 0 ; FillColor=ROOT.kOrange-3, Label="QCDe \#gamma"
+QCDEl_conv: QCD_Pt_20to30_bcToE      : xsec : LepGood_mcMatchId == 0 && LepGood_mcPromptGamma != 0 ; FillColor=ROOT.kOrange-3, Label="QCDe \#gamma"
+QCDEl_conv: QCD_Pt_30to80_bcToE      : xsec : LepGood_mcMatchId == 0 && LepGood_mcPromptGamma != 0 ; FillColor=ROOT.kOrange-3, Label="QCDe \#gamma"
+QCDEl_conv: QCD_Pt_80to170_bcToE     : xsec : LepGood_mcMatchId == 0 && LepGood_mcPromptGamma != 0 ; FillColor=ROOT.kOrange-3, Label="QCDe \#gamma"
+
+
+
 QCDEl_bjets: QCD_Pt_20to30_bcToE   : xsec : LepGood_mcMatchAny == 5 ; FillColor=ROOT.kPink+5, Label="QCDe\, b\#rightarrowl"
 QCDEl_bjets: QCD_Pt_30to80_bcToE   : xsec : LepGood_mcMatchAny == 5 ; FillColor=ROOT.kPink+5, Label="QCDe\, b\#rightarrowl"
 QCDEl_bjets: QCD_Pt_80to170_bcToE  : xsec : LepGood_mcMatchAny == 5 ; FillColor=ROOT.kPink+5, Label="QCDe\, b\#rightarrowl"
