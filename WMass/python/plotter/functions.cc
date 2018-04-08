@@ -508,6 +508,52 @@ bool pass_FakerateNum_debug(const bool  isEB = true,
 }
 //==================================================
 
+TVector2 tkmetEleCorr(float tkmet_pt, float tkmet_phi, float lep_pt, float lep_phi) {
+
+  TVector2 trkmet_corr;
+  trkmet_corr.SetMagPhi(tkmet_pt, tkmet_phi);
+
+  // when the electron is not compatible with the primary vertex, its track is not used to compute tkMet (it is a bug in our ntuples)
+  // in that case, add the electron back
+  // We have the following (assuming vectorial object in the equation)
+  // TkMEt_corr = -Sum(pT_tracks_noBadEle) - pT_badEle
+  // in the ntuples we have TkMEt = -Sum(pT_tracks_noBadEle)
+  
+  // here we correct the tkMet 
+  TVector2 badEle;      
+  badEle.SetMagPhi(lep_pt,lep_phi);
+  trkmet_corr -= badEle;  
+
+  return trkmet_corr;
+
+}
+
+//==================================================    
+
+float tkmetEleCorr_pt(float tkmet_pt, float tkmet_phi, float lep_pt, float lep_phi, bool eleTrackIsVertexCompatible) {
+
+  if (eleTrackIsVertexCompatible) return tkmet_pt;
+
+  TVector2 trkmet_corr = tkmetEleCorr(tkmet_pt, tkmet_phi, lep_pt, lep_phi);
+  return trkmet_corr.Mod();
+
+}
+
+
+//==================================================
+
+
+float tkmetEleCorr_phi(float tkmet_pt, float tkmet_phi, float lep_pt, float lep_phi, bool eleTrackIsVertexCompatible) {
+
+  if (eleTrackIsVertexCompatible) return tkmet_phi;
+
+  TVector2 trkmet_corr = tkmetEleCorr(tkmet_pt, tkmet_phi, lep_pt, lep_phi);
+  return trkmet_corr.Phi();
+
+}
+
+
+//==================================================
 
 // call like 
 // tkmt_tkmetEleCorr(met_trkPt,
@@ -531,11 +577,7 @@ float tkmt_tkmetEleCorr(float tkmet_pt, float tkmet_phi, float lep_pt, float lep
     // TkMEt_corr = -Sum(pT_tracks_noBadEle) - pT_badEle
     // in the ntuples we have TkMEt = -Sum(pT_tracks_noBadEle)
 
-    // here we define the tkMet as the wrong one and will correct later (we avoid declaring 2 TVector2) 
-    TVector2 trkmet_corr; trkmet_corr.SetMagPhi(tkmet_pt, tkmet_phi);  
-    TVector2 badEle;      badEle.SetMagPhi(lep_pt,lep_phi);
-    trkmet_corr -= badEle;
-
+    TVector2 trkmet_corr = tkmetEleCorr(tkmet_pt, tkmet_phi, lep_pt, lep_phi); 
     return mt_2(trkmet_corr.Mod(),trkmet_corr.Phi(),lep_pt,lep_phi);
 
   }
