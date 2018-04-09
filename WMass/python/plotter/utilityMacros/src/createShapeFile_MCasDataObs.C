@@ -9,7 +9,8 @@ using namespace std;
 // this macro handles the histograms in *_shapes.root file used by combine
 // it copies a given input file but changing x_data_obs
 // x_data_obs is obtained from some histograms in another *_shapes.root file produced with a different selection
-// through option 'addProcessDiffSel_sig0_bkg1_all2_none3' it is possible to select only some components from the file with different selection
+// through options 'addProcessDiffSel_sig0_bkg1_all2_none3' and 'copyProcessDiffSel_sig0_bkg1_all2_none3' it is possible to select 
+// which components should be added and/or copied from the file with different selection
 
 //======================================================================
 
@@ -277,7 +278,7 @@ void realCreateShapeFile(const string& fileName = "",
 
 void createShapeFile_MCasDataObs(const string& inputFilePath = "/afs/cern.ch/work/m/mciprian/w_mass_analysis/heppy/CMSSW_8_0_25/src/CMGTools/WMass/python/plotter/cards/helicity_2018_03_05_baseSel_WLO/", 
 				 const string& inputFilePath_diffSelection = "/afs/cern.ch/work/m/mciprian/w_mass_analysis/heppy/CMSSW_8_0_25/src/CMGTools/WMass/python/plotter/cards/helicity_2018_03_06_pfmt30_WLO/",
-				 const string& newFilesuffix = "test_MCasData",
+				 const string& outFilesuffix = "test_MCasData",
 				 const Int_t nBinsYw = 13,  // histogram named x_Wplus_right_Wplus_el_Ybin_NN, NN goes to 0 to nBinsYw - 1 
 				 const Int_t addProcessDiffSel_sig0_bkg1_all2_none3 = 3, // make data using signal or background or both with different selection
 				 const Int_t copyProcessDiffSel_sig0_bkg1_all2_none3 = 3, // copy signal or background or both or none from file with different selection
@@ -293,8 +294,8 @@ void createShapeFile_MCasDataObs(const string& inputFilePath = "/afs/cern.ch/wor
  
   string shapePlusFile = "Wel_plus_shapes.root";
   string shapeMinusFile = "Wel_minus_shapes.root";
-  string shapePlusFileOut = Form("Wel_plus_shapes_%s.root",newFilesuffix.c_str());
-  string shapeMinusFileOut = Form("Wel_minus_shapes_%s.root",newFilesuffix.c_str());
+  string shapePlusFileOut = Form("Wel_plus_shapes_%s.root",outFilesuffix.c_str());
+  string shapeMinusFileOut = Form("Wel_minus_shapes_%s.root",outFilesuffix.c_str());
 
   realCreateShapeFile(inputFilePath+shapePlusFile,  inputFilePath_diffSelection+shapePlusFile,  inputFilePath+shapePlusFileOut, "plus",   nBinsYw, addProcessDiffSel_sig0_bkg1_all2_none3, copyProcessDiffSel_sig0_bkg1_all2_none3, isMuon);
   realCreateShapeFile(inputFilePath+shapeMinusFile, inputFilePath_diffSelection+shapeMinusFile, inputFilePath+shapeMinusFileOut, "minus", nBinsYw, addProcessDiffSel_sig0_bkg1_all2_none3, copyProcessDiffSel_sig0_bkg1_all2_none3, isMuon);
