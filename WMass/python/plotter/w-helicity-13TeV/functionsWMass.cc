@@ -344,5 +344,19 @@ float ptElFullDn(float pt, float eta) {
 }
 
 
+//===============================================
+
+float getSmearedVar(float var, float smear, ULong64_t eventNumber, int isData, bool smearOnlyMC=false) {
+
+  if (smearOnlyMC && isData) return var;
+
+  if(!rng) rng = new TRandom3();
+  // use eventNumber as seed, otherwise each time the function is called for the same event, the smearer produce a different smeared value
+  rng->SetSeed(eventNumber); // make it really random across different jobs    
+  return var * ( 1.0 + smear * rng->Gaus());
+
+}
+
+
 
 //#endif
