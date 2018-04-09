@@ -415,8 +415,8 @@ void makeFakeRateGraphPlotsAndSmoothing(const string& inputFilePath = "www/wmass
 					const TString& etaBinBoundariesList = "0.0,1.0,1.479,2.1,2.5",  // important to use dots also for 1.0
 					const Double_t inputLuminosity = 35.9,  // -1 in case luminosity should not be printed
 					const Bool_t saveToFile = false,  // whether to save is WMass/data/fakerate/ (if false, save in current folder)
-					const string& inputFilePathForQCD_tmp = "",
-					const string& graphPrefixQCD = ""
+					const string& inputFilePathForQCD_tmp = "www/wmass/13TeV/fake-rate/test/SRtrees_new/fakeRate_pfmtfix_pt_coarse_pfmet20_HLT27_tightChargeNum/el/comb/",
+					const string& graphPrefixQCD = "fakeRateNumerator_el_vs_pt_coarse"
 			   ) 
 {
 
