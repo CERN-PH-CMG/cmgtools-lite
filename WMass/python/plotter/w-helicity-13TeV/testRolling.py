@@ -5,8 +5,8 @@ from array import array
 def getbinning(splitline):
     bins = splitline[5]
     if '*' in bins:
-        etabins = list( float(i) for i in bins.split('*')[0].replace('\'[','').replace(']','').split(',') )
-        ptbins  = list( float(i) for i in bins.split('*')[1].replace('[','').replace(']\'','').split(',') )
+        etabins = list( float(i) for i in bins.replace(' ','').split('*')[0].replace('\'[','').replace(']','').split(',') )
+        ptbins  = list( float(i) for i in bins.replace(' ','').split('*')[1].replace('[','').replace(']\'','').split(',') )
         nbinseta = len(etabins)-1
         nbinspt  = len( ptbins)-1
         binning = [nbinseta, etabins, nbinspt, ptbins]
@@ -81,50 +81,57 @@ def unroll2Dto1D(h):
 
 ROOT.gROOT.SetBatch()
 
-#shapesfile = '/afs/cern.ch/work/m/mdunser/public/cmssw/w-helicity-13TeV/CMSSW_8_0_25/src/CMGTools/WMass/python/plotter/cards/helicity_2018_02_08_binsEta32_binsPt20_binsY26/Wmu_plus_shapes.root'
-#shapesfile = '/afs/cern.ch/work/m/mdunser/public/cmssw/w-helicity-13TeV/CMSSW_8_0_25/src/CMGTools/WMass/python/plotter/cards/helicity_2018_02_09_variablebinningEta_binsPt20_longBkg/mu_minus_shapes.root'
-#shapesfile = '/afs/cern.ch/work/m/mdunser/public/cmssw/w-helicity-13TeV/CMSSW_8_0_25/src/CMGTools/WMass/python/plotter/cards/helicity_2018_02_12_variableEta_ptBins20_longBkg_MTTK45/mu_minus_shapes.root'
-#shapesfile = '/afs/cern.ch/work/m/mdunser/public/cmssw/w-helicity-13TeV/CMSSW_8_0_25/src/CMGTools/WMass/python/plotter/cards/helicity_2018_02_12_variableEta_ptBins20_longBkg_MTTK45/mu_minus_shapes.root'
-shapesfile = '/afs/cern.ch/work/m/mdunser/public/cmssw/w-helicity-13TeV/CMSSW_8_0_25/src/CMGTools/WMass/python/plotter/cards/helicity_2018_02_21_absY_mTtk45/mu_plus_shapes.root'
+if __name__ == "__main__":
+    from optparse import OptionParser
+    parser = OptionParser(usage="%prog [options] shapesdir channel")
+    parser.add_option('-o','--outdir', dest='outdir', default='.', type='string', help='outdput directory to save the matrix')
+    (options, args) = parser.parse_args()
+    channel = args[1]
+    
+    outname = options.outdir
+    if not os.path.exists(outname):
+        os.system("mkdir -p "+outname)
+        if os.path.exists("/afs/cern.ch"): os.system("cp /afs/cern.ch/user/g/gpetrucc/php/index.php "+outname)
+
+    for charge in ['plus','minus']:
+        shapesfile = "{indir}/W{flav}_{ch}_shapes.root".format(indir=args[0],flav=channel,ch=charge)
+        infile = ROOT.TFile(shapesfile, 'read')
+        print "==> RUNNING FOR CHARGE ",charge
+        for pol in ['right', 'left']:
+            print "\tPOLARIZATION ",pol
+            for ybin in range(13): 
+
+                jobsdir = args[0]+'/jobs/'
+                jobfile_name = 'W{ch}_{flav}_Ybin_{b}.sh'.format(ch=charge,flav=channel,b=ybin)
+                tmp_jobfile = open(jobsdir+jobfile_name, 'r')
+                tmp_line = tmp_jobfile.readlines()[-1].split()
+                ymin = list(i for i in tmp_line if '(genw_y)>' in i)[0].replace('\'','').split('>')[-1]
+                ymax = list(i for i in tmp_line if '(genw_y)<' in i)[0].replace('\'','').split('<')[-1]
+
+                binning = getbinning(tmp_line)
+
+                chs = '+' if charge == 'plus' else '-' 
+                h1_1 = infile.Get('x_W{ch}_{pol}_W{ch}_{flav}_Ybin_{ybin}'.format(ch=charge,pol=pol,flav=channel,ybin=ybin))
+                if len(binning) == 4:
+                    n1 = binning[0]; bins1 = array('d', binning[1])
+                    n2 = binning[2]; bins2 = array('d', binning[3])
+                    h2_1 = ROOT.TH2F('h2_1', 'W{ch} {pol} : |Y_{{W}}| #in [{ymin},{ymax}]'.format(ymin=ymin,ymax=ymax,pol=pol,ybin=ybin,ch=chs) , n1, bins1, n2, bins2 )
+                else:
+                    n1 = binning[0]; min1 = binning[1]; max1 = binning[2]
+                    n2 = binning[3]; min2 = binning[4]; max2 = binning[5]
+                    h2_1 = ROOT.TH2F('h2_1', 'W{ch} {pol} : |Y_{{W}}| #in [{ymin},{ymax}]'.format(ymin=ymin,ymax=ymax,pol=pol,ybin=ybin,ch=chs) , n1, min1, max1, n2, min2, max2)
+                h2_backrolled_1 = roll1Dto2D(h1_1, h2_1 )
+                h2_backrolled_1 .GetXaxis().SetTitle('lepton #eta')
+                h2_backrolled_1 .GetYaxis().SetTitle('lepton p_{T} (GeV)')
+                h2_backrolled_1 .GetZaxis().SetRangeUser(0.1*h2_backrolled_1.GetMaximum(),1.1*h2_backrolled_1.GetMaximum())
 
 
-infile = ROOT.TFile(shapesfile, 'read')
-for charge in ['plus']:#, 'minus']:
-    for pol in ['right', 'left']:
-        for ybin in range(13): 
-
-            jobsdir = os.path.dirname(shapesfile)+'/jobs/'
-            jobfile_name = 'W{ch}_mu_Ybin_{b}.sh'.format(ch=charge,b=ybin)
-            tmp_jobfile = open(jobsdir+jobfile_name, 'r')
-            tmp_line = tmp_jobfile.readlines()[-1].split()
-            ymin = list(i for i in tmp_line if '(genw_y)>' in i)[0].replace('\'','').split('>')[-1]
-            ymax = list(i for i in tmp_line if '(genw_y)<' in i)[0].replace('\'','').split('<')[-1]
-
-            binning = getbinning(tmp_line)
-
-            chs = '+' if charge == 'plus' else '-'
-
-            h1_1 = infile.Get('x_W{ch}_{pol}_W{ch}_mu_Ybin_{ybin}'.format(ch=charge,pol=pol,ybin=ybin))
-            if len(binning) == 4:
-                n1 = binning[0]; bins1 = array('d', binning[1])
-                n2 = binning[2]; bins2 = array('d', binning[3])
-                h2_1 = ROOT.TH2F('h2_1', 'W{ch} {pol} : |Y_{{W}}| #in [{ymin},{ymax}]'.format(ymin=ymin,ymax=ymax,pol=pol,ybin=ybin,ch=chs) , n1, bins1, n2, bins2 )
-            else:
-                n1 = binning[0]; min1 = binning[1]; max1 = binning[2]
-                n2 = binning[3]; min2 = binning[4]; max2 = binning[5]
-                h2_1 = ROOT.TH2F('h2_1', 'W{ch} {pol} : |Y_{{W}}| #in [{ymin},{ymax}]'.format(ymin=ymin,ymax=ymax,pol=pol,ybin=ybin,ch=chs) , n1, min1, max1, n2, min2, max2)
-            h2_backrolled_1 = roll1Dto2D(h1_1, h2_1 )
-            h2_backrolled_1 .GetXaxis().SetTitle('lepton #eta')
-            h2_backrolled_1 .GetYaxis().SetTitle('lepton p_{T} (GeV)')
-            h2_backrolled_1 .GetZaxis().SetRangeUser(0.1*h2_backrolled_1.GetMaximum(),1.1*h2_backrolled_1.GetMaximum())
-            
-            
-            canv = ROOT.TCanvas()
-            h2_backrolled_1.Draw('colz')
-            for ext in ['pdf', 'png']:
-                canv.SaveAs('~/www/private/w-helicity-13TeV/helicityTemplates/backrolledTemplates/W{ch}_{pol}_W{ch}_mu_Ybin_{ybin}_MTTK45_absY.{ext}'.format(ch=charge,pol=pol,ybin=ybin,ext=ext))
-## canv.Divide(1,2)
-## canv.cd(1)
-## h2.Draw('colz')
-## canv.cd(2)
-## h2backrolled.Draw('colz')
+                canv = ROOT.TCanvas()
+                h2_backrolled_1.Draw('colz')
+                for ext in ['pdf', 'png']:
+                    canv.SaveAs('{odir}/W{ch}_{pol}_W{ch}_el_Ybin_{ybin}_PFMT40_absY.{ext}'.format(odir=outname,ch=charge,pol=pol,ybin=ybin,ext=ext))
+    ## canv.Divide(1,2)
+    ## canv.cd(1)
+    ## h2.Draw('colz')
+    ## canv.cd(2)
+    ## h2backrolled.Draw('colz')
