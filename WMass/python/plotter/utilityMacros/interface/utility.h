@@ -271,6 +271,19 @@ private:
 
 };
 
+//======================================================================                          
+
+void replaceSubstringFromCString(string& str, const string& match = "", const string& strToInsert = "", const Bool_t replaceAll = false) {
+
+  // implement recursive strategy                      
+
+  size_t pos = str.find(match);
+  if (pos != string::npos) {
+    str.replace(str.find(match),match.size(),strToInsert);
+    if (replaceAll) replaceSubstringFromCString(str,match,strToInsert,replaceAll);
+  }
+
+}
 
 //======================================================
 
