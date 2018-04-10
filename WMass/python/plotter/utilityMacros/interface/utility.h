@@ -1368,7 +1368,7 @@ void drawTH1pair(TH1* h1, TH1* h2,
 
 void draw_nTH1(vector<TH1*> vecHist1d = {}, 
 	       const string& xAxisNameTmp = "", 
-	       const string& yAxisName = "Events", 
+	       const string& yAxisNameTmp = "Events", 
 	       const string& canvasName = "default", 
 	       const string& outputDIR = "./", 
 	       const vector<string>& vecLegEntry = {""},
@@ -1388,6 +1388,11 @@ void draw_nTH1(vector<TH1*> vecHist1d = {},
   Double_t xmin = 0;
   Double_t xmax = 0;
   Bool_t setXAxisRangeFromUser = getAxisRangeFromUser(xAxisName, xmin, xmax, xAxisNameTmp);
+
+  string yAxisName = "";
+  Double_t ymin = 0;
+  Double_t ymax = 0;
+  Bool_t setYAxisRangeFromUser = getAxisRangeFromUser(yAxisName, ymin, ymax, yAxisNameTmp);
 
   string yAxisNameRatio = "";
   Double_t yminRatio = 0;
@@ -1489,6 +1494,7 @@ void draw_nTH1(vector<TH1*> vecHist1d = {},
   }
 
   vecHist1d[0]->GetYaxis()->SetRangeUser(0.0, maxY * 1.2);
+  if (setYAxisRangeFromUser) vecHist1d[0]->GetYaxis()->SetRangeUser(ymin, ymax);
 
   if (setXAxisRangeFromUser) vecHist1d[0]->GetXaxis()->SetRangeUser(xmin,xmax);
   //////////////////////
