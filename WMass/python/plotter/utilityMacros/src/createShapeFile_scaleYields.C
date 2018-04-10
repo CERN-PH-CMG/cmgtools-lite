@@ -10,19 +10,6 @@ using namespace std;
 // it copies signal W templates with a given charge from a file for a W with opposite charge
 // Basically, it leaves names and global normalization of signal templates unchanged, but takes the shape of the opposite charge
 
-//======================================================================
-
-void replaceSubstringFromCString(string& str, const string& match = "", const string& strToInsert = "", const Bool_t replaceAll = false) {
-  
-  // implement recursive strategy
-
-  size_t pos = str.find(match);
-  if (pos != string::npos) {
-    str.replace(str.find(match),match.size(),strToInsert);
-    if (replaceAll) replaceSubstringFromCString(str,match,strToInsert,replaceAll);
-  }  
-
-}
 
 //======================================================================
 
