@@ -116,6 +116,7 @@ if __name__ == "__main__":
         titles=["charge flips","DY","Top","di-bosons","W#to#tau#nu","QCD","W{ch}_long".format(ch=charge)]
         for i,p in enumerate(procs):
             h1_1 = infile.Get('x_{p}'.format(p=p))
+            if not h1_1: continue # muons don't have Flips components
             h2_backrolled_1 = dressed2D(h1_1,binning,titles[i])
             canv = ROOT.TCanvas()
             h2_backrolled_1.Draw('colz')
