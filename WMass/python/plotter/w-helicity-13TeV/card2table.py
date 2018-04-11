@@ -56,7 +56,7 @@ if __name__ == "__main__":
 
     data = ["x_data_obs"]
     signal = ["W_left","W_right","x_W%s_long"%charge]
-    others = [k for k,h in yields.iteritems() if not any(sp in k for sp in signal+data)]
+    others = sorted([k for k,h in yields.iteritems() if not any(sp in k for sp in signal+data)])
     sorted_procs = signal+others+data
     print " & ".join(formatProc(p) for p in sorted_procs)," \\\\"
     print " & ".join("%.0f" % yields[p] for p in sorted_procs)," \\\\"
