@@ -109,7 +109,7 @@ if __name__ == "__main__":
                 canv = ROOT.TCanvas()
                 h2_backrolled_1.Draw('colz')
                 for ext in ['pdf', 'png']:
-                    canv.SaveAs('{odir}/W{ch}_{pol}_W{ch}_el_Ybin_{ybin}_PFMT40_absY.{ext}'.format(odir=outname,ch=charge,pol=pol,ybin=ybin,ext=ext))
+                    canv.SaveAs('{odir}/W{ch}_{pol}_W{ch}_{flav}_Ybin_{ybin}_PFMT40_absY.{ext}'.format(odir=outname,ch=charge,flav=channel,pol=pol,ybin=ybin,ext=ext))
 
         # do backgrounds now
         procs=["Flips","Z","Top","DiBosons","TauDecaysW","data_fakes","W{ch}_long".format(ch=charge)]
