@@ -34,11 +34,12 @@ def configureSplittingFromTime(selectedComponents,msPerEvent,jobTimeInHours,minS
         if nev == 0: continue
         njobs = (nev * msPerEvent) / (3.6e6 * jobTimeInHours)
         filesPerJob = len(comp.files)/njobs
-        if maxFiles and filesPerJob > maxFiles:
-            filesPerJob = maxFiles
         for (pattern,penalty) in penaltyByOrigin:
             if any(f for f in comp.files if pattern in f): 
                 filesPerJob /= penalty
+                if maxFiles: maxFiles /= penalty
+        if maxFiles and filesPerJob > maxFiles:
+            filesPerJob = maxFiles
         if minSplit and njobs < minSplit:
             if minSplitDoesFineSplit: 
                 raise RuntimeError, "Not implemented"
