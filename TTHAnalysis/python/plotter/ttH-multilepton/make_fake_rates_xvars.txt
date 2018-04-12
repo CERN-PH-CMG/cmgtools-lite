@@ -45,18 +45,18 @@ ptJI95_mvaPt080_coarse:  LepGood_pt*if3(LepGood_mvaTTH>0.80&&LepGood_mediumMuonI
 ptJI80_mvaPt085_coarse:  LepGood_pt*if3(LepGood_mvaTTH>0.85&&LepGood_mediumMuonId>0, 1.0, 0.80/LepGood_jetPtRatiov2): [ 0,5,10,15,20,30,45,65,100 ]; XTitle="lepton p_{T}^{corr80} (GeV)", Density=True
 ptJI80_mvaPt090_coarse:  LepGood_pt*if3(LepGood_mvaTTH>0.90&&LepGood_mediumMuonId>0, 1.0, 0.80/LepGood_jetPtRatiov2): [ 0,5,10,15,20,30,45,65,100 ]; XTitle="lepton p_{T}^{corr80} (GeV)", Density=True
 
-ptJI90_mvaPt090_fine:    LepGood_pt*if3(LepGood_mvaTTH>0.90&&LepGood_mediumMuonId>0, 1.0, 0.90/LepGood_jetPtRatiov2): [ 0,5,7.5,10,12.5,15,17.5,20,25,30,37,45,55,65,81,100 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
-ptJI90_mvaPt090_coarse:  LepGood_pt*if3(LepGood_mvaTTH>0.90&&LepGood_mediumMuonId>0, 1.0, 0.90/LepGood_jetPtRatiov2): [ 0,5,10,15,20,30,45,65,100 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
-ptJI90_mvaPt090_coarselongbin:  LepGood_pt*if3(LepGood_mvaTTH>0.90&&LepGood_mediumMuonId>0, 1.0, 0.90/LepGood_jetPtRatiov2): [ 0,5,10,15,20,30,45,100 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
-ptJI90_mvaPt090_coarsemu8bin:  LepGood_pt*if3(LepGood_mvaTTH>0.90&&LepGood_mediumMuonId>0, 1.0, 0.90/LepGood_jetPtRatiov2): [ 13,15,20,30,45,100 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
-ptJI90_mvaPt090_coarsemu17bin:  LepGood_pt*if3(LepGood_mvaTTH>0.90&&LepGood_mediumMuonId>0, 1.0, 0.90/LepGood_jetPtRatiov2): [ 25,30,45,100 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
-ptJI90_mvaPt090_coarsemu27bin:  LepGood_pt*if3(LepGood_mvaTTH>0.90&&LepGood_mediumMuonId>0, 1.0, 0.90/LepGood_jetPtRatiov2): [ 45,100 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
-ptJI90_mvaPt090_finemu17bin:  LepGood_pt*if3(LepGood_mvaTTH>0.90&&LepGood_mediumMuonId>0, 1.0, 0.90/LepGood_jetPtRatiov2): [ 25,30,45,65,100 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
-ptJI90_mvaPt090_finemu27bin:  LepGood_pt*if3(LepGood_mvaTTH>0.90&&LepGood_mediumMuonId>0, 1.0, 0.90/LepGood_jetPtRatiov2): [ 45,65,100 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
-ptJI90_mvaPt090_coarsemu50bin:  LepGood_pt*if3(LepGood_mvaTTH>0.90&&LepGood_mediumMuonId>0, 1.0, 0.90/LepGood_jetPtRatiov2): [ 81,100 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
-ptJI90_mvaPt090_coarsecomb:  LepGood_pt*if3(LepGood_mvaTTH>0.90&&LepGood_mediumMuonId>0, 1.0, 0.90/LepGood_jetPtRatiov2): [ 5, 10,15,20,30,45,100 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
-ptJI90_mvaPt090_coarsecomblo: LepGood_pt*if3(LepGood_mvaTTH>0.90&&LepGood_mediumMuonId>0, 1.0, 0.90/LepGood_jetPtRatiov2): [ 5,10,15,20,30,45 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
-ptJI90_mvaPt090_coarsecombhi: LepGood_pt*if3(LepGood_mvaTTH>0.90&&LepGood_mediumMuonId>0, 1.0, 0.90/LepGood_jetPtRatiov2): [ 20,30,45,100 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJI90_mvaPt090_fine:    LepGood_pt*if3(LepGood_mvaTTH>0.90&&LepGood_mediumMuonId>0, 1.0, 0.90/LepGood_jetPtRatiov2): [ 0,5,7.5,10,12.5,15,17.5,20,24,28,32,37,45,55,65,81,100 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJI90_mvaPt090_coarse:  LepGood_pt*if3(LepGood_mvaTTH>0.90&&LepGood_mediumMuonId>0, 1.0, 0.90/LepGood_jetPtRatiov2): [ 0,5,10,15,20,32,45,65,100 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJI85_mvaPt090_coarse:  LepGood_pt*if3(LepGood_mvaTTH>0.90&&LepGood_mediumMuonId>0, 1.0, 0.85/LepGood_jetPtRatiov2): [ 0,5,10,15,20,32,45,65,100 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJI95_mvaPt090_coarse:  LepGood_pt*if3(LepGood_mvaTTH>0.90&&LepGood_mediumMuonId>0, 1.0, 0.95/LepGood_jetPtRatiov2): [ 0,5,10,15,20,32,45,65,100 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJI90_mvaPt090_coarselongbin:  LepGood_pt*if3(LepGood_mvaTTH>0.90&&LepGood_mediumMuonId>0, 1.0, 0.90/LepGood_jetPtRatiov2): [ 0,5,10,15,20,32,45,100 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJI90_mvaPt090_coarsemu8bin:  LepGood_pt*if3(LepGood_mvaTTH>0.90&&LepGood_mediumMuonId>0, 1.0, 0.90/LepGood_jetPtRatiov2): [ 13,15,20,32,45,100 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJI90_mvaPt090_coarsemu17bin:  LepGood_pt*if3(LepGood_mvaTTH>0.90&&LepGood_mediumMuonId>0, 1.0, 0.90/LepGood_jetPtRatiov2): [ 25,32,45,65,100 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJI90_mvaPt090_coarsemu20bin:  LepGood_pt*if3(LepGood_mvaTTH>0.90&&LepGood_mediumMuonId>0, 1.0, 0.90/LepGood_jetPtRatiov2): [ 30,32,45,65,100 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJI90_mvaPt090_coarsemu27bin:  LepGood_pt*if3(LepGood_mvaTTH>0.90&&LepGood_mediumMuonId>0, 1.0, 0.90/LepGood_jetPtRatiov2): [ 40,45,65,100 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJI90_mvaPt090_coarsecomb:  LepGood_pt*if3(LepGood_mvaTTH>0.90&&LepGood_mediumMuonId>0, 1.0, 0.90/LepGood_jetPtRatiov2): [ 10,15,20,32,45,65,100 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJI90_mvaPt090_coarsecomblo: LepGood_pt*if3(LepGood_mvaTTH>0.90&&LepGood_mediumMuonId>0, 1.0, 0.90/LepGood_jetPtRatiov2): [ 5,10,15,20,32,45 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
+ptJI90_mvaPt090_coarsecombhi: LepGood_pt*if3(LepGood_mvaTTH>0.90&&LepGood_mediumMuonId>0, 1.0, 0.90/LepGood_jetPtRatiov2): [ 20,32,45,100 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
 ptJI90_mvaPt090_finecombhi: LepGood_pt*if3(LepGood_mvaTTH>0.90&&LepGood_mediumMuonId>0, 1.0, 0.90/LepGood_jetPtRatiov2): [ 20,30,45,65,100 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
 ptJI90_mvaPt090_zcoarse2: LepGood_pt*if3(LepGood_mvaTTH>0.90&&LepGood_mediumMuonId>0, 1.0, 0.90/LepGood_jetPtRatiov2): [ 0,5,10,15,30 ]; XTitle="lepton p_{T}^{corr} (GeV)", Density=True
 
