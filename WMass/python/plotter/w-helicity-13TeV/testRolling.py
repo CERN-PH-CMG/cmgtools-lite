@@ -64,10 +64,10 @@ def dressed2D(h1d,binning,title=''):
         n1 = binning[0]; min1 = binning[1]; max1 = binning[2]
         n2 = binning[3]; min2 = binning[4]; max2 = binning[5]
         h2_1 = ROOT.TH2F('h2_1', title, n1, min1, max1, n2, min2, max2)
-    h2_backrolled_1 = roll1Dto2D(h1_1, h2_1 )
+    h2_backrolled_1 = roll1Dto2D(h1d, h2_1 )
     h2_backrolled_1 .GetXaxis().SetTitle('lepton #eta')
     h2_backrolled_1 .GetYaxis().SetTitle('lepton p_{T} (GeV)')
-    h2_backrolled_1 .GetZaxis().SetRangeUser(0.1*h2_backrolled_1.GetMaximum(),1.1*h2_backrolled_1.GetMaximum())
+    h2_backrolled_1 .GetZaxis().SetRangeUser(0.01*h2_backrolled_1.GetMaximum(),1.1*h2_backrolled_1.GetMaximum())
     return h2_backrolled_1
 
 ROOT.gROOT.SetBatch()
@@ -109,7 +109,7 @@ if __name__ == "__main__":
                 canv = ROOT.TCanvas()
                 h2_backrolled_1.Draw('colz')
                 for ext in ['pdf', 'png']:
-                    canv.SaveAs('{odir}/W{ch}_{pol}_W{ch}_el_Ybin_{ybin}_PFMT40_absY.{ext}'.format(odir=outname,ch=charge,pol=pol,ybin=ybin,ext=ext))
+                    canv.SaveAs('{odir}/W{ch}_{pol}_W{ch}_{flav}_Ybin_{ybin}_PFMT40_absY.{ext}'.format(odir=outname,ch=charge,flav=channel,pol=pol,ybin=ybin,ext=ext))
 
         # do backgrounds now
         procs=["Flips","Z","Top","DiBosons","TauDecaysW","data_fakes","W{ch}_long".format(ch=charge)]
@@ -121,7 +121,7 @@ if __name__ == "__main__":
             canv = ROOT.TCanvas()
             h2_backrolled_1.Draw('colz')
             for ext in ['pdf', 'png']:
-                canv.SaveAs('{odir}/{proc}_{ch}_PFMT40_absY.{ext}'.format(odir=outname,proc=p,ch=charge,ext=ext))
+                canv.SaveAs('{odir}/{proc}_{ch}_{flav}_PFMT40_absY.{ext}'.format(odir=outname,proc=p,ch=charge,flav=channel,ext=ext))
             
 
     ## canv.Divide(1,2)
