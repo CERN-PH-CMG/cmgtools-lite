@@ -129,9 +129,14 @@ class HistoWithNuisances:
     def __getattr__(self,name):
         if name in self.__dict__: return self.__dict__[name]
         return getattr(self.nominal if self._usePostFit else self.central, name)
+    def isSimple(self):
+        if len(self.variations) != 0: return False
+        if self.nominal != self.central: return False
+        if self._rooFit or self._postFit or self._usePostFit: return False
+        return True
     def Clone(self,newname):
         h = HistoWithNuisances(self.central)
-        self.central.SetName(newname)
+        h.central.SetName(newname)
         for v,p in self.variations.iteritems():
             h.variations[v]=map(lambda x:x.Clone(), p)
             for hi in h.variations[v]: hi.SetDirectory(None)
@@ -234,6 +239,7 @@ class HistoWithNuisances:
                 for i in xrange(toys.numEntries()):
                     wvars.assignValueOnly(toys.get(i))
                     sumw2 += (norm.getVal()-nominal)**2
+                wvars.assignValueOnly(self._postFit.fitResult.floatParsFinal()) # recover central values
                 return sqrt(sumw2/toys.numEntries())
             else:
                 raise RuntimeError("Not implemented yet")
@@ -386,6 +392,15 @@ class HistoWithNuisances:
         h = self.Clone(self.GetName())
         h+=x
         return h
+    def Add(self,other,scaleFactor=None):
+        if scaleFactor is None:
+            self += other
+        elif self.isSimple() and other.isSimple():
+            self.nominal.Add(other.nominal, scaleFactor)
+        else:
+            scaledCopy = other.Clone("tmp")
+            scaledCopy.Scale(scaleFactor)
+            self += scaledCopy
     def writeToFile(self,tfile,writeVariations=True):
         tfile.WriteTObject(self.nominal, self.nominal.GetName())
         for key,vals in self.variations.iteritems():

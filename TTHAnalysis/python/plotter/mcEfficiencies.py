@@ -61,7 +61,12 @@ def effFromH2D(h2d,options,uncertainties="CP"):
         xerrs = h2d.GetXaxis().GetBinLowEdge(xbin)-xval, h2d.GetXaxis().GetBinUpEdge(xbin)-xval 
         ypass,ypassErr, yfail,yfailErr = h2d.GetBinContent(xbin,2),h2d.GetBinError(xbin,2), h2d.GetBinContent(xbin,1),h2d.GetBinError(xbin,1)
         yall = ypass+yfail
-        if yall <= 0 or ypass < 0: continue 
+        if yall <= 0: continue
+        if ypass < 0:
+            print "Warning: effFromH2D for %s at x = %g: ypass = %g +- %g  yfail = %g +- %g\n" % (h2d.GetName(), xval, ypass, ypassErr, yfail, yfailErr)
+            if uncertainties == "CP": continue
+            if ypass + 2*ypassErr < 0: continue
+            ypass, yall = 0, yfail
         eff = ypass/yall 
         neff = (yall**2)/(ypassErr**2 + yfailErr**2)
         if uncertainties == "CP":
@@ -153,7 +158,7 @@ def stackEffs(outname,x,effs,options):
     p1.SetLogy(options.logy)
 
     frame.Draw()
-    for title, eff in effs: eff.Draw("P SAME")
+    for title, eff in effs: eff.Draw("P0 SAME")
 
     if options.xrange:
         frame.GetXaxis().SetRangeUser(options.xrange[0], options.xrange[1])
@@ -272,7 +277,7 @@ def doEffRatio(x,effs,frame,options):
     line.DrawLine(cframe.GetXaxis().GetXmin(),1,cframe.GetXaxis().GetXmax(),1)
     unity.Draw("E2 SAME");
     for ratio in effrels[1:]:
-        ratio.Draw("PZ SAME");
+        ratio.Draw("P0Z SAME");
 
     liner = ROOT.TLine(); liner.SetLineStyle(2)
     for x in options.xlines: liner.DrawLine(x, rmin, x, rmax)
