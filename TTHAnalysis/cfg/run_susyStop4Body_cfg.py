@@ -478,7 +478,7 @@ from CMGTools.RootTools.samples.samples_Stop4Body import *
 selectedComponents = [
     TTJets,
     TT_pow,
-    TT_pow_backup,
+#    TT_pow_backup,
     TTJets_SingleLeptonFromTbar,
     TTJets_SingleLeptonFromTbar_ext,
     TTJets_SingleLeptonFromT,
