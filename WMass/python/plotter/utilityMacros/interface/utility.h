@@ -378,6 +378,24 @@ void addOutliersInHistoRange(TH1D* h) {
 
 //======================================================
 
+void smoothAveragingNbins(TH1* h, const Int_t groupBins = 2) {
+
+  // this functions is useful for QCD distributions from MC, which suffers from low statistics and big weights
+  // rebinning is tipically not ideal when this goes in a stack distributions with other processes that do not have problems of statistics
+  // therefore, one way is to sum groups of N consecutive bins for QCD and set the bin content of those as the sum/Nbins
+  // underflow and overflow bins are not considered
+
+  vector<Double_t> averages(1+ h->GetNbinsX()/groupBins); // if h has 5 bins and groupBins=2, we have 3 sets of bins (2 + 2 + 1)
+
+  for (Int_t  i = 1; i <= h->GetNbinsX(); ++i) averages[(i-1)/groupBins] += h->GetBinContent(i);
+  for (UInt_t i = 0; i < averages.size(); ++i) averages[i] /= (Double_t) groupBins;
+  for (Int_t  i = 1; i <= h->GetNbinsX(); ++i) h->SetBinContent(i,averages[(i-1)/groupBins]);
+
+}
+
+
+//======================================================
+
 void checkPoint(const Int_t& nCheck = 1, const Int_t& checkEveryN = 100000, const Int_t& nEvents = -1) {
 
   if(nEvents % checkEveryN == 0) {
@@ -1779,9 +1797,12 @@ void draw_nTH1(vector<TH1*> vecHist1d = {},
 	       const Double_t lumi = -1.0, 
 	       const Int_t rebinFactor = 1, 
 	       const Bool_t drawPlotLogY = true,
-	       const Bool_t drawRatioWithNominal = false 
+	       const Bool_t drawRatioWithNominal_tmp = false 
 	       ) 
 {
+
+  Bool_t drawRatioWithNominal = drawRatioWithNominal_tmp;
+  if (vecHist1d.size() == 1) drawRatioWithNominal = false;
 
   // assume the "nominal histogram is the first one
 
