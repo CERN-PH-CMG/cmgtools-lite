@@ -83,12 +83,12 @@ susyStop4Body_collections = susyCore_collections.copy()
 susyStop4Body_collections.update({
             ## ---------------------------------------------
             "selectedTaus"     : NTupleCollection("TauGood",   tauTypeSusy,                8,              help="Taus after the preselection"),
-            "selectedLeptons"  : NTupleCollection("LepGood",   leptonTypeDegStop,          8,              help="Leptons after the preselection"),
-            "otherLeptons"     : NTupleCollection("LepOther",  leptonTypeDegStop,          8,              help="Leptons after the preselection"),
+            "selectedLeptons"  : NTupleCollection("LepGood",   leptonTypeSusy,          8,              help="Leptons after the preselection"),
+            "otherLeptons"     : NTupleCollection("LepOther",  leptonTypeSusy,          8,              help="Leptons after the preselection"),
             ## ---------------------------------------------
             "cleanJetsAll"     : NTupleCollection("Jet",       jetTypeSusy,               30,              help="Cental jets after full selection and cleaning, sorted by pt"),
-            "jets"             : NTupleCollection("JetDirty",  genJetType,                25,              help="Cental jets after full selection but before cleaning, sorted by pt"),
-            "cleanGenJets"     : NTupleCollection("GenJet",    genJetType,                30,              help="Clean Gen Jets, sorted by pt"),
+#            "jets"             : NTupleCollection("JetDirty",  genJetType,                25,              help="Cental jets after full selection but before cleaning, sorted by pt"),
+#            "cleanGenJets"     : NTupleCollection("GenJet",    genJetType,                30,              help="Clean Gen Jets, sorted by pt"),
             ## ---------------------------------------------
             #"ivf"              : NTupleCollection("SV",        svType,                    20,              help="SVs from IVF"),
             ## ---------------------------------------------
