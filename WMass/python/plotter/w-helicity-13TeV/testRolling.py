@@ -77,6 +77,7 @@ if __name__ == "__main__":
     from optparse import OptionParser
     parser = OptionParser(usage="%prog [options] shapesdir channel")
     parser.add_option('-o','--outdir', dest='outdir', default='.', type='string', help='output directory to save the matrix')
+    parser.add_option(     '--noplot', dest="noplot", default=False, action='store_true', help="Do not plot templates (but you can still save them in a root file with option -s)");
     parser.add_option('-s','--save', dest='outfile_templates', default='templates_2D', type='string', help='pass name of output file to save 2D histograms (charge is automatically appended before extension). No need to specify extension, .root is automatically addedx')
     (options, args) = parser.parse_args()
     if len(args) < 2:
@@ -127,8 +128,9 @@ if __name__ == "__main__":
                 canv = ROOT.TCanvas()
                 h2_backrolled_1.Draw('colz')
                 h2_backrolled_1.Write(name2D)
-                for ext in ['pdf', 'png']:
-                    canv.SaveAs('{odir}/W{ch}_{pol}_W{ch}_el_Ybin_{ybin}_PFMT40_absY.{ext}'.format(odir=outname,ch=charge,pol=pol,ybin=ybin,ext=ext))
+                if not options.noplot:
+                    for ext in ['pdf', 'png']:
+                        canv.SaveAs('{odir}/W{ch}_{pol}_W{ch}_el_Ybin_{ybin}_PFMT40_absY.{ext}'.format(odir=outname,ch=charge,pol=pol,ybin=ybin,ext=ext))
 
         # do backgrounds now
         procs=["Flips","Z","Top","DiBosons","TauDecaysW","data_fakes","W{ch}_long".format(ch=charge)]
@@ -140,8 +142,9 @@ if __name__ == "__main__":
             canv = ROOT.TCanvas()
             h2_backrolled_1.Draw('colz')
             h2_backrolled_1.Write(str(p))
-            for ext in ['pdf', 'png']:
-                canv.SaveAs('{odir}/{proc}_{ch}_PFMT40_absY.{ext}'.format(odir=outname,proc=p,ch=charge,ext=ext))
+            if not options.noplot:
+                for ext in ['pdf', 'png']:
+                    canv.SaveAs('{odir}/{proc}_{ch}_PFMT40_absY.{ext}'.format(odir=outname,proc=p,ch=charge,ext=ext))
             
         outfile.Close()
 
