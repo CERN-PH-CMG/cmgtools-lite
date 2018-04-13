@@ -28,6 +28,7 @@ void checkElementInMap(const std::map<string,TH1D*>& m, const string& name = "")
 void createShapeFile_scaleYields(const string& inputFilePath = "/afs/cern.ch/work/m/mciprian/w_mass_analysis/heppy/CMSSW_8_0_25/src/CMGTools/WMass/python/plotter/cards/helicity_2018_03_05_baseSel_WLO/", 
 				 const string& outFilesuffix = "test_scaleWcharge",
 				 const string& chargeToScale = "plus",  // minus, plus
+				 const string& outputFilePath = "SAME",
 				 const Bool_t  isMuon = false
 				 ) 
 {
@@ -38,6 +39,9 @@ void createShapeFile_scaleYields(const string& inputFilePath = "/afs/cern.ch/wor
   }
 
   TH1::SetDefaultSumw2(); //all the following histograms will automatically call TH1::Sumw2()                    
+
+  string outDir = ((outputFilePath == "SAME") ? inputFilePath : outputFilePath);
+  createPlotDirAndCopyPhp(outDir);
 
   string otherCharge = (chargeToScale == "minus") ? "plus" : "minus";
 
@@ -141,7 +145,7 @@ void createShapeFile_scaleYields(const string& inputFilePath = "/afs/cern.ch/wor
   ///////////////////////////////////////////////
   // Finally, open new file and save scaled histograms
   //
-  shapeFile = new TFile((inputFilePath+shapeFileOut).c_str(),"RECREATE");
+  shapeFile = new TFile((outDir+shapeFileOut).c_str(),"RECREATE");
   if (!shapeFile || shapeFile->IsZombie()) {
     cout << "Error: file not opened. Exit" << endl;
     exit(EXIT_FAILURE);
@@ -160,7 +164,7 @@ void createShapeFile_scaleYields(const string& inputFilePath = "/afs/cern.ch/wor
 
   cout << "-----------------------------------" << endl;
   cout << "Copied " << totalCopied << " histograms" << endl;
-  cout << "Output: " << inputFilePath + shapeFileOut << endl;
+  cout << "Output: " << outDir + shapeFileOut << endl;
   cout << endl;
 
   histToCopy.clear();
@@ -168,179 +172,3 @@ void createShapeFile_scaleYields(const string& inputFilePath = "/afs/cern.ch/wor
 
 }
 
-
-
-
-
-  // for (UInt_t i = 0; i < processDiffSelToAdd.size(); i++) {
-
-  //   cout << "#########  i = " << i << ": " << processDiffSelToAdd[i] << endl;
-  //   htmp = (TH1D*) shapeFile->Get(processDiffSelToAdd[i].c_str());
-  //   checkNotNullPtr(htmp,"htmp:"+processDiffSelToAdd[i]);
-  //   htmp->SetDirectory(0);
-
-  //   if (i == 0) {
-  //     hSumProcesses = (TH1D*) htmp->Clone("hSumProcesses"); 
-  //     checkNotNullPtr(hSumProcesses,"hSumProcesses:"+processDiffSelToAdd[i]);
-  //     hSumProcesses->SetDirectory(0);
-  //   } else {
-  //     hSumProcesses->Add((TH1D*) htmp->Clone());
-  //   }
-
-  // }
-  // cout << "######### done" << endl;
-
-  // //shapeFile->Close();  // keep openend, it is used again below
-
-  // //////////////////////////////////////////////////////////////////
-  // // now we loop on input file to copy objects to rewrite on output
-  // //////////////////////////////////////////////////////////////////
-  // TFile* shapeFile_original = new TFile(fileName.c_str(),"READ");
-  // if (!shapeFile_original || shapeFile_original->IsZombie()) {
-  //   cout << "Error: file not opened. Exit" << endl;
-  //   exit(EXIT_FAILURE);
-  // }
-
-  // shapeFile_original->cd();
-
-  // cout << "#########" << endl;
-  // cout << "######### adding following samples with original selection" << endl;
-  // cout << "######### must add " << processOrigSelToAdd.size() << " elements" << endl;
-
-  // for (UInt_t i = 0; i < processOrigSelToAdd.size(); i++) {
-
-  //   cout << "#########  i = " << i << ": " << processOrigSelToAdd[i] << endl;
-  //   htmp = (TH1D*) shapeFile_original->Get(processOrigSelToAdd[i].c_str());
-  //   checkNotNullPtr(htmp,"htmp:"+processOrigSelToAdd[i]);
-  //   htmp->SetDirectory(0);
-  //   if (i == 0 && processDiffSelToAdd.size() == 0) {
-  //     hSumProcesses = (TH1D*) htmp->Clone("hSumProcesses"); 
-  //     checkNotNullPtr(hSumProcesses,"hSumProcesses:"+processOrigSelToAdd[i]);
-  //     hSumProcesses->SetDirectory(0);
-  //   } else {
-  //     hSumProcesses->Add((TH1D*) htmp->Clone());
-  //   }
-
-  // }
-
-  // cout << "######### done" << endl;
-
-
-  // if (copyProcessDiffSel_sig0_bkg1_all2_none3 != 2) {
-
-  //   dir = shapeFile_original;
-  //   total = dir->GetNkeys();
-  //   totalCopied = 0;
-  //   TIter next((TList *) dir->GetListOfKeys());
-
-  //   cout << "#########" << endl;
-  //   cout << "######### copying following samples with original selection" << endl;
-
-  //   while ((key = (TKey *)next())) {
-
-  //     TClass *cl = gROOT->GetClass(key->GetClassName());
-  //     if (cl->InheritsFrom("TH1")) {
-
-  // 	// the following line is not needed if you only want                                                                 
-  // 	// to count the histograms                                                           
-  // 	TH1 *h = (TH1 *)key->ReadObj();
-  // 	string hname(h->GetName());
-  // 	if (hname.find("x_data_obs") != string::npos) continue;
-
-  // 	if (copyProcessDiffSel_sig0_bkg1_all2_none3 == 0) {
-  // 	  if (hname.find("left") != string::npos || hname.find("right") != string::npos) continue;	
-  // 	} else if (copyProcessDiffSel_sig0_bkg1_all2_none3 == 1) {
-  // 	  if (hname.find("left") == string::npos && hname.find("right") == string::npos) continue;
-  // 	}
-
-  // 	cout << "######### " << hname << endl;      
-  // 	checkElementInMap(histToCopy,hname);
-  // 	histToCopy[hname] = (TH1D*) shapeFile_original->Get(hname.c_str());
-  // 	checkNotNullPtr(histToCopy[hname],"histToCopy:"+hname);
-  // 	histToCopy[hname]->SetDirectory(0);	
-  // 	totalCopied++;
-      
-  
-  //     }
-
-  //   }
-  //   cout << "Copied " << totalCopied << " histograms with original selection (there were " << total << " histograms including data)" << endl;
-  //   cout << "######### done" << endl;
-
-  // }
-
-  // shapeFile_original->Close();
-
-  // //////////////////////////////////////
-  // // change again to file with different selection to copy the remaining histograms (if any)
-
-  // if (copyProcessDiffSel_sig0_bkg1_all2_none3 != 3) {
-
-  //   shapeFile->cd();
-
-  //   dir = shapeFile;
-  //   total = dir->GetNkeys();
-  //   totalCopied = 0;
-  //   TIter next((TList *) dir->GetListOfKeys());
-
-  //   cout << "#########" << endl;
-  //   cout << "######### copying following samples with different selection" << endl;
-
-  //   while ((key = (TKey *)next())) {
-
-  //     TClass *cl = gROOT->GetClass(key->GetClassName());
-  //     if (cl->InheritsFrom("TH1")) {
-
-  // 	// the following line is not needed if you only want                                                                 
-  // 	// to count the histograms                                                           
-  // 	TH1 *h = (TH1 *)key->ReadObj();
-  // 	string hname(h->GetName());
-  // 	if (hname.find("x_data_obs") != string::npos) continue;
-
-  // 	if (copyProcessDiffSel_sig0_bkg1_all2_none3 == 0) {
-  // 	  if (hname.find("left") == string::npos && hname.find("right") == string::npos) continue;	
-  // 	} else if (copyProcessDiffSel_sig0_bkg1_all2_none3 == 1) {
-  // 	  if (hname.find("left") != string::npos || hname.find("right") != string::npos) continue;
-  // 	}
-
-  // 	cout << "######### " << hname << endl;      
-  // 	checkElementInMap(histToCopy,hname);
-  // 	histToCopy[hname] = (TH1D*) shapeFile->Get(hname.c_str());
-  // 	checkNotNullPtr(histToCopy[hname],"histToCopy:"+hname);
-  // 	histToCopy[hname]->SetDirectory(0);	
-  // 	totalCopied++;
-      
-  
-  //     }
-
-  //   }
-  //   cout << "Copied " << totalCopied << " histograms with different selection (there were " << total << " histograms including data)" << endl;
-  //   cout << "######### done" << endl;
-
-  // }
-
-  // shapeFile->Close();
-
-  // //////////////////////////////////////
-  // // opening new output file
-  // //////////////////////////////////////
-
-  // TFile* shapeFileOut = new TFile(fileNameOut.c_str(),"RECREATE");
-  // if (!shapeFileOut || shapeFileOut->IsZombie()) {
-  //   cout << "Error: file not opened. Exit" << endl;
-  //   exit(EXIT_FAILURE);
-  // }
-
-  // shapeFileOut->cd();
-
-  // std::map<string, TH1D*>::iterator it;
-  // for (it = histToCopy.begin(); it != histToCopy.end(); it++) {
-  //   it->second->Write();
-  // }
-  // hSumProcesses->Write("x_data_obs");  
-
-  // cout << endl;
-  // cout << endl;
-  // cout << "Created file " << fileNameOut << endl;
-  // cout << endl;
-  // shapeFileOut->Close();
