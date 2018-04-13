@@ -169,9 +169,10 @@ void makeFitComparison(const string& inputFilePath_tmp = "./fitComparison/",
     inputFile->Close();
 
   }
-  
-  drawGraphCMS(gr_rapidityL,"Y_{W} left", "a.u.", "rapidity_Wleft",outDir_tmp, legEntries, {0.6,0.7,0.9,0.9}, -1.0);
-  drawGraphCMS(gr_rapidityR,"Y_{W} right", "a.u.", "rapidity_Wright",outDir_tmp, legEntries, {0.6,0.7,0.9,0.9}, -1.0);
+
+  cout << "Now drawing graphs and ratios" << endl;  
+  drawRapidityGraph(gr_rapidityL,"Y_{W} left", "a.u.", "rapidity_Wleft",outDir_tmp, legEntries, {0.6,0.7,0.9,0.9}, -1.0, true,"X/first::0.95,1.05");
+  drawRapidityGraph(gr_rapidityR,"Y_{W} right", "a.u.", "rapidity_Wright",outDir_tmp, legEntries, {0.6,0.7,0.9,0.9}, -1.0, true,"X/first::0.95,1.05");
 
   for (UInt_t i = 0; i < gr_rapidityL.size(); ++i) {
     delete gr_rapidityL[i];
