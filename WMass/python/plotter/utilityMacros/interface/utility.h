@@ -378,18 +378,43 @@ void addOutliersInHistoRange(TH1D* h) {
 
 //======================================================
 
-void smoothAveragingNbins(TH1* h, const Int_t groupBins = 2) {
+void smoothAveragingNbins(TH1* h, const Int_t groupBins = 2, const Double_t minValueToStartGrouping = 0.0) {
 
   // this functions is useful for QCD distributions from MC, which suffers from low statistics and big weights
   // rebinning is tipically not ideal when this goes in a stack distributions with other processes that do not have problems of statistics
   // therefore, one way is to sum groups of N consecutive bins for QCD and set the bin content of those as the sum/Nbins
   // underflow and overflow bins are not considered
+  // grouping starts from first bin with content > minValueToStartGrouping
+  // In case bins with content 0 should be considered to start the procedure, set minValueToStartGrouping to any negative value
 
-  vector<Double_t> averages(1+ h->GetNbinsX()/groupBins); // if h has 5 bins and groupBins=2, we have 3 sets of bins (2 + 2 + 1)
+  Int_t firstBinToUse = 1;
 
-  for (Int_t  i = 1; i <= h->GetNbinsX(); ++i) averages[(i-1)/groupBins] += h->GetBinContent(i);
-  for (UInt_t i = 0; i < averages.size(); ++i) averages[i] /= (Double_t) groupBins;
-  for (Int_t  i = 1; i <= h->GetNbinsX(); ++i) h->SetBinContent(i,averages[(i-1)/groupBins]);
+  for (Int_t  i = 1; i <= h->GetNbinsX(); ++i) {
+    if (h->GetBinContent(i) > minValueToStartGrouping) {
+      firstBinToUse = i;
+      break;
+    }
+  }
+
+  vector<Double_t> averages(1+ (h->GetNbinsX() + 1 - firstBinToUse)/groupBins); // if h has 5 bins and groupBins=2, we have 3 sets of bins (2 + 2 + 1)
+  vector<Double_t> uncertainties(1+ (h->GetNbinsX() + 1 - firstBinToUse)/groupBins);
+
+  Int_t bin = -1;
+
+  for (Int_t  i = firstBinToUse; i <= h->GetNbinsX(); ++i) {
+    bin = (i-firstBinToUse)/groupBins;
+    averages[bin] += h->GetBinContent(i);
+    uncertainties[bin] += (h->GetBinError(i) * h->GetBinError(i));
+  }
+  for (UInt_t i = 0; i < averages.size(); ++i) {
+    averages[i] /= (Double_t) groupBins;
+    uncertainties[i] = sqrt ( uncertainties[i] / (Double_t) groupBins);
+  }
+  for (Int_t  i = firstBinToUse; i <= h->GetNbinsX(); ++i) {
+    bin = (i-firstBinToUse)/groupBins;
+    h->SetBinContent(i,averages[bin]);
+    h->SetBinError(i,uncertainties[bin]);
+  }
 
 }
 
@@ -1752,14 +1777,14 @@ void drawTH1pair(TH1* h1, TH1* h2,
   pad2->RedrawAxis("sameaxis");
 
   // Calculate chi2                                                                                        
-  double chi2 = h1->Chi2Test(h2,"CHI2/NDF WW");
-  TLegend leg2 (0.14,0.25,0.32,0.28,NULL,"brNDC");
-  leg2.SetFillColor(0);
-  leg2.SetFillStyle(1);
-  leg2.SetBorderSize(0);
-  leg2.SetLineColor(0);
-  leg2.AddEntry((TObject*)0,Form("#chi^{2}/ndf = %.2f",chi2),"");
-  leg2.Draw("same");
+  /* double chi2 = h1->Chi2Test(h2,"CHI2/NDF WW"); */
+  /* TLegend leg2 (0.14,0.25,0.32,0.28,NULL,"brNDC"); */
+  /* leg2.SetFillColor(0); */
+  /* leg2.SetFillStyle(1); */
+  /* leg2.SetBorderSize(0); */
+  /* leg2.SetLineColor(0); */
+  /* leg2.AddEntry((TObject*)0,Form("#chi^{2}/ndf = %.2f",chi2),""); */
+  /* leg2.Draw("same"); */
 
   canvas->SaveAs((outputDIR + canvasName + ".png").c_str());
   canvas->SaveAs((outputDIR + canvasName + ".pdf").c_str());
@@ -1859,7 +1884,7 @@ void draw_nTH1(vector<TH1*> vecHist1d = {},
   frame->GetXaxis()->SetLabelSize(0.04);
   frame->SetStats(0);
 
-  Int_t colorList[] = {kBlack, kBlue, kRed, kGreen+2, kOrange+1, kCyan, kGreen, kCyan+2, kGray+1, kViolet, kYellow+2};
+  Int_t colorList[] = {kBlack, kRed, kBlue, kGreen+2, kOrange+1, kCyan, kGreen, kCyan+2, kGray+1, kViolet, kYellow+2};
   vector<Int_t> histColor;
   for (UInt_t i = 0; i < vecHist1d.size(); i++) {   // now color are assigned in reverse order (the main contribution is the last object in the sample array)         
     vecHist1d[i]->SetLineColor(colorList[i]);
@@ -2034,7 +2059,10 @@ void drawTH1dataMCstack(TH1* h1 = NULL, vector<TH1*> vecMC = {},
 			const string& legEntry1 = "data", const vector<string>& vecLegEntryMC = {""}, 
 			const string& ratioPadYaxisName = "data/MC", const Double_t lumi = -1.0, const Int_t rebinFactor = 1, 
 			const Bool_t normalizeMCToData = false,
-			const Int_t draw_both0_noLog1_onlyLog2 = 0
+			const Int_t draw_both0_noLog1_onlyLog2 = 0,
+			const Double_t minFractionToBeInLegend = 0.001,
+			const vector<Int_t> vecMCcolors = {kCyan, kViolet, kBlue, kRed, kYellow, kGreen, kOrange+1, kCyan+2, kGreen+2, kGray},
+			const Int_t fillStyle = 3001
 			)
 {
 
@@ -2042,6 +2070,11 @@ void drawTH1dataMCstack(TH1* h1 = NULL, vector<TH1*> vecMC = {},
   Double_t xmin = 0;
   Double_t xmax = 0;
   Bool_t setXAxisRangeFromUser = getAxisRangeFromUser(xAxisName, xmin, xmax, xAxisNameTmp);
+
+  string yAxisNameRatio = "";
+  Double_t yminRatio = 0.5;
+  Double_t ymaxRatio = 1.5;
+  Bool_t setYAxisRatioRangeFromUser = getAxisRangeFromUser(yAxisNameRatio, yminRatio, ymaxRatio, ratioPadYaxisName);
 
   // cout << "xAxisName = " << xAxisName << "   xmin = " << xmin << "  xmax = " << xmax << endl;
 
@@ -2056,11 +2089,12 @@ void drawTH1dataMCstack(TH1* h1 = NULL, vector<TH1*> vecMC = {},
     vecMC[i]->SetStats(0);
   }
   
-  Int_t colorList[] = {kCyan, kViolet, kBlue, kRed, kYellow, kGreen, kOrange+1, kCyan+2, kGreen+2, kGray}; 
+  //Int_t colorList[] = {kCyan, kViolet, kBlue, kRed, kYellow, kGreen, kOrange+1, kCyan+2, kGreen+2, kGray}; 
   // the first color is for the main object. This array may contain more values than vecMC.size()
   vector<Int_t> histColor;
   for (UInt_t i = 0; i < vecMC.size(); i++) {   // now color are assigned in reverse order (the main contribution is the last object in the sample array)
-    histColor.push_back(colorList[i]);
+    //histColor.push_back(colorList[i]);
+    histColor.push_back(vecMCcolors[i]);
   }
 
   Double_t dataNorm = h1->Integral();
@@ -2075,7 +2109,7 @@ void drawTH1dataMCstack(TH1* h1 = NULL, vector<TH1*> vecMC = {},
   THStack* hMCstack = new THStack("hMCstack","");
   for (UInt_t j = 0; j < vecMC.size(); j++) {
     vecMC[j]->SetFillColor(histColor[j]);
-    vecMC[j]->SetFillStyle(3001);
+    vecMC[j]->SetFillStyle(fillStyle);
     myRebinHisto(vecMC[j],rebinFactor);
     if (normalizeMCToData) vecMC[j]->Scale(dataNorm/stackNorm);
     hMCstack->Add(vecMC[(UInt_t) vecMC.size() - j -1]);  // add last element as the first one (last element added in stack goes on top)
@@ -2094,10 +2128,12 @@ void drawTH1dataMCstack(TH1* h1 = NULL, vector<TH1*> vecMC = {},
   canvas->cd();
   canvas->SetBottomMargin(0.3);
   canvas->SetRightMargin(0.06);
+  canvas->SetLeftMargin(0.16);
 
   TPad *pad2 = new TPad("pad2","pad2",0,0.,1,0.9);
   pad2->SetTopMargin(0.7);
   pad2->SetRightMargin(0.06);
+  pad2->SetLeftMargin(0.16);
   pad2->SetFillColor(0);
   pad2->SetGridy(1);
   pad2->SetFillStyle(0);
@@ -2113,23 +2149,26 @@ void drawTH1dataMCstack(TH1* h1 = NULL, vector<TH1*> vecMC = {},
   h1->SetMarkerSize(1);
 
   h1->GetXaxis()->SetLabelSize(0);
+  h1->GetXaxis()->SetTitle(0);
   h1->GetYaxis()->SetTitle(yAxisName.c_str());
-  h1->GetYaxis()->SetTitleOffset(1.1);
+  h1->GetYaxis()->SetTitleOffset(1.2);
   // h1->GetYaxis()->SetTitleOffset(0.8);  // was 1.03 without setting also the size
   h1->GetYaxis()->SetTitleSize(0.05);
+  h1->GetYaxis()->SetLabelSize(0.04);
   h1->GetYaxis()->SetRangeUser(0.0, max(h1->GetMaximum(),stackCopy->GetMaximum()) * 1.2);
   if (setXAxisRangeFromUser) h1->GetXaxis()->SetRangeUser(xmin,xmax);
   h1->Draw("EP");
   hMCstack->Draw("HIST SAME");
   h1->Draw("EP SAME");
 
-  TLegend leg (0.6,0.7,0.9,0.9);
+  TLegend leg (0.65,0.7,0.95,0.9);
   leg.SetFillColor(0);
   leg.SetFillStyle(0);
   leg.SetBorderSize(0);
   leg.AddEntry(h1,legEntry1.c_str(),"PLE");
   for (UInt_t i = 0; i < vecMC.size(); i++) {
-    leg.AddEntry(vecMC[i],vecLegEntryMC[i].c_str(),"LF");
+    if (vecMC[i]->Integral()/stackCopy->Integral() > minFractionToBeInLegend)
+      leg.AddEntry(vecMC[i],vecLegEntryMC[i].c_str(),"F");
   }
   leg.Draw("same");
   canvas->RedrawAxis("sameaxis");
@@ -2143,11 +2182,12 @@ void drawTH1dataMCstack(TH1* h1 = NULL, vector<TH1*> vecMC = {},
   pad2->cd();
 
   frame->Reset("ICES");
-  frame->GetYaxis()->SetRangeUser(0.5,1.5);
+  frame->GetYaxis()->SetRangeUser(yminRatio,ymaxRatio);
   frame->GetYaxis()->SetNdivisions(5);
-  frame->GetYaxis()->SetTitle(ratioPadYaxisName.c_str());
+  frame->GetYaxis()->SetTitle(yAxisNameRatio.c_str());
   frame->GetYaxis()->SetTitleOffset(1.2);
-  // frame->GetYaxis()->SetTitleSize(0.15);
+  frame->GetYaxis()->SetTitleSize(0.05);
+  frame->GetYaxis()->SetLabelSize(0.04);
   frame->GetYaxis()->CenterTitle();
   if (setXAxisRangeFromUser) frame->GetXaxis()->SetRangeUser(xmin,xmax);
   frame->GetXaxis()->SetTitle(xAxisName.c_str());
@@ -2162,7 +2202,8 @@ void drawTH1dataMCstack(TH1* h1 = NULL, vector<TH1*> vecMC = {},
 
   ratio->Divide(den_noerr);
   den->Divide(den_noerr);
-  den->SetFillColor(kGray);
+  den->SetFillColor(kGray+1);
+  den->SetMarkerStyle(0);
   frame->Draw();
   ratio->SetMarkerSize(0.85);
   ratio->Draw("EPsame");
@@ -2176,14 +2217,14 @@ void drawTH1dataMCstack(TH1* h1 = NULL, vector<TH1*> vecMC = {},
   pad2->RedrawAxis("sameaxis");
 
   // Calculate chi2                                                                                        
-  double chi2 = h1->Chi2Test(stackCopy,"CHI2/NDF WW");
-  TLegend leg2 (0.14,0.25,0.32,0.28,NULL,"brNDC");
-  leg2.SetFillColor(0);
-  leg2.SetFillStyle(1);
-  leg2.SetBorderSize(0);
-  leg2.SetLineColor(0);
-  leg2.AddEntry((TObject*)0,Form("#chi^{2}/ndf = %.2f",chi2),"");
-  leg2.Draw("same");
+  /* double chi2 = h1->Chi2Test(stackCopy,"CHI2/NDF WW"); */
+  /* TLegend leg2 (0.14,0.25,0.32,0.28,NULL,"brNDC"); */
+  /* leg2.SetFillColor(0); */
+  /* leg2.SetFillStyle(1); */
+  /* leg2.SetBorderSize(0); */
+  /* leg2.SetLineColor(0); */
+  /* leg2.AddEntry((TObject*)0,Form("#chi^{2}/ndf = %.2f",chi2),""); */
+  /* leg2.Draw("same"); */
 
   if (draw_both0_noLog1_onlyLog2 != 2) {
     canvas->SaveAs((outputDIR + canvasName + ".png").c_str());
