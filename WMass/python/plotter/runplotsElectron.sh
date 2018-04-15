@@ -54,6 +54,8 @@ mtCutApplControlRegion="-A eleKin pfmt 'mt_2(met_pt,met_phi,${ptcorr},LepGood1_p
 #mtCutApplSignalRegion="-A eleKin pfmt 'mt_2(met_pt,met_phi,${ptcorr},LepGood1_phi) > 40'"
 mtCutApplSignalRegion=""
 metCutApplSignalRegion="-A eleKin met30 'met_pt > 30'"
+#WselFull="-A eleKin WregionSel 'ptElFull(LepGood1_calPt,LepGood1_eta) > 30 && ptElFull(LepGood1_calPt,LepGood1_eta) < 45 && mt_2(met_pt,met_phi,${ptcorr},LepGood1_phi) > 40' "
+WselFull=""
 ##############################################################
 ##############################################################
 
@@ -67,7 +69,7 @@ useDataGH="y"
 #useHLTpt27="y" # already in selection txt file
 runBatch="y"
 queueForBatch="cmscaf1nw"
-nameTag="_forAN_noUpPt_noMt" 
+nameTag="_forAN_noUpPt_noMt_trkVar" 
 #nameTag="_varStudy"
 useSkimmedTrees="y" # skimmed samples are on both pccmsrm28 and eos 
 usePtCorrForScaleFactors="n" # y: use corrected pt for scale factor weight; n: use LepGood_pt (which is what would have been used if the scale factors where in a friend tree)
@@ -83,6 +85,9 @@ batchDirName="plots_${today}${nameTag}"  # name of directory to create inside jo
 mcafile="mca-80X_V5.txt"
 cutfile="qcd1l_SRtrees.txt" # we start from it and add or remove cuts
 plotfile="test_plots.txt"
+# following 2 are used depending on the used trees because the samples are named differently
+mcafileFRskim="mca-80X_V5_FRskim.txt"
+mcafileTINY="mca-80X_V5_TINY.txt"
 #
 ##################################
 ##################################
@@ -95,8 +100,8 @@ excludeprocesses="Z_LO,W_LO" # decide whether to use NLO (amc@NLO) or LO (MadGra
 #selectplots=""  # if empty it uses all plots in cfg file
 #selectplots="nJetClean,ptl1,etal1,pfmet,tkmet,ele1ID,awayJet_pt,wpt_tk,ele1dxy"  # if empty it uses all plots in cfg file
 #selectplots="ptl1,etal1,pfmet,trkmt_trkmetEleCorr,pfmt,wpt_tk,nJetClean,ele1Iso04,ele1ID"  # if empty it uses all plots in cfg file
-selectplots="ptl1,trkmt_trkmetEleCorr_dy,pfmt,pfmet,trkmetEleCorr_dy"
-#selectplots="ptl1,etal1"
+selectplots="trkmt_trkmetEleCorr_dy,trkmetEleCorr_dy"
+#selectplots="ptl1,pfmt,pfmet"
 #selectplots="dphiLepPFMET,diffPt_lepPFMET,diffPt_lepPFMET_v2"
 #maxentries="150000" # max int number is > 2*10^9
 maxentries=""  # all events if ""
@@ -106,9 +111,9 @@ maxentries=""  # all events if ""
 # to scale all mC to data use option --scaleBkgToData <arg> many tmes for every process 
 # you also need not to have any process defined as signal
 #scaleAllMCtoData="" # if "", nothing is added to mcPlots.py command
-scaleAllMCtoData="--fitData" 
+#scaleAllMCtoData="--fitData" # keep commented, it is now set independently for each region 
 #scaleAllMCtoData=" --scaleBkgToData QCD --scaleBkgToData W --scaleBkgToData Z --scaleBkgToData Top --scaleBkgToData DiBosons " # does not seem to work as expected
-plottingMode="" # stack (default), nostack, norm (can leave "" for stack, otherwise --plotmode <arg>)
+plottingMode="" # stack (default), nostack, norm (can leave "" for stack, otherwise " --plotmode <arg> ")
 
 #############################
 # Now we declare some dictionary in bash
@@ -126,6 +131,7 @@ declare -A skimTreeDir=()
 declare -A outputDir=()
 declare -A regionCuts=()
 declare -A qcdFromFR=()   
+declare -A scaleMCdata=()   
 #############################
 # Note:
 # ---------------------------
@@ -139,9 +145,10 @@ regionKey["FRcompRegion"]="FRcompRegion"
 runRegion["FRcompRegion"]="n"
 regionName["FRcompRegion"]="FR_computation_region"
 skimTreeDir["FRcompRegion"]="TREES_1LEP_80X_V3_FRELSKIM_V5"
-outputDir["FRcompRegion"]="full2016dataBH_puAndTrgSf_ptResScale_${today}"
+outputDir["FRcompRegion"]="full2016data_${today}"
 regionCuts["FRcompRegion"]=" -A eleKin pfmet20 'met_pt < 20' "
 qcdFromFR["FRcompRegion"]="n"
+scaleMCdata["FRcompRegion"]=""
 #
 #############################
 #############################
@@ -151,9 +158,10 @@ regionKey["FRcompNumRegion"]="FRcompNumRegion"
 runRegion["FRcompNumRegion"]="n"
 regionName["FRcompNumRegion"]="FR_computationNumerator_region"
 skimTreeDir["FRcompNumRegion"]="TREES_1LEP_80X_V3_FRELSKIM_V5"
-outputDir["FRcompNumRegion"]="full2016dataBH_puAndTrgSf_ptResScale_${today}"
+outputDir["FRcompNumRegion"]="full2016data_${today}"
 regionCuts["FRcompNumRegion"]=" -A eleKin pfmet20 'met_pt < 20' ${FRnumSel}"
 qcdFromFR["FRcompNumRegion"]="n"
+scaleMCdata["FRcompNumRegion"]=""
 #
 #############################
 #############################
@@ -163,21 +171,23 @@ regionKey["FRcheckRegion"]="FRcheckRegion"
 runRegion["FRcheckRegion"]="n"
 regionName["FRcheckRegion"]="FR_check_region"
 skimTreeDir["FRcheckRegion"]="TREES_1LEP_80X_V3_WENUSKIM_V5"
-outputDir["FRcheckRegion"]="full2016dataBH_puAndTrgSf_ptResScale_${today}"
+outputDir["FRcheckRegion"]="full2016data_${today}"
 regionCuts["FRcheckRegion"]=" -X nJet30 ${FRnumSel} ${mtCutApplControlRegion} -A eleKin pfmet20 'met_pt > 20' "
 qcdFromFR["FRcheckRegion"]="y"
+scaleMCdata["FRcheckRegion"]=""
 #
 #############################
 #############################
 # APPLICATION REGION
 #----------------------------
 regionKey["FRapplRegion"]="FRapplRegion"
-runRegion["FRapplRegion"]="n"
+runRegion["FRapplRegion"]="y"
 regionName["FRapplRegion"]="FR_application_region"
 skimTreeDir["FRapplRegion"]="TREES_1LEP_80X_V3_WENUSKIM_V5"
-outputDir["FRapplRegion"]="full2016dataBH_puAndTrgSf_ptResScale_${today}"
-regionCuts["FRapplRegion"]=" -X nJet30 ${Wsel} ${notFRnumSel} ${mtCutApplSignalRegion}"
+outputDir["FRapplRegion"]="full2016data_${today}"
+regionCuts["FRapplRegion"]=" -X nJet30 ${WselFull} ${notFRnumSel} "
 qcdFromFR["FRapplRegion"]="n"
+scaleMCdata["FRapplRegion"]=""
 #
 #############################
 #############################
@@ -187,9 +197,10 @@ regionKey["WmassSignalRegion"]="WmassSignalRegion"
 runRegion["WmassSignalRegion"]="n"
 regionName["WmassSignalRegion"]="wmass_signal_region"
 skimTreeDir["WmassSignalRegion"]="TREES_1LEP_80X_V3_WENUSKIM_V5"
-outputDir["WmassSignalRegion"]="full2016dataBH_puAndTrgSf_ptResScale_${today}"
-regionCuts["WmassSignalRegion"]=" -X nJet30 ${Wsel} ${FRnumSel} ${metCutApplSignalRegion}"
+outputDir["WmassSignalRegion"]="full2016data_${today}"
+regionCuts["WmassSignalRegion"]=" -X nJet30 ${WselFull} ${FRnumSel} "
 qcdFromFR["WmassSignalRegion"]="y"
+scaleMCdata["WmassSignalRegion"]="--fitData"
 #
 #############################
 #############################
@@ -199,9 +210,10 @@ regionKey["WhelicitySignalRegion"]="WhelicitySignalRegion"
 runRegion["WhelicitySignalRegion"]="y"
 regionName["WhelicitySignalRegion"]="whelicity_signal_region"
 skimTreeDir["WhelicitySignalRegion"]="TREES_1LEP_80X_V3_WENUSKIM_V5"
-outputDir["WhelicitySignalRegion"]="full2016dataBH_puAndTrgSf_ptResScale_${today}_restrictPt_HLT27"
-regionCuts["WhelicitySignalRegion"]=" -X nJet30 ${FRnumSel} ${Wsel} ${mtCutApplSignalRegion}"
+outputDir["WhelicitySignalRegion"]="full2016data_${today}"
+regionCuts["WhelicitySignalRegion"]=" -X nJet30 ${FRnumSel} ${WselFull} "
 qcdFromFR["WhelicitySignalRegion"]="y"
+scaleMCdata["WhelicitySignalRegion"]="--fitData"
 #
 #############################
 #############################
@@ -211,9 +223,10 @@ regionKey["SignalRegionDenominator"]="SignalRegionDenominator"
 runRegion["SignalRegionDenominator"]="n"
 regionName["SignalRegionDenominator"]="signal_region_denominator"
 skimTreeDir["SignalRegionDenominator"]="TREES_1LEP_80X_V3_WENUSKIM_V5"
-outputDir["SignalRegionDenominator"]="full2016dataBH_puAndTrgSf_ptResScale_${today}"
+outputDir["SignalRegionDenominator"]="full2016data_${today}"
 regionCuts["SignalRegionDenominator"]=" -X nJet30"
 qcdFromFR["SignalRegionDenominator"]="n"
+scaleMCdata["SignalRegionDenominator"]=""
 #
 #############################
 #############################
@@ -223,9 +236,10 @@ regionKey["FRclosureCompRegion"]="FRclosureCompRegion"
 runRegion["FRclosureCompRegion"]="n"
 regionName["FRclosureCompRegion"]="FR_computationClosure_region"
 skimTreeDir["FRclosureCompRegion"]="TREES_1LEP_80X_V3_WENUSKIM_V5"
-outputDir["FRclosureCompRegion"]="full2016dataBH_puAndTrgSf_ptResScale_${today}"
+outputDir["FRclosureCompRegion"]="full2016data_${today}"
 regionCuts["FRclosureCompRegion"]=" -A eleKin pfmet20 'met_pt < 20' ${FRnumSel}"
 qcdFromFR["FRclosureCompRegion"]="y"
+scaleMCdata["FRclosureCompRegion"]=""
 #
 #############################
 
@@ -371,12 +385,18 @@ do
 	#treeAndFriend=" -P ${treepath}/${treedir}/ -F Friends ${treepath}/${treedir}/friends/tree_Friend_{cname}.root -F Friends ${treepath}/${treedir}/friends/tree_FRFriend_{cname}.root --FMC Friends ${treepath}/${treedir}/friends/tree_TrgFriend_{cname}.root "
 	treeAndFriend=" -P ${treepath}/${treedir}/ -F Friends ${treepath}/${treedir}/friends/tree_Friend_{cname}.root "
 
-	regionCommand="${commonCommand} ${treeAndFriend} ${regionCuts[${region}]}"
+	regionCommand="${commonCommand} ${treeAndFriend} ${regionCuts[${region}]} ${scaleMCdata[${region}]}"
 
 	if [[ "${qcdFromFR[${region}]}" == "y" ]]; then
-            regionCommand="${regionCommand} --xp QCD,treeFR_.*"    
+            regionCommand="${regionCommand} --xp QCD"    
 	else
-	    regionCommand="${regionCommand} --xp data_fakes,W,TauDecaysW,WFlips"
+	    regionCommand="${regionCommand} --xp data_fakes,TauDecaysW,WFlips"
+	fi
+
+	if [[ "${skimTreeDir[${region}]}" == "TREES_1LEP_80X_V3_WENUSKIM_V5_TINY" ]]; then
+	    regionCommand="${regionCommand/${mcafile}/${mcafileTINY}}"
+	elif [[ "${skimTreeDir[${region}]}" == "TREES_1LEP_80X_V3_FRELSKIM_V5" ]]; then
+	    regionCommand="${regionCommand/${mcafile}/${mcafileFRskim}}"
 	fi
 
         #commonFRcheck="${commonCommandFRcheck} ${treeAndFriend} -X nJet30 ${Wsel} ${FRnumSel} ${mtCutApplControlRegion} ${dataOptionFakes}"
