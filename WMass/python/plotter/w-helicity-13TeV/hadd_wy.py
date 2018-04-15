@@ -37,6 +37,8 @@ import re
 from optparse import OptionParser
 parser = OptionParser(usage='python %prog <input_folder> [options] ')
 parser.add_option('-c','--cut-name', dest='cutName', default='', type='string', help='name of cut. It is a tag that should be present in some folders')
+parser.add_option('-o','--outdir', dest='outdir', default='./', type='string', help='Output folder (default is current one)')
+parser.add_option('-s','--skip', dest='skip', default='', type='string', help='Match to skip (if a file has this string in its name it will be skipped)')
 parser.add_option('-l','--LO', dest="hasLO", action="store_true", default=False, help="Specify if there are folders for LO samples (they must end with '_LO')")
 (options, args) = parser.parse_args()
 
@@ -58,8 +60,17 @@ if options.cutName != '':
     varcut = options.cutName
     noAdditionalCut = False
 
+skipMatch = False
+match = ""
+if options.skip != '':
+    skipMatch = True
+    match = options.skip
+
 #files = [ f for f in os.listdir(inputdir) if f.endswith('.root') ]
 #files = list( [os.path.join(inputdir, f) for f in files] )
+    
+if not os.path.isdir(options.outdir):
+    os.system('mkdir -p {od}'.format(od=options.outdir))
 
 files = list()
 for root, dirs, tmpfiles in os.walk(inputdir):
@@ -92,6 +103,8 @@ helicities = ["right", "left", "long"]
 tmpplots = []
 varcut_thr_list = set([])
 for f in files:
+    if skipMatch and match in f: 
+        continue
     print "Opening file: ",f
     tf = ROOT.TFile.Open(f)
     for k in tf.GetListOfKeys() :
@@ -104,10 +117,20 @@ for f in files:
                 if varcut != "" and varcut in f:
                     regex = re.compile(varcut+'([0-9]*)')
                     varcut_thr = regex.findall(f)
-                    if len(varcut_thr):
-                        #print int(varcut_thr[0])
+                    if len(varcut_thr) and varcut_thr[0] != '':
+                        # case pfmtXX with XX integer
+                        #print "==> " + varcut_thr[0] 
                         varcut_thr_list.add(int(varcut_thr[0]))
                         newname = '_'.join( tokens[:2]+['reco_%s%d' % (varcut, int(varcut_thr[0]))]+tokens[2:] )                        
+                    else:
+                        # case pfmtSmearXX with XX integer
+                        regex = re.compile(varcut+'([A-Za-z]*)')  # get Smear
+                        suffix = regex.findall(f)
+                        regex = re.compile(str(suffix[0])+'([0-9]*)')  # get XX
+                        varcut_thr = regex.findall(f)
+                        varcut_thr_list.add(int(varcut_thr[0]))
+                        #print "==> " + suffix[0] + varcut_thr[0]
+                        newname = '_'.join( tokens[:2]+['reco_%s%d' % (varcut, int(varcut_thr[0]))]+tokens[2:]+suffix )   
                 else: 
                     newname = '_'.join( tokens[:2]+['reco']+tokens[2:] )
             else:
@@ -120,7 +143,7 @@ for f in files:
             tmpplots.append(newh)
     #tf.Close()
 
-outputfile = 'mc_reco_eff.root'
+outputfile = options.outdir + 'mc_reco_eff.root'
 mergedFile = ROOT.TFile.Open(outputfile,'recreate')
 mergedFile.cd()
 
@@ -138,7 +161,7 @@ if not noAdditionalCut:
     print ""    
     print "thresholds for " + varcut + " cut: ",varcut_thr_list
     for thr in varcut_thr_list:
-        outputfile = 'mc_reco_%s%d_eff.root' % (varcut, thr) 
+        outputfile = options.outdir + 'mc_reco_%s%d_eff.root' % (varcut, thr) 
         mergedFile = ROOT.TFile.Open(outputfile,'recreate')
         mergedFile.cd()
         print "#####################"
