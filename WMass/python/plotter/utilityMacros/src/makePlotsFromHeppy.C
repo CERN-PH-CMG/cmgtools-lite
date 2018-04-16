@@ -11,16 +11,16 @@ using namespace std;
 
 //======================================================================
 
-void makePlotsFromHeppy(const string& inputFilePath = "www/wmass/13TeV/distribution/TREES_1LEP_80X_V3_WENUSKIM_V5_TINY/FR_application_region/full2016data_14_04_2018_forAN_noUpPt_noMt/eta_0p0_1p479/", 
-			const string& inputFileName  = "test_plots.root",  // 
-			const string& outputFilePath = "www/wmass/13TeV/test/rebinSingleDistribution/",
-			const TString& processesList = "data,QCD,W,Z,Top,DiBosons",
-			const TString& legendEntryMCList = "QCD,W (amc@NLO),Z (amc@NLO),Top,DiBosons",
-			const vector<Int_t> colorMCList = {kGray, kRed+2, kAzure+2, kGreen+2, kViolet+2},
-			const TString& varList       = "pfmt,ptl1,pfmet",
-			const Double_t lumi          = 35.9, 
-			const Int_t globalRebinFactor  = 1 
-			) 
+void realMakePlotsFromHeppy(const string& inputFilePath = "www/wmass/13TeV/distribution/TREES_1LEP_80X_V3_WENUSKIM_V5_TINY/FR_application_region/full2016data_14_04_2018_forAN_noUpPt_noMt/", 
+			    const string& outputFilePath = "www/wmass/13TeV/test/rebinSingleDistribution/FR_application_region/full2016data_14_04_2018_forAN_noUpPt_noMt/",
+			    const string& inputFileName  = "test_plots.root",  // 
+			    const TString& processesList = "data,QCD,W,Z,Top,DiBosons",
+			    const TString& legendEntryMCList = "QCD,W (amc@NLO),Z (amc@NLO),Top,DiBosons",
+			    const vector<Int_t> colorMCList = {kGray, kRed+2, kAzure+2, kGreen+2, kViolet+2},
+			    const TString& varList       = "trkmetEleCorr_dy,trkmt_trkmetEleCorr_dy", // "pfmt,ptl1,pfmet",
+			    const Double_t lumi          = 35.9, 
+			    const Int_t globalRebinFactor  = 1 
+			    ) 
 {
 
   TH1::SetDefaultSumw2(); //all the following histograms will automatically call TH1::Sumw2()                    
@@ -88,4 +88,53 @@ void makePlotsFromHeppy(const string& inputFilePath = "www/wmass/13TeV/distribut
 
 }
 
+
+//=======================================================
+
+void makePlotsFromHeppy(const string& inputFilePath = "www/wmass/13TeV/distribution/TREES_1LEP_80X_V3_FRELSKIM_V5/FR_computation_region/full2016dataBH_puAndTrgSf_ptResScale_08_04_2018_forAN/", 
+			const string& outputFilePath = "www/wmass/13TeV/test/rebinSingleDistribution/FR_computation_region/full2016dataBH_puAndTrgSf_ptResScale_08_04_2018_forAN/",
+			const TString& subfoldersList = "eta_0p0_1p479/,eta_1p479_2p1/,eta_2p1_2p5/",
+			const string& inputFileName  = "test_plots.root",  // 
+			const TString& processesList = "data,QCD,W,Z,Top,DiBosons",
+			const TString& legendEntryMCList = "QCD,W (amc@NLO),Z (amc@NLO),Top,DiBosons",
+			const vector<Int_t> colorMCList = {kGray, kRed+2, kAzure+2, kGreen+2, kViolet+2},
+			const TString& varList       = "pfmet,ptl1,trkmetEleCorr_dy,pfmt,trkmt_trkmetEleCorr_dy", // "pfmt,ptl1,pfmet",
+			const Double_t lumi          = 35.9, 
+			const Int_t globalRebinFactor  = 1 
+			) 
+
+{
+
+  vector<string> subfolders;
+  //cout << "subfolders to plot: " << endl;
+  getVectorCStringFromTStringList(subfolders, subfoldersList, ",", false);
+
+  if (subfolders.size() == 0) {
+    realMakePlotsFromHeppy(inputFilePath,
+			   outputFilePath,
+			   inputFileName,
+			   processesList,
+			   legendEntryMCList,
+			   colorMCList,
+			   varList,
+			   lumi,
+			   globalRebinFactor
+			   );
+  } else {
+    for (UInt_t i = 0; i < subfolders.size(); ++i) {
+      string outputFolder = (outputFilePath == "SAME") ? outputFilePath : (outputFilePath + subfolders[i]);
+      realMakePlotsFromHeppy(inputFilePath + subfolders[i],
+			     outputFolder,
+			     inputFileName,
+			     processesList,
+			     legendEntryMCList,
+			     colorMCList,
+			     varList,
+			     lumi,
+			     globalRebinFactor
+			     );
+    }
+  }
+
+}
 
