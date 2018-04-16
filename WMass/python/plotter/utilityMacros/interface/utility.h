@@ -783,7 +783,7 @@ void checkNotNullPtr(TGraph* graphptr, const string& ptrName = "graphptr") {
 
 //======================================================
 
-void checkNotNullPtr(TObject* objptr, const string& ptrName = "graphptr") {
+void checkNotNullPtr(TObject* objptr, const string& ptrName = "objptr") {
 
   if ( objptr == NULL) {
     cout << "Error: pointer " << ptrName << " is NULL. Exit" << endl;
@@ -1117,7 +1117,7 @@ void drawGraph(vector<TGraph*> gr_roc_S_B = {},
   leg.SetFillStyle(0);
   leg.SetBorderSize(0);
 
-  Int_t colorList[] = {kBlack, kBlue, kRed, kGreen+2, kOrange+1, kCyan+2, kGray+2};
+  Int_t colorList[] = {kBlack, kRed, kBlue, kGreen+2, kOrange+1, kCyan+2, kGray+2};
 
   for (Int_t ig = 0; ig < nGraphs; ig++) {
     gr_roc_S_B[ig]->SetMarkerStyle(21);
