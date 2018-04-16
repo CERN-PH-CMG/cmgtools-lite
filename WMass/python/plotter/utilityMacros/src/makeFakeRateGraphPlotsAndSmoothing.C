@@ -73,20 +73,13 @@ void doFakeRateGraphPlots(const string& outputDIR_tmp = "./",
   TGraphAsymmErrors* fr_w = NULL;  // FR from W MC (actually, the prompt rate)
 
   // tmp plot to be removed to adjust settings in CMS_lumi
-  TH1D* htmp1 = new TH1D("htmp1","",1,0,1);
-  TH1D* htmp2 = new TH1D("htmp2","",1,0,1);
-  htmp1->Fill(0.5);
-  htmp2->Fill(0.5);
-  vector<TH1*> htmpVec; htmpVec.push_back(htmp2);
-  vector<string> htmpleg; htmpleg.push_back("");
-  drawTH1dataMCstack(htmp1, htmpVec, "variable", "Events", "tmpToBeRemoved", outputDIR,"",htmpleg,"",-1.0,1,false,1);
-  system(("rm " + outputDIR + "*tmpToBeRemoved*").c_str());
+  adjustSettings_CMS_lumi(outputDIR);
 
   string detId = isEB ? "EB" : "EE";
 
   vector<TGraph*> graphList;  // first element is the one on top of the stack
   vector<string> graphLegend;
-  vector <Double_t> legCoord = {0.12,0.65,0.60,0.9};
+  vector <Double_t> legCoord = {0.15,0.65,0.60,0.9};
 
   string graphPrefixQCD = "";
   if (graphPrefixQCD_tmp == "") graphPrefixQCD = graphPrefix;
