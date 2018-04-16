@@ -230,6 +230,9 @@ if not removeJecUncertainty:
     jetAnaScaleDown.cleanJetsFromTaus = True
 
 isoTrackAna.setOff = False
+
+isoTrackAna.useLegacy2016 = True
+
 genAna.allGenTaus = True
 
 if allGenParts:
