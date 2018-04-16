@@ -69,7 +69,7 @@ useDataGH="y"
 #useHLTpt27="y" # already in selection txt file
 runBatch="y"
 queueForBatch="cmscaf1nw"
-nameTag="_forAN_noUpPt_noMt_trkVar" 
+nameTag="_forAN_noUpPt_noMt_ptOnly_allBkg" 
 #nameTag="_varStudy"
 useSkimmedTrees="y" # skimmed samples are on both pccmsrm28 and eos 
 usePtCorrForScaleFactors="n" # y: use corrected pt for scale factor weight; n: use LepGood_pt (which is what would have been used if the scale factors where in a friend tree)
@@ -100,8 +100,9 @@ excludeprocesses="Z_LO,W_LO" # decide whether to use NLO (amc@NLO) or LO (MadGra
 #selectplots=""  # if empty it uses all plots in cfg file
 #selectplots="nJetClean,ptl1,etal1,pfmet,tkmet,ele1ID,awayJet_pt,wpt_tk,ele1dxy"  # if empty it uses all plots in cfg file
 #selectplots="ptl1,etal1,pfmet,trkmt_trkmetEleCorr,pfmt,wpt_tk,nJetClean,ele1Iso04,ele1ID"  # if empty it uses all plots in cfg file
-selectplots="trkmt_trkmetEleCorr_dy,trkmetEleCorr_dy"
+#selectplots="trkmt_trkmetEleCorr_dy,trkmetEleCorr_dy"
 #selectplots="ptl1,pfmt,pfmet"
+selectplots="ptl1"
 #selectplots="dphiLepPFMET,diffPt_lepPFMET,diffPt_lepPFMET_v2"
 #maxentries="150000" # max int number is > 2*10^9
 maxentries=""  # all events if ""
@@ -183,7 +184,7 @@ scaleMCdata["FRcheckRegion"]=""
 regionKey["FRapplRegion"]="FRapplRegion"
 runRegion["FRapplRegion"]="y"
 regionName["FRapplRegion"]="FR_application_region"
-skimTreeDir["FRapplRegion"]="TREES_1LEP_80X_V3_WENUSKIM_V5"
+skimTreeDir["FRapplRegion"]="TREES_1LEP_80X_V3_WENUSKIM_V5_TINY"
 outputDir["FRapplRegion"]="full2016data_${today}"
 regionCuts["FRapplRegion"]=" -X nJet30 ${WselFull} ${notFRnumSel} "
 qcdFromFR["FRapplRegion"]="n"
@@ -207,7 +208,7 @@ scaleMCdata["WmassSignalRegion"]="--fitData"
 # WHELICITY SIGNAL REGION (avoid possibly all kinematic selections)
 #----------------------------
 regionKey["WhelicitySignalRegion"]="WhelicitySignalRegion"
-runRegion["WhelicitySignalRegion"]="y"
+runRegion["WhelicitySignalRegion"]="n"
 regionName["WhelicitySignalRegion"]="whelicity_signal_region"
 skimTreeDir["WhelicitySignalRegion"]="TREES_1LEP_80X_V3_WENUSKIM_V5"
 outputDir["WhelicitySignalRegion"]="full2016data_${today}"
@@ -390,7 +391,11 @@ do
 	if [[ "${qcdFromFR[${region}]}" == "y" ]]; then
             regionCommand="${regionCommand} --xp QCD"    
 	else
-	    regionCommand="${regionCommand} --xp data_fakes,TauDecaysW,WFlips"
+	    if [[ "${treedir}" == "TREES_1LEP_80X_V3_FRELSKIM_V5" ]]; then		
+		regionCommand="${regionCommand} --xp data_fakes,TauDecaysW,WFlips"
+	    else
+		regionCommand="${regionCommand} --xp data_fakes"
+	    fi
 	fi
 
 	if [[ "${skimTreeDir[${region}]}" == "TREES_1LEP_80X_V3_WENUSKIM_V5_TINY" ]]; then
