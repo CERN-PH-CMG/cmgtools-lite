@@ -62,9 +62,9 @@ susyStop4Body_globalVariables = susyCore_globalVariables + [
 
 
             ##-------- custom quantities ------------------------------------------
-            NTupleVariable("event_mtw", lambda ev: ev.mtw, help="mt(l,met)"),
-            NTupleVariable("event_mtw1", lambda ev: ev.mtw1, help="1- 80*80/2*met*pt"),
-            NTupleVariable("event_mtw2", lambda ev: ev.mtw2, help="cos (phi)"),
+           # NTupleVariable("event_mtw", lambda ev: ev.mtw, help="mt(l,met)"),
+           # NTupleVariable("event_mtw1", lambda ev: ev.mtw1, help="1- 80*80/2*met*pt"),
+           # NTupleVariable("event_mtw2", lambda ev: ev.mtw2, help="cos (phi)"),
 
             ##-------- MET filter information ------------------------------------------
             #NTupleVariable("Flag_HBHENoiseFilter_fix", lambda ev: getattr(ev, "ev.hbheFilterNew", 0), help="HBEHE baseline temporary filter decision"),
