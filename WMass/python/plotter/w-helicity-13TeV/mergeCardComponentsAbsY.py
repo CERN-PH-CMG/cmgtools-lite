@@ -46,6 +46,7 @@ if __name__ == "__main__":
      parser.add_option(     '--sf'    , dest='scaleFile'    , default='', type='string', help='path of file with the scaling/unfolding')
      parser.add_option(     '--lumiLnU'    , dest='lumiLnU'    , default=0.026, type='float', help='Log-uniform constraint to be added to all the fixed MC processes')
      parser.add_option(     '--wXsecLnN'   , dest='wLnN'       , default=0.038, type='float', help='Log-normal constraint to be added to all the fixed W processes')
+     parser.add_option(     '--pdf-shape-only'   , dest='pdfShapeOnly' , default=False, action='store_true', help='Normalize the mirroring of the pdfs to central rate.')
      (options, args) = parser.parse_args()
      
      from symmetrizeMatrixAbsY import getScales
@@ -169,7 +170,7 @@ if __name__ == "__main__":
                                          tokens = newname.split("_"); pfx = '_'.join(tokens[:-1]); pdf = tokens[-1]
                                          ipdf = int(pdf.split('pdf')[-1])
                                          newname = "{pfx}_pdf{ipdf}".format(pfx=pfx,ipdf=ipdf)
-                                         (alternate,mirror) = mirrorShape(nominals[pfx],obj,newname)
+                                         (alternate,mirror) = mirrorShape(nominals[pfx],obj,newname,options.pdfShapeOnly)
                                          for alt in [alternate,mirror]:
                                              if alt.GetName() not in plots:
                                                  plots[alt.GetName()] = alt.Clone()
