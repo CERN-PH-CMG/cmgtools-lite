@@ -1,5 +1,5 @@
 from CMGTools.TTHAnalysis.analyzers.treeProducerSusyCore import *
-from CMGTools.TTHAnalysis.analyzers.ntupleTypes import *
+from CMGTools.TTHAnalysis.analyzers.ntupleTypesStop4Body import *
 
 susyStop4Body_globalVariables = susyCore_globalVariables + [
             ## ------- HT from LHE event, needed for merging HT binned samples (requires LHE analyzer to have run)  ---------------------------------- #
@@ -83,8 +83,8 @@ susyStop4Body_collections = susyCore_collections.copy()
 susyStop4Body_collections.update({
             ## ---------------------------------------------
             "selectedTaus"     : NTupleCollection("TauGood",   tauTypeSusy,                8,              help="Taus after the preselection"),
-            "selectedLeptons"  : NTupleCollection("LepGood",   leptonTypeSusy,          8,              help="Leptons after the preselection"),
-            "otherLeptons"     : NTupleCollection("LepOther",  leptonTypeSusy,          8,              help="Leptons after the preselection"),
+            "selectedLeptons"  : NTupleCollection("LepGood",   leptonTypeStop4Body,          8,              help="Leptons after the preselection"),
+            "otherLeptons"     : NTupleCollection("LepOther",  leptonTypeStop4Body,          8,              help="Leptons after the preselection"),
             ## ---------------------------------------------
             "cleanJetsAll"     : NTupleCollection("Jet",       jetTypeSusy,               30,              help="Cental jets after full selection and cleaning, sorted by pt"),
 #            "jets"             : NTupleCollection("JetDirty",  genJetType,                25,              help="Cental jets after full selection but before cleaning, sorted by pt"),
@@ -96,4 +96,3 @@ susyStop4Body_collections.update({
             ## ---------------------------------------------
             "LHE_weights"      : NTupleCollection("LHEweight", weightsInfoType,         1000, mcOnly=True, help="LHE weight info"),
 })
-
