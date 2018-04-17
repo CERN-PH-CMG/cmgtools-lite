@@ -83,6 +83,10 @@ if options.queue and not os.path.exists(outdir+"/jobs"):
     os.mkdir(outdir+"/jobs")
     os.mkdir(outdir+"/mca")
 
+# copy some cfg for bookkeeping
+os.system("cp %s %s" % (CUTFILE, outdir))
+os.system("cp %s %s" % (MCA, outdir))
+
 MCASYSTS=MCA
 if options.addPdfSyst:
     # write the additional systematic samples in the MCA file
@@ -128,7 +132,7 @@ if options.signalCards:
                 ycut=" -A alwaystrue YW%d 'abs(genw_y)>=%s && abs(genw_y)<%s' " % (iy,WYBinsEdges[iy],WYBinsEdges[iy+1])
                 ycut += POSCUT if charge=='plus' else NEGCUT
                 excl_long_signal  = '' if not options.longBkg else ',W{ch}_long'.format(ch=charge)
-                xpsel=' --xp "W{antich}.*,Z,Top,DiBosons,TauDecaysW{longbkg},data.*" --asimov '.format(antich = ('plus' if charge=='minus' else 'minus'), longbkg = excl_long_signal)
+                xpsel=' --xp "W{antich}.*,Flips,Z,Top,DiBosons,TauDecaysW{longbkg},data.*" --asimov '.format(antich = ('plus' if charge=='minus' else 'minus'), longbkg = excl_long_signal)
                 if not os.path.exists(outdir): os.mkdir(outdir)
                 if options.queue and not os.path.exists(outdir+"/jobs"): os.mkdir(outdir+"/jobs")
                 syst = '' if ip==0 else pdf

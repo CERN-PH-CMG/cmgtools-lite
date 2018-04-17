@@ -1,0 +1,2 @@
+alwaystrue : 1
+wel        : genw_decayId == 12

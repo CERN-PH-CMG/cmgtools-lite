@@ -117,7 +117,7 @@ class lepCalibratedEnergyProducer(Module):
         pass
     def beginFile(self, inputFile, outputFile, inputTree, wrappedOutputTree):
         self.out = wrappedOutputTree
-        #self.out.branch("LepGood_calPt_step1", "F", lenVar="nLepGood")
+        self.out.branch("LepGood_calPt_step1", "F", lenVar="nLepGood")
         self.out.branch("LepGood_calPt", "F", lenVar="nLepGood")
     def endFile(self, inputFile, outputFile, inputTree, wrappedOutputTree):
         pass
@@ -139,23 +139,23 @@ class lepCalibratedEnergyProducer(Module):
     def analyze(self, event):
         """process event, return True (go to next module) or False (fail, go to next event)"""
         leps = Collection(event, "LepGood")
-        #calPt_step1 = []
+        calPt_step1 = []
         calPt = []
         for l in leps:
             if abs(l.pdgId)!=11: # implemented only for electrons
                 calPt.append(-999.) 
-                #calPt_step1.append(-999.) 
+                calPt_step1.append(-999.) 
             else:
-                scale = self._worker.ScaleCorrection(event.run,abs(l.etaSc)<1.479,l.r9,abs(l.eta),l.pt)
-                smear = self._worker.getSmearingSigma(event.run,abs(l.etaSc)<1.479,l.r9,abs(l.eta),l.pt,0.,0.)
                 if event.isData:
-                    calPt.append(l.pt * scale)
-                    #calPt.append(l.pt * scale * self.residualScale(l.pt,l.eta,event.isData))
+                    scale = self._worker.ScaleCorrection(event.run,abs(l.etaSc)<1.479,l.r9,abs(l.eta),l.pt)
+                    calPt_step1.append(l.pt * scale)
+                    calPt.append(l.pt * scale * self.residualScale(l.pt,l.eta,event.isData))
                 else:
+                    smear = self._worker.getSmearingSigma(event.run,abs(l.etaSc)<1.479,l.r9,abs(l.eta),l.pt,0.,0.)
                     corr = 1.0 + smear * self.gauss()
-                    #calPt_step1.append(l.pt * corr)
+                    calPt_step1.append(l.pt * corr)
                     calPt.append(l.pt * corr)
-        #self.out.fillBranch("LepGood_calPt_step1", calPt_step1)
+        self.out.fillBranch("LepGood_calPt_step1", calPt_step1)
         self.out.fillBranch("LepGood_calPt", calPt)
         return True
 
@@ -165,4 +165,4 @@ class lepCalibratedEnergyProducer(Module):
 eleRelIsoEA = lambda : lepIsoEAProducer("%s/src/RecoEgamma/ElectronIdentification/data/Summer16/effAreaElectrons_cone03_pfNeuHadronsAndPhotons_80X.txt" % os.environ['CMSSW_BASE'])
 lepQCDAwayJet = lambda : lepAwayJetProducer(jetSel = lambda jet : jet.pt > 30 and abs(jet.eta) < 2.4,
                                             pairSel =lambda lep, jet: deltaR(lep.eta,lep.phi, jet.eta, jet.phi) > 0.7)
-eleCalibrated = lambda : lepCalibratedEnergyProducer("CMGTools/WMass/python/postprocessing/data/leptonScale/el/Run2016_legacyrereco")
+eleCalibrated = lambda : lepCalibratedEnergyProducer("CMGTools/WMass/python/postprocessing/data/leptonScale/el/Legacy2016_07Aug2017_FineEtaR9_ele")

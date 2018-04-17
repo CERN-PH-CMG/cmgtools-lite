@@ -1,24 +1,51 @@
-# usage:  python w-helicity-13TeV/hadd_wy.py <input_folder> [<cut_name_ID>]
+# usage:  python w-helicity-13TeV/hadd_wy.py <input_folder> [options]
 #
 # first argument is list of folders with distributions for no or nominal selection
-# second one, optional, is a key for the selection, which should be in some folder names
 # See examples below
 
 # script developed to work passing a folder containing other folders like the following:
+#
 # [mciprian@pccmsrm29 plotter]$ ls plots/gen/
 # wgen_fullsel_minus         wgen_fullsel_pfmt30_plus   wgen_fullsel_pfmt40_plus   wgen_fullsel_pfmt50_plus  wgen_nosel_minus
 # wgen_fullsel_pfmt30_minus  wgen_fullsel_pfmt40_minus  wgen_fullsel_pfmt50_minus  wgen_fullsel_plus         wgen_nosel_plus
-# [mciprian@pccmsrm29 plotter]$ python w-helicity-13TeV/hadd_wy.py plots/gen/ pfmt
+# [mciprian@pccmsrm29 plotter]$ python w-helicity-13TeV/hadd_wy.py plots/gen/ -c pfmt
 #
-# it will create root files containing histograms with no selection and with any of the other selections (no pfmt or pfmtXX in this case)
+# it will create root files containing histograms with no selection and with any of the other selections (no pfmt or pfmtXX in this case).
+# For the example above, it will create 4 files, one for nominal and one for each of the 3 pfmt selections
 #
-# It works also in you have only nosel and nominal selection (4 folders). In this case, the second argument can be skipped
+# It works also in you have only nosel and nominal selection (4 folders), which is the default.
+#
+# In general we use NLO samples, but we could also use LO (for example, for systematics). 
+# In this case the convention is that the last folder must end with '_LO'
+# In that case, the histograms will also be named with '_LO' at the end of their original names, and will be put in the same output file as the others.
+# This requires passing option -l, otherwise the script complains becasue it sees more than 4 folders 
+# (if you have exactly 4 folders and all are named with _LO the script still works).
+# The rest works in the same way (if you have additional selections and so on)
+#
+# Note: the script should still work if all the fullsel folders have some cut tag in their name, like in the following:
+#
+# [mciprian@pccmsrm29 plotter]$ ls plots/gen_eff_tightCharge/     
+# wgen_fullsel_pfmt40_minus     wgen_fullsel_pfmt40_plus     wgen_nosel_minus     wgen_nosel_plus
+# wgen_fullsel_pfmt40_minus_LO  wgen_fullsel_pfmt40_plus_LO  wgen_nosel_minus_LO  wgen_nosel_plus_LO
+#
+# In this case, you may not specify the cut with -c <cut_name_ID> option, and the files will be treated as usual, but you need -l
 
 import sys, os
 import ROOT, datetime, array
 import re
 
-inputdir = sys.argv[1]
+from optparse import OptionParser
+parser = OptionParser(usage='python %prog <input_folder> [options] ')
+parser.add_option('-c','--cut-name', dest='cutName', default='', type='string', help='name of cut. It is a tag that should be present in some folders')
+parser.add_option('-l','--LO', dest="hasLO", action="store_true", default=False, help="Specify if there are folders for LO samples (they must end with '_LO')")
+(options, args) = parser.parse_args()
+
+if len(args) == 0:
+    parser.print_usage()
+    quit()
+
+inputdir = args[0]
+
 # varcut = "pfmt"
 # if varcut != "":
 #     noAdditionalCut = False
@@ -27,8 +54,8 @@ inputdir = sys.argv[1]
 
 varcut = ""
 noAdditionalCut = True
-if len(sys.argv)>2:
-    varcut = str(sys.argv[2])
+if options.cutName != '':
+    varcut = options.cutName
     noAdditionalCut = False
 
 #files = [ f for f in os.listdir(inputdir) if f.endswith('.root') ]
@@ -42,9 +69,16 @@ for root, dirs, tmpfiles in os.walk(inputdir):
             print("Getting file --> %s " % str(thisfile))
             files.append(str(thisfile))
 
-if len(files) > 4 and noAdditionalCut:
+if options.hasLO:
+    expectedFolders = 8
+else:
+    expectedFolders = 4
+
+if len(files) > expectedFolders and noAdditionalCut:
     print "==================================="
-    print "WARNING: you have not specified any folder name tag, but I see more than 4 folders (%d)" % len(files)
+    print "WARNING: you have not specified any folder name tag, but I see more than %d folders (%d)" % (int(expectedFolders),len(files))
+    if int(expectedFolders) == 4 and len(files) == 8:
+        print "Did you want to include LO samples but forgot option --LO ?"
     print "I cannot manage this situation correctly, please check. Exit"
     print "==================================="
     quit()
@@ -78,6 +112,9 @@ for f in files:
                     newname = '_'.join( tokens[:2]+['reco']+tokens[2:] )
             else:
                 newname = name
+            lastFolder = os.path.basename(os.path.dirname(f))
+            if lastFolder.endswith('_LO'):
+                newname = newname + '_LO'
             newh = obj.Clone(newname)
             newh.SetDirectory(None)
             tmpplots.append(newh)

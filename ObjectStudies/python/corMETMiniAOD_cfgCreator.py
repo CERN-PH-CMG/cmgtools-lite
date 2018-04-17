@@ -227,6 +227,12 @@ if options.redoPuppi:
                                postfix="Puppi"
                                )
 
+    ## temporary fix since we do not have good JEC yet
+    process.basicJetsForMetPuppi.jetCorrEtaMax = cms.double(2.4)
+    process.corrPfMetType1Puppi.jetCorrEtaMax = cms.double(2.4)
+
+
+
 ### -------------------------------------------------------------------
 ### the lines below remove the L2L3 residual corrections when processing data
 ### -------------------------------------------------------------------

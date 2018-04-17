@@ -13,7 +13,7 @@ class DatasetVersionChecker:
         if not m: raise RuntimeError, "Sorry, dataset %r is not conformant with our expectations" % dataset
         dwild = "%s-v*%s" % (m.group(1), m.group(3))
         currversion = int(m.group(2))
-        dbs='das_client.py --query="dataset dataset=%s status=VALID" --limit 999'%(dwild,)
+        dbs='dasgoclient --query="dataset dataset=%s status=VALID" --limit 999'%(dwild,)
         dbsOut = _dasPopen(dbs, verbose=False)
         versions  = []
         for line in dbsOut:

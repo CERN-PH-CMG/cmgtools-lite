@@ -136,8 +136,9 @@ if __name__ == "__main__":
     for il,l in enumerate(l_sorted_new):
 
         #####################
-        ### by default, keep the same name 
+        ### remove CMS_Blabla if any 
         new_l = l.replace('CMS_We_','')
+        new_l = new_l.replace('CMS_','')
         ### make some names shorter
         if any(h in l for h in helicities):    
             chargeID = ""
@@ -239,7 +240,28 @@ if __name__ == "__main__":
         arr_rhi   = array.array('f', [])
 
 
-        ##
+        ###########################################################
+        ### Names in datacard are like Wplus_right_Wplus_el_Ybin_9, but fit_mdf->Print() shows norm_Wplus_right_Wplus_Ybin_9
+        ### Need a temporary patch to remove el from names copied from datacard, if they begin with 'norm_' .
+        tmp_procs = []
+        channel_mu1_el2 = 0
+        for process in procs:
+            ### electron case
+            if '_el_Ybin' in process:
+                channel_mu1_el2 = 2
+                tmp_procs.append(process.replace('_el_Ybin','_Ybin'))
+            ### muon case
+            elif '_mu_Ybin' in process:
+                tmp_procs.append(process.replace('_mu_Ybin','_Ybin'))
+                channel_mu1_el2 = 1
+            else:
+                tmp_procs.append(process)
+        procs = tmp_procs
+
+        if channel_mu1_el2 == 1:
+            print "Assuming you are working with muons"
+        elif channel_mu1_el2 == 2:
+            print "Assuming you are working with electrons"
 
         totalrate = 0.
         fitAbsoluteRates = False
@@ -276,7 +298,18 @@ if __name__ == "__main__":
                     arr_ehi.append(abs(tmp_par.getAsymErrorHi())/totalrate/ybinwidths[ip])
                     arr_elo.append(abs(tmp_par.getAsymErrorLo() if tmp_par.hasAsymError() else tmp_par.getAsymErrorHi())/totalrate/ybinwidths[ip])
 
-                    tmp_par_eff =  fitresult.constPars().find(p.replace('norm_','eff_'))
+                    #tmp_par_eff =  fitresult.constPars().find(p.replace('norm_','eff_'))  # won't work anymore since '_el_' is in efficiency parameter but not in p 
+                    tmp_par_eff_name = p.replace('norm_','eff_')
+                    if channel_mu1_el2 > 0:
+                        print "WARNING: getting name of efficiency parameter: we are adding 'us_%s_Ybin' to 'us_Ybin' " % "el" if channel_mu1_el2 == 2 else "mu" 
+                        print "before " + tmp_par_eff_name
+                        if channel_mu1_el2 == 2 and not '_el_Ybin' in tmp_par_eff_name:                        
+                            tmp_par_eff_name = tmp_par_eff_name.replace('us_Ybin','us_el_Ybin')
+                        elif channel_mu1_el2 == 1 and not '_mu_Ybin' in tmp_par_eff_name:
+                            tmp_par_eff_name = tmp_par_eff_name.replace('us_Ybin','us_mu_Ybin')
+                        print "after " + tmp_par_eff_name
+                    #print "ip, p, eff_par = %d %s %s" % (ip, str(p), str(tmp_par_eff_name))
+                    tmp_par_eff =  fitresult.constPars().find(tmp_par_eff_name)
                     tmp_eff = tmp_par_eff.getVal()
                     arr_valReco.append(tmp_par.getVal()/totalrate/ybinwidths[ip]*tmp_eff)
                     arr_ehiReco.append(abs(tmp_par.getAsymErrorHi())/totalrate/ybinwidths[ip]*tmp_eff)
@@ -284,8 +317,8 @@ if __name__ == "__main__":
 
                     tmp_par_init = fitresult.floatParsInit().find(p) if p in l_sorted_new else fitresult.constPars().find(p)
                     arr_relv .append(tmp_par.getVal()/tmp_par_init.getVal())
-                    arr_rello.append(abs(tmp_par.getAsymErrorLo())/tmp_par_init.getVal() if tmp_par.hasAsymError() else tmp_par.getAsymErrorHi())/tmp_par_init.getVal()
-                    arr_relhi.append(abs(tmp_par.getAsymErrorHi()))
+                    arr_rello.append(abs(tmp_par.getAsymErrorLo())/tmp_par_init.getVal() if tmp_par.hasAsymError() else abs(tmp_par.getAsymErrorHi())/tmp_par_init.getVal())
+                    arr_relhi.append(abs(tmp_par.getAsymErrorHi())/tmp_par_init.getVal())
                 else:
                     tmp_rate = float(rates[procs.index(tmp_procname)])
                     arr_val.append(tmp_rate/totalrate/ybinwidths[ip]*tmp_par.getVal())

@@ -100,7 +100,7 @@ def _runIt(args):
         else:
             fout = ROOT.TFile("%s/%s/%s_tree.root" % (myoutpath,options.tree,options.tree), "RECREATE");
         mytree.SetEntryList(None) # make sure things are clean
-        mycut = "(%s) && ((evt %% %d) == 0)" % (mycut, ps) if ps!=0 else "(%s)"%mycut
+        mycut = "(%s) && ((evt %% %d) == %d)" % (mycut, ps, options.psoffset) if ps!=0 else "(%s)"%mycut
         mytree.Draw('>>elist',mycut)
         elist = ROOT.gDirectory.Get('elist').Clone()
         if len(options.vetoevents)>0:
@@ -169,6 +169,7 @@ if __name__ == "__main__":
     parser.add_option("--relAcc",      dest="relAcc", default=0.05, type="float",  help="Target this relative accuracy on the yields") 
     parser.add_option("--absAcc",      dest="absAcc", default=0.07, type="float",  help="Target this absolute accuracy on the yields") 
     parser.add_option("--minEv",       dest="minEvents", default=10, type="int",  help="Minimum number of events") 
+    parser.add_option("--ps-offset",   dest="psoffset", default=0, type="int",  help="Offset on the prescale") 
     addMCAnalysisOptions(parser)
     (options, args) = parser.parse_args()
     options.final = True

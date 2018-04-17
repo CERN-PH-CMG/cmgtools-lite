@@ -242,6 +242,7 @@ metAna = cfg.Analyzer(
     copyMETsByValue = False,
     storePuppiExtra=False,
     doTkMet = False,
+    doPuppiMet = False,
     doMetNoPU = True,
     doMetNoMu = False,
     doMetNoEle = False,

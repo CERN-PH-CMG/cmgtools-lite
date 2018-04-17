@@ -35,6 +35,7 @@ if __name__ == "__main__":
     parser.add_option("-I", "--import", dest="imports",  type="string", default=[], action="append", nargs=2, help="Import modules (python package, comma-separated list of ");
     parser.add_option("-z", "--compression",  dest="compression", type="string", default=("LZMA:9"), help="Compression: none, or (algo):(level) ")
     parser.add_option("-d", "--dataset", dest="datasets",  type="string", default=[], action="append", help="Process only this dataset (or dataset if specified multiple times)");
+    parser.add_option(      "--dataset-rgx", dest="datasetsRgx",  type="string", default=None, help="Process only datasets that match this regexp (or comma-separated list of regexp)");
     parser.add_option("-c", "--chunk",   dest="chunks",    type="int",    default=[], action="append", help="Process only these chunks (works only if a single dataset is selected with -d)");
     parser.add_option("-N", "--events",  dest="chunkSize", type="int",    default=1000000, help="Default chunk size when splitting trees");
     parser.add_option("-p", "--pretend", dest="pretend",   action="store_true", default=False, help="Don't run anything");
@@ -81,6 +82,9 @@ if __name__ == "__main__":
             short = os.path.basename(D)
             if options.datasets != []:
                 if short not in options.datasets: continue
+            if options.datasetsRgx != None:
+                regexps = options.datasetsRgx.split(',')
+                if not any(re.match(rgx,short) for rgx in regexps): continue
             data = any(x in short for x in "DoubleMu DoubleEG MuEG MuonEG SingleMuon SingleElectron".split())
             if data and options.mconly: continue
             pckobj  = pickle.load(open(pckfile,'r'))
