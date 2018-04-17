@@ -439,19 +439,19 @@ class ttHCoreEventAnalyzer( Analyzer ):
 
         return True
 
-        def makeMT(self, event):
-            for lepton in event.inclusiveLeptons:
-                lepton.cosLMet = cos(lepton.phi() - event.met.phi())
-                lepton.mt      = mtw(lepton, event.met)
-                lepton.Q80     = 1 - 80**2/(2*lepton.pt()*event.met.pt())
+    def makeMT(self, event):
+        for lepton in event.inclusiveLeptons:
+            lepton.cosLMet = cos(lepton.phi() - event.met.phi())
+            lepton.mt      = mtw(lepton, event.met)
+            lepton.Q80     = 1 - 80**2/(2*lepton.pt()*event.met.pt())
 
-            for tau in event.selectedTaus:
-                tau.cosLMet = cos(tau.phi() - event.met.phi())
-                tau.mt      = mtw(tau, event.met)
-                tau.Q80     = 1 - 80**2/(2*tau.pt()*event.met.pt())
+        for tau in event.selectedTaus:
+            tau.cosLMet = cos(tau.phi() - event.met.phi())
+            tau.mt      = mtw(tau, event.met)
+            tau.Q80     = 1 - 80**2/(2*tau.pt()*event.met.pt())
 
-            for track in event.selectedIsoTrack:
-                track.cosLMet = cos(track.phi() - event.met.phi())
-                track.mt      = mtw(track, event.met)
-                track.Q80     = 1 - 80**2/(2*track.pt()*event.met.pt())
-            return
+        for track in event.selectedIsoTrack:
+            track.cosLMet = cos(track.phi() - event.met.phi())
+            track.mt      = mtw(track, event.met)
+            track.Q80     = 1 - 80**2/(2*track.pt()*event.met.pt())
+        return
