@@ -3,6 +3,8 @@
 # first argument is list of folders with distributions for no or nominal selection
 # See examples below
 
+# example usage: python w-helicity-13TeV/hadd_wy.py plots/gen_eff_tightCharge_chargeMatch/ -c pfmt -l -o eff_tightCharge_chargeMatch  
+
 # script developed to work passing a folder containing other folders like the following:
 #
 # [mciprian@pccmsrm29 plotter]$ ls plots/gen/
