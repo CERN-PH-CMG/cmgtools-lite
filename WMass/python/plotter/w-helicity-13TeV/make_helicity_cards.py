@@ -67,7 +67,7 @@ FASTTEST=''
 #FASTTEST='--max-entries 1000 '
 T=options.path
 print "used trees from: ",T
-J=1
+J=2
 MCA = args[0]
 CUTFILE = args[1]
 fitvar = args[2]
