@@ -78,6 +78,7 @@ if __name__ == "__main__":
                         ratio = copy.deepcopy(h_syst)
                         ratio.Divide(histo_central)
                         for ib in xrange(1, ratio.GetNbinsX()+1):
+                            if histo_central.GetBinContent(ib)>0:  print h_syst.GetBinContent(ib), "  ", histo_central.GetBinContent(ib)
                             ratio.SetBinContent(ib, abs(1.-ratio.GetBinContent(ib) if histo_central.GetBinContent(ib)>0 else 0))
                         title2D = '{proc} : variation={syst}'.format(proc=proc,syst=syst)
                         h2_backrolled_1 = dressed2D(ratio,binning,title2D)
