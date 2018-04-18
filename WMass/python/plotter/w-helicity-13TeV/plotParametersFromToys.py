@@ -108,17 +108,21 @@ def plotPars(inputFile, mdFit, doPull=True, pois=None, selectString=''):
         if doPull:
             tree.Draw( "(trackedParam_%s-%f)/%f>>%s" % (name,mean_p,sigma_p,name) )
         else:
-            tree.Draw( "trackedParam_%s>>%s" % (name,name) )
-     
-        histo = ROOT.gROOT.FindObject("%s" % name).Clone()
+            tree.Draw( "(trackedParam_%s-%f)>>%s" % (name,mean_p,name) )
+
+        if ROOT.gROOT.FindObject("%s" % name): 
+            histo = ROOT.gROOT.FindObject("%s" % name).Clone()
         histo.GetXaxis().SetTitle(histo.GetTitle())
         histo.GetYaxis().SetTitle("no toys (%d total)" % nToysInTree)
         histo.GetYaxis().SetTitleOffset(1.05)
         histo.GetXaxis().SetTitleOffset(0.9)
         histo.GetYaxis().SetTitleSize(0.05)
         histo.GetXaxis().SetTitleSize(0.05)
-        histo.GetXaxis().SetTitle("(%s-#theta_{0})/#sigma_{#theta}" % name)
-        
+        if doPull:
+            histo.GetXaxis().SetTitle("(%s-#theta_{0})/#sigma_{#theta}" % name)
+        else:
+            histo.GetXaxis().SetTitle("(%s-#theta_{0})/#theta_{0}" % name)
+
         histo.SetTitle("")
      
         fitPull = histo.Integral()>0
@@ -216,5 +220,5 @@ if __name__ == "__main__":
     limitsFile = args[0]
     mdfitfile = args[1]
 
-    plotPars(limitsFile,mdfitfile,pois='pdf.*')
-
+    plotPars(limitsFile,mdfitfile,doPull=True,pois='pdf.*')
+    plotPars(limitsFile,mdfitfile,doPull=False,pois='norm.*')
