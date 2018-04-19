@@ -105,6 +105,9 @@ tauAna.mvaId2017 = {
     "mvaKind" : "DBoldDMwLTwGJ",
 }
 
+# match using common source candidate pointer, as in nanoAOD
+jetAna.matchJetToLepAndTauByPFRefOnly = True
+
 
 
 #-------- ADDITIONAL ANALYZERS -----------
