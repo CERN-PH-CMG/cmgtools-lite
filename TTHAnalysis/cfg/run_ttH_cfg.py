@@ -97,9 +97,14 @@ tauAna.loose_etaMax = 2.3
 tauAna.loose_decayModeID = "decayModeFindingNewDMs"
 tauAna.loose_tauID = "decayModeFindingNewDMs"
 tauAna.loose_vetoLeptons = False # no cleaning with leptons in production
-#    jetAna.cleanJetsFromTaus = True
-#    jetAnaScaleUp.cleanJetsFromTaus = True
-#    jetAnaScaleDown.cleanJetsFromTaus = True
+
+# run 2017 tau ID score
+tauAna.mvaId2017 = {
+    "fileName" : "$CMSSW_BASE/src/PhysicsTools/Heppy/data/GBRForest_tauIdMVAIsoDBoldDMdR0p3wLT2017v2.root",
+    "mvaName" : "RecoTauTag_tauIdMVAIsoDBoldDMdR0p3wLT2017v2",
+    "mvaKind" : "DBoldDMwLTwGJ",
+}
+
 
 
 #-------- ADDITIONAL ANALYZERS -----------

@@ -79,6 +79,7 @@ leptonTypeSusy.addSubObjects([
 
 tauTypeSusy = NTupleObjectType("tauSusy",  baseObjectTypes = [ tauType ], variables = [
      NTupleVariable("idMVAdR03", lambda x : x.idMVAdR03, int, help="1,2,3,4,5,6 if the tau passes the very loose to very very tight WP of the IsolationMVArun2v1DBdR03oldDMwLT discriminator"),
+     NTupleVariable("mvaId2017", lambda x : getattr(x,'mvaId2017',-99), float, help="2017 tau ID MVA discriminator score"),
 ])
 tauTypeSusy.removeVariable("idMVANewDM")
 tauTypeSusy.removeVariable("idCI3hit")
