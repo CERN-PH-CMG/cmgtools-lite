@@ -29,7 +29,9 @@ run2017 = getHeppyOption("run2017", True)
 #Assume by default to run on TTbar, only run on other background samples if specifically asked for
 runWJets = getHeppyOption("runWJets", False)
 runZInv = getHeppyOption("runZInv", False)
-runOtherMC = getHeppyOption("runOtherMC", False)
+runOtherMC1 = getHeppyOption("runOtherMC1", False)
+runOtherMC2 = getHeppyOption("runOtherMC2", False)
+
 
 # --- LEPTON SKIMMING ---
 ttHLepSkim.minLeptons = 0
@@ -480,182 +482,253 @@ triggerFlagsAna.checkL1prescale = False
 selectedComponents = []
 
 if not run2017:
-
-from CMGTools.RootTools.samples.samples_13TeV_RunIISummer16MiniAODv2 import *
-#from CMGTools.RootTools.samples.samples_13TeV_signals import *
-#from CMGTools.RootTools.samples.samples_13TeV_80X_susySignalsPriv import *
-from CMGTools.RootTools.samples.samples_13TeV_DATA2016 import *
-from CMGTools.RootTools.samples.samples_Stop4Body import *
-
-selectedComponents = [
-    TTJets,
-    TT_pow,
-#    TT_pow_backup,
-    TTJets_SingleLeptonFromTbar,
-    TTJets_SingleLeptonFromTbar_ext,
-    TTJets_SingleLeptonFromT,
-    TTJets_SingleLeptonFromT_ext,
-    TTJets_DiLepton,
-    TTJets_DiLepton_ext,
-    TTJets_LO_HT600to800_ext,
-    TTJets_LO_HT800to1200_ext,
-    TTJets_LO_HT1200to2500_ext,
-    TTJets_LO_HT2500toInf_ext,
-]
-
-if runWJets:
-    selectedComponents = [
-        WJetsToLNu,
-        WJetsToLNu_LO,
-        WJetsToLNu_HT70to100,
-        WJetsToLNu_HT100to200,
-        WJetsToLNu_HT100to200_ext,
-        WJetsToLNu_HT100to200_ext2,
-        WJetsToLNu_HT200to400,
-        WJetsToLNu_HT200to400_ext,
-        WJetsToLNu_HT200to400_ext2,
-        WJetsToLNu_HT400to600,
-        WJetsToLNu_HT400to600_ext,
-        WJetsToLNu_HT600to800,
-        WJetsToLNu_HT600to800_ext,
-        WJetsToLNu_HT800to1200,
-        WJetsToLNu_HT800to1200_ext,
-        WJetsToLNu_HT1200to2500,
-        WJetsToLNu_HT1200to2500_ext,
-        WJetsToLNu_HT2500toInf,
-        WJetsToLNu_HT2500toInf_ext,
-        WJetsToLNu_Pt_100to250,
-        WJetsToLNu_Pt_100to250_ext,
-        WJetsToLNu_Pt_250to400,
-        WJetsToLNu_Pt_250to400_ext,
-        WJetsToLNu_Pt_400to600,
-        WJetsToLNu_Pt_400to600_ext,
-        WJetsToLNu_Pt_600toInf,
-        WJetsToLNu_Pt_600toInf_ext,
-    ]
-
-if runZInv:
-    selectedComponents = [
-        ZJetsToNuNu_HT100to200,
-        ZJetsToNuNu_HT100to200_ext,
-        ZJetsToNuNu_HT200to400,
-        ZJetsToNuNu_HT200to400_ext,
-        ZJetsToNuNu_HT400to600,
-        ZJetsToNuNu_HT400to600_ext,
-        ZJetsToNuNu_HT600to800,
-        ZJetsToNuNu_HT800to1200,
-        ZJetsToNuNu_HT1200to2500,
-        ZJetsToNuNu_HT1200to2500_ext,
-        ZJetsToNuNu_HT2500toInf,
-    ]
-
-if runOtherMC:
-    selectedComponents = [
-        WW,
-        WW_ext,
-        WZ,
-        WZ_ext,
-        ZZ,
-        ZZ_ext,
-        TBar_tWch_ext,
-        T_tch_powheg,
-        T_tWch_ext,
-        TBar_tch_powheg,
-        QCD_HT50to100,
-        QCD_HT100to200,
-        QCD_HT200to300,
-        QCD_HT200to300_ext,
-        QCD_HT300to500,
-        QCD_HT300to500_ext,
-        QCD_HT500to700,
-        QCD_HT500to700_ext,
-        QCD_HT700to1000,
-        QCD_HT700to1000_ext,
-        QCD_HT1000to1500,
-        QCD_HT1000to1500_ext,
-        QCD_HT1500to2000,
-        QCD_HT1500to2000_ext,
-        QCD_HT2000toInf,
-        QCD_HT2000toInf_ext,
-        DYJetsToLL_M5to50_HT100to200,
-        DYJetsToLL_M5to50_HT100to200_ext,
-        DYJetsToLL_M5to50_HT200to400,
-        DYJetsToLL_M5to50_HT200to400_ext,
-        DYJetsToLL_M5to50_HT400to600,
-        DYJetsToLL_M5to50_HT400to600_ext,
-        DYJetsToLL_M5to50_HT600toInf,
-        DYJetsToLL_M5to50_HT600toInf_ext,
-        DYJetsToLL_M50_HT70to100,
-        DYJetsToLL_M50_HT100to200,
-        DYJetsToLL_M50_HT100to200_ext,
-        DYJetsToLL_M50_HT200to400,
-        DYJetsToLL_M50_HT200to400_ext,
-        DYJetsToLL_M50_HT400to600,
-        DYJetsToLL_M50_HT400to600_ext,
-        DYJetsToLL_M50_HT600to800,
-        DYJetsToLL_M50_HT800to1200,
-        DYJetsToLL_M50_HT1200to2500,
-        DYJetsToLL_M50_HT2500toInf,
-        TTW_LO,
-        TTWToQQ,
-        TTWToLNu_ext,
-        TTWToLNu_ext2,
-        TTGJets,
-        TTGJets_ext,
-        TTZ_LO,
-        TTZToLLNuNu_ext,
-        TTZToLLNuNu_m1to10,
-        TTZToQQ,
-    ]
-
-if runSMS: # For running on signal
+    from CMGTools.RootTools.samples.samples_13TeV_RunIISummer16MiniAODv2 import *
+    #from CMGTools.RootTools.samples.samples_13TeV_signals import *
     #from CMGTools.RootTools.samples.samples_13TeV_80X_susySignalsPriv import *
-    #selectedComponents = [ SMS_T2tt_genHT_160_genMET_80_mStop_275_mLSP_205 ]
-    #selectedComponents = [ SMS_T2tt_dM_10to80_genHT_160_genMET_80_mWMin_0p1 ]
-    selectedComponents = signalSamples
-    selectedComponents = [ SMS_T2tt_dM_10to80_genHT_160_genMET_80_mWMin_0p1 ]
+    from CMGTools.RootTools.samples.samples_13TeV_DATA2016 import *
+    from CMGTools.RootTools.samples.samples_Stop4Body import *
 
-if runFullSimSignal:
-    selectedComponents = signalFullSim
-
-if runData: # For running on data
     selectedComponents = [
-        JetHT_Run2016B_03Feb2017_v2,
-        JetHT_Run2016C_03Feb2017,
-        JetHT_Run2016D_03Feb2017,
-        JetHT_Run2016E_03Feb2017,
-        JetHT_Run2016F_03Feb2017,
-        JetHT_Run2016G_03Feb2017,
-        JetHT_Run2016H_03Feb2017_v2,
-        JetHT_Run2016H_03Feb2017_v3,
-        MET_Run2016B_03Feb2017_v2,
-        MET_Run2016C_03Feb2017,
-        MET_Run2016D_03Feb2017,
-        MET_Run2016E_03Feb2017,
-        MET_Run2016F_03Feb2017,
-        MET_Run2016G_03Feb2017,
-        MET_Run2016H_03Feb2017_v2,
-        MET_Run2016H_03Feb2017_v3,
-        SingleElectron_Run2016B_03Feb2017_v2,
-        SingleElectron_Run2016C_03Feb2017,
-        SingleElectron_Run2016D_03Feb2017,
-        SingleElectron_Run2016E_03Feb2017,
-        SingleElectron_Run2016F_03Feb2017,
-        SingleElectron_Run2016G_03Feb2017,
-        SingleElectron_Run2016H_03Feb2017_v2,
-        SingleElectron_Run2016H_03Feb2017_v3,
-        SingleMuon_Run2016B_03Feb2017_v2,
-        SingleMuon_Run2016C_03Feb2017,
-        SingleMuon_Run2016D_03Feb2017,
-        SingleMuon_Run2016E_03Feb2017,
-        SingleMuon_Run2016F_03Feb2017,
-        SingleMuon_Run2016G_03Feb2017,
-        SingleMuon_Run2016H_03Feb2017_v2,
-        SingleMuon_Run2016H_03Feb2017_v3,
+        TTJets,
+        TT_pow,
+    #    TT_pow_backup,
+        TTJets_SingleLeptonFromTbar,
+        TTJets_SingleLeptonFromTbar_ext,
+        TTJets_SingleLeptonFromT,
+        TTJets_SingleLeptonFromT_ext,
+        TTJets_DiLepton,
+        TTJets_DiLepton_ext,
+        TTJets_LO_HT600to800_ext,
+        TTJets_LO_HT800to1200_ext,
+        TTJets_LO_HT1200to2500_ext,
+        TTJets_LO_HT2500toInf_ext,
     ]
-    for comp in selectedComponents:
-        comp.json = "$CMSSW_BASE/src/CMGTools/TTHAnalysis/data/json/Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt"
-    #if test != 0 and jsonAna in susyCoreSequence: susyCoreSequence.remove(jsonAna)
+
+    if runWJets:
+        selectedComponents = [
+            WJetsToLNu,
+            WJetsToLNu_LO,
+            WJetsToLNu_HT70to100,
+            WJetsToLNu_HT100to200,
+            WJetsToLNu_HT100to200_ext,
+            WJetsToLNu_HT100to200_ext2,
+            WJetsToLNu_HT200to400,
+            WJetsToLNu_HT200to400_ext,
+            WJetsToLNu_HT200to400_ext2,
+            WJetsToLNu_HT400to600,
+            WJetsToLNu_HT400to600_ext,
+            WJetsToLNu_HT600to800,
+            WJetsToLNu_HT600to800_ext,
+            WJetsToLNu_HT800to1200,
+            WJetsToLNu_HT800to1200_ext,
+            WJetsToLNu_HT1200to2500,
+            WJetsToLNu_HT1200to2500_ext,
+            WJetsToLNu_HT2500toInf,
+            WJetsToLNu_HT2500toInf_ext,
+            WJetsToLNu_Pt_100to250,
+            WJetsToLNu_Pt_100to250_ext,
+            WJetsToLNu_Pt_250to400,
+            WJetsToLNu_Pt_250to400_ext,
+            WJetsToLNu_Pt_400to600,
+            WJetsToLNu_Pt_400to600_ext,
+            WJetsToLNu_Pt_600toInf,
+            WJetsToLNu_Pt_600toInf_ext,
+        ]
+
+    if runZInv:
+        selectedComponents = [
+            ZJetsToNuNu_HT100to200,
+            ZJetsToNuNu_HT100to200_ext,
+            ZJetsToNuNu_HT200to400,
+            ZJetsToNuNu_HT200to400_ext,
+            ZJetsToNuNu_HT400to600,
+            ZJetsToNuNu_HT400to600_ext,
+            ZJetsToNuNu_HT600to800,
+            ZJetsToNuNu_HT800to1200,
+            ZJetsToNuNu_HT1200to2500,
+            ZJetsToNuNu_HT1200to2500_ext,
+            ZJetsToNuNu_HT2500toInf,
+        ]
+
+    if runOtherMC1:
+        selectedComponents = [
+            WW,
+            WW_ext,
+            WZ,
+            WZ_ext,
+            ZZ,
+            ZZ_ext,
+            DYJetsToLL_M5to50_HT100to200,
+            DYJetsToLL_M5to50_HT100to200_ext,
+            DYJetsToLL_M5to50_HT200to400,
+            DYJetsToLL_M5to50_HT200to400_ext,
+            DYJetsToLL_M5to50_HT400to600,
+            DYJetsToLL_M5to50_HT400to600_ext,
+            DYJetsToLL_M5to50_HT600toInf,
+            DYJetsToLL_M5to50_HT600toInf_ext,
+            DYJetsToLL_M50_HT70to100,
+            DYJetsToLL_M50_HT100to200,
+            DYJetsToLL_M50_HT100to200_ext,
+            DYJetsToLL_M50_HT200to400,
+            DYJetsToLL_M50_HT200to400_ext,
+            DYJetsToLL_M50_HT400to600,
+            DYJetsToLL_M50_HT400to600_ext,
+            DYJetsToLL_M50_HT600to800,
+            DYJetsToLL_M50_HT800to1200,
+            DYJetsToLL_M50_HT1200to2500,
+            DYJetsToLL_M50_HT2500toInf,
+        ]
+    if runOtherMC2:
+        selectedComponents = [
+            TBar_tWch_ext,
+            T_tch_powheg,
+            T_tWch_ext,
+            TBar_tch_powheg,
+            QCD_HT50to100,
+            QCD_HT100to200,
+            QCD_HT200to300,
+            QCD_HT200to300_ext,
+            QCD_HT300to500,
+            QCD_HT300to500_ext,
+            QCD_HT500to700,
+            QCD_HT500to700_ext,
+            QCD_HT700to1000,
+            QCD_HT700to1000_ext,
+            QCD_HT1000to1500,
+            QCD_HT1000to1500_ext,
+            QCD_HT1500to2000,
+            QCD_HT1500to2000_ext,
+            QCD_HT2000toInf,
+            QCD_HT2000toInf_ext,
+            TTW_LO,
+            TTWToQQ,
+            TTWToLNu_ext,
+            TTWToLNu_ext2,
+            TTGJets,
+            TTGJets_ext,
+            TTZ_LO,
+            TTZToLLNuNu_ext,
+            TTZToLLNuNu_m1to10,
+            TTZToQQ,
+        ]
+    if runSMS: # For running on signal
+        #from CMGTools.RootTools.samples.samples_13TeV_80X_susySignalsPriv import *
+        #selectedComponents = [ SMS_T2tt_genHT_160_genMET_80_mStop_275_mLSP_205 ]
+        #selectedComponents = [ SMS_T2tt_dM_10to80_genHT_160_genMET_80_mWMin_0p1 ]
+        selectedComponents = signalSamples
+        selectedComponents = [ SMS_T2tt_dM_10to80_genHT_160_genMET_80_mWMin_0p1 ]
+
+    if runFullSimSignal:
+        selectedComponents = signalFullSim
+
+    if runData: # For running on data
+        selectedComponents = [
+            JetHT_Run2016B_03Feb2017_v2,
+            JetHT_Run2016C_03Feb2017,
+            JetHT_Run2016D_03Feb2017,
+            JetHT_Run2016E_03Feb2017,
+            JetHT_Run2016F_03Feb2017,
+            JetHT_Run2016G_03Feb2017,
+            JetHT_Run2016H_03Feb2017_v2,
+            JetHT_Run2016H_03Feb2017_v3,
+            MET_Run2016B_03Feb2017_v2,
+            MET_Run2016C_03Feb2017,
+            MET_Run2016D_03Feb2017,
+            MET_Run2016E_03Feb2017,
+            MET_Run2016F_03Feb2017,
+            MET_Run2016G_03Feb2017,
+            MET_Run2016H_03Feb2017_v2,
+            MET_Run2016H_03Feb2017_v3,
+            SingleElectron_Run2016B_03Feb2017_v2,
+            SingleElectron_Run2016C_03Feb2017,
+            SingleElectron_Run2016D_03Feb2017,
+            SingleElectron_Run2016E_03Feb2017,
+            SingleElectron_Run2016F_03Feb2017,
+            SingleElectron_Run2016G_03Feb2017,
+            SingleElectron_Run2016H_03Feb2017_v2,
+            SingleElectron_Run2016H_03Feb2017_v3,
+            SingleMuon_Run2016B_03Feb2017_v2,
+            SingleMuon_Run2016C_03Feb2017,
+            SingleMuon_Run2016D_03Feb2017,
+            SingleMuon_Run2016E_03Feb2017,
+            SingleMuon_Run2016F_03Feb2017,
+            SingleMuon_Run2016G_03Feb2017,
+            SingleMuon_Run2016H_03Feb2017_v2,
+            SingleMuon_Run2016H_03Feb2017_v3,
+        ]
+        for comp in selectedComponents:
+            comp.json = "$CMSSW_BASE/src/CMGTools/TTHAnalysis/data/json/Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt"
+        #if test != 0 and jsonAna in susyCoreSequence: susyCoreSequence.remove(jsonAna)
+    else:
+        from CMGTools.RootTools.samples.samples_13TeV_RunIIFall17MiniAOD import *
+        from CMGTools.RootTools.samples.samples_13TeV_DATA2017 import *
+
+        selectedComponents = [
+            TTJets,
+            TTLep_pow,
+            TTHad_pow,
+            TTSemi_pow,
+        ]
+
+        if runWJets:
+            selectedComponents = [
+                WJetsToLNu_LO,
+                W1JetsToLNu_LO,
+                W2JetsToLNu_LO,
+                W3JetsToLNu_LO,
+                W4JetsToLNu_LO,
+            ]
+        if runZInv:
+            selectedComponents = [
+
+            ]
+        if runOtherMC1:
+            selectedComponents = [
+                WW,
+                WZ,
+                ZZ,
+                DYJetsToLL_M50,
+                DYJetsToLL_M50_ext,
+                DYJetsToLL_M50_LO,
+                DYJetsToLL_M50_LO_ext,
+            ] + DYJetsToLLM4to50HT + DYJetsToLLM50HT
+        if runOtherMC2:
+            selectedComponents = [
+                T_sch_lep, #TODO: Look for TBar. Hasn't been created until date.
+                T_tch,
+                TBar_tch,
+                T_tWch_noFullyHad,
+                TBar_tWch_noFullyHad,
+            ] + QCDHT + TTXs + TTXXs
+        if runSMS:
+            selectedComponents = []
+        if runFullSimSignal:
+            selectedComponents = []
+        if runData:
+            selectedComponents = [
+                JetHT_Run2017B_17Nov2017,
+                JetHT_Run2017C_17Nov2017,
+                JetHT_Run2017D_17Nov2017,
+                JetHT_Run2017E_17Nov2017,
+                JetHT_Run2017F_17Nov2017,
+                MET_Run2017B_17Nov2017,
+                MET_Run2017C_17Nov2017,
+                MET_Run2017D_17Nov2017,
+                MET_Run2017E_17Nov2017,
+                MET_Run2017F_17Nov2017,
+                SingleElectron_Run2017B_17Nov2017,
+                SingleElectron_Run2017C_17Nov2017,
+                SingleElectron_Run2017D_17Nov2017,
+                SingleElectron_Run2017E_17Nov2017,
+                SingleElectron_Run2017BF_17Nov2017,
+                SingleMuon_Run2017B_17Nov2017,
+                SingleMuon_Run2017C_17Nov2017,
+                SingleMuon_Run2017D_17Nov2017,
+                SingleMuon_Run2017E_17Nov2017,
+                SingleMuon_Run2017F_17Nov2017,
+            ]
+            for comp in selectedComponents:
+                comp.json = "$CMSSW_BASE/src/CMGTools/TTHAnalysis/data/json/Cert_294927-306462_13TeV_EOY2017ReReco_Collisions17_JSON.txt"
 
 #ISR jet counting
 from CMGTools.TTHAnalysis.analyzers.nIsrAnalyzer import NIsrAnalyzer
@@ -718,4 +791,3 @@ config = cfg.Config( components = selectedComponents,
                      services = outputService,
                      preprocessor = preprocessor,
                      events_class = event_class)
-

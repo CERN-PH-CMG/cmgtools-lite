@@ -87,8 +87,8 @@ susyStop4Body_collections.update({
             "otherLeptons"     : NTupleCollection("LepOther",  leptonTypeStop4Body,          8,              help="Leptons after the preselection"),
             ## ---------------------------------------------
             "cleanJetsAll"     : NTupleCollection("Jet",       jetTypeSusy,               30,              help="Cental jets after full selection and cleaning, sorted by pt"),
-#            "jets"             : NTupleCollection("JetDirty",  genJetType,                25,              help="Cental jets after full selection but before cleaning, sorted by pt"),
-#            "cleanGenJets"     : NTupleCollection("GenJet",    genJetType,                30,              help="Clean Gen Jets, sorted by pt"),
+            "jets"             : NTupleCollection("JetDirty",  genJetType,                25,              help="Cental jets after full selection but before cleaning, sorted by pt"),
+            "cleanGenJets"     : NTupleCollection("GenJet",    genJetType,                30,              help="Clean Gen Jets, sorted by pt"),
             ## ---------------------------------------------
             #"ivf"              : NTupleCollection("SV",        svType,                    20,              help="SVs from IVF"),
             ## ---------------------------------------------
