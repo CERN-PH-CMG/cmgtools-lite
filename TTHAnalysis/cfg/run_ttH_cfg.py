@@ -594,11 +594,11 @@ elif test == 'mem-sync':
     #if not getHeppyOption("single"): comp.fineSplitFactor = 8
 elif test == 'ttH-sync':
     ttHLepSkim.minLeptons=0
-    jetAna.recalibrateJets = False # JEC from MiniAOD for sync
-    selectedComponents = [TTWToLNu_ext]
+#    jetAna.recalibrateJets = False
+    selectedComponents = [TTHnobb_fxfx]
     comp = selectedComponents[0]
-    comp.files = ['/store/mc/RunIISummer16MiniAODv2/TTWJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext2-v1/110000/0015BB42-9BAA-E611-8C7F-0CC47A7E0196.root']
-    tmpfil = os.path.expandvars("/tmp/$USER/0015BB42-9BAA-E611-8C7F-0CC47A7E0196.root")
+    comp.files = ['/store/mc/RunIIFall17MiniAOD/ttHJetToNonbb_M125_TuneCP5_13TeV_amcatnloFXFX_madspin_pythia8/MINIAODSIM/94X_mc2017_realistic_v10-v1/20000/0CF65340-0200-E811-ABB7-0025905C53F0.root']
+    tmpfil = os.path.expandvars("/tmp/$USER/0CF65340-0200-E811-ABB7-0025905C53F0.root")
     if not os.path.exists(tmpfil):
         os.system("xrdcp root://eoscms//eos/cms%s %s" % (comp.files[0],tmpfil))
     comp.files = [ tmpfil ]
