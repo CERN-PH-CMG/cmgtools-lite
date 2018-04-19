@@ -5,6 +5,7 @@ from math import *
 import re
 import os, os.path
 from array import array
+import numpy as np
 
 ## safe batch mode
 import sys
@@ -14,6 +15,9 @@ import ROOT
 sys.argv = args
 ROOT.gROOT.SetBatch(True)
 ROOT.PyConfig.IgnoreCommandLineOptions = True
+
+def roundToN(x, n=2):
+    return round(x, -int(np.floor(np.sign(x) * np.log10(abs(x)))) + n)
 
 def formatProc(proc):
     x = proc.replace('x_','')
@@ -59,6 +63,6 @@ if __name__ == "__main__":
     others = sorted([k for k,h in yields.iteritems() if not any(sp in k for sp in signal+data)])
     sorted_procs = signal+others+data
     print " & ".join(formatProc(p) for p in sorted_procs)," \\\\"
-    print " & ".join("%.0f" % yields[p] for p in sorted_procs)," \\\\"
+    print " & ".join("%.0f" % (roundToN(yields[p]) if p!='x_data_obs' else yields[p]) for p in sorted_procs)," \\\\"
     print " ==> Total signal = %.0f M" % sum(y/1.e+6 for k,y in yields.iteritems() if any(sp in k for sp in signal))
     print " ==> Total bkg =  %.0f M" % sum(y/1.e+6 for k,y in yields.iteritems() if not any(sp in k for sp in signal+data))
