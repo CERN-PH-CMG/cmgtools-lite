@@ -212,12 +212,12 @@ selectedComponents = [TTLep_pow]
 sig_ttv = [TTHnobb_pow,TTHnobb_fxfx,TTWToLNu_fxfx,TTZToLLNuNu_amc,TTZToLLNuNu_m1to10] # signal + TTV
 ttv_lo = [TTW_LO,TTZ_LO] # TTV LO
 rares = [ZZTo4L,WW_DPS,TZQToLL]+TTXXs # rares # MISSING: GGHZZ4L,VHToNonbb,WpWpJJ,tWll
-single_t = Ts # single top + tW # MISSING: THQ,THW
-convs = [TTGJets] # X+G # MISSING: WGToLNuG_amcatnlo_ext,WGToLNuG_amcatnlo_ext2,ZGTo2LG_ext,TGJets,TGJets_ext
-v_jets = [WJetsToLNu_LO,DYJetsToLL_M10to50_LO,DYJetsToLL_M50_LO,DYJetsToLL_M50_LO_ext,WWTo2L2Nu] # V+jets
-tt_1l = [TTSemi_pow,TTJets] # TT 1l # MISSING: Madgraph
-tt_2l = [TTLep_pow] # TT 2l # MISSING: Madgraph
-boson = [WZTo3LNu_fxfx] # multi-boson # MISSING: WZTo3LNu_pow, TriBosons
+single_t = Ts + [THQ,THW] # single top + tW
+convs = [TTGJets,TGJets_lep] # X+G # MISSING: WGToLNuG_amcatnlo_ext,WGToLNuG_amcatnlo_ext2,ZGTo2LG_ext
+v_jets = [WJetsToLNu_LO,DYJetsToLL_M10to50_LO,DYJetsToLL_M50_LO,WWTo2L2Nu] # V+jets
+tt_1l = [TTSemi_pow, TTJets_SingleLeptonFromT, TTJets_SingleLeptonFromTbar] # TT 1l
+tt_2l = [TTLep_pow, TTJets_DiLepton] # TT 2l
+boson = [WZTo3LNu_fxfx] + TriBosons # multi-boson # MISSING: WZTo3LNu_pow
 
 samples_slow = sig_ttv + ttv_lo + rares + convs + boson + tt_2l
 samples_fast = single_t + v_jets + tt_1l
@@ -247,7 +247,7 @@ if runData and not isTest: # For running on data
 
     json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions17/13TeV/ReReco/Cert_294927-306462_13TeV_EOY2017ReReco_Collisions17_JSON.txt' # full 2017 dataset, EOY rereco, 41.4/fb
 
-    for era in 'BCDEF': dataChunks.append((json,filter(lambda dset: 'Run2017'+era in dset.name,dataSamples_17Nov2017),'2017'+era,[],False))
+    for era in 'BCDEF': dataChunks.append((json,filter(lambda dset: 'Run2017'+era in dset.name,dataSamples_31Mar2018),'2017'+era,[],False))
 
     DatasetsAndTriggers = []
     selectedComponents = [];
@@ -311,8 +311,12 @@ if runData and not isTest: # For running on data
     if runDataQCD: # for fake rate measurements in data
          configureSplittingFromTime(selectedComponents, 3.5, 2, maxFiles=15)
     else:
-        configureSplittingFromTime(filter(lambda x: 'Double' in x.name or 'MuonEG' in x.name,selectedComponents),50,5)
-        configureSplittingFromTime(filter(lambda x: 'Single' in x.name,selectedComponents),30,5)
+        configureSplittingFromTime(filter(lambda x: 'Double' in x.name or 'MuonEG' in x.name,selectedComponents),50,3)
+#        configureSplittingFromTime(filter(lambda x: 'Single' in x.name,selectedComponents),50,3)
+        for comp in selectedComponents:
+            if 'Single' in comp.name: comp.splitFactor = int(ceil(len(comp.files)/4))
+
+selectedComponents = filter(lambda x: 'Single' in x.name, selectedComponents)
 
 #printSummary(selectedComponents)
 
@@ -598,7 +602,7 @@ elif test == 'ttH-sync':
     selectedComponents = [TTHnobb_fxfx]
     comp = selectedComponents[0]
     comp.files = ['/store/mc/RunIIFall17MiniAOD/ttHJetToNonbb_M125_TuneCP5_13TeV_amcatnloFXFX_madspin_pythia8/MINIAODSIM/94X_mc2017_realistic_v10-v1/20000/0CF65340-0200-E811-ABB7-0025905C53F0.root']
-    tmpfil = os.path.expandvars("/tmp/$USER/0CF65340-0200-E811-ABB7-0025905C53F0.root")
+    tmpfil = os.path.expandvars("$TMPDIR/0CF65340-0200-E811-ABB7-0025905C53F0.root")
     if not os.path.exists(tmpfil):
         os.system("xrdcp root://eoscms//eos/cms%s %s" % (comp.files[0],tmpfil))
     comp.files = [ tmpfil ]
