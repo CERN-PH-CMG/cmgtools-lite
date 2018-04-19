@@ -23,6 +23,8 @@ removeJecUncertainty = getHeppyOption("removeJecUncertainty",False)
 skipT1METCorr = getHeppyOption("skipT1METCorr",False)
 isTest = getHeppyOption("test",None) != None and not re.match("^\d+$",getHeppyOption("test"))
 allGenParts = getHeppyOption("allGenParts", False)
+run2017 = getHeppyOption("run2017", True)
+
 
 #Assume by default to run on TTbar, only run on other background samples if specifically asked for
 runWJets = getHeppyOption("runWJets", False)
@@ -104,6 +106,10 @@ myMCGlobalTag = "Summer16_23Sep2016V3_MC"
 #myDataGlobalTag = "Spring16_25nsV8BCD_DATA Spring16_25nsV8E_DATA Spring16_25nsV8F_DATA Spring16_25nsV8_DATA"
 #myDataRuns      = [276811, 277420, 278802]
 myDataGlobalTag = [(1, 'Summer16_23Sep2016BCDV3_DATA'), (276831, 'Summer16_23Sep2016EFV3_DATA'), (278802, 'Summer16_23Sep2016GV3_DATA'), (280919, 'Summer16_23Sep2016HV3_DATA')]
+
+if run2017:
+    myMCGlobalTag = "Fall17_17Nov2017_V6_MC"
+    myDataGlobalTag =  [(1,"Fall17_17Nov2017B_V6_DATA"),(299337,"Fall17_17Nov2017C_V6_DATA"),(302030,"Fall17_17Nov2017D_V6_DATA"),(303435,"Fall17_17Nov2017E_V6_DATA"),(304911,"Fall17_17Nov2017F_V6_DATA")]
 
 jetAna.jetPt = 20.
 if not removeJecUncertainty:
@@ -471,6 +477,9 @@ triggerFlagsAna.checkL1prescale = False
 #    susyCoreSequence.remove(triggerAna)
 #    susyCoreSequence.remove(eventFlagsAna)
 
+selectedComponents = []
+
+if not run2017:
 
 from CMGTools.RootTools.samples.samples_13TeV_RunIISummer16MiniAODv2 import *
 #from CMGTools.RootTools.samples.samples_13TeV_signals import *
