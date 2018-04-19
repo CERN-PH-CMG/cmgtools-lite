@@ -659,76 +659,73 @@ if not run2017:
         for comp in selectedComponents:
             comp.json = "$CMSSW_BASE/src/CMGTools/TTHAnalysis/data/json/Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt"
         #if test != 0 and jsonAna in susyCoreSequence: susyCoreSequence.remove(jsonAna)
-    else:
-        from CMGTools.RootTools.samples.samples_13TeV_RunIIFall17MiniAOD import *
-        from CMGTools.RootTools.samples.samples_13TeV_DATA2017 import *
-
+else:
+    from CMGTools.RootTools.samples.samples_13TeV_RunIIFall17MiniAOD import *
+    from CMGTools.RootTools.samples.samples_13TeV_DATA2017 import *
+    selectedComponents = [
+        TTJets,
+        TTLep_pow,
+        TTHad_pow,
+        TTSemi_pow,
+    ]
+    if runWJets:
         selectedComponents = [
-            TTJets,
-            TTLep_pow,
-            TTHad_pow,
-            TTSemi_pow,
+            WJetsToLNu_LO,
+            W1JetsToLNu_LO,
+            W2JetsToLNu_LO,
+            W3JetsToLNu_LO,
+            W4JetsToLNu_LO,
         ]
-
-        if runWJets:
-            selectedComponents = [
-                WJetsToLNu_LO,
-                W1JetsToLNu_LO,
-                W2JetsToLNu_LO,
-                W3JetsToLNu_LO,
-                W4JetsToLNu_LO,
-            ]
-        if runZInv:
-            selectedComponents = [
-
-            ]
-        if runOtherMC1:
-            selectedComponents = [
-                WW,
-                WZ,
-                ZZ,
-                DYJetsToLL_M50,
-                DYJetsToLL_M50_ext,
-                DYJetsToLL_M50_LO,
-                DYJetsToLL_M50_LO_ext,
-            ] + DYJetsToLLM4to50HT + DYJetsToLLM50HT
-        if runOtherMC2:
-            selectedComponents = [
-                T_sch_lep, #TODO: Look for TBar. Hasn't been created until date.
-                T_tch,
-                TBar_tch,
-                T_tWch_noFullyHad,
-                TBar_tWch_noFullyHad,
-            ] + QCDHT + TTXs + TTXXs
-        if runSMS:
-            selectedComponents = []
-        if runFullSimSignal:
-            selectedComponents = []
-        if runData:
-            selectedComponents = [
-                JetHT_Run2017B_17Nov2017,
-                JetHT_Run2017C_17Nov2017,
-                JetHT_Run2017D_17Nov2017,
-                JetHT_Run2017E_17Nov2017,
-                JetHT_Run2017F_17Nov2017,
-                MET_Run2017B_17Nov2017,
-                MET_Run2017C_17Nov2017,
-                MET_Run2017D_17Nov2017,
-                MET_Run2017E_17Nov2017,
-                MET_Run2017F_17Nov2017,
-                SingleElectron_Run2017B_17Nov2017,
-                SingleElectron_Run2017C_17Nov2017,
-                SingleElectron_Run2017D_17Nov2017,
-                SingleElectron_Run2017E_17Nov2017,
-                SingleElectron_Run2017BF_17Nov2017,
-                SingleMuon_Run2017B_17Nov2017,
-                SingleMuon_Run2017C_17Nov2017,
-                SingleMuon_Run2017D_17Nov2017,
-                SingleMuon_Run2017E_17Nov2017,
-                SingleMuon_Run2017F_17Nov2017,
-            ]
-            for comp in selectedComponents:
-                comp.json = "$CMSSW_BASE/src/CMGTools/TTHAnalysis/data/json/Cert_294927-306462_13TeV_EOY2017ReReco_Collisions17_JSON.txt"
+    if runZInv:
+        selectedComponents = [
+        ]
+    if runOtherMC1:
+        selectedComponents = [
+            WW,
+            WZ,
+            ZZ,
+            DYJetsToLL_M50,
+            DYJetsToLL_M50_ext,
+            DYJetsToLL_M50_LO,
+            DYJetsToLL_M50_LO_ext,
+        ] + DYJetsToLLM4to50HT + DYJetsToLLM50HT
+    if runOtherMC2:
+        selectedComponents = [
+            T_sch_lep, #TODO: Look for TBar. Hasn't been created until date.
+            T_tch,
+            TBar_tch,
+            T_tWch_noFullyHad,
+            TBar_tWch_noFullyHad,
+        ] + QCDHT + TTXs + TTXXs
+    if runSMS:
+        selectedComponents = []
+    if runFullSimSignal:
+        selectedComponents = []
+    if runData:
+        selectedComponents = [
+            JetHT_Run2017B_17Nov2017,
+            JetHT_Run2017C_17Nov2017,
+            JetHT_Run2017D_17Nov2017,
+            JetHT_Run2017E_17Nov2017,
+            JetHT_Run2017F_17Nov2017,
+            MET_Run2017B_17Nov2017,
+            MET_Run2017C_17Nov2017,
+            MET_Run2017D_17Nov2017,
+            MET_Run2017E_17Nov2017,
+            MET_Run2017F_17Nov2017,
+            SingleElectron_Run2017B_17Nov2017,
+            SingleElectron_Run2017C_17Nov2017,
+            SingleElectron_Run2017D_17Nov2017,
+            SingleElectron_Run2017E_17Nov2017,
+            SingleElectron_Run2017BF_17Nov2017,
+            SingleMuon_Run2017B_17Nov2017,
+            SingleMuon_Run2017C_17Nov2017,
+            SingleMuon_Run2017D_17Nov2017,
+            SingleMuon_Run2017E_17Nov2017,
+            SingleMuon_Run2017F_17Nov2017,
+        ]
+        for comp in selectedComponents:
+            comp.json = "$CMSSW_BASE/src/CMGTools/TTHAnalysis/data/json/Cert_294927-306462_13TeV_EOY2017ReReco_Collisions17_JSON.txt"
 
 #ISR jet counting
 from CMGTools.TTHAnalysis.analyzers.nIsrAnalyzer import NIsrAnalyzer
