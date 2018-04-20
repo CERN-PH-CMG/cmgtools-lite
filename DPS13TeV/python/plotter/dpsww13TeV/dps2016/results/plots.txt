@@ -106,6 +106,7 @@ BDTdisc_elmuplusplus_20bins   : finalMVA_DPS: 20,0.,1.0; XTitle="BDT (e^{+}#mu^{
 BDTdisc_mumuminusminus_20bins : finalMVA_DPS: 20,0.,1.0; XTitle="BDT (#mu^{-}#mu^{-})" ,Legend="TL",YLim=0,60 
 BDTdisc_elmuminusminus_20bins : finalMVA_DPS: 20,0.,1.0; XTitle="BDT (e^{-}#mu^{-})"   ,Legend="TL",YLim=0,60 
 
+<<<<<<< HEAD
 BDT_prod_mumu_20bins    : BDT_DPS_WZ*BDT_DPS_fakes : 20,0.,1.0; XTitle="BDT WZ x fakes (#mu^{#pm}#mu^{#pm})" ,Legend="TL",YLim=0,60
 BDT_wz_mumu_20bins    : BDT_DPS_WZ : 20,0.,1.0; XTitle="BDT WZ (#mu^{#pm}#mu^{#pm})" ,Legend="TL",YLim=0,60
 BDT_fakes_mumu_20bins    : BDT_DPS_fakes : 20,0.,1.0; XTitle="BDT Fakes(#mu^{#pm}#mu^{#pm})" ,Legend="TL",YLim=0,60
@@ -216,6 +217,27 @@ BDT_fakes_mumuplusplus_20bins   : BDT_DPS_fakes            : 20,0.,1.0; XTitle="
 BDT_fakes_elmuplusplus_20bins   : BDT_DPS_fakes            : 20,0.,1.0; XTitle="BDT      fakes (e^{+}#mu^{+})"   ,Legend="TL",YLim=0,60
 BDT_fakes_mumuminusminus_20bins : BDT_DPS_fakes            : 20,0.,1.0; XTitle="BDT      fakes (#mu^{-}#mu^{-})" ,Legend="TL",YLim=0,60
 BDT_fakes_elmuminusminus_20bins : BDT_DPS_fakes            : 20,0.,1.0; XTitle="BDT      fakes (e^{-}#mu^{-})"   ,Legend="TL",YLim=0,60
+=======
+BDT_prod_mumuplusplus_20bins    : BDT_DPS_WZ*BDT_DPS_fakes : 20,0.,1.0; XTitle="BDT WZ x fakes (#mu^{+}#mu^{+})" 
+BDT_prod_elmuplusplus_20bins    : BDT_DPS_WZ*BDT_DPS_fakes : 20,0.,1.0; XTitle="BDT WZ x fakes (e^{+}#mu^{+})"   
+BDT_prod_mumuminusminus_20bins  : BDT_DPS_WZ*BDT_DPS_fakes : 20,0.,1.0; XTitle="BDT WZ x fakes (#mu^{-}#mu^{-})" 
+BDT_prod_elmuminusminus_20bins  : BDT_DPS_WZ*BDT_DPS_fakes : 20,0.,1.0; XTitle="BDT WZ x fakes (e^{-}#mu^{-})"   
+
+BDT_wz_mumuplusplus_20bins      : BDT_DPS_WZ               : 20,0.,1.0; XTitle="BDT WZ         (#mu^{+}#mu^{+})" 
+BDT_wz_elmuplusplus_20bins      : BDT_DPS_WZ               : 20,0.,1.0; XTitle="BDT WZ         (e^{+}#mu^{+})"   
+BDT_wz_mumuminusminus_20bins    : BDT_DPS_WZ               : 20,0.,1.0; XTitle="BDT WZ         (#mu^{-}#mu^{-})" 
+BDT_wz_elmuminusminus_20bins    : BDT_DPS_WZ               : 20,0.,1.0; XTitle="BDT WZ         (e^{-}#mu^{-})"   
+
+BDT_wz_mumuplusplus_15bins      : BDT_DPS_WZ               : 15,0.,1.0; XTitle="BDT WZ         (#mu^{+}#mu^{+})" 
+BDT_wz_elmuplusplus_15bins      : BDT_DPS_WZ               : 15,0.,1.0; XTitle="BDT WZ         (e^{+}#mu^{+})"   
+BDT_wz_mumuminusminus_15bins    : BDT_DPS_WZ               : 15,0.,1.0; XTitle="BDT WZ         (#mu^{-}#mu^{-})" 
+BDT_wz_elmuminusminus_15bins    : BDT_DPS_WZ               : 15,0.,1.0; XTitle="BDT WZ         (e^{-}#mu^{-})"   
+
+BDT_fakes_mumuplusplus_20bins   : BDT_DPS_fakes            : 20,0.,1.0; XTitle="BDT      fakes (#mu^{+}#mu^{+})" 
+BDT_fakes_elmuplusplus_20bins   : BDT_DPS_fakes            : 20,0.,1.0; XTitle="BDT      fakes (e^{+}#mu^{+})"   
+BDT_fakes_mumuminusminus_20bins : BDT_DPS_fakes            : 20,0.,1.0; XTitle="BDT      fakes (#mu^{-}#mu^{-})" 
+BDT_fakes_elmuminusminus_20bins : BDT_DPS_fakes            : 20,0.,1.0; XTitle="BDT      fakes (e^{-}#mu^{-})"   
+>>>>>>> dpsww13tev/80X_update
 
 
 
