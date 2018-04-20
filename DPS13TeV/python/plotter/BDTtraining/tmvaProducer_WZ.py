@@ -71,7 +71,6 @@ sig_tree = sig_tfile.Get('tree')
 factory.AddSignalTree    ( sig_tree , sig_weight)
 factory.AddBackgroundTree( bkg_tfile, bkg_weight)
 
-
 # cuts defining the signal and background sample
 common_cuts = '(nLepGood==2 && LepGood_pt[0]>25. && LepGood_pt[1]>20. && met_pt > 15. )' # && LepGood_tightId[1]>0 && LepGood_tightId[0]>0 && met_pt>15.)'
 tightCharge = '(LepGood_chargeConsistency[0] ==2 || abs(LepGood_pdgId[0]) == 13) && (LepGood_chargeConsistency[1] ==2 || abs(LepGood_pdgId[1]) == 13)'
