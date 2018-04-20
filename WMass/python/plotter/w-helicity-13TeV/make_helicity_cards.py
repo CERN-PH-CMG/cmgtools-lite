@@ -144,7 +144,6 @@ if options.signalCards:
     #ybinfile.writelines(' '.join(str(i) for i in WYBinsEdges))
     ybinfile.close()
     print "MAKING SIGNAL PART: WYBinsEdges = ",WYBinsEdges
-    sys.exit()
     for ip,pdf in enumerate(pdfsysts):
         for helicity in ['right', 'left']:
             antihel = 'right' if helicity == 'left' else 'left'
