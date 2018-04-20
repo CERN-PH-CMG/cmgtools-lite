@@ -1,9 +1,34 @@
 #!/usr/bin/env python
 from shutil import copyfile
-import re, sys, os, os.path, subprocess
+import re, sys, os, os.path, subprocess, json, ROOT
 import numpy as np
 # import some parameters from wmass_parameters.py, they are also used by other scripts
 from wmass_parameters import *
+
+## infile should be the reco/gen efficiency file of the electrons
+def makeYWBinning(infile, cutoff=10000):
+    
+    histo_file = ROOT.TFile(infile, 'READ')
+    
+    yw_binning = {}
+    
+    for ch in ['plus', 'minus']:
+        for pol in ['left', 'right']:
+            yw_binning['{ch}_{pol}'.format(ch=ch,pol=pol)] = [i*0.15 for i in range(11)]
+            hname = 'w{ch}_wy_reco_W{ch}_{pol}'.format(ch=ch,pol=pol)
+            histo = histo_file.Get(hname)
+            nlast = 0.
+            for ibin in reversed(range(1,histo.GetNbinsX()+1)):
+                nlast += histo.GetBinContent(ibin)
+                if nlast > cutoff: 
+                    ilast = ibin
+                    ylast = histo.GetXaxis().GetBinUpEdge(ilast)
+                    yw_binning['{ch}_{pol}'.format(ch=ch,pol=pol)] += [ 1.5+i*0.25 for i in range(1,int((ylast-1.5)/0.25)+1)]
+                    yw_binning['{ch}_{pol}'.format(ch=ch,pol=pol)] += [histo.GetXaxis().GetXmax()]
+                    break
+    
+    return yw_binning
+
 
 NPDFSYSTS=60 # Hessian variations of NNPDF 3.0
 pdfsysts=[''] # array containing the signal variations
@@ -113,57 +138,61 @@ if options.queue:
 POSCUT=" -A alwaystrue positive 'LepGood1_charge>0' "
 NEGCUT=" -A alwaystrue negative 'LepGood1_charge<0' "
 if options.signalCards:
-    WYBinsEdges = [0., 0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0, 2.25, 2.5, 2.75, 3.25, 6.0 ]
+    WYBinsEdges = makeYWBinning(os.environ['CMSSW_BASE']+'/src/CMGTools/WMass/data/efficiency/mc_reco_eff.root')#, 5000)
     ybinfile = open(outdir+'/binningYW.txt','w')
-    ybinfile.writelines(' '.join(str(i) for i in WYBinsEdges))
+    ybinfile.write(json.dumps(WYBinsEdges))
+    #ybinfile.writelines(' '.join(str(i) for i in WYBinsEdges))
     ybinfile.close()
-    print WYBinsEdges
     print "MAKING SIGNAL PART: WYBinsEdges = ",WYBinsEdges
     for ip,pdf in enumerate(pdfsysts):
-        for charge in ['plus','minus']:
-            if ip==0: 
-                IARGS = ARGS
-            else: 
-                IARGS = ARGS.replace(MCA,"{outdir}/mca/mca{syst}.txt".format(outdir=outdir,syst=pdf))
-                IARGS = IARGS.replace(SYSTFILE,"{outdir}/mca/systEnv-dummy.txt".format(outdir=outdir))
-                print "Running the systematic: ",pdf
-            for iy in xrange(len(WYBinsEdges)-1):
-                print "Making card for %s<=abs(genw_y)<%s and signal process with charge %s " % (WYBinsEdges[iy],WYBinsEdges[iy+1],charge)
-                ycut=" -A alwaystrue YW%d 'abs(genw_y)>=%s && abs(genw_y)<%s' " % (iy,WYBinsEdges[iy],WYBinsEdges[iy+1])
-                ycut += POSCUT if charge=='plus' else NEGCUT
-                excl_long_signal  = '' if not options.longBkg else ',W{ch}_long'.format(ch=charge)
-                xpsel=' --xp "W{antich}.*,Flips,Z,Top,DiBosons,TauDecaysW{longbkg},data.*" --asimov '.format(antich = ('plus' if charge=='minus' else 'minus'), longbkg = excl_long_signal)
-                if not os.path.exists(outdir): os.mkdir(outdir)
-                if options.queue and not os.path.exists(outdir+"/jobs"): os.mkdir(outdir+"/jobs")
-                syst = '' if ip==0 else pdf
-                dcname = "W{charge}_{channel}_Ybin_{iy}{syst}".format(charge=charge, channel=options.channel,iy=iy,syst=syst)
-                BIN_OPTS=OPTIONS + " -W '" + options.weightExpr + "'" + " -o "+dcname+" --od "+outdir + xpsel + ycut
-                if options.queue:
-                    srcfile=outdir+"/jobs/"+dcname+".sh"
-                    logfile=outdir+"/jobs/"+dcname+".log"
-                    srcfile_op = open(srcfile,"w")
-                    srcfile_op.write("#! /bin/sh\n")
-                    srcfile_op.write("ulimit -c 0 -S\n")
-                    srcfile_op.write("ulimit -c 0 -H\n")
-                    srcfile_op.write("cd {cmssw};\neval $(scramv1 runtime -sh);\ncd {dir};\n".format( 
-                            dir = os.getcwd(), cmssw = os.environ['CMSSW_BASE']))
-                    srcfile_op.write("python {dir}/makeShapeCards.py {args} \n".format(
-                            dir = os.getcwd(), args = IARGS+" "+BIN_OPTS))
-                    os.system("chmod a+x "+srcfile)
-                    cmd = "bsub -q {queue} -o {dir}/{logfile} {dir}/{srcfile}\n".format(
-                        queue=options.queue, dir=os.getcwd(), logfile=logfile, srcfile=srcfile)
-                    if options.dryRun: print cmd
-                    else: os.system(cmd)
-                else:
-                    cmd = "python makeShapeCards.py "+IARGS+" "+BIN_OPTS
-                    if options.dryRun: print cmd
+        for helicity in ['right', 'left']:
+            antihel = 'right' if helicity == 'left' else 'left'
+            for charge in ['plus','minus']:
+                antich = 'plus' if charge == 'minus' else 'minus'
+                YWbinning = WYBinsEdges['{ch}_{hel}'.format(ch=charge,hel=helicity)]
+                if ip==0: 
+                    IARGS = ARGS
+                else: 
+                    IARGS = ARGS.replace(MCA,"{outdir}/mca/mca{syst}.txt".format(outdir=outdir,syst=pdf))
+                    IARGS = IARGS.replace(SYSTFILE,"{outdir}/mca/systEnv-dummy.txt".format(outdir=outdir))
+                    print "Running the systematic: ",pdf
+                for iy in xrange(len(YWbinning)-1):
+                    print "Making card for %s<=abs(genw_y)<%s and signal process with charge %s " % (YWbinning[iy],YWbinning[iy+1],charge)
+                    ycut=" -A alwaystrue YW%d 'abs(genw_y)>=%s && abs(genw_y)<%s' " % (iy,YWbinning[iy],YWbinning[iy+1])
+                    ycut += POSCUT if charge=='plus' else NEGCUT
+                    excl_long_signal  = '' if not options.longBkg else ',W{ch}_long'.format(ch=charge)
+                    xpsel=' --xp "W{antich}.*,W{ch}_{antihel},Flips,Z,Top,DiBosons,TauDecaysW{longbkg},data.*" --asimov '.format(antich=antich,ch=charge,antihel=antihel,longbkg = excl_long_signal)
+                    if not os.path.exists(outdir): os.mkdir(outdir)
+                    if options.queue and not os.path.exists(outdir+"/jobs"): os.mkdir(outdir+"/jobs")
+                    syst = '' if ip==0 else pdf
+                    dcname = "W{charge}_{hel}_{channel}_Ybin_{iy}{syst}".format(charge=charge, hel=helicity, channel=options.channel,iy=iy,syst=syst)
+                    BIN_OPTS=OPTIONS + " -W '" + options.weightExpr + "'" + " -o "+dcname+" --od "+outdir + xpsel + ycut
+                    if options.queue:
+                        srcfile=outdir+"/jobs/"+dcname+".sh"
+                        logfile=outdir+"/jobs/"+dcname+".log"
+                        srcfile_op = open(srcfile,"w")
+                        srcfile_op.write("#! /bin/sh\n")
+                        srcfile_op.write("ulimit -c 0 -S\n")
+                        srcfile_op.write("ulimit -c 0 -H\n")
+                        srcfile_op.write("cd {cmssw};\neval $(scramv1 runtime -sh);\ncd {dir};\n".format( 
+                                dir = os.getcwd(), cmssw = os.environ['CMSSW_BASE']))
+                        srcfile_op.write("python {dir}/makeShapeCards.py {args} \n".format(
+                                dir = os.getcwd(), args = IARGS+" "+BIN_OPTS))
+                        os.system("chmod a+x "+srcfile)
+                        cmd = "bsub -q {queue} -o {dir}/{logfile} {dir}/{srcfile}\n".format(
+                            queue=options.queue, dir=os.getcwd(), logfile=logfile, srcfile=srcfile)
+                        if options.dryRun: print cmd
+                        else: os.system(cmd)
                     else:
-                        p = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
-                        out, err = p.communicate() 
-                        result = out.split('\n')
-                        for lin in result:
-                            if not lin.startswith('#'):
-                                print(lin)
+                        cmd = "python makeShapeCards.py "+IARGS+" "+BIN_OPTS
+                        if options.dryRun: print cmd
+                        else:
+                            p = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
+                            out, err = p.communicate() 
+                            result = out.split('\n')
+                            for lin in result:
+                                if not lin.startswith('#'):
+                                    print(lin)
 
 if options.bkgdataCards:
     print "MAKING BKG and DATA PART:\n"
