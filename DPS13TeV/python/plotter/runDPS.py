@@ -50,8 +50,10 @@ def runCards(trees, friends, targetdir, fmca, fcut, fsyst, plotbin, enabledcuts,
     cmd  = ' makeShapeCardsSusy.py --s2v -f -j 6 -l {lumi} --od {td} {trees} {fmca} {fcut}'.format(lumi=lumi, td=targetdir, trees=treestring, fmca=fmca, fcut=fcut)
     cmd += ' {plotvar} {binning}'.format(plotvar=plotbin.split()[0], binning=plotbin.split()[1])
     if friends:
-        cmd += ' --Fs {friends}'.format(friends=friends)
-    cmd += ' --mcc ttH-multilepton/mcc-eleIdEmu2.txt '
+        if not type(friends)==list: friends = [friends]
+        for f in friends:
+            cmd += ' -F Friends {friends}/tree_Friend_{{cname}}.root'.format(friends=f)
+    # cmd += ' --mcc ttH-multilepton/mcc-eleIdEmu2.txt '
     cmd += ' -W puw2016_nTrueInt_36fb(nTrueInt) ' 
     cmd += ' -p '+','.join(processes)
     cmd += ''.join(' -E ^'+cut for cut in enabledcuts )
@@ -144,7 +146,7 @@ def makeResults(onlyMM = True, splitCharge = True): #sfdate, onlyMM = True, spli
 
     targetcarddir = 'cards/{date}{pf}/'.format(date=date, pf=('-'+postfix if postfix else '') )
     trees     = '/eos/user/m/mdunser/dps-13TeV-combination/TREES_latest/'
-    friends = [trees+'/friends/', trees+'/friends_bdt/']
+    friends = [trees+'/friends/', trees+'/friends_bdt_new4/']
     targetdir = '/afs/cern.ch/user/m/mdunser/www/private/dps-ww-combination/results/{date}{pf}/'.format(date=date, pf=('-'+postfix if postfix else '') )
     fcut   = 'dpsww13TeV/dps2016/results/cuts_results.txt'#mumuelmu_mca.txt'
     fplots = 'dpsww13TeV/dps2016/results/plots.txt'
@@ -165,27 +167,28 @@ def makeResults(onlyMM = True, splitCharge = True): #sfdate, onlyMM = True, spli
     processes      = ['data', 'DPSWW', 'WZ', 'ZZ', 'WG_wg', 'rares', 'fakes_data']
     processesCards = ['data', 'DPSWW', 'WZ', 'ZZ', 'WG_wg', 'rares', 'fakes_data', 'WZamcatnlo']#, 'DPSWW_alt']
 
-    binningBDT   = ' (BDT_DPS_WZ*BDT_DPS_fakes) 20,0.,1. '
-    nbinspostifx = '_20bins'
+    binningBDT   = ' BDT_DPS_WZ 15,0.,1. '
+    nbinspostifx = '_15bins'
 
     fmca   = 'dpsww13TeV/dps2016/results/mumuelmu_mca.txt'
     
-    for ich,ch in enumerate(loop):
-        #if not ich: continue
-        enable    = ['trigmumu', 'mumu'] + ch
-        disable   = []
-        fittodata = []
-        scalethem = {'WZ': '{sf:.3f}'.format(sf=1.04),
-                     'ZZ': '{sf:.3f}'.format(sf=1.21)}
-        mumusf = 0.95
-        extraopts = ' -W {sf:.3f} --showIndivSigs '.format(sf=mumusf)
-        makeplots = ['BDT_prod_mumu'+(ch[0] if ch else '')+nbinspostifx]
-        runplots(trees, friends, targetdir, fmca, fcut, fplots, enable, disable, processes, scalethem, fittodata, makeplots, True, extraopts)
-        ## ==================================
-        ## running datacards
-        ## ==================================
-        ####    foobar extraoptscards = ' -W {sf:.3f} -o mumu{ch} -b mumu{ch} '.format(sf=mumusf, ch=(ch[0] if ch else ''))
-        ####    foobar runCards(trees, friends, targetcarddir, fmca, fcut, fsyst , binningBDT, enable, disable, processesCards, scalethem, extraoptscards)
+    for bdt in ['wz']:
+        for ich,ch in enumerate(loop):
+            #if not ich: continue
+            enable    = ['trigmumu', 'mumu'] + ch
+            disable   = []
+            fittodata = []
+            scalethem = {'WZ': '{sf:.3f}'.format(sf=1.04),
+                         'ZZ': '{sf:.3f}'.format(sf=1.21)}
+            mumusf = 0.95
+            extraopts = ' -W {sf:.3f} --plotmode=norm'.format(sf=mumusf) ##--showIndivSigs 
+            makeplots = ['BDT_{bdt}_mumu{ch}{nbins}'.format(ch=(ch[0] if ch else ''),bdt=bdt,nbins=nbinspostifx)]
+            #runplots(trees, friends, targetdir, fmca, fcut, fplots, enable, disable, processes, scalethem, fittodata, makeplots, True, extraopts)
+            ## ==================================
+            ## running datacards
+            ## ==================================
+            extraoptscards = ' -W {sf:.3f} -o mumu{ch} -b mumu{ch} '.format(sf=mumusf, ch=(ch[0] if ch else ''))
+            runCards(trees, friends, targetcarddir, fmca, fcut, fsyst , binningBDT, enable, disable, processesCards, scalethem, extraoptscards)
 
 
 def simplePlot():

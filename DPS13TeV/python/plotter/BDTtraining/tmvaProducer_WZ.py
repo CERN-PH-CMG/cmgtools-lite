@@ -16,7 +16,7 @@ r.TMVA.Tools.Instance()
 # does not work. Make sure you don't overwrite an
 # existing file.
 
-output_fn  = 'test/TL_TMVAOutputTest.root'
+output_fn  = 'training/TL_TMVAOutputTraining_WZ.root'
 output_f   = r.TFile(output_fn,'RECREATE')
  
 factory = r.TMVA.Factory('TMVAClassification', output_f,
@@ -31,78 +31,57 @@ factory = r.TMVA.Factory('TMVAClassification', output_f,
 
 
 #### our variables
+
 factory.AddVariable('LepGood_pt[0]','p_{T1}', 'F')
-factory.AddVariable('LepGood_pt[1]','p_{T2}', 'F') 
-factory.AddVariable('met_pt', 'F') 
+factory.AddVariable('LepGood_pt[1]','p_{T2}', 'F')
+factory.AddVariable('met_pt', 'F')
+factory.AddVariable('mt2davis(LepGood_pt[0],LepGood_eta[0],LepGood_phi[0],LepGood_pt[1],LepGood_eta[1],LepGood_phi[1],met_pt,met_phi)','MT2_{ll}', 'F')
+factory.AddVariable('mt_2(LepGood_pt[0],LepGood_phi[0],LepGood_pt[1],LepGood_phi[1])','MT l1 l2', 'F')
+factory.AddVariable('mt_2(LepGood_pt[0],LepGood_phi[0],met_pt,met_phi)','MT l1 met', 'F')
+factory.AddVariable('abs(deltaPhi(LepGood_phi[0],LepGood_phi[1]))','#Delta #phi l1 l2', 'F')
+factory.AddVariable('abs(deltaPhi(LepGood_phi[1],met_phi))','#Delta #phi l2 met', 'F')
+factory.AddVariable('abs(deltaPhi(phi_2(LepGood_pt[0],LepGood_eta[0],LepGood_phi[0],LepGood_mass[0],LepGood_pt[1],LepGood_eta[1],LepGood_phi[1],LepGood_mass[1]),LepGood_phi[1]))','d#phi(ll,l2)', 'F')
 factory.AddVariable('LepGood_eta[0]*LepGood_eta[1]','#eta_{1}*#eta_{2}', 'F')
 factory.AddVariable('abs(LepGood_eta[0]+LepGood_eta[1])','abs(#eta_{1}+#eta_{2})','F')
-factory.AddVariable('mt2davis(LepGood_pt[0],LepGood_eta[0],LepGood_phi[0],LepGood_pt[1],LepGood_eta[1],LepGood_phi[1],met_pt,met_phi)','MT2_{ll}', 'F')
-factory.AddVariable('mt_2(LepGood_pt[0],LepGood_phi[0],LepGood_pt[1],LepGood_phi[1])','MT l1 l2', 'F') 
-factory.AddVariable('mt_2(LepGood_pt[0],LepGood_phi[0],met_pt,met_phi)','MT l1 met', 'F') 
-factory.AddVariable('mt_2(LepGood_pt[1],LepGood_phi[1],met_pt,met_phi)','MT l2 met', 'F') 
-factory.AddVariable('abs(deltaPhi(LepGood_phi[0],met_phi))','#Delta #phi l1 met', 'F') 
-factory.AddVariable('abs(deltaPhi(LepGood_phi[1],met_phi))','#Delta #phi l2 met', 'F') 
-factory.AddVariable('abs(deltaPhi(LepGood_phi[0],LepGood_phi[1]))','#Delta #phi l1 l2', 'F') 
-factory.AddVariable('abs(deltaPhi(deltaPhi(LepGood_phi[0],LepGood_phi[1]),met_phi))','#Delta #phi l1l2 met', 'F')
-factory.AddVariable('abs(deltaPhi(deltaPhi(LepGood_phi[0],LepGood_phi[1]),LepGood_phi[1]))','#Delta #phi l1l2 l2', 'F')
+
+## get background and signal trees/chains
+
+sig_tfile = r.TFile('/eos/user/m/mdunser/dps-13TeV-combination/TREES_latest/WW_DPS_herwig/treeProducerWMass/tree.root')
+
+useNLO = False
+if useNLO:
+    bkg_tfile = r.TChain('tree')
+    bkg_tfile.Add('/eos/user/m/mdunser/dps-13TeV-combination/TREES_latest/WZTo3LNu_fxfx_part1/treeProducerWMass/tree.root')
+    bkg_tfile.Add('/eos/user/m/mdunser/dps-13TeV-combination/TREES_latest/WZTo3LNu_fxfx_part2/treeProducerWMass/tree.root')
+    factory.SetBackgroundWeightExpression('genWeight/abs(genWeight)') ## reweight by the genweight for NLO samples
+
+else:
+    bkg_tfile = r.TChain('tree')
+    bkg_tfile.Add('/eos/cms/store/cmst3/group/tthlep/peruzzi/TREES_TTH_250117_Summer16_JECV3_noClean_qgV2/WZTo3LNu_treeProducerSusyMultilepton_tree.root')
+    #bkg_tfile.Add('/eos/cms/store/cmst3/user/mdunser/HeppyProduction/TTH_150117//WZTo3LNu_mll01_ext_part1_treeProducerSusyMultilepton_tree.root')
+    #bkg_tfile.Add('/eos/cms/store/cmst3/user/mdunser/HeppyProduction/TTH_150117//WZTo3LNu_mll01_ext_part2_treeProducerSusyMultilepton_tree.root')
+    #bkg_tfile.Add('/eos/cms/store/cmst3/user/mdunser/HeppyProduction/TTH_150117//WZTo3LNu_mll01_ext_part3_treeProducerSusyMultilepton_tree.root')
 
 
+sig_weight = 1.0
+bkg_weight = 1.0
 
-
-
-#factory.AddVariable('abs(dphi_2(LepGood_pt[0],LepGood_eta[0],LepGood_phi[0],LepGood_pt[1],LepGood_eta[1],LepGood_phi[1],2))','#Delta #phi ll l2', 'F')
-
-    #factory.AddVariable('max(abs(mt_2(LepGood_pt[0],LepGood_phi[0],met_trkPt,met_trkPhi)-80.),abs(mt_2(LepGood_pt[1],LepGood_phi[1],met_trkPt,met_trkPhi)-80.))','maxThing','F')
-    #factory.AddVariable('min(mt_2(LepGood_pt[0],LepGood_phi[0],met_trkPt,met_trkPhi)-91.,mt_2(LepGood_pt[1],LepGood_phi[1],met_trkPt,met_trkPhi)-91.)','minThing','F')
-    #factory.AddVariable('mt_2(LepGood_pt[1],LepGood_phi[1],met_pt,met_phi)','MT l2 met', 'F') 
-    #factory.AddVariable('abs(deltaPhi(LepGood_phi[0],met_phi))','#Delta #phi 1', 'F') 
-    #factory.AddVariable('abs(eta_2(LepGood_pt[0],LepGood_eta[0],LepGood_phi[0],LepGood_mass[0],LepGood_pt[1],LepGood_eta[1],LepGood_phi[1],LepGood_mass[1]))','|#eta ll|','F')   
-
-
-## get background tree and friends etc p. 16 
-treePath = '/eos/user/m/mdunser/w-helicity-13TeV/trees/trees_all_skims/'
-#bkgtreePath = '/eos/user/m/mdunser/w-helicity-13TeV/trees/trees_all_skims/SingleMuon_Run2016H_part'
-#from ROOT import TChain, TSelector, TTree
-bkg_tfile = r.TChain('tree')
-list1 = ( list( i for i in os.listdir(treePath) if 'SingleMu' in i) )
-n=len(list1)
-for d in list1:
-    temp = treePath+d+'/treeProducerWMass/tree.root'
-    if os.path.isfile(temp):
-        bkg_tfile.Add(temp)
-
-#for d in list1:
- #   bkg_tfile.Add(treePath+d+'/treeProducerWMass/tree.root')
-
-#bkg_tfile = r.TFile(treePath+'/SingleMuon_Run2016H_part15/treeProducerWMass/tree.root')
-#bkg_ffile = r.TFile('bkgfriendtreefile')
-#bkg_tree = bkg_tfile.Get('tree')
-#bkg_tree.AddFriend('sf/t', bkg_ffile)
-
-sig_weight = 1.0;
-bkg_weight = 1.0;
-
-## get signal tree and friends etc p. 16
-
-sig_tfile = r.TFile(treePath+'/WWDoubleTo2L/treeProducerWMass/tree.root')
-#sig_ffile = r.TFile('bkgfriendtreefile')
 sig_tree = sig_tfile.Get('tree')
-#sig_tree.AddFriend('sf/t', sig_ffile)
 
-factory.AddSignalTree    ( sig_tree, sig_weight)
+factory.AddSignalTree    ( sig_tree , sig_weight)
 factory.AddBackgroundTree( bkg_tfile, bkg_weight)
 
+
 # cuts defining the signal and background sample
-common_cuts = '(LepGood_pt[0] > 25 && LepGood_pt[1] >20 && nLepGood ==2 && met_pt > 15 && LepGood_tightId[1] > 0 && LepGood_tightId[0] > 0) &&'
-afac = '(abs(LepGood_pdgId[0]*LepGood_pdgId[1]) == 169)'
-afss = '(LepGood_pdgId[0]*LepGood_pdgId[1] == 169) &&'
-TLnLL='(LepGood_relIso03[0] > 0.1 ||  LepGood_relIso03[1] > 0.1)'
-TL='((LepGood_relIso03[0] > 0.1 && LepGood_relIso03[1] < 0.1) || (LepGood_relIso03[0] < 0.1 && LepGood_relIso03[1] > 0.1))'
-LL='(LepGood_relIso03[0] > 0.1 &&  LepGood_relIso03[1] > 0.1)'
-sig_cutstring = common_cuts+afac
-bkg_cutstring = common_cuts+afss+TL
-
-
+common_cuts = '(nLepGood==2 && LepGood_pt[0]>25. && LepGood_pt[1]>20. && met_pt > 15. )' # && LepGood_tightId[1]>0 && LepGood_tightId[0]>0 && met_pt>15.)'
+tightCharge = '(LepGood_chargeConsistency[0] ==2 || abs(LepGood_pdgId[0]) == 13) && (LepGood_chargeConsistency[1] ==2 || abs(LepGood_pdgId[1]) == 13)'
+mmac        = '(abs(LepGood_pdgId[0]*LepGood_pdgId[1]) == 169)'
+mmss        = '(LepGood_pdgId[0]*LepGood_pdgId[1] == 169)'
+afac        = '(abs(LepGood_pdgId[0]*LepGood_pdgId[1]) == 169 || abs(LepGood_pdgId[0]*LepGood_pdgId[1]) == 121)'
+afss        = '(LepGood_pdgId[0]*LepGood_pdgId[1] == 169 || LepGood_pdgId[0]*LepGood_pdgId[1] == 121)'
+TT          = 'LepGood_mvaTTH[0] > 0.75 && LepGood_mvaTTH[1] > 0.75'
+sig_cutstring = ' && '.join([common_cuts, afac, tightCharge, TT])
+bkg_cutstring = ' && '.join([common_cuts, afss, tightCharge, TT])
 
 sigCut = r.TCut(sig_cutstring)
 bgCut  = r.TCut(bkg_cutstring)
@@ -118,11 +97,12 @@ factory.PrepareTrainingAndTestTree(sigCut,   # signal events p. 21
                                    ':'.join([
                                    'nTrain_Signal=0',
                                    'nTrain_Background=0',
-				   'nTest_Signal=0',
+				                   'nTest_Signal=0',
                                    'nTest_Background=0', 
                                    'SplitMode=Random',
                                    'NormMode=NumEvents',
                                    '!V' ]))
+
 
 ## define your methods: BDT, FISHER, LIKELIHOOD. along with the options
 
@@ -138,7 +118,7 @@ bdt = factory.BookMethod(r.TMVA.Types.kBDT, 'BDT',
                                     '!V', 
                                     'NTrees=850', 
                                     'MinNodeSize=0.05', 	
-				    'MaxDepth=3', 
+				                    'MaxDepth=3', 
                                     'BoostType=AdaBoost', 
                                     'AdaBoostBeta=0.5', 
                                     'SeparationType=GiniIndex', 
