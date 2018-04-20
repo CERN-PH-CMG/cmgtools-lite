@@ -23,11 +23,13 @@
 
 justPrint="y"   # if "y", it just prints commands (useful before submitting the job)
 doAlsoLO="y"    # decide to run also on LO samples, by default only NLO is done
+doAlsoSmear="y"    # decide to run smearing some quantity on which we cut, like pfmt
 outDir="plots/gen_eff_tightCharge_chargeMatch"
 plotterDir="/afs/cern.ch/work/m/mciprian/w_mass_analysis/heppy/CMSSW_8_0_25/src/CMGTools/WMass/python/plotter"
 treepath="/eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3_WENUSKIM_V5_TINY"
-#treepath="/eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3_WENUSKIM_V5"
-mca_W_NLO="w-helicity-13TeV/wmass_e/mca-includes/mca-80X-wenu-sig_lessFiles_genCutOnly.txt"
+#treepath="/eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3_WENUSKIM_V5" 
+#mca_W_NLO="w-helicity-13TeV/wmass_e/mca-includes/mca-80X-wenu-sig_genCutOnly.txt"          # less statistics
+mca_W_NLO="w-helicity-13TeV/wmass_e/mca-includes/mca-80X-wenu-sig_lessFiles_genCutOnly.txt" # all statistics
 mca_W_LO="w-helicity-13TeV/wmass_e/mca-includes/mca-80X-wenu-sig_LO_genCutOnly.txt"
 cutfile="w-helicity-13TeV/wmass_e/wenu_80X.txt"
 plotfile="w-helicity-13TeV/wmass_e/wenu_plots.txt"
@@ -38,13 +40,14 @@ eval `scramv1 runtime -sh`
 
 charges=("plus" "minus")
 
-cutname="pfmt"
-#cutname="pfmtSmear"
+#cutname="pfmt"
+cutname="pfmtSmearMET"
 #cutFolderNameSuffix="_smearMt"
 cutFolderNameSuffix=""
-additionalCut=" -A numSel ${cutname} 'mt_2(met_pt,met_phi,ptElFull(LepGood1_calPt,LepGood1_eta),LepGood1_phi) > XXX' "  # XXX will be replaced by value in additionalCutValues
-#additionalCut=" -A numSel ${cutname} 'getSmearedVar(mt_2(met_pt,met_phi,ptElFull(LepGood1_calPt,LepGood1_eta),LepGood1_phi),0.1,evt,isData,0) > XXX' "
-additionalCutValues=("30" "40" "50") # keep empty if not needed to run with different cuts
+#additionalCut=" -A numSel ${cutname} 'mt_2(met_pt,met_phi,ptElFull(LepGood1_calPt,LepGood1_eta),LepGood1_phi) > XXX' "  # XXX will be replaced by value in additionalCutValues
+additionalCut=" -A numSel ${cutname} 'mt_2(getSmearedVar(met_pt,0.2,evt,isData,0),met_phi,ptElFull(LepGood1_calPt,LepGood1_eta),LepGood1_phi) > XXX' "
+#additionalCutValues=("30" "40" "50") # keep empty if not needed to run with different cuts
+additionalCutValues=("40") # keep empty if not needed to run with different cuts
 #additionalCutValues=()
 
 # check if it works
