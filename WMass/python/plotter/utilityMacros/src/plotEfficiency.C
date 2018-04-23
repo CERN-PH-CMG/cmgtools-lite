@@ -157,7 +157,7 @@ void plotEfficiency(const string& inputFilePath = "/afs/cern.ch/work/m/mciprian/
 	  heffs_Smear.push_back( new TH1D( *((TH1D*) getEfficiency(inputFilePath+efficiencyFileName, isMuon, names[i], nameReco+"_SmearPFMET")) ) );   	
 	  createPlotDirAndCopyPhp(outDir+outDirTagName);
 	  adjustSettings_CMS_lumi(outDir+outDirTagName);
-	  drawTH1pair((TH1*)heffs.back()->Clone(),heffs_Smear.back(),"y_{W}", "Reco/gen efficiency",canvasName+"_Smear",outDir+outDirTagName,"No smear","Smear","NLO/Smear::0.95,1.05",-1.0,1,false); 
+	  drawTH1pair((TH1*)heffs.back()->Clone(),heffs_Smear.back(),"y_{W}", "Reco/gen efficiency",canvasName+"_Smear",outDir+outDirTagName,"No smear","Smear","NLO/Smear::0.98,1.02",-1.0,1,false); 
 	}
       }
     }
