@@ -85,7 +85,7 @@ if useFullData2016:
 J=4
 
 BASECONFIG = plotterPath + "w-helicity-13TeV/wmass_e"
-MCA = BASECONFIG+'/mca-80X_V3_FRskim.txt'
+MCA = BASECONFIG+'/mca-80X_V5_FRskim.txt'
 CUTFILE =BASECONFIG+'/qcd1l_SRtrees.txt'
 XVAR=ptvar
 FITVAR=fitvar

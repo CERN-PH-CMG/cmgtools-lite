@@ -43,7 +43,7 @@ DiBosons : WZ+WZ_ext : xsec; FillColor=ROOT.kViolet+2, Label="DiBosons", NormSys
 DiBosons : ZZ+ZZ_ext : xsec; FillColor=ROOT.kViolet+2, Label="DiBosons", NormSystematic=0.05
 
 #TauDecaysW : WJetsToLNu_NLO* : 3.*20508.9    : genw_decayId != 12 && genw_decayId != 14 ; FillColor=ROOT.kPink   ,  Label="W\#rightarrow\#tau\#nu"
-TauDecaysW : WJetsToLNu_NLO_part1 + WJetsToLNu_NLO_part2 + WJetsToLNu_NLO_part3 + WJetsToLNu_NLO_ext_part1 + WJetsToLNu_NLO_ext_part2 + WJetsToLNu_NLO_ext_part3 : 3.*20508.9    : genw_decayId != 12 && genw_decayId != 14 ; FillColor=ROOT.kPink   ,  Label="W\#rightarrow\#tau\#nu"
+TauDecaysW : WJetsToLNu_NLO_part1 + WJetsToLNu_NLO_part2 + WJetsToLNu_NLO_part3 + WJetsToLNu_NLO_ext_part1 + WJetsToLNu_NLO_ext_part2 + WJetsToLNu_NLO_ext_part3 : 3.*20508.9    : genw_decayId != 12 && genw_decayId != 14 ; FillColor=ROOT.kPink   ,  Label="W\#rightarrow\#tau\#nu", NormSystematic=0.038
 
 #WFlips  : WJetsToLNu_NLO* : 3.*20508.9    : genw_decayId == 12 && LepGood1_mcMatchId*LepGood1_charge==-24 ; FillColor=ROOT.kGray+1  , Label="W charge flips"
 WFlips  : WJetsToLNu_NLO_part1 + WJetsToLNu_NLO_part2 + WJetsToLNu_NLO_part3 + WJetsToLNu_NLO_ext_part1 + WJetsToLNu_NLO_ext_part2 + WJetsToLNu_NLO_ext_part3 : 3.*20508.9 : genw_decayId == 12 && LepGood1_mcMatchId*LepGood1_charge==-24 ; FillColor=ROOT.kGray+1  , Label="W charge flips"
