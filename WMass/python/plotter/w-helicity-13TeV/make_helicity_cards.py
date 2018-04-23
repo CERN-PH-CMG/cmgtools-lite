@@ -5,8 +5,22 @@ import numpy as np
 # import some parameters from wmass_parameters.py, they are also used by other scripts
 from wmass_parameters import *
 
+def intermediateBinning(diff):
+
+    n25 = int(diff/0.25)
+
+    rest = diff - n25*0.25
+
+    if any([np.isclose(rest,0.2), np.isclose(rest,0.15)]):
+        bins = [rest]
+        bins += [0.25 for i in range(n25)]
+    elif rest < 0.15:
+        bins = [0.25 for i in range(n25-1)] + [0.25+rest]
+
+    return bins
+
 ## infile should be the reco/gen efficiency file of the electrons
-def makeYWBinning(infile, cutoff=10000):
+def makeYWBinning(infile, cutoff=5000):
     
     histo_file = ROOT.TFile(infile, 'READ')
     
@@ -14,17 +28,23 @@ def makeYWBinning(infile, cutoff=10000):
     
     for ch in ['plus', 'minus']:
         for pol in ['left', 'right']:
-            yw_binning['{ch}_{pol}'.format(ch=ch,pol=pol)] = [i*0.15 for i in range(11)]
-            hname = 'w{ch}_wy_reco_W{ch}_{pol}'.format(ch=ch,pol=pol)
+            cp = '{ch}_{pol}'.format(ch=ch,pol=pol)
+            yw_binning[cp] = [i*0.15 for i in range(11)]
+            hname = 'w{ch}_abswy_reco_W{ch}_{pol}'.format(ch=ch,pol=pol)
             histo = histo_file.Get(hname)
             nlast = 0.
             for ibin in reversed(range(1,histo.GetNbinsX()+1)):
-                nlast += histo.GetBinContent(ibin)
-                if nlast > cutoff: 
+                if not nlast > cutoff:
+                    nlast += histo.GetBinContent(ibin)
+                else:
                     ilast = ibin
                     ylast = histo.GetXaxis().GetBinUpEdge(ilast)
-                    yw_binning['{ch}_{pol}'.format(ch=ch,pol=pol)] += [ 1.5+i*0.25 for i in range(1,int((ylast-1.5)/0.25)+1)]
-                    yw_binning['{ch}_{pol}'.format(ch=ch,pol=pol)] += [histo.GetXaxis().GetXmax()]
+                    diffTo1p5 = ylast - 1.5
+                    intermediate_binning = intermediateBinning(diffTo1p5)
+                    for i in intermediate_binning:
+                        yw_binning[cp] += [yw_binning[cp][-1]+i]
+                    yw_binning[cp] += [histo.GetXaxis().GetXmax()]
+                    yw_binning[cp] = [float('{n:.2f}'.format(n=n)) for n in yw_binning[cp] ]
                     break
     
     return yw_binning
@@ -138,7 +158,8 @@ if options.queue:
 POSCUT=" -A alwaystrue positive 'LepGood1_charge>0' "
 NEGCUT=" -A alwaystrue negative 'LepGood1_charge<0' "
 if options.signalCards:
-    WYBinsEdges = makeYWBinning(os.environ['CMSSW_BASE']+'/src/CMGTools/WMass/data/efficiency/mc_reco_eff.root')#, 5000)
+    ## WYBinsEdges = makeYWBinning(os.environ['CMSSW_BASE']+'/src/CMGTools/WMass/data/efficiency/mc_reco_eff.root')#, 5000)
+    WYBinsEdges = makeYWBinning('/afs/cern.ch/user/m/mciprian/public/whelicity_stuff/electron_efficiency/mc_reco_eff.root')
     ybinfile = open(outdir+'/binningYW.txt','w')
     ybinfile.write(json.dumps(WYBinsEdges))
     #ybinfile.writelines(' '.join(str(i) for i in WYBinsEdges))
