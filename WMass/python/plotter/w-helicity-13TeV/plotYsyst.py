@@ -1,4 +1,4 @@
-# USAGE:  python plotYsyst.py -C plus ../plots/gen/pdfvar/ ../cards/helicity_2018_03_09_testpdfsymm/binningYW.txt --fitResult multidimfit_plus_wpdf.root
+# USAGE:  python plotYsyst.py -C plus  ../cards/helicity_2018_03_09_testpdfsymm/binningYW.txt --fitResult multidimfit_plus_wpdf.root
 
 import ROOT, datetime, array, os, math
 ROOT.gROOT.SetBatch(True)
@@ -6,12 +6,18 @@ ROOT.PyConfig.IgnoreCommandLineOptions = True
 
 from mergeCardComponentsAbsY import mirrorShape
 
-def getRebinned(ybins, charge, infile):
+def getRebinned(ybins, charge, infile, ip):
     histo_file = ROOT.TFile(infile, 'READ')
+
+    pstr = 'central' if not ip else 'pdf'+ip
 
     histos = {}
     for pol in ['left','right','long']:
-        histo = histo_file.Get('w{ch}_abswy_W{ch}_{pol}'.format(ch=charge, pol=pol))
+        keys = histo_file.GetListOfKeys()
+        for k in keys:
+            if 'w{ch}'.format(ch=charge) in k.GetName() and pol in k.GetName() and pstr in k.GetName():
+                name = k.GetName()
+        histo = histo_file.Get(name)# 'w{ch}_wy_W{ch}_{pol}'.format(ch=charge, pol=pol))
         conts = []
         for iv, val in enumerate(ybins[:-1]):
             err = ROOT.Double()
@@ -27,15 +33,14 @@ NPDFs = 60
 if __name__ == "__main__":
 
     from optparse import OptionParser
-    parser = OptionParser(usage='%prog inputdir ybinfile [options] ')
+    parser = OptionParser(usage='%prog ybinfile [options] ')
     parser.add_option('-C','--charge', dest='charge', default='plus,minus', type='string', help='process given charge. default is both')
     parser.add_option(     '--fitResult', dest='fitResult', default=None, type='string', help='file with fitresult')
     parser.add_option('-o','--outdir', dest='outdir', default='.', type='string', help='outdput directory to save the matrix')
     parser.add_option(     '--suffix', dest='suffix', default='', type='string', help='suffix for the correlation matrix')
     (options, args) = parser.parse_args()
 
-    inputdir = args[0]
-    ybinfile = args[1]
+    ybinfile = args[0]
 
     print "Taking histos from dir: %s" % inputdir
 
@@ -50,17 +55,16 @@ if __name__ == "__main__":
     charges = options.charge.split(',')
     for charge in charges:
 
-        file_nom = '{dir}/wgen_nosel_{charge}_nominal.root'.format(dir=inputdir,charge=charge)
-        nominal = getRebinned(ybins,charge,file_nom)
+        file_pdfs = os.environ['CMSSW_BASE']+'/src/CMGTools/WMass/data/pdfs_prefit/pdf_variations_prefit.root'
+        nominal = getRebinned(ybins,charge,file_pdfs, 0)
         
         print "Now getting histograms from %s (will take some time)..." % inputdir
         shape_syst = {}
         for pol in ['left','right','long']:
             histos = []
-            for ip in xrange(NPDFs):
+            for ip in xrange(1,NPDFs+1):
                 #print "Loading polarization %s, histograms for pdf %d" % (pol,ip)
-                filepdf = '{dir}/wgen_nosel_{charge}_pdfs_pdf{ipdf}.root'.format(dir=inputdir,charge=charge,ipdf=ip)
-                pdf = getRebinned(ybins,charge,'{dir}/wgen_nosel_{charge}_pdfs_pdf{ipdf}.root'.format(dir=inputdir,charge=charge,ipdf=ip))
+                pdf = getRebinned(ybins,charge,file_pdfs,ip)
                 histos.append(pdf[pol])
             shape_syst[pol] = histos
 
