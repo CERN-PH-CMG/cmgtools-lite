@@ -11,7 +11,11 @@ def getRebinned(ybins, charge, infile):
 
     histos = {}
     for pol in ['left','right','long']:
-        histo = histo_file.Get('w{ch}_wy_W{ch}_{pol}'.format(ch=charge, pol=pol))
+        keys = histo_file.GetListOfKeys()
+        for k in keys:
+            if 'w{ch}'.format(ch=charge) in k.GetName() and pol in k.GetName():
+                name = k.GetName()
+        histo = histo_file.Get(name)# 'w{ch}_wy_W{ch}_{pol}'.format(ch=charge, pol=pol))
         conts = []
         for iv, val in enumerate(ybins[:-1]):
             err = ROOT.Double()
@@ -50,17 +54,17 @@ if __name__ == "__main__":
     charges = options.charge.split(',')
     for charge in charges:
 
-        file_nom = '{dir}/wgen_nosel_{charge}_nominal.root'.format(dir=inputdir,charge=charge)
+        file_nom = '{dir}/w{charge}_wy_central.root'.format(dir=inputdir,charge=charge)
         nominal = getRebinned(ybins,charge,file_nom)
         
         print "Now getting histograms from %s (will take some time)..." % inputdir
         shape_syst = {}
         for pol in ['left','right','long']:
             histos = []
-            for ip in xrange(NPDFs):
+            for ip in xrange(1,NPDFs+1):
                 #print "Loading polarization %s, histograms for pdf %d" % (pol,ip)
-                filepdf = '{dir}/wgen_nosel_{charge}_pdfs_pdf{ipdf}.root'.format(dir=inputdir,charge=charge,ipdf=ip)
-                pdf = getRebinned(ybins,charge,'{dir}/wgen_nosel_{charge}_pdfs_pdf{ipdf}.root'.format(dir=inputdir,charge=charge,ipdf=ip))
+                filepdf = '{dir}/w{charge}_wy_pdf{ipdf}.root'.format(dir=inputdir,charge=charge,ipdf=ip)
+                pdf = getRebinned(ybins,charge,filepdf)
                 histos.append(pdf[pol])
             shape_syst[pol] = histos
 
