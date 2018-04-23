@@ -105,6 +105,8 @@ class GenQEDJetProducer(Module):
         self.initReaders(inputTree) # initReaders must be called in beginFile
         self.out = wrappedOutputTree
         self.out.branch("weightGen", "F")
+        self.out.branch("gammaMaxDR", "F")
+        self.out.branch("gammaRelPtOutside", "F")
         self.out.branch("partonId1", "I")
         self.out.branch("partonId2", "I")
         self.out.branch("nGenLepDressed", "I")
@@ -151,6 +153,10 @@ class GenQEDJetProducer(Module):
         neutrinos = self._worker.promptNeutrinos()
         lepPdgIds = self._worker.dressedLeptonsPdgId()
         nuPdgIds = self._worker.promptNeutrinosPdgId()
+        gammaMaxDR = self._worker.gammaMaxDR()
+        gammaRelPtOutside = self._worker.gammaRelPtOutside()
+        self.out.fillBranch("gammaMaxDR", gammaMaxDR)
+        self.out.fillBranch("gammaRelPtOutside", gammaRelPtOutside)
 
         #nothing to do if this is data
         if event.isData: return True
