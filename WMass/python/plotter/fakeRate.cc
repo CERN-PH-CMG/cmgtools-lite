@@ -135,7 +135,7 @@ bool loadFRHisto(const std::string &histoName, const std::string file, const cha
 
 // }
 
-float fakeRateWeight_promptRateCorr_1l_i_smoothed(float lpt, float leta, int lpdgId, bool passWP, int iFR=0, int iPR=0, int expected_pdgId=11) {
+float fakeRateWeight_promptRateCorr_1l_i_smoothed(float lpt, float leta, int lpdgId, bool passWP, int iFR=0, int iPR=0) { //, int expected_pdgId=11) {
 
   // formula for fake rate including effect of prompt rate
   //
@@ -147,11 +147,12 @@ float fakeRateWeight_promptRateCorr_1l_i_smoothed(float lpt, float leta, int lpd
   // If p=1, then N(QCD in T) = f/(1-f) * N(NLT), which is the formula used in function fakeRateWeight_1l_i_smoothed()
 
 
-  double fpt = lpt; double feta = std::fabs(leta); int fid = abs(lpdgId); int fAbsExpected_pdgId = abs(expected_pdgId);
+  double fpt = lpt; double feta = std::fabs(leta); int fid = abs(lpdgId); 
 
-  if (fid != fAbsExpected_pdgId) {
-    return 0;
-  }
+  // int fAbsExpected_pdgId = abs(expected_pdgId);
+  // if (fid != fAbsExpected_pdgId) {
+  //   return 0;
+  // }
 
   TH2 *hist_fr = (fid == 11 ? FRi_el[iFR] : FRi_mu[iFR]);
   if (hist_fr == 0) {
@@ -198,12 +199,13 @@ float fakeRateWeight_promptRateCorr_1l_i_smoothed(float lpt, float leta, int lpd
 
 //==============================
 
-float fakeRateWeight_1l_i_smoothed(float lpt, float leta, int lpdgId, bool passWP, int iFR=0, int expected_pdgId=11) {
+float fakeRateWeight_1l_i_smoothed(float lpt, float leta, int lpdgId, bool passWP, int iFR=0) } //, int expected_pdgId=11) {
   if (!passWP) {
-    double fpt = lpt; double feta = std::fabs(leta); int fid = abs(lpdgId); int fAbsExpected_pdgId = abs(expected_pdgId);
-    if (fid != fAbsExpected_pdgId) {
-      return 0;
-    }
+    double fpt = lpt; double feta = std::fabs(leta); int fid = abs(lpdgId); 
+    // int fAbsExpected_pdgId = abs(expected_pdgId);
+    // if (fid != fAbsExpected_pdgId) {
+    //   return 0;
+    // }
     TH2 *hist = (fid == 11 ? FRi_el[iFR] : FRi_mu[iFR]);
     if (hist == 0) {
       std::cout << "Error in fakeRateWeight_1l_i_smoothed: hist == 0. Returning 0" << std::endl;	
