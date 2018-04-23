@@ -53,33 +53,36 @@ TH1* getEfficiency(const string& inputFile = "",
 // each file might have the LO histograms: their names end with '_LO'
 // if you pass compareWithLO, an additional folder is created for each file, and inside the NLO and LO samples are compared
 
-// void plotEfficiency(const string& inputFilePath = "/afs/cern.ch/work/m/mciprian/w_mass_analysis/heppy/CMSSW_8_0_25/src/CMGTools/WMass/data/efficiency/", 
-// 		    const TString& inputFileNameList = "mc_reco_eff.root,mc_reco_pfmt30_eff.root,mc_reco_pfmt40_eff.root,mc_reco_pfmt50_eff.root",	
-// 		    const TString& legendEntryList = "no PF M_{T},PF M_{T} > 30,PF M_{T} > 40,PF M_{T} > 50",
-// 		    const string& outDir = "www/wmass/13TeV/efficiency_NLO_tightCharge/",
-// 		    const Bool_t compareWithLO = true,
-//		    const Bool_t compareWithSmear = true,
-//                  const TString& inputFileNameWithSmearList= "mc_reco_pfmt30_eff.root,mc_reco_pfmt40_eff.root,mc_reco_pfmt50_eff.root",
-// 		    const Bool_t isMuon = false 
-// 		    ) 
+void plotEfficiency(const string& inputFilePath = "/afs/cern.ch/work/m/mciprian/w_mass_analysis/heppy/CMSSW_8_0_25/src/CMGTools/WMass/python/plotter/eff_tightCharge_chargeMatch_absY/", 
+		    const TString& inputFileNameList = "mc_reco_eff.root",	
+		    const TString& legendEntryList = "PF M_{T} > 40",
+		    const string& outDir = "www/wmass/13TeV/efficiency_NLO_tightCharge_chargeMatch_absY/",
+		    const string& xvar = "abswy",
+		    const Bool_t compareWithLO = true,
+		    const Bool_t compareWithSmear = true,
+		    const TString& inputFileNameWithSmearList= "mc_reco_eff.root",
+		    const Bool_t isMuon = false 
+		    ) 
 // void plotEfficiency(const string& inputFilePath = "/afs/cern.ch/work/m/mdunser/public/cmssw/w-helicity-13TeV/CMSSW_8_0_25/src/CMGTools/WMass/python/plotter/cards/helicity_2018_03_29_PFMT40_pdfSyst_GRANDECOMBINAZIONE/", 
 // 		    const TString& inputFileNameList = "scalefile_PFMT40_LONLO.root",	
 // 		    const TString& legendEntryList = "PF M_{T} > 40",
 // 		    const string& outDir = "www/wmass/13TeV/efficiency_muon/",
+//		    const string& xvar = "abswy",
 // 		    const Bool_t compareWithLO = true,
 // 		    const Bool_t compareWithSmear = false,
 // 		    const TString& inputFileNameWithSmearList= "",
 // 		    const Bool_t isMuon = true 
 // 		    ) 
-void plotEfficiency(const string& inputFilePath = "/afs/cern.ch/work/m/mciprian/w_mass_analysis/heppy/CMSSW_8_0_25/src/CMGTools/WMass/python/plotter/eff_tightCharge_chargeMatch/", 
-		    const TString& inputFileNameList = "mc_reco_eff.root,mc_reco_pfmt30_eff.root,mc_reco_pfmt40_eff.root,mc_reco_pfmt50_eff.root",	
-		    const TString& legendEntryList = "no PF M_{T},PF M_{T} > 30,PF M_{T} > 40,PF M_{T} > 50",
-		    const string& outDir = "www/wmass/13TeV/efficiency_NLO_tightCharge_chargeMatch/",
-		    const Bool_t compareWithLO = true,
-		    const Bool_t compareWithSmear = true,
-		    const TString& inputFileNameWithSmearList= "mc_reco_pfmt30_eff.root,mc_reco_pfmt40_eff.root,mc_reco_pfmt50_eff.root",
-		    const Bool_t isMuon = false 
-		    ) 
+// void plotEfficiency(const string& inputFilePath = "/afs/cern.ch/work/m/mciprian/w_mass_analysis/heppy/CMSSW_8_0_25/src/CMGTools/WMass/python/plotter/eff_tightCharge_chargeMatch/", 
+// 		    const TString& inputFileNameList = "mc_reco_eff.root,mc_reco_pfmt30_eff.root,mc_reco_pfmt40_eff.root,mc_reco_pfmt50_eff.root",	
+// 		    const TString& legendEntryList = "no PF M_{T},PF M_{T} > 30,PF M_{T} > 40,PF M_{T} > 50",
+// 		    const string& outDir = "www/wmass/13TeV/efficiency_NLO_tightCharge_chargeMatch/",
+//		    const string& xvar = "abswy",
+// 		    const Bool_t compareWithLO = true,
+// 		    const Bool_t compareWithSmear = true,
+// 		    const TString& inputFileNameWithSmearList= "mc_reco_pfmt30_eff.root,mc_reco_pfmt40_eff.root,mc_reco_pfmt50_eff.root",
+// 		    const Bool_t isMuon = false 
+// 		    ) 
 {
 
 
@@ -99,25 +102,26 @@ void plotEfficiency(const string& inputFilePath = "/afs/cern.ch/work/m/mciprian/
   getVectorCStringFromTStringList(heffsLegEntry, legendEntryList, ",", true);
 
   vector<string> names;
-  names.push_back("wminus_wy_Wminus_left");
-  names.push_back("wminus_wy_Wminus_long");
-  names.push_back("wminus_wy_Wminus_right");
-  names.push_back("wplus_wy_Wplus_left");
-  names.push_back("wplus_wy_Wplus_long");
-  names.push_back("wplus_wy_Wplus_right");
+  names.push_back(Form("wminus_%s_Wminus_left",xvar.c_str()));
+  names.push_back(Form("wminus_%s_Wminus_long",xvar.c_str()));
+  names.push_back(Form("wminus_%s_Wminus_right",xvar.c_str()));
+  names.push_back(Form("wplus_%s_Wplus_left",xvar.c_str()));
+  names.push_back(Form("wplus_%s_Wplus_long",xvar.c_str()));
+  names.push_back(Form("wplus_%s_Wplus_right",xvar.c_str()));
 
   string nameReco = "";
+  Int_t xvarMatchLength = xvar.size() + 2; // we take into account _ before and after xvar. e.g.: xvar = wy --> 2 +2; xvar = abswy --> 5 + 2
 
   for (UInt_t i = 0; i < names.size(); ++i) {
     
     nameReco = names[i];
-    nameReco.insert(nameReco.find("_wy_")+4,"reco_");  
+    nameReco.insert(nameReco.find(Form("_%s_",xvar.c_str()))+xvarMatchLength,"reco_");  
 
     vector<TH1*> heffs;
     vector<TH1*> heffs_LO;
     vector<TH1*> heffs_Smear;
 
-    string canvasName = "reco_gen_efficiency_" + names[i].substr(names[i].find("wy_W"));
+    string canvasName = "reco_gen_efficiency_" + names[i].substr(names[i].find(Form("%s_W",xvar.c_str())));
 
     for (UInt_t iname = 0; iname < inputFileNames.size(); ++iname) {
       
@@ -131,7 +135,7 @@ void plotEfficiency(const string& inputFilePath = "/afs/cern.ch/work/m/mciprian/
       if (compareWithLO) {
 	if (isMuon) {
 	  string nameGen = names[i];
-	  nameGen.insert(nameGen.find("_wy_")+4,"LO_");  
+	  nameGen.insert(nameGen.find(Form("_%s_",xvar.c_str())) +xvarMatchLength,"LO_");  
 	  nameReco.insert(nameReco.find("_reco_")+6,"LO_");  
 	  heffs_LO.push_back( new TH1D( *((TH1D*) getEfficiency(inputFilePath+efficiencyFileName, isMuon, nameGen, nameReco)) ) );   
 	} else {
@@ -149,11 +153,12 @@ void plotEfficiency(const string& inputFilePath = "/afs/cern.ch/work/m/mciprian/
 	    break;
 	  }
 	}
-	if (not fileHasSmear) continue;
-	heffs_Smear.push_back( new TH1D( *((TH1D*) getEfficiency(inputFilePath+efficiencyFileName, isMuon, names[i], nameReco+"_Smear")) ) );   	
-	createPlotDirAndCopyPhp(outDir+outDirTagName);
-	adjustSettings_CMS_lumi(outDir+outDirTagName);
-	drawTH1pair((TH1*)heffs.back()->Clone(),heffs_Smear.back(),"y_{W}", "Reco/gen efficiency",canvasName+"_Smear",outDir+outDirTagName,"No smear","Smear","NLO/Smear::0.9,1.1",-1.0,1,false); 
+	if (fileHasSmear) {
+	  heffs_Smear.push_back( new TH1D( *((TH1D*) getEfficiency(inputFilePath+efficiencyFileName, isMuon, names[i], nameReco+"_SmearPFMET")) ) );   	
+	  createPlotDirAndCopyPhp(outDir+outDirTagName);
+	  adjustSettings_CMS_lumi(outDir+outDirTagName);
+	  drawTH1pair((TH1*)heffs.back()->Clone(),heffs_Smear.back(),"y_{W}", "Reco/gen efficiency",canvasName+"_Smear",outDir+outDirTagName,"No smear","Smear","NLO/Smear::0.95,1.05",-1.0,1,false); 
+	}
       }
     }
     

@@ -4,123 +4,76 @@ const static int smoothPolinDegree = 1;
 
 using namespace std;
 
+// rebin pt like this for W and Z or sum (should be a subsample of bin boundaries array before rebinning (taken directly from histograms)
+// the higher the index, the less granular is the array
+static const vector<Double_t> ptBinBoundariesQCD_1 = {30,34,38,42,46,50,54,60};
+static const vector<Double_t> ptBinBoundariesQCD_2 = {30,35,40,46,52,60};
+static const vector<Double_t> ptBinBoundariesEWK_1 = {30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,46,48,50,54,60};
+static const vector<Double_t> ptBinBoundariesEWK_2 = {30,32,34,36,38,40,42,44,46,48,50,54,60};
+
+const TString& processesList = "data,data_sub,QCD,W,Z";
+const TString& legendEntryList = "data;data subtr. EWK MC;QCD MC;W MC (prompt rate);Z MC (prompt rate)"; 
+const TString& legendEntryList_WandZ = "data;data subtr. EWK MC;QCD MC;W,Z MC (prompt rate)"; 
+// if you want to show W+Z, set showMergedEWK = true and pass "W,Z MC (prompt rate)" to both W and Z, the color use is the one of the first W or Z in the list
+const vector<Int_t> colorList = {kBlack, kRed, kGreen+2, kBlue, kAzure+2};
+
+vector<Double_t> etaBoundariesGlobal;
+
+TH2D* frSmoothParameter_data = nullptr;
+TH2D* frSmoothParameter_qcd = nullptr;
+TH2D* frSmoothParameter_w = nullptr;
+TH2D* frSmoothParameter_z = nullptr;
+TH2D* frSmoothParameter_ewk = nullptr;
+
 // the core of this macro is makeFakeRateGraphPlotsAndSmoothing(), which is at the bottom of this code and calls all the rest
 
-// the idea is to get the files with the fake rate graphs and plot them together (plots produced with the fake rate script suck ;-) )
-// you need to pass:
-// inputFilePath: path to root file with fake rate graphs ( /path/to/some/where/, which contains the file(s) for the different eta bins)
-// isMuon: a boolean flag to decide if you have muons, or electrons (but now there are some hardcoded pieces that suppose you use electrons :( )
-// etaBinBoundariesList: a string with eta bin boundaries separated by commas (no space), e.g.: "0.0,1.479,2.1,2.5" (please always use at least one decimal, like 1.0)
-// saveToFile: boolean flag to decide whether to save smoothed FR fit parameters in file (you might just want to do plots to see how they look)
-// inputLuminosity: luminosity to be shown in the plot (a negative value doens't print any number, just '13 TeV' in the canvas)
-// inputFilePathForQCD_tmp: if empty, take QCD from same file as data, otherwise use this path (the reason is that you might want to use a different pt
-//   binning for QCD because you have much less statistics and in this case the graphs are in another path)
+//============================================
 
+void fillFakeRateTH2(TH2* h2 = nullptr, const Int_t etaBin = 0, const TH1* hpass = nullptr, const TH1* hntot = nullptr) {
 
-//=======================================================================
+  // the TH1 passed to this function might have less xbins than TH2, becasue TH2 has the original bins of pt in the input root file
+  // TH1 might have been rebinned, but since the new binning is a subset of the original, we can just fill two or more consecutive bins of TH2 with same values
 
-// following part is for the plotting the fake rate
+  TH1* ratio = (TH1*) hpass->Clone("ratio");
+  ratio->Divide(hntot);
 
-//=====================================================================
+  Double_t pt = 0.0;
 
-
-void doFakeRateGraphPlots(const string& outputDIR_tmp = "./", 
-			  const string& inputFileName_tmp = "wmass_varhists.root", 
-			  const string& graphPrefix = "",
-			  const string& mtDefinition = "trkmtfix",
-			  const Bool_t isMuon = false, 
-			  const Bool_t isEB = true,
-			  const Double_t inputLuminosity = -1,
-			  const string& plotPostFix = "",
-			  const string& inputFileNameForQCD_tmp = "",
-			  const string& graphPrefixQCD_tmp = "",
-			  const string& fr_fQCD_file = ""
-			  ) 
-{
-  
-  string outputDIR = outputDIR_tmp + "FR_graphs/";
-  string inputFileName = inputFileName_tmp + fr_fQCD_file;
-  string inputFileNameForQCD = inputFileNameForQCD_tmp + fr_fQCD_file;
-
-  createPlotDirAndCopyPhp(outputDIR);
-
-  gROOT->SetBatch(kTRUE);
-  TH1::SetDefaultSumw2(); //all the following histograms will automatically call TH1::Sumw2()                  
-  cout << endl;
-
-  TFile* inputFile = new TFile(inputFileName.c_str(),"READ");
-  if (!inputFile || inputFile->IsZombie()) {
-    cout << "Error: file not opened. Exit" << endl;
-    exit(EXIT_FAILURE);
-  }
-
-  inputFile->cd();
-
-  TFile* inputFileForQCD = NULL;
-  if (inputFileNameForQCD_tmp != "") {
-    inputFileForQCD = new TFile(inputFileNameForQCD.c_str(),"READ");
-    if (!inputFileForQCD || inputFileForQCD->IsZombie()) {
-      cout << "Error: file not opened. Exit" << endl;
-      exit(EXIT_FAILURE);
-    }
+  for (Int_t ipt = 1; ipt < h2->GetNbinsX(); ++ipt) {
     
+    pt = h2->GetXaxis()->GetBinCenter(ipt);
+    h2->SetBinContent(ipt,etaBin,ratio->GetBinContent(ratio->GetXaxis()->FindFixBin(pt)));
+
   }
-
-  TGraphAsymmErrors* fr_data_subEWKpromptRate = NULL; // FR obtained computing it in 2 mT regions to remove prompt lepton rate
-  TGraphAsymmErrors* fr_data_orig = NULL;  // FR before EWK subraction
-  TGraphAsymmErrors* fr_data_subEWKMC = NULL;  // FR from data after subtracting EWK from MC
-  TGraphAsymmErrors* fr_qcdmc = NULL;  // FR from QCD MC
-  TGraphAsymmErrors* fr_w = NULL;  // FR from W MC (actually, the prompt rate)
-
-  // tmp plot to be removed to adjust settings in CMS_lumi
-  adjustSettings_CMS_lumi(outputDIR);
-
-  string detId = isEB ? "EB" : "EE";
-
-  vector<TGraph*> graphList;  // first element is the one on top of the stack
-  vector<string> graphLegend;
-  vector <Double_t> legCoord = {0.15,0.65,0.60,0.9};
-
-  string graphPrefixQCD = "";
-  if (graphPrefixQCD_tmp == "") graphPrefixQCD = graphPrefix;
-  else                          graphPrefixQCD = graphPrefixQCD_tmp;
-
-  fr_data_subEWKMC         = (TGraphAsymmErrors*) getGraphCloneFromFile(inputFile, graphPrefix + "_data_2d_prefit_sub_graph", "", inputFileName);
-  fr_data_orig             = (TGraphAsymmErrors*) getGraphCloneFromFile(inputFile, graphPrefix + "_" + mtDefinition + "_data_prefit", "", inputFileName);
-  if (inputFileNameForQCD_tmp == "") 
-    fr_qcdmc               = (TGraphAsymmErrors*) getGraphCloneFromFile(inputFile, graphPrefix + "_" + mtDefinition + "_QCD_prefit", "", inputFileName);
-  else { 
-    inputFileForQCD->cd();
-    fr_qcdmc               = (TGraphAsymmErrors*) getGraphCloneFromFile(inputFileForQCD, graphPrefixQCD + "_" + mtDefinition + "_QCD_prefit", "", inputFileNameForQCD);
-  }
-  fr_w                     = (TGraphAsymmErrors*) getGraphCloneFromFile(inputFile, graphPrefix + "_W_2d_prefit_graph", "", inputFileName);
-  // fr_data_subEWKpromptRate = (TGraphAsymmErrors*) getGraphCloneFromFile(inputFile, graphPrefix + "_" + mtDefinition + "_data_fqcd", "", inputFileName);
-  
-  checkNotNullPtr(fr_data_subEWKMC,"fr_data_subEWKMC");
-  checkNotNullPtr(fr_data_orig,"fr_data_orig");
-  checkNotNullPtr(fr_qcdmc,"fr_qcdmc");
-  // checkNotNullPtr(fr_data_subEWKpromptRate,"fr_data_subEWKpromptRate");
-  checkNotNullPtr(fr_w,"fr_w");
-  
-  graphList.push_back(fr_data_orig);
-  graphList.push_back(fr_data_subEWKMC);
-  graphList.push_back(fr_qcdmc);
-  graphList.push_back(fr_w);
-  // graphList.push_back(fr_data_subEWKpromptRate);
-
-  graphLegend.push_back("data");
-  graphLegend.push_back("data subtr. EWK MC");
-  graphLegend.push_back("QCD MC");
-  graphLegend.push_back("W MC (prompt rate)");
-  // graphLegend.push_back("data subtr. prompt rate");
-
-  //  string yrange = isEB ? "0.0,1.1" : "0,0.8";
-  string yrange = isEB ? "0.25,1.4" : "0,1.4";
-
-  drawGraphCMS(graphList,"electron p_{T} [GeV]",Form("Fake Rate::%s",yrange.c_str()),Form("fakerateComparison_%s_%s",detId.c_str(),plotPostFix.c_str()),outputDIR,graphLegend,legCoord,inputLuminosity);
 
 }
 
+//============================================
+
+
+void fillFakeRateTH2smooth(TH2* h2 = nullptr, const TH2* h2fit = nullptr) {
+
+  // the TH1 passed to this function might have less xbins than TH2, becasue TH2 has the original bins of pt in the input root file
+  // TH1 might have been rebinned, but since the new binning is a subset of the original, we can just fill two or more consecutive bins of TH2 with same values
+
+  Double_t offset = 0.0;
+  Double_t slope  = 0.0;
+  Double_t pt = 0.0;
+
+  for (Int_t ipt = 1; ipt <= h2->GetNbinsX(); ++ipt) {
+
+    for (Int_t ieta = 1; ieta <= h2->GetNbinsY(); ++ieta) {
+
+      pt = h2->GetXaxis()->GetBinCenter(ipt);
+      offset = h2fit->GetBinContent(ieta, 1);
+      slope = h2fit->GetBinContent(ieta, 2);
+      h2->SetBinContent(ipt,ieta, offset + slope * pt);
+      
+    }
+
+  }
+
+}
 
 //============================================
 
@@ -133,12 +86,13 @@ TFitResultPtr fitGraph(TGraph* gr = NULL,
 		       const string& xAxisNameTmp = "xAxis", 
 		       const string& yAxisNameTmp = "yAxis", 
 		       const string& canvasName = "default",
-		       const string& outputDIR = "./",
+		       const string& outDir = "./",
 		       const string& legEntry = "",
 		       const vector<Double_t>& legCoord = {0.5,0.15,0.9,0.35},
 		       const Double_t lumi = -1.0,
 		       const Bool_t isData = true,
-		       const Bool_t isPromptRate = false
+		       const Bool_t isPromptRate = false,
+		       const Double_t nSigmaVarInPlot = 1.0
 		       ) 
 {
 
@@ -151,6 +105,20 @@ TFitResultPtr fitGraph(TGraph* gr = NULL,
   Double_t ymin = 0;
   Double_t ymax = 0;
   Bool_t setYAxisRangeFromUser = getAxisRangeFromUser(yAxisName, ymin, ymax, yAxisNameTmp);
+
+  // override function above
+  Int_t n = gr->GetN();
+  Double_t* y = gr->GetY();
+  Double_t* yerrup = gr->GetEYhigh();
+  Double_t* yerrdn = gr->GetEYlow();
+  Int_t loc = TMath::LocMax(n,y);
+  Double_t tmax = y[loc]+yerrup[loc];
+  loc = TMath::LocMin(n,y);
+  Double_t tmin = y[loc]-yerrdn[loc];
+  Double_t ydiff = tmax - tmin;
+
+  ymin = std::max(0.0, tmin - 0.5 * ydiff);
+  ymax = std::min(1.4, tmax + 1.0 * ydiff);
 
   string polN = string(Form("pol%d",smoothPolinDegree));
   // see fit options here: https://root.cern.ch/doc/master/classTGraph.html#aa978c8ee0162e661eae795f6f3a35589
@@ -244,12 +212,12 @@ TFitResultPtr fitGraph(TGraph* gr = NULL,
 
   TF1 * linefit_p0up = new TF1("linefit_p0up",polN.c_str(),xminfit,xmaxfit);
   linefit_p0up->SetNpx(10000);
-  linefit_p0up->SetParameter(0, linefit->GetParameter(0)+2*linefit->GetParError(0));
+  linefit_p0up->SetParameter(0, linefit->GetParameter(0)+nSigmaVarInPlot*linefit->GetParError(0));
   linefit_p0up->SetParameter(1, linefit->GetParameter(1));
   if (smoothPolinDegree > 1) linefit_p0up->SetParameter(2, linefit->GetParameter(2));
   TF1 * linefit_p0dn = new TF1("linefit_p0dn",polN.c_str(),xminfit,xmaxfit);
   linefit_p0dn->SetNpx(10000);
-  linefit_p0dn->SetParameter(0, linefit->GetParameter(0)-2*linefit->GetParError(0));
+  linefit_p0dn->SetParameter(0, linefit->GetParameter(0)-nSigmaVarInPlot*linefit->GetParError(0));
   linefit_p0dn->SetParameter(1, linefit->GetParameter(1));
   if (smoothPolinDegree > 1) linefit_p0dn->SetParameter(2, linefit->GetParameter(2));
 
@@ -266,12 +234,12 @@ TFitResultPtr fitGraph(TGraph* gr = NULL,
   linefit2->GetRange(xminfit2,xmaxfit2);
   TF1 * linefit2_p0up = new TF1("linefit2_p0up",polN.c_str(),xminfit2,xmaxfit2);
   linefit2_p0up->SetNpx(10000);
-  linefit2_p0up->SetParameter(0, linefit2->GetParameter(0)+2*linefit2->GetParError(0));
+  linefit2_p0up->SetParameter(0, linefit2->GetParameter(0)+nSigmaVarInPlot*linefit2->GetParError(0));
   linefit2_p0up->SetParameter(1, linefit2->GetParameter(1));
   if (smoothPolinDegree > 1) linefit2_p0up->SetParameter(2, linefit2->GetParameter(2));
   TF1 * linefit2_p0dn = new TF1("linefit2_p0dn",polN.c_str(),xminfit2,xmaxfit2);
   linefit2_p0dn->SetNpx(10000);
-  linefit2_p0dn->SetParameter(0, linefit2->GetParameter(0)-2*linefit2->GetParError(0));
+  linefit2_p0dn->SetParameter(0, linefit2->GetParameter(0)-nSigmaVarInPlot*linefit2->GetParError(0));
   linefit2_p0dn->SetParameter(1, linefit2->GetParameter(1));
   if (smoothPolinDegree > 1) linefit2_p0dn->SetParameter(2, linefit2->GetParameter(2));
 
@@ -304,9 +272,9 @@ TFitResultPtr fitGraph(TGraph* gr = NULL,
   //leg.AddEntry(linefit,"fit: p_{0} + p_{1}#upointx","L");
   if (smoothPolinDegree > 1) leg.AddEntry(linefit,"fit: p_{0} + p_{1}#upointx + p_{2}#upointx^{2}","L");
   else leg.AddEntry(linefit,Form("fit: %.2g %s %.2g #upoint x",fitres->Parameter(0),((fitres->Parameter(1) > 0) ? "+":"-"), fabs(fitres->Parameter(1))),"L");
-  leg.AddEntry(linefit_p0dn,"offset up/down (2#sigma)","L");
+  leg.AddEntry(linefit_p0dn,"offset up/down (1#sigma)","L");
   leg.AddEntry(linefit2,Form("fit: %.2g %s %.2g #upoint x",fitres2->Parameter(0),((fitres2->Parameter(1) > 0) ? "+":"-"), fabs(fitres2->Parameter(1))),"L");
-  leg.AddEntry(linefit2_p0dn,"offset up/down (2#sigma)","L");
+  leg.AddEntry(linefit2_p0dn,"offset up/down (1#sigma)","L");
   leg.Draw("same");
   // draw envelope
   linefit_p0up->Draw("Lsame");
@@ -337,143 +305,260 @@ TFitResultPtr fitGraph(TGraph* gr = NULL,
 
   canvas->RedrawAxis("sameaxis");
 
-  canvas->SaveAs((outputDIR+canvasName+".png").c_str());
-  canvas->SaveAs((outputDIR+canvasName+".pdf").c_str());
+  canvas->SaveAs((outDir+canvasName+".png").c_str());
+  canvas->SaveAs((outDir+canvasName+".pdf").c_str());
 
   delete canvas;
 
   if (isData) return fitres2;  // return fit in shorter range
-  else return fitres; // for QCD, it makes much more sense to use graph in full range, because we don't have to worry about prompt lepton rate at high pt
+  else return fitres; // for QCD or other MC, it makes much more sense to use graph in full range, because we don't have to worry about prompt lepton rate at high pt
   // also, for QCD the binning is tipically much less granular, so the fit in the narrow range would have just 4 points
 
 }
 
-//============================================
+//=======================================================================
 
-void doFakeRateSmoothing(const string& outputDIR_tmp = "./", 
-			 const string& inputFileName_tmp = "wmass_varhists.root", 
-			 const string& graphPrefix = "",
-			 const string& mtDefinition = "trkmtfix",
-			 const Bool_t isMuon = false, 
-			 const Bool_t isEB = true,
-			 const Double_t inputLuminosity = -1,
-			 const string& plotPostFix = "",
-			 const string& inputFileNameForQCD_tmp = "",
-			 const string& graphPrefixQCD_tmp = "",
-			 const string& fr_fQCD_file = "",
-			 TH2D* h2_fitParVsEta_data = NULL,
-			 TH2D* h2_fitParVsEta_qcd = NULL,
-			 TH2D* h2_fitParVsEta_w = NULL,
-			 const Int_t etaBinNumber = 1
-			 ) 
+// following part is for the plotting the fake rate
+
+//=====================================================================
+
+
+void doFakeRateGraphPlots(const string& inputFileName = "", 
+			  const string& outDir = "",
+			  const string& histPrefix = "fakeRateNumerator_el_vs_pt_granular",
+			  const vector<Int_t> ptBinIndexQCD = {1},  // should be a number for each eta bin (if only one is given, use it for all)
+			  const vector<Int_t> ptBinIndexEWK = {1},  // should be a number for each eta bin (if only one is given, use it for all)
+			  const Bool_t showMergedEWK = true,
+			  const Double_t inputLuminosity = -1,
+			  const Bool_t isEB = true,
+			  const string& plotPostFix = "",
+			  const Int_t etaBinNumber = 0
+			  ) 
 {
-  
-  string outputDIR = outputDIR_tmp + "FR_graphs/";
-  string inputFileName = inputFileName_tmp + fr_fQCD_file;;
-  string inputFileNameForQCD = inputFileNameForQCD_tmp + fr_fQCD_file;
-
-  createPlotDirAndCopyPhp(outputDIR);
 
   gROOT->SetBatch(kTRUE);
   TH1::SetDefaultSumw2(); //all the following histograms will automatically call TH1::Sumw2()                  
   cout << endl;
 
+  Int_t etaBinTH1 = etaBinNumber+1;
+
+  vector<Double_t> ptBinBoundariesEWK;
+  if (ptBinIndexEWK.size() == 1) {
+    if      (ptBinIndexEWK[0] == 1) ptBinBoundariesEWK = ptBinBoundariesEWK_1;
+    else if (ptBinIndexEWK[0] == 2) ptBinBoundariesEWK = ptBinBoundariesEWK_2;
+  } else {
+    if      (ptBinIndexEWK[etaBinNumber] == 1) ptBinBoundariesEWK = ptBinBoundariesEWK_1;
+    else if (ptBinIndexEWK[etaBinNumber] == 2) ptBinBoundariesEWK = ptBinBoundariesEWK_2;
+  }
+
+  vector<Double_t> ptBinBoundariesQCD;
+  if (ptBinIndexQCD.size() == 1) {
+    if      (ptBinIndexQCD[0] == 1) ptBinBoundariesQCD = ptBinBoundariesQCD_1;
+    else if (ptBinIndexQCD[0] == 2) ptBinBoundariesQCD = ptBinBoundariesQCD_2;
+  } else {
+    if      (ptBinIndexQCD[etaBinNumber] == 1) ptBinBoundariesQCD = ptBinBoundariesQCD_1;
+    else if (ptBinIndexQCD[etaBinNumber] == 2) ptBinBoundariesQCD = ptBinBoundariesQCD_2;
+  }
+
+  TGraphAsymmErrors* fr_data_subEWKMC = nullptr;
+  TGraphAsymmErrors* fr_w = nullptr;
+  TGraphAsymmErrors* fr_z = nullptr;
+  TGraphAsymmErrors* fr_qcd = nullptr;
+  TGraphAsymmErrors* fr_ewk = nullptr;
+
+  string detId = isEB ? "EB" : "EE";
+  string yrange = isEB ? "0.25,1.4" : "0,1.4";  // range for plotting all graphs
+  vector <Double_t> legCoord = {0.15,0.65,0.60,0.9};
+
+  cout << "Will save plots in " << outDir << endl;
+  createPlotDirAndCopyPhp(outDir);
+  adjustSettings_CMS_lumi(outDir);
+
+  vector<string> processes;
+  cout << "Processes to plot: " << endl;
+  getVectorCStringFromTStringList(processes,  processesList, ",", true);
+
+  vector<string> legendEntries;
+  cout << "Legend entries: " << endl;
+  if (showMergedEWK) getVectorCStringFromTStringList(legendEntries,  legendEntryList_WandZ, ";", true);
+  else               getVectorCStringFromTStringList(legendEntries,  legendEntryList, ";", true);
+
+  vector<TH1*> hpass;
+  vector<TH1*> hntot;
+  TH3* h3tmp = nullptr;
+  vector<TGraph*> gr;
+
+  TH1* hpass_ewk = nullptr;
+  TH1* hntot_ewk = nullptr;
+
+  ///////////////////////////////////////
+  // open file with inputs
+  //
   TFile* inputFile = new TFile(inputFileName.c_str(),"READ");
   if (!inputFile || inputFile->IsZombie()) {
     cout << "Error: file not opened. Exit" << endl;
     exit(EXIT_FAILURE);
   }
-
   inputFile->cd();
 
-  TFile* inputFileForQCD = NULL;
-  if (inputFileNameForQCD_tmp != "") {
-    inputFileForQCD = new TFile(inputFileNameForQCD.c_str(),"READ");
-    if (!inputFileForQCD || inputFileForQCD->IsZombie()) {
-      cout << "Error: file not opened. Exit" << endl;
-      exit(EXIT_FAILURE);
+  UInt_t nBins = 0;
+  UInt_t nBinsQCD = ptBinBoundariesQCD.size()-1;  
+  UInt_t nBinsEWK = ptBinBoundariesEWK.size()-1;  
+  Double_t ptMin = 0.0;
+  Double_t ptMax = 0.0;
+
+  for (UInt_t j = 0; j < processes.size(); ++j) {
+
+    string h3Name = Form("%s_%s",histPrefix.c_str(), processes[j].c_str());
+
+    h3tmp = (TH3*) getObjectCloneFromFile(inputFile,h3Name);
+    checkNotNullPtr(h3tmp, h3Name);
+    h3tmp->SetDirectory(0);
+
+    nBins = h3tmp->GetNbinsX();
+    Double_t* ptBins = (Double_t*) h3tmp->GetXaxis()->GetXbins()->GetArray();
+    //Double_t* ptBins = ptBins_tmp;
+    ptMin = ptBins[0];
+    ptMax = ptBins[nBins];
+
+    hpass.push_back( new TH1D(Form("%s_pass",processes[j].c_str()),"", nBins, ptBins) );
+    hntot.push_back( new TH1D(Form("%s_ntot",processes[j].c_str()),"", nBins, ptBins) );
+    if (hpass_ewk == nullptr && hntot_ewk == nullptr) {
+      hpass_ewk = new TH1D("ewk_pass","", nBinsEWK, ptBinBoundariesEWK.data());
+      hntot_ewk = new TH1D("ewk_ntot","", nBinsEWK, ptBinBoundariesEWK.data());
     }
-    
+
+    Double_t error = 0.0;
+    for (Int_t ix = 1; ix <= h3tmp->GetNbinsX(); ++ix) {
+      hpass.back()->SetBinContent(ix,h3tmp->IntegralAndError(ix,ix,0,h3tmp->GetNbinsY()+1,2,2,error)); // bin 1 along Z for fail, 2 for pass
+      hpass.back()->SetBinError(ix,error);
+      hntot.back()->SetBinContent(ix,h3tmp->IntegralAndError(ix,ix,0,h3tmp->GetNbinsY()+1,1,2,error));
+      hntot.back()->SetBinError(ix,error);
+    }
+    if (processes[j] == "QCD") {
+      hpass.back() = hpass.back()->Rebin(nBinsQCD,"",ptBinBoundariesQCD.data());
+      hntot.back() = hntot.back()->Rebin(nBinsQCD,"",ptBinBoundariesQCD.data());
+    } else if (processes[j] == "W" || processes[j] == "Z") {
+      hpass.back() = hpass.back()->Rebin(nBinsEWK,"",ptBinBoundariesEWK.data());
+      hntot.back() = hntot.back()->Rebin(nBinsEWK,"",ptBinBoundariesEWK.data());
+      hpass_ewk->Add(hpass.back());
+      hntot_ewk->Add(hntot.back());
+    }
+
+    if (processes[j] == "W") {
+
+      fr_w = new TGraphAsymmErrors(hpass.back(), hntot.back(), "cl=0.683 b(1,1) mode");
+      if (not showMergedEWK) gr.push_back(fr_w);
+      //fillFakeRateTH2(fr_pt_eta_w,etaBinTH1,hpass.back(),hntot.back());
+
+    } else if (processes[j] == "Z") {
+
+      fr_z = new TGraphAsymmErrors(hpass.back(), hntot.back(), "cl=0.683 b(1,1) mode");
+      if (not showMergedEWK) gr.push_back(new TGraphAsymmErrors(hpass.back(), hntot.back(), "cl=0.683 b(1,1) mode"));
+      //fillFakeRateTH2(fr_pt_eta_z,etaBinTH1,hpass.back(),hntot.back());
+
+    } else {
+
+      gr.push_back( new TGraphAsymmErrors(hpass.back(), hntot.back(), "cl=0.683 b(1,1) mode") );
+      if (processes[j] == "data_sub") {
+	fr_data_subEWKMC = (TGraphAsymmErrors*) gr.back();
+	//fillFakeRateTH2(fr_pt_eta_data,etaBinTH1,hpass.back(),hntot.back());
+      } else if (processes[j] == "QCD") {
+	fr_qcd           = (TGraphAsymmErrors*) gr.back();
+	//fillFakeRateTH2(fr_pt_eta_qcd,etaBinTH1,hpass.back(),hntot.back());
+      }
+
+    }
+
   }
 
-  TGraphAsymmErrors* fr_data_subEWKpromptRate = NULL; // FR obtained computing it in 2 mT regions to remove prompt lepton rate
-  TGraphAsymmErrors* fr_data_orig = NULL;  // FR before EWK subraction
-  TGraphAsymmErrors* fr_data_subEWKMC = NULL;  // FR from data after subtracting EWK from MC
-  TGraphAsymmErrors* fr_qcdmc = NULL;  // FR from QCD MC
-  TGraphAsymmErrors* fr_w = NULL;  // FR from W MC (prompt rate actually)
+  fr_ewk = new TGraphAsymmErrors(hpass_ewk, hntot_ewk, "cl=0.683 b(1,1) mode");
+  if (showMergedEWK) gr.push_back(fr_ewk);
+  //fillFakeRateTH2(fr_pt_eta_ewk,etaBinTH1,hpass_ewk,hntot_ewk);
 
-  // tmp plot to be removed to adjust settings in CMS_lumi
-  adjustSettings_CMS_lumi(outputDIR);
+  drawGraphCMS(gr, 
+	       Form("electron p_{T} [GeV]::%f,%f",ptMin,ptMax), 
+	       Form("Fake Rate::%s",yrange.c_str()), 
+	       Form("fakerateComparison_%s_%s",detId.c_str(),plotPostFix.c_str()), 
+	       outDir, legendEntries, legCoord,inputLuminosity,false,"",colorList);
+  
+  //////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////
 
-  string detId = isEB ? "EB" : "EE";
-
-  // hardcoded name of Tgraphs inside file :(
-  string graphPrefixQCD = "";
-  if (graphPrefixQCD_tmp == "") graphPrefixQCD = graphPrefix;
-  else                          graphPrefixQCD = graphPrefixQCD_tmp;
-
-  fr_data_subEWKMC           = (TGraphAsymmErrors*) getGraphCloneFromFile(inputFile, graphPrefix + "_data_2d_prefit_sub_graph", "", inputFileName);
-  // fr_data_subEWKpromptRate   = (TGraphAsymmErrors*) getGraphCloneFromFile(inputFile, graphPrefix + "_" + mtDefinition + "_data_fqcd", "", inputFileName);
-  // fr_data_orig               = (TGraphAsymmErrors*) getGraphCloneFromFile(inputFile, graphPrefix + "_" + mtDefinition + "_data_prefit", "", inputFileName);
-  if (inputFileNameForQCD_tmp == "") 
-    fr_qcdmc               = (TGraphAsymmErrors*) getGraphCloneFromFile(inputFile, graphPrefix + "_" + mtDefinition + "_QCD_prefit", "", inputFileName);
-  else { 
-    inputFileForQCD->cd();
-    fr_qcdmc               = (TGraphAsymmErrors*) getGraphCloneFromFile(inputFileForQCD, graphPrefixQCD + "_" + mtDefinition + "_QCD_prefit", "", inputFileNameForQCD);
-  }
-  fr_w                     = (TGraphAsymmErrors*) getGraphCloneFromFile(inputFile, graphPrefix + "_W_2d_prefit_graph", "", inputFileName);
-      
-  //checkNotNullPtr(fr_data_subEWKpromptRate,"fr_data_subEWKpromptRate");
-  checkNotNullPtr(fr_data_subEWKMC,"fr_data_subEWKMC");
-  // checkNotNullPtr(fr_data_orig,"fr_data_orig");
-  checkNotNullPtr(fr_qcdmc,"fr_qcdmc");
-  checkNotNullPtr(fr_w,"fr_w");
-
-  //  string yrange_data = isEB ? "0.2,0.5" : "0.2,0.4";
+  // ranges for the fit plot
+  // currently overriden inside the fucntion to plot the fit
+  // keep for reference
   string yrange_data  = isEB ? "0.5,1.0" : "0.1,0.4";
   string yrange_qcdmc = isEB ? "0.0,1.2" : "0.0,0.8";
   string yrange_w     = isEB ? "0.8,1.2" : "0.4,1.2";
-  vector <Double_t> legCoord = {0.12,0.7,0.60,0.9};
+  string yrange_z     = isEB ? "0.8,1.2" : "0.4,1.2";
+  string yrange_ewk   = isEB ? "0.8,1.2" : "0.4,1.2";
+  vector <Double_t> legCoordFit = {0.12,0.7,0.60,0.9};
 
-  TFitResultPtr ptr_data = fitGraph(fr_data_subEWKMC, isEB, "electron p_{T} [GeV]", Form("Fake Rate::%s",yrange_data.c_str()), Form("fr_data_subEWKMC_%s_%s",detId.c_str(),plotPostFix.c_str()), outputDIR, "data subtr. EWK MC", legCoord,inputLuminosity,true, false);
-
-  // fit is Y=a*X+b
-  // bin n.1 is for b (first parameter of pol1), bin n.2 is for a 
-  h2_fitParVsEta_data->SetBinContent(etaBinNumber,1,ptr_data->Parameter(0));
-  h2_fitParVsEta_data->SetBinError(etaBinNumber,1,ptr_data->ParError(0));
-  h2_fitParVsEta_data->SetBinContent(etaBinNumber,2,ptr_data->Parameter(1));
-  h2_fitParVsEta_data->SetBinError(etaBinNumber,2,ptr_data->ParError(1));
-
-  TFitResultPtr ptr_w = fitGraph(fr_w, isEB, "electron p_{T} [GeV]", Form("Prompt Rate::%s",yrange_w.c_str()), Form("fr_w_%s_%s",detId.c_str(),plotPostFix.c_str()), outputDIR, "W MC (prompt rate)", legCoord,inputLuminosity,false, true);
+  TFitResultPtr ptr_data = fitGraph(fr_data_subEWKMC, isEB, Form("electron p_{T} [GeV]::%f,%f",ptMin,ptMax), Form("Fake Rate::%s",yrange_data.c_str()), Form("fr_data_subEWKMC_%s_%s",detId.c_str(),plotPostFix.c_str()), outDir, "data subtr. EWK MC", legCoordFit,inputLuminosity,true, false);
 
   // fit is Y=a*X+b
   // bin n.1 is for b (first parameter of pol1), bin n.2 is for a 
-  h2_fitParVsEta_w->SetBinContent(etaBinNumber,1,ptr_w->Parameter(0));
-  h2_fitParVsEta_w->SetBinError(etaBinNumber,1,ptr_w->ParError(0));
-  h2_fitParVsEta_w->SetBinContent(etaBinNumber,2,ptr_w->Parameter(1));
-  h2_fitParVsEta_w->SetBinError(etaBinNumber,2,ptr_w->ParError(1));
+  frSmoothParameter_data->SetBinContent(etaBinTH1,1,ptr_data->Parameter(0));
+  frSmoothParameter_data->SetBinError(etaBinTH1,1,ptr_data->ParError(0));
+  frSmoothParameter_data->SetBinContent(etaBinTH1,2,ptr_data->Parameter(1));
+  frSmoothParameter_data->SetBinError(etaBinTH1,2,ptr_data->ParError(1));
+
+  TFitResultPtr ptr_w = fitGraph(fr_w, isEB, Form("electron p_{T} [GeV]::%f,%f",ptMin,ptMax), Form("Prompt Rate::%s",yrange_w.c_str()), Form("fr_w_%s_%s",detId.c_str(),plotPostFix.c_str()), outDir, "W MC (prompt rate)", legCoordFit,inputLuminosity,false, true);
+
+  // fit is Y=a*X+b
+  // bin n.1 is for b (first parameter of pol1), bin n.2 is for a 
+  frSmoothParameter_w->SetBinContent(etaBinTH1,1,ptr_w->Parameter(0));
+  frSmoothParameter_w->SetBinError(etaBinTH1,1,ptr_w->ParError(0));
+  frSmoothParameter_w->SetBinContent(etaBinTH1,2,ptr_w->Parameter(1));
+  frSmoothParameter_w->SetBinError(etaBinTH1,2,ptr_w->ParError(1));
+
+  TFitResultPtr ptr_z = fitGraph(fr_z, isEB, Form("electron p_{T} [GeV]::%f,%f",ptMin,ptMax), Form("Prompt Rate::%s",yrange_z.c_str()), Form("fr_z_%s_%s",detId.c_str(),plotPostFix.c_str()), outDir, "Z MC (prompt rate)", legCoordFit,inputLuminosity,false, true);
+
+  // fit is Y=a*X+b
+  // bin n.1 is for b (first parameter of pol1), bin n.2 is for a 
+  frSmoothParameter_w->SetBinContent(etaBinTH1,1,ptr_w->Parameter(0));
+  frSmoothParameter_w->SetBinError(etaBinTH1,1,ptr_w->ParError(0));
+  frSmoothParameter_w->SetBinContent(etaBinTH1,2,ptr_w->Parameter(1));
+  frSmoothParameter_w->SetBinError(etaBinTH1,2,ptr_w->ParError(1));
+
+  TFitResultPtr ptr_ewk = fitGraph(fr_ewk, isEB, Form("electron p_{T} [GeV]::%f,%f",ptMin,ptMax), Form("Prompt Rate::%s",yrange_ewk.c_str()), Form("fr_ewk_%s_%s",detId.c_str(),plotPostFix.c_str()), outDir, "W,Z MC (prompt rate)", legCoordFit,inputLuminosity,false, true);
+
+  // fit is Y=a*X+b
+  // bin n.1 is for b (first parameter of pol1), bin n.2 is for a 
+  frSmoothParameter_ewk->SetBinContent(etaBinTH1,1,ptr_ewk->Parameter(0));
+  frSmoothParameter_ewk->SetBinError(etaBinTH1,1,ptr_ewk->ParError(0));
+  frSmoothParameter_ewk->SetBinContent(etaBinTH1,2,ptr_ewk->Parameter(1));
+  frSmoothParameter_ewk->SetBinError(etaBinTH1,2,ptr_ewk->ParError(1));
 
 
-  TFitResultPtr ptr_qcd = fitGraph(fr_qcdmc, isEB, "electron p_{T} [GeV]", Form("Fake Rate::%s",yrange_qcdmc.c_str()), Form("fr_qcdmc_%s_%s",detId.c_str(),plotPostFix.c_str()), outputDIR, "QCD MC            ", legCoord,inputLuminosity,false, false);
+  TFitResultPtr ptr_qcd = fitGraph(fr_qcd, isEB, Form("electron p_{T} [GeV]::%f,%f",ptMin,ptMax), Form("Fake Rate::%s",yrange_qcdmc.c_str()), Form("fr_qcd_%s_%s",detId.c_str(),plotPostFix.c_str()), outDir, "QCD MC            ", legCoordFit,inputLuminosity,false, false);
 
-  h2_fitParVsEta_qcd->SetBinContent(etaBinNumber,1,ptr_qcd->Parameter(0));
-  h2_fitParVsEta_qcd->SetBinError(etaBinNumber,1,ptr_qcd->ParError(0));
-  h2_fitParVsEta_qcd->SetBinContent(etaBinNumber,2,ptr_qcd->Parameter(1));
-  h2_fitParVsEta_qcd->SetBinError(etaBinNumber,2,ptr_qcd->ParError(1));
+  frSmoothParameter_qcd->SetBinContent(etaBinTH1,1,ptr_qcd->Parameter(0));
+  frSmoothParameter_qcd->SetBinError(etaBinTH1,1,ptr_qcd->ParError(0));
+  frSmoothParameter_qcd->SetBinContent(etaBinTH1,2,ptr_qcd->Parameter(1));
+  frSmoothParameter_qcd->SetBinError(etaBinTH1,2,ptr_qcd->ParError(1));
+  //////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////
+
+  inputFile->Close();
+  delete inputFile;
 
 }
 
 //================================================================
 
-void makeFakeRateGraphPlotsAndSmoothing(const string& inputFilePath = "www/wmass/13TeV/fake-rate/test/SRtrees_new/fakeRate_pfmtfix_pt_granular_pfmet20_HLT27_tightChargeNum/el/comb/", 
-					const string& graphPrefix = "fakeRateNumerator_el_vs_pt_granular",
-					const string& mtDefinition = "pfmtfix",
+void makeFakeRateGraphPlotsAndSmoothing(const string& inputFilePath = "www/wmass/13TeV/fake-rate/test/SRtrees_new/fakeRate_pfmtfix_pt_granular_pfmet20_HLT27_tightChargeNum_5binEB_5binEE/el/comb/",
+					//const string& outDir_tmp = "SAME", 
+					const string& outDir_tmp = "www/wmass/13TeV/fake-rate/electron/FR_graphs/fakeRate_pfmtfix_pt_granular_pfmet20_HLT27_tightChargeNum_5binEB_5binEE_mergeWandZ/", 
+					const string& histPrefix = "fakeRateNumerator_el_vs_pfmtfix_pt_granular",
 					const Bool_t isMuon = false, 
-					const TString& etaBinBoundariesList = "0.0,1.0,1.479,2.1,2.5",  // important to use dots also for 1.0
-					const Double_t inputLuminosity = 35.9,  // -1 in case luminosity should not be printed
+					const Bool_t showMergedEWK = true,
 					const Bool_t saveToFile = false,  // whether to save is WMass/data/fakerate/ (if false, save in current folder)
-					const string& inputFilePathForQCD_tmp = "www/wmass/13TeV/fake-rate/test/SRtrees_new/fakeRate_pfmtfix_pt_coarse_pfmet20_HLT27_tightChargeNum/el/comb/",
-					const string& graphPrefixQCD = "fakeRateNumerator_el_vs_pt_coarse"
+					const TString& etaBinBoundariesList = "0.0,0.3,0.6,0.9,1.2,1.479,1.7,1.9,2.1,2.3,2.5",  // important to use dots also for 1.0
+					const vector<Int_t> ptBinIndexQCD = {2},  // should be a number for each eta bin (if only one is given, use it for all)
+					const vector<Int_t> ptBinIndexEWK = {1},  // should be a number for each eta bin (if only one is given, use it for all)
+					const Double_t inputLuminosity = 35.9 // -1 in case luminosity should not be printed
 			   ) 
 {
 
@@ -506,17 +591,18 @@ void makeFakeRateGraphPlotsAndSmoothing(const string& inputFilePath = "www/wmass
   }
   cout << endl;
 
-
+  etaBoundariesGlobal = etaBoundaries;
   Int_t NetaBins = (Int_t) etaBoundaries.size() - 1;
   vector<Double_t> parNumberBoundaries = {-0.5,0.5,1.5}; // bin center is 0 or 1 for a 2 parameter fit (we used a straight line to fit FR, so we have 2 parameters)
   Int_t Nparam = (Int_t) parNumberBoundaries.size() - 1;
 
-  TH2D* frSmoothParameter_data = new TH2D("frSmoothParameter_data","straight line fit parameters (offset, slope) vs eta",NetaBins,etaBoundaries.data(),Nparam,parNumberBoundaries.data());
-  TH2D* frSmoothParameter_qcd = new TH2D("frSmoothParameter_qcd","straight line fit parameters (offset, slope) vs eta",NetaBins,etaBoundaries.data(),Nparam,parNumberBoundaries.data());
-  TH2D* frSmoothParameter_w = new TH2D("frSmoothParameter_w","straight line fit parameters (offset, slope) vs eta",NetaBins,etaBoundaries.data(),Nparam,parNumberBoundaries.data());
+  frSmoothParameter_data = new TH2D("frSmoothParameter_data","straight line fit parameters (offset, slope) vs eta",NetaBins,etaBoundaries.data(),Nparam,parNumberBoundaries.data());
+  frSmoothParameter_qcd = new TH2D("frSmoothParameter_qcd","straight line fit parameters (offset, slope) vs eta",NetaBins,etaBoundaries.data(),Nparam,parNumberBoundaries.data());
+  frSmoothParameter_w = new TH2D("frSmoothParameter_w","straight line fit parameters (offset, slope) vs eta",NetaBins,etaBoundaries.data(),Nparam,parNumberBoundaries.data());
+  frSmoothParameter_z = new TH2D("frSmoothParameter_z","straight line fit parameters (offset, slope) vs eta",NetaBins,etaBoundaries.data(),Nparam,parNumberBoundaries.data());
+  frSmoothParameter_ewk = new TH2D("frSmoothParameter_ewk","straight line fit parameters (offset, slope) vs eta",NetaBins,etaBoundaries.data(),Nparam,parNumberBoundaries.data());
 
-  string outputDIR = inputFilePath;
-  string inputFilePathForQCD = (inputFilePathForQCD_tmp == "") ? inputFilePath : inputFilePathForQCD_tmp;
+  string outDir = (outDir_tmp == "SAME") ? (inputFilePath + "FR_graphs/") : outDir_tmp;
 
   for (Int_t i = 0; i < NetaBins; i++) {
 
@@ -524,23 +610,20 @@ void makeFakeRateGraphPlotsAndSmoothing(const string& inputFilePath = "www/wmass
     string fr_fQCD_file = "fr_sub_" + etabinPostFix + "_fQCD.root";
 
     Bool_t isEB = (etaBoundaries[i] < 1.479) ? true : false; 
-    doFakeRateGraphPlots(outputDIR,
-			 inputFilePath,graphPrefix,mtDefinition,
-			 isMuon,isEB,inputLuminosity,etabinPostFix,
-			 inputFilePathForQCD,graphPrefixQCD,fr_fQCD_file);
-
-    doFakeRateSmoothing(outputDIR,
-			inputFilePath,graphPrefix,mtDefinition,
-			isMuon,isEB,inputLuminosity,etabinPostFix,
-			inputFilePathForQCD,graphPrefixQCD,fr_fQCD_file,
-			frSmoothParameter_data,
-			frSmoothParameter_qcd,
-			frSmoothParameter_w,
-			i+1);  // pass i+1 as bin number because TH2 binning numbering starts from 1
+    doFakeRateGraphPlots(inputFilePath + fr_fQCD_file,
+			 outDir,
+			 histPrefix,
+			 ptBinIndexQCD,
+			 ptBinIndexEWK,
+			 showMergedEWK,
+			 inputLuminosity,
+			 isEB,
+			 etabinPostFix,
+			 i); 
 
   }
 
-
+  cout << "etaBoundariesGlobal.size()-1, etaBoundariesGlobal.data() " << etaBoundariesGlobal.size()-1 << "   " << etaBoundariesGlobal.data() << endl;
 
   // following works only if you are in the CMSSW_BASE area where you have CMGTools/WMass/...
   char* cmsswPath;
@@ -582,14 +665,71 @@ void makeFakeRateGraphPlotsAndSmoothing(const string& inputFilePath = "www/wmass
   }
 
   frSmoothFile->cd();
+
+  // fill TH2 (pt vs |eta|) with smoothed fake rate
+  TH2D* fr_pt_eta_data = new TH2D("fr_pt_eta_data","fake rate for data;electron p_{T};electron |#eta|", 
+			    120, 0, 60, NetaBins, etaBoundaries.data());
+  TH2D* fr_pt_eta_qcd = new TH2D("fr_pt_eta_qcd","fake rate for QCD MC;electron p_{T};electron |#eta|", 
+			   120, 0, 60, NetaBins, etaBoundaries.data());
+  TH2D* fr_pt_eta_w = new TH2D("fr_pt_eta_w","prompt rate for W MC;electron p_{T};electron |#eta|", 
+			 120, 0, 60, NetaBins, etaBoundaries.data());
+  TH2D* fr_pt_eta_z = new TH2D("fr_pt_eta_z","prompt rate for Z MC;electron p_{T};electron |#eta|", 
+			 120, 0, 60, NetaBins, etaBoundaries.data());
+  TH2D* fr_pt_eta_ewk = new TH2D("fr_pt_eta_ewk","prompt rate for W,Z MC;electron p_{T};electron |#eta|", 
+			   120, 0, 60, NetaBins, etaBoundaries.data());
+
+  cout << "Creating TH2 fr_pt_eta_* with smoothed fake or prompt rate (pT vs |eta|)" << endl;
+  cout << endl;
+  fillFakeRateTH2smooth(fr_pt_eta_data, frSmoothParameter_data);
+  fillFakeRateTH2smooth(fr_pt_eta_qcd, frSmoothParameter_qcd);
+  fillFakeRateTH2smooth(fr_pt_eta_w, frSmoothParameter_w);
+  fillFakeRateTH2smooth(fr_pt_eta_z, frSmoothParameter_z);
+  fillFakeRateTH2smooth(fr_pt_eta_ewk, frSmoothParameter_ewk);
+
+  // draw some TH2
+  drawCorrelationPlot(fr_pt_eta_data, 
+		      fr_pt_eta_data->GetXaxis()->GetTitle(),
+		      fr_pt_eta_data->GetYaxis()->GetTitle(),
+		      "fake rate",
+		      "smoothed_fakeRate_pt_vs_eta_data",
+		      "", outDir, 1,1, false,false,false,1);
+  drawCorrelationPlot(fr_pt_eta_qcd, 
+		      fr_pt_eta_qcd->GetXaxis()->GetTitle(),
+		      fr_pt_eta_qcd->GetYaxis()->GetTitle(),
+		      "fake rate",
+		      "smoothed_fakeRate_pt_vs_eta_qcd",
+		      "", outDir, 1,1, false,false,false,1);
+  drawCorrelationPlot(fr_pt_eta_ewk, 
+		      fr_pt_eta_ewk->GetXaxis()->GetTitle(),
+		      fr_pt_eta_ewk->GetYaxis()->GetTitle(),
+		      "prompt rate",
+		      "smoothed_promptRate_pt_vs_eta_ewk",
+		      "", outDir, 1,1, false,false,false,1);
+
+  // parameters of linear fit
+  cout << endl;
+  cout << "Writing TH2 frSmoothParameter_* with linear fit parameters in file" << endl;
   frSmoothParameter_data->Write();
   frSmoothParameter_qcd->Write();
   frSmoothParameter_w->Write();
+  frSmoothParameter_z->Write();
+  frSmoothParameter_ewk->Write();
+  // fake or prompt rate points (no errors)
+  cout << "Writing TH2 fr_pt_eta_* with smoothed fake or prompt rate in file" << endl;
+  fr_pt_eta_data->Write();
+  fr_pt_eta_qcd->Write();
+  fr_pt_eta_w->Write();
+  fr_pt_eta_z->Write();
+  fr_pt_eta_ewk->Write();
+
   frSmoothFile->Close();
+
 
   cout << endl;
   cout << endl;
   cout << "Created file " << frSmoothFileName << endl;
+  system(Form("cp %s %s",frSmoothFileName.c_str(),outDir.c_str()));
+  cout << "File also copied in " << outDir << endl;
   cout << endl;
 
 

@@ -27,10 +27,13 @@ void checkElementInMap(const std::map<string,TH2*>& m, const string& name = "") 
 
 //======================================================================
 
-void makeTemplates(const string& inputFilePath = "www/wmass/13TeV/test/rollingTemplates/fromEmanuele/", 
-		   const string& inputFileName  = "templates_2D_minus.root",  // 
-		   const string& outputFilePath = "www/wmass/13TeV/test/rollingTemplates/templates/fromEmanuele/"
-		   ) 
+void realMakeTemplates(const string& inputFilePath = "www/wmass/13TeV/test/rollingTemplates/fromEmanuele/", 
+		       const string& inputFileName  = "templates_2D_minus.root",  // 
+		       const string& outputFilePath = "www/wmass/13TeV/test/rollingTemplates/templates/fromEmanuele/",
+		       const bool smoothPlot = true,
+		       const bool drawProfileX = true,
+		       const bool scaleToUnitArea = true
+		       ) 
 {
 
   TH1::SetDefaultSumw2(); //all the following histograms will automatically call TH1::Sumw2()                    
@@ -120,8 +123,11 @@ void makeTemplates(const string& inputFilePath = "www/wmass/13TeV/test/rollingTe
 
     string templateName = it->first;
     TH2* h = it->second;
+
+    //setContentBelowScaleToZmin(hratio,zmin);
+    h->SetMinimum(0.0);
     drawCorrelationPlot(h, h->GetXaxis()->GetTitle(), h->GetYaxis()->GetTitle(), "Events",
-			h->GetName(), "", outDir, 1, 1, false, false, false, 1);
+			h->GetName(), "", outDir, 1, 1, smoothPlot, drawProfileX, scaleToUnitArea, 1);
 
   }
 
@@ -131,3 +137,33 @@ void makeTemplates(const string& inputFilePath = "www/wmass/13TeV/test/rollingTe
 }
 
 
+//================================
+
+void makeTemplates(const string& inputFilePath = "www/wmass/13TeV/test/rollingTemplates/helicity_2018_04_19_noSmearPFMET/", 
+		   const string& inputFileName  = "templates_2D_CHARGE.root",  // 
+		   const string& outputFilePath = "www/wmass/13TeV/test/rollingTemplates/templates/helicity_2018_04_19_noSmearPFMET/",
+		   const bool smoothPlot = false,
+		   const bool drawProfileX = false,
+		   const bool scaleToUnitArea = false
+ 		   ) 
+{
+
+  string matchToBeReplaced = "CHARGE";
+
+  if (inputFileName.find(matchToBeReplaced) != string::npos) {
+
+    vector<string> charges = {"plus", "minus"};
+
+    for (UInt_t i = 0; i < charges.size(); ++i) {
+      string name = inputFileName;
+      size_t pos = inputFileName.find(matchToBeReplaced);
+      name.replace(pos, matchToBeReplaced.size(), charges[i]);
+      realMakeTemplates(inputFilePath, name, outputFilePath, smoothPlot, drawProfileX, scaleToUnitArea);
+    }
+  
+  } else {
+    realMakeTemplates(inputFilePath, inputFileName, outputFilePath, smoothPlot, drawProfileX, scaleToUnitArea);
+  }
+
+
+}

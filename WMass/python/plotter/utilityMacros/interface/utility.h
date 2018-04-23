@@ -39,6 +39,7 @@
 #include <TH1D.h>
 #include <TH1F.h>
 #include <TH2.h>
+#include <TH3.h>
 #include <TKey.h>
 #include <TLatex.h>
 #include <TLegend.h>
@@ -322,6 +323,20 @@ string getTexLabel(const string& sampleDir = "wjets") {
 
 //======================================================
 
+void setContentBelowScaleToZmin(TH2* h2 = NULL, Double_t zmin = 0.0) {
+
+  // loop on histograms and set bins lower than minimum to minimum, unless they are 0)                                                                                     
+  for (Int_t ix = 1; ix <= h2->GetNbinsX(); ++ix) {
+    for (Int_t iy = 1; iy <= h2->GetNbinsY(); ++iy) {
+      Double_t binContent = h2->GetBinContent(ix,iy);
+      if (binContent > 0.0 and binContent < zmin) h2->SetBinContent(ix,iy,zmin);
+    }
+  }
+
+}
+
+//======================================================
+
 
 void addOverflowInLastBin(TH1D *h) {
 
@@ -387,14 +402,7 @@ void smoothAveragingNbins(TH1* h, const Int_t groupBins = 2, const Double_t minV
   // grouping starts from first bin with content > minValueToStartGrouping
   // In case bins with content 0 should be considered to start the procedure, set minValueToStartGrouping to any negative value
 
-  Int_t firstBinToUse = 1;
-
-  for (Int_t  i = 1; i <= h->GetNbinsX(); ++i) {
-    if (h->GetBinContent(i) > minValueToStartGrouping) {
-      firstBinToUse = i;
-      break;
-    }
-  }
+  Int_t firstBinToUse = h->FindFirstBinAbove(minValueToStartGrouping);
 
   vector<Double_t> averages(1+ (h->GetNbinsX() + 1 - firstBinToUse)/groupBins); // if h has 5 bins and groupBins=2, we have 3 sets of bins (2 + 2 + 1)
   vector<Double_t> uncertainties(1+ (h->GetNbinsX() + 1 - firstBinToUse)/groupBins);
@@ -417,6 +425,41 @@ void smoothAveragingNbins(TH1* h, const Int_t groupBins = 2, const Double_t minV
   }
 
 }
+
+//======================================================
+
+void rebinByN(TH1* h, const Int_t groupBins = 2, const Double_t minValueToStartGrouping = 0.0) {
+
+  // this functions is useful for QCD distributions from MC, which suffers from low statistics and big weights
+  // rebinning is tipically not ideal when this goes in a stack distributions with other processes that do not have problems of statistics
+  // therefore, one way is to sum groups of N consecutive bins for QCD and set the bin content of those as the sum/Nbins
+  // underflow and overflow bins are not considered
+  // grouping starts from first bin with content > minValueToStartGrouping
+  // In case bins with content 0 should be considered to start the procedure, set minValueToStartGrouping to any negative value
+
+  Int_t firstBinToUse = h->FindFirstBinAbove(minValueToStartGrouping);
+
+  vector<Double_t> averages(1+ (h->GetNbinsX() + 1 - firstBinToUse)/groupBins); // if h has 5 bins and groupBins=2, we have 3 sets of bins (2 + 2 + 1)
+  vector<Double_t> uncertainties(1+ (h->GetNbinsX() + 1 - firstBinToUse)/groupBins);
+
+  Int_t bin = -1;
+
+  for (Int_t  i = firstBinToUse; i <= h->GetNbinsX(); ++i) {
+    bin = (i-firstBinToUse)/groupBins;
+    averages[bin] += h->GetBinContent(i);
+    uncertainties[bin] += (h->GetBinError(i) * h->GetBinError(i));
+  }
+  for (UInt_t i = 0; i < averages.size(); ++i) {
+    uncertainties[i] = sqrt ( uncertainties[i]);
+  }
+  for (Int_t  i = firstBinToUse; i <= h->GetNbinsX(); ++i) {
+    bin = (i-firstBinToUse)/groupBins;
+    h->SetBinContent(i,averages[bin]);
+    h->SetBinError(i,uncertainties[bin]);
+  }
+
+}
+
 
 
 //======================================================
@@ -678,7 +721,7 @@ void myRebinHisto(TH1 *h, const Int_t rebinFactor = 1) {
 
   if (rebinFactor != 1) {
     h->Rebin(rebinFactor);
-    if ( (h->GetNbinsX() % rebinFactor) != 0) myAddOverflowInLastBin(h);
+    //if ( (h->GetNbinsX() % rebinFactor) != 0) myAddOverflowInLastBin(h);  // better not to add overflow to last bin inside this function
   }
 
 }
@@ -751,11 +794,62 @@ TH2* getHist2CloneFromFile(TFile* inputFile = NULL, const string& hvarName = "",
   if (sampleDir == "") hvar = (TH2*) inputFile->Get((hvarName).c_str());
   else hvar = (TH2*) inputFile->Get((sampleDir + "/" + hvarName).c_str());
   if (!hvar || hvar == NULL) {
-    cout << "Error in getHistCloneFromFile(): histogram '" << hvarName << "' not found in file (directory is " << sampleDir << "). End of programme." << endl;
+    cout << "Error in getHist2CloneFromFile(): histogram '" << hvarName << "' not found in file (directory is " << sampleDir << "). End of programme." << endl;
     exit(EXIT_FAILURE);
   }
 
   return (TH2*) hvar->Clone(sampleDir.c_str());
+
+}
+
+//======================================================
+
+TH3* getHist3CloneFromFile(TFile* inputFile = NULL, const string& hvarName = "", const string& sampleDir = "") {
+
+  // use sampleDir to select a directory, default is the first one
+  // use sampleDir without "/" at the end
+
+  TH3* hvar = NULL;
+
+  if (!inputFile || inputFile == NULL || inputFile->IsZombie()) {
+    cout << "Error in getHistCloneFromFile(): file not opened. Exit" << endl;
+    exit(EXIT_FAILURE);
+  }
+
+  if (sampleDir == "") hvar = (TH3*) inputFile->Get((hvarName).c_str());
+  else hvar = (TH3*) inputFile->Get((sampleDir + "/" + hvarName).c_str());
+  if (!hvar || hvar == NULL) {
+    cout << "Error in getHist3CloneFromFile(): histogram '" << hvarName << "' not found in file (directory is " << sampleDir << "). End of programme." << endl;
+    exit(EXIT_FAILURE);
+  }
+
+  return (TH3*) hvar->Clone(sampleDir.c_str());
+
+}
+
+
+//======================================================
+
+TObject* getObjectCloneFromFile(TFile* inputFile = NULL, const string& hvarName = "", const string& sampleDir = "") {
+
+  // use sampleDir to select a directory, default is the first one
+  // use sampleDir without "/" at the end
+
+  TObject* hvar = NULL;
+
+  if (!inputFile || inputFile == NULL || inputFile->IsZombie()) {
+    cout << "Error in getHistCloneFromFile(): file not opened. Exit" << endl;
+    exit(EXIT_FAILURE);
+  }
+
+  if (sampleDir == "") hvar = (TObject*) inputFile->Get((hvarName).c_str());
+  else hvar = (TObject*) inputFile->Get((sampleDir + "/" + hvarName).c_str());
+  if (!hvar || hvar == NULL) {
+    cout << "Error in getObjectCloneFromFile(): object '" << hvarName << "' not found in file (directory is " << sampleDir << "). End of programme." << endl;
+    exit(EXIT_FAILURE);
+  }
+
+  return (TObject*) hvar->Clone(sampleDir.c_str());
 
 }
 
@@ -1155,7 +1249,8 @@ void drawGraphCMS(vector<TGraph*> grList = {},
 		  const vector<Double_t>& legCoord = {0.5,0.15,0.9,0.35},
 		  const Double_t lumi = -1.0,
 		  const Bool_t drawRatioWithNominal = false,
-		  const string& ratioPadYaxisName = "X/first"
+		  const string& ratioPadYaxisName = "X/first",
+		  const vector<Int_t> vecMCcolors = {kBlack, kRed, kGreen+2, kBlue, kOrange+1, kCyan+2, kGray+2}
 		  ) 
 
 {
@@ -1214,14 +1309,14 @@ void drawGraphCMS(vector<TGraph*> grList = {},
   leg.SetFillStyle(0);
   leg.SetBorderSize(0);
 
-  Int_t colorList[] = {kBlack, kRed, kGreen+2, kBlue, kOrange+1, kCyan+2, kGray+2};
+  //Int_t colorList[] = {kBlack, kRed, kGreen+2, kBlue, kOrange+1, kCyan+2, kGray+2};
 
   for (Int_t ig = 0; ig < nGraphs; ig++) {
     grList[ig]->SetMarkerStyle(20);
-    grList[ig]->SetMarkerColor(colorList[ig]);
-    grList[ig]->SetLineColor(colorList[ig]);
+    grList[ig]->SetMarkerColor(vecMCcolors[ig]);
+    grList[ig]->SetLineColor(vecMCcolors[ig]);
     grList[ig]->SetLineWidth(2);
-    grList[ig]->SetFillColor(colorList[ig]);
+    grList[ig]->SetFillColor(vecMCcolors[ig]);
     if (ig == 0) grList[ig]->Draw("ap");
     else grList[ig]->Draw("p same");
     leg.AddEntry(grList[ig],leg_roc[ig].c_str(),"LF");
@@ -1326,10 +1421,10 @@ void drawGraphCMS(vector<TGraph*> grList = {},
     den->Draw("a2same");
     for (UInt_t ir = 0; ir < ratio.size(); ir++) {
       ratio[ir]->SetMarkerStyle(20);
-      ratio[ir]->SetMarkerColor(colorList[ir+1]);
-      ratio[ir]->SetLineColor(colorList[ir+1]);
+      ratio[ir]->SetMarkerColor(vecMCcolors[ir+1]);
+      ratio[ir]->SetLineColor(vecMCcolors[ir+1]);
       ratio[ir]->SetLineWidth(2);
-      ratio[ir]->SetFillColor(colorList[ir+1]);
+      ratio[ir]->SetFillColor(vecMCcolors[ir+1]);
       ratio[ir]->Draw("psame");
     }
 
@@ -3037,6 +3132,9 @@ void drawCorrelationPlot(TH2* h2D,
 
   if (rebinFactorY > 1) h2D->RebinY(rebinFactorY);
   if (rebinFactorX > 1) h2D->RebinX(rebinFactorX);
+
+  //gStyle->SetPalette(55, 0);  // 55:raibow palette ; 57: kBird (blue to yellow, default) ; 107 kVisibleSpectrum ; 77 kDarkRainBow 
+  gStyle->SetNumberContours(50); // default is 20 
 
   string labelX = "";
   Double_t xmin = 0;

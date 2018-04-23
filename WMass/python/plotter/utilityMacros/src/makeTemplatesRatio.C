@@ -27,13 +27,16 @@ void checkElementInMap(const std::map<string,TH2*>& m, const string& name = "") 
 
 //======================================================================
 
-void makeTemplatesRatio(const string& inputFilePath  = "www/wmass/13TeV/test/rollingTemplates/fromEmanuele/",
-			const string& inputFilePath2 = "www/wmass/13TeV/test/rollingTemplates/helicity_2018_04_11_smearMt/", 
-			const string& inputFileName  = "templates_2D_plus.root",  // 
-			const string& inputFileName2 = "templates_2D_plus.root",  // 
-			const string& outputFilePath = "www/wmass/13TeV/test/rollingTemplates/ratio/fromEmanuele_OVER_helicity_2018_04_11_smearMt/",
-			const string& zAxisName      = "nominal / smeared PF m_{T} (10%)::0.95,1.05"
-			) 
+void realMakeTemplatesRatio(const string& inputFilePath  = "www/wmass/13TeV/test/rollingTemplates/fromEmanuele/",
+			    const string& inputFilePath2 = "www/wmass/13TeV/test/rollingTemplates/helicity_2018_04_17_smearPFMET0p2/", 
+			    const string& inputFileName  = "templates_2D_minus.root",  // 
+			    const string& inputFileName2 = "templates_2D_minus.root",  // 
+			    const string& outputFilePath = "www/wmass/13TeV/test/rollingTemplates/ratio/fromEmanuele_OVER_helicity_2018_04_17_smearPFMET0p2/",
+			    const string& zAxisName      = "nominal / smeared PF E_{T}^{miss} (20%)::0.95,1.05",
+			    const bool smoothPlot = true,
+			    const bool drawProfileX = true,
+			    const bool scaleToUnitArea = true
+			    ) 
 {
 
   TH1::SetDefaultSumw2(); //all the following histograms will automatically call TH1::Sumw2()                    
@@ -189,16 +192,10 @@ void makeTemplatesRatio(const string& inputFilePath  = "www/wmass/13TeV/test/rol
     Double_t zmax = 1.1;
     string zAxisName_dummy = "";
     getAxisRangeFromUser(zAxisName_dummy,zmin,zmax,zAxisName);
-    // loop on histograms and set bins lower than minimum to minimum, unless they are 0)      
-    for (Int_t ix = 1; ix <= hratio->GetNbinsX(); ++ix) {
-      for (Int_t iy = 1; iy <= hratio->GetNbinsY(); ++iy) {
-	Double_t binContent = hratio->GetBinContent(ix,iy);
-	if (binContent > 0.0 and binContent < zmin) hratio->SetBinContent(ix,iy,zmin);
-      }
-    }
+    setContentBelowScaleToZmin(hratio,zmin);
 
     drawCorrelationPlot(hratio, hratio->GetXaxis()->GetTitle(), hratio->GetYaxis()->GetTitle(), zAxisName,
-			hratio->GetName(), "", outDir, 1, 1, false, false, false, 1);
+			hratio->GetName(), "", outDir, 1, 1, smoothPlot, drawProfileX, scaleToUnitArea, 1);
 
 
   }
@@ -210,3 +207,37 @@ void makeTemplatesRatio(const string& inputFilePath  = "www/wmass/13TeV/test/rol
 }
 
 
+//=====================================
+
+void makeTemplatesRatio(const string& inputFilePath  = "www/wmass/13TeV/test/rollingTemplates/helicity_2018_04_19_noSmearPFMET/",
+			const string& inputFilePath2 = "www/wmass/13TeV/test/rollingTemplates/helicity_2018_04_17_smearPFMET0p2/", 
+			const string& inputFileName  = "templates_2D_CHARGE.root",  // 
+			const string& inputFileName2 = "templates_2D_CHARGE.root",  // 
+			const string& outputFilePath = "www/wmass/13TeV/test/rollingTemplates/ratio/helicity_2018_04_19_noSmearPFMET_OVER_helicity_2018_04_17_smearPFMET0p2/",
+			const string& zAxisName      = "nominal / smeared PF E_{T}^{miss} (20%)::0.95,1.05",
+                        const bool smoothPlot = false,
+			const bool drawProfileX = false,
+			const bool scaleToUnitArea = false
+			) 
+{
+
+  string matchToBeReplaced = "CHARGE";
+  if (inputFileName.find(matchToBeReplaced) != string::npos) {
+
+    vector<string> charges = {"plus", "minus"};
+
+    for (UInt_t i = 0; i < charges.size(); ++i) {
+      string name1 = inputFileName;
+      size_t pos = inputFileName.find(matchToBeReplaced);
+      name1.replace(pos, matchToBeReplaced.size(), charges[i]);
+      string name2 = inputFileName2;
+      pos = inputFileName2.find(matchToBeReplaced);
+      name2.replace(pos, matchToBeReplaced.size(), charges[i]);
+      realMakeTemplatesRatio(inputFilePath, inputFilePath2, name1, name2, outputFilePath, zAxisName, smoothPlot, drawProfileX, scaleToUnitArea);
+    }    
+
+  } else {
+    realMakeTemplatesRatio(inputFilePath, inputFilePath2, inputFileName, inputFileName, outputFilePath, zAxisName, smoothPlot, drawProfileX, scaleToUnitArea);
+  }    
+
+}
