@@ -55,8 +55,8 @@ if __name__ == "__main__":
     charges = options.charge.split(',')
     for charge in charges:
 
-        file_nom = os.environ['CMSSW_BASE']+'/src/CMGTools/WMass/data/pdfs_prefit/pdf_variations_prefit.root'
-        nominal = getRebinned(ybins,charge,file_nom, 0)
+        file_pdfs = os.environ['CMSSW_BASE']+'/src/CMGTools/WMass/data/pdfs_prefit/pdf_variations_prefit.root'
+        nominal = getRebinned(ybins,charge,file_pdfs, 0)
         
         print "Now getting histograms from %s (will take some time)..." % inputdir
         shape_syst = {}
@@ -64,8 +64,7 @@ if __name__ == "__main__":
             histos = []
             for ip in xrange(1,NPDFs+1):
                 #print "Loading polarization %s, histograms for pdf %d" % (pol,ip)
-                filepdf = '{dir}/w{charge}_wy_pdf{ipdf}.root'.format(dir=inputdir,charge=charge,ipdf=ip)
-                pdf = getRebinned(ybins,charge,filepdfi,ip)
+                pdf = getRebinned(ybins,charge,file_pdfs,ip)
                 histos.append(pdf[pol])
             shape_syst[pol] = histos
 
