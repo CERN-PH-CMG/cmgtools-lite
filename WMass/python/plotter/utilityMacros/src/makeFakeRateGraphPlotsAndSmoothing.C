@@ -705,6 +705,18 @@ void makeFakeRateGraphPlotsAndSmoothing(const string& inputFilePath = "www/wmass
 		      "prompt rate",
 		      "smoothed_promptRate_pt_vs_eta_ewk",
 		      "", outDir, 1,1, false,false,false,1);
+  drawCorrelationPlot(fr_pt_eta_w, 
+		      fr_pt_eta_w->GetXaxis()->GetTitle(),
+		      fr_pt_eta_w->GetYaxis()->GetTitle(),
+		      "prompt rate",
+		      "smoothed_promptRate_pt_vs_eta_w",
+		      "", outDir, 1,1, false,false,false,1);
+  drawCorrelationPlot(fr_pt_eta_z, 
+		      fr_pt_eta_z->GetXaxis()->GetTitle(),
+		      fr_pt_eta_z->GetYaxis()->GetTitle(),
+		      "prompt rate",
+		      "smoothed_promptRate_pt_vs_eta_z",
+		      "", outDir, 1,1, false,false,false,1);
 
   // parameters of linear fit
   cout << endl;
