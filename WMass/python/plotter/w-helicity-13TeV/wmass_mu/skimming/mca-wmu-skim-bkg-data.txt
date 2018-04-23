@@ -1,15 +1,17 @@
-data        : SingleMuon_Run2016*
+#data        : SingleMuon_Run2016*
 
-#Z           : DYJetsToLL_M50_part*                : 1921.8*3                                              ; FillColor=ROOT.kAzure+2 , Label="Z", NormSystematic=0.04
-#
-#
-#Top         : TTJets_SingleLeptonFromT_part*      : xsec                                                  ; FillColor=ROOT.kGreen+2 , Label="Top", NormSystematic=0.09
-#Top         : TTJets_SingleLeptonFromTbar_part*   : xsec                                                  ; FillColor=ROOT.kGreen+2 , Label="Top", NormSystematic=0.09
-#Top         : TToLeptons_sch_amcatnlo             : xsec                                                  ; FillColor=ROOT.kGreen+2 , Label="Top", NormSystematic=0.04
-#Top         : T_tch_powheg_part*                  : xsec                                                  ; FillColor=ROOT.kGreen+2 , Label="Top", NormSystematic=0.04
-#Top         : TBar_tch_powheg_part*               : xsec                                                  ; FillColor=ROOT.kGreen+2 , Label="Top", NormSystematic=0.04
-#Top         : T_tWch_ext                          : xsec                                                  ; FillColor=ROOT.kGreen+2 , Label="Top", NormSystematic=0.06
-#Top         : TBar_tWch_ext                       : xsec                                                  ; FillColor=ROOT.kGreen+2 , Label="Top", NormSystematic=0.06
-#DiBosons    : WW+WW_ext                           : xsec                                                  ; FillColor=ROOT.kViolet+2, Label="DiBosons", NormSystematic=0.03
-#DiBosons    : WZ+WZ_ext                           : xsec                                                  ; FillColor=ROOT.kViolet+2, Label="DiBosons", NormSystematic=0.05
-#DiBosons    : ZZ+ZZ_ext                           : xsec                                                  ; FillColor=ROOT.kViolet+2, Label="DiBosons", NormSystematic=0.05
+Z           : DYJetsToLL_M50_part*                : 1921.8*3                                              ; FillColor=ROOT.kAzure+2 , Label="Z", NormSystematic=0.04
+
+
+Top         : TTJets_SingleLeptonFromT_part*      : xsec                                                  ; FillColor=ROOT.kGreen+2 , Label="Top", NormSystematic=0.09
+Top         : TTJets_SingleLeptonFromTbar_part*   : xsec                                                  ; FillColor=ROOT.kGreen+2 , Label="Top", NormSystematic=0.09
+Top         : TToLeptons_sch_amcatnlo             : xsec                                                  ; FillColor=ROOT.kGreen+2 , Label="Top", NormSystematic=0.04
+Top         : T_tch_powheg_part*                  : xsec                                                  ; FillColor=ROOT.kGreen+2 , Label="Top", NormSystematic=0.04
+Top         : TBar_tch_powheg_part*               : xsec                                                  ; FillColor=ROOT.kGreen+2 , Label="Top", NormSystematic=0.04
+Top         : T_tWch_ext                          : xsec                                                  ; FillColor=ROOT.kGreen+2 , Label="Top", NormSystematic=0.06
+Top         : TBar_tWch_ext                       : xsec                                                  ; FillColor=ROOT.kGreen+2 , Label="Top", NormSystematic=0.06
+DiBosons    : WW+WW_ext                           : xsec                                                  ; FillColor=ROOT.kViolet+2, Label="DiBosons", NormSystematic=0.03
+DiBosons    : WZ+WZ_ext                           : xsec                                                  ; FillColor=ROOT.kViolet+2, Label="DiBosons", NormSystematic=0.05
+DiBosons    : ZZ+ZZ_ext                           : xsec                                                  ; FillColor=ROOT.kViolet+2, Label="DiBosons", NormSystematic=0.05
+QCD         : QCD_Mu15_part*                      : xsec                                                  ; FillColor=ROOT.kBlue-4,   Label="QCD (MC)", NormSystematic=0.50
+

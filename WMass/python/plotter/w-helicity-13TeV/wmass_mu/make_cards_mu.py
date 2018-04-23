@@ -5,6 +5,7 @@ from optparse import OptionParser
 parser = OptionParser(usage='%prog [options]')
 parser.add_option('-d', '--dry-run', dest='dryRun',   action='store_true', default=False, help='Do not run the job, only print the command');
 parser.add_option('-s', '--suffix', dest='suffix', type='string', default=None, help='Append a suffix to the default outputdir (helicity_<date>)');
+parser.add_option("--pdf-syst", dest="addPdfSyst", action="store_true", default=False, help="Add PDF systematics to the signal (need incl_sig directive in the MCA file)");
 parser.add_option("--long-bkg", dest="longBkg",    action="store_true", default=True, help="Treat the longitudinal polarization as one background template.");
 (options, args) = parser.parse_args()
 
@@ -13,9 +14,9 @@ BASECONFIG   = 'w-helicity-13TeV/wmass_mu'
 MCA          = BASECONFIG+'/mca-wmu-helicity.txt'
 CUTFILE      = BASECONFIG+'/cuts_wmu.txt'
 SYSTFILE     = BASECONFIG+'/systsEnv.txt'
-#TREEPATH     = '/eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3_WENUSKIM_V3'
-TREEPATH     = '/eos/user/m/mdunser/w-helicity-13TeV/trees/trees_all_skims/'
-QUEUE        = '8nh'
+#TREEPATH     = '/eos/user/m/mdunser/w-helicity-13TeV/trees/trees_all_skims/'
+TREEPATH     = '/eos/user/m/mdunser/w-helicity-13TeV/trees/TREES_latest_1muskim/'
+QUEUE        = '2nd'
 VAR          = '\'LepGood1_pt:LepGood1_eta\''
 
 ## variable binning in eta
@@ -29,7 +30,7 @@ ptbinning = '['+','.join(str(i) for i in range(25,46))+']'
 
 ##BINNING      = '\'32,-2.4,2.4,20,25.,45.\''
 BINNING      = '\''+etabinning+'*'+ptbinning+'\''
-WEIGHTSTRING = ' \'puWeight*LepGood_effSF[0]\' '
+WEIGHTSTRING = ' \'puw*LepGood_effSF[0]\' '
 #WEIGHTSTRING = ' \'puWeight \' '#*LepGood_effSF[0]\' '
 #WEIGHTSTRING = ' \'1. \' '#*LepGood_effSF[0]\' '
 OUTDIR       = 'helicity_%s' % datetime.now().strftime('%Y_%m_%d')
@@ -42,5 +43,6 @@ for c in components:
     cmd='python ' + ' '.join([PROG,MCA,CUTFILE,VAR,BINNING,SYSTFILE,OUTDIR,'-C mu']) + \
         (' -W %s ' % WEIGHTSTRING) + (' -P %s ' % TREEPATH) + (' -q %s ' % QUEUE) + c
     if options.dryRun: cmd += '  --dry-run '
+    if options.addPdfSyst: cmd += '  --pdf-syst '
     if options.longBkg: cmd += ' --long-bkg '
     os.system(cmd)
