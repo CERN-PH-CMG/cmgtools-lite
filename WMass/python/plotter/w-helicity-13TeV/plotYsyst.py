@@ -13,16 +13,18 @@ def getRebinned(ybins, charge, infile, ip):
 
     histos = {}
     for pol in ['left','right','long']:
+        cp = '{ch}_{pol}'.format(ch=charge,pol=pol if not pol == 'long' else 'right')
+
         keys = histo_file.GetListOfKeys()
         for k in keys:
             if 'w{ch}'.format(ch=charge) in k.GetName() and pol in k.GetName() and pstr in k.GetName():
                 name = k.GetName()
         histo = histo_file.Get(name)# 'w{ch}_wy_W{ch}_{pol}'.format(ch=charge, pol=pol))
         conts = []
-        for iv, val in enumerate(ybins['{ch}_{pol}'.format(ch=charge,pol=pol if not pol == 'long' else 'right')][:-1]):
+        for iv, val in enumerate(ybins[cp][:-1]):
             err = ROOT.Double()
             istart = histo.FindBin(val)
-            iend   = histo.FindBin(ybins['{ch}_{pol}'.format(ch=charge,pol=pol if not pol == 'long' else 'right')][iv+1])
+            iend   = histo.FindBin(ybins[cp][iv+1])
             val = histo.IntegralAndError(istart, iend-1, err) ## do not include next bin
             conts.append(float(int(2*val))) ## input files are not abs(Y)
         histos[pol] = conts
@@ -122,7 +124,8 @@ if __name__ == "__main__":
 
         totalrate = 0.; totalrate_fit = 0.
         for pol in ['left','right']:
-            for iy,y in enumerate(ybinwidths['{ch}_{pol}'.format(ch=charge,pol=pol)]):
+            cp = '{ch}_{pol}'.format(ch=charge,pol=pol)
+            for iy,y in enumerate(ybinwidths[cp]):
                 totalrate += nominal[pol][iy]
                 if options.fitResult:
                     parname = 'norm_W{charge}_{pol}_W{charge}_Ybin_{iy}'.format(charge=charge,pol=pol,iy=iy)
@@ -139,9 +142,9 @@ if __name__ == "__main__":
             arr_rap       = array.array('f', []); arr_rlo       = array.array('f', []); arr_rhi       = array.array('f', []);
 
             for iy,y in enumerate(ybinwidths['{ch}_{pol}'.format(ch=charge,pol=pol)]):
-                arr_val.append(nominal[pol][iy]/totalrate/ybinwidths['{ch}_{pol}'.format(ch=charge,pol=pol)][iy])
-                arr_ehi.append(systematics[pol][iy]/totalrate/ybinwidths['{ch}_{pol}'.format(ch=charge,pol=pol)][iy])
-                arr_elo.append(systematics[pol][iy]/totalrate/ybinwidths['{ch}_{pol}'.format(ch=charge,pol=pol)][iy]) # symmetric for the expected
+                arr_val.append(nominal[pol][iy]/totalrate/ybinwidths[cp][iy])
+                arr_ehi.append(systematics[pol][iy]/totalrate/ybinwidths[cp][iy])
+                arr_elo.append(systematics[pol][iy]/totalrate/ybinwidths[cp][iy]) # symmetric for the expected
 
                 arr_relv. append(1.);
                 arr_rello.append(systematics[pol][iy]/nominal[pol][iy])
@@ -151,9 +154,9 @@ if __name__ == "__main__":
                     parname = 'norm_W{charge}_{pol}_W{charge}_Ybin_{iy}'.format(charge=charge,pol=pol,iy=iy)
 
                     tmp_par = fpars.find(parname) if parname in f_params else cpars.find(parname)
-                    arr_val_fit.append(tmp_par.getVal()/totalrate_fit/ybinwidths['{ch}_{pol}'.format(ch=charge,pol=pol)][iy])
-                    arr_ehi_fit.append(abs(tmp_par.getAsymErrorHi())/totalrate_fit/ybinwidths['{ch}_{pol}'.format(ch=charge,pol=pol)][iy])
-                    arr_elo_fit.append(abs(tmp_par.getAsymErrorLo() if tmp_par.hasAsymError() else tmp_par.getAsymErrorHi())/totalrate_fit/ybinwidths['{ch}_{pol}'.format(ch=charge,pol=pol)][iy])
+                    arr_val_fit.append(tmp_par.getVal()/totalrate_fit/ybinwidths[cp][iy])
+                    arr_ehi_fit.append(abs(tmp_par.getAsymErrorHi())/totalrate_fit/ybinwidths[cp][iy])
+                    arr_elo_fit.append(abs(tmp_par.getAsymErrorLo() if tmp_par.hasAsymError() else tmp_par.getAsymErrorHi())/totalrate_fit/ybinwidths[cp][iy])
 
                     # renormalize the theo to the fitted ones (should match when running on the expected)
                     arr_ehi[-1] = arr_ehi[-1]/arr_val[-1]*arr_val_fit[-1]
