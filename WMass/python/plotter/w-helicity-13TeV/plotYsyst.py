@@ -9,20 +9,22 @@ from mergeCardComponentsAbsY import mirrorShape
 def getRebinned(ybins, charge, infile, ip):
     histo_file = ROOT.TFile(infile, 'READ')
 
-    pstr = 'central' if not ip else 'pdf'+ip
+    pstr = 'central' if not ip else 'pdf{ip}'.format(ip=ip)
 
     histos = {}
     for pol in ['left','right','long']:
+        cp = '{ch}_{pol}'.format(ch=charge,pol=pol if not pol == 'long' else 'right')
+
         keys = histo_file.GetListOfKeys()
         for k in keys:
             if 'w{ch}'.format(ch=charge) in k.GetName() and pol in k.GetName() and pstr in k.GetName():
                 name = k.GetName()
         histo = histo_file.Get(name)# 'w{ch}_wy_W{ch}_{pol}'.format(ch=charge, pol=pol))
         conts = []
-        for iv, val in enumerate(ybins[:-1]):
+        for iv, val in enumerate(ybins[cp][:-1]):
             err = ROOT.Double()
             istart = histo.FindBin(val)
-            iend   = histo.FindBin(ybins[iv+1])
+            iend   = histo.FindBin(ybins[cp][iv+1])
             val = histo.IntegralAndError(istart, iend-1, err) ## do not include next bin
             conts.append(float(int(2*val))) ## input files are not abs(Y)
         histos[pol] = conts
@@ -42,15 +44,15 @@ if __name__ == "__main__":
 
     ybinfile = args[0]
 
-    print "Taking histos from dir: %s" % inputdir
-
     ybinfile = open(ybinfile, 'r')
-    ybinline = ybinfile.readlines()[0]
-    ybins = list(float(i) for i in ybinline.split())
+    ybins = eval(ybinfile.readlines()[0])
     ybinfile.close()
 
     ## calculate the bin widths for the rapidity bins
-    ybinwidths = list(abs(i - ybins[ybins.index(i)+1]) for i in ybins[:-1])
+    ybinwidths = {}
+    for k,v in ybins.items():
+        tmplist = list(abs(i - v[v.index(i)+1]) for i in v[:-1])
+        ybinwidths[k] = [float('{n:.2f}'.format(n=i)) for i in tmplist]
 
     charges = options.charge.split(',')
     for charge in charges:
@@ -58,7 +60,6 @@ if __name__ == "__main__":
         file_pdfs = os.environ['CMSSW_BASE']+'/src/CMGTools/WMass/data/pdfs_prefit/pdf_variations_prefit.root'
         nominal = getRebinned(ybins,charge,file_pdfs, 0)
         
-        print "Now getting histograms from %s (will take some time)..." % inputdir
         shape_syst = {}
         for pol in ['left','right','long']:
             histos = []
@@ -72,7 +73,7 @@ if __name__ == "__main__":
         for pol in ['left','right','long']:
             #print "===> Running pol = ",pol
             systs=[]
-            for iy,y in enumerate(ybinwidths):
+            for iy,y in enumerate(ybinwidths['{ch}_{pol}'.format(ch=charge,pol=pol if not pol=='long' else 'right')]):
                 #print "\tBin iy=%d,y=%f = " % (iy,y)
                 nom = nominal[pol][iy]
                 totUp=0
@@ -123,7 +124,8 @@ if __name__ == "__main__":
 
         totalrate = 0.; totalrate_fit = 0.
         for pol in ['left','right']:
-            for iy,y in enumerate(ybinwidths):
+            cp = '{ch}_{pol}'.format(ch=charge,pol=pol)
+            for iy,y in enumerate(ybinwidths[cp]):
                 totalrate += nominal[pol][iy]
                 if options.fitResult:
                     parname = 'norm_W{charge}_{pol}_W{charge}_Ybin_{iy}'.format(charge=charge,pol=pol,iy=iy)
@@ -131,6 +133,7 @@ if __name__ == "__main__":
                     totalrate_fit += tmp_par.getVal()
 
         for pol in ['left','right']:
+            cp = '{ch}_{pol}'.format(ch=charge,pol=pol)
 
             arr_val       = array.array('f', []); arr_ehi       = array.array('f', []); arr_elo       = array.array('f', []);
             arr_val_fit   = array.array('f', []); arr_ehi_fit   = array.array('f', []); arr_elo_fit   = array.array('f', []);
@@ -138,10 +141,10 @@ if __name__ == "__main__":
             arr_relv_fit  = array.array('f', []); arr_relhi_fit = array.array('f', []); arr_rello_fit = array.array('f', []);
             arr_rap       = array.array('f', []); arr_rlo       = array.array('f', []); arr_rhi       = array.array('f', []);
 
-            for iy,y in enumerate(ybinwidths):
-                arr_val.append(nominal[pol][iy]/totalrate/ybinwidths[iy])
-                arr_ehi.append(systematics[pol][iy]/totalrate/ybinwidths[iy])
-                arr_elo.append(systematics[pol][iy]/totalrate/ybinwidths[iy]) # symmetric for the expected
+            for iy,y in enumerate(ybinwidths['{ch}_{pol}'.format(ch=charge,pol=pol)]):
+                arr_val.append(nominal[pol][iy]/totalrate/ybinwidths[cp][iy])
+                arr_ehi.append(systematics[pol][iy]/totalrate/ybinwidths[cp][iy])
+                arr_elo.append(systematics[pol][iy]/totalrate/ybinwidths[cp][iy]) # symmetric for the expected
 
                 arr_relv. append(1.);
                 arr_rello.append(systematics[pol][iy]/nominal[pol][iy])
@@ -151,9 +154,9 @@ if __name__ == "__main__":
                     parname = 'norm_W{charge}_{pol}_W{charge}_Ybin_{iy}'.format(charge=charge,pol=pol,iy=iy)
 
                     tmp_par = fpars.find(parname) if parname in f_params else cpars.find(parname)
-                    arr_val_fit.append(tmp_par.getVal()/totalrate_fit/ybinwidths[iy])
-                    arr_ehi_fit.append(abs(tmp_par.getAsymErrorHi())/totalrate_fit/ybinwidths[iy])
-                    arr_elo_fit.append(abs(tmp_par.getAsymErrorLo() if tmp_par.hasAsymError() else tmp_par.getAsymErrorHi())/totalrate_fit/ybinwidths[iy])
+                    arr_val_fit.append(tmp_par.getVal()/totalrate_fit/ybinwidths[cp][iy])
+                    arr_ehi_fit.append(abs(tmp_par.getAsymErrorHi())/totalrate_fit/ybinwidths[cp][iy])
+                    arr_elo_fit.append(abs(tmp_par.getAsymErrorLo() if tmp_par.hasAsymError() else tmp_par.getAsymErrorHi())/totalrate_fit/ybinwidths[cp][iy])
 
                     # renormalize the theo to the fitted ones (should match when running on the expected)
                     arr_ehi[-1] = arr_ehi[-1]/arr_val[-1]*arr_val_fit[-1]
@@ -165,9 +168,9 @@ if __name__ == "__main__":
                     arr_rello_fit.append(abs(tmp_par.getAsymErrorHi())/tmp_par_init.getVal())
                     arr_relhi_fit.append(abs(tmp_par.getAsymErrorLo() if tmp_par.hasAsymError() else tmp_par.getAsymErrorHi())/tmp_par_init.getVal())
 
-                arr_rap.append((ybins[iy]+ybins[iy+1])/2.)
-                arr_rlo.append(abs(ybins[iy]-arr_rap[-1]))
-                arr_rhi.append(abs(ybins[iy]-arr_rap[-1]))
+                arr_rap.append((ybins[cp][iy]+ybins[cp][iy+1])/2.)
+                arr_rlo.append(abs(ybins[cp][iy]-arr_rap[-1]))
+                arr_rhi.append(abs(ybins[cp][iy]-arr_rap[-1]))
 
             if 'left' in pol:
                 print 'left {ch}: {i}'.format(ch=charge, i=sum(arr_val))
