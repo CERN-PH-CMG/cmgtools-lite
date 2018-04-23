@@ -72,6 +72,11 @@ def plotPars(inputFile, mdFit, doPull=True, pois=None, selectString=''):
     # get the ones to be plotted
     pars = list(fpi_s.at(i).GetName() for i in xrange(len(fpi_s))) 
 
+    channel=''
+    if any(re.match('.*_el_.*',x) for x in pars): channel += 'el'
+    if any(re.match('.*_mu_.*',x) for x in pars): channel += 'mu'
+    if len(channel): print "UNDERSTOOD FROM PARAMETERS THAT YOU ARE RUNNING ON CHANNEL: ", channel
+
     if pois:
         poi_patts = pois.split(",")
         for ppatt in poi_patts:
@@ -106,19 +111,30 @@ def plotPars(inputFile, mdFit, doPull=True, pois=None, selectString=''):
         nuisIsSymm = abs(abs(nuis_p.getErrorLo())-abs(nuis_p.getErrorHi()))<0.01 or nuis_p.getErrorLo() == 0
 
         if doPull:
-            tree.Draw( "(trackedParam_%s-%f)/%f>>%s" % (name,mean_p,sigma_p,name) )
+            error = ROOT.TH1F("error","",100,0,1e+7)
+            tree.Draw( "trackedParamErr_{par}>>error".format(par=name))
+            mean_err = error.GetMean()
+            histo = ROOT.TH1F("pull","",100,-5,5)
+            tree.Draw( "(trackedParam_{par}-{prefit})/{meanerr}>>pull".format(par=name,prefit=mean_p,meanerr=mean_err) )
+            #tree.Draw( "(trackedParam_{par}-{prefit})/trackedParamErr_{par}>>pull".format(par=name,prefit=mean_p) )
         else:
-            tree.Draw( "trackedParam_%s>>%s" % (name,name) )
-     
-        histo = ROOT.gROOT.FindObject("%s" % name).Clone()
+            residual = ROOT.TH1F("residual","",100,-1.,1.)
+            varname = "(trackedParam_{par}-{prefit})/{prefit}".format(par=name,prefit=mean_p)
+            tree.Draw( "{var}>>residual".format(var=varname))
+            rms = residual.GetRMS()
+            histo = ROOT.TH1F("pull","",100,-5*rms,5*rms)
+            tree.Draw( "{var}>>pull".format(var=varname) )
         histo.GetXaxis().SetTitle(histo.GetTitle())
         histo.GetYaxis().SetTitle("no toys (%d total)" % nToysInTree)
         histo.GetYaxis().SetTitleOffset(1.05)
         histo.GetXaxis().SetTitleOffset(0.9)
         histo.GetYaxis().SetTitleSize(0.05)
         histo.GetXaxis().SetTitleSize(0.05)
-        histo.GetXaxis().SetTitle("(%s-#theta_{0})/#sigma_{#theta}" % name)
-        
+        if doPull:
+            histo.GetXaxis().SetTitle("(%s-#theta_{0})/#sigma_{#theta}" % name)
+        else:
+            histo.GetXaxis().SetTitle("(%s-#theta_{0})/#theta_{0}" % name)
+
         histo.SetTitle("")
      
         fitPull = histo.Integral()>0
@@ -131,7 +147,7 @@ def plotPars(inputFile, mdFit, doPull=True, pois=None, selectString=''):
             lat.DrawLatex(0.12, 0.6, 'chi2/ndf: {cn:.2f}'.format(cn=fit.GetChisquare()/fit.GetNDF()))
         
         for ext in ['png', 'pdf']:
-            c.SaveAs("%s_%s.%s" % (name,'pull' if doPull else 'val',ext))
+            c.SaveAs("%s_%s_%s.%s" % (name,'pull' if doPull else 'val',channel,ext))
 
         if fitPull:
             tlatex = ROOT.TLatex(); tlatex.SetNDC(); 
@@ -148,7 +164,7 @@ def plotPars(inputFile, mdFit, doPull=True, pois=None, selectString=''):
                                   histo.GetMean(),effSigma(histo))
             nPulls += 1
             
-    if doPull and nPulls>0:
+    if nPulls>0:
         print "Generating Pull Summaries...\n"
         nRemainingPulls = nPulls
         hc = ROOT.TCanvas("hc","",3000,2000); hc.SetGrid(0);
@@ -159,8 +175,21 @@ def plotPars(inputFile, mdFit, doPull=True, pois=None, selectString=''):
             pullSummaryHist = ROOT.TH1F("pullSummary","",nThisPulls,0,nThisPulls);
             pullSummaryHist2 = ROOT.TH1F("pullSummary2","",nThisPulls,0,nThisPulls);
             pi=1
-            for name,pull in sorted(pullSummaryMap.iteritems(), key=lambda(k,v): int(k.split('pdf')[-1])):
+            sortedpulls = []
+            if 'pdf' in pois:
+                sortedpulls = sorted(pullSummaryMap.keys(), key=lambda k: int(k.split('pdf')[-1]))
+            elif 'norm' in pois:
+                keys = pullSummaryMap.keys()
+                keys_l = list(k for k in keys if 'left' in k)
+                keys_r = list(k for k in keys if 'right' in k)
+                norms_l = sorted(keys_l, key=lambda k: int(k.split('_')[-1]), reverse=False)
+                norms_r = sorted(keys_r, key=lambda k: int(k.split('_')[-1]), reverse=True)
+                sortedpulls = norms_r + norms_l
+            if len(sortedpulls)==0: break
+
+            for name in sortedpulls:
                 if pi>nThisPulls: break
+                pull = pullSummaryMap[name]
                 pullSummaryHist.GetXaxis().SetBinLabel(pi,name)
                 pullSummaryHist.SetBinContent(pi,pull[0]);  pullSummaryHist.SetBinError(pi,pull[1])
                 pullSummaryHist2.SetBinContent(pi,pull[2]);  pullSummaryHist2.SetBinError(pi,pull[3])
@@ -183,18 +212,20 @@ def plotPars(inputFile, mdFit, doPull=True, pois=None, selectString=''):
             pullSummaryHist.SetLabelSize(pullLabelSize)
             pullSummaryHist.LabelsOption("v")
             pullSummaryHist.GetYaxis().SetRangeUser(-1.,1.)
-            pullSummaryHist.GetYaxis().SetTitle("pull summary (n#sigma)")
+            if doPull: pullSummaryHist.GetYaxis().SetTitle("pull summary (n#sigma)")
+            else: pullSummaryHist.GetYaxis().SetTitle("residual summary (relative)")
             pullSummaryHist.Draw("E2")
             pullSummaryHist2.Draw("E1 SAME")
 
             leg = ROOT.TLegend(0.60, 0.60, 0.85, 0.80)
             leg.SetFillStyle(0)
             leg.SetBorderSize(0)
-            leg.AddEntry(pullSummaryHist,"Gassian pull")
-            leg.AddEntry(pullSummaryHist2,"Effective pull")
+            leg.AddEntry(pullSummaryHist,"Gassian #sigma")
+            leg.AddEntry(pullSummaryHist2,"Effective #sigma")
             leg.Draw("same")
+            suffix=pois.replace('.*','')
             for ext in ['png', 'pdf']:
-                hc.SaveAs("pullSummaryToys_%d.%s" % (pullPlots,ext))
+                hc.SaveAs("pullSummaryToys_{sfx}_{igroup}_{c}.{ext}".format(sfx=suffix,igroup=pullPlots,c=channel,ext=ext))
             pullPlots += 1
 
 
@@ -216,5 +247,6 @@ if __name__ == "__main__":
     limitsFile = args[0]
     mdfitfile = args[1]
 
-    plotPars(limitsFile,mdfitfile,pois='pdf.*')
-
+    plotPars(limitsFile,mdfitfile,doPull=True,pois='pdf.*')
+    plotPars(limitsFile,mdfitfile,doPull=False,pois='norm_Wplus.*')
+    plotPars(limitsFile,mdfitfile,doPull=False,pois='norm_Wminus.*')

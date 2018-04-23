@@ -68,7 +68,7 @@ def dressed2D(h1d,binning,name,title=''):
     h2_backrolled_1 = roll1Dto2D(h1_1, h2_1 )
     h2_backrolled_1 .GetXaxis().SetTitle('lepton #eta')
     h2_backrolled_1 .GetYaxis().SetTitle('lepton p_{T} (GeV)')
-    h2_backrolled_1 .GetZaxis().SetRangeUser(0.1*h2_backrolled_1.GetMaximum(),1.1*h2_backrolled_1.GetMaximum())
+    h2_backrolled_1 .GetZaxis().SetRangeUser(0.01*h2_backrolled_1.GetMaximum(),1.1*h2_backrolled_1.GetMaximum())
     return h2_backrolled_1
 
 ROOT.gROOT.SetBatch()
@@ -130,7 +130,7 @@ if __name__ == "__main__":
                 h2_backrolled_1.Write(name2D)
                 if not options.noplot:
                     for ext in ['pdf', 'png']:
-                        canv.SaveAs('{odir}/W{ch}_{pol}_W{ch}_el_Ybin_{ybin}_PFMT40_absY.{ext}'.format(odir=outname,ch=charge,pol=pol,ybin=ybin,ext=ext))
+                        canv.SaveAs('{odir}/W{ch}_{pol}_W{ch}_{flav}_Ybin_{ybin}_PFMT40_absY.{ext}'.format(odir=outname,ch=charge,flav=channel,pol=pol,ybin=ybin,ext=ext))
 
         # do backgrounds now
         procs=["Flips","Z","Top","DiBosons","TauDecaysW","data_fakes","W{ch}_long".format(ch=charge)]
@@ -144,7 +144,7 @@ if __name__ == "__main__":
             h2_backrolled_1.Write(str(p))
             if not options.noplot:
                 for ext in ['pdf', 'png']:
-                    canv.SaveAs('{odir}/{proc}_{ch}_PFMT40_absY.{ext}'.format(odir=outname,proc=p,ch=charge,ext=ext))
+                    canv.SaveAs('{odir}/{proc}_{ch}_{flav}_PFMT40_absY.{ext}'.format(odir=outname,proc=p,ch=charge,flav=channel,ext=ext))
             
         outfile.Close()
 

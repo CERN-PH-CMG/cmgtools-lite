@@ -146,12 +146,12 @@ class lepCalibratedEnergyProducer(Module):
                 calPt.append(-999.) 
                 calPt_step1.append(-999.) 
             else:
-                scale = self._worker.ScaleCorrection(event.run,abs(l.etaSc)<1.479,l.r9,abs(l.eta),l.pt)
-                smear = self._worker.getSmearingSigma(event.run,abs(l.etaSc)<1.479,l.r9,abs(l.eta),l.pt,0.,0.)
                 if event.isData:
+                    scale = self._worker.ScaleCorrection(event.run,abs(l.etaSc)<1.479,l.r9,abs(l.eta),l.pt)
                     calPt_step1.append(l.pt * scale)
                     calPt.append(l.pt * scale * self.residualScale(l.pt,l.eta,event.isData))
                 else:
+                    smear = self._worker.getSmearingSigma(event.run,abs(l.etaSc)<1.479,l.r9,abs(l.eta),l.pt,0.,0.)
                     corr = 1.0 + smear * self.gauss()
                     calPt_step1.append(l.pt * corr)
                     calPt.append(l.pt * corr)

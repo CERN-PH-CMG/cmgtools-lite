@@ -23,13 +23,11 @@ CMS_Top              : Top                          : .* : 1.06
 # ==================================================================
 # Fake rate uncertainties
 # ==================================================================
-# for the time being just apply a flat normalization uncertainty
-CMS_Wmu_FR_norm      : data_fakes                   : .* : 1.30
-
-
-# 1+2) Measurement of the fake rate                     : normalization and shapes
-#CMS_Wmu_FRmu_norm   : data_fakes                   : .* : FRmu_norm : templates
-#CMS_Wmu_FRmu_pt     : data_fakes                   : .* : FRmu_pt   : templatesShapeOnly
+# first is the normalization uncertainty
+CMS_Wmu_FR_norm        : data_fakes  : .* : 1.30
+# shape uncertainties (slope of FR with pt, and slope down, offset up and vice-versa)
+CMS_Wmu_FRmu_slope     : data_fakes  : .* : FRmu_slope : templatesShapeOnly
+CMS_Wmu_FRmu_both      : data_fakes  : .* : FRmu_both  : templatesShapeOnly
 
 
 # ==================================================================
