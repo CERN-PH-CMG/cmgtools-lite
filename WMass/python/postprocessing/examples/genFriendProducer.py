@@ -116,6 +116,9 @@ class GenQEDJetProducer(Module):
             self.out.branch("genw_"+V, "F")
         for N in range(1,self.nHessianWeights+1):
             self.out.branch("hessWgt"+str(N), "F")
+        for scale in ['muR','muF',"muRmuF"]:
+            for idir in ['Up','Dn']:
+                self.out.branch("qcd_{scale}{idir}".format(scale=scale,idir=idir), "F")
     def endFile(self, inputFile, outputFile, inputTree, wrappedOutputTree):
         pass
 
@@ -137,6 +140,21 @@ class GenQEDJetProducer(Module):
         self._pdfHelper.DoMC2Hessian(nomlhew,inPdfW,outPdfW)
         pdfeigweights = [wgt*weight/nomlhew for wgt in outPdfW.tolist()]
         return pdfeigweights
+
+    def qcdScaleWgtIdx(self,mur="0",muf="0"):
+        # mapping from https://indico.cern.ch/event/459797/contribution/2/attachments/1181555/1800214/mcaod-Feb15-2016.pdf
+        idx_map={}
+        idx_map[("0","0")]   = 0
+        idx_map[("0","Up")]  = 1
+        idx_map[("0","Dn")]  = 2
+        idx_map[("Up","0")]  = 3
+        idx_map[("Up","Up")] = 4
+        idx_map[("Up","Dn")] = 5
+        idx_map[("Dn","0")]  = 6
+        idx_map[("Dn","Up")] = 7
+        idx_map[("Dn","Dn")] = 8
+        if (mur,muf) not in idx_map: raise Exception('Scale variation muR={mur},muF={muf}'.format(mur=mur,muf=muf))
+        return idx_map[(mur,muf)]
 
     def analyze(self, event):
         """process event, return True (go to next module) or False (fail, go to next event)"""
@@ -217,6 +235,11 @@ class GenQEDJetProducer(Module):
         hessWgt = self.mcRep2Hess(getattr(event, "genWeight"),lheweights)
         for N in range(1,self.nHessianWeights+1):
             self.out.fillBranch("hessWgt"+str(N), hessWgt[N-1]/event.genWeight)
+        qcd0Wgt=lheweights[self.qcdScaleWgtIdx()]
+        for idir in ['Up','Dn']:
+            self.out.fillBranch("qcd_muR{idir}".format(idir=idir), lheweights[self.qcdScaleWgtIdx(mur=idir)]/qcd0Wgt)
+            self.out.fillBranch("qcd_muF{idir}".format(idir=idir), lheweights[self.qcdScaleWgtIdx(muf=idir)]/qcd0Wgt)
+            self.out.fillBranch("qcd_muRmuF{idir}".format(idir=idir), lheweights[self.qcdScaleWgtIdx(mur=idir,muf=idir)]/qcd0Wgt) # only correlated variations are physical
 
         return True
 
