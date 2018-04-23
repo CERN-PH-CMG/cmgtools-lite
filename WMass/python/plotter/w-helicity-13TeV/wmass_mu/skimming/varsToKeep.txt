@@ -4,6 +4,8 @@ evt
 isData    
 xsec
 nTrueInt
+puWeight
+genWeight
 Flag_badMuonMoriond2017 
 Flag_badCloneMuonMoriond2017 
 badCloneMuonMoriond2017_maxPt 
