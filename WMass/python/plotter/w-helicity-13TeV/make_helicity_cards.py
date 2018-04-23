@@ -158,8 +158,7 @@ if options.queue:
 POSCUT=" -A alwaystrue positive 'LepGood1_charge>0' "
 NEGCUT=" -A alwaystrue negative 'LepGood1_charge<0' "
 if options.signalCards:
-    ## WYBinsEdges = makeYWBinning(os.environ['CMSSW_BASE']+'/src/CMGTools/WMass/data/efficiency/mc_reco_eff.root')#, 5000)
-    WYBinsEdges = makeYWBinning('/afs/cern.ch/user/m/mciprian/public/whelicity_stuff/electron_efficiency/mc_reco_eff.root')
+    WYBinsEdges = makeYWBinning(os.environ['CMSSW_BASE']+'/src/CMGTools/WMass/data/efficiency/eff_el_PFMT40.root')#, 5000)
     ybinfile = open(outdir+'/binningYW.txt','w')
     ybinfile.write(json.dumps(WYBinsEdges))
     #ybinfile.writelines(' '.join(str(i) for i in WYBinsEdges))
