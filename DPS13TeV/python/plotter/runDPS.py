@@ -2,7 +2,7 @@ import optparse, subprocess, ROOT, datetime, math, array, copy, os
 import numpy as np
 
 #doPUreweighting = True
-doPUandSF = False
+doPUandSF = True
 
 def printAggressive(s):
     print '='.join('' for i in range(len(s)+1))
@@ -138,22 +138,16 @@ def runplots(trees, friends, targetdir, fmca, fcut, fplots, enabledcuts, disable
     print 'running: python', cmd
     subprocess.call(['python']+cmd.split())#+['/dev/null'],stderr=subprocess.PIPE)
 
-def makeResults(onlyMM = True, splitCharge = False): #sfdate, onlyMM = True, splitCharge = True):
+def makeResults(onlyMM = True, splitCharge = True): #sfdate, onlyMM = True, splitCharge = True):
 #def runCards(trees, friends, targetdir, fmca, fcut, fsyst, plotbin, enabledcuts, disabledcuts, processes, scaleprocesses, extraopts = ''):
 #python makeShapeCardsSusy.py --s2v -P /afs/cern.ch/work/e/efascion/DPStrees/TREES_110816_2muss/ --Fs /afs/cern.ch/work/e/efascion/public/friendsForDPS_110816/ -l 12.9 dps-ww/final_mca.txt dps-ww/cutfinal.txt finalMVA_DPS 10,0.,1.0  --od dps-ww/cards -p DPSWW,WZ,ZZ,WWW,WpWpJJ,Wjets  -W 0.8874 --asimov dps-ww/syst.txt
     
     #sfs = calculateScalefactors(False, sfdate)
 
     targetcarddir = 'cards/{date}{pf}/'.format(date=date, pf=('-'+postfix if postfix else '') )
-<<<<<<< HEAD
-    trees     = '/eos/user/m/mdunser/dps-13TeV-combination/TREES_latest/'    
-    friends = [trees+'/friends/', trees+'/friends_bdt_new4/']
-    targetdir = '/eos/user/a/anmehta/www/{date}{pf}Finalcuts_BDT_dimuon_2Dopt/'.format(date=date, pf=('-'+postfix if postfix else '') )
-=======
     trees     = '/eos/user/m/mdunser/dps-13TeV-combination/TREES_latest/'
     friends = [trees+'/friends/', trees+'/friends_bdt_new4/']
     targetdir = '/afs/cern.ch/user/m/mdunser/www/private/dps-ww-combination/results/{date}{pf}/'.format(date=date, pf=('-'+postfix if postfix else '') )
->>>>>>> dpsww13tev/80X_update
     fcut   = 'dpsww13TeV/dps2016/results/cuts_results.txt'#mumuelmu_mca.txt'
     fplots = 'dpsww13TeV/dps2016/results/plots.txt'
     fsyst  = 'dpsww13TeV/dps2016/results/syst.txt'
@@ -170,34 +164,8 @@ def makeResults(onlyMM = True, splitCharge = False): #sfdate, onlyMM = True, spl
 
     print 'did i split the charge?'
 
-    #    processes      = ['data', 'DPSWW', 'WZ', 'ZZ', 'WG_wg', 'rares', 'fakes_data']
+    processes      = ['data', 'DPSWW', 'WZ', 'ZZ', 'WG_wg', 'rares', 'fakes_data']
     processesCards = ['data', 'DPSWW', 'WZ', 'ZZ', 'WG_wg', 'rares', 'fakes_data', 'WZamcatnlo']#, 'DPSWW_alt']
-<<<<<<< HEAD
-    processes      = ['WZ','DPSWW','ZZ', 'WG_wg', 'rares', 'fakes_data'] 
-    #processes      = ['WZfxfx','WZamcatnlo','DPSWW','dataTL','WZ']
-    binningBDT   = ''# (BDT_DPS_WZ*BDT_DPS_fakes) 20,0.,1. '
-    nbinspostifx = '_20bins'
-
-    fmca   = 'dpsww13TeV/dps2016/results/mumuelmu_mca.txt'
-    
-    for ich,ch in enumerate(loop):
-        #if not ich: continue
-        enable    = ['trigmumu', 'mumu'] + ch
-        disable   = []
-        fittodata = []
-        scalethem = {'WZ': '{sf:.3f}'.format(sf=1.04),
-                     'ZZ': '{sf:.3f}'.format(sf=1.21)}
-        mumusf = 0.95
-        extraopts = '-W {sf:.3f}'.format(sf=mumusf)# --showIndivSigs --plotmode=norm
-        makeplots = ['BDTfakes_BDTWZ_mumu'+(ch[0] if ch else '')+nbinspostifx]
-        #makeplots = ['BDT_wz_mumu'+(ch[0] if ch else '')+nbinspostifx,'BDT_fakes_mumu'+(ch[0] if ch else '')+nbinspostifx,'BDT_prod_mumu'+(ch[0] if ch else '')+nbinspostifx]
-        runplots(trees,friends, targetdir, fmca, fcut, fplots, enable, disable, processes, scalethem, fittodata, makeplots, False, extraopts)
-        ## ==================================
-        ## running datacards
-        ## ==================================
-        ####    foobar extraoptscards = ' -W {sf:.3f} -o mumu{ch} -b mumu{ch} '.format(sf=mumusf, ch=(ch[0] if ch else ''))
-        ####    foobar runCards(trees, friends, targetcarddir, fmca, fcut, fsyst , binningBDT, enable, disable, processesCards, scalethem, extraoptscards)
-=======
 
     binningBDT   = ' BDT_DPS_WZ 15,0.,1. '
     nbinspostifx = '_15bins'
@@ -221,27 +189,28 @@ def makeResults(onlyMM = True, splitCharge = False): #sfdate, onlyMM = True, spl
             ## ==================================
             extraoptscards = ' -W {sf:.3f} -o mumu{ch} -b mumu{ch} '.format(sf=mumusf, ch=(ch[0] if ch else ''))
             runCards(trees, friends, targetcarddir, fmca, fcut, fsyst , binningBDT, enable, disable, processesCards, scalethem, extraoptscards)
->>>>>>> dpsww13tev/80X_update
 
 
 def simplePlot():
     print '=========================================='
     print 'running simple plots'
     print '=========================================='
+    trees     = ['/eos/user/m/mdunser/w-helicity-13TeV/trees/trees_all_skims/']
+    friends   = '/eos/user/m/mdunser/w-helicity-13TeV/trees/trees_all_skims/friends/'
+    targetdir = '/afs/cern.ch/user/m/mdunser/www/private/w-helicity-13TeV/simple_plots/{date}{pf}/'.format(date=date, pf=('-'+postfix if postfix else '') )
 
-    trees     = '/eos/user/m/mdunser/dps-13TeV-combination/TREES_latest/'
-    friends = ''
-    targetdir = '/eos/user/a/anmehta/www/{date}{pf}TL_shapes_final/'.format(date=date, pf=('-'+postfix if postfix else '') )
-    fcut   = 'dpsww13TeV/dps2016/simple/cuts_simple.txt'
-    fplots = 'dpsww13TeV/dps2016/results/plots.txt'
-    fmca   = 'dpsww13TeV/dps2016/simple/mumuelmu_mca.txt'
-    enable    = ['trigmumu', 'mumu']
+    fmca      = 'w-helicity-13TeV/wmass_mu/simple/mca_simple.txt'
+    fcut      = 'w-helicity-13TeV/wmass_mu/simple/cuts_simple.txt'
+    fplots    = 'w-helicity-13TeV/wmass_mu/simple/plots.txt'
+
+    enable    = []
     disable   = []
-    processes = ['DPSWW','dataTL']
+    #processes = ['data', 'Z', 'W', 'fakes_data', 'Top', 'DiBosons']
+    processes = ['WplusNoSkim']
     fittodata = []
     scalethem = {}
-    extraopts = '--plotmode=norm' #--ratioNums data --ratioDen WJ --maxRatioRange 0.2 2.0 --fixRatioRange 
-    makeplots = ['etaratio']#eta1','eta2'] #abs_eta_diff','eta_diff'] #dphil2met','pt1','met','pt2','eta1','eta2','mll','mtll','mt2','mt1','eta_sum','etaprod','dphiLep','dphil2met','dphilll2','mt2ll','lepMVA1','lepMVA2']
+    extraopts = '  ' #--maxRatioRange 0.8 1.2 --fixRatioRange ' #'--plotmode=norm '
+    makeplots = ['weightLongPlus', 'weightLeftPlus', 'weightRightPlus'] #'mtl1tk', 'etal1', 'ptl1']#'nVert', 'ptl1', 'etal1', 'mtl1tk', 'mtl1pf', 'tkmet', 'pfmet']
     showratio = False
     runplots(trees, friends, targetdir, fmca, fcut, fplots, enable, disable, processes, scalethem, fittodata, makeplots, showratio, extraopts)
     

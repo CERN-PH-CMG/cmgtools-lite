@@ -16,10 +16,12 @@ r.TMVA.Tools.Instance()
 # does not work. Make sure you don't overwrite an
 # existing file.
 includePt = True
-useHerwig = True
+useHerwig = False
 trainagainstTL = True
 doublemudata = True
-output_fn  = '{bkgsample}{DATAsample}_DPS{gen}_BDT{pt}.root'.format(bkgsample='TL' if trainagainstTL else 'LL',DATAsample='_in_DblMu' if doublemudata else '',pt='_noPt1' if not includePt else '',gen='Herwigpp' if useHerwig else 'Pythia')
+includeEtasum = True
+includeEtadiff = False
+output_fn  = '{bkgsample}{DATAsample}_DPS{gen}_BDT{pt}{etadiff}{etasum}.root'.format(bkgsample='TL' if trainagainstTL else 'LL',DATAsample='_in_DblMu' if doublemudata else '',pt='_noPt1' if not includePt else '',gen='Herwigpp' if useHerwig else 'Pythia',etadiff='_noEtadiff' if not includeEtadiff else '',etasum='_noEtasum' if not includeEtasum else '')
 output_f   = r.TFile(output_fn,'RECREATE')
  
 factory = r.TMVA.Factory('TMVAClassification', output_f,
@@ -45,7 +47,11 @@ factory.AddVariable('abs(deltaPhi(LepGood_phi[0],LepGood_phi[1]))','#Delta #phi 
 factory.AddVariable('abs(deltaPhi(LepGood_phi[1],met_phi))','#Delta #phi l2 met', 'F') 
 factory.AddVariable('abs(deltaPhi(phi_2(LepGood_pt[0],LepGood_eta[0],LepGood_phi[0],LepGood_mass[0],LepGood_pt[1],LepGood_eta[1],LepGood_phi[1],LepGood_mass[1]),LepGood_phi[1]))','#Delta #phi l1l2 l2', 'F')
 factory.AddVariable('LepGood_eta[0]*LepGood_eta[1]','#eta_{1}*#eta_{2}', 'F')
-factory.AddVariable('abs(LepGood_eta[0]+LepGood_eta[1])','abs(#eta_{1}+#eta_{2})','F')
+if includeEtasum:
+    factory.AddVariable('abs(LepGood_eta[0]+LepGood_eta[1])','abs(#eta_{1}+#eta_{2})','F')
+if includeEtadiff:
+    factory.AddVariable('abs(LepGood_eta[0]-LepGood_eta[1])','abs(#eta_{1}-#eta_{2})','F')
+
 
 #factory.AddVariable('mt_2(LepGood_pt[1],LepGood_phi[1],met_pt,met_phi)','MT l2 met', 'F') 
 #factory.AddVariable('abs(deltaPhi(LepGood_phi[0],met_phi))','#Delta #phi l1 met', 'F') 
@@ -101,7 +107,7 @@ else:
     signal='WWDoubleTo2L' 
 
 treePath_sig='/eos/user/m/mdunser/dps-13TeV-combination/TREES_latest/'
-sig_tfile = r.TFile(treePath_sig+signal+'/treeProducerWMass/tree.root')
+sig_tfile = r.TFile(treePath_sig+signal+'/treeProducerSusyMultilepton/tree.root')
 #sig_ffile = r.TFile('bkgfriendtreefile')
 sig_tree = sig_tfile.Get('tree')
 #sig_tree.AddFriend('sf/t', sig_ffile)
