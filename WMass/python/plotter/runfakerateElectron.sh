@@ -18,7 +18,8 @@ onlypack="n" # just pack an already existing fake-rate
 # if onlypack='n', the packing might still be done at the end of FR computation, see options below
 # else, if onlypack='y', it overrides the packFRfromTest option below
 #--------------------------
-etaRange="0.0,1.0,1.479,2.1,2.5"
+#etaRange="0.0,1.0,1.479,2.1,2.5"
+etaRange="0.0,0.3,0.6,0.9,1.2,1.479,1.7,1.9,2.1,2.3,2.5"
 mtRanges="0,30,30,120"
 mtDefinition="pfmtfix"  # trkmtfix, trkmt, pfmtfix, pfmt: even though we no longer use the 2-mT-regions method, I think pfmt should be better because trkmt is correlated with ID variables
 ptDefinition="pt_granular"  # pt_coarse, pt_granular (first is mainly for QCD MC)
@@ -26,7 +27,7 @@ ptDefinition="pt_granular"  # pt_coarse, pt_granular (first is mainly for QCD MC
 #-------------------------
 istest="y"
 # following option testdit is used only if istest is 'y'
-testdir="SRtrees_new/fakeRate_${mtDefinition}_${ptDefinition}_pfmet20_HLT27_tightChargeNum_pfmtLess40"
+testdir="SRtrees_new/fakeRate_${mtDefinition}_${ptDefinition}_pfmet20_HLT27_tightChargeNum_5binEB_5binEE"
 # by default, if this is a test we do not pack to avoid overwriting something when we just do tests
 # you can override this feature setting this flag to 'y'
 # even if you don't pack, the command you would use is printed in stdout
@@ -39,8 +40,9 @@ packFRfromTest="n"
 #addOption=" -A eleKin pfmet 'met_pt<20' -A eleKin pfmtLess40 'mt_2(met_pt,met_phi,ptCorrAndResidualScale(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_r9,run,isData,evt) ,LepGood_phi)<40' "
 #addOption=" -A eleKin pfmet 'met_pt<20' -R HLT_SingleEL HLT_Ele27 'HLT_BIT_HLT_Ele27_WPTight_Gsf_v == 1'"
 #addOption=" -A eleKin pfmet 'met_pt<20' -A eleKin tightcharge 'LepGood1_tightChargeFix == 2'"
-addOption=" -A eleKin pfmet 'met_pt<20' -A eleKin pfmtLess40 'mt_2(met_pt,met_phi,ptElFull(LepGood1_calPt,LepGood1_eta),LepGood1_phi) < 40'"
+#addOption=" -A eleKin pfmet 'met_pt<20' -A eleKin pfmtLess40 'mt_2(met_pt,met_phi,ptElFull(LepGood1_calPt,LepGood1_eta),LepGood1_phi) < 40'"
 #addOption=" -A eleKin pfmet 'met_pt<20' -A eleKin awayJetPt 'LepGood_awayJet_pt > 45' "
+addOption=" -A eleKin pfmet 'met_pt<20' "
 
 
 # check we are on lxplus  
