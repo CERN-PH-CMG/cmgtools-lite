@@ -1,6 +1,6 @@
-Flips : TTLep_pow : xsec : (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && !(LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge)) ; Label="Flips", FillColor=ROOT.kCyan-10
+Flips : TTJets_DiLepton_part1+TTJets_DiLepton_part2 : xsec : (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && !(LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge)) ; Label="Flips", FillColor=ROOT.kCyan-10
 Flips : DYJetsToLL_M10to50_LO : xsec : (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && !(LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge)) ; Label="Flips", FillColor=ROOT.kCyan-10
-Flips : DYJetsToLL_M50_LO_part1+DYJetsToLL_M50_LO_part2+DYJetsToLL_M50_LO_part3 : xsec : (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && !(LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge)) ; Label="Flips", FillColor=ROOT.kCyan-10
+Flips : DYJetsToLL_M50_LO : xsec : (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && !(LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge)) ; Label="Flips", FillColor=ROOT.kCyan-10
 Flips : T_tWch_noFullyHad : xsec : (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && !(LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge)) ; Label="Flips", FillColor=ROOT.kCyan-10
 Flips : TBar_tWch_noFullyHad : xsec : (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && !(LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge)) ; Label="Flips", FillColor=ROOT.kCyan-10
 Flips : WWTo2L2Nu : xsec : (LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0 && !(LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge)) ; Label="Flips", FillColor=ROOT.kCyan-10

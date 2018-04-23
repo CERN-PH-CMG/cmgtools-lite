@@ -1,4 +1,4 @@
-ttH+    : TTHnobb_pow : 0.5071*0.418 : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge; FillColor=ROOT.kOrange+10
+ttH+    : TTHnobb_fxfx : 0.5071*0.418 : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge; FillColor=ROOT.kOrange+10
 
 #tHq	: THQ : 3495799.0/0.705305*0.07096*0.324 : LHEweight_wgt[457]*(LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge); FillColor=ROOT.kRed
 #tHW	: THW : 1499200.0/0.273617*0.01561 : LHEweight_wgt[457]*(LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge); FillColor=ROOT.kBlue
@@ -7,23 +7,24 @@ ttH+    : TTHnobb_pow : 0.5071*0.418 : LepGood1_isMatchRightCharge && LepGood2_i
 TTW     : TTWToLNu_fxfx : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ;  FillColor=ROOT.kGreen-5, Label="ttW   "
 TTZ     : TTZToLLNuNu_amc : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ;  FillColor=ROOT.kSpring+2, Label="ttZ   "
 TTZ     : TTZToLLNuNu_m1to10 : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ;  FillColor=ROOT.kSpring+2
-TTZ	: TTLep_pow : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kSpring+2
-TTZ   	: TTSemi_pow : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kSpring+2
+TTZ	: TTJets_DiLepton_part1+TTJets_DiLepton_part2 : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kSpring+2
+TTZ   	: TTJets_SingleLeptonFromT : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kSpring+2
+TTZ   	: TTJets_SingleLeptonFromTbar : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kSpring+2
 
 EWK 	: WZTo3LNu_fxfx : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ;  FillColor=ROOT.kViolet-4
 EWK 	: WJetsToLNu_LO : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ;  FillColor=ROOT.kViolet-4
 EWK     : ZZTo4L : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ;  FillColor=ROOT.kAzure-9
 
 Rares   : DYJetsToLL_M10to50_LO: xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kCyan+1
-Rares   : DYJetsToLL_M50_LO_part1+DYJetsToLL_M50_LO_part2+DYJetsToLL_M50_LO_part3: xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kCyan+1
+Rares   : DYJetsToLL_M50_LO: xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kCyan+1
 
 #Rares: WpWpJJ : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kOrange-3, Label="W^{\#pm}W^{\#pm} "
 
-#Rares: WWDouble : 0.1729 : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kAzure-9
-#Rares: WWW : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kAzure-9
+Rares: WW_DPS : 0.1729 : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kAzure-9
+Rares: WWW_4F : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kAzure-9
 #Rares: WWZ : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kAzure-9
-#Rares: WZZ : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kAzure-9
-#Rares: ZZZ : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kAzure-9
+Rares: WZZ : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kAzure-9
+Rares: ZZZ : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kAzure-9
 Rares: TTTT : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kAzure-9
 Rares: TZQToLL : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kAzure-9
 #Rares: tWll : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kAzure-9
