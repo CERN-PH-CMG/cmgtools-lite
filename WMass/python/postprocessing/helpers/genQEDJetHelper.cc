@@ -31,6 +31,8 @@ class GenQEDJetHelper {
     nuPdgIds_.clear();
     lheLeps_.clear();
     lheLepPdgIds_.clear();
+    gammaMaxDR_ = -1.;
+    gammaRelPtOutside_ = 0.;
 
     // fill the prmpt hard particles and leptons / neutrinos
     genparticles promptgp;
@@ -59,10 +61,11 @@ class GenQEDJetHelper {
 
     std::vector<bool> usedPart;
     for(int iP=0;iP<(int)promptgp.size(); ++iP) usedPart.push_back(false);
+
     for(int iL=0; iL<(int)promptgp.size(); ++iL) {
       for(int iP=iL+1; iP<(int)promptgp.size(); ++iP) {
         if(!usedPart[iP] && promptgp[iL].DeltaR(promptgp[iP]) < deltaR_) {
-          // std::cout << "Dressing a lepton with a particle of pt = " << promptgp[iP].Pt() << " and within dR = " << lheLeps_[iL].DeltaR(promptgp[iP]) << std::endl;
+          //std::cout << "Dressing a lepton with a particle of pt = " << promptgp[iP].Pt() << " and mass " << promptgp[iP].M() << " and within dR = " << promptgp[iL].DeltaR(promptgp[iP]) << std::endl; //marc
           promptgp[iL] += promptgp[iP];
           usedPart[iP] = true;
         }
@@ -71,6 +74,20 @@ class GenQEDJetHelper {
       if(!usedPart[iL] && isChLep) {
         dressedLeptons_.push_back(promptgp[iL]);
         lepPdgIds_.push_back(pdgIds[iL]);
+
+        genparticle outsideGammas;
+        outsideGammas.SetPtEtaPhiM(0., 0., 0., 0.);
+        for(int iP=0; iP<(int)promptgp.size(); ++iP) {
+            if( abs(pdgIds[iP]) == 22 && promptgp[iL].DeltaR(promptgp[iP]) > deltaR_) {
+          // std::cout << "Found pdgId " <<  abs(pdgIds[iP]) << " with dR " << promptgp[iL].DeltaR(promptgp[iP]) << " to pdgId " << abs(pdgIds[iL]) << " with pT " << promptgp[iP].Pt() << std::endl;
+                outsideGammas += promptgp[iP];
+                if ( promptgp[iL].DeltaR(promptgp[iP]) > gammaMaxDR_) {
+                    gammaMaxDR_ = promptgp[iL].DeltaR(promptgp[iP]);
+                }
+            }
+        }
+        gammaRelPtOutside_ = outsideGammas.Pt()/promptgp[iL].Pt();
+
       }
     }
   }
@@ -83,10 +100,13 @@ class GenQEDJetHelper {
   const std::vector<int> & promptNeutrinosPdgId() { return nuPdgIds_; }
   const std::vector<int> & lheWsPdgId() { return lheWPdgIds_; }
   const std::vector<int> & lheLepsPdgId() { return lheLepPdgIds_; }
+  const float & gammaMaxDR() { return gammaMaxDR_; }
+  const float & gammaRelPtOutside() { return gammaRelPtOutside_; }
 
 private:
   genparticles dressedLeptons_, neutrinos_, lheWs_, lheLeps_;
   std::vector<int> lepPdgIds_,nuPdgIds_,lheWPdgIds_,lheLepPdgIds_;
+  float gammaMaxDR_, gammaRelPtOutside_;
   float deltaR_;
   rint *nGp_ = nullptr;
   rfloats *Gp_pt_ = nullptr;
