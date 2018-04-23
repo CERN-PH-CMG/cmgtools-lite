@@ -19,6 +19,21 @@ def _ttH_idEmu_cuts_E2_obj(lep):
     if (lep.full5x5_sigmaIetaIeta()>=(0.011+0.019*(abs(etasc)>1.479))): return False
     return True
 
+def _ttH_idEmu_cuts_E3(lep):
+    if (abs(lep.pdgId)!=11): return True
+    if (lep.hadronicOverEm>=(0.10-0.00*(abs(lep.etaSc)>1.479))): return False
+    if (lep.eInvMinusPInv<=-0.04): return False
+    if (lep.sigmaIEtaIEta>=(0.011+0.019*(abs(lep.etaSc)>1.479))): return False
+    return True
+def _ttH_idEmu_cuts_E3_obj(lep):
+    if (abs(lep.pdgId())!=11): return True
+    etasc = lep.superCluster().eta()
+    if (lep.hadronicOverEm()>=(0.10-0.00*(abs(etasc)>1.479))): return False
+    eInvMinusPInv = (1.0/lep.ecalEnergy() - lep.eSuperClusterOverP()/lep.ecalEnergy()) if lep.ecalEnergy()>0. else 9e9
+    if (eInvMinusPInv<=-0.04): return False
+    if (lep.full5x5_sigmaIetaIeta()>=(0.011+0.019*(abs(etasc)>1.479))): return False
+    return True
+
 def _soft_MuonId_2016ICHEP(lep):
     if (abs(lep.pdgId())!=13): return False
     if not lep.muonID("TMOneStationTight"): return False #TMOneStationTightMuonId
@@ -52,8 +67,8 @@ from CMGTools.TTHAnalysis.tools.combinedObjectTaggerForCleaning import *
 from CMGTools.TTHAnalysis.tools.fastCombinedObjectRecleaner import *
 
 def clean_and_FO_selection_TTH(lep):
-    return lep.conept>10 and lep.jetBTagDeepCSV<0.4941 and (abs(lep.pdgId)!=11 or _ttH_idEmu_cuts_E2(lep)) \
-        and (lep.mvaTTH>0.90 or (lep.jetPtRatiov2>0.5 and lep.jetBTagDeepCSV<0.1522 and (abs(lep.pdgId)!=13 or lep.segmentCompatibility>0.3) and (abs(lep.pdgId)!=11 or lep.mvaIdSpring16HZZ > (0.0 if abs(lep.eta)<1.479 else 0.7)) ) )
+    return lep.conept>10 and lep.jetBTagDeepCSV<0.4941 and (abs(lep.pdgId)!=11 or _ttH_idEmu_cuts_E3(lep)) \
+        and (lep.mvaTTH>0.90 or (abs(lep.pdgId)!=13 and lep.jetBTagDeepCSV<0.07 and lep.segmentCompatibility>0.3 and lep.jetPtRatiov2 > 0.60) or (abs(lep.pdgId)!=11 and lep.jetBTagDeepCSV<0.07 and lep.mvaIdFall17noIso > 0.5 and lep.jetPtRatiov2 > 0.60))
 
 MODULES.append( ('leptonJetFastReCleanerTTH_step1', lambda : CombinedObjectTaggerForCleaning("InternalRecl",
                                                                                        looseLeptonSel = lambda lep : lep.miniRelIso < 0.4 and lep.sip3d < 8,
