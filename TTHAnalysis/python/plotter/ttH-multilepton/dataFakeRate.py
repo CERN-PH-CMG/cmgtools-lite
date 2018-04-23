@@ -135,11 +135,16 @@ if __name__ == "__main__":
         if options.bare:
             for (yspec,xspec,fspec,x2d,report) in hists:
                 for k,v in report.iteritems(): 
-                    outfile.WriteTObject(v)
+                    outfile.WriteTObject(v.raw())
             outfile.ls()
             outfile.Close()
             print "Output saved to %s. exiting." % outname
             exit()
+        else:
+            for (yspec,xspec,fspec,x2d,report) in hists:
+                # downcast objects to raw
+                for k in report.keys(): 
+                    report[k] = report[k].raw()
     for (yspec,xspec,fspec,x2d,report) in hists:
         for k,v in report.iteritems(): outfile.WriteTObject(v)
         myname = outname.replace(".root","_%s_%s.root" % (yspec.name,xspec.name))
@@ -178,7 +183,7 @@ if __name__ == "__main__":
                     mca.stylePlot(p, hproj, fspec, mayBeMissing=True)
                     if options.globalRebin > 1: hproj.Rebin(options.globalRebin)
                     cropNegativeBins(hproj)
-                    greport[p] = hproj
+                    greport[p] = HistoWithNuisances(hproj)
                     gnorms[p]  = { 'pre': hproj.Integral() }
                     outfile.WriteTObject(hproj, hproj.GetName()+"_prefit")
                 plotter.printOnePlot(mca, fspec, greport, printDir=bindirname, outputName= "%s_for_%s%s_prefit" % (fspec.name,yspec.name,bzname) ) 
@@ -186,7 +191,7 @@ if __name__ == "__main__":
                     mca.setProcessOption(p, 'FreeFloat',      True)
                 doNormFit(fspec,greport,mca,saveScales=True)
                 for (p,h) in greport.iteritems():
-                    outfile.WriteTObject(h, h.GetName()+"_postfit")
+                    outfile.WriteTObject(h.raw(), h.GetName()+"_postfit")
                     gnorms[p]['post'] = h.Integral() 
                 if options.subSyst > 0:
                     for p in mca.listBackgrounds():
@@ -215,9 +220,9 @@ if __name__ == "__main__":
                         hproj = fitvarhist.Clone("%s_for_%s%s_%s%s_%s" % (fspec.name,xspec.name,bxname,yspec.name,bzname,p))
                         hproj.SetDirectory(None)
                         # sanity check binning
-                        if h.GetNbinsX() != projection.GetNbinsX(): raise RuntimeError, "Inconsistent input binning with x variable binning"
-                        if h.GetXaxis().GetBinLowEdge(ix) != projection.GetXaxis().GetBinLowEdge(ix): raise RuntimeError, "Inconsistent input binning with x variable binning"
-                        if h.GetXaxis().GetBinUpEdge(ix) != projection.GetXaxis().GetBinUpEdge(ix): raise RuntimeError, "Inconsistent input binning with x variable binning"
+                        if h.GetNbinsX() != projection.GetNbinsX(): raise RuntimeError, "Inconsistent input binning with x variable binning (%d bins vs %d)" % (h.GetNbinsX(), projection.GetNbinsX())
+                        if h.GetXaxis().GetBinLowEdge(ix) != projection.GetXaxis().GetBinLowEdge(ix): raise RuntimeError, "Inconsistent input binning with x variable binning at bin %d: xmin = %g vs %g" % (ix, h.GetXaxis().GetBinLowEdge(ix), projection.GetXaxis().GetBinLowEdge(ix))
+                        if h.GetXaxis().GetBinUpEdge(ix) != projection.GetXaxis().GetBinUpEdge(ix): raise RuntimeError, "Inconsistent input binning with x variable binning at bin %d: xmin = %g vs %g" % (ix, h.GetXaxis().GetBinUpEdge(ix), projection.GetXaxis().GetBinUpEdge(ix))
                         myfz = fzreport[p]
                         for iy in xrange(1,h.GetNbinsY()+1):
                             if options.fcut:
@@ -231,7 +236,7 @@ if __name__ == "__main__":
                         cropNegativeBins(hproj)
                         if options.globalRebin > 1: hproj.Rebin(options.globalRebin)
                         freport[p] = hproj
-                        freport_num_den[bzname[1:]][p] = hproj
+                        freport_num_den[bzname[1:]][p] = hproj 
                         outfile.WriteTObject(hproj, hproj.GetName()+"_prefit")
                         xzreport0[p].SetBinContent(ix,iz, hproj.Integral())
                         xzreport0[p].SetBinError(  ix,iz, _h1NormWithError(hproj, 0.0)[1])
@@ -240,7 +245,7 @@ if __name__ == "__main__":
                                              outputName = "%s_for_%s%s_%s%s_prefit" % (fspec.name,xspec.name,bxname,yspec.name,bzname)) 
                         doNormFit(fspec,freport,mca,saveScales=True)
                         for (p,h) in freport.iteritems():
-                            outfile.WriteTObject(h, h.GetName()+"_postfit")
+                            outfile.WriteTObject(h.raw(), h.GetName()+"_postfit")
                             xzreport[p].SetBinContent(ix,iz, h.Integral())
                             xzreport[p].SetBinError(  ix,iz, _h1NormWithError(h, mca.getProcessOption(p,'NormSystematic',0.))[1])
                         plotter.printOnePlot(mca, fspec, freport, printDir=bindirname,
@@ -321,25 +326,31 @@ if __name__ == "__main__":
                         ds_s_a = hypot(fzreport["signal"].GetBinError(1,1), fzreport["signal"].GetBinError(1,2))
                         bs_ns  = b_s_a / (b_s_a + s_s_a)
                         dbs_ns = (b_s_a * s_s_a)/((b_s_a+s_s_a)**2)*hypot(db_s_a/b_s_a, ds_s_a/s_s_a)
-                        def ifqcd(fs,fl,r,m,g,bsns):
+                        def ifqcd(fs,fl,r,m,g,bsns,cropToZero=True):
                             fs,fl,r,m,g,bsns = map( lambda x : max(x,0), [fs,fl,r,m,g,bsns] );
-                            return max(0,fs - r*m*fl)/(1 - r*m*g + bsns*(g*m-1)) 
+                            num = fs - r*m*fl
+                            den = 1 - r*m*g + bsns*(g*m-1);
+                            if cropToZero and num < 0: num = 0
+                            if den < 0 and not cropToZero: 
+                                print "Warning: den < 0: r*m*g = %g ; -bsns*(g*m-1) = %g " % (r*m*g, r*m*g-bsns*(g*m-1))
+                                return 0
+                            return num/den
                         def mhypot(*args):
                             return sqrt(sum(x**2 for x in args))
                         def ifqcd_werr(fsv,flv,r,dr,m,dm,g,dg,bsns,dbsns):
                             fs, fl = fsv[0], flv[0]
                             f = ifqcd(fs,fl,r,m,g,bsns)
-                            df_f = hypot(ifqcd(max(fsv[1],fsv[2]),0,r,m,g,bsns), ifqcd(0,max(flv[1],flv[2]),r,m,g,bsns))
+                            df_f = hypot(ifqcd(max(fsv[1],fsv[2]),0,r,m,g,bsns,cropToZero=False), ifqcd(0,max(flv[1],flv[2]),r,m,g,bsns,cropToZero=False))
                             df_r = 0.5*abs(ifqcd(fs,fl,r+dr,m,g,bsns)-ifqcd(fs,fl,r-dr,m,g,bsns))
                             if m == 1: 
                                 return (f, df_f, df_r, mhypot(df_r,df_r))
-                            df_m = 0.5*abs(ifqcd(fs,fl,r,m+dm,g,bsns)-ifqcd(fs,fl,r,m-dm,g,bsns))
+                            df_m = 0.5*abs(ifqcd(fs,fl,r,m+dm,g,bsns,cropToZero=False)-ifqcd(fs,fl,r,m-dm,g,bsns,cropToZero=False))
                             if g == 1:
                                 return (f, df_f, df_r, df_m, mhypot(df_r,df_r,df_m))
-                            df_g = 0.5*abs(ifqcd(fs,fl,r,m,g+dg,bsns)-ifqcd(fs,fl,r,m,g-dg,bsns))
+                            df_g = 0.5*abs(ifqcd(fs,fl,r,m,g+dg,bsns,cropToZero=False)-ifqcd(fs,fl,r,m,g-dg,bsns,cropToZero=False))
                             if bsns == 0:
                                 return (f, df_f, df_r, df_m, df_g, mhypot(df_r,df_r,df_m,df_g))
-                            df_bsns = 0.5*abs(ifqcd(fs,fl,r,m,g,bsns+dbsns)-ifqcd(fs,fl,r,m,g,bsns-dbsns))
+                            df_bsns = 0.5*abs(ifqcd(fs,fl,r,m,g,bsns+dbsns,cropToZero=False)-ifqcd(fs,fl,r,m,g,bsns-dbsns,cropToZero=False))
                             return (f, df_f, df_r, df_m, df_g, df_bsns, mhypot(df_r,df_r,df_m,df_g,df_bsns))
                         print "First iteration for %s, f_s %.3f  f_l %.3f :" % (bxname, f_s[0], f_l[0])
                         print "    r_slp               %.3f +- %.3f (stat) as in fQCD " % (r_slp, r_slp_stat)
@@ -544,7 +555,7 @@ if __name__ == "__main__":
                     nll0 = nll.getVal(); f0 = var.getVal()
                     bounds = []; search = []
                     if f0 > 0: search.append((f0,max(0,f0-4*var.getError())))
-                    if f0 < 0: search.append((f0,min(1,f0+4*var.getError())))
+                    if f0 < 1: search.append((f0,min(1,f0+4*var.getError())))
                     for x1,x2 in search:
                         for iTry in xrange(10):
                             var.setVal(x2)
