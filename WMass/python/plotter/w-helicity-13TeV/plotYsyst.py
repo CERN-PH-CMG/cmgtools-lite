@@ -11,7 +11,7 @@ def getRebinned(ybins, charge, infile):
 
     histos = {}
     for pol in ['left','right','long']:
-        histo = histo_file.Get('w{ch}_wy_W{ch}_{pol}'.format(ch=charge, pol=pol))
+        histo = histo_file.Get('w{ch}_abswy_W{ch}_{pol}'.format(ch=charge, pol=pol))
         conts = []
         for iv, val in enumerate(ybins[:-1]):
             err = ROOT.Double()
