@@ -199,7 +199,7 @@ float fakeRateWeight_promptRateCorr_1l_i_smoothed(float lpt, float leta, int lpd
 
 //==============================
 
-float fakeRateWeight_1l_i_smoothed(float lpt, float leta, int lpdgId, bool passWP, int iFR=0) } //, int expected_pdgId=11) {
+float fakeRateWeight_1l_i_smoothed(float lpt, float leta, int lpdgId, bool passWP, int iFR=0) { //, int expected_pdgId=11) {
   if (!passWP) {
     double fpt = lpt; double feta = std::fabs(leta); int fid = abs(lpdgId); 
     // int fAbsExpected_pdgId = abs(expected_pdgId);
