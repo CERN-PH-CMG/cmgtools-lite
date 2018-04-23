@@ -38,9 +38,11 @@ import re
 
 from optparse import OptionParser
 parser = OptionParser(usage='python %prog <input_folder> [options] ')
+parser.add_option('-x','--x-var', dest='xvar', default='wy', type='string', help='Name of variable in the x axis, as should appear inside the input root files (default is wy)')
 parser.add_option('-c','--cut-name', dest='cutName', default='', type='string', help='name of cut. It is a tag that should be present in some folders')
 parser.add_option('-o','--outdir', dest='outdir', default='./', type='string', help='Output folder (default is current one)')
 parser.add_option('-s','--skip', dest='skip', default='', type='string', help='Match to skip (if a file has this string in its name it will be skipped)')
+parser.add_option('-e','--endtag', dest='endtag', default='', type='string', help='Match identifying a specific folder. This tag should be found at the end of the name ')
 parser.add_option('-l','--LO', dest="hasLO", action="store_true", default=False, help="Specify if there are folders for LO samples (they must end with '_LO')")
 (options, args) = parser.parse_args()
 
@@ -55,6 +57,9 @@ inputdir = args[0]
 #     noAdditionalCut = False
 # else:
 #     noAdditionalCut = True
+
+xvar = options.xvar
+xvarMatch = "_" + xvar + "_"
 
 varcut = ""
 noAdditionalCut = True
@@ -87,6 +92,11 @@ if options.hasLO:
 else:
     expectedFolders = 4
 
+if options.endtag != '':
+    expectedFolders = expectedFolders + 2  # 1 additional reco for each charge, but the logic could change if we add more endtags
+
+#print "expectedFolders = " + str(expectedFolders)
+
 if len(files) > expectedFolders and noAdditionalCut:
     print "==================================="
     print "WARNING: you have not specified any folder name tag, but I see more than %d folders (%d)" % (int(expectedFolders),len(files))
@@ -112,11 +122,11 @@ for f in files:
     for k in tf.GetListOfKeys() :
         name=k.GetName()
         obj=k.ReadObj()
-        #if '_wy_' in name and 'background' not in name and obj.InheritsFrom("TH1"):
-        if '_wy_' in name and obj.InheritsFrom("TH1") and any(h in name for h in helicities):
+        if xvarMatch in name and obj.InheritsFrom("TH1") and any(h in name for h in helicities):
             if 'fullsel' in f:
                 tokens = name.split('_')
                 if varcut != "" and varcut in f:
+                    print "=== Check ==="
                     regex = re.compile(varcut+'([0-9]*)')
                     varcut_thr = regex.findall(f)
                     if len(varcut_thr) and varcut_thr[0] != '':
@@ -140,6 +150,9 @@ for f in files:
             lastFolder = os.path.basename(os.path.dirname(f))
             if lastFolder.endswith('_LO'):
                 newname = newname + '_LO'
+            if options.endtag != '' and lastFolder.endswith(options.endtag):
+                newname = newname + '_' + options.endtag
+
             newh = obj.Clone(newname)
             newh.SetDirectory(None)
             tmpplots.append(newh)
