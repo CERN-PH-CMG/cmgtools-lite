@@ -165,7 +165,7 @@ def makeResults(onlyMM = True, splitCharge = True): #sfdate, onlyMM = True, spli
     print 'did i split the charge?'
 
     processes      = ['data', 'DPSWW', 'WZ', 'ZZ', 'WG_wg', 'rares', 'fakes_data']
-    processesCards = ['data', 'DPSWW', 'WZ', 'ZZ', 'WG_wg', 'rares', 'fakes_data', 'WZamcatnlo']#, 'DPSWW_alt']
+    processesCards = ['data', 'DPSWW', 'WZ', 'ZZ', 'WG_wg', 'rares', 'fakes_data', 'WZamcatnlo', 'DPSWW_alt']
 
     binningBDT   = ' BDT_DPS_WZ 15,0.,1. '
     nbinspostifx = '_15bins'
