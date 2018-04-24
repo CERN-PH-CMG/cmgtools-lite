@@ -277,6 +277,9 @@ tauID_oldDMdR0p3wLT2017v2_WP_arrays[0]=[ #Efficiency: 0.95, idx = 0, VVL
 ( 860.167, 0.852715 ),
 ( 1036.5, 0.946705 ),
 ]
+import ROOT
+RecoTauTag_tauIdMVAIsoDBoldDMdR0p3wLT2017v2_mvaOutput_normalization = ROOT.TFormula("RecoTauTag_tauIdMVAIsoDBoldDMdR0p3wLT2017v2_mvaOutput_normalization",
+                                                                                    "1./(1.+4944671.000000*((1./(0.5*TMath::Max(1.e-6,x+1.)))-1.)/13174771.000000)")
 def tauID_oldDMdR0p3wLT2017v2_WP(pt,score,WP):
     xMin = tauID_oldDMdR0p3wLT2017v2_WP_arrays[WP][0][0]
     xMax = tauID_oldDMdR0p3wLT2017v2_WP_arrays[WP][-1][0]
@@ -288,7 +291,7 @@ def tauID_oldDMdR0p3wLT2017v2_WP(pt,score,WP):
     x2,c2 = tauID_oldDMdR0p3wLT2017v2_WP_arrays[WP][idx+1]
     x = (cutVar-x1)/(x2-x1)
     if max(0,min(1,x))!=x: raise RuntimeError
-    return score>(c1*x+c2*(1-x))
+    return RecoTauTag_tauIdMVAIsoDBoldDMdR0p3wLT2017v2_mvaOutput_normalization.Eval(score)>(c1*x+c2*(1-x))
 
 from CMGTools.TTHAnalysis.tools.leptonJetReCleaner import LeptonJetReCleaner
 from CMGTools.TTHAnalysis.tools.conept import conept_TTH
