@@ -10,9 +10,9 @@ dowhat = "plots"
 #dowhat = "yields" 
 #dowhat = "ntuple" # syntax: python ttH-multilepton/ttH_plots.py no 2lss_SR_extr outfile_{cname}.root --sP var1,var2,...
 
-TREES = "--Fs {P}/1_recleaner_060218_v1 --Fs {P}/5_triggerDecision_060218_v1 --Fs {P}/7_tauTightSel_v1 --FMCs {P}/8_vtxWeight2017_v1"
-TREESONLYSKIM = "-P /data1/peruzzi/TREES_TTH_050218_Fall17_JECV1NoRes_skim2LSS_v1 --Fs {P}/2_eventVars_060218_v1 --Fs {P}/3_kinMVA_noMEM_060218_v1"
-TREESONLYFULL = "-P /data1/peruzzi/TREES_TTH_050218_Fall17_JECV1NoRes"
+TREES = "--Fs {P}/1_recleaner_230418_v1 --Fs {P}/5_triggerDecision_230418_v1 --Fs {P}/7_tauTightSel_v1 --FMCs {P}/8_vtxWeight2017_v1"
+TREESONLYSKIM = "-P /data/peruzzi/TREES_TTH_190418_Fall17"# --Fs {P}/2_eventVars_060218_v1 --Fs {P}/3_kinMVA_noMEM_060218_v1"
+TREESONLYFULL = "-P /data/peruzzi/TREES_TTH_190418_Fall17"
 
 def base(selection):
 

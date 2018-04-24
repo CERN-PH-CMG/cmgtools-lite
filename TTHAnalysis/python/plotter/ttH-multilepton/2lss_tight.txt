@@ -1,5 +1,5 @@
 alwaystrue: 1
-trigger: Trigger_2l
+trigger: Trigger_2lss
 cleanup: minMllAFAS > 12
 dilep: nLepFO>=2
 pt2515: LepGood1_conePt>25 && LepGood2_conePt>15

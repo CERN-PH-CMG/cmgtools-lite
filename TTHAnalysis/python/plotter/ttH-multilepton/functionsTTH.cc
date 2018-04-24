@@ -18,7 +18,7 @@ float ttH_MVAto1D_3_3l_Marco (float kinMVA_3l_ttbar, float kinMVA_3l_ttV){
 
 }
 
-#include "ttH-multilepton/binning_2d_thresholds.h"
+#include "binning_2d_thresholds.h"
 float ttH_MVAto1D_7_2lss_Marco (float kinMVA_2lss_ttbar, float kinMVA_2lss_ttV){
 
 //________________
@@ -53,7 +53,7 @@ float newBinning(float x, float y){
   return r;
 }
 
-#include "ttH-multilepton/GetBinning.C"
+#include "GetBinning.C"
 
 
 float ttH_MVAto1D_6_flex (float kinMVA_2lss_ttbar, float kinMVA_2lss_ttV, int pdg1, int pdg2, float ttVcut, float ttcut1, float ttcut2){
