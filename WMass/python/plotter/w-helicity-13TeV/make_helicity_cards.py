@@ -180,8 +180,8 @@ if options.signalCards:
                     print "Making card for %s<=abs(genw_y)<%s and signal process with charge %s " % (YWbinning[iy],YWbinning[iy+1],charge)
                     ycut=" -A alwaystrue YW%d 'abs(genw_y)>=%s && abs(genw_y)<%s' " % (iy,YWbinning[iy],YWbinning[iy+1])
                     ycut += POSCUT if charge=='plus' else NEGCUT
-                    excl_long_signal  = '' if not options.longBkg else ',W{ch}_long'.format(ch=charge)
-                    xpsel=' --xp "W{antich}.*,W{ch}_{antihel},Flips,Z,Top,DiBosons,TauDecaysW{longbkg},data.*" --asimov '.format(antich=antich,ch=charge,antihel=antihel,longbkg = excl_long_signal)
+                    excl_long_signal  = '' if not options.longBkg else ',W{ch}_long.*'.format(ch=charge)
+                    xpsel=' --xp "W{antich}.*,W{ch}_{antihel}.*,Flips,Z,Top,DiBosons,TauDecaysW{longbkg},data.*" --asimov '.format(antich=antich,ch=charge,antihel=antihel,longbkg = excl_long_signal)
                     if not os.path.exists(outdir): os.mkdir(outdir)
                     if options.queue and not os.path.exists(outdir+"/jobs"): os.mkdir(outdir+"/jobs")
                     syst = '' if ip==0 else pdf
