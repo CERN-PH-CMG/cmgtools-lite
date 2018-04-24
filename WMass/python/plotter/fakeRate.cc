@@ -17,20 +17,21 @@ TH2 * helicityFractions_L = 0;
 TH2 * helicityFractions_R = 0;
 
 TH2 * FR_mu = 0;
+TH2 * FRi_mu[30] = {0};
 TH2 * FR_el = 0;
-TH2 * FRi_mu[30], *FRi_el[30];
+TH2 * FRi_el[30] = {0};
 
-// FR
+// FR for QCD MC, needed not to clash with that on data (above) in case they are used together
 TH2 * FR_mu_qcdmc = 0;
+TH2 * FRi_mu_qcdmc[30] = {0}; 
 TH2 * FR_el_qcdmc = 0;
-TH2 * FRi_mu_qcdmc[30], *FRi_el_qcdmc[30];
-
+TH2 *FRi_el_qcdmc[30] = {0};
 
 // prompt rate
 TH2 * PR_mu = 0;
+TH2 * PRi_mu[30] = {0};
 TH2 * PR_el = 0;
-TH2 * PRi_mu[30], *PRi_el[30];
-
+TH2 * PRi_el[30] = {0};
 
 // TH2 * FRcorrectionForPFMET = 0;
 // TH2 * FRcorrectionForPFMET_i[5];
@@ -41,9 +42,9 @@ bool loadFRHisto(const std::string &histoName, const std::string file, const cha
   TH2 * FR_temp = 0;
   TH2 * PR_temp = 0;
   if (histoName == "FR_mu")  { histo = & FR_mu;  hptr2 = & FRi_mu[0]; }
-  else if (histoName == "FR_mu_qcdmc")  { histo = & FR_mu;  hptr2 = & FRi_mu[0]; }
+  else if (histoName == "FR_mu_qcdmc")  { histo = & FR_mu_qcdmc;  hptr2 = & FRi_mu_qcdmc[0]; }
   else if (histoName == "FR_el")  { histo = & FR_el;  hptr2 = & FRi_el[0]; }
-  else if (histoName == "FR_el_qcdmc")  { histo = & FR_el;  hptr2 = & FRi_el[0]; }
+  else if (histoName == "FR_el_qcdmc")  { histo = & FR_elqcdmc;  hptr2 = & FRi_el_qcdmc[0]; }
   else if (histoName == "PR_el")  { histo = & PR_el;  hptr2 = & PRi_el[0]; }
   // else if (histoName == "FR_correction")  { histo = & FRcorrectionForPFMET; hptr2 = & FRcorrectionForPFMET_i[0]; }
   else if (TString(histoName).BeginsWith("FR_mu_i")) {histo = & FR_temp; hptr2 = & FRi_mu[TString(histoName).ReplaceAll("FR_mu_i","").Atoi()];}
@@ -154,15 +155,32 @@ float fakeRateWeight_promptRateCorr_1l_i_smoothed(float lpt, float leta, int lpd
   //   return 0;
   // }
 
-  TH2 *hist_fr = (fid == 11 ? FRi_el[iFR] : FRi_mu[iFR]);
-  if (hist_fr == 0) {
+  if (FRi_el[iFR] == 0 and FRi_mu[iFR] == 0) {
+    // this is the case where the histogram was not loaded correctly (one is 0 because you use the other flavour)
     std::cout << "Error in fakeRateWeight_promptRateCorr_1l_i_smoothed: hist_fr == 0. Returning 0" << std::endl;	
     return 0;
   } 
 
-  TH2 *hist_pr = (fid == 11 ? PRi_el[iFR] : PRi_mu[iFR]);
-  if (hist_pr == 0) {
+  if (PRi_el[iPR] == 0 and PRi_mu[iPR] == 0) {
+    // as above
     std::cout << "Error in fakeRateWeight_promptRateCorr_1l_i_smoothed: hist_pr == 0. Returning 0" << std::endl;	
+    return 0;
+  }
+
+
+  TH2 *hist_fr = (fid == 11 ? FRi_el[iFR] : FRi_mu[iFR]);
+  if (hist_fr == 0) {
+    // this is the case where you expect electrons but get a muon, or viceversa
+    // Indeed, selection is evaluated as 1 or 0 multiplying the event weight in TTree::Draw(...), so you potentially have all flavours here
+    // do not issue warnign mewssages here, unless it is for testing
+    //std::cout << "Error in fakeRateWeight_promptRateCorr_1l_i_smoothed: hist_fr == 0. It seems the flavour is not what you expect. Returning 0" << std::endl;	
+    return 0;
+  }
+
+  TH2 *hist_pr = (fid == 11 ? PRi_el[iPR] : PRi_mu[iPR]);
+  if (hist_pr == 0) {
+    // as before
+    //std::cout << "Error in fakeRateWeight_promptRateCorr_1l_i_smoothed: hist_pr == 0. Returning 0" << std::endl;	
     return 0;
   } 
 
@@ -206,9 +224,17 @@ float fakeRateWeight_1l_i_smoothed(float lpt, float leta, int lpdgId, bool passW
     // if (fid != fAbsExpected_pdgId) {
     //   return 0;
     // }
+    if (FRi_el[iFR] == 0 and FRi_mu[iFR] == 0) {
+      // this is the case where the histogram was not loaded correctly (one is 0 because you use the other flavour)
+      std::cout << "Error in fakeRateWeight_1l_i_smoothed: hist == 0. Returning 0" << std::endl;	
+      return 0;
+    } 
     TH2 *hist = (fid == 11 ? FRi_el[iFR] : FRi_mu[iFR]);
     if (hist == 0) {
-      std::cout << "Error in fakeRateWeight_1l_i_smoothed: hist == 0. Returning 0" << std::endl;	
+      // this is the case where you expect electrons but get a muon, or viceversa
+      // Indeed, selection is evaluated as 1 or 0 multiplying the event weight in TTree::Draw(...), so you potentially have all flavours here
+      // do not issue warnign mewssages here, unless it is for testing
+      //std::cout << "Error in fakeRateWeight_1l_i_smoothed: hist == 0. Returning 0" << std::endl;	
       //std::cout << "pdg ID = " << lpdgId << std::endl;
       return 0;
     }
