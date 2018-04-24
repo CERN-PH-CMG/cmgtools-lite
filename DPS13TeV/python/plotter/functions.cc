@@ -579,6 +579,44 @@ float tkmt_tkmetEleCorr(float tkmet_pt, float tkmet_phi, float lep_pt, float lep
 
 //==================================================
 
+int Binnumberset1D(float BDTx,float BDTy){
+  if(BDTx <=0.25 && BDTy > 0.2)return 1;
+  if(BDTx > 0.25 && BDTx <= 0.7 && BDTy >= 0.65) return 2;
+  if(BDTx > 0.5 && BDTx <= 0.7 && BDTy > 0.25 && BDTy <=0.65) return 3;
+  if(BDTx > 0.7 && BDTy > 0.25 && BDTy <=0.65 ) return 4;
+  if(BDTx > 0.95 && BDTy > 0.65 && BDTy <=0.95) return 5;
+  if(BDTx >0.25 && BDTx <=0.5 && BDTy > 0.2  && BDTy <= 0.45)return 6;
+  if(BDTx <=0.5 && BDTy <= 0.2)return 7;
+  if(BDTx > 0.8 && BDTx <= 0.9 && BDTy > 0.65 && BDTy <=0.85) return 8;
+  if(BDTx > 0.95 && BDTy > 0.95 ) return 9;
+  if(BDTx >0.8 &&  BDTx <= 0.9 && BDTy > 0.85 ) return 10;
+  if(BDTx >0.25 && BDTx <=0.5 && BDTy > 0.45  && BDTy <= 0.65)return 11;
+  if(BDTx >0.9 &&  BDTx <= 0.95 && BDTy > 0.65 && BDTy <=0.9) return 12;
+  if(BDTx >0.7 &&  BDTx <= 0.8 && BDTy > 0.65 ) return 13;
+  if(BDTx >0.9 && BDTx <= 0.95 && BDTy > 0.9)return 14;
+  if(BDTx >0.5 && BDTy <= 0.25)return 15;
+  /*
+  float a=0.35; float b=0.4; float c=0.6; float d=0.75; float e=0.8; float f =0.95;
+  if(BDTx <= 0.15 && BDTy <=b) return 4;
+  if(BDTx > 0.15 &&  BDTx <= 0.4 && BDTy <=0.4) return 2;
+  if(BDTx > 0.4  && BDTy <=b) return 5;
+  if(BDTx <=0.35 && BDTy > b && BDTy <=e) return 11;
+  if(BDTx >0.35 && BDTx <=0.6 && BDTy > b && BDTy <=0.6) return 12;
+  if(BDTx >0.35 && BDTx <=0.6 && BDTy > 0.6 && BDTy <=e) return 10;
+
+  if(BDTx > 0.6  && BDTx <=e  && BDTy > b && BDTy <=c) return 6;
+  if(BDTx > 0.6  && BDTx <=e  && BDTy > c && BDTy <=e) return 3;
+  if(BDTx > e && BDTx <=f && BDTy > b && BDTy <=0.85) return 1;
+  if(BDTx > f   && BDTy > b && BDTy <=0.9) return 9;
+  if(BDTx > f   && BDTy > 0.9 && BDTy <=f) return 14;
+  if(BDTx > f   && BDTy > f ) return 7;
+  if(BDTx > e && BDTx <=f  && BDTy > 0.85 && BDTy <=0.9 ) return 8;
+  if(BDTx > e && BDTx <=f  && BDTy >0.9 ) return 15;
+  if(BDTx <=0.8  && BDTy >e ) return 13;
+  */
+}
+
+
 
 
 void functions() {}
