@@ -156,31 +156,23 @@ def reMax(hist,hist2,islog,factorLin=1.3,factorLog=2.0,doWide=False):
     if  hist.ClassName() == 'THStack':
         #hist = hist.GetHistogram()  # better to use sum of all components, GetHistogram() returns a fake TH1 used to build the axis (could have no relation with the plot)
         hist = hist.GetStack().Last() # this is the sum of all components
-    #max0 = hist.GetMaximum()
-    #max2 = hist2.GetMaximum()*(factorLog if islog else factorLin)
     max0 = hist.GetBinContent(hist.GetMaximumBin())
     max2 = hist2.GetBinContent(hist2.GetMaximumBin())*(factorLog if islog else factorLin)
-    # centerBinMax0 = hist.GetBinCenter(hist.GetMaximumBin())
-    # centerBinMax2 = hist2.GetBinCenter(hist2.GetMaximumBin())
-    # print "hist = " + hist.GetName() + "   hist2 = " + hist2.GetName()
-    # print "before: max0,max2 = " + str(max0) +  " " + str(max2) + "   bin(max0),bin(max2) = " + str(centerBinMax0) + " " + str(centerBinMax2)
     # Below, use a protection against cases where uncertainty is much bigger than value (might happen with weird situations or QCD MC)
     if hasattr(hist2,'poissonGraph'):
        for i in xrange(hist2.poissonGraph.GetN()):
           if (hist2.poissonGraph.GetErrorYhigh(i) > hist2.poissonGraph.GetY()[i]):
-              tmpvalue = 1.1 * hist2.poissonGraph.GetY()[i]
+              tmpvalue = (factorLog if islog else factorLin) * hist2.poissonGraph.GetY()[i]
           else:
               tmpvalue = (hist2.poissonGraph.GetY()[i] + 1.3*hist2.poissonGraph.GetErrorYhigh(i))
           max2 = max(max2, tmpvalue*(factorLog if islog else factorLin))
     elif "TH1" in hist2.ClassName():
        for b in xrange(1,hist2.GetNbinsX()+1):
           if (hist2.GetBinError(b) > hist2.GetBinContent(b)):
-              tmpvalue = 1.1 * hist2.GetBinContent(b)
+              tmpvalue = (factorLog if islog else factorLin) * hist2.GetBinContent(b)
           else:
               tmpvalue = hist2.GetBinContent(b) + 1.3*hist2.GetBinError(b)
           max2 = max(max2, tmpvalue*(factorLog if islog else factorLin))
-          #print "hist2: bin,center,content,error,max2 = %d  %.1f  %.1f  %.1f  %.1f" % (b,hist2.GetBinCenter(b),hist2.GetBinContent(b),hist2.GetBinError(b),max2)
-    #print "after: max0,max2 = " + str(max0) +  " " + str(max2)
     if max2 > max0:
         max0 = max2;
         if islog: hist.GetYaxis().SetRangeUser(0.1 if doWide else 0.9, max0)
