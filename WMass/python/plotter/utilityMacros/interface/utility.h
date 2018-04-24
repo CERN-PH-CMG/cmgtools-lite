@@ -39,6 +39,7 @@
 #include <TH1D.h>
 #include <TH1F.h>
 #include <TH2.h>
+#include <TH3.h>
 #include <TKey.h>
 #include <TLatex.h>
 #include <TLegend.h>
@@ -271,6 +272,19 @@ private:
 
 };
 
+//======================================================================                          
+
+void replaceSubstringFromCString(string& str, const string& match = "", const string& strToInsert = "", const Bool_t replaceAll = false) {
+
+  // implement recursive strategy                      
+
+  size_t pos = str.find(match);
+  if (pos != string::npos) {
+    str.replace(str.find(match),match.size(),strToInsert);
+    if (replaceAll) replaceSubstringFromCString(str,match,strToInsert,replaceAll);
+  }
+
+}
 
 //======================================================
 
@@ -306,6 +320,20 @@ string getTexLabel(const string& sampleDir = "wjets") {
 
 }
 
+
+//======================================================
+
+void setContentBelowScaleToZmin(TH2* h2 = NULL, Double_t zmin = 0.0) {
+
+  // loop on histograms and set bins lower than minimum to minimum, unless they are 0)                                                                                     
+  for (Int_t ix = 1; ix <= h2->GetNbinsX(); ++ix) {
+    for (Int_t iy = 1; iy <= h2->GetNbinsY(); ++iy) {
+      Double_t binContent = h2->GetBinContent(ix,iy);
+      if (binContent > 0.0 and binContent < zmin) h2->SetBinContent(ix,iy,zmin);
+    }
+  }
+
+}
 
 //======================================================
 
@@ -362,6 +390,77 @@ void addOutliersInHistoRange(TH1D* h) {
   addUnderflowInFirstBin(h);
 
 }
+
+//======================================================
+
+void smoothAveragingNbins(TH1* h, const Int_t groupBins = 2, const Double_t minValueToStartGrouping = 0.0) {
+
+  // this functions is useful for QCD distributions from MC, which suffers from low statistics and big weights
+  // rebinning is tipically not ideal when this goes in a stack distributions with other processes that do not have problems of statistics
+  // therefore, one way is to sum groups of N consecutive bins for QCD and set the bin content of those as the sum/Nbins
+  // underflow and overflow bins are not considered
+  // grouping starts from first bin with content > minValueToStartGrouping
+  // In case bins with content 0 should be considered to start the procedure, set minValueToStartGrouping to any negative value
+
+  Int_t firstBinToUse = h->FindFirstBinAbove(minValueToStartGrouping);
+
+  vector<Double_t> averages(1+ (h->GetNbinsX() + 1 - firstBinToUse)/groupBins); // if h has 5 bins and groupBins=2, we have 3 sets of bins (2 + 2 + 1)
+  vector<Double_t> uncertainties(1+ (h->GetNbinsX() + 1 - firstBinToUse)/groupBins);
+
+  Int_t bin = -1;
+
+  for (Int_t  i = firstBinToUse; i <= h->GetNbinsX(); ++i) {
+    bin = (i-firstBinToUse)/groupBins;
+    averages[bin] += h->GetBinContent(i);
+    uncertainties[bin] += (h->GetBinError(i) * h->GetBinError(i));
+  }
+  for (UInt_t i = 0; i < averages.size(); ++i) {
+    averages[i] /= (Double_t) groupBins;
+    uncertainties[i] = sqrt ( uncertainties[i] / (Double_t) groupBins);
+  }
+  for (Int_t  i = firstBinToUse; i <= h->GetNbinsX(); ++i) {
+    bin = (i-firstBinToUse)/groupBins;
+    h->SetBinContent(i,averages[bin]);
+    h->SetBinError(i,uncertainties[bin]);
+  }
+
+}
+
+//======================================================
+
+void rebinByN(TH1* h, const Int_t groupBins = 2, const Double_t minValueToStartGrouping = 0.0) {
+
+  // this functions is useful for QCD distributions from MC, which suffers from low statistics and big weights
+  // rebinning is tipically not ideal when this goes in a stack distributions with other processes that do not have problems of statistics
+  // therefore, one way is to sum groups of N consecutive bins for QCD and set the bin content of those as the sum/Nbins
+  // underflow and overflow bins are not considered
+  // grouping starts from first bin with content > minValueToStartGrouping
+  // In case bins with content 0 should be considered to start the procedure, set minValueToStartGrouping to any negative value
+
+  Int_t firstBinToUse = h->FindFirstBinAbove(minValueToStartGrouping);
+
+  vector<Double_t> averages(1+ (h->GetNbinsX() + 1 - firstBinToUse)/groupBins); // if h has 5 bins and groupBins=2, we have 3 sets of bins (2 + 2 + 1)
+  vector<Double_t> uncertainties(1+ (h->GetNbinsX() + 1 - firstBinToUse)/groupBins);
+
+  Int_t bin = -1;
+
+  for (Int_t  i = firstBinToUse; i <= h->GetNbinsX(); ++i) {
+    bin = (i-firstBinToUse)/groupBins;
+    averages[bin] += h->GetBinContent(i);
+    uncertainties[bin] += (h->GetBinError(i) * h->GetBinError(i));
+  }
+  for (UInt_t i = 0; i < averages.size(); ++i) {
+    uncertainties[i] = sqrt ( uncertainties[i]);
+  }
+  for (Int_t  i = firstBinToUse; i <= h->GetNbinsX(); ++i) {
+    bin = (i-firstBinToUse)/groupBins;
+    h->SetBinContent(i,averages[bin]);
+    h->SetBinError(i,uncertainties[bin]);
+  }
+
+}
+
+
 
 //======================================================
 
@@ -622,7 +721,7 @@ void myRebinHisto(TH1 *h, const Int_t rebinFactor = 1) {
 
   if (rebinFactor != 1) {
     h->Rebin(rebinFactor);
-    if ( (h->GetNbinsX() % rebinFactor) != 0) myAddOverflowInLastBin(h);
+    //if ( (h->GetNbinsX() % rebinFactor) != 0) myAddOverflowInLastBin(h);  // better not to add overflow to last bin inside this function
   }
 
 }
@@ -695,11 +794,62 @@ TH2* getHist2CloneFromFile(TFile* inputFile = NULL, const string& hvarName = "",
   if (sampleDir == "") hvar = (TH2*) inputFile->Get((hvarName).c_str());
   else hvar = (TH2*) inputFile->Get((sampleDir + "/" + hvarName).c_str());
   if (!hvar || hvar == NULL) {
-    cout << "Error in getHistCloneFromFile(): histogram '" << hvarName << "' not found in file (directory is " << sampleDir << "). End of programme." << endl;
+    cout << "Error in getHist2CloneFromFile(): histogram '" << hvarName << "' not found in file (directory is " << sampleDir << "). End of programme." << endl;
     exit(EXIT_FAILURE);
   }
 
   return (TH2*) hvar->Clone(sampleDir.c_str());
+
+}
+
+//======================================================
+
+TH3* getHist3CloneFromFile(TFile* inputFile = NULL, const string& hvarName = "", const string& sampleDir = "") {
+
+  // use sampleDir to select a directory, default is the first one
+  // use sampleDir without "/" at the end
+
+  TH3* hvar = NULL;
+
+  if (!inputFile || inputFile == NULL || inputFile->IsZombie()) {
+    cout << "Error in getHistCloneFromFile(): file not opened. Exit" << endl;
+    exit(EXIT_FAILURE);
+  }
+
+  if (sampleDir == "") hvar = (TH3*) inputFile->Get((hvarName).c_str());
+  else hvar = (TH3*) inputFile->Get((sampleDir + "/" + hvarName).c_str());
+  if (!hvar || hvar == NULL) {
+    cout << "Error in getHist3CloneFromFile(): histogram '" << hvarName << "' not found in file (directory is " << sampleDir << "). End of programme." << endl;
+    exit(EXIT_FAILURE);
+  }
+
+  return (TH3*) hvar->Clone(sampleDir.c_str());
+
+}
+
+
+//======================================================
+
+TObject* getObjectCloneFromFile(TFile* inputFile = NULL, const string& hvarName = "", const string& sampleDir = "") {
+
+  // use sampleDir to select a directory, default is the first one
+  // use sampleDir without "/" at the end
+
+  TObject* hvar = NULL;
+
+  if (!inputFile || inputFile == NULL || inputFile->IsZombie()) {
+    cout << "Error in getHistCloneFromFile(): file not opened. Exit" << endl;
+    exit(EXIT_FAILURE);
+  }
+
+  if (sampleDir == "") hvar = (TObject*) inputFile->Get((hvarName).c_str());
+  else hvar = (TObject*) inputFile->Get((sampleDir + "/" + hvarName).c_str());
+  if (!hvar || hvar == NULL) {
+    cout << "Error in getObjectCloneFromFile(): object '" << hvarName << "' not found in file (directory is " << sampleDir << "). End of programme." << endl;
+    exit(EXIT_FAILURE);
+  }
+
+  return (TObject*) hvar->Clone(sampleDir.c_str());
 
 }
 
@@ -727,7 +877,7 @@ void checkNotNullPtr(TGraph* graphptr, const string& ptrName = "graphptr") {
 
 //======================================================
 
-void checkNotNullPtr(TObject* objptr, const string& ptrName = "graphptr") {
+void checkNotNullPtr(TObject* objptr, const string& ptrName = "objptr") {
 
   if ( objptr == NULL) {
     cout << "Error: pointer " << ptrName << " is NULL. Exit" << endl;
@@ -1061,7 +1211,7 @@ void drawGraph(vector<TGraph*> gr_roc_S_B = {},
   leg.SetFillStyle(0);
   leg.SetBorderSize(0);
 
-  Int_t colorList[] = {kBlack, kBlue, kRed, kGreen+2, kOrange+1, kCyan+2, kGray+2};
+  Int_t colorList[] = {kBlack, kRed, kBlue, kGreen+2, kOrange+1, kCyan+2, kGray+2};
 
   for (Int_t ig = 0; ig < nGraphs; ig++) {
     gr_roc_S_B[ig]->SetMarkerStyle(21);
@@ -1097,7 +1247,10 @@ void drawGraphCMS(vector<TGraph*> grList = {},
 		  const string& outputDIR = "./",
 		  const vector<string>& leg_roc = {""},
 		  const vector<Double_t>& legCoord = {0.5,0.15,0.9,0.35},
-		  const Double_t lumi = -1.0 
+		  const Double_t lumi = -1.0,
+		  const Bool_t drawRatioWithNominal = false,
+		  const string& ratioPadYaxisName = "X/first",
+		  const vector<Int_t> vecMCcolors = {kBlack, kRed, kGreen+2, kBlue, kOrange+1, kCyan+2, kGray+2}
 		  ) 
 
 {
@@ -1112,15 +1265,260 @@ void drawGraphCMS(vector<TGraph*> grList = {},
   Double_t ymax = 0;
   Bool_t setYAxisRangeFromUser = getAxisRangeFromUser(yAxisName, ymin, ymax, yAxisNameTmp);
 
+  string yAxisNameRatio = "";
+  Double_t yminRatio = 0;
+  Double_t ymaxRatio = 0;
+  Bool_t setYAxisRatioRangeFromUser = getAxisRangeFromUser(yAxisNameRatio, yminRatio, ymaxRatio, ratioPadYaxisName);
 
   Int_t nGraphs = grList.size();
 
-  TCanvas* canvas = new TCanvas("canvas","",600,600);
+  Int_t canvasWidth = 600;
+  Int_t canvasHeight = 600;
+  if (drawRatioWithNominal) {
+    canvasWidth = 600;
+    canvasHeight = 700;
+  }
+
+  TCanvas* canvas = new TCanvas("canvas","",canvasWidth,canvasHeight);
   canvas->cd();
+  canvas->SetTickx(1);
+  canvas->SetTicky(1);
+  canvas->cd();
+  if (drawRatioWithNominal) canvas->SetBottomMargin(0.3);
   canvas->SetFillColor(0);
   canvas->SetGrid();
   canvas->SetRightMargin(0.06);
+  canvas->SetLeftMargin(0.14);
+
+  TPad *pad2 = new TPad("pad2","pad2",0,0.,1,0.9);
+  pad2->SetTopMargin(0.7);
+  pad2->SetRightMargin(0.06);
+  pad2->SetLeftMargin(0.14);
+  pad2->SetFillColor(0);
+  pad2->SetGridy(1);
+  pad2->SetFillStyle(0);
+
+  // for the ratio plot
+  /* TH1* frame =  (TH1*) grList[0]->GetHistogram()->Clone("frame"); */
+  /* frame->GetXaxis()->SetLabelSize(0.04); */
+  /* frame->SetStats(0); */
+
+  //  TLegend leg (0.5,0.15,0.9,0.15+0.05*nGraphs);
+  TLegend leg (legCoord[0],legCoord[1],legCoord[2],legCoord[3]);
+  leg.SetFillColor(0);
+  leg.SetFillStyle(0);
+  leg.SetBorderSize(0);
+
+  //Int_t colorList[] = {kBlack, kRed, kGreen+2, kBlue, kOrange+1, kCyan+2, kGray+2};
+
+  for (Int_t ig = 0; ig < nGraphs; ig++) {
+    grList[ig]->SetMarkerStyle(20);
+    grList[ig]->SetMarkerColor(vecMCcolors[ig]);
+    grList[ig]->SetLineColor(vecMCcolors[ig]);
+    grList[ig]->SetLineWidth(2);
+    grList[ig]->SetFillColor(vecMCcolors[ig]);
+    if (ig == 0) grList[ig]->Draw("ap");
+    else grList[ig]->Draw("p same");
+    leg.AddEntry(grList[ig],leg_roc[ig].c_str(),"LF");
+  }
+  leg.Draw("same");
+
+  grList[0]->GetXaxis()->SetTitleSize(0.05);
+  grList[0]->GetXaxis()->SetLabelSize(0.04);
+  grList[0]->GetYaxis()->SetTitleOffset(1.3);
+  grList[0]->GetYaxis()->SetTitleSize(0.05);
+  grList[0]->GetYaxis()->SetLabelSize(0.04);
+  grList[0]->GetXaxis()->SetTitle(xAxisName.c_str());
+  grList[0]->GetYaxis()->SetTitle(yAxisName.c_str());
+  if (setXAxisRangeFromUser) grList[0]->GetXaxis()->SetRangeUser(xmin,xmax);
+  if (setYAxisRangeFromUser) grList[0]->GetYaxis()->SetRangeUser(ymin,ymax);
+  // if ratio plot is present, x axis shown only on it
+  if (drawRatioWithNominal) {
+    grList[0]->GetXaxis()->SetLabelSize(0);
+    grList[0]->GetXaxis()->SetTitle(0);
+  } 
+
+  //  CMS_lumi(canvas,Form("%.1f",lumi));
+  if (lumi < 0) CMS_lumi(canvas,"",true,false);
+  else CMS_lumi(canvas,Form("%.1f",lumi),true,false);
+  setTDRStyle();
+
+  canvas->RedrawAxis("sameaxis");
+
+  if (drawRatioWithNominal) {
+
+    pad2->Draw();
+    pad2->cd();
+
+    /* frame->Reset("ICES"); */
+    /* frame->GetYaxis()->SetRangeUser(0.9,1.1); */
+    /* frame->GetYaxis()->SetNdivisions(5); */
+    /* frame->GetYaxis()->SetTitle(yAxisNameRatio.c_str()); */
+    /* frame->GetYaxis()->SetTitleOffset(1.2); */
+    /* frame->GetYaxis()->SetTitleSize(0.05); */
+    /* frame->GetYaxis()->SetLabelSize(0.04); */
+    /* frame->GetYaxis()->CenterTitle(); */
+    /* frame->GetXaxis()->SetTitle(xAxisName.c_str()); */
+    /* if (setXAxisRangeFromUser) frame->GetXaxis()->SetRangeUser(xmin,xmax); */
+    /* if (setYAxisRatioRangeFromUser) frame->GetYaxis()->SetRangeUser(yminRatio,ymaxRatio); */
+    /* frame->GetXaxis()->SetTitleSize(0.05); */
+
+    vector<TGraphAsymmErrors*> ratio;
+    for (UInt_t ivar = 1; ivar < grList.size(); ivar++)
+      ratio.push_back( (TGraphAsymmErrors*) grList[ivar]->Clone(Form("ratio_%d",ivar)) );
+
+    // get extreme values, including errors on x)
+    Double_t xminGraph = 0.0;
+    Double_t xmaxGraph = 0.0;
+    TGraphAsymmErrors* den = (TGraphAsymmErrors*) grList[0]->Clone("den");
+
+    for(int ipoint = 0; ipoint < den->GetN(); ipoint++) {
+
+      // denominator graph (center at 1)
+      Double_t xval = 0.0;
+      Double_t yval = 0.0;
+      den->GetPoint(ipoint, xval, yval);
+      den->SetPoint(ipoint, xval, 1.0);
+      den->SetPointEYhigh(ipoint, den->GetErrorYhigh(ipoint)/yval);
+      den->SetPointEYlow(ipoint, den->GetErrorYlow(ipoint)/yval);
+      if (ipoint == 0)                xminGraph = xval - den->GetErrorXlow(ipoint);
+      if (ipoint == (den->GetN() - 1)) xmaxGraph = xval + den->GetErrorXhigh(ipoint);
+
+      // ratio graphs
+      for (UInt_t ir = 0; ir < ratio.size(); ir++) {
+
+	Double_t xval_r = 0.0; 
+	Double_t yval_r = 0.0;
+	ratio[ir]->GetPoint(ipoint, xval_r, yval_r);
+	ratio[ir]->SetPoint(ipoint, xval_r, yval_r/yval);
+	ratio[ir]->SetPointEYhigh(ipoint, ratio[ir]->GetErrorYhigh(ipoint)/yval);
+	ratio[ir]->SetPointEYlow(ipoint, ratio[ir]->GetErrorYlow(ipoint)/yval);
+	/* cout << "x = " << xval_r << "    y(ratio) = "  */
+	/*      << yval_r/yval << " +/- "  */
+	/*      << ratio[ir]->GetErrorYhigh(ipoint)/yval << "/" << ratio[ir]->GetErrorYlow(ipoint)/yval  */
+	/*      << endl; */
+
+      }
+
+    }
+
+    // cout << "check" << endl;
+    den->GetYaxis()->SetRangeUser(0.9,1.1);
+    // cout << "check 1" << endl;
+    den->GetYaxis()->SetNdivisions(5);
+    den->GetYaxis()->SetTitle(yAxisNameRatio.c_str());
+    den->GetYaxis()->SetTitleOffset(1.3);
+    den->GetYaxis()->SetTitleSize(0.05);
+    den->GetYaxis()->SetLabelSize(0.04);
+    den->GetYaxis()->CenterTitle();
+    den->GetXaxis()->SetTitle(xAxisName.c_str());
+    if (setXAxisRangeFromUser) den->GetXaxis()->SetRangeUser(xmin,xmax);
+    if (setYAxisRatioRangeFromUser) den->GetYaxis()->SetRangeUser(yminRatio,ymaxRatio);
+    den->GetXaxis()->SetTitleSize(0.05);
+
+    den->SetFillColor(kGray);
+    //frame->Draw();
+    den->Draw("a2same");
+    for (UInt_t ir = 0; ir < ratio.size(); ir++) {
+      ratio[ir]->SetMarkerStyle(20);
+      ratio[ir]->SetMarkerColor(vecMCcolors[ir+1]);
+      ratio[ir]->SetLineColor(vecMCcolors[ir+1]);
+      ratio[ir]->SetLineWidth(2);
+      ratio[ir]->SetFillColor(vecMCcolors[ir+1]);
+      ratio[ir]->Draw("psame");
+    }
+
+    //cout << "min,max x in ratio: " << xminGraph << ", " << xmaxGraph << endl;
+    TF1* line = new TF1("horiz_line", "1", xminGraph, xmaxGraph);
+    line->SetLineColor(kBlack);
+    line->SetLineWidth(2);
+    line->Draw("Lsame");
+ 
+    pad2->RedrawAxis("sameaxis");
+
+  }  // end of ratio plot settings                                                                   
+
+  canvas->SaveAs((outputDIR+canvasName+".png").c_str());
+  canvas->SaveAs((outputDIR+canvasName+".pdf").c_str());
+
+  delete canvas;
+
+}
+
+
+//=============================================
+
+void drawRapidityGraph(vector<TGraph*> grList = {}, 
+		       const string& xAxisNameTmp = "xAxis", 
+		       const string& yAxisNameTmp = "yAxis", 
+		       const string& canvasName = "default",
+		       const string& outputDIR = "./",
+		       const vector<string>& leg_roc = {""},
+		       const vector<Double_t>& legCoord = {0.5,0.15,0.9,0.35},
+		       const Double_t lumi = -1.0,
+		       const Bool_t drawRatioWithNominal = false,
+		       const string& ratioPadYaxisName = "X/first"
+		       ) 
+
+{
+
+  string xAxisName = "";
+  Double_t xmin = 0;
+  Double_t xmax = 0;
+  Bool_t setXAxisRangeFromUser = getAxisRangeFromUser(xAxisName, xmin, xmax, xAxisNameTmp);
+
+  string yAxisName = "";
+  Double_t ymin = 0;
+  Double_t ymax = 0;
+  Bool_t setYAxisRangeFromUser = getAxisRangeFromUser(yAxisName, ymin, ymax, yAxisNameTmp);
+
+  string yAxisNameRatio = "";
+  Double_t yminRatio = 0;
+  Double_t ymaxRatio = 0;
+  Bool_t setYAxisRatioRangeFromUser = getAxisRangeFromUser(yAxisNameRatio, yminRatio, ymaxRatio, ratioPadYaxisName);
+
+  Int_t nGraphs = grList.size();
+
+  Int_t canvasWidth = 600;
+  Int_t canvasHeight = 600;
+  if (drawRatioWithNominal) {
+    canvasWidth = 600;
+    canvasHeight = 700;
+  }
+
+  TCanvas* canvas = new TCanvas("canvas","",canvasWidth,canvasHeight);
   canvas->cd();
+  canvas->SetTickx(1);
+  canvas->SetTicky(1);
+  canvas->cd();
+  if (drawRatioWithNominal) canvas->SetBottomMargin(0.5);
+  canvas->SetFillColor(0);
+  canvas->SetGrid();
+  canvas->SetRightMargin(0.06);
+  canvas->SetLeftMargin(0.14);
+
+  TPad *pad2 = new TPad("pad2","pad2",0,0.,1,0.9);
+  pad2->SetTopMargin(0.5);
+  pad2->SetBottomMargin(0.3);
+  pad2->SetRightMargin(0.06);
+  pad2->SetLeftMargin(0.14);
+  pad2->SetFillColor(0);
+  pad2->SetGridy(1);
+  pad2->SetFillStyle(0);
+
+  TPad *pad3 = new TPad("pad3","pad3",0,0.,1,0.9);
+  pad3->SetTopMargin(0.7);
+  pad3->SetRightMargin(0.06);
+  pad3->SetLeftMargin(0.14);
+  pad3->SetFillColor(0);
+  pad3->SetGridy(1);
+  pad3->SetFillStyle(0);
+
+
+  // for the ratio plot
+  /* TH1* frame =  (TH1*) grList[0]->GetHistogram()->Clone("frame"); */
+  /* frame->GetXaxis()->SetLabelSize(0.04); */
+  /* frame->SetStats(0); */
 
   //  TLegend leg (0.5,0.15,0.9,0.15+0.05*nGraphs);
   TLegend leg (legCoord[0],legCoord[1],legCoord[2],legCoord[3]);
@@ -1144,13 +1542,18 @@ void drawGraphCMS(vector<TGraph*> grList = {},
 
   grList[0]->GetXaxis()->SetTitleSize(0.05);
   grList[0]->GetXaxis()->SetLabelSize(0.04);
-  grList[0]->GetYaxis()->SetTitleOffset(1.1);
+  grList[0]->GetYaxis()->SetTitleOffset(1.3);
   grList[0]->GetYaxis()->SetTitleSize(0.05);
   grList[0]->GetYaxis()->SetLabelSize(0.04);
   grList[0]->GetXaxis()->SetTitle(xAxisName.c_str());
   grList[0]->GetYaxis()->SetTitle(yAxisName.c_str());
   if (setXAxisRangeFromUser) grList[0]->GetXaxis()->SetRangeUser(xmin,xmax);
   if (setYAxisRangeFromUser) grList[0]->GetYaxis()->SetRangeUser(ymin,ymax);
+  // if ratio plot is present, x axis shown only on it
+  if (drawRatioWithNominal) {
+    grList[0]->GetXaxis()->SetLabelSize(0);
+    grList[0]->GetXaxis()->SetTitle(0);
+  } 
 
   //  CMS_lumi(canvas,Form("%.1f",lumi));
   if (lumi < 0) CMS_lumi(canvas,"",true,false);
@@ -1158,6 +1561,157 @@ void drawGraphCMS(vector<TGraph*> grList = {},
   setTDRStyle();
 
   canvas->RedrawAxis("sameaxis");
+
+  if (drawRatioWithNominal) {
+
+    pad2->Draw();
+    pad2->cd();
+
+    vector<TGraphAsymmErrors*> ratio;
+    for (UInt_t ivar = 1; ivar < grList.size(); ivar++)
+      ratio.push_back( (TGraphAsymmErrors*) grList[ivar]->Clone(Form("ratio_%d",ivar)) );
+
+    // get extreme values, including errors on x)
+    Double_t xminGraph = 0.0;
+    Double_t xmaxGraph = 0.0;
+    TGraphAsymmErrors* den = (TGraphAsymmErrors*) grList[0]->Clone("den");
+
+    for(int ipoint = 0; ipoint < den->GetN(); ipoint++) {
+
+      // denominator graph (center at 1)
+      Double_t xval = 0.0;
+      Double_t yval = 0.0;
+      den->GetPoint(ipoint, xval, yval);
+      den->SetPoint(ipoint, xval, 1.0);
+      den->SetPointEYhigh(ipoint, den->GetErrorYhigh(ipoint)/yval);
+      den->SetPointEYlow(ipoint, den->GetErrorYlow(ipoint)/yval);
+      if (ipoint == 0)                xminGraph = xval - den->GetErrorXlow(ipoint);
+      if (ipoint == (den->GetN() - 1)) xmaxGraph = xval + den->GetErrorXhigh(ipoint);
+
+      // ratio graphs
+      for (UInt_t ir = 0; ir < ratio.size(); ir++) {
+
+	Double_t xval_r = 0.0; 
+	Double_t yval_r = 0.0;
+	ratio[ir]->GetPoint(ipoint, xval_r, yval_r);
+	ratio[ir]->SetPoint(ipoint, xval_r, yval_r/yval);
+	ratio[ir]->SetPointEYhigh(ipoint, ratio[ir]->GetErrorYhigh(ipoint)/yval);
+	ratio[ir]->SetPointEYlow(ipoint, ratio[ir]->GetErrorYlow(ipoint)/yval);
+	/* cout << "x = " << xval_r << "    y(ratio) = "  */
+	/*      << yval_r/yval << " +/- "  */
+	/*      << ratio[ir]->GetErrorYhigh(ipoint)/yval << "/" << ratio[ir]->GetErrorYlow(ipoint)/yval  */
+	/*      << endl; */
+
+      }
+
+    }
+
+    // cout << "check" << endl;
+    den->GetYaxis()->SetRangeUser(0.9,1.1);
+    // cout << "check 1" << endl;
+    den->GetYaxis()->SetNdivisions(5);
+    den->GetYaxis()->SetTitle(yAxisNameRatio.c_str());
+    den->GetYaxis()->SetTitleOffset(1.3);
+    den->GetYaxis()->SetTitleSize(0.05);
+    den->GetYaxis()->SetLabelSize(0.04);
+    den->GetYaxis()->CenterTitle();
+    //den->GetXaxis()->SetTitle(xAxisName.c_str());
+    if (setXAxisRangeFromUser) den->GetXaxis()->SetRangeUser(xmin,xmax);
+    if (setYAxisRatioRangeFromUser) den->GetYaxis()->SetRangeUser(yminRatio,ymaxRatio);
+    //den->GetXaxis()->SetTitleSize(0.05);
+    den->GetXaxis()->SetLabelSize(0);
+    
+    den->SetFillColor(kGray);
+    //frame->Draw();
+    den->Draw("a2same");
+    for (UInt_t ir = 0; ir < ratio.size(); ir++) {
+      ratio[ir]->SetMarkerStyle(20);
+      ratio[ir]->SetMarkerColor(colorList[ir+1]);
+      ratio[ir]->SetLineColor(colorList[ir+1]);
+      ratio[ir]->SetLineWidth(2);
+      ratio[ir]->SetFillColor(colorList[ir+1]);
+      ratio[ir]->Draw("psame");
+    }
+
+    //cout << "min,max x in ratio: " << xminGraph << ", " << xmaxGraph << endl;
+    TF1* line = new TF1("horiz_line", "1", xminGraph, xmaxGraph);
+    line->SetLineColor(kBlack);
+    line->SetLineWidth(2);
+    line->Draw("Lsame");
+ 
+    pad2->RedrawAxis("sameaxis");
+
+    // end of pad 2
+    //////////////////
+    // now pad3
+    //////////////////////////
+    pad3->Draw();
+    pad3->cd();
+
+    vector<TGraphAsymmErrors*> ErrorRatio;
+    for (UInt_t ivar = 1; ivar < grList.size(); ivar++)
+      ErrorRatio.push_back( (TGraphAsymmErrors*) grList[ivar]->Clone(Form("ErrorRatio_%d",ivar)) );
+
+    // get extreme values, including errors on x)
+    TGraphAsymmErrors* den2 = (TGraphAsymmErrors*) grList[0]->Clone("den2");
+
+    for(int ipoint = 0; ipoint < den2->GetN(); ipoint++) {
+
+      // denominator graph
+      Double_t xval = 0.0;
+      Double_t yval = 0.0; // not really used here
+      den2->GetPoint(ipoint, xval, yval);
+      if (ipoint == 0)                xminGraph = xval - den2->GetErrorXlow(ipoint);
+      if (ipoint == (den2->GetN() - 1)) xmaxGraph = xval + den2->GetErrorXhigh(ipoint);
+
+      // ErrorRatio graphs
+      for (UInt_t ir = 0; ir < ErrorRatio.size(); ir++) {
+
+	Double_t xval_r = 0.0; 
+	Double_t yval_r = 0.0; // not really used here
+	ErrorRatio[ir]->GetPoint(ipoint, xval_r, yval_r);
+	ErrorRatio[ir]->SetPoint(ipoint, xval_r, ErrorRatio[ir]->GetErrorYhigh(ipoint)/den2->GetErrorYhigh(ipoint));  // use upper error, assuming lower is the same
+	ErrorRatio[ir]->SetPointError(ipoint, ErrorRatio[ir]->GetErrorXlow(ipoint), ErrorRatio[ir]->GetErrorXhigh(ipoint), 0, 0); // no error on the ratio of errors
+
+      }
+
+    }
+
+    // cout << "check" << endl;
+    ErrorRatio[0]->GetYaxis()->SetRangeUser(0.9,1.1);
+    // cout << "check 1" << endl;
+    ErrorRatio[0]->GetYaxis()->SetNdivisions(5);
+    ErrorRatio[0]->GetYaxis()->SetTitle("Err. ratio");
+    ErrorRatio[0]->GetYaxis()->SetTitleOffset(1.3);
+    ErrorRatio[0]->GetYaxis()->SetTitleSize(0.05);
+    ErrorRatio[0]->GetYaxis()->SetLabelSize(0.04);
+    ErrorRatio[0]->GetYaxis()->CenterTitle();
+    ErrorRatio[0]->GetXaxis()->SetTitle(xAxisName.c_str());
+    if (setXAxisRangeFromUser) ErrorRatio[0]->GetXaxis()->SetRangeUser(xmin,xmax);
+    //if (setYAxisErrorRatioRangeFromUser) ErrorRatio[0]->GetYaxis()->SetRangeUser(yminErrorRatio,ymaxErrorRatio);
+    ErrorRatio[0]->GetXaxis()->SetTitleSize(0.05);
+
+    //ErrorRatio[0]->SetFillColor(kGray);
+    //frame->Draw();
+    ErrorRatio[0]->Draw("ap same");
+    for (UInt_t ir = 1; ir < ErrorRatio.size(); ir++) {
+      ErrorRatio[ir]->SetMarkerStyle(20);
+      ErrorRatio[ir]->SetMarkerColor(colorList[ir+1]);
+      ErrorRatio[ir]->SetLineColor(colorList[ir+1]);
+      ErrorRatio[ir]->SetLineWidth(2);
+      ErrorRatio[ir]->SetFillColor(colorList[ir+1]);
+      ErrorRatio[ir]->Draw("psame");
+    }
+
+    //cout << "min,max x in ErrorRatio: " << xminGraph << ", " << xmaxGraph << endl;
+    TF1* line2 = new TF1("horiz_line", "1", xminGraph, xmaxGraph);
+    line2->SetLineColor(kBlack);
+    line2->SetLineWidth(2);
+    line2->Draw("Lsame");
+
+    pad3->RedrawAxis("sameaxis");
+
+  }  // end of ratio plot settings                                                                   
 
   canvas->SaveAs((outputDIR+canvasName+".png").c_str());
   canvas->SaveAs((outputDIR+canvasName+".pdf").c_str());
@@ -1318,14 +1872,14 @@ void drawTH1pair(TH1* h1, TH1* h2,
   pad2->RedrawAxis("sameaxis");
 
   // Calculate chi2                                                                                        
-  double chi2 = h1->Chi2Test(h2,"CHI2/NDF WW");
-  TLegend leg2 (0.14,0.25,0.32,0.28,NULL,"brNDC");
-  leg2.SetFillColor(0);
-  leg2.SetFillStyle(1);
-  leg2.SetBorderSize(0);
-  leg2.SetLineColor(0);
-  leg2.AddEntry((TObject*)0,Form("#chi^{2}/ndf = %.2f",chi2),"");
-  leg2.Draw("same");
+  /* double chi2 = h1->Chi2Test(h2,"CHI2/NDF WW"); */
+  /* TLegend leg2 (0.14,0.25,0.32,0.28,NULL,"brNDC"); */
+  /* leg2.SetFillColor(0); */
+  /* leg2.SetFillStyle(1); */
+  /* leg2.SetBorderSize(0); */
+  /* leg2.SetLineColor(0); */
+  /* leg2.AddEntry((TObject*)0,Form("#chi^{2}/ndf = %.2f",chi2),""); */
+  /* leg2.Draw("same"); */
 
   canvas->SaveAs((outputDIR + canvasName + ".png").c_str());
   canvas->SaveAs((outputDIR + canvasName + ".pdf").c_str());
@@ -1355,7 +1909,7 @@ void drawTH1pair(TH1* h1, TH1* h2,
 
 void draw_nTH1(vector<TH1*> vecHist1d = {}, 
 	       const string& xAxisNameTmp = "", 
-	       const string& yAxisName = "Events", 
+	       const string& yAxisNameTmp = "Events", 
 	       const string& canvasName = "default", 
 	       const string& outputDIR = "./", 
 	       const vector<string>& vecLegEntry = {""},
@@ -1363,9 +1917,12 @@ void draw_nTH1(vector<TH1*> vecHist1d = {},
 	       const Double_t lumi = -1.0, 
 	       const Int_t rebinFactor = 1, 
 	       const Bool_t drawPlotLogY = true,
-	       const Bool_t drawRatioWithNominal = false 
+	       const Bool_t drawRatioWithNominal_tmp = false 
 	       ) 
 {
+
+  Bool_t drawRatioWithNominal = drawRatioWithNominal_tmp;
+  if (vecHist1d.size() == 1) drawRatioWithNominal = false;
 
   // assume the "nominal histogram is the first one
 
@@ -1375,6 +1932,11 @@ void draw_nTH1(vector<TH1*> vecHist1d = {},
   Double_t xmin = 0;
   Double_t xmax = 0;
   Bool_t setXAxisRangeFromUser = getAxisRangeFromUser(xAxisName, xmin, xmax, xAxisNameTmp);
+
+  string yAxisName = "";
+  Double_t ymin = 0;
+  Double_t ymax = 0;
+  Bool_t setYAxisRangeFromUser = getAxisRangeFromUser(yAxisName, ymin, ymax, yAxisNameTmp);
 
   string yAxisNameRatio = "";
   Double_t yminRatio = 0;
@@ -1417,7 +1979,7 @@ void draw_nTH1(vector<TH1*> vecHist1d = {},
   frame->GetXaxis()->SetLabelSize(0.04);
   frame->SetStats(0);
 
-  Int_t colorList[] = {kBlack, kBlue, kRed, kGreen+2, kOrange+1, kCyan, kGreen, kCyan+2, kGray+1, kViolet, kYellow+2};
+  Int_t colorList[] = {kBlack, kRed, kBlue, kGreen+2, kOrange+1, kCyan, kGreen, kCyan+2, kGray+1, kViolet, kYellow+2};
   vector<Int_t> histColor;
   for (UInt_t i = 0; i < vecHist1d.size(); i++) {   // now color are assigned in reverse order (the main contribution is the last object in the sample array)         
     vecHist1d[i]->SetLineColor(colorList[i]);
@@ -1476,6 +2038,7 @@ void draw_nTH1(vector<TH1*> vecHist1d = {},
   }
 
   vecHist1d[0]->GetYaxis()->SetRangeUser(0.0, maxY * 1.2);
+  if (setYAxisRangeFromUser) vecHist1d[0]->GetYaxis()->SetRangeUser(ymin, ymax);
 
   if (setXAxisRangeFromUser) vecHist1d[0]->GetXaxis()->SetRangeUser(xmin,xmax);
   //////////////////////
@@ -1591,7 +2154,10 @@ void drawTH1dataMCstack(TH1* h1 = NULL, vector<TH1*> vecMC = {},
 			const string& legEntry1 = "data", const vector<string>& vecLegEntryMC = {""}, 
 			const string& ratioPadYaxisName = "data/MC", const Double_t lumi = -1.0, const Int_t rebinFactor = 1, 
 			const Bool_t normalizeMCToData = false,
-			const Int_t draw_both0_noLog1_onlyLog2 = 0
+			const Int_t draw_both0_noLog1_onlyLog2 = 0,
+			const Double_t minFractionToBeInLegend = 0.001,
+			const vector<Int_t> vecMCcolors = {kCyan, kViolet, kBlue, kRed, kYellow, kGreen, kOrange+1, kCyan+2, kGreen+2, kGray},
+			const Int_t fillStyle = 3001
 			)
 {
 
@@ -1599,6 +2165,11 @@ void drawTH1dataMCstack(TH1* h1 = NULL, vector<TH1*> vecMC = {},
   Double_t xmin = 0;
   Double_t xmax = 0;
   Bool_t setXAxisRangeFromUser = getAxisRangeFromUser(xAxisName, xmin, xmax, xAxisNameTmp);
+
+  string yAxisNameRatio = "";
+  Double_t yminRatio = 0.5;
+  Double_t ymaxRatio = 1.5;
+  Bool_t setYAxisRatioRangeFromUser = getAxisRangeFromUser(yAxisNameRatio, yminRatio, ymaxRatio, ratioPadYaxisName);
 
   // cout << "xAxisName = " << xAxisName << "   xmin = " << xmin << "  xmax = " << xmax << endl;
 
@@ -1613,11 +2184,12 @@ void drawTH1dataMCstack(TH1* h1 = NULL, vector<TH1*> vecMC = {},
     vecMC[i]->SetStats(0);
   }
   
-  Int_t colorList[] = {kCyan, kViolet, kBlue, kRed, kYellow, kGreen, kOrange+1, kCyan+2, kGreen+2, kGray}; 
+  //Int_t colorList[] = {kCyan, kViolet, kBlue, kRed, kYellow, kGreen, kOrange+1, kCyan+2, kGreen+2, kGray}; 
   // the first color is for the main object. This array may contain more values than vecMC.size()
   vector<Int_t> histColor;
   for (UInt_t i = 0; i < vecMC.size(); i++) {   // now color are assigned in reverse order (the main contribution is the last object in the sample array)
-    histColor.push_back(colorList[i]);
+    //histColor.push_back(colorList[i]);
+    histColor.push_back(vecMCcolors[i]);
   }
 
   Double_t dataNorm = h1->Integral();
@@ -1632,7 +2204,7 @@ void drawTH1dataMCstack(TH1* h1 = NULL, vector<TH1*> vecMC = {},
   THStack* hMCstack = new THStack("hMCstack","");
   for (UInt_t j = 0; j < vecMC.size(); j++) {
     vecMC[j]->SetFillColor(histColor[j]);
-    vecMC[j]->SetFillStyle(3001);
+    vecMC[j]->SetFillStyle(fillStyle);
     myRebinHisto(vecMC[j],rebinFactor);
     if (normalizeMCToData) vecMC[j]->Scale(dataNorm/stackNorm);
     hMCstack->Add(vecMC[(UInt_t) vecMC.size() - j -1]);  // add last element as the first one (last element added in stack goes on top)
@@ -1651,10 +2223,12 @@ void drawTH1dataMCstack(TH1* h1 = NULL, vector<TH1*> vecMC = {},
   canvas->cd();
   canvas->SetBottomMargin(0.3);
   canvas->SetRightMargin(0.06);
+  canvas->SetLeftMargin(0.16);
 
   TPad *pad2 = new TPad("pad2","pad2",0,0.,1,0.9);
   pad2->SetTopMargin(0.7);
   pad2->SetRightMargin(0.06);
+  pad2->SetLeftMargin(0.16);
   pad2->SetFillColor(0);
   pad2->SetGridy(1);
   pad2->SetFillStyle(0);
@@ -1670,23 +2244,26 @@ void drawTH1dataMCstack(TH1* h1 = NULL, vector<TH1*> vecMC = {},
   h1->SetMarkerSize(1);
 
   h1->GetXaxis()->SetLabelSize(0);
+  h1->GetXaxis()->SetTitle(0);
   h1->GetYaxis()->SetTitle(yAxisName.c_str());
-  h1->GetYaxis()->SetTitleOffset(1.1);
+  h1->GetYaxis()->SetTitleOffset(1.2);
   // h1->GetYaxis()->SetTitleOffset(0.8);  // was 1.03 without setting also the size
   h1->GetYaxis()->SetTitleSize(0.05);
+  h1->GetYaxis()->SetLabelSize(0.04);
   h1->GetYaxis()->SetRangeUser(0.0, max(h1->GetMaximum(),stackCopy->GetMaximum()) * 1.2);
   if (setXAxisRangeFromUser) h1->GetXaxis()->SetRangeUser(xmin,xmax);
   h1->Draw("EP");
   hMCstack->Draw("HIST SAME");
   h1->Draw("EP SAME");
 
-  TLegend leg (0.6,0.7,0.9,0.9);
+  TLegend leg (0.65,0.7,0.95,0.9);
   leg.SetFillColor(0);
   leg.SetFillStyle(0);
   leg.SetBorderSize(0);
   leg.AddEntry(h1,legEntry1.c_str(),"PLE");
   for (UInt_t i = 0; i < vecMC.size(); i++) {
-    leg.AddEntry(vecMC[i],vecLegEntryMC[i].c_str(),"LF");
+    if (vecMC[i]->Integral()/stackCopy->Integral() > minFractionToBeInLegend)
+      leg.AddEntry(vecMC[i],vecLegEntryMC[i].c_str(),"F");
   }
   leg.Draw("same");
   canvas->RedrawAxis("sameaxis");
@@ -1700,11 +2277,12 @@ void drawTH1dataMCstack(TH1* h1 = NULL, vector<TH1*> vecMC = {},
   pad2->cd();
 
   frame->Reset("ICES");
-  frame->GetYaxis()->SetRangeUser(0.5,1.5);
+  frame->GetYaxis()->SetRangeUser(yminRatio,ymaxRatio);
   frame->GetYaxis()->SetNdivisions(5);
-  frame->GetYaxis()->SetTitle(ratioPadYaxisName.c_str());
+  frame->GetYaxis()->SetTitle(yAxisNameRatio.c_str());
   frame->GetYaxis()->SetTitleOffset(1.2);
-  // frame->GetYaxis()->SetTitleSize(0.15);
+  frame->GetYaxis()->SetTitleSize(0.05);
+  frame->GetYaxis()->SetLabelSize(0.04);
   frame->GetYaxis()->CenterTitle();
   if (setXAxisRangeFromUser) frame->GetXaxis()->SetRangeUser(xmin,xmax);
   frame->GetXaxis()->SetTitle(xAxisName.c_str());
@@ -1719,7 +2297,8 @@ void drawTH1dataMCstack(TH1* h1 = NULL, vector<TH1*> vecMC = {},
 
   ratio->Divide(den_noerr);
   den->Divide(den_noerr);
-  den->SetFillColor(kGray);
+  den->SetFillColor(kGray+1);
+  den->SetMarkerStyle(0);
   frame->Draw();
   ratio->SetMarkerSize(0.85);
   ratio->Draw("EPsame");
@@ -1733,14 +2312,14 @@ void drawTH1dataMCstack(TH1* h1 = NULL, vector<TH1*> vecMC = {},
   pad2->RedrawAxis("sameaxis");
 
   // Calculate chi2                                                                                        
-  double chi2 = h1->Chi2Test(stackCopy,"CHI2/NDF WW");
-  TLegend leg2 (0.14,0.25,0.32,0.28,NULL,"brNDC");
-  leg2.SetFillColor(0);
-  leg2.SetFillStyle(1);
-  leg2.SetBorderSize(0);
-  leg2.SetLineColor(0);
-  leg2.AddEntry((TObject*)0,Form("#chi^{2}/ndf = %.2f",chi2),"");
-  leg2.Draw("same");
+  /* double chi2 = h1->Chi2Test(stackCopy,"CHI2/NDF WW"); */
+  /* TLegend leg2 (0.14,0.25,0.32,0.28,NULL,"brNDC"); */
+  /* leg2.SetFillColor(0); */
+  /* leg2.SetFillStyle(1); */
+  /* leg2.SetBorderSize(0); */
+  /* leg2.SetLineColor(0); */
+  /* leg2.AddEntry((TObject*)0,Form("#chi^{2}/ndf = %.2f",chi2),""); */
+  /* leg2.Draw("same"); */
 
   if (draw_both0_noLog1_onlyLog2 != 2) {
     canvas->SaveAs((outputDIR + canvasName + ".png").c_str());
@@ -2541,7 +3120,7 @@ void drawTH1MCstack(vector<TH1*> vecMC = {},
 
 
 void drawCorrelationPlot(TH2* h2D, 
-			 const string & labelXtmp = "xaxis", const string & labelYtmp = "yaxis", const string & labelZ = "zaxis",  
+			 const string & labelXtmp = "xaxis", const string & labelYtmp = "yaxis", const string & labelZtmp = "zaxis",  
 			 const string& canvasName = "default", const string& plotLabel = "", const string & outputDIR = "./", 
 			 const Int_t rebinFactorY = 1,
 			 const Int_t rebinFactorX = 1,
@@ -2554,6 +3133,9 @@ void drawCorrelationPlot(TH2* h2D,
   if (rebinFactorY > 1) h2D->RebinY(rebinFactorY);
   if (rebinFactorX > 1) h2D->RebinX(rebinFactorX);
 
+  //gStyle->SetPalette(55, 0);  // 55:raibow palette ; 57: kBird (blue to yellow, default) ; 107 kVisibleSpectrum ; 77 kDarkRainBow 
+  gStyle->SetNumberContours(50); // default is 20 
+
   string labelX = "";
   Double_t xmin = 0;
   Double_t xmax = 0;
@@ -2563,6 +3145,11 @@ void drawCorrelationPlot(TH2* h2D,
   Double_t ymin = 0;
   Double_t ymax = 0;
   Bool_t setYAxisRangeFromUser = getAxisRangeFromUser(labelY, ymin, ymax, labelYtmp);
+
+  string labelZ = "";
+  Double_t zmin = 0;
+  Double_t zmax = 0;
+  Bool_t setZAxisRangeFromUser = getAxisRangeFromUser(labelZ, zmin, zmax, labelZtmp);
 
   TCanvas* canvas = new TCanvas("canvas","",700,625);
   canvas->SetLeftMargin(0.16);
@@ -2593,11 +3180,23 @@ void drawCorrelationPlot(TH2* h2D,
   
   h2DPlot->GetXaxis()->SetTitle(labelX.c_str());
   h2DPlot->GetYaxis()->SetTitle(labelY.c_str());
-  if (scaleToUnitArea) h2DPlot->GetZaxis()->SetTitle("a.u");   
-  else h2DPlot->GetZaxis()->SetTitle(labelZ.c_str());
+  h2DPlot->GetXaxis()->SetTitleSize(0.05);
+  h2DPlot->GetXaxis()->SetLabelSize(0.04);
+  h2DPlot->GetXaxis()->SetTitleOffset(1.1);
+  h2DPlot->GetYaxis()->SetTitleSize(0.05);
+  h2DPlot->GetYaxis()->SetLabelSize(0.04);
+  h2DPlot->GetYaxis()->SetTitleOffset(1.1);
+  h2DPlot->GetZaxis()->SetTitleSize(0.05);
+  h2DPlot->GetZaxis()->SetLabelSize(0.04);
+  h2DPlot->GetZaxis()->SetTitleOffset(1.2);
+
+  /* if (scaleToUnitArea) h2DPlot->GetZaxis()->SetTitle("a.u");    */
+  /* else h2DPlot->GetZaxis()->SetTitle(labelZ.c_str()); */
+  h2DPlot->GetZaxis()->SetTitle(labelZ.c_str()); 
   h2DPlot->Draw("colz");
   if (setXAxisRangeFromUser) h2DPlot->GetXaxis()->SetRangeUser(xmin,xmax);
   if (setYAxisRangeFromUser) h2DPlot->GetYaxis()->SetRangeUser(ymin,ymax);
+  if (setZAxisRangeFromUser) h2DPlot->GetZaxis()->SetRangeUser(zmin,zmax);
 
   TProfile* h2DProfile = NULL;
   if (drawProfileX) {

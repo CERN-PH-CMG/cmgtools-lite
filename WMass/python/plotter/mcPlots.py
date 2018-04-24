@@ -638,6 +638,8 @@ def doLegend(pmap,mca,corner="TR",textSize=0.035,cutoff=1e-2,cutoffSignals=True,
         leg = ROOT.TLegend(x1,y1,x2,y2)
         if header: leg.SetHeader(header.replace("\#", "#"))
         leg.SetFillColor(0)
+        leg.SetFillStyle(0) # transparent legend, so it will not cover plots (markers of legend entries will cover it unless one changes the histogram FillStyle, but this has other effects on color, so better not touching the FillStyle)
+        leg.SetBorderSize(0)  # remove border
         leg.SetShadowColor(0)
         if header: leg.SetHeader(header.replace("\#", "#"))       
         if not legBorder:

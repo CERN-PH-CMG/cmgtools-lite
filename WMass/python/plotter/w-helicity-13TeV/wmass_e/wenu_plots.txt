@@ -29,7 +29,10 @@ wminus_ptl1     : LepGood1_calPt                                         : 70,0.
 wminus_mtwtk    : mt_2(LepGood1_calPt,LepGood1_phi,met_trkPt,met_trkPhi) : 150,0.,150. ; XTitle="m_{T} (reco\, W^{-})"
 wminus_etal1gen : GenLepDressed_eta[0]                                : 100,-7.,7.; XTitle="#eta^{e} (gen\, W^{-})"
 wminus_ptl1gen  : GenLepDressed_pt[0]                                 : 70,0.,70.; XTitle="p_{T}^{e} (gen\, W^{-})"
-wminus_wy       : genw_y                                              : 48,-6.,6. ; XTitle="Y_{W} (W^{-})"
+#wminus_wy       : genw_y                                              : 48,-6.,6. ; XTitle="Y_{W} (W^{-})"
+wminus_wy       : genw_y                                              : 240,-6.,6. ; XTitle="Y_{W} (W^{-})"
+#wminus_abswy    : abs(genw_y)                                         : 24,0.,6. ; XTitle="Y_{W} (W^{-})"
+wminus_abswy    : abs(genw_y)                                         : 120,0.,6. ; XTitle="Y_{W} (W^{-})"
 wminus_wpt      : genw_pt                                             : 100,0.,100. ; XTitle="p_{T}^{W} (W^{-})"
 wminus_abswygap : abs(genw_y)                                         : 60,0.,3. ; XTitle="|Y_{W}| (W^{-})"
 ##
@@ -38,7 +41,10 @@ wplus_ptl1     : LepGood1_calPt                                         : 70,0.,
 wplus_mtwtk    : mt_2(LepGood1_calPt,LepGood1_phi,met_trkPt,met_trkPhi) : 150,0.,150. ; XTitle="m_{T} (reco\, W^{+})"
 wplus_etal1gen : GenLepDressed_eta[0]                                : 100,-7.,7.; XTitle="#eta^{e} (gen\, W^{+})"
 wplus_ptl1gen  : GenLepDressed_pt[0]                                 : 70,0.,70.; XTitle="p_{T}^{e} (gen\, W^{+})"
-wplus_wy       : genw_y                                              : 48,-6.,6. ; XTitle="Y_{W} (W^{+})"
+#wplus_wy       : genw_y                                              : 48,-6.,6. ; XTitle="Y_{W} (W^{+})"
+wplus_wy       : genw_y                                              : 240,-6.,6. ; XTitle="Y_{W} (W^{+})"
+#wplus_abswy    : abs(genw_y)                                         : 24,0.,6. ; XTitle="Y_{W} (W^{+})"
+wplus_abswy    : abs(genw_y)                                         : 120,0.,6. ; XTitle="Y_{W} (W^{+})"
 wplus_wpt      : genw_pt                                             : 100,0.,100. ; XTitle="p_{T}^{W} (W^{+})"
 wplus_abswygap : abs(genw_y)                                         : 60,0.,3. ; XTitle="|Y_{W}| (W^{+})"
 

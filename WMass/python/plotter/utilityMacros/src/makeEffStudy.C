@@ -61,6 +61,18 @@ void realMakeEffStudy(const string& outDir = "",
 
   for (UInt_t i = 0; i < processes.size(); ++i) {
 
+    if (isPlusCharge) {
+      if (processes[i].Contains("Wminus")) {
+	cout << "Warning: charge is positive. Skipping process " << processes[i] << endl;
+	continue;
+      }
+    } else {
+      if (processes[i].Contains("Wplus")) {
+	cout << "Warning: charge is negative. Skipping process " << processes[i] << endl;
+	continue;
+      }
+    } 
+
     string histName = Form("%s_%s",histName_prefix.c_str(),processes[i].Data());
     h2 = (TH2D*) getHistCloneFromFile(inputFile, histName);
     checkNotNullPtr(h2, histName);
@@ -150,7 +162,7 @@ void realMakeEffStudy(const string& outDir = "",
     legendEntry.push_back("Z");
     legendEntry.push_back("QCD");
 
-    draw_nTH1(hist, xAxisName, Form("efficiency for %s > %d",varOnYaxis.c_str(),ycuts[j]), Form("efficiency_%s%d",varOnYaxis.c_str(),ycuts[j]), 
+    draw_nTH1(hist, xAxisName, Form("efficiency for %s > %d::0,1.2",varOnYaxis.c_str(),ycuts[j]), Form("efficiency_%s%d",varOnYaxis.c_str(),ycuts[j]), 
   	      outDir, legendEntry, "", -1, 1, false, false);
 
   }
@@ -164,11 +176,13 @@ void realMakeEffStudy(const string& outDir = "",
 
 //========================================================
 
-void makeEffStudy(const string& inputFilePath_tmp = "www/wmass/13TeV/efficiency_pfmt_HLT27/",
+// note: processesList could contain both Wplus and Wminus components: a check is made on the charge and non-existing components are discarded
+
+void makeEffStudy(const string& inputFilePath_tmp = "www/wmass/13TeV/efficiency_trkmt_vs_eta/",
 		  const string& inputFileName = "tmp_plots.root", 
 		  const string& outDir_tmp = "SAME", 
-		  const string& histName_prefix = "pfmt_etal1",
-		  const TString& processesList = "Z,TauDecaysW,DiBosons,data_fakes,Top,Wminus_left,Wminus_right,Wminus_long,Wplus_left,Wplus_right,Wplus_long",
+		  const string& histName_prefix = "trkmt_etal1",
+		  const TString& processesList = "Z,TauDecaysW,DiBosons,WFlips,data_fakes,Top,Wminus_left,Wminus_right,Wminus_long,Wplus_left,Wplus_right,Wplus_long",
 		  const TString& ycutList = "30,40,50"  // use integer
 		  ) 
 {

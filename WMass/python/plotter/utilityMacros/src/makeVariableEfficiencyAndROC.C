@@ -12,11 +12,11 @@ using namespace std;
 // efficiency_XtoInf is true if you define cut efficiency as integral from X to infinity over full integral, false to define numerator as integral from 0 to X
 // if outDir_tmp == "SAME", it is considered as inputFilePath_tmp
 
-void makeVariableEfficiencyAndROC(const string& inputFilePath_tmp = "/afs/cern.ch/user/m/mciprian/www/wmass/13TeV/distribution/TREES_1LEP_80X_V3_WENUSKIM_V5/whelicity_signal_region/full2016dataBH_puAndTrgSf_ptResScale_25_03_2018_restrictPt_HLT27_mtPlots/eta_0p0_1p479/",
+void realMakeVariableEfficiencyAndROC(const string& inputFilePath_tmp = "/afs/cern.ch/user/m/mciprian/www/wmass/13TeV/distribution/TREES_1LEP_80X_V3_WENUSKIM_V5/whelicity_signal_region/full2016dataBH_puAndTrgSf_ptResScale_09_04_2018_restrictPt_HLT27_forAN_noUpPt_noMt/eta_0p0_1p479/",
 				  const string& fileName = "test_plots.root",
 				  const TString& varList = "trkmt_trkmetEleCorr_dy,pfmt", 
 				  const TString& legendList = "Trk M_{T},PF M_{T}",
-				  const TString& signalBackgroundList = "W:data_fakes_fakes", // S and B separated by ":", multiple signals or backgrounds separated by ","
+				  const TString& signalBackgroundList = "W:data_fakes", // S and B separated by ":", multiple signals or backgrounds separated by ","
 				  const TString& signalBackgroundLegendList = "W+jets,QCD (FR)",
 				  const Bool_t efficiency_XtoInf = true, 
 				  const string& outDir_tmp = "SAME" 
@@ -208,5 +208,53 @@ void makeVariableEfficiencyAndROC(const string& inputFilePath_tmp = "/afs/cern.c
   inputFile->Close();
 
   cout << endl;
+
+}
+
+//====================================================
+
+void makeVariableEfficiencyAndROC(const string& inputFilePath_tmp = "/afs/cern.ch/user/m/mciprian/www/wmass/13TeV/distribution/TREES_1LEP_80X_V3_WENUSKIM_V5/whelicity_signal_region/full2016dataBH_puAndTrgSf_ptResScale_09_04_2018_restrictPt_HLT27_forAN_noUpPt_noMt/",
+				  const TString& subfoldersList = "eta_0p0_1p479/,eta_1p479_2p1/,eta_2p1_2p5/",
+				  const string& fileName = "test_plots.root",
+				  const TString& varList = "trkmt_trkmetEleCorr_dy,pfmt", 
+				  const TString& legendList = "Trk M_{T},PF M_{T}",
+				  const TString& signalBackgroundList = "W:data_fakes", // S and B separated by ":", multiple signals or backgrounds separated by ","
+				  const TString& signalBackgroundLegendList = "W+jets,QCD (FR)",
+				  const Bool_t efficiency_XtoInf = true, 
+				  const string& outDir_tmp = "SAME" 
+				  ) 
+{
+
+  vector<string> subfolders;
+  getVectorCStringFromTStringList(subfolders, subfoldersList, ",", false);
+
+  if (subfolders.size() == 0) {
+    realMakeVariableEfficiencyAndROC(inputFilePath_tmp,
+				     fileName,
+				     varList, 
+				     legendList,
+				     signalBackgroundList,
+				     signalBackgroundLegendList,
+				     efficiency_XtoInf, 
+				     outDir_tmp);
+  } else {
+    
+    for (UInt_t i = 0; i < subfolders.size(); ++i) {
+
+      string outputFolder = (outDir_tmp == "SAME") ? outDir_tmp : (outDir_tmp + subfolders[i]);
+      realMakeVariableEfficiencyAndROC(inputFilePath_tmp + subfolders[i],
+				       fileName,
+				       varList, 
+				       legendList,
+				       signalBackgroundList,
+				       signalBackgroundLegendList,
+				       efficiency_XtoInf, 
+				       outDir_tmp);
+      
+    }
+
+  }
+
+
 
 }

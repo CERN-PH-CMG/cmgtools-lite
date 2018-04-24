@@ -20,59 +20,77 @@ TH2 * FR_mu = 0;
 TH2 * FR_el = 0;
 TH2 * FRi_mu[30], *FRi_el[30];
 
+// FR
+TH2 * FR_mu_qcdmc = 0;
+TH2 * FR_el_qcdmc = 0;
+TH2 * FRi_mu_qcdmc[30], *FRi_el_qcdmc[30];
+
+
+// prompt rate
+TH2 * PR_mu = 0;
+TH2 * PR_el = 0;
+TH2 * PRi_mu[30], *PRi_el[30];
+
+
 // TH2 * FRcorrectionForPFMET = 0;
 // TH2 * FRcorrectionForPFMET_i[5];
 
-bool loadFRHisto(const std::string &histoName, const char *file, const char *name) {
+bool loadFRHisto(const std::string &histoName, const std::string file, const char *name) {
+
   TH2 **histo = 0, **hptr2 = 0;
   TH2 * FR_temp = 0;
-    if (histoName == "FR_mu")  { histo = & FR_mu;  hptr2 = & FRi_mu[0]; }
-    else if (histoName == "FR_mu_qcdmc")  { histo = & FR_mu;  hptr2 = & FRi_mu[0]; }
-    else if (histoName == "FR_el")  { histo = & FR_el;  hptr2 = & FRi_el[0]; }
-    else if (histoName == "FR_el_qcdmc")  { histo = & FR_el;  hptr2 = & FRi_el[0]; }
-    // else if (histoName == "FR_correction")  { histo = & FRcorrectionForPFMET; hptr2 = & FRcorrectionForPFMET_i[0]; }
-    else if (TString(histoName).BeginsWith("FR_mu_i")) {histo = & FR_temp; hptr2 = & FRi_mu[TString(histoName).ReplaceAll("FR_mu_i","").Atoi()];}
-    else if (TString(histoName).BeginsWith("FR_el_i")) {histo = & FR_temp; hptr2 = & FRi_el[TString(histoName).ReplaceAll("FR_el_i","").Atoi()];}
-    else if (TString(histoName).Contains("helicityFractions_0")) { histo = & helicityFractions_0; }
-    else if (TString(histoName).Contains("helicityFractions_L")) { histo = & helicityFractions_L; }
-    else if (TString(histoName).Contains("helicityFractions_R")) { histo = & helicityFractions_R; }
-    if (histo == 0)  {
-        std::cerr << "ERROR: histogram " << histoName << " is not defined in fakeRate.cc." << std::endl;
-        return 0;
-    }
+  TH2 * PR_temp = 0;
+  if (histoName == "FR_mu")  { histo = & FR_mu;  hptr2 = & FRi_mu[0]; }
+  else if (histoName == "FR_mu_qcdmc")  { histo = & FR_mu;  hptr2 = & FRi_mu[0]; }
+  else if (histoName == "FR_el")  { histo = & FR_el;  hptr2 = & FRi_el[0]; }
+  else if (histoName == "FR_el_qcdmc")  { histo = & FR_el;  hptr2 = & FRi_el[0]; }
+  else if (histoName == "PR_el")  { histo = & PR_el;  hptr2 = & PRi_el[0]; }
+  // else if (histoName == "FR_correction")  { histo = & FRcorrectionForPFMET; hptr2 = & FRcorrectionForPFMET_i[0]; }
+  else if (TString(histoName).BeginsWith("FR_mu_i")) {histo = & FR_temp; hptr2 = & FRi_mu[TString(histoName).ReplaceAll("FR_mu_i","").Atoi()];}
+  else if (TString(histoName).BeginsWith("FR_el_i")) {histo = & FR_temp; hptr2 = & FRi_el[TString(histoName).ReplaceAll("FR_el_i","").Atoi()];}
+  else if (TString(histoName).Contains("helicityFractions_0")) { histo = & helicityFractions_0; }
+  else if (TString(histoName).Contains("helicityFractions_L")) { histo = & helicityFractions_L; }
+  else if (TString(histoName).Contains("helicityFractions_R")) { histo = & helicityFractions_R; }
+  else if (TString(histoName).BeginsWith("PR_mu_i")) {histo = & PR_temp; hptr2 = & PRi_mu[TString(histoName).ReplaceAll("PR_mu_i","").Atoi()];}
+  else if (TString(histoName).BeginsWith("PR_el_i")) {histo = & PR_temp; hptr2 = & PRi_el[TString(histoName).ReplaceAll("PR_el_i","").Atoi()];}
+  if (histo == 0)  {
+    std::cerr << "ERROR: histogram " << histoName << " is not defined in fakeRate.cc." << std::endl;
+    return 0;
+  }
 
-    TFile *f = TFile::Open(file);
-    if (*histo != 0) {
-      if (std::string(name) != (*histo)->GetName()) {
-        //std::cerr << "WARNING: overwriting histogram " << (*histo)->GetName() << std::endl;
-      } else {
-          TH2* hnew = (TH2*) f->Get(name);
-          if (hnew == 0 || hnew->GetNbinsX() != (*histo)->GetNbinsX() || hnew->GetNbinsY() != (*histo)->GetNbinsY()) {
-              std::cerr << "WARNING: overwriting histogram " << (*histo)->GetName() << std::endl;
-          } else {
-              bool fail = false;
-              for (int ix = 1; ix <= (*histo)->GetNbinsX(); ++ix) {
-                  for (int iy = 1; iy <= (*histo)->GetNbinsX(); ++iy) {
-                      if ((*histo)->GetBinContent(ix,iy) != hnew->GetBinContent(ix,iy)) {
-                          fail = true; break;
-                      }
-                  }
-              }
-              if (fail) std::cerr << "WARNING: overwriting histogram " << (*histo)->GetName() << std::endl;
-          }
-      }
-      delete *histo;
-    }
-    if (f->Get(name) == 0) {
-        std::cerr << "ERROR: could not find " << name << " in " << file << std::endl;
-        *histo = 0;
+  TFile *f = TFile::Open(file.c_str());
+  if (*histo != 0) {
+    if (std::string(name) != (*histo)->GetName()) {
+      std::cerr << "WARNING: overwriting histogram " << (*histo)->GetName() << std::endl;
     } else {
-        *histo = (TH2*) f->Get(name)->Clone(name);
-        (*histo)->SetDirectory(0);
-        if (hptr2) *hptr2 = *histo;
+      TH2* hnew = (TH2*) f->Get(name);
+      if (hnew == 0 || hnew->GetNbinsX() != (*histo)->GetNbinsX() || hnew->GetNbinsY() != (*histo)->GetNbinsY()) {
+	std::cerr << "WARNING: overwriting histogram " << (*histo)->GetName() << std::endl;
+      } else {
+	bool fail = false;
+	for (int ix = 1; ix <= (*histo)->GetNbinsX(); ++ix) {
+	  for (int iy = 1; iy <= (*histo)->GetNbinsX(); ++iy) {
+	    if ((*histo)->GetBinContent(ix,iy) != hnew->GetBinContent(ix,iy)) {
+	      fail = true; break;
+	    }
+	  }
+	}
+	if (fail) std::cerr << "WARNING: overwriting histogram " << (*histo)->GetName() << std::endl;
+      }
     }
-    f->Close();
-    return histo != 0;
+    delete *histo;
+  }
+  if (f->Get(name) == 0) {
+    std::cerr << "ERROR: could not find " << name << " in " << file << std::endl;
+    *histo = 0;
+  } else {
+    *histo = (TH2*) f->Get(name)->Clone(name);
+    (*histo)->SetDirectory(0);
+    if (hptr2) *hptr2 = *histo;
+  }
+  f->Close();
+  return histo != 0;
+
 }
 
 // float fakeRateWeight_1l_i_smoothed_FRcorr(float lpt, float leta, int lpdgId, bool passWP, int iFR, float pfmet) {
@@ -117,12 +135,81 @@ bool loadFRHisto(const std::string &histoName, const char *file, const char *nam
 
 // }
 
-float fakeRateWeight_1l_i_smoothed(float lpt, float leta, int lpdgId, bool passWP, int iFR) {
+float fakeRateWeight_promptRateCorr_1l_i_smoothed(float lpt, float leta, int lpdgId, bool passWP, int iFR=0, int iPR=0) { //, int expected_pdgId=11) {
+
+  // formula for fake rate including effect of prompt rate
+  //
+  // Let LNT denote the region passing loose but not tight selection, T the region passing the tight selection.
+  // Let p and f denote the prompt and fake lepton rate respectively.
+  // Then:
+  // N(QCD in T) = f/(p-f) * (p*N(NLT) - (1-p)*N(T))
+  // second term is negative by definition of p)
+  // If p=1, then N(QCD in T) = f/(1-f) * N(NLT), which is the formula used in function fakeRateWeight_1l_i_smoothed()
+
+
+  double fpt = lpt; double feta = std::fabs(leta); int fid = abs(lpdgId); 
+
+  // int fAbsExpected_pdgId = abs(expected_pdgId);
+  // if (fid != fAbsExpected_pdgId) {
+  //   return 0;
+  // }
+
+  TH2 *hist_fr = (fid == 11 ? FRi_el[iFR] : FRi_mu[iFR]);
+  if (hist_fr == 0) {
+    std::cout << "Error in fakeRateWeight_promptRateCorr_1l_i_smoothed: hist_fr == 0. Returning 0" << std::endl;	
+    return 0;
+  } 
+
+  TH2 *hist_pr = (fid == 11 ? PRi_el[iFR] : PRi_mu[iFR]);
+  if (hist_pr == 0) {
+    std::cout << "Error in fakeRateWeight_promptRateCorr_1l_i_smoothed: hist_pr == 0. Returning 0" << std::endl;	
+    return 0;
+  } 
+
+  int etabin = std::max(1, std::min(hist_fr->GetNbinsX(), hist_fr->GetXaxis()->FindBin(feta)));
+  // FR
+  float p0 = hist_fr->GetBinContent(etabin, 1);
+  float p1 = hist_fr->GetBinContent(etabin, 2);
+  if (iFR==1) p0 += hist_fr->GetBinError(etabin, 1);
+  if (iFR==2) p0 -= hist_fr->GetBinError(etabin, 1);
+  if (iFR==3) p1 += hist_fr->GetBinError(etabin, 2);
+  if (iFR==4) p1 -= hist_fr->GetBinError(etabin, 2);
+  // now PR
+  // eta bin is the same as for fake rate
+  float p0_pr = hist_pr->GetBinContent(etabin, 1);
+  float p1_pr = hist_pr->GetBinContent(etabin, 2);
+  if (iPR==1) p0_pr += hist_pr->GetBinError(etabin, 1);
+  if (iPR==2) p0_pr -= hist_pr->GetBinError(etabin, 1);
+  if (iPR==3) p1_pr += hist_pr->GetBinError(etabin, 2);
+  if (iPR==4) p1_pr -= hist_pr->GetBinError(etabin, 2);
+
+  float fr = p0    + p1   *lpt;
+  float pr = p0_pr + p1_pr*lpt;
+
+  if (passWP) {
+    // tight
+    // returning a negative weight
+    return fr*(pr-1)/(pr-fr); // pr=1 --> return 0
+  } else {
+    // not tight (but still loose)
+    return fr*pr/(pr-fr);  // pr=1 --> return fr/(1-fr)
+  }
+
+}
+
+//==============================
+
+float fakeRateWeight_1l_i_smoothed(float lpt, float leta, int lpdgId, bool passWP, int iFR=0) { //, int expected_pdgId=11) {
   if (!passWP) {
-    double fpt = lpt; double feta = std::fabs(leta); int fid = abs(lpdgId);
+    double fpt = lpt; double feta = std::fabs(leta); int fid = abs(lpdgId); 
+    // int fAbsExpected_pdgId = abs(expected_pdgId);
+    // if (fid != fAbsExpected_pdgId) {
+    //   return 0;
+    // }
     TH2 *hist = (fid == 11 ? FRi_el[iFR] : FRi_mu[iFR]);
     if (hist == 0) {
       std::cout << "Error in fakeRateWeight_1l_i_smoothed: hist == 0. Returning 0" << std::endl;	
+      //std::cout << "pdg ID = " << lpdgId << std::endl;
       return 0;
     }
     int etabin = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(feta)));
@@ -136,6 +223,7 @@ float fakeRateWeight_1l_i_smoothed(float lpt, float leta, int lpdgId, bool passW
     return fr/(1-fr);
   } else return 0;
 }
+
 
 float fakeRateWeight_1l_i(float lpt, float leta, int lpdgId, bool passWP, int iFR) {
   if (!passWP) {
