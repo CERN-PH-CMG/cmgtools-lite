@@ -51,10 +51,10 @@ def makeYWBinning(infile, cutoff=5000):
 
 
 NPDFSYSTS=60 # Hessian variations of NNPDF 3.0
-pdfsysts=[''] # array containing the signal variations
+pdfsysts=[''] # array containing the PDFs signal variations
+qcdsysts=[''] # array containing the QCD scale signal variations
 
-def writePdfSystsToMCA(mcafile,odir,vec_weight="hessWgt",syst="pdf",incl_mca='incl_sig'):
-    open("%s/systEnv-dummy.txt" % odir, 'a').close()
+def getMcaIncl(mcafile,incl_mca='incl_sig'):
     incl_file=''
     mcaf = open(mcafile,'r')
     for l in mcaf.readlines():
@@ -67,16 +67,35 @@ def writePdfSystsToMCA(mcafile,odir,vec_weight="hessWgt",syst="pdf",incl_mca='in
                 if "IncludeMca" in o: 
                     incl_file = o.split('=')[1]
             break
+    return incl_file
+
+def writePdfSystsToMCA(mcafile,odir,vec_weight="hessWgt",syst="pdf",incl_mca='incl_sig'):
+    open("%s/systEnv-dummy.txt" % odir, 'a').close()
+    incl_file=getMcaIncl(mcafile,incl_mca)
     if len(incl_file)==0: 
         print "Warning! '%s' include directive not found. Not adding pdf systematics samples to MCA file %s" %(incl_mca,MCASYSTS)
         return
-
     for i in range(1,NPDFSYSTS+1):
         postfix = "_%s%d" % (syst,i) # this is the change needed to make all alternative variations to be symmetrized
         mcafile_syst = open("%s/mca%s.txt" % (odir,postfix), "w")
         mcafile_syst.write(incl_mca+postfix+'   : + ; IncludeMca='+incl_file+', AddWeight="'+vec_weight+str(i)+'", PostFix="'+postfix+'" \n')
         pdfsysts.append(postfix)
-    print "written ",vec_weight," systematics into ",MCASYSTS
+    print "written PDF systematics"
+    return MCASYSTS
+
+def writeQCDScaleSystsToMCA(mcafile,odir,syst="qcd",incl_mca='incl_sig'):
+    open("%s/systEnv-dummy.txt" % odir, 'a').close()
+    incl_file=getMcaIncl(mcafile,incl_mca)
+    if len(incl_file)==0: 
+        print "Warning! '%s' include directive not found. Not adding QCD scale systematics!"
+        return
+    for scale in ['muR','muF',"muRmuF"]:
+        for idir in ['Up','Dn']:
+            postfix = "_{syst}{idir}".format(syst=scale,idir=idir)
+            mcafile_syst = open("%s/mca%s.txt" % (odir,postfix), "w")
+            mcafile_syst.write(incl_mca+postfix+'   : + ; IncludeMca='+incl_file+', AddWeight="qcd'+postfix+'", PostFix="'+postfix+'" \n')
+            qcdsysts.append(postfix)
+    print "written QCD scale systematics"
     return MCASYSTS
 
 def writePdfSystsToSystFile(filename,sample="W.*",syst="CMS_W_pdf"):
@@ -88,7 +107,7 @@ def writePdfSystsToSystFile(filename,sample="W.*",syst="CMS_W_pdf"):
     print "written pdf syst configuration to ",SYSTFILEALL
     return SYSTFILEALL
 
-        
+
 from optparse import OptionParser
 parser = OptionParser(usage="%prog [options] mc.txt cuts.txt var bins systs.txt outdir ")
 parser.add_option("-q", "--queue",    dest="queue",     type="string", default=None, help="Run jobs on lxbatch instead of locally");
@@ -101,6 +120,7 @@ parser.add_option("-P", "--path", dest="path", type="string",default=None, help=
 parser.add_option("-C", "--channel", dest="channel", type="string", default='el', help="Channel. either 'el' or 'mu'");
 parser.add_option("--not-unroll2D", dest="notUnroll2D", action="store_true", default=False, help="Do not unroll the TH2Ds in TH1Ds needed for combine (to make 2D plots)");
 parser.add_option("--pdf-syst", dest="addPdfSyst", action="store_true", default=False, help="Add PDF systematics to the signal (need incl_sig directive in the MCA file)");
+parser.add_option("--qcd-syst", dest="addQCDSyst", action="store_true", default=False, help="Add QCD scale systematics to the signal (need incl_sig directive in the MCA file)");
 (options, args) = parser.parse_args()
 
 if len(sys.argv) < 6:
@@ -138,6 +158,8 @@ if options.addPdfSyst:
     MCASYSTS = writePdfSystsToMCA(MCA,outdir+"/mca")
     # write the complete systematics file (this was needed when trying to run all systs in one job)
     # SYSTFILEALL = writePdfSystsToSystFile(SYSTFILE)
+if options.addQCDSyst:
+    MCASYSTS = writeQCDScaleSystsToMCA(MCA,outdir+"/mca")
 
 ARGS=" ".join([MCA,CUTFILE,"'"+fitvar+"' "+"'"+binning+"'",SYSTFILE])
 BASECONFIG=os.path.dirname(MCA)
@@ -164,18 +186,18 @@ if options.signalCards:
     #ybinfile.writelines(' '.join(str(i) for i in WYBinsEdges))
     ybinfile.close()
     print "MAKING SIGNAL PART: WYBinsEdges = ",WYBinsEdges
-    for ip,pdf in enumerate(pdfsysts):
+    for ivar,var in enumerate(pdfsysts+qcdsysts):
         for helicity in ['right', 'left']:
             antihel = 'right' if helicity == 'left' else 'left'
             for charge in ['plus','minus']:
                 antich = 'plus' if charge == 'minus' else 'minus'
                 YWbinning = WYBinsEdges['{ch}_{hel}'.format(ch=charge,hel=helicity)]
-                if ip==0: 
+                if ivar==0: 
                     IARGS = ARGS
                 else: 
-                    IARGS = ARGS.replace(MCA,"{outdir}/mca/mca{syst}.txt".format(outdir=outdir,syst=pdf))
+                    IARGS = ARGS.replace(MCA,"{outdir}/mca/mca{syst}.txt".format(outdir=outdir,syst=var))
                     IARGS = IARGS.replace(SYSTFILE,"{outdir}/mca/systEnv-dummy.txt".format(outdir=outdir))
-                    print "Running the systematic: ",pdf
+                    print "Running the systematic: ",var
                 for iy in xrange(len(YWbinning)-1):
                     print "Making card for %s<=abs(genw_y)<%s and signal process with charge %s " % (YWbinning[iy],YWbinning[iy+1],charge)
                     ycut=" -A alwaystrue YW%d 'abs(genw_y)>=%s && abs(genw_y)<%s' " % (iy,YWbinning[iy],YWbinning[iy+1])
@@ -184,7 +206,7 @@ if options.signalCards:
                     xpsel=' --xp "W{antich}.*,W{ch}_{antihel}.*,Flips,Z,Top,DiBosons,TauDecaysW{longbkg},data.*" --asimov '.format(antich=antich,ch=charge,antihel=antihel,longbkg = excl_long_signal)
                     if not os.path.exists(outdir): os.mkdir(outdir)
                     if options.queue and not os.path.exists(outdir+"/jobs"): os.mkdir(outdir+"/jobs")
-                    syst = '' if ip==0 else pdf
+                    syst = '' if ivar==0 else var
                     dcname = "W{charge}_{hel}_{channel}_Ybin_{iy}{syst}".format(charge=charge, hel=helicity, channel=options.channel,iy=iy,syst=syst)
                     BIN_OPTS=OPTIONS + " -W '" + options.weightExpr + "'" + " -o "+dcname+" --od "+outdir + xpsel + ycut
                     if options.queue:
