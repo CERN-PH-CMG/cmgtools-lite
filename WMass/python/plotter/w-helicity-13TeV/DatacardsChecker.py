@@ -14,12 +14,13 @@ class CardsChecker:
         for charge in ["plus","minus"]:
             for r in xrange(nRapBins):
                 for ipdf in xrange(0,nPdfBins+1):
-                    if ipdf==0: key = "W{charge}_{channel}_Ybin_{bin}".format(charge=charge,channel=channel,bin=r)
-                    else: key = "W{charge}_{channel}_Ybin_{bin}_pdf{eigen}".format(charge=charge,channel=channel,bin=r,eigen=ipdf)
-                    f_txt = key+".card.txt" 
-                    f_root = key+".input.root"
-                    self.datacards[key] = f_txt
-                    self.cardinputs[key] = f_root
+                    for hel in ["left","right"]:
+                        if ipdf==0: key = "W{charge}_{pol}_{channel}_Ybin_{bin}".format(charge=charge,pol=hel,channel=channel,bin=r)
+                        else: key = "W{charge}_{pol}_{channel}_Ybin_{bin}_pdf{eigen}".format(charge=charge,pol=hel,channel=channel,bin=r,eigen=ipdf)
+                        f_txt = key+".card.txt"
+                        f_root = key+".input.root"
+                        self.datacards[key] = f_txt
+                        self.cardinputs[key] = f_root
 
     def checkCards(self):
         resubcmds = {}
