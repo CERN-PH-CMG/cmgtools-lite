@@ -154,15 +154,33 @@ def doTinyCmsPrelim(textLeft="_default_",textRight="_default_",hasExpo=False,tex
 
 def reMax(hist,hist2,islog,factorLin=1.3,factorLog=2.0,doWide=False):
     if  hist.ClassName() == 'THStack':
-        hist = hist.GetHistogram()
-    max0 = hist.GetMaximum()
-    max2 = hist2.GetMaximum()*(factorLog if islog else factorLin)
+        #hist = hist.GetHistogram()  # better to use sum of all components, GetHistogram() returns a fake TH1 used to build the axis (could have no relation with the plot)
+        hist = hist.GetStack().Last() # this is the sum of all components
+    #max0 = hist.GetMaximum()
+    #max2 = hist2.GetMaximum()*(factorLog if islog else factorLin)
+    max0 = hist.GetBinContent(hist.GetMaximumBin())
+    max2 = hist2.GetBinContent(hist2.GetMaximumBin())*(factorLog if islog else factorLin)
+    # centerBinMax0 = hist.GetBinCenter(hist.GetMaximumBin())
+    # centerBinMax2 = hist2.GetBinCenter(hist2.GetMaximumBin())
+    # print "hist = " + hist.GetName() + "   hist2 = " + hist2.GetName()
+    # print "before: max0,max2 = " + str(max0) +  " " + str(max2) + "   bin(max0),bin(max2) = " + str(centerBinMax0) + " " + str(centerBinMax2)
+    # Below, use a protection against cases where uncertainty is much bigger than value (might happen with weird situations or QCD MC)
     if hasattr(hist2,'poissonGraph'):
        for i in xrange(hist2.poissonGraph.GetN()):
-          max2 = max(max2, (hist2.poissonGraph.GetY()[i] + 1.3*hist2.poissonGraph.GetErrorYhigh(i))*(factorLog if islog else factorLin))
+          if (hist2.poissonGraph.GetErrorYhigh(i) > hist2.poissonGraph.GetY()[i]):
+              tmpvalue = 1.1 * hist2.poissonGraph.GetY()[i]
+          else:
+              tmpvalue = (hist2.poissonGraph.GetY()[i] + 1.3*hist2.poissonGraph.GetErrorYhigh(i))
+          max2 = max(max2, tmpvalue*(factorLog if islog else factorLin))
     elif "TH1" in hist2.ClassName():
        for b in xrange(1,hist2.GetNbinsX()+1):
-          max2 = max(max2, (hist2.GetBinContent(b) + 1.3*hist2.GetBinError(b))*(factorLog if islog else factorLin))
+          if (hist2.GetBinError(b) > hist2.GetBinContent(b)):
+              tmpvalue = 1.1 * hist2.GetBinContent(b)
+          else:
+              tmpvalue = hist2.GetBinContent(b) + 1.3*hist2.GetBinError(b)
+          max2 = max(max2, tmpvalue*(factorLog if islog else factorLin))
+          #print "hist2: bin,center,content,error,max2 = %d  %.1f  %.1f  %.1f  %.1f" % (b,hist2.GetBinCenter(b),hist2.GetBinContent(b),hist2.GetBinError(b),max2)
+    #print "after: max0,max2 = " + str(max0) +  " " + str(max2)
     if max2 > max0:
         max0 = max2;
         if islog: hist.GetYaxis().SetRangeUser(0.1 if doWide else 0.9, max0)
@@ -639,11 +657,11 @@ def doLegend(pmap,mca,corner="TR",textSize=0.035,cutoff=1e-2,cutoffSignals=True,
         if header: leg.SetHeader(header.replace("\#", "#"))
         leg.SetFillColor(0)
         leg.SetFillStyle(0) # transparent legend, so it will not cover plots (markers of legend entries will cover it unless one changes the histogram FillStyle, but this has other effects on color, so better not touching the FillStyle)
-        leg.SetBorderSize(0)  # remove border
         leg.SetShadowColor(0)
         if header: leg.SetHeader(header.replace("\#", "#"))       
         if not legBorder:
             leg.SetLineColor(0)
+            leg.SetBorderSize(0)  # remove border  (otherwise it is drawn with a white line, visible if it overlaps with plots
         leg.SetTextFont(42)
         leg.SetTextSize(textSize)
         if 'data' in pmap: 
@@ -974,7 +992,7 @@ class PlotMaker:
                     CMS_lumi.lumi_sqrtS = self._options.cmssqrtS
                     CMS_lumi.CMS_lumi(ROOT.gPad, 4, 0, -0.005 if doWide and doRatio else 0.01 if doWide else 0.05)
                 else: 
-                    doTinyCmsPrelim(hasExpo = total.GetMaximum() > 9e4 and not c1.GetLogy(),textSize=(0.045 if doRatio else 0.033)*options.topSpamSize, options=options,doWide=doWide)
+                    doTinyCmsPrelim(hasExpo = total.GetMaximum() > 9e4 or c1.GetLogy(),textSize=(0.045 if doRatio else 0.033)*options.topSpamSize, options=options,doWide=doWide)
                 if options.addspam:
                     if pspec.getOption('Legend','TR')=="TL":
                         doSpam(options.addspam, .68, .855, .9, .895, align=32, textSize=(0.045 if doRatio else 0.033)*options.topSpamSize)
@@ -1136,8 +1154,8 @@ class PlotMaker:
 def addPlotMakerOptions(parser, addAlsoMCAnalysis=True):
     if addAlsoMCAnalysis: addMCAnalysisOptions(parser)
     parser.add_option("--ss",  "--scale-signal", dest="signalPlotScale", default=1.0, type="float", help="scale the signal in the plots by this amount");
-    #parser.add_option("--lspam", dest="lspam",   type="string", default="CMS Simulation", help="Spam text on the right hand side");
-    parser.add_option("--lspam", dest="lspam",   type="string", default="#bf{CMS} #it{Preliminary}", help="Spam text on the right hand side");
+    #parser.add_option("--lspam", dest="lspam",   type="string", default="CMS Simulation", help="Spam text on the left hand side");
+    parser.add_option("--lspam", dest="lspam",   type="string", default="#bf{CMS} #it{Preliminary}", help="Spam text on the left hand side");
     parser.add_option("--rspam", dest="rspam",   type="string", default="%(lumi) (13 TeV)", help="Spam text on the right hand side");
     parser.add_option("--addspam", dest="addspam", type = "string", default=None, help="Additional spam text on the top left side, in the frame");
     parser.add_option("--topSpamSize", dest="topSpamSize",   type="float", default=1.2, help="Zoom factor for the top spam");
