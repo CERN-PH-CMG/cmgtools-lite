@@ -44,7 +44,7 @@ bool loadFRHisto(const std::string &histoName, const std::string file, const cha
   if (histoName == "FR_mu")  { histo = & FR_mu;  hptr2 = & FRi_mu[0]; }
   else if (histoName == "FR_mu_qcdmc")  { histo = & FR_mu_qcdmc;  hptr2 = & FRi_mu_qcdmc[0]; }
   else if (histoName == "FR_el")  { histo = & FR_el;  hptr2 = & FRi_el[0]; }
-  else if (histoName == "FR_el_qcdmc")  { histo = & FR_elqcdmc;  hptr2 = & FRi_el_qcdmc[0]; }
+  else if (histoName == "FR_el_qcdmc")  { histo = & FR_el_qcdmc;  hptr2 = & FRi_el_qcdmc[0]; }
   else if (histoName == "PR_el")  { histo = & PR_el;  hptr2 = & PRi_el[0]; }
   // else if (histoName == "FR_correction")  { histo = & FRcorrectionForPFMET; hptr2 = & FRcorrectionForPFMET_i[0]; }
   else if (TString(histoName).BeginsWith("FR_mu_i")) {histo = & FR_temp; hptr2 = & FRi_mu[TString(histoName).ReplaceAll("FR_mu_i","").Atoi()];}
