@@ -28,41 +28,50 @@ def runAll():
     print('RUNNING EXPECTED AND OBSERVED LIMIT')
     print('========================================')
     ## expected and observed limit
-    cmd_limitObs = 'combine -M Asymptotic {card}'.format(card=outcard_file)+additional_opt
+    if opts.runObs:
+        cmd_limitObs = 'combine -M AsymptoticLimits {card}'.format(card=outcard_file)+additional_opt
+    else:
+        cmd_limitObs = 'combine -M AsymptoticLimits -t -1 {card}'.format(card=outcard_file)+additional_opt
     print('command: {cmd}'.format(cmd=cmd_limitObs))
     subprocess.call(cmd_limitObs.split())
     
     print('RUNNING EXPECTED SIGNIFICANCE')
     print('================================================')
     ## for the expected significance in the presence of signal
-    cmd_significanceExp = 'combine -M ProfileLikelihood --signif -t -1 --expectSignal=1 {card}'.format(card=outcard_file)+additional_opt
+    cmd_significanceExp = 'combine -M Significance --signif -t -1 --expectSignal=1 {card}'.format(card=outcard_file)+additional_opt
     print('command: {cmd}'.format(cmd=cmd_significanceExp))
     subprocess.call(cmd_significanceExp.split())
     
     print('RUNNING EXPECTED SIGNIFICANCE FOR FACTORIZED APPROACH')
     print('================================================')
     ## for the expected significance in the presence of signal
-    cmd_significanceExp = 'combine -M ProfileLikelihood --signif -t -1 --expectSignal={r} {card}'.format(r=r,card=outcard_file)+additional_opt
+    cmd_significanceExp = 'combine -M Significance --signif -t -1 --expectSignal={r} {card}'.format(r=r,card=outcard_file)+additional_opt
     print('command: {cmd}'.format(cmd=cmd_significanceExp))
     subprocess.call(cmd_significanceExp.split())
     
-    print('RUNNING OBSERVED SIGNIFICANCE')
-    print('================================================')
-    ## for the expected significance in the presence of signal
-    cmd_significanceObs = 'combine -M ProfileLikelihood --signif             --expectSignal=1 {card}'.format(card=outcard_file)+additional_opt
-    print('command: {cmd}'.format(cmd=cmd_significanceObs))
-    subprocess.call(cmd_significanceObs.split())
+    if opts.runObs:
+        print('RUNNING OBSERVED SIGNIFICANCE')
+        print('================================================')
+        ## for the expected significance in the presence of signal
+        cmd_significanceObs = 'combine -M Significance --signif             --expectSignal=1 {card}'.format(card=outcard_file)+additional_opt
+        print('command: {cmd}'.format(cmd=cmd_significanceObs))
+        subprocess.call(cmd_significanceObs.split())
     
-    print('RUNNING EXPECTED AND OBSERVED UNCERTAINTY ON THE SIGNAL STRENGTH')
+    print('RUNNING EXPECTED UNCERTAINTY ON THE SIGNAL STRENGTH')
     print('====================================================================')
     ## expected uncertainty on the signal strength
-    cmd_sigUnc = 'combine -M MaxLikelihoodFit --justFit -t -1  --expectSignal=1 {card} --saveShapes --saveWithUncertainties '.format(card=outcard_file)+additional_opt ##--setPhysicsModelParameters lumiscale=1'
-    ## observed uncertainty on the signal strength
-    cmd_sigUnc = 'combine -M MaxLikelihoodFit --justFit --expectSignal=1 {card} --saveShapes --saveWithUncertainties '.format(card=outcard_file)+additional_opt ##--setPhysicsModelParameters lumiscale=1'
-    subprocess.call(cmd_sigUnc.split())
-    cmd_sigUnc2= 'combine -M MaxLikelihoodFit           --expectSignal=1 {card} --saveShapes --saveWithUncertainties '.format(card=outcard_file)+additional_opt ##--setPhysicsModelParameters lumiscale=1'
-    print('command: {cmd}'.format(cmd=cmd_sigUnc2))
-    subprocess.call(cmd_sigUnc2.split())
+    cmd_sigUncExp = 'combine -M MaxLikelihoodFit --justFit -t -1  --expectSignal=1 {card} --saveShapes --saveWithUncertainties '.format(card=outcard_file)+additional_opt ##--setPhysicsModelParameters lumiscale=1'
+    subprocess.call(cmd_sigUncExp.split())
+    if opts.runObs:
+        print('RUNNING OBSERVED UNCERTAINTY ON THE SIGNAL STRENGTH')
+        print('====================================================================')
+        ## observed uncertainty on the signal strength
+        cmd_sigUnc = 'combine -M MaxLikelihoodFit --justFit --expectSignal=1 {card} --saveShapes --saveWithUncertainties '.format(card=outcard_file)+additional_opt ##--setPhysicsModelParameters lumiscale=1'
+        subprocess.call(cmd_sigUnc.split())
+        cmd_sigUnc2= 'combine -M MaxLikelihoodFit           --expectSignal=1 {card} --saveShapes --saveWithUncertainties '.format(card=outcard_file)+additional_opt ##--setPhysicsModelParameters lumiscale=1'
+        print('command: {cmd}'.format(cmd=cmd_sigUnc2))
+        subprocess.call(cmd_sigUnc2.split())
+    sys.exit()
     
     print('RUNNING ANALYSIS OF THE PREFIT AND POSTFIT UNCERTAINTIES')
     print('====================================================================')
@@ -225,6 +234,7 @@ if __name__ == '__main__':
     parser.add_option('--mumu'     ,             action='store_true', dest='onlyMuMu'         , default=False, help='run the combination for only mumu')
     parser.add_option('--recalc'   ,             action='store_true', dest='recalculateLimits', default=False, help='recalculate the limits for the likelihood scan')
     parser.add_option('--scaleHL'  ,             action='store_true', dest='scaleHL'          , default=False, help='scale to the HL LHC lumi of 3000 fb-1')
+    parser.add_option('--runObserved',           action='store_true', dest='runObs'           , default=False, help='run also the observed limit and significances')
     global opts
     (opts, args) = parser.parse_args()
 

@@ -1,7 +1,7 @@
 lumi_13TeV_2016 : DPSWW      : .*             : 1.025
-signal_shape    : DPSWW      : .*             : DPSWW_alt  : alternateShapeOnly
 WZ_norm         : WZ         : .*             : 1.16
 WZ_shapeUnc     : WZ         : .*             : WZamcatnlo : alternateShapeOnly
+signal_shape    : DPSWW      : .*             : DPSWW_alt  : alternateShapeOnly
 ZZ_norm         : ZZ         : .*             : 1.30
 WG_norm         : WG_wg      : .*             : 1.50
 rares_norm      : rares      : .*             : 1.50

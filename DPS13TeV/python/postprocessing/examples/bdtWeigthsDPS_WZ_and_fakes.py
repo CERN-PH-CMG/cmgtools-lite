@@ -37,11 +37,11 @@ class BDT_DPS(Module):
             ## MVAVar('v10:= abs(deltaPhi(LepGood_phi[0],LepGood_phi[1]))'),
             ## MVAVar('v11:= abs(dphi_2(LepGood_pt[0],LepGood_eta[0],LepGood_phi[0],LepGood_pt[1],LepGood_eta[1],LepGood_phi[1],2))'),
         ]
-        Pwz='/afs/cern.ch/work/m/mdunser/public/cmssw/dpsww2018/CMSSW_8_0_25/src/CMGTools/DPS13TeV/python/plotter/weights/'#'/afs/cern.ch/user/v/vmariani/public/'
-        Pfakes='/afs/cern.ch/user/a/anmehta/public/' #'/afs/cern.ch/user/a/anmehta/public/'
-        #self._MVAs['BDT_DPS_WZ']    = MVATool('BDT', Pwz   +'TMVAClassification_BDT_pythia.weights.xml', self._vars, rarity=True) #for the pythia2016 weights
-        self._MVAs['BDT_DPS_WZ']    = MVATool('BDT', Pwz   +'TMVAClassification_BDT.weights.xml', self._vars, rarity=True) #for the herwig2017 weights
-        self._MVAs['BDT_DPS_fakes'] = MVATool('BDT', Pfakes+'TMVAClassification_BDT_Doublemu.weights.xml', self._vars, rarity=True) 
+        Pwz='/afs/cern.ch/user/v/vmariani/public/'
+        Pfakes='/afs/cern.ch/user/a/anmehta/public/'
+        self._MVAs['BDT_DPS_WZ']    = MVATool('BDT', Pwz   +'TMVAClassification_BDT_pythia.weights.xml', self._vars, rarity=True) #for the pythia2016 weights
+        #self._MVAs['BDT_DPS_WZ']    = MVATool('BDT', Pwz   +'TMVAClassification_BDT_herwNOPUweight.weights.xml', self._vars, rarity=True) #for the herwig2017 weights
+        self._MVAs['BDT_DPS_fakes'] = MVATool('BDT', Pfakes+'TMVAClassification_BDT.weights.xml', self._vars, rarity=True) 
 
     ## new stuff
     def beginJob(self):
