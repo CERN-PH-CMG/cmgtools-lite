@@ -304,8 +304,8 @@ from CMGTools.TTHAnalysis.tools.fastCombinedObjectRecleaner import *
 def clean_and_FO_selection_TTH(lep):
     return lep.conept>10 and lep.jetBTagDeepCSV<0.4941 and (abs(lep.pdgId)!=11 or _ttH_idEmu_cuts_E3(lep)) \
         and (lep.mvaTTH>0.90 or \
-                 (abs(lep.pdgId)!=13 and lep.jetBTagDeepCSV<0.07 and lep.segmentCompatibility>0.3 and lep.jetPtRatiov2 > 0.60) or \
-                 (abs(lep.pdgId)!=11 and lep.jetBTagDeepCSV<0.07 and lep.mvaIdFall17noIso > 0.5 and lep.jetPtRatiov2 > 0.60) \
+                 (abs(lep.pdgId)==13 and lep.jetBTagDeepCSV<0.07 and lep.segmentCompatibility>0.3 and lep.jetPtRatiov2>0.60) or \
+                 (abs(lep.pdgId)==11 and lep.jetBTagDeepCSV<0.07 and lep.mvaIdFall17noIso>0.5 and lep.jetPtRatiov2>0.60) \
                  )
 
 MODULES.append( ('leptonJetFastReCleanerTTH_step1', lambda : CombinedObjectTaggerForCleaning("InternalRecl",
@@ -401,7 +401,7 @@ MODULES.append( ('TauTightFlag', lambda : ObjTagger("isTauTight","TauSel_Recl",
                                                     [lambda tau : tauID_oldDMdR0p3wLT2017v2_WP(tau.pt,tau.mvaId2017,2)] )))
 
 from CMGTools.TTHAnalysis.tools.bTagEventWeightsCSVFullShape import BTagEventWeightFriend
-MODULES.append( ('eventBTagWeight', lambda : BTagEventWeightFriend(csvfile=os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/btag/DeepCSV_94XSF_V1_B_F.csv",
+MODULES.append( ('eventBTagWeight', lambda : BTagEventWeightFriend(csvfile=os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/btag/DeepCSV_94XSF_V2_B_F.csv",
                                                                    discrname="btagDeepCSV")))
 
 from CMGTools.TTHAnalysis.tools.BDT_resolvedTopTagger_cpp import BDT_resolvedTopTagger
