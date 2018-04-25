@@ -188,18 +188,18 @@ float fakeRateWeight_promptRateCorr_1l_i_smoothed(float lpt, float leta, int lpd
   // FR
   float p0 = hist_fr->GetBinContent(etabin, 1);
   float p1 = hist_fr->GetBinContent(etabin, 2);
-  if (iFR==1) p0 += hist_fr->GetBinError(etabin, 1);
-  if (iFR==2) p0 -= hist_fr->GetBinError(etabin, 1);
-  if (iFR==3) p1 += hist_fr->GetBinError(etabin, 2);
-  if (iFR==4) p1 -= hist_fr->GetBinError(etabin, 2);
+  if      (iFR==1) p0 += hist_fr->GetBinError(etabin, 1);
+  else if (iFR==2) p0 -= hist_fr->GetBinError(etabin, 1);
+  else if (iFR==3) p1 += hist_fr->GetBinError(etabin, 2);
+  else if (iFR==4) p1 -= hist_fr->GetBinError(etabin, 2);
   // now PR
   // eta bin is the same as for fake rate
   float p0_pr = hist_pr->GetBinContent(etabin, 1);
   float p1_pr = hist_pr->GetBinContent(etabin, 2);
-  if (iPR==1) p0_pr += hist_pr->GetBinError(etabin, 1);
-  if (iPR==2) p0_pr -= hist_pr->GetBinError(etabin, 1);
-  if (iPR==3) p1_pr += hist_pr->GetBinError(etabin, 2);
-  if (iPR==4) p1_pr -= hist_pr->GetBinError(etabin, 2);
+  if      (iPR==1) p0_pr += hist_pr->GetBinError(etabin, 1);
+  else if (iPR==2) p0_pr -= hist_pr->GetBinError(etabin, 1);
+  else if (iPR==3) p1_pr += hist_pr->GetBinError(etabin, 2);
+  else if (iPR==4) p1_pr -= hist_pr->GetBinError(etabin, 2);
 
   float fr = p0    + p1   *lpt;
   float pr = p0_pr + p1_pr*lpt;
@@ -241,10 +241,10 @@ float fakeRateWeight_1l_i_smoothed(float lpt, float leta, int lpdgId, bool passW
     int etabin = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(feta)));
     float p0 = hist->GetBinContent(etabin, 1);
     float p1 = hist->GetBinContent(etabin, 2);
-    if (iFR==1) p0 += hist->GetBinError(etabin, 1);
-    if (iFR==2) p0 -= hist->GetBinError(etabin, 1);
-    if (iFR==3) p1 += hist->GetBinError(etabin, 2);
-    if (iFR==4) p1 -= hist->GetBinError(etabin, 2);
+    if      (iFR==1) p0 += hist->GetBinError(etabin, 1);
+    else if (iFR==2) p0 -= hist->GetBinError(etabin, 1);
+    else if (iFR==3) p1 += hist->GetBinError(etabin, 2);
+    else if (iFR==4) p1 -= hist->GetBinError(etabin, 2);
     float fr = p0 + p1*lpt;
     return fr/(1-fr);
   } else return 0;
