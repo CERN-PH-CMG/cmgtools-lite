@@ -6,7 +6,7 @@ import sys,ROOT,os
 ROOT.gROOT.SetBatch(True)
 
 class CardsChecker:
-    def __init__(self, card_dir, channel, binsdict, nPdfBins, options):
+    def __init__(self, card_dir, options):
         self.card_dir = card_dir
         self.options = options
         self.datacards = {}
@@ -55,17 +55,13 @@ if __name__ == '__main__':
 
     if options.checkCards:
         carddir = args[0]
-        binsfile = open(carddir+'/binningYW.txt')
-        binsdict = eval(binsfile.read())
-        if len(args)<2: print 'needed inputs: datacards_dir channel '; quit()
-        if args[1] not in ['el','mu']: print 'channel must be either "mu" or "el"'; quit()
-        nPdfBins = args[2] if len(args)>3 else 60
-        cc = CardsChecker(carddir,args[1], binsdict, nPdfBins, options)
+        if len(args)<1: print 'needed inputs: datacards_dir '; quit()
+        cc = CardsChecker(carddir, options)
         result = cc.checkCards()
         if len(result)==0: print 'All cards are GOOD.'
         else: 
             keys = result.keys()
             keys.sort()
             for k in keys: print result[k]
-            print '## in total have to resubmit {n} jobs'.format(n=len(result[k]))
+            print '## in total have to resubmit {n} jobs'.format(n=len(result))
 
