@@ -19,7 +19,7 @@ class CardsChecker:
             f_root = key+'.input.root'
             self.datacards[key] = f_txt
             self.cardinputs[key] = f_root
-        print 'Expecting {n} cards and rootfiles'.format(n=len(self.datacards))
+        print '## Expecting {n} cards and rootfiles'.format(n=len(self.datacards))
 
     def checkCards(self):
         resubcmds = {}

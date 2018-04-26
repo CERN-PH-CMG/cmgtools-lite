@@ -52,7 +52,7 @@ def makeYWBinning(infile, cutoff=5000):
 
 NPDFSYSTS=60 # Hessian variations of NNPDF 3.0
 pdfsysts=[''] # array containing the PDFs signal variations
-qcdsysts=[''] # array containing the QCD scale signal variations
+qcdsysts=[  ] # array containing the QCD scale signal variations
 
 def getMcaIncl(mcafile,incl_mca='incl_sig'):
     incl_file=''
