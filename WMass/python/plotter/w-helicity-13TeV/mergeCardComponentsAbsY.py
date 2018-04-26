@@ -4,7 +4,7 @@
 # fit scaling by eff: ./mergeCardComponents.py -b Wel -m -C minus,plus -i ../cards/helicity_xxxxx/ --longToTotal 0.5 --sf mc_reco_eff.root --absolute
 
 import ROOT
-import sys,os,re
+import sys,os,re,json
 
 def mirrorShape(nominal,alternate,newname,alternateShapeOnly=False):
     alternate.SetName("%sUp" % newname)
@@ -61,21 +61,22 @@ if __name__ == "__main__":
      
          ## prepare the relevant files. only the datacards and the correct charge
          files = ( f for f in os.listdir(options.inputdir) if f.endswith('.card.txt') )
-         files = ( f for f in files if charge in f and 'pdf' not in f )
+         files = ( f for f in files if charge in f and not re.match('.*_pdf.*|.*_mu.*',f) )
          files = sorted(files, key = lambda x: int(x.rstrip('.card.txt').split('_')[-1]) if not 'bkg'in x else -1) ## ugly but works
          files = list( ( os.path.join(options.inputdir, f) for f in files ) )
          
-         existing_bins = []
-         empty_bins = []
+         existing_bins = {'left': [], 'right': []}
+         empty_bins = {'left': [], 'right': []}
      
          ## look for the maximum ybin bin number
          nbins = 0
          print "FILES = ",files
          for f in files:
+             pol = 'left' if '_left_' in f else 'right'
              if 'Ybin_' in f:
                  n = int(f[f.find('Ybin_')+5 : f.find('.card')])
                  if n>nbins: nbins=n
-                 if n not in existing_bins: existing_bins.append(n)
+                 if n not in existing_bins[pol]: existing_bins[pol].append(n)
          print 'found {n} bins of rapidity'.format(n=nbins+1)
      
          fixedYBins = {'plusR' : [n,n-1,n-2],
@@ -99,18 +100,21 @@ if __name__ == "__main__":
      
          ybinfile = open(os.path.join(options.inputdir, 'binningYW.txt'),'r')
          ybinline = ybinfile.readlines()[0]
-         ybins = list(float(i) for i in ybinline.split())
+         ybins = {k.split('_')[1]:v for k,v in json.loads(ybinline).iteritems() if k.startswith(charge)}
          ybinfile.close()
-         #ybins = list(float(i) for i in options.Ybins.split(','))
-         for b in xrange(len(ybins)-1):
-             if b not in existing_bins: 
-                 if b not in empty_bins:
-                     empty_bins.append(b)
-                     empty_bins.append(nbins+1-b)            
+         for pol in ['left','right']:
+             for b in xrange(len(ybins[pol])-1):
+                 if b not in existing_bins[pol]:
+                     if b not in empty_bins[pol]:
+                         empty_bins[pol].append(b)
+                         empty_bins[pol].append(nbins+1-b)
      
          longBKG = False
          tmpfiles = []
          for f in files:
+             basename = os.path.basename(f).split('.')[0]
+             if basename.startswith('W{charge}'.format(charge=charge)): pol=basename.split('_')[1]
+             else: pol='none' # bkg and data
              dir = os.path.dirname(f)
              bin = ''
              isEmpty = False
@@ -122,30 +126,29 @@ if __name__ == "__main__":
                          if len(l.split()) < 2: continue ## skip the second bin line if empty
                          bin = l.split()[1]
                          binn = int(bin.split('_')[-1]) if 'Ybin_' in bin else -1
-                     basename = os.path.basename(f).split('.')[0]
-                     rootfiles_syst = filter(lambda x: re.match('{base}_(pdf\d+)\.input\.root'.format(base=basename),x), os.listdir(options.inputdir))
+                     rootfiles_syst = filter(lambda x: re.match('{base}_(pdf\d+|muR\S+|muF\S+)\.input\.root'.format(base=basename),x), os.listdir(options.inputdir))
                      rootfiles_syst = [dir+'/'+x for x in rootfiles_syst]
                      rootfiles_syst.sort()
                      if re.match('process\s+',l): 
                          if len(l.split()) > 1 and all(n.isdigit() for n in l.split()[1:]) : continue
-                         if not ('left' in l and 'right' in l):
-                             if not binn in empty_bins: 
+                         if not pol in l:
+                             if pol!='none' and binn not in empty_bins[pol]: 
                                  if binn >= 0:
-                                     empty_bins.append(binn)
-                                     empty_bins.append(nbins-binn)
+                                     empty_bins[pol].append(binn)
+                                     empty_bins[pol].append(nbins-binn)
                              isEmpty = True
                          processes = l.split()[1:]
                      if re.match('process\s+W.*long',l) and 'bkg' in f:
                          print "===> W long is treated as a background"
                          longBKG = True
              if options.mergeRoot:
-                 if not binn in empty_bins:
-                     print 'processing bin = ',bin
+                 if pol=='none' or binn not in empty_bins[pol]:
+                     print 'processing bin: {bin} for polarization: {pol}'.format(bin=bin,pol=pol)
                      nominals = {}
                      for irf,rf in enumerate([rootfile]+rootfiles_syst):
                          print '\twith nominal/systematic file: ',rf
                          tf = ROOT.TFile.Open(rf)
-                         tmpfile = os.path.join(options.inputdir,'tmp_{bin}_sys{sys}.root'.format(bin=bin,sys=irf))
+                         tmpfile = os.path.join(options.inputdir,'tmp_{pol}_{bin}_sys{sys}.root'.format(pol=pol,bin=bin,sys=irf))
                          of=ROOT.TFile(tmpfile,'recreate')
                          tmpfiles.append(tmpfile)
                          # remove the duplicates also
@@ -167,38 +170,47 @@ if __name__ == "__main__":
                                              #print 'replacing old %s with %s' % (name,newname)
                                              plots[newname].Write()
                                      else:
-                                         tokens = newname.split("_"); pfx = '_'.join(tokens[:-1]); pdf = tokens[-1]
-                                         ipdf = int(pdf.split('pdf')[-1])
-                                         newname = "{pfx}_pdf{ipdf}".format(pfx=pfx,ipdf=ipdf)
-                                         (alternate,mirror) = mirrorShape(nominals[pfx],obj,newname,options.pdfShapeOnly)
-                                         for alt in [alternate,mirror]:
-                                             if alt.GetName() not in plots:
-                                                 plots[alt.GetName()] = alt.Clone()
-                                                 plots[alt.GetName()].Write()
+                                         if 'pdf' in newname:
+                                             tokens = newname.split("_"); pfx = '_'.join(tokens[:-1]); pdf = tokens[-1]
+                                             ipdf = int(pdf.split('pdf')[-1])
+                                             newname = "{pfx}_pdf{ipdf}".format(pfx=pfx,ipdf=ipdf)
+                                             (alternate,mirror) = mirrorShape(nominals[pfx],obj,newname,options.pdfShapeOnly)
+                                             for alt in [alternate,mirror]:
+                                                 if alt.GetName() not in plots:
+                                                     plots[alt.GetName()] = alt.Clone()
+                                                     plots[alt.GetName()].Write()
+                                         elif '_mu' in newname:
+                                             tokens = newname.split("_"); pfx = '_'.join(tokens[:-1]); qcdscale = tokens[-1].replace('Dn','Down')
+                                             newname = "{pfx}_{syst}".format(pfx=pfx,syst=qcdscale)
+                                             if newname not in plots:
+                                                 plots[newname] = obj.Clone(newname)
+                                                 plots[newname].Write()
                          of.Close()
-         if len(empty_bins):
+         if any(len(empty_bins[pol]) for pol in ['left','right']):
              print 'found a bunch of empty bins:', empty_bins
          if options.mergeRoot:
-             haddcmd = 'hadd -f {of} {tmpfiles}'.format(of=outfile, tmpfiles=' '.join(tmpfiles) )
+             haddcmd = 'hadd -f {of} {indir}/tmp_*.root'.format(of=outfile, indir=options.inputdir )
              #print 'would run this now: ', haddcmd
              #sys.exit()
              os.system(haddcmd)
-             os.system('rm {rm}'.format(rm=' '.join(tmpfiles)))
-     
-         print "Now trying to get info on PDF uncertainties..."
-         pdfsyst = {}
+             os.system('rm {indir}/tmp_*.root'.format(indir=options.inputdir))
+         
+         print "Now trying to get info on theory uncertainties..."
+         theosyst = {}
          tf = ROOT.TFile.Open(outfile)
          for e in tf.GetListOfKeys() :
              name=e.GetName()
-             if 'pdf' in name:
+             if 'pdf' in name or '_mu' in name:
                  if name.endswith("Up"): name = re.sub('Up$','',name)
                  if name.endswith("Down"): name = re.sub('Down$','',name)
                  syst = name.split('_')[-1]
                  binWsyst = '_'.join(name.split('_')[1:-1])
-                 if syst not in pdfsyst: pdfsyst[syst] = [binWsyst]
-                 else: pdfsyst[syst].append(binWsyst)
-         if len(pdfsyst): print "Found a bunch of PDF sysematics: ",pdfsyst.keys()
-         else: print "You are running w/o PDF systematics. Lucky you!"
+                 if syst not in theosyst: theosyst[syst] = [binWsyst]
+                 else: theosyst[syst].append(binWsyst)
+         if len(theosyst): print "Found a bunch of theoretical sysematics: ",theosyst.keys()
+         else: print "You are running w/o theory systematics. Lucky you!"
+         pdfsyst = {k:v for k,v in theosyst.iteritems() if 'pdf' in k}
+         qcdsyst = {k:v for k,v in theosyst.iteritems() if 'muR' in k or 'muF' in k}
      
          combineCmd="combineCards.py "
          for f in files:
@@ -275,11 +287,11 @@ if __name__ == "__main__":
          efficiencies    = {}; efferrors    = {}
          efficiencies_LO = {}; efferrors_LO = {}
          if options.scaleFile:
-             for pol in ['left','right','long']: 
-                 efficiencies   [pol] = [1./x for x in getScales(ybins, charge, pol, os.path.abspath(options.scaleFile))]
-                 efferrors      [pol] = [   x for x in getScales(ybins, charge, pol, os.path.abspath(options.scaleFile), returnError=True)] ## these errors are relative to the effs
-                 efficiencies_LO[pol] = [1./x for x in getScales(ybins, charge, pol, os.path.abspath(options.scaleFile), doNLO=False)]
-                 efferrors_LO   [pol] = [   x for x in getScales(ybins, charge, pol, os.path.abspath(options.scaleFile), doNLO=False, returnError=True)]
+             for pol in ['left','right']: 
+                 efficiencies   [pol] = [1./x for x in getScales(ybins[pol], charge, pol, os.path.abspath(options.scaleFile))]
+                 efferrors      [pol] = [   x for x in getScales(ybins[pol], charge, pol, os.path.abspath(options.scaleFile), returnError=True)] ## these errors are relative to the effs
+                 efficiencies_LO[pol] = [1./x for x in getScales(ybins[pol], charge, pol, os.path.abspath(options.scaleFile), doNLO=False)]
+                 efferrors_LO   [pol] = [   x for x in getScales(ybins[pol], charge, pol, os.path.abspath(options.scaleFile), doNLO=False, returnError=True)]
      
          combinedCard = open(cardfile,'a')
 
@@ -372,9 +384,9 @@ if __name__ == "__main__":
                  Wlong = [(p,r) for (p,r) in ProcsAndRates if re.match('W.*long',p)]
                  WLeftOrRight = [(p,r) for (p,r) in ProcsAndRates if ('left' in p or 'right' in p)]
                  if options.scaleFile:
-                     eff_long = 1./getScales([ybins[0],ybins[-1]], charge, 'long', options.scaleFile)[0]
-                     eff_left = 1./getScales([ybins[0],ybins[-1]], charge, 'left', options.scaleFile)[0]
-                     eff_right = 1./getScales([ybins[0],ybins[-1]], charge, 'right', options.scaleFile)[0]
+                     eff_long = 1./getScales([ybins['left'][0],ybins['left'][-1]], charge, 'long', options.scaleFile)[0] # just take the eff on the total Y acceptance (should be 0,6)
+                     eff_left = 1./getScales([ybins[pol][0],ybins[pol][-1]], charge, 'left', options.scaleFile)[0]
+                     eff_right = 1./getScales([ybins[pol][0],ybins[pol][-1]], charge, 'right', options.scaleFile)[0]
                      normWLong = sum([float(r) for (p,r) in Wlong])/eff_long # there should be only 1 Wlong/charge
                      normWLeft = sum([float(r) for (p,r) in WLeftOrRight if 'left' in p])/eff_left
                      normWRight = sum([float(r) for (p,r) in WLeftOrRight if 'right' in p])/eff_right
@@ -427,10 +439,11 @@ if __name__ == "__main__":
                  allPOIs = fixedPOIs+floatPOIs
      
                  ## add the PDF systematics 
-                 for sys,procs in pdfsyst.iteritems():
+                 for sys,procs in theosyst.iteritems():
                      # there should be 2 occurrences of the same proc in procs (Up/Down). This check should be useless if all the syst jobs are DONE
                      combinedCardNew.write('%-15s   shape %s\n' % (sys,(" ".join([kpatt % '1.0' if p in procs and procs.count(p)==2 else '  -  ' for p,r in ProcsAndRates]))) )
                  combinedCardNew.write('\npdfs group = '+' '.join([sys for sys,procs in pdfsyst.iteritems()])+'\n')
+                 combinedCardNew.write('\nscales group = '+' '.join([sys for sys,procs in qcdsyst.iteritems()])+'\n')
 
                  ## now assign a uniform luminosity uncertainty to all the fixed processes, to avoid constraining 
                  channel = 'mu' if 'mu' in helbin else 'el'
@@ -448,7 +461,7 @@ if __name__ == "__main__":
          ## make a group for the fixed rate parameters. just append it to the file.
          print 'adding a nuisance group for the fixed rateParams'
          with open(cardfile,'a+') as finalCardfile:
-             finalCardfile.write('\nfixedY group = {fixed} '.format(fixed=' '.join(i.strip() for i in fixedPOIs)))
+             if len(fixedPOIs): finalCardfile.write('\nfixedY group = {fixed} '.format(fixed=' '.join(i.strip() for i in fixedPOIs)))
              finalCardfile.write('\nallY group = {all} '.format(all=' '.join(i.strip().replace('_%s_'%options.bin,'_') for i in allPOIs)))
              finalCardfile.write('\n\n## end of file')
          #finalCardfile.close()
@@ -461,12 +474,12 @@ if __name__ == "__main__":
          print txt2wsCmd
          os.system(txt2wsCmd)
              
-         combineCmd = 'combine {ws} -M MultiDimFit    -t -1 --expectSignal=1 -m 999 --saveFitResult --cminInitialHesse 1 --cminFinalHesse 1 --cminPreFit 1       --redefineSignalPOIs {pois}            --floatOtherPOIs=0 --freezeNuisanceGroups efficiencies,fixedY{pdfs} -v 9'.format(ws=ws, pois=','.join(minosPOIs), pdfs=(',pdfs' if len(pdfsyst) else ''))
+         combineCmd = 'combine {ws} -M MultiDimFit    -t -1 --expectSignal=1 -m 999 --saveFitResult --cminInitialHesse 1 --cminFinalHesse 1 --cminPreFit 1       --redefineSignalPOIs {pois}            --floatOtherPOIs=0 --freezeNuisanceGroups efficiencies,fixedY{pdfs}{scales} -v 9'.format(ws=ws, pois=','.join(minosPOIs), pdfs=(',pdfs' if len(pdfsyst) else ''), scales=(',scaless' if len(qcdsyst) else ''))
          print combineCmd
 
      datacards = [os.path.abspath(options.inputdir)+"/"+options.bin+'_{ch}_card.txt'.format(ch=charge) for charge in ['plus','minus']]
      if sum([os.path.exists(card) for card in datacards])==2:
-         print "Cards for W+ and W- done. Comnining them now..."
+         print "Cards for W+ and W- done. Combining them now..."
          combinedCard = os.path.abspath(options.inputdir)+"/"+options.bin+'_card.txt'
          combineCards = 'combineCards.py '+' '.join(['{bin}_{ch}={bin}_{ch}_card.txt'.format(bin=options.bin,ch=charge) for charge in ['plus','minus']])+' > '+combinedCard
          print "combining W+ and W- with: ",combineCards
@@ -477,6 +490,6 @@ if __name__ == "__main__":
          t2w = 'text2workspace.py {cf} -o {ws} --X-allow-no-signal --X-no-check-norm '.format(cf=combinedCard, ws=ws)
          print "combined t2w command: ",t2w
          os.system(t2w)
-         combineCmdTwoCharges = 'combine {ws} -M MultiDimFit    -t -1 --expectSignal=1 -m 999 --saveFitResult --cminInitialHesse 1 --cminFinalHesse 1 --cminPreFit 1       --redefineSignalPOIs {pois}            --floatOtherPOIs=0 --freezeNuisanceGroups efficiencies,fixedY{pdfs} -v 9'.format(ws=ws, pois=','.join(minosPOIs), pdfs=(',pdfs' if len(pdfsyst) else ''))
+         combineCmdTwoCharges = 'combine {ws} -M MultiDimFit    -t -1 --expectSignal=1 -m 999 --saveFitResult --cminInitialHesse 1 --cminFinalHesse 1 --cminPreFit 1       --redefineSignalPOIs {pois}            --floatOtherPOIs=0 --freezeNuisanceGroups efficiencies,fixedY{pdfs}{scales} -v 9'.format(ws=ws, pois=','.join(minosPOIs), pdfs=(',pdfs' if len(pdfsyst) else ''), scales=(',scaless' if len(qcdsyst) else ''))
          print combineCmdTwoCharges
          print "DONE. ENJOY FITTING !"
