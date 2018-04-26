@@ -89,11 +89,18 @@ def writeQCDScaleSystsToMCA(mcafile,odir,syst="qcd",incl_mca='incl_sig'):
     if len(incl_file)==0: 
         print "Warning! '%s' include directive not found. Not adding QCD scale systematics!"
         return
-    for scale in ['muR','muF',"muRmuF"]:
+    for scale in ['muR','muF',"muRmuF", "wptSlope"]:
         for idir in ['Up','Dn']:
             postfix = "_{syst}{idir}".format(syst=scale,idir=idir)
             mcafile_syst = open("%s/mca%s.txt" % (odir,postfix), "w")
-            mcafile_syst.write(incl_mca+postfix+'   : + ; IncludeMca='+incl_file+', AddWeight="qcd'+postfix+'", PostFix="'+postfix+'" \n')
+            if not scale == "wptSlope":
+                mcafile_syst.write(incl_mca+postfix+'   : + ; IncludeMca='+incl_file+', AddWeight="qcd'+postfix+'", PostFix="'+postfix+'" \n')
+            else:
+                sign  =  1 if idir == 'Dn' else -1
+                asign = -1 if idir == 'Dn' else  1
+                offset = 0.05; slope = 0.005;
+                fstring = "wpt_slope_weight(genw_pt\,{off:.3f}\,{slo:.3f})".format(off=1.+asign*offset, slo=sign*slope)
+                mcafile_syst.write(incl_mca+postfix+'   : + ; IncludeMca='+incl_file+', AddWeight="'+fstring+'", PostFix="'+postfix+'" \n')
             qcdsysts.append(postfix)
     print "written QCD scale systematics"
     return MCASYSTS
