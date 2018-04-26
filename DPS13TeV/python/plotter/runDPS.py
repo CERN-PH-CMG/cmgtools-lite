@@ -182,14 +182,14 @@ def makeResults(onlyMM = True, splitCharge = True): #sfdate, onlyMM = True, spli
                          'ZZ': '{sf:.3f}'.format(sf=1.21)}
             mumusf = 0.95
             extraopts = ' -W {sf:.3f}'.format(sf=mumusf) ##--showIndivSigs --plotmode=norm
-            makeplots = ['BDTfakes_BDTWZ_mumu{ch}{nbins}'.format(ch=(ch[0] if ch else ''),nbins=nbinspostifx)] #BDTforCombine_mumu{ch}{nbins}'.format(ch=(ch[0] if ch else ''),nbins=nbinspostifx)] #BDT_{bdt}_mumu{ch}{nbins}'.format(ch=(ch[0] if ch else ''),bdt=bdt,nbins=nbinspostifx)]
+            makeplots = ['BDTforCombine_mumu{ch}{nbins}'.format(ch=(ch[0] if ch else ''),nbins=nbinspostifx)] #BDTforCombine_mumu{ch}{nbins}'.format(ch=(ch[0] if ch else ''),nbins=nbinspostifx)] #BDT_{bdt}_mumu{ch}{nbins}'.format(ch=(ch[0] if ch else ''),bdt=bdt,nbins=nbinspostifx)]
 
-            #            runplots(trees, friends, targetdir, fmca, fcut, fplots, enable, disable, processes, scalethem, fittodata, makeplots, True, extraopts)
+            runplots(trees, friends, targetdir, fmca, fcut, fplots, enable, disable, processes, scalethem, fittodata, makeplots, True, extraopts)
             ## ==================================
             ## running datacards
             ## ==================================
             extraoptscards = ' -W {sf:.3f} -o mumu{ch} -b mumu{ch} '.format(sf=mumusf, ch=(ch[0] if ch else ''))
-            runCards(trees, friends, targetcarddir, fmca, fcut, fsyst , binningBDT, enable, disable, processesCards, scalethem, extraoptscards)
+            #runCards(trees, friends, targetcarddir, fmca, fcut, fsyst , binningBDT, enable, disable, processesCards, scalethem, extraoptscards)
             
 
 def simplePlot():
