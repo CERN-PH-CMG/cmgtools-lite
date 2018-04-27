@@ -548,15 +548,15 @@ void doFakeRateGraphPlots(const string& inputFileName = "",
 
 //================================================================
 
-void makeFakeRateGraphPlotsAndSmoothing(const string& inputFilePath = "www/wmass/13TeV/fake-rate/test/SRtrees_new/fakeRate_pfmtfix_pt_granular_pfmet20_HLT27_tightChargeNum_5binEB_5binEE/el/comb/",
+void makeFakeRateGraphPlotsAndSmoothing(const string& inputFilePath = "www/wmass/13TeV/fake-rate/test/SRtrees_new/fakeRate_pfmtfix_pt_granular_pfmet20_HLT27_tightChargeNum/el/comb/",
 					//const string& outDir_tmp = "SAME", 
-					const string& outDir_tmp = "www/wmass/13TeV/fake-rate/electron/FR_graphs/fakeRate_pfmtfix_pt_granular_pfmet20_HLT27_tightChargeNum_5binEB_5binEE_mergeWandZ/", 
+					const string& outDir_tmp = "www/wmass/13TeV/fake-rate/electron/FR_graphs/fakeRate_pfmtfix_pt_granular_pfmet20_HLT27_tightChargeNum_2binEB_2binEE_mergeWandZ/", 
 					const string& histPrefix = "fakeRateNumerator_el_vs_pfmtfix_pt_granular",
 					const Bool_t isMuon = false, 
 					const Bool_t showMergedEWK = true,
 					const Bool_t saveToFile = false,  // whether to save is WMass/data/fakerate/ (if false, save in current folder)
-					const TString& etaBinBoundariesList = "0.0,0.3,0.6,0.9,1.2,1.479,1.7,1.9,2.1,2.3,2.5",  // important to use dots also for 1.0
-					const vector<Int_t> ptBinIndexQCD = {2},  // should be a number for each eta bin (if only one is given, use it for all)
+					const TString& etaBinBoundariesList = "0.0,1.0,1.479,2.1,2.5",  // important to use dots also for 1.0
+					const vector<Int_t> ptBinIndexQCD = {1},  // should be a number for each eta bin (if only one is given, use it for all)
 					const vector<Int_t> ptBinIndexEWK = {1},  // should be a number for each eta bin (if only one is given, use it for all)
 					const Double_t inputLuminosity = 35.9 // -1 in case luminosity should not be printed
 			   ) 
@@ -668,15 +668,15 @@ void makeFakeRateGraphPlotsAndSmoothing(const string& inputFilePath = "www/wmass
 
   // fill TH2 (pt vs |eta|) with smoothed fake rate
   TH2D* fr_pt_eta_data = new TH2D("fr_pt_eta_data","fake rate for data;electron p_{T};electron |#eta|", 
-			    120, 0, 60, NetaBins, etaBoundaries.data());
+			    60, 30, 60, NetaBins, etaBoundaries.data());
   TH2D* fr_pt_eta_qcd = new TH2D("fr_pt_eta_qcd","fake rate for QCD MC;electron p_{T};electron |#eta|", 
-			   120, 0, 60, NetaBins, etaBoundaries.data());
+			   60, 30, 60, NetaBins, etaBoundaries.data());
   TH2D* fr_pt_eta_w = new TH2D("fr_pt_eta_w","prompt rate for W MC;electron p_{T};electron |#eta|", 
-			 120, 0, 60, NetaBins, etaBoundaries.data());
+			 60, 30, 60, NetaBins, etaBoundaries.data());
   TH2D* fr_pt_eta_z = new TH2D("fr_pt_eta_z","prompt rate for Z MC;electron p_{T};electron |#eta|", 
-			 120, 0, 60, NetaBins, etaBoundaries.data());
+			 60, 30, 60, NetaBins, etaBoundaries.data());
   TH2D* fr_pt_eta_ewk = new TH2D("fr_pt_eta_ewk","prompt rate for W,Z MC;electron p_{T};electron |#eta|", 
-			   120, 0, 60, NetaBins, etaBoundaries.data());
+			   60, 30, 60, NetaBins, etaBoundaries.data());
 
   cout << "Creating TH2 fr_pt_eta_* with smoothed fake or prompt rate (pT vs |eta|)" << endl;
   cout << endl;

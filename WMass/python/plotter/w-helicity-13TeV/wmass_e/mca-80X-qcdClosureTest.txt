@@ -40,6 +40,9 @@ W_fakes    : WJetsToLNu_NLO_part1 + WJetsToLNu_NLO_part2 + WJetsToLNu_NLO_part3 
 
 QCD_fakes: QCD_Pt* : xsec; FillColor=ROOT.kGray, Label="QCD (FR)", FakeRate="w-helicity-13TeV/wmass_e/fakeRate-frqcdmc.txt"
 
+
+#QCD_fakes_FRdn: QCD_Pt* : xsec; FillColor=ROOT.kBlue, Label="QCD (FR dn)", FakeRate="w-helicity-13TeV/wmass_e/fakeRate-frqcdmc_dn.txt"
+
 # W    : WJetsToLNu_NLO_part2: 3.*20508.9 : genw_decayId == 12 && LepGood1_mcMatchId*LepGood1_charge!=-24; FillColor=ROOT.kRed+2, NormSystematic=0.026, FakeRate="w-helicity-13TeV/wmass_e/fakeRate-frqcdmc.txt", Label="W (FR)", PostFix='_fakes'
 # W    : WJetsToLNu_NLO_part3: 3.*20508.9 : genw_decayId == 12 && LepGood1_mcMatchId*LepGood1_charge!=-24; FillColor=ROOT.kRed+2, NormSystematic=0.026, FakeRate="w-helicity-13TeV/wmass_e/fakeRate-frqcdmc.txt", Label="W (FR)", PostFix='_fakes'
 # W    : WJetsToLNu_NLO_ext_part1: 3.*20508.9 : genw_decayId == 12 && LepGood1_mcMatchId*LepGood1_charge!=-24; FillColor=ROOT.kRed+2, NormSystematic=0.026, FakeRate="w-helicity-13TeV/wmass_e/fakeRate-frqcdmc.txt", Label="W (FR)", PostFix='_fakes'
