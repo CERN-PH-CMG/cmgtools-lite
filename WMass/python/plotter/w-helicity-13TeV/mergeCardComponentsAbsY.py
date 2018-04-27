@@ -79,9 +79,10 @@ if __name__ == "__main__":
                  if n not in existing_bins[pol]: existing_bins[pol].append(n)
          print 'found {n} bins of rapidity'.format(n=nbins+1)
      
-         fixedYBins = {'plusR' : [n,n-1,n-2],
+         ## we have the last bin constructed in a way that it has ~5k events.
+         fixedYBins = {'plusR' : [n],
                        'plusL' : [n],
-                       'minusR': [n,n-1,n-2],
+                       'minusR': [n],
                        'minusL': [n],
                       }
          
