@@ -239,7 +239,8 @@ if not removeJecUncertainty:
 
 isoTrackAna.setOff = False
 
-isoTrackAna.useLegacy2016 = True
+if not run2017:
+    isoTrackAna.useLegacy2016 = True
 
 genAna.allGenTaus = True
 
