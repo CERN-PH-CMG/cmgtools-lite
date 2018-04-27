@@ -157,7 +157,8 @@ def reMax(hist,hist2,islog,factorLin=1.3,factorLog=2.0,doWide=False):
         #hist = hist.GetHistogram()  # better to use sum of all components, GetHistogram() returns a fake TH1 used to build the axis (could have no relation with the plot)
         hist = hist.GetStack().Last() # this is the sum of all components
     max0 = hist.GetBinContent(hist.GetMaximumBin())
-    max2 = hist2.GetBinContent(hist2.GetMaximumBin())*(factorLog if islog else factorLin)
+    #max2 = hist2.GetBinContent(hist2.GetMaximumBin())*(factorLog if islog else factorLin)
+    max2 = hist2.GetBinContent(hist2.GetMaximumBin())
     # Below, use a protection against cases where uncertainty is much bigger than value (might happen with weird situations or QCD MC)
     if hasattr(hist2,'poissonGraph'):
        for i in xrange(hist2.poissonGraph.GetN()):
@@ -169,7 +170,8 @@ def reMax(hist,hist2,islog,factorLin=1.3,factorLog=2.0,doWide=False):
     elif "TH1" in hist2.ClassName():
        for b in xrange(1,hist2.GetNbinsX()+1):
           if (hist2.GetBinError(b) > hist2.GetBinContent(b)):
-              tmpvalue = (factorLog if islog else factorLin) * hist2.GetBinContent(b)
+              #tmpvalue = (factorLog if islog else factorLin) * hist2.GetBinContent(b)
+              tmpvalue = hist2.GetBinContent(b)
           else:
               tmpvalue = hist2.GetBinContent(b) + 1.3*hist2.GetBinError(b)
           max2 = max(max2, tmpvalue*(factorLog if islog else factorLin))
@@ -1195,10 +1197,13 @@ def addPlotMakerOptions(parser, addAlsoMCAnalysis=True):
     parser.add_option("--perBin", dest="perBin", action="store_true", default=False, help="Print the contents of every bin in another txt file");
     parser.add_option("--legendHeader", dest="legendHeader", type="string", default=None, help="Put a header to the legend")
     parser.add_option("--ratioOffset", dest="ratioOffset", type="float", default=0.0, help="Put an offset between ratio and main pad")
+    #parser.add_option("--yRangeOverMaxBinContent", dest="yRangeOverMaxBinContent", type="float", default=0.0, help="Used to set Y axis range as this times maximum bin content (does not include uncertainties, which is tipically good for histograms representing counts)")
     parser.add_option("--noCms", dest="doOfficialCMS", action="store_false", default=True, help="Use official tool to write CMS spam")
     parser.add_option("--cmsprel", dest="cmsprel", type="string", default="Preliminary", help="Additional text (Simulation, Preliminary, Internal)")
     parser.add_option("--cmssqrtS", dest="cmssqrtS", type="string", default="13 TeV", help="Sqrt of s to be written in the official CMS text.")
     parser.add_option("--printBin", dest="printBinning", type="string", default=None, help="Write 'Events/xx' instead of 'Events' on the y axis")
+    parser.add_option("--updateRootFile", dest="updateRootFile", action="store_true", default=False, help="Open the root file in UPDATE more (useful when you want to add a new histogram without running all the others)");
+
 
 if __name__ == "__main__":
     from optparse import OptionParser
@@ -1227,7 +1232,8 @@ if __name__ == "__main__":
     os.system("cp %s %s " % (args[0], re.sub("\.root$","",outname)+"_mca.txt"))
     #fcut = open(re.sub("\.root$","",outname)+"_cuts.txt")
     #fcut.write(cuts); fcut.write("\n"); fcut.close()
-    outfile  = ROOT.TFile(outname,"RECREATE")
+    rootFileOpenMode = "UPDATE" if options.updateRootFile else "RECREATE"
+    outfile  = ROOT.TFile(outname,rootFileOpenMode)
     plotter = PlotMaker(outfile,options)
     plotter.run(mca,cuts,plots)
     outfile.Close()
