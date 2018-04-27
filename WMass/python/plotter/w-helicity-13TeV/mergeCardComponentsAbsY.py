@@ -61,7 +61,7 @@ if __name__ == "__main__":
      
          ## prepare the relevant files. only the datacards and the correct charge
          files = ( f for f in os.listdir(options.inputdir) if f.endswith('.card.txt') )
-         files = ( f for f in files if charge in f and not re.match('.*_pdf.*|.*_mu.*',f) )
+         files = ( f for f in files if charge in f and not re.match('.*_pdf.*|.*_muR.*|.*_muF.*',f) )
          files = sorted(files, key = lambda x: int(x.rstrip('.card.txt').split('_')[-1]) if not 'bkg'in x else -1) ## ugly but works
          files = list( ( os.path.join(options.inputdir, f) for f in files ) )
          
@@ -179,7 +179,7 @@ if __name__ == "__main__":
                                                  if alt.GetName() not in plots:
                                                      plots[alt.GetName()] = alt.Clone()
                                                      plots[alt.GetName()].Write()
-                                         elif '_mu' in newname:
+                                         elif re.match('.*_muR.*|.*_muF.*',newname):
                                              tokens = newname.split("_"); pfx = '_'.join(tokens[:-1]); qcdscale = tokens[-1].replace('Dn','Down')
                                              newname = "{pfx}_{syst}".format(pfx=pfx,syst=qcdscale)
                                              if newname not in plots:
@@ -200,7 +200,7 @@ if __name__ == "__main__":
          tf = ROOT.TFile.Open(outfile)
          for e in tf.GetListOfKeys() :
              name=e.GetName()
-             if 'pdf' in name or '_mu' in name:
+             if re.match('.*_pdf.*|.*_muR.*|.*_muF.*',name):
                  if name.endswith("Up"): name = re.sub('Up$','',name)
                  if name.endswith("Down"): name = re.sub('Down$','',name)
                  syst = name.split('_')[-1]
