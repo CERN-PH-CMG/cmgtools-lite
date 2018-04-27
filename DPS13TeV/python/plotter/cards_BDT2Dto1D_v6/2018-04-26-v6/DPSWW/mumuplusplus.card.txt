@@ -1,0 +1,47 @@
+## Datacard for cut file dpsww13TeV/dps2016/results/cuts_results.txt (signal DPSWW)
+## Event selection: 
+##   event-filters : $DATA{Flag_HBHENoiseFilter>=1 && Flag_HBHENoiseIsoFilter>=1 && Flag_goodVertices>=1 && Flag_eeBadScFilter>=1 && Flag_EcalDeadCellTriggerPrimitiveFilter>=1 && Flag_globalTightHalo2016Filter >=1 && Flag_badChargedHadronFilter>=1 && Flag_badMuonMoriond2017>=1 && Flag_badCloneMuonMoriond2017>=1} $MC{1}
+##   SameSign : LepGood_charge[0] * LepGood_charge[1] > 0
+##   25/20 : LepGood1_pt > 25 && LepGood2_pt > 20
+##   metpt : met_pt > 15
+##   2l : nLepGood == 2
+##   bVeto : Sum$(Jet_Clean_pt > 25 && Jet_Clean_btagCSV > 0.5426) == 0
+##   01jets : Sum$(Jet_Clean_pt > 30) < 2
+##   lepMVA : min(LepGood1_mvaTTH,LepGood2_mvaTTH) > 0.75
+##   tightele : (LepGood1_mvaTTH > 0.85 || abs(LepGood1_pdgId)==13 ) && (LepGood2_mvaTTH > 0.85 || abs(LepGood2_pdgId)==13 )
+##   tightCharge : LepGood1_tightCharge > 1 && LepGood2_tightCharge > 1
+##   chargecon : (LepGood1_chargeConsistency >= 3 || abs(LepGood1_pdgId)==11) && (LepGood2_chargeConsistency >= 3 || abs(LepGood2_pdgId)==11)
+##   lostHits : (LepGood1_lostHits ==  0 || abs(LepGood1_pdgId)==13) &&  (LepGood2_lostHits ==  0 || abs(LepGood2_pdgId)==13)
+##   convVeto : (LepGood1_convVeto >   0 || abs(LepGood1_pdgId)==13) &&  (LepGood2_convVeto >   0 || abs(LepGood2_pdgId)==13)
+##   plusplus : LepGood1_charge > 0
+##   mumu : abs(LepGood1_pdgId*LepGood2_pdgId) == 169
+##   trigmumu : (HLT_DoubleMu || HLT_SingleMu)
+##   mumuelmu : abs(LepGood1_pdgId*LepGood2_pdgId) == 169 || abs(LepGood1_pdgId*LepGood2_pdgId) == 143
+##   trigmumuelmu : (HLT_MuEG || HLT_SingleEl || HLT_DoubleMu || HLT_SingleMu)
+shapes *        * ../common/mumuplusplus.input.root x_$PROCESS x_$PROCESS_$SYSTEMATIC
+##----------------------------------
+bin         mumuplusplus
+observation 639.0
+##----------------------------------
+##----------------------------------
+bin              mumuplusplus   mumuplusplus   mumuplusplus   mumuplusplus   mumuplusplus   mumuplusplus 
+process                 rares             ZZ             WZ          WG_wg     fakes_data          DPSWW 
+process                     1              2              3              4              5              0 
+rate                   32.316         23.677        280.533         65.652        192.704         41.045 
+##----------------------------------
+rares_norm   lnN         1.50              -              -              -              -              - 
+WZ_norm      lnN            -              -           1.16              -              -              - 
+mumu_fakes   lnN            -              -              -              -           1.25              - 
+lumi_13TeV_2016 lnN            -              -              -              -              -          1.025 
+WG_norm      lnN            -              -              -           1.50              -              - 
+ZZ_norm      lnN            -           1.30              -              -              -              - 
+mumu_fakes1 shape            -              -              -              -              1              - 
+mumu_fakes2 shape            -              -              -              -              1              - 
+WG_shape1  shape            -              -              -              1              -              - 
+WG_shape2  shape            -              -              -              1              -              - 
+ZZ_shape1  shape            -              1              -              -              -              - 
+ZZ_shape2  shape            -              1              -              -              -              - 
+signal_shape shape            -              -              -              -              -              1 
+WZ_shapeUnc shape            -              -              1              -              -              - 
+rares_shape1 shape            1              -              -              -              -              - 
+rares_shape2 shape            1              -              -              -              -              - 
