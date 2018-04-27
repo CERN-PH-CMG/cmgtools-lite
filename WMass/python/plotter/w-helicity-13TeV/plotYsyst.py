@@ -128,7 +128,8 @@ if __name__ == "__main__":
             for iy,y in enumerate(ybinwidths[cp]):
                 totalrate += nominal[pol][iy]
                 if options.fitResult:
-                    parname = 'norm_W{charge}_{pol}_W{charge}_Ybin_{iy}'.format(charge=charge,pol=pol,iy=iy)
+                    parname = 'norm_W{charge}_{pol}_W{charge}_{pol}_mu_Ybin_{iy}'.format(charge=charge,pol=pol,iy=iy)
+                    print parname
                     tmp_par = fpars.find(parname) if parname in f_params else cpars.find(parname)
                     totalrate_fit += tmp_par.getVal()
 
@@ -151,7 +152,7 @@ if __name__ == "__main__":
                 arr_relhi.append(systematics[pol][iy]/nominal[pol][iy]) # symmetric for the expected
                 
                 if options.fitResult:
-                    parname = 'norm_W{charge}_{pol}_W{charge}_Ybin_{iy}'.format(charge=charge,pol=pol,iy=iy)
+                    parname = 'norm_W{charge}_{pol}_W{charge}_{pol}_mu_Ybin_{iy}'.format(charge=charge,pol=pol,iy=iy)
 
                     tmp_par = fpars.find(parname) if parname in f_params else cpars.find(parname)
                     arr_val_fit.append(tmp_par.getVal()/totalrate_fit/ybinwidths[cp][iy])
