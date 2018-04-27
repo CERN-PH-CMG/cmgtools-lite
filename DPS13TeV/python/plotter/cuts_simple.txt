@@ -1,0 +1,26 @@
+alwaystrue : 1
+## trigger selection
+## =============================================
+## trigger1mu    : HLT_SingleMu > 0
+##trigger1mu    : (HLT_BIT_HLT_IsoMu24_v > 0 || HLT_BIT_HLT_IsoTkMu24_v > 0 )
+trigger2mu    : HLT_DoubleMu > 0  
+##event selection
+## ============================================
+PU            : nVert > 5 
+met           : met_pt > 15 
+#nJets         : nJet < 2
+## muon selection
+## =============================================
+lept          : nLepGood == 2
+muon          : (abs(LepGood1_pdgId) + abs(LepGood2_pdgId) == 26 )
+# || (abs(LepGood1_pdgId) + abs(LepGood2_pdgId) == 22)
+ssmuon        : LepGood1_pdgId*LepGood2_pdgId > 0
+muonTightId   : (LepGood1_tightId > 0 && LepGood2_tightId > 0 )
+#fakeleptons   : (LepGood1_mcMatchId != 0 && LepGood2_mcMatchId != 0) 
+muonTightIso  : (LepGood1_relIso03 < 0.05 && LepGood2_relIso03 < 0.05)  
+## veto on 3rd muon???
+## kinematic selection
+## =============================================
+l1pt25         : LepGood1_pt > 25.
+l2pt20         : LepGood2_pt > 20.
+leta         : (abs(LepGood1_eta) < 2.4 && abs(LepGood2_eta) < 2.4)
