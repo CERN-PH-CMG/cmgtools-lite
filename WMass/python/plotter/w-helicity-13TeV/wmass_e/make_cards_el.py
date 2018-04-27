@@ -6,7 +6,7 @@ parser = OptionParser(usage="%prog [options]")
 parser.add_option("-d", "--dry-run", dest="dryRun",   action="store_true", default=False, help="Do not run the job, only print the command");
 parser.add_option("-s", "--suffix", dest="suffix", type="string", default=None, help="Append a suffix to the default outputdir (helicity_<date>)");
 parser.add_option("-q", "--queue", dest="queue", type="string", default="cmscaf1nd", help="Select the queue to use");
-parser.add_option("--pdf-syst", dest="addPdfSyst", action="store_true", default=False, help="Add PDF systematics to the signal (need incl_sig directive in the MCA file)");
+parser.add_option("--syst", dest="addSyst", action="store_true", default=False, help="Add PDF and QCD scale systematics to the signal (need incl_sig directive in the MCA file)");
 (options, args) = parser.parse_args()
 
 PROG="w-helicity-13TeV/make_helicity_cards.py"
@@ -30,5 +30,5 @@ for c in components:
     cmd="python " + " ".join([PROG,MCA,CUTFILE,VAR,BINNING,SYSTFILE,OUTDIR]) + \
         (" --long-bkg -W %s " % WEIGHTSTRING) + (" -P %s " % TREEPATH) + (" -q %s " % QUEUE) + c
     if options.dryRun: cmd += '  --dry-run '
-    if options.addPdfSyst: cmd += '  --pdf-syst '
+    if options.addSyst: cmd += '  --pdf-syst --qcd-syst '
     os.system(cmd)

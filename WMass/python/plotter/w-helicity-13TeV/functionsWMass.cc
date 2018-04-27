@@ -66,6 +66,13 @@ float helicityWeightSimple(float yw, float ptw, float costheta, int pol)
 
 }
 
+float wpt_slope_weight(float wpt, float offset, float slope){
+    if(wpt > 20.) return 1.;
+    float weight = offset + slope*wpt;
+    return weight;
+}
+
+
 TFile *_file_recoToMedium_leptonSF_el = NULL;
 TH2F *_histo_recoToMedium_leptonSF_el = NULL;
 TFile *_file_recoToLoose_leptonSF_el = NULL;
