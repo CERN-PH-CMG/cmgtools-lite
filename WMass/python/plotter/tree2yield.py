@@ -22,6 +22,9 @@ from CMGTools.TTHAnalysis.plotter.mcCorrections import *
 if "/functions_cc.so" not in ROOT.gSystem.GetLibraries(): 
     compileMacro("src/CMGTools/WMass/python/plotter/functions.cc")
 
+if "/jsonManager_cc.so" not in ROOT.gSystem.GetLibraries(): 
+    compileMacro("src/CMGTools/WMass/python/plotter/jsonManager.cc")
+
 if "/w-helicity-13TeV/functionsWMass_cc.so" not in ROOT.gSystem.GetLibraries(): 
     compileMacro("src/CMGTools/WMass/python/plotter/w-helicity-13TeV/functionsWMass.cc")
 
