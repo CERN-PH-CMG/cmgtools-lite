@@ -86,7 +86,7 @@ if __name__ == "__main__":
     
         ## prepare the relevant files. only the datacards and the correct charge
         files = ( f for f in os.listdir(options.inputdir) if f.endswith('.card.txt') )
-        files = ( f for f in files if charge in f and not re.match('.*_pdf.*|.*_muR.*|.*_muF.*|.*wptSlope.*',f) )
+        files = ( f for f in files if charge in f and not re.match('.*_pdf.*|.*_muR.*|.*_muF.*|.*alphaS.*|.*wptSlope.*',f) )
         files = sorted(files, key = lambda x: int(x.rstrip('.card.txt').split('_')[-1]) if not 'bkg'in x else -1) ## ugly but works
         files = list( ( os.path.join(options.inputdir, f) for f in files ) )
         
@@ -126,7 +126,7 @@ if __name__ == "__main__":
                         if len(l.split()) < 2: continue ## skip the second bin line if empty
                         bin = l.split()[1]
                         binn = int(bin.split('_')[-1]) if 'Ybin_' in bin else -1
-                    rootfiles_syst = filter(lambda x: re.match('{base}_(pdf\d+|muR\S+|muF\S+|wptSlope\S+)\.input\.root'.format(base=basename),x), os.listdir(options.inputdir))
+                    rootfiles_syst = filter(lambda x: re.match('{base}_(pdf\d+|muR\S+|muF\S+|alphaS\S+|wptSlope\S+)\.input\.root'.format(base=basename),x), os.listdir(options.inputdir))
                     rootfiles_syst = [dir+'/'+x for x in rootfiles_syst]
                     rootfiles_syst.sort()
                     if re.match('process\s+',l): 
@@ -179,7 +179,7 @@ if __name__ == "__main__":
                                                 if alt.GetName() not in plots:
                                                     plots[alt.GetName()] = alt.Clone()
                                                     plots[alt.GetName()].Write()
-                                        elif re.match('.*_muR.*|.*_muF.*|.*wptSlope.*',newname): # these changes by default shape and normalization
+                                        elif re.match('.*_muR.*|.*_muF.*|.*alphaS.*|.*wptSlope.*',newname): # these changes by default shape and normalization
                                             tokens = newname.split("_"); pfx = '_'.join(tokens[:-1]); syst = tokens[-1].replace('Dn','Down')
                                             newname = "{pfx}_{syst}".format(pfx=pfx,syst=syst)
                                             if 'wptSlope' in newname: # this needs to be scaled not to change normalization
@@ -202,7 +202,7 @@ if __name__ == "__main__":
         tf = ROOT.TFile.Open(outfile)
         for e in tf.GetListOfKeys() :
             name=e.GetName()
-            if re.match('.*_pdf.*|.*_muR.*|.*_muF.*|.*wptSlope.*',name):
+            if re.match('.*_pdf.*|.*_muR.*|.*_muF.*|.*alphaS.*|.*wptSlope.*',name):
                 if name.endswith("Up"): name = re.sub('Up$','',name)
                 if name.endswith("Down"): name = re.sub('Down$','',name)
                 syst = name.split('_')[-1]
@@ -213,6 +213,7 @@ if __name__ == "__main__":
         else: print "You are running w/o theory systematics. Lucky you!"
         pdfsyst = {k:v for k,v in theosyst.iteritems() if 'pdf' in k}
         qcdsyst = {k:v for k,v in theosyst.iteritems() if 'muR' in k or 'muF' in k}
+        alssyst = {k:v for k,v in theosyst.iteritems() if 'alphaS' in k }
         wptsyst = {k:v for k,v in theosyst.iteritems() if 'wptSlope' in k}
     
         combineCmd="combineCards.py "
@@ -447,6 +448,7 @@ if __name__ == "__main__":
                     combinedCardNew.write('%-15s   shape %s\n' % (sys,(" ".join([kpatt % '1.0' if p in procs and procs.count(p)==2 else '  -  ' for p,r in ProcsAndRates]))) )
                 combinedCardNew.write('\npdfs group = '+' '.join([sys for sys,procs in pdfsyst.iteritems()])+'\n')
                 combinedCardNew.write('\nscales group = '+' '.join([sys for sys,procs in qcdsyst.iteritems()])+'\n')
+                combinedCardNew.write('\nalphaS group = '+' '.join([sys for sys,procs in alssyst.iteritems()])+'\n')
                 combinedCardNew.write('\nwpt group = '+' '.join([sys for sys,procs in wptsyst.iteritems()])+'\n')
 
                 ## now assign a uniform luminosity uncertainty to all the fixed processes, to avoid constraining 
@@ -478,7 +480,7 @@ if __name__ == "__main__":
         print txt2wsCmd
         os.system(txt2wsCmd)
             
-        combineCmd = 'combine {ws} -M MultiDimFit    -t -1 --expectSignal=1 -m 999 --saveFitResult --cminInitialHesse 1 --cminFinalHesse 1 --cminPreFit 1       --redefineSignalPOIs {pois}            --floatOtherPOIs=0 --freezeNuisanceGroups efficiencies,fixedY{pdfs}{scales} -v 9'.format(ws=ws, pois=','.join(minosPOIs), pdfs=(',pdfs' if len(pdfsyst) else ''), scales=(',scales' if len(qcdsyst) else ''))
+        combineCmd = 'combine {ws} -M MultiDimFit    -t -1 --expectSignal=1 -m 999 --saveFitResult --cminInitialHesse 1 --cminFinalHesse 1 --cminPreFit 1       --redefineSignalPOIs {pois}            --floatOtherPOIs=0 --freezeNuisanceGroups efficiencies,fixedY{pdfs}{scales}{alphas} -v 9'.format(ws=ws, pois=','.join(minosPOIs), pdfs=(',pdfs' if len(pdfsyst) else ''), scales=(',scales' if len(qcdsyst) else ''),alphas=('alphaS' if len(alssyst) else ''))
         print combineCmd
 
     datacards = [os.path.abspath(options.inputdir)+"/"+options.bin+'_{ch}_card.txt'.format(ch=charge) for charge in ['plus','minus']]

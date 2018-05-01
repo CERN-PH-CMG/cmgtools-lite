@@ -118,7 +118,7 @@ class GenQEDJetProducer(Module):
             self.out.branch("genw_"+V, "F")
         for N in range(1,self.nHessianWeights+1):
             self.out.branch("hessWgt"+str(N), "F")
-        for scale in ['muR','muF',"muRmuF"]:
+        for scale in ['muR','muF',"muRmuF","alphaS"]:
             for idir in ['Up','Dn']:
                 self.out.branch("qcd_{scale}{idir}".format(scale=scale,idir=idir), "F")
     def endFile(self, inputFile, outputFile, inputTree, wrappedOutputTree):
@@ -242,10 +242,11 @@ class GenQEDJetProducer(Module):
         for N in range(1,self.nHessianWeights+1):
             self.out.fillBranch("hessWgt"+str(N), hessWgt[N-1]/event.genWeight)
         qcd0Wgt=lheweights[self.qcdScaleWgtIdx()]
-        for idir in ['Up','Dn']:
-            self.out.fillBranch("qcd_muR{idir}".format(idir=idir), lheweights[self.qcdScaleWgtIdx(mur=idir)]/qcd0Wgt)
-            self.out.fillBranch("qcd_muF{idir}".format(idir=idir), lheweights[self.qcdScaleWgtIdx(muf=idir)]/qcd0Wgt)
+        for ii,idir in enumerate(['Up','Dn']):
+            self.out.fillBranch("qcd_muR{idir}"   .format(idir=idir), lheweights[self.qcdScaleWgtIdx(mur=idir)]/qcd0Wgt)
+            self.out.fillBranch("qcd_muF{idir}"   .format(idir=idir), lheweights[self.qcdScaleWgtIdx(muf=idir)]/qcd0Wgt)
             self.out.fillBranch("qcd_muRmuF{idir}".format(idir=idir), lheweights[self.qcdScaleWgtIdx(mur=idir,muf=idir)]/qcd0Wgt) # only correlated variations are physical
+            self.out.fillBranch("qcd_alphaS{idir}".format(idir=idir), lheweights[-1-ii]/lheweights[0]) # alphaS is at the end of the pdf variations. 0.119 is last, 0.117 next-to-last
 
         return True
 
