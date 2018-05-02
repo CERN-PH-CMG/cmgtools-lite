@@ -88,7 +88,7 @@ class GenQEDJetProducer(Module):
         else:
             print "genQEDJetHelper_cc.so found in ROOT libraries"
         self._worker = ROOT.GenQEDJetHelper(deltaR)
-        self.pdfWeightOffset = 10 #index of first mc replica weight (careful, this should not be the nominal weight, which is repeated in some mc samples).  The majority of run2 LO madgraph_aMC@NLO samples with 5fs matrix element and pdf would use index 10, corresponding to pdf set 263001, the first alternate mc replica for the nominal pdf set 263000 used for these samples
+        self.pdfWeightOffset = 9 #index of first mc replica weight (careful, this should not be the nominal weight, which is repeated in some mc samples).  The majority of run2 LO madgraph_aMC@NLO samples with 5fs matrix element and pdf would use index 10, corresponding to pdf set 263001, the first alternate mc replica for the nominal pdf set 263000 used for these samples
         self.nMCReplicasWeights = 100 #number of input weights (100 for NNPDF 3.0)
         self.nHessianWeights = 60 #number of output weights
         if "PDFWeightsHelper_cc.so" not in ROOT.gSystem.GetLibraries():
@@ -135,12 +135,12 @@ class GenQEDJetProducer(Module):
             print '[genFriendProducer][Warning] Unable to attach to generator-level particles (data only?). No info will be produced'
         self._ttreereaderversion = tree._ttreereaderversion # self._ttreereaderversion must be set AFTER all calls to tree.valueReader or tree.arrayReader
 
-    def mcRep2Hess(self,weight,lheweights):
+    def mcRep2Hess(self,lheweights):
         nomlhew = lheweights[0]
         inPdfW = np.array(lheweights[self.pdfWeightOffset:self.pdfWeightOffset+self.nMCReplicasWeights],dtype=float)
         outPdfW = np.array([0 for i in xrange(self.nHessianWeights)],dtype=float)
         self._pdfHelper.DoMC2Hessian(nomlhew,inPdfW,outPdfW)
-        pdfeigweights = [wgt*weight/nomlhew for wgt in outPdfW.tolist()]
+        pdfeigweights = [wgt/nomlhew for wgt in outPdfW.tolist()]
         return pdfeigweights
 
     def qcdScaleWgtIdx(self,mur="0",muf="0"):
@@ -238,9 +238,12 @@ class GenQEDJetProducer(Module):
                 self.out.fillBranch("genw_"+V, -999)
 
         lheweights = [w.wgt for w in lhe_wgts]
-        hessWgt = self.mcRep2Hess(getattr(event, "genWeight"),lheweights)
+        lhewgtIDs  = [w.id  for w in lhe_wgts]
+        if not lhewgtIDs[self.pdfWeightOffset]%10 ==1:
+            print 'ERROR/WARNING: the LHE weight with offset {n} does not seem to be the first replica!!!!'.format(n=self.pdfWeightOffset)
+        hessWgt = self.mcRep2Hess(lheweights) ## give all the lhe weights. the 0th entry is the nominal one
         for N in range(1,self.nHessianWeights+1):
-            self.out.fillBranch("hessWgt"+str(N), hessWgt[N-1]/event.genWeight)
+            self.out.fillBranch("hessWgt"+str(N), hessWgt[N-1])
         qcd0Wgt=lheweights[self.qcdScaleWgtIdx()]
         for ii,idir in enumerate(['Up','Dn']):
             self.out.fillBranch("qcd_muR{idir}"   .format(idir=idir), lheweights[self.qcdScaleWgtIdx(mur=idir)]/qcd0Wgt)
