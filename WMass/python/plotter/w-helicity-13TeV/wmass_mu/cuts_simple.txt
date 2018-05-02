@@ -1,0 +1,18 @@
+alwaystrue : 1
+wplus  : genw_charge > 0 ; Disable=True
+wminus : genw_charge < 0 ; Disable=True
+## trigger selection
+## =============================================
+## trigger1mu    : HLT_SingleMu > 0
+#trigger1mu    : (HLT_BIT_HLT_IsoMu24_v > 0 || HLT_BIT_HLT_IsoTkMu24_v > 0 )
+### muon selection
+### =============================================
+#1l            : nLepGood == 1
+#muon          : abs(LepGood1_pdgId) == 13
+#muonTightId   : LepGood1_tightId > 0
+#muonTightIso  : LepGood1_relIso03 < 0.05
+### kinematic selection
+### =============================================
+#lpt25         : LepGood1_pt > 25.
+#leta         : abs(LepGood1_eta) < 2.4
+gap         : abs(GenLepDressed_eta[0]) > 1.4442 && abs(GenLepDressed_eta[0]) < 1.556 ; Disable=True
