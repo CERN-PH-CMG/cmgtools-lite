@@ -30,6 +30,10 @@ for F in $(ls ${dir}/*_Friend_*.chunk*.root | sed 's/\.chunk[0-9]\+//' | sort | 
         if [ ! -f $ftest2 ]; then 
             echo "$ftest2 # not present";
         fi;
+        ftest3=$(stat --printf="%s" $ftest2)
+        if [ $ftest3 == "0" ]; then
+            echo "$ftest2 # has zero size";
+        fi;
     done
 done
 
