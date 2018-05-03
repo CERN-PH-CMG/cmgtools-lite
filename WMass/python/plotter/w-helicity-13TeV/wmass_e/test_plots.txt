@@ -14,9 +14,14 @@ trkmt_trkmetEleCorr_dy: tkmt_tkmetEleCorr(met_trkPt,met_trkPhi,ptElFull(LepGood1
 ele1Iso04: LepGood1_relIso04EA : 50,0,0.5 ; XTitle="relative isolation 04 (ele1)", Legend='TR', IncludeOverflows=True, Logy=True
 nJetClean: nJet_Clean : 5,-0.5,4.5 ; XTitle="number of jets (cleaned)", Legend='TR', IncludeOverflows=True
 
-ptl1: ptElFull(LepGood1_calPt,LepGood1_eta): 40,25,65 ; XTitle="leading electron p_{T} [GeV]", Legend='TR', IncludeOverflows=False
+ptl1: ptElFull(LepGood1_calPt,LepGood1_eta): 35,30,65 ; XTitle="leading electron p_{T} [GeV]", Legend='TR', IncludeOverflows=False
 etal1: LepGood1_eta: 50,-2.5,2.5 ; XTitle="leading electron #eta", Legend='TL', IncludeOverflows=False
 etal1_varBin: LepGood1_eta: [-2.5,-2.25,-2.0,-1.8,-1.566,-1.4442,-1.3,-1.2,-1.1,-1.0,-0.9,-0.8,-0.7,-0.6,-0.5,-0.4,-0.3,-0.2,-0.1,0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.1,1.2,1.3,1.4442,1.566,1.8,2.0,2.25,2.5] ; XTitle="leading electron #eta", Legend='TL', IncludeOverflows=False
+absetal1_binFR: abs(LepGood1_eta): [0.0,0.3,0.6,0.9,1.2,1.479,1.7,1.9,2.1,2.3,2.5]; XTitle="leading electron |#eta|", Legend='TR', IncludeOverflows=False
+etal1_binFR: LepGood1_eta: [-2.5,-2.4,-2.3,-2.2,-2.1,-2.0,-1.9,-1.8,-1.7,-1.6,-1.566,-1.4442,-1.4,-1.3,-1.2,-1.1,-1.0,-0.9,-0.8,-0.7,-0.6,-0.5,-0.4,-0.3,-0.2,-0.1,0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.1,1.2,1.3,1.4,1.4442,1.566,1.6,1.7,1.8,1.9,2.0,2.1,2.2,2.3,2.4,2.5]; XTitle="leading electron #eta", Legend='TR', IncludeOverflows=False
+
+ptl1_range: ptElFull(LepGood1_calPt,LepGood1_eta): 100,40,50 ; XTitle="leading electron p_{T} [GeV]", Legend='TR', IncludeOverflows=False
+ptl1_granBin: ptElFull(LepGood1_calPt,LepGood1_eta): 70,30,65 ; XTitle="leading electron p_{T} [GeV]", Legend='TR', IncludeOverflows=False
 
 pfmet: met_pt : 40,0,80 ; XTitle="PF E_{T}^{miss} [GeV]", Legend='TR', IncludeOverflows=False
 tkmet: met_trkPt : 30,0,60 ; XTitle="charged PF E_{T}^{miss} [GeV]", Legend='TR', IncludeOverflows=False

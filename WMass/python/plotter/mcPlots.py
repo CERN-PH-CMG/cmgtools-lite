@@ -154,10 +154,12 @@ def doTinyCmsPrelim(textLeft="_default_",textRight="_default_",hasExpo=False,tex
 
 def reMax(hist,hist2,islog,factorLin=1.3,factorLog=2.0,doWide=False):
     if  hist.ClassName() == 'THStack':
-        #hist = hist.GetHistogram()  # better to use sum of all components, GetHistogram() returns a fake TH1 used to build the axis (could have no relation with the plot)
-        hist = hist.GetStack().Last() # this is the sum of all components
-    max0 = hist.GetBinContent(hist.GetMaximumBin())
-    max2 = hist2.GetBinContent(hist2.GetMaximumBin())*(factorLog if islog else factorLin)
+        hist = hist.GetHistogram()  # better to use sum of all components, GetHistogram() returns a fake TH1 used to build the axis (could have no relation with the plot)
+        #hist = hist.GetStack().Last() # this is the sum of all components
+    #max0 = hist.GetBinContent(hist.GetMaximumBin())*(factorLog if islog else factorLin)
+    #max2 = hist2.GetBinContent(hist2.GetMaximumBin())*(factorLog if islog else factorLin)
+    max0 = hist.GetMaximum()
+    max2 = hist2.GetMaximum()*(factorLog if islog else factorLin)
     # Below, use a protection against cases where uncertainty is much bigger than value (might happen with weird situations or QCD MC)
     if hasattr(hist2,'poissonGraph'):
        for i in xrange(hist2.poissonGraph.GetN()):
@@ -648,7 +650,8 @@ def doLegend(pmap,mca,corner="TR",textSize=0.035,cutoff=1e-2,cutoffSignals=True,
         leg = ROOT.TLegend(x1,y1,x2,y2)
         if header: leg.SetHeader(header.replace("\#", "#"))
         leg.SetFillColor(0)
-        leg.SetFillStyle(0) # transparent legend, so it will not cover plots (markers of legend entries will cover it unless one changes the histogram FillStyle, but this has other effects on color, so better not touching the FillStyle)
+        leg.SetFillColorAlpha(0,0.6)  # should make the legend semitransparent (second number is 0 for fully transparent, 1 for full opaque)
+        #leg.SetFillStyle(0) # transparent legend, so it will not cover plots (markers of legend entries will cover it unless one changes the histogram FillStyle, but this has other effects on color, so better not touching the FillStyle)
         leg.SetShadowColor(0)
         if header: leg.SetHeader(header.replace("\#", "#"))       
         if not legBorder:
@@ -1025,7 +1028,8 @@ class PlotMaker:
                     p2.cd(); 
                     rdata,rnorm,rnorm2,rline = doRatioHists(pspec,pmap,total,totalSyst, maxRange=options.maxRatioRange, fixRange=options.fixRatioRange,
                                                             fitRatio=options.fitRatio, errorsOnRef=options.errorBandOnRatio, 
-                                                            ratioNums=options.ratioNums, ratioDen=options.ratioDen, ylabel=options.ratioYLabel, doWide=doWide, showStatTotLegend=True)
+                                                            ratioNums=options.ratioNums, ratioDen=options.ratioDen, ylabel=options.ratioYLabel, doWide=doWide, 
+                                                            showStatTotLegend=(False if options.noLegendRatioPlot else True))
                 if self._options.printPlots:
                     for ext in self._options.printPlots.split(","):
                         fdir = printDir;
@@ -1192,13 +1196,16 @@ def addPlotMakerOptions(parser, addAlsoMCAnalysis=True):
     parser.add_option("--no-elist", dest="elist", action="store_false", default='auto', help="Don't elist (which are on by default if making more than 2 plots)")
     if not parser.has_option("--yrange"): parser.add_option("--yrange", dest="yrange", default=None, nargs=2, type='float', help="Y axis range");
     parser.add_option("--emptyStack", dest="emptyStack", action="store_true", default=False, help="Allow empty stack in order to plot, for example, only signals but no backgrounds.")
+    parser.add_option("--noLegendRatioPlot", dest="noLegendRatioPlot", action="store_true", default=False, help="Remove legend in ratio plot (by default it is drawn)");
     parser.add_option("--perBin", dest="perBin", action="store_true", default=False, help="Print the contents of every bin in another txt file");
     parser.add_option("--legendHeader", dest="legendHeader", type="string", default=None, help="Put a header to the legend")
     parser.add_option("--ratioOffset", dest="ratioOffset", type="float", default=0.0, help="Put an offset between ratio and main pad")
+    #parser.add_option("--yRangeOverMaxBinContent", dest="yRangeOverMaxBinContent", type="float", default=0.0, help="Used to set Y axis range as this times maximum bin content (does not include uncertainties, which is tipically good for histograms representing counts)")
     parser.add_option("--noCms", dest="doOfficialCMS", action="store_false", default=True, help="Use official tool to write CMS spam")
     parser.add_option("--cmsprel", dest="cmsprel", type="string", default="Preliminary", help="Additional text (Simulation, Preliminary, Internal)")
     parser.add_option("--cmssqrtS", dest="cmssqrtS", type="string", default="13 TeV", help="Sqrt of s to be written in the official CMS text.")
     parser.add_option("--printBin", dest="printBinning", type="string", default=None, help="Write 'Events/xx' instead of 'Events' on the y axis")
+    parser.add_option("--updateRootFile", dest="updateRootFile", action="store_true", default=False, help="Open the root file in UPDATE more (useful when you want to add a new histogram without running all the others)");
 
 if __name__ == "__main__":
     from optparse import OptionParser
@@ -1227,7 +1234,8 @@ if __name__ == "__main__":
     os.system("cp %s %s " % (args[0], re.sub("\.root$","",outname)+"_mca.txt"))
     #fcut = open(re.sub("\.root$","",outname)+"_cuts.txt")
     #fcut.write(cuts); fcut.write("\n"); fcut.close()
-    outfile  = ROOT.TFile(outname,"RECREATE")
+    rootFileOpenMode = "UPDATE" if options.updateRootFile else "RECREATE"
+    outfile  = ROOT.TFile(outname,rootFileOpenMode)
     plotter = PlotMaker(outfile,options)
     plotter.run(mca,cuts,plots)
     outfile.Close()
