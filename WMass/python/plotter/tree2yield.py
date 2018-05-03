@@ -22,6 +22,9 @@ from CMGTools.TTHAnalysis.plotter.mcCorrections import *
 if "/functions_cc.so" not in ROOT.gSystem.GetLibraries(): 
     compileMacro("src/CMGTools/WMass/python/plotter/functions.cc")
 
+if "/jsonManager_cc.so" not in ROOT.gSystem.GetLibraries(): 
+    compileMacro("src/CMGTools/WMass/python/plotter/jsonManager.cc")
+
 if "/w-helicity-13TeV/functionsWMass_cc.so" not in ROOT.gSystem.GetLibraries(): 
     compileMacro("src/CMGTools/WMass/python/plotter/w-helicity-13TeV/functionsWMass.cc")
 
@@ -513,13 +516,19 @@ class TreeToYield:
         if self._isInit: self._tree.SetEntryList(None)
     def _rangeToProcess(self,fsplit):
         if fsplit != None and fsplit != (0,1):
-            allEntries = min(self.getEntries(), self._options.maxEntries)
+            if self._options.maxEntriesNotData and self._isdata:
+                allEntries = self.getEntries()
+            else:
+                allEntries = min(self.getEntries(), self._options.maxEntries)
             chunkSize = int(ceil(allEntries/float(fsplit[1])))
             firstEntry = chunkSize * fsplit[0]
             maxEntries = chunkSize # the last chunk may go beyond the end of the tree, but ROOT stops anyway so we don't care
         else:
             firstEntry = 0
-            maxEntries = self._options.maxEntries
+            if (self._options.maxEntriesNotData and self._isdata):
+                maxEntries = self.getEntries() 
+            else:
+                maxEntries = self._options.maxEntries 
         return (firstEntry, maxEntries)
 def _copyPlotStyle(self,plotfrom,plotto):
         plotto.SetFillStyle(plotfrom.GetFillStyle())
@@ -568,6 +577,7 @@ def addTreeToYieldOptions(parser):
     parser.add_option("--neg", "--allow-negative-results",     dest="allowNegative",    action="store_true", default=False, help="If the total yield is negative, keep it so rather than truncating it to zero") 
     parser.add_option("--neglist", dest="negAllowed", action="append", default=[], help="Give process names where negative values are allowed")
     parser.add_option("--max-entries",     dest="maxEntries", default=1000000000, type="int", help="Max entries to process in each tree") 
+    parser.add_option("--max-entries-not-data",     dest="maxEntriesNotData", default=False, action="store_true", help="When --max-entries is used, make if effective only for non data processes (needed for some tests because MC is rescaled to luminosity, data cannot)") 
     parser.add_option("-L", "--load-macro",  dest="loadMacro",   type="string", action="append", default=[], help="Load the following macro, with .L <file>+");
 
 def mergeReports(reports):
