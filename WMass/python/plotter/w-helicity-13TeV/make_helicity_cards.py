@@ -89,11 +89,11 @@ def writeQCDScaleSystsToMCA(mcafile,odir,syst="qcd",incl_mca='incl_sig'):
     if len(incl_file)==0: 
         print "Warning! '%s' include directive not found. Not adding QCD scale systematics!"
         return
-    for scale in ['muR','muF',"muRmuF", "wptSlope"]:
+    for scale in ['muR','muF',"muRmuF", "alphaS", "wptSlope"]:
         for idir in ['Up','Dn']:
             postfix = "_{syst}{idir}".format(syst=scale,idir=idir)
             mcafile_syst = open("%s/mca%s.txt" % (odir,postfix), "w")
-            if not scale == "wptSlope":
+            if not scale == "wptSlope": ## alphaS and qcd scales are treated equally here. but they are different from the w-pT slope
                 mcafile_syst.write(incl_mca+postfix+'   : + ; IncludeMca='+incl_file+', AddWeight="qcd'+postfix+'", PostFix="'+postfix+'" \n')
             else:
                 sign  =  1 if idir == 'Dn' else -1

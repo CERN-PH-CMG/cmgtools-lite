@@ -30,16 +30,26 @@ for F in $(ls ${dir}/*_Friend_*.chunk*.root | sed 's/\.chunk[0-9]\+//' | sort | 
         if [ ! -f $ftest2 ]; then 
             echo "$ftest2 # not present";
         fi;
+        ftest3=$(stat --printf="%s" $ftest2)
+        if [ $ftest3 == "0" ]; then
+            echo "$ftest2 # has zero size";
+        fi;
     done
 done
 
 if [[ "$Z" != "0" ]]; then
     echo "# Testing for zombies or not correctly closed files";
     FILES=$(ls ${dir}/*_Friend_*.chunk*.root);
-    for Z in $(cmgListZombies  $FILES); do
+    for Z in $FILES; do
         if test -s $Z; then # empty files have already been found
-            D=${Z%%/*};
-            echo "${BASE}${D}    # zombie";
+            root -b -l -q $Z >& zzz.log 
+            result=$(grep -E "(nullptr|recover|Zombie)" uuu.log | wc -l)
+            if [ $result -ne 0 ]; then
+                echo "$Z     # zombie";
+            else
+                echo "$Z     # OK";
+            fi;
+            rm uuu.log
         fi;
     done
 fi;
