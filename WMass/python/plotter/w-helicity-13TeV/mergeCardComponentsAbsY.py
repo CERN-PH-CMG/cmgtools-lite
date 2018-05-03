@@ -46,6 +46,7 @@ if __name__ == "__main__":
     parser.add_option(     '--longToTotal', dest='longToTotal', type='float', default=None, help='Apply a constraint on the Wlong/Wtot rate. Implies fitting for absolute rates')
     parser.add_option(     '--sf'    , dest='scaleFile'    , default='', type='string', help='path of file with the scaling/unfolding')
     parser.add_option(     '--lumiLnU'    , dest='lumiLnU'    , default=0.026, type='float', help='Log-uniform constraint to be added to all the fixed MC processes')
+    parser.add_option(     '--lumiLnN'    , dest='lumiLnN'    , default=0.026, type='float', help='Log-uniform constraint to be added to all the fixed MC processes')
     parser.add_option(     '--wXsecLnN'   , dest='wLnN'       , default=0.038, type='float', help='Log-normal constraint to be added to all the fixed W processes')
     parser.add_option(     '--pdf-shape-only'   , dest='pdfShapeOnly' , default=False, action='store_true', help='Normalize the mirroring of the pdfs to central rate.')
     (options, args) = parser.parse_args()
@@ -453,7 +454,7 @@ if __name__ == "__main__":
 
                 ## now assign a uniform luminosity uncertainty to all the fixed processes, to avoid constraining 
                 channel = 'mu' if 'mu' in helbin else 'el'
-                combinedCardNew.write('\nCMS_lumi_13TeV   lnU %s\n' % (" ".join([kpatt % '-' if ('data' in p or any(p.replace('_%s_'%channel,'_')==fPOI.replace('norm_','') for fPOI in floatPOIs)) else '%.3f'%(1+5.0*options.lumiLnU) for p,r in ProcsAndRates])) )
+                combinedCardNew.write('\nCMS_lumi_13TeV   lnN %s\n' % (" ".join([kpatt % '-' if ('data' in p or any(p.replace('_%s_'%channel,'_')==fPOI.replace('norm_','') for fPOI in floatPOIs)) else '%.3f'%(1+options.lumiLnN) for p,r in ProcsAndRates])) )
                 combinedCardNew.write('CMS_W   lnN %s\n' % (" ".join([kpatt % '%.3f' % (1+options.wLnN) if (p=='TauDecaysW' or p=='Wplus_long' or any(p.replace('_%s_'%channel,'_')==fPOI.replace('norm_','') for fPOI in fixedPOIs)) else '-' for p,r in ProcsAndRates])) )
 
                 combinedCardNew.close() ## for some reason this is really necessary
