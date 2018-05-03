@@ -3127,7 +3127,10 @@ void drawCorrelationPlot(TH2* h2D,
 			 const bool smoothPlot = true,
 			 const bool drawProfileX = true,
 			 const bool scaleToUnitArea = true,
-			 const Int_t draw_both0_noLog1_onlyLog2 = 0)
+			 const Int_t draw_both0_noLog1_onlyLog2 = 0,
+			 const Double_t leftMargin = 0.16,
+			 const Double_t rightMargin = 0.20)
+
 {
 
   if (rebinFactorY > 1) h2D->RebinY(rebinFactorY);
@@ -3152,8 +3155,8 @@ void drawCorrelationPlot(TH2* h2D,
   Bool_t setZAxisRangeFromUser = getAxisRangeFromUser(labelZ, zmin, zmax, labelZtmp);
 
   TCanvas* canvas = new TCanvas("canvas","",700,625);
-  canvas->SetLeftMargin(0.16);
-  canvas->SetRightMargin(0.20);
+  canvas->SetLeftMargin(leftMargin);
+  canvas->SetRightMargin(rightMargin);
   canvas->cd();
 
   system(("mkdir -p "+outputDIR).c_str());
