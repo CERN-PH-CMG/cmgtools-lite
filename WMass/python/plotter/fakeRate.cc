@@ -145,7 +145,8 @@ float fakeRateWeight_promptRateCorr_1l_i_smoothed(float lpt, float leta, int lpd
     return 0;
   } 
 
-  int etabin = std::max(1, std::min(hist_fr->GetNbinsX(), hist_fr->GetXaxis()->FindBin(feta)));
+  Bool_t hasNegativeEta = (hist_fr->GetXaxis()->GetBinLowEdge(1) < 0) ? true : false;
+  int etabin = std::max(1, std::min(hist_fr->GetNbinsX(), hist_fr->GetXaxis()->FindBin(hasNegativeEta ? leta : feta)));
   // FR
   float p0 = hist_fr->GetBinContent(etabin, 1);
   float p1 = hist_fr->GetBinContent(etabin, 2);
@@ -154,7 +155,8 @@ float fakeRateWeight_promptRateCorr_1l_i_smoothed(float lpt, float leta, int lpd
   else if (iFR==3) p1 += hist_fr->GetBinError(etabin, 2);
   else if (iFR==4) p1 -= hist_fr->GetBinError(etabin, 2);
   // now PR
-  // eta bin is the same as for fake rate
+  // eta bin is tipically the same as for fake rate, but let's allow the possibility that it is different
+  etabin = std::max(1, std::min(hist_pr->GetNbinsX(), hist_pr->GetXaxis()->FindBin(hasNegativeEta ? leta : feta)));
   float p0_pr = hist_pr->GetBinContent(etabin, 1);
   float p1_pr = hist_pr->GetBinContent(etabin, 2);
   if      (iPR==1) p0_pr += hist_pr->GetBinError(etabin, 1);
@@ -199,7 +201,8 @@ float fakeRateWeight_1l_i_smoothed(float lpt, float leta, int lpdgId, bool passW
       //std::cout << "pdg ID = " << lpdgId << std::endl;
       return 0;
     }
-    int etabin = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(feta)));
+    Bool_t hasNegativeEta = (hist->GetXaxis()->GetBinLowEdge(1) < 0);
+    int etabin = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(hasNegativeEta ? leta : feta)));
     float p0 = hist->GetBinContent(etabin, 1);
     float p1 = hist->GetBinContent(etabin, 2);
     if      (iFR==1) p0 += hist->GetBinError(etabin, 1);
