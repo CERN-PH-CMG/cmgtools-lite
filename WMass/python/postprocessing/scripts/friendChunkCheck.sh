@@ -42,7 +42,7 @@ if [[ "$Z" != "0" ]]; then
     FILES=$(ls ${dir}/*_Friend_*.chunk*.root);
     for Z in $FILES; do
         if test -s $Z; then # empty files have already been found
-            root -b -l -q $Z >& zzz.log 
+            root -b -l -q $Z >& uuu.log 
             result=$(grep -E "(nullptr|recover|Zombie)" uuu.log | wc -l)
             if [ $result -ne 0 ]; then
                 echo "$Z     # zombie";
