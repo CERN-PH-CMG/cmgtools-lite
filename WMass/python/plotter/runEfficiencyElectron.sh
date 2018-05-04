@@ -74,7 +74,7 @@ do
 	fi
 	
         ### gen selection no cuts
-	command="python mcPlots.py --pdir ${outDir}/${outfolder} -F Friends '{P}/friends/tree_Friend_{cname}.root'  -P ${treepath} -f -j 8 -l 35.9 --s2v  --lspam '#bf{CMS} #it{Preliminary}' --legendWidth 0.20 --legendFontSize 0.035  ${mcafile} ${cutfile} -p W${charge}_long,W${charge}_left,W${charge}_right --plotmode=nostack  --sP w${charge}_${plotvar} ${plotfile}   -U 'alwaystrue'"
+	command="python mcPlots.py --pdir ${outDir}/${outfolder} -F Friends '{P}/friends/tree_Friend_{cname}.root'  -P ${treepath} -f -j 8 -l 35.9 --s2v  --lspam '#bf{CMS} #it{Preliminary}' --legendWidth 0.20 --legendFontSize 0.035  ${mcafile} ${cutfile} -p W${charge}_long,W${charge}_left,W${charge}_right --plotmode=nostack  --sP w${charge}_${plotvar} ${plotfile}   -U 'alwaystrue' --noCms"
 
 	echo "${command}"
 	if [[ "${justPrint}" != "y" ]]; then

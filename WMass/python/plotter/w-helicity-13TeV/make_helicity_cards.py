@@ -69,30 +69,35 @@ def getMcaIncl(mcafile,incl_mca='incl_sig'):
             break
     return incl_file
 
-def writePdfSystsToMCA(mcafile,odir,vec_weight="hessWgt",syst="pdf",incl_mca='incl_sig'):
+def writePdfSystsToMCA(mcafile,odir,vec_weight="hessWgt",syst="pdf",incl_mca='incl_sig',append=False):
     open("%s/systEnv-dummy.txt" % odir, 'a').close()
     incl_file=getMcaIncl(mcafile,incl_mca)
     if len(incl_file)==0: 
-        print "Warning! '%s' include directive not found. Not adding pdf systematics samples to MCA file %s" %(incl_mca,MCASYSTS)
+        print "Warning! '%s' include directive not found. Not adding pdf systematics samples to MCA file" % incl_mca
         return
+    if append:
+        filename = "%s/mca_systs.txt" % odir
+        if not os.path.exists(filename): os.system('cp {mca_orig} {mca_syst}'.format(mca_orig=mcafile,mca_syst=filename))
     for i in range(1,NPDFSYSTS+1):
-        postfix = "_%s%d" % (syst,i) # this is the change needed to make all alternative variations to be symmetrized
-        mcafile_syst = open("%s/mca%s.txt" % (odir,postfix), "w")
+        postfix = "_%s%d" % (syst,i)
+        mcafile_syst = open(filename, 'a') if append else open("%s/mca%s.txt" % (odir,postfix), "w")
         mcafile_syst.write(incl_mca+postfix+'   : + ; IncludeMca='+incl_file+', AddWeight="'+vec_weight+str(i)+'", PostFix="'+postfix+'" \n')
         pdfsysts.append(postfix)
-    print "written PDF systematics"
-    return MCASYSTS
+    print "written ",syst," systematics relative to ",incl_mca
 
-def writeQCDScaleSystsToMCA(mcafile,odir,syst="qcd",incl_mca='incl_sig'):
+def writeQCDScaleSystsToMCA(mcafile,odir,syst="qcd",incl_mca='incl_sig',scales=[],append=False):
     open("%s/systEnv-dummy.txt" % odir, 'a').close()
     incl_file=getMcaIncl(mcafile,incl_mca)
     if len(incl_file)==0: 
         print "Warning! '%s' include directive not found. Not adding QCD scale systematics!"
         return
-    for scale in ['muR','muF',"muRmuF", "alphaS", "wptSlope"]:
+    if append:
+        filename = "%s/mca_systs.txt" % odir
+        if not os.path.exists(filename): os.system('cp {mca_orig} {mca_syst}'.format(mca_orig=mcafile,mca_syst=filename))    
+    for scale in scales:
         for idir in ['Up','Dn']:
             postfix = "_{syst}{idir}".format(syst=scale,idir=idir)
-            mcafile_syst = open("%s/mca%s.txt" % (odir,postfix), "w")
+            mcafile_syst = open(filename, 'a') if append else open("%s/mca%s.txt" % (odir,postfix), "w")
             if not scale == "wptSlope": ## alphaS and qcd scales are treated equally here. but they are different from the w-pT slope
                 mcafile_syst.write(incl_mca+postfix+'   : + ; IncludeMca='+incl_file+', AddWeight="qcd'+postfix+'", PostFix="'+postfix+'" \n')
             else:
@@ -102,8 +107,7 @@ def writeQCDScaleSystsToMCA(mcafile,odir,syst="qcd",incl_mca='incl_sig'):
                 fstring = "wpt_slope_weight(genw_pt\,{off:.3f}\,{slo:.3f})".format(off=1.+asign*offset, slo=sign*slope)
                 mcafile_syst.write(incl_mca+postfix+'   : + ; IncludeMca='+incl_file+', AddWeight="'+fstring+'", PostFix="'+postfix+'" \n')
             qcdsysts.append(postfix)
-    print "written QCD scale systematics"
-    return MCASYSTS
+    print "written ",syst," systematics relative to ",incl_mca
 
 def writePdfSystsToSystFile(filename,sample="W.*",syst="CMS_W_pdf"):
     SYSTFILEALL=('.').join(filename.split('.')[:-1])+"-all.txt"
@@ -159,14 +163,16 @@ if options.queue and not os.path.exists(outdir+"/jobs"):
 os.system("cp %s %s" % (CUTFILE, outdir))
 os.system("cp %s %s" % (MCA, outdir))
 
-MCASYSTS=MCA
 if options.addPdfSyst:
     # write the additional systematic samples in the MCA file
-    MCASYSTS = writePdfSystsToMCA(MCA,outdir+"/mca")
+    writePdfSystsToMCA(MCA,outdir+"/mca") # on W + jets (one syst variation / job)
+    writePdfSystsToMCA(MCA,outdir+"/mca",incl_mca='incl_dy',append=True) # on DY + jets (all syst variation in one job -fast enough-)
     # write the complete systematics file (this was needed when trying to run all systs in one job)
     # SYSTFILEALL = writePdfSystsToSystFile(SYSTFILE)
 if options.addQCDSyst:
-    MCASYSTS = writeQCDScaleSystsToMCA(MCA,outdir+"/mca")
+    scales = ['muR','muF',"muRmuF", "alphaS"]
+    writeQCDScaleSystsToMCA(MCA,outdir+"/mca",scales=scales+["wptSlope"])
+    writeQCDScaleSystsToMCA(MCA,outdir+"/mca",scales=scales,incl_mca='incl_dy',append=True)
 
 ARGS=" ".join([MCA,CUTFILE,"'"+fitvar+"' "+"'"+binning+"'",SYSTFILE])
 BASECONFIG=os.path.dirname(MCA)
@@ -246,6 +252,8 @@ if options.signalCards:
 if options.bkgdataCards:
     print "MAKING BKG and DATA PART:\n"
     for charge in ['plus','minus']:
+        if len(pdfsysts+qcdsysts)>1: # 1 is the nominal 
+            ARGS = ARGS.replace(MCA,"{outdir}/mca/mca_systs.txt".format(outdir=outdir))
         xpsel=' --xp "W.*" ' if not options.longBkg else ' --xp "W{ch}_left,W{ch}_right,W{ach}.*" '.format(ch=charge, ach='minus' if charge=='plus' else 'plus')
         chargecut = POSCUT if charge=='plus' else NEGCUT
         dcname = "bkg_and_data_{channel}_{charge}".format(channel=options.channel, charge=charge)

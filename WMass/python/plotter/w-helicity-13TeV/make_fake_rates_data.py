@@ -14,7 +14,10 @@ parser.add_option("--fqcd-ranges", dest="fqcd_ranges", default="0,40,50,120", ty
 parser.add_option("--mt", dest="fitvar", default="trkmtfix", type='string', help="Select mT definition: pfmt, trkmt, pfmtfix, trkmtfix");
 parser.add_option("--pt", dest="ptvar", default="pt_granular", type='string', help="Select pT definition: pt_granular (default) or pt_coarse");
 parser.add_option("--useSkim", dest="useSkim", default=False, action='store_true', help="Use skimmed sample for fake rates");
+parser.add_option("--useSignedEta", dest="useSignedEta", default=False, action='store_true', help="Make fake rate for eta bins distinguishing eta sign");
 parser.add_option("--skipStack", dest="skipStack", default=False, action='store_true', help="Skip stack plots");
+parser.add_option("--skipMCGO", dest="skipMCGO", default=False, action='store_true', help="Skip MCGO (will just print MCEFF, i.e. create root file with TH3D)");
+parser.add_option("--makeTH3-eta-pt-passID", dest="makeTH3_eta_pt_passID", default=False, action='store_true', help="This option is special. It will make the following create only the TH3D histograms with |eta|, pt and passID. This will allow to compute the FR in any binning of pt and eta (using another macro). It overrides some other options");
 parser.add_option("--addOpts", dest="addOpts", default="", type='string', help="Options to pass some other options from outside to build the command");
 (options, args) = parser.parse_args()
 
@@ -27,21 +30,35 @@ fitvar = str(options.fitvar)
 ptvar = str(options.ptvar)
 useFullData2016 = options.useFullData2016
 useSkim = options.useSkim
+useSignedEta = options.useSignedEta
 skipStack = options.skipStack
+skipMCGO = options.skipMCGO
 addOpts = options.addOpts
 etaRange = options.etaRange.split(",");
 
-if fqcd_ranges.count(",") != 3:
-    print "warning: options --fqcd-ranges requires 4 numbers separated by commas (3 commas expected), but %s was passed" % fqcd_ranges
-    quit()
+if options.makeTH3_eta_pt_passID:
+    if useSignedEta:
+        fitvar = "etal1"
+        etaRange = [ '-2.5', '2.5']
+    else:
+        fitvar = "absetal1"
+        etaRange = [ '0.0', '2.5']
+    skipMCGO = True
+    skipStack = True
+else:
+    if fqcd_ranges.count(",") != 3:
+        print "warning: options --fqcd-ranges requires 4 numbers separated by commas (3 commas expected), but %s was passed" % fqcd_ranges
+        quit()
 
-if len(etaRange)<2:
-    print "warning: must specify at least 1 eta bin (2 numbers for the boundary). Use option --etaRange '<arg1,arg2,...argN>'"
-    quit()
+    if len(etaRange)<2:
+        print "warning: must specify at least 1 eta bin (2 numbers for the boundary). Use option --etaRange '<arg1,arg2,...argN>'"
+        quit()
 
-if fitvar not in ["pfmt", "trkmt", "pfmtfix", "trkmtfix"]:
-    print "warning: unknown mt definition %s, use pfmt, trkmt, pfmtfix, trkmtfix" % fitvar
-    quit()
+    if fitvar not in ["pfmt", "trkmt", "pfmtfix", "trkmtfix"]:
+        print "warning: unknown mt definition %s, use pfmt, trkmt, pfmtfix, trkmtfix" % fitvar
+        quit()
+
+
 
 if not useMuon and ptvar not in ["pt_coarse", "pt_granular"]:
     print "warning: unknown pt definition %s, use pt_coarse, pt_granular" % ptvar
@@ -65,7 +82,8 @@ if charge != "":
 
 T="/eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3/" 
 if useSkim:
-    T="/eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3_FRELSKIM_V5/"
+    #T="/eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3_FRELSKIM_V5/"
+    T="/eos/cms/store/cmst3/group/wmass/mciprian/links/TREES_1LEP_80X_V3_FRELSKIM_V7/"
 objName='tree' # name of TTree object in Root file, passed to option --obj in tree2yield.py
 # if 'pccmsrm29' in os.environ['HOSTNAME']: T = T.replace('/data1/emanuele/wmass','/u2/emanuele')
 # elif 'lxplus' in os.environ['HOSTNAME']: T = T.replace('/data1/emanuele/wmass','/afs/cern.ch/work/e/emanuele/TREES/')
@@ -79,7 +97,7 @@ ptForScaleFactors =  "LepGood_pt"  # or ptcorr
 MCweightOption = ' -W "puw2016_nTrueInt_BF(nTrueInt)*trgSF_We(LepGood1_pdgId,%s,LepGood1_eta,2)" ' % str(ptForScaleFactors)
 if useFullData2016:
     #datasetOption = " --pg 'data := data_B,data_C,data_D,data_E,data_F,data_G,data_H' "
-    luminosity = 35.9
+    luminosity = 32.16
     MCweightOption = ' -W "puw2016_nTrueInt_36fb(nTrueInt)*trgSF_We(LepGood1_pdgId,%s,LepGood1_eta,2)" ' % str(ptForScaleFactors)
 
 J=4
@@ -149,10 +167,15 @@ else:
     MCGO=MCEFF + " --algo=fQCD --compare W_fake_prefit,data_fqcd,data_prefit "
 
 for i in range(0,len(etaRange)-1):
-    thisRange = etaRange[i].replace(".","p") + "_" + etaRange[i+1].replace(".","p")
-    print MCEFF + " -o " + PBASE + "/fr_sub_eta_" + thisRange + ".root --bare -A onelep eta 'abs(LepGood1_eta)>" + str(etaRange[i]) + " && abs(LepGood1_eta)<" + str(etaRange[i+1]) + "' " + str(chargeSelection) + "\n"
+    thisRange = etaRange[i].replace(".","p").replace("-","m") + "_" + etaRange[i+1].replace(".","p").replace("-","m")
+    if useSignedEta:
+        print MCEFF + " -o " + PBASE + "/fr_sub_eta_" + thisRange + ".root --bare -A onelep eta 'LepGood1_eta>" + str(etaRange[i]) + " && LepGood1_eta<" + str(etaRange[i+1]) + "' " + str(chargeSelection) + "\n"
+    else:
+        print MCEFF + " -o " + PBASE + "/fr_sub_eta_" + thisRange + ".root --bare -A onelep eta 'abs(LepGood1_eta)>" + str(etaRange[i]) + " && abs(LepGood1_eta)<" + str(etaRange[i+1]) + "' " + str(chargeSelection) + "\n"
+
     print "\n\n"
-    print MCGO + " -i " + PBASE + "/fr_sub_eta_" + thisRange + ".root -o " + PBASE + "/fr_sub_eta_" + thisRange + "_fQCD.root --subSyst 0.2\n" 
+    if (not skipMCGO):
+        print MCGO + " -i " + PBASE + "/fr_sub_eta_" + thisRange + ".root -o " + PBASE + "/fr_sub_eta_" + thisRange + "_fQCD.root --subSyst 0.2\n" 
 
 STACK = "python " + plotterPath + "w-helicity-13TeV/stack_fake_rates_data.py "+ RANGES + LEGEND + " --comb-mode=midpoint " # :_fit
 
