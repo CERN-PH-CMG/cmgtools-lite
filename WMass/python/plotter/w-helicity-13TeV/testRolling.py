@@ -65,7 +65,8 @@ def dressed2D(h1d,binning,name,title=''):
         n1 = binning[0]; min1 = binning[1]; max1 = binning[2]
         n2 = binning[3]; min2 = binning[4]; max2 = binning[5]
         h2_1 = ROOT.TH2F(name, title, n1, min1, max1, n2, min2, max2)
-    h2_backrolled_1 = roll1Dto2D(h1_1, h2_1 )
+    #h2_backrolled_1 = roll1Dto2D(h1_1, h2_1 )
+    h2_backrolled_1 = roll1Dto2D(h1d, h2_1 )
     h2_backrolled_1 .GetXaxis().SetTitle('lepton #eta')
     h2_backrolled_1 .GetYaxis().SetTitle('lepton p_{T} (GeV)')
     h2_backrolled_1 .GetZaxis().SetRangeUser(0.01*h2_backrolled_1.GetMaximum(),1.1*h2_backrolled_1.GetMaximum())
