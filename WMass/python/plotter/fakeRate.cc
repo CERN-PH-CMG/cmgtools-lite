@@ -169,20 +169,14 @@ float fakeRateWeight_promptRateCorr_1l_i_smoothed(float lpt, float leta, int lpd
 
 
   TH2 *hist_fr = (fid == 11 ? FRi_el[iFR] : FRi_mu[iFR]);
-  if (hist_fr == 0) {
+  TH2 *hist_pr = (fid == 11 ? PRi_el[iPR] : PRi_mu[iPR]);
+  if (hist_fr == 0 or hist_pr == 0) {
     // this is the case where you expect electrons but get a muon, or viceversa
     // Indeed, selection is evaluated as 1 or 0 multiplying the event weight in TTree::Draw(...), so you potentially have all flavours here
     // do not issue warnign mewssages here, unless it is for testing
     //std::cout << "Error in fakeRateWeight_promptRateCorr_1l_i_smoothed: hist_fr == 0. It seems the flavour is not what you expect. Returning 0" << std::endl;	
     return 0;
   }
-
-  TH2 *hist_pr = (fid == 11 ? PRi_el[iPR] : PRi_mu[iPR]);
-  if (hist_pr == 0) {
-    // as before
-    //std::cout << "Error in fakeRateWeight_promptRateCorr_1l_i_smoothed: hist_pr == 0. Returning 0" << std::endl;	
-    return 0;
-  } 
 
   int etabin = std::max(1, std::min(hist_fr->GetNbinsX(), hist_fr->GetXaxis()->FindBin(feta)));
   // FR
