@@ -51,8 +51,8 @@ def makeYWBinning(infile, cutoff=5000):
 
 
 NPDFSYSTS=60 # Hessian variations of NNPDF 3.0
-pdfsysts=[''] # array containing the PDFs signal variations
-qcdsysts=[  ] # array containing the QCD scale signal variations
+pdfsysts=[] # array containing the PDFs signal variations
+qcdsysts=[] # array containing the QCD scale signal variations
 
 def getMcaIncl(mcafile,incl_mca='incl_sig'):
     incl_file=''
@@ -79,7 +79,7 @@ def writePdfSystsToMCA(mcafile,odir,vec_weight="hessWgt",syst="pdf",incl_mca='in
         filename = "%s/mca_systs.txt" % odir
         if not os.path.exists(filename): os.system('cp {mca_orig} {mca_syst}'.format(mca_orig=mcafile,mca_syst=filename))
     for i in range(1,NPDFSYSTS+1):
-        postfix = "_%s%d" % (syst,i)
+        postfix = "_{proc}_{syst}{idx}".format(proc=incl_mca.split('_')[1],syst=syst,idx=i)
         mcafile_syst = open(filename, 'a') if append else open("%s/mca%s.txt" % (odir,postfix), "w")
         mcafile_syst.write(incl_mca+postfix+'   : + ; IncludeMca='+incl_file+', AddWeight="'+vec_weight+str(i)+'", PostFix="'+postfix+'" \n')
         pdfsysts.append(postfix)
@@ -96,7 +96,7 @@ def writeQCDScaleSystsToMCA(mcafile,odir,syst="qcd",incl_mca='incl_sig',scales=[
         if not os.path.exists(filename): os.system('cp {mca_orig} {mca_syst}'.format(mca_orig=mcafile,mca_syst=filename))    
     for scale in scales:
         for idir in ['Up','Dn']:
-            postfix = "_{syst}{idir}".format(syst=scale,idir=idir)
+            postfix = "_{proc}_{syst}{idir}".format(proc=incl_mca.split('_')[1],syst=scale,idir=idir)
             mcafile_syst = open(filename, 'a') if append else open("%s/mca%s.txt" % (odir,postfix), "w")
             if not scale == "wptSlope": ## alphaS and qcd scales are treated equally here. but they are different from the w-pT slope
                 mcafile_syst.write(incl_mca+postfix+'   : + ; IncludeMca='+incl_file+', AddWeight="qcd'+postfix+'", PostFix="'+postfix+'" \n')
@@ -118,6 +118,22 @@ def writePdfSystsToSystFile(filename,sample="W.*",syst="CMS_W_pdf"):
     print "written pdf syst configuration to ",SYSTFILEALL
     return SYSTFILEALL
 
+
+def submitBatch(dcname,outdir,mkShCardsCmd,options):
+    srcfile=outdir+"/jobs/"+dcname+".sh"
+    logfile=outdir+"/jobs/"+dcname+".log"
+    srcfile_op = open(srcfile,"w")
+    srcfile_op.write("#! /bin/sh\n")
+    srcfile_op.write("ulimit -c 0 -S\n")
+    srcfile_op.write("ulimit -c 0 -H\n")
+    srcfile_op.write("cd {cmssw};\neval $(scramv1 runtime -sh);\ncd {dir};\n".format( 
+            dir = os.getcwd(), cmssw = os.environ['CMSSW_BASE']))
+    srcfile_op.write(mkShCardsCmd)
+    os.system("chmod a+x "+srcfile)
+    cmd = "bsub -q {queue} -o {dir}/{logfile} {dir}/{srcfile}\n".format(
+        queue=options.queue, dir=os.getcwd(), logfile=logfile, srcfile=srcfile)
+    if options.dryRun: print cmd
+    else: os.system(cmd)
 
 from optparse import OptionParser
 parser = OptionParser(usage="%prog [options] mc.txt cuts.txt var bins systs.txt outdir ")
@@ -165,14 +181,14 @@ os.system("cp %s %s" % (MCA, outdir))
 
 if options.addPdfSyst:
     # write the additional systematic samples in the MCA file
-    writePdfSystsToMCA(MCA,outdir+"/mca") # on W + jets (one syst variation / job)
-    writePdfSystsToMCA(MCA,outdir+"/mca",incl_mca='incl_dy',append=True) # on DY + jets (all syst variation in one job -fast enough-)
+    writePdfSystsToMCA(MCA,outdir+"/mca") # on W + jets 
+    writePdfSystsToMCA(MCA,outdir+"/mca",incl_mca='incl_dy') # on DY + jets
     # write the complete systematics file (this was needed when trying to run all systs in one job)
     # SYSTFILEALL = writePdfSystsToSystFile(SYSTFILE)
 if options.addQCDSyst:
     scales = ['muR','muF',"muRmuF", "alphaS"]
     writeQCDScaleSystsToMCA(MCA,outdir+"/mca",scales=scales+["wptSlope"])
-    writeQCDScaleSystsToMCA(MCA,outdir+"/mca",scales=scales,incl_mca='incl_dy',append=True)
+    writeQCDScaleSystsToMCA(MCA,outdir+"/mca",scales=scales,incl_mca='incl_dy')
 
 ARGS=" ".join([MCA,CUTFILE,"'"+fitvar+"' "+"'"+binning+"'",SYSTFILE])
 BASECONFIG=os.path.dirname(MCA)
@@ -199,7 +215,8 @@ if options.signalCards:
     #ybinfile.writelines(' '.join(str(i) for i in WYBinsEdges))
     ybinfile.close()
     print "MAKING SIGNAL PART: WYBinsEdges = ",WYBinsEdges
-    for ivar,var in enumerate(pdfsysts+qcdsysts):
+    wsyst = ['']+[x for x in pdfsysts+qcdsysts if 'sig' in x]
+    for ivar,var in enumerate(wsyst):
         for helicity in ['right', 'left']:
             antihel = 'right' if helicity == 'left' else 'left'
             for charge in ['plus','minus']:
@@ -223,21 +240,8 @@ if options.signalCards:
                     dcname = "W{charge}_{hel}_{channel}_Ybin_{iy}{syst}".format(charge=charge, hel=helicity, channel=options.channel,iy=iy,syst=syst)
                     BIN_OPTS=OPTIONS + " -W '" + options.weightExpr + "'" + " -o "+dcname+" --od "+outdir + xpsel + ycut
                     if options.queue:
-                        srcfile=outdir+"/jobs/"+dcname+".sh"
-                        logfile=outdir+"/jobs/"+dcname+".log"
-                        srcfile_op = open(srcfile,"w")
-                        srcfile_op.write("#! /bin/sh\n")
-                        srcfile_op.write("ulimit -c 0 -S\n")
-                        srcfile_op.write("ulimit -c 0 -H\n")
-                        srcfile_op.write("cd {cmssw};\neval $(scramv1 runtime -sh);\ncd {dir};\n".format( 
-                                dir = os.getcwd(), cmssw = os.environ['CMSSW_BASE']))
-                        srcfile_op.write("python {dir}/makeShapeCards.py {args} \n".format(
-                                dir = os.getcwd(), args = IARGS+" "+BIN_OPTS))
-                        os.system("chmod a+x "+srcfile)
-                        cmd = "bsub -q {queue} -o {dir}/{logfile} {dir}/{srcfile}\n".format(
-                            queue=options.queue, dir=os.getcwd(), logfile=logfile, srcfile=srcfile)
-                        if options.dryRun: print cmd
-                        else: os.system(cmd)
+                        mkShCardsCmd = "python {dir}/makeShapeCards.py {args} \n".format(dir = os.getcwd(), args = IARGS+" "+BIN_OPTS)
+                        submitBatch(dcname,outdir,mkShCardsCmd,options)
                     else:
                         cmd = "python makeShapeCards.py "+IARGS+" "+BIN_OPTS
                         if options.dryRun: print cmd
@@ -252,28 +256,15 @@ if options.signalCards:
 if options.bkgdataCards:
     print "MAKING BKG and DATA PART:\n"
     for charge in ['plus','minus']:
-        if len(pdfsysts+qcdsysts)>1: # 1 is the nominal 
-            ARGS = ARGS.replace(MCA,"{outdir}/mca/mca_systs.txt".format(outdir=outdir))
         xpsel=' --xp "W.*" ' if not options.longBkg else ' --xp "W{ch}_left,W{ch}_right,W{ach}.*" '.format(ch=charge, ach='minus' if charge=='plus' else 'plus')
+        if len(pdfsysts+qcdsysts)>1: # 1 is the nominal 
+            xpsel+=' --xp "Z" '
         chargecut = POSCUT if charge=='plus' else NEGCUT
         dcname = "bkg_and_data_{channel}_{charge}".format(channel=options.channel, charge=charge)
         BIN_OPTS=OPTIONS + " -W '" + options.weightExpr + "'" + " -o "+dcname+" --od "+outdir + xpsel + chargecut
         if options.queue:
-            srcfile=outdir+"/jobs/"+dcname+".sh"
-            logfile=outdir+"/jobs/"+dcname+".log"
-            srcfile_op = open(srcfile,"w")
-            srcfile_op.write("#! /bin/sh\n")
-            srcfile_op.write("ulimit -c 0 -S\n")
-            srcfile_op.write("ulimit -c 0 -H\n")
-            srcfile_op.write("cd {cmssw};\neval $(scramv1 runtime -sh);\ncd {dir};\n".format( 
-                    dir = os.getcwd(), cmssw = os.environ['CMSSW_BASE']))
-            srcfile_op.write("python {dir}/makeShapeCards.py {args} \n".format(
-                    dir = os.getcwd(), args = ARGS+" "+BIN_OPTS))
-            os.system("chmod a+x "+srcfile)
-            cmd = "bsub -q {queue} -o {dir}/{logfile} {dir}/{srcfile}\n".format(
-                queue=options.queue, dir=os.getcwd(), logfile=logfile, srcfile=srcfile)
-            if options.dryRun: print cmd
-            else: os.system(cmd)
+            mkShCardsCmd = "python {dir}/makeShapeCards.py {args} \n".format(dir = os.getcwd(), args = ARGS+" "+BIN_OPTS)
+            submitBatch(dcname,outdir,mkShCardsCmd,options)
         else:
             cmd = "python makeShapeCards.py "+ARGS+" "+BIN_OPTS
             if options.dryRun: print cmd
@@ -284,3 +275,34 @@ if options.bkgdataCards:
                 for lin in result:
                     if not lin.startswith('#'):
                         print(lin)
+
+if options.bkgdataCards and len(pdfsysts+qcdsysts)>1:
+    dysyst = ['']+[x for x in pdfsysts+qcdsysts if 'dy' in x]
+    for ivar,var in enumerate(dysyst):
+        for charge in ['plus','minus']:
+            antich = 'plus' if charge == 'minus' else 'minus'
+            if ivar==0: 
+                IARGS = ARGS
+            else: 
+                IARGS = ARGS.replace(MCA,"{outdir}/mca/mca{syst}.txt".format(outdir=outdir,syst=var))
+                IARGS = IARGS.replace(SYSTFILE,"{outdir}/mca/systEnv-dummy.txt".format(outdir=outdir))
+                print "Running the DY with systematic: ",var
+            print "Making card for DY process with charge ", charge
+            chcut = POSCUT if charge=='plus' else NEGCUT
+            xpsel=' --xp "[^Z]*" --asimov '
+            syst = '' if ivar==0 else var
+            dcname = "Z_{channel}_{charge}{syst}".format(channel=options.channel, charge=charge,syst=syst)
+            BIN_OPTS=OPTIONS + " -W '" + options.weightExpr + "'" + " -o "+dcname+" --od "+outdir + xpsel + chcut
+            if options.queue:
+                mkShCardsCmd = "python {dir}/makeShapeCards.py {args} \n".format(dir = os.getcwd(), args = IARGS+" "+BIN_OPTS)
+                submitBatch(dcname,outdir,mkShCardsCmd,options)
+            else:
+                cmd = "python makeShapeCards.py "+IARGS+" "+BIN_OPTS
+                if options.dryRun: print cmd
+                else:
+                    p = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
+                    out, err = p.communicate() 
+                    result = out.split('\n')
+                    for lin in result:
+                        if not lin.startswith('#'):
+                            print(lin)
