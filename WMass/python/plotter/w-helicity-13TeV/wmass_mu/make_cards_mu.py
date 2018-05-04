@@ -8,7 +8,7 @@ CUTFILE      = BASECONFIG+'/cuts_wmu.txt'
 SYSTFILE     = BASECONFIG+'/systsEnv.txt'
 #TREEPATH     = '/eos/user/m/mdunser/w-helicity-13TeV/trees/trees_all_skims/'
 TREEPATH     = '/eos/user/m/mdunser/w-helicity-13TeV/trees/TREES_latest_1muskim/'
-QUEUE        = '8nh'
+QUEUE        = '2nd'
 VAR          = '\'LepGood1_pt:LepGood1_eta\''
 
 ## variable binning in eta
@@ -27,7 +27,7 @@ WEIGHTSTRING = ' \'puw2016_nTrueInt_36fb(nTrueInt)*LepGood_effSF[0]\' '
 #WEIGHTSTRING = ' \'1. \' '#*LepGood_effSF[0]\' '
 OUTDIR       = 'helicity_%s' % datetime.now().strftime('%Y_%m_%d')
 
-components=[' -s ',' -b ']
+components=[' -b ', ' -s ']
 #components=[' -b ']
     
 

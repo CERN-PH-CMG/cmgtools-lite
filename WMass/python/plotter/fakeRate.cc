@@ -47,6 +47,7 @@ bool loadFRHisto(const std::string &histoName, const std::string file, const cha
   else if (histoName == "FR_el")  { histo = & FR_el;  hptr2 = & FRi_el[0]; }
   else if (histoName == "FR_el_qcdmc")  { histo = & FR_el_qcdmc;  hptr2 = & FRi_el_qcdmc[0]; }
   else if (histoName == "PR_el")  { histo = & PR_el;  hptr2 = & PRi_el[0]; }
+  else if (histoName == "PR_mu")  { histo = & PR_mu;  hptr2 = & PRi_mu[0]; }
   else if (TString(histoName).BeginsWith("FR_mu_i")) {histo = & FR_temp; hptr2 = & FRi_mu[TString(histoName).ReplaceAll("FR_mu_i","").Atoi()];}
   else if (TString(histoName).BeginsWith("FR_el_i")) {histo = & FR_temp; hptr2 = & FRi_el[TString(histoName).ReplaceAll("FR_el_i","").Atoi()];}
   else if (TString(histoName).Contains("helicityFractions_0")) { histo = & helicityFractions_0; }
@@ -130,20 +131,14 @@ float fakeRateWeight_promptRateCorr_1l_i_smoothed(float lpt, float leta, int lpd
 
 
   TH2 *hist_fr = (fid == 11 ? FRi_el[iFR] : FRi_mu[iFR]);
-  if (hist_fr == 0) {
+  TH2 *hist_pr = (fid == 11 ? PRi_el[iPR] : PRi_mu[iPR]);
+  if (hist_fr == 0 or hist_pr == 0) {
     // this is the case where you expect electrons but get a muon, or viceversa
     // Indeed, selection is evaluated as 1 or 0 multiplying the event weight in TTree::Draw(...), so you potentially have all flavours here
     // do not issue warnign mewssages here, unless it is for testing
     //std::cout << "Error in fakeRateWeight_promptRateCorr_1l_i_smoothed: hist_fr == 0. It seems the flavour is not what you expect. Returning 0" << std::endl;	
     return 0;
   }
-
-  TH2 *hist_pr = (fid == 11 ? PRi_el[iPR] : PRi_mu[iPR]);
-  if (hist_pr == 0) {
-    // as before
-    //std::cout << "Error in fakeRateWeight_promptRateCorr_1l_i_smoothed: hist_pr == 0. Returning 0" << std::endl;	
-    return 0;
-  } 
 
   Bool_t hasNegativeEta = (hist_fr->GetXaxis()->GetBinLowEdge(1) < 0) ? true : false;
   int etabin = std::max(1, std::min(hist_fr->GetNbinsX(), hist_fr->GetXaxis()->FindBin(hasNegativeEta ? leta : feta)));
@@ -155,7 +150,7 @@ float fakeRateWeight_promptRateCorr_1l_i_smoothed(float lpt, float leta, int lpd
   else if (iFR==3) p1 += hist_fr->GetBinError(etabin, 2);
   else if (iFR==4) p1 -= hist_fr->GetBinError(etabin, 2);
   // now PR
-  // eta bin is tipically the same as for fake rate, but let's allow the possibility that it is different
+  // eta bin is typically the same as for fake rate, but let's allow the possibility that it is different
   etabin = std::max(1, std::min(hist_pr->GetNbinsX(), hist_pr->GetXaxis()->FindBin(hasNegativeEta ? leta : feta)));
   float p0_pr = hist_pr->GetBinContent(etabin, 1);
   float p1_pr = hist_pr->GetBinContent(etabin, 2);
@@ -166,6 +161,7 @@ float fakeRateWeight_promptRateCorr_1l_i_smoothed(float lpt, float leta, int lpd
 
   float fr = p0    + p1   *lpt;
   float pr = p0_pr + p1_pr*lpt;
+  if (pr > 0.98) pr = 0.98; // safety thing
 
   if (passWP) {
     // tight
