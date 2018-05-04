@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import sys,os.path
+import sys,os.path,re
 args = sys.argv[:]
 sys.argv = ['-b']
 import ROOT
@@ -38,14 +38,24 @@ class CheckOneFriend:
 
 if __name__ == "__main__":
 
-    if len(args)<2:
+    from optparse import OptionParser
+    parser = OptionParser(usage="%prog [options] dir_with_trees")
+    parser.add_option(      "--sp", dest="selectProcess",  type="string", default=None, help="Process only datasets that match this regexp (or comma-separated list of regexp)");
+    (options, args) = parser.parse_args()
+
+    if len(args)<1:
         print "Usage: python checkMergedFriends.py <dir_with_trees>.\n"
         exit(1)
 
-    inputdir = args[1]
+    sel_processes = []
+    if options.selectProcess != None:
+        sel_processes = options.selectProcess.split(',')
+
+    inputdir = args[0]
     for root,dirs,files in os.walk(inputdir):
         for d in dirs:
             if "friends" in d: continue
+            if options.selectProcess and not any(re.match(proc,d) for proc in sel_processes): continue
             print "Checking dataset %s..." % d
             cf = CheckOneFriend(inputdir,d)
             cf.check(1)
