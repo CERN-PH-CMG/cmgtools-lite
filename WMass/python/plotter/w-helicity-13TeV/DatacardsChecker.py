@@ -42,7 +42,7 @@ class CardsChecker:
                     if not tfile or tfile.IsZombie():
                         if self.options.verbose>1: print '# ',f, ' is Zombie'
                         f_ok = False
-                    if len(tfile.GetListOfKeys() < 0):
+                    if len(tfile.GetListOfKeys()) < 0:
                         if self.options.verbose>1: print '# WARNING',f, ' has no keys inside!!'
                         f_ok = False
 
