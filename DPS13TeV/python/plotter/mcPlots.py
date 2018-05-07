@@ -627,7 +627,7 @@ def doLegend(pmap,mca,corner="TR",textSize=0.035,cutoff=1e-2,cutoffSignals=True,
         elif corner == "TC":
             (x1,y1,x2,y2) = (.5, .75 - textSize*max(nentries-3,0), .5+legWidth, .91)
         elif corner == "TL":
-            (x1,y1,x2,y2) = (.2, .75 - textSize*max(nentries-3,0), .2+legWidth, .91)
+            (x1,y1,x2,y2) = (.2, .89 - textSize*max(nentries-3,0), .2+3*legWidth, .91)#0.2
         elif corner == "BR":
             (x1,y1,x2,y2) = (.85-legWidth, .33 + textSize*max(nentries-3,0), .90, .15)
         elif corner == "BC":
@@ -644,6 +644,7 @@ def doLegend(pmap,mca,corner="TR",textSize=0.035,cutoff=1e-2,cutoffSignals=True,
             leg.SetLineColor(0)
         leg.SetTextFont(42)
         leg.SetTextSize(textSize)
+        leg.SetNColumns(3);
         if 'data' in pmap: 
             leg.AddEntry(pmap['data'], mca.getProcessOption('data','Label','Data', noThrow=True), 'LPE')
         total = sum([x.Integral() for x in pmap.itervalues()])
@@ -959,7 +960,7 @@ class PlotMaker:
                     if options.noStackSig: mcStyle = ("L","F")
                     else:                  mcStyle = "F"
                 else: mcStyle = "L"
-                doLegend(pmap,mca,corner=pspec.getOption('Legend','TR'),
+                doLegend(pmap,mca,corner=pspec.getOption('Legend','TL'),
                                   cutoff=legendCutoff, mcStyle=mcStyle,
                                   cutoffSignals=not(options.showSigShape or options.showIndivSigShapes or options.showSFitShape), 
                                   textSize=( (0.045 if doRatio else 0.022) if options.legendFontSize <= 0 else options.legendFontSize ),
