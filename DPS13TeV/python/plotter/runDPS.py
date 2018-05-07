@@ -159,6 +159,7 @@ def makeResults(onlyMM = True, splitCharge = True): #sfdate, onlyMM = True, spli
 
     if splitCharge: 
         loop = [ ['plusplus'], ['minusminus']]
+        
     else:
         loop = [ [] ]
 
@@ -182,23 +183,24 @@ def makeResults(onlyMM = True, splitCharge = True): #sfdate, onlyMM = True, spli
                          'ZZ': '{sf:.3f}'.format(sf=1.21)}
             mumusf = 0.95
             extraopts = ' -W {sf:.3f} --showIndivSigs'.format(sf=mumusf) # --plotmode=norm
-            makeplots = ['BDTforCombine_mumu{ch}{nbins}'.format(ch=(ch[0] if ch else ''),nbins=nbinspostifx)] #BDTforCombine_mumu{ch}{nbins}'.format(ch=(ch[0] if ch else ''),nbins=nbinspostifx)] #BDT_{bdt}_mumu{ch}{nbins}'.format(ch=(ch[0] if ch else ''),bdt=bdt,nbins=nbinspostifx)]
+            makeplots = ['BDTforCombine_mumu{ch}{nbins}'.format(ch=(ch[0] if ch else ''),nbins=nbinspostifx)] 
+            
 
             runplots(trees, friends, targetdir, fmca, fcut, fplots, enable, disable, processes, scalethem, fittodata, makeplots, True, extraopts)
             ## ==================================
             ## running datacards
             ## ==================================
             extraoptscards = ' -W {sf:.3f} -o mumu{ch} -b mumu{ch} '.format(sf=mumusf, ch=(ch[0] if ch else ''))
-            #runCards(trees, friends, targetcarddir, fmca, fcut, fsyst , binningBDT, enable, disable, processesCards, scalethem, extraoptscards)
+            runCards(trees, friends, targetcarddir, fmca, fcut, fsyst , binningBDT, enable, disable, processesCards, scalethem, extraoptscards)
             
 
 def simplePlot():
     print '=========================================='
     print 'running simple plots'
     print '=========================================='
-    trees     = ['/eos/user/m/mdunser/w-helicity-13TeV/trees/dpsWW_herwigAndPythiaTuneCP5']#['/eos/user/m/mdunser/w-helicity-13TeV/trees/trees_all_skims/'] #'/eos/user/m/mdunser/w-helicity-13TeV/trees/wz3lnu/'] #trees_all_skims/
-    friends   = '/afs/cern.ch/user/v/vmariani/CMSSW_8_0_19/src/CMGTools/DPS13TeV/python/postprocessing' #'/eos/user/m/mdunser/w-helicity-13TeV/trees/trees_all_skims/friends/'
-    targetdir = '/eos/user/v/vmariani/www/bdt_weight_applied_pythia/' #'/eos/user/v/vmariani/www/weight/'#'./plots/{date}{pf}/'.format(date=date, pf=('-'+postfix if postfix else '') )
+    trees     = ['/eos/user/m/mdunser/w-helicity-13TeV/trees/wz3lnu/']
+    friends   = '/eos/user/m/mdunser/w-helicity-13TeV/trees/trees_all_skims/friends/'
+    targetdir = '/eos/user/v/vmariani/www/bdt_weight_applied_pythia/' 
 
     fmca      = 'dpsww13TeV/dps2016/simple/mca_simple.txt' #'dpsww13TeV/dps2016/mca-wmu-weight.txt' 
     fcut      = 'dpsww13TeV/dps2016/simple/cuts_simple.txt'
