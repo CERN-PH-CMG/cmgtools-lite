@@ -61,6 +61,7 @@ ptMax=" -A eleKin ptMax 'ptElFull(LepGood1_calPt,LepGood1_eta) < XX' "
 mtMin=" -A eleKin pfmt 'mt_2(met_pt,met_phi,${ptcorr},LepGood1_phi) > XX' "
 mtMax=" -A eleKin pfmt 'mt_2(met_pt,met_phi,${ptcorr},LepGood1_phi) < XX' "
 WselFull=" ${mtMin/XX/40} ${ptMax/XX/45} ${fiducial} ${json_L1_HLT27} "
+WselAllpt=" ${mtMin/XX/40} ${fiducial} ${json_L1_HLT27} "
 ##############################################################
 ##############################################################
 
@@ -72,16 +73,16 @@ WselFull=" ${mtMin/XX/40} ${ptMax/XX/45} ${fiducial} ${json_L1_HLT27} "
 ##################################
 useDataGH="y"
 #useHLTpt27="y" # already in selection txt file
-runBatch="n"
+runBatch="y"
 queueForBatch="cmscaf1nd"
-nameTag="_json32fb_mTmax30_ultimateFR_allWMC" 
+nameTag="" 
 #nameTag="_varStudy"
 useSkimmedTrees="y" # skimmed samples are on both pccmsrm28 and eos 
 usePtCorrForScaleFactors="n" # y: use corrected pt for scale factor weight; n: use LepGood_pt (which is what would have been used if the scale factors where in a friend tree)
 # eta bin boundaries to divide regions in eta
-#etaBinBoundaries=("0.0" "1.479" "2.1" "2.5")
+etaBinBoundaries=("0.0" "1.479" "2.1" "2.5")
 #etaBinBoundaries=("0.0" "1.479" "2.5")
-etaBinBoundaries=("0.0" "2.5")
+#etaBinBoundaries=("0.0" "2.5")
 today=`date +"%d_%m_%Y"`
 batchDirName="plots_${today}${nameTag}"  # name of directory to create inside jobsLog
 ##################################
@@ -108,8 +109,9 @@ excludeprocesses="Z_LO,W_LO" # decide whether to use NLO (amc@NLO) or LO (MadGra
 #selectplots="nJetClean,ptl1,etal1,pfmet,tkmet,ele1ID,awayJet_pt,wpt_tk,ele1dxy"  # if empty it uses all plots in cfg file
 #selectplots="ptl1,etal1,pfmet,trkmt_trkmetEleCorr,pfmt,wpt_tk,nJetClean,ele1Iso04,ele1ID"  # if empty it uses all plots in cfg file
 #selectplots="trkmt_trkmetEleCorr_dy,trkmetEleCorr_dy"
-selectplots="etal1_binFR"
+#selectplots="etal1_binFR"
 #selectplots="ptl1,pfmt,pfmet"
+selectplots="ptl1_granBin"
 #selectplots="ptl1,etal1,pfmt,pfmet"
 #selectplots="dphiLepPFMET,diffPt_lepPFMET,diffPt_lepPFMET_v2"
 #maxentries="150000" # max int number is > 2*10^9
@@ -180,7 +182,7 @@ scaleMCdata["FRcompNumRegion"]=""
 # FR validation REGION
 #----------------------------
 regionKey["FRcheckRegion"]="FRcheckRegion"
-runRegion["FRcheckRegion"]="y"
+runRegion["FRcheckRegion"]="n"
 regionName["FRcheckRegion"]="FR_check_region"
 skimTreeDir["FRcheckRegion"]="TREES_1LEP_80X_V3_WENUSKIM_V5_TINY"
 outputDir["FRcheckRegion"]="full2016data_${today}"
@@ -271,15 +273,15 @@ scaleMCdata["FRclosureMC"]=""
 # Some random plots, they are here to exploit the batch submission
 #----------------------------
 regionKey["TestPlots"]="TestPlots"
-runRegion["TestPlots"]="n"
-regionName["TestPlots"]="dataJsonTest"
+runRegion["TestPlots"]="y"
+regionName["TestPlots"]="dataErasTest_nostack"
 skimTreeDir["TestPlots"]="TREES_1LEP_80X_V3_WENUSKIM_V5_TINY"
 outputDir["TestPlots"]="sigRegion_${today}"
-regionCuts["TestPlots"]=" -X nJet30 ${FRnumSel} ${WselFull} ${fiducial}"
+regionCuts["TestPlots"]=" -X nJet30 ${FRnumSel} ${WselAllpt}"
 qcdFromFR["TestPlots"]="y"
 scaleMCdata["TestPlots"]=""
-mcafileTest="mca-data-testJSON.txt"
-optionsTest=" --plotmode nostack --ratioYLabel Json / All --ratioDen dataAll --ratioNums dataJson --noLegendRatioPlot --sp dataAll "
+mcafileTest="mca-includes/mca-data-legacy2016_eras.txt"
+optionsTest=" --plotmode nostack --xp data"
 #
 #############################
 
