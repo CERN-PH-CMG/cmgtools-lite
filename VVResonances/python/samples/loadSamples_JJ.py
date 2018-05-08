@@ -32,7 +32,7 @@ JetHT = [JetHT_Run2017B_17Nov2017, JetHT_Run2017C_17Nov2017, JetHT_Run2017D_17No
 
 # Jet HT to be used for jj
 for s in JetHT:
-    s.triggers = triggers_pfht1050+triggers_pfht800_mass50+triggers_pfjet500+triggers_pfjet400_mass30
+    s.triggers = triggers_pfht1050+triggers_ak8pfht_mass50+triggers_ak8pfjet+triggers_ak8pfjet_mass30
     s.vetoTriggers = []
     s.json = json
 

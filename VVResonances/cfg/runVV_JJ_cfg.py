@@ -64,7 +64,7 @@ from CMGTools.VVResonances.samples.loadSamples_JJ import *
 # selectedComponents = mcSamples + dataSamples
 # selectedComponents = [JetHT_Run2017F_17Nov2017]
 # selectedComponents = [QCD_HT100to200]
-# selectedComponents = signalSamples
+selectedComponents = QCDPt
 
 #import pdb;pdb.set_trace()
 
@@ -79,11 +79,7 @@ from CMGTools.RootTools.samples.triggers_13TeV_DATA2017 import *
 
 
 triggerFlagsAna.triggerBits = {
-    "HT1050": triggers_pfht1050,
-    "HT800_MASS50": triggers_pfht800_mass50,
-    "JET500": triggers_pfjet500,
-    "JET400_MASS30": triggers_pfht800_mass50,
-    "JJ": triggers_pfht1050 + triggers_pfht800_mass50 + triggers_pfjet500 + triggers_pfjet400_mass30,
+    "JJ": triggers_pfht1050 + triggers_ak8pfht_mass50 + triggers_ak8pfjet + triggers_ak8pfjet_mass30,
 }
 
 
@@ -92,7 +88,7 @@ test = 0
 if test == 1:
     # test a single component, using a single thread.
     # selectedComponents = [BulkGravToWW_narrow_M_1200]
-    selectedComponents = [Wprime_WZ_WhadZhad_narrow_M6000]
+    selectedComponents = [BulkGravToWW_narrow_M_800]
     # selectedComponents = [QCD_HT100to200]
     for c in selectedComponents:
         c.files = c.files[:1]
@@ -112,7 +108,7 @@ else:
     # split samples in a smarter way
     from CMGTools.HToZZ4L.tools.configTools import configureSplittingFromTime, printSummary
     # means 40 ms per event, job to last 3h
-    configureSplittingFromTime(selectedComponents, 75, 4)
+    configureSplittingFromTime(selectedComponents, 75, 2)
     # print summary of components to process
     printSummary(selectedComponents)
 
