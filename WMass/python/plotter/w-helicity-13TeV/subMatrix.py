@@ -57,6 +57,8 @@ if __name__ == "__main__":
     h2_corr = fitresult.correlationHist()
 
     c = ROOT.TCanvas("c","",1200,800)
+    c.SetGridx()
+    c.SetGridy()
     ROOT.gStyle.SetPalette(55)
     ROOT.gStyle.SetNumberContours(200); # default is 20 (values on palette go from -1 to 1)
 
@@ -86,7 +88,7 @@ if __name__ == "__main__":
 
     ## make the new, smaller TH2F correlation matrix
     nbins = len(binlabels)
-    th2_sub = ROOT.TH2F('sub_corr_matrix', 'small correlation matrix', nbins, 0.5, nbins+0.5, nbins, 0.5, nbins+0.5)
+    th2_sub = ROOT.TH2F('sub_corr_matrix', 'small correlation matrix', nbins, 0., nbins, nbins, 0., nbins)
     th2_sub.GetXaxis().SetTickLength(0.)
     th2_sub.GetYaxis().SetTickLength(0.)
     
