@@ -99,7 +99,7 @@ def writeQCDScaleSystsToMCA(mcafile,odir,syst="qcd",incl_mca='incl_sig',scales=[
             postfix = "_{proc}_{syst}{idir}".format(proc=incl_mca.split('_')[1],syst=scale,idir=idir)
             mcafile_syst = open(filename, 'a') if append else open("%s/mca%s.txt" % (odir,postfix), "w")
             if not scale == "wptSlope": ## alphaS and qcd scales are treated equally here. but they are different from the w-pT slope
-                mcafile_syst.write(incl_mca+postfix+'   : + ; IncludeMca='+incl_file+', AddWeight="qcd'+postfix+'", PostFix="'+postfix+'" \n')
+                mcafile_syst.write(incl_mca+postfix+'   : + ; IncludeMca='+incl_file+', AddWeight="qcd_'+scale+idir+'", PostFix="'+postfix+'" \n')
             else:
                 sign  =  1 if idir == 'Dn' else -1
                 asign = -1 if idir == 'Dn' else  1

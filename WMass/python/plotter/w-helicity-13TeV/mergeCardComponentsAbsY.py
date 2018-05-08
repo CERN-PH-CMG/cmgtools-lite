@@ -88,7 +88,7 @@ if __name__ == "__main__":
         ## prepare the relevant files. only the datacards and the correct charge
         files = ( f for f in os.listdir(options.inputdir) if f.endswith('.card.txt') )
         files = ( f for f in files if charge in f and not re.match('.*_pdf.*|.*_muR.*|.*_muF.*|.*alphaS.*|.*wptSlope.*',f) )
-        files = sorted(files, key = lambda x: int(x.rstrip('.card.txt').split('_')[-1]) if not 'bkg'in x else -1) ## ugly but works
+        files = sorted(files, key = lambda x: int(x.rstrip('.card.txt').split('_')[-1]) if not any(bkg in x for bkg in ['bkg','Z_']) else -1) ## ugly but works
         files = list( ( os.path.join(options.inputdir, f) for f in files ) )
         
         existing_bins = {'left': [], 'right': []}
@@ -112,7 +112,7 @@ if __name__ == "__main__":
     
         longBKG = False
         tmpfiles = []
-        for f in files:
+        for ifile,f in enumerate(files):
             basename = os.path.basename(f).split('.')[0]
             if basename.startswith('W{charge}'.format(charge=charge)): pol=basename.split('_')[1]
             else: pol='none' # bkg and data
@@ -127,7 +127,10 @@ if __name__ == "__main__":
                         if len(l.split()) < 2: continue ## skip the second bin line if empty
                         bin = l.split()[1]
                         binn = int(bin.split('_')[-1]) if 'Ybin_' in bin else -1
-                    rootfiles_syst = filter(lambda x: re.match('{base}_(pdf\d+|muR\S+|muF\S+|alphaS\S+|wptSlope\S+)\.input\.root'.format(base=basename),x), os.listdir(options.inputdir))
+                    rootfiles_syst = filter(lambda x: re.match('{base}_sig_(pdf\d+|muR\S+|muF\S+|alphaS\S+|wptSlope\S+)\.input\.root'.format(base=basename),x), os.listdir(options.inputdir))
+                    if ifile==0:
+                        ch = 'mu' if 'mu' in options.bin else 'el'
+                        rootfiles_syst += filter(lambda x: re.match('Z_{channel}_{charge}_dy_(pdf\d+|muR\S+|muF\S+|alphaS\S+\S+)\.input\.root'.format(channel=ch,charge=charge),x), os.listdir(options.inputdir))
                     rootfiles_syst = [dir+'/'+x for x in rootfiles_syst]
                     rootfiles_syst.sort()
                     if re.match('process\s+',l): 
@@ -172,7 +175,7 @@ if __name__ == "__main__":
                                             plots[newname].Write()
                                     else:
                                         if 'pdf' in newname: # these changes by default shape and normalization. Each variation should be symmetrized wrt nominal
-                                            tokens = newname.split("_"); pfx = '_'.join(tokens[:-1]); pdf = tokens[-1]
+                                            tokens = newname.split("_"); pfx = '_'.join(tokens[:-2]); pdf = tokens[-1]
                                             ipdf = int(pdf.split('pdf')[-1])
                                             newname = "{pfx}_pdf{ipdf}".format(pfx=pfx,ipdf=ipdf)
                                             (alternate,mirror) = mirrorShape(nominals[pfx],obj,newname,options.pdfShapeOnly)
@@ -181,7 +184,7 @@ if __name__ == "__main__":
                                                     plots[alt.GetName()] = alt.Clone()
                                                     plots[alt.GetName()].Write()
                                         elif re.match('.*_muR.*|.*_muF.*|.*alphaS.*|.*wptSlope.*',newname): # these changes by default shape and normalization
-                                            tokens = newname.split("_"); pfx = '_'.join(tokens[:-1]); syst = tokens[-1].replace('Dn','Down')
+                                            tokens = newname.split("_"); pfx = '_'.join(tokens[:-2]); syst = tokens[-1].replace('Dn','Down')
                                             newname = "{pfx}_{syst}".format(pfx=pfx,syst=syst)
                                             if 'wptSlope' in newname: # this needs to be scaled not to change normalization
                                                 obj.Scale(nominals[pfx].Integral()/obj.Integral())
@@ -221,7 +224,10 @@ if __name__ == "__main__":
         for f in files:
             basename = os.path.basename(f).split(".")[0]
             binn = int(basename.split('_')[-1]) if 'Ybin_' in basename else 999
-            binname = basename if re.match('Wplus|Wminus',basename) else "other"
+            binname = ''
+            if re.match('Wplus|Wminus',basename): binname=basename
+            elif re.match('Z.*{charge}'.format(charge=charge),basename): binname='Z'
+            else: binname='other'
             if not binn in empty_bins:
                 combineCmd += " %s=%s " % (binname,f)
         tmpcard = os.path.join(options.inputdir,'tmpcard.txt')
