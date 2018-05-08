@@ -44,7 +44,7 @@ if __name__ == "__main__":
         nPDF = max( int(i.split('_')[-1].replace('pdf','').replace('Down','').replace('Up','')) for i in siglist if 'pdf' in i)
 
         bkgs = ['data_fakes','Flips','DiBosons','Top','TauDecaysW','Z','W%s_long'%charge] # other than W_{L,R}
-        wlr = ['W{ch}_{p}_W{ch}_{p}_{flav}_Ybin_{i}'.format(ch=charge,p=pol,flav=channel,i=iy) for pol in ['left','right'] for iy in xrange(nY[charge+'_'+pol]+1)]
+        wlr = ['W{ch}_{p}_W{ch}_{p}_{flav}_Ybin_0'.format(ch=charge,p=pol,flav=channel) for pol in ['left','right'] ]
         procs=wlr+bkgs
 
         jobsdir = args[0]+'/jobs/'
@@ -56,13 +56,14 @@ if __name__ == "__main__":
         ratios={}
         for proc in procs:
             print "Making syst plots for process : ",proc," ..."
+            pol = 'none'
             # central template
             if 'W{ch}'.format(ch=charge) in proc:
-                for pol in ['right', 'left']:
-                    cp = charge+'_'+pol
-                    histo_central = infile.Get('x_W{ch}_{pol}_W{ch}_{pol}_{flav}_Ybin_0'.format(ch=charge,pol=pol,flav=channel))
-                    for iy in xrange(1,nY[cp]+1):
-                        histo_central.Add(infile.Get('x_W{ch}_{pol}_W{ch}_{pol}_{flav}_Ybin_{i}'.format(ch=charge,pol=pol,flav=channel,i=iy)))
+                pol = proc.split('_')[1]
+                cp = charge+'_'+pol
+                histo_central = infile.Get('x_W{ch}_{pol}_W{ch}_{pol}_{flav}_Ybin_0'.format(ch=charge,pol=pol,flav=channel))
+                for iy in xrange(1,nY[cp]+1):
+                    histo_central.Add(infile.Get('x_W{ch}_{pol}_W{ch}_{pol}_{flav}_Ybin_{i}'.format(ch=charge,pol=pol,flav=channel,i=iy)))
             else:
                 histo_central = infile.Get('x_%s'%proc)
             # systematic templates
@@ -71,14 +72,12 @@ if __name__ == "__main__":
                     if not re.match('W{ch}|Z'.format(ch=charge),proc): continue # only W and Z have PDF variations
                     for ip in xrange(1,nPDF+1):
                         if 'W{ch}'.format(ch=charge) in proc:
-                            for pol in ['right', 'left']:
-                                cp = charge+'_'+pol
-                                histo_pdfi = infile.Get('x_W{ch}_{pol}_W{ch}_{pol}_{flav}_Ybin_0_pdf{ip}Up'.format(ch=charge,pol=pol,flav=channel,ip=ip))
-                                for iy in xrange(1,nY[cp]+1):
-                                    histo_pdfi_iy = infile.Get('x_W{ch}_{pol}_W{ch}_{pol}_{flav}_Ybin_{iy}_pdf{ip}Up'.format(ch=charge,pol=pol,flav=channel,iy=iy,ip=ip))
-                                    if histo_pdfi_iy: histo_pdfi.Add(histo_pdfi_iy)
-                                title2D = 'W{ch} {pol} : pdf {ip}'.format(ip=ip,pol=pol,ch=chs)
-                                key = 'syst_W{ch}_{pol}_W{ch}_{pol}_{flav}_pdf{ip}'.format(ch=charge,pol=pol,flav=channel,ip=ip)
+                            histo_pdfi = infile.Get('x_W{ch}_{pol}_W{ch}_{pol}_{flav}_Ybin_0_pdf{ip}Up'.format(ch=charge,pol=pol,flav=channel,ip=ip))
+                            for iy in xrange(1,nY[cp]+1):
+                                histo_pdfi_iy = infile.Get('x_W{ch}_{pol}_W{ch}_{pol}_{flav}_Ybin_{iy}_pdf{ip}Up'.format(ch=charge,pol=pol,flav=channel,iy=iy,ip=ip))
+                                if histo_pdfi_iy: histo_pdfi.Add(histo_pdfi_iy)
+                            title2D = 'W{ch} {pol} : pdf {ip}'.format(ip=ip,pol=pol,ch=chs)
+                            key = 'syst_W{ch}_{pol}_W{ch}_{pol}_{flav}_pdf{ip}'.format(ch=charge,pol=pol,flav=channel,ip=ip)
                         else:
                             histo_pdfi = infile.Get('x_{proc}_pdf{ip}Up'.format(proc=proc,ip=ip))
                             title2D = 'Z : pdf {ip}'.format(ip=ip)
