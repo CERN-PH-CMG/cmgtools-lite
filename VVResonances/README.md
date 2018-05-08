@@ -9,15 +9,15 @@ cmsrel 9_4_2
 cd CMSSW_9_4_2/src
 cmsenv
 git cms-init
-git remote add clelange git@github.com:clelange/cmg-cmssw.git -f -t Fall17_17Nov2017_V4_MC
+git remote add clelange git@github.com:clelange/cmg-cmssw.git -f -t jetID2017
 cp /afs/cern.ch/user/c/cmgtools/public/sparse-checkout_80X_heppy .git/info/sparse-checkout
-git checkout -b Fall17_17Nov2017_V4_MC clelange/Fall17_17Nov2017_V4_MC
+git checkout -b jetID2017 clelange/jetID2017
 git remote add origin git@github.com:`git config user.github`/cmg-cmssw.git
-git push -u origin Fall17_17Nov2017_V4_MC
-git clone -o clelange git@github.com:clelange/cmgtools-lite.git -b jetID2017 CMGTools
+git push -u origin jetID2017
+git clone -o clelange git@github.com:clelange/cmgtools-lite.git -b Diboson_2017 CMGTools
 cd CMGTools
 git remote add origin git@github.com:`git config user.github`/cmgtools-lite.git
-git push -u origin jetID2017
+git push -u origin Diboson_2017
 cd $CMSSW_BASE/src
 scram b -j 8
 ```
