@@ -13,9 +13,10 @@ background = QCDHT+QCDPt
 
 # Load signal from here
 from CMGTools.VVResonances.samples.signal_13TeV_94X_Fall17 import *
+from CMGTools.VVResonances.samples.signal_13TeV_94X_Fall17_private import *
 
 
-mcSamples = background+signalSamples
+mcSamples = background+signalSamples+signalSamples_private
 # load triggers
 from CMGTools.RootTools.samples.triggers_13TeV_DATA2017 import *
 # Load Data samples
@@ -23,7 +24,7 @@ from CMGTools.RootTools.samples.samples_13TeV_DATA2017 import *
 
 
 # Load JSON
-json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions17/13TeV/Final/Cert_294927-306462_13TeV_PromptReco_Collisions17_JSON.txt'
+json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions17/13TeV/ReReco/Cert_294927-306462_13TeV_EOY2017ReReco_Collisions17_JSON.txt'
 
 
 JetHT = [JetHT_Run2017B_17Nov2017, JetHT_Run2017C_17Nov2017, JetHT_Run2017D_17Nov2017, JetHT_Run2017E_17Nov2017, JetHT_Run2017F_17Nov2017]

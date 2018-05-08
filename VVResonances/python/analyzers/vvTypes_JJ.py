@@ -2,7 +2,7 @@ from PhysicsTools.Heppy.analyzers.core.AutoFillTreeProducer  import *
 import ROOT
 dummyLV=ROOT.math.XYZTLorentzVector(0.0,0.0,0.0001,0.0001)
 
-FatJetType = NTupleObjectType("FatJetType", baseObjectTypes=[jetType], variables = [
+FatJetType = NTupleObjectType("FatJetType", baseObjectTypes=[jetTypeID], variables = [
     NTupleVariable("tau1",   lambda x : x.substructure.ntau[0], float),
     NTupleVariable("tau2",   lambda x : x.substructure.ntau[1], float),
     NTupleVariable("tau3",   lambda x : x.substructure.ntau[2], float),

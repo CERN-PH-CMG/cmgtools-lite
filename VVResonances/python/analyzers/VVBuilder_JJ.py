@@ -166,7 +166,7 @@ class VVBuilder_JJ(Analyzer):
         # L2L3 corrections)
         substructure.tau21_DDT = 0
         if (substructure.softDropJet.mass() > 0):
-            substructure.tau21_DDT = substructure.ntau[1] / substructure.ntau[0] + (0.063 * math.log(
+            substructure.tau21_DDT = substructure.ntau[1] / substructure.ntau[0] + (0.082 * math.log(
                 (substructure.softDropJet.mass() * substructure.softDropJet.mass()) / substructure.softDropJet.pt()))
         setattr(jet, tag, substructure)
 
@@ -303,7 +303,7 @@ class VVBuilder_JJ(Analyzer):
         bestW = max(W, key=lambda x: x.leg1.pt())
         # now the jets, use lower pT cut since we'll recluster
         fatJets = self.selectJets(event.jetsAK8, lambda x: x.pt() > 150.0 and abs(
-            x.eta()) < 2.4 and x.jetID('POG_PFID_Loose'), tightLeptonsForW, 1.0)
+            x.eta()) < 2.4 and x.jetID('POG_PFID_Tight'), tightLeptonsForW, 1.0)
         if len(fatJets) == 0:
             return output
         bestJet = max(fatJets, key=lambda x: x.pt())
@@ -341,7 +341,7 @@ class VVBuilder_JJ(Analyzer):
 
         # topology
         satteliteJets = self.selectJets(event.jets, lambda x: x.pt() > 30.0 and x.jetID(
-            'POG_PFID_Loose'), tightLeptonsForW, 0.4, [bestJet], 0.8)
+            'POG_PFID_Tight'), tightLeptonsForW, 0.4, [bestJet], 0.8)
         otherLeptons = self.cleanOverlap(looseLeptonsForW, [bestW.leg1])
         self.topology(VV, satteliteJets, otherLeptons)
 
@@ -371,7 +371,7 @@ class VVBuilder_JJ(Analyzer):
             abs(x.pdgId()) == 13 and (x.highPtIDIso)), otherGoodLeptons)
         # now the jets
         fatJets = self.selectJets(event.jetsAK8, lambda x: x.pt() > 200.0 and abs(
-            x.eta()) < 2.4 and x.jetID('POG_PFID_Loose'), [bestZ.leg1, bestZ.leg2], 1.0)
+            x.eta()) < 2.4 and x.jetID('POG_PFID_Tight'), [bestZ.leg1, bestZ.leg2], 1.0)
         if len(fatJets) == 0:
             return output
         bestJet = max(fatJets, key=lambda x: x.pt())
@@ -401,7 +401,7 @@ class VVBuilder_JJ(Analyzer):
 
         # topology
         satteliteJets = self.selectJets(event.jets, lambda x: x.pt() > 30.0 and x.jetID(
-            'POG_PFID_Loose'), otherTightLeptons, 0.4, [bestJet], 0.8)
+            'POG_PFID_Tight'), otherTightLeptons, 0.4, [bestJet], 0.8)
         self.topology(VV, satteliteJets, otherTightLeptons)
         output.append(VV)
         return output
@@ -489,7 +489,7 @@ class VVBuilder_JJ(Analyzer):
 
         # topology
         satteliteJets = self.selectJets(event.jets, lambda x: x.pt() > 30.0 and x.jetID(
-            'POG_PFID_Loose'), leptons, 0.3, [VV.leg1, VV.leg2], 0.8)
+            'POG_PFID_Tight'), leptons, 0.3, [VV.leg1, VV.leg2], 0.8)
         self.topology(VV, satteliteJets, leptons)
         output.append(VV)
         return output
@@ -501,7 +501,7 @@ class VVBuilder_JJ(Analyzer):
         leptons = filter(lambda x: (abs(x.pdgId()) == 11 and x.heepID) or (
             abs(x.pdgId()) == 13 and x.highPtIDIso), event.selectedLeptons)
         fatJets = self.selectJets(event.jetsAK8, lambda x: x.pt() > 200.0 and abs(
-            x.eta()) < 2.4 and x.jetID('POG_PFID_Loose'), leptons, 1.0)
+            x.eta()) < 2.4 and x.jetID('POG_PFID_Tight'), leptons, 1.0)
 
         if len(fatJets) < 1:
             return output
@@ -535,7 +535,7 @@ class VVBuilder_JJ(Analyzer):
 
         # topology
         satteliteJets = self.selectJets(event.jets, lambda x: x.pt() > 30.0 and x.jetID(
-            'POG_PFID_Loose'), leptons, 0.3, [VV.leg2], 0.8)
+            'POG_PFID_Tight'), leptons, 0.3, [VV.leg2], 0.8)
         self.topology(VV, satteliteJets, leptons)
         output.append(VV)
         return output
