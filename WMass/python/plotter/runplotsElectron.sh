@@ -182,7 +182,7 @@ scaleMCdata["FRcompNumRegion"]=""
 # FR validation REGION
 #----------------------------
 regionKey["FRcheckRegion"]="FRcheckRegion"
-runRegion["FRcheckRegion"]="n"
+runRegion["FRcheckRegion"]="y"
 regionName["FRcheckRegion"]="FR_check_region"
 skimTreeDir["FRcheckRegion"]="TREES_1LEP_80X_V3_WENUSKIM_V5_TINY"
 outputDir["FRcheckRegion"]="full2016data_${today}"

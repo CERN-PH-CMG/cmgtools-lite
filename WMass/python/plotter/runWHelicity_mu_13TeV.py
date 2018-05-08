@@ -8,7 +8,8 @@ def submitFRrecursive(ODIR, name, cmd, dryRun=False):
     outdir=ODIR+"/jobs/"
     if not os.path.isdir(outdir): 
         os.system('mkdir -p '+outdir)
-    os.system('cp ${{HOME}}/index.php {od}'.format(od=outdir))
+    os.system('cp ${{HOME}}/index.php {od}/../'.format(od=outdir))
+    os.system('cp ${{HOME}}/resubFRs.py {od}/../../'.format(od=outdir))
     srcfile = outdir+name+".sh"
     logfile = outdir+name+".log"
     srcfile_op = open(srcfile,"w")
@@ -248,7 +249,7 @@ def fakesDataMC():
     fittodata = []
     scalethem = {}
     extraopts = '  --maxRatioRange 0.8 1.2 --fixRatioRange  --fitData '
-    makeplots = ['mtl1pf']#mtl1pf', 'pfmet']#'ptl1', 'etal1', 'mtl1pf', 'pfmet']
+    makeplots = ['ptl1', 'etal1', 'mtl1pf']#mtl1pf', 'pfmet']#'ptl1', 'etal1', 'mtl1pf', 'pfmet']
     showratio = True
     runplots(trees, friends, targetdir, fmca, fcut, fplots, enable, disable, processes, scalethem, fittodata, makeplots, showratio, extraopts)
 
@@ -577,68 +578,121 @@ def makeFakeRatesFast(recalculate):
         print fakerates
         print promptrates
 
-        h_fr_smoothed_data = ROOT.TH2F('fakerates_smoothed_data',' fakerates - smoothed data', len(binningeta)-1, array.array('f',binningeta), 2, array.array('f',[0., 1., 2.]))
+        h_fr_smoothed_data = ROOT.TH2F('fakerates_smoothed_data'  ,' fakerates - smoothed data'  , len(binningeta)-1, array.array('f',binningeta), 2, array.array('f',[0., 1., 2.]))
+        h_pr_smoothed_data = ROOT.TH2F('promptrates_smoothed_data',' promptrates - smoothed data', len(binningeta)-1, array.array('f',binningeta), 2, array.array('f',[0., 1., 2.]))
         #h_fr_smoothed_mc   = ROOT.TH2F(h_name+'_qcd' ,h_title+' - qcd' , len(binning)-1, array.array('f',binning), len(binningeta)-1, array.array('f',binningeta))
 
-        for eta in ['barrel', 'endcap']:
-            graph_file= ROOT.TFile(targetdir+'/fr_mu_{eta}'.format(eta=eta), 'read')
-            graph= graph_file.Get('muonTightIso_pt_fine_binned_data_sub')
 
-            pol0 = ROOT.TF1("pol0_{eta}".format(eta=eta), "[0]        ", 25., 50.)
-            pol1 = ROOT.TF1("pol1_{eta}".format(eta=eta), "[1]*x + [0]", 25., 50.)
 
-            pol0.SetLineColor(ROOT.kGreen); pol0.SetLineWidth(2)
-            pol1.SetLineColor(ROOT.kRed-3); pol1.SetLineWidth(2)
+        for j,eta in enumerate(binningeta[:-1]):
 
-            #pol0.SetParameter(1, graph.Eval(25.))
-            #pol1.SetParameter(1, graph.Eval(25.)); pol1.SetParameter(2, 0.)
 
-            pol0.SetParLimits(1, 0.1, 0.4)
-            pol1.SetParLimits(1, -0.1  , 0.0)
-            pol1.SetParLimits(0,  0.1  , 1.1)
+            print 'GETTING AND FITTING THE FR FROM', etastring
 
-            graph.Fit("pol0_{eta}".format(eta=eta), "M", "", 25., 50.)
-            graph.Fit("pol1_{eta}".format(eta=eta), "M", "", 25., 50.)
-            #graph.Fit("pol0", "M", "", 25., 50.)
-            #graph.Fit("pol1", "M", "", 25., 50.)
+            etastring = 'To'.join(str(i).replace('-','m').replace('.','p') for i in [eta, binningeta[j+1]] )
+            tmp_td = targetdir+'/'+etastring
 
-            pol0_chi2 = pol0.GetChisquare(); pol0_ndf = pol0.GetNDF()
-            pol1_chi2 = pol1.GetChisquare(); pol1_ndf = pol1.GetNDF()
+            graph_file= ROOT.TFile(tmp_td+'/fr_mu_{eta}'.format(eta=etastring), 'read')
 
-            rchi2_0 = pol0_chi2/pol0_ndf
-            rchi2_1 = pol1_chi2/pol1_ndf
+            mg = ROOT.TMultiGraph(); pols = []
+            for rate in ['pr', 'fr']:
 
-            bestfunc = pol1 ##if rchi2_0 < rchi2_1 else pol1
-            worstfun = pol0 ##if rchi2_0 > rchi2_1 else pol1
+                pol0 = ROOT.TF1("{r}_pol0_{eta}".format(r=rate,eta=etastring), "[0]        ", 25., 50.)
+                pol1 = ROOT.TF1("{r}_pol1_{eta}".format(r=rate,eta=etastring), "[1]*x + [0]", 25., 50.)
 
-            print '{eta}: chi2 of pol0 = {chi0}/{ndf0} = {red0}'.format(eta=eta,chi0=pol0_chi2,ndf0=pol0_ndf, red0=rchi2_0)
-            print '{eta}: chi2 of pol1 = {chi1}/{ndf1} = {red1}'.format(eta=eta,chi1=pol1_chi2,ndf1=pol1_ndf, red1=rchi2_1)
 
-            print 'the better function is {func}'.format(func=bestfunc.GetName())
+                if rate == 'fr':
+                    graph = graph_file.Get('muonTightIso_pt_fine_binned_data_sub')
+                    pol0.SetLineColor(ROOT.kGreen); pol0.SetLineWidth(2)
+                    pol1.SetLineColor(ROOT.kRed-3); pol1.SetLineWidth(2)
+                    pol0.SetParLimits(1, 0.1, 0.4)
+                    pol1.SetParLimits(1, -0.1  , 0.1)
+                    pol1.SetParLimits(0,  0.1  , 1.1)
 
-            #print '{eta}: compared to {func}         .   value={val:.3f}'.format(eta=eta, func = worstfun.GetName(), val=worstfun.GetChisquare()/worstfun.GetNDF())
-            
-            etabin = 1 if eta == 'barrel' else 2
-            
-            h_fr_smoothed_data.SetBinContent(etabin, 1, bestfunc.GetParameter(0))
-            h_fr_smoothed_data.SetBinError  (etabin, 1, bestfunc.GetParError (0))
+                else:
+                    graph = graph_file.Get('muonTightIso_pt_fine_binned_WandZ')
+                    graph.SetLineColor(ROOT.kRed); graph.SetMarkerColor(ROOT.kRed)
+                    pol0.SetLineColor(ROOT.kBlue)   ; pol0.SetLineWidth(2)
+                    pol1.SetLineColor(ROOT.kAzure-3); pol1.SetLineWidth(2)
+                    pol0.SetParLimits(1, 0.1, 1.1)
+                    pol1.SetParLimits(1, -0.1  , 0.1)
+                    pol1.SetParLimits(0,  0.1  , 1.1)
 
-            h_fr_smoothed_data.SetBinContent(etabin, 2, bestfunc.GetParameter(1) if bestfunc.GetNpar() > 1 else 0.)
-            h_fr_smoothed_data.SetBinError  (etabin, 2, bestfunc.GetParError (1) if bestfunc.GetNpar() > 1 else 0.)
+                mg.Add(copy.deepcopy(graph))
 
-            graph.Draw('ape')
-            graph.GetYaxis().SetRangeUser(0., 0.5)
-            pol0.Draw('same')
-            pol1.Draw('same')
-            canv.SaveAs(targetdir+'fakerate_fit_data_{eta}.png'.format(eta=eta))
-            canv.SaveAs(targetdir+'fakerate_fit_data_{eta}.pdf'.format(eta=eta))
+                graph.Fit("{r}_pol0_{eta}".format(r=rate,eta=etastring), "M", "", 25., 50.)
+                graph.Fit("{r}_pol1_{eta}".format(r=rate,eta=etastring), "M", "", 25., 50.)
+
+                pol0_chi2 = pol0.GetChisquare(); pol0_ndf = pol0.GetNDF()
+                pol1_chi2 = pol1.GetChisquare(); pol1_ndf = pol1.GetNDF()
+
+                rchi2_0 = pol0_chi2/pol0_ndf
+                rchi2_1 = pol1_chi2/pol1_ndf
+
+                bestfunc = pol0 if rchi2_0 < rchi2_1 else pol1
+                worstfun = pol0 if rchi2_0 > rchi2_1 else pol1
+
+                print '{r} and {eta}: chi2 of pol0 = {chi0}/{ndf0} = {red0}'.format(r=rate,eta=etastring,chi0=pol0_chi2,ndf0=pol0_ndf, red0=rchi2_0)
+                print '{r} and {eta}: chi2 of pol1 = {chi1}/{ndf1} = {red1}'.format(r=rate,eta=etastring,chi1=pol1_chi2,ndf1=pol1_ndf, red1=rchi2_1)
+
+                print 'the better function is {func}'.format(func=bestfunc.GetName())
+
+                #print '{eta}: compared to {func}         .   value={val:.3f}'.format(eta=eta, func = worstfun.GetName(), val=worstfun.GetChisquare()/worstfun.GetNDF())
+                
+                etabin = j+1 #if eta == 'barrel' else 2
+                
+                if rate == 'fr':
+                    h_fr_smoothed_data.SetBinContent(etabin, 1, bestfunc.GetParameter(0))
+                    h_fr_smoothed_data.SetBinError  (etabin, 1, bestfunc.GetParError (0))
+
+                    h_fr_smoothed_data.SetBinContent(etabin, 2, bestfunc.GetParameter(1) if bestfunc.GetNpar() > 1 else 0.)
+                    h_fr_smoothed_data.SetBinError  (etabin, 2, bestfunc.GetParError (1) if bestfunc.GetNpar() > 1 else 0.)
+
+                else:
+                    h_pr_smoothed_data.SetBinContent(etabin, 1, bestfunc.GetParameter(0))
+                    h_pr_smoothed_data.SetBinError  (etabin, 1, bestfunc.GetParError (0))
+
+                    h_pr_smoothed_data.SetBinContent(etabin, 2, bestfunc.GetParameter(1) if bestfunc.GetNpar() > 1 else 0.)
+                    h_pr_smoothed_data.SetBinError  (etabin, 2, bestfunc.GetParError (1) if bestfunc.GetNpar() > 1 else 0.)
+
+                pols.append(copy.deepcopy(pol0))
+                pols.append(copy.deepcopy(pol1))
+                mg.Add(copy.deepcopy(graph))
+
+            #graph.Draw('ape')
+            mg.Draw('ape')
+            mg.GetYaxis().SetRangeUser(0., 1.0)
+            for p in pols:
+                p.Draw('same')
+            ##pol1.Draw('same')
+            canv.SaveAs(targetdir+'fakeAndPromptRate_fit_data_{eta}.png'.format(eta=etastring))
+            canv.SaveAs(targetdir+'fakeAndPromptRate_fit_data_{eta}.pdf'.format(eta=etastring))
         
-        h_fr_smoothed_data.Draw("colz text")
+        h_fr_smoothed_data.Draw("colz text45")
+        h_fr_smoothed_data.GetZaxis().SetRangeUser(-0.05, 0.45)
+        h_fr_smoothed_data.GetXaxis().SetTitle('#eta_{#mu}')
+        h_fr_smoothed_data.GetXaxis().SetTitleSize(0.045)
+        h_fr_smoothed_data.GetXaxis().SetLabelSize(0.05)
+        h_fr_smoothed_data.GetYaxis().SetLabelSize(0.08)
+        h_fr_smoothed_data.GetYaxis().SetBinLabel(1, 'offset')
+        h_fr_smoothed_data.GetYaxis().SetBinLabel(2, 'slope')
         canv.SaveAs(targetdir+'fakerate_smoothed_data_{date}.png'.format(date=date))
         canv.SaveAs(targetdir+'fakerate_smoothed_data_{date}.pdf'.format(date=date))
         
-        outfile = ROOT.TFile('w-helicity-13TeV/wmass_mu/fakerateSmoothed_mu_{date}{pf}.root'.format(date=date,pf=('_'+postfix if postfix else '')),'RECREATE')
+        h_pr_smoothed_data.Draw("colz text45")
+        h_pr_smoothed_data.GetZaxis().SetRangeUser(0.00, 1.0)
+        h_pr_smoothed_data.GetXaxis().SetTitle('#eta_{#mu}')
+        h_pr_smoothed_data.GetXaxis().SetTitleSize(0.045)
+        h_pr_smoothed_data.GetXaxis().SetLabelSize(0.05)
+        h_pr_smoothed_data.GetYaxis().SetLabelSize(0.08)
+        h_pr_smoothed_data.GetYaxis().SetBinLabel(1, 'offset')
+        h_pr_smoothed_data.GetYaxis().SetBinLabel(2, 'slope')
+        canv.SaveAs(targetdir+'promptrate_smoothed_data_{date}.png'.format(date=date))
+        canv.SaveAs(targetdir+'promptrate_smoothed_data_{date}.pdf'.format(date=date))
+        
+        outfile = ROOT.TFile('w-helicity-13TeV/wmass_mu/frAndPr_fit_mu_{date}{pf}.root'.format(date=date,pf=('_'+postfix if postfix else '')),'RECREATE')
         h_fr_smoothed_data.Write()
+        h_pr_smoothed_data.Write()
         outfile.Close()
     
 
@@ -660,7 +714,6 @@ if __name__ == '__main__':
     parser.add_option('--fs'        , '--fakeshapes' , dest='fakeShapes'   , action='store_true' , default=False , help='run fake shapes')
     parser.add_option('--fc'        , '--fakeclosure', dest='fakeClosure'   , action='store_true' , default=False , help='run fake closure')
     parser.add_option('--fdm'       , '--fakesDataMC', dest='fakesDataMC'   , action='store_true' , default=False , help='run fakes data MC comparison')
-    parser.add_option('--frp'       , '--fakerateplots', dest='fakeratePlots', type='string' , default='' , help='run fakerate plots and fitting')
     parser.add_option('--mt'        , '--makeTemplates', dest='makeTemplates', action='store_true' , default=False , help='make templates')
     parser.add_option('--dy'        , '--dyComparison' , dest='dyComparison' , action='store_true' , default=False , help='make dy comparisons')
     parser.add_option('--pdf'       , '--pdfVariations', dest='pdfVariations', action='store_true' , default=False , help='make plots with pdf variations')
@@ -697,11 +750,8 @@ if __name__ == '__main__':
     if opts.fakesDataMC:
         print 'running the fakes data-mc comparison'
         fakesDataMC()
-    if opts.fakeratePlots:
-        print 'running the fakerateplots and fitting'
-        fakeratePlots(opts.fakeratePlots)
     if opts.makeTemplates:
-        print 'running the fakerateplots and fitting'
+        print 'make helicity templates'
         fractionReweighting()
     if opts.dyComparison:
         print 'running the dy comparisons'

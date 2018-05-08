@@ -1,12 +1,12 @@
 # vim: syntax=sh
 * ; TreeName="treeProducerWMass"
 
-WandZ     : TauDecaysW_*                   : 3.*20508.9    : 1 ; FillColor=ROOT.kRed+2  , Label="WandZ"
+WandZ     : WJetsToLNu_*                   : 3.*20508.9    : 1 ; FillColor=ROOT.kRed+2  , Label="WandZ"
 WandZ     : DYJetsToLL_M50_part*           : 3.*1921.8     : 1 ; FillColor=ROOT.kRed+2  , Label="WandZ"
 
 QCD       : QCD_Mu15_part*                 : 302673.0      : 1 ; FillColor=ROOT.kGray+2 , Label="QCD"
 
 data      : SingleMuon_Run2016*
 
-data_sub  : -                                                  ; FillColor=ROOT.kYellow+2 , FillStyle=3005, Label="Data - EWK"
+data_sub  : -                                                  ; FillColor=ROOT.kOrange+8 , FillStyle=3005, Label="Data - EWK"
 

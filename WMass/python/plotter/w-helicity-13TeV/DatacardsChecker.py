@@ -33,12 +33,19 @@ class CardsChecker:
             if not os.path.exists(self.card_dir+'/'+f): 
                 if self.options.verbose>1: print '# input root file ',f,' is not present in ',self.card_dir
                 f_ok = False
+            elif os.path.getsize(self.card_dir+'/'+f) < 1000.:
+                print '# WARNING found a input root file below 1kB:', self.card_dir+'/'+f
+                f_ok = False
             else: 
                 if self.options.checkZombies:
                     tfile = ROOT.TFile.Open(self.card_dir+'/'+f)
                     if not tfile or tfile.IsZombie():
                         if self.options.verbose>1: print '# ',f, ' is Zombie'
                         f_ok = False
+                    if len(tfile.GetListOfKeys()) < 0:
+                        if self.options.verbose>1: print '# WARNING',f, ' has no keys inside!!'
+                        f_ok = False
+
             if not f_ok: 
                 resubcmds[key] = 'bsub -q {queue} -o {dir}/{logfile} {dir}/{srcfile}'.format(
                     queue=self.options.queue, dir='/'.join([os.getcwd(),self.card_dir,'jobs']), logfile=key+'_resub.log', srcfile=key+'.sh')
