@@ -130,7 +130,7 @@ histPref['EWK'] = {'style': sVV_WJets, 'layer': 3, 'legend': 'EWK'}
 histPref['ElectroWeak'] = {'style': sVV_WJets,
                            'layer': 3, 'legend': 'ElectroWeak'}
 histPref['ZJ*'] = {'style': sVV_DYJets, 'layer': 3.1,
-                   'legend': 'Z#rightarrow#tau#tau/Z#rightarrow ll, j#rightarrow#tau'}
+                   'legend': 'Z+jets'}
 histPref['ZL*'] = {'style': sVV_DYJets, 'layer': 3.2, 'legend': 'DY + jets'}
 histPref['Zl0jet*'] = {'style': sVV_DYJets, 'layer': 3.2,
                        'legend': 'Z#rightarrow ll + 0 jets'}
