@@ -72,7 +72,7 @@ if __name__ == "__main__":
              
                     title2D = 'W{ch} {pol} : pdf {ip}'.format(ip=ip,pol=pol,ch=chs)
                     h2_backrolled_1 = dressed2D(ratio_pdfi,binning,title2D)
-                    h2_backrolled_1.GetZaxis().SetRangeUser(-0.02,0.02)
+                    h2_backrolled_1.GetZaxis().SetRangeUser(-0.010,0.010)
                     ratios['syst_W{ch}_{pol}_W{ch}_{pol}_{flav}_pdf{ip}'.format(ch=charge,pol=pol,flav=channel,ip=ip)] = h2_backrolled_1
         else:
             for proc in procs:
@@ -101,6 +101,8 @@ if __name__ == "__main__":
             for ext in ['pdf', 'png']:
                 canv.SaveAs('{odir}/{name}.{ext}'.format(odir=outname,name=k,ext=ext))
 
-    print 'ERRORS FOUND IN THESE SYSTEAMTICS'
-    for err in errors:
-        print err
+    if len(errors):
+        print 'WARNING WARNING WARNING ===================='
+        print 'ERRORS FOUND IN THESE SYSTEAMTICS'
+        for err in errors:
+            print err
