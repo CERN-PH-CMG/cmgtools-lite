@@ -54,6 +54,7 @@ if __name__ == "__main__":
     from symmetrizeMatrixAbsY import getScales
     
     charges = options.charge.split(',')
+    channel = 'mu' if 'mu' in options.bin else 'el'
     
     ## look for the maximum ybin bin number in each charge/helicity state
     binningFile = open(options.inputdir+'/binningYW.txt')
@@ -129,8 +130,7 @@ if __name__ == "__main__":
                         binn = int(bin.split('_')[-1]) if 'Ybin_' in bin else -1
                     rootfiles_syst = filter(lambda x: re.match('{base}_sig_(pdf\d+|muR\S+|muF\S+|alphaS\S+|wptSlope\S+)\.input\.root'.format(base=basename),x), os.listdir(options.inputdir))
                     if ifile==0:
-                        ch = 'mu' if 'mu' in options.bin else 'el'
-                        rootfiles_syst += filter(lambda x: re.match('Z_{channel}_{charge}_dy_(pdf\d+|muR\S+|muF\S+|alphaS\S+\S+)\.input\.root'.format(channel=ch,charge=charge),x), os.listdir(options.inputdir))
+                        rootfiles_syst += filter(lambda x: re.match('Z_{channel}_{charge}_dy_(pdf\d+|muR\S+|muF\S+|alphaS\S+\S+)\.input\.root'.format(channel=channel,charge=charge),x), os.listdir(options.inputdir))
                     rootfiles_syst = [dir+'/'+x for x in rootfiles_syst]
                     rootfiles_syst.sort()
                     if re.match('process\s+',l): 
@@ -305,7 +305,7 @@ if __name__ == "__main__":
                 efferrors_LO   [pol] = [   x for x in getScales(ybins[pol], charge, pol, os.path.abspath(options.scaleFile), doNLO=False, returnError=True)]
     
         combinedCard = open(cardfile,'a')
-
+        # combinedCard.write('gaussian_param param 0 1\n') # this is to add manually a "lumi" lnN constraint on each process scaled by a rateParam
         POIs = []; fixedPOIs = []; allPOIs = []
         if options.constrainRateParams:
             signal_procs = filter(lambda x: re.match('Wplus|Wminus',x), realprocesses)
@@ -344,10 +344,9 @@ if __name__ == "__main__":
                             expRate0 = float(ProcsAndRatesDict[helbin])/tmp_eff
                             param_range_0 = '{r:15.1f} [{dn:.1f},{up:.1f}]'.format(r=expRate0,dn=(1-rateNuis)*expRate0,up=(1+rateNuis)*expRate0)
                             # remove the channel to allow ele/mu combination when fitting for GEN
-                            channel = 'mu' if 'mu' in helbin else 'el'
-                            helbin_nochan = helbin.replace('W{charge}_{channel}_Ybin'.format(charge=charge,channel=channel),
-                                                           'W{charge}_Ybin'.format(charge=charge))
+                            helbin_nochan = helbin.replace('_{channel}_Ybin'.format(channel=channel),'_Ybin')
                             combinedCard.write('norm_{nc}  rateParam * {n} \t {pr}\n'.format(nc=helbin_nochan,n=helbin,pr=param_range_0))
+                            # combinedCard.write('lumi_13TeV_rp rateParam * {n} \t TMath::Power({lumiLnN},@0) gaussian_param \n'.format(n=helbin,lumiLnN=1.+optionslumiLnN)) #  this is to add manually a "lumi" lnN constraint on each process scaled by a rateParam
     
                         ## if we do not want to fit the gen-level thing, we want to just put the absolute reco rates here
                         else:
@@ -402,13 +401,13 @@ if __name__ == "__main__":
                     normWLeft = sum([float(r) for (p,r) in WLeftOrRight if 'left' in p])/eff_left
                     normWRight = sum([float(r) for (p,r) in WLeftOrRight if 'right' in p])/eff_right
                     normWLeftOrRight = normWLeft + normWRight
-                    combinedCardNew.write("eff_{nc}   rateParam * {n}    {eff:.5f} [{dn:.5f},{up:.5f}]\n".format(nc=Wlong[0][0].replace('_long','_%s_long'%options.bin),n=Wlong[0][0],
+                    combinedCardNew.write("eff_{nc}   rateParam * {n}    {eff:.5f} [{dn:.5f},{up:.5f}]\n".format(nc=Wlong[0][0].replace('_long','_%s_long' % channel),n=Wlong[0][0],
                                                                                                                  eff=eff_long,dn=(1-1E-04)*eff_long,up=(1+1E-04)*eff_long))
     
                     ## i have no idea what happens after here in this if block...
                     if options.longToTotal:
                         r0overLR = normWLong/normWLeftOrRight
-                        combinedCardNew.write("norm_%-50s    rateParam * %-5s    %15.1f [%.0f,%.0f]\n" % (Wlong[0][0],Wlong[0][0].replace('_long','_%s_long'%options.bin),
+                        combinedCardNew.write("norm_%-50s    rateParam * %-5s    %15.1f [%.0f,%.0f]\n" % (Wlong[0][0],Wlong[0][0].replace('_long','_%s_long' % channel),
                                                                                                           normWLeftOrRight,(1-options.longToTotal)*normWLeftOrRight,(1+options.longToTotal)*normWLeftOrRight))
                         wLongNormString = "ratio_%-5s   rateParam * %-5s   2*(%s)*%.3f %s\n" \
                             % (Wlong[0][0],Wlong[0][0],'+'.join(['@%d'%i for i in xrange(len(POIs))]),r0overLR,','.join([p for p in POIs]))
@@ -418,7 +417,7 @@ if __name__ == "__main__":
                     else:
                         nl = normWLong; tc = tightConstraint
                         combinedCardNew.write("norm_{n} rateParam * {n} {r:15.1f} [{dn:.1f},{up:.1f}]\n".format(n=Wlong[0][0],r=nl,dn=(1-tc)*nl,up=(1+tc)*nl))
-                        POIs.append('norm_{nc}'.format(nc=Wlong[0][0].replace('_long','_%s_long'%options.bin)))
+                        POIs.append('norm_{n}'.format(n=Wlong[0][0].replace('_long','_%s_long' % channel))) # at this stage, norm POIs have still the channel inside
     
                 ## if we do not scale gen-reco, then we go back to before...
                 else:
@@ -439,8 +438,7 @@ if __name__ == "__main__":
                 ## remove all the POIs that we want to fix
                 if options.absoluteRates:
                     # remove the channel to allow ele/mu combination when fitting for GEN
-                    channel = 'mu' if 'mu' in helbin else 'el'
-                    POIs = [poi.replace('W{charge}_{channel}_Ybin'.format(charge=charge,channel=channel),'W{charge}_Ybin'.format(charge=charge)) for poi in  POIs]
+                    POIs = [poi.replace('_{channel}_'.format(channel=channel),'_') for poi in  POIs]
                 for poi in POIs:
                     if 'right' in poi and any('Ybin_'+str(i) in poi for i in fixedYBins[charge+'R']):
                         fixedPOIs.append(poi)
@@ -459,7 +457,6 @@ if __name__ == "__main__":
                 combinedCardNew.write('\nwpt group = '+' '.join([sys for sys,procs in wptsyst.iteritems()])+'\n')
 
                 ## now assign a uniform luminosity uncertainty to all the fixed processes, to avoid constraining 
-                channel = 'mu' if 'mu' in helbin else 'el'
                 combinedCardNew.write('\nCMS_lumi_13TeV   lnN %s\n' % (" ".join([kpatt % '-' if ('data' in p or any(p.replace('_%s_'%channel,'_')==fPOI.replace('norm_','') for fPOI in floatPOIs)) else '%.3f'%(1+options.lumiLnN) for p,r in ProcsAndRates])) )
                 combinedCardNew.write('CMS_W   lnN %s\n' % (" ".join([kpatt % '%.3f' % (1+options.wLnN) if (p=='TauDecaysW' or p=='Wplus_long' or any(p.replace('_%s_'%channel,'_')==fPOI.replace('norm_','') for fPOI in fixedPOIs)) else '-' for p,r in ProcsAndRates])) )
 
