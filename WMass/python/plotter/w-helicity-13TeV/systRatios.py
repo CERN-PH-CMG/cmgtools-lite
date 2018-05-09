@@ -131,6 +131,8 @@ if __name__ == "__main__":
             for ext in ['pdf', 'png']:
                 canv.SaveAs('{odir}/{name}.{ext}'.format(odir=outname,name=k,ext=ext))
 
-    print 'ERRORS FOUND IN THESE SYSTEAMTICS'
-    for err in errors:
-        print err
+    if len(errors):
+        print '=== WARNING === WARNING === WARNING ==='
+        print 'ERRORS FOUND IN THESE SYSTEAMTICS'
+        for err in errors:
+            print err
