@@ -323,10 +323,11 @@ if __name__ == "__main__":
                 for iy,helbin in enumerate(hel):
                     pol = helbin.split('_')[1]
                     index_procs = procs.index(helbin)
-                    lns = ' - '.join('' for i in range(index_procs+1))
-                    lns += ' {effunc:.4f} '.format(effunc=1.+efferrors[pol][iy])
-                    lns += ' - '.join('' for i in range(len(procs) - index_procs))
-                    combinedCard.write('eff_unc_{hb}    lnN {lns}\n'.format(hb=helbin,lns=lns))
+                    if options.absoluteRates:
+                        lns = ' - '.join('' for i in range(index_procs+1))
+                        lns += ' {effunc:.4f} '.format(effunc=1.+efferrors[pol][iy])
+                        lns += ' - '.join('' for i in range(len(procs) - index_procs))
+                        combinedCard.write('eff_unc_{hb}    lnN {lns}\n'.format(hb=helbin,lns=lns))
             for hel in hel_to_constrain:
                 for iy,helbin in enumerate(hel):
                     sfx = str(iy)
@@ -356,32 +357,32 @@ if __name__ == "__main__":
     
                     ## if not fitting full rates, we do the relative rateParams close to 1.
                     else:
-                        param_range_0 = '1. [{dn:.2f},{up:.2f}]'.format(dn=1-rateNuis,up=1+rateNuis)
-                        param_range_1 = param_range_0
-                        combinedCard.write('norm_{n}   rateParam * {n}    {pr}\n'.format(n=helbin,pr=param_range_0))
+                        pass
+                        # param_range_0 = '1. [{dn:.2f},{up:.2f}]'.format(dn=1-rateNuis,up=1+rateNuis)
+                        # param_range_1 = param_range_0
+                        # combinedCard.write('norm_{n}   rateParam * {n}    {pr}\n'.format(n=helbin,pr=param_range_0))
                     POIs.append(normPOI)
     
             ## not sure this below will still work with absY, but for now i don't care (marc)
-            if not longBKG and not options.longLnN:
-                for i in xrange(len(signal_0)):
-                    sfx = signal_0[i].split('_')[-1]
-                    param_range = '[0.95,1.05]' if sfx in bins_to_constrain else '[0.95,1.05]'
-                    combinedCard.write('norm_%-5s   rateParam * %-5s    1 %s\n' % (signal_0[i],signal_0[i],param_range))
-                    POIs.append('norm_%s' % signal_0[i])
+            # if not longBKG and not options.longLnN:
+            #     for i in xrange(len(signal_0)):
+            #         sfx = signal_0[i].split('_')[-1]
+            #         param_range = '[0.95,1.05]' if sfx in bins_to_constrain else '[0.95,1.05]'
+            #         combinedCard.write('norm_%-5s   rateParam * %-5s    1 %s\n' % (signal_0[i],signal_0[i],param_range))
+            #         POIs.append('norm_%s' % signal_0[i])
         
-            if options.absoluteRates:
-                combinedCard = open(cardfile,'r')
-                procs = []
-                rates = []
-                for l in combinedCard.readlines():
-                    if re.match("process\s+",l) and not re.match("process\s+\d",l): # my regexp qualities are bad... 
-                        procs = (l.rstrip().split())[1:]
-                    if re.match("rate\s+",l):
-                        rates = (l.rstrip().split())[1:]
-                    if len(procs) and len(rates): break
-                ProcsAndRates = zip(procs,rates)
+            combinedCard = open(cardfile,'a+')
+            procs = []
+            rates = []
+            for l in combinedCard.readlines():
+                if re.match("process\s+",l) and not re.match("process\s+\d",l): # my regexp qualities are bad... 
+                    procs = (l.rstrip().split())[1:]
+                if re.match("rate\s+",l):
+                    rates = (l.rstrip().split())[1:]
+                if len(procs) and len(rates): break
+            ProcsAndRates = zip(procs,rates)
 
-                combinedCard = open(cardfile,'r')
+            if options.absoluteRates:
                 ProcsAndRatesUnity = []
                 for (p,r) in ProcsAndRates:
                     ProcsAndRatesUnity.append((p,'1') if ('left' in p or 'right' in p or 'long' in p) else (p,r))
@@ -434,11 +435,17 @@ if __name__ == "__main__":
     
                 ## make an efficiency nuisance group
                 combinedCardNew.write('\nefficiencies group = '+' '.join([p.replace('norm','eff') for p in POIs])+'\n\n' )
+                ## make a group for the fixed rate parameters.
+                print 'adding a nuisance group for the fixed rateParams'
+                if len(fixedPOIs): combinedCardNew.write('\nfixedY group = {fixed} '.format(fixed=' '.join(i.strip() for i in fixedPOIs)))
+                combinedCardNew.write('\nallY group = {all} '.format(all=' '.join(i.strip().replace('_%s_'%options.bin,'_') for i in allPOIs)))
+                combinedCardNew.close() ## for some reason this is really necessary
+
+                os.system("mv {cardfile}_new {cardfile}".format(cardfile=cardfile))
 
                 ## remove all the POIs that we want to fix
-                if options.absoluteRates:
-                    # remove the channel to allow ele/mu combination when fitting for GEN
-                    POIs = [poi.replace('_{channel}_'.format(channel=channel),'_') for poi in  POIs]
+                # remove the channel to allow ele/mu combination when fitting for GEN
+                POIs = [poi.replace('_{channel}_'.format(channel=channel),'_') for poi in  POIs]
                 for poi in POIs:
                     if 'right' in poi and any('Ybin_'+str(i) in poi for i in fixedYBins[charge+'R']):
                         fixedPOIs.append(poi)
@@ -446,60 +453,53 @@ if __name__ == "__main__":
                         fixedPOIs.append(poi)
                 floatPOIs = list(poi for poi in POIs if not poi in fixedPOIs)
                 allPOIs = fixedPOIs+floatPOIs
-    
-                ## add the PDF systematics 
-                for sys,procs in theosyst.iteritems():
-                    # there should be 2 occurrences of the same proc in procs (Up/Down). This check should be useless if all the syst jobs are DONE
-                    combinedCardNew.write('%-15s   shape %s\n' % (sys,(" ".join([kpatt % '1.0' if p in procs and procs.count(p)==2 else '  -  ' for p,r in ProcsAndRates]))) )
-                combinedCardNew.write('\npdfs group = '+' '.join([sys for sys,procs in pdfsyst.iteritems()])+'\n')
-                combinedCardNew.write('\nscales group = '+' '.join([sys for sys,procs in qcdsyst.iteritems()])+'\n')
-                combinedCardNew.write('\nalphaS group = '+' '.join([sys for sys,procs in alssyst.iteritems()])+'\n')
-                combinedCardNew.write('\nwpt group = '+' '.join([sys for sys,procs in wptsyst.iteritems()])+'\n')
-
-                ## now assign a uniform luminosity uncertainty to all the fixed processes, to avoid constraining 
-                combinedCardNew.write('\nCMS_lumi_13TeV   lnN %s\n' % (" ".join([kpatt % '-' if ('data' in p or any(p.replace('_%s_'%channel,'_')==fPOI.replace('norm_','') for fPOI in floatPOIs)) else '%.3f'%(1+options.lumiLnN) for p,r in ProcsAndRates])) )
-                combinedCardNew.write('CMS_W   lnN %s\n' % (" ".join([kpatt % '%.3f' % (1+options.wLnN) if (p=='TauDecaysW' or p=='Wplus_long' or any(p.replace('_%s_'%channel,'_')==fPOI.replace('norm_','') for fPOI in fixedPOIs)) else '-' for p,r in ProcsAndRates])) )
-
-                combinedCardNew.close() ## for some reason this is really necessary
-                os.system("mv {cardfile}_new {cardfile}".format(cardfile=cardfile))
-    
+                ## define the combine POIs, i.e. the subset on which to run MINOS
+                minosPOIs = allPOIs if not options.POIsToMinos else options.POIsToMinos.split(',')
         
-    
-        ## define the combine POIs, i.e. the subset on which to run MINOS
-        minosPOIs = allPOIs if not options.POIsToMinos else options.POIsToMinos.split(',')
-    
-        ## make a group for the fixed rate parameters. just append it to the file.
-        print 'adding a nuisance group for the fixed rateParams'
-        with open(cardfile,'a+') as finalCardfile:
-            if len(fixedPOIs): finalCardfile.write('\nfixedY group = {fixed} '.format(fixed=' '.join(i.strip() for i in fixedPOIs)))
-            finalCardfile.write('\nallY group = {all} '.format(all=' '.join(i.strip().replace('_%s_'%options.bin,'_') for i in allPOIs)))
-            finalCardfile.write('\n\n## end of file')
-        #finalCardfile.close()
-    
+            ## add the PDF systematics 
+            for sys,procs in theosyst.iteritems():
+                # there should be 2 occurrences of the same proc in procs (Up/Down). This check should be useless if all the syst jobs are DONE
+                combinedCard.write('%-15s   shape %s\n' % (sys,(" ".join([kpatt % '1.0' if p in procs and procs.count(p)==2 else '  -  ' for p,r in ProcsAndRates]))) )
+            combinedCard.write('\npdfs group = '+' '.join([sys for sys,procs in pdfsyst.iteritems()])+'\n')
+            combinedCard.write('\nscales group = '+' '.join([sys for sys,procs in qcdsyst.iteritems()])+'\n')
+            combinedCard.write('\nalphaS group = '+' '.join([sys for sys,procs in alssyst.iteritems()])+'\n')
+            combinedCard.write('\nwpt group = '+' '.join([sys for sys,procs in wptsyst.iteritems()])+'\n')
+
+            ## now assign a uniform luminosity uncertainty to all the MC processes
+            combinedCard.write('\nCMS_lumi_13TeV   lnN %s\n' % (" ".join([kpatt % '-' if 'data' in p else '%.3f'%(1+options.lumiLnN) for p,r in ProcsAndRates])) )
+            combinedCard.write('CMS_W   lnN %s\n' % (" ".join([kpatt % '%.3f' % (1+options.wLnN) if (p=='TauDecaysW' or re.match('W{charge}'.format(charge=charge),p)) else '-' for p,r in ProcsAndRates])) )
+            combinedCard.close() 
+
         print "merged datacard in ",cardfile
         
         #ws = "%s_ws.root" % options.bin
         ws = cardfile.replace('_card.txt', '_ws.root')
-        txt2wsCmd = 'text2workspace.py {cf} -o {ws} --X-allow-no-signal --X-no-check-norm '.format(cf=cardfile, ws=ws)
+        if options.absoluteRates:
+            txt2wsCmd = 'text2workspace.py {cf} -o {ws} --X-allow-no-signal --X-no-check-norm '.format(cf=cardfile, ws=ws)
+            combineCmd = 'combine {ws} -M MultiDimFit    -t -1 --expectSignal=1 -m 999 --saveFitResult --cminInitialHesse 1 --cminFinalHesse 1 --cminPreFit 1       --redefineSignalPOIs {pois}            --floatOtherPOIs=0 --freezeNuisanceGroups efficiencies,fixedY{pdfs}{scales}{alphas} -v 9'.format(ws=ws, pois=','.join(minosPOIs), pdfs=(',pdfs' if len(pdfsyst) else ''), scales=(',scales' if len(qcdsyst) else ''),alphas=('alphaS' if len(alssyst) else ''))
+        else: 
+            signals = ['W{charge}_{pol}_W{charge}_{pol}_{channel}_Ybin_{yb}'.format(charge=charge,pol=pol,channel=channel,yb=yb) for pol in ['left','right'] for yb in xrange(len(ybins[pol])) ]
+            signals += ['W{charge}_long'.format(charge=charge)]
+            multisig = ' '.join(["--PO 'map=.*/{proc}$:r_{proc}[1,0,10]'".format(proc=proc) for proc in signals])
+            txt2wsCmd = 'text2workspace.py {cf} -o {ws} --X-allow-no-signal --X-no-check-norm -P HiggsAnalysis.CombinedLimit.PhysicsModel:multiSignalModel --PO verbose {pos}'.format(cf=cardfile, ws=ws, pos=multisig)
+            combineCmd = 'combine {ws} -M MultiDimFit    -t -1 -m 999 --saveFitResult --keepFailures --cminInitialHesse 1 --cminFinalHesse 1 --cminPreFit 1       --redefineSignalPOIs {pois} --floatOtherPOIs=0 -v 9'.format(ws=ws, pois=','.join(['r_'+p for p in signals]))
         print txt2wsCmd
         os.system(txt2wsCmd)
-            
-        combineCmd = 'combine {ws} -M MultiDimFit    -t -1 --expectSignal=1 -m 999 --saveFitResult --cminInitialHesse 1 --cminFinalHesse 1 --cminPreFit 1       --redefineSignalPOIs {pois}            --floatOtherPOIs=0 --freezeNuisanceGroups efficiencies,fixedY{pdfs}{scales}{alphas} -v 9'.format(ws=ws, pois=','.join(minosPOIs), pdfs=(',pdfs' if len(pdfsyst) else ''), scales=(',scales' if len(qcdsyst) else ''),alphas=('alphaS' if len(alssyst) else ''))
         print combineCmd
 
-    datacards = [os.path.abspath(options.inputdir)+"/"+options.bin+'_{ch}_card.txt'.format(ch=charge) for charge in ['plus','minus']]
-    if sum([os.path.exists(card) for card in datacards])==2:
-        print "Cards for W+ and W- done. Combining them now..."
-        combinedCard = os.path.abspath(options.inputdir)+"/"+options.bin+'_card.txt'
-        combineCards = 'combineCards.py '+' '.join(['{bin}_{ch}={bin}_{ch}_card.txt'.format(bin=options.bin,ch=charge) for charge in ['plus','minus']])+' > '+combinedCard
-        print "combining W+ and W- with: ",combineCards
-        # go into the input dir to issue the combine command w/o paths not to screw up the paths of the shapes in the cards
-        os.system('cd {inputdir}; {cmd}; cd -'.format(inputdir=os.path.abspath(options.inputdir),cmd=combineCards))
+    # datacards = [os.path.abspath(options.inputdir)+"/"+options.bin+'_{ch}_card.txt'.format(ch=charge) for charge in ['plus','minus']]
+    # if sum([os.path.exists(card) for card in datacards])==2:
+    #     print "Cards for W+ and W- done. Combining them now..."
+    #     combinedCard = os.path.abspath(options.inputdir)+"/"+options.bin+'_card.txt'
+    #     combineCards = 'combineCards.py '+' '.join(['{bin}_{ch}={bin}_{ch}_card.txt'.format(bin=options.bin,ch=charge) for charge in ['plus','minus']])+' > '+combinedCard
+    #     print "combining W+ and W- with: ",combineCards
+    #     # go into the input dir to issue the combine command w/o paths not to screw up the paths of the shapes in the cards
+    #     os.system('cd {inputdir}; {cmd}; cd -'.format(inputdir=os.path.abspath(options.inputdir),cmd=combineCards))
         
-        ws = combinedCard.replace('_card.txt', '_ws.root')
-        t2w = 'text2workspace.py {cf} -o {ws} --X-allow-no-signal --X-no-check-norm '.format(cf=combinedCard, ws=ws)
-        print "combined t2w command: ",t2w
-        os.system(t2w)
-        combineCmdTwoCharges = 'combine {ws} -M MultiDimFit    -t -1 --expectSignal=1 -m 999 --saveFitResult --cminInitialHesse 1 --cminFinalHesse 1 --cminPreFit 1       --redefineSignalPOIs {pois}            --floatOtherPOIs=0 --freezeNuisanceGroups efficiencies,fixedY{pdfs}{scales} -v 9'.format(ws=ws, pois=','.join(minosPOIs), pdfs=(',pdfs' if len(pdfsyst) else ''), scales=(',scales' if len(qcdsyst) else ''))
-        print combineCmdTwoCharges
-        print "DONE. ENJOY FITTING !"
+    #     ws = combinedCard.replace('_card.txt', '_ws.root')
+    #     t2w = 'text2workspace.py {cf} -o {ws} --X-allow-no-signal --X-no-check-norm '.format(cf=combinedCard, ws=ws)
+    #     print "combined t2w command: ",t2w
+    #     os.system(t2w)
+    #     combineCmdTwoCharges = 'combine {ws} -M MultiDimFit    -t -1 --expectSignal=1 -m 999 --saveFitResult --cminInitialHesse 1 --cminFinalHesse 1 --cminPreFit 1       --redefineSignalPOIs {pois}            --floatOtherPOIs=0 --freezeNuisanceGroups efficiencies,fixedY{pdfs}{scales} -v 9'.format(ws=ws, pois=','.join(minosPOIs), pdfs=(',pdfs' if len(pdfsyst) else ''), scales=(',scales' if len(qcdsyst) else ''))
+    #     print combineCmdTwoCharges
+    #     print "DONE. ENJOY FITTING !"
