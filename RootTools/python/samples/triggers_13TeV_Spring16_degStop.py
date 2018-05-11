@@ -4,12 +4,6 @@
 
 
 ### ----> for the degStop
-
-
-
-
-
-    
         
 METTriggers = \
 [\
@@ -161,30 +155,3 @@ triggers = METTriggers + SingleMuonPDTriggers + SingleElPDTriggers + JetHTPDTrig
 for trigger in  triggers:
   trigger_name = "trigger_{trig}".format(trig=trigger.replace("_v*","") )
   exec("{trig_name}  =  [ '{trig}'] ".format(trig_name = trigger_name, trig=trigger))
-                                           
-                
-        
-                
-            
-                                    
-    
-                                    
-                     
-            
-                                    
-           
-        
-    
-           
-                            
-    
-                            
-            
-                 
-        
-           
-                           
-                                                  
-                   
-                    
-                    
