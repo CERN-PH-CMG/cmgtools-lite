@@ -303,9 +303,9 @@ if __name__ == "__main__":
                 efferrors      [pol] = [   x for x in getScales(ybins[pol], charge, pol, os.path.abspath(options.scaleFile), returnError=True)] ## these errors are relative to the effs
                 efficiencies_LO[pol] = [1./x for x in getScales(ybins[pol], charge, pol, os.path.abspath(options.scaleFile), doNLO=False)]
                 efferrors_LO   [pol] = [   x for x in getScales(ybins[pol], charge, pol, os.path.abspath(options.scaleFile), doNLO=False, returnError=True)]
-    
+        combinedCard.close()
+
         combinedCard = open(cardfile,'a')
-        # combinedCard.write('gaussian_param param 0 1\n') # this is to add manually a "lumi" lnN constraint on each process scaled by a rateParam
         POIs = []; fixedPOIs = []; allPOIs = []
         if options.constrainRateParams:
             signal_procs = filter(lambda x: re.match('Wplus|Wminus',x), realprocesses)
@@ -355,32 +355,12 @@ if __name__ == "__main__":
                             param_range_0 = '{r:15.1f} [{dn:.1f},{up:.1f}]'.format(r=expRate0,dn=(1-rateNuis)*expRate0,up=(1+rateNuis)*expRate0)
                             combinedCard.write('norm_{n}  rateParam * {n} \t {pr}\n'.format(n=helbin,pr=param_range_0))
     
-                    ## if not fitting full rates, we do the relative rateParams close to 1.
                     else:
+                        ## if not fitting full rates, we do the relative rateParams close to 1.
+                        ## this is now done with a physics model 
                         pass
-                        # param_range_0 = '1. [{dn:.2f},{up:.2f}]'.format(dn=1-rateNuis,up=1+rateNuis)
-                        # param_range_1 = param_range_0
-                        # combinedCard.write('norm_{n}   rateParam * {n}    {pr}\n'.format(n=helbin,pr=param_range_0))
                     POIs.append(normPOI)
-    
-            ## not sure this below will still work with absY, but for now i don't care (marc)
-            # if not longBKG and not options.longLnN:
-            #     for i in xrange(len(signal_0)):
-            #         sfx = signal_0[i].split('_')[-1]
-            #         param_range = '[0.95,1.05]' if sfx in bins_to_constrain else '[0.95,1.05]'
-            #         combinedCard.write('norm_%-5s   rateParam * %-5s    1 %s\n' % (signal_0[i],signal_0[i],param_range))
-            #         POIs.append('norm_%s' % signal_0[i])
-        
-            combinedCard = open(cardfile,'a+')
-            procs = []
-            rates = []
-            for l in combinedCard.readlines():
-                if re.match("process\s+",l) and not re.match("process\s+\d",l): # my regexp qualities are bad... 
-                    procs = (l.rstrip().split())[1:]
-                if re.match("rate\s+",l):
-                    rates = (l.rstrip().split())[1:]
-                if len(procs) and len(rates): break
-            ProcsAndRates = zip(procs,rates)
+            combinedCard.close()
 
             if options.absoluteRates:
                 ProcsAndRatesUnity = []
@@ -388,6 +368,7 @@ if __name__ == "__main__":
                     ProcsAndRatesUnity.append((p,'1') if ('left' in p or 'right' in p or 'long' in p) else (p,r))
     
                 combinedCardNew = open(cardfile+"_new",'w')
+                combinedCard = open(cardfile,'r')
                 for l in combinedCard.readlines():
                     if re.match("rate\s+",l):
                         combinedCardNew.write('rate            %s \n' % ' '.join([kpatt % r for (p,r) in ProcsAndRatesUnity])+'\n')
@@ -438,9 +419,8 @@ if __name__ == "__main__":
                 ## make a group for the fixed rate parameters.
                 print 'adding a nuisance group for the fixed rateParams'
                 if len(fixedPOIs): combinedCardNew.write('\nfixedY group = {fixed} '.format(fixed=' '.join(i.strip() for i in fixedPOIs)))
-                combinedCardNew.write('\nallY group = {all} '.format(all=' '.join(i.strip().replace('_%s_'%options.bin,'_') for i in allPOIs)))
+                combinedCardNew.write('\nallY group = {all} \n'.format(all=' '.join(i.strip().replace('_%s_'%options.bin,'_') for i in allPOIs)))
                 combinedCardNew.close() ## for some reason this is really necessary
-
                 os.system("mv {cardfile}_new {cardfile}".format(cardfile=cardfile))
 
                 ## remove all the POIs that we want to fix
@@ -456,6 +436,7 @@ if __name__ == "__main__":
                 ## define the combine POIs, i.e. the subset on which to run MINOS
                 minosPOIs = allPOIs if not options.POIsToMinos else options.POIsToMinos.split(',')
         
+            combinedCard = open(cardfile,'a+')
             ## add the PDF systematics 
             for sys,procs in theosyst.iteritems():
                 # there should be 2 occurrences of the same proc in procs (Up/Down). This check should be useless if all the syst jobs are DONE
