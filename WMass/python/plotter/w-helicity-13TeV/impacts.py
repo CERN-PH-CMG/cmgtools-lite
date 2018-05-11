@@ -1,5 +1,5 @@
-# usage: 1. INITIAL FITS: python impacts.py ../cards/helicity_2018_03_09_testpdfsymm/Wel_plus_ws.root initial --channel el [--params 'CMS_lumi_13TeV']
-# usage: 2. SCANS: python impacts.py ../cards/helicity_2018_03_09_testpdfsymm/Wel_plus_ws.root scan --channel el [--params 'CMS_lumi_13TeV']
+# usage: step 1. INITIAL FITS: python impacts.py Wel_plus_ws.root initial --channel el [--params 'CMS_lumi_13TeV']
+# usage: step 2 (when 1 is done). SCANS: python impacts.py Wel_plus_ws.root scan --channel el [--params 'CMS_lumi_13TeV']
 
 import ROOT, random, array, os
 
