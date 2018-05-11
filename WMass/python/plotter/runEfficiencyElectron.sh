@@ -23,16 +23,23 @@
 
 justPrint="y"   # if "y", it just prints commands (useful before submitting the job)
 doAlsoLO="y"    # decide to run also on LO samples, by default only NLO is done
-outDir="plots/gen_eff_tightCharge_chargeMatch_signedY"
+splitHelicity="n"
+outDir="plots/gen_eff_etaPt"
 plotterDir="/afs/cern.ch/work/m/mciprian/w_mass_analysis/heppy/CMSSW_8_0_25/src/CMGTools/WMass/python/plotter"
 treepath="/eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3_WENUSKIM_V5_TINY"
 #treepath="/eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3_WENUSKIM_V5" 
 #mca_W_NLO="w-helicity-13TeV/wmass_e/mca-includes/mca-80X-wenu-sig_lessFiles_genCutOnly.txt"    # less statistics
 mca_W_NLO="w-helicity-13TeV/wmass_e/mca-includes/mca-80X-wenu-sig_genCutOnly.txt"       # all statistics
 mca_W_LO="w-helicity-13TeV/wmass_e/mca-includes/mca-80X-wenu-sig_LO_genCutOnly.txt"
+if [[ "${splitHelicity}" != "y" ]]; then
+    mca_W_NLO="w-helicity-13TeV/wmass_e/mca-includes/mca-80X-wenu-sig_genCutOnly_noHel.txt"     # not splitted in helicity, only in charge
+    mca_W_LO="w-helicity-13TeV/wmass_e/mca-includes/mca-80X-wenu-sig_LO_genCutOnly_noHel.txt"   # not splitted in helicity, only in charge
+fi
+
 cutfile="w-helicity-13TeV/wmass_e/wenu_80X.txt"
 plotfile="w-helicity-13TeV/wmass_e/wenu_plots.txt"
-plotvar="abswy"
+#plotvar="abswy"
+plotvar="etaPtGen"
 #plotvar="wy"
 noChargeFlip=" -A tightCharge noChargeFlip 'LepGood1_mcMatchId*LepGood1_charge!=-24' "
 
@@ -44,8 +51,6 @@ cd ${plotterDir}
 eval `scramv1 runtime -sh`
 
 charges=("plus" "minus")
-
-
 
 orders=("NLO")
 if [[ "${doAlsoLO}" == "y" ]]; then
@@ -72,9 +77,16 @@ do
 	    mcafile="${mca_W_LO}"
 	    outfolder="${outfolder}_LO"
 	fi
+
+	processes=""
+	if [[ "${splitHelicity}" == "y" ]]; then
+	    processes=" -p W${charge}_long,W${charge}_left,W${charge}_right "
+	else
+	    processes=" -p W${charge} "
+	fi
 	
         ### gen selection no cuts
-	command="python mcPlots.py --pdir ${outDir}/${outfolder} -F Friends '{P}/friends/tree_Friend_{cname}.root'  -P ${treepath} -f -j 8 -l 35.9 --s2v  --lspam '#bf{CMS} #it{Preliminary}' --legendWidth 0.20 --legendFontSize 0.035  ${mcafile} ${cutfile} -p W${charge}_long,W${charge}_left,W${charge}_right --plotmode=nostack  --sP w${charge}_${plotvar} ${plotfile}   -U 'alwaystrue' --noCms"
+	command="python mcPlots.py --pdir ${outDir}/${outfolder} -F Friends '{P}/friends/tree_Friend_{cname}.root'  -P ${treepath} -f -j 8 -l 35.9 --s2v  --lspam '#bf{CMS} #it{Preliminary}' --legendWidth 0.20 --legendFontSize 0.035  ${mcafile} ${cutfile} ${processes} --plotmode=nostack  --sP w${charge}_${plotvar} ${plotfile}   -U 'alwaystrue' --noCms  "
 
 	echo "${command}"
 	if [[ "${justPrint}" != "y" ]]; then
@@ -86,7 +98,8 @@ do
         ### reco selection all cuts       
 	outfolder="${outfolder/wgen_nosel/wgen_fullsel}"
 
-	command="python mcPlots.py --pdir ${outDir}/${outfolder} -F Friends '{P}/friends/tree_Friend_{cname}.root'  -P ${treepath} -f -j 8 -l 35.9 --s2v  --lspam '#bf{CMS} #it{Preliminary}' --legendWidth 0.20 --legendFontSize 0.035 ${mcafile} ${cutfile}  -p W${charge}_long,W${charge}_left,W${charge}_right --plotmode=nostack  --sP w${charge}_${plotvar}  ${plotfile}   -W 'puw2016_nTrueInt_36fb(nTrueInt)*trgSF_We(LepGood1_pdgId,LepGood1_pt,LepGood1_eta,2)*leptonSF_We(LepGood1_pdgId,LepGood1_pt,LepGood1_eta)' ${noChargeFlip}"   
+	command="python mcPlots.py --pdir ${outDir}/${outfolder} -F Friends '{P}/friends/tree_Friend_{cname}.root'  -P ${treepath} -f -j 8 -l 35.9 --s2v  --lspam '#bf{CMS} #it{Preliminary}' --legendWidth 0.20 --legendFontSize 0.035 ${mcafile} ${cutfile}  ${processes} --plotmode=nostack  --sP w${charge}_${plotvar}  ${plotfile}   -W 'puw2016_nTrueInt_36fb(nTrueInt)*trgSF_We(LepGood1_pdgId,LepGood1_pt,LepGood1_eta,2)*leptonSF_We(LepGood1_pdgId,LepGood1_pt,LepGood1_eta)' ${noChargeFlip} --noCms  "   
+
 	echo "${command}"
 	if [[ "${justPrint}" != "y" ]]; then
 	    echo "${command}" | bash
