@@ -66,7 +66,7 @@ if __name__ == "__main__":
     datacard.close()
 
     print "Written card to ",args[1],"\n"
-    multisig = ' '.join(["--PO 'map=.*/{proc}$:r_{proc}[1,0,10]'".format(proc=p) for p in procs])
+    multisig = ' '.join(["--PO 'map=.*/{proc}$:r_{proc}[1,0.95,1.05]'".format(proc=p) for p in procs])
     txt2wsCmd = 'text2workspace.py {cf} -o asimov_ws.root --X-allow-no-signal -P HiggsAnalysis.CombinedLimit.PhysicsModel:multiSignalModel --PO verbose {pos}'.format(cf=args[1], pos=multisig)
     combineCmd = "combine asimov_ws.root -M MultiDimFit -t -1 -m 999 --saveFitResult --keepFailures --redefineSignalPOIs {pois} --floatOtherPOIs=1 --trackParameters 'lumi'".format(pois=','.join(['r_'+p for p in procs]))
     #print txt2wsCmd
