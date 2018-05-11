@@ -718,7 +718,7 @@ else:
             SingleElectron_Run2017C_17Nov2017,
             SingleElectron_Run2017D_17Nov2017,
             SingleElectron_Run2017E_17Nov2017,
-            SingleElectron_Run2017BF_17Nov2017,
+            SingleElectron_Run2017F_17Nov2017,
             SingleMuon_Run2017B_17Nov2017,
             SingleMuon_Run2017C_17Nov2017,
             SingleMuon_Run2017D_17Nov2017,
