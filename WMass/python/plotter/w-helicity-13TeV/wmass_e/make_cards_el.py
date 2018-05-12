@@ -4,11 +4,14 @@ from datetime import datetime
 from optparse import OptionParser
 parser = OptionParser(usage="%prog [options]")
 parser.add_option("-d", "--dry-run", dest="dryRun",   action="store_true", default=False, help="Do not run the job, only print the command");
-parser.add_option("-x", "--x-sec", dest="xsec",   action="store_true", default=False, help="Do differential cross-section");
-parser.add_option(      "--xsec-sigcard-binned", dest="xsec_sigcard_binned",   action="store_true", default=False, help="When doing differential cross-section, will make 1 signal card for each 2D template bin (default is False because the number of cards easily gets huge)");
 parser.add_option("-s", "--suffix", dest="suffix", type="string", default=None, help="Append a suffix to the default outputdir (helicity_<date>)");
 parser.add_option("-q", "--queue", dest="queue", type="string", default="cmscaf1nd", help="Select the queue to use");
 parser.add_option("--syst", dest="addSyst", action="store_true", default=False, help="Add PDF and QCD scale systematics to the signal (need incl_sig directive in the MCA file)");
+#### options for differential xsec
+parser.add_option("-x", "--x-sec", dest="xsec",   action="store_true", default=False, help="Do differential cross-section");
+parser.add_option(      "--xsec-sigcard-binned", dest="xsec_sigcard_binned",   action="store_true", default=False, help="When doing differential cross-section, will make 1 signal card for each 2D template bin (default is False because the number of cards easily gets huge)");
+parser.add_option("--groupSignalBy", dest="groupSignalBy", type="int", default='0', help="Group signal bins in bunches of N (pass N as argument). Default is 0, meaning \
+not using this option. This option will reduce the number of chunk datacard for signal,but jobs will last for longer");
 (options, args) = parser.parse_args()
 
 if options.xsec and options.xsec_sigcard_binned and options.addSyst:
@@ -50,7 +53,9 @@ longBackGroundOption = "" if options.xsec else "--long-bkg"  # for xsec we are n
 for c in components:
     cmd="python " + " ".join([PROG,MCA,CUTFILE,VAR,BINNING,SYSTFILE,OUTDIR]) + \
         (" %s -W %s " % (longBackGroundOption,WEIGHTSTRING)) + (" -P %s " % TREEPATH) + (" -q %s " % QUEUE) + c
-    if options.xsec and options.xsec_sigcard_binned: cmd += '  --xsec-sigcard-binned '
+    if options.xsec:
+        if options.xsec_sigcard_binned: cmd += '  --xsec-sigcard-binned '
+        if options.groupSignalBy: cmd += '  --groupSignalBy %d ' % options.groupSignalBy
     if options.dryRun: cmd += '  --dry-run '
     if options.addSyst: cmd += '  --pdf-syst --qcd-syst '
     os.system(cmd)
