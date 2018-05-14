@@ -184,6 +184,36 @@ BDTfakes_BDTWZ_mumu_varbins14   : BDT_DPS_WZ\:BDT_DPS_fakes  :[0,0.4,0.5,0.6,0.7
 
 BDTfakes_BDTWZ_mumu_varbins23   : BDT_DPS_WZ\:BDT_DPS_fakes  :[0,0.3,0.4,0.5,0.6,0.7,0.8,0.82,0.86,0.88,0.9,0.91,0.925,0.935,0.945,0.95,0.955,0.965,0.975,0.98,0.982,0.985,0.99,0.992,0.994,0.996,0.998,1.0]*[0,0.3,0.4,0.5,0.6,0.7,0.8,0.82,0.86,0.88,0.9,0.91,0.925,0.935,0.945,0.95,0.955,0.965,0.975,0.98,0.982,0.985,0.99,0.992,0.994,0.996,0.998,1.0]; XTitle="BDT_fakes(#mu^{-}#mu^{-})", YTitle="BDT_WZ(#mu^{-}#mu^{-})"
 
+met_elmuminusminus           : met_pt          : 10,15,115; XTitle="E_{T}^{miss} (e^{-}#mu^{-}) (GeV)" ,YMin=0,YMax=400 
+met_elmuplusplus           : met_pt          : 10,15,115; XTitle="E_{T}^{miss} (e^{+}#mu^{+}) (GeV)" ,YMin=0,YMax=400 
+
+pt1_elmu           : LepGood1_pt     : 20,20,100; XTitle="p_{T} lead. (e^{#pm}#mu^{#pm}) (GeV)",YMin=0,YMax=300
+pt2_elmu           : LepGood2_pt     : 20,20,100; XTitle="p_{T} trail. (e^{#pm}#mu^{#pm}) (GeV)",YMin=0,YMax=600
+met_elmu           : met_pt          : 10,15,115; XTitle="E_{T}^{miss} (e^{#pm}#mu^{#pm}) (GeV)" ,YMin=0,YMax=400 
+mt2ll_elmu         : mt2davis(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood2_pt,LepGood2_eta,LepGood2_phi,met_pt,met_phi) : 20,0,120 ; XTitle="M_{T2}^{ll} (e^{#pm}#mu^{#pm}) (GeV)",YMin=0,YMax=500
+eta_sum_elmu       : abs(LepGood1_eta + LepGood2_eta)  : 20,0,6; XTitle="abs(#eta_{1}+#eta_{2}) (e^{#pm}#mu^{#pm})",YMin=0,YMax=300
+dphiLep_elmu       : abs(deltaPhi(LepGood1_phi,LepGood2_phi)) : 20,0,3.15; XTitle="#Delta#phi_{ll} (e^{#pm}#mu^{#pm}) (rad.)",Legend="TL",YMin=0,YMax=300
+etaprod_elmu       : LepGood1_eta*LepGood2_eta : 20,-6.25,6.25; XTitle="#eta_{1}*#eta_{2} (e^{#pm}#mu^{#pm})", Legend="TL",YMin=0,YMax=400
+mt1_elmu           : mt_2(LepGood1_pt,LepGood1_phi,met_pt,met_phi) : 20,0,250; XTitle="m_{T} lepton 1 (e^{#pm}#mu^{#pm}) (GeV)",YMin=0,YMax=500
+mtll_elmu          : mt_2(LepGood1_pt,LepGood1_phi,LepGood2_pt,LepGood2_phi) : 20,0,250; XTitle="m_{T} ll (e^{#pm}#mu^{#pm}) (GeV)",YMin=0,YMax=500
+dphil2met_elmu     : abs(deltaPhi(LepGood2_phi,met_phi)) : 20,0.,3.15; XTitle="#Delta#phi_{l2 MET} (e^{#pm}#mu^{#pm}) (rad.)",YMin=0,YMax=200
+dphilll2_elmu  :abs(deltaPhi(phi_2(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_mass,LepGood2_pt,LepGood2_eta,LepGood2_phi,LepGood2_mass),LepGood2_phi)) :  60,0.,3.2; XTitle="#Delta #phi(l1l2 l2) (e^{#pm}#mu^{#pm}) (rad.)",YMin=0,YMax=200
+
+
+pt1_mumu           : LepGood1_pt     : 20,20,100; XTitle="p_{T} lead. (#mu^{#pm}#mu^{#pm}) (GeV)",YMin=0,YMax=200
+pt2_mumu           : LepGood2_pt     : 20,20,100; XTitle="p_{T} trail. (#mu^{#pm}#mu^{#pm}) (GeV)",YMin=0,YMax=450
+met_mumu           : met_pt          : 10,15,115; XTitle="E_{T}^{miss} (#mu^{#pm}#mu^{#pm}) (GeV)" ,YMin=0,YMax=350 
+mt2ll_mumu         : mt2davis(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood2_pt,LepGood2_eta,LepGood2_phi,met_pt,met_phi) : 20,0,120 ; XTitle="M_{T2}^{ll} (#mu^{#pm}#mu^{#pm}) (GeV)",YMin=0,YMax=450
+eta_sum_mumu       : abs(LepGood1_eta + LepGood2_eta)  : 20,0,6; XTitle="abs(#eta_{1}+#eta_{2}) (#mu^{#pm}#mu^{#pm})",YMin=0,YMax=250
+dphiLep_mumu       : abs(deltaPhi(LepGood1_phi,LepGood2_phi)) : 20,0,3.15; XTitle="#Delta#phi_{ll} (#mu^{#pm}#mu^{#pm}) (rad.)",Legend="TL",YMin=0,YMax=200
+etaprod_mumu       : LepGood1_eta*LepGood2_eta : 20,-6.25,6.25; XTitle="#eta_{1}*#eta_{2} (#mu^{#pm}#mu^{#pm})", Legend="TL",YMin=0,YMax=350
+mt1_mumu           : mt_2(LepGood1_pt,LepGood1_phi,met_pt,met_phi) : 20,0,250; XTitle="m_{T} lepton 1 (#mu^{#pm}#mu^{#pm}) (GeV)",YMin=0,YMax=350
+mtll_mumu          : mt_2(LepGood1_pt,LepGood1_phi,LepGood2_pt,LepGood2_phi) : 20,0,250; XTitle="m_{T} ll (#mu^{#pm}#mu^{#pm}) (GeV)",YMin=0,YMax=350
+dphil2met_mumu     : abs(deltaPhi(LepGood2_phi,met_phi)) : 20,0.,3.15; XTitle="#Delta#phi_{l2 MET} (#mu^{#pm}#mu^{#pm}) (rad.)",YMin=0,YMax=200
+dphilll2_mumu  :abs(deltaPhi(phi_2(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_mass,LepGood2_pt,LepGood2_eta,LepGood2_phi,LepGood2_mass),LepGood2_phi)) :  60,0.,3.2; XTitle="#Delta #phi(l1l2 l2) (#mu^{#pm}#mu^{#pm}) (rad.)",YMin=0,YMax=200
+
+
+
 BDTfakes_BDTWZ_mumuminusminus_4bins   : BDT_DPS_WZ\:BDT_DPS_fakes  : 4,0,1.0,4,0.,1. ; XTitle="BDT_fakes(#mu^{-}#mu^{-})", YTitle="BDT_WZ(#mu^{-}#mu^{-})"
 
 BDTfakes_BDTWZ_mumuplusplus_4bins   : BDT_DPS_WZ\:BDT_DPS_fakes  : 4,0,1.0,4,0.,1. ; XTitle="BDT_fakes(#mu^{+}#mu^{+})", YTitle="BDT_WZ(#mu^{+}#mu^{+})"

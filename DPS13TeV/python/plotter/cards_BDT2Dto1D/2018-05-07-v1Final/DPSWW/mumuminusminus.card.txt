@@ -27,7 +27,7 @@ observation 431.0
 bin              mumuminusminus   mumuminusminus   mumuminusminus   mumuminusminus   mumuminusminus   mumuminusminus 
 process                   rares               ZZ               WZ            WG_wg       fakes_data            DPSWW 
 process                       1                2                3                4                5                0 
-rate                     16.336           17.555          169.000           55.858          170.932           20.777 
+rate                     16.336           17.555          169.000           55.858          170.960           20.777 
 ##----------------------------------
 rares_norm   lnN           1.50                -                -                -                -                - 
 WZ_norm      lnN              -                -             1.16                -                -                - 

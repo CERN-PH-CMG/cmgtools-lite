@@ -41,7 +41,7 @@ if __name__ == "__main__":
     parser.add_option("-p", "--pretend", dest="pretend",   action="store_true", default=False, help="Don't run anything");
     parser.add_option("-j", "--jobs",    dest="jobs",      type="int",    default=1, help="Use N threads");
     parser.add_option("-q", "--queue",   dest="queue",     type="string", default=None, help="Run jobs on lxbatch instead of locally");
-    parser.add_option("-t", "--tree",    dest="tree",      default='treeProducerWMass', help="Pattern for tree name");
+    parser.add_option("-t", "--tree",    dest="tree",      default='treeProducerSusyMultilepton', help="Pattern for tree name");
     parser.add_option("--log", "--log-dir", dest="logdir", type="string", default=None, help="Directory of stdout and stderr");
     parser.add_option("--env",   dest="env", type="string", default="lxbatch", help="Give the environment on which you want to use the batch system (lxbatch, psi, oviedo)");
     parser.add_option("--run",   dest="runner",  type="string", default="lxbatch_runner.sh", help="Give the runner script (default: lxbatch_runner.sh)");
