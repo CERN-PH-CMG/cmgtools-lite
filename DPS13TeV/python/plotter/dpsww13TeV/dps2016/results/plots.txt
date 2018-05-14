@@ -186,18 +186,18 @@ BDTfakes_BDTWZ_mumu_varbins23   : BDT_DPS_WZ\:BDT_DPS_fakes  :[0,0.3,0.4,0.5,0.6
 
 met_elmuminusminus           : met_pt          : 10,15,115; XTitle="E_{T}^{miss} (e^{-}#mu^{-}) (GeV)" ,YMin=0,YMax=400 
 met_elmuplusplus           : met_pt          : 10,15,115; XTitle="E_{T}^{miss} (e^{+}#mu^{+}) (GeV)" ,YMin=0,YMax=400 
-
-pt1_elmu           : LepGood1_pt     : 20,20,100; XTitle="p_{T} lead. (e^{#pm}#mu^{#pm}) (GeV)",YMin=0,YMax=300
-pt2_elmu           : LepGood2_pt     : 20,20,100; XTitle="p_{T} trail. (e^{#pm}#mu^{#pm}) (GeV)",YMin=0,YMax=600
-met_elmu           : met_pt          : 10,15,115; XTitle="E_{T}^{miss} (e^{#pm}#mu^{#pm}) (GeV)" ,YMin=0,YMax=400 
-mt2ll_elmu         : mt2davis(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood2_pt,LepGood2_eta,LepGood2_phi,met_pt,met_phi) : 20,0,120 ; XTitle="M_{T2}^{ll} (e^{#pm}#mu^{#pm}) (GeV)",YMin=0,YMax=500
-eta_sum_elmu       : abs(LepGood1_eta + LepGood2_eta)  : 20,0,6; XTitle="abs(#eta_{1}+#eta_{2}) (e^{#pm}#mu^{#pm})",YMin=0,YMax=300
-dphiLep_elmu       : abs(deltaPhi(LepGood1_phi,LepGood2_phi)) : 20,0,3.15; XTitle="#Delta#phi_{ll} (e^{#pm}#mu^{#pm}) (rad.)",Legend="TL",YMin=0,YMax=300
-etaprod_elmu       : LepGood1_eta*LepGood2_eta : 20,-6.25,6.25; XTitle="#eta_{1}*#eta_{2} (e^{#pm}#mu^{#pm})", Legend="TL",YMin=0,YMax=400
+LepGood_idEmuTTH_elmu:LepGood_idEmuTTH:[-0.5,1.0,1.5]; XTitle="LepGood_idEmuTTH (e^{#pm}#mu^{#pm})"
+pt1_elmu           : LepGood1_pt     : 20,20,100; XTitle="p_{T} lead. (e^{#pm}#mu^{#pm}) (GeV)",YMin=0,YMax=600
+pt2_elmu           : LepGood2_pt     : 20,20,100; XTitle="p_{T} trail. (e^{#pm}#mu^{#pm}) (GeV)",YMin=0,YMax=800
+met_elmu           : met_pt          : 10,15,115; XTitle="E_{T}^{miss} (e^{#pm}#mu^{#pm}) (GeV)" ,YMin=0,YMax=600 
+mt2ll_elmu         : mt2davis(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood2_pt,LepGood2_eta,LepGood2_phi,met_pt,met_phi) : 20,0,120 ; XTitle="M_{T2}^{ll} (e^{#pm}#mu^{#pm}) (GeV)",YMin=0,YMax=700
+eta_sum_elmu       : abs(LepGood1_eta + LepGood2_eta)  : 20,0,6; XTitle="abs(#eta_{1}+#eta_{2}) (e^{#pm}#mu^{#pm})",YMin=0,YMax=400
+dphiLep_elmu       : abs(deltaPhi(LepGood1_phi,LepGood2_phi)) : 20,0,3.15; XTitle="#Delta#phi_{ll} (e^{#pm}#mu^{#pm}) (rad.)",Legend="TL",YMin=0,YMax=450
+etaprod_elmu       : LepGood1_eta*LepGood2_eta : 20,-6.25,6.25; XTitle="#eta_{1}*#eta_{2} (e^{#pm}#mu^{#pm})", Legend="TL",YMin=0,YMax=600
 mt1_elmu           : mt_2(LepGood1_pt,LepGood1_phi,met_pt,met_phi) : 20,0,250; XTitle="m_{T} lepton 1 (e^{#pm}#mu^{#pm}) (GeV)",YMin=0,YMax=500
-mtll_elmu          : mt_2(LepGood1_pt,LepGood1_phi,LepGood2_pt,LepGood2_phi) : 20,0,250; XTitle="m_{T} ll (e^{#pm}#mu^{#pm}) (GeV)",YMin=0,YMax=500
+mtll_elmu          : mt_2(LepGood1_pt,LepGood1_phi,LepGood2_pt,LepGood2_phi) : 20,0,250; XTitle="m_{T} ll (e^{#pm}#mu^{#pm}) (GeV)",YMin=0,YMax=520
 dphil2met_elmu     : abs(deltaPhi(LepGood2_phi,met_phi)) : 20,0.,3.15; XTitle="#Delta#phi_{l2 MET} (e^{#pm}#mu^{#pm}) (rad.)",YMin=0,YMax=200
-dphilll2_elmu  :abs(deltaPhi(phi_2(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_mass,LepGood2_pt,LepGood2_eta,LepGood2_phi,LepGood2_mass),LepGood2_phi)) :  60,0.,3.2; XTitle="#Delta #phi(l1l2 l2) (e^{#pm}#mu^{#pm}) (rad.)",YMin=0,YMax=200
+dphilll2_elmu  :abs(deltaPhi(phi_2(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_mass,LepGood2_pt,LepGood2_eta,LepGood2_phi,LepGood2_mass),LepGood2_phi)) :  60,0.,3.2; XTitle="#Delta #phi(l1l2 l2) (e^{#pm}#mu^{#pm}) (rad.)",YMin=0,YMax=120
 
 
 pt1_mumu           : LepGood1_pt     : 20,20,100; XTitle="p_{T} lead. (#mu^{#pm}#mu^{#pm}) (GeV)",YMin=0,YMax=200
