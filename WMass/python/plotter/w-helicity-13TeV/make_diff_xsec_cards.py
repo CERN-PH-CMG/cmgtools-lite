@@ -332,9 +332,11 @@ if __name__ == "__main__":
                         ptcut=" -A alwaystrue pt%d '%s>=%s && %s<%s' " % (ipt,ptVarCut,ptbinning[ipt],ptVarCut,ptbinning[ipt+1])
                         etacut=" -A alwaystrue eta%d '%s>=%s && %s<%s' " % (ieta,etaVarCut,etabinning[ieta],etaVarCut,etabinning[ieta+1])
                         ycut += (ptcut + etacut)
-                        dcname = "W{charge}_{channel}_ieta_{ieta}_ipt_{ipt}{syst}".format(charge=charge, channel=options.channel,ieta=ieta,ipt=ipt,syst=syst)
+                        ##dcname = "W{charge}_{channel}_ieta_{ieta}_ipt_{ipt}{syst}".format(charge=charge, channel=options.channel,ieta=ieta,ipt=ipt,syst=syst)
+                        ## keep same logic as before for the datacard name
+                        dcname = "W{charge}_{channel}_group_{gr}{syst}".format(charge=charge,channel=options.channel,gr=ibin,syst=syst)
                     else:
-                        dcname = "W{charge}_{channel}{syst}".format(charge=charge, channel=options.channel,syst=syst)
+                        dcname = "W{charge}_{channel}_group_{gr}{syst}".format(charge=charge, channel=options.channel,gr=ibin,syst=syst)
 
                     BIN_OPTS=OPTIONS + " -W '" + options.weightExpr + "'" + " -o "+dcname+" --od "+outdir + xpsel + ycut
                     if options.queue:

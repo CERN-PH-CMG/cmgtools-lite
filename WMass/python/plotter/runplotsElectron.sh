@@ -75,7 +75,7 @@ useDataGH="y"
 #useHLTpt27="y" # already in selection txt file
 runBatch="y"
 queueForBatch="cmscaf1nd"
-nameTag="" 
+nameTag="_trkmtOnly" 
 #nameTag="_varStudy"
 useSkimmedTrees="y" # skimmed samples are on both pccmsrm28 and eos 
 usePtCorrForScaleFactors="n" # y: use corrected pt for scale factor weight; n: use LepGood_pt (which is what would have been used if the scale factors where in a friend tree)
@@ -111,7 +111,8 @@ excludeprocesses="Z_LO,W_LO" # decide whether to use NLO (amc@NLO) or LO (MadGra
 #selectplots="trkmt_trkmetEleCorr_dy,trkmetEleCorr_dy"
 #selectplots="etal1_binFR"
 #selectplots="ptl1,pfmt,pfmet"
-selectplots="ptl1_granBin"
+#selectplots="ptl1_granBin"
+selectplots="trkmt_trkmetEleCorr_dy"
 #selectplots="ptl1,etal1,pfmt,pfmet"
 #selectplots="dphiLepPFMET,diffPt_lepPFMET,diffPt_lepPFMET_v2"
 #maxentries="150000" # max int number is > 2*10^9
@@ -182,7 +183,7 @@ scaleMCdata["FRcompNumRegion"]=""
 # FR validation REGION
 #----------------------------
 regionKey["FRcheckRegion"]="FRcheckRegion"
-runRegion["FRcheckRegion"]="y"
+runRegion["FRcheckRegion"]="n"
 regionName["FRcheckRegion"]="FR_check_region"
 skimTreeDir["FRcheckRegion"]="TREES_1LEP_80X_V3_WENUSKIM_V5_TINY"
 outputDir["FRcheckRegion"]="full2016data_${today}"
@@ -221,11 +222,11 @@ scaleMCdata["WmassSignalRegion"]="--fitData"
 # WHELICITY SIGNAL REGION (avoid possibly all kinematic selections)
 #----------------------------
 regionKey["WhelicitySignalRegion"]="WhelicitySignalRegion"
-runRegion["WhelicitySignalRegion"]="n"
+runRegion["WhelicitySignalRegion"]="y"
 regionName["WhelicitySignalRegion"]="whelicity_signal_region"
-skimTreeDir["WhelicitySignalRegion"]="TREES_1LEP_80X_V3_WENUSKIM_V5_TINY"
+skimTreeDir["WhelicitySignalRegion"]="TREES_1LEP_80X_V3_WENUSKIM_V5" ## ADD _TINY, uness you want trkmet variables
 outputDir["WhelicitySignalRegion"]="full2016data_${today}"
-regionCuts["WhelicitySignalRegion"]=" -X nJet30 ${FRnumSel} ${WselFull} "
+regionCuts["WhelicitySignalRegion"]=" -X nJet30 ${FRnumSel} ${fiducial} ${json_L1_HLT27}" #${WselAllPt} "
 qcdFromFR["WhelicitySignalRegion"]="y"
 scaleMCdata["WhelicitySignalRegion"]="--fitData"
 #
@@ -273,7 +274,7 @@ scaleMCdata["FRclosureMC"]=""
 # Some random plots, they are here to exploit the batch submission
 #----------------------------
 regionKey["TestPlots"]="TestPlots"
-runRegion["TestPlots"]="y"
+runRegion["TestPlots"]="n"
 regionName["TestPlots"]="dataErasTest_nostack"
 skimTreeDir["TestPlots"]="TREES_1LEP_80X_V3_WENUSKIM_V5_TINY"
 outputDir["TestPlots"]="sigRegion_${today}"
