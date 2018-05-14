@@ -38,7 +38,10 @@ for i in range(1,61):
 
 hWdict = {}
 for var in sigVars:
-    hWdict[var] = 0
+    if var == "nomi": hWdict[var] = 0
+    else:
+        hWdict[var+"Up"] = 0
+        hWdict[var+"Down"] = 0
 
 endVars = [ "Down", "Up"]
 helicities = [ "right", "left", "long"]
@@ -55,12 +58,8 @@ for k in tf.GetListOfKeys() :
     if obj.InheritsFrom("TH1") and signalMatch in name and any(h in name for h in helicities):
 
         if any(ud in name for ud in endVars):
-            if name.endswith("Up"):
-                tmpname = name.replace("Up",'')
-            elif name.endswith("Down"):
-                tmpname = name.replace("Down",'')
-            syst = tmpname.split('_')[-1]
-            if syst == "elescale": syst = "CMS_We_" + syst
+            syst = name.split('_')[-1]
+            if "elescale" in syst: syst = "CMS_We_" + syst
         else:
             syst = "nomi"
 
