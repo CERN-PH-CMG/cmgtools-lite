@@ -6,7 +6,7 @@ import numpy as np
 ## open root file and make inclusive signal template (summing all rapidity bins and helicities)
 ## then copy them in a new file, adding also the other non-signal shapes
 
-# python makeInclusiveWshape.py Wel_plus_shapes.root -o testMergeW/ -c plus -f el
+# python makeInclusiveWshape.py shapesFromEmanuele/Wel_plus_shapes.root -o testMergeW/ -c plus -f el
 
 from optparse import OptionParser
 parser = OptionParser(usage="%prog [options] shapes.root ")
@@ -48,6 +48,8 @@ helicities = [ "right", "left", "long"]
 
 hists = []  # will contain the histograms to copy in output file
 
+signalSum = 0
+nCompSummed = 0
 
 tf = ROOT.TFile.Open(args[0],"READ")
 
@@ -63,7 +65,6 @@ for k in tf.GetListOfKeys() :
         else:
             syst = "nomi"
 
-
         postfix = ("_"+syst) if syst != "nomi" else ""
         newname = 'x_W{ch}_{fl}{pfx}'.format(ch=charge,fl=options.flavour,pfx=postfix)
         if hWdict[syst] == 0:
@@ -73,10 +74,20 @@ for k in tf.GetListOfKeys() :
             hists.append(hWdict[syst])
         else:
             hWdict[syst].Add(obj)            
+
+        ## just a check
+        if syst == "nomi":
+            signalSum += obj.Integral() 
+            nCompSummed += 1
+        ##     print "Sum W: %.2f    component: %.2f" % (hWdict[syst].Integral(), obj.Integral())
+
     else:
         # copy all other objects
         obj.SetDirectory(None)
         hists.append(obj)
+
+    if ("data_obs" in name): data_integral = obj.Integral()
+
 
 nInitialHists = len(tf.GetListOfKeys())
 tf.Close()
@@ -96,5 +107,12 @@ for h in hists:
     print "Writing histo: ",h.GetName()
     h.Write()
 print "---------------"
-print "I wrote %d histograms (there were %d initially)" % (len(hists),nInitialHists)
+print "I wrote %d histograms in %s (there were %d initially)" % (len(hists),outputfile,nInitialHists)
 outFile.Close()
+
+print "I summed %d signal components (not including variations)" % nCompSummed
+print "Data integral: %f" % data_integral
+print "SumW integral: %f" % signalSum
+if  (hWdict["nomi"].Integral()-signalSum) > 0.0001:
+    print "WARNING with merging signal!"
+    print "W.Integral(): %.2f    signalSum: %.2f" % (hWdict[syst].Integral(), signalSum)
