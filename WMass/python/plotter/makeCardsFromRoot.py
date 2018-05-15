@@ -48,8 +48,8 @@ parser.add_option("-c", "--charge", dest="charge", type="string", default='plus'
 parser.add_option("-b","--bin", dest="bin", default="ch1", type="string", help="name of the bin (the number of template bin used for each datacard is added to it)")
 parser.add_option("-s","--syst-file", dest="systfile", default="", type="string", help="File defining the systematics (only the constant ones are used)")
 parser.add_option(     "--shape-syst-file", dest="shapesystfile", default="", type="string", help="File defining the systematics (only the constant ones are used)")
-parser.add_option(     "--netabins", dest="netabins", default="38", type="int", help="Number of eta bins (or along x axis in general)")
-parser.add_option(     "--nptbins", dest="nptbins", default="15", type="int", help="Number of pt bins (or along y axis in general)")
+parser.add_option(     "--netabins", dest="netabins", default="38", type="int", help="Number of eta bins (or along x axis in general). Needed to associate global bin to 2D bin")
+#parser.add_option(     "--nptbins", dest="nptbins", default="15", type="int", help="Number of pt bins (or along y axis in general)")
 (options, args) = parser.parse_args()
 
 if len(sys.argv) < 1:
@@ -64,11 +64,12 @@ for k in tf.GetListOfKeys() :
     obj=k.ReadObj()
     if obj != 0 and obj.InheritsFrom("TH1"):
         nTotBins = obj.GetNbinsX()
+        print "There are %d bins in the templates" % nTotBins
         break
 tf.Close()
 
-nptbins = options.ptbins
-netabins = options.etabins
+#nptbins = options.nptbins
+netabins = options.netabins
 
 outdir = options.outdir
 if not outdir.endswith(','): outdir += "/"
@@ -77,9 +78,6 @@ if outdir != "./":
     if not os.path.exists(outdir):
         print "Creating folder", outdir
         os.system("mkdir -p " + outdir)
-
-sysfile = options.systfile 
-shapesysfile = options.shapesystfile 
 
 charge = options.charge
 flavour = options.flavour
@@ -116,9 +114,9 @@ for hbin in range(1,nTotBins+1):
 
     ieta,ipt = getXYBinsFromGlobalBin(hbin-1,netabins)
     card.write("### template bin = %d, ieta = %d, ipt = %d\n" % (hbin,ieta,ipt))
-    card.write("imax = 1\n")
-    card.write("jmax = *\n")
-    card.write("kmax = *\n")
+    card.write("imax 1\n")
+    card.write("jmax *\n")
+    card.write("kmax *\n")
     card.write("##-----------------------------\n")
     card.write("shapes * * FAKE\n")
     card.write("##-----------------------------\n")
@@ -150,8 +148,8 @@ for hbin in range(1,nTotBins+1):
     #First those that are constant, from w-helicity-13TeV/wmass_e/systsEnv.txt
     #print "Now loading systematics"
     truebinname = binname  # this is just a dummy variable, it is used below to match binmap from the sysfile: as far as I know is always binmap='.*' (all bins)
-    if sysfile != "":
-        sysfile = os.environ['CMSSW_BASE']+'/src/CMGTools/WMass/python/plotter/'+sysfile
+    if options.systfile != "":
+        sysfile = os.environ['CMSSW_BASE']+'/src/CMGTools/WMass/python/plotter/'+options.systfile
         systs = {}
         for line in open(sysfile, 'r'):
             if re.match("\s*#.*", line): continue
@@ -188,8 +186,8 @@ for hbin in range(1,nTotBins+1):
 
     ## now the shape systematics
     systProc = {}  # associate array of processes to a given systematic (to write the datacard)
-    if shapesysfile != "":
-        shapesysfile = os.environ['CMSSW_BASE']+'/src/CMGTools/WMass/python/plotter/'+shapesysfile
+    if options.shapesystfile != "":
+        shapesysfile = os.environ['CMSSW_BASE']+'/src/CMGTools/WMass/python/plotter/'+options.shapesystfile
         #print shapesysfile
         for line in open(shapesysfile, 'r'):
             if re.match("\s*#.*", line): continue
