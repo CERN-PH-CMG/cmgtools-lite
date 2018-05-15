@@ -1,8 +1,8 @@
 data : DoubleMuon_2017B
-data : DoubleMuon_2017C_part1+DoubleMuon_2017C_part2
+data : DoubleMuon_2017C
 data : DoubleMuon_2017D
-data : DoubleMuon_2017E_part1+DoubleMuon_2017E_part2
-data : DoubleMuon_2017F_part1+DoubleMuon_2017F_part2+DoubleMuon_2017F_part3
+data : DoubleMuon_2017E
+data : DoubleMuon_2017F
 data : DoubleEG_2017B
 data : DoubleEG_2017C
 data : DoubleEG_2017D
