@@ -86,6 +86,7 @@ if __name__ == "__main__":
     for par in parameters:
         pardir = absopath+'/'+par+'/'
         os.system('mkdir -p '+pardir)
+        print 'at parameter {p} running {n} points'.format(p=par, n=options.npoints)
         for point in range(options.npoints):
             cmd_base  = 'combine {ws} -M MultiDimFit -t -1 --algo grid --points {np} '.format(ws=absinfile,np=options.npoints)
             cmd_base += ' --cminDefaultMinimizerType GSLMultiMin --cminDefaultMinimizerAlgo BFGS2 '
