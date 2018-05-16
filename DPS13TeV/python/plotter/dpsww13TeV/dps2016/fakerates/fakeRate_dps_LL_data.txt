@@ -1,0 +1,9 @@
+## Let the first and second lepton always pass the MVA cuts (set the value to 1)
+cut-change: LepGood1_mvaTTH : (LepGood1_mvaTTH > if3(abs(LepGood1_pdgId) == 13, -2, -0.9))
+cut-change: LepGood2_mvaTTH : (LepGood2_mvaTTH > if3(abs(LepGood2_pdgId) == 13, -2, -0.9))
+## load histograms 
+load-histo: FR_mu  : dpsww13TeV/dps2016/fakerates/fakerateMap_mu_2017TTH.root : fakerate_mu_data
+load-histo: FR_el  : dpsww13TeV/dps2016/fakerates/fakerateMap_el_2017TTH.root : fakerate_el_data
+## more fancy way for later load-histo: FR_el : $DATA/fakerate/FR_ttl.root : FR_tight_el
+## define the FR weight
+weight: fakeRateWeight_2lssMVA_LL(LepGood1_pt,LepGood1_eta,LepGood1_pdgId,LepGood1_mvaTTH > if3(abs(LepGood1_pdgId)==13,0.75,0.85),LepGood2_pt,LepGood2_eta,LepGood2_pdgId,LepGood2_mvaTTH > if3(abs(LepGood2_pdgId)==13,0.75,0.85), 0.5)
