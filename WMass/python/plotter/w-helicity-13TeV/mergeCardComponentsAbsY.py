@@ -308,7 +308,7 @@ if __name__ == "__main__":
         signal_0 = filter(lambda x: re.match('.*long.*',x),signal_procs)
         
         hel_to_constrain = [signal_L,signal_R]
-        tightConstraint = 0.05
+        tightConstraint = 0.50
         for hel in hel_to_constrain:
             for iy,helbin in enumerate(hel):
                 pol = helbin.split('_')[1]
@@ -388,12 +388,6 @@ if __name__ == "__main__":
     
             ## make an efficiency nuisance group
             combinedCardNew.write('\nefficiencies group = '+' '.join([p.replace('norm','eff') for p in POIs])+'\n\n' )
-            ## make a group for the fixed rate parameters.
-            print 'adding a nuisance group for the fixed rateParams'
-            if len(fixedPOIs): combinedCardNew.write('\nfixedY group = {fixed} '.format(fixed=' '.join(i.strip() for i in fixedPOIs)))
-            combinedCardNew.write('\nallY group = {all} \n'.format(all=' '.join(i.strip().replace('_%s_'%options.bin,'_') for i in allPOIs)))
-            combinedCardNew.close() ## for some reason this is really necessary
-            os.system("mv {cardfile}_new {cardfile}".format(cardfile=cardfile))
 
             ## remove all the POIs that we want to fix
             # remove the channel to allow ele/mu combination when fitting for GEN
@@ -407,20 +401,27 @@ if __name__ == "__main__":
             allPOIs = fixedPOIs+floatPOIs
             ## define the combine POIs, i.e. the subset on which to run MINOS
             minosPOIs = allPOIs if not options.POIsToMinos else options.POIsToMinos.split(',')
+
+            ## make a group for the fixed rate parameters.
+            print 'adding a nuisance group for the fixed rateParams'
+            if len(fixedPOIs): combinedCardNew.write('\nfixedY group = {fixed} '.format(fixed=' '.join(i.strip() for i in fixedPOIs)))
+            combinedCardNew.write('\nallY group = {all} \n'.format(all=' '.join([i for i in allPOIs])))
+            combinedCardNew.close() ## for some reason this is really necessary
+            os.system("mv {cardfile}_new {cardfile}".format(cardfile=cardfile))
         
             combinedCard = open(cardfile,'a+')
             ## add the PDF systematics 
             for sys,procs in theosyst.iteritems():
                 # there should be 2 occurrences of the same proc in procs (Up/Down). This check should be useless if all the syst jobs are DONE
-                combinedCard.write('%-15s   shape %s\n' % (sys,(" ".join([kpatt % '1.0' if p in procs and procs.count(p)==2 else '  -  ' for p,r in ProcsAndRates]))) )
+                combinedCard.write('%-15s   shape %s\n' % (sys,(" ".join(['1.0' if p in procs and procs.count(p)==2 else '  -  ' for p,r in ProcsAndRates]))) )
             combinedCard.write('\npdfs group = '+' '.join([sys for sys,procs in pdfsyst.iteritems()])+'\n')
             combinedCard.write('\nscales group = '+' '.join([sys for sys,procs in qcdsyst.iteritems()])+'\n')
             combinedCard.write('\nalphaS group = '+' '.join([sys for sys,procs in alssyst.iteritems()])+'\n')
             combinedCard.write('\nwpt group = '+' '.join([sys for sys,procs in wptsyst.iteritems()])+'\n')
 
             ## now assign a uniform luminosity uncertainty to all the MC processes
-            combinedCard.write('\nCMS_lumi_13TeV   lnN %s\n' % (" ".join([kpatt % '-' if 'data' in p else '%.3f'%(1+options.lumiLnN) for p,r in ProcsAndRates])) )
-            combinedCard.write('CMS_W   lnN %s\n' % (" ".join([kpatt % '%.3f' % (1+options.wLnN) if (p=='TauDecaysW' or re.match('W{charge}'.format(charge=charge),p)) else '-' for p,r in ProcsAndRates])) )
+            combinedCard.write('\nCMS_lumi_13TeV   lnN %s\n' % (" ".join(['-' if 'data' in p else '%.3f'%(1+options.lumiLnN) for p,r in ProcsAndRates])) )
+            combinedCard.write('CMS_W   lnN %s\n' % (" ".join(['%.3f' % (1+options.wLnN) if (p=='TauDecaysW' or re.match('W{charge}'.format(charge=charge),p)) else '-' for p,r in ProcsAndRates])) )
             combinedCard.close() 
 
         print "merged datacard in ",cardfile
@@ -434,7 +435,8 @@ if __name__ == "__main__":
             signals += ['W{charge}_long'.format(charge=charge)]
             multisig = ' '.join(["--PO 'map=.*/{proc}$:r_{proc}[1,0,10]'".format(proc=proc) for proc in signals])
             txt2wsCmd = 'text2workspace.py {cf} -o {ws} --X-allow-no-signal --X-no-check-norm -P HiggsAnalysis.CombinedLimit.PhysicsModel:multiSignalModel --PO verbose {pos}'.format(cf=cardfile, ws=ws, pos=multisig)
-            combineCmd = 'combine {ws} -M MultiDimFit    -t -1 -m 999 --saveFitResult --keepFailures --cminInitialHesse 1 --cminFinalHesse 1 --cminPreFit 1       --redefineSignalPOIs {pois} --floatOtherPOIs=0 -v 9'.format(ws=ws, pois=','.join(['r_'+p for p in signals]))
+            #combineCmd = 'combine {ws} -M MultiDimFit    -t -1 -m 999 --saveFitResult --keepFailures --cminInitialHesse 1 --cminFinalHesse 1 --cminPreFit 1       --redefineSignalPOIs {pois} --floatOtherPOIs=0 -v 9'.format(ws=ws, pois=','.join(['r_'+p for p in signals]))
+            combineCmd = 'combine {ws} -M MultiDimFit -t -1 -m 999 --saveFitResult --keepFailures --cminDefaultMinimizerType GSLMultiMin --cminDefaultMinimizerAlgo BFGS2 --cminDefaultMinimizerTolerance=0.001 --redefineSignalPOIs {pois} -v 9'.format(ws=ws, pois=','.join(['r_'+p for p in signals]))
         print txt2wsCmd
         os.system(txt2wsCmd)
         print combineCmd
