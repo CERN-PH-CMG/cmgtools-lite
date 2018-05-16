@@ -72,7 +72,7 @@ tf.Close()
 netabins = options.netabins
 
 outdir = options.outdir
-if not outdir.endswith(','): outdir += "/"
+if not outdir.endswith('/'): outdir += "/"
 
 if outdir != "./":
     if not os.path.exists(outdir):
@@ -242,11 +242,19 @@ for hbin in range(1,nTotBins+1):
                 dnVar = hdn.GetBinContent(hbin)/binContent
                 dc_element[syst,pr] = "%.3f/%.3f" % (dnVar,upVar)
             else:
-                dc_element[syst,pr] = "1.000"
+                dc_element[syst,pr] = "1.0"
 
         card.write(('%-16s lnN' % syst) + " ".join([kpatt % (dc_element[syst,p] if p in systProc[syst] else "-") for p in processesNoData]) +"\n")
 
     tf.Close()
+
+    ## define groups of systematics
+    card.write("\n")
+    card.write("pdfs group = %s\n\n" % ' '.join(pdf for pdf in pdfsyst))
+    card.write("scales group = muR muF muRmuF\n\n")
+    card.write("alphaS group = alphaS\n\n")
+    card.write("wpt group = wptSlope\n\n")
+    card.write("frshape group = CMS_We_FRe_pt\n\n")
 
     card.write("\n")
     card.write("## THE END!\n")
