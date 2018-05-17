@@ -214,6 +214,10 @@ boson = [WZTo3LNu_fxfx] # multi-boson # MISSING: WZTo3LNu_pow, TriBosons
 samples_slow = sig_ttv + ttv_lo + rares + convs + boson + tt_2l
 samples_fast = single_t + v_jets + tt_1l
 
+if getHeppyOption("mergeExtensions"):
+    samples_slow = mergeExtensions(samples_slow,verbose=True)[0]
+    samples_fast = mergeExtensions(samples_fast,verbose=True)[0]
+
 cropToLumi(rares,500)
 configureSplittingFromTime(samples_fast,50,3)
 configureSplittingFromTime(samples_slow,100,3)
@@ -653,7 +657,7 @@ if not getHeppyOption("keepLHEweights",False):
 
 ## Auto-AAA
 if not getHeppyOption("isCrab"):
-    autoAAA(selectedComponents)
+    autoAAA(selectedComponents, quiet=getHeppyOption("quietAAA",False))
 
 ## output histogram
 outputService=[]
