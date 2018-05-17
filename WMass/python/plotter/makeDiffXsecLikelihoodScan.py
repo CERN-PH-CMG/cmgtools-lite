@@ -12,7 +12,7 @@ from w_helicity_13TeV.make_diff_xsec_cards import getXYBinsFromGlobalBin
 from w_helicity_13TeV.make_diff_xsec_cards import getGlobalBin
 from w_helicity_13TeV.make_diff_xsec_cards import getArrayParsingString
 
-from utility import drawCorrelationPlot
+from utility import *
 
 if __name__ == "__main__":
 
@@ -22,6 +22,7 @@ if __name__ == "__main__":
     parser.add_option('-n','--n-points', dest='npoints', default=0, type='int', help='Number of points used for the scan')
     parser.add_option("-f", "--flavour", dest="flavour", type="string", default='el', help="Channel: either 'el' or 'mu'");
     parser.add_option("-c", "--charge", dest="charge", type="string", default='plus', help="Charge: either 'plus' or 'minus'");
+    parser.add_option(      "--no-save-scan", dest="nosavescan", action="store_true", default=False, help="Do not save the scans, just the 2D maps with the summary")
     (options, args) = parser.parse_args()
 
     if len(args) < 2:
@@ -48,7 +49,7 @@ if __name__ == "__main__":
     ptbinning=binning.split('*')[1]
     etabinning = getArrayParsingString(etabinning)
     ptbinning = getArrayParsingString(ptbinning)
-    tmpbinning = [float(x) for x in etabinning]
+    tmpbinning = [float(x) for x in etabinning]  ## needed for constructor of TH2 below
     etabinning = tmpbinning
     tmpbinning = [float(x) for x in ptbinning]
     ptbinning = tmpbinning 
@@ -57,8 +58,6 @@ if __name__ == "__main__":
     nptbins = len(ptbinning)-1
     netabins = len(etabinning)-1
     nBinsInTemplate = (netabins)*(nptbins)
-    # create dummy TH2 to easily get bin coordinate using TH2 methods
-    hbins = ROOT.TH2D("hbins","",netabins, array('d',etabinning), nptbins, array('d',ptbinning))
 
     files = [ f for f in os.listdir(inputdir) if f.endswith('.root') and f.startswith('higgsCombine')]
     files = list( [os.path.join(inputdir, f) for f in files] ) 
@@ -84,10 +83,10 @@ if __name__ == "__main__":
         # print globalbin
         globalbin = int(globalbin[0])
         etabin,ptbin = getXYBinsFromGlobalBin(globalbin,netabins,False) ## indices from 1 in both input and output, usable for TH2::GetBinContent
-        etal = hbins.GetXaxis().GetBinLowEdge(etabin)
-        etah = hbins.GetXaxis().GetBinLowEdge(etabin+1)
-        ptl  = hbins.GetYaxis().GetBinLowEdge(ptbin)
-        pth  = hbins.GetYaxis().GetBinLowEdge(ptbin+1)
+        etal = h2_npoints.GetXaxis().GetBinLowEdge(etabin)
+        etah = h2_npoints.GetXaxis().GetBinLowEdge(etabin+1)
+        ptl  = h2_npoints.GetYaxis().GetBinLowEdge(ptbin)
+        pth  = h2_npoints.GetYaxis().GetBinLowEdge(ptbin+1)
         #etabin,ptbin = getXYBinsFromGlobalBin(globalbin-1,netabins)  ## array-like indices in both input and output
         print "Global bin = %d    eta,pt bin= %d,%d (indices from 1)"  % (globalbin,etabin,ptbin)
         print "Eta in [%.3g, %.3g] --- Pt in [%.0f, %.0f]"  % (etal,etah,ptl,pth)
@@ -104,18 +103,25 @@ if __name__ == "__main__":
             r = tree.r
             dnll = 2. * tree.deltaNLL
             #print "r=%.3f   2*dNLL=%.3f" % (r, dnll)
-            dnll_r[r] = dnll
+            if (dnll > 0 or r == 1.0): 
+                dnll_r[r] = dnll
 
         gr = ROOT.TGraph(len(dnll_r))
         keys = dnll_r.keys()
         i = 0
+        # find first point with y value < 10 (but not 0)
+        pointFound = False
+        xminfit = 0.9
+        xmaxfit = 1.1
         for key in sorted(keys):
             #print "Adding point %f   %f to graph" % (key,dnll_r[key])
             gr.SetPoint(i, key, dnll_r[key])
             i += 1
             # save x of first value with ordinate < 2, used for fit below
-            if dnll_r[key] <= 2: xfitmin = key
-            
+            if (not pointFound and dnll_r[key] <= 10 and dnll_r[key] > 0.0): 
+                xfitmin = key
+                xfitmax = 2.0 - xfitmin
+                pointfound = True
 
         c = ROOT.TCanvas("c","",700,600)
         c.cd();
@@ -141,11 +147,11 @@ if __name__ == "__main__":
         gr.GetYaxis().SetLabelSize(0.04);
         gr.GetXaxis().SetTitle("r");
         gr.GetYaxis().SetTitle("2 #times #Delta NLL");
-        gr.GetXaxis().SetRangeUser(0.9,1.1);
+        gr.GetXaxis().SetRangeUser(xfitmin,xfitmax);
 
-        # fit with parabola
-        #f1 = ROOT.TF1("f1","pol4",xfitmin,2.0-xfitmin); # symmetric range in r
-        f1 = ROOT.TF1("f1","pol9",0.9,1.1); 
+        # fit
+        f1 = ROOT.TF1("f1","pol9",xfitmin,xfitmax); # symmetric range in r
+        #f1 = ROOT.TF1("f1","pol9",0.9,1.1); 
         fitres = gr.Fit("f1","EMFRS+"); 
         fit = gr.GetFunction("f1");
         fit.SetLineWidth(3);
@@ -163,7 +169,7 @@ if __name__ == "__main__":
         chLeg = 'W^{+}' if charge == "plus" else 'W^{-}'
         flLeg = 'e' if flavour == "el" else "#mu"
         leg.SetHeader("Channel: {ch} #rightarrow {fl}#nu".format(ch=chLeg, fl=flLeg) )
-        leg.AddEntry(gr , "scan: 1 + %d points" % nVarPoints, 'PL')
+        leg.AddEntry(gr , "scan: 1 + %d/%d points" % (nVarPoints,options.npoints), 'PL')
         leg.AddEntry(fit, "fit with pol9", 'lf')
         leg.AddEntry(0, "r(min) = %.3f" % rMinFit, '')
         leg.AddEntry(0, "r(-1#sigma) = %.3f" % r1sigmaDn, '')
@@ -171,9 +177,11 @@ if __name__ == "__main__":
         leg.Draw('same')    
  
         c.RedrawAxis("sameaxis");
-        for ext in ['png', 'pdf']:
-            c.SaveAs('{od}/deltaNll_bin{bin}_{ch}.{ext}'.format(od=outdir, bin=globalbin, ch=charge, ext=ext))
-        c = 0
+        if not options.nosavescan:
+            for ext in ['png', 'pdf']:
+                c.SaveAs('{od}/deltaNll_bin{bin}_{ch}.{ext}'.format(od=outdir, bin=globalbin, ch=charge, ext=ext))
+            c = 0
+
 
         h2_npoints.SetBinContent(etabin,ptbin,nVarPoints)
         h2_rMinFit.SetBinContent(etabin,ptbin,rMinFit)

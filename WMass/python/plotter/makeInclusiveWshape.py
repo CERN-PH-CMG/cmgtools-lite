@@ -14,6 +14,7 @@ parser.add_option("-o", "--outdir",    dest="outdir", type="string", default="./
 parser.add_option('-c','--charge', dest='charge', default='plus', type='string', help='process given charge (plus,minus): default is plus')
 parser.add_option("-n", "--name",      dest="name",   type="string", default="", help="Name for output file (if not given, name is <oldname>_inclusiveW.root)");
 parser.add_option("-f", "--flavour", dest="flavour", type="string", default='el', help="Channel: either 'el' or 'mu'");
+parser.add_option(      "--wlong-missing-syst", dest="wLongMissingSyst", type="string", default='', help="Comma separated list of systematics not applied to Wlong (in that case, to get the inclusive signal the nominal Wlong will be summed to the sum of variations from left and right)");
 (options, args) = parser.parse_args()
 
 if len(sys.argv) < 1:
@@ -32,6 +33,17 @@ signalMatch = "W%s" % charge
 sigVars = [ "nomi", "CMS_We_elescale", "alphaS", "wptSlope", "muR", "muF", "muRmuF"]
 for i in range(1,61):
     sigVars.append("pdf%d" % i)
+
+systNotInWlong = [x for x in options.wLongMissingSyst.split(',')] if options.wLongMissingSyst != "" else []
+if "pdf" in systNotInWlong:
+    tmp = [x for x in systNotInWlong if x != "pdf"]
+    systNotInWlong = tmp
+    for i in range(1,61):
+        systNotInWlong.append("pdf%d" % i)
+    
+
+#print len(systNotInWlong)
+#print systNotInWlong
 
 #print sigVars
 #quit()
@@ -88,6 +100,17 @@ for k in tf.GetListOfKeys() :
 
     if ("data_obs" in name): data_integral = obj.Integral()
 
+######### end of loop on keys
+
+name = "x_W{ch}_long".format(ch=charge)
+hWlong = tf.Get(name)
+
+for sys in systNotInWlong:
+    for ud in endVars:
+        if hWlong:
+            hWdict[sys+ud].Add(hWlong)
+        else:
+            raise RuntimeError, "Could not get histogram %s" % name
 
 nInitialHists = len(tf.GetListOfKeys())
 tf.Close()

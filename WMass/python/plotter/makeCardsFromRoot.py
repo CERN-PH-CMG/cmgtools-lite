@@ -4,8 +4,10 @@ import re, sys, os, os.path, subprocess, json, ROOT
 import numpy as np
 
 from w_helicity_13TeV.make_diff_xsec_cards import getXYBinsFromGlobalBin
+from w_helicity_13TeV.make_diff_xsec_cards import getArrayParsingString
+
 ## write datacard for counting experiment in each 2D template bin, using shapes from helicity datacards (after having summed up the signal components)
-## python makeCardsFromRoot.py testMergeW/Wel_plus_shapes_addInclW.root -o testDatacardWriter -f el -b Wel -s w-helicity-13TeV/wmass_e/systsEnv.txt --shape-syst-file w-helicity-13TeV/wmass_e/shapesystUtility.txt --netabins 38
+## python makeCardsFromRoot.py testMergeW/Wel_plus_shapes_addInclW.root [-2.5,-2.25,-2.0,-1.8,-1.566,-1.4442,-1.3,-1.2,-1.1,-1.0,-0.9,-0.8,-0.7,-0.6,-0.5,-0.4,-0.3,-0.2,-0.1,0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.1,1.2,1.3,1.4442,1.566,1.8,2.0,2.25,2.5]*[30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45] -o testDatacardWriter -f el -b Wel -s w-helicity-13TeV/wmass_e/systsEnv.txt --shape-syst-file w-helicity-13TeV/wmass_e/shapesystUtility.txt 
 
 ########################################
 ## shapesystUtility.txt is something like this
@@ -40,7 +42,7 @@ from w_helicity_13TeV.make_diff_xsec_cards import getXYBinsFromGlobalBin
 
 
 from optparse import OptionParser
-parser = OptionParser(usage="%prog [options] shapes.root ")
+parser = OptionParser(usage="%prog [options] shapes.root binning")
 parser.add_option("-o", "--outdir",    dest="outdir", type="string", default="./", help="Output folder (current one as default)");
 parser.add_option("-n", "--name",      dest="name",   type="string", default="", help="Name for output datacard (if not given, name is <shapes>_card_<bin>.txt )");
 parser.add_option("-f", "--flavour", dest="flavour", type="string", default='el', help="Channel: either 'el' or 'mu'");
@@ -48,29 +50,41 @@ parser.add_option("-c", "--charge", dest="charge", type="string", default='plus'
 parser.add_option("-b","--bin", dest="bin", default="ch1", type="string", help="name of the bin (the number of template bin used for each datacard is added to it)")
 parser.add_option("-s","--syst-file", dest="systfile", default="", type="string", help="File defining the systematics (only the constant ones are used)")
 parser.add_option(     "--shape-syst-file", dest="shapesystfile", default="", type="string", help="File defining the systematics (only the constant ones are used)")
-parser.add_option(     "--netabins", dest="netabins", default="38", type="int", help="Number of eta bins (or along x axis in general). Needed to associate global bin to 2D bin")
+#parser.add_option(     "--netabins", dest="netabins", default="38", type="int", help="Number of eta bins (or along x axis in general). Needed to associate global bin to 2D bin")
 #parser.add_option(     "--nptbins", dest="nptbins", default="15", type="int", help="Number of pt bins (or along y axis in general)")
 (options, args) = parser.parse_args()
 
-if len(sys.argv) < 1:
+if len(sys.argv) < 2:
     parser.print_usage()
     quit()
 
-## open file and get number of bins in template by reading one key
-nTotBins = 1
-tf = ROOT.TFile.Open(args[0],"READ")
-for k in tf.GetListOfKeys() :
-    name=k.GetName()
-    obj=k.ReadObj()
-    if obj != 0 and obj.InheritsFrom("TH1"):
-        nTotBins = obj.GetNbinsX()
-        print "There are %d bins in the templates" % nTotBins
-        break
-tf.Close()
-
 #nptbins = options.nptbins
-netabins = options.netabins
+#netabins = options.netabins
 
+## open file and get number of bins in template by reading one key
+#nTotBins = 1
+# tf = ROOT.TFile.Open(args[0],"READ")
+# for k in tf.GetListOfKeys() :
+#     name=k.GetName()
+#     obj=k.ReadObj()
+#     if obj != 0 and obj.InheritsFrom("TH1"):
+#         nTotBins = obj.GetNbinsX()
+#         print "There are %d bins in the templates" % nTotBins
+#         break
+# tf.Close()
+
+
+etabinning,ptbinning = args[1].split('*')    # args[1] is like "[a,b,c,...]*[d,e,f,...]", and is of type string. We need to get an array 
+etabinning = getArrayParsingString(etabinning)
+ptbinning = getArrayParsingString(ptbinning)
+tmpbinning = [float(x) for x in etabinning]  ## needed for constructor of TH2 below                                                                                      
+etabinning = tmpbinning
+tmpbinning = [float(x) for x in ptbinning]
+ptbinning = tmpbinning
+nptbins = len(ptbinning)-1
+netabins = len(etabinning)-1
+nTotBins = (netabins)*(nptbins)
+    
 outdir = options.outdir
 if not outdir.endswith('/'): outdir += "/"
 
@@ -113,7 +127,9 @@ for hbin in range(1,nTotBins+1):
     card = open(cardname,'w')
 
     ieta,ipt = getXYBinsFromGlobalBin(hbin-1,netabins)
-    card.write("### template bin = %d, ieta = %d, ipt = %d\n" % (hbin,ieta,ipt))
+    card.write("### template bin = %d, ieta in [%.3g, %.3g], ipt in [%.3g, %.3g]\n" % (hbin,
+                                                                                       etabinning[ieta],etabinning[ieta+1],
+                                                                                       ptbinning[ipt],ptbinning[ipt+1]))
     card.write("imax 1\n")
     card.write("jmax *\n")
     card.write("kmax *\n")
