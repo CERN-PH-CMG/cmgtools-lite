@@ -1,6 +1,6 @@
 #!/bin/env python
 
-# usage: ./mergeCardComponents.py -b Wmu -m --long-lnN 1.10 -C minus,plus -i ../cards/helicity_xxxxx/
+# usage: ./mergeCardComponents.py -b Wmu -C minus,plus -i ../cards/helicity_xxxxx/
 # fit scaling by eff: ./mergeCardComponentsAbsY.py [-m] -b Wel -C minus,plus -i cards/ --sf eff_el_PFMT40.root 
 
 import ROOT
@@ -421,7 +421,8 @@ if __name__ == "__main__":
 
             ## now assign a uniform luminosity uncertainty to all the MC processes
             combinedCard.write('\nCMS_lumi_13TeV   lnN %s\n' % (" ".join(['-' if 'data' in p else '%.3f'%(1+options.lumiLnN) for p,r in ProcsAndRates])) )
-            combinedCard.write('CMS_W   lnN %s\n' % (" ".join(['%.3f' % (1+options.wLnN) if (p=='TauDecaysW' or re.match('W{charge}'.format(charge=charge),p)) else '-' for p,r in ProcsAndRates])) )
+            ## not needed as  far as we float all the Y bins
+            # combinedCard.write('CMS_W   lnN %s\n' % (" ".join(['%.3f' % (1+options.wLnN) if (p=='TauDecaysW' or re.match('W{charge}'.format(charge=charge),p)) else '-' for p,r in ProcsAndRates])) )
             combinedCard.close() 
 
         print "merged datacard in ",cardfile
