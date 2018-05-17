@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 ## USAGE
-## python plotParametersFromToys.py higgsLimit.root multidimfit.root
+## python plotParametersFromToys.py higgsLimit.root workspace.root
 
 import re
 from sys import argv, stdout, stderr, exit
@@ -60,30 +60,27 @@ def effSigma(histo):
     if ierr != 0: print "effsigma: Error of type ", ierr
     return widmin
 
-def plotPars(inputFile, mdFit, doPull=True, pois=None, selectString=''):
+def plotPars(inputFile, workspace, doPull=True, pois=None, selectString='', maxPullsPerPlot=30):
     
-    fitFile = ROOT.TFile(mdFit)
-    if fitFile == None: raise RuntimeError, "Cannot open file %s" % mdFit
-    fit_s  = fitFile.Get("fit_mdf")
-    if fit_s == None or fit_s.ClassName()   != "RooFitResult": raise RuntimeError, "File %s does not contain the output of the signal fit 'fit_mdf'"     % mdFit
-
-    # get the initial parameters (from one multidim fit)
-    fpi_s = fit_s.floatParsInit()
-    # get the ones to be plotted
-    pars = list(fpi_s.at(i).GetName() for i in xrange(len(fpi_s))) 
+    ### GET LIST OF PARAMETERS AND INITIAL VALUES FROM THE WORKSPACE
+    wsfile = ROOT.TFile(workspace, 'read')
+    rws = wsfile.Get('w')
+    pars = ROOT.RooArgList(rws.allVars())
+    params = list(pars.at(i).GetName() for i in range(len(pars)))
+    params = filter(lambda x: not x.endswith('_In'),params)
 
     channel=''
-    if any(re.match('.*_el_.*',x) for x in pars): channel += 'el'
-    if any(re.match('.*_mu_.*',x) for x in pars): channel += 'mu'
+    if any(re.match('.*_el_.*',x) for x in params): channel += 'el'
+    if any(re.match('.*_mu_.*',x) for x in params): channel += 'mu'
     if len(channel): print "UNDERSTOOD FROM PARAMETERS THAT YOU ARE RUNNING ON CHANNEL: ", channel
 
     if pois:
         poi_patts = pois.split(",")
         for ppatt in poi_patts:
-            pars = filter(lambda x: re.match(ppatt,x),pars)
+            params = filter(lambda x: re.match(ppatt,x),params)
 
-    if any(re.match('pdf.*',x) for x in pars):
-        pars = sorted(pars, key = lambda x: int(x.split('pdf')[-1]), reverse=False)
+    if any(re.match('pdf.*',x) for x in params):
+        params = sorted(params, key = lambda x: int(x.split('pdf')[-1]), reverse=False)
 
     treeFile = ROOT.TFile(inputFile)
     tree = treeFile.Get("limit")
@@ -91,15 +88,14 @@ def plotPars(inputFile, mdFit, doPull=True, pois=None, selectString=''):
 
     nPulls = 0
     pullLabelSize = 0.028
-    maxPullsPerPlot = 30
     pullSummaryMap = {}
 
     c = ROOT.TCanvas("c","",960,800)
 
-    for name in pars:
+    for name in params:
 
         print "Making pull for parameter ",name
-        nuis_p = fpi_s.find(name)
+        nuis_p = pars.find(name)
         nToysInTree = tree.GetEntries()
      
         # get best-fit value and uncertainty at prefit for this 
@@ -115,15 +111,17 @@ def plotPars(inputFile, mdFit, doPull=True, pois=None, selectString=''):
             tree.Draw( "trackedParamErr_{par}>>error".format(par=name))
             mean_err = error.GetMean()
             histo = ROOT.TH1F("pull","",100,-5,5)
-            tree.Draw( "(trackedParam_{par}-{prefit})/{meanerr}>>pull".format(par=name,prefit=mean_p,meanerr=mean_err) )
-            #tree.Draw( "(trackedParam_{par}-{prefit})/trackedParamErr_{par}>>pull".format(par=name,prefit=mean_p) )
+            ### with GSL minimizer errors don't make sense. Quote relative to prefit sigma. Add cut emulating the goodness of fit...
+            tree.Draw( "(trackedParam_{par}-{prefit})>>pull".format(par=name,prefit=mean_p),"abs(trackedParam_{par}-{prefit})>2E-02".format(par=name,prefit=mean_p)) 
+            ### this would be if MINUIT worked
+            #tree.Draw( "(trackedParam_{par}-{prefit})/{meanerr}>>pull".format(par=name,prefit=mean_p,meanerr=mean_err) )
         else:
             residual = ROOT.TH1F("residual","",100,-1.,1.)
             varname = "(trackedParam_{par}-{prefit})/{prefit}".format(par=name,prefit=mean_p)
-            tree.Draw( "{var}>>residual".format(var=varname))
+            tree.Draw( "{var}>>residual".format(var=varname),"abs({var})>1E-3".format(var=varname))
             rms = residual.GetRMS()
             histo = ROOT.TH1F("pull","",100,-5*rms,5*rms)
-            tree.Draw( "{var}>>pull".format(var=varname) )
+            tree.Draw( "{var}>>pull".format(var=varname),"abs({var})>1E-3".format(var=varname))
         histo.GetXaxis().SetTitle(histo.GetTitle())
         histo.GetYaxis().SetTitle("no toys (%d total)" % nToysInTree)
         histo.GetYaxis().SetTitleOffset(1.05)
@@ -187,12 +185,15 @@ def plotPars(inputFile, mdFit, doPull=True, pois=None, selectString=''):
                 sortedpulls = norms_r + norms_l
             if len(sortedpulls)==0: break
 
+            maxErr = 0;
             for name in sortedpulls:
                 if pi>nThisPulls: break
                 pull = pullSummaryMap[name]
                 pullSummaryHist.GetXaxis().SetBinLabel(pi,name)
                 pullSummaryHist.SetBinContent(pi,pull[0]);  pullSummaryHist.SetBinError(pi,pull[1])
                 pullSummaryHist2.SetBinContent(pi,pull[2]);  pullSummaryHist2.SetBinError(pi,pull[3])
+                max2=max(pull[1],pull[3])
+                if max2>maxErr: maxErr=max2
                 del pullSummaryMap[name]
                 pi += 1
                 nRemainingPulls -= 1
@@ -211,7 +212,8 @@ def plotPars(inputFile, mdFit, doPull=True, pois=None, selectString=''):
 
             pullSummaryHist.SetLabelSize(pullLabelSize)
             pullSummaryHist.LabelsOption("v")
-            pullSummaryHist.GetYaxis().SetRangeUser(-1.,1.)
+            yrange = 3. if doPull else min(maxErr,1)
+            pullSummaryHist.GetYaxis().SetRangeUser(-yrange,yrange)
             if doPull: pullSummaryHist.GetYaxis().SetTitle("pull summary (n#sigma)")
             else: pullSummaryHist.GetYaxis().SetTitle("residual summary (relative)")
             pullSummaryHist.Draw("E2")
@@ -220,7 +222,7 @@ def plotPars(inputFile, mdFit, doPull=True, pois=None, selectString=''):
             leg = ROOT.TLegend(0.60, 0.60, 0.85, 0.80)
             leg.SetFillStyle(0)
             leg.SetBorderSize(0)
-            leg.AddEntry(pullSummaryHist,"Gassian #sigma")
+            leg.AddEntry(pullSummaryHist,"Gaussian #sigma")
             leg.AddEntry(pullSummaryHist2,"Effective #sigma")
             leg.Draw("same")
             suffix=pois.replace('.*','')
@@ -247,6 +249,6 @@ if __name__ == "__main__":
     limitsFile = args[0]
     mdfitfile = args[1]
 
-    plotPars(limitsFile,mdfitfile,doPull=True,pois='pdf.*')
-    plotPars(limitsFile,mdfitfile,doPull=False,pois='norm_Wplus.*')
-    plotPars(limitsFile,mdfitfile,doPull=False,pois='norm_Wminus.*')
+    plotPars(limitsFile,mdfitfile,doPull=True,pois='pdf.*',maxPullsPerPlot=30)
+    plotPars(limitsFile,mdfitfile,doPull=False,pois='norm_Wplus.*',maxPullsPerPlot=100)
+    plotPars(limitsFile,mdfitfile,doPull=False,pois='norm_Wminus.*',maxPullsPerPlot=100)
