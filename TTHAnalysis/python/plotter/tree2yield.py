@@ -194,6 +194,10 @@ class TreeToYield:
         if self._options.forceunweight: self._weight = False
     def getVariations(self):
         return self._variations
+    def clearVariations(self):
+        self._variations = []
+        if hasattr(self, '_ttyVariations'):
+            self._ttyVariations = {}
     def getTTYVariations(self):
         if not getattr(self, '_ttyVariations'):
             self.makeTTYVariations()

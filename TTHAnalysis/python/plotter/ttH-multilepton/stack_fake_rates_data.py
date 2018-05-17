@@ -42,7 +42,7 @@ def combine(graphs,mode):
     for j,(x,xl,xh) in enumerate(xvals):
         if mode in ("default","midpoint"): 
             yhli = [ (g.GetY()[i], g.GetErrorYhigh(i), g.GetErrorYlow(i)) for g in graphs for i in xrange(g.GetN()) if abs(g.GetX()[i]-x) <= 0.01 ]
-            yavg = sum((y/(h**2+l**2)) for (y,h,l) in yhli)/sum(1.0/(h**2+l**2) for (y,h,l) in yhli)
+            yavg = sum((y/(h**2+l**2)) for (y,h,l) in yhli if h+l != 0)/sum(1.0/(h**2+l**2) for (y,h,l) in yhli if h+l != 0)
             ymax = max(y+h for (y,h,l) in yhli)
             ymin = min(y-l for (y,h,l) in yhli)
             if mode == "midpoint":
