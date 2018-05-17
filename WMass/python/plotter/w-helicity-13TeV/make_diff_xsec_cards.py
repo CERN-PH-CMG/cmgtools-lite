@@ -159,11 +159,15 @@ def getGlobalBin(ix, iy, nbinsX):
     # global bin starts from 0
     return (ix + iy * nbinsX)
 
-def getXYBinsFromGlobalBin(globalbin, nbinsX):
+def getXYBinsFromGlobalBin(globalbin, nbinsX, binFrom0=True):
     # global bin goes from 0 to nbinX*nbinsY-1 
     # returned x(y) is a number from 0 to nbinsX(Y) -1
-    iy = int(globalbin/nbinsX)
-    ix = globalbin % nbinsX
+    tmp = globalbin if binFrom0 else (globalbin-1)
+    iy = int(tmp/nbinsX)
+    ix = tmp % nbinsX
+    if not binFrom0:
+        ix = ix + 1
+        iy = iy + 1
     return ix,iy
 
 
