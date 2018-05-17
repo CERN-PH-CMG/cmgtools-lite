@@ -42,13 +42,13 @@ def createHistograms(hist_cfg, all_stack=False, verbose=False, friend_func=None)
             for vcfg in vcfgs:
                 hist = hists[vcfg.name]
                 plot = plots[vcfg.name]
-                hist._BuildStack(hist._SortedHistograms(), ytitle='Events')
+                hist._BuildStack(hist._SortedHistograms(), ytitle=cfg.ytitle)
 
                 total_hist = plot.AddHistogram(cfg.name, hist.stack.totalHist.weighted, stack=True)
 
                 if cfg.norm_cfg is not None:
                     norm_hist = createHistogram(cfg.norm_cfg, all_stack=True)
-                    norm_hist._BuildStack(norm_hist._SortedHistograms(), ytitle='Events')
+                    norm_hist._BuildStack(norm_hist._SortedHistograms(), ytitle=cfg.ytitle)
                     total_hist.Scale(hist.stack.integral/total_hist.Yield())
 
                 if cfg.total_scale is not None:

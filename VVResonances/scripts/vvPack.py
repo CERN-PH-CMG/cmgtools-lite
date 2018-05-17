@@ -13,7 +13,7 @@ if __name__ == '__main__':
     #define output dictionary
     output=dict()
     rootFile='vvTreeProducer/tree.root'
-
+    puFile='PileUpAnalyzer/rawMCPU.root'
 
     for directory in os.listdir(args[0]):
         if directory.find("Chunk")!=-1:
@@ -42,4 +42,6 @@ if __name__ == '__main__':
 
         #next copy the main tree
         shutil.copyfile(directory+'/'+rootFile,directory+'.root')
+        if os.path.exists(directory+'/'+puFile):
+          shutil.copyfile(directory+'/'+puFile,directory+'_rawPUMC.root')
     

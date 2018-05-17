@@ -1,12 +1,14 @@
-import os, sys
+import os, sys, re
 
 def _filterSamples(samples,args):
     selsamples = []
+    use_regexp = ( "--re" in args or "--regexp" in args or "--regex" in args)
     realargs = [ a for a in args if not(a.startswith("--")) ]
     if len(realargs) > 2:
         for x in realargs[2:]:
+            regexp = re.compile(x if use_regexp else re.escape(x))
             for s in samples:
-                if x in s.name and s not in selsamples:
+                if re.search(regexp, s.name) and s not in selsamples:
                     selsamples.append(s)
     else:
         selsamples = samples
@@ -83,7 +85,9 @@ python samplefile.py checkdecl:
                 print "Checking",d.name," ",
                 checker.checkComp(d, verbose=True)
    if "list" in args or "summary" in args:
-        from CMGTools.RootTools.samples.configTools import printSummary
+        from CMGTools.RootTools.samples.configTools import printSummary, mergeExtensions
+        if "--merge-extensions" in args or "--mex" in args:
+            selsamples = mergeExtensions(selsamples, verbose=True)[0]
         printSummary(selsamples)
    if "genXSecAna" in args:
         import subprocess, re;
