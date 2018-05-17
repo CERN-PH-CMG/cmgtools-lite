@@ -60,7 +60,7 @@ def effSigma(histo):
     if ierr != 0: print "effsigma: Error of type ", ierr
     return widmin
 
-def plotPars(inputFile, workspace, doPull=True, pois=None, selectString=''):
+def plotPars(inputFile, workspace, doPull=True, pois=None, selectString='', maxPullsPerPlot=30):
     
     ### GET LIST OF PARAMETERS AND INITIAL VALUES FROM THE WORKSPACE
     wsfile = ROOT.TFile(workspace, 'read')
@@ -88,7 +88,6 @@ def plotPars(inputFile, workspace, doPull=True, pois=None, selectString=''):
 
     nPulls = 0
     pullLabelSize = 0.028
-    maxPullsPerPlot = 30
     pullSummaryMap = {}
 
     c = ROOT.TCanvas("c","",960,800)
@@ -186,12 +185,15 @@ def plotPars(inputFile, workspace, doPull=True, pois=None, selectString=''):
                 sortedpulls = norms_r + norms_l
             if len(sortedpulls)==0: break
 
+            maxErr = 0;
             for name in sortedpulls:
                 if pi>nThisPulls: break
                 pull = pullSummaryMap[name]
                 pullSummaryHist.GetXaxis().SetBinLabel(pi,name)
                 pullSummaryHist.SetBinContent(pi,pull[0]);  pullSummaryHist.SetBinError(pi,pull[1])
                 pullSummaryHist2.SetBinContent(pi,pull[2]);  pullSummaryHist2.SetBinError(pi,pull[3])
+                max2=max(pull[1],pull[3])
+                if max2>maxErr: maxErr=max2
                 del pullSummaryMap[name]
                 pi += 1
                 nRemainingPulls -= 1
@@ -210,7 +212,8 @@ def plotPars(inputFile, workspace, doPull=True, pois=None, selectString=''):
 
             pullSummaryHist.SetLabelSize(pullLabelSize)
             pullSummaryHist.LabelsOption("v")
-            pullSummaryHist.GetYaxis().SetRangeUser(-3.,3.)
+            yrange = 3. if doPull else min(maxErr,1)
+            pullSummaryHist.GetYaxis().SetRangeUser(-yrange,yrange)
             if doPull: pullSummaryHist.GetYaxis().SetTitle("pull summary (n#sigma)")
             else: pullSummaryHist.GetYaxis().SetTitle("residual summary (relative)")
             pullSummaryHist.Draw("E2")
@@ -219,7 +222,7 @@ def plotPars(inputFile, workspace, doPull=True, pois=None, selectString=''):
             leg = ROOT.TLegend(0.60, 0.60, 0.85, 0.80)
             leg.SetFillStyle(0)
             leg.SetBorderSize(0)
-            leg.AddEntry(pullSummaryHist,"Gassian #sigma")
+            leg.AddEntry(pullSummaryHist,"Gaussian #sigma")
             leg.AddEntry(pullSummaryHist2,"Effective #sigma")
             leg.Draw("same")
             suffix=pois.replace('.*','')
@@ -246,6 +249,6 @@ if __name__ == "__main__":
     limitsFile = args[0]
     mdfitfile = args[1]
 
-    plotPars(limitsFile,mdfitfile,doPull=True,pois='pdf.*')
-    plotPars(limitsFile,mdfitfile,doPull=False,pois='norm_Wplus.*')
-    plotPars(limitsFile,mdfitfile,doPull=False,pois='norm_Wminus.*')
+    plotPars(limitsFile,mdfitfile,doPull=True,pois='pdf.*',maxPullsPerPlot=30)
+    plotPars(limitsFile,mdfitfile,doPull=False,pois='norm_Wplus.*',maxPullsPerPlot=100)
+    plotPars(limitsFile,mdfitfile,doPull=False,pois='norm_Wminus.*',maxPullsPerPlot=100)
