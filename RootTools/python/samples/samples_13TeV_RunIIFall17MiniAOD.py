@@ -318,6 +318,7 @@ TTHnobb_pow = kreator.makeMCComponent("TTHnobb_pow", "/ttHToNonbb_M125_TuneCP5_1
 TTHtautau_pow = kreator.makeMCComponent("TTHtautau_pow", "/ttHToTauTau_M125_TuneCP5_13TeV-powheg-pythia8/RunIIFall17MiniAOD-94X_mc2017_realistic_v10-v2/MINIAODSIM", "CMS", ".*root", 0.5071*0.06272)
 
 TZQToLL  = kreator.makeMCComponent("TZQToLL","/tZq_ll_4f_ckm_NLO_TuneCP5_PSweights_13TeV-amcatnlo-pythia8/RunIIFall17MiniAOD-94X_mc2017_realistic_v10-v1/MINIAODSIM", "CMS", ".*root", 0.07358, fracNegWeights=0.367)
+tWll = kreator.makeMCComponentFromEOS("tWll", "ST_tWll_5f_LO_TuneCP5_PSweights_13TeV_madgraph_pythia8_Fall17", "/store/cmst3/group/tthlep/peruzzi/%s/MINIAODSIM_merged", ".*root", 0.01123) # miniAOD v2
 
 # These are the inverted coupling cross sections, i.e. cf = -1.0, cv = 1.0 (see https://twiki.cern.ch/twiki/bin/viewauth/CMS/SingleTopHiggsGeneration13TeV), which is the default weight configuration. Apply LHE event weights to recover other cases including the SM.
 THQ = kreator.makeMCComponent("THQ", "/THQ_4f_Hincl_13TeV_madgraph_pythia8/RunIIFall17MiniAOD-PU2017_94X_mc2017_realistic_v11-v1/MINIAODSIM", "CMS", ".*root",  0.7927)
@@ -326,7 +327,7 @@ THW = kreator.makeMCComponent("THW", "/THW_5f_Hincl_13TeV_madgraph_pythia8/RunII
 TTXs = [ TTGJets, TTGJets_ext, TGJets_lep,
          TTWToLNu_fxfx, TTW_LO, 
          TTZToLLNuNu_amc, TTZToLLNuNu_amc_psw, TTZ_LO, TTZToLLNuNu_m1to10, 
-         TZQToLL, THQ, THW,
+         TZQToLL, tWll, THQ, THW,
          TTH_pow, TTHnobb_fxfx, TTHnobb_pow, TTHtautau_pow,  ]
 
 # ====== TT + DIBOSON, 4-top =====
@@ -354,7 +355,7 @@ WWToLNuQQ = kreator.makeMCComponent("WWToLNuQQ", "/WWToLNuQQ_NNPDF31_TuneCP5_13T
 WWToLNuQQ_ext = kreator.makeMCComponent("WWToLNuQQ_ext", "/WWToLNuQQ_NNPDF31_TuneCP5_13TeV-powheg-pythia8/RunIIFall17MiniAOD-94X_mc2017_realistic_v10_ext1-v1/MINIAODSIM", "CMS", ".*root", 43.53 )
 WW_DPS = kreator.makeMCComponent("WW_DPS", "/WW_DoubleScattering_13TeV-pythia8_TuneCP5/RunIIFall17MiniAOD-94X_mc2017_realistic_v10-v1/MINIAODSIM", "CMS", ".*root", 1.921)
 WWTo2L2Nu_DPS_hpp = kreator.makeMCComponent("WWTo2L2Nu_DPS_hpp", "/WWTo2L2Nu_DoubleScattering_13TeV-herwigpp/RunIIFall17MiniAOD-94X_mc2017_realistic_v11-v1/MINIAODSIM", "CMS", ".*root", 1.921*(3*0.108)**2) ## from above times BR: genXSecAna reports 36030 pb that makes no sense to me
-
+WpWpJJ = kreator.makeMCComponentFromEOS("WpWpJJ", "WpWpJJ_EWK_QCD_TuneCP5_13TeV_madgraph_pythia8_Fall17", "/store/cmst3/group/tthlep/peruzzi/%s/MINIAODSIM_merged", ".*root", 0.03711) # miniAOD v2
 
 WZTo3LNu_fxfx = kreator.makeMCComponent("WZTo3LNu_fxfx", "/WZTo3LNu_TuneCP5_13TeV-amcatnloFXFX-pythia8/RunIIFall17MiniAOD-94X_mc2017_realistic_v10-v2/MINIAODSIM", "CMS", ".*root", 5.063, fracNegWeights=0.189 )
 WZTo1L1Nu2Q = kreator.makeMCComponent("WZTo1L1Nu2Q", "/WZTo1L1Nu2Q_13TeV_amcatnloFXFX_madspin_pythia8/RunIIFall17MiniAOD-94X_mc2017_realistic_v10-v1/MINIAODSIM", "CMS", ".*root",  10.71, fracNegWeights=0.204 )
@@ -371,6 +372,7 @@ DiBosons = [
     WWToLNuQQ_ext,
     WW_DPS,
     WWTo2L2Nu_DPS_hpp,
+    WpWpJJ,
     WZ,
     WZTo3LNu_fxfx,
     WZTo1L1Nu2Q,

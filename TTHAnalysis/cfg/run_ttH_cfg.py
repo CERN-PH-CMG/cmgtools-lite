@@ -211,7 +211,7 @@ selectedComponents = [TTLep_pow]
 
 sig_ttv = [TTHnobb_pow,TTHnobb_fxfx,TTWToLNu_fxfx,TTZToLLNuNu_amc,TTZToLLNuNu_m1to10] # signal + TTV
 ttv_lo = [TTW_LO,TTZ_LO] # TTV LO
-rares = [ZZTo4L,WW_DPS,TZQToLL,GGHZZ4L,VHToNonbb]+TTXXs # rares # MISSING: WpWpJJ,tWll
+rares = [ZZTo4L,WW_DPS,TZQToLL,GGHZZ4L,VHToNonbb,WpWpJJ,tWll]+TTXXs # rares
 single_t = Ts + [THQ,THW] # single top + tW
 convs = [TTGJets,TGJets_lep] # X+G # MISSING: WGToLNuG_amcatnlo_ext,WGToLNuG_amcatnlo_ext2,ZGTo2LG_ext
 v_jets = [WJetsToLNu_LO,DYJetsToLL_M10to50_LO,DYJetsToLL_M50_LO,WWTo2L2Nu] # V+jets

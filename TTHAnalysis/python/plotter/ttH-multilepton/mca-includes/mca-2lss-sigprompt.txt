@@ -23,9 +23,9 @@ Rares: TTTT : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge 
 Rares: TTTW : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kAzure-9
 Rares: TTWH : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kAzure-9
 Rares: TZQToLL : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kAzure-9
-#Rares: tWll : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kAzure-9
+Rares: tWll : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kAzure-9
 Rares: WW_DPS : 0.1729 : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kAzure-9
-#Rares: WpWpJJ : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kAzure-9
+Rares: WpWpJJ : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kAzure-9
 Rares: WWW_4F : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kAzure-9
 Rares: WWZ_4F : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kAzure-9
 Rares: WZG : xsec : LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge ; FillColor=ROOT.kAzure-9
