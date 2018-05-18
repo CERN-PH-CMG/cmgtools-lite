@@ -33,7 +33,7 @@ if __name__ == "__main__":
     parser.add_option('-i', '--infile'         , dest='infile' , default=''   , type='string', help='workspace converted from datacard')
     parser.add_option('-o', '--outdir'         , dest='outdir' , default=''   , type='string', help='outdput directory to make jobs and run combine in.')
     parser.add_option('-n', '--npoints'        , dest='npoints', default=50   , type='int'   , help='total number of points to run on scan')
-    parser.add_option(      '--points-per-job' , dest='ppj'    , default=1    , type='int'   , help='points of the scan to run per job')
+    parser.add_option(      '--points-per-job' , dest='ppj'    , default=5    , type='int'   , help='points of the scan to run per job')
     parser.add_option(      '--scan-parameters', dest='pois'   , default=''   , type='string', help='comma separated list of regexp parameters to run. default is all parameters!')
     parser.add_option(      '--suffix'         , dest='suffix' , default=''   , type='string', help='suffix')
     parser.add_option('-q', '--queue'          , dest='queue'  , default='8nh', type='string', help='use this queue. default 8nh')
@@ -82,7 +82,6 @@ if __name__ == "__main__":
                 parameters.append(pars[i].GetName())
 
 
-
     for par in parameters:
         pardir = absopath+'/'+par+'/'
         os.system('mkdir -p '+pardir)
@@ -90,7 +89,9 @@ if __name__ == "__main__":
         tmp_val = ws.var(par).getVal()
         tmp_dn = 0.8*tmp_val if tmp_val else -2.
         tmp_up = 1.2*tmp_val if tmp_val else  2.
-        for point in range(options.npoints):
+        firstpoint = 0
+        while firstpoint <= options.npoints-1:
+            lastpoint = min(firstpoint+options.ppj-1,options.npoints-1)
             cmd_base  = 'combine {ws} -M MultiDimFit -t -1 --algo grid --points {np} '.format(ws=absinfile,np=options.npoints)
             #cmd_base += ' --cminDefaultMinimizerType GSLMultiMin --cminDefaultMinimizerAlgo BFGS2 '
             # josh's magic options:
@@ -98,14 +99,14 @@ if __name__ == "__main__":
             cmd_base += ' --setParameterRanges "{p}={dn:.2f},{up:.2f}" '.format(p=par,dn=tmp_dn,up=tmp_up)
             cmd_base += ' -P {par} --floatOtherPOIs=1 '.format(par=par)
             #cmd_base+= ' --setParameterRanges <whatever> '
-            cmd_base += ' --keepFailures -n _{name}_point{n} '.format(name=par,n=point)
-            cmd_base += ' --firstPoint {n} --lastPoint {n} '.format(n=point)
+            cmd_base += ' --keepFailures -n _{name}_point{n}To{nn} '.format(name=par,n=firstpoint,nn=lastpoint)
+            cmd_base += ' --firstPoint {n} --lastPoint {nn} '.format(n=firstpoint,nn=lastpoint)
             #cmd_base += ' --redefineSignalPOIs '+','.join( [i for i in all_parameters if 'norm_' in i] )
             if options.verbose:
                 cmd_base += ' -v 10 '
 
             ## make new file for evert parameter and point
-            job_file_name = jobdir+'/job_{p}_point{n:.0f}.sh'.format(p=par,n=point)
+            job_file_name = jobdir+'/job_{p}_point{n:.0f}To{nn:.0f}.sh'.format(p=par,n=firstpoint,nn=lastpoint)
             tmp_file = open(job_file_name, 'w')
 
             ## fill the whole shebang in there
@@ -126,4 +127,6 @@ if __name__ == "__main__":
                 os.system(cmd_submit)
             else:
                 print cmd_submit
+
+            firstpoint = lastpoint+1
 
