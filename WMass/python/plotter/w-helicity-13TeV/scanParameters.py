@@ -8,7 +8,17 @@ from array import array
 ## takes a comma separated list of regular expressions as input via --scan-parameters
 
 ## example:
-## python w-helicity-13TeV/scanParamteters.py -i <combine_workspace> --scan-parameters CMS_lumi_13TeV,norm.*left.*Ybin.*12 --outdir <outdir> --npoints 25 --pretend
+##
+## python w-helicity-13TeV/scanParamteters.py -i <combine_ws> --scan-parameters CMS_lumi_13TeV,norm.*Ybin.*12 --outdir <dir> --npoints 25 --points-per-job 5
+##
+## has option --pretend to not submit, just print the commands
+##
+## once this is done, you can run the postprocessing with the same command, and two more options
+## this command will hadd the single files into one scan_par.root file. then it will plot all the scans
+## into the specified webdir. the hadd is not done if the scan_par.root file already exists (unless forced with --overwrite)
+##
+## python w-helicity-13TeV/scanParamteters.py -i <combine_ws> --scan-parameters CMS_lumi_13TeV,norm.*Ybin.*12 --outdir <dir>                                 --postprocess --webdir <dir>
+##
 ## ===================================================================
 
 def graphStyle(graph):
