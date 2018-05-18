@@ -1,7 +1,10 @@
 #!/bin/env python
 
-# usage: ./mergeCardComponents.py -b Wmu -m --long-lnN 1.10 -C minus,plus -i ../cards/helicity_xxxxx/
-# fit scaling by eff: ./mergeCardComponentsAbsY.py [-m] -b Wel -C minus,plus -i cards/ --sf eff_el_PFMT40.root 
+####################
+###################
+# TO BE UPDATED
+##################
+##################
 
 import ROOT
 import sys,os,re,json
