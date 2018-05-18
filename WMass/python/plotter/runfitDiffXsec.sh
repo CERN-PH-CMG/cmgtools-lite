@@ -14,7 +14,7 @@ saveOnlyhiggsCombineFile="y"
 
 dirToRunCombineFrom="${plotterDir}diffXsecFit_testScalLikelihood_freezeShapeNuis_np50/"
 #combineOptions=" --saveFitResult "
-combineOptions=" --algo grid  --points 50 --keepFailures --setParameterRanges \"r=0.9,1.1\" --cminDefaultMinimizerType GSLMultiMin --cminDefaultMinimizerAlgo BFGS2  --freezeNuisanceGroups pdfs,scales,alphaS,wpt,frshape "
+combineOptions=" --algo grid  --points 50 --keepFailures --setParameterRanges \"r=0.9,1.1\" --cminDefaultMinimizerType GSLMultiMinMod --cminDefaultMinimizerAlgo BFGS2 --freezeNuisanceGroups pdfs,scales,alphaS,wpt,frshape "
 selectedbins=()
 for i in `seq 1 $nTotBins`
 do

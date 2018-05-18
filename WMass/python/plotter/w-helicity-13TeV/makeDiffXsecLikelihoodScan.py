@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# python makeDiffXsecLikelihoodScan.py diffXsecFit_testScalLikelihood_freezeShapeNuis/ [-2.5,-2.25,-2.0,-1.8,-1.566,-1.4442,-1.3,-1.2,-1.1,-1.0,-0.9,-0.8,-0.7,-0.6,-0.5,-0.4,-0.3,-0.2,-0.1,0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.1,1.2,1.3,1.4442,1.566,1.8,2.0,2.25,2.5]*[30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45] -o plots/diffXsec/likelihoodScan/ -f el -c plus
+# python makeDiffXsecLikelihoodScan.py ../diffXsecFit_testScalLikelihood_freezeShapeNuis/ [-2.5,-2.25,-2.0,-1.8,-1.566,-1.4442,-1.3,-1.2,-1.1,-1.0,-0.9,-0.8,-0.7,-0.6,-0.5,-0.4,-0.3,-0.2,-0.1,0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.1,1.2,1.3,1.4442,1.566,1.8,2.0,2.25,2.5]*[30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45] -o plots/diffXsec/likelihoodScan/ -f el -c plus
 
 
 from shutil import copyfile
@@ -8,11 +8,12 @@ import re, sys, os, os.path, subprocess, json, ROOT
 import numpy as np
 from array import array
 
-from w_helicity_13TeV.make_diff_xsec_cards import getXYBinsFromGlobalBin
-from w_helicity_13TeV.make_diff_xsec_cards import getGlobalBin
-from w_helicity_13TeV.make_diff_xsec_cards import getArrayParsingString
+from make_diff_xsec_cards import getXYBinsFromGlobalBin
+from make_diff_xsec_cards import getGlobalBin
+from make_diff_xsec_cards import getArrayParsingString
 
-from utility import *
+sys.path.append(os.environ['CMSSW_BASE']+"/src/CMGTools/WMass/python/plotter/")
+from plotUtils.utility import *
 
 if __name__ == "__main__":
 
