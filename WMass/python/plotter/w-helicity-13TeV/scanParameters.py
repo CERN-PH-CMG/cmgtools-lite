@@ -223,7 +223,7 @@ if __name__ == "__main__":
             tmp_fit = tmp_graph.GetFunction('pol2')
             tmp_fit.SetLineColor(ROOT.kAzure-4)
             (best, sol1, sol2) = solvePol2(tmp_fit.GetParameter(2), tmp_fit.GetParameter(1), tmp_fit.GetParameter(0)-1)
-            lat.DrawLatex(0.15, 0.45, 'best: {best:.3f}'.format(best=best))
+            lat.DrawLatex(0.15, 0.45, '#hat{{#mu}}_{{0}}: {best:.3f}'.format(best=best))
             lat.DrawLatex(0.15, 0.40, '-1 #sigma {sol1:.3f}'.format(sol1=sol1))
             lat.DrawLatex(0.15, 0.35, '+1 #sigma {sol2:.3f}'.format(sol2=sol2))
 
