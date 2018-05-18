@@ -1,4 +1,4 @@
-import ROOT, os, datetime, re, operator
+import ROOT, os, datetime, re, operator, math
 from array import array
 
 
@@ -21,10 +21,25 @@ from array import array
 ##
 ## ===================================================================
 
+def solvePol2(a,b,c):
+
+    # calculate the discriminant
+    d = (b**2) - (4*a*c)
+
+    if not a or d < 0:
+        return (0,0,0)
+    
+    # find two solutions
+    sol1 = (-b-math.sqrt(d))/(2*a)
+    sol2 = (-b+math.sqrt(d))/(2*a)
+
+    bestfit = -1.*b/(2.*a)
+
+    return (bestfit, sol1, sol2)
+
 def graphStyle(graph):
     graph.SetMarkerStyle(20)
     graph.SetMarkerColor(ROOT.kOrange+7)
-    graph.SetLineColor  (ROOT.kAzure-4)
     graph.SetLineWidth  (2)
     graph.SetMarkerSize(1.0)
     graph.GetYaxis().SetTitle('-2 #Delta ln L')
@@ -173,6 +188,8 @@ if __name__ == "__main__":
     ## end the submission, now move to what to do during postprocessing
     else:
         ROOT.gROOT.SetBatch()
+        lat = ROOT.TLatex()
+        lat.SetNDC(); lat.SetTextSize(0.04)
         c1 = ROOT.TCanvas('foo','bar',800,800)
         if not os.path.isdir(options.webdir):
             os.system('mkdir -p {wd} '.format(wd=options.webdir))
@@ -202,6 +219,21 @@ if __name__ == "__main__":
             tmp_line = ROOT.TLine(tmp_graph.GetXaxis().GetXmin(), 1., tmp_graph.GetXaxis().GetXmax(), 1.)
             tmp_line.SetLineStyle(7); tmp_line.SetLineWidth(2);
             tmp_line.Draw('same')
+            tmp_graph.Fit('pol2')
+            tmp_fit = tmp_graph.GetFunction('pol2')
+            tmp_fit.SetLineColor(ROOT.kAzure-4)
+            (best, sol1, sol2) = solvePol2(tmp_fit.GetParameter(2), tmp_fit.GetParameter(1), tmp_fit.GetParameter(0)-1)
+            lat.DrawLatex(0.15, 0.45, '#hat{{#mu}}_{{0}}: {best:.3f}'.format(best=best))
+            lat.DrawLatex(0.15, 0.40, '-1 #sigma {sol1:.3f}'.format(sol1=sol1))
+            lat.DrawLatex(0.15, 0.35, '+1 #sigma {sol2:.3f}'.format(sol2=sol2))
+
+            tmp_linel = ROOT.TLine(sol1, 1., sol1, 0.)
+            tmp_linel.SetLineStyle(3); tmp_line.SetLineWidth(2);
+            tmp_linel.Draw('same')
+
+            tmp_liner = ROOT.TLine(sol2, 1., sol2, 0.)
+            tmp_liner.SetLineStyle(3); tmp_line.SetLineWidth(2);
+            tmp_liner.Draw('same')
 
             if not options.webdir:
                 print 'ERROR: specify a directory to save the plots!'
