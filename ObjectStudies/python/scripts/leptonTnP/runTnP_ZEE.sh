@@ -16,7 +16,7 @@ for V in 2 3; do DATA="$DATA $P/SingleElectron_Run2016H_PromptReco_v${V}/treePro
 MC="--refmc  $P/DYJetsToLL_M50_LO/treeProducerTnP/tree.root"
 PDS="$DATA $MC"
 
-OPTS=" --doRatio  --pdir $PDIR/$JOB  " 
+OPTS=" --doRatio  --pdir $PDIR/$JOB  "
 OPTS="$OPTS -t tree  --mc-cut TnP_tag_mcMatchId&&TnP_probe_mcMatchId --mc-mass TnP_mass   "
 OPTS="$OPTS -L $CMSSW_BASE/src/CMGTools/TTHAnalysis/python/plotter/susy-sos/functionsSOS.cc "
 case $HOSTNAME in
@@ -33,7 +33,7 @@ fi;
 if [[ "$1" == "all" ]]; then
   shift;
   for ID in SOS SOS_FO SOS_PR SOS_NM1_{ID,ISO,IP}; do # SOS_NM1_{Id,Iso,Ip} # SOS_003 SOS_NoIP SOS_presel SOS_FO SOS SOS_PR
-     for SMOD in MCTG BWDCB2; do  
+     for SMOD in MCTG BWDCB2; do
         for BMOD in bern4 bern3; do
             for X in barrel endcap eta vtx; do
                echo $LAUNCHER $0 $ID $SMOD $BMOD $X;
@@ -70,7 +70,7 @@ CDEN="TnP_tag_sip3d < 2.5 && TnP_tag_relIso04 < 0.1 "
 case $ID in
   SOS) NUM="$SOS_SEL_ISO && $SOS_SEL_IDCV && $SOS_SEL_IP" ; CDEN="$CDEN && $MET_PRESEL" ;;
   SOS_FO) NUM="$SOS_FO_IDCV && $SOS_FO_IP && $SOS_FO_ISO"; CDEN="$CDEN && $MET_PRESEL" ;;
-  SOS_PR) NUM="$SOS_SEL_ISO && $SOS_SEL_ID && $SOS_SEL_IP" ; 
+  SOS_PR) NUM="$SOS_SEL_ISO && $SOS_SEL_ID && $SOS_SEL_IP" ;
           CDEN="$CDEN &&  $SOS_FO_IDCV && $SOS_FO_IP && $SOS_FO_ISO && $MET_PRESEL" ;;
   SOS_NM1_ID)  NUM="$SOS_SEL_IDCV" ; CDEN="$CDEN && $SOS_SEL_ISO  && $SOS_SEL_IP  && $MET_PRESEL"  ;;
   SOS_NM1_IP)  NUM="$SOS_SEL_IP" ;   CDEN="$CDEN && $SOS_SEL_IDCV && $SOS_SEL_ISO && $MET_PRESEL" ;;
@@ -78,7 +78,7 @@ case $ID in
   *) echo "Uknown ID $ID"; exit 2;;
 esac;
 
-DEN="$CDEN"; POST=""; 
+DEN="$CDEN"; POST="";
 if [[ "$SMOD" == "MCTG" ]]; then OPTS="${OPTS} --fine-binning 100  "; fi
 
 function getcut() { case $1 in
