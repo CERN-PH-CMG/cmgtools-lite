@@ -665,20 +665,28 @@ else:
     from CMGTools.RootTools.samples.samples_13TeV_DATA2017 import *
     selectedComponents = [
         TTJets,
+        #TTJets_SingleLeptonFromT, #Missing XS
         TTLep_pow,
         TTHad_pow,
         TTSemi_pow,
     ]
     if runWJets:
         selectedComponents = [
-            WJetsToLNu_LO,
-            W1JetsToLNu_LO,
-            W2JetsToLNu_LO,
+            #WJetsToLNu_LO,     #status=PRODUCTION
+            #W1JetsToLNu_LO,    #status=PRODUCTION
+            #W2JetsToLNu_LO,    #status=PRODUCTION
             W3JetsToLNu_LO,
             W4JetsToLNu_LO,
         ]
     if runZInv:
         selectedComponents = [
+            ZJetsToNuNu_HT100to200,
+            ZJetsToNuNu_HT200to400,
+            ZJetsToNuNu_HT400to600,
+            ZJetsToNuNu_HT600to800,
+            ZJetsToNuNu_HT800t1200,
+            ZJetsToNuNu_HT1200to2500,
+            ZJetsToNuNu_HT2500toInf,
         ]
     if runOtherMC1:
         selectedComponents = [
@@ -689,7 +697,19 @@ else:
             DYJetsToLL_M50_ext,
             DYJetsToLL_M50_LO,
             DYJetsToLL_M50_LO_ext,
-        ] + DYJetsToLLM4to50HT + DYJetsToLLM50HT
+            DYJetsToLL_M4to50_HT70to100,
+            DYJetsToLL_M4to50_HT100to200,
+            DYJetsToLL_M4to50_HT200to400,
+            DYJetsToLL_M4to50_HT400to600,
+            DYJetsToLL_M4to50_HT600toInf,
+            DYJetsToLL_M50_HT100to200,
+            DYJetsToLL_M50_HT200to400,
+            DYJetsToLL_M50_HT400to600,
+            DYJetsToLL_M50_HT600to800,
+            DYJetsToLL_M50_HT800to1200,
+            #DYJetsToLL_M50_HT1200to2500,
+            DYJetsToLL_M50_HT2500toInf,
+        ]
     if runOtherMC2:
         selectedComponents = [
             T_sch_lep, #TODO: Look for TBar. Hasn't been created until date.
@@ -697,7 +717,34 @@ else:
             TBar_tch,
             T_tWch_noFullyHad,
             TBar_tWch_noFullyHad,
-        ] + QCDHT + TTXs + TTXXs
+            QCD_HT100to200,
+            QCD_HT200to300,
+            QCD_HT300to500,
+            QCD_HT500to700,
+            QCD_HT700to1000,
+            QCD_HT1000to1500,
+            QCD_HT1500to2000,
+            QCD_HT2000toInf,
+            TTGJets, 
+            TTWToLNu_fxfx, 
+            TTW_LO, 
+            TTZToLLNuNu_amc, 
+            TTZToLLNuNu_amc_psw, 
+            TTZ_LO, 
+            TTZToLLNuNu_m1to10, 
+            TTH_pow, 
+            TTHnobb_fxfx, 
+            TTHnobb_pow, 
+            TTHtautau_pow,  
+            TZQToLL,
+            TTTT, 
+            TTWH, 
+            TTZH, 
+            TTWW, 
+            TTHH, 
+            TTTJ, 
+            TTTW,
+        ]
     if runSMS:
         selectedComponents = []
     if runFullSimSignal:
