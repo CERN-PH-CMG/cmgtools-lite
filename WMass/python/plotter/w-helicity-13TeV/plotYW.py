@@ -33,9 +33,11 @@ if __name__ == "__main__":
     else:
         ybinfile = os.path.dirname(os.path.abspath(options.infile))+'/binningYW.txt'
 
+    wsfile = ROOT.TFile(options.infile, 'read')
+    ws = wsfile.Get('w')
 
     ## this function gets a list of all the proper parameter names from the ws.
-    parameters = utilities.getParametersFromWS(ws)#options.pois)
+    parameters = utilities.getParametersFromWS(ws, options.pois)
 
     pars_central = {}
     for par in parameters:
@@ -93,8 +95,6 @@ if __name__ == "__main__":
             systematics[pol]=systs
 
         ### GET LIST OF PARAMETERS AND INITIAL VALUES FROM THE WORKSPACE
-        wsfile = ROOT.TFile(options.infile, 'read')
-        ws = wsfile.Get('w')
         pars = ROOT.RooArgList(ws.allVars())
         params = list(pars.at(i).GetName() for i in range(len(pars)))
         hel_pars = list(p for p in params if 'norm_W' in p)
@@ -125,7 +125,7 @@ if __name__ == "__main__":
             tree = tf_toys.Get('limit')
 
             for par in parameters:
-                tree.Draw('trackedParam_{par}>>h_{par}'.format(par=parname),'abs(trackedParam_{par}-{central})/{central}>1E-3'.format(par=par,central=pars_central[par]))
+                tree.Draw('trackedParam_{par}>>h_{par}'.format(par=par),'abs(trackedParam_{par}-{central})/{central}>1E-3'.format(par=par,central=pars_central[par]))
                 h = ROOT.gROOT.FindObject('h_{par}'.format(par=par)).Clone()
                 fitval[par] = h.GetMean()
                 fiterr[par] = h.GetRMS()
@@ -282,7 +282,7 @@ if __name__ == "__main__":
 
         date = datetime.date.today().isoformat()
         for ext in ['png', 'pdf']:
-            c2.SaveAs('{od}/genAbsY_pdfs_{date}_{ch}{suffix}.{ext}'.format(od=options.outdir, date=date, ch=charge, suffix=options.suffix, ext=ext))
+            c2.SaveAs('{od}/genAbsY_pdfs_{date}_{ch}{suffix}_{t}.{ext}'.format(od=options.outdir, date=date, ch=charge, suffix=options.suffix, ext=ext,t='fromScans' if options.fromScans else 'fromToys'))
 
         ## now make the relative error plot:
         ## ======================================
@@ -351,4 +351,4 @@ if __name__ == "__main__":
         padDown.RedrawAxis("sameaxis");
 
         for ext in ['png', 'pdf']:
-            c2.SaveAs('{od}/genAbsY_pdfs_{date}_{ch}{suffix}_relative.{ext}'.format(od=options.outdir, date=date, ch=charge, suffix=options.suffix, ext=ext))
+            c2.SaveAs('{od}/genAbsY_pdfs_{date}_{ch}{suffix}_relative_{t}.{ext}'.format(od=options.outdir, date=date, ch=charge, suffix=options.suffix, ext=ext,t='fromScans' if options.fromScans else 'fromToys'))
