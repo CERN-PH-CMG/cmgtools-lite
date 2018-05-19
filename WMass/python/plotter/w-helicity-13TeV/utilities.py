@@ -46,6 +46,7 @@ class util:
         graph.Fit('pol2')
         tmp_fit = graph.GetFunction('pol2')
         (best, sol1, sol2) = self.solvePol2(tmp_fit.GetParameter(2), tmp_fit.GetParameter(1), tmp_fit.GetParameter(0)-1)
+        return (best, sol1, sol2)
 
     def getRebinned(self, ybins, charge, infile, ip):
         histo_file = ROOT.TFile(infile, 'READ')
