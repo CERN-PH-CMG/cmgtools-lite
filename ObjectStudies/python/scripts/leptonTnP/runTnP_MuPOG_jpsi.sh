@@ -1,32 +1,46 @@
 #!/bin/bash
 
-case $HOSTNAME in
-#cmsco01*) exit 1; P=/data1/gpetrucc/MUPOG_TnP_76X/ ;;
-cmsphys10*) P=/data1/g/gpetrucc/MuTnP80X/ ;;
-*) exit 1; P=root://eoscms//eos/cms/store/group/phys_muon/TagAndProbe/76XtreeProduction/v41/ ;;
-esac;
+year=2017
 
-PDIR="plots/80X/TnP_Moriond17/"
+if [ "${year}" == 2016 ]; then
+    case $HOSTNAME in
+    #cmsco01*) exit 1; P=/data1/gpetrucc/MUPOG_TnP_76X/ ;;
+    cmsphys10*) P=/data1/g/gpetrucc/MuTnP80X/ ;;
+    *) exit 1; P=root://eoscms//eos/cms/store/group/phys_muon/TagAndProbe/76XtreeProduction/v41/ ;;
+    esac;
+    MC=$P/jpsi/tnpJPsi_MC_JpsiPt8_TuneCUEP8M1_13TeV_pythia8.root
+    DATA=""
+    for R in B C D E F G; do
+        DATA="$DATA $P/jpsi/tnpJPsi_Data_Run2016${R}_part1.root $P/jpsi/tnpJPsi_Data_Run2016${R}_part2.root"
+    done
+    DATA="$DATA $P/jpsi/tnpJPsi_Data_Run2016Hv2.root $P/jpsi/tnpJPsi_Data_Run2016Hv3.root"
+    PDIR="plots/80X/TnP_Moriond17/"
+else
+    DATA=/eos/cms/store/group/phys_muon/TagAndProbe/Run2017/94X/Run*/TnPTree_17Nov2017_SingleMuon_Run2017Bv1_Full_GoldenJSON.root
+    MC=/eos/cms/store/group/phys_muon/TagAndProbe/Run2017/94X/JPsi/MC/TnPTreeJPsi_94X_JpsiToMuMu_Pythia8.root
+    PDIR="plots/94X/TnP_ICHEP18/"
+fi
+
 JOB="mupog_jpsi_v1"
 XBINS="[3,3.5,4,4.5,5,6,7,8,10,12]"
 EBINS="[-2.4,-2.1,-1.6,-1.2,-0.9,-0.6,-0.3,-0.2,0.2,0.3,0.6,0.9,1.2,1.6,2.1,2.4]"
 VBINS="[0.5,5.5,6.5,7.5,8.5,9.5,10.5,11.5,12.5,13.5,14.5,15.5,16.5,17.5,18.5,19.5,20.5,21.5,22.5,24.5,26.5,28.5,30.5,34.5]"
 
-MC=$P/jpsi/tnpJPsi_MC_JpsiPt8_TuneCUEP8M1_13TeV_pythia8.root
-DATA=""
-for R in B C D E F G; do
-    DATA="$DATA $P/jpsi/tnpJPsi_Data_Run2016${R}_part1.root $P/jpsi/tnpJPsi_Data_Run2016${R}_part2.root"
-done
-DATA="$DATA $P/jpsi/tnpJPsi_Data_Run2016Hv2.root $P/jpsi/tnpJPsi_Data_Run2016Hv3.root"
 PDS="$DATA --refmc $MC"
 
-OPTS=" --doRatio  --pdir $PDIR/$JOB -j 5 " #--mcw vtxWeight2015(nVert)"
+OPTS=" --doRatio  --pdir $PDIR/$JOB -j 14 " #--mcw vtxWeight2015(nVert)"
 OPTS="$OPTS -t tpTree/fitter_tree  --mc-cut 1 --mc-mass mass   "
 if [[ "$1" != "" ]]; then SEL=$1; OPTS="$OPTS --reqname $1 "; shift; fi
 if [[ "$1" != "" ]]; then OPTS="$OPTS $* "; shift; fi
 MASS="  -m mass 80,2.85,3.34"
-CDEN=" tag_Mu7p5_Track2_Jpsi_MU && pair_drM1 > 0.5 "
+if [ "${year}" == 2016 ]; then
+    CDEN=" tag_Mu7p5_Track2_Jpsi_MU && pair_drM1 > 0.5 "
+else
+    # TODO: FIX THIS!
+    CDEN="1"
+fi
 for ID in Loose Reco ; do
+  echo "$ID"
   if [[ "$SEL" != "" ]] && echo $SEL | grep -q -v $ID; then continue; fi
   NUM="$ID"
   if [[ "$ID" == "Reco" ]]; then NUM="(Glb || TM)"; fi
