@@ -7,7 +7,7 @@ cd $HOMEDIR;
 eval $(scramv1 runtime -sh)
 ulimit -s unlimited
 ulimit -c 0
-cp -s $PWD/*.py $WORKDIR/
+cp -s $PWD/*.{py,sh,cc} $WORKDIR/
 cd $WORKDIR
 echo "## Home dir is $HOMEDIR"  >  $LOG
 echo "## Executing $*"  >> $LOG
