@@ -242,16 +242,31 @@ class MCAnalysis:
                 # Adjust free-float and fixed from command line
                 for p0 in options.processesToFloat:
                     for p in p0.split(","):
-                        if re.match(p+"$", pname): tty.setOption('FreeFloat', True)
+                        if re.match(p+"$", pname): 
+                            tty.setOption('FreeFloat', True)
+                            if 'NormSystematic' in extra: 
+                                myvariations = tty.getVariations()
+                                if len(myvariations) != 1 or myvariations[0].name != "norm_"+pname or myvariations[0].unc_type != "normSymm":
+                                    raise RuntimeError("NormSystematic + FreeFloat from commandline => not supported");
+                                tty.clearVariations()
+                                tty.setOption('NormSystematic',0)
                 for p0 in options.processesToFix:
                     for p in p0.split(","):
                         if re.match(p+"$", pname): tty.setOption('FreeFloat', False)
-                for p0, p1 in options.processesToPeg:
-                    for p in p0.split(","):
-                        if re.match(p+"$", pname): tty.setOption('PegNormToProcess', p1)
                 for p0, p1 in options.processesToSetNormSystematic:
                     for p in p0.split(","):
                         if re.match(p+"$", pname): tty.setOption('NormSystematic', float(p1))
+                thepeg = None
+                for p0, p1 in options.processesToPeg:
+                    for p in p0.split(","):
+                        if re.match(p+"$", pname): 
+                            tty.setOption('PegNormToProcess', p1)
+                if tty.getOption('PegNormToProcess', pname) != pname and tty.getOption('NormSystematic',0):
+                    myvariations = tty.getVariations()
+                    if len(myvariations) != 1 or myvariations[0].name != "norm_"+pname or myvariations[0].unc_type != "normSymm":
+                        raise RuntimeError("PegNormToProcess + NormSystematic + non-trivial uncertainties => not supported");
+                    myvariations[0].name = "norm_"+tty.getOption('PegNormToProcess')
+                    print "Overwrite the norm systematic for %s to make it correlated with %s" % (pname, tty.getOption('PegNormToProcess'))
                 if pname not in self._rank: self._rank[pname] = len(self._rank)
             if to_norm: 
                 for tty in ttys: tty.setScaleFactor("%s*%g" % (scale, 1000.0/total_w))

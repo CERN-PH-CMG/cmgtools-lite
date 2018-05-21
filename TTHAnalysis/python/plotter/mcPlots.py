@@ -324,7 +324,7 @@ def doNormFit(pspec,pmap,mca,saveScales=False):
         if mca.getProcessOption(p,'FreeFloat',False):
             normTermName = mca.getProcessOption(p,'PegNormToProcess',p)
             print "%s scale as %s" % (p, normTermName)
-            poi = w.factory('r_%s[1,%g,%g]' % (p, pmap[p].Integral(), normTermName, 0.0, 5)); w.nodelete.append(poi)
+            poi = w.factory('r_%s[1,%g,%g]' % (normTermName, 0.0, 5)); w.nodelete.append(poi)
             pois.add('r_%s' % normTermName)
             norm.addOtherFactor(poi)
             procNormMap[p] = norm.getVal()
@@ -781,7 +781,8 @@ class PlotMaker:
                                           printDir=self._options.printDir+(("/"+subname) if subname else ""))
             if elist: mca.clearCut()
 
-    def printOnePlot(self,mca,pspec,pmap,mytotal=None,makeCanvas=True,outputDir=None,printDir=None,xblind=[9e99,-9e99],extraProcesses=[],plotmode="auto",outputName=None):
+    def printOnePlot(self,mca,pspec,pmapIn,mytotal=None,makeCanvas=True,outputDir=None,printDir=None,xblind=[9e99,-9e99],extraProcesses=[],plotmode="auto",outputName=None):
+                pmap = dict( (k, h if isinstance(h,HistoWithNuisances) else HistoWithNuisances(h)) for (k,h) in pmapIn.iteritems() )
                 options = self._options
                 if printDir == None: printDir=self._options.printDir
                 if outputDir == None: outputDir = self._dir
@@ -947,6 +948,8 @@ class PlotMaker:
                         doStatTests(total, pmap['data'], options.doStatTests, legendCorner=pspec.getOption('Legend','TR'))
                 if pspec.hasOption('YMin') and pspec.hasOption('YMax'):
                     total.GetYaxis().SetRangeUser(pspec.getOption('YMin',1.0), pspec.getOption('YMax',1.0))
+                elif pspec.hasOption('YMin'):
+                    total.SetMinimum(pspec.getOption('YMin'))
                 if pspec.hasOption('ZMin') and pspec.hasOption('ZMax'):
                     total.GetZaxis().SetRangeUser(pspec.getOption('ZMin',1.0), pspec.getOption('ZMax',1.0))
                 #if options.yrange: 
@@ -1062,7 +1065,7 @@ class PlotMaker:
                                 for line in loglines: dump.write("%s\n" % line)
                                 dump.write("\n")
                             dump.close()
-                        if ext == "txt":
+                        if ext == "txt" and "TProfile" not in total.ClassName():
                             dump = open("%s/%s.%s" % (fdir, outputName, ext), "w")
                             maxlen = max([len(mca.getProcessOption(p,'Label',p)) for p in mca.listSignals(allProcs=True) + mca.listBackgrounds(allProcs=True)]+[10])
                             fmt    = "%%-%ds %%9.2f +/- %%9.2f (stat)" % (maxlen+1)
@@ -1086,7 +1089,7 @@ class PlotMaker:
                                 for line in loglines: dump.write("%s\n" % line)
                                 dump.write("\n")
                             dump.close()
-                        else:
+                        if ext != "txt":
                             savErrorLevel = ROOT.gErrorIgnoreLevel; ROOT.gErrorIgnoreLevel = ROOT.kWarning;
                             if "TH2" in total.ClassName() or "TProfile2D" in total.ClassName():
                                 pmap["total"] = total

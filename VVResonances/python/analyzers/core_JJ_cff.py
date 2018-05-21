@@ -4,7 +4,7 @@ from PhysicsTools.Heppy.analyzers.objects.all import *
 from PhysicsTools.Heppy.analyzers.gen.all import *
 from CMGTools.VVResonances.analyzers.LeptonIDOverloader import *
 from CMGTools.VVResonances.analyzers.HbbTagComputer import *
-from CMGTools.VVResonances.analyzers.VVBuilder import *
+from CMGTools.VVResonances.analyzers.VVBuilder_JJ import *
 from CMGTools.VVResonances.analyzers.TTBuilder import *
 from CMGTools.VVResonances.analyzers.VTauBuilder import *
 from CMGTools.VVResonances.analyzers.Skimmer import *
@@ -56,38 +56,18 @@ eventFlagsAna = cfg.Analyzer(
     fallbackProcessName = 'RECO',
     outprefix   = 'Flag',
     triggerBits = {
+        "goodVertices" : [ "Flag_goodVertices" ],
+        "globalTightHalo2016Filter" : [ "Flag_globalTightHalo2016Filter" ],
         "HBHENoiseFilter" : [ "Flag_HBHENoiseFilter" ],
         "HBHENoiseIsoFilter" : [ "Flag_HBHENoiseIsoFilter" ],
-        "CSCTightHaloFilter" : [ "Flag_CSCTightHaloFilter" ],
-        "globalTightHalo2016Filter" : [ "Flag_globalTightHalo2016Filter" ],
-        "hcalLaserEventFilter" : [ "Flag_hcalLaserEventFilter" ],
         "EcalDeadCellTriggerPrimitiveFilter" : [ "Flag_EcalDeadCellTriggerPrimitiveFilter" ],
-        "goodVertices" : [ "Flag_goodVertices" ],
-        "trackingFailureFilter" : [ "Flag_trackingFailureFilter" ],
-        "eeBadScFilter" : [ "Flag_eeBadScFilter" ],
-        "ecalLaserCorrFilter" : [ "Flag_ecalLaserCorrFilter" ],
-        "trkPOGFilters" : [ "Flag_trkPOGFilters" ],
-        "trkPOG_manystripclus53X" : [ "Flag_trkPOG_manystripclus53X" ],
-        "trkPOG_toomanystripclus53X" : [ "Flag_trkPOG_toomanystripclus53X" ],
-        "trkPOG_logErrorTooManyClusters" : [ "Flag_trkPOG_logErrorTooManyClusters" ],
+        "BadPFMuonFilter" : [ "Flag_BadPFMuonFilter" ],
+        "BadChargedCandidateFilter" : [ "Flag_BadChargedCandidateFilter" ],
+        "eeBadScFilter" : [ "Flag_eeBadScFilter" ], # not suggested
+        "ecalBadCalibFilter" : [ "Flag_ecalBadCalibFilter" ],
         "METFilters" : [ "Flag_METFilters" ],
     }
     )
-
-from CMGTools.TTHAnalysis.analyzers.badChargedHadronAnalyzer import badChargedHadronAnalyzer
-badChargedHadronAna = cfg.Analyzer(
-    badChargedHadronAnalyzer, name = 'badChargedHadronAna',
-    muons='slimmedMuons',
-    packedCandidates = 'packedPFCandidates',
-)
-
-from CMGTools.TTHAnalysis.analyzers.badMuonAnalyzer import badMuonAnalyzer
-badMuonAna = cfg.Analyzer(
-    badMuonAnalyzer, name = 'badMuonAna',
-    muons='slimmedMuons',
-    packedCandidates = 'packedPFCandidates',
-)
-
 
 # Select a list of good primary vertices (generic)
 vertexAna = cfg.Analyzer(
@@ -153,7 +133,7 @@ lepAna = cfg.Analyzer(
     muon_dxydz_track = "innerTrack",
     # loose muon selection
     loose_muon_id     = "",
-    loose_muon_pt     = 20.0,
+    loose_muon_pt     = 30.0,
     loose_muon_eta    = 2.4,
     loose_muon_dxy    = 0.3,
     loose_muon_dz     = 20.0,
@@ -275,11 +255,11 @@ jetAna = cfg.Analyzer(
     minLepPt = 10,
     relaxJetId = False,
     doPuId = False, # Not commissioned in 7.0.X
-    recalibrateJets = True, #'MC', # True, False, 'MC', 'Data'
+    recalibrateJets = False, #'MC', # True, False, 'MC', 'Data'
     applyL2L3Residual = 'Data', # Switch to 'Data' when they will become available for Data
     recalibrationType = "AK4PFPuppi",
-    mcGT     = "Fall17_17Nov2017_V6_MC",
-    dataGT   = [(1,"Fall17_17Nov2017B_V6_DATA"), (299337,"Fall17_17Nov2017C_V6_DATA"), (302030,"Fall17_17Nov2017D_V6_DATA"), (303435,"Fall17_17Nov2017E_V6_DATA"), (304911,"Fall17_17Nov2017F_V6_DATA")],
+    mcGT     = "Summer16_23Sep2016V3_MC",
+    dataGT   = [(1,"Summer16_23Sep2016BCDV3_DATA"),(276831,"Summer16_23Sep2016EFV3_DATA"),(278802,"Summer16_23Sep2016GV3_DATA"),(280919,"Summer16_23Sep2016HV3_DATA")],
     jecPath = "${CMSSW_BASE}/src/CMGTools/RootTools/data/jec/",
     shiftJEC = 0, # set to +1 or -1 to apply +/-1 sigma shift to the nominal jet energies
     addJECShifts = True, # if true, add  "corr", "corrJECUp", and "corrJECDown" for each jet (requires uncertainties to be available!)
@@ -306,7 +286,7 @@ jetAnaAK8 = cfg.Analyzer(
     copyJetsByValue = False,      #Whether or not to copy the input jets or to work with references (should be 'True' if JetAnalyzer is run more than once)
     genJetCol = 'slimmedGenJetsAK8',
     rho = ('fixedGridRhoFastjetAll','',''),
-    jetPt = 150.,
+    jetPt = 170.,
     jetEta = 2.4,
     jetEtaCentral = 2.4,
     cleanJetsFromLeptons = True,
@@ -315,11 +295,11 @@ jetAnaAK8 = cfg.Analyzer(
     minLepPt = 10,
     relaxJetId = False,
     doPuId = False, # Not commissioned in 7.0.X
-    recalibrateJets = True, #'MC', # True, False, 'MC', 'Data'
+    recalibrateJets = False, #'MC', # True, False, 'MC', 'Data'
     applyL2L3Residual = 'Data', # Switch to 'Data' when they will become available for Data
     recalibrationType = "AK8PFPuppi",
-    mcGT     = "Fall17_17Nov2017_V4_MC",
-    dataGT   = [(1,"Fall17_17Nov2017B_V4_DATA"), (299337,"Fall17_17Nov2017C_V4_DATA"), (302030,"Fall17_17Nov2017D_V4_DATA"), (303435,"Fall17_17Nov2017E_V4_DATA"), (304911,"Fall17_17Nov2017F_V4_DATA")],
+    mcGT     = "Summer16_23Sep2016V3_MC",
+    dataGT   = [(1,"Summer16_23Sep2016BCDV3_DATA"),(276831,"Summer16_23Sep2016EFV3_DATA"),(278802,"Summer16_23Sep2016GV3_DATA"),(280919,"Summer16_23Sep2016HV3_DATA")],
     jecPath = "${CMSSW_BASE}/src/CMGTools/RootTools/data/jec/",
     shiftJEC = 0, # set to +1 or -1 to apply +/-1 sigma shift to the nominal jet energies
     addJECShifts = True, # if true, add  "corr", "corrJECUp", and "corrJECDown" for each jet (requires uncertainties to be available!)
@@ -347,7 +327,7 @@ mergedTruthAna = cfg.Analyzer(TopMergingAnalyzer,name='mergeTruthAna')
 
 
 vvAna = cfg.Analyzer(
-    VVBuilder,name='vvAna',
+    VVBuilder_JJ,name='vvAna',
     suffix = '',
     doPUPPI=True,
     bDiscriminator = "pfCombinedInclusiveSecondaryVertexV2BJetTags",
@@ -375,7 +355,7 @@ ttAna = cfg.Analyzer(
 
 
 
-
+'''
 metWeightAna = cfg.Analyzer(
     ObjectWeightAnalyzer, name="metWeightAnalyzer",
     path='${CMSSW_BASE}/src/CMGTools/VVResonances/data',
@@ -388,7 +368,7 @@ metWeightAna = cfg.Analyzer(
         {'cut':lambda x: abs(x.leg1.leg1.pdgId())==13,'dimensions':1,'filename':'myTriggerScaleFactors.root','histoname':"MET_MU_DATA",'x':lambda x:x.leg1.leg2.pt(),'tag':'eff_HLTMET_DATA'},
         ]
 )
-
+'''
 
 
 vTauAna = cfg.Analyzer(
@@ -437,6 +417,4 @@ coreSequence = [
     eventFlagsAna,
     triggerFlagsAna,
     mergedTruthAna,
-    badMuonAna,
-    badChargedHadronAna,
 ]
