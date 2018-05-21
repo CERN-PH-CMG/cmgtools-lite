@@ -860,7 +860,7 @@ if __name__ == "__main__":
     if options.pretend:
         print textBlob; exit()
     ROOT.gROOT.SetBatch(True)
-    ROOT.gROOT.ProcessLine(".x ~/cpp/tdrstyle.cc")
+    ROOT.gROOT.ProcessLine(".x ../../../../TTHAnalysis/python/plotter/tdrstyle.cc")
     ROOT.gSystem.Load("libHiggsAnalysisCombinedLimit")
     if "/functions_cc.so" not in ROOT.gSystem.GetLibraries():
         ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/TTHAnalysis/python/plotter/functions.cc+" % os.environ['CMSSW_BASE']);
