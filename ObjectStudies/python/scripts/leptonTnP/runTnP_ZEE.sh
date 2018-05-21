@@ -1,18 +1,32 @@
 #!/bin/bash
 
-P=/afs/cern.ch/user/g/gpetrucc/w/TREES_80X_SOS_130716_TnP
-case $HOSTNAME in
-    cmsco01*) P=/data/g/gpetrucc/TREES_80X_SOS_080217_TnP ;;
-esac;
+year=2017
 
-PDIR="plots/80X/TnP_Moriond17/"
+if [ "${year}" == 2016 ]; then
+    P=/afs/cern.ch/user/g/gpetrucc/w/TREES_80X_SOS_130716_TnP
+    case $HOSTNAME in
+        cmsco01*) P=/data/g/gpetrucc/TREES_80X_SOS_080217_TnP ;;
+    esac;
+else
+    P=/afs/cern.ch/work/b/bschneid/sos/TnP_trees_run04
+fi
+
+if [ "${year}" == 2016 ]; then
+    PDIR="plots/80X/TnP_Moriond17/"
+else
+    PDIR="plots/94X/TnP_ICHEP18/"
+fi
 JOB="zee_sos_v1.0"
 XBINS="[5,12.5,16,20,25,30]" #25,40,70,120]"
 EBINS="[-2.5,-2.0,-1.52,-1.44,-1,0,1,1.44,1.52,2.0,2.5]"
 VBINS="[0.5,5.5,6.5,7.5,8.5,9.5,10.5,11.5,12.5,13.5,14.5,15.5,16.5,17.5,18.5,19.5,20.5,21.5,22.5,24.5,26.5,28.5,30.5,34.5]"
 DATA=""
-for L in B C D E F G; do DATA="$DATA $P/SingleElectron_Run2016${L}_23Sep2016/treeProducerTnP/tree.root"; done
-for V in 2 3; do DATA="$DATA $P/SingleElectron_Run2016H_PromptReco_v${V}/treeProducerTnP/tree.root"; done
+if [ "${year}" == 2016 ]; then
+    for L in B C D E F G; do DATA="$DATA $P/SingleElectron_Run2016${L}_23Sep2016/treeProducerTnP/tree.root"; done
+    for V in 2 3; do DATA="$DATA $P/SingleElectron_Run2016H_PromptReco_v${V}/treeProducerTnP/tree.root"; done
+else
+    for L in B C D E F; do DATA="$DATA $P/SingleElectron_Run2017${L}_17Nov2017/treeProducerTnP/tree.root"; done
+fi
 MC="--refmc  $P/DYJetsToLL_M50_LO/treeProducerTnP/tree.root"
 PDS="$DATA $MC"
 
