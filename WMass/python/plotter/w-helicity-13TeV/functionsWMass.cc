@@ -306,11 +306,11 @@ float ptCorr(float pt, float eta, float phi, float r9, int run, int isData, ULon
 TFile *_file_residualcorr_scale = NULL;
 TH2D *_histo_residualcorr_scale = NULL;
 
-float residualScale(float pt, float eta, int isData) {
+float residualScale(float pt, float eta, int isData, const char *fileCorr="../postprocessing/data/leptonScale/el/plot_dm_diff.root") {
   if(!isData) return 1.;
 
   if(!_histo_residualcorr_scale) {
-    _file_residualcorr_scale = new TFile("../postprocessing/data/leptonScale/el/plot_dm_diff.root");
+    _file_residualcorr_scale = new TFile(fileCorr);
     _histo_residualcorr_scale = (TH2D*)(_file_residualcorr_scale->Get("plot_dm_diff"));
   }
   
@@ -334,20 +334,27 @@ float ptElFull(float pt, float eta, int nSigma=0) {
   if (nSigma == 0) return pt;
 
   float relSyst=0.;
+  // THE FOLLOWING USES STD EGAMMA SYSTEMATICS (W/O RESIDUAL CORRECTIONS, INTEGRATED IN ETA/PT)
+  /*
   if(fabs(eta)<1.0) relSyst = 0.0015;  
   else if(fabs(eta)<1.479) relSyst = 0.005;  
   else relSyst = 0.01; 
-  // used w/o variable of the friend trees: slow and giving a different output for the same electron at each call due to random smearing in MC
-  //  return (1.+nSigma*relSyst) * ptCorr(pt,eta,phi,r9,run,isData,eventNumber) * residualScale(pt,eta,isData);
   return (1.+nSigma*relSyst) * pt;
+  */
+  // the following uses private residual corrections of AN-17-340
+  if (nSigma==0) return pt;
+  else {
+    float syst = 1-residualScale(pt,eta,1,"../postprocessing/data/leptonScale/el/plot_dm_diff_closure.root");
+    return (1. + nSigma*syst) * pt;
+  }
 }
 
 float ptElFullUp(float pt, float eta) {
-  return ptElFull(pt,1);
+  return ptElFull(pt,eta,1);
 }
 
 float ptElFullDn(float pt, float eta) {
-  return ptElFull(pt,-1);
+  return ptElFull(pt,eta,-1);
 }
 
 
