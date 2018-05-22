@@ -471,6 +471,7 @@ class MCAnalysis:
                         self._altPostFits[resalias].label = self._options.altExternalFitResultLabels[i]
         if getattr(self, '_postFit', None):
             roofit = roofitizeReport(ret)
+            addMyPOIs(roofit, ret, self)
             for k,h in ret.iteritems():
                 if k != "data" and h.Integral() > 0:
                     h.setPostFitInfo(self._postFit,True)

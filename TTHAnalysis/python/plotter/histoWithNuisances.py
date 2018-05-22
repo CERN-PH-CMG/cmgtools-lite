@@ -662,7 +662,21 @@ def mergePlots(name,plots):
 def listAllNuisances(histWithNuisanceMap):
     return set().union(*(h.getVariationList() for (k,h) in histWithNuisanceMap.iteritems() if k != "data" and h.Integral() >= 0))
 
-def addDefaultPOI(context,histoWithNuisanceMap,mca,poiName):
+def addMyPOIs(context, histoWithNuisanceMap, mca):
+    pois = set()
+    for p in mca.listBackgrounds(allProcs=True) + mca.listSignals(allProcs=True):
+        if p not in histoWithNuisanceMap: continue
+        if histoWithNuisanceMap[p].Integral() <= 0: continue
+        (pdf,norm) = histoWithNuisanceMap[p].rooFitPdfAndNorm()
+        if mca.getProcessOption(p,'FreeFloat',False):
+            normTermName = mca.getProcessOption(p,'PegNormToProcess',p)
+            print "%s scale as %s" % (p, normTermName)
+            poi = context.factory('r_%s[1,%g,%g]' % (normTermName, 0.0, 5))
+            norm.addOtherFactor(poi)
+            pois.add('r_%s' % normTermName)
+    return pois
+ 
+def addExternalDefaultPOI(context,histoWithNuisanceMap,mca,poiName):
     if context.workspace.var(poiName):
         return
     poi = context.workspace.factory("%s[1]" % poiName); context.workspace.nodelete.append(poi)
@@ -674,7 +688,7 @@ def addDefaultPOI(context,histoWithNuisanceMap,mca,poiName):
         if h.Integral() > 0:
             h.addRooFitScaleFactor(poi)
 
-def addPhysicsModelPOIs(context,histoWithNuisanceMap,mca,processPegs):
+def addExternalPhysicsModelPOIs(context,histoWithNuisanceMap,mca,processPegs):
     pois  = set(v for (p,v) in processPegs)
     done = True
     for p in pois:
