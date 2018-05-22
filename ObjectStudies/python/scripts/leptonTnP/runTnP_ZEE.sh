@@ -27,7 +27,7 @@ if [ "${year}" == 2016 ]; then
 else
     for L in B C D E F; do DATA="$DATA $P/SingleElectron_Run2017${L}_17Nov2017/treeProducerTnP/tree.root"; done
 fi
-MC="--refmc  $P/DYJetsToLL_M50_LO/treeProducerTnP/tree.root"
+MC="--refmc  $P/DYJetsToLL_M50/treeProducerTnP/tree.root"
 PDS="$DATA $MC"
 
 OPTS=" --doRatio  --pdir $PDIR/$JOB  "
