@@ -46,9 +46,9 @@ for ID in Loose Reco LooseIdOnly; do
   NUM="$ID"
   if [[ "$ID" == "Reco" ]]; then NUM="(Glb || TM)"; fi
   if [[ "$ID" == "LooseIdOnly" ]]; then NUM="Loose"; CDEN="$CDEN && (Glb || TM)"; fi
-  for BMOD in bern3 bern4; do # bern4 expo
+  for BMOD in bern3 bern4 expo; do
     if [[ "$SEL" != "" ]] && echo $SEL | grep -q "_" && echo $SEL | grep -q -v $BMOD; then continue; fi
-    for SMOD in  JDGauss JCB; do # JGauss  JCB
+    for SMOD in  JDGauss JCB JGauss; do
         if [[ "$SEL" != "" ]] && echo $SEL | grep -q "_" && echo $SEL | grep -q -v $BMOD; then continue; fi
         DEN="$CDEN"; POST=""
         python tnpEfficiency.py $PDS -d "abs(eta)<1.2 && $DEN" -n "$NUM" $OPTS --x-var pt $XBINS -N mu_${SMOD}_${BMOD}${POST}_${ID}_barrel -b $BMOD -s $SMOD $MASS --xtitle "p_{T} (GeV)" ;
