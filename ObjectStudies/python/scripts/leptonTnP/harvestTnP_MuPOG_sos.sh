@@ -1,5 +1,5 @@
 #!/bin/bash
-P=plots/80X/TnP_Moriond17
+P=plots/94X/TnP_ICHEP18/
 IN="mupog_sos_v1.0"; OUT="$IN/00_harvest"
 
 MEAS="$(echo SOS SOS_PR SOS_{ID,ISO,IP} SOS_comb)"

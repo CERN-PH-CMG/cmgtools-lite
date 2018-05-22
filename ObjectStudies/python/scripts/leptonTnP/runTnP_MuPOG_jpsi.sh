@@ -16,9 +16,15 @@ if [ "${year}" == 2016 ]; then
     DATA="$DATA $P/jpsi/tnpJPsi_Data_Run2016Hv2.root $P/jpsi/tnpJPsi_Data_Run2016Hv3.root"
     PDIR="plots/80X/TnP_Moriond17/"
 else
-    DATA=/eos/cms/store/group/phys_muon/TagAndProbe/Run2017/94X/Run*/TnPTree_17Nov2017_SingleMuon_Run2017Bv1_Full_GoldenJSON.root
+    for R in B C D E F; do
+        unset BUGFIX
+        if [ "${R}" == B ]; then
+            BUGFIX=_BUGFIX
+        fi
+        DATA="${DATA} /eos/cms/store/group/phys_muon/TagAndProbe/Run2017/94X/JPsi/Run${R}/TnPTreeJPsi_17Nov2017_Charmonium_Run2017${R}v1_Full_GoldenJSON${BUGFIX}.root"
+    done
     MC=/eos/cms/store/group/phys_muon/TagAndProbe/Run2017/94X/JPsi/MC/TnPTreeJPsi_94X_JpsiToMuMu_Pythia8.root
-    PDIR="plots/94X/TnP_ICHEP18/"
+    PDIR=plots/94X/TnP_ICHEP18/
 fi
 
 JOB="mupog_jpsi_v1"
@@ -33,13 +39,8 @@ OPTS="$OPTS -t tpTree/fitter_tree  --mc-cut 1 --mc-mass mass   "
 if [[ "$1" != "" ]]; then SEL=$1; OPTS="$OPTS --reqname $1 "; shift; fi
 if [[ "$1" != "" ]]; then OPTS="$OPTS $* "; shift; fi
 MASS="  -m mass 80,2.85,3.34"
-if [ "${year}" == 2016 ]; then
-    CDEN=" tag_Mu7p5_Track2_Jpsi_MU && pair_drM1 > 0.5 "
-else
-    # TODO: FIX THIS!
-    CDEN="1"
-fi
-for ID in Loose Reco ; do
+CDEN=" tag_Mu7p5_Track2_Jpsi_MU && pair_drM1 > 0.5 "
+for ID in Loose Reco LooseIdOnly; do
   echo "$ID"
   if [[ "$SEL" != "" ]] && echo $SEL | grep -q -v $ID; then continue; fi
   NUM="$ID"
