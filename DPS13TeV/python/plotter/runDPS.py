@@ -147,6 +147,7 @@ def makeResults(onlyMM = True, splitCharge = False): #sfdate, onlyMM = True, spl
     trees     = '/eos/user/m/mdunser/dps-13TeV-combination/TREES_latest/'
     friends = [trees+'/friends_latest_jets/', trees+'/friends_latest_bdt/']
     targetdir = '/eos/user/a/anmehta/www/{date}{pf}Dilepton_all_4AN/'.format(date=date, pf=('-'+postfix if postfix else '') )
+    #targetdir = '/eos/user/a/anmehta/www/{date}{pf}4AN/'.format(date=date, pf=('-'+postfix if postfix else '') )
     fcut   = 'dpsww13TeV/dps2016/results/cuts_results.txt'#mumuelmu_mca.txt'
     fplots = 'dpsww13TeV/dps2016/results/plots.txt'
     fsyst  = 'dpsww13TeV/dps2016/results/syst.txt'
@@ -171,15 +172,15 @@ def makeResults(onlyMM = True, splitCharge = False): #sfdate, onlyMM = True, spl
     #binningBDT   = 'BDT_DPS_WZ 15,0.,1.0'
     nbinspostifx = '_20bins'
 
-    fmca   = 'dpsww13TeV/dps2016/results/ll_mca.txt' #for dilep inclusive
+    fmca   = 'dpsww13TeV/dps2016/results/elel_mca.txt' #for dilep inclusive
     
     for bdt in ['wz']:
         for ich,ch in enumerate(loop):
             #if not ich: continue
             #enable    = ['trigmumu', 'mumu'] + ch
             #enable    = ['trigelmu', 'elmu'] + ch
-            enable    = ['trigmumuelmuelel', 'mumuelmuelel'] + ch
-            #enable    = ['trigelel', 'elel'] + ch
+            #enable    = ['trigmumuelmuelel', 'mumuelmuelel'] + ch
+            enable    = ['trigelel', 'elel'] + ch
             disable   = []
             fittodata = []
             scalethem = {'WZ': '{sf:.3f}'.format(sf=1.04),
@@ -188,7 +189,7 @@ def makeResults(onlyMM = True, splitCharge = False): #sfdate, onlyMM = True, spl
             extraopts = ' -W {sf:.3f}  --showIndivSigs'.format(sf=mumusf) # --plotmode=norm --plotmode=nostack
             #makeplots = ['BDTforCombine_elmu{ch}{nbins}'.format(ch=(ch[0] if ch else ''),nbins=nbinspostifx)]       
             #makeplots = ['BDT_wz_elmu{ch}{nbins}'.format(ch=(ch[0] if ch else ''),nbins=nbinspostifx),'BDT_fakes_elmu{ch}{nbins}'.format(ch=(ch[0] if ch else ''),nbins=nbinspostifx)]        
-            makeplots=['pt2_ll','dphiLep_ll','pt1_ll','eta_sum_ll','dphilll2_ll','etaprod_ll','mt1_ll','met_ll','mt2ll_ll','mtll_ll','dphil2met_ll','BDT_wz_ll_20bins','BDT_fakes_ll_20bins']
+            makeplots=['pt1_elel','pt2_elel','met_elel']#'dphiLep_ll','pt2_ll','eta_sum_ll','dphilll2_ll','etaprod_ll','mt1_ll','met_ll','mt2ll_ll','mtll_ll','dphil2met_ll','BDT_wz_ll_20bins','BDT_fakes_ll_20bins']
             
             runplots(trees, friends, targetdir, fmca, fcut, fplots, enable, disable, processes, scalethem, fittodata, makeplots, True, extraopts)
             ## ==================================
