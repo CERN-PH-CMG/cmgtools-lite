@@ -20,7 +20,7 @@ if __name__ == "__main__":
     
     print "Submitting {nt} toys with workspace {ws} and prefix {pfx}...".format(nt=ntoys,ws=workspace,pfx=prefix)
 
-    trackPars = "'\"''rgx{norm_.*|pdf.*|scales.*|alphaS.*|wpt.*|CMS.*|eff_unc.*}''\"'"
+    trackPars = "'\"''rgx{norm_.*|pdf.*|mu.*|alphaS.*|wpt.*|CMS.*|eff_unc.*}''\"'"
     raiseNormPars = "'\"''rgx{norm_.*}=1,100000000''\"'"
     ## the following is to have a reasonable result with MINUIT
     #cmdBase = "combineTool.py -d {ws} -M MultiDimFit -t {nt} --expectSignal=1 -m 999 {savefr} --cminInitialHesse 1 --cminFinalHesse 1 --cminPreFit 1 --redefineSignalPOIs norm_W%s_long --floatOtherPOIs=0 --freezeNuisanceGroups efficiencies%s --toysNoSystematics -n _{pfx} -s {seed} --trackParameters {track} --setParameterRanges {norm} --job-mode lxbatch --task-name {taskname} --sub-opts='-q 8nh' %s" % (charge, ',pdfs,scales,alphaS,wpt' if options.normonly else '', '--dry-run' if options.dryRun else '')

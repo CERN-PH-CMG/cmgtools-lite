@@ -117,13 +117,13 @@ float fakeRateWeight_promptRateCorr_1l_i_smoothed(float lpt, float leta, int lpd
   //   return 0;
   // }
 
-  if (FRi_el[iFR] == 0 and FRi_mu[iFR] == 0) {
+  if (FRi_el[iFR] == 0 && FRi_mu[iFR] == 0) {
     // this is the case where the histogram was not loaded correctly (one is 0 because you use the other flavour)
     std::cout << "Error in fakeRateWeight_promptRateCorr_1l_i_smoothed: hist_fr == 0. Returning 0" << std::endl;	
     return 0;
   } 
 
-  if (PRi_el[iPR] == 0 and PRi_mu[iPR] == 0) {
+  if (PRi_el[iPR] == 0 && PRi_mu[iPR] == 0) {
     // as above
     std::cout << "Error in fakeRateWeight_promptRateCorr_1l_i_smoothed: hist_pr == 0. Returning 0" << std::endl;	
     return 0;
@@ -132,7 +132,7 @@ float fakeRateWeight_promptRateCorr_1l_i_smoothed(float lpt, float leta, int lpd
 
   TH2 *hist_fr = (fid == 11 ? FRi_el[iFR] : FRi_mu[iFR]);
   TH2 *hist_pr = (fid == 11 ? PRi_el[iPR] : PRi_mu[iPR]);
-  if (hist_fr == 0 or hist_pr == 0) {
+  if (hist_fr == 0 && hist_pr == 0) {
     // this is the case where you expect electrons but get a muon, or viceversa
     // Indeed, selection is evaluated as 1 or 0 multiplying the event weight in TTree::Draw(...), so you potentially have all flavours here
     // do not issue warnign mewssages here, unless it is for testing
@@ -161,6 +161,7 @@ float fakeRateWeight_promptRateCorr_1l_i_smoothed(float lpt, float leta, int lpd
 
   float fr = p0    + p1   *lpt;
   float pr = p0_pr + p1_pr*lpt;
+
   if (pr > 0.98) pr = 0.98; // safety thing
 
   if (passWP) {
