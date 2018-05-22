@@ -774,7 +774,6 @@ class PlotMaker:
                         allprocs = mca.listSignals(True)+mca.listBackgrounds(True)+["data"]
                         for k,h in pmap_slice.iteritems():
                             if k in allprocs:
-                                print "%s goes in style for %s" % (k, h.GetName())
                                 stylePlot(h,pspec_slice, lambda opt, deft: mca.getProcessOption(k, opt, deft))
                         self.printOnePlot(mca,pspec_slice,pmap_slice,
                                           xblind=xblind, makeCanvas=makeCanvas, outputDir=dir,
