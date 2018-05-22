@@ -19,7 +19,7 @@ LUMI="$1"; shift
 if [[ "${LUMI}" == "ICHEP" ]]; then LUMI="12.9 --xf .*_2016E.*,.*_2016F.*,.*_2016G.*,.*_2016H.*"; fi
 if [[ "${LUMI}" == "POSTICHEP" ]]; then LUMI="23.0 --xf .*_2016B.*,.*_2016C.*,.*_2016D.*"; fi
 echo "Normalizing to ${LUMI}/fb";
-OPTIONS=" --tree treeProducerSusyMultilepton --s2v -j $J -l ${LUMI} -f "
+OPTIONS=" --tree treeProducerSusyMultilepton --s2v -j $J -l ${LUMI} -f --WA prescaleFromSkim"
 test -d cards/$OUTNAME || mkdir -p cards/$OUTNAME
 OPTIONS="${OPTIONS} --od cards/$OUTNAME ";
 

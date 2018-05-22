@@ -1,6 +1,7 @@
 # Triggers for 2017 DATA
 
-triggers_mumu_iso    = [ "HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8_v*",
+triggers_mumu_iso    = [ "HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_v*", # for early data only
+                         "HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8_v*",
                          "HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass8_v*",
                          "HLT_Mu19_TrkIsoVVL_Mu9_TrkIsoVVL_DZ_Mass3p8_v*", 
                          "HLT_Mu19_TrkIsoVVL_Mu9_TrkIsoVVL_DZ_Mass8_v*", ] # Note: Mass3p8 and 19/9 missing in early data 
@@ -19,7 +20,8 @@ triggers_ee_noniso = ["HLT_DoubleEle25_CaloIdL_MW_v*", # 25 and 27 missing in ea
 
 triggers_mue   = [ "HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_v*",  # NoDZ version only from 2017C
                    "HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ_v*", 
-                   "HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v*" ] # Mu8/Ele23 w/o DZ is always prescaled
+                   "HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v*", # Mu8/Ele23 w/o DZ is always prescaled
+                   "HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ_v*" ]
 
 # note: all dilepton+HT are missing in the early part of the data taking (2017B)
 triggers_mumu_ht =  [ "HLT_DoubleMu8_Mass8_PFHT350_v*",
@@ -68,6 +70,6 @@ triggers_ak8pfjet_mass30 = ['HLT_AK8PFJet%d_TrimMass30_v*' % pt for pt in (360, 
 
 # MET and muon+MET triggers for SOS
 triggers_SOS_doublemulowMET = ["HLT_DoubleMu3_DZ_PFMET50_PFMHT60_v*"]
-triggers_SOS_highMET = ["HLT_PFMETNoMu100_PFMHTNoMu100_IDTight_PFHT60","HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60","HLT_PFMETNoMu120_PFMHTNoMu120_IDTight", "HLT_PFMETNoMu140_PFMHTNoMu140_IDTight"] #NoMu version
-#triggers_SOS_highMET = ["HLT_PFMET100_PFMHT100_IDTight_PFHT60","HLT_PFMET120_PFMHT120_IDTight_PFHT60","HLT_PFMET120_PFMHT120_IDTight", "HLT_PFMET140_PFMHT140_IDTight"] 
+triggers_SOS_highMET = ["HLT_PFMETNoMu100_PFMHTNoMu100_IDTight_PFHT60_v*","HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60_v*","HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v*","HLT_PFMETNoMu140_PFMHTNoMu140_IDTight_v*"] #NoMu version
+#triggers_SOS_highMET = ["HLT_PFMET100_PFMHT100_IDTight_PFHT60_v*","HLT_PFMET120_PFMHT120_IDTight_PFHT60_v*","HLT_PFMET120_PFMHT120_IDTight_v*", "HLT_PFMET140_PFMHT140_IDTight_v*"]
 triggers_SOS_tripleMu = ["HLT_TripleMu_5_3_3_Mass3p8to60_DZ_v*"]

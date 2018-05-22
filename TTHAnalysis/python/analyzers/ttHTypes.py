@@ -23,7 +23,7 @@ leptonTypeSusy = NTupleObjectType("leptonSusy", baseObjectTypes = [ leptonType ]
     NTupleVariable("jetBTagDeepCSVCvsL", lambda lepton : (lambda x: -99 if isnan(x) else x)((lepton.jet.btag('pfDeepCSVJetTags:probc')/(lepton.jet.btag('pfDeepCSVJetTags:probc')+lepton.jet.btag('pfDeepCSVJetTags:probudsg'))) if hasattr(lepton,'jet') and hasattr(lepton.jet, 'btag') else -99), help="DeepCSV btag of nearest jet, CvsL = c/(c+udsg)"),
     NTupleVariable("miniRelIsoCharged",   lambda x : getattr(x,'miniAbsIsoCharged',-99)/x.pt()),
     NTupleVariable("miniRelIsoNeutral",   lambda x : getattr(x,'miniAbsIsoNeutral',-99)/x.pt()),
-    NTupleVariable("jetNDauChargedMVASel",    lambda lepton : sum((deltaR(x.eta(),x.phi(),lepton.jet.eta(),lepton.jet.phi())<=0.4 and x.charge()!=0 and x.fromPV()>1 and x.hasTrackDetails() and qualityTrk(x.pseudoTrack(),lepton.associatedVertex)) for x in lepton.jet.daughterPtrVector()) if hasattr(lepton,'jet') and lepton.jet != lepton else 0, help="n charged daughters (with selection for ttH lepMVA) of nearest jet"),
+    NTupleVariable("jetNDauChargedMVASel",    lambda lepton : sum((deltaR(x.eta(),x.phi(),lepton.eta(),lepton.phi())<=0.4 and x.charge()!=0 and x.fromPV()>1 and x.hasTrackDetails() and qualityTrk(x.pseudoTrack(),lepton.associatedVertex)) for x in lepton.jet.daughterPtrVector()) if hasattr(lepton,'jet') and lepton.jet != lepton else 0, help="n charged daughters (with selection for ttH lepMVA) of nearest jet"),
     # More ID
     NTupleVariable("chargedHadRelIso04",  lambda x : x.chargedHadronIsoR(0.4)/x.pt(), help="PF Rel Iso, R=0.4, charged hadrons only"),
     NTupleVariable("trackerLayers", lambda x : (x.track() if abs(x.pdgId())==13 else x.gsfTrack()).hitPattern().trackerLayersWithMeasurement(), int, help="Tracker Layers"),
@@ -79,6 +79,7 @@ leptonTypeSusy.addSubObjects([
 
 tauTypeSusy = NTupleObjectType("tauSusy",  baseObjectTypes = [ tauType ], variables = [
      NTupleVariable("idMVAdR03", lambda x : x.idMVAdR03, int, help="1,2,3,4,5,6 if the tau passes the very loose to very very tight WP of the IsolationMVArun2v1DBdR03oldDMwLT discriminator"),
+     NTupleVariable("mvaId2017", lambda x : getattr(x,'mvaId2017',-99), float, help="2017 tau ID MVA discriminator score"),
 ])
 tauTypeSusy.removeVariable("idMVANewDM")
 tauTypeSusy.removeVariable("idCI3hit")

@@ -1,10 +1,8 @@
-TT      : TTLep_pow : xsec ; FillColor=ROOT.kGray
-TT      : TTSemi_pow : xsec ; FillColor=ROOT.kGray
-
-TT_fxfx	: TTJets_part1+TTJets_part2 : xsec ; Label="TT (FXFX)", FillColor=11, SkipMe=True
-
+TT      : TTJets_DiLepton_part1+TTJets_DiLepton_part2 : xsec ; FillColor=ROOT.kGray
+TT      : TTJets_SingleLeptonFromT : xsec ; FillColor=ROOT.kGray
+TT      : TTJets_SingleLeptonFromTbar : xsec ; FillColor=ROOT.kGray
 DY      : DYJetsToLL_M10to50_LO: xsec  ; FillColor=ROOT.kCyan
-DY      : DYJetsToLL_M50_LO_part1+DYJetsToLL_M50_LO_part2+DYJetsToLL_M50_LO_part3: xsec  ; FillColor=ROOT.kCyan
+DY      : DYJetsToLL_M50_LO: xsec  ; FillColor=ROOT.kCyan
 WJets   : WJetsToLNu_LO  : xsec  ; FillColor=ROOT.kCyan+2
 SingleTop: T_tch: xsec  ; FillColor=ROOT.kGray+2, Label="Single T"
 SingleTop: TBar_tch: xsec  ; FillColor=ROOT.kGray+2, Label="Single T"

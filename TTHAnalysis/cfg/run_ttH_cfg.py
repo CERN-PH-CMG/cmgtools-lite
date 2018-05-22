@@ -97,9 +97,17 @@ tauAna.loose_etaMax = 2.3
 tauAna.loose_decayModeID = "decayModeFindingNewDMs"
 tauAna.loose_tauID = "decayModeFindingNewDMs"
 tauAna.loose_vetoLeptons = False # no cleaning with leptons in production
-#    jetAna.cleanJetsFromTaus = True
-#    jetAnaScaleUp.cleanJetsFromTaus = True
-#    jetAnaScaleDown.cleanJetsFromTaus = True
+
+# run 2017 tau ID score
+tauAna.mvaId2017 = {
+    "fileName" : "$CMSSW_BASE/src/PhysicsTools/Heppy/data/GBRForest_tauIdMVAIsoDBoldDMdR0p3wLT2017v2.root",
+    "mvaName" : "RecoTauTag_tauIdMVAIsoDBoldDMdR0p3wLT2017v2",
+    "mvaKind" : "DBoldDMwLTwGJ",
+}
+
+# match using common source candidate pointer, as in nanoAOD
+jetAna.matchJetToLepAndTauByPFRefOnly = True
+
 
 
 #-------- ADDITIONAL ANALYZERS -----------
@@ -203,15 +211,14 @@ selectedComponents = [TTLep_pow]
 
 sig_ttv = [TTHnobb_pow,TTHnobb_fxfx,TTWToLNu_fxfx,TTZToLLNuNu_amc,TTZToLLNuNu_m1to10] # signal + TTV
 ttv_lo = [TTW_LO,TTZ_LO] # TTV LO
-rares = [ZZTo4L,WW_DPS,TZQToLL]+TTXXs # rares # MISSING: GGHZZ4L,VHToNonbb,WpWpJJ,tWll
-single_t = Ts # single top + tW # MISSING: THQ,THW
-convs = [TTGJets] # X+G # MISSING: WGToLNuG_amcatnlo_ext,WGToLNuG_amcatnlo_ext2,ZGTo2LG_ext,TGJets,TGJets_ext
-v_jets = [WJetsToLNu_LO,DYJetsToLL_M10to50_LO,DYJetsToLL_M50_LO,DYJetsToLL_M50_LO_ext,WWTo2L2Nu] # V+jets
+rares = [ZZTo4L,WW_DPS,TZQToLL,GGHZZ4L,VHToNonbb,WpWpJJ,tWll]+TTXXs # rares
+single_t = Ts + [THQ,THW] # single top + tW
+convs = [TTGJets,TGJets_lep] # X+G # MISSING: WGToLNuG_amcatnlo_ext,WGToLNuG_amcatnlo_ext2,ZGTo2LG_ext
+v_jets = [WJetsToLNu_LO,DYJetsToLL_M10to50_LO,DYJetsToLL_M50_LO,WWTo2L2Nu] # V+jets
 v_jets_more = [ W1JetsToLNu_LO, W2JetsToLNu_LO, W3JetsToLNu_LO, W4JetsToLNu_LO ] + DYNJetsToLL + DYJetsToLLM4to50HT
-
-tt_1l = [TTSemi_pow,TTJets] # TT 1l # MISSING: Madgraph
-tt_2l = [TTLep_pow] # TT 2l # MISSING: Madgraph
-boson = [WZTo3LNu_fxfx] # multi-boson # MISSING: WZTo3LNu_pow, TriBosons
+tt_1l = [TTSemi_pow, TTJets_SingleLeptonFromT, TTJets_SingleLeptonFromTbar] # TT 1l
+tt_2l = [TTLep_pow, TTJets_DiLepton] # TT 2l
+boson = [WZTo3LNu_fxfx] + TriBosons # multi-boson # MISSING: WZTo3LNu_pow
 
 samples_slow = sig_ttv + ttv_lo + rares + convs + boson + tt_2l
 samples_fast = single_t + v_jets + tt_1l + v_jets_more
@@ -247,7 +254,7 @@ if runData and not isTest: # For running on data
 
     json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions17/13TeV/ReReco/Cert_294927-306462_13TeV_EOY2017ReReco_Collisions17_JSON.txt' # full 2017 dataset, EOY rereco, 41.4/fb
 
-    for era in 'BCDEF': dataChunks.append((json,filter(lambda dset: 'Run2017'+era in dset.name,dataSamples_17Nov2017),'2017'+era,[],False))
+    for era in 'BCDEF': dataChunks.append((json,filter(lambda dset: 'Run2017'+era in dset.name,dataSamples_31Mar2018),'2017'+era,[],False))
 
     DatasetsAndTriggers = []
     selectedComponents = [];
@@ -307,8 +314,11 @@ if runData and not isTest: # For running on data
     if runDataQCD: # for fake rate measurements in data
          configureSplittingFromTime(selectedComponents, 5, 2, maxFiles=8)
     else:
-        configureSplittingFromTime(filter(lambda x: 'Double' in x.name or 'MuonEG' in x.name,selectedComponents),50,5)
-        configureSplittingFromTime(filter(lambda x: 'Single' in x.name,selectedComponents),30,5)
+        configureSplittingFromTime(filter(lambda x: 'Double' in x.name or 'MuonEG' in x.name,selectedComponents),50,3)
+#        configureSplittingFromTime(filter(lambda x: 'Single' in x.name,selectedComponents),50,3)
+        for comp in selectedComponents:
+            if 'Single' in comp.name: comp.splitFactor = int(ceil(len(comp.files)/4))
+
 
 #printSummary(selectedComponents)
 
@@ -600,11 +610,11 @@ elif test == 'mem-sync':
     #if not getHeppyOption("single"): comp.fineSplitFactor = 8
 elif test == 'ttH-sync':
     ttHLepSkim.minLeptons=0
-    jetAna.recalibrateJets = False # JEC from MiniAOD for sync
-    selectedComponents = [TTWToLNu_ext]
+#    jetAna.recalibrateJets = False
+    selectedComponents = [TTHnobb_fxfx]
     comp = selectedComponents[0]
-    comp.files = ['/store/mc/RunIISummer16MiniAODv2/TTWJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext2-v1/110000/0015BB42-9BAA-E611-8C7F-0CC47A7E0196.root']
-    tmpfil = os.path.expandvars("/tmp/$USER/0015BB42-9BAA-E611-8C7F-0CC47A7E0196.root")
+    comp.files = ['/store/mc/RunIIFall17MiniAOD/ttHJetToNonbb_M125_TuneCP5_13TeV_amcatnloFXFX_madspin_pythia8/MINIAODSIM/94X_mc2017_realistic_v10-v1/20000/0CF65340-0200-E811-ABB7-0025905C53F0.root']
+    tmpfil = os.path.expandvars("$TMPDIR/0CF65340-0200-E811-ABB7-0025905C53F0.root")
     if not os.path.exists(tmpfil):
         os.system("xrdcp root://eoscms//eos/cms%s %s" % (comp.files[0],tmpfil))
     comp.files = [ tmpfil ]
