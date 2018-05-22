@@ -17,11 +17,16 @@ def fillSliceY(th2,plot1d,yvalue,xslice):
     for xbin in xrange(1,th2.GetNbinsX()+1):
         xval = th2.GetXaxis().GetBinCenter(xbin)
         if xslice[0] <= xval and xval <= xslice[1]:
+            msg = "trying to fill %s bin %2d x %5.1f from %s: " % (th2.GetName(), xbin, xval, plot1d.GetName())
+            found = "Not found!!"
             for i in xrange(plot1d.GetN()):
                 x,xp,xm = plot1d.GetX()[i], plot1d.GetErrorXhigh(i), plot1d.GetErrorYlow(i)
                 if x-xm <= xval and xval <= x+xp:
                     th2.SetBinContent(xbin,ybin,plot1d.GetY()[i])
                     th2.SetBinError(xbin,ybin,max(plot1d.GetErrorYlow(i),plot1d.GetErrorYhigh(i)))
+                    found = "bin %d x %5.1f endpoints [%5.1f, %5.1f], fr = %.3f +- %.3f" % (i, x, x-xm,x+xp, th2.GetBinContent(xbin,ybin), th2.GetBinError(xbin,ybin))
+            if "Not" in found:
+                print msg, found
 def readSliceY(th2,filename,plotname,yvalue,xslice):
     slicefile = ROOT.TFile.Open(filename)
     if not slicefile: raise RuntimeError, "Cannot open "+filename
@@ -74,6 +79,21 @@ def makeVariants(h,altsrc=None):
         ret.append(hsyst)
     return ret
 
+def fixLastBin(ibin, hdata, hmc=None, blowup=2.0):
+    isrc = hdata.GetNbinsX()+ibin
+    idst = isrc+1
+    for iy in xrange(1,hdata.GetNbinsY()+1):
+        fr0 = hdata.GetBinContent(isrc, iy)
+        er0 = hdata.GetBinError(isrc, iy)
+        if hmc:
+            sf = hmc.GetBinContent(idst, iy)/hmc.GetBinContent(isrc, iy)
+            print "extrapolate %s from pt %.1f to pt %.1f with SF %.3f from %s" % (hdata.GetName(), hdata.GetXaxis().GetBinCenter(isrc), hdata.GetXaxis().GetBinCenter(idst), sf, hmc.GetName())
+            fr0 *= sf; er0 *= sf
+        else:
+            print "extrapolate %s from pt %.1f to pt %.1f" % (hdata.GetName(), hdata.GetXaxis().GetBinCenter(isrc))
+        hdata.SetBinContent(idst, iy, fr0)
+        hdata.SetBinError(idst, iy, er0 * blowup)
+
 def styles(hs):
     colors = [ ('Data',ROOT.kBlack), ('MC tt',ROOT.kRed+1), ('QCD',ROOT.kAzure+1 ),
                ('QCD, #gamma corr',ROOT.kGreen+2), ('Data, #gamma corr',ROOT.kGray+2),
@@ -107,6 +127,7 @@ if __name__ == "__main__":
     parser.add_option("--showRatio", dest="showRatio", action="store_true", default=True, help="Add a data/sim ratio plot at the bottom")
     parser.add_option("--rr", "--ratioRange", dest="ratioRange", type="float", nargs=2, default=(0,2.9), help="Min and max for the ratio")
     parser.add_option("--normEffUncToLumi", dest="normEffUncToLumi", action="store_true", default=False, help="Normalize the dataset to the given lumi for the uncertainties on the calculated efficiency")
+    parser.add_option("--fix-last-bin", dest="fixLastBin", action="store_true", default=False, help="Fudge last bin")
     (options, args) = parser.parse_args()
     (outname) = args[0]
     print outname
@@ -118,8 +139,8 @@ if __name__ == "__main__":
         ROOT.gROOT.ProcessLine(".x tdrstyle.cc")
         ROOT.gStyle.SetOptStat(0)
     if True:
-       ptbins_el = [ 15,20,30,45,65,100 ]
-       ptbins_mu = [ 15,20,30,45,65,100 ]
+       ptbins_el = [ 15,25,35,45,65,100 ]
+       ptbins_mu = [ 10,15,20,32,45,65,100 ]
        etabins_el = [0, 1.479, 2.5]
        etabins_mu = [0, 1.2,   2.4]
        etaslices_el = [ (0.4,"00_15"), (1.8,"15_25") ]
@@ -129,9 +150,9 @@ if __name__ == "__main__":
        Xnices = [ "MC QCD", "Data, comb." ]
 
 
-       an = args[1]
+       an = args[1].lower()
 
-       if an=='tth':
+       if an == 'tth':
            # TTH
 
            h2d_el = [ make2D(outfile,"FR_mva090_el_"+X, ptbins_el, etabins_el) for X in XsQ ]
@@ -139,28 +160,28 @@ if __name__ == "__main__":
            h2d_el_tt = [ make2D(outfile,"FR_mva090_el_TT", ptbins_el, etabins_el) ]
            h2d_mu_tt = [ make2D(outfile,"FR_mva090_mu_TT", ptbins_mu, etabins_mu) ]
 
-           Plots="plots/80X/ttH_Moriond17/lepMVA/v3.0/fr-meas"
+           Plots="plots/94X/ttH/lepMVA/v1.0.1/fr-meas"
            Z3l="z3l"
            QCD="qcd1l"
            #### Electrons: 
-           readMany2D(XsQ, h2d_el, "/".join([Plots, QCD, "el/HLT_Ele8_CaloIdM_TrackIdM_PFJet30/fakerates-mtW1R/fr_sub_eta_%s_comp.root"]), "%s", etaslices_el, (15,20) )
-           readMany2D(XsQ, h2d_el, "/".join([Plots, QCD, "el/HLT_Ele12_CaloIdM_TrackIdM_PFJet30/fakerates-mtW1R/fr_sub_eta_%s_comp.root"]), "%s", etaslices_el, (20,30) )
-           readMany2D(XsQ, h2d_el, "/".join([Plots, QCD, "el/HLT_Ele17_CaloIdM_TrackIdM_PFJet30/fakerates-mtW1R/fr_sub_eta_%s_comp.root"]), "%s", etaslices_el, (30,999) )
+           readMany2D(XsQ, h2d_el, "/".join([Plots, QCD, "el/HLT_EleX_Combined/fakerates-mtW1R/fr_sub_eta_%s_comp.root"]), "%s", etaslices_el, (15,999) )
 
            #### Muons: 
-           # 10-30 from Mu3_PFJet40 + Mu8
-           readMany2D(XsQ, h2d_mu, "/".join([Plots, QCD, "mu/HLT_MuX_CombLow/fakerates-mtW1R/oneLoose/fr_sub_eta_%s_comp.root"]), "%s", etaslices_mu, (15,30) )
-           # 30-inf from Mu8+Mu17+Mu27:
-           readMany2D(XsQ, h2d_mu, "/".join([Plots, QCD, "mu/HLT_MuX_CombHigh/fakerates-mtW1R/splitbin/fr_sub_eta_%s_comp.root"]), "%s", etaslices_mu, (30,999) )
+           readMany2D(XsQ, h2d_mu, "/".join([Plots, QCD, "mu/HLT_MuX_Combined/fakerates-mtW1R/fr_sub_eta_%s_comp.root"]), "%s", etaslices_mu, (10,999) )
+
+           if options.fixLastBin:
+               fixLastBin(-1, h2d_el[1], h2d_el[0])
+               fixLastBin(-1, h2d_mu[1], h2d_mu[0])
 
            #### TT MC-truth
-           MCPlots="plots/80X/ttH_Moriond17/lepMVA/v3.0/fr-mc"; ID="wp090iv30f50E2";
+           MCPlots="plots/94X/ttH/lepMVA/v1.0.1/fr-mc"; ID="wp090iv01f60E3";
            XVar="mvaPt_090i_ptJI90_mvaPt090"
-           readMany2D(["TT_red"], h2d_mu_tt, "/".join([MCPlots, "mu_bnb_"+ID+"_recJet30_eta_%s.root"]), XVar+"_coarse_%s",   etaslices_mu, (15,999) )
-           readMany2D(["TT_redNC"], h2d_el_tt, "/".join([MCPlots, "el_lbin_"+ID+"_recJet30_eta_%s.root"]), XVar+"_coarse_%s",   etaslices_el, (15,999) )
+           readMany2D(["TT_SS_red"], h2d_mu_tt, "/".join([MCPlots, "mu_bnb_"+ID+"_recJet30_eta_%s.root"]), XVar+"_coarse_%s",   etaslices_mu, (15,999) )
+           readMany2D(["TT_SS_redNC"], h2d_el_tt, "/".join([MCPlots, "el_bnbNC_"+ID+"_recJet30_eta_%s.root"]), XVar+"_coarseelcomb_%s",   etaslices_el, (15,999) )
 
            h2d_el_mc4cc = [ make2D(outfile,"FR_mva090_el_MC"+X, ptbins_el, etabins_el) for X in ("QCD","QCDNC") ]
-           readMany2D(["QCDEl_red_El8","QCDEl_redNC_El8"], h2d_el_mc4cc, "/".join([MCPlots, "el_lbin_"+ID+"_recJet30_eta_%s.root"]), XVar+"_coarse_%s",   etaslices_el, (15,999) )
+           readMany2D(["QCDEl_red_El8", "QCDEl_redNC_El8"],  h2d_el_mc4cc, "/".join([MCPlots, "el_hltid8_" +ID+"_recJet30_eta_%s.root"]), XVar+"_coarseelcomb_%s",   etaslices_el, (15,32) )
+           readMany2D(["QCDEl_red_El17","QCDEl_redNC_El17"], h2d_el_mc4cc, "/".join([MCPlots, "el_hltid17_"+ID+"_recJet30_eta_%s.root"]), XVar+"_coarseelcomb_%s",   etaslices_el, (32,999) )
            h2d_el_cc = [ make2D(outfile,"FR_mva090_el_"+X+"_NC", ptbins_el, etabins_el) for X in XsQ ]
            for hu,hc in zip(h2d_el,h2d_el_cc):
               for ie in xrange(1,len(etabins_el)):

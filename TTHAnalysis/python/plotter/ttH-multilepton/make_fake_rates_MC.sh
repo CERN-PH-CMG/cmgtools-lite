@@ -8,7 +8,7 @@ ttH)
     T=/afs/cern.ch/work/g/gpetrucc/TREES_TTH_120218_Fall17_JECV4_1L;
     hostname | grep -q cmsco01 && T=/data1/gpetrucc/TREES_TTH_120218_Fall17_JECV4_1L
     #hostname | grep -q cmsphys10 && T=/data1/g/gpetrucc/TREES_80X_ttH_300117_1L
-    PBASE="plots/94X/${ANALYSIS}/lepMVA/v1.0/fr-mc/"
+    PBASE="plots/94X/${ANALYSIS}/lepMVA/v1.0.1/fr-mc/"
     ;;
 susy) 
     echo "NOT UP TO DATE"; exit 1; 
