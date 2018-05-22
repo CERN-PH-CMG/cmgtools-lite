@@ -4,6 +4,26 @@ import numpy as np
 #doPUreweighting = True
 doPUandSF = False
 
+def submitFRrecursive(ODIR, name, cmd, dryRun=False):
+    outdir=ODIR+"/jobs/"
+    if not os.path.isdir(outdir): 
+        os.system('mkdir -p '+outdir)
+    os.system('cp ${{HOME}}/index.php {od}/../'.format(od=outdir))
+    os.system('cp ${{HOME}}/resubFRs.py {od}/../../'.format(od=outdir))
+    srcfile = outdir+name+".sh"
+    logfile = outdir+name+".log"
+    srcfile_op = open(srcfile,"w")
+    srcfile_op.write("#! /bin/sh\n")
+    srcfile_op.write("ulimit -c 0\n")
+    srcfile_op.write("cd {cmssw};\neval $(scramv1 runtime -sh);\ncd {d};\n".format( 
+            d = os.getcwd(), cmssw = os.environ['CMSSW_BASE']))
+    srcfile_op.write(cmd+'\n')
+    os.system("chmod a+x "+srcfile)
+    bsubcmd = "bsub -q 1nd -o {logfile} {srcfile}\n".format(d=os.getcwd(), logfile=logfile, srcfile=srcfile)
+    if dryRun: 
+        print "[DRY-RUN]: ", bsubcmd
+    else: os.system(bsubcmd)
+
 def printAggressive(s):
     print '='.join('' for i in range(len(s)+1))
     print s
@@ -284,6 +304,11 @@ def fakeShapes():
 
 
 def makeFakeRatesFast(recalculate):
+    ## in order to calculate the fakerates (and submit the jobs to the batch) one has to run (i think):
+
+    ##  python runDPS.py --fr --recalculate --submitFR
+
+
     ## this here is the usual stuff, but the paths are still wrong. we need to find the 1l skims that have mvaTTH inside
     trees     = '/eos/user/m/mdunser/w-helicity-13TeV/trees/TREES_latest_1muskim/'
     friends   = '/eos/user/m/mdunser/w-helicity-13TeV/trees/TREES_latest_1muskim/friends/'
@@ -344,7 +369,9 @@ def makeFakeRatesFast(recalculate):
         etastring = 'To'.join(str(i).replace('-','m').replace('.','p') for i in [eta, binningeta[j+1]] )
         tmp_td = targetdir+'/'+etastring
 
-        ## this is some weird recursive magic to submit this to the batch
+        ## this is some weird recursive magic to submit this to the batch. one needs a valid voms proxy
+        ## and such to run this on batch. it submits one job per bin in eta. each would take about
+        ## an hour i guess? depends a lot on priorities etc. though
         if opts.submitFR:
             abspath = os.path.abspath('.')
             tmp_cmd = 'python '+abspath+'/runDPS.py --fr --recalculate --doBin {j}'.format(j=j)
@@ -365,7 +392,8 @@ def makeFakeRatesFast(recalculate):
         extraopts = ' -A alwaystrue ETA{eta} LepGood1_eta>={e1}&&LepGood1_eta<{e2} '.format(eta=etastring, e1=eta, e2=binningeta[j+1]) ## no whitespaces in the cutstring here!!
         
         ## the next line would add pileup and lepton SFs. but we don't have them yet...
-        ## INCLUDE THIS LATER!!!!! extraopts+= ' -W {wgt} '.format(wgt=pileupandSFs)
+        ## include at least the lepton SFs later (not super important though)
+        extraopts+= ' -W 1. '.format(wgt=pileupandSFs)
 
         ## now if recalculate is set to true it will run the plots for the WandZ scale factor
         if recalculate: runplots(trees, friends, tmp_td, fmca, fcut, fplots, enable, disable, processes, scalethem, fittodata, newplots, True, extraopts)
@@ -599,8 +627,12 @@ if __name__ == '__main__':
     parser.add_option('-l'          , '--lumi'       , dest='lumi'         , type='float'        , default=0.    , help='change lumi by hand')
     parser.add_option('--simple'    ,                  dest='simple'       , action='store_true' , default=False , help='make simple plot')
     parser.add_option('--sFR'       ,                  dest='sFR'          , action='store_true' , default=False , help='make simple FR plots')
+    ## begin fake rate options
     parser.add_option('--fr'        , '--fakerates'  , dest='runFR'        , action='store_true' , default=False , help='run fakerates for muons')
-    parser.add_option('--rec'        , '--recalculate'  , dest='recalculate'        , action='store_true' , default=False , help='recalculate fakerates')
+    parser.add_option('--rec'       , '--recalculate', dest='recalculate'  , action='store_true' , default=False , help='recalculate fakerates')
+    parser.add_option('--submitFR'  , '--submitFR'   , dest='submitFR'     , action='store_true' , default=False , help='submit the fakerates to the batch')
+    parser.add_option('--doBin'     ,                  dest='doBin'        , type='int'          , default=-999  , help='submit exactly this bin of the FR calculation to the batch')
+    ## end fake rate options
     parser.add_option('--pr'        , '--promptrates', dest='runPR'        , action='store_true' , default=False , help='run promptrates for muons')
     parser.add_option('--fs'        , '--fakeshapes' , dest='fakeShapes'   , action='store_true' , default=False , help='run fake shapes')
     parser.add_option('--fc'        , '--fakeclosure', dest='fakeClosure'   , action='store_true' , default=False , help='run fake closure')
