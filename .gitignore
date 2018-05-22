@@ -11,4 +11,5 @@ __init__.py
 *C.d
 *.pcm
 LSFJOB*/
+*statusMultipleTaksJobs.sh
 *resubmitMultipleTaksJobs.sh
