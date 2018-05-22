@@ -3,13 +3,16 @@ ROOT.gROOT.SetBatch(True)
 
 ## ===================================================================
 ## USAGE:
-## needs as infile a multidimfit.root result
+## needs as infile a toys.root with limit tree from toys
 ## takes a comma separated list of regular expressions as input via --params
 ## if no output directory is given, it will just plot the smaller correlation matrix
 ## if output directory is given, it will save it there as pdf and png
 
 ## example:
-## python w-helicity-13TeV/subMatrix.py --infile <multidimfit.root> --params alph,muR,muF,.*Ybin.*2,pdf12,pdf56,pdf42 --outdir <output_directory>
+## python w-helicity-13TeV/subMatrix.py toys.root --params alph,muR,muF,.*Ybin.*2,pdf12,pdf56,pdf42 --outdir <output_directory>
+## examples of common regexps:
+## NORMs: 'norm_.*'
+## PDFs: range [1,20]: '^pdf([1-9]|1[0-9])|20$'
 ## ===================================================================
 
 
@@ -51,12 +54,18 @@ if __name__ == "__main__":
             os.system('mkdir -p {od}'.format(od=options.outdir))
         os.system('cp {pf} {od}'.format(pf='/afs/cern.ch/user/g/gpetrucc/php/index.php',od=options.outdir))
 
+    pois_regexps = list(options.params.split(','))
+    print "Filtering POIs with the following regex: ",pois_regexps
+
     ### GET LIST OF PARAMETERS AND INITIAL VALUES FROM THE WORKSPACE
     wsfile = ROOT.TFile(args[0], 'read')
     rws = wsfile.Get('w')
     pars = ROOT.RooArgList(rws.allVars())
     params = list(pars.at(i).GetName() for i in xrange(len(pars)))
     params = filter(lambda x: not x.endswith('_In'),params)
+    params = filter(lambda x: any([re.match(rgx,x) for rgx in pois_regexps]),params)
+    
+    print "filtered params = ",params
 
     toysfile = ROOT.TFile(args[1], 'read')
     toys = toysfile.Get('limit')
@@ -64,21 +73,19 @@ if __name__ == "__main__":
     fitvals = {}
     fiterrs = {}
     floatParams = []
-    pois_regexps = list(options.params.split(','))
     for p in params:
         bname = 'trackedParam_{par}'.format(par=p)
         if toys.GetBranch(bname) == None:
             # print "WARING! Branch for variable ",p," not tracked in the toys!"
             continue
-        if any([re.match(poi,p) for poi in pois_regexps]):
-            floatParams.append(p)
-            central_val = pars.find(p).getVal()
-            residual_thr = central_val*1E-03 if central_val!=0 else 1E-03 # to remove bad fits with BGSF2
-            toys.Draw('{branch}>>h_{par}'.format(branch=bname,par=p),'abs({branch}-{central})>{thr}'.format(branch=bname,central=central_val,thr=residual_thr))
-            h = ROOT.gROOT.FindObject('h_{par}'.format(par=p)).Clone()
-            fitvals[p] = h.GetMean()
-            fiterrs[p] = h.GetRMS()
-            print "Par: ",p,":\tInitial = ",central_val,"\tFit = ",fitvals[p]," +/- ",fiterrs[p]
+        floatParams.append(p)
+        central_val = pars.find(p).getVal()
+        residual_thr = central_val*1E-03 if central_val!=0 else 1E-03 # to remove bad fits with BGSF2
+        toys.Draw('{branch}>>h_{par}'.format(branch=bname,par=p),'abs({branch}-{central})>{thr}'.format(branch=bname,central=central_val,thr=residual_thr))
+        h = ROOT.gROOT.FindObject('h_{par}'.format(par=p)).Clone()
+        fitvals[p] = h.GetMean()
+        fiterrs[p] = h.GetRMS()
+        print "Par: ",p,":\tInitial = ",central_val,"\tFit = ",fitvals[p]," +/- ",fiterrs[p]
 
     print "===> Build covariance matrix from this set of params: ",floatParams
 
@@ -97,17 +104,6 @@ if __name__ == "__main__":
             residual_thr_x = central_val_x*1E-02 if central_val_x!=0 else 1E-02; residual_thr_y = central_val_y*1E-02 if central_val_y!=0 else 1E-02
             residual_uthr_x = central_val_x*0.1 if central_val_x!=0 else 3; residual_uthr_y = central_val_y*0.1 if central_val_y!=0 else 3
             gof = '{resx}>{cutx} && {resy}>{cuty} && {resx}<{ucutx} && {resy}<{ucuty}'.format(cutx=residual_thr_x,resx=residual_x,cuty=residual_thr_y,resy=residual_y,ucutx=residual_uthr_x,ucuty=residual_uthr_y)
-            
-            # this uses the error, but the error comes from MINUIT still, so not reliable to filter fit status
-            # toys.Draw("trackedParamErr_{x}>>h_err_{x}".format(x=x)); herrx=ROOT.gROOT.FindObject('h_err_{x}'.format(x=x)).Clone()
-            # toys.Draw("trackedParamErr_{y}>>h_err_{y}".format(y=y)); herry=ROOT.gROOT.FindObject('h_err_{y}'.format(y=y)).Clone()
-            # herrx.Fit('gaus','Q'); mean_errx, sigma_errx = (herrx.GetFunction("gaus").GetParameter(1), herrx.GetFunction("gaus").GetParameter(2))
-            # herry.Fit('gaus','Q'); mean_erry, sigma_erry = (herry.GetFunction("gaus").GetParameter(1), herry.GetFunction("gaus").GetParameter(2))
-            # print "mean err x = ",mean_errx, " +/- ",sigma_errx
-            # print "mean err y = ",mean_erry, " +/- ",sigma_erry
-            # gof = 'abs(trackedParamErr_{x}-{mean_errx})<3*{sigma_errx} && abs(trackedParamErr_{y}-{mean_erry})<3*{sigma_erry}'.format(x=x,mean_errx=mean_errx,sigma_errx=sigma_errx,   
-            #                                                                                                                          y=y,mean_erry=mean_erry,sigma_erry=sigma_erry)
-
             var = '({x}-{x0})*({y}-{y0})'.format(x='trackedParam_'+x,x0=fitvals[x],y='trackedParam_'+y,y0=fitvals[y])
             toys.Draw('{var}>>h_{x}_{y}'.format(var=var,x=x,y=y),gof)
             h = ROOT.gROOT.FindObject('h_{x}_{y}'.format(x=x,y=y)).Clone()
@@ -121,7 +117,7 @@ if __name__ == "__main__":
     for x in floatParams:
         for y in floatParams:
             corr[(x,y)] = cov[(x,y)]/math.sqrt(cov[(x,x)])/math.sqrt(cov[(y,y)])
-            print x," - ",y," => cov = ",cov[(x,y)],"; sigma(x) = ",math.sqrt(cov[(x,x)]),"; sigma(y) = ",math.sqrt(cov[(y,y)])
+            # print x," - ",y," => cov = ",cov[(x,y)],"; sigma(x) = ",math.sqrt(cov[(x,x)]),"; sigma(y) = ",math.sqrt(cov[(y,y)])
 
     ## sort the floatParams. alphabetically, except for pdfs, which are sorted by number
     floatParams = sorted(floatParams, key= lambda x: int(x.split('_')[-1]) if 'norm' in x and '_Ybin_' in x else 0)
@@ -157,7 +153,8 @@ if __name__ == "__main__":
             th2_sub.GetYaxis().SetBinLabel(j+1, new_y)
 
     th2_sub.GetZaxis().SetRangeUser(-1, 1)
-    th2_sub.Draw('colz text')
+    if len(params)<30: th2_sub.Draw('colz text')
+    else: th2_sub.Draw('colz')
 
     if options.outdir:
         for i in ['pdf', 'png']:
