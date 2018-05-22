@@ -267,16 +267,17 @@ float fakeRateWeight_2lssMVA_TL(float l1pt, float l1eta, int l1pdgId, float l1mv
     int nfail = (l1mva < WP)+(l2mva < WP);
     
     if (nfail == 1) {
-            double fpt,feta; int fid;
+      return 1;
+      /*            double fpt,feta; int fid;
             if (l1mva < l2mva) { fpt = l1pt; feta = std::abs(l1eta); fid = abs(l1pdgId); }
             else               { fpt = l2pt; feta = std::abs(l2eta); fid = abs(l2pdgId); }
             TH2 *hist = (fid == 11 ? FR_el : FR_mu);
             int ptbin  = std::max(1, std::min(hist->GetNbinsX(), hist->GetXaxis()->FindBin(fpt)));
             int etabin = std::max(1, std::min(hist->GetNbinsY(), hist->GetYaxis()->FindBin(feta)));
             double fr = hist->GetBinContent(ptbin,etabin);
-            return fr/(1-fr);
+            return fr/(1-fr);*/
         }
-        else return 0;
+    //    else return 0;
 
 }
 
@@ -285,6 +286,8 @@ float fakeRateWeight_2lssMVA_LL(float l1pt, float l1eta, int l1pdgId, float l1mv
 {
     int nfail = (l1mva < WP)+(l2mva < WP);
     if (nfail == 2) {
+      return 1;
+      /*
       TH2 *hist1 = (abs(l1pdgId) == 11 ? FR_el : FR_mu);
             int ptbin1  = std::max(1, std::min(hist1->GetNbinsX(), hist1->GetXaxis()->FindBin(l1pt)));
             int etabin1 = std::max(1, std::min(hist1->GetNbinsY(), hist1->GetYaxis()->FindBin(std::abs(l1eta))));
@@ -293,9 +296,9 @@ float fakeRateWeight_2lssMVA_LL(float l1pt, float l1eta, int l1pdgId, float l1mv
             int ptbin2  = std::max(1, std::min(hist2->GetNbinsX(), hist2->GetXaxis()->FindBin(l2pt)));
             int etabin2 = std::max(1, std::min(hist2->GetNbinsY(), hist2->GetYaxis()->FindBin(std::abs(l2eta))));
             double fr2 = hist2->GetBinContent(ptbin2,etabin2);
-            return -fr1*fr2/((1-fr1)*(1-fr2));
+            return -fr1*fr2/((1-fr1)*(1-fr2));*/
         }
-    else return 0;
+    //    else return 0;
 }
 
 

@@ -28,6 +28,14 @@ trigelmu     : (HLT_MuEG || HLT_SingleMu || HLT_SingleEl)                       
 #
 mumuelmu     : abs(LepGood1_pdgId*LepGood2_pdgId) == 169 || abs(LepGood1_pdgId*LepGood2_pdgId) == 143      ; Disable=True
 trigmumuelmu : (HLT_MuEG || HLT_SingleEl || HLT_DoubleMu || HLT_SingleMu)                                  ; Disable=True
+#
+elel         : abs(LepGood1_pdgId*LepGood2_pdgId) == 121   						   ; Disable=True
+trigelel     : (HLT_SingleEl || HLT_DoubleEl)                        			      	           ; Disable=True
+
+### dilepton
+mumuelmuelel   :abs(LepGood1_pdgId*LepGood2_pdgId) == 169 || abs(LepGood1_pdgId*LepGood2_pdgId) == 143 || abs(LepGood1_pdgId*LepGood2_pdgId) == 121     ; Disable=True
+trigmumuelmuelel : (HLT_SingleEl || HLT_MuEG ||  HLT_DoubleMu || HLT_SingleMu || HLT_DoubleEl) ; Disable=True
+
 ##DataBDTblind : $DATA{finalMVA_DPS<0.7} $MC{1}                                                              ; Disable=True
 matched      : LepGood1_mcMatchId != 0 && LepGood2_mcMatchId != 0                                          ; Disable=True
 
