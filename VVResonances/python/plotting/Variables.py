@@ -12,6 +12,7 @@ generic_vars = [
 
 jj_generic_vars = [
     VCfg(name='jj_LV_mass', binning={'nbinsx':100, 'xmin':600., 'xmax':5000.}, unit='GeV', xtitle='m_{VV}'),
+    VCfg(name='jj_Delta_eta', drawname='abs(jj_l1_eta-jj_l2_eta)', binning={'nbinsx':50, 'xmin':0, 'xmax':5}, unit='', xtitle='#Delta #eta'),
 ]
 
 jj_l1_vars = [
@@ -21,10 +22,12 @@ jj_l1_vars = [
     # VCfg(name='jj_l1_tau1', binning={'nbinsx':40, 'xmin':0., 'xmax':1.}, unit=None, xtitle='jet1 #tau_{1}'),
     # VCfg(name='jj_l1_tau2', binning={'nbinsx':40, 'xmin':0., 'xmax':1.}, unit=None, xtitle='jet1 #tau_{2}'),
     VCfg(name='jj_l1_tau21', drawname='jj_l1_tau2/jj_l1_tau1', binning={'nbinsx':40, 'xmin':0., 'xmax':1.}, unit='', xtitle='jet1 #tau_{21}'),
-    VCfg(name='jj_l1_btagBOOSTED_recalc', binning={'nbinsx':40, 'xmin':-1., 'xmax':1.}, unit='', xtitle='boosted b-tag'),
+    VCfg(name='jj_l1_tau21_DDT', binning={'nbinsx':40, 'xmin':0., 'xmax':1.}, unit='', xtitle='jet1 #tau_{21}^{DDT}'),
+    # VCfg(name='jj_l1_btagBOOSTED_recalc', binning={'nbinsx':40, 'xmin':-1., 'xmax':1.}, unit='', xtitle='boosted b-tag'),
     VCfg(name='jj_l1_softDrop_mass', drawname='jj_l1_softDrop_massCorr*jj_l1_softDrop_massBare', binning={'nbinsx':100, 'xmin':0., 'xmax':250.}, unit='GeV', xtitle='jet1 SD mass'),
-    VCfg(name='jj_l1_s1BTag', binning={'nbinsx':40, 'xmin':-1., 'xmax':1.}, unit=None, xtitle='jet1 subjet1 CSV'),
-    VCfg(name='jj_l1_s2BTag', binning={'nbinsx':40, 'xmin':-1., 'xmax':1.}, unit=None, xtitle='jet1 subjet2 CSV'),
+    VCfg(name='jj_l1_softDrop_mass_m55', drawname='jj_l1_softDrop_massCorr*jj_l1_softDrop_massBare', binning={'nbinsx':33, 'xmin':55., 'xmax':220.}, unit='GeV', xtitle='jet1 SD mass'),
+    # VCfg(name='jj_l1_s1BTag', binning={'nbinsx':40, 'xmin':-1., 'xmax':1.}, unit=None, xtitle='jet1 subjet1 CSV'),
+    # VCfg(name='jj_l1_s2BTag', binning={'nbinsx':40, 'xmin':-1., 'xmax':1.}, unit=None, xtitle='jet1 subjet2 CSV'),
 ]
 
 jj_l2_vars = [
@@ -34,10 +37,36 @@ jj_l2_vars = [
     # VCfg(name='jj_l2_tau1', binning={'nbinsx':40, 'xmin':0., 'xmax':1.}, unit=None, xtitle='jet2 #tau_{1}'),
     # VCfg(name='jj_l2_tau2', binning={'nbinsx':40, 'xmin':0., 'xmax':1.}, unit=None, xtitle='jet2 #tau_{2}'),
     VCfg(name='jj_l2_tau21', drawname='jj_l2_tau2/jj_l2_tau1', binning={'nbinsx':40, 'xmin':0., 'xmax':1.}, unit='', xtitle='jet2 #tau_{21}'),
-    VCfg(name='jj_l2_btagBOOSTED_recalc', binning={'nbinsx':40, 'xmin':-1., 'xmax':1.}, unit='', xtitle='boosted b-tag'),
+    VCfg(name='jj_l2_tau21_DDT', binning={'nbinsx':40, 'xmin':0., 'xmax':1.}, unit='', xtitle='jet2 #tau_{21}^{DDT}'),
+    # VCfg(name='jj_l2_btagBOOSTED_recalc', binning={'nbinsx':40, 'xmin':-1., 'xmax':1.}, unit='', xtitle='boosted b-tag'),
     VCfg(name='jj_l2_softDrop_mass', drawname='jj_l2_softDrop_massCorr*jj_l2_softDrop_massBare', binning={'nbinsx':100, 'xmin':0., 'xmax':250.}, unit='GeV', xtitle='jet2 SD mass'),
-    VCfg(name='jj_l2_s1BTag', binning={'nbinsx':40, 'xmin':-1., 'xmax':1.}, unit=None, xtitle='jet2 subjet2 CSV'),
-    VCfg(name='jj_l2_s2BTag', binning={'nbinsx':40, 'xmin':-1., 'xmax':1.}, unit=None, xtitle='jet2 subjet2 CSV'),
+    VCfg(name='jj_l2_softDrop_mass_m55', drawname='jj_l2_softDrop_massCorr*jj_l2_softDrop_massBare', binning={'nbinsx':33, 'xmin':55., 'xmax':220.}, unit='GeV', xtitle='jet2 SD mass'),
+    # VCfg(name='jj_l2_s1BTag', binning={'nbinsx':40, 'xmin':-1., 'xmax':1.}, unit=None, xtitle='jet2 subjet2 CSV'),
+    # VCfg(name='jj_l2_s2BTag', binning={'nbinsx':40, 'xmin':-1., 'xmax':1.}, unit=None, xtitle='jet2 subjet2 CSV'),
+]
+
+jj_l1_jetid = [
+    VCfg(name='jj_l1_chf', binning={'nbinsx':50, 'xmin':0., 'xmax':1.}, unit='', xtitle='jet1 charged hadron fraction'),
+    VCfg(name='jj_l1_nhf', binning={'nbinsx':50, 'xmin':0., 'xmax':1.}, unit='', xtitle='jet1 neutral hadron fraction'),
+    VCfg(name='jj_l1_phf', binning={'nbinsx':50, 'xmin':0., 'xmax':1.}, unit='', xtitle='jet1 neutral EM fraction'),
+    VCfg(name='jj_l1_muf', binning={'nbinsx':50, 'xmin':0., 'xmax':1.}, unit='', xtitle='jet1 muon fraction'),
+    VCfg(name='jj_l1_elf', binning={'nbinsx':50, 'xmin':0., 'xmax':1.}, unit='', xtitle='jet1 charged EM fraction'),
+    VCfg(name='jj_l1_chm', binning={'nbinsx':50, 'xmin':0., 'xmax':200}, unit='', xtitle='jet1 charged hadron multiplicity'),
+    VCfg(name='jj_l1_npr', binning={'nbinsx':50, 'xmin':0., 'xmax':200}, unit='', xtitle='jet1 number of constituents'),
+    VCfg(name='jj_l1_npn', binning={'nbinsx':50, 'xmin':0., 'xmax':200}, unit='', xtitle='jet1 neutral hadron multiplicity'),
+
+]
+
+jj_l2_jetid = [
+    VCfg(name='jj_l2_chf', binning={'nbinsx':50, 'xmin':0., 'xmax':1.}, unit='', xtitle='jet2 charged hadron fraction'),
+    VCfg(name='jj_l2_nhf', binning={'nbinsx':50, 'xmin':0., 'xmax':1.}, unit='', xtitle='jet2 neutral hadron fraction'),
+    VCfg(name='jj_l2_phf', binning={'nbinsx':50, 'xmin':0., 'xmax':1.}, unit='', xtitle='jet2 neutral EM fraction'),
+    VCfg(name='jj_l2_muf', binning={'nbinsx':50, 'xmin':0., 'xmax':1.}, unit='', xtitle='jet2 muon fraction'),
+    VCfg(name='jj_l2_elf', binning={'nbinsx':50, 'xmin':0., 'xmax':1.}, unit='', xtitle='jet2 charged EM fraction'),
+    VCfg(name='jj_l2_chm', binning={'nbinsx':50, 'xmin':0., 'xmax':200}, unit='', xtitle='jet2 charged hadron multiplicity'),
+    VCfg(name='jj_l2_npr', binning={'nbinsx':50, 'xmin':0., 'xmax':200}, unit='', xtitle='jet2 number of constituents'),
+    VCfg(name='jj_l2_npn', binning={'nbinsx':50, 'xmin':0., 'xmax':200}, unit='', xtitle='jet2 neutral hadron multiplicity'),
+
 ]
 
 lnujj_generic_vars = [
