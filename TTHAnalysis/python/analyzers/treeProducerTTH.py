@@ -5,6 +5,7 @@ ttH_globalVariables = [
             NTupleVariable("rho",  lambda ev: ev.rho, float, help="kt6PFJets rho"),
             NTupleVariable("rhoCN",  lambda ev: ev.rhoCN, float, help="fixed grid rho central neutral"),
             NTupleVariable("nVert",  lambda ev: len(ev.goodVertices), int, help="Number of good vertices"),
+            NTupleVariable("PV_ndof",  lambda ev: (ev.goodVertices if ev.goodVertices else ev.vertices)[0].ndof(), float, help="Degrees of freedom of PV"),
 
             NTupleVariable("nJet25", lambda ev: sum([j.pt() > 25 for j in ev.cleanJets]), int, help="Number of jets with pt > 25, |eta|<2.4"),
             NTupleVariable("nJet25a", lambda ev: sum([j.pt() > 25 for j in ev.cleanJetsAll]), int, help="Number of jets with pt > 25, |eta|<4.7"),

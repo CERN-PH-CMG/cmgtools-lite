@@ -9,4 +9,5 @@ change: nLepGood == 1 : minMllAFAS > 12
 change: HLT_BIT_HLT_Ele12_CaloIdM_TrackIdM_PFJet30_v : 1
 change: HLT_FR_Mu8 : 1
 change: HLT_FR_Mu17 : 1
+change: PV_ndof : 200
 weight: 1

@@ -92,22 +92,26 @@ class VertexWeightFriend:
 if __name__ == '__main__':
     from sys import argv
     class Tester(Module):
-        def __init__(self, name):
+        def __init__(self, name, nvtx=False):
             Module.__init__(self,name,None)
-#            self.mc  = VertexWeightFriend(myfile=argv[2],targetfile=argv[2],myhist="nvtx_background",targethist="nvtx_data",verbose=True)
-            self.mc  = VertexWeightFriend(myfile=None,targetfile=argv[2],myhist=None,targethist="pileup",vtx_coll_to_reweight="nTrueInt",verbose=True,autoPU=True)
+            if nvtx:
+                self.mc  = VertexWeightFriend(myfile=argv[2],targetfile=argv[2],myhist="nvtx_background",targethist="nvtx_data",verbose=True)
+            else:
+                self.mc  = VertexWeightFriend(myfile=None,targetfile=argv[2],myhist=None,targethist="pileup",vtx_coll_to_reweight="nTrueInt",verbose=True,autoPU=True)
         def init(self,tree):
-            if tree: self.mc.init(tree)
+            self.mc.init(tree)
         def analyze(self,ev):
             ret = self.mc(ev)
             print ev.nVert, ret.values()[0]
-    test = Tester("tester")              
     import os.path
     if os.path.exists(argv[1]):
+        test = Tester("tester")
         el = EventLoop([ test ])
         file = ROOT.TFile(argv[1])
         tree = file.Get("tree")
         tree.vectorTree = True
         el.loop([tree], maxEvents = 10 if len(argv) < 4 else int(argv[3]))
     elif argv[1].startswith("_puw"):
+        test = Tester("tester",nvtx=True)
+        test.mc.init(None)
         test.mc.printPUWCode(argv[1]) 

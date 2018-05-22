@@ -47,7 +47,8 @@ triggers_1e_noniso = [ "HLT_Ele115_CaloIdVT_GsfTrkIdT_v*"] # Not 2017B
 
 # Prescaled lepton triggers
 triggers_FR_1mu_noiso = [ "HLT_Mu%d_v*" % pt for pt in (8,17) ] # DoubleMu PD
-triggers_FR_1mu_noiso_highpt = [ "HLT_Mu%d_v*" % pt for pt in (20,27,50) ] + ["HLT_Mu3_PFJet40_v*"] # SingleMu PD
+triggers_FR_1mu_noiso_smpd = [ "HLT_Mu%d_v*" % pt for pt in (20,27) ] + ["HLT_Mu3_PFJet40_v*"] # SingleMu PD
+triggers_FR_1mu_noiso_highpt = [ "HLT_Mu%d_v*" % pt for pt in (50,) ] # SingleMu PD
 triggers_FR_1e_noiso = [ "HLT_Ele%d_CaloIdM_TrackIdM_PFJet30_v*" % pt for pt in (8,17,23) ] # SingleElectron
 triggers_FR_1e_iso   = [ "HLT_Ele%d_CaloIdL_TrackIdL_IsoVL_PFJet30_v*" % pt for pt in (8,12,23) ] # SingleElectron
 
@@ -55,11 +56,18 @@ triggers_FR_1e_iso   = [ "HLT_Ele%d_CaloIdL_TrackIdL_IsoVL_PFJet30_v*" % pt for 
 # HT:
 triggers_pfht1050 = ['HLT_PFHT1050_v*']
 
-# AK8 HT:
-triggers_pfht800_mass50 = ['HLT_AK8PFHT800_TrimMass50_v*']
+# AK8 HT: not in 2017B, lower thresholds are prescaled
+triggers_ak8pfht_mass50 = ['HLT_AK8PFHT%d_TrimMass50_v*' % ht for ht in (750, 800)]
 
 # PF Jet
-triggers_pfjet500 = ['HLT_AK8PFJet500_v*']
+triggers_ak8pfjet = ['HLT_AK8PFJet500_v*']
 
-# AK8 PF Jet
-triggers_pfjet400_mass30 = ['HLT_AK8PFJet400_TrimMass30_v*']
+# AK8 PF Jet: not in 2017B, lower thresholds are prescaled
+triggers_ak8pfjet_mass30 = ['HLT_AK8PFJet%d_TrimMass30_v*' % pt for pt in (360, 380, 400)]
+
+
+# MET and muon+MET triggers for SOS
+triggers_SOS_doublemulowMET = ["HLT_DoubleMu3_DZ_PFMET50_PFMHT60_v*"]
+triggers_SOS_highMET = ["HLT_PFMETNoMu100_PFMHTNoMu100_IDTight_PFHT60","HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60","HLT_PFMETNoMu120_PFMHTNoMu120_IDTight", "HLT_PFMETNoMu140_PFMHTNoMu140_IDTight"] #NoMu version
+#triggers_SOS_highMET = ["HLT_PFMET100_PFMHT100_IDTight_PFHT60","HLT_PFMET120_PFMHT120_IDTight_PFHT60","HLT_PFMET120_PFMHT120_IDTight", "HLT_PFMET140_PFMHT140_IDTight"] 
+triggers_SOS_tripleMu = ["HLT_TripleMu_5_3_3_Mass3p8to60_DZ_v*"]

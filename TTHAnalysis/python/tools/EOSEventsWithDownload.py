@@ -1,10 +1,11 @@
 from DataFormats.FWLite import Events as FWLiteEvents
 from CMGTools.Production.changeComponentAccessMode import convertFile as convertFileAccess 
-import os, subprocess, json, timeit
+import os, subprocess, json, timeit, hashlib
 
 class EOSEventsWithDownload(object):
     def __init__(self, files, tree_name):
         self.aggressive = getattr(self.__class__, 'aggressive', 0)
+        self.long_cache = getattr(self.__class__, 'long_cache', False)
         print "Aggressive prefetching level %d" % self.aggressive
         self._files = []
         self._nevents = 0
@@ -128,18 +129,22 @@ class EOSEventsWithDownload(object):
                     if fname.startswith("root://eoscms") or (self.aggressive >= 2 and fname.startswith("root://")):
                         if not self.isLocal(fname):
                             tmpdir = os.environ['TMPDIR'] if 'TMPDIR' in os.environ else "/tmp"
-                            rndchars  = "".join([hex(ord(i))[2:] for i in os.urandom(8)])
+                            rndchars  = "".join([hex(ord(i))[2:] for i in os.urandom(8)]) if not self.long_cache else "long_cache-id%d-%s" % (os.getuid(), hashlib.sha1(fname).hexdigest());
                             localfile = "%s/%s-%s.root" % (tmpdir, os.path.basename(fname).replace(".root",""), rndchars)
-                            try:
-                                print "Filename %s is remote (geotag >= 9000), will do a copy to local path %s " % (fname,localfile)
-                                start = timeit.default_timer()
-                                subprocess.check_output(["xrdcp","-f","-N",fname,localfile])
-                                print "Time used for transferring the file locally: %s s" % (timeit.default_timer() - start)
-                                self._localCopy = localfile
+                            if self.long_cache and os.path.exists(localfile):
+                                print "Filename %s is already available in local path %s " % (fname,localfile)
                                 fname = localfile
-                            except:
-                                print "Could not save file locally, will run from remote"
-                                if os.path.exists(localfile): os.remove(localfile) # delete in case of incomplete transfer
+                            else:
+                                try:
+                                    print "Filename %s is remote (geotag >= 9000), will do a copy to local path %s " % (fname,localfile)
+                                    start = timeit.default_timer()
+                                    subprocess.check_output(["xrdcp","-f","-N",fname,localfile])
+                                    print "Time used for transferring the file locally: %s s" % (timeit.default_timer() - start)
+                                    if not self.long_cache: self._localCopy = localfile 
+                                    fname = localfile
+                                except:
+                                    print "Could not save file locally, will run from remote"
+                                    if os.path.exists(localfile): os.remove(localfile) # delete in case of incomplete transfer
                     print "Will run from "+fname
                     self.events = FWLiteEvents([fname])
                     break
