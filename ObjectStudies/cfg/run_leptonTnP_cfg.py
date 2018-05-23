@@ -58,7 +58,7 @@ elif run == "El":
     fastSkim2L.muCut = lambda mu : False
     lepAna.loose_muon_isoCut = lambda mu : False
 
-printSummary(selectedComponents)
+#printSummary(selectedComponents)
 if True: autoAAA(selectedComponents)
 
 from PhysicsTools.HeppyCore.framework.heppy_loop import getHeppyOption
