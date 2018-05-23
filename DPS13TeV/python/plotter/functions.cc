@@ -696,7 +696,7 @@ int Binnumberset1D(float BDTx,float BDTy){
   if(BDTx  > 0.9   && BDTy <= 0.85)return 8;
   if(BDTx  > 0.9   && BDTy >  0.85 && BDTy <= 0.9)return 7; 
   
-  */
+  
   //v8
   if(BDTx <=0.25 && BDTy > 0.2)return 1;
   if(BDTx > 0.25 && BDTx <= 0.7 && BDTy >= 0.65) return 2;
@@ -714,7 +714,7 @@ int Binnumberset1D(float BDTx,float BDTy){
   if(BDTx >0.7 &&  BDTx <= 0.8 && BDTy > 0.65 ) return 14;
   if(BDTx > 0.975 && BDTy > 0.975 ) return 15;
   
-  /*
+  
   //v9
   if(BDTx  > 0.1 && BDTx <=0.25 && BDTy >0.1 && BDTy <= 0.35)return 1;
   if((BDTx  > 0.95 && BDTy > 0.75 && BDTy <=0.8)||  (BDTx  > 0.85 && BDTx <= 0.95 && BDTy > 0.75 && BDTy <=0.9) )return 2;
@@ -822,7 +822,7 @@ int Binnumberset1D(float BDTx,float BDTy){
   if((BDTx > 0.65 && BDTx <=0.8 && BDTy >0.75) || (BDTx  > 0.8 && BDTx <=0.85 && BDTy > 0.75 && BDTy <=0.95) )return 13;
   if(BDTx  > 0.95  && BDTy > 0.85 && BDTy <=0.95)return 14;
   if(BDTx  > 0.65 && BDTx <=0.85 && BDTy >0.65 && BDTy <=0.75)return 15;
-    
+  
   //v14
   if(BDTx  > 0.1 && BDTx <=0.25 && BDTy >0.1 && BDTy <= 0.35)return 1;
   if((BDTx  > 0.85 && BDTx <= 0.95 && BDTy > 0.75 && BDTy <=0.9)) return 2;
@@ -860,7 +860,7 @@ int Binnumberset1D(float BDTx,float BDTy){
   if(BDTx  > 0.8 && BDTx <=0.9 && BDTy <=0.65)return 14;
 
   
-  
+  */
   //v13 arranged acc to signal strength(final)
 
   if(BDTx  <= 0.1 )return 1;
@@ -878,7 +878,7 @@ int Binnumberset1D(float BDTx,float BDTy){
   if((BDTx  > 0.95 && BDTy > 0.75 && BDTy <=0.85)||  (BDTx  > 0.85 && BDTx <= 0.95 && BDTy > 0.75 && BDTy <=0.9) )return 13;
   if(BDTx  > 0.95  && BDTy > 0.85 && BDTy <=0.95)return 14;
   if(BDTx  > 0.95  && BDTy > 0.95)return 15;
-  */
+  
 }
 
 
