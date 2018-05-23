@@ -9,6 +9,8 @@ leptonTypeTnP = NTupleObjectType("leptonTnP", baseObjectTypes = [ leptonType, Wi
     # ----------------------
     NTupleVariable("eleMVASpring15_VLooseIdEmu", lambda x : x.electronID("POG_MVA_ID_Spring15_NonTrig_VLooseIdEmu") if abs(x.pdgId())==11 else 1, int, help="VLoose MVA Ele ID (as per susy)"),
     NTupleVariable("eleMVASpring15_HZZ",         lambda x : x.electronID("MVA_ID_NonTrig_Spring15_HZZ")             if abs(x.pdgId())==11 else 1, int, help="MVA Ele ID (as per hzz)"),
+    NTupleVariable("SOSTightID2017",             lambda x: (x.electronID("MVA_ID_nonIso_Fall17_wp90") if x.pt()<10 else x.electronID("MVA_ID_nonIso_Fall17_SUSYTight")) if abs(x.pdgId())==11 else 0, int, help="SOS tight electron MVA noIso ID 2017 (WP: POG wp90 below 10 GeV, SUSYTight above)"),
+
     # ----------------------
     NTupleVariable("etaSc", lambda x : x.superCluster().eta() if abs(x.pdgId())==11 else -100, help="Electron supercluster pseudorapidity"),
     NTupleVariable("isGap", lambda x : x.isGap() if abs(x.pdgId())==11 else False, int, help="is this a Gap electron"),
