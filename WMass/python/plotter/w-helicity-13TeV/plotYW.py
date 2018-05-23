@@ -13,6 +13,38 @@ utilities = utilities.util()
 
 NPDFs = 60
 
+def getCleanedGraph(infile, par, norm, n_iter, treename='limit'):
+    f = ROOT.TFile(infile,'read')
+    tree = f.Get(treename)
+    vals = []
+    normval = norm if norm else 1.
+    for ev in tree:
+        if 2.*ev.deltaNLL > 10: continue
+        vals.append( [getattr(ev, par)/normval, 2.*ev.deltaNLL] )
+    vals = sorted(vals)
+
+    
+    for i in range(n_iter):
+        print 'at iteration', i
+        graph = ROOT.TGraph(len(vals), array.array('d', [x[0] for x in vals]), array.array('d', [y[1] for y in vals]) )
+        graph.Fit('pol2')
+        ff = graph.GetFunction('pol2')
+        distances = []
+        for v1,v2 in vals:
+            distances.append(abs(ff.Eval(v1) - v2))
+        im = distances.index(max(distances))
+        distances.pop(im)
+        vals.pop(im)
+
+        graph = ROOT.TGraph(len(vals), array.array('d', [x[0] for x in vals]), array.array('d', [y[1] for y in vals]) )
+        if len(vals) < 10: break
+
+    graph.SetName(par+'_graph_it{i:.0f}'.format(i=i))
+    utilities.graphStyle(graph)
+
+    return graph
+    
+
 if __name__ == "__main__":
 
     from optparse import OptionParser
@@ -27,6 +59,11 @@ if __name__ == "__main__":
     parser.add_option(      '--parameters'  , dest='pois'     , default='norm.*Ybin.*', type='string', help='comma separated list of regexp parameters to run. default is all parameters!')
     parser.add_option(      '--suffix'      , dest='suffix'   , default=''            , type='string', help='suffix for the correlation matrix')
     (options, args) = parser.parse_args()
+
+
+    if not os.path.isdir(options.outdir):
+        os.system('mkdir {od}'.format(od=options.outdir))
+        os.system('cp /afs/cern.ch/user/m/mdunser/index.php {od}'.format(od=options.outdir))
 
     if options.ybinfile:
         ybinfile = options.ybinfile
@@ -134,6 +171,10 @@ if __name__ == "__main__":
 
         ## else take the errors from the likelihood scans
         else:
+            gcanv = ROOT.TCanvas()
+            if not os.path.isdir(options.outdir+'/scans/'):
+                os.system('mkdir {od}/scans/'.format(od=options.outdir))
+                os.system('cp /afs/cern.ch/user/m/mdunser/index.php {od}/scans/'.format(od=options.outdir))
             for par in parameters:
                 ## first hadd all the point files into one scan file named scan_<par>.root
                 absopath = os.path.abspath(options.scandir)
@@ -143,11 +184,27 @@ if __name__ == "__main__":
                 ## get the parameter value now
                 tmp_val = ws.var(par).getVal()
                 ## get the graph of the scan, and then fit a pol2 and solve the equation for errors
-                tmp_graph = utilities.getGraph(ofn, par, norm=tmp_val)
+                ## marc marc tmp_graph = utilities.getGraph(ofn, par, norm=tmp_val)
+                ## marc marc (cen, dn, up) = utilities.getErrorFromGraph(tmp_graph)
+                tmp_graph = getCleanedGraph(ofn, par, norm=tmp_val, n_iter = 15)
+                tmp_graph.Fit('pol2')
+                tmp_graph.Draw('ap')
+
+## =================
+                ## make some plots of the likelihood scans
+                ## draw a line at 2.*deltaNLL = 1.
+                tmp_line = ROOT.TLine(tmp_graph.GetXaxis().GetXmin(), 1., tmp_graph.GetXaxis().GetXmax(), 1.)
+                tmp_line.SetLineStyle(7); tmp_line.SetLineWidth(2);
+                tmp_line.Draw('same')
+                gcanv.SaveAs('{od}/scans/scan_{p}.pdf'.format(od=options.outdir,p=par))
+                gcanv.SaveAs('{od}/scans/scan_{p}.png'.format(od=options.outdir,p=par))
+                
+## =================
+
                 (cen, dn, up) = utilities.getErrorFromGraph(tmp_graph)
                 ## put that into the same container as before. have to multiply the things back in
                 fitval[par] = tmp_val*cen
-                fiterr[par] = tmp_val*dn ## take just one for now
+                fiterr[par] = tmp_val*(cen-dn)/cen ## take just one for now
                 totalrate_fit += fitval[par]
 
         ## done getting the uncertainties
