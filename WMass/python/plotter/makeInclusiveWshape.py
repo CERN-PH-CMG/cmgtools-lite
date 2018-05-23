@@ -6,7 +6,7 @@ import numpy as np
 ## open root file and make inclusive signal template (summing all rapidity bins and helicities)
 ## then copy them in a new file, adding also the other non-signal shapes
 
-# python makeInclusiveWshape.py shapesFromEmanuele/Wel_plus_shapes.root -o testMergeW/ -c plus -f el
+# python makeInclusiveWshape.py shapesFromEmanuele_goodSyst/Wel_plus_shapes.root -o testMergeW/ -c plus -f el --wlong-missing-syst pdf,alphaS,wptSlope,muR,muF,muRmuF
 
 from optparse import OptionParser
 parser = OptionParser(usage="%prog [options] shapes.root ")
@@ -14,7 +14,7 @@ parser.add_option("-o", "--outdir",    dest="outdir", type="string", default="./
 parser.add_option('-c','--charge', dest='charge', default='plus', type='string', help='process given charge (plus,minus): default is plus')
 parser.add_option("-n", "--name",      dest="name",   type="string", default="", help="Name for output file (if not given, name is <oldname>_inclusiveW.root)");
 parser.add_option("-f", "--flavour", dest="flavour", type="string", default='el', help="Channel: either 'el' or 'mu'");
-parser.add_option(      "--wlong-missing-syst", dest="wLongMissingSyst", type="string", default='', help="Comma separated list of systematics not applied to Wlong (in that case, to get the inclusive signal the nominal Wlong will be summed to the sum of variations from left and right)");
+parser.add_option(      "--wlong-missing-syst", dest="wLongMissingSyst", type="string", default='', help="Comma separated list of shape signal systematics not applied to Wlong (in that case, to get the inclusive signal the nominal Wlong will be summed to the sum of variations from left and right)");
 (options, args) = parser.parse_args()
 
 if len(sys.argv) < 1:
@@ -80,7 +80,7 @@ for k in tf.GetListOfKeys() :
         postfix = ("_"+syst) if syst != "nomi" else ""
         newname = 'x_W{ch}_{fl}{pfx}'.format(ch=charge,fl=options.flavour,pfx=postfix)
         if hWdict[syst] == 0:
-            print "newname =", newname
+            #print "newname =", newname
             hWdict[syst] = obj.Clone(newname)
             hWdict[syst].SetDirectory(None)
             hists.append(hWdict[syst])
@@ -91,6 +91,7 @@ for k in tf.GetListOfKeys() :
         if syst == "nomi":
             signalSum += obj.Integral() 
             nCompSummed += 1
+            print "Summing %s to inclusive W" % name
         ##     print "Sum W: %.2f    component: %.2f" % (hWdict[syst].Integral(), obj.Integral())
 
     else:
