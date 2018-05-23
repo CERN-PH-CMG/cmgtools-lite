@@ -351,7 +351,7 @@ if __name__ == "__main__":
         for l in combinedCard.readlines():
             if re.match("rate\s+",l):
                 if options.scaleFile: combinedCardNew.write('rate            %s \n' % ' '.join([kpatt % r for (p,r) in ProcsAndRatesUnity])+'\n')
-                else: combinedCardNew.write('rate            %s \n' % ' '.join([kpatt % r for (p,r) in ProcsAndRates])+'\n')
+                else: combinedCardNew.write('rate            %s \n' % ' '.join([kpatt % '-1' for (p,r) in ProcsAndRates])+'\n')
             else: combinedCardNew.write(l)
         if options.scaleFile:
             eff_long = 1./getScales([ybins['left'][0],ybins['left'][-1]], charge, 'long', options.scaleFile)[0] # just take the eff on the total Y acceptance (should be 0,6)
