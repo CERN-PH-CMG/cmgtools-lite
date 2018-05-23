@@ -108,7 +108,7 @@ tauAna.mvaId2017 = {
 # match using common source candidate pointer, as in nanoAOD
 jetAna.matchJetToLepAndTauByPFRefOnly = True
 
-
+ttHCoreEventAna.btagAlgo = 'DeepCSV'
 
 #-------- ADDITIONAL ANALYZERS -----------
 
