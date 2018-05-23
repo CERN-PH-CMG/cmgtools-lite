@@ -31,6 +31,25 @@ def getAxisRangeFromUser(axisNameTmp="",
 
 #########################################################################
 
+def adjustSettings_CMS_lumi():
+
+    ## dummy function to be called before using any other fucntion calling CMS_lumi
+    ## for some reason, the settings of the very first plot are screwed up.
+    ## To fix this issue, it is enough to call it to a dummy plot
+    dummy = ROOT.TH1D("dummy","",10,0,10)
+    for i in range(1,1+dummy.GetNbinsX()):
+        dummy.SetBinContent(i,i)
+    dummy.GetXaxis().SetTitle("x axis")
+    dummy.GetYaxis().SetTitle("y axis")
+    cdummy = ROOT.TCanvas("cdummy","",600,600)
+    dummy.Draw("HE")
+    CMS_lumi(cdummy,"",True,False)
+    setTDRStyle()        
+    ## no need to save the canvas    
+
+
+#########################################################################
+
 
 def drawCorrelationPlot(h2D,
                         labelXtmp="xaxis", labelYtmp="yaxis", labelZtmp="zaxis",
@@ -131,8 +150,6 @@ def drawCorrelationPlot(h2D,
         for ext in ['png', 'pdf']:
             canvas.SaveAs('{od}/{cn}_logZ.{ext}'.format(od=outdir, cn=canvasName, ext=ext))
         canvas.SetLogz(0)
-
-    canvas = 0
 
 
 ##########################################################

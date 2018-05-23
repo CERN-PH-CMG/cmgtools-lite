@@ -100,6 +100,7 @@ def CMS_lumi(pad = 0,
     setTDRStyle()    
 
     lm = pad.GetLeftMargin() - 0.15  ## 0.15 should be the default
+    rm = 0.16 - pad.GetRightMargin()  ## 0.16 should be the default
 
     latex2 = ROOT.TLatex()
     latex2.SetNDC()
@@ -110,9 +111,9 @@ def CMS_lumi(pad = 0,
         latex2.SetTextSize(0.5*pad.GetTopMargin())
 
     if lumi != "":
-        latex2.DrawLatex(0.94+offsetLumi, 0.95,"%s fb^{-1} (%d TeV)" % (lumi,centerOfMassEnergy))
+        latex2.DrawLatex(rm + 0.94+offsetLumi, 0.95,"%s fb^{-1} (%d TeV)" % (lumi,centerOfMassEnergy))
     else:
-        latex2.DrawLatex(0.88+offsetLumi, 0.95,"(%d TeV)" % centerOfMassEnergy)
+        latex2.DrawLatex(rm + 0.88+offsetLumi, 0.95,"(%d TeV)" % centerOfMassEnergy)
 
     if up:
         latex2.SetTextSize(0.65*pad.GetTopMargin())
