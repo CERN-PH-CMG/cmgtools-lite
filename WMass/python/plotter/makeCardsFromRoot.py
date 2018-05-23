@@ -7,7 +7,10 @@ from w_helicity_13TeV.make_diff_xsec_cards import getXYBinsFromGlobalBin
 from w_helicity_13TeV.make_diff_xsec_cards import getArrayParsingString
 
 ## write datacard for counting experiment in each 2D template bin, using shapes from helicity datacards (after having summed up the signal components)
-## python makeCardsFromRoot.py testMergeW/Wel_plus_shapes_addInclW.root [-2.5,-2.25,-2.0,-1.8,-1.566,-1.4442,-1.3,-1.2,-1.1,-1.0,-0.9,-0.8,-0.7,-0.6,-0.5,-0.4,-0.3,-0.2,-0.1,0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.1,1.2,1.3,1.4442,1.566,1.8,2.0,2.25,2.5]*[30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45] -o testDatacardWriter -f el -b Wel -s w-helicity-13TeV/wmass_e/systsEnv.txt --shape-syst-file w-helicity-13TeV/wmass_e/shapesystUtility.txt 
+## python makeCardsFromRoot.py testMergeW_goodSyst/Wel_plus_shapes_addInclW.root [-2.5,-2.3,-2.1,-1.9,-1.7,-1.566,-1.4442,-1.3,-1.2,-1.1,-1.0,-0.9,-0.8,-0.7,-0.6,-0.5,-0.4,-0.3,-0.2,-0.1,0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.1,1.2,1.3,1.4442,1.566,1.7,1.9,2.1,2.3,2.5]*[30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45]  -o datacardWriterGoodSyst -f el -b Wel -s w-helicity-13TeV/wmass_e/systsEnv.txt --shape-syst-file w-helicity-13TeV/wmass_e/shapesystUtility.txt 
+
+## old binning
+# [-2.5,-2.25,-2.0,-1.8,-1.566,-1.4442,-1.3,-1.2,-1.1,-1.0,-0.9,-0.8,-0.7,-0.6,-0.5,-0.4,-0.3,-0.2,-0.1,0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.1,1.2,1.3,1.4442,1.566,1.8,2.0,2.25,2.5]*[30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45]
 
 ########################################
 ## shapesystUtility.txt is something like this
@@ -45,12 +48,12 @@ from optparse import OptionParser
 parser = OptionParser(usage="%prog [options] shapes.root binning")
 parser.add_option("-o", "--outdir",    dest="outdir", type="string", default="./", help="Output folder (current one as default)");
 parser.add_option("-n", "--name",      dest="name",   type="string", default="", help="Name for output datacard (if not given, name is <shapes>_card_<bin>.txt )");
-parser.add_option("-f", "--flavour", dest="flavour", type="string", default='el', help="Channel: either 'el' or 'mu'");
-parser.add_option("-c", "--charge", dest="charge", type="string", default='plus', help="Charge: either 'plus' or 'minus'");
-parser.add_option("-b","--bin", dest="bin", default="ch1", type="string", help="name of the bin (the number of template bin used for each datacard is added to it)")
-parser.add_option("-s","--syst-file", dest="systfile", default="", type="string", help="File defining the systematics (only the constant ones are used)")
-parser.add_option(     "--shape-syst-file", dest="shapesystfile", default="", type="string", help="File defining the systematics (only the constant ones are used)")
-#parser.add_option(     "--netabins", dest="netabins", default="38", type="int", help="Number of eta bins (or along x axis in general). Needed to associate global bin to 2D bin")
+parser.add_option("-f", "--flavour",   dest="flavour", type="string", default='el', help="Channel: either 'el' or 'mu'");
+parser.add_option("-c", "--charge",    dest="charge", type="string", default='plus', help="Charge: either 'plus' or 'minus'");
+parser.add_option("-b", "--bin",       dest="bin", default="ch1", type="string", help="name of the bin (the number of template bin used for each datacard is added to it)")
+parser.add_option("-s", "--syst-file", dest="systfile", default="", type="string", help="File defining the systematics (only the constant ones are used)")
+parser.add_option(      "--shape-syst-file", dest="shapesystfile", default="", type="string", help="File defining the systematics (only the constant ones are used)")
+#parser.add_option(     "--netabins",  dest="netabins", default="38", type="int", help="Number of eta bins (or along x axis in general). Needed to associate global bin to 2D bin")
 #parser.add_option(     "--nptbins", dest="nptbins", default="15", type="int", help="Number of pt bins (or along y axis in general)")
 (options, args) = parser.parse_args()
 
@@ -266,7 +269,8 @@ for hbin in range(1,nTotBins+1):
 
     ## define groups of systematics
     card.write("\n")
-    card.write("pdfs group = %s\n\n" % ' '.join(pdf for pdf in pdfsyst))
+    card.write("pdfs group = %s\n\n" % ' '.join(["pdf%d" % i for i in range(1,1+len(pdfsyst))] ) )
+    #card.write("pdfs group = %s\n\n" % ' '.join(pdf for pdf in pdfsyst ))
     card.write("scales group = muR muF muRmuF\n\n")
     card.write("alphaS group = alphaS\n\n")
     card.write("wpt group = wptSlope\n\n")
