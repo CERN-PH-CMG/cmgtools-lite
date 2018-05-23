@@ -110,47 +110,42 @@ case $bin in
         python tnpEfficiency.py $PDS -d "$CUT && $DEN" -n "$NUM" $OPTS --x-var TnP_probe_eta $EBINS -N el_${SMOD}_${BMOD}${POST}_${ID}_$bin   -b $BMOD -s $SMOD $MASS  --xtitle "#eta";;
     vtx_*) getcut ${bin/vtx_};
         python tnpEfficiency.py $PDS -d "$CUT && $DEN" -n "$NUM" $OPTS --x-var nVert $VBINS -N el_${SMOD}_${BMOD}${POST}_${ID}_$bin   -b $BMOD -s $SMOD $MASS --xtitle "N(vertices)";;
-        # ---------------------------------
-        all)
+    all)
         for B in barrel endcap eta_pt520 vtx_pt520 eta_pt20 vtx_pt20; do bash $0 $ID $SMOD $BMOD $B $*; done;;
-        vtx)
-            for B in vtx_pt520 vtx_pt20; do bash $0 $ID $SMOD $BMOD $B $*; done;;
-            eta)
-                for B in eta_pt520 eta_pt20; do bash $0 $ID $SMOD $BMOD $B $*; done;;
-                be)
-                    for B in barrel endcap; do bash $0 $ID $SMOD $BMOD $B $*; done;;
-                        # ---------------------------------
-                        *)
-                        echo "I don't know the bin $bin"; exit 4;
-                esac;
+    vtx)
+        for B in vtx_pt520 vtx_pt20; do bash $0 $ID $SMOD $BMOD $B $*; done;;
+    eta)
+        for B in eta_pt520 eta_pt20; do bash $0 $ID $SMOD $BMOD $B $*; done;;
+    be)
+        for B in barrel endcap; do bash $0 $ID $SMOD $BMOD $B $*; done;;
+    *)
+        echo "I don't know the bin $bin"; exit 4;
+esac;
 
+#python tnpEfficiency.py $PDS -d "TnP_probe_pt > 20 && $DEN" -n "$NUM" $OPTS --x-var TnP_probe_eta $EBINS -N el_${SMOD}_${BMOD}${POST}_${ID}_pt20   -b $BMOD -s $SMOD $MASS  --xtitle "#eta" ;
+#python tnpEfficiency.py $PDS -d "TnP_probe_pt > 20 && $DEN" -n "$NUM" $OPTS --x-var nVert $VBINS -N el_${SMOD}_${BMOD}${POST}_${ID}_pt20_vtx   -b $BMOD -s $SMOD $MASS --xtitle "N(vertices)" ;
 
+if [[ "$SMOD" == "MCTG" && "$BMOD" == "bern4" ]]; then
+    MASS2=" -m TnP_mass 100,65,125"; POST="_mass";
+    #echo "python tnpEfficiency.py $PDS -d "abs(TnP_probe_eta)<1.2 && $DEN" -n "$NUM" $OPTS --x-var pt $XBINS -N el_${SMOD}_${BMOD}${POST}_${ID}_barrel -b $BMOD -s $SMOD $MASS2 --xtitle "p_{T} (GeV)" ;
+    #echo "python tnpEfficiency.py $PDS -d "abs(TnP_probe_eta)>1.2 && $DEN" -n "$NUM" $OPTS --x-var pt $XBINS -N el_${SMOD}_${BMOD}${POST}_${ID}_endcap -b $BMOD -s $SMOD $MASS2 --xtitle "p_{T} (GeV)" ;
+    #echo "python tnpEfficiency.py $PDS -d "pt > 20 && $DEN" -n "$NUM" $OPTS --x-var eta $EBINS -N el_${SMOD}_${BMOD}${POST}_${ID}_pt20   -b $BMOD -s $SMOD $MASS2  --xtitle "#eta" ;
+    #echo "python tnpEfficiency.py $PDS -d "pt > 20 && $DEN" -n "$NUM" $OPTS --x-var nVert $VBINS -N el_${SMOD}_${BMOD}${POST}_${ID}_pt20_vtx   -b $BMOD -s $SMOD $MASS2 --xtitle "N(vertices)" ;
+    #echo "python tnpEfficiency.py $PDS -d "pt > 5 && pt < 20 && $DEN" -n "$NUM" $OPTS --x-var eta $EBINS -N el_${SMOD}_${BMOD}${POST}_${ID}_pt520   -b $BMOD -s $SMOD $MASS2  --xtitle "#eta" ;
+    #echo "python tnpEfficiency.py $PDS -d "pt > 5 && pt < 20 && $DEN" -n "$NUM" $OPTS --x-var nVert $VBINS -N el_${SMOD}_${BMOD}${POST}_${ID}_pt520_vtx   -b $BMOD -s $SMOD $MASS2 --xtitle "N(vertices)" ;
+fi
+if [[ "$SMOD" == "MCTG" && "$BMOD" == "bern4" ]]; then
+    DEN="$CDEN && TnP_tag_pt > 25 && TnP_tag_relIso03 < 0.1"; POST="_tightTag";
+    #echo "python tnpEfficiency.py $PDS -d "abs(TnP_probe_eta)<1.2 && $DEN" -n "$NUM" $OPTS --x-var pt $XBINS -N el_${SMOD}_${BMOD}${POST}_${ID}_barrel -b $BMOD -s $SMOD $MASS --xtitle "p_{T} (GeV)" ;
+    #echo "python tnpEfficiency.py $PDS -d "abs(TnP_probe_eta)>1.2 && $DEN" -n "$NUM" $OPTS --x-var pt $XBINS -N el_${SMOD}_${BMOD}${POST}_${ID}_endcap -b $BMOD -s $SMOD $MASS --xtitle "p_{T} (GeV)" ;
+    #echo "python tnpEfficiency.py $PDS -d "pt > 20 && $DEN" -n "$NUM" $OPTS --x-var eta $EBINS -N el_${SMOD}_${BMOD}${POST}_${ID}_pt20   -b $BMOD -s $SMOD $MASS  --xtitle "#eta" ;
+    #echo "python tnpEfficiency.py $PDS -d "pt > 20 && $DEN" -n "$NUM" $OPTS --x-var nVert $VBINS -N el_${SMOD}_${BMOD}${POST}_${ID}_pt20_vtx   -b $BMOD -s $SMOD $MASS --xtitle "N(vertices)" ;
+    #echo "python tnpEfficiency.py $PDS -d "pt > 5 && pt < 20 && $DEN" -n "$NUM" $OPTS --x-var eta $EBINS -N el_${SMOD}_${BMOD}${POST}_${ID}_pt520   -b $BMOD -s $SMOD $MASS  --xtitle "#eta" ;
+    #echo "python tnpEfficiency.py $PDS -d "pt > 5 && pt < 20 && $DEN" -n "$NUM" $OPTS --x-var nVert $VBINS -N el_${SMOD}_${BMOD}${POST}_${ID}_pt520_vtx   -b $BMOD -s $SMOD $MASS --xtitle "N(vertices)" ;
 
-                #python tnpEfficiency.py $PDS -d "TnP_probe_pt > 20 && $DEN" -n "$NUM" $OPTS --x-var TnP_probe_eta $EBINS -N el_${SMOD}_${BMOD}${POST}_${ID}_pt20   -b $BMOD -s $SMOD $MASS  --xtitle "#eta" ;
-                #python tnpEfficiency.py $PDS -d "TnP_probe_pt > 20 && $DEN" -n "$NUM" $OPTS --x-var nVert $VBINS -N el_${SMOD}_${BMOD}${POST}_${ID}_pt20_vtx   -b $BMOD -s $SMOD $MASS --xtitle "N(vertices)" ;
-
-                if [[ "$SMOD" == "MCTG" && "$BMOD" == "bern4" ]]; then
-                    MASS2=" -m TnP_mass 100,65,125"; POST="_mass";
-                    #echo "python tnpEfficiency.py $PDS -d "abs(TnP_probe_eta)<1.2 && $DEN" -n "$NUM" $OPTS --x-var pt $XBINS -N el_${SMOD}_${BMOD}${POST}_${ID}_barrel -b $BMOD -s $SMOD $MASS2 --xtitle "p_{T} (GeV)" ;
-                    #echo "python tnpEfficiency.py $PDS -d "abs(TnP_probe_eta)>1.2 && $DEN" -n "$NUM" $OPTS --x-var pt $XBINS -N el_${SMOD}_${BMOD}${POST}_${ID}_endcap -b $BMOD -s $SMOD $MASS2 --xtitle "p_{T} (GeV)" ;
-                    #echo "python tnpEfficiency.py $PDS -d "pt > 20 && $DEN" -n "$NUM" $OPTS --x-var eta $EBINS -N el_${SMOD}_${BMOD}${POST}_${ID}_pt20   -b $BMOD -s $SMOD $MASS2  --xtitle "#eta" ;
-                    #echo "python tnpEfficiency.py $PDS -d "pt > 20 && $DEN" -n "$NUM" $OPTS --x-var nVert $VBINS -N el_${SMOD}_${BMOD}${POST}_${ID}_pt20_vtx   -b $BMOD -s $SMOD $MASS2 --xtitle "N(vertices)" ;
-                    #echo "python tnpEfficiency.py $PDS -d "pt > 5 && pt < 20 && $DEN" -n "$NUM" $OPTS --x-var eta $EBINS -N el_${SMOD}_${BMOD}${POST}_${ID}_pt520   -b $BMOD -s $SMOD $MASS2  --xtitle "#eta" ;
-                    #echo "python tnpEfficiency.py $PDS -d "pt > 5 && pt < 20 && $DEN" -n "$NUM" $OPTS --x-var nVert $VBINS -N el_${SMOD}_${BMOD}${POST}_${ID}_pt520_vtx   -b $BMOD -s $SMOD $MASS2 --xtitle "N(vertices)" ;
-                fi
-                if [[ "$SMOD" == "MCTG" && "$BMOD" == "bern4" ]]; then
-                    DEN="$CDEN && TnP_tag_pt > 25 && TnP_tag_relIso03 < 0.1"; POST="_tightTag";
-                    #echo "python tnpEfficiency.py $PDS -d "abs(TnP_probe_eta)<1.2 && $DEN" -n "$NUM" $OPTS --x-var pt $XBINS -N el_${SMOD}_${BMOD}${POST}_${ID}_barrel -b $BMOD -s $SMOD $MASS --xtitle "p_{T} (GeV)" ;
-                    #echo "python tnpEfficiency.py $PDS -d "abs(TnP_probe_eta)>1.2 && $DEN" -n "$NUM" $OPTS --x-var pt $XBINS -N el_${SMOD}_${BMOD}${POST}_${ID}_endcap -b $BMOD -s $SMOD $MASS --xtitle "p_{T} (GeV)" ;
-                    #echo "python tnpEfficiency.py $PDS -d "pt > 20 && $DEN" -n "$NUM" $OPTS --x-var eta $EBINS -N el_${SMOD}_${BMOD}${POST}_${ID}_pt20   -b $BMOD -s $SMOD $MASS  --xtitle "#eta" ;
-                    #echo "python tnpEfficiency.py $PDS -d "pt > 20 && $DEN" -n "$NUM" $OPTS --x-var nVert $VBINS -N el_${SMOD}_${BMOD}${POST}_${ID}_pt20_vtx   -b $BMOD -s $SMOD $MASS --xtitle "N(vertices)" ;
-                    #echo "python tnpEfficiency.py $PDS -d "pt > 5 && pt < 20 && $DEN" -n "$NUM" $OPTS --x-var eta $EBINS -N el_${SMOD}_${BMOD}${POST}_${ID}_pt520   -b $BMOD -s $SMOD $MASS  --xtitle "#eta" ;
-                    #echo "python tnpEfficiency.py $PDS -d "pt > 5 && pt < 20 && $DEN" -n "$NUM" $OPTS --x-var nVert $VBINS -N el_${SMOD}_${BMOD}${POST}_${ID}_pt520_vtx   -b $BMOD -s $SMOD $MASS --xtitle "N(vertices)" ;
-
-                    DEN="$CDEN && SIP < 2"; POST="_tightSIP";
-                    #echo "python tnpEfficiency.py $PDS -d "abs(TnP_probe_eta)<1.2 && $DEN" -n "$NUM" $OPTS --x-var pt $XBINS -N el_${SMOD}_${BMOD}${POST}_${ID}_barrel -b $BMOD -s $SMOD $MASS --xtitle "p_{T} (GeV)" ;
-                    #echo "python tnpEfficiency.py $PDS -d "abs(TnP_probe_eta)>1.2 && $DEN" -n "$NUM" $OPTS --x-var pt $XBINS -N el_${SMOD}_${BMOD}${POST}_${ID}_endcap -b $BMOD -s $SMOD $MASS --xtitle "p_{T} (GeV)" ;
-                    #echo "python tnpEfficiency.py $PDS -d "pt > 20 && $DEN" -n "$NUM" $OPTS --x-var eta $EBINS -N el_${SMOD}_${BMOD}${POST}_${ID}_pt20   -b $BMOD -s $SMOD $MASS  --xtitle "#eta" ;
-                    #echo "python tnpEfficiency.py $PDS -d "pt > 20 && $DEN" -n "$NUM" $OPTS --x-var nVert $VBINS -N el_${SMOD}_${BMOD}${POST}_${ID}_pt20_vtx   -b $BMOD -s $SMOD $MASS --xtitle "N(vertices)" ;
-
-                fi;
+    DEN="$CDEN && SIP < 2"; POST="_tightSIP";
+    #echo "python tnpEfficiency.py $PDS -d "abs(TnP_probe_eta)<1.2 && $DEN" -n "$NUM" $OPTS --x-var pt $XBINS -N el_${SMOD}_${BMOD}${POST}_${ID}_barrel -b $BMOD -s $SMOD $MASS --xtitle "p_{T} (GeV)" ;
+    #echo "python tnpEfficiency.py $PDS -d "abs(TnP_probe_eta)>1.2 && $DEN" -n "$NUM" $OPTS --x-var pt $XBINS -N el_${SMOD}_${BMOD}${POST}_${ID}_endcap -b $BMOD -s $SMOD $MASS --xtitle "p_{T} (GeV)" ;
+    #echo "python tnpEfficiency.py $PDS -d "pt > 20 && $DEN" -n "$NUM" $OPTS --x-var eta $EBINS -N el_${SMOD}_${BMOD}${POST}_${ID}_pt20   -b $BMOD -s $SMOD $MASS  --xtitle "#eta" ;
+    #echo "python tnpEfficiency.py $PDS -d "pt > 20 && $DEN" -n "$NUM" $OPTS --x-var nVert $VBINS -N el_${SMOD}_${BMOD}${POST}_${ID}_pt20_vtx   -b $BMOD -s $SMOD $MASS --xtitle "N(vertices)" ;
+fi;
