@@ -51,10 +51,14 @@ def getXsecs(processes, systs, ybins, lumi, infile):
 
             tmp_hist_up = ROOT.TH1F('x_'+process+'_'+sys+'Up','x_'+process+'_'+sys+'Up', 1, 0., 1.)
             tmp_hist_up.SetBinContent(1, nup/lumi)
-            tmp_hist_dn = ROOT.TH1F('x_'+process+'_'+sys+'Dn','x_'+process+'_'+sys+'Dn', 1, 0., 1.)
+            tmp_hist_dn = ROOT.TH1F('x_'+process+'_'+sys+'Down','x_'+process+'_'+sys+'Dn', 1, 0., 1.)
             tmp_hist_dn.SetBinContent(1, ndn/lumi)
             hists.append(copy.deepcopy(tmp_hist_up))
             hists.append(copy.deepcopy(tmp_hist_dn))
+
+    hist_data = ROOT.TH1F('x_data_obs', 'x_data_obs', 1, 0., 1.)
+    hist_data.SetBinContent(1, 1.)
+    hists.append(copy.deepcopy(hist_data))
 
     return hists
 
@@ -484,7 +488,8 @@ if __name__ == "__main__":
             hist.Write()
         tmp_xsec_hists.Close()
 
-        tmp_xsec_dc = open(os.path.join(options.inputdir,options.bin+'_{ch}_xsec_card.txt'   .format(ch=charge)), 'w')
+        tmp_xsec_dc_name = os.path.join(options.inputdir,options.bin+'_{ch}_xsec_card.txt'   .format(ch=charge))
+        tmp_xsec_dc = open(tmp_xsec_dc_name, 'w')
         tmp_xsec_dc.write("imax 1\n")
         tmp_xsec_dc.write("jmax *\n")
         tmp_xsec_dc.write("kmax *\n")
@@ -492,7 +497,7 @@ if __name__ == "__main__":
         tmp_xsec_dc.write("shapes *  *  %s %s\n" % (tmp_xsec_histfile_name, 'x_$PROCESS x_$PROCESS_$SYSTEMATIC'))
         tmp_xsec_dc.write('##----------------------------------\n')
         tmp_xsec_dc.write('bin {b}_xsec\n'.format(b=options.bin))
-        tmp_xsec_dc.write('observation -1\n')
+        tmp_xsec_dc.write('observation 1.\n') ## don't know if that will work...
         tmp_xsec_dc.write('bin      {s}\n'.format(s=' '.join(['{b}_xsec'.format(b=options.bin) for p in tmp_sigprocs])))
         tmp_xsec_dc.write('process  {s}\n'.format(s=' '.join([p for p in tmp_sigprocs])))
         tmp_xsec_dc.write('process  {s}\n'.format(s=' '.join(str(i+1)  for i in range(len(tmp_sigprocs)))))
@@ -507,6 +512,9 @@ if __name__ == "__main__":
         tmp_xsec_dc.close()
 
         ## end of all the xsec construction of datacard and making the file
+
+        ## command to make the workspace. should be done after combineCards.py!
+        ## os.system('text2workspace.py --X-allow-no-signal -o {ws} {dc}'.format(ws=tmp_xsec_dc_name.replace('_card','_ws'), dc=tmp_xsec_dc_name))
 
         print "merged datacard in ",cardfile
         
