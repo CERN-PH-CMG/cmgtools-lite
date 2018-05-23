@@ -50,7 +50,7 @@ if [[ "$1" == "all" ]]; then
     for ID in SOS SOS_PR SOS_ID SOS_ISO SOS_IP; do #SOS_NM1_{Id,Iso,Ip} SOS_003 SOS_NoIP SOS_presel; do
         for SMOD in MCTG dvoigt2 ; do # MCTG dvoigt2 BWDCB2 BWDCB; do
             for BMOD in bern4 bern3 ; do # expo bern3; do
-                for W in be; do  # eta vtx
+                for W in all; do  # eta vtx
                     echo $LAUNCHER $0 $ID $SMOD $BMOD $W
                 done
             done

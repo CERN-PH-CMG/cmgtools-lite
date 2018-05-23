@@ -26,7 +26,6 @@ for M in $MEAS; do
     esac;
     OPTS=" --doRatio --pdir ${P}/$OUT --idir ${P}/$IN "; XTIT="p_{T} (GeV)"
     python $MAIN -N mu_${M}_vtx_pt520 $OPTS $MODS --ytitle "$TIT" --xtit "N(vertices)"  $RANGES_OTHER;
-    continue;
     python $MAIN -N mu_${M}_eta_pt520 $OPTS $MODS --ytitle "$TIT" --xtit "#eta"   $RANGES_OTHER
     for BE in barrel endcap; do
         python $MAIN -N mu_${M}_${BE} $OPTS $MODS --ytitle "$TIT" --xtit "$XTIT"  $RANGES_PT 
