@@ -4,7 +4,64 @@
 # fit scaling by eff: ./mergeCardComponentsAbsY.py [-m] -b Wel -C minus,plus -i cards/ --sf eff_el_PFMT40.root 
 
 import ROOT
-import sys,os,re,json
+import sys,os,re,json, copy
+
+def getXsecs(processes, systs, ybins, lumi, infile):
+    histo_file = ROOT.TFile(infile, 'READ')
+
+    hists = []
+
+    for process in processes:
+        pol = 'left' if 'left' in process else 'right' if 'right' in process else 'long'
+
+        cen_name = 'w'+charge+'_wy_central_W' +charge+'_'+pol
+        cen_hist = histo_file.Get(cen_name)
+
+        ybinnumber = int(process.split('_')[-1])
+        yfirst = ybins[pol][ybinnumber]
+        ylast  = ybins[pol][ybinnumber+1]
+
+        istart = cen_hist.FindBin(yfirst)
+        iend   = cen_hist.FindBin(ylast)
+
+        ncen = cen_hist .Integral(istart, iend-1)
+
+        tmp_hist = ROOT.TH1F('x_'+process+'_xsec','x_'+process+'_xsec', 1, 0., 1.)
+        ## normalize back to cross section
+        tmp_hist.SetBinContent(1, ncen/lumi)
+
+        hists.append(copy.deepcopy(tmp_hist))
+
+        for sys in systs:
+
+            upn = sys+'Up' if not 'pdf' in sys else sys
+            dnn = sys+'Dn' if not 'pdf' in sys else sys
+
+            sys_upname = 'w'+charge+'_wy_'+upn+'_W'+charge+'_'+pol
+            sys_dnname = 'w'+charge+'_wy_'+dnn+'_W'+charge+'_'+pol
+
+            sys_up_hist = histo_file.Get(sys_upname)
+            sys_dn_hist = histo_file.Get(sys_dnname)
+
+            nup = sys_up_hist .Integral(istart, iend-1)
+            ndn = sys_dn_hist .Integral(istart, iend-1)
+
+            if 'pdf' in sys:
+                ndn = 2.*ncen-nup ## or ncen/nup?
+
+            tmp_hist_up = ROOT.TH1F('x_'+process+'_xsec_'+sys+'Up','x_'+process+'_'+sys+'Up', 1, 0., 1.)
+            tmp_hist_up.SetBinContent(1, nup/lumi)
+            tmp_hist_dn = ROOT.TH1F('x_'+process+'_xsec_'+sys+'Down','x_'+process+'_'+sys+'Dn', 1, 0., 1.)
+            tmp_hist_dn.SetBinContent(1, ndn/lumi)
+            hists.append(copy.deepcopy(tmp_hist_up))
+            hists.append(copy.deepcopy(tmp_hist_dn))
+
+    hist_data = ROOT.TH1F('x_data_obs', 'x_data_obs', 1, 0., 1.)
+    hist_data.SetBinContent(1, 1.)
+    hists.append(copy.deepcopy(hist_data))
+
+    return hists
+
 
 def mirrorShape(nominal,alternate,newname,alternateShapeOnly=False):
     alternate.SetName("%sUp" % newname)
@@ -409,6 +466,56 @@ if __name__ == "__main__":
         # combinedCard.write('CMS_W   lnN %s\n' % (" ".join(['%.3f' % (1+options.wLnN) if (p=='TauDecaysW' or re.match('W{charge}'.format(charge=charge),p)) else '-' for p,r in ProcsAndRates])) )
         combinedCard.close() 
 
+            
+        ## here we make a second datacard that will be masked. which for every process
+        ## has a 1-bin histogram with the cross section for every nuisance parameter and
+        ## every signal process inside
+
+        ## first make a list of all the signal processes. this excludes the long!!!!
+        tmp_sigprocs = [p for p in realprocesses if 'Wminus' in p or 'Wplus' in p]
+        tmp_sigprocs = [p for p in tmp_sigprocs if not 'long' in p]
+
+        ## xsecfilname 
+        hists = getXsecs(tmp_sigprocs, 
+                         [i for i in theosyst.keys() if not 'wpt' in i],
+                         ybins, 
+                         36000., 
+                         '/afs/cern.ch/work/m/mdunser/public/cmssw/w-helicity-13TeV/CMSSW_8_0_25/src/CMGTools/WMass/data/theory/theory_cross_sections.root' ## hard coded for now
+                        )
+        tmp_xsec_histfile_name = os.path.abspath(outfile.replace('_shapes','_shapes_xsec'))
+        tmp_xsec_hists = ROOT.TFile(tmp_xsec_histfile_name, 'recreate')
+        for hist in hists:
+            hist.Write()
+        tmp_xsec_hists.Close()
+
+        tmp_xsec_dc_name = os.path.join(options.inputdir,options.bin+'_{ch}_xsec_card.txt'   .format(ch=charge))
+        tmp_xsec_dc = open(tmp_xsec_dc_name, 'w')
+        tmp_xsec_dc.write("imax 1\n")
+        tmp_xsec_dc.write("jmax *\n")
+        tmp_xsec_dc.write("kmax *\n")
+        tmp_xsec_dc.write('##----------------------------------\n') 
+        tmp_xsec_dc.write("shapes *  *  %s %s\n" % (tmp_xsec_histfile_name, 'x_$PROCESS x_$PROCESS_$SYSTEMATIC'))
+        tmp_xsec_dc.write('##----------------------------------\n')
+        tmp_xsec_dc.write('bin {b}\n'.format(b=options.bin))
+        tmp_xsec_dc.write('observation -1\n') ## don't know if that will work...
+        tmp_xsec_dc.write('bin      {s}\n'.format(s=' '.join(['{b}'.format(b=options.bin) for p in tmp_sigprocs])))
+        tmp_xsec_dc.write('process  {s}\n'.format(s=' '.join([p+'_xsec' for p in tmp_sigprocs])))
+        tmp_xsec_dc.write('process  {s}\n'.format(s=' '.join(str(i+1)  for i in range(len(tmp_sigprocs)))))
+        tmp_xsec_dc.write('rate     {s}\n'.format(s=' '.join('-1' for i in range(len(tmp_sigprocs)))))
+        tmp_xsec_dc.write('# --------------------------------------------------------------\n')
+
+        for sys,procs in theosyst.iteritems():
+            if 'wpt' in sys: continue
+            # there should be 2 occurrences of the same proc in procs (Up/Down). This check should be useless if all the syst jobs are DONE
+            tmp_xsec_dc.write('%-15s   shape %s\n' % (sys,(" ".join(['1.0' if p in tmp_sigprocs  else '  -  ' for p in tmp_sigprocs]))) )
+
+        tmp_xsec_dc.close()
+
+        ## end of all the xsec construction of datacard and making the file
+
+        ## command to make the workspace. should be done after combineCards.py!
+        ## os.system('text2workspace.py --X-allow-no-signal -o {ws} {dc}'.format(ws=tmp_xsec_dc_name.replace('_card','_ws'), dc=tmp_xsec_dc_name))
+
         print "merged datacard in ",cardfile
         
         ws = cardfile.replace('_card.txt', '_ws.root')
@@ -424,11 +531,24 @@ if __name__ == "__main__":
             signals = ['W{charge}_{pol}_W{charge}_{pol}_{channel}_Ybin_{yb}'.format(charge=charge,pol=pol,channel=channel,yb=yb) for pol in ['left','right'] for yb in xrange(len(ybins[pol])-1) ]
             signals += ['W{charge}_long'.format(charge=charge)]
             multisig = ' '.join(["--PO 'map=.*/{proc}$:r_{proc_nochan}[1,0,10]'".format(proc=proc,proc_nochan=proc.replace('_{channel}_'.format(channel=channel),'_')) for proc in signals])
-            txt2wsCmd = 'text2workspace.py {cf} -o {ws} --X-allow-no-signal --X-no-check-norm -P HiggsAnalysis.CombinedLimit.PhysicsModel:multiSignalModel --PO verbose {pos}'.format(cf=cardfile, ws=ws, pos=multisig)
+
+            cardfile_xsec = cardfile.replace('_card', '_card_withXsecMask')
+            chname = options.bin+'_{ch}'.format(ch=charge)
+            chname_xsec = chname+'_xsec'
+            ccCmd = 'combineCards.py {oc}={odc} {xc}={xdc} > {out}'.format(oc=chname,odc=cardfile,xc=chname_xsec,xdc=tmp_xsec_dc_name,out=cardfile_xsec)
+
+            newws = cardfile_xsec.replace('_card','_ws').replace('.txt','.root')
+
+            txt2wsCmd = 'text2workspace.py {cf} -o {ws} --X-allow-no-signal --X-no-check-norm -P HiggsAnalysis.CombinedLimit.PhysicsModel:multiSignalModel --PO verbose {pos} --channel-masks '.format(cf=cardfile_xsec, ws=newws, pos=multisig)
             #combineCmd = 'combine {ws} -M MultiDimFit    -t -1 -m 999 --saveFitResult --keepFailures --cminInitialHesse 1 --cminFinalHesse 1 --cminPreFit 1       --redefineSignalPOIs {pois} --floatOtherPOIs=0 -v 9'.format(ws=ws, pois=','.join(['r_'+p for p in signals]))
-            combineCmd = 'combine {ws} -M MultiDimFit -t -1 -m 999 --saveFitResult {minOpts} --redefineSignalPOIs {pois} -v 9'.format(ws=ws, pois=','.join(['r_'+p for p in signals]),minOpts=minimizerOpts)
+            combineCmd = 'combine {ws} -M MultiDimFit -t -1 -m 999 --saveFitResult {minOpts} --redefineSignalPOIs {pois} -v 9 --setParameters mask_{xc}=1 '.format(ws=newws, pois=','.join(['r_'+p for p in signals]),minOpts=minimizerOpts, xc=chname_xsec)
+        ## here running the combine cards command first
+        print ccCmd
+        os.system(ccCmd)
+        ## then running the t2w command afterwards
         print txt2wsCmd
         os.system(txt2wsCmd)
+        ## print out the command to run in combine
         print combineCmd
     # end of loop over charges
 
