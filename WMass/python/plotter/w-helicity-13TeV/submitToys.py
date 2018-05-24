@@ -36,7 +36,7 @@ if __name__ == "__main__":
     cmdBase += " --toysFrequentist --bypassFrequentistFit -s {seed} --trackParameters {track} " # toys options
     cmdBase += " %s --floatOtherPOIs=1 " % poiOpt # POIs
     if options.normonly: cmdBase += " --freezeNuisanceGroups pdfs,scales,alphaS,wpt " # nuisances to freeze
-    cmdBase += " -n _{pfx} -s {seed}  --job-mode lxbatch --task-name {taskname} --sub-opts='-q 8nh' %s " % '--dry-run' if options.dryRun else '' # jobs configuration
+    cmdBase += " -n _{pfx} -s {seed}  --job-mode lxbatch --task-name {taskname} --sub-opts='-q 8nh' %s " % ('--dry-run' if options.dryRun else '') # jobs configuration
 
     print "Submitting {nt} toys with workspace {ws} and prefix {pfx}...".format(nt=ntoys,ws=workspace,pfx=prefix)
 
