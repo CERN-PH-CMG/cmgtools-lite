@@ -16,8 +16,9 @@ CMS_Wmu_lepVeto      : Z                            : .* : 1.03
 # Z xsec from FEWZ 3.1: https://twiki.cern.ch/twiki/bin/viewauth/CMS/StandardModelCrossSectionsat13TeV
 # Top (take a conservative value as the maximum uncertainty among single-t and ttbar (ttbar from: https://twiki.cern.ch/twiki/bin/view/LHCPhysics/TtbarNNLO)
 # ==================================================================
-CMS_DY               : Z                            : .* : 1.038
+## no longer needed. all scales etc are there now CMS_DY               : Z                            : .* : 1.038
 CMS_VV               : DiBosons                     : .* : 1.16
+CMS_W                : TaudecaysW                   : .* : 1.038
 CMS_Top              : Top                          : .* : 1.06 
 
 # ==================================================================
