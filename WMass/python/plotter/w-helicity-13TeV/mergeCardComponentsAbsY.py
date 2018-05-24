@@ -26,7 +26,7 @@ def getXsecs(processes, systs, ybins, lumi, infile):
 
         ncen = cen_hist .Integral(istart, iend-1)
 
-        tmp_hist = ROOT.TH1F('x_'+process,'x_'+process, 1, 0., 1.)
+        tmp_hist = ROOT.TH1F('x_'+process+'_xsec','x_'+process+'_xsec', 1, 0., 1.)
         ## normalize back to cross section
         tmp_hist.SetBinContent(1, ncen/lumi)
 
@@ -49,9 +49,9 @@ def getXsecs(processes, systs, ybins, lumi, infile):
             if 'pdf' in sys:
                 ndn = 2.*ncen-nup ## or ncen/nup?
 
-            tmp_hist_up = ROOT.TH1F('x_'+process+'_'+sys+'Up','x_'+process+'_'+sys+'Up', 1, 0., 1.)
+            tmp_hist_up = ROOT.TH1F('x_'+process+'_xsec_'+sys+'Up','x_'+process+'_'+sys+'Up', 1, 0., 1.)
             tmp_hist_up.SetBinContent(1, nup/lumi)
-            tmp_hist_dn = ROOT.TH1F('x_'+process+'_'+sys+'Down','x_'+process+'_'+sys+'Dn', 1, 0., 1.)
+            tmp_hist_dn = ROOT.TH1F('x_'+process+'_xsec_'+sys+'Down','x_'+process+'_'+sys+'Dn', 1, 0., 1.)
             tmp_hist_dn.SetBinContent(1, ndn/lumi)
             hists.append(copy.deepcopy(tmp_hist_up))
             hists.append(copy.deepcopy(tmp_hist_dn))
@@ -482,7 +482,7 @@ if __name__ == "__main__":
                          36000., 
                          '/afs/cern.ch/work/m/mdunser/public/cmssw/w-helicity-13TeV/CMSSW_8_0_25/src/CMGTools/WMass/data/theory/theory_cross_sections.root' ## hard coded for now
                         )
-        tmp_xsec_histfile_name = os.path.abspath(outfile.replace('_shapes','_xsec'))
+        tmp_xsec_histfile_name = os.path.abspath(outfile.replace('_shapes','_shapes_xsec'))
         tmp_xsec_hists = ROOT.TFile(tmp_xsec_histfile_name, 'recreate')
         for hist in hists:
             hist.Write()
@@ -496,10 +496,10 @@ if __name__ == "__main__":
         tmp_xsec_dc.write('##----------------------------------\n') 
         tmp_xsec_dc.write("shapes *  *  %s %s\n" % (tmp_xsec_histfile_name, 'x_$PROCESS x_$PROCESS_$SYSTEMATIC'))
         tmp_xsec_dc.write('##----------------------------------\n')
-        tmp_xsec_dc.write('bin {b}_xsec\n'.format(b=options.bin))
+        tmp_xsec_dc.write('bin {b}\n'.format(b=options.bin))
         tmp_xsec_dc.write('observation 1.\n') ## don't know if that will work...
-        tmp_xsec_dc.write('bin      {s}\n'.format(s=' '.join(['{b}_xsec'.format(b=options.bin) for p in tmp_sigprocs])))
-        tmp_xsec_dc.write('process  {s}\n'.format(s=' '.join([p for p in tmp_sigprocs])))
+        tmp_xsec_dc.write('bin      {s}\n'.format(s=' '.join(['{b}'.format(b=options.bin) for p in tmp_sigprocs])))
+        tmp_xsec_dc.write('process  {s}\n'.format(s=' '.join([p+'_xsec' for p in tmp_sigprocs])))
         tmp_xsec_dc.write('process  {s}\n'.format(s=' '.join(str(i+1)  for i in range(len(tmp_sigprocs)))))
         tmp_xsec_dc.write('rate     {s}\n'.format(s=' '.join('-1' for i in range(len(tmp_sigprocs)))))
         tmp_xsec_dc.write('# --------------------------------------------------------------\n')
