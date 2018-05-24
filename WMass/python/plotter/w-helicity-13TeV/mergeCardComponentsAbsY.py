@@ -497,7 +497,7 @@ if __name__ == "__main__":
         tmp_xsec_dc.write("shapes *  *  %s %s\n" % (tmp_xsec_histfile_name, 'x_$PROCESS x_$PROCESS_$SYSTEMATIC'))
         tmp_xsec_dc.write('##----------------------------------\n')
         tmp_xsec_dc.write('bin {b}\n'.format(b=options.bin))
-        tmp_xsec_dc.write('observation 1.\n') ## don't know if that will work...
+        tmp_xsec_dc.write('observation -1\n') ## don't know if that will work...
         tmp_xsec_dc.write('bin      {s}\n'.format(s=' '.join(['{b}'.format(b=options.bin) for p in tmp_sigprocs])))
         tmp_xsec_dc.write('process  {s}\n'.format(s=' '.join([p+'_xsec' for p in tmp_sigprocs])))
         tmp_xsec_dc.write('process  {s}\n'.format(s=' '.join(str(i+1)  for i in range(len(tmp_sigprocs)))))
