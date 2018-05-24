@@ -29,7 +29,7 @@ if __name__ == "__main__":
        POIs += ['r_W{charge}_{pol}_W{charge}_{pol}_Ybin_{ib}'.format(charge=charge,pol=pol,ib=i) for i in xrange(nbins[charge+'_left']-1)]
     poiOpt = ' --redefineSignalPOIs '+','.join(POIs)
 
-    trackPars = "'\"''rgx{pdf.*|mu.*|.*_xsec|alphaS.*|wpt.*|CMS.*}''\"'"
+    trackPars = "'\"''rgx{pdf.*|mu.*|r.*_xsec|alphaS.*|wpt.*|CMS.*}''\"'"
     raiseNormPars = "'\"''rgx{r_.*}=1,10''\"'"
     cmdBase = "combineTool.py -d {ws} -M MultiDimFit -t {nt} -m 999 {savefr} " # combine method
     cmdBase += " --cminDefaultMinimizerType GSLMultiMinMod --cminDefaultMinimizerAlgo BFGS2 --cminDefaultMinimizerTolerance=0.001 " # minimizer
