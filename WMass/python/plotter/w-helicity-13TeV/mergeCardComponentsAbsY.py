@@ -227,7 +227,7 @@ if __name__ == "__main__":
                                             plots[newname].Write()
                                     else:
                                         if 'pdf' in newname: # these changes by default shape and normalization. Each variation should be symmetrized wrt nominal
-                                            tokens = newname.split("_"); pfx = '_'.join(tokens[:-2]); pdf = tokens[-1]
+                                            tokens = newname.split("_"); pfx = '_'.join(tokens[:-1]); pdf = tokens[-1]
                                             ipdf = int(pdf.split('pdf')[-1])
                                             newname = "{pfx}_pdf{ipdf}".format(pfx=pfx,ipdf=ipdf)
                                             (alternate,mirror) = mirrorShape(nominals[pfx],obj,newname,options.pdfShapeOnly)
@@ -236,7 +236,7 @@ if __name__ == "__main__":
                                                     plots[alt.GetName()] = alt.Clone()
                                                     plots[alt.GetName()].Write()
                                         elif re.match('.*_muR.*|.*_muF.*|.*alphaS.*|.*wptSlope.*',newname): # these changes by default shape and normalization
-                                            tokens = newname.split("_"); pfx = '_'.join(tokens[:-2]); syst = tokens[-1].replace('Dn','Down')
+                                            tokens = newname.split("_"); pfx = '_'.join(tokens[:-1]); syst = tokens[-1].replace('Dn','Down')
                                             newname = "{pfx}_{syst}".format(pfx=pfx,syst=syst)
                                             if 'wptSlope' in newname: # this needs to be scaled not to change normalization
                                                 obj.Scale(nominals[pfx].Integral()/obj.Integral())
