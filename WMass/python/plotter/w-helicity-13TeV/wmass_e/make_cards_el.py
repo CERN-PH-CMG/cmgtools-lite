@@ -5,8 +5,8 @@ from optparse import OptionParser
 parser = OptionParser(usage="%prog [options]")
 parser.add_option("-d", "--dry-run", dest="dryRun",   action="store_true", default=False, help="Do not run the job, only print the command");
 parser.add_option("-s", "--suffix", dest="suffix", type="string", default=None, help="Append a suffix to the default outputdir (helicity_<date>)");
-parser.add_option("-q", "--queue", dest="queue", type="string", default="cmscaf1nd", help="Select the queue to use");
-parser.add_option("--syst", dest="addSyst", action="store_true", default=False, help="Add PDF and QCD scale systematics to the signal (need incl_sig directive in the MCA file)");
+parser.add_option("-q", "--queue", dest="queue", type="string", default="2nd", help="Select the queue to use");
+parser.add_option(      "--syst", dest="addSyst", action="store_true", default=False, help="Add PDF and QCD scale systematics to the signal (need incl_sig directive in the MCA file)");
 (options, args) = parser.parse_args()
 
 BASECONFIG="w-helicity-13TeV/wmass_e"
@@ -19,7 +19,7 @@ QUEUE=str(options.queue)
 VAR="\"ptElFull(LepGood1_calPt,LepGood1_eta):LepGood1_eta\""
 #BINNING="\"48,-2.5,2.5,20,30.,50.\""
 #BINNING="\"24,-2.5,2.5,20,30.,50.\""
-BINNING="\"[-2.5,-2.25,-2.0,-1.8,-1.566,-1.4442,-1.3,-1.2,-1.1,-1.0,-0.9,-0.8,-0.7,-0.6,-0.5,-0.4,-0.3,-0.2,-0.1,0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.1,1.2,1.3,1.4442,1.566,1.8,2.0,2.25,2.5]*[30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45]\"" 
+BINNING="\"[-2.5,-2.3,-2.1,-1.9,-1.7,-1.566,-1.4442,-1.3,-1.2,-1.1,-1.0,-0.9,-0.8,-0.7,-0.6,-0.5,-0.4,-0.3,-0.2,-0.1,0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.1,1.2,1.3,1.4442,1.566,1.7,1.9,2.1,2.3,2.5]*[30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45]\""
 WEIGHTSTRING=" \'puw2016_nTrueInt_36fb(nTrueInt)*trgSF_We(LepGood1_pdgId,LepGood1_pt,LepGood1_eta,2)*leptonSF_We(LepGood1_pdgId,LepGood1_pt,LepGood1_eta)\' "
 
 OUTDIR="helicity_%s" % datetime.now().strftime("%Y_%m_%d")

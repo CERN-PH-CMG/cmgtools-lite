@@ -1,10 +1,67 @@
 #!/bin/env python
 
-# usage: ./mergeCardComponents.py -b Wmu -m --long-lnN 1.10 -C minus,plus -i ../cards/helicity_xxxxx/
+# usage: ./mergeCardComponents.py -b Wmu -C minus,plus -i ../cards/helicity_xxxxx/
 # fit scaling by eff: ./mergeCardComponentsAbsY.py [-m] -b Wel -C minus,plus -i cards/ --sf eff_el_PFMT40.root 
 
 import ROOT
-import sys,os,re,json
+import sys,os,re,json, copy
+
+def getXsecs(processes, systs, ybins, lumi, infile):
+    histo_file = ROOT.TFile(infile, 'READ')
+
+    hists = []
+
+    for process in processes:
+        pol = 'left' if 'left' in process else 'right' if 'right' in process else 'long'
+
+        cen_name = 'w'+charge+'_wy_central_W' +charge+'_'+pol
+        cen_hist = histo_file.Get(cen_name)
+
+        ybinnumber = int(process.split('_')[-1])
+        yfirst = ybins[pol][ybinnumber]
+        ylast  = ybins[pol][ybinnumber+1]
+
+        istart = cen_hist.FindBin(yfirst)
+        iend   = cen_hist.FindBin(ylast)
+
+        ncen = cen_hist .Integral(istart, iend-1)
+
+        tmp_hist = ROOT.TH1F('x_'+process+'_xsec','x_'+process+'_xsec', 1, 0., 1.)
+        ## normalize back to cross section
+        tmp_hist.SetBinContent(1, ncen/lumi)
+
+        hists.append(copy.deepcopy(tmp_hist))
+
+        for sys in systs:
+
+            upn = sys+'Up' if not 'pdf' in sys else sys
+            dnn = sys+'Dn' if not 'pdf' in sys else sys
+
+            sys_upname = 'w'+charge+'_wy_'+upn+'_W'+charge+'_'+pol
+            sys_dnname = 'w'+charge+'_wy_'+dnn+'_W'+charge+'_'+pol
+
+            sys_up_hist = histo_file.Get(sys_upname)
+            sys_dn_hist = histo_file.Get(sys_dnname)
+
+            nup = sys_up_hist .Integral(istart, iend-1)
+            ndn = sys_dn_hist .Integral(istart, iend-1)
+
+            if 'pdf' in sys:
+                ndn = 2.*ncen-nup ## or ncen/nup?
+
+            tmp_hist_up = ROOT.TH1F('x_'+process+'_xsec_'+sys+'Up','x_'+process+'_'+sys+'Up', 1, 0., 1.)
+            tmp_hist_up.SetBinContent(1, nup/lumi)
+            tmp_hist_dn = ROOT.TH1F('x_'+process+'_xsec_'+sys+'Down','x_'+process+'_'+sys+'Dn', 1, 0., 1.)
+            tmp_hist_dn.SetBinContent(1, ndn/lumi)
+            hists.append(copy.deepcopy(tmp_hist_up))
+            hists.append(copy.deepcopy(tmp_hist_dn))
+
+    hist_data = ROOT.TH1F('x_data_obs', 'x_data_obs', 1, 0., 1.)
+    hist_data.SetBinContent(1, 1.)
+    hists.append(copy.deepcopy(hist_data))
+
+    return hists
+
 
 def mirrorShape(nominal,alternate,newname,alternateShapeOnly=False):
     alternate.SetName("%sUp" % newname)
@@ -41,11 +98,12 @@ if __name__ == "__main__":
     parser.add_option(     '--fix-YBins', dest='fixYBins', type='string', default='plusR=99;plusL=99;minusR=99;minusL=99', help='add here replacement of default rate-fixing. with format plusR=10,11,12;plusL=11,12;minusR=10,11,12;minusL=10,11 ')
     parser.add_option('-p','--POIs', dest='POIsToMinos', type='string', default=None, help='Decide which are the nuiscances for which to run MINOS (a.k.a. POIs). Default is all non fixed YBins. With format poi1,poi2 ')
     parser.add_option('-l','--long-lnN', dest='longLnN', type='float', default=None, help='add a common lnN constraint to all longitudinal components')
-    parser.add_option(     '--absolute', dest='absoluteRates', default=False, action='store_true', help='Fit for absolute rates, not scale factors')
     parser.add_option(     '--sf'    , dest='scaleFile'    , default='', type='string', help='path of file with the scaling/unfolding')
     parser.add_option(     '--lumiLnN'    , dest='lumiLnN'    , default=0.026, type='float', help='Log-uniform constraint to be added to all the fixed MC processes')
     parser.add_option(     '--wXsecLnN'   , dest='wLnN'       , default=0.038, type='float', help='Log-normal constraint to be added to all the fixed W processes')
     parser.add_option(     '--pdf-shape-only'   , dest='pdfShapeOnly' , default=False, action='store_true', help='Normalize the mirroring of the pdfs to central rate.')
+    parser.add_option('-M','--minimizer'   , dest='minimizer' , type='string', default='GSLMultiMinMod', help='Minimizer to be used for the fit')
+    parser.add_option(     '--comb'   , dest='combineCharges' , default=False, action='store_true', help='Combine W+ and W-, if single cards are done')
     (options, args) = parser.parse_args()
     
     from symmetrizeMatrixAbsY import getScales
@@ -153,6 +211,7 @@ if __name__ == "__main__":
                         for e in tf.GetListOfKeys() :
                             name=e.GetName()
                             obj=e.ReadObj()
+                            if name.endswith('data_obs') and 'data' not in basename: continue
                             if (not re.match('Wplus|Wminus',os.path.basename(f))) and 'data_obs' in name: obj.Clone().Write()
                             for p in processes:
                                 if p in name:
@@ -168,7 +227,7 @@ if __name__ == "__main__":
                                             plots[newname].Write()
                                     else:
                                         if 'pdf' in newname: # these changes by default shape and normalization. Each variation should be symmetrized wrt nominal
-                                            tokens = newname.split("_"); pfx = '_'.join(tokens[:-2]); pdf = tokens[-1]
+                                            tokens = newname.split("_"); pfx = '_'.join(tokens[:-1]); pdf = tokens[-1]
                                             ipdf = int(pdf.split('pdf')[-1])
                                             newname = "{pfx}_pdf{ipdf}".format(pfx=pfx,ipdf=ipdf)
                                             (alternate,mirror) = mirrorShape(nominals[pfx],obj,newname,options.pdfShapeOnly)
@@ -177,7 +236,7 @@ if __name__ == "__main__":
                                                     plots[alt.GetName()] = alt.Clone()
                                                     plots[alt.GetName()].Write()
                                         elif re.match('.*_muR.*|.*_muF.*|.*alphaS.*|.*wptSlope.*',newname): # these changes by default shape and normalization
-                                            tokens = newname.split("_"); pfx = '_'.join(tokens[:-2]); syst = tokens[-1].replace('Dn','Down')
+                                            tokens = newname.split("_"); pfx = '_'.join(tokens[:-1]); syst = tokens[-1].replace('Dn','Down')
                                             newname = "{pfx}_{syst}".format(pfx=pfx,syst=syst)
                                             if 'wptSlope' in newname: # this needs to be scaled not to change normalization
                                                 obj.Scale(nominals[pfx].Integral()/obj.Integral())
@@ -270,8 +329,6 @@ if __name__ == "__main__":
         
         os.system('rm {tmpcard}'.format(tmpcard=tmpcard))
         
-        if options.scaleFile: options.absoluteRates = True
-        
         kpatt = " %7s "
         if options.longLnN:
             combinedCard.write('norm_long_'+options.bin+'       lnN    ' + ' '.join([kpatt % (options.longLnN if 'long' in x else '-') for x in realprocesses])+'\n')
@@ -308,12 +365,12 @@ if __name__ == "__main__":
         signal_0 = filter(lambda x: re.match('.*long.*',x),signal_procs)
         
         hel_to_constrain = [signal_L,signal_R]
-        tightConstraint = 0.05
+        tightConstraint = 0.50
         for hel in hel_to_constrain:
             for iy,helbin in enumerate(hel):
                 pol = helbin.split('_')[1]
                 index_procs = procs.index(helbin)
-                if options.absoluteRates:
+                if options.scaleFile:
                     lns = ' - '.join('' for i in range(index_procs+1))
                     lns += ' {effunc:.4f} '.format(effunc=1.+efferrors[pol][iy])
                     lns += ' - '.join('' for i in range(len(procs) - index_procs))
@@ -323,125 +380,181 @@ if __name__ == "__main__":
                 sfx = str(iy)
                 pol = helbin.split('_')[1]
                 rateNuis = tightConstraint
-                normPOI = 'norm_{n}'.format(n=helbin)
+                normPOI = '{norm}_{n}'.format(norm='norm' if options.scaleFile else 'r', n=helbin)
 
                 ## if we fit absolute rates, we need to get them from the process and plug them in below
-                if options.absoluteRates:
-    
-                    ## if we want to fit with the efficiency gen-reco, we need to add one efficiency parameter
-                    if options.scaleFile:
-                        tmp_eff = efficiencies[pol][iy]
-                        combinedCard.write('eff_{n}    rateParam * {n} \t {eff:.5f} [{dn:.5f},{up:.5f}]\n'.format(n=helbin,eff=tmp_eff,dn=(1-1E-04)*tmp_eff,up=(1+1E-04)*tmp_eff))
-                        expRate0 = float(ProcsAndRatesDict[helbin])/tmp_eff
-                        param_range_0 = '{r:15.1f} [{dn:.1f},{up:.1f}]'.format(r=expRate0,dn=(1-rateNuis)*expRate0,up=(1+rateNuis)*expRate0)
-                        # remove the channel to allow ele/mu combination when fitting for GEN
-                        helbin_nochan = helbin.replace('_{channel}_Ybin'.format(channel=channel),'_Ybin')
-                        combinedCard.write('norm_{nc}  rateParam * {n} \t {pr}\n'.format(nc=helbin_nochan,n=helbin,pr=param_range_0))
-                        # combinedCard.write('lumi_13TeV_rp rateParam * {n} \t TMath::Power({lumiLnN},@0) gaussian_param \n'.format(n=helbin,lumiLnN=1.+optionslumiLnN)) #  this is to add manually a "lumi" lnN constraint on each process scaled by a rateParam
-    
-                    ## if we do not want to fit the gen-level thing, we want to just put the absolute reco rates here
-                    else:
-                        expRate0 = float(ProcsAndRatesDict[helbin])
-                        param_range_0 = '{r:15.1f} [{dn:.1f},{up:.1f}]'.format(r=expRate0,dn=(1-rateNuis)*expRate0,up=(1+rateNuis)*expRate0)
-                        combinedCard.write('norm_{n}  rateParam * {n} \t {pr}\n'.format(n=helbin,pr=param_range_0))
-    
-                else:
-                    ## if not fitting full rates, we do the relative rateParams close to 1.
-                    ## this is now done with a physics model 
-                    pass
+                ## if we want to fit with the efficiency gen-reco, we need to add one efficiency parameter
+                if options.scaleFile:
+                    tmp_eff = efficiencies[pol][iy]
+                    combinedCard.write('eff_{n}    rateParam * {n} \t {eff:.5f} [{dn:.5f},{up:.5f}]\n'.format(n=helbin,eff=tmp_eff,dn=(1-1E-04)*tmp_eff,up=(1+1E-04)*tmp_eff))
+                    expRate0 = float(ProcsAndRatesDict[helbin])/tmp_eff
+                    param_range_0 = '{r:15.1f} [{dn:.1f},{up:.1f}]'.format(r=expRate0,dn=(1-rateNuis)*expRate0,up=(1+rateNuis)*expRate0)
+                    # remove the channel to allow ele/mu combination when fitting for GEN
+                    helbin_nochan = helbin.replace('_{channel}_Ybin'.format(channel=channel),'_Ybin')
+                    combinedCard.write('norm_{nc}  rateParam * {n} \t {pr}\n'.format(nc=helbin_nochan,n=helbin,pr=param_range_0))
                 POIs.append(normPOI)
         combinedCard.close()
 
-        if options.absoluteRates:
-            ProcsAndRatesUnity = []
-            for (p,r) in ProcsAndRates:
-                ProcsAndRatesUnity.append((p,'1') if ('left' in p or 'right' in p or 'long' in p) else (p,r))
+        ### Now write the final datacard
+        combinedCardNew = open(cardfile+"_new",'w')
+        combinedCard = open(cardfile,'r')
+
+        ProcsAndRatesUnity = [] # used in case of scaling to GEN
+        for (p,r) in ProcsAndRates:
+            ProcsAndRatesUnity.append((p,'1') if ('left' in p or 'right' in p or 'long' in p) else (p,r))
+        Wlong = [(p,r) for (p,r) in ProcsAndRates if re.match('W.*long',p)]
+        WLeftOrRight = [(p,r) for (p,r) in ProcsAndRates if ('left' in p or 'right' in p)]
+
+        for l in combinedCard.readlines():
+            if re.match("rate\s+",l):
+                if options.scaleFile: combinedCardNew.write('rate            %s \n' % ' '.join([kpatt % r for (p,r) in ProcsAndRatesUnity])+'\n')
+                else: combinedCardNew.write('rate            %s \n' % ' '.join([kpatt % '-1' for (p,r) in ProcsAndRates])+'\n')
+            else: combinedCardNew.write(l)
+        if options.scaleFile:
+            eff_long = 1./getScales([ybins['left'][0],ybins['left'][-1]], charge, 'long', options.scaleFile)[0] # just take the eff on the total Y acceptance (should be 0,6)
+            eff_left = 1./getScales([ybins[pol][0],ybins[pol][-1]], charge, 'left', options.scaleFile)[0]
+            eff_right = 1./getScales([ybins[pol][0],ybins[pol][-1]], charge, 'right', options.scaleFile)[0]
+            normWLong = sum([float(r) for (p,r) in Wlong])/eff_long # there should be only 1 Wlong/charge
+            normWLeft = sum([float(r) for (p,r) in WLeftOrRight if 'left' in p])/eff_left
+            normWRight = sum([float(r) for (p,r) in WLeftOrRight if 'right' in p])/eff_right
+            combinedCardNew.write("eff_{nc}   rateParam * {n}    {eff:.5f} [{dn:.5f},{up:.5f}]\n".format(nc=Wlong[0][0].replace('_long','_%s_long' % channel),n=Wlong[0][0],
+                                                                                                         eff=eff_long,dn=(1-1E-04)*eff_long,up=(1+1E-04)*eff_long))
+            ## write the long yield here
+            nl = normWLong; tc = tightConstraint
+            combinedCardNew.write("norm_{n} rateParam * {n} {r:15.1f} [{dn:.1f},{up:.1f}]\n".format(n=Wlong[0][0],r=nl,dn=(1-tc)*nl,up=(1+tc)*nl))
+            POIs.append('norm_{n}'.format(n=Wlong[0][0].replace('_long','_%s_long' % channel))) # at this stage, norm POIs have still the channel inside
+        else:
+            POIs.append('r_{n}'.format(n=Wlong[0][0].replace('_long','_%s_long' % channel)))
     
-            combinedCardNew = open(cardfile+"_new",'w')
-            combinedCard = open(cardfile,'r')
-            for l in combinedCard.readlines():
-                if re.match("rate\s+",l):
-                    combinedCardNew.write('rate            %s \n' % ' '.join([kpatt % r for (p,r) in ProcsAndRatesUnity])+'\n')
-                else: combinedCardNew.write(l)
-            Wlong = [(p,r) for (p,r) in ProcsAndRates if re.match('W.*long',p)]
-            WLeftOrRight = [(p,r) for (p,r) in ProcsAndRates if ('left' in p or 'right' in p)]
-            if options.scaleFile:
-                eff_long = 1./getScales([ybins['left'][0],ybins['left'][-1]], charge, 'long', options.scaleFile)[0] # just take the eff on the total Y acceptance (should be 0,6)
-                eff_left = 1./getScales([ybins[pol][0],ybins[pol][-1]], charge, 'left', options.scaleFile)[0]
-                eff_right = 1./getScales([ybins[pol][0],ybins[pol][-1]], charge, 'right', options.scaleFile)[0]
-                normWLong = sum([float(r) for (p,r) in Wlong])/eff_long # there should be only 1 Wlong/charge
-                normWLeft = sum([float(r) for (p,r) in WLeftOrRight if 'left' in p])/eff_left
-                normWRight = sum([float(r) for (p,r) in WLeftOrRight if 'right' in p])/eff_right
-                normWLeftOrRight = normWLeft + normWRight
-                combinedCardNew.write("eff_{nc}   rateParam * {n}    {eff:.5f} [{dn:.5f},{up:.5f}]\n".format(nc=Wlong[0][0].replace('_long','_%s_long' % channel),n=Wlong[0][0],
-                                                                                                             eff=eff_long,dn=(1-1E-04)*eff_long,up=(1+1E-04)*eff_long))
-                ## write the long yield here
-                nl = normWLong; tc = tightConstraint
-                combinedCardNew.write("norm_{n} rateParam * {n} {r:15.1f} [{dn:.1f},{up:.1f}]\n".format(n=Wlong[0][0],r=nl,dn=(1-tc)*nl,up=(1+tc)*nl))
-                POIs.append('norm_{n}'.format(n=Wlong[0][0].replace('_long','_%s_long' % channel))) # at this stage, norm POIs have still the channel inside
-    
-            ## if we do not scale gen-reco, then we go back to before...
-            else:
-                normWLong = sum([float(r) for (p,r) in Wlong]) # there should be only 1 Wlong/charge
-                normWLeftOrRight = sum([float(r) for (p,r) in WLeftOrRight])
-                combinedCardNew.write("norm_%-50s   rateParam * %-5s  %15.1f [%.0f,%.0f]\n" % (Wlong[0][0],Wlong[0][0],normWLong,(1-tightConstraint)*normWLong,(1+tightConstraint)*normWLong))
-    
-            ## make an efficiency nuisance group
+        if options.scaleFile: ## make an efficiency nuisance group
             combinedCardNew.write('\nefficiencies group = '+' '.join([p.replace('norm','eff') for p in POIs])+'\n\n' )
-            ## make a group for the fixed rate parameters.
+
+        ## remove all the POIs that we want to fix
+        # remove the channel to allow ele/mu combination when fitting for GEN
+        POIs = [poi.replace('_{channel}_'.format(channel=channel),'_') for poi in  POIs]
+        for poi in POIs:
+            if 'right' in poi and any('Ybin_'+str(i) in poi for i in fixedYBins[charge+'R']):
+                fixedPOIs.append(poi)
+            if 'left'  in poi and any('Ybin_'+str(i) in poi for i in fixedYBins[charge+'L']):
+                fixedPOIs.append(poi)
+        floatPOIs = list(poi for poi in POIs if not poi in fixedPOIs)
+        allPOIs = fixedPOIs+floatPOIs
+        ## define the combine POIs, i.e. the subset on which to run MINOS
+        minosPOIs = allPOIs if not options.POIsToMinos else options.POIsToMinos.split(',')
+
+        ## make a group for the fixed rate parameters. ## this is maybe obsolete, and restricted only to absolute rate fitting
+        if options.scaleFile:
             print 'adding a nuisance group for the fixed rateParams'
             if len(fixedPOIs): combinedCardNew.write('\nfixedY group = {fixed} '.format(fixed=' '.join(i.strip() for i in fixedPOIs)))
-            combinedCardNew.write('\nallY group = {all} \n'.format(all=' '.join(i.strip().replace('_%s_'%options.bin,'_') for i in allPOIs)))
-            combinedCardNew.close() ## for some reason this is really necessary
-            os.system("mv {cardfile}_new {cardfile}".format(cardfile=cardfile))
-
-            ## remove all the POIs that we want to fix
-            # remove the channel to allow ele/mu combination when fitting for GEN
-            POIs = [poi.replace('_{channel}_'.format(channel=channel),'_') for poi in  POIs]
-            for poi in POIs:
-                if 'right' in poi and any('Ybin_'+str(i) in poi for i in fixedYBins[charge+'R']):
-                    fixedPOIs.append(poi)
-                if 'left'  in poi and any('Ybin_'+str(i) in poi for i in fixedYBins[charge+'L']):
-                    fixedPOIs.append(poi)
-            floatPOIs = list(poi for poi in POIs if not poi in fixedPOIs)
-            allPOIs = fixedPOIs+floatPOIs
-            ## define the combine POIs, i.e. the subset on which to run MINOS
-            minosPOIs = allPOIs if not options.POIsToMinos else options.POIsToMinos.split(',')
+            combinedCardNew.write('\nallY group = {all} \n'.format(all=' '.join([i for i in allPOIs])))
+        combinedCardNew.close() ## for some reason this is really necessary
+        os.system("mv {cardfile}_new {cardfile}".format(cardfile=cardfile))
         
-            combinedCard = open(cardfile,'a+')
-            ## add the PDF systematics 
-            for sys,procs in theosyst.iteritems():
-                # there should be 2 occurrences of the same proc in procs (Up/Down). This check should be useless if all the syst jobs are DONE
-                combinedCard.write('%-15s   shape %s\n' % (sys,(" ".join([kpatt % '1.0' if p in procs and procs.count(p)==2 else '  -  ' for p,r in ProcsAndRates]))) )
-            combinedCard.write('\npdfs group = '+' '.join([sys for sys,procs in pdfsyst.iteritems()])+'\n')
-            combinedCard.write('\nscales group = '+' '.join([sys for sys,procs in qcdsyst.iteritems()])+'\n')
-            combinedCard.write('\nalphaS group = '+' '.join([sys for sys,procs in alssyst.iteritems()])+'\n')
-            combinedCard.write('\nwpt group = '+' '.join([sys for sys,procs in wptsyst.iteritems()])+'\n')
+        combinedCard = open(cardfile,'a+')
+        ## add the PDF systematics 
+        for sys,procs in theosyst.iteritems():
+            # there should be 2 occurrences of the same proc in procs (Up/Down). This check should be useless if all the syst jobs are DONE
+            combinedCard.write('%-15s   shape %s\n' % (sys,(" ".join(['1.0' if p in procs and procs.count(p)==2 else '  -  ' for p,r in ProcsAndRates]))) )
+        combinedCard.write('\npdfs group = '+' '.join([sys for sys,procs in pdfsyst.iteritems()])+'\n')
+        combinedCard.write('\nscales group = '+' '.join([sys for sys,procs in qcdsyst.iteritems()])+'\n')
+        combinedCard.write('\nalphaS group = '+' '.join([sys for sys,procs in alssyst.iteritems()])+'\n')
+        combinedCard.write('\nwpt group = '+' '.join([sys for sys,procs in wptsyst.iteritems()])+'\n')
 
-            ## now assign a uniform luminosity uncertainty to all the MC processes
-            combinedCard.write('\nCMS_lumi_13TeV   lnN %s\n' % (" ".join([kpatt % '-' if 'data' in p else '%.3f'%(1+options.lumiLnN) for p,r in ProcsAndRates])) )
-            combinedCard.write('CMS_W   lnN %s\n' % (" ".join([kpatt % '%.3f' % (1+options.wLnN) if (p=='TauDecaysW' or re.match('W{charge}'.format(charge=charge),p)) else '-' for p,r in ProcsAndRates])) )
-            combinedCard.close() 
+        ## now assign a uniform luminosity uncertainty to all the MC processes
+        combinedCard.write('\nCMS_lumi_13TeV   lnN %s\n' % (" ".join(['-' if 'data' in p else '%.3f'%(1+options.lumiLnN) for p,r in ProcsAndRates])) )
+        ## not needed as  far as we float all the Y bins
+        # combinedCard.write('CMS_W   lnN %s\n' % (" ".join(['%.3f' % (1+options.wLnN) if (p=='TauDecaysW' or re.match('W{charge}'.format(charge=charge),p)) else '-' for p,r in ProcsAndRates])) )
+        combinedCard.close() 
+
+            
+        ## here we make a second datacard that will be masked. which for every process
+        ## has a 1-bin histogram with the cross section for every nuisance parameter and
+        ## every signal process inside
+
+        ## first make a list of all the signal processes. this excludes the long!!!!
+        tmp_sigprocs = [p for p in realprocesses if 'Wminus' in p or 'Wplus' in p]
+        tmp_sigprocs = [p for p in tmp_sigprocs if not 'long' in p]
+
+        ## xsecfilname 
+        hists = getXsecs(tmp_sigprocs, 
+                         [i for i in theosyst.keys() if not 'wpt' in i],
+                         ybins, 
+                         36000., 
+                         '/afs/cern.ch/work/m/mdunser/public/cmssw/w-helicity-13TeV/CMSSW_8_0_25/src/CMGTools/WMass/data/theory/theory_cross_sections.root' ## hard coded for now
+                        )
+        tmp_xsec_histfile_name = os.path.abspath(outfile.replace('_shapes','_shapes_xsec'))
+        tmp_xsec_hists = ROOT.TFile(tmp_xsec_histfile_name, 'recreate')
+        for hist in hists:
+            hist.Write()
+        tmp_xsec_hists.Close()
+
+        tmp_xsec_dc_name = os.path.join(options.inputdir,options.bin+'_{ch}_xsec_card.txt'   .format(ch=charge))
+        tmp_xsec_dc = open(tmp_xsec_dc_name, 'w')
+        tmp_xsec_dc.write("imax 1\n")
+        tmp_xsec_dc.write("jmax *\n")
+        tmp_xsec_dc.write("kmax *\n")
+        tmp_xsec_dc.write('##----------------------------------\n') 
+        tmp_xsec_dc.write("shapes *  *  %s %s\n" % (tmp_xsec_histfile_name, 'x_$PROCESS x_$PROCESS_$SYSTEMATIC'))
+        tmp_xsec_dc.write('##----------------------------------\n')
+        tmp_xsec_dc.write('bin {b}\n'.format(b=options.bin))
+        tmp_xsec_dc.write('observation -1\n') ## don't know if that will work...
+        tmp_xsec_dc.write('bin      {s}\n'.format(s=' '.join(['{b}'.format(b=options.bin) for p in tmp_sigprocs])))
+        tmp_xsec_dc.write('process  {s}\n'.format(s=' '.join([p+'_xsec' for p in tmp_sigprocs])))
+        tmp_xsec_dc.write('process  {s}\n'.format(s=' '.join(str(i+1)  for i in range(len(tmp_sigprocs)))))
+        tmp_xsec_dc.write('rate     {s}\n'.format(s=' '.join('-1' for i in range(len(tmp_sigprocs)))))
+        tmp_xsec_dc.write('# --------------------------------------------------------------\n')
+
+        for sys,procs in theosyst.iteritems():
+            if 'wpt' in sys: continue
+            # there should be 2 occurrences of the same proc in procs (Up/Down). This check should be useless if all the syst jobs are DONE
+            tmp_xsec_dc.write('%-15s   shape %s\n' % (sys,(" ".join(['1.0' if p in tmp_sigprocs  else '  -  ' for p in tmp_sigprocs]))) )
+
+        tmp_xsec_dc.close()
+
+        ## end of all the xsec construction of datacard and making the file
+
+        ## command to make the workspace. should be done after combineCards.py!
+        ## os.system('text2workspace.py --X-allow-no-signal -o {ws} {dc}'.format(ws=tmp_xsec_dc_name.replace('_card','_ws'), dc=tmp_xsec_dc_name))
 
         print "merged datacard in ",cardfile
         
         ws = cardfile.replace('_card.txt', '_ws.root')
-        if options.absoluteRates:
-            txt2wsCmd = 'text2workspace.py {cf} -o {ws} --X-allow-no-signal --X-no-check-norm '.format(cf=cardfile, ws=ws)
-            combineCmd = 'combine {ws} -M MultiDimFit    -t -1 --expectSignal=1 -m 999 --saveFitResult --cminInitialHesse 1 --cminFinalHesse 1 --cminPreFit 1       --redefineSignalPOIs {pois}            --floatOtherPOIs=0 --freezeNuisanceGroups efficiencies,fixedY{pdfs}{scales}{alphas} -v 9'.format(ws=ws, pois=','.join(minosPOIs), pdfs=(',pdfs' if len(pdfsyst) else ''), scales=(',scales' if len(qcdsyst) else ''),alphas=(',alphaS' if len(alssyst) else ''))
+        minimizerOpts = ' --cminDefaultMinimizerType '+options.minimizer
+        if options.minimizer.startswith('GSLMultiMin'): # default is Mod version by Josh
+            minimizerOpts += ' --cminDefaultMinimizerAlgo BFGS2 --cminDefaultMinimizerTolerance=0.001 --keepFailures '
         else: 
-            signals = ['W{charge}_{pol}_W{charge}_{pol}_{channel}_Ybin_{yb}'.format(charge=charge,pol=pol,channel=channel,yb=yb) for pol in ['left','right'] for yb in xrange(len(ybins[pol])) ]
+            minimizerOpts += ' --cminInitialHesse 1 --cminFinalHesse 1 --cminPreFit 1 '
+        if options.scaleFile:
+            txt2wsCmd = 'text2workspace.py {cf} -o {ws} --X-allow-no-signal --X-no-check-norm '.format(cf=cardfile, ws=ws)
+            combineCmd = 'combine {ws} -M MultiDimFit -t -1 -m 999 --saveFitResult {minOpts} --redefineSignalPOIs {pois} --floatOtherPOIs=0 --freezeNuisanceGroups efficiencies,fixedY{pdfs}{scales}{alphas} -v 9'.format(ws=ws, pois=','.join(minosPOIs), pdfs=(',pdfs' if len(pdfsyst) else ''), scales=(',scales' if len(qcdsyst) else ''),alphas=(',alphaS' if len(alssyst) else ''),minOpts=minimizerOpts)
+        else: 
+            signals = ['W{charge}_{pol}_W{charge}_{pol}_{channel}_Ybin_{yb}'.format(charge=charge,pol=pol,channel=channel,yb=yb) for pol in ['left','right'] for yb in xrange(len(ybins[pol])-1) ]
             signals += ['W{charge}_long'.format(charge=charge)]
-            multisig = ' '.join(["--PO 'map=.*/{proc}$:r_{proc}[1,0,10]'".format(proc=proc) for proc in signals])
-            txt2wsCmd = 'text2workspace.py {cf} -o {ws} --X-allow-no-signal --X-no-check-norm -P HiggsAnalysis.CombinedLimit.PhysicsModel:multiSignalModel --PO verbose {pos}'.format(cf=cardfile, ws=ws, pos=multisig)
-            combineCmd = 'combine {ws} -M MultiDimFit    -t -1 -m 999 --saveFitResult --keepFailures --cminInitialHesse 1 --cminFinalHesse 1 --cminPreFit 1       --redefineSignalPOIs {pois} --floatOtherPOIs=0 -v 9'.format(ws=ws, pois=','.join(['r_'+p for p in signals]))
+            multisig      = ' '.join(["--PO 'map=.*/{proc}$:r_{proc_nochan}[1,0,10]'".format(proc=proc,proc_nochan=proc.replace('_{channel}_'.format(channel=channel),'_')) for proc in signals])
+            multisig_xsec = ' '.join(["--PO 'map=.*/{proc}_xsec$:r_{proc_nochan}_xsec[1,0,10]'".format(proc=proc,proc_nochan=proc.replace('_{channel}_'.format(channel=channel),'_')) for proc in tmp_sigprocs])
+
+            cardfile_xsec = cardfile.replace('_card', '_card_withXsecMask')
+            chname = options.bin+'_{ch}'.format(ch=charge)
+            chname_xsec = chname+'_xsec'
+            ccCmd = 'combineCards.py {oc}={odc} {xc}={xdc} > {out}'.format(oc=chname,odc=cardfile,xc=chname_xsec,xdc=tmp_xsec_dc_name,out=cardfile_xsec)
+
+            newws = cardfile_xsec.replace('_card','_ws').replace('.txt','.root')
+
+            txt2wsCmd = 'text2workspace.py {cf} -o {ws} --X-allow-no-signal --X-no-check-norm -P HiggsAnalysis.CombinedLimit.PhysicsModel:multiSignalModel --PO verbose {pos} --channel-masks '.format(cf=cardfile_xsec, ws=newws, pos=multisig+' '+multisig_xsec)
+            #combineCmd = 'combine {ws} -M MultiDimFit    -t -1 -m 999 --saveFitResult --keepFailures --cminInitialHesse 1 --cminFinalHesse 1 --cminPreFit 1       --redefineSignalPOIs {pois} --floatOtherPOIs=0 -v 9'.format(ws=ws, pois=','.join(['r_'+p for p in signals]))
+            combineCmd = 'combine {ws} -M MultiDimFit -t -1 -m 999 --saveFitResult {minOpts} --redefineSignalPOIs {pois} -v 9 --setParameters mask_{xc}=1 '.format(ws=newws, pois=','.join(['r_'+p for p in signals]),minOpts=minimizerOpts, xc=chname_xsec)
+        ## here running the combine cards command first
+        print ccCmd
+        os.system(ccCmd)
+        ## then running the t2w command afterwards
         print txt2wsCmd
         os.system(txt2wsCmd)
+        ## print out the command to run in combine
         print combineCmd
     # end of loop over charges
 
     datacards = [os.path.abspath(options.inputdir)+"/"+options.bin+'_{ch}_card.txt'.format(ch=charge) for charge in ['plus','minus']]
-    if sum([os.path.exists(card) for card in datacards])==2:
+    if options.combineCharges and sum([os.path.exists(card) for card in datacards])==2:
         print "Cards for W+ and W- done. Combining them now..."
         combinedCard = os.path.abspath(options.inputdir)+"/"+options.bin+'_card.txt'
         combineCards = 'combineCards.py '+' '.join(['{bin}_{ch}={bin}_{ch}_card.txt'.format(bin=options.bin,ch=charge) for charge in ['plus','minus']])+' > '+combinedCard

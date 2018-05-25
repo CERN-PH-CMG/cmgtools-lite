@@ -1,3 +1,5 @@
+#!/bin/env python
+
 # usage: python submitToys.py ../cards/helicity_2018_03_09_testpdfsymm/Wel_plus_ws.root 1000 plus -n 10
 
 import ROOT, random, array, os
@@ -16,15 +18,33 @@ if __name__ == "__main__":
     prefix = args[2] if len(args)>2 else wsbase
     charge = 'plus' if 'plus' in wsbase else 'minus'
     
-    print "Submitting {nt} toys with workspace {ws} and prefix {pfx}...".format(nt=ntoys,ws=workspace,pfx=prefix)
+    binningFile = open(os.path.dirname(workspace)+'/binningYW.txt')
+    binningYW = eval(binningFile.read())
+    nbins={}
+    for i,j in binningYW.items():
+        nbins[i] = len(j)-1
+        
+    POIs = ['r_W{charge}_long'.format(charge=charge)]
+    for pol in ['left','right']:
+       POIs += ['r_W{charge}_{pol}_W{charge}_{pol}_Ybin_{ib}'.format(charge=charge,pol=pol,ib=i) for i in xrange(nbins[charge+'_left']-1)]
+    poiOpt = ' --redefineSignalPOIs '+','.join(POIs)
 
-    trackPars = "'\"''rgx{norm_.*|pdf.*}''\"'"
-    raiseNormPars = "'\"''rgx{norm_.*}=1,100000000''\"'"
-    cmdBase = "combineTool.py -d {ws} -M MultiDimFit -t {nt} --expectSignal=1 -m 999 {savefr} --cminInitialHesse 1 --cminFinalHesse 1 --cminPreFit 1 --redefineSignalPOIs norm_W%s_long --floatOtherPOIs=0 --freezeNuisanceGroups efficiencies,fixedY%s --toysNoSystematics -n _{pfx} -s {seed} --trackParameters {track} --setParameterRanges {norm} --job-mode lxbatch --task-name {taskname} --sub-opts='-q 8nh' %s" % (charge, ',pdfs' if options.normonly else '', '--dry-run' if options.dryRun else '')
+    trackPars = "'\"''rgx{pdf.*|mu.*|r.*_xsec|alphaS.*|wpt.*|CMS.*}''\"'"
+    raiseNormPars = "'\"''rgx{r_.*}=1,10''\"'"
+    cmdBase = "combineTool.py -d {ws} -M MultiDimFit -t {nt} -m 999 {savefr} " # combine method
+    cmdBase += " --cminDefaultMinimizerType GSLMultiMinMod --cminDefaultMinimizerAlgo BFGS2 --cminDefaultMinimizerTolerance=0.001 " # minimizer
+    cmdBase += " --toysFrequentist --bypassFrequentistFit -s {seed} --trackParameters {track} " # toys options
+    cmdBase += " %s --floatOtherPOIs=1 " % poiOpt # POIs
+    ## this is constructed from the ws name. it *should* work. but it's not the most elegant way of doing this
+    masking_par = '_'.join(['mask']+os.path.basename(workspace).split('_')[:2]+['xsec'])
+    cmdBase += " --setParameters {mp}=1 ".format(mp=masking_par)
+    if options.normonly: cmdBase += " --freezeNuisanceGroups pdfs,scales,alphaS,wpt " # nuisances to freeze
+    cmdBase += " -n _{pfx} -s {seed}  --job-mode lxbatch --task-name {taskname} --sub-opts='-q 8nh' %s " % ('--dry-run' if options.dryRun else '') # jobs configuration
+
+    print "Submitting {nt} toys with workspace {ws} and prefix {pfx}...".format(nt=ntoys,ws=workspace,pfx=prefix)
 
     if options.nTj==None or ntoys<options.nTj:
         cmd = cmdBase.format(nt=ntoys,ws=workspace,pfx=prefix,seed=12345,taskname='toys_'+prefix,track=trackPars,norm=raiseNormPars,savefr='--saveFitResult')
-        print cmd
         os.system(cmd)
     else:
         random.seed()
