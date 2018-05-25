@@ -44,7 +44,10 @@ DiBosons : ZZ+ZZ_ext : xsec; FillColor=ROOT.kViolet+2, Label="DiBosons", NormSys
 
 TauDecaysW : NoSkim_WJetsToLNu_NLO* : 3.*20508.9    : genw_decayId != 12 && genw_decayId != 14 ; FillColor=ROOT.kPink   ,  Label="W\#rightarrow\#tau\#nu", NormSystematic=0.038
 
-#WFlips  : WJetsToLNu_NLO* : 3.*20508.9    : genw_decayId == 12 && LepGood1_mcMatchId*LepGood1_charge==-24 ; FillColor=ROOT.kGray+1  , Label="W charge flips"
-WFlips  : WJetsToLNu_NLO_part1 + WJetsToLNu_NLO_part2 + WJetsToLNu_NLO_part3 + WJetsToLNu_NLO_ext_part1 + WJetsToLNu_NLO_ext_part2 + WJetsToLNu_NLO_ext_part3 : 3.*20508.9 : genw_decayId == 12 && LepGood1_mcMatchId*LepGood1_charge==-24 ; FillColor=ROOT.kGray+1  , Label="W charge flips"
+WFlips  : WJetsToLNu_NLO* : 3.*20508.9    : genw_decayId == 12 && LepGood1_mcMatchId*LepGood1_charge==-24 ; FillColor=ROOT.kGray+1  , Label="W charge flips"
+#WFlips  : WJetsToLNu_NLO_part1 + WJetsToLNu_NLO_part2 + WJetsToLNu_NLO_part3 + WJetsToLNu_NLO_ext_part1 + WJetsToLNu_NLO_ext_part2 + WJetsToLNu_NLO_ext_part3 : 3.*20508.9 : genw_decayId == 12 && LepGood1_mcMatchId*LepGood1_charge==-24 ; FillColor=ROOT.kGray+1  , Label="W charge flips"
 
 data: SingleElectron_07Aug17_Run2016*
+
+
+#data_noJson: SingleElectron_07Aug17_Run2016* : 1 ; FakeRate="w-helicity-13TeV/wmass_e/dataNoJson.txt", Label="data noJson", FillColor=ROOT.kGreen+2, NormSystematic=0.30

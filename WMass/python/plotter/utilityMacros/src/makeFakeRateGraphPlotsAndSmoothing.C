@@ -29,6 +29,42 @@ TH2D* frSmoothParameter_ewk = nullptr;
 
 //============================================
 
+void plotFRparamRelUncertainty(TH2* h2 = nullptr, 
+			       const string& outDir = "", 
+			       const string& xAxisName = "",
+			       const string& yAxisName = "",
+			       const string& zAxisName = "", 
+			       const string& canvasName = "") 
+{
+
+  TH2* h2relUnc = (TH2*) h2->Clone("relUnc");
+
+  for (Int_t i = 1; i <= h2relUnc->GetNbinsX(); i++) {
+
+    for (Int_t j = 1; j <= h2relUnc->GetNbinsX(); j++) {
+      
+      Double_t var = h2relUnc->GetBinContent(i,j);
+      var = (var == 0) ? 0 : fabs(h2relUnc->GetBinError(i,j)/var);
+      if (var > 1) var = 1;
+      h2relUnc->SetBinContent(i,j,var);
+
+    }
+
+  }
+    
+
+  drawCorrelationPlot(h2relUnc, 
+		      xAxisName,
+		      yAxisName,
+		      zAxisName,
+		      canvasName,
+		      "", outDir, 1,1, false,false,false,1);
+
+
+}
+
+//============================================
+
 void fillTH2fromTH3zrange(TH2* h2 = nullptr, const TH3* h3 = nullptr, const Int_t zbinLow = 1, const Int_t zbinHigh = 1) {
 
   // assume TH2 is a slice of TH3 with same binning
@@ -919,6 +955,12 @@ void makeFakeRateGraphPlotsAndSmoothing(const string& inputFilePath = "www/wmass
 			"fake rate",
 			"smoothed_fakeRate_pt_vs_eta_qcd",
 			"", outDir, 1,1, false,false,false,1);
+
+
+  cout << endl;
+  cout << "Plotting TH2 with relative uncertainty on FR parameters" << endl;
+  plotFRparamRelUncertainty(frSmoothParameter_data,outDir,fr_pt_eta_data->GetYaxis()->GetTitle(),"0 offset : 1 slope","relative uncertainty", "smoothed_fakeRate_pt_vs_eta_data_relUnc");
+  plotFRparamRelUncertainty(frSmoothParameter_data_fitNarrowRange,outDir,fr_pt_eta_data->GetYaxis()->GetTitle(),"0 offset : 1 slope","relative uncertainty", "smoothed_fakeRate_pt_vs_eta_data_fitNarrowRange_relUnc");
 
   // parameters of linear fit
   cout << endl;
