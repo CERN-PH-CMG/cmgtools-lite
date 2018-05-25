@@ -7,7 +7,7 @@ from make_diff_xsec_cards import getArrayParsingString
 # usage 
 # create an MCA with many signal processes for different cuts
 #
-# python printBinnnedSignalMCA.py -o w-helicity-13TeV/wmass_e/mca-includes/ -n mca-80X-wenu-sigInclCharge_binned_eta_pt.txt -b "[x1,x2,x3,...]*[y1,y2,y3,...]" -x LepGood1_eta -y ptElFull(LepGood1_calPt,LepGood1_eta) -c el
+# python printBinnnedSignalMCA.py -o w-helicity-13TeV/wmass_e/mca-includes/ -n mca-80X-wenu-sigInclCharge_binned_eta_pt.txt -b "[x1,x2,x3,...]*[y1,y2,y3,...]" -x GenLepDressed_eta[0] -y GenLepDressed_pt[0] -c el
 #
 # for option -b, I have to implement using constant width binning, with format like the histogram creator for mcPlots.py
 
@@ -18,7 +18,7 @@ parser.add_option('-n','--name', dest='mcaName',   default='mca-80X-wenu-sigIncl
 parser.add_option('-c','--channel', dest='channel',   default='el', type='string', help='Channel (el or mu)')
 parser.add_option('-x','--xvar', dest='xvar',   default='LepGood1_eta', type='string', help='Name of variable in x axis of the template')
 parser.add_option('-y','--yvar', dest='yvar',   default='ptElFull(LepGood1_calPt,LepGood1_eta)', type='string', help='Name of variable in y axis of the template')
-parser.add_option('-b','--binning', dest='binning', default='[-2.5,-2.2,-1.9,-1.566,-1.4442,-1.2,-0.9,-0.6,-0.3,0,0.3,0.6,0.9,1.2,1.4442,1.566,1.9,2.2,2.5]*[30,33,36,39,42,45]', type='string', help='Binning (use same format as for histogram definition for mcPlots.py (to be implemented correctly)')
+parser.add_option('-b','--binning', dest='binning', default='[-2.5,-2.1,-1.566,-1.4442,-1.0,-0.5,0,0.5,1.0,1.4442,1.566,2.1,2.5]*[30,33,36,39,42,45]', type='string', help='Binning (use same format as for histogram definition for mcPlots.py (to be implemented correctly)')
 (options, args) = parser.parse_args()
 
 outdir = options.outdir
@@ -56,7 +56,8 @@ flav=options.channel
 syst_suffix = ["_elescale_Up", "_elescale_Dn"] 
 labels = ["lep scale Up", "lep scale Dn"]  
 syst_label = dict(zip(syst_suffix, labels))
-all_syst_suffix = ["", "_elescale_Up", "_elescale_Dn"]  # "" is for nominal
+all_syst_suffix = [""]  # "" is for nominal
+all_syst_suffix.extend(syst_suffix)
 
 for syst in all_syst_suffix:
 

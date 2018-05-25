@@ -8,15 +8,29 @@ combineDir="${plotterDir}combineDir"
 
 nVerbose=0
 nTotBins=570
+doAllBins="y"
+rpoints=50
+nBinIni=98
+nBinFin=98
 justPrint="n"
 log="p"  # p, t, s for print on stdout (default), throw away (to /dev/null) or save to a file
 saveOnlyhiggsCombineFile="y"
 
-dirToRunCombineFrom="${plotterDir}diffXsecFit_testScalLikelihood_freezeShapeNuis_np50/"
+dirToRunCombineFrom="${plotterDir}diffXsecFit_LikelihoodScan_withNuisNoFRshape_np50_newMinType/"
 #combineOptions=" --saveFitResult "
-combineOptions=" --algo grid  --points 50 --keepFailures --setParameterRanges \"r=0.9,1.1\" --cminDefaultMinimizerType GSLMultiMinMod --cminDefaultMinimizerAlgo BFGS2 --freezeNuisanceGroups pdfs,scales,alphaS,wpt,frshape "
+combineOptions=" --algo grid  --points ${rpoints} --setParameterRanges \"r=0.9,1.1\" --cminDefaultMinimizerType GSLMultiMinMod --cminDefaultMinimizerAlgo BFGS2 "
+#combineOptions="${combineOptions} --keepFailures "
+combineOptions="${combineOptions} --freezeNuisanceGroups frshape "
+#--freezeNuisanceGroups pdfs,scales,alphaS,wpt,frshape
+
+if [[ "${doAllBins}" == "y" ]]; then
+    nBinIni=1
+    nBinFin=${nTotBins}
+fi        
+
+
 selectedbins=()
-for i in `seq 1 $nTotBins`
+for i in `seq $nBinIni $nBinFin`
 do
     selectedbins+=(${i}) 
 done

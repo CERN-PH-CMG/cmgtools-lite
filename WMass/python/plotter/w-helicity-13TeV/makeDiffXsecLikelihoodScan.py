@@ -16,17 +16,54 @@ from make_diff_xsec_cards import getArrayParsingString
 sys.path.append(os.environ['CMSSW_BASE']+"/src/CMGTools/WMass/python/plotter/")
 from plotUtils.utility import *
 
+
+def filterBadScanPoints(gr, dnll_r, fdef, nTrial=3, maxDNLL=10.0, verbose=False):
+
+    # dnll_r is a dictionary, key=r, value=2*deltaNLL (gr was built with this dictionary, so I could pass just on of them (to be implemented))
+
+    hDistFitGraph = ROOT.TH1D("hDistFitGraph","",100,0, maxDNLL)
+    colors = [ROOT.kRed, ROOT.kGreen+2, ROOT.kAzure+2, ROOT.kViolet, ROOT.kPink, ROOT.kBlue, ROOT.kOrange+1]  # make it with at least nTrial colors
+    newdnll_r = dict(dnll_r) # copy dictionary of 2*dnll versus r, will start removing points
+    newgr = 0
+    for i in range(nTrial):
+        newgr = ROOT.TGraph()
+        hDistFitGraph.Reset()
+        print "trial",str(i)
+        for r in sorted(newdnll_r):
+            #print "x, y = %.3f, %.3f" % (r,newdnll_r[r]) 
+            hDistFitGraph.Fill(abs(fdef.Eval(r)-dnll_r[r]))
+        mean = hDistFitGraph.GetMean()
+        stddev = hDistFitGraph.GetStdDev()
+        if verbose: print "mean dist: %.3f, rms: %.3f " % (mean,stddev)
+        for r in newdnll_r.keys():
+            if abs(fdef.Eval(r)-newdnll_r[r]) > (mean+stddev): del newdnll_r[r]
+        keys = newdnll_r.keys()
+        for point,r in enumerate(sorted(keys)):
+            newgr.SetPoint(point,r,newdnll_r[r])            
+        rmin = min(keys)
+        rmax = max(keys)
+        newgr.SetMarkerColor(colors[i])
+        newgr.SetMarkerStyle(20)
+        newgr.Fit(fdef,"0QMFS+","",rmin,rmax)  # do not use original range of the function (no "R" option to Fit), but use [rmin,rmax]
+
+    del hDistFitGraph
+
+    # return dictionary with filtered key and values and final graph
+    return newdnll_r,newgr  # pass both (it looks like I cannot reset the number of points in a graph, I have to recreate TGraph, so return also the points, even though I could get them from the graph itself)
+
+
 if __name__ == "__main__":
 
     from optparse import OptionParser
     parser = OptionParser(usage="%prog [options] higgsCombineFolder binning")
     parser.add_option('-o','--outdir', dest='outdir', default='./', type='string', help='output directory')
     parser.add_option('-n','--n-points', dest='npoints', default=0, type='int', help='Number of points used for the scan')
+    parser.add_option('-r','--range-scan', dest='rangescan', default="0.9,1.1", type='string', help='Range used for scan of r (two value separated by comma)')
     parser.add_option(     '--min-bin', dest='minbin', default=1, type='int', help='minimum bin number when selecting bin range for the scans')
     parser.add_option(     '--max-bin', dest='maxbin', default=0, type='int', help='max bin number when selecting bin range for the scans (0 for up to the last one)')
     parser.add_option("-f", "--flavour", dest="flavour", type="string", default='el', help="Channel: either 'el' or 'mu'");
     parser.add_option("-c", "--charge", dest="charge", type="string", default='plus', help="Charge: either 'plus' or 'minus'");
-    parser.add_option(      "--scan-fit-opt", dest="scanFitOpt", type="string", default='QMRFS+', help="Options passed to TGraph::Fit for the scan fit");
+    parser.add_option(      "--scan-fit-opt", dest="scanFitOpt", type="string", default='QMFS+', help="Options passed to TGraph::Fit for the scan fit");
     parser.add_option(      "--maxDNLL", dest="maxDNLL", type="float", default='1000000.0', help="Maximum deltaNLL to add point in graph");
     parser.add_option(      "--minDNLL", dest="minDNLL", type="float", default='0.05', help="Minimum deltaNLL to add point in graph");
     parser.add_option(      "--no-save-scan", dest="nosavescan", action="store_true", default=False, help="Do not save the scans, just the 2D maps with the summary")
@@ -98,22 +135,22 @@ if __name__ == "__main__":
         rootfile = f.split('/')[-1]
         print "========================"
         print "Scanning file",rootfile
-        # one way to match bin number
-        # nameBeforeBinNum = "higgsCombine_W{ch}_bin".format(ch=charge)
-        # regex = re.compile(nameBeforeBinNum+'([0-9]*)')  # get whatever number after nameBeforeBinNum
-        # globalbin = regex.findall(rootfile)
-        ## another possibility is the following
+        # match bin number (expected to be the first integer in the name (a second one will be the mass passed to -m n combine)
         globalbin = re.findall(r'\d+', rootfile)
         # print globalbin
         globalbin = int(globalbin[0])
+        # get eta.pt bin 
         etabin,ptbin = getXYBinsFromGlobalBin(globalbin,netabins,False) ## indices from 1 in both input and output, usable for TH2::GetBinContent
         etal = h2_npoints.GetXaxis().GetBinLowEdge(etabin)
         etah = h2_npoints.GetXaxis().GetBinLowEdge(etabin+1)
         ptl  = h2_npoints.GetYaxis().GetBinLowEdge(ptbin)
         pth  = h2_npoints.GetYaxis().GetBinLowEdge(ptbin+1)
-        #etabin,ptbin = getXYBinsFromGlobalBin(globalbin-1,netabins)  ## array-like indices in both input and output
         print "Global bin = %d    eta,pt bin= %d,%d (indices from 1)"  % (globalbin,etabin,ptbin)
         print "Eta in [%.3g, %.3g] --- Pt in [%.0f, %.0f]"  % (etal,etah,ptl,pth)
+
+
+        # Open root file and get limit tree
+        dnll_r = {}
         tf = ROOT.TFile(f, 'READ')
         tree = tf.Get("limit")
         if not tree:
@@ -121,8 +158,7 @@ if __name__ == "__main__":
             print "Skipping and continuing"
             nMissingTree += 1
             continue
-
-        dnll_r = {}
+        # build dictionary with r and 2*deltaNLL, exclude some points
         nVarPoints = tree.GetEntries() - 1
         for entry in tree:
             r = tree.r
@@ -130,21 +166,12 @@ if __name__ == "__main__":
             #print "r=%.3f   2*dNLL=%.3f" % (r, dnll)
             if ((dnll <= options.maxDNLL and dnll >= options.minDNLL) or r == 1.0): 
                 dnll_r[r] = dnll
+        tf.Close()
 
-        gr = ROOT.TGraph()
         keys = dnll_r.keys()
-        # find first point with y value < options.maxDLL and > options.minDLL
         firstPointFound = False
-        xminfit = 0.9
-        xmaxfit = 1.1
-        for i,key in enumerate(sorted(keys)):
-            #print "Adding point %f   %f to graph" % (key,dnll_r[key])
-            gr.SetPoint(i, key, dnll_r[key])
-            # save x of first value with ordinate < options.maxDNLL, also used for fit below
-            if (not firstPointFound and dnll_r[key] <= options.maxDNLL and dnll_r[key] >= options.minDNLL): 
-                xminfit = 0.99 * key
-                xmaxfit = 2.0 - xminfit
-                firstPointFound = True
+        xminfit = float(options.rangescan.split(',')[0])
+        xmaxfit = float(options.rangescan.split(',')[1])
 
         c = ROOT.TCanvas("c","",700,600)
         c.cd()
@@ -154,6 +181,16 @@ if __name__ == "__main__":
         c.SetFillColor(0)
         c.SetGrid()
         c.SetLeftMargin(0.14)
+
+        gr = ROOT.TGraph()
+        for i,r in enumerate(sorted(keys)):
+            #print "Adding point %f   %f to graph" % (r,dnll_r[r])
+            gr.SetPoint(i, r, dnll_r[r])
+            # save x of first value with ordinate < options.maxDNLL, also used for fit below
+            if (not firstPointFound and dnll_r[r] <= options.maxDNLL and dnll_r[r] >= options.minDNLL): 
+                xminfit = 0.99 * r
+                xmaxfit = 2.0 - xminfit
+                firstPointFound = True
 
         gr.SetMarkerStyle(20)
         gr.SetMarkerColor(ROOT.kBlack)
@@ -171,29 +208,36 @@ if __name__ == "__main__":
         gr.GetXaxis().SetTitle("r")
         gr.GetYaxis().SetTitle("2 #times #Delta NLL")
         gr.GetXaxis().SetRangeUser(xminfit,xmaxfit)
-        maxStoredValDNLL = max(dnll_r[key] for key in dnll_r)
+        maxStoredValDNLL = max(dnll_r[r] for r in dnll_r)
         gr.GetYaxis().SetRangeUser(-0.1,1.2*min(options.maxDNLL,maxStoredValDNLL))
 
         # very first fit with pol9 (random, just need something that follows the points
-        f1 = ROOT.TF1("f1","pol9",xminfit,xmaxfit) # symmetric range in r
-        gr.Fit(f1,options.scanFitOpt) 
+        f1 = ROOT.TF1("f1","pol9") # symmetric range in r
+        gr.Fit(f1,options.scanFitOpt,"",xminfit,xmaxfit) 
         fit = gr.GetFunction("f1")
         fit.SetLineWidth(3)
         fit.SetLineColor(ROOT.kOrange+2)
-        #f2 = ROOT.TF1("f2","pol2",xminfit,xmaxfit)
-        #gr.Fit(f2,options.scanFitOpt) 
+        fit.SetFillColor(ROOT.kOrange+2)
+        fit.SetMarkerColor(ROOT.kOrange+2)
+
+        #f2 = ROOT.TF1("f2","pol2")
+        #gr.Fit(f2,options.scanFitOpt,"",xminfit,xmaxfit) 
         #parabola = gr.GetFunction("f2")
         #parabola.SetLineWidth(3)
         #parabola.SetLineColor(ROOT.kBlue)
+        #parabola.SetFillColor(ROOT.kBlue)
+        #parabola.SetMarkerColor(ROOT.kBlue)
 
-        mypol2 = ROOT.TF1("mypol2","[0]*(x-1)**2",xminfit,xmaxfit);  # a*(x-1)^2 is a parabola centered at x = 1, with minimum at 0
+        mypol2 = ROOT.TF1("mypol2","[0]*(x-1)**2");  # a*(x-1)^2 is a parabola centered at x = 1, with minimum at 0
         mypol2.SetParameter(0,300)  # we would expect that for x = 0.9 it is roughly 2*deltaNLL=3
-        mypol2.SetParLimits(0,10,600) 
-        gr.Fit("mypol2",options.scanFitOpt) 
-        mypol2 = gr.GetFunction("mypol2")
+        mypol2.SetParLimits(0,0.1,600) 
+        gr.Fit("mypol2","0"+options.scanFitOpt,"",xminfit,xmaxfit) 
+        mypol2 = gr.GetFunction("mypol2") # .Clone("mypol2_init")
         mypol2.SetLineWidth(3)
-        mypol2.SetLineColor(ROOT.kGreen+3)        
-
+        mypol2.SetLineColor(ROOT.kBlack)        
+        mypol2.SetFillColor(ROOT.kBlack)        
+        mypol2.SetMarkerColor(ROOT.kBlack)        
+        mypol2.DrawCopy("CSAME")
 
         # ## algo to remove points too far from the expected position 
         # # let's assume r in [0.9, 1.1], dnll(max)~5
@@ -215,12 +259,13 @@ if __name__ == "__main__":
         # #     expdy = mypol2.Eval(arr_rleft[i]) - mypol2.Eval(arr_rleft[i+1])
         # #     expdist = hypot(dr, expdy) 
         # #     if (expdist > 1.5 * expdy): del goodPoints[arr_rleft[i+1]]
-
-        hDistFitGraph = ROOT.TH1D("hDistFitGraph","",500,0,25)
+        
+        hDistFitGraph = ROOT.TH1D("hDistFitGraph","",100,0,options.maxDNLL)
         nTrial = 3
-        colors = [ROOT.kRed, ROOT.kGreen+2, ROOT.kAzure+2, ROOT.kViolet,ROOT.kOrange+1]  # make it with at least nTrial colors
+        colors = [ROOT.kRed, ROOT.kGreen+2, ROOT.kAzure+2]  #  , ROOT.kViolet,ROOT.kOrange+1]  # make it with at least nTrial colors
         newdnll_r = dict(dnll_r)
         graphs = {}
+        flist = []
         for i in range(nTrial):
             name = "nTrial%d" % i
             graphs[name] = ROOT.TGraph()
@@ -237,51 +282,65 @@ if __name__ == "__main__":
             keys = newdnll_r.keys()
             for point,r in enumerate(sorted(keys)):
                 graphs[name].SetPoint(point,r,newdnll_r[r])            
+            rmin = min(keys)
+            rmax = max(keys)
             graphs[name].SetMarkerColor(colors[i])
             graphs[name].SetMarkerStyle(20)
             graphs[name].Draw("P SAME")
-            graphs[name].Fit(mypol2,options.scanFitOpt)         
+            graphs[name].Fit(mypol2,"0"+options.scanFitOpt,"",rmin,rmax)         
             func = graphs[name].GetFunction("mypol2")         
             func.SetLineColor(colors[i])
-            #func.DrawCopy("SAME")
+            func.SetFillColor(colors[i])
+            func.SetMarkerColor(colors[i])
+            flist.append(func.DrawCopy("CSAME"))
             
+        del hDistFitGraph
+
+        #newdnll_r,flist = filterBadScanPoints(gr, dnll_r, mypol2, canvas=c, nTrial=3, options=options)
+        #func = flist[-1]
+
+        # newdnll_r = {}
+        # newgr = 0
+        # newdnll_r,newgr = filterBadScanPoints(gr, dnll_r, mypol2, nTrial=3, maxDNLL=10.0, verbose=False)
+        # newgr.Draw("PSAME")
+        # newgr.SetMarkerColor(ROOT.kGreen+2)
+        # newgr.SetLineColor(ROOT.kGreen+2)
+        # newgr.SetFillColor(ROOT.kGreen+2)
+        # func = mypol2
+
         finalkeys = sorted(newdnll_r.keys())
         finalxmin = finalkeys[0]
         finalxmax = finalkeys[len(finalkeys)-1]
-        # f1 = ROOT.TF1("f1","pol9",finalxmin,finalxmax) # symmetric range in r
-        # graphs[name].Fit(f1,"0"+options.scanFitOpt) 
-        # fit = graphs[name].GetFunction("f1")
-        # fit.SetLineWidth(3)
+        # takes some interesting parameters from last fit
         r1sigmaDn = func.GetX(1.0, 0.5, 1)
         r1sigmaUp = func.GetX(1.0, 1, 1.5)
         rMinFit = func.GetMinimumX(0.95, 1.05)  # 1 by definition because we forced mypol2 to pass through (1,0)
         print "Bin %d --> Fit: rmin = %.3f    +/- 1 sigma range = [%.3f, %.3f]" % (globalbin, rMinFit, r1sigmaDn, r1sigmaUp)
 
+        # leg = ROOT.TLegend(0.30, 0.48, 0.7, 0.87)
+        # leg.SetFillColor(0)
+        # leg.SetFillStyle(0)
+        # leg.SetBorderSize(0)
+        # chLeg = 'W^{+}' if charge == "plus" else 'W^{-}'
+        # flLeg = 'e' if flavour == "el" else "#mu"
+        # leg.SetHeader("Channel: {ch} #rightarrow {fl}#nu".format(ch=chLeg, fl=flLeg) )
+        # leg.AddEntry(gr , "scan: 1 + %d/%d points" % (nVarPoints,options.npoints), 'P')
+        # leg.AddEntry(fit, "fit with pol9", 'LF')
+        # #leg.AddEntry(parabola, "fit with pol2", 'LF')
+        # leg.AddEntry(mypol2, "first fit: y = a#dot(x-1)^{2}", "LF")
+        # for i in range(len(flist)):
+        #     leg.AddEntry(flist[i], "trial %d: y = a#dot(x-1)^{2}" % (i+1), "LF")
+        # leg.AddEntry(0, "r(min) = %.3f" % rMinFit, '')
+        # leg.AddEntry(0, "r(-1#sigma) = %.3f" % r1sigmaDn, '')
+        # leg.AddEntry(0, "r(+1#sigma) = %.3f" % r1sigmaUp, '')
+        # leg.Draw('same')    
 
-        leg = ROOT.TLegend(0.30, 0.50, 0.7, 0.85)
-        leg.SetFillColor(0)
-        leg.SetFillStyle(0)
-        leg.SetBorderSize(0)
-        chLeg = 'W^{+}' if charge == "plus" else 'W^{-}'
-        flLeg = 'e' if flavour == "el" else "#mu"
-        leg.SetHeader("Channel: {ch} #rightarrow {fl}#nu".format(ch=chLeg, fl=flLeg) )
-        leg.AddEntry(gr , "scan: 1 + %d/%d points" % (nVarPoints,options.npoints), 'PL')
-        leg.AddEntry(fit, "fit with pol9", 'lf')
-        #leg.AddEntry(parabola, "fit with pol2", 'lf')
-        leg.AddEntry(mypol2, "first fit: y = a#dot(x-1)^{2}", 'lf')
-        leg.AddEntry(func, "last fit: y = a#dot(x-1)^{2}", 'lf')
-        leg.AddEntry(0, "r(min) = %.3f" % rMinFit, '')
-        leg.AddEntry(0, "r(-1#sigma) = %.3f" % r1sigmaDn, '')
-        leg.AddEntry(0, "r(+1#sigma) = %.3f" % r1sigmaUp, '')
-        leg.Draw('same')    
- 
         c.RedrawAxis("sameaxis")
         if not options.nosavescan:
             for ext in ['png', 'pdf']:
                 c.SaveAs('{od}/deltaNll_bin{bin}_{ch}.{ext}'.format(od=outdir, bin=globalbin, ch=charge, ext=ext))
-            c = 0
 
-
+        
         h2_npoints.SetBinContent(etabin,ptbin,nVarPoints)
         h2_rMinFit.SetBinContent(etabin,ptbin,rMinFit)
         h2_r1sigmaDn.SetBinContent(etabin,ptbin,1.-r1sigmaDn)
@@ -289,6 +348,17 @@ if __name__ == "__main__":
         h2_r1sigmaUpDnMean.SetBinContent(etabin,ptbin,((r1sigmaUp+r1sigmaDn)/2. -1))
 
         ### end of loop on bins
+        #newdnll_r.clear()
+        #del flist
+        #del graphs  # don't delete, trhows seg.fault
+        #del gr      # don't delete, trhows seg.fault
+        #del leg
+        #del c
+
+        print "============================================"
+        print "Done with file", rootfile
+        print "============================================"
+        print ""
 
     h2list = []
     
@@ -311,6 +381,10 @@ if __name__ == "__main__":
         xname = "%s #eta" % lepton
         yname = "%s p_{T}" % lepton
         zname = h.GetZaxis().GetTitle()
+
+        # following function will make some warnings appear
+        # TCanvas::Constructor:0: RuntimeWarning: Deleting canvas with same name: canvas
+        # see also https://root-forum.cern.ch/t/segfault-in-batch-mode-root-groot-setbatch-true/24180/8
 
         if not options.nosavesummary:
             drawCorrelationPlot(h, labelXtmp=xname, labelYtmp=yname, labelZtmp=zname,

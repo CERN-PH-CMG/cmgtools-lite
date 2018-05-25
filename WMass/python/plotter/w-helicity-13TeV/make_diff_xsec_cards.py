@@ -153,15 +153,17 @@ def getArrayParsingString(inputString, verbose=False):
     return tmp
 
 # new function
-def getGlobalBin(ix, iy, nbinsX):
-    # ix goes from 0 to nbinsX-1, like the value returned buy "for ix in xrange(nbinsX)"
+def getGlobalBin(ix, iy, nbinsX, binFrom0=True):
+    # ix goes from 0 to nbinsX-1, like the value returned by "for ix in xrange(nbinsX)"
     # same is expected for iy
-    # global bin starts from 0
+    # If this is the case, global bin starts from 0
+    #However, if binFrom0=False, it is expected that the bins start from 1 (like those of a TH1) and the globalbin that is returned will start from 1 as well
     return (ix + iy * nbinsX)
 
 def getXYBinsFromGlobalBin(globalbin, nbinsX, binFrom0=True):
     # global bin goes from 0 to nbinX*nbinsY-1 
     # returned x(y) is a number from 0 to nbinsX(Y) -1
+    # however, if that is not the convention, then binFrom0 must be set to False: this manages the case where the global bin starts from 1 and the returned ix and iy will start from 1 as well
     tmp = globalbin if binFrom0 else (globalbin-1)
     iy = int(tmp/nbinsX)
     ix = tmp % nbinsX
@@ -179,7 +181,7 @@ if __name__ == "__main__":
     parser.add_option("--dry-run", dest="dryRun",    action="store_true", default=False, help="Do not run the job, only print the command");
     parser.add_option("-s", "--signal-cards",  dest="signalCards",  action="store_true", default=False, help="Make the signal part of the datacards");
     parser.add_option("-b", "--bkgdata-cards", dest="bkgdataCards", action="store_true", default=False, help="Make the background and data part of the datacards");
-    parser.add_option("-W", "--weight", dest="weightExpr", default="-W 1", help="Event weight expression (default 1)");
+    parser.add_option("-W", "--weight", dest="weightExpr", default="1", help="Event weight expression (default 1)");
     parser.add_option("-P", "--path", dest="path", type="string",default=None, help="Path to directory with input trees and pickle files");
     parser.add_option("-C", "--channel", dest="channel", type="string", default='el', help="Channel. either 'el' or 'mu'");
     parser.add_option("--groupSignalBy", dest="groupSignalBy", type="int", default='0', help="Group signal bins in bunches of N (pass N as argument). Default is 0, meaning not using this option. This option will reduce the number of chunk datacard for signal,but jobs will last for longer");
@@ -251,10 +253,10 @@ if __name__ == "__main__":
     ptbinning=binning.split('*')[1]
     etabinning = getArrayParsingString(etabinning)
     ptbinning = getArrayParsingString(ptbinning)
-    ptVarCutEl="ptElFull(LepGood1_calPt,LepGood1_eta)"
-    ptVarCutMu="LepGood1_pt"
-    ptVarCut = ptVarCutEl if (options.channel == "el") else ptVarCutMu
-    etaVarCut = "LepGood1_eta"
+    #ptVarCutEl="ptElFull(LepGood1_calPt,LepGood1_eta)"
+    #ptVarCutMu="LepGood1_pt"
+    ptVarCut = "GenLepDressed_pt[0]" #  ptVarCutEl if (options.channel == "el") else ptVarCutMu
+    etaVarCut = "GenLepDressed_eta[0]" #"LepGood1_eta"
     nptbins = len(ptbinning)-1
     netabins = len(etabinning)-1
     nBinsInTemplate = (netabins)*(nptbins)
@@ -277,8 +279,6 @@ if __name__ == "__main__":
     ## Another way is to make signal cards grouping bins in bunches with some criteria
     ## this is enabled by option.groupSignalBy
     ## In this case, I set loopBins so to loop from 0 to int(nBinsInTemplate/ngroup) 
-
-            
 
     POSCUT=" -A alwaystrue positive 'LepGood1_charge>0' "
     NEGCUT=" -A alwaystrue negative 'LepGood1_charge<0' "
