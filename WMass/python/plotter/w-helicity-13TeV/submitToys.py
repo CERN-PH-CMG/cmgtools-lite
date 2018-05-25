@@ -29,12 +29,15 @@ if __name__ == "__main__":
        POIs += ['r_W{charge}_{pol}_W{charge}_{pol}_Ybin_{ib}'.format(charge=charge,pol=pol,ib=i) for i in xrange(nbins[charge+'_left']-1)]
     poiOpt = ' --redefineSignalPOIs '+','.join(POIs)
 
-    trackPars = "'\"''rgx{pdf.*|mu.*|alphaS.*|wpt.*|CMS.*}''\"'"
+    trackPars = "'\"''rgx{pdf.*|mu.*|r.*_xsec|alphaS.*|wpt.*|CMS.*}''\"'"
     raiseNormPars = "'\"''rgx{r_.*}=1,10''\"'"
     cmdBase = "combineTool.py -d {ws} -M MultiDimFit -t {nt} -m 999 {savefr} " # combine method
     cmdBase += " --cminDefaultMinimizerType GSLMultiMinMod --cminDefaultMinimizerAlgo BFGS2 --cminDefaultMinimizerTolerance=0.001 " # minimizer
     cmdBase += " --toysFrequentist --bypassFrequentistFit -s {seed} --trackParameters {track} " # toys options
     cmdBase += " %s --floatOtherPOIs=1 " % poiOpt # POIs
+    ## this is constructed from the ws name. it *should* work. but it's not the most elegant way of doing this
+    masking_par = '_'.join(['mask']+os.path.basename(workspace).split('_')[:2]+['xsec'])
+    cmdBase += " --setParameters {mp}=1 ".format(mp=masking_par)
     if options.normonly: cmdBase += " --freezeNuisanceGroups pdfs,scales,alphaS,wpt " # nuisances to freeze
     cmdBase += " -n _{pfx} -s {seed}  --job-mode lxbatch --task-name {taskname} --sub-opts='-q 8nh' %s " % ('--dry-run' if options.dryRun else '') # jobs configuration
 
