@@ -39,7 +39,7 @@ if __name__ == "__main__":
     masking_par = '_'.join(['mask']+os.path.basename(workspace).split('_')[:2]+['xsec'])
     cmdBase += " --setParameters {mp}=1 ".format(mp=masking_par)
     if options.normonly: cmdBase += " --freezeNuisanceGroups pdfs,scales,alphaS,wpt " # nuisances to freeze
-    cmdBase += " -n _{pfx} -s {seed}  --job-mode lxbatch --task-name {taskname} --sub-opts='-q 8nh' %s " % '--dry-run' if options.dryRun else '' # jobs configuration
+    cmdBase += " -n _{pfx} -s {seed}  --job-mode lxbatch --task-name {taskname} --sub-opts='-q 8nh' %s " % ('--dry-run' if options.dryRun else '') # jobs configuration
 
     print "Submitting {nt} toys with workspace {ws} and prefix {pfx}...".format(nt=ntoys,ws=workspace,pfx=prefix)
 
