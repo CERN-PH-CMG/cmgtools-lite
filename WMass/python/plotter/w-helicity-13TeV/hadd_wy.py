@@ -42,8 +42,11 @@ parser.add_option('-x','--x-var', dest='xvar', default='wy', type='string', help
 parser.add_option('-c','--cut-name', dest='cutName', default='', type='string', help='name of cut. It is a tag that should be present in some folders')
 parser.add_option('-o','--outdir', dest='outdir', default='./', type='string', help='Output folder (default is current one)')
 parser.add_option('-s','--skip', dest='skip', default='', type='string', help='Match to skip (if a file has this string in its name it will be skipped)')
-parser.add_option('-e','--endtag', dest='endtag', default='', type='string', help='Match identifying a specific folder. This tag should be found at the end of the name ')
+parser.add_option('-e','--endtag', dest='endtag', default='', type='string', help='Match identifying a specific folder. This tag should be found at the end of the name (general case of option -l for LO samples)')
 parser.add_option('-l','--LO', dest="hasLO", action="store_true", default=False, help="Specify if there are folders for LO samples (they must end with '_LO')")
+parser.add_option(     '--TH2',dest="hasTH2", action="store_true", default=False, help="Specify if there are TH2 inside root file (default is TH1)")
+parser.add_option(     '--no-helicity',dest="has_no_helicity", action="store_true", default=False, help="Specify that the helicity is not part of the histogram name (in case you only separate by charge)")
+
 (options, args) = parser.parse_args()
 
 if len(args) == 0:
@@ -51,6 +54,10 @@ if len(args) == 0:
     quit()
 
 inputdir = args[0]
+
+outdir = options.outdir
+if not outdir.endswith("/"):
+    outdir += "/" 
 
 # varcut = "pfmt"
 # if varcut != "":
@@ -73,11 +80,16 @@ if options.skip != '':
     skipMatch = True
     match = options.skip
 
+if options.hasTH2:
+    baseClassName = "TH2"
+else:
+    baseClassName = "TH1"
+
 #files = [ f for f in os.listdir(inputdir) if f.endswith('.root') ]
 #files = list( [os.path.join(inputdir, f) for f in files] )
     
-if not os.path.isdir(options.outdir):
-    os.system('mkdir -p {od}'.format(od=options.outdir))
+if not os.path.isdir(outdir):
+    os.system('mkdir -p {od}'.format(od=outdir))
 
 files = list()
 for root, dirs, tmpfiles in os.walk(inputdir):
@@ -122,43 +134,45 @@ for f in files:
     for k in tf.GetListOfKeys() :
         name=k.GetName()
         obj=k.ReadObj()
-        if xvarMatch in name and obj.InheritsFrom("TH1") and any(h in name for h in helicities):
-            if 'fullsel' in f:
-                tokens = name.split('_')
-                if varcut != "" and varcut in f:
-                    print "=== Check ==="
-                    regex = re.compile(varcut+'([0-9]*)')
-                    varcut_thr = regex.findall(f)
-                    if len(varcut_thr) and varcut_thr[0] != '':
-                        # case pfmtXX with XX integer
-                        #print "==> " + varcut_thr[0] 
-                        varcut_thr_list.add(int(varcut_thr[0]))
-                        newname = '_'.join( tokens[:2]+['reco_%s%d' % (varcut, int(varcut_thr[0]))]+tokens[2:] )                        
-                    else:
-                        # case pfmtSmearXX with XX integer
-                        regex = re.compile(varcut+'([A-Za-z]*)')  # get Smear
-                        suffix = regex.findall(f)
-                        regex = re.compile(str(suffix[0])+'([0-9]*)')  # get XX
+        if xvarMatch in name and obj.InheritsFrom(baseClassName):
+            if options.has_no_helicity or any(h in name for h in helicities):
+                if options.hasTH2 and 'background' in name: continue
+                if 'fullsel' in f:
+                    tokens = name.split('_')
+                    if varcut != "" and varcut in f:
+                        print "=== Check ==="
+                        regex = re.compile(varcut+'([0-9]*)')
                         varcut_thr = regex.findall(f)
-                        varcut_thr_list.add(int(varcut_thr[0]))
-                        #print "==> " + suffix[0] + varcut_thr[0]
-                        newname = '_'.join( tokens[:2]+['reco_%s%d' % (varcut, int(varcut_thr[0]))]+tokens[2:]+suffix )   
-                else: 
-                    newname = '_'.join( tokens[:2]+['reco']+tokens[2:] )
-            else:
-                newname = name
-            lastFolder = os.path.basename(os.path.dirname(f))
-            if lastFolder.endswith('_LO'):
-                newname = newname + '_LO'
-            if options.endtag != '' and lastFolder.endswith(options.endtag):
-                newname = newname + '_' + options.endtag
+                        if len(varcut_thr) and varcut_thr[0] != '':
+                            # case pfmtXX with XX integer
+                            #print "==> " + varcut_thr[0] 
+                            varcut_thr_list.add(int(varcut_thr[0]))
+                            newname = '_'.join( tokens[:2]+['reco_%s%d' % (varcut, int(varcut_thr[0]))]+tokens[2:] )                        
+                        else:
+                            # case pfmtSmearXX with XX integer
+                            regex = re.compile(varcut+'([A-Za-z]*)')  # get Smear
+                            suffix = regex.findall(f)
+                            regex = re.compile(str(suffix[0])+'([0-9]*)')  # get XX
+                            varcut_thr = regex.findall(f)
+                            varcut_thr_list.add(int(varcut_thr[0]))
+                            #print "==> " + suffix[0] + varcut_thr[0]
+                            newname = '_'.join( tokens[:2]+['reco_%s%d' % (varcut, int(varcut_thr[0]))]+tokens[2:]+suffix )   
+                    else: 
+                        newname = '_'.join( tokens[:2]+['reco']+tokens[2:] )
+                else:
+                    newname = name
+                lastFolder = os.path.basename(os.path.dirname(f))
+                if lastFolder.endswith('_LO'):
+                    newname = newname + '_LO'
+                if options.endtag != '' and lastFolder.endswith(options.endtag):
+                    newname = newname + '_' + options.endtag
 
-            newh = obj.Clone(newname)
-            newh.SetDirectory(None)
-            tmpplots.append(newh)
-    #tf.Close()
+                newh = obj.Clone(newname)
+                newh.SetDirectory(None)
+                tmpplots.append(newh)
+        #tf.Close()
 
-outputfile = options.outdir + 'mc_reco_eff.root'
+outputfile = outdir + 'mc_reco_eff.root'
 mergedFile = ROOT.TFile.Open(outputfile,'recreate')
 mergedFile.cd()
 
@@ -176,7 +190,7 @@ if not noAdditionalCut:
     print ""    
     print "thresholds for " + varcut + " cut: ",varcut_thr_list
     for thr in varcut_thr_list:
-        outputfile = options.outdir + 'mc_reco_%s%d_eff.root' % (varcut, thr) 
+        outputfile = outdir + 'mc_reco_%s%d_eff.root' % (varcut, thr) 
         mergedFile = ROOT.TFile.Open(outputfile,'recreate')
         mergedFile.cd()
         print "#####################"

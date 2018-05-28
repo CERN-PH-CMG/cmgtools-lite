@@ -1,0 +1,2 @@
+Wplus   : WJetsToLNu_NLO* : 3.*20508.9   : genw_decayId == 12 && genw_charge>0 && LepGood1_mcMatchId*LepGood1_charge!=-24 ; FillColor=ROOT.kRed+2 , Label="W+"
+Wminus  : WJetsToLNu_NLO* : 3.*20508.9   : genw_decayId == 12 && genw_charge<0 && LepGood1_mcMatchId*LepGood1_charge!=-24 ; FillColor=ROOT.kRed+2 , Label="W-"

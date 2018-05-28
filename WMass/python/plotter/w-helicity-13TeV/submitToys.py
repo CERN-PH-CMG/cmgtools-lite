@@ -22,9 +22,10 @@ if __name__ == "__main__":
     parser = OptionParser(usage='%prog workspace ntoys [prefix] [options] ')
     parser.add_option('-n'  , '--ntoy-per-job'  , dest='nTj'           , type=int           , default=None , help='split jobs with ntoys per batch job')
     parser.add_option(        '--dry-run'       , dest='dryRun'        , action='store_true', default=False, help='Do not run the job, only print the command');
+    parser.add_option('-q'  , '--queue'         , dest="queue"         , type="string"      , default="2nd", help="Select the queue to use");
     parser.add_option(        '--norm-only'     , dest='normonly'      , action='store_true', default=False, help='Run the fit fixing the PDF uncertainties');
     parser.add_option('--fd', '--fitDiagnostics', dest='fitDiagnostics', action='store_true'               , help='run FitDiagnostics instead of MultiDimFit');
-    parser.add_option('--outdir', dest='outdir', type=str               , help='outdirectory');
+    parser.add_option('--outdir', dest='outdir', type="string", default=None, help='outdirectory');
     (options, args) = parser.parse_args()
     
     workspace = args[0]; wsbase = os.path.basename(workspace).split('.')[0]
@@ -47,15 +48,15 @@ if __name__ == "__main__":
 
     trackPars = ' \'rgx{pdf.*|mu.*|alphaS.*|wpt.*|CMS.*}\''
     raiseNormPars = "\"''rgx{r_.*}=1,10''\""
-    #cmdBase = "combineTool.py -d {ws} -M {md} -t {nt} -m 999 {savefr} " # combine method
-    cmdBase = "combine -d {ws} -M {md} -t {nt} -m 999 {savefr} " # combine method
+    #cmdBase = "combineTool.py -d {ws} -M {md} -t {nt} -m 999  " # combine method
+    cmdBase = "combine -d {ws} -M {md} -t {nt} -m 999 " # combine method
     cmdBase += " --cminDefaultMinimizerType GSLMultiMinMod --cminDefaultMinimizerAlgo BFGS2 --cminDefaultMinimizerTolerance=0.001 " # minimizer
     cmdBase += " --toysFrequentist --bypassFrequentistFit -s {seed} --trackParameters {track} " # toys options
     cmdBase += " %s " % poiOpt # POIs "
     if not options.fitDiagnostics:
         cmdBase+= ' --floatOtherPOIs=1 '
     else:
-        cmdBase+= ' --saveNormalizations --skipBOnlyFit '
+        cmdBase+= ' --saveNormalizations --skipBOnlyFit --savePredictionsPerToy '
     ## this is constructed from the ws name. it *should* work. but it's not the most elegant way of doing this
     masking_par = '_'.join(['mask']+os.path.basename(workspace).split('_')[:2]+['xsec'])
     cmdBase += " --setParameters {mp}=1 ".format(mp=masking_par)
@@ -65,14 +66,14 @@ if __name__ == "__main__":
     print "Submitting {nt} toys with workspace {ws} and prefix {pfx}...".format(nt=ntoys,ws=workspace,pfx=prefix)
 
     if options.nTj==None or ntoys<options.nTj:
-        cmd = cmdBase.format(nt=ntoys,ws=workspace,pfx=prefix,seed=12345,taskname='toys_'+prefix,track=trackPars,norm=raiseNormPars,savefr='--saveFitResult',md=comMethod)
+        cmd = cmdBase.format(nt=ntoys,ws=workspace,pfx=prefix,seed=12345,taskname='toys_'+prefix,track=trackPars,norm=raiseNormPars,md=comMethod)
         os.system(cmd)
     else:
 
-        absopath  = os.path.abspath(os.path.dirname(options.outdir))
+        absopath  = os.path.abspath(options.outdir)
 
         if not options.outdir:
-            print 'ERROR: give at least an output directory. there will be a YUGE number of jobs!'
+            raise RuntimeError, 'ERROR: give at least an output directory. there will be a YUGE number of jobs!'
         else:
             if not os.path.isdir(absopath):
                 print 'making a directory and running in it'
@@ -89,7 +90,7 @@ if __name__ == "__main__":
         resT = int(ntoys%nTj)
         for j in xrange(int(ntoys/nTj)):
             cmd = cmdBase.format(nt=nTj,ws=os.path.abspath(workspace),pfx=prefix+"_%d"%j,seed=int(random.uniform(0,1000*len(jobs))),md=comMethod,
-                                 taskname="toys_%s_%d"%(prefix,j),track=trackPars,norm=raiseNormPars,savefr='--saveFitResult' if j==0 else '')
+                                 taskname="toys_%s_%d"%(prefix,j),track=trackPars,norm=raiseNormPars)
             cmd += ' -n {name} '.format(name='_toy'+str(j))
             ## make new file for evert parameter and point
             job_file_name = jobdir+'/job_{j}_toy{n:.0f}To{nn:.0f}.sh'.format(j=j,n=j*nTj,nn=(j+1)*nTj)
@@ -103,8 +104,12 @@ if __name__ == "__main__":
             tmp_file.write(tmp_filecont)
             tmp_file.close()
             os.system('chmod u+x {f}'.format(f=job_file_name))
-            os.system('bsub -o {log} -q 1nd {job}'.format(log=job_file_name.replace('.sh','.log'),job=job_file_name))
+            cmd = 'bsub -o {log} -q {queue} {job}'.format(log=job_file_name.replace('.sh','.log'),queue=options.queue,job=job_file_name)
+            if options.dryRun:
+                print cmd
+            else:
+                os.system(cmd)
         #cmd = cmdBase.format(nt=resT,ws=workspace,pfx=prefix+"_%d"%len(jobs),seed=int(random.uniform(0,1000*len(jobs))),md=comMethod,
-        #                     taskname="toys_%s_%d"%(prefix,len(jobs)),track=trackPars,norm=raiseNormPars,savefr='')
+        #                     taskname="toys_%s_%d"%(prefix,len(jobs)),track=trackPars,norm=raiseNormPars)
         #os.system(cmd)
 
