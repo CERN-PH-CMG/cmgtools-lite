@@ -10,7 +10,7 @@ from PhysicsTools.Heppy.analyzers.gen.all import *
 import os
 
 from CMGTools.TTHAnalysis.analyzers.ttHhistoCounterAnalyzer import ttHhistoCounterAnalyzer
-dmCounter = cfg.Analyzer(
+histoCounter = cfg.Analyzer(
     ttHhistoCounterAnalyzer, name="ttHhistoCounterAnalyzer",
     )
 
@@ -43,6 +43,7 @@ triggerAna = cfg.Analyzer(
 triggerFlagsAna = cfg.Analyzer(
     TriggerBitAnalyzer, name="TriggerFlags",
     processName = 'HLT',
+    fallbackProcessName = 'HLT2',
     prescaleProcessName = 'PAT',
     prescaleFallbackProcessName = 'RECO',
     unrollbits = False,
@@ -54,6 +55,33 @@ triggerFlagsAna = cfg.Analyzer(
     )
 
 # Create flags for MET filter bits
+eventFlagsAna = cfg.Analyzer(
+    TriggerBitAnalyzer, name="EventFlags",
+    processName = 'PAT',
+    fallbackProcessName = 'RECO',
+    outprefix   = 'Flag',
+    triggerBits = {
+        "HBHENoiseFilter" : [ "Flag_HBHENoiseFilter" ],
+        "HBHENoiseIsoFilter" : [ "Flag_HBHENoiseIsoFilter" ],
+        "globalTightHalo2016Filter" : [ "Flag_globalTightHalo2016Filter" ],
+        "CSCTightHalo2015Filter" : [ "Flag_CSCTightHalo2015Filter" ],
+        "CSCTightHaloFilter" : [ "Flag_CSCTightHaloFilter" ],
+        "CSCTightHalo2016Filter" : [ "Flag_globalTightHalo2016Filter" ],
+        "hcalLaserEventFilter" : [ "Flag_hcalLaserEventFilter" ],
+        "EcalDeadCellTriggerPrimitiveFilter" : [ "Flag_EcalDeadCellTriggerPrimitiveFilter" ],
+        "goodVertices" : [ "Flag_goodVertices" ],
+        "trackingFailureFilter" : [ "Flag_trackingFailureFilter" ],
+        "eeBadScFilter" : [ "Flag_eeBadScFilter" ],
+        "ecalLaserCorrFilter" : [ "Flag_ecalLaserCorrFilter" ],
+        "trkPOGFilters" : [ "Flag_trkPOGFilters" ],
+        "trkPOG_manystripclus53X" : [ "Flag_trkPOG_manystripclus53X" ],
+        "trkPOG_toomanystripclus53X" : [ "Flag_trkPOG_toomanystripclus53X" ],
+        "trkPOG_logErrorTooManyClusters" : [ "Flag_trkPOG_logErrorTooManyClusters" ],
+        "MuFlag_good" : [ "Flag_noBadMuons" ],
+        "MuFlag_bad" : [ "Flag_badMuons" ],
+        "MuFlag_dup" : [ "Flag_duplicateMuons" ],
+    }
+    )
 
 from CMGTools.TTHAnalysis.analyzers.badChargedHadronAnalyzer import badChargedHadronAnalyzer
 badChargedHadronAna = cfg.Analyzer(
@@ -69,30 +97,24 @@ badMuonAna = cfg.Analyzer(
     packedCandidates = 'packedPFCandidates',
 )
 
-eventFlagsAna = cfg.Analyzer(
-    TriggerBitAnalyzer, name="EventFlags",
-    processName = 'PAT',
-    fallbackProcessName = 'RECO',
-    outprefix   = 'Flag',
-    triggerBits = {
-        "HBHENoiseFilter" : [ "Flag_HBHENoiseFilter" ],
-        "HBHENoiseIsoFilter" : [ "Flag_HBHENoiseIsoFilter" ],
-        "CSCTightHaloFilter" : [ "Flag_CSCTightHaloFilter" ],
-        "CSCTightHalo2015Filter" : [ "Flag_CSCTightHalo2015Filter" ],
-        "globalTightHalo2016Filter" : [ "Flag_globalTightHalo2016Filter" ],
-        "hcalLaserEventFilter" : [ "Flag_hcalLaserEventFilter" ],
-        "EcalDeadCellTriggerPrimitiveFilter" : [ "Flag_EcalDeadCellTriggerPrimitiveFilter" ],
-        "goodVertices" : [ "Flag_goodVertices" ],
-        "trackingFailureFilter" : [ "Flag_trackingFailureFilter" ],
-        "eeBadScFilter" : [ "Flag_eeBadScFilter" ],
-        "ecalLaserCorrFilter" : [ "Flag_ecalLaserCorrFilter" ],
-        "trkPOGFilters" : [ "Flag_trkPOGFilters" ],
-        "trkPOG_manystripclus53X" : [ "Flag_trkPOG_manystripclus53X" ],
-        "trkPOG_toomanystripclus53X" : [ "Flag_trkPOG_toomanystripclus53X" ],
-        "trkPOG_logErrorTooManyClusters" : [ "Flag_trkPOG_logErrorTooManyClusters" ],
-        "METFilters" : [ "Flag_METFilters" ],
-    }
-    )
+from CMGTools.TTHAnalysis.analyzers.badMuonAnalyzerMoriond2017 import badMuonAnalyzerMoriond2017
+badCloneMuonAnaMoriond2017 = cfg.Analyzer(
+    badMuonAnalyzerMoriond2017, name = 'badCloneMuonMoriond2017',
+    muons = 'slimmedMuons',
+    vertices         = 'offlineSlimmedPrimaryVertices',
+    minMuPt = 20,
+    selectClones = True,
+    postFix = '',
+)
+
+badMuonAnaMoriond2017 = cfg.Analyzer(
+    badMuonAnalyzerMoriond2017, name = 'badMuonMoriond2017',
+    muons = 'slimmedMuons',
+    vertices         = 'offlineSlimmedPrimaryVertices',
+    minMuPt = 20,
+    selectClones = False,
+    postFix = '',
+)
 
 # Select a list of good primary vertices (generic)
 vertexAna = cfg.Analyzer(
@@ -119,12 +141,15 @@ genAna = cfg.Analyzer(
     # Particles of which we want to save the pre-FSR momentum (a la status 3).
     # Note that for quarks and gluons the post-FSR doesn't make sense,
     # so those should always be in the list
-    savePreFSRParticleIds = [ 1,2,3,4,5, 11,12,13,14,15,16, 21 ],
+    savePreFSRParticleIds = [ 1,2,3,4,5, 11,12,13,14,15,16, 21,22 ],
     # Make also the list of all genParticles, for other analyzers to handle
     makeAllGenParticles = True,
+    # save all the genParticles in the generatorSummary object of the event
+    saveAllGenParticles = False,
     # Make also the splitted lists
     makeSplittedGenLists = True,
     allGenTaus = False,
+    saveIncomingPartons = True,
     # Print out debug information
     verbose = False,
     )
@@ -141,6 +166,7 @@ genHFAna = cfg.Analyzer(
 
 lheWeightAna = cfg.Analyzer(
     LHEWeightAnalyzer, name="LHEWeightAnalyzer",
+    useLumiInfo=False
 )
 
 pdfwAna = cfg.Analyzer(
@@ -155,15 +181,15 @@ lepAna = cfg.Analyzer(
     # input collections
     muons='slimmedMuons',
     electrons='slimmedElectrons',
-    rhoMuon= 'fixedGridRhoFastjetAll',
-    rhoElectron = 'fixedGridRhoFastjetAll',
+    rhoMuon= 'fixedGridRhoFastjetCentralNeutral',
+    rhoElectron = 'fixedGridRhoFastjetCentralNeutral',
     # energy scale corrections and ghost muon suppression (off by default)
     doMuonScaleCorrections=False,
     doElectronScaleCorrections=False, # "embedded" in 5.18 for regression
     doSegmentBasedMuonCleaning=False,
     # inclusive very loose muon selection
     inclusive_muon_id  = "POG_ID_Loose",
-    inclusive_muon_pt  = 3,
+    inclusive_muon_pt  = 7,
     inclusive_muon_eta = 2.4,
     inclusive_muon_dxy = 1000,
     inclusive_muon_dz  = 1000,
@@ -174,8 +200,7 @@ lepAna = cfg.Analyzer(
     loose_muon_eta    = 2.4,
     loose_muon_dxy    = 1000,
     loose_muon_dz     = 1000,
-    loose_muon_isoCut = (lambda mu : ( mu.relIso04 <= 0.4)), # this is not to apply loose_muon_relIso which is on DR=0.3
-    loose_muon_relIso = 0.4,
+    loose_muon_relIso = 1000,
     # inclusive very loose electron selection
     inclusive_electron_id  = "",
     inclusive_electron_pt  = 5,
@@ -207,50 +232,21 @@ lepAna = cfg.Analyzer(
     min_dr_electron_muon = 0.05,
     # do MC matching 
     do_mc_match = True, # note: it will in any case try it only on MC, not on data
+    do_mc_match_photons = "all",
     match_inclusiveLeptons = False, # match to all inclusive leptons
     )
 
-
-## MET-based Skim
-from CMGTools.MonoXAnalysis.analyzers.monoJetSkimmer import monoJetSkimmer
-monoJetSkim = cfg.Analyzer(
-    monoJetSkimmer, name='monoJetSkimmer',
-    jets      = "cleanJetsAll", # jet collection to use
-    jetPtCuts = [],          # e.g. [60,40,30,20] to require at least four jets with pt > 60,40,30,20 
-    metCut = 0               # MET cut      
-    )
-
-## number of leptons Skim
-from CMGTools.MonoXAnalysis.analyzers.monoJetCtrlLepSkimmer import monoJetCtrlLepSkimmer
-monoJetCtrlLepSkim = cfg.Analyzer(
-    monoJetCtrlLepSkimmer, name='monoJetCtrlLepSkimmer',
+## Lepton-based Skim (generic, but requirements depend on the final state)
+from CMGTools.TTHAnalysis.analyzers.ttHLepSkimmer import ttHLepSkimmer
+ttHLepSkim = cfg.Analyzer(
+    ttHLepSkimmer, name='ttHLepSkimmer',
     minLeptons = 0,
     maxLeptons = 999,
     #idCut  = "lepton.relIso03 < 0.2" # can give a cut
-    idCut = 'lepton.muonID("POG_ID_Loose") if abs(lepton.pdgId())==13 else lepton.electronID("POG_Cuts_ID_SPRING16_25ns_v1_ConvVetoDxyDz_Veto")',
-    ptCuts = [10],                # can give a set of pt cuts on the leptons
-    )
-
-## number of FatJets (ak08) Skim
-from CMGTools.MonoXAnalysis.analyzers.monoJetCtrlFatJetSkimmer import monoJetCtrlFatJetSkimmer
-monoJetCtrlFatJetSkim = cfg.Analyzer(
-    monoJetCtrlFatJetSkimmer, name='monoJetCtrlFatJetSkimmer',
-    minFatJets = 0,
-    maxFatJets = 999,
-    idCut= '',
-    ptCuts     = [160],
-    )
-
-## gamma+jets Skim
-from CMGTools.MonoXAnalysis.analyzers.gammaJetCtrlSkimmer import gammaJetCtrlSkimmer
-gammaJetCtrlSkim = cfg.Analyzer(
-    gammaJetCtrlSkimmer, name='gammaJetCtrlSkimmer',
-    minPhotons = 0,
-    minJets = 0,
-    photonIdCut = 'photon.photonID("PhotonCutBasedIDLoose")',
-    photonPtCut = 150,
-    jetPtCut = 0,
-    )
+    #ptCuts = [20,10],                # can give a set of pt cuts on the leptons
+    requireSameSignPair = False,
+    allowLepTauComb = False
+)
 
 ## Photon Analyzer (generic)
 photonAna = cfg.Analyzer(
@@ -345,7 +341,7 @@ jetAna = cfg.Analyzer(
     copyJetsByValue = False,      #Whether or not to copy the input jets or to work with references (should be 'True' if JetAnalyzer is run more than once)
     genJetCol = 'slimmedGenJets',
     rho = ('fixedGridRhoFastjetAll','',''),
-    jetPt = 15.,
+    jetPt = 25.,
     jetEta = 4.7,
     jetEtaCentral = 2.5,
     cleanJetsFromLeptons = True,
@@ -369,7 +365,7 @@ jetAna = cfg.Analyzer(
     cleanJetsFromFirstPhoton = False,
     cleanJetsFromTaus = False,
     cleanJetsFromIsoTracks = False,
-    doQG = True,
+    doQG = False,
     do_mc_match = True,
     cleanGenJetsFromPhoton = False,
     collectionPostFix = "",
@@ -377,6 +373,26 @@ jetAna = cfg.Analyzer(
     calculateType1METCorrection  = False,
     type1METParams = { 'jetPtThreshold':15., 'skipEMfractionThreshold':0.9, 'skipMuons':True },
     storeLowPtJets = False,
+    )
+
+## Jets Analyzer (generic)
+jetAnaScaleUp = jetAna.clone(name='jetAnalyzerScaleUp',
+    copyJetsByValue = True,
+    jetCol = 'slimmedJets',
+    shiftJEC = +1, # set to +1 or -1 to apply +/-1 sigma shift to the nominal jet energies
+    collectionPostFix = "_jecUp",
+    calculateType1METCorrection  = True,
+    cleanSelectedLeptons = False,
+   )
+
+## Jets Analyzer (generic)
+jetAnaScaleDown = jetAna.clone(name='jetAnalyzerScaleDown',
+    copyJetsByValue = True,
+    jetCol = 'slimmedJets',
+    shiftJEC = -1, # set to +1 or -1 to apply +/-1 sigma shift to the nominal jet energies
+    collectionPostFix = "_jecDown",
+    calculateType1METCorrection  = True,
+    cleanSelectedLeptons = False,
     )
 
 
@@ -424,12 +440,15 @@ metAna = cfg.Analyzer(
     metCollection     = "slimmedMETs",
     noPUMetCollection = "slimmedMETs",
     copyMETsByValue = False,
-    doTkMet = False,
-    doPuppiMet = False,
+    doTkMet = True,
+    includeTkMetCHS = True,
+    includeTkMetPVLoose = True,
+    includeTkMetPVTight = True,
     doMetNoPU = True,
-    doMetNoMu = True,
+    doMetNoMu = False,
     doMetNoEle = False,
     doMetNoPhoton = False,
+    storePuppiExtra = False, # False for MC, True for re-MiniAOD
     recalibrate = False,  # or "type1", or True 
     applyJetSmearing = False, # does nothing unless the jet smearing is turned on in the jet analyzer
     old74XMiniAODs = False, # set to True to get the correct Raw MET when running on old 74X MiniAODs
@@ -440,27 +459,19 @@ metAna = cfg.Analyzer(
     collectionPostFix = "",
     )
 
-metNoHFAna = cfg.Analyzer(
-    METAnalyzer, name="metNoHFAnalyzer",
-    metCollection     = "slimmedMETsNoHF",
-    noPUMetCollection = "slimmedMETsNoHF",
-    copyMETsByValue = False,
-    doTkMet = False,
-    doPuppiMet = False,
-    doMetNoPU = True,
-    doMetNoMu = False,
-    doMetNoEle = False,
-    doMetNoPhoton = False,
-    recalibrate = False,
-    applyJetSmearing = False, # does nothing unless the jet smearing is turned on in the jet analyzer
-    old74XMiniAODs = False,   # can't be true, since MET NoHF wasn't there in old 74X MiniAODs
-    jetAnalyzerPostFix = "",
-    candidates='packedPFCandidates',
-    candidatesTypes='std::vector<pat::PackedCandidate>',
-    dzMax = 0.1,
-    collectionPostFix = "NoHF",
+metAnaScaleUp = metAna.clone(name="metAnalyzerScaleUp",
+    copyMETsByValue = True,
+    recalibrate = "type1", 
+    jetAnalyzerPostFix = "_jecUp",
+    collectionPostFix = "_jecUp",
     )
 
+metAnaScaleDown = metAna.clone(name="metAnalyzerScaleDown",
+    copyMETsByValue = True,
+    recalibrate = "type1", 
+    jetAnalyzerPostFix = "_jecDown",
+    collectionPostFix = "_jecDown",
+    )
 
 # Core Event Analyzer (computes basic quantities like HT, dilepton masses)
 from CMGTools.TTHAnalysis.analyzers.ttHCoreEventAnalyzer import ttHCoreEventAnalyzer
@@ -477,7 +488,7 @@ ttHCoreEventAna = cfg.Analyzer(
 def doECalElectronCorrections(sync=False,era="25ns"):
     global lepAna, monoJetCtrlLepSkim
     lepAna.doElectronScaleCorrections = {
-        'data' : 'EgammaAnalysis/ElectronTools/data/ScalesSmearings/80X_ichepV1_2016_ele',
+        'data' : 'EgammaAnalysis/ElectronTools/data/ScalesSmearings/Winter_2016_reReco_v1_ele',
         'GBRForest': ('$CMSSW_BASE/src/CMGTools/RootTools/data/egamma_epComb_GBRForest_76X.root',
                       'gedelectron_p4combination_'+era),
         'isSync': sync
@@ -507,25 +518,26 @@ dmCoreSequence = [
     triggerAna,
     pileUpAna,
     genAna,
-    genHiggsAna,
-    genHFAna,
+#    genHiggsAna,
+#    genHFAna,
     pdfwAna,
     vertexAna,
     lepAna,
     jetAna,
-    monoJetCtrlLepSkim,
+    ttHLepSkim,
     metAna,
-    monoJetSkim,
     photonAna,
-    tauAna,
-    monoxTauAna,
-    isoTrackAna,
+#    tauAna,
+#    monoxTauAna,
+#    isoTrackAna,
     ttHCoreEventAna,
-    monoXFatJetAna,
-    monoJetCtrlFatJetSkim,
-    gammaJetCtrlSkim,
+#    monoXFatJetAna,
+#    monoJetCtrlFatJetSkim,
+#    gammaJetCtrlSkim,
     triggerFlagsAna,
-    badChargedHadronAna,
-    badMuonAna,
     eventFlagsAna,
+    badMuonAna,
+    badMuonAnaMoriond2017,
+    badCloneMuonAnaMoriond2017,
+    badChargedHadronAna,
 ]

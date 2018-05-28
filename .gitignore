@@ -10,5 +10,7 @@ __init__.py
 *C.so
 *C.d
 *.pcm
+*.png
+*.pdf
 LSFJOB*/
-
+MonoXAnalysis/

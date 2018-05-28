@@ -1,0 +1,2 @@
+# unweighted signal for simple plots
+Wincl : WJetsToLNu_part1    : 3.*20508.9   ; FillColor=ROOT.kRed+2, Label="W inclusive", NormSystematic=0.026

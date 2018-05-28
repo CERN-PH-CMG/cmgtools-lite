@@ -1,0 +1,6 @@
+## don't need a cut change or anything really. just load the histogram
+## and call with polarisation == 2
+load-histo: helicityFractions_0 : w-helicity-13TeV/fractionReweighting/fractions.root : fraction0_minus_sym
+load-histo: helicityFractions_L : w-helicity-13TeV/fractionReweighting/fractions.root : fractionL_minus_sym
+load-histo: helicityFractions_R : w-helicity-13TeV/fractionReweighting/fractions.root : fractionR_minus_sym
+weight: helicityWeight(genw_y,genw_pt,genw_costcs,2)

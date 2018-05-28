@@ -1,0 +1,38 @@
+# ==================================================================
+# luminosity
+# ==================================================================
+#lumi_13TeV          : W.*|TauDecaysW|Z|Top|DiBosons: .* : 1.026
+
+# ==================================================================
+# lepton efficiencies
+# ==================================================================
+CMS_We_lepEff        : W.*|TauDecaysW|Z|Top|DiBosons: .* : 1.01
+CMS_We_lepVeto       : Z : .* : 1.03
+
+# ==================================================================
+# backgrounds normalizations
+# Z xsec from FEWZ 3.1: https://twiki.cern.ch/twiki/bin/viewauth/CMS/StandardModelCrossSectionsat13TeV
+# Top (take a conservative value as the maximum uncertainty among single-t and ttbar (ttbar from: https://twiki.cern.ch/twiki/bin/view/LHCPhysics/TtbarNNLO)
+# ==================================================================
+CMS_DY               : Z                            : .* : 1.038
+CMS_VV               : DiBosons                     : .* : 1.16
+CMS_Top              : Top                          : .* : 1.06 
+
+# ==================================================================
+# lepton scale
+# ==================================================================
+CMS_We_elescale      :  W.*: .* : elescale         : templates 
+
+# ==================================================================
+# Fake rate uncertainties
+# 1+2) Measurement of the fake rate: normalization and shapes
+# ==================================================================
+# flat normalization uncertainty
+CMS_We_FRe_norm      : data_fakes  : .* : 1.30
+# shape uncertainty (slope of FR with pt)
+CMS_We_FRe_pt        : data_fakes  : .* : FRe_pt   : templatesShapeOnly
+
+# ==================================================================
+# Charge flips (uncertainty from T&P. Take the max(EB,EE) )
+# ==================================================================
+CMS_We_flips         : Flips                        : .* : 1.10

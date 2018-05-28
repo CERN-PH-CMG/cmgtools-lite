@@ -1,0 +1,3 @@
+# unweighted signal for simple plots
+W : WJetsToLNu_NLO*    : 3.*20508.9   ; FillColor=ROOT.kRed+2, Label="W", NormSystematic=0.026
+#W : WJetsToLNu_LO*    : 3.*20508.9   ; FillColor=ROOT.kRed+2, Label="W", NormSystematic=0.026

@@ -1,0 +1,44 @@
+# ==================================================================
+# luminosity
+# ==================================================================
+## remove for now lumi_13TeV           : W.*|Z|Top|DiBosons|TaudecaysW : .* : 1.026
+
+
+# ==================================================================
+# lepton efficiencies
+# ==================================================================
+## remove for now CMS_Wmu_lepEff       : W.*|Z|Top|DiBosons|TaudecaysW : .* : 1.02
+CMS_Wmu_lepVeto      : Z                            : .* : 1.03
+
+
+# ==================================================================
+# Background normalizations:
+# Z xsec from FEWZ 3.1: https://twiki.cern.ch/twiki/bin/viewauth/CMS/StandardModelCrossSectionsat13TeV
+# Top (take a conservative value as the maximum uncertainty among single-t and ttbar (ttbar from: https://twiki.cern.ch/twiki/bin/view/LHCPhysics/TtbarNNLO)
+# ==================================================================
+## no longer needed. all scales etc are there now CMS_DY               : Z                            : .* : 1.038
+CMS_VV               : DiBosons                     : .* : 1.16
+CMS_W                : TaudecaysW                   : .* : 1.038
+CMS_Top              : Top                          : .* : 1.06 
+
+# ==================================================================
+# Fake rate uncertainties
+# ==================================================================
+# first is the normalization uncertainty
+CMS_Wmu_FR_norm        : data_fakes  : .* : 1.30
+# shape uncertainties (slope of FR with pt, and slope down, offset up and vice-versa)
+CMS_Wmu_FRmu_slope     : data_fakes  : .* : FRmu_slope : templatesShapeOnly
+CMS_Wmu_FRmu_both      : data_fakes  : .* : FRmu_both  : templatesShapeOnly
+
+
+# ==================================================================
+# lepton scale
+# ==================================================================
+#CMS_Wmu_muscale     : W.*                          : .* : muscale   : templates
+
+# recoil uncertainty
+#CMS_recoil          : W.*                          : .* : recoil    : templates
+
+
+# ptW uncertainty (from Z pT reweighting)
+#CMS_W_ptw               : W_.*                         : .* : theoryptw : templates

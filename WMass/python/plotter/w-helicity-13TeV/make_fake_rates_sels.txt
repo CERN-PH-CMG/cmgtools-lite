@@ -1,0 +1,11 @@
+#fakeRateNumerator_el: LepGood1_hltId > 0 && pass_FakerateNumerator2016((abs(LepGood1_eta)<1.479),LepGood1_tightId,LepGood1_dxy,LepGood1_dz,LepGood1_lostHits,LepGood1_convVeto,LepGood1_relIso04EA) && LepGood1_tightChargeFix == 2:  2,-0.5,1.5;   Title="medium ID EGM", MarkerColor=4,  MarkerStyle=21, MarkerSize=1.3
+#
+fakeRateNumerator_el: LepGood1_hltId > 0 && LepGood1_customId == 1 && LepGood1_tightChargeFix == 2:  2,-0.5,1.5;   Title="custom ID EGM", MarkerColor=4,  MarkerStyle=21, MarkerSize=1.3
+#fakeRateNumerator_el: LepGood1_hltId > 0 && pass_FakerateNumerator_medium2016(fabs(LepGood1_eta)<1.479,LepGood1_tightId,LepGood1_dxy,LepGood1_dz,LepGood1_lostHits,LepGood1_convVeto,LepGood1_relIso04EA):  2,-0.5,1.5;   Title="custom ID EGM", MarkerColor=4,  MarkerStyle=21, MarkerSize=1.3
+#
+# Run2 cut-based ID: https://twiki.cern.ch/twiki/bin/viewauth/CMS/CutBasedElectronIdentificationRun2
+#
+# muon cuts to be revisited, they are taken from 8 TeV
+MuonIso: LepGood1_relIso04 < 0.12 :  2,-0.5,1.5;   Title="muon isolation", MarkerColor=4,  MarkerStyle=21, MarkerSize=1.3
+MuonTightIso: LepGood1_tightId > 0 && LepGood1_relIso04 < 0.12 :  2,-0.5,1.5;   Title="muon isolation", MarkerColor=4,  MarkerStyle=21, MarkerSize=1.3
+

@@ -1,0 +1,47 @@
+trkmtfix: mt_2(met_trkPt,met_trkPhi,35,LepGood1_phi): 60,0,120 ; XTitle="Trk m_{T} (fix p_{T} = 35 GeV) [GeV]", Legend='TL', IncludeOverflows=False
+pfmt: mt_2(met_pt,met_phi,ptElFull(LepGood1_calPt,LepGood1_eta),LepGood1_phi) : 60,0,120 ; XTitle="m_{T} [GeV]", Legend='TL', IncludeOverflows=False
+pfmtfix: mt_2(met_pt,met_phi,35,LepGood1_phi): 60,0,120 ; XTitle="PF m_{T} (fix p_{T} = 35 GeV) [GeV]", Legend='TL', IncludeOverflows=False
+
+trkmt: mt_2(met_trkPt,met_trkPhi,ptElFull(LepGood1_calPt,LepGood1_eta),LepGood1_phi) : 60,0,120 ; XTitle="Trk m_{T} [GeV]", Legend='TL', IncludeOverflows=False
+
+trkmt_trkmetEleCorr: tkmt_tkmetEleCorr(met_trkPt,met_trkPhi,ptElFull(LepGood1_calPt,LepGood1_eta),LepGood1_phi,pass_dxy_dz(abs(LepGood1_eta)<1.479, LepGood1_dxy, LepGood1_dz) && pass_lostHits_conVeto(LepGood1_lostHits, LepGood1_convVeto)) : 60,0,120 ; XTitle="Trk m_{T} [GeV]", Legend='TL', IncludeOverflows=False
+
+#trkmt_trkmetEleCorr_dxy_dy: tkmt_tkmetEleCorr(met_trkPt,met_trkPhi,ptElFull(LepGood1_calPt,LepGood1_eta),LepGood1_phi,pass_dxy_dz(abs(LepGood1_eta)<1.479, LepGood1_dxy, LepGood1_dz) ) : 60,0,120 ; XTitle="Trk m_{T} [GeV]", Legend='TL', IncludeOverflows=False
+
+# following definition should be the better: TrkMet in ntuples defined with charged candidates with |dz| < 0.1 (see metAna in WMass/python/analyzers/dmCore_modules_cff.py and makeTkMETs in PhysicsTools/Heppy/python/analyzers/objects/METAnalyzer.py
+trkmt_trkmetEleCorr_dy: tkmt_tkmetEleCorr(met_trkPt,met_trkPhi,ptElFull(LepGood1_calPt,LepGood1_eta),LepGood1_phi, abs(LepGood1_dz) < 0.1 ) : 60,0,120 ; XTitle="Trk m_{T} [GeV]", Legend='TL', IncludeOverflows=False
+
+ele1Iso04: LepGood1_relIso04EA : 50,0,0.5 ; XTitle="relative isolation 04 (ele1)", Legend='TR', IncludeOverflows=True, Logy=True
+nJetClean: nJet_Clean : 5,-0.5,4.5 ; XTitle="number of jets (cleaned)", Legend='TR', IncludeOverflows=True
+
+ptl1: ptElFull(LepGood1_calPt,LepGood1_eta): 35,30,65 ; XTitle="leading electron p_{T} [GeV]", Legend='TR', IncludeOverflows=False
+etal1: LepGood1_eta: 50,-2.5,2.5 ; XTitle="leading electron #eta", Legend='TL', IncludeOverflows=False
+etal1_varBin: LepGood1_eta: [-2.5,-2.25,-2.0,-1.8,-1.566,-1.4442,-1.3,-1.2,-1.1,-1.0,-0.9,-0.8,-0.7,-0.6,-0.5,-0.4,-0.3,-0.2,-0.1,0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.1,1.2,1.3,1.4442,1.566,1.8,2.0,2.25,2.5] ; XTitle="leading electron #eta", Legend='TL', IncludeOverflows=False
+absetal1_binFR: abs(LepGood1_eta): [0.0,0.3,0.6,0.9,1.2,1.479,1.7,1.9,2.1,2.3,2.5]; XTitle="leading electron |#eta|", Legend='TR', IncludeOverflows=False
+etal1_binFR: LepGood1_eta: [-2.5,-2.4,-2.3,-2.2,-2.1,-2.0,-1.9,-1.8,-1.7,-1.6,-1.566,-1.4442,-1.4,-1.3,-1.2,-1.1,-1.0,-0.9,-0.8,-0.7,-0.6,-0.5,-0.4,-0.3,-0.2,-0.1,0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0,1.1,1.2,1.3,1.4,1.4442,1.566,1.6,1.7,1.8,1.9,2.0,2.1,2.2,2.3,2.4,2.5]; XTitle="leading electron #eta", Legend='TR', IncludeOverflows=False
+
+ptl1_range: ptElFull(LepGood1_calPt,LepGood1_eta): 100,40,50 ; XTitle="leading electron p_{T} [GeV]", Legend='TR', IncludeOverflows=False
+ptl1_granBin: ptElFull(LepGood1_calPt,LepGood1_eta): 70,30,65 ; XTitle="leading electron p_{T} [GeV]", Legend='TR', IncludeOverflows=False
+
+pfmet: met_pt : 40,0,80 ; XTitle="PF E_{T}^{miss} [GeV]", Legend='TR', IncludeOverflows=False
+tkmet: met_trkPt : 30,0,60 ; XTitle="charged PF E_{T}^{miss} [GeV]", Legend='TR', IncludeOverflows=False
+trkmetEleCorr_dy: tkmetEleCorr_pt(met_trkPt,met_trkPhi,ptElFull(LepGood1_calPt,LepGood1_eta),LepGood1_phi, abs(LepGood1_dz) < 0.1) : 30,0,60 ; XTitle="charged PF E_{T}^{miss} [GeV]", Legend='TR', IncludeOverflows=False
+
+nVert: nVert : 20,0.5,40.5; XTitle="number of vertices", Legend='TR', IncludeOverflows=True 
+rho: rho : 20,0.5,40.5; XTitle="#rho", Legend='TR', IncludeOverflows=True 
+ele1ID: LepGood1_tightId : 5,-0.5,4.5 ; XTitle="electron ID (ele1)", Legend='TL', IncludeOverflows=True
+
+awayJet_pt: LepGood_awayJet_pt : 60,20,80; XTitle="away jet p_{T} [GeV]", Legend='TR', IncludeOverflows=False
+
+#wpt_tk: pt_2(ptElFull(LepGood1_calPt,LepGood1_eta), LepGood1_phi, met_trkPt, met_trkPhi ): 40,0,40 ; XTitle="W p_{T} (charged PF E_{T}^{miss}) [GeV]", Legend='TR', IncludeOverflows=False 
+#wpt_pf: pt_2(ptElFull(LepGood1_calPt,LepGood1_eta), LepGood1_phi, met_pt, met_phi ): 40,0,40 ; XTitle="W p_{T} (PF E_{T}^{miss}) [GeV]", Legend='TR', IncludeOverflows=False 
+
+#dphiLepJet : abs(deltaPhi(LepGood1_phi,Jet1_phi))*(nJet>1) : 32,0.0,3.2; XTitle="#Delta#phi(electron\,jet)\, nJet>1", Legend='TR', IncludeOverflows=True, Logy=True
+ele1dxy: abs(LepGood1_dxy) : 40,0,0.4 ; XTitle="#Deltaxy (ele1) [cm]", Legend='TR', IncludeOverflows=False, Logy=True
+
+#dphiLepPFMET : abs(deltaPhi(LepGood1_phi,met_phi)) : 32,0.0,3.2; XTitle="#Delta#phi(electron\,PF E_{T}^{miss})", Legend='TL', IncludeOverflows=True
+#diffPt_lepPFMET: ptElFull(LepGood1_calPt,LepGood1_eta) - met_pt: 50,0,50 ; XTitle="electron p_{T} - PF E_{T}^{miss} [GeV]", Legend='TR', IncludeOverflows=False
+#diffPt_lepPFMET_v2: (ptElFull(LepGood1_calPt,LepGood1_eta) + met_pt * cos(deltaPhi(LepGood1_phi,met_phi))): 65,0,65 ; XTitle="electron p_{T} + PF E_{T}^{miss} * cos(#Delta#phi(electron\,PF E_{T}^{miss})) [GeV]", Legend='TR', IncludeOverflows=False
+
+## should define a corrected trkMet before using it, like I am doing with trkMt
+#dphiLepTrkMET : abs(deltaPhi(LepGood1_phi,met_trkPhi)) : 32,0.0,3.2; XTitle="#Delta#phi(electron\,Trk E_{T}^{miss} [GeV])", Legend='TL', IncludeOverflows=True

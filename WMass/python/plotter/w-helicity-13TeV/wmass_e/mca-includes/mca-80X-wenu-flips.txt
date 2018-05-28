@@ -1,0 +1,2 @@
+Flips  : WJetsToLNu_NLO* : 3.*20508.9    : genw_decayId == 12 && LepGood1_mcMatchId*LepGood1_charge==-24 ; FillColor=ROOT.kGray+1, Label="W flips"
+#Flips  : WJetsToLNu_NLO_part1 + WJetsToLNu_NLO_part2 + WJetsToLNu_NLO_part3 + WJetsToLNu_NLO_ext_part1 + WJetsToLNu_NLO_ext_part2 + WJetsToLNu_NLO_ext_part3 : 3.*20508.9    : genw_decayId == 12 && LepGood1_mcMatchId*LepGood1_charge==-24 ; FillColor=ROOT.kGray+1, Label="W flips"

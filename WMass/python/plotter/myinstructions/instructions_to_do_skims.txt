@@ -1,0 +1,21 @@
+use the script w-helicity-13TeV/skims.py as:
+python w-helicity-13TeV/skims.py <args> [OPTIONS]
+
+Arguments:
+a) an mca file, e.g. w-helicity-13TeV/wmass_e/mca-includes/mca-data-legacy2016.txt
+b) a cut file with the selections of the skim, e.g. w-helicity-13TeV/wmass_e/skim_wenu.txt
+c) path to trees to be skimmed, e.g. /eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3/ (can use a symbolic link pointing to the folder)
+d) output folder of the skimmed trees
+
+Options tipically used:
+-->  -f w-helicity-13TeV/wmass_e/varsSkim_80X.txt -q 8nh --log skim_w_legacy
+-f takes a file with the variables to be kept (not only we cut events, but also variables)
+-q select the batch queue (it means the command is run in batch
+--log takes the name of a folder to store the log files of the command run in batch
+--pretend prints the command to submit jobs, but do not actually submit them
+
+--------------------------
+EXAMPLE:
+arguments, mca files and options are just put as a consistent example, you should change them according to your needs
+--------------------------
+python w-helicity-13TeV/skims.py w-helicity-13TeV/wmass_e/mca-includes/mca-data-legacy2016.txt w-helicity-13TeV/wmass_e/skim_wenu.txt /eos/cms/store/group/dpg_ecal/comm_ecal/localreco/TREES_1LEP_80X_V3 /eos/cms/store/group/dpg_ecal/comm_ecal/localreco/Legacy2016_WENUSKIM_V4 -f w-helicity-13TeV/wmass_e/varsSkim_80X.txt -q 8nh --log skim_w_legacy

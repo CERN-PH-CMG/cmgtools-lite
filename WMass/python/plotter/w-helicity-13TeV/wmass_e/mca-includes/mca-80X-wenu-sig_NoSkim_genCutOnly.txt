@@ -1,0 +1,16 @@
+# signal from the weighted uncut sample
+# Wplus_long  : WJetsToLNu_LO* : 3.*20508.9    : genw_decayId == 12 && genw_charge>0 ; FillColor=ROOT.kGray+1   , FakeRate="w-helicity-13TeV/fractionReweighting/reweighting_0_plus.txt", Label="W+ long"
+# Wplus_left  : WJetsToLNu_LO* : 3.*20508.9    : genw_decayId == 12 && genw_charge>0 ; FillColor=ROOT.kBlue-1   , FakeRate="w-helicity-13TeV/fractionReweighting/reweighting_L_plus.txt", Label="W+ left"
+# Wplus_right : WJetsToLNu_LO* : 3.*20508.9    : genw_decayId == 12 && genw_charge>0 ; FillColor=ROOT.kGreen+1  , FakeRate="w-helicity-13TeV/fractionReweighting/reweighting_R_plus.txt", Label="W+ right"
+
+# Wminus_long  : WJetsToLNu_LO* : 3.*20508.9    : genw_decayId == 12 && genw_charge<0 ; FillColor=ROOT.kYellow+1 , FakeRate="w-helicity-13TeV/fractionReweighting/reweighting_0_minus.txt", Label="W- long"
+# Wminus_left  : WJetsToLNu_LO* : 3.*20508.9    : genw_decayId == 12 && genw_charge<0 ; FillColor=ROOT.kViolet-1 , FakeRate="w-helicity-13TeV/fractionReweighting/reweighting_L_minus.txt", Label="W- left"
+# Wminus_right : WJetsToLNu_LO* : 3.*20508.9    : genw_decayId == 12 && genw_charge<0 ; FillColor=ROOT.kAzure+1  , FakeRate="w-helicity-13TeV/fractionReweighting/reweighting_R_minus.txt", Label="W- right"
+
+Wplus_long  : WJetsToLNu_NLO_NoSkim_part* : 3.*20508.9    : genw_decayId == 14 && genw_charge>0  ; FillColor=ROOT.kGray+1   , FakeRate="w-helicity-13TeV/fractionReweighting/reweighting_0_plus.txt", Label="W+ long"
+Wplus_left  : WJetsToLNu_NLO_NoSkim_part*: 3.*20508.9    : genw_decayId == 14 && genw_charge>0  ; FillColor=ROOT.kBlue-1   , FakeRate="w-helicity-13TeV/fractionReweighting/reweighting_L_plus.txt", Label="W+ left"
+Wplus_right : WJetsToLNu_NLO_NoSkim_part*: 3.*20508.9    : genw_decayId == 14 && genw_charge>0  ; FillColor=ROOT.kGreen+1  , FakeRate="w-helicity-13TeV/fractionReweighting/reweighting_R_plus.txt", Label="W+ right"
+
+Wminus_long  : WJetsToLNu_NLO_NoSkim_part*: 3.*20508.9    : genw_decayId == 14 && genw_charge<0  ; FillColor=ROOT.kYellow+1 , FakeRate="w-helicity-13TeV/fractionReweighting/reweighting_0_minus.txt", Label="W- long"
+Wminus_left  : WJetsToLNu_NLO_NoSkim_part*: 3.*20508.9    : genw_decayId == 14 && genw_charge<0  ; FillColor=ROOT.kViolet-1 , FakeRate="w-helicity-13TeV/fractionReweighting/reweighting_L_minus.txt", Label="W- left"
+Wminus_right : WJetsToLNu_NLO_NoSkim_part*: 3.*20508.9    : genw_decayId == 14 && genw_charge<0  ; FillColor=ROOT.kAzure+1  , FakeRate="w-helicity-13TeV/fractionReweighting/reweighting_R_minus.txt", Label="W- right"
