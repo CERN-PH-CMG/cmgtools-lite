@@ -54,6 +54,8 @@ if __name__ == "__main__":
     cmdBase += " %s " % poiOpt # POIs "
     if not options.fitDiagnostics:
         cmdBase+= ' --floatOtherPOIs=1 '
+    else:
+        cmdBase+= ' --saveNormalizations --skipBOnlyFit '
     ## this is constructed from the ws name. it *should* work. but it's not the most elegant way of doing this
     masking_par = '_'.join(['mask']+os.path.basename(workspace).split('_')[:2]+['xsec'])
     cmdBase += " --setParameters {mp}=1 ".format(mp=masking_par)
