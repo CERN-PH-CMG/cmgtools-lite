@@ -2,11 +2,11 @@
 #  use mcEfficiencies.py to make plots of the fake rate
 ################################
 T_SUSY="/data1/peruzzi/TREES_80X_011216_Spring16MVA_1lepFR --FDs /data1/peruzzi/frQCDVars_skimdata"
-T_TTH=/afs/cern.ch/work/g/gpetrucc/TREES_TTH_120218_Fall17_JECV4_1L
+T_TTH=/afs/cern.ch/work/g/gpetrucc/TREES_94X_FR_240518
 if hostname | grep -q cmsco01; then
-    T_TTH=/data1/gpetrucc/TREES_TTH_120218_Fall17_JECV4_1L
-#elif hostname | grep -q cmsphys10; then
-#    T_TTH=/data1/g/gpetrucc/TREES_80X_ttH_300117_1L
+    T_TTH=/data1/gpetrucc/TREES_94X_FR_240518
+elif hostname | grep -q cmsphys10; then
+    T_TTH=/data/g/gpetrucc/TREES_94X_FR_240518
 fi
 ANALYSIS=$1; if [[ "$1" == "" ]]; then exit 1; fi; shift;
 case $ANALYSIS in
@@ -42,35 +42,34 @@ case $trigger in
 #    PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw$lepton$trigger(nVert)' "
 #    ;;
 Mu3_PFJet40)
-    BCORE="${BCORE} -A veto trigger 'HLT_FR_${trigger}' -A veto recoptfortrigger 'LepGood_pt>4.0 && LepGood_awayJet_pt>45' --xf 'DoubleMu.*'  "; 
+    BCORE="${BCORE} -A veto trigger 'HLT_FR_${trigger}' -A veto recoptfortrigger 'LepGood_pt>4.0 && LepGood_awayJet_pt>45'  "; 
     PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw$trigger(nVert)' "
     ;;
 Mu8)
-    BCORE="${BCORE} -A veto trigger 'HLT_FR_${trigger}' -A veto recoptfortrigger 'LepGood_pt>8 && $conept > 13' --xf 'SingleMu.*'  "; 
+    BCORE="${BCORE} -A veto trigger 'HLT_FR_${trigger}' -A veto recoptfortrigger 'LepGood_pt>8 && $conept > 13'  "; 
     PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw$trigger(nVert)' "
     ;;
 Mu17)
-    BCORE="${BCORE} -A veto trigger 'HLT_FR_${trigger}' -A veto recoptfortrigger 'LepGood_pt>17 && $conept > 25' --xf 'SingleMu.*' "; 
+    BCORE="${BCORE} -A veto trigger 'HLT_FR_${trigger}' -A veto recoptfortrigger 'LepGood_pt>17 && $conept > 25' "; 
     PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw$trigger(nVert)' "
     ;;
 Mu20)
-    BCORE="${BCORE} -A veto trigger 'HLT_FR_${trigger}' -A veto recoptfortrigger 'LepGood_pt>20 && $conept > 30' --xf 'DoubleMu.*' "; 
+    BCORE="${BCORE} -A veto trigger 'HLT_FR_${trigger}' -A veto recoptfortrigger 'LepGood_pt>20 && $conept > 30' "; 
     PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw$trigger(nVert)' "
     ;;
 Mu27)
-    BCORE="${BCORE} -A veto trigger 'HLT_FR_${trigger}' -A veto recoptfortrigger 'LepGood_pt>27 && $conept > 40' --xf 'DoubleMu.*' "; 
+    BCORE="${BCORE} -A veto trigger 'HLT_FR_${trigger}' -A veto recoptfortrigger 'LepGood_pt>27 && $conept > 40' "; 
     PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw$trigger(nVert)' "
     ;;
 Mu50)
-    BCORE="${BCORE} -A veto trigger 'HLT_FR_${trigger}' -A veto recoptfortrigger 'LepGood_pt>50 && $conept > 75' --xf 'DoubleMu.*' "; 
+    BCORE="${BCORE} -A veto trigger 'HLT_FR_${trigger}' -A veto recoptfortrigger 'LepGood_pt>50 && $conept > 75' "; 
     PUW=" -L ttH-multilepton/frPuReweight.cc -W 'puw$trigger(nVert)' "
     ;;
 MuX_Combined)
-    BCORE="${BCORE} -A veto trigger 'HLT_FR_${trigger}' -A veto recoptfortrigger 'LepGood_pt>8.5' --xf 'SingleMu.*'  "; 
+    BCORE="${BCORE} -A veto trigger 'HLT_FR_${trigger}' -A veto recoptfortrigger 'LepGood_pt>8.5'  "; 
     PUW=" "
     ;;
 MuX_OR)
-    BCORE="${BCORE/TREES_TTH_120218_Fall17_JECV4_1L/TREES_TTH_120218_Fall17_JECV4_1L_exclusiveData}";
     BCORE="${BCORE} -E trigMu -E conePt10 -E notConePt100 "; 
     CONEPTVAR="ptJI90_mvaPt090_coarsecomb"
     PUW="-L ttH-multilepton/frPuReweight.cc -W 'coneptw$trigger($conept,nVert)' "
@@ -106,7 +105,7 @@ esac;
 
 what=$3;
 more=$4
-PBASE="plots/94X/${ANALYSIS}/lepMVA/v1.1.0/fr-meas/qcd1l/$lepton/HLT_$trigger/$what/$more"
+PBASE="plots/94X/${ANALYSIS}/lepMVA/v2.0-dev/fr-meas/qcd1l/$lepton/HLT_$trigger/$what/$more"
 
 EWKONE="-p ${QCD}_red,EWK,data"
 EWKSPLIT="-p ${QCD}_red,WJets,DYJets,Top,data"
@@ -269,14 +268,11 @@ case $what in
         #MCGO="$MCEFF --compare ${QCD}_red_prefit,${QCD}_red --algo=fitND "
         #echo " ( $MCGO -i $PBASE/fr_sub_eta_${BARREL}.root -o $PBASE/fr_sub_eta_${BARREL}_full.root   $BG )"
         #echo " ( $MCGO -i $PBASE/fr_sub_eta_${ENDCAP}.root -o $PBASE/fr_sub_eta_${ENDCAP}_full.root   $BG )"
-        MCGO="$MCEFF --compare ${QCD}_red_prefit,data_fit --algo=fitSimND --shapeSystSignal=l:0.2,s:0.05,b:0.02 --shapeSystBackground=l:0.1,s:0.05,b:0.02"
-        echo " ( $MCGO -i $PBASE/fr_sub_eta_${BARREL}.root -o $PBASE/fr_sub_eta_${BARREL}_fitSimND_old.root  $BG )"
-        echo " ( $MCGO -i $PBASE/fr_sub_eta_${ENDCAP}.root -o $PBASE/fr_sub_eta_${ENDCAP}_fitSimND_old.root  $BG )"
-        MCGO="$MCEFF --compare ${QCD}_red_prefit,data_fit --algo=fitSimND --shapeSystSignal=l:0.15,s:0.07,b:0.02 --shapeSystBackground=l:0.07,s:0.03,b:0.02"
+        MCGO="$MCEFF --compare ${QCD}_red_prefit,data_fit --algo=fitSimND --shapeSystSignal=l:0.15,s:0.05,b:0.02 --shapeSystBackground=l:0.07,s:0.02,b:0.02 --kappaBkg 1.1 --constrain theta_bkg --sigmaFBkg 0.05 --constrain fbkg "
         echo " ( $MCGO -i $PBASE/fr_sub_eta_${BARREL}.root -o $PBASE/fr_sub_eta_${BARREL}_fitSimND.root  $BG )"
         echo " ( $MCGO -i $PBASE/fr_sub_eta_${ENDCAP}.root -o $PBASE/fr_sub_eta_${ENDCAP}_fitSimND.root  $BG )"
         if $ISWIDE; then
-            MCGO="$MCEFF --compare ${QCD}_red_prefit,data_fit --algo=fitGlobalSimND --shapeSystSignal=l:0.15,s:0.07,b:0.02 --shapeSystBackground=l:0.07,s:0.03,b:0.02"
+            MCGO="$MCEFF --compare ${QCD}_red_prefit,data_fit --algo=fitGlobalSimND --shapeSystSignal=l:0.15,s:0.05,b:0.02 --shapeSystBackground=l:0.07,s:0.02,b:0.02"
             echo " ( $MCGO -i $PBASE/fr_sub_eta_${BARREL}.root -o $PBASE/fr_sub_eta_${BARREL}_fitGlobalSimND.root  $BG )"
             echo " ( $MCGO -i $PBASE/fr_sub_eta_${ENDCAP}.root -o $PBASE/fr_sub_eta_${ENDCAP}_fitGlobalSimND.root  $BG )"
             REG=" --regularize theta_sig 0.5 --regularize theta_bkg 0.5 --regularize fsig 0.07 --regularize fbkg 0.04 "

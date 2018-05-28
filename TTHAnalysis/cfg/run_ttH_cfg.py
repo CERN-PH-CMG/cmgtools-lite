@@ -268,14 +268,14 @@ if runData and not isTest: # For running on data
 
     if runDataQCD: # for fake rate measurements in data
         DatasetsAndTriggers = [
-            ("DoubleMuon", triggers_FR_1mu_noiso ),
-            ("SingleMuon", triggers_FR_1mu_noiso_smpd ),
-            #("SingleElectron",   triggers_FR_1e_noiso ),
+            #("DoubleMuon", triggers_FR_1mu_noiso ),
+            #("SingleMuon", triggers_FR_1mu_noiso_smpd ),
+            ("SingleElectron",   triggers_FR_1e_noiso ),
             #("JetHT",   triggers_FR_jet )
         ]
         #triggers_FR_muNoIso = [ 'HLT_Mu27_v*', 'HLT_Mu50_v*' ]
         #triggerAna.myTriggerPrescales = { 'HLT_Mu50_v*':10 }
-        exclusiveDatasets = False
+        exclusiveDatasets = True
     if runDataQCD and runQCDBM: # for fake rate measurements in data
         DatasetsAndTriggers = [
             ("SingleMuon", triggers_FR_1mu_noiso_smpd ),
@@ -329,7 +329,7 @@ if runFRMC:
     #QCDEm, _ = mergeExtensions([q for q in QCDPtEMEnriched+QCDPtbcToE if "toInf" not in q.name])
     QCDEm = [q for q in QCD_EMs+QCD_bcToE if "toInf" not in q.name]
     selectedComponents = [QCD_Mu15] + QCD_Mu5 + [WJetsToLNu_LO,DYJetsToLL_M10to50_LO,DYJetsToLL_M50_LO]
-    #selectedComponents += QCDEm
+    selectedComponents += QCDEm
     selectedComponents += [TTLep_pow, TTSemi_pow]
     selectedComponents += [T_tch, TBar_tch, T_tWch_noFullyHad, TBar_tWch_noFullyHad]
     cropToLumi(selectedComponents, 1.0)
@@ -354,12 +354,17 @@ if runFRMC or runDataQCD:
     for t in FRTrigs:
         tShort = t.replace("HLT_","FR_").replace("_v*","")
         triggerFlagsAna.triggerBits[tShort] = [ t ]
+    susyCoreSequence.remove(tauAna)
     # reduce event content
     treeProducer.collections = {
         "selectedLeptons" : NTupleCollection("LepGood",  leptonTypeSusy, 8, help="Leptons after the preselection"),
         "cleanJets"       : NTupleCollection("Jet",      jetTypeSusy, 15, help="Cental jets after full selection and cleaning, sorted by pt"),
-        "selectedTaus"    : NTupleCollection("TauGood",  tauTypeSusy, 8, help="Taus after the preselection"), # for cleaning jets
+        #"selectedTaus"    : NTupleCollection("TauGood",  tauTypeSusy, 8, help="Taus after the preselection"), # for cleaning jets
     }
+    # turn on jet-lepton cleaning
+    jetAna.lepSelCut = lambda lep : True
+    jetAna.minLepPt = 0
+    jetAna.jetLepDR = 0.7
     # select lepton + jet pairs
     from CMGTools.TTHAnalysis.analyzers.ttHLepQCDFakeRateAnalyzer import ttHLepQCDFakeRateAnalyzer
     ttHLepQCDFakeRateAna = cfg.Analyzer(ttHLepQCDFakeRateAnalyzer, name="ttHLepQCDFakeRateAna",

@@ -71,6 +71,8 @@ if __name__ == "__main__":
     parser.add_option("--same-nd-templates", dest="sameNDTemplates", action="store_true", default=False, help="Just make the first histograms and stop");
     parser.add_option("--kappaSig", dest="kappaSig", type="float", default=1.5, help="Lognormal Kappa for the signal in fits (if constraints are on)");
     parser.add_option("--kappaBkg", dest="kappaBkg", type="float", default=1.2, help="Lognormal Kappa for the background in fits (if constraints are on)");
+    parser.add_option("--sigmaFBkg", dest="sigmaFBkg", type="float", default=1.0, help="Gaussian constrain for background fake rate in fits (if constraints are on)");
+    parser.add_option("--constrain", dest="constrain", default=[], action="append", help="Put constraints on signal or background yields (theta_sig, theta_bkg) or background rates (fbkg), can use multiple times");
     parser.add_option("--regularize", dest="regularize", default=[], action="append", nargs=2, help="Put a constraint on the bin-by-bin difference of a given parameter (for fitGlobalSimND)");
     (options, args) = parser.parse_args()
     mca  = MCAnalysis(args[0],options)
@@ -495,8 +497,13 @@ if __name__ == "__main__":
                     w.factory('SIMUL::all(num, pass=all_pass, fail=all_fail)') 
                     sim = ROOT.RooSimultaneousOpt(w.pdf("all"), "")
                     nuisanceList = ROOT.RooArgSet()
-                    for nuisance in listAllNuisances(reportND):
-                        c = roofit.factory("Gaussian::%sPdf(%s,0,1)" % (nuisance, nuisance));
+                    toConstrain = [ (n,0,1) for n in listAllNuisances(reportND) ]
+                    for theta in "theta_sig", "theta_bkg":
+                        if theta in options.constrain: toConstrain.append( (theta, 0, 1) )
+                    if "fbkg" in options.constrain:
+                        toConstrain.append( ("fbkg", fewk, options.sigmaFBkg) )
+                    for nuisance, mean, sigma in toConstrain:
+                        c = roofit.factory("SimpleGaussianConstraint::%sPdf(%s,%g,%g)" % (nuisance, nuisance, mean, sigma));
                         sim.addExtraConstraint(c)
                         nuisanceList.add(w.var(nuisance))
                     cmdArgs = ROOT.RooLinkedList()

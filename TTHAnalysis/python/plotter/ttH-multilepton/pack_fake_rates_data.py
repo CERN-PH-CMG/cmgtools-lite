@@ -160,23 +160,20 @@ if __name__ == "__main__":
            h2d_el_tt = [ make2D(outfile,"FR_mva090_el_TT", ptbins_el, etabins_el) ]
            h2d_mu_tt = [ make2D(outfile,"FR_mva090_mu_TT", ptbins_mu, etabins_mu) ]
 
-           Plots="plots/94X/ttH/lepMVA/v1.0.1/fr-meas"
+           Plots="plots/94X/ttH/lepMVA/v2.0-dev/fr-meas"
            Z3l="z3l"
            QCD="qcd1l"
-           #### Electrons: 
-           readMany2D(XsQ, h2d_el, "/".join([Plots, QCD, "el/HLT_EleX_Combined/fakerates-mtW1R/fr_sub_eta_%s_comp.root"]), "%s", etaslices_el, (15,999) )
-
-           #### Muons: 
-           readMany2D(XsQ, h2d_mu, "/".join([Plots, QCD, "mu/HLT_MuX_Combined/fakerates-mtW1R/fr_sub_eta_%s_comp.root"]), "%s", etaslices_mu, (10,999) )
+           readMany2D(XsQ, h2d_el, "/".join([Plots, QCD, "el/HLT_EleX_OR/fakerates-mtW1R/fr_sub_eta_%s_comp.root"]), "%s", etaslices_el, (15,999) )
+           readMany2D(XsQ, h2d_mu, "/".join([Plots, QCD, "mu/HLT_MuX_OR/fakerates-mtW1R/fr_sub_eta_%s_comp.root"]), "%s", etaslices_mu, (10,999) )
 
            if options.fixLastBin:
                fixLastBin(-1, h2d_el[1], h2d_el[0])
                fixLastBin(-1, h2d_mu[1], h2d_mu[0])
 
            #### TT MC-truth
-           MCPlots="plots/94X/ttH/lepMVA/v1.0.1/fr-mc"; ID="wp090iv01f60E3";
+           MCPlots="plots/94X/ttH/lepMVA/v2.0-dev/fr-mc"; ID="wp090iv01f60E3";
            XVar="mvaPt_090i_ptJI90_mvaPt090"
-           readMany2D(["TT_SS_red"], h2d_mu_tt, "/".join([MCPlots, "mu_bnb_"+ID+"_recJet30_eta_%s.root"]), XVar+"_coarse_%s",   etaslices_mu, (15,999) )
+           readMany2D(["TT_SS_red"], h2d_mu_tt, "/".join([MCPlots, "mu_bnb_"+ID+"_recJet30_eta_%s.root"]), XVar+"_coarsecomb_%s",   etaslices_mu, (15,999) )
            readMany2D(["TT_SS_redNC"], h2d_el_tt, "/".join([MCPlots, "el_bnbNC_"+ID+"_recJet30_eta_%s.root"]), XVar+"_coarseelcomb_%s",   etaslices_el, (15,999) )
 
            h2d_el_mc4cc = [ make2D(outfile,"FR_mva090_el_MC"+X, ptbins_el, etabins_el) for X in ("QCD","QCDNC") ]
