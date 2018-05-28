@@ -168,11 +168,17 @@ class UncertaintyFile:
                             extra[key] = eval(val)
                         else: extra[setting] = True
                 field = [f.strip() for f in line.split(':')]
-                if options and getattr(options,'uncertaintiesToExclude',[]):
+                if options and getattr(options,'uncertaintiesToSelect',[]):
                     skipme = True
+                    for p0 in options.uncertaintiesToSelect:
+                        for p in p0.split(","):
+                            if re.match(p+"$", field[0]): skipme = False
+                    if skipme: continue
+                if options and getattr(options,'uncertaintiesToExclude',[]):
+                    skipme = False
                     for p0 in options.uncertaintiesToExclude:
                         for p in p0.split(","):
-                            if re.match(p+"$", field[0]): skipMe = True
+                            if re.match(p+"$", field[0]): skipme = True
                     if skipme: continue
                 (name, procmatch, binmatch, unc_type) = field[:4]
                 more_args = field[4:]
