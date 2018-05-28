@@ -418,7 +418,7 @@ TriBosons = [
 # ----------------------------- summary ----------------------------------------
 
 
-amples = QCDPtFlat + QCDPt + QCDHT + QCD_Mus + QCD_EMs + QCD_bcToE + Ws + DYs + VJetsQQHT + TTs + Ts + TTXs + TTXXs + DiBosons + TriBosons + ZJetsToNuNuHT
+mcSamples = QCDPtFlat + QCDPt + QCDHT + QCD_Mus + QCD_EMs + QCD_bcToE + Ws + DYs + VJetsQQHT + TTs + Ts + TTXs + TTXXs + DiBosons + TriBosons + ZJetsToNuNuHT
 
 
 samples = mcSamples
