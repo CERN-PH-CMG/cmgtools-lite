@@ -3,7 +3,8 @@
 # usage: python submitToys.py ../cards/helicity_2018_03_09_testpdfsymm/Wel_plus_ws.root 1000 plus -n 10
 
 jobstring  = '''#!/bin/sh
-ulimit -s unlimited
+ulimit -c 0 -S
+ulimit -c 0 -H
 set -e
 cd CMSSWBASE
 export SCRAM_ARCH=slc6_amd64_gcc530
