@@ -16,6 +16,37 @@ from make_diff_xsec_cards import getArrayParsingString
 sys.path.append(os.environ['CMSSW_BASE']+"/src/CMGTools/WMass/python/plotter/")
 from plotUtils.utility import *
 
+# def getXfromSpline(spline,yval,x0,dx,tolerance=0.001):
+#     # return first x for which y=yval (in case you expect more, choose x0 accodingly
+#     # pass a ROOT.TSpline3, the y value you are looking for, the starting x value x0, the step dx and the tolerance to claim to have found x(yval)
+
+#     # y0 = spline.Eval(x0)
+#     # if y0 > yval:
+#     #     x0isUp = True
+#     # elif y0 < yval:
+#     #     x0isUp = False
+#     # else:
+#     #     retun x0
+        
+#     x = x0
+#     found = False
+
+#     while not found:
+#         # sample the spline looking for x for which [y0,y(x)] contains yval (this is meant to avoid situations with non monotonic curves)
+#         y1tmp = spline.Eval(x)
+#         y2mp = spline.Eval(x + dx)
+#         ymax = max(y1tmp,y2tmp)
+#         ymin = min(y1tmp,y2tmp)
+#         if ymax > yval and ymin < yval:
+#             xlow = x
+#             xup = x + 0.5 * dx
+#             ycenter = spline.Eval(xup)
+#             if ycenter > yval:
+#                 ymin = min(ycenter,ymax)
+#                 ymax = max(ycenter,ymax)
+                
+#         else:
+#             x = x + dx
 
 def filterBadScanPoints(gr, dnll_r, fdef, nTrial=3, maxDNLL=10.0, verbose=False):
 
@@ -211,22 +242,24 @@ if __name__ == "__main__":
         maxStoredValDNLL = max(dnll_r[r] for r in dnll_r)
         gr.GetYaxis().SetRangeUser(-0.1,1.2*min(options.maxDNLL,maxStoredValDNLL))
 
-        # very first fit with pol9 (random, just need something that follows the points
+        # very first fit with pol9 (random, just need something that follows the points, to create the spline)
         f1 = ROOT.TF1("f1","pol9") # symmetric range in r
-        gr.Fit(f1,options.scanFitOpt,"",xminfit,xmaxfit) 
+        gr.Fit(f1,"0"+options.scanFitOpt,"",xminfit,xmaxfit)  # option 0 not to draw fitted function 
         fit = gr.GetFunction("f1")
-        fit.SetLineWidth(3)
-        fit.SetLineColor(ROOT.kOrange+2)
-        fit.SetFillColor(ROOT.kOrange+2)
-        fit.SetMarkerColor(ROOT.kOrange+2)
+        # fit.SetLineWidth(3)
+        # fit.SetLineColor(ROOT.kOrange+2)
+        # fit.SetFillColor(ROOT.kOrange+2)
+        # fit.SetMarkerColor(ROOT.kOrange+2)
 
-        #f2 = ROOT.TF1("f2","pol2")
-        #gr.Fit(f2,options.scanFitOpt,"",xminfit,xmaxfit) 
-        #parabola = gr.GetFunction("f2")
-        #parabola.SetLineWidth(3)
-        #parabola.SetLineColor(ROOT.kBlue)
-        #parabola.SetFillColor(ROOT.kBlue)
-        #parabola.SetMarkerColor(ROOT.kBlue)
+        tmpPoints = [x for x in sorted(keys)]
+        gr_xmin = tmpPoints[0]
+        gr_xmax = tmpPoints[-1]
+        spl = ROOT.TSpline3("spline3",gr,"b1e1",fit.Derivative(gr_xmin),fit.Derivative(gr_xmax))   # "b1e1" gives first derivative at beginning and end point
+        spl.SetLineWidth(3)
+        spl.SetLineColor(ROOT.kOrange+2)
+        #spl.SetFillColor(ROOT.kOrange+2)
+        spl.SetMarkerColor(ROOT.kOrange+2)
+        spl.Draw("pclsame")
 
         mypol2 = ROOT.TF1("mypol2","[0]*(x-1)**2");  # a*(x-1)^2 is a parabola centered at x = 1, with minimum at 0
         mypol2.SetParameter(0,300)  # we would expect that for x = 0.9 it is roughly 2*deltaNLL=3
@@ -237,7 +270,7 @@ if __name__ == "__main__":
         mypol2.SetLineColor(ROOT.kBlack)        
         mypol2.SetFillColor(ROOT.kBlack)        
         mypol2.SetMarkerColor(ROOT.kBlack)        
-        mypol2.DrawCopy("CSAME")
+        mypol2.DrawCopy("CSAME")   # use DrawCopy because we are going to use mypol2 again for fit later, with less points (otherwise the previously plotted fits are modified)
 
         # ## algo to remove points too far from the expected position 
         # # let's assume r in [0.9, 1.1], dnll(max)~5
@@ -310,30 +343,30 @@ if __name__ == "__main__":
 
         finalkeys = sorted(newdnll_r.keys())
         finalxmin = finalkeys[0]
-        finalxmax = finalkeys[len(finalkeys)-1]
+        finalxmax = finalkeys[-1]
         # takes some interesting parameters from last fit
-        r1sigmaDn = func.GetX(1.0, 0.5, 1)
-        r1sigmaUp = func.GetX(1.0, 1, 1.5)
-        rMinFit = func.GetMinimumX(0.95, 1.05)  # 1 by definition because we forced mypol2 to pass through (1,0)
+        r1sigmaDn = fit.GetX(1.0, 0.5, 1)
+        r1sigmaUp = fit.GetX(1.0, 1, 1.5)
+        rMinFit = fit.GetMinimumX(0.95, 1.05)  # 1 by definition because we forced mypol2 to pass through (1,0)
         print "Bin %d --> Fit: rmin = %.3f    +/- 1 sigma range = [%.3f, %.3f]" % (globalbin, rMinFit, r1sigmaDn, r1sigmaUp)
 
-        # leg = ROOT.TLegend(0.30, 0.48, 0.7, 0.87)
-        # leg.SetFillColor(0)
-        # leg.SetFillStyle(0)
-        # leg.SetBorderSize(0)
-        # chLeg = 'W^{+}' if charge == "plus" else 'W^{-}'
-        # flLeg = 'e' if flavour == "el" else "#mu"
-        # leg.SetHeader("Channel: {ch} #rightarrow {fl}#nu".format(ch=chLeg, fl=flLeg) )
-        # leg.AddEntry(gr , "scan: 1 + %d/%d points" % (nVarPoints,options.npoints), 'P')
-        # leg.AddEntry(fit, "fit with pol9", 'LF')
-        # #leg.AddEntry(parabola, "fit with pol2", 'LF')
-        # leg.AddEntry(mypol2, "first fit: y = a#dot(x-1)^{2}", "LF")
-        # for i in range(len(flist)):
-        #     leg.AddEntry(flist[i], "trial %d: y = a#dot(x-1)^{2}" % (i+1), "LF")
-        # leg.AddEntry(0, "r(min) = %.3f" % rMinFit, '')
-        # leg.AddEntry(0, "r(-1#sigma) = %.3f" % r1sigmaDn, '')
-        # leg.AddEntry(0, "r(+1#sigma) = %.3f" % r1sigmaUp, '')
-        # leg.Draw('same')    
+        leg = ROOT.TLegend(0.30, 0.48, 0.7, 0.87)
+        leg.SetFillColor(0)
+        leg.SetFillStyle(0)
+        leg.SetBorderSize(0)
+        chLeg = 'W^{+}' if charge == "plus" else 'W^{-}'
+        flLeg = 'e' if flavour == "el" else "#mu"
+        leg.SetHeader("Channel: {ch} #rightarrow {fl}#nu".format(ch=chLeg, fl=flLeg) )
+        leg.AddEntry(gr , "scan: 1 + %d/%d points" % (nVarPoints,options.npoints), 'P')
+        #leg.AddEntry(fit, "fit with pol9", 'LF')
+        leg.AddEntry(spl, "TSpline3", 'LF')
+        leg.AddEntry(mypol2, "first fit: y = a#dot(x-1)^{2}", "LF")
+        for i in range(len(flist)):
+            leg.AddEntry(flist[i], "trial %d: y = a#dot(x-1)^{2}" % (i+1), "LF")
+        leg.AddEntry(0, "r(min) = %.3f" % rMinFit, '')
+        leg.AddEntry(0, "r(-1#sigma) = %.3f" % r1sigmaDn, '')
+        leg.AddEntry(0, "r(+1#sigma) = %.3f" % r1sigmaUp, '')
+        leg.Draw('same')    
 
         c.RedrawAxis("sameaxis")
         if not options.nosavescan:
