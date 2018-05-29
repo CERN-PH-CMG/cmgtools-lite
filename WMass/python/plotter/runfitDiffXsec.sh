@@ -2,38 +2,25 @@
 
 wmassDir="/afs/cern.ch/work/m/mciprian/w_mass_analysis/heppy/CMSSW_8_0_25/src/CMGTools/WMass/"
 plotterDir="${wmassDir}python/plotter/"
-cardDir="${plotterDir}testDatacardWriter/"
+cardDir="${plotterDir}datacardWriterGoodSyst//"
 combineDir="${plotterDir}combineDir"
 #wwwDir="/afs/cern.ch/user/m/mciprian/www/wmass/13TeV/"
 
-nVerbose=0
-nTotBins=570
-doAllBins="y"
-rpoints=50
+nVerbose=0  # passed to combine
+doAllBins="y" # if not "y", select bin range below (those at borders are included)
 nBinIni=98
 nBinFin=98
 justPrint="n"
+rpoints=50
 log="p"  # p, t, s for print on stdout (default), throw away (to /dev/null) or save to a file
 saveOnlyhiggsCombineFile="y"
 
-dirToRunCombineFrom="${plotterDir}diffXsecFit_LikelihoodScan_withNuisNoFRshape_np50_newMinType/"
+dirToRunCombineFrom="${plotterDir}diffXsecFit_LikelihoodScan_withNuis_np50/"
 #combineOptions=" --saveFitResult "
 combineOptions=" --algo grid  --points ${rpoints} --setParameterRanges \"r=0.9,1.1\" --cminDefaultMinimizerType GSLMultiMinMod --cminDefaultMinimizerAlgo BFGS2 "
 #combineOptions="${combineOptions} --keepFailures "
-combineOptions="${combineOptions} --freezeNuisanceGroups frshape "
 #--freezeNuisanceGroups pdfs,scales,alphaS,wpt,frshape
 
-if [[ "${doAllBins}" == "y" ]]; then
-    nBinIni=1
-    nBinFin=${nTotBins}
-fi        
-
-
-selectedbins=()
-for i in `seq $nBinIni $nBinFin`
-do
-    selectedbins+=(${i}) 
-done
 #echo "${selectedbins[@]}"
 #selectedbins=(20 35 50 65 80 95 125 140 155 170 185 200 215 230 245 260 275 290 305 320 335 350 365 380 395 410 425 440 510 520)
 #charges=("plus" "minus")
@@ -59,6 +46,17 @@ for charge in "${charges[@]}"
 do
 
     echo "#########################################"
+    nTotBins=`ls ${cardDir} | grep ${charge} | wc -l`
+    if [[ "${doAllBins}" == "y" ]]; then
+	nBinIni=1
+	nBinFin=${nTotBins}
+    fi        
+    
+    selectedbins=()
+    for i in `seq $nBinIni $nBinFin`
+    do
+	selectedbins+=(${i}) 
+    done
 
     for nbin in "${selectedbins[@]}"
     do

@@ -123,17 +123,18 @@ if __name__ == "__main__":
     binning = args[1]
     etabinning=binning.split('*')[0]    # this is like [a,b,c,...], and is of type string. We nedd to get an array    
     ptbinning=binning.split('*')[1]
-    etabinning = getArrayParsingString(etabinning)
-    ptbinning = getArrayParsingString(ptbinning)
-    tmpbinning = [float(x) for x in etabinning]  ## needed for constructor of TH2 below
-    etabinning = tmpbinning
-    tmpbinning = [float(x) for x in ptbinning]
-    ptbinning = tmpbinning 
-    print "eta binning " + str(etabinning)
-    print "pt  binning " + str(ptbinning)
+    etabinning = getArrayParsingString(etabinning, makeFloat=True)
+    ptbinning = getArrayParsingString(ptbinning, makeFloat=True)
+    # tmpbinning = [float(x) for x in etabinning]  ## needed for constructor of TH2 below
+    #etabinning = tmpbinning
+    # tmpbinning = [float(x) for x in ptbinning]
+    #ptbinning = tmpbinning 
     nptbins = len(ptbinning)-1
     netabins = len(etabinning)-1
     nBinsInTemplate = (netabins)*(nptbins)
+    print "eta binning " + str(etabinning)
+    print "pt  binning " + str(ptbinning)
+    print "%d eta bins and %d pt bins (%d in total)" % (netabins, nptbins, nBinsInTemplate)
 
     files = [ f for f in os.listdir(inputdir) if f.endswith('.root') and f.startswith('higgsCombine')]
     files = list( [os.path.join(inputdir, f) for f in files] ) 
@@ -344,10 +345,11 @@ if __name__ == "__main__":
         finalkeys = sorted(newdnll_r.keys())
         finalxmin = finalkeys[0]
         finalxmax = finalkeys[-1]
-        # takes some interesting parameters from last fit
-        r1sigmaDn = fit.GetX(1.0, 0.5, 1)
+        # takes some interesting parameters from pol9 fit (could use the spline)
+        # generally, for good scans, which are the majority, there is no need to filter points away, because they already behave sensibly
+        r1sigmaDn = fit.GetX(1.0, 0.5, 1)  # last two arguments are the x range where to look for
         r1sigmaUp = fit.GetX(1.0, 1, 1.5)
-        rMinFit = fit.GetMinimumX(0.95, 1.05)  # 1 by definition because we forced mypol2 to pass through (1,0)
+        rMinFit = fit.GetMinimumX(0.95, 1.05)  # 1 by definition if we use mypol2 because we forced mypol2 to pass through (1,0), otherwise can be any value around 1
         print "Bin %d --> Fit: rmin = %.3f    +/- 1 sigma range = [%.3f, %.3f]" % (globalbin, rMinFit, r1sigmaDn, r1sigmaUp)
 
         leg = ROOT.TLegend(0.30, 0.48, 0.7, 0.87)
