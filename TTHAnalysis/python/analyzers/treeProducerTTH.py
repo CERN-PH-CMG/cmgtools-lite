@@ -91,7 +91,7 @@ ttH_collections = {
             "cleanJetsFwd"    : NTupleCollection("JetFwd",  jetTypeSusyFwd,  6, help="Forward jets after full selection and cleaning, sorted by pt"),
             #"ivf"            : NTupleCollection("SV",     svType, 20, help="SVs from IVF"),
             ##------------------------------------------------
-            "LHE_weights"     : NTupleCollection("LHEweight",  weightsInfoType, 1000, mcOnly=True, help="LHE weight info"),
+            "LHE_weights"     : NTupleCollection("LHEweight",  weightsInfoType, 2000, mcOnly=True, help="LHE weight info"),
 }
 
 def setLossyFloatCompression(precision=12,highPrecision=-1):
