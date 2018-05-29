@@ -20,7 +20,7 @@ class TTBuilder(VVBuilder):
             return output
 
         #topology of the event (other stuff on top of tt)
-        satteliteJets = self.selectJets(event.jets,lambda x: x.pt()>30.0  and x.jetID('POG_PFID_Loose')  ,leptons,0.3,[TT.leg1,TT.leg2],0.8)
+        satteliteJets = self.selectJets(event.jets,lambda x: x.pt()>30.0  and x.jetID('POG_PFID_Tight')  ,leptons,0.3,[TT.leg1,TT.leg2],0.8)
         self.topology(TT,satteliteJets,leptons)
 
         if self.cfg_comp.isMC:
@@ -41,7 +41,7 @@ class TTBuilder(VVBuilder):
         if len(fatJets)<2:
             return output
 
-        
+
         top=min(fatJets,key=lambda x: abs(x.mass()-174.0))
         W=None
         WM=1000.0
@@ -54,7 +54,7 @@ class TTBuilder(VVBuilder):
 
         if W==None:
             return output
-        otherJets = self.selectJets(event.jets,lambda x: x.pt()>30.0  and x.jetID('POG_PFID_Loose')  ,leptons,0.3,[top,W],0.8)
+        otherJets = self.selectJets(event.jets,lambda x: x.pt()>30.0  and x.jetID('POG_PFID_Tight')  ,leptons,0.3,[top,W],0.8)
 
         if len(otherJets)==0:
             return output
@@ -63,8 +63,8 @@ class TTBuilder(VVBuilder):
         Wbs=[]
         for j in otherJets:
             Wbs.append(Pair(W,j))
-        #The one closest to top mass    
-        bestWb = min(Wbs,key=lambda x:abs(x.mass()-174.0))    
+        #The one closest to top mass
+        bestWb = min(Wbs,key=lambda x:abs(x.mass()-174.0))
 
         #best fat jet other
 
@@ -73,7 +73,7 @@ class TTBuilder(VVBuilder):
             return output
 
         #topology of the event (other stuff on top of tt)
-        satteliteJets = self.selectJets(event.jets,lambda x: x.pt()>30.0  and x.jetID('POG_PFID_Loose')  ,leptons+[TT.leg1.leg2],0.3,[TT.leg1.leg1,TT.leg2],0.8)
+        satteliteJets = self.selectJets(event.jets,lambda x: x.pt()>30.0  and x.jetID('POG_PFID_Tight')  ,leptons+[TT.leg1.leg2],0.3,[TT.leg1.leg1,TT.leg2],0.8)
         self.topology(TT,satteliteJets,leptons)
 
         if self.cfg_comp.isMC:
@@ -90,7 +90,7 @@ class TTBuilder(VVBuilder):
         if len(wJets)<2:
             return output
 
-        otherJets = self.selectJets(event.jets,lambda x: x.pt()>30.0  and x.jetID('POG_PFID_Loose')  ,leptons,0.3,[wJets[0],wJets[1]],0.8)
+        otherJets = self.selectJets(event.jets,lambda x: x.pt()>30.0  and x.jetID('POG_PFID_Tight')  ,leptons,0.3,[wJets[0],wJets[1]],0.8)
 
         if len(otherJets)<2:
             return output
@@ -102,7 +102,7 @@ class TTBuilder(VVBuilder):
                 Wbs.append(Pair(w,j))
 
         #power of python
-        TTs=[]        
+        TTs=[]
         for t1,t2 in itertools.combinations(Wbs,2):
             #remove overlap
             if deltaR(t1.leg1.eta(),t1.leg1.phi(),t2.leg1.eta(),t2.leg1.phi())<0.8:
@@ -113,14 +113,14 @@ class TTBuilder(VVBuilder):
             TTs.append(Pair(t1,t2))
 
 
-           
+
         if len(TTs)==0:
             return output
-        #The one closest to SUM(top mass)    
-        TT = min(TTs,key=lambda x:abs(x.leg1.mass()-174.0)+abs(x.leg2.mass()-174.0))    
+        #The one closest to SUM(top mass)
+        TT = min(TTs,key=lambda x:abs(x.leg1.mass()-174.0)+abs(x.leg2.mass()-174.0))
 
         #topology of the event (other stuff on top of tt)
-        satteliteJets = self.selectJets(event.jets,lambda x: x.pt()>30.0  and x.jetID('POG_PFID_Loose')  ,leptons+[TT.leg1.leg2,TT.leg2.leg2],0.3,[TT.leg1.leg1,TT.leg2.leg1],0.8)
+        satteliteJets = self.selectJets(event.jets,lambda x: x.pt()>30.0  and x.jetID('POG_PFID_Tight')  ,leptons+[TT.leg1.leg2,TT.leg2.leg2],0.3,[TT.leg1.leg1,TT.leg2.leg1],0.8)
         self.topology(TT,satteliteJets,leptons)
 
 
@@ -164,10 +164,10 @@ class TTBuilder(VVBuilder):
                 if p.status()==1 and not (p.pdgId() in [12,14,16]):
                     event.genParticleLVs.push_back(p.p4())
 
-        #Precategorize here        
+        #Precategorize here
 
         leptons= filter(lambda x: (abs(x.pdgId())==11 and x.heepID) or (abs(x.pdgId())==13 and x.highPtIDIso ),event.selectedLeptons)
-        fatJetsPre=self.selectJets(event.jetsAK8,lambda x: x.pt()>200.0 and abs(x.eta())<2.4 and x.jetID('POG_PFID_Loose')  ,leptons,1.0)
+        fatJetsPre=self.selectJets(event.jetsAK8,lambda x: x.pt()>200.0 and abs(x.eta())<2.4 and x.jetID('POG_PFID_Tight')  ,leptons,1.0)
 
 
 
@@ -186,4 +186,3 @@ class TTBuilder(VVBuilder):
         setattr(event,'TT'+self.cfg_ana.suffix,TT)
         setattr(event,'WbT'+self.cfg_ana.suffix,WbT)
         setattr(event,'WbWb'+self.cfg_ana.suffix,WbWb)
-

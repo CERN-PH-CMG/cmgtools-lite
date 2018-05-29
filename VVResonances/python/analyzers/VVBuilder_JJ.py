@@ -23,10 +23,10 @@ class Truth(object):
         pass
 
 
-class VVBuilder(Analyzer):
+class VVBuilder_JJ(Analyzer):
 
     def __init__(self, cfg_ana, cfg_comp, looperName):
-        super(VVBuilder, self).__init__(cfg_ana, cfg_comp, looperName)
+        super(VVBuilder_JJ, self).__init__(cfg_ana, cfg_comp, looperName)
         self.vbTool = VectorBosonToolBox()
         self.smearing = ROOT.TRandom(10101982)
         if hasattr(self.cfg_ana, "doPUPPI") and self.cfg_ana.doPUPPI:
@@ -48,7 +48,7 @@ class VVBuilder(Analyzer):
             'btagsf', os.path.expandvars(self.cfg_ana.btagCSVFile))
 
     def declareHandles(self):
-        super(VVBuilder, self).declareHandles()
+        super(VVBuilder_JJ, self).declareHandles()
         self.handles['packed'] = AutoHandle(
             'packedPFCandidates', 'std::vector<pat::PackedCandidate>')
         if self.cfg_comp.isMC:
@@ -62,6 +62,8 @@ class VVBuilder(Analyzer):
                 i.px(), i.py(), i.pz(), i.energy()))
         return out
 
+#### here ####
+
     def substructure(self, jet, event, nSubjets=2, suffix=""):
         # if we already filled it exit
         tag = 'substructure' + suffix
@@ -73,17 +75,29 @@ class VVBuilder(Analyzer):
 
         # we take LVs around the jets and recluster
         for LV in event.LVs:
-            if deltaR(LV.eta(), LV.phi(), jet.eta(), jet.phi()) < 1.2:
-                LVs.push_back(LV)
+         if deltaR(LV.eta(), LV.phi(), jet.eta(), jet.phi()) < 1.6:
+          LVs.push_back(LV)
 
-        interface = ROOT.cmg.FastJetInterface(
-            LVs, -1.0, 0.8, 1, 0.01, 5.0, 4.4)
+        interface = ROOT.cmg.FastJetInterface(LVs, -1.0, 0.8, 1, 0.01, 5.0, 4.4)
+
         # make jets
-        interface.makeInclusiveJets(150.0)
+        interface.makeInclusiveJets(80.0)
 
         outputJets = interface.get(True)
         if len(outputJets) == 0:
             return
+
+        corrNoL1 = jet.corr / jet.CorrFactor_L1
+
+	bestPUPPIjet = -1
+	drtmp = 0.8
+	for i in range(len(outputJets)):
+	 dr = deltaR(outputJets[i].eta(),outputJets[i].phi(),jet.eta(),jet.phi())
+	 if dr <= drtmp:
+	  drtmp = dr
+	  bestPUPPIjet = i
+
+	if bestPUPPIjet == -1: return
 
 #        setattr(jet,tag,Substructure())
 #        substructure=getattr(jet,tag)
@@ -91,25 +105,24 @@ class VVBuilder(Analyzer):
 
         # For the pruned sub jets +PUPPIcalculate the correction
         # without L1
-        corrNoL1 = jet.corr / jet.CorrFactor_L1
+        #corrNoL1 = jet.corr / jet.CorrFactor_L1
 
         # if PUPPI reset the jet four vector
-        if self.doPUPPI:
-            jet.setP4(outputJets[0] * jet.corr)
+        #if self.doPUPPI:
+        #    jet.setP4(outputJets[0] * jet.corr)
 
         substructure = Substructure()
+
         # OK!Now save the area
-        substructure.area = interface.getArea(1, 0)
+        substructure.area = interface.getArea(1, bestPUPPIjet)
 
         # Get pruned lorentzVector and subjets
-        interface.prune(True, 0, 0.1, 0.5)
-
-        substructure.prunedJet = self.copyLV(
-            interface.get(False))[0] * corrNoL1
+        interface.prune(True, bestPUPPIjet, 0.1, 0.5)
+        substructure.prunedJet = self.copyLV(interface.get(False))[0] * corrNoL1
         interface.makeSubJets(False, 0, nSubjets)
         substructure.prunedSubjets = self.copyLV(interface.get(False))
-        # getv the btag of the pruned subjets
 
+        # getv the btag of the pruned subjets
         jet.subJetTags = [-99.0] * nSubjets
         jet.subJetCTagL = [-99.0] * nSubjets
         jet.subJetCTagB = [-99.0] * nSubjets
@@ -117,7 +130,7 @@ class VVBuilder(Analyzer):
         jet.subJet_partonFlavour = [-99.0] * nSubjets
 
         for i, s in enumerate(substructure.prunedSubjets):
-            for o in jet.subjets("SoftDrop"):
+            for o in jet.subjets("SoftDropPuppi"):
                 dr = deltaR(s.eta(), s.phi(), o.eta(), o.phi())
                 if dr < 0.1:
                     # found = True
@@ -130,17 +143,17 @@ class VVBuilder(Analyzer):
                     jet.subJet_partonFlavour[i] = o.partonFlavour()
                     jet.subJet_hadronFlavour[i] = o.hadronFlavour()
                     break
+
         # Get soft Drop lorentzVector and subjets
-        interface.softDrop(True, 0, 0.0, 0.1, 0.8)
-        substructure.softDropJet = self.copyLV(
-            interface.get(False))[0] * corrNoL1
+        interface.softDrop(True, bestPUPPIjet, 0.0, 0.1, 0.8)
+	softdropJets = interface.get(False)
+        substructure.softDropJet = self.copyLV(softdropJets)[0] * corrNoL1
         substructure.softDropJetMassCor = 0
         substructure.softDropJetMassBare = 0
         substructure.softDropJetMassL2L3 = 0
         if self.doPUPPI:
-            softDropJetUnCorr = self.copyLV(interface.get(False))[0]
-            substructure.softDropJetMassCor = self.getPUPPIMassWeight(
-                softDropJetUnCorr)
+            softDropJetUnCorr = self.copyLV(softdropJets)[0]
+            substructure.softDropJetMassCor = self.getPUPPIMassWeight(substructure.softDropJet)
             substructure.softDropJetMassBare = softDropJetUnCorr.mass()
             substructure.softDropJetMassL2L3 = substructure.softDropJet.mass()
 
@@ -148,8 +161,7 @@ class VVBuilder(Analyzer):
         substructure.softDropSubjets = self.copyLV(interface.get(False))
 
         # get NTau
-        substructure.ntau = interface.nSubJettiness(
-            0, 4, 0, 6, 1.0, 0.8, 999.0, 999.0, 999)
+        substructure.ntau = interface.nSubJettiness(bestPUPPIjet, 4, 0, 6, 1.0, 0.8, 999.0, 999.0, 999)
         # calculate DDT tau21 (currently without softDropJetMassCor, but the
         # L2L3 corrections)
         substructure.tau21_DDT = 0
@@ -158,6 +170,7 @@ class VVBuilder(Analyzer):
                 (substructure.softDropJet.mass() * substructure.softDropJet.mass()) / substructure.softDropJet.pt()))
         setattr(jet, tag, substructure)
 
+#### here ####
     def substructureGEN(self, jet, event):
         # if we already filled it exit
         if hasattr(jet, 'substructureGEN') or not self.cfg_comp.isMC:
@@ -168,11 +181,11 @@ class VVBuilder(Analyzer):
 
         # we take LVs around the jets and recluster
         for p in event.genParticleLVs:
-            if deltaR(p.eta(), p.phi(), jet.eta(), jet.phi()) < 1.2:
-                LVs.push_back(p)
+            if deltaR(p.eta(), p.phi(), jet.eta(), jet.phi()) < 1.6:
+             LVs.push_back(p)
 
-        interface = ROOT.cmg.FastJetInterface(
-            LVs, -1.0, 0.8, 1, 0.01, 5.0, 4.4)
+        interface = ROOT.cmg.FastJetInterface(LVs, -1.0, 0.8, 1, 0.01, 5.0, 4.4)
+
         # make jets
         interface.makeInclusiveJets(50.0)
 
@@ -180,19 +193,27 @@ class VVBuilder(Analyzer):
         if len(outputJets) == 0:
             return
 
+	bestGENjet = 0
+	drtmp = 9999
+	for i in range(len(outputJets)):
+	 dr = deltaR(outputJets[i].eta(),outputJets[i].phi(),jet.eta(),jet.phi())
+	 if dr <= drtmp:
+	  drtmp = dr
+	  bestGENjet = i
+
         jet.substructureGEN = Substructure()
         # OK!Now save the area
-        jet.substructureGEN.area = interface.getArea(1, 0)
+        jet.substructureGEN.area = interface.getArea(1, bestGENjet)
         # Get pruned lorentzVector and subjets
-        jet.substructureGEN.jet = self.copyLV(interface.get(True))[0]
+        jet.substructureGEN.jet = self.copyLV(interface.get(True))[bestGENjet]
 
-        interface.prune(True, 0, 0.1, 0.5)
-
+        interface.prune(True, bestGENjet, 0.1, 0.5)
         jet.substructureGEN.prunedJet = self.copyLV(interface.get(False))[0]
-        interface.softDrop(True, 0, 0.0, 0.1, 0.8)
-        jet.substructureGEN.softDropJet = self.copyLV(interface.get(False))[0]
-        jet.substructureGEN.ntau = interface.nSubJettiness(
-            0, 4, 0, 6, 1.0, 0.8, 999.0, 999.0, 999)
+
+        interface.softDrop(True, bestGENjet, 0.0, 0.1, 0.8)
+        softdropJets = interface.get(False)
+        jet.substructureGEN.softDropJet = self.copyLV(softdropJets)[0]
+        jet.substructureGEN.ntau = interface.nSubJettiness(bestGENjet, 4, 0, 6, 1.0, 0.8, 999.0, 999.0, 999)
 
     def cleanOverlap(self, collection, toRemove):
         after = list(set(collection) - set(toRemove))
@@ -259,7 +280,8 @@ class VVBuilder(Analyzer):
                         break
             if not overlap:
                 output.append(j)
-        return output
+
+	return output
 
     def makeWV(self, event):
         output = []
@@ -387,27 +409,62 @@ class VVBuilder(Analyzer):
     def makeJJ(self, event):
         output = []
 
+        if len(event.jetsAK8) == 0: return output
+
+        if not(event.jetsAK8[0].jetID('POG_PFID_TightLepVeto')): return output
+
+	evt = event.input.eventAuxiliary().id().event()
+	lumi = event.input.eventAuxiliary().id().luminosityBlock()
+	run = event.input.eventAuxiliary().id().run()
+	debug = False
+	#if evt == 7276 and lumi == 43: debug = True
+	#if not debug: return output
+
+        if debug: print "******** FOUND EVENT ************* ", run, lumi, evt
+
         # loop on the leptons
         leptons = filter(lambda x: (abs(x.pdgId()) == 11 and x.heepID) or (
             abs(x.pdgId()) == 13 and x.highPtIDIso), event.selectedLeptons)
         fatJets = self.selectJets(event.jetsAK8, lambda x: x.pt() > 200.0 and abs(
-            x.eta()) < 2.4 and x.jetID('POG_PFID_Tight'), leptons, 1.0)
+            x.eta()) < 2.4 and x.jetID('POG_PFID_TightLepVeto'), leptons, 0.8)
 
         if len(fatJets) < 2:
             return output
 
+	if debug: print "----------------- BEFORE SORTING ----------------- "
+	i = 1
+        for j in fatJets:
+	 if debug: print " * jet ",i," pt ", j.pt(), " eta ", j.eta(), " phi ",j.phi()
+	 i+=1
+
+        fatJets = fatJets[:2]
+        if evt%2 != 0: fatJets = list(reversed(fatJets))
+
+	if debug:
+	 print "----------------- AFTER SORTING ----------------- "
+	 i = 1
+         for j in fatJets:
+	  #print " * jet ",i," pt ", j.pt(), " eta ", j.eta(), " mass no corr ",j.substructure.softDropJetMassBare, " mass corr ",j.substructure.softDropJetMassBare*j.substructure.softDropJetMassCor," tau21 ", j.substructure.ntau[1]/j.substructure.ntau[0]
+	  print " * jet ",i," pt ", j.pt(), " eta ", j.eta()
+	  i+=1
+
         VV = Pair(fatJets[0], fatJets[1])
 
         # kinematics
-        if abs(VV.leg1.eta() - VV.leg2.eta()) > 1.3 or VV.mass() < 1000:
+        if abs(VV.leg1.eta() - VV.leg2.eta()) > 1.3 or VV.mass() < 700:
             return output
 
         self.substructure(VV.leg1, event)
         self.substructure(VV.leg2, event)
 
-        # substructure changes jet, so we need to recalculate the resonance
-        # mass
-        VV = Pair(fatJets[0], fatJets[1])
+        # substructure changes jet, so we need to recalculate the resonance mass
+	VV = Pair(fatJets[0], fatJets[1])
+
+        if debug:
+	 print "----------------- AFTER PARING ----------------- "
+	 print " * VV leg1 pt ", VV.leg1.pt(), " eta ", VV.leg1.eta()
+	 print " * VV leg2 pt ", VV.leg2.pt(), " eta ", VV.leg2.eta()
+	 print "    === VV mass ", VV.mass()," deta ", abs(VV.leg1.eta() - VV.leg2.eta()), " ======"
 
         # substructure truth
         if self.cfg_comp.isMC:
@@ -416,8 +473,7 @@ class VVBuilder(Analyzer):
             if hasattr(VV.leg2, 'substructureGEN') and hasattr(VV.leg1,'substructureGEN'):
                 VV.genPartialMass = (VV.leg1.substructureGEN.jet + VV.leg2.substructureGEN.jet).M()
 
-
-
+	if debug: print "    === VV gen mass ", (VV.leg1.substructureGEN.jet + VV.leg2.substructureGEN.jet).M()," ======"
 
         if not hasattr(VV.leg1, "substructure"):
             return output
@@ -550,7 +606,7 @@ class VVBuilder(Analyzer):
         taus_prompt = [p for p in event.genParticles if p.statusFlags(
         ).isDirectHardProcessTauDecayProduct()]
         all = leptons_prompt + taus_prompt
-        genBoson = VVBuilder.p4sum(all)
+        genBoson = VVBuilder_JJ.p4sum(all)
         return genBoson
 
     def makeTruthType(self, event):
@@ -589,14 +645,14 @@ class VVBuilder(Analyzer):
             for p in event.genPacked:
                 if p.status() == 1 and p.pt() > 0.05 and not (abs(p.pdgId()) in [12, 14, 16]):
                     event.genParticleLVs.push_back(p.p4())
-        LNuJJ = self.makeWV(event)
-        LLJJ = self.makeZV(event)
+        #LNuJJ = self.makeWV(event)
+        #LLJJ = self.makeZV(event)
         JJ = self.makeJJ(event)
-        JJNuNu = self.makeMETV(event)
-        TruthType = self.makeTruthType(event)
+        #JJNuNu = self.makeMETV(event)
+        #TruthType = self.makeTruthType(event)
 
-        setattr(event, 'LNuJJ' + self.cfg_ana.suffix, LNuJJ)
+        #setattr(event, 'LNuJJ' + self.cfg_ana.suffix, LNuJJ)
         setattr(event, 'JJ' + self.cfg_ana.suffix, JJ)
-        setattr(event, 'LLJJ' + self.cfg_ana.suffix, LLJJ)
-        setattr(event, 'JJNuNu' + self.cfg_ana.suffix, JJNuNu)
-        setattr(event, 'TruthType' + self.cfg_ana.suffix, TruthType)
+        #setattr(event, 'LLJJ' + self.cfg_ana.suffix, LLJJ)
+        #setattr(event, 'JJNuNu' + self.cfg_ana.suffix, JJNuNu)
+        #setattr(event, 'TruthType' + self.cfg_ana.suffix, TruthType)

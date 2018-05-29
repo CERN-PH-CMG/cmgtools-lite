@@ -1,8 +1,8 @@
 data : DoubleMuon_2017B_forFlips
-data : DoubleMuon_2017C_part1_forFlips+DoubleMuon_2017C_part2_forFlips
+data : DoubleMuon_2017C_forFlips
 data : DoubleMuon_2017D_forFlips
-data : DoubleMuon_2017E_part1_forFlips+DoubleMuon_2017E_part2_forFlips
-data : DoubleMuon_2017F_part1_forFlips+DoubleMuon_2017F_part2_forFlips+DoubleMuon_2017F_part3_forFlips
+data : DoubleMuon_2017E_forFlips
+data : DoubleMuon_2017F_forFlips
 data : DoubleEG_2017B_forFlips
 data : DoubleEG_2017C_forFlips
 data : DoubleEG_2017D_forFlips

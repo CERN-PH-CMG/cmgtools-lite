@@ -2,7 +2,7 @@
 ##       CONFIGURATION FOR TTH MULTILEPTON TREES       ##
 ##########################################################
 import PhysicsTools.HeppyCore.framework.config as cfg
-import re
+import re, sys
 
 
 #-------- LOAD ALL ANALYZERS -----------
@@ -29,7 +29,7 @@ selectedEvents=getHeppyOption("selectEvents","")
 keepGenPart=getHeppyOption("keepGenPart",False)
 
 sample = "main"
-#if runDataQCD or runFRMC: sample="qcd1l"
+if runDataQCD or runFRMC: sample="qcd1l"
 #sample = "z3l"
 
 # Lepton Skimming
@@ -211,18 +211,25 @@ selectedComponents = [TTLep_pow]
 
 sig_ttv = [TTHnobb_pow,TTHnobb_fxfx,TTWToLNu_fxfx,TTZToLLNuNu_amc,TTZToLLNuNu_m1to10] # signal + TTV
 ttv_lo = [TTW_LO,TTZ_LO] # TTV LO
-rares = [ZZTo4L,WW_DPS,TZQToLL]+TTXXs # rares # MISSING: GGHZZ4L,VHToNonbb,WpWpJJ,tWll
+rares = [ZZTo4L,WW_DPS,TZQToLL,GGHZZ4L,VHToNonbb,WpWpJJ,tWll]+TTXXs # rares
 single_t = Ts + [THQ,THW] # single top + tW
 convs = [TTGJets,TGJets_lep] # X+G # MISSING: WGToLNuG_amcatnlo_ext,WGToLNuG_amcatnlo_ext2,ZGTo2LG_ext
 v_jets = [WJetsToLNu_LO,DYJetsToLL_M10to50_LO,DYJetsToLL_M50_LO,WWTo2L2Nu] # V+jets
+v_jets_more = [ W1JetsToLNu_LO, W2JetsToLNu_LO, W3JetsToLNu_LO, W4JetsToLNu_LO ] + DYNJetsToLL + DYJetsToLLM4to50HT
 tt_1l = [TTSemi_pow, TTJets_SingleLeptonFromT, TTJets_SingleLeptonFromTbar] # TT 1l
 tt_2l = [TTLep_pow, TTJets_DiLepton] # TT 2l
 boson = [WZTo3LNu_fxfx] + TriBosons # multi-boson # MISSING: WZTo3LNu_pow
 
 samples_slow = sig_ttv + ttv_lo + rares + convs + boson + tt_2l
-samples_fast = single_t + v_jets + tt_1l
+samples_fast = single_t + v_jets + tt_1l + v_jets_more
+
+if getHeppyOption("mergeExtensions"):
+    verbose = (getHeppyOption("mergeExtensions") != "quiet")
+    samples_slow = mergeExtensions(samples_slow,verbose=verbose)[0]
+    samples_fast = mergeExtensions(samples_fast,verbose=verbose)[0]
 
 cropToLumi(rares,500)
+cropToLumi(v_jets_more,50)
 configureSplittingFromTime(samples_fast,50,3)
 configureSplittingFromTime(samples_slow,100,3)
 
@@ -312,7 +319,6 @@ if runData and not isTest: # For running on data
         for comp in selectedComponents:
             if 'Single' in comp.name: comp.splitFactor = int(ceil(len(comp.files)/4))
 
-selectedComponents = filter(lambda x: 'Single' in x.name, selectedComponents)
 
 #printSummary(selectedComponents)
 
@@ -627,6 +633,9 @@ if getHeppyOption("fast"):
         electrons = 'slimmedElectrons', eleCut = lambda ele : ele.pt() > 5,
         minLeptons = 2, 
     )
+    if getHeppyOption("fastSS"):
+        fastSkim.requireSameSignPair = True
+        ttHLepSkim.requireSameSignPair = True
     if isolation == "miniIso" and lepAna.doMiniIsolation == "precomputed":
         fastSkim.muCut = lambda mu : mu.pt() > 3 and mu.isLooseMuon() and mu.miniPFIsolation().chargedHadronIso() < 0.4*mu.pt()
         fastSkim.eleCut = lambda ele : ele.pt() > 5 and ele.miniPFIsolation().chargedHadronIso() < 0.4*ele.pt()
@@ -665,7 +674,7 @@ if not getHeppyOption("keepLHEweights",False):
 
 ## Auto-AAA
 if not getHeppyOption("isCrab"):
-    autoAAA(selectedComponents)
+    autoAAA(selectedComponents, quiet=getHeppyOption("quietAAA",False))
 
 ## output histogram
 outputService=[]
@@ -688,6 +697,7 @@ if selectComponents:
 
 # print summary of components to process
 printSummary(selectedComponents)
+if getHeppyOption("justSummary"): sys.exit(0)
 
 # the following is declared in case this cfg is used in input to the heppy.py script
 from PhysicsTools.HeppyCore.framework.eventsfwlite import Events

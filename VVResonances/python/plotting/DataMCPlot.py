@@ -280,6 +280,32 @@ class DataMCPlot(object):
         if TPad.Pad():
             TPad.Pad().Update()
 
+    def DrawDataMinusMCOverData(self, ymin=-0.5, ymax=0.5):
+        stackedHists = []
+        dataHist = None
+        for hist in self._SortedHistograms():
+            if hist.stack is False:
+                dataHist = hist
+                continue
+            stackedHists.append( hist )
+        self._BuildStack( stackedHists, ytitle='Data/MC')
+        mcHist = copy.deepcopy(self.stack.totalHist)
+        self.dataOverMCHist = copy.deepcopy(dataHist)
+        # mcHist.Scale(self.dataOverMCHist.Integral()/mcHist.Integral())
+        self.dataOverMCHist.Add(mcHist, -1)
+        self.dataOverMCHist.Divide( dataHist )
+        self.dataOverMCHist.Draw()
+        yaxis = self.dataOverMCHist.GetYaxis()
+        yaxis.SetRangeUser(ymin, ymax)
+        yaxis.SetTitle('(data-MC)/data')
+        yaxis.SetNdivisions(5)
+        fraclines= 0.2
+        if ymax <= 0.2 or ymin>=-0.2:
+            fraclines = 0.1
+        self.DrawRatioLines(self.dataOverMCHist, fraclines, 0.)
+        if TPad.Pad():
+            TPad.Pad().Update()
+
     def DrawRatioStack(self, opt='',
                        xmin=None, xmax=None, ymin=None, ymax=None):
         '''Draw ratios.
@@ -361,10 +387,11 @@ class DataMCPlot(object):
         xmin = hist.obj.GetXaxis().GetXmin()
         xmax = hist.obj.GetXaxis().GetXmax()
         line = TLine()
-        line.DrawLine(xmin, y0, xmax, y0)
         line.SetLineStyle(2)
-        line.DrawLine(xmin, y0+frac, xmax, y0+frac)
-        line.DrawLine(xmin, y0-frac, xmax, y0-frac)
+        line.DrawLine(xmin, y0, xmax, y0)
+        # line.SetLineStyle(2)
+        # line.DrawLine(xmin, y0+frac, xmax, y0+frac)
+        # line.DrawLine(xmin, y0-frac, xmax, y0-frac)
 
     def GetStack(self):
         '''Returns stack; builds stack if not there yet'''

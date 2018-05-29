@@ -14,7 +14,13 @@ class LeptonIDOverloader( Analyzer ):
 
 
     def heepID(self,lepton):
-        return self.heepIDNoIso(lepton) and self.heepIDCalculator.iso(lepton.physObj,lepton.rho,self.handles['electrons'].product(),self.handles['lostTracks'].product(),self.handles['packed'].product())
+        passId = self.heepIDNoIso(lepton)
+        if not passId:
+            return passId
+        passIso = False
+        if (self.handles['electrons'].isValid() and self.handles['lostTracks'].isValid() and self.handles['packed'].isValid()):
+            passIso = self.heepIDCalculator.iso(lepton.physObj, lepton.rho, self.handles['electrons'].product(), self.handles['lostTracks'].product(), self.handles['packed'].product())
+        return (passId and passIso)
 
     def declareHandles(self):
         super(LeptonIDOverloader, self).declareHandles()
