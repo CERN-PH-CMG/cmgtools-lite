@@ -670,6 +670,8 @@ class MCAnalysis:
             if k2 != to and re.match(patt,k2): k2 = to
             if k2 not in mergemap: mergemap[k2]=[]
             mergemap[k2].append(v)
+        for k3 in mergemap:
+            mergemap[k3].sort(lambda x: x!=k3)
         return dict([ (k,mergePlots(pspec.name+"_"+k,v)) for k,v in mergemap.iteritems() ])
     def stylePlot(self,process,plot,pspec,mayBeMissing=False):
         if process in self._allData:
