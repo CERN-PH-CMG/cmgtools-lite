@@ -6,4 +6,5 @@ eleKin : ptElFull(LepGood1_calPt,LepGood1_eta) > 30 && ptElFull(LepGood1_calPt,L
 HLTid : LepGood1_hltId > 0
 numSel : LepGood1_customId == 1
 tightCharge : LepGood1_tightChargeFix == 2
+json : isGoodRunLS(isData,run,lumi)
 mt: mt_2(met_pt,met_phi,ptElFull(LepGood1_calPt,LepGood1_eta),LepGood1_phi) > 40
