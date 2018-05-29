@@ -358,3 +358,30 @@ float ttH_2lss_ifflavnb(int LepGood1_pdgId, int LepGood2_pdgId, int nBJetMedium2
   std::abort();
 }
 
+
+std::vector<int> boundaries_runPeriod2017 = {297020,299337,302030,303435,304911};
+std::vector<double> lumis_runPeriod2017 = {4.802,9.629,4.235,9.268,13.433};
+bool cumul_lumis_runPeriod2017_isInit = false;
+std::vector<float> cumul_lumis_runPeriod2017;
+
+int runPeriod2017(int run){
+    auto period = std::find_if(boundaries_runPeriod2017.begin(),boundaries_runPeriod2017.end(),[run](const int &y){return y>run;});
+    return std::distance(boundaries_runPeriod2017.begin(),period)-1;
+}
+
+TRandom3 rand_generator_RunDependentMC2017(0);
+int hashBasedRunPeriod2017(int isData, int run, int lumi, int event){
+  if (isData) return runPeriod2017(run);
+  if (!cumul_lumis_runPeriod2017_isInit){
+    cumul_lumis_runPeriod2017.push_back(0);
+    float tot_lumi = std::accumulate(lumis_runPeriod2017.begin(),lumis_runPeriod2017.end(),float(0.0));
+    for (uint i=0; i<lumis_runPeriod2017.size(); i++) cumul_lumis_runPeriod2017.push_back(cumul_lumis_runPeriod2017.back()+lumis_runPeriod2017[i]/tot_lumi);
+    cumul_lumis_runPeriod2017_isInit = true;
+  }
+  Int_t x = 161248*run+2136324*lumi+12781432*event;
+  unsigned int hash = TString::Hash(&x,sizeof(Int_t));
+  rand_generator_RunDependentMC2017.SetSeed(hash);
+  float val = rand_generator_RunDependentMC2017.Uniform();
+  auto period = std::find_if(cumul_lumis_runPeriod2017.begin(),cumul_lumis_runPeriod2017.end(),[val](const float &y){return y>val;});
+  return std::distance(cumul_lumis_runPeriod2017.begin(),period)-1;
+}
