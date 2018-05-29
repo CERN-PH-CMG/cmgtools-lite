@@ -21,8 +21,8 @@ combineOptions=" --algo grid  --points ${rpoints} --setParameterRanges \"r=0.9,1
 #combineOptions="${combineOptions} --keepFailures "
 #--freezeNuisanceGroups pdfs,scales,alphaS,wpt,frshape
 
-#echo "${selectedbins[@]}"
 #selectedbins=(20 35 50 65 80 95 125 140 155 170 185 200 215 230 245 260 275 290 305 320 335 350 365 380 395 410 425 440 510 520)
+#echo "${selectedbins[@]}"
 #charges=("plus" "minus")
 charges=("plus")
 
