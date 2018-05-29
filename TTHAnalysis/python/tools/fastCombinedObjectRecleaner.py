@@ -13,7 +13,7 @@ class fastCombinedObjectRecleaner:
         self.vars_leptons = ["pdgId"]
         self.vars_taus = ["mvaId2017"]
         self.vars_taus_int = ["idMVAdR03"]
-        self.vars_jets = ["btagCSV","btagDeepCSV","qgl","ctagCsvL","ptd","axis1","corr","corr_JECUp","corr_JECDown"]
+        self.vars_jets = ["btagCSV","btagDeepCSV","qgl","btagDeepCSVCvsL","btagDeepCSVCvsB","ptd","axis1","corr","corr_JECUp","corr_JECDown"]
         self.vars_jets_int = ["mult"]+(["hadronFlavour"] if isMC else [])
         self.vars_jets_nooutput = []
         self.jc = jetCollection
