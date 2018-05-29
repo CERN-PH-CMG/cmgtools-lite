@@ -10,18 +10,20 @@ dowhat = "plots"
 #dowhat = "yields" 
 #dowhat = "ntuple" # syntax: python ttH-multilepton/ttH_plots.py no 2lss_SR_extr outfile_{cname}.root --sP var1,var2,...
 
+P0="/afs/cern.ch/work/p/peruzzi/tthtrees"
+if 'cmsco01'   in os.environ['HOSTNAME']: P0="/data/peruzzi"
+if 'cmsphys10' in os.environ['HOSTNAME']: P0="/data1/g/gpetrucc"
 TREES = "--Fs {P}/1_recleaner_180518_v2 --Fs {P}/5_triggerDecision_230418_v1 --Fs {P}/7_tauTightSel_v2 --FMCs {P}/8_vtxWeight2017_v1 --FMCs {P}/6_bTagSF_v2"
-TREESONLYSKIM = "-P /data/peruzzi/TREES_TTH_190418_Fall17_skim2lss3l --Fs {P}/2_eventVars_230418_v2 --Fs {P}/3_kinMVA_nov8_noMEM_230418_v2 --Fs {P}/10_BDT_rTT_v1_v2"
-TREESONLYFULL = "-P /data/peruzzi/TREES_TTH_190418_Fall17"
+#TREESONLYSKIM = "-P /data/peruzzi/TREES_TTH_190418_Fall17_skim2lss3l --Fs {P}/2_eventVars_230418_v2 --Fs {P}/3_kinMVA_nov8_noMEM_230418_v2 --Fs {P}/10_BDT_rTT_v1_v2"
+TREESONLYSKIM = "-P "+P0+"/TREES_TTH_190418_Fall17_skim2lss3l --Fs {P}/2_eventVars_230418_v2 --Fs {P}/3_kinMVA_nov8_noMEM_230418_v2 "
+TREESONLYFULL = "-P "+P0+"/TREES_TTH_190418_Fall17"
 
 def base(selection):
 
     CORE=' '.join([TREES,TREESONLYSKIM])
-    if 'cmsco01' not in os.environ['HOSTNAME'] and 'cmsphys10' not in os.environ['HOSTNAME']: 
-        CORE = CORE.replace('/data1/peruzzi','/afs/cern.ch/work/p/peruzzi/tthtrees')
-
     CORE+=" -f -j 8 -l 41.4 --s2v -L ttH-multilepton/functionsTTH.cc --tree treeProducerSusyMultilepton --mcc ttH-multilepton/lepchoice-ttH-FO.txt --split-factor=-1 --WA prescaleFromSkim "# --neg"
-    CORE+=' '.join(["--plotgroup data_fakes%s+='.*_promptsub%s'"%(x,x) for x in ['','_FRe_norm_Up','_FRe_norm_Dn','_FRe_pt_Up','_FRe_pt_Dn','_FRe_be_Up','_FRe_be_Dn','_FRm_norm_Up','_FRm_norm_Dn','_FRm_pt_Up','_FRm_pt_Dn','_FRm_be_Up','_FRm_be_Dn']])+" --neglist '.*_promptsub.*' "
+    if "data" in selection:
+        CORE+=' '.join(["--plotgroup data_fakes%s+='.*_promptsub%s'"%(x,x) for x in ['','_FRe_norm_Up','_FRe_norm_Dn','_FRe_pt_Up','_FRe_pt_Dn','_FRe_be_Up','_FRe_be_Dn','_FRm_norm_Up','_FRm_norm_Dn','_FRm_pt_Up','_FRm_pt_Dn','_FRm_be_Up','_FRm_be_Dn']])+" --neglist '.*_promptsub.*' "
     RATIO= " --maxRatioRange 0.0  1.99 --ratioYNDiv 505 "
     RATIO2=" --showRatio --attachRatioPanel --fixRatioRange "
     LEGEND=" --legendColumns 2 --legendWidth 0.25 "
@@ -33,7 +35,7 @@ def base(selection):
         GO="%s ttH-multilepton/mca-2lss-mc.txt ttH-multilepton/2lss_tight.txt "%CORE
         GO="%s -W 'vtxWeight2017*eventBTagSF*leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[0]],LepGood_pt[iLepFO_Recl[0]],LepGood_eta[iLepFO_Recl[0]],2)*leptonSF_ttH(LepGood_pdgId[iLepFO_Recl[1]],LepGood_pt[iLepFO_Recl[1]],LepGood_eta[iLepFO_Recl[1]],2)'"%GO#*triggerSF_ttH(LepGood_pdgId[iLepFO_Recl[0]],LepGood_pdgId[iLepFO_Recl[1]],2)'"%GO
         if dowhat in ["plots","ntuple"]: GO+=" ttH-multilepton/2lss_3l_plots.txt --xP '^lep(3|4)_.*' --xP '^(3|4)lep_.*' --xP 'kinMVA_3l_.*' "
-        if dowhat == "plots": GO=GO.replace(LEGEND, " --legendColumns 3 --legendWidth 0.46 ")
+        if dowhat == "plots": GO=GO.replace(LEGEND, " --legendColumns 3 --legendWidth 0.52 ")
         if dowhat == "plots": GO=GO.replace(RATIO,  " --maxRatioRange 0.6  1.99 --ratioYNDiv 210 ")
         GO += " --binname 2lss "
     elif selection=='3l':
@@ -119,18 +121,30 @@ if __name__ == '__main__':
             
         if '_closuretest' in torun:
             x = x.replace('mca-2lss-mc.txt','mca-2lss-mc-closuretest.txt')
-            #x = x.replace("--maxRatioRange 0 2","--maxRatioRange 0.5 1.5")
-            x = add(x,"--AP --plotmode nostack --sP 2lep_catIndex_nosign --sP kinMVA_2lss_ttbar_withBDTv8 --sP kinMVA_2lss_ttV_withHj")
-            x = add(x,"-p incl_FR_QCD_elonly -p incl_FR_QCD_muonly -p TT_FR_QCD -p TT_FR_TT -p TT_fake --ratioDen TT_FR_QCD --ratioNums TT_fake --errors ")
+            x = x.replace("--maxRatioRange 0.6  1.99 --ratioYNDiv 210", "--maxRatioRange 0.0 1.99 --fixRatioRange ")
+            x = x.replace("--legendColumns 3", "--legendColumns 2")
+            x = add(x,"--AP --plotmode nostack --sP 2lep_catIndex_nosign --sP 2lep_catIndex --sP kinMVA_2lss_ttbar --sP kinMVA_2lss_ttV --sP nBJetMedium25 --sP 2lep_nJet25_from4")
+            x = add(x,"-p TT_FR_QCD -p TT_FR_TT -p TT_fake --ratioDen TT_FR_QCD --ratioNums TT_fake,TT_FR_TT --errors ")
             if '_closuretest_norm' in torun:
                 x = x.replace("--plotmode nostack","--plotmode norm")
+                x = x.replace("--ratioNums TT_fake,TT_FR_TT","--ratioNums TT_fake")
                 x = add(x,"--fitRatio 1")
+                if '_unc' in torun:
+                    x = add(x,"--su CMS_ttHl16_Clos_[em]_norm")
+            else:
+                if '_uncfull' in torun:
+                    x = add(x,"--su 'CMS_ttHl16_FR.*' ")
+                elif '_unc' in torun:
+                    x = add(x,"--su 'CMS_ttHl16_Clos_[em].*_norm' ")
             if '_mufake' in torun: x = add(x,"-A alwaystrue mufake '(abs(LepGood1_pdgId)==13 && LepGood1_mcMatchId==0) || (abs(LepGood2_pdgId)==13 && LepGood2_mcMatchId==0)'")
             if '_elfake' in torun: x = add(x,"-A alwaystrue elfake '(abs(LepGood1_pdgId)==11 && LepGood1_mcMatchId==0) || (abs(LepGood2_pdgId)==11 && LepGood2_mcMatchId==0)'")
             if '_bloose' in torun: x = add(x,'-E ^BLoose ')
             if '_btight' in torun: x = add(x,'-E ^BTight ')
             if '_nobcut' in torun: x = add(x,'-X ^2b1B ')
-            if '_notrigger' in torun: x = add(x,'-X ^trigger ')
+            if '_notrigger' in torun: x = add(x,'-X ^trigger ' )
+
+        if '_unc' in torun:
+            x = add(x,"--unc ttH-multilepton/systsUnc.txt")
 
         if '_varsFR' in torun:
             x = x.replace('mca-2lss-mc.txt','mca-2lss-data-frdata-vars.txt')
@@ -155,6 +169,13 @@ if __name__ == '__main__':
         if '_flav' in torun:
             for flav in ['mm','ee','em']: 
                 runIt(add(x,'-E ^%s'%flav).replace("--binname 2lss","--binname 2lss_"+flav),'%s/%s'%(torun,flav))
+        if '_catnosign' in torun:
+            for flav in ['mm','ee','em']: 
+                runIt(add(x,'-E ^%s'%flav).replace("--binname 2lss","--binname 2lss_"+flav),'%s/%s'%(torun,flav))
+            for flav in ['mm_bt','mm_bl','em_bt','em_bl']: 
+                runIt(add(x,'-E ^%s -E ^B%s'%(flav[:2], ("Tight" if "bt" in flav else "Loose"))).replace("--binname 2lss","--binname 2lss_"+flav),'%s/%s'%(torun,flav))
+            for flav in ['btight','bloose']: 
+                runIt(add(x,' -E ^B%s'%("Tight" if "bt" in flav else "Loose")),'%s/%s'%(torun,flav))
         if '_cats' in torun:
             for cat in ['b2lss_ee_neg','b2lss_ee_pos',\
                             'b2lss_em_bl_neg','b2lss_em_bl_pos','b2lss_em_bt_neg','b2lss_em_bt_pos',\
@@ -186,17 +207,30 @@ if __name__ == '__main__':
         if '_closuretest' in torun:
             x = x.replace('mca-3l-mc.txt','mca-3l-mc-closuretest.txt')
             #x = x.replace("--maxRatioRange 0 3","--maxRatioRange 0.5 1.5")
-            x = add(x,"--AP --plotmode nostack --sP kinMVA_3l_ttbar --sP kinMVA_3l_ttV --sP 3lep_catIndex --sP nLepTight")
-            x = add(x,"-p TT_FR_QCD -p TT_FR_TT -p TT_fake --ratioDen TT_FR_QCD --ratioNums TT_fake --errors ")
+            x = add(x,"--AP --plotmode nostack --sP kinMVA_3l_ttbar --sP kinMVA_3l_ttV --sP --sP 3lep_catIndex --sP nBJetMedium25 --sP 3lep_nJet25 --sP 3lep_n_ele")
+            x = add(x,"-p TT_FR_QCD -p TT_FR_TT -p TT_fake --ratioDen TT_FR_QCD --ratioNums TT_fake,TT_FR_TT --errors ")
+            x = x.replace('--showMCError','')
+            x = x.replace('--legendWidth 0.42','--legendWidth 0.60')
             if '_closuretest_norm' in torun:
                 x = x.replace("--plotmode nostack","--plotmode norm")
+                x = x.replace("--ratioNums TT_fake,TT_FR_TT","--ratioNums TT_fake")
                 x = add(x,"--fitRatio 1")
+                if '_unc' in torun:
+                    x = add(x,"--su CMS_ttHl16_Clos_[em]_norm")
+            else:
+                if '_uncfull' in torun:
+                    x = add(x,"--su 'CMS_ttHl16_FR.*' ")
+                elif '_unc' in torun:
+                    x = add(x,"--su 'CMS_ttHl16_Clos_[em].*_norm' ")
             if '_mufake' in torun: x = add(x,"-A alwaystrue mufake '(abs(LepGood1_pdgId)==13 && LepGood1_mcMatchId==0) || (abs(LepGood2_pdgId)==13 && LepGood2_mcMatchId==0) || (abs(LepGood3_pdgId)==13 && LepGood3_mcMatchId==0)'")
             if '_elfake' in torun: x = add(x,"-A alwaystrue elfake '(abs(LepGood1_pdgId)==11 && LepGood1_mcMatchId==0) || (abs(LepGood2_pdgId)==11 && LepGood2_mcMatchId==0) || (abs(LepGood3_pdgId)==11 && LepGood3_mcMatchId==0)'")
             if '_bloose' in torun: x = add(x,'-E ^BLoose ')
             if '_btight' in torun: x = add(x,'-E ^BTight ')
             if '_nobcut' in torun: x = add(x,'-X ^2b1B ')
             if '_notrigger' in torun: x = add(x,'-X ^trigger ')
+
+        if '_unc' in torun:
+            x = add(x,"--unc ttH-multilepton/systsUnc.txt")
 
         if '_varsFR' in torun:
             torun += "_"+sys.argv[-1]
@@ -212,8 +246,11 @@ if __name__ == '__main__':
         runIt(x,'%s'%torun)
         if '_cats' in torun:
             for cat in ['b3l_bl_neg','b3l_bl_pos','b3l_bt_neg','b3l_bt_pos']:
-                runIt(add(x,'-E ^%s'%cat),'%s/%s'%(torun,cat))
                 runIt(add(x,'-E ^%s'%cat).replace("--binname 3l","--binname %s" % cat[1:-4]),'%s/%s'%(torun,cat))
+        if '_catnosign' in torun:
+            for flav in ['btight','bloose']: 
+                runIt(add(x,' -E ^B%s'%("Tight" if "bt" in flav else "Loose")).replace("--binname 3l","--binname 3l_%s" % flav[:2]),'%s/%s'%(torun,flav))
+
 
     if '4l_' in torun:
         x = base('4l')
@@ -231,6 +268,9 @@ if __name__ == '__main__':
             if not '_data' in torun: raise RuntimeError
             x = x.replace('mca-2lss-mcdata.txt','mca-2lss-mcdata-frdata.txt')
         x = add(x,"-R ^4j 3j 'nJet25==3'")
+        if '_unc' in torun:
+            x = add(x,"--unc ttH-multilepton/systsUnc.txt")
+
         plots = ['2lep_.*','nJet25','nBJetLoose25','nBJetMedium25','met','metLD','htJet25j','mhtJet25','mtWmin','htllv','kinMVA_2lss_ttbar.*','kinMVA_2lss_ttV.*','kinMVA_2lss_bins7','kinMVA_input.*','era']
         runIt(x,'%s'%torun,plots)
         if '_flav' in torun:

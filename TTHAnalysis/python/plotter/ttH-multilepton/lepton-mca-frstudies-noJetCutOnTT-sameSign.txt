@@ -10,4 +10,4 @@ change: HLT_BIT_HLT_Ele12_CaloIdM_TrackIdM_PFJet30_v : 1
 change: HLT_FR_Mu8 : 1
 change: HLT_FR_Mu17 : 1
 change: PV_ndof : 200
-weight: nLepGood >= 2 && LepGood_charge[0]*LepGood_charge[1] > 0 && LepGood_tightCharge[0] >= if3(abs(LepGood_pdgId[0])==13,1,2) &&  LepGood_tightCharge[1] >= if3(abs(LepGood_pdgId[1])==13,1,2) 
+weight: nLepGood == 2 && LepGood_charge[0]*LepGood_charge[1] > 0 && LepGood_tightCharge[0] >= if3(abs(LepGood_pdgId[0])==13,1,2) &&  LepGood_tightCharge[1] >= if3(abs(LepGood_pdgId[1])==13,1,2) 

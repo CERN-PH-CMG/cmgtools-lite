@@ -105,7 +105,7 @@ EWK : TBar_tWch_noFullyHad  : xsec : LepGood_mcMatchId != 0 ; Label="Prompt", Fi
 #data : SingleElectron_2017E ; FillColor=ROOT.kBlack, Label="Data"
 data : DoubleMuon_2017C+DoubleMuon_2017D+DoubleMuon_2017E+DoubleMuon_2017F ; FillColor=ROOT.kBlack, Label="Data"
 data : SingleElectron_2017B+SingleElectron_2017C+SingleElectron_2017D+SingleElectron_2017E+SingleElectron_2017F ; FillColor=ROOT.kBlack, Label="Data"
-data : SingleMuon_2017B_part1+SingleMuon_2017B_part2+SingleMuon_2017C+SingleMuon_2017D+SingleMuon_2017E+SingleMuon_2017F; FillColor=ROOT.kBlack, Label="Data"
+data : SingleMuon_2017B+SingleMuon_2017C+SingleMuon_2017D+SingleMuon_2017E+SingleMuon_2017F; FillColor=ROOT.kBlack, Label="Data"
 
 ## Options only
 QCDMu_red_prefit : - ; FillColor=ROOT.kPink-2, Label="QCD MC"
