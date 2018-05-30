@@ -291,15 +291,21 @@ float leptonSF_ttH(int pdgid, float pt, float eta, int nlep, float var=0){
 //TH2Poly* t2poly_triggerSF_ttH_em = NULL;
 //TH2Poly* t2poly_triggerSF_ttH_3l = NULL;
 
-float triggerSF_ttH(int pdgid1, int pdgid2, int nlep){
-  
-  if (nlep>=3) return 1;
-  
-  int comb = abs(pdgid1)+abs(pdgid2);
-  if (comb==22) return 1.01; // ee
-  else if (comb==24) return 1.01; // em
-  else if (comb==26) return 1; // mm
+float triggerSF_ttH(int pdgid1, float pt1, int pdgid2, float pt2, int nlep, float shift = 0){
 
+  if (nlep>=3) return 1.0+shift*0.05;
+
+  int comb = abs(pdgid1)+abs(pdgid2);
+
+  if (comb==22) return (pt1<30) ? (0.937+shift*0.027) : (0.991+shift*0.002); // ee
+  else if (comb==24) { // em
+    if (pt1<35) return 0.952+shift*0.008;
+    else if (pt1<50) return 0.983+shift*0.003;
+    else return 1.0+shift*0.001;
+  }
+  else if (comb==26) return (pt1<35) ? (0.972+shift*0.006) : (0.994+shift*0.001); // mm
+
+  std::cout << "ERROR: triggerSF_ttH called with wrong input, returning 1" << std::endl;
   return 1;
 
 }
