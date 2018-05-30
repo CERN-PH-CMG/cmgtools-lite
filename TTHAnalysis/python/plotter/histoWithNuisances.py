@@ -399,6 +399,27 @@ class HistoWithNuisances:
             print "WARNING: addBinByBinn on an object that already has roofit/postfit info"
             self._rooFit  = None
             self._postFit = None
+    def isShapeVariation(self,name,tolerance=1e-5):
+        """return true if the specified variation alters the shape of the histogram.
+           this is tested by checking if the ratio between non-empty bins of the 
+           nominal and varied histogram are identical within the tolerance"""
+        h0 = self.central
+        for h in self.variations[name]:
+            ratio = None 
+            for b in xrange(1,h0.GetNbinsX()+1):
+                y0 = h0.GetBinContent(b)
+                y  =  h.GetBinContent(b)
+                if (y0 == 0):
+                    if (y != 0): return True
+                elif y == 0: 
+                    return True
+                else:
+                    if ratio is None:
+                        ratio = y/y0
+                    else:
+                        if abs(y/y0 - ratio) > tolerance: 
+                            return True
+        return False
     def rooFitPdfAndNorm(self,roofitContext=None):
         if self._rooFit:
             if roofitContext != None and self._rooFit['context'] != roofitContext:
@@ -691,8 +712,16 @@ def mergePlots(name,plots):
         if any(p for p in plots[1:] if not one._canAdd(p)):
             return SumWithNuisances(name,plots)
     one = one.Clone(name)
-    for p in plots[1:]:
-        one+=p
+    if isinstance(one, HistoWithNuisances):
+        for p in plots[1:]: one+=p
+    elif isinstance(one, ROOT.TH1):
+        for p in plots[1:]: one.Add(p)
+    elif isinstance(one, ROOT.TGraph):
+        others = ROOT.TList()
+        for p in plots[1:]: others.Add(p)
+        one.Merge(others)
+    else: # try blindly and hope it works
+        for p in plots[1:]: one+=p
     return one
 
 def listAllNuisances(histWithNuisanceMap):
