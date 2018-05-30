@@ -15,6 +15,7 @@ idEmuCut: LepGood_idEmu3
 #cvslDen:  LepGood_mvaTTH > 0.75 || (abs(LepGood_pdgId)==13 && LepGood_jetBTagCSV < 0.5426) || (abs(LepGood_pdgId)==11 && (LepGood_mvaIdSpring16GP > -0.5 || abs(LepGood_eta)<1.479))
 dcvsvlDen:  LepGood_mvaTTH > 0.90 ||  ( LepGood_jetBTagDeepCSV < 0.07 && (abs(LepGood_pdgId)==13 && LepGood_segmentCompatibility > 0.3 || abs(LepGood_pdgId)==11 && LepGood_mvaIdFall17noIso > +0.5)) 
 num : LepGood_mediumMuonId > 0 && LepGood_mvaTTH > 0.90 ; Disable=True
+wSel : mt_2(met_pt,met_phi,LepGood_pt,LepGood_phi) > 50; Disable=True
 pt10 : LepGood_pt > 10; Disable=True
 conePt10 : LepGood_pt*if3(LepGood_mvaTTH>0.90&&LepGood_mediumMuonId>0, 1.0, 0.90/LepGood_jetPtRatiov2) > 10; Disable=True
 mva075_conePt10 : LepGood_pt*if3(LepGood_mvaTTH>0.75&&LepGood_mediumMuonId>0, 1.0, 0.90/LepGood_jetPtRatiov2) > 10; Disable=True

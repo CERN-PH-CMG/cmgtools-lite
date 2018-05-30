@@ -48,6 +48,9 @@ dPhi : abs(deltaPhi(LepGood_phi, LepGood_awayJet_phi)) : 30,0,3.14 ; XTitle="#De
 dEta : abs(LepGood_eta-LepGood_awayJet_eta) : 30,0,5; XTitle="#Delta#eta(lep\, away jet)"
 
 met : met_pt : 30,0,140; XTitle="E_{T}^{miss} (GeV)", Logy, YMin=0.9, MoreY=100
+met_1 : met_pt : 30,0,140; XTitle="E_{T}^{miss} (GeV)"
 nvtx : nVert: 60,-0.5,59.5; XTitle="N(vtx)"
 mtW1 : mt_2(met_pt,met_phi,LepGood_pt,LepGood_phi) : 40,0,160; XTitle="M_{T}(l\, E_{T}^{miss}) (GeV)", Logy, YMin=0.9, MoreY=100
+mtW1_1 : mt_2(met_pt,met_phi,LepGood_pt,LepGood_phi) : 40,0,160; XTitle="M_{T}(l\, E_{T}^{miss}) (GeV)" 
 mtW1R : mt_2(met_pt,met_phi,35,LepGood_phi) : 40,0,160; XTitle="M_{T}^{fix}(l\, E_{T}^{miss}) (GeV)", Logy, YMin=0.9, MoreY=100
+ptW : pt_2(met_pt,met_phi,LepGood_pt,LepGood_phi) : 40,0,160; XTitle="p_{T}(l\, E_{T}^{miss}) (GeV)", Logy, YMin=0.9, MoreY=100
