@@ -150,9 +150,9 @@ class MCAnalysis:
             if self.variationsFile:
                 for var in self.variationsFile.uncertainty():
                     if var.procmatch().match(pname) and var.binmatch().match(options.binname): 
-                        if var.name in variations:
-                            print "Variation %s overriden for process %s, new process pattern %r, bin %r (old had %r, %r)" % (
-                                    var.name, pname, var.procpattern(), var.binpattern(), variations[var.name].procpattern(), variations[var.name].binpattern())
+                        #if var.name in variations:
+                        #    print "Variation %s overriden for process %s, new process pattern %r, bin %r (old had %r, %r)" % (
+                        #            var.name, pname, var.procpattern(), var.binpattern(), variations[var.name].procpattern(), variations[var.name].binpattern())
                         variations[var.name] = var
                 if 'NormSystematic' in extra:
                     del extra['NormSystematic']
@@ -313,6 +313,11 @@ class MCAnalysis:
         elif process in self._optionsOnlyProcesses:
             self._optionsOnlyProcesses[process][name] = value
         else: raise RuntimeError, "Can't set option %s for undefined process %s" % (name,process)
+    def getProcessNuisances(self,process):
+        ret = set()
+        for tty in self._allData[process]: 
+            ret.update([v.name for v in tty.getVariations()])
+        return ret
     def getScales(self,process):
         return [ tty.getScaleFactor() for tty in self._allData[process] ] 
     def setScales(self,process,scales):
@@ -672,7 +677,7 @@ class MCAnalysis:
             if k2 not in mergemap: mergemap[k2]=[]
             mergemap[k2].append(v)
         for k3 in mergemap:
-            mergemap[k3].sort(lambda x: x!=k3)
+            mergemap[k3].sort(key=lambda x: x!=k3)
         return dict([ (k,mergePlots(pspec.name+"_"+k,v)) for k,v in mergemap.iteritems() ])
     def stylePlot(self,process,plot,pspec,mayBeMissing=False):
         if process in self._allData:

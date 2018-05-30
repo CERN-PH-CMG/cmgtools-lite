@@ -339,6 +339,8 @@ class HistoWithNuisances:
         return self.central
     def getVariation(self,alternate):
         return self.variations[alternate]
+    def hasVariation(self,alternate):
+        return (alternate in self.variations)
     def hasVariations(self):
         return bool(self.variations) 
     def getVariationList(self):
@@ -492,19 +494,33 @@ class HistoWithNuisances:
             scaledCopy = other.Clone("tmp")
             scaledCopy.Scale(scaleFactor)
             self += scaledCopy
-    def writeToFile(self,tfile,writeVariations=True):
+    def writeToFile(self,tfile,writeVariations=True,takeOwnership=True):
         tfile.WriteTObject(self.nominal, self.nominal.GetName())
         for key,vals in self.variations.iteritems():
             tfile.WriteTObject(vals[0], self.GetName()+"_"+key+"Up")
             tfile.WriteTObject(vals[1], self.GetName()+"_"+key+"Down")
         if self.central != self.nominal:
             tfile.WriteTObject(self.central, self.central.GetName())
-        if self.nominal.InheritsFrom("TH1"): 
-            self.nominal.SetDirectory(tfile) 
-            for vals in self.variations.itervalues():
-                for v in vals: v.SetDirectory(tfile) 
-            if self.central != self.nominal:
-                self.central.SetDirectory(tfile) 
+        if takeOwnership:
+            if self.nominal.InheritsFrom("TH1"): 
+                self.nominal.SetDirectory(tfile) 
+                for vals in self.variations.itervalues():
+                    for v in vals: v.SetDirectory(tfile) 
+                if self.central != self.nominal:
+                    self.central.SetDirectory(tfile) 
+
+def readHistoWithNuisances(tfile, name, variations, mayBeMissing=False):
+    central = tfile.Get(name)
+    if not central: 
+        if mayBeMissing: return None
+        raise RuntimeError("Missing %s in %s" % (name, tfile.GetName()))
+    ret = HistoWithNuisances(central)
+    for var in variations:
+        for sign in ("Up", "Down"):
+            hvar = tfile.Get(name+"_"+var+sign)
+            if not hvar: raise RuntimeError("Missing %s in %s" % (name+"_"+var+sign, tfile.GetName()))
+            ret.addVariation(var, sign.lower(), hvar)
+    return ret
 
 class SumWithNuisances(HistoWithNuisances):
     def __init__(self,name,histos):
