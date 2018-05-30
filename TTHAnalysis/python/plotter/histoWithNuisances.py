@@ -8,6 +8,21 @@ def _cloneNoDir(hist,name=''):
     ret.SetDirectory(None)
     return ret
 
+def cropNegativeBins(histo):
+            if "TH1" in histo.ClassName():
+                for b in xrange(0,histo.GetNbinsX()+2):
+                    if histo.GetBinContent(b) < 0: histo.SetBinContent(b, 0.0)
+            elif "TH2" in histo.ClassName():
+                for bx in xrange(0,histo.GetNbinsX()+2):
+                    for by in xrange(0,histo.GetNbinsY()+2):
+                        if histo.GetBinContent(bx,by) < 0: histo.SetBinContent(bx,by, 0.0)
+            elif "TH3" in histo.ClassName():
+                for bx in xrange(0,histo.GetNbinsX()+2):
+                    for by in xrange(0,histo.GetNbinsY()+2):
+                        for bz in xrange(0,histo.GetNbinsZ()+2):
+                            if histo.GetBinContent(bx,by,bz) < 0: histo.SetBinContent(bx,by,bz, 0.0)
+
+
 class RooFitContext:
     def __init__(self,workspace):
         self.workspace = workspace
@@ -334,7 +349,12 @@ class HistoWithNuisances:
             ret.SetPoint(i, x, y)
             ret.SetPointError(i, EXlow,EXhigh,EYlow,EYhigh)
         return ret
-
+    def cropNegativeBins(self, allVariations=True):
+        cropNegativeBins(self.nominal)
+        if allVariations:
+            cropNegativeBins(self.central)
+            for hs in self.variations.itervalues():
+                for h in hs: cropNegativeBins(h)
     def getCentral(self):
         return self.central
     def getVariation(self,alternate):
