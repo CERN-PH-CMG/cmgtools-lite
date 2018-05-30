@@ -12,9 +12,12 @@
 #include "TStopwatch.h"
 #include <algorithm>
 
+#include "HadTopKinFit.cc" // providing the HadTopKinFit class
+
 enum BDT_EventReco_algoType {
   k_BDTv8_Hj = 0,
   k_rTT_Hj = 1,
+  k_httTT_Hj = 2,
 };
 
 typedef math::PtEtaPhiMLorentzVectorD ptvec;
@@ -83,6 +86,8 @@ public:
   int j3idx = -99;
   bool hasScore_rTT = false;
   float score_rTT = -99;
+  bool hasScore_httTT = false;
+  float score_httTT = -99;
 };
 
 typedef BDT_EventReco_Top eTop;
@@ -152,9 +157,7 @@ class BDT_EventReco_EventP4Cache {
 
 class BDT_EventReco {
  public: 
-  BDT_EventReco(std::string weight_file_name_bloose, std::string weight_file_name_btight, std::string weight_file_name_Hj, std::string weight_file_name_Hjj, std::string weight_file_name_rTT, BDT_EventReco_algoType _algo, float csv_looseWP, float csv_mediumWP){
-    Init(weight_file_name_bloose,weight_file_name_btight,weight_file_name_Hj,weight_file_name_Hjj,weight_file_name_rTT,_algo,csv_looseWP, csv_mediumWP);
-  };
+  BDT_EventReco(std::string weight_file_name_bloose, std::string weight_file_name_btight, std::string weight_file_name_Hj, std::string weight_file_name_Hjj, std::string weight_file_name_rTT, std::string weight_file_name_httTT, std::string kinfit_file_name_httTT, BDT_EventReco_algoType _algo, float csv_looseWP, float csv_mediumWP);
   ~BDT_EventReco(){
     clear();
   };
@@ -166,12 +169,13 @@ class BDT_EventReco {
     leps.push_back(std::make_shared<eObj>(pt,eta,phi,mass));
   };
   void clear();
-  void Init(std::string weight_file_name_bloose, std::string weight_file_name_btight, std::string weight_file_name_Hj, std::string weight_file_name_Hjj, std::string weight_file_name_rTT, BDT_EventReco_algoType _algo, float csv_looseWP, float csv_mediumWP);
   std::vector<float> EvalMVA();
   std::vector<float> CalcHadTopTagger(char* _permlep, char* _x);
   std::vector<float> CalcHjTagger(char* _permlep, char* _x, std::vector<int> &permjet);
   std::vector<float> CalcrTT(char* _x);
   float EvalScore(eTopP top);
+  float EvalScore_httTT(eTopP top);
+  std::tuple<float,float> EvalKinFit(eTopP top);
 
   void setDebug(bool val){debug = val;};
 
@@ -188,6 +192,7 @@ class BDT_EventReco {
   std::shared_ptr<TMVA::Reader> TMVAReader_[2];
   std::shared_ptr<TMVA::Reader> TMVAReader_Hj_, TMVAReader_Hjj_;
   std::shared_ptr<TMVA::Reader> TMVAReader_rTT_ = nullptr;
+  std::shared_ptr<TMVA::Reader> TMVAReader_httTT_ = nullptr;
 
   float bJet_fromLepTop_CSV_var;
   float bJet_fromHadTop_CSV_var;
@@ -248,6 +253,19 @@ class BDT_EventReco {
   float var_b_wcand_deltaR = -99;
   float var_topcand_mass = -99;
 
+  float var_httTT_CSV_b;
+  float var_httTT_qg_Wj2;
+  float var_httTT_pT_bWj1Wj2;
+  float var_httTT_pT_Wj2;
+  float var_httTT_m_Wj1Wj2;
+  float var_httTT_nllKinFit;
+  float var_httTT_pT_b_o_kinFit_pT_b;
+
+  HadTopKinFit *httTT_kinfitWorker = nullptr;
+  TLorentzVector httTT_kinfit_recBJet;
+  TLorentzVector httTT_kinfit_recWJet1;
+  TLorentzVector httTT_kinfit_recWJet2;
+
   int nBMedium;
 
   bool debug = false;
@@ -262,6 +280,7 @@ class BDT_EventReco {
   const uint nOutputVariablesHadTop = 20;
   const uint nOutputVariablesHig = 4;
   const uint nOutputVariablesrTT = 16;
+  const uint nOutputVariableshttTT = 5;
   uint expected_size = 0;
 
   float csv_loose_working_point = -1;
@@ -269,7 +288,7 @@ class BDT_EventReco {
 
 };
 
-void BDT_EventReco::Init(std::string weight_file_name_bloose, std::string weight_file_name_btight, std::string weight_file_name_Hj, std::string weight_file_name_Hjj, std::string weight_file_name_rTT, BDT_EventReco_algoType _algo, float csv_looseWP, float csv_mediumWP){
+BDT_EventReco::BDT_EventReco(std::string weight_file_name_bloose, std::string weight_file_name_btight, std::string weight_file_name_Hj, std::string weight_file_name_Hjj, std::string weight_file_name_rTT, std::string weight_file_name_httTT, std::string kinfit_file_name_httTT, BDT_EventReco_algoType _algo, float csv_looseWP, float csv_mediumWP){
 
   algo = _algo;
   csv_loose_working_point = csv_looseWP;
@@ -356,9 +375,27 @@ void BDT_EventReco::Init(std::string weight_file_name_bloose, std::string weight
 
   }
 
+  if (algo==k_httTT_Hj) {
+
+    TMVAReader_httTT_ = std::make_shared<TMVA::Reader>( "!Color:!Silent" );
+
+    TMVAReader_httTT_->AddVariable("CSV_b",&var_httTT_CSV_b);
+    TMVAReader_httTT_->AddVariable("qg_Wj2",&var_httTT_qg_Wj2);
+    TMVAReader_httTT_->AddVariable("pT_bWj1Wj2",&var_httTT_pT_bWj1Wj2);
+    TMVAReader_httTT_->AddVariable("m_Wj1Wj2",&var_httTT_m_Wj1Wj2);
+    TMVAReader_httTT_->AddVariable("nllKinFit",&var_httTT_nllKinFit);
+    TMVAReader_httTT_->AddVariable("pT_b_o_kinFit_pT_b",&var_httTT_pT_b_o_kinFit_pT_b);
+    TMVAReader_httTT_->AddVariable("pT_Wj2",&var_httTT_pT_Wj2);
+
+    reco::details::loadTMVAWeights(TMVAReader_httTT_.get(),"BDT",weight_file_name_httTT);
+
+    httTT_kinfitWorker = new HadTopKinFit(1,kinfit_file_name_httTT);
+
+  }
+
   clear();
 
-  expected_size = (algo==k_BDTv8_Hj)*nOutputVariablesHadTop+(algo==k_rTT_Hj)*nOutputVariablesrTT+nOutputVariablesHig;
+  expected_size = (algo==k_BDTv8_Hj)*nOutputVariablesHadTop+(algo==k_rTT_Hj)*nOutputVariablesrTT+(algo==k_httTT_Hj)*nOutputVariableshttTT+nOutputVariablesHig;
 
 };
 
@@ -427,6 +464,14 @@ void BDT_EventReco::clear(){
   var_b_wcand_deltaR = -99;
   var_topcand_mass = -99;
 
+  var_httTT_CSV_b = -99;
+  var_httTT_qg_Wj2 = -99;
+  var_httTT_pT_bWj1Wj2 = -99;
+  var_httTT_pT_Wj2 = -99;
+  var_httTT_m_Wj1Wj2 = -99;
+  var_httTT_nllKinFit = -99;
+  var_httTT_pT_b_o_kinFit_pT_b = -99;
+
   nBMedium = 0;
 
   done_perms.clear();
@@ -460,7 +505,7 @@ std::vector<float> BDT_EventReco::EvalMVA(){
     }
 
   }
-  else if (algo==k_rTT_Hj) {
+  else if (algo==k_rTT_Hj || algo==k_httTT_Hj) {
     while (permjet.size()<6) permjet.push_back(-1-(permjet.size()-jets.size()));
     if (jets.size()>8) warn = true;
     if (permjet.size()>max_n_jets-1) { // allow 1 jet less in this case (careful max_n_jets is also used for coding elsewhere!)
@@ -494,6 +539,7 @@ std::vector<float> BDT_EventReco::EvalMVA(){
   std::vector<float> best_permutation_Hj(nOutputVariablesHig,-99);
   std::vector<float> best_permutation_Hjj(nOutputVariablesHig,-99);
   eTopP best_permutation_rTT = nullptr;
+  eTopP best_permutation_httTT = nullptr;
 
   uint n_tested_permutations = 0;
 
@@ -546,6 +592,19 @@ std::vector<float> BDT_EventReco::EvalMVA(){
 	  best_permutation_rTT = topcand;
 	}
       }
+      else if (algo==k_httTT_Hj) {
+
+	if ((int)(_x[0])<0 || (int)(_x[2])<0 || (int)(_x[3])<0) continue;
+
+	n_tested_permutations++;
+
+	auto topcand = cache->getTop(_x[0],_x[2],_x[3]);
+	float score = EvalScore_httTT(topcand);
+	top_tag = score;
+	if (!best_permutation_httTT || (score > best_permutation_httTT->score_httTT)) {
+	  best_permutation_httTT = topcand;
+	}
+      }
 
       if (top_tag>-1){
 	std::vector<float> Hj = CalcHjTagger(_permlep,_x,permjet);
@@ -590,6 +649,17 @@ std::vector<float> BDT_EventReco::EvalMVA(){
       output.at(13) = top->j1idx;
       output.at(14) = top->j2idx;
       output.at(15) = top->j3idx;
+    }
+  }
+  else if (algo==k_httTT_Hj) {
+    output.resize(nOutputVariableshttTT,-99);
+    if (best_permutation_httTT) {
+      auto top = best_permutation_httTT;
+      output.at(0) = top->score_httTT; // mvaValue
+      output.at(1) = top->p4->pt(); // HadTop_pt
+      output.at(2) = top->j1idx;
+      output.at(3) = top->j2idx;
+      output.at(4) = top->j3idx;
     }
   }
   output.push_back(best_permutation_Hj[0]);
@@ -685,6 +755,35 @@ float BDT_EventReco::EvalScore(eTopP top){
   top->score_rTT = score;
   return score;
 
+};
+
+float BDT_EventReco::EvalScore_httTT(eTopP top){
+
+  if (top->hasScore_httTT) return top->score_httTT;
+
+  var_httTT_CSV_b = top->b->deepcsv();
+  var_httTT_qg_Wj2 = top->j3->qgl();
+  var_httTT_pT_bWj1Wj2 = (*(top->b->p4())+*(top->j2->p4())+*(top->j3->p4())).pt();
+  var_httTT_pT_Wj2 = top->j3->pt();
+  var_httTT_m_Wj1Wj2 = (*(top->j2->p4())+*(top->j3->p4())).mass();
+  auto kf = EvalKinFit(top);
+  var_httTT_nllKinFit = std::get<0>(kf);
+  var_httTT_pT_b_o_kinFit_pT_b = std::get<1>(kf);
+
+  float score = TMVAReader_httTT_->EvaluateMVA("BDT");
+
+  top->hasScore_httTT = true;
+  top->score_httTT = score;
+  return score;
+
+};
+
+std::tuple<float,float> BDT_EventReco::EvalKinFit(eTopP top){
+  httTT_kinfit_recBJet.SetPtEtaPhiM(top->b->pt(),top->b->eta(),top->b->phi(),top->b->mass());
+  httTT_kinfit_recWJet1.SetPtEtaPhiM(top->j2->pt(),top->j2->eta(),top->j2->phi(),top->j2->mass());
+  httTT_kinfit_recWJet2.SetPtEtaPhiM(top->j3->pt(),top->j3->eta(),top->j3->phi(),top->j3->mass());
+  httTT_kinfitWorker->fit(httTT_kinfit_recBJet,httTT_kinfit_recWJet1,httTT_kinfit_recWJet2);
+  return std::make_tuple(float(httTT_kinfitWorker->nll()),float(httTT_kinfitWorker->fittedBJet().Pt()));
 };
 
 
