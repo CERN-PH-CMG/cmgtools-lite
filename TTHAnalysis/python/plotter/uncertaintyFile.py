@@ -148,6 +148,7 @@ class UncertaintyFile:
             self._uncertainty = []
             file = open(txtfileOrUncertainty, "r")
             if not file: raise RuntimeError, "Cannot open "+txtfileOrUncertainty+"\n"
+            aliases={}
             for line in file:
               try:
                 line = line.strip()
@@ -167,7 +168,15 @@ class UncertaintyFile:
                             (key,val) = [f.strip() for f in setting.split("=",1)]
                             extra[key] = eval(val)
                         else: extra[setting] = True
+                l0 = line
+                line = re.sub(r"\$(\w+)", (lambda m : aliases[m.group(1)] if m.group(1) in aliases else m.group(0)), line)
+                #if line != l0: print "After aliases: [%s] -> [%s]" % (l0.strip(), line.strip())
                 field = [f.strip() for f in line.split(':')]
+                if field[0] == "$alias":
+                    if field[1] in aliases: raise RuntimeError("Duplicate definition of alias $"+field[1])
+                    aliases[field[1]] = "("+field[2]+")"
+                    #print "took alias $%s for (%s)" % (field[1], field[2])
+                    continue
                 if options and getattr(options,'uncertaintiesToSelect',[]):
                     skipme = True
                     for p0 in options.uncertaintiesToSelect:
