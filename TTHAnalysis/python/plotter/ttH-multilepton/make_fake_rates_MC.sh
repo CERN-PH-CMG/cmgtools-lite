@@ -102,7 +102,8 @@ for WP in $WPs; do
 	    *ptJ90*)    ptJI="ptJI90";;
 	    *ptJ95*)    ptJI="ptJI95";;
 	    090*)    ptJI="ptJI90";;
-	    075*)    ptJI="ptJI80";;
+	    075*)    ptJI="ptJI90";;
+	    #075*)    ptJI="ptJI80";;
 	    RA*)  ptJI="conePt";;
 	    sViX0*)    ptJI="ptJI85";;
 	    sMiX0*)    ptJI="ptJI85";;

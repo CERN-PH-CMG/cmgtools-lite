@@ -153,33 +153,36 @@ if __name__ == "__main__":
        an = args[1].lower()
 
        if an == 'tth':
+           mva="090"
+           if len(args)>2: mva=args[2]
            # TTH
 
-           h2d_el = [ make2D(outfile,"FR_mva090_el_"+X, ptbins_el, etabins_el) for X in XsQ ]
-           h2d_mu = [ make2D(outfile,"FR_mva090_mu_"+X, ptbins_mu, etabins_mu) for X in XsQ ]
-           h2d_el_tt = [ make2D(outfile,"FR_mva090_el_TT", ptbins_el, etabins_el) ]
-           h2d_mu_tt = [ make2D(outfile,"FR_mva090_mu_TT", ptbins_mu, etabins_mu) ]
+           h2d_el = [ make2D(outfile,"FR_mva"+mva+"_el_"+X, ptbins_el, etabins_el) for X in XsQ ]
+           h2d_mu = [ make2D(outfile,"FR_mva"+mva+"_mu_"+X, ptbins_mu, etabins_mu) for X in XsQ ]
+           h2d_el_tt = [ make2D(outfile,"FR_mva"+mva+"_el_TT", ptbins_el, etabins_el) ]
+           h2d_mu_tt = [ make2D(outfile,"FR_mva"+mva+"_mu_TT", ptbins_mu, etabins_mu) ]
 
            Plots="plots/94X/ttH/lepMVA/v2.0-dev/fr-meas"
            Z3l="z3l"
            QCD="qcd1l"
-           readMany2D(XsQ, h2d_el, "/".join([Plots, QCD, "el/HLT_EleX_OR/fakerates-mtW1R/fr_sub_eta_%s_comp.root"]), "%s", etaslices_el, (15,999) )
-           readMany2D(XsQ, h2d_mu, "/".join([Plots, QCD, "mu/HLT_MuX_OR/fakerates-mtW1R/fr_sub_eta_%s_comp.root"]), "%s", etaslices_mu, (10,999) )
+           prefix=("loose_" if mva == "075" else "")
+           readMany2D(XsQ, h2d_el, "/".join([Plots, QCD, prefix+"el/HLT_EleX_OR/fakerates-mtW1R/fr_sub_eta_%s_comp.root"]), "%s", etaslices_el, (15,999) )
+           readMany2D(XsQ, h2d_mu, "/".join([Plots, QCD, prefix+"mu/HLT_MuX_OR/fakerates-mtW1R/fr_sub_eta_%s_comp.root"]), "%s", etaslices_mu, (10,999) )
 
            if options.fixLastBin:
                fixLastBin(-1, h2d_el[1], h2d_el[0])
                fixLastBin(-1, h2d_mu[1], h2d_mu[0])
 
            #### TT MC-truth
-           MCPlots="plots/94X/ttH/lepMVA/v2.0-dev/fr-mc"; ID="wp090iv01f60E3";
-           XVar="mvaPt_090i_ptJI90_mvaPt090"
+           MCPlots="plots/94X/ttH/lepMVA/v2.0-dev/fr-mc"; ID="wp"+mva+"iv01f60E3";
+           XVar="mvaPt_"+mva+"i_ptJI90_mvaPt"+mva
            readMany2D(["TT_SS_red"], h2d_mu_tt, "/".join([MCPlots, "mu_bnb_"+ID+"_recJet30_eta_%s.root"]), XVar+"_coarsecomb_%s",   etaslices_mu, (15,999) )
            readMany2D(["TT_SS_redNC"], h2d_el_tt, "/".join([MCPlots, "el_bnbNC_"+ID+"_recJet30_eta_%s.root"]), XVar+"_coarseelcomb_%s",   etaslices_el, (15,999) )
 
-           h2d_el_mc4cc = [ make2D(outfile,"FR_mva090_el_MC"+X, ptbins_el, etabins_el) for X in ("QCD","QCDNC") ]
+           h2d_el_mc4cc = [ make2D(outfile,"FR_mva"+mva+"_el_MC"+X, ptbins_el, etabins_el) for X in ("QCD","QCDNC") ]
            readMany2D(["QCDEl_red_El8", "QCDEl_redNC_El8"],  h2d_el_mc4cc, "/".join([MCPlots, "el_hltid8_" +ID+"_recJet30_eta_%s.root"]), XVar+"_coarseelcomb_%s",   etaslices_el, (15,32) )
            readMany2D(["QCDEl_red_El17","QCDEl_redNC_El17"], h2d_el_mc4cc, "/".join([MCPlots, "el_hltid17_"+ID+"_recJet30_eta_%s.root"]), XVar+"_coarseelcomb_%s",   etaslices_el, (32,999) )
-           h2d_el_cc = [ make2D(outfile,"FR_mva090_el_"+X+"_NC", ptbins_el, etabins_el) for X in XsQ ]
+           h2d_el_cc = [ make2D(outfile,"FR_mva"+mva+"_el_"+X+"_NC", ptbins_el, etabins_el) for X in XsQ ]
            for hu,hc in zip(h2d_el,h2d_el_cc):
               for ie in xrange(1,len(etabins_el)):
                 for ip in xrange(1,len(ptbins_el)):
