@@ -24,6 +24,7 @@ class BDT_eventReco: # has to run on a recleaner with label _Recl
         algo = getattr(ROOT,algostring)
 
         self.run = ROOT.BDT_EventReco(weightfile_bloose,weightfile_btight,weightfile_hj,weightfile_hjj,weightfile_rTT,weightfile_httTT,kinfitfile_httTT,algo,csv_looseWP,csv_mediumWP)
+        self.run.setDebug(False)
 
         if algo==ROOT.k_BDTv8_Hj:
             self.branches = [
@@ -73,6 +74,7 @@ class BDT_eventReco: # has to run on a recleaner with label _Recl
             self.branches = [
                 "mvaValue",
                 "HadTop_pt",
+                "HadTop_mass",
                 "iJetSel1",
                 "iJetSel2",
                 "iJetSel3",

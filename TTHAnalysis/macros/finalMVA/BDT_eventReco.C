@@ -100,7 +100,7 @@ class BDT_EventReco_EventP4Cache {
 
   eObjP getSum(int i1, int i2){
     char _xc[2] = {(char)i1,(char)i2};
-    std::sort(_xc,_xc+2);
+    std::sort(_xc,_xc+2); // no ordering kept
     std::string _x(_xc,_xc+2);
     auto it = paircache.find(_x);
     if (it==paircache.end()){
@@ -113,11 +113,11 @@ class BDT_EventReco_EventP4Cache {
 
   eObjP getSum(int i1, int i2, int i3){
     char _xc[3] = {(char)i1,(char)i2,(char)i3};
-    std::sort(_xc,_xc+3);
+    std::sort(_xc,_xc+3); // no ordering kept
     std::string _x(_xc,_xc+3);
     auto it = triplecache.find(_x);
     if (it==triplecache.end()){
-      auto o = (i1<0) ? getSum(i2,i3) : std::make_shared<eObj>(*(getJet(i1).get()->p4())+*(getSum(i2,i3).get()));
+      auto o = std::make_shared<eObj>(*(getJet(i1).get()->p4())+*(getSum(i2,i3).get()));
       triplecache[_x] = o;
       return o;
     }
@@ -126,8 +126,7 @@ class BDT_EventReco_EventP4Cache {
 
   eTopP getTop(int i1, int i2, int i3){
     char _xc[3] = {(char)i1,(char)i2,(char)i3};
-    std::sort(_xc,_xc+3);
-    std::string _x(_xc,_xc+3);
+    std::string _x(_xc,_xc+3); // ordering kept
     auto it = topcache.find(_x);
     if (it==topcache.end()){
       auto o = std::make_shared<eTop>(getSum(i2,i3),getSum(i1,i2,i3),getJet(i1),getJet(i2),getJet(i3),i1,i2,i3,false,-99);
@@ -280,7 +279,7 @@ class BDT_EventReco {
   const uint nOutputVariablesHadTop = 20;
   const uint nOutputVariablesHig = 4;
   const uint nOutputVariablesrTT = 16;
-  const uint nOutputVariableshttTT = 5;
+  const uint nOutputVariableshttTT = 6;
   uint expected_size = 0;
 
   float csv_loose_working_point = -1;
@@ -595,6 +594,7 @@ std::vector<float> BDT_EventReco::EvalMVA(){
       else if (algo==k_httTT_Hj) {
 
 	if ((int)(_x[0])<0 || (int)(_x[2])<0 || (int)(_x[3])<0) continue;
+	if (jets.at(_x[2])->pt()<jets.at(_x[3])->pt()) continue;
 
 	n_tested_permutations++;
 
@@ -657,9 +657,10 @@ std::vector<float> BDT_EventReco::EvalMVA(){
       auto top = best_permutation_httTT;
       output.at(0) = top->score_httTT; // mvaValue
       output.at(1) = top->p4->pt(); // HadTop_pt
-      output.at(2) = top->j1idx;
-      output.at(3) = top->j2idx;
-      output.at(4) = top->j3idx;
+      output.at(2) = top->p4->mass(); // HadTop_mass
+      output.at(3) = top->j1idx;
+      output.at(4) = top->j2idx;
+      output.at(5) = top->j3idx;
     }
   }
   output.push_back(best_permutation_Hj[0]);
@@ -712,6 +713,8 @@ float BDT_EventReco::EvalScore(eTopP top){
   float score = TMVAReader_rTT_->EvaluateMVA("BDT");
 
   if (debug) {
+    std::cout << "rTT tagger on jets " << top->j1idx << " " << top->j2idx << " " << top->j3idx << std::endl;
+
     std::cout <<  var_b_pt << " " ;
     std::cout <<  var_b_mass << " " ;
     std::cout <<  var_b_ptD << " " ;
@@ -768,9 +771,27 @@ float BDT_EventReco::EvalScore_httTT(eTopP top){
   var_httTT_m_Wj1Wj2 = (*(top->j2->p4())+*(top->j3->p4())).mass();
   auto kf = EvalKinFit(top);
   var_httTT_nllKinFit = std::get<0>(kf);
-  var_httTT_pT_b_o_kinFit_pT_b = std::get<1>(kf);
+  if (std::get<1>(kf)!=0) var_httTT_pT_b_o_kinFit_pT_b = top->b->pt()/std::get<1>(kf);
+  else {
+    std::cout << "ERROR: kinematic fit returned fitted b pt == 0. Will set var_httTT_pT_b_o_kinFit_pT_b to 1." << std::endl;
+    var_httTT_pT_b_o_kinFit_pT_b = 1;
+  }
 
   float score = TMVAReader_httTT_->EvaluateMVA("BDT");
+
+  if (debug) {
+    std::cout << "httTT tagger on jets " << top->j1idx << " " << top->j2idx << " " << top->j3idx << std::endl;
+
+    std::cout << "var_httTT_CSV_b: " << var_httTT_CSV_b << std::endl;
+    std::cout << "var_httTT_qg_Wj2: " << var_httTT_qg_Wj2 << std::endl;
+    std::cout << "var_httTT_pT_bWj1Wj2: " << var_httTT_pT_bWj1Wj2 << std::endl;
+    std::cout << "var_httTT_pT_Wj2: " << var_httTT_pT_Wj2 << std::endl;
+    std::cout << "var_httTT_m_Wj1Wj2: " << var_httTT_m_Wj1Wj2 << std::endl;
+    std::cout << "var_httTT_nllKinFit: " << var_httTT_nllKinFit << std::endl;
+    std::cout << "var_httTT_pT_b_o_kinFit_pT_b: " << var_httTT_pT_b_o_kinFit_pT_b << std::endl;
+    std::cout << "score: " << score << std::endl;
+
+  }
 
   top->hasScore_httTT = true;
   top->score_httTT = score;
