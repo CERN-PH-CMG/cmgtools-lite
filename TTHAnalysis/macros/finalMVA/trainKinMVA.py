@@ -52,108 +52,6 @@ def load_dataset(name, trainclass, addw=1, path=None, friends=[]):
 
     return tree, weight
 
-def train_multiclass(fOutName, options):
-    dsets = [
-        ('TTHnobb_pow', 'ttH', 1),
-        ('TTW_LO', 'ttV', 1),
-        ('TTZ_LO', 'ttV', 1),
-    ]
-
-    if '_3l' in options.training:
-        dsets += [
-            ('TTJets_DiLepton',            'tt', 1),
-#            ('TTJets_DiLepton_ext_skim3l', 'tt', 0.9),
-        ]
-    else:
-        dsets += [
-            ('TTJets_SingleLeptonFromT',        'tt', 0.1),
-            ('TTJets_SingleLeptonFromTbar',     'tt', 0.1),
-            ('TTJets_SingleLeptonFromT_ext',    'tt', 0.9),
-            ('TTJets_SingleLeptonFromTbar_ext', 'tt', 0.9),
-        ]
-
-    datasets = []
-    for name, trainclass, addw in dsets:
-        tree, weight = load_dataset(name, trainclass, addw,
-                                    path=options.treepath,
-                                    friends=options.friends)
-        datasets.append((name, trainclass, tree, weight))
-
-    fOut = ROOT.TFile(fOutName,"recreate")
-    fOut.cd()
-    factory = ROOT.TMVA.Factory(options.training, fOut, "!V:!Color:Transformations=I:AnalysisType=Multiclass")
-    allcuts = ROOT.TCut('1')
-    for cut in options.addcuts:
-        allcuts += cut
-
-    allcuts += "nLepFO_Recl>=2"
-    allcuts += "LepGood_conePt[iLepFO_Recl[0]]>25"
-    allcuts += "LepGood_conePt[iLepFO_Recl[1]]>15"
-
-    allcuts += "abs(mZ1_Recl-91.2) > 10"
-    allcuts += "(met_pt*0.00397 + mhtJet25_Recl*0.00265 > 0.2)"
-    allcuts += "(nBJetLoose25_Recl >= 2 || nBJetMedium25_Recl >= 1)"
-    allcuts += "minMllAFAS_Recl>12"
-
-    if '_3l' in options.training:
-        allcuts += "nLepFO_Recl>=3"
-        allcuts += "LepGood_conePt[iLepFO_Recl[2]]>15"
-        allcuts += "nJet25_Recl>=2"
-        # allcuts += "LepGood_isTight_Recl[iLepFO_Recl[0]]"
-        # allcuts += "LepGood_isTight_Recl[iLepFO_Recl[1]]"
-        # allcuts += "LepGood_isTight_Recl[iLepFO_Recl[2]]"
-    else:
-        allcuts += "nLepTight_Recl<=2"
-        allcuts += "nJet25_Recl>=4"
-        allcuts += "(LepGood_charge[iLepFO_Recl[0]]*LepGood_charge[iLepFO_Recl[1]] > 0)" #!
-        # allcuts += "LepGood_isTight_Recl[iLepFO_Recl[0]]"
-        # allcuts += "LepGood_isTight_Recl[iLepFO_Recl[1]]"
-
-    factory.AddSpectator("iF0 := iLepFO_Recl[0]","F") # do not remove this!
-    factory.AddSpectator("iF1 := iLepFO_Recl[1]","F") # do not remove this!
-    factory.AddSpectator("iF2 := iLepFO_Recl[2]","F") # do not remove this!
-
-    factory.AddVariable("higher_Lep_eta := max(abs(LepGood_eta[iLepFO_Recl[0]]),abs(LepGood_eta[iLepFO_Recl[1]]))", 'F')
-    factory.AddVariable("MT_met_lep1 := MT_met_lep1", 'F')
-    factory.AddVariable("numJets_float := nJet25_Recl", 'F')
-    factory.AddVariable("mindr_lep1_jet := mindr_lep1_jet", 'F')
-    factory.AddVariable("mindr_lep2_jet := mindr_lep2_jet", 'F')
-    factory.AddVariable("LepGood_conePt[iLepFO_Recl[0]] := LepGood_conePt[iLepFO_Recl[0]]", 'F')
-    factory.AddVariable("LepGood_conePt[iLepFO_Recl[1]] := LepGood_conePt[iLepFO_Recl[1]]", 'F')
-    factory.AddVariable("avg_dr_jet : = avg_dr_jet", 'F')
-    factory.AddVariable("met := min(met_pt, 400)", 'F')
-
-    ## Add the datasets
-    for name,trainclass,tree,weight in datasets:
-        factory.AddTree(tree, trainclass, weight)
-
-    fOut.cd()
-    for trainclass in set([x[1] for x in dsets]):
-        factory.SetWeightExpression("genWeight*xsec", trainclass)
-
-    ## Start the training
-    factory.PrepareTrainingAndTestTree(allcuts, "!V")
-    factory.BookMethod(ROOT.TMVA.Types.kBDT, 'BDTG',
-                            ':'.join([
-                                '!H',
-                                '!V',
-                                'NTrees=200',
-                                # 'NTrees=500',
-                                'BoostType=Grad',
-                                'Shrinkage=0.10',
-                                '!UseBaggedGrad',
-                                'nCuts=200',
-                                # 'nCuts=2000',
-                                'nEventsMin=100',
-                                'MaxDepth=8',
-                                'NegWeightTreatment=PairNegWeightsGlobal',
-                                ]))
-    factory.TrainAllMethods()
-    factory.TestAllMethods()
-    factory.EvaluateAllMethods()
-
-    fOut.Close()
-
 def train_single(allcuts, variables, dsets, fOutName, options):
     datasets = []
     for name, trainclass, addw in dsets:
@@ -162,32 +60,34 @@ def train_single(allcuts, variables, dsets, fOutName, options):
                                     friends=options.friends)
         datasets.append((name, trainclass, tree, weight))
 
-    fOut = ROOT.TFile(fOutName,"recreate")
+    fOut = ROOT.TFile(fOutName+'.root',"recreate")
     fOut.cd()
     factory = ROOT.TMVA.Factory(options.training, fOut, "!V:!Color:Transformations=I")
 
     for cut in options.addcuts:
         allcuts += cut
 
-    factory.AddSpectator("iF0 := iLepFO_Recl[0]","F") # do not remove this!
-    factory.AddSpectator("iF1 := iLepFO_Recl[1]","F") # do not remove this!
-    factory.AddSpectator("iF2 := iLepFO_Recl[2]","F") # do not remove this!
+    dl = ROOT.TMVA.DataLoader("dataset_%s"%fOutName)
+
+    dl.AddSpectator("iF0 := iLepFO_Recl[0]","F") # do not remove this!
+    dl.AddSpectator("iF1 := iLepFO_Recl[1]","F") # do not remove this!
+    dl.AddSpectator("iF2 := iLepFO_Recl[2]","F") # do not remove this!
 
     ## Add the variables
     for var in variables:
-        factory.AddVariable(var, 'F')
+        dl.AddVariable(var, 'F')
 
     ## Add the datasets
     for name,trainclass,tree,weight in datasets:
-        factory.AddTree(tree, trainclass, weight)
+        dl.AddTree(tree, trainclass, weight)
 
     fOut.cd()
     for trainclass in set([x[1] for x in dsets]):
-        factory.SetWeightExpression("genWeight*xsec", trainclass)
+        dl.SetWeightExpression("prescaleFromSkim*genWeight*xsec", trainclass)
 
     ## Start the training
-    factory.PrepareTrainingAndTestTree(allcuts, "!V")
-    factory.BookMethod(ROOT.TMVA.Types.kBDT, 'BDTG',
+    dl.PrepareTrainingAndTestTree(allcuts, "!V")
+    factory.BookMethod(dl,ROOT.TMVA.Types.kBDT, 'BDTG',
                             ':'.join([
                                 '!H',
                                 '!V',
@@ -260,10 +160,8 @@ def train_2d(fOutName, training, options):
 #            "avg_dr_jet : = avg_dr_jet",
         ]
         dsets += [
-            ('TTJets_SingleLeptonFromT',        'Background', 0.2),
-            ('TTJets_SingleLeptonFromTbar',     'Background', 0.2),
-            ('TTJets_SingleLeptonFromT_ext',    'Background', 0.8),
-            ('TTJets_SingleLeptonFromTbar_ext', 'Background', 0.8),
+            ('TTJets_SingleLeptonFromT',        'Background', 1.0),
+            ('TTJets_SingleLeptonFromTbar',     'Background', 1.0),
         ]
 
 
@@ -292,14 +190,10 @@ def train_2d(fOutName, training, options):
 #            "avg_dr_jet : = avg_dr_jet",
         ]
         dsets += [
-            ('TTJets_DiLepton',            'Background', 1.0/6),
-            ('TTJets_DiLepton_ext_part1',            'Background', 2.0/6),
-            ('TTJets_DiLepton_ext_part2',            'Background', 2.0/6),
-            ('TTJets_DiLepton_ext_part3',            'Background', 1.0/6),
-            ('TTJets_SingleLeptonFromT',        'Background', 0.2),
-            ('TTJets_SingleLeptonFromTbar',     'Background', 0.2),
-            ('TTJets_SingleLeptonFromT_ext',    'Background', 0.8),
-            ('TTJets_SingleLeptonFromTbar_ext', 'Background', 0.8),
+            ('TTJets_DiLepton_part1',            'Background', 16156033.0/(16156033.0+987698.0)),
+            ('TTJets_DiLepton_part2',            'Background', 987698.0/(16156033.0+987698.0)),
+            ('TTJets_SingleLeptonFromT',        'Background', 1.0),
+            ('TTJets_SingleLeptonFromTbar',     'Background', 1.0),
         ]
 
     if 'bdtv8_bestchoice' in training:
@@ -317,6 +211,14 @@ def train_2d(fOutName, training, options):
     if 'bdtv8_value' in training:
         variables += [
             'BDTv8_eventReco_mvaValue := max(-1.1,BDTv8_eventReco_mvaValue)',
+            ]
+    if 'bdtrTT_value' in training:
+        variables += [
+            'BDTrTT_eventReco_mvaValue := max(-1.1,BDTrTT_eventReco_mvaValue)',
+            ]
+    if 'bdthttTT_value' in training:
+        variables += [
+            'BDThttTT_eventReco_mvaValue := max(-1.1,BDThttTT_eventReco_mvaValue)',
             ]
     if 'bdtv8_reco' in training:
         variables += [
@@ -359,27 +261,38 @@ def train_2d(fOutName, training, options):
         variables += [
             "MEM_LR := -log((0.00389464*MEM_TTLL*(MEM_TTLL<1) + 3.12221e-14*MEM_TTW*(MEM_TTW<1)) / (0.00389464*MEM_TTLL*(MEM_TTLL<1) + 3.12221e-14*MEM_TTW*(MEM_TTW<1)+9.99571e-05*(MEM_TTHfl*(MEM_TTHfl<1)+MEM_TTHsl*(MEM_TTHsl<1))/2))"
             ]
-    if 'hj_value' in training:
+    if 'hj_value_v8' in training:
         variables += [
             'BDTv8_eventReco_Hj_score := max(-1.1,BDTv8_eventReco_Hj_score)',
 #            'BDTv8_eventReco_Hjj_score := max(-1.1,BDTv8_eventReco_Hjj_score)',
             ]
+    if 'hj_value_rTT' in training:
+        variables += [
+            'BDTrTT_eventReco_Hj_score := max(-1.1,BDTrTT_eventReco_Hj_score)',
+            ]
+    if 'hj_value_httTT' in training:
+        variables += [
+            'BDThttTT_eventReco_Hj_score := max(-1.1,BDThttTT_eventReco_Hj_score)',
+            ]
 
-    outname = fOutName+'_'+training+'.root'
+    outname = fOutName+'_'+training
     train_single(allcuts, variables, dsets, outname, options)
 
 def main(args, options):
     global _treepath
     _treepath = options.treepath
-    if 'MultiClassICHEP16' in options.training:
-        train_multiclass(args[0]+'.root', options)
-        return
 
     if len(options.training):
         train_2d(args[0], options.training.lower(), options)
     else:
         train_2d(args[0], '2lss_ttv',   options)
+        train_2d(args[0], '2lss_ttv_hj_value_v8',   options)
+        train_2d(args[0], '2lss_ttv_hj_value_rTT',   options)
+        train_2d(args[0], '2lss_ttv_hj_value_httTT',   options)
         train_2d(args[0], '2lss_ttbar', options)
+        train_2d(args[0], '2lss_ttbar_bdtv8_value', options)
+        train_2d(args[0], '2lss_ttbar_bdtrTT_value', options)
+        train_2d(args[0], '2lss_ttbar_bdthttTT_value', options)
         train_2d(args[0], '3l_ttv',     options)
         train_2d(args[0], '3l_ttbar',   options)
 
