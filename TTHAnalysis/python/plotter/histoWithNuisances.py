@@ -374,15 +374,19 @@ class HistoWithNuisances:
             print "WARNING: adding a variantion on an object that already has roofit/postfit info"
             self._rooFit  = None
             self._postFit = None
-    def addBinByBin(self, namePattern="{name}_bbb_{bin}", ycutoff=1e-3, relcutoff=1e-2, verbose=False, norm=False):
+    def addBinByBin(self, namePattern="{name}_bbb_{bin}", ycutoff=1e-3, relcutoff=1e-2, verbose=False, norm=False, conservativePruning=False):
         ref = self.central
         ytot = ref.Integral()
         if (ytot == 0): return 
         for b in xrange(1,ref.GetNbinsX()+1):
             y, e = ref.GetBinContent(b), ref.GetBinError(b)
-            if y/ytot < ycutoff: continue
-            if e/y    < relcutoff: continue
-            if e < 0.2*sqrt(y+1): continue
+            if y <= 0 or e < 0: continue
+            if conservativePruning: # conservative adaptive pruning that was used in makeShapeCards in the past
+                if e < 0.1*sqrt(y+0.04): continue 
+            else:
+                if y/ytot < ycutoff: continue
+                if e/y    < relcutoff: continue
+                if e < 0.2*sqrt(y+1): continue
             if verbose: 
                 print "\tbin %3d: yield %9.1f +- %9.1f (rel %.5f), rel err. %.4f, poisson %.1f" % (b, y, e, y/ytot, e/y if y else 1, sqrt(y+1))
             hi = _cloneNoDir(ref)
