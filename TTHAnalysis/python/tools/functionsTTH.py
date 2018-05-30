@@ -300,12 +300,15 @@ MODULES=[]
 
 from CMGTools.TTHAnalysis.tools.combinedObjectTaggerForCleaning import *
 from CMGTools.TTHAnalysis.tools.fastCombinedObjectRecleaner import *
+from CMGTools.TTHAnalysis.tools.objFloatCalc import ObjFloatCalc
+MODULES.append( ('jetPtRatiov3', lambda : ObjFloatCalc(None,"LepGood",
+                                                    dict(jetPtRatiov3 = lambda lep: lep.jetPtRatiov2 if lep.jetBTagCSV > -98 else 1.0/(1.0 + lep.relIso04)))) )
 
 def clean_and_FO_selection_TTH(lep):
     return lep.conept>10 and lep.jetBTagDeepCSV<0.4941 and (abs(lep.pdgId)!=11 or _ttH_idEmu_cuts_E3(lep)) \
         and (lep.mvaTTH>0.90 or \
-                 (abs(lep.pdgId)==13 and lep.jetBTagDeepCSV<0.07 and lep.segmentCompatibility>0.3 and lep.jetPtRatiov2>0.60) or \
-                 (abs(lep.pdgId)==11 and lep.jetBTagDeepCSV<0.07 and lep.mvaIdFall17noIso>0.5 and lep.jetPtRatiov2>0.60) \
+                 (abs(lep.pdgId)==13 and lep.jetBTagDeepCSV<0.07 and lep.segmentCompatibility>0.3 and lep.jetPtRatiov3>0.60) or \
+                 (abs(lep.pdgId)==11 and lep.jetBTagDeepCSV<0.07 and lep.mvaIdFall17noIso>0.5 and lep.jetPtRatiov3>0.60) \
                  )
 
 MODULES.append( ('leptonJetFastReCleanerTTH_step1', lambda : CombinedObjectTaggerForCleaning("InternalRecl",
