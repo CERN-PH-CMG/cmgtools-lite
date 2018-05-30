@@ -111,10 +111,12 @@ for WP in $WPs; do
 	    sMi*)    ptJI="ptJIMIX4";;
 	esac
         B0="$BASE -P $T ttH-multilepton/make_fake_rates_sels.txt ttH-multilepton/make_fake_rates_xvars.txt --groupBy cut --sP ${Num} " 
+        B0="$B0 --Fs {P}/1_jetPtRatiov3_v1 --mcc ttH-multilepton/mcc-ptRatiov3.txt "
         B0="$B0 --mcc ttH-multilepton/mcc-eleIdEmu2.txt  "
         #B0="$B0 --legend=TR --showRatio --ratioRange 0.41 1.59   --yrange 0 0.20 " 
         B0="$B0 --legend=TR --showRatio --ratioRange 0.00 1.99   --yrange 0 0.25 " 
 	B1="${PLOTTER} -P $T ttH-multilepton/make_fake_rates_plots.txt"
+        B1="$B1 --Fs {P}/1_jetPtRatiov3_v1 --mcc ttH-multilepton/mcc-ptRatiov3.txt "
 	B1="${B1} --mcc ttH-multilepton/mcc-eleIdEmu2.txt  "
         B1="$B1 --showRatio --maxRatioRange 0 2 --plotmode=norm -f "
         JetDen="-A pt20 mll 'nLepGood == 1'"

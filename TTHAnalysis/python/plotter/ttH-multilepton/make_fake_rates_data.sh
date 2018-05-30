@@ -18,7 +18,7 @@ susy*) echo "NOT UP TO DATE"; exit 1;;
 *) echo "You did not specify the analysis"; exit 1;;
 esac;
 BCORE=" --s2v --tree treeProducerSusyMultilepton ttH-multilepton/mca-qcd1l.txt ${CUTFILE} -P $T -l 41.7 --AP  --WA prescaleFromSkim  "
-#BCORE="${BCORE} --Fs {P}/1_extraVars_v1  "
+BCORE="${BCORE} --Fs {P}/1_jetPtRatiov3_v1 --mcc ttH-multilepton/mcc-ptRatiov3.txt "
 BCORE="${BCORE} --mcc ttH-multilepton/mcc-eleIdEmu2.txt  "; 
 #BCORE="${BCORE} --mcc ttH-multilepton/mcc-noHLTinMC-some.txt  "; 
 
