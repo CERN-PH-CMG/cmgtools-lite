@@ -18,6 +18,11 @@ TREES = "--Fs {P}/1_recleaner_180518_v2 --Fs {P}/5_triggerDecision_230418_v1 --F
 TREESONLYSKIM = "-P "+P0+"/TREES_TTH_190418_Fall17_skim2lss3l --Fs {P}/2_eventVars_230418_v2 --Fs {P}/3_kinMVA_nov8_noMEM_230418_v2 "
 TREESONLYFULL = "-P "+P0+"/TREES_TTH_190418_Fall17"
 
+TREESONLYSKIM = TREESONLYSKIM+" --Fs {P}/4_BDTv8_Hj_290518_v1"
+TREESONLYSKIM = TREESONLYSKIM+" --Fs {P}/4_BDTrTT_Hj_290518_v1"
+TREESONLYSKIM = TREESONLYSKIM+" --Fs {P}/4_BDThttTT_Hj_290518_v1"
+
+
 def base(selection):
 
     CORE=' '.join([TREES,TREESONLYSKIM])
