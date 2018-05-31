@@ -89,7 +89,7 @@ else
         SOS_NM1_ID)  NUM="$SOS_SEL_IDCV" ; CDEN="$CDEN && $SOS_SEL_ISO  && $SOS_SEL_IP  && $MET_PRESEL"  ;;
         SOS_NM1_IP)  NUM="$SOS_SEL_IP" ;   CDEN="$CDEN && $SOS_SEL_IDCV && $SOS_SEL_ISO && $MET_PRESEL" ;;
         SOS_NM1_ISO) NUM="$SOS_SEL_ISO" ;  CDEN="$CDEN && $SOS_SEL_IDCV && $SOS_SEL_IP  && $MET_PRESEL"  ;;
-        *) echo "Uknown ID $ID"; exit 2;;
+        *) echo "Unknown ID $ID"; exit 2;;
     esac;
 
     DEN="$CDEN"; POST="";
