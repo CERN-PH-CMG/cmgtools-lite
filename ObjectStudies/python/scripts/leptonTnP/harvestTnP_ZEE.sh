@@ -1,6 +1,6 @@
 #!/bin/bash
 P=plots/94X/TnP_ICHEP18
-IN="zee_sos_v1.0"; OUT="$IN/00_harvest"
+IN="zee_sos_v4.0"; OUT="$IN/00_harvest"
 
 MEAS="SOS SOS_PR SOS_NM1_ID SOS_NM1_ISO SOS_NM1_IP SOS_FO"
 if [[ "$1" != "" ]]; then MEAS="$*"; fi

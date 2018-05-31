@@ -8,7 +8,7 @@ if [ "${year}" == 2016 ]; then
         cmsco01*) P=/data/g/gpetrucc/TREES_80X_SOS_080217_TnP ;;
     esac;
 else
-    P=/afs/cern.ch/work/b/bschneid/sos/TnP_trees_run04
+    P=/eos/cms/store/user/bschneid/sos/TnP_trees_run10
 fi
 
 if [ "${year}" == 2016 ]; then
@@ -16,8 +16,8 @@ if [ "${year}" == 2016 ]; then
 else
     PDIR="plots/94X/TnP_ICHEP18/"
 fi
-JOB="zee_sos_v1.0"
-XBINS="[5,12.5,16,20,25,30]" #25,40,70,120]"
+JOB="zee_sos_v4.0"
+XBINS="[5,12.5,16,20,25,30,40,60]" #25,40,70,120]"
 EBINS="[-2.5,-2.0,-1.52,-1.44,-1,0,1,1.44,1.52,2.0,2.5]"
 VBINS="[0.5,5.5,6.5,7.5,8.5,9.5,10.5,11.5,12.5,13.5,14.5,15.5,16.5,17.5,18.5,19.5,20.5,21.5,22.5,24.5,26.5,28.5,30.5,34.5]"
 DATA=""
@@ -50,7 +50,7 @@ if [[ "$1" == "all" ]]; then
         for SMOD in MCTG BWDCB2; do
             for BMOD in bern4 bern3; do
                 for X in barrel endcap eta vtx; do
-                    $LAUNCHER $0 $ID $SMOD $BMOD $X;
+                    echo $LAUNCHER $0 $ID $SMOD $BMOD $X;
                 done
             done
         done
@@ -66,9 +66,9 @@ else
 
     MASS=" -m TnP_mass 80,70,115 "
 
-    SOS_PRESEL_ID="TnP_probe_eleMVASpring15_VLooseIdEmu"
-    SOS_FO_ID="eleWPVVL(TnP_probe_pt,TnP_probe_etaSc,TnP_probe_mvaIdSpring15)"
-    SOS_SEL_ID="TnP_probe_eleMVASpring15_HZZ"
+    SOS_PRESEL_ID="TnP_probe_SUSYVLooseFall17"
+    SOS_FO_ID="TnP_probe_SUSYVLooseFOFall17"
+    SOS_SEL_ID="TnP_probe_SOSTightID2017"
 
     SOS_FO_IDCV="${SOS_FO_ID}   && TnP_probe_convVeto && TnP_probe_lostHits == 0"
     SOS_SEL_IDCV="${SOS_SEL_ID} && TnP_probe_convVeto && TnP_probe_lostHits == 0"
