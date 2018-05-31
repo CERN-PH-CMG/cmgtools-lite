@@ -1,6 +1,137 @@
-import ROOT, os, datetime, re, operator, math
-from array import array
+import ROOT, os, datetime, re, operator, math, copy
+import utilities
+import array
+#from joshuncs import uncs_josh
+uncs_josh = eval(open('joshsuncs.py','r').read())
 
+utilities = utilities.util()
+
+def getCleanedError(self, graph):
+    fname = graph.GetName()+'_fit'
+    tf1 = ROOT.TF1(fname, 'a*(x-1)^2')
+    graph.Fit(fname)
+    tmp_fit = graph.GetFunction(fname)
+    return (best, sol1, sol2)
+
+def noOffsetGraph(graph, func):
+    newgraph = graph.Clone(graph.GetName()+'_noOffset')
+    utilities.graphStyle(newgraph, color=ROOT.kMagenta+1)
+    minpoint = -1.*func.GetParameter(1) / (2.*func.GetParameter(2))
+    fmin = func.Eval(minpoint)
+
+    print 'found minimum at', fmin
+    
+    for ip in range(1,newgraph.GetN()+1):
+        x, y = ROOT.Double(), ROOT.Double()
+        newgraph.GetPoint(ip, x, y)
+        newgraph.SetPoint(ip, x, y-fmin)
+
+    return newgraph
+        
+
+def getCleanedGraph(infile, par, norm, n_iter, treename='limit'):
+    f = ROOT.TFile(infile,'read')
+    tree = f.Get(treename)
+    vals = []
+    normval = norm if norm else 1.
+    for ev in tree:
+        ##if 2.*ev.deltaNLL > 15: continue
+        if norm == 1. and abs(getattr(ev, par) - norm) > 0.07: continue
+        if abs(2.*ev.deltaNLL) < 0.0001: continue
+        vals.append( [getattr(ev, par)/normval, 2.*ev.deltaNLL] )
+    vals = sorted(vals)
+
+    n_iter = int(n_iter)
+    
+    for i in range(n_iter):
+    #while(n_iter):
+        if len(vals) < 10: break
+        print 'at iteration', i
+        graph = ROOT.TGraph(len(vals), array.array('d', [x[0] for x in vals]), array.array('d', [y[1] for y in vals]) )
+        ## if not i:
+        ##     fname = graph.GetName()+'_fit0'
+        ##     tf1 = ROOT.TF1(fname, '[0]*(x-1)^2')
+        ##     graph.Fit(fname)
+        ##     ff = graph.GetFunction(fname)
+        ##     
+        ## else:
+        graph.Fit('pol2', 'rob')
+        ff = graph.GetFunction('pol2')
+
+        distances = []
+        for v1,v2 in vals:
+            distances.append(abs(ff.Eval(v1) - v2))
+        im = distances.index(max(distances))
+        distances.pop(im)
+        vals.pop(im)
+
+        #graph = ROOT.TGraph(len(vals), array.array('d', [x[0] for x in vals]), array.array('d', [y[1] for y in vals]) )
+        #n_iter -= 1
+
+    graph.SetName(par+'_graph_it{i:.0f}'.format(i=i))
+    utilities.graphStyle(graph, rangeY=[-3., 15.] )
+
+    return graph
+
+def cleanGraphNew(infile, par, norm, treename='limit'):
+    f = ROOT.TFile(infile,'read')
+    tree = f.Get(treename)
+    vals = []
+    expectedSlope = []
+    normval = norm if norm else 1.
+
+    for ev in tree:
+        #if 2.*ev.deltaNLL > 10: continue
+        if abs(2.*ev.deltaNLL) < 0.0001: continue
+        vals.append( [getattr(ev, par)/normval, 2.*ev.deltaNLL] )
+
+    vals = sorted(vals)
+    
+    graph = ROOT.TGraph(len(vals), array.array('d', [x[0] for x in vals]), array.array('d', [y[1] for y in vals]) )
+
+    realSlope = []
+    
+    newys = []
+    newxs = []
+
+    for i in range(graph.GetN()):
+
+        if not i or i == graph.GetN()+1: continue
+
+
+        x0,y0 = ROOT.Double(), ROOT.Double()
+        x1,y1 = ROOT.Double(), ROOT.Double()
+        x2,y2 = ROOT.Double(), ROOT.Double()
+
+        before = graph.GetPoint(i-1, x0, y0)
+        point  = graph.GetPoint(i  , x1, y1)
+        after  = graph.GetPoint(i+1, x2, y2)
+
+
+        if (x1-x0) and  (x2-x1):
+            slopeL = (y1 - y0)/(x1-x0)
+            slopeR = (y2 - y1)/(x2-x1)
+        else:
+            slopeL = 0.
+            slopeR = 0.
+
+        avgSlope = (slopeL+slopeR)/2.
+
+        realSlope    .append(avgSlope)
+        expectedSlope.append(x1)
+        #print 'at point {i} expecting slope {x1:.2f} finding: {x2:.2f}           ratio: {foo:.3f}'.format(i=i, x1=x1, x2=avgSlope, foo=x1/avgSlope if avgSlope else 0.)
+        print 'at point {i} found {y0:.2f} {y1:.2f} {y2:.2f}'.format(i=i,y0=y0,y1=y1,y2=y2)
+
+        newy = (y0+y1+y2)/3.
+        newys.append(newy)
+        newxs.append(x1)
+
+    newgraph = ROOT.TGraph(len(newys), array.array('d', newxs), array.array('d', newys) )
+
+    return copy.deepcopy(newgraph)
+
+    #print 'this is the real slope: ', realSlope
+    #print 'this is the expected  : ', expectedSlope
 
 ## ===================================================================
 ## USAGE:
@@ -9,7 +140,7 @@ from array import array
 
 ## example:
 ##
-## python w-helicity-13TeV/scanParamteters.py -i <combine_ws> --scan-parameters CMS_lumi_13TeV,norm.*Ybin.*12 --outdir <dir> --npoints 25 --points-per-job 5
+## python w-helicity-13TeV/scanParameters.py -i <combine_ws> --scan-parameters CMS_lumi_13TeV,norm.*Ybin.*12 --outdir <dir> --npoints 25 --points-per-job 5
 ##
 ## has option --pretend to not submit, just print the commands
 ##
@@ -17,51 +148,14 @@ from array import array
 ## this command will hadd the single files into one scan_par.root file. then it will plot all the scans
 ## into the specified webdir. the hadd is not done if the scan_par.root file already exists (unless forced with --overwrite)
 ##
-## python w-helicity-13TeV/scanParamteters.py -i <combine_ws> --scan-parameters CMS_lumi_13TeV,norm.*Ybin.*12 --outdir <dir>                                 --postprocess --webdir <dir>
+## python w-helicity-13TeV/scanParameters.py -i <combine_ws> --scan-parameters CMS_lumi_13TeV,norm.*Ybin.*12 --outdir <dir>                                 --postprocess --webdir <dir>
 ##
 ## ===================================================================
 
-def solvePol2(a,b,c):
-
-    # calculate the discriminant
-    d = (b**2) - (4*a*c)
-
-    if not a or d < 0:
-        return (0,0,0)
-    
-    # find two solutions
-    sol1 = (-b-math.sqrt(d))/(2*a)
-    sol2 = (-b+math.sqrt(d))/(2*a)
-
-    bestfit = -1.*b/(2.*a)
-
-    return (bestfit, sol1, sol2)
-
-def graphStyle(graph):
-    graph.SetMarkerStyle(20)
-    graph.SetMarkerColor(ROOT.kOrange+7)
-    graph.SetLineWidth  (2)
-    graph.SetMarkerSize(1.0)
-    graph.GetYaxis().SetTitle('-2 #Delta ln L')
-    graph.GetYaxis().SetRangeUser(-0.01, 4.0)
-
-
-def getGraph(infile, par, norm, treename='limit'):
-    f = ROOT.TFile(infile,'read')
-    tree = f.Get(treename)
-    vals = []
-    normval = norm if norm else 1.
-    for ev in tree:
-        vals.append( [getattr(ev, par)/normval, 2.*ev.deltaNLL] )
-    vals = sorted(vals)
-    graph = ROOT.TGraph(len(vals), array('d', [x[0] for x in vals]), array('d', [y[1] for y in vals]) )
-    graphStyle(graph)
-    graph.GetXaxis().SetTitle(par)
-    graph.SetTitle('scan for '+par)
-    return graph
 
 jobstring  = '''#!/bin/sh
-ulimit -s unlimited
+ulimit -c 0 -S
+ulimit -c 0 -H
 set -e
 cd CMSSWBASE
 export SCRAM_ARCH=slc6_amd64_gcc530
@@ -94,6 +188,8 @@ if __name__ == "__main__":
     parser.add_option(      '--webdir'         , dest='webdir'     , default=''   , type='string', help='web directory to save the likelihood scans')
     (options, args) = parser.parse_args()
 
+    if not options.outdir[-1] == '/':
+        options.outdir += '/'
     absopath  = os.path.abspath(os.path.dirname(options.outdir))
     absinfile = os.path.abspath(options.infile)
 
@@ -142,21 +238,22 @@ if __name__ == "__main__":
             os.system('mkdir -p '+pardir)
             print 'at parameter {p} running {n} points'.format(p=par, n=options.npoints)
             tmp_val = ws.var(par).getVal()
-            tmp_dn = 0.8*tmp_val if tmp_val else -2.
-            tmp_up = 1.2*tmp_val if tmp_val else  2.
+            tmp_dn = 0.9*tmp_val if tmp_val else -1.15
+            tmp_up = 1.1*tmp_val if tmp_val else  1.15
             firstpoint = 0
             while firstpoint <= options.npoints-1:
                 lastpoint = min(firstpoint+options.ppj-1,options.npoints-1)
                 cmd_base  = 'combine {ws} -M MultiDimFit -t -1 --algo grid --points {np} '.format(ws=absinfile,np=options.npoints)
-                #cmd_base += ' --cminDefaultMinimizerType GSLMultiMin --cminDefaultMinimizerAlgo BFGS2 '
-                # josh's magic options:
                 cmd_base += ' --cminDefaultMinimizerType GSLMultiMinMod --cminDefaultMinimizerAlgo BFGS2 '
                 cmd_base += ' --setParameterRanges "{p}={dn:.2f},{up:.2f}" '.format(p=par,dn=tmp_dn,up=tmp_up)
                 cmd_base += ' -P {par} --floatOtherPOIs=1 '.format(par=par)
-                #cmd_base+= ' --setParameterRanges <whatever> '
-                cmd_base += ' --keepFailures -n _{name}_point{n}To{nn} '.format(name=par,n=firstpoint,nn=lastpoint)
+                ## cmd_base += ' --keepFailures ' ## don't want this anymore ... ?!
+                cmd_base += ' -n _{name}_point{n}To{nn} '.format(name=par,n=firstpoint,nn=lastpoint)
                 cmd_base += ' --firstPoint {n} --lastPoint {nn} '.format(n=firstpoint,nn=lastpoint)
+                ##  masking_par = '_'.join(['mask']+os.path.basename(options.infile).split('_')[:2]+['xsec'])
+                ##  cmd_base += ' --setParameters {mp}=1 '.format(mp=masking_par)
                 #cmd_base += ' --redefineSignalPOIs '+','.join( [i for i in all_parameters if 'norm_' in i] )
+                cmd_base += ' --expectSignal=1 '
                 if options.verbose:
                     cmd_base += ' -v 10 '
 
@@ -194,6 +291,9 @@ if __name__ == "__main__":
         if not os.path.isdir(options.webdir):
             os.system('mkdir -p {wd} '.format(wd=options.webdir))
             os.system('cp /afs/cern.ch/user/g/gpetrucc/php/index.php '+options.webdir)
+        uncertainties      = []
+        uncertainties_josh = []
+        
         for ip,par in enumerate(parameters):
             ## first hadd all the point files into one scan file named scan_<par>.root
             pardir = absopath+'/'+par+'/'
@@ -213,19 +313,58 @@ if __name__ == "__main__":
             tmp_val = ws.var(par).getVal()
 
             ## make some plots of the likelihood scans
-            tmp_graph = getGraph(ofn, par, norm=tmp_val)
+            ##tmp_graph = utilities.getGraph(ofn, par, norm=tmp_val)
+            tmp_graph = getCleanedGraph(ofn, par, norm=tmp_val, n_iter=5)
             tmp_graph.Draw('ap')
+
+
             ## draw a line at 2.*deltaNLL = 1.
             tmp_line = ROOT.TLine(tmp_graph.GetXaxis().GetXmin(), 1., tmp_graph.GetXaxis().GetXmax(), 1.)
             tmp_line.SetLineStyle(7); tmp_line.SetLineWidth(2);
             tmp_line.Draw('same')
-            tmp_graph.Fit('pol2')
+            tmp_line0 = ROOT.TLine(tmp_graph.GetXaxis().GetXmin(), 0., tmp_graph.GetXaxis().GetXmax(), 0.)
+            tmp_line0.SetLineStyle(1); tmp_line0.SetLineWidth(2);
+            tmp_line0.Draw('same')
+
+            ## graph with offest
+            tmp_graph.Fit('pol2', 'rob')
             tmp_fit = tmp_graph.GetFunction('pol2')
             tmp_fit.SetLineColor(ROOT.kAzure-4)
-            (best, sol1, sol2) = solvePol2(tmp_fit.GetParameter(2), tmp_fit.GetParameter(1), tmp_fit.GetParameter(0)-1)
-            lat.DrawLatex(0.15, 0.45, '#hat{{#mu}}_{{0}}: {best:.3f}'.format(best=best))
-            lat.DrawLatex(0.15, 0.40, '-1 #sigma {sol1:.3f}'.format(sol1=sol1))
-            lat.DrawLatex(0.15, 0.35, '+1 #sigma {sol2:.3f}'.format(sol2=sol2))
+            (best, sol1, sol2) = utilities.solvePol2(tmp_fit.GetParameter(2), tmp_fit.GetParameter(1), tmp_fit.GetParameter(0)-1)
+
+            ## correct for the offset of the graph
+            tmp_graph_nooffset = noOffsetGraph(copy.deepcopy(tmp_graph), tmp_fit)
+
+            ## look for the minimum point in x and offset by that number
+            minpoint = -1.*tmp_fit.GetParameter(1) / (2.*tmp_fit.GetParameter(2))
+            tmp_fit_nooffset = tmp_fit.Clone(tmp_fit.GetName()+'_nooffset')
+            tmp_fit_nooffset.SetParameter(0, tmp_fit_nooffset.GetParameter(0)-tmp_fit.Eval(minpoint))
+            tmp_fit_nooffset.SetLineColor(ROOT.kYellow+1)
+            tmp_fit_nooffset.SetLineWidth(2)
+
+            mg = ROOT.TMultiGraph()
+            mg.Add(tmp_graph)
+            mg.Add(tmp_graph_nooffset)
+            mg.Draw('ap')
+            mg.GetYaxis().SetRangeUser(-3., 10.)
+            mg.GetYaxis().SetTitle(tmp_graph.GetYaxis().GetTitle())
+            mg.GetXaxis().SetRangeUser(tmp_graph.GetXaxis().GetXmin(), tmp_graph.GetXaxis().GetXmax())
+            ##if 'r_W' in par:
+            ##    mg.GetXaxis().Set
+            tmp_line.Draw('same')
+            tmp_line0.Draw('same')
+            tmp_fit_nooffset.Draw('same')
+            (best, sol1, sol2) = utilities.solvePol2(tmp_fit_nooffset.GetParameter(2), tmp_fit_nooffset.GetParameter(1), tmp_fit_nooffset.GetParameter(0)-1)
+            
+            print 'solutions for nooffest graph', sol1, sol2
+            
+
+            lat.DrawLatex(0.35, 0.85, '#hat{{#mu}}_{{0}}: {best:.3f}'.format(best=best))
+            lat.DrawLatex(0.35, 0.80, '-1 #sigma {sol1:.3f}'.format(sol1=sol1))
+            lat.DrawLatex(0.35, 0.75, '+1 #sigma {sol2:.3f}'.format(sol2=sol2))
+    
+            uncertainties     .append( (par, (abs(sol1-tmp_val)+abs(sol2-tmp_val))/2. ) )  ## take the average of the uncertainty left and right
+            uncertainties_josh.append( (par, uncs_josh[par] ) )
 
             tmp_linel = ROOT.TLine(sol1, 1., sol1, 0.)
             tmp_linel.SetLineStyle(3); tmp_line.SetLineWidth(2);
@@ -242,3 +381,61 @@ if __name__ == "__main__":
             c1.SaveAs(options.webdir+'/'+os.path.basename(ofn).replace('.root','.pdf'))
             c1.SaveAs(options.webdir+'/'+os.path.basename(ofn).replace('.root','.png'))
 
+
+        ROOT.gROOT.SetBatch(0)
+        c12 = ROOT.TCanvas()
+        
+        
+        pdfunc_scans = ROOT.TGraph(len(uncertainties), array.array('d', [i for i,j in enumerate(uncertainties)]), array.array('d', [j[1] for j in uncertainties     ]))
+        pdfunc_josh  = ROOT.TGraph(len(uncertainties), array.array('d', [i for i,j in enumerate(uncertainties)]), array.array('d', [j[1] for j in uncertainties_josh]))
+
+        hist_uncs = ROOT.TH1F('hist_uncs', 'postfit', len(uncertainties), 0., len(uncertainties))
+        hist_uncs_josh= ROOT.TH1F('hist_uncs_josh', 'hist_uncs_josh', len(uncertainties), 0., len(uncertainties))
+        for i,j in enumerate(uncertainties):
+            hist_uncs      .SetBinContent(i+1,j[1])
+            hist_uncs_josh .SetBinContent(i+1,uncertainties_josh[i][1])
+            hist_uncs      .SetBinError(i+1,0.)
+            hist_uncs_josh .SetBinError(i+1,0.)
+            hist_uncs      .GetXaxis().SetBinLabel(i+1,j[0] if not 'r_' in j[0] else 'r_'+'_'.join(j[0].split('_')[3:]))
+            hist_uncs_josh .GetXaxis().SetBinLabel(i+1,j[0] if not 'r_' in j[0] else 'r_'+'_'.join(j[0].split('_')[3:]))
+        
+        hist_uncs.SetMarkerColor(38); hist_uncs.SetMarkerSize(1.0); hist_uncs.SetMarkerStyle(20)
+        hist_uncs_josh.SetMarkerColor(46); hist_uncs_josh.SetMarkerSize(1.0); hist_uncs_josh.SetMarkerStyle(21)
+
+        hist_uncs.Draw('p')
+        hist_uncs_josh.Draw('p same')
+
+        hist_uncs.GetYaxis().SetRangeUser(0., 1.0)
+        
+        #utilities.graphStyle(pdfunc_scans, style=20, color=38, size=1.0, titleY='pdf postfit unc.', rangeY=0)
+        #utilities.graphStyle(pdfunc_josh , style=21, color=46, size=1.0, titleY='pdf postfit unc.', rangeY=0)
+        #
+        #mg2 = ROOT.TMultiGraph()
+        #mg2.Add(pdfunc_scans)
+        #mg2.Add(pdfunc_josh)
+
+        #mg2.Draw('ap')
+
+        #mg2_hist = mg2.GetHistogram()
+        #for i,j in enumerate(uncertainties):
+        #    mg2_hist.GetXaxis().SetBinLabel(mg2_hist.GetXaxis().FindBin(i), j[0])
+
+        #mg2_hist.Draw('axis same')
+
+        #
+        #mg2.GetXaxis().SetTitle('pdf index')
+        #mg2.GetYaxis().SetTitle('postfit uncertainty')
+        #mg2.GetYaxis().SetRangeUser(0., 1.3)
+        #
+        leg = ROOT.TLegend(0.8, 0.9, 0.9, 1.)
+        leg.SetFillStyle(0)
+        leg.AddEntry(hist_uncs, 'from scans'     , 'p')
+        leg.AddEntry(hist_uncs_josh, 'from tensorflow', 'p')
+        leg.Draw('same')
+        c12.SaveAs(options.webdir+'/postfit_uncertainty_comparison_{foob}.pdf'.format(foob=options.pois.replace(',','_').replace('.','').replace('*','')))
+        c12.SaveAs(options.webdir+'/postfit_uncertainty_comparison_{foob}.png'.format(foob=options.pois.replace(',','_').replace('.','').replace('*','')))
+
+    
+        
+
+        
