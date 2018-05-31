@@ -8,6 +8,21 @@ def _cloneNoDir(hist,name=''):
     ret.SetDirectory(None)
     return ret
 
+def cropNegativeBins(histo):
+            if "TH1" in histo.ClassName():
+                for b in xrange(0,histo.GetNbinsX()+2):
+                    if histo.GetBinContent(b) < 0: histo.SetBinContent(b, 0.0)
+            elif "TH2" in histo.ClassName():
+                for bx in xrange(0,histo.GetNbinsX()+2):
+                    for by in xrange(0,histo.GetNbinsY()+2):
+                        if histo.GetBinContent(bx,by) < 0: histo.SetBinContent(bx,by, 0.0)
+            elif "TH3" in histo.ClassName():
+                for bx in xrange(0,histo.GetNbinsX()+2):
+                    for by in xrange(0,histo.GetNbinsY()+2):
+                        for bz in xrange(0,histo.GetNbinsZ()+2):
+                            if histo.GetBinContent(bx,by,bz) < 0: histo.SetBinContent(bx,by,bz, 0.0)
+
+
 class RooFitContext:
     def __init__(self,workspace):
         self.workspace = workspace
@@ -334,11 +349,18 @@ class HistoWithNuisances:
             ret.SetPoint(i, x, y)
             ret.SetPointError(i, EXlow,EXhigh,EYlow,EYhigh)
         return ret
-
+    def cropNegativeBins(self, allVariations=True):
+        cropNegativeBins(self.nominal)
+        if allVariations:
+            cropNegativeBins(self.central)
+            for hs in self.variations.itervalues():
+                for h in hs: cropNegativeBins(h)
     def getCentral(self):
         return self.central
     def getVariation(self,alternate):
         return self.variations[alternate]
+    def hasVariation(self,alternate):
+        return (alternate in self.variations)
     def hasVariations(self):
         return bool(self.variations) 
     def getVariationList(self):
@@ -352,15 +374,19 @@ class HistoWithNuisances:
             print "WARNING: adding a variantion on an object that already has roofit/postfit info"
             self._rooFit  = None
             self._postFit = None
-    def addBinByBin(self, namePattern="{name}_bbb_{bin}", ycutoff=1e-3, relcutoff=1e-2, verbose=False, norm=False):
+    def addBinByBin(self, namePattern="{name}_bbb_{bin}", ycutoff=1e-3, relcutoff=1e-2, verbose=False, norm=False, conservativePruning=False):
         ref = self.central
         ytot = ref.Integral()
         if (ytot == 0): return 
         for b in xrange(1,ref.GetNbinsX()+1):
             y, e = ref.GetBinContent(b), ref.GetBinError(b)
-            if y/ytot < ycutoff: continue
-            if e/y    < relcutoff: continue
-            if e < 0.2*sqrt(y+1): continue
+            if y <= 0 or e < 0: continue
+            if conservativePruning: # conservative adaptive pruning that was used in makeShapeCards in the past
+                if e < 0.1*sqrt(y+0.04): continue 
+            else:
+                if y/ytot < ycutoff: continue
+                if e/y    < relcutoff: continue
+                if e < 0.2*sqrt(y+1): continue
             if verbose: 
                 print "\tbin %3d: yield %9.1f +- %9.1f (rel %.5f), rel err. %.4f, poisson %.1f" % (b, y, e, y/ytot, e/y if y else 1, sqrt(y+1))
             hi = _cloneNoDir(ref)
@@ -377,6 +403,27 @@ class HistoWithNuisances:
             print "WARNING: addBinByBinn on an object that already has roofit/postfit info"
             self._rooFit  = None
             self._postFit = None
+    def isShapeVariation(self,name,tolerance=1e-5):
+        """return true if the specified variation alters the shape of the histogram.
+           this is tested by checking if the ratio between non-empty bins of the 
+           nominal and varied histogram are identical within the tolerance"""
+        h0 = self.central
+        for h in self.variations[name]:
+            ratio = None 
+            for b in xrange(1,h0.GetNbinsX()+1):
+                y0 = h0.GetBinContent(b)
+                y  =  h.GetBinContent(b)
+                if (y0 == 0):
+                    if (y != 0): return True
+                elif y == 0: 
+                    return True
+                else:
+                    if ratio is None:
+                        ratio = y/y0
+                    else:
+                        if abs(y/y0 - ratio) > tolerance: 
+                            return True
+        return False
     def rooFitPdfAndNorm(self,roofitContext=None):
         if self._rooFit:
             if roofitContext != None and self._rooFit['context'] != roofitContext:
@@ -492,19 +539,33 @@ class HistoWithNuisances:
             scaledCopy = other.Clone("tmp")
             scaledCopy.Scale(scaleFactor)
             self += scaledCopy
-    def writeToFile(self,tfile,writeVariations=True):
+    def writeToFile(self,tfile,writeVariations=True,takeOwnership=True):
         tfile.WriteTObject(self.nominal, self.nominal.GetName())
         for key,vals in self.variations.iteritems():
             tfile.WriteTObject(vals[0], self.GetName()+"_"+key+"Up")
             tfile.WriteTObject(vals[1], self.GetName()+"_"+key+"Down")
         if self.central != self.nominal:
             tfile.WriteTObject(self.central, self.central.GetName())
-        if self.nominal.InheritsFrom("TH1"): 
-            self.nominal.SetDirectory(tfile) 
-            for vals in self.variations.itervalues():
-                for v in vals: v.SetDirectory(tfile) 
-            if self.central != self.nominal:
-                self.central.SetDirectory(tfile) 
+        if takeOwnership:
+            if self.nominal.InheritsFrom("TH1"): 
+                self.nominal.SetDirectory(tfile) 
+                for vals in self.variations.itervalues():
+                    for v in vals: v.SetDirectory(tfile) 
+                if self.central != self.nominal:
+                    self.central.SetDirectory(tfile) 
+
+def readHistoWithNuisances(tfile, name, variations, mayBeMissing=False):
+    central = tfile.Get(name)
+    if not central: 
+        if mayBeMissing: return None
+        raise RuntimeError("Missing %s in %s" % (name, tfile.GetName()))
+    ret = HistoWithNuisances(central)
+    for var in variations:
+        for sign in ("Up", "Down"):
+            hvar = tfile.Get(name+"_"+var+sign)
+            if not hvar: raise RuntimeError("Missing %s in %s" % (name+"_"+var+sign, tfile.GetName()))
+            ret.addVariation(var, sign.lower(), hvar)
+    return ret
 
 class SumWithNuisances(HistoWithNuisances):
     def __init__(self,name,histos):
@@ -655,8 +716,16 @@ def mergePlots(name,plots):
         if any(p for p in plots[1:] if not one._canAdd(p)):
             return SumWithNuisances(name,plots)
     one = one.Clone(name)
-    for p in plots[1:]:
-        one+=p
+    if isinstance(one, HistoWithNuisances):
+        for p in plots[1:]: one+=p
+    elif isinstance(one, ROOT.TH1):
+        for p in plots[1:]: one.Add(p)
+    elif isinstance(one, ROOT.TGraph):
+        others = ROOT.TList()
+        for p in plots[1:]: others.Add(p)
+        one.Merge(others)
+    else: # try blindly and hope it works
+        for p in plots[1:]: one+=p
     return one
 
 def listAllNuisances(histWithNuisanceMap):

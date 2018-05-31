@@ -18,16 +18,25 @@ susy*) echo "NOT UP TO DATE"; exit 1;;
 *) echo "You did not specify the analysis"; exit 1;;
 esac;
 BCORE=" --s2v --tree treeProducerSusyMultilepton ttH-multilepton/mca-qcd1l.txt ${CUTFILE} -P $T -l 41.7 --AP  --WA prescaleFromSkim  "
-#BCORE="${BCORE} --Fs {P}/1_extraVars_v1  "
+BCORE="${BCORE} --Fs {P}/1_jetPtRatiov3_v1 --mcc ttH-multilepton/mcc-ptRatiov3.txt "
 BCORE="${BCORE} --mcc ttH-multilepton/mcc-eleIdEmu2.txt  "; 
 #BCORE="${BCORE} --mcc ttH-multilepton/mcc-noHLTinMC-some.txt  "; 
+
+MVAWP=90
 
 BG=" -j 8 "; if [[ "$1" == "-b" ]]; then BG=" & "; shift; fi
 
 lepton=$1; if [[ "$1" == "" ]]; then exit 1; fi
+lepdir=${lepton};
 case $lepton in
 mu) BCORE="${BCORE} -E ^${lepton} --xf 'SingleEl.*'  "; QCD=QCDMu; ;;
 el) BCORE="${BCORE} -E ^${lepton} --xf 'DoubleMu.*,SingleMu.*' "; QCD=QCDEl; ;;
+loose_mu) 
+    lepdir=$1; lepton="mu"; MVAWP=75; CUTPREFIX="mva0${MVAWP}_"; NUM="mvaPt_0${MVAWP}i";
+    BCORE="${BCORE} -E ^${lepton} --xf 'SingleEl.*'  "; QCD=QCDMu; ;;
+loose_el) 
+    lepdir=$1; lepton="el"; MVAWP=75; CUTPREFIX="mva0${MVAWP}_"; NUM="mvaPt_0${MVAWP}i";
+    BCORE="${BCORE} -E ^${lepton} --xf 'DoubleMu.*,SingleMu.*' "; QCD=QCDEl; ;;
 #mu_jet) lepton="mu"; BCORE="${BCORE} -E ${lepton} --xf 'Double.*' -X idEmuCut -R minimal ptj40 ' LepGood_awayJet_pt > 40'  "; QCD=QCDMu; ;;
 #mu_jet6) lepton="mu"; BCORE="${BCORE} -E ${lepton} --xf 'Double.*,JetHT_.*' -X idEmuCut -R minimal ptj40 ' LepGood_awayJet_pt > 60'  "; QCD=QCDMu; ;;
 #mu_ht)  lepton="mu"; BCORE="${BCORE} -E ${lepton} --xf 'Double.*' -X idEmuCut -R minimal ptj40 ' LepGood_awayJet_pt > 40'  "; QCD=QCDMu; ;;
@@ -35,7 +44,7 @@ el) BCORE="${BCORE} -E ^${lepton} --xf 'DoubleMu.*,SingleMu.*' "; QCD=QCDEl; ;;
 esac;
 
 trigger=$2; if [[ "$2" == "" ]]; then exit 1; fi
-conept="LepGood_pt*if3(LepGood_mvaTTH>0.90&&LepGood_mediumMuonId>0, 1.0, 0.90/LepGood_jetPtRatiov2)"
+conept="LepGood_pt*if3(LepGood_mvaTTH>0.${MVAWP}&&LepGood_mediumMuonId>0, 1.0, 0.90/LepGood_jetPtRatiov2)"
 case $trigger in
 #PFJet6)
 #    BCORE="${BCORE} -E HLT_PFJet6   "; 
@@ -70,8 +79,8 @@ MuX_Combined)
     PUW=" "
     ;;
 MuX_OR)
-    BCORE="${BCORE} -E trigMu -E conePt10 -E notConePt100 "; 
-    CONEPTVAR="ptJI90_mvaPt090_coarsecomb"
+    BCORE="${BCORE} -E ^${CUTPREFIX}trigMu -E ^${CUTPREFIX}conePt10 -E ^${CUTPREFIX}notConePt100 "; 
+    CONEPTVAR="ptJI90_mvaPt0${MVAWP}_coarsecomb"
     PUW="-L ttH-multilepton/frPuReweight.cc -W 'coneptw$trigger($conept,nVert)' "
     ;;
 Ele8|Ele8_CaloIdM_TrackIdM_PFJet30)
@@ -91,9 +100,8 @@ EleX_Combined)
     PUW=" "
     ;;
 EleX_OR)
-    BCORE="${BCORE/TREES_TTH_120218_Fall17_JECV4_1L/TREES_TTH_120218_Fall17_JECV4_1L_exclusiveData}";
-    BCORE="${BCORE} -E trigEl -E conePt15 -E notConePt100 "; 
-    CONEPTVAR="ptJI90_mvaPt090_coarseelcomb"
+    BCORE="${BCORE} -E ^${CUTPREFIX}trigEl -E ^${CUTPREFIX}conePt15 -E ^${CUTPREFIX}notConePt100 "; 
+    CONEPTVAR="ptJI90_mvaPt0${MVAWP}_coarseelcomb"
     PUW="-L ttH-multilepton/frPuReweight.cc -W 'coneptw$trigger($conept,nVert)' "
     ;;
 *)
@@ -105,7 +113,7 @@ esac;
 
 what=$3;
 more=$4
-PBASE="plots/94X/${ANALYSIS}/lepMVA/v2.0-dev/fr-meas/qcd1l/$lepton/HLT_$trigger/$what/$more"
+PBASE="plots/94X/${ANALYSIS}/lepMVA/v2.0-dev/fr-meas/qcd1l/$lepdir/HLT_$trigger/$what/$more"
 
 EWKONE="-p ${QCD}_red,EWK,data"
 EWKSPLIT="-p ${QCD}_red,WJets,DYJets,Top,data"

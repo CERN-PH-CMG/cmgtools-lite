@@ -27,8 +27,6 @@ def base(selection):
 
     CORE=' '.join([TREES,TREESONLYSKIM])
     CORE+=" -f -j 8 -l 41.4 --s2v -L ttH-multilepton/functionsTTH.cc --tree treeProducerSusyMultilepton --mcc ttH-multilepton/lepchoice-ttH-FO.txt --split-factor=-1 --WA prescaleFromSkim "# --neg"
-    if "data" in selection:
-        CORE+=' '.join(["--plotgroup data_fakes%s+='.*_promptsub%s'"%(x,x) for x in ['','_FRe_norm_Up','_FRe_norm_Dn','_FRe_pt_Up','_FRe_pt_Dn','_FRe_be_Up','_FRe_be_Dn','_FRm_norm_Up','_FRm_norm_Dn','_FRm_pt_Up','_FRm_pt_Dn','_FRm_be_Up','_FRm_be_Dn']])+" --neglist '.*_promptsub.*' "
     RATIO= " --maxRatioRange 0.0  1.99 --ratioYNDiv 505 "
     RATIO2=" --showRatio --attachRatioPanel --fixRatioRange "
     LEGEND=" --legendColumns 2 --legendWidth 0.25 "
@@ -64,6 +62,10 @@ def base(selection):
 
     return GO
 
+def promptsub(x):
+    procs = [ '' ]
+    if dowhat == "cards": procs += ['_FRe_norm_Up','_FRe_norm_Dn','_FRe_pt_Up','_FRe_pt_Dn','_FRe_be_Up','_FRe_be_Dn','_FRm_norm_Up','_FRm_norm_Dn','_FRm_pt_Up','_FRm_pt_Dn','_FRm_be_Up','_FRm_be_Dn']
+    return x + ' '.join(["--plotgroup data_fakes%s+='.*_promptsub%s'"%(x,x) for x in procs])+" --neglist '.*_promptsub.*' "
 def procs(GO,mylist):
     return GO+' '+" ".join([ '-p %s'%l for l in mylist ])
 def sigprocs(GO,mylist):
@@ -110,6 +112,7 @@ if __name__ == '__main__':
         if '_table' in torun:
             x = x.replace('mca-2lss-mc.txt','mca-2lss-mc-table.txt')
         if '_frdata' in torun:
+            x = promptsub(x)
             if '_blinddata' in torun:
                 x = x.replace('mca-2lss-mc.txt','mca-2lss-mcdata.txt')
                 x = add(x,'--xp data')
@@ -199,6 +202,7 @@ if __name__ == '__main__':
             x = x.replace('mca-3l-mc.txt','mca-3l-mc-sigextr.txt').replace('--showRatio --maxRatioRange 0 2','--showRatio --maxRatioRange 0 1 --ratioYLabel "S/B"')
         if '_data' in torun: x = x.replace('mca-3l-mc.txt','mca-3l-mcdata.txt')
         if '_frdata' in torun:
+            x = promptsub(x)
             if '_blinddata' in torun:
                 x = x.replace('mca-3l-mc.txt','mca-3l-mcdata.txt')
                 x = add(x,'--xp data')
@@ -263,6 +267,7 @@ if __name__ == '__main__':
         if '_relax' in torun: x = add(x,'-X ^TTTT ')
         if '_data' in torun: x = x.replace('mca-4l-mc.txt','mca-4l-mcdata.txt')
         if '_frdata' in torun:
+            x = promptsub(x)
             raise RuntimeError, 'Fakes estimation not implemented for 4l'
         runIt(x,'%s'%torun)
 
@@ -270,6 +275,7 @@ if __name__ == '__main__':
         x = base('2lss')
         if '_data' in torun: x = x.replace('mca-2lss-mc.txt','mca-2lss-mcdata.txt')
         if '_frdata' in torun:
+            x = promptsub(x)
             if not '_data' in torun: raise RuntimeError
             x = x.replace('mca-2lss-mcdata.txt','mca-2lss-mcdata-frdata.txt')
         x = add(x,"-R ^4j 3j 'nJet25==3'")
@@ -317,6 +323,7 @@ if __name__ == '__main__':
         x = base('3l')
         if '_data' in torun: x = x.replace('mca-3l-mc.txt','mca-3l-mcdata.txt')
         if '_frdata' in torun:
+            x = promptsub(x)
             if not '_data' in torun: raise RuntimeError
             x = x.replace('mca-3l-mcdata.txt','mca-3l-mcdata-frdata.txt')
         x = add(x,"-I 'Zveto' -X ^2b1B -E ^Bveto ")
@@ -328,6 +335,7 @@ if __name__ == '__main__':
         x = base('3l')
         if '_data' in torun: x = x.replace('mca-3l-mc.txt','mca-3l-mcdata.txt')
         if '_frdata' in torun:
+            x = promptsub(x)
             if not '_data' in torun: raise RuntimeError
             x = x.replace('mca-3l-mcdata.txt','mca-3l-mcdata-frdata.txt')
         plots = ['lep2_pt','met','nJet25','mZ1']
@@ -341,6 +349,7 @@ if __name__ == '__main__':
         x = base('4l')
         if '_data' in torun: x = x.replace('mca-4l-mc.txt','mca-4l-mcdata.txt')
         if '_frdata' in torun:
+            x = promptsub(x)
             raise RuntimeError, 'Fakes estimation not implemented for 4l'
         x = add(x,"-I ^Zveto")
         runIt(x,'%s'%torun)
