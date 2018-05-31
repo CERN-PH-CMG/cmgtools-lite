@@ -96,7 +96,7 @@ else
     function getcut() { case $1 in
     barrel) CUT="abseta < 1.2";;
     endcap) CUT="abseta > 1.2";;
-    pt520) CUT="pt > 5 && pt < 20";;
+    pt320) CUT="pt > 3.5 && pt < 20";;
     pt20)  CUT="pt > 20";;
     *) echo "Unknown ptCut $1"; exit 3;
 esac; }
