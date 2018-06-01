@@ -9,6 +9,24 @@ from CMS_lumi import *
 
 #########################################################################
 
+def addStringToEnd(name, matchToAdd, notAddIfEndswithMatch=False):
+    if notAddIfEndswithMatch and name.endswith(matchToAdd):
+        return name
+    elif not name.endswith(matchToAdd):
+        return name + matchToAdd
+
+#########################################################################
+
+
+def createPlotDirAndCopyPhp(outdir):
+    if outdir != "./":
+        if not os.path.exists(outdir):
+            os.system("mkdir -p "+outdir)
+            if os.path.exists("/afs/cern.ch"): os.system("cp /afs/cern.ch/user/g/gpetrucc/php/index.php "+outdir)
+    
+
+#########################################################################
+
 def getAxisRangeFromUser(axisNameTmp="", 
                          separator="::", 
                          rangeSeparator=","

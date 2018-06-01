@@ -143,14 +143,18 @@ def submitBatch(dcname,outdir,mkShCardsCmd,options):
     else: os.system(cmd)
 
 # new function
-def getArrayParsingString(inputString, verbose=False):
+def getArrayParsingString(inputString, verbose=False, makeFloat=False):
     # convert string [a,b,c,...] to list of a b c ...
     tmp = inputString.replace('[','').replace(']','')
     tmp = tmp.split(',')
     if verbose:
         print "Input:",inputString
         print "Output:",tmp
-    return tmp
+    if makeFloat:
+        ret = [float(x) for x in tmp]
+    else:
+        ret = tmp
+    return ret
 
 # new function
 def getGlobalBin(ix, iy, nbinsX, binFrom0=True):
@@ -287,11 +291,11 @@ if __name__ == "__main__":
 
         print "MAKING SIGNAL PART: "
 
-        ybinfile = open(outdir+'/binningPtEta.txt','w')
-        ybinfile.write("Template binning: eta-pt on x-y axis\n")
-        ybinfile.write(binning)
-        ybinfile.write('\n')
-        ybinfile.close()
+        ptEta_binfile = open(outdir+'/binningPtEta.txt','w')
+        ptEta_binfile.write("Template binning: eta-pt on x-y axis\n")
+        ptEta_binfile.write(binning)
+        ptEta_binfile.write('\n')
+        ptEta_binfile.close()
 
         for ibin in xrange(loopBins):
 
