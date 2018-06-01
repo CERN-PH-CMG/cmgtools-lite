@@ -91,8 +91,9 @@ if __name__ == "__main__":
         cmd += ' -n {name} '.format(name='_toy'+str(j))
         # randomizing initial parameters
         params = list(pars.at(i).GetName() for i in range(len(pars)))
-        params = filter(lambda x: not x.startswith('r_'),params)
-        params = filter(lambda x: not x.endswith('_In') and not x.endswith('th1x') and x!='MH',params)
+        params = filter(lambda x: not x.startswith('r_') and not x.endswith('_xsec'),params)  # POIs
+        params = filter(lambda x: not x.endswith('_In') and not x.endswith('th1x') and x!='MH',params) # inputs and combine internal stuff
+        params = filter(lambda x: 'mask' not in x, params) # channel masking
         rndpars = {}
         for p in params:
             par = pars.find(p)
