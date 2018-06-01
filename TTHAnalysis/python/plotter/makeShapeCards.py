@@ -52,8 +52,8 @@ def file2map(x):
 YRpath = os.environ['CMSSW_BASE']+"/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/";
 #YRpath = '/afs/cern.ch/user/p/peruzzi/work/cmgtools/combine/CMSSW_7_4_14/src/HiggsAnalysis/CombinedLimit/data/lhc-hxswg/sm/'
 #XStth = file2map(YRpath+"xs/8TeV/8TeV-ttH.txt")
-BRhvv = file2map(YRpath+"br/BR2bosons.txt")
-BRhff = file2map(YRpath+"br/BR2fermions.txt")
+#BRhvv = file2map(YRpath+"br/BR2bosons.txt")
+#BRhff = file2map(YRpath+"br/BR2fermions.txt")
 def mkspline(table,column,sf=1.0):
     pairs = [ (x,c[column]/sf) for (x,c) in table.iteritems() ]
     pairs.sort()
@@ -559,7 +559,7 @@ for mass in masses:
         if re.match('envelop.*',mode):
             datacard.write(('%s shape' % (npatt%(name+"0"))) + " ".join([kpatt % effmap0[p]  for p in procs]) +"\n")
         if any([re.match(x+'.*',mode) for x in ["envelop", "shapeOnly"]]):
-            datacard.write(('% shape' % (npatt%(name+"1"))) + " ".join([kpatt % effmap12[p] for p in procs]) +"\n")
+            datacard.write(('%s shape' % (npatt%(name+"1"))) + " ".join([kpatt % effmap12[p] for p in procs]) +"\n")
             if "shapeOnly2D" not in mode:
                 datacard.write(('%-10s shape' % (npatt%(name+"2"))) + " ".join([kpatt % effmap12[p] for p in procs]) +"\n")
 if len(masses) > 1:
