@@ -184,7 +184,7 @@ TFitResultPtr fitGraph(TGraph* gr = NULL,
   // TF1 * f1 = new TF1("f1","[0] * (x - 25.) + [1]",25,60);
   // TF1 * f2 = new TF1("f2","[0] * (x - 25.) + [1]",30,46);
 
-  Double_t maxslope = isData ? 0.0005 : 0.01;  
+  Double_t maxslope = isData ? 0.0005 : 0.015;  
 
   if (isEB) {
 
