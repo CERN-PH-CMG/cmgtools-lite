@@ -94,6 +94,7 @@ def drawCorrelationPlot(h2D,
     labelY,setYAxisRangeFromUser,ymin,ymax = getAxisRangeFromUser(labelYtmp)
     labelZ,setZAxisRangeFromUser,zmin,zmax = getAxisRangeFromUser(labelZtmp)
     
+    #canvas = ROOT.TCanvas("canvas",h2D.GetTitle() if plotLabel == "ForceTitle" else "",700,625)
     canvas = ROOT.TCanvas("canvas","",700,625)
     canvas.SetLeftMargin(leftMargin)
     canvas.SetRightMargin(rightMargin)
@@ -147,15 +148,18 @@ def drawCorrelationPlot(h2D,
         h2DProfile.Draw("EPsame")
         
     # not yet implemented
-    CMS_lumi(canvas,"",True,False)
+    if not plotLabel == "ForceTitle": CMS_lumi(canvas,"",True,False)
     setTDRStyle()
+
+    if plotLabel == "ForceTitle":
+        ROOT.gStyle.SetOptTitle(1)        
 
     leg = ROOT.TLegend(0.39,0.75,0.89,0.95)
     leg.SetFillStyle(0)
     leg.SetFillColor(0)
     leg.SetBorderSize(0)
     leg.SetTextFont(62)
-    if plotLabel != "": leg.AddEntry(0,plotLabel,"")
+    if plotLabel not in ["", "ForceTitle"]: leg.AddEntry(0,plotLabel,"")
     if drawProfileX: leg.AddEntry(0,"Correlation = %.2f" % h2DPlot.GetCorrelationFactor(),"")
     leg.Draw("same")
 
