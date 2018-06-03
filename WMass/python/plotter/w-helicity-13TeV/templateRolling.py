@@ -9,7 +9,6 @@
 # will implement taking 2D template binning from a file
 
 
-
 import ROOT, os
 from array import array
 from make_diff_xsec_cards import getArrayParsingString

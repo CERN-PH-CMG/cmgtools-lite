@@ -320,8 +320,27 @@ if __name__ == "__main__":
                         for i in xrange(len(pseudobins)):
                             realprocesses.append(pseudoprocesses[i]+"_"+pseudobins[i] if ('Wminus' in pseudobins[i] or 'Wplus' in pseudobins[i]) else pseudoprocesses[i])
                         combinedCard.write('bin            %s \n' % ' '.join([kpatt % options.bin for p in pseudoprocesses]))
-                        combinedCard.write('process        %s \n' % ' '.join([kpatt % p for p in realprocesses]))
-                        combinedCard.write('process        %s \n' % ' '.join([kpatt % str(i+1) for i in xrange(len(pseudobins))]))
+                        #combinedCard.write('process        %s \n' % ' '.join([kpatt % p for p in realprocesses]))
+                        ## marc combinedCard.write('process        %s \n' % ' '.join([kpatt % str(i+1) for i in xrange(len(pseudobins))]))
+                        procids = []; procnames = []
+                        pos = 1; neg =  0;
+                        for i,proc in enumerate(realprocesses):
+                            if 'Ybin' in proc:
+                                procnames.append(proc)
+                                procids.append( str(neg)); neg -= 1
+                            else:
+                                procnames.append(proc)
+                                procids.append( str(pos)); pos += 1
+                        processNameLine = 'process        '
+                        processIDLine   = 'process        '
+                        for i,pid in enumerate(procids):
+                            processNameLine += '       '+procnames[i]
+                            processIDLine   += '       '+pid
+                        processNameLine += ' \n'
+                        processIDLine   += ' \n'
+                        combinedCard.write(processNameLine)
+                        combinedCard.write(processIDLine  )
+    
                     nmatchprocess += 1
                 if nmatchprocess==2: 
                     nmatchprocess +=1
@@ -337,7 +356,8 @@ if __name__ == "__main__":
         procs = []
         rates = []
         for l in combinedCard.readlines():
-            if re.match("process\s+",l) and not re.match("process\s+\d",l): # my regexp qualities are bad... 
+            ##if re.match("process\s+",l) and not re.match("process\s+\d",l): # my regexp qualities are bad... 
+            if 'process' in l and 'Ybin' in l:
                 procs = (l.rstrip().split())[1:]
             if re.match("rate\s+",l):
                 rates = (l.rstrip().split())[1:]
@@ -500,7 +520,8 @@ if __name__ == "__main__":
         tmp_xsec_dc.write('observation -1\n') ## don't know if that will work...
         tmp_xsec_dc.write('bin      {s}\n'.format(s=' '.join(['{b}'.format(b=options.bin) for p in tmp_sigprocs])))
         tmp_xsec_dc.write('process  {s}\n'.format(s=' '.join([p+'_xsec' for p in tmp_sigprocs])))
-        tmp_xsec_dc.write('process  {s}\n'.format(s=' '.join(str(i+1)  for i in range(len(tmp_sigprocs)))))
+        ###tmp_xsec_dc.write('process  {s}\n'.format(s=' '.join(str(i+1)  for i in range(len(tmp_sigprocs)))))
+        tmp_xsec_dc.write('process  {s}\n'.format(s=' '.join(procids[procnames.index(pname)]  for pname in tmp_sigprocs)))
         tmp_xsec_dc.write('rate     {s}\n'.format(s=' '.join('-1' for i in range(len(tmp_sigprocs)))))
         tmp_xsec_dc.write('# --------------------------------------------------------------\n')
 
@@ -539,7 +560,9 @@ if __name__ == "__main__":
 
             newws = cardfile_xsec.replace('_card','_ws').replace('.txt','.root')
 
-            txt2wsCmd = 'text2workspace.py {cf} -o {ws} --X-allow-no-signal --X-no-check-norm -P HiggsAnalysis.CombinedLimit.PhysicsModel:multiSignalModel --PO verbose {pos} --channel-masks '.format(cf=cardfile_xsec, ws=newws, pos=multisig)
+            txt2wsCmd = 'text2workspace.py {cf} -o {ws} --X-allow-no-background -P HiggsAnalysis.CombinedLimit.PhysicsModel:multiSignalModel --PO verbose {pos} --channel-masks '.format(cf=cardfile_xsec, ws=newws, pos=multisig)
+            txt2wsCmd_noXsec = 'text2workspace.py {cf} -o {ws} -P HiggsAnalysis.CombinedLimit.PhysicsModel:multiSignalModel --PO verbose {pos} '.format(cf=cardfile, ws=ws, pos=multisig)
+
             #combineCmd = 'combine {ws} -M MultiDimFit    -t -1 -m 999 --saveFitResult --keepFailures --cminInitialHesse 1 --cminFinalHesse 1 --cminPreFit 1       --redefineSignalPOIs {pois} --floatOtherPOIs=0 -v 9'.format(ws=ws, pois=','.join(['r_'+p for p in signals]))
             combineCmd = 'combine {ws} -M MultiDimFit -t -1 -m 999 --saveFitResult {minOpts} --redefineSignalPOIs {pois} -v 9 --setParameters mask_{xc}=1 '.format(ws=newws, pois=','.join(['r_'+p for p in signals]),minOpts=minimizerOpts, xc=chname_xsec)
         ## here running the combine cards command first
@@ -548,6 +571,8 @@ if __name__ == "__main__":
         ## then running the t2w command afterwards
         print txt2wsCmd
         os.system(txt2wsCmd)
+        print "redoing also the noXsec workspace..."
+        os.system(txt2wsCmd_noXsec)
         ## print out the command to run in combine
         print combineCmd
     # end of loop over charges
@@ -564,7 +589,7 @@ if __name__ == "__main__":
         ws = combinedCard.replace('_card.txt', '_ws.root')
         t2w = 'text2workspace.py {cf} -o {ws} --X-allow-no-signal --X-no-check-norm '.format(cf=combinedCard, ws=ws)
         print "combined t2w command: ",t2w
-        os.system(t2w)
+        ## marc os.system(t2w)
         combineCmdTwoCharges = 'combine {ws} -M MultiDimFit    -t -1 --expectSignal=1 -m 999 --saveFitResult --cminInitialHesse 1 --cminFinalHesse 1 --cminPreFit 1       --redefineSignalPOIs {pois}            --floatOtherPOIs=0 --freezeNuisanceGroups efficiencies,fixedY{pdfs}{scales} -v 9'.format(ws=ws, pois=','.join(minosPOIs), pdfs=(',pdfs' if len(pdfsyst) else ''), scales=(',scales' if len(qcdsyst) else ''))
         print combineCmdTwoCharges
         print "DONE. ENJOY FITTING !"
